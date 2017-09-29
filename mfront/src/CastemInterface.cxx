@@ -1528,10 +1528,10 @@ namespace mfront{
 
   void
   CastemInterface::writeUMATxxAdditionalSymbols(std::ostream&,
-						    const std::string&,
-						    const Hypothesis,
-						    const BehaviourDescription&,
-						    const FileDescription&) const
+						const std::string&,
+						const Hypothesis,
+						const BehaviourDescription&,
+						const FileDescription&) const
   {} // end of CastemInterface::writeUMATxxAdditionalSymbols
 
   void

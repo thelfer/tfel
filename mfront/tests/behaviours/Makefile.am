@@ -171,6 +171,7 @@ EXTRA_DIST=CMakeLists.txt                                                 \
 	   references/implicitsimomieheelastoplasticity.ref               \
 	   references/monocrystal_dd_cc_numericaljacobian.ref             \
 	   references/monocrystal_dd_cc_irradiation_numericaljacobian.ref \
+	   references/logarithmicstrainelasticity-shear.ref               \
 	   references/logarithmicstrainnortoncreepuniaxialtesting.ref     \
 	   references/norton_log1D-uniaxialtesting.ref                    \
 	   references/T91-satohtest.ref                                   \

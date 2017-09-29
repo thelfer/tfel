@@ -140,6 +140,26 @@ namespace mfront{
 				 const Hypothesis,
 				 const BehaviourDescription&,
 				 const FileDescription&) const override;
+    /*!
+     * \param[in] out  : output file
+     * \param[in] name : name of the behaviour as defined by interface
+     *                   (generally taking into account the material
+     *                    and the behaviour name)
+     * \param[in] mb   : behaviour description
+     */
+    void writeUMATxxBehaviourTypeSymbols(std::ostream&,
+					 const std::string&,
+					 const BehaviourDescription&) const override;
+    /*!
+     * \param[in] out  : output file
+     * \param[in] name : name of the behaviour as defined by interface
+     *                   (generally taking into account the material
+     *                    and the behaviour name)
+     * \param[in] mb   : behaviour description
+     */
+    void writeUMATxxBehaviourKinematicSymbols(std::ostream&,
+					      const std::string&,
+					      const BehaviourDescription&) const override;
 
     virtual void
     writeCyranoFunctionDeclaration(std::ostream&,

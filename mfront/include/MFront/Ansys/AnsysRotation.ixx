@@ -172,14 +172,14 @@ namespace ansys
   // em : Déformations dans le repère matériau
   template<typename real>
   void AnsysRotation3D<real>::rotateStrainsForward(const real *const eg,
-						          real *const em)
+						   real *const em)
   {
-    em[0]=2*(a[1]*a[2]*eg[5]+a[0]*a[2]*eg[4]+a[0]*a[1]*eg[3])+a[2]*a[2]*eg[2]+a[1]*a[1]*eg[1]+a[0]*a[0]*eg[0];
-    em[1]=2*(a[4]*a[5]*eg[5]+a[3]*a[5]*eg[4]+a[3]*a[4]*eg[3])+a[5]*a[5]*eg[2]+a[4]*a[4]*eg[1]+a[3]*a[3]*eg[0];
-    em[2]=2*(a[7]*a[8]*eg[5]+a[6]*a[8]*eg[4]+a[6]*a[7]*eg[3])+a[8]*a[8]*eg[2]+a[7]*a[7]*eg[1]+a[6]*a[6]*eg[0];
-    em[3]=(a[1]*a[5]+a[2]*a[4])*eg[5]+(a[0]*a[5]+a[2]*a[3])*eg[4]+(a[0]*a[4]+a[1]*a[3])*eg[3]+a[2]*a[5]*eg[2]+a[1]*a[4]*eg[1]+a[0]*a[3]*eg[0];
-    em[4]=(a[1]*a[8]+a[2]*a[7])*eg[5]+(a[0]*a[8]+a[2]*a[6])*eg[4]+(a[0]*a[7]+a[1]*a[6])*eg[3]+a[2]*a[8]*eg[2]+a[1]*a[7]*eg[1]+a[0]*a[6]*eg[0];
-    em[5]=(a[4]*a[8]+a[5]*a[7])*eg[5]+(a[3]*a[8]+a[5]*a[6])*eg[4]+(a[3]*a[7]+a[4]*a[6])*eg[3]+a[5]*a[8]*eg[2]+a[4]*a[7]*eg[1]+a[3]*a[6]*eg[0];
+    em[0]=2*(a[1]*a[2]*eg[4]+a[0]*a[2]*eg[5]+a[0]*a[1]*eg[3])+a[2]*a[2]*eg[2]+a[1]*a[1]*eg[1]+a[0]*a[0]*eg[0];
+    em[1]=2*(a[4]*a[5]*eg[4]+a[3]*a[5]*eg[5]+a[3]*a[4]*eg[3])+a[5]*a[5]*eg[2]+a[4]*a[4]*eg[1]+a[3]*a[3]*eg[0];
+    em[2]=2*(a[7]*a[8]*eg[4]+a[6]*a[8]*eg[5]+a[6]*a[7]*eg[3])+a[8]*a[8]*eg[2]+a[7]*a[7]*eg[1]+a[6]*a[6]*eg[0];
+    em[3]=(a[1]*a[5]+a[2]*a[4])*eg[4]+(a[0]*a[5]+a[2]*a[3])*eg[5]+(a[0]*a[4]+a[1]*a[3])*eg[3]+a[2]*a[5]*eg[2]+a[1]*a[4]*eg[1]+a[0]*a[3]*eg[0];
+    em[5]=(a[1]*a[8]+a[2]*a[7])*eg[4]+(a[0]*a[8]+a[2]*a[6])*eg[5]+(a[0]*a[7]+a[1]*a[6])*eg[3]+a[2]*a[8]*eg[2]+a[1]*a[7]*eg[1]+a[0]*a[6]*eg[0];
+    em[4]=(a[4]*a[8]+a[5]*a[7])*eg[4]+(a[3]*a[8]+a[5]*a[6])*eg[5]+(a[3]*a[7]+a[4]*a[6])*eg[3]+a[5]*a[8]*eg[2]+a[4]*a[7]*eg[1]+a[3]*a[6]*eg[0];
   } // end of AnsysRotation3D<real>::rotateStrainForward
 
   // Calcul des déformations dans le repère global
@@ -190,12 +190,12 @@ namespace ansys
   void AnsysRotation3D<real>::rotateStrainsBackward(const real *const em,
 						           real *const eg)
   {
-    eg[0]=2*(a[3]*a[6]*em[5]+a[0]*a[6]*em[4]+a[0]*a[3]*em[3])+a[6]*a[6]*em[2]+a[3]*a[3]*em[1]+a[0]*a[0]*em[0];
-    eg[1]=2*(a[4]*a[7]*em[5]+a[1]*a[7]*em[4]+a[1]*a[4]*em[3])+a[7]*a[7]*em[2]+a[4]*a[4]*em[1]+a[1]*a[1]*em[0];
-    eg[2]=2*(a[5]*a[8]*em[5]+a[2]*a[8]*em[4]+a[2]*a[5]*em[3])+a[8]*a[8]*em[2]+a[5]*a[5]*em[1]+a[2]*a[2]*em[0];
-    eg[3]=(a[3]*a[7]+a[4]*a[6])*em[5]+(a[0]*a[7]+a[1]*a[6])*em[4]+(a[0]*a[4]+a[1]*a[3])*em[3]+a[6]*a[7]*em[2]+a[3]*a[4]*em[1]+a[0]*a[1]*em[0];
-    eg[4]=(a[3]*a[8]+a[5]*a[6])*em[5]+(a[0]*a[8]+a[2]*a[6])*em[4]+(a[0]*a[5]+a[2]*a[3])*em[3]+a[6]*a[8]*em[2]+a[3]*a[5]*em[1]+a[0]*a[2]*em[0];
-    eg[5]=(a[4]*a[8]+a[5]*a[7])*em[5]+(a[1]*a[8]+a[2]*a[7])*em[4]+(a[1]*a[5]+a[2]*a[4])*em[3]+a[7]*a[8]*em[2]+a[4]*a[5]*em[1]+a[1]*a[2]*em[0];
+    eg[0]=2*(a[3]*a[6]*em[4]+a[0]*a[6]*em[5]+a[0]*a[3]*em[3])+a[6]*a[6]*em[2]+a[3]*a[3]*em[1]+a[0]*a[0]*em[0];
+    eg[1]=2*(a[4]*a[7]*em[4]+a[1]*a[7]*em[5]+a[1]*a[4]*em[3])+a[7]*a[7]*em[2]+a[4]*a[4]*em[1]+a[1]*a[1]*em[0];
+    eg[2]=2*(a[5]*a[8]*em[4]+a[2]*a[8]*em[5]+a[2]*a[5]*em[3])+a[8]*a[8]*em[2]+a[5]*a[5]*em[1]+a[2]*a[2]*em[0];
+    eg[3]=(a[3]*a[7]+a[4]*a[6])*em[4]+(a[0]*a[7]+a[1]*a[6])*em[5]+(a[0]*a[4]+a[1]*a[3])*em[3]+a[6]*a[7]*em[2]+a[3]*a[4]*em[1]+a[0]*a[1]*em[0];
+    eg[5]=(a[3]*a[8]+a[5]*a[6])*em[4]+(a[0]*a[8]+a[2]*a[6])*em[5]+(a[0]*a[5]+a[2]*a[3])*em[3]+a[6]*a[8]*em[2]+a[3]*a[5]*em[1]+a[0]*a[2]*em[0];
+    eg[4]=(a[4]*a[8]+a[5]*a[7])*em[4]+(a[1]*a[8]+a[2]*a[7])*em[5]+(a[1]*a[5]+a[2]*a[4])*em[3]+a[7]*a[8]*em[2]+a[4]*a[5]*em[1]+a[1]*a[2]*em[0];
   } // end of AnsysRotation3D<real>::rotateStrainBackward
 
   // Calcul des contraintes dans le repère matériau
@@ -204,13 +204,13 @@ namespace ansys
   // sm : Contraintes dans le repère matériau
   template<typename real>
   void AnsysRotation3D<real>::rotateStressesForward(const real *const sg,
-						           real *const sm){
-    sm[0]=2*a[1]*a[2]*sg[5]+2*a[0]*a[2]*sg[4]+2*a[0]*a[1]*sg[3]+a[2]*a[2]*sg[2]+a[1]*a[1]*sg[1]+a[0]*a[0]*sg[0];
-    sm[1]=2*a[4]*a[5]*sg[5]+2*a[3]*a[5]*sg[4]+2*a[3]*a[4]*sg[3]+a[5]*a[5]*sg[2]+a[4]*a[4]*sg[1]+a[3]*a[3]*sg[0]; 
-    sm[2]=2*a[7]*a[8]*sg[5]+2*a[6]*a[8]*sg[4]+2*a[6]*a[7]*sg[3]+a[8]*a[8]*sg[2]+a[7]*a[7]*sg[1]+a[6]*a[6]*sg[0];
-    sm[3]=(a[1]*a[5]+a[2]*a[4])*sg[5]+(a[2]*a[3]+a[0]*a[5])*sg[4]+(a[0]*a[4]+a[1]*a[3])*sg[3]+a[2]*a[5]*sg[2]+a[1]*a[4]*sg[1]+a[0]*a[3]*sg[0];
-    sm[4]=(a[1]*a[8]+a[2]*a[7])*sg[5]+(a[2]*a[6]+a[0]*a[8])*sg[4]+(a[0]*a[7]+a[1]*a[6])*sg[3]+a[2]*a[8]*sg[2]+a[1]*a[7]*sg[1]+a[0]*a[6]*sg[0];
-    sm[5]=(a[4]*a[8]+a[5]*a[7])*sg[5]+(a[5]*a[6]+a[3]*a[8])*sg[4]+(a[3]*a[7]+a[4]*a[6])*sg[3]+a[5]*a[8]*sg[2]+a[4]*a[7]*sg[1]+a[3]*a[6]*sg[0];
+						    real *const sm){
+    sm[0]=2*a[1]*a[2]*sg[4]+2*a[0]*a[2]*sg[5]+2*a[0]*a[1]*sg[3]+a[2]*a[2]*sg[2]+a[1]*a[1]*sg[1]+a[0]*a[0]*sg[0];
+    sm[1]=2*a[4]*a[5]*sg[4]+2*a[3]*a[5]*sg[5]+2*a[3]*a[4]*sg[3]+a[5]*a[5]*sg[2]+a[4]*a[4]*sg[1]+a[3]*a[3]*sg[0]; 
+    sm[2]=2*a[7]*a[8]*sg[4]+2*a[6]*a[8]*sg[5]+2*a[6]*a[7]*sg[3]+a[8]*a[8]*sg[2]+a[7]*a[7]*sg[1]+a[6]*a[6]*sg[0];
+    sm[3]=(a[1]*a[5]+a[2]*a[4])*sg[4]+(a[2]*a[3]+a[0]*a[5])*sg[5]+(a[0]*a[4]+a[1]*a[3])*sg[3]+a[2]*a[5]*sg[2]+a[1]*a[4]*sg[1]+a[0]*a[3]*sg[0];
+    sm[5]=(a[1]*a[8]+a[2]*a[7])*sg[4]+(a[2]*a[6]+a[0]*a[8])*sg[5]+(a[0]*a[7]+a[1]*a[6])*sg[3]+a[2]*a[8]*sg[2]+a[1]*a[7]*sg[1]+a[0]*a[6]*sg[0];
+    sm[4]=(a[4]*a[8]+a[5]*a[7])*sg[4]+(a[5]*a[6]+a[3]*a[8])*sg[5]+(a[3]*a[7]+a[4]*a[6])*sg[3]+a[5]*a[8]*sg[2]+a[4]*a[7]*sg[1]+a[3]*a[6]*sg[0];
   } // end of AnsysRotation3D<real>::rotateStressesForward
 
   // Calcul des contraintes dans le repère global
@@ -220,12 +220,12 @@ namespace ansys
   template<typename real>
   void AnsysRotation3D<real>::rotateStressesBackward(const real *const sm,
 						            real *const sg){
-    sg[0]=2*a[3]*a[6]*sm[5]+2*a[0]*a[6]*sm[4]+2*a[0]*a[3]*sm[3]+a[6]*a[6]*sm[2]+a[3]*a[3]*sm[1]+a[0]*a[0]*sm[0];
-    sg[1]=2*a[4]*a[7]*sm[5]+2*a[1]*a[7]*sm[4]+2*a[1]*a[4]*sm[3]+a[7]*a[7]*sm[2]+a[4]*a[4]*sm[1]+a[1]*a[1]*sm[0];
-    sg[2]=2*a[5]*a[8]*sm[5]+2*a[2]*a[8]*sm[4]+2*a[2]*a[5]*sm[3]+a[8]*a[8]*sm[2]+a[5]*a[5]*sm[1]+a[2]*a[2]*sm[0];
-    sg[3]=(a[3]*a[7]+a[4]*a[6])*sm[5]+(a[1]*a[6]+a[0]*a[7])*sm[4]+(a[0]*a[4]+a[1]*a[3])*sm[3]+a[6]*a[7]*sm[2]+a[3]*a[4]*sm[1]+a[0]*a[1]*sm[0];
-    sg[4]=(a[3]*a[8]+a[5]*a[6])*sm[5]+(a[2]*a[6]+a[0]*a[8])*sm[4]+(a[0]*a[5]+a[2]*a[3])*sm[3]+a[6]*a[8]*sm[2]+a[3]*a[5]*sm[1]+a[0]*a[2]*sm[0]; 
-    sg[5]=(a[4]*a[8]+a[5]*a[7])*sm[5]+(a[2]*a[7]+a[1]*a[8])*sm[4]+(a[1]*a[5]+a[2]*a[4])*sm[3]+a[7]*a[8]*sm[2]+a[4]*a[5]*sm[1]+a[1]*a[2]*sm[0]; 
+    sg[0]=2*a[3]*a[6]*sm[4]+2*a[0]*a[6]*sm[5]+2*a[0]*a[3]*sm[3]+a[6]*a[6]*sm[2]+a[3]*a[3]*sm[1]+a[0]*a[0]*sm[0];
+    sg[1]=2*a[4]*a[7]*sm[4]+2*a[1]*a[7]*sm[5]+2*a[1]*a[4]*sm[3]+a[7]*a[7]*sm[2]+a[4]*a[4]*sm[1]+a[1]*a[1]*sm[0];
+    sg[2]=2*a[5]*a[8]*sm[4]+2*a[2]*a[8]*sm[5]+2*a[2]*a[5]*sm[3]+a[8]*a[8]*sm[2]+a[5]*a[5]*sm[1]+a[2]*a[2]*sm[0];
+    sg[3]=(a[3]*a[7]+a[4]*a[6])*sm[4]+(a[1]*a[6]+a[0]*a[7])*sm[5]+(a[0]*a[4]+a[1]*a[3])*sm[3]+a[6]*a[7]*sm[2]+a[3]*a[4]*sm[1]+a[0]*a[1]*sm[0];
+    sg[5]=(a[3]*a[8]+a[5]*a[6])*sm[4]+(a[2]*a[6]+a[0]*a[8])*sm[5]+(a[0]*a[5]+a[2]*a[3])*sm[3]+a[6]*a[8]*sm[2]+a[3]*a[5]*sm[1]+a[0]*a[2]*sm[0]; 
+    sg[4]=(a[4]*a[8]+a[5]*a[7])*sm[4]+(a[2]*a[7]+a[1]*a[8])*sm[5]+(a[1]*a[5]+a[2]*a[4])*sm[3]+a[7]*a[8]*sm[2]+a[4]*a[5]*sm[1]+a[1]*a[2]*sm[0]; 
   } // end of AnsysRotation3D<real>::rotateStressesBackward
   
   template<typename real>
@@ -247,6 +247,30 @@ namespace ansys
   template<typename real>
   void AnsysRotation3D<real>::rotateTangentOperatorBackward(real *const D) const
   {
+    auto aD = [&D](const size_t i,
+		   const size_t j) -> real& {
+      return D[j*6+i];
+    };    
+    // convert D to Abaqus conventions
+    std::swap(aD(4,0),aD(5,0));
+    std::swap(aD(4,1),aD(5,1));
+    std::swap(aD(4,2),aD(5,2));
+    std::swap(aD(4,3),aD(5,3));
+    std::swap(aD(4,4),aD(5,4));
+    std::swap(aD(4,5),aD(5,5));
+    std::swap(aD(0,4),aD(0,5));
+    std::swap(aD(1,4),aD(1,5));
+    std::swap(aD(2,4),aD(2,5));
+    std::swap(aD(3,4),aD(3,5));
+    std::swap(aD(4,4),aD(4,5));
+    std::swap(aD(5,4),aD(5,5));
+    aD(0,3)/=2;aD(0,4)/=2;aD(0,5)/=2;
+    aD(1,3)/=2;aD(1,4)/=2;aD(1,5)/=2;
+    aD(2,3)/=2;aD(2,4)/=2;aD(2,5)/=2;
+    aD(3,3)/=2;aD(3,4)/=2;aD(3,5)/=2;
+    aD(4,3)/=2;aD(4,4)/=2;aD(4,5)/=2;
+    aD(5,3)/=2;aD(5,4)/=2;aD(5,5)/=2;
+    // 
     real MN[6][6];
     // Contruction de la matrice de passage N (pour les tenseurs)
     // Première ligne
@@ -332,6 +356,25 @@ namespace ansys
 	}
       }
     }
+    // convert D to Ansys conventions
+    std::swap(aD(4,0),aD(5,0));
+    std::swap(aD(4,1),aD(5,1));
+    std::swap(aD(4,2),aD(5,2));
+    std::swap(aD(4,3),aD(5,3));
+    std::swap(aD(4,4),aD(5,4));
+    std::swap(aD(4,5),aD(5,5));
+    std::swap(aD(0,4),aD(0,5));
+    std::swap(aD(1,4),aD(1,5));
+    std::swap(aD(2,4),aD(2,5));
+    std::swap(aD(3,4),aD(3,5));
+    std::swap(aD(4,4),aD(4,5));
+    std::swap(aD(5,4),aD(5,5));
+    aD(0,3)*=2;aD(0,4)*=2;aD(0,5)*=2;
+    aD(1,3)*=2;aD(1,4)*=2;aD(1,5)*=2;
+    aD(2,3)*=2;aD(2,4)*=2;aD(2,5)*=2;
+    aD(3,3)*=2;aD(3,4)*=2;aD(3,5)*=2;
+    aD(4,3)*=2;aD(4,4)*=2;aD(4,5)*=2;
+    aD(5,3)*=2;aD(5,4)*=2;aD(5,5)*=2;
   } // end of AnsysRotation3D<real>::rotateTangentOperatorBackward
 
   template<typename InputIterator>

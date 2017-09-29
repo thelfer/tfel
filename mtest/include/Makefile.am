@@ -53,6 +53,7 @@ nobase_include_HEADERS = MTest/Config.hxx	                         \
 			 MTest/CalculiXFiniteStrainBehaviour.hxx         \
 			 MTest/AnsysStandardBehaviour.hxx                \
 			 MTest/AnsysSmallStrainBehaviour.hxx             \
+			 MTest/AnsysFiniteStrainBehaviour.hxx            \
 			 MTest/AnsysNormaliseTangentOperator.hxx         \
 			 MTest/CyranoBehaviour.hxx                       \
 			 MTest/Evolution.hxx                             \

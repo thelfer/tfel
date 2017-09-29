@@ -113,6 +113,60 @@ namespace ansys
     std::swap(Dt(4,5),Dt(5,4));
   }
 
+  template<typename real>
+  tfel::math::st2tost2<2u,real>
+  AnsysTangentOperator<real>::convert2D(const real* const D)
+  {
+    tfel::math::st2tost2<2u,real> r;
+    TFEL_CONSTEXPR const real isqrt2 = tfel::math::Cste<real>::isqrt2;
+    using size_type = typename tfel::math::st2tost2<2u,real>::size_type;
+    for(size_type i=0;i!=4;++i){
+      for(size_type j=0;j!=4;++j){
+	r(i,j)=D[j*4+i];
+      }
+    }
+    r(0,3) *= isqrt2;
+    r(1,3) *= isqrt2;
+    r(2,3) *= isqrt2;
+    r(3,0) *= isqrt2;
+    r(3,1) *= isqrt2;
+    r(3,2) *= isqrt2;
+    return r;
+  }
+
+  template<typename real>
+  tfel::math::st2tost2<3u,real>
+  AnsysTangentOperator<real>::convert3D(const real* const D)
+  {
+    tfel::math::st2tost2<3u,real> r;
+    TFEL_CONSTEXPR const real isqrt2 = tfel::math::Cste<real>::isqrt2;
+    using size_type = typename tfel::math::st2tost2<3u,real>::size_type;
+    for(size_type i=0;i!=6;++i){
+      for(size_type j=0;j!=6;++j){
+	r(i,j)=D[j*6+i];
+      }
+    }
+    r(0,3) *= isqrt2;
+    r(1,3) *= isqrt2;
+    r(2,3) *= isqrt2;
+    r(0,4) *= isqrt2;
+    r(1,4) *= isqrt2;
+    r(2,4) *= isqrt2;
+    r(0,5) *= isqrt2;
+    r(1,5) *= isqrt2;
+    r(2,5) *= isqrt2;
+    r(3,0) *= isqrt2;
+    r(3,1) *= isqrt2;
+    r(3,2) *= isqrt2;
+    r(4,0) *= isqrt2;
+    r(4,1) *= isqrt2;
+    r(4,2) *= isqrt2;
+    r(5,0) *= isqrt2;
+    r(5,1) *= isqrt2;
+    r(5,2) *= isqrt2;
+    return r;
+  }
+    
 } // end of namespace ansys
 
 #endif /* LIB_ANSYSTANGENTOPERATOR_IXX */

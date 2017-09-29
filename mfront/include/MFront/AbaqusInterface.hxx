@@ -28,11 +28,8 @@ namespace mfront{
   struct AbaqusInterface
     : public AbaqusInterfaceBase
   {
-    /*!
-     * \return the name of the interface
-     */
-    static std::string 
-    getName();
+    //! \return the name of the interface
+    static std::string getName();
     /*!
      * \param[in,out] mb: behaviour description
      * \param[in] k  : keyword treated
@@ -43,7 +40,7 @@ namespace mfront{
      * treated by the interface. The second entry is an iterator after
      * the last token treated.
      */
-    virtual std::pair<bool,tokens_iterator>
+    std::pair<bool,tokens_iterator>
     treatKeyword(BehaviourDescription&,
 		 const std::string&,
 		 const std::vector<std::string>&,
@@ -54,22 +51,20 @@ namespace mfront{
      * \param[in] mb        : mechanical behaviour description
      * \param[in] fd        : mfront file description
      */
-    virtual void
-    endTreatment(const BehaviourDescription&,
-		  const FileDescription&) const override;
+    void endTreatment(const BehaviourDescription&,
+		      const FileDescription&) const override;
     /*!
      * \param[out] d  : target description
      * \param[out] bd : behaviour description
      */
-    virtual void getTargetsDescription(TargetsDescription&,
-				       const BehaviourDescription&) override;
+    void getTargetsDescription(TargetsDescription&,
+			       const BehaviourDescription&) override;
     //! destructor
     virtual ~AbaqusInterface();
     
   protected:
 
-    virtual std::string
-    getInterfaceName() const override;
+    std::string getInterfaceName() const override;
     /*!
      * write the initialisation of the driving variables
      * \param[out] os: output file
@@ -155,10 +150,9 @@ namespace mfront{
      *                    and the behaviour name)
      * \param[in] mb   : behaviour description
      */
-    virtual void
-    writeUMATxxBehaviourTypeSymbols(std::ostream&,
-				    const std::string&,
-				    const BehaviourDescription&) const override;
+    void writeUMATxxBehaviourTypeSymbols(std::ostream&,
+					 const std::string&,
+					 const BehaviourDescription&) const override;
     /*!
      * \param[in] out  : output file
      * \param[in] name : name of the behaviour as defined by interface
@@ -166,10 +160,9 @@ namespace mfront{
      *                    and the behaviour name)
      * \param[in] mb   : behaviour description
      */
-    virtual void
-    writeUMATxxBehaviourKinematicSymbols(std::ostream&,
-					 const std::string&,
-					 const BehaviourDescription&) const override;
+    void writeUMATxxBehaviourKinematicSymbols(std::ostream&,
+					      const std::string&,
+					      const BehaviourDescription&) const override;
     /*!
      * \brief write the call to the base function
      * \param[in] out:  output file
@@ -181,7 +174,7 @@ namespace mfront{
      *                  expansion
      * \param[in] h:    modelling hypothesis
      */
-    virtual void writeUMATFunctionBase(std::ostream&,
+    virtual void writeFunctionBase(std::ostream&,
 				       const BehaviourDescription&,
 				       const std::string&,
 				       const std::string&,
@@ -195,11 +188,36 @@ namespace mfront{
      *                  and the behaviour name)
      * \param[in] h:    modelling hypothesis
      */
-    virtual void
-    writeUMATSmallStrainFunction(std::ostream&,
-				 const BehaviourDescription&,
-				 const std::string&,
-				 const Hypothesis) const;
+    virtual void writeSmallStrainFunction(std::ostream&,
+					  const BehaviourDescription&,
+					  const std::string&,
+					  const Hypothesis) const;
+    /*!
+     * \brief write the call to the base function
+     * \param[in] out:  output file
+     * \param[in] mb:   mechanical behaviour description
+     * \param[in] name: name of the behaviour as defined by interface
+     *                  (generally taking into account the material
+     *                  and the behaviour name)
+     * \param[in] h:    modelling hypothesis
+     */
+    virtual void writeFiniteStrainFunction(std::ostream&,
+					   const BehaviourDescription&,
+					   const std::string&,
+					   const Hypothesis) const;
+    /*!
+     * \brief write the call to the base function
+     * \param[in] out:  output file
+     * \param[in] mb:   mechanical behaviour description
+     * \param[in] name: name of the behaviour as defined by interface
+     *                  (generally taking into account the material
+     *                  and the behaviour name)
+     * \param[in] h:    modelling hypothesis
+     */
+    virtual void writeFiniteRotationSmallStrainFunction(std::ostream&,
+							const BehaviourDescription&,
+							const std::string&,
+							const Hypothesis) const;
     /*!
      * \brief write the call to the base function
      * \param[in] out:  output file
@@ -210,24 +228,10 @@ namespace mfront{
      * \param[in] h:    modelling hypothesis
      */
     virtual void
-    writeUMATFiniteStrainFunction(std::ostream&,
-				  const BehaviourDescription&,
-				  const std::string&,
-				  const Hypothesis) const;
-    /*!
-     * \brief write the call to the base function
-     * \param[in] out:  output file
-     * \param[in] mb:   mechanical behaviour description
-     * \param[in] name: name of the behaviour as defined by interface
-     *                  (generally taking into account the material
-     *                  and the behaviour name)
-     * \param[in] h:    modelling hypothesis
-     */
-    virtual void
-    writeUMATFiniteRotationSmallStrainFunction(std::ostream&,
-					       const BehaviourDescription&,
-					       const std::string&,
-					       const Hypothesis) const;
+    writeMieheApelLambrechtLogarithmicStrainFunction(std::ostream&,
+						     const BehaviourDescription&,
+						     const std::string&,
+						     const Hypothesis) const;
     /*!
      * \brief boolean stating the we want a comparison of the user
      * defined tangent operator with a numerical approximation.

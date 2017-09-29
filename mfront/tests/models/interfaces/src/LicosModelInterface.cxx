@@ -729,6 +729,7 @@ namespace mfront{
 	i=0;
 	for(auto puv=f.modifiedVariables.begin();puv!=f.modifiedVariables.end();++puv){
 	  this->srcFile << "results[" << i << "] = " <<  *puv << ";\n";
+	  ++i;
 	}
       }
       this->srcFile << "} // end of " << md.className << "::" << f.name << "::operator()\n\n";
@@ -1041,7 +1042,6 @@ namespace mfront{
 		  << "{\n"
 		  << "using namespace std;\n"
 		  << "using namespace pleiades::parser;\n"
-		  << "typedef map<string,string>::value_type MVType;\n"
 		  << "vector<string>::const_iterator ptr;\n"
 		  << "ModelBase::save(directory,saveddata);\n"
 		  << "auto& msaveddata = saveddata.get<DataMap>(this->getName(),true);\n"
@@ -1224,6 +1224,7 @@ namespace mfront{
 	  i=0;
 	  for(const auto& mv : f.modifiedVariables){
 	    this->srcFile << "ff_" << mv << "[ptr2] = " << "results[" << i << "];\n";  
+	    ++i;
 	  }
 	  this->srcFile << "}\n"
 			<< "} else {\n";

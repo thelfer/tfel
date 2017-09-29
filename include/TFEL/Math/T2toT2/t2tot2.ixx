@@ -90,7 +90,6 @@ namespace tfel{
 	static TFEL_MATH_INLINE TFEL_CONSTEXPR
 	tfel::math::t2tot2<1u,T> IxI(){
 #ifndef TFEL_MATH_T2TOT2_SPECIALVALUES_CONSTEXPR_SUPPORT
-	const auto zero = T{0};
 	const auto one  = T{1};
 #endif
 	  return {one,one,one,

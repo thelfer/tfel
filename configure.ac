@@ -1085,6 +1085,25 @@ AC_OUTPUT([debug.sh
       	   mfront/tests/behaviours/abaqus/abaqusorthotropicsaintvenantkirchhoffelasticity-3D-sig11.mtest
       	   mfront/tests/behaviours/abaqus/abaqusorthotropicsaintvenantkirchhoffelasticity-3D-sig11-2.mtest
       	   mfront/tests/behaviours/abaqus/abaqusorthotropicsaintvenantkirchhoffelasticity-3D-sig11-3.mtest
+      	   mfront/tests/behaviours/abaqus/abaqusmieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-1-3D.mtest
+      	   mfront/tests/behaviours/abaqus/abaqusmieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-2-3D.mtest
+      	   mfront/tests/behaviours/abaqus/abaqusmieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-3-3D.mtest
+      	   mfront/tests/behaviours/abaqus/abaqusmieheapellambrechtlogarithmicstrainelasticity2-uniaxialloading-1-3D.mtest
+      	   mfront/tests/behaviours/abaqus/abaqusmieheapellambrechtlogarithmicstrainelasticity2-uniaxialloading-2-3D.mtest
+      	   mfront/tests/behaviours/abaqus/abaqusmieheapellambrechtlogarithmicstrainelasticity2-uniaxialloading-3-3D.mtest
+      	   mfront/tests/behaviours/abaqus/abaqusmieheapellambrechtlogarithmicstrainelasticity3-uniaxialloading-1-3D.mtest
+      	   mfront/tests/behaviours/abaqus/abaqusmieheapellambrechtlogarithmicstrainelasticity3-uniaxialloading-2-3D.mtest
+      	   mfront/tests/behaviours/abaqus/abaqusmieheapellambrechtlogarithmicstrainelasticity3-uniaxialloading-3-3D.mtest
+      	   mfront/tests/behaviours/abaqus/abaqusmieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-1-3D.mtest
+      	   mfront/tests/behaviours/abaqus/abaqusmieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-2-3D.mtest
+      	   mfront/tests/behaviours/abaqus/abaqusmieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-3-3D.mtest
+	   mfront/tests/behaviours/abaqus/abaqusmieheapellambrechtlogarithmicstrainelasticity-shear-2D.mtest
+	   mfront/tests/behaviours/abaqus/abaqusmieheapellambrechtlogarithmicstrainelasticity-shear-FXY-3D.mtest
+	   mfront/tests/behaviours/abaqus/abaqusmieheapellambrechtlogarithmicstrainelasticity-shear-FXZ-3D.mtest
+	   mfront/tests/behaviours/abaqus/abaqusmieheapellambrechtlogarithmicstrainelasticity-shear-FYX-3D.mtest
+	   mfront/tests/behaviours/abaqus/abaqusmieheapellambrechtlogarithmicstrainelasticity-shear-FYZ-3D.mtest
+	   mfront/tests/behaviours/abaqus/abaqusmieheapellambrechtlogarithmicstrainelasticity-shear-FZX-3D.mtest
+	   mfront/tests/behaviours/abaqus/abaqusmieheapellambrechtlogarithmicstrainelasticity-shear-FZY-3D.mtest
    	   mfront/tests/behaviours/abaqus-explicit/Makefile
            mfront/tests/behaviours/abaqus-explicit/abaqusexplicitsaintvenantkirchhoffelasticity-uniaxialloading-sig11-2D.mtest
            mfront/tests/behaviours/abaqus-explicit/abaqusexplicitsaintvenantkirchhoffelasticity-uniaxialloading-sig22-2D.mtest
@@ -1212,6 +1231,73 @@ AC_OUTPUT([debug.sh
 	   mfront/tests/behaviours/ansys/ansysmaterialpropertiesboundscheck5.mtest
 	   mfront/tests/behaviours/ansys/ansysmaterialpropertiesboundscheck6.mtest
 	   mfront/tests/behaviours/ansys/ansysmaterialpropertiesboundscheck.mtest
+	   mfront/tests/behaviours/ansys/ansysmieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-1-3D.mtest
+	   mfront/tests/behaviours/ansys/ansysmieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-2-3D.mtest
+	   mfront/tests/behaviours/ansys/ansysmieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-3-3D.mtest
+	   mfront/tests/behaviours/ansys/ansysmieheapellambrechtlogarithmicstrainelasticity2-uniaxialloading-1-3D.mtest
+	   mfront/tests/behaviours/ansys/ansysmieheapellambrechtlogarithmicstrainelasticity2-uniaxialloading-2-3D.mtest
+	   mfront/tests/behaviours/ansys/ansysmieheapellambrechtlogarithmicstrainelasticity2-uniaxialloading-3-3D.mtest
+	   mfront/tests/behaviours/ansys/ansysmieheapellambrechtlogarithmicstrainelasticity3-uniaxialloading-1-3D.mtest
+	   mfront/tests/behaviours/ansys/ansysmieheapellambrechtlogarithmicstrainelasticity3-uniaxialloading-2-3D.mtest
+	   mfront/tests/behaviours/ansys/ansysmieheapellambrechtlogarithmicstrainelasticity3-uniaxialloading-3-3D.mtest
+	   mfront/tests/behaviours/ansys/ansysmieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-1-3D.mtest
+	   mfront/tests/behaviours/ansys/ansysmieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-2-3D.mtest
+	   mfront/tests/behaviours/ansys/ansysmieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-3-3D.mtest
+	   mfront/tests/behaviours/ansys/ansysmieheapellambrechtlogarithmicstrainelasticity-shear-2D.mtest
+	   mfront/tests/behaviours/ansys/ansysmieheapellambrechtlogarithmicstrainelasticity-shear-FXY-3D.mtest
+	   mfront/tests/behaviours/ansys/ansysmieheapellambrechtlogarithmicstrainelasticity-shear-FXZ-3D.mtest
+	   mfront/tests/behaviours/ansys/ansysmieheapellambrechtlogarithmicstrainelasticity-shear-FYX-3D.mtest
+	   mfront/tests/behaviours/ansys/ansysmieheapellambrechtlogarithmicstrainelasticity-shear-FYZ-3D.mtest
+	   mfront/tests/behaviours/ansys/ansysmieheapellambrechtlogarithmicstrainelasticity-shear-FZX-3D.mtest
+	   mfront/tests/behaviours/ansys/ansysmieheapellambrechtlogarithmicstrainelasticity-shear-FZY-3D.mtest
+	   mfront/tests/behaviours/ansys/ansyssaintvenantkirchhoffelasticity2-shear-1-2D.mtest
+	   mfront/tests/behaviours/ansys/ansyssaintvenantkirchhoffelasticity2-shear-1-3D.mtest
+	   mfront/tests/behaviours/ansys/ansyssaintvenantkirchhoffelasticity2-shear-2-2D.mtest
+	   mfront/tests/behaviours/ansys/ansyssaintvenantkirchhoffelasticity2-shear-2-3D.mtest
+	   mfront/tests/behaviours/ansys/ansyssaintvenantkirchhoffelasticity2-shear-3-3D.mtest
+	   mfront/tests/behaviours/ansys/ansyssaintvenantkirchhoffelasticity2-shear-4-3D.mtest
+	   mfront/tests/behaviours/ansys/ansyssaintvenantkirchhoffelasticity2-shear-5-3D.mtest
+	   mfront/tests/behaviours/ansys/ansyssaintvenantkirchhoffelasticity2-shear-6-3D.mtest
+	   mfront/tests/behaviours/ansys/ansyssaintvenantkirchhoffelasticity2-uniaxialloading-1-2D.mtest
+	   mfront/tests/behaviours/ansys/ansyssaintvenantkirchhoffelasticity2-uniaxialloading-1-3D.mtest
+	   mfront/tests/behaviours/ansys/ansyssaintvenantkirchhoffelasticity2-uniaxialloading-2-2D.mtest
+	   mfront/tests/behaviours/ansys/ansyssaintvenantkirchhoffelasticity2-uniaxialloading-2-3D.mtest
+	   mfront/tests/behaviours/ansys/ansyssaintvenantkirchhoffelasticity2-uniaxialloading-3-2D.mtest
+	   mfront/tests/behaviours/ansys/ansyssaintvenantkirchhoffelasticity2-uniaxialloading-3-3D.mtest
+	   mfront/tests/behaviours/ansys/ansyssaintvenantkirchhoffelasticity3-shear-1-2D.mtest
+	   mfront/tests/behaviours/ansys/ansyssaintvenantkirchhoffelasticity3-shear-1-3D.mtest
+	   mfront/tests/behaviours/ansys/ansyssaintvenantkirchhoffelasticity3-shear-2-2D.mtest
+	   mfront/tests/behaviours/ansys/ansyssaintvenantkirchhoffelasticity3-shear-2-3D.mtest
+	   mfront/tests/behaviours/ansys/ansyssaintvenantkirchhoffelasticity3-shear-3-3D.mtest
+	   mfront/tests/behaviours/ansys/ansyssaintvenantkirchhoffelasticity3-shear-4-3D.mtest
+	   mfront/tests/behaviours/ansys/ansyssaintvenantkirchhoffelasticity3-shear-5-3D.mtest
+	   mfront/tests/behaviours/ansys/ansyssaintvenantkirchhoffelasticity3-shear-6-3D.mtest
+	   mfront/tests/behaviours/ansys/ansyssaintvenantkirchhoffelasticity3-uniaxialloading-1-2D.mtest
+	   mfront/tests/behaviours/ansys/ansyssaintvenantkirchhoffelasticity3-uniaxialloading-1-3D.mtest
+	   mfront/tests/behaviours/ansys/ansyssaintvenantkirchhoffelasticity3-uniaxialloading-2-2D.mtest
+	   mfront/tests/behaviours/ansys/ansyssaintvenantkirchhoffelasticity3-uniaxialloading-2-3D.mtest
+	   mfront/tests/behaviours/ansys/ansyssaintvenantkirchhoffelasticity3-uniaxialloading-3-2D.mtest
+	   mfront/tests/behaviours/ansys/ansyssaintvenantkirchhoffelasticity3-uniaxialloading-3-3D.mtest
+	   mfront/tests/behaviours/ansys/ansyssaintvenantkirchhoffelasticity-shear-1-2D.mtest
+	   mfront/tests/behaviours/ansys/ansyssaintvenantkirchhoffelasticity-shear-1-3D.mtest
+	   mfront/tests/behaviours/ansys/ansyssaintvenantkirchhoffelasticity-shear-2-2D.mtest
+	   mfront/tests/behaviours/ansys/ansyssaintvenantkirchhoffelasticity-shear-2-3D.mtest
+	   mfront/tests/behaviours/ansys/ansyssaintvenantkirchhoffelasticity-shear-3-3D.mtest
+	   mfront/tests/behaviours/ansys/ansyssaintvenantkirchhoffelasticity-shear-4-3D.mtest
+	   mfront/tests/behaviours/ansys/ansyssaintvenantkirchhoffelasticity-shear-5-3D.mtest
+	   mfront/tests/behaviours/ansys/ansyssaintvenantkirchhoffelasticity-shear-6-3D.mtest
+	   mfront/tests/behaviours/ansys/ansyssaintvenantkirchhoffelasticity-uniaxialloading-1-2D.mtest
+	   mfront/tests/behaviours/ansys/ansyssaintvenantkirchhoffelasticity-uniaxialloading-1-3D.mtest
+	   mfront/tests/behaviours/ansys/ansyssaintvenantkirchhoffelasticity-uniaxialloading-2-2D.mtest
+	   mfront/tests/behaviours/ansys/ansyssaintvenantkirchhoffelasticity-uniaxialloading-2-3D.mtest
+	   mfront/tests/behaviours/ansys/ansyssaintvenantkirchhoffelasticity-uniaxialloading-3-2D.mtest
+	   mfront/tests/behaviours/ansys/ansyssaintvenantkirchhoffelasticity-uniaxialloading-3-3D.mtest
+	   mfront/tests/behaviours/ansys/ansyssaintvenantkirchhoffelasticity-uniaxialloading-sig11-2D.mtest
+	   mfront/tests/behaviours/ansys/ansyssaintvenantkirchhoffelasticity-uniaxialloading-sig11-3D.mtest
+	   mfront/tests/behaviours/ansys/ansyssaintvenantkirchhoffelasticity-uniaxialloading-sig22-2D.mtest
+	   mfront/tests/behaviours/ansys/ansyssaintvenantkirchhoffelasticity-uniaxialloading-sig22-3D.mtest
+	   mfront/tests/behaviours/ansys/ansyssaintvenantkirchhoffelasticity-uniaxialloading-sig33-2D.mtest
+	   mfront/tests/behaviours/ansys/ansyssaintvenantkirchhoffelasticity-uniaxialloading-sig33-3D.mtest
 	   mfront/tests/behaviours/bricks/Makefile
    	   mfront/tests/behaviours/bricks/StandardElasticity/Makefile
 	   mfront/tests/behaviours/bricks/StandardElasticity/castem/Makefile
@@ -1492,6 +1578,13 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/castem/castemmieheapellambrechtlogarithmicstrainelasticity2-uniaxialloading-3-1D.mtest
            mfront/tests/behaviours/castem/castemmieheapellambrechtlogarithmicstrainelasticity2-uniaxialloading-3-2D.mtest
            mfront/tests/behaviours/castem/castemmieheapellambrechtlogarithmicstrainelasticity2-uniaxialloading-3-3D.mtest
+           mfront/tests/behaviours/castem/castemmieheapellambrechtlogarithmicstrainelasticity-shear-2D.mtest
+           mfront/tests/behaviours/castem/castemmieheapellambrechtlogarithmicstrainelasticity-shear-FXY-3D.mtest
+           mfront/tests/behaviours/castem/castemmieheapellambrechtlogarithmicstrainelasticity-shear-FXZ-3D.mtest
+           mfront/tests/behaviours/castem/castemmieheapellambrechtlogarithmicstrainelasticity-shear-FYX-3D.mtest
+           mfront/tests/behaviours/castem/castemmieheapellambrechtlogarithmicstrainelasticity-shear-FYZ-3D.mtest
+           mfront/tests/behaviours/castem/castemmieheapellambrechtlogarithmicstrainelasticity-shear-FZX-3D.mtest
+           mfront/tests/behaviours/castem/castemmieheapellambrechtlogarithmicstrainelasticity-shear-FZY-3D.mtest
            mfront/tests/behaviours/castem/castemelasticity_log1D-uniaxialloading-1-1D.mtest
            mfront/tests/behaviours/castem/castemelasticity_log1D-uniaxialloading-2-1D.mtest
            mfront/tests/behaviours/castem/castemelasticity_log1D-uniaxialloading-3-1D.mtest

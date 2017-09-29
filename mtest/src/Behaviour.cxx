@@ -47,6 +47,7 @@
 #ifdef HAVE_ANSYS
 #include"MTest/AnsysStandardBehaviour.hxx"
 #include"MTest/AnsysSmallStrainBehaviour.hxx"
+#include"MTest/AnsysFiniteStrainBehaviour.hxx"
 #endif /* HAVE_ANSYS  */
 #ifdef HAVE_CYRANO
 #include"MTest/CyranoBehaviour.hxx"
@@ -115,6 +116,9 @@ namespace mtest
       check_no_parameters();
       const auto type = elm.getUMATBehaviourType(l,f);
       if(type==1u){
+	const auto ktype = elm.getUMATBehaviourKinematic(l,f);
+	throw_if((ktype!=0u)&&(ktype!=1u),
+		 "unsupported behaviour kinematic");
 	b = std::make_shared<AsterSmallStrainBehaviour>(h,l,f);
       } else if(type==2u){
 	b = std::make_shared<AsterFiniteStrainBehaviour>(h,l,f);
@@ -167,6 +171,8 @@ namespace mtest
       const auto type = elm.getUMATBehaviourType(l,bn);
       if(type==1u){
 	b = std::make_shared<AnsysSmallStrainBehaviour>(h,l,f);
+      } else if(type==2u){
+	b = std::make_shared<AnsysFiniteStrainBehaviour>(h,l,f);
       } else {
 	throw_if(true,"unsupported behaviour type ("+std::to_string(type)+")");
       }

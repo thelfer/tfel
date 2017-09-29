@@ -178,6 +178,12 @@ namespace tfel
     {
       const auto iJ = 1/tfel::math::det(this->F);
       tfel::math::ST2toST2View<1u,stress> Kr(K);
+      auto transpose = [&Kr](){
+	std::swap(Kr(0,1),Kr(1,0));
+	std::swap(Kr(0,2),Kr(2,0));
+	std::swap(Kr(1,2),Kr(2,1));
+      };
+      transpose();
       Kr(0,0) = (Kr(0,0)-2*T[0])*iJ;
       Kr(0,1)*=iJ;
       Kr(0,2)*=iJ;
@@ -187,6 +193,7 @@ namespace tfel
       Kr(2,0)*=iJ;
       Kr(2,1)*=iJ;
       Kr(2,2) = (Kr(2,2)-2*T[2])*iJ;
+      transpose();
     } // end of LogarithmicStrainHandler<1u,StressType>::convertToCauchyStressTruesdellRateTangentModuli
     
     template<typename StressType>
@@ -228,8 +235,8 @@ namespace tfel
 	const auto N = getNTensors(m);
 	const auto M = getEulerianMTensors(m,F1);
 	this->p=(d[0]*(N(0)^M(0))+d[1]*(N(1)^M(1)))/4;
-	this->p(2,2)=d[2]*((N(2))(2))*((M(2))(2))/4;
-	this->p += theta/2*(N(3)^M(3));
+	this->p(2,2)=(d[2]/4)*((N(2))(2))*((M(2))(2));
+	this->p += (theta/2)*(N(3)^M(3));
       }
     }
 
@@ -478,17 +485,27 @@ namespace tfel
 											     const stress* const T) const
     {
       tfel::math::ST2toST2View<2u,stress> k(K);
-      auto to_tfel = [&k]{
+      auto transpose = [&k](){
+	std::swap(k(0,1),k(1,0));
+	std::swap(k(0,2),k(2,0));
+	std::swap(k(0,3),k(3,0));
+	std::swap(k(1,2),k(2,1));
+	std::swap(k(1,3),k(3,1));
+	std::swap(k(2,3),k(3,2));
+      };
+      auto to_tfel = [&k,transpose]{
 	TFEL_CONSTEXPR const auto cste  = tfel::math::Cste<real>::sqrt2;
 	k(0,3)*=cste;k(1,3)*=cste;k(2,3)*=cste;
 	k(3,0)*=cste;k(3,1)*=cste;k(3,2)*=cste;
 	k(3,3)*=2;
+	transpose();
       };
-      auto to_abaqus = [&k]{
+      auto to_abaqus = [&k,&transpose]{
 	TFEL_CONSTEXPR const auto icste = tfel::math::Cste<real>::isqrt2;
 	k(0,3)*=icste;k(1,3)*=icste;k(2,3)*=icste;
 	k(3,0)*=icste;k(3,1)*=icste;k(3,2)*=icste;
 	k(3,3)/=2;
+	transpose();
       };
       to_tfel();
       tfel::math::stensor<2u,stress> t;
@@ -496,6 +513,64 @@ namespace tfel
       k = this->convertToCauchyStressTruesdellRateTangentModuli(k,t);
       to_abaqus();
     } // end of LogarithmicStrainHandler<2u,StressType>::convertToCauchyStressTruesdellRateTangentModuli
+
+    template<typename StressType>
+    typename LogarithmicStrainHandler<2u,StressType>::TangentOperator
+    LogarithmicStrainHandler<2u,StressType>::convertToAbaqusTangentModuli(const TangentOperator& Ks,
+									  const StressStensor& T) const
+    {
+      using FSTOBase = FiniteStrainBehaviourTangentOperatorBase;
+      const auto F0  = tfel::math::tensor<2u,real>::Id();
+      const auto sig  = this->convertToCauchyStress(T);
+      if(this->s==LAGRANGIAN){
+	const auto Cse = this->convertToMaterialTangentModuli(Ks,T);
+	auto Kr = convert<FSTOBase::ABAQUS,
+			  FSTOBase::DS_DEGL>(Cse,F0,this->F,sig);
+	Kr /= tfel::math::det(this->F);
+	return Kr;
+      }
+      const auto N = getNTensors(this->m);
+      const auto M = getEulerianMTensors(this->m,this->F);
+      TangentOperator Kr;
+      this->convertTangentModuli(Kr,Ks,T,N,M);
+      return convert<FSTOBase::ABAQUS,
+		     FSTOBase::SPATIAL_MODULI>(Kr,F0,this->F,sig);
+    } // end of LogarithmicStrainHandler<2u,StressType>::convertToAbaqusTangentModuli
+
+    template<typename StressType>
+    void
+    LogarithmicStrainHandler<2u,StressType>::convertToAbaqusTangentModuli(stress *const K,
+									  const stress* const T) const
+    {
+      tfel::math::ST2toST2View<2u,stress> k(K);
+      auto transpose = [&k](){
+	std::swap(k(0,1),k(1,0));
+	std::swap(k(0,2),k(2,0));
+	std::swap(k(0,3),k(3,0));
+	std::swap(k(1,2),k(2,1));
+	std::swap(k(1,3),k(3,1));
+	std::swap(k(2,3),k(3,2));
+      };
+      auto to_tfel = [&k,transpose]{
+	TFEL_CONSTEXPR const auto cste  = tfel::math::Cste<real>::sqrt2;
+	k(0,3)*=cste;k(1,3)*=cste;k(2,3)*=cste;
+	k(3,0)*=cste;k(3,1)*=cste;k(3,2)*=cste;
+	k(3,3)*=2;
+	transpose();
+      };
+      auto to_abaqus = [&k,&transpose]{
+	TFEL_CONSTEXPR const auto icste = tfel::math::Cste<real>::isqrt2;
+	k(0,3)*=icste;k(1,3)*=icste;k(2,3)*=icste;
+	k(3,0)*=icste;k(3,1)*=icste;k(3,2)*=icste;
+	k(3,3)/=2;
+	transpose();
+      };
+      to_tfel();
+      tfel::math::stensor<2u,stress> t;
+      t.importTab(T);
+      k = this->convertToAbaqusTangentModuli(k,t);
+      to_abaqus();
+    } // end of LogarithmicStrainHandler<2u,StressType>::convertToAbaqusTangentModuli
     
     template<typename StressType>
     LogarithmicStrainHandler<3u,StressType>::LogarithmicStrainHandler(const Setting c,
@@ -918,7 +993,24 @@ namespace tfel
 											     const stress* const T) const
     {
       tfel::math::ST2toST2View<3u,stress> k(K);
-      auto to_tfel = [&k]{
+      auto transpose = [&k](){
+	std::swap(k(0,1),k(1,0));
+	std::swap(k(0,2),k(2,0));
+	std::swap(k(0,3),k(3,0));
+	std::swap(k(0,4),k(4,0));
+	std::swap(k(0,5),k(5,0));
+	std::swap(k(1,2),k(2,1));
+	std::swap(k(1,3),k(3,1));
+	std::swap(k(1,4),k(4,1));
+	std::swap(k(1,5),k(5,1));
+	std::swap(k(2,3),k(3,2));
+	std::swap(k(2,4),k(4,2));
+	std::swap(k(2,5),k(5,2));
+	std::swap(k(3,4),k(4,3));
+	std::swap(k(3,5),k(5,3));
+	std::swap(k(4,5),k(5,4));
+      };
+      auto to_tfel = [&k,&transpose]{
 	TFEL_CONSTEXPR const auto cste  = tfel::math::Cste<real>::sqrt2;
 	k(0,3)*=cste;k(1,3)*=cste;k(2,3)*=cste;
 	k(0,4)*=cste;k(1,4)*=cste;k(2,4)*=cste;
@@ -929,8 +1021,9 @@ namespace tfel
 	k(3,3)*=2;k(3,4)*=2;k(3,5)*=2;
 	k(4,3)*=2;k(4,4)*=2;k(4,5)*=2;
 	k(5,3)*=2;k(5,4)*=2;k(5,5)*=2;
+	transpose();
       };
-      auto to_abaqus = [&k]{
+      auto to_abaqus = [&k,&transpose]{
 	TFEL_CONSTEXPR const auto icste = tfel::math::Cste<real>::isqrt2;
 	k(0,3)*=icste;k(1,3)*=icste;k(2,3)*=icste;
 	k(0,4)*=icste;k(1,4)*=icste;k(2,4)*=icste;
@@ -941,6 +1034,7 @@ namespace tfel
 	k(3,3)/=2;k(3,4)/=2;k(3,5)/=2;
 	k(4,3)/=2;k(4,4)/=2;k(4,5)/=2;
 	k(5,3)/=2;k(5,4)/=2;k(5,5)/=2;
+	transpose();
       };
       to_tfel();
       tfel::math::stensor<3u,stress> t;
@@ -948,6 +1042,86 @@ namespace tfel
       k = this->convertToCauchyStressTruesdellRateTangentModuli(k,t);
       to_abaqus();
     } // end of LogarithmicStrainHandler<3u,StressType>::convertToCauchyStressTruesdellRateTangentModuli
+
+    template<typename StressType>
+    typename LogarithmicStrainHandler<3u,StressType>::TangentOperator
+    LogarithmicStrainHandler<3u,StressType>::convertToAbaqusTangentModuli(const TangentOperator& Ks,
+											     const StressStensor& T) const
+    {
+      using FSTOBase = FiniteStrainBehaviourTangentOperatorBase;
+      const auto F0  = tfel::math::tensor<3u,real>::Id();
+      const auto sig  = this->convertToCauchyStress(T);
+      if(this->s==LAGRANGIAN){
+	const auto Cse = this->convertToMaterialTangentModuli(Ks,T);
+	auto Kr = convert<FSTOBase::ABAQUS,
+			  FSTOBase::DS_DEGL>(Cse,F0,this->F,sig);
+	Kr /= tfel::math::det(this->F);
+	return Kr;
+      } else {
+	const auto N = getNTensors(this->m);
+	const auto M = getEulerianMTensors(this->m,this->F);
+	TangentOperator Kr;
+	this->convertTangentModuli(Kr,Ks,T,N,M);
+	return convert<FSTOBase::ABAQUS,
+		       FSTOBase::SPATIAL_MODULI>(Kr,F0,this->F,sig);
+      }
+    } // end of LogarithmicStrainHandler<3u,StressType>::convertToAbaqusTangentModuli
+
+    template<typename StressType>
+    void
+    LogarithmicStrainHandler<3u,StressType>::convertToAbaqusTangentModuli(stress *const K,
+									  const stress* const T) const
+    {
+      tfel::math::ST2toST2View<3u,stress> k(K);
+      auto transpose = [&k](){
+	std::swap(k(0,1),k(1,0));
+	std::swap(k(0,2),k(2,0));
+	std::swap(k(0,3),k(3,0));
+	std::swap(k(0,4),k(4,0));
+	std::swap(k(0,5),k(5,0));
+	std::swap(k(1,2),k(2,1));
+	std::swap(k(1,3),k(3,1));
+	std::swap(k(1,4),k(4,1));
+	std::swap(k(1,5),k(5,1));
+	std::swap(k(2,3),k(3,2));
+	std::swap(k(2,4),k(4,2));
+	std::swap(k(2,5),k(5,2));
+	std::swap(k(3,4),k(4,3));
+	std::swap(k(3,5),k(5,3));
+	std::swap(k(4,5),k(5,4));
+      };
+      auto to_tfel = [&k,&transpose]{
+	TFEL_CONSTEXPR const auto cste  = tfel::math::Cste<real>::sqrt2;
+	k(0,3)*=cste;k(1,3)*=cste;k(2,3)*=cste;
+	k(0,4)*=cste;k(1,4)*=cste;k(2,4)*=cste;
+	k(0,5)*=cste;k(1,5)*=cste;k(2,5)*=cste;
+	k(3,0)*=cste;k(3,1)*=cste;k(3,2)*=cste;
+	k(4,0)*=cste;k(4,1)*=cste;k(4,2)*=cste;
+	k(5,0)*=cste;k(5,1)*=cste;k(5,2)*=cste;
+	k(3,3)*=2;k(3,4)*=2;k(3,5)*=2;
+	k(4,3)*=2;k(4,4)*=2;k(4,5)*=2;
+	k(5,3)*=2;k(5,4)*=2;k(5,5)*=2;
+	transpose();
+      };
+      auto to_abaqus = [&k,&transpose]{
+	TFEL_CONSTEXPR const auto icste = tfel::math::Cste<real>::isqrt2;
+	k(0,3)*=icste;k(1,3)*=icste;k(2,3)*=icste;
+	k(0,4)*=icste;k(1,4)*=icste;k(2,4)*=icste;
+	k(0,5)*=icste;k(1,5)*=icste;k(2,5)*=icste;
+	k(3,0)*=icste;k(3,1)*=icste;k(3,2)*=icste;
+	k(4,0)*=icste;k(4,1)*=icste;k(4,2)*=icste;
+	k(5,0)*=icste;k(5,1)*=icste;k(5,2)*=icste;
+	k(3,3)/=2;k(3,4)/=2;k(3,5)/=2;
+	k(4,3)/=2;k(4,4)/=2;k(4,5)/=2;
+	k(5,3)/=2;k(5,4)/=2;k(5,5)/=2;
+	transpose();
+      };
+      to_tfel();
+      tfel::math::stensor<3u,stress> t;
+      t.importTab(T);
+      k = this->convertToAbaqusTangentModuli(k,t);
+      to_abaqus();
+    } // end of LogarithmicStrainHandler<3u,StressType>::convertToAbaqusTangentModuli
     
   } // end of namespace material
 

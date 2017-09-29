@@ -46,8 +46,8 @@ namespace mfront{
     if(AbaqusInterfaceBase::hasFiniteStrainStrategy(bd)){
       const auto fs = AbaqusInterfaceBase::getFiniteStrainStrategy(bd);
       throw_if(fs!="Native",
-	       "unsupported feature @AbaqusSaveTangentOperator "
-	       "and @AbaqusCompareToNumericalTangentOperator : "
+	       "unsupported feature "
+	       "@AbaqusCompareToNumericalTangentOperator: "
 	       "those are only valid for small strain beahviours or "
 	       "finite strain behaviours based on the `Native` "
 	       "finite strain strategy");
@@ -61,22 +61,21 @@ namespace mfront{
     return false;
   } // end of usesMFrontOrthotropyManagementPolicy
   
-  static void
-  writeUMATArguments(std::ostream& out,
-		     const BehaviourDescription& bd,
-		     const bool f)
-  {
-    const auto sb = (bd.getBehaviourType()==
-		     BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR);
-    const auto fs = [&bd,&sb]{
-      if((sb)&&(!AbaqusInterfaceBase::hasFiniteStrainStrategy(bd))){
-	return false;
-      }
-      return true;
-    }();
-    const auto fs2 = (bd.getBehaviourType()==
-		      BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR);
+  static void writeArguments(std::ostream& out,
+			     const BehaviourDescription& bd,
+			     const bool f)
+  {    
     if(f){
+      const auto requires_stran = [&bd]{
+	if(bd.getBehaviourType()==
+	   BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
+	  if(AbaqusInterfaceBase::hasFiniteStrainStrategy(bd)){
+	    const auto fs = AbaqusInterfaceBase::getFiniteStrainStrategy(bd);
+	    return fs=="Native";
+	  }
+	}
+	return true;
+      }();
       out << "(abaqus::AbaqusReal *const STRESS,\n"
 	  << " abaqus::AbaqusReal *const STATEV,\n"
 	  << " abaqus::AbaqusReal *const DDSDDE,\n"
@@ -86,10 +85,15 @@ namespace mfront{
 	  << " abaqus::AbaqusReal *const RPL,\n"
 	  << " abaqus::AbaqusReal *const DDSDDT,\n"
 	  << " abaqus::AbaqusReal *const DRPLDE,\n"
-	  << " abaqus::AbaqusReal *const DRPLDT,\n"
-	  << " const abaqus::AbaqusReal *const STRAN,\n"
-	  << " const abaqus::AbaqusReal *const DSTRAN,\n"
-	  << " const abaqus::AbaqusReal *const TIME,\n"
+	  << " abaqus::AbaqusReal *const DRPLDT,\n";
+      if(requires_stran){
+ 	out << " const abaqus::AbaqusReal *const STRAN,\n"
+	    << " const abaqus::AbaqusReal *const DSTRAN,\n";
+      } else {
+	out << " const abaqus::AbaqusReal *const,\n"
+	    << " const abaqus::AbaqusReal *const,\n";
+       }
+      out << " const abaqus::AbaqusReal *const TIME,\n"
 	  << " const abaqus::AbaqusReal *const DTIME,\n"
 	  << " const abaqus::AbaqusReal *const TEMP,\n"
 	  << " const abaqus::AbaqusReal *const DTEMP,\n"
@@ -116,6 +120,17 @@ namespace mfront{
 	  << "       abaqus::AbaqusInt  *const KINC,\n"
 	  << "const int size)";
     } else {
+      const auto btype = bd.getBehaviourType();
+      const auto sb = (btype==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR);
+      const auto requires_kstep = [&bd,&btype]{
+	if(btype==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
+	  if(AbaqusInterfaceBase::hasFiniteStrainStrategy(bd)){
+	    return AbaqusInterfaceBase::getFiniteStrainStrategy(bd)!="Native";
+	  }
+	  return false;
+	}
+	return true;
+      }();
       out << "(abaqus::AbaqusReal *const STRESS,\n"
 	  << " abaqus::AbaqusReal *const STATEV,\n"
 	  << " abaqus::AbaqusReal *const DDSDDE,\n"
@@ -150,7 +165,7 @@ namespace mfront{
 	  << " const abaqus::AbaqusReal *const DROT,\n"
 	  << "       abaqus::AbaqusReal *const PNEWDT,\n"
 	  << " const abaqus::AbaqusReal *const,\n";
-      if(fs2){
+      if(!sb){
 	out << " const abaqus::AbaqusReal *const F0,\n"
 	    << " const abaqus::AbaqusReal *const F1,\n";
       } else {
@@ -161,7 +176,7 @@ namespace mfront{
 	  << " const abaqus::AbaqusInt  *const,\n"
 	  << " const abaqus::AbaqusInt  *const,\n"
 	  << " const abaqus::AbaqusInt  *const,\n";
-      if(fs){
+      if(requires_kstep){
 	out << " const abaqus::AbaqusInt  *const KSTEP,\n";
       } else {
 	out << " const abaqus::AbaqusInt  *const,\n";
@@ -169,10 +184,9 @@ namespace mfront{
       out << "       abaqus::AbaqusInt  *const,\n"
 	  << "const int)";
     }
-  } // end of writeUMATArguments
+  } // end of writeArguments
 
-  static void
-  writeUMATArguments(std::ostream& out)
+  static void writeArguments(std::ostream& out)
   {
     out << "(abaqus::AbaqusReal *const,\n"
 	<< " abaqus::AbaqusReal *const,\n"
@@ -212,7 +226,7 @@ namespace mfront{
 	<< " const abaqus::AbaqusInt  *const,\n"
 	<< "       abaqus::AbaqusInt  *const,\n"
 	<< "const int)";
-  } // end of writeUMATArguments
+  } // end of writeArguments
 
   std::string AbaqusInterface::getName()
   {
@@ -385,8 +399,11 @@ namespace mfront{
       out << "#include\"MFront/Abaqus/AbaqusOrthotropicBehaviour.hxx\"\n";
     }
     if(AbaqusInterfaceBase::hasFiniteStrainStrategy(mb)){
-      if(AbaqusInterfaceBase::getFiniteStrainStrategy(mb)!="Native"){
+      const auto fs = AbaqusInterfaceBase::getFiniteStrainStrategy(mb);
+      if(fs=="FiniteRotationSmallStrain"){
 	out << "#include\"MFront/Abaqus/AbaqusFiniteStrain.hxx\"\n\n";
+      } else if(fs=="MieheApelLambrechtLogarithmicStrain"){
+	out << "#include\"TFEL/Material/LogarithmicStrainHandler.hxx\"\n\n";
       }
     }
     out << "#include\"TFEL/Material/" << mb.getClassName() << ".hxx\"\n"
@@ -418,7 +435,7 @@ namespace mfront{
     for(const auto h: mh){
       out << "MFRONT_SHAREDOBJ void\n"
 	  << this->getFunctionNameForHypothesis(name,h);
-      writeUMATArguments(out);
+      writeArguments(out);
       out << ";\n\n";
     }
 
@@ -485,17 +502,19 @@ namespace mfront{
 	if(AbaqusInterfaceBase::hasFiniteStrainStrategy(mb)){
 	  const auto fs = AbaqusInterfaceBase::getFiniteStrainStrategy(mb);
 	  if(fs=="Native"){
-	    this->writeUMATSmallStrainFunction(out,mb,name,h);
+	    this->writeSmallStrainFunction(out,mb,name,h);
 	  } else if(fs=="FiniteRotationSmallStrain"){
-	    this->writeUMATFiniteRotationSmallStrainFunction(out,mb,name,h);
+	    this->writeFiniteRotationSmallStrainFunction(out,mb,name,h);
+	  } else if(fs=="MieheApelLambrechtLogarithmicStrain"){
+	    this->writeMieheApelLambrechtLogarithmicStrainFunction(out,mb,name,h);
 	  } else {
 	    throw_if(true,"unsupported finite strain strategy '"+fs+"'");
 	  }
 	} else {
-	  this->writeUMATSmallStrainFunction(out,mb,name,h);
+	  this->writeSmallStrainFunction(out,mb,name,h);
 	}
       } else if(mb.getBehaviourType()==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR){
-	this->writeUMATFiniteStrainFunction(out,mb,name,h);
+	this->writeFiniteStrainFunction(out,mb,name,h);
       } else {
 	throw_if(true,"the abaqus interface only supports small "
 		 "and finite strain behaviours");
@@ -506,19 +525,19 @@ namespace mfront{
     this->writeInputFileExample(mb,fd,true);
   } // end of AbaqusInterface::endTreatment
   
-  void AbaqusInterface::writeUMATFunctionBase(std::ostream& out,
+  void AbaqusInterface::writeFunctionBase(std::ostream& out,
 					      const BehaviourDescription& mb,
 					      const std::string& name,
 					      const std::string& sfeh,
 					      const Hypothesis h) const
   {
     auto throw_if = [](const bool b,const std::string& m){
-      tfel::raise_if(b,"AbaqusInterface::writeUMATFunctionBase: "+m);
+      tfel::raise_if(b,"AbaqusInterface::writeFunctionBase: "+m);
     };
     std::string dv0,dv1,sig,statev,nstatev;
     const auto btype = mb.getBehaviourType();
     out << "static void\n" << name << "_base" << this->getFunctionNameForHypothesis("",h);
-    writeUMATArguments(out,mb,false);
+    writeArguments(out,mb,false);
     out << "{\n";
     // this is required for gcc 4.7.2
     const auto is_fs = [&mb,&btype,this]{
@@ -755,18 +774,18 @@ namespace mfront{
 	  << "std::cout << std::endl;\n";
     }
     out << "}\n\n";
-  } // end of AbaqusInterface::writeUMATFunctionBase
+  } // end of AbaqusInterface::writeFunctionBase
 
-  void AbaqusInterface::writeUMATFiniteStrainFunction(std::ostream& out,
+  void AbaqusInterface::writeFiniteStrainFunction(std::ostream& out,
 						     const BehaviourDescription& mb,
 						     const std::string& name,
 						     const Hypothesis h) const
   {
     const std::string sfeh = "nullptr";
-    this->writeUMATFunctionBase(out,mb,name,sfeh,h);
+    this->writeFunctionBase(out,mb,name,sfeh,h);
     out << "MFRONT_SHAREDOBJ void\n"
 	<< this->getFunctionNameForHypothesis(name,h);
-    writeUMATArguments(out,mb,true);
+    writeArguments(out,mb,true);
     out << "{\n";
     if(mb.getAttribute(BehaviourData::profiling,false)){
       out << "using mfront::BehaviourProfiler;\n"
@@ -783,16 +802,16 @@ namespace mfront{
 	<< "}\n\n";
   }
   
-  void AbaqusInterface::writeUMATSmallStrainFunction(std::ostream& out,
+  void AbaqusInterface::writeSmallStrainFunction(std::ostream& out,
 						     const BehaviourDescription& mb,
 						     const std::string& name,
 						     const Hypothesis h) const
   {
     const std::string sfeh = "abaqus::AbaqusStandardSmallStrainStressFreeExpansionHandler";
-    this->writeUMATFunctionBase(out,mb,name,sfeh,h);
+    this->writeFunctionBase(out,mb,name,sfeh,h);
     out << "MFRONT_SHAREDOBJ void\n"
 	<< this->getFunctionNameForHypothesis(name,h);
-    writeUMATArguments(out,mb,true);
+    writeArguments(out,mb,true);
     out << "{\n";
     if(mb.getAttribute(BehaviourData::profiling,false)){
       out << "using mfront::BehaviourProfiler;\n"
@@ -907,21 +926,20 @@ namespace mfront{
     out << "}\n\n";
   }
   
-  void
-  AbaqusInterface::writeUMATFiniteRotationSmallStrainFunction(std::ostream& out,
-							      const BehaviourDescription& mb,
-							      const std::string& name,
-							      const Hypothesis h) const
+  void AbaqusInterface::writeFiniteRotationSmallStrainFunction(std::ostream& out,
+							       const BehaviourDescription& mb,
+							       const std::string& name,
+							       const Hypothesis h) const
   {
     tfel::raise_if(h==ModellingHypothesis::PLANESTRESS,
-		   "AbaqusInterface::writeUMATFiniteRotationSmallStrainFunction: "
+		   "AbaqusInterface::writeFiniteRotationSmallStrainFunction: "
 		   "plane stress is not supported yet");
     const auto ps = h==ModellingHypothesis::PLANESTRESS ? "true" : "false";
     const std::string sfeh = "abaqus::AbaqusStandardSmallStrainStressFreeExpansionHandler";
-    this->writeUMATFunctionBase(out,mb,name,sfeh,h);
+    this->writeFunctionBase(out,mb,name,sfeh,h);
     out << "MFRONT_SHAREDOBJ void\n"
 	<< this->getFunctionNameForHypothesis(name,h);
-    writeUMATArguments(out,mb,true);
+    writeArguments(out,mb,true);
     out << "{\n"
 	<< "using namespace abaqus;\n"
 	<< "AbaqusReal eto[6];\n"
@@ -938,9 +956,7 @@ namespace mfront{
 	  << "BehaviourProfiler::FINITESTRAINPREPROCESSING);\n";
     }
     
-    out << "static_cast<void>(STRAN);\n"
-	<< "static_cast<void>(DSTRAN);\n"
-	<< "AbaqusFiniteStrain::computeGreenLagrangeStrain(eto,DFGRD0,*NTENS," << ps << ");\n"
+    out << "AbaqusFiniteStrain::computeGreenLagrangeStrain(eto,DFGRD0,*NTENS," << ps << ");\n"
 	<< "AbaqusFiniteStrain::computeGreenLagrangeStrain(deto,DFGRD1,*NTENS," << ps << ");\n"
 	<< "AbaqusFiniteStrain::computeSecondPiolaKirchhoffStressFromCauchyStress(STRESS,DFGRD0,*NTENS," << ps << ",0);\n"
 	<< "for(int i=0;i!=*NTENS;++i){\n"
@@ -959,16 +975,96 @@ namespace mfront{
       out << "BehaviourProfiler::Timer post_timer(" << mb.getClassName() << "Profiler::getProfiler(),\n"
 	  << "BehaviourProfiler::FINITESTRAINPOSTPROCESSING);\n";
     }
-    out << "AbaqusFiniteStrain::computeCauchyStressFromSecondPiolaKirchhoffStress(STRESS,DFGRD1,*NTENS," << ps << ",0);\n";
-    out << "AbaqusFiniteStrain::computeAbaqusTangentOperatorFromCSE(DDSDDE,CSE,DFGRD1,STRESS,*NTENS," << ps << ");\n";
-    out << "}\n";
-    out << "}\n\n";
+    out << "AbaqusFiniteStrain::computeCauchyStressFromSecondPiolaKirchhoffStress(STRESS,DFGRD1,*NTENS," << ps << ",0);\n"
+	<< "AbaqusFiniteStrain::computeAbaqusTangentOperatorFromCSE(DDSDDE,CSE,DFGRD1,STRESS,*NTENS," << ps << ");\n"
+	<< "}\n"
+	<< "}\n\n";
+  }
+
+  void AbaqusInterface::writeMieheApelLambrechtLogarithmicStrainFunction(std::ostream& out,
+									 const BehaviourDescription& mb,
+									 const std::string& name,
+									 const Hypothesis h) const
+  {
+    auto throw_if = [](const bool b,const std::string& m){
+      tfel::raise_if(b,"AbaqusInterface::writeMieheApelLambrechtLogarithmicStrainFunction: "+m);
+    };
+    throw_if(h==ModellingHypothesis::PLANESTRESS,
+	     "plane stress is not supported yet");
+    const std::string sfeh = "abaqus::AbaqusLogarithmicStrainStressFreeExpansionHandler";
+    this->writeFunctionBase(out,mb,name,sfeh,h);
+    const auto d = [&h,&throw_if]{
+      if(h==ModellingHypothesis::TRIDIMENSIONAL){
+	return 3u;
+      }
+      throw_if(!((h==ModellingHypothesis::AXISYMMETRICAL)||
+		 (h==ModellingHypothesis::PLANESTRAIN)),
+	       "unsupported modelling hypothesis");
+      return 2u;
+    }();
+    const auto n = [&h,&throw_if]{
+      if(h==ModellingHypothesis::TRIDIMENSIONAL){
+	return 6u;
+      }
+      throw_if(!((h==ModellingHypothesis::AXISYMMETRICAL)||
+		 (h==ModellingHypothesis::PLANESTRAIN)),
+	       "unsupported modelling hypothesis");
+      return 4u;
+    }();
+    out << "MFRONT_SHAREDOBJ void\n"
+	<< this->getFunctionNameForHypothesis(name,h);
+    writeArguments(out,mb,true);
+    out << "{\n";
+    if(mb.getAttribute(BehaviourData::profiling,false)){
+      out << "using mfront::BehaviourProfiler;\n"
+	  << "using tfel::material::" << mb.getClassName() << "Profiler;\n"
+	  << "BehaviourProfiler::Timer total_timer(" << mb.getClassName()
+	  << "Profiler::getProfiler(),\n"
+	  << "BehaviourProfiler::TOTALTIME);\n";
+      out << "{\n"
+	  << "BehaviourProfiler::Timer pre_timer(" << mb.getClassName() << "Profiler::getProfiler(),\n"
+	  << "BehaviourProfiler::FINITESTRAINPREPROCESSING);\n";
+    }
+    out << "using namespace abaqus;\n"
+	<< "using namespace tfel::math;\n"
+	<< "using namespace tfel::material;\n"
+	<< "AbaqusReal eto[" << n << "];\n"
+      	<< "AbaqusReal deto[" << n << "];\n"
+	<< "LogarithmicStrainHandler<" << d << ",AbaqusReal> "
+	<< "lsh0(LogarithmicStrainHandlerBase::EULERIAN,\n"
+	<< "     tensor<" << d << ",AbaqusReal>::buildFromFortranMatrix(DFGRD0));\n"
+	<< "LogarithmicStrainHandler<" << d << ",AbaqusReal> "
+	<< "lsh1(LogarithmicStrainHandlerBase::EULERIAN,\n"
+	<< "     tensor<" << d << ",AbaqusReal>::buildFromFortranMatrix(DFGRD1));\n"
+	<< "lsh0.getHenckyLogarithmicStrain(eto);\n"
+	<< "lsh1.getHenckyLogarithmicStrain(deto);\n";
+    for(unsigned short i=0;i!=n;++i){
+      out << "deto[" << i << "]-=eto[" << i << "];\n";
+    }
+    out << "lsh0.convertFromCauchyStress(STRESS);\n";
+    if(mb.getAttribute(BehaviourData::profiling,false)){
+      out << "}\n";
+    }
+    out	<< name << "_base" << this->getFunctionNameForHypothesis("",h)
+	<< "(STRESS,STATEV,DDSDDE,SSE,SPD,SCD,RPL,DDSDDT,DRPLDE,DRPLDT,\n"
+	<< "eto,deto,TIME,DTIME,TEMP,DTEMP,PREDEF,DPRED,CMNAME,\n"
+	<< "NDI,NSHR,NTENS,NSTATV,PROPS,NPROPS,COORDS,DROT,PNEWDT,\n"
+	<< "CELENT,DFGRD0,DFGRD1,NOEL,NPT,LAYER,KSPT,KSTEP,KINC,size);\n"
+        << "if(*PNEWDT>=0.99999){\n";
+    if(mb.getAttribute(BehaviourData::profiling,false)){
+      out << "BehaviourProfiler::Timer post_timer(" << mb.getClassName() << "Profiler::getProfiler(),\n"
+	  << "BehaviourProfiler::FINITESTRAINPOSTPROCESSING);\n";
+    }
+    out << "lsh1.convertToAbaqusTangentModuli(DDSDDE,STRESS);\n"
+	<< "// converting the stress\n"
+	<< "lsh1.convertToCauchyStress(STRESS);\n"
+	<< "}\n"
+	<< "}\n\n";
   }
   
-  void
-  AbaqusInterface::writeUMATxxBehaviourTypeSymbols(std::ostream& out,
-						   const std::string& name,
-						   const BehaviourDescription& mb) const
+  void AbaqusInterface::writeUMATxxBehaviourTypeSymbols(std::ostream& out,
+							const std::string& name,
+							const BehaviourDescription& mb) const
   {
     auto throw_if = [](const bool b,const std::string& m){
       tfel::raise_if(b,"AbaqusInterface::writeUMATxxBehaviourTypeSymbols: "+m);
@@ -976,7 +1072,8 @@ namespace mfront{
     out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
 	<< "_BehaviourType = " ;
     if(mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
-      if(AbaqusInterfaceBase::hasFiniteStrainStrategy(mb)){
+      if((AbaqusInterfaceBase::hasFiniteStrainStrategy(mb))&&
+	 (AbaqusInterfaceBase::getFiniteStrainStrategy(mb)!="Native")){
 	out << "2u;\n\n";
       } else {
 	out << "1u;\n\n";
@@ -1187,9 +1284,8 @@ namespace mfront{
     }
   } // end of AbaqusInterface::exportThermodynamicForce
 
-  void
-  AbaqusInterface::getTargetsDescription(TargetsDescription& d,
-					const BehaviourDescription& bd)
+  void AbaqusInterface::getTargetsDescription(TargetsDescription& d,
+					      const BehaviourDescription& bd)
   {
     const auto lib  = this->getLibraryName(bd);
     const auto name = bd.getLibrary()+bd.getClassName(); 

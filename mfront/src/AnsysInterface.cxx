@@ -122,11 +122,21 @@ namespace mfront{
     return bd.getAttribute<std::string>(AnsysInterface::finiteStrainStrategy);
   } // end of getFiniteStrainStrategy
   
-  static void writeUMATArguments(std::ostream& out,
-				 const BehaviourDescription& mb,
-				 const bool base)
+  static void writeArguments(std::ostream& out,
+			     const BehaviourDescription& bd,
+			     const bool base)
   {
     if(!base){
+      const auto requires_stran = [&bd]{
+	if(bd.getBehaviourType()==
+	   BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
+	  if(hasFiniteStrainStrategy(bd)){
+	    const auto fs = getFiniteStrainStrategy(bd);
+	    return fs=="Native";
+	  }
+	}
+	return true;
+      }();
       out << "(const ansys::AnsysInt *const matId,\n"
 	  << " const ansys::AnsysInt *const elemId,\n"
 	  << " const ansys::AnsysInt *const kDomIntPt,\n"
@@ -149,10 +159,15 @@ namespace mfront{
 	  << "       ansys::AnsysReal *const DDSDDE,\n"
 	  << "       ansys::AnsysReal *const SEDEL,\n"
 	  << "       ansys::AnsysReal *const SEDPL,\n"
-	  << "       ansys::AnsysReal *const EPSEQ,\n"
-	  << " const ansys::AnsysReal *const STRAN,\n"
-	  << " const ansys::AnsysReal *const DSTRAN,\n"
-	  << "       ansys::AnsysReal *const EPSPL,\n"
+	  << "       ansys::AnsysReal *const EPSEQ,\n";
+      if(requires_stran){
+	out << " const ansys::AnsysReal *const STRAN,\n"
+	    << " const ansys::AnsysReal *const DSTRAN,\n";
+      } else {
+	out << " const ansys::AnsysReal *const,\n"
+	    << " const ansys::AnsysReal *const,\n";
+      }
+      out << "       ansys::AnsysReal *const EPSPL,\n"
 	  << " const ansys::AnsysReal *const PROPS,\n"
 	  << " const ansys::AnsysReal *const coords,\n"
 	  << " const ansys::AnsysReal *const DROT,\n"
@@ -169,6 +184,7 @@ namespace mfront{
 	  << " const ansys::AnsysReal *const var7,\n"
 	  << " const ansys::AnsysReal *const var8)";
     } else {
+      
       out << "(const ansys::AnsysInt *const,\n"
 	  << " const ansys::AnsysInt *const,\n"
 	  << " const ansys::AnsysInt *const,\n"
@@ -192,7 +208,7 @@ namespace mfront{
 	  << "       ansys::AnsysReal *const SEDEL,\n"
 	  << "       ansys::AnsysReal *const SEDPL,\n"
 	  << "       ansys::AnsysReal *const EPSEQ,\n";
-      if(mb.getBehaviourType()==
+      if(bd.getBehaviourType()==
 	 BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
 	out << " const ansys::AnsysReal *const STRAN,\n"
 	    << " const ansys::AnsysReal *const DSTRAN,\n";
@@ -204,7 +220,7 @@ namespace mfront{
 	  << " const ansys::AnsysReal *const PROPS,\n"
 	  << " const ansys::AnsysReal *const,\n"
 	  << " const ansys::AnsysReal *const DROT,\n";
-      if(mb.getBehaviourType()==
+      if(bd.getBehaviourType()==
 	 BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR){
 	out << " const ansys::AnsysReal *const F0,\n"
 	    << " const ansys::AnsysReal *const F1,\n";
@@ -223,10 +239,9 @@ namespace mfront{
 	  << " const ansys::AnsysReal *const,\n"
 	  << " const ansys::AnsysReal *const)";
     }
-  } // end of writeUMATArguments
+  } // end of writeArguments
 
-  static void
-  writeUMATArguments(std::ostream& out)
+  static void writeArguments(std::ostream& out)
   {
     out << "(const ansys::AnsysInt *const,\n"
 	<< " const ansys::AnsysInt *const,\n"
@@ -269,7 +284,7 @@ namespace mfront{
 	<< " const ansys::AnsysReal *const,\n"
 	<< " const ansys::AnsysReal *const,\n"
 	<< " const ansys::AnsysReal *const)";
-  } // end of writeUMATArguments
+  } // end of writeArguments
 
   std::string AnsysInterface::getLibraryName(const BehaviourDescription& mb) const
   {
@@ -911,9 +926,15 @@ namespace mfront{
       out << "#include\"MFront/Ansys/AnsysOrthotropicBehaviour.hxx\"\n";
     }
     if((mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR)&&
-       (hasFiniteStrainStrategy(mb))&&
-       (getFiniteStrainStrategy(mb)!="Native")){
-      out << "#include\"MFront/Ansys/AnsysFiniteStrain.hxx\"\n\n";
+       (hasFiniteStrainStrategy(mb))){
+      const auto fs = getFiniteStrainStrategy(mb);
+      if(fs=="FiniteRotationSmallStrain"){
+	out << "#include\"MFront/Ansys/AnsysFiniteStrain.hxx\"\n\n";
+      }
+      if(fs=="MieheApelLambrechtLogarithmicStrain"){
+	out << "#include\"TFEL/Material/LogarithmicStrainHandler.hxx\"\n\n"
+	    << "#include\"MFront/Ansys/AnsysTangentOperator.hxx\"\n\n";
+      }
     }
     out << "#include\"TFEL/Material/" << mb.getClassName() << ".hxx\"\n"
 	<< "#endif /* __cplusplus */\n\n";
@@ -944,7 +965,7 @@ namespace mfront{
     for(const auto h: mh){
       out << "MFRONT_SHAREDOBJ void\n"
 	  << this->getFunctionNameForHypothesis(name,h);
-      writeUMATArguments(out);
+      writeArguments(out);
       out << ";\n\n";
     }
 
@@ -1009,17 +1030,19 @@ namespace mfront{
 	if(hasFiniteStrainStrategy(mb)){
 	  const auto fs = getFiniteStrainStrategy(mb);
 	  if(fs=="Native"){
-	    this->writeUMATSmallStrainFunction(out,mb,name,h);
+	    this->writeSmallStrainFunction(out,mb,name,h);
 	  } else if(fs=="FiniteRotationSmallStrain"){
-	    this->writeUMATFiniteRotationSmallStrainFunction(out,mb,name,h);
+	    this->writeFiniteRotationSmallStrainFunction(out,mb,name,h);
+	  } else if(fs=="MieheApelLambrechtLogarithmicStrain"){
+	    this->writeMieheApelLambrechtLogarithmicStrainFunction(out,mb,name,h);
 	  } else {
 	    throw_if(true,"unsupported finite strain strategy !");
 	  }
 	} else {
-	  this->writeUMATSmallStrainFunction(out,mb,name,h);
+	  this->writeSmallStrainFunction(out,mb,name,h);
 	}
       } else if(mb.getBehaviourType()==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR){
-	this->writeUMATFiniteStrainFunction(out,mb,name,h);
+	this->writeFiniteStrainFunction(out,mb,name,h);
       } else {
 	throw_if(true,"the ansys interface only supports small "
 		 "and finite strain behaviours");
@@ -1030,19 +1053,19 @@ namespace mfront{
     this->writeInputFileExample(mb,fd);
   } // end of AnsysInterface::endTreatment
   
-  void AnsysInterface::writeUMATFunctionBase(std::ostream& out,
-					     const BehaviourDescription& mb,
-					     const std::string& name,
-					     const std::string& sfeh,
-					     const Hypothesis h) const
+  void AnsysInterface::writeFunctionBase(std::ostream& out,
+					 const BehaviourDescription& mb,
+					 const std::string& name,
+					 const std::string& sfeh,
+					 const Hypothesis h) const
   {
     auto throw_if = [](const bool b,const std::string& m){
-      tfel::raise_if(b,"AnsysInterface::writeUMATFunctionBase: "+m);
+      tfel::raise_if(b,"AnsysInterface::writeFunctionBase: "+m);
     };
     std::string dv0,dv1,sig;
     const auto btype = mb.getBehaviourType();
     out << "static void\n" << name << "_base" << this->getFunctionNameForHypothesis("",h);
-    writeUMATArguments(out,mb,true);
+    writeArguments(out,mb,true);
     out << "{\n";
     if(mb.getSymmetryType()==mfront::ORTHOTROPIC){
       const auto mpoffset = [this,h,&mb]{
@@ -1210,18 +1233,18 @@ namespace mfront{
 	  << "std::cout << std::endl;\n";
     }
     out << "}\n\n";
-  } // end of AnsysInterface::writeUMATFunctionBase
+  } // end of AnsysInterface::writeFunctionBase
 
-  void AnsysInterface::writeUMATFiniteStrainFunction(std::ostream& out,
-						     const BehaviourDescription& mb,
-						     const std::string& name,
-						     const Hypothesis h) const
+  void AnsysInterface::writeFiniteStrainFunction(std::ostream& out,
+						 const BehaviourDescription& mb,
+						 const std::string& name,
+						 const Hypothesis h) const
   {
     const std::string sfeh = "nullptr";
-    this->writeUMATFunctionBase(out,mb,name,sfeh,h);
+    this->writeFunctionBase(out,mb,name,sfeh,h);
     out << "MFRONT_SHAREDOBJ void\n"
 	<< this->getFunctionNameForHypothesis(name,h);
-    writeUMATArguments(out,mb,false);
+    writeArguments(out,mb,false);
     out << "{\n";
     if(mb.getAttribute(BehaviourData::profiling,false)){
       out << "using mfront::BehaviourProfiler;\n"
@@ -1239,16 +1262,16 @@ namespace mfront{
 	<< "}\n\n";
   }
   
-  void AnsysInterface::writeUMATSmallStrainFunction(std::ostream& out,
-						     const BehaviourDescription& mb,
-						     const std::string& name,
-						     const Hypothesis h) const
+  void AnsysInterface::writeSmallStrainFunction(std::ostream& out,
+						const BehaviourDescription& mb,
+						const std::string& name,
+						const Hypothesis h) const
   {
     const std::string sfeh = "ansys::AnsysStandardSmallStrainStressFreeExpansionHandler";
-    this->writeUMATFunctionBase(out,mb,name,sfeh,h);
+    this->writeFunctionBase(out,mb,name,sfeh,h);
     out << "MFRONT_SHAREDOBJ void\n"
 	<< this->getFunctionNameForHypothesis(name,h);
-    writeUMATArguments(out,mb,false);
+    writeArguments(out,mb,false);
     out << "{\n";
     if(mb.getAttribute(BehaviourData::profiling,false)){
       out << "using mfront::BehaviourProfiler;\n"
@@ -1361,22 +1384,21 @@ namespace mfront{
     out << "}\n\n";
   }
   
-  void
-  AnsysInterface::writeUMATFiniteRotationSmallStrainFunction(std::ostream& out,
+  void AnsysInterface::writeFiniteRotationSmallStrainFunction(std::ostream& out,
 							      const BehaviourDescription& mb,
 							      const std::string& name,
 							      const Hypothesis h) const
   {
     if(h==ModellingHypothesis::PLANESTRESS){
-      tfel::raise("AnsysInterface::writeUMATFiniteRotationSmallStrainFunction: "
+      tfel::raise("AnsysInterface::writeFiniteRotationSmallStrainFunction: "
 		  "plane stress is not supported yet");
     }
     const auto ps = h==ModellingHypothesis::PLANESTRESS ? "true" : "false";
     const std::string sfeh = "ansys::AnsysStandardSmallStrainStressFreeExpansionHandler";
-    this->writeUMATFunctionBase(out,mb,name,sfeh,h);
+    this->writeFunctionBase(out,mb,name,sfeh,h);
     out << "MFRONT_SHAREDOBJ void\n"
 	<< this->getFunctionNameForHypothesis(name,h);
-    writeUMATArguments(out,mb,false);
+    writeArguments(out,mb,false);
     out << "{\n"
 	<< "using namespace ansys;\n"
 	<< "AnsysReal eto[6];\n"
@@ -1393,11 +1415,9 @@ namespace mfront{
 	  << "BehaviourProfiler::FINITESTRAINPREPROCESSING);\n";
     }
     
-    out << "static_cast<void>(STRAN);\n"
-	<< "static_cast<void>(DSTRAN);\n"
-	<< "AnsysFiniteStrain::computeGreenLagrangeStrain(eto,DFGRD0,*NTENS," << ps << ");\n"
-	<< "AnsysFiniteStrain::computeGreenLagrangeStrain(deto,DFGRD1,*NTENS," << ps << ");\n"
-	<< "AnsysFiniteStrain::computeSecondPiolaKirchhoffStressFromCauchyStress(STRESS,DFGRD0,*NTENS," << ps << ",0);\n"
+    out << "AnsysFiniteStrain::computeGreenLagrangeStrain(eto,F0,*NTENS," << ps << ");\n"
+	<< "AnsysFiniteStrain::computeGreenLagrangeStrain(deto,F1,*NTENS," << ps << ");\n"
+	<< "AnsysFiniteStrain::computeSecondPiolaKirchhoffStressFromCauchyStress(STRESS,F0,*NTENS," << ps << ",0);\n"
 	<< "for(int i=0;i!=*NTENS;++i){\n"
 	<< "deto[i] -= eto[i];\n"
 	<< "}\n";
@@ -1407,25 +1427,146 @@ namespace mfront{
     out	<< name << "_base" << this->getFunctionNameForHypothesis("",h)
 	<< "(matId,elemId,kDomIntPt,kLayer,kSectPt,ldsetp,isubst,keycut,\n"
 	<< " nDirect,nShear,NTENS,NSTATV,NPROPS,TIME,DTIME,TEMP,DTEMP,\n"
-	<< " STRESS,STATEV,DDSDDE,SEDEL,SEDPL,EPSEQ,STRAN,DSTRAN,\n"
+	<< " STRESS,STATEV,DDSDDE,SEDEL,SEDPL,EPSEQ,eto,deto,\n"
 	<< " EPSPL,PROPS,coords,DROT,F0,F1,tsstif,EPSZZ,\n"
 	<< " var1,var2,var3,var4,var5,var6,var7,var8);\n"
-	<< "if(*keycut!=0){\n";
+	<< "if(*keycut==0){\n";
     if(mb.getAttribute(BehaviourData::profiling,false)){
       out << "BehaviourProfiler::Timer post_timer("
 	  << mb.getClassName() << "Profiler::getProfiler(),\n"
 	  << "BehaviourProfiler::FINITESTRAINPOSTPROCESSING);\n";
     }
-    out << "AnsysFiniteStrain::computeCauchyStressFromSecondPiolaKirchhoffStress(STRESS,DFGRD1,*NTENS," << ps << ",0);\n";
-    out << "AnsysFiniteStrain::computeAnsysTangentOperatorFromCSE(DDSDDE,CSE,DFGRD1,STRESS,*NTENS," << ps << ");\n";
-    out << "}\n";
-    out << "}\n\n";
+    out << "AnsysFiniteStrain::computeCauchyStressFromSecondPiolaKirchhoffStress(STRESS,F1,*NTENS," << ps << ",0);\n"
+	<< "AnsysFiniteStrain::computeAnsysTangentOperatorFromCSE(DDSDDE,CSE,F1,STRESS,*NTENS," << ps << ");\n"
+	<< "}\n"
+	<< "}\n\n";
+  }
+
+  void AnsysInterface::writeMieheApelLambrechtLogarithmicStrainFunction(std::ostream& out,
+									 const BehaviourDescription& mb,
+									 const std::string& name,
+									 const Hypothesis h) const
+  {
+    auto throw_if = [](const bool b,const std::string& m){
+      tfel::raise_if(b,"AnsysInterface::writeMieheApelLambrechtLogarithmicStrainFunction: "+m);
+    };
+    throw_if(h==ModellingHypothesis::PLANESTRESS,
+	     "plane stress is not supported yet");
+    const std::string sfeh = "ansys::AnsysLogarithmicStrainStressFreeExpansionHandler";
+    this->writeFunctionBase(out,mb,name,sfeh,h);
+    const auto d = [&h,&throw_if]{
+      if(h==ModellingHypothesis::TRIDIMENSIONAL){
+	return 3u;
+      }
+      throw_if(!((h==ModellingHypothesis::AXISYMMETRICAL)||
+		 (h==ModellingHypothesis::PLANESTRAIN)||
+		 (h==ModellingHypothesis::PLANESTRESS)),
+	       "unsupported modelling hypothesis");
+      return 2u;
+    }();
+    const auto n = [&h,&throw_if]{
+      if(h==ModellingHypothesis::TRIDIMENSIONAL){
+	return 6u;
+      }
+      throw_if(!((h==ModellingHypothesis::AXISYMMETRICAL)||
+		 (h==ModellingHypothesis::PLANESTRAIN)||
+		 (h==ModellingHypothesis::PLANESTRESS)),
+	       "unsupported modelling hypothesis");
+      return 4u;
+    }();
+    out << "MFRONT_SHAREDOBJ void\n"
+	<< this->getFunctionNameForHypothesis(name,h);
+    writeArguments(out,mb,false);
+    out << "{\n";
+    if(mb.getAttribute(BehaviourData::profiling,false)){
+      out << "using mfront::BehaviourProfiler;\n"
+	  << "using tfel::material::" << mb.getClassName() << "Profiler;\n"
+	  << "BehaviourProfiler::Timer total_timer(" << mb.getClassName()
+	  << "Profiler::getProfiler(),\n"
+	  << "BehaviourProfiler::TOTALTIME);\n"
+	  << "{\n"
+	  << "BehaviourProfiler::Timer pre_timer(" << mb.getClassName() << "Profiler::getProfiler(),\n"
+	  << "BehaviourProfiler::FINITESTRAINPREPROCESSING);\n";
+    }
+    out << "using namespace ansys;\n"
+	<< "using namespace tfel::math;\n"
+	<< "using namespace tfel::material;\n"
+	<< "AnsysReal eto[" << n << "];\n"
+      	<< "AnsysReal deto[" << n << "];\n"
+	<< "LogarithmicStrainHandler<" << d << ",AnsysReal> "
+	<< "lsh0(LogarithmicStrainHandlerBase::EULERIAN,\n"
+	<< "     tensor<" << d << ",AnsysReal>::buildFromFortranMatrix(F0));\n"
+	<< "LogarithmicStrainHandler<" << d << ",AnsysReal> "
+	<< "lsh1(LogarithmicStrainHandlerBase::EULERIAN,\n"
+	<< "     tensor<" << d << ",AnsysReal>::buildFromFortranMatrix(F1));\n"
+	<< "lsh0.getHenckyLogarithmicStrain(eto);\n"
+	<< "lsh1.getHenckyLogarithmicStrain(deto);\n";
+    for(unsigned short i=0;i!=n;++i){
+      out << "deto[" << i << "]-=eto[" << i << "];\n";
+    }
+    if(n>3){
+      out << "// from Voigt to Ansys' conventions\n";
+      for(unsigned short i=3;i!=n;++i){
+	out << "eto[" << i << "]/=2;\n"
+	    << "deto[" << i << "]/=2;\n";
+      }
+    }
+    if(h==ModellingHypothesis::TRIDIMENSIONAL){
+      out << "// conversion to Ansys' convention\n" 
+	  << "std::swap(eto[4],eto[5]);\n"
+	  << "std::swap(eto[4],eto[5]);\n"
+	  << "// conversion to Abaqus conventions\n"
+	  << "std::swap(STRESS[4],STRESS[5]);\n";
+    }
+    out << "lsh0.convertFromCauchyStress(STRESS);\n";
+    if(h==ModellingHypothesis::TRIDIMENSIONAL){
+      out << "std::swap(STRESS[4],STRESS[5]);\n";
+    }
+    if(mb.getAttribute(BehaviourData::profiling,false)){
+      out << "}\n";
+    }
+    out	<< name << "_base" << this->getFunctionNameForHypothesis("",h)
+	<< "(matId,elemId,kDomIntPt,kLayer,kSectPt,ldsetp,isubst,keycut,\n"
+	<< " nDirect,nShear,NTENS,NSTATV,NPROPS,TIME,DTIME,TEMP,DTEMP,\n"
+	<< " STRESS,STATEV,DDSDDE,SEDEL,SEDPL,EPSEQ,eto,deto,\n"
+	<< " EPSPL,PROPS,coords,DROT,F0,F1,tsstif,EPSZZ,\n"
+	<< " var1,var2,var3,var4,var5,var6,var7,var8);\n"
+	<< "if(*keycut==0){\n";
+    if(mb.getAttribute(BehaviourData::profiling,false)){
+      out << "BehaviourProfiler::Timer post_timer(" << mb.getClassName() << "Profiler::getProfiler(),\n"
+	  << "BehaviourProfiler::FINITESTRAINPOSTPROCESSING);\n";
+    }
+    if(h==ModellingHypothesis::TRIDIMENSIONAL){
+      out << "const auto C = AnsysTangentOperator<AnsysReal>::convert3D(DDSDDE);\n"
+	  << "stensor<3u,AnsysReal> T;\n"
+	  << "T.importTab(STRESS);\n"
+	  << "std::swap(T[4],T[5]);\n";
+    } else {
+      out << "const auto C = AnsysTangentOperator<AnsysReal>::convert2D(DDSDDE);\n"
+	  << "stensor<2u,AnsysReal> T;\n"
+	  << "T.importTab(STRESS);\n";
+    }
+    out << "const auto D = lsh1.convertToAbaqusTangentModuli(C,T);\n"
+	<< "// converting the stress\n"
+	<< "lsh1.convertToCauchyStress(STRESS);\n";
+    if(h==ModellingHypothesis::TRIDIMENSIONAL){
+      out << "std::swap(STRESS[4],STRESS[5]);\n"
+	  << "tfel::math::ST2toST2View<3u,AnsysReal> Dt(DDSDDE);\n"
+	  << "Dt=D;\n"
+	  << "AnsysTangentOperator<AnsysReal>::normalize(Dt);\n";
+    } else {
+      out << "tfel::math::ST2toST2View<2u,AnsysReal> Dt(DDSDDE);\n"
+	  << "Dt=D;\n"
+	  << "AnsysTangentOperator<AnsysReal>::normalize(Dt);\n";
+    }
+    out << "}\n"
+	<< "}\n\n";
   }
   
   void
   AnsysInterface::writeUMATxxBehaviourTypeSymbols(std::ostream& out,
-						   const std::string& name,
-						   const BehaviourDescription& mb) const
+						  const std::string& name,
+						  const BehaviourDescription& mb) const
   {
     auto throw_if = [](const bool b,const std::string& m){
       tfel::raise_if(b,"AnsysInterface::writeUMATxxBehaviourTypeSymbols: "+m);

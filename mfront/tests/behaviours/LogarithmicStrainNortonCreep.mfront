@@ -7,6 +7,8 @@
 @CalculiXFiniteStrainStrategy[calculix]            MieheApelLambrechtLogarithmicStrain;
 @AbaqusFiniteStrainStrategy[abaqus,abaqusexplicit] MieheApelLambrechtLogarithmicStrain;
 @EPXFiniteStrainStrategy[epx]                      MieheApelLambrechtLogarithmicStrain;
+@AnsysFiniteStrainStrategy[ansys]                  MieheApelLambrechtLogarithmicStrain;
+
 @Theta 1.;
 
 @MaterialProperty real A;

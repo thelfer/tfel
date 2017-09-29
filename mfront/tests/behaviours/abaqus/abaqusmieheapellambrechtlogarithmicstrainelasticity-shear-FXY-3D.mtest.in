@@ -1,0 +1,32 @@
+/*! 
+ * \file   castemmieheapellambrechtlogarithmicstrain-uniaxialloading-1-2D.mtest
+ * \brief
+ * \author Helfer Thomas
+ * \brief  4 dec. 2013
+ */
+
+@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'LOGARITHMICSTRAINELASTICITY_3D';
+@MaterialProperty<constant> 'YoungModulus'     215.e9;
+@MaterialProperty<constant> 'PoissonRatio'       0.3;
+
+@ImposedDrivingVariable 'FXX' {0:1.,1.:1.};
+@ImposedDrivingVariable 'FYY' {0:1.,1.:1.};
+@ImposedDrivingVariable 'FZZ' {0:1.,1.:1.};
+@ImposedDrivingVariable 'FXY' {0:0.,1.:0.8};
+@ImposedDrivingVariable 'FYX' 0.;
+@ImposedDrivingVariable 'FXZ' 0.;
+@ImposedDrivingVariable 'FZX' 0.;
+@ImposedDrivingVariable 'FYZ' 0.;
+@ImposedDrivingVariable 'FZY' 0.;
+
+@ExternalStateVariable 'Temperature' 293.15;
+
+@Times {0.,1 in 15};
+
+@Test<file> '@top_srcdir@/mfront/tests/behaviours/references/logarithmicstrainelasticity-shear.ref' {'SXX':7} 1.;
+@Test<file> '@top_srcdir@/mfront/tests/behaviours/references/logarithmicstrainelasticity-shear.ref' {'SYY':8} 1.;
+@Test<file> '@top_srcdir@/mfront/tests/behaviours/references/logarithmicstrainelasticity-shear.ref' {'SZZ':9} 1.;
+@Test<file> '@top_srcdir@/mfront/tests/behaviours/references/logarithmicstrainelasticity-shear.ref' {'SXY':10} 1.;
+@Test<function> {'SXZ':'0'} 1.;
+@Test<function> {'SYZ':'0'} 1.;
+

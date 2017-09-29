@@ -88,7 +88,11 @@ set(mfront_tests_SOURCES
   IsotropicVolumeSwelling
   OrthotropicSwelling
   OrthotropicSwelling2
-  AxialGrowth)
+  AxialGrowth
+  LogarithmicStrainElasticity
+  LogarithmicStrainElasticity2
+  LogarithmicStrainElasticity3
+  LogarithmicStrainNortonCreep)
 if((NOT WIN32) AND (NOT CYGWIN))
   list(APPEND mfront_tests_SOURCES
        AbaqusAxialGrowth
@@ -409,3 +413,22 @@ endif(NOT WIN32)
 test_abaqus(orthotropicsaintvenantkirchhoffelasticity-3D-sig11)
 test_abaqus(orthotropicsaintvenantkirchhoffelasticity-3D-sig11-2)
 test_abaqus(orthotropicsaintvenantkirchhoffelasticity-3D-sig11-3)
+test_abaqus(mieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-1-3D)
+test_abaqus(mieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-2-3D)
+test_abaqus(mieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-3-3D)
+test_abaqus(mieheapellambrechtlogarithmicstrainelasticity2-uniaxialloading-1-3D)
+test_abaqus(mieheapellambrechtlogarithmicstrainelasticity2-uniaxialloading-2-3D)
+test_abaqus(mieheapellambrechtlogarithmicstrainelasticity2-uniaxialloading-3-3D)
+test_abaqus(mieheapellambrechtlogarithmicstrainelasticity3-uniaxialloading-1-3D)
+test_abaqus(mieheapellambrechtlogarithmicstrainelasticity3-uniaxialloading-2-3D)
+test_abaqus(mieheapellambrechtlogarithmicstrainelasticity3-uniaxialloading-3-3D)
+test_abaqus(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-1-3D)
+test_abaqus(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-2-3D)
+test_abaqus(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-3-3D)
+test_abaqus(mieheapellambrechtlogarithmicstrainelasticity-shear-2D)
+test_abaqus(mieheapellambrechtlogarithmicstrainelasticity-shear-FXY-3D)
+test_abaqus(mieheapellambrechtlogarithmicstrainelasticity-shear-FXZ-3D)
+test_abaqus(mieheapellambrechtlogarithmicstrainelasticity-shear-FYX-3D)
+test_abaqus(mieheapellambrechtlogarithmicstrainelasticity-shear-FYZ-3D)
+test_abaqus(mieheapellambrechtlogarithmicstrainelasticity-shear-FZX-3D)
+test_abaqus(mieheapellambrechtlogarithmicstrainelasticity-shear-FZY-3D)

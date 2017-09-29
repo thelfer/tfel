@@ -402,15 +402,14 @@ namespace tfel
        * \see MechanicalBehaviourBase::BehaviourType
        * The value returned has the following meaning:
        * - 0: general behaviour
-       * - 1: small strain behaviour
-       * - 2: finite strain behaviour
+       * - 1: strain based behaviour
+       * - 2: standard finite strain behaviour
        * - 3: cohesive zone model
        * \param[in] l : name of the library
        * \param[in] f : law name
        */
-      unsigned short
-      getUMATBehaviourType(const std::string&,
-			   const std::string&);
+      unsigned short getUMATBehaviourType(const std::string&,
+					  const std::string&);
       /*!
        * \return the kinematic assumption used by the behaviour
        * \see MechanicalBehaviourBase::Kinematic
@@ -420,12 +419,13 @@ namespace tfel
        * - 2: cohesive zone model kinematic
        * - 3: standard finite strain kinematic (F-Cauchy)
        * - 4: ptest finite strain kinematic (eto-pk1)
+       * - 5: Green-Lagrange strain
+       * - 6: Miehe Apel Lambrecht logarithmic strain framework
        * \param[in] l : name of the library
        * \param[in] f : law name
        */
-      unsigned short
-      getUMATBehaviourKinematic(const std::string&,
-				const std::string&);
+      unsigned short getUMATBehaviourKinematic(const std::string&,
+					       const std::string&);
       /*!
        * \return the symmetry of the behaviour (isotropic or
        * orthotropic) If the returned value is 0, the behaviour is

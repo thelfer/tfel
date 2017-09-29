@@ -203,6 +203,17 @@ specifiy the optimisation level to be used.
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/80/>
 
+## Ticket #79: `Cyrano` interface: bug in `CyranoBehaviourHandler` class. Missing test.
+
+The problem appeared when local substepping is enabled.
+
+This feature was not tested for the `Cyrano` interface, which
+explains why this regression has not been detected so far.
+
+The problem was fixed and appropriate test were added.
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/79/>
+
 ## Ticket #78: Fix transpose of `st2tost2` when using rvalue reference
 
 The definition of the transpose of `st2tost2` was broken when the

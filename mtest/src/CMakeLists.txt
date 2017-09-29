@@ -140,6 +140,7 @@ if(HAVE_ANSYS)
 set(TFELMTest_SOURCES
     AnsysStandardBehaviour.cxx
     AnsysSmallStrainBehaviour.cxx
+    AnsysFiniteStrainBehaviour.cxx
     AnsysNormaliseTangentOperator.cxx
     ${TFELMTest_SOURCES})
 set(TFELMTest_LDADD

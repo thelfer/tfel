@@ -262,6 +262,12 @@ namespace mfront{
     throw_if(mb.getBehaviourType()!=BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR,
 	     "the cyrano interface only supports "
 	     "small strain behaviours");
+    if(mb.isStrainMeasureDefined()){
+      throw_if(mb.getStrainMeasure()!=BehaviourDescription::LINEARISED,
+	       "the cyrano interface only supports "
+	       "small strain behaviours: the only strain measured "
+	       "supported is the HPP one (linearised)");
+    }
     if(mb.getAttribute(BehaviourDescription::requiresStiffnessTensor,false)){
       throw_if(mb.getSymmetryType()!=mb.getElasticSymmetryType(),
 	       "the type of the behaviour (isotropic or orthotropic) does not "
@@ -452,6 +458,52 @@ namespace mfront{
 						      const FileDescription&) const
   {} // end of CyranoInterface::writeUMATxxAdditionalSymbols
 
+  void
+  CyranoInterface::writeUMATxxBehaviourTypeSymbols(std::ostream& out,
+						   const std::string& name,
+						   const BehaviourDescription& mb) const
+  {
+    auto throw_if = [](const bool b,const std::string& m){
+      tfel::raise_if(b,"CyranoInterface::writeUMATxxBehaviourTypeSymbols: "+m);
+    };
+    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
+	<< "_BehaviourType = " ;
+    if(mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
+      if(mb.isStrainMeasureDefined()){
+	throw_if(mb.getStrainMeasure()!=BehaviourDescription::LINEARISED,
+		 "the cyrano interface only supports "
+		 "small strain behaviours: the only strain measured "
+		 "supported is the HPP one (linearised)");
+      }
+      out << "1u;\n\n";
+    } else {
+      throw_if(true,"unsupported behaviour type");
+    }
+  } // end of CyranoInterface::writeUMATxxBehaviourTypeSymbols
+
+  void
+  CyranoInterface::writeUMATxxBehaviourKinematicSymbols(std::ostream& out,
+						   const std::string& name,
+						   const BehaviourDescription& mb) const
+  {
+    auto throw_if = [](const bool b,const std::string& m){
+      tfel::raise_if(b,"CyranoInterface::writeUMATxxBehaviourKinematicSymbols: "+m);
+    };
+    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
+	<< "_BehaviourKinematic = " ;
+    if(mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
+      if(mb.isStrainMeasureDefined()){
+	throw_if(mb.getStrainMeasure()!=BehaviourDescription::LINEARISED,
+		 "the cyrano interface only supports "
+		 "small strain behaviours: the only strain measured "
+		 "supported is the HPP one (linearised)");
+      }
+      out << "1u;\n\n";
+    } else {
+      throw_if(true,"unsupported behaviour type");
+    }
+  } // end of CyranoInterface::writeUMATxxBehaviourKinematicSymbols
+  
   void
   CyranoInterface::writeCyranoFunctionDeclaration(std::ostream& out,
 						  const std::string& name) const
@@ -710,8 +762,7 @@ namespace mfront{
     out << "}; // end of class CyranoTraits\n\n";
   } // end of CyranoInterface::writeCyranoBehaviourTraits
 
-  std::string
-  CyranoInterface::getModellingHypothesisTest(const Hypothesis h) const
+  std::string CyranoInterface::getModellingHypothesisTest(const Hypothesis h) const
   {
     std::ostringstream test;
     test << "*NDI==" << this->getModellingHypothesisIdentifier(h);

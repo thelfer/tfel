@@ -592,7 +592,7 @@ namespace mfront{
     virtual void
     writeUMATxxBehaviourTypeSymbols(std::ostream&,
 				    const std::string&,
-				    const BehaviourDescription&) const;
+				    const BehaviourDescription&) const = 0;
     /*!
      * \param[in] out  : output file
      * \param[in] name : name of the behaviour as defined by interface
@@ -603,7 +603,7 @@ namespace mfront{
     virtual void
     writeUMATxxBehaviourKinematicSymbols(std::ostream&,
 					 const std::string&,
-					 const BehaviourDescription&) const;
+					 const BehaviourDescription&) const = 0;
     /*!
      * \brief write the symbols associated with the source file
      * \param[in] out  : output file

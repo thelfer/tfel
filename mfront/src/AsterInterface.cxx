@@ -796,6 +796,61 @@ namespace mfront{
 						     const FileDescription&) const
   {} // end of AsterInterface::writeUMATxxAdditionalSymbols
 
+  void
+  AsterInterface::writeUMATxxBehaviourTypeSymbols(std::ostream& out,
+						   const std::string& name,
+						   const BehaviourDescription& mb) const
+  {
+    auto throw_if = [](const bool b,const std::string& m){
+      tfel::raise_if(b,"AsterInterface::writeUMATxxBehaviourTypeSymbols: "+m);
+    };
+    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
+	<< "_BehaviourType = " ;
+    if(mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
+      out << "1u;\n\n";
+    } else if(mb.getBehaviourType()==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR){
+      out << "2u;\n\n";
+    } else if(mb.getBehaviourType()==BehaviourDescription::COHESIVEZONEMODEL){
+      out << "3u;\n\n";
+    } else {
+      throw_if(true,"unsupported behaviour type");
+    }
+  } // end of AsterInterface::writeUMATxxBehaviourTypeSymbols
+
+  void
+  AsterInterface::writeUMATxxBehaviourKinematicSymbols(std::ostream& out,
+						   const std::string& name,
+						   const BehaviourDescription& mb) const
+  {
+    auto throw_if = [](const bool b,const std::string& m){
+      tfel::raise_if(b,"AsterInterface::writeUMATxxBehaviourKinematicSymbols: "+m);
+    };
+    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
+	<< "_BehaviourKinematic = " ;
+    if(mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
+      if(mb.isStrainMeasureDefined()){
+	const auto fs = mb.getStrainMeasure();
+	if(fs==BehaviourDescription::LINEARISED){
+	  out << "1u;\n\n";
+	} else if (fs==BehaviourDescription::GREENLAGRANGE){
+	  out << "5u;\n\n";
+	} else if (fs==BehaviourDescription::HENCKY){
+	  out << "6u;\n\n";
+	} else {
+	  out << "0u;\n\n";
+	}
+      } else {
+	out << "0u;\n\n";
+      }
+    } else if(mb.getBehaviourType()==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR){
+      out << "3u;\n\n";
+    } else if(mb.getBehaviourType()==BehaviourDescription::COHESIVEZONEMODEL){
+      out << "2u;\n\n";
+    } else {
+      throw_if(true,"unsupported behaviour type");
+    }
+  } // end of AsterInterface::writeUMATxxBehaviourKinematicSymbols
+  
   void AsterInterface::writeUMATxxSpecificSymbols(std::ostream& out,
 						  const std::string& name,
 						  const BehaviourDescription& bd,

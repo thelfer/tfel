@@ -153,6 +153,11 @@ namespace mtest
     for(AnsysInt i=3;i!=static_cast<unsigned short>(ntens);++i){
       us(i) /= sqrt2;
     }
+    if(h==ModellingHypothesis::TRIDIMENSIONAL){
+      std::swap(ue0[4],ue0[5]);
+      std::swap(ude[4],ude[5]);
+      std::swap(us[4],us[5]);
+    }
     const AnsysInt matId = 0;
     const AnsysInt elemId = 0;
     const AnsysInt kDomIntPt = 0;
@@ -246,6 +251,9 @@ namespace mtest
       // turning stresses in TFEL conventions
       for(AnsysInt i=3;i!=static_cast<unsigned short>(ntens);++i){
 	us[i] *= sqrt2;
+      }
+      if(h==ModellingHypothesis::TRIDIMENSIONAL){
+	std::swap(us[4],us[5]);
       }
       copy(us.begin(),us.begin()+s.s1.size(),s.s1.begin());
     }

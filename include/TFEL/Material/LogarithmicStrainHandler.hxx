@@ -325,6 +325,24 @@ namespace tfel
       void
       convertToCauchyStressTruesdellRateTangentModuli(stress *const,
 						      const stress* const) const;
+      /*!
+       * \return the moduli used by the Abaqus solver
+       * \param[in] Ks: tangent moduli in the logarithmic space
+       * \param[in]  T: dual of the logarithmic strain
+       */
+      TangentOperator
+      convertToAbaqusTangentModuli(const TangentOperator&,
+				   const StressStensor&) const;
+      /*!
+       * \param[in,out] K: On input, the consistent tangent operator
+       * in the logarithmic space. On output, the moduli used by
+       * abaqus. Both are expressed in the Abaqus/Standard
+       * conventions.
+       * \param[in] T: dual of the logarithmic strain in
+       * Abaqus/Standard conventions.
+       */
+      void convertToAbaqusTangentModuli(stress *const,
+					const stress* const) const;
     private:
       /*!
        * \brief compute the N tensors
@@ -527,6 +545,24 @@ namespace tfel
       void
       convertToCauchyStressTruesdellRateTangentModuli(stress *const,
 						      const stress* const) const;
+      /*!
+       * \return the moduli used by the Abaqus solver
+       * \param[in] Ks: tangent moduli in the logarithmic space
+       * \param[in]  T: dual of the logarithmic strain
+       */
+      TangentOperator
+      convertToAbaqusTangentModuli(const TangentOperator&,
+				   const StressStensor&) const;
+      /*!
+       * \param[in,out] K: On input, the consistent tangent operator
+       * in the logarithmic space. On output, the moduli used by
+       * abaqus. Both are expressed in the Abaqus/Standard
+       * conventions.
+       * \param[in] T: dual of the logarithmic strain in
+       * Abaqus/Standard conventions.
+       */
+      void convertToAbaqusTangentModuli(stress *const,
+					const stress* const) const;
     private:
       //! \return true if all eigenvalues are equal
       static bool areEigenValuesEqual(const tfel::math::tvector<3u,real>&);

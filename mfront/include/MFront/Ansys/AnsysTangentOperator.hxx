@@ -44,6 +44,18 @@ namespace ansys
   struct AnsysTangentOperator
   {
     /*!
+     * \brief convert to TFEL object
+     * \param[in] D: ansys tangent operatorx
+     */
+    static tfel::math::st2tost2<2u,real>
+    convert2D(const real* const);
+    /*!
+     * \brief convert to TFEL object
+     * \param[in] D: ansys tangent operatorx
+     */
+    static tfel::math::st2tost2<3u,real>
+    convert3D(const real* const);
+    /*!
      * \brief normalize the tangent operator in 1D
      * \param[in] Dt : tangent operator
      */

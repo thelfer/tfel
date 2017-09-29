@@ -128,6 +128,7 @@ endif
 if HAVE_ANSYS
 libTFELMTest_la_SOURCES += AnsysStandardBehaviour.cxx        \
 			   AnsysSmallStrainBehaviour.cxx     \
+			   AnsysFiniteStrainBehaviour.cxx    \
 			   AnsysNormaliseTangentOperator.cxx
 libTFELMTest_la_LIBADD  += -L$(top_builddir)/mfront/src -lAnsysInterface
 endif

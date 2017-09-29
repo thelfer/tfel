@@ -145,11 +145,10 @@ namespace mfront{
      * \param[in] mb   : behaviour description
      * \param[in] fd   : file description
      */
-    virtual void
-    writeUMATxxSpecificSymbols(std::ostream&,
-			       const std::string&,
-			       const BehaviourDescription&,
-			       const FileDescription&) const override;
+    void writeUMATxxSpecificSymbols(std::ostream&,
+				    const std::string&,
+				    const BehaviourDescription&,
+				    const FileDescription&) const override;
     /*!
      * \param[in] out : output file
      */

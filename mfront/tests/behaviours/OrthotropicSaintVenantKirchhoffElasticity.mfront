@@ -13,6 +13,8 @@
     4.8e+10,1.16418e+11,7.8e+10};
 
 @PredictionOperator<DS_DEGL>{
+  static_cast<void>(smt); // suppression d'un warning : la matrice
+			  // tangente est toujours l'élastique
   Dt = D;
 }
 @Integrator{

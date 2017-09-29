@@ -96,12 +96,31 @@ namespace mfront{
      * \param[in] mb   : behaviour description
      * \param[in] fd   : file description
      */
-    virtual void
-    writeUMATxxAdditionalSymbols(std::ostream&,
-				 const std::string&,
-				 const Hypothesis,
-				 const BehaviourDescription&,
-				 const FileDescription&) const override;
+    void  writeUMATxxAdditionalSymbols(std::ostream&,
+				       const std::string&,
+				       const Hypothesis,
+				       const BehaviourDescription&,
+				       const FileDescription&) const override;
+    /*!
+     * \param[in] out  : output file
+     * \param[in] name : name of the behaviour as defined by interface
+     *                   (generally taking into account the material
+     *                    and the behaviour name)
+     * \param[in] mb   : behaviour description
+     */
+    void writeUMATxxBehaviourTypeSymbols(std::ostream&,
+					 const std::string&,
+					 const BehaviourDescription&) const override;
+    /*!
+     * \param[in] out  : output file
+     * \param[in] name : name of the behaviour as defined by interface
+     *                   (generally taking into account the material
+     *                    and the behaviour name)
+     * \param[in] mb   : behaviour description
+     */
+    void writeUMATxxBehaviourKinematicSymbols(std::ostream&,
+					      const std::string&,
+					      const BehaviourDescription&) const override;
     /*!
      * \param[in] out  : output file
      * \param[in] name : name of the behaviour as defined by interface
@@ -250,28 +269,6 @@ namespace mfront{
 				     const Hypothesis,
 				     const BehaviourDescription&) const override;
     /*!
-     * \param[in] out  : output file
-     * \param[in] name : name of the behaviour as defined by interface
-     *                   (generally taking into account the material
-     *                    and the behaviour name)
-     * \param[in] mb   : behaviour description
-     */
-    virtual void
-    writeUMATxxBehaviourTypeSymbols(std::ostream&,
-				    const std::string&,
-				    const BehaviourDescription&) const override;
-    /*!
-     * \param[in] out  : output file
-     * \param[in] name : name of the behaviour as defined by interface
-     *                   (generally taking into account the material
-     *                    and the behaviour name)
-     * \param[in] mb   : behaviour description
-     */
-    virtual void
-    writeUMATxxBehaviourKinematicSymbols(std::ostream&,
-					 const std::string&,
-					 const BehaviourDescription&) const override;
-    /*!
      * \brief write the call to the base function
      * \param[in] out:  output file
      * \param[in] mb:   mechanical behaviour description
@@ -282,11 +279,50 @@ namespace mfront{
      *                  expansion
      * \param[in] h:    modelling hypothesis
      */
-    virtual void writeUMATFunctionBase(std::ostream&,
-				       const BehaviourDescription&,
-				       const std::string&,
-				       const std::string&,
-				       const Hypothesis) const;
+    virtual void writeFunctionBase(std::ostream&,
+				   const BehaviourDescription&,
+				   const std::string&,
+				   const std::string&,
+				   const Hypothesis) const;
+    /*!
+     * \brief write the call to the base function
+     * \param[in] out:  output file
+     * \param[in] mb:   mechanical behaviour description
+     * \param[in] name: name of the behaviour as defined by interface
+     *                  (generally taking into account the material
+     *                  and the behaviour name)
+     * \param[in] h:    modelling hypothesis
+     */
+    virtual void writeSmallStrainFunction(std::ostream&,
+					  const BehaviourDescription&,
+					  const std::string&,
+					  const Hypothesis) const;
+    /*!
+     * \brief write the call to the base function
+     * \param[in] out:  output file
+     * \param[in] mb:   mechanical behaviour description
+     * \param[in] name: name of the behaviour as defined by interface
+     *                  (generally taking into account the material
+     *                  and the behaviour name)
+     * \param[in] h:    modelling hypothesis
+     */
+    virtual void writeFiniteStrainFunction(std::ostream&,
+					   const BehaviourDescription&,
+					   const std::string&,
+					   const Hypothesis) const;
+    /*!
+     * \brief write the call to the base function
+     * \param[in] out:  output file
+     * \param[in] mb:   mechanical behaviour description
+     * \param[in] name: name of the behaviour as defined by interface
+     *                  (generally taking into account the material
+     *                  and the behaviour name)
+     * \param[in] h:    modelling hypothesis
+     */
+    virtual void writeFiniteRotationSmallStrainFunction(std::ostream&,
+							const BehaviourDescription&,
+							const std::string&,
+							const Hypothesis) const;    
     /*!
      * \brief write the call to the base function
      * \param[in] out:  output file
@@ -297,38 +333,10 @@ namespace mfront{
      * \param[in] h:    modelling hypothesis
      */
     virtual void
-    writeUMATSmallStrainFunction(std::ostream&,
-				 const BehaviourDescription&,
-				 const std::string&,
-				 const Hypothesis) const;
-    /*!
-     * \brief write the call to the base function
-     * \param[in] out:  output file
-     * \param[in] mb:   mechanical behaviour description
-     * \param[in] name: name of the behaviour as defined by interface
-     *                  (generally taking into account the material
-     *                  and the behaviour name)
-     * \param[in] h:    modelling hypothesis
-     */
-    virtual void
-    writeUMATFiniteStrainFunction(std::ostream&,
-				  const BehaviourDescription&,
-				  const std::string&,
-				  const Hypothesis) const;
-    /*!
-     * \brief write the call to the base function
-     * \param[in] out:  output file
-     * \param[in] mb:   mechanical behaviour description
-     * \param[in] name: name of the behaviour as defined by interface
-     *                  (generally taking into account the material
-     *                  and the behaviour name)
-     * \param[in] h:    modelling hypothesis
-     */
-    virtual void
-    writeUMATFiniteRotationSmallStrainFunction(std::ostream&,
-					       const BehaviourDescription&,
-					       const std::string&,
-					       const Hypothesis) const;    
+    writeMieheApelLambrechtLogarithmicStrainFunction(std::ostream&,
+						     const BehaviourDescription&,
+						     const std::string&,
+						     const Hypothesis) const;    
     //! \return true if the interface handles external state variables
     virtual bool areExternalStateVariablesSupported() const override;
     /*!
