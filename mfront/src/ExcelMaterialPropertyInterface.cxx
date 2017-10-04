@@ -81,15 +81,14 @@ namespace mfront
     }
   } // end of readExcelInterface
     
-  std::string
-  ExcelMaterialPropertyInterface::getName()
+  std::string ExcelMaterialPropertyInterface::getName()
   {
     return "excel";
   }
 
   ExcelMaterialPropertyInterface::~ExcelMaterialPropertyInterface() = default;
   
-  std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
+  std::pair<bool,ExcelMaterialPropertyInterface::tokens_iterator>
   ExcelMaterialPropertyInterface::treatKeyword(const std::string& k,
 					       const std::vector<std::string>& i,
 					       tokens_iterator current,

@@ -84,6 +84,11 @@ namespace calculix
     static void exe(real *const DDSDDE,
 		    const real* const D)
     {
+      // In CalculiX, the stiffness tensor is written using Voigt
+      // notations
+      // (sxx ... sxy ... ) = D. (exx ... 2exy ...)
+      // This is *not* consistent with the representation of tensors
+      // This can be very misleading
       TFEL_CONSTEXPR const auto one_half   = real(1)/real(2);
       TFEL_CONSTEXPR const auto one_fourth = real(1)/real(4);
       TFEL_CONSTEXPR const auto hicste     = tfel::math::Cste<real>::isqrt2/2;

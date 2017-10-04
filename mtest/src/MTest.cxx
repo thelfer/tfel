@@ -617,11 +617,20 @@ namespace mtest
 					   const real dt,
 					   const StiffnessMatrixType mt) const{
     using namespace tfel::material;
-    auto display = [](const tfel::math::matrix<real>& m){
+    auto display = [](const tfel::math::matrix<real>& m,
+		      const size_type mi,
+		      const size_type mj){
+      using tfel::utilities::TerminalColors;
       auto& os = mfront::getLogStream();
       for(size_type i=0;i!=m.getNbRows();++i){
 	for(size_type j=0;j!=m.getNbCols();){
-	  os << m(i,j);
+	  if((i==mi)&&(j==mj)){
+	    os.write(TerminalColors::Red,sizeof(TerminalColors::Red));
+	    os << m(i,j);
+	    os.write(TerminalColors::Reset,sizeof(TerminalColors::Reset));
+	  } else {
+	    os << m(i,j);
+	  }
 	  if(++j!=m.getNbCols()){
 	    os << " ";
 	  }
@@ -696,19 +705,27 @@ namespace mtest
       bwk.nivs.swap(s.iv1);
       if(ok){
 	real merr(0);
+	size_type mi=0;
+	size_type mj=0;
 	for(size_type i=0;i!=nth;++i){
 	  for(size_type j=0;j!=ndv;++j){
-	    merr = std::max(merr,std::abs(bwk.k(i,j)-bwk.nk(i,j)));
+	    const auto err = std::abs(bwk.k(i,j)-bwk.nk(i,j));
+	    if(err>merr){
+	      merr=err;
+	      mi=i;
+	      mj=j;
+	    }
 	  }
 	}
 	if(merr>this->toeps){
 	  auto& log = mfront::getLogStream();
 	  log << "Compaison to numerical jacobian failed "
-	      << "(error : " << merr << ", criterium " << this->toeps << ").\n"
+	      << "(error : " << merr << " for (" << mi << ","
+	      << mj << "), criterium " << this->toeps << ").\n"
 	      << "Tangent operator returned by the behaviour : \n";
-	  display(bwk.k);
+	  display(bwk.k,mi,mj);
 	  log << "Numerical tangent operator (perturbation value : " << this-> pv << ") : \n";
-	  display(bwk.nk);
+	  display(bwk.nk,mi,mj);
 	}
       } else {
 	auto& log = mfront::getLogStream();

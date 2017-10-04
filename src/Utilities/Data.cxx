@@ -50,9 +50,11 @@ namespace tfel{
 	return true;
       };
       if(p->value=="true"){
+	++p;
 	return Data(true);
       }
       if(p->value=="false"){
+	++p;
 	return Data(false);
       }
       if(p->flag==Token::String){

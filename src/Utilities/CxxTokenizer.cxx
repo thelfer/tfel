@@ -885,19 +885,17 @@ namespace tfel{
       this->comments.clear();
     } // end of CxxTokenizer::clear
 
-    void
-    CxxTokenizer::checkNotEndOfLine(const std::string& method,
-				    const_iterator& p, 
-				    const const_iterator pe)
+    void CxxTokenizer::checkNotEndOfLine(const std::string& method,
+					 const_iterator& p, 
+					 const const_iterator pe)
     {
       raise_if(p==pe,method+" : unexpected end of line");
     } // end of CxxTokenizer::checkNotEndOfLine
     
-    void
-    CxxTokenizer::checkNotEndOfLine(const std::string& method,
-				    const std::string& error,
-				    const_iterator& p, 
-				    const const_iterator pe)
+    void CxxTokenizer::checkNotEndOfLine(const std::string& method,
+					 const std::string& error,
+					 const_iterator& p, 
+					 const const_iterator pe)
     {
       if(p==pe){
 	auto msg = method+": unexpected end of line";
@@ -919,9 +917,8 @@ namespace tfel{
       ++p;
     } // end of CxxTokenizer::readSpecifiedToken
 
-    std::string
-    CxxTokenizer::readString(const_iterator& p, 
-			     const const_iterator pe)
+    std::string CxxTokenizer::readString(const_iterator& p, 
+					 const const_iterator pe)
     {
       CxxTokenizer::checkNotEndOfLine("CxxTokenizer::readString","",p,pe);
       raise_if(p->flag!=Token::String,

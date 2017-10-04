@@ -32,10 +32,16 @@
 
 namespace mfront{
 
+  const char* const FiniteStrainSingleCrystalBrick::shiftedDeformationGradientOption =
+    "shifted_elastic_deformation_gradient";
+
+  const char* const FiniteStrainSingleCrystalBrick::shiftedDeformationGradientAttribute =
+    "FiniteStrainSingleCrystalBrick::shifted_elastic_deformation_gradient";
+
   FiniteStrainSingleCrystalBrick::FiniteStrainSingleCrystalBrick(AbstractBehaviourDSL& dsl_,
 								 BehaviourDescription& mb_,
 								 const Parameters& p,
-								 const DataMap&)
+								 const DataMap& d)
     : BehaviourBrickBase(dsl_,mb_)
   {
     auto throw_if = [](const bool b,const std::string& m){
@@ -69,15 +75,36 @@ namespace mfront{
     throw_if(!this->bd.getBehaviourData(h).getIntegrationVariables().empty(),
 	     "no integration variable shall be declared before declaring the "
 	     "'FiniteStrainSingleCrystal' brick");
+    // options
+    this->checkOptionsNames(d,{FiniteStrainSingleCrystalBrick::shiftedDeformationGradientOption},
+			    this->getName());
+    if(d.count(FiniteStrainSingleCrystalBrick::shiftedDeformationGradientOption)){
+      const auto on = std::string(FiniteStrainSingleCrystalBrick::shiftedDeformationGradientOption);
+      const auto an = std::string(FiniteStrainSingleCrystalBrick::shiftedDeformationGradientAttribute);
+      const auto& b = d.at(on);
+      throw_if(!b.is<bool>(),"invalid type for option '"+on+"'");
+      throw_if(this->bd.hasAttribute(an),
+	       "attribute '"+an+"' already used");
+      this->bd.setAttribute(an,b.get<bool>(),false);
+    }
+    // elastic strain
     VariableDescription eel("StrainStensor","eel",1u,0u);
     eel.description = "elastic strain";
     this->bd.addIntegrationVariable(h,eel,BehaviourData::UNREGISTRED);
     this->bd.setGlossaryName(h,"eel",tfel::glossary::Glossary::ElasticStrain);
     // declaring the elastic part of the deformation gradient
     VariableDescription Fe("DeformationGradientTensor","Fe",1u,0u);
-    Fe.description = "elastic part of the deformation gradient";
+    if(this->bd.getAttribute<bool>(FiniteStrainSingleCrystalBrick::shiftedDeformationGradientAttribute,false)){
+      Fe.description = "shifted elastic part of the deformation gradient";
+    } else {
+      Fe.description = "elastic part of the deformation gradient";
+    }
     this->bd.addAuxiliaryStateVariable(h,Fe,BehaviourData::UNREGISTRED);
-    this->bd.setEntryName(h,"Fe","ElasticPartOfTheDeformationGradient");
+    if(this->bd.getAttribute<bool>(FiniteStrainSingleCrystalBrick::shiftedDeformationGradientAttribute,false)){
+      this->bd.setEntryName(h,"Fe","ShiftedElasticPartOfTheDeformationGradient");
+    } else {
+      this->bd.setEntryName(h,"Fe","ElasticPartOfTheDeformationGradient");
+    }
     // additional includes
     this->bd.appendToIncludes("#include\"TFEL/Math/General/CubicRoots.hxx\"");
     // set that the tangent operator is computed
@@ -147,7 +174,10 @@ namespace mfront{
     const auto cn = this->bd.getClassName()+"SlipSystems<real>";
     // local data values initialisation
     CodeBlock init;
-    init.code =
+    if(this->bd.getAttribute<bool>(FiniteStrainSingleCrystalBrick::shiftedDeformationGradientAttribute,false)){
+      init.code = "this->Fe += DeformationGradientTensor::Id();\n";
+    }
+    init.code +=
       "this->fsscb_data.dF    = (this->F1)*invert(this->F0);\n"
       "this->fsscb_data.Fe0   = this->Fe;\n"
       "this->fsscb_data.Fe_tr = (this->fsscb_data.dF)*(this->fsscb_data.Fe0);\n"
@@ -203,6 +233,10 @@ namespace mfront{
       "this->Fe = (this->fsscb_data.Fe_tr)*(this->fsscb_data.inv_dFp);\n"
       "this->fsscb_data.S = (this->D)*(this->eel);\n"
       "this->sig = convertSecondPiolaKirchhoffStressToCauchyStress(this->fsscb_data.S,this->Fe);\n";
+    if(this->bd.getAttribute<bool>(FiniteStrainSingleCrystalBrick::shiftedDeformationGradientAttribute,false)){
+      fs.code +=
+	"this->Fe -= DeformationGradientTensor::Id();\n";
+    }
     fs.members  = {"sig","Fe","D"};
     this->bd.setCode(h,BehaviourData::ComputeFinalStress,
     		     fs,BehaviourData::CREATE,
@@ -211,11 +245,24 @@ namespace mfront{
     CodeBlock to;
     to.code = 
       "static_cast<void>(smt);\n"
-      "const auto& ss = "+cn+"::getSlidingSystems();\n"
-      "const auto fsscb_dC_dFe = t2tost2<N,real>::dCdF(this->Fe);\n"
-      "const auto fsscb_dS_dFe = eval((this->D)*fsscb_dC_dFe/2);\n"
-      "const auto fsscb_dtau_dFe = "
-      "computePushForwardDerivative(fsscb_dS_dFe,this->fsscb_data.S,this->Fe); \n"
+      "const auto& ss = "+cn+"::getSlidingSystems();\n";
+    if(this->bd.getAttribute<bool>(FiniteStrainSingleCrystalBrick::shiftedDeformationGradientAttribute,false)){
+      to.code += "const auto fsscb_dC_dFe = t2tost2<N,real>::dCdF(this->Fe);\n";
+    } else {
+      to.code += "const auto fsscb_dC_dFe = t2tost2<N,real>::dCdF(this->Fe+DeformationGradientTensor::Id());\n";
+    }
+    to.code += 
+      "const auto fsscb_dS_dFe = eval((this->D)*fsscb_dC_dFe/2);\n";
+    if(this->bd.getAttribute<bool>(FiniteStrainSingleCrystalBrick::shiftedDeformationGradientAttribute,false)){
+      to.code += 
+	"const auto fsscb_dtau_dFe = "
+	"computePushForwardDerivative(fsscb_dS_dFe,this->fsscb_data.S,this->Fe+DeformationGradientTensor::Id());\n";
+    } else {
+      to.code += 
+	"const auto fsscb_dtau_dFe = "
+	"computePushForwardDerivative(fsscb_dS_dFe,this->fsscb_data.S,this->Fe);\n";
+    }
+    to.code +=       
       "const auto fsscb_dFe_dDF_tot = "
       "t2tot2<N,real>::tpld(this->fsscb_data.inv_dFp,"
       "                     t2tot2<N,real>::tpld(this->fsscb_data.Fe0));\n"

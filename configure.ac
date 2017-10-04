@@ -612,6 +612,7 @@ AC_OUTPUT([debug.sh
        	   docs/gallery/behaviours/plasticity/Makefile
        	   docs/gallery/behaviours/viscoelasticity/Makefile
        	   docs/gallery/behaviours/viscoplasticity/Makefile
+       	   docs/gallery/behaviours/finitestrainsinglecrystal/Makefile
 	   docs/doxygen/Makefile
 	   cmake/Makefile
 	   cmake/modules/Makefile

@@ -56,6 +56,7 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./isotropicplasticityamstrongfrederickinematichardening.md \
 	   ./singlecrystal.md                                         \
 	   ./finitestrainsinglecrystal.md                             \
+	   ./finitestrainsinglecrystal-huang.md                       \
 	   ./phasefield.md				              \
 	   ./pandoc-crossref.yaml                                     \
 	   ./TODO.md						      \
