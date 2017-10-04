@@ -352,6 +352,8 @@ namespace mfront{
 	      cout << "Hexagonal closed-packed\n";
 	    } else if(s==CrystalStructure::FCC){
 	      cout << "Face-centered cubic\n";
+	    } else if(s==CrystalStructure::BCC){
+	      cout << "Body-centered cubic\n";
 	    } else {
 	      tfel::raise("unsupported crystal structure");
 	    }
