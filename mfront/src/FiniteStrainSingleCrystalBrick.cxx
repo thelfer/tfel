@@ -247,9 +247,9 @@ namespace mfront{
       "static_cast<void>(smt);\n"
       "const auto& ss = "+cn+"::getSlidingSystems();\n";
     if(this->bd.getAttribute<bool>(FiniteStrainSingleCrystalBrick::shiftedDeformationGradientAttribute,false)){
-      to.code += "const auto fsscb_dC_dFe = t2tost2<N,real>::dCdF(this->Fe);\n";
-    } else {
       to.code += "const auto fsscb_dC_dFe = t2tost2<N,real>::dCdF(this->Fe+DeformationGradientTensor::Id());\n";
+    } else {
+      to.code += "const auto fsscb_dC_dFe = t2tost2<N,real>::dCdF(this->Fe);\n";
     }
     to.code += 
       "const auto fsscb_dS_dFe = eval((this->D)*fsscb_dC_dFe/2);\n";
