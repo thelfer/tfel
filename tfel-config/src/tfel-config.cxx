@@ -382,19 +382,19 @@ int main(const int argc,const char *const *const argv)
     },"request flags for all librairies.");
   registerCallBack("--version",&treatVersion,
 		   "print tfel version and svn revision.");
-  registerCallBack("--major-version",[]{
+  registerCallBack("--major-number",[]{
       const auto v = tokenize(VERSION,'.');
       if(v.size()>=1){
 	std::cout << v[0] << " ";
       }
     },"print tfel major version.");
-  registerCallBack("--minor-version",[]{
+  registerCallBack("--minor-number",[]{
       const auto v = tokenize(VERSION,'.');
       if(v.size()>=2){
 	std::cout << v[1] << " ";
       }
     },"print tfel minor version.");
-  registerCallBack("--revision-version",[]{
+  registerCallBack("--revision-number",[]{
       const auto v = tokenize(VERSION,'.');
       if(v.size()>=3){
 	std::cout << v[2] << " ";
