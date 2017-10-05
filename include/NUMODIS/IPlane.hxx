@@ -168,12 +168,16 @@ namespace numodis
 
   };
 
+  TFELNUMODIS_VISIBILITY_EXPORT
   bool operator==(const IPlane& lhs,const IPlane& rhs);
 
+  TFELNUMODIS_VISIBILITY_EXPORT
   bool operator!=(const IPlane& lhs,const IPlane& rhs);
 
+  TFELNUMODIS_VISIBILITY_EXPORT
   bool operator<(const IPlane& lhs,const IPlane& rhs);
 
+  TFELNUMODIS_VISIBILITY_EXPORT
   int PlaneCoincide(const IPlane& lhs,const IPlane& rhs);
 
 } // end of namespace numodis

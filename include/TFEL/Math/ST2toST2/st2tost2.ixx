@@ -486,8 +486,8 @@ namespace tfel{
 		  const TensorType& F)
     {
       st2tost2<ST2toST2Traits<ST2toST2Type>::dime,
-      typename ComputeBinaryResult<ST2toST2NumType<ST2toST2Type>,
-      TensorNumType<TensorType>,OpMult>::Result> r;
+               BinaryOperationResult<ST2toST2NumType<ST2toST2Type>,
+                                     TensorNumType<TensorType>,OpMult>> r;
       push_forward(r,C,F);
       return r;
     }

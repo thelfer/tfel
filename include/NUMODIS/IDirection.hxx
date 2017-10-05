@@ -138,8 +138,10 @@ namespace numodis
 
   };
 
+  TFELNUMODIS_VISIBILITY_EXPORT
   bool operator==(const IDirection& lhs,const IDirection& rhs);
 
+  TFELNUMODIS_VISIBILITY_EXPORT
   bool operator!=(const IDirection& lhs,const IDirection& rhs);
 
 } // end of namespace numodis

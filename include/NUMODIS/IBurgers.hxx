@@ -158,8 +158,9 @@ namespace numodis
 
   };
 
+  TFELNUMODIS_VISIBILITY_EXPORT
   int Coincide(const IBurgers& b1,
-	       const IBurgers& b2);
+	           const IBurgers& b2);
 
 } // end of namespace numodis
   

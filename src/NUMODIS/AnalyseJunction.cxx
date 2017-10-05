@@ -145,7 +145,7 @@ namespace numodis
 	      continue;
 	    }
 
-	  double stress;
+	  double stress = 0;
 	  try
 	    {
 	      stress = tn.computeCriticalStress(anglerad,0.001,0.00001,20);

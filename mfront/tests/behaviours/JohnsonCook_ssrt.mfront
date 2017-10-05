@@ -60,7 +60,7 @@
 @InitLocalVariables{
   // Product of minimum strain rate by time increment
   e0Dot_dt = e0Dot*dt;
-  brcp     = 1.e6*beta/(rho*cp);
+  brcp     = real(1.e6)*beta/(rho*cp);
   itmt0    = 1/(thetam-theta0);
   Tn       = T0 + dTg;
   // Elastic stress preediction and equivalent elastic stress
@@ -98,13 +98,13 @@
     Kc  += C*log(dp/e0Dot_dt);
     idp  = 1/dp;
   }
-  const auto Tpow      = pow(rT_,m-1.);
-  const auto ppow      = B*pow(p_,n-1.);
+  const auto Tpow      = pow(rT_,m-1);
+  const auto ppow      = B*pow(p_,n-1);
   real       rp        = A+p_*ppow;
   const auto Kr        = m*Kt*rp*Kc*Tpow*itmt0;
   const auto drp_ddeel = Kr*dp;
-  const auto drp_ddp   = (theta*n*ppow + rp*C*idp)*(1.-rT_*Tpow) - Kr*seq;
-  rp       *= Kc*(1.-rT_*Tpow);
+  const auto drp_ddp   = (theta*n*ppow + rp*C*idp)*(1-rT_*Tpow) - Kr*seq;
+  rp       *= Kc*(1-rT_*Tpow);
 
   fp        = (seq-rp)/young;
   dfp_ddeel = 2*(mu/young)*theta*(1+drp_ddeel)*n_;
@@ -116,5 +116,5 @@
 }
 
 @UpdateAuxiliaryStateVariables{
-  dTg += 1.e6*beta/(rho*cp)*sigmaeq(deviator(sig))*dp;
+  dTg += real(1.e6)*beta/(rho*cp)*sigmaeq(deviator(sig))*dp;
 }

@@ -96,7 +96,7 @@ Temp.setEntryName("Adiabatic_heating_dT");
 }
 
 @ComputeStress{
-  sig = lambda*trace(eel)*Stensor::Id()+2.*mu*eel;
+  sig = lambda*trace(eel)*Stensor::Id()+2*mu*eel;
 }
 
 @Integrator{
@@ -193,19 +193,19 @@ Temp.setEntryName("Adiabatic_heating_dT");
   fp         = (seq-rp)/young;
   dfp_ddp    = -drp_ddp/young;  
   dfp_ddTemp = -drp_ddT/young;
-  dfp_ddeel  = 2.*mu*theta/young*n_;
+  dfp_ddeel  = 2*mu*theta/young*n_;
 
   fTemp         = (dTemp - brcp*rp*dp)*itm;
   dfTemp_ddp    = -brcp*(rp+drp_ddp*dp)*itm; 
-  dfTemp_ddTemp = (1.-brcp*drp_ddT*dp)*itm; 
+  dfTemp_ddTemp = (1-brcp*drp_ddT*dp)*itm; 
 
   feel         = deel - deto + dp*n_;		
-  dfeel_ddeel += (Stensor4::M()-(n_^n_))*2.*mu*theta*dp*iseq;
+  dfeel_ddeel += (Stensor4::M()-(n_^n_))*2*mu*theta*dp*iseq;
   dfeel_ddp    = n_ ;
 } 
 
 @UpdateAuxiliaryStateVariables{
-  dpdt = max(0.,dp/dt);
+  dpdt = max(strainrate(0),dp/dt);
 }
 			     
 @TangentOperator{
