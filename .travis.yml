@@ -117,3 +117,10 @@ script:
   - cmake ../ -DCMAKE_BUILD_TYPE=Release -Dlocal-castem-header=ON -Denable-aster=ON
   - "make |grep -v -e 'warning: section' |grep -v 'note: change section name to'"
   - "make check |grep -v -e 'warning: section' |grep -v 'note: change section name to'"
+
+notifications:
+  email:
+    recipients:
+      - tfel-contact@cea.fr
+    on_success: change
+    on_failure: always

@@ -36,7 +36,6 @@
 #include<unistd.h>
 #endif
 
-#include"TFEL/Raise.hxx"
 #include"TFEL/Utilities/StringAlgorithms.hxx"
 #include"TFEL/System/System.hxx"
 #include"MFront/MFrontHeader.hxx"
@@ -75,7 +74,7 @@ namespace mfront{
 			      const GeneratorOptions& o,
 			      const std::string&){
     auto throw_if = [](const bool b,const std::string& m){
-      tfel::raise_if(b,"generateCMakeListFile: "+m);
+      if(b){throw(std::runtime_error("generateCMakeListFile: "+m));}
     };
     if(getVerboseMode()>=VERBOSE_LEVEL2){
       getLogStream() << "generating 'src/CMakeList.txt'\n";
@@ -99,10 +98,7 @@ namespace mfront{
       << "\n"
       << "cmake_minimum_required(VERSION 2.4)\n"
       << "project(\"mfront-sources\")\n"
-      << "set(CMAKE_SKIP_RPATH ON)\n\n"
-      << "if(MSVC)\n"
-      << "set(CMAKE_CXX_FLAGS \"/wd4251\")\n"
-      << "endif(MSVC)\n\n"
+      << "set(CMAKE_SKIP_RPATH ON)\n"
       << "function(spawn res cmd)\n"
       << "  execute_process(COMMAND ${cmd} ${ARGN}\n"
       << "    OUTPUT_VARIABLE SPAWN_RESULT\n"
@@ -212,7 +208,7 @@ namespace mfront{
       m << "string (REPLACE \";\" \" \" " << l. name << "_COMPILE_FLAGS\n"
 	<< "  \"${" << l. name << "_COMPILE_FLAGS}\")\n";
       // link_libraries
-      auto has_link_libraries = [&o,&l]{
+      auto has_link_libraries = [&t,&o,&l]{
 	if(!l.link_libraries.empty()){
 	  return true;
 	}
@@ -302,8 +298,8 @@ namespace mfront{
 	std::remove_if(argv2, argv2 + 9, [](const char* ptr) {
 		return ptr == nullptr;
 	});
-    auto error = [&t](const std::string& e,
-		      const char* const* args){
+    auto error = [&argv,&t](const std::string& e,
+			    const char* const* args){
       auto msg = "callCmake: can't build target '"+t+"'\n";
       if(!e.empty()){
 	msg += e+'\n';
@@ -312,9 +308,11 @@ namespace mfront{
       for(const char * const * a = args;*a!=nullptr;++a){
 	msg += *a;msg += ' ';
       }
-      tfel::raise(msg);
+      throw(std::runtime_error(msg));
     };
-    tfel::raise_if(::strlen(cmake)==0u,"callCMake: empty cmake command");
+    if(::strlen(cmake)==0u){
+      throw(std::runtime_error("callCmake: empty cmake command"));
+    }
     const auto pwd = systemCall::getCurrentWorkingDirectory();
     systemCall::changeCurrentWorkingDirectory(d);
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
