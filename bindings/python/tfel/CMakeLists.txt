@@ -19,10 +19,12 @@ tfel_python_module(tests tests.cxx
   TestResult.cxx)
 target_link_libraries(py_tfel_tests TFELTests)
 
+if(NOT WIN32)
 tfel_python_module(utilities utilities.cxx
   Data.cxx
   TextData.cxx)
 target_link_libraries(py_tfel_utilities TFELUtilities)
+endif(NOT WIN32)
 
 tfel_python_module(glossary
   pyglossary.cxx
@@ -50,6 +52,7 @@ if(NOT WIN32)
     ExternalBehaviourDescription.cxx)
 else(NOT WIN32)
   tfel_python_module(system system.cxx
+    LibraryInformation.cxx
     ExternalLibraryManager.cxx
     ExternalBehaviourDescription.cxx)
 endif(NOT WIN32)

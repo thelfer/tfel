@@ -34,9 +34,9 @@ namespace tfel
 	  const T2& v2)
       {
 #ifndef NO_RUNTIME_CHECK_BOUNDS
-	typedef typename T1::RunTimeProperties RunTimeProperties;
-	RunTimeCheck<RunTimeProperties>::exe(v1.getRunTimeProperties(),
-					     v2.getRunTimeProperties());
+//	typedef typename T1::RunTimeProperties RunTimeProperties;
+//	RunTimeCheck<RunTimeProperties>::exe(v1.getRunTimeProperties(),
+//					     v2.getRunTimeProperties());
 #endif
 	typedef typename T1::size_type size_type;
 	size_type i;

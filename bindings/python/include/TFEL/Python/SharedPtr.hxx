@@ -20,6 +20,16 @@
 #include<boost/version.hpp>
 #include<boost/bind.hpp>
 
+#ifdef and
+#undef and
+#endif
+#ifdef xor
+#undef xor
+#endif
+#ifdef or
+#undef or
+#endif
+
 #if BOOST_VERSION < 105300
 #define TFEL_PYTHON_GETPOINTER_OVERLOAD
 #else
@@ -37,6 +47,7 @@
 /* http://boost.2283326.n4.nabble.com/No-automatic-upcasting-with-std-shared-ptr-in-function-calls-td4573165.html */
 namespace boost {
   template<typename T>
+  TFEL_VISIBILITY_LOCAL
   T *get_pointer(const std::shared_ptr<T> & p)
   {
     return p.get();

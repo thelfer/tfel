@@ -17,6 +17,16 @@
 #include<iostream>
 #include<vector>
 
+#ifdef and
+#undef and
+#endif
+#ifdef xor
+#undef xor
+#endif
+#ifdef or
+#undef or
+#endif
+
 #include<boost/python.hpp>
 #include<boost/python/stl_iterator.hpp>
 

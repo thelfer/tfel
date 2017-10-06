@@ -162,8 +162,8 @@ namespace tfel{
       size_type i;
       size_type j;
 #ifndef NO_RUNTIME_CHECK_BOUNDS
-      RunTimeCheck<RunTimeProperties>::exe(this->getRunTimeProperties(),
-					   expr.getRunTimeProperties());
+//      RunTimeCheck<RunTimeProperties>::exe(this->getRunTimeProperties(),
+//					   expr.getRunTimeProperties());
 #endif /* LIB_TFEL_MATRIXIXX */
       for(i=0;i<this->nb_rows;++i){
 	for(j=0;j<this->nb_cols;++j){

@@ -15,8 +15,6 @@ if(TFEL_APPEND_VERSION)
   add_definitions("-DTFEL_APPEND_VERSION")
 endif(TFEL_APPEND_VERSION)
 
-option(enable-developer-warnings "add warnings mostly useful for TFEL developers" OFF)
-
 # tfel specific macros
 include(cmake/modules/tfel.cmake)
 # some variables for compatibility with autotools
@@ -240,8 +238,8 @@ if(enable-python OR enable-python-bindings)
   set(HAVE_PYTHON ON)
   add_definitions("-DHAVE_PYTHON=1")
   add_definitions("-DTFEL_PYTHON_INCLUDES=\\\"\"-I${PYTHON_INCLUDE_DIRS}\"\\\"")
-  get_filename_component(PYTHON_LIBRARY_PATH "${PYTHON_LIBRARIES}" PATH)
-  get_filename_component(PYTHON_LIBRARY_FULL "${PYTHON_LIBRARIES}" NAME)
+  get_filename_component(PYTHON_LIBRARY_PATH ${PYTHON_LIBRARIES} PATH)
+  get_filename_component(PYTHON_LIBRARY_FULL ${PYTHON_LIBRARIES} NAME)
   string(REGEX REPLACE "lib(.+)\\.(.+)$" "\\1" PYTHON_LIBRARY ${PYTHON_LIBRARY_FULL})
   add_definitions("-DTFEL_PYTHON_LIBS=\\\"\"-L${PYTHON_LIBRARY_PATH} -l${PYTHON_LIBRARY}\"\\\"")
   message(STATUS "found python          ${PYTHONLIBS_VERSION_STRING}")
@@ -453,7 +451,7 @@ if(install-system-libraries)
       
   if( MINGW )
     message(STATUS "Installing system-libraries: MinGW DLLs." )
-    get_filename_component(Mingw_Path "${CMAKE_CXX_COMPILER}" PATH)
+    get_filename_component(Mingw_Path ${CMAKE_CXX_COMPILER} PATH)
     file(GLOB libgcc  "${Mingw_Path}/libgcc_s*")
     add_to_system_runtime_libs("${libgcc}")
     add_to_system_runtime_libs("${Mingw_Path}/libstdc++-6.dll")
