@@ -15,6 +15,7 @@
 #include"TFEL/System/LibraryInformation.hxx"
 
 void declareLibraryInformation();
+
 void declareLibraryInformation(){
   using tfel::system::LibraryInformation;
   std::vector<std::string> (LibraryInformation::* ptr1)() =

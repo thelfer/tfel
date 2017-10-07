@@ -113,6 +113,13 @@ namespace tfel{
     {}
 
     template<unsigned short N, typename T>
+    template <std::size_t I>
+    constexpr typename fsarray<N,T>::const_reference fsarray<N,T>::get() const{
+      static_assert(I<N,"fsarray::get: invalid index");
+      return this->operator[](I);
+    } // end of fsarray<N,T>::get()
+    
+    template<unsigned short N, typename T>
     typename fsarray<N,T>::iterator 
     fsarray<N,T>::begin() noexcept
     {

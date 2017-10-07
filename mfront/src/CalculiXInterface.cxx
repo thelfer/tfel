@@ -562,7 +562,8 @@ namespace mfront{
 	  << " ielas,mi,NSTATV,STATEV0,STATEV1,s.begin(),D.begin(),"
 	  << "iorien,pgauss,orab,PNEWDT,ipkon,size);\n";
     }
-    out << "if(*PNEWDT>=1){\n";
+    out << "if(*PNEWDT>=1){\n"
+	<< "*PNEWDT=-1;\n";
     if (mb.getSymmetryType()==mfront::ORTHOTROPIC){
       out << "s.changeBasis(rb);\n"
 	  << "D = change_basis(st2tost2<3u,real>(D),rb);\n";
@@ -670,7 +671,8 @@ namespace mfront{
 	<< " voj,XKL,vj,ithermal,TEMP1,DTIME,time,ttime,icmd,"
 	<< " ielas,mi,NSTATV,STATEV0,STATEV1,s.begin(),D.begin(),"
 	<< "iorien,pgauss,orab,PNEWDT,ipkon,size);\n"
-	<< "if(*PNEWDT>=1){\n";
+	<< "if(*PNEWDT>=1){\n"
+    	<< "*PNEWDT=-1;\n";
     if (mb.getSymmetryType()==mfront::ORTHOTROPIC){
       out << "const auto rb = transpose(r);\n"
 	  << "s.changeBasis(rb);\n"
@@ -678,8 +680,7 @@ namespace mfront{
     }
     out << "s.exportTab(STRESS);\n"
 	<< "// converting the consistent tangent operator\n"
-	<< "calculix::ConvertUnsymmetricTangentOperator::exe(DDSDDE,D.begin());\n"
-	<< "}\n";
+	<< "calculix::ConvertUnsymmetricTangentOperator::exe(DDSDDE,D.begin());\n";
     if(getDebugMode()){
       out << "std::cout << \"Dt :\" << std::endl;\n"
 	  << "const calculix::CalculiXReal *p = DDSDDE;\n"
@@ -692,11 +693,11 @@ namespace mfront{
     	  << "std::cout << std::endl;\n";
     }
     if(this->generateMTestFile){
-      out << "if(*PNEWDT<1){\n";
+      out << "} else {\n";
       this->generateMTestFile2(out,mb.getBehaviourType(),
 			       name,"",mb);
-      out << "}\n";
     }
+    out << "}\n";
     out << "} // end of " << this->getFunctionName(name) << "\n\n";
   }
   
@@ -795,7 +796,8 @@ namespace mfront{
 	<< " voj,XKL,vj,ithermal,TEMP1,DTIME,time,ttime,icmd,"
 	<< " ielas,mi,NSTATV,STATEV0,STATEV1,T.begin(),D.begin(),"
 	<< "iorien,pgauss,orab,PNEWDT,ipkon,size);\n"
-	<< "if(*PNEWDT>=1){\n";
+	<< "if(*PNEWDT>=1){\n"
+	<< "*PNEWDT=-1;\n";
     if(!variant){
       // saving the stresses in the material frame
       out << "tfel::fsalgo::copy<6u>::exe(eto1.begin(),ivs1+" << nivs << ");\n"
@@ -827,13 +829,12 @@ namespace mfront{
     	  << "}\n"
     	  << "std::cout << std::endl;\n";
     }
-    out << "}\n";
     if(this->generateMTestFile){
-      out << "if(*PNEWDT<1){\n";
+      out << "} else {\n";
       this->generateMTestFile2(out,mb.getBehaviourType(),
 			       name,"",mb);
-      out << "}\n";
     }
+    out << "}\n";
     out << "} // end of " << this->getFunctionName(name) << "\n\n";
   } // end of CalculiXInterface::writeMieheApelLambrechtLogarithmicStrainFunction
   

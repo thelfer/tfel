@@ -17,6 +17,7 @@
 #include<iostream>
 #include<vector>
 
+#ifdef _MSC_VER
 #ifdef and
 #undef and
 #endif
@@ -26,6 +27,7 @@
 #ifdef or
 #undef or
 #endif
+#endif /* _MSC_VER */
 
 #include<boost/python.hpp>
 #include<boost/python/stl_iterator.hpp>

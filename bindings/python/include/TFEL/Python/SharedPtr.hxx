@@ -20,6 +20,7 @@
 #include<boost/version.hpp>
 #include<boost/bind.hpp>
 
+#ifdef _MSC_VER
 #ifdef and
 #undef and
 #endif
@@ -29,6 +30,7 @@
 #ifdef or
 #undef or
 #endif
+#endif /* _MSC_VER */
 
 #if BOOST_VERSION < 105300
 #define TFEL_PYTHON_GETPOINTER_OVERLOAD

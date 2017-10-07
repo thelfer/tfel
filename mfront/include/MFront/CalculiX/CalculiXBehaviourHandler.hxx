@@ -46,7 +46,7 @@ namespace calculix
     typedef tfel::material::MechanicalBehaviourBase MechanicalBehaviourBase; 
     typedef tfel::material::TangentOperatorTraits<MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR>
     TangentOperatorTraits;
-    static constexpr TangentOperatorTraits::SMFlag value = TangentOperatorTraits::STANDARDTANGENTOPERATOR;
+    static constexpr auto value = TangentOperatorTraits::STANDARDTANGENTOPERATOR;
   };
 
   template<>
@@ -54,7 +54,7 @@ namespace calculix
   {
     typedef tfel::material::MechanicalBehaviourBase MechanicalBehaviourBase; 
     typedef tfel::material::TangentOperatorTraits<MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR> TangentOperatorTraits;
-    static constexpr TangentOperatorTraits::SMFlag value = TangentOperatorTraits::DS_DEGL;
+    static constexpr auto value = TangentOperatorTraits::DS_DEGL;
   };
 
   template<tfel::material::ModellingHypothesis::Hypothesis H,
@@ -215,7 +215,8 @@ namespace calculix
 	  throwNegativeTimeStepException(Traits::getName());
 	}
 	this->behaviour.checkBounds();
-	auto r = BV::SUCCESS;
+	auto r  = BV::SUCCESS;
+	*(d.PNEWDT) = CalculiXReal(1);
 	const auto smflag = CalculiXTangentOperatorFlag<CalculiXTraits<BV>::btype>::value;
 	auto tsf = behaviour.computeAPrioriTimeStepScalingFactor(*(d.PNEWDT));
 	*(d.PNEWDT) = tsf.second;

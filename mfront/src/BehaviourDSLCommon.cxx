@@ -970,38 +970,36 @@ namespace mfront{
 				"generateSlipSystems",m);
       }
     };
-    auto write_tensor = [](std::ostream& out,const std::vector<tensor>& ts){
-      for(decltype(ts.size()) i=0;i!=ts.size();){
+    auto write_tensor = [](std::ostream& out,
+			   const std::string& mu,
+			   const std::vector<tensor>& ts){
+      for(decltype(ts.size()) i=0;i!=ts.size();++i){
 	const auto& t = ts[i];
-	out << "tensor{"
-	<< "real(" << t[0] << "),"
-	<< "real(" << t[1] << "),"
-	<< "real(" << t[2] << "),"
-	<< "real(" << t[3] << "),"
-	<< "real(" << t[4] << "),"
-	<< "real(" << t[5] << "),"
-	<< "real(" << t[6] << "),"
-	<< "real(" << t[7] << "),"
-	<< "real(" << t[8] << ")}";
-	if(++i!=ts.size()){
-	  out << ",\n";
-	}
+	out << mu << "[" << i << "] = tensor{"
+	    << "real(" << t[0] << "),"
+	    << "real(" << t[1] << "),"
+	    << "real(" << t[2] << "),"
+	    << "real(" << t[3] << "),"
+	    << "real(" << t[4] << "),"
+	    << "real(" << t[5] << "),"
+	    << "real(" << t[6] << "),"
+	    << "real(" << t[7] << "),"
+	    << "real(" << t[8] << ")};\n";
       }
     };
-    auto write_stensor = [](std::ostream& out,const std::vector<tensor>& ts){
+    auto write_stensor = [](std::ostream& out,
+			    const std::string& mus,
+			    const std::vector<tensor>& ts){
       TFEL_CONSTEXPR const auto cste = tfel::math::Cste<long double>::sqrt2/2;
-      for(decltype(ts.size()) i=0;i!=ts.size();){
+      for(decltype(ts.size()) i=0;i!=ts.size();++i){
 	const auto& t = ts[i];
-	out << "stensor{"
+	out << mus << "[" << i << "] = stensor{"
 	    << "real(" << t[0] << "),"
 	    << "real(" << t[1] << "),"
 	    << "real(" << t[2] << "),"
 	    << "real(" << (t[3]+t[4])*cste << "),"
 	    << "real(" << (t[5]+t[6])*cste << "),"
-	    << "real(" << (t[7]+t[8])*cste << ")}";
-	if(++i!=ts.size()){
-	  out << ",\n";
-	}
+	    << "real(" << (t[7]+t[8])*cste << ")};\n";
       }
     };
     const auto& sss = this->mb.getSlipSystems();
@@ -1176,38 +1174,18 @@ namespace mfront{
       	<< "} // end of " << cn << "::getSlidingSystems\n\n"
     	<< "template<typename real>\n"
     	<< cn << "<real>::" << cn << "(){\n";
+    std::vector<tensor> gots;
     for(size_type idx=0;idx!=nb;++idx){
-      out << "this->mu" << idx << " = {";
-      write_tensor(out,sss.getOrientationTensors(idx));
-      out << "};\n";
+      const auto& ots = sss.getOrientationTensors(idx);
+      write_tensor(out,"this->mu"+std::to_string(idx),ots);
+      gots.insert(gots.end(),ots.begin(),ots.end());
     }
-    out << "this->mu = {";
-    for(size_type idx=0;idx!=nb;){
-      if(nb!=1u){
-	out << "// " << idx << " slip system family\n";
-      }
-      write_tensor(out,sss.getOrientationTensors(idx));
-      if(++idx!=nb){
-    	out << ",\n";
-      }
-    }
-    out << "};\n";
+    write_tensor(out,"this->mu",gots);
     for(size_type idx=0;idx!=nb;++idx){
-      out << "this->mus" << idx << " = {";
-      write_stensor(out,sss.getOrientationTensors(idx));
-      out << "};\n";
+      write_stensor(out,"this->mus"+std::to_string(idx),
+		    sss.getOrientationTensors(idx));
     }
-    out << "this->mus = {";
-    for(size_type idx=0;idx!=nb;){
-      if(nb!=1u){
-    	out << "// " << idx << " slip system family\n";
-      }
-      write_stensor(out,sss.getOrientationTensors(idx));
-      if(++idx!=nb){
-    	out << ",\n";
-      }
-    }
-    out << "};\n";
+    write_stensor(out,"this->mus",gots);
     auto write_imatrix = [&out,&sss,&nb,&nss](const std::vector<long double>& m,
 					      const std::string& n){
       const auto ims = sss.getInteractionMatrixStructure();

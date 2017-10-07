@@ -135,6 +135,12 @@ namespace tfel
       TFEL_MATH_INLINE constexpr
       fsarray(const T2&);
       /*!
+       * \brief member function for structured bindings support
+       * \tparam I: index to be retrieved
+       */
+      template <std::size_t I>
+      constexpr const_reference get() const;
+      /*!
        * return an iterator to the first element of the vector
        * (provided for stl compatibility)
        * \return iterator, an iterator to the first element

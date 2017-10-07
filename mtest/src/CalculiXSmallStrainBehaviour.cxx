@@ -119,7 +119,7 @@ namespace mtest
 		&us(0),&(wk.D(0,0)),&ioren,nullptr,
 		orab,&ndt,nullptr,
 		0 /*hidden fortran parameter */);
-    if(ndt<1.){
+    if((ndt>0)&&(ndt<1.)){
       return {false,ndt};
     }
     // treating the consistent tangent operator
@@ -140,7 +140,7 @@ namespace mtest
       }
       std::copy(us.begin(),us.begin()+s.s1.size(),s.s1.begin());
     }
-    return {true,ndt};
+    return {true,(ndt>0) ? ndt : 1};
   }
 
   CalculiXSmallStrainBehaviour::~CalculiXSmallStrainBehaviour() = default;
