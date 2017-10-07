@@ -296,7 +296,6 @@ if(enable-python-bindings)
     else(BOOST_NUMPY_FOUND)
       message(STATUS "  numpy *not* found")
     endif(BOOST_NUMPY_FOUND)
-    get_filename_component(Boost_PYTHON_LIBRARY "${Boost_PYTHON_LIBRARY}" NAME)
     message(STATUS "Boost library python found (${Boost_PYTHON_LIBRARY}).")
   else(Boost_PYTHON_FOUND)
     message(FATAL_ERROR "Boost python libraries not found.\n"
@@ -456,6 +455,24 @@ if(install-system-libraries)
     add_to_system_runtime_libs("${libgcc}")
     add_to_system_runtime_libs("${Mingw_Path}/libstdc++-6.dll")
   endif( MINGW )
+
+  if(MSVC)
+    if(enable-python-bindings)
+      if(Boost_PYTHON_LIBRARY_DEBUG)
+	string(REPLACE ".lib" ".dll"
+	       Boost_PYTHON_DLL_DEBUG
+	       "${Boost_PYTHON_LIBRARY_DEBUG}")
+        add_to_system_runtime_libs("${Boost_PYTHON_DLL_DEBUG}")
+      endif(Boost_PYTHON_LIBRARY_DEBUG)
+      if(Boost_PYTHON_LIBRARY_RELEASE)
+	string(REPLACE ".lib" ".dll"
+	       Boost_PYTHON_DLL_RELEASE
+	       "${Boost_PYTHON_LIBRARY_RELEASE}")
+        message("HERE2: ${Boost_PYTHON_DLL_RELEASE}")
+        add_to_system_runtime_libs("${Boost_PYTHON_DLL_RELEASE}")
+      endif(Boost_PYTHON_LIBRARY_RELEASE)
+    endif(enable-python-bindings)
+  endif(MSVC)
 
   message(STATUS "runtime libraries : ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS}")
   include(InstallRequiredSystemLibraries)

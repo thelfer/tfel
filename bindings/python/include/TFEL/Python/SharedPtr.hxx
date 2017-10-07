@@ -47,7 +47,7 @@
 /* http://boost.2283326.n4.nabble.com/No-automatic-upcasting-with-std-shared-ptr-in-function-calls-td4573165.html */
 namespace boost {
   template<typename T>
-  TFEL_VISIBILITY_LOCAL
+  TFEL_VISIBILITY_LOCAL TFEL_INLINE
   T *get_pointer(const std::shared_ptr<T> & p)
   {
     return p.get();

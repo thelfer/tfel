@@ -11,6 +11,7 @@
  * project under specific licensing conditions. 
  */
 
+#include"TFEL/Python/SharedPtr.hxx"
 #include<boost/python.hpp>
 #include"TFEL/Raise.hxx"
 #include"MFront/InitDSLs.hxx"
@@ -18,6 +19,42 @@
 #include"MFront/InitInterfaces.hxx"
 #include"MFront/AbstractDSL.hxx"
 #include"MFront/AbstractBehaviourDSL.hxx"
+
+#ifdef _MSC_VER
+ // explicit specialisation to fix a bug in Visual Studio 2015 update 3
+namespace boost
+{
+	template <>
+	const volatile mfront::BehaviourDescription*
+		get_pointer<const volatile mfront::BehaviourDescription>(
+			const volatile mfront::BehaviourDescription*c)
+	{
+		return c;
+	}
+	template <>
+	const volatile mfront::AbstractBehaviourDSL*
+		get_pointer<const volatile mfront::AbstractBehaviourDSL>(
+			const volatile mfront::AbstractBehaviourDSL*c)
+	{
+		return c;
+	}
+	template <>
+	const volatile mfront::AbstractDSL*
+		get_pointer<const volatile mfront::AbstractDSL>(
+			const volatile mfront::AbstractDSL*c)
+	{
+		return c;
+	}
+	template <>
+	const volatile mfront::BehaviourData*
+		get_pointer<const volatile mfront::BehaviourData>(
+			const volatile mfront::BehaviourData*c)
+	{
+		return c;
+	}
+}
+#endif /* _MSC_VER */
+
 
 void declareAbstractDSL();
 void declareDSLFactory();
