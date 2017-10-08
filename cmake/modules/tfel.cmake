@@ -372,13 +372,25 @@ endmacro(python_module_base)
 macro(python_lib_module name package)
   python_module_base(${package}_${name} ${name} ${ARGN})
   if(TFEL_APPEND_VERSION)
-    install(TARGETS py_${package}_${name}
-      DESTINATION lib${LIB_SUFFIX}/${PYTHON_LIBRARY}/site-packages/${package}_${TFEL_VERSION_FOR_PYTHON_MODULES}
-      COMPONENT python_bindings)
+    if(WIN32)
+      install(TARGETS py_${package}_${name}
+        DESTINATION bin/${PYTHON_LIBRARY}/site-packages/${package}_${TFEL_VERSION_FOR_PYTHON_MODULES}
+        COMPONENT python_bindings)
+    else(WIN32)
+      install(TARGETS py_${package}_${name}
+        DESTINATION lib${LIB_SUFFIX}/${PYTHON_LIBRARY}/site-packages/${package}_${TFEL_VERSION_FOR_PYTHON_MODULES}
+        COMPONENT python_bindings)
+    endif(WIN32)
   else(TFEL_APPEND_VERSION)
-    install(TARGETS py_${package}_${name}
-      DESTINATION lib${LIB_SUFFIX}/${PYTHON_LIBRARY}/site-packages/${package}
-      COMPONENT python_bindings)
+    if(WIN32)
+      install(TARGETS py_${package}_${name}
+        DESTINATION bin/${PYTHON_LIBRARY}/site-packages/${package}
+        COMPONENT python_bindings)
+    else(WIN32)
+      install(TARGETS py_${package}_${name}
+        DESTINATION lib${LIB_SUFFIX}/${PYTHON_LIBRARY}/site-packages/${package}
+        COMPONENT python_bindings)
+    endif(WIN32)
   endif(TFEL_APPEND_VERSION)
 endmacro(python_lib_module)
 
@@ -420,9 +432,15 @@ macro(tfel_python_script_base dir)
     else(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${pyscript}.in")
       set(python_script "${CMAKE_CURRENT_SOURCE_DIR}/${pyscript}")
     endif(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${pyscript}.in")
-    install(PROGRAMS ${python_script}
-      DESTINATION lib${LIB_SUFFIX}/${PYTHON_LIBRARY}/site-packages/${dir}/
-      COMPONENT python_bindings)
+    if(WIN32)
+      install(PROGRAMS ${python_script}
+        DESTINATION bin/${PYTHON_LIBRARY}/site-packages/${dir}/
+        COMPONENT python_bindings)
+    else(WIN32)
+      install(PROGRAMS ${python_script}
+        DESTINATION lib${LIB_SUFFIX}/${PYTHON_LIBRARY}/site-packages/${dir}/
+        COMPONENT python_bindings)
+    endif(WIN32)
   endforeach(pyscript ${ARGN})
 endmacro(tfel_python_script_base)
 
