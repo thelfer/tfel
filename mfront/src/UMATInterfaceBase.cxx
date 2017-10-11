@@ -1600,64 +1600,6 @@ namespace mfront
 						     const BehaviourDescription&,
 						     const FileDescription&) const
   {} // end of UMATInterfaceBase::writeUMATxxSpecificSymbols
-
-  // void UMATInterfaceBase::writeUMATxxBehaviourTypeSymbols(std::ostream& out,
-  // 							  const std::string& name,
-  // 							  const BehaviourDescription& mb) const
-  // {
-  //   out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
-  // 	<< "_BehaviourType = " ;
-  //   if(mb.getBehaviourType()==BehaviourDescription::GENERALBEHAVIOUR){
-  //     out << "0u;\n\n";
-  //   } else if(mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
-  //     out << "1u;\n\n";
-  //   } else if(mb.getBehaviourType()==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR){
-  //     out << "2u;\n\n";
-  //   } else if(mb.getBehaviourType()==BehaviourDescription::COHESIVEZONEMODEL){
-  //     out << "3u;\n\n";
-  //   } else {
-  //     tfel::raise("UMATInterfaceBase::writeUMATxxBehaviourTypeSymbols: "
-  // 		  "unsupported behaviour type.");
-  //   }
-  // } // end of UMATInterfaceBase::writeUMATxxBehaviourTypeSymbols
-
-  // void
-  // UMATInterfaceBase::writeUMATxxBehaviourKinematicSymbols(std::ostream& out,
-  // 							  const std::string& name,
-  // 							  const BehaviourDescription& mb) const
-  // {
-  //   out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
-  // 	<< "_BehaviourKinematic = " ;
-  //   if(mb.getBehaviourType()==BehaviourDescription::GENERALBEHAVIOUR){
-  //     out << "0u;\n\n";
-  //   } else if(mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
-  //     if(mb.hasStrainMeasure()){
-  // 	swith(mb.getStrainMesure()){
-  // 	case LINEARISED:
-  // 	  out << "1u;\n\n";	  
-  // 	  break;
-  // 	case GREENLAGRANGE:
-  // 	  out << "5u;\n\n";	  
-  // 	  break;
-  // 	case HENCKY:
-  // 	  out << "6u;\n\n";	  
-  // 	  break;
-  // 	default:
-  // 	  tfel::raise("UMATInterfaceBase::writeUMATxxBehaviourKinematicSymbols: "
-  // 		      "unsupported strain measure");
-  // 	}
-  //     } else {
-  // 	out << "0u;\n\n";
-  //     }
-  //   } else if(mb.getBehaviourType()==BehaviourDescription::COHESIVEZONEMODEL){
-  //     out << "2u;\n\n";
-  //   } else if(mb.getBehaviourType()==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR){
-  //     out << "3u;\n\n";
-  //   } else {
-  //     tfel::raise("UMATInterfaceBase::writeUMATxxBehaviourKinematicSymbols: "
-  // 		  "unsupported behaviour type.");
-  //   }
-  // } // end of UMATInterfaceBase::writeUMATxxBehaviourKinematicSymbols
   
   void
   UMATInterfaceBase::writeUMATxxSupportedModellingHypothesis(std::ostream& out,

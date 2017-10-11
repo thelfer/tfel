@@ -170,9 +170,16 @@ namespace mfront{
       {"--type","return the behaviour type\n"
        "The value returned has the following meaning:\n"
        "- 0: general behaviour\n"
-       "- 1: small strain behaviour\n"
+       "- 1: strain based behaviour\n"
        "- 2: finite strain behaviour\n"
        "- 3: cohesive zone model\n"},
+      {"--is-strain-measure-defined","return 'true' is a strain measure "
+       "has been defined, 'false' otherwise"},
+      {"--strain-measure","return the strain measure used by the behaviour.\n"
+       "The following strain measure are defined: "
+       "- 'Linearised': HPP behaviour\n"
+       "- 'GreenLagrange'\n"
+       "- 'Hencky'\n"},
       {"--symmetry","return the behaviour symmetry. If the returned value is 0, "
        "the behaviour is isotropic. If the returned value is 1, "
        "the behaviour is orthotropic."},
@@ -317,6 +324,38 @@ namespace mfront{
 	    } else {
 	      tfel::raise("unsupported behaviour type");
 	    }}});
+    } else if(qn=="--is-strain-measure-defined"){
+      this->queries.push_back({"is-strain-measure-defined",
+	    [](const FileDescription&,
+	       const BehaviourDescription& d,
+	       const Hypothesis){
+	    const auto t = d.getBehaviourType();
+	    tfel::raise_if(t!=BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR,
+			   "the behaviour is not based on strain");
+	    cout << (d.isStrainMeasureDefined() ? "true\n" : "false\n");
+	  }});
+    } else if(qn=="--strain-measure"){
+      this->queries.push_back({"strain-measure",
+	    [](const FileDescription&,
+	       const BehaviourDescription& d,
+	       const Hypothesis){
+	    const auto t = d.getBehaviourType();
+	    tfel::raise_if(t!=BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR,
+			   "the behaviour is not based on a strain measure");
+	    tfel::raise_if(!d.isStrainMeasureDefined(),
+			   "no strain measure defined");
+	    const auto ss = d.getStrainMeasure();
+	    if(ss==BehaviourDescription::LINEARISED){
+	      cout << "Linearised";
+	    } else if(ss==BehaviourDescription::GREENLAGRANGE){
+	      cout << "GreenLagrange\n";
+	    } else if(ss==BehaviourDescription::HENCKY){
+	      cout << "Hencky\n";
+	    } else {
+	      tfel::raise_if(true,"internal error "
+			     "(unsupported strain measure)");
+	    }
+	  }});
     } else if(qn=="--symmetry"){
       this->queries.push_back({"symmetry",[](const FileDescription&,
 					 const BehaviourDescription& d,
