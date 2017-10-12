@@ -963,11 +963,23 @@ namespace mfront{
   {
     using SlipSystemsDescription = BehaviourDescription::SlipSystemsDescription;
     using size_type = SlipSystemsDescription::size_type;
+    using vector    = SlipSystemsDescription::vector;
     using tensor    = SlipSystemsDescription::tensor;
     auto throw_if = [this](const bool b,const std::string& m){
       if(b){
 	this->throwRuntimeError("FiniteStrainSingleCrystalBrick::"
 				"generateSlipSystems",m);
+      }
+    };
+    auto write_vector = [](std::ostream& out,
+			   const std::string& v,
+			   const std::vector<vector>& ts){
+      for(decltype(ts.size()) i=0;i!=ts.size();++i){
+	const auto& t = ts[i];
+	out << v << "[" << i << "] = vector{"
+	    << "real(" << t[0] << "),"
+	    << "real(" << t[1] << "),"
+	    << "real(" << t[2] << ")};\n";
       }
     };
     auto write_tensor = [](std::ostream& out,
@@ -1039,6 +1051,8 @@ namespace mfront{
     	<< "//! a simple alias\n"
     	<< "using tensor = tfel::math::tensor<3u,real>;\n"
     	<< "//! a simple alias\n"
+    	<< "using vector = tfel::math::tvector<3u,real>;\n"
+    	<< "//! a simple alias\n"
     	<< "using stensor = tfel::math::stensor<3u,real>;\n";
     auto nss = size_type{};
     for(size_type idx=0;idx!=nb;++idx){
@@ -1068,14 +1082,22 @@ namespace mfront{
       out << ";\n";
     }
     out << "//! tensor of directional sense\n"
-	<< "tfel::math::tvector<Nss" << ",tensor> mu" << ";\n"
+	<< "tfel::math::tvector<Nss,tensor> mu;\n"
 	<< "//! symmetric tensor of directional sense\n"
-	<< "tfel::math::tvector<Nss" << ",stensor> mus" << ";\n";
+	<< "tfel::math::tvector<Nss,stensor> mus;\n"
+	<< "//! normal to slip plane\n"
+	<< "tfel::math::tvector<Nss,vector> np;\n"
+	<< "//! unit vector in the slip direction\n"
+	<< "tfel::math::tvector<Nss,vector> ns;\n";
     for(size_type idx = 0;idx!=nb;++idx){
       out << "//! tensor of directional sense\n"
 	  << "tfel::math::tvector<Nss" << idx << ",tensor> mu" << idx << ";\n"
 	  << "//! symmetric tensor of directional sense\n"
-	  << "tfel::math::tvector<Nss" << idx << ",stensor> mus" << idx << ";\n";
+	  << "tfel::math::tvector<Nss" << idx << ",stensor> mus" << idx << ";\n"
+	  << "//! normal to slip plane\n"
+	  << "tfel::math::tvector<Nss" << idx << ",vector> np" << idx << ";\n"
+	  << "//! unit vector in the slip direction\n"
+	  << "tfel::math::tvector<Nss" << idx << ",vector> ns" << idx << ";\n";
     }
     if(this->mb.hasInteractionMatrix()){
       out << "//! interaction matrix\n"
@@ -1175,17 +1197,36 @@ namespace mfront{
     	<< "template<typename real>\n"
     	<< cn << "<real>::" << cn << "(){\n";
     std::vector<tensor> gots;
+    std::vector<vector> gnss;
+    std::vector<vector> gnps;
+    // orientation tensors
     for(size_type idx=0;idx!=nb;++idx){
       const auto& ots = sss.getOrientationTensors(idx);
       write_tensor(out,"this->mu"+std::to_string(idx),ots);
       gots.insert(gots.end(),ots.begin(),ots.end());
     }
     write_tensor(out,"this->mu",gots);
+    // symmetric orientation tensors
     for(size_type idx=0;idx!=nb;++idx){
       write_stensor(out,"this->mus"+std::to_string(idx),
 		    sss.getOrientationTensors(idx));
     }
     write_stensor(out,"this->mus",gots);
+    // normal to slip planes
+    for(size_type idx=0;idx!=nb;++idx){
+      const auto& nps = sss.getSlipPlaneNormals(idx);
+      write_vector(out,"this->np"+std::to_string(idx),nps);
+      gnps.insert(gnps.end(),nps.begin(),nps.end());
+    }
+    write_vector(out,"this->np",gnps);
+    // slip direction
+    for(size_type idx=0;idx!=nb;++idx){
+      const auto& nss2 = sss.getSlipDirections(idx);
+      write_vector(out,"this->ns"+std::to_string(idx),nss2);
+      gnss.insert(gnss.end(),nss2.begin(),nss2.end());
+    }
+    write_vector(out,"this->ns",gnss);
+
     auto write_imatrix = [&out,&sss,&nb,&nss](const std::vector<long double>& m,
 					      const std::string& n){
       const auto ims = sss.getInteractionMatrixStructure();

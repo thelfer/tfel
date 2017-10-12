@@ -75,6 +75,12 @@ namespace mfront
     using  Mode = BehaviourData::Mode;
     //! a simple alias
     using  Position = BehaviourData::Position;
+    //! validation tatus
+    enum ValidationStatus{
+      UNVALIDATED,
+      QUALIFIED,
+      VALIDATED,
+    };
     //! Strain measure
     enum StrainMeasure{
       LINEARISED,

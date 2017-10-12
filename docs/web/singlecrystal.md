@@ -6,9 +6,10 @@ This page' purpose is twofold:
 
 - it shows how to define:
     - the crystal structure.
-    - the slip systems. Once the slip systems are defined, the
-      orientations tensors and their symmetric parts are automatically
-      defined.
+    - the slip systems. Once the slip systems are defined, the normals
+      to the slips planes, the slip directions (normalized Burger's
+      vector), the orientations tensors and their symmetric parts
+      are automatically defined.
     - the interaction matrix (used to describe hardening).
     - the interaction matrix used to evaluate the effect of all the
       dislocation on the mean free path of dislocations of a specific
@@ -265,6 +266,19 @@ const auto& ss = FCCSingleCrystalSlipSystems<real>::getSlipSystems();
 
 Of course, the name `ss` (for slips systems) can be changed by the
 user to match his/her own conventions.
+
+### Access to normals to the slip planes, slip directions and orientation tensors
+
+The previous data structure has the following public members:
+
+- `np`: an array containing all the normals to the slip planes
+- `ns`: an array containing all the slip directions (unit vector based on the Burger's vector)
+- `mu`: an array containing all the orientation tensors
+- `mus`: an array containing all the symmetric part of the orientation tensors
+
+For every slip system family, specific arrays are also provided. For
+example, `np0` contains all the normals to the slip planes of the
+first family.
 
 ### Access to the interaction matrix defined through `@InteractionMatrix`
 

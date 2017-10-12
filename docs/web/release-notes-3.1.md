@@ -841,6 +841,17 @@ This method takes two named arguments:
     - `LowerAndUpper`
 - `--physical-bounds-value`: show the bounds value associated as a
   range.
+
+### Queries associated with the strain measure
+
+- `--is-strain-measure-defined`: return `true` if a strain measure has
+  been defined, `false` otherwise.
+- `-strain-measure`: return the strain measure on which the behaviour
+  is build. The following values are valid: `Linearised`,
+  `GreenLagrange` and `Hencky`.
+
+### Queries associated with the crystal structure
+
 - `--has-crystal-structure`: return `true` if a crystal structure has
   been defined.
 - `--crystal-structure`: return the crystal structure.

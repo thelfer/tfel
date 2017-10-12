@@ -34,6 +34,8 @@ namespace tfel{
       //! a simple alias
       using vec4d  = std::array<int,4u>;
       //! a simple alias
+      using vector = std::array<long double,3u>;
+      //! a simple alias
       using tensor = std::array<long double,9u>;
       //! 
       struct system3d{
@@ -137,6 +139,20 @@ namespace tfel{
       std::vector<system> getSlipSystems(const size_type) const;
       //! \return all the slip systems, sorted by family
       std::vector<std::vector<system>> getSlipSystems() const;
+      //! \return the normals to the slip planes, sorted by family
+      std::vector<std::vector<vector>> getSlipPlaneNormals() const;      
+      /*!
+       * \return the normals to the slip plane associated with the ith family
+       * \param[in] i: index
+       */
+      std::vector<vector> getSlipPlaneNormals(const size_type) const;
+      //! \return the unit vectors giving the slip direction, sorted by family
+      std::vector<std::vector<vector>> getSlipDirections() const;      
+      /*!
+       * \return the  unit vectors giving the slip direction the ith family
+       * \param[in] i: index
+       */
+      std::vector<vector> getSlipDirections(const size_type) const;
       //! \return the orientation tensors, sorted by family
       std::vector<std::vector<tensor>> getOrientationTensors() const;      
       /*!

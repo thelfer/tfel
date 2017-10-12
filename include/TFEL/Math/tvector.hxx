@@ -302,29 +302,24 @@ namespace tfel{
     abs(const tvector<N,T>& v);
 
     template<typename T>
-    tvector<1u,T>
-    makeTVector1D(const T);
+    tvector<1u,T> makeTVector1D(const T);
 
     template<typename T>
-    tvector<2u,T>
-    makeTVector2D(const T,
-		  const T);
+    tvector<2u,T> makeTVector2D(const T,
+				const T);
     
     template<typename T>
-    tvector<3u,T>
-    makeTVector3D(const T,
-		  const T,
-		  const T);
+    tvector<3u,T> makeTVector3D(const T,
+				const T,
+				const T);
 
     template<typename T>
-    tvector<3u,T>
-    cross_product(const tvector<2u,T>&,
-		  const tvector<2u,T>&);
+    tvector<3u,T> cross_product(const tvector<2u,T>&,
+				const tvector<2u,T>&);
 
     template<typename T>
-    tvector<3u,T>
-    cross_product(const tvector<3u,T>&,
-		  const tvector<3u,T>&);
+    tvector<3u,T> cross_product(const tvector<3u,T>&,
+				const tvector<3u,T>&);
 
     /*!
      * find a vector perpendicular to the second one
@@ -370,7 +365,7 @@ namespace tfel{
      */
     template<unsigned short I,unsigned short J,
 	     unsigned short N,typename T>
-    Expr<tvector<J-I,T>,TinyVectorFromTinyVectorViewExpr<J-I,N,I,T,true> >
+    Expr<tvector<J-I,T>,TinyVectorFromTinyVectorViewExpr<J-I,N,I,T,true>>
     slice(const tvector<N,T>&);
 
   } // end of namespace math
@@ -381,7 +376,7 @@ namespace tfel{
      * Partial specialisation for tvectors
      */
     template<unsigned short N,typename T2,typename T>
-    struct IsAssignableTo<tfel::math::tvector<N,T2>,tfel::math::tvector<N,T> >
+    struct IsAssignableTo<tfel::math::tvector<N,T2>,tfel::math::tvector<N,T>>
     {
       /*!
        *  Result

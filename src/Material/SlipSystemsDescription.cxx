@@ -408,6 +408,36 @@ namespace tfel{
       return tfel::material::getOrientationTensor(n,m);
     } // end of getOrentiationTensor
 
+    static SlipSystemsDescription::vector
+    getSlipPlaneNormal(const CrystalStructure cs,
+			 const SlipSystemsDescription::system& s)
+    {
+      if(s.is<SlipSystemsDescription::system3d>()){
+	const auto& s3d = s.get<SlipSystemsDescription::system3d>();
+	return normal(cs,s3d.plane);
+      }
+      raise_if(!s.is<SlipSystemsDescription::system4d>(),
+	       "getOrentiationTensor: "
+	       "internal error (unsupported slip system type)");
+      const auto& s4d = s.get<SlipSystemsDescription::system4d>();
+      return normal(cs,s4d.plane);
+    } // end of getSlipPlaneNormal
+
+    static SlipSystemsDescription::vector
+    getSlipDirection(const CrystalStructure cs,
+			 const SlipSystemsDescription::system& s)
+    {
+      if(s.is<SlipSystemsDescription::system3d>()){
+	const auto& s3d = s.get<SlipSystemsDescription::system3d>();
+	return burgers(cs,s3d.burgers);
+      }
+      raise_if(!s.is<SlipSystemsDescription::system4d>(),
+	       "getOrentiationTensor: "
+	       "internal error (unsupported slip system type)");
+      const auto& s4d = s.get<SlipSystemsDescription::system4d>();
+      return burgers(cs,s4d.burgers);
+    } // end of getSlipDirection
+    
     static SlipSystemsDescription::tensor
     getOrientationTensor(const CrystalStructure cs,
 			 const SlipSystemsDescription::system& s)
@@ -421,6 +451,50 @@ namespace tfel{
       return getOrientationTensor(cs,s.get<SlipSystemsDescription::system4d>());
     } // end of getOrentiationTensor
 
+    std::vector<SlipSystemsDescription::vector>
+    SlipSystemsDescription::getSlipPlaneNormals(const size_type i) const
+    {
+      const auto ss = this->getSlipSystems(i);
+      auto r = std::vector<vector>(ss.size());
+      for(size_type idx=0;idx!=ss.size();++idx){
+	r[idx] = tfel::material::getSlipPlaneNormal(this->cs,ss[idx]);
+      }
+      return r;
+    } // end of SlipSystemsDescription::getSlipPlaneNormals()
+
+    std::vector<std::vector<SlipSystemsDescription::vector>>
+    SlipSystemsDescription::getSlipPlaneNormals() const
+    {
+      const auto s = this->getNumberOfSlipSystemsFamilies();
+      auto r = std::vector<std::vector<vector>>(s);
+      for(size_type i=0;i!=this->getNumberOfSlipSystemsFamilies();++i){
+	r[i] = this->getSlipPlaneNormals(i);
+      }
+      return r;
+    } // end of SlipSystemsDescription::getSlipPlaneNormals()
+
+    std::vector<SlipSystemsDescription::vector>
+    SlipSystemsDescription::getSlipDirections(const size_type i) const
+    {
+      const auto ss = this->getSlipSystems(i);
+      auto r = std::vector<vector>(ss.size());
+      for(size_type idx=0;idx!=ss.size();++idx){
+	r[idx] = tfel::material::getSlipDirection(this->cs,ss[idx]);
+      }
+      return r;
+    } // end of SlipSystemsDescription::getSlipDirections()
+
+    std::vector<std::vector<SlipSystemsDescription::vector>>
+    SlipSystemsDescription::getSlipDirections() const
+    {
+      const auto s = this->getNumberOfSlipSystemsFamilies();
+      auto r = std::vector<std::vector<vector>>(s);
+      for(size_type i=0;i!=this->getNumberOfSlipSystemsFamilies();++i){
+	r[i] = this->getSlipDirections(i);
+      }
+      return r;
+    } // end of SlipSystemsDescription::getSlipDirections()
+    
     std::vector<SlipSystemsDescription::tensor>
     SlipSystemsDescription::getOrientationTensors(const size_type i) const
     {
@@ -506,7 +580,7 @@ namespace tfel{
 	  td[4]*mn[4]+td[3]*mn[3]+td[2]*mn[2]+td[1]*mn[1]+td[0]*mn[0];
       }
       return r;
-    } // end of SlipSystemsDescription::getOrientationTensors
+    } // end of SlipSystemsDescription::getSchmidFactors
     
     std::vector<std::vector<long double>>
     SlipSystemsDescription::getSchmidFactors(const vec d) const
@@ -517,7 +591,7 @@ namespace tfel{
 	r[i] = this->getSchmidFactors(d,i);
       }
       return r;
-    } // end of SlipSystemsDescription::getOrientationTensors
+    } // end of SlipSystemsDescription::getSchmidFactors
     
     SlipSystemsDescription::size_type
     SlipSystemsDescription::getNumberOfSlipSystems(const size_type i) const
