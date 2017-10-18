@@ -1410,6 +1410,8 @@ namespace mfront{
     if(this->mb.hasCode(h,BehaviourData::AdditionalConvergenceChecks)){
       os << "void additionalConvergenceChecks(bool& converged,real& error){\n"
 	 << this->mb.getCode(h,BehaviourData::AdditionalConvergenceChecks) << '\n'
+	 << "static_cast<void>(converged);\n"
+	 << "static_cast<void>(error);\n"
 	 << "} // end of additionalConvergenceChecks\n\n";
     } else {
       os << "constexpr void additionalConvergenceChecks(bool&,real&) const{\n"
