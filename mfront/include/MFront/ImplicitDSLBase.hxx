@@ -144,6 +144,8 @@ namespace mfront{
     virtual void treatIterMax();
     //! \brief treat the @Epsilon keyword
     virtual void treatEpsilon();
+    //! \brief treat the @AdditionalConvergenceChecks keyword
+    virtual void treatAdditionalConvergenceChecks();
     //! \brief treat the @PerturbationValueForNumericalJacobianComputation keyword
     virtual void treatPerturbationValueForNumericalJacobianComputation();
     //! \brief treat the @Algorithm keyword

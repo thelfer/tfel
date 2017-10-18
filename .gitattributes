@@ -280,6 +280,7 @@ docs/mfront-en.svg -text
 docs/mfront-fr.svg -text
 docs/mfront.bmp -text
 docs/mfront.ico -text
+docs/mfront/AdditionalConvergenceChecks.md -text
 docs/mfront/Algorithm.md -text
 docs/mfront/Author.md -text
 docs/mfront/AuxiliaryStateVar.md -text
@@ -1165,6 +1166,7 @@ docs/web/img/TwitterBanner.xcf -text
 docs/web/img/UnilateralMazars.svg -text
 docs/web/img/VeRCoRs.png -text
 docs/web/img/VeRCoRs.xcf -text
+docs/web/img/VisualStudioPython.png -text
 docs/web/img/VoidsGrowth.png -text
 docs/web/img/VoidsGrowth.xcf -text
 docs/web/img/Win64.png -text

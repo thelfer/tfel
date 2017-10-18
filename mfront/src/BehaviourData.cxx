@@ -69,7 +69,9 @@ namespace mfront{
   BehaviourData::InitializeJacobian = "InitializeJacobian";
   const char *const
   BehaviourData::InitializeJacobianInvert = "InitializeJacobianInvert";
-
+  const char *const
+  BehaviourData::AdditionalConvergenceChecks = "AdditionalConvergenceChecks";
+  
   const char *const
   BehaviourData::profiling = "profiling";
   const char *const

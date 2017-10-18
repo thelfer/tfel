@@ -937,7 +937,6 @@ namespace mfront
 		     << this->current->line << ":"
 		     << this->current->offset << ": warning: extra ‘;’ [-pedantic]\n";
     }
-    ++(this->current);
   } // end of DSLBase::treatLonelySperator
   
   void DSLBase::treatAuthor()

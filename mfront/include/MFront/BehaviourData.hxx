@@ -96,6 +96,8 @@ namespace mfront{
     static const char *const ComputeInternalEnergy;
     //! standard code name
     static const char *const ComputeDissipatedEnergy;
+    //! standard code name
+    static const char *const AdditionalConvergenceChecks;
     /*
      * normalised attribute names
      * \note properties name begins with a lower case

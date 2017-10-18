@@ -123,7 +123,7 @@ namespace mfront{
 	<< "this->iter=0;\n";
     if(getDebugMode()){
       out << "cout << endl << \"" << mb.getClassName()
-	  << "::integrate() : beginning of resolution\" << endl;\n";
+	  << "::integrate() : beginning of resolution\\n\";\n";
     }
     out << "while((converged==false)&&\n"
 	<< "(this->iter<" << mb.getClassName() << "::iterMax)){\n"
@@ -134,7 +134,7 @@ namespace mfront{
     }
     out << "const bool computeFdF_ok = this->computeFdF();\n"
 	<< "if(computeFdF_ok){\n"
-	<< "error=norm(this->fzeros);\n"
+	<< "error=norm(this->fzeros)/(real(" << n2 << "));\n"
 	<< "}\n"
 	<< "if((!computeFdF_ok)||(!ieee754::isfinite(error))){\n"
 	<< "if(this->iter==1){\n";
@@ -157,12 +157,15 @@ namespace mfront{
 	<< "}\n"
 	<< "} else {\n"
 	<< "this->zeros_1  = this->zeros;\n"
-	<< "converged = ((error)/(real(" << n2 << "))<"
-	<< "(this->epsilon));\n";
+	<< "converged = error<this->epsilon;\n"
+	<< "this->additionalConvergenceChecks(converged,error);\n";
+    if(d.hasCode(BehaviourData::AdditionalConvergenceChecks)){
+      
+    }
     if(getDebugMode()){
       out << "cout << \"" << mb.getClassName()
 	  << "::integrate() : iteration \" "
-	  << "<< this->iter << \" : \" << (error)/(real(" << n2 << ")) << endl;\n";
+	  << "<< this->iter << \" : \" << error << endl;\n";
     }
     out << "if(!converged){\n"
 	<< "Dzeros = this->fzeros;\n"

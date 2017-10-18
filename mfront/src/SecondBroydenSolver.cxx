@@ -82,10 +82,9 @@ namespace mfront{
 					    const Hypothesis) const
   {} // end of SecondBroydenSolver::writeSpecificMembers
 
-  void
-  SecondBroydenSolver::writeSpecificInitializeMethodPart(std::ostream& out,
-							 const BehaviourDescription& mb,
-							 const Hypothesis h) const
+  void SecondBroydenSolver::writeSpecificInitializeMethodPart(std::ostream& out,
+							      const BehaviourDescription& mb,
+							      const Hypothesis h) const
   {
     const auto& d = mb.getBehaviourData(h);
     const auto n = d.getIntegrationVariables().getTypeSize();
@@ -100,10 +99,9 @@ namespace mfront{
     }
   } // end of SecondBroydenSolver::writeSpecificInitializeMethodPart
   
-  void
-  SecondBroydenSolver::writeResolutionAlgorithm(std::ostream& out,
-						const BehaviourDescription& mb,
-						const Hypothesis h) const
+  void SecondBroydenSolver::writeResolutionAlgorithm(std::ostream& out,
+						     const BehaviourDescription& mb,
+						     const Hypothesis h) const
   {
     const auto btype = mb.getBehaviourTypeFlag();
     const auto& d = mb.getBehaviourData(h);
@@ -118,7 +116,7 @@ namespace mfront{
 	<< "this->iter=0;\n";
     if(getDebugMode()){
       out << "cout << endl << \"" << mb.getClassName()
-	  << "::integrate() : beginning of resolution\" << endl;\n";
+	  << "::integrate() : beginning of resolution\\n\";\n";
     }
     out << "while((converged==false)&&\n"
 	<< "(this->iter<" << mb.getClassName() << "::iterMax)){\n"
@@ -152,13 +150,13 @@ namespace mfront{
 	<< "}\n"
 	<< "} else {\n"
 	<< "this->zeros_1  = this->zeros;\n"
-	<< "error=norm(this->fzeros);\n"
-	<< "converged = ((error)/(real(" << n2 << "))<"
-	<< "(this->epsilon));\n";
+	<< "error=norm(this->fzeros)/(real(" << n2 << "));\n"
+	<< "converged = error<this->epsilon;\n"
+	<< "this->additionalConvergenceChecks(converged,error);\n";
     if(getDebugMode()){
       out << "cout << \"" << mb.getClassName()
 	  << "::integrate() : iteration \" "
-	  << "<< this->iter << \" : \" << (error)/(real(" << n2 << ")) << endl;\n";
+	  << "<< this->iter << \" : \" << error << endl;\n";
     }
     out << "if(!converged){\n"
 	<< "Dzeros   = -(this->inv_jacobian)*(this->fzeros);\n";

@@ -22,7 +22,8 @@ namespace mfront{
   LevenbergMarquartSolverBase::getReservedNames() const
   {
     return {"levmar_jacobian_1","levmar_fzeros_1",
-	"levmar_error","levmar_m","levmar_sm",
+	"levmar_error","levmar_error2","levmar_error_1",
+	"levmar_m","levmar_sm",
 	"levmar_mu","levmar_mu0","levmar_muF",
 	"levmar_r","levmar_p0","levmar_p1","levmar_p2"};
   } // end of LevenbergMarquartSolverBase::getReservedNames
@@ -120,12 +121,13 @@ namespace mfront{
     const auto n2 = d.getIntegrationVariables().getTypeSize();
     out << "// dumping parameter\n";
     out << "real levmar_mu = this->levmar_mu0;\n";
-    out << "auto error = real{};\n";
+    out << "auto error    = real{};\n";
+    out << "auto levmar_error = real{};\n";
     out << "bool converged=false;\n";
     out << "this->iter=0;\n";
     if(getDebugMode()){
       out << "cout << endl << \"" << mb.getClassName()
-	  << "::integrate() : beginning of resolution\"\n;\n";
+	  << "::integrate() : beginning of resolution\\n\";\n";
     }
     if(mb.hasCode(h,BehaviourData::ComputeStress)){
       out << "this->computeStress();\n";
@@ -144,19 +146,20 @@ namespace mfront{
     if(this->requiresNumericalJacobian()){
       out << "this->computeNumericalJacobian(this->jacobian);\n";
     }
-    out << "error=norm(this->fzeros);\n"
+    out << "levmar_error=norm(this->fzeros);\n"
+	<< "error=levmar_error/(real(" << n2 << "));\n"
 	<< "while((converged==false)&&\n"
 	<< "(this->iter<" << mb.getClassName() << "::iterMax)){\n"
 	<< "++(this->iter);\n"
 	<< "this->zeros_1  = this->zeros;\n";
     NonLinearSystemSolverBase::writeEvaluateNumericallyComputedBlocks(out,mb,h);
     NonLinearSystemSolverBase::writeComparisonToNumericalJacobian(out,mb,h,"jacobian");
-    out << "converged = ((error)/(real(" << n2 << "))<"
-	<< "(this->epsilon));\n";
+    out << "converged = error<this->epsilon;\n"
+	<< "this->additionalConvergenceChecks(converged,error);\n";
     if(getDebugMode()){
       out << "cout << \"" << mb.getClassName()
 	  << "::integrate() : iteration \" "
-	  << "<< this->iter << \" : \" << (error)/(real(" << n2 << ")) << \", dumping parameter : \" << levmar_mu << endl;\n";
+	  << "<< this->iter << \" : \" << error << \", dumping parameter : \" << levmar_mu << endl;\n";
     }
     out << "if(!converged){\n"
 	<< "// matrix containing tJJ+levmar_mu*I\n"
@@ -214,27 +217,28 @@ namespace mfront{
     out << "// updating mu\n"
 	<< "levmar_mu *= 4;\n"
 	<< "} else {\n"
-	<< "const real error_1=error;\n"
+	<< "const real levmar_error_1=levmar_error;\n"
 	<< "#if (!defined __INTEL_COMPILER)\n"
 	<< "const real error_p=norm(levmar_fzeros_1-levmar_jacobian_1*levmar_sm);\n"
 	<< "#else\n"
-	<< "tvector<" << n2 <<  ",real> levmar_error = levmar_jacobian_1*levmar_sm\n;"
-	<< "const real error_p=norm(levmar_fzeros_1-levmar_error);\n"
+	<< "tvector<" << n2 <<  ",real> levmar_error2 = levmar_jacobian_1*levmar_sm\n;"
+	<< "const real error_p=norm(levmar_fzeros_1-levmar_error2);\n"
 	<< "#endif  /* __INTEL_COMPILER */\n"
-	<< "error=norm(this->fzeros);\n"
-	<< "const real levmar_r = (error*error-error_1*error_1)/(error_p*error_p-error_1*error_1);\n"
+	<< "levmar_error=norm(this->fzeros);\n"
+	<< "const real levmar_r = (levmar_error*levmar_error-levmar_error_1*levmar_error_1)/(error_p*error_p-levmar_error_1*levmar_error_1);\n"
 	<< "if(levmar_r<this->levmar_p0){\n"
 	<< "// rejecting the step\n"
 	<< "this->zeros     = this->zeros_1;\n"
 	<< "this->fzeros    = levmar_fzeros_1;\n"
 	<< "this->jacobian  = levmar_jacobian_1;\n"
-	<< "error = error_1;\n";
+	<< "levmar_error = levmar_error_1;\n";
     if(mb.hasCode(h,BehaviourData::ComputeStress)){
       out << "this->computeStress();\n";
     }
     out << "levmar_mu *= 4;\n"
 	<< "} else {\n"
-	<< "// accepting the step and updating mu\n";
+	<< "// accepting the step and updating mu\n"
+	<< "error=levmar_error/(real(" << n2 << "));\n";
     if(this->requiresNumericalJacobian()){
       out << "this->computeNumericalJacobian(this->jacobian);\n";
     }

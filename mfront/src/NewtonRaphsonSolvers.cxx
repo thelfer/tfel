@@ -132,7 +132,7 @@ namespace mfront{
 	<< "this->iter=0;\n";
     if(getDebugMode()){
       out << "cout << endl << \"" << mb.getClassName()
-	  << "::integrate() : beginning of resolution\" << endl;\n";
+	  << "::integrate() : beginning of resolution\\n\";\n";
     }
     out << "while((converged==false)&&\n"
 	<< "(this->iter<" << mb.getClassName() << "::iterMax)){\n"
@@ -142,7 +142,7 @@ namespace mfront{
     }
     out << "const bool computeFdF_ok = this->computeFdF();\n"
 	<< "if(computeFdF_ok){\n"
-	<< "error=norm(this->fzeros);\n"
+	<< "error=norm(this->fzeros)/(real(" << n2 << "));\n"
 	<< "}\n"
 	<< "if((!computeFdF_ok)||(!ieee754::isfinite(error))){\n"
 	<< "if(this->iter==1){\n";
@@ -169,8 +169,8 @@ namespace mfront{
       NonLinearSystemSolverBase::writeEvaluateNumericallyComputedBlocks(out,mb,h);
       NonLinearSystemSolverBase::writeComparisonToNumericalJacobian(out,mb,h,"njacobian");
     }
-    out << "converged = ((error)/(real(" << n2 << "))<"
-	<< "(this->epsilon));\n";
+    out << "converged = error<this->epsilon;\n"
+	<< "this->additionalConvergenceChecks(converged,error);\n";
     if(this->requiresNumericalJacobian()){
       // We compute the numerical jacobian even if we converged since
       // most of the time, this tangent operator will be computed
@@ -198,7 +198,7 @@ namespace mfront{
     if(getDebugMode()){
       out << "cout << \"" << mb.getClassName()
 	  << "::integrate() : iteration \" "
-	  << "<< this->iter << \" : \" << (error)/(real(" << n2 << ")) << endl;\n";
+	  << "<< this->iter << \" : \" << error << endl;\n";
     }
     out << "if(!converged){\n";
     if(this->usesPowellDogLegAlgorithm()){

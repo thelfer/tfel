@@ -1,6 +1,7 @@
 SUBDIRS=abaqus ansys
 
-MFRONT_DOCS = Algorithm.md				                \
+MFRONT_DOCS = AdditionalConvergenceChecks.md                            \
+	      Algorithm.md				                \
 	      Author.md				                        \
 	      AuxiliaryStateVar.md				        \
 	      AuxiliaryStateVariable.md			                \

@@ -152,6 +152,7 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./img/UnilateralMazars.svg                                 \
 	   ./img/FiniteStrainTangentOperatorConvertion.svg            \
 	   ./img/VeRCoRs.png                                          \
+	   ./img/VisualStudioPython.png                               \
 	   ./img/AbaqusRotSigTest.png                                 \
 	   ./img/FissurationPastille.png                              \
 	   ./img/anderson-withwithoutacceleration.svg                 \

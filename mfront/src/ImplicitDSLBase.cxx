@@ -12,8 +12,6 @@
  * project under specific licensing conditions. 
  */
 
-#include<iostream>
-
 #include<cmath>
 #include<limits>
 #include<cstdlib>
@@ -62,6 +60,8 @@ namespace mfront{
     this->reserveName("idx3");
     this->mb.registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
 				"computeNumericalJacobian");
+    this->mb.registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+				"additionalConvergenceChecks");
     this->reserveName("TinyMatrixSolve");
     // CallBacks
     this->registerNewCallBack("@UsableInPurelyImplicitResolution",
@@ -72,6 +72,8 @@ namespace mfront{
     this->registerNewCallBack("@Predictor",&ImplicitDSLBase::treatPredictor);
     this->registerNewCallBack("@Theta",&ImplicitDSLBase::treatTheta);
     this->registerNewCallBack("@Epsilon",&ImplicitDSLBase::treatEpsilon);
+    this->registerNewCallBack("@AdditionalConvergenceChecks",
+			      &ImplicitDSLBase::treatAdditionalConvergenceChecks);
     this->registerNewCallBack("@PerturbationValueForNumericalJacobianComputation",
 			      &ImplicitDSLBase::treatPerturbationValueForNumericalJacobianComputation);
     this->registerNewCallBack("@IterMax",&ImplicitDSLBase::treatIterMax);
@@ -294,20 +296,13 @@ namespace mfront{
       this->throwRuntimeError("ImplicitDSLBase::treatJacobianComparisonCriterion",
 			      "must call '@CompareToNumericalJacobian' first");
     }
-    double jacobianComparisonCriterion;
     this->checkNotEndOfFile("ImplicitDSLBase::treatJacobianComparisonCriterion",
 			    "Cannot read jacobianComparisonCriterion value.");
-    std::istringstream flux(current->value);
-    flux >> jacobianComparisonCriterion;
-    if((flux.fail())||(!flux.eof())){
-      this->throwRuntimeError("ImplicitDSLBase::treatJacobianComparisonCriterion",
-			      "Failed to read jacobianComparisonCriterion value.");
-    }
+    double jacobianComparisonCriterion = this->readDouble();
     if(jacobianComparisonCriterion<0){
       this->throwRuntimeError("ImplicitDSLBase::treatJacobianComparisonCriterion",
 			      "JacobianComparisonCriterion value must be positive.");
     }
-    ++(this->current);
     this->readSpecifiedToken("ImplicitDSLBase::treatJacobianComparisonCriterion",";");
     this->mb.addParameter(h,VariableDescription("real","jacobianComparisonCriterion",1u,0u),
 			  BehaviourData::ALREADYREGISTRED);
@@ -336,21 +331,14 @@ namespace mfront{
 
   void ImplicitDSLBase::treatTheta()
   {
-    const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-    double theta;
+    const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     this->checkNotEndOfFile("ImplicitDSLBase::treatTheta",
 			    "Cannot read theta value.");
-    std::istringstream flux(current->value);
-    flux >> theta;
-    if((flux.fail())||(!flux.eof())){
-      this->throwRuntimeError("ImplicitDSLBase::treatTheta",
-			      "Failed to read theta value.");
-    }
+    const auto theta = this->readDouble();
     if((theta<0.)||(theta>1.)){
       this->throwRuntimeError("ImplicitDSLBase::treatTheta",
 			      "Theta value must be positive and smaller than 1.");
     }
-    ++(this->current);
     this->readSpecifiedToken("ImplicitDSLBase::treatTheta",";");
     VariableDescription tv("real","theta",1u,0u);
     tv.description = "theta value used by the implicit scheme";
@@ -361,21 +349,14 @@ namespace mfront{
 
   void ImplicitDSLBase::treatEpsilon()
   {
-    const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-    double epsilon;
+    const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     this->checkNotEndOfFile("ImplicitDSLBase::treatEpsilon",
 			    "Cannot read epsilon value.");
-    std::istringstream flux(current->value);
-    flux >> epsilon;
-    if((flux.fail())||(!flux.eof())){
-      this->throwRuntimeError("ImplicitDSLBase::treatEpsilon",
-			      "Failed to read epsilon value.");
-    }
+    const auto epsilon = this->readDouble();
     if(epsilon<0){
       this->throwRuntimeError("ImplicitDSLBase::treatEpsilon",
 			      "Epsilon value must be positive.");
     }
-    ++(this->current);
     this->readSpecifiedToken("ImplicitDSLBase::treatEpsilon",";");
     VariableDescription e("real","epsilon",1u,0u);
     e.description = "value used to stop the iteration of the implicit algorithm";
@@ -384,23 +365,22 @@ namespace mfront{
     this->mb.setEntryName(h,"epsilon","epsilon");
   } // ImplicitDSLBase::treatEpsilon
 
+  void ImplicitDSLBase::treatAdditionalConvergenceChecks()
+  {
+    this->readCodeBlock(*this,BehaviourData::AdditionalConvergenceChecks,
+			&ImplicitDSLBase::standardModifier,true,true);
+  } // end of ImplicitDSLBase::treatAdditionalConvergenceChecks()
+  
   void ImplicitDSLBase::treatPerturbationValueForNumericalJacobianComputation()
   {
-    const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-    double epsilon;
+    const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     this->checkNotEndOfFile("ImplicitDSLBase::treatPerturbationValueForNumericalJacobianComputation",
 			    "Cannot read epsilon value.");
-    std::istringstream flux(current->value);
-    flux >> epsilon;
-    if((flux.fail())||(!flux.eof())){
-      this->throwRuntimeError("ImplicitDSLBase::treatPerturbationValueForNumericalJacobianComputation",
-			      "Failed to read epsilon value.");
-    }
+    const auto epsilon = this->readDouble();
     if(epsilon<0){
       this->throwRuntimeError("ImplicitDSLBase::treatPerturbationValueForNumericalJacobianComputation",
 			      "Epsilon value must be positive.");
     }
-    ++(this->current);
     this->readSpecifiedToken("ImplicitDSLBase::treatPerturbationValueForNumericalJacobianComputation",";");
     VariableDescription e("real","numerical_jacobian_epsilon",1u,0u);
     e.description = "perturbation value used to compute a finite difference approximation of the jacobian";
@@ -410,10 +390,8 @@ namespace mfront{
 
   void ImplicitDSLBase::treatIterMax()
   {
-    using namespace std;
-    const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-    unsigned short iterMax;
-    iterMax = this->readUnsignedShort("ImplicitDSLBase::treatIterMax");
+    const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    const auto iterMax = this->readUnsignedShort("ImplicitDSLBase::treatIterMax");
     if(iterMax==0){
       this->throwRuntimeError("ImplicitDSLBase::treatIterMax",
 			      "invalid value for parameter 'iterMax'");
@@ -428,12 +406,12 @@ namespace mfront{
 							       const std::string& var,
 							       const bool addThisPtr)
   {
-    using namespace std;
     const auto& d = this->mb.getBehaviourData(h);
     if(d.isIntegrationVariableIncrementName(var)){
-      if(this->mb.hasAttribute(h,var.substr(1)+"_normalisation_factor")){
-	const auto& s = d.getStateVariableDescription(var.substr(1));
-	const auto& nf = this->mb.getAttribute<string>(h,var.substr(1)+"_normalisation_factor");
+      const auto v = var.substr(1);
+      if(this->mb.hasAttribute(h,v+"_normalisation_factor")){
+	const auto& s = d.getStateVariableDescription(v);
+	const auto& nf = this->mb.getAttribute<std::string>(h,v+"_normalisation_factor");
 	if(s.arraySize==1u){
 	  if(addThisPtr){
 	    return "(("+nf+")*(this->"+var+"))";
@@ -609,7 +587,6 @@ namespace mfront{
 
   void ImplicitDSLBase::treatPredictor()
   {
-    using namespace std;
     this->readCodeBlock(*this,BehaviourData::ComputePredictor,
 			&ImplicitDSLBase::standardModifier,
 			&ImplicitDSLBase::predictorAnalyser,true);
@@ -1104,44 +1081,38 @@ namespace mfront{
   {
     BehaviourDSLCommon::writeBehaviourParserSpecificMembers(os,h);
     const auto& d = this->mb.getBehaviourData(h);
-    VariableDescriptionContainer::const_iterator p;
-    VariableDescriptionContainer::const_iterator p2;
     SupportedTypes::TypeSize n;
-    SupportedTypes::TypeSize n3;
-    // size of linear system
-    for(p=d.getIntegrationVariables().begin();p!=d.getIntegrationVariables().end();++p){
-      n3 += this->getTypeSize(p->type,p->arraySize);
-    }
-    for(p=d.getIntegrationVariables().begin();p!=d.getIntegrationVariables().end();++p){
+    const auto n3 = d.getIntegrationVariables().getTypeSize();
+    for(const auto v : d.getIntegrationVariables()){
       SupportedTypes::TypeSize n2;
-      for(p2=d.getIntegrationVariables().begin();p2!=d.getIntegrationVariables().end();++p2){
-	SupportedTypes::TypeFlag flag  = SupportedTypes::getTypeFlag(p->type);
-	SupportedTypes::TypeFlag flag2 = SupportedTypes::getTypeFlag(p2->type);
-	if((p->arraySize!=1u)||(p2->arraySize!=1u)){
+      for(const auto v2 : d.getIntegrationVariables()){
+	const auto flag  = SupportedTypes::getTypeFlag(v.type);
+	const auto flag2 = SupportedTypes::getTypeFlag(v2.type);
+	if((v.arraySize!=1u)||(v2.arraySize!=1u)){
 	  os << "/*!\n"
 	     << " * \\return the part of the jacobian matrix "
 	     << "corresponding to the derivative "
-	     << "of variable " << p->name 
-	     << " by variable " << p2->name << "\n"
+	     << "of variable " << v.name 
+	     << " by variable " << v2.name << "\n"
 	     << " */\n";
 	}
-	if((p->arraySize!=1u)&&(p2->arraySize==1u)){
+	if((v.arraySize!=1u)&&(v2.arraySize==1u)){
 	  if(flag==SupportedTypes::Scalar){
 	    if(flag2==SupportedTypes::Scalar){
 	      os << "real&\n"
-		 << "df" << p->name << "_dd" << p2->name
+		 << "df" << v.name << "_dd" << v2.name
 		 << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
 		 << "const unsigned short idx){\n"
 		 << "return tjacobian(" << n << "+idx, " << n2 << ");\n"
 		 << "}\n\n";
 	      os << "real&\n"
-		 << "df" << p->name << "_dd" << p2->name << "(const unsigned short idx){\n"
+		 << "df" << v.name << "_dd" << v2.name << "(const unsigned short idx){\n"
 		 << "return this->jacobian(" << n << "+idx, " << n2 << ");\n"
 		 << "}\n\n";
 	    } else if(flag2==SupportedTypes::TVector){
 	      // Le résultat est un tenseur, une ligne dans la matrice jacobienne
 	      os << "typename tfel::math::TVectorFromTinyMatrixRowView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
-		 << "df" << p->name << "_dd" << p2->name 
+		 << "df" << v.name << "_dd" << v2.name 
 		 << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
 		 << "const unsigned short idx){\n"
 		 << "using namespace tfel::math;\n"
@@ -1149,7 +1120,7 @@ namespace mfront{
 		 << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(tjacobian,idx,0);\n"
 		 << "}\n\n";
 	      os << "typename tfel::math::TVectorFromTinyMatrixRowView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
-		 << "df" << p->name << "_dd" << p2->name 
+		 << "df" << v.name << "_dd" << v2.name 
 		 << "(const unsigned short idx){\n"
 		 << "using namespace tfel::math;\n"
 		 << "return typename TVectorFromTinyMatrixRowView2<N,"
@@ -1158,7 +1129,7 @@ namespace mfront{
 	    } else {
 	      // Le résultat est un tenseur, une ligne dans la matrice jacobienne
 	      os << "typename tfel::math::StensorFromTinyMatrixRowView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
-		 << "df" << p->name << "_dd" << p2->name 
+		 << "df" << v.name << "_dd" << v2.name 
 		 << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
 		 << "const unsigned short idx){\n"
 		 << "using namespace tfel::math;\n"
@@ -1166,7 +1137,7 @@ namespace mfront{
 		 << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(tjacobian,idx,0);\n"
 		 << "}\n\n";
 	      os << "typename tfel::math::StensorFromTinyMatrixRowView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
-		 << "df" << p->name << "_dd" << p2->name 
+		 << "df" << v.name << "_dd" << v2.name 
 		 << "(const unsigned short idx){\n"
 		 << "using namespace tfel::math;\n"
 		 << "return typename StensorFromTinyMatrixRowView2<N,"
@@ -1177,7 +1148,7 @@ namespace mfront{
 	    if(flag2==SupportedTypes::Scalar){
 	      // Le résultat est un tenseur, une colonne dans la matrice jacobienne
 	      os << "typename tfel::math::StensorFromTinyMatrixColumnView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
-		 << "df" << p->name << "_dd" << p2->name 
+		 << "df" << v.name << "_dd" << v2.name 
 		 << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
 		 << "const unsigned short idx){\n"
 		 << "using namespace tfel::math;\n"
@@ -1185,7 +1156,7 @@ namespace mfront{
 		 << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(tjacobian,idx,0);\n"
 		 << "}\n\n";
 	      os << "typename tfel::math::StensorFromTinyMatrixColumnView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
-		 << "df" << p->name << "_dd" << p2->name 
+		 << "df" << v.name << "_dd" << v2.name 
 		 << "(const unsigned short idx){\n"
 		 << "using namespace tfel::math;\n"
 		 << "return typename StensorFromTinyMatrixColumnView2<N,"
@@ -1194,7 +1165,7 @@ namespace mfront{
 	    } else if(flag2==SupportedTypes::TVector){
 	      // Le résultat est une sous-matrice
 	      os << "typename tfel::math::TMatrixFromTinyMatrixView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
-		 << "df" << p->name << "_dd" << p2->name 
+		 << "df" << v.name << "_dd" << v2.name 
 		 << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
 		 << "const unsigned short idx){\n"
 		 << "using namespace tfel::math;\n"
@@ -1202,7 +1173,7 @@ namespace mfront{
 		 << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(tjacobian,idx,0u);\n"
 		 << "}\n\n";
 	      os << "typename tfel::math::TMatrixFromTinyMatrixView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
-		 << "df" << p->name << "_dd" << p2->name 
+		 << "df" << v.name << "_dd" << v2.name 
 		 << "(const unsigned short idx){\n"
 		 << "using namespace tfel::math;\n"
 		 << "return typename TMatrixFromTinyMatrixView2<N,"
@@ -1216,7 +1187,7 @@ namespace mfront{
 	    if(flag2==SupportedTypes::Scalar){
 	      // Le résultat est un tenseur, une colonne dans la matrice jacobienne
 	      os << "typename tfel::math::StensorFromTinyMatrixColumnView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
-		 << "df" << p->name << "_dd" << p2->name 
+		 << "df" << v.name << "_dd" << v2.name 
 		 << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
 		 << "const unsigned short idx){\n"
 		 << "using namespace tfel::math;\n"
@@ -1224,7 +1195,7 @@ namespace mfront{
 		 << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(tjacobian,idx,0);\n"
 		 << "}\n\n";
 	      os << "typename tfel::math::StensorFromTinyMatrixColumnView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
-		 << "df" << p->name << "_dd" << p2->name 
+		 << "df" << v.name << "_dd" << v2.name 
 		 << "(const unsigned short idx){\n"
 		 << "using namespace tfel::math;\n"
 		 << "return typename StensorFromTinyMatrixColumnView2<N,"
@@ -1233,7 +1204,7 @@ namespace mfront{
 	    } else if(flag2==SupportedTypes::Stensor){
 	      // Le résultat est un tenseur d'ordre 4
 	      os << "typename tfel::math::ST2toST2FromTinyMatrixView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
-		 << "df" << p->name << "_dd" << p2->name 
+		 << "df" << v.name << "_dd" << v2.name 
 		 << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
 		 << "const unsigned short idx){\n"
 		 << "using namespace tfel::math;\n"
@@ -1241,7 +1212,7 @@ namespace mfront{
 		 << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(tjacobian,idx,0u);\n"
 		 << "}\n\n";
 	      os << "typename tfel::math::ST2toST2FromTinyMatrixView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
-		 << "df" << p->name << "_dd" << p2->name 
+		 << "df" << v.name << "_dd" << v2.name 
 		 << "(const unsigned short idx){\n"
 		 << "using namespace tfel::math;\n"
 		 << "return typename ST2toST2FromTinyMatrixView2<N,"
@@ -1252,24 +1223,24 @@ namespace mfront{
 				      "derivation of a tensor by a vector is not defined");
 	    }
 	  }
-	} else if((p->arraySize==1u)&&(p2->arraySize!=1u)){
+	} else if((v.arraySize==1u)&&(v2.arraySize!=1u)){
 	  if(flag==SupportedTypes::Scalar){
 	    if(flag2==SupportedTypes::Scalar){
 	      os << "real&\n"
-		 << "df" << p->name << "_dd" << p2->name 
+		 << "df" << v.name << "_dd" << v2.name 
 		 << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
 		 << "const unsigned short idx){\n"
 		 << "return tjacobian(" << n << ", " << n2 << "+idx);\n"
 		 << "}\n\n";
 	      os << "real&\n"
-		 << "df" << p->name << "_dd" << p2->name 
+		 << "df" << v.name << "_dd" << v2.name 
 		 << "(const unsigned short idx){\n"
 		 << "return this->jacobian(" << n << ", " << n2 << "+idx);\n"
 		 << "}\n\n";
 	    } else {
 	      // Le résultat est un tenseur, une ligne dans la matrice jacobienne
 	      os << "typename tfel::math::StensorFromTinyMatrixRowView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
-		 << "df" << p->name << "_dd" << p2->name 
+		 << "df" << v.name << "_dd" << v2.name 
 		 << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
 		 << "const unsigned short idx){\n"
 		 << "using namespace tfel::math;\n"
@@ -1277,7 +1248,7 @@ namespace mfront{
 		 << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(tjacobian,0,idx);\n"
 		 << "}\n\n";
 	      os << "typename tfel::math::StensorFromTinyMatrixRowView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
-		 << "df" << p->name << "_dd" << p2->name 
+		 << "df" << v.name << "_dd" << v2.name 
 		 << "(const unsigned short idx){\n"
 		 << "using namespace tfel::math;\n"
 		 << "return typename StensorFromTinyMatrixRowView2<N,"
@@ -1288,7 +1259,7 @@ namespace mfront{
 	    if(flag2==SupportedTypes::Scalar){
 	      // Le résultat est un tenseur, une colonne dans la matrice jacobienne
 	      os << "typename tfel::math::StensorFromTinyMatrixColumnView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
-		 << "df" << p->name << "_dd" << p2->name 
+		 << "df" << v.name << "_dd" << v2.name 
 		 << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
 		 << "const unsigned short idx){\n"
 		 << "using namespace tfel::math;\n"
@@ -1296,7 +1267,7 @@ namespace mfront{
 		 << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(tjacobian,0,idx);\n"
 		 << "}\n\n";
 	      os << "typename tfel::math::StensorFromTinyMatrixColumnView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
-		 << "df" << p->name << "_dd" << p2->name 
+		 << "df" << v.name << "_dd" << v2.name 
 		 << "(const unsigned short idx){\n"
 		 << "using namespace tfel::math;\n"
 		 << "return typename StensorFromTinyMatrixColumnView2<N,"
@@ -1304,7 +1275,7 @@ namespace mfront{
 		 << "}\n\n";
 	    } else {
 	      os << "typename tfel::math::ST2toST2FromTinyMatrixView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
-		 << "df" << p->name << "_dd" << p2->name 
+		 << "df" << v.name << "_dd" << v2.name 
 		 << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
 		 << "const unsigned short idx){\n"
 		 << "using namespace tfel::math;\n"
@@ -1312,7 +1283,7 @@ namespace mfront{
 		 << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(tjacobian,0,idx);\n"
 		 << "}\n\n";
 	      os << "typename tfel::math::ST2toST2FromTinyMatrixView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
-		 << "df" << p->name << "_dd" << p2->name 
+		 << "df" << v.name << "_dd" << v2.name 
 		 << "(const unsigned short idx){\n"
 		 << "using namespace tfel::math;\n"
 		 << "return typename ST2toST2FromTinyMatrixView2<N,"
@@ -1320,18 +1291,18 @@ namespace mfront{
 		 << "}\n\n";
 	    }
 	  }
-	} else if((p->arraySize!=1u)&&(p2->arraySize!=1u)){
+	} else if((v.arraySize!=1u)&&(v2.arraySize!=1u)){
 	  if(flag==SupportedTypes::Scalar){
 	    if(flag2==SupportedTypes::Scalar){
 	      os << "real&\n"
-		 << "df" << p->name << "_dd" << p2->name 
+		 << "df" << v.name << "_dd" << v2.name 
 		 << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
 		 << "const unsigned short idx,"
 		 << " const unsigned short idx2){\n"
 		 << "return tjacobian(" << n << "+idx, " << n2 << "+idx2);\n"
 		 << "}\n\n";
 	      os << "real&\n"
-		 << "df" << p->name << "_dd" << p2->name 
+		 << "df" << v.name << "_dd" << v2.name 
 		 << "(const unsigned short idx,"
 		 << " const unsigned short idx2){\n"
 		 << "return this->jacobian(" << n << "+idx, " << n2 << "+idx2);\n"
@@ -1339,7 +1310,7 @@ namespace mfront{
 	    } else {
 	      // Le résultat est un tenseur, une ligne dans la matrice jacobienne
 	      os << "typename tfel::math::StensorFromTinyMatrixRowView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
-		 << "df" << p->name << "_dd" << p2->name 
+		 << "df" << v.name << "_dd" << v2.name 
 		 << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
 		 << "const unsigned short idx,"
 		 << " const unsigned short idx2){\n"
@@ -1348,7 +1319,7 @@ namespace mfront{
 		 << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(tjacobian,idx,idx2);\n"
 		 << "}\n\n";
 	      os << "typename tfel::math::StensorFromTinyMatrixRowView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
-		 << "df" << p->name << "_dd" << p2->name 
+		 << "df" << v.name << "_dd" << v2.name 
 		 << "(const unsigned short idx,"
 		 << " const unsigned short idx2){\n"
 		 << "using namespace tfel::math;\n"
@@ -1360,7 +1331,7 @@ namespace mfront{
 	    if(flag2==SupportedTypes::Scalar){
 	      // Le résultat est un tenseur, une colonne dans la matrice jacobienne
 	      os << "typename tfel::math::StensorFromTinyMatrixColumnView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
-		 << "df" << p->name << "_dd" << p2->name 
+		 << "df" << v.name << "_dd" << v2.name 
 		 << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
 		 << "const unsigned short idx,"
 		 << " const unsigned short idx2){\n"
@@ -1369,7 +1340,7 @@ namespace mfront{
 		 << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(tjacobian,idx,idx2);\n"
 		 << "}\n\n";
 	      os << "typename tfel::math::StensorFromTinyMatrixColumnView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
-		 << "df" << p->name << "_dd" << p2->name 
+		 << "df" << v.name << "_dd" << v2.name 
 		 << "(const unsigned short idx,"
 		 << " const unsigned short idx2){\n"
 		 << "using namespace tfel::math;\n"
@@ -1378,7 +1349,7 @@ namespace mfront{
 		 << "}\n\n";
 	    } else {
 	      os << "typename tfel::math::ST2toST2FromTinyMatrixView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
-		 << "df" << p->name << "_dd" << p2->name 
+		 << "df" << v.name << "_dd" << v2.name 
 		 << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
 		 << "const unsigned short idx,"
 		 << " const unsigned short idx2){\n"
@@ -1387,7 +1358,7 @@ namespace mfront{
 		 << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(tjacobian,idx,idx2);\n"
 		 << "}\n\n";
 	      os << "typename tfel::math::ST2toST2FromTinyMatrixView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
-		 << "df" << p->name << "_dd" << p2->name 
+		 << "df" << v.name << "_dd" << v2.name 
 		 << "(const unsigned short idx,"
 		 << " const unsigned short idx2){\n"
 		 << "using namespace tfel::math;\n"
@@ -1397,9 +1368,9 @@ namespace mfront{
 	    }
 	  }
 	}
-	n2 += this->getTypeSize(p2->type,p2->arraySize);
+	n2 += this->getTypeSize(v2.type,v2.arraySize);
       }
-      n += this->getTypeSize(p->type,p->arraySize);
+      n += this->getTypeSize(v.type,v.arraySize);
     }
     // size of linear system
     n = n3;
@@ -1421,7 +1392,6 @@ namespace mfront{
     os << "// number of iterations\n";
     os << "unsigned int iter = 0u;\n\n";
     //
-    
     if(this->solver->usesJacobian()){
       // compute the numerical part of the jacobian.  This method is
       // used to compute a numerical approximation of the jacobian for
@@ -1435,6 +1405,15 @@ namespace mfront{
       // jacobian invert method can be used to compute the tangent
       // operator.
       this->writeGetPartialJacobianInvert(os,h);
+    }
+    // additional convergence checks
+    if(this->mb.hasCode(h,BehaviourData::AdditionalConvergenceChecks)){
+      os << "void additionalConvergenceChecks(bool& converged,real& error){\n"
+	 << this->mb.getCode(h,BehaviourData::AdditionalConvergenceChecks) << '\n'
+	 << "} // end of additionalConvergenceChecks\n\n";
+    } else {
+      os << "constexpr void additionalConvergenceChecks(bool&,real&) const{\n"
+	 << "} // end of additionalConvergenceChecks\n\n";
     }
     // compute stress
     if(this->mb.hasCode(h,BehaviourData::ComputeStress)){
@@ -2010,12 +1989,6 @@ namespace mfront{
   void ImplicitDSLBase::writeBehaviourParserSpecificInitializeMethodPart(std::ostream& os,
 									 const Hypothesis h) const
   {
-    const auto& d = this->mb.getBehaviourData(h);
-    SupportedTypes::TypeSize n;
-    this->checkBehaviourFile(os);
-    for(const auto& v : d.getIntegrationVariables()){
-      n += this->getTypeSize(v.type,v.arraySize);
-    }
     this->solver->writeSpecificInitializeMethodPart(os,mb,h);
   }
 

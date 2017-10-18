@@ -353,6 +353,7 @@ namespace mfront{
       msize = std::max(msize,k.size());
     }
     for(const auto& key: keys){
+      if(key==";"){continue;}
       const auto fp = getDocumentationFilePath(o,key);
       auto k = key;
       k.resize(msize,' ');
