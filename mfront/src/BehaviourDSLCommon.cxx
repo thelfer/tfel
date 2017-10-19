@@ -1195,6 +1195,14 @@ namespace mfront{
       	<< "return i;\n"
       	<< "} // end of " << cn << "::getSlidingSystems\n\n"
     	<< "template<typename real>\n"
+    	<< "const " << cn << "<real>&\n" << cn << "<real>::getSlipSystems(){\n"
+	<< "return " << cn << "<real>::getSlidingSystems();\n"
+	<< "} // end of " << cn << "::getSlipSystems\n\n"
+    	<< "template<typename real>\n"
+    	<< "const " << cn << "<real>&\n" << cn << "<real>::getGlidingSystems(){\n"
+	<< "return " << cn << "<real>::getSlidingSystems();\n"
+	<< "} // end of " << cn << "::getGlidingSystems\n\n"
+    	<< "template<typename real>\n"
     	<< cn << "<real>::" << cn << "(){\n";
     std::vector<tensor> gots;
     std::vector<vector> gnss;
