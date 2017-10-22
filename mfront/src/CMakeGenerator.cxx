@@ -269,14 +269,20 @@ namespace mfront{
     //    const char * silent = getDebugMode() ? nullptr : "-s";
     const char * silent = nullptr;
     const auto g = []{
-      const auto dg = getCMakeDefaultGenerator();
+      const auto cg = []()->std::string{
+	const auto * e = ::getenv("CMAKE_GENERATOR");
+	if(e!=nullptr){
+	  return e;
+	}
+	return getCMakeDefaultGenerator();
+      }();
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
       // spawn function do not like spaces in arguments
-      if(dg.find(' ')!=std::string::npos){
-	return '"'+dg+'"';
+      if(cg.find(' ')!=std::string::npos){
+	return '"'+cg+'"';
       }
 #endif
-      return dg;
+      return cg;
     }();
     // check for multi-configuration generator
     const char* cfg1 = nullptr;
@@ -286,18 +292,18 @@ namespace mfront{
       cfg1 = "--config";
       cfg2 = "Release";
     }
-	const char* tg1 = nullptr;
-	const char* tg2 = nullptr;
-	if (t != "all") {
-		tg1 = "--target";
-		tg2 = t.c_str();
-	}
+    const char* tg1 = nullptr;
+    const char* tg2 = nullptr;
+    if (t != "all") {
+      tg1 = "--target";
+      tg2 = t.c_str();
+    }
     const char * argv[]  = {cmake,"-G",g.c_str(),".",silent,nullptr};
     const char * argv2[] = {cmake,"--build",".",tg1,tg2,
 				 cfg1,cfg2,silent,nullptr};
-	std::remove_if(argv2, argv2 + 9, [](const char* ptr) {
-		return ptr == nullptr;
-	});
+    std::remove_if(argv2, argv2 + 9, [](const char* ptr) {
+	return ptr == nullptr;
+      });
     auto error = [&argv,&t](const std::string& e,
 			    const char* const* args){
       auto msg = "callCmake: can't build target '"+t+"'\n";
