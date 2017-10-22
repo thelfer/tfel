@@ -14,12 +14,8 @@
 #ifndef LIB_TFEL_MATH_LOGARITHMICSTRAINHANDLER_IXX
 #define LIB_TFEL_MATH_LOGARITHMICSTRAINHANDLER_IXX
 
-#include<iostream>
-#include"TFEL/Math/Stensor/StensorConceptIO.hxx"
-#include"TFEL/Math/ST2toST2/ST2toST2View.hxx"
-#include"TFEL/Math/ST2toST2/ST2toST2ConceptIO.hxx"
-
 #include<cmath>
+#include"TFEL/Math/ST2toST2/ST2toST2View.hxx"
 #include"TFEL/Material/FiniteStrainBehaviourTangentOperator.hxx"
 
 namespace tfel
@@ -258,7 +254,7 @@ namespace tfel
     void LogarithmicStrainHandler<2u,StressType>::getHenckyLogarithmicStrain(real *const elog) const
     {
       const auto el = StrainStensor::computeIsotropicFunction(this->e,this->m);
-      tfel::math::internals::ExportToVoigt<3u>::exe(&el[0],elog);
+      tfel::math::internals::ExportToVoigt<2u>::exe(&el[0],elog);
     } // end of LogarithmicStrainHandler<2u,StressType>::getHenckyLogarithmicStrain
     
     template<typename StressType>
@@ -324,9 +320,8 @@ namespace tfel
       if(this->s==LAGRANGIAN){
 	const auto S = this->convertToSecondPiolaKirchhoffStress(T);
 	return tfel::math::convertSecondPiolaKirchhoffStressToCauchyStress(S,this->F);
-      } else {
-	return (2*(T|p))/tfel::math::det(this->F);
       }
+      return (2*(T|p))/tfel::math::det(this->F);
     } // end of LogarithmicStrainHandler<2u,StressType>::convertToSecondPiolaKirchhoffStress
 
     template<typename StressType>
@@ -395,7 +390,7 @@ namespace tfel
       N(2) = {0,0,2,0};
       N(3) = stensor::buildFromVectorsSymmetricDiadicProduct(v[0],v[1]);
       return N;
-    } // end of LogarithmicStrainHandler<3u,StressType>::getNTensors
+    } // end of LogarithmicStrainHandler<2u,StressType>::getNTensors
 
     template<typename StressType>
     tfel::math::tvector<4u,tfel::math::stensor<2u,typename LogarithmicStrainHandler<2u,StressType>::real>>
@@ -420,7 +415,7 @@ namespace tfel
       M(2) = {zero,zero,2*F[2]*F[2],zero};
       M(3) = stensor::buildFromVectorsSymmetricDiadicProduct(n[0],n[1]);
       return M;
-    } // end of LogarithmicStrainHandler<3u,StressType>::getEulerianMTensors
+    } // end of LogarithmicStrainHandler<2u,StressType>::getEulerianMTensors
     
     template<typename StressType>
     typename LogarithmicStrainHandler<2u,StressType>::TangentOperator
