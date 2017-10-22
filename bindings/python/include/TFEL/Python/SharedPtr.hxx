@@ -37,7 +37,7 @@
 #else
 #ifdef __clang__
 #ifndef _LIBCPP_VERSION
-#ifdef BOOST_VERSION < 105700
+#if BOOST_VERSION < 105700
 #define TFEL_PYTHON_GETPOINTER_OVERLOAD
 #endif /* BOOST_VERSION */
 #endif /* _LIBCPP_VERSION */
