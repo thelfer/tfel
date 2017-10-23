@@ -6,6 +6,18 @@
 
 # Tickets fixed
 
+## Ticket #92: Reading boolean values in `Data::read_value` is broken
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/92/>
+
+## Ticket #91: Parts of the implicit systems and jacobian matrix blocks by the `StandardElasticity` brick shall be inserted at the beginning of the `@Integrator` block, not at the end
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/91/>
+
+## Ticket #90: Wrong test on `BOOST_VERSION` version in `bindings/python/include/TFEL/Python/SharedPtr.hxx`
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/90/>
+
 ## Ticket #89: StandardElasticity: bug when only one the plane stress modelling hypotheses is selected
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/89/>

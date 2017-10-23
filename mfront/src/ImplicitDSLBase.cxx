@@ -897,6 +897,7 @@ namespace mfront{
 	 (i.type==MaterialPropertyInput::EXTERNALSTATEVARIABLE)){
 	return "this->"+i.name + "+theta*(this->d" + i.name+')';
       } else if ((i.type==MaterialPropertyInput::MATERIALPROPERTY)||
+		 (i.type==MaterialPropertyInput::STATEVARIABLE)||
 		 (i.type==MaterialPropertyInput::PARAMETER)){
 	return "this->"+i.name;
       } else {
@@ -910,6 +911,7 @@ namespace mfront{
 	 (i.type==MaterialPropertyInput::EXTERNALSTATEVARIABLE)){
 	return "this->"+i.name + "+this->d" + i.name;
       } else if ((i.type==MaterialPropertyInput::MATERIALPROPERTY)||
+		 (i.type==MaterialPropertyInput::STATEVARIABLE)||
 		 (i.type==MaterialPropertyInput::PARAMETER)){
 	return "this->"+i.name;
       } else {
@@ -1079,7 +1081,102 @@ namespace mfront{
   void ImplicitDSLBase::writeBehaviourParserSpecificMembers(std::ostream& os,
 							    const Hypothesis h) const
   {
+    using Modifier = std::function<std::string(const MaterialPropertyInput&)>;
+    Modifier mts = [this](const MaterialPropertyInput& i) -> std::string{
+      if((i.type==MaterialPropertyInput::TEMPERATURE)||
+	 (i.type==MaterialPropertyInput::AUXILIARYSTATEVARIABLEFROMEXTERNALMODEL)||
+	 (i.type==MaterialPropertyInput::STATEVARIABLE)||
+	 (i.type==MaterialPropertyInput::EXTERNALSTATEVARIABLE)){
+	return "this->"+i.name + "+theta*(this->d" + i.name+')';
+      } else if ((i.type==MaterialPropertyInput::MATERIALPROPERTY)||
+		 (i.type==MaterialPropertyInput::PARAMETER)){
+	return "this->"+i.name;
+      } else {
+	this->throwRuntimeError("ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation",
+				"unsupported input type for variable '"+i.name+"'");
+      }
+    };
+    Modifier ets = [this](const MaterialPropertyInput& i) -> std::string {
+      if((i.type==MaterialPropertyInput::TEMPERATURE)||
+	 (i.type==MaterialPropertyInput::AUXILIARYSTATEVARIABLEFROMEXTERNALMODEL)||
+	 (i.type==MaterialPropertyInput::STATEVARIABLE)||
+	 (i.type==MaterialPropertyInput::EXTERNALSTATEVARIABLE)){
+	return "this->"+i.name + "+this->d" + i.name;
+      } else if ((i.type==MaterialPropertyInput::MATERIALPROPERTY)||
+		 (i.type==MaterialPropertyInput::PARAMETER)){
+	return "this->"+i.name;
+      } else {
+	this->throwRuntimeError("ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation",
+				"unsupported input type for variable '"+i.name+"'");
+      }
+    };
+    // 
     BehaviourDSLCommon::writeBehaviourParserSpecificMembers(os,h);
+    // updating material properties
+    os << "// updating material properties, in mandatory\n"
+       << "void updateMaterialPropertiesDependantOnStateVariables(){\n"
+       << "using namespace std;\n"
+       << "using namespace tfel::math;\n"
+       << "using std::vector;\n";
+    writeMaterialLaws(os,this->mb.getMaterialLaws());
+    if(this->mb.getAttribute(BehaviourDescription::computesStiffnessTensor,false)){
+      if(this->mb.areElasticMaterialPropertiesDependantOnStateVariables()){
+	os << "// updating the stiffness tensor at the middle of the time step\n";
+	this->writeStiffnessTensorComputation(os,"this->D",mts);
+	os << "// stiffness tensor at the end of the time step\n";
+	this->writeStiffnessTensorComputation(os,"this->D_tdt",ets);
+      }
+    }
+    for(const auto& ht : this->mb.getHillTensors()){
+      if((this->mb.getBehaviourType()!=BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR)&&
+	 (this->mb.getBehaviourType()!=BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR)){
+	this->throwRuntimeError("ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation",
+				"Hill tensors shall only be defined for finite strain "
+				"or small strain behaviours");
+      }      
+      if(this->mb.areMaterialPropertiesDependantOnStateVariables(ht.c)){
+	this->writeHillTensorComputation(os,"this->"+ht.name,ht,mts);
+	this->writeHillTensorComputation(os,"this->"+ht.name+"_tdt",ht,ets);
+      }
+    }
+    if((!this->mb.getAttribute(BehaviourDescription::computesStiffnessTensor,false))&&
+       (this->mb.getElasticSymmetryType()==ISOTROPIC)&&
+       (this->mb.areElasticMaterialPropertiesDefined())){
+      const auto& emps = this->mb.getElasticMaterialProperties();
+      if(emps.size()!=2u){
+	this->throwRuntimeError("ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation",
+				"invalid number of material properties");
+      }
+      if(this->mb.isMaterialPropertyDependantOnStateVariables(emps[0])){
+	this->writeMaterialPropertyCheckBoundsEvaluation(os,emps[0],mts);
+	this->writeMaterialPropertyCheckBoundsEvaluation(os,emps[0],ets);
+	os << "this->young=";
+	this->writeMaterialPropertyEvaluation(os,emps[0],mts);
+	os << ";\n";
+	os << "this->young_tdt=";
+	this->writeMaterialPropertyEvaluation(os,emps[0],ets);
+	os << ";\n";
+      }
+      if(this->mb.isMaterialPropertyDependantOnStateVariables(emps[1])){
+	this->writeMaterialPropertyCheckBoundsEvaluation(os,emps[1],mts);
+	this->writeMaterialPropertyCheckBoundsEvaluation(os,emps[1],ets);
+	os << "this->nu=";
+	this->writeMaterialPropertyEvaluation(os,emps[1],mts);
+	os << ";\n";
+	os << "this->nu_tdt=";
+	this->writeMaterialPropertyEvaluation(os,emps[1],ets);
+	os << ";\n";
+      }
+      if((this->mb.isMaterialPropertyDependantOnStateVariables(emps[0]))||
+	 (this->mb.isMaterialPropertyDependantOnStateVariables(emps[1]))){
+	os << "this->lambda=computeLambda(young,nu);\n"
+	   << "this->mu=computeMu(young,nu);\n"
+	   << "this->lambda_tdt = computeLambda(young_tdt,nu_tdt);\n"
+	   << "this->mu_tdt     = computeMu(young_tdt,nu_tdt);\n";
+      }
+    }
+    os << "}\n\n";
+    // 
     const auto& d = this->mb.getBehaviourData(h);
     SupportedTypes::TypeSize n;
     const auto n3 = d.getIntegrationVariables().getTypeSize();
@@ -1414,7 +1511,7 @@ namespace mfront{
 	 << "static_cast<void>(error);\n"
 	 << "} // end of additionalConvergenceChecks\n\n";
     } else {
-      os << "constexpr void additionalConvergenceChecks(bool&,real&) const{\n"
+      os << "void additionalConvergenceChecks(bool&,real&) const{\n"
 	 << "} // end of additionalConvergenceChecks\n\n";
     }
     // compute stress

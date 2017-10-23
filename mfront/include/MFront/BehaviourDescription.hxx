@@ -76,11 +76,15 @@ namespace mfront
     //! a simple alias
     using  Position = BehaviourData::Position;
     //! validation tatus
+    enum VerificationStatus{
+      UNVERIFIED,
+      VERIFIED
+    }; // end of VerificationStatus
+    //! validation tatus
     enum ValidationStatus{
       UNVALIDATED,
-      QUALIFIED,
-      VALIDATED,
-    };
+      VALIDATED
+    }; // end of ValidationStatus
     //! Strain measure
     enum StrainMeasure{
       LINEARISED,
@@ -153,7 +157,7 @@ namespace mfront
       //! external name
       std::string ename;
       //! variable type
-      enum {TEMPERATURE,MATERIALPROPERTY,
+      enum {TEMPERATURE,MATERIALPROPERTY,STATEVARIABLE,
 	    AUXILIARYSTATEVARIABLEFROMEXTERNALMODEL,
 	    EXTERNALSTATEVARIABLE,PARAMETER} type;
     }; // end of 
@@ -426,8 +430,12 @@ namespace mfront
      * \return true if the material property is constant over the time step
      * \param[in] mp: material property
      */
-    bool
-      isMaterialPropertyConstantDuringTheTimeStep(const MaterialProperty&) const;
+    bool isMaterialPropertyConstantDuringTheTimeStep(const MaterialProperty&) const;
+    /*!
+     * \return true if the material property depends on state variables
+     * \param[in] mp: material property
+     */
+    bool isMaterialPropertyDependantOnStateVariables(const MaterialProperty&) const;
     //! \return registred models
     const std::vector<ModelDescription>& getModelsDescriptions() const;
     /*!
@@ -452,9 +460,19 @@ namespace mfront
     /*!
      * \return true if the given material properties are constant over
      * the time step
-     * \param[in] mps: list of material propertiesx
+     * \param[in] mps: list of material properties
      */
     bool areMaterialPropertiesConstantDuringTheTimeStep(const std::vector<MaterialProperty>&) const;
+    /*!
+     * \return true if the elastic material properties depend on state
+     * variables
+     */
+    bool areElasticMaterialPropertiesDependantOnStateVariables() const;
+    /*!
+     * \return true if the given material properties depend on state variables
+     * \param[in] mps: list of material properties
+     */
+    bool areMaterialPropertiesDependantOnStateVariables(const std::vector<MaterialProperty>&) const;
     /*!
      * \brief add a new Hill tensor
      * \param[in] v:   variable description

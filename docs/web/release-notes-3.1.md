@@ -12,17 +12,102 @@ The page declares the new functionalities of the 3.1 version of
 
 # Highlights
 
-## Numerical stability
+## The gallery and the `MFrontGallery` project
 
-#### Tests with `verrou`
+## Enhanced numerical stability
 
-### Enabling the `-ffast-math` with GCC
+### Tests with `verrou`
+
+### Enabling the `-ffast-math` with `GCC`
+
+The `-ffast-math` flag of `GCC` can significantly improve the
+performances of the generated code by allowing optimizations that do
+not preserve strict IEEE compliance. For instance, the overall tests
+delivered with `TFEL` runs almost \(10\,\%\) faster with this option
+enabled.
+
+Most of those optimizations are used by default by the `Intel`
+compiler.
+
+There are two potential issues with this flags:
+
+- due to the lack of the strict IEEE compliance, the resulting code
+  can be less portable. This can also lead to less accurate and more
+  unstable code. In `TFEL/MFront`, it has been seen that the algorithm
+  used to compute the eigenvalues and the eigenvectors of symmetric
+  tensors can be affected. New algorithms, more stable but less
+  efficient, have been introduce, as discussed below.
+- under `GCC`, various mathematical functions of the standard library
+  behaves in an unexpected manner and can not be trusted. For example,
+  the `isnan` function returns `true`, even if its argument is `NaN`.
+  This issue has been overcome by implementing proper versions of the
+  `fpclassify`, `isnan`, `isfinite` functions, as described below.
 
 ## Single crystal behaviours
 
 ### Introducing the `TFELNUMODIS` library
 
 ### The `SlipSystemsDescription` class in `TFEL/Material`
+
+## Better support of the `Windows` operating system
+
+There are various ways of getting `TFEL` and `MFront` working on the
+the `Windows` operating system:
+
+- One may use the
+  [`Visual Studio`](https://www.visualstudio.com/vs/cplusplus) IDE and
+  compilers suite. This is the *de facto* standard on the `Windows`
+  OS. This is also the compiler used by the
+  [`Salome` platform](http://www.salome-platform.org/). An
+  installation guide for `Visual Studio` is available
+  [here](http://tfel.sourceforge.net/install-windows-VisualStudio.html).
+- One may use the [`MINGW`](http://www.mingw.org/), which is a native
+  `Windows` port of the `GNU Compiler Collection` (GCC). This port can
+  be used in the [`MSYS`](http://www.mingw.org/wiki/MSYS))
+  environment. The `Windows` port of the `Cast3M` finite element
+  solver is built on the `MINGW`. An installation guide for
+  `TFEL/MFront` with `Cast3M 2017` is available
+  [here][http://tfel.sourceforge.net/install-windows-Cast3M2017.html).
+  In the `MSYS` environment, the compilation and installation steps
+  are similar to those in `Linux`. More details can be found
+  [here](http://tfel.sourceforge.net/install-windows-msys.html).
+- One may compile `TFEL/MFront` under
+  [`Cygwin`](https://www.cygwin.com/), which provides a large
+  collection of `GNU` and Open Source tools which provide
+  functionality similar to a `Linux` distribution on `Windows` and a
+  substantial `POSIX` `API` functionality. Various ports of the
+  `CalculiX` finite element solver is built upon `Cygwin`
+- One may compile `TFEL/MFront` using one of the `Linux` distribution
+  available with the
+  [`Windows Subsystem for LinuX`](https://msdn.microsoft.com/fr-fr/commandline/wsl/about). This
+  is not officially supported yet, but has been successfully tested by
+  various contributors.
+
+### `Visual Studio` support
+
+Support of the `Visual Studio` has been greatly improved. `TFEL`
+versions `3.0.x` could be compiled and tested with `Visual Studio`
+`2015` and later, but the resulting executables were not really usable
+by an end user. Indeed, those versions of `mfront` could not generate
+a build system compatible with `Visual Studio`.
+
+For this reason, the `cmake` generator, described below, has been
+introduced.
+
+## `Travis CI` and `Appveyor` continous integration services
+
+As an open-source project available on
+(`github`](https://github.com/thelfer/tfel), one have free access to
+the `Travis CI` and `Appveyor` continous integration services:
+
+- `Travis CI` allows us to build `TFEL/MFront` on various combinations
+  compilers (`gcc` and `clang`) and operating systems (`Ubuntu` and
+  `Mac Os`).
+- `Appveyor` allows us to build `TFEL/MFront` with `Visual Studio
+  2017`.
+
+Since builds are limited a one hour, one can only test a subset of the
+`TFEL/MFront` functionalities. 
 
 # TFEL
 
@@ -551,6 +636,71 @@ Linking CXX shared library libmateriallaw.so
 [100%] Built target materiallaw
 The following library has been built :
 - materiallaw.so :  YoungModulusTest
+~~~~
+
+### Chaning the build system targeted used by `cmake`
+
+By default, `cmake` generates configuration files for a default build
+system which is determined as follows:
+
+- if `TFEL` was built using `cmake`, the same build system is used.
+- otherwise, the `Unix Makefiles` build system is used.
+
+This can be changed by the user using the `CMAKE_GENERATOR`
+environment variable. For example, one my select the `Ninja` build
+system as follows:
+
+~~~~{.bash}
+$ CMAKE_GENERATOR="Ninja" mfront --obuild --interface=aster -G cmake Norton.mfront 
+Treating target : all
+-- The C compiler identification is GNU 4.9.2
+-- The CXX compiler identification is GNU 4.9.2
+-- Check for working C compiler using: Ninja
+-- Check for working C compiler using: Ninja -- works
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working CXX compiler using: Ninja
+-- Check for working CXX compiler using: Ninja -- works
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- tfel-config         : /home/th202608/codes/tfel/trunk/install-python-3.4/bin/tfel-config
+-- tfel oflags         : -fvisibility-inlines-hidden;-fvisibility=hidden;-fno-fast-math;-DNO_RUNTIME_CHECK_BOUNDS;-O2;-DNDEBUG;-ftree-vectorize;-march=native
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /tmp/src
+[3/3] Linking CXX shared library libAsterBehaviour.so
+The following library has been built :
+- libAsterBehaviour.so :  asternorton
+~~~~
+
+### Environment variables affecting the build system generated  by `cmake`
+
+The build system generated by `cmake` can be affected by various
+environment variables. For example, with the `Ninja` and `Unix
+Makefiles` build systems, one can select the `C++` compiler using the
+`CXX` environment variable, as follows:
+
+~~~~{.bash}
+$ CC=clang CXX=clang++ CMAKE_GENERATOR="Ninja" mfront --obuild --interface=aster -G cmake Norton.mfront 
+Treating target : all
+-- The C compiler identification is Clang 3.5.0
+-- The CXX compiler identification is Clang 3.5.0
+-- Check for working C compiler using: Ninja
+-- Check for working C compiler using: Ninja -- works
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working CXX compiler using: Ninja
+-- Check for working CXX compiler using: Ninja -- works
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- tfel-config         : /home/th202608/codes/tfel/trunk/install-python-3.4/bin/tfel-config
+-- tfel oflags         : -fvisibility-inlines-hidden;-fvisibility=hidden;-fno-fast-math;-DNO_RUNTIME_CHECK_BOUNDS;-O2;-DNDEBUG;-ftree-vectorize;-march=native
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /tmp/src
+[3/3] Linking CXX shared library libAsterBehaviour.so
+The following library has been built :
+- libAsterBehaviour.so :  asternorton
 ~~~~
 
 ## `Implicit` DSL
@@ -1213,6 +1363,100 @@ The following queries are now available:
 - `--physical-bounds-value`: show the bounds value associated as a range.
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/50/>
+
+## Ticket #55: New functionnalities for multi-yield-surfaces plasticity
+
+The `@AdditionalConvergenceChecks` keyword is meant to introduce a
+code block returning stating if convergence has been reached. More
+precisely, this code block is meant to modify a boolean variable
+called `converged`. This boolean is `true` if the standard convergence
+criterion has been reached, `false` otherwise.
+
+One possible usage of this code block is multi-surfaces' plasticity
+treated by activating or desactivating statuses.
+
+### Example
+
+Consider a two surfaces plastic behaviour. To handle it, we will need
+two arrays of boolean:
+
+- the first one tells if the ith surface is activable during the time
+  step.
+- the second one gives the current status of the ith surface: if the
+  corresponding status is set to `true`, this surface is active.
+
+~~~~
+@Brick StandardElasticity; // to have computeElasticPrediction
+
+@LocalVariable bool status[2];
+
+@Prediction{
+  // initial status based of the elastic prediction
+  auto sigel = computeElasticPrediction();
+  for(unsigned short i=0;i!=2;++i){
+	status[i] = ...
+  }
+} // end of @Prediction
+
+@Integrator{
+  for(unsigned short i=0;i!=2;++i){
+    if(status[i]){
+      ...
+    }
+  }
+} // end of @Integrator
+
+@AdditionalConvergenceChecks{
+  // initial status based of the elastic prediction
+  for(unsigned short i=0;i!=2;++i){
+    // change the status if needed. If a status a changed,
+    //set `converged` to `false`
+	...
+  }
+}
+~~~~
+
+## Ticket #60: Compute the consistent tangent operator for the `MieheApelLambrechtLogarithmicStrain` finite strain strategy
+
+The `LogarithmicStrainHandler` class has been introduced to gather the
+implementations of `MieheApelLambrechtLogarithmicStrain` finite strain
+strategy in all interfaces. The computation of the consistent tangent
+operator has been implemented in this class.
+
+This feature is available in the `Cast3M`, `Abaqus/Standard` and
+`CalculiX` interfaces.
+
+## Ticket #61: Introduce a general `@FiniteStrainStrategy` keyword. Deprecate definition of the finite strain strategies in the interfaces.
+
+The `StrainMeasure` keyword has been introduced. This keyword is
+followed by the name of a strain measure:
+
+- `Linearised` (small strain behaviour)
+- `Green-Lagrange`
+- `Hencky`
+
+The stress tensor computed by the behaviour is interpreted as the dual
+of the strain measure chosen.
+
+The definition of the finite strain strategies in interfaces has not
+been deprecated, as this allows to define general purpose behaviours
+available in various "flavours".
+
+The `StrainMeasure` keyword has been introduced. This keyword is
+followed by the name of a strain measure:
+
+- `Linearised` (small strain behaviour)
+- `Green-Lagrange`
+- `Hencky`
+
+The stress tensor computed by the behaviour is interpreted as the dual
+of the strain measure chosen.
+
+The definition of the finite strain strategies in interfaces has not
+been deprecated, as this allows to define general purpose behaviours
+available in various "flavours".
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/61/>
 
 ## Ticket #65: `@ElasticMaterialProperties` does not work for DSL describing isotropics behaviours
 

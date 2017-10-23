@@ -2511,41 +2511,42 @@ namespace mfront{
       this->throwRuntimeError("BehaviourDSLCommon::writeStandardTFELTypedefs",
 			      "ouput file is not valid");
     }
-    file << "typedef unsigned short ushort;\n";
+    file << "using ushort =  unsigned short;\n";
     if(this->mb.useQt()){        
-      file << "typedef tfel::config::Types<N,Type,use_qt> Types;\n";
+      file << "using Types = tfel::config::Types<N,Type,use_qt>;\n";
     } else {
-      file << "typedef tfel::config::Types<N,Type,false> Types;\n";
+      file << "using Types = tfel::config::Types<N,Type,false>;\n";
     }
-    file << "typedef typename Types::real                              real;\n"
-	 << "typedef typename Types::time                              time;\n"
-	 << "typedef typename Types::length                            length;\n"
-	 << "typedef typename Types::frequency                         frequency;\n"
-	 << "typedef typename Types::stress                            stress;\n"
-	 << "typedef typename Types::strain                            strain;\n"
-	 << "typedef typename Types::strainrate                        strainrate;\n"
-	 << "typedef typename Types::stressrate                        stressrate;\n"
-	 << "typedef typename Types::temperature                       temperature;\n"
-	 << "typedef typename Types::thermalexpansion                  thermalexpansion;\n"
-	 << "typedef typename Types::massdensity                       massdensity;\n"
-	 << "typedef typename Types::TVector                           TVector;\n"
-	 << "typedef typename Types::Stensor                           Stensor;\n"
-	 << "typedef typename Types::Stensor4                          Stensor4;\n"
-	 << "typedef typename Types::FrequencyStensor                  FrequencyStensor;\n"
-	 << "typedef typename Types::ForceTVector                      ForceTVector;\n"
-	 << "typedef typename Types::StressStensor                     StressStensor;\n"
-	 << "typedef typename Types::StressRateStensor                 StressRateStensor;\n"
-	 << "typedef typename Types::DisplacementTVector               DisplacementTVector;\n"
-	 << "typedef typename Types::StrainStensor                     StrainStensor;\n"
-	 << "typedef typename Types::StrainRateStensor                 StrainRateStensor;\n"
-	 << "typedef typename Types::StiffnessTensor                   StiffnessTensor;\n"
-	 << "typedef typename Types::Tensor                            Tensor;\n"
-	 << "typedef typename Types::StressTensor                      StressTensor;\n"
-	 << "typedef typename Types::ThermalExpansionCoefficientTensor ThermalExpansionCoefficientTensor;\n"
-	 << "typedef typename Types::DeformationGradientTensor         DeformationGradientTensor;\n"
-      	 << "typedef typename Types::DeformationGradientRateTensor     DeformationGradientRateTensor;\n"
+    file << "using real                = typename Types::real;\n"
+	 << "using time                = typename Types::time;\n"
+	 << "using length              = typename Types::length;\n"
+	 << "using frequency           = typename Types::frequency;\n"
+	 << "using stress              = typename Types::stress;\n"
+	 << "using strain              = typename Types::strain;\n"
+	 << "using strainrate          = typename Types::strainrate;\n"
+	 << "using stressrate          = typename Types::stressrate;\n"
+	 << "using temperature         = typename Types::temperature;\n"
+	 << "using thermalexpansion    = typename Types::thermalexpansion;\n"
+	 << "using massdensity         = typename Types::massdensity;\n"
+	 << "using TVector             = typename Types::TVector;\n"
+	 << "using Stensor             = typename Types::Stensor;\n"
+	 << "using Stensor4            = typename Types::Stensor4;\n"
+	 << "using FrequencyStensor    = typename Types::FrequencyStensor;\n"
+	 << "using ForceTVector        = typename Types::ForceTVector;\n"
+	 << "using StressStensor       = typename Types::StressStensor;\n"
+	 << "using StressRateStensor   = typename Types::StressRateStensor;\n"
+	 << "using DisplacementTVector = typename Types::DisplacementTVector;\n"
+	 << "using StrainStensor       = typename Types::StrainStensor;\n"
+	 << "using StrainRateStensor   = typename Types::StrainRateStensor;\n"
+	 << "using StiffnessTensor     = typename Types::StiffnessTensor;\n"
+	 << "using Tensor              = typename Types::Tensor;\n"
+	 << "using StressTensor        = typename Types::StressTensor;\n"
+	 << "using ThermalExpansionCoefficientTensor = typename Types::ThermalExpansionCoefficientTensor;\n"
+	 << "using DeformationGradientTensor         = typename Types::DeformationGradientTensor;\n"
+      	 << "using DeformationGradientRateTensor     = typename Types::DeformationGradientRateTensor;\n"
       // tangent operator
-	 << "typedef " << this->mb.getTangentOperatorType() << " TangentOperator;\n";
+	 << "using TangentOperator   = " << this->mb.getTangentOperatorType() << ";\n"
+	 << "using PhysicalConstants = tfel::PhysicalConstants<real>;\n";
   } // end of BehaviourDSLCommon::writeStandardTFELTypedefs
 
   std::string
@@ -2660,6 +2661,7 @@ namespace mfront{
        << "#include<stdexcept>\n"
        << "#include<algorithm>\n\n"
        << "#include\"TFEL/Raise.hxx\"\n"
+       << "#include\"TFEL/PhysicalConstants.hxx\"\n"
        << "#include\"TFEL/Config/TFELConfig.hxx\"\n"
        << "#include\"TFEL/Config/TFELTypes.hxx\"\n"
        << "#include\"TFEL/Metaprogramming/StaticAssert.hxx\"\n"
@@ -4883,6 +4885,7 @@ namespace mfront{
        << "#include<stdexcept>\n"
        << "#include<algorithm>\n\n"
        << "#include\"TFEL/Raise.hxx\"\n"
+       << "#include\"TFEL/PhysicalConstants.hxx\"\n"
        << "#include\"TFEL/Config/TFELConfig.hxx\"\n"
        << "#include\"TFEL/Config/TFELTypes.hxx\"\n"
        << "#include\"TFEL/Metaprogramming/StaticAssert.hxx\"\n"
@@ -5824,6 +5827,7 @@ namespace mfront{
        << "#include<stdexcept>\n"
        << "#include<algorithm>\n\n"
        << "#include\"TFEL/Raise.hxx\"\n"
+       << "#include\"TFEL/PhysicalConstants.hxx\"\n"
        << "#include\"TFEL/Config/TFELConfig.hxx\"\n"
        << "#include\"TFEL/Config/TFELTypes.hxx\"\n"
        << "#include\"TFEL/Metaprogramming/StaticAssert.hxx\"\n"

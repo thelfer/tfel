@@ -54,6 +54,7 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./hyperviscoelasticity.md				      \
 	   ./orthotropiclinearhardeningplasticity.md                  \
 	   ./isotropicplasticityamstrongfrederickinematichardening.md \
+	   ./iwan.md                                                  \
 	   ./singlecrystal.md                                         \
 	   ./finitestrainsinglecrystal.md                             \
 	   ./finitestrainsinglecrystal-huang.md                       \
@@ -82,6 +83,7 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./RungeKutta-keywords.md				      \
 	   ./coverity-scan.md                                         \
 	   ./tensors.md                                               \
+	   ./theory.md                                                \
 	   ./robots.txt						      \
 	   ./crossdomain.xml					      \
 	   ./js/vendor						      \
@@ -94,6 +96,7 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./humans.txt						      \
 	   ./apple-touch-icon-precomposed.png			      \
 	   ./img/background.svg  				      \
+	   ./img/CauchyStressComponents.png                           \
 	   ./img/tutorielch12-img1.png				      \
 	   ./img/VoidsGrowth.png				      \
 	   ./img/FuelRod-ddif2.png				      \
@@ -112,6 +115,7 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./img/AMITEX_FFTP_website.png			      \
 	   ./img/HureCast3M2014.png			              \
 	   ./img/CodeAster2015Flyer.png			              \
+	   ./img/Configuration.png			              \
 	   ./img/mingw-get1.png			                      \
 	   ./img/mingw-get1.xcf			                      \
 	   ./img/mingw-get2.png			                      \
@@ -134,6 +138,7 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./img/Norton-full.docx				      \
 	   ./img/Norton-full.odt				      \
 	   ./img/Norton-full.pdf				      \
+	   ./img/Polar_decomposition_of_F.png                         \
 	   ./img/topfuel2015-poster.png				      \
 	   ./img/abaqus-isotropichardening1.png			      \
 	   ./img/abaqus-isotropichardening2.png			      \

@@ -317,7 +317,9 @@ namespace mfront
     };
     auto getVariableType = [&throw_if,this](const Hypothesis h,
 					    const std::string& v){
-      if(this->isExternalStateVariableName(h,v)){
+      if(this->isStateVariableName(h,v)){
+	return MaterialPropertyInput::STATEVARIABLE;
+      } else if(this->isExternalStateVariableName(h,v)){
 	return MaterialPropertyInput::EXTERNALSTATEVARIABLE;
       } else if(this->isAuxiliaryStateVariableName(h,v)){
 	const auto& bd = this->getBehaviourData(h);
@@ -524,8 +526,8 @@ namespace mfront
   } // end of BehaviourDescription::isMaterialPropertyConstantDuringTheTimeStep
 
   bool BehaviourDescription::areElasticMaterialPropertiesConstantDuringTheTimeStep() const{
-    tfel::raise_if(!this->areElasticMaterialPropertiesDefined(),
-		   "BehaviourDescription::getElasticMaterialProperties: "
+    tfel::raise_if(!this->areElasticMaterialPropertiesDefined(),"BehaviourDescription::"
+		   "areElasticMaterialPropertiesConstantDuringTheTimeStep: "
 		   "no elastic material property defined");
     return this->areMaterialPropertiesConstantDuringTheTimeStep(this->elasticMaterialProperties);
   } // end of BehaviourDescription::areElasticMaterialPropertiesConstantDuringTheTimeStep
@@ -539,6 +541,34 @@ namespace mfront
     }
     return true;
   } // end of BehaviourDescription::areMaterialPropertiesConstantDuringTheTimeStep
+
+  bool BehaviourDescription::isMaterialPropertyDependantOnStateVariables(const MaterialProperty& mp) const{
+    if(mp.is<ComputedMaterialProperty>()){
+      const auto& cmp = mp.get<ComputedMaterialProperty>();
+      for(const auto& i : this->getMaterialPropertyInputs(*(cmp.mpd))){
+	if(i.type==BehaviourDescription::MaterialPropertyInput::STATEVARIABLE){
+	  return true;
+	}
+      }
+    }
+    return false;
+  } // end of BehaviourDescription::isMaterialPropertyDependantOnStateVariables
+  
+  bool BehaviourDescription::areElasticMaterialPropertiesDependantOnStateVariables() const{
+    tfel::raise_if(!this->areElasticMaterialPropertiesDefined(),"BehaviourDescription::"
+		   "areElasticMaterialPropertiesDependantOnStateVariables: "
+		   "no elastic material property defined");
+    return this->areMaterialPropertiesDependantOnStateVariables(this->elasticMaterialProperties);
+  } // end of BehaviourDescription::areElasticMaterialPropertiesDependantOnStateVariables
+  
+  bool BehaviourDescription::areMaterialPropertiesDependantOnStateVariables(const std::vector<MaterialProperty>& mps) const{
+    for(const auto& mp : mps){
+      if(this->isMaterialPropertyDependantOnStateVariables(mp)){
+	return true;
+      }
+    }
+    return true;
+  } // end of BehaviourDescription::areMaterialPropertiesDependantOnStateVariables
   
   const std::vector<BehaviourDescription::MaterialProperty>&
   BehaviourDescription::getElasticMaterialProperties() const

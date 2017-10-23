@@ -183,6 +183,7 @@ docs/gallery/behaviours/hyperviscoelasticity/SignoriniHyperViscoelasticity.mfron
 docs/gallery/behaviours/plasticity/CMakeLists.txt -text
 docs/gallery/behaviours/plasticity/IsotropicLinearHardeningPlasticity.mfront -text
 docs/gallery/behaviours/plasticity/IsotropicLinearKinematicHardeningPlasticity.mfront -text
+docs/gallery/behaviours/plasticity/Iwan.mfront -text
 docs/gallery/behaviours/plasticity/Makefile.am -text
 docs/gallery/behaviours/plasticity/OrthotropicLinearHardeningPlasticity.mfront -text
 docs/gallery/behaviours/viscoelasticity/CMakeLists.txt -text
@@ -1135,7 +1136,10 @@ docs/web/img/CalculiX_MFRONT_WSL.png -text
 docs/web/img/CalculiX_MFRONT_WSL.xcf -text
 docs/web/img/CastemWebSite.png -text
 docs/web/img/CastemWebSite.xcf -text
+docs/web/img/CauchyStressComponents.png -text
 docs/web/img/CodeAster2015Flyer.png -text
+docs/web/img/Configuration.pdf -text
+docs/web/img/Configuration.png -text
 docs/web/img/FiniteStrainTangentOperatorConvertion.dot -text
 docs/web/img/FiniteStrainTangentOperatorConvertion.svg -text
 docs/web/img/FissurationPastille.png -text
@@ -1158,6 +1162,7 @@ docs/web/img/Norton-web.odt -text
 docs/web/img/Norton-web.pdf -text
 docs/web/img/Norton.mfront -text
 docs/web/img/NortonCreepUniaxialTesting.svg -text
+docs/web/img/Polar_decomposition_of_F.png -text
 docs/web/img/SalomeMeca2015.png -text
 docs/web/img/TFEL-pcbsd.png -text
 docs/web/img/TFEL-pcbsd.xcf -text
@@ -1257,6 +1262,7 @@ docs/web/install-windows-msys.md -text
 docs/web/install.md -text
 docs/web/interfaces.md -text
 docs/web/isotropicplasticityamstrongfrederickinematichardening.md -text
+docs/web/iwan.md -text
 docs/web/js/MathJax.js -text
 docs/web/js/main.js -text
 docs/web/js/plugins.js -text
@@ -1298,6 +1304,7 @@ docs/web/singlecrystal.md -text
 docs/web/svn.md -text
 docs/web/tensors.md -text
 docs/web/tex/lcmd_utf8.tex -text
+docs/web/theory.md -text
 docs/web/tutorial-spanish.md -text
 docs/web/tutorial.md -text
 docs/web/zmat.md -text

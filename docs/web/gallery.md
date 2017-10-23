@@ -32,6 +32,8 @@ behaviour. This framework is described
 - The implementation of an orthotropic plastic behaviour with
   isotropic linear hardening is described
   [here](orthotropiclinearhardeningplasticity.html).
+- The implementation of a multi-surface plastic behaviour (the Iwan
+  behaviour) is described [here](iwan.html).
 
 ## Viscoplasticity
 

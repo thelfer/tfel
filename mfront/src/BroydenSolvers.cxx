@@ -203,7 +203,8 @@ namespace mfront{
 	<< "}\n";
     NonLinearSystemSolverBase::writeLimitsOnIncrementValuesBasedOnStateVariablesPhysicalBounds(out,mb,h);
     NonLinearSystemSolverBase::writeLimitsOnIncrementValuesBasedOnIntegrationVariablesIncrementsPhysicalBounds(out,mb,h);
-    out << "}\n"
+    out << "this->updateMaterialPropertiesDependantOnStateVariables();\n"
+	<< "}\n"
 	<< "}\n"
 	<< "}\n";
   } // end of MFrontBroydenSolverBase::writeResolutionAlgorithm

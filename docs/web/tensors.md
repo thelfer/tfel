@@ -41,6 +41,25 @@ following template arguments:
 
 Symmetric tensors are denoted as follows \(\s\).
 
+## Vector notations for symmetric tensors
+
+A symmetric tensor is stored as an array of values, as follows in
+\(3D\):
+\[
+  \tenseur{s}=
+  \begin{pmatrix}
+    s_{\,11}\quad
+    s_{\,22}\quad
+    s_{\,33}\quad
+    \sqrt{2}\,s_{\,12}\quad
+    \sqrt{2}\,s_{\,13}\quad
+    \sqrt{2}\,s_{\,23}
+  \end{pmatrix}^{T}
+\]
+
+The contracted product of two symmetric tensors is the scalar product
+of their vector forms (hence the \(\sqrt{2}\)).
+
 ### The identity tensor
 
 The symmetric second order identity tensor is returned by the `Id`
@@ -58,6 +77,25 @@ following template arguments:
 - The type used to perform the computation.
 
 Non symmetric tensors are denoted as follows \(\a\).
+
+## Vector notations for symmetric tensors
+
+A tensor is stored as an array of values, as follows in
+\(3D\):
+\[
+  \tenseur{s}=
+  \begin{pmatrix}
+    s_{\,11}\quad
+    s_{\,22}\quad
+    s_{\,33}\quad
+    s_{\,12}\quad
+    s_{\,21}\quad
+    s_{\,13}\quad
+    s_{\,31}\quad
+    s_{\,23}\quad
+    s_{\,32}
+  \end{pmatrix}^{T}
+\]
 
 ### The identity tensor
 

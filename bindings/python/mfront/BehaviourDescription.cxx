@@ -14,6 +14,7 @@
 #include<set>
 #include<memory>
 #include<boost/python.hpp>
+#include"TFEL/Raise.hxx"
 #include"MFront/BehaviourDescription.hxx"
 
 static std::vector<tfel::material::ModellingHypothesis::Hypothesis>
@@ -134,11 +135,38 @@ hasAttribute(const mfront::BehaviourDescription& d,
 	     const std::string& n){
   return d.hasAttribute(h,n);
 }
-  
+
+static void setStrainMeasure(mfront::BehaviourDescription& d,
+			     const std::string& s){
+  if(s=="Linearised"){
+    d.setStrainMeasure(mfront::BehaviourDescription::LINEARISED);
+  } else if (s=="Green-Lagrange"){
+    d.setStrainMeasure(mfront::BehaviourDescription::GREENLAGRANGE);
+  }
+  tfel::raise_if(s!="Hencky","BehaviourDescription::setStrainMeasure: "
+		 "unsupported strain measure '"+s+"'");
+  d.setStrainMeasure(mfront::BehaviourDescription::HENCKY);
+} // end of getStrainMeasure
+
+static std::string getStrainMeasure(const mfront::BehaviourDescription& d){
+  tfel::raise_if(!d.isStrainMeasureDefined(),
+		 "BehaviourDescription::getStrainMeasure: no strain measure defined");
+  const auto ss = d.getStrainMeasure();
+  if(ss==mfront::BehaviourDescription::LINEARISED){
+    return "Linearised";
+  } else if (ss==mfront::BehaviourDescription::GREENLAGRANGE){
+    return "Green-Lagrange";
+  }
+  tfel::raise_if(ss!=mfront::BehaviourDescription::HENCKY,
+		 "BehaviourDescription::getStrainMeasure: unsupported strain measure");
+  return "Hencky";
+} // end of getStrainMeasure
+
 void declareBehaviourDescription();
 void declareBehaviourDescription(){
   using namespace boost::python;
   using namespace mfront;
+  
   class_<BehaviourDescription>("BehaviourDescription")
     .def("setBehaviourName",&BehaviourDescription::setBehaviourName)
     .def("getBehaviourName",&BehaviourDescription::getBehaviourName,
@@ -191,6 +219,18 @@ void declareBehaviourDescription(){
 	 "set the crystal structure")
     .def("getAttributes",&BehaviourDescription::getAttributes,
 	 return_value_policy<copy_const_reference>())
+    .def("isStrainMeasureDefined",&BehaviourDescription::isStrainMeasureDefined,
+	 "return if a strain measure has been defined")
+    .def("setStrainMeasure",setStrainMeasure,
+	 "set the strain measure. The following strain measures are supported:\n"
+	 "- Linearised\n"
+	 "- Green-Lagrange\n"
+	 "- Hencky\n")
+    .def("getStrainMeasure",getStrainMeasure,
+	 "return the strain measure, which can have one of the following values:\n"
+	 "- Linearised\n"
+	 "- Green-Lagrange\n"
+	 "- Hencky\n")
     ;
 
 }
