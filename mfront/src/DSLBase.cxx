@@ -51,9 +51,30 @@ namespace std{
 namespace mfront
 {
 
-  static bool
-  isInteger(const std::string& s){
-    for(const auto c : s){
+  static bool isInteger(const std::string& s){
+    const auto s2 = [&s]{
+      if(s.empty()){
+	return s;
+      }
+      if((s.back()=='u')||(s.back()=='U')||
+	 (s.back()=='l')||(s.back()=='L')){
+	return s.substr(0,s.size()-1);
+      } else if((tfel::utilities::ends_with(s,"ul"))||
+		(tfel::utilities::ends_with(s,"uL"))||
+		(tfel::utilities::ends_with(s,"lu"))||
+		(tfel::utilities::ends_with(s,"Lu"))||
+		(tfel::utilities::ends_with(s,"Ul"))||
+		(tfel::utilities::ends_with(s,"UL"))||
+		(tfel::utilities::ends_with(s,"lU"))||
+		(tfel::utilities::ends_with(s,"LU"))){
+	return s.substr(0,s.size()-2);
+      }
+      return s;
+    }();
+    if(s2.empty()){
+      return false;
+    }
+    for(const auto c : s2){
       if(!std::isdigit(c)){return false;}
     }
     return true;
@@ -63,21 +84,11 @@ namespace mfront
 
   DSLBase::WordAnalyser::~WordAnalyser() = default;
 
-  DSLBase::CodeBlockParserOptions::CodeBlockParserOptions()
-    : modifier(nullptr),
-      analyser(nullptr),
-      delim1("{"),
-      delim2("}"),
-      qualifyStaticVariables(false),
-      qualifyMemberVariables(false),
-      allowSemiColon(true),
-      registerLine(true)
-  {}
+  DSLBase::CodeBlockParserOptions::CodeBlockParserOptions() = default;
 
   DSLBase::CodeBlockParserOptions::~CodeBlockParserOptions() noexcept = default;
 
-  DSLBase::DSLBase()
-  {}
+  DSLBase::DSLBase() = default;
 
   std::vector<std::string>
   DSLBase::getDefaultReservedNames(){
@@ -569,63 +580,77 @@ namespace mfront
     }
   }
 
-  void DSLBase::readVarList(VariableDescriptionContainer& cont,
-			    const bool allowArray)
-  {
+  std::pair<std::string,bool> DSLBase::readType(){
     auto throw_if = [this](const bool b,const std::string& m){
-      if(b){this->throwRuntimeError("DSLBase::readVarList",m);}
+      if(b){this->throwRuntimeError("DSLBase::readType",m);}
     };
-    this->checkNotEndOfFile("DSLBase::readVarList",
-			    "Cannot read type of varName.\n");
     auto type=this->current->value;
     throw_if(!this->isValidIdentifier(type,false),
-	     "given type "+type+"is not valid.");
+	     "given type '"+type+"' is not valid.");
     ++(this->current);
-    this->checkNotEndOfFile("DSLBase::readVarList");
+    this->checkNotEndOfFile("DSLBase::readType");
     while(this->current->value=="::"){
       ++(this->current);
-      this->checkNotEndOfFile("DSLBase::readVarList");
+      this->checkNotEndOfFile("DSLBase::readType");
       const auto t = this->current->value;
       throw_if(!this->isValidIdentifier(t,false),
 	       "given type '"+t+"' is not valid.");
       type += "::"+t;
       ++(this->current);
-      this->checkNotEndOfFile("DSLBase::readVarList");
+      this->checkNotEndOfFile("DSLBase::readType");
     }
     if(this->current->value=="<"){
-      unsigned short openBrackets = 1u;
+      bool b = false;
+      type+="<";
+      this->checkNotEndOfFile("DSLBase::readType");
       ++(this->current);
-      this->checkNotEndOfFile("DSLBase::readVarList");
-      type += "<";
-      while(openBrackets!=0){
-	const auto t = this->current->value;
-	throw_if((!this->isValidIdentifier(t,false))&&(!isInteger(t)),
-		 "given type '"+t+"' is not valid.");
-	++(this->current);
-	this->checkNotEndOfFile("DSLBase::readVarList");
-	type += t;
-	if(this->current->value==","){
+      this->checkNotEndOfFile("DSLBase::readType");
+      bool c = true;
+      while(c){
+	if(isInteger(this->current->value)){
+	  type+=this->current->value;
 	  ++(this->current);
-	  this->checkNotEndOfFile("DSLBase::readVarList");
-	  const auto t2 = this->current->value;
-	  throw_if((!this->isValidIdentifier(t2,false))&&(!isInteger(t2)),
-		   "given type '"+t+"' is not valid.");
-	  type+=",";
-	} else if(this->current->value=="<"){
-	  throw_if(isInteger(t),"given type '"+t+"'is not valid.");
-	  ++openBrackets;
-	  ++(this->current);
-	  this->checkNotEndOfFile("DSLBase::readVarList");
-	  type += "<";      
-	} else if(this->current->value==">"){
-	  --openBrackets;
-	  ++(this->current);
-	  this->checkNotEndOfFile("DSLBase::readVarList");
-	  type += ">";      
+	} else {
+	  const auto r = this->readType();
+	  type+=r.first;
+	  b=r.second;
+	  if(!b){
+	    c=false;
+	  }
+	}
+	if(c){
+	  this->checkNotEndOfFile("DSLBase::readType");
+	  if(this->current->value==","){
+	    this->readSpecifiedToken("DSLBase::readType",",");
+	    type+=",";
+	  } else {
+	    c = false;
+	  }
 	}
       }
+      if(b){
+	if(this->current->value==">>"){
+	  ++(this->current);
+	  return {type+'>',false};
+	} else {
+	  this->readSpecifiedToken("DSLBase::readType",">");
+	}
+	type+=">";
+      }
     }
-    this->readVarList(cont,type,allowArray);
+    return {type,true};
+  } // end of DSLBase::readType
+  
+  void DSLBase::readVarList(VariableDescriptionContainer& cont,
+			    const bool allowArray)
+  {
+    this->checkNotEndOfFile("DSLBase::readVarList",
+			    "Cannot read type of varName.\n");
+    const auto r = this->readType();
+    if(!r.second){
+      this->throwRuntimeError("DSLBase::readVarList","unbalanced '>'");
+    }
+    this->readVarList(cont,r.first,allowArray);
   } // end of DSLBase::readVarList
 
   std::vector<tfel::utilities::Token>

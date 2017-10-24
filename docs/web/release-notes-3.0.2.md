@@ -6,6 +6,18 @@
 
 # Tickets fixed
 
+## Ticket #93: Error declaring local variable
+
+In certain circumstances, parsing a variable type was not consistent
+with `C++` rules. For example, the following statement was not
+properly parsed:
+
+~~~~{.cpp}
+@LocalVariable tfel::math::tvector<Nss,tfel::math::tensor<3u,real> >  mu;
+~~~~
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/93/>
+
 ## Ticket #92: Reading boolean values in `Data::read_value` is broken
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/92/>

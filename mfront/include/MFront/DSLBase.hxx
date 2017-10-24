@@ -128,19 +128,19 @@ namespace mfront
       //! analyser applied to variables
       std::shared_ptr<WordAnalyser> analyser;
       //! delimeter marking the beginning of the block to be read
-      std::string delim1;
+      std::string delim1 = "{";
       //! delimeter marking the end of the block to be read
-      std::string delim2;
+      std::string delim2 = "}";
       //! if this member is true, the class name will be added in
       //! front of variables names
-      bool qualifyStaticVariables;
+      bool qualifyStaticVariables = false;
       //! if this member is true, the "this->" prefix will be added in
       //! front of variables names
-      bool qualifyMemberVariables;
+      bool qualifyMemberVariables = false;
       //! if true, the semi-colon will be allowed
-      bool allowSemiColon;
+      bool allowSemiColon = true;
       //! if true, line number will be registred
-      bool registerLine;
+      bool registerLine = true;
     }; // end of CodeBlockParserOptions
     //! \return a list of names that shall be reserved
     static std::vector<std::string>
@@ -280,6 +280,8 @@ namespace mfront
     std::pair<bool,T>
     readInitialisationValue(const std::string&,
 			    const bool);
+    //! \brief read a C++ type
+    std::pair<std::string,bool> readType();
     /*!
      * \param[in] cont : variable container to wich variables are
      * added
