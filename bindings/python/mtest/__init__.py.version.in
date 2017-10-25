@@ -1,4 +1,5 @@
 import std_@TFEL_VERSION_FOR_PYTHON_MODULES@
+import tfel_@TFEL_VERSION_FOR_PYTHON_MODULES@.tests
 import tfel_@TFEL_VERSION_FOR_PYTHON_MODULES@.math
 from ._mtest import *
 

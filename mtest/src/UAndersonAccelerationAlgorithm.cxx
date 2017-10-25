@@ -60,7 +60,10 @@ namespace mtest
 	}));
     if(this->Nmax==-1){this->Nmax = 4;}
     if(this->alMax==-1){this->alMax = 2;}
-    mfront::getLogStream() << "UAndersonAccelerationAlgorithm::initialize" << std::endl;
+    if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL1){
+      mfront::getLogStream() << "UAndersonAccelerationAlgorithm::initialize: "
+                             << this->Nmax << " " << this->alMax << '\n';
+    }
     this->a->setAnderson(this->Nmax,this->alMax);
   } // end of UAndersonAccelerationAlgorithm::initialize
 

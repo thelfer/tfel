@@ -135,12 +135,12 @@ namespace mfront{
 		   "for variable '"+n+"'");
   } // end of MTestFileGeneratorBase::addValue
 
-  void
-  MTestFileGeneratorBase::generate(const std::string& n) const
+  void MTestFileGeneratorBase::generate(const std::string& n) const
   {
     std::ofstream file(n+"-"+std::to_string(getIdentifier())+".mtest");
     tfel::raise_if(!file,"MTestFileGeneratorBase::generate: "
 		   "can't open file '"+n+".mtest'");
+    file << "@MaximumNumberOfSubSteps 1;\n";
     if(this->handleThermalExpansion){
       file << "@HandleThermalExpansion true;\n";
     } else {
