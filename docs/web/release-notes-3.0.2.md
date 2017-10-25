@@ -2,6 +2,12 @@
 % Thomas Helfer
 % 2017
 
+Version 3.0.2 of `TFEL`, `MFront` and `MTest` has been released on the
+25th October, 2017.
+
+This is mainly a bug fix version of the `3.0` series. All tickets
+solved are described below. There are no known regressions.
+
 \newcommand{\mol}{\mathrm{mol}}
 
 # Tickets fixed

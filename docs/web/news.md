@@ -16,6 +16,15 @@
 \newcommand{\Frac}[2]{{{\displaystyle \frac{\displaystyle #1}{\displaystyle #2}}}}
 \newcommand{\deriv}[2]{{\displaystyle \frac{\displaystyle \partial #1}{\displaystyle \partial #2}}}
 
+# Release of `TFEL` `3.0.2` (25/10/2017)
+
+Version 3.0.2 of `TFEL`, `MFront` and `MTest` has been released on the
+25th October, 2017.
+
+This is mainly a bug fix version of the `3.0` series. Detailed release
+notes are available [here](release-notes-3.0.2.html). There are no
+known regressions.
+
 # Behaviours for modelling mild steel (14/09/2017)
 
 ![](img/rusinek-klepaczko.svg ""){width=75%}
