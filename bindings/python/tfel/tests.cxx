@@ -14,8 +14,10 @@
 #include<boost/python.hpp>
 
 void declareTestResult();
+void declareXMLTestOutput();
 
 BOOST_PYTHON_MODULE(tests)
 {
   declareTestResult();
+  declareXMLTestOutput();
 }

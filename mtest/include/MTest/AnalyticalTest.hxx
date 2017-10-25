@@ -17,9 +17,9 @@
 #include<map>
 #include<memory>
 #include<string>
-
 #include"TFEL/Math/Evaluator.hxx"
 #include"TFEL/Tests/TestResult.hxx"
+#include"MTest/Config.hxx"
 #include"MTest/MTest.hxx"
 
 namespace mtest{
@@ -28,7 +28,7 @@ namespace mtest{
    * Test based on the comparison of the solution to analytical
    * results
    */
-  struct AnalyticalTest
+  struct MTEST_VISIBILITY_EXPORT AnalyticalTest
     : public MTest::UTest
   {
     /*!

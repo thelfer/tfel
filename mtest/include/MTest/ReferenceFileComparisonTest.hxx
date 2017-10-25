@@ -15,13 +15,13 @@
 #define LIB_MTEST_MTESTREFERENCEFILECOMPARISONTEST_HXX 
 
 #include<map>
+#include<memory>
 #include<string>
 
 #include"TFEL/Tests/TestResult.hxx"
-#include<memory>
 #include"TFEL/Utilities/CxxTokenizer.hxx"
 #include"TFEL/Utilities/TextData.hxx"
-
+#include"MTest/Config.hxx"
 #include"MTest/MTest.hxx"
 
 namespace mtest{
@@ -29,7 +29,7 @@ namespace mtest{
   /*!
    * Test based on the comparison of the solution to a reference file
    */
-  struct ReferenceFileComparisonTest
+  struct MTEST_VISIBILITY_EXPORT ReferenceFileComparisonTest
     : public MTest::UTest
   {
     /*!

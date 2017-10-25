@@ -381,7 +381,7 @@ namespace mtest
 	this->readSpecifiedToken("MTestParser::handleTest","}",
 				 p,this->tokens.end());	
       }
-      const real eps = this->readDouble(t,p);
+      const auto eps = this->readDouble(t,p);
       throw_if(eps<0,"invalid criterion value");
       for(const auto& f : functions){
 	const auto& g = buildValueExtractor(*(t.getBehaviour()),f.first);
@@ -441,8 +441,8 @@ namespace mtest
 								  ef,c.first,g,eps));
 	}
       }
-  } else {
-    throw_if(true,"invalid test type '"+type+"'");
+    } else {
+      throw_if(true,"invalid test type '"+type+"'");
     }
     this->readSpecifiedToken("MTestParser::handleTest",";",
 			     p,this->tokens.end());

@@ -24,41 +24,31 @@ namespace tfel
 
     MultipleTestOutputs::MultipleTestOutputs() = default;
 
-    void
-    MultipleTestOutputs::addTestOutput(const TestOutputPtr& o)
+    void MultipleTestOutputs::addTestOutput(const TestOutputPtr& o)
     {
       this->outputs.push_back(o);
     } // end of MultipleTestOutputs::addTestOutput
     
-    void
-    MultipleTestOutputs::beginTestSuite(const std::string& n)
+    void MultipleTestOutputs::beginTestSuite(const std::string& n)
     {
-      using namespace std;
-      vector<TestOutputPtr>::iterator p;
-      for(p=this->outputs.begin();p!=this->outputs.end();++p){
-	(*p)->beginTestSuite(n);
+      for(auto& o : this->outputs){
+	o->beginTestSuite(n);
       }
     } // end of MultipleTestOutputs::beginTestSuite
 
-    void
-    MultipleTestOutputs::addTest(const std::string& g,
-				 const std::string& n,
-				 const TestResult& r)
+    void MultipleTestOutputs::addTest(const std::string& g,
+				      const std::string& n,
+				      const TestResult& r)
     {
-      using namespace std;
-      vector<TestOutputPtr>::iterator p;
-      for(p=this->outputs.begin();p!=this->outputs.end();++p){
-	(*p)->addTest(g,n,r);
+      for(auto& o : this->outputs){
+	o->addTest(g,n,r);
       }
     } // end of MultipleTestOutputs::addTest
      
-    void
-    MultipleTestOutputs::endTestSuite(const TestResult& r)
+    void MultipleTestOutputs::endTestSuite(const TestResult& r)
     {
-      using namespace std;
-      vector<TestOutputPtr>::iterator p;
-      for(p=this->outputs.begin();p!=this->outputs.end();++p){
-	(*p)->endTestSuite(r);
+      for(auto& o : this->outputs){
+	o->endTestSuite(r);
       }
     } // end of MultipleTestOutputs::endTestSuite
   

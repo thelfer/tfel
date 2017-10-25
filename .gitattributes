@@ -104,6 +104,7 @@ bindings/python/tfel/PhysicalConstants.cxx -text
 bindings/python/tfel/ProcessManagerCommand.cxx -text
 bindings/python/tfel/TestResult.cxx -text
 bindings/python/tfel/TextData.cxx -text
+bindings/python/tfel/XMLTestOutput.cxx -text
 bindings/python/tfel/__init__.py.in -text
 bindings/python/tfel/__init__.py.version.in -text
 bindings/python/tfel/material.cxx -text

@@ -1,5 +1,5 @@
 /*! 
- * \file  bindings/python/tfel/TestResult.cxx
+ * \file  bindings/python/tfel/XMLTestOutput.cxx
  * \brief
  * \author Helfer Thomas
  * \brief 20 sept. 2013
@@ -13,18 +13,19 @@
 
 #include<boost/python.hpp>
 
-#include"TFEL/Tests/TestResult.hxx"
+#include"TFEL/Tests/XMLTestOutput.hxx"
 
-void declareTestResult();
+void declareXMLTestOutput();
 
-void declareTestResult()
+void declareXMLTestOutput()
 {
   using namespace boost;
   using namespace boost::python;
   using namespace tfel::tests;
-  class_<TestResult>("TestResult")
-    .def("success",&TestResult::success)
-    .def("duration",&TestResult::duration)
+  class_<XMLTestOutput,noncopyable>("XMLTestOutput",init<std::string>())
+    .def("beginTestSuite",&XMLTestOutput::beginTestSuite)
+    .def("endTestSuite",&XMLTestOutput::endTestSuite)
+    .def("addTest",&XMLTestOutput::addTest)
     ;
 
 } // end of declareExternalLibraryManager

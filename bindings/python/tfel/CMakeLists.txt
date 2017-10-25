@@ -16,7 +16,8 @@ tfel_python_module(_tfel tfel.cxx
   PhysicalConstants.cxx)
 
 tfel_python_module(tests tests.cxx
-  TestResult.cxx)
+  TestResult.cxx
+  XMLTestOutput.cxx)
 target_link_libraries(py_tfel_tests TFELTests)
 
 if(NOT WIN32)

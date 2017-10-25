@@ -26,9 +26,7 @@ namespace tfel
   namespace tests
   {
     
-   /*! 
-     * result of test
-     */
+    //! result of a test
     struct TFELTESTS_VISIBILITY_EXPORT TestResult
       : protected std::vector<TestResult>
     {
@@ -62,27 +60,20 @@ namespace tfel
       TestResult& operator = (const TestResult&);
       //! assignement operator
       TestResult& operator = (TestResult&&);
-      /*! 
-       * report success
-       */
+      //! report success
       bool success() const;
-      /*! 
-       * get result details
-       */
-      const std::string&
-      details() const;
+      //! get result details
+      const std::string& details() const;
       /*!
        *  \return a read-only (constant) iterator that points to the
        *  first element in the vector.
        */
-      const_iterator
-      begin() const;
+      const_iterator begin() const;
       /*!
        *  \return an iterator that points one past
        *  the last element in the vector
        */
-      const_iterator
-      end() const;
+      const_iterator end() const;
       /*!
        * This is a typical stack operation.  The function creates an
        * element at the end of the vector and assigns the given data
@@ -113,8 +104,7 @@ namespace tfel
       bool s = true;
     }; // end of struct 
     
-    std::ostream&
-    operator << (std::ostream&,const TestResult&);
+    std::ostream& operator << (std::ostream&,const TestResult&);
 
   } // end of namespace tests
 

@@ -75,8 +75,7 @@ namespace tfel
       return r;
     } // end of TestSuite::execute
 
-    TestResult
-    TestSuite::execute(TestOutput& o)
+    TestResult TestSuite::execute(TestOutput& o)
     {
       using namespace std;
       using namespace std::chrono;

@@ -19,7 +19,9 @@
 #include"MTest/Behaviour.hxx"
 #include"MTest/Constraint.hxx"
 #include"MTest/CurrentState.hxx"
+#include"MTest/AnalyticalTest.hxx"
 #include"MTest/StructureCurrentState.hxx"
+#include"MTest/ReferenceFileComparisonTest.hxx"
 #include"MTest/NonLinearConstraint.hxx"
 #include"MTest/ImposedDrivingVariable.hxx"
 #include"MTest/ImposedThermodynamicForce.hxx"
@@ -577,6 +579,38 @@ getInternalStateVariableValue2(const mtest::MTestCurrentState& s,
   return getInternalStateVariableValue1(s,n,1);
 } // end of getInternalStateVariableValue
 
+static void MTest_addAnalyticalTest(mtest::MTest& m,
+				    const std::string& c,
+				    const std::string& f,
+				    const double eps){
+  const auto& g    = mtest::buildValueExtractor(*(m.getBehaviour()),c);
+  const auto& evms = m.getEvolutions();
+  auto t = std::make_shared<mtest::AnalyticalTest>(f,c,g,evms,eps);
+  m.addTest(t);
+}
+
+static void MTest_addReferenceFileComparisonTest1(mtest::MTest& m,
+						  const std::string& c,
+						  const std::string& f,
+						  const unsigned short cn,
+						  const double eps){
+  const tfel::utilities::TextData data(f);
+  const auto& g = mtest::buildValueExtractor(*(m.getBehaviour()),c);
+  m.addTest(std::make_shared<mtest::ReferenceFileComparisonTest>(data,cn,c,g,eps));
+}
+
+static void MTest_addReferenceFileComparisonTest2(mtest::MTest& m,
+						  const std::string& c,
+						  const std::string& f,
+						  const std::string& cn,
+						  const double eps){
+  const tfel::utilities::TextData data(f);
+  const auto& evms = m.getEvolutions();
+  const auto& g = mtest::buildValueExtractor(*(m.getBehaviour()),c);
+  m.addTest(std::make_shared<mtest::ReferenceFileComparisonTest>(data,evms,
+								 cn,c,g,eps));
+}
+
 void declareMTest();
 
 void declareMTest()
@@ -865,6 +899,24 @@ void declareMTest()
 	 &MTest::setStensorInternalStateVariableInitialValues)
     .def("setTensorInternalStateVariableInitialValues",
 	 &MTest::setTensorInternalStateVariableInitialValues)
-  ;
+    .def("addAnalyticalTest",
+	 MTest_addAnalyticalTest,
+	 "Add a test comparing the results to an analytical solution:\n"
+	 "- result to be tested (strain, stress, internal state variable)\n"
+    	 "- formulae giving the analytical solution\n"
+	 "- test criterion\n")
+    .def("addReferenceFileComparisonTest",MTest_addReferenceFileComparisonTest1,
+	 "Add a test comparing the results to the one given in a reference file:\n"
+	 "- result to be tested (strain, stress, internal state variable)\n"
+	 "- file name\n"
+    	 "- column number\n"
+	 "- test criterion\n")
+    .def("addReferenceFileComparisonTest",MTest_addReferenceFileComparisonTest2,
+	 "Add a test comparing the results to the one given in a reference file:\n"
+	 "- result to be tested (strain, stress, internal state variable)\n"
+	 "- file name\n"
+    	 "- formulae used to extract the data from the file ($1 is the first column)\n"
+	 "- test criterion\n")
+    ;
 
 } // end of declareExternalLibraryManager

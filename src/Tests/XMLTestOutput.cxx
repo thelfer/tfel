@@ -113,8 +113,7 @@ namespace tfel
       this->os << "</testcase>\n";
     } // end of XMLTestOutput::addTest
 
-    void
-    XMLTestOutput::treatTest(const TestResult& r)
+    void XMLTestOutput::treatTest(const TestResult& r)
     {
       std::string out;
       if(r.success()){

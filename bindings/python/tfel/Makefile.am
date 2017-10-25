@@ -20,8 +20,10 @@ _tfel_la_LIBADD  = @BOOST_LIBS@ @BOOST_PYTHON_LIBS@             \
 		   -L@PYTHONPATH@/lib -lpython@PYTHON_VERSION@
 _tfel_la_LDFLAGS = -module
 
-tests_la_SOURCES = tests.cxx      \
-		   TestResult.cxx
+tests_la_SOURCES = tests.cxx         \
+		   TestResult.cxx    \
+		   XMLTestOutput.cxx
+
 tests_la_LIBADD  = -L@top_builddir@/src/Tests -lTFELTests       \
 		   @BOOST_LIBS@ @BOOST_PYTHON_LIBS@             \
 		   -L@PYTHONPATH@/lib -lpython@PYTHON_VERSION@
