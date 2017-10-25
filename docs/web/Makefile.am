@@ -55,6 +55,7 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./orthotropiclinearhardeningplasticity.md                  \
 	   ./isotropicplasticityamstrongfrederickinematichardening.md \
 	   ./iwan.md                                                  \
+	   ./ddif2.md                                                 \
 	   ./singlecrystal.md                                         \
 	   ./finitestrainsinglecrystal.md                             \
 	   ./finitestrainsinglecrystal-huang.md                       \

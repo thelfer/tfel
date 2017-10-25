@@ -1079,6 +1079,7 @@ docs/web/crossdomain.xml -text
 docs/web/css/main.css -text
 docs/web/css/normalize.css -text
 docs/web/css/slideshow.css -text
+docs/web/ddif2.md -text
 docs/web/devel.md -text
 docs/web/doc/TOC.md -text
 docs/web/doc/crossdomain.md -text
