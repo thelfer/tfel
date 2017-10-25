@@ -1,2 +1,2 @@
-SUBDIRS=StandardElasticity FiniteStrainSingleCrystal
+SUBDIRS=StandardElasticity FiniteStrainSingleCrystal DDIF2
 EXTRA_DIST=CMakeLists.txt

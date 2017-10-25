@@ -1,0 +1,10 @@
+@DSL Implicit;
+@Author Thomas Helfer;
+@Date 25/10/2017;
+@Behaviour DDIF2_3;
+
+@Brick DDIF2 {
+ fracture_stress : 150e6,
+ softening_slope : -75e9,
+ handle_pressure_on_crack_surface : true
+};

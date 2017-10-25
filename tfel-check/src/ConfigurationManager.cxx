@@ -110,7 +110,7 @@ namespace tfel{
 	  CxxTokenizer::readSpecifiedToken("tfel::check::parse",":",p,pe);
 	  CxxTokenizer::checkNotEndOfLine("tfel::check::parse",p,pe);
 	  const auto variables =
-	    extract<std::map<std::string,std::string>>(Data::read(p,pe));
+	    convert<std::map<std::string,std::string>>(Data::read(p,pe));
 	  c.modify([&variables,&throw_if](Configuration& conf){
 	      for(const auto& v: variables){
 		std::cout << v.first << ": " << v.second << std::endl;

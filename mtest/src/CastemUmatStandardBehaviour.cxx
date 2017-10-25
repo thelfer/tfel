@@ -118,7 +118,7 @@ namespace mtest{
       if(pd==mp.end()){
 	return {};
       }
-      return tfel::utilities::extract<std::vector<std::string>>(pd->second);
+      return tfel::utilities::convert<std::vector<std::string>>(pd->second);
     };
     const auto mpnames = get("C_MATERIAU");
     for(const auto& n : mpnames){

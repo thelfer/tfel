@@ -93,28 +93,65 @@ namespace mfront{
      * \param[in] t: type of the material property
      * \param[in] n: name of the variable
      * \param[in] g: glossary name
+     * \param[in] s: array size
      */
     virtual void
     addMaterialPropertyIfNotDefined(const std::string&,
 				    const std::string&,
-				    const GlossaryEntry&) const;
+				    const GlossaryEntry&,
+				    const unsigned short = 1u) const;
     /*!
      * \brief add a new material property
      * \param[in] t: type of the material property
      * \param[in] n: name of the variable
      * \param[in] e: entry name
+     * \param[in] s: array size
      */
     virtual void
     addMaterialPropertyIfNotDefined(const std::string&,
 				    const std::string&,
-				    const std::string&) const;
+				    const std::string&,
+				    const unsigned short = 1u) const;
     /*!
-     * \brief add a new material property
+     * \brief add a new external state variable
      * \param[in] t: type of the material property
      * \param[in] n: name of the variable
+     * \param[in] s: array size
+     */
+    virtual void addExternalStateVariable(const std::string&,
+					  const std::string&,
+					  const unsigned short = 1u) const;
+    /*!
+     * \brief add a new external state variable
+     * \param[in] t: type of the material property
+     * \param[in] n: name of the variable
+     * \param[in] g: glossary entry
+     * \param[in] s: array size
+     */
+    virtual void addExternalStateVariable(const std::string&,
+					  const std::string&,
+					  const GlossaryEntry&,
+					  const unsigned short = 1u) const;
+    /*!
+     * \brief add a new external state variable
+     * \param[in] t: type of the material property
+     * \param[in] n: name of the variable
+     * \param[in] e: entry name
+     * \param[in] s: array size
+     */
+    virtual void addExternalStateVariable(const std::string&,
+					  const std::string&,
+					  const std::string&,
+					  const unsigned short = 1u) const;
+    /*!
+     * \brief add a new local variable
+     * \param[in] t: type of the material property
+     * \param[in] n: name of the variable
+     * \param[in] s: array size
      */
     virtual void addLocalVariable(const std::string&,
-				  const std::string&) const;
+				  const std::string&,
+				  const unsigned short = 1u) const;
     /*!
      * \brief add a new material property
      * \param[in] n: name of the variable
@@ -128,11 +165,55 @@ namespace mfront{
      * \brief add a new material property
      * \param[in] n: name of the variable
      * \param[in] e: entry name
+     * \param[in] s: array size
+     * \param[in] p: parameter default value
+     */
+    virtual void addParameter(const std::string&,
+			      const GlossaryEntry&,
+			      const unsigned short,
+			      const double) const;
+    /*!
+     * \brief add a new material property
+     * \param[in] n: name of the variable
+     * \param[in] e: entry name
+     * \param[in] s: array size
+     * \param[in] p: parameter default values
+     */
+    virtual void addParameter(const std::string&,
+			      const GlossaryEntry&,
+			      const unsigned short,
+			      const std::vector<double>&) const;
+    /*!
+     * \brief add a new material property
+     * \param[in] n: name of the variable
+     * \param[in] e: entry name
      * \param[in] p: parameter default value
      */
     virtual void addParameter(const std::string&,
 			      const std::string&,
 			      const double) const;
+    /*!
+     * \brief add a new material property
+     * \param[in] n: name of the variable
+     * \param[in] e: entry name
+     * \param[in] s: array size
+     * \param[in] p: parameter default value
+     */
+    virtual void addParameter(const std::string&,
+			      const std::string&,
+			      const unsigned short,
+			      const double) const;
+    /*!
+     * \brief add a new material property
+     * \param[in] n: name of the variable
+     * \param[in] e: entry name
+     * \param[in] s: array size
+     * \param[in] p: parameter default values
+     */
+    virtual void addParameter(const std::string&,
+			      const std::string&,
+			      const unsigned short,
+			      const std::vector<double>&) const;
     //! calling domain specific language
     AbstractBehaviourDSL& dsl;
     //! mechanical behaviour description of which the BehaviourBrick acts

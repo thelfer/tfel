@@ -1307,6 +1307,8 @@ AC_OUTPUT([debug.sh
    	   mfront/tests/behaviours/bricks/FiniteStrainSingleCrystal/Makefile
 	   mfront/tests/behaviours/bricks/FiniteStrainSingleCrystal/castem/Makefile
 	   mfront/tests/behaviours/bricks/FiniteStrainSingleCrystal/aster/Makefile
+   	   mfront/tests/behaviours/bricks/DDIF2/Makefile
+	   mfront/tests/behaviours/bricks/DDIF2/castem/Makefile
 	   mfront/tests/behaviours/castem/Makefile
 	   mfront/tests/behaviours/castem/UMATExternalBehaviourDescription.cxx
    	   mfront/tests/behaviours/castem/LibraryInformationCastemTest.cxx

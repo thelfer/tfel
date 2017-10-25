@@ -52,7 +52,8 @@ namespace mfront{
   void
   BehaviourBrickBase::addMaterialPropertyIfNotDefined(const std::string& t,
 						      const std::string& n,
-						      const GlossaryEntry& g) const
+						      const GlossaryEntry& g,
+						      const unsigned short s) const
   {
     auto throw_if = [](const bool b,const std::string& m){
       tfel::raise_if(b,"BehaviourBrickBase::addMaterialPropertyIfNotDefined: "+m);
@@ -76,7 +77,7 @@ namespace mfront{
       this->bd.checkVariableGlossaryName(n,g);
     } else {
       const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-      this->bd.addMaterialProperty(h,{t,n,1u,0u});
+      this->bd.addMaterialProperty(h,{t,n,s,0u});
       this->bd.setGlossaryName(h,n,g);
     }
   } // end of BehaviourBrickBase::addMaterialPropertyIfNotDefined
@@ -84,7 +85,8 @@ namespace mfront{
   void
   BehaviourBrickBase::addMaterialPropertyIfNotDefined(const std::string& t,
 						      const std::string& n,
-						      const std::string& e) const
+						      const std::string& e,
+						      const unsigned short s) const
   {
     auto throw_if = [](const bool b,const std::string& m){
       tfel::raise_if(b,"BehaviourBrickBase::addMaterialPropertyIfNotDefined: "+m);
@@ -108,11 +110,42 @@ namespace mfront{
       this->bd.checkVariableEntryName(n,e);
     } else {
       const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-      this->bd.addMaterialProperty(h,{t,n,1u,0u});
+      this->bd.addMaterialProperty(h,{t,n,s,0u});
       this->bd.setEntryName(h,n,e);
     }
   } // end of BehaviourBrickBase::addMaterialPropertyIfNotDefined
 
+  void BehaviourBrickBase::addExternalStateVariable(const std::string& t,
+						    const std::string& n,
+						    const unsigned short s) const
+  {
+    const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    VariableDescription v(t,n,s,0u);
+    this->bd.addExternalStateVariable(h,v);
+  } // end of BehaviourBrickBase::addExternalStateVariable
+
+  void BehaviourBrickBase::addExternalStateVariable(const std::string& t,
+						    const std::string& n,
+						    const GlossaryEntry& g,
+						    const unsigned short s) const
+  {
+    const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    VariableDescription v(t,n,s,0u);
+    this->bd.addExternalStateVariable(h,v);
+    this->bd.setGlossaryName(h,n,g);
+  } // end of BehaviourBrickBase::addExternalStateVariable
+
+  void BehaviourBrickBase::addExternalStateVariable(const std::string& t,
+						    const std::string& n,
+						    const std::string& e,
+						    const unsigned short s) const
+  {
+    const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    VariableDescription v(t,n,s,0u);
+    this->bd.addExternalStateVariable(h,v);
+    this->bd.setEntryName(h,n,e);
+  } // end of BehaviourBrickBase::addExternalStateVariable
+  
   void BehaviourBrickBase::checkOptionsNames(const DataMap& d,
 					     const std::vector<std::string>& k,
 					     const std::string& n){
@@ -122,15 +155,16 @@ namespace mfront{
 		     "brick '"+n+"' does not expect option '"+de.first+"'");
     }
   } // end of BehaviourBrickBase::checkOptionsNames
-  
+
   void BehaviourBrickBase::addLocalVariable(const std::string& t,
-					    const std::string& n) const
+					    const std::string& n,
+					    const unsigned short s) const
   {
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-    VariableDescription v(t,n,1u,0u);
+    VariableDescription v(t,n,s,0u);
     this->bd.addLocalVariable(h,v);
   } // end of BehaviourBrickBase::addLocalVariable
-
+  
   void BehaviourBrickBase::addParameter(const std::string& n,
 					const GlossaryEntry& g,
 					const double p) const
@@ -143,6 +177,34 @@ namespace mfront{
   } // end of BehaviourBrickBase::addParameter
 
   void BehaviourBrickBase::addParameter(const std::string& n,
+					const GlossaryEntry& g,
+					const unsigned short s,
+					const double p) const
+  {
+    const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    VariableDescription v("real",n,s,0u);
+    this->bd.addParameter(h,v);
+    this->bd.setGlossaryName(h,n,g);
+    for(unsigned short i=0;i!=s;++i){
+      this->bd.setParameterDefaultValue(h,n,i,p);
+    }
+  } // end of BehaviourBrickBase::addParameter
+
+  void BehaviourBrickBase::addParameter(const std::string& n,
+					const GlossaryEntry& g,
+					const unsigned short s,
+					const std::vector<double>& p) const
+  {
+    const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    VariableDescription v("real",n,1u,0u);
+    this->bd.addParameter(h,v);
+    this->bd.setGlossaryName(h,n,g);
+    for(unsigned short i=0;i!=s;++i){
+      this->bd.setParameterDefaultValue(h,n,i,p[i]);
+    }
+  } // end of BehaviourBrickBase::addParameter
+  
+  void BehaviourBrickBase::addParameter(const std::string& n,
 					const std::string& e,
 					const double p) const
   {
@@ -153,6 +215,36 @@ namespace mfront{
     this->bd.setParameterDefaultValue(h,n,p);
   } // end of BehaviourBrickBase::addParameter
 
+  void BehaviourBrickBase::addParameter(const std::string& n,
+					const std::string& e,
+					const unsigned short s,
+					const double p) const
+  {
+    const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    VariableDescription v("real",n,s,0u);
+    this->bd.addParameter(h,v);
+    this->bd.setEntryName(h,n,e);
+    for(unsigned short i=0;i!=s;++i){
+      this->bd.setParameterDefaultValue(h,n,i,p);
+    }
+  } // end of BehaviourBrickBase::addParameter
+
+  void BehaviourBrickBase::addParameter(const std::string& n,
+					const std::string& e,
+					const unsigned short s,
+					const std::vector<double>& p) const
+  {
+    const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    tfel::raise_if(p.size()!=s,"BehaviourBrickBase::addParameter: "
+		   "invalid number of default parameters values");
+    VariableDescription v("real",n,s,0u);
+    this->bd.addParameter(h,v);
+    this->bd.setEntryName(h,n,e);
+    for(unsigned short i=0;i!=s;++i){
+      this->bd.setParameterDefaultValue(h,n,i,p[i]);
+    }
+  } // end of BehaviourBrickBase::addParameter
+  
   BehaviourBrickBase::~BehaviourBrickBase() = default;
 
 } // end of namespace mfront

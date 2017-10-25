@@ -1,2 +1,3 @@
 add_subdirectory(StandardElasticity)
 add_subdirectory(FiniteStrainSingleCrystal)
+add_subdirectory(DDIF2)

@@ -14,6 +14,8 @@
 #ifndef LIB_MFRONT_DDIF2BRICKBEHAVIOURBRICK_HXX
 #define LIB_MFRONT_DDIF2BRICKBEHAVIOURBRICK_HXX 
 
+#include <array>
+#include "TFEL/Utilities/GenTypeBase.hxx"
 #include "MFront/StandardElasticityBrick.hxx"
 
 namespace mfront{
@@ -82,10 +84,18 @@ namespace mfront{
     //! destructor
     virtual ~DDIF2Brick();
   protected:
+    using FractureStress =
+      tfel::utilities::GenType<std::shared_ptr<MaterialPropertyDescription>,
+			       double>;
+    using SofteningSlope =
+      tfel::utilities::GenType<std::shared_ptr<MaterialPropertyDescription>,
+			       double>;
     //! fracture stress
-    std::shared_ptr<MaterialPropertyDescription> sr;
-    //! softening slope
-    std::shared_ptr<MaterialPropertyDescription> rp;
+    std::array<FractureStress,3u> sr;
+    //! fracture stress
+    std::array<SofteningSlope,3u> rp;
+    //! handle pressure on crack surface
+    bool pr = false;
   }; // end of struct DDIF2Brick
 
 } // end of namespace mfront

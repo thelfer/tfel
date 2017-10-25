@@ -274,40 +274,6 @@ namespace tfel{
       return apply<DataComparator>(lhs,rhs);
     }
 
-    template<>
-    std::vector<std::string>
-    extract<std::vector<std::string>>(const Data& d){
-      auto throw_if = [](const bool b,const std::string& msg){
-	raise_if(b,"extract<std::vector<std::string>>: "+msg);
-      };
-      throw_if(!d.is<std::vector<Data>>(),"invalid data type");
-      const auto& vd = d.get<std::vector<Data>>();
-      auto r = std::vector<std::string>{};
-      r.reserve(vd.size());
-      for(const auto&w : vd){
-	throw_if(!w.is<std::string>(),"invalid data type");
-	r.push_back(w.get<std::string>());
-      }
-      return r;
-    } // end of extract<std::vector<std::string>>
-
-    template<>
-    std::map<std::string,std::string>
-    extract<std::map<std::string,std::string>>(const Data& d){
-      auto throw_if = [](const bool b,const std::string& msg){
-	raise_if(b,"extract<std::map<std::string,"
-		 "std::string>>: "+msg);
-      };
-      throw_if(!d.is<std::map<std::string,Data>>(),"invalid data type");
-      const auto& m = d.get<std::map<std::string,Data>>();
-      auto r = std::map<std::string,std::string>{};
-      for(const auto&e : m){
-	throw_if(!e.second.is<std::string>(),"invalid data type");
-	r.insert({e.first,e.second.get<std::string>()});
-      }
-      return r;
-    } // end of extract<std::vector<std::string>>
-
   } // end of namespace utilities
 
 } // end of namespace tfel

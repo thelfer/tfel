@@ -634,7 +634,7 @@ namespace mtest
       if(v.is<std::string>()){
 	t.addOutput("minimum_value",v.get<std::string>());
       } else {
-	for(const auto& f : tfel::utilities::extract<std::vector<std::string>>(v)){
+	for(const auto& f : tfel::utilities::convert<std::vector<std::string>>(v)){
 	  t.addOutput("minimum_value",f);
 	}
       }
@@ -643,7 +643,7 @@ namespace mtest
       if(v.is<std::string>()){
 	t.addOutput("maximum_value",v.get<std::string>());
       } else {
-	for(const auto& f : tfel::utilities::extract<std::vector<std::string>>(v)){
+	for(const auto& f : tfel::utilities::convert<std::vector<std::string>>(v)){
 	  t.addOutput("maximum_value",f);
 	}
       }

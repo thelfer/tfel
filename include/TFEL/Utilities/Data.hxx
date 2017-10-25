@@ -34,6 +34,22 @@ namespace tfel{
     using DataTypes = tfel::meta::GenerateTypeList<bool,int,double,std::string,
 						   std::vector<Data>,
 						   std::map<std::string,Data>>::type;
+
+    namespace internals{
+    
+      // a simple meta function
+      template<typename T>
+      struct isDataTypeCheck{
+	static constexpr const bool value =
+	  tfel::meta::TLCountNbrOfT<typename std::decay<T>::type,
+				    tfel::utilities::DataTypes>::value==1;
+      };
+    }
+    
+    //! a simple alias
+    template<typename T>
+    using isDataType = tfel::utilities::internals::isDataTypeCheck<T>;
+    
     /*!
      * Data extracted from json like structure
      */
@@ -118,31 +134,19 @@ namespace tfel{
      * \return the extracted value
      */
     template<typename T>
-    T extract(const Data&);
+    T convert(const Data&);
+
     /*!
-     * \brief extract a vector of string from a `Data` structure.
      * \param[in] d: data
-     * \return the extracted value.
-     * \pre The Data must hold a vector of Data and each Data of the
-     *      vector must be a string
+     * \return true if the Data can be converted to the given type
      */
-    template<>
-    TFELUTILITIES_VISIBILITY_EXPORT std::vector<std::string>
-    extract<std::vector<std::string>>(const Data&);
-    /*!
-     * \brief extract a std::map<std::string,std::string> from a
-     * `Data` structure.
-     * \param[in] d: data
-     * \return the extracted value.
-     * \pre The Data must hold a map of Data and each Data of the map
-     *      must be a string.
-     */
-    template<>
-    TFELUTILITIES_VISIBILITY_EXPORT std::map<std::string,std::string>
-    extract<std::map<std::string,std::string>>(const Data&);
+    template<typename T>
+    bool is_convertible(const Data&);
     
   } // end of namespace utilities
 
 } // end of namespace tfel
+
+#include"TFEL/Utilities/Data.ixx"
 
 #endif /* LIB_TFEL_UTILITIES_DATA_HXX */

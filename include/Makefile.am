@@ -506,6 +506,7 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Utilities/CxxTokenizer.ixx                                                              \
 		 	TFEL/Utilities/Token.hxx                                                                     \
 		 	TFEL/Utilities/Data.hxx                                                                      \
+		 	TFEL/Utilities/Data.ixx                                                                      \
 			TFEL/Utilities/TerminalColors.hxx	                                                     \
 			TFEL/Utilities/GenTypeCastError.hxx	                                                     \
 			TFEL/Utilities/GenTypeBase.hxx	                                                             \

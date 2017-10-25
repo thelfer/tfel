@@ -1874,6 +1874,7 @@ include/TFEL/Utilities/CxxKeywords.hxx -text
 include/TFEL/Utilities/CxxTokenizer.hxx -text
 include/TFEL/Utilities/CxxTokenizer.ixx -text
 include/TFEL/Utilities/Data.hxx -text
+include/TFEL/Utilities/Data.ixx -text
 include/TFEL/Utilities/FCString.hxx -text
 include/TFEL/Utilities/FCString.ixx -text
 include/TFEL/Utilities/GenTypeBase.hxx -text
@@ -3398,6 +3399,19 @@ mfront/tests/behaviours/aster/asterviscoplasisocin.mtest.in -text
 mfront/tests/behaviours/aster/asterxx.py.in -text
 mfront/tests/behaviours/aster/strainhardeningcreep.gnuplot -text
 mfront/tests/behaviours/bricks/CMakeLists.txt -text
+mfront/tests/behaviours/bricks/DDIF2/CMakeLists.txt -text
+mfront/tests/behaviours/bricks/DDIF2/DDIF2.mfront -text
+mfront/tests/behaviours/bricks/DDIF2/DDIF2_2.mfront -text
+mfront/tests/behaviours/bricks/DDIF2/DDIF2_3.mfront -text
+mfront/tests/behaviours/bricks/DDIF2/DDIF2_4.mfront -text
+mfront/tests/behaviours/bricks/DDIF2/DDIF2_5.mfront -text
+mfront/tests/behaviours/bricks/DDIF2/Makefile.am -text
+mfront/tests/behaviours/bricks/DDIF2/castem/CMakeLists.txt -text
+mfront/tests/behaviours/bricks/DDIF2/castem/Makefile.am -text
+mfront/tests/behaviours/bricks/DDIF2/castem/ddif2.mtest -text
+mfront/tests/behaviours/bricks/DDIF2/castem/ddif2_2.mtest -text
+mfront/tests/behaviours/bricks/DDIF2/castem/ddif2_3.mtest -text
+mfront/tests/behaviours/bricks/DDIF2/castem/ddif2_4.mtest -text
 mfront/tests/behaviours/bricks/FiniteStrainSingleCrystal/CMakeLists.txt -text
 mfront/tests/behaviours/bricks/FiniteStrainSingleCrystal/FiniteStrainSingleCrystal.mfront -text
 mfront/tests/behaviours/bricks/FiniteStrainSingleCrystal/FiniteStrainSingleCrystal_NumericalJacobian.mfront -text
