@@ -152,7 +152,7 @@ namespace mfront{
     integrator.code = "feel -= this->deto;\n";
     this->bd.setCode(uh,BehaviourData::Integrator,
     		     integrator,BehaviourData::CREATEORAPPEND,
-    		     BehaviourData::AT_END);
+    		     BehaviourData::AT_BEGINNING);
     this->bd.addLocalDataStructure(d,BehaviourData::ALREADYREGISTRED);
   } // end of StandardElasticityBrick::endTreatment
 
@@ -426,7 +426,7 @@ namespace mfront{
     }
     this->bd.setCode(agps,BehaviourData::Integrator,
 		     integrator,BehaviourData::CREATEORAPPEND,
-		     BehaviourData::AT_END);
+		     BehaviourData::AT_BEGINNING);
   }
 
   void
@@ -501,7 +501,7 @@ namespace mfront{
     }
     this->bd.setCode(ps,BehaviourData::Integrator,
 		     integrator,BehaviourData::CREATEORAPPEND,
-		     BehaviourData::AT_END);
+		     BehaviourData::AT_BEGINNING);
   }
 
   void
