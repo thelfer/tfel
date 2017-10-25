@@ -1,4 +1,5 @@
 import std
+import tfel.tests
 import tfel.math
 from ._mtest import *
 
