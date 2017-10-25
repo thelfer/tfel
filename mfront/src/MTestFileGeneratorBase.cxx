@@ -164,6 +164,7 @@ namespace mfront{
 		 "can't open file '"+n+".mtest'");
       throw(runtime_error(msg));
     }
+    file << "@MaximumNumberOfSubSteps 1;\n";
     if(this->handleThermalExpansion){
       file << "@HandleThermalExpansion true;" << endl;
     } else {
