@@ -361,7 +361,7 @@ namespace mfront{
 	"this->sebdata.lambda=tfel::material::computeLambda(this->young,this->nu);\n"
 	"this->sebdata.mu=tfel::material::computeMu(this->young,this->nu);\n";
       this->bd.setCode(uh,BehaviourData::BeforeInitializeLocalVariables,
-		       init,BehaviourData::CREATE,
+		       init,BehaviourData::CREATEORAPPEND,
 		       BehaviourData::AT_BEGINNING,true);
       // Hooke law
       smts.code =

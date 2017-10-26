@@ -33,21 +33,8 @@ namespace mfront{
 			 const DataMap& d)
     : StandardElasticityBrick(dsl_,mb_,p,DataMap())
   {
-    using MaterialPropertyInput = BehaviourDescription::MaterialPropertyInput;
     auto throw_if = [](const bool b,const std::string& m){
       tfel::raise_if(b,"DDIF2Brick::DDIF2Brick: "+m);
-    };
-    std::function<std::string(const MaterialPropertyInput&)> ets =
-      [throw_if](const MaterialPropertyInput& i) -> std::string {
-      if((i.type==MaterialPropertyInput::TEMPERATURE)||
-	 (i.type==MaterialPropertyInput::AUXILIARYSTATEVARIABLEFROMEXTERNALMODEL)||
-	 (i.type==MaterialPropertyInput::EXTERNALSTATEVARIABLE)){
-	return "this->"+i.name + "+this->d" + i.name;
-      } else if ((i.type==MaterialPropertyInput::MATERIALPROPERTY)||
-		 (i.type==MaterialPropertyInput::PARAMETER)){
-	return "this->"+i.name;
-      }
-      throw_if(true,"unsupported input type for variable '"+i.name+"'");
     };
     // undefined hypothesis
     constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
@@ -68,7 +55,6 @@ namespace mfront{
     this->checkOptionsNames(d,{"fracture_stress","softening_slope",
 	  "fracture_stresses","softening_slopes",
 	  "handle_pressure_on_crack_surface"},this->getName());
-    CodeBlock init;
     throw_if((d.count("fracture_stress"))&&(d.count("fracture_stresses")),
 	     "can't specify 'fracture_stress' and 'fracture_stress1' "
 	     "(or 'fracture_stress2' or 'fracture_stress3'");
@@ -86,15 +72,6 @@ namespace mfront{
 	const auto& f = s.get<std::string>();
 	this->addLocalVariable("stress","sigr",3);
 	this->sr[0] = this->dsl.handleMaterialPropertyDescription(f);
-	this->sr[2] = this->sr[1] = this->sr[0];
-	BehaviourDescription::ComputedMaterialProperty mp_sr;
-	mp_sr.mpd = this->sr[0].get<std::shared_ptr<MaterialPropertyDescription>>();
-	std::ostringstream ssigr;
-	ssigr << "this->sigr[0] = ";
-	this->dsl.writeMaterialPropertyEvaluation(ssigr,mp_sr,ets);
-	ssigr << ";\n";
-	ssigr << "this->sigr[2] = this->sigr[1] = this->sigr[0];\n";
-	init.code += ssigr.str();
       } else {
 	throw_if(true,"invalid type for data 'fracture_stress'");
       }
@@ -115,15 +92,8 @@ namespace mfront{
 	throw_if(v.size()!=3u,"invalid array size for "
 		 "the `fracture_stresses` parameters");
 	this->addLocalVariable("stress","sigr",3);
-	std::ostringstream ssigr;
 	for(unsigned short i=0;i!=3;++i){
 	  this->sr[i] = this->dsl.handleMaterialPropertyDescription(v[i]);
-	  BehaviourDescription::ComputedMaterialProperty mp_sr;
-	  mp_sr.mpd = this->sr[i].get<std::shared_ptr<MaterialPropertyDescription>>();
-	  ssigr << "this->sigr[" << i << "] = ";
-	  this->dsl.writeMaterialPropertyEvaluation(ssigr,mp_sr,ets);
-	  ssigr << ";\n";
-	  init.code += ssigr.str();
 	}
       } else {
 	throw_if(true,"invalid type for data 'fracture_stresses', "
@@ -141,15 +111,6 @@ namespace mfront{
 	const auto& f = s.get<std::string>();
 	this->addLocalVariable("stress","Rp",3);
 	this->rp[0] = this->dsl.handleMaterialPropertyDescription(f);
-	this->rp[2] = this->rp[1] = this->rp[0];
-	BehaviourDescription::ComputedMaterialProperty mp_rp;
-	mp_rp.mpd  = this->rp[0];
-	std::ostringstream srp;
-	srp << "this->Rp[0] = ";
-	this->dsl.writeMaterialPropertyEvaluation(srp,mp_rp,ets);
-	srp << ";\n";
-	srp << "this->Rp[2] = this->Rp[1] = this->Rp[0];\n";
-	init.code += srp.str();
       } else {
 	throw_if(true,"invalid type for data 'softening_slope'");
       }
@@ -169,15 +130,8 @@ namespace mfront{
 	throw_if(v.size()!=3u,"invalid array size for "
 		 "the `softening_slopes` parameters");
 	this->addLocalVariable("stress","Rp",3);
-	std::ostringstream sRp;
 	for(unsigned short i=0;i!=3;++i){
 	  this->rp[i] = this->dsl.handleMaterialPropertyDescription(v[i]);
-	  BehaviourDescription::ComputedMaterialProperty mp_rp;
-	  mp_rp.mpd = this->rp[i].get<std::shared_ptr<MaterialPropertyDescription>>();
-	  sRp << "this->Rp[" << i << "] = ";
-	  this->dsl.writeMaterialPropertyEvaluation(sRp,mp_rp,ets);
-	  sRp << ";\n";
-	  init.code += sRp.str();
 	}
       } else {
 	throw_if(true,"invalid type for data 'softening_slopes', "
@@ -192,30 +146,82 @@ namespace mfront{
 	this->addExternalStateVariable("stress","pr","PressureOnCrackSurface");
       }
     }
-    if(!init.code.empty()){
-      this->bd.setCode(uh,BehaviourData::BeforeInitializeLocalVariables,
-		       init,BehaviourData::CREATEORAPPEND,
-		       BehaviourData::AT_END);
-    }
   } // end of DDIF2Brick::DDIF2Brick
 
   void DDIF2Brick::completeVariableDeclaration() const
   {
-    using tfel::glossary::Glossary; 
+    using tfel::glossary::Glossary;
+    using MaterialPropertyInput = BehaviourDescription::MaterialPropertyInput;
     auto throw_if = [](const bool b,const std::string& m){
       tfel::raise_if(b,"DDIF2Brick::completeVariableDeclaration: "+m);
+    };
+    std::function<std::string(const MaterialPropertyInput&)> ets =
+      [throw_if](const MaterialPropertyInput& i) -> std::string {
+      if((i.type==MaterialPropertyInput::TEMPERATURE)||
+	 (i.type==MaterialPropertyInput::AUXILIARYSTATEVARIABLEFROMEXTERNALMODEL)||
+	 (i.type==MaterialPropertyInput::EXTERNALSTATEVARIABLE)){
+	return "this->"+i.name + "+this->d" + i.name;
+      } else if ((i.type==MaterialPropertyInput::MATERIALPROPERTY)||
+		 (i.type==MaterialPropertyInput::PARAMETER)){
+	return "this->"+i.name;
+      }
+      throw_if(true,"unsupported input type for variable '"+i.name+"'");
     };
     constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     if(getVerboseMode()>=VERBOSE_DEBUG){
       getLogStream() << "DDIF2Brick::completeVariableDeclaration: begin\n";
     }
     StandardElasticityBrick::completeVariableDeclaration();
+    CodeBlock init;
     // fracture properties
     if(this->sr[0].empty()){
       this->addMaterialPropertyIfNotDefined("stress","sigr","FractureStress",3u);
+    } else if(this->sr[0].is<std::shared_ptr<MaterialPropertyDescription>>()){
+      if(!this->sr[1].empty()){
+	std::ostringstream ssigr;
+	for(unsigned short i=0;i!=3;++i){
+	  BehaviourDescription::ComputedMaterialProperty mp_sr;
+	  mp_sr.mpd = this->sr[i].get<std::shared_ptr<MaterialPropertyDescription>>();
+	  ssigr << "this->sigr[" << i << "] = ";
+	  this->dsl.writeMaterialPropertyEvaluation(ssigr,mp_sr,ets);
+	  ssigr << ";\n";
+	  init.code += ssigr.str();
+	}
+      } else {
+	BehaviourDescription::ComputedMaterialProperty mp_sr;
+	mp_sr.mpd = this->sr[0].get<std::shared_ptr<MaterialPropertyDescription>>();
+	std::ostringstream ssigr;
+	ssigr << "this->sigr[0] = ";
+	this->dsl.writeMaterialPropertyEvaluation(ssigr,mp_sr,ets);
+	ssigr << ";\n";
+	ssigr << "this->sigr[2] = this->sigr[1] = this->sigr[0];\n";
+	init.code += ssigr.str();
+      }
     }
+    // softening slopes
     if(this->rp[0].empty()){
       this->addMaterialPropertyIfNotDefined("stress","Rp","SofteningSlope",3u);
+    } else if(this->rp[0].is<std::shared_ptr<MaterialPropertyDescription>>()){
+      if(!this->rp[1].empty()){
+	std::ostringstream sRp;
+	for(unsigned short i=0;i!=3;++i){
+	  BehaviourDescription::ComputedMaterialProperty mp_rp;
+	  mp_rp.mpd = this->rp[i].get<std::shared_ptr<MaterialPropertyDescription>>();
+	  sRp << "this->Rp[" << i << "] = ";
+	  this->dsl.writeMaterialPropertyEvaluation(sRp,mp_rp,ets);
+	  sRp << ";\n";
+	  init.code += sRp.str();
+	}
+      } else {
+	BehaviourDescription::ComputedMaterialProperty mp_rp;
+	mp_rp.mpd  = this->rp[0];
+	std::ostringstream srp;
+	srp << "this->Rp[0] = ";
+	this->dsl.writeMaterialPropertyEvaluation(srp,mp_rp,ets);
+	srp << ";\n";
+	srp << "this->Rp[2] = this->Rp[1] = this->Rp[0];\n";
+	init.code += srp.str();
+      }
     }
     LocalDataStructure d;
     d.name = "ddif2bdata";
@@ -230,8 +236,7 @@ namespace mfront{
 	       "unsupported hypothesis '"+ModellingHypothesis::toString(h)+"'");
     }
     // init local variables
-    CodeBlock init;
-    init.code = "for(unsigned short idx=0;idx!=3;++idx){\n"
+    init.code += "for(unsigned short idx=0;idx!=3;++idx){\n"
       "this->nf[idx]      = Stensor(real(0));\n"
       "this->nf[idx][idx] = real(1);\n"
       "}\n";
