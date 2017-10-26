@@ -6,7 +6,7 @@ link_directories("${PROJECT_BINARY_DIR}/mfront/src")
 
 if(NOT WIN32)
   add_library(PleiadesMaterialProperties-2.0 MODULE
-    MFrontPleiadesMaterialPropertyInterface-2.0.cxx)
+    PleiadesMaterialPropertyInterface-2.0.cxx)
   target_link_libraries(PleiadesMaterialProperties-2.0
     TFELMFront
     MFrontLogStream
