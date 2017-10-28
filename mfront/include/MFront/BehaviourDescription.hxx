@@ -15,9 +15,9 @@
 #define LIB_MFRONT_BEHAVIOURDESCRIPTION_HXX 
 
 #include<set>
-#include<map>
 #include<vector>
 #include<memory>
+#include<utility>
 
 #include"TFEL/Utilities/GenTypeBase.hxx"
 #include"TFEL/Math/tvector.hxx"
@@ -288,8 +288,7 @@ namespace mfront
     void addLocalDataStructure(const LocalDataStructure&,
 			       const BehaviourData::RegistrationStatus = BehaviourData::UNREGISTRED);
     //! \return the list of material laws
-    const std::vector<std::string>&
-      getMaterialLaws() const;
+    const std::vector<std::string>& getMaterialLaws() const;
     //! \return the size of the main variables
     std::pair<SupportedTypes::TypeSize,
 	      SupportedTypes::TypeSize>
@@ -302,8 +301,18 @@ namespace mfront
     void addMainVariable(const DrivingVariable&,
 			 const ThermodynamicForce&);
     //! \return the main variables of the behaviour
-    const std::map<DrivingVariable,ThermodynamicForce>&
-      getMainVariables() const;
+    const std::vector<std::pair<DrivingVariable,ThermodynamicForce>>&
+    getMainVariables() const;
+    /*!
+     * \return the driving variable with the associated name
+     * \param[in] n: name
+     */
+    const DrivingVariable& getDrivingVariable(const std::string&) const;
+    /*!
+     * \return the thermodynamic force with the associated name
+     * \param[in] n: name
+     */
+    const ThermodynamicForce& getThermodynamicForce(const std::string&) const;
     /*!
      * \brief set the behaviour to be a small strain standard
      * behaviour
@@ -336,6 +345,8 @@ namespace mfront
     bool isDrivingVariableName(const std::string&) const;
 
     bool isDrivingVariableIncrementName(const std::string&) const;
+
+    bool isThermodynamicForceName(const std::string&) const;
     //! \return the behaviour type
     BehaviourType getBehaviourType() const;
     /*!
@@ -1394,8 +1405,16 @@ namespace mfront
      */
     TFEL_NORETURN static void throwUndefinedAttribute(const std::string&);
     /*!
-     * update the class name
+     * \return the driving variable with the associated name
+     * \param[in] n: name
      */
+    DrivingVariable& getDrivingVariable(const  std::string&);
+    /*!
+     * \return the thermodynamic force with the associated name
+     * \param[in] n: name
+     */
+    ThermodynamicForce& getThermodynamicForce(const std::string&);
+    //! update the class name
     void updateClassName();
     /*!
      * \brief create the mechanical behaviour data associated with the
@@ -1581,7 +1600,7 @@ namespace mfront
      * main variables, association of a driving variable and a
      * thermodynamicforce
      */
-    std::map<DrivingVariable,ThermodynamicForce> mvariables;
+    std::vector<std::pair<DrivingVariable,ThermodynamicForce>> mvariables;
     /*!
      * elastic material properties
      * For isotropic   behaviours, only two elastic material properties must be defined.

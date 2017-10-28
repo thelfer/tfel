@@ -145,7 +145,7 @@ namespace mfront{
       }
       ++(p);
       CxxTokenizer::checkNotEndOfLine(m,p,pe);
-      throw_if(p->value!=")","Expected ')' (read '"+p->value+"')");
+      CxxTokenizer::readSpecifiedToken(m,")",p,pe);
     }
     CxxTokenizer::readSpecifiedToken(m,"in",p,pe);
     CxxTokenizer::checkNotEndOfLine(m,"Expected ']' or '['.",p,pe);
@@ -185,10 +185,10 @@ namespace mfront{
   } // end of readVariableBounds
 
   std::tuple<std::string,bool,unsigned short>
-  extracVariableNameAndArrayPosition(const std::string& n)
+  extractVariableNameAndArrayPosition(const std::string& n)
   {
     auto throw_if = [](const bool c,const std::string& m){
-      tfel::raise_if(c,"mfront::extracVariableNameAndArrayPosition: "+m);
+      tfel::raise_if(c,"mfront::extractVariableNameAndArrayPosition: "+m);
     };
     unsigned short i = 0;
     auto p  = n.cbegin();
@@ -213,6 +213,6 @@ namespace mfront{
     ++p;
     throw_if(p!=pe,"invalid variable name '"+n+"'");
     return std::make_tuple(r,true,i);
-  } // end of extracVariableNameAndArrayPosition
+  } // end of extractVariableNameAndArrayPosition
   
 } // end of namespace mfront

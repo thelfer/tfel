@@ -175,7 +175,7 @@ namespace mfront{
    */
   MFRONT_VISIBILITY_EXPORT
   std::tuple<std::string,bool,unsigned short>
-  extracVariableNameAndArrayPosition(const std::string&);
+  extractVariableNameAndArrayPosition(const std::string&);
   
 } // end of mfront
 

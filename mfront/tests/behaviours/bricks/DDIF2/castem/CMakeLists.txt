@@ -11,7 +11,7 @@ link_directories("${PROJECT_BINARY_DIR}/mfront/src"
 if(HAVE_CASTEM)
   mfront_behaviour_brick_check_library(MFrontCastemDDIF2BrickBehaviours
     DDIF2 umat
-    DDIF2 DDIF2_2 DDIF2_3 DDIF2_4 DDIF2_5)
+    DDIF2 DDIF2_2 DDIF2_3 DDIF2_4 DDIF2_5 DDIF2_6)
   target_link_libraries(MFrontCastemDDIF2BrickBehaviours
     CastemInterface MFrontProfiling TFELMaterial
     TFELMath TFELUtilities TFELException)
@@ -78,3 +78,5 @@ castemtest_ddif2brick(ddif2   umatddif2   ddif2-uniaxialtesting.ref)
 castemtest_ddif2brick(ddif2_2 umatddif2_2 ddif2-uniaxialtesting.ref)
 castemtest_ddif2brick(ddif2_3 umatddif2_3 ddif2-uniaxialtesting.ref)
 castemtest_ddif2brick(ddif2_4 umatddif2_4 ddif2-uniaxialtesting.ref)
+castemtest_ddif2brick(ddif2_5 umatddif2_5 ddif2-uniaxialtesting.ref)
+castemtest_ddif2brick(ddif2_6 umatddif2_6 ddif2-uniaxialtesting.ref)

@@ -16,26 +16,30 @@
 
 #include<string>
 #include"MFront/MFrontConfig.hxx"
-
+#include"MFront/VariableDescription.hxx"
+    
 namespace mfront
 {
 
   /*!
-   * structure describes the thermodynamic force associated with a
-   * driving variable.
+   * \brief structure describes the thermodynamic force associated
+   * with a driving variable.
    */
   struct MFRONT_VISIBILITY_EXPORT ThermodynamicForce
+    : VariableDescription
   {
-    ThermodynamicForce() = default;
-    ThermodynamicForce(ThermodynamicForce&&) = default;
-    ThermodynamicForce(const ThermodynamicForce&) = default;
-    ThermodynamicForce& operator=(ThermodynamicForce&&) = default;
-    ThermodynamicForce& operator=(const ThermodynamicForce&) = default;
+    /*!
+     * Constructor
+     * \param[in] t : variable type
+     * \param[in] n : variable name
+     */
+    ThermodynamicForce(const std::string&,
+		       const std::string&);
+    ThermodynamicForce(ThermodynamicForce&&);
+    ThermodynamicForce(const ThermodynamicForce&);
+    ThermodynamicForce& operator=(ThermodynamicForce&&);
+    ThermodynamicForce& operator=(const ThermodynamicForce&);
     ~ThermodynamicForce() noexcept;
-    //! name of the thermodynamic force
-    std::string name;
-    //! type of the thermodynamic force
-    std::string type;
   }; // end of struct ThermodynamicForce
   
 } // end of namespace mfront

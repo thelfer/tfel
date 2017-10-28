@@ -3405,6 +3405,7 @@ mfront/tests/behaviours/bricks/DDIF2/DDIF2_2.mfront -text
 mfront/tests/behaviours/bricks/DDIF2/DDIF2_3.mfront -text
 mfront/tests/behaviours/bricks/DDIF2/DDIF2_4.mfront -text
 mfront/tests/behaviours/bricks/DDIF2/DDIF2_5.mfront -text
+mfront/tests/behaviours/bricks/DDIF2/DDIF2_6.mfront -text
 mfront/tests/behaviours/bricks/DDIF2/Makefile.am -text
 mfront/tests/behaviours/bricks/DDIF2/castem/CMakeLists.txt -text
 mfront/tests/behaviours/bricks/DDIF2/castem/Makefile.am -text
@@ -3412,6 +3413,8 @@ mfront/tests/behaviours/bricks/DDIF2/castem/ddif2.mtest -text
 mfront/tests/behaviours/bricks/DDIF2/castem/ddif2_2.mtest -text
 mfront/tests/behaviours/bricks/DDIF2/castem/ddif2_3.mtest -text
 mfront/tests/behaviours/bricks/DDIF2/castem/ddif2_4.mtest -text
+mfront/tests/behaviours/bricks/DDIF2/castem/ddif2_5.mtest -text
+mfront/tests/behaviours/bricks/DDIF2/castem/ddif2_6.mtest -text
 mfront/tests/behaviours/bricks/FiniteStrainSingleCrystal/CMakeLists.txt -text
 mfront/tests/behaviours/bricks/FiniteStrainSingleCrystal/FiniteStrainSingleCrystal.mfront -text
 mfront/tests/behaviours/bricks/FiniteStrainSingleCrystal/FiniteStrainSingleCrystal_NumericalJacobian.mfront -text
@@ -5263,6 +5266,7 @@ mfront/tests/properties/interfaces/include/CMakeLists.txt -text
 mfront/tests/properties/interfaces/include/MFront/PleiadesMaterialPropertyInterface-2.0.hxx -text
 mfront/tests/properties/interfaces/include/Makefile.am -text
 mfront/tests/properties/interfaces/src/CMakeLists.txt -text
+mfront/tests/properties/interfaces/src/MFrontPleiadesMaterialPropertyInterface-2.0.cxx -text
 mfront/tests/properties/interfaces/src/Makefile.am -text
 mfront/tests/properties/interfaces/src/PleiadesMaterialPropertyInterface-2.0.cxx -text
 mfront/tests/properties/test-c.c -text

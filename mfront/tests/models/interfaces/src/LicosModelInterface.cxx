@@ -421,7 +421,8 @@ namespace mfront{
 	  this->headerFile << "#line " << p2->lineNumber << " \"" 
 			   << fd.fileName << "\"\n";
 	}
-	this->headerFile << "static constexpr " << getVariableType(p2->type) << " " << p2->name << ";" << '\n';
+	this->headerFile << "static constexpr const " << getVariableType(p2->type) << " " << p2->name
+			 << " = " << p2->value << ";" << '\n';
       }
       this->headerFile << '\n';
     }
@@ -733,13 +734,6 @@ namespace mfront{
 	}
       }
       this->srcFile << "} // end of " << md.className << "::" << f.name << "::operator()\n\n";
-    }
-    // static variables
-    if(!md.staticVars.empty()){
-      for(const auto& sv : md.staticVars){
-	this->writeStaticVariableInitialization(fd,md,sv);
-      }
-      this->srcFile << '\n';
     }
     // Constructors
     if(this->hasDefaultConstructor){

@@ -26,8 +26,6 @@
 
 namespace mfront {
 
-PleiadesMaterialPropertyInterface::PleiadesMaterialPropertyInterface() = default;
-  
 std::string PleiadesMaterialPropertyInterface::getName(void) {
   return "pleiades-2.0";
   // TODO: make a PleiadesMaterialPropertyInterface.cxx.in and use @PACKAGE_VERSION@
@@ -49,7 +47,7 @@ void PleiadesMaterialPropertyInterface::getTargetsDescription(
   const auto name = mpd.material.empty() ? mpd.className : mpd.material + "_" + mpd.className;
   const auto hn = "include/Pleiades/Metier/MaterialProperty/" + name + "-pleiades.hh";
   d[lib].ldflags.push_back("-lm");
-  d[lib].cppflags.push_back("`pleiades-config --includes`");
+  d[lib].cppflags.push_back("`pleiades-config --includes`\n");
   d[lib].sources.push_back(name + "-pleiades.cpp");
   d[lib].epts.push_back(name);
   d.headers.push_back(hn.substr(8));
@@ -348,7 +346,5 @@ void PleiadesMaterialPropertyInterface::writeSrcFile(const MaterialPropertyDescr
   os.close();
 }  // end of PleiadesMaterialPropertyInterface::writeSrcFile()
 
-PleiadesMaterialPropertyInterface::~PleiadesMaterialPropertyInterface() = default;
-  
 MaterialPropertyInterfaceProxy<PleiadesMaterialPropertyInterface> pleiadesLawProxy;
 }  // end of namespace mfront

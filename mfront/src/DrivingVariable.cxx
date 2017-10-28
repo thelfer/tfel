@@ -16,13 +16,17 @@
 namespace mfront
 {
 
-  DrivingVariable::~DrivingVariable() noexcept = default;
+  DrivingVariable::DrivingVariable(const std::string& t,
+				   const std::string& n)
+    : VariableDescription(t,n,1u,0u)
+  {} // end of DrivingVariable::DrivingVariable
 
-  bool
-  DrivingVariable::operator < (const DrivingVariable& o) const
-  {
-    return this->name < o.name;
-  }
+  DrivingVariable::DrivingVariable(DrivingVariable&&) = default;
+  DrivingVariable::DrivingVariable(const DrivingVariable&) = default;
+  DrivingVariable& DrivingVariable::operator=(DrivingVariable&&) = default;
+  DrivingVariable& DrivingVariable::operator=(const DrivingVariable&) = default;
+  
+  DrivingVariable::~DrivingVariable() noexcept = default;
 
 } // end of namespace mfront
 

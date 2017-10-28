@@ -735,7 +735,7 @@ namespace mfront{
       auto l = [o](const FileDescription&,
 		   const BehaviourDescription& d,
 		   const Hypothesis h){
-	const auto  vn = extracVariableNameAndArrayPosition(o);
+	const auto  vn = extractVariableNameAndArrayPosition(o);
 	const auto& n  = std::get<0>(vn);
 	const auto& bd = d.getBehaviourData(h);
 	const auto& p  = bd.getVariableDescriptionByExternalName(n);
@@ -751,7 +751,7 @@ namespace mfront{
 		   const BehaviourDescription& d,
 		   const Hypothesis h){
 	const auto& bd = d.getBehaviourData(h);
-	const auto  vn = extracVariableNameAndArrayPosition(o);
+	const auto  vn = extractVariableNameAndArrayPosition(o);
 	const auto& n  = std::get<0>(vn);
 	const auto& p  = bd.getVariableDescriptionByExternalName(n);
 	const auto& b  = std::get<1>(vn) ? p.getBounds(std::get<2>(vn)) : p.getBounds();
@@ -771,7 +771,7 @@ namespace mfront{
 		   const BehaviourDescription& d,
 		   const Hypothesis h){
 	const auto& bd = d.getBehaviourData(h);
-	const auto  vn = extracVariableNameAndArrayPosition(o);
+	const auto  vn = extractVariableNameAndArrayPosition(o);
 	const auto& n  = std::get<0>(vn);
 	const auto& p  = bd.getVariableDescriptionByExternalName(n);
 	const auto& b  = std::get<1>(vn) ? p.getBounds(std::get<2>(vn)) : p.getBounds();
@@ -790,7 +790,7 @@ namespace mfront{
       auto l = [o](const FileDescription&,
 		   const BehaviourDescription& d,
 		   const Hypothesis h){
-	const auto  vn = extracVariableNameAndArrayPosition(o);
+	const auto  vn = extractVariableNameAndArrayPosition(o);
 	const auto& n  = std::get<0>(vn);
 	const auto& bd = d.getBehaviourData(h);
 	const auto& p  = bd.getVariableDescriptionByExternalName(n);
@@ -806,7 +806,7 @@ namespace mfront{
 		   const BehaviourDescription& d,
 		   const Hypothesis h){
 	const auto& bd = d.getBehaviourData(h);
-	const auto  vn = extracVariableNameAndArrayPosition(o);
+	const auto  vn = extractVariableNameAndArrayPosition(o);
 	const auto& n  = std::get<0>(vn);
 	const auto& p  = bd.getVariableDescriptionByExternalName(n);
 	const auto& b  = (std::get<1>(vn) ?
@@ -828,7 +828,7 @@ namespace mfront{
 		   const BehaviourDescription& d,
 		   const Hypothesis h){
 	const auto& bd = d.getBehaviourData(h);
-	const auto  vn = extracVariableNameAndArrayPosition(o);
+	const auto  vn = extractVariableNameAndArrayPosition(o);
 	const auto& n  = std::get<0>(vn);
 	const auto& p  = bd.getVariableDescriptionByExternalName(n);
 	const auto& b  = (std::get<1>(vn) ?

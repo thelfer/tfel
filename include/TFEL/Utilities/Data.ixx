@@ -38,6 +38,24 @@ namespace tfel{
       struct DataConvertor
 	: public DataConvertorImpl<T,tfel::utilities::isDataType<T>::value>
       {}; // end of struct DataConvertor
+
+      /*!
+       * \brief an helper class (in C++-11, no `if constexpr`, so we
+       * rely on template specialisation)
+       */
+      template<>
+      struct DataConvertor<double>
+      {
+	static double exe(const Data& d){
+	  if(d.is<int>()){
+	    return d.get<int>();
+	  }
+	  return d.get<double>();
+	}
+	static bool is_convertible(const Data& d){
+	  return d.is<int>() || d.is<double>();
+	}
+      }; // end of struct DataConvertor
       
       //! partial specialisation for `std::vector`
       template<typename T>

@@ -12,6 +12,8 @@
  * project under specific licensing conditions. 
  */
 
+#include<iostream>
+
 #include<algorithm>
 #include<stdexcept>
 #include<iterator>
@@ -2314,7 +2316,7 @@ namespace mfront{
     for(const auto & h : hs){
       this->current = b;
       const auto r = this->readVariableBounds();
-      const auto v = extracVariableNameAndArrayPosition(r.first);
+      const auto v = extractVariableNameAndArrayPosition(r.first);
       if(std::get<1>(v)){
 	this->mb.setBounds(h,std::get<0>(v),std::get<2>(v),r.second);
       } else {

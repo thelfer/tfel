@@ -729,14 +729,10 @@ namespace mfront
     tfel::raise_if(!this->mvariables.empty(),
 		   "BehaviourDescription::declareAsASmallStrainStandardBehaviour: "
 		   "some driving variables are already declared");
-    DrivingVariable eto;
-    eto.name = "eto";
-    eto.type = "StrainStensor";
+    DrivingVariable eto("StrainStensor","eto");
     eto.increment_known = true;
-    ThermodynamicForce sig;
-    sig.name = "sig";
-    sig.type = "StressStensor";
-    this->mvariables.insert({eto,sig});
+    ThermodynamicForce sig("StressStensor","sig");
+    this->mvariables.push_back({eto,sig});
     this->type = BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR;
     this->registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,"eto");
     this->registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,"deto");
@@ -748,14 +744,10 @@ namespace mfront
     tfel::raise_if(!this->mvariables.empty(),
 		   "BehaviourDescription::declareAsAFiniteStrainStandardBehaviour: "
 		   "some driving variables are already declared");
-    DrivingVariable F;
-    F.name = "F";
-    F.type = "DeformationGradientTensor";
+    DrivingVariable F("DeformationGradientTensor","F");
     F.increment_known = false;
-    ThermodynamicForce sig;
-    sig.name = "sig";
-    sig.type = "StressStensor";
-    this->mvariables.insert({F,sig});
+    ThermodynamicForce sig("StressStensor","sig");
+    this->mvariables.push_back({F,sig});
     this->type = BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR;
     if(b){
       this->registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,"F");
@@ -766,20 +758,15 @@ namespace mfront
     this->registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,"sig");
   }
   
-  void
-  BehaviourDescription::declareAsACohesiveZoneModel()
+  void BehaviourDescription::declareAsACohesiveZoneModel()
   {
     tfel::raise_if(!this->mvariables.empty(),
 		   "BehaviourDescription::declareAsACohesiveZoneModel: "
 		   "some driving variables are already declared");
-    DrivingVariable u;
-    u.name = "u";
-    u.type = "DisplacementTVector";
+    DrivingVariable u("DisplacementTVector","u");
     u.increment_known = true;
-    ThermodynamicForce t;
-    t.name = "t";
-    t.type = "ForceTVector";
-    this->mvariables.insert({u,t});
+    ThermodynamicForce t("ForceTVector","t");
+    this->mvariables.push_back({u,t});
     this->type = BehaviourDescription::COHESIVEZONEMODEL;
     this->registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,"u");
     this->registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,"du");
@@ -821,24 +808,85 @@ namespace mfront
     }
   }
   
-  void BehaviourDescription::addMainVariable(const DrivingVariable&    v,
+  void BehaviourDescription::addMainVariable(const DrivingVariable&    dv,
 					     const ThermodynamicForce& f)
   {
     tfel::raise_if(this->type!=BehaviourDescription::GENERALBEHAVIOUR,
 		   "BehaviourDescription::addMainVariables: "
 		   "one can not add a main variable if the behaviour "
 		   "don't have a general behaviour type");
-    tfel::raise_if(!this->mvariables.insert({v,f}).second,
-		   "BehaviourDescription::addMainVariables: "
-		   "a driving variable '"+v.name+"' has "
-		   "already been declared");
+    for(const auto& v : this->mvariables){
+      tfel::raise_if(dv.name==v.first.name,
+		     "BehaviourDescription::addMainVariables: "
+		     "a driving variable '"+dv.name+"' has "
+		     "already been declared");
+      tfel::raise_if(f.name==v.second.name,
+		     "BehaviourDescription::addMainVariables: "
+		     "a driving variable '"+f.name+"' has "
+		     "already been declared");
+    }
+    this->mvariables.push_back({dv,f});
   } // end of BehaviourDescription::addMainVariables
 
-  const std::map<DrivingVariable,ThermodynamicForce>&
+  const std::vector<std::pair<DrivingVariable,ThermodynamicForce>>&
   BehaviourDescription::getMainVariables() const
   {
     return this->mvariables;
   } // end of BehaviourDescription::getMainVariables
+  
+  DrivingVariable& BehaviourDescription::getDrivingVariable(const std::string& n){
+    using value_type = std::pair<DrivingVariable,ThermodynamicForce>;
+    const auto p = std::find_if(this->mvariables.begin(),
+				this->mvariables.end(),
+				[&n](const value_type& v){
+				  return v.first.name==n;
+				});
+    tfel::raise_if(p==this->mvariables.end(),
+		   "BehaviourDescription::getDrivingVariable: "
+		   "unknown driving variable '"+n+"'");
+    return p->first;
+  } // end of BehaviourDescription::getDrivingVariable
+
+  const DrivingVariable&
+  BehaviourDescription::getDrivingVariable(const std::string& n) const{
+    using value_type = std::pair<DrivingVariable,ThermodynamicForce>;
+    const auto p = std::find_if(this->mvariables.begin(),
+				this->mvariables.end(),
+				[&n](const value_type& v){
+				  return v.first.name==n;
+				});
+    tfel::raise_if(p==this->mvariables.end(),
+		   "BehaviourDescription::getDrivingVariable: "
+		   "unknown driving variable '"+n+"'");
+    return p->first;
+  } // end of BehaviourDescription::getDrivingVariable
+
+  ThermodynamicForce& BehaviourDescription::getThermodynamicForce(const std::string& n){
+    using value_type = std::pair<DrivingVariable,ThermodynamicForce>;
+    const auto p = std::find_if(this->mvariables.begin(),
+				this->mvariables.end(),
+				[&n](const value_type& v){
+				  return v.second.name==n;
+				});
+    tfel::raise_if(p==this->mvariables.end(),
+		   "BehaviourDescription::getDrivingVariable: "
+		   "unknown driving variable '"+n+"'");
+    return p->second;
+  } // end of BehaviourDescription::getThermodynamicForce
+
+  const ThermodynamicForce&
+  BehaviourDescription::getThermodynamicForce(const std::string& n) const{
+    using value_type = std::pair<DrivingVariable,ThermodynamicForce>;
+    const auto p = std::find_if(this->mvariables.begin(),
+				this->mvariables.end(),
+				[&n](const value_type& v){
+				  return v.second.name==n;
+				});
+    tfel::raise_if(p==this->mvariables.end(),
+		   "BehaviourDescription::getDrivingVariable: "
+		   "unknown driving variable '"+n+"'");
+    return p->second;
+  } // end of BehaviourDescription::getThermodynamicForce
   
   bool BehaviourDescription::isDrivingVariableName(const std::string& n) const
   {
@@ -861,6 +909,17 @@ namespace mfront
     return false;
   } // end of BehaviourDescription::isDrivingVariableIncrementName
 
+  bool BehaviourDescription::isThermodynamicForceName(const std::string& n) const
+  {
+    for(const auto& v : this->getMainVariables()){
+      const auto& tf = v.second;
+      if(tf.name==n){
+	return true;
+      }
+    }
+    return false;
+  } // end of BehaviourDescription::isThermodynamicForceName
+  
   std::pair<SupportedTypes::TypeSize,SupportedTypes::TypeSize>
   BehaviourDescription::getMainVariablesSize() const
   {
@@ -2003,7 +2062,20 @@ namespace mfront
 				       const std::string& n,
 				       const VariableBoundsDescription& b)
   {
-    this->callBehaviourData(h,&BehaviourData::setBounds,n,b,true);
+    auto throw_if = [](const bool c,const std::string& m){
+      tfel::raise_if(c,"BehaviourDescription::setBounds: "+m);
+    };
+    if(this->isDrivingVariableName(n)){
+      throw_if(h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+	       "invalid modelling hypothesis");
+      this->getDrivingVariable(n).setBounds(b);
+    } else if(this->isThermodynamicForceName(n)){
+      throw_if(h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+	       "invalid modelling hypothesis");
+      this->getThermodynamicForce(n).setBounds(b);
+    } else {
+      this->callBehaviourData(h,&BehaviourData::setBounds,n,b,true);
+    }
   } // end of BehaviourDescription::setBounds
 
   void BehaviourDescription::setBounds(const Hypothesis h,
@@ -2011,13 +2083,26 @@ namespace mfront
 				       const unsigned short i,
 				       const VariableBoundsDescription& b)
   {
-    if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
-      this->d.setBounds(n,i,b);
-      for(auto md : this->sd){
-	md.second.get()->setBounds(n,i,b);
-      }
+    auto throw_if = [](const bool c,const std::string& m){
+      tfel::raise_if(c,"BehaviourDescription::setBounds: "+m);
+    };
+    if(this->isDrivingVariableName(n)){
+      throw_if(h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+	       "invalid modelling hypothesis");
+      this->getDrivingVariable(n).setBounds(b,i);
+    } else if(this->isThermodynamicForceName(n)){
+      throw_if(h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+	       "invalid modelling hypothesis");
+      this->getThermodynamicForce(n).setBounds(b,i);
     } else {
-      this->getBehaviourData2(h).setBounds(n,i,b);
+      if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
+	this->d.setBounds(n,i,b);
+	for(auto md : this->sd){
+	  md.second.get()->setBounds(n,i,b);
+	}
+      } else {
+	this->getBehaviourData2(h).setBounds(n,i,b);
+      }
     }
   } // end of BehaviourDescription::setBounds
   
@@ -2025,7 +2110,20 @@ namespace mfront
 					       const std::string& n,
 					       const VariableBoundsDescription& b)
   {
-    this->callBehaviourData(h,&BehaviourData::setPhysicalBounds,n,b,true);
+    auto throw_if = [](const bool c,const std::string& m){
+      tfel::raise_if(c,"BehaviourDescription::setPhysicalBounds: "+m);
+    };
+    if(this->isDrivingVariableName(n)){
+      throw_if(h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+	       "invalid modelling hypothesis");
+      this->getDrivingVariable(n).setBounds(b);
+    } else if(this->isThermodynamicForceName(n)){
+      throw_if(h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+	       "invalid modelling hypothesis");
+      this->getThermodynamicForce(n).setBounds(b);
+    } else {
+      this->callBehaviourData(h,&BehaviourData::setPhysicalBounds,n,b,true);
+    }
   } // end of BehaviourDescription::setPhysicalBounds
 
   void BehaviourDescription::setPhysicalBounds(const Hypothesis h,
@@ -2033,13 +2131,26 @@ namespace mfront
 					       const unsigned short i,
 					       const VariableBoundsDescription& b)
   {
-    if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
-      this->d.setPhysicalBounds(n,i,b);
-      for(auto md : this->sd){
-	md.second.get()->setPhysicalBounds(n,i,b);
-      }
+    auto throw_if = [](const bool c,const std::string& m){
+      tfel::raise_if(c,"BehaviourDescription::setPhysicalBounds: "+m);
+    };
+    if(this->isDrivingVariableName(n)){
+      throw_if(h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+	       "invalid modelling hypothesis");
+      this->getDrivingVariable(n).setBounds(b,i);
+    } else if(this->isThermodynamicForceName(n)){
+      throw_if(h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+	       "invalid modelling hypothesis");
+      this->getThermodynamicForce(n).setBounds(b,i);
     } else {
-      this->getBehaviourData2(h).setPhysicalBounds(n,i,b);
+      if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
+	this->d.setPhysicalBounds(n,i,b);
+	for(auto md : this->sd){
+	  md.second.get()->setPhysicalBounds(n,i,b);
+	}
+      } else {
+	this->getBehaviourData2(h).setPhysicalBounds(n,i,b);
+      }
     }
   } // end of BehaviourDescription::setPhysicalBounds
   

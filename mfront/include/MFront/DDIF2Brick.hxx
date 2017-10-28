@@ -90,10 +90,15 @@ namespace mfront{
     using SofteningSlope =
       tfel::utilities::GenType<std::shared_ptr<MaterialPropertyDescription>,
 			       double>;
+    using FractureEnergy =
+      tfel::utilities::GenType<std::shared_ptr<MaterialPropertyDescription>,
+			       double>;
     //! fracture stress
     std::array<FractureStress,3u> sr;
-    //! fracture stress
+    //! softening slopes
     std::array<SofteningSlope,3u> rp;
+    //! fracture energy
+    std::array<FractureEnergy,3u> gc;
     //! handle pressure on crack surface
     bool pr = false;
   }; // end of struct DDIF2Brick

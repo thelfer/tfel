@@ -16,6 +16,7 @@
 
 #include<string>
 #include"MFront/MFrontConfig.hxx"
+#include"MFront/VariableDescription.hxx"
 
 namespace mfront
 {
@@ -26,26 +27,24 @@ namespace mfront
    * strain behaviours have the total strain as driving variable.
    */
   struct MFRONT_VISIBILITY_EXPORT DrivingVariable
+    : public VariableDescription
   {
-    DrivingVariable() = default;
-    DrivingVariable(DrivingVariable&&) = default;
-    DrivingVariable(const DrivingVariable&) = default;
-    DrivingVariable& operator=(DrivingVariable&&) = default;
-    DrivingVariable& operator=(const DrivingVariable&) = default;
+    /*!
+     * Constructor
+     * \param[in] t : variable type
+     * \param[in] n : variable name
+     */
+    DrivingVariable(const std::string&,
+		    const std::string&);
+    DrivingVariable(DrivingVariable&&);
+    DrivingVariable(const DrivingVariable&);
+    DrivingVariable& operator=(DrivingVariable&&);
+    DrivingVariable& operator=(const DrivingVariable&);
     ~DrivingVariable() noexcept;
-    //! name of the driving variable
-    std::string name;
-    //! type of the driving variable
-    std::string type;
     //! This flags tells which of the driving variable increment or of
     //! the value of driving variable at the end of the time step is
     //! given.
     bool increment_known = false;
-    /*!
-     * comparison operator
-     * \param[in] o : the other driving variable
-     */
-    bool operator < (const DrivingVariable&) const;
   }; // end of struct DrivingVariable
   
 } // end of namespace mfront

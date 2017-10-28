@@ -4,6 +4,6 @@
 @Behaviour DDIF2_5;
 
 @Brick DDIF2 {
- fracture_stresses : {1e11,150e6,150e6},
+ fracture_stresses : {150e6,1e11,150e6},
  softening_slopes  : {-75e9,-50e9,-25e9}
 };
