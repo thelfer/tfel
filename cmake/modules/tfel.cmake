@@ -352,8 +352,13 @@ macro(python_module_base fullname name)
   endif(WIN32)
   set_target_properties(py_${fullname} PROPERTIES PREFIX "")
   set_target_properties(py_${fullname} PROPERTIES OUTPUT_NAME ${name})
-  target_link_libraries(py_${fullname}
-    ${Boost_PYTHON_LIBRARY} ${PYTHON_LIBRARIES})
+  if(TFEL_USES_CONAN)
+    target_link_libraries(py_${fullname}
+      ${CONAN_LIBS} ${PYTHON_LIBRARIES})
+  else(TFEL_USES_CONAN)
+    target_link_libraries(py_${fullname}
+      ${Boost_PYTHON_LIBRARY} ${PYTHON_LIBRARIES})
+  endif(TFEL_USES_CONAN)
 endmacro(python_module_base)
 
 # macro(python_module name)

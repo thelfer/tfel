@@ -15,6 +15,12 @@ if(TFEL_APPEND_VERSION)
   add_definitions("-DTFEL_APPEND_VERSION")
 endif(TFEL_APPEND_VERSION)
 
+if(EXISTS "${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
+  include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+  conan_basic_setup(NO_OUTPUT_DIRS)
+  set(TFEL_USES_CONAN ON)
+endif(EXISTS "${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
+
 # tfel specific macros
 include(cmake/modules/tfel.cmake)
 # some variables for compatibility with autotools

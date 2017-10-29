@@ -13,6 +13,7 @@
 /LICENCE-GNU-GPL -text
 /Makefile.am -text
 /README -text
+/README-conan.md -text
 /README.md -text
 /TODO.org -text
 /appveyor.yml -text
@@ -152,6 +153,7 @@ cmake/modules/tfel.cmake -text
 cmake/modules/zset.cmake -text
 cmake/pyc-compile.py -text
 cmake/pyo-compile.py -text
+/conanfile.txt -text
 /configure.ac -text
 /cppcheck.sh -text
 /debug.sh.in -text
@@ -1297,6 +1299,7 @@ docs/web/publications.md -text
 docs/web/release-notes-2.0.5.md -text
 docs/web/release-notes-3.0.1.md -text
 docs/web/release-notes-3.0.2.md -text
+docs/web/release-notes-3.0.3.md -text
 docs/web/release-notes-3.0.md -text
 docs/web/release-notes-3.1.md -text
 docs/web/release-notes.md -text
