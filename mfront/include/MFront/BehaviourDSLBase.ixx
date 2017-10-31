@@ -119,6 +119,8 @@ namespace mfront{
     add("@GlidingSystems",&Child::treatSlipSystems);
     add("@SlidingSystems",&Child::treatSlipSystems);
     add("@InteractionMatrix",&Child::treatInteractionMatrix);
+    add("@DislocationsMeanFreePathInteractionMatrix",
+	&Child::treatDislocationsMeanFreePathInteractionMatrix);
   } // end of BehaviourDSLBase<Child>::registerDefaultCallBacks
 
   template<typename Child>
