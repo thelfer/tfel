@@ -134,6 +134,8 @@ namespace mfront
     insert_if(d[lib].cppflags,TFEL_JAVA_INCLUDES);
     insert_if(d[lib].cppflags,
 	      "$(shell "+tfel_config+" --cppflags --compiler-flags)");
+    insert_if(d[lib].include_directories,
+	      "$(shell "+tfel_config+" --include-path)");
     insert_if(d[lib].sources,name+"-java.cxx");
     if(this->package.empty()){
       insert_if(d[lib].epts,getJavaClassName(mpd)+"."+mpd.law);

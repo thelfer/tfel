@@ -94,6 +94,8 @@ namespace mfront
     insert_if(l.cppflags,TFEL_PYTHON_INCLUDES);
     insert_if(l.cppflags,
 	      "$(shell "+tfel_config+" --cppflags --compiler-flags)");
+    insert_if(d[lib].include_directories,
+	      "$(shell "+tfel_config+" --include-path)");
     insert_if(l.link_libraries,"m");    
     insert_if(l.ldflags,TFEL_PYTHON_LIBS);
     insert_if(l.sources,name+"-python.cxx");

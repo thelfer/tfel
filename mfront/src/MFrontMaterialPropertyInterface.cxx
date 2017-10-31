@@ -56,6 +56,8 @@ namespace mfront
     const auto tfel_config = tfel::getTFELConfigExecutableName();
     insert_if(d[lib].cppflags,
 	      "$(shell "+tfel_config+" --cppflags --compiler-flags)");
+    insert_if(d[lib].include_directories,
+	      "$(shell "+tfel_config+" --include-path)");
     if(!header.empty()){
       insert_if(d.headers,header+".hxx");
     }
