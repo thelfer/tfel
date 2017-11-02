@@ -15,6 +15,7 @@
 #undef NDEBUG
 #endif /* NDEBUG */
 
+#include<cfenv>
 #include<cstdlib>
 #include<utility>
 #include<iostream>

@@ -5,6 +5,7 @@
  * \date   09 mai 2017
  */
 
+#include<cfenv>
 #include<random>
 #include<ostream>
 #include<stdexcept>

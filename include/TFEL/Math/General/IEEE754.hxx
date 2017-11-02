@@ -14,6 +14,7 @@
 #ifndef LIB_TFEL_MATH_IEEE754_HXX
 #define LIB_TFEL_MATH_IEEE754_HXX
 
+#include<cmath>
 #include"TFEL/Config/TFELConfig.hxx"
 
 namespace tfel{
