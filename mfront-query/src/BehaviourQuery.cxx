@@ -500,7 +500,7 @@ namespace mfront{
 	    auto i = size_t{};
 	    for(const auto& ssis : ssis_r){
 	      cout << "- rank " << i << ':';
-	      for(const auto ssi: ssis){
+	      for(const auto& ssi: ssis){
 		cout << " (" << to_string(ssi.g1)
 		     << ':'  << to_string(ssi.g2) << ')';
 	      }

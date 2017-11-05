@@ -44,17 +44,13 @@ namespace tfel
     template<typename T>
     struct vector_to_python_list
     {
-      static PyObject* convert(const T& v)
+      static PyObject* convert(const T& o)
       {
-	using namespace std;
-	using namespace boost::python;
-	using boost::python::iterator;
-	typename T::const_iterator p;
-	list l;
-	for(p=v.begin();p!=v.end();++p){
-	  l.append(*p);
+	boost::python::list l;
+	for(const auto& v : o){
+	  l.append(v);
 	}
-	return incref(l.ptr());
+	return boost::python::incref(l.ptr());
       }
     };
 

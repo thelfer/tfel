@@ -120,7 +120,6 @@ int main(const int argc, const char *const *const argv)
     MessageBox(nullptr,e.what(),
 	       "mfront",0);
 #else /* defined _WIN32 || defined _WIN64 ||defined __CYGWIN__ */
-  } catch(exception& e){
     std::cerr << e.what() << std::endl;
 #endif /* defined _WIN32 || defined _WIN64 ||defined __CYGWIN__ */
     return EXIT_FAILURE;

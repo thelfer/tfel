@@ -1180,9 +1180,9 @@ namespace mfront{
     const auto& d = this->mb.getBehaviourData(h);
     SupportedTypes::TypeSize n;
     const auto n3 = d.getIntegrationVariables().getTypeSize();
-    for(const auto v : d.getIntegrationVariables()){
+    for(const auto& v : d.getIntegrationVariables()){
       SupportedTypes::TypeSize n2;
-      for(const auto v2 : d.getIntegrationVariables()){
+      for(const auto& v2 : d.getIntegrationVariables()){
 	const auto flag  = SupportedTypes::getTypeFlag(v.type);
 	const auto flag2 = SupportedTypes::getTypeFlag(v2.type);
 	if((v.arraySize!=1u)||(v2.arraySize!=1u)){

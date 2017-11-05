@@ -64,9 +64,11 @@ private:
   {
     this->test2<float,es>();
     this->test2<double,es>();
-#ifndef __CYGWIN__
+    // on FreeBSD 11.1, powl seems broken: the linker emits a
+    // warning about its precision
+#if (!defined __CYGWIN__) && (!defined __FreeBSD__)
     this->test2<long double,es>();
-#endif /* __CYGWIN__ */
+#endif /* (!defined __CYGWIN__) && (!defined __FreeBSD__) */
     this->test3<float,es>();
     this->test3<double,es>();
   } // end of check

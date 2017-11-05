@@ -57,6 +57,10 @@ Options
                           (enabled by default if pandoc is found)
   enable-fast-math      : use advance options to optimize code further.
   			  Compiler can then ignore IEEE 754 compatibility
+  enable-broken-boost-python-module-visibility-handling : workaround a bug
+  			  in boost python which occurs on FreeBSD+clang.
+			  See https://github.com/boostorg/python/issues/173
+			  for details
 
 cmake usefull variables
 =======================
