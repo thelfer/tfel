@@ -44,9 +44,9 @@ struct StensorComputeEigenvectors final
     this->test<double>();
     this->test2<float>();
     this->test2<double>();
-#ifndef __CYGWIN__
+#if (!defined __CYGWIN__) && (!defined __FreeBSD__)
     this->test2<long double>();
-#endif /* __CYGWIN__ */
+#endif /* (!defined __CYGWIN__) && (!defined __FreeBSD__) */
     this->test3<float>();
     this->test3<double>();
     return this->result;
