@@ -873,6 +873,7 @@ namespace mtest{
 		     "temperature evolution is not defined");
       const auto T = (*(pT->second))(t+dt);
       if(this->hpp){
+	// pi capture is required for Visual Studio 2015
 	const auto Pi = [this,T,Ri_,pi]{
 	  if(this->gseq==nullptr){
 	    return this->P0*(T/this->T0);

@@ -19,7 +19,8 @@ This document describes the generic installation procedure for `TFEL`
 from the sources on posix-compliant systems. Please note that the main
 systems on which `TFEL` was developed is `Linux`. Extensive testing on
 other posix-compliant operating systems, notably `FreeBSD`, is
-lacking, although compilation and unit testing is known to work.
+lacking, although compilation and unit testing is known to work. A
+page dedicated to `FreeBSD` is available [here](install-freebsd.html).
 
 The installation on [Windows plateform](http://windows.microsoft.com)
 is described in the following pages:
@@ -30,7 +31,7 @@ is described in the following pages:
   requiring `Cast3M` to be installed.
 - [Installation based on `MSYS`](install-windows-msys.html).
 
-The creation of binary packages are detailled [here](packages.html)
+The creation of binary packages are detailled [here](packages.html). 
 
 `TFEL` is known to work on standard architectures implemented by the
 Intel and AMD processors, either 32 or 64 bits. As no specific

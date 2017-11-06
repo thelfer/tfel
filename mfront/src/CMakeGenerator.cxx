@@ -208,7 +208,7 @@ namespace mfront{
       m << "string (REPLACE \";\" \" \" " << l. name << "_COMPILE_FLAGS\n"
 	<< "  \"${" << l. name << "_COMPILE_FLAGS}\")\n";
       // link_libraries
-      auto has_link_libraries = [&t,&o,&l]{
+      auto has_link_libraries = [&o,&l]{
 	if(!l.link_libraries.empty()){
 	  return true;
 	}
@@ -304,7 +304,7 @@ namespace mfront{
     std::remove_if(argv2, argv2 + 9, [](const char* ptr) {
 	return ptr == nullptr;
       });
-    auto error = [&argv,&t](const std::string& e,
+    auto error = [&t](const std::string& e,
 			    const char* const* args){
       auto msg = "callCmake: can't build target '"+t+"'\n";
       if(!e.empty()){

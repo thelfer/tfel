@@ -10,8 +10,8 @@
  * Copyright © CEA 2017
  */
 
-#ifndef _LIB_MFRONTPLEIADESLAWINTERFACE_H_
-#define _LIB_MFRONTPLEIADESLAWINTERFACE_H_
+#ifndef LIB_MFRONTPLEIADESLAWINTERFACE_H
+#define LIB_MFRONTPLEIADESLAWINTERFACE_H
 
 #include <string>
 
@@ -84,4 +84,4 @@ struct PleiadesMaterialPropertyInterface
 
 }  // end of namespace mfront
 
-#endif /* _LIB_MFRONTPLEIADESLAWINTERFACE_H */
+#endif /* LIB_MFRONTPLEIADESLAWINTERFACE_H */

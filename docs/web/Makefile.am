@@ -22,6 +22,7 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./zmat.md						      \
 	   ./getting-started.md					      \
 	   ./install.md						      \
+	   ./install-freebsd.md					      \
 	   ./install-windows-msys.md				      \
 	   ./install-windows-Cast3M2017.md			      \
 	   ./install-windows-VisualStudio.md			      \

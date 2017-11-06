@@ -707,10 +707,10 @@ namespace mfront{
        (this->mb.getElasticSymmetryType()==ISOTROPIC)&&
        (this->mb.areElasticMaterialPropertiesDefined())){
       auto add_lv = [this,h](BehaviourDescription& bd,
-			   const std::string& t,
-			   const std::string& n,
-			   const std::string& g,
-			   const std::string d){
+			const std::string& t,
+			const std::string& n,
+			const std::string& g,
+			const std::string d){
 	auto r = bd.checkVariableExistence(n,"Parameter",false);
 	if(!r.first){
 	  VariableDescription v(t,n,1u,0u);

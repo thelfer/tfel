@@ -52,7 +52,7 @@ namespace mfront
 {
 
   static bool isInteger(const std::string& s){
-    const auto s2 = [&s]{
+    const auto s2 = [&s] () -> std::string {
       if(s.empty()){
 	return s;
       }

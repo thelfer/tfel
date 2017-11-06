@@ -1068,7 +1068,7 @@ namespace mfront{
     writeArguments(out,mb,true);
     out << "{\n";
     if(mb.getSymmetryType()==mfront::ORTHOTROPIC){
-      const auto mpoffset = [this,h,&mb]{
+      const auto mpoffset = [h,&mb]{
 	auto o = size_t{};
 	if(mb.getAttribute(BehaviourDescription::requiresStiffnessTensor,false)){
 	  if((h==ModellingHypothesis::PLANESTRESS)||

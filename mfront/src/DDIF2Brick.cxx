@@ -295,11 +295,11 @@ namespace mfront{
       const std::string young = this->bd.areElasticMaterialPropertiesDefined() ?
 	"this->young_tdt" : "this->young";
       init.code +=
-	"this->Rp[0]=1/(1/("+young+")-(2*(this->Gc[0]))/((this->Lc[0])*(this->sigr[0])*(this->sigr[0])));\n";
-      init.code +=	     
-	"this->Rp[1]=1/(1/("+young+")-(2*(this->Gc[1]))/((this->Lc[1])*(this->sigr[1])*(this->sigr[1])));\n";
-      init.code +=	     
-	"this->Rp[2]=1/(1/("+young+")-(2*(this->Gc[2]))/((this->Lc[2])*(this->sigr[2])*(this->sigr[2])));\n";
+	"this->Rp[0]=-((this->Lc[0])*(this->sigr[0])*(this->sigr[0]))/(2*(this->Gc[0]));\n";
+      init.code +=
+	"this->Rp[1]=-((this->Lc[1])*(this->sigr[1])*(this->sigr[1]))/(2*(this->Gc[1]));\n";
+      init.code +=
+	"this->Rp[2]=-((this->Lc[2])*(this->sigr[2])*(this->sigr[2]))/(2*(this->Gc[2]));\n";
     }
     LocalDataStructure d;
     d.name = "ddif2bdata";

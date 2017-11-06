@@ -11,9 +11,9 @@
 @Behaviour<umat> @library@ @behaviour@;
 @MaterialProperty<constant> 'YoungModulus'     150.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
-@MaterialProperty<constant> 'ElementSize[0]' '13.3333333333333e-06';
-@MaterialProperty<constant> 'ElementSize[1]' '13.3333333333333e-06';
-@MaterialProperty<constant> 'ElementSize[2]' '13.3333333333333e-06';
+@MaterialProperty<constant> 'ElementSize[0]' '20e-06';
+@MaterialProperty<constant> 'ElementSize[1]' '20e-06';
+@MaterialProperty<constant> 'ElementSize[2]' '20e-06';
 
 @ExternalStateVariable 'Temperature' {0:293.15,3600.:800};
 

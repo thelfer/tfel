@@ -41,8 +41,9 @@ namespace tfel{
       virtual bool isConform() const override;
       virtual std::shared_ptr<Interpolation>
 	clone() const override;
+      virtual ~SplineLocalInterpolation();
     private:
-      std::map<double, struct tfel::math::CubicSpline<double> > splines;
+      std::map<double,tfel::math::CubicSpline<double>> splines;
       std::vector<double> timesBefore; /**< vector containing the first times of each group of 3 times **/
     };
 

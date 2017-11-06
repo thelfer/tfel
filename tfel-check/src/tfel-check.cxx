@@ -110,10 +110,10 @@ namespace tfel{
 		 "already defined");
 	this->configFiles.push_back(f);
       };
-      auto declare = [this](const char* const n,
-			    const CallBack& c){
-	this->registerCallBack(n,c);
-      };
+      // auto declare = [this](const char* const n,
+      // 			    const CallBack& c){
+      // 	this->registerCallBack(n,c);
+      // };
       auto declare2 = [this](const char* const n,
 			     const char* const a,
 			     const CallBack& c){
