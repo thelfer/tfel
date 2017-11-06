@@ -14,6 +14,7 @@
 @MaterialProperty<constant> 'ElementSize[0]' '20e-06';
 @MaterialProperty<constant> 'ElementSize[1]' '20e-06';
 @MaterialProperty<constant> 'ElementSize[2]' '20e-06';
+@MaterialProperty<constant> 'AngularCoordinate' 0;
 
 @ExternalStateVariable 'Temperature' {0:293.15,3600.:800};
 

@@ -215,7 +215,7 @@ namespace mfront{
       getLogStream() << "DDIF2Brick::completeVariableDeclaration: begin\n";
     }
     StandardElasticityBrick::completeVariableDeclaration();
-    CodeBlock init;
+    std::string init_code;
     // fracture stresses
     if(this->sr[0].empty()){
       this->addMaterialPropertyIfNotDefined("stress","sigr","FractureStress",3u);
@@ -228,7 +228,7 @@ namespace mfront{
 	  ssigr << "this->sigr[" << i << "] = ";
 	  this->dsl.writeMaterialPropertyEvaluation(ssigr,mp_sr,ets);
 	  ssigr << ";\n";
-	  init.code += ssigr.str();
+	  init_code += ssigr.str();
 	}
       } else {
 	BehaviourDescription::ComputedMaterialProperty mp_sr;
@@ -238,7 +238,7 @@ namespace mfront{
 	this->dsl.writeMaterialPropertyEvaluation(ssigr,mp_sr,ets);
 	ssigr << ";\n";
 	ssigr << "this->sigr[2] = this->sigr[1] = this->sigr[0];\n";
-	init.code += ssigr.str();
+	init_code += ssigr.str();
       }
     }
     // softening slopes
@@ -254,7 +254,7 @@ namespace mfront{
 	  sRp << "this->Rp[" << i << "] = ";
 	  this->dsl.writeMaterialPropertyEvaluation(sRp,mp_rp,ets);
 	  sRp << ";\n";
-	  init.code += sRp.str();
+	  init_code += sRp.str();
 	}
       } else {
 	BehaviourDescription::ComputedMaterialProperty mp_rp;
@@ -264,7 +264,7 @@ namespace mfront{
 	this->dsl.writeMaterialPropertyEvaluation(srp,mp_rp,ets);
 	srp << ";\n";
 	srp << "this->Rp[2] = this->Rp[1] = this->Rp[0];\n";
-	init.code += srp.str();
+	init_code += srp.str();
       }
     }
     //  fracture energies
@@ -277,7 +277,7 @@ namespace mfront{
 	  sGc << "this->Gc[" << i << "] = ";
 	  this->dsl.writeMaterialPropertyEvaluation(sGc,mp_gc,ets);
 	  sGc << ";\n";
-	  init.code += sGc.str();
+	  init_code += sGc.str();
 	}
       } else {
 	BehaviourDescription::ComputedMaterialProperty mp_gc;
@@ -287,18 +287,18 @@ namespace mfront{
 	this->dsl.writeMaterialPropertyEvaluation(sgc,mp_gc,ets);
 	sgc << ";\n";
 	sgc << "this->Gc[2] = this->Gc[1] = this->Gc[0];\n";
-	init.code += sgc.str();
+	init_code += sgc.str();
       }
     }
     if(!this->gc[0].empty()){
       this->addMaterialPropertyIfNotDefined("length","Lc","ElementSize",3u);
       const std::string young = this->bd.areElasticMaterialPropertiesDefined() ?
 	"this->young_tdt" : "this->young";
-      init.code +=
+      init_code +=
 	"this->Rp[0]=-((this->Lc[0])*(this->sigr[0])*(this->sigr[0]))/(2*(this->Gc[0]));\n";
-      init.code +=
+      init_code +=
 	"this->Rp[1]=-((this->Lc[1])*(this->sigr[1])*(this->sigr[1]))/(2*(this->Gc[1]));\n";
-      init.code +=
+      init_code +=
 	"this->Rp[2]=-((this->Lc[2])*(this->sigr[2])*(this->sigr[2]))/(2*(this->Gc[2]));\n";
     }
     LocalDataStructure d;
@@ -314,13 +314,23 @@ namespace mfront{
 	       "unsupported hypothesis '"+ModellingHypothesis::toString(h)+"'");
     }
     // init local variables
-    init.code += "for(unsigned short idx=0;idx!=3;++idx){\n"
+    init_code += "for(unsigned short idx=0;idx!=3;++idx){\n"
       "this->nf[idx]      = Stensor(real(0));\n"
       "this->nf[idx][idx] = real(1);\n"
       "}\n";
-    this->bd.setCode(uh,BehaviourData::BeforeInitializeLocalVariables,
-    		     init,BehaviourData::CREATEORAPPEND,
-    		     BehaviourData::AT_END);
+    for(const auto h : this->bd.getModellingHypotheses()){
+      CodeBlock init;
+      init.code = init_code;
+      if(h!=ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN){
+	this->addMaterialPropertyIfNotDefined("real","angl","AngularCoordinate");
+	init.code +=
+	  "// change to cylindrical coordinates\n"
+	  "DDIF2Base::cart2cyl(this->deto,this->angl);\n";
+      }
+      this->bd.setCode(h,BehaviourData::BeforeInitializeLocalVariables,
+		       init,BehaviourData::CREATEORAPPEND,
+		       BehaviourData::AT_END);
+    }
     if(getVerboseMode()>=VERBOSE_DEBUG){
       getLogStream() << "DDIF2Brick::completeVariableDeclaration: end\n";
     }
@@ -378,13 +388,20 @@ namespace mfront{
     		     integrator,BehaviourData::CREATEORAPPEND,
     		     BehaviourData::AT_END);
     /* update auxiliary state variables */
-    CodeBlock uasv;
-    uasv.code = "this->efm[0]=std::max(this->efm[0],this->ef[0]);\n"
-      "this->efm[1]=std::max(this->efm[1],this->ef[1]);\n"
-      "this->efm[2]=std::max(this->efm[2],this->ef[2]);\n";
-    this->bd.setCode(uh,BehaviourData::UpdateAuxiliaryStateVariables,
-    		     uasv,BehaviourData::CREATEORAPPEND,
-    		     BehaviourData::AT_END);
+    for(const auto h : this->bd.getModellingHypotheses()){
+      CodeBlock uasv;
+      uasv.code = "this->efm[0]=std::max(this->efm[0],this->ef[0]);\n"
+	"this->efm[1]=std::max(this->efm[1],this->ef[1]);\n"
+	"this->efm[2]=std::max(this->efm[2],this->ef[2]);\n";
+      if(h!=ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN){
+	uasv.code +=
+	  "// change to cartesian coordinates\n"
+	  "DDIF2Base::cyl2cart(this->sig,this->angl);\n";
+      }
+      this->bd.setCode(h,BehaviourData::UpdateAuxiliaryStateVariables,
+		       uasv,BehaviourData::CREATEORAPPEND,
+		       BehaviourData::AT_END);
+    }
   } // end of DDIF2Brick::endTreatment
   
   std::string DDIF2Brick::getName() const{

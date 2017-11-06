@@ -2,13 +2,14 @@
 @Date 25/10/2017;
 @Description{
   This file describes a tensile test along XX.
-  Simulation Results are compared to the
+  Simulation results are compared to the
   analytical solution.
 };
 
 @XMLOutputFile @xml_output@;
 @MaximumNumberOfSubSteps 1;
 @Behaviour<umat> @library@ @behaviour@;
+
 @MaterialProperty<constant> 'YoungModulus'     150.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 @MaterialProperty<constant> 'ThermalExpansion'   0.;
@@ -18,7 +19,7 @@
 @MaterialProperty<constant> 'SofteningSlope[0]' '-0.5*YoungModulus';
 @MaterialProperty<constant> 'SofteningSlope[1]' '-0.5*YoungModulus';
 @MaterialProperty<constant> 'SofteningSlope[2]' '-0.5*YoungModulus';
-
+@MaterialProperty<constant> 'AngularCoordinate' 0;
 
 @ExternalStateVariable 'Temperature' {0:293.15,3600.:800};
 

@@ -18,6 +18,7 @@
 @MaterialProperty<constant> 'SofteningSlope[0]' '-0.5*YoungModulus';
 @MaterialProperty<constant> 'SofteningSlope[1]' '-0.5*YoungModulus';
 @MaterialProperty<constant> 'SofteningSlope[2]' '-0.5*YoungModulus';
+@MaterialProperty<constant> 'AngularCoordinate' 0;
 
 @ExternalStateVariable 'Temperature' {0:293.15,3600.:800};
 @ExternalStateVariable 'PressureOnCrackSurface' 0;
