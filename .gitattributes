@@ -1148,6 +1148,7 @@ docs/web/img/Configuration.png -text
 docs/web/img/FiniteStrainTangentOperatorConvertion.dot -text
 docs/web/img/FiniteStrainTangentOperatorConvertion.svg -text
 docs/web/img/FissurationPastille.png -text
+docs/web/img/FreeBSD.jpg -text
 docs/web/img/FuelRod-ddif2.png -text
 docs/web/img/FuelRod-ddif2.xcf -text
 docs/web/img/HureCast3M2014.png -text
@@ -1171,6 +1172,7 @@ docs/web/img/Polar_decomposition_of_F.png -text
 docs/web/img/SalomeMeca2015.png -text
 docs/web/img/TFEL-pcbsd.png -text
 docs/web/img/TFEL-pcbsd.xcf -text
+docs/web/img/TrueOS.jpg -text
 docs/web/img/TwitterBanner.png -text
 docs/web/img/TwitterBanner.xcf -text
 docs/web/img/UnilateralMazars.svg -text

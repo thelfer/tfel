@@ -165,6 +165,8 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./img/FissurationPastille.png                              \
 	   ./img/anderson-withwithoutacceleration.svg                 \
 	   ./img/freebsdlogo-1.png                                    \
+	   ./img/FreeBSD.jpg                                          \
+	   ./img/TrueOS.jpg                                           \
 	   ./img/tplot.svg                                            \
 	   ./img/AccesDigiteo.png                                     \
 	   ./img/IsotropicViscoplasticityAmstrongFredericKinematicHardening.svg \
