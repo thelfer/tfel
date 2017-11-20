@@ -30,6 +30,10 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Material/Lame.hxx			                                                     \
 			TFEL/Material/Hill.hxx			                                                     \
 			TFEL/Material/Hill.ixx			                                                     \
+			TFEL/Material/Hosford.hxx			                                             \
+			TFEL/Material/Hosford.ixx			                                             \
+			TFEL/Material/Barlat.hxx			                                             \
+			TFEL/Material/Barlat.ixx			                                             \
 			TFEL/Material/StiffnessTensor.hxx			                                     \
 			TFEL/Material/StiffnessTensor.ixx			                                     \
 			TFEL/Material/ThermalBehaviourData.hxx	                                                     \

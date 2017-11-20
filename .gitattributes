@@ -1389,6 +1389,8 @@ include/TFEL/Glossary/Forward/Glossary.hxx -text
 include/TFEL/Glossary/Glossary.hxx -text
 include/TFEL/Glossary/GlossaryEntry.hxx -text
 include/TFEL/Macros.hxx -text
+include/TFEL/Material/Barlat.hxx -text
+include/TFEL/Material/Barlat.ixx -text
 include/TFEL/Material/BoundsCheck.hxx -text
 include/TFEL/Material/CrystalStructure.hxx -text
 include/TFEL/Material/DDIF2Base.hxx -text
@@ -1399,6 +1401,8 @@ include/TFEL/Material/FiniteStrainBehaviourTangentOperatorBase.hxx -text
 include/TFEL/Material/GursonTvergaardNeedleman.hxx -text
 include/TFEL/Material/Hill.hxx -text
 include/TFEL/Material/Hill.ixx -text
+include/TFEL/Material/Hosford.hxx -text
+include/TFEL/Material/Hosford.ixx -text
 include/TFEL/Material/IsotropicLinearFourierHookLaw.hxx -text
 include/TFEL/Material/IsotropicLinearFourierLaw.hxx -text
 include/TFEL/Material/Lame.hxx -text
@@ -5708,6 +5712,7 @@ tests/FSAlgorithms/transform.cxx -text
 tests/Makefile.am -text
 tests/Material/AbaqusTangentOperator.cxx -text
 tests/Material/AbaqusTangentOperator2.cxx -text
+tests/Material/BarlatSecondDerivativeTest.cxx -text
 tests/Material/CMakeLists.txt -text
 tests/Material/FiniteStrainBehaviourTangentOperator.cxx -text
 tests/Material/FiniteStrainBehaviourTangentOperator10.cxx -text
@@ -5722,6 +5727,7 @@ tests/Material/FiniteStrainBehaviourTangentOperator6.cxx -text
 tests/Material/FiniteStrainBehaviourTangentOperator7.cxx -text
 tests/Material/FiniteStrainBehaviourTangentOperator8.cxx -text
 tests/Material/FiniteStrainBehaviourTangentOperator9.cxx -text
+tests/Material/HosfordSecondDerivativeTest.cxx -text
 tests/Material/Hyperelasticity.cxx -text
 tests/Material/LogarithmicStrainHandlerTest.cxx -text
 tests/Material/Makefile.am -text

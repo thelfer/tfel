@@ -26,7 +26,7 @@ We will use the `mingw-get-setup.exe` program that can be grabbed
 [here](http://sourceforge.net/projects/mingw/files/Installer).
 
 Installing [MSYS](http://www.mingw.org/wiki/MSYS) is a \(3\) steps
-process depicted on the following figures~:
+process depicted on the following figures:
 
 ![Splash Screen (Click on `Continue`)](img/mingw-get1.png
 	"Splash Screen (Click on `Continue`)")

@@ -80,6 +80,10 @@ namespace tfel{
       using type = typename ResultType_<TagA,TagB,A_,B_,Op>::type;
     };
 
+    // a simple alias
+    template<typename A, typename B, typename Op>
+    using result_type = typename ResultType<A,B,Op>::type;
+    
   } // end of namespace math
 
 } // end of namespace tfel  

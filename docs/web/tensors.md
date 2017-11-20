@@ -15,13 +15,16 @@
 \newcommand{\sderiv}[2]{{\displaystyle \frac{\displaystyle \partial^{2} #1}{\displaystyle \partial #2^{2}}}}
 \newcommand{\dtot}{{{\mathrm{d}}}}
 \newcommand{\paren}[1]{{\left(#1\right)}}
+\newcommand{\absvalue}[1]{{\left|#1\right|}}
+\newcommand{\sigmaeq}{\sigma_{\mathrm{eq}}}
 
 \newcommand{\a}{\tns{a}}
 \newcommand{\s}{\tenseur{s}}
 \newcommand{\c}{\tenseur{c}}
 
 This page is meant to describe the various tensor objects and
-operations available in `TFEL/Math`.
+operations available in `TFEL/Math` and some functionalities provided
+by the `TFEL/Material` library.
 
 # Classes describing second and fourth order tensors
 
@@ -434,7 +437,7 @@ constexpr const auto es = stensor<3u,real>::FSESQLEIGENSOLVER;
 const auto vp = s.computeEigenValues<es>();
 ~~~~
 
-### Eigenvectors
+### Eigenvectors {#sec:eigensolvers}
 
 The default eigen solver for symmetric tensors used in `TFEL` is based
 on analitical computations of the eigen values and eigen vectors. Such
@@ -529,6 +532,142 @@ const auto [vp,m] = s.computeEigenVectors();
 const auto evp    = map([](const auto x){return exp(x)},vp);
 const auto [f,df] = Stensor::computeIsotropicFunctionAndDerivative(evp,evp,vp,m,1.e-12);
 ~~~~
+
+# Special operations for mechanical behaviours
+
+## Yield criteria
+
+### von Mises stress
+
+The von Mises stress can be computed using the `sigmaeq` function, as
+follows:
+
+~~~~{.cpp}
+const auto seq = sigmaeq(s);
+~~~~
+
+### Hill stress
+
+### Hosford stress
+
+The header `TFEL/Material/Hosford.hxx` introduces three functions
+which are meant to compute the Hosford equivalent stress and its first
+and second derivatives. *This header is automatically included by
+`MFront`*
+
+The Hosford equivalent stress is defined by (see @hosford_generalized_1972):
+\[
+\sigmaeq^{H}=\sqrt[a]{\Frac{1}{2}\paren{\absvalue{s_{1}-s_{2}}^{a}+\absvalue{s_{1}-s_{3}}^{a}+\absvalue{s_{2}-s_{3}}^{a}}}
+\]
+where \(s_{1}\), \(s_{2}\) and \(s_{3}\) are the eigenvalues of the
+stress.
+
+Therefore, when \(a\) goes to infinity, the Hosford stress reduces to
+the Tresca stress. When \(n = 2\) the Hosford stress reduces to the
+von Mises stress.
+
+The following function has been implemented:
+
+- `computeHosfordStress`: return the Hosford equivalent stress
+- `computeHosfordStressNormal`: return a tuple containg the Hosford
+  equivalent stress and its first derivative (the normal)
+- `computeHosfordStressSecondDerivative`: return a tuple containg the
+  Hosford equivalent stress, its first derivative (the normal) and the
+  second derivative.
+
+The implementation of those functions are greatly inspired by the work
+of Scherzinger (see @scherzinger_return_2017). In particular, great
+care is given to avoid overflows in the computations of the Hosford
+stress.
+
+Those functions have two template parameters:
+
+- the type of symmetric tensors used for the stress tensor
+  (automatically deduced, but required if the second parameter is
+  specified).
+- the eigen solver to be used (See Section&nbsp;@sec:eigensolvers).
+
+### Barlat stress
+
+The Barlat equivalent stress is defined as follows (See @barlat_linear_2005):
+\[
+\sigmaeq^{B}=
+\sqrt[a]{\Frac{1}{4}\paren{
+\begin{aligned}
+\absvalue{s'_{1}-s''_{1}}^{a}+\absvalue{s'_{1}-s''_{2}}^{a}+\absvalue{s'_{1}-s''_{3}}^{a}+\\
+\absvalue{s'_{2}-s''_{1}}^{a}+\absvalue{s'_{2}-s''_{2}}^{a}+\absvalue{s'_{2}-s''_{3}}^{a}+\\
+\absvalue{s'_{3}-s''_{1}}^{a}+\absvalue{s'_{3}-s''_{2}}^{a}+\absvalue{s'_{3}-s''_{3}}^{a}
+\end{aligned}
+}}
+\]
+
+where \(s'_{i}\) and \(s''_{i}\) are the eigenvalues of two
+transformed stresses \(\tenseur{s}'\) and \(\tenseur{s}''\) by two
+linear transformation \(\tenseurq{L}'\) and \(\tenseurq{L}''\):
+\[
+\begin{aligned}
+\tenseur{s}'  &= \tenseurq{L'} \,\colon\,\tenseur{s}' \\
+\tenseur{s}'' &= \tenseurq{L''}\,\colon\,\tenseur{s}''\\
+\end{aligned}
+\]
+
+A linear transformation is defined as follows:
+\[
+\begin{pmatrix}
+0 & -c_{12} & -c_{13} & 0 & 0 & 0 \\
+-c_{21} & 0 & -c_{23} & 0 & 0 & 0 \\
+-c_{31} & -c_{32} & 0 & 0 & 0 & 0 \\
+0 & 0 & 0 & c_{44} & 0 & 0 \\
+0 & 0 & 0 & 0 & c_{55} & 0 \\
+0 & 0 & 0 & 0 & 0 & c_{66} \\
+\end{pmatrix}
+\]
+
+#### Linear transformations
+
+To define the linear transformations, the
+`makeBarlatLinearTransformation` function has been introduced. This
+function takes two template parameter:
+
+- the space dimension (\(1\), \(2\), and \(3\))
+- the numeric type used (automatically deduced)
+
+This functions takes the \(9\) non zero coefficients as arguments, as
+follows:
+
+~~~~{.cpp}
+const auto l1 = makeBarlatLinearTransformationType<3>(c_12,c_21,c_13,c_31,
+                                                      c_23,c_32,c_44,c_55,c_55);
+~~~~
+
+##### Note
+
+In his paper, Barlat and coworkers uses the following convention for
+storing symmetric tensors:
+
+\[
+\begin{pmatrix}
+xx & yy & zz & yz & zx & xy
+\end{pmatrix}
+\]
+
+which is not consistent with the
+`TFEL`/`Cast3M`/`Abaqus`/`Ansys` conventions:
+
+\[
+\begin{pmatrix}
+xx & yy & zz & xy & xz & yz
+\end{pmatrix}
+\]
+
+Therefore, if one wants to uses coeficients \f(c^{B}\f) given
+by Barlat, one shall call this function as follows:
+
+~~~~{.cpp}
+const auto l1 = makeBarlatLinearTransformationType<3>(cB_12,cB_21,cB_13,cB_31,
+                                                      cB_23,cB_32,cB_66,cBB_55,cBB_44);
+~~~~
+
 
 # References
 

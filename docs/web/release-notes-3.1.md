@@ -6,6 +6,7 @@
 \newcommand{\paren}[1]{\left(#1\right)}
 \newcommand{\deriv}[2]{\Frac{\partial #1}{\partial #2}}
 \newcommand{\tenseur}[1]{\underline{#1}}
+\newcommand{\sigmaeq}{\sigma_{\mathrm{eq}}}
 
 The page declares the new functionalities of the 3.1 version of
 `TFEL`, `MFront` and `MTest`.
@@ -548,6 +549,55 @@ defined in the `TFEL/Math/General/IEEE754.hxx` header file in the
 `tfel::math::ieee754` namespace.
 
 ## `TFEL/Material`
+
+### Hosford equivalent stress
+
+The header `TFEL/Material/Hosford.hxx` introduces three functions
+which are meant to compute the Hosford equivalent stress and its first
+and second derivatives. *This header is automatically included by
+`MFront`*
+
+The Hosford equivalent stress is defined by:
+\[
+\sigmaeq=\sqrt[a]{\Frac{1}{2}\paren{\paren{s_{1}-s_{2}}^{a}+\paren{s_{1}-s_{3}}^{a}+\paren{s_{2}-s_{3}}^{a}}}
+\]
+where \(s_{1}\), \(s_{2}\) and \(s_{3}\) are the eigenvalues of the
+stress.
+
+Therefore, when \(a\) goes to infinity, the Hosford stress reduces to
+the Tresca stress. When \(n = 2\) the Hosford stress reduces to the
+von Mises stress.
+
+The following function has been implemented:
+
+- `computeHosfordStress`: return the Hosford equivalent stress
+- `computeHosfordStressNormal`: return a tuple containg the Hosford
+  equivalent stress and its first derivative (the normal)
+- `computeHosfordStressSecondDerivative`: return a tuple containg the
+  Hosford equivalent stress, its first derivative (the normal) and the
+  second derivative.
+
+#### Example
+
+The following example computes the Hosford equivalent stress, its
+normal and second derivative:
+
+~~~~{.cpp}
+stress seq;
+Stensor  n;
+Stensor4 dn;
+std::tie(seq,n,dn) = computeHosfordStressSecondDerivative(s,a,seps);
+~~~~
+
+In this example, `s` is the stress tensor, `a` is the Hosford
+exponent, `seps` is a numerical parameter used to detect when two
+eigenvalues are equal.
+
+If `C++-17` is available, the previous code can be made much more readable:
+
+~~~~{.cpp}
+const auto [seq,n,dn] = computeHosfordStressSecondDerivative(s,a,seps);
+~~~~
 
 ### The `SlipSystemsDescription` class
 

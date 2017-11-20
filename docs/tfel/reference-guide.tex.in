@@ -1603,7 +1603,7 @@ ensemble de fichiers de tests \mfront{} qui peut servir d'exemple.
   tenseur symétrique}
 
 Un tenseur symétrique \(\tenseur{s}\) peut toujours être
-diagonalisé. Soit \(\lambda_{1},\lambda_{2},\lambda_{3}\) ses trois
+diagonalisé. Soient \(\lambda_{1},\lambda_{2},\lambda_{3}\) ses trois
 valeurs propres et \(\vec{e}_{1},\vec{e}_{2},\vec{e}_{3}\) les
 vecteurs propres associés. \(\tenseur{s}\) se décompose ainsi~:
 \[
@@ -1907,6 +1907,33 @@ classiques~:
 \end{aligned}
 \]
 
+\subsection{Dérivées première et seconde de fonctions des valeurs
+  propres d'un tenseur symétrique}
+
+Considérons une fonction
+\(f\paren{\lambda_{1},\lambda_{2},\lambda_{3}}\) des trois valeurs
+propres \(\lambda_{1},\lambda_{2},\lambda_{3}\) d'un tenseur
+symétrique \(\tenseur{s}\).
+
+\subsubsection{Dérivée première}
+
+La dérivée première se calcule simplement~:
+\[
+  \deriv{f}{\tenseur{s}}=\sum_{i=1}^{3}\deriv{f}{\lambda_{i}}\,\tenseur{n}_{ii}
+\]
+
+\subsubsection{Dérivée seconde}
+
+La dérivée seconde se calcule ainsi~:
+\[
+  \Frac{\partial^{2}f}{\partial s\,\partial\tenseur{s}}=\sum_{i=1}^{3}\sum_{j=1}^{3}\Frac{\partial^{2}\,f}{\partial\lambda_{i}\,\partial\lambda_{j}}\,\tenseur{n}_{ii}\otimes\tenseur{n}_{jj}+\sum_{i=1}^{3}\deriv{f}{\lambda_{i}}\,\deriv{\tenseur{n}_{ii}}{\tenseur{s}}
+\]
+
+\paragraph{Cas \(\lambda_{1}=\lambda_{2}\)} Dans ce cas, apparaît dans
+l'expression précédente un terme singulier de la forme~:
+\[
+  \lim_{\lambda_{1}\rightarrow 0}\Frac{1}{\lambda_{1}-\lambda_{2}}\paren{\deriv{f}{\lambda_{1}}-\deriv{f}{\lambda_{2}}}
+\]
 
 
 \clearpage

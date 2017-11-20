@@ -39,4 +39,5 @@ tests_material(LogarithmicStrainHandlerTest)
 tests_material(Hyperelasticity)
 tests_material(Ogden)
 tests_material(SlipSystemsDescriptionTest)
-
+tests_material(HosfordSecondDerivativeTest)
+tests_material(BarlatSecondDerivativeTest)

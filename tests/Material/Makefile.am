@@ -23,7 +23,9 @@ test_PROGRAMS = boundsCheck \
 		LogarithmicStrainHandlerTest           \
 		Hyperelasticity                        \
 		Ogden                                  \
-		SlipSystemsDescriptionTest
+		SlipSystemsDescriptionTest             \
+		HosfordSecondDerivativeTest            \
+		BarlatSecondDerivativeTest
 
 LDADD = -lTFELMaterial -lTFELMath       \
 	-lTFELUtilities -lTFELException \
@@ -54,7 +56,9 @@ FiniteStrainBehaviourTangentOperator13_SOURCES = FiniteStrainBehaviourTangentOpe
 LogarithmicStrainHandlerTest_SOURCES           = LogarithmicStrainHandlerTest.cxx
 Hyperelasticity_SOURCES = Hyperelasticity.cxx
 Ogden_SOURCES = Ogden.cxx
-SlipSystemsDescriptionTest_SOURCES = SlipSystemsDescriptionTest.cxx
+SlipSystemsDescriptionTest_SOURCES  = SlipSystemsDescriptionTest.cxx
+HosfordSecondDerivativeTest_SOURCES = HosfordSecondDerivativeTest.cxx
+BarlatSecondDerivativeTest_SOURCES  = BarlatSecondDerivativeTest.cxx
 
 TESTS=$(test_PROGRAMS)
 

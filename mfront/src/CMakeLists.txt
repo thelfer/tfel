@@ -28,9 +28,9 @@ mfront_library(MFrontLogStream
 
 mfront_library(MFrontProfiling
   BehaviourProfiler.cxx)
-if(UNIX AND (NOT APPLE) AND (NOT HAIKU))
+if(UNIX AND (NOT APPLE) AND (NOT HAIKU) AND (NOT (CMAKE_SYSTEM_NAME STREQUAL "OpenBSD")))
   target_link_libraries(MFrontProfiling rt)
-endif(UNIX AND (NOT APPLE) AND (NOT HAIKU))
+endif(UNIX AND (NOT APPLE) AND (NOT HAIKU) AND (NOT (CMAKE_SYSTEM_NAME STREQUAL "OpenBSD")))
 
 # TFELMFront
 

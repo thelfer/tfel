@@ -11,7 +11,8 @@ systems for the following reasons:
 This page is dedicated to show how this issues can be overcome and
 ease the `MFront` experience on `Windows`. We will focus on coupling
 with `Cast3M` `2017` which is packaged with a version of the `MinGW`
-compiler suite.
+compiler suite. **This tutorial makes the assumption that the user
+have installed the developer version of `Cast3M`**.
 
 This tutorial will show that:
 

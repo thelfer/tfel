@@ -93,6 +93,8 @@ namespace mfront{
     const std::string suffix;
     //! libray type
     const LibraryType type;
+    //! list of mfront files used to generate the C++ sources
+    std::vector<std::string> mfront_sources;
     //! generated sources
     std::vector<std::string> sources;
     //! additional preprocessor flags

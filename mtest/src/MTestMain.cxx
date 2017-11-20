@@ -184,15 +184,13 @@ namespace mtest
   void MTestMain::treatEnableFloatingPointExceptions()
   {
     // mathematical
-#if ! (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__||defined __APPLE__)
 #ifdef HAVE_FENV
     ::feclearexcept(FE_ALL_EXCEPT);
-#ifndef __HAIKU__
+#ifdef __GLIBC__
     ::feenableexcept(FE_DIVBYZERO); // division by zero
     ::feenableexcept(FE_INVALID);   // invalid operation
-#endif /* __HAIKU__ */
+#endif /* __GLIBC__ */
 #endif /* HAVE_FENV */
-#endif
   } // end of MTestMain::treatEnableFloatingPointExceptions
 
   void MTestMain::treatRoundingDirectionMode()

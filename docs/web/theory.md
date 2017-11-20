@@ -152,7 +152,7 @@ tensors (logarithm, exponential, square root, ..):
 ![Initial and deformed configurations](img/Configuration.png "Initial and deformed configurations"){width=75%}
 
 - at a given time \(t\), a structure is characterised by its
-  {\em configuration} \(\mathcal{C}_{t}\)~;
+  {\em configuration} \(\mathcal{C}_{t}\);
 - the initial configuration \(\mathcal{C}_{0}\) is often taken
   as the reference configuration
 - the motion is described by a family of mappings \(\phi_{t}\),
@@ -378,7 +378,7 @@ paper.
 
 - A strain measure must satisfy the following hypotheses:
     - tends to \(\tepsilonto\) when the infinitesimal strain
-    theory's assumptions are satisfied~;
+    theory's assumptions are satisfied;
   - is objective (filters finite body rotation)
   - is symmetric
   - many isotropic functions of \(\tenseur{U}\) satisfy those
@@ -427,7 +427,7 @@ paper.
 ### The Green-Lagrange strain
 
 - The Green-Lagrange strain and its dual are:
-    - easy to compute (no computational penalty)~;
+    - easy to compute (no computational penalty);
   - there is no straight-forward relation between the
     Green-Lagrange strain and the change of volume
         - for small strain however:
@@ -453,7 +453,7 @@ theory to finite rotation*
     stress \(\tenseur{\tau}\), which is egal to the Cauchy stress
     \(\tsigma\) for isochoric deformation
   - However, the Hencky strain and its dual are costly to compute
-  (see Miehe et al., 2005)~;
+  (see Miehe et al., 2005);
 
 ** The logarithmic strain framework is indeed well suited for
  plasticity and/or viscoplasticity **
