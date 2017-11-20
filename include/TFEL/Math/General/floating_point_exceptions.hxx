@@ -35,13 +35,13 @@ namespace tfel{
     void init_floating_point_exceptions()
     {
 #ifdef HAVE_FENV
-#ifdef _GNU_SOURCE
+#ifdef __GLIBC__
       feenableexcept(FE_DIVBYZERO); //	division by zero
       feenableexcept(FE_UNDERFLOW); //	result not representable due to underflow
       feenableexcept(FE_OVERFLOW);  //	result not representable due to overflow
       feenableexcept(FE_INVALID);   //	invalid operation
       fedisableexcept(FE_INEXACT);  // The Inexact exception occurs when the  rounded  result  of  an operation  is  not equal to the infinite precision result.
-#endif /* LIB_TFEL_FLOATING_POINT_EXCEPTIONS_HXX */
+#endif /* __GLIBC__ */
 #endif /* LIB_TFEL_FLOATING_POINT_EXCEPTIONS_HXX */
     }    
     
