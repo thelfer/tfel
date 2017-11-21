@@ -1108,6 +1108,7 @@ docs/web/finitestrainsinglecrystal.md -text
 docs/web/gallery.md -text
 docs/web/getting-started.md -text
 docs/web/glossary.md -text
+docs/web/hosford.md -text
 docs/web/humans.txt -text
 docs/web/hyperelasticity.md -text
 docs/web/hyperviscoelasticity.md -text
@@ -1151,6 +1152,8 @@ docs/web/img/FissurationPastille.png -text
 docs/web/img/FreeBSD.jpg -text
 docs/web/img/FuelRod-ddif2.png -text
 docs/web/img/FuelRod-ddif2.xcf -text
+docs/web/img/HosfordStress.png -text
+docs/web/img/HosfordStress.svg -text
 docs/web/img/HureCast3M2014.png -text
 docs/web/img/HureCast3M2014.xcf -text
 docs/web/img/IconeCast3M_bleue.png -text
@@ -2443,6 +2446,7 @@ mfront/tests/behaviours/Gurson.mfront -text
 mfront/tests/behaviours/GursonTvergaardNeedlemanPlasticFlow_NumericalJacobian.mfront -text
 mfront/tests/behaviours/GursonTvergaardNeedlemanViscoPlasticFlow_NumericalJacobian.mfront -text
 mfront/tests/behaviours/Hayhurst.mfront -text
+mfront/tests/behaviours/HosfordPerfectPlasticity.mfront -text
 mfront/tests/behaviours/ImplicitFiniteStrainNorton.mfront -text
 mfront/tests/behaviours/ImplicitHayhurst.mfront -text
 mfront/tests/behaviours/ImplicitMonoCrystal.mfront -text

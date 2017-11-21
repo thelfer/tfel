@@ -1,0 +1,47 @@
+@DSL       Implicit;
+@Behaviour HosfordPerfectPlasticity;
+@Author    Thomas Helfer;
+@Description{
+  A simple implementation of a perfect
+  plasticity behaviour using the
+  Hosford stress.
+};
+
+@ModellingHypotheses {".+"};
+
+@Brick StandardElasticity;
+@Epsilon 1.e-16;
+@Theta 1;
+
+@StateVariable strain p;
+p.setGlossaryName("EquivalentPlasticStrain");
+
+@ElasticMaterialProperties {150e9,0.3};
+@Parameter sigy = 150e6;
+
+@LocalVariable bool b;
+
+@InitializeLocalVariables{
+  const stress seps = 1.e-10*young;
+  const auto sigel = computeElasticPrediction();
+  const auto seqel = computeHosfordStress(sigel,8,seps);
+  b = seqel>sigy;
+}
+
+@Integrator{
+  const stress seps = 1.e-10*young;
+  if(!b){
+    // elastic loading, nothing to be done
+    return true;
+  }
+  real seq;
+  Stensor n;
+  Stensor4 dn;
+  std::tie(seq,n,dn) = computeHosfordStressSecondDerivative(sig,8,seps);
+  feel        += dp*n;
+  dfeel_ddeel += 2*mu*theta*dp*dn;
+  dfeel_ddp    = n;
+  fp           = (seq-sigy)/young;
+  dfp_ddeel    = 2*mu*theta*n/young;
+  dfp_ddp      = 0;
+}

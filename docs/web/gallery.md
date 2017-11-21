@@ -34,6 +34,8 @@ behaviour. This framework is described
   [here](orthotropiclinearhardeningplasticity.html).
 - The implementation of a multi-surface plastic behaviour (the Iwan
   behaviour) is described [here](iwan.html).
+- The implementation of a perfect plastic behaviour based on the
+  Hosford equivalent stress is described [here](hosford.html).
 
 ## Viscoplasticity
 

@@ -2,6 +2,7 @@
 % Helfer Thomas
 % January 23, 2017
 
+\newcommand{\absvalue}[1]{{\left|#1\right|}}
 \newcommand{\paren}[1]{{\left(#1\right)}}
 \newcommand{\tenseur}[1]{\underline{#1}}
 \newcommand{\tenseurq}[1]{\underline{\underline{\mathbf{#1}}}}
@@ -19,6 +20,8 @@
 
 # Hosford equivalent stress (17/10/2017)
 
+![Comparison of the Hosford stress \(a=100,a=8\) and the von Mises stress](img/HosfordStress.svg "Comparison of the Hosford stress \(a=100,a=8\) and the von Mises stress"){width=70%}
+
 The header `TFEL/Material/Hosford.hxx` introduces three functions
 which are meant to compute the Hosford equivalent stress and its first
 and second derivatives. *This header is automatically included by
@@ -26,7 +29,7 @@ and second derivatives. *This header is automatically included by
 
 The Hosford equivalent stress is defined by:
 \[
-\sigmaeq=\sqrt[a]{\Frac{1}{2}\paren{\paren{s_{1}-s_{2}}^{a}+\paren{s_{1}-s_{3}}^{a}+\paren{s_{2}-s_{3}}^{a}}}
+\sigmaeq=\sqrt{\Frac{1}{2}\paren{\absvalue{\sigma_{1}-\sigma_{2}}^{2}+\absvalue{\sigma_{1}-\sigma_{3}}^{2}+\absvalue{\sigma_{2}-\sigma_{3}}^{2}}}
 \]
 where \(s_{1}\), \(s_{2}\) and \(s_{3}\) are the eigenvalues of the
 stress.

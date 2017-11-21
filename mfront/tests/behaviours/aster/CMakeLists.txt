@@ -30,6 +30,7 @@ set(mfront_tests_SOURCES
   DruckerPrager
   DruckerPragerEcroLin
   DruckerPragerEcroLinDefault
+  HosfordPerfectPlasticity
   JohnsonCook_s
   JohnsonCook_ssr
   JohnsonCook_ssrt

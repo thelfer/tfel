@@ -25,6 +25,7 @@ set(mfront_tests_SOURCES
   OrthotropicCreep_rk42
   OrthotropicCreep_rkCastem
   ImplicitOrthotropicCreep
+  HosfordPerfectPlasticity
   JohnsonCook_s
   JohnsonCook_ssr
   JohnsonCook_ssrt

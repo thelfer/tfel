@@ -35,6 +35,7 @@ namespace tfel{
        * \param[in] n1: second eigen tensor
        * \param[in] n2: third eigen tensor
        * \param[in] vp: eigen values
+       * \param[in] m: matrix for the eigen vectors
        * \param[in] e: criterion used to check if two eigenvalues are equal
        */
       template<typename StressStensor>
@@ -54,7 +55,20 @@ namespace tfel{
 		     d2Psi_dvp2[3],d2Psi_dvp2[1],d2Psi_dvp2[5],
 		     d2Psi_dvp2[4],d2Psi_dvp2[5],d2Psi_dvp2[2]};
       } // end of computeHosfordStressSecondDerivative
-
+      /*!
+       * \brief compute the second derivative of the Hosford equivalent stress
+       * \param[out] d2Psi_ds2: second derivative of the Hosford equivalent stress
+       * \param[in] dPsi_dvp: first derivative of the Hosford
+       * equivalent stress with respect to the eigenvalue
+       * \param[in] d2Psi_dvp2: second derivative of the Hosford
+       * equivalent stress with respect to the eigenvalue
+       * \param[in] n0: first eigen tensor
+       * \param[in] n1: second eigen tensor
+       * \param[in] n2: third eigen tensor
+       * \param[in] vp: eigen values
+       * \param[in] m: matrix for the eigen vectors
+       * \param[in] e: criterion used to check if two eigenvalues are equal
+       */
       template<typename StressStensor>
       typename std::enable_if<tfel::math::StensorTraits<StressStensor>::dime==2u,
 			      void>::type
@@ -74,21 +88,31 @@ namespace tfel{
 	const tvector<3u,base> v0 = m.template column_view<0u>();
 	const tvector<3u,base> v1 = m.template column_view<1u>();
 	const stensor<2u,base> n01 = stensor<2u,base>::buildFromVectorsSymmetricDiadicProduct(v0,v1)*icste;
+	d2Psi_ds2 = (d2Psi_dvp2[0]*(n0^n0)+d2Psi_dvp2[3]*(n0^n1)+d2Psi_dvp2[4]*(n0^n2)+
+		     d2Psi_dvp2[1]*(n1^n1)+d2Psi_dvp2[3]*(n1^n0)+d2Psi_dvp2[5]*(n1^n2)+
+		     d2Psi_dvp2[2]*(n2^n2)+d2Psi_dvp2[4]*(n2^n0)+d2Psi_dvp2[5]*(n2^n1));
 	if(std::abs(vp(0)-vp(1))<e){
-	  d2Psi_ds2 = (d2Psi_dvp2[0]*(n0^n0)+d2Psi_dvp2[3]*(n0^n1)+d2Psi_dvp2[4]*(n0^n2)+
-		       d2Psi_dvp2[1]*(n1^n1)+d2Psi_dvp2[3]*(n1^n0)+d2Psi_dvp2[5]*(n1^n2)+
-		       d2Psi_dvp2[2]*(n2^n2)+d2Psi_dvp2[4]*(n2^n0)+d2Psi_dvp2[5]*(n2^n1)+
-		       ((d2Psi_dvp2[0]+d2Psi_dvp2[1]-2*d2Psi_dvp2[3])/2)*(n01^n01));
+	  d2Psi_ds2 += ((d2Psi_dvp2[0]+d2Psi_dvp2[1]-2*d2Psi_dvp2[3])/2)*(n01^n01);
 	} else {
 	  // 0    1    2    3    4    5 
 	  // s1s1 s2s2 s3s3 s1s2 s1s3 s2s3
-	  d2Psi_ds2 = (d2Psi_dvp2[0]*(n0^n0)+d2Psi_dvp2[3]*(n0^n1)+d2Psi_dvp2[4]*(n0^n2)+
-		       d2Psi_dvp2[1]*(n1^n1)+d2Psi_dvp2[3]*(n1^n0)+d2Psi_dvp2[5]*(n1^n2)+
-		       d2Psi_dvp2[2]*(n2^n2)+d2Psi_dvp2[4]*(n2^n0)+d2Psi_dvp2[5]*(n2^n1)+
-		       (dPsi_dvp[0]-dPsi_dvp[1])/(vp[0]-vp[1])*(n01^n01));
+	  d2Psi_ds2 += (dPsi_dvp[0]-dPsi_dvp[1])/(vp[0]-vp[1])*(n01^n01);
 	}
       } // end of computeHosfordStressSecondDerivative
-
+      /*!
+       * \brief compute the second derivative of the Hosford equivalent stress
+       * \param[out] d2Psi_ds2: second derivative of the Hosford equivalent stress
+       * \param[in] dPsi_dvp: first derivative of the Hosford
+       * equivalent stress with respect to the eigenvalue
+       * \param[in] d2Psi_dvp2: second derivative of the Hosford
+       * equivalent stress with respect to the eigenvalue
+       * \param[in] n0: first eigen tensor
+       * \param[in] n1: second eigen tensor
+       * \param[in] n2: third eigen tensor
+       * \param[in] vp: eigen values
+       * \param[in] m: matrix for the eigen vectors
+       * \param[in] e: criterion used to check if two eigenvalues are equal
+       */
       template<typename StressStensor>
       typename std::enable_if<tfel::math::StensorTraits<StressStensor>::dime==3u,
 			      void>::type
@@ -111,56 +135,46 @@ namespace tfel{
 	const stensor<3u,base> n01 = stensor<3u,base>::buildFromVectorsSymmetricDiadicProduct(v0,v1)*cste;
 	const stensor<3u,base> n02 = stensor<3u,base>::buildFromVectorsSymmetricDiadicProduct(v0,v2)*cste;
 	const stensor<3u,base> n12 = stensor<3u,base>::buildFromVectorsSymmetricDiadicProduct(v1,v2)*cste;
+	d2Psi_ds2 = d2Psi_dvp2[0]*(n0^n0)+d2Psi_dvp2[3]*(n0^n1)+d2Psi_dvp2[4]*(n0^n2)+
+	  d2Psi_dvp2[1]*(n1^n1)+d2Psi_dvp2[3]*(n1^n0)+d2Psi_dvp2[5]*(n1^n2)+
+	  d2Psi_dvp2[2]*(n2^n2)+d2Psi_dvp2[4]*(n2^n0)+d2Psi_dvp2[5]*(n2^n1);
 	if((std::abs(vp(0)-vp(1))<e)&&(std::abs(vp(0)-vp(2))<e)){
-	  d2Psi_ds2 = (d2Psi_dvp2[0]*(n0^n0)+d2Psi_dvp2[3]*(n0^n1)+d2Psi_dvp2[4]*(n0^n2)+
-		       d2Psi_dvp2[1]*(n1^n1)+d2Psi_dvp2[3]*(n1^n0)+d2Psi_dvp2[5]*(n1^n2)+
-		       d2Psi_dvp2[2]*(n2^n2)+d2Psi_dvp2[4]*(n2^n0)+d2Psi_dvp2[5]*(n2^n1)+
-		       ((d2Psi_dvp2[0]+d2Psi_dvp2[1]-2*d2Psi_dvp2[3])/2)*(n01^n01)+
-		       ((d2Psi_dvp2[0]+d2Psi_dvp2[2]-2*d2Psi_dvp2[4])/2)*(n02^n02)+
-		       ((d2Psi_dvp2[1]+d2Psi_dvp2[2]-2*d2Psi_dvp2[5])/2)*(n12^n12));
+	  d2Psi_ds2 += (((d2Psi_dvp2[0]+d2Psi_dvp2[1]-2*d2Psi_dvp2[3])/2)*(n01^n01)+
+			((d2Psi_dvp2[0]+d2Psi_dvp2[2]-2*d2Psi_dvp2[4])/2)*(n02^n02)+
+			((d2Psi_dvp2[1]+d2Psi_dvp2[2]-2*d2Psi_dvp2[5])/2)*(n12^n12));
 	} else if(std::abs(vp(0)-vp(1))<e){
-	  d2Psi_ds2 = (d2Psi_dvp2[0]*(n0^n0)+d2Psi_dvp2[3]*(n0^n1)+d2Psi_dvp2[4]*(n0^n2)+
-		       d2Psi_dvp2[1]*(n1^n1)+d2Psi_dvp2[3]*(n1^n0)+d2Psi_dvp2[5]*(n1^n2)+
-		       d2Psi_dvp2[2]*(n2^n2)+d2Psi_dvp2[4]*(n2^n0)+d2Psi_dvp2[5]*(n2^n1)+
-		       ((d2Psi_dvp2[0]+d2Psi_dvp2[1]-2*d2Psi_dvp2[3])/2)*(n01^n01)+
-		       dPsi_dvp[0]*(n02^n02)/(vp[0]-vp[2])+
-		       dPsi_dvp[1]*(n12^n12)/(vp[1]-vp[2])+
-		       dPsi_dvp[2]*((n12^n12)/(vp[2]-vp[1])+(n02^n02)/(vp[2]-vp[0])));
+	  d2Psi_ds2 += (((d2Psi_dvp2[0]+d2Psi_dvp2[1]-2*d2Psi_dvp2[3])/2)*(n01^n01)+
+			dPsi_dvp[0]*(n02^n02)/(vp[0]-vp[2])+
+			dPsi_dvp[1]*(n12^n12)/(vp[1]-vp[2])+
+			dPsi_dvp[2]*((n12^n12)/(vp[2]-vp[1])+(n02^n02)/(vp[2]-vp[0])));
 	} else if(std::abs(vp(0)-vp(2))<e){
-	  d2Psi_ds2 = (d2Psi_dvp2[0]*(n0^n0)+d2Psi_dvp2[3]*(n0^n1)+d2Psi_dvp2[4]*(n0^n2)+
-		       d2Psi_dvp2[1]*(n1^n1)+d2Psi_dvp2[3]*(n1^n0)+d2Psi_dvp2[5]*(n1^n2)+
-		       d2Psi_dvp2[2]*(n2^n2)+d2Psi_dvp2[4]*(n2^n0)+d2Psi_dvp2[5]*(n2^n1)+
-		       ((d2Psi_dvp2[0]+d2Psi_dvp2[2]-2*d2Psi_dvp2[4])/2)*(n02^n02)+
-		       dPsi_dvp[1]*((n01^n01)/(vp[1]-vp[0])+(n12^n12)/(vp[1]-vp[2]))+
-		       dPsi_dvp[0]*(n01^n01)/(vp[0]-vp[1])+
-		       dPsi_dvp[2]*(n12^n12)/(vp[2]-vp[1]));
+	  d2Psi_ds2 += (((d2Psi_dvp2[0]+d2Psi_dvp2[2]-2*d2Psi_dvp2[4])/2)*(n02^n02)+
+			dPsi_dvp[1]*((n01^n01)/(vp[1]-vp[0])+(n12^n12)/(vp[1]-vp[2]))+
+			dPsi_dvp[0]*(n01^n01)/(vp[0]-vp[1])+
+			dPsi_dvp[2]*(n12^n12)/(vp[2]-vp[1]));
 	} else if(std::abs(vp(1)-vp(2))<e){
-	  d2Psi_ds2 = (d2Psi_dvp2[0]*(n0^n0)+d2Psi_dvp2[3]*(n0^n1)+d2Psi_dvp2[4]*(n0^n2)+
-		       d2Psi_dvp2[1]*(n1^n1)+d2Psi_dvp2[3]*(n1^n0)+d2Psi_dvp2[5]*(n1^n2)+
-		       d2Psi_dvp2[2]*(n2^n2)+d2Psi_dvp2[4]*(n2^n0)+d2Psi_dvp2[5]*(n2^n1)+
-		       ((d2Psi_dvp2[1]+d2Psi_dvp2[2]-2*d2Psi_dvp2[5])/2)*(n12^n12)+
-		       dPsi_dvp[0]*((n01^n01)/(vp[0]-vp[1])+(n02^n02)/(vp[0]-vp[2]))+
-		       dPsi_dvp[1]*(n01^n01)/(vp[1]-vp[0])+
-		       dPsi_dvp[2]*(n02^n02)/(vp[2]-vp[0]));
+	  d2Psi_ds2 += (((d2Psi_dvp2[1]+d2Psi_dvp2[2]-2*d2Psi_dvp2[5])/2)*(n12^n12)+
+			dPsi_dvp[0]*((n01^n01)/(vp[0]-vp[1])+(n02^n02)/(vp[0]-vp[2]))+
+			dPsi_dvp[1]*(n01^n01)/(vp[1]-vp[0])+
+			dPsi_dvp[2]*(n02^n02)/(vp[2]-vp[0]));
 	} else {
-	  d2Psi_ds2 = (d2Psi_dvp2[0]*(n0^n0)+d2Psi_dvp2[3]*(n0^n1)+d2Psi_dvp2[4]*(n0^n2)+
-		       d2Psi_dvp2[1]*(n1^n1)+d2Psi_dvp2[3]*(n1^n0)+d2Psi_dvp2[5]*(n1^n2)+
-		       d2Psi_dvp2[2]*(n2^n2)+d2Psi_dvp2[4]*(n2^n0)+d2Psi_dvp2[5]*(n2^n1)+
-		       dPsi_dvp[0]*((n01^n01)/(vp[0]-vp[1])+(n02^n02)/(vp[0]-vp[2]))+
-		       dPsi_dvp[1]*((n01^n01)/(vp[1]-vp[0])+(n12^n12)/(vp[1]-vp[2]))+
-		       dPsi_dvp[2]*((n12^n12)/(vp[2]-vp[1])+(n02^n02)/(vp[2]-vp[0])));
+	  d2Psi_ds2 += (dPsi_dvp[0]*((n01^n01)/(vp[0]-vp[1])+(n02^n02)/(vp[0]-vp[2]))+
+			dPsi_dvp[1]*((n01^n01)/(vp[1]-vp[0])+(n12^n12)/(vp[1]-vp[2]))+
+			dPsi_dvp[2]*((n12^n12)/(vp[2]-vp[1])+(n02^n02)/(vp[2]-vp[0])));
 	}
       } // end of computeHosfordStressSecondDerivative
 	  
     } // end of namespace internals
     
     template<typename StressStensor,
+	     typename HosfordExponentType,
 	     tfel::math::stensor_common::EigenSolver es>
     HosfordStressType<StressStensor>
     computeHosfordStress(const StressStensor& s,
-			 const HosfordBaseType<StressStensor> a,
+			 const HosfordExponentType a,
 			 const HosfordStressType<StressStensor> e)
     {
+      using real    = HosfordBaseType<StressStensor>;
       const auto seq  = sigmaeq(s);
       if(seq<e){
 	return seq*0;
@@ -169,15 +183,16 @@ namespace tfel{
       const auto vp   = s.template computeEigenValues<es>()*iseq;
       return seq*std::pow((std::pow(std::abs(vp[0]-vp[1]),a)+
 			   std::pow(std::abs(vp[0]-vp[2]),a)+
-			   std::pow(std::abs(vp[1]-vp[2]),a))/2,1/a);
+			   std::pow(std::abs(vp[1]-vp[2]),a))/2,1/real(a));
     } // end of computeHosfordYieldStress
 
     template<typename StressStensor,
+	     typename HosfordExponentType,
 	     tfel::math::stensor_common::EigenSolver es>
     std::tuple<HosfordStressType<StressStensor>,
     	       HosfordStressNormalType<StressStensor>>
       computeHosfordStressNormal(const StressStensor& s,
-				 const HosfordBaseType<StressStensor> a,
+				 const HosfordExponentType a,
 				 const HosfordStressType<StressStensor> e)
     {
       constexpr const auto N = tfel::math::StensorTraits<StressStensor>::dime;
@@ -202,7 +217,7 @@ namespace tfel{
 			     std::pow(std::abs(rvp[0]-rvp[2]),a)+
 			     std::pow(std::abs(rvp[1]-rvp[2]),a))/2;
       // Hosford equivalent stress
-      const auto Psi      = seq*std::pow(Psi_a,1/a);
+      const auto Psi      = seq*std::pow(Psi_a,1/real(a));
       // For the derivatives, the stress eigenvalues are normalised by
       // the Hosford equivalent stress
       const auto rvp2     = vp/Psi;
@@ -224,12 +239,13 @@ namespace tfel{
     } // end of computeHosfordStressNormal
 
     template<typename StressStensor,
+	     typename HosfordExponentType,
 	     tfel::math::stensor_common::EigenSolver es>
     std::tuple<HosfordStressType<StressStensor>,
     	       HosfordStressNormalType<StressStensor>,
 	       HosfordStressSecondDerivativeType<StressStensor>>
       computeHosfordStressSecondDerivative(const StressStensor& s,
-					   const HosfordBaseType<StressStensor> a,
+					   const HosfordExponentType a,
 					   const HosfordStressType<StressStensor> e)
     {
       constexpr const auto N = tfel::math::StensorTraits<StressStensor>::dime;
@@ -242,7 +258,7 @@ namespace tfel{
       const auto seq   = sigmaeq(s);
       if(seq<e){
     	return std::make_tuple(stress{0},normal{real{0}},
-			       second_derivative{real{0}});
+			       second_derivative{istress{0}});
       }
       const auto iseq     = 1/seq;
       // no structured bindings yet
@@ -257,7 +273,7 @@ namespace tfel{
 			     std::pow(std::abs(rvp[0]-rvp[2]),a)+
 			     std::pow(std::abs(rvp[1]-rvp[2]),a))/2;
       // Hosford equivalent stress
-      const auto Psi      = seq*std::pow(Psi_a,1/a);
+      const auto Psi      = seq*std::pow(Psi_a,1/real(a));
       // For the derivatives, the stress eigenvalues are normalised by
       // the Hosford equivalent stress
       const auto rvp2     = vp/Psi;

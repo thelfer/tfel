@@ -55,24 +55,6 @@ namespace tfel{
       tfel::math::st2tost2<tfel::math::StensorTraits<StressStensor>::dime,
 			   BarlatInvertStressType<StressStensor>>;
     /*!
-     * \brief compute the Barlat yield stress
-     * \param[in] s: stress tensor
-     * \param[in] l1: first linear transformation
-     * \param[in] l2: second linear transformation
-     * \param[in] a: Barlat exponent
-     * \param[in] e: criterion used to check if the stress are null
-     */
-    template<typename StressStensor,
-    	     tfel::math::stensor_common::EigenSolver =
-    	     tfel::math::stensor_common::TFELEIGENSOLVER>
-    BarlatStressType<StressStensor>
-    computeBarlatStress(const StressStensor&,
-    			const BarlatLinearTransformationType<StressStensor>&,
-    			const BarlatLinearTransformationType<StressStensor>&,
-    			const BarlatBaseType<StressStensor>,
-    			const BarlatStressType<StressStensor>);
-    
-    /*!
      * \tparam N:    space dimension
      * \tparam real: numerical type
      * \return a linear transformation of the stresses
@@ -126,7 +108,11 @@ namespace tfel{
 				   const real,const real, const real,
 				   const real,const real, const real);
     /*!
-     * \brief compute the Barlat yield stress and the its first derivative
+     * \brief compute the Barlat yield stress
+     * \tparam StressStensor: type of the stress tensor
+     * \tparam HosfordExponentType: type of the hosford exponent
+     * (could be a numeric type or an integer type)
+     * \tparam es: eigen solver to be used
      * \param[in] s: stress tensor
      * \param[in] l1: first linear transformation
      * \param[in] l2: second linear transformation
@@ -134,6 +120,29 @@ namespace tfel{
      * \param[in] e: criterion used to check if the stress are null
      */
     template<typename StressStensor,
+	     typename BarlatExponentType,
+    	     tfel::math::stensor_common::EigenSolver =
+    	     tfel::math::stensor_common::TFELEIGENSOLVER>
+    BarlatStressType<StressStensor>
+    computeBarlatStress(const StressStensor&,
+    			const BarlatLinearTransformationType<StressStensor>&,
+    			const BarlatLinearTransformationType<StressStensor>&,
+    			const BarlatExponentType,
+    			const BarlatStressType<StressStensor>);
+    /*!
+     * \brief compute the Barlat yield stress and the its first derivative
+     * \tparam StressStensor: type of the stress tensor
+     * \tparam HosfordExponentType: type of the hosford exponent
+     * (could be a numeric type or an integer type)
+     * \tparam es: eigen solver to be used
+     * \param[in] s: stress tensor
+     * \param[in] l1: first linear transformation
+     * \param[in] l2: second linear transformation
+     * \param[in] a: Barlat exponent
+     * \param[in] e: criterion used to check if the stress are null
+     */
+    template<typename StressStensor,
+	     typename BarlatExponentType,
     	     tfel::math::stensor_common::EigenSolver =
     	     tfel::math::stensor_common::TFELEIGENSOLVER>
     std::tuple<BarlatStressType<StressStensor>,
@@ -141,27 +150,32 @@ namespace tfel{
     computeBarlatStressNormal(const StressStensor&,
     			      const BarlatLinearTransformationType<StressStensor>&,
     			      const BarlatLinearTransformationType<StressStensor>&,
-    			      const BarlatBaseType<StressStensor>,
+    			      const BarlatExponentType,
     			      const BarlatStressType<StressStensor>);
-    // /*!
-    //  * \brief compute the Barlat yield stress and its first and second derivatives
-    //  * \param[in] s: stress tensor
-    //  * \param[in] l1: first linear transformation
-    //  * \param[in] l2: second linear transformation
-    //  * \param[in] a: Barlat exponent
-    //  * \param[in] e: criterion used to check if the stress are null
-    //  */
-    // template<typename StressStensor,
-    // 	     tfel::math::stensor_common::EigenSolver =
-    // 	     tfel::math::stensor_common::TFELEIGENSOLVER>
-    // std::tuple<BarlatStressType<StressStensor>,
-    // 	       BarlatStressNormalType<StressStensor>,
-    // 	       BarlatStressSecondDerivativeType<StressStensor>>
-    // computeBarlatStressSecondDerivative(const StressStensor&,
-    // 					const BarlatLinearTransformationType<StressStensor>&,
-    // 					const BarlatLinearTransformationType<StressStensor>&,
-    // 					const BarlatBaseType<StressStensor>,
-    // 					const BarlatStressType<StressStensor>);
+    /*!
+     * \brief compute the Barlat yield stress and its first and second derivatives
+     * \tparam StressStensor: type of the stress tensor
+     * \tparam HosfordExponentType: type of the hosford exponent
+     * (could be a numeric type or an integer type)
+     * \tparam es: eigen solver to be used
+     * \param[in] s: stress tensor
+     * \param[in] l1: first linear transformation
+     * \param[in] l2: second linear transformation
+     * \param[in] a: Barlat exponent
+     * \param[in] e: criterion used to check if the stress are null
+     */
+    template<typename StressStensor,
+	     typename BarlatExponentType,
+    	     tfel::math::stensor_common::EigenSolver =
+    	     tfel::math::stensor_common::TFELEIGENSOLVER>
+    std::tuple<BarlatStressType<StressStensor>,
+    	       BarlatStressNormalType<StressStensor>,
+    	       BarlatStressSecondDerivativeType<StressStensor>>
+    computeBarlatStressSecondDerivative(const StressStensor&,
+    					const BarlatLinearTransformationType<StressStensor>&,
+    					const BarlatLinearTransformationType<StressStensor>&,
+    					const BarlatExponentType,
+    					const BarlatStressType<StressStensor>);
     
   } // end of namespace material
   

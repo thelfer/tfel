@@ -58,6 +58,7 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./isotropicplasticityamstrongfrederickinematichardening.md \
 	   ./iwan.md                                                  \
 	   ./ddif2.md                                                 \
+	   ./hosford.md                                               \
 	   ./singlecrystal.md                                         \
 	   ./finitestrainsinglecrystal.md                             \
 	   ./finitestrainsinglecrystal-huang.md                       \
@@ -218,6 +219,8 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./img/CalculiX_MFRONT_WSL.png	                      \
 	   ./img/CalculiXBenchmarkSmallStrain.png                     \
 	   ./img/AsterTotalLagrangian.png                             \
+	   ./img/HosfordStress.png                                    \
+	   ./img/HosfordStress.svg                                    \
 	   ./media/epx1.mp4                                           \
 	   ./media/epx2.mp4                                           \
 	   ./media/abaqus-explicit.mp4                                \

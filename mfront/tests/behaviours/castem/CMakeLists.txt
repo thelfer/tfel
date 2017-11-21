@@ -40,6 +40,7 @@ set(mfront_tests_SOURCES
   OrthotropicElastic5
   OrthotropicElastic6
   GeneralizedMaxwell
+  HosfordPerfectPlasticity
   FiniteRotationSmallStrainElasticity
   FiniteRotationSmallStrainElasticity2
   LogarithmicStrainElasticity

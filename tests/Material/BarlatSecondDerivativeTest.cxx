@@ -36,17 +36,17 @@ struct BarlatSecondDerivativeTest final
 			  0,0,0};
     const double v4[6] = {-0.24525337568425,-0.24525337568425,1.27453824166446,
 			  0,0,0};
-    for(const auto v : {Id,v1,v2,v3,v4}){
-      test1a<1u>(v);
-      test1b<1u>(v);
-      test1c<1u>(v);
-      test1a<2u>(v);
-      test1b<2u>(v);
-      test1c<2u>(v);
-      test1a<3u>(v);
-      test1b<3u>(v);
-      test1c<3u>(v);
-    }
+    // for(const auto v : {Id,v1,v2,v3,v4}){
+    //   test1a<1u>(v);
+    //   test1b<1u>(v);
+    //   test1c<1u>(v);
+    //   test1a<2u>(v);
+    //   test1b<2u>(v);
+    //   test1c<2u>(v);
+    //   test1a<3u>(v);
+    //   test1b<3u>(v);
+    //   test1c<3u>(v);
+    // }
     for(const auto v : {v1,v2,v3,v4}){
       test2a<1u>(v);
       test2a<2u>(v);
@@ -56,9 +56,10 @@ struct BarlatSecondDerivativeTest final
       test2b<3u>(v);
     }
     // for(const auto v : {v1,v2,v3,v4}){
+    //   //    for(const auto v : {v1}){      
     //   test3<1u>(v);
-    //   test3<2u>(v);
-    //   test3<3u>(v);
+    //   // test3<2u>(v);
+    //   // test3<3u>(v);
     // }
     return this->result;
   } // end of execute
@@ -122,10 +123,8 @@ struct BarlatSecondDerivativeTest final
   // stress and its first and second derivatives
   template<unsigned short N>
   void test1c(const double* values){
-    using tfel::math::stensor;
-    using tfel::math::st2tost2;
-    using tfel::material::computeBarlatStressNormal;
-    using tfel::material::makeBarlatLinearTransformation;
+    using namespace tfel::math;
+    using namespace tfel::material;
     using size_type = typename stensor<N,double>::size_type;
     const auto seps = 1.e-10;
     const auto eps1 = 1.e-8;
@@ -139,29 +138,30 @@ struct BarlatSecondDerivativeTest final
     		       st2tost2<N,double>(double(0)) :
     		       eval((st2tost2<N,double>::M()-(n^n))/seq));
     // no structured binding yet
-    double hseq;
-    tfel::math::stensor<N,double> hn;
+    double bseq;
+    stensor<N,double> bn;
+    st2tost2<N,double> dbn;
     const auto l = makeBarlatLinearTransformation<N,double>(1,1,1,1,1,1,1,1,1);
-    std::tie(hseq,hn) = computeBarlatStressNormal(s,l,l,2,seps);
-    if(std::abs(seq-hseq)>seps){
-      std::cout << seq << " " << hseq << " " << seps << std::endl;
+    std::tie(bseq,bn,dbn) = computeBarlatStressSecondDerivative(s,l,l,2,seps);
+    if(std::abs(seq-bseq)>seps){
+      std::cout << seq << " " << bseq << " " << seps << std::endl;
     }
-    TFEL_TESTS_ASSERT(std::abs(seq-hseq)<seps);	
+    TFEL_TESTS_ASSERT(std::abs(seq-bseq)<seps);	
     for(size_type i=0;i!=s.size();++i){
-      const auto en = std::abs(n[i]-hn[i]);
+      const auto en = std::abs(n[i]-bn[i]);
       if(en>eps1){
     	std::cout << i <<  " " << n(i)
-    		  << " " << hn(i) << " " << en << std::endl;
+    		  << " " << bn(i) << " " << en << std::endl;
       }
       TFEL_TESTS_ASSERT(en<eps1);	
-      // for(size_type j=0;j!=s.size();++j){
-      // 	const auto edn = std::abs(dhn(i,j)-dn(i,j));
-      // 	if(edn>=eps2){
-      // 	  std::cout << i   << " " << j << " " << dn(i,j)
-      // 		    << " " << dhn(i,j) << " " << edn << std::endl;
-      // 	}
-      // 	TFEL_TESTS_ASSERT(std::abs(edn)<eps2);	
-      // }
+      for(size_type j=0;j!=s.size();++j){
+      	const auto edn = std::abs(dbn(i,j)-dn(i,j));
+      	if(edn>=eps2){
+      	  std::cout << i   << " " << j << " " << dn(i,j)
+      		    << " " << dbn(i,j) << " " << edn << std::endl;
+      	}
+      	TFEL_TESTS_ASSERT(std::abs(edn)<eps2);	
+      }
     }
   }
   // This tests compares the first derivative of the Barlat stress for
@@ -261,49 +261,68 @@ struct BarlatSecondDerivativeTest final
   // for a Barlat exponent egal to 8 to a numerical approximation
   template<unsigned short N>
   void test3(const double* values){
-  //   using tfel::math::stensor;
-  //   using tfel::math::st2tost2;
-  //   using tfel::material::computeBarlatStressNormal;
-  //   using tfel::material::computeBarlatStressSecondDerivative;
-  //   constexpr const auto a  = double(8);
-  //   using size_type = typename stensor<N,double>::size_type;
-  //   const auto seps = 1.e-10;
-  //   const auto eps1 = 2.e-6;
-  //   const auto eps2 = 2.e-4;
-  //   const auto ds   = 1.e-6;
-  //   const auto s    = stensor<N,double>{values};
-  //   double seq;
-  //   stensor<N,double> n;
-  //   st2tost2<N,double> dn;
-  //   std::tie(seq,n,dn) = computeBarlatStressSecondDerivative(s,a,seps);
-  //   tfel::math::st2tost2<N,double> dnn;
-  //   for(size_type i=0;i!=s.size();++i){
-  //     auto sb = s;
-  //     sb[i] += ds;
-  //     double seq_p,seq_m;
-  //     stensor<N,double> n_p,n_m;
-  //     std::tie(seq_p,n_p) = computeBarlatStressNormal(sb,a,seps);
-  //     sb[i] -= 2*ds;
-  //     std::tie(seq_m,n_m) = computeBarlatStressNormal(sb,a,seps);
-  //     for(size_type j=0;j!=s.size();++j){
-  // 	dnn(j,i)=(n_p(j)-n_m(j))/(2*ds);
-  //     }
-  //   }
-  //   for(size_type i=0;i!=s.size();++i){
-  //     for(size_type j=0;j!=s.size();++j){
-  // 	const auto en = std::abs(dnn(i,j)-dn(i,j));
-  // 	const auto e  = std::max(std::abs(dnn(i,j))*eps2,
-  // 				 eps1);
-  // 	if(en>e){
-  // 	  std::cout << i <<  " " << j
-  // 		    << " " << dnn(i,j)
-  // 		    << " " << dn(i,j)
-  // 		    << " " << en
-  // 		    << " " << e  << std::endl;
-  // 	}
-  // 	TFEL_TESTS_ASSERT(en<e);	
-  //     }
-  //   }
+    using namespace tfel::math;
+    using namespace tfel::material;
+    constexpr const auto a  = double(8);
+    const auto l1 = makeBarlatLinearTransformation<N,double>(-0.069888,
+    							     0.936408,
+    							     0.079143,
+    							     1.003060,
+    							     0.524741,
+    							     1.363180,
+    							     1.023770,
+    							     1.069060,
+    							     0.954322);
+    //    const auto l1 = makeBarlatLinearTransformation<N,double>(0,0,0,0,0,0,0,0,0);
+    const auto l2 = l1;
+    // const auto l2 = makeBarlatLinearTransformation<N,double>(-0.981171,
+    // 							     0.476741,
+    // 							     0.575316,
+    // 							     0.866827,
+    // 							     1.145010,
+    // 							     -0.079294,
+    // 							     1.051660,
+    // 							     1.147100,
+    // 							     1.404620);
+    // const auto l2 = makeBarlatLinearTransformation<N,double>(0,0,0,0,0,0,0,0,0);
+    using size_type = typename stensor<N,double>::size_type;
+    const auto seps = 1.e-10;
+    const auto eps1 = 2.e-6;
+    const auto eps2 = 2.e-4;
+    const auto ds   = 1.e-6;
+    const auto s    = stensor<N,double>{values};
+    double seq;
+    stensor<N,double> n;
+    st2tost2<N,double> dn;
+    std::tie(seq,n,dn) = computeBarlatStressSecondDerivative(s,l1,l2,a,seps);
+    tfel::math::st2tost2<N,double> dnn;
+    for(size_type i=0;i!=s.size();++i){
+      auto sb = s;
+      sb[i] += ds;
+      double seq_p,seq_m;
+      stensor<N,double> n_p,n_m;
+      std::tie(seq_p,n_p) = computeBarlatStressNormal(sb,l1,l2,a,seps);
+      sb[i] -= 2*ds;
+      std::tie(seq_m,n_m) = computeBarlatStressNormal(sb,l1,l2,a,seps);
+      for(size_type j=0;j!=s.size();++j){
+  	dnn(j,i)=(n_p(j)-n_m(j))/(2*ds);
+      }
+    }
+    for(size_type i=0;i!=s.size();++i){
+      for(size_type j=0;j!=s.size();++j){
+  	const auto en = std::abs(dnn(i,j)-dn(i,j));
+  	const auto e  = std::max(std::abs(dnn(i,j))*eps2,
+  				 eps1);
+  	if(en>e){
+  	  std::cout << i <<  " " << j
+  		    << " " << dnn(i,j)
+  		    << " " << dn(i,j)
+  		    << " " << en
+  		    << " " << e  << std::endl;
+  	}
+  	TFEL_TESTS_ASSERT(en<e);	
+      }
+    }
   }
 }; // end of BarlatSecondDerivativeTest
 

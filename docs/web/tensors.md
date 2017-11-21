@@ -539,6 +539,40 @@ const auto [f,df] = Stensor::computeIsotropicFunctionAndDerivative(evp,evp,vp,m,
 
 ### von Mises stress
 
+The von Mises stress is defined by:
+\[
+\sigmaeq=\sqrt{\Frac{3}{2}\,\tenseur{s}\,\colon\,\tenseur{s}}
+\]
+where \(\tenseur{s}\) is the deviatoric stress defined as follows:
+\[
+\tenseur{s}=\tsigma-\Frac{1}{3}\,\trace{\tsigma}\,\tenseur{I}
+\]
+
+The previous expression can be rewritten by introducing a fourth order
+tensor called \(\tenseurq{M}\):
+\[
+\sigmaeq=\sqrt{\sigma\,\colon\,\tenseurq{M}\,\colon\,\tsigma}
+\]
+
+The tensor \(\tenseurq{M}\) is given by:
+\[
+\tenseurq{M}=\Frac{3}{2}\,\paren{\tenseurq{I}-\Frac{1}{3}\,\tenseur{I}\,\otimes\,\tenseur{I}}
+\]
+
+The tensor \(\tenseurq{M}\) is accessible through the `M` `constexpr`
+`static` method of the `st2tost2` class, as follows:
+
+~~~~{.cpp}
+constexpr const auto M = st2tost2<N,real>::M();
+~~~~
+
+In terms of the eigenvalues of the stress, denoted by \(\sigma_{1}\),
+\(\sigma_{2}\) and \(\sigma_{3}\), the von Mises stress can also be
+defined by (see @hosford_generalized_1972):
+\[
+\sigmaeq=\sqrt{\Frac{1}{2}\paren{\absvalue{\sigma_{1}-\sigma_{2}}^{2}+\absvalue{\sigma_{1}-\sigma_{3}}^{2}+\absvalue{\sigma_{2}-\sigma_{3}}^{2}}}
+\]
+
 The von Mises stress can be computed using the `sigmaeq` function, as
 follows:
 
@@ -546,9 +580,107 @@ follows:
 const auto seq = sigmaeq(s);
 ~~~~
 
+The derivative \(\tenseur{n}\) of the von Mises stress with respect to
+the stress is called the normal and is given by:
+\[
+\tenseur{n}=\deriv{\sigmaeq}{\tsigma}=\Frac{3}{2\,\sigmaeq}\,\tenseur{s}=\Frac{1}{\sigmaeq}\,\tenseur{M}\,\colon\,\tsigma
+\]
+
+The normal can be computed by:
+
+~~~~{.cpp}
+const auto n = eval(3*deviator(sig)/(2*seq));
+~~~~
+
+> **Note** The `eval` function is used to evaluate the
+> normal. Otherwise, the expression template mechanism used by `TFEL`
+> would delay its evaluation.
+
+Another way to compute it is to use the \(\tenseurq{M}\) tensor, as
+follows:
+
+~~~~{.cpp}
+const auto n = eval(M*sig/seq);
+~~~~
+
+The second derivative of the von Mises stress with respect to the von
+Mises stress is given by:
+
+\[
+\sderiv{\sigmaeq}{\tsigma}=\Frac{1}{\sigmaeq}\paren{\tenseur{M}-\tenseur{n}\otimes\tenseur{n}}
+\]
+
+This second derivative can be computed as follows:
+
+~~~~{.cpp}
+const auto dn_ds = eval((M-(n^n))/seq);
+~~~~
+
 ### Hill stress
 
+The Hill tensor \(\tenseurq{H}\) is defined by:
+\[
+\tenseurq{H}=
+\left(
+\begin{array}{cccccc}
+F+H & -F  & -H  & 0 & 0 & 0 \\
+-F  & G+F & -G  & 0 & 0 & 0 \\
+-H  & -G  & H+G & 0 & 0 & 0 \\
+0   & 0   & 0   & L & 0 & 0 \\
+0   & 0   & 0   & 0 & M & 0 \\
+0   & 0   & 0   & 0 & 0 & N \\
+\end{array}
+\right)
+\]
+
+The Hill stress \(\sigmaeq^{H}\) is defined by:
+\[
+\begin{aligned}
+\sigmaeq^{H}&=\sqrt{\tsigma\,\colon\,\tenseurq{H}\,\colon\,\tsigma}\\
+	        &=\sqrt{F\,\paren{\sigma_{11}-\sigma_{22}}^2+
+                    G\,\paren{\sigma_{22}-\sigma_{33}}^2+
+			        H\,\paren{\sigma_{33}-\sigma_{11}}^2+
+					2\,L\sigma_{12}^{2}+
+					2\,M\sigma_{13}^{2}+
+					2\,N\sigma_{23}^{2}}
+\end{aligned}
+\]
+
+> **Warning** This convention is given in the book of Lemaître et
+> Chaboche and seems to differ from the one described in most other
+> books.
+
+The first derivative of the Hill stress is given by:
+\[
+\tenseur{n}^{H}=\deriv{\sigmaeq^{H}}{\tsigma}=\Frac{1}{\sigmaeq^{H}}\,\tenseur{H}\,\colon\,\tsigma
+\]
+
+The second derivative of the Hill stress is given by:
+\[
+\sderiv{\sigmaeq^{H}}{\tsigma}=\Frac{1}{\sigmaeq^{H}}\,\paren{\tenseur{H}-\tenseur{n}^{H}\,\otimes\,\tenseur{n}^{H}}
+\]
+
+The header `TFEL/Material/Hill.hxx` introduces various functions to
+build the Hill tensor:
+
+- `hillTensor` or `makeHillTensor`, which has:
+    - two template parameters: the space dimension and the underlying
+      numeric type.
+	- the six arguments giving the Hill coefficients \(F\), \(G\),
+      \(H\), \(L\), \(M\), \(N\).
+- `computeHillTensor` or `makeHillTensor`, which has:
+    - three template parameters: the modelling hypothesis, the
+      orthotropic axis convention, and the underlying numeric type.
+	- the six arguments giving the Hill coefficients \(F\), \(G\),
+      \(H\), \(L\), \(M\), \(N\).
+
+> **Note** In `MFront`, one shall use the `@HillTensor` to compute the
+> `Hill` tensor, which takes into account the modelling hypothesis and
+> the orthotropic axis convention.
+
 ### Hosford stress
+
+![Comparison of the Hosford stress \(a=100,a=8\) and the von Mises stress](img/HosfordStress.svg "Comparison of the Hosford stress \(a=100,a=8\) and the von Mises stress"){width=70%}
 
 The header `TFEL/Material/Hosford.hxx` introduces three functions
 which are meant to compute the Hosford equivalent stress and its first
@@ -557,9 +689,9 @@ and second derivatives. *This header is automatically included by
 
 The Hosford equivalent stress is defined by (see @hosford_generalized_1972):
 \[
-\sigmaeq^{H}=\sqrt[a]{\Frac{1}{2}\paren{\absvalue{s_{1}-s_{2}}^{a}+\absvalue{s_{1}-s_{3}}^{a}+\absvalue{s_{2}-s_{3}}^{a}}}
+\sigmaeq^{H}=\sqrt[a]{\Frac{1}{2}\paren{\absvalue{\sigma_{1}-\sigma_{2}}^{a}+\absvalue{\sigma_{1}-\sigma_{3}}^{a}+\absvalue{\sigma_{2}-\sigma_{3}}^{a}}}
 \]
-where \(s_{1}\), \(s_{2}\) and \(s_{3}\) are the eigenvalues of the
+where \(\sigma_{1}\), \(\sigma_{2}\) and \(\sigma_{3}\) are the eigenvalues of the
 stress.
 
 Therefore, when \(a\) goes to infinity, the Hosford stress reduces to
@@ -606,8 +738,8 @@ transformed stresses \(\tenseur{s}'\) and \(\tenseur{s}''\) by two
 linear transformation \(\tenseurq{L}'\) and \(\tenseurq{L}''\):
 \[
 \begin{aligned}
-\tenseur{s}'  &= \tenseurq{L'} \,\colon\,\tenseur{s}' \\
-\tenseur{s}'' &= \tenseurq{L''}\,\colon\,\tenseur{s}''\\
+\tenseur{s}'  &= \tenseurq{L'} \,\colon\,\tsigma \\
+\tenseur{s}'' &= \tenseurq{L''}\,\colon\,\tsigma \\
 \end{aligned}
 \]
 
@@ -640,34 +772,31 @@ const auto l1 = makeBarlatLinearTransformationType<3>(c_12,c_21,c_13,c_31,
                                                       c_23,c_32,c_44,c_55,c_55);
 ~~~~
 
-##### Note
-
-In his paper, Barlat and coworkers uses the following convention for
-storing symmetric tensors:
-
-\[
-\begin{pmatrix}
-xx & yy & zz & yz & zx & xy
-\end{pmatrix}
-\]
-
-which is not consistent with the
-`TFEL`/`Cast3M`/`Abaqus`/`Ansys` conventions:
-
-\[
-\begin{pmatrix}
-xx & yy & zz & xy & xz & yz
-\end{pmatrix}
-\]
-
-Therefore, if one wants to uses coeficients \f(c^{B}\f) given
-by Barlat, one shall call this function as follows:
-
-~~~~{.cpp}
-const auto l1 = makeBarlatLinearTransformationType<3>(cB_12,cB_21,cB_13,cB_31,
-                                                      cB_23,cB_32,cB_66,cBB_55,cBB_44);
-~~~~
-
+> **Note** In his paper, Barlat and coworkers uses the following convention for
+> storing symmetric tensors:
+> 
+> \[
+> \begin{pmatrix}
+> xx & yy & zz & yz & zx & xy
+> \end{pmatrix}
+> \]
+> 
+> which is not consistent with the
+> `TFEL`/`Cast3M`/`Abaqus`/`Ansys` conventions:
+> 
+> \[
+> \begin{pmatrix}
+> xx & yy & zz & xy & xz & yz
+> \end{pmatrix}
+> \]
+> 
+> Therefore, if one wants to uses coeficients \f(c^{B}\f) given
+> by Barlat, one shall call this function as follows:
+> 
+> ~~~~{.cpp}
+> const auto l1 = makeBarlatLinearTransformationType<3>(cB_12,cB_21,cB_13,cB_31,
+>                                                       cB_23,cB_32,cB_66,cBB_55,cBB_44);
+> ~~~~
 
 # References
 

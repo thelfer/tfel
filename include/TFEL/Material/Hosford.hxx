@@ -51,45 +51,60 @@ namespace tfel{
 			   HosfordInvertStressType<StressStensor>>;
     /*!
      * \brief compute the Hosford yield stress
+     * \tparam StressStensor: type of the stress tensor
+     * \tparam HosfordExponentType: type of the hosford exponent
+     * (could be a numeric type or an integer type)
+     * \tparam es: eigen solver to be used
      * \param[in] s: stress tensor
      * \param[in] a: Hosford exponent
      * \param[in] e: criterion used to check if the stress are null
      */
     template<typename StressStensor,
+	     typename HosfordExponentType,
 	     tfel::math::stensor_common::EigenSolver =
 	     tfel::math::stensor_common::TFELEIGENSOLVER>
     HosfordStressType<StressStensor>
     computeHosfordStress(const StressStensor&,
-			 const HosfordBaseType<StressStensor>,
+			 const HosfordExponentType,
 			 const HosfordStressType<StressStensor>);
     /*!
      * \brief compute the Hosford yield stress and the its first derivative
+     * \tparam StressStensor: type of the stress tensor
+     * \tparam HosfordExponentType: type of the hosford exponent
+     * (could be a numeric type or an integer type)
+     * \tparam es: eigen solver to be used
      * \param[in] s: stress tensor
      * \param[in] a: Hosford exponent
      * \param[in] e: criterion used to check if the stress are null
      */
     template<typename StressStensor,
+	     typename HosfordExponentType,
 	     tfel::math::stensor_common::EigenSolver =
 	     tfel::math::stensor_common::TFELEIGENSOLVER>
     std::tuple<HosfordStressType<StressStensor>,
     	       HosfordStressNormalType<StressStensor>>
     computeHosfordStressNormal(const StressStensor&,
-			       const HosfordBaseType<StressStensor>,
+			       const HosfordExponentType,
 			       const HosfordStressType<StressStensor>);
     /*!
      * \brief compute the Hosford yield stress and its first and second derivatives
+     * \tparam StressStensor: type of the stress tensor
+     * \tparam HosfordExponentType: type of the hosford exponent
+     * (could be a numeric type or an integer type)
+     * \tparam es: eigen solver to be used
      * \param[in] s: stress tensor
      * \param[in] a: Hosford exponent
      * \param[in] e: criterion used to check if the stress are null
      */
     template<typename StressStensor,
+	     typename HosfordExponentType,
 	     tfel::math::stensor_common::EigenSolver =
 	     tfel::math::stensor_common::TFELEIGENSOLVER>
     std::tuple<HosfordStressType<StressStensor>,
     	       HosfordStressNormalType<StressStensor>,
 	       HosfordStressSecondDerivativeType<StressStensor>>
     computeHosfordStressSecondDerivative(const StressStensor&,
-					 const HosfordBaseType<StressStensor>,
+					 const HosfordExponentType,
 					 const HosfordStressType<StressStensor>);
     
   } // end of namespace material

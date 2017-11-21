@@ -10,8 +10,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_MATERIAL_HILLIXX
-#define LIB_TFEL_MATERIAL_HILLIXX 
+#ifndef LIB_TFEL_MATERIAL_HILL_IXX
+#define LIB_TFEL_MATERIAL_HILL_IXX 
 
 namespace tfel
 {
@@ -22,15 +22,15 @@ namespace tfel
     namespace internals
     {
 
-      template<unsigned short,typename stress>
+      template<unsigned short,typename real>
       struct ComputeHillTensorBase;
 
-      template<typename stress>
-      struct ComputeHillTensorBase<1u,stress>
+      template<typename real>
+      struct ComputeHillTensorBase<1u,real>
       {
-	static tfel::math::st2tost2<1u,stress>
-	hillTensor(const stress F,const stress G,const stress H,
-		   const stress,const stress,const stress)
+	static tfel::math::st2tost2<1u,real>
+	hillTensor(const real F,const real G,const real H,
+		   const real,const real,const real)
 	{
 	  return { F+H,  -F,  -H,
 	            -F, G+F,  -G,
@@ -38,14 +38,14 @@ namespace tfel
 	}
       }; // end of struct HillTensor
       
-      template<typename stress>
-      struct ComputeHillTensorBase<2u,stress>
+      template<typename real>
+      struct ComputeHillTensorBase<2u,real>
       {
-	static tfel::math::st2tost2<2u,stress>
-	hillTensor(const stress F,const stress G,const stress H,
-		   const stress L,const stress,const stress)
+	static tfel::math::st2tost2<2u,real>
+	hillTensor(const real F,const real G,const real H,
+		   const real L,const real,const real)
 	{   
-	  constexpr const auto zero = stress{0};
+	  constexpr const auto zero = real{0};
 	  return { F+H,  -F,  -H,zero,
 	            -F, G+F,  -G,zero,
  	            -H,  -G, H+G,zero,
@@ -53,14 +53,14 @@ namespace tfel
 	}
       }; // end of struct HillTensor
 
-      template<typename stress>
-      struct ComputeHillTensorBase<3u,stress>    
+      template<typename real>
+      struct ComputeHillTensorBase<3u,real>    
       {
-	static tfel::math::st2tost2<3u,stress>
-        hillTensor(const stress F,const stress G,const stress H,
-		   const stress L,const stress M,const stress N)
+	static tfel::math::st2tost2<3u,real>
+        hillTensor(const real F,const real G,const real H,
+		   const real L,const real M,const real N)
 	{
-	  constexpr const auto zero = stress{0};
+	  constexpr const auto zero = real{0};
 	  return { F+H,  -F,  -H,zero,zero,zero,
 	            -F, G+F,  -G,zero,zero,zero,
  	            -H,  -G, H+G,zero,zero,zero,
@@ -72,19 +72,19 @@ namespace tfel
       }; // end of struct HillTensor
       
       template<tfel::material::ModellingHypothesis::Hypothesis,
-	       tfel::material::OrthotropicAxesConvention,typename stress>
+	       tfel::material::OrthotropicAxesConvention,typename real>
       struct ComputeHillTensor;
 
-      template<tfel::material::ModellingHypothesis::Hypothesis H,typename stress>
-      struct ComputeHillTensor<H,tfel::material::OrthotropicAxesConvention::DEFAULT,stress>
+      template<tfel::material::ModellingHypothesis::Hypothesis H,typename real>
+      struct ComputeHillTensor<H,tfel::material::OrthotropicAxesConvention::DEFAULT,real>
 	: public ComputeHillTensorBase<tfel::material::ModellingHypothesisToSpaceDimension<H>::value,
-				       stress>
+				       real>
       {
 	//! \brief space dimension
 	static constexpr const auto N =
 	  tfel::material::ModellingHypothesisToSpaceDimension<H>::value;
 	//! \brief return type
-	using result_type = tfel::math::st2tost2<N,stress>;
+	using result_type = tfel::math::st2tost2<N,real>;
 	/*!
 	 * \param[in] H_F: orthotropic coefficient
 	 * \param[in] H_G: orthotropic coefficient
@@ -94,22 +94,22 @@ namespace tfel
 	 * \param[in] H_N: orthotropic coefficient
 	 */
 	static TFEL_MATERIAL_INLINE result_type
-	exe(const stress H_F,const stress H_G,const stress H_H,
-	    const stress H_L,const stress H_M,const stress H_N){
-	  return ComputeHillTensorBase<N,stress>::hillTensor(H_F,H_G,H_H,H_L,H_M,H_N);
+	exe(const real H_F,const real H_G,const real H_H,
+	    const real H_L,const real H_M,const real H_N){
+	  return ComputeHillTensorBase<N,real>::hillTensor(H_F,H_G,H_H,H_L,H_M,H_N);
 	} // end of exe
-      }; // end of struct ComputeHillTensor<H,tfel::material::OrthotropicAxesConvention::DEFAULT,stress>
+      }; // end of struct ComputeHillTensor<H,tfel::material::OrthotropicAxesConvention::DEFAULT,real>
 
-      template<tfel::material::ModellingHypothesis::Hypothesis H,typename stress>
-      struct ComputeHillTensor<H,tfel::material::OrthotropicAxesConvention::PIPE,stress>
+      template<tfel::material::ModellingHypothesis::Hypothesis H,typename real>
+      struct ComputeHillTensor<H,tfel::material::OrthotropicAxesConvention::PIPE,real>
 	: public ComputeHillTensorBase<tfel::material::ModellingHypothesisToSpaceDimension<H>::value,
-				       stress>
+				       real>
       {
 	//! \brief space dimension
 	static constexpr const unsigned short N =
 	  tfel::material::ModellingHypothesisToSpaceDimension<H>::value;
 	//! \brief return type
-	using result_type = tfel::math::st2tost2<N,stress>;
+	using result_type = tfel::math::st2tost2<N,real>;
 	/*!
 	 * \param[in] H_F: orthotropic coefficient
 	 * \param[in] H_G: orthotropic coefficient
@@ -119,19 +119,19 @@ namespace tfel
 	 * \param[in] H_N: orthotropic coefficient
 	 */
 	static TFEL_MATERIAL_INLINE result_type
-	exe(const stress H_F,const stress H_G,const stress H_H,
-	    const stress H_L,const stress H_M,const stress H_N){
-	  return ComputeHillTensorBase<N,stress>::hillTensor(H_F,H_G,H_H,H_L,H_M,H_N);
+	exe(const real H_F,const real H_G,const real H_H,
+	    const real H_L,const real H_M,const real H_N){
+	  return ComputeHillTensorBase<N,real>::hillTensor(H_F,H_G,H_H,H_L,H_M,H_N);
 	} // end of exe
-      }; // end of struct ComputeHillTensor<H,tfel::material::OrthotropicAxesConvention::PIPE,stress>
+      }; // end of struct ComputeHillTensor<H,tfel::material::OrthotropicAxesConvention::PIPE,real>
       
-      template<typename stress>
+      template<typename real>
       struct ComputeHillTensor<tfel::material::ModellingHypothesis::PLANESTRESS,
-			       tfel::material::OrthotropicAxesConvention::PIPE,stress>
-	: public ComputeHillTensorBase<2u,stress>
+			       tfel::material::OrthotropicAxesConvention::PIPE,real>
+	: public ComputeHillTensorBase<2u,real>
       {
 	//! \brief return type
-	using result_type = tfel::math::st2tost2<2u,stress>;
+	using result_type = tfel::math::st2tost2<2u,real>;
 	/*!
 	 * \param[in] H_F: orthotropic coefficient
 	 * \param[in] H_G: orthotropic coefficient
@@ -141,20 +141,20 @@ namespace tfel
 	 * \param[in] H_N: orthotropic coefficient
 	 */
 	static TFEL_MATERIAL_INLINE result_type
-	exe(const stress H_F,const stress H_G,const stress H_H,
-	    const stress H_L,const stress H_M,const stress H_N){
-	  return ComputeHillTensorBase<2u,stress>::hillTensor(H_H,H_G,H_F,H_M,H_L,H_N);
+	exe(const real H_F,const real H_G,const real H_H,
+	    const real H_L,const real H_M,const real H_N){
+	  return ComputeHillTensorBase<2u,real>::hillTensor(H_H,H_G,H_F,H_M,H_L,H_N);
 	} // end of exe
-      }; // end of struct ComputeHillTensor<H,tfel::material::OrthotropicAxesConvention::PIPE,stress>
+      }; // end of struct ComputeHillTensor<H,tfel::material::OrthotropicAxesConvention::PIPE,real>
 
 
-      template<typename stress>
+      template<typename real>
       struct ComputeHillTensor<tfel::material::ModellingHypothesis::PLANESTRAIN,
-			       tfel::material::OrthotropicAxesConvention::PIPE,stress>
-	: public ComputeHillTensorBase<2u,stress>
+			       tfel::material::OrthotropicAxesConvention::PIPE,real>
+	: public ComputeHillTensorBase<2u,real>
       {
 	//! \brief return type
-	using result_type = tfel::math::st2tost2<2u,stress>;
+	using result_type = tfel::math::st2tost2<2u,real>;
 	/*!
 	 * \param[in] H_F: orthotropic coefficient
 	 * \param[in] H_G: orthotropic coefficient
@@ -164,19 +164,19 @@ namespace tfel
 	 * \param[in] H_N: orthotropic coefficient
 	 */
 	static TFEL_MATERIAL_INLINE result_type
-	exe(const stress H_F,const stress H_G,const stress H_H,
-	    const stress H_L,const stress H_M,const stress H_N){
-	  return ComputeHillTensorBase<2u,stress>::hillTensor(H_H,H_G,H_F,H_M,H_L,H_N);
+	exe(const real H_F,const real H_G,const real H_H,
+	    const real H_L,const real H_M,const real H_N){
+	  return ComputeHillTensorBase<2u,real>::hillTensor(H_H,H_G,H_F,H_M,H_L,H_N);
 	} // end of exe
-      }; // end of struct ComputeHillTensor<H,tfel::material::OrthotropicAxesConvention::PIPE,stress>
+      }; // end of struct ComputeHillTensor<H,tfel::material::OrthotropicAxesConvention::PIPE,real>
 
-      template<typename stress>
+      template<typename real>
       struct ComputeHillTensor<tfel::material::ModellingHypothesis::GENERALISEDPLANESTRAIN,
-			       tfel::material::OrthotropicAxesConvention::PIPE,stress>
-	: public ComputeHillTensorBase<2u,stress>
+			       tfel::material::OrthotropicAxesConvention::PIPE,real>
+	: public ComputeHillTensorBase<2u,real>
       {
 	//! \brief return type
-	using result_type = tfel::math::st2tost2<2u,stress>;
+	using result_type = tfel::math::st2tost2<2u,real>;
 	/*!
 	 * \param[in] H_F: orthotropic coefficient
 	 * \param[in] H_G: orthotropic coefficient
@@ -186,34 +186,52 @@ namespace tfel
 	 * \param[in] H_N: orthotropic coefficient
 	 */
 	static TFEL_MATERIAL_INLINE result_type
-	exe(const stress H_F,const stress H_G,const stress H_H,
-	    const stress H_L,const stress H_M,const stress H_N){
-	  return ComputeHillTensorBase<2u,stress>::hillTensor(H_H,H_G,H_F,H_M,H_L,H_N);
+	exe(const real H_F,const real H_G,const real H_H,
+	    const real H_L,const real H_M,const real H_N){
+	  return ComputeHillTensorBase<2u,real>::hillTensor(H_H,H_G,H_F,H_M,H_L,H_N);
 	} // end of exe
-      }; // end of struct ComputeHillTensor<H,tfel::material::OrthotropicAxesConvention::PIPE,stress>
+      }; // end of struct ComputeHillTensor<H,tfel::material::OrthotropicAxesConvention::PIPE,real>
       
     } // end of namespace internals
 
-    template<unsigned short N,typename stress>
-    tfel::math::st2tost2<N,stress>
-    hillTensor(const stress H_F,const stress H_G,const stress H_H,
-	       const stress H_L,const stress H_M,const stress H_N)
+    template<unsigned short N,typename real>
+    tfel::math::st2tost2<N,real>
+    hillTensor(const real H_F,const real H_G,const real H_H,
+	       const real H_L,const real H_M,const real H_N)
     {
       using namespace tfel::material::internals;
-      return ComputeHillTensorBase<N,stress>::hillTensor(H_F,H_G,H_H,H_L,H_M,H_N);
+      return ComputeHillTensorBase<N,real>::hillTensor(H_F,H_G,H_H,H_L,H_M,H_N);
     }
 
-    template<ModellingHypothesis::Hypothesis H,
-	     OrthotropicAxesConvention c,typename stress>
-    tfel::math::st2tost2<ModellingHypothesisToSpaceDimension<H>::value,stress>
-    computeHillTensor(const stress H_F,const stress H_G,const stress H_H,
-		      const stress H_L,const stress H_M,const stress H_N){
+    template<unsigned short N,typename real>
+    tfel::math::st2tost2<N,real>
+    makeHillTensor(const real H_F,const real H_G,const real H_H,
+		   const real H_L,const real H_M,const real H_N)
+    {
       using namespace tfel::material::internals;
-      return ComputeHillTensor<H,c,stress>::exe(H_F,H_G,H_H,H_L,H_M,H_N);
+      return ComputeHillTensorBase<N,real>::hillTensor(H_F,H_G,H_H,H_L,H_M,H_N);
+    } // end of makeHillTensor
+    
+    template<ModellingHypothesis::Hypothesis H,
+	     OrthotropicAxesConvention c,typename real>
+    tfel::math::st2tost2<ModellingHypothesisToSpaceDimension<H>::value,real>
+    computeHillTensor(const real H_F,const real H_G,const real H_H,
+		      const real H_L,const real H_M,const real H_N){
+      using namespace tfel::material::internals;
+      return ComputeHillTensor<H,c,real>::exe(H_F,H_G,H_H,H_L,H_M,H_N);
     } // end of function computeHillTensor
+
+    template<ModellingHypothesis::Hypothesis H,
+	     OrthotropicAxesConvention c,typename real>
+    tfel::math::st2tost2<ModellingHypothesisToSpaceDimension<H>::value,real>
+    makeHillTensor(const real H_F,const real H_G,const real H_H,
+		      const real H_L,const real H_M,const real H_N){
+      using namespace tfel::material::internals;
+      return ComputeHillTensor<H,c,real>::exe(H_F,H_G,H_H,H_L,H_M,H_N);
+    } // end of function makeHillTensor
     
   } // end of namespace material
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_MATERIAL_HILLIXX */
+#endif /* LIB_TFEL_MATERIAL_HILL_IXX */

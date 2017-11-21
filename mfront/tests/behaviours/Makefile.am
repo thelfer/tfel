@@ -23,6 +23,7 @@ MFRONTS= DDIF2.mfront                                                      \
          OrthotropicElastic5.mfront                                        \
          OrthotropicElastic6.mfront                                        \
          GeneralizedMaxwell.mfront                                         \
+	 HosfordPerfectPlasticity.mfront                                   \
          FiniteRotationSmallStrainElasticity.mfront                        \
          FiniteRotationSmallStrainElasticity2.mfront                       \
 	 Plasticity.mfront                                                 \
