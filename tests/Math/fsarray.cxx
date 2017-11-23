@@ -35,24 +35,24 @@ struct FSArrayTest final
   {} // end of FSArrayTest
   tfel::tests::TestResult execute() override
   {
-#if (!defined _MSC_VER) && (!defined _LIBCPP_VERSION)
+#if (!defined _MSC_VER) && (!defined _LIBCPP_VERSION) && (!defined __INTEL_COMPILER)
     this->test1();
     this->test2();
     this->test3();
 #endif
     return this->result;
   } // end of execute
-#if (!defined _MSC_VER) && (!defined _LIBCPP_VERSION)
+#if (!defined _MSC_VER) && (!defined _LIBCPP_VERSION) && (!defined __INTEL_COMPILER)
   void test1()
   {
     using namespace std;
     using namespace tfel::math;
-    constexpr fsarray<3u,int> a1(0);
-    constexpr fsarray<3u,int> a2{a1};
-    constexpr fsarray<3u,int> a3({3,2,6});
-    constexpr fsarray<3u,int> a4{a3};
-    constexpr fsarray<3u,int> a5 = {5,3,9};
-    constexpr fsarray<3u,int> a6{a5};
+    constexpr const fsarray<3u,int> a1(0);
+    constexpr const fsarray<3u,int> a2{a1};
+    constexpr const fsarray<3u,int> a3({3,2,6});
+    constexpr const fsarray<3u,int> a4{a3};
+    constexpr const fsarray<3u,int> a5 = {5,3,9};
+    constexpr const fsarray<3u,int> a6{a5};
     TFEL_TESTS_ASSERT(structify<a1[0]>::value==0);
     TFEL_TESTS_ASSERT(structify<a1[1]>::value==0);
     TFEL_TESTS_ASSERT(structify<a1[2]>::value==0);

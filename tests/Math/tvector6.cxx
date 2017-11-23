@@ -42,7 +42,7 @@ struct TVector6 final
     TFEL_TESTS_ASSERT(equal<2u>::exe(z.begin(),cross_product(x,y).begin()));
     TFEL_TESTS_ASSERT(equal<2u>::exe(x.begin(),cross_product(y,z).begin()));
     TFEL_TESTS_ASSERT(equal<2u>::exe(y.begin(),cross_product(z,x).begin()));
-#pragma message("HERE")
+#pragma message("something needs to be done")
     // TFEL_TESTS_ASSERT(equal<2u>::exe((-x).begin(),
     // 				     cross_product(z,y).begin()));
     // TFEL_TESTS_ASSERT(equal<2u>::exe((-y).begin(),
