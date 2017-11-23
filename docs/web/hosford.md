@@ -77,10 +77,9 @@ post-processings purpose, we choose to keep it as a state variable.
 ## Elastic prediction
 
 First, an elastic prediction of the stress \(\tsigma^{\mathrm{tr}}\)
-is made:
-\[
-\tsigma^{\mathrm{tr}}=\lambda\,\trace{\bts{\tepsilonel}+\theta\,\Delta\,\tepsilonto}\,\tenseur{I}+2\,\mu\,\paren{\bts{\tepsilonel}+\theta\,\Delta\,\tepsilonto}
-\]
+is made (The following expression is not valid in plane stress
+hypothesis, see below):
+\[ \tsigma^{\mathrm{tr}}=\lambda\,\trace{\bts{\tepsilonel}+\theta\,\Delta\,\tepsilonto}\,\tenseur{I}+2\,\mu\,\paren{\bts{\tepsilonel}+\theta\,\Delta\,\tepsilonto} \]
 
 - If the predicted stress is inside the elastic domain, no plastic
   flow occurs.
@@ -222,6 +221,9 @@ defined as follows:
 @Parameter sigy = 150e6;
 ~~~~
 
+Here `a` stands for the Hosford exponent and `sigy` is the yield
+stress.
+
 ## Local variable declaration
 
 A boolean `b` is declared as a local variable.
@@ -230,18 +232,42 @@ A boolean `b` is declared as a local variable.
 @LocalVariable bool b;
 ~~~~
 
+This boolean will be `true` if plastic loading occurs.
+
 ## Local variable initialization
+
+The main goal of the local variable initialization is to test if the
+elastic prediction of the stress lies inside the yield surface.
 
 ~~~~{.cpp}
 @InitializeLocalVariables{
   const stress seps = 1.e-10*young;
   const auto sigel = computeElasticPrediction();
-  const auto seqel = computeHosfordStress(sigel,8,seps);
+  const auto seqel = computeHosfordStress(sigel,a,seps);
   b = seqel>sigy;
 }
 ~~~~
 
+The `computeElasticPrediction` method, provided by the
+`StandardElasticity` brick, computes the elastic prediction of the
+stress and takes into account the modelling hypothesis. This
+prediction is thus valid under the plane stress hypothesis.
+
+The `computeHosfordStress` is then called. It takes three arguments:
+
+- the stress,
+- the Hosford exponent,
+- a criterion used to check if the von Mises stress is non zero. The
+  von Mises stress is used to normalize the eigenvalues of the stress
+  and avoid numerical overflows (See @scherzinger_return_2017 for
+  details).
+
+At the last line, the boolean variable `b` is set to `true` if the
+elastic prediction of the Hosford stress exceeds the yield stress.
+
 ## Implicit system
+
+The code describing the implicit system is rather short:
 
 ~~~~{.cpp}
 @Integrator{
@@ -262,6 +288,30 @@ A boolean `b` is declared as a local variable.
   dfp_ddp      = 0;
 }
 ~~~~
+
+It shall be noted that, at the beginning of this code block:
+
+- `feel` has been initialized to
+  \(\Delta\,\tepsilonel-\Delta\,\tepsilonto\) by the
+  `StandardElasticity` brick
+- `fp` has been initialized to \(\Delta\,p\) following standard
+  conventions defined in the the `Implicit` domain specific language.
+- the jacobian has been set to identity, following standard
+  conventions defined in the `Implicit` domain specific language.
+
+Thus, all the variables have been set to describe a purely elastic
+behaviour. Hence, nothing is to be done if the boolean variable `b` is
+`false`. In this case, one just return `true`.
+
+If a plastic loading has been predicted, one uses the
+`computeHosfordStressSecondDerivative` function which returns:
+
+- the Hosford stress `seq`
+- the Hosford stress derivative `n` with respect to the stress
+- the Hosford stress second derivative `dn` with respect to the stress
+
+The implicit system is then readily written, using expressions given
+in the previous paragraph.
 
 > **Note** With `C++-17` structured bindings enabled, the previous
 > code is much more readable:
@@ -285,6 +335,9 @@ A boolean `b` is declared as a local variable.
 
 # Determining the yield surface in plane stress
 
+In this section, we show how to use a simple `python` script to
+determine the yield surface in plane stress.
+
 ## Compilation of the behaviour
 
 ~~~~{.bash}
@@ -294,7 +347,14 @@ The following library has been built :
 - libABAQUSBEHAVIOUR.so :  HOSFORDPERFECTPLASTICITY_AXIS HOSFORDPERFECTPLASTICITY_PSTRESS HOSFORDPERFECTPLASTICITY_PSTRAIN HOSFORDPERFECTPLASTICITY_3D
 ~~~~
 
-## A simple `python` script to determine the yield stress in 
+## A simple `python` script to determine the yield surface in plane stress
+
+The following script determines the yield stress under the plane
+stress assumption in the principal stress space by a brute force
+approach. It imposes strain paths in varying directions and a
+constraint the shear stress is null. The computations stops when the
+plastic equivalent strain exceeds \(10^{-3}\). The current stress
+state is then printed.
 
 ~~~~{.python}
 from math import pi,cos,sin,sqrt

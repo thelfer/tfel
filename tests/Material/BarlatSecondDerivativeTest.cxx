@@ -272,18 +272,15 @@ struct BarlatSecondDerivativeTest final
     							     1.023770,
     							     1.069060,
     							     0.954322);
-    //    const auto l1 = makeBarlatLinearTransformation<N,double>(0,0,0,0,0,0,0,0,0);
-    const auto l2 = l1;
-    // const auto l2 = makeBarlatLinearTransformation<N,double>(-0.981171,
-    // 							     0.476741,
-    // 							     0.575316,
-    // 							     0.866827,
-    // 							     1.145010,
-    // 							     -0.079294,
-    // 							     1.051660,
-    // 							     1.147100,
-    // 							     1.404620);
-    // const auto l2 = makeBarlatLinearTransformation<N,double>(0,0,0,0,0,0,0,0,0);
+    const auto l2 = makeBarlatLinearTransformation<N,double>(-0.981171,
+    							     0.476741,
+    							     0.575316,
+    							     0.866827,
+    							     1.145010,
+    							     -0.079294,
+    							     1.051660,
+    							     1.147100,
+    							     1.404620);
     using size_type = typename stensor<N,double>::size_type;
     const auto seps = 1.e-10;
     const auto eps1 = 2.e-6;

@@ -17,6 +17,7 @@
 p.setGlossaryName("EquivalentPlasticStrain");
 
 @ElasticMaterialProperties {150e9,0.3};
+@Parameter a = 8;
 @Parameter sigy = 150e6;
 
 @LocalVariable bool b;
@@ -24,7 +25,7 @@ p.setGlossaryName("EquivalentPlasticStrain");
 @InitializeLocalVariables{
   const stress seps = 1.e-10*young;
   const auto sigel = computeElasticPrediction();
-  const auto seqel = computeHosfordStress(sigel,8,seps);
+  const auto seqel = computeHosfordStress(sigel,a,seps);
   b = seqel>sigy;
 }
 
@@ -37,7 +38,7 @@ p.setGlossaryName("EquivalentPlasticStrain");
   real seq;
   Stensor n;
   Stensor4 dn;
-  std::tie(seq,n,dn) = computeHosfordStressSecondDerivative(sig,8,seps);
+  std::tie(seq,n,dn) = computeHosfordStressSecondDerivative(sig,a,seps);
   feel        += dp*n;
   dfeel_ddeel += 2*mu*theta*dp*dn;
   dfeel_ddp    = n;
