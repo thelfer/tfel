@@ -278,7 +278,7 @@ namespace mfront{
     };
     throw_if((mb.getBehaviourType()!=BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR)&&
 	     ((mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR)&&
-	      !hasFiniteStrainStrategy(mb)),
+	      (!hasFiniteStrainStrategy(mb))),
 	     "the europlexus interface only supports "
 	     "finite strain behaviours");
     checkFiniteStrainStrategyDefinitionConsistency(mb);

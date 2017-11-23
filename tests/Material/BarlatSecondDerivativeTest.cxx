@@ -36,17 +36,17 @@ struct BarlatSecondDerivativeTest final
 			  0,0,0};
     const double v4[6] = {-0.24525337568425,-0.24525337568425,1.27453824166446,
 			  0,0,0};
-    // for(const auto v : {Id,v1,v2,v3,v4}){
-    //   test1a<1u>(v);
-    //   test1b<1u>(v);
-    //   test1c<1u>(v);
-    //   test1a<2u>(v);
-    //   test1b<2u>(v);
-    //   test1c<2u>(v);
-    //   test1a<3u>(v);
-    //   test1b<3u>(v);
-    //   test1c<3u>(v);
-    // }
+    for(const auto v : {Id,v1,v2,v3,v4}){
+      test1a<1u>(v);
+      test1b<1u>(v);
+      test1c<1u>(v);
+      test1a<2u>(v);
+      test1b<2u>(v);
+      test1c<2u>(v);
+      test1a<3u>(v);
+      test1b<3u>(v);
+      test1c<3u>(v);
+    }
     for(const auto v : {v1,v2,v3,v4}){
       test2a<1u>(v);
       test2a<2u>(v);
@@ -55,12 +55,11 @@ struct BarlatSecondDerivativeTest final
       test2b<2u>(v);
       test2b<3u>(v);
     }
-    // for(const auto v : {v1,v2,v3,v4}){
-    //   //    for(const auto v : {v1}){      
-    //   test3<1u>(v);
-    //   // test3<2u>(v);
-    //   // test3<3u>(v);
-    // }
+    for(const auto v : {v1,v2,v3,v4}){
+      test3<1u>(v);
+      test3<2u>(v);
+      test3<3u>(v);
+    }
     return this->result;
   } // end of execute
  private:

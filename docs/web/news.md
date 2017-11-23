@@ -20,7 +20,7 @@
 
 # Hosford equivalent stress (17/10/2017)
 
-![Comparison of the Hosford stress \(a=100,a=8\) and the von Mises stress](img/HosfordStress.svg "Comparison of the Hosford stress \(a=100,a=8\) and the von Mises stress"){width=70%}
+![Comparison of the Hosford stress \(a=100,a=8\) and the von Mises stress](img/HosfordStress.svg "Comparison of the Hosford stress \(a=100,a=8\) and the von Mises stress in plane stress"){width=70%}
 
 The header `TFEL/Material/Hosford.hxx` introduces three functions
 which are meant to compute the Hosford equivalent stress and its first

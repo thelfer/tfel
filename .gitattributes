@@ -185,6 +185,7 @@ docs/gallery/behaviours/hyperviscoelasticity/Makefile.am -text
 docs/gallery/behaviours/hyperviscoelasticity/SignoriniHyperViscoelasticity-tfel-2.0.3.mfront -text
 docs/gallery/behaviours/hyperviscoelasticity/SignoriniHyperViscoelasticity.mfront -text
 docs/gallery/behaviours/plasticity/CMakeLists.txt -text
+docs/gallery/behaviours/plasticity/HosfordPerfectPlasticity.mfront -text
 docs/gallery/behaviours/plasticity/IsotropicLinearHardeningPlasticity.mfront -text
 docs/gallery/behaviours/plasticity/IsotropicLinearKinematicHardeningPlasticity.mfront -text
 docs/gallery/behaviours/plasticity/Iwan.mfront -text
@@ -5717,6 +5718,7 @@ tests/Makefile.am -text
 tests/Material/AbaqusTangentOperator.cxx -text
 tests/Material/AbaqusTangentOperator2.cxx -text
 tests/Material/BarlatSecondDerivativeTest.cxx -text
+tests/Material/BarlatSecondDerivativeTest2.cxx -text
 tests/Material/CMakeLists.txt -text
 tests/Material/FiniteStrainBehaviourTangentOperator.cxx -text
 tests/Material/FiniteStrainBehaviourTangentOperator10.cxx -text

@@ -55,6 +55,41 @@ namespace tfel{
       tfel::math::st2tost2<tfel::math::StensorTraits<StressStensor>::dime,
 			   BarlatInvertStressType<StressStensor>>;
     /*!
+     * \brief an helper structure used to simplify the code
+     * \tparam StressStensor: type of the stress tensor
+     */
+    template<typename StressStensor>
+    struct BarlatStressAndDerivativesWithRespectToEigenvalues
+    {
+      //! Barlat stress
+      BarlatStressType<StressStensor> Phi;
+      /*!
+       * Derivative of the Barlat stress with respect to the
+       * eigenvalues of s1
+       */
+      tfel::math::tvector<3u,BarlatBaseType<StressStensor>> dPhi_dsvp1;
+      /*!
+       * Derivative of the Barlat stress with respect to the
+       * eigenvalues of s2
+       */
+      tfel::math::tvector<3u,BarlatBaseType<StressStensor>> dPhi_dsvp2;
+      /*!
+       * Second derivative of the Barlat stress with respect to the
+       * eigenvalues of s1
+       */
+      tfel::math::tvector<6u,BarlatInvertStressType<StressStensor>> d2Phi_dsvp12;
+      /*!
+       * Second derivative of the Barlat stress with respect to the
+       * eigenvalues of s2
+       */
+      tfel::math::tvector<6u,BarlatInvertStressType<StressStensor>> d2Phi_dsvp22;
+      /*!
+       * Second derivative of the Barlat stress with respect to the
+       * eigenvalues of s1 and s2
+       */
+      tfel::math::tvector<9u,BarlatInvertStressType<StressStensor>> d2Phi_dsvp1dsvp2;
+    }; // end of struct BarlatStressAndDerivativesWithRespectToEigenvalues
+    /*!
      * \tparam N:    space dimension
      * \tparam real: numerical type
      * \return a linear transformation of the stresses
@@ -98,8 +133,8 @@ namespace tfel{
      * by Barlat, one shall call this function as follows:
      *
      * \code{.cpp}
-     * const auto l1 = makeBarlatLinearTransformationType<3>(cB_12,cB_21,cB_13,cB_31,
-     *                                                       cB_23,cB_32,cB_66,cBB_55,cBB_44);
+     * const auto l1 = makeBarlatLinearTransformation<3>(cB_12,cB_21,cB_13,cB_31,
+     *                                                   cB_23,cB_32,cB_66,cBB_55,cBB_44);
      * \endcode
      */
     template<unsigned short N, typename real>
@@ -108,16 +143,70 @@ namespace tfel{
 				   const real,const real, const real,
 				   const real,const real, const real);
     /*!
-     * \brief compute the Barlat yield stress
+     * \brief This function computes the Barlat yield stress.
+     * The Barlat yield stress is defined by:
+     * \f[
+     * \phi\left(\underline{\bf s}\right) =
+     * \sqrt[a]{
+     *   \frac{1}{4}\left(
+     *   \sum_{i=0}^{3}
+     *   \sum_{j=0}^{3}
+     *   \left|s'_{i}-s''_{j}\right|^{a}
+     *   \right)
+     * }
+     * \f]
+     * where \f$s'_{i}\f$ and \f$s''_{j}\f$ are the eigenvalues
+     * computed from two tensors \f$\underline{\bf s}'\f$ and
+     * \f$\underline{\bf s}''\f$ resulting from a linear
+     * transformation of the stress tensor:
+     * \f[
+     * \left\{
+     * \begin{aligned}
+     *  \underline{\bf s}'  &= \underline{\underline{L}}' \,\colon\,\underline{\bf s} \\
+     *  \underline{\bf s}'' &= \underline{\underline{L}}''\,\colon\,\underline{\bf s} \\
+     * \end{aligned}
+     * \right.
+     * \f]
+     *
+     * The linear transformations \f$\underline{\underline{L}}'\f$ and
+     * \f$\underline{\underline{L}}''\f$ are defined by \(9\)
+     * coefficients (each) which describe the material orthotropy, as
+     * follows:
+     * 
+     * \f[
+     * \underline{\underline{L}}'=
+     * \begin{pmatrix}
+     * 0 & -c'_{12} & -c'_{13} & 0 & 0 & 0 \\
+     * -c'_{21} & 0 & -c'_{23} & 0 & 0 & 0 \\
+     * -c'_{31} & -c'_{32} & 0 & 0 & 0 & 0 \\
+     * 0 & 0 & 0 & c'_{44} & 0 & 0 \\
+     * 0 & 0 & 0 & 0 & c'_{55} & 0 \\
+     * 0 & 0 & 0 & 0 & 0 & c'_{66} \\
+     * \end{pmatrix}
+     * \quad
+     * \text{and}
+     * \quad
+     * \underline{\underline{L}}''=
+     * \begin{pmatrix}
+     * 0 & -c''_{12} & -c''_{13} & 0 & 0 & 0 \\
+     * -c''_{21} & 0 & -c''_{23} & 0 & 0 & 0 \\
+     * -c''_{31} & -c''_{32} & 0 & 0 & 0 & 0 \\
+     * 0 & 0 & 0 & c''_{44} & 0 & 0 \\
+     * 0 & 0 & 0 & 0 & c''_{55} & 0 \\
+     * 0 & 0 & 0 & 0 & 0 & c''_{66} \\
+     * \end{pmatrix}
+     * \f]
+     *
+     * \see `makeBarlatLinearTransformation`
      * \tparam StressStensor: type of the stress tensor
-     * \tparam HosfordExponentType: type of the hosford exponent
+     * \tparam BarlatExponentType: type of the hosford exponent
      * (could be a numeric type or an integer type)
      * \tparam es: eigen solver to be used
      * \param[in] s: stress tensor
      * \param[in] l1: first linear transformation
      * \param[in] l2: second linear transformation
      * \param[in] a: Barlat exponent
-     * \param[in] e: criterion used to check if the stress are null
+     * \param[in] e: criterion used to check if the von Mises stress is null
      */
     template<typename StressStensor,
 	     typename BarlatExponentType,
@@ -132,14 +221,15 @@ namespace tfel{
     /*!
      * \brief compute the Barlat yield stress and the its first derivative
      * \tparam StressStensor: type of the stress tensor
-     * \tparam HosfordExponentType: type of the hosford exponent
+     * \tparam BarlatExponentType: type of the hosford exponent
      * (could be a numeric type or an integer type)
      * \tparam es: eigen solver to be used
      * \param[in] s: stress tensor
      * \param[in] l1: first linear transformation
      * \param[in] l2: second linear transformation
      * \param[in] a: Barlat exponent
-     * \param[in] e: criterion used to check if the stress are null
+     * \param[in] e: criterion used to check if the von Mises stress is null.
+     * \see `computeBarlatStress`
      */
     template<typename StressStensor,
 	     typename BarlatExponentType,
@@ -153,9 +243,28 @@ namespace tfel{
     			      const BarlatExponentType,
     			      const BarlatStressType<StressStensor>);
     /*!
+     * \brief compute the Barlat yield stress and its first and second
+     * derivatives with respect to the eigen values of the transformed
+     * stress \f$s_{1}\f$ and \f$s_{2}\f$
+     * \tparam StressStensor: type of the stress tensor
+     * \tparam BarlatExponentType: type of the hosford exponent
+     * (could be a numeric type or an integer type)
+     * \param[in] vp1: eigen values of the first transformed stress
+     * \param[in] vp2: eigen values of the second transformed stress
+     * \param[in] seq: von Mises stress
+     * \param[in] a: Barlat exponent
+     * \see `computeBarlatStress`
+     */
+    template<typename StressStensor,typename BarlatExponentType>
+    BarlatStressAndDerivativesWithRespectToEigenvalues<StressStensor>
+    computeBarlatStressSecondDerivative(const tfel::math::tvector<3u,BarlatStressType<StressStensor>>&,
+					const tfel::math::tvector<3u,BarlatStressType<StressStensor>>&,
+					const BarlatStressType<StressStensor>,
+					const BarlatExponentType);
+    /*!
      * \brief compute the Barlat yield stress and its first and second derivatives
      * \tparam StressStensor: type of the stress tensor
-     * \tparam HosfordExponentType: type of the hosford exponent
+     * \tparam BarlatExponentType: type of the hosford exponent
      * (could be a numeric type or an integer type)
      * \tparam es: eigen solver to be used
      * \param[in] s: stress tensor
@@ -163,6 +272,7 @@ namespace tfel{
      * \param[in] l2: second linear transformation
      * \param[in] a: Barlat exponent
      * \param[in] e: criterion used to check if the stress are null
+     * \see `computeBarlatStress`
      */
     template<typename StressStensor,
 	     typename BarlatExponentType,

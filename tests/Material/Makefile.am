@@ -25,7 +25,8 @@ test_PROGRAMS = boundsCheck \
 		Ogden                                  \
 		SlipSystemsDescriptionTest             \
 		HosfordSecondDerivativeTest            \
-		BarlatSecondDerivativeTest
+		BarlatSecondDerivativeTest             \
+		BarlatSecondDerivativeTest2
 
 LDADD = -lTFELMaterial -lTFELMath       \
 	-lTFELUtilities -lTFELException \
@@ -59,6 +60,7 @@ Ogden_SOURCES = Ogden.cxx
 SlipSystemsDescriptionTest_SOURCES  = SlipSystemsDescriptionTest.cxx
 HosfordSecondDerivativeTest_SOURCES = HosfordSecondDerivativeTest.cxx
 BarlatSecondDerivativeTest_SOURCES  = BarlatSecondDerivativeTest.cxx
+BarlatSecondDerivativeTest2_SOURCES = BarlatSecondDerivativeTest2.cxx
 
 TESTS=$(test_PROGRAMS)
 

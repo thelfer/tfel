@@ -11,13 +11,16 @@
 \newcommand{\tepsilonvis}{\tenseur{\varepsilon}^{\mathrm{vis}}}
 \newcommand{\tdepsilonvis}{\tenseur{\dot{\varepsilon}}^{\mathrm{vis}}}
 \newcommand{\tepsilonp}{\tenseur{\varepsilon}^{\mathrm{p}}}
+\newcommand{\tdepsilonp}{\tenseur{\dot{\varepsilon}}^{\mathrm{p}}}
 \newcommand{\tsigma}{\underline{\sigma}}
 \newcommand{\trace}[1]{{\mathrm{tr}\paren{#1}}}
 \newcommand{\sigmaH}{\sigma_{H}}
 \newcommand{\Frac}[2]{{{\displaystyle \frac{\displaystyle #1}{\displaystyle #2}}}}
 \newcommand{\deriv}[2]{{\displaystyle \frac{\displaystyle \partial #1}{\displaystyle \partial #2}}}
 \newcommand{\sigmaeq}{\sigma_{\mathrm{eq}}}
-
+\newcommand{\bts}[1]{{\left.#1\right|_{t}}}
+\newcommand{\mts}[1]{{\left.#1\right|_{t+\theta\,\Delta\,t}}}
+\newcommand{\ets}[1]{{\left.#1\right|_{t+\Delta\,t}}}
 
 The Hosford equivalent stress is defined by (see @hosford_generalized_1972):
 \[
@@ -30,7 +33,19 @@ Therefore, when \(a\) goes to infinity, the Hosford stress reduces to
 the Tresca stress. When \(n = 2\) the Hosford stress reduces to the
 von Mises stress.
 
-![Comparison of the Hosford stress \(a=100,a=8\) and the von Mises stress](img/HosfordStress.svg "Comparison of the Hosford stress \(a=100,a=8\) and the von Mises stress"){width=70%}
+![Comparison of the Hosford stress \(a=100,a=8\) and the von Mises stress](img/HosfordStress.svg
+ "Comparison of the Hosford stress \(a=100,a=8\) and the von Mises
+ stress in plane stress"){width=70%}
+
+The Hosford stress is an isotropic homogeneous function of
+degree 1. The flow rule is assumed associated and the plastic strain
+rate \(\tdepsilonp\) is given by:
+\[
+\tdepsilonp=\dot{p}\,\deriv{\sigmaeq^{H}}{\tsigma}=\dot{p}\,\tenseur{n}^{H}
+\]
+where \(\dot{p}\) is the rate of the equivalent plastic strain \(p\).
+
+## Yield surface
 
 This paper is dedicated to the implementation a perfect plastic
 behaviour based on the Hosford equivalent stress. The yield surface is
@@ -40,11 +55,84 @@ f\paren{\tsigma}=\sigmaeq^{H}-\sigma_{Y}
 \]
 where the yield stress \(\sigma_{Y}\) is a constant material parameter.
 
+The whole implementation is available
+[here](./gallery/plasticity/HosfordPerfectPlasticity.mfront).
+
 # Implicit scheme
+
+## Choice of the state variables
+
+The behaviour is integrated by an implicit scheme. Two state variables
+are introduced:
+
+- the elastic strain \(\tepsilonel\).
+- the equivalent plastic strain \(p\).
+
+The elastic strain is automatically defined by the
+`StandardElasticity` brick.
+
+The latter could be considered as an integration variable, but, for
+post-processings purpose, we choose to keep it as a state variable.
+
+## Elastic prediction
+
+First, an elastic prediction of the stress \(\tsigma^{\mathrm{tr}}\)
+is made:
+\[
+\tsigma^{\mathrm{tr}}=\lambda\,\trace{\bts{\tepsilonel}+\theta\,\Delta\,\tepsilonto}\,\tenseur{I}+2\,\mu\,\paren{\bts{\tepsilonel}+\theta\,\Delta\,\tepsilonto}
+\]
+
+- If the predicted stress is inside the elastic domain, no plastic
+  flow occurs.
+- Otherwise, the material state at the end of the time step lies on
+  the yield surface.
+
+## Equations governing the material evolution under plastic loading
+
+The equation associated with the evolution of the elastic strain is
+given by the split of strain:
+\[
+f_{\tepsilonel}=\Delta\,\tepsilonel-\Delta\,\tepsilonto+\Delta\,p\,\mts{\tenseur{n}^{H}}
+\]
+
+The derivatives of this equation with respect to
+\(\Delta\,\tepsilonel\) and \(\Delta\,p\) are given by~:
+\[
+\left\{
+\begin{aligned}
+\deriv{f_{\tepsilonel}}{\Delta\,\tepsilonel} &= \tenseurq{I}+2\,\mu\,\theta\,\Delta\,p\,\deriv{\mts{\tenseur{n}^{H}}}{\mts{\tsigma}}\\
+\deriv{f_{\tepsilonel}}{\Delta\,\tepsilonel} &= \mts{\tenseur{n}^{H}}\\
+\end{aligned}
+\right.
+\]
+
+To determine the equivalent plastic strain increment, the following
+equation must be satisfied:
+\[
+f_{p}=\mts{\sigmaeq^{H}}-\sigma_{Y}=0
+\]
+
+The derivatives of this equation with respect to
+\(\Delta\,\tepsilonel\) and \(\Delta\,p\) are given by:
+\[
+\left\{
+\begin{aligned}
+\deriv{f_{p}}{\Delta\,\tepsilonel} &= 2\,\mu\,\theta\,\mts{\tenseur{n}^{H}}\\
+\deriv{f_{p}}{\Delta\,p}           &= 0\\
+\end{aligned}
+\right.
+\]
 
 # Implementation
 
 ## Metadata
+
+The beginning of the file gives some information about the behaviour:
+
+- the integration scheme used, selected by the `@DSL` keyword.
+- the name of the behaviour, introduced by the `@Behaviour` keyword.
+- the author of the implementation (`@Author`).
+- a small description of the behaviour (`@Description`).
 
 ~~~~{.cpp}
 @DSL       Implicit;
@@ -58,6 +146,10 @@ where the yield stress \(\sigma_{Y}\) is a constant material parameter.
 ~~~~
 
 ## Supported modelling hypothesis
+
+Thanks to the `StandardElasticity` brick, all the modelling hypotheses
+can be supported. The following statement, starting with the
+`@ModellingHypotheses`, enables all the modelling hypotheses:
 
 ~~~~{.cpp}
 @ModellingHypotheses {".+"};
@@ -80,13 +172,16 @@ brick which provides:
 
 This behaviour brick is fully described [here](BehaviourBricks.html).
 
-The usage of the `StandardElasticity` is declared as follows:
+The usage of the `StandardElasticity` is introduced as follows:
 
 ~~~~{.cpp}
 @Brick StandardElasticity;
 ~~~~
 
 ## Numerical parameters
+
+The following part of file give some default values for numerical
+parameters used by the integration algorithm:
 
 ~~~~{.cpp}
 @Epsilon 1.e-16;
@@ -95,6 +190,12 @@ The usage of the `StandardElasticity` is declared as follows:
 
 ## State variables
 
+The elastic strain is automatically declared the `StandardElasticity`
+brick. The associated variable is `eel`.
+
+The following statement introduces the equivalent plastic strain named
+`p`:
+
 ~~~~{.cpp}
 @StateVariable strain p;
 p.setGlossaryName("EquivalentPlasticStrain");
@@ -102,13 +203,28 @@ p.setGlossaryName("EquivalentPlasticStrain");
 
 ## Material constants
 
+The material properties are hard-coded. The
+`@ElasticMaterialProperties` is used to declare the Young modulus and
+the Poisson ratio.
+
 ~~~~{.cpp}
 @ElasticMaterialProperties {150e9,0.3};
+~~~~
+
+In the `Implicit` scheme, the lame coefficient are automatically
+deduced from the Young modulus and the Poisson ratio.
+
+The parameters associated with the plastic part of the behaviour are
+defined as follows:
+
+~~~~{.cpp}
 @Parameter a    = 8;
 @Parameter sigy = 150e6;
 ~~~~
 
 ## Local variable declaration
+
+A boolean `b` is declared as a local variable.
 
 ~~~~{.cpp}
 @LocalVariable bool b;
@@ -215,3 +331,5 @@ for theta in [pi*(-1+2*float(i)/99) for i in range(0,100)]:
 ~~~~
 
 # References
+
+<!-- Local IspellDict: english -->

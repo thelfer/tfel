@@ -2,6 +2,7 @@
 % Thomas Helfer
 % 2017
 
+\newcommand{\absvalue}[1]{{\left|#1\right|}}
 \newcommand{\Frac}[2]{\displaystyle\frac{\displaystyle #1}{\displaystyle #2}}
 \newcommand{\paren}[1]{\left(#1\right)}
 \newcommand{\deriv}[2]{\Frac{\partial #1}{\partial #2}}
@@ -559,7 +560,7 @@ and second derivatives. *This header is automatically included by
 
 The Hosford equivalent stress is defined by:
 \[
-\sigmaeq=\sqrt[a]{\Frac{1}{2}\paren{\paren{s_{1}-s_{2}}^{a}+\paren{s_{1}-s_{3}}^{a}+\paren{s_{2}-s_{3}}^{a}}}
+\sigmaeq^{H}=\sqrt[a]{\Frac{1}{2}\paren{\absvalue{\sigma_{1}-\sigma_{2}}^{a}+\absvalue{\sigma_{1}-\sigma_{3}}^{a}+\absvalue{\sigma_{2}-\sigma_{3}}^{a}}}
 \]
 where \(s_{1}\), \(s_{2}\) and \(s_{3}\) are the eigenvalues of the
 stress.
@@ -568,14 +569,14 @@ Therefore, when \(a\) goes to infinity, the Hosford stress reduces to
 the Tresca stress. When \(n = 2\) the Hosford stress reduces to the
 von Mises stress.
 
-The following function has been implemented:
+The following functions has been implemented:
 
 - `computeHosfordStress`: return the Hosford equivalent stress
-- `computeHosfordStressNormal`: return a tuple containg the Hosford
+- `computeHosfordStressNormal`: return a tuple containing the Hosford
   equivalent stress and its first derivative (the normal)
-- `computeHosfordStressSecondDerivative`: return a tuple containg the
-  Hosford equivalent stress, its first derivative (the normal) and the
-  second derivative.
+- `computeHosfordStressSecondDerivative`: return a tuple containing
+  the Hosford equivalent stress, its first derivative (the normal) and
+  the second derivative.
 
 #### Example
 
@@ -598,6 +599,115 @@ If `C++-17` is available, the previous code can be made much more readable:
 ~~~~{.cpp}
 const auto [seq,n,dn] = computeHosfordStressSecondDerivative(s,a,seps);
 ~~~~
+
+### Barlat equivalent stress
+
+The header `TFEL/Material/Barlat.hxx` introduces various functions
+which are meant to compute the Barlat equivalent stress and its first
+and second derivatives. *This header is automatically included by
+`MFront`* for orthotropic behaviours.
+
+The Barlat equivalent stress is defined as follows (See @barlat_linear_2005):
+\[
+\sigmaeq^{B}=
+\sqrt[a]{
+  \frac{1}{4}\left(
+  \sum_{i=0}^{3}
+  \sum_{j=0}^{3}
+  \absvalue{s'_{i}-s''_{j}}^{a}
+  \right)
+}
+\]
+
+where \(s'_{i}\) and \(s''_{i}\) are the eigenvalues of two
+transformed stresses \(\tenseur{s}'\) and \(\tenseur{s}''\) by two
+linear transformation \(\tenseurq{L}'\) and \(\tenseurq{L}''\):
+\[
+\left\{
+\begin{aligned}
+\tenseur{s}'  &= \tenseurq{L'} \,\colon\,\tsigma \\
+\tenseur{s}'' &= \tenseurq{L''}\,\colon\,\tsigma \\
+\end{aligned}
+\right.
+\]
+
+The linear transformations \(\tenseurq{L}'\) and \(\tenseurq{L}''\)
+are defined by \(9\) coefficients (each) which describe the material
+orthotropy, as follows:
+\[
+\tenseurq{L}'
+\begin{pmatrix}
+0 & -c'_{12} & -c'_{13} & 0 & 0 & 0 \\
+-c'_{21} & 0 & -c'_{23} & 0 & 0 & 0 \\
+-c'_{31} & -c'_{32} & 0 & 0 & 0 & 0 \\
+0 & 0 & 0 & c'_{44} & 0 & 0 \\
+0 & 0 & 0 & 0 & c'_{55} & 0 \\
+0 & 0 & 0 & 0 & 0 & c'_{66} \\
+\end{pmatrix}
+\quad
+\text{and}
+\quad
+\tenseurq{L}''
+\begin{pmatrix}
+0 & -c''_{12} & -c''_{13} & 0 & 0 & 0 \\
+-c''_{21} & 0 & -c''_{23} & 0 & 0 & 0 \\
+-c''_{31} & -c''_{32} & 0 & 0 & 0 & 0 \\
+0 & 0 & 0 & c''_{44} & 0 & 0 \\
+0 & 0 & 0 & 0 & c''_{55} & 0 \\
+0 & 0 & 0 & 0 & 0 & c''_{66} \\
+\end{pmatrix}
+\]
+
+The following functions have been implemented:
+
+- `computeBarlatStress`: return the Barlat equivalent stress
+- `computeBarlatStressNormal`: return a tuple containing the Barlat
+  equivalent stress and its first derivative (the normal)
+- `computeBarlatStressSecondDerivative`: return a tuple containing the
+  Barlat equivalent stress, its first derivative (the normal) and the
+  second derivative.
+
+#### Linear transformations
+
+To define the linear transformations, the
+`makeBarlatLinearTransformation` function has been introduced. This
+function takes two template parameter:
+
+- the space dimension (\(1\), \(2\), and \(3\))
+- the numeric type used (automatically deduced)
+
+This functions takes the \(9\) coefficients as arguments, as follows:
+
+~~~~{.cpp}
+const auto l1 = makeBarlatLinearTransformationType<3>(c_12,c_21,c_13,c_31,
+                                                      c_23,c_32,c_44,c_55,c_55);
+~~~~
+
+> **Note** In his paper, Barlat and coworkers uses the following convention for
+> storing symmetric tensors:
+> 
+> \[
+> \begin{pmatrix}
+> xx & yy & zz & yz & zx & xy
+> \end{pmatrix}
+> \]
+> 
+> which is not consistent with the
+> `TFEL`/`Cast3M`/`Abaqus`/`Ansys` conventions:
+> 
+> \[
+> \begin{pmatrix}
+> xx & yy & zz & xy & xz & yz
+> \end{pmatrix}
+> \]
+> 
+> Therefore, if one wants to uses coeficients \f(c^{B}\f) given
+> by Barlat, one shall call this function as follows:
+> 
+> ~~~~{.cpp}
+> const auto l1 = makeBarlatLinearTransformationType<3>(cB_12,cB_21,cB_13,cB_31,
+>                                                       cB_23,cB_32,cB_66,cBB_55,cBB_44);
+> ~~~~
 
 ### The `SlipSystemsDescription` class
 

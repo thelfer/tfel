@@ -486,7 +486,6 @@ if(install-system-libraries)
 	string(REPLACE ".lib" ".dll"
 	       Boost_PYTHON_DLL_RELEASE
 	       "${Boost_PYTHON_LIBRARY_RELEASE}")
-        message("HERE2: ${Boost_PYTHON_DLL_RELEASE}")
         add_to_system_runtime_libs("${Boost_PYTHON_DLL_RELEASE}")
       endif(Boost_PYTHON_LIBRARY_RELEASE)
     endif(enable-python-bindings)

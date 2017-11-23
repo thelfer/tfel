@@ -680,7 +680,9 @@ build the Hill tensor:
 
 ### Hosford stress
 
-![Comparison of the Hosford stress \(a=100,a=8\) and the von Mises stress](img/HosfordStress.svg "Comparison of the Hosford stress \(a=100,a=8\) and the von Mises stress"){width=70%}
+![Comparison of the Hosford stress \(a=100,a=8\) and the von Mises stress](img/HosfordStress.svg
+ "Comparison of the Hosford stress \(a=100,a=8\) and the von Mises
+ stress in plane stress"){width=70%}
 
 The header `TFEL/Material/Hosford.hxx` introduces three functions
 which are meant to compute the Hosford equivalent stress and its first
@@ -724,34 +726,51 @@ Those functions have two template parameters:
 The Barlat equivalent stress is defined as follows (See @barlat_linear_2005):
 \[
 \sigmaeq^{B}=
-\sqrt[a]{\Frac{1}{4}\paren{
-\begin{aligned}
-\absvalue{s'_{1}-s''_{1}}^{a}+\absvalue{s'_{1}-s''_{2}}^{a}+\absvalue{s'_{1}-s''_{3}}^{a}+\\
-\absvalue{s'_{2}-s''_{1}}^{a}+\absvalue{s'_{2}-s''_{2}}^{a}+\absvalue{s'_{2}-s''_{3}}^{a}+\\
-\absvalue{s'_{3}-s''_{1}}^{a}+\absvalue{s'_{3}-s''_{2}}^{a}+\absvalue{s'_{3}-s''_{3}}^{a}
-\end{aligned}
-}}
+\sqrt[a]{
+  \frac{1}{4}\left(
+  \sum_{i=0}^{3}
+  \sum_{j=0}^{3}
+  \absvalue{s'_{i}-s''_{j}}^{a}
+  \right)
+}
 \]
 
 where \(s'_{i}\) and \(s''_{i}\) are the eigenvalues of two
 transformed stresses \(\tenseur{s}'\) and \(\tenseur{s}''\) by two
 linear transformation \(\tenseurq{L}'\) and \(\tenseurq{L}''\):
 \[
+\left\{
 \begin{aligned}
 \tenseur{s}'  &= \tenseurq{L'} \,\colon\,\tsigma \\
 \tenseur{s}'' &= \tenseurq{L''}\,\colon\,\tsigma \\
 \end{aligned}
+\right.
 \]
 
-A linear transformation is defined as follows:
+The linear transformations \(\tenseurq{L}'\) and \(\tenseurq{L}''\)
+are defined by \(9\) coefficients (each) which describe the material
+orthotropy, as follows:
 \[
+\tenseurq{L}'
 \begin{pmatrix}
-0 & -c_{12} & -c_{13} & 0 & 0 & 0 \\
--c_{21} & 0 & -c_{23} & 0 & 0 & 0 \\
--c_{31} & -c_{32} & 0 & 0 & 0 & 0 \\
-0 & 0 & 0 & c_{44} & 0 & 0 \\
-0 & 0 & 0 & 0 & c_{55} & 0 \\
-0 & 0 & 0 & 0 & 0 & c_{66} \\
+0 & -c'_{12} & -c'_{13} & 0 & 0 & 0 \\
+-c'_{21} & 0 & -c'_{23} & 0 & 0 & 0 \\
+-c'_{31} & -c'_{32} & 0 & 0 & 0 & 0 \\
+0 & 0 & 0 & c'_{44} & 0 & 0 \\
+0 & 0 & 0 & 0 & c'_{55} & 0 \\
+0 & 0 & 0 & 0 & 0 & c'_{66} \\
+\end{pmatrix}
+\quad
+\text{and}
+\quad
+\tenseurq{L}''
+\begin{pmatrix}
+0 & -c''_{12} & -c''_{13} & 0 & 0 & 0 \\
+-c''_{21} & 0 & -c''_{23} & 0 & 0 & 0 \\
+-c''_{31} & -c''_{32} & 0 & 0 & 0 & 0 \\
+0 & 0 & 0 & c''_{44} & 0 & 0 \\
+0 & 0 & 0 & 0 & c''_{55} & 0 \\
+0 & 0 & 0 & 0 & 0 & c''_{66} \\
 \end{pmatrix}
 \]
 
@@ -764,8 +783,7 @@ function takes two template parameter:
 - the space dimension (\(1\), \(2\), and \(3\))
 - the numeric type used (automatically deduced)
 
-This functions takes the \(9\) non zero coefficients as arguments, as
-follows:
+This functions takes the \(9\) coefficients as arguments, as follows:
 
 ~~~~{.cpp}
 const auto l1 = makeBarlatLinearTransformationType<3>(c_12,c_21,c_13,c_31,
