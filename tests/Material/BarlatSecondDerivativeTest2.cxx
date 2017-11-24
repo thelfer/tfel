@@ -71,8 +71,8 @@ struct BarlatSecondDerivativeTest2 final
     const auto s1   = eval(l1*s);
     const auto s2   = eval(l2*s);
     // eigen values of s1 and s1
-    const auto vp1 = s1.template computeEigenValues();
-    const auto vp2 = s2.template computeEigenValues();
+    const auto vp1 = s1.computeEigenValues();
+    const auto vp2 = s2.computeEigenValues();
     // Barlat potential and its derivatives
     const auto d = computeBarlatStressSecondDerivative<stensor<3u,double>>(vp1,vp2,seq,8);
     // numerical differentiation with respect to vp1
@@ -161,8 +161,8 @@ struct BarlatSecondDerivativeTest2 final
     const auto s1   = eval(l1*s);
     const auto s2   = eval(l2*s);
     // eigen values of s1 and s1
-    const auto vp1 = s1.template computeEigenValues();
-    const auto vp2 = s2.template computeEigenValues();
+    const auto vp1 = s1.computeEigenValues();
+    const auto vp2 = s2.computeEigenValues();
     // Barlat potential and its derivatives
     const auto d = computeBarlatStressSecondDerivative<stensor<3u,double>>(vp1,vp2,seq,8);
     // numerical differentiation with respect to vp2

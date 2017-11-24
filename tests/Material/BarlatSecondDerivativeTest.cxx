@@ -127,7 +127,7 @@ struct BarlatSecondDerivativeTest final
     using size_type = typename stensor<N,double>::size_type;
     const auto seps = 1.e-10;
     const auto eps1 = 1.e-8;
-    const auto eps2 = 1.e-8;
+    const auto eps2 = 2.e-8;
     const auto s    = stensor<N,double>{values};
     const auto seq  = sigmaeq(s);
     const auto n    = (seq<seps ?
