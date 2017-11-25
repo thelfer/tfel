@@ -43,8 +43,7 @@ struct ST2toST2ChangeBasisTest
     : tfel::tests::TestCase("TFEL/Math","ST2toST2ChangeBasis")
   {} // end of ST2toST2ChangeBasis
   
-  tfel::tests::TestResult
-  execute()
+  tfel::tests::TestResult execute() override
   {
     auto from_euler = [](const double psi,const double the,const double phi){
       const double cospsi = std::cos(psi);

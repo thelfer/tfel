@@ -37,8 +37,7 @@ struct TransposeDerivativeTest final
     this->execute<3>();
     return this->result;
   } // end of execute
-  virtual ~TransposeDerivativeTest()
-  {}
+  ~TransposeDerivativeTest() override = default;
  private:
   template<unsigned short N>
   void execute(){

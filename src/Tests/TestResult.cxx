@@ -53,20 +53,17 @@ namespace tfel
      return this->d;
     } // end of TestResult::succees
 
-    TestResult::const_iterator
-    TestResult::begin() const
+    TestResult::const_iterator TestResult::begin() const
     {
       return std::vector<TestResult>::begin();
     } // end of TestResult::begin()
 
-    TestResult::const_iterator
-    TestResult::end() const
+    TestResult::const_iterator TestResult::end() const
     {
       return std::vector<TestResult>::end();
     } // end of TestResult::end()
 
-    void
-    TestResult::append(const TestResult& r)
+    void TestResult::append(const TestResult& r)
     {
       if(!r.success()){
 	this->s = false;

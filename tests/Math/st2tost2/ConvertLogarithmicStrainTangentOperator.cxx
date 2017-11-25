@@ -32,8 +32,7 @@ struct ConvertLogarithmicStrainTangentOperatorTest
     : tfel::tests::TestCase("TFEL/Math","ConvertLogarithmicStrainTangentOperator")
   {} // end of ConvertLogarithmicStrainTangentOperatorTest
   
-  tfel::tests::TestResult
-  execute()
+  tfel::tests::TestResult execute() override
   {
     //    this->test<1>();
     // this->test<2>();

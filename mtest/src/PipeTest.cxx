@@ -109,7 +109,7 @@ namespace mtest{
       }
       return this->results;
     }
-    virtual ~IntegralTest() = default;
+    ~IntegralTest() override = default;
   protected:
     enum Variable{
       INNERDISPLACEMENT,
@@ -196,7 +196,7 @@ namespace mtest{
       }
       return this->results;
     }
-    virtual ~ProfileTest() = default;
+    ~ProfileTest() override = default;
   protected:
     /*!
      * \return the array of values in which the variable tested is

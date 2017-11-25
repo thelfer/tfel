@@ -69,7 +69,7 @@ struct Expr4Test final
     TFEL_TESTS_ASSERT(abs(v4(2)-12)==0);
     return this->result;
   }
-  virtual ~Expr4Test() = default;
+  ~Expr4Test() override = default;
 };
 
 TFEL_TESTS_GENERATE_PROXY(Expr4Test,"Expr4Test");

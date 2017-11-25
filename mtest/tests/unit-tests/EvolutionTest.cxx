@@ -52,7 +52,7 @@ struct EvolutionTestUnitTest final
     return this->result;
   } // end of execute()
   //! destructor
-  ~EvolutionTestUnitTest() = default;
+  ~EvolutionTestUnitTest() override = default;
 };
 
 TFEL_TESTS_GENERATE_PROXY(EvolutionTestUnitTest,"EvolutionTestUnitTest");

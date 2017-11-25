@@ -43,7 +43,7 @@ struct Expr9Test final
     expr2 e(t1,t2);
     return this->result;
   }
-  virtual ~Expr9Test() = default;
+   ~Expr9Test() override = default;
 };
 
 TFEL_TESTS_GENERATE_PROXY(Expr9Test,"Expr9Test");

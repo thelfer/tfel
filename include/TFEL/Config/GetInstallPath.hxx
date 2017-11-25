@@ -1,5 +1,5 @@
 /*!
- * \file   GetInstallPath.hxx
+ * \file   include/TFEL/Config/GetInstallPath.hxx
  * \brief    
  * \author THOMAS HELFER
  * \date   21 déc. 2015

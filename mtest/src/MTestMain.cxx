@@ -56,7 +56,7 @@ namespace mtest
      */
     int execute();
     //! destructor
-    ~MTestMain();
+    ~MTestMain() override;
   protected:
     enum {
       MTEST,

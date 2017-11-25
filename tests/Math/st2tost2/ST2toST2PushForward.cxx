@@ -26,8 +26,7 @@ struct ST2toST2PushForwardTest
     : tfel::tests::TestCase("TFEL/Math","ST2toST2PushForward")
   {} // end of ST2toST2PushForward
   
-  tfel::tests::TestResult
-  execute()
+  tfel::tests::TestResult execute() override
   {
     this->test<1>();
     this->test<2>();

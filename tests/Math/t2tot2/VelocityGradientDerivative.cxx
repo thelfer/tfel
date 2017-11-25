@@ -40,8 +40,7 @@ struct VelocityGradientDerivativeTest final
     this->execute2<3>();
     return this->result;
   } // end of execute
-  virtual ~VelocityGradientDerivativeTest()
-  {}
+  ~VelocityGradientDerivativeTest() override = default;
  private:
   template<unsigned short N>
   void execute(){

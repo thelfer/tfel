@@ -113,11 +113,8 @@ struct ExprTest final
     TFEL_TESTS_ASSERT(c(2u)==1);
     return this->result;
   }
-  virtual ~ExprTest();
+  ~ExprTest() override = default;
 };
-
-ExprTest::~ExprTest()
-{}
 
 TFEL_TESTS_GENERATE_PROXY(ExprTest,"ExprTest");
 

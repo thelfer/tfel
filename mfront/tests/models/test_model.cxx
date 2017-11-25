@@ -38,7 +38,7 @@ struct B4CConcentrationModelTest final
     return this->result;
   } // end of execute
   //! destructor
-  virtual ~B4CConcentrationModelTest() = default;
+  ~B4CConcentrationModelTest() override = default;
  private:
   void test1(){
     mfront::B4C_ConcentrationModel<double> cm;

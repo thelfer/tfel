@@ -21,7 +21,7 @@ struct ProcessManagerCommandWrapper final
 {
   bool execute(const tfel::system::ProcessManager::StreamId,
 	       const tfel::system::ProcessManager::StreamId) final;
-  virtual ~ProcessManagerCommandWrapper();
+  ~ProcessManagerCommandWrapper() override;
 }; // end of struct Command
 
 bool

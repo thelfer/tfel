@@ -33,8 +33,7 @@ struct TVector7
 			    "TVector7")
   {} // end of TVector7
 
-  tfel::tests::TestResult
-  execute()
+  tfel::tests::TestResult execute() override
   {
     using namespace tfel::fsalgo;
     using namespace tfel::math;

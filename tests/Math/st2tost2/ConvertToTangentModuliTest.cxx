@@ -33,8 +33,7 @@ struct ConvertToTangentModuliTest
     : tfel::tests::TestCase("TFEL/Math","ConvertToTangentModuli")
   {} // end of ConvertToTangentModuli
   
-  tfel::tests::TestResult
-  execute()
+  tfel::tests::TestResult execute() override
   {
     this->test<1>();
     this->test<2>();

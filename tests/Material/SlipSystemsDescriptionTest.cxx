@@ -34,7 +34,7 @@ struct SlipSystemsDescriptionTest final
     this->checkHCP();
     return this->result;
   }
-  virtual ~SlipSystemsDescriptionTest() = default;
+  ~SlipSystemsDescriptionTest() override = default;
  private:
 
   using SlipSystemsDescription = tfel::material::SlipSystemsDescription;

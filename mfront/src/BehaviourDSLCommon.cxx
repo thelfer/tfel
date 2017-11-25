@@ -4903,6 +4903,7 @@ namespace mfront{
        << "#include\"TFEL/Material/Hosford.hxx\"\n";
     if(this->mb.getSymmetryType()==ORTHOTROPIC){
       os << "#include\"TFEL/Material/Hill.hxx\"\n"
+	 << "#include\"TFEL/Material/Barlat.hxx\"\n"
 	 << "#include\"TFEL/Material/OrthotropicAxesConvention.hxx\"\n";
     }
     if(this->mb.getAttribute(BehaviourDescription::computesStiffnessTensor,false)){

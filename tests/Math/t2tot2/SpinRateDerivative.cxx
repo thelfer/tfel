@@ -40,8 +40,7 @@ struct SpinRateDerivativeTest final
     this->execute2<3>();
     return this->result;
   } // end of execute
-  virtual ~SpinRateDerivativeTest()
-  {}
+  ~SpinRateDerivativeTest() override = default;
  private:
   template<unsigned short N>
   void execute(){

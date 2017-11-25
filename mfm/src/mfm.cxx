@@ -215,7 +215,7 @@ private:
     return *(this->currentArgument);
   }
   
-  void treatUnknownArgument()
+  void treatUnknownArgument() override
   {
     using namespace tfel::system;
     auto throw_if = [](const bool c,const std::string& m){
@@ -260,12 +260,11 @@ private:
     }
   } // end of treatUnknownArgument
   
-  std::string getVersionDescription() const{
+  std::string getVersionDescription() const override{
     return "1.0";
   }
 
-  std::string getUsageDescription() const
-  {
+  std::string getUsageDescription() const override{
     return "Usage: "+this->programName+" [options] [files]";
   }
 

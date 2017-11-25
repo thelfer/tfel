@@ -774,6 +774,27 @@ orthotropy, as follows:
 \end{pmatrix}
 \]
 
+The following function has been implemented:
+
+- `computeBarlatStress`: return the Barlat equivalent stress
+- `computeBarlatStressNormal`: return a tuple containg the Barlat
+  equivalent stress and its first derivative (the normal)
+- `computeBarlatStressSecondDerivative`: return a tuple containg the
+  Barlat equivalent stress, its first derivative (the normal) and the
+  second derivative.
+
+The implementation of those functions are greatly inspired by the work
+of Scherzinger (see @scherzinger_return_2017). In particular, great
+care is given to avoid overflows in the computations of the Barlat
+stress.
+
+Those functions have two template parameters:
+
+- the type of symmetric tensors used for the stress tensor
+  (automatically deduced, but required if the second parameter is
+  specified).
+- the eigen solver to be used (See Section&nbsp;@sec:eigensolvers).
+
 #### Linear transformations
 
 To define the linear transformations, the

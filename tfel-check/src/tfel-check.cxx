@@ -54,7 +54,7 @@ namespace tfel{
        */
       int execute();
       //! desctructor
-      virtual ~TFELCheck();
+      ~TFELCheck() override;
     protected:
       /*!
        * \brief method called while parsing unregistred command line

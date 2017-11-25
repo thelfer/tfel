@@ -32,8 +32,7 @@ struct RateOfDeformationDerivativeTest final
     this->execute<3>();
     return this->result;
   } // end of execute
-  virtual ~RateOfDeformationDerivativeTest()
-  {}
+  ~RateOfDeformationDerivativeTest() override = default;
  private:
   template<unsigned short N>
   void execute(){

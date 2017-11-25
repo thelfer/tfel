@@ -18,6 +18,129 @@
 \newcommand{\deriv}[2]{{\displaystyle \frac{\displaystyle \partial #1}{\displaystyle \partial #2}}}
 \newcommand{\sigmaeq}{\sigma_{\mathrm{eq}}}
 
+# Barlat stress (24/11/2017)
+
+Functions to compute the Barlat equivalent stress and its first and
+second derivatives are now available in `TFEL/Material`.
+
+The Barlat equivalent stress is defined as follows (See @barlat_linear_2005):
+\[
+\sigmaeq^{B}=
+\sqrt[a]{
+  \frac{1}{4}\left(
+  \sum_{i=0}^{3}
+  \sum_{j=0}^{3}
+  \absvalue{s'_{i}-s''_{j}}^{a}
+  \right)
+}
+\]
+
+where \(s'_{i}\) and \(s''_{i}\) are the eigenvalues of two
+transformed stresses \(\tenseur{s}'\) and \(\tenseur{s}''\) by two
+linear transformation \(\tenseurq{L}'\) and \(\tenseurq{L}''\):
+\[
+\left\{
+\begin{aligned}
+\tenseur{s}'  &= \tenseurq{L'} \,\colon\,\tsigma \\
+\tenseur{s}'' &= \tenseurq{L''}\,\colon\,\tsigma \\
+\end{aligned}
+\right.
+\]
+
+The linear transformations \(\tenseurq{L}'\) and \(\tenseurq{L}''\)
+are defined by \(9\) coefficients (each) which describe the material
+orthotropy, as follows:
+\[
+\tenseurq{L}'
+\begin{pmatrix}
+0 & -c'_{12} & -c'_{13} & 0 & 0 & 0 \\
+-c'_{21} & 0 & -c'_{23} & 0 & 0 & 0 \\
+-c'_{31} & -c'_{32} & 0 & 0 & 0 & 0 \\
+0 & 0 & 0 & c'_{44} & 0 & 0 \\
+0 & 0 & 0 & 0 & c'_{55} & 0 \\
+0 & 0 & 0 & 0 & 0 & c'_{66} \\
+\end{pmatrix}
+\quad
+\text{and}
+\quad
+\tenseurq{L}''
+\begin{pmatrix}
+0 & -c''_{12} & -c''_{13} & 0 & 0 & 0 \\
+-c''_{21} & 0 & -c''_{23} & 0 & 0 & 0 \\
+-c''_{31} & -c''_{32} & 0 & 0 & 0 & 0 \\
+0 & 0 & 0 & c''_{44} & 0 & 0 \\
+0 & 0 & 0 & 0 & c''_{55} & 0 \\
+0 & 0 & 0 & 0 & 0 & c''_{66} \\
+\end{pmatrix}
+\]
+
+When all the coefficients \(c'_{ji}\) and \(c''_{ji}\) are equal to
+\(1\), the Barlat equivalent stress reduces to the Hosford equivalent
+stress.
+
+The following function has been implemented:
+
+- `computeBarlatStress`: return the Barlat equivalent stress
+- `computeBarlatStressNormal`: return a tuple containg the Barlat
+  equivalent stress and its first derivative (the normal)
+- `computeBarlatStressSecondDerivative`: return a tuple containg the
+  Barlat equivalent stress, its first derivative (the normal) and the
+  second derivative.
+
+The implementation of those functions are greatly inspired by the work
+of Scherzinger (see @scherzinger_return_2017). In particular, great
+care is given to avoid overflows in the computations of the Barlat
+stress.
+
+Those functions have two template parameters:
+
+- the type of symmetric tensors used for the stress tensor
+  (automatically deduced, but required if the second parameter is
+  specified).
+- the eigen solver to be used.
+
+## Example
+
+The following example computes the Hosford equivalent stress, its
+normal and second derivative:
+
+~~~~{.cpp}
+const auto l1 = makeBarlatLinearTransformation<N,double>(-0.069888,0.936408,
+                                                         0.079143,1.003060,
+                                                         0.524741,1.363180,
+                                                         1.023770,1.069060,
+                                                         0.954322);
+const auto l2 = makeBarlatLinearTransformation<N,double>(-0.981171,0.476741,
+    							                         0.575316,0.866827,
+    							                         1.145010,-0.079294,
+    							                         1.051660,1.147100,
+    							                         1.404620);
+stress seq;
+Stensor  n;
+Stensor4 dn;
+std::tie(seq,n,dn) = computeBarlatStressSecondDerivative(s,l1,l2,a,seps);
+~~~~
+
+In this example, `s` is the stress tensor, `a` is the Hosford
+exponent, `seps` is a numerical parameter used to detect when two
+eigenvalues are equal.
+
+If `C++-17` is available, the previous code can be made much more readable:
+
+~~~~{.cpp}
+const auto l1 = makeBarlatLinearTransformation<N,double>(-0.069888,0.936408,
+                                                         0.079143,1.003060,
+                                                         0.524741,1.363180,
+                                                         1.023770,1.069060,
+                                                         0.954322);
+const auto l2 = makeBarlatLinearTransformation<N,double>(-0.981171,0.476741,
+    							                         0.575316,0.866827,
+    							                         1.145010,-0.079294,
+    							                         1.051660,1.147100,
+    							                         1.404620);
+const auto [seq,n,dn] = computeBarlatStressSecondDerivative(s,l1,l2,a,seps);
+~~~~
+
 # Hosford equivalent stress (17/10/2017)
 
 ![Comparison of the Hosford stress \(a=100,a=8\) and the von Mises stress](img/HosfordStress.svg "Comparison of the Hosford stress \(a=100,a=8\) and the von Mises stress in plane stress"){width=70%}

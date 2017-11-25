@@ -78,7 +78,7 @@ struct Expr8Test final
     TFEL_TESTS_ASSERT(std::abs(s3(3)-0)<eps);
     return this->result;
   }
-  virtual ~Expr8Test() = default;
+  ~Expr8Test() override = default;
 };
 
 TFEL_TESTS_GENERATE_PROXY(Expr8Test,"Expr8Test");

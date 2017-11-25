@@ -65,7 +65,7 @@ struct Expr3Test final
 
     return this->result;
   }
-  virtual ~Expr3Test() = default;
+  ~Expr3Test() override = default;
 };
 
 TFEL_TESTS_GENERATE_PROXY(Expr3Test,"Expr3Test");
