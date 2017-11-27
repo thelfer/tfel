@@ -37,18 +37,17 @@ namespace tfel
       : d(c),s(b)
     {} // end of TestResult::TestResult
     
-    TestResult::TestResult(const TestResult&)  = default;
-    TestResult::TestResult(TestResult&&)  = default;
-    TestResult& TestResult::operator = (const TestResult&) = default;
-    TestResult& TestResult::operator = (TestResult&&) = default;
+    TestResult::TestResult(const TestResult&) = default;
+    TestResult::TestResult(TestResult&&) noexcept = default;
+    TestResult& TestResult::operator= (const TestResult&) = default;
+    TestResult& TestResult::operator= (TestResult&&) = default;
 
     bool TestResult::success() const
     {
      return this->s;
     } // end of TestResult::succees
 
-    const std::string&
-    TestResult::details() const
+    const std::string& TestResult::details() const
     {
      return this->d;
     } // end of TestResult::succees
@@ -87,8 +86,8 @@ namespace tfel
   
     TestResult::~TestResult() = default;
 
-    std::ostream&
-    operator << (std::ostream& os,const TestResult& r)
+    std::ostream& operator << (std::ostream& os,
+			       const TestResult& r)
     {
       os << "Result : ";
       if(r.success()){
@@ -96,8 +95,7 @@ namespace tfel
       } else {
 	os << "FAILED\n";
       }
-      os << '\n';
-      os << "Details : " << r.details() << '\n';
+      os << "\nDetails : " << r.details() << '\n';
       for(const auto& t : r){
 	os << t << '\n';
       }

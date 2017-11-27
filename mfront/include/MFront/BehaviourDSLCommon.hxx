@@ -529,9 +529,9 @@ namespace mfront{
      */
     virtual void
     registerDefaultVarNames();
-    //!\brief treat the @Brick keyword
+    //!\brief treat the `@Brick` keyword
     virtual void treatBrick();
-    //!\brief treat the @Model keyword
+    //!\brief treat the `@Model` keyword
     virtual void treatModel();
     /*!
      * \brief get a model description from an mfront file
@@ -540,117 +540,117 @@ namespace mfront{
      */
     virtual ModelDescription
     getModelDescription(const std::string&);
-    //! \brief treat the @Private keyword
+    //! \brief treat the `@Private` keyword
     virtual void treatPrivate() override;
-    //! \brief treat the @Members keyword
+    //! \brief treat the `@Members` keyword
     virtual void treatMembers() override;
-    //! \brief treat the @StrainMeasure keyword
+    //! \brief treat the `@StrainMeasure` keyword
     virtual void treatStrainMeasure();
-    //! \brief treat the @TangentOperator keyword
+    //! \brief treat the `@TangentOperator` keyword
     virtual void treatTangentOperator();
-    //! \brief treat the @IsTangentOperatorSymmetric keyword
+    //! \brief treat the `@IsTangentOperatorSymmetric` keyword
     virtual void treatIsTangentOperatorSymmetric();
-    //! \brief treat the @Material keyword
+    //! \brief treat the `@Material` keyword
     virtual void treatMaterial();
-    //! \brief treat the @Library keyword
+    //! \brief treat the `@Library` keyword
     virtual void treatLibrary();
-    //! \brief treat the @Profiling keyword
+    //! \brief treat the `@Profiling` keyword
     virtual void treatProfiling();
-    //! \brief treat the @ModellingHypothesis keyword
+    //! \brief treat the `@ModellingHypothesis` keyword
     virtual void treatModellingHypothesis();
-    //! \brief treat the @ModellingHypotheses keyword
+    //! \brief treat the `@ModellingHypotheses` keyword
     virtual void treatModellingHypotheses();
-    //! \brief treat the @UpdateAuxiliaryStateVariables keyword
+    //! \brief treat the `@UpdateAuxiliaryStateVariables` keyword
     virtual void treatUpdateAuxiliaryStateVariables();
-    //! \brief treat the @InternalEnergy keyword
+    //! \brief treat the `@InternalEnergy` keyword
     virtual void treatInternalEnergy();
-    //! \brief treat the @DissipatedEnergy keyword
+    //! \brief treat the `@DissipatedEnergy` keyword
     virtual void treatDissipatedEnergy();
-    //! \brief treat the @ComputeStressFreeExpansion keyword
+    //! \brief treat the `@ComputeStressFreeExpansion` keyword
     virtual void treatComputeStressFreeExpansion();
-    //! \brief treat the @UsableInPurelyImplicitResolution keyword
+    //! \brief treat the `@UsableInPurelyImplicitResolution` keyword
     virtual void
     treatUsableInPurelyImplicitResolution();
-    //! \brief treat the @Parameter keyword
+    //! \brief treat the `@Parameter` keyword
     virtual void treatParameter();
-    //! \brief treat the @LocalVariables keyword
+    //! \brief treat the `@LocalVariables` keyword
     virtual void treatLocalVar();
-    //! handle the @ComputeThermalExpansion keyword
+    //! handle the `@ComputeThermalExpansion` keyword
     virtual void treatComputeThermalExpansion();
-    //! handle the @ComputeStiffnessTensor keyword
+    //! handle the `@ComputeStiffnessTensor` keyword
     virtual void treatComputeStiffnessTensor();
-    //! handle the @ElasticMaterialProperties keyword
+    //! handle the `@ElasticMaterialProperties` keyword
     virtual void treatElasticMaterialProperties();
     /*!
      * \brief read the elastic material properties and assign them to
      * the behaviour Description
      */
     virtual void readElasticMaterialProperties();
-    //! \brief handle the @HillTensor keyword
+    //! \brief handle the `@HillTensor` keyword
     virtual void treatHillTensor();
-    //! \brief handle the @InitLocalVariables keyword
+    //! \brief handle the `@InitLocalVariables` keyword
     virtual void treatInitLocalVariables();
-    //! \brief handle the @OrthotropicBehaviour keyword
+    //! \brief handle the `@OrthotropicBehaviour` keyword
     virtual void treatOrthotropicBehaviour();
-    //! \brief handle the @IsotropicElasticBehaiour keyword
+    //! \brief handle the `@IsotropicElasticBehaiour` keyword
     virtual void treatIsotropicElasticBehaviour();
-    //! \brief handle the @IsotropicBehaviour keyword
+    //! \brief handle the `@IsotropicBehaviour` keyword
     virtual void treatIsotropicBehaviour();
-    //! \brief handle the @RequireStiffnessOperator keyword
+    //! \brief handle the `@RequireStiffnessOperator` keyword
     virtual void treatRequireStiffnessOperator();
-    //! \brief handle the @RequireStiffnessTensor keyword
+    //! \brief handle the `@RequireStiffnessTensor` keyword
     virtual void treatRequireStiffnessTensor();
 
     virtual void  treatStiffnessTensorOption();
-    //! \brief handle the @RequireThermalExpansionCoefficientTensor keyword
+    //! \brief handle the `@RequireThermalExpansionCoefficientTensor` keyword
     virtual void
     treatRequireThermalExpansionCoefficientTensor();
-    //! \brief handle the @Behaviour keyword
+    //! \brief handle the `@Behaviour` keyword
     virtual void treatBehaviour();
-    //! \brief handle the @Interface keyword
+    //! \brief handle the `@Interface` keyword
     virtual void treatInterface();
-    //! \brief handle the @StateVariable keyword
+    //! \brief handle the `@StateVariable` keyword
     virtual void treatStateVariable();
-    //! \brief handle the @AuxiliaryStateVariable keyword
+    //! \brief handle the `@AuxiliaryStateVariable` keyword
     virtual void treatAuxiliaryStateVariable();
-    //! \brief handle the @ExternalStateVariable keyword
+    //! \brief handle the `@ExternalStateVariable` keyword
     virtual void treatExternalStateVariable();
-    //! \brief treat the @MinimalTimeStepScalingFactor keyword
+    //! \brief treat the `@MinimalTimeStepScalingFactor` keyword
     virtual void treatMinimalTimeStepScalingFactor();
-    //! \brief treat the @MaximalTimeStepScalingFactor keyword
+    //! \brief treat the `@MaximalTimeStepScalingFactor` keyword
     virtual void treatMaximalTimeStepScalingFactor();
-    //! \brief treat the @APrioriTimeStepScalingFactor keyword
+    //! \brief treat the `@APrioriTimeStepScalingFactor` keyword
     virtual void treatAPrioriTimeStepScalingFactor();
-    //! \brief treat the @Integrator keyword
+    //! \brief treat the `@Integrator` keyword
     virtual void treatIntegrator();
-    //! \brief treat the @APosterioriTimeStepScalingFactor keyword
+    //! \brief treat the `@APosterioriTimeStepScalingFactor` keyword
     virtual void treatAPosterioriTimeStepScalingFactor();
-    //! \brief treat the @MaterialProperty and the @Coef keywords
+    //! \brief treat the `@MaterialProperty` and the `@Coef` keywords
     virtual void treatCoef();
-    //! \brief treat the @UseQt keyword
+    //! \brief treat the `@UseQt` keyword
     virtual void treatUseQt();
-    //! \brief treat the @Bounds keyword
+    //! \brief treat the `@Bounds` keyword
     virtual void treatBounds();
-    //! \brief treat the @PhysicalBounds keyword
+    //! \brief treat the `@PhysicalBounds` keyword
     virtual void treatPhysicalBounds();
-    //! \brief treat the @PredictionOperator keyword
+    //! \brief treat the `@PredictionOperator` keyword
     virtual void treatPredictionOperator();
-    //! \brief treat the @Swelling keyword
+    //! \brief treat the `@Swelling` keyword
     virtual void treatSwelling();
-    //! \brief treat the @AxialGrowth keyword
+    //! \brief treat the `@AxialGrowth` keyword
     virtual void treatAxialGrowth();
-    //! \brief treat the @Relocation keyword
+    //! \brief treat the `@Relocation` keyword
     virtual void treatRelocation();
-    //! \brief treat the @CrystalStructure keyword
+    //! \brief treat the `@CrystalStructure` keyword
     virtual void treatCrystalStructure();
-    //! \brief treat the @SlipSystem keyword
+    //! \brief treat the `@SlipSystem` keyword
     virtual void treatSlipSystem();
-    //! \brief treat the @SlipSystems keyword
+    //! \brief treat the `@SlipSystems` keyword
     virtual void treatSlipSystems();
-    //! \brief treat the @InteractionMatrix keyword
+    //! \brief treat the `@InteractionMatrix` keyword
     virtual void treatInteractionMatrix();
     /*!
-     * \brief treat the @DislocationsMeanFreePathInteractionMatrix
+     * \brief treat the `@DislocationsMeanFreePathInteractionMatrix`
      * keyword.
      */
     virtual void treatDislocationsMeanFreePathInteractionMatrix();

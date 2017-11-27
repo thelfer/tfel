@@ -55,11 +55,11 @@ namespace tfel
       //! copy constructor
       TestResult(const TestResult&);
       //! copy constructor
-      TestResult(TestResult&&);
-      //! assignement operator
-      TestResult& operator = (const TestResult&);
+      TestResult(TestResult&&) noexcept;
       //! assignement operator
       TestResult& operator = (TestResult&&);
+      //! assignement operator
+      TestResult& operator = (const TestResult&);
       //! report success
       bool success() const;
       //! get result details

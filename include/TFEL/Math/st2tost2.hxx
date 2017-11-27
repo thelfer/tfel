@@ -192,9 +192,9 @@ namespace tfel{
       fromRotationMatrix(const tmatrix<3u,3u,typename tfel::typetraits::base_type<T>>&);
       /*!
        * \brief compute the derivative of the symmetric tensor product:
-       * \[
+       * \f[
        * \frac{d}{ds1}\left(s1*s+s*s1\right)
-       * \]
+       * \f]
        * \param[in] s: second tensor of the product
        */
       template<typename StensorType>
@@ -324,9 +324,9 @@ namespace tfel{
 
     /*!
      * \return the push_forward of a st2tost2:
-     * \[
+     * \f[
      * Ct_{ijkl}=F_{im}F_{jn}F_{kp}F_{lq}C_{mnpq}
-     * \]
+     * \f]
      * \param[in] C: input
      * \param[in] F: deformation gradient
      */

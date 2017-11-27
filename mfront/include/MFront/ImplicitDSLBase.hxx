@@ -91,13 +91,13 @@ namespace mfront{
     virtual void
     treatUnknownVariableMethod(const Hypothesis,
 			       const std::string&) override;
-    //! \brief treat the @StateVariable keyword
+    //! \brief treat the `@StateVariable` keyword
     virtual void treatStateVariable() override;
-    //! \brief treat the @IntegrationVariable keyword
+    //! \brief treat the `@IntegrationVariable` keyword
     virtual void treatIntegrationVariable();
-    //! \brief treat the @Integrator keyword
+    //! \brief treat the `@Integrator` keyword
     virtual void  treatIntegrator() override;
-    //! \brief treat the @ComputeFinalStress keyword
+    //! \brief treat the `@ComputeFinalStress` keyword
     virtual void treatComputeFinalStress();
 
     virtual void completeVariableDeclaration() override;
@@ -138,33 +138,33 @@ namespace mfront{
 
     virtual void writeGetPartialJacobianInvert(std::ostream&,
 					       const Hypothesis) const;
-    //! \brief treat the @Theta keyword
+    //! \brief treat the `@Theta` keyword
     virtual void treatTheta();
-    //! \brief treat the @IterMax keyword
+    //! \brief treat the `@IterMax` keyword
     virtual void treatIterMax();
-    //! \brief treat the @Epsilon keyword
+    //! \brief treat the `@Epsilon` keyword
     virtual void treatEpsilon();
-    //! \brief treat the @AdditionalConvergenceChecks keyword
+    //! \brief treat the `@AdditionalConvergenceChecks` keyword
     virtual void treatAdditionalConvergenceChecks();
-    //! \brief treat the @PerturbationValueForNumericalJacobianComputation keyword
+    //! \brief treat the `@PerturbationValueForNumericalJacobianComputation` keyword
     virtual void treatPerturbationValueForNumericalJacobianComputation();
-    //! \brief treat the @Algorithm keyword
+    //! \brief treat the `@Algorithm` keyword
     virtual void treatAlgorithm();
-    //! \brief treat the @Predictor keyword
+    //! \brief treat the `@Predictor` keyword
     virtual void treatPredictor();
-    //! \brief treat the @ComputeStress keyword
+    //! \brief treat the `@ComputeStress` keyword
     virtual void treatComputeStress();
-    //! \brief treat the @CompareToNumericalJacobian keyword
+    //! \brief treat the `@CompareToNumericalJacobian` keyword
     virtual void treatCompareToNumericalJacobian();
-    //! \brief treat the @JacobianComparisonCriterion keyword
+    //! \brief treat the `@JacobianComparisonCriterion` keyword
     virtual void treatJacobianComparisonCriterion();
-    //! \brief treat the @InitJacobian keyword
+    //! \brief treat the `@InitJacobian` keyword
     virtual void treatInitJacobian();
-    //! \brief treat the @InitJacobianInvert keyword
+    //! \brief treat the `@InitJacobianInvert` keyword
     virtual void treatInitJacobianInvert();
-    //! \brief treat the @MaximumIncrementValuePerIteration keyword
+    //! \brief treat the `@MaximumIncrementValuePerIteration` keyword
     virtual void treatMaximumIncrementValuePerIteration();
-    //! \brief treat the @NumericallyComputedJacobianBlocks keyword
+    //! \brief treat the `@NumericallyComputedJacobianBlocks` keyword
     virtual void treatNumericallyComputedJacobianBlocks();
     /*!
      * \return true if the the given variable may have methods

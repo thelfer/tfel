@@ -102,10 +102,19 @@ tfel_enable_cxx_compiler_flag(COMPILER_FLAGS "fno-omit-frame-pointer")
 
 endif(enable-sanitize-options)
 
-if(${CMAKE_CXX_COMPILER_VERSION} VERSION_LESS 4.7)
-  message(FATAL_ERROR "TFEL C++11 support is only available for gcc version >= 4.7")
-endif(${CMAKE_CXX_COMPILER_VERSION} VERSION_LESS 4.7)
-set(COMPILER_CXXFLAGS "${COMPILER_CXXFLAGS} -std=c++11")
+option(enable-cxx-17 "enable support of the C++17 standard")
+if(enable-cxx-17)
+  if(${CMAKE_CXX_COMPILER_VERSION} VERSION_LESS 7.2)
+    message(FATAL_ERROR "TFEL C++17 support is only available for gcc version >= 7.2")
+  endif(${CMAKE_CXX_COMPILER_VERSION} VERSION_LESS 7.2)
+  set(COMPILER_FLAGS "-std=c++17 ${COMPILER_FLAGS}")
+else(enable-cxx-17)
+  if(${CMAKE_CXX_COMPILER_VERSION} VERSION_LESS 4.7)
+    message(FATAL_ERROR "TFEL C++11 support is only available for gcc version >= 4.7")
+  endif(${CMAKE_CXX_COMPILER_VERSION} VERSION_LESS 4.7)
+  set(COMPILER_CXXFLAGS "${COMPILER_CXXFLAGS} -std=c++11")  
+endif(enable-cxx-17)
+
 # unsable flag
 # set(COMPILER_CXXFLAGS "${COMPILER_CXXFLAGS} -D_GLIBCXX_CONCEPT_CHECKS")
 

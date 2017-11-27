@@ -37,34 +37,55 @@
 namespace calculix
 {
 
+  /*!
+   * \brief a metafunction returning a description of the consistent
+   * tangent operator
+   * \tparam btype: type of the behaviour considered
+   */
   template<CalculiXBehaviourType btype>
   struct CalculiXTangentOperatorFlag;
-
+  /*!
+   * \brief partial specialisation of `CalculiXTangentOperatorFlag`
+   * metafunction for strain based behaviours.
+   */
   template<>
   struct CalculiXTangentOperatorFlag<calculix::STANDARDSTRAINBASEDBEHAVIOUR>
   {
+    //! a simple alias
     typedef tfel::material::MechanicalBehaviourBase MechanicalBehaviourBase; 
+    //! a simple alias
     typedef tfel::material::TangentOperatorTraits<MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR>
     TangentOperatorTraits;
+    //! \return value of the metafunction
     static constexpr auto value = TangentOperatorTraits::STANDARDTANGENTOPERATOR;
   };
-
+  /*!
+   * \brief partial specialisation of `CalculiXTangentOperatorFlag`
+   * metafunction for strain based behaviours.
+   */
   template<>
   struct CalculiXTangentOperatorFlag<calculix::STANDARDFINITESTRAINBEHAVIOUR>
   {
+    //! a simple alias
     typedef tfel::material::MechanicalBehaviourBase MechanicalBehaviourBase; 
+    //! a simple alias
     typedef tfel::material::TangentOperatorTraits<MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR> TangentOperatorTraits;
+    //! \return value of the metafunction
     static constexpr auto value = TangentOperatorTraits::DS_DEGL;
   };
-
+  /*!
+   * \brief structure used to write a behaviour
+   * \tparam H: hypothesis
+   * \tparam Behaviour: behaviour
+   */
   template<tfel::material::ModellingHypothesis::Hypothesis H,
 	   template<tfel::material::ModellingHypothesis::Hypothesis,typename,bool> class Behaviour>
   struct TFEL_VISIBILITY_LOCAL CalculiXBehaviourHandler
     : public CalculiXInterfaceExceptions
   {
-
     /*!
-     * An helper structure used to initialise the driving variables
+     * \brief An helper structure used to initialise the driving
+     * variables.
      */
     struct TFEL_VISIBILITY_LOCAL DrivingVariableInitialiserWithStressFreeExpansion
       : public CalculiXInterfaceExceptions
@@ -247,26 +268,41 @@ namespace calculix
       } // end of Integrator::exe
 	
     private:
-      
+      /*!
+       * \brief An helper structure used when the consistent tangent
+       * operator can't be computed.
+       */
       struct ConsistentTangentOperatorIsNotAvalaible
       {
+	//! a simple alias
 	typedef Behaviour<H,CalculiXReal,false> BV;
-	static void exe(BV&,CalculiXReal *const)
+	/*!
+	 * \brief a function whose only purpose is to throw
+	 * an exception
+	 */
+	TFEL_NORETURN static void exe(BV&,CalculiXReal *const)
 	{
 	  typedef tfel::material::MechanicalBehaviourTraits<BV> Traits;
 	  throwConsistentTangentOperatorIsNotAvalaible(Traits::getName());
 	} // end of exe	  
       };
-
+      //! a simple alias
       typedef Behaviour<H,CalculiXReal,false> BV;
+      //! the behaviour wrapped
       BV behaviour;
+      //! the time increment
       CalculiXReal dt;
     }; // end of struct Integrator
-
+    /*!
+     * \brief check that the number of material properties given by
+     * `CalculiX` is greater than the expected number of material
+     * properties
+     * \param[in] NPROPS: number of material properties given by
+     * `CalculiX`.
+     */
     TFEL_CALCULIX_INLINE2 static void
     checkNPROPS(const CalculiXInt NPROPS)
     {
-      using namespace std;
       using namespace tfel::material;
       typedef Behaviour<H,CalculiXReal,false> BV;
       typedef MechanicalBehaviourTraits<BV> Traits;
@@ -281,7 +317,14 @@ namespace calculix
 						 NPROPS_,NPROPS);
       }
     } // end of checkNPROPS
-      
+    /*!
+     * \brief check that the number of state variables given by
+     * `CalculiX` is greater than the expected number of state
+     * variables.
+     *
+     * \param[in] NSTATV: number of state variables given by
+     * `CalculiX`.
+     */
     TFEL_CALCULIX_INLINE2 static void
     checkNSTATV(const CalculiXInt NSTATV)
     {

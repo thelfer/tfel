@@ -62,7 +62,7 @@ namespace mfront{
      * example, to support plane stress in RungeKutta and Implicit
      * parsers, the user must provide some hand-crafted code. He must
      * enable this modelling hypothesis by calling explicitely
-     * @ModellingHypothesis or @ModellingHypotheses keywords.
+     * `@ModellingHypothesis` or `@ModellingHypotheses` keywords.
      */
     virtual bool
     isModellingHypothesisSupported(const Hypothesis) const override;

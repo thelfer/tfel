@@ -170,20 +170,20 @@ namespace mfront{
     /*!
      * \brief a simple wrapper around an isotropic swelling model
      * given by a volume change
-     * \[
+     * \f[
      * s = \left(dV_V0/3,dV_V0/3,dV_V0/3\,0\,0\,0\right)
-     * \]
+     * \f]
      */
     struct VolumeSwellingStressFreeExpansion{
-      //! volumetric stress free expansion
+      //!o volumetric stress free expansion
       StressFreeExpansionHandler sfe;
     }; // end of struct VolumeSwellingStressFreeExpansion
     /*!
      * \brief a simple wrapper around a model describing an axial
      * growth.
-     * \[
+     * \f[
      * s = \left(0,0,dlz_lz\,0\,0\,0\right)
-     * \]
+     * \f]
      */
     struct AxialGrowth{
       //! description of the axial growth
@@ -192,9 +192,9 @@ namespace mfront{
     /*!
      * \brief a simple wrapper around a model describing fuel
      * relocation.
-     * \[
+     * \f[
      * s = \left(0,0,dlz_lz\,0\,0\,0\right)
-     * \]
+     * \f]
      */
     struct Relocation{
       //! description of the axial growth
@@ -204,9 +204,9 @@ namespace mfront{
      * \brief a brief structure describing a stress free expansion du
      * to an isotropic swelling given by a linear change in each
      * material geometry:
-     * \[
+     * \f[
      * s = \left(dl_l,dl_l,dl_l\,0\,0\,0\right)
-     * \]
+     * \f]
      */
     struct IsotropicStressFreeExpansion{
       //! stress free expansion in each direction

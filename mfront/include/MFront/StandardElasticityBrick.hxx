@@ -40,7 +40,7 @@ namespace mfront{
    *   orthotropic. This parameter can not be used if the
    *   `@RequiresStiffnessTensor` has been used.
    * - `Orthotropic`. This requires the behaviour to de declared
-   *   orthotropic (through @OrthotropicBehaviour keyword).  This
+   *   orthotropic (through `@OrthotropicBehaviour` keyword).  This
    *   parameter can not be used if the `@RequiresStiffnessTensor` has
    *   been used.
    * - `NoPlaneStressSupport`. If this parameter is given, plane

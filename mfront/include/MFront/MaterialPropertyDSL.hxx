@@ -156,32 +156,32 @@ namespace mfront{
      * \param[in] n: interface name
      */
     virtual void addInterface(const std::string&);
-    //! treat the @Material keyword
+    //! treat the `@Material` keyword
     virtual void treatMaterial();
-    //! treat the @Library keyword
+    //! treat the `@Library` keyword
     virtual void treatLibrary();
-    //! treat the @Output keyword
+    //! treat the `@Output` keyword
     virtual void treatOutput();
-    //! treat the @Input keyword
+    //! treat the `@Input` keyword
     virtual void treatInput();
-    //! treat the @Law keyword
+    //! treat the `@Law` keyword
     virtual void treatLaw();
-    //! treat the @Function keyword
+    //! treat the `@Function` keyword
     virtual void treatFunction();
     /*!
      * treat the setGlossaryName and the setEntryName method for
      * inputs or output.
      */
     virtual void treatMethod();
-    //! treat the @Interface keyword
+    //! treat the `@Interface` keyword
     virtual void treatInterface();
-    //! treat the @Parameter keyword
+    //! treat the `@Parameter` keyword
     virtual void treatParameter();
-    //! treat the @Constant keyword
+    //! treat the `@Constant` keyword
     virtual void treatConstant();
-    //! treat the @Bounds keyword
+    //! treat the `@Bounds` keyword
     virtual void treatBounds();
-    //! treat the @PhysicalBounds keyword
+    //! treat the `@PhysicalBounds` keyword
     virtual void treatPhysicalBounds();
     
     virtual void
@@ -193,13 +193,9 @@ namespace mfront{
      */
     std::map<std::string,
 	     std::shared_ptr<AbstractMaterialPropertyInterface>> interfaces;
-    /*!
-     * list of resgistred keywords
-     */
+    //! \brief list of resgistred keywords
     std::set<std::string> registredKeyWords;
-    /*!
-     * map of callbacks used during the file interpretation
-     */
+    //! \brief map of callbacks used during the file interpretation
     CallBackContainer callBacks;
     /*!
      * a temporary object used to store the name of the variable on

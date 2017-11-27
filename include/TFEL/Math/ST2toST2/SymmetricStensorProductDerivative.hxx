@@ -21,8 +21,9 @@ namespace tfel{
   namespace math{
 
     /*!
-     * \brief compute the derivative of the product \(a\,\dot\,b\,\dot\,a\) with respect
-     * to \(a\), where \(a\) and \(b) are two symmetric tensor.
+     * \brief compute the derivative of the product
+     * \(a\,\dot\,b\,\dot\,a\) with respect to \(a\), where \(a\) and
+     * \(b) are two symmetric tensor.
      * \param[in] a: the first symmetric tensor
      * \param[in] b: the second symmetric tensor
      */
@@ -36,8 +37,9 @@ namespace tfel{
        (StensorTraits<StensorType2>::dime==1u)),
       st2tost2<1u,decltype(a[0]*b[0])>>::type;
     /*!
-     * \brief compute the derivative of the product \(a\,\dot\,b\,\dot\,a\) with respect
-     * to \(a\), where \(a\) and \(b) are two symmetric tensor.
+     * \brief compute the derivative of the product
+     * \(a\,\dot\,b\,\dot\,a\) with respect to \(a\), where \(a\) and
+     * \(b) are two symmetric tensor.
      * \param[in] a: the first symmetric tensor
      * \param[in] b: the second symmetric tensor
      */

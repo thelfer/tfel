@@ -64,13 +64,13 @@ namespace mfront{
     virtual void treatInterface();
     /*!
      * \brief external commands specificed on the command line through
-     * an --@XXX option
+     * an `--@XXX` option
      */
     std::vector<std::string> ecmds;
     /*!
      * \brief substitutions specificed on the command line through an
-     * --@XXX@=YYY option: every occurrence of @XXX@ in the input
-     * files will be replaced by YYY
+     * `--@XXX@=YYY` option: every occurrence of `XXX` in the input
+     * files will be replaced by `YYY`
      */
     std::map<std::string,std::string> substitutions;
     //! list of all input files

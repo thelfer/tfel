@@ -116,16 +116,27 @@ namespace castem
 					  const CastemReal* const);
   
   /*!
-   * This structure is in charge of computing the Stiffness operator
-   * from the material properties given by Cast3M.  The resulting
-   * operator uses MFront representation of tensors and symmetric
-   * tensors.
+   * \brief This structure is in charge of computing the elastic
+   * stiffness tensor from the material properties given by `Cast3M`.
+   * The resulting operator uses `MFront` representation of tensors and
+   * symmetric tensors.
+   * \tparam btype: behaviour type
+   * \tparam H: modelling hypothesis
+   * \tparam s: symmetry type (isotropic or orthotropic)
+   * \tparam b: boolean stating if the one computes the altered or
+   * unaltered stiffness tensor. This parameter is only meaningful for
+   * plane stress hypotheses.
    */
   template<CastemBehaviourType,
 	   tfel::material::ModellingHypothesis::Hypothesis,
 	   CastemSymmetryType,bool>
   struct CastemComputeStiffnessTensor;
-
+  /*!
+   * \brief partial specialisation of the
+   * `CastemComputeStiffnessTensor` for isotropic strain based
+   * behaviour in axisymmetrical generalised plane strain.
+   * \tparam b: unused boolean.
+   */
   template<bool b>
   struct TFEL_VISIBILITY_LOCAL
   CastemComputeStiffnessTensor<castem::STANDARDSTRAINBASEDBEHAVIOUR,
@@ -144,7 +155,12 @@ namespace castem
       CastemComputeIsotropicStiffnessTensor1D(C,props);
     }
   }; // end of struct CastemComputeStiffnessTensor
-
+  /*!
+   * \brief partial specialisation of the
+   * `CastemComputeStiffnessTensor` for isotropic strain based
+   * behaviour in axisymmetry.
+   * \tparam b: unused boolean.
+   */
   template<bool b>
   struct TFEL_VISIBILITY_LOCAL
   CastemComputeStiffnessTensor<castem::STANDARDSTRAINBASEDBEHAVIOUR,
@@ -163,7 +179,12 @@ namespace castem
       CastemComputeIsotropicStiffnessTensor2D(C,props);
     }
   }; // end of struct CastemComputeStiffnessTensor
-
+  /*!
+   * \brief partial specialisation of the
+   * `CastemComputeStiffnessTensor` for isotropic strain based
+   * behaviour in plane stress. The `exe` method will return the
+   * unaltered stifness tensor.
+   */
   template<>
   struct TFEL_VISIBILITY_LOCAL
   CastemComputeStiffnessTensor<castem::STANDARDSTRAINBASEDBEHAVIOUR,
@@ -182,7 +203,12 @@ namespace castem
       CastemComputeIsotropicStiffnessTensor2D(C,props);
     }
   }; // end of struct CastemComputeStiffnessTensor
-
+  /*!
+   * \brief partial specialisation of the
+   * `CastemComputeStiffnessTensor` for isotropic strain based
+   * behaviour in plane stress. The `exe` method will return the
+   * altered stifness tensor.
+   */
   template<>
   struct TFEL_VISIBILITY_LOCAL
   CastemComputeStiffnessTensor<castem::STANDARDSTRAINBASEDBEHAVIOUR,
@@ -201,7 +227,12 @@ namespace castem
       CastemComputeIsotropicPlaneStressAlteredStiffnessTensor(C,props);
     }
   }; // end of struct CastemComputeStiffnessTensor
-
+  /*!
+   * \brief partial specialisation of the
+   * `CastemComputeStiffnessTensor` for isotropic strain based
+   * behaviour in plane strain.
+   * \tparam b: unused boolean.
+   */
   template<bool b>
   struct TFEL_VISIBILITY_LOCAL
   CastemComputeStiffnessTensor<castem::STANDARDSTRAINBASEDBEHAVIOUR,
@@ -220,7 +251,12 @@ namespace castem
       CastemComputeIsotropicStiffnessTensor2D(C,props);
     }
   }; // end of struct CastemComputeStiffnessTensor
-
+  /*!
+   * \brief partial specialisation of the
+   * `CastemComputeStiffnessTensor` for isotropic strain based
+   * behaviour in generalised plane strain.
+   * \tparam b: unused boolean.
+   */
   template<bool b>
   struct TFEL_VISIBILITY_LOCAL
   CastemComputeStiffnessTensor<castem::STANDARDSTRAINBASEDBEHAVIOUR,
@@ -239,7 +275,12 @@ namespace castem
       CastemComputeIsotropicStiffnessTensor2D(C,props);
     }
   }; // end of struct CastemComputeStiffnessTensor
-
+  /*!
+   * \brief partial specialisation of the
+   * `CastemComputeStiffnessTensor` for isotropic strain based
+   * behaviour in 3D.
+   * \tparam b: unused boolean.
+   */
   template<bool b>
   struct TFEL_VISIBILITY_LOCAL
   CastemComputeStiffnessTensor<castem::STANDARDSTRAINBASEDBEHAVIOUR,
@@ -352,7 +393,9 @@ namespace castem
       CastemComputeOrthotropicStiffnessTensor2D(C,props);
     }
   }; // end of struct CastemComputeStiffnessTensor
-
+  /*!
+   * \brief 
+   */
   template<bool b>
   struct TFEL_VISIBILITY_LOCAL
   CastemComputeStiffnessTensor<castem::STANDARDSTRAINBASEDBEHAVIOUR,

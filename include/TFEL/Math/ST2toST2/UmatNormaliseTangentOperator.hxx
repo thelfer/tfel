@@ -31,8 +31,8 @@ namespace tfel{
     template<unsigned short N,typename stress>
     struct UmatNormaliseTangentOperatorBase;
     /*!
-     * \partial specialisation of the UmatNormaliseTangentOperatorBase
-     * class in 1D
+     * \brief partial specialisation of the
+     * `UmatNormaliseTangentOperatorBase` class in 1D.
      */
     template<typename stress>
     struct UmatNormaliseTangentOperatorBase<1u,stress>
@@ -50,8 +50,8 @@ namespace tfel{
       exe(stress* const,const stress* const);
     };
     /*!
-     * \partial specialisation of the UmatNormaliseTangentOperatorBase
-     * class in 1D
+     * \brief partial specialisation of the
+     * `UmatNormaliseTangentOperatorBase` class in 1D
      */
     template<typename stress>
     struct UmatNormaliseTangentOperatorBase<2u,stress>
@@ -69,8 +69,8 @@ namespace tfel{
       exe(stress* const,const stress* const);
     };
     /*!
-     * \partial specialisation of the UmatNormaliseTangentOperatorBase
-     * class in 1D
+     * \brief partial specialisation of the
+     * `UmatNormaliseTangentOperatorBase` class in 1D
      */
     template<typename stress>
     struct UmatNormaliseTangentOperatorBase<3u,stress>

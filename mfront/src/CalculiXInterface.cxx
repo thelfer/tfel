@@ -834,8 +834,8 @@ namespace mfront{
       this->generateMTestFile2(out,mb.getBehaviourType(),
 			       name,"",mb);
     }
-    out << "}\n";
-    out << "} // end of " << this->getFunctionName(name) << "\n\n";
+    out << "}\n"
+	<< "} // end of " << this->getFunctionName(name) << "\n\n";
   } // end of CalculiXInterface::writeMieheApelLambrechtLogarithmicStrainFunction
   
   void

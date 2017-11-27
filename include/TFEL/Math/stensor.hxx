@@ -567,9 +567,9 @@ namespace tfel{
        * \param[out] n : derivatives of the  eigenvalues
        * \param[in]  m  : eigenvectors
        * This eigenvalues of the derivatives is given by~:
-       * \[
+       * \f[
        * \frac{\displaystyle \partial}{\lambda_{i}}{\displaystyle \underbrace{s}}=\underbrace{n}_{i}=\vec{e}_{i}\otimes\vec{e}_{i}
-       * \]
+       * \f]
        * \(\underbrace{n}_{i}\) are the eigen tensors associated to the given tensor.
        */
       std::tuple<stensor<N,T>,stensor<N,T>,stensor<N,T>>
@@ -581,10 +581,10 @@ namespace tfel{
        * \param[out] n2 : derivative of the third  eigenvalue
        * \param[in]  m  : eigenvectors
        * This eigenvalues of the derivatives is given by~:
-       * \[
+       * \f[
        * \frac{\displaystyle \partial}{\lambda_{i}}{\displaystyle \underbrace{s}}=\underbrace{n}_{i}=\vec{e}_{i}\otimes\vec{e}_{i}
-       * \]
-       * \(\underbrace{n}_{i}\) are the eigen tensors associated to the given tensor.
+       * \f]
+       * \f$\underbrace{n}_{i}\f$ are the eigen tensors associated to the given tensor.
        */
       template<typename StensorType>
       static typename std::enable_if<
@@ -598,18 +598,18 @@ namespace tfel{
 				      StensorType&,
 				      const tmatrix<3u,3u,tfel::typetraits::base_type<T>>&);
       /*!
-       * compute the "eigentensors"
-       * \param[out] n : derivativse of the eigenvalues
-       * \param[in]  m   : eigenvectors
+       * \brief compute the "eigentensors"
+       * \param[out] n: derivativse of the eigenvalues
+       * \param[in]  m: eigenvectors
        */
       static std::tuple<stensor<N,T>,stensor<N,T>,stensor<N,T>>
       computeEigenTensors(const tmatrix<3u,3u,tfel::typetraits::base_type<T>>&);
       /*!
        * compute the "eigentensors"
-       * \param[out] n0  : derivative of the first  eigenvalue
-       * \param[out] n1  : derivative of the second eigenvalue
-       * \param[out] n2  : derivative of the third  eigenvalue
-       * \param[in]  m   : eigenvectors
+       * \param[out] n0: derivative of the first  eigenvalue
+       * \param[out] n1: derivative of the second eigenvalue
+       * \param[out] n2: derivative of the third  eigenvalue
+       * \param[in]  m:  eigenvectors
        */
       template<typename StensorType>
       static typename std::enable_if<
@@ -623,13 +623,13 @@ namespace tfel{
 			  StensorType&,
 			  const tmatrix<3u,3u,tfel::typetraits::base_type<T>>&);
       /*!
-       * compute the "eigentensors" derivatives
-       * \param[out] dn0_ds : derivative of the first  eigenvalue
-       * \param[out] dn1_ds : derivative of the second eigenvalue
-       * \param[out] dn2_ds : derivative of the third  eigenvalue
-       * \param[in]  vp     : eigen values
-       * \param[in]  m      : eigenvectors
-       * \param[in]  eps    : numerical parameter for regularisation
+       * \brief compute the "eigentensors" derivatives
+       * \param[out] dn0_ds: derivative of the first  eigenvalue
+       * \param[out] dn1_ds: derivative of the second eigenvalue
+       * \param[out] dn2_ds: derivative of the third  eigenvalue
+       * \param[in]  vp:     eigen values
+       * \param[in]  m:      eigen vectors
+       * \param[in]  eps:    numerical parameter for regularisation
        */
       template<typename ST2toST2Type>
       static typename std::enable_if<
@@ -1079,9 +1079,9 @@ namespace tfel{
 				       const bool = false);
     /*!
      * \brief convert the corotationnal cauchy stress to the second Piola-Kirchhoff stress
-     * \[
+     * \f[
      * \tenseur{S} = J\,\tenseur{U}^{-1}\,.\,\tsigma\,.\,\tenseur{U}^{-1}
-     * \]
+     * \f]
      * \param[in] s: corotationnal cauchy stress
      * \param[in] U: stretch tensor
      * \return the second Piola-Kirchhoff stress
@@ -1099,9 +1099,9 @@ namespace tfel{
 								 const T2&);
     /*!
      * \brief convert the corotationnal cauchy stress to the second Piola-Kirchhoff stress
-     * \[
+     * \f[
      * \tenseur{S} = J\,\tenseur{U}^{-1}\,.\,\tsigma\,.\,\tenseur{U}^{-1}
-     * \]
+     * \f]
      * \param[in] s: corotationnal cauchy stress
      * \param[in] U: stretch tensor
      * \return the second Piola-Kirchhoff stress
@@ -1119,9 +1119,9 @@ namespace tfel{
 								 const T2&);
     /*!
      * \brief convert the corotationnal cauchy stress to the second Piola-Kirchhoff stress
-     * \[
+     * \f[
      * \tenseur{S} = J\,\tenseur{U}^{-1}\,.\,\tsigma\,.\,\tenseur{U}^{-1}
-     * \]
+     * \f]
      * \param[in] s: corotationnal cauchy stress
      * \param[in] U: stretch tensor
      * \return the second Piola-Kirchhoff stress
@@ -1138,10 +1138,11 @@ namespace tfel{
     convertCorotationnalCauchyStressToSecondPiolaKirchhoffStress(const T&,
 								 const T2&);
     /*!
-     * \brief convert the second Piola-Kirchhoff stress to the corotationnal cauchy stress
-     * \[
+     * \brief convert the second Piola-Kirchhoff stress to the
+     * corotationnal cauchy stress:
+     * \f[
      * \tenseur{S} = J\,\tenseur{U}^{-1}\,.\,\tsigma\,.\,\tenseur{U}^{-1}
-     * \]
+     * \f]
      * \param[in] S: the second Piola-Kirchhoff stress
      * \param[in] U: stretch tensor
      * \return the corotationnal cauchy stress
@@ -1158,10 +1159,11 @@ namespace tfel{
     convertSecondPiolaKirchhoffStressToCorotationnalCauchyStress(const T&,
 								 const T2&);
     /*!
-     * \brief convert the second Piola-Kirchhoff stress to the corotationnal cauchy stress
-     * \[
+     * \brief convert the second Piola-Kirchhoff stress to the
+     * corotationnal cauchy stress:
+     * \f[
      * \tenseur{S} = J\,\tenseur{U}^{-1}\,.\,\tsigma\,.\,\tenseur{U}^{-1}
-     * \]
+     * \f]
      * \param[in] S: the second Piola-Kirchhoff stress
      * \param[in] U: stretch tensor
      * \return the corotationnal cauchy stress
@@ -1178,10 +1180,11 @@ namespace tfel{
     convertSecondPiolaKirchhoffStressToCorotationnalCauchyStress(const T&,
 								 const T2&);
     /*!
-     * \brief convert the second Piola-Kirchhoff stress to the corotationnal cauchy stress
-     * \[
+     * \brief convert the second Piola-Kirchhoff stress to the
+     * corotationnal cauchy stress:
+     * \f[
      * \tenseur{S} = J\,\tenseur{U}^{-1}\,.\,\tsigma\,.\,\tenseur{U}^{-1}
-     * \]
+     * \f]
      * \param[in] S: the second Piola-Kirchhoff stress
      * \param[in] U: stretch tensor
      * \return the corotationnal cauchy stress
@@ -1199,7 +1202,9 @@ namespace tfel{
 								 const T2&);
     /*!
      * \brief return the symmetric product of two stensors as a symmetric tensor
+     * \f[
      * s1*s2+s2*s1
+     * \f]
      * \param[in] s1: first  tensor
      * \param[in] s2: second tensor
      */
@@ -1215,8 +1220,10 @@ namespace tfel{
     symmetric_product(const StensorType1&,
 		      const StensorType2&);
     /*!
-     * \brief return the symmetric product of two stensors as a symmetric tensor
+     * \brief return the symmetric product of two stensors as a symmetric tensor:
+     * \f[
      * s1*s2+s2*s1
+     * \f]
      * \param[in] s1: first  tensor
      * \param[in] s2: second tensor
      */
@@ -1233,7 +1240,9 @@ namespace tfel{
 		      const StensorType2&);
     /*!
      * \brief return the symmetric product of two stensors as a symmetric tensor
+     * \f[
      * s1*s2+s2*s1
+     * \f]
      * \param[in] s1: first  tensor
      * \param[in] s2: second tensor
      */

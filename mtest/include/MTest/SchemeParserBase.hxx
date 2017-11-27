@@ -246,7 +246,7 @@ namespace mtest{
 						tokens_iterator&);
     //! a simple alias
     using ExternalFunctionManager = tfel::math::parser::ExternalFunctionManager;
-    //! external function imported through the @Import keyword
+    //! external function imported through the `@Import` keyword
     std::shared_ptr<ExternalFunctionManager> externalFunctions;
     //! callbacks
     std::map<std::string,CallBack> callbacks;

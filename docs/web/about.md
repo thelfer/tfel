@@ -41,6 +41,8 @@
 - Laurent Dupuy
 - Fabien Onimus
 - Jordi Alberich
+- Pedro Giffuni
+
 
 # Tools
 
