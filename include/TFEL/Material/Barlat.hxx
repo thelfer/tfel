@@ -3,7 +3,7 @@
  * \brief  
  * \author Thomas Helfer
  * \date   15/11/2017
- * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
  * reserved. 
  * This project is publicly released under either the GNU GPL Licence 
  * or the CECILL-A licence. A copy of thoses licences are delivered 
@@ -16,6 +16,7 @@
 
 #include"TFEL/Math/stensor.hxx"
 #include"TFEL/Math/st2tost2.hxx"
+#include"TFEL/Material/OrthotropicAxesConvention.hxx"
 
 namespace tfel{
 
@@ -93,15 +94,15 @@ namespace tfel{
      * \tparam N:    space dimension
      * \tparam real: numerical type
      * \return a linear transformation of the stresses
-     * \param[in] c12: coefficient of  linear transformation
-     * \param[in] c21: coefficient of  linear transformation
-     * \param[in] c13: coefficient of  linear transformation
-     * \param[in] c31: coefficient of  linear transformation
-     * \param[in] c23: coefficient of  linear transformation
-     * \param[in] c32: coefficient of  linear transformation
-     * \param[in] c44: coefficient of  linear transformation
-     * \param[in] c55: coefficient of  linear transformation
-     * \param[in] c66: coefficient of  linear transformation
+     * \param[in] c12: coefficient of linear transformation
+     * \param[in] c21: coefficient of linear transformation
+     * \param[in] c13: coefficient of linear transformation
+     * \param[in] c31: coefficient of linear transformation
+     * \param[in] c23: coefficient of linear transformation
+     * \param[in] c32: coefficient of linear transformation
+     * \param[in] c44: coefficient of linear transformation
+     * \param[in] c55: coefficient of linear transformation
+     * \param[in] c66: coefficient of linear transformation
      *
      * The linear transformation is defined as follows:
      * \f[
@@ -139,6 +140,48 @@ namespace tfel{
      */
     template<unsigned short N, typename real>
     tfel::math::st2tost2<N,real>
+    makeBarlatLinearTransformation(const real,const real, const real,
+				   const real,const real, const real,
+				   const real,const real, const real);
+    /*!
+     * \tparam H: modelling hypothesis
+     * \tparam c: orthotropic axis convention
+     * \tparam real: numerical type
+     * \return a linear transformation of the stresses
+     * \param[in] c12: coefficient of linear transformation
+     * \param[in] c21: coefficient of linear transformation
+     * \param[in] c13: coefficient of linear transformation
+     * \param[in] c31: coefficient of linear transformation
+     * \param[in] c23: coefficient of linear transformation
+     * \param[in] c32: coefficient of linear transformation
+     * \param[in] c44: coefficient of linear transformation
+     * \param[in] c55: coefficient of linear transformation
+     * \param[in] c66: coefficient of linear transformation
+     * 
+     * \brief This function is barely a wrapper around the
+     * `makeBarlatLinearTransformation<N,real>`, where `N` is
+     * the space dimension associated with the modelling hypothesis
+     * `H`.
+     *
+     * If the orthotropic axis convention is
+     * `OrthotropicAxesConvention::DEFAULT`, then the arguments are
+     * passed unchanged to the
+     * `makeBarlatLinearTransformation<N,real>` function.
+     *
+     * If the orthotropic axis convention is
+     * `OrthotropicAxesConvention::PIPE`, then the arguments passed to
+     * the `makeBarlatLinearTransformation<N,real>` function depends
+     * on the modelling hypothesis:
+     * - in 1D, 2D axisymmetric, and 3D modelling hypotheses, the
+     *   arguments are passed unchanged.
+     * - in plane 2D modelling hypotheses (`PLANESTRAIN`,
+     *   `PLANESTRESS`, `GENERALISEDPLANESTRAIN`), the coefficients
+     *   relative to the second axis are exchanged with the
+     *   coefficients related to the third axis.
+     */
+    template<ModellingHypothesis::Hypothesis H,
+	     OrthotropicAxesConvention c,typename real>
+    tfel::math::st2tost2<ModellingHypothesisToSpaceDimension<H>::value,real>
     makeBarlatLinearTransformation(const real,const real, const real,
 				   const real,const real, const real,
 				   const real,const real, const real);

@@ -2,9 +2,9 @@
  * \file   include/TFEL/Math/Tensor/tensorResultType.hxx
  * \brief  this file implements partial specialisations of the
  * ResultType class for tensor.
- * \author Helfer Thomas
+ * \author Thomas Helfer
  * \date   03 Jul 2006
- * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
  * reserved. 
  * This project is publicly released under either the GNU GPL Licence 
  * or the CECILL-A licence. A copy of thoses licences are delivered 

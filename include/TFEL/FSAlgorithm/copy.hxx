@@ -1,9 +1,9 @@
 /*!
  * \file   include/TFEL/FSAlgorithm/copy.hxx
  * \brief  this file implements the copy class.
- * \author Helfer Thomas
+ * \author Thomas Helfer
  * \date   30 Jun 2006
- * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
  * reserved. 
  * This project is publicly released under either the GNU GPL Licence 
  * or the CECILL-A licence. A copy of thoses licences are delivered 
@@ -30,7 +30,7 @@ namespace tfel{
      * This documentation is mostly inspired from:
      * http://www.sgi.com/tech/stl/copy.html
      * 
-     * \author Helfer Thomas
+     * \author Thomas Helfer
      * \date   30 Jun 2006      
      */
     template<unsigned int N>
@@ -49,7 +49,7 @@ namespace tfel{
        * - OutputIterator is a model of Output Iterator.
        * - InputIterator's value type is convertible to a type in OutputIterator's set of value types. 
        * 
-       * \author Helfer Thomas
+       * \author Thomas Helfer
        * \date   30 Jun 2006      
        */
       template<typename InputIterator,typename OutputIterator>
@@ -64,7 +64,7 @@ namespace tfel{
     /*!
      * \brief partial specialisation of struct copy to end recursion.
      *
-     * \author Helfer Thomas
+     * \author Thomas Helfer
      * \date   30 Jun 2006      
      */
     template<>
@@ -74,7 +74,7 @@ namespace tfel{
        * \return the ouptut iterator to the end the recursion
        * \sa copy<N>::exe()
        *
-       * \author Helfer Thomas
+       * \author Thomas Helfer
        * \date   30 Jun 2006
        */
       template<typename InputIterator,typename OutputIterator>
@@ -92,7 +92,7 @@ namespace tfel{
      * This is disabled if NO_FSALGORITHM_SPECIALISATION is defined
      * \see NO_FSALGORITHM_SPECIALISATION
      *
-     * \author Helfer Thomas
+     * \author Thomas Helfer
      * \date   30 Jun 2006      
      */
     template<>
@@ -102,7 +102,7 @@ namespace tfel{
        * \return the ouptut iterator to the end the recursion
        * \sa copy<N>::exe()
        *
-       * \author Helfer Thomas
+       * \author Thomas Helfer
        * \date   30 Jun 2006
        */
       template<typename InputIterator,typename OutputIterator>
@@ -119,7 +119,7 @@ namespace tfel{
      * This is disabled if NO_FSALGORITHM_SPECIALISATION is defined
      * \see NO_FSALGORITHM_SPECIALISATION
      *
-     * \author Helfer Thomas
+     * \author Thomas Helfer
      * \date   30 Jun 2006      
      */
     template<>
@@ -138,7 +138,7 @@ namespace tfel{
        * - OutputIterator is a model of Random Access Iterator.
        * - InputIterator's value type is convertible to a type in OutputIterator's set of value types. 
        * 
-       * \author Helfer Thomas
+       * \author Thomas Helfer
        * \date   30 Jun 2006      
        */
       template<typename InputIterator,typename OutputIterator>
@@ -179,7 +179,7 @@ namespace tfel{
      * This is disabled if NO_FSALGORITHM_SPECIALISATION is defined
      * \see NO_FSALGORITHM_SPECIALISATION
      *
-     * \author Helfer Thomas
+     * \author Thomas Helfer
      * \date   30 Jun 2006      
      */
     template<>
@@ -200,7 +200,7 @@ namespace tfel{
        * - OutputIterator is a model of Random Access Iterator.
        * - InputIterator's value type is convertible to a type in OutputIterator's set of value types. 
        * 
-       * \author Helfer Thomas
+       * \author Thomas Helfer
        * \date   30 Jun 2006      
        */
       template<typename InputIterator,typename OutputIterator>
@@ -242,7 +242,7 @@ namespace tfel{
      * This is disabled if NO_FSALGORITHM_SPECIALISATION is defined
      * \see NO_FSALGORITHM_SPECIALISATION
      *
-     * \author Helfer Thomas
+     * \author Thomas Helfer
      * \date   30 Jun 2006      
      */
     template<>
@@ -261,7 +261,7 @@ namespace tfel{
        * - OutputIterator is a model of Random Access Iterator.
        * - InputIterator's value type is convertible to a type in OutputIterator's set of value types. 
        * 
-       * \author Helfer Thomas
+       * \author Thomas Helfer
        * \date   30 Jun 2006      
        */
       template<typename InputIterator,typename OutputIterator>
@@ -304,7 +304,7 @@ namespace tfel{
      * This is disabled if NO_FSALGORITHM_SPECIALISATION is defined
      * \see NO_FSALGORITHM_SPECIALISATION
      *
-     * \author Helfer Thomas
+     * \author Thomas Helfer
      * \date   30 Jun 2006      
      */
     template<>
@@ -323,7 +323,7 @@ namespace tfel{
        * - OutputIterator is a model of Random Access Iterator.
        * - InputIterator's value type is convertible to a type in OutputIterator's set of value types. 
        * 
-       * \author Helfer Thomas
+       * \author Thomas Helfer
        * \date   30 Jun 2006      
        */
       template<typename InputIterator,typename OutputIterator>
@@ -367,7 +367,7 @@ namespace tfel{
      * This is disabled if NO_FSALGORITHM_SPECIALISATION is defined
      * \see NO_FSALGORITHM_SPECIALISATION
      *
-     * \author Helfer Thomas
+     * \author Thomas Helfer
      * \date   30 Jun 2006      
      */
     template<>
@@ -386,7 +386,7 @@ namespace tfel{
        * - OutputIterator is a model of Random Access Iterator.
        * - InputIterator's value type is convertible to a type in OutputIterator's set of value types. 
        * 
-       * \author Helfer Thomas
+       * \author Thomas Helfer
        * \date   30 Jun 2006      
        */
       template<typename InputIterator,typename OutputIterator>
@@ -431,7 +431,7 @@ namespace tfel{
      * This is disabled if NO_FSALGORITHM_SPECIALISATION is defined
      * \see NO_FSALGORITHM_SPECIALISATION
      *
-     * \author Helfer Thomas
+     * \author Thomas Helfer
      * \date   30 Jun 2006      
      */
     template<>
@@ -450,7 +450,7 @@ namespace tfel{
        * - OutputIterator is a model of Random Access Iterator.
        * - InputIterator's value type is convertible to a type in OutputIterator's set of value types. 
        * 
-       * \author Helfer Thomas
+       * \author Thomas Helfer
        * \date   30 Jun 2006      
        */
       template<typename InputIterator,typename OutputIterator>
@@ -496,7 +496,7 @@ namespace tfel{
      * This is disabled if NO_FSALGORITHM_SPECIALISATION is defined
      * \see NO_FSALGORITHM_SPECIALISATION
      *
-     * \author Helfer Thomas
+     * \author Thomas Helfer
      * \date   30 Jun 2006      
      */
     template<>
@@ -515,7 +515,7 @@ namespace tfel{
        * - OutputIterator is a model of Random Access Iterator.
        * - InputIterator's value type is convertible to a type in OutputIterator's set of value types. 
        * 
-       * \author Helfer Thomas
+       * \author Thomas Helfer
        * \date   30 Jun 2006      
        */
       template<typename InputIterator,typename OutputIterator>
@@ -562,7 +562,7 @@ namespace tfel{
      * This is disabled if NO_FSALGORITHM_SPECIALISATION is defined
      * \see NO_FSALGORITHM_SPECIALISATION
      *
-     * \author Helfer Thomas
+     * \author Thomas Helfer
      * \date   30 Jun 2006      
      */
     template<>
@@ -581,7 +581,7 @@ namespace tfel{
        * - OutputIterator is a model of Random Access Iterator.
        * - InputIterator's value type is convertible to a type in OutputIterator's set of value types. 
        * 
-       * \author Helfer Thomas
+       * \author Thomas Helfer
        * \date   30 Jun 2006      
        */
       template<typename InputIterator,typename OutputIterator>
@@ -629,7 +629,7 @@ namespace tfel{
      * This is disabled if NO_FSALGORITHM_SPECIALISATION is defined
      * \see NO_FSALGORITHM_SPECIALISATION
      *
-     * \author Helfer Thomas
+     * \author Thomas Helfer
      * \date   30 Jun 2006      
      */
     template<>
@@ -648,7 +648,7 @@ namespace tfel{
        * - OutputIterator is a model of Random Access Iterator.
        * - InputIterator's value type is convertible to a type in OutputIterator's set of value types. 
        * 
-       * \author Helfer Thomas
+       * \author Thomas Helfer
        * \date   30 Jun 2006      
        */
       template<typename InputIterator,typename OutputIterator>

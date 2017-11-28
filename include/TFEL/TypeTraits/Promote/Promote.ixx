@@ -1,9 +1,9 @@
 /*!
  *\file   Promote.ixx
  *\brief  This file implement the Promote class.
- *\author Helfer Thomas
+ *\author Thomas Helfer
  *\date   02 jun 2006
- * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
  * reserved. 
  * This project is publicly released under either the GNU GPL Licence 
  * or the CECILL-A licence. A copy of thoses licences are delivered 
@@ -20,7 +20,7 @@
 /*!
  * \def    TFEL_MATH_CHOOSETYPE
  * \brief  An helper macro to specialise ChooseType.
- * \author Helfer Thomas
+ * \author Thomas Helfer
  * \date   01 Sept 2006 
  */
 #define TFEL_MATH_CHOOSETYPE(X)                   \
@@ -63,7 +63,7 @@ namespace tfel{
        * \param  B, second type
        * \return type, the result.
        * \pre    std::numeric_limits<A> and std::numeric_limits<B> must be defined 
-       * \author Helfer Thomas
+       * \author Thomas Helfer
        * \date   02 jun 2006
        */
       template<typename A, typename B>
@@ -147,7 +147,7 @@ namespace tfel{
        * \brief  An helper class which associates to a type a type that is greater. 
        * \param  T, a type
        * \return type, the result
-       * \author Helfer Thomas
+       * \author Thomas Helfer
        * \date   02 jun 2006
        */
       template<typename> 
@@ -300,7 +300,7 @@ namespace tfel{
       /*!
        * \class  ChooseType
        * \brief  Choose the largest of the two types, taking their signess into account
-       * \author Helfer Thomas
+       * \author Thomas Helfer
        * \date   01 Sept 2006 
        */
       template<typename A, typename B, bool A_is_signed, bool B_is_signed>

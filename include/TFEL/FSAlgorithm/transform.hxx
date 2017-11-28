@@ -1,9 +1,9 @@
 /*!
  * \file   include/TFEL/FSAlgorithm/transform.hxx
  * \brief  This file implements the transform algorithm.
- * \author Helfer Thomas
+ * \author Thomas Helfer
  * \date   30 Jun 2006
- * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
  * reserved. 
  * This project is publicly released under either the GNU GPL Licence 
  * or the CECILL-A licence. A copy of thoses licences are delivered 
@@ -30,7 +30,7 @@ namespace tfel{
      *
      * \see transform.cxx for some elementary tests.
      *
-     * \author Helfer Thomas
+     * \author Thomas Helfer
      * \date   30 Jun 2006      
      */
     template<unsigned int N>
@@ -53,7 +53,7 @@ namespace tfel{
        * - InputIterator's value type must be convertible to UnaryFunction's argument type.
        * - UnaryFunction's result type must be convertible to a type in OutputIterator's set of value types. 
        *
-       * \author Helfer Thomas
+       * \author Thomas Helfer
        * \date   30 Jun 2006      
        */
       template<typename InputIterator,typename OutputIterator, 
@@ -82,7 +82,7 @@ namespace tfel{
        * - InputIterator1's and InputIterator2's value types must be convertible, respectively, to BinaryFunction's first and second argument types.
        * - UnaryFunction's result type must be convertible to a type in OutputIterator's set of value types.
        *
-       * \author Helfer Thomas
+       * \author Thomas Helfer
        * \date   30 Jun 2006
        */
       template<typename InputIterator1,typename InputIterator2,
@@ -100,7 +100,7 @@ namespace tfel{
     /*!
      * \brief partial specialisation used to end recursion when using the transform algorithm.
      *
-     * \author Helfer Thomas
+     * \author Thomas Helfer
      * \date   30 Jun 2006      
      */
     template<>
@@ -110,7 +110,7 @@ namespace tfel{
        * \return the ouptut iterator to the end the recursion
        * \sa transform<N>::exe()
        *
-       * \author Helfer Thomas
+       * \author Thomas Helfer
        * \date   30 Jun 2006
        */
       template<typename InputIterator,typename OutputIterator, 
@@ -125,7 +125,7 @@ namespace tfel{
        * \return the ouptut iterator to the end the recursion
        * \sa transform<N>::exe()
        *
-       * \author Helfer Thomas
+       * \author Thomas Helfer
        * \date   30 Jun 2006
        */
       template<typename InputIterator,typename InputIterator2,

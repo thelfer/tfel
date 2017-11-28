@@ -3,7 +3,7 @@
  * \brief    
  * \author Joachim Kopp/Thomas Helfer
  * \date   30/12/2016
- * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
  * reserved. 
  *
  * This project is publicly released under either the GNU GPL Licence 

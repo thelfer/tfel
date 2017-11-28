@@ -75,6 +75,7 @@ WARN_LOGFILE           = doxygen.log
 #---------------------------------------------------------------------------
 INPUT                  = @abs_top_srcdir@
 FILE_PATTERNS          = *.hxx     \
+			 *.ixx     \
 			 *.doxygen
 RECURSIVE              = YES
 EXCLUDE                = 

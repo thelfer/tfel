@@ -1,8 +1,10 @@
 /*!
  * \file   tfel-doc/include/TFEL/Utilities/GeneratorOptions.hxx
  * \brief    
- * \author THOMAS HELFER
+ * \author Thomas Helfer
  * \date   21 août 2015
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
+ * reserved. 
  * This project is publicly released under either the GNU GPL Licence 
  * or the CECILL-A licence. A copy of thoses licences are delivered 
  * with the sources of TFEL. CEA or EDF may also distribute this 

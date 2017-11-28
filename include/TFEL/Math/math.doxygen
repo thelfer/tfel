@@ -1,12 +1,25 @@
 /*!
  * \file include/TFEL/Math/math.doxygen
- * \brief this file contains the documentation of the math namespace
+ * \brief this file contains the documentation of the `tfel::math`
+ * namespace.
  */
 
 /*!
  * \namespace tfel::math
  * \brief This namespace contains various classes and functions
  * défining mathematical objects and numerical algorithms.
+ *
+ * \section Tensorial Tensorial objects
+ *
+ * The `TFEL/Math` library provides two classes for second order
+ * tensors:
+ * - The `stensor` class which describes *symmetric* second order
+ *   tensors.
+ * - The `tensor` class which describes general second order
+ *   (symmetric and unsymmetric) tensors.
+ *
+ * Fourth order tensors are linear transformations of second order
+ * tensors.
  */
 
 /*!

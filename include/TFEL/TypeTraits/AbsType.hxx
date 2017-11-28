@@ -2,9 +2,9 @@
  * \file   include/TFEL/TypeTraits/AbsType.hxx
  * \brief  This file declares the AbsType traits class
  * and specialises it for standard numeric types.
- * \author Helfer Thomas
+ * \author Thomas Helfer
  * \date   10 Sept. 2012
- * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
  * reserved. 
  * This project is publicly released under either the GNU GPL Licence 
  * or the CECILL-A licence. A copy of thoses licences are delivered 
@@ -22,7 +22,7 @@
  * \def    TFEL_TYPETRAITS_ABSTYPE
  * \brief An helper macro to specialise AbsType for each standard
  * "real" numeric types.
- * \author Helfer Thomas
+ * \author Thomas Helfer
  * \date   10 Sept. 2012
  */
 #define TFEL_TYPETRAITS_ABSTYPE(X)         \
@@ -40,7 +40,7 @@
  * \def    TFEL_TYPETRAITS_ABSTYPEII
  * \brief  An helper macro to specialise AbsType for each
  * standard "complex" numeric types.
- * \author Helfer Thomas
+ * \author Thomas Helfer
  * \date   10 Sept. 2012
  */
 #define TFEL_TYPETRAITS_ABSTYPEII(X)                          \
@@ -68,7 +68,7 @@ namespace tfel{
      * \param  T, type to be tested.
      * \return type, type of abs() function
      *
-     * \author Helfer Thomas
+     * \author Thomas Helfer
      * \date   10 Sept. 2012
      */
     template<typename T>

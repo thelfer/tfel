@@ -1,9 +1,9 @@
 /*!
  * \file   tests/Tests/testcase.cxx
- * \author Helfer Thomas
+ * \author Thomas Helfer
  * \date   10 Apr 10
  * \brief a simple test of the TestCase class
- * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
  * reserved. 
  * This project is publicly released under either the GNU GPL Licence 
  * or the CECILL-A licence. A copy of thoses licences are delivered 

@@ -1,9 +1,9 @@
 /*!
  * \file   include/TFEL/TypeTraits/IsInvalid.hxx
  * \brief  This file declares the IsInvalid traits class.
- * \author Helfer Thomas
+ * \author Thomas Helfer
  * \date   14 oct 2006
- * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
  * reserved. 
  * This project is publicly released under either the GNU GPL Licence 
  * or the CECILL-A licence. A copy of thoses licences are delivered 
@@ -26,7 +26,7 @@ namespace tfel{
      * \param  T, type to be tested.
      * \return bool cond, true if T is invalid, false otherwise.
      *
-     * \author Helfer Thomas
+     * \author Thomas Helfer
      * \date   Apr 2006
      */
     template<typename T>

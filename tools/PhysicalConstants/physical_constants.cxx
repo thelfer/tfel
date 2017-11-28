@@ -3,7 +3,7 @@
  * \brief    
  * \author Thomas Helfer
  * \date   18 août 2017
- * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
  * reserved. 
  * This project is publicly released under either the GNU GPL Licence 
  * or the CECILL-A licence. A copy of thoses licences are delivered 
@@ -116,9 +116,9 @@ static void generate_cxx(const std::vector<Constant>& cs)
   os << "/*!\n"
      << " * \\file   include/TFEL/PhysicalConstants.hxx\n"
      << " * \\brief\n"
-     << " * \\author HELFER Thomas 202608\n"
+     << " * \\author Thomas Helfer\n"
      << " * \\date   18 août 2017\n"
-     << " * \\copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights\n"
+     << " * \\copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights\n"
      << " * reserved.\n"
      << " * This project is publicly released under either the GNU GPL Licence\n" 
      << " * or the CECILL-A licence. A copy of thoses licences are delivered\n" 
@@ -171,7 +171,7 @@ static void generate_python(const std::vector<Constant>& cs)
      << " * \\brief\n"
      << " * \\author Thomas Helfer\n"
      << " * \\date   18 août 2017\n"
-     << " * \\copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights \n"
+     << " * \\copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights \n"
      << " * reserved. \n"
      << " * This project is publicly released under either the GNU GPL Licence \n"
      << " * or the CECILL-A licence. A copy of thoses licences are delivered \n"
@@ -250,7 +250,7 @@ static void generate_fortran77(const std::vector<Constant>& cs)
      << "C> \\brief\n"
      << "C> \\author Thomas Helfer\n"
      << "C> \\date   18 août 2017\n"
-     << "C> \\copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights \n"
+     << "C> \\copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights \n"
      << "C> reserved. \n"
      << "C> This project is publicly released under either the GNU GPL Licence \n"
      << "C> or the CECILL-A licence. A copy of thoses licences are delivered \n"
@@ -316,7 +316,7 @@ static void generate_fortran90(const std::vector<Constant>& cs)
      << "!           http://physics.nist.gov/cuu/Constants/index.html\n"
      << "!> \\author Thomas Helfer\n"
      << "!> \\date   18 août 2017\n"
-     << "!> \\copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights \n"
+     << "!> \\copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights \n"
      << "!  reserved. \n"
      << "!  This project is publicly released under either the GNU GPL Licence \n"
      << "!  or the CECILL-A licence. A copy of thoses licences are delivered \n"

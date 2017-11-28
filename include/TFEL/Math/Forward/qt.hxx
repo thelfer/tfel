@@ -1,9 +1,9 @@
 /*! 
  * \file  include/TFEL/Math/Forward/qt.hxx
  * \brief
- * \author Helfer Thomas
+ * \author Thomas Helfer
  * \brief 03 jan. 2012
- * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
  * reserved. 
  * This project is publicly released under either the GNU GPL Licence 
  * or the CECILL-A licence. A copy of thoses licences are delivered 
@@ -30,7 +30,7 @@ namespace tfel
      * \param T, the underlying numerical type.
      * \pre T must be a fundamental numerical type.
      * \see unit_samples.hxx, IsFundamentalNumericType
-     * \author Helfer Thomas
+     * \author Thomas Helfer
      * \date   06 Jun 2006
      */
     template<typename unit,typename T>

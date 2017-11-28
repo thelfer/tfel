@@ -1,9 +1,9 @@
 /*!
  * \file   include/TFEL/TypeTraits/IsSafelyReinterpretCastableTo.hxx
  * \brief  This file implements the IsSafelyReinterpretCastableTo traits class.
- * \author Helfer Thomas
+ * \author Thomas Helfer
  * \date   26 Jul 2006
- * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
  * reserved. 
  * This project is publicly released under either the GNU GPL Licence 
  * or the CECILL-A licence. A copy of thoses licences are delivered 
@@ -33,7 +33,7 @@ namespace tfel{
      * \return bool cond, true if the above expressions are valid,
      * false otherwise.
      *
-     * \author Helfer Thomas
+     * \author Thomas Helfer
      * \date   28 jun 2006     
      */ 
     template<typename A,typename B>

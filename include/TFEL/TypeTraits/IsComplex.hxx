@@ -2,9 +2,9 @@
  * \file   include/TFEL/TypeTraits/IsComplex.hxx
  * \brief  This file declares the IsComplex traits class and
  * specialises it for standard numeric types.
- * \author Helfer Thomas
+ * \author Thomas Helfer
  * \date   04 Jul 2006
- * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
  * reserved. 
  * This project is publicly released under either the GNU GPL Licence 
  * or the CECILL-A licence. A copy of thoses licences are delivered 
@@ -21,7 +21,7 @@
  * \def    TFEL_META_IS_COMPLEX
  * \brief An helper macro to specialise IsComplex for each standard
  * numeric types.
- * \author Helfer Thomas
+ * \author Thomas Helfer
  * \date   28 jun 2006 
  */
 #define TFEL_META_IS_COMPLEX(X)            \
@@ -62,7 +62,7 @@ namespace tfel{
      *
      * \see IsScalar, IsReal
      *
-     * \author Helfer Thomas
+     * \author Thomas Helfer
      * \date   04 Jul 2006
      */
     template<typename T>

@@ -9,7 +9,7 @@
  *  \brief class that does a relative first, and then an absolute comparison if
  *         the relative didn't pass, between two columns
  *
- * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
  * reserved. 
  * This project is publicly released under either the GNU GPL Licence 
  * or the CECILL-A licence. A copy of thoses licences are delivered 

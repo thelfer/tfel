@@ -2,8 +2,9 @@
  * \file   include/TFEL/Math/Parser/EvaluatorFunction.hxx
  * \brief  
  * 
- * \author Helfer Thomas
+ * \author Thomas Helfer
  * \date   15 jan 2009
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
  * reserved. 
  * This project is publicly released under either the GNU GPL Licence 
  * or the CECILL-A licence. A copy of thoses licences are delivered 

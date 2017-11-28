@@ -1,8 +1,14 @@
 /*!
  * \file   mfront/tests/models/interfaces/include/MFront/PleiadesModelInterface-2.0.hxx
  * \brief  This file declares the PleiadesModelInterface class
- * \author Helfer Thomas
+ * \author Thomas Helfer
  * \date   10 Nov 2006
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
+ * reserved. 
+ * This project is publicly released under either the GNU GPL Licence 
+ * or the CECILL-A licence. A copy of thoses licences are delivered 
+ * with the sources of TFEL. CEA or EDF may also distribute this 
+ * project under specific licensing conditions. 
  */
 
 #ifndef LIB_MFRONT_PLEIADESMODELINTERFACE_HXX

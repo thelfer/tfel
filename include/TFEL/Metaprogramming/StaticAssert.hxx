@@ -1,10 +1,10 @@
 /*!
  * \file   include/TFEL/Metaprogramming/StaticAssert.hxx
  * \brief  This file defines the TFEL_STATIC_ASSERT macro.
- * \author Helfer Thomas
+ * \author Thomas Helfer
  * \date   28 Aug 2006
  * modified 11/08/2013: add  __attribute__ ((__used__)) for gcc
- * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
  * reserved. 
  * This project is publicly released under either the GNU GPL Licence 
  * or the CECILL-A licence. A copy of thoses licences are delivered 
@@ -27,7 +27,7 @@ namespace tfel{
       /*!
        * An helper class. Only its specialisation 
        * for true is defined.
-       * \author Helfer Thomas
+       * \author Thomas Helfer
        * \date   28 Aug 2006
        */
       template<bool>
@@ -35,7 +35,7 @@ namespace tfel{
       
       /*!
        * Partial specialisation of StaticTest
-       * \author Helfer Thomas
+       * \author Thomas Helfer
        * \date   28 Aug 2006
        */
       template<>
@@ -43,7 +43,7 @@ namespace tfel{
       
       /*!
        * A do nothing class
-       * \author Helfer Thomas
+       * \author Thomas Helfer
        * \date   28 Aug 2006
        */
       template<unsigned int N>
@@ -83,7 +83,7 @@ namespace tfel{
  * This macro is disabled if the flag NOSTATICDEBUG defined.
  * \see NOSTATICDEBUG.
  *
- * \author Helfer Thomas
+ * \author Thomas Helfer
  * \date   28 Aug 2006
  */
 #define TFEL_STATIC_ASSERT(x) \

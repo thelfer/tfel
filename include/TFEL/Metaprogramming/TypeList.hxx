@@ -1,9 +1,9 @@
 /*!
  * \file   include/TFEL/Metaprogramming/TypeList.hxx
  * \brief  This file declares some tools to work with TL.
- * \author Helfer Thomas
+ * \author Thomas Helfer
  * \date   30 August 2006
- * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
  * reserved. 
  * This project is publicly released under either the GNU GPL Licence 
  * or the CECILL-A licence. A copy of thoses licences are delivered 
@@ -32,7 +32,7 @@ namespace tfel{
      * (http://www.ddj.com/dept/cpp/184403813)
      * \endhtmlonly.
      *
-     * \author Helfer Thomas
+     * \author Thomas Helfer
      * \date   30 August 2006
      */
     struct TFEL_VISIBILITY_LOCAL TL{};
@@ -41,7 +41,7 @@ namespace tfel{
      * \class TLNode
      * \brief Nodes of TL.
      * TLs are simply linked list of types. This class describe its nodes.
-     * \author Helfer Thomas
+     * \author Thomas Helfer
      * \date   30 August 2006
      */
     template<typename T, typename U>
@@ -50,7 +50,7 @@ namespace tfel{
     /*!
      * \class  TLE
      * \brief  Type used to end a TL.
-     * \author Helfer Thomas
+     * \author Thomas Helfer
      * \date   30 August 2006
      */
     struct TLE;
@@ -66,7 +66,7 @@ namespace tfel{
      *
      * \return type, the TL resulting from the transformation.
      *
-     * \author Helfer Thomas
+     * \author Thomas Helfer
      * \date   30 August 2006
      */
     template<typename Tlist, template<typename> class Transform>
@@ -79,7 +79,7 @@ namespace tfel{
      * \param T, a TL
      * \return value, the number of elements in T.
      *
-     * \author Helfer Thomas
+     * \author Thomas Helfer
      * \date   30 August 2006
      */
     template<typename T>
@@ -94,7 +94,7 @@ namespace tfel{
      * \param U, a TL.
      * \return value, the number of times T appears in U.
      *
-     * \author Helfer Thomas
+     * \author Thomas Helfer
      * \date   30 August 2006
      */
     template<typename T, typename U>
@@ -109,7 +109,7 @@ namespace tfel{
      * \param List, a TL.
      * \return value, the position of T in List.
      *
-     * \author Helfer Thomas
+     * \author Thomas Helfer
      * \date   30 August 2006
      */
     template<typename T, typename List>
@@ -122,7 +122,7 @@ namespace tfel{
      * \param List, a TL.
      * \param T, a type.
      * \return type, a new typelist.
-     * \author Helfer Thomas
+     * \author Thomas Helfer
      * \date   09 September 2006
      */
     template<typename List,typename T>
@@ -135,7 +135,7 @@ namespace tfel{
      * \param List, a TL.
      * \param T, a type.
      * \return type, a new typelist.
-     * \author Helfer Thomas
+     * \author Thomas Helfer
      * \date   09 September 2006
      */
     template<typename List,typename T>
@@ -149,7 +149,7 @@ namespace tfel{
      * \param  typename Second, a TL. 
      * \return type, the resulting TL.
      *
-     * \author Helfer Thomas
+     * \author Thomas Helfer
      * \date   15 Sept. 2006
      */
     template<typename First,typename Second>
@@ -165,7 +165,7 @@ namespace tfel{
      * \return type, the Nth element of T or TLE 
      * if T contains less than N elements.
      *
-     * \author Helfer Thomas
+     * \author Thomas Helfer
      * \date   30 August 2006
      */
     template<typename T, unsigned int N>
@@ -181,7 +181,7 @@ namespace tfel{
      * \return type, a TL or TLE 
      * if T contains less than N elements.
      *
-     * \author Helfer Thomas
+     * \author Thomas Helfer
      * \date   30 August 2006
      */
     template<typename T, unsigned int N>
@@ -196,7 +196,7 @@ namespace tfel{
      * \param U, a TL. 
      * \return cond, true if T  appears one and only one time in U.
      *
-     * \author Helfer Thomas
+     * \author Thomas Helfer
      * \date   30 August 2006
      */
     template<typename T,typename U>
@@ -210,7 +210,7 @@ namespace tfel{
      * \param T, a TL. 
      * \return cond, true if all elements in T are unique
      *
-     * \author Helfer Thomas
+     * \author Thomas Helfer
      * \date   30 August 2006
      */
     template<typename T>
@@ -224,7 +224,7 @@ namespace tfel{
      * \param List, a TL.
      * \param BaseType, a type.
      * \return type, a new typelist.
-     * \author Helfer Thomas
+     * \author Thomas Helfer
      * \date   09 September 2006
      */
     template<typename List,typename BaseType>
@@ -237,7 +237,7 @@ namespace tfel{
      *
      * \param List, a TL.
      * \return type, a new typelist.
-     * \author Helfer Thomas
+     * \author Thomas Helfer
      * \date   08 Januar 2006
      */
     template<typename List>
@@ -251,7 +251,7 @@ namespace tfel{
      * \param typename List, a TL.
      * 
      * \return const bool.
-     * \author Helfer Thomas
+     * \author Thomas Helfer
      * \date   10 March 2007
      */
     template<typename List>
@@ -264,7 +264,7 @@ namespace tfel{
      * \return cons size_t value, the result.
      * The size is given by the sizeof operator.
      * The minimum size is 1.
-     * \author Helfer Thomas.
+     * \author Thomas Helfer.
      * \date   22 Apr. 2007.
      */
     template<typename List> 
@@ -276,7 +276,7 @@ namespace tfel{
      * \return cons size_t value, the result.
      * The size is given by the sizeof operator.
      * The minimum size is alignof(char).
-     * \author Helfer Thomas.
+     * \author Thomas Helfer.
      * \date   16/12/2014
      */
     template<typename List> 
@@ -289,7 +289,7 @@ namespace tfel{
      * \param List, a TL.
      * \param size_t, the thresold value.
      * \return type, a result under the form of a TL.
-     * \author Helfer Thomas.
+     * \author Thomas Helfer.
      * \date   22 Apr. 2007.
      */
     template<typename List,size_t size>

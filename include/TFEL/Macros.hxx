@@ -1,9 +1,9 @@
 /*! 
  * \file  include/TFEL/Macros.hxx
  * \brief  defines some usefull macros
- * \author Helfer Thomas
+ * \author Thomas Helfer
  * \brief 23 mai 2011
- * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
  * reserved. 
  * This project is publicly released under either the GNU GPL Licence 
  * or the CECILL-A licence. A copy of thoses licences are delivered 
@@ -27,7 +27,7 @@
  * is that macro expansion of macro arguments does not
  * occur in TFEL_PP_DO_JOIN2 but does in TFEL_PP_DO_JOIN.
  *
- * \author Helfer Thomas
+ * \author Thomas Helfer
  * \date   28 Aug 2006
  */
 #define TFEL_PP_JOIN( X, Y ) TFEL_PP_DO_JOIN( X, Y )
@@ -36,7 +36,7 @@
  * \def TFEL_PP_DO_JOIN
  * \brief An helper macro for TFEL_PP_JOIN
  * \see TFEL_PP_JOIN
- * \author Helfer Thomas
+ * \author Thomas Helfer
  * \date   28 Aug 2006
  */
 #define TFEL_PP_DO_JOIN( X, Y ) TFEL_PP_DO_JOIN2(X,Y)
@@ -45,7 +45,7 @@
  * \def TFEL_PP_DO_JOIN2
  * \brief An helper macro for TFEL_PP_JOIN
  * \see TFEL_PP_JOIN
- * \author Helfer Thomas
+ * \author Thomas Helfer
  * \date   28 Aug 2006
  */
 #define TFEL_PP_DO_JOIN2( X, Y ) X##Y

@@ -1,9 +1,9 @@
 /*!
  * \file  tools/glossary/generate_glossary.cxx
  * \brief
- * \author Helfer Thomas
+ * \author Thomas Helfer
  * \brief 14 mai 2009
- * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
  * reserved. 
  * This project is publicly released under either the GNU GPL Licence 
  * or the CECILL-A licence. A copy of thoses licences are delivered 
@@ -223,9 +223,9 @@ void generateCxxOutput(const GlossaryTokenizer& tokenizer)
   // writting headers
   header << "/*!\n"
 	 << " * \\file   Glossary.hxx\n"
-	 << " * \\author Helfer Thomas\n"
+	 << " * \\author Thomas Helfer\n"
 	 << " * \\date   09/06/14\n"
-	 << " * \\copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights\n" 
+	 << " * \\copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights\n" 
 	 << " * reserved.\n"
 	 << " * This project is publicly released under either the GNU GPL Licence\n"
 	 << " * or the CECILL-A licence. A copy of thoses licences are delivered\n"
@@ -324,9 +324,9 @@ void generateCxxOutput(const GlossaryTokenizer& tokenizer)
   /* writting src file */
   src << "/*!\n"
       << " * \\file   Glossary.cxx\n"
-      << " * \\author Helfer Thomas\n"
+      << " * \\author Thomas Helfer\n"
       << " * \\date   09/06/14\n"
-      << " * \\copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights\n" 
+      << " * \\copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights\n" 
       << " * reserved.\n"
       << " * This project is publicly released under either the GNU GPL Licence\n"
       << " * or the CECILL-A licence. A copy of thoses licences are delivered\n"
@@ -633,9 +633,9 @@ void generateBoostPythonBindings(const GlossaryTokenizer& tokenizer)
   // python bindings
   psrc << "/*!\n"
        << " * \\file   PythonGlossary.cxx\n"
-       << " * \\author Helfer Thomas\n"
+       << " * \\author Thomas Helfer\n"
        << " * \\date   09/06/14\n"
-       << " * \\copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights\n" 
+       << " * \\copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights\n" 
        << " * reserved.\n"
        << " * This project is publicly released under either the GNU GPL Licence\n"
        << " * or the CECILL-A licence. A copy of thoses licences are delivered\n"

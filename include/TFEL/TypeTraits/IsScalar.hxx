@@ -2,9 +2,9 @@
  * \file   include/TFEL/TypeTraits/IsScalar.hxx
  * \brief  This file declares the IsScalar traits class
  * and specialises it for standard numeric types.
- * \author Helfer Thomas
+ * \author Thomas Helfer
  * \date   07 Jun 2006
- * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
  * reserved. 
  * This project is publicly released under either the GNU GPL Licence 
  * or the CECILL-A licence. A copy of thoses licences are delivered 
@@ -22,7 +22,7 @@
  * \brief An helper macro to specialise IsScalar for each standard
  * "real" numeric types.
  *
- * \author Helfer Thomas
+ * \author Thomas Helfer
  * \date   28 jun 2006 
  */
 #define TFEL_META_IS_SCALAR(X)             \
@@ -61,7 +61,7 @@ namespace tfel{
      *
      * \see IsReal, IsComplex
      *
-     * \author Helfer Thomas
+     * \author Thomas Helfer
      * \date   04 Jul 2006
      */
     template<typename T>

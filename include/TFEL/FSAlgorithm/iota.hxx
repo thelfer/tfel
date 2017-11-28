@@ -1,9 +1,9 @@
 /*!
  * \file   include/TFEL/FSAlgorithm/iota.hxx
  * \brief  This file implements the iota class.
- * \author Helfer Thomas
+ * \author Thomas Helfer
  * \date   01 Aug 2006
- * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
  * reserved. 
  * This project is publicly released under either the GNU GPL Licence 
  * or the CECILL-A licence. A copy of thoses licences are delivered 
@@ -30,7 +30,7 @@ namespace tfel{
      *
      * \see iota.cxx for some elementary tests.
      *
-     * \author Helfer Thomas
+     * \author Thomas Helfer
      * \date   30 Jun 2006      
      */
     template<unsigned int N>
@@ -63,7 +63,7 @@ namespace tfel{
     /*!
      * \brief partial specialisation used to end recursion when using the iota algorithm.
      *
-     * \author Helfer Thomas
+     * \author Thomas Helfer
      * \date   30 Jun 2006      
      */
     template<>
@@ -73,7 +73,7 @@ namespace tfel{
        * \return void
        * \sa iota<N>::exe() for details
        *
-       * \author Helfer Thomas
+       * \author Thomas Helfer
        * \date   30 Jun 2006
        */
       template<typename ForwardIterator,typename T>

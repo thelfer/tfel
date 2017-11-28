@@ -1,9 +1,9 @@
 /*!
  * \file   include/TFEL/Utilities/TerminalColors.hxx
  * \brief  This file implements the TerminalColors class. 
- * \author Helfer Thomas
+ * \author Thomas Helfer
  * \date   26 Jul 2006
- * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
  * reserved. 
  * This project is publicly released under either the GNU GPL Licence 
  * or the CECILL-A licence. A copy of thoses licences are delivered 
@@ -24,7 +24,7 @@ namespace tfel{
      * \class  TerminalColors
      * \brief  This class contains char sequence corresponding to colors. 
      * This enables to write ouput messages in color in the terminal.
-     * \author Helfer Thomas
+     * \author Thomas Helfer
      * \date   26 Jul 2006
      */
     struct TFELUTILITIES_VISIBILITY_EXPORT TerminalColors

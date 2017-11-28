@@ -1,9 +1,9 @@
 /*!
  * \file   Barlat.ixx
  * \brief    
- * \author HELFER Thomas 202608
+ * \author Thomas Helfer
  * \date   17 nov. 2017
- * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
  * reserved. 
  * This project is publicly released under either the GNU GPL Licence 
  * or the CECILL-A licence. A copy of thoses licences are delivered 
@@ -133,7 +133,147 @@ namespace tfel{
 	      zero,zero,zero,zero,zero,c66};
 	} // end of exe
       }; // end of struct BarlatLinearTransformation<3u>
-
+      /*!
+       * \brief an helper structure used to build linear
+       * transformation according to the modelling hypothesis and the
+       * orthotropic axis convention.
+       * \tparam H: modelling hypothesis
+       * \tparam c: orthotropic axis convention
+       */
+      template<tfel::material::ModellingHypothesis::Hypothesis H,
+	       tfel::material::OrthotropicAxesConvention c>
+      struct BarlatLinearTransformationII;
+      /*!
+       * \brief partial specialisation of the
+       * `BarlatLinearTransformationII` for the
+       * `tfel::material::OrthotropicAxesConvention::DEFAULT`
+       * orthotropic convention.
+       */
+      template<tfel::material::ModellingHypothesis::Hypothesis H>
+      struct BarlatLinearTransformationII<H,tfel::material::OrthotropicAxesConvention::DEFAULT>
+	: public BarlatLinearTransformation<tfel::material::ModellingHypothesisToSpaceDimension<H>::value>
+      {}; // end of struct BarlatLinearTransformationII<H,tfel::material::OrthotropicAxesConvention::DEFAULT>
+      /*!
+       * \brief partial specialisation of the
+       * `BarlatLinearTransformationII` for the
+       * `tfel::material::OrthotropicAxesConvention::PIPE` orthotropic
+       * convention for non plane modelling hypothesis.
+       */
+      template<tfel::material::ModellingHypothesis::Hypothesis H>
+      struct BarlatLinearTransformationII<H,tfel::material::OrthotropicAxesConvention::PIPE>
+	: public BarlatLinearTransformation<tfel::material::ModellingHypothesisToSpaceDimension<H>::value>
+      {}; // end of struct BarlatLinearTransformationII<H,tfel::material::OrthotropicAxesConvention::DEFAULT>
+      /*!
+       * \brief partial specialisation of the
+       * `BarlatLinearTransformationII` for the
+       * `tfel::material::OrthotropicAxesConvention::PIPE`
+       * orthotropic convention and the
+       * `tfel::material::ModellingHypothesis::PLANESTRAIN`
+       * modelling hypothesis.
+       */
+      template<>
+      struct BarlatLinearTransformationII<tfel::material::ModellingHypothesis::PLANESTRAIN,
+					  tfel::material::OrthotropicAxesConvention::PIPE>
+      {
+	/*!
+	 * \return a linear transformation of the stresses
+	 * \param[in] c12: coefficient of  linear transformation
+	 * \param[in] c21: coefficient of  linear transformation
+	 * \param[in] c13: coefficient of  linear transformation
+	 * \param[in] c31: coefficient of  linear transformation
+	 * \param[in] c23: coefficient of  linear transformation
+	 * \param[in] c32: coefficient of  linear transformation
+	 * \param[in] c44: coefficient of  linear transformation
+	 * \param[in] c55: coefficient of  linear transformation
+	 * \param[in] c66: coefficient of  linear transformation
+	 * \see tfel::material::makeBarlatLinearTransformation
+	 */
+	template<typename real>
+	static tfel::math::st2tost2<2u,real>
+	exe(const real c12,const real c21,
+	    const real c13,const real c31,
+	    const real c23,const real c32,
+	    const real c44,const real c55,
+	    const real c66)
+	{
+	  return BarlatLinearTransformation<2u>::exe(c13,c23,c12,c21,c32,
+						     c23,c55,c44,c66);
+	} // end of exe
+      }; // end of struct BarlatLinearTransformationII<H,tfel::material::OrthotropicAxesConvention::DEFAULT>
+      /*!
+       * \brief partial specialisation of the
+       * `BarlatLinearTransformationII` for the
+       * `tfel::material::OrthotropicAxesConvention::PIPE`
+       * orthotropic convention and the
+       * `tfel::material::ModellingHypothesis::PLANESTRESS`
+       * modelling hypothesis.
+       */
+      template<>
+      struct BarlatLinearTransformationII<tfel::material::ModellingHypothesis::PLANESTRESS,
+					  tfel::material::OrthotropicAxesConvention::PIPE>
+      {
+	/*!
+	 * \return a linear transformation of the stresses
+	 * \param[in] c12: coefficient of  linear transformation
+	 * \param[in] c21: coefficient of  linear transformation
+	 * \param[in] c13: coefficient of  linear transformation
+	 * \param[in] c31: coefficient of  linear transformation
+	 * \param[in] c23: coefficient of  linear transformation
+	 * \param[in] c32: coefficient of  linear transformation
+	 * \param[in] c44: coefficient of  linear transformation
+	 * \param[in] c55: coefficient of  linear transformation
+	 * \param[in] c66: coefficient of  linear transformation
+	 * \see tfel::material::makeBarlatLinearTransformation
+	 */
+	template<typename real>
+	static tfel::math::st2tost2<2u,real>
+	exe(const real c12,const real c21,
+	    const real c13,const real c31,
+	    const real c23,const real c32,
+	    const real c44,const real c55,
+	    const real c66)
+	{
+	  return BarlatLinearTransformation<2u>::exe(c13,c23,c12,c21,c32,
+						     c23,c55,c44,c66);
+	} // end of exe
+      }; // end of struct BarlatLinearTransformationII<H,tfel::material::OrthotropicAxesConvention::DEFAULT>
+      /*!
+       * \brief partial specialisation of the
+       * `BarlatLinearTransformationII` for the
+       * `tfel::material::OrthotropicAxesConvention::PIPE` orthotropic
+       * convention and the
+       * `tfel::material::ModellingHypothesis::GENERALISEDPLANESTRESS`
+       * modelling hypothesis.
+       */
+      template<>
+      struct BarlatLinearTransformationII<tfel::material::ModellingHypothesis::GENERALISEDPLANESTRAIN,
+					  tfel::material::OrthotropicAxesConvention::PIPE>
+      {
+	/*!
+	 * \return a linear transformation of the stresses
+	 * \param[in] c12: coefficient of  linear transformation
+	 * \param[in] c21: coefficient of  linear transformation
+	 * \param[in] c13: coefficient of  linear transformation
+	 * \param[in] c31: coefficient of  linear transformation
+	 * \param[in] c23: coefficient of  linear transformation
+	 * \param[in] c32: coefficient of  linear transformation
+	 * \param[in] c44: coefficient of  linear transformation
+	 * \param[in] c55: coefficient of  linear transformation
+	 * \param[in] c66: coefficient of  linear transformation
+	 * \see tfel::material::makeBarlatLinearTransformation
+	 */
+	template<typename real>
+	static tfel::math::st2tost2<2u,real>
+	exe(const real c12,const real c21,
+	    const real c13,const real c31,
+	    const real c23,const real c32,
+	    const real c44,const real c55,
+	    const real c66)
+	{
+	  return BarlatLinearTransformation<2u>::exe(c13,c23,c12,c21,c32,
+						     c23,c55,c44,c66);
+	} // end of exe
+      }; // end of struct BarlatLinearTransformationII<H,tfel::material::OrthotropicAxesConvention::DEFAULT>
       /*!
        * \brief add the terms relative to the eigenvectors derivatives
        * \param[out] d2Phi_ds2: second derivative of the Barlat equivalent stress
@@ -247,6 +387,17 @@ namespace tfel{
 							   c32,c44,c55,c66);
     } // end of makeBarlatLinearTransformationType
 
+    template<ModellingHypothesis::Hypothesis H,
+	     OrthotropicAxesConvention c,typename real>
+    tfel::math::st2tost2<ModellingHypothesisToSpaceDimension<H>::value,real>
+    makeBarlatLinearTransformation(const real c12,const real c21, const real c13,
+				   const real c31,const real c23, const real c32,
+				   const real c44,const real c55, const real c66)
+    {
+      return internals::BarlatLinearTransformationII<H,c>::exe(c12,c21,c13,c31,c23,
+							       c32,c44,c55,c66);
+    } // end of makeBarlatLinearTransformation
+    
     template<typename StressStensor,
 	     typename BarlatExponentType,
 	     tfel::math::stensor_common::EigenSolver es>

@@ -1,9 +1,9 @@
 /*!
  * \file   include/TFEL/FSAlgorithm/for_each.hxx
  * \brief  This file implements the for_each class.
- * \author Helfer Thomas
+ * \author Thomas Helfer
  * \date   30 Jun 2006
- * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
  * reserved. 
  * This project is publicly released under either the GNU GPL Licence 
  * or the CECILL-A licence. A copy of thoses licences are delivered 
@@ -34,7 +34,7 @@ namespace tfel{
      * 
      * \see for_each.cxx for some elementary tests.
      *
-     * \author Helfer Thomas
+     * \author Thomas Helfer
      * \date   30 Jun 2006      
      */
     template<unsigned int N>
@@ -52,7 +52,7 @@ namespace tfel{
        * - UnaryFunction does not apply any non-constant operation through its argument.
        * - InputIterator's value type is convertible to UnaryFunction's argument type.
        *
-       * \author Helfer Thomas
+       * \author Thomas Helfer
        * \date   30 Jun 2006      
        */
       template<typename InputIterator,typename UnaryFunction>
@@ -68,7 +68,7 @@ namespace tfel{
     /*!
      * \brief partial specialisation of struct for_each to end recursion.
      *
-     * \author Helfer Thomas
+     * \author Thomas Helfer
      * \date   30 Jun 2006      
      */
     template<>
@@ -78,7 +78,7 @@ namespace tfel{
        * \return UnaryFunction
        * \sa for_each<N>::exe() for details
        *
-       * \author Helfer Thomas
+       * \author Thomas Helfer
        * \date   30 Jun 2006
        */
       template<typename InputIterator,typename UnaryFunction>

@@ -1,9 +1,9 @@
 /*!
  * \file   include/TFEL/Math/Matrix/MatrixConcept.hxx
  * \brief  This file declares the MatrixTraits, MatrixConcept and MatrixType classes.
- * \author Helfer Thomas
+ * \author Thomas Helfer
  * \date   04 May 2006
- * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
  * reserved. 
  * This project is publicly released under either the GNU GPL Licence 
  * or the CECILL-A licence. A copy of thoses licences are delivered 
@@ -37,7 +37,7 @@ namespace tfel{
      * This is du to the fact that we utilise CRTP to define the 
      * MatrixConcept class, so the characteristic of the matrix type
      * must be known \b before this type is defined.
-     * \author Helfer Thomas
+     * \author Thomas Helfer
      * \date   04 May 2006
      */
     template<typename T>
@@ -68,7 +68,7 @@ namespace tfel{
      * \brief A class used to model the concept of matrices.
      * Here we use the curiously recurring template pattern.  
      * \param T, a matrix type.
-     * \author Helfer Thomas
+     * \author Thomas Helfer
      * \date   04 May 2006
      */
     template<typename T>

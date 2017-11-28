@@ -1,9 +1,9 @@
 /*!
  * \file   include/TFEL/Math/T2toT2/T2toT2ConceptOperations.hxx
  * \brief  This file implements operations that can be applied to t2tot2.
- * \author Helfer Thomas
+ * \author Thomas Helfer
  * \date   19 November 2013
- * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
  * reserved. 
  * This project is publicly released under either the GNU GPL Licence 
  * or the CECILL-A licence. A copy of thoses licences are delivered 

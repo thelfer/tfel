@@ -1,9 +1,9 @@
 /*!
  *\file   qtSpecific.hxx
  *\brief  This file pecialises some class traits for quantities.
- *\author Helfer Thomas
+ *\author Thomas Helfer
  *\date   06 Jun 2006
- * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
  * reserved. 
  * This project is publicly released under either the GNU GPL Licence 
  * or the CECILL-A licence. A copy of thoses licences are delivered 
@@ -17,7 +17,7 @@
 /*!
  * \def TFEL_MATH_QT_BASE_TYPE
  * \brief  An helper macro used to define BaseType for quantity.
- * \author Helfer Thomas
+ * \author Thomas Helfer
  * \date   26 Jul 2006
  */
 #define TFEL_MATH_QT_BASE_TYPE(X)                              \

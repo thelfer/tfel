@@ -1,9 +1,9 @@
 /*!
  * \file   mfront/include/MFront/Aster/AsterInterface.hxx
  * \brief  This file implements the AsterInterface class.
- * \author Helfer Thomas
+ * \author Thomas Helfer
  * \date   28 Jul 2006
- * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
  * reserved. 
  * This project is publicly released under either the GNU GPL Licence 
  * or the CECILL-A licence. A copy of thoses licences are delivered 
@@ -69,7 +69,7 @@ namespace aster
    * duplication between two different finite strain strategies (to
    * reduce both compile-time and library size).
    *
-   * \author Helfer Thomas
+   * \author Thomas Helfer
    * \date   28 Jul 2006
    */
   template<template<tfel::material::ModellingHypothesis::Hypothesis,

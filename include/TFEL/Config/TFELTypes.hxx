@@ -1,9 +1,9 @@
 /*!
  * \file   include/TFEL/Config/TFELTypes.hxx
  * \brief  This file implements the Types class
- * \author Helfer Thomas
+ * \author Thomas Helfer
  * \date   08 Aug 2006
- * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
  * reserved. 
  * This project is publicly released under either the GNU GPL Licence 
  * or the CECILL-A licence. A copy of thoses licences are delivered 
@@ -37,7 +37,7 @@ namespace tfel
      * \param unsigned short N, space dimension.
      * \param typename T, numerical type, double by default.
      * \param bool use_quantities, says if one shall use quantities. 
-     * \author Helfer Thomas
+     * \author Thomas Helfer
      * \date   08 Aug 2006
      */
     template<unsigned short N,typename T = double, bool use_quantities = true>

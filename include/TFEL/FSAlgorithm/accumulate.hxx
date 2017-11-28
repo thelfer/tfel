@@ -1,9 +1,9 @@
 /*!
  * \file   include/TFEL/FSAlgorithm/accumulate.hxx
  * \brief  This file implements the accumulate class.
- * \author Helfer Thomas
+ * \author Thomas Helfer
  * \date   30 jun 2006
- * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
  * reserved. 
  * This project is publicly released under either the GNU GPL Licence 
  * or the CECILL-A licence. A copy of thoses licences are delivered 
@@ -30,7 +30,7 @@ namespace tfel{
      *
      * \see accumulate.cxx for some elementary tests.
      *
-     * \author Helfer Thomas
+     * \author Thomas Helfer
      * \date   30 Jun 2006      
      */
     template<unsigned int N>
@@ -86,7 +86,7 @@ namespace tfel{
     /*!
      * \brief partial specialisation of struct accumulate to end recursion.
      *
-     * \author Helfer Thomas
+     * \author Thomas Helfer
      * \date   30 Jun 2006      
      */
     template<>
@@ -96,7 +96,7 @@ namespace tfel{
        * \return the value of init
        * \sa accumulate<N>::exe()
        *
-       * \author Helfer Thomas
+       * \author Thomas Helfer
        * \date   30 Jun 2006
        */
       template <typename InputIterator, typename T>
@@ -109,7 +109,7 @@ namespace tfel{
        * \return the value of init
        * \sa accumulate<N>::exe()
        *
-       * \author Helfer Thomas
+       * \author Thomas Helfer
        * \date   30 Jun 2006
        */
       template <class InputIterator, class T, class BinaryFunction>

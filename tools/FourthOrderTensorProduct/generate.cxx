@@ -1,9 +1,9 @@
 /*! 
  * \file   tools/FourthOrderTensorProduct/generate.cxx
  * \brief
- * \author Helfer Thomas
+ * \author Thomas Helfer
  * \brief  16 juin 2014
- * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
  * reserved. 
  * This project is publicly released under either the GNU GPL Licence 
  * or the CECILL-A licence. A copy of thoses licences are delivered 
@@ -145,7 +145,7 @@ writeFileHeader(std::ostream& out,
   out << "/*! " << endl;
   out << " * \\file  " << getName(p) << "ProductExpr.hxx" << endl;
   out << " * \\brief" << endl;
-  out << " * \\author Helfer Thomas" << endl;
+  out << " * \\author Thomas Helfer" << endl;
   out << " * \\date 16 juin 2014" << endl;
   out << " */" << endl;
   out << "" << endl;

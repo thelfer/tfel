@@ -2,9 +2,9 @@
  * \file   include/TFEL/Utilities/GenTypeSpecialisation.ixx
  * \brief  This file implements some special support for specific classes.
  * \see    TL
- * \author Helfer Thomas
+ * \author Thomas Helfer
  * \date   19 Apr. 2007
- * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
  * reserved. 
  * This project is publicly released under either the GNU GPL Licence 
  * or the CECILL-A licence. A copy of thoses licences are delivered 
@@ -19,7 +19,7 @@
 #define TFEL_UTILITIES_GENTYPESPECIALIZEDACCESSOR(X,Y)                  \
       /*                                                                \
        * \brief  partial specialisation for X                           \
-       * \author Helfer Thomas                                          \
+       * \author Thomas Helfer                                          \
        * \date   20 Apr. 2007                                           \
        */                                                               \
       template<typename Child>                                          \
@@ -70,7 +70,7 @@ namespace tfel{
 
       /*
        * \brief  partial specialisation for std::string.
-       * \author Helfer Thomas
+       * \author Thomas Helfer
        * \date   20 Apr. 2007
        */
       template<typename Child>

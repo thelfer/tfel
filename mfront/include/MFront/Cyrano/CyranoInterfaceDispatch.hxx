@@ -1,9 +1,9 @@
 /*! 
  * \file  mfront/include/MFront/Cyrano/CyranoInterfaceDispatch.hxx
  * \brief
- * \author Helfer Thomas
+ * \author Thomas Helfer
  * \date   21 fév 2014
- * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
  * reserved. 
  * This project is publicly released under either the GNU GPL Licence 
  * or the CECILL-A licence. A copy of thoses licences are delivered 
@@ -34,7 +34,7 @@ namespace cyrano{
   /*!
    * \class  CyranoInterfaceDispatch
    * \brief  
-   * \author Helfer Thomas
+   * \author Thomas Helfer
    * \date   24 Jul 2013
    */
   template<tfel::material::ModellingHypothesis::Hypothesis H,

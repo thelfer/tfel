@@ -1,9 +1,9 @@
 /*!
  * \file   include/TFEL/Math/General/DotProduct.hxx
  * \brief  
- * \author Helfer Thomas
+ * \author Thomas Helfer
  * \date   30 jun 2006
- * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
  * reserved. 
  * This project is publicly released under either the GNU GPL Licence 
  * or the CECILL-A licence. A copy of thoses licences are delivered 
@@ -30,7 +30,7 @@ namespace tfel{
      *
      * \see inner_product
      *
-     * \author Helfer Thomas
+     * \author Thomas Helfer
      * \date   01 Sep 2006      
      */
     template<unsigned int N>
@@ -66,7 +66,7 @@ namespace tfel{
     /*!
      * \brief partial specialisation used to end recursion when using the dotProduct algorithm.
      *
-     * \author Helfer Thomas
+     * \author Thomas Helfer
      * \date   30 Jun 2006      
      */
     template<>
@@ -76,7 +76,7 @@ namespace tfel{
        * \return the result at the end the recursion.
        * \sa dotProduct<N>::exe() for details.
        *
-       * \author Helfer Thomas
+       * \author Thomas Helfer
        * \date   30 Jun 2006
        */
       template <typename InputIterator1, typename InputIterator2, typename T>

@@ -7,7 +7,11 @@
 \newcommand{\paren}[1]{\left(#1\right)}
 \newcommand{\deriv}[2]{\Frac{\partial #1}{\partial #2}}
 \newcommand{\tenseur}[1]{\underline{#1}}
+\newcommand{\tenseurq}[1]{\underline{\underline{\mathbf{#1}}}}
 \newcommand{\sigmaeq}{\sigma_{\mathrm{eq}}}
+\newcommand{\tsigma}{\underline{\sigma}}
+\newcommand{\trace}[1]{{\mathrm{tr}\paren{#1}}}
+\newcommand{\sigmaH}{\sigma_{H}}
 
 The page declares the new functionalities of the 3.1 version of
 `TFEL`, `MFront` and `MTest`.

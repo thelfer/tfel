@@ -2,8 +2,8 @@
  * \file   include/TFEL/Metaprogramming/GenerateTypeList.hxx
  * \see    GenerateTypeList.cxx to see how this file was generated.
  * \brief  This file declares the GenerateTypeList template class.
- * \author Helfer Thomas
- * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
+ * \author Thomas Helfer
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
  * reserved. 
  * This project is publicly released under either the GNU GPL Licence 
  * or the CECILL-A licence. A copy of thoses licences are delivered 
@@ -28,7 +28,7 @@ namespace tfel{
      * works
      * \latexonly\cite{alexandrescu01:_c_desig,alexandrescu02}\endlatexonly
      * \htmlonly(http://www.ddj.com/dept/cpp/184403813)\endhtmlonly.
-     * \author Helfer Thomas
+     * \author Thomas Helfer
      */
     template<typename... Types>
     struct TFEL_VISIBILITY_LOCAL GenerateTypeList;

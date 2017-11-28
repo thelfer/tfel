@@ -1,9 +1,9 @@
 /*! 
  * \file  mfront/include/MFront/Castem/CastemInterfaceDispatch.hxx
  * \brief
- * \author Helfer Thomas
+ * \author Thomas Helfer
  * \brief 24 juil. 2013
- * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
  * reserved. 
  * This project is publicly released under either the GNU GPL Licence 
  * or the CECILL-A licence. A copy of thoses licences are delivered 
@@ -36,7 +36,7 @@ namespace castem{
   /*!
    * \class  CastemInterfaceDispatch
    * \brief  
-   * \author Helfer Thomas
+   * \author Thomas Helfer
    * \date   24 Jul 2013
    */
   template<CastemBehaviourType type,
@@ -67,7 +67,7 @@ namespace castem{
   /*!
    * \class  CastemInterfaceDispatch
    * \brief  partial specialisation for small strain behaviours
-   * \author Helfer Thomas
+   * \author Thomas Helfer
    * \date   24 Jul 2013
    */
   template<tfel::material::ModellingHypothesis::Hypothesis H,
@@ -110,7 +110,7 @@ namespace castem{
   /*!
    * \class  CastemInterfaceDispatch
    * \brief  partial specialisation for small strain behaviours
-   * \author Helfer Thomas
+   * \author Thomas Helfer
    * \date   24 Jul 2013
    */
   template<template<tfel::material::ModellingHypothesis::Hypothesis,
@@ -160,7 +160,7 @@ namespace castem{
   /*!
    * \class  CastemInterfaceDispatch
    * \brief  partial specialisation for small strain behaviours
-   * \author Helfer Thomas
+   * \author Thomas Helfer
    * \date   24 Jul 2013
    */
   template<tfel::material::ModellingHypothesis::Hypothesis H,

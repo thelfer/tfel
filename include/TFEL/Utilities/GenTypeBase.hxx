@@ -3,9 +3,9 @@
  * \brief  This file implements the GenTypeBase class and some 
  * internal classes used by the GenType class.
  * \see    TL
- * \author Helfer Thomas
+ * \author Thomas Helfer
  * \date   19 Apr. 2007
- * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
  * reserved. 
  * This project is publicly released under either the GNU GPL Licence 
  * or the CECILL-A licence. A copy of thoses licences are delivered 
@@ -35,7 +35,7 @@ namespace tfel{
       
       //! a helper function for destroying a plain old data type.
       /*
-       * \author Helfer Thomas.
+       * \author Thomas Helfer.
        * \date   20 Apr. 2007.
        */
       template<typename T>
@@ -51,7 +51,7 @@ namespace tfel{
 
       //! an helper function to call the destructor of T.
       /*
-       * \author Helfer Thomas.
+       * \author Thomas Helfer.
        * \date   20 Apr. 2007.
        */
       template<typename T>
@@ -70,7 +70,7 @@ namespace tfel{
 
       //! an helper function to call the assignement operator of T.
       /*
-       * \author Helfer Thomas.
+       * \author Thomas Helfer.
        * \date   15/06/2017.
        */
       template<typename T>
@@ -92,7 +92,7 @@ namespace tfel{
       };
       //! an helper function to call the assignement operator of T.
       /*
-       * \author Helfer Thomas.
+       * \author Thomas Helfer.
        * \date   15/06/2017.
        */
       template<typename T>
@@ -113,7 +113,7 @@ namespace tfel{
       };
       //! an helper function to call the assignement operator of T.
       /*
-       * \author Helfer Thomas.
+       * \author Thomas Helfer.
        * \date   20 Apr. 2007.
        */
       template<typename T>
@@ -130,7 +130,7 @@ namespace tfel{
 
       //! an helper function to call the copy constructor of T.
       /*
-       * \author Helfer Thomas.
+       * \author Thomas Helfer.
        * \date   20 Apr. 2007.
        */
       template<typename T>
@@ -158,7 +158,7 @@ namespace tfel{
        * \param typename T, the specific type.
        * \see GenTypeSpecialisation.ixx for examples.
        * \see http://en.wikipedia.org/wiki/Curiously_Recurring_Template_Pattern
-       * \author Helfer Thomas.
+       * \author Thomas Helfer.
        * \date   20 Apr. 2007.
        */
       template<typename Child,typename T>
@@ -173,7 +173,7 @@ namespace tfel{
        * \param typename List, the List of types contained in the GenType.
        * \see GenTypeSpecialisation.ixx for examples.
        * \see http://en.wikipedia.org/wiki/Curiously_Recurring_Template_Pattern
-       * \author Helfer Thomas.
+       * \author Thomas Helfer.
        * \date   20 Apr. 2007.
        */
       template<typename Child,typename List>
@@ -202,7 +202,7 @@ namespace tfel{
       
       //! a partial specialisation to end the recursion.
       /*
-       * \author Helfer Thomas.
+       * \author Thomas Helfer.
        * \date   20 Apr. 2007.
        */
       template<typename Child>
@@ -229,7 +229,7 @@ namespace tfel{
       /*
        * \param unsigned short N, the current index.
        * \param typename List, a list of types.
-       * \author Helfer Thomas.
+       * \author Thomas Helfer.
        * \date   20 Apr. 2007.
        */
       template<typename List,typename... Types>
@@ -241,7 +241,7 @@ namespace tfel{
 
       //! A partial specialisation to end the recursion.
       /*
-       * \author Helfer Thomas.
+       * \author Thomas Helfer.
        * \date   20 Apr. 2007.
        */
       template<typename... Types>
@@ -290,7 +290,7 @@ namespace tfel{
     //! The base class of GenType.
     /*
      * \param  typename List, the list of types contained in the GenType.
-     * \author Helfer Thomas.
+     * \author Thomas Helfer.
      * \date   20 Apr. 2007.
      */
     template<typename List>

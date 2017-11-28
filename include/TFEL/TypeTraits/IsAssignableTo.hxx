@@ -3,9 +3,9 @@
  * \brief  This file implements the IsAssignableTo class traits and 
  * its partial specialisation for each standard numeric types.
  * 
- * \author Helfer Thomas
+ * \author Thomas Helfer
  * \date   28 jun 2006
- * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
  * reserved. 
  * This project is publicly released under either the GNU GPL Licence 
  * or the CECILL-A licence. A copy of thoses licences are delivered 
@@ -24,7 +24,7 @@
  * \def TFEL_MATH_IS_ASSIGNABLE_
  * \brief An helper macro to specialise IsAssignableTo for each
  * standard numeric types.
- * \author Helfer Thomas
+ * \author Thomas Helfer
  * \date   28 jun 2006 
  */
 #define TFEL_MATH_IS_ASSIGNABLE_(X,Y)                                               \
@@ -45,7 +45,7 @@
  * \def TFEL_MATH_IS_ASSIGNABLE
  * \brief An helper macro to specialise IsAssignableTo for each
  * standard numeric types.
- * \author Helfer Thomas
+ * \author Thomas Helfer
  * \date   28 jun 2006 
  */
 #define TFEL_MATH_IS_ASSIGNABLE(X)                                        \
@@ -82,7 +82,7 @@ namespace tfel{
      * \return bool cond, true if b = a is valid, false otherwise.
      *
      * \see Promote
-     * \author Helfer Thomas
+     * \author Thomas Helfer
      * \date   28 jun 2006     
      */ 
     template<typename A,typename B>

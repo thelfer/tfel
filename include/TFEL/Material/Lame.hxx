@@ -3,9 +3,9 @@
  * \brief  This file defines various functions dealing with Lame's coefficients.
  * Using Lame's coefficients, linear elastic behaviour may be written~:
  * \f[ \underline{\sigma} = \lambda*\mathrm{tr}\left(\underline{\epsilon}\right)\underline{I}+2\mu\underline{\epsilon} \f]
- * \author Helfer Thomas
+ * \author Thomas Helfer
  * \date   31 Jul 2006
- * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
  * reserved. 
  * This project is publicly released under either the GNU GPL Licence 
  * or the CECILL-A licence. A copy of thoses licences are delivered 
@@ -71,7 +71,7 @@ namespace tfel{
      * \brief compute the elastic stiffness given Lame's coefficients
      * \param N : space dimension
      * \param T : numerical type
-     * \author Helfer Thomas
+     * \author Thomas Helfer
      * \date   12 Sep 2006
      */
     template<unsigned short,typename>
@@ -210,7 +210,7 @@ namespace tfel{
      * \brief compute the elastic stiffness given Lame's coefficients
      * \param N : space dimension
      * \param T : numerical type
-     * \author Helfer Thomas
+     * \author Thomas Helfer
      * \date   12 Sep 2006
      */
     template<unsigned short N,typename T>
@@ -235,7 +235,7 @@ namespace tfel{
      * \brief compute the elastic stiffness given Lame's coefficients
      * \param H : modelling hypothesis
      * \param T : numerical type
-     * \author Helfer Thomas
+     * \author Thomas Helfer
      * \date   12 Sep 2006
      */
     template<ModellingHypothesis::Hypothesis H,

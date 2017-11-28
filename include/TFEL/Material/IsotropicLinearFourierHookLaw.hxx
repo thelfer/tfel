@@ -1,9 +1,9 @@
 /*!
  * \file   include/TFEL/Material/IsotropicLinearFourierHookLaw.hxx
  * \brief  This file declares the IsotropicLinearFourierHookLaw class
- * \author Helfer Thomas
+ * \author Thomas Helfer
  * \date   27 Sep 2006
- * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
  * reserved. 
  * This project is publicly released under either the GNU GPL Licence 
  * or the CECILL-A licence. A copy of thoses licences are delivered 
@@ -26,7 +26,7 @@ namespace tfel{
      * \brief This class implements the hook law.
      * \param N, space dimension.
      * \param T, numerical type.
-     * \author Helfer Thomas
+     * \author Thomas Helfer
      * \date   28 Jul 2006
      */
     template<unsigned short N,typename T,bool use_qt>

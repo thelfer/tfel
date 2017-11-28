@@ -1,3 +1,18 @@
+/*!
+ * \file   include/TFEL/Utilities/GenTypeBase_MSC.hxx
+ * \brief  This file implements the GenTypeBase class and some 
+ * internal classes used by the GenType class.
+ * \see    TL
+ * \author Thomas Helfer
+ * \date   19 Apr. 2007
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
+ * reserved. 
+ * This project is publicly released under either the GNU GPL Licence 
+ * or the CECILL-A licence. A copy of thoses licences are delivered 
+ * with the sources of TFEL. CEA or EDF may also distribute this 
+ * project under specific licensing conditions. 
+ */
+
 namespace tfel{
   
   namespace utilities{
@@ -8,7 +23,7 @@ namespace tfel{
       /*
        * \param unsigned short N, the current index.
        * \param typename List, a list of types.
-       * \author Helfer Thomas.
+       * \author Thomas Helfer.
        * \date   20 Apr. 2007.
        */
       template<unsigned short N,typename List>
@@ -39,7 +54,7 @@ namespace tfel{
 
       //! A partial specialisation to end the recursion.
       /*
-       * \author Helfer Thomas.
+       * \author Thomas Helfer.
        * \date   20 Apr. 2007.
        */
       template<typename List>
@@ -64,7 +79,7 @@ namespace tfel{
     //! The base class of GenType.
     /*
      * \param  typename List, the list of types contained in the GenType.
-     * \author Helfer Thomas.
+     * \author Thomas Helfer.
      * \date   20 Apr. 2007.
      */
     template<typename List>

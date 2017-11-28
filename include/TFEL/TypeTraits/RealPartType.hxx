@@ -2,9 +2,9 @@
  * \file   include/TFEL/TypeTraits/RealPartType.hxx
  * \brief  This file declares the RealPartType traits class
  * and specialises it for standard numeric types.
- * \author Helfer Thomas
+ * \author Thomas Helfer
  * \date   23 Aug 2006
- * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
  * reserved. 
  * This project is publicly released under either the GNU GPL Licence 
  * or the CECILL-A licence. A copy of thoses licences are delivered 
@@ -22,7 +22,7 @@
  * \def    TFEL_TYPETRAITS_REALPARTTYPE
  * \brief An helper macro to specialise RealPartType for each standard
  * "real" numeric types.
- * \author Helfer Thomas
+ * \author Thomas Helfer
  * \date   23 Aug 2006
  */
 #define TFEL_TYPETRAITS_REALPARTTYPE(X)    \
@@ -41,7 +41,7 @@
  * \brief  An helper macro to specialise RealPartType for each
  * standard "real"
  * numeric types.
- * \author Helfer Thomas
+ * \author Thomas Helfer
  * \date   23 Aug 2006
  */
 #define TFEL_TYPETRAITS_REALPARTTYPEII(X)        \
@@ -70,7 +70,7 @@ namespace tfel{
      * \param  T, type to be tested.
      * \return type, type of the real part of the argument
      *
-     * \author Helfer Thomas
+     * \author Thomas Helfer
      * \date   23 Aug 2006
      */
     template<typename T>

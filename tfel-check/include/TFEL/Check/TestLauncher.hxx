@@ -1,10 +1,10 @@
 /*!
  * \file   TestLauncher.hxx
  * \brief  This file declares the TestLauncher class
- * \author Helfer Thomas
+ * \author Thomas Helfer
  * \date   28 Jan 2008
  *
- * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
  * reserved. 
  * This project is publicly released under either the GNU GPL Licence 
  * or the CECILL-A licence. A copy of thoses licences are delivered 

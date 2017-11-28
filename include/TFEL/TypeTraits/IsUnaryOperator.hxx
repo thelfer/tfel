@@ -1,9 +1,9 @@
 /*!
  * \file   include/TFEL/TypeTraits/IsUnaryOperator.hxx
  * \brief  This file declares the IsUnaryOperator traits class.
- * \author Helfer Thomas
+ * \author Thomas Helfer
  * \date   07 Jun 2006
- * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
  * reserved. 
  * This project is publicly released under either the GNU GPL Licence 
  * or the CECILL-A licence. A copy of thoses licences are delivered 
@@ -26,7 +26,7 @@ namespace tfel{
      * \return bool cond, true if T stands for a unary operator, false
      * otherwise.
      *
-     * \author Helfer Thomas
+     * \author Thomas Helfer
      * \date   08/01/07
      */
     template<typename T>

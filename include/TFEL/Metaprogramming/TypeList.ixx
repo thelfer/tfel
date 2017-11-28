@@ -2,9 +2,9 @@
  * \file   include/TFEL/Metaprogramming/TypeList.ixx
  * 
  * \brief    
- * \author Helfer Thomas
+ * \author Thomas Helfer
  * \date   07 Aug 2006
- * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
  * reserved. 
  * This project is publicly released under either the GNU GPL Licence 
  * or the CECILL-A licence. A copy of thoses licences are delivered 
@@ -65,7 +65,7 @@ namespace tfel{
     
     /*!
      * Partial Specialisation to end the recursion.
-     * \author Helfer Thomas
+     * \author Thomas Helfer
      * \date   30 August 2006
      */
     template<template<typename> class Transform>
@@ -81,7 +81,7 @@ namespace tfel{
 
     /*!
      * Partial Specialisation to end the recursion.
-     * \author Helfer Thomas
+     * \author Thomas Helfer
      * \date   30 August 2006
      */
     template<>
@@ -91,7 +91,7 @@ namespace tfel{
     
     /*!
      * Partial Specialisation to end the recursion.
-     * \author Helfer Thomas
+     * \author Thomas Helfer
      * \date   30 August 2006
      */
     template<typename T>
@@ -110,7 +110,7 @@ namespace tfel{
 
       /*!
        * \brief  An helper class for the TLFindEltPos metafunction.
-       * \author Helfer Thomas
+       * \author Thomas Helfer
        * \date   30 August 2006
        */
       template<typename T, typename List>
@@ -121,7 +121,7 @@ namespace tfel{
       
       /*!
        * Partial Specialisation to end the recursion.
-       * \author Helfer Thomas
+       * \author Thomas Helfer
        * \date   30 August 2006
        */
       template<typename T>
@@ -225,7 +225,7 @@ namespace tfel{
 
       /*!
        * \brief  An helper class for the TLElementsAreUnique metafunction.
-       * \author Helfer Thomas
+       * \author Thomas Helfer
        * \date   30 August 2006
        */
       template<typename T,typename U>

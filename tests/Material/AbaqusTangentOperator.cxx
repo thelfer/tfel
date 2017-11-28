@@ -4,6 +4,8 @@
  * \brief This test verify that the abaqus tangent operator
  *        is correctly computed by comparing its value to 
  *        an numerical perturbation 
+ * \author Thomas Helfer
+ * \date   13 août 2016
  *
  * Numerical Approximation of Tangent Moduli for Finite Element
  * Implementations of Nonlinear Hyperelastic Material Models
@@ -12,8 +14,12 @@
  * Journal of biomechanical engineering, 6
  * 2008-12
  *
- * \author THOMAS HELFER
- * \date   13 août 2016
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
+ * reserved. 
+ * This project is publicly released under either the GNU GPL Licence 
+ * or the CECILL-A licence. A copy of thoses licences are delivered 
+ * with the sources of TFEL. CEA or EDF may also distribute this 
+ * project under specific licensing conditions. 
  */
 
 #ifdef NDEBUG

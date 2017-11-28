@@ -1,9 +1,9 @@
 /*!
  * \file   include/TFEL/FSAlgorithm/generate.hxx
  * \brief  This file implements the generate class.
- * \author Helfer Thomas
+ * \author Thomas Helfer
  * \date   30 jun 2006
- * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
  * reserved. 
  * This project is publicly released under either the GNU GPL Licence 
  * or the CECILL-A licence. A copy of thoses licences are delivered 
@@ -30,7 +30,7 @@ namespace tfel{
      *
      * \see generate.cxx for some elementary tests.
      *
-     * \author Helfer Thomas
+     * \author Thomas Helfer
      * \date   30 Jun 2006      
      */
     template<unsigned int N>
@@ -61,7 +61,7 @@ namespace tfel{
     /*!
      * \brief partial specialisation used to end recursion when using the generate algorithm.
      *
-     * \author Helfer Thomas
+     * \author Thomas Helfer
      * \date   30 Jun 2006      
      */
     template<>
@@ -71,7 +71,7 @@ namespace tfel{
        * \return void
        * \sa generate<N>::exe() for details
        *
-       * \author Helfer Thomas
+       * \author Thomas Helfer
        * \date   30 Jun 2006
        */
       template<typename ForwardIterator,typename Generator>

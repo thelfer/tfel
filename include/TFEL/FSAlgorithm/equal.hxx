@@ -1,9 +1,9 @@
 /*!
  * \file   include/TFEL/FSAlgorithm/equal.hxx
  * \brief  this file implements the equal class.
- * \author Helfer Thomas
+ * \author Thomas Helfer
  * \date   30 Jun 2006
- * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
  * reserved. 
  * This project is publicly released under either the GNU GPL Licence 
  * or the CECILL-A licence. A copy of thoses licences are delivered 
@@ -30,7 +30,7 @@ namespace tfel{
      *
      * \see transform.cxx for some elementary tests.
      * 
-     * \author Helfer Thomas
+     * \author Thomas Helfer
      * \date   30 Jun 2006      
      */
     template<unsigned int N>
@@ -84,7 +84,7 @@ namespace tfel{
     /*!
      * \brief partial specialisation of struct equal to end recursion.
      *
-     * \author Helfer Thomas
+     * \author Thomas Helfer
      * \date   30 Jun 2006      
      */
     template<>

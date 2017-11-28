@@ -1,9 +1,9 @@
 /*!
  * \file   include/TFEL/Metaprogramming/InvalidType.hxx
  * \brief  This file declares InvalidType
- * \author Helfer Thomas
+ * \author Thomas Helfer
  * \date   28 Aug 2006
- * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
  * reserved. 
  * This project is publicly released under either the GNU GPL Licence 
  * or the CECILL-A licence. A copy of thoses licences are delivered 
@@ -26,7 +26,7 @@ namespace tfel{
      * It is safe to make a typedef to InvalidType but it cannot be
      * instanciated. This type is generally used to give default and 
      * invalid values to fields in traits class.
-     * \author Helfer Thomas
+     * \author Thomas Helfer
      * \date   28 Aug 2006     
      */
     struct InvalidType;

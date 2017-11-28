@@ -1,9 +1,9 @@
 /*!
  * \file   include/TFEL/FSAlgorithm/max_element.hxx
  * \brief  This file implements the max_element class.
- * \author Helfer Thomas
+ * \author Thomas Helfer
  * \date   30 jun 2006
- * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
  * reserved. 
  * This project is publicly released under either the GNU GPL Licence 
  * or the CECILL-A licence. A copy of thoses licences are delivered 
@@ -28,7 +28,7 @@ namespace tfel{
      * This documentation is mostly inspired from:
      * http://www.sgi.com/tech/stl/max_element.html
      *
-     * \author Helfer Thomas
+     * \author Thomas Helfer
      * \date   30 Jun 2006      
      */
     template<unsigned int N>
@@ -45,7 +45,7 @@ namespace tfel{
        * - ForwardIterator is a model of Forward Iterator.
        * - ForwardIterator's value type is LessThan Comparable.
        *
-       * \author Helfer Thomas
+       * \author Thomas Helfer
        * \date   30 Jun 2006      
        */
       template<typename ForwardIterator>
@@ -74,7 +74,7 @@ namespace tfel{
        * - BinaryPredicate is a model of Binary Predicate.
        * - ForwardIterator's value type is convertible to BinaryPredicate's first argument type and second argument type.
        *
-       * \author Helfer Thomas
+       * \author Thomas Helfer
        * \date   30 Jun 2006      
        */
       template<typename ForwardIterator,typename BinaryPredicate>
@@ -103,7 +103,7 @@ namespace tfel{
        * - ForwardIterator is a model of Forward Iterator.
        * - ForwardIterator's value type is LessThan Comparable.
        *
-       * \author Helfer Thomas
+       * \author Thomas Helfer
        * \date   30 Jun 2006      
        */
       template<typename ForwardIterator>
@@ -127,7 +127,7 @@ namespace tfel{
        * - BinaryPredicate is a model of Binary Predicate.
        * - ForwardIterator's value type is convertible to BinaryPredicate's first argument type and second argument type.
        *
-       * \author Helfer Thomas
+       * \author Thomas Helfer
        * \date   30 Jun 2006      
        */
       template<typename ForwardIterator,typename BinaryPredicate>
@@ -143,7 +143,7 @@ namespace tfel{
     /*!
      * \brief partial specialisation used to end recursion when using the max_element algorithm.
      *
-     * \author Helfer Thomas
+     * \author Thomas Helfer
      * \date   30 Jun 2006      
      */
     template<>
@@ -153,7 +153,7 @@ namespace tfel{
        * \return the ForwardIterator to end the recursion
        * \sa max_element<N>::exe_() for more details.
        *
-       * \author Helfer Thomas
+       * \author Thomas Helfer
        * \date   30 Jun 2006
        */
       template<typename ForwardIterator>
@@ -170,7 +170,7 @@ namespace tfel{
        * \return the ForwardIterator to end the recursion
        * \sa max_element<N>::exe_() for more details.
        *
-       * \author Helfer Thomas
+       * \author Thomas Helfer
        * \date   30 Jun 2006
        */
       template<typename ForwardIterator,typename BinaryPredicate>
@@ -190,7 +190,7 @@ namespace tfel{
        * \return the ForwardIterator to end the recursion
        * \sa max_element<N>::exe() for more details.
        *
-       * \author Helfer Thomas
+       * \author Thomas Helfer
        * \date   30 Jun 2006
        */
       template<typename ForwardIterator>
@@ -204,7 +204,7 @@ namespace tfel{
        * \return the ForwardIterator to end the recursion
        * \sa max_element<N>::exe() for more details.
        *
-       * \author Helfer Thomas
+       * \author Thomas Helfer
        * \date   30 Jun 2006
        */
       template<typename ForwardIterator,typename BinaryPredicate>
@@ -219,7 +219,7 @@ namespace tfel{
     /*!
      * \brief partial specialisation used to end recursion when using the max_element algorithm.
      *
-     * \author Helfer Thomas
+     * \author Thomas Helfer
      * \date   30 Jun 2006      
      */
     template<>
@@ -229,7 +229,7 @@ namespace tfel{
        * \return the ForwardIterator
        * \sa max_element<N>::exe() for more details.
        *
-       * \author Helfer Thomas
+       * \author Thomas Helfer
        * \date   30 Jun 2006
        */
       template<typename ForwardIterator>
@@ -243,7 +243,7 @@ namespace tfel{
        * \return the ForwardIterator
        * \sa max_element<N>::exe() for more details.
        *
-       * \author Helfer Thomas
+       * \author Thomas Helfer
        * \date   30 Jun 2006
        */
       template<typename ForwardIterator,typename BinaryPredicate>
