@@ -3,7 +3,7 @@
  * \brief
  * \author Helfer Thomas
  * \brief 14 mai 2009
- * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
  * reserved. 
  * This project is publicly released under either the GNU GPL Licence 
  * or the CECILL-A licence. A copy of thoses licences are delivered 
@@ -272,7 +272,7 @@ void generateCxxOutput(const GlossaryTokenizer& tokenizer)
 	 << " * \\file   Glossary.hxx" << endl
 	 << " * \\author Helfer Thomas" << endl
 	 << " * \\date   09/06/14" << endl
-	 << " * \\copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights" << endl 
+	 << " * \\copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights" << endl 
 	 << " * reserved." << endl
 	 << " * This project is publicly released under either the GNU GPL Licence" << endl
 	 << " * or the CECILL-A licence. A copy of thoses licences are delivered" << endl
@@ -373,7 +373,7 @@ void generateCxxOutput(const GlossaryTokenizer& tokenizer)
       << " * \\file   Glossary.cxx" << endl
       << " * \\author Helfer Thomas" << endl
       << " * \\date   09/06/14" << endl
-      << " * \\copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights" << endl 
+      << " * \\copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights" << endl 
       << " * reserved." << endl
       << " * This project is publicly released under either the GNU GPL Licence" << endl
       << " * or the CECILL-A licence. A copy of thoses licences are delivered" << endl
@@ -715,7 +715,7 @@ void generateBoostPythonBindings(const GlossaryTokenizer& tokenizer)
        << " * \\file   PythonGlossary.cxx" << endl
        << " * \\author Helfer Thomas" << endl
        << " * \\date   09/06/14" << endl
-       << " * \\copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights" << endl 
+       << " * \\copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights" << endl 
        << " * reserved." << endl
        << " * This project is publicly released under either the GNU GPL Licence" << endl
        << " * or the CECILL-A licence. A copy of thoses licences are delivered" << endl
