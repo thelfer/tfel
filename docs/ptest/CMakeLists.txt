@@ -39,19 +39,19 @@ if(HAVE_LATEX AND GENERATE_REFERENCE_DOC)
   add_custom_target(ptest-doc-pdf ALL DEPENDS ptest.pdf)
   add_dependencies(doc-pdf
     ptest-doc-pdf)
-  if(TFEL_APPEND_VERSION)
+  if(TFEL_APPEND_SUFFIX)
     install(FILES ${CMAKE_CURRENT_BINARY_DIR}/ptest.pdf
-      DESTINATION share/doc/mtest-${TFEL_VERSION}/ptest
+      DESTINATION share/doc/mtest-${TFEL_SUFFIX}/ptest
       COMPONENT docs)
     install(FILES ${CMAKE_CURRENT_BINARY_DIR}/ptest.pdf
-      DESTINATION share/doc/tfel-${TFEL_VERSION}/web/documents/ptest
+      DESTINATION share/doc/tfel-${TFEL_SUFFIX}/web/documents/ptest
       COMPONENT website)
-  else(TFEL_APPEND_VERSION)
+  else(TFEL_APPEND_SUFFIX)
     install(FILES ${CMAKE_CURRENT_BINARY_DIR}/ptest.pdf
       DESTINATION share/doc/mtest/ptest
       COMPONENT docs)
     install(FILES ${CMAKE_CURRENT_BINARY_DIR}/ptest.pdf
       DESTINATION share/doc/tfel/web/documents/ptest
       COMPONENT website)
-  endif(TFEL_APPEND_VERSION)
+  endif(TFEL_APPEND_SUFFIX)
 endif(HAVE_LATEX AND GENERATE_REFERENCE_DOC)

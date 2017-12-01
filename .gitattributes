@@ -185,6 +185,7 @@ docs/gallery/behaviours/hyperviscoelasticity/Makefile.am -text
 docs/gallery/behaviours/hyperviscoelasticity/SignoriniHyperViscoelasticity-tfel-2.0.3.mfront -text
 docs/gallery/behaviours/hyperviscoelasticity/SignoriniHyperViscoelasticity.mfront -text
 docs/gallery/behaviours/plasticity/CMakeLists.txt -text
+docs/gallery/behaviours/plasticity/GreenPerfectPlasticity.mfront -text
 docs/gallery/behaviours/plasticity/HosfordPerfectPlasticity.mfront -text
 docs/gallery/behaviours/plasticity/IsotropicLinearHardeningPlasticity.mfront -text
 docs/gallery/behaviours/plasticity/IsotropicLinearKinematicHardeningPlasticity.mfront -text
@@ -1109,6 +1110,7 @@ docs/web/finitestrainsinglecrystal.md -text
 docs/web/gallery.md -text
 docs/web/getting-started.md -text
 docs/web/glossary.md -text
+docs/web/greenplasticity.md -text
 docs/web/hosford.md -text
 docs/web/humans.txt -text
 docs/web/hyperelasticity.md -text
@@ -1153,6 +1155,8 @@ docs/web/img/FissurationPastille.png -text
 docs/web/img/FreeBSD.jpg -text
 docs/web/img/FuelRod-ddif2.png -text
 docs/web/img/FuelRod-ddif2.xcf -text
+docs/web/img/GreenYieldCriterion.png -text
+docs/web/img/GreenYieldCriterion.svg -text
 docs/web/img/HosfordStress.png -text
 docs/web/img/HosfordStress.svg -text
 docs/web/img/HureCast3M2014.png -text

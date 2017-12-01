@@ -192,10 +192,10 @@ else(WIN32 AND enable-static)
   target_link_libraries(mtest TFELMTest TFELSystem TFELUtilities TFELTests)
 endif(WIN32 AND enable-static)
 
-if(TFEL_APPEND_VERSION)
+if(TFEL_APPEND_SUFFIX)
   set_target_properties(mtest
-    PROPERTIES OUTPUT_NAME "mtest-${TFEL_VERSION}")
-endif(TFEL_APPEND_VERSION)
+    PROPERTIES OUTPUT_NAME "mtest-${TFEL_SUFFIX}")
+endif(TFEL_APPEND_SUFFIX)
 
 install(TARGETS mtest DESTINATION bin
   COMPONENT mtest)

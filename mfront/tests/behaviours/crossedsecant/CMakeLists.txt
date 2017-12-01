@@ -31,17 +31,17 @@ macro(test_crossedsecant test_arg)
         set_property(TEST crossedsecant${test_arg}_${conf}_mtest
           PROPERTY DEPENDS "MFrontCastemBehaviours MFrontMaterialProperties-castem mtest")
       endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-      if(TFEL_APPEND_VERSION)
+      if(TFEL_APPEND_SUFFIX)
 	install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}
-	  DESTINATION "share/doc/mfront-${TFEL_VERSION}/tests/behaviours/crossedsecant"
+	  DESTINATION "share/doc/mfront-${TFEL_SUFFIX}/tests/behaviours/crossedsecant"
 	  CONFIGURATIONS ${conf}
 	  COMPONENT mtest)
-      else(TFEL_APPEND_VERSION)
+      else(TFEL_APPEND_SUFFIX)
 	install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}
 	  DESTINATION "share/doc/mfront/tests/behaviours/crossedsecant"
 	  CONFIGURATIONS ${conf}
 	  COMPONENT mtest)
-      endif(TFEL_APPEND_VERSION)
+      endif(TFEL_APPEND_SUFFIX)
     endforeach(conf ${CMAKE_CONFIGURATION_TYPES})
   else(CMAKE_CONFIGURATION_TYPES)
     get_property(MFrontCastemBehavioursBuildPath TARGET MFrontCastemBehaviours PROPERTY LOCATION_${conf})
@@ -55,15 +55,15 @@ macro(test_crossedsecant test_arg)
       PROPERTIES DEPENDS MFrontMaterialProperties-castem)
     set_tests_properties(crossedsecant${test_arg}_mtest
       PROPERTIES DEPENDS mtest)
-    if(TFEL_APPEND_VERSION)
+    if(TFEL_APPEND_SUFFIX)
       install(FILES ${CMAKE_CURRENT_BINARY_DIR}/crossedsecant${test_arg}.mtest
-	DESTINATION "share/doc/mfront-${TFEL_VERSION}/tests/behaviours/crossedsecant"
+	DESTINATION "share/doc/mfront-${TFEL_SUFFIX}/tests/behaviours/crossedsecant"
 	COMPONENT mtest)
-    else(TFEL_APPEND_VERSION)
+    else(TFEL_APPEND_SUFFIX)
       install(FILES ${CMAKE_CURRENT_BINARY_DIR}/crossedsecant${test_arg}.mtest
 	DESTINATION "share/doc/mfront/tests/behaviours/crossedsecant"
 	COMPONENT mtest)
-    endif(TFEL_APPEND_VERSION)
+    endif(TFEL_APPEND_SUFFIX)
   endif(CMAKE_CONFIGURATION_TYPES)
 endmacro(test_crossedsecant)
 

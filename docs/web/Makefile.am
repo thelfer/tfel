@@ -59,6 +59,7 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./iwan.md                                                  \
 	   ./ddif2.md                                                 \
 	   ./hosford.md                                               \
+	   ./greenplasticity.md                                       \
 	   ./singlecrystal.md                                         \
 	   ./finitestrainsinglecrystal.md                             \
 	   ./finitestrainsinglecrystal-huang.md                       \
@@ -221,6 +222,8 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./img/AsterTotalLagrangian.png                             \
 	   ./img/HosfordStress.png                                    \
 	   ./img/HosfordStress.svg                                    \
+	   ./img/GreenYieldCriterion.svg                              \
+	   ./img/GreenYieldCriterion.png                              \
 	   ./media/epx1.mp4                                           \
 	   ./media/epx2.mp4                                           \
 	   ./media/abaqus-explicit.mp4                                \

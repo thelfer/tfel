@@ -354,11 +354,11 @@ namespace mfront{
       out.open("abaqus/umat.cpp");
       if(out){
 	const auto root = tfel::getInstallPath();
-#ifdef TFEL_APPEND_VERSION
+#ifdef TFEL_APPEND_SUFFIX
 	const auto fn = root+"/share/doc/mfront-" VERSION "/abaqus/umat.cpp";
-#else  /* TFEL_APPEND_VERSION */
+#else  /* TFEL_APPEND_SUFFIX */
 	const auto fn = root+"/share/doc/mfront/abaqus/umat.cpp";
-#endif /* TFEL_APPEND_VERSION */
+#endif /* TFEL_APPEND_SUFFIX */
 	std::ifstream in{fn};
 	if(in){
 	  out << in.rdbuf();

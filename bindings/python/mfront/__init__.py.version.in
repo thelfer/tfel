@@ -1,5 +1,5 @@
-import std_@TFEL_VERSION_FOR_PYTHON_MODULES@
-import tfel_@TFEL_VERSION_FOR_PYTHON_MODULES@.material
+import std_@TFEL_SUFFIX_FOR_PYTHON_MODULES@
+import tfel_@TFEL_SUFFIX_FOR_PYTHON_MODULES@.material
 from ._mfront import *
 
 initDSLs()

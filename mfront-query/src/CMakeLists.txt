@@ -27,10 +27,10 @@ target_link_libraries(mfront-query
   TFELMFront 
   MFrontLogStream
   TFELSystem TFELUtilities)
-if(TFEL_APPEND_VERSION)
+if(TFEL_APPEND_SUFFIX)
   set_target_properties(mfront-query
-    PROPERTIES OUTPUT_NAME "mfront-query-${TFEL_VERSION}")
-endif(TFEL_APPEND_VERSION)
+    PROPERTIES OUTPUT_NAME "mfront-query-${TFEL_SUFFIX}")
+endif(TFEL_APPEND_SUFFIX)
 install(TARGETS mfront-query DESTINATION bin
   COMPONENT mfront)
 

@@ -8,10 +8,10 @@ if(WIN32 AND enable-static)
   set_target_properties(tfel-config PROPERTIES LINK_FLAGS "-static-libgcc -static") 
   set_target_properties(tfel-config PROPERTIES LINK_SEARCH_END_STATIC ON) 
 endif(WIN32 AND enable-static)
-if(TFEL_APPEND_VERSION)
+if(TFEL_APPEND_SUFFIX)
   set_target_properties(tfel-config
-    PROPERTIES OUTPUT_NAME "tfel-config-${TFEL_VERSION}")
-endif(TFEL_APPEND_VERSION)
+    PROPERTIES OUTPUT_NAME "tfel-config-${TFEL_SUFFIX}")
+endif(TFEL_APPEND_SUFFIX)
 
 install(TARGETS tfel-config DESTINATION bin
   COMPONENT core)

@@ -36,17 +36,17 @@ if(HAVE_FORTRAN)
           set_property(TEST castemumat${test_arg}_${conf}_mtest
             PROPERTY DEPENDS "CastemUmat mtest")
 	endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-	if(TFEL_APPEND_VERSION)
+	if(TFEL_APPEND_SUFFIX)
 	  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}
-	    DESTINATION "share/doc/mtest-${TFEL_VERSION}/tests/mtest/behaviours/castem"
+	    DESTINATION "share/doc/mtest-${TFEL_SUFFIX}/tests/mtest/behaviours/castem"
 	    CONFIGURATIONS ${conf}
 	    COMPONENT mtest)
-	else(TFEL_APPEND_VERSION)
+	else(TFEL_APPEND_SUFFIX)
 	  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}
-	    DESTINATION "share/doc/mtest-${TFEL_VERSION}/tests/mtest/behaviours/castem"
+	    DESTINATION "share/doc/mtest-${TFEL_SUFFIX}/tests/mtest/behaviours/castem"
 	    CONFIGURATIONS ${conf}
 	    COMPONENT mtest)
-	endif(TFEL_APPEND_VERSION)
+	endif(TFEL_APPEND_SUFFIX)
       endforeach(conf ${CMAKE_CONFIGURATION_TYPES})
     else(CMAKE_CONFIGURATION_TYPES)
       get_property(CastemUmatLibraryPath TARGET CastemUmat PROPERTY LOCATION_${conf})
@@ -63,15 +63,15 @@ if(HAVE_FORTRAN)
       endif(_WILL_FAIL)
       set_property(TEST castemumat${test_arg}_mtest
 	PROPERTY DEPENDS "CastemUmat mtest")
-      if(TFEL_APPEND_VERSION)
+      if(TFEL_APPEND_SUFFIX)
 	install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/castemumat${test_arg}.mtest
-	  DESTINATION "share/doc/mtest-${TFEL_VERSION}/tests/mtest/behaviours/castem"
+	  DESTINATION "share/doc/mtest-${TFEL_SUFFIX}/tests/mtest/behaviours/castem"
 	  COMPONENT mtest)
-      else(TFEL_APPEND_VERSION)
+      else(TFEL_APPEND_SUFFIX)
 	install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/castemumat${test_arg}.mtest
 	  DESTINATION "share/doc/mtest/tests/mtest/behaviours/castem"
 	  COMPONENT mtest)
-      endif(TFEL_APPEND_VERSION)
+      endif(TFEL_APPEND_SUFFIX)
     endif(CMAKE_CONFIGURATION_TYPES)
   endmacro(test_castemumat)
   add_library(CastemUmat SHARED umat.f mooney.f neohoo.f)

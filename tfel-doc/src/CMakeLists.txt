@@ -29,9 +29,9 @@ target_link_libraries(tfel-doc
                       TFELSystem
 		      TFELUtilities
 		      TFELException)
-if(TFEL_APPEND_VERSION)
+if(TFEL_APPEND_SUFFIX)
   set_target_properties(tfel-doc
-    PROPERTIES OUTPUT_NAME "tfel-doc-${TFEL_VERSION}")
-endif(TFEL_APPEND_VERSION)
+    PROPERTIES OUTPUT_NAME "tfel-doc-${TFEL_SUFFIX}")
+endif(TFEL_APPEND_SUFFIX)
 install(TARGETS tfel-doc DESTINATION bin
   COMPONENT core)

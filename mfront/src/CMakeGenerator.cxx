@@ -118,11 +118,11 @@ namespace mfront{
       << "  set(TFELHOME $ENV{TFELHOME})\n"
       << "endif(TFEL_INSTALL_PATH)\n"
       << "\n";
-#ifdef TFEL_APPEND_VERSION
-    m << "find_program(TFEL_CONFIG  tfel-config-" VERSION " \"${TFELHOME}/bin\")\n";
-#else  /* TFEL_APPEND_VERSION */
+#ifdef TFEL_APPEND_SUFFIX
+    m << "find_program(TFEL_CONFIG  tfel-config-" TFEL_SUFFIX " \"${TFELHOME}/bin\")\n";
+#else  /* TFEL_APPEND_SUFFIX */
     m << "find_program(TFEL_CONFIG  tfel-config \"${TFELHOME}/bin\")\n";
-#endif /* TFEL_APPEND_VERSION */
+#endif /* TFEL_APPEND_SUFFIX */
     m << "message(STATUS \"tfel-config         : ${TFEL_CONFIG}\")\n"
       << "\n";
       // << "spawn(TFEL_INCLUDE_PATH ${TFEL_CONFIG} \"--include-path\")\n"

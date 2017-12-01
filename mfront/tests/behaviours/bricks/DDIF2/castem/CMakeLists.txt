@@ -62,15 +62,15 @@ macro(castemtest_ddif2brick test_arg behaviour)
 	  PROPERTY DEPENDS "MFrontCastemDDIF2BrickBehaviours MFrontMaterialProperties-castem mtest")
       endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
     endforeach(rm ${IEEE754_ROUNDING_MODES})
-    if(TFEL_APPEND_VERSION)
+    if(TFEL_APPEND_SUFFIX)
       install(FILES ${file}
-	DESTINATION "share/doc/mfront-${TFEL_VERSION}/tests/behaviours/bricks/DDIF2/castem"
+	DESTINATION "share/doc/mfront-${TFEL_SUFFIX}/tests/behaviours/bricks/DDIF2/castem"
 	COMPONENT mtest)
-    else(TFEL_APPEND_VERSION)
+    else(TFEL_APPEND_SUFFIX)
       install(FILES ${file}
 	DESTINATION "share/doc/mfront/tests/behaviours/bricks/DDIF2/castem"
 	COMPONENT mtest)
-    endif(TFEL_APPEND_VERSION)
+    endif(TFEL_APPEND_SUFFIX)
   endif(HAVE_CASTEM)
 endmacro(castemtest_ddif2brick)
 

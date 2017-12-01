@@ -18,6 +18,25 @@
 \newcommand{\deriv}[2]{{\displaystyle \frac{\displaystyle \partial #1}{\displaystyle \partial #2}}}
 \newcommand{\sigmaeq}{\sigma_{\mathrm{eq}}}
 
+# New entry in the gallery: perfect plasticity based on the Green yield criterion (30/11/2017)
+
+![Comparison of the Green criterion \(C=1,F=0.2\) and the von Mises criterion](img/GreenYieldCriterion.svg "Comparison of the Green criterion \(C=1,F=0.2\) and the von Mises criterion in plane stress"){width=70%}
+
+The Green yield criterion is based on the definition of an equivalent stress
+\(\sigmaeq\) defined as follows:
+\[
+\sigmaeq=\sqrt{\Frac{3}{2}\,C\,\tenseur{s}\,\colon\,\tenseur{s}-F\,\trace{\tsigma}^{2}}
+\]
+where \(\tenseur{s}\) is the deviatoric stress tensor:
+\[
+\tenseur{s}=\tsigma-\Frac{1}{3}\,\trace{\tsigma}\,\tenseur{I}
+\]
+
+[A new entry](greenplasticity.html) in the gallery shows how to build
+a perfect plastic behaviour based on this equivalent stress. The
+implementation is available here:
+<https://github.com/thelfer/MFrontGallery/blob/master/generic-behaviours/plasticity/GreenPerfectPlasticity.mfront>
+
 # Barlat stress (24/11/2017)
 
 Functions to compute the Barlat equivalent stress and its first and

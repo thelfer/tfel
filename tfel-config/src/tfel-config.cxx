@@ -122,7 +122,7 @@ static bool getValueInRegistry(std::string &value)
   char  szBuffer[512];
   DWORD dwBufferSize = sizeof(szBuffer);
   LONG  nError;
-  LONG  lRes = RegOpenKeyEx(HKEY_CLASSES_ROOT,"TFELHOME-" VERSION,0,KEY_READ,&hKey);
+  LONG  lRes = RegOpenKeyEx(HKEY_CLASSES_ROOT,"TFELHOME-"VERSION,0,KEY_READ,&hKey);
   if(ERROR_SUCCESS != lRes){
     return false;
   }
@@ -198,11 +198,11 @@ static std::string includeDir()
   std::string inc(INCLUDEDIR);
   const auto& th = getTFELHOME();
   if(!th.empty()){
-#ifdef TFEL_APPEND_VERSION
-    return th+"/include"+"/TFEL-"+VERSION;
-#else /* TFEL_APPEND_VERSION */
+#ifdef TFEL_APPEND_SUFFIX
+    return th+"/include"+"/TFEL-"+TFEL_SUFFIX;
+#else /* TFEL_APPEND_SUFFIX */
     return th+"/include";
-#endif /* TFEL_APPEND_VERSION */
+#endif /* TFEL_APPEND_SUFFIX */
   } else {
     if(inc.substr(0,9)=="${prefix}"){
       inc = handleSpace(prefix + "/include");
@@ -270,11 +270,11 @@ TFEL_NORETURN static void treatLicences()
 static void listLibraries(const char* p)
 {
   auto display_if = [&p](const bool b, const char* s){
-#ifdef TFEL_APPEND_VERSION
-    if(b){std::cout << p << s << "-" << VERSION << ' ';}
-#else /* TFEL_APPEND_VERSION*/
+#ifdef TFEL_APPEND_SUFFIX
+    if(b){std::cout << p << s << "-" << TFEL_SUFFIX << ' ';}
+#else /* TFEL_APPEND_SUFFIX*/
     if(b){std::cout << p << s << ' ';}
-#endif /* TFEL_APPEND_VERSION*/
+#endif /* TFEL_APPEND_SUFFIX*/
   };
   display_if(mfront_profiling,"MFrontProfiling");
   display_if(material,"TFELMaterial");

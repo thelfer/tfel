@@ -9,11 +9,10 @@ if(CMAKE_VERSION VERSION_GREATER 3.1.0)
   cmake_policy(SET CMP0054 NEW)
 endif(CMAKE_VERSION VERSION_GREATER 3.1.0)
 
+set(TFEL_VERSION_FLAVOUR "" CACHE STRING
+  "Append a flavour to the version number")
 option(TFEL_APPEND_VERSION
   "append TFEL version number to all libraries, executables and directories" OFF)
-if(TFEL_APPEND_VERSION)
-  add_definitions("-DTFEL_APPEND_VERSION")
-endif(TFEL_APPEND_VERSION)
 
 if(EXISTS "${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
   include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
@@ -508,24 +507,24 @@ if(install-system-libraries)
 endif(install-system-libraries)
 
 # install licences
-if(TFEL_APPEND_VERSION)
+if(TFEL_APPEND_SUFFIX)
   install (FILES LICENCE-GNU-GPL
-    DESTINATION "share/doc/tfel-${TFEL_VERSION}"
+    DESTINATION "share/doc/tfel-${TFEL_SUFFIX}"
     COMPONENT core)
   install (FILES LICENCE-CECILL-A-EN
-    DESTINATION "share/doc/tfel-${TFEL_VERSION}"
+    DESTINATION "share/doc/tfel-${TFEL_SUFFIX}"
     COMPONENT core)
   install (FILES LICENCE-CECILL-A-FR
-    DESTINATION "share/doc/tfel-${TFEL_VERSION}"
+    DESTINATION "share/doc/tfel-${TFEL_SUFFIX}"
     COMPONENT core)
-else(TFEL_APPEND_VERSION)
+else(TFEL_APPEND_SUFFIX)
   install (FILES LICENCE-GNU-GPL DESTINATION "share/doc/tfel"
     COMPONENT core)
   install (FILES LICENCE-CECILL-A-EN DESTINATION "share/doc/tfel"
     COMPONENT core)
   install (FILES LICENCE-CECILL-A-FR DESTINATION "share/doc/tfel"
     COMPONENT core)
-endif(TFEL_APPEND_VERSION)
+endif(TFEL_APPEND_SUFFIX)
 
 set(CPACK_PACKAGE_VERSION   "${CMAKE_PROJECT_NAME}-${TFEL_VERSION}")
 if(${CMAKE_SYSTEM_PROCESSOR})

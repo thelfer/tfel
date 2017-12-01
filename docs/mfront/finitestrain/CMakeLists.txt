@@ -40,16 +40,16 @@ add_custom_target(finitestrain-doc-pdf ALL DEPENDS finitestrain.pdf)
 add_dependencies(doc-pdf
   finitestrain-doc-pdf)
 
-if(TFEL_APPEND_VERSION)
+if(TFEL_APPEND_SUFFIX)
   install(FILES
     ${CMAKE_CURRENT_BINARY_DIR}/finitestrain.pdf
-    DESTINATION share/doc/mfront-${TFEL_VERSION}/references
+    DESTINATION share/doc/mfront-${TFEL_SUFFIX}/references
     COMPONENT docs)
   install(FILES
     ${CMAKE_CURRENT_BINARY_DIR}/finitestrain.pdf
-    DESTINATION share/doc/tfel-${TFEL_VERSION}/web/documents/mfront
+    DESTINATION share/doc/tfel-${TFEL_SUFFIX}/web/documents/mfront
     COMPONENT website)
-else(TFEL_APPEND_VERSION)
+else(TFEL_APPEND_SUFFIX)
   install(FILES
     ${CMAKE_CURRENT_BINARY_DIR}/finitestrain.pdf
     DESTINATION share/doc/mfront/references
@@ -58,4 +58,4 @@ else(TFEL_APPEND_VERSION)
     ${CMAKE_CURRENT_BINARY_DIR}/finitestrain.pdf
     DESTINATION share/doc/tfel/web/documents/mfront
     COMPONENT website)
-endif(TFEL_APPEND_VERSION)
+endif(TFEL_APPEND_SUFFIX)

@@ -16,15 +16,15 @@ macro(pandoc_html file)
     ARGS      ${CMAKE_CURRENT_SOURCE_DIR}/${file}.md -o ${file}.html)
   add_custom_target(${file}-html ALL DEPENDS ${file}.html)
   add_dependencies(website ${file}-html)
-  if(TFEL_APPEND_VERSION)
+  if(TFEL_APPEND_SUFFIX)
     install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}.html
-      DESTINATION share/doc/tfel-${TFEL_VERSION}/web
+      DESTINATION share/doc/tfel-${TFEL_SUFFIX}/web
       COMPONENT website)
-  else(TFEL_APPEND_VERSION)
+  else(TFEL_APPEND_SUFFIX)
     install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}.html
       DESTINATION share/doc/tfel/web
       COMPONENT website)
-  endif(TFEL_APPEND_VERSION)
+  endif(TFEL_APPEND_SUFFIX)
 endmacro(pandoc_html)
 
 add_custom_target(website)
@@ -73,6 +73,7 @@ pandoc_html(Norton-web)
 pandoc_html(Norton-full)
 pandoc_html(coverity-scan)
 pandoc_html(hosford "--toc")
+pandoc_html(greenplasticity "--toc")
 pandoc_html(hyperelasticity "--toc")
 pandoc_html(signorini "--toc" "--toc-depth=2" "-c css/slideshow.css")
 pandoc_html(ogden "--toc" "--toc-depth=2")
@@ -116,17 +117,17 @@ pandoc_html(BehaviourBricks "--toc" "--toc-depth=2")
 
 pandoc_html(MTest-keywords "--toc" "--toc-depth=1")
 
-if(TFEL_APPEND_VERSION)
+if(TFEL_APPEND_SUFFIX)
   install(DIRECTORY js css doc img media downloads
-    DESTINATION share/doc/tfel-${TFEL_VERSION}/web
+    DESTINATION share/doc/tfel-${TFEL_SUFFIX}/web
     COMPONENT website
     PATTERN ".svn" EXCLUDE)
   install(FILES 404.html apple-touch-icon-precomposed.png 
     CHANGELOG.md CONTRIBUTING.md crossdomain.xml favicon.ico
     humans.txt LICENSE.md README.md robots.txt TODO.md
-    DESTINATION share/doc/tfel-${TFEL_VERSION}/web
+    DESTINATION share/doc/tfel-${TFEL_SUFFIX}/web
     COMPONENT website)
-else(TFEL_APPEND_VERSION)
+else(TFEL_APPEND_SUFFIX)
   install(DIRECTORY js css doc img media downloads
     DESTINATION share/doc/tfel/web
     COMPONENT website
@@ -136,4 +137,4 @@ else(TFEL_APPEND_VERSION)
     humans.txt LICENSE.md README.md robots.txt TODO.md
     DESTINATION share/doc/tfel/web
     COMPONENT website)
-endif(TFEL_APPEND_VERSION)
+endif(TFEL_APPEND_SUFFIX)

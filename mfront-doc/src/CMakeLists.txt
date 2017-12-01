@@ -24,9 +24,9 @@ target_link_libraries(mfront-doc
   TFELMFront 
   MFrontLogStream
   TFELSystem TFELUtilities)
-if(TFEL_APPEND_VERSION)
+if(TFEL_APPEND_SUFFIX)
   set_target_properties(mfront-doc
-    PROPERTIES OUTPUT_NAME "mfront-doc-${TFEL_VERSION}")
-endif(TFEL_APPEND_VERSION)
+    PROPERTIES OUTPUT_NAME "mfront-doc-${TFEL_SUFFIX}")
+endif(TFEL_APPEND_SUFFIX)
 install(TARGETS mfront-doc DESTINATION bin
   COMPONENT mfront)

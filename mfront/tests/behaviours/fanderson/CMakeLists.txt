@@ -43,17 +43,17 @@ macro(test_fanderson test_arg)
         set_property(TEST fanderson${test_arg}_${conf}_mtest
           PROPERTY DEPENDS "MFrontCastemBehaviours MFrontMaterialProperties-castem mtest")
       endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-      if(TFEL_APPEND_VERSION)
+      if(TFEL_APPEND_SUFFIX)
 	install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}
-	  DESTINATION "share/doc/mfront-${TFEL_VERSION}/tests/behaviours/fanderson"
+	  DESTINATION "share/doc/mfront-${TFEL_SUFFIX}/tests/behaviours/fanderson"
 	  CONFIGURATIONS ${conf}
 	  COMPONENT mtest)
-      else(TFEL_APPEND_VERSION)
+      else(TFEL_APPEND_SUFFIX)
 	install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}
 	  DESTINATION "share/doc/mfront/tests/behaviours/fanderson"
 	  CONFIGURATIONS ${conf}
 	  COMPONENT mtest)
-      endif(TFEL_APPEND_VERSION)
+      endif(TFEL_APPEND_SUFFIX)
     endforeach(conf ${CMAKE_CONFIGURATION_TYPES})
   else(CMAKE_CONFIGURATION_TYPES)
     get_property(MFrontCastemBehavioursBuildPath TARGET MFrontCastemBehaviours PROPERTY LOCATION_${conf})
@@ -73,15 +73,15 @@ macro(test_fanderson test_arg)
     endif(_WILL_FAIL)
     set_property(TEST fanderson${test_arg}_mtest
       PROPERTY DEPENDS "MFrontCastemBehaviours MFrontMaterialProperties-castem mtest")
-    if(TFEL_APPEND_VERSION)
+    if(TFEL_APPEND_SUFFIX)
       install(FILES ${CMAKE_CURRENT_BINARY_DIR}/fanderson${test_arg}.mtest
-	DESTINATION "share/doc/mfront-${TFEL_VERSION}/tests/behaviours/fanderson"
+	DESTINATION "share/doc/mfront-${TFEL_SUFFIX}/tests/behaviours/fanderson"
 	COMPONENT mtest)
-    else(TFEL_APPEND_VERSION)
+    else(TFEL_APPEND_SUFFIX)
       install(FILES ${CMAKE_CURRENT_BINARY_DIR}/fanderson${test_arg}.mtest
 	DESTINATION "share/doc/mfront/tests/behaviours/fanderson"
 	COMPONENT mtest)
-    endif(TFEL_APPEND_VERSION)
+    endif(TFEL_APPEND_SUFFIX)
   endif(CMAKE_CONFIGURATION_TYPES)
 endmacro(test_fanderson)
 

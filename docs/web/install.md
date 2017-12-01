@@ -226,7 +226,7 @@ $ cmake -DLIB_SUFFIX=64 ....
 
 ### Appending the version number
 
-The `TFEL_APPEND_VERSION` option will append the version number to the
+The `TFEL_APPEND_SUFFIX` option will append the version number to the
 names of:
 
 - The executables.
@@ -239,7 +239,7 @@ names of:
 The headers are installed in a subforder named `TFEL-${TVEL_VERSION}`.
 
 For example, if the `TFEL` version is `3.0.2-dev`, using
-`TFEL_APPEND_VERSION` opion will generate:
+`TFEL_APPEND_SUFFIX` opion will generate:
 
 - The `mfront-3.0.2-dev` executable.
 - The `libTFELMaterial-3.0.2-dev.so` library.

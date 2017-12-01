@@ -38,17 +38,17 @@ macro(cyranoptest test_arg)
         set_property(TEST cyrano${test_arg}_${conf}_ptest
           PROPERTY DEPENDS "MFrontCyranoBehaviours MFrontMaterialProperties-castem mtest")
       endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-      if(TFEL_APPEND_VERSION)
+      if(TFEL_APPEND_SUFFIX)
 	install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}
-	  DESTINATION "share/doc/mtest-${TFEL_VERSION}/tests/ptest/behaviours/cyrano"
+	  DESTINATION "share/doc/mtest-${TFEL_SUFFIX}/tests/ptest/behaviours/cyrano"
 	  CONFIGURATIONS ${conf}
 	  COMPONENT mtest)
-      else(TFEL_APPEND_VERSION)
+      else(TFEL_APPEND_SUFFIX)
 	install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}
 	  DESTINATION "share/doc/mtest/tests/ptest/behaviours/cyrano"
 	  CONFIGURATIONS ${conf}
 	  COMPONENT mtest)
-      endif(TFEL_APPEND_VERSION)
+      endif(TFEL_APPEND_SUFFIX)
     endforeach(conf ${CMAKE_CONFIGURATION_TYPES})
   else(CMAKE_CONFIGURATION_TYPES)
     get_property(MFrontCyranoBehavioursBuildPath TARGET MFrontCyranoBehaviours PROPERTY LOCATION_${conf})
@@ -67,15 +67,15 @@ macro(cyranoptest test_arg)
     endif(_WILL_FAIL)
     set_property(TEST cyrano${test_arg}_ptest
       PROPERTY DEPENDS "MFrontCyranoBehaviours MFrontMaterialProperties-castem ptest")
-    if(TFEL_APPEND_VERSION)
+    if(TFEL_APPEND_SUFFIX)
       install(FILES ${CMAKE_CURRENT_BINARY_DIR}/cyrano${test_arg}.ptest
-	DESTINATION "share/doc/mtest-${TFEL_VERSION}/tests/ptest/behaviours/cyrano"
+	DESTINATION "share/doc/mtest-${TFEL_SUFFIX}/tests/ptest/behaviours/cyrano"
 	COMPONENT mtest)
-    else(TFEL_APPEND_VERSION)
+    else(TFEL_APPEND_SUFFIX)
        install(FILES ${CMAKE_CURRENT_BINARY_DIR}/cyrano${test_arg}.ptest
 	DESTINATION "share/doc/mtest/tests/ptest/behaviours/cyrano"
 	COMPONENT mtest)
-    endif(TFEL_APPEND_VERSION)
+    endif(TFEL_APPEND_SUFFIX)
   endif(CMAKE_CONFIGURATION_TYPES)
 endmacro(cyranoptest)
 

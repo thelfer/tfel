@@ -31,17 +31,17 @@ macro(test_ironstuck test_arg)
         set_property(TEST ironstuck${test_arg}_${conf}_mtest
           PROPERTY DEPENDS "MFrontCastemBehaviours MFrontMaterialProperties-castem mtest")
       endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-      if(TFEL_APPEND_VERSION)
+      if(TFEL_APPEND_SUFFIX)
 	install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}
-	  DESTINATION "share/doc/mfront-${TFEL_VERSION}/tests/behaviours/ironstuck"
+	  DESTINATION "share/doc/mfront-${TFEL_SUFFIX}/tests/behaviours/ironstuck"
 	  CONFIGURATIONS ${conf}
 	  COMPONENT mtest)
-      else(TFEL_APPEND_VERSION)
+      else(TFEL_APPEND_SUFFIX)
 	install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}
 	  DESTINATION "share/doc/mfront/tests/behaviours/ironstuck"
 	  CONFIGURATIONS ${conf}
 	  COMPONENT mtest)
-      endif(TFEL_APPEND_VERSION)
+      endif(TFEL_APPEND_SUFFIX)
     endforeach(conf ${CMAKE_CONFIGURATION_TYPES})
   else(CMAKE_CONFIGURATION_TYPES)
     get_property(MFrontCastemBehavioursBuildPath TARGET MFrontCastemBehaviours PROPERTY LOCATION_${conf})
@@ -55,15 +55,15 @@ macro(test_ironstuck test_arg)
       PROPERTIES DEPENDS MFrontMaterialProperties-castem)
     set_tests_properties(ironstuck${test_arg}_mtest
       PROPERTIES DEPENDS mtest)
-    if(TFEL_APPEND_VERSION)
+    if(TFEL_APPEND_SUFFIX)
       install(FILES ${CMAKE_CURRENT_BINARY_DIR}/ironstuck${test_arg}.mtest
-	DESTINATION "share/doc/mfront-${TFEL_VERSION}/tests/behaviours/ironstuck"
+	DESTINATION "share/doc/mfront-${TFEL_SUFFIX}/tests/behaviours/ironstuck"
 	COMPONENT mtest)
-    else(TFEL_APPEND_VERSION)
+    else(TFEL_APPEND_SUFFIX)
       install(FILES ${CMAKE_CURRENT_BINARY_DIR}/ironstuck${test_arg}.mtest
 	DESTINATION "share/doc/mfront/tests/behaviours/ironstuck"
 	COMPONENT mtest)
-    endif(TFEL_APPEND_VERSION)
+    endif(TFEL_APPEND_SUFFIX)
   endif(CMAKE_CONFIGURATION_TYPES)
 endmacro(test_ironstuck)
 

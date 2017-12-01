@@ -739,8 +739,15 @@ hyperviscoelastic behaviours based on the development in Prony series:
 
 ### Plasticity
 
-An example of a simple orthotropic behaviour is available
-[here](orthotropiclinearhardeningplasticity.html).
+- [IsotropicLinearHardeningPlasticity](gallery/plasticity/IsotropicLinearHardeningPlasticity.mfront)
+- [IsotropicLinearKinematicHardeningPlasticity](gallery/plasticity/IsotropicLinearKinematicHardeningPlasticity.mfront)
+- The implementation of an orthotropic plastic behaviour with
+  isotropic linear hardening is described
+  [here](orthotropiclinearhardeningplasticity.html).
+- The implementation of a perfect plastic behaviour based on the
+  Hosford equivalent stress is described [here](hosford.html).
+- The implementation of a perfect plastic behaviour based on the
+  Green yield criterion is described [here](greenplasticity.html).
 
 ### Viscoplasticity
 
@@ -1249,6 +1256,13 @@ $ mfm --filter-by-material='M5' --filter-by-type=material_property --filter-by-n
 ~~~~
 
 # Tickets fixed
+
+This release also takes into account the tickets fixed for
+`tfel-3.0.1`, `tfel-3.0.2`, `tfel-3.0.3`. For a detailed list, see:
+
+- [the release notes of `tfel-3.0.1`](release-notes-3.0.1.html)
+- [the release notes of `tfel-3.0.2`](release-notes-3.0.2.html)
+- [the release notes of `tfel-3.0.3`](release-notes-3.0.3.html)
 
 ## Ticket #37: Add the ability to compute part of the jacobian numerically
 

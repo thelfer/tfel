@@ -34,5 +34,5 @@ Such an example illustrates:
   [this page](BehaviourBricks.html)).
 - The usage of the `@AdditionalConvergenceChecks` keyword.
 
-The whole implementation is available
-[here](./gallery/viscoplasticity/IsotropicViscoplasticityAmstrongFredericKinematicHardening.mfront).
+<!-- The whole implementation is available -->
+<!-- [here](./gallery/viscoplasticity/IsotropicViscoplasticityAmstrongFredericKinematicHardening.mfront). -->

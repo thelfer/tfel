@@ -36,7 +36,7 @@ namespace tfel{
     char  szBuffer[512];
     DWORD dwBufferSize = sizeof(szBuffer);
     LONG  nError;
-    LONG  lRes = RegOpenKeyEx(HKEY_CLASSES_ROOT,"TFELHOME-" VERSION,0,KEY_READ,&hKey);
+    LONG  lRes = RegOpenKeyEx(HKEY_CLASSES_ROOT,"TFELHOME-"VERSION,0,KEY_READ,&hKey);
     if(ERROR_SUCCESS != lRes){
       return false;
     }
@@ -93,26 +93,26 @@ namespace tfel{
 
   std::string getTFELConfigExecutableName(){
 #ifdef _WIN32
-#ifdef TFEL_APPEND_VERSION
-    return "tfel-config-" VERSION ".exe";
-#else /* TFEL_APPEND_VERSION */
+#ifdef TFEL_APPEND_SUFFIX
+    return "tfel-config-" TFEL_SUFFIX ".exe";
+#else /* TFEL_APPEND_SUFFIX */
     return "tfel-config.exe";
-#endif /* TFEL_APPEND_VERSION */
+#endif /* TFEL_APPEND_SUFFIX */
 #else /* WIN32 */
-#ifdef TFEL_APPEND_VERSION
-    return "tfel-config-" VERSION;
-#else /* TFEL_APPEND_VERSION */
+#ifdef TFEL_APPEND_SUFFIX
+    return "tfel-config-" TFEL_SUFFIX;
+#else /* TFEL_APPEND_SUFFIX */
     return "tfel-config";
-#endif /* TFEL_APPEND_VERSION */
+#endif /* TFEL_APPEND_SUFFIX */
 #endif /* _WIN32 */
   }
 
   std::string getLibraryInstallName(const std::string& l){
-#ifdef TFEL_APPEND_VERSION
-    return l+'-'+VERSION;
-#else /* TFEL_APPEND_VERSION */
+#ifdef TFEL_APPEND_SUFFIX
+    return l+'-'+TFEL_SUFFIX;
+#else /* TFEL_APPEND_SUFFIX */
     return l;
-#endif /* TFEL_APPEND_VERSION */
+#endif /* TFEL_APPEND_SUFFIX */
   }
   
 } // end of namespace tfel

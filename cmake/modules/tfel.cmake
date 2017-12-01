@@ -2,15 +2,41 @@ macro(tfel_project tfel_version_major tfel_version_minor tfel_version_patch)
   project("tfel")
   set(PACKAGE_NAME "tfel")
   set(VERSION "${tfel_version_major}.${tfel_version_minor}.${tfel_version_patch}")
-  set(TFEL_VERSION "${VERSION}")
+
+  if(TFEL_APPEND_VERSION OR TFEL_VERSION_FLAVOUR)
+    set(TFEL_APPEND_SUFFIX ON)
+    add_definitions("-DTFEL_APPEND_SUFFIX")
+  endif(TFEL_APPEND_VERSION OR TFEL_VERSION_FLAVOUR)
+
   set(TFEL_WEBSITE "http://tfel.sourceforce.net")
   # the version number.
   set(TFEL_VERSION_MAJOR "${tfel_version_major}")
   set(TFEL_VERSION_MINOR "${tfel_version_minor}")
   set(TFEL_VERSION_PATCH "${tfel_version_patch}")
+
+  set(TFEL_VERSION "${VERSION}")
+  if(TFEL_VERSION_FLAVOUR)
+    set(TFEL_VERSION "${VERSION}-${TFEL_VERSION_FLAVOUR}")
+  else(TFEL_VERSION_FLAVOUR)
+    set(TFEL_VERSION "${VERSION}")
+  endif(TFEL_VERSION_FLAVOUR)
   add_definitions("-DVERSION=\\\"\"${TFEL_VERSION}\"\\\"")
-  string(REPLACE "." "_" TFEL_VERSION_FOR_PYTHON_MODULES "${TFEL_VERSION}")
-  string(REPLACE "-" "_" TFEL_VERSION_FOR_PYTHON_MODULES "${TFEL_VERSION_FOR_PYTHON_MODULES}")
+  
+  if(TFEL_APPEND_VERSION)
+    set(TFEL_SUFFIX "${TFEL_VERSION}")
+    add_definitions("-DTFEL_SUFFIX=\\\"\"${TFEL_SUFFIX}\"\\\"")
+  else(TFEL_APPEND_VERSION)
+    if(TFEL_VERSION_FLAVOUR)
+      set(TFEL_SUFFIX "${TFEL_VERSION_FLAVOUR}")
+      add_definitions("-DTFEL_SUFFIX=\\\"\"${TFEL_SUFFIX}\"\\\"")
+    endif(TFEL_VERSION_FLAVOUR)
+  endif(TFEL_APPEND_VERSION)
+
+  if(TFEL_SUFFIX)
+    string(REPLACE "." "_" TFEL_SUFFIX_FOR_PYTHON_MODULES "${TFEL_SUFFIX}")
+    string(REPLACE "-" "_" TFEL_SUFFIX_FOR_PYTHON_MODULES "${TFEL_SUFFIX_FOR_PYTHON_MODULES}")
+  endif(TFEL_SUFFIX)
+  
   if(LIB_SUFFIX)
     add_definitions("-DLIB_SUFFIX=\\\"\"${LIB_SUFFIX}\"\\\"")
   endif(LIB_SUFFIX)
@@ -29,75 +55,75 @@ set(CPACK_COMPONENT_MFRONT_DEPENDS core)
 set(CPACK_COMPONENT_MTEST_DEPENDS  core mfront)
 
 macro(install_header dir file)
-  if(TFEL_APPEND_VERSION)  
+  if(TFEL_APPEND_SUFFIX)  
     install(FILES ${dir}/${file}
-      DESTINATION "include/TFEL-${TFEL_VERSION}/${dir}"
+      DESTINATION "include/TFEL-${TFEL_SUFFIX}/${dir}"
       COMPONENT core)
-  else(TFEL_APPEND_VERSION)
+  else(TFEL_APPEND_SUFFIX)
     install(FILES ${dir}/${file}
       DESTINATION "include/${dir}"
       COMPONENT core)
-  endif(TFEL_APPEND_VERSION)
+  endif(TFEL_APPEND_SUFFIX)
 endmacro(install_header)
 
 macro(install_mfront_header dir file)
-  if(TFEL_APPEND_VERSION)
+  if(TFEL_APPEND_SUFFIX)
     install(FILES ${dir}/${file}
-      DESTINATION "include/TFEL-${TFEL_VERSION}/${dir}"
+      DESTINATION "include/TFEL-${TFEL_SUFFIX}/${dir}"
       COMPONENT mfront)
-  else(TFEL_APPEND_VERSION)
+  else(TFEL_APPEND_SUFFIX)
     install(FILES ${dir}/${file}
       DESTINATION "include/${dir}"
       COMPONENT mfront)
-  endif(TFEL_APPEND_VERSION)
+  endif(TFEL_APPEND_SUFFIX)
 endmacro(install_mfront_header)
 
 macro(install_mtest_header dir file)
-  if(TFEL_APPEND_VERSION)
+  if(TFEL_APPEND_SUFFIX)
     install(FILES ${dir}/${file}
-      DESTINATION "include/TFEL-${TFEL_VERSION}/${dir}"
+      DESTINATION "include/TFEL-${TFEL_SUFFIX}/${dir}"
       COMPONENT mtest)
-  else(TFEL_APPEND_VERSION)
+  else(TFEL_APPEND_SUFFIX)
     install(FILES ${dir}/${file}
       DESTINATION "include/${dir}"
       COMPONENT mtest)
-  endif(TFEL_APPEND_VERSION)
+  endif(TFEL_APPEND_SUFFIX)
 endmacro(install_mtest_header)
 
 macro(install_data dir file)
-  if(TFEL_APPEND_VERSION)
+  if(TFEL_APPEND_SUFFIX)
     install(FILES ${file}
-      DESTINATION "share/tfel-${TFEL_VERSION}/${dir}")
-  else(TFEL_APPEND_VERSION)
+      DESTINATION "share/tfel-${TFEL_SUFFIX}/${dir}")
+  else(TFEL_APPEND_SUFFIX)
     install(FILES ${file}
       DESTINATION "share/tfel/${dir}")
-  endif(TFEL_APPEND_VERSION)
+  endif(TFEL_APPEND_SUFFIX)
 endmacro(install_data)
 
 macro(install_mfront_data dir file)
-  if(TFEL_APPEND_VERSION)
+  if(TFEL_APPEND_SUFFIX)
     install(FILES ${file}
-      DESTINATION "share/doc/mfront-${TFEL_VERSION}/${dir}"
+      DESTINATION "share/doc/mfront-${TFEL_SUFFIX}/${dir}"
       COMPONENT mfront)
-  else(TFEL_APPEND_VERSION)
+  else(TFEL_APPEND_SUFFIX)
     install(FILES ${file}
       DESTINATION "share/doc/mfront/${dir}"
       COMPONENT mfront)
-  endif(TFEL_APPEND_VERSION)
+  endif(TFEL_APPEND_SUFFIX)
 	
 endmacro(install_mfront_data)
 
 macro(install_gallery dir file)
   install_mfront_data("gallery/${dir}" "${file}")
-  if(TFEL_APPEND_VERSION)
+  if(TFEL_APPEND_SUFFIX)
     install(FILES ${file}
-      DESTINATION "share/doc/tfel-${TFEL_VERSION}/web/gallery/${dir}"
+      DESTINATION "share/doc/tfel-${TFEL_SUFFIX}/web/gallery/${dir}"
       COMPONENT web)
-  else(TFEL_APPEND_VERSION)
+  else(TFEL_APPEND_SUFFIX)
     install(FILES ${file}
       DESTINATION "share/doc/tfel/web/gallery/${dir}"
       COMPONENT web)
-  endif(TFEL_APPEND_VERSION)
+  endif(TFEL_APPEND_SUFFIX)
 endmacro(install_gallery)
 
 macro(tfel_library_internal name component)
@@ -105,9 +131,9 @@ macro(tfel_library_internal name component)
     message(FATAL_ERROR "tfel_library_internal : no source specified")
   endif(${ARGC} LESS 2)
   add_library(${name} SHARED ${ARGN})
-  if(TFEL_APPEND_VERSION)
-    set_target_properties(${name} PROPERTIES OUTPUT_NAME "${name}-${TFEL_VERSION}")
-  endif(TFEL_APPEND_VERSION)
+  if(TFEL_APPEND_SUFFIX)
+    set_target_properties(${name} PROPERTIES OUTPUT_NAME "${name}-${TFEL_SUFFIX}")
+  endif(TFEL_APPEND_SUFFIX)
   if(WIN32)
     install(TARGETS ${name} DESTINATION bin
       COMPONENT ${component})
@@ -118,11 +144,11 @@ macro(tfel_library_internal name component)
   endif(WIN32)
   if(enable-static)
     add_library(${name}-static STATIC ${ARGN})
-    if(TFEL_APPEND_VERSION)
-      set_target_properties(${name}-static PROPERTIES OUTPUT_NAME "${name}-{TFEL_VERSION}")
-    else(TFEL_APPEND_VERSION)
+    if(TFEL_APPEND_SUFFIX)
+      set_target_properties(${name}-static PROPERTIES OUTPUT_NAME "${name}-{TFEL_SUFFIX}")
+    else(TFEL_APPEND_SUFFIX)
       set_target_properties(${name}-static PROPERTIES OUTPUT_NAME "${name}")
-    endif(TFEL_APPEND_VERSION)
+    endif(TFEL_APPEND_SUFFIX)
     # Now the library target "${name}-static" will be named "${name}.lib"
     # with MS tools.
     # This conflicts with the "${name}.lib" import library corresponding
@@ -363,30 +389,30 @@ endmacro(python_module_base)
 
 # macro(python_module name)
 #   python_module_base(${name} ${name} ${ARGN})
-#     if(TFEL_APPEND_VERSION)
+#     if(TFEL_APPEND_SUFFIX)
 #       install(TARGETS py_${name}
-# 	DESTINATION lib${LIB_SUFFIX}/tfel-${TFEL_VERSION}/${PYTHON_LIBRARY}/site-packages/
+# 	DESTINATION lib${LIB_SUFFIX}/tfel-${TFEL_SUFFIX}/${PYTHON_LIBRARY}/site-packages/
 # 	COMPONENT python_bindings)
-#     else(TFEL_APPEND_VERSION)
+#     else(TFEL_APPEND_SUFFIX)
 #       install(TARGETS py_${name}
 # 	DESTINATION lib${LIB_SUFFIX}/${PYTHON_LIBRARY}/site-packages/
 # 	COMPONENT python_bindings)
-#     endif(TFEL_APPEND_VERSION)
+#     endif(TFEL_APPEND_SUFFIX)
 # endmacro(python_module)
 
 macro(python_lib_module name package)
   python_module_base(${package}_${name} ${name} ${ARGN})
-  if(TFEL_APPEND_VERSION)
+  if(TFEL_APPEND_SUFFIX)
     if(WIN32)
       install(TARGETS py_${package}_${name}
-        DESTINATION bin/${PYTHON_LIBRARY}/site-packages/${package}_${TFEL_VERSION_FOR_PYTHON_MODULES}
+        DESTINATION bin/${PYTHON_LIBRARY}/site-packages/${package}_${TFEL_SUFFIX_FOR_PYTHON_MODULES}
         COMPONENT python_bindings)
     else(WIN32)
       install(TARGETS py_${package}_${name}
-        DESTINATION lib${LIB_SUFFIX}/${PYTHON_LIBRARY}/site-packages/${package}_${TFEL_VERSION_FOR_PYTHON_MODULES}
+        DESTINATION lib${LIB_SUFFIX}/${PYTHON_LIBRARY}/site-packages/${package}_${TFEL_SUFFIX_FOR_PYTHON_MODULES}
         COMPONENT python_bindings)
     endif(WIN32)
-  else(TFEL_APPEND_VERSION)
+  else(TFEL_APPEND_SUFFIX)
     if(WIN32)
       install(TARGETS py_${package}_${name}
         DESTINATION bin/${PYTHON_LIBRARY}/site-packages/${package}
@@ -396,7 +422,7 @@ macro(python_lib_module name package)
         DESTINATION lib${LIB_SUFFIX}/${PYTHON_LIBRARY}/site-packages/${package}
         COMPONENT python_bindings)
     endif(WIN32)
-  endif(TFEL_APPEND_VERSION)
+  endif(TFEL_APPEND_SUFFIX)
 endmacro(python_lib_module)
 
 macro(std_python_module name)
@@ -421,7 +447,7 @@ macro(tfel_python_script_base dir)
   endif(${ARGC} LESS 1)
   foreach(pyscript ${ARGN})
     if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${pyscript}.in")
-      if(TFEL_APPEND_VERSION)
+      if(TFEL_APPEND_SUFFIX)
 	if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${pyscript}.version.in")
 	  configure_file("${CMAKE_CURRENT_SOURCE_DIR}/${pyscript}.version.in"
 	    "${CMAKE_CURRENT_BINARY_DIR}/${pyscript}" @ONLY)
@@ -429,10 +455,10 @@ macro(tfel_python_script_base dir)
 	  configure_file("${CMAKE_CURRENT_SOURCE_DIR}/${pyscript}.in"
 	    "${CMAKE_CURRENT_BINARY_DIR}/${pyscript}" @ONLY)
 	endif(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${pyscript}.version.in")
-      else(TFEL_APPEND_VERSION)
+      else(TFEL_APPEND_SUFFIX)
 	configure_file("${CMAKE_CURRENT_SOURCE_DIR}/${pyscript}.in"
 	  "${CMAKE_CURRENT_BINARY_DIR}/${pyscript}" @ONLY)
-      endif(TFEL_APPEND_VERSION)
+      endif(TFEL_APPEND_SUFFIX)
       set(python_script "${CMAKE_CURRENT_BINARY_DIR}/${pyscript}")
     else(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${pyscript}.in")
       set(python_script "${CMAKE_CURRENT_SOURCE_DIR}/${pyscript}")
@@ -450,9 +476,9 @@ macro(tfel_python_script_base dir)
 endmacro(tfel_python_script_base)
 
 macro(tfel_python_script dir)
-  if(TFEL_APPEND_VERSION)
-    tfel_python_script_base(${dir}_${TFEL_VERSION_FOR_PYTHON_MODULES} ${ARGN})
-  else(TFEL_APPEND_VERSION)
+  if(TFEL_APPEND_SUFFIX)
+    tfel_python_script_base(${dir}_${TFEL_SUFFIX_FOR_PYTHON_MODULES} ${ARGN})
+  else(TFEL_APPEND_SUFFIX)
     tfel_python_script_base(${dir} ${ARGN})
-  endif(TFEL_APPEND_VERSION)
+  endif(TFEL_APPEND_SUFFIX)
 endmacro(tfel_python_script)

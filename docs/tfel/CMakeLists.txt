@@ -27,19 +27,19 @@ if(HAVE_LATEX)
   add_custom_target(tfel-doc-pdf ALL DEPENDS reference-guide.pdf)
   add_dependencies(doc-pdf
     tfel-doc-pdf)
-  if(TFEL_APPEND_VERSION)
+  if(TFEL_APPEND_SUFFIX)
     install(FILES ${CMAKE_CURRENT_BINARY_DIR}/reference-guide.pdf
-      DESTINATION share/doc/tfel-${TFEL_VERSION}
+      DESTINATION share/doc/tfel-${TFEL_SUFFIX}
       COMPONENT docs)
     install(FILES ${CMAKE_CURRENT_BINARY_DIR}/reference-guide.pdf
-      DESTINATION share/doc/tfel-${TFEL_VERSION}/web/documents/tfel
+      DESTINATION share/doc/tfel-${TFEL_SUFFIX}/web/documents/tfel
       COMPONENT website)
-  else(TFEL_APPEND_VERSION)
+  else(TFEL_APPEND_SUFFIX)
     install(FILES ${CMAKE_CURRENT_BINARY_DIR}/reference-guide.pdf
       DESTINATION share/doc/tfel
       COMPONENT docs)
     install(FILES ${CMAKE_CURRENT_BINARY_DIR}/reference-guide.pdf
       DESTINATION share/doc/tfel/web/documents/tfel
       COMPONENT website)
-  endif(TFEL_APPEND_VERSION)
+  endif(TFEL_APPEND_SUFFIX)
 endif(HAVE_LATEX)

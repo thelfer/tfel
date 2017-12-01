@@ -42,6 +42,7 @@ Options
   enable-cyrano     : enables cyrano support (cyrano is eDF fuel performance code)
   enable-calculix   : enables CalculiX support
   enable-libcxx     : enable libc++ on Linux and clang
+  enable-cxx-17     : enable c++-17 features (requires `gcc` >= 7.2)
   
   enable-random-tests: enable tests based on a random choice of 
   enable-developer-warnings : enable additionnal compiler warnings 

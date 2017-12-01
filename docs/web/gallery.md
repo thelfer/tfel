@@ -36,6 +36,8 @@ behaviour. This framework is described
   behaviour) is described [here](iwan.html).
 - The implementation of a perfect plastic behaviour based on the
   Hosford equivalent stress is described [here](hosford.html).
+- The implementation of a perfect plastic behaviour based on the
+  Green yield criterion is described [here](greenplasticity.html).
 
 ## Viscoplasticity
 

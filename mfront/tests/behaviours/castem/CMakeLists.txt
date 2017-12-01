@@ -236,17 +236,17 @@ macro(test_castem test_arg)
           set_property(TEST ${test}
             PROPERTY DEPENDS "MFrontCastemBehaviours MFrontMaterialProperties-castem mtest")
 	endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-	if(TFEL_APPEND_VERSION)
+	if(TFEL_APPEND_SUFFIX)
 	  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}
-	    DESTINATION "share/doc/mfront-${TFEL_VERSION}/tests/behaviours/castem"
+	    DESTINATION "share/doc/mfront-${TFEL_SUFFIX}/tests/behaviours/castem"
 	    CONFIGURATIONS ${conf}
 	    COMPONENT mtest)
-	else(TFEL_APPEND_VERSION)
+	else(TFEL_APPEND_SUFFIX)
 	  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}
 	    DESTINATION "share/doc/mfront/tests/behaviours/castem"
 	    CONFIGURATIONS ${conf}
 	    COMPONENT mtest)
-	endif(TFEL_APPEND_VERSION)
+	endif(TFEL_APPEND_SUFFIX)
       endforeach(conf ${CMAKE_CONFIGURATION_TYPES})
     else(CMAKE_CONFIGURATION_TYPES)
       get_property(MFrontCastemBehavioursBuildPath TARGET MFrontCastemBehaviours PROPERTY LOCATION_${conf})
@@ -268,15 +268,15 @@ macro(test_castem test_arg)
       endif(_WILL_FAIL)
       set_property(TEST ${test}
 	PROPERTY DEPENDS "MFrontCastemBehaviours MFrontMaterialProperties-castem mtest")
-      if(TFEL_APPEND_VERSION)
+      if(TFEL_APPEND_SUFFIX)
 	install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}
-	  DESTINATION "share/doc/mfront-${TFEL_VERSION}/tests/behaviours/castem"
+	  DESTINATION "share/doc/mfront-${TFEL_SUFFIX}/tests/behaviours/castem"
 	  COMPONENT mtest)
-      else(TFEL_APPEND_VERSION)
+      else(TFEL_APPEND_SUFFIX)
 	install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}
 	  DESTINATION "share/doc/mfront/tests/behaviours/castem"
 	  COMPONENT mtest)
-      endif(TFEL_APPEND_VERSION)
+      endif(TFEL_APPEND_SUFFIX)
     endif(CMAKE_CONFIGURATION_TYPES)
   endforeach(rm ${IEEE754_ROUNDING_MODES})
 endmacro(test_castem)

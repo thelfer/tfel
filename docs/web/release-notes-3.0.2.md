@@ -137,7 +137,7 @@ For more details, see: <https://sourceforge.net/p/tfel/tickets/82/>
 
 ## Ticket #81: Have two versions of MFront in the same environment
 
-In `cmake`, the `TFEL_APPEND_VERSION` option will append the version
+In `cmake`, the `TFEL_APPEND_SUFFIX` option will append the version
 number to the names of:
 
 - The executables.
@@ -150,7 +150,7 @@ number to the names of:
 The headers are installed in a subforder named `TFEL-${TVEL_VERSION}`.
 
 For example, if the `TFEL` version is `3.0.2-dev`, using
-`TFEL_APPEND_VERSION` opion will generate:
+`TFEL_APPEND_SUFFIX` opion will generate:
 
 - The `mfront-3.0.2-dev` executable.
 - The `libTFELMaterial-3.0.2-dev.so` library.

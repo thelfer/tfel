@@ -62,15 +62,15 @@ macro(castemtest_finitestrainsinglecrystalbrick test_arg behaviour)
       set_property(TEST brick${test_arg}_${behaviour}_consistenttangentoperator_mtest
 	PROPERTY DEPENDS "MFrontCastemBehaviours MFrontMaterialProperties-castem mtest")
     endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-    if(TFEL_APPEND_VERSION)
+    if(TFEL_APPEND_SUFFIX)
       install(FILES ${file}
-	DESTINATION "share/doc/mfront-${TFEL_VERSION}/tests/behaviours/bricks/FiniteStrainSingleCrystal/castem/"
+	DESTINATION "share/doc/mfront-${TFEL_SUFFIX}/tests/behaviours/bricks/FiniteStrainSingleCrystal/castem/"
 	COMPONENT mtest)
-    else(TFEL_APPEND_VERSION)
+    else(TFEL_APPEND_SUFFIX)
       install(FILES ${file}
 	DESTINATION "share/doc/mfront/tests/behaviours/bricks/FiniteStrainSingleCrystal/castem/"
 	COMPONENT mtest)
-    endif(TFEL_APPEND_VERSION)
+    endif(TFEL_APPEND_SUFFIX)
   endif(HAVE_CASTEM)
 endmacro(castemtest_finitestrainsinglecrystalbrick)
 

@@ -48,15 +48,15 @@ macro(astertest_finitestrainsinglecrystalbrick test_arg behaviour)
       set_property(TEST brick${test_arg}${behaviour}_consistenttangentoperator_mtest
 	PROPERTY DEPENDS "MFrontAsterBehaviours MFrontMaterialProperties-aster mtest")
     endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-    if(TFEL_APPEND_VERSION)
+    if(TFEL_APPEND_SUFFIX)
       install(FILES ${file}
-	DESTINATION "share/doc/mfront-${TFEL_VERSION}/tests/behaviours/bricks/FiniteStrainSingleCrystal/aster/"
+	DESTINATION "share/doc/mfront-${TFEL_SUFFIX}/tests/behaviours/bricks/FiniteStrainSingleCrystal/aster/"
 	COMPONENT mtest)
-    else(TFEL_APPEND_VERSION)
+    else(TFEL_APPEND_SUFFIX)
       install(FILES ${file}
 	DESTINATION "share/doc/mfront/tests/behaviours/bricks/FiniteStrainSingleCrystal/aster/"
 	COMPONENT mtest)
-    endif(TFEL_APPEND_VERSION)
+    endif(TFEL_APPEND_SUFFIX)
   endif(HAVE_ASTER)
 endmacro(astertest_finitestrainsinglecrystalbrick)
 

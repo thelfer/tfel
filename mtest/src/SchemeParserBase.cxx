@@ -36,20 +36,20 @@ namespace mtest{
 					     const std::string& k) const
   {
     const auto root = tfel::getInstallPath();
-#ifdef TFEL_APPEND_VERSION
+#ifdef TFEL_APPEND_SUFFIX
     auto f = root+"/share/doc/mtest-" VERSION "/"+s+'/'+k.substr(1)+".md";
-#else  /* TFEL_APPEND_VERSION */
+#else  /* TFEL_APPEND_SUFFIX */
     auto f = root+"/share/doc/mtest/"+s+'/'+k.substr(1)+".md";
-#endif /* TFEL_APPEND_VERSION */
+#endif /* TFEL_APPEND_SUFFIX */
     std::ifstream desc{f};
     if(desc){
       return f;
     }
-#ifdef TFEL_APPEND_VERSION
+#ifdef TFEL_APPEND_SUFFIX
     f = root+"/share/doc/mtest-" VERSION "/"+k.substr(1)+".md";
-#else  /* TFEL_APPEND_VERSION */
+#else  /* TFEL_APPEND_SUFFIX */
     f = root+"/share/doc/mtest/"+k.substr(1)+".md";
-#endif /* TFEL_APPEND_VERSION */
+#endif /* TFEL_APPEND_SUFFIX */
     desc.open(f);
     if(desc){
       return f;

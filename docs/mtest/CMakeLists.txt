@@ -2,14 +2,14 @@ add_subdirectory(mtest)
 add_subdirectory(ptest)
 
 macro(install_mtest_desc file)
-  if(TFEL_APPEND_VERSION)
+  if(TFEL_APPEND_SUFFIX)
     install(FILES ${file}.md
-      DESTINATION share/doc/mtest-${TFEL_VERSION}
+      DESTINATION share/doc/mtest-${TFEL_SUFFIX}
       COMPONENT mtest)
-  else(TFEL_APPEND_VERSION)
+  else(TFEL_APPEND_SUFFIX)
     install(FILES ${file}.md DESTINATION share/doc/mtest
       COMPONENT mtest)
-  endif(TFEL_APPEND_VERSION)
+  endif(TFEL_APPEND_SUFFIX)
 endmacro(install_mtest_desc file)
 
 install_mtest_desc(Author)
@@ -101,19 +101,19 @@ if(HAVE_LATEX AND GENERATE_REFERENCE_DOC)
   add_dependencies(doc-pdf
     mtest-doc-pdf)
 
-  if(TFEL_APPEND_VERSION)
+  if(TFEL_APPEND_SUFFIX)
     install(FILES ${CMAKE_CURRENT_BINARY_DIR}/mtest.pdf
-      DESTINATION share/doc/mtest-${TFEL_VERSION}
+      DESTINATION share/doc/mtest-${TFEL_SUFFIX}
       COMPONENT docs)
     install(FILES ${CMAKE_CURRENT_BINARY_DIR}/mtest.pdf
-      DESTINATION share/doc/tfel-${TFEL_VERSION}/web/documents/mtest
+      DESTINATION share/doc/tfel-${TFEL_SUFFIX}/web/documents/mtest
       COMPONENT website)
-  else(TFEL_APPEND_VERSION)
+  else(TFEL_APPEND_SUFFIX)
     install(FILES ${CMAKE_CURRENT_BINARY_DIR}/mtest.pdf
       DESTINATION share/doc/mtest
       COMPONENT docs)
     install(FILES ${CMAKE_CURRENT_BINARY_DIR}/mtest.pdf
       DESTINATION share/doc/tfel/web/documents/mtest
       COMPONENT website)
-  endif(TFEL_APPEND_VERSION)
+  endif(TFEL_APPEND_SUFFIX)
 endif(HAVE_LATEX AND GENERATE_REFERENCE_DOC)

@@ -16,14 +16,14 @@ macro(install_mfront_desc file)
   #     DESTINATION share/doc/tfel/web/mfront
   #     COMPONENT website)
   # endif(HAVE_PANDOC)
-  if(TFEL_APPEND_VERSION)
+  if(TFEL_APPEND_SUFFIX)
     install(FILES ${file}.md
-      DESTINATION share/doc/mfront-${TFEL_VERSION}
+      DESTINATION share/doc/mfront-${TFEL_SUFFIX}
       COMPONENT mfront)
-  else(TFEL_APPEND_VERSION)
+  else(TFEL_APPEND_SUFFIX)
     install(FILES ${file}.md DESTINATION share/doc/mfront
       COMPONENT mfront)
-  endif(TFEL_APPEND_VERSION)
+  endif(TFEL_APPEND_SUFFIX)
 endmacro(install_mfront_desc file)
 
 macro(install_mfront_desc2 directory file)
@@ -42,15 +42,15 @@ macro(install_mfront_desc2 directory file)
   #     DESTINATION share/doc/tfel/web/mfront/${directory}/${file}.html
   #     COMPONENT website)
   # endif(HAVE_PANDOC)
-  if(TFEL_APPEND_VERSION)
+  if(TFEL_APPEND_SUFFIX)
     install(FILES ${directory}/${file}.md
-      DESTINATION share/doc/mfront-${TFEL_VERSION}/${directory}
+      DESTINATION share/doc/mfront-${TFEL_SUFFIX}/${directory}
       COMPONENT mfront)
-  else(TFEL_APPEND_VERSION)
+  else(TFEL_APPEND_SUFFIX)
     install(FILES ${directory}/${file}.md
       DESTINATION share/doc/mfront/${directory}
       COMPONENT mfront)
-  endif(TFEL_APPEND_VERSION)
+  endif(TFEL_APPEND_SUFFIX)
 endmacro(install_mfront_desc2 directory file)
 
 install_mfront_desc(AdditionalConvergenceChecks)

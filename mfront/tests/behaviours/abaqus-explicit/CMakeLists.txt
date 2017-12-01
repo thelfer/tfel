@@ -83,15 +83,15 @@ macro(test_abaqus_explicit test_arg)
           set_property(TEST ${test}
             PROPERTY DEPENDS MFrontAbaqusExplicitBehaviours MFrontMaterialProperties-castem mtest)
 	endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-	if(TFEL_APPEND_VERSION)
+	if(TFEL_APPEND_SUFFIX)
 	  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}
-	    DESTINATION "share/doc/mfront-${TFEL_VERSION}/tests/behaviours/abaqus-explicit"
+	    DESTINATION "share/doc/mfront-${TFEL_SUFFIX}/tests/behaviours/abaqus-explicit"
 	    COMPONENT mtest)
-	else(TFEL_APPEND_VERSION)
+	else(TFEL_APPEND_SUFFIX)
 	  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}
 	    DESTINATION "share/doc/mfront/tests/behaviours/abaqus-explicit"
 	    COMPONENT mtest)
-	endif(TFEL_APPEND_VERSION)
+	endif(TFEL_APPEND_SUFFIX)
       endforeach(conf ${CMAKE_CONFIGURATION_TYPES})
     else(CMAKE_CONFIGURATION_TYPES)
       set(file "abaqusexplicit${test_arg}-${rm}.mtest")
@@ -113,15 +113,15 @@ macro(test_abaqus_explicit test_arg)
       endif(_WILL_FAIL)
       set_tests_properties(${test} PROPERTIES DEPENDS MFrontAbaqusExplicitBehaviours)
       set_tests_properties(${test} PROPERTIES DEPENDS mtest)
-      if(TFEL_APPEND_VERSION)
+      if(TFEL_APPEND_SUFFIX)
 	install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}
-	  DESTINATION "share/doc/mfront-${TFEL_VERSION}/tests/behaviours/abaqus-explicit"
+	  DESTINATION "share/doc/mfront-${TFEL_SUFFIX}/tests/behaviours/abaqus-explicit"
 	  COMPONENT mtest)
-      else(TFEL_APPEND_VERSION)
+      else(TFEL_APPEND_SUFFIX)
 	install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}
 	  DESTINATION "share/doc/mfront/tests/behaviours/abaqus-explicit"
 	  COMPONENT mtest)
-      endif(TFEL_APPEND_VERSION)
+      endif(TFEL_APPEND_SUFFIX)
     endif(CMAKE_CONFIGURATION_TYPES)
   endforeach(rm ${IEEE754_ROUNDING_MODES})
 endmacro(test_abaqus_explicit)
