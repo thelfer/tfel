@@ -1,7 +1,7 @@
 tfel_enable_cxx_compiler_flag(OPTIMISATION_FLAGS_MARCH "fast")
 if(NOT enable-fast-math)
   tfel_enable_cxx_compiler_flag(OPTIMISATION_FLAGS  "Kieee")
-endif(enable-fast-math)
+endif(NOT enable-fast-math)
 
 set(COMPILER_CXXFLAGS "${COMPILER_CXXFLAGS} -std=c++11")
 set(OPTIMISATION_FLAGS "-DNO_RUNTIME_CHECK_BOUNDS ${OPTIMISATION_FLAGS}")
