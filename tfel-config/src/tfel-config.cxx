@@ -122,7 +122,7 @@ static bool getValueInRegistry(std::string &value)
   char  szBuffer[512];
   DWORD dwBufferSize = sizeof(szBuffer);
   LONG  nError;
-  LONG  lRes = RegOpenKeyEx(HKEY_CLASSES_ROOT,"TFELHOME-"VERSION,0,KEY_READ,&hKey);
+  LONG  lRes = RegOpenKeyEx(HKEY_CLASSES_ROOT,"TFELHOME-" VERSION,0,KEY_READ,&hKey);
   if(ERROR_SUCCESS != lRes){
     return false;
   }
