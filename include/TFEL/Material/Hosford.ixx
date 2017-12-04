@@ -312,6 +312,4 @@ namespace tfel{
   
 } // end of namespace tfel
 
-#include"TFEL/Material/Hosford.ixx"
-
 #endif /* LIB_TFEL_MATERIAL_HOSFORD_IXX */

@@ -41,14 +41,14 @@ struct FSArrayTest final
   {} // end of FSArrayTest
   tfel::tests::TestResult execute() override
   {
-#if (!defined _MSC_VER) && (!defined _LIBCPP_VERSION) && (!defined __INTEL_COMPILER)
+#if (!defined _MSC_VER) && (!defined _LIBCPP_VERSION) && (!defined __INTEL_COMPILER) && (!defined __PGI)
     this->test1();
     this->test2();
     this->test3();
 #endif
     return this->result;
   } // end of execute
-#if (!defined _MSC_VER) && (!defined _LIBCPP_VERSION) && (!defined __INTEL_COMPILER)
+#if (!defined _MSC_VER) && (!defined _LIBCPP_VERSION) && (!defined __INTEL_COMPILER) && (!defined __PGI)
   void test1()
   {
     using namespace std;

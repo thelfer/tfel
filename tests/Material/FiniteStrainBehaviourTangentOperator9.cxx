@@ -87,8 +87,8 @@ struct FiniteStrainBehaviourTangentOperator9 final
 	auto Fm = F;
 	Fp(i) += e;
 	Fm(i) -= e;
-	const auto tp = svk(Fp)*det(Fp);
-	const auto tm = svk(Fm)*det(Fm);
+	const stensor tp = svk(Fp)*det(Fp);
+	const stensor tm = svk(Fm)*det(Fm);
 	const stensor dt = (tp-tm)/(2*e);
 	for(size_type j=0;j!=dt.size();++j){
 	  r(j,i)=dt(j);

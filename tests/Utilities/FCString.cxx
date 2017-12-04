@@ -178,10 +178,10 @@ struct FCStringTest final
     using namespace tfel::utilities;;
     const char c[5] = {'1','2','3','4','5'};
     const char c2[5] = {'1','2','3','\0','5'};
-    const auto sv4  = restrict<4>(c);
-    const auto sv2  = restrict<2>(c);
-    const auto sv5  = restrict<5>(c2);
-    const auto sv5b = restrict<5>(c);
+    const auto sv4  = narrow<4>(c);
+    const auto sv2  = narrow<2>(c);
+    const auto sv5  = narrow<5>(c2);
+    const auto sv5b = narrow<5>(c);
     const fcstring<4> s  = sv4;
     TFEL_TESTS_ASSERT(s.size()==4);
     TFEL_TESTS_ASSERT(s=="1234");

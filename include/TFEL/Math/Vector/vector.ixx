@@ -98,9 +98,6 @@ namespace tfel{
     constexpr const T& 
     vector<T>::operator()(const typename vector<T>::size_type i) const  noexcept
     {
-#ifndef NO_RUNTIME_CHECK_BOUNDS
-	assert(i<this->size());
-#endif /* LIB_TFEL_VECTORIXX */
       return std::vector<T>::operator[](i);
     }
 

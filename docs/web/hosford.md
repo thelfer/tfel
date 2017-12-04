@@ -33,7 +33,7 @@ Therefore, when \(a\) goes to infinity, the Hosford stress reduces to
 the Tresca stress. When \(n = 2\) the Hosford stress reduces to the
 von Mises stress.
 
-![Comparison of the Hosford stress \(a=100,a=8\) and the von Mises stress](img/HosfordStress.svg
+![Comparison of the Hosford stress \(a=100,a=8\) and the von Mises stress in plane stress](img/HosfordStress.svg
  "Comparison of the Hosford stress \(a=100,a=8\) and the von Mises
  stress in plane stress"){width=70%}
 

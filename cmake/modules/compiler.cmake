@@ -142,8 +142,10 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "SunPro")
   # message(FATAL_ERROR "TFEL C++11 support is not availabable with the SunPro compiler")
 elseif(MSVC)
   include(cmake/modules/msvc.cmake)
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "PGI")
+  include(cmake/modules/pgi.cmake)
 else(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-  message(FATAL_ERROR "unsupported compiler id")
+  message(FATAL_ERROR "unsupported compiler id ${CMAKE_CXX_COMPILER_ID}")
 endif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 
 file(WRITE "${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/src.cxx"

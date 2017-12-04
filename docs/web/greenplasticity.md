@@ -60,7 +60,7 @@ Cette relation est directement prise en charge par la brique
 The behaviour is based on the definition of an equivalent stress
 \(\sigmaeq\) defined as follows:
 \[
-\sigmaeq=\sqrt{\Frac{3}{2}\,C\,\tenseur{s}\,\colon\,\tenseur{s}-F\,\trace{\tsigma}^{2}}
+\sigmaeq=\sqrt{\Frac{3}{2}\,C\,\tenseur{s}\,\colon\,\tenseur{s}+F\,\trace{\tsigma}^{2}}
 \]
 where \(\tenseur{s}\) is the deviatoric stress tensor:
 \[

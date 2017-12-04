@@ -28,18 +28,18 @@ namespace tfel{
      * null-terminalted
      */
     template<std::size_t N,typename CharT>
-    struct CStringRestrictedView
+    struct CStringNarrowedView
     {
       const CharT* const value;
-    }; // end of struct CStringRestrictedView
+    }; // end of struct CStringNarrowedView
 
     /*!
-     * \brief an helper function to build a `CStringRestrictedView` object;
+     * \brief an helper function to build a `CStringNarrowedView` object;
      * \param[in] s: C-string
      * \return a restricted view of the input
      */
     template<std::size_t N,typename CharT>
-    CStringRestrictedView<N,CharT> restrict(const CharT *);
+    CStringNarrowedView<N,CharT> narrow(const CharT *);
     
     /*!
      * \brief This class implements a string with fixed capacity.
@@ -79,7 +79,7 @@ namespace tfel{
        * \param[in] src: source
        */
       template<std::size_t N2>
-      basic_fcstring(const CStringRestrictedView<N2,CharT>&);
+      basic_fcstring(const CStringNarrowedView<N2,CharT>&);
       //! move constructor
       basic_fcstring(basic_fcstring&&);
       //! copy constructor
@@ -104,7 +104,7 @@ namespace tfel{
        */
       template<std::size_t N2>
       basic_fcstring&
-      operator=(const CStringRestrictedView<N2,CharT>&);
+      operator=(const CStringNarrowedView<N2,CharT>&);
       /*!
        * \brief access opeartor
        * \param[in] i: index

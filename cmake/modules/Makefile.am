@@ -4,6 +4,7 @@ EXTRA_DIST = autotools.cmake               \
 	     gcc.cmake                     \
 	     intel.cmake                   \
 	     pathscale.cmake               \
+	     pgi.cmake                     \
 	     msvc.cmake                    \
 	     aster.cmake                   \
 	     zset.cmake                    \

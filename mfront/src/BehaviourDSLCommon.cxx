@@ -12,8 +12,6 @@
  * project under specific licensing conditions. 
  */
 
-#include<iostream>
-
 #include<algorithm>
 #include<stdexcept>
 #include<iterator>
@@ -5032,9 +5030,9 @@ namespace mfront{
       for(const auto& v : d.getExternalStateVariables()){
 	externalStateVarsSize+=this->getTypeSize(v.type,v.arraySize);
       }
+      externalStateVarsSize2  = externalStateVarsSize;
+      externalStateVarsSize2 -= SupportedTypes::TypeSize(1,0,0,0);
     }
-    externalStateVarsSize2  = externalStateVarsSize;
-    externalStateVarsSize2 -= SupportedTypes::TypeSize(1,0,0,0);
     os << "/*!\n"
        << "* Partial specialisation for "
        << this->mb.getClassName() << ".\n"

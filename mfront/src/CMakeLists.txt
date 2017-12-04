@@ -300,13 +300,23 @@ mfront_library(TFELMFront ${TFELMFront_SOURCES})
 
 if(UNIX)
   if(NOT HAIKU)
-    target_link_libraries(TFELMFront
-      MFrontLogStream
-      TFELMaterial TFELMathParser
-      TFELSystem   TFELUtilities
-      TFELGlossary TFELException
-      TFELConfig
-      -pthread ${TFEL_DL_LIBRARY})
+    if(CMAKE_CXX_COMPILER_ID STREQUAL "PGI")
+      target_link_libraries(TFELMFront
+	MFrontLogStream
+	TFELMaterial TFELMathParser
+	TFELSystem   TFELUtilities
+	TFELGlossary TFELException
+	TFELConfig
+	${TFEL_DL_LIBRARY})
+    else(CMAKE_CXX_COMPILER_ID STREQUAL "PGI")
+      target_link_libraries(TFELMFront
+	MFrontLogStream
+	TFELMaterial TFELMathParser
+	TFELSystem   TFELUtilities
+	TFELGlossary TFELException
+	TFELConfig
+	-pthread ${TFEL_DL_LIBRARY})
+    endif(CMAKE_CXX_COMPILER_ID STREQUAL "PGI")
   else(NOT HAIKU)
     target_link_libraries(TFELMFront
       MFrontLogStream

@@ -38,6 +38,8 @@ namespace mfront{
     };
     // undefined hypothesis
     constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    throw_if(this->bd.getElasticSymmetryType()!=mfront::ISOTROPIC,
+	     "the DDIF2 brick is only usable for isotropic behaviours");
     // reserve some specific variables
     this->bd.reserveName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,"ddif2bdata");
     // reserve some specific variables

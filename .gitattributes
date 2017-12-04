@@ -149,6 +149,7 @@ cmake/modules/latex.cmake -text
 cmake/modules/msvc.cmake -text
 cmake/modules/pandoc.cmake -text
 cmake/modules/pathscale.cmake -text
+cmake/modules/pgi.cmake -text
 cmake/modules/tfel.cmake -text
 cmake/modules/zset.cmake -text
 cmake/pyc-compile.py -text

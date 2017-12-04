@@ -10,7 +10,11 @@
 
 #define PREFIXDIR     "@prefix@"
 #define EXECPREFIXDIR "@exec_prefix@"
+#ifdef TFEL_APPEND_SUFFIX
+#define INCLUDEDIR    "@includedir@/TFEL-@TFEL_SUFFIX@"
+#else  /* TFEL_APPEND_SUFFIX */
 #define INCLUDEDIR    "@includedir@"
+#endif /* TFEL_APPEND_SUFFIX */
 #define LIBDIR        "@libdir@"
 
 #endif /* LIB_TFEL_GETINSTALLPATH_DEFINES_HXX */

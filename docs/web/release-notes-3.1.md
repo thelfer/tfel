@@ -14,23 +14,132 @@
 \newcommand{\sigmaH}{\sigma_{H}}
 
 The page declares the new functionalities of the 3.1 version of
-`TFEL`, `MFront` and `MTest`.
+the `TFEL` project.
+
+The `TFEL` project is a collaborative development of
+[CEA](http://www.cea.fr/english-portal "Commissariat à l'énergie
+atomique") and [EDF](http://www.edf.com/ "Électricité de France")
+dedicated to material knowledge manangement with special focus on
+mechanical behaviours. It provides a set of libraries (including
+`TFEL/Math` and `TFEL/Material`) and several executables, in
+particular `MFront` and `MTest`.
+
+`TFEL` is available on a wide variety of operating systems and
+compilers.
 
 # Highlights
 
 ## The gallery and the `MFrontGallery` project
 
+The `MFront` gallery is meant to present well-written implementation
+of behaviours that will be updated to follow `MFront` latest
+evolutions. In each case, the integration algorithm is fully
+described.
+
+<!-- `MFrontGallery` is a `github` repository where the implementation of -->
+<!-- the behaviour described in the gallery can be found. The -->
+
+The `MFrontGallery` project is a `cmake` project which builds material
+libraries for all the codes and/or languages supported by `MFront`
+based on the implementation described in the gallery. The purpose of
+this project is twofold:
+
+- it delivers ready-to-use shared libraries for a wide variety of
+  phenomena.
+- it provides an example of how to build a compilation project for
+  `MFront` files, including lots of useful `cmake` macros, recipes to
+  build shared libraries and add tests.
+
+The `MFrontGallery` project is available as a `github` repository:
+<https://github.com/thelfer/MFrontGallery>
+
+### Hyperelastic behaviours
+
+The implementation of various hyperelastic behaviours can be found
+[here](hyperelasticity.html):
+
+- [Signorini](signorini.html)
+- [Ogden](ogden.html)
+
+### Hyperviscoelastic behaviours
+
+The following page describes how to implement standard
+hyperviscoelastic behaviours based on the development in Prony series:
+
+<http://tfel.sourceforge.net/hyperviscoelasticity.html>
+
+### Plasticity
+
+- [IsotropicLinearHardeningPlasticity](gallery/plasticity/IsotropicLinearHardeningPlasticity.mfront)
+- [IsotropicLinearKinematicHardeningPlasticity](gallery/plasticity/IsotropicLinearKinematicHardeningPlasticity.mfront)
+- The implementation of an orthotropic plastic behaviour with
+  isotropic linear hardening is described
+  [here](orthotropiclinearhardeningplasticity.html).
+- The implementation of a perfect plastic behaviour based on the
+  Hosford equivalent stress is described [here](hosford.html).
+- The implementation of a perfect plastic behaviour based on the
+  Green yield criterion is described [here](greenplasticity.html).
+
+### Viscoplasticity
+
+This following article shows how to implement an isotropic
+viscoplastic behaviour combining isotropic hardening and multiple
+kinematic hardenings following an Armstrong-Frederic evolution of the
+back stress:
+
+<http://tfel.sourceforge.net/isotropicplasticityamstrongfrederickinematichardening.html>
+
+## Support for additional yield criteria
+
+![Comparison of the Hosford stress \(a=100,a=8\) and the von Mises stress in plane stress](img/HosfordStress.svg
+ "Comparison of the Hosford stress \(a=100,a=8\) and the von Mises
+ stress in plane stress"){width=70%}
+
+The `TFEL/Material` provides functions to handle advanced yield
+criteria, such as:
+
+- the Hosford yield criterion (see @hosford_generalized_1972). The
+  associated functions are described in Paragraph @sec:hosford.
+- the Barlat yield criterion (see @barlat_linear_2005). The associated
+  functions are described in Paragraph @sec:barlat.
+
+Following Scherzinger (see @scherzinger_return_2017 for details),
+special care has been taken to avoid overflow in the evaluation of the
+yield stress.
+
+Those two yield criteria are based on the eigenvalues and of the
+stress. The computation of the second derivative, required to build
+the jacobian of the implicit system, is thus quite involved.
+
 ## Enhanced numerical stability
 
-### Tests with `verrou`
+This release has seen lot of work in the overall numerical stability
+of `TFEL` algorithms and lead to duplicate most of tests, who are now
+run using different rounding modes.
+
+Tests based on `mtest` are run \(5\) times, one for each of the four
+rounding modes defined in the `IEEE754` norm, plus one time using a
+specific mode which randomly switches between those modes at various
+stages of the computations.
+
+Although very crude with respect to advanced approaches such as the
+`CADNA` library (see
+[@lamotte_cadna_c:_2010,@universite_pierre_et_marie_curie_cadna:_])
+or the `verrou` software, developped by `EDF` on top of `valgrind`
+(see @fevotte_verrou:_2016), those checks, combined with demanding
+convergence criteria, have proven to be helpful and led to several
+developments: see for example the section @sec:eigensolvers which
+compares various algorithms to find the eigen vectors of symmetric
+tensors.
 
 ### Enabling the `-ffast-math` with `GCC`
 
-The `-ffast-math` flag of `GCC` can significantly improve the
-performances of the generated code by allowing optimizations that do
-not preserve strict IEEE compliance. For instance, the overall tests
-delivered with `TFEL` runs almost \(10\,\%\) faster with this option
-enabled.
+One side effect of the work on the enhanced numerical stability is
+that the `-ffast-math` flag of `GCC` can now be enabled more
+safely. This significantly improve the performances of the generated
+code by allowing optimizations that do not preserve strict IEEE
+compliance. For instance, the overall tests delivered with `TFEL` runs
+almost \(10\,\%\) faster with this option enabled.
 
 Most of those optimizations are used by default by the `Intel`
 compiler.
@@ -47,13 +156,134 @@ There are two potential issues with this flags:
   behaves in an unexpected manner and can not be trusted. For example,
   the `isnan` function returns `true`, even if its argument is `NaN`.
   This issue has been overcome by implementing proper versions of the
-  `fpclassify`, `isnan`, `isfinite` functions, as described below.
+  `fpclassify`, `isnan`, `isfinite` functions, as described below in
+  paragraph @sec:isnan.
 
-## Single crystal behaviours
+To build `TFEL` with the `-ffast-math`, just pass the
+`-Denable-fast-math=ON` option to `cmake`.
 
-### Introducing the `TFELNUMODIS` library
+> **Note**
+>
+> Even if `TFEL` is not build with the `-ffast-math`, this option can
+> be used to compile `MFront` files, by specifying the
+> `--obuild=level2` option to `MFront`, as follows:
+>
+> ~~~~{.sh}
+> $ mfront --obuild=level2 --interface=....
+> ~~~~
 
-### The `SlipSystemsDescription` class in `TFEL/Material`
+## Single crystal behaviours in `MFront`
+
+Support for writting single crystal behaviours have been greatly
+improved thanks to the `TFELNUMODIS` library, which borrows code for
+the `NUMODIS` project.
+
+The following new keywords are now available in `MFront`:
+
+- `@CrystalStructure`. The following crystal structures are supported:
+    - `Cubic`: cubic structure.
+    - `BCC`: body centered cubic structure.
+    - `FCC`: face centered cubic structure.
+    - `HCP`: hexagonal closed-packed structures.
+- A single slip systems family can be defined by one of the following
+  synonymous keywords: `@SlidingSystem`, `@GlidingSystem` or
+  `@SlipSystem`. Several slip systems families ca be defined by
+  `@SlidingSystems`, `@GlidingSystems` or `@SlipSystems`.
+- Two kinds of interaction matrix are supported:
+   - The first interaction is defined through the `@InteractionMatrix`
+     keyword and is meant to describe the effect of dislocations on
+     hardening.
+   - The second interaction is defined through the
+     `@DislocationsMeanFreePathInteractionMatrix` keyword and is meant
+	 to evaluate the effect of all the dislocations on the mean free
+     path of dislocations of a specific system.
+
+Those keywords are fully documented on
+[this page](singlecrystal.html). As most of the information relative
+to the slip system and the interaction matrix are automatically
+generated, the use of the `mfront-query` tool is strongly advised.
+
+## The `DDIF2` brick
+
+`DDIF2` is the name of a description of damage which formulation is
+inspired by softening plasticity. This description is the basis of
+most mechanical behaviour used in CEA' fuel performance.
+
+The `DDIF2` brick can be used in place of the `StandardElasticity`
+brick. Internally, the `DDIF2` brick is derived from the
+`StandardElasticity` brick, so the definition of the elastic
+properties follows the same rules.
+
+### Local coordinate
+
+This description is currently limited to initially isotropic
+behaviours, but the damage is described in three orthogonal
+directions. Those directions are currently fixed with respect to the
+global system. For \(2D\) and \(3D\) modelling hypotheses, those
+directions are determined by a material property, which external name
+is `AngularCoordinate`, giving the angular coordinate in a cylindrical
+system.
+
+### Material properties associated with damage
+
+The description of damage is based on the following material
+properties:
+
+- the fracture stresses in each direction. Two options can be used to
+  described them:
+    - if the `fracture_stress` option is used, the fracture stresses
+	  are equal in each directions.
+	- otherwise, the `fracture_stresses` keyword can be used to
+      describe the fracture stresses in each of the three directions.
+- the softening slopes stresses in each direction. Two options can be
+  used to described them:
+    - if the `softening_slope` option is used, the softening slopes
+	  are equal in each directions.
+	- otherwise, the `softening_slopes` keyword can be used to
+      describe the softening slopes in each of the three directions.
+
+In each case, a material property must be given as a value or as an
+external `MFront` file.
+
+#### Fracture energies
+
+Following Hillerborg approach (see @hillerborg_analysis_1976),
+softening slopes can be related to fracture energies by the mesh
+size. Thus, rather than the softening slopes, the user can provide the
+fracture energies through one the `fracture_energy` or
+`fracture_energies` options. In this case, an array of three material
+properties, which external name is `ElementSize`, is automatically
+declared.
+
+### External pressure effect
+
+The effect of external pressure on the crack surface can be taken into
+account using the option `handle_pressure_on_crack_surface`. If this
+option is true, an external state variable called `pr`, which external
+name is `PressureOnCrackSurface`, is automatically declared.
+
+### Example
+
+Here is an example of a behaviour based on the `DDIF2` brick:
+
+~~~~{.cpp}
+@DSL Implicit;
+@Author Thomas Helfer;
+@Date 25/10/2017;
+@Behaviour DDIF2_4;
+
+@Brick DDIF2 {
+ fracture_stresses : {150e6,150e6,1e11},
+ softening_slope : -75e9,
+ handle_pressure_on_crack_surface : true
+};
+~~~~
+
+Here, the fracture stresses are different in each direction. The
+softening slope is the same in each direction. When a crack is open,
+the external pressure is applied on the crack surface.
+
+## Improved installation options
 
 ## Better support of the `Windows` operating system
 
@@ -97,8 +327,19 @@ versions `3.0.x` could be compiled and tested with `Visual Studio`
 by an end user. Indeed, those versions of `mfront` could not generate
 a build system compatible with `Visual Studio`.
 
-For this reason, the `cmake` generator, described below, has been
-introduced.
+For this reason, the `cmake` generator, described below in section
+@sec:cmake, has been introduced.
+
+## New interfaces
+
+Two new interfaces were introduced in `MFront`:
+
+- a native interface for the `CalculiX` solver. Here native is used to
+  distinguish this interface from the `Abaqus` interface which can
+  also be used within `CalculiX`. This interface can be used with
+  `CalculiX` 2.13.
+- an interface for the `ANSYS` `APDL` solver. The latter is still
+  experimental.
 
 ## `Travis CI` and `Appveyor` continous integration services
 
@@ -165,10 +406,10 @@ The standard library suffix is:
 
 The `getLibraryPath` method returns the path to a shared library:
 
-- The method relies on the `GetModuleFileNameA` function on `Windows`
+- The method calls the `GetModuleFileNameA` function on `Windows`
   which is reliable.
 - On `Unix`, no portable way exists, so the method simply looks if the
-  library can be loaded. If so, the method look if the file exists
+  library can be loaded. If so, the method looks if the file exists
   locally or in a directory listed in the `LD_LIBRARY_PATH` variable. 
 
 ##### Better handling of behaviour parameters
@@ -226,7 +467,7 @@ knowledge type associated with and entry point. The returned value has the follo
 
 The `getInterface` method allows retrieving the interface of used to
 generate an entry point. The value returned is defined by `MFront`
-following Table @#tbl:MFrontInterfaceName.
+following Table @tbl:MFrontInterfaceName.
 
 | Finite element solver | `MFront` interface name |
 |:---------------------:|:-----------------------:|
@@ -366,7 +607,7 @@ tvector<3u,real>    vp2;
 std::tie(vp,m)=s.computeEigenVectors(Stensor::ASCENDING);
 ~~~~~
 
-#### New eigen solvers
+#### New eigen solvers{#sec:eigensolvers}
 
 The default eigen solver for symmetric tensors used in `TFEL` is based
 on analitical computations of the eigen values and eigen vectors. Such
@@ -517,7 +758,7 @@ const auto evp    = map([](const auto x){return exp(x)},vp);
 const auto [f,df] = Stensor::computeIsotropicFunctionAndDerivative(evp,evp,vp,m,1.e-12);
 ~~~~
 
-### Portable implementation of the `fpclassify`, `isnan`,  `isfinite` functions
+### Portable implementation of the `fpclassify`, `isnan`,  `isfinite` functions{#sec:isnan}
 
 The `C99` standard defines the `fpclassify`, `isnan`, `isfinite`
 functions to query some information about double precision
@@ -555,7 +796,7 @@ defined in the `TFEL/Math/General/IEEE754.hxx` header file in the
 
 ## `TFEL/Material`
 
-### Hosford equivalent stress
+### Hosford equivalent stress{#sec:hosford}
 
 The header `TFEL/Material/Hosford.hxx` introduces three functions
 which are meant to compute the Hosford equivalent stress and its first
@@ -604,14 +845,15 @@ If `C++-17` is available, the previous code can be made much more readable:
 const auto [seq,n,dn] = computeHosfordStressSecondDerivative(s,a,seps);
 ~~~~
 
-### Barlat equivalent stress
+### Barlat equivalent stress{#sec:barlat}
 
 The header `TFEL/Material/Barlat.hxx` introduces various functions
 which are meant to compute the Barlat equivalent stress and its first
 and second derivatives. *This header is automatically included by
 `MFront`* for orthotropic behaviours.
 
-The Barlat equivalent stress is defined as follows (See @barlat_linear_2005):
+The Barlat equivalent stress is defined as follows (see
+@barlat_linear_2005):
 \[
 \sigmaeq^{B}=
 \sqrt[a]{
@@ -717,48 +959,7 @@ const auto l1 = makeBarlatLinearTransformationType<3>(c_12,c_21,c_13,c_31,
 
 # New functionalities of the `MFront` code generator
 
-## Gallery
-
-The `MFront` gallery is meant to present well-written implementation of
-behaviours that will be updated to follow `MFront` latest evolutions.
-
-### Hyperelastic behaviours
-
-The implementation of various hyperelastic behaviours can be found
-[here](hyperelasticity.html):
-
-- [Signorini](signorini.html)
-- [Ogden](ogden.html)
-
-### Hyperviscoelastic behaviours
-
-The following page describes how to implement standard
-hyperviscoelastic behaviours based on the development in Prony series:
-
-<http://tfel.sourceforge.net/hyperviscoelasticity.html>
-
-### Plasticity
-
-- [IsotropicLinearHardeningPlasticity](gallery/plasticity/IsotropicLinearHardeningPlasticity.mfront)
-- [IsotropicLinearKinematicHardeningPlasticity](gallery/plasticity/IsotropicLinearKinematicHardeningPlasticity.mfront)
-- The implementation of an orthotropic plastic behaviour with
-  isotropic linear hardening is described
-  [here](orthotropiclinearhardeningplasticity.html).
-- The implementation of a perfect plastic behaviour based on the
-  Hosford equivalent stress is described [here](hosford.html).
-- The implementation of a perfect plastic behaviour based on the
-  Green yield criterion is described [here](greenplasticity.html).
-
-### Viscoplasticity
-
-This following article shows how to implement an isotropic
-viscoplastic behaviour combining isotropic hardening and multiple
-kinematic hardenings following an Armstrong-Frederic evolution of the
-back stress:
-
-<http://tfel.sourceforge.net/isotropicplasticityamstrongfrederickinematichardening.html>
-
-## `cmake` Generator
+## `cmake` Generator{#sec:cmake}
 
 For `Visual Studio` users, who do not have access to the `GNU` `make`
 utility, a `cmake` generator was introduced.
@@ -1664,7 +1865,7 @@ languages (DSL) describing isotropics behaviours.
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/65/>
 
-## Ticket 74 `mfront-query`: handle static variables
+## Ticket 74: `mfront-query`: handle static variables
 
 `mfront-query` now has the following options:
 

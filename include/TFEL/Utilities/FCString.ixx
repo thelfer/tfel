@@ -25,7 +25,7 @@ namespace tfel{
   namespace utilities{
 
     template<std::size_t N,typename CharT>
-    CStringRestrictedView<N,CharT> restrict(const CharT * s)
+    CStringNarrowedView<N,CharT> narrow(const CharT * s)
     {
       return {s};
     }
@@ -52,13 +52,13 @@ namespace tfel{
       if(!b){
 	this->operator=(src);
       } else {
-	this->operator=(restrict<N>(src));
+	this->operator=(narrow<N>(src));
       }
     } // end of basic_fcstring<N,CharT,Traits>::basic_fcstring
 
     template<std::size_t N,typename CharT,typename Traits>
     template<std::size_t N2>
-    basic_fcstring<N,CharT,Traits>::basic_fcstring(const CStringRestrictedView<N2,CharT>& src)
+    basic_fcstring<N,CharT,Traits>::basic_fcstring(const CStringNarrowedView<N2,CharT>& src)
     {
       this->operator=(src);
     } // end of basic_fcstring<N,CharT,Traits>::basic_fcstring
@@ -95,7 +95,7 @@ namespace tfel{
     template<std::size_t N,typename CharT,typename Traits>
     template<std::size_t N2>
     basic_fcstring<N,CharT,Traits>&
-    basic_fcstring<N,CharT,Traits>::operator = (const CStringRestrictedView<N2,CharT>& rhs)
+    basic_fcstring<N,CharT,Traits>::operator = (const CStringNarrowedView<N2,CharT>& rhs)
     {
       const auto s1 = basic_fcstring<N2,CharT,Traits>::strnlen(rhs.value);
       const auto s  = (s1>N2) ? N2 : s1;

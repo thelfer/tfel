@@ -360,7 +360,7 @@ namespace tfel
 	        -((this->e[0]-this->e[1])*idvp-d[0])*idvp};
       }();
       const tvector<4u,real> dzeta = {(T|N(0))/2,(T|N(1))/2,T[2],(T|N(3))/2};
-#ifndef __INTEL_COMPILER
+#if (!defined __INTEL_COMPILER) && (!defined __PGI)
       Kr  = 4*transpose(p)*Ks*p + (f[0]*dzeta(0)*(M(0)^M(0))+
 				   f[1]*dzeta(1)*(M(1)^M(1))+
 				   f[2]*dzeta(2)*(M(2)^M(2)))/4;
@@ -901,7 +901,7 @@ namespace tfel
 	}
 	return r;
       }();
-#ifndef __INTEL_COMPILER
+#if (!defined __INTEL_COMPILER) && (!defined __PGI)
       Kr = 4*transpose(p)*Ks*p+(f[0]*dzeta(0,0)*(M(0,0)^M(0,0))+
 				f[1]*dzeta(1,1)*(M(1,1)^M(1,1))+
 				f[2]*dzeta(2,2)*(M(2,2)^M(2,2)))/4;

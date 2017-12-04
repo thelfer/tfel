@@ -167,7 +167,7 @@ namespace mfront{
 	<< "broyden_inv = Dzeros|((this->inv_jacobian)*Dfzeros);\n"
 	<< "if(broyden_inv>100*std::numeric_limits<real>::epsilon()){\n"
 	<< "inv_jacobian2 = this->inv_jacobian;\n"
-	<< "#if (!defined __INTEL_COMPILER)\n"
+	<< "#if (!defined __INTEL_COMPILER) and (!defined __PGI)\n"
 	<< "this->inv_jacobian += "
 	<< "((Dzeros-inv_jacobian2*Dfzeros)^(Dzeros*inv_jacobian2))/(broyden_inv);\n"
 	<< "#else\n"
@@ -175,7 +175,7 @@ namespace mfront{
 	<< "const tvector<" << n2 <<  ",real> fzeros4 = Dzeros*inv_jacobian2;\n"
 	<< "this->inv_jacobian += "
 	<< "((Dzeros-fzeros3)^(fzeros4))/(broyden_inv);\n"
-	<< "#endif  /* __INTEL_COMPILER */\n"
+	<< "#endif  /* not __INTEL_COMPILER OR __PGI */\n"
 	<< "}\n"
 	<< "}\n";
     NonLinearSystemSolverBase::writeLimitsOnIncrementValuesBasedOnStateVariablesPhysicalBounds(out,mb,h);

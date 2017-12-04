@@ -347,7 +347,7 @@ namespace tfel{
 	: a(l),b(r)
       {} // end of Expr
       /*!
-       * array-like access operator
+       * \brief array-like access operator
        */
       TFEL_MATH_INLINE value_type
       operator[](const size_type i) const
@@ -358,7 +358,7 @@ namespace tfel{
       	return Op::apply(this->a,this->b(i));
       }
       /*!
-       * multi-dimensional operator acces
+       * \brief multi-dimensional operator acces
        */
       template<typename... Indexes>
       TFEL_MATH_INLINE

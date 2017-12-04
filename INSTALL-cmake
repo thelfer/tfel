@@ -68,7 +68,8 @@ cmake usefull variables
 
 - `CMAKE_BUILD_TYPE`           : two values are supported 'Release' and 'Debug'
 - `CASTEM_INSTALL_PATH`        : specify where the castem has been installed
-- `ZSET_INSTALL_PATH`          : specify where the ZSET sofware has been installed
+- `ZSET_INSTALL_PATH`          : specify where the ZSET sofware has been
+                                 installed
 - `CMAKE_TOOLCHAIN_FILE`       : specify a tool chain file
 - `TFEL_SVN_REVISION`          : tfel-svn revision
 - `Python_ADDITIONAL_VERSIONS` : select the `python` version to
@@ -76,6 +77,14 @@ cmake usefull variables
   			         version of python shall be passed, not
   			         the revision version or the detection
   			         fails.
+- `TFEL_BROKEN_LIBMATH`        : set to `true` to disable tests based on
+                                 changing the rounding mode. This is not
+				 well supported by old version of the GNU
+				 library for example (such as the one
+				 delivered with debian wheezy).
+- `TFEL_DL_LIBRARY`            : set the path the `dl` library. This library
+  			       	 can sometimes not be found when using non
+				 default compilers (eg. the PGI compiler).
 
 cmake typical usage
 ===================
