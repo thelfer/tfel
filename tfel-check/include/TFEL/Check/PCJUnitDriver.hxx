@@ -27,14 +27,17 @@ namespace tfel{
 
   namespace check{
 
+    /*!
+     * \brief class in charg of build XML report for JUnit.
+     */
     struct TFELCHECK_VISIBILITY_EXPORT PCJUnitDriver
       : public PCILogDriver
     {
       PCJUnitDriver(const std::string& f = "");
       //! destructor
-      virtual ~PCJUnitDriver();
+      ~PCJUnitDriver() override;
 
-      virtual void addMessage(const std::string&) override;
+      void addMessage(const std::string&) override;
       /*!
        * \param[in] testname:
        * \param[in] step:
@@ -43,13 +46,13 @@ namespace tfel{
        * \param[in] success:
        * \param[in] message:
        */
-      virtual void addTestResult(const std::string&,
-				 const std::string&,
-				 const std::string&,
-				 const float,
-				 const bool,
-				 const std::string& = "") override;
-      virtual void terminate() override;
+      void addTestResult(const std::string&,
+			 const std::string&,
+			 const std::string&,
+			 const float,
+			 const bool,
+			 const std::string& = "") override;
+      void terminate() override;
     };
 
   } // end of namespace check

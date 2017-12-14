@@ -253,7 +253,7 @@ namespace details {
     }
 
   public:
-    std::vector<std::string> sections() {
+    std::vector<std::string> sections() override {
       std::vector<std::string> ret;
 
       const header_t h = header();
@@ -281,7 +281,7 @@ namespace details {
       return ret;
     }
 
-    std::vector<std::string> symbols() {
+    std::vector<std::string> symbols() override {
       std::vector<std::string> ret;
 
       const header_t h = header();
@@ -303,7 +303,7 @@ namespace details {
       return ret;
     }
 
-    std::vector<std::string> symbols(const char* section_name) {
+    std::vector<std::string> symbols(const char* section_name) override{
       std::vector<std::string> ret;
 
       const header_t h = header();

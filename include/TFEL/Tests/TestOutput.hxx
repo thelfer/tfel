@@ -24,36 +24,29 @@ namespace tfel
   namespace tests
   {
     
-    /*!
-     * Base class for Test Outputs
-     */
+    //! \brief base class for tests' outputs
     struct TestOutput
     {
       /*!
-       * Begin a new test suite
-       * \param n : name of the test suite
+       * \brief begin a new test suite
+       * \param[in] n: name of the test suite
        */
-      virtual void
-      beginTestSuite(const std::string&) = 0;
+      virtual void beginTestSuite(const std::string&) = 0;
       /*!
-       *  Add a new test
-       * \param n : group  of the test
-       * \param n : name   of the test
-       * \param r : result of the test
+       * \brief add a new test
+       * \param[in] n: group  of the test
+       * \param[in] n: name   of the test
+       * \param[in] r: result of the test
        */
-      virtual void
-      addTest(const std::string&,
-	      const std::string&,
-	      const TestResult&) = 0;
+      virtual void addTest(const std::string&,
+			   const std::string&,
+			   const TestResult&) = 0;
       /*!
-       * End a test suite
-       * \param r : (global) result of the test suite
+       * \brief end a test suite
+       * \param[in] r: (global) result of the test suite
        */
-      virtual void
-      endTestSuite(const TestResult&) = 0;
-      /*!
-       * Destructor
-       */
+      virtual void endTestSuite(const TestResult&) = 0;
+      //! \bried destructor
       virtual ~TestOutput();
     }; // end of struct TestOutput
     

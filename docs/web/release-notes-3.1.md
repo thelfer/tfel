@@ -132,14 +132,24 @@ developments: see for example the section @sec:eigensolvers which
 compares various algorithms to find the eigen vectors of symmetric
 tensors.
 
-### Enabling the `-ffast-math` with `GCC`
+> **Note**
+>
+> Old versions of the `libm` library (such as the one package with
+> `Debian` `Wheezy` and those found on some exotic systems, such as
+> `Haiku`), do not support working in other rounding mode than the
+> default one (rounding to the nearest) and can crash (segfaults !).
+> 
+> Disabling changing the rounding mode on those systems can be
+> specified by passing `-DTFEL_BROKEN_LIB_MATH=ON` to `cmake`.
+
+### Enabling the `-ffast-math` with `GCC` an `clang`
 
 One side effect of the work on the enhanced numerical stability is
-that the `-ffast-math` flag of `GCC` can now be enabled more
-safely. This significantly improve the performances of the generated
-code by allowing optimizations that do not preserve strict IEEE
-compliance. For instance, the overall tests delivered with `TFEL` runs
-almost \(10\,\%\) faster with this option enabled.
+that the `-ffast-math` flag of `GCC` and `clang` can now be enabled
+more safely. This significantly improve the performances of the
+generated code by allowing optimizations that do not preserve strict
+IEEE compliance. For instance, the overall tests delivered with `TFEL`
+runs almost \(10\,\%\) faster with this option enabled.
 
 Most of those optimizations are used by default by the `Intel`
 compiler.
@@ -283,7 +293,95 @@ Here, the fracture stresses are different in each direction. The
 softening slope is the same in each direction. When a crack is open,
 the external pressure is applied on the crack surface.
 
+## The `@StrainMeasure` keyword
+
+In previous versions of `TFEL`, the user would write strain based
+behaviour. The definition of the strain, and by energetic duality the
+definition of the stress, were not part of the behaviour.
+
+This is very important for a generic behaviour, which describe a
+physical phenomenon with no reference to a particular material, but it
+is not appropriate for a specific behaviour, identified for a specific
+material, because the definition of the strain is intrinsically part
+of the behaviour.
+
+Three strain measure are currently supported:
+
+- the Hencky strain (see @miehe_anisotropic_2002).
+- the Green-Lagrange strain.
+- the linearised strain.
+
+The two first strain measures are suitable for use in finite strain
+analyses (including finite rotation), whereas the latter is limited to
+infinitesimal strain analyses (no rotation, small strain).
+
+For the two first strain measures, the definition of the strain is
+done at a pre-processing stage, before calling the behaviour
+integration. The interpretation of the dual stress and its conversion
+to the stress measure expected by the solver is done after the
+behaviour integration, at a post-processing stage. During this
+post-processing stage, the consistent tangent operator is also
+converted to the one expected by the solver.
+
+Those pre- and post-processing stages can be performed:
+
+- by the calling solver (`Code_Aster`, `ZeBuLoN`). In this case, the
+  consistent use of the behaviour was the responsability of the user.
+- by the `MFront` interface (`Cast3M`, `Europlexus`, `CalculiX`,
+  etc.). In this case, one has to use one following keywords:
+    - `@CastemFiniteStrainStrategy` or `@CastemFiniteStrainStrategies` for
+      the `Cast3M` interface. For backward compatibility, those keywords
+      are synonymous of `@UmatFiniteStrainStrategy` or
+      `@UmatFiniteStrainStrategies`.
+    - `@EuroplexusFiniteStrainStrategy` (or `@EPXFiniteStrainStrategy`)
+      for the `Europlexus` interface.
+    - `@AbaqusFiniteStrainStrategy` for the `Abaqus/Standard` and
+      `Abaqus/Explicit` interfaces.
+      - etc.
+  For a given behaviour, one may had to use several of those keywords
+  for every interface supported. This was cumbersome.
+
+Each case was quite error-prone and could lead to an improper usage of
+the behaviour.
+
+To circumvent this issue, the `@StrainMeasure` keyword was
+introduced. This keyword has two distinct effect, depending on the
+interface:
+
+- if the pre- and post-processing stages are performed by the solver
+  (`Code_Aster`), appropriate symbols are defined in the shared
+  library, so that the calling solver can deduce the appropriate
+  strain measure to be used.
+- otherwise, the the pre- and post-processing stages are handled by
+  the interface.
+
 ## Improved installation options
+
+### Appending the version number
+
+The `TFEL_APPEND_VERSION` option will append the version number to the
+names of:
+
+- The executables.
+- The libraries.
+- The python modules. Note that, to comply with `python` restriction
+  on module' names, the characters `.` and `-` are replace by `_` and
+  that only the first level modules are affected.
+- The directories in the `share` folder.
+
+This allows multiple executables to be installed in the same
+directory. This option is available since `TFEL` version \(3.0.2\)
+
+### Specifying a version flavour
+
+The `TFEL_VERSION_FLAVOUR` let the user define a string that will be
+used to modify the names of executables, libraries and so on (see the
+previous paragraph for details).
+
+For example, using `-DTFEL_VERSION_FLAVOUR=dbg` at the `cmake`
+invocation, will generate an executable called `mfront-dbg`.
+
+This option can be combined with the `TFEL_APPEND_VERSION` option.
 
 ## Better support of the `Windows` operating system
 
@@ -356,7 +454,10 @@ the `Travis CI` and `Appveyor` continous integration services:
 Since builds are limited a one hour, one can only test a subset of the
 `TFEL/MFront` functionalities. 
 
-# TFEL
+# Updates in `TFEL` libraries
+
+The `TFEL` project provides several libraries. This paragraph is about
+updates made in those libraries.
 
 ## TFEL/Utilities
 
@@ -879,9 +980,24 @@ linear transformation \(\tenseurq{L}'\) and \(\tenseurq{L}''\):
 
 The linear transformations \(\tenseurq{L}'\) and \(\tenseurq{L}''\)
 are defined by \(9\) coefficients (each) which describe the material
-orthotropy, as follows:
+orthotropy. There are defined through auxiliary linear transformations
+\(\tenseurq{C}'\) and \(\tenseurq{C}''\) as follows:
 \[
-\tenseurq{L}'
+\begin{aligned}
+\tenseurq{L}' &=\tenseurq{C}'\,\colon\,\tenseurq{M} \\
+\tenseurq{L}''&=\tenseurq{C}''\,\colon\,\tenseurq{M}
+\end{aligned}
+\]
+where \(\tenseurq{M}\) is the transformation of the stress to its deviator:
+\[
+\tenseurq{M}=\tenseurq{I}-\Frac{1}{3}\tenseur{I}\,\otimes\,\tenseur{I}
+\]
+
+The linear transformations of the deaviator stress \(\tenseurq{C}'\)
+and \(\tenseurq{C}''\), are defined as follows:
+\[
+\tenseurq{C}'=
+\Frac{1}{3}\,
 \begin{pmatrix}
 0 & -c'_{12} & -c'_{13} & 0 & 0 & 0 \\
 -c'_{21} & 0 & -c'_{23} & 0 & 0 & 0 \\
@@ -893,7 +1009,7 @@ orthotropy, as follows:
 \quad
 \text{and}
 \quad
-\tenseurq{L}''
+\tenseurq{C}''=
 \begin{pmatrix}
 0 & -c''_{12} & -c''_{13} & 0 & 0 & 0 \\
 -c''_{21} & 0 & -c''_{23} & 0 & 0 & 0 \\
@@ -947,13 +1063,20 @@ const auto l1 = makeBarlatLinearTransformationType<3>(c_12,c_21,c_13,c_31,
 > \end{pmatrix}
 > \]
 > 
-> Therefore, if one wants to uses coeficients \f(c^{B}\f) given
+> Therefore, if one wants to uses coeficients \(c^{B}\) given
 > by Barlat, one shall call this function as follows:
 > 
 > ~~~~{.cpp}
 > const auto l1 = makeBarlatLinearTransformationType<3>(cB_12,cB_21,cB_13,cB_31,
 >                                                       cB_23,cB_32,cB_66,cBB_55,cBB_44);
 > ~~~~
+
+The `TFEL/Material` library also provide an overload of the
+`makeBarlatLinearTransformationType` which template parameters are the
+modelling hypothesis and the orthotropic axis conventions. The purpose
+of this overload is to swap appriopriate coefficients to get a
+consistent definition of the linear transforamtions for all the
+modelling hypotheses.
 
 ### The `SlipSystemsDescription` class
 
@@ -1902,6 +2025,97 @@ the `@Epsilon` keyword defines implicitly a parameter named `epsilon`.
 In previous versions of `MFront`, those rules were only partially
 enforced: it may happen that some keywords or variable declaration
 shall now be moved before the first user defined code block.
+
+# Portability
+
+<div id="slideshow">
+  <ul class="slides">
+	<li><img src="img/TFEL-3.1/Fedora_27_05_12_2017_11_37_17.png" width="620" height="320" alt="Fedora 27 gcc 7.2.1"/></li>
+	<li><img src="img/TFEL-3.1/Ghost_BSD-10.3.png" width="620" height="320" alt="Ghost BSD 10.3 clang 3.4.1"/></li>
+	<li><img src="img/TFEL-3.1/TrueOs-07-2017_05_12_2017_08_01_39.png" width="620" height="320" alt="TrueOs 2017 clang-4.0"/></li>
+	<li><img src="img/TFEL-3.1/Alpine_Linux_3.6.png" width="620" height="320" alt="Alpine Linux 3.6 MUSL C library gcc 6.3"/></li>
+	<li><img src="img/TFEL-3.1/VisualStudio-2015.png" width="620" height="320" alt="Visual Studio 2015"/></li>
+	<li><img src="img/TFEL-3.1/Cygwin.png" width="620" height="320" alt="Cygwin gcc 5.4"/></li>
+	<li><img src="img/TFEL-3.1/MINGW-Cast3M2017.png" width="620" height="320" alt="MingGW gcc 6.3 (delivered by Cast3M 2017)"/></li>
+	<li><img src="img/TFEL-3.1/OpenSolaris-2017.png" width="620" height="320" alt="OpenSolaris 2017"/></li>
+	<li><img src="img/TFEL-3.1/Haiku-51366.png" width="620" height="320" alt="Haiku révision 51366"/></li>
+  </ul>
+  <span class="arrow previous"></span>
+  <span class="arrow next"></span>
+</div>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+<script src="js/slideshow.js"></script>
+
+Portability is a convincing sign of software quality and
+maintainability:
+
+- usage of functionalities specific to operating
+  systems are well identified.
+- it demonstrates that the code is not dependant of the system
+  libraries, such as the `C` or `C++` libraries.
+
+`TFEL` has been tested successfully on a various flavours of `LinuX`
+and `BSD` systems (including `FreeBSD` and `OpenBSD`). The first ones
+are mostly build on `gcc`, `libstdc++` and the `glibc`. The second
+ones are build on `clang` and `libc++`.
+
+`TFEL` can be build on `Windows` in a wide variety of configurations
+and compilers:
+
+- native ports can be build using the `Visual Studio` (2015 and 2017)
+  or `MingGW` compilers.
+- `TFEL` can be build in the `Cygwin` environment.
+
+
+`TFEL` have reported to build successfully in the `Windows Subsystem
+  for LinuX (`WSL`) environment.
+
+Although not officially supported, more exotic systems, such as
+`OpenSolaris` and `Haiku`, have also been tested successfully. The
+`Minix` operating systems provides a pre-release of `clang` `3.4` that
+fails to compile `TFEL`.
+
+## Supported compilers
+
+Version 3.1 has been tested using the following compilers:
+
+- [`gcc`](https://gcc.gnu.org/) on various `POSIX` systems: versions
+  4.7, 4.8, 4.9, 5.1, 5.2, 6.1, 6.2, 7.1, 7.2
+- [`clang`](http://clang.llvm.org/) on various `POSIX` systems:
+  versions 3.5, 3.6, 3.7, 3.8, 3.9, 4.0, 5.0
+- [`intel`](https://software.intel.com/en-us/intel-compilers). The
+  only tested version is the 2018 version on `LinuX`.
+  [Intel compilers 15](https://software.intel.com/en-us/intel-compilers)
+  are known not to work due to a bug in the [EDG](https://www.edg.com)
+  front-end that can't parse a syntax mandatory for the expression
+  template engine. The same bug affects the
+  [Blitz++](http://sourceforge.net/projects/blitz/) library (see
+  <http://dsec.pku.edu.cn/~mendl/blitz/manual/blitz11.html>). Versions
+  2016 and 2017 shall work but were not tested.
+- [`Visual Studio`](https://www.visualstudio.com/) The only supported
+  versions ate the 2015 and 2017 versions. Previous versions do not
+  provide a suitable `C++11` support.
+- `PGI` compiler (NVIDIA): version 17.10 on `LinuX`
+- `MinGW` has been tested successfully in a wide variety of
+  configurations/versions, including the version delivered with
+  `Cast3M 2017`.
+
+## Benchmarcks
+
+|  Compiler and options    |  Success ratio    |  Test time  |
+|:------------------------:|:-----------------:|:-----------:|
+|  `gcc 4.9.2`             | 100% tests passed |  681.19 sec |
+|  `gcc 4.9.2+fast-math`   | 100% tests passed |  572.48 sec |
+|  `clang 3.5`             | 100% tests passed |  662.50 sec |
+|  `clang 3.5+libstcxx`    |  99% tests passed |  572.18 sec |
+|  `clang 5.0`             | 100% tests passed |  662.50 sec |
+|  `icpc 2018`             | 100% tests passed |  511.08 sec |
+|  `PGI 17.10`             |  99% tests passed |  662.61 sec |
+: A comparison of various compilers and specific options
+
+Concerning the `PGI` compilers, performances may be affected by the
+fact that this compiler generates huge shared libraries (three to ten
+times larger than other compilers).
 
 # References
 

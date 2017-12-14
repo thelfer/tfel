@@ -55,10 +55,9 @@ namespace tfel{
 	    const real,const real,
 	    const real)
 	{
-	  TFEL_CONSTEXPR const auto zero = real{0};
-	  return {zero,-c12,-c13,
-	      -c21,zero,-c23,
-	      -c31,-c32,zero};
+	  return {(c13+c12)/3  ,(c13-2*c12)/3,(c12-2*c13)/3,
+	          (c23-2*c21)/3,(c23+c21)/3  ,(c21-2*c23)/3,
+	          (c32-2*c31)/3,(c31-2*c32)/3,(c32+c31)/3};
 	} // end of exe
       }; // end of struct BarlatLinearTransformation<1u>
       /*!
@@ -90,9 +89,9 @@ namespace tfel{
 	    const real)
 	{
 	  TFEL_CONSTEXPR const auto zero = real{0};
-	  return {zero,-c12,-c13,zero,
-	      -c21,zero,-c23,zero,
-	      -c31,-c32,zero,zero,
+	  return {(c13+c12)/3  ,(c13-2*c12)/3,(c12-2*c13)/3,zero,
+	      (c23-2*c21)/3,(c23+c21)/3  ,(c21-2*c23)/3,zero,
+	      (c32-2*c31)/3,(c31-2*c32)/3,(c32+c31)/3,zero,
 	      zero,zero,zero,c44};
 	} // end of exe
       }; // end of struct BarlatLinearTransformation<2u>
@@ -125,9 +124,9 @@ namespace tfel{
 	    const real c66)
 	{
 	  TFEL_CONSTEXPR const auto zero = real{0};
-	  return {zero,-c12,-c13,zero,zero,zero,
-	      -c21,zero,-c23,zero,zero,zero,
-	      -c31,-c32,zero,zero,zero,zero,
+	  return {(c13+c12)/3  ,(c13-2*c12)/3,(c12-2*c13)/3,zero,zero,zero,
+	      (c23-2*c21)/3,(c23+c21)/3  ,(c21-2*c23)/3    ,zero,zero,zero,
+	      (c32-2*c31)/3,(c31-2*c32)/3,(c32+c31)/3      ,zero,zero,zero,
 	      zero,zero,zero,c44,zero,zero,
 	      zero,zero,zero,zero,c55,zero,
 	      zero,zero,zero,zero,zero,c66};
@@ -196,10 +195,10 @@ namespace tfel{
 	    const real c44,const real c55,
 	    const real c66)
 	{
-	  return BarlatLinearTransformation<2u>::exe(c13,c23,c12,c21,c32,
+	  return BarlatLinearTransformation<2u>::exe(c13,c31,c12,c21,c32,
 						     c23,c55,c44,c66);
 	} // end of exe
-      }; // end of struct BarlatLinearTransformationII<H,tfel::material::OrthotropicAxesConvention::DEFAULT>
+      }; // end of struct BarlatLinearTransformationII
       /*!
        * \brief partial specialisation of the
        * `BarlatLinearTransformationII` for the
@@ -233,7 +232,7 @@ namespace tfel{
 	    const real c44,const real c55,
 	    const real c66)
 	{
-	  return BarlatLinearTransformation<2u>::exe(c13,c23,c12,c21,c32,
+	  return BarlatLinearTransformation<2u>::exe(c13,c31,c12,c21,c32,
 						     c23,c55,c44,c66);
 	} // end of exe
       }; // end of struct BarlatLinearTransformationII<H,tfel::material::OrthotropicAxesConvention::DEFAULT>
@@ -270,7 +269,7 @@ namespace tfel{
 	    const real c44,const real c55,
 	    const real c66)
 	{
-	  return BarlatLinearTransformation<2u>::exe(c13,c23,c12,c21,c32,
+	  return BarlatLinearTransformation<2u>::exe(c13,c31,c12,c21,c32,
 						     c23,c55,c44,c66);
 	} // end of exe
       }; // end of struct BarlatLinearTransformationII<H,tfel::material::OrthotropicAxesConvention::DEFAULT>

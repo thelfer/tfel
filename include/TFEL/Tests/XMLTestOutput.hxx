@@ -29,49 +29,47 @@ namespace tfel
   {
     
     /*!
-     *  Test Output using a standard stream
+     * \brief Instances of this class reports tests' outputs in an 
+     * XML file in the JUnit format.
      */
     struct TFELTESTS_VISIBILITY_EXPORT XMLTestOutput final
       : public TestOutput
     {
       /*!
-       * Constructor
-       * \param o : output file name
+       * \brief constructor
+       * \param[in] o: output file name
        */
       XMLTestOutput(const std::string&);
       /*!
-       * Begin a new test suite
-       * \param n : name of the test suite
+       * \brief begin a new test suite
+       * \param[in] n: name of the test suite
        */
-      virtual void
-      beginTestSuite(const std::string&) override;
+      void beginTestSuite(const std::string&) override;
       /*!
-       *  Add a new test
-       * \param g : group  of the test
-       * \param n : name   of the test
-       * \param r : result of the test
+       * \brief add a new test
+       * \param[in] g: group  of the test
+       * \param[in] n: name   of the test
+       * \param[in] r: result of the test
        */
-      virtual void
-      addTest(const std::string&,
-	      const std::string&,
-	      const TestResult&) override;
+      void addTest(const std::string&,
+		   const std::string&,
+		   const TestResult&) override;
       /*!
        * End a test suite
-       * \param r : (global) result of the test suite
+       * \param[in] r: (global) result of the test suite
        */
-      virtual void
-      endTestSuite(const TestResult&) override;
+      void endTestSuite(const TestResult&) override;
       //! Destructor
-      virtual ~XMLTestOutput();
+      ~XMLTestOutput() override;
     private:
       /*!
-       * \param r : result to be treated
+       * \param r: result to be treated
        */
       TFEL_VISIBILITY_LOCAL void
       treatTest(const TestResult&);
-      //! copy constructor (disabled)
+      //! \brief copy constructor (disabled)
       XMLTestOutput(const XMLTestOutput&) = delete;
-      //! assignement operator (disabled)
+      //! \brief assignement operator (disabled)
       XMLTestOutput&
       operator=(const XMLTestOutput&) = delete;
       //! output stream

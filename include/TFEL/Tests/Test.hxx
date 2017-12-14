@@ -25,29 +25,19 @@ namespace tfel
   namespace tests
   {
     
-    /*!
-     * Base class for all tests
-     */
+    //! \brief the ase class of all tests.
     struct TFELTESTS_VISIBILITY_EXPORT Test
     {
-      /*! 
-       * return the name of the test
-       * \return the name of the test
-       */
+      //! \return the name of the test
       virtual std::string name() const = 0;
-      /*! 
-       * return the group of the test
-       * \return the group of the test
-       */
+      //! \return the group of the test
       virtual std::string classname() const = 0;
       /*! 
-       * execute test
+       * \brief execute test
        * \return the results of the test
        */
       virtual TestResult execute() = 0;
-      /*! 
-       * destructor
-       */
+      //! destructor
       virtual ~Test();
     }; // end of struct Test
     

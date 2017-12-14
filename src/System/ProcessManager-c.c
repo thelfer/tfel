@@ -38,7 +38,7 @@ int processManager_wcoredump(int status){
 #ifdef WCOREDUMP
   return WCOREDUMP(status);
 #else
-  return false;
+  return 0;
 #endif
 } /* end of processManager_wcoredump */
 

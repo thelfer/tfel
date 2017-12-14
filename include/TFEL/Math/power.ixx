@@ -90,7 +90,7 @@ namespace tfel{
       static TFEL_MATH_INLINE
       T exe(const T&)
       {
-	return T(1);
+	return {1};
       }
     };
 
@@ -101,7 +101,7 @@ namespace tfel{
       static TFEL_MATH_INLINE
       T exe(const T&)
       {
-	return T(1);
+	return {1};
       }
     };
 
@@ -137,7 +137,11 @@ namespace tfel{
 	return x*x*x;
       }
     };
-
+    /*!
+     * \brief an helper structure to compute the negative power of a
+     * number.
+     * \tparam N: exponent
+     */
     template<int N>
     struct TFEL_VISIBILITY_LOCAL PowerNeg
     {

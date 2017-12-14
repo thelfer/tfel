@@ -274,7 +274,7 @@ namespace details {
     };
 
   public:
-    std::vector<std::string> sections() {
+    std::vector<std::string> sections() override{
       std::vector<std::string> ret;
       section_names_gather f = { ret };
       command_finder(SEGMENT_CMD_NUMBER, f);
@@ -292,14 +292,14 @@ namespace details {
     }
 
   public:
-    std::vector<std::string> symbols() {
+    std::vector<std::string> symbols() override{
       std::vector<std::string> ret;
       symbol_names_gather f = { ret, 0 };
       command_finder(load_command_types::LC_SYMTAB_, f);
       return ret;
     }
 
-    std::vector<std::string> symbols(const char* section_name) {
+    std::vector<std::string> symbols(const char* section_name) override{
       // Not very optimal solution
       std::vector<std::string> ret = sections();
       std::vector<std::string>::iterator it = std::find(ret.begin(), ret.end(), section_name);

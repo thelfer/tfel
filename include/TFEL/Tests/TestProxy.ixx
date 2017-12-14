@@ -23,31 +23,13 @@ namespace tfel
   namespace tests
   {
     
-    template<typename T>
-    TestProxy<T>::TestProxy(const std::string& n)
+    template<typename TestType>
+    template<typename... Arguments>
+    TestProxy<TestType>::TestProxy(const std::string& n,
+				   Arguments&&... a)
     {
       auto& tm = TestManager::getTestManager();
-      tm.addTest(n,std::shared_ptr<Test>(new T()));
-    } // end of TestProxy<T>::TestProxy
-
-    template<typename T>
-    template<typename T2>
-    TestProxy<T>::TestProxy(const std::string& n,
-			    const T2& t)
-    {
-      auto& tm = TestManager::getTestManager();
-      tm.addTest(n,std::shared_ptr<Test>(new T(t)));
-    } // end of TestProxy<T>::TestProxy
-
-    template<typename T>
-    template<typename T2,
-	     typename T3>
-    TestProxy<T>::TestProxy(const std::string& n,
-			    const T2& t1,
-			    const T3& t2)
-    {
-      auto& tm = TestManager::getTestManager();
-      tm.addTest(n,std::shared_ptr<Test>(new T(t1,t2)));
+      tm.addTest(n,std::make_shared<TestType>(std::forward<Arguments>(a)...));
     } // end of TestProxy<T>::TestProxy
     
   } // end of namespace test

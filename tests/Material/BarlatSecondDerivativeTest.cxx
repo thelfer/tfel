@@ -83,7 +83,7 @@ struct BarlatSecondDerivativeTest final
     // no structured binding yet
     const auto l = makeBarlatLinearTransformation<N,double>(1,1,1,1,1,1,1,1,1);
     const auto hseq = computeBarlatStress(s,l,l,2,seps);
-    if(std::abs(seq-hseq)>seps){
+     if(std::abs(seq-hseq)>seps){
       std::cout << seq << " " << hseq << " " << seps << std::endl;
     }
     TFEL_TESTS_ASSERT(std::abs(seq-hseq)<seps);	
@@ -179,7 +179,7 @@ struct BarlatSecondDerivativeTest final
     using namespace tfel::material;
     using size_type = typename stensor<N,double>::size_type;
     const auto seps = 1.e-10;
-    const auto eps1 = 3.e-8;
+    const auto eps1 = 1.e-7;
     const auto ds   = 1.e-5;
     const auto s    = stensor<N,double>{values};
     const auto l = makeBarlatLinearTransformation<N,double>(1,1,1,1,1,1,1,1,1);

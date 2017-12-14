@@ -80,17 +80,15 @@ namespace tfel{
      * \brief   An helper metafunction for tag computing.
      * \warning This class shall not be used directly.
      * \see     ComputeObjectTag
-     * \param   typename Type, type tested.
-     * \param   bool b1, true if scalar.
-     * \param   bool b2, true if operator.
-     * \param   bool b3, true if the object has a ConceptTag typedef.
+     * \tparam   typename Type, type tested.
+     * \tparam   bool b1, true if scalar.
+     * \tparam   bool b2, true if operator.
+     * \tparam   bool b3, true if the object has a ConceptTag typedef.
      * \return  type, the tag searched. By default, return InvalidType.
      */     
     template<typename Type,bool b1=false,bool b2=false,bool b3=false>
     struct ComputeObjectTag_{
-      /*!
-       * Result
-       */
+      //! \brief Result
       typedef tfel::meta::InvalidType type;
     }; // end of ComputeObjectTag_
 
@@ -101,9 +99,7 @@ namespace tfel{
     template<typename Type>
     struct ComputeObjectTag_<Type,true>
     {
-      /*!
-       * Result
-       */
+      //! \brief Result
       typedef ScalarTag type;
     }; // end of ComputeObjectTag_<true,false,false,false,false,false,false>
 
@@ -114,9 +110,7 @@ namespace tfel{
     template<typename Type>
     struct ComputeObjectTag_<Type,false,true>
     {
-      /*!
-       * Result
-       */
+      //! \brief Result
       typedef UnaryOperatorTag type;
     }; // end of ComputeObjectTag_<true,false,false,false,false,false,false>
     
@@ -127,35 +121,27 @@ namespace tfel{
     template<typename Type>
     struct ComputeObjectTag_<Type,false,false,true>
     {
-      /*!		                      
-       * Result	                      
-       */		                      
-      typedef typename Type::ConceptTag type;
+      //! \brief Result
+      using type = typename Type::ConceptTag;
     }; // end of ComputeObjectTag_<false,false,true>
 
     template<typename T>
     struct ComputeObjectTag
     {
     private:
-      /*!
-       * \brief tells if T is a scalar.
-       */
+      //! \brief tells if T is a scalar.
       static constexpr bool IsTScalar = tfel::typetraits::IsScalar<T>::cond;
-      /*!
-       * \brief tells if T is an unary operator.
-       */
+      //! \brief tells if T is an unary operator.
       static constexpr bool IsTUnaryOperator = tfel::typetraits::IsUnaryOperator<T>::cond;
-      /*!
-       * \brief tells if T has a ConceptTag typedef.
-       */
+      //! \brief tells if T has a ConceptTag typedef.
       static constexpr bool HasConceptTag = tfel::math::internals::HasConceptTag<T>::cond;
     public:
       /*!
-       * The result type, which is computed by the auxiliary
+       * \brief The result type, which is computed by the auxiliary
        * metafunction ComputeObjectTag_
        */
-      typedef typename ComputeObjectTag_<T,IsTScalar,IsTUnaryOperator,
-					 HasConceptTag>::type type;
+      using type = typename ComputeObjectTag_<T,IsTScalar,IsTUnaryOperator,
+					      HasConceptTag>::type;
     }; // end of ComputeObjectTag
 
   } // end of namespace math

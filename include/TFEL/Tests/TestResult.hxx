@@ -26,30 +26,28 @@ namespace tfel
   namespace tests
   {
     
-    //! result of a test
+    //! \brief structure describing the result of a test or a test suite
     struct TFELTESTS_VISIBILITY_EXPORT TestResult
       : protected std::vector<TestResult>
     {
       using std::vector<TestResult>::const_iterator;
-      /*! 
-       * Default onstructor
-       */
+      //! \brief default onstructor
       TestResult();
       /*! 
-       * Constructor
-       * \param b : tells if the test is a success
+       * \brief constructor
+       * \param[in] b: tells if the test is a success
        */
       TestResult(const bool);
       /*! 
-       * Constructor
-       * \param b : tells if the test is a success
-       * \param c : detail
+       * \brief constructor
+       * \param[in] b: tells if the test is a success
+       * \param[in] c: detail
        */
       TestResult(const bool,const char* const);
       /*! 
-       * Constructor
-       * \param b : tells if the test is a success
-       * \param c : detail
+       * \brief constructor
+       * \param[in] b: tells if the test is a success
+       * \param[in] c: detail
        */
       TestResult(const bool,const std::string&);
       //! copy constructor
@@ -60,9 +58,9 @@ namespace tfel
       TestResult& operator = (TestResult&&);
       //! assignement operator
       TestResult& operator = (const TestResult&);
-      //! report success
+      //! \brief report success
       bool success() const;
-      //! get result details
+      //! \return result details
       const std::string& details() const;
       /*!
        *  \return a read-only (constant) iterator that points to the
@@ -75,23 +73,21 @@ namespace tfel
        */
       const_iterator end() const;
       /*!
-       * This is a typical stack operation.  The function creates an
-       * element at the end of the vector and assigns the given data
-       * to it.
+       * \brief This is a typical stack operation. The function
+       * creates an element at the end of the vector and assigns the
+       * given data to it.
        * Due to the nature of a vector this operation can be
        * done in constant time if the vector has preallocated space
        * available.
-       * \param r : result to be appended
+       * \param[in] r : result to be appended
        */
       void append(const TestResult&);
       /*!
        * \brief set test duration
-       * \param d test duration
+       * \param[in] d test duration
        */
       void setTestDuration(const double);
-      /*!
-       * \return test duration
-       */
+      //! \return the test duration
       double duration() const;
       //! destructor
       ~TestResult();

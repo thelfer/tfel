@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_STENSOR_HXX
-#define LIB_TFEL_STENSOR_HXX 
+#ifndef LIB_TFEL_MATH_STENSOR_HXX
+#define LIB_TFEL_MATH_STENSOR_HXX 
 
 #include<tuple>
 #include<cstddef>
@@ -1281,5 +1281,5 @@ namespace tfel{
 #include"TFEL/Math/Stensor/stensorResultType.hxx"
 #include"TFEL/Math/Stensor/DecompositionInPositiveAndNegativeParts.hxx"
 
-#endif /* LIB_TFEL_STENSOR_HXX */
+#endif /* LIB_TFEL_MATH_STENSOR_HXX */
 

@@ -20,7 +20,7 @@ struct ProcessManagerCommandWrapper final
     boost::python::wrapper<tfel::system::ProcessManager::Command>
 {
   bool execute(const tfel::system::ProcessManager::StreamId,
-	       const tfel::system::ProcessManager::StreamId) final;
+	       const tfel::system::ProcessManager::StreamId) override final;
   ~ProcessManagerCommandWrapper() override;
 }; // end of struct Command
 
