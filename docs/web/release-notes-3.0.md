@@ -521,7 +521,7 @@ Version 3.0.x were tested using the following compilers:
   [Blitz++](http://sourceforge.net/projects/blitz/) library (see
   <http://dsec.pku.edu.cn/~mendl/blitz/manual/blitz11.html>)
 - [`Visual Studio`](https://www.visualstudio.com/) The only supported
-  version is the 2015 version. Previous versions does not provide a
+  version is the 2015 version. Previous versions do not provide a
   suitable `C++11` support.
 
 ## Documentation

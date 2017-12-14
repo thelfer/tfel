@@ -26,7 +26,7 @@ namespace tfel
   {
 
     /*!
-     * A simple wrapper around test functions
+     * \brief A simple wrapper around test functions.
      * \param f : function to be wrapped
      */ 
    template<bool (*f)()>
@@ -34,34 +34,28 @@ namespace tfel
      : public Test
    {
      /*!
-      * Constructor
-      * \param g : group of the test
-      * \param n : name  of the function
+      * \brief constructor
+      * \param[in] g: group of the test
+      * \param[in] n: name  of the function
       */
      TestFunctionWrapper(const std::string&,
 			 const std::string&);
      /*!
-      * Constructor
-      * \param n : name of the function
+      * \brief constructor
+      * \param[in] n: name of the function
       */
      TestFunctionWrapper(const char* const);
+     //! \return the name of the test function
+     std::string name() const override;
+     //! \return the name of the test function
+     std::string classname() const override;
      /*! 
-      * return the name of the test function
-      * \return the name of the test function
-      */
-     virtual std::string name() const override;
-     /*! 
-      * return the name of the test function
-      * \return the name of the test function
-      */
-     virtual std::string classname() const override;
-     /*! 
-      * execute test
+      * \brief execute test
       * \return the results of the test
       */
-     virtual TestResult execute() override;
+     TestResult execute() override;
      //! destructor
-     virtual ~TestFunctionWrapper();
+     ~TestFunctionWrapper() override;
    private:
      //! copy constructor (disabled)
      TestFunctionWrapper(const TestFunctionWrapper&) = delete;

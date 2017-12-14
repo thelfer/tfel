@@ -86,12 +86,13 @@ presentations-doc-pdf:
 # cd docs/presentations ;                                     \
 # make -f Makefile.doc
 
-EXTRA_DIST = bootstrap.sh    \
-	     CMakeLists.txt  \
-	     tfel.doxygen    \
-	     INSTALL         \
-             INSTALL-cmake   \
-	     env-win32.sh.in \
+EXTRA_DIST = bootstrap.sh     \
+	     CMakeLists.txt   \
+	     tfel.doxygen     \
+	     INSTALL          \
+             INSTALL-cmake    \
+	     env-win32.sh.in  \
+	     env-win32.bat.in \
 	     README.md
 
 licencesdir = $(pkgdatadir)

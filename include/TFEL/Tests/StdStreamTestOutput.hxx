@@ -29,79 +29,65 @@ namespace tfel
   {
     
     /*!
-     *  Test Output using a standard stream
+     * \brief Instances of this class redirects the output of a
+     * TestResult to a standard stream
      */
     struct TFELTESTS_VISIBILITY_EXPORT StdStreamTestOutput final
       : public TestOutput
     {
       /*!
-       * Constructor
-       * \param o : output file name
+       * \brief constructor
+       * \param[in] o: output file name
        */
       StdStreamTestOutput(const std::string&);
       /*!
-       * Constructor
-       * \param o : output stream
-       * \param b : color output
+       * \brief constructor
+       * \param[in] o: output stream
+       * \param[in] b: color output
        */
       StdStreamTestOutput(std::ostream&,
 			  const bool = true);
       /*!
-       * Constructor
-       * \param o : output stream
-       * \param b : color output
+       * \brief Constructor
+       * \param[in] o: output stream
+       * \param[in] b: color output
        */
       StdStreamTestOutput(const std::shared_ptr<std::ostream>&,
 			  const bool = false);
       /*!
-       * Begin a new test suite
-       * \param n : name of the test suite
+       * \brief begin a new test suite
+       * \param[in] n: name of the test suite
        */
-      virtual void
-      beginTestSuite(const std::string&) override;
+      void beginTestSuite(const std::string&) override;
       /*!
-       *  Add a new test
-       * \param g : group  of the test
-       * \param n : name   of the test
-       * \param r : result of the test
+       * \brief add a new test
+       * \param[in] g: group  of the test
+       * \param[in] n: name   of the test
+       * \param[in] r: result of the test
        */
-      virtual void
-      addTest(const std::string&,
-	      const std::string&,
-	      const TestResult&) override;
+      void addTest(const std::string&,
+		   const std::string&,
+		   const TestResult&) override;
       /*!
-       * End a test suite
-       * \param r : (global) result of the test suite
+       * \brief end a test suite
+       * \param[in] r: (global) result of the test suite
        */
-      virtual void
-      endTestSuite(const TestResult&) override;
-      /*!
-       * Destructor
-       */
-      virtual ~StdStreamTestOutput();
+      void endTestSuite(const TestResult&) override;
+      //! \brief Destructor
+      ~StdStreamTestOutput() override;
     private:
       /*!
-       * \param r : result to be treated
-       * \param s : string to be added at beginning of line
+       * \param r: result to be treated
+       * \param s: string to be added at beginning of line
        */
-      TFEL_VISIBILITY_LOCAL void
-      treatTest(const TestResult&,
-		const std::string&);
-      /*!
-       * copy constructor (disabled)
-       * \param src : object to be copied
-       */
-      TFEL_VISIBILITY_LOCAL StdStreamTestOutput(const StdStreamTestOutput&);
-      /*!
-       * assignement operator (disabled)
-       * \param src : object to be assigned
-       * \return a reference to this object
-       */
-      TFEL_VISIBILITY_LOCAL StdStreamTestOutput&
-      operator=(const StdStreamTestOutput&);
-      /*!
-       * pointer used to close stream, if the class has to handle it
-       */
+      TFEL_VISIBILITY_LOCAL void treatTest(const TestResult&,
+					   const std::string&);
+      //! \brief copy constructor (disabled)
+      StdStreamTestOutput(const StdStreamTestOutput&) = delete;
+      //! \brief assignement operator (disabled)
+      StdStreamTestOutput&
+      operator=(const StdStreamTestOutput&) = delete;
+      //! pointer used to close stream, if the class has to handle it
       std::shared_ptr<std::ostream> pos;
       //! output stream
       std::ostream& os;

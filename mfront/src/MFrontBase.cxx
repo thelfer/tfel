@@ -100,7 +100,7 @@ namespace mfront{
   {
     using namespace tfel::system;
     // calling mfront plugins
-    const char * libs = ::getenv("MFRONT_ADDITIONAL_LIBRARIES");
+    const auto libs = ::getenv("MFRONT_ADDITIONAL_LIBRARIES");
     if(libs!=nullptr){
       auto& lm = ExternalLibraryManager::getExternalLibraryManager();
       for(const auto& l : tfel::utilities::tokenize(libs,':')){

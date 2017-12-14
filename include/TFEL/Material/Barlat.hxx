@@ -106,6 +106,8 @@ namespace tfel{
      *
      * The linear transformation is defined as follows:
      * \f[
+     * \underline{L}=
+     * \frac{1}{3}\,
      * \begin{pmatrix}
      * 0 & -c_{12} & -c_{13} & 0 & 0 & 0 \\
      * -c_{21} & 0 & -c_{23} & 0 & 0 & 0 \\
@@ -113,6 +115,17 @@ namespace tfel{
      * 0 & 0 & 0 & c_{44} & 0 & 0 \\
      * 0 & 0 & 0 & 0 & c_{55} & 0 \\
      * 0 & 0 & 0 & 0 & 0 & c_{66} \\
+     * \end{pmatrix}
+     * \,
+     * \cdot
+     * \,
+     * \begin{pmatrix}
+     * 2  & -1 & -1 & 0 & 0 & 0 \\
+     * -1 &  2 & -1 & 0 & 0 & 0 \\
+     * -1 & -1 & 2 & 0 & 0 & 0 \\
+     * 0 & 0 & 0 & 1 & 0 & 0 \\
+     * 0 & 0 & 0 & 0 & 1 & 0 \\
+     * 0 & 0 & 0 & 0 & 0 & 1 \\
      * \end{pmatrix}
      * \f]
      * \note Barlat uses the following convention for storing
@@ -212,12 +225,30 @@ namespace tfel{
      * \f]
      *
      * The linear transformations \f$\underline{\underline{L}}'\f$ and
-     * \f$\underline{\underline{L}}''\f$ are defined by \(9\)
+     * \f$\underline{\underline{L}}''\f$ can be deduced from linear
+     * transformations \f$\underline{\underline{C}}'\f$ and
+     * \f$\underline{\underline{C}}''\f$. on the deviator of the
+     * stress as follows:
+     *
+     * \f[
+     * \begin{aligned}
+     * \underline{L}'  &=\underline{\underline{C}}'\,\colon\,\underline{\underline{M}} \\
+     * \underline{L}'' &=\underline{\underline{C}}'\,\colon\,\underline{\underline{M}} \\
+     * \end{aligned}
+     * \f]
+     * where \f$\underline{\underline{M}}\f$ is the transformation of
+     * the stress to its deviator:
+     * \f[
+     * \underline{\underline{M}}=\underline{\underline{I}}-\frac{1}{3}\underline{I}\,\otimes\,\underline{I}
+     * \f]
+     * 
+     * The linear transformations \f$\underline{\underline{C}}'\f$ and
+     * \f$\underline{\underline{C}}''\f$ are defined by \f(9\f)
      * coefficients (each) which describe the material orthotropy, as
      * follows:
      * 
      * \f[
-     * \underline{\underline{L}}'=
+     * \underline{\underline{C}}'=
      * \begin{pmatrix}
      * 0 & -c'_{12} & -c'_{13} & 0 & 0 & 0 \\
      * -c'_{21} & 0 & -c'_{23} & 0 & 0 & 0 \\
@@ -229,7 +260,7 @@ namespace tfel{
      * \quad
      * \text{and}
      * \quad
-     * \underline{\underline{L}}''=
+     * \underline{\underline{C}}''=
      * \begin{pmatrix}
      * 0 & -c''_{12} & -c''_{13} & 0 & 0 & 0 \\
      * -c''_{21} & 0 & -c''_{23} & 0 & 0 & 0 \\
@@ -250,6 +281,7 @@ namespace tfel{
      * \param[in] l2: second linear transformation
      * \param[in] a: Barlat exponent
      * \param[in] e: criterion used to check if the von Mises stress is null
+     * \return the Barlat yield stress \f$\phi\left(\underline{\bf s}\right)\f$
      */
     template<typename StressStensor,
 	     typename BarlatExponentType,

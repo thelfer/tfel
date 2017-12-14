@@ -1,5 +1,5 @@
 /*!
- * \file   Glossary.hxx
+ * \file   include/TFEL/Glossary/Glossary.hxx
  * \author Thomas Helfer
  * \date   09/06/14
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights

@@ -250,7 +250,27 @@ matching the `T2toT2Concept`.
 
 ## Multiplication of second order tensors
 
+\tenseur{a}\,\star_{1}\,\tenseur{b} = \Frac{1}{2}\paren{a\,.}
+
 ### Derivatives
+
+## Symmetric product of two symmetric second order tensors
+
+The symmetric product of two symmetric second order tensors
+\(\tenseur{a}\) and \(\tenseur{b}\) can be defined as follows:
+
+\[
+\tenseur{a}\,\cdot_{s}\,\tenseur{b} = \Frac{1}{2}\paren{\tenseur{a}\,\cdot\tenseur{b}+\tenseur{b}\,\cdot\tenseur{a}}
+\]
+
+This can be computed by the `symmetric_product` function.
+
+### Derivative
+
+The derivative of the symmetric
+\(\tenseur{a}\,\cdot_{s}\,\tenseur{b}\) with respect to
+\(\tenseur{a}\) can be computed using the `st2tost2::stpd` static
+method with takes \(\tenseur{b}\) as argument.
 
 # Special functions
 
@@ -267,7 +287,7 @@ function, as follows:
 const auto s2 = square(s);
 ~~~~
 
-## Derivative of the square of a symmetric tensor
+### Derivative of the square of a symmetric tensor
 
 The derivative of the square of a symmetric tensor is a fourth order
 tensor mapping a symmetric tensor toward a symmetric tensor. It can be
@@ -290,6 +310,11 @@ which is more efficient than:
 ~~~~{.cpp}
 const auto ds2_dc = st2tost2<N,real>::dsquare(s2)*ds_dc;
 ~~~~
+
+## Positive and negative parts of a symmetric tensor
+
+The Positive and negative parts of a symmetric tensor can be computed
+respectively by the `positive_part` and `negative_part` function.
 
 ## Transposition of a second order tensor {#sec:transpose}
 
@@ -749,9 +774,24 @@ linear transformation \(\tenseurq{L}'\) and \(\tenseurq{L}''\):
 
 The linear transformations \(\tenseurq{L}'\) and \(\tenseurq{L}''\)
 are defined by \(9\) coefficients (each) which describe the material
-orthotropy, as follows:
+orthotropy. There are defined through auxiliary linear transformations
+\(\tenseurq{C}'\) and \(\tenseurq{C}''\) as follows:
 \[
-\tenseurq{L}'
+\begin{aligned}
+\tenseurq{L}' &=\tenseurq{C}'\,\colon\,\tenseurq{M} \\
+\tenseurq{L}''&=\tenseurq{C}''\,\colon\,\tenseurq{M}
+\end{aligned}
+\]
+where \(\tenseurq{M}\) is the transformation of the stress to its deviator:
+\[
+\tenseurq{M}=\tenseurq{I}-\Frac{1}{3}\tenseur{I}\,\otimes\,\tenseur{I}
+\]
+
+The linear transformations of the deaviator stress \(\tenseurq{C}'\)
+and \(\tenseurq{C}''\), are defined as follows:
+\[
+\tenseurq{C}'=
+\Frac{1}{3}\,
 \begin{pmatrix}
 0 & -c'_{12} & -c'_{13} & 0 & 0 & 0 \\
 -c'_{21} & 0 & -c'_{23} & 0 & 0 & 0 \\
@@ -763,7 +803,7 @@ orthotropy, as follows:
 \quad
 \text{and}
 \quad
-\tenseurq{L}''
+\tenseurq{C}''=
 \begin{pmatrix}
 0 & -c''_{12} & -c''_{13} & 0 & 0 & 0 \\
 -c''_{21} & 0 & -c''_{23} & 0 & 0 & 0 \\
@@ -829,13 +869,20 @@ const auto l1 = makeBarlatLinearTransformationType<3>(c_12,c_21,c_13,c_31,
 > \end{pmatrix}
 > \]
 > 
-> Therefore, if one wants to uses coeficients \f(c^{B}\f) given
+> Therefore, if one wants to uses coeficients \(c^{B}\) given
 > by Barlat, one shall call this function as follows:
 > 
 > ~~~~{.cpp}
 > const auto l1 = makeBarlatLinearTransformationType<3>(cB_12,cB_21,cB_13,cB_31,
 >                                                       cB_23,cB_32,cB_66,cBB_55,cBB_44);
 > ~~~~
+
+The `TFEL/Material` library also provide an overload of the
+`makeBarlatLinearTransformationType` which template parameters are the
+modelling hypothesis and the orthotropic axis conventions. The purpose
+of this overload is to swap appriopriate coefficients to get a
+consistent definition of the linear transforamtions for all the
+modelling hypotheses.
 
 # References
 

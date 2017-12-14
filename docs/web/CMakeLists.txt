@@ -92,7 +92,7 @@ pandoc_html(release-notes-3.0   "--toc" "--toc-depth=2")
 pandoc_html(release-notes-3.0.1 "--toc" "--toc-depth=2")
 pandoc_html(release-notes-3.0.2 "--toc" "--toc-depth=2")
 pandoc_html(release-notes-3.0.3 "--toc" "--toc-depth=2")
-pandoc_html(release-notes-3.1   "--toc" "--toc-depth=2")
+pandoc_html(release-notes-3.1   "--toc" "--toc-depth=2" "--number-sections" "-c css/slideshow.css")
 pandoc_html(theory  "--toc" "--toc-depth=2")
 pandoc_html(tensors "--toc" "--toc-depth=2")
 

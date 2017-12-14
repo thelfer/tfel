@@ -68,9 +68,24 @@ linear transformation \(\tenseurq{L}'\) and \(\tenseurq{L}''\):
 
 The linear transformations \(\tenseurq{L}'\) and \(\tenseurq{L}''\)
 are defined by \(9\) coefficients (each) which describe the material
-orthotropy, as follows:
+orthotropy. There are defined through auxiliary linear transformations
+\(\tenseurq{C}'\) and \(\tenseurq{C}''\) as follows:
 \[
-\tenseurq{L}'
+\begin{aligned}
+\tenseurq{L}' &=\tenseurq{C}'\,\colon\,\tenseurq{M} \\
+\tenseurq{L}''&=\tenseurq{C}''\,\colon\,\tenseurq{M}
+\end{aligned}
+\]
+where \(\tenseurq{M}\) is the transformation of the stress to its deviator:
+\[
+\tenseurq{M}=\tenseurq{I}-\Frac{1}{3}\tenseur{I}\,\otimes\,\tenseur{I}
+\]
+
+The linear transformations of the deaviator stress \(\tenseurq{C}'\)
+and \(\tenseurq{C}''\), are defined as follows:
+\[
+\tenseurq{C}'=
+\Frac{1}{3}\,
 \begin{pmatrix}
 0 & -c'_{12} & -c'_{13} & 0 & 0 & 0 \\
 -c'_{21} & 0 & -c'_{23} & 0 & 0 & 0 \\
@@ -82,7 +97,7 @@ orthotropy, as follows:
 \quad
 \text{and}
 \quad
-\tenseurq{L}''
+\tenseurq{C}''=
 \begin{pmatrix}
 0 & -c''_{12} & -c''_{13} & 0 & 0 & 0 \\
 -c''_{21} & 0 & -c''_{23} & 0 & 0 & 0 \\

@@ -226,7 +226,7 @@ $ cmake -DLIB_SUFFIX=64 ....
 
 ### Appending the version number
 
-The `TFEL_APPEND_SUFFIX` option will append the version number to the
+The `TFEL_APPEND_VERSION` option will append the version number to the
 names of:
 
 - The executables.
@@ -239,7 +239,7 @@ names of:
 The headers are installed in a subforder named `TFEL-${TVEL_VERSION}`.
 
 For example, if the `TFEL` version is `3.0.2-dev`, using
-`TFEL_APPEND_SUFFIX` opion will generate:
+`TFEL_APPEND_VERSION` opion will generate:
 
 - The `mfront-3.0.2-dev` executable.
 - The `libTFELMaterial-3.0.2-dev.so` library.
@@ -249,6 +249,17 @@ For example, if the `TFEL` version is `3.0.2-dev`, using
 
 This allows multiple executables to be installed in the same
 directory.
+
+### Specifying a version flavour
+
+The `TFEL_VERSION_FLAVOUR` let the user define a string that will be
+used to modify the names of executables, libraries and so on (see the
+previous paragraph for details).
+
+For example, using `-DTFEL_VERSION_FLAVOUR=dbg` at the `cmake`
+invocation, will generate an executable called `mfront-dbg`.
+
+This option can be combined with the `TFEL_APPEND_VERSION` option.
 
 ### Selecting the `python` version
 

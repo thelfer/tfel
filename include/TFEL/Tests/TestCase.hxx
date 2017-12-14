@@ -126,38 +126,28 @@
     TestCase::registerResult("lesser or equal : '"#X"<="#Y"'",X<=Y);    \
   }
 
-
-
 namespace tfel
 {
 
   namespace tests
   {
     
-    /*!
-     * Base class for all TestCase
-     */
+    //! \brief class used to describe an single test
     struct TFELTESTS_VISIBILITY_EXPORT TestCase
       : public Test
     {
-      /*! 
-       * \return the name of the test
-       */
-      virtual std::string
-      name() const override;
-      /*! 
-       * \return the group of the test
-       */
-      virtual std::string
-      classname() const override;
+      //! \return the name of the test
+      std::string name() const override;
+      //! \return the group of the test
+      std::string classname() const override;
     protected:
       /*!
-       * Constructor
+       * \brief constructor
        * \param[in] n : name  of the test
        */
       TestCase(const std::string&);
       /*!
-       * Constructor
+       * \brief constructor
        * \param[in] g : group of the test
        * \param[in] n : name  of the test
        */
@@ -171,8 +161,7 @@ namespace tfel
       registerResult(const std::string&,
 		     const bool);
       //! destructor
-      virtual ~TestCase();
-    protected:
+      ~TestCase() override;
       //! result of the test
       TestResult result;
     private:

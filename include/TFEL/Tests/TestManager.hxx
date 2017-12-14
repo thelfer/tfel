@@ -35,87 +35,89 @@ namespace tfel
   {
     
     /*!
-     * class in charge of managing a collection of tests.
+     * \brief a singleton in charge of managing a collection of tests.
      */
     struct TFELTESTS_VISIBILITY_EXPORT TestManager
     {
       //! a simple alias
-      typedef std::shared_ptr<TestOutput> TestOutputPtr;
+      using TestOutputPtr =  std::shared_ptr<TestOutput>;
       //! a simple alias
-      typedef std::shared_ptr<Test> TestPtr;
+      using TestPtr =  std::shared_ptr<Test>;
+      //! \return the unique instance of the class
+      static TestManager& getTestManager();
       /*!
-       * \return the unique instance of the class
-       */
-      static TestManager&
-      getTestManager();
-      /*!
-       * add a test output
-       * \param o : output to be added
+       * \brief add a test output
+       * \param o: output to be added
        */
       void addTestOutput(TestOutputPtr);
       /*!
-       * add a test output
-       * \param o : output to be added
-       * \param b : colourised output
+       * \brief add a test output
+       * \param o: output to be added
+       * \param[in] b: colourised output
        */
       void addTestOutput(std::ostream&,
 			 const bool = true);
       /*!
-       * add a test output to the specified file 
-       * \param f : file name
+       * \brief add a test output to the specified file 
+       * \param[in] f: file name
        */
       void addTestOutput(const std::string&);
       /*!
-       * add a test output to the specified file 
-       * \param f : file name
+       * \brief add a test output to the specified file 
+       * \param f: file name
        */
       void addXMLTestOutput(const std::string&);
       /*!
-       * add a test output to the specified test suite
-       * \param n : name of the test suite
-       * \param o : output to be added
+       * \brief add a test output to the specified test suite
+       * \param n: name of the test suite
+       * \param o: output to be added
        */
       void addTestOutput(const std::string&,
 			 TestOutputPtr);
       /*!
-       * add a test output to the specified test suite
-       * \param n : name of the test suite
-       * \param o : output to be added
-       * \param b : colourised output
+       * \brief add a test output to the specified test suite
+       * \param[in] n: name of the test suite
+       * \param[in] o: output to be added
+       * \param[in] b: colourised output
        */
       void addTestOutput(const std::string&,
 			 std::ostream&,
 			 const bool = true);
       /*!
        * add a test output to the specified file
-       * \param n : name of the test suite
-       * \param f : file name
+       * \param[in] n: name of the test suite
+       * \param[in] f: file name
        */
       void addTestOutput(const std::string&,
 			 const std::string&);
       /*!
        * add a test to the specified test suite
-       * \param g : group of the test
-       * \param t : test to be added
+       * \param[in] g: group of the test
+       * \param t: test to be added
        */
       void addTest(const std::string&,TestPtr);
       /*!
-       * execute registred tests
+       * \brief execute registred tests
+       * \return the results of all tests
        */
       TestResult execute();
     private:
       //! a simple alias
-      typedef std::shared_ptr<MultipleTestOutputs> MultipleTestOutputsPtr;
+      using MultipleTestOutputsPtr = std::shared_ptr<MultipleTestOutputs>;
       //! a simple alias
-      typedef std::shared_ptr<TestSuite> TestSuitePtr;
+      using TestSuitePtr = std::shared_ptr<TestSuite>;
       /*!
-       * default constructor declared private to implement the
-       * Singleton pattern.
+       * \brief default constructor declared private to implement the
+       * singleton pattern.
        */
       TFEL_VISIBILITY_LOCAL TestManager();
+      //! \brief move constructor (disabled)
       TestManager(TestManager&&) = delete;
+      //! \brief copy constructor (disabled)
       TestManager(const TestManager&) = delete;
+      //! \brief move assignement operator (disabled)
       TestManager& operator=(TestManager&&) = delete;
+      //! \brief assignement operator (disabled)
       TestManager& operator=(const TestManager&) = delete;
       //! outputs used by default
       MultipleTestOutputsPtr default_outputs;

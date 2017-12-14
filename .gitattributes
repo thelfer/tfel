@@ -1179,6 +1179,15 @@ docs/web/img/Norton.mfront -text
 docs/web/img/NortonCreepUniaxialTesting.svg -text
 docs/web/img/Polar_decomposition_of_F.png -text
 docs/web/img/SalomeMeca2015.png -text
+docs/web/img/TFEL-3.1/Alpine_Linux_3.6.png -text
+docs/web/img/TFEL-3.1/Cygwin.png -text
+docs/web/img/TFEL-3.1/Fedora_27_05_12_2017_11_37_17.png -text
+docs/web/img/TFEL-3.1/Ghost_BSD-10.3.png -text
+docs/web/img/TFEL-3.1/Haiku-51366.png -text
+docs/web/img/TFEL-3.1/MINGW-Cast3M2017.png -text
+docs/web/img/TFEL-3.1/OpenSolaris-2017.png -text
+docs/web/img/TFEL-3.1/TrueOs-07-2017_05_12_2017_08_01_39.png -text
+docs/web/img/TFEL-3.1/VisualStudio-2015.png -text
 docs/web/img/TFEL-pcbsd.png -text
 docs/web/img/TFEL-pcbsd.xcf -text
 docs/web/img/TrueOS.jpg -text
@@ -1326,6 +1335,7 @@ docs/web/theory.md -text
 docs/web/tutorial-spanish.md -text
 docs/web/tutorial.md -text
 docs/web/zmat.md -text
+/env-win32.bat.in -text
 /env-win32.sh.in -text
 include/CMakeLists.txt -text
 include/FSES/Utilities.hxx -text

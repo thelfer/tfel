@@ -296,11 +296,10 @@ namespace tfel{
       }
     }
 
-    void
-    CxxTokenizer::readNumber(Token::size_type& o,
-			     std::string::const_iterator& p,
-			     const std::string::const_iterator pe,
-			     const Token::size_type n)
+    void CxxTokenizer::readNumber(Token::size_type& o,
+				  std::string::const_iterator& p,
+				  const std::string::const_iterator pe,
+				  const Token::size_type n)
     {
       auto throw_if = [](const bool b,const std::string& m){
 	raise_if(b,"CxxTokenizer::readNumber: "+m);

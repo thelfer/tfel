@@ -1,5 +1,5 @@
 /*!
- * \file   st2tost2_push_forward.ixx
+ * \file   include/TFEL/Math/ST2toST2/ST2toST2ConceptPushForward.ixx
  * \brief    
  * \author Thomas Helfer
  * \date   15 avril 2016
