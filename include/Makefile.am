@@ -34,6 +34,8 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Material/Hosford.ixx			                                             \
 			TFEL/Material/Barlat.hxx			                                             \
 			TFEL/Material/Barlat.ixx			                                             \
+			TFEL/Material/PiPlane.hxx                                                                    \
+			TFEL/Material/PiPlane.ixx                                                                    \
 			TFEL/Material/StiffnessTensor.hxx			                                     \
 			TFEL/Material/StiffnessTensor.ixx			                                     \
 			TFEL/Material/ThermalBehaviourData.hxx	                                                     \

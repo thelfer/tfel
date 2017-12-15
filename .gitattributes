@@ -1324,6 +1324,7 @@ docs/web/release-notes-3.0.2.md -text
 docs/web/release-notes-3.0.3.md -text
 docs/web/release-notes-3.0.md -text
 docs/web/release-notes-3.1.md -text
+docs/web/release-notes-3.2.md -text
 docs/web/release-notes.md -text
 docs/web/robots.txt -text
 docs/web/signorini.md -text
@@ -1438,6 +1439,8 @@ include/TFEL/Material/ModellingHypothesis.hxx -text
 include/TFEL/Material/OrthotropicAxesConvention.hxx -text
 include/TFEL/Material/OrthotropicAxesConvention.ixx -text
 include/TFEL/Material/OutOfBoundsPolicy.hxx -text
+include/TFEL/Material/PiPlane.hxx -text
+include/TFEL/Material/PiPlane.ixx -text
 include/TFEL/Material/PolyCrystalsSlidingSystems.hxx -text
 include/TFEL/Material/PolyCrystalsSlidingSystems.ixx -text
 include/TFEL/Material/RambergOsgood.hxx -text

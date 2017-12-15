@@ -111,11 +111,12 @@ Those two yield criteria are based on the eigenvalues and of the
 stress. The computation of the second derivative, required to build
 the jacobian of the implicit system, is thus quite involved.
 
-## Enhanced numerical stability
+## Enhanced numerical reproducibility and stability
 
-This release has seen lot of work in the overall numerical stability
-of `TFEL` algorithms and lead to duplicate most of tests, who are now
-run using different rounding modes.
+This release has seen lot of work in the overall numerical
+reproducibility and stability of `TFEL` algorithms and lead to
+duplicate most of tests, who are now run using different rounding
+modes.
 
 Tests based on `mtest` are run \(5\) times, one for each of the four
 rounding modes defined in the `IEEE754` norm, plus one time using a
@@ -174,7 +175,7 @@ To build `TFEL` with the `-ffast-math`, just pass the
 
 > **Note**
 >
-> Even if `TFEL` is not build with the `-ffast-math`, this option can
+> Even if `TFEL` is not built with the `-ffast-math`, this option can
 > be used to compile `MFront` files, by specifying the
 > `--obuild=level2` option to `MFront`, as follows:
 >
@@ -433,9 +434,9 @@ For this reason, the `cmake` generator, described below in section
 Two new interfaces were introduced in `MFront`:
 
 - a native interface for the `CalculiX` solver. Here native is used to
-  distinguish this interface from the `Abaqus` interface which can
-  also be used within `CalculiX`. This interface can be used with
-  `CalculiX` 2.13.
+  distinguish this interface from the `Abaqus/Standard` interface
+  which can also be used within `CalculiX`. This interface can be used
+  with `CalculiX` 2.13.
 - an interface for the `ANSYS` `APDL` solver. The latter is still
   experimental.
 
@@ -1492,7 +1493,7 @@ This method takes two named arguments:
 - `--is-strain-measure-defined`: return `true` if a strain measure has
   been defined, `false` otherwise.
 - `-strain-measure`: return the strain measure on which the behaviour
-  is build. The following values are valid: `Linearised`,
+  is built. The following values are valid: `Linearised`,
   `GreenLagrange` and `Hencky`.
 
 ### Queries associated with the crystal structure
@@ -2056,19 +2057,19 @@ maintainability:
 
 `TFEL` has been tested successfully on a various flavours of `LinuX`
 and `BSD` systems (including `FreeBSD` and `OpenBSD`). The first ones
-are mostly build on `gcc`, `libstdc++` and the `glibc`. The second
-ones are build on `clang` and `libc++`.
+are mostly built on `gcc`, `libstdc++` and the `glibc`. The second
+ones are built on `clang` and `libc++`.
 
-`TFEL` can be build on `Windows` in a wide variety of configurations
+`TFEL` can be built on `Windows` in a wide variety of configurations
 and compilers:
 
-- native ports can be build using the `Visual Studio` (2015 and 2017)
+- native ports can be built using the `Visual Studio` (2015 and 2017)
   or `MingGW` compilers.
-- `TFEL` can be build in the `Cygwin` environment.
+- `TFEL` can be built in the `Cygwin` environment.
 
 
 `TFEL` have reported to build successfully in the `Windows Subsystem
-  for LinuX (`WSL`) environment.
+for LinuX` (`WSL`) environment.
 
 Although not officially supported, more exotic systems, such as
 `OpenSolaris` and `Haiku`, have also been tested successfully. The
@@ -2085,15 +2086,15 @@ Version 3.1 has been tested using the following compilers:
   versions 3.5, 3.6, 3.7, 3.8, 3.9, 4.0, 5.0
 - [`intel`](https://software.intel.com/en-us/intel-compilers). The
   only tested version is the 2018 version on `LinuX`.
-  [Intel compilers 15](https://software.intel.com/en-us/intel-compilers)
+  [Intel compilers 15 and 16](https://software.intel.com/en-us/intel-compilers)
   are known not to work due to a bug in the [EDG](https://www.edg.com)
   front-end that can't parse a syntax mandatory for the expression
   template engine. The same bug affects the
   [Blitz++](http://sourceforge.net/projects/blitz/) library (see
-  <http://dsec.pku.edu.cn/~mendl/blitz/manual/blitz11.html>). Versions
-  2016 and 2017 shall work but were not tested.
+  <http://dsec.pku.edu.cn/~mendl/blitz/manual/blitz11.html>). Version
+  2017 shall work but were not tested.
 - [`Visual Studio`](https://www.visualstudio.com/) The only supported
-  versions ate the 2015 and 2017 versions. Previous versions do not
+  versions are the 2015 and 2017 versions. Previous versions do not
   provide a suitable `C++11` support.
 - `PGI` compiler (NVIDIA): version 17.10 on `LinuX`
 - `MinGW` has been tested successfully in a wide variety of

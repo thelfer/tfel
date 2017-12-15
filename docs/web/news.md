@@ -18,6 +18,196 @@
 \newcommand{\deriv}[2]{{\displaystyle \frac{\displaystyle \partial #1}{\displaystyle \partial #2}}}
 \newcommand{\sigmaeq}{\sigma_{\mathrm{eq}}}
 
+# Release of versions 3.1 and 3.0.3 of `TFEL/MFront` (15/12/2017)
+
+Versions 3.1 and 3.0.3 of `TFEL`, `MFront` and `MTest` has been
+released on the 15th December, 2017.
+
+## Version 3.1
+
+A detailed version of the release notes is available
+[here](http://tfel.sourceforge.net/release-notes-3.1.html).
+
+### Highlights
+
+From a user point of view, TFEL 3.1 brings many important features:
+
+- The gallery is a list of detailed documentations about implementing
+  clean, efficient and reliable mechanical behaviour using `MFront`
+  that will be updated as TFEL and MFront evolve. In each case, the
+  integration algorithm is fully described. The gallery currently
+  contains \(17\) entries covering finite strain elasticity, finite
+  strain viscoplasticity, damage, plasticity and viscoplasticity. The
+  gallery. Those implementations are also gathered in a `cmake`
+  projects called `MFrontGallery` which can be cloned on github:
+  <https://github.com/thelfer/MFrontGallery>
+- The integration of the `TFEL/NUMODIS` library which provides many
+  functionalities associated with single crystal description coming
+  from the [`NUMODIS` project](http://www.numodis.fr/). Those
+  functionalities are available in `MFront` through many new keywords
+  that simplify to a great extent the way small and finite strain
+  single crystal behaviours can be written. See the following page for
+  a detailled description:
+  <http://tfel.sourceforge.net/singlecrystal.html>
+- The `DDIF2` behaviour is used in CEA fuel performances codes to
+  describe cracking of the nuclear fuel. The `DDIF2` brick allows this
+  model to be easily coupled to the viscplastic behaviour of the fuel
+  material and can be used as easily as the `StandardElasticity`
+  brick. See this page for details:
+  <http://tfel.sourceforge.net/ddif2.html>
+- An important work has been devoted to enhance the overall numerical
+  reproducibility and stability of the algorithms of `TFEL/Math`. It
+  is now much safer to use the `-ffast-math` option in `gcc` and
+  `clang` which can drastically increase the efficiency of the
+  generated code. This option is automatically added when using the
+  `--obuild=level2` option of `mfront`. See the release notes for
+  details.
+- Support for the Hershey/Hosford yield criteria which generalizes the
+  Mises criteria. Indeed the Hershey/Hosford yield criteria lies
+  between the Mises criteria and the Tresca criteria. Various
+  functions have been introduced to compute the equivalent stress
+  associated with this criteria, its first and second derivatives. See
+  this page for details: <http://tfel.sourceforge.net/tensors.html>
+- Support for the Barlat yield criteria which generalizes the Hill
+  criteria. Various functions have been introduced to compute the
+  equivalent stress associated with this criteria, its first and
+  second derivatives. See this page for details:
+  <http://tfel.sourceforge.net/tensors.html>
+- Abritrary non linear constraints can now be defined in `MTest`.
+- Better support of the Windows platform. Using the `cmake` generator,
+  using `mfront` on windows with the `Microsoft` compilers is easy and
+  closely follows the existing practices on other operating systems.
+- Improved installation options. Two versions, or the same version in
+  different flavours (compiled in debug mode, compiled with different
+  compilers), of `TFEL/MFront` can now be installed in parallel.
+  See <http://tfel.sourceforge.net/install.html> for details.
+
+### Mechanical behaviours
+
+#### New interfaces
+
+Two new interfaces have been introduced in `MFront`:
+
+- A native interface for the `CalculiX` solver. Here native is used to
+  distinguish this interface from the `Abaqus/Standard` interface
+  which can also be used within `CalculiX`. This interface can be used
+  with `CalculiX` 2.13.
+- An interface for the `ANSYS` `APDL` solver. The latter is still
+  experimental.
+
+#### The `@NumericallyComputedJacobianBlocks` keyword
+
+Computing the jacobian of the implicit system is the most difficult
+part of implementing a behaviour. Computing the jacobian by finite
+difference is interesting but significantly decreases the performances
+of the behaviour and can be (very) sensitive to the choice of the
+numerical perturbation.
+
+The `@NumericallyComputedJacobianBlocks` keyword is used select a list
+of jacobian blocks that have to be computed numerically. This is more
+efficient than computing the whole jacobian numerically. Combined with
+the ability to compare the jacobian to a numerical approximation, the
+user now has the ability to build the jacobian incrementally, block by
+block and checks at each steps that their analytical expressions are
+correct.
+
+### Portability
+
+<div id="slideshow">
+  <ul class="slides">
+	<li><img src="img/TFEL-3.1/Fedora_27_05_12_2017_11_37_17.png" width="620" height="320" alt="Fedora 27 gcc 7.2.1"/></li>
+	<li><img src="img/TFEL-3.1/Ghost_BSD-10.3.png" width="620" height="320" alt="Ghost BSD 10.3 clang 3.4.1"/></li>
+	<li><img src="img/TFEL-3.1/TrueOs-07-2017_05_12_2017_08_01_39.png" width="620" height="320" alt="TrueOs 2017 clang-4.0"/></li>
+	<li><img src="img/TFEL-3.1/Alpine_Linux_3.6.png" width="620" height="320" alt="Alpine Linux 3.6 MUSL C library gcc 6.3"/></li>
+	<li><img src="img/TFEL-3.1/VisualStudio-2015.png" width="620" height="320" alt="Visual Studio 2015"/></li>
+	<li><img src="img/TFEL-3.1/Cygwin.png" width="620" height="320" alt="Cygwin gcc 5.4"/></li>
+	<li><img src="img/TFEL-3.1/MINGW-Cast3M2017.png" width="620" height="320" alt="MingGW gcc 6.3 (delivered by Cast3M 2017)"/></li>
+	<li><img src="img/TFEL-3.1/OpenSolaris-2017.png" width="620" height="320" alt="OpenSolaris 2017"/></li>
+	<li><img src="img/TFEL-3.1/Haiku-51366.png" width="620" height="320" alt="Haiku révision 51366"/></li>
+  </ul>
+  <span class="arrow previous"></span>
+  <span class="arrow next"></span>
+</div>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+<script src="js/slideshow.js"></script>
+
+Portability is a convincing sign of software quality and
+maintainability:
+
+- usage of functionalities specific to operating
+  systems are well identified.
+- it demonstrates that the code is not dependant of the system
+  libraries, such as the `C` or `C++` libraries.
+
+`TFEL` has been tested successfully on a various flavours of `LinuX`
+and `BSD` systems (including `FreeBSD` and `OpenBSD`). The first ones
+are mostly build on `gcc`, `libstdc++` and the `glibc`. The second
+ones are build on `clang` and `libc++`.
+
+`TFEL` can be build on `Windows` in a wide variety of configurations
+and compilers:
+
+- native ports can be build using the `Visual Studio` (2015 and 2017)
+  or `MingGW` compilers.
+- `TFEL` can be build in the `Cygwin` environment.
+
+
+`TFEL` have reported to build successfully in the `Windows Subsystem
+for LinuX` (`WSL`) environment.
+
+Although not officially supported, more exotic systems, such as
+`OpenSolaris` and `Haiku`, have also been tested successfully. The
+`Minix` operating systems provides a pre-release of `clang` `3.4` that
+fails to compile `TFEL`.
+
+#### Supported compilers
+
+Version 3.1 has been tested using the following compilers:
+
+- [`gcc`](https://gcc.gnu.org/) on various `POSIX` systems: versions
+  4.7, 4.8, 4.9, 5.1, 5.2, 6.1, 6.2, 7.1, 7.2
+- [`clang`](http://clang.llvm.org/) on various `POSIX` systems:
+  versions 3.5, 3.6, 3.7, 3.8, 3.9, 4.0, 5.0
+- [`intel`](https://software.intel.com/en-us/intel-compilers). The
+  only tested version is the 2018 version on `LinuX`.
+  [Intel compilers 15 and 16](https://software.intel.com/en-us/intel-compilers)
+  are known not to work due to a bug in the [EDG](https://www.edg.com)
+  front-end that can't parse a syntax mandatory for the expression
+  template engine. The same bug affects the
+  [Blitz++](http://sourceforge.net/projects/blitz/) library (see
+  <http://dsec.pku.edu.cn/~mendl/blitz/manual/blitz11.html>). Version
+  2017 shall work but were not tested.
+- [`Visual Studio`](https://www.visualstudio.com/) The only supported
+  versions are the 2015 and 2017 versions. Previous versions do not
+  provide a suitable `C++11` support.
+- `PGI` compiler (NVIDIA): version 17.10 on `LinuX`
+- `MinGW` has been tested successfully in a wide variety of
+  configurations/versions, including the version delivered with
+  `Cast3M 2017`.
+
+#### Benchmarcks
+
+|  Compiler and options    |  Success ratio    |  Test time  |
+|:------------------------:|:-----------------:|:-----------:|
+|  `gcc 4.9.2`             | 100% tests passed |  681.19 sec |
+|  `gcc 4.9.2+fast-math`   | 100% tests passed |  572.48 sec |
+|  `clang 3.5`             | 100% tests passed |  662.50 sec |
+|  `clang 3.5+libstcxx`    |  99% tests passed |  572.18 sec |
+|  `clang 5.0`             | 100% tests passed |  662.50 sec |
+|  `icpc 2018`             | 100% tests passed |  511.08 sec |
+|  `PGI 17.10`             |  99% tests passed |  662.61 sec |
+: A comparison of various compilers and specific options
+
+Concerning the `PGI` compilers, performances may be affected by the
+fact that this compiler generates huge shared libraries (three to ten
+times larger than other compilers).
+
+## Version 3.0.3
+
+This is mainly a bug fix version of the `3.0` series. Detailed release
+notes are available [here](release-notes-3.0.3.html). There are no
+known regressions.
+
 # New entry in the gallery: perfect plasticity based on the Green yield criterion (30/11/2017)
 
 ![Comparison of the Green criterion \(C=1,F=0.2\) and the von Mises criterion](img/GreenYieldCriterion.svg "Comparison of the Green criterion \(C=1,F=0.2\) and the von Mises criterion in plane stress"){width=70%}
