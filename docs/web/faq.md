@@ -1,8 +1,160 @@
 % Frequently asked questions
 % Helfer Thomas
-% October 15, 2014
+% December 18, 2017
 
-# My newly implemented behaviour is not converging, what can I do ?
+# Documentation
+
+There are various kind of documents available, covering a wide range
+of questions. This section describes some of them, but documentation
+about specific part of the `TFEL` project, such as `MFront`, is
+described in the associated sections.
+
+## TFEL/Math
+
+### Documentation about operations on tensors
+
+Available operations on tensors are described
+[here](tensors.html). This page is not complete, so you may want to
+read the `doxygen` documentation of the project.
+
+# Installation
+
+This section deals with installing `MFront` from sources. Consider
+using binary packages of your distribution, when available, if those
+versions were compiled with the appropriate interfaces for your
+specific needs.
+
+## Documentation
+
+The installation process is fully described in the following pages:
+
+- [install.html](install.hml): this document describes the generic
+  installation procedure for `TFEL` from the sources on
+  posix-compliant systems. Please note that the main systems on which
+  `TFEL` was developed is `Linux`. Extensive testing on other
+  posix-compliant operating systems, notably `FreeBSD`, is lacking,
+  although compilation and unit testing is known to work.
+- A page dedicated to `FreeBSD` is available
+  [here](install-freebsd.html).
+- The installation on
+  [Windows plateform](http://windows.microsoft.com) is described in the
+  following pages:
+    - [Installation based on `cmake` and `Visual Studio`](install-windows-VisualStudio.html).
+    - [Installation based on `cmake` and `MinGW` (as packaged with `Cast3M` `2017`)](install-windows-Cast3M2017.html).
+	  This tutorial can easily be adapted to other versions of
+	  `MinGW`, without requiring `Cast3M` to be installed.
+    - [Installation based on `MSYS`](install-windows-msys.html).
+- The creation of binary packages are detailled [here](packages.html). 
+
+## Which build systems shall I use (`autotools` or `cmake`)
+
+We strongly recommend using the `cmake` build system, which is
+actively in the development process used for various reasons and which
+enables many tests that are not present when using `autotools`.
+
+The `autotools` build system is barely maintained in a functional
+state under `LinuX`. This can be used when `cmake` is not available.
+
+## Portable build
+
+By default, the compilation of `mfront` takes advantage of the
+specific CPU of the host system (using flags such as `--march=native`
+with `clang` and `gcc`, `-xHost` with the `intel` compiler). However,
+the binaries generated can not:
+
+- be used to generated redistributable binary packages.
+- be installed on a NFS-like shared folder to be shared on a network
+  of computers.
+
+In both cases, the execution can fail with an `illegal instruction`
+message.
+
+To solve this issue, the `-Denable-portable-build=ON` option (this
+option is valid for `cmake`, when using the `autotools`, consider the
+`--enable-portable-build` option) has been introduced.
+
+With this option, the `mfront` binary and all the `TFEL` shared
+libraries will be "portable" (will not include CPU specific
+instructions).
+
+However, most of the times, the shared libraries produced by `MFront`
+will be executed on the machine on which they will be used. For this
+reasons, the default behaviour of `mfront` is to use flags like
+`-march=native` when compiling the libraries (This can be disabled by
+selecting `--obuild=level0`).
+
+Thus, we test the availability of this flag whether or not
+`-Denable-portable-build=ON` is used.  Thus, a message such as
+`--enabling flag 'march=native'` barely states that this option is
+supported by the compiler.
+
+The best way to know if this option was taken into account is check
+the flags used to compile TFEL, as follows:
+
+~~~~{.sh}
+# when using cmake
+$ make VERBOSE=1
+~~~~
+
+~~~~{.sh}
+# when using autotools
+$ make V=1
+~~~~
+
+Without `-Denable-portable-build=ON`, you shall see the
+`--march=native` flag twice: one time as a compiler flag, one time as
+part of the definition of the `OPTIMISATION_FLAGS` macro. With
+`-Denable-portable-build=ON`, you will see it only once, in the
+definition of the `OPTIMISATION`_FLAGS macro.
+
+# MFront
+
+## General questions
+
+### What is a DSL (domain specific language)
+
+## Documentation
+
+### Keywords available
+
+To get the list of all the keywords associated with a given `DSL`, the
+`Implicit` keyword for example, just type:
+
+~~~~{.sh}
+$ mfront --help-keywords-list=Implicit
+~~~~
+
+### Help on a specific keyword
+
+To get help on a specific keyword, the `@StrainMeasure` keyword from
+the `Implicit DSL` for example, just type:
+
+~~~~{.sh}
+$ mfront --help-keyword=Implicit:@StrainMeasure
+~~~~
+
+The help is written using `pandoc`' `markdown`.
+
+### Getting the help on all keywords of a specific DSL
+
+The following command will display the description of all the keywords
+provided by the `Implicit DSL`:
+
+~~~~{.sh}
+$ mfront --help-keywords=Implicit
+~~~~
+
+Using `pandoc`, this can be turned into an web page or a `PDF`
+document, as follows:
+
+~~~~{.sh}
+$ mfront --help-keywords=Implicit | pandoc -f markdown-markdown_in_html_blocks+tex_math_single_backslash --mathjax -o Implicit.html
+$ mfront --help-keywords=Implicit | pandoc -f markdown-markdown_in_html_blocks+tex_math_single_backslash --mathjax -s --toc --toc-depth=1 -o Implicit.pdf
+~~~~
+
+## Mechanical behaviours
+
+### My newly implemented behaviour do not converge, what can I do ?
 
 Let us point that, there is no general guidelines, most troubles are
 behaviour specific. However, here are some advises to may help
@@ -27,7 +179,7 @@ runtime. For example, it may show:
   residual.
 - `NaN` propagation.
 
-## Large values of the residual
+#### Large values of the residual
 
 In this case, you may want to print some of your variables to see what
 is happening. If the large values appears due to unrealistic
@@ -36,7 +188,7 @@ prediction of the stresses, in particular at the second iteration, the
 robust algorithms (`PowellDogLeg`, `LevenbergMarquardt`). Otherwise,
 you must check your units.
 
-## Divergence spurious oscillations in the residual
+#### Divergence spurious oscillations in the residual
 
 In the second case, the trouble may be related to your implementation
 of the Jacobian matrix (assuming you are using an `Implicit` scheme
@@ -53,7 +205,7 @@ $ mfront --obuild --interface=castem --@CompareToNumericalJacobian=true norton.m
 Spurious oscillations may also be caused by an ill-conditioned system,
 see the `setNormalisationFactor` method.
 
-## `NaN` propagation.
+#### `NaN` propagation.
 
 In this case, you may want to build your `MFront` libraries with
 debugging symbols. This can be done by defining the `CXXFLAGS`
@@ -90,7 +242,7 @@ trouble. Beware that this line may be in the generated code. In this
 case, this information will not be useful and you shall return to
 manual search of the problem.
 
-# What are the variable types available in `MFront`
+### What are the variable types available in `MFront`
 
 For all domain specific languages, `MFront` defines the real
 `typedef` which is used to abstract to floating-point type used
@@ -106,23 +258,23 @@ We now get more specific and **only** deal with *mechanical
 behaviours*.
 
 For scalar values, `MFront` introduces many different `typedef`
-to be able to express the nature of the variable :
+to be able to express the nature of the variable:
 
 `real`, `frequency`, `stress`, `length`, `time`, `strain`,
 `strainrate`, `temperature`, `energy_density`,
 `thermalexpansion`, `massdensity`
 
-For vector values, `MFront` introduces these `typedef` :
+For vector values, `MFront` introduces these `typedef`:
 
 `TVector`,`DisplacementTVector`, `ForceTVector`
 
 For symmetric tensor values, `MFront` also introduces many different
-`typedef` :
+`typedef`:
 
 `Stensor`, `StressStensor`, `StressRateStensor`, `StrainStensor`,
 `StrainRateStensor`
 
-Finally, for tensor values, `MFront` introduces these `typedef` :
+Finally, for tensor values, `MFront` introduces these `typedef`:
 
 `Tensor`, `DeformationGradientTensor`
 
@@ -133,7 +285,7 @@ of `MFront` so that we won't be able to add a `StressStensor` and a
 types to do that.
 
 You can also directly use to types provided by the `TFEL`
-library. The most interesting ones for the end user are :
+library. The most interesting ones for the end user are:
 
 - `tvector<N,Type>` (fixed sized vector)
 - `stensor<N,Type>` (symmetric tensor)
@@ -152,19 +304,21 @@ where `N` is the size for vectors, the number of rows for matrices and
 the spatial dimension for the other types. `M` is the number of
 columns for the matrices. `Type` is the underlying numeric type.
 
-# What are the differences between the `Stensor`, `StressStensor` and `StrainStensor`
+### What are the differences between the `Stensor`, `StressStensor` and `StrainStensor`
 
-The difference between those types is currently purely informative :
+The difference between those types is currently purely informative:
 the user can use these types to improve the readability of their code
 which is strongly encouraged.
 
 The `TFEL` library has support for quantities (number associated with
 units) which allows to checks for the consistency of operations at
 compile-time (no cost at runtime). However, support for this feature
-has not been enabled in `MFront` yet : for the moment, we only have
+has not been enabled in `MFront` yet: for the moment, we only have
 introduced the associated types.
 
-# In which order are the blocks given by the user evaluated ?
+### `Implicit` DSL
+
+### In which order are the blocks given by the user evaluated ?
 
 The following figure shows how the various blocks defined by the user
 may be used when using the `Implicit` domain specific language:

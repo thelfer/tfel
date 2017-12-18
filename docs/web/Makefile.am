@@ -50,6 +50,7 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./release-notes-3.0.2.md				      \
 	   ./release-notes-3.0.3.md				      \
 	   ./release-notes-3.1.md				      \
+	   ./release-notes-3.1.1.md				      \
 	   ./release-notes-3.2.md				      \
 	   ./hyperelasticity.md				              \
 	   ./signorini.md				              \

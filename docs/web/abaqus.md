@@ -210,8 +210,64 @@ Under Windows, the dynamic libraries are searched:
 
 Depending on the compiler and compiler version, appropriate flags
 shall be added for the compilation of the generic `umat.cpp` or
-`vumat-*.cpp` files which are written against the `C++11`
-standard. Those flags are defined in the `abaqus_v6.env` file that
+`vumat-*.cpp` files which are written against the `C++11` standard.
+
+The procedure depends on the version of `Abaqus` used. In every case,
+one shall modify a file called `abaqus_v6.env` which is delivered with
+`Abaqus`. The modified version of this file must be in the current
+working directory.
+
+### Versions later than `Abaqus 2017`
+
+In the `abaqus_v6.env`, one can load a specific environment file using
+the `importEnv` function:
+
+~~~~{.python}
+# Import site specific parameters such as licensing and doc parameters
+importEnv('<path>/custom_v6.env')
+~~~~
+
+This file, called `custom_v6.env`, is used to modify the `compile_cpp`
+entry which contains the command line used to compile `C++` files. The
+content of this file can be copied from one of the system specific
+environment file delivered with `Abaqus`. For example, under `LinuX`,
+one can use the `lnx86_64.env` as a basis to build the
+`custom_v6.env`.
+
+Here is an example of a modified `custom_v6.env` (we changed several
+paths that must be updated to match your installation):
+
+~~~~{.python}
+# Installation of Abaqus CAE 2017
+# Mon Jul 17 15:06:17 2017
+plugin_central_dir="/appli/abaqus/linuxo/V6R2017x/CAE/plugins"
+doc_root="file:////usr/DassaultSystemes/SIMULIA2017doc/English"
+license_server_type=FLEXNET
+abaquslm_license_file="<licenfile>"
+compile_cpp = ['g++', '-O2', '-std=c++11','-c', '-fPIC', '-w', '-Wno-deprecated', '-DTYPENAME=typename',
+               '-D_LINUX_SOURCE', '-DABQ_LINUX', '-DABQ_LNX86_64', '-DSMA_GNUC',
+               '-DFOR_TRAIL', '-DHAS_BOOL', '-DASSERT_ENABLED',
+               '-D_BSD_TYPES', '-D_BSD_SOURCE', '-D_GNU_SOURCE',
+               '-D_POSIX_SOURCE', '-D_XOPEN_SOURCE_EXTENDED', '-D_XOPEN_SOURCE',
+               '-DHAVE_OPENGL', '-DHKS_OPEN_GL',  '-DGL_GLEXT_PROTOTYPES',
+               '-DMULTI_THREADING_ENABLED', '-D_REENTRANT',
+               '-DABQ_MPI_SUPPORT', '-DBIT64', '-D_LARGEFILE64_SOURCE', '-D_FILE_OFFSET_BITS=64', '%P',
+               # '-O0', # <-- Optimization level
+               # '-g',  # <-- Debug symbols
+               '-I%I']
+usub_lib_dir='<path_to_mfront_generated_libraries>:<path_to_mfront>/lib'
+~~~~
+
+The last line define a set of paths where shared libraries will be
+searched for, which is useful if one does not want to install `TFEL`
+and `MFront` on in system wide path (such as `/usr/`) or modify the
+`LD_LIBRARY_PATH` environment variable. One can also specify a shared
+directory (on a NFS file system for example) to access material
+behaviours shared among a team of colleagues.
+
+### Versions prior to `Abaqus v2017`
+
+The appropriate flags can be defined in the `abaqus_v6.env` file that
 can be overridden by the user.
 
 For the `gcc` compiler, one have to add the `--std=c++11` flag. The
@@ -228,7 +284,7 @@ compile_cpp = [cppCmd,
                '-DHAVE_OPENGL', '-DHKS_OPEN_GL',  '-DGL_GLEXT_PROTOTYPES',
                '-DMULTI_THREADING_ENABLED', '-D_REENTRANT',
                '-DABQ_MPI_SUPPORT', '-DBIT64', '-D_LARGEFILE64_SOURCE',
-               '-D_FILE_OFFSET_BITS=64', '-std=c++11',
+               '-D_FILE_OFFSET_BITS=64', '-O2', '-std=c++11',
                mpiCppImpl,'-I\%I']
 ~~~~~~~~~~~~~~~
 
@@ -470,16 +526,22 @@ appropriate generic file for calling `MFront` behaviours:
 - the `vumat-sp.cpp` file is used for single precision.
 - the `vumat-dp.cpp` file is used for double precision.
 
-*For double precision computation, the user must pass the `double`
-`both` command line arguments to `Abaqus/Explicit` so that both the
-packaging steps and the resolution are performed in double precision*
-(by default, if only the `double` command line argument is passed to
-`Abaqus/Explicit`, the packaging step is performed in single precision
-and the resolution is performed in double precision).
+*For double precision computation, the user must pass the
+`double=both` command line arguments to `Abaqus/Explicit` so that both
+the packaging steps and the resolution are performed in double
+precision* (by default, if only the `double` command line argument is
+passed to `Abaqus/Explicit`, the packaging step is performed in single
+precision and the resolution is performed in double precision).
 
 **It is important to carefully respect those instructions: otherwise,
 `Abaqus/Explicit` will crash due to a memory corruption (segmentation
 error)**.
+
+Here is an example of `Abaqus` invocation: 
+
+~~~~{.sh}
+Abaqus user=vumat-dp.cpp double=both job=...
+~~~~
 
 ## Finite strain strategies
 
