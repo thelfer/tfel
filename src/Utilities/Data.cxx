@@ -11,11 +11,12 @@
  * with the sources of TFEL. CEA or EDF may also distribute this 
  * project under specific licensing conditions. 
  */
-#include<iostream>
+
 #include<algorithm>
 
 #include"TFEL/Raise.hxx"
 #include"TFEL/Math/General/IEEE754.hxx"
+#include"TFEL/Utilities/StringAlgorithms.hxx"
 #include"TFEL/Utilities/Data.hxx"
 
 namespace tfel{
@@ -67,9 +68,7 @@ namespace tfel{
 	++p;
 	return Data(v);
       }
-      std::size_t pos;
-      const double r = std::stod(p->value,&pos);
-      throw_if(pos!=p->value.size(),"invalid number '"+p->value+"'");
+      const auto r = convert<double>(p->value);
       ++p;
       return Data(r);
     }
@@ -164,10 +163,6 @@ namespace tfel{
 	raise_if(b,"Data::parse: "+msg);
       };
       auto get = [&callbacks,throw_if](const std::string& k){
-	std::for_each(callbacks.begin(),callbacks.end(),
-		      [](std::map<std::string,CallBack>::const_reference& v){
-			std::cout << "'" << v.first << "'" << std::endl;
-		      });
 	const auto pc = callbacks.find(k);
 	throw_if(pc==callbacks.end(),"unsupported key '"+k+"'");
 	return pc->second;
