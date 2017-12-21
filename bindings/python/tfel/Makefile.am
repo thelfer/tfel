@@ -32,7 +32,8 @@ tests_la_LDFLAGS = -module
 math_la_SOURCES = math.cxx      \
 		  vector.cxx    \
 		  tvector.cxx   \
-		  stensor.cxx
+		  stensor.cxx   \
+		  st2tost2.cxx
 math_la_LIBADD  = -L@top_builddir@/src/Math -lTFELMath         \
 		  @BOOST_LIBS@ @BOOST_PYTHON_LIBS@             \
 		  -L@PYTHONPATH@/lib -lpython@PYTHON_VERSION@
@@ -49,15 +50,18 @@ utilities_la_LDFLAGS = -module
 glossary_la_SOURCES = pyglossary.cxx \
 		      Glossary.cxx   \
 		      GlossaryEntry.cxx
-glossary_la_LIBADD  = -L@top_builddir@/src/Glossary -lTFELGlossary         \
-		      @BOOST_LIBS@ @BOOST_PYTHON_LIBS@             \
+glossary_la_LIBADD  = -L@top_builddir@/src/Glossary -lTFELGlossary  \
+		      @BOOST_LIBS@ @BOOST_PYTHON_LIBS@              \
 		      -L@PYTHONPATH@/lib -lpython@PYTHON_VERSION@
 glossary_la_LDFLAGS = -module
 
 material_la_SOURCES = material.cxx            \
 		      ModellingHypothesis.cxx \
 		      OutOfBoundsPolicy.cxx   \
-		      CrystalStructure.cxx
+		      CrystalStructure.cxx    \
+		      PiPlane.cxx             \
+                      Hosford.cxx             \
+		      Barlat.cxx
 material_la_LIBADD  = -L@top_builddir@/src/Material -lTFELMaterial \
 		      @BOOST_LIBS@ @BOOST_PYTHON_LIBS@             \
 		      -L@PYTHONPATH@/lib -lpython@PYTHON_VERSION@

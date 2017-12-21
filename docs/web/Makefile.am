@@ -34,10 +34,12 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./documentations.md					      \
 	   ./gallery.md					              \
 	   ./mfront-python.md					      \
+	   ./material.md					      \
 	   ./mtest.md						      \
 	   ./mtest-python.md					      \
 	   ./tutorial.md					      \
 	   ./tutorial-spanish.md				      \
+	   ./tfel-python.md					      \
 	   ./LICENSE.md						      \
 	   ./glossary.md					      \
 	   ./parameters.md					      \
@@ -226,6 +228,7 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./img/HosfordStress.svg                                    \
 	   ./img/GreenYieldCriterion.svg                              \
 	   ./img/GreenYieldCriterion.png                              \
+	   ./img/IsotropicEquivalentStressesInPiPlane.svg             \
            ./img/TFEL-3.1/Alpine_Linux_3.6.png			      \
            ./img/TFEL-3.1/Fedora_27_05_12_2017_11_37_17.png	      \
            ./img/TFEL-3.1/Ghost_BSD-10.3.png			      \
@@ -235,6 +238,18 @@ EXTRA_DIST=CMakeLists.txt					      \
            ./img/TFEL-3.1/VisualStudio-2015.png			      \
            ./img/TFEL-3.1/OpenSolaris-2017.png			      \
            ./img/TFEL-3.1/Haiku-51366.png			      \
+           ./img/Scherzinger/Hosford100/Newton.png		      \
+           ./img/Scherzinger/Hosford100/LevenbergMarquardt.png	      \
+           ./img/Scherzinger/Hosford100/NewtonJacobi.png	      \
+           ./img/Scherzinger/Hosford100/LevenbergMarquardtJacobi.png  \
+           ./img/Scherzinger/Hosford100/MaximumIncrementValuePerIteration.png \
+           ./img/Scherzinger/Hosford100/MaximumIncrementValuePerIterationJacobi.png \
+           ./img/Scherzinger/Hosford100/TestOnYieldStress.png         \
+           ./img/Scherzinger/Hosford6/TestOnYieldStress.png	      \
+           ./img/Scherzinger/Hosford6/Newton.png		      \
+           ./img/Scherzinger/Hosford8/TestOnYieldStress.png	      \
+           ./img/Scherzinger/Hosford8/Newton.png		      \
+           ./img/Scherzinger/Hosford8/NewtonJacobi.png		      \
 	   ./media/epx1.mp4                                           \
 	   ./media/epx2.mp4                                           \
 	   ./media/abaqus-explicit.mp4                                \

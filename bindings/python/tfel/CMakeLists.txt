@@ -36,14 +36,18 @@ target_link_libraries(py_tfel_glossary TFELGlossary)
 tfel_python_module(math math.cxx
   vector.cxx
   tvector.cxx
-  stensor.cxx)
+  stensor.cxx
+  st2tost2.cxx)
 target_link_libraries(py_tfel_math TFELMath)
 
 tfel_python_module(material
   material.cxx
   ModellingHypothesis.cxx
   OutOfBoundsPolicy.cxx
-  CrystalStructure.cxx)
+  CrystalStructure.cxx
+  PiPlane.cxx
+  Barlat.cxx
+  Hosford.cxx)
 
 if(NOT WIN32)
   tfel_python_module(system system.cxx

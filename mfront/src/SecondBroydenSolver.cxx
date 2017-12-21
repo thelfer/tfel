@@ -45,8 +45,7 @@ namespace mfront{
     return false;
   } // end of SecondBroydenSolver::allowsJacobianInitialisation
 
-  bool
-  SecondBroydenSolver::allowsJacobianInvertInitialisation() const
+  bool SecondBroydenSolver::allowsJacobianInvertInitialisation() const
   {
     return true;
   } // end of SecondBroydenSolver::allowsJacobianInvertInitialisation
@@ -57,8 +56,7 @@ namespace mfront{
     return false;
   } // end of SecondBroydenSolver::allowsJacobianInitialisation
 
-  bool
-  SecondBroydenSolver::requiresNumericalJacobian() const
+  bool SecondBroydenSolver::requiresNumericalJacobian() const
   {
     return false;
   }
@@ -70,7 +68,7 @@ namespace mfront{
 					     const tokens_iterator)
   {
     return {false,p};
-  } // end of MFrontLevenbergMarquartSolverBase::treatSpecificKeywords
+  } // end of SecondBroydenSolver::treatSpecificKeywords
 
   void
   SecondBroydenSolver::completeVariableDeclaration(BehaviourDescription&) const

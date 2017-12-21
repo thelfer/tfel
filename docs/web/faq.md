@@ -2,6 +2,31 @@
 % Helfer Thomas
 % December 18, 2017
 
+# Getting help
+
+There are various ways of getting help, including this FAQ.
+
+The main source is the `TFEL` website:
+<http://tfel.sourceforge.net/>. In particular, one may want to read
+the pages dedicated to:
+
+- the documentation (see also the various entries in the FAQ below):
+  <http://tfel.sourceforge.net/documentation.html>
+- the installation process (see also the dedicated entry in the FAQ
+  below): <http://tfel.sourceforge.net/documentation.html>
+
+If none of the resources available is satisfying, one may want to use:
+
+- the `TFEL` forums: <https://sourceforge.net/p/tfel/discussion>
+- the user mailing list:
+  [tfel-discuss@lists.sourceforge.net](mailto:tfel-discuss@lists.sourceforge.net)
+- the `TFEL` official mail adress to contact the developpers:
+  [tfel-contact@cea.fr](tfel-contact@cea.fr).
+
+We recommend using the forums and the mailing list for general
+questions, as our answers can hopefully also be of any help to other
+users.
+
 # Documentation
 
 There are various kind of documents available, covering a wide range
@@ -113,6 +138,41 @@ definition of the `OPTIMISATION`_FLAGS macro.
 
 ### What is a DSL (domain specific language)
 
+`MFront` treats various kind of material knowledge:
+
+- [material properties](material-properties.html) (for instance the
+  Young modulus, the thermal conductivity, etc.)
+- [mechanical behaviours](behaviours.html).
+- [simple point-wise models](models.html), such as material swelling
+  used in fuel performance codes.
+
+For mechanical behaviours, various algorithms are available.
+
+In all cases, `MFront` strives to provide the most natural way of
+implementing the material knowledge under consideration. In technical
+terms, `MFront` provides for each case a *domain specific language*
+which is meant to be simple and expressive.
+
+### Supporting new interfaces
+
+`MFront` already supports many interfaces to:
+
+- free or commercial finite element solvers (implicit or explicit)
+- mechanical solvers based on Fast Fourier Transform (FFT).
+
+Most solvers offers entry points to add user defined mechanical
+behaviours. The most common one is `UMAT`, which is part of the
+`Abaqus/Standard` solver. In this case, the process of supporting new
+a solver is fairly easy and we are ready to help setting it
+up. However, extensive testing can be a long and tedious task: again,
+we are ready to help by providing advice, test cases and reference
+solutions.
+
+If no such entry point exist, then one may need to modify the
+solver. Again, we can provide valuable advice of how to do add support
+for user defined behaviours and even provide tight integration with
+`MFront` (which can really ease user's life).
+
 ## Documentation
 
 ### Keywords available
@@ -152,7 +212,14 @@ $ mfront --help-keywords=Implicit | pandoc -f markdown-markdown_in_html_blocks+t
 $ mfront --help-keywords=Implicit | pandoc -f markdown-markdown_in_html_blocks+tex_math_single_backslash --mathjax -s --toc --toc-depth=1 -o Implicit.pdf
 ~~~~
 
-## Mechanical behaviours
+## General questions about mechanical behaviours
+
+### Where can I find examples of well written behaviours ?
+
+The gallery has been created for that purpose. Various implementations
+of mechanical behaviour are covered in depth, including the
+description of the algorithm used. See [this page](gallery.html) for
+details.
 
 ### My newly implemented behaviour do not converge, what can I do ?
 
@@ -316,7 +383,7 @@ compile-time (no cost at runtime). However, support for this feature
 has not been enabled in `MFront` yet: for the moment, we only have
 introduced the associated types.
 
-### `Implicit` DSL
+## Implementing mechanical behaviours using the `Implicit` DSL
 
 ### In which order are the blocks given by the user evaluated ?
 

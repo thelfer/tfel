@@ -64,9 +64,9 @@ namespace mfront
     this->registerSolver("Broyden2",
 			 buildSolverConstructor<SecondBroydenSolver>);
     this->registerSolver("LevenbergMarquardt",
-			 buildSolverConstructor<LevenbergMarquartSolver>);
+			 buildSolverConstructor<LevenbergMarquardtSolver>);
     this->registerSolver("LevenbergMarquardt_NumericalJacobian",
-			 buildSolverConstructor<LevenbergMarquartNumericalJacobianSolver>);
+			 buildSolverConstructor<LevenbergMarquardtNumericalJacobianSolver>);
   } // end of NonLinearSystemSolverFactory::NonLinearSystemSolverFactory
 
   void

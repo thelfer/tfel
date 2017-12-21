@@ -66,6 +66,7 @@ pandoc_html(models)
 pandoc_html(parameters)
 pandoc_html(publications)
 pandoc_html(release-notes "--toc" "--toc-depth=1")
+pandoc_html(material "--toc" "--toc-depth=2")
 pandoc_html(mfm)
 pandoc_html(mfront-doc)
 pandoc_html(mfront-python "--toc" "--toc-depth=3")
@@ -97,6 +98,7 @@ pandoc_html(release-notes-3.1.1 "--toc" "--toc-depth=2")
 pandoc_html(release-notes-3.2   "--toc" "--toc-depth=2" "--number-sections" "-c css/slideshow.css")
 pandoc_html(theory  "--toc" "--toc-depth=2")
 pandoc_html(tensors "--toc" "--toc-depth=2")
+pandoc_html(tfel-python "--toc" "--toc-depth=3")
 
 # mfront keywords
 

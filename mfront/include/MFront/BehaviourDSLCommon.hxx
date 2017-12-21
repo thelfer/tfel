@@ -949,7 +949,7 @@ namespace mfront{
      */
     virtual void
     writeMaterialPropertyArguments(std::ostream&,
-				   const BehaviourDescription::ComputedMaterialProperty&,
+				   const BehaviourDescription::MaterialProperty&,
 				   std::function<std::string(const MaterialPropertyInput&)>&) const;
     /*!
      * \brief write the bounds checks to a material property

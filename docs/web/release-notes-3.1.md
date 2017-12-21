@@ -1042,8 +1042,8 @@ function takes two template parameter:
 This functions takes the \(9\) coefficients as arguments, as follows:
 
 ~~~~{.cpp}
-const auto l1 = makeBarlatLinearTransformationType<3>(c_12,c_21,c_13,c_31,
-                                                      c_23,c_32,c_44,c_55,c_55);
+const auto l1 = makeBarlatLinearTransformation<3>(c_12,c_21,c_13,c_31,
+                                                  c_23,c_32,c_44,c_55,c_66);
 ~~~~
 
 > **Note** In his paper, Barlat and coworkers uses the following convention for
@@ -1068,12 +1068,12 @@ const auto l1 = makeBarlatLinearTransformationType<3>(c_12,c_21,c_13,c_31,
 > by Barlat, one shall call this function as follows:
 > 
 > ~~~~{.cpp}
-> const auto l1 = makeBarlatLinearTransformationType<3>(cB_12,cB_21,cB_13,cB_31,
->                                                       cB_23,cB_32,cB_66,cBB_55,cBB_44);
+> const auto l1 = makeBarlatLinearTransformation<3>(cB_12,cB_21,cB_13,cB_31,
+>                                                   cB_23,cB_32,cB_66,cBB_55,cBB_44);
 > ~~~~
 
 The `TFEL/Material` library also provide an overload of the
-`makeBarlatLinearTransformationType` which template parameters are the
+`makeBarlatLinearTransformation` which template parameters are the
 modelling hypothesis and the orthotropic axis conventions. The purpose
 of this overload is to swap appriopriate coefficients to get a
 consistent definition of the linear transforamtions for all the

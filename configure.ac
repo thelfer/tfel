@@ -10,7 +10,7 @@ AC_CANONICAL_HOST
 AC_CANONICAL_TARGET
 
 # Automake specific stuff
-AM_INIT_AUTOMAKE([foreign dist-bzip2 tar-ustar subdir-objects subdir-objects subdir-objects subdir-objects subdir-objects])
+AM_INIT_AUTOMAKE([foreign dist-bzip2 tar-ustar subdir-objects subdir-objects subdir-objects subdir-objects subdir-objects subdir-objects])
 m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])])
 
 # ok, this is ugly, but is sufficient for our needs

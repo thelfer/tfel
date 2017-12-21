@@ -11,11 +11,10 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_PYTHON_VECTORCONVERTER_H_
-#define LIB_TFEL_PYTHON_VECTORCONVERTER_H_ 
+#ifndef LIB_TFEL_PYTHON_PAIRCONVERTER_H_
+#define LIB_TFEL_PYTHON_PAIRCONVERTER_H_ 
 
-#include<vector>
-
+#include<utility>
 #include<boost/python.hpp>
 #include<boost/python/stl_iterator.hpp>
 
@@ -26,7 +25,7 @@ namespace tfel
   {
 
     /*!
-     * convert vector converter to python tuple
+     * convert pair converter to python tuple
      */
     template<typename T1, typename T2>
     struct pair_to_python_tuple
@@ -62,7 +61,6 @@ namespace tfel
 	handle<> h(borrowed(ptr));
 	tuple l(h);
 	stl_input_iterator<object> p(l);
-	stl_input_iterator<object> pe;
         extract<T1> e1(*p);
         if(!e1.check()){
 	  return nullptr;
@@ -80,19 +78,18 @@ namespace tfel
       {
 	using namespace boost::python;
 	using namespace boost::python::converter;
-	typedef rvalue_from_python_storage<std::pair<T1,T2> > py_storage;
+	using py_storage = rvalue_from_python_storage<std::pair<T1,T2>>;
 	using std::pair;
 	assert(PyTuple_Check(ptr));
 	handle<> h(borrowed(ptr));
 	tuple l(h);
 	stl_input_iterator<object> p(l);
-	stl_input_iterator<object> pe;
 	// Grab pointer to memory into which to construct the new pair<T1,T2>
 	void* storage = reinterpret_cast<py_storage *>(data)->storage.bytes;
 	// in-place construct the new pair<T1,T2> using the character data
 	// extraced from the python object
 	new (storage) pair<T1,T2>();
-	pair<T1,T2>& v = *(static_cast<pair<T1,T2> *>(storage));
+	auto& v = *(static_cast<pair<T1,T2> *>(storage));
         extract<T1> e1(*p);
         assert(e1.check());
         ++p;
@@ -122,5 +119,5 @@ namespace tfel
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_PYTHON_VECTORCONVERTER_H_ */
+#endif /* LIB_TFEL_PYTHON_PAIRCONVERTER_H_ */
 

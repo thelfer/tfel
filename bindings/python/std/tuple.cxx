@@ -1,8 +1,8 @@
 /*! 
- * \file   bindings/python/std/pair.cxx
+ * \file   bindings/python/std/tuple.cxx
  * \brief
  * \author Thomas Helfer
- * \brief  10 jun 2010
+ * \brief  19/12/2017
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
  * reserved. 
  * This project is publicly released under either the GNU GPL Licence 
@@ -11,12 +11,14 @@
  * project under specific licensing conditions. 
  */
 
-#include<map>
+#include<tuple>
 #include<boost/python.hpp>
-#include"TFEL/Python/PairConverter.hxx"
+#include"TFEL/Python/TupleConverter.hxx"
 
-BOOST_PYTHON_MODULE(_stl_pair)
+BOOST_PYTHON_MODULE(_stl_tuple)
 {
   using namespace tfel::python;
-  initializePairConverter<std::string,std::string>();
+  initializeTupleConverter<double>();
+  initializeTupleConverter<double,double>();
+  initializeTupleConverter<double,double,double>();
 }

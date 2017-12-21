@@ -27,24 +27,21 @@ namespace tfel{
     struct Power;
 
     template<int N,unsigned int D>
-    class TFEL_VISIBILITY_LOCAL UnaryResultType<float,Power<N,D> >
+    struct UnaryResultType<float,Power<N,D> >
     {
-    public:
-      typedef float type;
+      using type = float;
     };
 
     template<int N,unsigned int D>
-    class TFEL_VISIBILITY_LOCAL UnaryResultType<double,Power<N,D> >
+    struct UnaryResultType<double,Power<N,D> >
     {
-    public:
-      typedef double type;
+      using type = double;
     };
 
     template<int N,unsigned int D>
-    class TFEL_VISIBILITY_LOCAL UnaryResultType<long double,Power<N,D> >
+    struct UnaryResultType<long double,Power<N,D> >
     {
-    public:
-      typedef long double type;
+      using type = long double;
     };
 
     template<int N,typename T>
@@ -54,8 +51,7 @@ namespace tfel{
       T>::type
     power(const T);
   
-    template<int N,unsigned int D,
-	     typename T>
+    template<int N,unsigned int D,typename T>
     TFEL_MATH_INLINE
     typename std::enable_if<
       tfel::typetraits::IsScalar<T>::cond,

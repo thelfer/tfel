@@ -32,6 +32,7 @@ bindings/python/include/Makefile.am -text
 bindings/python/include/TFEL/Python/MapConverter.hxx -text
 bindings/python/include/TFEL/Python/PairConverter.hxx -text
 bindings/python/include/TFEL/Python/SharedPtr.hxx -text
+bindings/python/include/TFEL/Python/TupleConverter.hxx -text
 bindings/python/include/TFEL/Python/VectorConverter.hxx -text
 bindings/python/mfront/AbstractBehaviourDSL.cxx -text
 bindings/python/mfront/AbstractDSL.cxx -text
@@ -84,12 +85,14 @@ bindings/python/std/Makefile.am -text
 bindings/python/std/__init__.py.in -text
 bindings/python/std/map.cxx -text
 bindings/python/std/pair.cxx -text
+bindings/python/std/tuple.cxx -text
 bindings/python/std/vector.cxx -text
 bindings/python/tests/CMakeLists.txt -text
 bindings/python/tests/Makefile.am -text
 bindings/python/tests/pymfronttest1.py.in -text
 bindings/python/tests/pymfronttest2.py.in -text
 bindings/python/tests/pymfronttest3.py.in -text
+bindings/python/tfel/Barlat.cxx -text
 bindings/python/tfel/CMakeLists.txt -text
 bindings/python/tfel/CrystalStructure.cxx -text
 bindings/python/tfel/Data.cxx -text
@@ -97,11 +100,13 @@ bindings/python/tfel/ExternalBehaviourDescription.cxx -text
 bindings/python/tfel/ExternalLibraryManager.cxx -text
 bindings/python/tfel/Glossary.cxx -text
 bindings/python/tfel/GlossaryEntry.cxx -text
+bindings/python/tfel/Hosford.cxx -text
 bindings/python/tfel/LibraryInformation.cxx -text
 bindings/python/tfel/Makefile.am -text
 bindings/python/tfel/ModellingHypothesis.cxx -text
 bindings/python/tfel/OutOfBoundsPolicy.cxx -text
 bindings/python/tfel/PhysicalConstants.cxx -text
+bindings/python/tfel/PiPlane.cxx -text
 bindings/python/tfel/ProcessManagerCommand.cxx -text
 bindings/python/tfel/TestResult.cxx -text
 bindings/python/tfel/TextData.cxx -text
@@ -111,6 +116,7 @@ bindings/python/tfel/__init__.py.version.in -text
 bindings/python/tfel/material.cxx -text
 bindings/python/tfel/math.cxx -text
 bindings/python/tfel/pyglossary.cxx -text
+bindings/python/tfel/st2tost2.cxx -text
 bindings/python/tfel/stensor.cxx -text
 bindings/python/tfel/system.cxx -text
 bindings/python/tfel/tests.cxx -text
@@ -1167,6 +1173,7 @@ docs/web/img/IconeCast3M_jaune.png -text
 docs/web/img/IconeCast3M_verte.png -text
 docs/web/img/ImplicitDSL.svg -text
 docs/web/img/Interfaces.svg -text
+docs/web/img/IsotropicEquivalentStressesInPiPlane.svg -text
 docs/web/img/IsotropicViscoplasticityAmstrongFredericKinematicHardening.svg -text
 docs/web/img/LogarithmicStrainPlasticity-ssna303.svg -text
 docs/web/img/Norton-full.docx -text
@@ -1179,6 +1186,18 @@ docs/web/img/Norton.mfront -text
 docs/web/img/NortonCreepUniaxialTesting.svg -text
 docs/web/img/Polar_decomposition_of_F.png -text
 docs/web/img/SalomeMeca2015.png -text
+docs/web/img/Scherzinger/Hosford100/LevenbergMarquardt.png -text
+docs/web/img/Scherzinger/Hosford100/LevenbergMarquardtJacobi.png -text
+docs/web/img/Scherzinger/Hosford100/MaximumIncrementValuePerIteration.png -text
+docs/web/img/Scherzinger/Hosford100/MaximumIncrementValuePerIterationJacobi.png -text
+docs/web/img/Scherzinger/Hosford100/Newton.png -text
+docs/web/img/Scherzinger/Hosford100/NewtonJacobi.png -text
+docs/web/img/Scherzinger/Hosford100/TestOnYieldStress.png -text
+docs/web/img/Scherzinger/Hosford6/Newton.png -text
+docs/web/img/Scherzinger/Hosford6/TestOnYieldStress.png -text
+docs/web/img/Scherzinger/Hosford8/Newton.png -text
+docs/web/img/Scherzinger/Hosford8/NewtonJacobi.png -text
+docs/web/img/Scherzinger/Hosford8/TestOnYieldStress.png -text
 docs/web/img/TFEL-3.1/Alpine_Linux_3.6.png -text
 docs/web/img/TFEL-3.1/Cygwin.png -text
 docs/web/img/TFEL-3.1/Fedora_27_05_12_2017_11_37_17.png -text
@@ -1296,6 +1315,7 @@ docs/web/js/slideshow.js -text
 docs/web/js/vendor/jquery-1.10.2.min.js -text
 docs/web/js/vendor/modernizr-2.6.2.min.js -text
 docs/web/material-properties.md -text
+docs/web/material.md -text
 docs/web/media/CalculiXSheetForming-50.mp4 -text
 docs/web/media/SignoriniCompression.mp4 -text
 docs/web/media/SignoriniStrip.mp4 -text
@@ -1333,6 +1353,7 @@ docs/web/singlecrystal.md -text
 docs/web/svn.md -text
 docs/web/tensors.md -text
 docs/web/tex/lcmd_utf8.tex -text
+docs/web/tfel-python.md -text
 docs/web/theory.md -text
 docs/web/tutorial-spanish.md -text
 docs/web/tutorial.md -text

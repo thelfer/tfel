@@ -104,6 +104,17 @@ namespace mfront
     };
     /*!
      * \brief this structure holds the value of a material
+     * property defined through an analytic expression
+     */
+    struct AnalyticMaterialProperty
+    {
+      //! return the list of the variables
+      std::vector<std::string> getVariableNames() const;
+      //! description of a material property
+      std::string f;
+    }; // end of AnalyticMaterialProperty
+    /*!
+     * \brief this structure holds the value of a material
      * property defined through an mfront file
      */
     struct ComputedMaterialProperty
@@ -114,6 +125,7 @@ namespace mfront
     //! list of supported material properties types
     using MaterialPropertyTypes =
       tfel::meta::GenerateTypeList<ConstantMaterialProperty,
+				   AnalyticMaterialProperty,
 				   ComputedMaterialProperty>::type;
     //! a simple alias
     using StressFreeExpansionDescription =

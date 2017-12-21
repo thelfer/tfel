@@ -16,10 +16,12 @@
 void declareTFELMathVector();
 void declaretvector();
 void declarestensor();
+void declarest2tost2();
 
 BOOST_PYTHON_MODULE(math)
 {
   declaretvector();
   declarestensor();
+  declarest2tost2();
   declareTFELMathVector();
 }

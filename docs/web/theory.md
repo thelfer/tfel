@@ -158,7 +158,7 @@ tensors (logarithm, exponential, square root, ..):
 - the motion is described by a family of mappings \(\phi_{t}\),
   the {\bf deformation}, which associates a point \(\vec{X}\) in
   \(\mathcal{C}_{0}\) to its position \(\vec{x}\) in
-  \(\mathcal{C}_{t}\)~:
+  \(\mathcal{C}_{t}\):
   \[
   \vec{x}=\phi_{t}\paren{\vec{X}}=\vec{X}+\vec{u}_{t}\paren{\vec{X}}
   \]
@@ -173,7 +173,7 @@ tensors (logarithm, exponential, square root, ..):
   \[
   \phi\paren{\vec{X}+\dtot\,\vec{X}}-\phi\paren{\vec{X}}=\deriv{\phi}{\vec{X}}\,.\dtot\,\vec{X}+\underbrace{\vec{X}\,.\,\Frac{\partial^{2}\,\phi}{\partial\,\vec{X}^{2}}\,.\dtot\,\vec{X}+\ldots}_{\text{Higher order terms}}
   \]
-- The deformation gradient \(\tns{F}\) is a tensor defined by~:
+- The deformation gradient \(\tns{F}\) is a tensor defined by:
   \[
   \tns{F}=\deriv{\phi}{\vec{X}}=\tns{I}+\deriv{\vec{u}}{\vec{X}}
   \]
@@ -212,7 +212,7 @@ paper.
 
 ### Pure dilatation
 
-- Pure dilatations correspond to diagonal deformation gradients~:
+- Pure dilatations correspond to diagonal deformation gradients:
   \[
   \tns{F}=\tenseur{U}=
   \begin{pmatrix}
@@ -345,13 +345,13 @@ paper.
   \quad\text{or}\quad
   \tepsilonto=\Frac{1}{2}\paren{\Grad{\vec{u}}+\transpose{\Grad{\vec{u}}}}
   \]
-- change of volume~:
+- change of volume:
   \[
   J=\det\tns{F}\approx{}=\det\tenseur{U}=1+\trace{\tepsilonto}
   \]
 - \(\Omega_{t}\) can be replaced by \(\Omega_{0}\):
     - no more geometrical non linearity
-  - Equilibrium~:
+  - Equilibrium:
   \[
   \Divergence\tsigma+\vec{f}=\rho_{0}\,\vec{a} \quad\text{and}\quad
   \tsigma=\transpose{\tsigma}
@@ -443,7 +443,7 @@ theory to finite rotation*
 ### The logarithmic strain framework
 
 - There is a straight-forward relation between the
-  Hencky strain strain and the change of volume~:
+  Hencky strain strain and the change of volume:
   \[
   J = \exp\paren{\trace{\tepsilonto_{\mathrm{log}}}}
   \]
@@ -471,7 +471,7 @@ theory to finite rotation*
   path-independent, i.e. the mechanical work only depends on the
   current state of deformation and not the history of the
   deformation process
-- The dual stress \(\tenseur{T}_{\star}\) then satisfies ~:
+- The dual stress \(\tenseur{T}_{\star}\) then satisfies :
   \[
   \tenseur{T}_{\star} = \deriv{w}{\tepsilonto_{\star}}
   \]
@@ -479,21 +479,21 @@ theory to finite rotation*
 ## Linear Elasticity
 
 - Linear elasticity assumes a linear relationship between
-  \(\tepsilonto_{\star}\) and \(\tenseur{T}_{\star}\)~:
+  \(\tepsilonto_{\star}\) and \(\tenseur{T}_{\star}\):
   \[
   \tenseur{T}_{\star} = \tenseurq{D}\,\colon\,\tepsilonto_{\star}\quad\Leftrightarrow\quad w=\Frac{1}{2}\tepsilonto_{\star}\,\colon\,\tenseurq{D}\,\colon\,\tepsilonto_{\star}
   \]
-- The fourth order tensor \(\tenseurq{D}\) satisfies~:
+- The fourth order tensor \(\tenseurq{D}\) satisfies:
   \[
   \tenseurq{D}=\Frac{\partial^{2}w}{\partial\tepsilonto_{\star}\partial\tepsilonto_{\star}}
   \]
-- \(\tenseurq{D}\) have the following properties~:
+- \(\tenseurq{D}\) have the following properties:
     - \(\tenseurq{D}\) has minor symmetries (\(\tenseur{T}_{\star}\) and \(\tepsilonto_{\star}\)
-    are symmetric)~:
+    are symmetric):
     \[
     D_{ijkl}= D_{jikl}\quad\text{and}\quad D_{ijkl}= D_{ijlk}
     \]
-  - \(\tenseurq{D}\) has major symmetries (Schwarz theorem)~:
+  - \(\tenseurq{D}\) has major symmetries (Schwarz theorem):
     \[
     D_{ijkl}=D_{klij}
     \]
@@ -529,7 +529,7 @@ theory to finite rotation*
 
 ### Bulk modulus
 
-- Separate change of volume from deviatoric part~:
+- Separate change of volume from deviatoric part:
   \[
   \begin{aligned}
     \tenseur{T}_{\star}&= \lambda\,\paren{\trace{\tepsilonto_{\star}}}\,\tenseur{I}+2\,\mu\,\tepsilonto_{\star} \\
@@ -541,7 +541,7 @@ theory to finite rotation*
 
 ### Young modulus and Poisson coefficient
 
-- consider an uniaxial tensile state along \(11\)~:
+- consider an uniaxial tensile state along \(11\):
   \[
   \begin{aligned}
     \tepsilonto_{\star}& =
@@ -676,13 +676,13 @@ theory to finite rotation*
   T^{eq}_{\star}=\text{Cste}
   \]
   defines a sphere in the deviatoric space
-- The normal to this surface is~:
+- The normal to this surface is:
   \[
   \tenseur{n}_{\star}=\deriv{T^{eq}_{\star}}{\tenseur{T}_{\star}}=\Frac{3\,\tenseur{s}_{\star}}{2\,T^{eq}_{\star}}
   \]
 - \(\tenseur{n}_{\star}\colon\tenseur{n}_{\star}=\Frac{3}{2}\)
 - The normal is colinear to \(\tenseur{s}_{\star}\), thus an
-  isochoric viscoplastic flow of the form~:
+  isochoric viscoplastic flow of the form:
   \[
   \tdepsilonvis_{\star}=f\paren{\tenseur{T}_{\star}}\tenseur{n}_{\star}
   \]

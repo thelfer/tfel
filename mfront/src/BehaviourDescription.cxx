@@ -185,21 +185,28 @@ namespace mfront
 					   const tfel::glossary::GlossaryEntry& e,
 					   const std::string& n)
   {
+    auto throw_if = [](const bool c,const std::string& m){
+      tfel::raise_if(c,"checkThermalExpansionCoefficientArgument: "+m);
+    };
     declareParameter(bd,a,e,n);
-    if(!a.is<BehaviourDescription::ComputedMaterialProperty>()){
+    if(a.is<BehaviourDescription::ConstantMaterialProperty>()){
       return;
     }
-    const auto& mpd = *(a.get<BehaviourDescription::ComputedMaterialProperty>().mpd);
-    tfel::raise_if(!((mpd.inputs.size())||(mpd.inputs.size()!=1u)),
-		   "checkThermalExpansionCoefficientArgument: "
-		   "thermal expansion shall only depend on "
-		   "temperature or be constant");
-    if(mpd.inputs.size()==1u){
-      const auto& v = mpd.inputs.front();
-      const auto& vn = v.getExternalName();
-      tfel::raise_if(vn!="Temperature",
-		     "checkThermalExpansionCoefficientArgument: "
-		     "thermal expansion shall only depend on temperature");
+    if(a.is<BehaviourDescription::ComputedMaterialProperty>()){
+      const auto& mpd = *(a.get<BehaviourDescription::ComputedMaterialProperty>().mpd);
+      throw_if(!((mpd.inputs.size())||(mpd.inputs.size()!=1u)),
+	       "thermal expansion shall only depend on "
+	       "temperature or be constant");
+      if(mpd.inputs.size()==1u){
+	const auto& v = mpd.inputs.front();
+	const auto& vn = v.getExternalName();
+	throw_if(vn!="Temperature","thermal expansion shall "
+		 "only depend on temperature");
+      }
+    } else if(a.is<BehaviourDescription::AnalyticMaterialProperty>()){
+      
+    } else {
+      throw_if(true,"unsupported material property type");
     }
   } // end of checkThermalExpansionCoefficientArgument
 

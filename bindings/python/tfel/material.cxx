@@ -16,10 +16,16 @@
 void declareModellingHypothesis();
 void declareOutOfBoundsPolicy();
 void declareCrystalStructure();
+void declarePiPlane();
+void declareHosford();
+void declareBarlat();
 
 BOOST_PYTHON_MODULE(material)
 {
   declareModellingHypothesis();
   declareOutOfBoundsPolicy();
   declareCrystalStructure();
+  declarePiPlane();
+  declareHosford();
+  declareBarlat();
 }

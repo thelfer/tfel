@@ -146,7 +146,12 @@ namespace tfel
       };
       throw_if(s.empty());
       std::size_t p;
-      const auto r = std::stod(s,&p);
+      double r;
+      try{
+	r = std::stod(s,&p);
+      } catch(std::exception&){
+	throw_if(true);
+      }
       throw_if(p!=s.size());
       return r;
     }
@@ -160,7 +165,12 @@ namespace tfel
       };
       throw_if(s.empty());
       std::size_t p;
-      const auto r = std::stold(s,&p);
+      long double r;
+      try{
+	r = std::stold(s,&p);
+      } catch(std::exception&){
+	throw_if(true);
+      }
       throw_if(p!=s.size());
       return r;
     }

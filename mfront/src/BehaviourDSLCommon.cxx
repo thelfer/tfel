@@ -1669,10 +1669,17 @@ namespace mfront{
   BehaviourDSLCommon::extractMaterialProperty(const std::string& m,
 					      const tfel::utilities::Token& t){
     if(t.flag==tfel::utilities::Token::String){
-      BehaviourDescription::ComputedMaterialProperty mp;
+      // file name of formula
       const auto f = t.value.substr(1,t.value.size()-2);
-      mp.mpd = this->handleMaterialPropertyDescription(f);
-      return mp;
+      if(tfel::utilities::ends_with(f,".mfront")){
+	// file name
+	BehaviourDescription::ComputedMaterialProperty mp;
+	mp.mpd = this->handleMaterialPropertyDescription(f);
+	return mp;
+      } else {
+	BehaviourDescription::ComputedMaterialProperty mp;
+	
+      }  
     }
     BehaviourDescription::ConstantMaterialProperty mp;
     try{
@@ -4067,9 +4074,10 @@ namespace mfront{
   } // end of BehaviourDSLCommon::writeStiffnessTensorComputation
 
   void BehaviourDSLCommon::writeMaterialPropertyArguments(std::ostream& out,
-							  const BehaviourDescription::ComputedMaterialProperty& cmp,
+							  const BehaviourDescription::MaterialProperty& m,
 							  std::function<std::string(const MaterialPropertyInput&)>& f) const
   {
+    const auto& cmp = m.get<BehaviourDescription::ComputedMaterialProperty>();
     const auto& mpd = *(cmp.mpd);
     out << '(';
     if(!mpd.inputs.empty()){
@@ -4851,10 +4859,8 @@ namespace mfront{
   void BehaviourDSLCommon::writeBehaviourDestructor(std::ostream& os) const
   {    
     this->checkBehaviourFile(os);
-    os << "/*!\n"
-       << "* \\brief Destructor\n"
-       << "*/\n"
-       << "~" << this->mb.getClassName() << "()\n" << "{}\n\n";
+    os << "//!\n"
+       << "~" << this->mb.getClassName() << "()\n" << " = default;\n\n";
   }
 
   void BehaviourDSLCommon::writeBehaviourUpdateExternalStateVariables(std::ostream& os,
