@@ -213,11 +213,11 @@ namespace tfel{
       // eigenvalues are normalised by the Von Mises stress to avoid
       // overflow
       const auto rvp      = vp*iseq;
-      const auto Psi_a    = (std::pow(std::abs(rvp[0]-rvp[1]),a)+
+      const real Psi_a    = (std::pow(std::abs(rvp[0]-rvp[1]),a)+
 			     std::pow(std::abs(rvp[0]-rvp[2]),a)+
 			     std::pow(std::abs(rvp[1]-rvp[2]),a))/2;
       // Hosford equivalent stress
-      const auto Psi      = seq*std::pow(Psi_a,1/real(a));
+      const real Psi      = seq*std::pow(Psi_a,1/real(a));
       // For the derivatives, the stress eigenvalues are normalised by
       // the Hosford equivalent stress
       const auto rvp2     = vp/Psi;
@@ -226,9 +226,10 @@ namespace tfel{
       const tfel::math::tvector<3u,real> drvp2  = {rvp2[0]-rvp2[1],
 						   rvp2[0]-rvp2[2],
 						   rvp2[1]-rvp2[2]};
-      const tfel::math::tvector<3u,real> drvp2_am2 = {std::pow(std::abs(drvp2[0]),a-2),
-						      std::pow(std::abs(drvp2[1]),a-2),
-						      std::pow(std::abs(drvp2[2]),a-2)};
+      const tfel::math::tvector<3u,real> drvp2_am2
+	= {real(std::pow(std::abs(drvp2[0]),a-2)),
+	   real(std::pow(std::abs(drvp2[1]),a-2)),
+	   real(std::pow(std::abs(drvp2[2]),a-2))};
       const tfel::math::tvector<3u,real> dPsi_ds =
 	{( drvp2[0]*drvp2_am2[0]+drvp2[1]*drvp2_am2[1])/2,
 	 (-drvp2[0]*drvp2_am2[0]+drvp2[2]*drvp2_am2[2])/2,
@@ -269,11 +270,11 @@ namespace tfel{
       // eigenvalues are normalised by the Von Mises stress to avoid
       // overflow
       const auto rvp      = vp*iseq;
-      const auto Psi_a    = (std::pow(std::abs(rvp[0]-rvp[1]),a)+
+      const real Psi_a    = (std::pow(std::abs(rvp[0]-rvp[1]),a)+
 			     std::pow(std::abs(rvp[0]-rvp[2]),a)+
 			     std::pow(std::abs(rvp[1]-rvp[2]),a))/2;
       // Hosford equivalent stress
-      const auto Psi      = seq*std::pow(Psi_a,1/real(a));
+      const real Psi      = seq*std::pow(Psi_a,1/real(a));
       // For the derivatives, the stress eigenvalues are normalised by
       // the Hosford equivalent stress
       const auto rvp2     = vp/Psi;
@@ -282,9 +283,9 @@ namespace tfel{
 						   rvp2[0]-rvp2[2],
 						   rvp2[1]-rvp2[2]};
       const tfel::math::tvector<3u,real> drvp2_am2 =
-	{std::pow(std::abs(drvp2[0]),a-2),
-	 std::pow(std::abs(drvp2[1]),a-2),
-	 std::pow(std::abs(drvp2[2]),a-2)};
+	{real(std::pow(std::abs(drvp2[0]),a-2)),
+	 real(std::pow(std::abs(drvp2[1]),a-2)),
+	 real(std::pow(std::abs(drvp2[2]),a-2))};
       const tfel::math::tvector<3u,real> dPsi_dsvp =
 	{( drvp2[0]*drvp2_am2[0]+drvp2[1]*drvp2_am2[1])/2,
 	 (-drvp2[0]*drvp2_am2[0]+drvp2[2]*drvp2_am2[2])/2,
