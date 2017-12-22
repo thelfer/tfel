@@ -28,8 +28,8 @@ namespace tfel{
       constexpr const auto isqrt2 = Cste<stress>::isqrt2;
       constexpr const auto isqrt3 = Cste<stress>::isqrt3;
       constexpr const auto isqrt6 = isqrt2*isqrt3;
-      constexpr const auto n0 = tvector<3u,real>{{ isqrt2,-isqrt2,zero}};
-      constexpr const auto n1 = tvector<3u,real>{{-isqrt6,-isqrt6,2*isqrt6}};
+      const auto n0 = tvector<3u,real>{{ isqrt2,-isqrt2,zero}};
+      const auto n1 = tvector<3u,real>{{-isqrt6,-isqrt6,2*isqrt6}};
       return std::tuple<stress,stress>{(s|n0),(s|n1)};
     } // end of projectOnPiPlane
 
@@ -62,8 +62,8 @@ namespace tfel{
       constexpr const auto isqrt2 = Cste<stress>::isqrt2;
       constexpr const auto isqrt3 = Cste<stress>::isqrt3;
       constexpr const auto isqrt6 = isqrt2*isqrt3;
-      constexpr const auto n0 = tvector<3u,real>{{ isqrt2,-isqrt2,zero}};
-      constexpr const auto n1 = tvector<3u,real>{{-isqrt6,-isqrt6,2*isqrt6}};
+      const auto n0 = tvector<3u,real>{{ isqrt2,-isqrt2,zero}};
+      const auto n1 = tvector<3u,real>{{-isqrt6,-isqrt6,2*isqrt6}};
       const auto s = s0*n0+s1*n1;
       return std::tuple<stress,stress,stress>{s[0],s[1],s[2]};
     } // end of buildFromPiPlane
