@@ -619,6 +619,7 @@ AC_OUTPUT([debug.sh
 	   include/Makefile
 	   include/TFEL/Config/GetInstallPath-defines.hxx
 	   src/Makefile
+	   src/PhysicalConstants/Makefile
 	   src/Config/Makefile
 	   src/Tests/Makefile
 	   src/Exception/Makefile

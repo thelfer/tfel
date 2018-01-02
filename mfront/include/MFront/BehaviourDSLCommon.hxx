@@ -998,7 +998,6 @@ namespace mfront{
 						  const std::string& = "") const;
     virtual void
     writeThermalExpansionComputation(std::ostream&,
-				     const BehaviourDescription::MaterialProperty&,
 				     const std::string&,
 				     const std::string&,
 				     const std::string& = "") const;

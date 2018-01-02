@@ -1155,7 +1155,18 @@ namespace mfront
 	  for(const auto& p:params){
 	    const auto pn = d.getExternalName(p.name);
 	    out << "  " << pn << " ";
-	    if(p.type=="real"){
+	    if(p.type=="int"){
+	      throw_if(p.arraySize!=1,
+		       "unsupported array size for parameter '"+p.name+"'");
+	      out << d.getIntegerParameterDefaultValue(p.name) << '\n';
+	    } else if(p.type=="ushort"){
+	      throw_if(p.arraySize!=1,
+		       "unsupported array size for parameter '"+p.name+"'");
+	      out << d.getUnsignedShortParameterDefaultValue(p.name) << '\n';
+	    } else {
+	      const auto f = SupportedTypes::getTypeFlag(p.type);
+	      throw_if(f!=SupportedTypes::Scalar,
+		       "unsupported parameter type '"+p.type+"'");
 	      if(p.arraySize==1){
 		out << d.getFloattingPointParameterDefaultValue(p.name) << '\n';
 	      } else {
@@ -1167,10 +1178,6 @@ namespace mfront
 		}
 		out << '\n';
 	      }
-	    } else if(p.type=="int"){
-	      out << d.getIntegerParameterDefaultValue(p.name) << '\n';
-	    } else if(p.type=="ushort"){
-	      out << d.getUnsignedShortParameterDefaultValue(p.name) << '\n';
 	    }
 	  }
 	}
@@ -1322,12 +1329,16 @@ namespace mfront
 	<< "break;\n";
     for(p=params.begin(),pn=pnames.begin();p!=params.end();++p,++pn){
       out << "} else if(str==\"" << *pn << "\"){\n";
-      if(p->type=="real"){
-	out << "const double value=file.getdouble();\n";
-      } else if(p->type=="int"){
+      if(p->type=="int"){
 	out << "const int value=file.getint();\n";
       } else if(p->type=="ushort"){
 	out << "const unsigned short value=static_cast<unsigned short>(file.getint());\n";
+      } else {
+	const auto f = SupportedTypes::getTypeFlag(p->type);
+	tfel::raise_if(f!=SupportedTypes::Scalar,
+		       "ZMATInterface::writeParametersInitialisation: "
+		       "unsupported type '"+p->type+"' for parameter '"+p->name+"'");
+	out << "const double value=file.getdouble();\n";
       }
       if(mb.hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,p->name)){
 	out << "tfel::material::" << mb.getClassName() 
@@ -1541,9 +1552,15 @@ namespace mfront
     insert_if(d[lib].epts,bd.getClassName());
     insert_if(d[lib].link_directories,
 	      "$(shell "+tfel_config+" --library-path)");
+#if __cplusplus >= 201703L
     insert_if(d[lib].link_libraries,
 	      "$(shell "+tfel_config+" --library-dependency "
 	      "--material --mfront-profiling)");
+#else /* __cplusplus < 201703L */
+    insert_if(d[lib].link_libraries,
+	      "$(shell "+tfel_config+" --library-dependency "
+	      "--material --mfront-profiling --physical-constants)");
+#endif /* __cplusplus < 201703L */
   } // end of ZMATInterface::getTargetsDescription
 
   ZMATInterface::~ZMATInterface() = default;

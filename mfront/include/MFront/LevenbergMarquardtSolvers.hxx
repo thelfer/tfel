@@ -23,7 +23,7 @@ namespace mfront{
    * Newton-Raphson algorithm coupled with the Levenberg-Marquart
    * algorithm for increased robustness.
    */
-  struct LevenbergMarquartSolverBase
+  struct LevenbergMarquardtSolverBase
     : public NonLinearSystemSolverBase
   {
     /*!
@@ -118,15 +118,15 @@ namespace mfront{
     /*!
      * destructor
      */
-    virtual ~LevenbergMarquartSolverBase();
-  }; // end of struct LevenbergMarquartSolverBase
+    virtual ~LevenbergMarquardtSolverBase();
+  }; // end of struct LevenbergMarquardtSolverBase
 
   /*!
    * the standard Newton-Raphson solver coupled with the
    * Levenberg-Marquart algorithm for increased robustness
    */
-  struct LevenbergMarquartSolver
-    : public LevenbergMarquartSolverBase
+  struct LevenbergMarquardtSolver
+    : public LevenbergMarquardtSolverBase
   {
     /*!
      * \return true if the solver requires a numerical jacobian
@@ -136,7 +136,7 @@ namespace mfront{
     /*!
      * destructor
      */
-    virtual ~LevenbergMarquartSolver();
+    virtual ~LevenbergMarquardtSolver();
   };
 
   /*!
@@ -144,8 +144,8 @@ namespace mfront{
    * evaluation coupled with the Levenberg-Marquart algorithm for
    * increased robustness
    */
-  struct LevenbergMarquartNumericalJacobianSolver
-    : public LevenbergMarquartSolverBase
+  struct LevenbergMarquardtNumericalJacobianSolver
+    : public LevenbergMarquardtSolverBase
   {
     /*!
      * \return true if the solver requires a numerical jacobian
@@ -155,7 +155,7 @@ namespace mfront{
     /*!
      * destructor
      */
-    virtual ~LevenbergMarquartNumericalJacobianSolver();
+    virtual ~LevenbergMarquardtNumericalJacobianSolver();
   };
 
 } // end of namespace mfront

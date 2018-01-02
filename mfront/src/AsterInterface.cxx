@@ -678,9 +678,15 @@ namespace mfront{
     }
     insert_if(d[lib].link_directories,
 	      "$(shell "+tfel_config+" --library-path)");
+#if __cplusplus >= 201703L
     insert_if(d[lib].link_libraries,
 	      "$(shell "+tfel_config+" --library-dependency "
 	      "--material --mfront-profiling)");
+#else /* __cplusplus < 201703L */
+    insert_if(d[lib].link_libraries,
+	      "$(shell "+tfel_config+" --library-dependency "
+	      "--material --mfront-profiling --physical-constants)");
+#endif /* __cplusplus < 201703L */
     // insert_if(d[lib].epts,name);
     insert_if(d[lib].epts,this->getFunctionName(name));
   } // end of AsterInterface::getTargetsDescription

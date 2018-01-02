@@ -1137,7 +1137,9 @@ namespace mfront{
     };
     throw_if(!this->parameters.contains(n),"no parameter '"+n+"' defined");
     const auto& p = this->parameters.getVariable(n);
-    throw_if(p.type!="real","parameter '"+n+"' is not a floatting point");
+    const auto  f = SupportedTypes::getTypeFlag(p.type);
+    throw_if(f!=SupportedTypes::Scalar,
+	     "parameter '"+n+"' is not a scalar");
     throw_if(!this->parametersDefaultValues.insert({n,v}).second,
 	     "default value for parameter '"+n+"' already defined");
   }

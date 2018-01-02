@@ -5665,6 +5665,9 @@ src/NUMODIS/Makefile.am -text
 src/NUMODIS/TripleNode.cxx -text
 src/NUMODIS/Utilities.cxx -text
 src/NUMODIS/Vect3.cxx -text
+src/PhysicalConstants/CMakeLists.txt -text
+src/PhysicalConstants/Makefile.am -text
+src/PhysicalConstants/PhysicalConstants.cxx -text
 src/System/BinaryRead.cxx -text
 src/System/BinaryWrite.cxx -text
 src/System/CMakeLists.txt -text

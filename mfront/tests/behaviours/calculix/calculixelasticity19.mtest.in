@@ -13,7 +13,7 @@
 @Real 'Tref' 293.15;
 @Real 'Ti'   1800.;
 @Evolution 'T' {0:'Ti',3600.:800};
-@Parameter 'referenceTemperatureForThermalExpansion' 'Ti';
+@Parameter 'ReferenceTemperatureForInitialGeometry' 'Ti';
 
 @MaterialProperty<constant> 'YoungModulus'     'E';
 @MaterialProperty<constant> 'PoissonRatio'     'nu';

@@ -1127,18 +1127,19 @@ namespace mfront
     ip = false;
     up = false;
     for(const auto& v : pc){
-      if(v.type=="real"){
-	rp = true;
-      } else if(v.type=="int"){
+      if(v.type=="int"){
 	ip = true;
       } else if(v.type=="ushort"){
 	up = true;
       } else {
-	tfel::raise("UMATInterfaceBase::checkParametersType: "
-		    "unsupport parameter type '"+v.type+"'.");
+	const auto f = SupportedTypes::getTypeFlag(v.type);
+	tfel::raise_if(f!=SupportedTypes::Scalar,
+		       "UMATInterfaceBase::checkParametersType: "
+		       "unsupport parameter type '"+v.type+"'.");
+	rp = true;
       } 
     }
-  }
+  } // end of UMATInterfaceBase::checkParametersType
 
   void
   UMATInterfaceBase::writeSetOutOfBoundsPolicyFunctionDeclaration(std::ostream& out,
@@ -1784,17 +1785,18 @@ namespace mfront
   	  << "_ParametersTypes [] = {";
       for(auto p=parameters.begin();p!=parameters.end();){
   	for(unsigned short is=0;is!=p->arraySize;){
-	  if(p->type=="real"){
-	    out << "0";
-	  } else if(p->type=="int"){
+	  if(p->type=="int"){
 	    out << "1";
 	  } else if(p->type=="ushort"){
 	    out << "2";
 	  } else {
-  	    tfel::raise("UMATInterfaceBase::writeUMATxxParametersSymbols: "
-			"internal error, unsupported type "
-			"for parameter '"+p->name+"'");
-  	  }
+	    const auto f = SupportedTypes::getTypeFlag(p->type);
+	    tfel::raise_if(f!=SupportedTypes::Scalar,
+			   "UMATInterfaceBase::writeUMATxxParametersSymbols: "
+			   "internal error, unsupported type "
+			   "for parameter '"+p->name+"'");
+	    out << "0";
+	  }
   	  if(++is!=p->arraySize){
   	    out << ",";
   	  }
@@ -1820,7 +1822,20 @@ namespace mfront
 		     "writeUMATxxParameterDefaultValueSymbols: "+m);
     };
     for(const auto& p: mb.getBehaviourData(h).getParameters()){
-      if(p.type=="real"){
+      if(p.type=="int"){
+	throw_if(p.arraySize!=1u,"unsupported parameters array of type '"+p.type+"'");
+	out << "MFRONT_SHAREDOBJ int " << this->getSymbolName(name,h)
+	    << "_" << p.getExternalName() << "_ParameterDefaultValue  = "
+	    << mb.getIntegerParameterDefaultValue(h,p.name) << ";\n\n";
+      } else  if(p.type=="ushort"){
+	throw_if(p.arraySize!=1u,"unsupported parameters array of type '"+p.type+"'");
+	out << "MFRONT_SHAREDOBJ unsigned short " << this->getSymbolName(name,h)
+	    << "_" << p.getExternalName() << "_ParameterDefaultValue  = "
+	    << mb.getUnsignedShortParameterDefaultValue(h,p.name) << ";\n\n";
+      } else {
+	const auto f = SupportedTypes::getTypeFlag(p.type);
+	throw_if(f!=SupportedTypes::Scalar,
+		 "unsupported paramaeter type '"+p.type+"'");
 	if(p.arraySize==1u){
 	  out << "MFRONT_SHAREDOBJ double " << this->getSymbolName(name,h)
 	      << "_" << p.name << "_ParameterDefaultValue" << " = "
@@ -1833,17 +1848,6 @@ namespace mfront
 		<< mb.getFloattingPointParameterDefaultValue(h,p.name,is)
 		<< ";\n\n";
 	  }
-	}
-      } else {
-	throw_if(p.arraySize!=1u,"unsupported parameters array of type '"+p.type+"'");
-	if(p.type=="int"){
-	  out << "MFRONT_SHAREDOBJ int " << this->getSymbolName(name,h)
-	      << "_" << p.getExternalName() << "_ParameterDefaultValue  = "
-	      << mb.getIntegerParameterDefaultValue(h,p.name) << ";\n\n";
-	} else {
-	  out << "MFRONT_SHAREDOBJ unsigned short " << this->getSymbolName(name,h)
-	      << "_" << p.getExternalName() << "_ParameterDefaultValue  = "
-	      << mb.getUnsignedShortParameterDefaultValue(h,p.name) << ";\n\n";
 	}
       }
     }
