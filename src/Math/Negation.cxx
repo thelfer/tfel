@@ -25,9 +25,12 @@ namespace tfel
       Negation::Negation(const std::shared_ptr<Expr> e)
 	: expr(e)
       {} // end of Negation::Negation
+
+      std::string Negation::getCxxFormula(const std::vector<std::string>& m) const{
+	return "-("+this->expr->getCxxFormula(m)+')';
+      } // end of Negation::getCxxFormula
       
-      double
-      Negation::getValue() const
+      double Negation::getValue() const
       {
 	return -(this->expr->getValue());
       } // end of Negation::getValue()

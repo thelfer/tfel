@@ -83,29 +83,29 @@ TFEL_NORETURN static void treatHelp();
 TFEL_NORETURN static void treatLicences();
 
 static CallBacksContainer callBacksContainer;
-static bool compilerflags   = false;
-static bool oflags0         = false;
-static bool oflags          = false;
-static bool oflags2         = false;
-static bool warning         = false;
-static bool incs            = false;
-static bool incspath        = false;
-static bool cppflags        = false;
-static bool libsdeps        = false;
-static bool libspath        = false;
-static bool ldflags         = false;
-static bool exceptions      = false;
-static bool math            = false;
-static bool mathCubicSpline = false;
-static bool mathKriging     = false;
-static bool mathParser      = false;
-static bool mathInterpreter = false;
-static bool utilities       = false;
-static bool glossary        = false;
-static bool numodis         = false;
-static bool material        = false;
-static bool tests           = false;
-static bool mfront_profiling    = false;
+static bool compilerflags     = false;
+static bool oflags0           = false;
+static bool oflags            = false;
+static bool oflags2           = false;
+static bool warning           = false;
+static bool incs              = false;
+static bool incspath          = false;
+static bool cppflags          = false;
+static bool libsdeps          = false;
+static bool libspath          = false;
+static bool ldflags           = false;
+static bool exceptions        = false;
+static bool math              = false;
+static bool mathCubicSpline   = false;
+static bool mathKriging       = false;
+static bool mathParser        = false;
+static bool utilities         = false;
+static bool glossary          = false;
+static bool numodis           = false;
+static bool material          = false;
+static bool tests             = false;
+static bool physicalConstants = false;
+static bool mfront_profiling  = false;
 #ifdef HAVE_CASTEM
 static bool castem          = false;
 #endif /* HAVE_CASTEM */
@@ -278,7 +278,6 @@ static void listLibraries(const char* p)
   };
   display_if(mfront_profiling,"MFrontProfiling");
   display_if(material,"TFELMaterial");
-  display_if(mathInterpreter,"TFELMathInterpreter");
   display_if(mathParser,"TFELMathParser");
   display_if(mathCubicSpline,"TFELMathCubicSpline");
   display_if(mathKriging,"TFELMathKriging");
@@ -289,6 +288,7 @@ static void listLibraries(const char* p)
   display_if(exceptions,"TFELException");
   display_if(numodis,"TFELNUMODIS");
   display_if(tests,"TFELTests");
+  display_if(physicalConstants,"TFELPhysicalConstants");
 }
 
 /* coverity [UNCAUGHT_EXCEPT]*/
@@ -346,16 +346,18 @@ int main(const int argc,const char *const *const argv)
 	mathCubicSpline = math = exceptions = true;
     },"request flags for libTFELMathCubicSpline.");
   registerCallBack("--math-parser",[]{
+#if __cplusplus < 201703L
+      physicalConstants = true;
+#endif  /* __cplusplus > 201703L */
       math = exceptions  = true;
       mathParser = mathKriging = true; 
     },"request flags for libTFELMathParser.");
-  registerCallBack("--math-interpreter",[]{
-      math = exceptions  = true;
-      mathInterpreter = mathParser = mathKriging = true; 
-    },"request flags for libTFELMathInterpreter.");
   registerCallBack("--tests",[]{
       tests  = true;
     },"request flags for libTFELTests.");
+  registerCallBack("--physical-constants",[]{
+      physicalConstants  = true;
+    },"request flags for libTFELPhysicalConstants.");
   registerCallBack("--system",[]{
       lsystem = exceptions = true;
     },"request flags for libTFELSystem.");

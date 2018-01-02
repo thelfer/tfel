@@ -136,7 +136,12 @@ MFRONTS= DDIF2.mfront                                                      \
 	 AbaqusOrthotropicElastic2.mfront                                  \
 	 AbaqusOrthotropicSwelling.mfront                                  \
 	 AbaqusOrthotropicSwelling2.mfront                                 \
-	 RelocationTest.mfront
+	 RelocationTest.mfront                                             \
+	 ComputeThermalExpansion.mfront                                    \
+	 ComputeThermalExpansion2.mfront                                   \
+	 ComputeThermalExpansion3.mfront                                   \
+	 ParameterTest.mfront                                              \
+	 ParameterTest2.mfront
 
 testsdir = $(pkgdatadir)/mfront/tests/behaviours
 tests_DATA = $(MFRONTS)

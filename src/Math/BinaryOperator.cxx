@@ -34,16 +34,34 @@ namespace tfel
 	return a+b;
       } // end of OpPlus::apply
 
+      std::string OpPlus::getCxxFormula(const std::string& a,
+					const std::string& b)
+      {
+	return '('+a+")+("+b+')';
+      } // end of OpPlus::getCxxFormula
+      
       double OpMinus::apply(const double a,const double b)
       {
 	return a-b;
       } // end of OpMinus::apply
 
+      std::string OpMinus::getCxxFormula(const std::string& a,
+					const std::string& b)
+      {
+	return '('+a+")-("+b+')';
+      } // end of OpMinus::getCxxFormula
+      
       double OpMult::apply(const double a,const double b)
       {
 	return a*b;
       } // end of OpMult::apply
 
+      std::string OpMult::getCxxFormula(const std::string& a,
+					const std::string& b)
+      {
+	return '('+a+")*("+b+')';
+      } // end of OpMult::getCxxFormula
+      
       double OpDiv::apply(const double a,const double b)
       {
 	raise_if(std::abs(b)<std::numeric_limits<double>::min(),
@@ -52,11 +70,23 @@ namespace tfel
 	return a/b;
       } // end of OpDiv::apply
 
+      std::string OpDiv::getCxxFormula(const std::string& a,
+					const std::string& b)
+      {
+	return '('+a+")/("+b+')';
+      } // end of OpDiv::getCxxFormula
+      
       double OpPower::apply(const double a,const double b)
       {
 	return std::pow(a,b);
       } // end of OpDiv::apply
 
+      std::string OpPower::getCxxFormula(const std::string& a,
+					 const std::string& b)
+      {
+	return "std::pow("+a+','+b+')';
+      } // end of OpPower::getCxxFormula
+      
       void
       BinaryOperationBase::throwUnimplementedDifferentiateFunctionException()
       {
@@ -126,7 +156,7 @@ namespace tfel
 	auto l   = std::make_shared<BinaryOperation<OpPower>>(ca,cb);
 	auto da  = a->differentiate(pos,v);
 	auto db  = b->differentiate(pos,v);
-	auto lna = std::make_shared<StandardFunction<log>>(ca);
+	auto lna = std::make_shared<StandardFunction<log>>("log",ca);
 	auto r1  = std::make_shared<BinaryOperation<OpMult>>(db,lna);
 	auto r21 = std::make_shared<BinaryOperation<OpDiv>>(da,ca);
 	auto r2  = std::make_shared<BinaryOperation<OpMult>>(cb,r21);

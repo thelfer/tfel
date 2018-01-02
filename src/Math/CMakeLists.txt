@@ -1,6 +1,7 @@
 include_directories("${PROJECT_SOURCE_DIR}/include")
 link_directories("${PROJECT_BINARY_DIR}/src/Math"
-                 "${PROJECT_BINARY_DIR}/src/Exception")
+  "${PROJECT_BINARY_DIR}/src/PhysicalConstants"
+  "${PROJECT_BINARY_DIR}/src/Exception")
 
 set(TFELMath_SOURCES
     MathException.cxx
@@ -73,4 +74,5 @@ add_dependencies(TFELMathParser TFELMath)
 target_link_libraries(TFELMathParser
 		      TFELMathKriging
                       TFELMath
-		      TFELException)
+		      TFELException
+		      TFELPhysicalConstants)

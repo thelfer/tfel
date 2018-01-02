@@ -35,8 +35,7 @@ namespace tfel
 
       struct TFELMATHPARSER_VISIBILITY_EXPORT ExternalFunction
       {
-	virtual double
-	getValue() const = 0;
+	virtual double getValue() const = 0;
 	virtual void
 	setVariableValue(const std::vector<double>::size_type,
 			 const double) = 0;

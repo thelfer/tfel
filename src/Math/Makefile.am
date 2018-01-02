@@ -83,9 +83,10 @@ libTFELMathParser_la_DEPENDENCIES      = libTFELMath.la \
 libTFELMath_la_LIBADD       = -L@top_builddir@/src/Exception/ \
 			      -lTFELException
 
-libTFELMathParser_la_LIBADD = -L@top_builddir@/src/Exception/ \
-			      -L@top_builddir@/src/Math/      \
-			      -lTFELMath -lTFELException
+libTFELMathParser_la_LIBADD = -L@top_builddir@/src/PhysicalConstants/            \
+			      -L@top_builddir@/src/Exception/                    \
+			      -L@top_builddir@/src/Math/                         \
+			      -lTFELMath -lTFELException -lTFELPhysicalConstants
 
 libTFELMathCubicSpline_la_LIBADD = -L@top_builddir@/src/Exception/ \
 			           -L@top_builddir@/src/Math/      \

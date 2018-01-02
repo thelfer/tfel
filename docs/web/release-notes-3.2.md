@@ -37,6 +37,83 @@ is available [here](tfel-python.html).
 The `TFEL` project provides several libraries. This paragraph is about
 updates made in those libraries.
 
+## TFEL/Math
+
+### Improvements to the `Evaluator` class
+
+The `Evaluator` class is used to interpret textual formula, as
+follows:
+
+~~~~{.cxx}
+Evalutator ev("sin(x)");
+ev.setVariableValue("x",12);
+const auto s = ev.getValue();
+~~~~
+
+#### An overload for the `getValue` method
+
+In the previous example, each variable value had to be set using the
+`setVariableValue` method. The new overloaded version of the
+`getValue` method can take a map as argument as follows:
+
+~~~~{.cxx}
+Evalutator ev("sin(x)");
+const auto s = ev.getValue({{"x",12}});
+~~~~
+
+#### `Operator()`
+
+Two overloaded versions of the `Evaluator::operator()` has been
+introduced as a synonyms for the `getValue` method:
+
+~~~~{.cxx}
+Evalutator ev("sin(x)");
+const auto s = ev({{"x",12}});
+~~~~
+
+#### The `getCxxFormula` method
+
+The `getCxxFormula` method returns a string representing the
+evaluation of the formula in standard `C++`. This method takes a map
+as argument which describes how certain variables shall be
+represented. This method can be used, as follows:
+
+~~~~{.cxx}
+Evalutator ev("2*sin(x)");
+std::cout << ev({"x":"this->x"}}) << '\n';
+~~~~
+
+The previous code displays:
+
+~~~~{.sh}
+sin((2)*(this->x))
+~~~~
+
+This function is the basis of a new functionality of the `MFront` code
+generator (inline material properties), see
+Section&nbsp;@sec:inline-mprops for details.
+
+#### New mathematical functions
+
+The following new mathematical functions have been introduced:
+
+- `exp2`: returns the base-2 exponential.
+- `expm1`: returns the base-e exponential minus one.
+- `cbrt`: returns the cubic root
+- `log2`: computes the base-2 logarithm of the argment.
+- `log1p`: computes the logarithm of the argment plus one.
+- `acosh`: computes the inverse of the hyperbolic cosine.
+- `asinh`: computes the inverse of the hyperbolic sine.
+- `atanh`: computes the inverse of the hyperbolic tangent.
+- `erf`: computes the error function.
+- `erfc`: computes the complementary error function.
+- `tgamma`: computes the Gamma function.
+- `lgamma`: compute the natural logarithm of the gamma function.
+- `hypot`: returns the hypotenuse of a right-angled triangle whose
+  legs are x and y, i.e. computes \(\sqrt{x^{2}+y^{2}}.
+- `atan2`: returns the principal value of the arc tangent of \(y/x\),
+  expressed in radians.
+
 ## TFEL/Material
 
 ### \(\pi\)-plane
@@ -194,6 +271,36 @@ for a in [pi*(-1.+(2.*i)/(nmax-1)) for i in range(0,nmax)]:
     s1,s2  = tmaterial.projectOnPiPlane(s);
     print(s1,s2);
 ~~~~
+
+# New functionalities in `MFront`
+
+## Various improvements
+
+### Inline material properties in mechanical behaviours {#sec:inline-mprops}
+
+Various keywords (such as `@ElasticMaterialProperties`,
+`@ComputeThermalExpansion`, `@HillTensor`, etc.)  expects one or more
+material properties. In previous versions, those material properties
+were constants or defined by an external `MFront`.
+
+This new version allows those material properties to be defined by
+formulae, as follows:
+
+~~~~{.cxx}
+@Parameter E0 =2.1421e11,E1 = -3.8654e7,E2 = -3.1636e4;
+@ElasticMaterialProperties {"E0+(T-273.15)*(E1+E2*(T-273.15))",0.3}
+~~~~
+
+As for material properties defined in external `MFront` files, the
+material properties evaluated by formulae will be computed for updated
+values of their parameters. For example, if the previous lines were
+used in the `Implicit` DSL, two variables `young` and `young_tdt` will
+be automatically made available:
+
+- the `young` variable will be computed for the temperature
+  \(T+\theta\,\Delta\,T\).
+- the `young_tdt` variable will be computed for the temperature
+  \(T+\Delta\,T\).
 
 # References
 

@@ -34,49 +34,105 @@ namespace tfel
 
       struct OpEqual
       {
-	static  bool TFEL_VISIBILITY_LOCAL
-	apply(const double,const double);
+	static bool apply(const double,const double);
+	/*!
+	 * \brief return a string suitable for integration in a C++
+	 * code.
+	 * \param[in] a: left hand side
+	 * \param[in] b: right hand side
+	 */
+	static std::string getCxxFormula(const std::string&,
+					 const std::string&);
       }; // end of struct OpEqual
 
       struct OpGreater
       {
-	static bool TFEL_VISIBILITY_LOCAL
-	apply(const double,const double);
+	static bool apply(const double,const double);
+	/*!
+	 * \brief return a string suitable for integration in a C++
+	 * code.
+	 * \param[in] a: left hand side
+	 * \param[in] b: right hand side
+	 */
+	static std::string getCxxFormula(const std::string&,
+					 const std::string&);
       }; // end of struct OpGreater
 
       struct OpGreaterOrEqual
       {
-	static bool TFEL_VISIBILITY_LOCAL
-	apply(const double,const double);
+	static bool apply(const double,const double);
+	/*!
+	 * \brief return a string suitable for integration in a C++
+	 * code.
+	 * \param[in] a: left hand side
+	 * \param[in] b: right hand side
+	 */
+	static std::string getCxxFormula(const std::string&,
+					 const std::string&);
       }; // end of struct OpGreaterOrEqual
 
       struct OpLesser
       {
-	static bool TFEL_VISIBILITY_LOCAL
-	apply(const double,const double);
+	static bool apply(const double,const double);
+	/*!
+	 * \brief return a string suitable for integration in a C++
+	 * code.
+	 * \param[in] a: left hand side
+	 * \param[in] b: right hand side
+	 */
+	static std::string getCxxFormula(const std::string&,
+					 const std::string&);
       }; // end of struct OpLess
 
       struct OpLesserOrEqual
       {
-	static bool TFEL_VISIBILITY_LOCAL
-	apply(const double,const double);
+	static bool apply(const double,const double);
+	/*!
+	 * \brief return a string suitable for integration in a C++
+	 * code.
+	 * \param[in] a: left hand side
+	 * \param[in] b: right hand side
+	 */
+	static std::string getCxxFormula(const std::string&,
+					 const std::string&);
       }; // end of struct OpLessOrEqual
 
       struct OpAnd
       {
-	static bool TFEL_VISIBILITY_LOCAL
-	apply(const bool,const bool);
+	static bool apply(const bool,const bool);
+	/*!
+	 * \brief return a string suitable for integration in a C++
+	 * code.
+	 * \param[in] a: left hand side
+	 * \param[in] b: right hand side
+	 */
+	static std::string getCxxFormula(const std::string&,
+					 const std::string&);
       }; // end of struct OpAnd
 
       struct OpOr
       {
-	static bool
-	apply(const bool,const bool);
+	static bool apply(const bool,const bool);
+	/*!
+	 * \brief return a string suitable for integration in a C++
+	 * code.
+	 * \param[in] a: left hand side
+	 * \param[in] b: right hand side
+	 */
+	static std::string getCxxFormula(const std::string&,
+					 const std::string&);
       }; // end of struct OpOr
 
       struct LogicalExpr
       {
       	virtual bool getValue() const = 0;
+	/*!
+	 * \return a string representation of the evaluator suitable to
+	 * be integrated in a C++ code.
+	 * \param[in] m: a map used to change the names of the variables
+	 */
+	virtual std::string
+	getCxxFormula(const std::vector<std::string>&) const = 0;
 	virtual void
 	checkCyclicDependency(std::vector<std::string>&) const = 0;
 	virtual std::shared_ptr<LogicalExpr>
@@ -100,24 +156,24 @@ namespace tfel
       struct TFEL_VISIBILITY_LOCAL LogicalOperation final
 	: public LogicalExpr
       {
-	LogicalOperation(const ExprPtr,
-			 const ExprPtr);
-	virtual bool
-	  getValue() const override;
-	virtual void
-	  checkCyclicDependency(std::vector<std::string>&) const override;
-	virtual LogicalExprPtr
-	  resolveDependencies(const std::vector<double>&) const override;
-	virtual LogicalExprPtr
-	  clone(const std::vector<double>&) const override;
-	virtual void
-	  getParametersNames(std::set<std::string>&) const override;
-	virtual LogicalExprPtr
-	  createFunctionByChangingParametersIntoVariables(const std::vector<double>&,
-							  const std::vector<std::string>&,
-							  const std::map<std::string,
-							  std::vector<double>::size_type>&) const override;
-	virtual ~LogicalOperation();
+	LogicalOperation(const ExprPtr,const ExprPtr);
+	bool getValue() const override;
+	/*!
+	 * \return a string representation of the evaluator suitable to
+	 * be integrated in a C++ code.
+	 * \param[in] m: a map used to change the names of the variables
+	 */
+	std::string getCxxFormula(const std::vector<std::string>&) const override;
+	void checkCyclicDependency(std::vector<std::string>&) const override;
+	LogicalExprPtr resolveDependencies(const std::vector<double>&) const override;
+	LogicalExprPtr clone(const std::vector<double>&) const override;
+	void getParametersNames(std::set<std::string>&) const override;
+	LogicalExprPtr
+	createFunctionByChangingParametersIntoVariables(const std::vector<double>&,
+							const std::vector<std::string>&,
+							const std::map<std::string,
+							std::vector<double>::size_type>&) const override;
+	~LogicalOperation() override;
       private:
 	LogicalOperation& operator=(const LogicalOperation&) = delete;
 	LogicalOperation& operator=(LogicalOperation&&) = delete;
@@ -129,24 +185,24 @@ namespace tfel
       struct TFEL_VISIBILITY_LOCAL LogicalBinaryOperation final
 	: public LogicalExpr
       {
-	LogicalBinaryOperation(LogicalExprPtr,
-			       LogicalExprPtr);
-	virtual bool
-	  getValue() const override;
-	virtual void
-	  checkCyclicDependency(std::vector<std::string>&) const override;
-	virtual LogicalExprPtr
-	  resolveDependencies(const std::vector<double>&) const override;
-	virtual LogicalExprPtr
-	  clone(const std::vector<double>&) const override;
-	virtual void
-	  getParametersNames(std::set<std::string>&) const override;
-	virtual LogicalExprPtr
-	  createFunctionByChangingParametersIntoVariables(const std::vector<double>&,
-							  const std::vector<std::string>&,
-							  const std::map<std::string,
-							  std::vector<double>::size_type>&) const override;
-	virtual ~LogicalBinaryOperation();
+	LogicalBinaryOperation(LogicalExprPtr,LogicalExprPtr);
+	bool getValue() const override;
+	/*!
+	 * \return a string representation of the evaluator suitable to
+	 * be integrated in a C++ code.
+	 * \param[in] m: a map used to change the names of the variables
+	 */
+	std::string getCxxFormula(const std::vector<std::string>&) const override;
+	void checkCyclicDependency(std::vector<std::string>&) const override;
+        LogicalExprPtr resolveDependencies(const std::vector<double>&) const override;
+	LogicalExprPtr clone(const std::vector<double>&) const override;
+	void getParametersNames(std::set<std::string>&)  const override;
+	LogicalExprPtr
+	createFunctionByChangingParametersIntoVariables(const std::vector<double>&,
+							const std::vector<std::string>&,
+							const std::map<std::string,
+							std::vector<double>::size_type>&) const override;
+	~LogicalBinaryOperation() override;
       private:
 	LogicalBinaryOperation& operator=(const LogicalBinaryOperation&) = delete;
 	LogicalBinaryOperation& operator=(LogicalBinaryOperation&&) = delete;
@@ -158,21 +214,23 @@ namespace tfel
 	: public LogicalExpr
       {
 	NegLogicalExpression(LogicalExprPtr);
-	virtual bool getValue() const override;
-	virtual void
-	  checkCyclicDependency(std::vector<std::string>&) const override;
-	virtual LogicalExprPtr
-	  resolveDependencies(const std::vector<double>&) const override;
-	virtual LogicalExprPtr
-	  clone(const std::vector<double>&) const override;
-	virtual void
-	  getParametersNames(std::set<std::string>&) const override;
-	virtual LogicalExprPtr
-	  createFunctionByChangingParametersIntoVariables(const std::vector<double>&,
-							  const std::vector<std::string>&,
-							  const std::map<std::string,
-							  std::vector<double>::size_type>&) const override;
-	~NegLogicalExpression();
+	bool getValue() const override;
+	/*!
+	 * \return a string representation of the evaluator suitable to
+	 * be integrated in a C++ code.
+	 * \param[in] m: a map used to change the names of the variables
+	 */
+	std::string getCxxFormula(const std::vector<std::string>&) const override;
+	void checkCyclicDependency(std::vector<std::string>&) const override;
+	LogicalExprPtr resolveDependencies(const std::vector<double>&) const override;
+	LogicalExprPtr clone(const std::vector<double>&) const override;
+	void getParametersNames(std::set<std::string>&) const override;
+	LogicalExprPtr
+	createFunctionByChangingParametersIntoVariables(const std::vector<double>&,
+							const std::vector<std::string>&,
+							const std::map<std::string,
+							std::vector<double>::size_type>&) const override;
+	~NegLogicalExpression() override;
       private:
 	NegLogicalExpression& operator=(const NegLogicalExpression&) = delete;
 	NegLogicalExpression& operator=(NegLogicalExpression&&) = delete;

@@ -12,6 +12,7 @@
  * project under specific licensing conditions. 
  */
 
+#include<cmath>
 #include<sstream>
 #include<stdexcept>
 
@@ -63,12 +64,19 @@ namespace tfel
 	      "call to function failed for value "+std::to_string(v)+" "
 	      "("+std::string(strerror(e))+")");
       } // end of struct StandardFunctionBase::throwInvalidCallException()
+
+      std::string
+      StandardFunctionBase::getCxxFormula(const char* const n,
+					  const std::string& e)
+      {
+	return std::string(n)+'('+e+')';
+      } // end of StandardFunctionBase::getCxxFormula
       
       TFEL_MATH_DIFFERENTIATEFUNCTION_PARTIALSPECIALISATION_DEFINITION(exp)
       {
 	auto ce = expr->clone(v);
 	auto de = expr->differentiate(pos,v);
-	auto expe = std::make_shared<StandardFunction< ::exp >>(ce);
+	auto expe = std::make_shared<StandardFunction< ::exp >>("exp",ce);
 	return std::make_shared<BinaryOperation<OpMult>>(expe,de);
       } // end of differentiateFunction
 
@@ -76,7 +84,7 @@ namespace tfel
       {
 	auto ce = expr->clone(v);
 	auto de = expr->differentiate(pos,v);
-	auto cose = std::make_shared<StandardFunction< ::cos >>(ce);
+	auto cose = std::make_shared<StandardFunction< ::cos >>("cos",ce);
 	return std::make_shared<BinaryOperation<OpMult>>(cose,de);
       } // end of differentiateFunction
 
@@ -84,7 +92,7 @@ namespace tfel
       {
 	auto ce = expr->clone(v);
 	auto de = expr->differentiate(pos,v);
-	auto sine= std::make_shared<StandardFunction< ::sin >>(ce);
+	auto sine= std::make_shared<StandardFunction< ::sin >>("sin",ce);
 	return std::make_shared<BinaryOperation<OpMult>>(std::make_shared<Negation>(sine),de);
       } // end of differentiateFunction
 
@@ -92,7 +100,7 @@ namespace tfel
       {
 	auto ce = expr->clone(v);
 	auto de = expr->differentiate(pos,v);
-	auto tane= std::make_shared<StandardFunction< ::tan >>(ce);
+	auto tane= std::make_shared<StandardFunction< ::tan >>("tan",ce);
 	auto tan2e= std::make_shared<BinaryOperation<OpMult>>(tane,tane);
 	auto tan2e_= std::make_shared<BinaryOperation<OpPlus>>(std::make_shared<Number>(1.),tan2e);
 	return std::make_shared<BinaryOperation<OpMult>>(tan2e_,de);
@@ -102,7 +110,7 @@ namespace tfel
       {
 	auto ce = expr->clone(v);
 	auto de = expr->differentiate(pos,v);
-	auto sqrte= std::make_shared<StandardFunction< ::sqrt >>(ce);
+	auto sqrte= std::make_shared<StandardFunction< ::sqrt >>("sqrt",ce);
 	auto sqrte_= std::make_shared<BinaryOperation<OpDiv>>(std::make_shared<Number>(0.5),
 							      sqrte);
 	return std::make_shared<BinaryOperation<OpMult>>(sqrte_,de);
@@ -130,7 +138,7 @@ namespace tfel
 	auto de = expr->differentiate(pos,v);
 	auto den1= std::make_shared<BinaryOperation<OpMult>>(ce,ce);
 	auto den2= std::make_shared<BinaryOperation<OpMinus>>(std::make_shared<Number>(1.),den1);
-	auto den3= std::make_shared<StandardFunction< ::sqrt>>(den2);
+	auto den3= std::make_shared<StandardFunction< ::sqrt>>("sqrt",den2);
 	return std::make_shared<BinaryOperation<OpDiv>>(de,den3);
       } // end of differentiateFunction
 
@@ -142,7 +150,7 @@ namespace tfel
 	auto num2= std::make_shared<BinaryOperation<OpMult>>(num1,de);
 	auto den1= std::make_shared<BinaryOperation<OpMult>>(ce,ce);
 	auto den2= std::make_shared<BinaryOperation<OpMinus>>(std::make_shared<Number>(1.),den1);
-	auto den3= std::make_shared<StandardFunction< ::sqrt >>(den2);
+	auto den3= std::make_shared<StandardFunction< ::sqrt >>("sqrt",den2);
 	return std::make_shared<BinaryOperation<OpDiv>>(num2,den3);
       } // end of differentiateFunction
 
@@ -159,7 +167,7 @@ namespace tfel
       {
 	auto ce = expr->clone(v);
 	auto de = expr->differentiate(pos,v);
-	auto coshe= std::make_shared<StandardFunction< ::cosh >>(ce);
+	auto coshe= std::make_shared<StandardFunction< ::cosh >>("cosh",ce);
 	return std::make_shared<BinaryOperation<OpMult>>(coshe,de);
       } // end of differentiateFunction
 
@@ -167,7 +175,7 @@ namespace tfel
       {
 	auto ce = expr->clone(v);
 	auto de = expr->differentiate(pos,v);
-	auto sinhe= std::make_shared<StandardFunction< ::sinh >>(ce);
+	auto sinhe= std::make_shared<StandardFunction< ::sinh >>("sinh",ce);
 	return std::make_shared<BinaryOperation<OpMult>>(sinhe,de);
       } // end of differentiateFunction
 
@@ -175,7 +183,7 @@ namespace tfel
       {
 	auto ce = expr->clone(v);
 	auto de = expr->differentiate(pos,v);
-	auto coshe= std::make_shared<StandardFunction< ::cosh >>(ce);
+	auto coshe= std::make_shared<StandardFunction< ::cosh >>("cosh",ce);
 	auto coshe2= std::make_shared<BinaryOperation<OpMult>>(coshe,coshe);
 	return std::make_shared<BinaryOperation<OpDiv>>(de,coshe2);
       } // end of differentiateFunction

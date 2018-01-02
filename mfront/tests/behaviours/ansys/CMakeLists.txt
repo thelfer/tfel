@@ -24,7 +24,12 @@ set(mfront_tests_SOURCES
   LogarithmicStrainElasticity
   LogarithmicStrainElasticity2
   LogarithmicStrainElasticity3
-  LogarithmicStrainNortonCreep)
+  LogarithmicStrainNortonCreep
+  ComputeThermalExpansion
+  ComputeThermalExpansion2
+  ComputeThermalExpansion3
+  ParameterTest
+  ParameterTest2)
 mfront_dependencies(MFrontAnsysBehaviours
   ThermalExpansionCoefficientTest
   ThermalExpansionCoefficientTest2
@@ -234,3 +239,6 @@ test_ansys(mieheapellambrechtlogarithmicstrainelasticity-shear-FYX-3D)
 test_ansys(mieheapellambrechtlogarithmicstrainelasticity-shear-FYZ-3D)
 test_ansys(mieheapellambrechtlogarithmicstrainelasticity-shear-FZX-3D)
 test_ansys(mieheapellambrechtlogarithmicstrainelasticity-shear-FZY-3D)
+test_ansys(parametertest)
+test_ansys(parametertest2)
+

@@ -10,7 +10,7 @@ AC_CANONICAL_HOST
 AC_CANONICAL_TARGET
 
 # Automake specific stuff
-AM_INIT_AUTOMAKE([foreign dist-bzip2 tar-ustar subdir-objects subdir-objects subdir-objects subdir-objects subdir-objects subdir-objects])
+AM_INIT_AUTOMAKE([foreign dist-bzip2 tar-ustar subdir-objects subdir-objects subdir-objects subdir-objects subdir-objects subdir-objects subdir-objects])
 m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])])
 
 # ok, this is ugly, but is sufficient for our needs
@@ -619,6 +619,7 @@ AC_OUTPUT([debug.sh
 	   include/Makefile
 	   include/TFEL/Config/GetInstallPath-defines.hxx
 	   src/Makefile
+	   src/PhysicalConstants/Makefile
 	   src/Config/Makefile
 	   src/Tests/Makefile
 	   src/Exception/Makefile
@@ -820,6 +821,8 @@ AC_OUTPUT([debug.sh
   	   mfront/tests/behaviours/aster/asteraxialgrowth2.mtest
 	   mfront/tests/behaviours/aster/asterjohnsoncook_ssrt.mtest
 	   mfront/tests/behaviours/aster/asterrusinekklepaczko_ssrt.mtest
+	   mfront/tests/behaviours/aster/asterparametertest.mtest
+   	   mfront/tests/behaviours/aster/asterparametertest2.mtest
            mfront/tests/behaviours/epx/Makefile
            mfront/tests/behaviours/epx/epxsaintvenantkirchhoffelasticity-uniaxialloading-sig11-2D.mtest
            mfront/tests/behaviours/epx/epxsaintvenantkirchhoffelasticity-uniaxialloading-sig22-2D.mtest
@@ -1105,6 +1108,8 @@ AC_OUTPUT([debug.sh
 	   mfront/tests/behaviours/abaqus/abaqusmieheapellambrechtlogarithmicstrainelasticity-shear-FYZ-3D.mtest
 	   mfront/tests/behaviours/abaqus/abaqusmieheapellambrechtlogarithmicstrainelasticity-shear-FZX-3D.mtest
 	   mfront/tests/behaviours/abaqus/abaqusmieheapellambrechtlogarithmicstrainelasticity-shear-FZY-3D.mtest
+	   mfront/tests/behaviours/abaqus/abaqusparametertest.mtest
+   	   mfront/tests/behaviours/abaqus/abaqusparametertest2.mtest
    	   mfront/tests/behaviours/abaqus-explicit/Makefile
            mfront/tests/behaviours/abaqus-explicit/abaqusexplicitsaintvenantkirchhoffelasticity-uniaxialloading-sig11-2D.mtest
            mfront/tests/behaviours/abaqus-explicit/abaqusexplicitsaintvenantkirchhoffelasticity-uniaxialloading-sig22-2D.mtest
@@ -1299,6 +1304,8 @@ AC_OUTPUT([debug.sh
 	   mfront/tests/behaviours/ansys/ansyssaintvenantkirchhoffelasticity-uniaxialloading-sig22-3D.mtest
 	   mfront/tests/behaviours/ansys/ansyssaintvenantkirchhoffelasticity-uniaxialloading-sig33-2D.mtest
 	   mfront/tests/behaviours/ansys/ansyssaintvenantkirchhoffelasticity-uniaxialloading-sig33-3D.mtest
+           mfront/tests/behaviours/ansys/ansysparametertest.mtest
+           mfront/tests/behaviours/ansys/ansysparametertest2.mtest
 	   mfront/tests/behaviours/bricks/Makefile
    	   mfront/tests/behaviours/bricks/StandardElasticity/Makefile
 	   mfront/tests/behaviours/bricks/StandardElasticity/castem/Makefile
@@ -1654,6 +1661,11 @@ AC_OUTPUT([debug.sh
 	   mfront/tests/behaviours/castem/castemaxialgrowth4.mtest
    	   mfront/tests/behaviours/castem/castemrelocationtest.mtest
            mfront/tests/behaviours/castem/castemorthotropicsaintvenantkirchhoffelasticity-3D-sig11.mtest
+           mfront/tests/behaviours/castem/castemcomputethermalexpansion.mtest
+           mfront/tests/behaviours/castem/castemcomputethermalexpansion2.mtest
+           mfront/tests/behaviours/castem/castemcomputethermalexpansion3.mtest
+	   mfront/tests/behaviours/castem/castemparametertest.mtest
+   	   mfront/tests/behaviours/castem/castemparametertest2.mtest
            mfront/tests/behaviours/castem/dgibi/Makefile
            mfront/tests/behaviours/castem2/Makefile   
            mfront/tests/behaviours/castem2/castem2burger.mtest
@@ -2636,6 +2648,8 @@ AC_OUTPUT([debug.sh
   	   mfront/tests/behaviours/cyrano/cyranoaxialgrowth.mtest
     	   mfront/tests/behaviours/cyrano/cyranoaxialgrowth3.mtest
        	   mfront/tests/behaviours/cyrano/cyranoaxialgrowth4.mtest
+  	   mfront/tests/behaviours/abaqus/abaqusparametertest.mtest
+   	   mfront/tests/behaviours/abaqus/abaqusparametertest2.mtest
   	   mfront/tests/behaviours/uanderson/Makefile	   
   	   mfront/tests/behaviours/uanderson/uandersonageingburger.mtest
   	   mfront/tests/behaviours/uanderson/uandersonanistropiclemaitreviscoplasticbehaviour.mtest
@@ -3105,6 +3119,8 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/calculix/calculixfinitestrainsinglecrystal-012.mtest
            mfront/tests/behaviours/calculix/calculixfinitestrainsinglecrystal-012-2.mtest
            mfront/tests/behaviours/calculix/calculixfinitestrainsinglecrystal-159.mtest
+           mfront/tests/behaviours/calculix/calculixparametertest.mtest
+           mfront/tests/behaviours/calculix/calculixparametertest2.mtest
            mfront/tests/models/Makefile
            mfront/tests/models/interfaces/Makefile
            mfront/tests/models/interfaces/include/Makefile

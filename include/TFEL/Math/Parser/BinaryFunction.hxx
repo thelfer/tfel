@@ -15,8 +15,8 @@
 #ifndef LIB_TFEL_BINARYFUNCTION_HXX
 #define LIB_TFEL_BINARYFUNCTION_HXX 
 
-#include"TFEL/Config/TFELConfig.hxx"
 #include<memory>
+#include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Math/Parser/Expr.hxx"
 
 namespace tfel
@@ -39,6 +39,17 @@ namespace tfel
 	throwUnimplementedDifferentiateFunctionException();
 	TFEL_NORETURN static void
 	throwInvalidCallException(const int);
+	/*!
+	 * \brief build the C++ formula resulting from the evolution
+	 * of a binary function.
+	 * \param[in] n: name
+	 * \param[in] e1: first  argument
+	 * \param[in] e2: second argument
+	 */
+	static std::string getCxxFormula(const char* const,
+					 const std::string&,
+					 const std::string&);
+
       }; // end of struct StandardBinaryFunctionBase
 
       template<double (*f)(const double,const double)>
@@ -46,11 +57,29 @@ namespace tfel
 	: public BinaryFunction,
 	  protected StandardBinaryFunctionBase
       {
-	StandardBinaryFunction(const std::shared_ptr<Expr>,
+	/*!
+	 * \param[in] n: name of the function
+	 * \param[in] e1: first argument
+	 * \param[in] e2: second argument
+	 */
+	StandardBinaryFunction(const char* const,
+			       const std::shared_ptr<Expr>,
 			       const std::shared_ptr<Expr>);
+	/*!
+	 *\return the value resulting for the evaluation of the
+	 * function and its arguments
+	 */
+	double getValue() const override;
+	/*!
+	 * \return a string representation of the evaluator suitable to
+	 * be integrated in a C++ code.
+	 * \param[in] m: a map used to change the names of the variables
+	 */
+	std::string
+	getCxxFormula(const std::vector<std::string>&) const override;
+	
 	virtual void
 	checkCyclicDependency(std::vector<std::string>&) const override;
-	virtual double getValue() const override;
 	virtual std::shared_ptr<Expr>
 	resolveDependencies(const std::vector<double>&) const override;
 	virtual std::shared_ptr<Expr>
@@ -69,7 +98,11 @@ namespace tfel
       private:
         StandardBinaryFunction& operator=(const StandardBinaryFunction&) = delete;
 	StandardBinaryFunction& operator=(StandardBinaryFunction&&) = delete;
+	//! function name
+	const char* const name;
+	//! first argument
 	const std::shared_ptr<Expr> expr1;
+	//! second argument
 	const std::shared_ptr<Expr> expr2;
       }; // end of struct StandardBinaryFunction
 

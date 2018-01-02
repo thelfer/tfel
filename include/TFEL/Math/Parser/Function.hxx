@@ -41,14 +41,37 @@ namespace tfel
 	throwUnimplementedDifferentiateFunctionException();
 	TFEL_NORETURN static void
 	throwInvalidCallException(const double,const int);
+	/*!
+	 * \brief build the C++ formula resulting from the evolution
+	 * of a unary function.
+	 * \param[in] n: name
+	 * \param[in] e: argument
+	 */
+	static std::string getCxxFormula(const char *,
+					 const std::string&);
       }; // end of struct StandardFunctionBase
 
       template<StandardFunctionPtr f>
       struct TFEL_VISIBILITY_LOCAL StandardFunction final
 	: public Function
       {
-	StandardFunction(const std::shared_ptr<Expr>);
-	virtual double getValue() const override;
+	/*!
+	 * \param[in] n: name of the function
+	 * \param[in] e: expression
+	 */
+	StandardFunction(const char* const,
+			 const std::shared_ptr<Expr>);
+	/*!
+	 *\return the value resulting for the evaluation of the
+	 * function and its argument
+	 */
+	double getValue() const override;
+	/*!
+	 * \return a string representation of the evaluator suitable to
+	 * be integrated in a C++ code.
+	 * \param[in] m: a map used to change the names of the variables
+	 */
+	std::string getCxxFormula(const std::vector<std::string>&) const override;
 	virtual void
 	checkCyclicDependency(std::vector<std::string>&) const override;
 	virtual std::shared_ptr<Expr>
@@ -69,6 +92,9 @@ namespace tfel
       private:
 	StandardFunction& operator=(const StandardFunction&) = delete;
 	StandardFunction& operator=(StandardFunction&&) = delete;
+	//! name
+	const char* const name;
+	//! argument
 	const std::shared_ptr<Expr> expr;
       }; // end of struct StandardFunction
 

@@ -35,21 +35,23 @@ namespace tfel
       {} // end of LogicalOperation::LogicalOperation
 
       template<typename Op>
-      bool
-      LogicalOperation<Op>::getValue() const
+      bool LogicalOperation<Op>::getValue() const
       {
 	return Op::apply(this->a->getValue(),
 			 this->b->getValue());
       } // end of LogicalOperation::getValue() const
 
       template<typename Op>
+      std::string LogicalOperation<Op>::getCxxFormula(const std::vector<std::string>& m) const{
+	return Op::getCxxFormula(this->a->getCxxFormula(m),this->b->getCxxFormula(m));
+      } // end of LogicalOperation<Op>::getCxxFormula
+      
+      template<typename Op>
       void
       LogicalOperation<Op>::checkCyclicDependency(std::vector<std::string>& vars) const
       {
-	using namespace std;
-	using std::vector;
-	vector<string> a_vars(vars);
-	vector<string> b_vars(vars);
+	std::vector<std::string> a_vars(vars);
+	std::vector<std::string> b_vars(vars);
 	this->a->checkCyclicDependency(a_vars);
 	this->b->checkCyclicDependency(b_vars);
 	mergeVariablesNames(vars,a_vars);
@@ -60,16 +62,16 @@ namespace tfel
       std::shared_ptr<LogicalExpr>
       LogicalOperation<Op>::resolveDependencies(const std::vector<double>& v) const
       {
-	return std::shared_ptr<LogicalExpr>(new LogicalOperation<Op>(this->a->resolveDependencies(v),
-							      this->b->resolveDependencies(v)));
+	return std::make_shared<LogicalOperation<Op>>(this->a->resolveDependencies(v),
+						      this->b->resolveDependencies(v));
       } // end of LogicalOperation<Op>::resolveDependencies() const
 
       template<typename Op>
       std::shared_ptr<LogicalExpr>
       LogicalOperation<Op>::clone(const std::vector<double>& v) const
       {
-	return std::shared_ptr<LogicalExpr>(new LogicalOperation<Op>(this->a->clone(v),
-							      this->b->clone(v)));
+	return std::make_shared<LogicalOperation<Op>>(this->a->clone(v),
+						      this->b->clone(v));
       } // end of LogicalOperation<Op>::clone
 
       template<typename Op>
@@ -104,13 +106,19 @@ namespace tfel
       {} // end of LogicalBinaryOperation::LogicalBinaryOperation
 
       template<typename Op>
-      bool
-      LogicalBinaryOperation<Op>::getValue() const
+      bool LogicalBinaryOperation<Op>::getValue() const
       {
 	return Op::apply(this->a->getValue(),
 			 this->b->getValue());
       } // end of LogicalBinaryOperation::getValue() const
 
+      template<typename Op>
+      std::string LogicalBinaryOperation<Op>::getCxxFormula(const std::vector<std::string>& m) const
+      {
+	return Op::getCxxFormula(this->a->getCxxFormula(m),
+				 this->b->getCxxFormula(m));
+      } // end of LogicalBinaryOperation::getCxxFormula() const
+      
       template<typename Op>
       void
       LogicalBinaryOperation<Op>::checkCyclicDependency(std::vector<std::string>& vars) const

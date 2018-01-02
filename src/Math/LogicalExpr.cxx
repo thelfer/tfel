@@ -13,7 +13,7 @@
 
 #include<cmath>
 #include<limits>
-
+#include"TFEL/Math/General/IEEE754.hxx"
 #include"TFEL/Math/Parser/LogicalExpr.hxx"
 
 namespace tfel
@@ -27,38 +27,73 @@ namespace tfel
 
       bool OpEqual::apply(const double a,const double b)
       {
-	return std::abs(a-b) < 10*std::numeric_limits<double>::min();
+	return tfel::math::ieee754::fpclassify(std::abs(a-b))==FP_ZERO;
       } // end of OpEqual::apply
-
+      
+      std::string OpEqual::getCxxFormula(const std::string& a,
+					 const std::string& b){
+	return '('+a+")==("+b+')';
+      } // end of OpEqual::getCxxFormula
+	  
       bool OpGreater::apply(const double a,const double b)
       {
 	return a > b;
       } // end of OpGreater::apply
 
+      std::string OpGreater::getCxxFormula(const std::string& a,
+					   const std::string& b){
+	return '('+a+")>("+b+')';
+      } // end of OpGreater::getCxxFormula
+      
       bool OpGreaterOrEqual::apply(const double a,const double b)
       {
 	return a >= b;
       } // end of OpGreaterOrEqual::apply
 
+      std::string OpGreaterOrEqual::getCxxFormula(const std::string& a,
+						  const std::string& b){
+	return '('+a+")>=("+b+')';
+      } // end of OpGreaterOrEqual::getCxxFormula
+      
       bool OpLesser::apply(const double a,const double b)
       {
 	return a < b;
       } // end of OpLesser::apply
 
+      std::string OpLesser::getCxxFormula(const std::string& a,
+					  const std::string& b){
+	return '('+a+")>("+b+')';
+      } // end of OpLesser::getCxxFormula
+      
       bool OpLesserOrEqual::apply(const double a,const double b)
       {
 	return a <= b;
       } // end of OpLesserOrEqual::apply
 
+      std::string OpLesserOrEqual::getCxxFormula(const std::string& a,
+						 const std::string& b){
+	return '('+a+")>=("+b+')';
+      } // end of OpLesserOrEqual::getCxxFormula
+      
       bool OpAnd::apply(const bool a,const bool b)
       {
 	return a && b;
       } // end of OpAnd::apply
+
+      std::string OpAnd::getCxxFormula(const std::string& a,
+				       const std::string& b){
+	return '('+a+")&&("+b+')';
+      } // end of OpAnd::getCxxFormula
       
       bool OpOr::apply(const bool a,const bool b)
       {
 	return a || b;
       } // end of OpAnd::apply
+
+      std::string OpOr::getCxxFormula(const std::string& a,
+				      const std::string& b){
+	return '('+a+")||("+b+')';
+      } // end of OpOr::getCxxFormula
       
       LogicalExpr::~LogicalExpr() = default;
 
@@ -70,6 +105,11 @@ namespace tfel
       {
 	return !this->a->getValue();
       } // end of NegLogicalExpression::getValue() const
+
+      std::string NegLogicalExpression::getCxxFormula(const std::vector<std::string>& m) const
+      {
+	return "!("+this->a->getCxxFormula(m)+")";
+      } // end of NegLogicalExpression::getCxxFormula
       
       void
       NegLogicalExpression::checkCyclicDependency(std::vector<std::string>& names) const

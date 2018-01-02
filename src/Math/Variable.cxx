@@ -31,11 +31,16 @@ namespace tfel
 	: v(v_), pos(p_)
       {} // end of Variable::Variable
 
-      double
-      Variable::getValue() const
+      double Variable::getValue() const
       {
 	return this->v[this->pos];
       } // end of Variable::getValue
+
+      std::string Variable::getCxxFormula(const std::vector<std::string>& m) const{
+	tfel::raise_if(this->pos>=m.size(),"Variable::getCxxFormula: "
+		       "invalid argument");
+	return m[this->pos];
+      } // end of Variable::getCxxFormula
 
       void
       Variable::checkCyclicDependency(std::vector<std::string>&) const

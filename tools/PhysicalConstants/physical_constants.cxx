@@ -11,7 +11,11 @@
  * project under specific licensing conditions. 
  */
 
-// g++ physical_constants.cxx -o physical_constants `tfel-config --compiler-flags --includes --libs --utilities` && ./physical_constants && cp PhysicalConstants.cxx ../../bindings/python/tfel/PhysicalConstants.cxx
+// g++ physical_constants.cxx -o physical_constants `tfel-config --compiler-flags --includes --libs --utilities`
+// ./physical_constants
+// cp PhysicalConstants.hxx ../../include/
+// cp PhysicalConstants.cxx ../../src/PhysicalConstants
+// cp PhysicalConstants-python.cxx ../../bindings/python/tfel/PhysicalConstants.cxx
 
 #include<iostream>
 
@@ -129,43 +133,98 @@ static void generate_cxx(const std::vector<Constant>& cs)
      << "#ifndef LIB_TFEL_PHYSICALCONSTANTS_HXX\n"
      << "#define LIB_TFEL_PHYSICALCONSTANTS_HXX\n"
      << "\n"
+     << "#include\"TFEL/Config/TFELConfig.hxx\"\n"
+     << "\n"
      << "namespace tfel{\n"
      << "\n"
+     << "#if __cplusplus >= 201703L\n\n"
      << "  template<typename real = double>\n"
      << "  struct PhysicalConstants{\n";
   for(const auto& c : cs){
     write_comments(os,c);
-    os << "static constexpr const real " << c.name << " = real(" << c.value << ");\n";
+    os << "static constexpr const real " << c.name
+       << " = real(" << c.value << ");\n";
     if(!c.short_name.empty()){
       write_comments(os,c);
-      os << "static constexpr const real " << c.short_name << " = real(" << c.value << ");\n";
+      os << "static constexpr const real " << c.short_name
+	 << "= real(" << c.value << ");\n";
     }
   }
   os << "  }; // end of PhysicalConstants\n"
      << "\n"
-     << "#if __cplusplus >= 201402L\n"
      << "namespace constants{\n\n";
   for(const auto& c : cs){
     write_comments(os,c);
     os << "template<typename real>\n"
-       << "constexpr const real " << c.name << " = real(" << c.value << ");\n";
+       << "inline constexpr const real " << c.name
+       << " = real(" << c.value << ");\n";
     if(!c.short_name.empty()){
       write_comments(os,c);
       os << "template<typename real = double>\n"
-	 << "constexpr const real " << c.short_name << " = real(" << c.value << ");\n";
+	 << "inline constexpr const real " << c.short_name
+	 << " = real(" << c.value << ");\n";
     }
   }
   os << "\n"
-     << "} // end of namespace constants\n"
-     << "#endif /* __cplusplus >= 201402L */\n\n"
+     << "} // end of namespace constants\n\n"
+     << "#else  /* __cplusplus >= 201703L */\n\n"
+     << "  template<typename real = double>\n"
+     << "  struct TFELPHYSICALCONSTANTS_VISIBILITY_EXPORT PhysicalConstants{\n";
+  for(const auto& c : cs){
+    write_comments(os,c);
+    os << "static const real " << c.name << ";\n";
+    if(!c.short_name.empty()){
+      write_comments(os,c);
+      os << "static const real " << c.short_name << ";\n";
+    }
+  }
+  os << "  }; // end of PhysicalConstants\n"
+     << "#endif /* __cplusplus >= 201703L */\n\n"
      << "} // end of namespace tfel\n"
      << "\n"
      << "#endif /* LIB_TFEL_PHYSICALCONSTANTS_HXX */\n";
+  os.close();
+  os.open("PhysicalConstants.cxx");
+  os << "/*!\n"
+     << " * \\file   src/PhysicalConstants/PhysicalConstants.cxx\n"
+     << " * \\brief\n"
+     << " * \\author Thomas Helfer\n"
+     << " * \\date   28/12/2017\n"
+     << " * \\copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights\n"
+     << " * reserved.\n"
+     << " * This project is publicly released under either the GNU GPL Licence\n" 
+     << " * or the CECILL-A licence. A copy of thoses licences are delivered\n" 
+     << " * with the sources of TFEL. CEA or EDF may also distribute this\n"
+     << " * project under specific licensing conditions.\n"
+     << " */\n"
+     << "\n"
+     << "#include\"TFEL/PhysicalConstants.hxx\"\n"
+     << "\n"
+     << "#if __cplusplus < 201703L\n\n"
+     << "namespace tfel{\n"
+     << "\n";
+  for(const auto t : {"float","double","long double"}){
+    for(const auto& c : cs){
+      os << "template<>\n"
+	 << "const " << t << " "
+	 << "PhysicalConstants<" << t << ">::" << c.name << " = "
+	 << "static_cast<" << t << ">(" << c.value << ");\n\n";
+      if(!c.short_name.empty()){
+	os << "template<>\n"
+	   << "const " << t << " "
+	   << "PhysicalConstants<" << t << ">::" << c.short_name << " = "
+	   << "static_cast<" << t << ">(" << c.value << ");\n\n";
+      }
+    }
+  }
+  os << "} // end of namespace tfel\n\n"
+     << "#endif  /* __cplusplus < 201703L */\n";
+  os.close();
 } // end of generate_cxx
 
 static void generate_python(const std::vector<Constant>& cs)
 {
-  std::ofstream os("PhysicalConstants.cxx");
+  std::ofstream os("PhysicalConstants-python.cxx");
   os << "/*!\n"
      << " * \\file   bindings/python/tfel/PhysicalConstants.cxx\n"
      << " * \\brief\n"

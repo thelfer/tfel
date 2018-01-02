@@ -1,0 +1,41 @@
+@Behaviour ParameterTest;
+@Author Helfer Thomas;
+@Date 23/11/06;
+@Description{
+ A very first test 
+ (the most simple one in fact).
+}
+
+@ProvidesSymmetricTangentOperator;
+
+// Material properties
+@Parameter young = 150e9;
+@Parameter nu    = 0.3;
+young.setGlossaryName("YoungModulus");
+nu.setGlossaryName("PoissonRatio");
+
+// Lame Coefficients
+@LocalVariable stress lambda,mu;
+
+@InitLocalVariables{
+  constexpr const auto eps = real(1.e-12);
+  const auto dy = young-stress(100e9);
+  const auto dn = nu-real(0.2);
+  if(abs(dy)>eps*young){
+    throw(runtime_error("invalid value for the "
+			"Young modulus"));
+  }
+  if(abs(dn)>eps*nu){
+    throw(runtime_error("invalid value for the "
+			"Poisson ratio"));
+  }
+  lambda = computeLambda(young,nu);
+  mu = computeMu(young,nu);
+}
+
+@Integrator{
+  sig = lambda*trace(eto+deto)*StrainStensor::Id()+2*mu*(eto+deto);
+  if(computeTangentOperator_){
+    Dt = lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
+  }
+}

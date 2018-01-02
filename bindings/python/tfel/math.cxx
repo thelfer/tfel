@@ -17,6 +17,7 @@ void declareTFELMathVector();
 void declaretvector();
 void declarestensor();
 void declarest2tost2();
+void declareEvaluator();
 
 BOOST_PYTHON_MODULE(math)
 {
@@ -24,4 +25,5 @@ BOOST_PYTHON_MODULE(math)
   declarestensor();
   declarest2tost2();
   declareTFELMathVector();
+  declareEvaluator();
 }

@@ -69,6 +69,12 @@ namespace tfel
 	return df->getValue();
       } // end of DifferentiatedFunctionExpr::getValue
 
+      std::string
+      DifferentiatedFunctionExpr::getCxxFormula(const std::vector<std::string>&) const{
+	tfel::raise("DifferentiatedFunctionExpr::getCxxFormula: "
+		    "unimplemented feature");
+      } // end of DifferentiatedFunctionExpr::getCxxFormula
+      
       void
       DifferentiatedFunctionExpr::checkCyclicDependency(std::vector<std::string>& names) const
       {

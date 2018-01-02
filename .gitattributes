@@ -96,6 +96,7 @@ bindings/python/tfel/Barlat.cxx -text
 bindings/python/tfel/CMakeLists.txt -text
 bindings/python/tfel/CrystalStructure.cxx -text
 bindings/python/tfel/Data.cxx -text
+bindings/python/tfel/Evaluator.cxx -text
 bindings/python/tfel/ExternalBehaviourDescription.cxx -text
 bindings/python/tfel/ExternalLibraryManager.cxx -text
 bindings/python/tfel/Glossary.cxx -text
@@ -1316,6 +1317,7 @@ docs/web/js/vendor/jquery-1.10.2.min.js -text
 docs/web/js/vendor/modernizr-2.6.2.min.js -text
 docs/web/material-properties.md -text
 docs/web/material.md -text
+docs/web/math.md -text
 docs/web/media/CalculiXSheetForming-50.mp4 -text
 docs/web/media/SignoriniCompression.mp4 -text
 docs/web/media/SignoriniStrip.mp4 -text
@@ -1489,7 +1491,6 @@ include/TFEL/Math/CubicSpline.ixx -text
 include/TFEL/Math/Discretization1D.hxx -text
 include/TFEL/Math/Discretization1D.ixx -text
 include/TFEL/Math/Evaluator.hxx -text
-include/TFEL/Math/Evaluator.ixx -text
 include/TFEL/Math/ExpressionTemplates/Expr.hxx -text
 include/TFEL/Math/ExpressionTemplates/StandardOperations.hxx -text
 include/TFEL/Math/FSLevenbergMarquardt.hxx -text
@@ -2465,6 +2466,9 @@ mfront/tests/behaviours/Chaboche.mfront -text
 mfront/tests/behaviours/Chaboche2.mfront -text
 mfront/tests/behaviours/CompressibleNeoHookeanBehaviour.mfront -text
 mfront/tests/behaviours/ComputeStressFreeExpansion.mfront -text
+mfront/tests/behaviours/ComputeThermalExpansion.mfront -text
+mfront/tests/behaviours/ComputeThermalExpansion2.mfront -text
+mfront/tests/behaviours/ComputeThermalExpansion3.mfront -text
 mfront/tests/behaviours/DDIF2.mfront -text
 mfront/tests/behaviours/DruckerPrager.mfront -text
 mfront/tests/behaviours/DruckerPragerEcroLin.mfront -text
@@ -2559,6 +2563,8 @@ mfront/tests/behaviours/OrthotropicElastic6.mfront -text
 mfront/tests/behaviours/OrthotropicSaintVenantKirchhoffElasticity.mfront -text
 mfront/tests/behaviours/OrthotropicSwelling.mfront -text
 mfront/tests/behaviours/OrthotropicSwelling2.mfront -text
+mfront/tests/behaviours/ParameterTest.mfront -text
+mfront/tests/behaviours/ParameterTest2.mfront -text
 mfront/tests/behaviours/PlasIsoCin.mfront -text
 mfront/tests/behaviours/Plasticity.mfront -text
 mfront/tests/behaviours/PolyCrystals.mfront -text
@@ -2830,6 +2836,8 @@ mfront/tests/behaviours/abaqus/abaqusorthotropicswelling-omp.mtest.in -text
 mfront/tests/behaviours/abaqus/abaqusorthotropicswelling.mtest.in -text
 mfront/tests/behaviours/abaqus/abaqusorthotropicswelling2-omp.mtest.in -text
 mfront/tests/behaviours/abaqus/abaqusorthotropicswelling2.mtest.in -text
+mfront/tests/behaviours/abaqus/abaqusparametertest.mtest.in -text
+mfront/tests/behaviours/abaqus/abaqusparametertest2.mtest.in -text
 mfront/tests/behaviours/abaqus/abaqusplasisocin.mtest.in -text
 mfront/tests/behaviours/abaqus/abaqusplasticity.mtest.in -text
 mfront/tests/behaviours/abaqus/abaqussaintvenantkirchhoffelasticity-shear-1-2D.mtest.in -text
@@ -3226,6 +3234,8 @@ mfront/tests/behaviours/ansys/ansysmieheapellambrechtlogarithmicstrainelasticity
 mfront/tests/behaviours/ansys/ansysmieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-1-3D.mtest.in -text
 mfront/tests/behaviours/ansys/ansysmieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-2-3D.mtest.in -text
 mfront/tests/behaviours/ansys/ansysmieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-3-3D.mtest.in -text
+mfront/tests/behaviours/ansys/ansysparametertest.mtest.in -text
+mfront/tests/behaviours/ansys/ansysparametertest2.mtest.in -text
 mfront/tests/behaviours/ansys/ansyssaintvenantkirchhoffelasticity-shear-1-2D.mtest.in -text
 mfront/tests/behaviours/ansys/ansyssaintvenantkirchhoffelasticity-shear-1-3D.mtest.in -text
 mfront/tests/behaviours/ansys/ansyssaintvenantkirchhoffelasticity-shear-2-2D.mtest.in -text
@@ -3371,6 +3381,8 @@ mfront/tests/behaviours/aster/asterorthotropiccreep.mtest.in -text
 mfront/tests/behaviours/aster/asterorthotropicswelling.mtest.in -text
 mfront/tests/behaviours/aster/asterorthotropicswelling2.mtest.in -text
 mfront/tests/behaviours/aster/asterorthotropicswelling3.mtest.in -text
+mfront/tests/behaviours/aster/asterparametertest.mtest.in -text
+mfront/tests/behaviours/aster/asterparametertest2.mtest.in -text
 mfront/tests/behaviours/aster/asterplasisocin.mtest.in -text
 mfront/tests/behaviours/aster/asterplasticity.mtest.in -text
 mfront/tests/behaviours/aster/asterpolycrystals.mtest.in -text
@@ -3563,6 +3575,8 @@ mfront/tests/behaviours/calculix/calculixmieheapellambrechtlogarithmicstrainelas
 mfront/tests/behaviours/calculix/calculixmieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-1-3D.mtest.in -text
 mfront/tests/behaviours/calculix/calculixmieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-2-3D.mtest.in -text
 mfront/tests/behaviours/calculix/calculixmieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-3-3D.mtest.in -text
+mfront/tests/behaviours/calculix/calculixparametertest.mtest.in -text
+mfront/tests/behaviours/calculix/calculixparametertest2.mtest.in -text
 mfront/tests/behaviours/calculix/calculixsaintvenantkirchhoffelasticity-shear-1-3D.mtest.in -text
 mfront/tests/behaviours/calculix/calculixsaintvenantkirchhoffelasticity-shear-2-3D.mtest.in -text
 mfront/tests/behaviours/calculix/calculixsaintvenantkirchhoffelasticity-shear-3-3D.mtest.in -text
@@ -3592,6 +3606,9 @@ mfront/tests/behaviours/castem/castemchaboche.mtest.in -text
 mfront/tests/behaviours/castem/castemchaboche2.mtest.in -text
 mfront/tests/behaviours/castem/castemcompressibleneohookeanbehaviour.mtest.in -text
 mfront/tests/behaviours/castem/castemcomputestressfreeexpansion.mtest.in -text
+mfront/tests/behaviours/castem/castemcomputethermalexpansion.mtest.in -text
+mfront/tests/behaviours/castem/castemcomputethermalexpansion2.mtest.in -text
+mfront/tests/behaviours/castem/castemcomputethermalexpansion3.mtest.in -text
 mfront/tests/behaviours/castem/castemddif2-2.mtest.in -text
 mfront/tests/behaviours/castem/castemddif2-3.mtest.in -text
 mfront/tests/behaviours/castem/castemddif2-4.mtest.in -text
@@ -3879,6 +3896,8 @@ mfront/tests/behaviours/castem/castemorthotropicsaintvenantkirchhoffelasticity-3
 mfront/tests/behaviours/castem/castemorthotropicswelling.mtest.in -text
 mfront/tests/behaviours/castem/castemorthotropicswelling2.mtest.in -text
 mfront/tests/behaviours/castem/castemorthotropicswelling3.mtest.in -text
+mfront/tests/behaviours/castem/castemparametertest.mtest.in -text
+mfront/tests/behaviours/castem/castemparametertest2.mtest.in -text
 mfront/tests/behaviours/castem/castemplasisocin.mtest.in -text
 mfront/tests/behaviours/castem/castemplasticity.mtest.in -text
 mfront/tests/behaviours/castem/castempolycrystals.mtest.in -text
@@ -4383,6 +4402,8 @@ mfront/tests/behaviours/cyrano/cyranoorthotropicelasticity6-2.mtest.in -text
 mfront/tests/behaviours/cyrano/cyranoorthotropicelasticity6-3.mtest.in -text
 mfront/tests/behaviours/cyrano/cyranoorthotropicswelling.mtest.in -text
 mfront/tests/behaviours/cyrano/cyranoorthotropicswelling2.mtest.in -text
+mfront/tests/behaviours/cyrano/cyranoparametertest.mtest.in -text
+mfront/tests/behaviours/cyrano/cyranoparametertest2.mtest.in -text
 mfront/tests/behaviours/epx/CMakeLists.txt -text
 mfront/tests/behaviours/epx/Makefile.am -text
 mfront/tests/behaviours/epx/epxaxialgrowth.mtest.in -text
@@ -5690,6 +5711,9 @@ src/NUMODIS/Makefile.am -text
 src/NUMODIS/TripleNode.cxx -text
 src/NUMODIS/Utilities.cxx -text
 src/NUMODIS/Vect3.cxx -text
+src/PhysicalConstants/CMakeLists.txt -text
+src/PhysicalConstants/Makefile.am -text
+src/PhysicalConstants/PhysicalConstants.cxx -text
 src/System/BinaryRead.cxx -text
 src/System/BinaryWrite.cxx -text
 src/System/CMakeLists.txt -text
@@ -5852,6 +5876,7 @@ tests/Math/lu2.cxx -text
 tests/Math/newton_raphson.cxx -text
 tests/Math/parser.cxx -text
 tests/Math/parser10.cxx -text
+tests/Math/parser11.cxx -text
 tests/Math/parser2.cxx -text
 tests/Math/parser3.cxx -text
 tests/Math/parser4.cxx -text

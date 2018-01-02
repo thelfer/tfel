@@ -27,7 +27,12 @@ set(mfront_tests_SOURCES
   LogarithmicStrainElasticity2
   LogarithmicStrainNortonCreep
   SaintVenantKirchhoffElasticity
-  FiniteStrainSingleCrystal)
+  FiniteStrainSingleCrystal
+  ComputeThermalExpansion
+  ComputeThermalExpansion2
+  ComputeThermalExpansion3
+  ParameterTest
+  ParameterTest2)
 mfront_dependencies(MFrontCalculiXBehaviours
   ThermalExpansionCoefficientTest
   ThermalExpansionCoefficientTest2
@@ -182,3 +187,6 @@ test_calculix(mieheapellambrechtlogarithmicstrainelasticity2-uniaxialloading-3-3
 test_calculix(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-1-3D)
 test_calculix(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-2-3D)
 test_calculix(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-3-3D)
+
+test_calculix(parametertest)
+test_calculix(parametertest2)

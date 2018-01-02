@@ -43,6 +43,14 @@ namespace tfel
 		      const std::vector<double>&) const = 0;
 	virtual void
 	getParametersNames(std::set<std::string>&) const = 0;
+	/*!
+	 * \return a string representation of the evaluator suitable to
+	 * be integrated in a C++ code.
+	 * \param[in] m: a map used to change the names of the variables
+	 */
+	virtual std::string
+	getCxxFormula(const std::vector<std::string>&) const = 0;
+	
 	virtual std::shared_ptr<Expr>
 	createFunctionByChangingParametersIntoVariables(const std::vector<double>&,
 							const std::vector<std::string>&,

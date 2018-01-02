@@ -33,8 +33,10 @@ math_la_SOURCES = math.cxx      \
 		  vector.cxx    \
 		  tvector.cxx   \
 		  stensor.cxx   \
-		  st2tost2.cxx
-math_la_LIBADD  = -L@top_builddir@/src/Math -lTFELMath         \
+		  st2tost2.cxx  \
+		  Evaluator.cxx 
+math_la_LIBADD  = -L@top_builddir@/src/Math                    \
+		  -lTFELMath -lTFELMathParser                  \
 		  @BOOST_LIBS@ @BOOST_PYTHON_LIBS@             \
 		  -L@PYTHONPATH@/lib -lpython@PYTHON_VERSION@
 math_la_LDFLAGS = -module

@@ -41,6 +41,15 @@ namespace tfel
 	      "("+std::string(strerror(e))+")");
       } // end of struct StandardBinaryFunctionBase::throwInvalidCallException
 
+
+      std::string
+      StandardBinaryFunctionBase::getCxxFormula(const char* const n,
+						const std::string& e1,
+						const std::string& e2)
+      {
+	return std::string(n)+'('+e1+','+e2+')';
+      } // end of StandardBinaryFunctionBase::getCxxFormula
+
       BinaryFunction::~BinaryFunction() = default;
 
     } // end of namespace parser

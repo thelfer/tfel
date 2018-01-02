@@ -30,12 +30,18 @@ namespace tfel
     namespace parser
     {
 
+      /*!
+       * \brief a simple structure in charge of storing external
+       * functions by name.
+       */
       struct ExternalFunctionManager
 	: public std::map<std::string,
-			  std::shared_ptr<ExternalFunction> >
+			  std::shared_ptr<ExternalFunction>>
       {}; // end of struct ExternalFunctionManager
 
-      typedef std::shared_ptr<ExternalFunctionManager> ExternalFunctionManagerPtr;
+      //! \brief a simple alias
+      using  ExternalFunctionManagerPtr =
+	std::shared_ptr<ExternalFunctionManager>;
       
     } // end of namespace parser
 

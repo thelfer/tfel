@@ -21,8 +21,11 @@
 #include<cctype>
 
 #include"TFEL/Raise.hxx"
+#include"TFEL/PhysicalConstants.hxx"
 #include"TFEL/Math/power.hxx"
 #include"TFEL/Math/Evaluator.hxx"
+#include"TFEL/Math/Parser/Function.hxx"
+#include"TFEL/Math/Parser/BinaryFunction.hxx"
 
 #ifdef __CYGWIN__
 static bool isascii(const int c){
@@ -36,6 +39,25 @@ namespace tfel
   namespace math
   {
 
+    struct Evaluator::FunctionGeneratorManager
+    {
+      void insert(const std::string&,
+		  const Evaluator::FunctionGenerator);
+      void insert(const std::string&,
+		  const Evaluator::BinaryFunctionGenerator);
+      void insert(const std::string&,
+		  const Evaluator::ExternalFunctionGenerator);
+    private:
+      friend struct Evaluator;
+      FunctionGeneratorManager();
+      TFEL_VISIBILITY_LOCAL void
+      checkName(const std::string&) const;
+      std::map<std::string,double> constants;
+      std::map<std::string,Evaluator::FunctionGenerator> fctGenerators;
+      std::map<std::string,Evaluator::BinaryFunctionGenerator> bFctGenerators;
+      std::map<std::string,Evaluator::ExternalFunctionGenerator> extOpGenerators;
+    }; // end of struct FunctionManager
+    
     void
     Evaluator::checkNotEndOfExpression(const std::string& method,
 				       const std::string& error,
@@ -87,9 +109,8 @@ namespace tfel
     Evaluator::convertToUnsignedInt(const std::string& method,
 				    const std::string& value)
     {
-      using namespace std;
-      string::const_iterator ps;
-      istringstream converter(value);
+      std::string::const_iterator ps;
+      std::istringstream converter(value);
       for(ps=value.begin();ps!=value.end();++ps){
 	raise_if(!isdigit(*ps),method+" : invalid entry");
       }
@@ -100,13 +121,11 @@ namespace tfel
       return u;
     } // end of Evaluator::convertToUnsignedInt
 
-    int
-    Evaluator::convertToInt(const std::string& method,
-			    const std::string& value)
+    int Evaluator::convertToInt(const std::string& method,
+				const std::string& value)
     {
-      using namespace std;
-      string::const_iterator ps;
-      istringstream converter(value);
+      std::string::const_iterator ps;
+      std::istringstream converter(value);
       for(ps=value.begin();ps!=value.end();++ps){
 	raise_if(!isdigit(*ps),method+" : invalid entry");
       }
@@ -168,11 +187,12 @@ namespace tfel
 #if !(defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
     template<unsigned short N>
     static std::shared_ptr<tfel::math::parser::Expr>
-    EvaluatorPowerFunctionGenerator(const std::shared_ptr<tfel::math::parser::Expr> e)
+    EvaluatorPowerFunctionGenerator(const char* const n,
+				    const std::shared_ptr<tfel::math::parser::Expr> e)
     {
       using namespace tfel::math::parser;
       using namespace tfel::math::stdfunctions;
-      return std::make_shared<StandardFunction<power<N>>>(e);
+      return std::make_shared<StandardFunction<power<N>>>(n,e);
     } // end of EvaluatorPowerFunctionGenerator
 #endif
 
@@ -190,37 +210,37 @@ namespace tfel
 	return std::make_shared<Number>(1.);
 #if !(defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
       case 1:
-	return EvaluatorPowerFunctionGenerator<1>(args[0]);
+	return EvaluatorPowerFunctionGenerator<1>("tfel::math::power<1>",args[0]);
       case 2:
-	return EvaluatorPowerFunctionGenerator<2>(args[0]);
+	return EvaluatorPowerFunctionGenerator<2>("tfel::math::power<2>",args[0]);
       case 3:
-	return EvaluatorPowerFunctionGenerator<3>(args[0]);
+	return EvaluatorPowerFunctionGenerator<3>("tfel::math::power<3>",args[0]);
       case 4:
-	return EvaluatorPowerFunctionGenerator<4>(args[0]);
+	return EvaluatorPowerFunctionGenerator<4>("tfel::math::power<4>",args[0]);
       case 5:
-	return EvaluatorPowerFunctionGenerator<5>(args[0]);
+	return EvaluatorPowerFunctionGenerator<5>("tfel::math::power<5>",args[0]);
       case 6:
-	return EvaluatorPowerFunctionGenerator<6>(args[0]);
+	return EvaluatorPowerFunctionGenerator<6>("tfel::math::power<6>",args[0]);
       case 7:
-	return EvaluatorPowerFunctionGenerator<7>(args[0]);
+	return EvaluatorPowerFunctionGenerator<7>("tfel::math::power<7>",args[0]);
       case 8:
-	return EvaluatorPowerFunctionGenerator<8>(args[0]);
+	return EvaluatorPowerFunctionGenerator<8>("tfel::math::power<8>",args[0]);
       case 9:
-	return EvaluatorPowerFunctionGenerator<9>(args[0]);
+	return EvaluatorPowerFunctionGenerator<9>("tfel::math::power<9>",args[0]);
       case 10:
-	return EvaluatorPowerFunctionGenerator<10>(args[0]);
+	return EvaluatorPowerFunctionGenerator<10>("tfel::math::power<10>",args[0]);
       case 11:
-	return EvaluatorPowerFunctionGenerator<11>(args[0]);
+	return EvaluatorPowerFunctionGenerator<11>("tfel::math::power<11>",args[0]);
       case 12:
-	return EvaluatorPowerFunctionGenerator<12>(args[0]);
+	return EvaluatorPowerFunctionGenerator<12>("tfel::math::power<12>",args[0]);
       case 13:
-	return EvaluatorPowerFunctionGenerator<13>(args[0]);
+	return EvaluatorPowerFunctionGenerator<13>("tfel::math::power<13>",args[0]);
       case 14:
-	return EvaluatorPowerFunctionGenerator<14>(args[0]);
+	return EvaluatorPowerFunctionGenerator<14>("tfel::math::power<14>",args[0]);
       case 15:
-	return EvaluatorPowerFunctionGenerator<15>(args[0]);
+	return EvaluatorPowerFunctionGenerator<15>("tfel::math::power<15>",args[0]);
       case 16:
-	return EvaluatorPowerFunctionGenerator<16>(args[0]);
+	return EvaluatorPowerFunctionGenerator<16>("tfel::math::power<16>",args[0]);
 #endif
       }
       raise("EvaluatorTreatPower: only exponent below 16 are supported");
@@ -336,6 +356,8 @@ namespace tfel
       auto throw_if = [](const bool b, const std::string& m){
 	raise_if(b,"Evaluator::FunctionGeneratorManager::checkName: "+m);
       };
+      throw_if(this->constants.find(name)!=this->constants.end(),
+	       "a constant named '"+name+"' has already been declared");
       throw_if(this->fctGenerators.find(name)!=this->fctGenerators.end(),
 	       "a function named '"+name+"' has already been declared");
       throw_if(this->bFctGenerators.find(name)!=this->bFctGenerators.end(),
@@ -349,7 +371,7 @@ namespace tfel
 						const Evaluator::FunctionGenerator f)
     {
       this->checkName(name);
-      this->fctGenerators.insert(make_pair(name,f));
+      this->fctGenerators.insert({name,f});
     } // end of FunctionGeneratorManager::insert
     
     void
@@ -357,7 +379,7 @@ namespace tfel
 						const Evaluator::BinaryFunctionGenerator f)
     {
       this->checkName(name);
-      this->bFctGenerators.insert(make_pair(name,f));
+      this->bFctGenerators.insert({name,f});
     } // end of FunctionGeneratorManager::insert
 
     void
@@ -365,29 +387,112 @@ namespace tfel
 						const Evaluator::ExternalFunctionGenerator f)
     {
       this->checkName(name);
-      this->extOpGenerators.insert(make_pair(name,f));
+      this->extOpGenerators.insert({name,f});
     } // end of FunctionGeneratorManager::insert
+
+    template<double (*f)(const double)>
+    static std::pair<std::string,std::function<Evaluator::ExprPtr(const Evaluator::ExprPtr)>>
+    makeStandardFunctionGenerator(const char* const n){
+      return {n,[n](const Evaluator::ExprPtr e){
+	  return std::shared_ptr<parser::Expr>(new parser::StandardFunction<f>(n,e));
+	}};
+    }// end of makeStandardFunctionGenerator
+
+    template<double (*f)(const double,const double)>
+    static std::pair<std::string,std::function<Evaluator::ExprPtr(const Evaluator::ExprPtr,
+								  const Evaluator::ExprPtr)>>
+    makeBinaryFunctionGenerator(const char* const n){
+      return {n,[n](const Evaluator::ExprPtr e1,
+		    const Evaluator::ExprPtr e2){
+	  return std::shared_ptr<parser::Expr>(new parser::StandardBinaryFunction<f>(n,e1,e2));
+	}};
+    }// end of makeStandardFunctionGenerator
     
     Evaluator::FunctionGeneratorManager::FunctionGeneratorManager()
     {
-      this->fctGenerators.insert({{"exp",&StandardFctGenerator<exp>},
-	                          {"abs",&StandardFctGenerator<fabs>},
-				  {"sin",&StandardFctGenerator<sin>},
-				  {"cos",&StandardFctGenerator<cos>},
-				  {"tan",&StandardFctGenerator<tan>},
-				  {"sqrt",&StandardFctGenerator<sqrt>},
-				  {"log",&StandardFctGenerator<log>},
-				  {"ln",&StandardFctGenerator<log>},
-				  {"log10",&StandardFctGenerator<log10>},
-				  {"asin",&StandardFctGenerator<asin>},
-				  {"acos",&StandardFctGenerator<acos>},
-				  {"atan",&StandardFctGenerator<atan>},
-				  {"sinh",&StandardFctGenerator<sinh>},
-				  {"cosh",&StandardFctGenerator<cosh>},
-				  {"tanh",&StandardFctGenerator<tanh>},
-				  {"H",&StandardFctGenerator<Evaluator::Heavyside>}});
-      this->bFctGenerators.insert({{"max",&StandardBinaryFctGenerator<Evaluator::max>},
-	                           {"min",&StandardBinaryFctGenerator<Evaluator::min>}});
+      
+      this->constants.insert({"Cste::AtomicMassConstant",
+	    tfel::PhysicalConstants<double>::AtomicMassConstant});
+      this->constants.insert({"Cste::mu",
+	    tfel::PhysicalConstants<double>::mu});
+      this->constants.insert({"Cste::AvogadroConstant",
+	    tfel::PhysicalConstants<double>::AvogadroConstant});
+      this->constants.insert({"Cste::Na",
+	    tfel::PhysicalConstants<double>::Na});
+      this->constants.insert({"Cste::BoltzmannConstant",
+	    tfel::PhysicalConstants<double>::BoltzmannConstant});
+      this->constants.insert({"Cste::kb",
+	    tfel::PhysicalConstants<double>::kb});
+      this->constants.insert({"Cste::ConductanceQuantum",
+	    tfel::PhysicalConstants<double>::ConductanceQuantum});
+      this->constants.insert({"Cste::G0",
+	    tfel::PhysicalConstants<double>::G0});
+      this->constants.insert({"Cste::ElectricConstant",
+	    tfel::PhysicalConstants<double>::ElectricConstant});
+      this->constants.insert({"Cste::e0",
+	    tfel::PhysicalConstants<double>::e0});
+      this->constants.insert({"Cste::ElectronMass",
+	    tfel::PhysicalConstants<double>::ElectronMass});
+      this->constants.insert({"Cste::me",
+	    tfel::PhysicalConstants<double>::me});
+      this->constants.insert({"Cste::ElectronVolt",
+	    tfel::PhysicalConstants<double>::ElectronVolt});
+      this->constants.insert({"Cste::eV",
+	    tfel::PhysicalConstants<double>::eV});
+      this->constants.insert({"Cste::ElementaryCharge",
+	    tfel::PhysicalConstants<double>::ElementaryCharge});
+      this->constants.insert({"Cste::e",
+	    tfel::PhysicalConstants<double>::e});
+      this->constants.insert({"Cste::FaradayConstant",
+	    tfel::PhysicalConstants<double>::FaradayConstant});
+      this->constants.insert({"Cste::F",
+	    tfel::PhysicalConstants<double>::F});
+      this->constants.insert({"Cste::FineStructureConstant",
+	    tfel::PhysicalConstants<double>::FineStructureConstant});
+      this->constants.insert({"Cste::a",
+	    tfel::PhysicalConstants<double>::a});
+      this->constants.insert({"Cste::MolarGasConstant",
+	    tfel::PhysicalConstants<double>::MolarGasConstant});
+      this->constants.insert({"Cste::R",
+	    tfel::PhysicalConstants<double>::R});
+      this->constants.insert({"Cste::StefanBoltzmannConstant",
+	    tfel::PhysicalConstants<double>::StefanBoltzmannConstant});
+      this->constants.insert({"Cste::s",
+	    tfel::PhysicalConstants<double>::s});
+      this->fctGenerators.insert({makeStandardFunctionGenerator<exp>("exp"),
+	    makeStandardFunctionGenerator<exp2>("exp2"),
+	    makeStandardFunctionGenerator<expm1>("expm1"),
+	    makeStandardFunctionGenerator<cbrt>("cbrt"),
+	    makeStandardFunctionGenerator<fabs>("abs"),
+	    makeStandardFunctionGenerator<sqrt>("sqrt"),
+	    makeStandardFunctionGenerator<log>("ln"),
+	    makeStandardFunctionGenerator<log>("log"),
+	    makeStandardFunctionGenerator<log10>("log10"),
+	    makeStandardFunctionGenerator<log2>("log2"),
+	    makeStandardFunctionGenerator<log1p>("log1p"),
+	    makeStandardFunctionGenerator<cosh>("cosh"),
+	    makeStandardFunctionGenerator<sinh>("sinh"),
+	    makeStandardFunctionGenerator<tanh>("tanh"),
+	    makeStandardFunctionGenerator<acosh>("acosh"),
+	    makeStandardFunctionGenerator<asinh>("asinh"),
+	    makeStandardFunctionGenerator<atanh>("atanh"),
+	    makeStandardFunctionGenerator<sin>("sin"),
+	    makeStandardFunctionGenerator<cos>("cos"),
+	    makeStandardFunctionGenerator<tan>("tan"),
+	    makeStandardFunctionGenerator<acos>("acos"),
+	    makeStandardFunctionGenerator<asin>("asin"),
+	    makeStandardFunctionGenerator<atan>("atan"),
+	    makeStandardFunctionGenerator<erf>("erf"),
+	    makeStandardFunctionGenerator<erfc>("erfc"),
+	    makeStandardFunctionGenerator<tgamma>("tgamma"),
+	    makeStandardFunctionGenerator<lgamma>("lgamma"),
+	    makeStandardFunctionGenerator<Evaluator::Heavyside>("H")});
+      this->bFctGenerators.insert({makeBinaryFunctionGenerator<Evaluator::max>("max"),
+	    makeBinaryFunctionGenerator<Evaluator::min>("min"),
+	    makeBinaryFunctionGenerator<hypot>("hypot"),
+	    makeBinaryFunctionGenerator<atan2>("atan2"),
+	    }
+	);
       this->extOpGenerators.insert({"power",EvaluatorTreatPower});
     } // end of Evaluator::FunctionGeneratorManager::FunctionGeneratorManager
 
@@ -400,17 +505,20 @@ namespace tfel
 
     bool Evaluator::isValidIdentifier(const std::string& s)
     {
-      auto& f = Evaluator::getFunctionGeneratorManager();
+      const auto& f = Evaluator::getFunctionGeneratorManager();
       if(s=="diff"){
 	return false;
       }
-      if(f.extOpGenerators.find(s)!=f.extOpGenerators.end()){
+      if(f.extOpGenerators.count(s)!=0){
 	return false;
       }
-      if(f.fctGenerators.find(s)!=f.fctGenerators.end()){
+      if(f.constants.count(s)!=0){
 	return false;
       }
-      if(f.bFctGenerators.find(s)!=f.bFctGenerators.end()){
+      if(f.fctGenerators.count(s)!=0){
+	return false;
+      }
+      if(f.bFctGenerators.count(s)!=0){
 	return false;
       }
       return true;
@@ -473,11 +581,10 @@ namespace tfel
 
     std::vector<std::string>
     Evaluator::analyseParameters(std::vector<std::string>::const_iterator& p,
-				 const std::vector<std::string>::const_iterator  pe)
+				 const std::vector<std::string>::const_iterator pe)
     {
-      using namespace std;
-      vector<string> params;
-      string::const_iterator ps;
+      std::vector<std::string> params;
+      std::string::const_iterator ps;
       checkNotEndOfExpression("Evaluator::analyseParameters",p,pe);
       while(*p!=">"){
 	// check parameter validity
@@ -825,10 +932,38 @@ namespace tfel
 			   const bool b,
 			   const std::string& s)
     {
-      using namespace std;
-      map<string,Evaluator::FunctionGenerator>::const_iterator p2;
-      map<string,Evaluator::BinaryFunctionGenerator>::const_iterator p3;
-      map<string,Evaluator::ExternalFunctionGenerator>::const_iterator p4;
+      auto checkIdentifier = [](const std::string& v){
+	auto throw_if = [&v](const bool c){
+	  raise_if(c,"Evaluator::treatGroup2: "
+		   "invalid variable name '"+v+"'");
+	};
+	throw_if(v.empty());
+	auto ps = v.begin();
+	throw_if(isdigit(*ps));
+	for(;ps!=v.end();++ps){
+	  throw_if((!isalpha(*ps))&&(!(isdigit(*ps)))&&(*ps!='_'));
+	  throw_if(isspace(*ps));
+	}
+      }; // end of checkIdentifier
+      auto readVariableOrFunctionName = [&p,pe,checkIdentifier]()
+	-> std::pair<unsigned int,std::string>{
+	Evaluator::checkNotEndOfExpression("Evaluator::treatGroup2",p,pe);
+	checkIdentifier(*p);
+	auto vn = *p;
+	auto vs = 1u;
+	++p;
+	while((p!=pe)&&(*p==":")){
+	  ++p;
+	  Evaluator::checkNotEndOfExpression("Evaluator::treatGroup2",p,pe);
+	  Evaluator::readSpecifiedToken("Evaluator::treatGroup2",":",p,pe);
+	  Evaluator::checkNotEndOfExpression("Evaluator::treatGroup2",p,pe);
+	  checkIdentifier(*p);
+	  vn += "::"+*p;
+	  ++vs;
+	  ++p;
+	}
+	return {vs,vn};
+      }; // end of readVariableOfFunctionName
       assert(p!=pe);
       auto g = std::make_shared<TGroup>();
       bool test;
@@ -841,83 +976,112 @@ namespace tfel
 	if(*p=="diff"){
 	  ++p;
 	  this->treatDiff(p,pe,g.get(),b);
-	} else if((p4=Evaluator::getFunctionGeneratorManager().extOpGenerators.find(*p))!=
-		  Evaluator::getFunctionGeneratorManager().extOpGenerators.end()){
 	  ++p;
-	  Evaluator::checkNotEndOfExpression("Evaluator::treatGroup2",p,pe);
-	  if(*p=="<"){
-	    ++p;
-	    const auto& params = this->analyseParameters(p,pe);
-	    Evaluator::readSpecifiedToken("Evaluator::treatGroup2","(",p,pe);
-	    auto args   = this->analyseArguments(p,pe,b);
-	    g->add(std::make_shared<TExternalOperator>(p4->second,params,args));
-	  } else {
-	    Evaluator::readSpecifiedToken("Evaluator::treatGroup2","(",p,pe);
-	    vector<string> params;
-	    auto args = this->analyseArguments(p,pe,b);
-	    g->add(std::make_shared<TExternalOperator>(p4->second,params,args));
-	  }
-	} else if((p3=Evaluator::getFunctionGeneratorManager().bFctGenerators.find(*p))!=
-		  Evaluator::getFunctionGeneratorManager().bFctGenerators.end()){
-	  // call to binary function
-	  ++p;
-	  Evaluator::readSpecifiedToken("Evaluator::treatGroup2","(",p,pe);
-	  const auto args = this->analyseArguments(2,p,pe,b);
-	  g->add(std::make_shared<TBinaryFunction>(p3->second,args[0],args[1]));
-	} else if((p2=Evaluator::getFunctionGeneratorManager().fctGenerators.find(*p))!=
-		  Evaluator::getFunctionGeneratorManager().fctGenerators.end()){
-	  // call to function
-	  ++p;
-	  Evaluator::readSpecifiedToken("Evaluator::treatGroup2","(",p,pe);
-	  g->add(std::make_shared<TFunction>(p2->second,this->treatGroup(p,pe,b)));
 	} else if(isNumber(*p)){
 	  // number
-	  istringstream converter(*p);
+	  std::istringstream converter(*p);
 	  double value;
 	  converter >> value;
 	  g->add(std::make_shared<TNumber>(value));
+	  ++p;
 	} else if(*p=="("){
 	  ++p;
 	  // begin group
 	  g->add(this->treatGroup(p,pe,b));
+	  ++p;
 	} else if(*p=="+"){
 	  g->add(std::make_shared<TOperator>("+"));
+	  ++p;
 	} else if(*p=="-"){
 	  g->add(std::make_shared<TOperator>("-"));
+	  ++p;
 	} else if(*p=="*"){
 	  g->add(std::make_shared<TOperator>("*"));
+	  ++p;
 	} else if(*p=="/"){
 	  g->add(std::make_shared<TOperator>("/"));
+	  ++p;
 	} else if(*p=="**"){
 	  g->add(std::make_shared<TOperator>("**"));
+	  ++p;
 	} else {
-	  auto pt = p;
-	  ++pt;
-	  if((pt!=pe)&&(*pt=="(")){
-	    if(this->manager!=nullptr){
-	      this->addExternalFunctionToGroup(g.get(),p,pe,b);
+	  const auto  vn  = readVariableOrFunctionName();
+	  const auto& fgm = Evaluator::getFunctionGeneratorManager();
+	  const auto  pc  = fgm.constants.find(vn.second);
+	  const auto  p2  = fgm.fctGenerators.find(vn.second);
+	  const auto  p3  = fgm.bFctGenerators.find(vn.second);
+	  const auto  p4  = fgm.extOpGenerators.find(vn.second);
+	  if(p4!=fgm.extOpGenerators.end()){
+	    Evaluator::checkNotEndOfExpression("Evaluator::treatGroup2",p,pe);
+	    if(*p=="<"){
+	      ++p;
+	      const auto& params = this->analyseParameters(p,pe);
+	      Evaluator::readSpecifiedToken("Evaluator::treatGroup2","(",p,pe);
+	      auto args   = this->analyseArguments(p,pe,b);
+	      g->add(std::make_shared<TExternalOperator>(p4->second,params,args));
 	    } else {
-	      raise("Evaluator::treatGroup2 : unknown function '"+*p+"'");
+	      Evaluator::readSpecifiedToken("Evaluator::treatGroup2","(",p,pe);
+	      auto params = std::vector<std::string>{};
+	      auto args = this->analyseArguments(p,pe,b);
+	      g->add(std::make_shared<TExternalOperator>(p4->second,params,args));
 	    }
+	    ++p;
+	  } else if(p3!=fgm.bFctGenerators.end()){
+	    // call to binary function
+	    Evaluator::readSpecifiedToken("Evaluator::treatGroup2","(",p,pe);
+	    const auto args = this->analyseArguments(2,p,pe,b);
+	    g->add(std::make_shared<TBinaryFunction>(p3->second,args[0],args[1]));
+	    ++p;
+	  } else if(p2!=fgm.fctGenerators.end()){
+	    // call to function
+	    Evaluator::readSpecifiedToken("Evaluator::treatGroup2","(",p,pe);
+	    g->add(std::make_shared<TFunction>(p2->second,this->treatGroup(p,pe,b)));
+	    ++p;
+	  } else if(pc!=fgm.constants.end()){
+	    g->add(std::make_shared<TNumber>(pc->second));
 	  } else {
-	    if(b){
-	      // variable name is fixed
-	      if(this->positions.find(*p)==this->positions.end()){
-		vector<shared_ptr<Evaluator::TExpr> > args;
-		raise_if(this->manager==nullptr,
-			 "Evaluator::treatGroup2: "
-			 "unknown variable '"+*p+"'");
-		g->add(std::make_shared<TExternalFunctionExpr>(*p,args,this->manager));
-
+	    if((p!=pe)&&(*p=="(")){
+	      if(this->manager!=nullptr){
+		this->addExternalFunctionToGroup(g.get(),p,pe,vn.second,b);
+		++p;
 	      } else {
-		g->add(std::make_shared<TVariable>(*p,*this));
+		raise("Evaluator::treatGroup2 : unknown function '"+vn.second+"'");
 	      }
 	    } else {
-	      g->add(std::make_shared<TVariable>(*p,*this));
+	      auto args = std::vector<std::shared_ptr<Evaluator::TExpr>>{};
+	      if(b){
+		// variable name is fixed
+		if(this->positions.find(vn.second)==this->positions.end()){
+		  if(vn.first!=1){
+		    raise_if(this->manager==nullptr,
+			     "Evaluator::treatGroup2: "
+			     "unknown function '"+vn.second+"'");
+		  } else {
+		    raise_if(this->manager==nullptr,
+			     "Evaluator::treatGroup2: "
+			     "unknown variable '"+vn.second+"'");
+		  }
+		  g->add(std::make_shared<TExternalFunctionExpr>(vn.second,args,
+								 this->manager));
+		} else {
+		  raise_if(vn.first!=1u,"Evaluator::treatGroup2: "
+			   "invalid variable name '"+vn.second+"'");
+		  g->add(std::make_shared<TVariable>(vn.second,*this));
+		}
+	      } else {
+		if(vn.first==1u){
+		  g->add(std::make_shared<TVariable>(vn.second,*this));
+		} else {
+		  raise_if(this->manager==nullptr,
+			   "Evaluator::treatGroup2: "
+			   "unknown function '"+vn.second+"'");
+		  g->add(std::make_shared<TExternalFunctionExpr>(vn.second,args,
+								 this->manager));
+		}
+	      }
 	    }
 	  }
 	}
-	++p;
 	if(s.empty()){
 	  test = (p!=pe);
 	} else {
@@ -964,9 +1128,8 @@ namespace tfel
       this->variables[p->second] = value;
     }//end of Evaluator::setVariableValue
     
-    void
-    Evaluator::setVariableValue(const std::vector<double>::size_type pos,
-				const double value)
+    void Evaluator::setVariableValue(const std::vector<double>::size_type pos,
+				     const double value)
     {
       if(pos>=this->variables.size()){
 	std::ostringstream msg;
@@ -982,7 +1145,40 @@ namespace tfel
       }
       this->variables[pos] = value;
     }//end of Evaluator::setVariableValue
+    
+    std::string Evaluator::getCxxFormula(const std::map<std::string,std::string>& m) const{
+      raise_if(this->expr==nullptr,
+	       "Evaluator::getCxxFormula: "
+	       "uninitialized expression.");
+      for(const auto& mv : m){
+	raise_if(this->positions.count(mv.first)==0,
+		 "Evaluator::getCxxFormula: "
+		 "invalid substitution '"+mv.first+"'");
+      }
+      auto vn = std::vector<std::string>{};
+      vn.resize(this->positions.size());
+      for(const auto& mv : this->positions){
+	const auto p = m.find(mv.first);
+	if(p!=m.end()){
+	  vn[mv.second] = p->second;
+	} else {
+	  vn[mv.second] = mv.first;
+	}
+      }
+      return this->expr->getCxxFormula(vn);
+    } // end of Evaluator::getCxxFormula
 
+    double Evaluator::operator()(const std::map<std::string,double>& vs){
+      return this->getValue(vs);
+    } // end of Evaluator::operator()
+    
+    double Evaluator::getValue(const std::map<std::string,double>& vs){
+      for(const auto v:vs){
+	this->setVariableValue(v.first,v.second);
+      }
+      return this->getValue();
+    } // end of Evaluator::getValue
+    
     double Evaluator::getValue() const
     {
       raise_if(this->expr==nullptr,
@@ -991,6 +1187,10 @@ namespace tfel
       return this->expr->getValue();
     }//end of Evaluator::getValue
 
+    double Evaluator::operator()() const{
+      return this->getValue();
+    } // end of Evaluator::operator()
+    
     std::vector<std::string>
     Evaluator::getVariablesNames() const
     {
@@ -1013,25 +1213,30 @@ namespace tfel
     void Evaluator::analyse(const std::string& f,
 			    const bool b)
     {
-      tfel::math::parser::EvaluatorBase::analyse(f);
-      auto       p  = this->tokens.cbegin(); 
-      const auto pe = this->tokens.cend();
-      auto g = this->treatGroup(p,pe,b,"");
-      g->reduce();
-      this->expr = g->analyse();
+      try{
+	tfel::math::parser::EvaluatorBase::analyse(f);
+	auto       p  = this->tokens.cbegin(); 
+	const auto pe = this->tokens.cend();
+	auto g = this->treatGroup(p,pe,b,"");
+	g->reduce();
+	this->expr = g->analyse();
+      } catch(std::exception& e){
+	tfel::raise("Evaluator::analyse: "
+		    "analysis of formula '"+f+"' failed "
+		    "("+std::string(e.what())+")");
+      }
     }
 
     void
     Evaluator::addExternalFunctionToGroup(TGroup * const g,
 					  std::vector<std::string>::const_iterator& p,
 					  const std::vector<std::string>::const_iterator pe,
+					  const std::string& fn,
 					  const bool b)
     {
-      const auto fname = *p;
-      ++p;
       Evaluator::readSpecifiedToken("Evaluator::addExternalFunctionToGroup","(",p,pe);
       auto args = this->analyseArguments(p,pe,b);
-      g->add(std::make_shared<TExternalFunctionExpr>(fname,args,this->manager));
+      g->add(std::make_shared<TExternalFunctionExpr>(fn,args,this->manager));
     } // end of Evaluator::addExternalFunctionToGroup
 
     Evaluator::Evaluator() = default;

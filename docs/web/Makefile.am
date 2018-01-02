@@ -34,6 +34,7 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./documentations.md					      \
 	   ./gallery.md					              \
 	   ./mfront-python.md					      \
+	   ./math.md					              \
 	   ./material.md					      \
 	   ./mtest.md						      \
 	   ./mtest-python.md					      \

@@ -263,7 +263,7 @@ namespace ansys
 			    AnsysTraits<BV>::thermalExpansionPropertiesOffset+
 			    AnsysTraits<BV>::orthotropicAxesOffset);
       const auto nprops  = AnsysTraits<BV>::material_properties_nb;
-      const auto NPROPS_ = offset+nprops ==0 ? 1 : offset+nprops; 
+      const auto NPROPS_           = offset+nprops;
       const auto is_defined_       = Traits::is_defined;
       //Test if the nb of properties matches Behaviour requirements
       if((NPROPS!=NPROPS_)&&is_defined_){

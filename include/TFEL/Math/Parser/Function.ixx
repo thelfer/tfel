@@ -46,13 +46,14 @@ namespace tfel
     {
 
       template<StandardFunctionPtr f>
-      StandardFunction<f>::StandardFunction(const std::shared_ptr<Expr> e)
-	: expr(e)
+      StandardFunction<f>::StandardFunction(const char* const n,
+					    const std::shared_ptr<Expr> e)
+	: name(n),
+	  expr(e)
       {} // end of StandardFunction::StandardFunction
 
       template<StandardFunctionPtr f>
-      StandardFunction<f>::~StandardFunction()
-      {} // end of StandardFunction::StandardFunction
+      StandardFunction<f>::~StandardFunction() = default;
 
       template<StandardFunctionPtr f>
       void
@@ -66,11 +67,10 @@ namespace tfel
       StandardFunction<f>::getValue() const
       {
 	using namespace std;
-	double res;
-	const double arg = this->expr->getValue();
+	const auto arg = this->expr->getValue();
 	int old = errno;
 	errno = 0;
-	res = f(arg);
+	const auto res = f(arg);
 	if(errno!=0){
 	  int e = errno;
 	  errno = old;
@@ -80,6 +80,13 @@ namespace tfel
 	return res;
       } // end of StandardFunction::StandardFunction
 
+      template<StandardFunctionPtr f>
+      std::string
+      StandardFunction<f>::getCxxFormula(const std::vector<std::string>& m) const
+      {
+	return StandardFunctionBase::getCxxFormula(this->name,this->expr->getCxxFormula(m));
+      } // end of StandardFunction<f>::getCxxFormula()
+      
       template<StandardFunctionPtr f>
       void
       StandardFunction<f>::checkCyclicDependency(std::vector<std::string>& names) const
@@ -91,14 +98,15 @@ namespace tfel
       std::shared_ptr<Expr>
       StandardFunction<f>::resolveDependencies(const std::vector<double>& v) const
       {
-	return std::shared_ptr<Expr>(new StandardFunction<f>(this->expr->resolveDependencies(v)));
+	return std::shared_ptr<Expr>(new StandardFunction<f>(this->name,
+							     this->expr->resolveDependencies(v)));
       } // end of StandardFunction<f>::resolveDependencies()
       
       template<StandardFunctionPtr f>
       std::shared_ptr<Expr>
       StandardFunction<f>::clone(const std::vector<double>& v) const
       {
-	return std::shared_ptr<Expr>(new StandardFunction<f>(this->expr->clone(v)));
+	return std::shared_ptr<Expr>(new StandardFunction<f>(this->name,this->expr->clone(v)));
       } // end of StandardFunction<f>::clone
 
       template<StandardFunctionPtr f>
@@ -110,7 +118,7 @@ namespace tfel
       {
 	using std::shared_ptr;
 	shared_ptr<Expr> nexpr = this->expr->createFunctionByChangingParametersIntoVariables(v,p,pos);
-	return shared_ptr<Expr>(new StandardFunction<f>(nexpr));
+	return shared_ptr<Expr>(new StandardFunction<f>(this->name,nexpr));
       } // end of StandardFunction<f>::createFunctionByChangingParametersIntoVariables
 
       template<StandardFunctionPtr f>

@@ -26,6 +26,11 @@ namespace tfel
     
       EvaluatorFunctionBase::EvaluatorFunctionBase() = default;
 
+      std::string EvaluatorFunctionBase::getCxxFormula(const std::vector<std::string>&) const{
+	raise("EvaluatorFunctionBase::getCxxFormula: "
+	      "unimplemented feature");
+      }
+      
       std::shared_ptr<Expr>
       EvaluatorFunctionBase::differentiate(const std::vector<double>::size_type,
 					   const std::vector<double>&) const

@@ -189,7 +189,7 @@ namespace tfel
     parser::ExprPtr Evaluator::TGroup::analyse()
     {
       raise_if(this->subExpr.size()!=1u,
-	       "TGroup::analyse : "
+	       "TGroup::analyse: "
 	       "tgroup has not been reduced.");
       return (this->subExpr[0])->analyse();
     }

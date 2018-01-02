@@ -55,6 +55,7 @@ test_PROGRAMS = hill                                     \
 		parser8                                  \
 		parser9                                  \
 		parser10                                 \
+		parser11                                 \
 		integerparser                            \
 		broyden                                  \
 		broyden2                                 \
@@ -271,6 +272,15 @@ parser9_LDADD = -L$(top_builddir)/src/Tests        \
 
 parser10_SOURCES               = parser10.cxx
 parser10_LDADD = -L$(top_builddir)/src/Tests       \
+		-L$(top_builddir)/src/Math         \
+	        -L$(top_builddir)/src/Utilities    \
+	        -L$(top_builddir)/src/Exception    \
+	        -lTFELMathParser -lTFELMathKriging \
+		-lTFELMath  -lTFELUtilities        \
+		-lTFELException	-lTFELTests
+
+parser11_SOURCES               = parser11.cxx
+parser11_LDADD = -L$(top_builddir)/src/Tests       \
 		-L$(top_builddir)/src/Math         \
 	        -L$(top_builddir)/src/Utilities    \
 	        -L$(top_builddir)/src/Exception    \

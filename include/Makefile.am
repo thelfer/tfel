@@ -147,7 +147,6 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/Parser/EvaluatorFunction.hxx                                                       \
 			TFEL/Math/Parser/EvaluatorFunction.ixx                                                       \
 			TFEL/Math/Evaluator.hxx 						                     \
-			TFEL/Math/Evaluator.ixx 						                     \
 			TFEL/Math/IntegerEvaluator.hxx 						                     \
 			TFEL/Math/CubicSpline.hxx					                             \
 			TFEL/Math/CubicSpline.ixx					                             \

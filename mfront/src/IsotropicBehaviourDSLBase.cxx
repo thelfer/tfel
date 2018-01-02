@@ -267,26 +267,30 @@ namespace mfront{
   {
     using Modifier = std::function<std::string(const MaterialPropertyInput&)>;
     Modifier mts = [this](const MaterialPropertyInput& i) -> std::string{
-      if((i.type==MaterialPropertyInput::TEMPERATURE)||
-	 (i.type==MaterialPropertyInput::AUXILIARYSTATEVARIABLEFROMEXTERNALMODEL)||
-	 (i.type==MaterialPropertyInput::EXTERNALSTATEVARIABLE)){
+      if((i.category==MaterialPropertyInput::TEMPERATURE)||
+	 (i.category==MaterialPropertyInput::AUXILIARYSTATEVARIABLEFROMEXTERNALMODEL)||
+	 (i.category==MaterialPropertyInput::EXTERNALSTATEVARIABLE)){
 	return "this->"+i.name + "+theta*(this->d" + i.name+')';
-      } else if ((i.type==MaterialPropertyInput::MATERIALPROPERTY)||
-		 (i.type==MaterialPropertyInput::PARAMETER)){
+      } else if ((i.category==MaterialPropertyInput::MATERIALPROPERTY)||
+		 (i.category==MaterialPropertyInput::PARAMETER)){
 	return "this->"+i.name;
+      }	else if (i.category==MaterialPropertyInput::STATICVARIABLE){
+	return this->mb.getClassName()+"::"+i.name;
       } else {
 	this->throwRuntimeError("ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation",
 				"unsupported input type for variable '"+i.name+"'");
       }
     };
     Modifier ets = [this](const MaterialPropertyInput& i) -> std::string {
-      if((i.type==MaterialPropertyInput::TEMPERATURE)||
-	 (i.type==MaterialPropertyInput::AUXILIARYSTATEVARIABLEFROMEXTERNALMODEL)||
-	 (i.type==MaterialPropertyInput::EXTERNALSTATEVARIABLE)){
+      if((i.category==MaterialPropertyInput::TEMPERATURE)||
+	 (i.category==MaterialPropertyInput::AUXILIARYSTATEVARIABLEFROMEXTERNALMODEL)||
+	 (i.category==MaterialPropertyInput::EXTERNALSTATEVARIABLE)){
 	return "this->"+i.name + "+this->d" + i.name;
-      } else if ((i.type==MaterialPropertyInput::MATERIALPROPERTY)||
-		 (i.type==MaterialPropertyInput::PARAMETER)){
+      } else if ((i.category==MaterialPropertyInput::MATERIALPROPERTY)||
+		 (i.category==MaterialPropertyInput::PARAMETER)){
 	return "this->"+i.name;
+      }	else if (i.category==MaterialPropertyInput::STATICVARIABLE){
+	return this->mb.getClassName()+"::"+i.name;
       } else {
 	this->throwRuntimeError("ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation",
 				"unsupported input type for variable '"+i.name+"'");

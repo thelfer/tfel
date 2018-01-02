@@ -53,6 +53,12 @@ namespace tfel
 	return this->f->getValue();
       } // end of ExternalFunctionExpr2::getValue
 
+      std::string
+      ExternalFunctionExpr2::getCxxFormula(const std::vector<std::string>&) const{
+	tfel::raise("ExternalFunctionExpr2::getCxxFormula: "
+		    "unimplemented feature");
+      } // end of ExternalFunctionExpr2::getCxxFormula
+      
       void
       ExternalFunctionExpr2::checkCyclicDependency(std::vector<std::string>& names) const
       {

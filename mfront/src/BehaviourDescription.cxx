@@ -18,6 +18,7 @@
 #include"TFEL/Raise.hxx"
 #include"TFEL/Glossary/Glossary.hxx"
 #include"TFEL/Glossary/GlossaryEntry.hxx"
+#include"TFEL/Math/Evaluator.hxx"
 #include"TFEL/Utilities/CxxTokenizer.hxx"
 #include"MFront/PedanticMode.hxx"
 #include"MFront/MFrontLogStream.hxx"
@@ -28,7 +29,12 @@
 
 namespace mfront
 {
-
+  
+  std::vector<std::string>
+  BehaviourDescription::AnalyticMaterialProperty::getVariablesNames() const {
+    return tfel::math::Evaluator(this->f).getVariablesNames();
+  } // end of AnalyticMaterialProperty::getVariablesNames
+  
   template<typename Arg1>
   void
   BehaviourDescription::callBehaviourData(const Hypothesis h,
@@ -167,8 +173,8 @@ namespace mfront
 			       BehaviourDescription::MaterialProperty& emp,
 			       const tfel::glossary::GlossaryEntry& e,
 			       const std::string& n2){
-    if(emp.is<BehaviourDescription::ComputedMaterialProperty>()){
-      const auto& mpd = *(emp.get<BehaviourDescription::ComputedMaterialProperty>().mpd);
+    if(emp.is<BehaviourDescription::ExternalMFrontMaterialProperty>()){
+      const auto& mpd = *(emp.get<BehaviourDescription::ExternalMFrontMaterialProperty>().mpd);
       const auto& ename = mpd.output.getExternalName();
       if(ename!=e){
 	getLogStream() << "checkElasticMaterialProperty: inconsistent external name for "
@@ -192,19 +198,27 @@ namespace mfront
     if(a.is<BehaviourDescription::ConstantMaterialProperty>()){
       return;
     }
-    if(a.is<BehaviourDescription::ComputedMaterialProperty>()){
-      const auto& mpd = *(a.get<BehaviourDescription::ComputedMaterialProperty>().mpd);
-      throw_if(!((mpd.inputs.size())||(mpd.inputs.size()!=1u)),
-	       "thermal expansion shall only depend on "
-	       "temperature or be constant");
-      if(mpd.inputs.size()==1u){
-	const auto& v = mpd.inputs.front();
-	const auto& vn = v.getExternalName();
-	throw_if(vn!="Temperature","thermal expansion shall "
-		 "only depend on temperature");
+    if(a.is<BehaviourDescription::ExternalMFrontMaterialProperty>()){
+      const auto& mpd = *(a.get<BehaviourDescription::ExternalMFrontMaterialProperty>().mpd);
+      for(const auto i : bd.getMaterialPropertyInputs(mpd,false)){
+	const auto c = i.category;
+	throw_if((c!=BehaviourDescription::MaterialPropertyInput::TEMPERATURE)&&
+		 (c!=BehaviourDescription::MaterialPropertyInput::MATERIALPROPERTY)&&
+		 (c!=BehaviourDescription::MaterialPropertyInput::PARAMETER)&&
+		 (c!=BehaviourDescription::MaterialPropertyInput::STATICVARIABLE),
+		 "invalid input '"+i.ename+"' ("+i.name+") for thermal expansion");
       }
     } else if(a.is<BehaviourDescription::AnalyticMaterialProperty>()){
-      
+      const auto& vn =
+	a.get<BehaviourDescription::AnalyticMaterialProperty>().getVariablesNames();
+      for(const auto i : bd.getMaterialPropertyInputs(vn,false)){
+	const auto c = i.category;
+	throw_if((c!=BehaviourDescription::MaterialPropertyInput::TEMPERATURE)&&
+		 (c!=BehaviourDescription::MaterialPropertyInput::MATERIALPROPERTY)&&
+		 (c!=BehaviourDescription::MaterialPropertyInput::PARAMETER)&&
+		 (c!=BehaviourDescription::MaterialPropertyInput::STATICVARIABLE),
+		 "invalid input '"+i.ename+"' ("+i.name+") for thermal expansion");
+      }
     } else {
       throw_if(true,"unsupported material property type");
     }
@@ -316,35 +330,104 @@ namespace mfront
     return this->dsl;
   } // end of BehaviourDescription::getDSLName
 
+  BehaviourDescription::MaterialPropertyInput::Category
+  BehaviourDescription::getMaterialPropertyInputCategory(const Hypothesis h,
+							 const std::string& v) const{
+    auto throw_if = [](const bool c,const std::string& m){
+      tfel::raise_if(c,"BehaviourDescription::getMaterialPropertyInputCategory: "+m);
+    };
+    if(this->isStateVariableName(h,v)){
+      return MaterialPropertyInput::STATEVARIABLE;
+    } else if(this->isExternalStateVariableName(h,v)){
+      return MaterialPropertyInput::EXTERNALSTATEVARIABLE;
+    } else if(this->isAuxiliaryStateVariableName(h,v)){
+      const auto& bd = this->getBehaviourData(h);
+      const auto& av = bd.getAuxiliaryStateVariableDescription(v);
+      throw_if(!av.getAttribute<bool>("ComputedByExternalModel",false),
+	       "only auxiliary state variable computed by a model are allowed here");
+      return MaterialPropertyInput::AUXILIARYSTATEVARIABLEFROMEXTERNALMODEL;
+    } else if(this->isMaterialPropertyName(h,v)){
+      return MaterialPropertyInput::MATERIALPROPERTY;
+    } else if(this->isParameterName(h,v)){
+      return MaterialPropertyInput::PARAMETER;
+    } else if(this->isStaticVariableName(h,v)){
+      return MaterialPropertyInput::STATICVARIABLE;
+    }
+    throw_if(true,"unsupported variable: variable '"+v+"' is "
+	     "neither an external state variable, a material "
+	     "property nor a parameter nor an auxiliary "
+	     "state variable evaluated by an external model, "
+	     "nor a static variable");
+  } // end of BehaviourDescription::getMaterialPropertyInputCategory
+  
   std::vector<BehaviourDescription::MaterialPropertyInput>
-  BehaviourDescription::getMaterialPropertyInputs(const MaterialPropertyDescription& mpd) const
+  BehaviourDescription::getMaterialPropertyInputs(const std::vector<std::string>& i,
+						  const bool b) const
   {
     auto throw_if = [](const bool c,const std::string& m){
       tfel::raise_if(c,"BehaviourDescription::getMaterialPropertyInputs: "+m);
     };
-    auto getVariableType = [&throw_if,this](const Hypothesis h,
-					    const std::string& v){
-      if(this->isStateVariableName(h,v)){
-	return MaterialPropertyInput::STATEVARIABLE;
-      } else if(this->isExternalStateVariableName(h,v)){
-	return MaterialPropertyInput::EXTERNALSTATEVARIABLE;
-      } else if(this->isAuxiliaryStateVariableName(h,v)){
-	const auto& bd = this->getBehaviourData(h);
-	const auto& av = bd.getAuxiliaryStateVariableDescription(v);
-	throw_if(!av.getAttribute<bool>("ComputedByExternalModel",false),
-		 "only auxiliary state variable computed by a model are allowed here");
-	return MaterialPropertyInput::AUXILIARYSTATEVARIABLEFROMEXTERNALMODEL;
-      } else if(this->isMaterialPropertyName(h,v)){
-	return MaterialPropertyInput::MATERIALPROPERTY;
-      } else if(this->isParameterName(h,v)){
-	return MaterialPropertyInput::PARAMETER;
+    auto inputs = std::vector<MaterialPropertyInput>{};
+    const auto hs = [this,b,throw_if]() -> std::set<BehaviourDescription::Hypothesis>{
+      if(this->hypotheses.empty()){
+	// modelling hypotheses are not set yet
+	throw_if(b,"modelling hypothesis must be defined");
+	return {ModellingHypothesis::UNDEFINEDHYPOTHESIS};
       }
-      throw_if(true,"unsupported variable: variable '"+v+"' is "
-	       "neither an external state variable, a material "
-	       "property nor a parameter nor an auxiliary "
-	       "state variable evaluated by an external model");
+      return this->getDistinctModellingHypotheses();
+    }();
+    for(const auto& v : i){
+      if(v=="T"){
+	inputs.push_back({"T",tfel::glossary::Glossary::Temperature,
+	      MaterialPropertyInput::TEMPERATURE});
+      } else {
+	const auto rh = *(hs.begin());
+	const auto t  = this->getMaterialPropertyInputCategory(rh,v);
+	if(t==MaterialPropertyInput::STATICVARIABLE){
+	  for(const auto h:hs){
+	    throw_if(this->getMaterialPropertyInputCategory(h,v)!=t,
+		     "the variable '"+v+"' belongs to two different "
+		     "categories in two distinct modelling hypotheses. "
+		     "This is not supported.");
+	  }
+	  inputs.push_back({v,v,t});
+	} else  {
+	  const auto vd = this->getBehaviourData(rh).getVariableDescription(v);
+	  const auto en = vd.getExternalName();
+	  for(const auto h:hs){
+	    const auto vd2 = this->getBehaviourData(h).getVariableDescription(v);
+	    throw_if(vd2.getExternalName()!=en,
+		     "the variable '"+v+"' has two different "
+		     "external names in two distinct modelling hypotheses."
+		     "This is not supported.");
+	    throw_if(this->getMaterialPropertyInputCategory(h,v)!=t,
+		     "the variable '"+v+"' belongs to two different "
+		     "categories in two distinct modelling hypotheses. "
+		     "This is not supported.");
+	  }
+	  inputs.push_back({v,en,t});
+	}
+      }
+    }
+    return inputs;
+  } // end of BehaviourDescription::getMaterialPropertyInputs
+  
+  std::vector<BehaviourDescription::MaterialPropertyInput>
+  BehaviourDescription::getMaterialPropertyInputs(const MaterialPropertyDescription& mpd,
+						  const bool b) const
+  {
+    auto throw_if = [](const bool c,const std::string& m){
+      tfel::raise_if(c,"BehaviourDescription::getMaterialPropertyInputs: "+m);
     };
     auto inputs = std::vector<MaterialPropertyInput>{};
+    const auto hs = [this,b,throw_if]() -> std::set<BehaviourDescription::Hypothesis>{
+      if(this->hypotheses.empty()){
+	// modelling hypotheses are not set yet
+	throw_if(b,"modelling hypothesis must be defined");
+	return {ModellingHypothesis::UNDEFINEDHYPOTHESIS};
+      }
+      return this->getDistinctModellingHypotheses();
+    }();
     for(const auto& v : mpd.inputs){
       if((getPedanticMode())&&(!(v.hasGlossaryName())&&(!v.hasEntryName()))){
 	getLogStream() << "BehaviourDescription::getMaterialPropertyInputs: "
@@ -356,16 +439,15 @@ namespace mfront
 	inputs.push_back({"T",tfel::glossary::Glossary::Temperature,
 	      MaterialPropertyInput::TEMPERATURE});
       } else {
-	auto hs = this->getDistinctModellingHypotheses();
 	const auto n =
 	  this->getVariableDescriptionByExternalName(*(hs.begin()),vn).name;
-	const auto t = getVariableType(*(hs.begin()),n);
+	const auto t = this->getMaterialPropertyInputCategory(*(hs.begin()),n);
 	for(const auto h:hs){
 	  throw_if(this->getVariableDescriptionByExternalName(h,vn).name!=n,
 		   "the external name '"+vn+"' is associated with "
 		   "two differents variables in two distinct "
 		   "modelling hypotheses. This is not supported.");
-	  throw_if(getVariableType(h,n)!=t,
+	  throw_if(this->getMaterialPropertyInputCategory(h,n)!=t,
 		   "the external name '"+vn+"' has two different "
 		   "types in two distinct modelling hypotheses. "
 		   "This is not supported.");
@@ -519,11 +601,20 @@ namespace mfront
 
   bool
   BehaviourDescription::isMaterialPropertyConstantDuringTheTimeStep(const MaterialProperty& mp) const{
-    if(mp.is<ComputedMaterialProperty>()){
-      const auto& cmp = mp.get<ComputedMaterialProperty>();
+    if(mp.is<ExternalMFrontMaterialProperty>()){
+      const auto& cmp = mp.get<ExternalMFrontMaterialProperty>();
       for(const auto& i : this->getMaterialPropertyInputs(*(cmp.mpd))){
-	if(!((i.type==BehaviourDescription::MaterialPropertyInput::MATERIALPROPERTY)||
-	     (i.type==BehaviourDescription::MaterialPropertyInput::PARAMETER))){
+	if(!((i.category==BehaviourDescription::MaterialPropertyInput::MATERIALPROPERTY)||
+	     (i.category==BehaviourDescription::MaterialPropertyInput::PARAMETER))){
+	  return false;
+	}
+      }
+      return true;
+    } else if(mp.is<AnalyticMaterialProperty>()){
+      const auto& amp = mp.get<AnalyticMaterialProperty>();
+      for(const auto& i : this->getMaterialPropertyInputs(amp.getVariablesNames())){
+	if(!((i.category==BehaviourDescription::MaterialPropertyInput::MATERIALPROPERTY)||
+	     (i.category==BehaviourDescription::MaterialPropertyInput::PARAMETER))){
 	  return false;
 	}
       }
@@ -550,14 +641,27 @@ namespace mfront
   } // end of BehaviourDescription::areMaterialPropertiesConstantDuringTheTimeStep
 
   bool BehaviourDescription::isMaterialPropertyDependantOnStateVariables(const MaterialProperty& mp) const{
-    if(mp.is<ComputedMaterialProperty>()){
-      const auto& cmp = mp.get<ComputedMaterialProperty>();
+    if(mp.is<ExternalMFrontMaterialProperty>()){
+      const auto& cmp = mp.get<ExternalMFrontMaterialProperty>();
       for(const auto& i : this->getMaterialPropertyInputs(*(cmp.mpd))){
-	if(i.type==BehaviourDescription::MaterialPropertyInput::STATEVARIABLE){
+	if(i.category==BehaviourDescription::MaterialPropertyInput::STATEVARIABLE){
 	  return true;
 	}
       }
+      return false;
     }
+    if(mp.is<AnalyticMaterialProperty>()){
+      const auto& amp = mp.get<AnalyticMaterialProperty>();
+      for(const auto& i : this->getMaterialPropertyInputs(amp.getVariablesNames())){
+	if(i.category==BehaviourDescription::MaterialPropertyInput::STATEVARIABLE){
+	  return true;
+	}
+      }
+      return false;
+    }
+    tfel::raise_if(!mp.is<ConstantMaterialProperty>(),
+		   "BehaviourDescription::isMaterialPropertyDependantOnStateVariables: "
+		   "unsupported material property");
     return false;
   } // end of BehaviourDescription::isMaterialPropertyDependantOnStateVariables
   

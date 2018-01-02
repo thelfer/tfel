@@ -29,32 +29,87 @@ namespace tfel
 
       struct OpPlus
       {
+	/*!
+	 * \param[in] a: lhs
+	 * \param[in] b: rhs
+	 */
 	static double TFEL_VISIBILITY_LOCAL
 	apply(const double,const double);
+	/*!
+	 * \param[in] a: lhs
+	 * \param[in] b: rhs
+	 */
+	static std::string TFEL_VISIBILITY_LOCAL
+	getCxxFormula(const std::string&,
+		      const std::string&);
       }; // end of struct OpPlus
 
       struct OpMinus
       {
+	/*!
+	 * \param[in] a: lhs
+	 * \param[in] b: rhs
+	 */
 	static double TFEL_VISIBILITY_LOCAL
 	apply(const double,const double);
+	/*!
+	 * \param[in] a: lhs
+	 * \param[in] b: rhs
+	 */
+	static std::string TFEL_VISIBILITY_LOCAL
+	getCxxFormula(const std::string&,
+		      const std::string&);
       }; // end of struct OpMinus
 
       struct OpMult
       {
+	/*!
+	 * \param[in] a: lhs
+	 * \param[in] b: rhs
+	 */
 	static double TFEL_VISIBILITY_LOCAL
 	apply(const double,const double);
+	/*!
+	 * \param[in] a: lhs
+	 * \param[in] b: rhs
+	 */
+	static std::string TFEL_VISIBILITY_LOCAL
+	getCxxFormula(const std::string&,
+		      const std::string&);
       }; // end of struct OpMult
 
       struct OpDiv
       {
+	/*!
+	 * \param[in] a: lhs
+	 * \param[in] b: rhs
+	 */
 	static double TFEL_VISIBILITY_LOCAL
 	apply(const double,const double);
+	/*!
+	 * \param[in] a: lhs
+	 * \param[in] b: rhs
+	 */
+	static std::string TFEL_VISIBILITY_LOCAL
+	getCxxFormula(const std::string&,
+		      const std::string&);
       }; // end of struct OpDiv
 
       struct OpPower
       {
+	/*!
+	 * \param[in] a: lhs
+	 * \param[in] b: rhs
+	 */
 	static double TFEL_VISIBILITY_LOCAL
 	apply(const double,const double);
+	/*!
+	 * \param[in] a: lhs
+	 * \param[in] b: rhs
+	 */
+	static std::string TFEL_VISIBILITY_LOCAL
+	getCxxFormula(const std::string&,
+		      const std::string&);
       }; // end of struct OpPower
 
       struct BinaryOperationBase
@@ -70,8 +125,15 @@ namespace tfel
       {
 	BinaryOperation(const std::shared_ptr<Expr>,
 			const std::shared_ptr<Expr>);
-	virtual double
-	getValue() const override final;
+	double getValue() const override final;
+	/*!
+	 * \return a string representation of the evaluator suitable to
+	 * be integrated in a C++ code.
+	 * \param[in] m: a map used to change the names of the variables
+	 */
+	std::string
+	getCxxFormula(const std::vector<std::string>&) const override final;
+	
 	virtual void
         checkCyclicDependency(std::vector<std::string>&) const override final;
 	virtual std::shared_ptr<Expr>

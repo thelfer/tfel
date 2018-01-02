@@ -28,15 +28,24 @@ namespace tfel
     {
 
       template<double (*f)(const double,const double)>
-      StandardBinaryFunction<f>::StandardBinaryFunction(const std::shared_ptr<Expr> e1,
+      StandardBinaryFunction<f>::StandardBinaryFunction(const char* const n,
+							const std::shared_ptr<Expr> e1,
 							const std::shared_ptr<Expr> e2)
-	: expr1(e1),expr2(e2)
+	: name(n),expr1(e1),expr2(e2)
       {} // end of StandardBinaryFunction::StandardBinaryFunction
 
       template<double (*f)(const double,const double)>
-      StandardBinaryFunction<f>::~StandardBinaryFunction()
-      {} // end of StandardBinaryFunction::StandardBinaryFunction
+      StandardBinaryFunction<f>::~StandardBinaryFunction() = default;
 
+      template<double (*f)(const double,const double)>
+      std::string
+      StandardBinaryFunction<f>::getCxxFormula(const std::vector<std::string>& m) const
+      {
+	return StandardBinaryFunctionBase::getCxxFormula(this->name,
+							 this->expr1->getCxxFormula(m),
+							 this->expr2->getCxxFormula(m));
+      } // end of StandardBinaryFunction<f>::getCxxFormula()
+      
       template<double (*f)(const double,const double)>
       double
       StandardBinaryFunction<f>::getValue() const
@@ -58,10 +67,8 @@ namespace tfel
       void
       StandardBinaryFunction<f>::checkCyclicDependency(std::vector<std::string>& names) const
       {
-	using namespace std;
-	using std::vector;
-	vector<string> a_names(names);
-	vector<string> b_names(names);
+	std::vector<std::string> a_names(names);
+	std::vector<std::string> b_names(names);
 	this->expr1->checkCyclicDependency(a_names);
 	this->expr2->checkCyclicDependency(b_names);
 	mergeVariablesNames(names,a_names);
@@ -72,8 +79,9 @@ namespace tfel
       std::shared_ptr<Expr>
       StandardBinaryFunction<f>::resolveDependencies(const std::vector<double>& v) const
       {
-	return std::shared_ptr<Expr>(new StandardBinaryFunction<f>(this->expr1->resolveDependencies(v),
-								   this->expr2->resolveDependencies(v)));
+	return std::make_shared<StandardBinaryFunction<f>>(this->name,
+							   this->expr1->resolveDependencies(v),
+							   this->expr2->resolveDependencies(v));
       } // end of StandardBinaryFunction<f>::resolveDependencies
 
       template<double (*f)(const double,const double)>
@@ -99,8 +107,9 @@ namespace tfel
       std::shared_ptr<Expr>
       StandardBinaryFunction<f>::clone(const std::vector<double>& v) const
       {
-	return std::shared_ptr<Expr>(new StandardBinaryFunction<f>(this->expr1->clone(v),
-								   this->expr2->clone(v)));
+	return std::make_shared<StandardBinaryFunction<f>>(this->name,
+							   this->expr1->clone(v),
+							   this->expr2->clone(v));
       } // end of StandardBinaryFunction<f>::clone
 
       template<double (*f)(const double,const double)>
@@ -110,8 +119,9 @@ namespace tfel
 										 const std::map<std::string,
 										 std::vector<double>::size_type>& pos) const
       {
-	return std::shared_ptr<Expr>(new StandardBinaryFunction<f>(this->expr1->createFunctionByChangingParametersIntoVariables(v,params,pos),
-								   this->expr2->createFunctionByChangingParametersIntoVariables(v,params,pos)));
+	const auto e1 = this->expr1->createFunctionByChangingParametersIntoVariables(v,params,pos);
+	const auto e2 = this->expr2->createFunctionByChangingParametersIntoVariables(v,params,pos);
+	return std::make_shared<StandardBinaryFunction<f>>(this->name,e1,e2);
       }
 
     } // end of namespace parser

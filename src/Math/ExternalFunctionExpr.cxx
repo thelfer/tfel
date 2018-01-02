@@ -63,6 +63,12 @@ namespace tfel
 	return p2->second->getValue();
       } // end of ExternalFunctionExpr::getValue
 
+      std::string
+      ExternalFunctionExpr::getCxxFormula(const std::vector<std::string>&) const{
+	tfel::raise("ExternalFunctionExpr::getCxxFormula: "
+		    "unimplemented feature");
+      } // end of ExternalFunctionExpr::getCxxFormula
+
       void
       ExternalFunctionExpr::checkCyclicDependency(std::vector<std::string>& names) const
       {
@@ -214,10 +220,10 @@ namespace tfel
       std::shared_ptr<Expr>
       ExternalFunctionExpr::resolveDependencies(const std::vector<double>& v) const
       {
-	std::vector<std::shared_ptr<Expr> > nargs(this->args.size());
-        std::vector<std::shared_ptr<Expr> >::const_iterator p;
-        std::vector<std::shared_ptr<Expr> >::iterator p2;
-        for(p=this->args.begin(),p2=nargs.begin();p!=this->args.end();++p,++p2){
+	std::vector<std::shared_ptr<Expr>> nargs(this->args.size());
+        auto p  = this->args.begin();
+        auto p2 = nargs.begin();
+        for(;p!=this->args.end();++p,++p2){
 	  *p2 = (*p)->resolveDependencies(v);
 	}
 	auto p3 = this->manager->find(this->name);

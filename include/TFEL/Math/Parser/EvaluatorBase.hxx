@@ -39,8 +39,8 @@ namespace tfel
 	EvaluatorBase&
 	operator=(EvaluatorBase&&) = default;
 	void analyse(const std::string&);
-	std::vector<std::string> tokens;
 	~EvaluatorBase();
+	std::vector<std::string> tokens;
       private:
 	static TFEL_VISIBILITY_LOCAL void
 	splitAtTokenSeperator(std::vector<std::string>&);

@@ -25,9 +25,13 @@ namespace tfel
       Number::Number(const double v)
 	: value(v)
       {} // end of Number::Number
+
+      std::string
+      Number::getCxxFormula(const std::vector<std::string>&) const{
+	return std::to_string(this->value);
+      } // end of Number::getCxxFormula
       
-      double
-      Number::getValue() const
+      double Number::getValue() const
       {
 	return this->value;
       } // end of Number::getValue

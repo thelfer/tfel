@@ -6,14 +6,15 @@ This array is used to automatically used to declared the elastic
 material properties of the behaviour (see the
 `@ElasticMaterialProperties` keyword for details).
 
-An entry can be either a string referring to an external `MFront` file or a
-numerical value.
+An entry can be either a string referring to an external `MFront`
+file, a formula or a numerical value.
 
-If an entry refers to an external `MFront` file, all the inputs of
-this material property must be either:
+If an entry refers to an external `MFront` file or the formula, all
+the inputs of this material property must be either:
 
 - a material property
 - a parameter
+- a state variable
 - an external state variable
 
 of the behaviour.

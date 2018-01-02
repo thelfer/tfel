@@ -135,7 +135,12 @@ set(mfront_tests_SOURCES
   AxialGrowth
   AxialGrowth2
   AxialGrowth3
-  RelocationTest)
+  RelocationTest
+  ComputeThermalExpansion
+  ComputeThermalExpansion2
+  ComputeThermalExpansion3
+  ParameterTest
+  ParameterTest2)
 
 mfront_dependencies(MFrontCastemBehaviours
   Inconel600_YoungModulus
@@ -665,6 +670,11 @@ test_castem(axialgrowth2)
 test_castem(axialgrowth3)
 test_castem(axialgrowth4)
 test_castem(relocationtest)
+test_castem(computethermalexpansion)
+test_castem(computethermalexpansion2)
+test_castem(computethermalexpansion3)
+test_castem(parametertest)
+test_castem(parametertest2)
 
 macro(test_castem_cxx test_arg)
   if(CMAKE_CONFIGURATION_TYPES)

@@ -93,7 +93,10 @@ set(mfront_tests_SOURCES
   LogarithmicStrainElasticity
   LogarithmicStrainElasticity2
   LogarithmicStrainElasticity3
-  LogarithmicStrainNortonCreep)
+  LogarithmicStrainNortonCreep
+  ComputeThermalExpansion
+  ComputeThermalExpansion2
+  ComputeThermalExpansion3)
 if((NOT WIN32) AND (NOT CYGWIN))
   list(APPEND mfront_tests_SOURCES
        AbaqusAxialGrowth
@@ -101,7 +104,9 @@ if((NOT WIN32) AND (NOT CYGWIN))
        AbaqusOrthotropicSwelling	
        AbaqusOrthotropicSwelling2
        AbaqusOrthotropicElastic
-       AbaqusOrthotropicElastic2)
+       AbaqusOrthotropicElastic2
+       ParameterTest
+       ParameterTest2)
 endif((NOT WIN32) AND (NOT CYGWIN))
 mfront_dependencies(MFrontAbaqusBehaviours
   ThermalExpansionCoefficientTest
@@ -433,3 +438,5 @@ test_abaqus(mieheapellambrechtlogarithmicstrainelasticity-shear-FYX-3D)
 test_abaqus(mieheapellambrechtlogarithmicstrainelasticity-shear-FYZ-3D)
 test_abaqus(mieheapellambrechtlogarithmicstrainelasticity-shear-FZX-3D)
 test_abaqus(mieheapellambrechtlogarithmicstrainelasticity-shear-FZY-3D)
+test_abaqus(parametertest)
+test_abaqus(parametertest2)

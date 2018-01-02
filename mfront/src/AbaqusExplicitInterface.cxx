@@ -241,6 +241,7 @@ namespace mfront{
     d.headers.push_back("MFront/Abaqus/abaqusexplicit"+name+".hxx");
     insert_if(d[lib].link_directories,"$(shell "+tfel_config+" --library-path)");
     insert_if(d[lib].link_libraries,tfel::getLibraryInstallName("AbaqusInterface"));
+#if __cplusplus >= 201703L
     if(ppolicy=="ThreadPool"){
       insert_if(d[lib].link_libraries,
 		"$(shell "+tfel_config+" --library-dependency "
@@ -250,6 +251,17 @@ namespace mfront{
 		"$(shell "+tfel_config+" --library-dependency "
 		"--material --mfront-profiling)");
     }
+#else /* __cplusplus < 201703L */
+    if(ppolicy=="ThreadPool"){
+      insert_if(d[lib].link_libraries,
+		"$(shell "+tfel_config+" --library-dependency "
+		"--material --system --mfront-profiling --physical-constants)");
+    } else {
+      insert_if(d[lib].link_libraries,
+		"$(shell "+tfel_config+" --library-dependency "
+		"--material --mfront-profiling --physical-constants)");
+    }
+#endif /* __cplusplus < 201703L */
     for(const auto h : this->getModellingHypothesesToBeTreated(bd)){
       insert_if(d[lib].epts,this->getFunctionNameForHypothesis(name,h));
     }

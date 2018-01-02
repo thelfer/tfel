@@ -2,14 +2,15 @@ The `@ElasticMaterialProperties` keyword is used give the material
 properties for standard mechanical behaviours.
 
 This keywords is followed by an array which values can be either a
-string referring to an external `MFront` file or a numerical
-value. After this array, a semi-colon is expected.
+string referring to a formula, an external `MFront` file or a
+numerical value. After this array, a semi-colon is expected.
 
-If an entry refers to an external `MFront` file, all the inputs of
-this material property must be either:
+If an entry refers to an external `MFront` file or a formula, all the
+inputs of this material property must be either:
 
 - a material property
 - a parameter
+- a state variable
 - an external state variable
 
 of the behaviour.

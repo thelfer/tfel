@@ -13,7 +13,7 @@
 
 #include<cmath>
 #include<limits>
-
+#include"TFEL/Raise.hxx"
 #include"TFEL/Math/Parser/ConditionalExpr.hxx"
 
 namespace tfel
@@ -39,6 +39,13 @@ namespace tfel
 	return this->b->getValue();
       } // end of ConditionalExpr::getValue() const
 
+      std::string
+      ConditionalExpr::getCxxFormula(const std::vector<std::string>& m) const{
+	return "("+this->c->getCxxFormula(m)+") ? "+
+	  "("+this->a->getCxxFormula(m)+") : "+
+	  "("+this->b->getCxxFormula(m)+")";
+      } // end of ConditionalExpr::getCxxFormula
+      
       void
       ConditionalExpr::checkCyclicDependency(std::vector<std::string>& vars) const
       {

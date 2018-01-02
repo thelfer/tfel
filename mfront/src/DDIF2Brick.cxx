@@ -201,14 +201,16 @@ namespace mfront{
       tfel::raise_if(b,"DDIF2Brick::completeVariableDeclaration: "+m);
     };
     std::function<std::string(const MaterialPropertyInput&)> ets =
-      [throw_if](const MaterialPropertyInput& i) -> std::string {
-      if((i.type==MaterialPropertyInput::TEMPERATURE)||
-	 (i.type==MaterialPropertyInput::AUXILIARYSTATEVARIABLEFROMEXTERNALMODEL)||
-	 (i.type==MaterialPropertyInput::EXTERNALSTATEVARIABLE)){
+      [this,throw_if](const MaterialPropertyInput& i) -> std::string {
+      if((i.category==MaterialPropertyInput::TEMPERATURE)||
+	 (i.category==MaterialPropertyInput::AUXILIARYSTATEVARIABLEFROMEXTERNALMODEL)||
+	 (i.category==MaterialPropertyInput::EXTERNALSTATEVARIABLE)){
 	return "this->"+i.name + "+this->d" + i.name;
-      } else if ((i.type==MaterialPropertyInput::MATERIALPROPERTY)||
-		 (i.type==MaterialPropertyInput::PARAMETER)){
+      } else if ((i.category==MaterialPropertyInput::MATERIALPROPERTY)||
+		 (i.category==MaterialPropertyInput::PARAMETER)){
 	return "this->"+i.name;
+      } else if (i.category==MaterialPropertyInput::STATICVARIABLE){
+	return this->bd.getClassName()+"::"+i.name;
       }
       throw_if(true,"unsupported input type for variable '"+i.name+"'");
     };
@@ -225,7 +227,7 @@ namespace mfront{
       if(!this->sr[1].empty()){
 	std::ostringstream ssigr;
 	for(unsigned short i=0;i!=3;++i){
-	  BehaviourDescription::ComputedMaterialProperty mp_sr;
+	  BehaviourDescription::ExternalMFrontMaterialProperty mp_sr;
 	  mp_sr.mpd = this->sr[i].get<std::shared_ptr<MaterialPropertyDescription>>();
 	  ssigr << "this->sigr[" << i << "] = ";
 	  this->dsl.writeMaterialPropertyEvaluation(ssigr,mp_sr,ets);
@@ -233,7 +235,7 @@ namespace mfront{
 	  init_code += ssigr.str();
 	}
       } else {
-	BehaviourDescription::ComputedMaterialProperty mp_sr;
+	BehaviourDescription::ExternalMFrontMaterialProperty mp_sr;
 	mp_sr.mpd = this->sr[0].get<std::shared_ptr<MaterialPropertyDescription>>();
 	std::ostringstream ssigr;
 	ssigr << "this->sigr[0] = ";
@@ -251,7 +253,7 @@ namespace mfront{
       if(!this->rp[1].empty()){
 	std::ostringstream sRp;
 	for(unsigned short i=0;i!=3;++i){
-	  BehaviourDescription::ComputedMaterialProperty mp_rp;
+	  BehaviourDescription::ExternalMFrontMaterialProperty mp_rp;
 	  mp_rp.mpd = this->rp[i].get<std::shared_ptr<MaterialPropertyDescription>>();
 	  sRp << "this->Rp[" << i << "] = ";
 	  this->dsl.writeMaterialPropertyEvaluation(sRp,mp_rp,ets);
@@ -259,7 +261,7 @@ namespace mfront{
 	  init_code += sRp.str();
 	}
       } else {
-	BehaviourDescription::ComputedMaterialProperty mp_rp;
+	BehaviourDescription::ExternalMFrontMaterialProperty mp_rp;
 	mp_rp.mpd  = this->rp[0];
 	std::ostringstream srp;
 	srp << "this->Rp[0] = ";
@@ -274,7 +276,7 @@ namespace mfront{
       if(!this->gc[1].empty()){
 	std::ostringstream sGc;
 	for(unsigned short i=0;i!=3;++i){
-	  BehaviourDescription::ComputedMaterialProperty mp_gc;
+	  BehaviourDescription::ExternalMFrontMaterialProperty mp_gc;
 	  mp_gc.mpd = this->gc[i].get<std::shared_ptr<MaterialPropertyDescription>>();
 	  sGc << "this->Gc[" << i << "] = ";
 	  this->dsl.writeMaterialPropertyEvaluation(sGc,mp_gc,ets);
@@ -282,7 +284,7 @@ namespace mfront{
 	  init_code += sGc.str();
 	}
       } else {
-	BehaviourDescription::ComputedMaterialProperty mp_gc;
+	BehaviourDescription::ExternalMFrontMaterialProperty mp_gc;
 	mp_gc.mpd  = this->gc[0];
 	std::ostringstream sgc;
 	sgc << "this->Gc[0] = ";

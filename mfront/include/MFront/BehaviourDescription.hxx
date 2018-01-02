@@ -109,7 +109,7 @@ namespace mfront
     struct AnalyticMaterialProperty
     {
       //! return the list of the variables
-      std::vector<std::string> getVariableNames() const;
+      std::vector<std::string> getVariablesNames() const;
       //! description of a material property
       std::string f;
     }; // end of AnalyticMaterialProperty
@@ -117,7 +117,7 @@ namespace mfront
      * \brief this structure holds the value of a material
      * property defined through an mfront file
      */
-    struct ComputedMaterialProperty
+    struct ExternalMFrontMaterialProperty
     {
       //! description of a material property
       std::shared_ptr<MaterialPropertyDescription> mpd;
@@ -126,7 +126,7 @@ namespace mfront
     using MaterialPropertyTypes =
       tfel::meta::GenerateTypeList<ConstantMaterialProperty,
 				   AnalyticMaterialProperty,
-				   ComputedMaterialProperty>::type;
+				   ExternalMFrontMaterialProperty>::type;
     //! a simple alias
     using StressFreeExpansionDescription =
       BehaviourData::StressFreeExpansionDescription;
@@ -169,9 +169,15 @@ namespace mfront
       //! external name
       std::string ename;
       //! variable type
-      enum {TEMPERATURE,MATERIALPROPERTY,STATEVARIABLE,
-	    AUXILIARYSTATEVARIABLEFROMEXTERNALMODEL,
-	    EXTERNALSTATEVARIABLE,PARAMETER} type;
+      enum Category {
+	TEMPERATURE,
+	MATERIALPROPERTY,
+	STATEVARIABLE,
+	AUXILIARYSTATEVARIABLEFROMEXTERNALMODEL,
+	EXTERNALSTATEVARIABLE,
+	PARAMETER,
+	STATICVARIABLE};
+      Category category;
     }; // end of 
     //! attribute name
     static const char *const requiresStiffnessTensor;
@@ -221,7 +227,7 @@ namespace mfront
     void setMaterialName(const std::string&);
     //! \return the material name
     const std::string&
-      getMaterialName() const;
+    getMaterialName() const;
     /*!
      * \brief set the library name
      * \param[in] l: library name
@@ -237,11 +243,32 @@ namespace mfront
     //! \return the class name
     const std::string& getClassName() const;
     /*!
-     * \return the inputs of a material property
-     * \param[in] mpd: material property description
+     * \return the inputs of a material property 
+     * \param[in] i: list of variables used to evaluated the material
+     * property.
+     * \param[in] b: if true, the modelling hypotheses must be
+     * defined. In this case, inputs are searched in the BehaviourData
+     * associed with each modelling hypothesis and consistency of the
+     * definition of each input is checked. If false, all inputs are
+     * searched in the root BehaviourData only (the one associated
+     * with UNDEFINEDHYPOTESIS).
      */
     std::vector<MaterialPropertyInput>
-      getMaterialPropertyInputs(const MaterialPropertyDescription&) const;
+    getMaterialPropertyInputs(const std::vector<std::string>&,
+			      const bool = true) const;
+    /*!
+     * \return the inputs of a material property
+     * \param[in] mpd: material property description
+     * \param[in] b: if true, the modelling hypotheses must be
+     * defined. In this case, inputs are searched in the BehaviourData
+     * associed with each modelling hypothesis and consistency of the
+     * definition of each input is checked. If false, all inputs are
+     * searched in the root BehaviourData only (the one associated
+     * with UNDEFINEDHYPOTESIS).
+     */
+    std::vector<MaterialPropertyInput>
+    getMaterialPropertyInputs(const MaterialPropertyDescription&,
+			      const bool = true) const;
     /*!
      * \brief append the given code to the sources
      * \param[in] s: sources
@@ -1571,6 +1598,14 @@ namespace mfront
 		     const BehaviourData::RegistrationStatus,
 		     void (BehaviourData::*)(const VariableDescription&,
 					     const BehaviourData::RegistrationStatus));
+    /*!
+     * \return the category associated with the given variable
+     * \param[in] h: modelling hypothesis
+     * \param[in] v: variable name
+     */
+    MaterialPropertyInput::Category
+    getMaterialPropertyInputCategory(const Hypothesis,
+				     const std::string&) const;
     /*!
      * \brief check that the given hypothesis is supported
      * \param[in] h: modelling hypothesis

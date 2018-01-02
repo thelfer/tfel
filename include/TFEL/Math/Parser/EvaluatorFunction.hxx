@@ -17,6 +17,7 @@
 
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Math/Evaluator.hxx"
+#include"TFEL/Math/Parser/Function.hxx"
 
 namespace tfel
 {
@@ -49,6 +50,12 @@ namespace tfel
       {
 	//! constructor
 	EvaluatorFunctionBase();
+	/*!
+	 * \return a string representation of the evaluator suitable to
+	 * be integrated in a C++ code.
+	 * \param[in] m: a map used to change the names of the variables
+	 */
+	std::string getCxxFormula(const std::vector<std::string>&) const override;
 	/*!
 	 * \brief default implementation of the `differentiate`
 	 * method. This throws a `std::runtime_error` stating that

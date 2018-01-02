@@ -37,8 +37,9 @@ tfel_python_module(math math.cxx
   vector.cxx
   tvector.cxx
   stensor.cxx
-  st2tost2.cxx)
-target_link_libraries(py_tfel_math TFELMath)
+  st2tost2.cxx
+  Evaluator.cxx)
+target_link_libraries(py_tfel_math TFELMath TFELMathParser)
 
 tfel_python_module(material
   material.cxx

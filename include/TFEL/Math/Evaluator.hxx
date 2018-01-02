@@ -19,6 +19,7 @@
 #include<memory>
 #include<vector>
 #include<string>
+#include<functional>
 
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Math/Parser/Expr.hxx"  
@@ -33,8 +34,8 @@ namespace tfel
   {
 
     /*!
-     * class in charge of handling a function defined by a string.
-     * 
+     * \brief class in charge of handling a function defined by a
+     * string.
      */
     struct TFELMATHPARSER_VISIBILITY_EXPORT Evaluator
       : public tfel::math::parser::EvaluatorBase,
@@ -60,14 +61,13 @@ namespace tfel
       template<typename LogicalOperator>
       struct TLogicalBinaryOperation;
       struct TConditionalExpr;
-      typedef std::shared_ptr<tfel::math::parser::Expr>
-      (*FunctionGenerator)(const std::shared_ptr<tfel::math::parser::Expr>);
-      typedef std::shared_ptr<tfel::math::parser::Expr>
-      (*BinaryFunctionGenerator)(const std::shared_ptr<tfel::math::parser::Expr>,
-				 const std::shared_ptr<tfel::math::parser::Expr>);
-      typedef std::shared_ptr<tfel::math::parser::Expr>
+      using ExprPtr = std::shared_ptr<tfel::math::parser::Expr>;
+      using FunctionGenerator       = std::function<ExprPtr(const ExprPtr)>;
+      using BinaryFunctionGenerator = std::function<ExprPtr(const ExprPtr,
+							    const ExprPtr)>;
+      typedef ExprPtr
       (*ExternalFunctionGenerator)(const std::vector<std::string>&,
-				   std::vector<std::shared_ptr<tfel::math::parser::Expr> >&);
+				   std::vector<ExprPtr >&);
       struct FunctionGeneratorManager;
       static FunctionGeneratorManager&
       getFunctionGeneratorManager();
@@ -129,17 +129,17 @@ namespace tfel
       explicit Evaluator(const std::string&,
 			 std::shared_ptr<tfel::math::parser::ExternalFunctionManager>&);
       /*!
-       * \param const vector<std::string>&, variable name
-       * \param const std::string&, function definition
-       * \param std::shared_ptr<ExternalFunctionManager>&, external
+       * \param[in] const vector<std::string>&, variable name
+       * \param[in] const std::string&, function definition
+       * \param[in] std::shared_ptr<ExternalFunctionManager>&, external
        * function definition
        */
       explicit Evaluator(const std::vector<std::string>&,
 			 const std::string&,
 			 std::shared_ptr<tfel::math::parser::ExternalFunctionManager>&);
       /*!
-       * Build an evaluator from a value
-       * v : value
+       * \brief build an evaluator from a value.
+       * \param[in] v: value
        */
       explicit Evaluator(const double);
       //! Default constructor
@@ -147,79 +147,98 @@ namespace tfel
       //! Copy constructor
       Evaluator(const Evaluator&);
       //! Assignement operator constructor
-      Evaluator&
-      operator=(const Evaluator&);
+      Evaluator& operator=(const Evaluator&);
       /*!
        * \param const std::string&, function definition
        */
-      void
-      setFunction(const std::string&);
+      void setFunction(const std::string&);
       /*!
        * \param const vector<std::string>&, variable names
        * \param const std::string&, function definition
        */
-      void
-      setFunction(const std::vector<std::string>&,
-		  const std::string&);
+      void setFunction(const std::vector<std::string>&,
+		       const std::string&);
       /*!
        * \param const std::string&, function definition
        * \param std::shared_ptr<ExternalFunctionManager>&, external
        * function definition
        */
-      void
-      setFunction(const std::string&,
-		  std::shared_ptr<tfel::math::parser::ExternalFunctionManager>&);
+      void setFunction(const std::string&,
+		       std::shared_ptr<tfel::math::parser::ExternalFunctionManager>&);
       /*!
        * \param const vector<std::string>&, variable name
        * \param const std::string&, function definition
        * \param std::shared_ptr<ExternalFunctionManager>&, external
        * function definition
        */
-      void
-      setFunction(const std::vector<std::string>&,
-		  const std::string&,
-		  std::shared_ptr<tfel::math::parser::ExternalFunctionManager>&);
-      virtual double
-      getValue() const override;
-      virtual std::vector<std::string>
-      getVariablesNames() const;
-      virtual std::vector<double>::size_type
-      getNumberOfVariables() const override;
-      virtual void
-      checkCyclicDependency() const;
-      virtual void
-      checkCyclicDependency(const std::string&) const override;
-      virtual void
-      checkCyclicDependency(std::vector<std::string>&) const override;
-      virtual std::shared_ptr<tfel::math::parser::ExternalFunction>
+      void setFunction(const std::vector<std::string>&,
+		       const std::string&,
+		       std::shared_ptr<tfel::math::parser::ExternalFunctionManager>&);
+      /*!
+       * \brief evaluate the formula
+       * \return the result of the evaluation
+       * \note variables values shall have been set with the
+       * `setVariableValue` method.
+       */
+      double getValue() const override;
+      /*!
+       * \brief evaluate the formula
+       * \param[in] vs: a map giving the values of some of the
+       * variables recquired to evaluate the formula.
+       * \return the result of the evaluation
+       * \note the values of the variables not given in argument shall
+       * have been set with the `setVariableValue` method.
+       */
+      double getValue(const std::map<std::string,double>&);
+      /*!
+       * \brief evaluate the formula
+       * \return the result of the evaluation
+       * \note variables values shall have been set with the
+       * `setVariableValue` method.
+       */
+      double operator()() const;
+      /*!
+       * \brief evaluate the formula
+       * \param[in] vs: a map giving the values of some of the
+       * variables recquired to evaluate the formula.
+       * \return the result of the evaluation
+       * \note the values of the variables not given in argument shall
+       * have been set with the `setVariableValue` method.
+       */
+      double operator()(const std::map<std::string,double>&);
+      /*!
+       * \return a string representation of the evaluator suitable to
+       * be integrated in a C++ code.
+       * \param[in] m: a map used to change the names of the variables
+       */
+      virtual std::string getCxxFormula(const std::map<std::string,std::string>& = {}) const;
+      virtual std::vector<std::string> getVariablesNames() const;
+      std::vector<double>::size_type getNumberOfVariables() const override;
+      virtual void checkCyclicDependency() const;
+      void checkCyclicDependency(const std::string&) const override;
+      void checkCyclicDependency(std::vector<std::string>&) const override;
+      std::shared_ptr<tfel::math::parser::ExternalFunction>
       differentiate(const std::vector<double>::size_type) const override;
-      virtual std::shared_ptr<tfel::math::parser::ExternalFunction>
+      std::shared_ptr<tfel::math::parser::ExternalFunction>
       differentiate(const std::string&) const override;
-      virtual std::shared_ptr<tfel::math::parser::ExternalFunction>
+      std::shared_ptr<tfel::math::parser::ExternalFunction>
       resolveDependencies() const override;
-      virtual void
-      removeDependencies();
-      virtual void setVariableValue(const std::vector<double>::size_type,
-				    const double) override;
+      virtual void removeDependencies();
+      void setVariableValue(const std::vector<double>::size_type,
+			    const double) override;
       virtual void setVariableValue(const std::string&,const double);
       virtual void setVariableValue(const char* const,const double);
-      virtual std::shared_ptr<ExternalFunction>
+      std::shared_ptr<ExternalFunction>
       createFunctionByChangingParametersIntoVariables(const std::vector<std::string>&) const override;
-      virtual std::shared_ptr<ExternalFunction>
+      std::shared_ptr<ExternalFunction>
       createFunctionByChangingParametersIntoVariables(std::vector<std::string>&,
 						      const std::vector<double>&,
 						      const std::vector<std::string>&,
 						      const std::map<std::string,
 						      std::vector<double>::size_type>&) const override;
-      virtual void
-      getParametersNames(std::set<std::string>&) const override;
-      virtual ~Evaluator();
+      void getParametersNames(std::set<std::string>&) const override;
+      ~Evaluator() override;
     private:
-      static ExternalFunctionRegister externalFunctionRegister TFEL_VISIBILITY_LOCAL;
-      std::vector<double> variables;
-      std::map<std::string,std::vector<double>::size_type> positions;
-      std::shared_ptr<tfel::math::parser::Expr> expr;
-      std::shared_ptr<tfel::math::parser::ExternalFunctionManager> manager;
       template<typename T>
       static bool TFEL_VISIBILITY_LOCAL
       convert(const std::string&);
@@ -244,37 +263,58 @@ namespace tfel
       TFEL_VISIBILITY_LOCAL
       analyseParameters(std::vector<std::string>::const_iterator&,
 			const std::vector<std::string>::const_iterator);
-      std::vector<std::shared_ptr<Evaluator::TExpr> >
+      std::vector<std::shared_ptr<Evaluator::TExpr>>
       TFEL_VISIBILITY_LOCAL
       analyseArguments(std::vector<std::string>::const_iterator&,
 		       const std::vector<std::string>::const_iterator,
 		       const bool);
-      std::vector<std::shared_ptr<Evaluator::TExpr> >
+      std::vector<std::shared_ptr<Evaluator::TExpr>>
       TFEL_VISIBILITY_LOCAL
       analyseArguments(const unsigned short,
 		       std::vector<std::string>::const_iterator&,
 		       const std::vector<std::string>::const_iterator,
 		       const bool);
-      std::shared_ptr<Evaluator::TExpr>
-      TFEL_VISIBILITY_LOCAL
+      /*!
+       * \brief analyse a formula by splitting it in tokens that are
+       * then parsed by the `treatGroup` method.
+       * \param[in] f: formula
+       * \param[in] b: if true, the variable names are known and no
+       * variable can be added dynamically.
+       */
+      TFEL_VISIBILITY_LOCAL void
+      analyse(const std::string&,
+	      const bool = false);
+      /*!
+       * \brief analyse an group of tokens. This functions checks if a
+       * conditional operator is found and treats it recursively. If
+       * no conditional operator is found, the `treatGroup2` method is
+       * called.
+       * \param[in] p:  iterator to the current position
+       * \param[in] pe: iterator past-the-end of the sequence
+       * \param[in] b:  if true, the variable names are known and no
+       * variable can be added dynamically.
+       * \param[in] s:  string delimiting the end of the expression.
+       */
+      TFEL_VISIBILITY_LOCAL std::shared_ptr<Evaluator::TExpr>
       treatGroup(std::vector<std::string>::const_iterator&,
 		 std::vector<std::string>::const_iterator,
 		 const bool = false,
 		 const std::string& = ")");
-      unsigned short
-      TFEL_VISIBILITY_LOCAL
+      /*!
+       *
+       */
+      TFEL_VISIBILITY_LOCAL unsigned short
       countNumberOfArguments(std::vector<std::string>::const_iterator,
 			     const std::vector<std::string>::const_iterator);
-      void
-      TFEL_VISIBILITY_LOCAL
+      /*!
+       *
+       */
+      TFEL_VISIBILITY_LOCAL void
       addExternalFunctionToGroup(TGroup * const,
 				 std::vector<std::string>::const_iterator&,
 				 const std::vector<std::string>::const_iterator,
+				 const std::string&,
 				 const bool);
-      void
-      TFEL_VISIBILITY_LOCAL
-      analyse(const std::string&,
-	      const bool = false);
       std::pair<bool,std::vector<std::string>::const_iterator>
       TFEL_VISIBILITY_LOCAL
       search(std::vector<std::string>::const_iterator,
@@ -295,49 +335,42 @@ namespace tfel
       treatLogicalExpression2(const std::vector<std::string>::const_iterator,
 			      const std::vector<std::string>::const_iterator,
 			      const bool);
+      /*!
+       * \brief analyse a subexpression
+       * \param[in] p:  iterator to the current position
+       * \param[in] pe: iterator past the last valid iterator
+       * \param[in] b: if true, the variable names are known and no
+       * variable can be added dynamically.
+       * \param[in] s: string delimiting the end of the subexpression
+       */
       std::shared_ptr<Evaluator::TExpr>
       TFEL_VISIBILITY_LOCAL
       treatGroup2(std::vector<std::string>::const_iterator&,
 		  std::vector<std::string>::const_iterator,
 		  const bool = false,
 		  const std::string& = ")");
+
+      static ExternalFunctionRegister externalFunctionRegister TFEL_VISIBILITY_LOCAL;
+      //! \brief variables values
+      std::vector<double> variables;
+      /*!
+       * \brief a simple mapping between variables' names and their
+       * position in the array of variables' values.
+       */
+      std::map<std::string,std::vector<double>::size_type> positions;
+      /*!
+       * \brief the expression resulting from the analysis of the
+       * formula to be evaluated
+       */
+      ExprPtr expr;
+      //! \brief a pointer to externally defined functions
+      std::shared_ptr<tfel::math::parser::ExternalFunctionManager> manager;
     }; // end of struct Evaluator
-
-    struct Evaluator::FunctionGeneratorManager
-    {
-      void
-      insert(const std::string&,
-	     const Evaluator::FunctionGenerator);
-      void
-      insert(const std::string&,
-	     const Evaluator::BinaryFunctionGenerator);
-      void
-      insert(const std::string&,
-	     const Evaluator::ExternalFunctionGenerator);
-    private:
-      friend struct Evaluator;
-      FunctionGeneratorManager();
-      TFEL_VISIBILITY_LOCAL void
-      checkName(const std::string&) const;
-      std::map<std::string,Evaluator::FunctionGenerator> fctGenerators;
-      std::map<std::string,Evaluator::BinaryFunctionGenerator> bFctGenerators;
-      std::map<std::string,Evaluator::ExternalFunctionGenerator> extOpGenerators;
-    }; // end of struct FunctionManager
-
-    template<double (*f)(const double,const double)>
-    TFEL_VISIBILITY_LOCAL std::shared_ptr<tfel::math::parser::Expr>
-    StandardBinaryFctGenerator(std::shared_ptr<tfel::math::parser::Expr>,
-			       std::shared_ptr<tfel::math::parser::Expr>);
-    
-    template<double (*f)(const double)>
-    TFEL_VISIBILITY_LOCAL std::shared_ptr<tfel::math::parser::Expr>
-    StandardFctGenerator(const std::shared_ptr<tfel::math::parser::Expr>);
     
   } // end of namespace math
 
 } // end of namespace tfel
 
-#include"TFEL/Math/Evaluator.ixx"
 #include"TFEL/Math/Parser/EvaluatorTExpr.hxx"
 
 #endif /* LIB_TFEL_MATH_EVALUATOR_HXX */

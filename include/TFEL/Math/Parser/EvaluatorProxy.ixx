@@ -27,15 +27,17 @@ namespace tfel
       template<EvaluatorProxyFunctionPtr1V f>
       EvaluatorProxy<f>::EvaluatorProxy(const std::string& name)
       {
-	using namespace tfel::math;
-	Evaluator::getFunctionGeneratorManager().insert(name,&StandardFctGenerator<f>);
+	Evaluator::getFunctionGeneratorManager().insert(name,[name]{
+	    return std::shared_ptr<Expr>(new StandardFunction<f>(e));
+	  });
       }
-    
+      
       template<EvaluatorProxyFunctionPtr2V f>
       EvaluatorProxy2V<f>::EvaluatorProxy2V(const std::string& name)
       {
-	using namespace tfel::math;
-	Evaluator::getFunctionGeneratorManager().insert(name,&StandardBinaryFctGenerator<f>);
+	Evaluator::getFunctionGeneratorManager().insert(name,[name]{
+	    return std::shared_ptr<Expr>(new StandardBinaryFunction<f>(e1,e2));
+	  });
       } // end of struct EvaluatorProxy::EvaluatorProxy2V
     
       template<EvaluatorProxyFunctionPtr1P1V f>

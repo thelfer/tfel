@@ -89,7 +89,13 @@ set(mfront_tests_SOURCES
   IsotropicVolumeSwelling
   OrthotropicSwelling
   OrthotropicSwelling2
-  AxialGrowth)
+  AxialGrowth
+  ComputeThermalExpansion
+  ComputeThermalExpansion2
+  ComputeThermalExpansion3
+  ParameterTest
+  ParameterTest2
+  )
 mfront_dependencies(MFrontAsterBehaviours
   ThermalExpansionCoefficientTest
   ThermalExpansionCoefficientTest2
@@ -414,6 +420,8 @@ test_aster(axialgrowth)
 test_aster(axialgrowth2)
 test_aster(rusinekklepaczko_ssrt)
 test_aster(johnsoncook_ssrt)
+test_aster(parametertest)
+test_aster(parametertest2)
 
 if(enable-python-bindings)
   test_aster_python(xx)

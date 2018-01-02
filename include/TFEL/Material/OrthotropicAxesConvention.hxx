@@ -37,10 +37,12 @@ namespace tfel{
      *   strain.
      * This means that we have to exchange the second and third
      * axis. This is the PIPE (orthotropic axes) convention.
+     *
      */
     enum class OrthotropicAxesConvention{
       DEFAULT,
-      PIPE
+      PIPE,
+      PLATE
     }; // end of enum class OrthotropicAxesConvention
 
     /*!

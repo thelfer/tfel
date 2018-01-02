@@ -948,9 +948,9 @@ namespace mfront{
      * the end of the time step, we could make f return V+dV
      */
     virtual void
-    writeMaterialPropertyArguments(std::ostream&,
-				   const BehaviourDescription::MaterialProperty&,
-				   std::function<std::string(const MaterialPropertyInput&)>&) const;
+    writeExternalMFrontMaterialPropertyArguments(std::ostream&,
+						 const BehaviourDescription::MaterialProperty&,
+						 std::function<std::string(const MaterialPropertyInput&)>&) const;
     /*!
      * \brief write the bounds checks to a material property
      * \param[out] out: output stream
@@ -981,10 +981,10 @@ namespace mfront{
      * \brief write the evoluation of a thermal expansion coefficient
      * \param[out] out: output stream
      * \param[in]  mpd: material property
-     * \param[in] T: temperature at which the thermal expansion
+     * \param[in] T:    temperature at which the thermal expansion
      * coefficient is computed
-     * \param[in] i: indice
-     * \param[in] s: suffix
+     * \param[in] idx:  index
+     * \param[in] s:    suffix
      */
     virtual void
     writeThermalExpansionCoefficientComputation(std::ostream&,
@@ -998,7 +998,6 @@ namespace mfront{
 						  const std::string& = "") const;
     virtual void
     writeThermalExpansionComputation(std::ostream&,
-				     const BehaviourDescription::MaterialProperty&,
 				     const std::string&,
 				     const std::string&,
 				     const std::string& = "") const;

@@ -35,6 +35,11 @@ set(mfront_tests_SOURCES
   AxialGrowth
   AxialGrowth2
   AxialGrowth3
+  ComputeThermalExpansion
+  ComputeThermalExpansion2
+  ComputeThermalExpansion3
+  ParameterTest
+  ParameterTest2
   )
 mfront_dependencies(MFrontCyranoBehaviours
   YoungModulusTest_1
@@ -220,3 +225,5 @@ test_cyrano(axialgrowth3)
 test_cyrano(axialgrowth4)
 test_cyrano(orthotropicswelling)
 test_cyrano(orthotropicswelling2)
+test_cyrano(parametertest)
+test_cyrano(parametertest2)

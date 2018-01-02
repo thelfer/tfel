@@ -34,12 +34,17 @@ namespace tfel
       {} // end of BinaryOperation<Op>::~BinaryOperation()
       
       template<typename Op>
-      double
-      BinaryOperation<Op>::getValue() const
+      double BinaryOperation<Op>::getValue() const
       {
 	return Op::apply(this->a->getValue(),this->b->getValue());
       } // end of BinaryOperation<Op>::getValue
 
+      template<typename Op>
+      std::string BinaryOperation<Op>::getCxxFormula(const std::vector<std::string>& m) const{
+	return Op::getCxxFormula(this->a->getCxxFormula(m),
+				 this->b->getCxxFormula(m));
+      } // end of BinaryOperation<Op>::getCxxFormula
+      
       template<typename Op>
       void
       BinaryOperation<Op>::checkCyclicDependency(std::vector<std::string>& names) const
