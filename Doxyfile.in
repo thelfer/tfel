@@ -110,10 +110,12 @@ IGNORE_PREFIX          =
 GENERATE_HTML          = YES
 HTML_OUTPUT            = 
 HTML_FILE_EXTENSION    = .html
-HTML_HEADER            = 
-HTML_FOOTER            = 
-HTML_STYLESHEET        = 
-HTML_ALIGN_MEMBERS     = YES
+HTML_HEADER            = @abs_top_srcdir@/docs/doxygen/header.html
+HTML_FOOTER            = @abs_top_srcdir@/docs/doxygen/footer.html
+HTML_STYLESHEET        =
+HTML_EXTRA_STYLESHEET  = @abs_top_srcdir@/docs/doxygen/customdoxygen.css   
+HTML_EXTRA_FILES       = @abs_top_srcdir@/docs/doxygen/doxy-boot.js
+HTML_ALIGN_MEMBERS     = NO
 USE_MATHJAX            = YES
 INTERACTIVE_SVG        = YES
 GENERATE_HTMLHELP      = YES
@@ -130,6 +132,7 @@ TREEVIEW_WIDTH         = 250
 # Configuration::additions related to the search engine   
 #---------------------------------------------------------------------------
 SEARCH_ENGINE          = YES
+SERVER_BASED_SEARCH    = NO
 #---------------------------------------------------------------------------
 # configuration options related to the LaTeX output
 #---------------------------------------------------------------------------

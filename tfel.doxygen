@@ -5,46 +5,58 @@
  */
 
 /*!
- * \mainpage TFEL project
- * \author   Helfer Thomas
- * \date     27/07/2014
+ * \mainpage The TFEL project
+ * \author   Thomas Helfer
+ * \date     2/01/2018
  *
- * TFEL is a collaborative development of [CEA](http://www.cea.fr/english-portal "Commissariat à l'énergie atomique") and [EDF](http://www.edf.com/ "Électricité de France").
+ * `TFEL` is a collaborative development of
+ * [CEA](http://www.cea.fr/english-portal "Commissariat à l'énergie
+ * atomique") and [EDF](http://www.edf.com/ "Électricité de France").
+ *
+ * The official website of the `TFEL` project is the following:
+ * <http://tfel.sourceforge.net>.
+ *
+ * # Overview
  * 
- * The TFEL project provides:
- * - mfront               : a code generator for material properties,
- *   mechanical behaviours and simple models.
- * - TFEL/Math            : a set of classes used in mechanical
+ * The `TFEL` project provides:
+ * - `mfront`: a code generator for material properties, mechanical
+ *   behaviours and simple models.
+ * - `mtest`: a simple mechanical solver able to simulate:
+ *     - the behaviour of a single point
+ *     - the behaviour of a pipe
+ * - `TFEL/Math`: a set of classes used in mechanical
  *   implementations of mechanical behaviours and various algorithms.
  *   Mechanical operations are handled using expression templates.
- * - TFEL/Material        : classes used by mechanical behaviours
- * - TFEL/Utilities       : various classes
- * - TFEL/Metaprogramming : a set of classes to ease metaprogramming in C++98
- * - TFEL/Typetraits      : a set of classes providing information on types
- * - TFEL/System          : intefaces to system specific operations on file and
- *                          processes
+ * - `TFEL/Material`: classes used by mechanical behaviours
+ * - `TFEL/Utilities`: various classes, including the `CxxTokenizer`
+ *   class.
+ * - `TFEL/Metaprogramming`: a set of classes to ease metaprogramming.
+ * - `TFEL/Typetraits`: a set of classes providing information on types
+ * - `TFEL/System`: intefaces to system specific operations on file and
+ *    threads and processes
  *  
- *  # Overview
- * 
- * MFront is a code generator which translates a set of closely related
- * domain specific languages into plain [C++](http://isocpp.org/). Those
- * languages covers three kind of material knowledge:
- * 
- * - material properties (for instance the Young modulus, the thermal
- * conductivity, etc.
- * - mechanical behaviours
- * - simple point-wise models, such as material swelling used in fuel
- * performance codes.
- * 
  * # History
  * 
- * - Versions prior to 0.1 were developed by T. Helfer as an independent project.
+ * - Versions prior to 0.1 were developed by T. Helfer as an
+ *   independent project.
  * - Starting with version 1.0, TFEL was developed as a sub-project of
  *   the PLEIADES platform.
- * - Versions higher than 2.0 are open-source and distributed under the
- *   [GPL](https://gnu.org/licenses/gpl.html "GNU General Public
- *   License") license.
+ * - Versions higher than 2.0 are open-source.
+ *
+ * # TFEL/MFront licence 
+ *
+ * `TFEL` version prior to 0.1 were released under both the LGPL and
+ * the CECILL-B licences. A copy of those licences are included in the
+ * distributions of `TFEL`.
  * 
+ * `TFEL` versions 1.x were developped by CEA within the PLEIADES
+ * project. Since svn revision 584, TFEL was part of the `PLEIADES`
+ * projet.
+ * 
+ * Starting from versions 2.x, `TFEL\ has been publicly released under
+ * either the GPL or the CECILL-A licence. A copy of thoses licences
+ * are delivered with the sources of `TFEL`. CEA or EDF may also
+ * distribute this project under specific licensing conditions.
  */
 
 /*!

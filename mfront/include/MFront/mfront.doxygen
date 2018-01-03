@@ -1,10 +1,26 @@
 /*!
  * \file  mfront/include/MFront/mfront.doxygen
- * \brief this file contains the documentation of the mfront namespace.
+ * \brief this file contains the documentation of the `mfront` namespace.
  */
 
 /*!
  * \namespace mfront
- * \brief This namespace contains material used to build the MFront
+ * \brief This namespace contains material used to build the `MFront`
  * code generator.
+ */
+
+/*!
+ * \page mfront The MFront code generator
+ *
+ * \htmlonly <style>div.image img[src="img/mfront-en.svg"]{width:500px;}</style> \endhtmlonly 
+ * @image html img/mfront-en.svg "The official MFront Logo"
+ *
+ * `MFront` is a code generator which translates a set of closely related
+ * domain specific languages into plain [C++](http://isocpp.org/). Those
+ * languages covers three kind of material knowledge:
+ * - Material properties (for instance the Young modulus, the thermal
+ *   conductivity, etc.
+ * - Mechanical behaviours.
+ * - Simple point-wise models, such as material swelling used in fuel
+ *   performance codes.
  */

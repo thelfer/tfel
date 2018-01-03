@@ -26,7 +26,7 @@ namespace tfel{
    * throw, this avoids undefined behaviour as reported by the
    * `cert-err60-cpp` warning of `clang-tidy` (thrown exception type
    * is not nothrow copy constructible).
-   * \tparam Exception: time of the exception to be thrown.
+   * \tparam Exception: type of the exception to be thrown.
    */
   template<typename Exception = std::runtime_error>
   TFEL_NORETURN TFEL_VISIBILITY_LOCAL TFEL_INLINE
@@ -38,7 +38,7 @@ namespace tfel{
    * throw, this avoids undefined behaviour as reported by the
    * `cert-err60-cpp` warning of `clang-tidy` (thrown exception type
    * is not nothrow copy constructible).
-   * \tparam Exception: time of the exception to be thrown.
+   * \tparam Exception: type of the exception to be thrown.
    * \tparam Args: type of the arguments passed to the exception'
    * constructor.
    * \param[in] a: arguments passed to the exception' constructor.
@@ -50,7 +50,7 @@ namespace tfel{
 
   /*!
    * \brief raise an exception if the first argument is `true`.
-   * \tparam Exception: time of the exception to be thrown.
+   * \tparam Exception: type of the exception to be thrown.
    * \param[in] b: condition to be checked. If `true`, an exception is
    * thrown.
    */
@@ -60,7 +60,7 @@ namespace tfel{
 
   /*!
    * \brief raise an exception if the first argument is `true`.
-   * \tparam Exception: time of the exception to be thrown.
+   * \tparam Exception: type of the exception to be thrown.
    * \tparam Args: type of the arguments passed to the exception'
    * constructor.
    * \param[in] b: condition to be checked. If `true`, an exception is

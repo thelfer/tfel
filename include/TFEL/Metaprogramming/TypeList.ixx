@@ -470,7 +470,7 @@ namespace tfel{
 	typedef typename std::conditional<std::is_same<T,typename List::Current>::value,
 					IntegerValue<N>,
 					TLPosition<N+1,T,typename List::Next> >::type Select;
-      static constexpr unsigned short value = Select::value;
+	static constexpr unsigned short value = Select::value;
       private:
 	TFEL_STATIC_ASSERT((IsSubClassOf<List,TL>::cond));
       }; // end of TLPosition

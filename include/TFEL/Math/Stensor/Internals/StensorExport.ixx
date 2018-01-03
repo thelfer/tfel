@@ -28,22 +28,43 @@ namespace tfel{
 
     namespace internals{
 
+      /*!
+       * \brief partial specialisation of the `ExportToTab` class in
+       * 1D.
+       */
       template<>
       struct TFEL_VISIBILITY_LOCAL ExportToTab<1u>{
+	/*!
+	 * \brief convert an array of values using the TFEL convention
+	 * to an array
+	 * \tparam T: numeric type
+	 * \param[in]  src: pointer to the original values.
+	 * \param[out] target: pointer to the new values.
+	 */
 	template<typename T>
-	TFEL_MATH_INLINE static void exe(const T* const src,T * const target)
-	{
+	TFEL_MATH_INLINE static void exe(const T* const src,
+					 T * const target){
 	  target[0] = src[0];
 	  target[1] = src[1];
 	  target[2] = src[2];
-	}
-      };
-
+	} // end of exe 
+      }; // end of ExportToTab<1u>
+      /*!
+       * \brief partial specialisation of the `ExportToTab` class in
+       * 2D.
+       */
       template<>
       struct TFEL_VISIBILITY_LOCAL ExportToTab<2u>{
+	/*!
+	 * \brief convert an array of values using the TFEL convention
+	 * to an array
+	 * \tparam T: numeric type
+	 * \param[in]  src: pointer to the original values.
+	 * \param[out] target: pointer to the new values.
+	 */
 	template<typename T>
-	TFEL_MATH_INLINE static void exe(const T* const src,T * const target)
-	{
+	TFEL_MATH_INLINE static void exe(const T* const src,
+					 T * const target){
 	  constexpr const auto icste = Cste<T>::isqrt2;
 	  target[0] = src[0];
 	  target[1] = src[1];
@@ -51,12 +72,22 @@ namespace tfel{
 	  target[3] = src[3]*icste;
 	}
       };
-
+      /*!
+       * \brief partial specialisation of the `ExportToTab` class in
+       * 3D.
+       */
       template<>
       struct TFEL_VISIBILITY_LOCAL ExportToTab<3u>{
+	/*!
+	 * \brief convert an array of values using the TFEL convention
+	 * to an array
+	 * \tparam T: numeric type
+	 * \param[in]  src: pointer to the original values.
+	 * \param[out] target: pointer to the new values.
+	 */
 	template<typename T>
-	TFEL_MATH_INLINE static void exe(const T* const src,T * const target)
-	{
+	TFEL_MATH_INLINE static void exe(const T* const src,
+					 T * const target){
 	  constexpr const auto icste = Cste<T>::isqrt2;
 	  target[0] = src[0];
 	  target[1] = src[1];
@@ -66,9 +97,19 @@ namespace tfel{
 	  target[5] = src[5]*icste;
 	}
       };
-
+      /*!
+       * \brief partial specialisation of the `ExportToVoigt` class in
+       * 1D.
+       */
       template<>
       struct TFEL_VISIBILITY_LOCAL ExportToVoigt<1u>{
+	/*!
+	 * \brief convert an array of values using the TFEL convention
+	 * to an array of values using the Voigt convention.
+	 * \tparam T: numeric type
+	 * \param[in]  src: pointer to the original values.
+	 * \param[out] target: pointer to the new values.
+	 */
 	template<typename T>
 	TFEL_MATH_INLINE static void exe(const T* const src,T * const target)
 	{
@@ -77,11 +118,22 @@ namespace tfel{
 	  target[2] = src[2];
 	}
       };
-
+      /*!
+       * \brief partial specialisation of the `ExportToVoigt` class in
+       * 2D.
+       */
       template<>
       struct TFEL_VISIBILITY_LOCAL ExportToVoigt<2u>{
+	/*!
+	 * \brief convert an array of values using the TFEL convention
+	 * to an array of values using the Voigt convention.
+	 * \tparam T: numeric type
+	 * \param[in]  src: pointer to the original values.
+	 * \param[out] target: pointer to the new values.
+	 */
 	template<typename T>
-	TFEL_MATH_INLINE static void exe(const T* const src,T * const target)
+	TFEL_MATH_INLINE static void exe(const T* const src,
+					 T * const target)
 	{
 	  constexpr const auto cste = Cste<T>::sqrt2;
 	  target[0] = src[0];
@@ -90,11 +142,22 @@ namespace tfel{
 	  target[3] = src[3]*cste;
 	}
       };
-
+      /*!
+       * \brief partial specialisation of the `ExportToVoigt` class in
+       * 3D.
+       */
       template<>
       struct TFEL_VISIBILITY_LOCAL ExportToVoigt<3u>{
+	/*!
+	 * \brief convert an array of values using the TFEL convention
+	 * to an array of values using the Voigt convention.
+	 * \tparam T: numeric type
+	 * \param[in]  src: pointer to the original values.
+	 * \param[out] target: pointer to the new values.
+	 */
 	template<typename T>
-	TFEL_MATH_INLINE static void exe(const T* const src,T * const target)
+	TFEL_MATH_INLINE static void exe(const T* const src,
+					 T * const target)
 	{
 	  constexpr const auto cste = Cste<T>::sqrt2;
 	  target[0] = src[0];

@@ -27,13 +27,13 @@ the test case) than using a full-fledged finite element solver.
 
 # Licences
 
-TFEL version prior to 0.1 were released under both the LGPL and the
+`TFEL` version prior to 0.1 were released under both the LGPL and the
 CECILL-B licences. A copy of those licences are included in the
 distributions of TFEL.
 
-TFEL versions 1.x were developped by CEA within the PLEIADES
-project. Since svn revision 584, TFEL was part of the pleiades
-architecture projet.
+`TFEL` versions 1.x were developped by CEA within the PLEIADES
+project. Since svn revision 584, TFEL was part of the `PLEIADES`
+projet.
 
 Starting from versions 2.x, TFEL has been publicly released under
 either the GPL or the CECILL-A licence. A copy of thoses licences are

@@ -37,21 +37,30 @@ namespace tfel{
 
     namespace internals{
     
-      // a simple meta function
+      /*!
+       * \brief a simple meta function to the check if the given type
+       * is part of the `DataTypes` type list.
+       * \tparam T: type to be checked
+       */
       template<typename T>
       struct isDataTypeCheck{
+	//! \brief result type
 	static constexpr const bool value =
 	  tfel::meta::TLCountNbrOfT<typename std::decay<T>::type,
 				    tfel::utilities::DataTypes>::value==1;
       };
-    }
+      
+    } // end of namespace internals
     
     //! a simple alias
     template<typename T>
     using isDataType = tfel::utilities::internals::isDataTypeCheck<T>;
     
     /*!
-     * Data extracted from json like structure
+     * \brief A structure able to contain values extracted from a
+     * JSON-like file.
+     * \see the `DataTypes` list of types for all the values that a
+     * Data can contain.
      */
     struct TFELUTILITIES_VISIBILITY_EXPORT Data
       : public GenTypeBase<DataTypes>
