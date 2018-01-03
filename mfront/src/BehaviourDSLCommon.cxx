@@ -3704,15 +3704,13 @@ namespace mfront{
     if((this->mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR)||
        (this->mb.getBehaviourType()==BehaviourDescription::COHESIVEZONEMODEL)){
       if(this->mb.useQt()){
-	os << "if(smflag!=MechanicalBehaviour<" << btype 
-	   << ",hypothesis,Type,use_qt>::STANDARDTANGENTOPERATOR){\n"
-	   << "throw(runtime_error(\"invalid tangent operator flag\"));\n"
-	   << "}\n";
+	os << "raise_if(smflag!=MechanicalBehaviour<" << btype 
+	   << ",hypothesis,Type,use_qt>::STANDARDTANGENTOPERATOR,\n"
+	   << "\"invalid tangent operator flag\");\n";
       } else {
-	os << "if(smflag!=MechanicalBehaviour<" << btype 
-	   << ",hypothesis,Type,false>::STANDARDTANGENTOPERATOR){\n"
-	   << "throw(runtime_error(\"invalid tangent operator flag\"));\n"
-	   << "}\n";
+	os << "raise_if(smflag!=MechanicalBehaviour<" << btype 
+	   << ",hypothesis,Type,false>::STANDARDTANGENTOPERATOR,\n"
+	   << "\"invalid tangent operator flag\");\n";
       }
     }
     os << "bool computeTangentOperator_ = smt!=NOSTIFFNESSREQUESTED;\n";
@@ -3776,7 +3774,7 @@ namespace mfront{
        << "void\nsetOutOfBoundsPolicy(const OutOfBoundsPolicy policy_value){\n"
        << "this->policy = policy_value;\n"
        << "} // end of setOutOfBoundsPolicy\n\n";
-  } // end of BehaviourDSLCommon::writeBehaviourOutOfBoundsEnumeration
+  } // end of BehaviourDSLCommon::writeBehaviourSetOutOfBoundsPolicy
 
   static void writeBoundsChecks(std::ostream& os,
 				const VariableDescription& v,
@@ -4169,22 +4167,20 @@ namespace mfront{
       this->writeExternalMFrontMaterialPropertyArguments(out,cmp,f);
       out << ";\n"
 	  << "if(" << n << "_bounds_check_status!=0){\n"
-	  << "if(" << n << "_bounds_check_status<0){\n"
 	  << "// physical bounds\n"
-	  << "throw(OutOfBoundsException(\"" << this->mb.getClassName() << ": "
-	  << "a variable is out of its physical bounds \"\n"
-	  << "                           \"when calling the material property '" << n << "'\"));\n"
+	  << "tfel::raise_if<OutOfBoundsException>(" << n << "_bounds_check_status<0,\n"
+	  << "\"" << this->mb.getClassName() << ": a variable is out of its physical bounds \"\n"
+	  << "\"when calling the material property '" << n << "'\");\n"
 	  << "} else {\n"
 	  << "// standard bounds\n"
 	  << "if(this->policy==Strict){\n"
-	  << "throw(OutOfBoundsException(\"" << this->mb.getClassName() << ": "
+	  << "tfel::raise<OutOfBoundsException>(\"" << this->mb.getClassName() << ": "
 	  << "a variable is out of its bounds \"\n"
-	  << "                           \"when calling the material property '" << n << "'\"));\n"
+	  << "\"when calling the material property '" << n << "'\");\n"
 	  << "} else if(this->policy==Warning){\n"
 	  << "std::cerr << \"" << this->mb.getClassName() << ": "
 	  << "a variable is out of its bounds \"\n"
-	  << "             \"when calling the material property '" << n << "'\\n\";\n"
-	  << "}\n"
+	  << "\"when calling the material property '" << n << "'\\n\";\n"
 	  << "}\n"
 	  << "}\n"
       	  << "}\n";
@@ -5567,9 +5563,8 @@ namespace mfront{
     }
     if(!hasUserDefinedPredictionOperatorCode(this->mb,h)){
       os << "IntegrationResult computePredictionOperator(const SMFlag,const SMType) override{\n"
-	 << "throw(std::runtime_error(\"" << this->mb.getClassName()
-	 << "::computePredictionOperator: \"\n"
-	 << "\"unsupported prediction operator flag\"));\n"
+	 << "tfel::raise(\"" << this->mb.getClassName() << "::computePredictionOperator: \"\n"
+	 << "\"unsupported prediction operator flag\");\n"
 	 << "}\n\n";
       return;
     }
@@ -5613,10 +5608,10 @@ namespace mfront{
 	      FiniteStrainBehaviourTangentOperatorConversionPath::getShortestPath(paths,t);
 	    if(path.empty()){
 	      os << "IntegrationResult computePredictionOperator_" << ktype << "(const SMType){\n"
-		 << "throw(std::runtime_error(\"" << this->mb.getClassName()
+		 << "tfel::raise(\"" << this->mb.getClassName()
 		 << "::computePredictionOperator_" << ktype << ": \"\n"
 		 << "\"computing the prediction operator '"
-		 << ktype << "' is not supported\"));\n"
+		 << ktype << "' is not supported\");\n"
 		 << "}\n\n";
 	    } else {
 	      os << "IntegrationResult computePredictionOperator_" << ktype << "(const SMType smt){\n";
@@ -5652,9 +5647,9 @@ namespace mfront{
 	     << "return this->computePredictionOperator_" << ktype << "(smt);\n";
 	}
 	os << "}\n"
-	   << "throw(runtime_error(\"" << this->mb.getClassName()
+	   << "tfel::raise(\"" << this->mb.getClassName()
 	   << "::computePredictionOperator: \"\n"
-	   << "\"unsupported prediction operator flag\"));\n"
+	   << "\"unsupported prediction operator flag\");\n"
 	   << "}\n\n";
       }
     } else {
@@ -5667,15 +5662,13 @@ namespace mfront{
       if((this->mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR)||
 	 (this->mb.getBehaviourType()==BehaviourDescription::COHESIVEZONEMODEL)){
 	if(mb.useQt()){
-	  os << "if(smflag!=MechanicalBehaviour<" << btype 
-	     << ",hypothesis,Type,use_qt>::STANDARDTANGENTOPERATOR){\n"
-	     << "throw(runtime_error(\"invalid prediction operator flag\"));\n"
-	     << "}\n";
+	  os << "tfel::raise_if(smflag!=MechanicalBehaviour<" << btype 
+	     << ",hypothesis,Type,use_qt>::STANDARDTANGENTOPERATOR,\n"
+	     << "\"invalid prediction operator flag\");\n";
 	} else {
-	  os << "if(smflag!=MechanicalBehaviour<" << btype 
-	     << ",hypothesis,Type,false>::STANDARDTANGENTOPERATOR){\n"
-	     << "throw(runtime_error(\"invalid prediction operator flag\"));\n"
-	     << "}\n";
+	  os << "tfel::raise_if(smflag!=MechanicalBehaviour<" << btype 
+	     << ",hypothesis,Type,false>::STANDARDTANGENTOPERATOR,\n"
+	     << "\"invalid prediction operator flag\");\n";
 	}
       }
       os << this->mb.getCode(h,BehaviourData::ComputePredictionOperator)
@@ -5687,7 +5680,6 @@ namespace mfront{
   void BehaviourDSLCommon::writeBehaviourComputeTangentOperator(std::ostream& os,
 								const Hypothesis h) const
   {
-    using namespace std;
     using namespace tfel::material;
     if(this->mb.getBehaviourType()==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR){
       // all available tangent operators for finite strain behaviours
@@ -5696,7 +5688,7 @@ namespace mfront{
       const auto converters =
 	FiniteStrainBehaviourTangentOperatorConversion::getAvailableFiniteStrainBehaviourTangentOperatorConversions();
       // tangent operators defined by the user
-      vector<FiniteStrainBehaviourTangentOperatorBase::Flag> ktos;
+      std::vector<FiniteStrainBehaviourTangentOperatorBase::Flag> ktos;
       for(const auto& t : tos){
 	const auto ktype=convertFiniteStrainBehaviourTangentOperatorFlagToString(t);
 	if(this->mb.hasCode(h,std::string(BehaviourData::ComputeTangentOperator)
@@ -5706,7 +5698,7 @@ namespace mfront{
       }
       if(!ktos.empty()){
 	// computing all the conversion paths starting from user defined ones
-	vector<FiniteStrainBehaviourTangentOperatorConversionPath> paths;
+	std::vector<FiniteStrainBehaviourTangentOperatorConversionPath> paths;
 	for(const auto& k:ktos){
 	  const auto kpaths = 
 	    FiniteStrainBehaviourTangentOperatorConversionPath::getConversionsPath(k,ktos,converters);
@@ -5729,12 +5721,10 @@ namespace mfront{
 	      FiniteStrainBehaviourTangentOperatorConversionPath::getShortestPath(paths,t);
 	    if(path.empty()){
 	      os << "bool computeConsistentTangentOperator_" << ktype << "(const SMType){\n"
-		 << "using namespace std;\n"
-		 << "string msg(\"" << this->mb.getClassName()
-		 << "::computeConsistentTangentOperator_" << ktype << " : \");\n"
-		 << "msg += \"computing the tangent operator '"
-		 << ktype << "' is not supported\";\n"
-		 << "throw(runtime_error(msg));\n"
+		 << "tfel::raise(\"" << this->mb.getClassName()
+		 << "::computeConsistentTangentOperator_" << ktype << ": \"\n"
+		 << "\"computing the tangent operator '"
+		 << ktype << "' is not supported\");\n"
 		 << "}\n\n";
 	    } else {
 	      os << "bool computeConsistentTangentOperator_" << ktype << "(const SMType smt){\n";
@@ -5762,7 +5752,6 @@ namespace mfront{
 	  }
 	}
 	os << "bool computeConsistentTangentOperator(const SMFlag smflag,const SMType smt){\n"
-	   << "using namespace std;\n"
 	   << "switch(smflag){\n";
 	for(const auto& t:tos){
 	  const auto ktype=convertFiniteStrainBehaviourTangentOperatorFlagToString(t);
@@ -5770,9 +5759,9 @@ namespace mfront{
 	     << "return this->computeConsistentTangentOperator_" << ktype << "(smt);\n";
 	}
 	os << "}\n"
-	   << "throw(std::runtime_error(\"" << this->mb.getClassName()
-	   << "::computeConsistentTangentOperator : \"\n"
-	   << "\"unsupported tangent operator flag\"));\n"
+	   << "tfel::raise(\"" << this->mb.getClassName()
+	   << "::computeConsistentTangentOperator: \"\n"
+	   << "\"unsupported tangent operator flag\");\n"
 	   << "}\n\n";
       }
     } else {
@@ -6319,7 +6308,8 @@ namespace mfront{
 	 << "#include<fstream>\n"
 	 << "#include<stdexcept>\n\n";
     }
-    os << "#include\"" << this->getBehaviourDataFileName()   << "\"\n"
+    os << "#include\"TFEL/Raise.hxx\"\n"
+       << "#include\"" << this->getBehaviourDataFileName()   << "\"\n"
        << "#include\"" << this->getIntegrationDataFileName() << "\"\n"
        << "#include\"" << this->getBehaviourFileName()       << "\"\n\n";
   } // end of BehaviourDSLCommon::writeSrcFileHeader()
@@ -6421,11 +6411,10 @@ namespace mfront{
       << type << " value;\n"
       << "std::istringstream converter(v);\n"
       << "converter >> value;\n"
-      << "if(!converter||(!converter.eof())){\n"
-      << "throw(std::runtime_error(\"" << cname << "::get" << type2 << ": \"\n"
+      << "tfel::raise_if(!converter||(!converter.eof()),\n"
+      << "\"" << cname << "::get" << type2 << ": \"\n"
       << "\"can't convert '\"+v+\"' to " << type << " "
-      << "for parameter '\"+ n+\"'\"));\n"
-      << "}\n"
+      << "for parameter '\"+ n+\"'\");\n"
       << "return value;\n"
       << "}\n\n";
   }
@@ -6556,11 +6545,9 @@ namespace mfront{
 	}
       }
       os << "} else {\n";
-      os << "string msg(\"" << cname << "::set : \");\n"
-	 << "msg += \" no parameter named '\";\n"
-	 << "msg += key;\n"
-	 << "msg += \"'\";\n"
-	 << "throw(runtime_error(msg));\n"
+      os << "tfel::raise(\"" << cname << "::set: \"\n"
+	 << "\" no parameter named "
+	 << "'\"+std::string(key)+\"'\");\n"
 	 << "}\n"
 	 << "}\n\n";
     }
@@ -6584,11 +6571,9 @@ namespace mfront{
 	}
       }
       os << "} else {\n";
-      os << "string msg(\"" << cname << "::set : \");\n"
-	 << "msg += \" no parameter named '\";\n"
-	 << "msg += key;\n"
-	 << "msg += \"'\";\n"
-	 << "throw(runtime_error(msg));\n"
+      os << "tfel::raise(\"" << cname << "::set: \"\n"
+	 << "\"no parameter named "
+	 << "'\"+std::string(key)+\"'\");\n"
 	 << "}\n"
 	 << "}\n\n";
     }
@@ -6612,11 +6597,8 @@ namespace mfront{
 	}
       }
       os << "} else {\n";
-      os << "string msg(\"" << cname << "::set : \");\n"
-	 << "msg += \" no parameter named '\";\n"
-	 << "msg += key;\n"
-	 << "msg += \"'\";\n"
-	 << "throw(runtime_error(msg));\n"
+      os << "tfel::raise(\"" << cname << "::set: \"\n"
+	 << "\"no parameter named '\"+std::string(key)+\"'\");\n"
 	 << "}\n"
 	 << "}\n\n";
     }
@@ -6654,10 +6636,10 @@ namespace mfront{
        << "std::getline(f,line);\n"
        << "auto tokens = tokenize(line);\n"
        << "auto throw_if = [ln,line,fn](const bool c,const std::string& m){\n"
-       << "if(c){throw(std::runtime_error(\"" << cname << "::readParameters: \"\n"
+       << "tfel::raise_if(c,\"" << cname << "::readParameters: \"\n"
        << "\"error at line '\"+std::to_string(ln)+\"' \"\n"
        << "\"while reading parameter file '\"+std::string(fn)+\"'\"\n"
-       << "\"(\"+m+\")\"));}\n"
+       << "\"(\"+m+\")\");\n"
        << "};\n"
        << "if(tokens.empty()){\n"
        << "continue;\n"

@@ -30,7 +30,7 @@ namespace abaqus{
 	<< "the size of symmetric tensors for the current hypothesis does not match "
 	<< "`Abaqus` declaration (NTENS) for behaviour '" << b << "'. Expected '" 
 	<< n1 << "', got '" << n2 << "'.";
-    throw(AbaqusException(msg.str()));
+    tfel::raise<AbaqusException>(msg.str());
   } // end AbaqusInterfaceExceptions::throwInvalidTensorSize
   
   void
@@ -43,7 +43,7 @@ namespace abaqus{
 	<< "the number of material properties does not match. The behaviour '" 
 	<< b  << "' requires " << n1 << " material properties, and "
 	<< n2 << " material properties were declared";
-    throw(AbaqusException(msg.str()));
+    tfel::raise<AbaqusException>(msg.str());
   } // end of throwUnMatchedNumberOfMaterialProperties
     
   void
@@ -56,7 +56,7 @@ namespace abaqus{
 	<< "the number of internal state variables does not match. The behaviour '" 
 	<< b  << "' requires " << n1 << " state variables, and "
 	<< n2 << " state variables were declared";
-    throw(AbaqusException(msg.str()));
+    tfel::raise<AbaqusException>(msg.str());
   } // end of throwUnMatchedNumberOfStateVariables
 
   void

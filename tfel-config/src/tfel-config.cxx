@@ -402,6 +402,16 @@ int main(const int argc,const char *const *const argv)
 	std::cout << v[2] << " ";
       }
     },"print tfel revision version.");
+  registerCallBack("--cxx-standard",[]{
+#if __cplusplus >= 201703L
+      std::cout << "17";
+#elif __cplusplus >= 201402L
+      std::cout << "14";
+#else /* __cplusplus >= 201703L */
+      std::cout << "11";
+#endif /* __cplusplus >= 201703L */
+	},"print the version of the C++ standard "
+    "used to compile TFEL.");
   registerCallBack("--licence",&treatLicences,
 		   "print tfel licences.");
 #ifdef TFEL_PYTHON_BINDINGS

@@ -30,7 +30,7 @@ namespace ansys{
 	<< "the number of material properties does not match. The behaviour '" 
 	<< b  << "' requires " << n1 << " material properties, and "
 	<< n2 << " material properties were declared";
-    throw(AnsysException(msg.str()));
+    tfel::raise<AnsysException>(msg.str());
   } // end of throwUnMatchedNumberOfMaterialProperties
     
   void
@@ -43,7 +43,7 @@ namespace ansys{
 	<< "the number of internal state variables does not match. The behaviour '" 
 	<< b  << "' requires " << n1 << " state variables, and "
 	<< n2 << " state variables were declared";
-    throw(AnsysException(msg.str()));
+    tfel::raise<AnsysException>(msg.str());
   } // end of throwUnMatchedNumberOfStateVariables
 
   void

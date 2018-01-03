@@ -13,6 +13,7 @@
 
 #include<sstream>
 
+#include"TFEL/Raise.hxx"
 #include"MFront/Castem/CastemException.hxx"
 #include"MFront/Castem/CastemGetModellingHypothesis.hxx"
 
@@ -44,7 +45,7 @@ namespace castem
     ostringstream msg;
     msg << "castem::getModellingHypothesis : "
 	<< "invalid argument ('" << ndi << "')";
-    throw(CastemException(msg.str()));
+    tfel::raise<CastemException>(msg.str());
   }
 
 } // end of namespace castem

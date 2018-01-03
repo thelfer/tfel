@@ -1753,15 +1753,13 @@ namespace mfront{
     if((this->mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR)||
        (this->mb.getBehaviourType()==BehaviourDescription::COHESIVEZONEMODEL)){
       if(this->mb.useQt()){
-	os << "if(smflag!=MechanicalBehaviour<" << btype 
-	   << ",hypothesis,Type,use_qt>::STANDARDTANGENTOPERATOR){\n"
-	   << "throw(runtime_error(\"invalid tangent operator flag\"));\n"
-	   << "}\n";
+	os << "tfel::raise_if(smflag!=MechanicalBehaviour<" << btype 
+	   << ",hypothesis,Type,use_qt>::STANDARDTANGENTOPERATOR,\n"
+	   << "\"invalid tangent operator flag\");\n";
       } else {
-	os << "if(smflag!=MechanicalBehaviour<" << btype 
-	   << ",hypothesis,Type,false>::STANDARDTANGENTOPERATOR){\n"
-	   << "throw(runtime_error(\"invalid tangent operator flag\"));\n"
-	   << "}\n";
+	os << "tfel::raise_if(smflag!=MechanicalBehaviour<" << btype 
+	   << ",hypothesis,Type,false>::STANDARDTANGENTOPERATOR,\n"
+	   << "\"invalid tangent operator flag\");\n";
       }
     }
     if(this->mb.hasCode(h,BehaviourData::ComputePredictor)){

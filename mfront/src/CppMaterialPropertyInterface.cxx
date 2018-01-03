@@ -226,6 +226,7 @@ namespace mfront
 	<< "#include<cstring>\n"
       	<< "#include<vector>\n"
       	<< "#include<string>\n"
+	<< "#include\"TFEL/Raise.hxx\"\n"
 	<< "#include\"TFEL/Math/General/IEEE754.hxx\"\n"
 	<< "#include\"" << name << "-cxx.hxx\"\n\n";
     writeExportDirectives(src);
@@ -314,11 +315,10 @@ namespace mfront
 	// can't use std::swap here as errno might be a macro
 	  << "const auto mfront_errno = errno;\n"
 	  << "errno = mfront_errno_old;\n"
-	  << "if((mfront_errno!=0)||"
-	  << "(!tfel::math::ieee754::isfinite(" << mpd.output.name << "))){\n"
-	  << "throw(runtime_error(\""<< name << ": errno has been set \"\n"
-	  << "                    \"(\"+std::string(::strerror(errno))+\")\"));\n"
-	  << "}\n"
+	  << "tfel::raise_if((mfront_errno!=0)||"
+	  << "(!tfel::math::ieee754::isfinite(" << mpd.output.name << ")),\n"
+	  << "\""<< name << ": errno has been set \"\n"
+	  << "\"(\"+std::string(::strerror(errno))+\")\");\n"
 	  << "#endif /* MFRONT_NOERRNO_HANDLING */\n";
     }
     src << "return " << mpd.output.name << ";\n"
@@ -352,7 +352,7 @@ namespace mfront
 		<< "msg << \"" << name << " : "  << i.name << " is below its physical lower bound \";\n"
 		<< "msg << \"(\" << " << i.name 
 		<< " << \" < " << b.lowerBound << ")\";\n"
-		<< "throw(range_error(msg.str()));\n"
+		<< "tfel::raise<range_error>(msg.str());\n"
 		<< "}\n";
 	  } else if(b.boundsType==VariableBoundsDescription::UPPER){
 	    src << "if(" << i.name<< " > "<< b.upperBound << "){\n"
@@ -360,7 +360,7 @@ namespace mfront
 		<< "msg << \"" << name << " : "  << i.name << " is beyond its physical upper bound \";\n"
 		<< "msg << \"(\" << " << i.name 
 		<< " << \" > " << b.upperBound << ")\";\n"
-		<< "throw(range_error(msg.str()));\n"
+		<< "tfel::raise<range_error>(msg.str());\n"
 		<< "}\n";
 	  } else {
 	    src << "if(" << i.name<< " < "<< b.lowerBound << "){\n"
@@ -368,14 +368,14 @@ namespace mfront
 		<< "msg << \"" << name << " : "  << i.name << " is below its physical lower bound \";\n"
 		<< "msg << \"(\" << " << i.name 
 		<< " << \" < " << b.lowerBound << ")\";\n"
-		<< "throw(range_error(msg.str()));\n"
+		<< "tfel::raise<range_error>(msg.str());\n"
 		<< "}\n"
 		<< "if(" << i.name<< " > "<< b.upperBound << "){\n"
 		<< "ostringstream msg;\n"
 		<< "msg << \"" << name << " : "  << i.name << " is beyond its physical upper bound \";\n"
 		<< "msg << \"(\" << " << i.name 
 		<< " << \" > " << b.upperBound << ")\";\n"
-		<< "throw(range_error(msg.str()));\n"
+		<< "tfel::raise<range_error>(msg.str());\n"
 		<< "}\n";
 	  }
 	}
@@ -397,7 +397,7 @@ namespace mfront
 		<< "msg << \"" << name << " : "  << i.name << " is below its lower bound \";\n"
 		<< "msg << \"(\" << " << i.name 
 		<< " << \" < " << b.lowerBound << ")\";\n"
-		<< "throw(range_error(msg.str()));\n"
+		<< "tfel::raise<range_error>(msg.str());\n"
 		<< "} else if(strcmp(policy,\"WARNING\")==0){\n"
 		<< "cerr << \"" << i.name << " is below its lower bound \";\n"
 		<< "cerr << \"(\" << " << i.name 
@@ -415,7 +415,7 @@ namespace mfront
 		<< "msg << \"" << name << " : "  << i.name << " is beyond its upper bound \";\n"
 		<< "msg << \"(\" << " << i.name 
 		<< " << \" > " << b.upperBound << ")\";\n"
-		<< "throw(range_error(msg.str()));\n"
+		<< "tfel::raise<range_error>(msg.str());\n"
 		<< "} else if(strcmp(policy,\"WARNING\")==0){\n"
 		<< "cerr << \"" << i.name << " is beyond its upper bound \";\n"
 		<< "cerr << \"(\" << " << i.name 
@@ -433,7 +433,7 @@ namespace mfront
 		<< "msg << \"" << name << " : "  << i.name << " is below its lower bound \";\n"
 		<< "msg << \"(\" << " << i.name 
 		<< " << \" < " << b.lowerBound << ")\";\n"
-		<< "throw(range_error(msg.str()));\n"
+		<< "tfel::raise<range_error>(msg.str());\n"
 		<< "} else if(strcmp(policy,\"WARNING\")==0){\n"
 		<< "cerr << \"" << i.name << " is below its lower bound \";\n"
 		<< "cerr << \"(\" << " << i.name 
@@ -450,7 +450,7 @@ namespace mfront
 		<< "msg << \"" << name << " : "  << i.name << " is beyond its upper bound \";\n"
 		<< "msg << \"(\" << " << i.name 
 		<< " << \" > " << b.upperBound << ")\";\n"
-		<< "throw(range_error(msg.str()));\n"
+		<< "tfel::raise<range_error>(msg.str());\n"
 		<< "} else if(strcmp(policy,\"WARNING\")==0){\n"
 		<< "cerr << \"" << i.name << " is beyond its upper bound \";\n"
 		<< "cerr << \"(\" << " << i.name 

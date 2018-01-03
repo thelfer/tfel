@@ -5,6 +5,20 @@
 This is mainly a bug fix version of the `3.1` series. All tickets
 solved are described below.
 
+# New functionalities
+
+## `tfel-config`
+
+### Requesting the C++ standard version used to compile `TFEL`
+
+The `--cxx-standard` option returns the version of the C++ standard
+used to compile `TFEL`, as follows:
+
+~~~~{.sh}
+$ tfel-config --cxx-standard
+17
+~~~~
+
 # Tickets fixed
 
 ## Ticket #102: The usage of the constants defined in the PhysicalConstants class is broken in debug mode
