@@ -945,7 +945,8 @@ namespace tfel
 	  throw_if(isspace(*ps));
 	}
       }; // end of checkIdentifier
-      auto readVariableOrFunctionName = [&p,pe,checkIdentifier]()
+      // this must be captured du to a gcc 4.7 bug
+      auto readVariableOrFunctionName = [this,&p,pe,checkIdentifier]()
 	-> std::pair<unsigned int,std::string>{
 	Evaluator::checkNotEndOfExpression("Evaluator::treatGroup2",p,pe);
 	checkIdentifier(*p);

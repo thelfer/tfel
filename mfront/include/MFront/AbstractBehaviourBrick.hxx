@@ -55,7 +55,7 @@ namespace mfront
     //! a simple alias
     using CxxTokenizer = tfel::utilities::CxxTokenizer;
     //! a simple alias
-    using tokens_iterator = CxxTokenizer::TokensContainer::const_iterator;
+    using tokens_iterator = CxxTokenizer::const_iterator;
     /*!
      * Object used to pass parameters to BehaviourBricks constructor
      * The key   is the parameter name.

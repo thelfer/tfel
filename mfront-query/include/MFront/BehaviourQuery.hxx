@@ -93,13 +93,11 @@ namespace mfront{
     //! treat the "--modelling-hypothesis" command line argument
     virtual void treatModellingHypothesis() final;
     //! treat an unknown argument
-    virtual void treatUnknownArgument() final;
+    void treatUnknownArgument() override final;
     //! get the version description
-    virtual std::string
-    getVersionDescription() const override final;
+    std::string getVersionDescription() const override final;
     //! get the usage description
-    virtual std::string
-    getUsageDescription() const override final;
+    std::string getUsageDescription() const override final;
     //! \return a query that show a list of variables
     template<const VariableDescriptionContainer& (BehaviourData::* m)() const>
     query generateVariablesListQuery();

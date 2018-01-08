@@ -64,6 +64,7 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./iwan.md                                                  \
 	   ./ddif2.md                                                 \
 	   ./hosford.md                                               \
+	   ./barlat-yld2004.md                                        \
 	   ./greenplasticity.md                                       \
 	   ./singlecrystal.md                                         \
 	   ./finitestrainsinglecrystal.md                             \
@@ -251,6 +252,8 @@ EXTRA_DIST=CMakeLists.txt					      \
            ./img/Scherzinger/Hosford8/TestOnYieldStress.png	      \
            ./img/Scherzinger/Hosford8/Newton.png		      \
            ./img/Scherzinger/Hosford8/NewtonJacobi.png		      \
+           ./img/pipe.svg					      \
+           ./img/plate.svg					      \
 	   ./media/epx1.mp4                                           \
 	   ./media/epx2.mp4                                           \
 	   ./media/abaqus-explicit.mp4                                \

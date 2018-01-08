@@ -28,10 +28,18 @@ namespace mfront
   static std::shared_ptr<AbstractBehaviourBrick>
   buildBehaviourBrickConstructor(AbstractBehaviourDSL& dsl,
 				 BehaviourDescription& mb,
-				 const AbstractBehaviourBrick::Parameters& p,
-				 const AbstractBehaviourBrick::DataMap& d)
+				 const AbstractBehaviourBrick::Parameters& bp,
+				 AbstractBehaviourBrick::tokens_iterator& p,
+				 const AbstractBehaviourBrick::tokens_iterator pe)
   {
-    return std::make_shared<T>(dsl,mb,p,d);
+    const auto d = [&p,pe]{
+      using DataMap = std::map<std::string,tfel::utilities::Data>;
+      if((p!=pe)&&(p->value=="{")){
+	return tfel::utilities::Data::read(p,pe).get<DataMap>();
+      }
+      return DataMap();
+    }();
+    return std::make_shared<T>(dsl,mb,bp,d);
   } // end of buildAlgoritmConstructor
 
   AbstractBehaviourBrickFactory&
@@ -45,14 +53,15 @@ namespace mfront
   AbstractBehaviourBrickFactory::get(const std::string& a,
 				     AbstractBehaviourDSL& dsl,
 				     BehaviourDescription& mb,
-				     const AbstractBehaviourBrick::Parameters& p,
-				     const AbstractBehaviourBrick::DataMap& d) const
+				     const AbstractBehaviourBrick::Parameters& bp,
+				     tokens_iterator& p,
+				     const tokens_iterator pe) const
   {
     auto pc = this->constructors.find(a);
     tfel::raise_if(pc==this->constructors.end(),
 		   "AbstractBehaviourBrickFactory::getAbstractBehaviourBrick : "
 		   "no AbstractBehaviourBrick '"+a+"' registred");
-    return (*(pc->second))(dsl,mb,p,d);
+    return (*(pc->second))(dsl,mb,bp,p,pe);
   }
 
   AbstractBehaviourBrickFactory::AbstractBehaviourBrickFactory()

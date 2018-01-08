@@ -20,38 +20,6 @@ namespace tfel{
 
   namespace material{
 
-    template<ModellingHypothesis::Hypothesis H>
-    template<typename StressType>
-    void
-    ComputeAlteredStiffnessTensor<H>::exe(tfel::math::st2tost2<ModellingHypothesisToSpaceDimension<H>::value,StressType>& Da,
-					  const tfel::math::st2tost2<ModellingHypothesisToSpaceDimension<H>::value,StressType>& D)
-    {
-      Da = D;
-    }
-
-    template<typename StressType>
-    void
-    ComputeAlteredStiffnessTensor<ModellingHypothesis::PLANESTRESS>::exe(tfel::math::st2tost2<2u,StressType>& Da,
-									 const tfel::math::st2tost2<2u,StressType>& D)
-    {
-      Da(0,0)=D(0,0)-D(2,0)/D(2,2)*D(0,2);
-      Da(0,1)=D(0,1)-D(2,1)/D(2,2)*D(0,2);
-      Da(1,0)=D(1,0)-D(2,0)/D(2,2)*D(1,2);
-      Da(1,1)=D(1,1)-D(2,1)/D(2,2)*D(1,2);
-      Da(0,2)=StressType(0);
-      Da(1,2)=StressType(0);
-      Da(2,0)=StressType(0);
-      Da(2,1)=StressType(0);
-      Da(2,2)=StressType(0);
-      Da(0,3)=StressType(0);
-      Da(1,3)=StressType(0);
-      Da(2,3)=StressType(0);
-      Da(3,0)=StressType(0);
-      Da(3,1)=StressType(0);
-      Da(3,2)=StressType(0);
-      Da(3,3)=D(3,3);
-    } // end of computeAlteredStiffnessTensor
-
     namespace internals{
 
       template<unsigned short N,StiffnessTensorAlterationCharacteristic smt>
@@ -294,7 +262,8 @@ namespace tfel{
 	} // end of struct exe
       };
 
-      template<ModellingHypothesis::Hypothesis H,StiffnessTensorAlterationCharacteristic smt>
+      template<ModellingHypothesis::Hypothesis H,
+	       StiffnessTensorAlterationCharacteristic smt>
       struct ComputeIsotropicStiffnessTensorII
 	: public ComputeIsotropicStiffnessTensorI<ModellingHypothesisToSpaceDimension<H>::value,
 						  StiffnessTensorAlterationCharacteristic::UNALTERED>
@@ -306,7 +275,8 @@ namespace tfel{
 	: public ComputeIsotropicStiffnessTensorI<2u,StiffnessTensorAlterationCharacteristic::ALTERED>
       {};
       
-      template<ModellingHypothesis::Hypothesis H,StiffnessTensorAlterationCharacteristic smt>
+      template<ModellingHypothesis::Hypothesis H,
+	       StiffnessTensorAlterationCharacteristic smt>
       struct ComputeOrthotropicStiffnessTensorII
 	: public ComputeOrthotropicStiffnessTensorI<ModellingHypothesisToSpaceDimension<H>::value,
 						    StiffnessTensorAlterationCharacteristic::UNALTERED>
@@ -317,9 +287,157 @@ namespace tfel{
 						 StiffnessTensorAlterationCharacteristic::ALTERED>
 	: public ComputeOrthotropicStiffnessTensorI<2u,StiffnessTensorAlterationCharacteristic::ALTERED>
       {};
-      
+
+      /*!
+       * \brief class in charge of computing an orthotropic stiffness
+       * tensor according to:
+       * - The modelling hypothesis.
+       * - The choice of computing an altered or unaltered stiffness
+       *   tensor. This parameter is only useful in plane stress
+       *   modelling hypotheses.
+       * - The orthotropic axes convention.
+       * \tparam H: modelling hypothesis
+       * \tparam smt: stiffness matrix alteration choice
+       * \tparam c: orthotropic axis convention
+       */
+      template<ModellingHypothesis::Hypothesis,
+	       StiffnessTensorAlterationCharacteristic,
+	       OrthotropicAxesConvention>
+      struct ComputeOrthotropicStiffnessTensor;
+      /*!
+       * \brief partial specialisation for the
+       * `OrthotropicAxesConvention::DEFAULT` orthotropic axes
+       * convention.
+       * \tparam H: modelling hypothesis
+       * \tparam smt: stiffness matrix alteration choice
+       */
+      template<ModellingHypothesis::Hypothesis H,
+	       StiffnessTensorAlterationCharacteristic smt>
+      struct ComputeOrthotropicStiffnessTensor<H,smt,OrthotropicAxesConvention::DEFAULT>
+	: public ComputeOrthotropicStiffnessTensorII<H,smt>
+      {};
+      /*!
+       * \brief partial specialisation for the
+       * `OrthotropicAxesConvention::PIPE` orthotropic axes
+       * convention.
+       * \tparam H: modelling hypothesis
+       * \tparam smt: stiffness matrix alteration choice
+       */
+      template<ModellingHypothesis::Hypothesis H,
+	       StiffnessTensorAlterationCharacteristic smt>
+      struct ComputeOrthotropicStiffnessTensor<H,smt,OrthotropicAxesConvention::PIPE>
+	: public ComputeOrthotropicStiffnessTensorII<H,smt>
+      {};
+      /*!
+       * \brief partial specialisation for the:
+       * - `ModellingHypothesis::PLANESTRESS` modelling hypothesis.
+       * - `OrthotropicAxesConvention::PIPE` orthotropic axes
+       * convention.
+       * \tparam smt: stiffness matrix alteration choice
+       */
+      template<StiffnessTensorAlterationCharacteristic smt>
+      struct ComputeOrthotropicStiffnessTensor<ModellingHypothesis::PLANESTRESS,
+					       smt,OrthotropicAxesConvention::PIPE>
+      {
+	template<typename StressType,typename RealType>
+	static TFEL_MATERIAL_INLINE void
+	exe(tfel::math::st2tost2<2u,StressType>& C,
+	    const StressType E1, const StressType E2, const StressType E3,
+	    const RealType   n12,const RealType   n23,const RealType   n13,
+	    const StressType G12,const StressType G23,const StressType G13)
+	{
+	  using COST = ComputeOrthotropicStiffnessTensorII<ModellingHypothesis::PLANESTRESS,smt>;
+	  COST::exe(C,E1,E3,E2,
+		    n13,n23*E3/E2,n12,
+		    G13,G23,G12);
+
+	}
+      };
+      /*!
+       * \brief partial specialisation for the:
+       * - `ModellingHypothesis::PLANESTRAIN` modelling hypothesis.
+       * - `OrthotropicAxesConvention::PIPE` orthotropic axes
+       * convention.
+       * \tparam smt: stiffness matrix alteration choice
+       */
+      template<StiffnessTensorAlterationCharacteristic smt>
+      struct ComputeOrthotropicStiffnessTensor<ModellingHypothesis::PLANESTRAIN,
+					       smt,OrthotropicAxesConvention::PIPE>
+      {
+	template<typename StressType,typename RealType>
+	static TFEL_MATERIAL_INLINE void
+	exe(tfel::math::st2tost2<2u,StressType>& C,
+	    const StressType E1, const StressType E2, const StressType E3,
+	    const RealType   n12,const RealType   n23,const RealType   n13,
+	    const StressType G12,const StressType G23,const StressType G13)
+	{
+	  using COST = ComputeOrthotropicStiffnessTensorII<ModellingHypothesis::PLANESTRAIN,smt>;
+	  COST::exe(C,E1,E3,E2,
+		    n13,n23*E3/E2,n12,
+		    G13,G23,G12);
+	}
+      };
+      /*!
+       * \brief partial specialisation for the:
+       * - `ModellingHypothesis::GENERALISEDPLANESTRAIN` modelling
+       *   hypothesis.
+       * - `OrthotropicAxesConvention::PIPE` orthotropic axes
+       * convention.
+       * \tparam smt: stiffness matrix alteration choice
+       */
+      template<StiffnessTensorAlterationCharacteristic smt>
+      struct ComputeOrthotropicStiffnessTensor<ModellingHypothesis::GENERALISEDPLANESTRAIN,
+					       smt,OrthotropicAxesConvention::PIPE>
+      {
+	template<typename StressType,typename RealType>
+	static TFEL_MATERIAL_INLINE void
+	exe(tfel::math::st2tost2<2u,StressType>& C,
+	    const StressType E1, const StressType E2, const StressType E3,
+	    const RealType   n12,const RealType   n23,const RealType   n13,
+	    const StressType G12,const StressType G23,const StressType G13)
+	{
+	  using COST =
+	    ComputeOrthotropicStiffnessTensorII<ModellingHypothesis::GENERALISEDPLANESTRAIN,smt>;
+	  COST::exe(C,E1,E3,E2,
+		    n13,n23*E3/E2,n12,
+		    G13,G23,G12);
+	}
+      };
+
     } // end of namespace internals
-     
+    
+    template<ModellingHypothesis::Hypothesis H>
+    template<typename StressType>
+    void
+    ComputeAlteredStiffnessTensor<H>::exe(tfel::math::st2tost2<ModellingHypothesisToSpaceDimension<H>::value,StressType>& Da,
+					  const tfel::math::st2tost2<ModellingHypothesisToSpaceDimension<H>::value,StressType>& D)
+    {
+      Da = D;
+    }
+
+    template<typename StressType>
+    void
+    ComputeAlteredStiffnessTensor<ModellingHypothesis::PLANESTRESS>::exe(tfel::math::st2tost2<2u,StressType>& Da,
+									 const tfel::math::st2tost2<2u,StressType>& D)
+    {
+      Da(0,0)=D(0,0)-D(2,0)/D(2,2)*D(0,2);
+      Da(0,1)=D(0,1)-D(2,1)/D(2,2)*D(0,2);
+      Da(1,0)=D(1,0)-D(2,0)/D(2,2)*D(1,2);
+      Da(1,1)=D(1,1)-D(2,1)/D(2,2)*D(1,2);
+      Da(0,2)=StressType(0);
+      Da(1,2)=StressType(0);
+      Da(2,0)=StressType(0);
+      Da(2,1)=StressType(0);
+      Da(2,2)=StressType(0);
+      Da(0,3)=StressType(0);
+      Da(1,3)=StressType(0);
+      Da(2,3)=StressType(0);
+      Da(3,0)=StressType(0);
+      Da(3,1)=StressType(0);
+      Da(3,2)=StressType(0);
+      Da(3,3)=D(3,3);
+    } // end of computeAlteredStiffnessTensor
+
     template<unsigned short N,StiffnessTensorAlterationCharacteristic smt,
 	     typename StressType,typename RealType>
     void computeIsotropicStiffnessTensorII(tfel::math::st2tost2<N,StressType>& C,
@@ -360,6 +478,20 @@ namespace tfel{
       tfel::material::internals::ComputeOrthotropicStiffnessTensorII<H,smt>::exe(C,E1,E2,E3,
 										 n12,n23,n13,
 										 G12,G23,G13);
+    }
+
+    template<ModellingHypothesis::Hypothesis H,
+	     StiffnessTensorAlterationCharacteristic smt,
+	     OrthotropicAxesConvention c,
+	     typename StressType,typename RealType>
+    void computeOrthotropicStiffnessTensor(tfel::math::st2tost2<ModellingHypothesisToSpaceDimension<H>::value,StressType>& C,
+					   const StressType E1, const StressType E2, const StressType E3,
+					   const RealType   n12,const RealType   n23,const RealType n13,
+					   const StressType G12,const StressType G23,const StressType G13)
+    {
+      internals::ComputeOrthotropicStiffnessTensor<H,smt,c>::exe(C,E1,E2,E3,
+								 n12,n23,n13,
+								 G12,G23,G13);
     }
     
   } // end of namespace material

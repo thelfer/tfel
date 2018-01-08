@@ -68,18 +68,16 @@ namespace mfront{
     //! \brief register call-backs associated with command line arguments
     virtual void registerCommandLineCallBacks();
     //! return the current argument
-    virtual const tfel::utilities::Argument&
+    const tfel::utilities::Argument&
     getCurrentCommandLineArgument() const override final;
     //! treat an unknown argument
     virtual void treatWeb();
     //! treat an unknown argument
-    virtual void treatUnknownArgument() final;
+    void treatUnknownArgument() override final;
     //! get the version description
-    virtual std::string
-    getVersionDescription() const override final;
+    std::string getVersionDescription() const override final;
     //! get the usage description
-    virtual std::string
-    getUsageDescription() const override final;
+    std::string getUsageDescription() const override final;
     virtual void writeWebOutput(std::ostream&,
 				const BehaviourDescription&,
 				const FileDescription&) const;

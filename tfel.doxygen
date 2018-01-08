@@ -5,7 +5,7 @@
  */
 
 /*!
- * \mainpage The TFEL project
+ * \mainpage An introduction to the TFEL project
  * \author   Thomas Helfer
  * \date     2/01/2018
  *
@@ -53,7 +53,7 @@
  * project. Since svn revision 584, TFEL was part of the `PLEIADES`
  * projet.
  * 
- * Starting from versions 2.x, `TFEL\ has been publicly released under
+ * Starting from versions 2.x, `TFEL` has been publicly released under
  * either the GPL or the CECILL-A licence. A copy of thoses licences
  * are delivered with the sources of `TFEL`. CEA or EDF may also
  * distribute this project under specific licensing conditions.

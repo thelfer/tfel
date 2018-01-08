@@ -80,13 +80,11 @@ namespace mfront{
     //! treat a standard query
     virtual void treatStandardQuery() final;
     //! treat an unknown argument
-    virtual void treatUnknownArgument() final;
+    void treatUnknownArgument() override final;
     //! get the version description
-    virtual std::string
-    getVersionDescription() const override final;
+    std::string getVersionDescription() const override final;
     //! get the usage description
-    virtual std::string
-    getUsageDescription() const override final;
+    std::string getUsageDescription() const override final;
     //! all the registred queries
     std::vector<std::pair<std::string,query>> queries;
     //! abstract behaviour dsl

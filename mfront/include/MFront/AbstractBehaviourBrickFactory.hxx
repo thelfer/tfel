@@ -16,8 +16,9 @@
 
 #include<map>
 #include<string>
-
 #include<memory>
+
+#include"TFEL/Utilities/CxxTokenizer.hxx"
 #include"MFront/AbstractBehaviourBrick.hxx"
 
 namespace mfront
@@ -34,10 +35,16 @@ namespace mfront
   struct AbstractBehaviourBrickFactory
   {
     //! a simple alias
-    typedef std::shared_ptr<AbstractBehaviourBrick> (* constructor)(AbstractBehaviourDSL&,
-								    BehaviourDescription&,
-								    const AbstractBehaviourBrick::Parameters&,
-								    const AbstractBehaviourBrick::DataMap&);
+    using CxxTokenizer = tfel::utilities::CxxTokenizer;
+    //! a simple alias
+    using tokens_iterator = CxxTokenizer::const_iterator;
+    //! a simple alias
+    using  constructor =
+      std::shared_ptr<AbstractBehaviourBrick> (*)(AbstractBehaviourDSL&,
+						  BehaviourDescription&,
+						  const AbstractBehaviourBrick::Parameters&,
+						  tokens_iterator& p,
+						  const tokens_iterator pe);
     /*!
      * \return the uniq instance of the AbstractBehaviourBrick factory
      */
@@ -48,15 +55,18 @@ namespace mfront
      * \param[in,out] dsl: calling domain specific language
      * \param[in,out] mb:  mechanical behaviour description to be
      * treated
-     * \param[out]    p:   parameters
-     * \param[out]    d:   data
+     * \param[in]     bp:  brick parameters
+     * \param[in,out] p:   iterator to the current position in the input
+     * file
+     * \param[in]     pe:  iterator to past-the-last token
      */
     std::shared_ptr<AbstractBehaviourBrick>
     get(const std::string&,
 	AbstractBehaviourDSL&,
 	BehaviourDescription&,
 	const AbstractBehaviourBrick::Parameters&,
-	const AbstractBehaviourBrick::DataMap&) const;
+	tokens_iterator& p,
+	const tokens_iterator pe) const;
     /*!
      * \param[in] a : AbstractBehaviourBrick name 
      * \param[in] c : AbstractBehaviourBrick constructor 

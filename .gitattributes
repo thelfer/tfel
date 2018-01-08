@@ -174,6 +174,7 @@ docs/doxygen/customdoxygen.css -text
 docs/doxygen/doxy-boot.js -text
 docs/doxygen/footer.html -text
 docs/doxygen/header.html -text
+docs/doxygen/img/background.svg -text
 docs/gallery/CMakeLists.txt -text
 docs/gallery/Makefile.am -text
 docs/gallery/behaviours/CMakeLists.txt -text
@@ -833,6 +834,7 @@ docs/presentations/portable-behaviour/img/LogarithmicStrainPlasticity-ssna303.sv
 docs/presentations/portable-behaviour/img/background.svg -text
 docs/presentations/portable-behaviour/img/pipe.pdf -text svneol=unset#unset
 docs/presentations/portable-behaviour/img/pipe.svg -text
+docs/presentations/portable-behaviour/img/plate.svg -text
 docs/presentations/portable-behaviour/img/tubeaxi.eps -text
 docs/presentations/portable-behaviour/img/tubeaxi2.eps -text
 docs/presentations/portable-behaviour/mysettings.css -text
@@ -1123,6 +1125,7 @@ docs/web/about.md -text
 docs/web/ansys.md -text
 docs/web/apple-touch-icon-precomposed.png -text
 docs/web/aster.md -text
+docs/web/barlat-yld2004.md -text
 docs/web/behaviours.md -text
 docs/web/benchmark.md -text
 docs/web/bibliography.bib -text
@@ -1289,6 +1292,8 @@ docs/web/img/mingw-get2.xcf -text
 docs/web/img/mingw-get3.png -text
 docs/web/img/mingw-get3.xcf -text
 docs/web/img/parameters.svg -text
+docs/web/img/pipe.svg -text
+docs/web/img/plate.svg -text
 docs/web/img/poster-giens2015-2-fr.svg -text
 docs/web/img/poster-giens2015.svg -text
 docs/web/img/poster-giens2017-fr.svg -text

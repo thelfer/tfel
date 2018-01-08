@@ -17,6 +17,7 @@
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Math/st2tost2.hxx"
 #include"TFEL/Material/ModellingHypothesis.hxx"
+#include"TFEL/Material/OrthotropicAxesConvention.hxx"
 
 namespace tfel{
 
@@ -123,7 +124,8 @@ namespace tfel{
      * \param[in]  yg: young modulus
      * \param[in]  nu: poisson ratio
      */
-    template<ModellingHypothesis::Hypothesis H,StiffnessTensorAlterationCharacteristic,
+    template<ModellingHypothesis::Hypothesis H,
+	     StiffnessTensorAlterationCharacteristic,
 	     typename StressType,typename RealType>
     TFEL_MATERIAL_INLINE void
     computeIsotropicStiffnessTensor(tfel::math::st2tost2<ModellingHypothesisToSpaceDimension<H>::value,StressType>&,
@@ -141,7 +143,31 @@ namespace tfel{
      * \param[in]  G23:  shear modulus
      * \param[in]  G13:  shear modulus
      */
-    template<ModellingHypothesis::Hypothesis H,StiffnessTensorAlterationCharacteristic,
+    template<ModellingHypothesis::Hypothesis H,
+	     StiffnessTensorAlterationCharacteristic,
+	     typename StressType,typename RealType>
+    TFEL_MATERIAL_INLINE void
+    computeOrthotropicStiffnessTensor(tfel::math::st2tost2<ModellingHypothesisToSpaceDimension<H>::value,StressType>&,
+				      const StressType,const StressType,const StressType,
+				      const RealType,const RealType,const RealType,
+				      const StressType,const StressType,const StressType);
+
+
+    /*!
+     * \param[out] D: stiffness tensor
+     * \param[in]  yg1:  young modulus in the first direction
+     * \param[in]  yg2:  young modulus in the second direction
+     * \param[in]  yg3:  young modulus in the third direction
+     * \param[in]  nu12: PoissonRatio
+     * \param[in]  nu23: PoissonRatio
+     * \param[in]  nu13: PoissonRatio
+     * \param[in]  G12:  shear modulus
+     * \param[in]  G23:  shear modulus
+     * \param[in]  G13:  shear modulus
+     */
+    template<ModellingHypothesis::Hypothesis H,
+	     StiffnessTensorAlterationCharacteristic smt,
+	     OrthotropicAxesConvention c,
 	     typename StressType,typename RealType>
     TFEL_MATERIAL_INLINE void
     computeOrthotropicStiffnessTensor(tfel::math::st2tost2<ModellingHypothesisToSpaceDimension<H>::value,StressType>&,

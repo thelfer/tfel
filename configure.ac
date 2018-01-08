@@ -2648,8 +2648,8 @@ AC_OUTPUT([debug.sh
   	   mfront/tests/behaviours/cyrano/cyranoaxialgrowth.mtest
     	   mfront/tests/behaviours/cyrano/cyranoaxialgrowth3.mtest
        	   mfront/tests/behaviours/cyrano/cyranoaxialgrowth4.mtest
-  	   mfront/tests/behaviours/abaqus/abaqusparametertest.mtest
-   	   mfront/tests/behaviours/abaqus/abaqusparametertest2.mtest
+  	   mfront/tests/behaviours/cyrano/cyranoparametertest.mtest
+   	   mfront/tests/behaviours/cyrano/cyranoparametertest2.mtest
   	   mfront/tests/behaviours/uanderson/Makefile	   
   	   mfront/tests/behaviours/uanderson/uandersonageingburger.mtest
   	   mfront/tests/behaviours/uanderson/uandersonanistropiclemaitreviscoplasticbehaviour.mtest

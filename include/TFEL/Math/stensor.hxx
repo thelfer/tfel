@@ -1080,7 +1080,7 @@ namespace tfel{
     /*!
      * \brief convert the corotationnal cauchy stress to the second Piola-Kirchhoff stress
      * \f[
-     * \tenseur{S} = J\,\tenseur{U}^{-1}\,.\,\tsigma\,.\,\tenseur{U}^{-1}
+     * \underline{S} = J\,\underline{U}^{-1}\,.\,\underline{\sigma}\,.\,\underline{U}^{-1}
      * \f]
      * \param[in] s: corotationnal cauchy stress
      * \param[in] U: stretch tensor
@@ -1100,7 +1100,7 @@ namespace tfel{
     /*!
      * \brief convert the corotationnal cauchy stress to the second Piola-Kirchhoff stress
      * \f[
-     * \tenseur{S} = J\,\tenseur{U}^{-1}\,.\,\tsigma\,.\,\tenseur{U}^{-1}
+     * \underline{S} = J\,\underline{U}^{-1}\,.\,\underline{\sigma}\,.\,\underline{U}^{-1}
      * \f]
      * \param[in] s: corotationnal cauchy stress
      * \param[in] U: stretch tensor
@@ -1120,7 +1120,7 @@ namespace tfel{
     /*!
      * \brief convert the corotationnal cauchy stress to the second Piola-Kirchhoff stress
      * \f[
-     * \tenseur{S} = J\,\tenseur{U}^{-1}\,.\,\tsigma\,.\,\tenseur{U}^{-1}
+     * \underline{S} = J\,\underline{U}^{-1}\,.\,\underline{\sigma}\,.\,\underline{U}^{-1}
      * \f]
      * \param[in] s: corotationnal cauchy stress
      * \param[in] U: stretch tensor
@@ -1141,7 +1141,7 @@ namespace tfel{
      * \brief convert the second Piola-Kirchhoff stress to the
      * corotationnal cauchy stress:
      * \f[
-     * \tenseur{S} = J\,\tenseur{U}^{-1}\,.\,\tsigma\,.\,\tenseur{U}^{-1}
+     * \underline{S} = J\,\underline{U}^{-1}\,.\,\underline{\sigma}\,.\,\underline{U}^{-1}
      * \f]
      * \param[in] S: the second Piola-Kirchhoff stress
      * \param[in] U: stretch tensor
@@ -1162,7 +1162,7 @@ namespace tfel{
      * \brief convert the second Piola-Kirchhoff stress to the
      * corotationnal cauchy stress:
      * \f[
-     * \tenseur{S} = J\,\tenseur{U}^{-1}\,.\,\tsigma\,.\,\tenseur{U}^{-1}
+     * \underline{S} = J\,\underline{U}^{-1}\,.\,\underline{\sigma}\,.\,\underline{U}^{-1}
      * \f]
      * \param[in] S: the second Piola-Kirchhoff stress
      * \param[in] U: stretch tensor
@@ -1183,7 +1183,7 @@ namespace tfel{
      * \brief convert the second Piola-Kirchhoff stress to the
      * corotationnal cauchy stress:
      * \f[
-     * \tenseur{S} = J\,\tenseur{U}^{-1}\,.\,\tsigma\,.\,\tenseur{U}^{-1}
+     * \underline{S} = J\,\underline{U}^{-1}\,.\,\underline{\sigma}\,.\,\underline{U}^{-1}
      * \f]
      * \param[in] S: the second Piola-Kirchhoff stress
      * \param[in] U: stretch tensor

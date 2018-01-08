@@ -482,7 +482,24 @@ namespace mfront{
     }
     // defining modelling hypotheses
     if(!this->mb.areModellingHypothesesDefined()){
-      this->mb.setModellingHypotheses(this->getDefaultModellingHypotheses());
+      auto dmh = this->getDefaultModellingHypotheses();
+      // taking into account restrictin du to the `Plate` othotropic
+      // axes convention
+      if((this->mb.getSymmetryType()==mfront::ORTHOTROPIC)&&
+	 (this->mb.getOrthotropicAxesConvention()==
+	  OrthotropicAxesConvention::PLATE)){
+	for (auto ph = dmh.begin();ph!=dmh.end();){
+	  if ((*ph!=ModellingHypothesis::TRIDIMENSIONAL)&&
+	      (*ph!=ModellingHypothesis::PLANESTRESS)&&
+	      (*ph!=ModellingHypothesis::PLANESTRAIN)&&
+	      (*ph!=ModellingHypothesis::GENERALISEDPLANESTRAIN)){
+	    ph = dmh.erase(ph);
+	  } else {
+	    ++ph;
+	  }
+	}
+      }
+      this->mb.setModellingHypotheses(dmh);
     }
     const auto& mh = this->mb.getModellingHypotheses();
     // treating bricks
@@ -1464,11 +1481,8 @@ namespace mfront{
   void BehaviourDSLCommon::treatBrick()
   {
     using Parameters = AbstractBehaviourBrick::Parameters;
-    using Data       = AbstractBehaviourBrick::Data;
-    using DataMap    = AbstractBehaviourBrick::DataMap;
     auto& f = AbstractBehaviourBrickFactory::getFactory();
     auto parameters = Parameters{};
-    auto data       = DataMap{};
     if(this->current->value=="<"){
       auto options = std::vector<tfel::utilities::Token>{};
       this->readList(options,"BehaviourDSLCommon::treatBehaviourBrick",
@@ -1504,11 +1518,10 @@ namespace mfront{
       ++(this->current);
       return r;
     }();
-    if(this->current->value=="{"){
-      data = Data::read(this->current,this->tokens.end()).get<DataMap>();
-    }
+    const auto br = f.get(b,*this,this->mb,parameters,
+			  this->current,this->tokens.end());
     this->readSpecifiedToken("BehaviourDSLCommon::treatBehaviourBrick",";");
-    this->bricks.emplace_back(f.get(b,*this,this->mb,parameters,data));
+    this->bricks.push_back(std::move(br));
   } // end of BehaviourDSLCommon::treatBrick
   
   void BehaviourDSLCommon::treatTangentOperator()
@@ -2095,7 +2108,7 @@ namespace mfront{
   void BehaviourDSLCommon::treatOrthotropicBehaviour()
   {
     using namespace tfel::material;
-    OrthotropicAxesConvention c = OrthotropicAxesConvention::DEFAULT;
+    auto c = OrthotropicAxesConvention::DEFAULT;
     this->checkNotEndOfFile("BehaviourDSLCommon::treatOrthotropicBehaviour");
     if(this->current->value=="<"){
       this->readSpecifiedToken("BehaviourDSLCommon::treatOrthotropicBehaviour","<");

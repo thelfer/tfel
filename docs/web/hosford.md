@@ -22,6 +22,34 @@
 \newcommand{\mts}[1]{{\left.#1\right|_{t+\theta\,\Delta\,t}}}
 \newcommand{\ets}[1]{{\left.#1\right|_{t+\Delta\,t}}}
 
+This paper is dedicated to the implementation a perfect plastic
+behaviour based on the Hosford equivalent stress.
+
+The whole implementation is available
+[here](./gallery/plasticity/HosfordPerfectPlasticity.mfront).
+
+# Description
+
+## Elasticity
+
+The elasticity is assumed linear and isotropic, i.e. given by the
+Hooke law:
+\[
+\tsigma=\lambda\,\trace{\tepsilonel}\,\tenseur{I}+2\,\mu\,\tepsilonel 
+\]
+where \(\lambda\) and \(\mu\) are the first and second Lamé parameters.
+
+## Plasticity
+
+The yield surface is chosen as follows:
+\[
+f\paren{\tsigma}=\sigmaeq^{H}-\sigma_{Y}
+\]
+where:
+
+- \(\sigmaeq^{H}\) is the Hosford equivalent stress defined hereafter.
+- The yield stress \(\sigma_{Y}\) is a constant material parameter.
+
 The Hosford equivalent stress is defined by (see @hosford_generalized_1972):
 \[
 \sigmaeq^{H}=\sqrt[a]{\Frac{1}{2}\paren{\absvalue{\sigma_{1}-\sigma_{2}}^{a}+\absvalue{\sigma_{1}-\sigma_{3}}^{a}+\absvalue{\sigma_{2}-\sigma_{3}}^{a}}}
@@ -45,19 +73,6 @@ rate \(\tdepsilonp\) is given by:
 \]
 where \(\dot{p}\) is the rate of the equivalent plastic strain \(p\).
 
-## Yield surface
-
-This paper is dedicated to the implementation a perfect plastic
-behaviour based on the Hosford equivalent stress. The yield surface is
-thus chosen as follows:
-\[
-f\paren{\tsigma}=\sigmaeq^{H}-\sigma_{Y}
-\]
-where the yield stress \(\sigma_{Y}\) is a constant material parameter.
-
-The whole implementation is available
-[here](./gallery/plasticity/HosfordPerfectPlasticity.mfront).
-
 # Implicit scheme
 
 ## Choice of the state variables
@@ -72,14 +87,15 @@ The elastic strain is automatically defined by the
 `StandardElasticity` brick.
 
 The latter could be considered as an integration variable, but, for
-post-processings purpose, we choose to keep it as a state variable.
+post-processing purposes, we choose to keep it as a state variable.
 
 ## Elastic prediction
 
 First, an elastic prediction of the stress \(\tsigma^{\mathrm{tr}}\)
 is made (The following expression is not valid in plane stress
 hypothesis, see below):
-\[ \tsigma^{\mathrm{tr}}=\lambda\,\trace{\bts{\tepsilonel}+\theta\,\Delta\,\tepsilonto}\,\tenseur{I}+2\,\mu\,\paren{\bts{\tepsilonel}+\theta\,\Delta\,\tepsilonto} \]
+\[
+\tsigma^{\mathrm{tr}}=\lambda\,\trace{\bts{\tepsilonel}+\theta\,\Delta\,\tepsilonto}\,\tenseur{I}+2\,\mu\,\paren{\bts{\tepsilonel}+\theta\,\Delta\,\tepsilonto} \]
 
 - If the predicted stress is inside the elastic domain, no plastic
   flow occurs.

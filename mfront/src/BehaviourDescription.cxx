@@ -1398,6 +1398,21 @@ namespace mfront
 	       "Cowardly aborting.");
     }
     if(this->hypotheses.empty()){
+      if((this->stypeIsDefined)&&
+	 (this->getSymmetryType()==mfront::ORTHOTROPIC)&&
+	 (this->oacIsDefined)&&
+	 (this->getOrthotropicAxesConvention()==
+	  OrthotropicAxesConvention::PLATE)){
+	for(const auto h: mh){
+	  throw_if((h!=ModellingHypothesis::TRIDIMENSIONAL)&&
+		   (h!=ModellingHypothesis::PLANESTRESS)&&
+		   (h!=ModellingHypothesis::PLANESTRAIN)&&
+		   (h!=ModellingHypothesis::GENERALISEDPLANESTRAIN),
+		   "Modelling hypothesis '"+
+		   ModellingHypothesis::toString(h)+"' is not compatible "
+		   "with the `Plate` orthotropic axes convention");
+	}
+      }
       this->hypotheses.insert(mh.begin(),mh.end());
     } else {
       if(b){
@@ -1411,6 +1426,9 @@ namespace mfront
 	}
 	throw_if(nh.empty(),"intersection of previously modelling hypotheses "
 		 "with the new ones is empty");
+	// as this is the intersection with previously defined
+	// hyppotheses, restrictions related to the orthotropic axes
+	// conditions does not have to be checked.
 	this->hypotheses.swap(nh);
       } else {
 	throw_if(true,"supported modelling hypotheses have already been declared");
@@ -1421,7 +1439,7 @@ namespace mfront
   const std::vector<ModelDescription>&
   BehaviourDescription::getModelsDescriptions() const{
     return this->models;
-  }
+  } // end of BehaviourDescription::getModelsDescriptions
   
   void BehaviourDescription::addModelDescription(const ModelDescription& md){
     constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
@@ -1444,7 +1462,7 @@ namespace mfront
 						 const BehaviourData::RegistrationStatus);
     mptr f = &BehaviourData::addMaterialProperty;
     this->addVariables(h,v,s,f);
-  }
+  } // end of BehaviourDescription::addMaterialProperties
 
   void
   BehaviourDescription::addMaterialProperty(const Hypothesis h,

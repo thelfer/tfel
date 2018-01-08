@@ -8,6 +8,8 @@ SUBDIRS = tex html tfel mfront   \
 	  gallery tutorial web   \
 	  doxygen
 
-EXTRA_DIST = CMakeLists.txt \
-	     mfront.bmp     \
+EXTRA_DIST = CMakeLists.txt     \
+	     mfront.bmp         \
+             mfront-fr.svg      \
+	     mfront-en.svg      \
 	     mfront.ico

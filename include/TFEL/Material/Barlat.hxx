@@ -143,7 +143,7 @@ namespace tfel{
      * \end{pmatrix}
      * \f]
      * 
-     * Therefore, if one wants to uses coeficients \f(c^{B}\f) given
+     * Therefore, if one wants to uses coeficients \f$c^{B}\f$ given
      * by Barlat, one shall call this function as follows:
      *
      * \code{.cpp}
@@ -191,6 +191,16 @@ namespace tfel{
      *   `PLANESTRESS`, `GENERALISEDPLANESTRAIN`), the coefficients
      *   relative to the second axis are exchanged with the
      *   coefficients related to the third axis.
+     *
+     * If the orthotropic axis convention is
+     * `OrthotropicAxesConvention::PLATE`, then the arguments passed to
+     * the `makeBarlatLinearTransformation<N,real>` function depends
+     * on the modelling hypothesis:
+     * - in 3D and in plane 2D modelling hypotheses (`PLANESTRAIN`,
+     *   `PLANESTRESS`, `GENERALISEDPLANESTRAIN`), the coefficients
+     *   relative to the second axis are exchanged with the
+     *   coefficients related to the third axis.
+     * - 1D, 2D axisymmetric modelling hypotheses are not available.
      */
     template<ModellingHypothesis::Hypothesis H,
 	     OrthotropicAxesConvention c,typename real>
@@ -243,7 +253,7 @@ namespace tfel{
      * \f]
      * 
      * The linear transformations \f$\underline{\underline{C}}'\f$ and
-     * \f$\underline{\underline{C}}''\f$ are defined by \f(9\f)
+     * \f$\underline{\underline{C}}''\f$ are defined by \f$9\f$
      * coefficients (each) which describe the material orthotropy, as
      * follows:
      * 

@@ -29,9 +29,53 @@ body {
     height: 100%;
     font-size:.9em;
     font-family:Arial, Helvetica, sans-serif;
-    background: url("img/background.svg") no-repeat fixed top left
+/*    background: url("img/background.svg") no-repeat fixed top left */
 		   /* The html and body elements cannot have any padding or margin. */
 }
+
+code {
+    color: grey;
+    background-color: transparent;
+}
+
+.title {
+    font-size: 40px;
+}
+
+h1, .h1{
+    width:100%;
+    color: blue;
+    font-family:Arial, Helvetica, sans-serif;
+    background-color: transparent;
+}
+
+h2, .h2{
+    font-family:Arial, Helvetica, sans-serif;
+    color: DodgerBlue ;
+    background-color: transparent;
+}
+
+h3, .h3{
+    font-family:Arial, Helvetica, sans-serif;
+    color: CornflowerBlue  ;
+    background-color: transparent;
+}
+
+h4, .h4{
+    font-family:Arial, Helvetica, sans-serif;
+    display: inline  ;
+}
+
+#content {
+  background: url("img/background.svg") no-repeat fixed top left 
+}
+
+/* body.SRPage { */
+/*     height: 100%; */
+/*     font-size:.9em; */
+/*     font-family:Arial, Helvetica, sans-serif; */
+/*     background: none; */
+/* } */
 
 body p{
    text-align: justify;

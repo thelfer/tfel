@@ -161,7 +161,7 @@ namespace tfel{
       template<tfel::material::ModellingHypothesis::Hypothesis H>
       struct BarlatLinearTransformationII<H,tfel::material::OrthotropicAxesConvention::PIPE>
 	: public BarlatLinearTransformation<tfel::material::ModellingHypothesisToSpaceDimension<H>::value>
-      {}; // end of struct BarlatLinearTransformationII<H,tfel::material::OrthotropicAxesConvention::DEFAULT>
+      {}; // end of struct BarlatLinearTransformationII<H,tfel::material::OrthotropicAxesConvention::PIPE>
       /*!
        * \brief partial specialisation of the
        * `BarlatLinearTransformationII` for the
@@ -235,7 +235,7 @@ namespace tfel{
 	  return BarlatLinearTransformation<2u>::exe(c13,c31,c12,c21,c32,
 						     c23,c55,c44,c66);
 	} // end of exe
-      }; // end of struct BarlatLinearTransformationII<H,tfel::material::OrthotropicAxesConvention::DEFAULT>
+      }; // end of struct BarlatLinearTransformationII<H,tfel::material::OrthotropicAxesConvention::PIPE>
       /*!
        * \brief partial specialisation of the
        * `BarlatLinearTransformationII` for the
@@ -272,7 +272,51 @@ namespace tfel{
 	  return BarlatLinearTransformation<2u>::exe(c13,c31,c12,c21,c32,
 						     c23,c55,c44,c66);
 	} // end of exe
-      }; // end of struct BarlatLinearTransformationII<H,tfel::material::OrthotropicAxesConvention::DEFAULT>
+      }; // end of struct BarlatLinearTransformationII<H,tfel::material::OrthotropicAxesConvention::PIPE>
+      /*!
+       * \brief partial specialisation of the
+       * `BarlatLinearTransformationII` for:
+       * - the `ModellingHypothesis::TRIDIMENSIONAL` modelling hypothesis.
+       * - the `OrthotropicAxesConvention::PLATE` orthotropic convention.
+       */
+      template<>
+      struct BarlatLinearTransformationII<tfel::material::ModellingHypothesis::TRIDIMENSIONAL,
+					  tfel::material::OrthotropicAxesConvention::PLATE>
+	: public BarlatLinearTransformation<3u>
+      {}; // end of struct BarlatLinearTransformationII
+      /*!
+       * \brief partial specialisation of the
+       * `BarlatLinearTransformationII` for:
+       * - the `ModellingHypothesis::PLANESTRESS` modelling hypothesis.
+       * - the `OrthotropicAxesConvention::PLATE` orthotropic convention.
+       */
+      template<>
+      struct BarlatLinearTransformationII<tfel::material::ModellingHypothesis::PLANESTRESS,
+					  tfel::material::OrthotropicAxesConvention::PLATE>
+	: public BarlatLinearTransformation<2u>
+      {}; // end of struct BarlatLinearTransformationII
+      /*!
+       * \brief partial specialisation of the
+       * `BarlatLinearTransformationII` for:
+       * - the `ModellingHypothesis::PLANESTRAIN` modelling hypothesis.
+       * - the `OrthotropicAxesConvention::PLATE` orthotropic convention.
+       */
+      template<>
+      struct BarlatLinearTransformationII<tfel::material::ModellingHypothesis::PLANESTRAIN,
+					  tfel::material::OrthotropicAxesConvention::PLATE>
+	: public BarlatLinearTransformation<2u>
+      {}; // end of struct BarlatLinearTransformationII
+      /*!
+       * \brief partial specialisation of the
+       * `BarlatLinearTransformationII` for:
+       * - the `ModellingHypothesis::GENERALISEDPLANESTRAIN` modelling hypothesis.
+       * - the `OrthotropicAxesConvention::PLATE` orthotropic convention.
+       */
+      template<>
+      struct BarlatLinearTransformationII<tfel::material::ModellingHypothesis::GENERALISEDPLANESTRAIN,
+					  tfel::material::OrthotropicAxesConvention::PLATE>
+	: public BarlatLinearTransformation<2u>
+      {}; // end of struct BarlatLinearTransformationII
       /*!
        * \brief add the terms relative to the eigenvectors derivatives
        * \param[out] d2Phi_ds2: second derivative of the Barlat equivalent stress
@@ -373,7 +417,7 @@ namespace tfel{
 	  d2Phi_ds2 += (dPhi_dvp[1]-dPhi_dvp[2])/(vp[1]-vp[2])*(n12^n12);
 	}
       } // end of completeBaralatStressSecondDerivative
-      
+
     } // end namespace internals
 
     template<unsigned short N, typename real>

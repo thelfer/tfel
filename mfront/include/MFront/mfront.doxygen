@@ -13,7 +13,7 @@
  * \page mfront The MFront code generator
  *
  * \htmlonly <style>div.image img[src="img/mfront-en.svg"]{width:500px;}</style> \endhtmlonly 
- * @image html img/mfront-en.svg "The official MFront Logo"
+ * \image html img/mfront-en.svg "The official MFront Logo"
  *
  * `MFront` is a code generator which translates a set of closely related
  * domain specific languages into plain [C++](http://isocpp.org/). Those
