@@ -2452,7 +2452,7 @@ namespace mfront
   } // end of BehaviourDescription::checkVariablePosition
 
   void
-  BehaviourDescription::setOrthotropicAxesConvention(const tfel::material::OrthotropicAxesConvention c)
+  BehaviourDescription::setOrthotropicAxesConvention(const OrthotropicAxesConvention c)
   {
     tfel::raise_if(this->oacIsDefined,
 		   "BehaviourDescription::setOrthotropicAxesConvention: "
@@ -2460,6 +2460,19 @@ namespace mfront
     tfel::raise_if(this->getSymmetryType()!=mfront::ORTHOTROPIC,
 		   "BehaviourDescription::setOrthotropicAxesConvention: "
 		   "the behaviour is not orthotropic.");
+    if(c==OrthotropicAxesConvention::PLATE){
+      if(this->areModellingHypothesesDefined()){
+	for(const auto h : this->getModellingHypotheses()){
+	  tfel::raise_if((h!=ModellingHypothesis::TRIDIMENSIONAL)&&
+			 (h!=ModellingHypothesis::PLANESTRESS)&&
+			 (h!=ModellingHypothesis::PLANESTRAIN)&&
+			 (h!=ModellingHypothesis::GENERALISEDPLANESTRAIN),
+			 "Modelling hypothesis '"+
+			 ModellingHypothesis::toString(h)+"' is not compatible "
+			 "with the `Plate` orthotropic axes convention");
+	}
+      }
+    }
     this->oacIsDefined = true;
     this->oac = c;
   }

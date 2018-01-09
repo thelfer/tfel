@@ -22,7 +22,9 @@ test_PROGRAMS = DSLTest                                    \
 		SlipSystemsTest                            \
 		UMATTest				   \
 		VUMATTest_dp				   \
-		VUMATTest_sp
+		VUMATTest_sp                               \
+		OrthotropicAxesConventionTest
+
 
 DSLTest_SOURCES                     = DSLTest.cxx
 DSLTest2_SOURCES                    = DSLTest2.cxx
@@ -40,6 +42,7 @@ SlipSystemsTest_SOURCES    = SlipSystemsTest.cxx
 UMATTest_SOURCES           = UMATTest.cxx
 VUMATTest_sp_SOURCES       = VUMATTest_sp.cxx
 VUMATTest_dp_SOURCES       = VUMATTest_dp.cxx
+OrthotropicAxesConventionTest_SOURCES = OrthotropicAxesConventionTest.cxx
 
 LDADD = -L$(top_builddir)/mfront/src    \
 	-L$(top_builddir)/src/Material  \

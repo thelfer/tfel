@@ -5407,6 +5407,7 @@ mfront/tests/unit-tests/DSLTest.cxx -text
 mfront/tests/unit-tests/DSLTest2.cxx.in -text
 mfront/tests/unit-tests/LocalDataStructureTest.cxx -text
 mfront/tests/unit-tests/Makefile.am -text
+mfront/tests/unit-tests/OrthotropicAxesConventionTest.cxx -text
 mfront/tests/unit-tests/SlipSystemsTest.cxx -text
 mfront/tests/unit-tests/StandardElasticityBrickTest.cxx -text
 mfront/tests/unit-tests/SwellingTest.cxx.in -text
