@@ -846,6 +846,29 @@ namespace tfel{
 					  Power<2> >::Result>>::type
     computeDeterminantDerivative(const StensorType&);
     /*!
+     * \return the derivative of the determinant of the deviator of
+     * symmetric tensor.
+     *
+     * Let \f$\underline{s}\f$ be a symmetric tensor and \f$J_{3}\f$
+     * be the determinant of \f$\underline{s}'\f$ the deviator of
+     * \f$\underline{s}\f$:
+     * \f[
+     * J_{3} = \mathrm{det}\left(\underline{s}'\right)
+     *       = \mathrm{det}\left(\underline{s}-\mathrm{tr}\left(\underline{s}'\right)\,\underline{I}\right)
+     * \f]
+     *
+     * This function computes \f$\displaystyle\frac{\partial J_{3}}{\partial \underline{\sigma}}\f$.
+     *
+     * \param[in] s: tensor where the the determinant is evaluated
+     */
+    template<typename StensorType>
+    typename std::enable_if<
+      tfel::meta::Implements<StensorType,StensorConcept>::cond,
+      stensor<StensorTraits<StensorType>::dime,
+	      typename ComputeUnaryResult<StensorNumType<StensorType>,
+					  Power<2> >::Result>>::type
+    computeDeviatorDeterminantDerivative(const StensorType&);
+    /*!
      * \brief rotate a symmetric tensor using a rotation matrix
      * \param[in] s: symmetric tensor to be rotated
      * \param[in] r: rotation matrix

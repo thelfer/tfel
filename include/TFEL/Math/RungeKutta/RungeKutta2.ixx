@@ -10,8 +10,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef RUNGE_KUTTA2_I_
-#define RUNGE_KUTTA2_I_ 1
+#ifndef TFEL_MATH_RUNGE_KUTTA2_IXX
+#define TFEL_MATH_RUNGE_KUTTA2_IXX 1
 
 #include"TFEL/Config/TFELConfig.hxx"
 
@@ -87,4 +87,4 @@ namespace tfel{
 } // end of namespace tfel
 
 
-#endif /* RUNGE_KUTTA2_I_ */
+#endif /* TFEL_MATH_RUNGE_KUTTA2_IXX */

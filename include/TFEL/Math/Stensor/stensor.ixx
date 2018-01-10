@@ -1252,6 +1252,20 @@ namespace tfel{
       computeDeterminantDerivative(dJ,s);
       return dJ;
     }
+
+    template<typename StensorType>
+    typename std::enable_if<
+      tfel::meta::Implements<StensorType,StensorConcept>::cond,
+      stensor<StensorTraits<StensorType>::dime,
+	      typename ComputeUnaryResult<StensorNumType<StensorType>,
+					  Power<2>>::Result>>::type
+    computeDeviatorDeterminantDerivative(const StensorType& s){
+      stensor<StensorTraits<StensorType>::dime,
+	      typename ComputeUnaryResult<StensorNumType<StensorType>,
+					  Power<2>>::Result> dJ;
+      computeDeviatorDeterminantDerivative(dJ,s);
+      return dJ;
+    }
     
   } //end of namespace math
 

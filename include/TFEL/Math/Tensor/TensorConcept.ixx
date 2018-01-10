@@ -9,8 +9,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_MATH_TENSOR_CONCEPT_IMPL_
-#define LIB_TFEL_MATH_TENSOR_CONCEPT_IMPL_ 1
+#ifndef LIB_TFEL_MATH_TENSOR_CONCEPT_IXX
+#define LIB_TFEL_MATH_TENSOR_CONCEPT_IXX 1
 
 #include"TFEL/FSAlgorithm/transform.hxx"
 #include"TFEL/FSAlgorithm/copy.hxx"
@@ -810,4 +810,4 @@ namespace tfel{
   
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_MATH_TENSOR_CONCEPT_IMPL_ */
+#endif /* LIB_TFEL_MATH_TENSOR_CONCEPT_IXX */

@@ -557,6 +557,58 @@ namespace tfel{
 	  -s[5],zero,zero,s[4]*icste,s[3]*icste,-s[0]};
     } // end of computeDeterminantSecondDerivative
 
+    template<typename StensorType>
+    typename std::enable_if<
+      tfel::meta::Implements<StensorType,StensorConcept>::cond&&
+      StensorTraits<StensorType>::dime==1u&&
+      tfel::typetraits::IsScalar<StensorNumType<StensorType>>::cond,
+      st2tost2<1u,StensorNumType<StensorType>>>::type
+    computeDeviatorDeterminantSecondDerivative(const StensorType& s)
+    {
+      return{-(2*s[2]+2*s[1]-4*s[0])/9,(4*s[2]-2*s[1]-2*s[0])/9,
+	  -(2*s[2]-4*s[1]+2*s[0])/9,(4*s[2]-2*s[1]-2*s[0])/9,
+	  -(2*s[2]-4*s[1]+2*s[0])/9,-(2*s[2]+2*s[1]-4*s[0])/9,
+	  -(2*s[2]-4*s[1]+2*s[0])/9,-(2*s[2]+2*s[1]-4*s[0])/9,
+	  (4*s[2]-2*s[1]-2*s[0])/9};
+    } // end of computeDeviatorDeterminantSecondDerivative
+
+    template<typename StensorType>
+    typename std::enable_if<
+      tfel::meta::Implements<StensorType,StensorConcept>::cond&&
+      StensorTraits<StensorType>::dime==2u&&
+      tfel::typetraits::IsScalar<StensorNumType<StensorType>>::cond,
+      st2tost2<2u,StensorNumType<StensorType>>>::type
+    computeDeviatorDeterminantSecondDerivative(const StensorType& s){
+      return {-(2*s[2]+2*s[1]-4*s[0])/9,(4*s[2]-2*s[1]-2*s[0])/9,
+	  -(2*s[2]-4*s[1]+2*s[0])/9,s[3]/3,(4*s[2]-2*s[1]-2*s[0])/9,
+	  -(2*s[2]-4*s[1]+2*s[0])/9,-(2*s[2]+2*s[1]-4*s[0])/9,
+	  s[3]/3,-(2*s[2]-4*s[1]+2*s[0])/9,
+	  -(2*s[2]+2*s[1]-4*s[0])/9,(4*s[2]-2*s[1]-2*s[0])/9,
+	  (-2*s[3])/3,s[3]/3,s[3]/3,(-2*s[3])/3,-(2*s[2]-s[1]-s[0])/3};
+    } // end of computeDeviatorDeterminantSecondDerivative
+    
+    template<typename StensorType>
+    typename std::enable_if<
+      tfel::meta::Implements<StensorType,StensorConcept>::cond&&
+      StensorTraits<StensorType>::dime==3u&&
+      tfel::typetraits::IsScalar<StensorNumType<StensorType>>::cond,
+      st2tost2<3u,StensorNumType<StensorType>>>::type
+    computeDeviatorDeterminantSecondDerivative(const StensorType& s){
+      using NumType = StensorNumType<StensorType>;
+      constexpr const auto icste = Cste<NumType>::isqrt2;
+      return {-(2*s[2]+2*s[1]-4*s[0])/9,(4*s[2]-2*s[1]-2*s[0])/9,
+	  -(2*s[2]-4*s[1]+2*s[0])/9,s[3]/3,s[4]/3,
+	  (-2*s[5])/3,(4*s[2]-2*s[1]-2*s[0])/9,
+	  -(2*s[2]-4*s[1]+2*s[0])/9,-(2*s[2]+2*s[1]-4*s[0])/9,
+	  s[3]/3,(-2*s[4])/3,s[5]/3,
+	  -(2*s[2]-4*s[1]+2*s[0])/9,-(2*s[2]+2*s[1]-4*s[0])/9,
+	  (4*s[2]-2*s[1]-2*s[0])/9,(-2*s[3])/3,
+	  s[4]/3,s[5]/3,s[3]/3,s[3]/3,(-2*s[3])/3,
+	  -(2*s[2]-s[1]-s[0])/3,s[5]*icste,
+	  s[4]*icste,s[4]/3,(-2*s[4])/3,s[4]/3,s[5]*icste,
+	  (s[2]-2*s[1]+s[0])/3,s[3]*icste,(-2*s[5])/3,
+	  s[5]/3,s[5]/3,s[4]*icste,s[3]*icste,(s[2]+s[1]-2*s[0])/3};
+    } // end of computeDeviatorDeterminantSecondDerivative
     
   } //end of namespace math
 

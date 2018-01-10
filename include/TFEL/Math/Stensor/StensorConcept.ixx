@@ -9,8 +9,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef STENSOR_CONCEPT_IMPL_
-#define STENSOR_CONCEPT_IMPL_ 1
+#ifndef TFEL_MATH_STENSOR_CONCEPT_IXX
+#define TFEL_MATH_STENSOR_CONCEPT_IXX 1
 
 #include"TFEL/Math/General/Abs.hxx"
 #include"TFEL/Math/Stensor/StensorSizeToDime.hxx"
@@ -301,9 +301,76 @@ namespace tfel{
       dJ[4]=icste*s[3]*s[5]-s[1]*s[4];
       dJ[5]=icste*s[3]*s[4]-s[0]*s[5]; 
     } // end of ComputeDeterminantDerivative
+
+    template<typename StensorResultType,
+	     typename StensorType>
+    typename std::enable_if<
+      tfel::meta::Implements<StensorResultType,StensorConcept>::cond &&
+      tfel::meta::Implements<StensorType,StensorConcept>::cond &&
+      StensorTraits<StensorType>::dime == 1u&&
+      StensorTraits<StensorResultType>::dime == 1u&&
+      tfel::typetraits::IsAssignableTo<typename ComputeUnaryResult<StensorNumType<StensorType>,
+								   Power<2> >::Result,
+				       StensorNumType<StensorResultType>>::cond,
+      void>::type
+    computeDeviatorDeterminantDerivative(StensorResultType& dJ,
+					 const StensorType& s)
+    {
+      dJ[0] = -(s[2]*s[2]+(2*s[0]-4*s[1])*s[2]+s[1]*s[1]+2*s[0]*s[1]-2*s[0]*s[0])/9.;
+      dJ[1] = -(s[2]*s[2]+(2*s[1]-4*s[0])*s[2]-2*s[1]*s[1]+2*s[0]*s[1]+s[0]*s[0])/9.;
+      dJ[2] = (2*s[2]*s[2]+((-2*s[1])-2*s[0])*s[2]-s[1]*s[1]+4*s[0]*s[1]-s[0]*s[0])/9.;
+    } // end of ComputeDeviatorDeterminantDerivative
+
+    template<typename StensorResultType,
+	     typename StensorType>
+    typename std::enable_if<
+      tfel::meta::Implements<StensorResultType,StensorConcept>::cond &&
+      tfel::meta::Implements<StensorType,StensorConcept>::cond &&
+      StensorTraits<StensorType>::dime == 2u&&
+      StensorTraits<StensorResultType>::dime == 2u&&
+      tfel::typetraits::IsAssignableTo<typename ComputeUnaryResult<StensorNumType<StensorType>,
+								   Power<2> >::Result,
+				       StensorNumType<StensorResultType>>::cond,
+      void>::type
+    computeDeviatorDeterminantDerivative(StensorResultType& dJ,
+					 const StensorType& s)
+    {
+      dJ[0] = (3*s[3]*s[3]-2*s[2]*s[2]+(8*s[1]-4*s[0])*s[2]-2*s[1]*s[1]-4*s[0]*s[1]+4*s[0]*s[0])/18;
+      dJ[1] = (3*s[3]*s[3]-2*s[2]*s[2]+(8*s[0]-4*s[1])*s[2]+4*s[1]*s[1]-4*s[0]*s[1]-2*s[0]*s[0])/18;
+      dJ[2] = -(3*s[3]*s[3]-2*s[2]*s[2]+(2*s[1]+2*s[0])*s[2]+s[1]*s[1]-4*s[0]*s[1]+s[0]*s[0])/9;
+      dJ[3] = -((2*s[2]-s[1]-s[0])*s[3])/3;
+    } // end of ComputeDeviatorDeterminantDerivative
+
+    template<typename StensorResultType,
+	     typename StensorType>
+    typename std::enable_if<
+      tfel::meta::Implements<StensorResultType,StensorConcept>::cond &&
+      tfel::meta::Implements<StensorType,StensorConcept>::cond &&
+      StensorTraits<StensorType>::dime == 3u&&
+      StensorTraits<StensorResultType>::dime == 3u&&
+      tfel::typetraits::IsAssignableTo<typename ComputeUnaryResult<StensorNumType<StensorType>,
+								   Power<2> >::Result,
+				       StensorNumType<StensorResultType>>::cond,
+      void>::type
+    computeDeviatorDeterminantDerivative(StensorResultType& dJ,
+					 const StensorType& s)
+    {
+      using NumType = StensorNumType<StensorType>;
+      using real    = tfel::typetraits::base_type<NumType>;
+      TFEL_CONSTEXPR const auto cste    = Cste<real>::sqrt2;
+      dJ[0] = -(6*s[5]*s[5]-3*s[4]*s[4]-3*s[3]*s[3]+2*s[2]*s[2]+
+		(4*s[0]-8*s[1])*s[2]+2*s[1]*s[1]+4*s[0]*s[1]-4*s[0]*s[0])/18;
+      dJ[1] = (3*s[5]*s[5]-6*s[4]*s[4]+3*s[3]*s[3]-2*s[2]*s[2]+
+	       (8*s[0]-4*s[1])*s[2]+4*s[1]*s[1]-4*s[0]*s[1]-2*s[0]*s[0])/18;
+      dJ[2] = (3*s[5]*s[5]+3*s[4]*s[4]-6*s[3]*s[3]+4*s[2]*s[2]+
+	       ((-4*s[1])-4*s[0])*s[2]-2*s[1]*s[1]+8*s[0]*s[1]-2*s[0]*s[0])/18;
+      dJ[3] = (3*cste*s[4]*s[5]+((-4*s[2])+2*s[1]+2*s[0])*s[3])/6;
+      dJ[4] = (3*cste*s[3]*s[5]+(2*s[2]-4*s[1]+2*s[0])*s[4])/6;
+      dJ[5] = ((2*s[2]+2*s[1]-4*s[0])*s[5]+3*cste*s[3]*s[4])/6;
+    } // end of ComputeDeviatorDeterminantDerivative
     
   } // end of namespace math
 
 } // end of namespace tfel
 
-#endif /* STENSOR_CONCEPT_IMPL_ */
+#endif /* TFEL_MATH_STENSOR_CONCEPT_IXX */

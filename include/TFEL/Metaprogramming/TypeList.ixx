@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_TYPELIST_I_
-#define LIB_TFEL_TYPELIST_I_ 
+#ifndef LIB_TFEL_META_TYPELIST_IXX
+#define LIB_TFEL_META_TYPELIST_IXX 
 
 #include<type_traits>
 
@@ -498,5 +498,5 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_TYPELIST_I_ */
+#endif /* LIB_TFEL_META_TYPELIST_IXX */
 

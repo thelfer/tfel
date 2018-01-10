@@ -1407,6 +1407,10 @@ docs/web/theory.md -text
 docs/web/tutorial-spanish.md -text
 docs/web/tutorial.md -text
 docs/web/zmat.md -text
+docs/wxmaxima/J3Derivative.wxmx -text
+docs/wxmaxima/J3Derivative1D.wxmx -text
+docs/wxmaxima/J3Derivative2D.wxmx -text
+docs/wxmaxima/J3Derivative3D.wxmx -text
 /env-win32.bat.in -text
 /env-win32.sh.in -text
 include/CMakeLists.txt -text
@@ -5942,6 +5946,7 @@ tests/Math/qt3.cxx -text
 tests/Math/solve.cxx -text
 tests/Math/st2tost2/CMakeLists.txt -text
 tests/Math/st2tost2/ComputeDeterminantSecondDerivativeTest.cxx -text
+tests/Math/st2tost2/ComputeDeviatorDeterminantSecondDerivativeTest.cxx -text
 tests/Math/st2tost2/ConvertLogarithmicStrainTangentOperator.cxx -text
 tests/Math/st2tost2/ConvertToTangentModuliTest.cxx -text
 tests/Math/st2tost2/Makefile.am -text
@@ -5960,9 +5965,10 @@ tests/Math/st2tot2/StensorProductDerivative.cxx -text
 tests/Math/st2tot2/StensorProductDerivative2.cxx -text
 tests/Math/st2tot2/st2tot2.cxx -text
 tests/Math/stensor/CMakeLists.txt -text
+tests/Math/stensor/ComputeDeterminantDerivativeTest.cxx -text
+tests/Math/stensor/ComputeDeviatorDeterminantDerivativeTest.cxx -text
 tests/Math/stensor/InvariantsDerivatives.cxx -text
 tests/Math/stensor/Makefile.am -text
-tests/Math/stensor/StensorComputeJacobianDerivativeTest.cxx -text
 tests/Math/stensor/StensorFromTinyMatrixColumnView.cxx -text
 tests/Math/stensor/stensor.cxx -text
 tests/Math/stensor/stensor10.cxx -text

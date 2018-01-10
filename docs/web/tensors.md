@@ -9,7 +9,6 @@
 \newcommand{\transpose}[1]{{#1^{\mathop{T}}}}
 
 \newcommand{\tsigma}{\underline{\sigma}}
-\newcommand{\trace}[1]{{\mathrm{tr}\paren{#1}}}
 \newcommand{\Frac}[2]{{{\displaystyle \frac{\displaystyle #1}{\displaystyle #2}}}}
 \newcommand{\deriv}[2]{{\displaystyle \frac{\displaystyle \partial #1}{\displaystyle \partial #2}}}
 \newcommand{\sderiv}[2]{{\displaystyle \frac{\displaystyle \partial^{2} #1}{\displaystyle \partial #2^{2}}}}
@@ -224,10 +223,10 @@ The diadic product \(\tns{a}\,\otimes\,\tns{b}\) of two tensors
 
 \[
 \left\{
-\begin{array}
-\,\tns{c}\,\colon\,\paren {\tns{a}\,\otimes\,\tns{b}}=\paren{\tns{c}\,\colon\,\tns{a}}\,\tns{b} \\
-\,\paren {\tns{a}\,\otimes\,\tns{b}}\,\colon\,\tns{c}=\paren{\tns{c}\,\colon\,\tns{b}}\,\tns{a} \\
-\end{array}
+\begin{aligned}
+\tns{c}\,\colon\,\paren {\tns{a}\,\otimes\,\tns{b}}&=\paren{\tns{c}\,\colon\,\tns{a}}\,\tns{b} \\
+\paren {\tns{a}\,\otimes\,\tns{b}}\,\colon\,\tns{c}&=\paren{\tns{c}\,\colon\,\tns{b}}\,\tns{a} \\
+\end{aligned}
 \right.
 \]
 
@@ -249,8 +248,6 @@ matching the `T2toT2Concept`.
 ## Application of a fourth order tensor
 
 ## Multiplication of second order tensors
-
-\tenseur{a}\,\star_{1}\,\tenseur{b} = \Frac{1}{2}\paren{a\,.}
 
 ### Derivatives
 
@@ -325,7 +322,7 @@ A non symmetric second order tensor can be transpose using the
 const auto B = transpose(A);
 ~~~~
 
-## Second order tensor invariants
+## Second order tensor invariants {#sec:invariants}
 
 ### Defintion
 
@@ -367,7 +364,7 @@ const auto I2 = (I1*I1-trace(square(A)))/2;
 const auto I3 = det(A);
 ~~~~
 
-### Derivatives of the invariants of a tensor
+### Derivatives of the invariants of a tensor {#sec:invariants:derivatives}
 
 The derivative of the invariants are classically given by:
 \[
@@ -427,10 +424,161 @@ const auto d2I2_dA2 = (id^id)-st2tot2<N,real>::Id();
 ~~~~
 
 The \(\sderiv{I_{3}}{\a}\) term can be computed using the
-`computeJacobianSecondDerivative` function, as follows:
+`computeDeterminantSecondDerivative` function, as follows:
 
 ~~~~{.cpp}
 const auto d2I3_dA2 = computeDeterminantSecondDerivative(A);
+~~~~
+
+## Invariants of the stress deviator tensor @wikipedia_invariants_2017 {#sec:deviatoric:invariants}
+
+Let \(\tsigma\) be a stress tensor. Its deviatoric part
+\(\tenseur{s}\) is:
+\[
+\tenseur{s}=\tsigma-\Frac{1}{3}\,\trace{\tsigma}\,\tenseur{I}
+=\paren{\tenseurq{I}-\Frac{1}{3}\,\tenseur{I}\,\otimes\,\tenseur{I}}\,\colon\,\tsigma
+\]
+
+The deviator of a tensor can be computed using the `deviator`
+function.
+
+As it is a second order tensor, the stress deviator tensor also has a
+set of invariants, which can be obtained using the same procedure used
+to calculate the invariants of the stress tensor. It can be shown that
+the principal directions of the stress deviator tensor \(s_{ij}\) are
+the same as the principal directions of the stress tensor
+\(\sigma_{ij}\). Thus, the characteristic equation is
+
+\[
+\left| s_{ij}- \lambda\delta_{ij} \right| = -\lambda^3+J_1\lambda^2-J_2\lambda+J_3=0,
+\]
+
+where \(J_1\), \(J_2\) and \(J_3\) are the first, second, and third
+*deviatoric stress invariants*, respectively. Their values are the same
+(invariant) regardless of the orientation of the coordinate system
+chosen. These deviatoric stress invariants can be expressed as a
+function of the components of \(s_{ij}\) or its principal values \(s_1\),
+\(s_2\), and \(s_3\), or alternatively, as a function of \(\sigma_{ij}\) or
+its principal values \(\sigma_1\), \(\sigma_2\), and \(\sigma_3\). Thus,
+
+\[
+\begin{aligned}
+J_1 &= s_{kk}=0,\, \\
+J_2 &= \textstyle{\frac{1}{2}}s_{ij}s_{ji} = \Frac{1}{2}\trace{\tenseur{s}^2}\\
+&= \Frac{1}{2}(s_1^2 + s_2^2 + s_3^2) \\
+&= \Frac{1}{6}\left[(\sigma_{11} - \sigma_{22})^2 + (\sigma_{22} - \sigma_{33})^2 + (\sigma_{33} - \sigma_{11})^2 \right ] + \sigma_{12}^2 + \sigma_{23}^2 + \sigma_{31}^2 \\
+&= \Frac{1}{6}\left[(\sigma_1 - \sigma_2)^2 + (\sigma_2 - \sigma_3)^2 + (\sigma_3 - \sigma_1)^2 \right ] \\
+&= \Frac{1}{3}I_1^2-I_2 = \frac{1}{2}\left[\trace{\tenseur{\sigma}^2} - \frac{1}{3}\trace{\tenseur{\sigma}}^2\right],\,\\
+J_3 &= \det(s_{ij}) \\
+&= \Frac{1}{3}s_{ij}s_{jk}s_{ki} = \Frac{1}{3} \trace{\tenseur{s}^3}\\
+&= \Frac{1}{3}(s_1^3 + s_2^3 + s_3^3) \\
+&= s_1s_2s_3 \\
+&= \Frac{2}{27}I_1^3 - \Frac{1}{3}I_1 I_2 + I_3 = \Frac{1}{3}\left[\trace{\tenseur{\sigma}^3} - \trace{\tenseur{\sigma}^2}\trace{\tenseur{\sigma}} +\Frac{2}{9}\trace{\tenseur{\sigma}}^3\right].
+\end{aligned}
+\]
+
+where \(I_{1}\), \(I_{2}\) and \(I_{3}\) are the invariants of
+\(\tsigma\) (see Section&nbsp;@sec:invariants).
+
+The invariants \(J_{2}\) and \(J_{3}\) of deviatoric part of the
+stress are the basis of many isotropic yield criteria, some of them
+being described below.
+
+### First derivative
+
+This paragraph details the first derivative of \(J_{2}\) and \(J_{3}\)
+with respect to \(\tsigma\).
+
+The computation of \(\deriv{J_{2}}{\tsigma}\) is straight-forward by
+chain rule, using the expression of the derivatives of the invariants
+of a tensor (see Section&nbsp;@sec:invariants:derivatives):
+\[
+\deriv{J_{2}}{\tsigma}= \deriv{J_{2}}{\tenseur{s}}\,\dot\,\deriv{\tenseur{s}}{\tsigma}= \Frac{1}{2}\,\tenseur{s}
+\]
+
+In pratice, this can be implemented as follows:
+
+~~~~{.cpp}
+const auto dJ2 = eval(deviator(sig)/2);
+~~~~
+
+For the expression of \(\deriv{J_{3}}{\tsigma}\), one can derive its
+expression based of the three invariants of \(\tsigma\), as follows:
+
+\[
+\begin{aligned}
+\deriv{J_{3}}{\tsigma}
+&=\deriv{}{\tsigma}\paren{\Frac{2}{27}\,I_{1}^3 - \Frac{1}{3}\,I_{1}\,I_{2} + I_{3}}\\
+&=\Frac{2}{9}\,I_{1}^{2}\,\tenseur{I}-\Frac{1}{3}\left[I_{2}\,\tenseur{I}+I_{1}\,\deriv{I_{2}}{\tsigma}\right]+\deriv{I_{3}}{\tsigma}\\
+\end{aligned}
+\]
+
+For `TFEL` versions prior to 3.2, one can implement this formula as follows:
+
+~~~~{.cpp}
+constexpr const auto id = stensor<N,real>::Id();
+const auto I1  = trace(sig);
+const auto I2  = (I1*I1-trace(square(sig)))/2;
+const auto dI2 = I1*id-sig;
+const auto dI3 = computeDeterminantDerivative(sig);
+const auto dJ3 = eval((2*I1*I1/9)*id-(I2*id+I1*dI2)/3+dI3);
+~~~~
+
+For `TFEL` versions greater than \(3.2\), one may want to use the
+optimised `computeDeviatorDeterminantDerivative` function as follows:
+
+~~~~{.cpp}
+const auto dJ3 = computeDeviatorDeterminantDerivative(sig);
+~~~~
+
+### Second derivative
+
+This paragraph details the second derivatives of \(J_{2}\) and \(J_{3}\)
+with respect to \(\tsigma\).
+
+The second derivative \(\sderiv{J_{2}}{\tsigma}\) is straight-forward:
+\[
+\sderiv{J_{2}}{\tsigma}=
+\Frac{1}{2}\,\paren{\tenseurq{I}-\Frac{1}{3}\,\tenseur{I}\,\otimes\,\tenseur{I}}
+\]
+
+It can be readily implemented:
+
+~~~~{.cpp}
+constexpr const auto id  = stensor<N,real>::Id();
+constexpr const auto id4 = st2tost2<N,real>::Id();
+const auto d2J2 = eval((id4-(id^id)/3)/2);
+~~~~
+
+The second derivative \(\sderiv{J_{3}}{\tsigma}\) is also
+straight-forward to compute (see also
+Section&nbsp;@sec:invariants:derivatives):
+\[
+\deriv{J_{3}}{\tsigma}
+=\Frac{4}{9}\,I_{1}\,\tenseur{I}\,\otimes\,\tenseur{I}
+-\Frac{1}{3}\left[\tenseur{I}\,\otimes\,\deriv{I_{2}}{\tsigma}+\deriv{I_{2}}{\tsigma}\,\otimes\,\tenseur{I}+I_{1}\,\sderiv{I_{2}}{\tsigma}\right]+
+\sderiv{I_{3}}{\tsigma}
+\]
+
+For `TFEL` versions prior to 3.2, one can implement this formula as follows:
+
+~~~~{.cpp}
+constexpr const auto id = stensor<N,real>::Id();
+constexpr const auto id4 = st2tost2<N,real>::Id();
+const auto I1   = trace(sig);
+const auto I2   = (I1*I1-trace(square(sig)))/2;
+const auto dI2  = I1*id-sig;
+const auto d2I2 = (id^id)-id4;
+const auto d2I3 = computeDeterminantSecondDerivative(sig);
+const auto d2J3 = eval((4*I1/9)*(id^id)-((id^dI2)+(dI2^id)+i1*d2I2)/3+d2I3);
+~~~~
+
+For `TFEL` versions greater than \(3.2\), one may want to use the
+optimised `computeDeviatorDeterminantSecondDerivative` function as
+follows:
+
+~~~~{.cpp}
+const auto dJ3 = computeDeviatorDeterminantSecondDerivative(J);
 ~~~~
 
 ## Eigenvalues, eigenvectors and eigentensors of symmetric tensors
@@ -562,16 +710,20 @@ const auto [f,df] = Stensor::computeIsotropicFunctionAndDerivative(evp,evp,vp,m,
 
 ## Yield criteria
 
-### von Mises stress
+### von Mises stress @wikipedia_von_Mises_2017
 
 The von Mises stress is defined by:
 \[
-\sigmaeq=\sqrt{\Frac{3}{2}\,\tenseur{s}\,\colon\,\tenseur{s}}
+\sigmaeq=\sqrt{\Frac{3}{2}\,\tenseur{s}\,\colon\,\tenseur{s}}=\sqrt{3\,J_{2}}
 \]
-where \(\tenseur{s}\) is the deviatoric stress defined as follows:
+where:
+
+- \(\tenseur{s}\) is the deviatoric stress defined as follows:
 \[
 \tenseur{s}=\tsigma-\Frac{1}{3}\,\trace{\tsigma}\,\tenseur{I}
 \]
+- \(J_{2}\) is the second invariant of \(\tenseur{s}\) (see
+  also Section&nbsp;@sec:deviatoric:invariants).
 
 The previous expression can be rewritten by introducing a fourth order
 tensor called \(\tenseurq{M}\):
@@ -593,7 +745,7 @@ constexpr const auto M = st2tost2<N,real>::M();
 
 In terms of the eigenvalues of the stress, denoted by \(\sigma_{1}\),
 \(\sigma_{2}\) and \(\sigma_{3}\), the von Mises stress can also be
-defined by (see @hosford_generalized_1972):
+defined by:
 \[
 \sigmaeq=\sqrt{\Frac{1}{2}\paren{\absvalue{\sigma_{1}-\sigma_{2}}^{2}+\absvalue{\sigma_{1}-\sigma_{3}}^{2}+\absvalue{\sigma_{2}-\sigma_{3}}^{2}}}
 \]

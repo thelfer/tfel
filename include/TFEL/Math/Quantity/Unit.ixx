@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_UNIT_I_
-#define LIB_TFEL_UNIT_I_ 
+#ifndef LIB_TFEL_MATH_UNIT_IXX
+#define LIB_TFEL_MATH_UNIT_IXX 
 
 namespace tfel{
 
@@ -229,5 +229,5 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_UNIT_I_ */
+#endif /* LIB_TFEL_MATH_UNIT_IXX */
 

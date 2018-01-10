@@ -5,17 +5,18 @@ if WITH_TESTS
 
 testdir = $(pkgdatadir)/tests/Math/st2tost2
 
-test_PROGRAMS =	st2tost2                                 \
-		st2tost2-2                               \
-		st2tost2-3                               \
-		ST2toST2ChangeBasis                      \
-		ST2toST2FromTinyMatrixView               \
-		ST2toST2FromTinyMatrixView2              \
-		ST2toST2PushForward                      \
-		StensorSquareDerivative                  \
-		ConvertToTangentModuliTest               \
-		ConvertLogarithmicStrainTangentOperator  \
-		ComputeDeterminantSecondDerivativeTest   \
+test_PROGRAMS =	st2tost2                                       \
+		st2tost2-2                                     \
+		st2tost2-3                                     \
+		ST2toST2ChangeBasis                            \
+		ST2toST2FromTinyMatrixView                     \
+		ST2toST2FromTinyMatrixView2                    \
+		ST2toST2PushForward                            \
+		StensorSquareDerivative                        \
+		ConvertToTangentModuliTest                     \
+		ConvertLogarithmicStrainTangentOperator        \
+		ComputeDeterminantSecondDerivativeTest         \
+		ComputeDeviatorDeterminantSecondDerivativeTest \
 		SymmetricStensorProductDerivativeTest
 
 LDADD = -lTFELMath -lTFELException -lTFELTests \
@@ -34,6 +35,7 @@ StensorSquareDerivative_SOURCES = StensorSquareDerivative.cxx
 ConvertToTangentModuliTest_SOURCES = ConvertToTangentModuliTest.cxx
 ConvertLogarithmicStrainTangentOperator_SOURCES = ConvertLogarithmicStrainTangentOperator.cxx
 ComputeDeterminantSecondDerivativeTest_SOURCES  = ComputeDeterminantSecondDerivativeTest.cxx
+ComputeDeviatorDeterminantSecondDerivativeTest_SOURCES  = ComputeDeviatorDeterminantSecondDerivativeTest.cxx
 SymmetricStensorProductDerivativeTest_SOURCES   = SymmetricStensorProductDerivativeTest.cxx
 
 TESTS=$(test_PROGRAMS)

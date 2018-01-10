@@ -388,7 +388,76 @@ namespace tfel{
       StensorTraits<StensorType>::dime==3u&&
       tfel::typetraits::IsScalar<StensorNumType<StensorType>>::cond,
       st2tost2<3u,StensorNumType<StensorType>>>::type
-    computeDeterminantSecondDerivative(const StensorType&);
+    computeDeviatorDeterminantSecondDerivative(const StensorType&);
+    /*!
+     * \brief compute the second derivative of the determinant of the
+     * deviator of symmetric tensor.
+
+     * Let \f$\underline{s}\f$ be a symmetric tensor and \f$J_{3}\f$
+     * be the determinant of \f$\underline{s}'\f$ the deviator of
+     * \f$\underline{s}\f$:
+     * \f[
+     * J_{3} = \mathrm{det}\left(\underline{s}'\right)
+     *       = \mathrm{det}\left(\underline{s}-\mathrm{tr}\left(\underline{s}'\right)\,\underline{I}\right)
+     * \f]
+     *
+     * This function computes \f$\displaystyle\frac{\partial^{2} J_{3}}{\partial \underline{\sigma}^{2}}\f$.
+     *
+     * \param[in] s: tensor
+     */
+    template<typename StensorType>
+    typename std::enable_if<
+      tfel::meta::Implements<StensorType,StensorConcept>::cond&&
+      StensorTraits<StensorType>::dime==1u&&
+      tfel::typetraits::IsScalar<StensorNumType<StensorType>>::cond,
+      st2tost2<1u,StensorNumType<StensorType>>>::type
+    computeDeviatorDeterminantSecondDerivative(const StensorType&);
+    /*!
+     * \brief compute the second derivative of the determinant of the
+     * deviator of symmetric tensor.
+
+     * Let \f$\underline{s}\f$ be a symmetric tensor and \f$J_{3}\f$
+     * be the determinant of \f$\underline{s}'\f$ the deviator of
+     * \f$\underline{s}\f$:
+     * \f[
+     * J_{3} = \mathrm{det}\left(\underline{s}'\right)
+     *       = \mathrm{det}\left(\underline{s}-\mathrm{tr}\left(\underline{s}'\right)\,\underline{I}\right)
+     * \f]
+     *
+     * This function computes \f$\displaystyle\frac{\partial^{2} J_{3}}{\partial \underline{\sigma}^{2}}\f$.
+     *
+     * \param[in] s: tensor
+     */
+    template<typename StensorType>
+    typename std::enable_if<
+      tfel::meta::Implements<StensorType,StensorConcept>::cond&&
+      StensorTraits<StensorType>::dime==2u&&
+      tfel::typetraits::IsScalar<StensorNumType<StensorType>>::cond,
+      st2tost2<2u,StensorNumType<StensorType>>>::type
+    computeDeviatorDeterminantSecondDerivative(const StensorType&);
+    /*!
+     * \brief compute the second derivative of the determinant of the
+     * deviator of symmetric tensor.
+
+     * Let \f$\underline{s}\f$ be a symmetric tensor and \f$J_{3}\f$
+     * be the determinant of \f$\underline{s}'\f$ the deviator of
+     * \f$\underline{s}\f$:
+     * \f[
+     * J_{3} = \mathrm{det}\left(\underline{s}'\right)
+     *       = \mathrm{det}\left(\underline{s}-\mathrm{tr}\left(\underline{s}'\right)\,\underline{I}\right)
+     * \f]
+     *
+     * This function computes \f$\displaystyle\frac{\partial^{2} J_{3}}{\partial \underline{\sigma}^{2}}\f$.
+     *
+     * \param[in] s: tensor
+     */
+    template<typename StensorType>
+    typename std::enable_if<
+      tfel::meta::Implements<StensorType,StensorConcept>::cond&&
+      StensorTraits<StensorType>::dime==3u&&
+      tfel::typetraits::IsScalar<StensorNumType<StensorType>>::cond,
+      st2tost2<3u,StensorNumType<StensorType>>>::type
+    computeDeviatorDeterminantSecondDerivative(const StensorType&);
     
   } // end of namespace math
 

@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_MATH_T2TOST2_CONCEPT_IMPL_
-#define LIB_TFEL_MATH_T2TOST2_CONCEPT_IMPL_ 1
+#ifndef LIB_TFEL_MATH_T2TOST2_CONCEPT_IXX
+#define LIB_TFEL_MATH_T2TOST2_CONCEPT_IXX 1
 
 #include"TFEL/Math/General/MathConstants.hxx"
 #include"TFEL/Math/Tensor/TensorSizeToDime.hxx"
@@ -291,4 +291,4 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_MATH_T2TOST2_CONCEPT_IMPL_ */
+#endif /* LIB_TFEL_MATH_T2TOST2_CONCEPT_IXX */

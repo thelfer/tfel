@@ -18,6 +18,107 @@
 \newcommand{\deriv}[2]{{\displaystyle \frac{\displaystyle \partial #1}{\displaystyle \partial #2}}}
 \newcommand{\sigmaeq}{\sigma_{\mathrm{eq}}}
 
+# Efficient computations of the first and second derivatives of the invariants of the stress deviator tensor with respect to the stress (10/01/2018)
+
+Let \(\tsigma\) be a stress tensor. Its deviatoric part
+\(\tenseur{s}\) is:
+
+\[
+\tenseur{s}=\tsigma-\Frac{1}{3}\,\trace{\tsigma}\,\tenseur{I}
+=\paren{\tenseurq{I}-\Frac{1}{3}\,\tenseur{I}\,\otimes\,\tenseur{I}}\,\colon\,\tsigma
+\]
+
+The deviator of a tensor can be computed using the `deviator`
+function.
+
+As it is a second order tensor, the stress deviator tensor also has a
+set of invariants, which can be obtained using the same procedure used
+to calculate the invariants of the stress tensor. It can be shown that
+the principal directions of the stress deviator tensor \(s_{ij}\) are
+the same as the principal directions of the stress tensor
+\(\sigma_{ij}\). Thus, the characteristic equation is
+
+\[
+\left| s_{ij}- \lambda\delta_{ij} \right| = -\lambda^3+J_1\lambda^2-J_2\lambda+J_3=0,
+\]
+
+where \(J_1\), \(J_2\) and \(J_3\) are the first, second, and third
+*deviatoric stress invariants*, respectively. Their values are the same
+(invariant) regardless of the orientation of the coordinate system
+chosen. These deviatoric stress invariants can be expressed as a
+function of the components of \(s_{ij}\) or its principal values \(s_1\),
+\(s_2\), and \(s_3\), or alternatively, as a function of \(\sigma_{ij}\) or
+its principal values \(\sigma_1\), \(\sigma_2\), and \(\sigma_3\). Thus,
+
+\[
+\begin{aligned}
+J_1 &= s_{kk}=0,\, \\
+J_2 &= \textstyle{\frac{1}{2}}s_{ij}s_{ji} = \Frac{1}{2}\trace{\tenseur{s}^2}\\
+&= \Frac{1}{2}(s_1^2 + s_2^2 + s_3^2) \\
+&= \Frac{1}{6}\left[(\sigma_{11} - \sigma_{22})^2 + (\sigma_{22} - \sigma_{33})^2 + (\sigma_{33} - \sigma_{11})^2 \right ] + \sigma_{12}^2 + \sigma_{23}^2 + \sigma_{31}^2 \\
+&= \Frac{1}{6}\left[(\sigma_1 - \sigma_2)^2 + (\sigma_2 - \sigma_3)^2 + (\sigma_3 - \sigma_1)^2 \right ] \\
+&= \Frac{1}{3}I_1^2-I_2 = \frac{1}{2}\left[\trace{\tenseur{\sigma}^2} - \frac{1}{3}\trace{\tenseur{\sigma}}^2\right],\,\\
+J_3 &= \det(s_{ij}) \\
+&= \Frac{1}{3}s_{ij}s_{jk}s_{ki} = \Frac{1}{3} \trace{\tenseur{s}^3}\\
+&= \Frac{1}{3}(s_1^3 + s_2^3 + s_3^3) \\
+&= s_1s_2s_3 \\
+&= \Frac{2}{27}I_1^3 - \Frac{1}{3}I_1 I_2 + I_3 = \Frac{1}{3}\left[\trace{\tenseur{\sigma}^3} - \trace{\tenseur{\sigma}^2}\trace{\tenseur{\sigma}} +\Frac{2}{9}\trace{\tenseur{\sigma}}^3\right].
+\end{aligned}
+\]
+
+where \(I_{1}\), \(I_{2}\) and \(I_{3}\) are the invariants of
+\(\tsigma\).
+
+\(J_{2}\) and \(J_{3}\) are building blocks for many isotropic yield
+critera. Classically, \(J_{2}\) is directly related to the von Mises
+stress \(\sigmaeq\):
+
+\[
+\sigmaeq=\sqrt{\Frac{3}{2}\,\tenseur{s}\,\colon\,\tenseur{s}}=\sqrt{3\,J_{2}}
+\]
+
+The first and second derivatives of \(J_{2}\) with respect to
+\(\sigma\) can be trivially implemented, as follows:
+
+~~~~{.cpp}
+constexpr const auto id  = stensor<N,real>::Id();
+constexpr const auto id4 = st2tost2<N,real>::Id();
+// first derivative of J2
+const auto dJ2  = eval(deviator(sig)/2);
+// second derivative of J2
+const auto d2J2 = eval((id4-(id^id)/3)/2);
+~~~~
+
+In comparison, the computation of the first and second derivatives of
+\(J_{3}\) with respect to \(\sigma\) are more cumbersome. In previous
+versions `TFEL`, one had to write:
+
+~~~~{.cpp}
+constexpr const auto id = stensor<N,real>::Id();
+constexpr const auto id4 = st2tost2<N,real>::Id();
+const auto I1   = trace(sig);
+const auto I2   = (I1*I1-trace(square(sig)))/2;
+const auto dI2  = I1*id-sig;
+const auto dI3  = computeDeterminantDerivative(sig);
+const auto d2I2 = (id^id)-id4;
+const auto d2I3 = computeDeterminantSecondDerivative(sig);
+// first derivative of J3
+const auto dJ3  = eval((2*I1*I1/9)*id-(I2*id+I1*dI2)/3+dI3);
+// second derivative of J3
+const auto d2J3 = eval((4*I1/9)*(id^id)-((id^dI2)+(dI2^id)+i1*d2I2)/3+d2I3);
+~~~~
+
+More efficient implementations are now available using the
+`computeDeviatorDeterminantDerivative` and
+`computeDeviatorDeterminantSecondDerivative` functions:
+
+~~~~{.cpp}
+// first derivative of J3
+const auto dJ3  = computeDeviatorDeterminantDerivative(sig);
+// second derivative of J3
+const auto d2J3 = computeDeviatorDeterminantSecondDerivative(sig);
+~~~~
+
 # The `doxygen` documentation (4/01/2018)
 
 Further documentation for advanced users has been published: the

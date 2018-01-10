@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_STENSOREXPORT_I_
-#define LIB_TFEL_STENSOREXPORT_I_ 
+#ifndef LIB_TFEL_MATH_STENSOREXPORT_IXX
+#define LIB_TFEL_MATH_STENSOREXPORT_IXX 
 
 #include<cmath>
 
@@ -175,6 +175,5 @@ namespace tfel{
 
 } // end of namespace tfel
 
-
-#endif /* LIB_TFEL_STENSOREXPORT_I_ */
+#endif /* LIB_TFEL_MATH_STENSOREXPORT_IXX */
 

@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_PERMUTATION_I_
-#define LIB_TFEL_PERMUTATION_I_ 
+#ifndef LIB_TFEL_MATH_PERMUTATION_IXX
+#define LIB_TFEL_MATH_PERMUTATION_IXX 
 
 #include<algorithm>
 
@@ -74,5 +74,5 @@ namespace tfel{
 } // end of namespace tfel
 
 
-#endif /* LIB_TFEL_PERMUTATION_I_ */
+#endif /* LIB_TFEL_MATH_PERMUTATION_IXX */
 

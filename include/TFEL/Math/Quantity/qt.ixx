@@ -11,8 +11,8 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_TFEL_QT_I_
-#define LIB_TFEL_QT_I_
+#ifndef LIB_TFEL_MATH_QT_IXX
+#define LIB_TFEL_MATH_QT_IXX
 
 #include"TFEL/Math/power.hxx"
 #include"TFEL/Math/General/UnaryResultType.hxx"
@@ -388,5 +388,5 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_QT_I_ */
+#endif /* LIB_TFEL_MATH_QT_IXX */
 

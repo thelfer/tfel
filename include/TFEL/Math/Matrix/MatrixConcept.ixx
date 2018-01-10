@@ -9,8 +9,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef TFEL_MATH_MATRIX_CONCEPT_IMPL_
-#define TFEL_MATH_MATRIX_CONCEPT_IMPL_ 1
+#ifndef TFEL_MATH_MATRIX_CONCEPT_IXX
+#define TFEL_MATH_MATRIX_CONCEPT_IXX 1
 
 namespace tfel{
 
@@ -28,4 +28,4 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* TFEL_MATH_MATRIX_CONCEPT_IMPL_ */
+#endif /* TFEL_MATH_MATRIX_CONCEPT_IXX */

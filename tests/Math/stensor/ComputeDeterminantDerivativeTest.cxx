@@ -1,5 +1,5 @@
 /*!
- * \file   StensorComputeJacobianDerivativeTest.cxx
+ * \file   ComputeDeterminantDerivativeTest.cxx
  * \brief    
  * \author Thomas Helfer
  * \date   24 déc. 2016
@@ -27,10 +27,9 @@
 
 #include"TFEL/Math/stensor.hxx"
 
-template<unsigned short N,typename F,typename real>
+template<unsigned short N,typename real>
 static tfel::math::stensor<N,real>
-getNumericalApproximation(const F& f,
-			  const tfel::math::stensor<N,real>& C,
+getNumericalApproximation(const tfel::math::stensor<N,real>& C,
 			  const real e){
   tfel::math::stensor<N,real> r;
   for(unsigned short j=0;j!=C.size();++j){
@@ -38,21 +37,21 @@ getNumericalApproximation(const F& f,
     auto Cm = C;
     Cp(j)+=e;
     Cm(j)-=e;
-    const auto Fp = f(Cp);
-    const auto Fm = f(Cm);
-    const auto dF = (Fp-Fm)/(2*e);
-    r(j)=dF;
+    const auto Jp = det(Cp);
+    const auto Jm = det(Cm);
+    const auto dJ = (Jp-Jm)/(2*e);
+    r(j)=dJ;
   }
   return r;
 } // end of getNumericalApproximation
 
-struct StensorComputeJacobianDerivativeTest final
+struct ComputeDeterminantDerivativeTest final
   : public tfel::tests::TestCase
 {
-   StensorComputeJacobianDerivativeTest()
+   ComputeDeterminantDerivativeTest()
     : tfel::tests::TestCase("TFEL/Math",
-			    "StensorComputeJacobianDerivativeTest")
-  {} // end of StensorComputeJacobianDerivativeTest
+			    "ComputeDeterminantDerivativeTest")
+  {} // end of ComputeDeterminantDerivativeTest
   tfel::tests::TestResult execute() override
   {
     const double sqrt2 = std::sqrt(2.);
@@ -81,12 +80,9 @@ struct StensorComputeJacobianDerivativeTest final
 private:
   template<unsigned short N>
   void check(const tfel::math::stensor<N,double>& s){
-    auto J = [](const tfel::math::stensor<N,double>& v){
-      return det(v);
-    };
     TFEL_CONSTEXPR const auto eps   = 1e-2;
     TFEL_CONSTEXPR const auto prec  = 1e-13;
-    auto ndJ = getNumericalApproximation(J,s,eps);
+    auto ndJ = getNumericalApproximation(s,eps);
     auto dJ  = computeDeterminantDerivative(s);
     for(unsigned short i=0;i!=s.size();++i){
       if(std::abs(dJ(i)-ndJ(i))>prec){
@@ -98,14 +94,14 @@ private:
   }
 };
 
-TFEL_TESTS_GENERATE_PROXY(StensorComputeJacobianDerivativeTest,
-			  "StensorComputeJacobianDerivativeTest");
+TFEL_TESTS_GENERATE_PROXY(ComputeDeterminantDerivativeTest,
+			  "ComputeDeterminantDerivativeTest");
 
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main()
 {
   auto& m = tfel::tests::TestManager::getTestManager();
   m.addTestOutput(std::cout);
-  m.addXMLTestOutput("StensorComputeJacobianDerivativeTest.xml");
+  m.addXMLTestOutput("ComputeDeterminantDerivativeTest.xml");
   return m.execute().success() ? EXIT_SUCCESS : EXIT_FAILURE;
 }

@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_QTOPERATIONS_I_
-#define LIB_TFEL_QTOPERATIONS_I_ 
+#ifndef LIB_TFEL_MATH_QTOPERATIONS_IXX
+#define LIB_TFEL_MATH_QTOPERATIONS_IXX 
 
 namespace tfel{
 
@@ -108,5 +108,5 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_QTOPERATIONS_I_ */
+#endif /* LIB_TFEL_MATH_QTOPERATIONS_IXX */
 
