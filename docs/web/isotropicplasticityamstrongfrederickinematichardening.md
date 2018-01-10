@@ -377,8 +377,8 @@ nu.setGlossaryName("PoissonRatio");
 
 ### Definition of the implicit system
 
-The definition of the implicit system is done in the `@Integrator code
-block:
+The definition of the implicit system is done in the `@Integrator`
+code block:
 
 ~~~~{.cpp}
 @Integrator{
