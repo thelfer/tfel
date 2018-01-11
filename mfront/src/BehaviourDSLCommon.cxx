@@ -4915,7 +4915,6 @@ namespace mfront{
 	os << "this->" << v.first.name  << "0  = this->"  << v.first.name << "1;\n";
       }
     }
-    os << "this->T   += this->dT;\n";
     for(const auto& v : md.getExternalStateVariables()){
       os << "this->" << v.name << " += this->d" << v.name << ";\n";
     }
