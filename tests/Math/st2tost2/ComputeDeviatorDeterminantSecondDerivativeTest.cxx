@@ -90,7 +90,7 @@ struct ComputeDeviatorDeterminantSecondDerivativeTest final
     using Stensor  = stensor<N,double>;
     using Stensor4 = st2tost2<N,double>;
     using size_type = typename stensor<N,double>::size_type;
-    constexpr const auto id = Stensor::Id();
+    const auto id = Stensor::Id();
     const double prec = 1.e-10;
     const stensor<N,double> s(values);
     const auto i1 = trace(s);
