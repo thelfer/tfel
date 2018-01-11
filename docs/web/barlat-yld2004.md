@@ -1,5 +1,5 @@
 % Implementation of Barlat' Yld2004 behaviour
-% Thomas Helfer
+% Thomas Helfer, Dominique Deloison
 % 7/01/2018
 
 \newcommand{\absvalue}[1]{{\left|#1\right|}}
@@ -40,13 +40,13 @@ where \(\lambda\) and \(\mu\) are the first and second Lamé parameters.
 
 The yield surface is given by:
 \[
-\sigmaeq^{B}-\sigma_{0}\left(1+\Frac{p}{p_{0}}\right)^{n}=0
+\Frac{\sigmaeq^{B}}{\sigma_{0}}-\left(1+\Frac{p}{p_{0}}\right)^{np}=0
 \]
 where:
 
 - \(\sigmaeq^{B}\) is the Barlat equivalent stress defined hereafter.
 - \(p\) is the equivalent plastic strain.
-- \(\sigma_{0}\), \(p_{0}\) and \(n\) are material parameters.
+- \(\sigma_{0}\), \(p_{0}\) and \(np\) are material parameters.
 
 The Barlat equivalent stress is defined as follows (See @barlat_linear_2005):
 \[
@@ -131,17 +131,17 @@ are introduced:
 The elastic strain is automatically defined by the
 `StandardElasticity` brick.
 
-The latter could be considered as an integration variable, which means
-that its value would not be saved from one time step to
-antoher. However, for post-processing purposes, we choose to keep it
-as a state variable.
-
 ## Elastic prediction
 
 First, an elastic prediction of the stress \(\tsigma^{\mathrm{tr}}\)
 is made (The following expression is not valid in plane stress
-hypothesis, see below):
-\[ \tsigma^{\mathrm{tr}}=\lambda\,\trace{\bts{\tepsilonel}+\theta\,\Delta\,\tepsilonto}\,\tenseur{I}+2\,\mu\,\paren{\bts{\tepsilonel}+\theta\,\Delta\,\tepsilonto} \]
+hypothesis, this is the reason why we will use the
+`computeElasticPrediction` method defined by the `StandardElasticity`
+brick, see below):
+
+\[
+\tsigma^{\mathrm{tr}}=\lambda\,\trace{\bts{\tepsilonel}+\theta\,\Delta\,\tepsilonto}\,\tenseur{I}+2\,\mu\,\paren{\bts{\tepsilonel}+\theta\,\Delta\,\tepsilonto}
+\]
 
 - If the predicted stress is inside the elastic domain, no plastic
   flow occurs.
@@ -170,7 +170,7 @@ The derivatives of this equation with respect to
 To determine the equivalent plastic strain increment, the following
 equation must be satisfied:
 \[
-f_{p}=\mts{\sigmaeq^{B}}-\sigma_{Y}=0
+f_{p}=\Frac{\mts{\sigmaeq^{B}}}{\sigma0}-\left(1+\Frac{\mts{p}}{p_{0}}\right)^{np}=0
 \]
 
 The derivatives of this equation with respect to
@@ -178,8 +178,8 @@ The derivatives of this equation with respect to
 \[
 \left\{
 \begin{aligned}
-\deriv{f_{p}}{\Delta\,\tepsilonel} &= 2\,\mu\,\theta\,\mts{\tenseur{n}^{B}}\\
-\deriv{f_{p}}{\Delta\,p}           &= 0\\
+\deriv{f_{p}}{\Delta\,\tepsilonel} &= \Frac{2\,\mu\,\theta}{\sigma_{0}}\,\mts{\tenseur{n}^{B}}\\
+\deriv{f_{p}}{\Delta\,p}           &= -\Frac{np\,\theta}{p0}\left(1+\Frac{\mts{p}}{p_{0}}\right)^{np-1}\\
 \end{aligned}
 \right.
 \]
@@ -244,46 +244,223 @@ The usage of the `StandardElasticity` is introduced as follows:
 @Brick StandardElasticity;
 ~~~~
 
-## Implicit system
+## Numerical parameters
 
-The following example computes the Barlat equivalent stress, its
-normal and second derivative:
+The following part of file give some default values for numerical
+parameters used by the integration algorithm:
 
 ~~~~{.cpp}
-const auto l1 = makeBarlatLinearTransformation<N,double>(-0.069888,0.936408,
-                                                         0.079143,1.003060,
-                                                         0.524741,1.363180,
-                                                         1.023770,1.069060,
-                                                         0.954322);
-const auto l2 = makeBarlatLinearTransformation<N,double>(-0.981171,0.476741,
-    							                         0.575316,0.866827,
-    							                         1.145010,-0.079294,
-    							                         1.051660,1.147100,
-    							                         1.404620);
-stress seq;
-Stensor  n;
-Stensor4 dn;
-std::tie(seq,n,dn) = computeBarlatStressSecondDerivative(s,l1,l2,a,seps);
+@Epsilon 1.e-16;
+@Theta   1;
 ~~~~
 
-In this example, `s` is the stress tensor, `a` is the Hosford
-exponent, `seps` is a numerical parameter used to detect when two
-eigenvalues are equal.
+## Elastic properties and yield stress
 
-If `C++-17` is available, the previous code can be made much more readable:
+The material properties are hard-coded. The
+`@ElasticMaterialProperties` is used to declare the Young modulus and
+the Poisson ratio.
 
 ~~~~{.cpp}
-const auto l1 = makeBarlatLinearTransformation<N,double>(-0.069888,0.936408,
-                                                         0.079143,1.003060,
-                                                         0.524741,1.363180,
-                                                         1.023770,1.069060,
-                                                         0.954322);
-const auto l2 = makeBarlatLinearTransformation<N,double>(-0.981171,0.476741,
-    							                         0.575316,0.866827,
-    							                         1.145010,-0.079294,
-    							                         1.051660,1.147100,
-    							                         1.404620);
-const auto [seq,n,dn] = computeBarlatStressSecondDerivative(s,l1,l2,a,seps);
+@ElasticMaterialProperties {150e9,0.3};
+~~~~
+
+This keyword automatically declares two parameters called
+`YoungModulus` and `PoissonRatio`.
+
+In the `Implicit` scheme, the lame coefficients are automatically
+deduced from the Young modulus and the Poisson ratio. They are
+accessible though the `lambda` and `mu` local variables which are
+automatically defined.
+
+The parameters associated with the plastic part of the behaviour are
+defined as follows:
+
+~~~~{.cpp}
+@Parameter a    = 8;
+// 646*0.025**0.227
+@Parameter sig0 = 150e6;
+sig0.setEntryName("HardeningReferenceStress");
+@Parameter p0   = 1.e-4;
+p0.setEntryName("HardeningReferenceStrain");
+@Parameter np   = 2;
+np.setEntryName("BarlatExponent");
+@Parameter c1p[9]  = {-0.069888,0.079143,0.936408,
+		      0.524741,1.00306,1.36318,
+		      0.954322,1.06906,1.02377};
+c1p.setEntryName("BarlatLinearTransformationCoefficients1");
+@Parameter c2p[9]  = {0.981171,0.575316,0.476741,
+		      1.14501,0.866827,-0.079294,
+		      1.40462,1.1471,1.05166};
+c2p.setEntryName("BarlatLinearTransformationCoefficients2");
+~~~~
+
+Here `a` stands for the Barlat exponent, `sig0`, `p0` and `np` are the
+parameters describing the hardening of the material.
+
+The parameters associated with the first linear transformation are
+given in the following order (see [this page](tensors.html) for
+details):
+
+\[
+\left(c^{1}_{xy},c^{1}_{yx},c^{1}_{xz},c^{1}_{zx},c^{1}_{yz},c^{1}_{zy},c^{1}_{xy},c^{1}_{xz},c^{1}_{yz}\right)
+\]
+
+> **Note** In his paper, Barlat and coworkers seems to use the
+> following convention for storing symmetric tensors:
+> 
+> \[
+> \begin{pmatrix}
+> xx & yy & zz & yz & zx & xy
+> \end{pmatrix}
+> \]
+> 
+> which is not consistent with the
+> `TFEL`/`Cast3M`/`Abaqus`/`Ansys` conventions:
+> 
+> \[
+> \begin{pmatrix}
+> xx & yy & zz & xy & xz & yz
+> \end{pmatrix}
+> \]
+> 
+> Therefore, if one wants to uses coeficients \(c^{B}\) given
+> by Barlat et al., one shall "swap" the appropriate coefficients.
+
+## State variables
+
+The elastic strain is automatically declared the `StandardElasticity`
+brick. The associated variable is `eel`.
+
+The following statement introduces the equivalent plastic strain named
+`p`:
+
+~~~~{.cpp}
+@StateVariable strain p;
+p.setGlossaryName("EquivalentPlasticStrain");
+~~~~
+
+## Local variables declaration
+
+For the implementations, we will need three local variables:
+
+- a boolean `b`. This boolean will be `true` if a plastic loading
+  occurs.
+- two fourth order tensors `l1` and `l2` that stands for the linear
+  transformation of the stress tensors.
+
+~~~~{.cpp}
+@LocalVariable bool b;
+@LocalVariable Stensor4 l1,l2;
+~~~~
+
+## Local variable initialization
+
+The main goal of the local variable initialization is to test if the
+elastic prediction of the stress lies inside the yield surface.
+
+~~~~{.cpp}
+@InitializeLocalVariables{
+  // when using the `Plate` orthotropic axes convention, all the
+  // modelling hypotheses uses the same convention, so we can just
+  // use the `makeBarlatLinearTransformation` function with the
+  // space dimension N as the template parameter
+  l1 = makeBarlatLinearTransformation<N>(c1p[0],c1p[1],c1p[2],
+					                     c1p[3],c1p[4],c1p[5],
+					                     c1p[6],c1p[7],c1p[8]);
+  l2 = makeBarlatLinearTransformation<N>(c2p[0],c2p[1],c2p[2],
+	                                     c2p[3],c2p[4],c2p[5],
+					                     c2p[6],c2p[7],c2p[8]);
+  const stress seps = 1.e-10*young;
+  const auto sigel = computeElasticPrediction();
+  const auto seqel = computeBarlatStress(sigel,l1,l2,a,seps);
+  b = seqel/sig0>pow(1+p/p0,np);
+}
+~~~~
+
+The `computeElasticPrediction` method, provided by the
+`StandardElasticity` brick, computes the elastic prediction of the
+stress and takes into account the modelling hypothesis. This
+prediction is thus valid under the plane stress hypothesis.
+
+The `makeBarlatLinearTransformation` and the `computeBarlatStress`
+functions are described in details [here](tensors.hml)
+
+## Implicit system
+
+The code describing the implicit system is rather short:
+
+~~~~{.cpp}
+@Integrator{
+  const stress seps = 1.e-10*young;
+  if(!b){
+    // elastic loading, nothing to be done
+    return true;
+  }
+  const auto p_ = p+theta*dp;
+  if(p_<0){
+    return false;
+  }
+  real seq;
+  Stensor n;
+  Stensor4 dn;
+  const auto tmp = pow(1+p_/p0,np);
+  std::tie(seq,n,dn) = computeBarlatStressSecondDerivative(sig,l1,l2,a,seps);
+  feel        += dp*n;
+  dfeel_ddeel += 2*mu*theta*dp*dn;
+  dfeel_ddp    = n;
+  fp           = seq/sig0-tmp;
+  dfp_ddeel    = (2*mu*theta)/sig0*n;
+  dfp_ddp      = (np*theta)/(p0+p_)*tmp;
+}
+~~~~
+
+It shall be noted that, at the beginning of this code block:
+
+- `feel` has been initialized to
+  \(\Delta\,\tepsilonel-\Delta\,\tepsilonto\) by the
+  `StandardElasticity` brick
+- `fp` has been initialized to \(\Delta\,p\) following standard
+  conventions defined in the the `Implicit` domain specific language.
+- the jacobian has been set to identity, following standard
+  conventions defined in the `Implicit` domain specific language.
+
+Thus, all the variables have been set to describe a purely elastic
+behaviour. Hence, nothing is to be done if the boolean variable `b` is
+`false`. In this case, one just return `true`.
+
+If a plastic loading has been predicted, one uses the
+`computeBarlatStressSecondDerivative` function which returns:
+
+- the Barlat stress `seq`
+- the Barlat stress derivative `n` with respect to the stress
+- the Barlat stress second derivative `dn` with respect to the stress
+
+The implicit system is then readily written, using expressions given
+in the previous paragraph.
+
+In `C++17`, the previous code can be more simplier and smaller, using
+*structured bindings*:
+
+~~~~{.cpp}
+@Integrator{
+  const stress seps = 1.e-10*young;
+  if(!b){
+    // elastic loading, nothing to be done
+    return true;
+  }
+  const auto p_ = p+theta*dp;
+  if(p_<0){
+    return false;
+  }
+  const auto tmp = pow(1+p_/p0,np);
+  const auto [seq,n,dn] = computeBarlatStressSecondDerivative(sig,l1,l2,a,seps);
+  feel        += dp*n;
+  dfeel_ddeel += 2*mu*theta*dp*dn;
+  dfeel_ddp    = n;
+  fp           = seq/sig0-tmp;
+  dfp_ddeel    = (2*mu*theta)/sig0*n;
+  dfp_ddp      = (np*theta)/(p0+p_)*tmp;
+}
 ~~~~
 
 # References

@@ -5851,6 +5851,7 @@ tests/Material/FiniteStrainBehaviourTangentOperator8.cxx -text
 tests/Material/FiniteStrainBehaviourTangentOperator9.cxx -text
 tests/Material/HosfordSecondDerivativeTest.cxx -text
 tests/Material/Hyperelasticity.cxx -text
+tests/Material/IsotropicCazacuYieldTest.cxx -text
 tests/Material/LogarithmicStrainHandlerTest.cxx -text
 tests/Material/Makefile.am -text
 tests/Material/Ogden.cxx -text

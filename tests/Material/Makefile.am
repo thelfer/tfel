@@ -26,7 +26,8 @@ test_PROGRAMS = boundsCheck \
 		SlipSystemsDescriptionTest             \
 		HosfordSecondDerivativeTest            \
 		BarlatSecondDerivativeTest             \
-		BarlatSecondDerivativeTest2
+		BarlatSecondDerivativeTest2            \
+		IsotropicCazacuYieldTest
 
 LDADD = -lTFELMaterial -lTFELMath       \
 	-lTFELUtilities -lTFELException \
@@ -61,6 +62,7 @@ SlipSystemsDescriptionTest_SOURCES  = SlipSystemsDescriptionTest.cxx
 HosfordSecondDerivativeTest_SOURCES = HosfordSecondDerivativeTest.cxx
 BarlatSecondDerivativeTest_SOURCES  = BarlatSecondDerivativeTest.cxx
 BarlatSecondDerivativeTest2_SOURCES = BarlatSecondDerivativeTest2.cxx
+IsotropicCazacuYieldTest_SOURCES    = IsotropicCazacuYieldTest.cxx
 
 TESTS=$(test_PROGRAMS)
 

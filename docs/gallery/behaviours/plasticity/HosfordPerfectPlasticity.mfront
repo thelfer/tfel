@@ -44,5 +44,11 @@ p.setGlossaryName("EquivalentPlasticStrain");
   dfeel_ddp    = n;
   fp           = (seq-sigy)/young;
   dfp_ddeel    = 2*mu*theta*n/young;
-  dfp_ddp      = 0;
+  // this is a small trick that is necessary if the first time
+  // step leads to a plastic loading:
+  // on this case, the stress are zero on the first iteration and
+  // this results in a null line in the jacobian matrix because
+  // the normal is then undefined.
+  // To avoid the issue, we arbitrarily set dfp_ddp to 1 in that case. 
+  dfp_ddp      = (seq<seps) ? 1:  0;
 }

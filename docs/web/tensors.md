@@ -493,13 +493,13 @@ The computation of \(\deriv{J_{2}}{\tsigma}\) is straight-forward by
 chain rule, using the expression of the derivatives of the invariants
 of a tensor (see Section&nbsp;@sec:invariants:derivatives):
 \[
-\deriv{J_{2}}{\tsigma}= \deriv{J_{2}}{\tenseur{s}}\,\dot\,\deriv{\tenseur{s}}{\tsigma}= \Frac{1}{2}\,\tenseur{s}
+\deriv{J_{2}}{\tsigma}= \deriv{J_{2}}{\tenseur{s}}\,\dot\,\deriv{\tenseur{s}}{\tsigma}= \tenseur{s}
 \]
 
 In pratice, this can be implemented as follows:
 
 ~~~~{.cpp}
-const auto dJ2 = eval(deviator(sig)/2);
+const auto dJ2 = deviator(sig);
 ~~~~
 
 For the expression of \(\deriv{J_{3}}{\tsigma}\), one can derive its
@@ -539,7 +539,7 @@ with respect to \(\tsigma\).
 The second derivative \(\sderiv{J_{2}}{\tsigma}\) is straight-forward:
 \[
 \sderiv{J_{2}}{\tsigma}=
-\Frac{1}{2}\,\paren{\tenseurq{I}-\Frac{1}{3}\,\tenseur{I}\,\otimes\,\tenseur{I}}
+\tenseurq{I}-\Frac{1}{3}\,\tenseur{I}\,\otimes\,\tenseur{I}
 \]
 
 It can be readily implemented:
@@ -547,7 +547,7 @@ It can be readily implemented:
 ~~~~{.cpp}
 constexpr const auto id  = stensor<N,real>::Id();
 constexpr const auto id4 = st2tost2<N,real>::Id();
-const auto d2J2 = eval((id4-(id^id)/3)/2);
+const auto d2J2 = eval(id4-(id^id)/3);
 ~~~~
 
 The second derivative \(\sderiv{J_{3}}{\tsigma}\) is also
@@ -578,7 +578,7 @@ optimised `computeDeviatorDeterminantSecondDerivative` function as
 follows:
 
 ~~~~{.cpp}
-const auto dJ3 = computeDeviatorDeterminantSecondDerivative(J);
+const auto d2J3 = computeDeviatorDeterminantSecondDerivative(J);
 ~~~~
 
 ## Eigenvalues, eigenvectors and eigentensors of symmetric tensors
@@ -1003,8 +1003,8 @@ const auto l1 = makeBarlatLinearTransformation<3>(c_12,c_21,c_13,c_31,
                                                   c_23,c_32,c_44,c_55,c_66);
 ~~~~
 
-> **Note** In his paper, Barlat and coworkers uses the following convention for
-> storing symmetric tensors:
+> **Note** In his paper, Barlat and coworkers seems to use the
+> following convention for storing symmetric tensors:
 > 
 > \[
 > \begin{pmatrix}

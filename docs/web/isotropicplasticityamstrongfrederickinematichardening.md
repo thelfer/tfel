@@ -18,7 +18,6 @@
 \newcommand{\tsigma}{\underline{\sigma}}
 \newcommand{\sigmaeq}{\sigma_{\mathrm{eq}}}
 \newcommand{\sigmaH}{\sigma_{H}}
-\newcommand{\trace}[1]{{\mathrm{tr}\paren{#1}}}
 \newcommand{\Frac}[2]{{{\displaystyle \frac{\displaystyle #1}{\displaystyle #2}}}}
 \newcommand{\deriv}[2]{{\displaystyle \frac{\displaystyle \partial #1}{\displaystyle \partial #2}}}
 \newcommand{\sderiv}[2]{{\displaystyle \frac{\displaystyle \partial^{2} #1}{\displaystyle \partial #2^{2}}}}

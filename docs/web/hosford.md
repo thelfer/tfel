@@ -127,6 +127,10 @@ equation must be satisfied:
 f_{p}=\mts{\sigmaeq^{H}}-\sigma_{Y}=0
 \]
 
+In the implementation described below, this equation will be
+normalised by the Young modulus to ensure that all equations have the
+same magnitude.
+
 The derivatives of this equation with respect to
 \(\Delta\,\tepsilonel\) and \(\Delta\,p\) are given by:
 \[
@@ -226,8 +230,10 @@ the Poisson ratio.
 @ElasticMaterialProperties {150e9,0.3};
 ~~~~
 
-In the `Implicit` scheme, the lame coefficient are automatically
-deduced from the Young modulus and the Poisson ratio.
+In the `Implicit` scheme, the lame coefficients are automatically
+deduced from the Young modulus and the Poisson ratio. They are
+accessible though the `lambda` and `mu` local variables which are
+automatically defined.
 
 The parameters associated with the plastic part of the behaviour are
 defined as follows:
@@ -301,7 +307,13 @@ The code describing the implicit system is rather short:
   dfeel_ddp    = n;
   fp           = (seq-sigy)/young;
   dfp_ddeel    = 2*mu*theta*n/young;
-  dfp_ddp      = 0;
+  // this is a small trick that is necessary if the first time
+  // step leads to a plastic loading:
+  // on this case, the stress are zero on the first iteration and
+  // this results in a null line in the jacobian matrix because
+  // the normal is then undefined.
+  // To avoid the issue, we arbitrarily set dfp_ddp to 1 in that case. 
+  dfp_ddp      = (seq<seps) ? 1:  0;
 }
 ~~~~
 

@@ -1,9 +1,10 @@
 % Publications
 % Helfer Thomas
-% July 21, 2015
+% January 11, 2018
 
 ---
 nocite: |
+	@guenot-delahaie_simulation_2017
 	@michel_new_2017
 	@bary_analytical_2017
 	@gelebart_fft_2017

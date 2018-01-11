@@ -84,9 +84,9 @@ The first and second derivatives of \(J_{2}\) with respect to
 constexpr const auto id  = stensor<N,real>::Id();
 constexpr const auto id4 = st2tost2<N,real>::Id();
 // first derivative of J2
-const auto dJ2  = eval(deviator(sig)/2);
+const auto dJ2  = deviator(sig);
 // second derivative of J2
-const auto d2J2 = eval((id4-(id^id)/3)/2);
+const auto d2J2 = eval(id4-(id^id)/3);
 ~~~~
 
 In comparison, the computation of the first and second derivatives of
