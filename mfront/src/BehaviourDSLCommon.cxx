@@ -4145,7 +4145,7 @@ namespace mfront{
     if(m.is<BehaviourDescription::ComputedMaterialProperty>()){
       const auto& cmp = m.get<BehaviourDescription::ComputedMaterialProperty>();
       const auto& mpd = *(cmp.mpd);
-      if((hasBounds(mpd.inputs))&&(hasPhysicalBounds(mpd.inputs))){
+      if(!((hasBounds(mpd.inputs))&&(hasPhysicalBounds(mpd.inputs)))){
 	return;
       }
       const auto& n = MFrontMaterialPropertyInterface().getFunctionName(mpd);
