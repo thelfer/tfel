@@ -21,6 +21,31 @@ $ tfel-config --cxx-standard
 
 # Tickets fixed
 
+## Ticket #104: Checks of material properties' bounds are not generated anymore 
+
+The checks for material properties are not generated any more. This is
+due to an ill-formed test in `BehaviourDSLCommon.cxx` in the
+`writeMaterialPropertyCheckBoundsEvaluation` method of the
+`BehaviourDSLCommon` class.
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/104/>
+
+## Ticket #103: The temperature is updated twice in updateExternalStateVariables
+
+
+The temperature is updated twice in
+`updateExternalStateVariables`. This is due to the fact that the
+temperature has been explicitly integrated in the external state
+variables in the 3.1 release (in previous releases, the temperature
+was treated independently, which led to lots of code duplication and
+special cases).
+
+This bug affects behaviours relying on local sub-stepping, a feature
+provided by the `Cast3M` and `Cyrano` interfaces. The other interfaces
+are not affected.
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/103/>
+
 ## Ticket #102: The usage of the constants defined in the PhysicalConstants class is broken in debug mode
 
 The various constants defined in the `PhysicalConstants` class are
