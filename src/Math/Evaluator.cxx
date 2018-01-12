@@ -940,6 +940,8 @@ namespace tfel
 	throw_if(v.empty());
 	auto ps = v.begin();
 	throw_if(isdigit(*ps));
+	throw_if((!isalpha(*ps))&&(!(isdigit(*ps)))&&(*ps!='_')&&(*ps!='$'));
+	++ps;
 	for(;ps!=v.end();++ps){
 	  throw_if((!isalpha(*ps))&&(!(isdigit(*ps)))&&(*ps!='_'));
 	  throw_if(isspace(*ps));
