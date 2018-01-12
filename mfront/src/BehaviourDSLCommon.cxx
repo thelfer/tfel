@@ -4168,9 +4168,10 @@ namespace mfront{
 								 std::function<std::string(const MaterialPropertyInput&)>& f) const
   {
     if(m.is<BehaviourDescription::ExternalMFrontMaterialProperty>()){
-      const auto& cmp = m.get<BehaviourDescription::ExternalMFrontMaterialProperty>();
+    const auto& cmp = m.get<BehaviourDescription::ExternalMFrontMaterialProperty>();
       const auto& mpd = *(cmp.mpd);
-      if((hasBounds(mpd.inputs))&&(hasPhysicalBounds(mpd.inputs))){
+      if(!((hasBounds(mpd.inputs))&&
+	   (hasPhysicalBounds(mpd.inputs)))){
 	return;
       }
       const auto& n = MFrontMaterialPropertyInterface().getFunctionName(mpd);
