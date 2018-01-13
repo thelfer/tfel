@@ -32,6 +32,8 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Material/Hill.ixx			                                                     \
 			TFEL/Material/Hosford.hxx			                                             \
 			TFEL/Material/Hosford.ixx			                                             \
+			TFEL/Material/OrthotropicStressLinearTransformation.hxx                                      \
+			TFEL/Material/OrthotropicStressLinearTransformation.ixx                                      \
 			TFEL/Material/Barlat.hxx			                                             \
 			TFEL/Material/Barlat.ixx			                                             \
 			TFEL/Material/PiPlane.hxx                                                                    \

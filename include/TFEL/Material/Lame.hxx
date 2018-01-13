@@ -30,7 +30,7 @@ namespace tfel{
      * \brief compute the first Lame's coefficient
      */
     template<typename T>
-    TFEL_MATERIAL_INLINE T computeLambda(const T young, const T nu)
+    constexpr T computeLambda(const T young, const T nu)
     {
       return nu*young/((1+nu)*(1-2*nu));
     }
@@ -39,7 +39,7 @@ namespace tfel{
      * \brief compute the first Lame's coefficient
      */
     template<typename T>
-    TFEL_MATERIAL_INLINE tfel::math::qt<tfel::math::Stress,T> 
+    constexpr tfel::math::qt<tfel::math::Stress,T> 
     computeLambda(const tfel::math::qt<tfel::math::Stress,T> young,
 		  const tfel::math::qt<tfel::math::NoUnit,T> nu)
     {
@@ -50,7 +50,7 @@ namespace tfel{
      * \brief compute the second Lame's coefficient
      */
     template<typename T>
-    TFEL_MATERIAL_INLINE T computeMu(const T young, const T nu)
+    constexpr T computeMu(const T young, const T nu)
     {
       return young/(2*(1+nu));
     }
@@ -59,7 +59,7 @@ namespace tfel{
      * \brief compute the second Lame's coefficient
      */
     template<typename T>
-    TFEL_MATERIAL_INLINE tfel::math::qt<tfel::math::Stress,T> 
+    constexpr tfel::math::qt<tfel::math::Stress,T> 
     computeMu(const tfel::math::qt<tfel::math::Stress,T> young, 
 	      const tfel::math::qt<tfel::math::NoUnit,T> nu)
     {

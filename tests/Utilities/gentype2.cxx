@@ -69,7 +69,7 @@ struct GenTypeTest2 final
     : tfel::tests::TestCase("TFEL/Utilities",
 			    "GenTypeTest2")
   {} // end of GenTypeTest2
-  tfel::tests::TestResult execute() final
+  tfel::tests::TestResult execute() override
   {
     using namespace std;
     using namespace tfel::utilities;

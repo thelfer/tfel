@@ -4170,8 +4170,8 @@ namespace mfront{
     if(m.is<BehaviourDescription::ExternalMFrontMaterialProperty>()){
     const auto& cmp = m.get<BehaviourDescription::ExternalMFrontMaterialProperty>();
       const auto& mpd = *(cmp.mpd);
-      if(!((hasBounds(mpd.inputs))&&
-	   (hasPhysicalBounds(mpd.inputs)))){
+      if((!hasBounds(mpd.inputs))&&
+	 (!(hasPhysicalBounds(mpd.inputs)))){
 	return;
       }
       const auto& n = MFrontMaterialPropertyInterface().getFunctionName(mpd);
@@ -5001,7 +5001,8 @@ namespace mfront{
        << "#include\"TFEL/Material/Lame.hxx\"\n"
        << "#include\"TFEL/Material/Hosford.hxx\"\n";
     if(this->mb.getSymmetryType()==ORTHOTROPIC){
-      os << "#include\"TFEL/Material/Hill.hxx\"\n"
+      os << "#include\"TFEL/Material/OrthotropicStressLinearTransformation.hxx\"\n"
+	 << "#include\"TFEL/Material/Hill.hxx\"\n"
 	 << "#include\"TFEL/Material/Barlat.hxx\"\n"
 	 << "#include\"TFEL/Material/OrthotropicAxesConvention.hxx\"\n";
     }
@@ -6076,7 +6077,6 @@ namespace mfront{
 	os << "this->" <<v.first.name  << "1 = (1-time_scaling_factor)*(behaviourData." <<v.first.name  << "0)+time_scaling_factor*(this->" <<v.first.name  << "1);\n";
       }
     }
-    os << "this->dT   *= time_scaling_factor;\n";
     for(const auto& v : md.getExternalStateVariables()){
       os << "this->d" << v.name << " *= time_scaling_factor;\n";
     }

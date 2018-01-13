@@ -141,7 +141,9 @@ MFRONTS= DDIF2.mfront                                                      \
 	 ComputeThermalExpansion2.mfront                                   \
 	 ComputeThermalExpansion3.mfront                                   \
 	 ParameterTest.mfront                                              \
-	 ParameterTest2.mfront
+	 ParameterTest2.mfront                                             \
+	 ElasticMaterialPropertiesBoundsCheckTest.mfront                   \
+	 TemperatureUpdateOnSubSteppingCheck.mfront
 
 testsdir = $(pkgdatadir)/mfront/tests/behaviours
 tests_DATA = $(MFRONTS)

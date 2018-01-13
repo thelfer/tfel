@@ -140,7 +140,9 @@ set(mfront_tests_SOURCES
   ComputeThermalExpansion2
   ComputeThermalExpansion3
   ParameterTest
-  ParameterTest2)
+  ParameterTest2
+  ElasticMaterialPropertiesBoundsCheckTest
+  TemperatureUpdateOnSubSteppingCheck)
 
 mfront_dependencies(MFrontCastemBehaviours
   Inconel600_YoungModulus
@@ -180,7 +182,8 @@ mfront_dependencies(MFrontCastemBehaviours
   T91MartensiticSteel_Rinf_ROUX2007
   T91MartensiticSteel_ThermalExpansion_ROUX2007
   T91MartensiticSteel_YieldStress_ROUX2007
-  T91MartensiticSteel_YoungModulus_ROUX2007)
+  T91MartensiticSteel_YoungModulus_ROUX2007
+  YoungModulusBoundsCheckTest)
   
 mfront_behaviour_check_library(MFrontCastemBehaviours umat  ${mfront_tests_SOURCES})
 
@@ -675,6 +678,11 @@ test_castem(computethermalexpansion2)
 test_castem(computethermalexpansion3)
 test_castem(parametertest)
 test_castem(parametertest2)
+
+test_castem(elasticmaterialpropertiesboundschecktest
+  NO_XML_OUTPUT WILL_FAIL)
+test_castem(temperatureupdateonsubsteppingcheck)
+
 
 macro(test_castem_cxx test_arg)
   if(CMAKE_CONFIGURATION_TYPES)

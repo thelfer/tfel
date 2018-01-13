@@ -1666,6 +1666,8 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/castem/castemcomputethermalexpansion3.mtest
 	   mfront/tests/behaviours/castem/castemparametertest.mtest
    	   mfront/tests/behaviours/castem/castemparametertest2.mtest
+   	   mfront/tests/behaviours/castem/castemelasticmaterialpropertiesboundschecktest.mtest
+   	   mfront/tests/behaviours/castem/castemtemperatureupdateonsubsteppingcheck.mtest
            mfront/tests/behaviours/castem/dgibi/Makefile
            mfront/tests/behaviours/castem2/Makefile   
            mfront/tests/behaviours/castem2/castem2burger.mtest
@@ -2650,6 +2652,8 @@ AC_OUTPUT([debug.sh
        	   mfront/tests/behaviours/cyrano/cyranoaxialgrowth4.mtest
   	   mfront/tests/behaviours/cyrano/cyranoparametertest.mtest
    	   mfront/tests/behaviours/cyrano/cyranoparametertest2.mtest
+   	   mfront/tests/behaviours/cyrano/cyranoelasticmaterialpropertiesboundschecktest.mtest
+   	   mfront/tests/behaviours/cyrano/cyranotemperatureupdateonsubsteppingcheck.mtest
   	   mfront/tests/behaviours/uanderson/Makefile	   
   	   mfront/tests/behaviours/uanderson/uandersonageingburger.mtest
   	   mfront/tests/behaviours/uanderson/uandersonanistropiclemaitreviscoplasticbehaviour.mtest

@@ -1,0 +1,44 @@
+@DSL Default;
+@Behaviour TemperatureUpdateOnSubSteppingCheck;
+@Author Thomas Helfer;
+@Date 13/01/2018;
+@Description {
+  "This behaviour is used to check that its "
+  "the temperature is correctly updated when "
+  "sub-stepping is enabled."
+};
+
+@UMATUseTimeSubStepping[umat] true;
+@UMATMaximumSubStepping[umat] 20;
+@CyranoUseTimeSubStepping[cyrano] true;
+@CyranoMaximumSubStepping[cyrano] 20;
+
+// time at the beginning time of the time step
+@StateVariable real ct;
+
+@InitLocalVariables{
+  if(dt>1){
+    throw(DivergenceException());
+  }
+  constexpr const auto e  = numeric_limits<real>::epsilon();
+  constexpr const auto Ti = 293.15;
+  constexpr const auto Te = 1223.15;
+  constexpr const auto te = 3600;
+  const auto Tt = Ti+(Te-Ti)*(ct/te);
+  if(std::abs(T-Tt)>100*Te*e){
+    throw(runtime_error("invalid temperature value"));
+  }
+}
+
+@ProvidesSymmetricTangentOperator;
+@Integrator{
+  constexpr stress young = 150e9;
+  constexpr real nu = 0.3;
+  constexpr const auto lambda = computeLambda(young,nu);
+  constexpr const auto mu     = computeMu(young,nu);
+  sig = lambda*trace(eto+deto)*StrainStensor::Id()+2*mu*(eto+deto);
+  ct += dt;
+  if(computeTangentOperator_){
+    Dt = lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
+  }
+}
