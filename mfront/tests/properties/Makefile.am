@@ -44,7 +44,8 @@ mfronts = ErrnoHandlingCheck.mfront                            \
 	  T91MartensiticSteel_Rinf_ROUX2007.mfront	       \
 	  T91MartensiticSteel_ThermalExpansion_ROUX2007.mfront \
 	  T91MartensiticSteel_YieldStress_ROUX2007.mfront      \
-	  T91MartensiticSteel_YoungModulus_ROUX2007.mfront
+	  T91MartensiticSteel_YoungModulus_ROUX2007.mfront     \
+	  YoungModulusBoundsCheckTest.mfront
 
 EXTRA_DIST = $(mfronts)      \
 	     CMakeLists.txt

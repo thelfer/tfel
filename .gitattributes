@@ -2482,6 +2482,7 @@ mfront/tests/behaviours/DDIF2.mfront -text
 mfront/tests/behaviours/DruckerPrager.mfront -text
 mfront/tests/behaviours/DruckerPragerEcroLin.mfront -text
 mfront/tests/behaviours/DruckerPragerEcroLinDefault.mfront -text
+mfront/tests/behaviours/ElasticMaterialPropertiesBoundsCheckTest.mfront -text
 mfront/tests/behaviours/Elasticity.mfront -text
 mfront/tests/behaviours/Elasticity2.mfront -text
 mfront/tests/behaviours/Elasticity3.mfront -text
@@ -2589,6 +2590,7 @@ mfront/tests/behaviours/StrainHardeningCreep.mfront -text
 mfront/tests/behaviours/StrainHardeningCreep2.mfront -text
 mfront/tests/behaviours/StrainHardeningCreep3.mfront -text
 mfront/tests/behaviours/T91ViscoplasticBehaviour.mfront -text
+mfront/tests/behaviours/TemperatureUpdateOnSubSteppingCheck.mfront -text
 mfront/tests/behaviours/Tvergaard.mfront -text
 mfront/tests/behaviours/UnilateralMazars.mfront -text
 mfront/tests/behaviours/ViscoChaboche.mfront -text
@@ -3686,6 +3688,7 @@ mfront/tests/behaviours/castem/castemelasticity_malls-uniaxialloading-2-3D.mtest
 mfront/tests/behaviours/castem/castemelasticity_malls-uniaxialloading-3-1D.mtest.in -text
 mfront/tests/behaviours/castem/castemelasticity_malls-uniaxialloading-3-2D.mtest.in -text
 mfront/tests/behaviours/castem/castemelasticity_malls-uniaxialloading-3-3D.mtest.in -text
+mfront/tests/behaviours/castem/castemelasticmaterialpropertiesboundschecktest.mtest.in -text
 mfront/tests/behaviours/castem/castemellipticcreep.mtest.in -text
 mfront/tests/behaviours/castem/castemexternalstatevariablesboundscheck.mtest.in -text
 mfront/tests/behaviours/castem/castemexternalstatevariablesboundscheck2.mtest.in -text
@@ -3930,6 +3933,7 @@ mfront/tests/behaviours/castem/castemstrainhardeningcreep.mtest.in -text
 mfront/tests/behaviours/castem/castemstrainhardeningcreep2.mtest.in -text
 mfront/tests/behaviours/castem/castemstrainhardeningcreep3.mtest.in -text
 mfront/tests/behaviours/castem/castemstressrelaxation.mtest.in -text
+mfront/tests/behaviours/castem/castemtemperatureupdateonsubsteppingcheck.mtest.in -text
 mfront/tests/behaviours/castem/castemtssf.mtest.in -text
 mfront/tests/behaviours/castem/castemtvergaard.mtest.in -text
 mfront/tests/behaviours/castem/castemviscochaboche.mtest.in -text
@@ -4363,6 +4367,7 @@ mfront/tests/behaviours/cyrano/cyranoelasticity_LogarithmicStrain1DWrapper-therm
 mfront/tests/behaviours/cyrano/cyranoelasticity_LogarithmicStrain1DWrapper-uniaxialloading-1-1D.mtest.in -text
 mfront/tests/behaviours/cyrano/cyranoelasticity_LogarithmicStrain1DWrapper-uniaxialloading-2-1D.mtest.in -text
 mfront/tests/behaviours/cyrano/cyranoelasticity_LogarithmicStrain1DWrapper-uniaxialloading-3-1D.mtest.in -text
+mfront/tests/behaviours/cyrano/cyranoelasticmaterialpropertiesboundschecktest.mtest.in -text
 mfront/tests/behaviours/cyrano/cyranoellipticcreep.mtest.in -text
 mfront/tests/behaviours/cyrano/cyranoexternalstatevariablesboundscheck.mtest.in -text
 mfront/tests/behaviours/cyrano/cyranoexternalstatevariablesboundscheck2.mtest.in -text
@@ -4396,6 +4401,7 @@ mfront/tests/behaviours/cyrano/cyranoorthotropicelasticity6-2.mtest.in -text
 mfront/tests/behaviours/cyrano/cyranoorthotropicelasticity6-3.mtest.in -text
 mfront/tests/behaviours/cyrano/cyranoorthotropicswelling.mtest.in -text
 mfront/tests/behaviours/cyrano/cyranoorthotropicswelling2.mtest.in -text
+mfront/tests/behaviours/cyrano/cyranotemperatureupdateonsubsteppingcheck.mtest.in -text
 mfront/tests/behaviours/epx/CMakeLists.txt -text
 mfront/tests/behaviours/epx/Makefile.am -text
 mfront/tests/behaviours/epx/epxaxialgrowth.mtest.in -text
@@ -5324,6 +5330,7 @@ mfront/tests/properties/VanadiumAlloy_SpecificHeat_SRMA.mfront -text
 mfront/tests/properties/VanadiumAlloy_ThermalConductivity_SRMA.mfront -text
 mfront/tests/properties/VanadiumAlloy_ThermalExpansion_SRMA.mfront -text
 mfront/tests/properties/VanadiumAlloy_YoungModulus_SRMA.mfront -text
+mfront/tests/properties/YoungModulusBoundsCheckTest.mfront -text
 mfront/tests/properties/YoungModulusTest.mfront -text
 mfront/tests/properties/YoungModulusTest_1.mfront -text
 mfront/tests/properties/YoungModulusTest_2.mfront -text

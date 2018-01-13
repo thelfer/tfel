@@ -35,7 +35,8 @@ set(mfront_tests_SOURCES
   AxialGrowth
   AxialGrowth2
   AxialGrowth3
-  )
+  ElasticMaterialPropertiesBoundsCheckTest
+  TemperatureUpdateOnSubSteppingCheck)
 mfront_dependencies(MFrontCyranoBehaviours
   YoungModulusTest_1
   YoungModulusTest_2
@@ -50,7 +51,8 @@ mfront_dependencies(MFrontCyranoBehaviours
   ThermalExpansionCoefficientTest2
   ThermalExpansionCoefficientTest_1
   ThermalExpansionCoefficientTest_2
-  ThermalExpansionCoefficientTest_3)
+  ThermalExpansionCoefficientTest_3
+  YoungModulusBoundsCheckTest)
 
 mfront_behaviour_check_library(MFrontCyranoBehaviours cyrano ${mfront_tests_SOURCES})
 target_link_libraries(MFrontCyranoBehaviours
@@ -220,3 +222,7 @@ test_cyrano(axialgrowth3)
 test_cyrano(axialgrowth4)
 test_cyrano(orthotropicswelling)
 test_cyrano(orthotropicswelling2)
+
+test_cyrano(elasticmaterialpropertiesboundschecktest
+  NO_XML_OUTPUT WILL_FAIL)
+test_cyrano(temperatureupdateonsubsteppingcheck)

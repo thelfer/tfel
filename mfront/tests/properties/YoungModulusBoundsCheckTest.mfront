@@ -1,0 +1,16 @@
+@DSL    MaterialLaw;
+@Law    YoungModulusBoundsCheckTest;
+@Author Thomas Helfer;
+@Date   26/02/2016;
+
+@Output E;
+E.setGlossaryName("YoungModulus");
+
+@Input T;
+T.setGlossaryName("Temperature");
+
+@PhysicalBounds T in [273.15:300];
+
+@Function{
+  E = 7.8e+10;
+}
