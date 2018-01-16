@@ -103,6 +103,12 @@ namespace mfront{
      * \param[out] os:  output file stream
      * \param[in]  mpd: material property description
      */
+    virtual void writeTFELVersionSymbol(std::ostream&,
+					const MaterialPropertyDescription&) const override;
+    /*!
+     * \param[out] os:  output file stream
+     * \param[in]  mpd: material property description
+     */
     virtual void writeMaterialKnowledgeTypeSymbol(std::ostream&,
 						  const MaterialPropertyDescription&) const override;  
     virtual bool requiresCheckBoundsFunction() const override;

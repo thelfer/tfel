@@ -79,6 +79,12 @@ namespace mfront{
      * \param[out] os:  output file stream
      * \param[in]  mpd: material property description
      */
+    virtual void writeTFELVersionSymbol(std::ostream&,
+					const MaterialPropertyDescription&) const;
+    /*!
+     * \param[out] os:  output file stream
+     * \param[in]  mpd: material property description
+     */
     virtual void writeMaterialSymbol(std::ostream&,
 				     const MaterialPropertyDescription&) const;
     /*!

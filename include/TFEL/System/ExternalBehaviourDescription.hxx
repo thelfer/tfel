@@ -35,6 +35,8 @@ namespace tfel
       ExternalBehaviourData(const ExternalBehaviourData&);
       ExternalBehaviourData& operator=(ExternalBehaviourData&&);
       ExternalBehaviourData& operator=(const ExternalBehaviourData&);
+      //! version of TFEL used to generate the behaviour
+      std::string tfel_version;
       //! name of the library
       std::string library;
       //! name of the behavior

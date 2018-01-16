@@ -1,10 +1,11 @@
 @DSL Implicit;
-@Behaviour IsotropicPlasticity;
+@Behaviour IsotropicJ2Plasticity;
 @Author Thomas Helfer;
 @Date   5/06/2016;
 @Description{
   "This file is used to test the StandardElasticity "
-  "brick for an isotropic plastic behaviour."
+  "brick for an isotropic J2 plastic behaviour with "
+  "linear isotropic hardening."
  }
 
 @Theta 1;

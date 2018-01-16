@@ -44,19 +44,20 @@ namespace tfel
       const auto hypotheses = elm.getSupportedModellingHypotheses(l,f);
       throw_if(std::find(hypotheses.begin(),hypotheses.end(),h)==hypotheses.end(),
 	       "unsupported hypothesis");
-      this->library    = l;
-      this->behaviour  = f;
-      this->hypothesis = h;
-      this->source    = elm.getSource(l,f);
-      this->btype     = elm.getUMATBehaviourType(l,f);
-      this->kinematic = elm.getUMATBehaviourKinematic(l,f);
-      this->stype     = elm.getUMATSymmetryType(l,f);
-      this->etype     = elm.getUMATElasticSymmetryType(l,f);
-      this->isUPUIR   = elm.isUMATBehaviourUsableInPurelyImplicitResolution(l,f,h);
-      this->mpnames   = elm.getUMATMaterialPropertiesNames(l,f,h);
-      this->ivnames   = elm.getUMATInternalStateVariablesNames(l,f,h);
-      this->ivtypes   = elm.getUMATInternalStateVariablesTypes(l,f,h);
-      this->evnames   = elm.getUMATExternalStateVariablesNames(l,f,h);
+      this->library      = l;
+      this->behaviour    = f;
+      this->hypothesis   = h;
+      this->tfel_version = elm.getTFELVersion(l,f);
+      this->source       = elm.getSource(l,f);
+      this->btype        = elm.getUMATBehaviourType(l,f);
+      this->kinematic    = elm.getUMATBehaviourKinematic(l,f);
+      this->stype        = elm.getUMATSymmetryType(l,f);
+      this->etype        = elm.getUMATElasticSymmetryType(l,f);
+      this->isUPUIR      = elm.isUMATBehaviourUsableInPurelyImplicitResolution(l,f,h);
+      this->mpnames      = elm.getUMATMaterialPropertiesNames(l,f,h);
+      this->ivnames      = elm.getUMATInternalStateVariablesNames(l,f,h);
+      this->ivtypes      = elm.getUMATInternalStateVariablesTypes(l,f,h);
+      this->evnames      = elm.getUMATExternalStateVariablesNames(l,f,h);
       //! parameters
       const auto pn = elm.getUMATParametersNames(l,f,h);
       const auto pt = elm.getUMATParametersTypes(l,f,h);

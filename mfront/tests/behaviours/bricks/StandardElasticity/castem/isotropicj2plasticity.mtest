@@ -1,8 +1,8 @@
 @Author Helfer Thomas;
 @Date   10/06/2016;
 @Description{
-  "Uniaxial tensile test of a simple isotropic behaviour "
-  "in plane stress"
+  "Uniaxial tensile test of a simple isotropic "
+  "J2 plastic behaviour in plane stress"
 };
 
 @XMLOutputFile @xml_output@;

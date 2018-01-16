@@ -82,8 +82,8 @@ private:
   void check(const tfel::math::stensor<N,double>& s){
     TFEL_CONSTEXPR const auto eps   = 1e-6;
     TFEL_CONSTEXPR const auto prec  = 2e-13;
-    auto ndJ = getNumericalApproximation(s,eps);
-    auto dJ  = computeDeviatorDeterminantDerivative(s);
+    const auto ndJ = getNumericalApproximation(s,eps);
+    const auto dJ  = computeDeviatorDeterminantDerivative(s);
     for(unsigned short i=0;i!=s.size();++i){
       if(std::abs(dJ(i)-ndJ(i))>prec){
 	std::cout << "dJ : " << i << " " << dJ(i) << " " << ndJ(i)

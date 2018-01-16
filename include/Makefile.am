@@ -27,6 +27,10 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Material/FiniteStrainBehaviourTangentOperatorBase.hxx	                             \
 			TFEL/Material/LogarithmicStrainHandler.hxx	                                             \
 			TFEL/Material/LogarithmicStrainHandler.ixx	                                             \
+			TFEL/Material/IsotropicPlasticity.hxx	                                                     \
+			TFEL/Material/IsotropicPlasticity.ixx	                                                     \
+			TFEL/Material/OrthotropicPlasticity.hxx	                                                     \
+			TFEL/Material/OrthotropicPlasticity.ixx	                                                     \
 			TFEL/Material/Lame.hxx			                                                     \
 			TFEL/Material/Hill.hxx			                                                     \
 			TFEL/Material/Hill.ixx			                                                     \
@@ -71,6 +75,7 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Config/Internals/JacobianType.hxx	                                                     \
 			TFEL/Config/Internals/ThermalConductivityMatrixType.hxx                                      \
 			TFEL/Config/TFEL_MATH_Config.hxx		                                             \
+			TFEL/Config/GetTFELVersion.h		                                                     \
 			TFEL/Config/GetInstallPath.hxx		                                                     \
 			TFEL/Config/TFELTypes.hxx			                                             \
 			TFEL/Config/TFELConfig.hxx			                                             \

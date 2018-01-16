@@ -41,7 +41,7 @@ if(HAVE_CASTEM)
     OrthotropicStandardElasticity3
     TestComputeElasticPrediction
     TestComputeElasticPrediction2
-    IsotropicPlasticity
+    IsotropicJ2Plasticity
     SingleCrystal_DD_FCC)
   target_link_libraries(MFrontCastemBehaviourBricks
     CastemInterface MFrontProfiling TFELMaterial
@@ -156,4 +156,5 @@ castemtest_standardelasticitybrick(testcomputeelasticprediction2 umattestcompute
 castemtest_standardelasticitybrick(testcomputeelasticprediction3 umattestcomputeelasticprediction2)
 castemtest_standardelasticitybrick(testcomputeelasticprediction4 umattestcomputeelasticprediction2)
 
-castemtest_standardelasticitybrick(isotropicplasticity umatisotropicplasticity plasticity.ref)
+castemtest_standardelasticitybrick(isotropicj2plasticity
+  umatisotropicj2plasticity plasticity.ref)

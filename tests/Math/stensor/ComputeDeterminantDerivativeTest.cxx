@@ -60,21 +60,11 @@ struct ComputeDeterminantDerivativeTest final
     const double v2[6] = {-8.2e-2,4.5e-2,7.2e-2,0e-2,2.3e-2*sqrt2,0.};
     const double v3[6] = {8.2e-2,4.5e-2,-7.2e-2,0e-2,0.e-2,2.3e-2*sqrt2};
     const double v4[6] = {8.2e-2,4.5e-2,-7.2e-2,3.14e-2*sqrt2,-6.42e-2*sqrt2,2.3e-2*sqrt2};
-    this->check(tfel::math::stensor<1u,double>(v0));
-    this->check(tfel::math::stensor<2u,double>(v0));
-    this->check(tfel::math::stensor<3u,double>(v0));
-    this->check(tfel::math::stensor<1u,double>(v1));
-    this->check(tfel::math::stensor<2u,double>(v1));
-    this->check(tfel::math::stensor<3u,double>(v1));
-    this->check(tfel::math::stensor<1u,double>(v2));
-    this->check(tfel::math::stensor<2u,double>(v2));
-    this->check(tfel::math::stensor<3u,double>(v2));
-    this->check(tfel::math::stensor<1u,double>(v3));
-    this->check(tfel::math::stensor<2u,double>(v3));
-    this->check(tfel::math::stensor<3u,double>(v3));
-    this->check(tfel::math::stensor<1u,double>(v4));
-    this->check(tfel::math::stensor<2u,double>(v4));
-    this->check(tfel::math::stensor<3u,double>(v4));
+    for(const auto v : {v0,v1,v2,v3,v4}){
+      this->check(tfel::math::stensor<1u,double>(v));
+      this->check(tfel::math::stensor<2u,double>(v));
+      this->check(tfel::math::stensor<3u,double>(v));
+    }
     return this->result;
   } // end of execute
 private:
@@ -82,8 +72,8 @@ private:
   void check(const tfel::math::stensor<N,double>& s){
     TFEL_CONSTEXPR const auto eps   = 1e-2;
     TFEL_CONSTEXPR const auto prec  = 1e-13;
-    auto ndJ = getNumericalApproximation(s,eps);
-    auto dJ  = computeDeterminantDerivative(s);
+    const auto ndJ = getNumericalApproximation(s,eps);
+    const auto dJ  = tfel::math::computeDeterminantDerivative(s);
     for(unsigned short i=0;i!=s.size();++i){
       if(std::abs(dJ(i)-ndJ(i))>prec){
 	std::cout << "dJ : " << i << " " << dJ(i) << " " << ndJ(i)

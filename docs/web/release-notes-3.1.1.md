@@ -21,6 +21,46 @@ $ tfel-config --cxx-standard
 
 # Tickets fixed
 
+## Ticket #105: Getting version number of `MFront`
+
+In order to check the MFront usage with `CYRANO3`, its would be usefull
+to retrieve the version of `MFront`:
+
+- used to generate a given shared library.
+- associated with the library: `libTFELMFront.so` which is dynamically
+  loaded in `CYRANO3`.
+
+### Metadata in `MFront` generated libraries
+
+A specific symbol is now generated for every generated entry points
+(functions or classes) defined in `MFront` libraries.
+
+This symbol' name is composed by the entry point name followed by
+`_tfel_version`.
+
+For example, if we are testing the version used to generated the
+`cyranonorton` function, one have to retrieve the
+`cyranonorton_tfel_version` symbol.
+
+This can be done:
+
+- directly using `dlopen/dlsym`.
+- by using the `getTFELVersion` method of the `ExternalLibraryManager`
+  class.
+
+The `tfel_version` member has been added to the
+`ExternalBehaviourDescription` class which is used by `Cyrano`. Beware
+that this can lead to inconsistencies if a previous version of `TFEL`
+is used.
+
+
+### Retrieving the `TFEL` version at runtime
+
+The `TFEL` version can be retrived by calling the `getTFELVersion`
+function defined in the `TFELConfig` shared library.
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/105/>
+
 ## Ticket #104: Checks of material properties' bounds are not generated anymore 
 
 The checks for material properties are not generated any more. This is

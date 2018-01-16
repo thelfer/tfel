@@ -11,4 +11,4 @@ EXTRA_DIST = CMakeLists.txt                       \
 	     testcomputeelasticprediction2.mtest  \
 	     testcomputeelasticprediction3.mtest  \
 	     testcomputeelasticprediction4.mtest  \
-	     isotropicplasticity.mtest
+	     isotropicj2plasticity.mtest

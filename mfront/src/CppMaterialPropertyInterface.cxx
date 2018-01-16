@@ -235,6 +235,7 @@ namespace mfront
 	    << "#endif /* __cplusplus */\n\n";
     // mfront metadata
     writeEntryPointSymbol(src,name);
+    writeTFELVersionSymbol(src,name);
     writeInterfaceSymbol(src,name,"C++");
     writeMaterialSymbol(src,name,mpd.material);
     writeMaterialKnowledgeTypeSymbol(src,name,MATERIALPROPERTY);

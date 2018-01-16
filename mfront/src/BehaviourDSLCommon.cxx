@@ -4998,6 +4998,7 @@ namespace mfront{
        << "#include\"TFEL/Material/MechanicalBehaviourTraits.hxx\"\n"
        << "#include\"TFEL/Material/OutOfBoundsPolicy.hxx\"\n"
        << "#include\"TFEL/Material/BoundsCheck.hxx\"\n"
+       << "#include\"TFEL/Material/IsotropicPlasticity.hxx\"\n"
        << "#include\"TFEL/Material/Lame.hxx\"\n"
        << "#include\"TFEL/Material/Hosford.hxx\"\n";
     if(this->mb.getSymmetryType()==ORTHOTROPIC){

@@ -937,6 +937,7 @@ namespace mfront
     writeExportDirectives(out);
     const auto zcn = "ZMAT"+mb.getClassName();
     writeEntryPointSymbol(out,zcn);
+    writeTFELVersionSymbol(out,zcn);
     writeMaterialSymbol(out,zcn,mb.getMaterialName());
     out << "MFRONT_SHAREDOBJ const char *\n"
   	<< zcn << "_mfront_interface = \""

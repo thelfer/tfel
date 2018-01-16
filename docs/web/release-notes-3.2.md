@@ -114,7 +114,7 @@ The following new mathematical functions have been introduced:
 - `atan2`: returns the principal value of the arc tangent of \(y/x\),
   expressed in radians.
 
-### Efficient computations of the first and second derivatives of the invariants of the stress deviator tensor with respect to the stress
+### Efficient computations of the first and second derivatives of the invariants of the stress deviator tensor with respect to the stress {#sec:deviatoric:invariants}
 
 Let \(\tsigma\) be a stress tensor. Its deviatoric part
 \(\tenseur{s}\) is:
@@ -154,7 +154,7 @@ J_2 &= \textstyle{\frac{1}{2}}s_{ij}s_{ji} = \Frac{1}{2}\trace{\tenseur{s}^2}\\
 &= \Frac{1}{6}\left[(\sigma_{11} - \sigma_{22})^2 + (\sigma_{22} - \sigma_{33})^2 + (\sigma_{33} - \sigma_{11})^2 \right ] + \sigma_{12}^2 + \sigma_{23}^2 + \sigma_{31}^2 \\
 &= \Frac{1}{6}\left[(\sigma_1 - \sigma_2)^2 + (\sigma_2 - \sigma_3)^2 + (\sigma_3 - \sigma_1)^2 \right ] \\
 &= \Frac{1}{3}I_1^2-I_2 = \frac{1}{2}\left[\trace{\tenseur{\sigma}^2} - \frac{1}{3}\trace{\tenseur{\sigma}}^2\right],\,\\
-J_3 &= \det(s_{ij}) \\
+J_3 &= \det\paren{\tenseur{s}} \\
 &= \Frac{1}{3}s_{ij}s_{jk}s_{ki} = \Frac{1}{3} \trace{\tenseur{s}^3}\\
 &= \Frac{1}{3}(s_1^3 + s_2^3 + s_3^3) \\
 &= s_1s_2s_3 \\
@@ -216,6 +216,85 @@ const auto d2J3 = computeDeviatorDeterminantSecondDerivative(sig);
 ~~~~
 
 ## TFEL/Material
+
+### Isotropic Plasticity
+
+By definition, \(J_{2}\) and \(J_{3}\) are the second and third
+invariants of the deviatoric part \(\tenseur{s}\) of the stress tensor
+\(\tsigma\) (see also Section&nbsp;@sec:deviatoric:invariants):
+
+\[
+\left\{
+\begin{aligned}
+J_2 &= \Frac{1}{2}\trace{\tenseur{s}^2}\\
+J_3 &= \det(\tenseur{s}) \\
+\end{aligned}
+\right.
+\]
+
+The first and second derivatives of \(J_{2}\) with respect to the
+stress tensor \(\tsigma\) are trivially computed and implemented (see
+Section&nbsp;@sec:deviatoric:invariants).
+
+The first and second derivatives of \(J_{2}\) with respect to the
+stress tensor \(\tsigma\) can be computed respectively by:
+
+- The `computesJ3Derivative` function, which is a synonym for the
+  `computeDeviatorDeterminantDerivative` function defined in the
+  `tfel::math` namespace (see
+  Section&nbsp;@sec:deviatoric:invariants for details).
+- The `computeJ3SecondDerivative` function, which is a synonym for the
+  `computeDeviatorDeterminantSecondDerivative` function defined in the
+  `tfel::math` namespace (see Section&nbsp;@sec:deviatoric:invariants
+  for details).
+
+### Orthotropic plasticity
+
+Within the framework of the theory of representation, generalizations
+to anisotropic conditions of the invariants of the deviatoric stress
+have been proposed by Cazacu and Barlat (see
+@cazacu_generalization_2001):
+
+- The generalization of \(J_{2}\) is denoted \(J_{2}^{O}\). It is
+  defined by:
+  \[
+  J_{2}^{O}= a_6\,s_{yz}^2+a_5\,s_{xz}^2+a_4\,s_{xy}^2+\frac{a_2}{6}\,(s_{yy}-s_{zz})^2+\frac{a_3}{6}\,(s_{xx}-s_{zz})^2+\frac{a_1}{6}\,(s_{xx}-s_{yy})^2
+  \]
+  where the \(\left.a_{i}\right|_{i\in[1:6]}\) are six coefficients
+  describing the orthotropy of the material.
+- The generalization of \(J_{3}\) is denoted \(J_{3}^{O}\). It is
+  defined by:
+  \[
+  \begin{aligned}
+  J_{3}^{O}=
+  &\frac{1}{27}\,(b_1+b_2)\,s_{xx}^3+\frac{1}{27}\,(b_3+b_4)\,s_{yy}^3+\frac{1}{27}\,(2\,(b_1+b_4)-b_2-b_3)\,s_{zz}^3\\
+  &-\frac{1}{9}\,(b_1\,s_{yy}+b_2s_{zz})\,s_{xx}^2\\
+  &-\frac{1}{9}\,(b_3\,s_{zz}+b_4\,s_{xx})\,s_{yy}^2\\
+  &-\frac{1}{9}\,((b_1-b_2+b_4)\,s_{xx}+(b_1-b3+b_4)\,s_{yy})\,s_{zz}^3\\
+  &+\frac{2}{9}\,(b_1+b_4)\,s_{xx}\,s_{yy}\,s_{zz}\\
+  &-\frac{s_{xz}^2}{3}\,(2\,b_9\,s_{yy}-b_8\,s_{zz}-(2\,b_9-b_8)\,s_{xx})\\
+  &-\frac{s_{xy}^2}{3}\,(2\,b_{10}\,s_{zz}-b_5\,s_{yy}-(2\,b_{10}-b_5)\,s_{xx})\\
+  &-\frac{s_{yz}^2}{3}\,((b_6+b_7)\,s_{xx}-b_6\,s_{yy}-b_7\,s_{zz})\\
+  &+2\,b_{11}\,s_{xy}\,s_{xz}\,s_{yz}
+  \end{aligned}
+  \]
+  where the \(\left.b_{i}\right|_{i\in[1:11]}\) are eleven coefficients
+  describing the orthotropy of the material.
+
+Those invariants may be used to generalize isotropic yield criteria
+based on \(J_{2}\) and \(J_{3}\) invariants to orthotropy.
+
+The following functions 
+
+\(J_{2}^{0}\), \(J_{3}^{0}\) and their first and second derivatives
+with respect to the stress tensor \(\tsigma\) can be computed
+by the following functions:
+
+- `computesJ2O`, `computesJ2ODerivative` and
+  `computesJ2OSecondDerivative`.
+- `computesJ3O`, `computesJ3ODerivative` and
+  `computesJ3OSecondDerivative`.
+
 
 ### \(\pi\)-plane
 

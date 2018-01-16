@@ -18,7 +18,7 @@ MFRONTS= IsotropicStandardElasticity.mfront    \
 	 OrthotropicStandardElasticity3.mfront \
 	 TestComputeElasticPrediction.mfront   \
 	 TestComputeElasticPrediction2.mfront  \
-	 IsotropicPlasticity.mfront            \
+	 IsotropicJ2Plasticity.mfront          \
 	 SingleCrystal_DD_FCC.mfront
 
 testsdir = $(pkgdatadir)/mfront/tests/behaviours/bricks/StandardElasticity

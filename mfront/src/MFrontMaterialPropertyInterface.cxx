@@ -129,6 +129,10 @@ namespace mfront
 							      const MaterialPropertyDescription&) const
   {} // end of MFrontMaterialPropertyInterface::writeEntryPointSymbol
 
+  void MFrontMaterialPropertyInterface::writeTFELVersionSymbol(std::ostream&,
+							      const MaterialPropertyDescription&) const
+  {} // end of MFrontMaterialPropertyInterface::writeTFELVersionSymbol
+  
   void MFrontMaterialPropertyInterface::writeMaterialSymbol(std::ostream&,
 							    const MaterialPropertyDescription&) const
   {} // end of MFrontMaterialPropertyInterface::writeMaterialSymbol

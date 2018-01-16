@@ -39,7 +39,7 @@ if(HAVE_CYRANO)
     OrthotropicStandardElasticity3
     TestComputeElasticPrediction
     TestComputeElasticPrediction2
-    IsotropicPlasticity)
+    IsotropicJ2Plasticity)
   target_link_libraries(MFrontCyranoBehaviourBricks
     CyranoInterface MFrontProfiling TFELMaterial
     TFELMath TFELUtilities TFELException)

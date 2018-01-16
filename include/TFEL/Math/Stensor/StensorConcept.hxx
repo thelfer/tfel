@@ -29,15 +29,19 @@ namespace tfel{
 
   namespace math{
 
-    template<class T>
+    template<typename StensorType>
     struct StensorTraits{
       typedef tfel::meta::InvalidType NumType;
       typedef unsigned short          IndexType;
       static constexpr unsigned short dime = 0u;
     };
 
-    template<class T>
-    using StensorNumType = typename StensorTraits<T>::NumType;    
+    template<typename StensorType>
+    using StensorNumType = typename StensorTraits<StensorType>::NumType;    
+    
+    template<typename StensorType>
+    using StensorBaseType =
+      tfel::typetraits::base_type<StensorNumType<StensorType>>;
     
     /*!
      * \class StensorTag

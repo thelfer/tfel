@@ -1456,6 +1456,7 @@ include/NUMODIS/TripleNode.hxx -text
 include/NUMODIS/Vect3.hxx -text
 include/TFEL/Config/GetInstallPath-defines.hxx.in -text
 include/TFEL/Config/GetInstallPath.hxx -text
+include/TFEL/Config/GetTFELVersion.h -text
 include/TFEL/Config/Internals/HeatFluxVectorType.hxx -text
 include/TFEL/Config/Internals/InvJacobianType.hxx -text
 include/TFEL/Config/Internals/JacobianType.hxx -text
@@ -1500,6 +1501,8 @@ include/TFEL/Material/Hosford.hxx -text
 include/TFEL/Material/Hosford.ixx -text
 include/TFEL/Material/IsotropicLinearFourierHookLaw.hxx -text
 include/TFEL/Material/IsotropicLinearFourierLaw.hxx -text
+include/TFEL/Material/IsotropicPlasticity.hxx -text
+include/TFEL/Material/IsotropicPlasticity.ixx -text
 include/TFEL/Material/Lame.hxx -text
 include/TFEL/Material/LogarithmicStrainHandler.hxx -text
 include/TFEL/Material/LogarithmicStrainHandler.ixx -text
@@ -1513,6 +1516,8 @@ include/TFEL/Material/MetallicCFCSlidingSystems.ixx -text
 include/TFEL/Material/ModellingHypothesis.hxx -text
 include/TFEL/Material/OrthotropicAxesConvention.hxx -text
 include/TFEL/Material/OrthotropicAxesConvention.ixx -text
+include/TFEL/Material/OrthotropicPlasticity.hxx -text
+include/TFEL/Material/OrthotropicPlasticity.ixx -text
 include/TFEL/Material/OrthotropicStressLinearTransformation.hxx -text
 include/TFEL/Material/OrthotropicStressLinearTransformation.ixx -text
 include/TFEL/Material/OutOfBoundsPolicy.hxx -text
@@ -3550,7 +3555,7 @@ mfront/tests/behaviours/bricks/FiniteStrainSingleCrystal/castem/CMakeLists.txt -
 mfront/tests/behaviours/bricks/FiniteStrainSingleCrystal/castem/Makefile.am -text
 mfront/tests/behaviours/bricks/Makefile.am -text
 mfront/tests/behaviours/bricks/StandardElasticity/CMakeLists.txt -text
-mfront/tests/behaviours/bricks/StandardElasticity/IsotropicPlasticity.mfront -text
+mfront/tests/behaviours/bricks/StandardElasticity/IsotropicJ2Plasticity.mfront -text
 mfront/tests/behaviours/bricks/StandardElasticity/IsotropicStandardElasticity.mfront -text
 mfront/tests/behaviours/bricks/StandardElasticity/IsotropicStandardElasticity10.mfront -text
 mfront/tests/behaviours/bricks/StandardElasticity/IsotropicStandardElasticity11.mfront -text
@@ -3576,7 +3581,7 @@ mfront/tests/behaviours/bricks/StandardElasticity/aster/Makefile.am -text
 mfront/tests/behaviours/bricks/StandardElasticity/aster/singlecrystal_dd_cfc.mtest -text
 mfront/tests/behaviours/bricks/StandardElasticity/castem/CMakeLists.txt -text
 mfront/tests/behaviours/bricks/StandardElasticity/castem/Makefile.am -text
-mfront/tests/behaviours/bricks/StandardElasticity/castem/isotropicplasticity.mtest -text
+mfront/tests/behaviours/bricks/StandardElasticity/castem/isotropicj2plasticity.mtest -text
 mfront/tests/behaviours/bricks/StandardElasticity/castem/isotropicstandardelasticity.mtest -text
 mfront/tests/behaviours/bricks/StandardElasticity/castem/isotropicstandardelasticity2.mtest -text
 mfront/tests/behaviours/bricks/StandardElasticity/castem/isotropicstandardelasticity3.mtest -text
@@ -5861,10 +5866,12 @@ tests/Material/FiniteStrainBehaviourTangentOperator9.cxx -text
 tests/Material/HosfordSecondDerivativeTest.cxx -text
 tests/Material/Hyperelasticity.cxx -text
 tests/Material/IsotropicCazacuYieldTest.cxx -text
+tests/Material/IsotropicPlasticityTest.cxx -text
 tests/Material/LogarithmicStrainHandlerTest.cxx -text
 tests/Material/Makefile.am -text
 tests/Material/Ogden.cxx -text
 tests/Material/OrthotropicAxesConventionTest.cxx -text
+tests/Material/OrthotropicPlasticityTest.cxx -text
 tests/Material/SlipSystemsDescriptionTest.cxx -text
 tests/Material/boundsCheck.cxx -text
 tests/Math/CMakeLists.txt -text

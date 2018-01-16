@@ -469,7 +469,7 @@ J_2 &= \textstyle{\frac{1}{2}}s_{ij}s_{ji} = \Frac{1}{2}\trace{\tenseur{s}^2}\\
 &= \Frac{1}{6}\left[(\sigma_{11} - \sigma_{22})^2 + (\sigma_{22} - \sigma_{33})^2 + (\sigma_{33} - \sigma_{11})^2 \right ] + \sigma_{12}^2 + \sigma_{23}^2 + \sigma_{31}^2 \\
 &= \Frac{1}{6}\left[(\sigma_1 - \sigma_2)^2 + (\sigma_2 - \sigma_3)^2 + (\sigma_3 - \sigma_1)^2 \right ] \\
 &= \Frac{1}{3}I_1^2-I_2 = \frac{1}{2}\left[\trace{\tenseur{\sigma}^2} - \frac{1}{3}\trace{\tenseur{\sigma}}^2\right],\,\\
-J_3 &= \det(s_{ij}) \\
+J_3 &= \det\paren{\tenseur{s}} \\
 &= \Frac{1}{3}s_{ij}s_{jk}s_{ki} = \Frac{1}{3} \trace{\tenseur{s}^3}\\
 &= \Frac{1}{3}(s_1^3 + s_2^3 + s_3^3) \\
 &= s_1s_2s_3 \\
@@ -525,11 +525,15 @@ const auto dJ3 = eval((2*I1*I1/9)*id-(I2*id+I1*dI2)/3+dI3);
 ~~~~
 
 For `TFEL` versions greater than \(3.2\), one may want to use the
-optimised `computeDeviatorDeterminantDerivative` function as follows:
+optimised `computeDeviatorDeterminantDerivative` function, defined in
+the namespace `tfel::math`, as follows:
 
 ~~~~{.cpp}
 const auto dJ3 = computeDeviatorDeterminantDerivative(sig);
 ~~~~
+
+The `computeJ3Derivative`, defined in `tfel::material` namespace, is a
+synonym for the `computeDeviatorDeterminantDerivative` function.
 
 ### Second derivative
 
@@ -574,12 +578,16 @@ const auto d2J3 = eval((4*I1/9)*(id^id)-((id^dI2)+(dI2^id)+i1*d2I2)/3+d2I3);
 ~~~~
 
 For `TFEL` versions greater than \(3.2\), one may want to use the
-optimised `computeDeviatorDeterminantSecondDerivative` function as
-follows:
+optimised `computeDeviatorDeterminantSecondDerivative` function,
+defined in the `tfel:math` namespace, as follows:
 
 ~~~~{.cpp}
 const auto d2J3 = computeDeviatorDeterminantSecondDerivative(J);
 ~~~~
+
+The `computeJ3SecondDerivative`, defined in `tfel::material`
+namespace, is a synonym for the
+`computeDeviatorDeterminantSecondDerivative` function.
 
 ## Eigenvalues, eigenvectors and eigentensors of symmetric tensors
 

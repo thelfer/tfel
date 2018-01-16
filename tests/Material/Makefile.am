@@ -23,6 +23,8 @@ test_PROGRAMS = boundsCheck \
 		LogarithmicStrainHandlerTest           \
 		Hyperelasticity                        \
 		Ogden                                  \
+		IsotropicPlasticityTest                \
+		OrthotropicPlasticityTest              \
 		SlipSystemsDescriptionTest             \
 		HosfordSecondDerivativeTest            \
 		BarlatSecondDerivativeTest             \
@@ -58,6 +60,8 @@ FiniteStrainBehaviourTangentOperator13_SOURCES = FiniteStrainBehaviourTangentOpe
 LogarithmicStrainHandlerTest_SOURCES           = LogarithmicStrainHandlerTest.cxx
 Hyperelasticity_SOURCES = Hyperelasticity.cxx
 Ogden_SOURCES = Ogden.cxx
+IsotropicPlasticityTest_SOURCES     = IsotropicPlasticityTest.cxx
+OrthotropicPlasticityTest_SOURCES   = OrthotropicPlasticityTest.cxx
 SlipSystemsDescriptionTest_SOURCES  = SlipSystemsDescriptionTest.cxx
 HosfordSecondDerivativeTest_SOURCES = HosfordSecondDerivativeTest.cxx
 BarlatSecondDerivativeTest_SOURCES  = BarlatSecondDerivativeTest.cxx

@@ -380,6 +380,7 @@ namespace mfront
 	  << "}\n\n";
     }
     writeEntryPointSymbol(out,name);
+    writeTFELVersionSymbol(out,name);
     writeInterfaceSymbol(out,name,"Castem");
     writeMaterialSymbol(out,name,mpd.material);
     writeMaterialKnowledgeTypeSymbol(out,name,MATERIALPROPERTY);

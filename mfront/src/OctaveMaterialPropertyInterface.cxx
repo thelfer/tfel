@@ -149,6 +149,7 @@ namespace mfront
 	<< "#endif /* __cplusplus */\n\n";
     // mfront metadata
     writeEntryPointSymbol(out,name);
+    writeTFELVersionSymbol(out,name);
     writeInterfaceSymbol(out,name,"Octave");
     writeMaterialSymbol(out,name,mpd.material);
     writeMaterialKnowledgeTypeSymbol(out,name,MATERIALPROPERTY);
