@@ -32,7 +32,7 @@ namespace mfront{
   struct BehaviourDescription;
 
   /*!
-   * \brief write a specific symbols stating that a given name entry
+   * \brief write a specific symbol stating that a given name entry
    * point (`C`-like function for example) has been created using
    * `MFront`.
    * \param[out] os: output stream
@@ -42,6 +42,16 @@ namespace mfront{
   MFRONT_VISIBILITY_EXPORT void
   writeEntryPointSymbol(std::ostream&,
 			const std::string&);
+  /*!
+   * \brief write a specific symbol giving the version of `MFront`
+   * used to generate the given entry point.
+   * \param[out] os: output stream
+   * \param[in]  n:  entry point
+   * name
+   */
+  MFRONT_VISIBILITY_EXPORT void
+  writeTFELVersionSymbol(std::ostream&,
+			 const std::string&);
   /*!
    * \brief write a specific symbol stating that a given name entry
    * point (`C`-like function for example) has been created using

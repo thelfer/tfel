@@ -300,6 +300,7 @@ namespace mfront
 	    << "#endif /* __cplusplus */\n\n";
     // mfront metadata
     writeEntryPointSymbol(srcFile,name);
+    writeTFELVersionSymbol(srcFile,name);
     writeInterfaceSymbol(srcFile,name,"Python");
     writeMaterialSymbol(srcFile,name,mpd.material);
     writeMaterialKnowledgeTypeSymbol(srcFile,name,MATERIALPROPERTY);

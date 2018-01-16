@@ -71,6 +71,8 @@ struct UMATBehaviourDescriptionTest final
     const auto b = ExternalBehaviourDescription{"@MFrontCastemBehavioursBuildPath@",
 						"umatnorton","PlaneStrain"};
     // should small strain behaviour
+    TFEL_TESTS_ASSERT(b.tfel_version=="@TFEL_VERSION@");
+    // should small strain behaviour
     TFEL_TESTS_ASSERT(b.btype==1u);
     // behaviour shall be isotropic
     TFEL_TESTS_ASSERT(b.stype==0u);

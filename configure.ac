@@ -621,6 +621,7 @@ AC_OUTPUT([debug.sh
 	   src/Makefile
 	   src/PhysicalConstants/Makefile
 	   src/Config/Makefile
+	   src/Config/GetTFELVersion.c
 	   src/Tests/Makefile
 	   src/Exception/Makefile
 	   src/Utilities/Makefile

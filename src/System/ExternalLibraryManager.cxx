@@ -400,6 +400,25 @@ namespace tfel
       return *(static_cast<const char* const *>(p));
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
     } // end of ExternalLibraryManager::getMaterial
+
+    std::string ExternalLibraryManager::getTFELVersion(const std::string& l,
+						       const std::string& f)
+    {
+      const auto lib = this->loadLibrary(l);
+#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
+      const auto p   = (const char* const *) ::GetProcAddress(lib,(f+"_tfel_version").c_str());
+#else
+      const auto p   = ::dlsym(lib,(f+"_tfel_version").c_str());
+#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
+      if(p==nullptr){
+	return "";
+      }
+#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
+      return *p;
+#else
+      return *(static_cast<const char* const *>(p));
+#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
+    } // end of ExternalLibraryManager::getTFELVersion
     
     std::vector<std::string>
     ExternalLibraryManager::getSupportedModellingHypotheses(const std::string& l,

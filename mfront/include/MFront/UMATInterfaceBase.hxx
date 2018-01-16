@@ -526,6 +526,12 @@ namespace mfront{
     virtual void writeUMATxxEntryPointSymbol(std::ostream&,
 					     const std::string&) const;
     /*!
+     * \param[in] out: output file
+     * \param[in] n:   name of the entry point
+     */
+    virtual void writeUMATxxTFELVersionSymbol(std::ostream&,
+					      const std::string&) const;
+    /*!
      * \param[in] out  : output file
      * \param[in] name : name of the behaviour as defined by interface
      *                   (generally taking into account the material

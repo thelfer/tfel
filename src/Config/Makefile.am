@@ -7,7 +7,9 @@ AM_LDFLAGS   = -no-undefined -avoid-version -Wl,--add-stdcall-alias -Wl,--kill-a
 endif
 
 lib_LTLIBRARIES = libTFELConfig.la 
-libTFELConfig_la_SOURCES  = GetInstallPath.cxx
+libTFELConfig_la_SOURCES  = GetInstallPath.cxx \
+			    GetTFELVersion.c
+
 libTFELConfig_la_CPPFLAGS = $(AM_CPPFLAGS) -DTFELConfig_EXPORTS
 
 EXTRA_DIST = CMakeLists.txt

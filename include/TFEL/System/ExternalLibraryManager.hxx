@@ -300,6 +300,16 @@ namespace tfel
 					const std::string&,
 					const std::string&);
       /*!
+       * \return the TFEL version used to generate the given entry
+       * point.
+       * \param[in] l: name of the library
+       * \param[in] s: name of function or mechanical behaviour
+       * This function looks for the symbol s+'_tfel_version' in the
+       * library and expect it to a pointer to characters.
+       * If the symbol is not found, an empty string is returned.
+       */
+      std::string getTFELVersion(const std::string&,const std::string&);
+      /*!
        * \return the src of the function or the mechanical behaviour
        * \param[in] l: name of the library
        * \param[in] s: name of function or mechanical behaviour

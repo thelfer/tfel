@@ -1418,6 +1418,7 @@ include/NUMODIS/TripleNode.hxx -text
 include/NUMODIS/Vect3.hxx -text
 include/TFEL/Config/GetInstallPath-defines.hxx.in -text
 include/TFEL/Config/GetInstallPath.hxx -text
+include/TFEL/Config/GetTFELVersion.h -text
 include/TFEL/Config/Internals/HeatFluxVectorType.hxx -text
 include/TFEL/Config/Internals/InvJacobianType.hxx -text
 include/TFEL/Config/Internals/JacobianType.hxx -text
@@ -5629,6 +5630,7 @@ mtest/tests/unit-tests/PipeTest.cxx -text
 src/CMakeLists.txt -text
 src/Config/CMakeLists.txt -text
 src/Config/GetInstallPath.cxx -text
+src/Config/GetTFELVersion.c.in -text
 src/Config/Makefile.am -text
 src/Exception/CMakeLists.txt -text
 src/Exception/Makefile.am -text

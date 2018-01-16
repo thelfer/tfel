@@ -221,6 +221,12 @@ namespace mfront
     mfront::writeEntryPointSymbol(os,this->getFunctionName(mpd));
   } // end of CMaterialPropertyInterfaceBase::writeEntryPointSymbol
 
+  void CMaterialPropertyInterfaceBase::writeTFELVersionSymbol(std::ostream& os,
+							     const MaterialPropertyDescription& mpd) const
+  {
+    mfront::writeTFELVersionSymbol(os,this->getFunctionName(mpd));
+  } // end of CMaterialPropertyInterfaceBase::writeTFELVersionSymbol
+  
   void CMaterialPropertyInterfaceBase::writeMaterialSymbol(std::ostream& os,
 							   const MaterialPropertyDescription& mpd) const
   {

@@ -13,7 +13,9 @@
  */
 
 #ifdef HAVE_FENV
+#ifdef __cplusplus
 #include<cfenv>
+#endif /* __cplusplus */
 #endif /* LIB_TFEL_MATH_CONFIG_HXX */
 
 #ifndef LIB_TFEL_MATH_CONFIG_HXX

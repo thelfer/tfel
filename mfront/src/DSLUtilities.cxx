@@ -17,6 +17,7 @@
 #include<stdexcept>
 #include"TFEL/Raise.hxx"
 #include"TFEL/Config/TFELConfig.hxx"
+#include"TFEL/Config/GetTFELVersion.h"
 #include"TFEL/Glossary/GlossaryEntry.hxx"
 #include"MFront/MFrontDebugMode.hxx"
 #include"MFront/DSLUtilities.hxx"
@@ -46,6 +47,12 @@ namespace mfront
 	<< n << "_mfront_ept = \"" << n2 << "\";\n\n";
   } // end of writeEntryPointSymbols
 
+  void writeTFELVersionSymbol(std::ostream& out,
+			      const std::string& n){
+    out << "MFRONT_SHAREDOBJ const char* \n"
+	<< n << "_tfel_version = \"" << ::getTFELVersion() << "\";\n\n";
+  } // end of writeTFELVersionSymbol
+  
   void writeInterfaceSymbol(std::ostream& out,
 			     const std::string& n,
 			     const std::string& i)

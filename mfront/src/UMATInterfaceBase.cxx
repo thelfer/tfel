@@ -17,6 +17,7 @@
 #include<algorithm>
 
 #include"TFEL/Raise.hxx"
+#include"TFEL/Config/GetTFELVersion.h"
 #include"TFEL/System/System.hxx"
 #include"TFEL/Utilities/StringAlgorithms.hxx"
 #include"TFEL/Glossary/Glossary.hxx"
@@ -1550,6 +1551,7 @@ namespace mfront
 						       const FileDescription & fd) const
   {
     this->writeUMATxxEntryPointSymbol(out,name);
+    this->writeUMATxxTFELVersionSymbol(out,name);
     this->writeUMATxxMaterialSymbol(out,name,mb);
     this->writeUMATxxMaterialKnowledgeTypeSymbol(out,name);
     this->writeUMATxxInterfaceNameSymbols(out,name,mb,fd);
@@ -1567,6 +1569,12 @@ namespace mfront
     writeEntryPointSymbol(out,this->getFunctionName(n));
   } // end of UMATInterfaceBase::writeUMATxxEntryPointSymbol
 
+  void UMATInterfaceBase::writeUMATxxTFELVersionSymbol(std::ostream& out,
+						       const std::string& n) const{
+    out << "MFRONT_SHAREDOBJ const char* \n"
+	<< n << "_tfel_version = \"" << ::getTFELVersion() << "\";\n\n";
+  } // end of UMATInterfaceBase::writeUMATxxTFELVersionSymbol
+  
   void UMATInterfaceBase::writeUMATxxMaterialSymbol(std::ostream& out,
 						    const std::string& n,
 						    const BehaviourDescription& mb) const{

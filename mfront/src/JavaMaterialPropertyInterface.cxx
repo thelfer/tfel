@@ -303,6 +303,7 @@ namespace mfront
     srcFile << "#endif /* __cplusplus */\n\n";
     // mfront metadata
     writeEntryPointSymbol(srcFile,name);
+    writeTFELVersionSymbol(srcFile,name);
     writeInterfaceSymbol(srcFile,name,"Java");
     writeMaterialSymbol(srcFile,name,mpd.material);
     writeMaterialKnowledgeTypeSymbol(srcFile,name,MATERIALPROPERTY);
