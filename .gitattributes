@@ -5696,6 +5696,7 @@ mtest/tests/unit-tests/PipeTest.cxx -text
 src/CMakeLists.txt -text
 src/Config/CMakeLists.txt -text
 src/Config/GetInstallPath.cxx -text
+src/Config/GetTFELVersion.c.in -text
 src/Config/Makefile.am -text
 src/Exception/CMakeLists.txt -text
 src/Exception/Makefile.am -text
