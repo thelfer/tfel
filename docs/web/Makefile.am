@@ -63,6 +63,7 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./isotropicplasticityamstrongfrederickinematichardening.md \
 	   ./iwan.md                                                  \
 	   ./ddif2.md                                                 \
+	   ./drucker.md                                               \
 	   ./hosford.md                                               \
 	   ./barlat-yld2004.md                                        \
 	   ./greenplasticity.md                                       \

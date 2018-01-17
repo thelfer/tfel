@@ -5002,7 +5002,8 @@ namespace mfront{
        << "#include\"TFEL/Material/Lame.hxx\"\n"
        << "#include\"TFEL/Material/Hosford.hxx\"\n";
     if(this->mb.getSymmetryType()==ORTHOTROPIC){
-      os << "#include\"TFEL/Material/OrthotropicStressLinearTransformation.hxx\"\n"
+      os << "#include\"TFEL/Material/OrthotropicPlasticity.hxx\"\n"
+	 << "#include\"TFEL/Material/OrthotropicStressLinearTransformation.hxx\"\n"
 	 << "#include\"TFEL/Material/Hill.hxx\"\n"
 	 << "#include\"TFEL/Material/Barlat.hxx\"\n"
 	 << "#include\"TFEL/Material/OrthotropicAxesConvention.hxx\"\n";

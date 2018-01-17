@@ -295,6 +295,10 @@ by the following functions:
 - `computesJ3O`, `computesJ3ODerivative` and
   `computesJ3OSecondDerivative`.
 
+Those functions take the stress tensor as first argument and each
+orthotropic coefficients. Each of those functions has an overload
+taking the stress tensor as its firs arguments and a tiny vector
+(`tfel::math::tvector`) containing the orthotropic coefficients.
 
 ### \(\pi\)-plane
 

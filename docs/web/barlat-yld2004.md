@@ -1,4 +1,4 @@
-% Implementation of Barlat' Yld2004 behaviour
+% Implementation of Barlat' Yld2004-18p behaviour
 % Thomas Helfer, Dominique Deloison
 % 7/01/2018
 
@@ -22,8 +22,8 @@
 \newcommand{\mts}[1]{{\left.#1\right|_{t+\theta\,\Delta\,t}}}
 \newcommand{\ets}[1]{{\left.#1\right|_{t+\Delta\,t}}}
 
-This article discusses the implementation of the Yld2004 behaviour, as
-decribed by Barlat et al. (See @barlat_linear_2005).
+This article discusses the implementation of the Yld2004-18p
+behaviour, as decribed by Barlat et al. (See @barlat_linear_2005).
 
 # Description of the behaviour
 
@@ -87,11 +87,10 @@ where \(\tenseurq{M}\) is the transformation of the stress to its deviator:
 \tenseurq{M}=\tenseurq{I}-\Frac{1}{3}\tenseur{I}\,\otimes\,\tenseur{I}
 \]
 
-The linear transformations of the deaviator stress \(\tenseurq{C}'\)
-and \(\tenseurq{C}''\), are defined as follows:
+The linear transformations \(\tenseurq{C}'\) and \(\tenseurq{C}''\) of
+the deviator stress are defined as follows:
 \[
 \tenseurq{C}'=
-\Frac{1}{3}\,
 \begin{pmatrix}
 0 & -c'_{12} & -c'_{13} & 0 & 0 & 0 \\
 -c'_{21} & 0 & -c'_{23} & 0 & 0 & 0 \\

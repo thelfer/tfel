@@ -36,8 +36,8 @@ behaviour. This framework is described
   behaviour) is described [here](iwan.html).
 - The implementation of a perfect plastic behaviour based on the
   Hosford equivalent stress is described [here](hosford.html).
-- The implementation of the Barlat' Yld2004 behaviour is described
-  [here](barlat.html).
+- The implementation of the Barlat' Yld2004-18p behaviour is described
+  [here](barlat-yld2004.html).
 - The implementation of a perfect plastic behaviour based on the
 - The implementation of a perfect plastic behaviour based on the
   Green yield criterion is described [here](greenplasticity.html).

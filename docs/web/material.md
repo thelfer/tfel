@@ -111,11 +111,10 @@ where \(\tenseurq{M}\) is the transformation of the stress to its deviator:
 \tenseurq{M}=\tenseurq{I}-\Frac{1}{3}\tenseur{I}\,\otimes\,\tenseur{I}
 \]
 
-The linear transformations of the deaviator stress \(\tenseurq{C}'\)
-and \(\tenseurq{C}''\), are defined as follows:
+The linear transformations \(\tenseurq{C}'\) and \(\tenseurq{C}''\) of
+the deviator stress are defined as follows:
 \[
 \tenseurq{C}'=
-\Frac{1}{3}\,
 \begin{pmatrix}
 0 & -c'_{12} & -c'_{13} & 0 & 0 & 0 \\
 -c'_{21} & 0 & -c'_{23} & 0 & 0 & 0 \\

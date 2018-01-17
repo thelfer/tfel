@@ -589,6 +589,56 @@ The `computeJ3SecondDerivative`, defined in `tfel::material`
 namespace, is a synonym for the
 `computeDeviatorDeterminantSecondDerivative` function.
 
+## Orthotropic generalization of the invariants of the stress deviator tensor {#sec:deviatoric:orthotropic:invariants}
+
+Within the framework of the theory of representation, generalizations
+to orthotropic conditions of the invariants of the deviatoric stress
+have been proposed by Cazacu and Barlat (see
+@cazacu_generalization_2001):
+
+- The generalization of \(J_{2}\) is denoted \(J_{2}^{O}\). It is
+  defined by:
+  \[
+  J_{2}^{O}= a_6\,s_{yz}^2+a_5\,s_{xz}^2+a_4\,s_{xy}^2+\frac{a_2}{6}\,(s_{yy}-s_{zz})^2+\frac{a_3}{6}\,(s_{xx}-s_{zz})^2+\frac{a_1}{6}\,(s_{xx}-s_{yy})^2
+  \]
+  where the \(\left.a_{i}\right|_{i\in[1:6]}\) are six coefficients
+  describing the orthotropy of the material.
+- The generalization of \(J_{3}\) is denoted \(J_{3}^{O}\). It is
+  defined by:
+  \[
+  \begin{aligned}
+  J_{3}^{O}=
+  &\frac{1}{27}\,(b_1+b_2)\,s_{xx}^3+\frac{1}{27}\,(b_3+b_4)\,s_{yy}^3+\frac{1}{27}\,(2\,(b_1+b_4)-b_2-b_3)\,s_{zz}^3\\
+  &-\frac{1}{9}\,(b_1\,s_{yy}+b_2s_{zz})\,s_{xx}^2\\
+  &-\frac{1}{9}\,(b_3\,s_{zz}+b_4\,s_{xx})\,s_{yy}^2\\
+  &-\frac{1}{9}\,((b_1-b_2+b_4)\,s_{xx}+(b_1-b3+b_4)\,s_{yy})\,s_{zz}^3\\
+  &+\frac{2}{9}\,(b_1+b_4)\,s_{xx}\,s_{yy}\,s_{zz}\\
+  &-\frac{s_{xz}^2}{3}\,(2\,b_9\,s_{yy}-b_8\,s_{zz}-(2\,b_9-b_8)\,s_{xx})\\
+  &-\frac{s_{xy}^2}{3}\,(2\,b_{10}\,s_{zz}-b_5\,s_{yy}-(2\,b_{10}-b_5)\,s_{xx})\\
+  &-\frac{s_{yz}^2}{3}\,((b_6+b_7)\,s_{xx}-b_6\,s_{yy}-b_7\,s_{zz})\\
+  &+2\,b_{11}\,s_{xy}\,s_{xz}\,s_{yz}
+  \end{aligned}
+  \]
+  where the \(\left.b_{i}\right|_{i\in[1:11]}\) are eleven coefficients
+  describing the orthotropy of the material.
+
+Those invariants may be used to generalize isotropic yield criteria
+based on \(J_{2}\) and \(J_{3}\) invariants to orthotropy.
+
+\(J_{2}^{0}\), \(J_{3}^{0}\) and their first and second derivatives
+with respect to the stress tensor \(\tsigma\) can be computed
+by the following functions:
+
+- `computesJ2O`, `computesJ2ODerivative` and
+  `computesJ2OSecondDerivative`.
+- `computesJ3O`, `computesJ3ODerivative` and
+  `computesJ3OSecondDerivative`.
+
+Those functions take the stress tensor as first argument and each
+orthotropic coefficients. Each of those functions has an overload
+taking the stress tensor as its firs arguments and a tiny vector
+(`tfel::math::tvector`) containing the orthotropic coefficients.
+
 ## Eigenvalues, eigenvectors and eigentensors of symmetric tensors
 
 ### Eigenvalue
@@ -947,8 +997,8 @@ where \(\tenseurq{M}\) is the transformation of the stress to its deviator:
 \tenseurq{M}=\tenseurq{I}-\Frac{1}{3}\tenseur{I}\,\otimes\,\tenseur{I}
 \]
 
-The linear transformations of the deaviator stress \(\tenseurq{C}'\)
-and \(\tenseurq{C}''\), are defined as follows:
+The linear transformations \(\tenseurq{C}'\) and \(\tenseurq{C}''\) of
+the deviator stress are defined as follows:
 \[
 \tenseurq{C}'=
 \Frac{1}{3}\,
