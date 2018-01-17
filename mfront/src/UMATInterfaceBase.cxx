@@ -1571,8 +1571,7 @@ namespace mfront
 
   void UMATInterfaceBase::writeUMATxxTFELVersionSymbol(std::ostream& out,
 						       const std::string& n) const{
-    out << "MFRONT_SHAREDOBJ const char* \n"
-	<< n << "_tfel_version = \"" << ::getTFELVersion() << "\";\n\n";
+    writeTFELVersionSymbol(out,this->getFunctionName(n));
   } // end of UMATInterfaceBase::writeUMATxxTFELVersionSymbol
   
   void UMATInterfaceBase::writeUMATxxMaterialSymbol(std::ostream& out,
