@@ -28,7 +28,7 @@ namespace tfel{
     //! a simple alias
     template<typename StensorType>
     using J2OCoefficients =
-      const tfel::math::tvector<6u,tfel::math::StensorBaseType<StensorType>>;
+      tfel::math::tvector<6u,tfel::math::StensorBaseType<StensorType>>;
     /*!
      * \brief compute \f$J_{2}^{O}\f$ the orthotropic generalization
      * of the third invariant of the deviatoric part of the stress
@@ -412,7 +412,7 @@ namespace tfel{
     //! a simple alias
     template<typename StensorType>
     using J3OCoefficients =
-      const tfel::math::tvector<11u,tfel::math::StensorBaseType<StensorType>>;   
+      tfel::math::tvector<11u,tfel::math::StensorBaseType<StensorType>>;   
     /*!
      * \brief compute \f$J_{3}^{O}\f$ the orthotropic generalization
      * of the third invariant of the deviatoric part of the stress
