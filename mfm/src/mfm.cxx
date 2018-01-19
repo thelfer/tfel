@@ -229,7 +229,8 @@ private:
     };
     auto& elm = ExternalLibraryManager::getExternalLibraryManager();
     const auto& a  = this->getCurrentCommandLineArgument();
-    const auto& l = static_cast<const std::string&>(a);
+    //    const auto& l = static_cast<const std::string&>(a);
+    const auto& l = a.as_string();
     if(l.empty()){
       return;
     }
