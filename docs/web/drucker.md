@@ -1,4 +1,4 @@
-% Implementation of a perfect plastic behaviour using the Drucker yield criterion (@drucker_relation_1949) and its extension to orthotropic (@cazacu_generalization_2001)
+% Implementation of a perfect plastic behaviour using the Drucker yield criterion (@drucker_relation_1949) and two of its extensions to orthotropy (@cazacu_generalization_2001)
 % Thomas Helfer
 % 21/11/2017
 
@@ -24,11 +24,15 @@
 \newcommand{\ets}[1]{{\left.#1\right|_{t+\Delta\,t}}}
 \newcommand{\transpose}[1]{{#1^{\mathrm{T}}}}
 
-<!-- This paper is dedicated to the implementation a perfect plastic -->
-<!-- behaviour based on the Drucker yield criterion. -->
+This paper is dedicated to the implementation a perfect plastic
+behaviour based on the Drucker yield criterion and two generalizations
+to orthotropy.
 
-<!-- The two implementations are available -->
-<!-- [here](./gallery/plasticity/DruckerPerfectPlasticity.mfront). -->
+Those three implementations are available here:
+
+- [DruckerPerfectPlasticity_Cazacu2001.mfront](./gallery/plasticity/DruckerPerfectPlasticity_Cazacu2001.mfront).
+- [OrthotropicDruckerPerfectPlasticity2090T3_Cazacu2001.mfront](./gallery/plasticity/OrthotropicDruckerPerfectPlasticity2090T3_Cazacu2001.mfront)
+- [OrthotropicDruckerPerfectPlasticityYdLin6016T4_Cazacu2001.mfront](./gallery/plasticity/OrthotropicDruckerPerfectPlasticityYdLin6016T4_Cazacu2001.mfront)
 
 # Description
 
@@ -528,6 +532,15 @@ straight-forward:
 \sigmaeq^{D,O}=\sqrt{3}\,\paren{\paren{J_{2}^{O}}^{3}-c\,\paren{J_{3}^{O}}^2}^{\tfrac{1}{6}}
 \]
 
+## Verification
+
+![Plane stress yield surface (\(\sigma_{xy}=0\) and \(\sigma_{xy}=0.45\,\sigma_{0}\)) of 2090-T3 alloy sheet as predicted by the generalization of the Drucker yield criterion using generalized invariants (See @cazacu_generalization_2001, Figure 6).](img/Cazacu2001_2090-T3.svg
+ "Plane stress yield surface (\(\sigma_{xy}=0\) and
+ \(\sigma_{xy}=0.45\,\sigma_{0}\)) of 2090-T3 alloy sheet as predicted
+ by the generalization of the Drucker yield criterion using
+ generalized invariants (See @cazacu_generalization_2001, Figure
+ 3)"){width=80%}
+
 # A second extension to orthotropy (@barlat_linear_2007)
 
 Another approach is to introduce a linear transformation of the
@@ -585,7 +598,16 @@ following relations:
 The expressions of \(\deriv{\sigmaeq^{D,OL}}{\tenseur{s}'}\) and
 \(\sderiv{\sigmaeq^{D,OL}}{\tenseur{s}'}\) are the obtained from the
 isotropic case by replacing \(\tsigma\) with \(\tenseur{s}'\), which
-is trivial.
+is trivial to implement on the basis of the isotropic implementation
+described in the beginning of this document.
+
+## Verification
+
+![Plane stress yield surface (\(\sigma_{xy}=0\)) of 6016-T4 alloy sheet as predicted by the generalization of the Drucker yield criterion using a linear transformation (See @cazacu_generalization_2001, Figure 3).](img/Cazacu2001_6016-T4-YdLin.svg
+ "Plane stress yield surface (\(\sigma_{xy}=0\)) of 6016-T4 alloy
+ sheet as predicted by the generalization of the Drucker yield
+ criterion using a linear transformation (See
+ @cazacu_generalization_2001, Figure 3)"){width=80%}
 
 # References
 

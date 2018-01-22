@@ -2946,20 +2946,20 @@ namespace mfront{
   void BehaviourDSLCommon::writeBehaviourDataForwardDeclarations(std::ostream& os) const
   {
     this->checkBehaviourDataFile(os);
-    os << "// Forward Declaration\n"
-       << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type,bool use_qt>\n"
+    os << "//! \\brief forward declaration\n"
+       << "template<ModellingHypothesis::Hypothesis hypothesis,typename,bool>\n"
        << "class " << this->mb.getClassName() << "BehaviourData;\n\n"
-       << "// Forward Declaration\n"
+       << "//! \\brief forward declaration\n"
        << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type,bool use_qt>\n"
        << "class " << this->mb.getClassName() << "IntegrationData;\n\n";
     if(this->mb.useQt()){
-      os << "// Forward Declaration\n";
+      os << "//! \\brief forward declaration\n";
       os << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type,bool use_qt>\n";
       os << "std::ostream&\n operator <<(std::ostream&,";
       os << "const " << this->mb.getClassName() 
 	 << "BehaviourData<hypothesis,Type,use_qt>&);\n\n";
     } else {
-      os << "// Forward Declaration\n";
+      os << "//! \\brief forward declaration\n";
       os << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type>\n";
       os << "std::ostream&\n operator <<(std::ostream&,";
       os << "const " << this->mb.getClassName() 
@@ -2969,14 +2969,14 @@ namespace mfront{
     for(const auto & h : this->mb.getModellingHypotheses()){
       if(this->mb.hasSpecialisedMechanicalData(h)){
 	if(this->mb.useQt()){
-	  os << "// Forward Declaration\n"
+	  os << "//! \\brief forward declaration\n"
 	     << "template<typename Type,bool use_qt>\n"
 	     << "std::ostream&\n operator <<(std::ostream&,"
 	     << "const " << this->mb.getClassName() 
 	     << "BehaviourData<ModellingHypothesis::"
 	     << ModellingHypothesis::toUpperCaseString(h) << ",Type,use_qt>&);\n\n";
 	} else {
-	  os << "// Forward Declaration\n"
+	  os << "//! \\brief forward declaration\n"
 	     << "template<typename Type>\n"
 	     << "std::ostream&\n operator <<(std::ostream&,"
 	     << "const " << this->mb.getClassName() 
@@ -3178,16 +3178,16 @@ namespace mfront{
   void BehaviourDSLCommon::writeBehaviourForwardDeclarations(std::ostream& os) const
   {
     this->checkBehaviourFile(os);
-    os << "// Forward Declaration\n"
+    os << "//! \\brief forward declaration\n"
        << "template<ModellingHypothesis::Hypothesis,typename Type,bool use_qt>\n"
        << "class " << this->mb.getClassName() << ";\n\n";
     if(this->mb.useQt()){
-      os << "// Forward Declaration\n"
+      os << "//! \\brief forward declaration\n"
 	 << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type,bool use_qt>\n"
 	 << "std::ostream&\n operator <<(std::ostream&,"
 	 << "const " << this->mb.getClassName() << "<hypothesis,Type,use_qt>&);\n\n";
     } else {
-      os << "// Forward Declaration\n"
+      os << "//! \\brief forward declaration\n"
 	 << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type>\n"
 	 << "std::ostream&\n operator <<(std::ostream&,"
 	 << "const " << this->mb.getClassName() << "<hypothesis,Type,false>&);\n\n";
@@ -3197,14 +3197,14 @@ namespace mfront{
     for(const auto & h : mh){
       if(this->mb.hasSpecialisedMechanicalData(h)){
 	if(this->mb.useQt()){
-	  os << "// Forward Declaration\n"
+	  os << "//! \\brief forward declaration\n"
 	     << "template<typename Type,bool use_qt>\n"
 	     << "std::ostream&\n operator <<(std::ostream&,"
 	     << "const " << this->mb.getClassName() 
 	     << "<ModellingHypothesis::"
 	     << ModellingHypothesis::toUpperCaseString(h) << ",Type,use_qt>&);\n\n";
 	} else {
-	  os << "// Forward Declaration\n"
+	  os << "//! \\brief forward declaration\n"
 	     << "template<typename Type>\n"
 	     << "std::ostream&\n operator <<(std::ostream&,"
 	     << "const " << this->mb.getClassName() 
@@ -6108,17 +6108,17 @@ namespace mfront{
   void BehaviourDSLCommon::writeIntegrationDataForwardDeclarations(std::ostream& os) const
   {
     this->checkIntegrationDataFile(os);
-    os << "// Forward Declaration\n"
+    os << "//! \\brief forward declaration\n"
        << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type,bool use_qt>\n"
        << "class " << this->mb.getClassName() << "IntegrationData;\n\n";
     if(this->mb.useQt()){
-      os << "// Forward Declaration\n"
+      os << "//! \\brief forward declaration\n"
 	 << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type,bool use_qt>\n"
 	 << "std::ostream&\n operator <<(std::ostream&,"
 	 << "const " << this->mb.getClassName() 
 	 << "IntegrationData<hypothesis,Type,use_qt>&);\n\n";
     } else {
-      os << "// Forward Declaration\n"
+      os << "//! \\brief forward declaration\n"
 	 << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type>\n"
 	 << "std::ostream&\n operator <<(std::ostream&,"
 	 << "const " << this->mb.getClassName() 
@@ -6129,14 +6129,14 @@ namespace mfront{
     for(const auto & h : mh){
       if(this->mb.hasSpecialisedMechanicalData(h)){
 	if(this->mb.useQt()){
-	  os << "// Forward Declaration\n"
+	  os << "//! \\brief forward declaration\n"
 	     << "template<typename Type,bool use_qt>\n"
 	     << "std::ostream&\n operator <<(std::ostream&,"
 	     << "const " << this->mb.getClassName() 
 	     << "IntegrationData<ModellingHypothesis::"
 	     << ModellingHypothesis::toUpperCaseString(h) << ",Type,use_qt>&);\n\n";
 	} else {
-	  os << "// Forward Declaration\n"
+	  os << "//! \\brief forward declaration\n"
 	     << "template<typename Type>\n"
 	     << "std::ostream&\n operator <<(std::ostream&,"
 	     << "const " << this->mb.getClassName() 

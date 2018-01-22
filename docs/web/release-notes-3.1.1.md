@@ -21,6 +21,28 @@ $ tfel-config --cxx-standard
 
 # Tickets fixed
 
+## Ticket #107: The ZMAT interface does not support array of parameters
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/107/>
+
+## Ticket #106: Compilation of MFront 3.1 fails for Intel Compiler
+
+Compilation of MFront 3.1 fails for Intel Compiler (version
+icc/2016.0.047) with this message:
+
+~~~~{.bash}
+mfm/src/mfm.cxx(232): error: invalid type conversion: "const tfel::utilities::Argument" to "const std::string &" const auto& l = static_cast<const std::string&="">(a);
+~~~~
+
+This problem is limited to this version of the Intel Compiler. The
+solution is to change this line with:
+
+~~~~{.cpp}
+const auto& l = a.as_string();
+~~~~
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/106/>
+
 ## Ticket #105: Getting version number of `MFront`
 
 In order to check the MFront usage with `CYRANO3`, its would be usefull
@@ -52,7 +74,6 @@ The `tfel_version` member has been added to the
 `ExternalBehaviourDescription` class which is used by `Cyrano`. Beware
 that this can lead to inconsistencies if a previous version of `TFEL`
 is used.
-
 
 ### Retrieving the `TFEL` version at runtime
 

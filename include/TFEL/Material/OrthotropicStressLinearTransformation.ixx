@@ -332,22 +332,41 @@ namespace tfel{
     template<unsigned short N, typename real>
     tfel::math::st2tost2<N,real>
     makeOrthotropicStressLinearTransformation(const real c12,const real c21, const real c13,
-				   const real c31,const real c23, const real c32,
-				   const real c44,const real c55, const real c66)
+					      const real c31,const real c23, const real c32,
+					      const real c44,const real c55, const real c66)
     {
       return internals::OrthotropicStressLinearTransformation<N>::exe(c12,c21,c13,c31,c23,
 								      c32,c44,c55,c66);
     } // end of makeOrthotropicStressLinearTransformationType
 
+    template<unsigned short N, typename real>
+    tfel::math::st2tost2<N,real>
+    makeOrthotropicStressLinearTransformation(const tfel::math::tvector<9u,real>& c)
+    {
+      return internals::OrthotropicStressLinearTransformation<N>::exe(c[0],c[1],c[2],
+								      c[3],c[4],c[5],
+								      c[6],c[7],c[8]);
+    } // end of makeOrthotropicStressLinearTransformationType
+    
     template<ModellingHypothesis::Hypothesis H,
 	     OrthotropicAxesConvention c,typename real>
     tfel::math::st2tost2<ModellingHypothesisToSpaceDimension<H>::value,real>
     makeOrthotropicStressLinearTransformation(const real c12,const real c21, const real c13,
-				   const real c31,const real c23, const real c32,
-				   const real c44,const real c55, const real c66)
+					      const real c31,const real c23, const real c32,
+					      const real c44,const real c55, const real c66)
     {
       return internals::OrthotropicStressLinearTransformationII<H,c>::exe(c12,c21,c13,c31,c23,
 									  c32,c44,c55,c66);
+    } // end of makeOrthotropicStressLinearTransformation
+
+    template<ModellingHypothesis::Hypothesis H,
+	     OrthotropicAxesConvention oac,typename real>
+    tfel::math::st2tost2<ModellingHypothesisToSpaceDimension<H>::value,real>
+    makeOrthotropicStressLinearTransformation(const tfel::math::tvector<9u,real>& c)
+    {
+      return internals::OrthotropicStressLinearTransformationII<H,oac>::exe(c[0],c[1],c[2],
+									    c[3],c[4],c[5],
+									    c[6],c[7],c[8]);
     } // end of makeOrthotropicStressLinearTransformation
     
   } // end of namespace material

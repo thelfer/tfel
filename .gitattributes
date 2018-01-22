@@ -198,12 +198,15 @@ docs/gallery/behaviours/hyperviscoelasticity/Makefile.am -text
 docs/gallery/behaviours/hyperviscoelasticity/SignoriniHyperViscoelasticity-tfel-2.0.3.mfront -text
 docs/gallery/behaviours/hyperviscoelasticity/SignoriniHyperViscoelasticity.mfront -text
 docs/gallery/behaviours/plasticity/CMakeLists.txt -text
+docs/gallery/behaviours/plasticity/DruckerPerfectPlasticity_Cazacu2001.mfront -text
 docs/gallery/behaviours/plasticity/GreenPerfectPlasticity.mfront -text
 docs/gallery/behaviours/plasticity/HosfordPerfectPlasticity.mfront -text
 docs/gallery/behaviours/plasticity/IsotropicLinearHardeningPlasticity.mfront -text
 docs/gallery/behaviours/plasticity/IsotropicLinearKinematicHardeningPlasticity.mfront -text
 docs/gallery/behaviours/plasticity/Iwan.mfront -text
 docs/gallery/behaviours/plasticity/Makefile.am -text
+docs/gallery/behaviours/plasticity/OrthotropicDruckerPerfectPlasticity2090T3_Cazacu2001.mfront -text
+docs/gallery/behaviours/plasticity/OrthotropicDruckerPerfectPlasticityYdLin6016T4_Cazacu2001.mfront -text
 docs/gallery/behaviours/plasticity/OrthotropicLinearHardeningPlasticity.mfront -text
 docs/gallery/behaviours/viscoelasticity/CMakeLists.txt -text
 docs/gallery/behaviours/viscoelasticity/GeneralizedMaxwell.mfront -text
@@ -1200,6 +1203,8 @@ docs/web/img/CalculiX_MFRONT_WSL.xcf -text
 docs/web/img/CastemWebSite.png -text
 docs/web/img/CastemWebSite.xcf -text
 docs/web/img/CauchyStressComponents.png -text
+docs/web/img/Cazacu2001_2090-T3.svg -text
+docs/web/img/Cazacu2001_6016-T4-YdLin.svg -text
 docs/web/img/CodeAster2015Flyer.png -text
 docs/web/img/Configuration.pdf -text
 docs/web/img/Configuration.png -text
