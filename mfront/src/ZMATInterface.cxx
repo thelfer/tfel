@@ -1329,25 +1329,53 @@ namespace mfront
 	<< "file.back();\n"
 	<< "break;\n";
     for(p=params.begin(),pn=pnames.begin();p!=params.end();++p,++pn){
-      out << "} else if(str==\"" << *pn << "\"){\n";
-      if(p->type=="int"){
-	out << "const int value=file.getint();\n";
-      } else if(p->type=="ushort"){
-	out << "const unsigned short value=static_cast<unsigned short>(file.getint());\n";
+      if((p->type=="int")||(p->type=="ushort")){
+	out << "} else if(str==\"" << *pn << "\"){\n";
+	if(p->type=="int"){
+	  out << "const int value=file.getint();\n";
+	} else {
+	  out << "const unsigned short value=static_cast<unsigned short>(file.getint());\n";
+	}
+	if(mb.hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,p->name)){
+	  out << "tfel::material::" << mb.getClassName() 
+	      << "ParametersInitializer::get()." << p->name << " = value;\n";  
+	} else {
+	  out << "tfel::material::" << mb.getClassName() 
+	      << ModellingHypothesis::toString(h) 
+	      << "ParametersInitializer::get()." << p->name << " = value;\n";
+	}
       } else {
 	const auto f = SupportedTypes::getTypeFlag(p->type);
 	tfel::raise_if(f!=SupportedTypes::Scalar,
 		       "ZMATInterface::writeParametersInitialisation: "
 		       "unsupported type '"+p->type+"' for parameter '"+p->name+"'");
-	out << "const double value=file.getdouble();\n";
-      }
-      if(mb.hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,p->name)){
-	out << "tfel::material::" << mb.getClassName() 
-	    << "ParametersInitializer::get()." << p->name << " = value;\n";  
-      } else {
-	out << "tfel::material::" << mb.getClassName() 
-	    << ModellingHypothesis::toString(h) 
-	    << "ParametersInitializer::get()." << p->name << " = value;\n";
+	if(p->arraySize==1u){
+	  out << "} else if(str==\"" << *pn << "\"){\n";
+	  out << "const double value=file.getdouble();\n";
+	  if(mb.hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,p->name)){
+	    out << "tfel::material::" << mb.getClassName() 
+		<< "ParametersInitializer::get()." << p->name << " = value;\n";  
+	  } else {
+	    out << "tfel::material::" << mb.getClassName() 
+		<< ModellingHypothesis::toString(h) 
+		<< "ParametersInitializer::get()." << p->name << " = value;\n";
+	  }
+	} else {
+	  for(unsigned short i=0;i!=p->arraySize;++i){
+	    out << "} else if(str==\"" << *pn << "[" << i << "]\"){\n";
+	    out << "const double value=file.getdouble();\n";
+	    if(mb.hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,p->name)){
+	      out << "tfel::material::" << mb.getClassName() 
+		  << "ParametersInitializer::get()."
+		  << p->name << "[" << i << "] = value;\n";  
+	    } else {
+	      out << "tfel::material::" << mb.getClassName() 
+		  << ModellingHypothesis::toString(h) 
+		  << "ParametersInitializer::get()."
+		  << p->name << "[" << i << "] = value;\n";
+	    }
+	  }
+	}
       }
     }
     out << "} else {\n"
