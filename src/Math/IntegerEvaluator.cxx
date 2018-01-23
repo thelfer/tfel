@@ -24,12 +24,6 @@
 #include"TFEL/Math/IntegerEvaluator.hxx"
 #include"TFEL/Math/Parser/IntegerEvaluatorTExpr.hxx"
 
-#ifdef __CYGWIN__
-static bool isascii(const int c){
-  return ((c>=0) && (c<128));
-}
-#endif
-
 namespace tfel
 {
 
