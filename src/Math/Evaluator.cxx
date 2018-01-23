@@ -24,12 +24,6 @@
 #include"TFEL/Math/power.hxx"
 #include"TFEL/Math/Evaluator.hxx"
 
-#ifdef __CYGWIN__
-static bool isascii(const int c){
-  return ((c>=0) && (c<128));
-}
-#endif
-
 namespace tfel
 {
 
