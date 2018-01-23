@@ -1,5 +1,5 @@
 /*!
- * \file   include/TFEL/Material/Hosford.hxx
+ * \file   include/TFEL/Material/Hosford1972YieldCriterion.hxx
  * \brief  
  * \author Thomas Helfer
  * \date   15/11/2017
@@ -111,6 +111,6 @@ namespace tfel{
   
 } // end of namespace tfel
 
-#include"TFEL/Material/Hosford.ixx"
+#include"TFEL/Material/Hosford1972YieldCriterion.ixx"
 
 #endif /* LIB_TFEL_MATERIAL_HOSFORD_HXX */

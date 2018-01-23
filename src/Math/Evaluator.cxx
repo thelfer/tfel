@@ -27,12 +27,6 @@
 #include"TFEL/Math/Parser/Function.hxx"
 #include"TFEL/Math/Parser/BinaryFunction.hxx"
 
-#ifdef __CYGWIN__
-static bool isascii(const int c){
-  return ((c>=0) && (c<128));
-}
-#endif
-
 namespace tfel
 {
 
@@ -584,12 +578,11 @@ namespace tfel
 				 const std::vector<std::string>::const_iterator pe)
     {
       std::vector<std::string> params;
-      std::string::const_iterator ps;
       checkNotEndOfExpression("Evaluator::analyseParameters",p,pe);
       while(*p!=">"){
 	// check parameter validity
-	for(ps=p->begin();ps!=p->end();++ps){
-	  raise_if(!(isalpha(*ps)||isdigit(*ps))||(*ps=='_')||(*ps=='-'),
+	for(const auto c : *p){
+	  raise_if(!(isalpha(c)||isdigit(c))||(c=='_')||(c=='-'),
 		   "Evaluator::analyseParameters: "
 		   "invalid parameter '"+*p+"'");
 	}

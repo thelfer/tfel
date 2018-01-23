@@ -80,7 +80,7 @@ namespace mfront{
     //! treat a standard query
     virtual void treatStandardQuery() final;
     //! treat an unknown argument
-    virtual void treatUnknownArgument() final;
+    void treatUnknownArgument() override final;
     //! get the version description
     virtual std::string
     getVersionDescription() const override final;

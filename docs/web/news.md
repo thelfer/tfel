@@ -533,10 +533,10 @@ const auto [seq,n,dn] = computeBarlatStressSecondDerivative(s,l1,l2,a,seps);
 
 ![Comparison of the Hosford stress \(a=100,a=8\) and the von Mises stress](img/HosfordStress.svg "Comparison of the Hosford stress \(a=100,a=8\) and the von Mises stress in plane stress"){width=70%}
 
-The header `TFEL/Material/Hosford.hxx` introduces three functions
-which are meant to compute the Hosford equivalent stress and its first
-and second derivatives. *This header is automatically included by
-`MFront`*
+The header `TFEL/Material/Hosford1972YieldCriterion.hxx` introduces
+three functions which are meant to compute the Hosford equivalent
+stress and its first and second derivatives. *This header is
+automatically included by `MFront`*
 
 The Hosford equivalent stress is defined by:
 \[

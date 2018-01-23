@@ -172,7 +172,7 @@ namespace tfel{
 			   tfel::math::BinaryOperationResult<tfel::math::StensorBaseType<StensorType>,
 							     tfel::math::StensorNumType<StensorType>,
 							     tfel::math::OpDiv>>>::type
-    computeJ2OSecondDerivative(const StensorType& s,
+    computeJ2OSecondDerivative(const StensorType&,
 			       const tfel::math::StensorBaseType<StensorType> a1,
 			       const tfel::math::StensorBaseType<StensorType> a2,
 			       const tfel::math::StensorBaseType<StensorType> a3,
@@ -193,7 +193,7 @@ namespace tfel{
 			   tfel::math::BinaryOperationResult<tfel::math::StensorBaseType<StensorType>,
 							     tfel::math::StensorNumType<StensorType>,
 							     tfel::math::OpDiv>>>::type
-    computeJ2OSecondDerivative(const StensorType& s,
+    computeJ2OSecondDerivative(const StensorType&,
 			       const tfel::math::StensorBaseType<StensorType> a1,
 			       const tfel::math::StensorBaseType<StensorType> a2,
 			       const tfel::math::StensorBaseType<StensorType> a3,
@@ -217,7 +217,7 @@ namespace tfel{
 			   tfel::math::BinaryOperationResult<tfel::math::StensorBaseType<StensorType>,
 							     tfel::math::StensorNumType<StensorType>,
 							     tfel::math::OpDiv>>>::type
-    computeJ2OSecondDerivative(const StensorType& s,
+    computeJ2OSecondDerivative(const StensorType&,
 			       const tfel::math::StensorBaseType<StensorType> a1,
 			       const tfel::math::StensorBaseType<StensorType> a2,
 			       const tfel::math::StensorBaseType<StensorType> a3,

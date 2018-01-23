@@ -486,6 +486,15 @@ be automatically made available:
 - the `young_tdt` variable will be computed for the temperature
   \(T+\Delta\,T\).
 
+# Known incompatibilities
+
+## Header files
+
+The following header files have been renamed:
+
+- `Hosford.hxx` has been moved in `Hosford1972YieldCriterion.hxx`.
+- `Barlat.hxx` has been moved in `Barlat2004YieldCriterion.hxx`.
+
 # References
 
 <!-- Local IspellDict: english -->

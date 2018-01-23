@@ -45,7 +45,8 @@ Options
   enable-cxx-17     : enable c++-17 features (requires `gcc` >= 7.2)
   
   enable-random-tests: enable tests based on a random choice of 
-  enable-developer-warnings : enable additionnal compiler warnings 
+  enable-developer-warnings : enable additionnal compiler warnings
+  enable-advanced-developer-warnings : enable additionnal compiler warnings 
   enable-sanitize-options : additional compiler flags (gcc specific)
   enable-portable-build   : do not use processor specific flags. The generated binaries can be
                             used on other machines as long as the architecture and the compiler

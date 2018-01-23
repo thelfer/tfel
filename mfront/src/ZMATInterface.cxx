@@ -777,7 +777,7 @@ namespace mfront
 	<< "/*!\n"
 	<< "* ZMAT Interface to the " << mb.getClassName() << " behaviour"
 	<< "*/\n"
-	<< "struct ZMAT" << mb.getClassName() << '\n'
+	<< "struct ZMAT" << mb.getClassName() << " final\n"
 	<< ": public BEHAVIOR\n"
 	<< "{\n"
 	<< "//! constructor;\n"
@@ -788,7 +788,7 @@ namespace mfront
 	<< " * \\param[in]     dim   : dimension (used by the BEHAVIOUR class)\n"
 	<< " * \\param[in]     integ : pointer to the local integration\n"
 	<< " */\n"
-	<< "virtual void initialize(ASCII_FILE&,int,LOCAL_INTEGRATION*);\n"
+	<< "void initialize(ASCII_FILE&,int,LOCAL_INTEGRATION*) override;\n"
 	<< "/*!\n"
 	<< " * \\brief integrate the beahviour over a time step\n"
 	<< " * \\param[in,out] mat        : material properties\n"
@@ -798,14 +798,13 @@ namespace mfront
 	<< " * \\return NULL on success\n"
 	<< " */\n"
 	<< "INTEGRATION_RESULT*\n"
-	<< "integrate(MAT_DATA&,const VECTOR&,MATRIX*&,int);\n";
+	<< "integrate(MAT_DATA&,const VECTOR&,MATRIX*&,int) override;\n";
     if(mb.getAttribute(BehaviourDescription::requiresStiffnessTensor,false)){
       out << "/*!\n"
 	  << " * \\brief return the elasticity matrix\n"
 	  << " * \\param[in] mdat : material data\n"
 	  << " */\n"
-	  << "SMATRIX\n"
-	  << "get_elasticity_matrix(MAT_DATA&,double);\n";
+	  << "SMATRIX get_elasticity_matrix(MAT_DATA&,double) override;\n";
     }
     out << "//! destructor\n"
 	<< "virtual ~ZMAT" << mb.getClassName() << "();\n"

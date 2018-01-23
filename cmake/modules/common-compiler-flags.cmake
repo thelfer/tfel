@@ -50,8 +50,6 @@ if(enable-developer-warnings)
   tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS "Wzero-as-null-pointer-constant")
   tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS "Wsign-conversion")
   tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS "Wsign-promo")
-  tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS "Wsuggest-final-types")
-  tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS "Wsuggest-final-methods")
   if(NOT (WIN32 AND ( CMAKE_SIZEOF_VOID_P EQUAL 8 )))
     tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS "Wlong-long")
   endif(NOT (WIN32 AND ( CMAKE_SIZEOF_VOID_P EQUAL 8 )))
@@ -66,3 +64,9 @@ else(enable-developer-warnings)
   tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS
     "Wno-missing-variable-declarations")
 endif(enable-developer-warnings)
+
+
+if(enable-advanced-developer-warnings)
+  tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS "Wsuggest-final-types")
+  tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS "Wsuggest-final-methods")
+endif(enable-advanced-developer-warnings)

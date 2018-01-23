@@ -1491,8 +1491,8 @@ include/TFEL/Glossary/Forward/Glossary.hxx -text
 include/TFEL/Glossary/Glossary.hxx -text
 include/TFEL/Glossary/GlossaryEntry.hxx -text
 include/TFEL/Macros.hxx -text
-include/TFEL/Material/Barlat.hxx -text
-include/TFEL/Material/Barlat.ixx -text
+include/TFEL/Material/Barlat2004YieldCriterion.hxx -text
+include/TFEL/Material/Barlat2004YieldCriterion.ixx -text
 include/TFEL/Material/BoundsCheck.hxx -text
 include/TFEL/Material/CrystalStructure.hxx -text
 include/TFEL/Material/DDIF2Base.hxx -text
@@ -1503,8 +1503,8 @@ include/TFEL/Material/FiniteStrainBehaviourTangentOperatorBase.hxx -text
 include/TFEL/Material/GursonTvergaardNeedleman.hxx -text
 include/TFEL/Material/Hill.hxx -text
 include/TFEL/Material/Hill.ixx -text
-include/TFEL/Material/Hosford.hxx -text
-include/TFEL/Material/Hosford.ixx -text
+include/TFEL/Material/Hosford1972YieldCriterion.hxx -text
+include/TFEL/Material/Hosford1972YieldCriterion.ixx -text
 include/TFEL/Material/IsotropicLinearFourierHookLaw.hxx -text
 include/TFEL/Material/IsotropicLinearFourierLaw.hxx -text
 include/TFEL/Material/IsotropicPlasticity.hxx -text

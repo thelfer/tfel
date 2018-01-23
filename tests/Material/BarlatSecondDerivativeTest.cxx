@@ -20,8 +20,8 @@
 #include"TFEL/Tests/TestManager.hxx"
 #include"TFEL/Math/Stensor/StensorConceptIO.hxx"
 #include"TFEL/Math/ST2toST2/ST2toST2ConceptIO.hxx"
-#include"TFEL/Material/Hosford.hxx"
-#include"TFEL/Material/Barlat.hxx"
+#include"TFEL/Material/Hosford1972YieldCriterion.hxx"
+#include"TFEL/Material/Barlat2004YieldCriterion.hxx"
 
 struct BarlatSecondDerivativeTest final
   : public tfel::tests::TestCase

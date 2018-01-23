@@ -17,10 +17,10 @@
 
 ## Hosford equivalent stress{#sec:hosford}
 
-The header `TFEL/Material/Hosford.hxx` introduces three functions
-which are meant to compute the Hosford equivalent stress and its first
-and second derivatives. *This header is automatically included by
-`MFront`*
+The header `TFEL/Material/Hosford1972YieldCriterion.hxx` introduces
+three functions which are meant to compute the Hosford equivalent
+stress and its first and second derivatives. *This header is
+automatically included by `MFront`*
 
 The Hosford equivalent stress is defined by:
 \[
@@ -66,10 +66,10 @@ const auto [seq,n,dn] = computeHosfordStressSecondDerivative(s,a,seps);
 
 ## Barlat equivalent stress{#sec:barlat}
 
-The header `TFEL/Material/Barlat.hxx` introduces various functions
-which are meant to compute the Barlat equivalent stress and its first
-and second derivatives. *This header is automatically included by
-`MFront`* for orthotropic behaviours.
+The header `TFEL/Material/Barlat2004YieldCriterion.hxx` introduces
+various functions which are meant to compute the Barlat equivalent
+stress and its first and second derivatives. *This header is
+automatically included by `MFront`* for orthotropic behaviours.
 
 The Barlat equivalent stress is defined as follows (see
 @barlat_linear_2005):

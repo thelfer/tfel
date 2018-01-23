@@ -12,7 +12,7 @@
  */
 
 #include<boost/python.hpp>
-#include"TFEL/Material/Hosford.hxx"
+#include"TFEL/Material/Hosford1972YieldCriterion.hxx"
 
 template<unsigned short N>
 static double

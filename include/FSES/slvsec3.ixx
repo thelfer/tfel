@@ -47,7 +47,7 @@ namespace fses{
   void slvsec3(MatrixType& R, VectorType& w,
 	       const real d[3], const real z[3], int i0, int i1, int i2)
   {
-    constexpr const auto M_SQRT3  = real(1.73205080756887729352744634151);
+    constexpr const auto c_sqrt3  = real(1.73205080756887729352744634151);
     constexpr const auto zero     = real(0);
     constexpr const auto one      = real(1);
     constexpr const auto two      = real(2);
@@ -99,7 +99,7 @@ namespace fses{
     phi = c27 * ( square(beta)*(p - beta)/four - gamma*(q - c27/four*gamma));
     phi = (one/three) * std::atan2(std::sqrt(std::abs(phi)), q);
     c = sqrt_p*std::cos(phi);
-    s = (one/M_SQRT3)*sqrt_p*std::abs(std::sin(phi));
+    s = (one/c_sqrt3)*sqrt_p*std::abs(std::sin(phi));
 
     x0[0] = x0[1] = x0[2] = (one/three)*(alpha - c);
     if (c > s){            // Make sure the roots are in ascending order

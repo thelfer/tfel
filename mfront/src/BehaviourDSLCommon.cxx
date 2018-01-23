@@ -5000,12 +5000,12 @@ namespace mfront{
        << "#include\"TFEL/Material/BoundsCheck.hxx\"\n"
        << "#include\"TFEL/Material/IsotropicPlasticity.hxx\"\n"
        << "#include\"TFEL/Material/Lame.hxx\"\n"
-       << "#include\"TFEL/Material/Hosford.hxx\"\n";
+       << "#include\"TFEL/Material/Hosford1972YieldCriterion.hxx\"\n";
     if(this->mb.getSymmetryType()==ORTHOTROPIC){
       os << "#include\"TFEL/Material/OrthotropicPlasticity.hxx\"\n"
 	 << "#include\"TFEL/Material/OrthotropicStressLinearTransformation.hxx\"\n"
 	 << "#include\"TFEL/Material/Hill.hxx\"\n"
-	 << "#include\"TFEL/Material/Barlat.hxx\"\n"
+	 << "#include\"TFEL/Material/Barlat2004YieldCriterion.hxx\"\n"
 	 << "#include\"TFEL/Material/OrthotropicAxesConvention.hxx\"\n";
     }
     if(this->mb.getAttribute(BehaviourDescription::computesStiffnessTensor,false)){

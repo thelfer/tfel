@@ -12,7 +12,7 @@
  */
 
 #include<boost/python.hpp>
-#include"TFEL/Material/Barlat.hxx"
+#include"TFEL/Material/Barlat2004YieldCriterion.hxx"
 
 template<unsigned short N>
 static tfel::math::st2tost2<N,double>

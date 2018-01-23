@@ -133,8 +133,15 @@ namespace tfel{
     {
       return makeOrthotropicStressLinearTransformation<N,real>(c12,c21,c13,c31,c23,
 							       c32,c44,c55,c66);
-    } // end of makeBarlatLinearTransformationType
+    } // end of makeBarlatLinearTransformation
 
+    template<unsigned short N, typename real>
+    tfel::math::st2tost2<N,real>
+    makeBarlatLinearTransformation(const tfel::math::tvector<9u,real>& c)
+    {
+      return makeOrthotropicStressLinearTransformation<N,real>(c);
+    } // end of makeBarlatLinearTransformation
+    
     template<ModellingHypothesis::Hypothesis H,
 	     OrthotropicAxesConvention c,typename real>
     tfel::math::st2tost2<ModellingHypothesisToSpaceDimension<H>::value,real>
@@ -144,6 +151,14 @@ namespace tfel{
     {
       return makeOrthotropicStressLinearTransformation<H,c,real>(c12,c21,c13,c31,c23,
 								 c32,c44,c55,c66);
+    } // end of makeBarlatLinearTransformation
+    
+    template<ModellingHypothesis::Hypothesis H,
+	     OrthotropicAxesConvention oac,typename real>
+    tfel::math::st2tost2<ModellingHypothesisToSpaceDimension<H>::value,real>
+    makeBarlatLinearTransformation(const tfel::math::tvector<9u,real>& c)
+    {
+      return makeOrthotropicStressLinearTransformation<H,oac,real>(c);
     } // end of makeBarlatLinearTransformation
     
     template<typename StressStensor,

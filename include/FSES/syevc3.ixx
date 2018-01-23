@@ -46,7 +46,7 @@ namespace fses {
   {
     using real = GetMatrixNumericType_t<MatrixType>;
 
-    constexpr const auto M_SQRT3   = real(1.73205080756887729352744634151);
+    constexpr const auto c_sqrt3   = real(1.73205080756887729352744634151);
     constexpr const auto one       = real(1);
     constexpr const auto two       = real(2);
     constexpr const auto three     = real(3);
@@ -81,7 +81,7 @@ namespace fses {
     phi = (one_third) * std::atan2(std::sqrt(std::abs(phi)), q);
   
     const real c = sqrt_p*std::cos(phi);
-    const real s = (one/M_SQRT3)*sqrt_p*std::sin(phi);
+    const real s = (one/c_sqrt3)*sqrt_p*std::sin(phi);
 
     at(w,1)  = one_third*(m - c);
     at(w,2)  = at(w,1) + s;
