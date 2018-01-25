@@ -723,20 +723,22 @@ namespace mfront{
      * \param[in] h    : modelling hypothesis
      * \param[in] mb   : behaviour description
      */
-    void writeUMATxxBoundsSymbols(std::ostream&,
-				  const std::string&,
-				  const Hypothesis,
-				  const BehaviourDescription&) const;
+    virtual void
+    writeUMATxxBoundsSymbols(std::ostream&,
+			     const std::string&,
+			     const Hypothesis,
+			     const BehaviourDescription&) const;
     /*!
      * \param[in] out  : output file
      * \param[in] name : name of the behaviour 
      * \param[in] h    : modelling hypothesis
      * \param[in] mb   : behaviour description
      */
-    void writeUMATxxPhysicalBoundsSymbols(std::ostream&,
-					  const std::string&,
-					  const Hypothesis,
-					  const BehaviourDescription&) const;
+    virtual void
+    writeUMATxxPhysicalBoundsSymbols(std::ostream&,
+				     const std::string&,
+				     const Hypothesis,
+				     const BehaviourDescription&) const;
     /*!
      * \param[in] out  : output file
      * \param[in] name : name of the behaviour 
