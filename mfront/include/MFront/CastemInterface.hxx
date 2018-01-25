@@ -376,10 +376,18 @@ namespace mfront{
 						       const std::string&,
 						       const char) const;
 
-    virtual std::string
+    /*!
+     * \return true if the interface handles the given modelling hypothesis
+     * \param[in] h  : modelling hypothesis
+     * \param[in] mb : behaviour description
+     */
+    bool isModellingHypothesisHandled(const Hypothesis,
+				      const BehaviourDescription&) const override;
+    
+    std::string
     getModellingHypothesisTest(const Hypothesis) const override;
 
-    virtual std::map<UMATInterfaceBase::Hypothesis,std::string>
+    std::map<UMATInterfaceBase::Hypothesis,std::string>
     gatherModellingHypothesesAndTests(const BehaviourDescription&) const override;
     /*!
      * \return the list of modelling hypotheses treated by the interface

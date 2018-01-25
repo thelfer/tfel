@@ -607,6 +607,22 @@ namespace mfront{
     return mh;
   } // end of CastemInterfaceModellingHypothesesToBeTreated
 
+  bool CastemInterface::isModellingHypothesisHandled(const Hypothesis h,
+						     const BehaviourDescription& mb) const
+  {
+    const auto mh = this->getModellingHypothesesToBeTreated(mb);
+    if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
+      return !mb.areAllMechanicalDataSpecialised(mh);
+    }
+    if(mh.find(h)!=mh.end()){
+      return true;
+    }
+    if(h==ModellingHypothesis::PLANESTRESS){
+      return this->usesGenericPlaneStressAlgorithm(mb);
+    }
+    return false;
+  } // end of CastemInterface::isModellingHypothesisHandled
+  
   void
   CastemInterface::writeGetOutOfBoundsPolicyFunctionImplementation(std::ostream& out,
 								   const std::string& name) const
@@ -1112,16 +1128,7 @@ namespace mfront{
 	  ModellingHypothesis::PLANESTRESS,
 	  ModellingHypothesis::GENERALISEDPLANESTRAIN,
 	  ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN}){
-      const auto b = [this,&mb,&mh,h]{
-	if(std::find(mh.begin(),mh.end(),h)!=mh.end()){
-	  return true;
-	}
-	if(h==ModellingHypothesis::PLANESTRESS){
-	  return this->usesGenericPlaneStressAlgorithm(mb);
-	}
-	return false;
-      }();
-      if(b){
+      if(this->isModellingHypothesisHandled(h,mb)){
 	out << "static void \numat"
 	    << makeLowerCase(name) << "_base_" << ModellingHypothesis::toUpperCaseString(h) 
 	    << "(const castem::CastemInt *const NTENS, const castem::CastemReal *const DTIME,\n"
@@ -1159,6 +1166,7 @@ namespace mfront{
 	    << "castem::CastemInt  *const KINC,\n"
 	    << "const castem::StressFreeExpansionHandler&)\n"
 	    << "{\n"
+	    << "std::cerr << \"" << name << ": unsupported modelling hypothesis\\n\";\n"
 	    << "*KINC = -2;\n"
 	    << "}\n\n";
       }
@@ -1780,6 +1788,17 @@ namespace mfront{
 			 &preprocessing,&postprocessing,
 			 &throw_if](const int ndi,const Hypothesis h,const bool b){
       out << (b ? "if" : " else if") << "(*NDI==" << ndi << "){\n";
+      if(!this->isModellingHypothesisHandled(h,mb)){
+	// don't do any pre- or post-processing
+	out << "	umat" << makeLowerCase(name) << "_base_"
+	    << ModellingHypothesis::toUpperCaseString(h)
+	    << "(NTENS,DTIME,DROT,DDSDDE,nullptr,nullptr,\n"
+	    << " TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,\n"
+	    << " STATEV,NSTATV,STRESS,PNEWDT,KINC,\n"
+	    << " castem::CastemLogarithmicStrainStressFreeExpansionHandler);\n"
+	    << "}";
+	return;
+      }
       if(mb.getAttribute(BehaviourData::profiling,false)){
 	out << "{\n"
 	    << "BehaviourProfiler::Timer pre_timer(" << mb.getClassName()

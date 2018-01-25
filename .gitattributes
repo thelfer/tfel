@@ -1494,6 +1494,8 @@ include/TFEL/Macros.hxx -text
 include/TFEL/Material/Barlat2004YieldCriterion.hxx -text
 include/TFEL/Material/Barlat2004YieldCriterion.ixx -text
 include/TFEL/Material/BoundsCheck.hxx -text
+include/TFEL/Material/Cazacu2006IsotropicYieldCriterion.hxx -text
+include/TFEL/Material/Cazacu2006IsotropicYieldCriterion.ixx -text
 include/TFEL/Material/CrystalStructure.hxx -text
 include/TFEL/Material/DDIF2Base.hxx -text
 include/TFEL/Material/DDIF2Base.ixx -text

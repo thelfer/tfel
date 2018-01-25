@@ -1,5 +1,5 @@
 /*!
- * \file   include/TFEL/Material/Hosford.ixx
+ * \file   include/TFEL/Material/Hosford1972YieldCriterion.ixx
  * \brief  
  * \author Thomas Helfer
  * \date   15/11/2017
@@ -213,11 +213,11 @@ namespace tfel{
       // eigenvalues are normalised by the Von Mises stress to avoid
       // overflow
       const auto rvp      = vp*iseq;
-      const real Psi_a    = (std::pow(std::abs(rvp[0]-rvp[1]),a)+
+      const real rPsi_a   = (std::pow(std::abs(rvp[0]-rvp[1]),a)+
 			     std::pow(std::abs(rvp[0]-rvp[2]),a)+
 			     std::pow(std::abs(rvp[1]-rvp[2]),a))/2;
       // Hosford equivalent stress
-      const real Psi      = seq*std::pow(Psi_a,1/real(a));
+      const real Psi      = seq*std::pow(rPsi_a,1/real(a));
       // For the derivatives, the stress eigenvalues are normalised by
       // the Hosford equivalent stress
       const auto rvp2     = vp/Psi;
@@ -270,11 +270,11 @@ namespace tfel{
       // eigenvalues are normalised by the Von Mises stress to avoid
       // overflow
       const auto rvp      = vp*iseq;
-      const real Psi_a    = (std::pow(std::abs(rvp[0]-rvp[1]),a)+
+      const real rPsi_a   = (std::pow(std::abs(rvp[0]-rvp[1]),a)+
 			     std::pow(std::abs(rvp[0]-rvp[2]),a)+
 			     std::pow(std::abs(rvp[1]-rvp[2]),a))/2;
       // Hosford equivalent stress
-      const real Psi      = seq*std::pow(Psi_a,1/real(a));
+      const real Psi      = seq*std::pow(rPsi_a,1/real(a));
       // For the derivatives, the stress eigenvalues are normalised by
       // the Hosford equivalent stress
       const auto rvp2     = vp/Psi;
