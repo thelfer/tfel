@@ -97,7 +97,7 @@ set(mfront_tests_SOURCES
   ComputeThermalExpansion
   ComputeThermalExpansion2
   ComputeThermalExpansion3)
-if((NOT WIN32) AND (NOT CYGWIN))
+if((NOT WIN32) AND (NOT CYGWIN) AND (NOT MSYS))
   list(APPEND mfront_tests_SOURCES
        AbaqusAxialGrowth
        AbaqusAxialGrowth2
@@ -107,7 +107,7 @@ if((NOT WIN32) AND (NOT CYGWIN))
        AbaqusOrthotropicElastic2
        ParameterTest
        ParameterTest2)
-endif((NOT WIN32) AND (NOT CYGWIN))
+endif((NOT WIN32) AND (NOT CYGWIN) AND (NOT MSYS))
 mfront_dependencies(MFrontAbaqusBehaviours
   ThermalExpansionCoefficientTest
   ThermalExpansionCoefficientTest2

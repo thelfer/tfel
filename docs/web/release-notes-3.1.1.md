@@ -21,6 +21,25 @@ $ tfel-config --cxx-standard
 
 # Tickets fixed
 
+## Ticket #108: Imcompatibility between `@StrainMeasure Hencky` and `@ModellingHypothesis AxisymmetricalGeneralisedPlaneStrain`
+
+This is a mistake in the `Cast3M` interface which happens when:
+
+- using the `MieheApelLambrecht` finite strain strategy or using the
+  Hencky strain measure (this is equivalent for the `Cast3M`
+  interface)
+- the plane stress hypothesis is not directly supported by the
+  behaviour. In this case, the `Cast3M` interface tries to use the
+  `GeneralisedPlaneStrain` hypothesis to support plane stress
+  computations.
+
+Because of some ill-formed test in `CastemInterface.cxx`, the
+interface tried to access to the `BehaviourData` associated with the
+`GeneralisedPlaneStrain` hypothesis ... which may be not
+available. Hence the error.
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/108/>
+
 ## Ticket #107: The ZMAT interface does not support array of parameters
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/107/>
