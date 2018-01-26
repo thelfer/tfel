@@ -59,8 +59,8 @@ namespace mfront
 
   UMATInterfaceBase::UMATInterfaceBase() = default;
 
-  bool UMATInterfaceBase::isModellingHypothesisHandled(const Hypothesis h,
-						       const BehaviourDescription& mb) const
+  bool UMATInterfaceBase::isBehaviourConstructorRequired(const Hypothesis h,
+						         const BehaviourDescription& mb) const
   {
     const auto ih = this->getModellingHypothesesToBeTreated(mb);
     if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){

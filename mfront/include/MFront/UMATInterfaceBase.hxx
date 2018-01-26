@@ -800,7 +800,7 @@ namespace mfront{
      * \param[in] mb : behaviour description
      */
     virtual bool
-    isModellingHypothesisHandled(const Hypothesis,
+    isBehaviourConstructorRequired(const Hypothesis,
 				 const BehaviourDescription&) const override;
     //! \return true if the interface handles external state variables
     virtual bool areExternalStateVariablesSupported() const;
