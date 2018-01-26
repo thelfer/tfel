@@ -377,12 +377,19 @@ namespace mfront{
 						       const char) const;
 
     /*!
-     * \return true if the interface handles the given modelling hypothesis
+     * \return true if the interface supports the given modelling
+     * hypothesis. 
+     *
+     * \note the Cast3M interface may support modelling hypotheses
+     * not intrinsically supported by the behaviour (plane stress case
+     * for strain based behaviours). 
+     *
      * \param[in] h  : modelling hypothesis
      * \param[in] mb : behaviour description
      */
-    bool isModellingHypothesisHandled(const Hypothesis,
-				      const BehaviourDescription&) const override;
+    virtual bool
+    isModellingHypothesisSupported(const Hypothesis,
+				   const BehaviourDescription&) const;
     
     std::string
     getModellingHypothesisTest(const Hypothesis) const override;

@@ -66,7 +66,7 @@ namespace mfront{
      * \param[in] mb : mechanical behaviour description
      */
     virtual bool
-    isModellingHypothesisHandled(const Hypothesis,
+    isBehaviourConstructorRequired(const Hypothesis,
 				 const BehaviourDescription&) const override;
     
     virtual std::set<Hypothesis>

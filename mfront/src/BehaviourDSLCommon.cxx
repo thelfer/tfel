@@ -2840,7 +2840,7 @@ namespace mfront{
     os << "\n{}\n\n";
     // Creating constructor for external interfaces
     for(const auto& i : this->interfaces){
-      if(i.second->isModellingHypothesisHandled(h,this->mb)){
+      if(i.second->isBehaviourConstructorRequired(h,this->mb)){
 	i.second->writeBehaviourDataConstructor(os,h,this->mb);
       }
     }
@@ -3774,7 +3774,7 @@ namespace mfront{
        << "void\nsetOutOfBoundsPolicy(const OutOfBoundsPolicy policy_value){\n"
        << "this->policy = policy_value;\n"
        << "} // end of setOutOfBoundsPolicy\n\n";
-  } // end of BehaviourDSLCommon::writeBehaviourOutOfBoundsEnumeration
+  } // end of BehaviourDSLCommon::writeBehaviourSetOutOfBoundsPolicy
 
   static void writeBoundsChecks(std::ostream& os,
 				const VariableDescription& v,
@@ -4001,7 +4001,7 @@ namespace mfront{
     write_body();
     // constructor specific to interfaces
     for(const auto& i : this->interfaces){
-      if(i.second->isModellingHypothesisHandled(h,this->mb)){
+      if(i.second->isBehaviourConstructorRequired(h,this->mb)){
 	i.second->writeBehaviourConstructor(os,this->mb,init);
 	write_body();
       }
@@ -5974,7 +5974,7 @@ namespace mfront{
     os << "\n{}\n\n";
     // Creating constructor for external interfaces
     for(const auto& i : this->interfaces){
-      if(i.second->isModellingHypothesisHandled(h,this->mb)){
+      if(i.second->isBehaviourConstructorRequired(h,this->mb)){
 	i.second->writeIntegrationDataConstructor(os,h,this->mb);
       }
     }

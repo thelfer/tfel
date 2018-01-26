@@ -68,13 +68,14 @@ namespace mfront{
 		 tokens_iterator,
 		 const tokens_iterator) = 0;
     /*!
-     * \return true if the interface handles the given modelling hypothesis
+     * \return true if the interface will create
+     * constructors in the behaviour class.
      * \param[in] h  : modelling hypothesis
      * \param[in] mb : behaviour description
      */
     virtual bool
-    isModellingHypothesisHandled(const Hypothesis,
-				 const BehaviourDescription&) const = 0;
+    isBehaviourConstructorRequired(const Hypothesis,
+				   const BehaviourDescription&) const = 0;
     /*!
      * \return the list of modelling hypotheses treated by the interface
      * \param[in] mb : behaviour description

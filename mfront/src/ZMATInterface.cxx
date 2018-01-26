@@ -166,8 +166,8 @@ namespace mfront
     return {false,current};
   }
   
-  bool ZMATInterface::isModellingHypothesisHandled(const Hypothesis h,
-						   const BehaviourDescription& mb) const
+  bool ZMATInterface::isBehaviourConstructorRequired(const Hypothesis h,
+						     const BehaviourDescription& mb) const
   {
     const auto ih = this->getModellingHypothesesToBeTreated(mb);
     if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
