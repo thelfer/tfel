@@ -476,7 +476,7 @@ namespace tfel{
 						     const tvector<3u,T>& vp,
 						     const tmatrix<3u,3u,tfel::typetraits::base_type<T>>& m,
 						     const T eps){
-      tfel::math::internals::StensorComputeIsotropicFunctionDerivative<N>::exe(d,f,df,vp,m,eps); 
+      tfel::math::internals::StensorComputeIsotropicFunctionDerivative<N>::exe2(d,f,df,vp,m,eps); 
     }
 
     template<unsigned short N,typename T>

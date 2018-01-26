@@ -361,10 +361,10 @@ add_subdirectory(src)
 add_subdirectory(bindings)
 
 add_subdirectory(tfel-config)
-if(UNIX AND (NOT CYGWIN))
+if(UNIX AND (NOT CYGWIN) AND (NOT MSYS))
   add_subdirectory(tfel-doc)
   add_subdirectory(tfel-check)
-endif(UNIX AND (NOT CYGWIN))
+endif(UNIX AND (NOT CYGWIN) AND (NOT MSYS))
 
 add_subdirectory(mfront)
 add_subdirectory(mfront-query)
@@ -438,7 +438,7 @@ endif(enable-website)
 add_subdirectory(docs)
 
 ## environment under msys
-if(CMAKE_HOST_WIN32 OR CYGWIN)
+if(CMAKE_HOST_WIN32 OR CYGWIN OR MSYS)
   if(MSYS)
      string(REGEX REPLACE "(.*):(.*)" "/\\1\\2"
              TFEL_BINARY_DIR "${PROJECT_BINARY_DIR}")
@@ -456,7 +456,7 @@ if(CMAKE_HOST_WIN32 OR CYGWIN)
     configure_file(env-win32.sh.in  env.sh  @ONLY)
     configure_file(env-win32.bat.in env.bat @ONLY)
   endif(CMAKE_CONFIGURATION_TYPES)
-endif(CMAKE_HOST_WIN32 OR CYGWIN)
+endif(CMAKE_HOST_WIN32 OR CYGWIN OR MSYS)
 
 ## Packaging
 option(install-system-libraries "install system libraries" OFF)
