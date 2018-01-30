@@ -153,6 +153,8 @@ namespace tfel
       return ExprPtr(new Variable(this->vars,this->pos));
     }  
 
+    Evaluator::TVariable::~TVariable() = default;
+    
     bool Evaluator::TGroup::isOperator() const
     {
       return false;

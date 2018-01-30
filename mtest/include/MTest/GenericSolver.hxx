@@ -31,15 +31,14 @@ namespace mtest{
      * \param[in]   ti: time at the beginning of the time step
      * \param[in]   ti: time at the end of the time step
      */
-    virtual void
-    execute(StudyCurrentState& scs,
-	    SolverWorkSpace& wk,
-	    const Study& s,
-	    const SolverOptions& o,
-	    const real ti,
-	    const real te) override;
+    void execute(StudyCurrentState& scs,
+		 SolverWorkSpace& wk,
+		 const Study& s,
+		 const SolverOptions& o,
+		 const real ti,
+		 const real te) override;
     //! destructor
-    virtual ~GenericSolver();
+    ~GenericSolver() override;
   }; // end of struct GenericSolver
   
 } // end of namespace mtest

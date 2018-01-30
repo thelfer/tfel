@@ -1169,7 +1169,7 @@ namespace tfel
     } // end of Evaluator::operator()
     
     double Evaluator::getValue(const std::map<std::string,double>& vs){
-      for(const auto v:vs){
+      for(const auto& v:vs){
 	this->setVariableValue(v.first,v.second);
       }
       return this->getValue();

@@ -32,9 +32,9 @@ namespace tfel{
     {
       //! constructor
       MixedComparison();
-      virtual void compare() override;
+      void compare() override;
       //! destructor
-      virtual ~MixedComparison();
+      ~MixedComparison() override;
     };
 
   } // end of namespace check

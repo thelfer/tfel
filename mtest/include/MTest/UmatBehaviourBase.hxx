@@ -244,23 +244,21 @@ namespace mtest
      * \param[in] n : name of the parameter
      * \param[in] v : value
      */
-    virtual void
-    setParameter(const std::string&,
-		 const real) const override;
+    void setParameter(const std::string&,
+		      const real) const override;
     /*!
      * \brief set the value of a parameter
      * \param[in] n : name of the parameter
      * \param[in] v : value
      */
-    virtual void
-    setIntegerParameter(const std::string&,
-			const int) const override;
+    void setIntegerParameter(const std::string&,
+			     const int) const override;
     /*!
      * \brief set the value of a parameter
      * \param[in] n : name of the parameter
      * \param[in] v : value
      */
-    virtual void
+    void
     setUnsignedIntegerParameter(const std::string&,
 				const unsigned short) const override;
     /*!
@@ -273,7 +271,7 @@ namespace mtest
      * \param[out] mp  : evolution manager where 
      * \param[in]  evm : evolution manager
      */
-    virtual void
+    void
     setOptionalMaterialPropertiesDefaultValues(EvolutionManager&,
 					       const EvolutionManager&) const override;
     /*!
@@ -283,11 +281,10 @@ namespace mtest
      * \param[out] wk : behaviour workspace
      * \param[in] s   : current state
      */
-    virtual bool
-    doPackagingStep(CurrentState&,
-		    BehaviourWorkSpace&) const override;
+    bool doPackagingStep(CurrentState&,
+			 BehaviourWorkSpace&) const override;
     //! destructor
-    virtual ~UmatBehaviourBase();
+    ~UmatBehaviourBase() override;
   protected:
     /*!
      * \brief initialize the first value of the tangent operator

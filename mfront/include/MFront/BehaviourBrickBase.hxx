@@ -51,9 +51,8 @@ namespace mfront{
      * \param[in] r : requirement manager
      * \param[in] h : modelling hypothesis
      */
-    virtual void
-    addRequirements(bbrick::RequirementManager&,
-		    const Hypothesis) const override;
+    void addRequirements(bbrick::RequirementManager&,
+			 const Hypothesis) const override;
     /*!
      * \brief treat a keyword
      * \param[in] key: keyword to be treated
@@ -63,12 +62,12 @@ namespace mfront{
      * treated by the interface. The second entry is an iterator after
      * the last token treated.
      */
-    virtual std::pair<bool,tokens_iterator>
+    std::pair<bool,tokens_iterator>
     treatKeyword(const std::string&,
 		 tokens_iterator&,
 		 const tokens_iterator) override;
     //! destructor
-    virtual ~BehaviourBrickBase();
+    ~BehaviourBrickBase() override;
   protected:
     //! a simple alias
     using GlossaryEntry = tfel::glossary::GlossaryEntry;

@@ -45,24 +45,18 @@ namespace tfel
 	 * \param[in] m: a map used to change the names of the variables
 	 */
 	std::string getCxxFormula(const std::vector<std::string>&) const override;
-	
-	virtual void
-	checkCyclicDependency(std::vector<std::string>&) const override;
-	virtual std::shared_ptr<Expr>
-	differentiate(const std::vector<double>::size_type,
-		      const std::vector<double>&) const override;
-	virtual std::shared_ptr<Expr>
-	resolveDependencies(const std::vector<double>&) const override;
-	virtual std::shared_ptr<Expr>
-	clone(const std::vector<double>&) const override;
-	virtual void
-	getParametersNames(std::set<std::string>&) const override;
-	virtual std::shared_ptr<Expr>
+	void checkCyclicDependency(std::vector<std::string>&) const override;
+	std::shared_ptr<Expr> differentiate(const std::vector<double>::size_type,
+					    const std::vector<double>&) const override;
+	std::shared_ptr<Expr> resolveDependencies(const std::vector<double>&) const override;
+	std::shared_ptr<Expr> clone(const std::vector<double>&) const override;
+	void getParametersNames(std::set<std::string>&) const override;
+	std::shared_ptr<Expr>
 	createFunctionByChangingParametersIntoVariables(const std::vector<double>&,
 							const std::vector<std::string>&,
 							const std::map<std::string,
 							               std::vector<double>::size_type>&) const override;
-	virtual ~DifferentiatedFunctionExpr();
+	~DifferentiatedFunctionExpr() override;
       private:
 	std::shared_ptr<ExternalFunction> TFEL_VISIBILITY_LOCAL
 	getDerivative() const;

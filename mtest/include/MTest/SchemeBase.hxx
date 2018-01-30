@@ -60,19 +60,16 @@ namespace mtest{
     /*!
      * \param[in] h : modelling hypothesis
      */
-    virtual void
-    setModellingHypothesis(const std::string&) override;
+    void setModellingHypothesis(const std::string&) override;
     /*!
      * \param[in] t : times
      */
-    virtual void
-    setTimes(const std::vector<real>&);
+    virtual void setTimes(const std::vector<real>&);
     /*!
      * \brief set the output file
      * \param[in] f : file name
      */
-    virtual void
-    setOutputFileName(const std::string&);
+    virtual void setOutputFileName(const std::string&);
     //! \return true if the output file name has been defined
     virtual bool isOutputFileNameDefined() const;
     /*!
@@ -241,7 +238,7 @@ namespace mtest{
      */
     virtual void setCastemAccelerationPeriod(const int);
     //! destructor
-    virtual ~SchemeBase();
+    ~SchemeBase() override;
   protected:
     /*!
      * complete the initialisation. This method must be called once.

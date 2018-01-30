@@ -33,25 +33,23 @@ namespace mfront{
      * \param[in] mb : behaviour description
      * \param[in] fd : mfront file description
      */
-    virtual void
-    endTreatment(const BehaviourDescription&,
-		 const FileDescription&) const override;
+    void endTreatment(const BehaviourDescription&,
+		      const FileDescription&) const override;
     /*!
      * write interface specific includes
      * \param[in] out : output file
      * \param[in] mb  : behaviour description
      */
-    virtual void 
-    writeInterfaceSpecificIncludes(std::ostream&,
-				   const BehaviourDescription&) const override;
+    void writeInterfaceSpecificIncludes(std::ostream&,
+					const BehaviourDescription&) const override;
     /*!
      * \param[out] d  : target description
      * \param[in]  bd : behaviour description
      */
-    virtual void getTargetsDescription(TargetsDescription&,
-				       const BehaviourDescription&) override;
+    void getTargetsDescription(TargetsDescription&,
+			       const BehaviourDescription&) override;
     //! destructor
-    virtual ~AbaqusExplicitInterface();
+    ~AbaqusExplicitInterface() override;
     
   protected:
     /*!

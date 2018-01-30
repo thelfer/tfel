@@ -78,7 +78,7 @@ namespace mtest
     /*!
      * destructor
      */
-    virtual ~PipeTestParser();
+    ~PipeTestParser() override;
   protected:
     /*!
      * \brief handle the `@RadialLoading` keyword

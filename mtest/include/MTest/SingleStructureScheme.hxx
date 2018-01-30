@@ -101,7 +101,7 @@ namespace mtest{
     /*!
      * \brief perform the computation of the packaging step
      */
-    virtual bool doPackagingStep(StudyCurrentState&) const override;      
+    bool doPackagingStep(StudyCurrentState&) const override;      
     /*!
      * \brief update current state at the beginning of a new time step:
      * - update the material properties
@@ -111,10 +111,9 @@ namespace mtest{
      * \param[in]  t: current time
      * \param[in] dt: time increment
      */
-    virtual void
-    prepare(StudyCurrentState&,
-	    const real,
-	    const real) const override;
+    void prepare(StudyCurrentState&,
+		 const real,
+		 const real) const override;
     /*!
      * \param[in] n : parameter name
      * \param[in] v : parameter value
@@ -163,7 +162,7 @@ namespace mtest{
      */
     virtual void setOutOfBoundsPolicy(const tfel::material::OutOfBoundsPolicy);
     //! destructor
-    virtual ~SingleStructureScheme();
+    ~SingleStructureScheme() override;
   protected:
     /*!
      * \brief check that the behaviour is consistent with the
@@ -180,10 +179,9 @@ namespace mtest{
      * complete the initialisation. This method must be called once.
      * \note this method must be called by the derived class.
      */ 
-    virtual void completeInitialisation() override;
+    void completeInitialisation() override;
     //! \return the default stiffness matrix type
-    virtual StiffnessMatrixType
-    getDefaultStiffnessMatrixType() const override;
+    StiffnessMatrixType getDefaultStiffnessMatrixType() const override;
     //! list of internal variable names, including their suffixes
     std::vector<std::string> ivfullnames;
     //! the mechanical behaviour

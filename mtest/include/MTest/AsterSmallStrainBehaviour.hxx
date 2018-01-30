@@ -39,10 +39,9 @@ namespace mtest
     /*!
      * \param[out] v : initial values of the driving variables
      */
-    virtual void
-    getDrivingVariablesDefaultInitialValues(tfel::math::vector<real>&) const override;
+    void getDrivingVariablesDefaultInitialValues(tfel::math::vector<real>&) const override;
     //! destructor
-    virtual ~AsterSmallStrainBehaviour();
+    ~AsterSmallStrainBehaviour() override;
   protected:
     /*!
      * \brief call the mechanical behaviour
@@ -57,7 +56,7 @@ namespace mtest
      * \param[in]     b     : if true, integrate the behaviour over the time
      * step, if false compute a prediction of the stiffness matrix
      */
-    virtual std::pair<bool,real>
+    std::pair<bool,real>
     call_behaviour(tfel::math::matrix<real>&,
 		   CurrentState&,
 		   BehaviourWorkSpace&,

@@ -39,10 +39,9 @@ namespace mtest
     /*!
      * \param[out] v : initial values of the driving variables
      */
-    virtual void
-      getDrivingVariablesDefaultInitialValues(tfel::math::vector<real>&) const override;
+    void getDrivingVariablesDefaultInitialValues(tfel::math::vector<real>&) const override;
     //! destructor
-    virtual ~AbaqusFiniteStrainBehaviour();
+    ~AbaqusFiniteStrainBehaviour() override;
   protected:
     /*!
      * \brief call the mechanical behaviour
@@ -57,13 +56,13 @@ namespace mtest
      * \param[in] b : if true, integrate the behaviour over the time
      * step, if false compute a prediction of the stiffness matrix
      */
-    virtual std::pair<bool,real>
-      call_behaviour(tfel::math::matrix<real>&,
-		     CurrentState&,
-		     BehaviourWorkSpace&,
-		     const real,
-		     const StiffnessMatrixType,
-		     const bool) const override;
+    std::pair<bool,real>
+    call_behaviour(tfel::math::matrix<real>&,
+		   CurrentState&,
+		   BehaviourWorkSpace&,
+		   const real,
+		   const StiffnessMatrixType,
+		   const bool) const override;
   }; // end of struct Behaviour
   
 } // end of namespace mtest

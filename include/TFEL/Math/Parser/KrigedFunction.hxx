@@ -58,45 +58,34 @@ namespace tfel
 
 	KrigedFunction(const KrigedFunction&);
 
-	virtual double
-	getValue() const override;
+	double getValue() const override;
 
-	virtual void
-	setVariableValue(const std::vector<double>::size_type,
-			 const double) override;
+	void setVariableValue(const std::vector<double>::size_type,
+			      const double) override;
 
-	virtual std::vector<double>::size_type
-	getNumberOfVariables() const override;
+	std::vector<double>::size_type getNumberOfVariables() const override;
 
-	virtual void
-	checkCyclicDependency(const std::string&) const override;
+	void checkCyclicDependency(const std::string&) const override;
 
-	virtual void
-	checkCyclicDependency(std::vector<std::string>&) const override;
+	void checkCyclicDependency(std::vector<std::string>&) const override;
 
-	virtual std::shared_ptr<ExternalFunction>
-	differentiate(const std::vector<double>::size_type) const override;
+	std::shared_ptr<ExternalFunction> differentiate(const std::vector<double>::size_type) const override;
+	std::shared_ptr<ExternalFunction> differentiate(const std::string&) const override;
+	std::shared_ptr<ExternalFunction> resolveDependencies() const override;
 
-	virtual	std::shared_ptr<ExternalFunction>
-	differentiate(const std::string&) const override;
-
-	virtual	std::shared_ptr<ExternalFunction>
-	resolveDependencies() const override;
-
-	virtual std::shared_ptr<ExternalFunction>
+	std::shared_ptr<ExternalFunction>
 	createFunctionByChangingParametersIntoVariables(const std::vector<std::string>&) const override;
 
-	virtual std::shared_ptr<ExternalFunction>
+	std::shared_ptr<ExternalFunction>
 	createFunctionByChangingParametersIntoVariables(std::vector<std::string>&,
 							const std::vector<double>&,
 							const std::vector<std::string>&,
 							const std::map<std::string,
 							std::vector<double>::size_type>&) const override;
 
-	virtual void
-	getParametersNames(std::set<std::string>&) const override;
+	void getParametersNames(std::set<std::string>&) const override;
 
-	virtual ~KrigedFunction();
+	~KrigedFunction() override;
 
       private:
 

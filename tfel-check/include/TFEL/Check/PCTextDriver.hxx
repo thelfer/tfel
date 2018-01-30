@@ -32,7 +32,7 @@ namespace tfel{
 
       PCTextDriver();
       PCTextDriver(const std::string&);
-      virtual void addMessage(const std::string&) override;
+      void addMessage(const std::string&) override;
       /*!
        * \param[in] testname:
        * \param[in] step:
@@ -41,14 +41,14 @@ namespace tfel{
        * \param[in] success:
        * \param[in] message:
        */
-      virtual void addTestResult(const std::string&,
-				 const std::string&,
-				 const std::string&,
-				 const float,
-				 bool,
-				 const std::string& = "") override;
+      void addTestResult(const std::string&,
+			 const std::string&,
+			 const std::string&,
+			 const float,
+			 bool,
+			 const std::string& = "") override;
       //! destructor
-      virtual ~PCTextDriver();
+      ~PCTextDriver() override;
     };
 
   } // end of namespace check

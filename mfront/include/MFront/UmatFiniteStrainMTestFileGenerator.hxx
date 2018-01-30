@@ -50,20 +50,18 @@ namespace mfront
     /*!
      * destructor
      */
-    virtual ~UmatFiniteStrainMTestFileGenerator();
+    ~UmatFiniteStrainMTestFileGenerator() override;
   protected:
     /*!
      * write behaviour declaration
      * \param[in] os : output stream
      */
-    virtual void
-    writeBehaviourDeclaration(std::ostream&) const override;
+    void writeBehaviourDeclaration(std::ostream&) const override;
     /*!
      * write driving variables
      * \param[in] os : output stream
      */
-    virtual void
-    writeDrivingVariables(std::ostream&) const override;
+    void writeDrivingVariables(std::ostream&) const override;
     //! interface name
     std::string interface;
     //! library name

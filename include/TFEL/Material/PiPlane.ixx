@@ -43,8 +43,7 @@ namespace tfel{
     } // end of projectOnPiPlane
 
     template<typename StressStensor,
-	     tfel::math::stensor_common::EigenSolver es =
-	     tfel::math::stensor_common::TFELEIGENSOLVER>
+	     tfel::math::stensor_common::EigenSolver es>
     std::tuple<tfel::math::StensorNumType<StressStensor>,
 	       tfel::math::StensorNumType<StressStensor>>
     projectOnPiPlane(const StressStensor& s)

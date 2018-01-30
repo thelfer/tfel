@@ -22,12 +22,11 @@ namespace mfront{
   struct MFrontModelInterface final
     : public AbstractModelInterface
   {
-    static std::string 
-    getName();
+    static std::string getName();
 
     MFrontModelInterface();
 
-    virtual ~MFrontModelInterface();
+    ~MFrontModelInterface() override;
 
     /*!
      * \param[in] k  : keyword treated
@@ -38,20 +37,18 @@ namespace mfront{
      * treated by the interface. The second entry is an iterator after
      * the last token treated.
      */
-    virtual std::pair<bool,tokens_iterator>
+    std::pair<bool,tokens_iterator>
     treatKeyword(const std::string&,
 		 const std::vector<std::string>&,
 		 tokens_iterator,
 		 const tokens_iterator) override;
 
-    virtual void
-    declareReservedNames(std::set<std::string>&) override;
+    void declareReservedNames(std::set<std::string>&) override;
 
     /*!
      * \param pdata : processing data
      * \param data  : model data
      */
-    virtual
     void writeOutputFiles(const FileDescription&,
 			  const ModelDescription&) override;
     /*!
@@ -59,9 +56,9 @@ namespace mfront{
      * \param[out] d  : target description
      * \param[in]  md : model description
      */
-    virtual void getTargetsDescription(TargetsDescription&,
-				       const ModelDescription&) override;
-
+    void getTargetsDescription(TargetsDescription&,
+			       const ModelDescription&) override;
+    
   private:
 
     virtual void

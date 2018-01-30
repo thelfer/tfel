@@ -50,8 +50,7 @@ namespace mfront{
     using OrthotropicAxesConvention =
       tfel::material::OrthotropicAxesConvention;
     //! \return the behaviour description
-    virtual const BehaviourDescription&
-    getBehaviourDescription() const override final;
+    const BehaviourDescription& getBehaviourDescription() const override final;
     /*!
      * \brief This function handles a material property treated as a
      * dependency of the current file.
@@ -69,7 +68,7 @@ namespace mfront{
      * \param[in] f : file in which the material law is
      * implemented. This must be the full path.
      */
-    virtual std::shared_ptr<MaterialPropertyDescription>
+    std::shared_ptr<MaterialPropertyDescription>
     handleMaterialPropertyDescription(const std::string&) override;
     /*!
      * \brief import a file
@@ -82,10 +81,9 @@ namespace mfront{
      * `--@YYY@=XXX`)
      *
      */
-    virtual void
-    analyseFile(const std::string&,
-		const std::vector<std::string>&,
-		const std::map<std::string,std::string>&) override;
+    void analyseFile(const std::string&,
+		     const std::vector<std::string>&,
+		     const std::map<std::string,std::string>&) override;
   protected:
     /*!
      * create a variable modifier from a method
@@ -108,16 +106,11 @@ namespace mfront{
        * \param[in] v : the variable name
        * \param[in] b : true if "this" shall be added
        */
-      virtual std::string
-	exe(const std::string&,
-	    const bool) override;
-      /*!
-       * destructor
-       */
-      virtual ~StandardVariableModifier();
-
+      std::string exe(const std::string&,
+		      const bool) override;
+      //! destructor
+      ~StandardVariableModifier() override;
     private:
-
       T& instance;
       const Hypothesis hypothesis;
       const MPtr mptr;
@@ -148,12 +141,9 @@ namespace mfront{
       /*!
        * \param[in] k : the current word
        */
-      virtual void
-      exe(const std::string&) override;
-      /*!
-       * destructor
-       */
-      virtual ~StandardWordAnalyser();
+      void exe(const std::string&) override;
+      //! destructor
+      ~StandardWordAnalyser() override;
 
     private:
 
@@ -198,28 +188,28 @@ namespace mfront{
     /*!
      * \return the name of the generated class
      */
-    virtual std::string getClassName() const override;
+    std::string getClassName() const override;
     /*!
      * \brief add a material law
      * \param[in] m : added material law name
      */
-    virtual void addMaterialLaw(const std::string&) override;
+    void addMaterialLaw(const std::string&) override;
     /*!
      * \brief append the given code to the includes
      */
-    virtual void appendToIncludes(const std::string&) override;
+    void appendToIncludes(const std::string&) override;
     /*!
      * \brief append the given code to the members
      */
-    virtual void appendToMembers(const std::string&) override;
+    void appendToMembers(const std::string&) override;
     /*!
      * \brief append the given code to the private code
      */
-    virtual void appendToPrivateCode(const std::string&) override;
+    void appendToPrivateCode(const std::string&) override;
     /*!
      * \brief append the given code to the sources
      */
-    virtual void appendToSources(const std::string&) override;
+    void appendToSources(const std::string&) override;
     /*!
      * \param[out] o : options to be read
      * \param[in]  s : allow specialisation
@@ -364,13 +354,12 @@ namespace mfront{
      * \brief add a static variable description
      * \param[in] v : variable description
      */
-    virtual void
-    addStaticVariableDescription(const StaticVariableDescription&) override;
+    void addStaticVariableDescription(const StaticVariableDescription&) override;
     /*!
      * \return the value of an integer constant
      * \param[in] n: variable name
      */
-    virtual int getIntegerConstant(const std::string&) const override;
+    int getIntegerConstant(const std::string&) const override;
     /*!
      * disable the declaration of new variables
      * \param[in] h : modelling hypothesis
@@ -383,7 +372,7 @@ namespace mfront{
     /*!
      * write the output files
      */
-    virtual void generateOutputFiles() override;
+    void generateOutputFiles() override;
     /*!
      * \brief write the header files declaring the slip systems
      */
@@ -396,8 +385,7 @@ namespace mfront{
      * supported, the user must use the `@ModellingHypothesis` or
      * `@ModellingHypotheses` keywords.
      */
-    virtual std::set<Hypothesis>
-    getDefaultModellingHypotheses() const override;
+    std::set<Hypothesis> getDefaultModellingHypotheses() const override;
     /*!
      * \return true if the given modelling hypothesis is handled by
      * the parser
@@ -415,8 +403,7 @@ namespace mfront{
      * enable this modelling hypothesis by calling explicitely
      * `@ModellingHypothesis` or `@ModellingHypotheses` keywords.
      */
-    virtual bool
-    isModellingHypothesisSupported(const Hypothesis) const override;
+    bool isModellingHypothesisSupported(const Hypothesis) const override;
     /*!
      * \brief the standard variable modifier
      * \param[in] h : modelling hypothesis
@@ -512,18 +499,17 @@ namespace mfront{
     /*!
      * set the interfaces to be used
      */
-    virtual void
-    setInterfaces(const std::set<std::string>&) override;
+    void setInterfaces(const std::set<std::string>&) override;
     /*!
      * \brief register a name.
      * \param[in] n : name
      */
-    virtual void reserveName(const std::string&) override;
+    void reserveName(const std::string&) override;
     /*!
      * \brief look if a name is reserved
      * \param[in] n : name
      */
-    virtual bool isNameReserved(const std::string&) const override;
+    bool isNameReserved(const std::string&) const override;
     /*!
      * register the default variable names
      */
@@ -541,9 +527,9 @@ namespace mfront{
     virtual ModelDescription
     getModelDescription(const std::string&);
     //! \brief treat the `@Private` keyword
-    virtual void treatPrivate() override;
+    void treatPrivate() override;
     //! \brief treat the `@Members` keyword
-    virtual void treatMembers() override;
+    void treatMembers() override;
     //! \brief treat the `@StrainMeasure` keyword
     virtual void treatStrainMeasure();
     //! \brief treat the `@TangentOperator` keyword
@@ -973,7 +959,7 @@ namespace mfront{
      * For example, if we want to evaluate the variable name 'V' at
      * the end of the time step, we could make f return V+dV
      */
-    virtual void
+    void
     writeMaterialPropertyEvaluation(std::ostream&,
 				    const BehaviourDescription::MaterialProperty&,
 				    std::function<std::string(const MaterialPropertyInput&)>&) const override;
@@ -1241,9 +1227,9 @@ namespace mfront{
     treatUnknownVariableMethod(const Hypothesis,
 			       const std::string&);
     //! method called when an unknown keyword is parsed
-    virtual void treatUnknownKeyword() override;
+    void treatUnknownKeyword() override;
     //! destructor
-    virtual ~BehaviourDSLCommon();
+    ~BehaviourDSLCommon() override;
     /*!
      * \param[in] h : modelling hypothesis
      * \param[in] n : variable name

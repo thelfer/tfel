@@ -46,8 +46,8 @@ namespace tfel{
       InvalidTimeStepException() = default;
       InvalidTimeStepException(InvalidTimeStepException&&) = default;
       InvalidTimeStepException(const InvalidTimeStepException&) = default;
-      virtual const char* what() const noexcept override final;
-      virtual ~InvalidTimeStepException() noexcept;
+      const char* what() const noexcept override final;
+      ~InvalidTimeStepException() noexcept override;
     }; // end of struct InvalidTimeStepException
 
     struct TFELMATH_VISIBILITY_EXPORT MathDivergenceException
@@ -56,7 +56,7 @@ namespace tfel{
       MathDivergenceException() = default;
       MathDivergenceException(MathDivergenceException&&) = default;
       MathDivergenceException(const MathDivergenceException&) = default;
-      virtual ~MathDivergenceException() noexcept;
+       ~MathDivergenceException() noexcept override;
     }; // end of struct MathDivergenceException
 
     struct TFELMATH_VISIBILITY_EXPORT MaximumNumberOfIterationsReachedException
@@ -65,8 +65,8 @@ namespace tfel{
       MaximumNumberOfIterationsReachedException() = default;
       MaximumNumberOfIterationsReachedException(MaximumNumberOfIterationsReachedException&&) = default;
       MaximumNumberOfIterationsReachedException(const MaximumNumberOfIterationsReachedException&) = default;
-      virtual const char* what() const noexcept override final;
-      virtual ~MaximumNumberOfIterationsReachedException() noexcept;
+      const char* what() const noexcept override final;
+      ~MaximumNumberOfIterationsReachedException() noexcept override;
     }; // end of struct MaximumNumberOfIterationsReachedException
 
     struct TFELMATH_VISIBILITY_EXPORT SingularJacobianException
@@ -75,8 +75,8 @@ namespace tfel{
       SingularJacobianException() = default;
       SingularJacobianException(SingularJacobianException&&) = default;
       SingularJacobianException(const SingularJacobianException&) = default;
-      virtual const char* what() const noexcept override final;
-      virtual ~SingularJacobianException() noexcept;
+      const char* what() const noexcept override final;
+      ~SingularJacobianException() noexcept override;
     }; // end of struct SingularJacobianException
 
   } // end of namespace math

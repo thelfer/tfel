@@ -38,26 +38,23 @@ namespace mfront{
     //! Constructors
     MFrontNewtonRaphsonSolverBase();
     //! \return the reserved names
-    virtual std::vector<std::string>
-    getReservedNames() const override;
+    std::vector<std::string> getReservedNames() const override;
     /*!
      * \return true if the solver uses the jacobian of the system
      * (Newton-Raphson solvers) or an approximation of it (Broyden
      * method).
      */
-    virtual bool usesJacobian() const override;
+    bool usesJacobian() const override;
     /*!
      * \return true if the solver uses the invert of the jacobian of
      * the system or an approximation of it (second Broyden method).
      */
-    virtual bool
-    usesJacobianInvert() const override;
+    bool usesJacobianInvert() const override;
     /*!
      * \return true if the solver allows the user to initialize the
      * jacobian
      */
-    virtual bool
-    allowsJacobianInitialisation() const override;
+    bool allowsJacobianInitialisation() const override;
     /*!
      * \return true if the solver allows the user to initialize the
      * invert of the jacobian.
@@ -65,15 +62,13 @@ namespace mfront{
      * invert of the jacobian could for example be initialised to
      * identity in the behaviour constructor.
      */
-    virtual bool
-    allowsJacobianInvertInitialisation() const override;
+    bool allowsJacobianInvertInitialisation() const override;
     /*!
      * \return true if the solver requires the jacobian to be
      * initialized to the identity matrix at the beginning of the
      * computeFdF method.
      */
-    virtual bool
-    requiresJacobianToBeReinitialisedToIdentityAtEachIterations() const override;
+    bool requiresJacobianToBeReinitialisedToIdentityAtEachIterations() const override;
     /*!
      * \brief write the algorithm specific members
      * \param[in,out] md  : mechanical description
@@ -81,7 +76,7 @@ namespace mfront{
      * \param[in] p       : current position in file (after keyword)
      * \param[in] pe      : end of file
      */
-    virtual std::pair<bool,tokens_iterator>
+    std::pair<bool,tokens_iterator>
     treatSpecificKeywords(BehaviourDescription&,
 			  const std::string&,
 			  const tokens_iterator,
@@ -90,7 +85,7 @@ namespace mfront{
      * \brief method called when all the user defined variables have been set.
      * \param[in,out] md  : mechanical description
      */
-    virtual void completeVariableDeclaration(BehaviourDescription&) const override;
+    void completeVariableDeclaration(BehaviourDescription&) const override;
     /*!
      * \brief write algorithm specific initialisations
      * This method may be used to initialise the jacobian to identity
@@ -100,35 +95,32 @@ namespace mfront{
      * \param[in] md  : mechanical description
      * \param[in] h   : modelling hypotheis
      */
-    virtual void
-    writeSpecificInitializeMethodPart(std::ostream&,
-				      const BehaviourDescription&,
-				      const Hypothesis) const override;
+    void writeSpecificInitializeMethodPart(std::ostream&,
+					   const BehaviourDescription&,
+					   const Hypothesis) const override;
     /*!
      * \brief write the algorithm specific members
      * \param[in] out : output file
      * \param[in] md  : mechanical description
      * \param[in] h   : modelling hypotheis
      */
-    virtual void
-    writeSpecificMembers(std::ostream&,
-			 const BehaviourDescription&,
-			 const Hypothesis) const override;
+    void writeSpecificMembers(std::ostream&,
+			      const BehaviourDescription&,
+			      const Hypothesis) const override;
     /*!
      * \brief write the resolution algorithm
      * \param[in] out : output file
      * \param[in] md  : mechanical description
      * \param[in] h   : modelling hypotheis
      */
-    virtual void
-    writeResolutionAlgorithm(std::ostream&,
-			     const BehaviourDescription&,
-			     const Hypothesis) const override;
+    void writeResolutionAlgorithm(std::ostream&,
+				  const BehaviourDescription&,
+				  const Hypothesis) const override;
   protected:
     /*!
      * destructor
      */
-    virtual ~MFrontNewtonRaphsonSolverBase();
+    ~MFrontNewtonRaphsonSolverBase() override;
     /*!
      * The derived class shall return true if the NewtonAlgorithm
      * shall be combined with the powell dog leg algorithm
@@ -148,19 +140,15 @@ namespace mfront{
     /*!
      * \return true if the solver requires a numerical jacobian
      */
-    virtual bool
-    requiresNumericalJacobian() const override;
-    /*!
-     * destructor
-     */
-    virtual ~MFrontNewtonRaphsonSolver();
+    bool requiresNumericalJacobian() const override;
+    //! destructor
+    ~MFrontNewtonRaphsonSolver() override;
   protected:
     /*!
      * The derived class shall return true if the NewtonAlgorithm
      * shall be combined with the powell dog leg algorithm
      */
-    virtual bool
-    usesPowellDogLegAlgorithm() const override;
+    bool usesPowellDogLegAlgorithm() const override;
   };
 
   /*!
@@ -172,19 +160,15 @@ namespace mfront{
     /*!
      * \return true if the solver requires a numerical jacobian
      */
-    virtual bool
-    requiresNumericalJacobian() const override;
-    /*!
-     * destructor
-     */
-    virtual ~MFrontNewtonRaphsonNumericalJacobianSolver();
+    bool requiresNumericalJacobian() const override;
+    //! destructor
+    ~MFrontNewtonRaphsonNumericalJacobianSolver() override;
   protected:
     /*!
      * The derived class shall return true if the NewtonAlgorithm
      * shall be combined with the powell dog leg algorithm
      */
-    virtual bool
-    usesPowellDogLegAlgorithm() const override;
+    bool usesPowellDogLegAlgorithm() const override;
   };
 
   /*!
@@ -196,19 +180,17 @@ namespace mfront{
     /*!
      * \return true if the solver requires a numerical jacobian
      */
-    virtual bool
-    requiresNumericalJacobian() const override;
+    bool requiresNumericalJacobian() const override;
     /*!
      * destructor
      */
-    virtual ~MFrontPowellDogLegNewtonRaphsonSolver();
+    ~MFrontPowellDogLegNewtonRaphsonSolver() override;
   protected:
     /*!
      * The derived class shall return true if the PowellDogLegNewtonAlgorithm
      * shall be combined with the powell dog leg algorithm
      */
-    virtual bool
-    usesPowellDogLegAlgorithm() const override;
+    bool usesPowellDogLegAlgorithm() const override;
   };
 
   /*!
@@ -220,19 +202,15 @@ namespace mfront{
     /*!
      * \return true if the solver requires a numerical jacobian
      */
-    virtual bool
-    requiresNumericalJacobian() const override;
-    /*!
-     * destructor
-     */
-    virtual ~MFrontPowellDogLegNewtonRaphsonNumericalJacobianSolver();
+    bool requiresNumericalJacobian() const override;
+    //! destructor
+    ~MFrontPowellDogLegNewtonRaphsonNumericalJacobianSolver() override;
   protected:
     /*!
      * The derived class shall return true if the PowellDogLegNewtonAlgorithm
      * shall be combined with the powell dog leg algorithm
      */
-    virtual bool
-    usesPowellDogLegAlgorithm() const override;
+    bool usesPowellDogLegAlgorithm() const override;
   };
 
 } // end of namespace mfront

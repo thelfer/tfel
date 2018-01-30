@@ -43,19 +43,18 @@ namespace mtest
      * \note this method is only meaningfull for the umat (Cast3M)
      * interface
      */
-    virtual tfel::math::tmatrix<3u,3u,real>
+    tfel::math::tmatrix<3u,3u,real>
     getRotationMatrix(const tfel::math::vector<real>&,
 		      const tfel::math::tmatrix<3u,3u,real>&) const override;
     /*!
      * \return the size of the array of internal variables
      */
-    virtual size_t
-    getInternalStateVariablesSize() const override;
+    size_t getInternalStateVariablesSize() const override;
     /*!
      * \return the descriptions the internal variables
      * \param[in] d : space dimension
      */
-    virtual std::vector<std::string>
+    std::vector<std::string>
     getInternalStateVariablesDescriptions() const override;
     /*!
      * \return the default type of stiffness matrix used by the behaviour
@@ -72,7 +71,7 @@ namespace mtest
      * \param[in]  dt    : time increment
      * \param[in]  ktype : type of the stiffness matrix
      */
-    virtual std::pair<bool,real>
+    std::pair<bool,real>
     computePredictionOperator(BehaviourWorkSpace&,
 			      const CurrentState&,
 			      const StiffnessMatrixType) const override;
@@ -86,7 +85,7 @@ namespace mtest
      * \param[in]     dt    : time increment
      * \param[in]     ktype : type of the stiffness matrix
      */
-    virtual std::pair<bool,real>
+    std::pair<bool,real>
     integrate(CurrentState&,
 	      BehaviourWorkSpace&,
 	      const real,
@@ -95,10 +94,9 @@ namespace mtest
      * \brief allocate internal workspace
      * \param[out] wk : behaviour workspace
      */
-    virtual void
-    allocate(BehaviourWorkSpace&) const override;
+    void allocate(BehaviourWorkSpace&) const override;
     //! destructor
-    virtual ~AsterStandardBehaviour();
+    ~AsterStandardBehaviour() override;
   protected:
     /*!
      * \brief call the mechanical behaviour

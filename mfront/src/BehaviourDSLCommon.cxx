@@ -4956,7 +4956,7 @@ namespace mfront{
   {    
     this->checkBehaviourFile(os);
     os << "//!\n"
-       << "~" << this->mb.getClassName() << "()\n" << " = default;\n\n";
+       << "~" << this->mb.getClassName() << "()\n" << " override = default;\n\n";
   }
 
   void BehaviourDSLCommon::writeBehaviourUpdateExternalStateVariables(std::ostream& os,

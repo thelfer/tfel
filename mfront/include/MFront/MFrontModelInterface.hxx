@@ -38,7 +38,7 @@ namespace mfront {
      * is an iterator after the last token used to treat the keyword.
      * pair.
      */ 
-    virtual std::pair<bool,tokens_iterator>
+    std::pair<bool,tokens_iterator>
     treatKeyword(const std::string&,
 		 const std::vector<std::string>&,
 		 tokens_iterator,
@@ -46,25 +46,23 @@ namespace mfront {
     /*!
      * \param[out] names: reserved names
      */
-    virtual void
-    declareReservedNames(std::set<std::string>&) override;
+    void declareReservedNames(std::set<std::string>&) override;
     /*!
      * \brief write the output files for the given model description
      * \param[in] fd: file description
      * \param[in] md: model description
      */
-    virtual void
-    writeOutputFiles(const FileDescription&,
-		     const ModelDescription&) override;
+    void writeOutputFiles(const FileDescription&,
+			  const ModelDescription&) override;
     /*!
      * \brief : fill the target descripton
      * \param[out] td: target description
      * \param[in]  md: model description
      */
-    virtual void getTargetsDescription(TargetsDescription&,
-				       const ModelDescription&) override;
+    void getTargetsDescription(TargetsDescription&,
+			       const ModelDescription&) override;
     //! destructor
-    virtual ~MFrontModelInterface();
+    ~MFrontModelInterface() override;
   }; // end of struct MFrontModelInterface
 
 } // end of namespace mfront

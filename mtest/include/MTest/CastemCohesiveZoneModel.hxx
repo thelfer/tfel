@@ -42,7 +42,7 @@ namespace mtest
      * \note this method is only meaningfull for the umat (Cast3M)
      * interface
      */
-    virtual tfel::math::tmatrix<3u,3u,real>
+    tfel::math::tmatrix<3u,3u,real>
     getRotationMatrix(const tfel::math::vector<real>&,
 		      const tfel::math::tmatrix<3u,3u,real>&) const override;
     /*!
@@ -54,13 +54,11 @@ namespace mtest
      * \brief allocate internal workspace
      * \param[in] wk : workspace
      */
-    virtual void
-    allocate(BehaviourWorkSpace&) const override;
+    void allocate(BehaviourWorkSpace&) const override;
     /*!
      * \return the default type of stiffness matrix used by the behaviour
      */
-    virtual StiffnessMatrixType
-    getDefaultStiffnessMatrixType() const override;
+     StiffnessMatrixType getDefaultStiffnessMatrixType() const override;
     /*!
      * \brief integrate the mechanical behaviour over the time step
      * \return a pair. The first member is true if the integration was
@@ -70,7 +68,7 @@ namespace mtest
      * \param[in]  s     : current state
      * \param[in]  ktype : type of the stiffness matrix
      */
-    virtual std::pair<bool,real>
+    std::pair<bool,real>
     computePredictionOperator(BehaviourWorkSpace&,
 			      const CurrentState&,
 			      const StiffnessMatrixType) const override;
@@ -84,7 +82,7 @@ namespace mtest
      * \param[in]     dt    : time increment
      * \param[in]     ktype : type of the stiffness matrix
      */
-    virtual std::pair<bool,real>
+    std::pair<bool,real>
     integrate(CurrentState&,
 	      BehaviourWorkSpace&,
 	      const real,
@@ -99,11 +97,10 @@ namespace mtest
      * \param[out] mp  : evolution manager where 
      * \param[in]  evm : evolution manager
      */
-    virtual void
-    setOptionalMaterialPropertiesDefaultValues(EvolutionManager&,
-					       const EvolutionManager&) const override;
+    void setOptionalMaterialPropertiesDefaultValues(EvolutionManager&,
+						    const EvolutionManager&) const override;
     //! destructor
-    virtual ~CastemCohesiveZoneModel();
+    ~CastemCohesiveZoneModel() override;
   protected:
     /*!
      * \brief compute the elastic stiffness

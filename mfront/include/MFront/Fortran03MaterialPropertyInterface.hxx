@@ -60,33 +60,26 @@ namespace mfront{
     virtual void writeInterfaceSymbol(std::ostream&,
 				      const MaterialPropertyDescription&) const override;
     //! destructor
-    virtual ~Fortran03MaterialPropertyInterface();
+    ~Fortran03MaterialPropertyInterface() override;
         
   private:
     
-    virtual void
-    writeParameterList(std::ostream&,
-		       const VariableDescriptionContainer&) const override;
+    void writeParameterList(std::ostream&,
+			    const VariableDescriptionContainer&) const override;
 
-    virtual void
-    writeInterfaceSpecificVariables(std::ostream&,
-				    const VariableDescriptionContainer&) const override;
+    void writeInterfaceSpecificVariables(std::ostream&,
+					 const VariableDescriptionContainer&) const override;
 
-    virtual void
-    writeSrcPreprocessorDirectives(std::ostream&,
-				   const MaterialPropertyDescription&) const override;
+    void writeSrcPreprocessorDirectives(std::ostream&,
+					const MaterialPropertyDescription&) const override;
 
-    virtual void
-    writeBeginHeaderNamespace(std::ostream&) const override;
+    void writeBeginHeaderNamespace(std::ostream&) const override;
 
-    virtual void
-    writeEndHeaderNamespace(std::ostream&) const override;
+    void writeEndHeaderNamespace(std::ostream&) const override;
 
-    virtual void
-    writeBeginSrcNamespace(std::ostream&) const override;
+    void writeBeginSrcNamespace(std::ostream&) const override;
 
-    virtual void
-    writeEndSrcNamespace(std::ostream&) const override;
+    void writeEndSrcNamespace(std::ostream&) const override;
 
     /*!
      * \param const std::string&, name of the material

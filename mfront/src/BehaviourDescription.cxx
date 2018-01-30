@@ -200,7 +200,7 @@ namespace mfront
     }
     if(a.is<BehaviourDescription::ExternalMFrontMaterialProperty>()){
       const auto& mpd = *(a.get<BehaviourDescription::ExternalMFrontMaterialProperty>().mpd);
-      for(const auto i : bd.getMaterialPropertyInputs(mpd,false)){
+      for(const auto& i : bd.getMaterialPropertyInputs(mpd,false)){
 	const auto c = i.category;
 	throw_if((c!=BehaviourDescription::MaterialPropertyInput::TEMPERATURE)&&
 		 (c!=BehaviourDescription::MaterialPropertyInput::MATERIALPROPERTY)&&

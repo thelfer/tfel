@@ -42,8 +42,7 @@ namespace mtest
     /*!
      * \param[out] v : initial values of the driving variables
      */
-    virtual void
-    getDrivingVariablesDefaultInitialValues(tfel::math::vector<real>&) const override;
+    void getDrivingVariablesDefaultInitialValues(tfel::math::vector<real>&) const override;
     /*!
      * \brief integrate the mechanical behaviour over the time step
      * \return a pair. The first member is true if the integration was
@@ -53,7 +52,7 @@ namespace mtest
      * \param[in]  s     : current state
      * \param[in]  ktype : type of the stiffness matrix
      */
-    virtual std::pair<bool,real>
+    std::pair<bool,real>
     computePredictionOperator(BehaviourWorkSpace&,
 			      const CurrentState&,
 			      const StiffnessMatrixType) const override;
@@ -67,7 +66,7 @@ namespace mtest
      * \param[in]     dt    : time increment
      * \param[in]     ktype : type of the stiffness matrix
      */
-    virtual std::pair<bool,real>
+    std::pair<bool,real>
     integrate(CurrentState&,
 	      BehaviourWorkSpace&,
 	      const real,
@@ -82,22 +81,20 @@ namespace mtest
      * \param[out] mp  : evolution manager where 
      * \param[in]  evm : evolution manager
      */
-    virtual void
-    setOptionalMaterialPropertiesDefaultValues(EvolutionManager&,
-					       const EvolutionManager&) const override;
+    void setOptionalMaterialPropertiesDefaultValues(EvolutionManager&,
+						    const EvolutionManager&) const override;
     /*!
      * \return the string passed to the UMAT function through the
      * CMNAME parameter.
      */
-    virtual const char*
-    getBehaviourNameForUMATFunctionCall() const override;
+    const char* getBehaviourNameForUMATFunctionCall() const override;
     /*!
      * \brief allocate internal workspace
      * \param[out] wk : workspace
      */
-    virtual void allocate(BehaviourWorkSpace&) const override;
+    void allocate(BehaviourWorkSpace&) const override;
     //! destructor
-    virtual ~CastemSmallStrainBehaviour();
+    ~CastemSmallStrainBehaviour() override;
   protected:
     /*!
      * \brief integrate the mechanical behaviour over the time step

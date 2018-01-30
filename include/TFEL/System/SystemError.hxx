@@ -32,8 +32,8 @@ namespace tfel
       SystemError(const std::string&);
       SystemError(SystemError&&) = default;
       SystemError(const SystemError&) = default;
-      virtual const char* what() const  noexcept override;
-      virtual ~SystemError() noexcept;
+      const char* what() const  noexcept override;
+      ~SystemError() noexcept override;
     private:
       std::string msg;
     }; // end of struct SystemError

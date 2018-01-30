@@ -32,34 +32,25 @@ namespace tfel
 	: public ExternalFunction
       {
 	ConstantExternalFunction(const double);
-      	virtual double
-	getValue() const override;
-	virtual void
-	setVariableValue(const std::vector<double>::size_type,
-			 const double) override;
-	virtual std::vector<double>::size_type
-	getNumberOfVariables() const override;
-	virtual void
-	checkCyclicDependency(const std::string&) const override;
-	virtual void
-	checkCyclicDependency(std::vector<std::string>&) const override;
-	virtual std::shared_ptr<ExternalFunction>
-	differentiate(const std::vector<double>::size_type) const override;
-	virtual	std::shared_ptr<ExternalFunction>
-	differentiate(const std::string&) const override;
-	virtual	std::shared_ptr<ExternalFunction>
-	resolveDependencies() const override;
-	virtual std::shared_ptr<ExternalFunction>
+	double getValue() const override;
+	void setVariableValue(const std::vector<double>::size_type,
+			      const double) override;
+	std::vector<double>::size_type getNumberOfVariables() const override;
+	void checkCyclicDependency(const std::string&) const override;
+	void checkCyclicDependency(std::vector<std::string>&) const override;
+	std::shared_ptr<ExternalFunction> differentiate(const std::vector<double>::size_type) const override;
+	std::shared_ptr<ExternalFunction> differentiate(const std::string&) const override;
+	std::shared_ptr<ExternalFunction> resolveDependencies() const override;
+	std::shared_ptr<ExternalFunction>
 	createFunctionByChangingParametersIntoVariables(const std::vector<std::string>&) const override;
-	virtual std::shared_ptr<ExternalFunction>
+	std::shared_ptr<ExternalFunction>
 	createFunctionByChangingParametersIntoVariables(std::vector<std::string>&,
 							const std::vector<double>&,
 							const std::vector<std::string>&,
 							const std::map<std::string,
 							std::vector<double>::size_type>&) const override;
-	virtual void
-	getParametersNames(std::set<std::string>&) const override;
-	virtual ~ConstantExternalFunction();
+	void getParametersNames(std::set<std::string>&) const override;
+	~ConstantExternalFunction() override;
       protected:
 	ConstantExternalFunction& operator=(const ConstantExternalFunction&) = delete;
 	ConstantExternalFunction& operator=(ConstantExternalFunction&&) = delete;

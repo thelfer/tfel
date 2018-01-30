@@ -77,7 +77,7 @@ struct BehaviourBrickRequirementManagerTest final
    * \brief check that all providers are correctly extracted from the
    * BehaviourData from the RequirementManager constructor
    */
-  void test(void){
+  void test(){
     using namespace tfel::glossary;
     using namespace mfront::bbrick;
     const auto mh = tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
@@ -117,7 +117,7 @@ struct BehaviourBrickRequirementManagerTest final
   /*!
    * \brief some test on requirements handling
    */
-  void test2(void){
+  void test2(){
     using namespace tfel::glossary;
     using namespace mfront::bbrick;
     const auto mh = tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
@@ -160,7 +160,7 @@ struct BehaviourBrickRequirementManagerTest final
   /*!
    * \brief some test on requirements handling when units are considered
    */
-  void test3(void){
+  void test3(){
     using namespace tfel::glossary;
     using namespace mfront::bbrick;
     const auto mh = tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
@@ -211,7 +211,7 @@ struct BehaviourBrickRequirementManagerTest final
 TFEL_TESTS_GENERATE_PROXY(BehaviourBrickRequirementManagerTest,
 			  "BehaviourBrickRequirementManagerTest");
 
-int main(void)
+int main()
 {
   mfront::initDSLs();
   auto& m = tfel::tests::TestManager::getTestManager();

@@ -27,7 +27,7 @@ namespace mfront{
     //! constructor
     RungeKuttaDSLBase();
     //! destructor
-    virtual ~RungeKuttaDSLBase();
+    ~RungeKuttaDSLBase() override;
 
   protected:
 
@@ -47,9 +47,8 @@ namespace mfront{
 				   const std::string&,
 				   const bool);
 
-    virtual void
-    treatUnknownVariableMethod(const Hypothesis,
-			       const std::string&) override;
+    void treatUnknownVariableMethod(const Hypothesis,
+				    const std::string&) override;
     //! treat the `@Epsilon` keywork
     virtual void treatEpsilon();
     //! treat the `@MinimalTimeStep` keywork
@@ -61,25 +60,25 @@ namespace mfront{
     //! treat the `@ComputeFinalStress` keywork
     virtual void treatComputeFinalStress();
     //! treat the `@UpdateAuxiliaryStateVariables` keywork
-    virtual void treatUpdateAuxiliaryStateVariables() override;
+    void treatUpdateAuxiliaryStateVariables() override;
     //! treat the `@Derivative` keywork
     virtual void treatDerivative();
 
     virtual void setDefaultAlgorithm();
     
-    virtual void completeVariableDeclaration() override;
+    void completeVariableDeclaration() override;
 
-    virtual void endsInputFileProcessing() override;
+    void endsInputFileProcessing() override;
     
-    virtual void writeBehaviourParserSpecificIncludes(std::ostream&) const override;
+    void writeBehaviourParserSpecificIncludes(std::ostream&) const override;
 
-    virtual void writeBehaviourParserSpecificTypedefs(std::ostream&) const override;
+    void writeBehaviourParserSpecificTypedefs(std::ostream&) const override;
 
-    virtual void writeBehaviourParserSpecificMembers(std::ostream&,
-						     const Hypothesis) const override;
+    void writeBehaviourParserSpecificMembers(std::ostream&,
+					     const Hypothesis) const override;
 
-    virtual void writeBehaviourLocalVariablesInitialisation(std::ostream&,
-							    const Hypothesis) const override;
+    void writeBehaviourLocalVariablesInitialisation(std::ostream&,
+						    const Hypothesis) const override;
     
     virtual void writeBehaviourEulerIntegrator(std::ostream&,
 					       const Hypothesis) const;
@@ -99,16 +98,14 @@ namespace mfront{
     virtual void writeBehaviourRKCastemIntegrator(std::ostream&,
 						  const Hypothesis) const;
 
-    virtual void writeBehaviourUpdateStateVariables(std::ostream&,
-						    const Hypothesis) const override;
+    void writeBehaviourUpdateStateVariables(std::ostream&,
+					    const Hypothesis) const override;
 
-    virtual void
-    writeBehaviourUpdateAuxiliaryStateVariables(std::ostream&,
-						const Hypothesis) const override;
+    void writeBehaviourUpdateAuxiliaryStateVariables(std::ostream&,
+						     const Hypothesis) const override;
 
-    virtual void
-    writeBehaviourIntegrator(std::ostream&,
-			     const Hypothesis) const override;
+    void writeBehaviourIntegrator(std::ostream&,
+				  const Hypothesis) const override;
 
     friend struct BehaviourDSLBase<RungeKuttaDSLBase>;
 

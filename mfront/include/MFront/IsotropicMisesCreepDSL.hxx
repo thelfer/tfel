@@ -29,26 +29,23 @@ namespace mfront{
 
     IsotropicMisesCreepDSL();
     
-    virtual void endsInputFileProcessing() override;
+    void endsInputFileProcessing() override;
 
-    virtual ~IsotropicMisesCreepDSL();
+    ~IsotropicMisesCreepDSL() override;
 
   protected:
     
-    virtual void
-    writeBehaviourParserSpecificInitializeMethodPart(std::ostream&,
-						     const Hypothesis) const override;
+    void writeBehaviourParserSpecificInitializeMethodPart(std::ostream&,
+							  const Hypothesis) const override;
 
-    virtual void
-    writeBehaviourParserSpecificMembers(std::ostream&,
-					const Hypothesis) const override;
+    void writeBehaviourParserSpecificMembers(std::ostream&,
+					     const Hypothesis) const override;
 
-    virtual void writeBehaviourIntegrator(std::ostream&,
-					  const Hypothesis) const override;
+    void writeBehaviourIntegrator(std::ostream&,
+				  const Hypothesis) const override;
 
-    virtual void
-    writeBehaviourComputeTangentOperator(std::ostream&,
-					 const Hypothesis) const override;
+    void writeBehaviourComputeTangentOperator(std::ostream&,
+					      const Hypothesis) const override;
 
   };
 

@@ -28,25 +28,25 @@ namespace tfel
       virtual ~SignalHandler();
     }; // end of struct SignalHandler
     
-    struct TFELSYSTEM_VISIBILITY_EXPORT FctSignalHandler
+    struct TFELSYSTEM_VISIBILITY_EXPORT FctSignalHandler final
       : public SignalHandler
     {
       typedef void (*Fct)(const int);
       FctSignalHandler(const Fct);
-      virtual void execute(const int) override final;
-      virtual ~FctSignalHandler();
+      void execute(const int) override final;
+      ~FctSignalHandler() override;
     private:
       const Fct f;
     }; // end of struct FctSignalHandler
 
     template<typename Class>
-    struct MemberSignalHandler
+    struct MemberSignalHandler final
       : public SignalHandler
     {
       typedef void (Class:: *Fct)(const int);
       MemberSignalHandler(Class&,const Fct);
-      virtual void execute(const int) override final;
-      ~MemberSignalHandler();
+      void execute(const int) override final;
+      ~MemberSignalHandler() override;
     private:
       Class &c;
       const Fct f;

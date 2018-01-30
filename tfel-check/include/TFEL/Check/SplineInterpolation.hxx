@@ -36,14 +36,13 @@ namespace tfel{
       SplineInterpolation(const SplineInterpolation&);
       SplineInterpolation& operator=(SplineInterpolation&&);
       SplineInterpolation& operator=(const SplineInterpolation&);
-      virtual ~SplineInterpolation();
-      virtual void interpolate(const std::vector<double>&,
-			       const std::vector<double>&) override;
-      virtual double getValue(const double x) const override;
-      virtual std::string getType() const override;
-      virtual bool isConform() const override;
-      virtual std::shared_ptr<Interpolation>
-	clone() const override;
+      void interpolate(const std::vector<double>&,
+		       const std::vector<double>&) override;
+      double getValue(const double x) const override;
+      std::string getType() const override;
+      bool isConform() const override;
+      std::shared_ptr<Interpolation> clone() const override;
+      ~SplineInterpolation() override;
     private:
       struct tfel::math::CubicSpline<double> spline;
 

@@ -28,82 +28,82 @@ namespace tfel
      * Exception thrown when calling any of the getValue method before
      * calling setCollocationPoints.
      */
-    struct TFELMATHCUBICSPLINE_VISIBILITY_EXPORT CubicSplineUninitialised
+    struct TFELMATHCUBICSPLINE_VISIBILITY_EXPORT CubicSplineUninitialised final
       : public MathRunTimeException
     {
       CubicSplineUninitialised() = default;
       CubicSplineUninitialised(const CubicSplineUninitialised&) = default;
       CubicSplineUninitialised(CubicSplineUninitialised&&) = default;
-      virtual const char* what() const noexcept override final;
-      virtual ~CubicSplineUninitialised() noexcept;
+      const char* what() const noexcept override final;
+      ~CubicSplineUninitialised() noexcept override;
     }; // end of struct CubicSplineUninitialised
 
     /*!
      * Exception thrown when the abscissa vector given to the
      * CubicSpline constructor has a size smaller than 3.
      */
-    struct TFELMATHCUBICSPLINE_VISIBILITY_EXPORT CubicSplineInvalidAbscissaVectorSize
+    struct TFELMATHCUBICSPLINE_VISIBILITY_EXPORT CubicSplineInvalidAbscissaVectorSize final
       : public MathRunTimeException
     {
       CubicSplineInvalidAbscissaVectorSize() = default;
       CubicSplineInvalidAbscissaVectorSize(const CubicSplineInvalidAbscissaVectorSize&) = default;
       CubicSplineInvalidAbscissaVectorSize(CubicSplineInvalidAbscissaVectorSize&&) = default;
-      virtual const char* what() const noexcept override final;
-      virtual ~CubicSplineInvalidAbscissaVectorSize() noexcept;
+      const char* what() const noexcept override final;
+      ~CubicSplineInvalidAbscissaVectorSize() noexcept override;
     }; // end of struct CubicSplineInvalidAbscissaVectorSize
 
     /*!
      * Exception thrown when the linear system solved leads to a null pivot
      */
-    struct TFELMATHCUBICSPLINE_VISIBILITY_EXPORT CubicSplineNullPivot
+    struct TFELMATHCUBICSPLINE_VISIBILITY_EXPORT CubicSplineNullPivot final
       : public MathRunTimeException
     {
       CubicSplineNullPivot() = default;
       CubicSplineNullPivot(const CubicSplineNullPivot&) = default;
       CubicSplineNullPivot(CubicSplineNullPivot&&) = default;
-      virtual const char* what() const noexcept override final;
-      virtual ~CubicSplineNullPivot() noexcept;
+      const char* what() const noexcept override final;
+      ~CubicSplineNullPivot() noexcept override;
     }; // end of struct CubicSplineInvalidAbscissaVectorSize
 
     /*!
      * Exception thrown when the ordinate vector given to the
      * CubicSpline constructor has a size smaller than 3.
      */
-    struct TFELMATHCUBICSPLINE_VISIBILITY_EXPORT CubicSplineInvalidOrdinateVectorSize
+    struct TFELMATHCUBICSPLINE_VISIBILITY_EXPORT CubicSplineInvalidOrdinateVectorSize final
       : public MathRunTimeException
     {
       CubicSplineInvalidOrdinateVectorSize() = default;
       CubicSplineInvalidOrdinateVectorSize(const CubicSplineInvalidOrdinateVectorSize&) = default;
       CubicSplineInvalidOrdinateVectorSize(CubicSplineInvalidOrdinateVectorSize&&) = default;
-      virtual const char* what() const noexcept override final;
-      virtual ~CubicSplineInvalidOrdinateVectorSize() noexcept;
+      const char* what() const noexcept override final;
+      ~CubicSplineInvalidOrdinateVectorSize() noexcept override;
     }; // end of struct CubicSplineInvalidOrdinateVectorSize
 
     /*!
      * Exception thrown when the abscissa and the ordinate vectors
      * don't have the same size
      */
-    struct TFELMATHCUBICSPLINE_VISIBILITY_EXPORT CubicSplineInvalidInputs
+    struct TFELMATHCUBICSPLINE_VISIBILITY_EXPORT CubicSplineInvalidInputs final
       : public MathRunTimeException
     {
       CubicSplineInvalidInputs() = default;
       CubicSplineInvalidInputs(const CubicSplineInvalidInputs&) = default;
       CubicSplineInvalidInputs(CubicSplineInvalidInputs&&) = default;
-      virtual const char* what() const noexcept override final;
-      virtual ~CubicSplineInvalidInputs() noexcept;
+      const char* what() const noexcept override final;
+      ~CubicSplineInvalidInputs() noexcept override;
     }; // end of struct CubicSplineInvalidInputs
 
     /*!
      * Exception thrown when the abscissa vector is not ordered
      */
-    struct TFELMATHCUBICSPLINE_VISIBILITY_EXPORT CubicSplineUnorderedAbscissaVector
+    struct TFELMATHCUBICSPLINE_VISIBILITY_EXPORT CubicSplineUnorderedAbscissaVector final
       : public MathRunTimeException
     {
       CubicSplineUnorderedAbscissaVector() = default;
       CubicSplineUnorderedAbscissaVector(const CubicSplineUnorderedAbscissaVector&) = default;
       CubicSplineUnorderedAbscissaVector(CubicSplineUnorderedAbscissaVector&&) = default;
-      virtual const char* what() const noexcept override final;
-      virtual ~CubicSplineUnorderedAbscissaVector() noexcept;
+      const char* what() const noexcept override final;
+      ~CubicSplineUnorderedAbscissaVector() noexcept override;
     }; // end of struct CubicSplineUnorderedAbscissaVector
 
     /*!
@@ -113,8 +113,7 @@ namespace tfel
      * \param real  : floatting type number used for the computations
      * \param value : result type
      */
-    template<typename real,
-	     typename value = real>
+    template<typename real,typename value = real>
     struct CubicSpline
     {
       
@@ -123,29 +122,23 @@ namespace tfel
        * \param[in] pxe : iterator past the last abscissa
        * \param[in] py  : iterator to the first ordinate
        */
-      template<typename AIterator,
-	       typename OIterator>
-      void
-      setCollocationPoints(AIterator,
-			   AIterator,
-			   OIterator);
+      template<typename AIterator, typename OIterator>
+      void setCollocationPoints(AIterator,
+				AIterator,
+				OIterator);
 
       /*!
        * \param[in] x : abscissa
        * \param[in] y : ordinates
        */
-      template<typename AContainer,
-	       typename OContainer>
-      void
-      setCollocationPoints(const AContainer&,
-			   const OContainer&);
-
+      template<typename AContainer,typename OContainer>
+      void setCollocationPoints(const AContainer&,
+				const OContainer&);
       /*!
        * \return the spline value at the given point
        * \param[in] x : point at which the spline is evaluated
        */
       value operator()(const real) const;
-
       /*!
        * \return the spline integral
        * \param[in] xa : left end point
@@ -153,7 +146,6 @@ namespace tfel
        */
       value computeIntegral(const real,
 			    const real) const;
-
       /*!
        * \return the spline mean value
        * \param[in] xa : point at which the spline is evaluated
@@ -161,13 +153,11 @@ namespace tfel
        */
       value computeMeanValue(const real,
 			     const real) const;
-
       /*!
        * \return the spline value at the given point
        * \param[in] x : point at which the spline is evaluated
        */
       value getValue(real) const;
-      
       /*!
        * \return the value of the spline and the value of its
        * derivative at the given point
@@ -178,7 +168,6 @@ namespace tfel
        * 
        */
       void getValues(value&,value&,real) const;
-      
       /*!
        * \return the value of the spline and the value of its
        * derivative at the given point

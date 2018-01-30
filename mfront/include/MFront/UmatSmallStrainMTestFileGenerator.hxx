@@ -50,7 +50,7 @@ namespace mfront
     /*!
      * destructor
      */
-    virtual ~UmatSmallStrainMTestFileGenerator();
+    ~UmatSmallStrainMTestFileGenerator() override;
   protected:
     /*!
      * write behaviour declaration

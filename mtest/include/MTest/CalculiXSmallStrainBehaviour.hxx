@@ -34,15 +34,14 @@ namespace mtest
      * \param[in] b : behaviour name
      */
     CalculiXSmallStrainBehaviour(const Hypothesis,
-			       const std::string&,
-			       const std::string&);
+				 const std::string&,
+				 const std::string&);
     /*!
      * \param[out] v : initial values of the driving variables
      */
-    virtual void
-    getDrivingVariablesDefaultInitialValues(tfel::math::vector<real>&) const override;
+    void getDrivingVariablesDefaultInitialValues(tfel::math::vector<real>&) const override;
     //! destructor
-    virtual ~CalculiXSmallStrainBehaviour();
+    ~CalculiXSmallStrainBehaviour() override;
   protected:
     /*!
      * \brief call the mechanical behaviour

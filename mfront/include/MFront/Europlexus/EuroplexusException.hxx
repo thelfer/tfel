@@ -29,13 +29,11 @@ namespace epx {
 
     EuroplexusException(const EuroplexusException&);
 
-    virtual const char* 
-    what () const noexcept override final;
+    const char* what () const noexcept override final;
 
-    virtual std::string 
-    getMsg() const noexcept final;
+    virtual std::string getMsg() const noexcept final;
     
-    virtual ~EuroplexusException() noexcept;
+    ~EuroplexusException() noexcept override;
 
   private:
     
@@ -48,7 +46,7 @@ namespace epx {
     
   }; // end of struct EuroplexusException
 
-  struct MFRONT_EPX_VISIBILITY_EXPORT EuroplexusInvalidModellingHypothesis
+  struct MFRONT_EPX_VISIBILITY_EXPORT EuroplexusInvalidModellingHypothesis final
     : public EuroplexusException
   {
     /*!
@@ -56,30 +54,31 @@ namespace epx {
      */
     EuroplexusInvalidModellingHypothesis(const char*);
     //! destructor
-    virtual ~EuroplexusInvalidModellingHypothesis() noexcept;
+    ~EuroplexusInvalidModellingHypothesis() noexcept override;
+  private:
     EuroplexusInvalidModellingHypothesis&
-      operator=(const EuroplexusInvalidModellingHypothesis&) = delete;
+    operator=(const EuroplexusInvalidModellingHypothesis&) = delete;
   }; // end of struct EuroplexusInvalidModellingHypothesis
   
-  struct MFRONT_EPX_VISIBILITY_EXPORT EuroplexusInvalidNTENSValue
+  struct MFRONT_EPX_VISIBILITY_EXPORT EuroplexusInvalidNTENSValue final
     : public EuroplexusException
   {
     EuroplexusInvalidNTENSValue(const unsigned short);
     EuroplexusInvalidNTENSValue(const EuroplexusInvalidNTENSValue&);
-    virtual ~EuroplexusInvalidNTENSValue() noexcept;
+    ~EuroplexusInvalidNTENSValue() noexcept override;
   private:
     EuroplexusInvalidNTENSValue();
     EuroplexusInvalidNTENSValue&
     operator=(const EuroplexusInvalidNTENSValue&);
   }; // end of struct EuroplexusInvalidNTENSValue
 
-  struct MFRONT_EPX_VISIBILITY_EXPORT EuroplexusInvalidDimension
+  struct MFRONT_EPX_VISIBILITY_EXPORT EuroplexusInvalidDimension final
     : public EuroplexusException
   {
     EuroplexusInvalidDimension(const std::string&,
-			 const unsigned short);
+			       const unsigned short);
     EuroplexusInvalidDimension(const EuroplexusInvalidDimension&);
-    virtual ~EuroplexusInvalidDimension() noexcept;
+    ~EuroplexusInvalidDimension() noexcept override;
   private:
     EuroplexusInvalidDimension();
     EuroplexusInvalidDimension&

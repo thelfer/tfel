@@ -59,45 +59,44 @@ namespace numodis
 
     HCP(const HCP&);
 
-    virtual double Norm2(const IBurgers& iburgers) const override;
+    double Norm2(const IBurgers&) const override;
 
-    virtual int getNsymmetries() const override;
+    int getNsymmetries() const override;
 
-    virtual GSystem Symmetry(int k,
-			     const GSystem& gsystem) const override;
+    GSystem Symmetry(int,const GSystem&) const override;
 
-    virtual void GenerateEquivalentIBurgers(const IBurgers& iburgers,
-					    std::vector<IBurgers>& eqiburgers) const override;
+    void GenerateEquivalentIBurgers(const IBurgers&,
+				    std::vector<IBurgers>&) const override;
 
-    virtual void GenerateEquivalentPlanes(const IPlane& iplane,
-					  std::vector<IPlane>& planes) const override;
+    void GenerateEquivalentPlanes(const IPlane&,
+				  std::vector<IPlane>&) const override;
 
-    virtual void GenerateEquivalentIndices(const std::vector<int>& ind0,
-					   std::vector<std::vector<int> >& equivalent) const override;
+    void GenerateEquivalentIndices(const std::vector<int>&,
+				   std::vector<std::vector<int>>&) const override;
 
-    virtual void GenerateOrthogonalVector(const IPlane& u,
-					  IDirection& v) const override;
+    void GenerateOrthogonalVector(const IPlane&,
+				  IDirection&) const override;
 
-    virtual bool SamePlaneFamily(const IPlane& iplane0,
-				 const IPlane& iplane1) const override;
+    bool SamePlaneFamily(const IPlane&,
+			 const IPlane&) const override;
 
-    virtual bool SameBurgersFamily(const IBurgers& iburgers0,
-				   const IBurgers& iburgers1) const override;
+    bool SameBurgersFamily(const IBurgers&,
+			   const IBurgers&) const override;
+    
+    bool SameGlideSystem(const IPlane&,
+			 const IBurgers&,
+			 const IPlane&,
+			 const IBurgers&) const override;
 
-    virtual bool SameGlideSystem(const IPlane& iplane0,
-				 const IBurgers& iburgers0,
-				 const IPlane& iplane1,
-				 const IBurgers& iburgers1) const override;
+    void CrossProduct(const IPlane&,
+		      const IPlane&,
+		      IDirection&) const override;
 
-    virtual void CrossProduct(const IPlane& iplane0,
-			      const IPlane& iplane1,
-			      IDirection& idirection) const override;
+    void CrossProduct(const IBurgers&,
+		      const IDirection&,
+		      IPlane&) const override;
 
-    virtual void CrossProduct(const IBurgers& iburgers,
-			      const IDirection& idirection,
-			      IPlane& iplane) const override;
-
-    virtual ~HCP();
+    ~HCP() override;
 
     //===========================================================
     // HCP::getNindices
@@ -106,7 +105,7 @@ namespace numodis
     //-----------------------------------------------------------
     /*! \return number of indices                              */
     //===========================================================
-    virtual int getNindices() const override;
+    int getNindices() const override;
 
     //===========================================================
     // HCP::ScalProduct

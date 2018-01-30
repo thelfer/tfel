@@ -45,13 +45,12 @@ namespace mfront
       public tfel::utilities::CxxTokenizer
   {
     //! \return the file description associated with the treated file
-    virtual const FileDescription& getFileDescription() const override final;
+    const FileDescription& getFileDescription() const override final;
     /*!
      * \return the target description
      * \note This method shall be called *after* the analyseFile method
      */
-    virtual const TargetsDescription&
-    getTargetsDescription() const override;
+    const TargetsDescription& getTargetsDescription() const override;
     /*!
      * \brief open a file and add given external instructions at the
      * beginning
@@ -467,7 +466,7 @@ namespace mfront
      */
     double readDouble();
     //! destructor
-    virtual ~DSLBase();
+    ~DSLBase() override;
     //! \brief description of the file treated
     FileDescription fd;
     /*!

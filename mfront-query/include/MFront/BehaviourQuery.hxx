@@ -58,7 +58,7 @@ namespace mfront{
     //! treat the requests
     virtual void exe();
     //! destructor
-    virtual ~BehaviourQuery();
+    ~BehaviourQuery() override;
   private :
     //! a simple alias
     using ModellingHypothesis = tfel::material::ModellingHypothesis;
@@ -73,7 +73,7 @@ namespace mfront{
     //! \brief register call-backs associated with command line arguments
     virtual void registerCommandLineCallBacks();
     //! return the current argument
-    virtual const tfel::utilities::Argument&
+    const tfel::utilities::Argument&
     getCurrentCommandLineArgument() const override final;
     //! treat a standard query
     virtual void treatStandardQuery() final;

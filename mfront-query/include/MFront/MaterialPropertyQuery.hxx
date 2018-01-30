@@ -55,7 +55,7 @@ namespace mfront{
     //! treat the requests
     virtual void exe();
     //! destructor
-    virtual ~MaterialPropertyQuery();
+    ~MaterialPropertyQuery() override;
   private :
     //! a simple alias
     using query = std::function<void(const FileDescription&,
@@ -65,7 +65,7 @@ namespace mfront{
     //! \brief register call-backs associated with command line arguments
     virtual void registerCommandLineCallBacks();
     //! return the current argument
-    virtual const tfel::utilities::Argument&
+    const tfel::utilities::Argument&
     getCurrentCommandLineArgument() const override final;
     //! treat the "--generated-sources" query
     virtual void treatGeneratedSources() final;
@@ -82,11 +82,9 @@ namespace mfront{
     //! treat an unknown argument
     void treatUnknownArgument() override final;
     //! get the version description
-    virtual std::string
-    getVersionDescription() const override final;
+    std::string getVersionDescription() const override final;
     //! get the usage description
-    virtual std::string
-    getUsageDescription() const override final;
+    std::string getUsageDescription() const override final;
     //! all the registred queries
     std::vector<std::pair<std::string,query>> queries;
     //! abstract behaviour dsl

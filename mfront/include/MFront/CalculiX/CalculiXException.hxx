@@ -35,13 +35,11 @@ namespace calculix {
     //! copy constructor
     CalculiXException(const CalculiXException&);
 
-    virtual const char* 
-    what () const noexcept override final;
+    const char* what () const noexcept override final;
 
-    virtual std::string 
-    getMsg() const noexcept final;
+    virtual std::string getMsg() const noexcept final;
     //! destructor    
-    virtual ~CalculiXException() noexcept;
+     ~CalculiXException() noexcept override;
   private:
     CalculiXException() = delete;
     CalculiXException& operator=(const CalculiXException&) = delete;
@@ -53,7 +51,7 @@ namespace calculix {
    * \brief exception thrown when an invalid modelling hypothesis is
    * to be used
    */
-  struct MFRONT_CALCULIX_VISIBILITY_EXPORT CalculiXInvalidModellingHypothesis
+  struct MFRONT_CALCULIX_VISIBILITY_EXPORT CalculiXInvalidModellingHypothesis final
     : public CalculiXException
   {
     /*!
@@ -65,15 +63,16 @@ namespace calculix {
     //! copy constructor
     CalculiXInvalidModellingHypothesis(const CalculiXInvalidModellingHypothesis&);
     //! destructor
-    virtual ~CalculiXInvalidModellingHypothesis() noexcept;
+    ~CalculiXInvalidModellingHypothesis() noexcept override;
+  private:
     CalculiXInvalidModellingHypothesis&
-      operator=(const CalculiXInvalidModellingHypothesis&) = delete;
+    operator=(const CalculiXInvalidModellingHypothesis&) = delete;
   }; // end of struct CalculiXInvalidModellingHypothesis
   /*!
    * \brief exception thrown when an invalid value of the *NTENS
    * parameter is given
    */
-  struct MFRONT_CALCULIX_VISIBILITY_EXPORT CalculiXInvalidNTENSValue
+  struct MFRONT_CALCULIX_VISIBILITY_EXPORT CalculiXInvalidNTENSValue final
     : public CalculiXException
   {
     CalculiXInvalidNTENSValue(const unsigned short);
@@ -82,7 +81,7 @@ namespace calculix {
     //! copy constructor
     CalculiXInvalidNTENSValue(const CalculiXInvalidNTENSValue&);
     //! desctructor
-    virtual ~CalculiXInvalidNTENSValue() noexcept;
+     ~CalculiXInvalidNTENSValue() noexcept override;
   private:
     CalculiXInvalidNTENSValue() = delete;
     CalculiXInvalidNTENSValue&
@@ -91,7 +90,7 @@ namespace calculix {
   /*!
    * \brief exception thrown when an invalid dimension is detected
    */
-  struct MFRONT_CALCULIX_VISIBILITY_EXPORT CalculiXInvalidDimension
+  struct MFRONT_CALCULIX_VISIBILITY_EXPORT CalculiXInvalidDimension final
     : public CalculiXException
   {
     CalculiXInvalidDimension(const std::string&,
@@ -101,7 +100,7 @@ namespace calculix {
     //! copy constructor
     CalculiXInvalidDimension(const CalculiXInvalidDimension&);
     //! destructor
-    virtual ~CalculiXInvalidDimension() noexcept;
+    ~CalculiXInvalidDimension() noexcept override;
   private:
     CalculiXInvalidDimension() = delete;
     CalculiXInvalidDimension&

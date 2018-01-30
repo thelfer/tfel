@@ -39,16 +39,14 @@ namespace mtest
     /*!
      * \param[out] v : initial values of the driving variables
      */
-    virtual void
-    getDrivingVariablesDefaultInitialValues(tfel::math::vector<real>&) const override;
+    void getDrivingVariablesDefaultInitialValues(tfel::math::vector<real>&) const override;
     /*!
      * \brief allocate internal workspace
      * \param[out] wk : work space
      */
-    virtual void
-    allocate(BehaviourWorkSpace&) const override;
+    void allocate(BehaviourWorkSpace&) const override;
     //! destructor
-    virtual ~AsterFiniteStrainBehaviour();
+    ~AsterFiniteStrainBehaviour() override;
   protected:
     /*!
      * \brief call the mechanical behaviour

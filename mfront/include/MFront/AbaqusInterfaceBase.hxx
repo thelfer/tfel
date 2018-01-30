@@ -77,7 +77,7 @@ namespace mfront{
     
     static std::string getOrthotropyManagementPolicy(const BehaviourDescription&);
     //! destructor
-    virtual ~AbaqusInterfaceBase();
+    ~AbaqusInterfaceBase() override;
   protected:
     /*!
      * \brief return the state variable offset used for variables used

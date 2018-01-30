@@ -33,7 +33,7 @@ namespace mfront{
      * treated by the interface. The second entry is an iterator after
      * the last token treated.
      */
-    virtual std::pair<bool,tokens_iterator>
+    std::pair<bool,tokens_iterator>
     treatKeyword(const std::string&,
 		 const std::vector<std::string>&,
 		 tokens_iterator,
@@ -43,16 +43,16 @@ namespace mfront{
      * \param[out] d   : target description
      * \param[in]  mpd : material property description
      */
-    virtual void getTargetsDescription(TargetsDescription&,
-				       const MaterialPropertyDescription&) const override;
+    void getTargetsDescription(TargetsDescription&,
+			       const MaterialPropertyDescription&) const override;
     /*!
      * \param[out] os:  output file stream
      * \param[in]  mpd: material property description
      */
-    virtual void writeInterfaceSymbol(std::ostream&,
-				      const MaterialPropertyDescription&) const override;
+    void writeInterfaceSymbol(std::ostream&,
+			      const MaterialPropertyDescription&) const override;
     //! destructor
-    virtual ~CMaterialPropertyInterface();
+    ~CMaterialPropertyInterface() override;
         
   protected:
 

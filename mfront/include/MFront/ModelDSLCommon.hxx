@@ -36,17 +36,16 @@ namespace mfront{
     //! constructor
     ModelDSLCommon();
     //! \return the target of the dsl
-    virtual DSLTarget getTargetType() const override final;
+    DSLTarget getTargetType() const override final;
     /*!
      * \brief write the output files.
      * \note this shall be called after the analyseFile method.
      */
-    virtual void generateOutputFiles() override;
+    void generateOutputFiles() override;
 
-    virtual void
-    setInterfaces(const std::set<std::string>&) override;
+    void setInterfaces(const std::set<std::string>&) override;
     //! destructor
-    virtual ~ModelDSLCommon();
+    ~ModelDSLCommon() override;
 
   protected:
     /*!
@@ -57,48 +56,47 @@ namespace mfront{
      * been registred and throws an exception if it does, register it
      * otherwise
      */
-    virtual void reserveName(const std::string&) override;
+    void reserveName(const std::string&) override;
     /*!
      * \brief look if a name is reserved
      * \param[in] n : name
      */
-    virtual bool isNameReserved(const std::string&) const override;
+    bool isNameReserved(const std::string&) const override;
     /*!
      * \return the name of the generated class
      */
-    virtual std::string getClassName() const override ;
+    std::string getClassName() const override ;
     /*!
      * \brief add a material law
      * \param[in] m : added material law name
      */
-    virtual void addMaterialLaw(const std::string&) override;
+    void addMaterialLaw(const std::string&) override;
     /*!
      * \brief append the given code to the includes
      */
-    virtual void appendToIncludes(const std::string&) override;
+    void appendToIncludes(const std::string&) override;
     /*!
      * \brief append the given code to the members
      */
-    virtual void appendToMembers(const std::string&) override;
+    void appendToMembers(const std::string&) override;
     /*!
      * \brief append the given code to the private code
      */
-    virtual void appendToPrivateCode(const std::string&) override;
+    void appendToPrivateCode(const std::string&) override;
     /*!
      * \brief append the given code to the sources
      */
-    virtual void appendToSources(const std::string&) override;
+    void appendToSources(const std::string&) override;
     /*!
      * \brief add a static variable description
      * \param[in] v : variable description
      */
-    virtual void
-    addStaticVariableDescription(const StaticVariableDescription&) override;
+    void addStaticVariableDescription(const StaticVariableDescription&) override;
     /*!
      * \return the value of an integer constant
      * \param[in] n: variable name
      */
-    virtual int getIntegerConstant(const std::string&) const override;
+    int getIntegerConstant(const std::string&) const override;
     //! treat the `@Material` keyword
     virtual void treatMaterial();
     //! treat the `@Library` keyword
@@ -110,7 +108,7 @@ namespace mfront{
 
     virtual void treatDomains();
 
-    virtual void treatUnknownKeyword() override;
+    void treatUnknownKeyword() override;
 
     virtual void treatBounds();
     

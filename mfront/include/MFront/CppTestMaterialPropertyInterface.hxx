@@ -28,8 +28,7 @@ namespace mfront{
   struct CppTestMaterialPropertyInterface
     : public AbstractMaterialPropertyInterface
   {
-    static std::string 
-    getName();
+    static std::string getName();
     
     CppTestMaterialPropertyInterface();
     /*!
@@ -41,7 +40,7 @@ namespace mfront{
      * treated by the interface. The second entry is an iterator after
      * the last token treated.
      */
-    virtual std::pair<bool,tokens_iterator>
+    std::pair<bool,tokens_iterator>
     treatKeyword(const std::string&,
 		 const std::vector<std::string>&,
 		 tokens_iterator,
@@ -51,17 +50,17 @@ namespace mfront{
      * \param[out] d   : target description
      * \param[in]  mpd : material property description
      */
-    virtual void getTargetsDescription(TargetsDescription&,
-				       const MaterialPropertyDescription&) const override;
+    void getTargetsDescription(TargetsDescription&,
+			       const MaterialPropertyDescription&) const override;
     /*!
      * \brief generate the output files
      * \param[in] mpd : material property description
      * \param[in] fd  : mfront file description
      */
-    virtual void writeOutputFiles(const MaterialPropertyDescription&,
-				  const FileDescription&) const override;
+    void writeOutputFiles(const MaterialPropertyDescription&,
+			  const FileDescription&) const override;
     //! destructor
-    virtual ~CppTestMaterialPropertyInterface();
+    ~CppTestMaterialPropertyInterface() override;
     
   private:
 

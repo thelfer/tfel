@@ -40,7 +40,7 @@ namespace mfront{
      */
     const NonLinearSystemSolver& getSolver() const;
     //!\brief destructor
-    virtual ~ImplicitDSLBase();
+    ~ImplicitDSLBase() override;
 
   protected:
     
@@ -59,10 +59,9 @@ namespace mfront{
     integratorAnalyser(const Hypothesis,
 		       const std::string&);
 
-    virtual std::string
-    tangentOperatorVariableModifier(const Hypothesis,
-				    const std::string&,
-				    const bool) override;
+    std::string tangentOperatorVariableModifier(const Hypothesis,
+						const std::string&,
+						const bool) override;
 
     virtual std::string
     integratorVariableModifier(const Hypothesis,
@@ -82,56 +81,51 @@ namespace mfront{
      * treat an unknown keyword. This method is overriden so the
      * solver may have specific keywords
      */
-    virtual void
-    treatUnknownKeyword() override;
+    void treatUnknownKeyword() override;
     /*!
      * \param[in] h : modelling hypothesis
      * \param[in] n : variable name
      */
-    virtual void
-    treatUnknownVariableMethod(const Hypothesis,
-			       const std::string&) override;
+    void treatUnknownVariableMethod(const Hypothesis,
+				    const std::string&) override;
     //! \brief treat the `@StateVariable` keyword
-    virtual void treatStateVariable() override;
+    void treatStateVariable() override;
     //! \brief treat the `@IntegrationVariable` keyword
-    virtual void treatIntegrationVariable();
+    void treatIntegrationVariable();
     //! \brief treat the `@Integrator` keyword
-    virtual void  treatIntegrator() override;
+    void  treatIntegrator() override;
     //! \brief treat the `@ComputeFinalStress` keyword
     virtual void treatComputeFinalStress();
 
-    virtual void completeVariableDeclaration() override;
+    void completeVariableDeclaration() override;
 
-    virtual void endsInputFileProcessing() override;
+    void endsInputFileProcessing() override;
 
-    virtual void
-    writeBehaviourLocalVariablesInitialisation(std::ostream&,
-					       const Hypothesis) const override;
+    void writeBehaviourLocalVariablesInitialisation(std::ostream&,
+						    const Hypothesis) const override;
     
-    virtual void writeBehaviourIntegrator(std::ostream&,
-					  const Hypothesis) const override;
+    void writeBehaviourIntegrator(std::ostream&,
+				  const Hypothesis) const override;
 
     virtual void writeComputeFdF(std::ostream&,
 				 const Hypothesis) const;
 
-    virtual void writeBehaviourParserSpecificIncludes(std::ostream&) const override;
+    void writeBehaviourParserSpecificIncludes(std::ostream&) const override;
 
-    virtual void writeBehaviourParserSpecificTypedefs(std::ostream&) const override;
+    void writeBehaviourParserSpecificTypedefs(std::ostream&) const override;
 
-    virtual void writeBehaviourParserSpecificMembers(std::ostream&,
-						     const Hypothesis) const override;
+    void writeBehaviourParserSpecificMembers(std::ostream&,
+					     const Hypothesis) const override;
 
-    virtual void writeBehaviourIntegrationVariablesIncrements(std::ostream&,
-							      const Hypothesis) const override;
+    void writeBehaviourIntegrationVariablesIncrements(std::ostream&,
+						      const Hypothesis) const override;
     
-    virtual std::string
-    getBehaviourConstructorsInitializers(const Hypothesis) const override;
+    std::string getBehaviourConstructorsInitializers(const Hypothesis) const override;
 
-    virtual std::string
-    getIntegrationVariablesIncrementsInitializers(const Hypothesis) const override;
+    std::string getIntegrationVariablesIncrementsInitializers(const Hypothesis) const override;
 
-    virtual void writeBehaviourParserSpecificInitializeMethodPart(std::ostream&,
-								  const Hypothesis) const override;
+    void writeBehaviourParserSpecificInitializeMethodPart(std::ostream&,
+							  const Hypothesis) const override;
 
     virtual void writeComputeNumericalJacobian(std::ostream&,
 					       const Hypothesis) const;
@@ -171,9 +165,8 @@ namespace mfront{
      * \param[in] h : modelling hypothesis
      * \param[in] n : name
      */
-    virtual bool
-    isCallableVariable(const Hypothesis,
-		       const std::string&) const override;
+    bool isCallableVariable(const Hypothesis,
+			    const std::string&) const override;
     /*!
      * \return a type able to do the mapping of a variable with the
      * vector used by the root-finding algorithm.

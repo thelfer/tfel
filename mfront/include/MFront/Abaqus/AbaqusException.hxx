@@ -34,14 +34,10 @@ namespace abaqus {
     AbaqusException(AbaqusException&&);
     //! copy constructor
     AbaqusException(const AbaqusException&);
-
-    virtual const char* 
-    what () const noexcept override final;
-
-    virtual std::string 
-    getMsg() const noexcept final;
+    const char*  what () const noexcept override final;
+    virtual std::string getMsg() const noexcept final;
     //! destructor    
-    virtual ~AbaqusException() noexcept;
+    ~AbaqusException() noexcept override;
   private:
     AbaqusException() = delete;
     AbaqusException& operator=(const AbaqusException&) = delete;

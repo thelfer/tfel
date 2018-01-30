@@ -28,12 +28,11 @@ namespace mfront{
 
     DefaultCZMDSL();
 
-    ~DefaultCZMDSL();
+    ~DefaultCZMDSL() override;
 
   protected:
 
-    virtual void
-    writeBehaviourParserSpecificIncludes(std::ostream&) const override;
+    void writeBehaviourParserSpecificIncludes(std::ostream&) const override;
 
   }; // end of struct DefaultCZMDSL
 

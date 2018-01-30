@@ -33,7 +33,7 @@ namespace tfel{
       virtual ~MaterialException() noexcept;
     };
 
-    struct TFELMATERIAL_VISIBILITY_EXPORT DivergenceException
+    struct TFELMATERIAL_VISIBILITY_EXPORT DivergenceException final
       : public MaterialException
     {
       DivergenceException() = default;
@@ -41,18 +41,18 @@ namespace tfel{
       DivergenceException(const std::string&);
       DivergenceException(DivergenceException&&)      = default;
       DivergenceException(const DivergenceException&) = default;
-      virtual const char * what() const noexcept override final;
-      virtual ~DivergenceException() noexcept;
+      const char * what() const noexcept override final;
+      ~DivergenceException() noexcept override;
     };
     
-    struct TFELMATERIAL_VISIBILITY_EXPORT OutOfBoundsException
+    struct TFELMATERIAL_VISIBILITY_EXPORT OutOfBoundsException final
       : public MaterialException
     {
       OutOfBoundsException(std::string);
       OutOfBoundsException(OutOfBoundsException&&)      = default;
       OutOfBoundsException(const OutOfBoundsException&) = default;
-      virtual const char * what() const noexcept override final;
-      virtual ~OutOfBoundsException() noexcept;
+      const char * what() const noexcept override final;
+      ~OutOfBoundsException() noexcept override;
     private:
       std::string msg;
     };

@@ -42,25 +42,22 @@ namespace mtest
      * \note this method is only meaningfull for the aster (Cast3M)
      * interface
      */
-    virtual tfel::math::tmatrix<3u,3u,real>
+    tfel::math::tmatrix<3u,3u,real>
     getRotationMatrix(const tfel::math::vector<real>&,
 		      const tfel::math::tmatrix<3u,3u,real>&) const override;
     /*!
      * \param[out] v : initial values of the driving variables
      */
-    virtual void
-    getDrivingVariablesDefaultInitialValues(tfel::math::vector<real>&) const override;
+    void getDrivingVariablesDefaultInitialValues(tfel::math::vector<real>&) const override;
     /*!
      * \brief allocate internal workspace
      * \param[out] wk : workspace
      */
-    virtual void
-    allocate(BehaviourWorkSpace&) const override;
+    void allocate(BehaviourWorkSpace&) const override;
     /*!
      * \return the default type of stiffness matrix used by the behaviour
      */
-    virtual StiffnessMatrixType
-    getDefaultStiffnessMatrixType() const override;
+    StiffnessMatrixType getDefaultStiffnessMatrixType() const override;
     /*!
      * \brief integrate the mechanical behaviour over the time step
      * \return a pair. The first member is true if the integration was
@@ -70,7 +67,7 @@ namespace mtest
      * \param[in]  s     : current state
      * \param[in]  ktype : type of the stiffness matrix
      */
-    virtual std::pair<bool,real>
+    std::pair<bool,real>
     computePredictionOperator(BehaviourWorkSpace&,
 			      const CurrentState&,
 			      const StiffnessMatrixType) const override;
@@ -84,7 +81,7 @@ namespace mtest
      * \param[in]     dt    : time increment
      * \param[in]     ktype : type of the stiffness matrix
      */
-    virtual std::pair<bool,real>
+    std::pair<bool,real>
     integrate(CurrentState&,
 	      BehaviourWorkSpace&,
 	      const real,
@@ -99,11 +96,10 @@ namespace mtest
      * \param[out] mp  : evolution manager where 
      * \param[in]  evm : evolution manager
      */
-    virtual void
-    setOptionalMaterialPropertiesDefaultValues(EvolutionManager&,
-					       const EvolutionManager&) const override;
+    void setOptionalMaterialPropertiesDefaultValues(EvolutionManager&,
+						    const EvolutionManager&) const override;
     //! destructor
-    virtual ~AsterCohesiveZoneModel();
+    ~AsterCohesiveZoneModel() override;
   protected:
     /*!
      * \brief call the mechanical behaviour
@@ -118,7 +114,7 @@ namespace mtest
      * \param[in]     b     : if true, integrate the behaviour over the time
      * step, if false compute a prediction of the stiffness matrix
      */
-    virtual std::pair<bool,real>
+    std::pair<bool,real>
     call_behaviour(tfel::math::matrix<real>&,
 		   CurrentState&,
 		   BehaviourWorkSpace&,

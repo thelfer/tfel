@@ -89,24 +89,21 @@ namespace mtest{
     }; // end of struct UnitTest
     //! default constructor
     PipeTest();
-    //! return the mesh
-    const PipeMesh& getMesh() const;
     /*! 
      * \return the name of the test
      */
-    virtual std::string
-    name() const override;
+    std::string name() const override;
     /*! 
      * \return the group of the test
      */
-    virtual std::string
-    classname() const override;
+    std::string classname() const override;
+    //! return the mesh
+    const PipeMesh& getMesh() const;
     /*!
      * integrate the behaviour
      * along the loading path
      */ 
-    virtual tfel::tests::TestResult
-    execute() override;
+    tfel::tests::TestResult execute() override;
     /*!
      * integrate the behaviour over one step
      * \param[out] s: current structure state
@@ -204,12 +201,11 @@ namespace mtest{
      * complete the initialisation. This method must be called once.
      * \note this method is called automatically by the execute method.
      */ 
-    virtual void completeInitialisation() override;
+    void completeInitialisation() override;
     /*!
      * \return the total number of unknowns
      */
-    virtual size_type
-    getNumberOfUnknowns() const override;
+    size_type getNumberOfUnknowns() const override;
     /*!
      * \return the total number of nodes
      */
@@ -219,14 +215,12 @@ namespace mtest{
      * \brief initialize the current state
      * \param[in] s : current state
      */
-    virtual void
-    initializeCurrentState(StudyCurrentState&) const override;
+    void initializeCurrentState(StudyCurrentState&) const override;
     /*!
      * \brief initialize the workspace
      * \param[in] wk : workspace
      */
-    virtual void
-    initializeWorkSpace(SolverWorkSpace&) const override;
+    void initializeWorkSpace(SolverWorkSpace&) const override;
     /*!
      * \brief update current state at the beginning of a new time step:
      * - update the material properties
@@ -236,16 +230,16 @@ namespace mtest{
      * \param[in]  t: current time
      * \param[in] dt: time increment
      */
-    virtual void prepare(StudyCurrentState&,
-			 const real,
-			 const real) const override;
+    void prepare(StudyCurrentState&,
+		 const real,
+		 const real) const override;
     /*!
      * \brief make a linear prediction of the unknows and state
      * \param[out] s: current structure state
      * \param[in] dt: time increment
      */
-    virtual void makeLinearPrediction(StudyCurrentState&,
-				      const real) const override;
+    void makeLinearPrediction(StudyCurrentState&,
+			      const real) const override;
     /*!
      * \brief compute the stiffness matrix and the residual
      * \return a pair containing:
@@ -263,7 +257,7 @@ namespace mtest{
      * \param[in]  smt: type of tangent operator
      * \note the memory has already been allocated
      */
-    virtual std::pair<bool,real>
+    std::pair<bool,real>
     computePredictionStiffnessAndResidual(StudyCurrentState&,
 					  tfel::math::matrix<real>&,
 					  tfel::math::vector<real>&,
@@ -287,7 +281,7 @@ namespace mtest{
      * \param[in]  smt: type of tangent operator
      * \note the memory has already been allocated
      */
-    virtual std::pair<bool,real>
+    std::pair<bool,real>
     computeStiffnessMatrixAndResidual(StudyCurrentState&,
 				      tfel::math::matrix<real>&,
 				      tfel::math::vector<real>&,
@@ -297,7 +291,7 @@ namespace mtest{
     /*!
      * \param[in] : du unknows increment difference between two iterations
      */
-    virtual real getErrorNorm(const tfel::math::vector<real>&) const override;
+    real getErrorNorm(const tfel::math::vector<real>&) const override;
     /*!
      * \param[in]  s: current structure state
      * \param[in] du: unknows increment estimation
@@ -308,13 +302,13 @@ namespace mtest{
      * \param[in] dt: time increment
      * \return a boolean saying if all convergence criteria are met
      */
-    virtual bool checkConvergence(const StudyCurrentState&,
-				  const tfel::math::vector<real>&,
-				  const tfel::math::vector<real>&,
-				  const SolverOptions&,
-				  const unsigned int,
-				  const real,
-				  const real) const override;
+    bool checkConvergence(const StudyCurrentState&,
+			  const tfel::math::vector<real>&,
+			  const tfel::math::vector<real>&,
+			  const SolverOptions&,
+			  const unsigned int,
+			  const real,
+			  const real) const override;
     /*!
      * \param[in]  s: current structure state
      * \param[in] du: unknows increment estimation
@@ -324,7 +318,7 @@ namespace mtest{
      * \param[in] dt: time increment
      * \return a description of all the criteria that were not met.
      */
-    virtual std::vector<std::string>
+    std::vector<std::string>
     getFailedCriteriaDiagnostic(const StudyCurrentState&,
 				const tfel::math::vector<real>&,
 				const tfel::math::vector<real>&,
@@ -338,23 +332,21 @@ namespace mtest{
      * \param[in] t:  current time
      * \param[in] dt: time increment
      */
-    virtual void
-    computeLoadingCorrection(StudyCurrentState&,
-			     SolverWorkSpace&,
-			     const SolverOptions&,
-			     const real,
-			     const real) const override;
+    void computeLoadingCorrection(StudyCurrentState&,
+				  SolverWorkSpace&,
+				  const SolverOptions&,
+				  const real,
+				  const real) const override;
     /*!
      * \param[out] s: current structure state
      * \param[in]  t:  current time
      * \param[in]  dt: time increment
      * \param[in]  p:  period
      */
-    virtual void
-    postConvergence(StudyCurrentState&,
-		    const real,
-		    const real,
-		    const unsigned int) const override;
+    void postConvergence(StudyCurrentState&,
+			 const real,
+			 const real,
+			 const unsigned int) const override;
     /*!
      * \brief add a new profile postprocessing
      * \param[in] f: file name
@@ -365,10 +357,9 @@ namespace mtest{
     /*!
      * \param[in] h : modelling hypothesis
      */
-    virtual void
-    setModellingHypothesis(const std::string&) override;
+    void setModellingHypothesis(const std::string&) override;
     //! \brief set the modelling hypothesis to the default one
-    virtual void setDefaultModellingHypothesis() override;
+    void setDefaultModellingHypothesis() override;
     //! \brief turn hpp to true
     virtual void performSmallStrainAnalysis();
     /*!
@@ -378,8 +369,8 @@ namespace mtest{
      * \param[in] o: if true, this time has been specified by the
      * user. Otherwise, it has been reached due to sub-stepping.
      */
-    virtual void printOutput(const real,const StudyCurrentState&,
-			     const bool) const override;
+    void printOutput(const real,const StudyCurrentState&,
+		     const bool) const override;
     /*!
      * \brief compute the minium and maximum values of a scalar
      * variable
@@ -438,14 +429,14 @@ namespace mtest{
     virtual void addOutput(const std::string&,
 			   const std::string&);
     //! destructor
-    virtual ~PipeTest();
+    ~PipeTest() override;
   protected:
     /*!
      * \brief check that the behaviour is consistent with the
      * modelling hypothesis
      * \param[in] bp : pointer to the behaviour
      */
-    virtual void checkBehaviourConsistency(const std::shared_ptr<Behaviour>&) override;
+    void checkBehaviourConsistency(const std::shared_ptr<Behaviour>&) override;
   private:
     //! a simple alias
     using ModellingHypothesis = tfel::material::ModellingHypothesis;
@@ -454,8 +445,7 @@ namespace mtest{
      * manager
      * \param[in] s: current state
      */
-    virtual void
-    setGaussPointPositionForEvolutionsEvaluation(const CurrentState&) const override;
+    void setGaussPointPositionForEvolutionsEvaluation(const CurrentState&) const override;
     //! description of an additional
     struct AdditionalOutput{
       //! description

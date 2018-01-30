@@ -204,7 +204,7 @@ struct UMATBehaviourDescriptionTest final
 TFEL_TESTS_GENERATE_PROXY(UMATBehaviourDescriptionTest,
 			  "UMATBehaviourDescriptionTest");
 
-int main(void){
+int main(){
   using namespace std;
   using namespace tfel::tests;
   TestManager& manager = TestManager::getTestManager();

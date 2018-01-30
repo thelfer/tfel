@@ -77,24 +77,19 @@ namespace tfel
 	 */
 	std::string
 	getCxxFormula(const std::vector<std::string>&) const override;
-	
-	virtual void
-	checkCyclicDependency(std::vector<std::string>&) const override;
-	virtual std::shared_ptr<Expr>
-	resolveDependencies(const std::vector<double>&) const override;
-	virtual std::shared_ptr<Expr>
+	void checkCyclicDependency(std::vector<std::string>&) const override;
+	std::shared_ptr<Expr> resolveDependencies(const std::vector<double>&) const override;
+	std::shared_ptr<Expr>
 	differentiate(const std::vector<double>::size_type,
 		      const std::vector<double>&) const override;
-	virtual std::shared_ptr<Expr>
-	clone(const std::vector<double>&) const override;
-	virtual std::shared_ptr<Expr>
+	std::shared_ptr<Expr> clone(const std::vector<double>&) const override;
+	std::shared_ptr<Expr>
 	createFunctionByChangingParametersIntoVariables(const std::vector<double>&,
 							const std::vector<std::string>&,
 							const std::map<std::string,
 							std::vector<double>::size_type>&) const override;	
-	virtual void
-	getParametersNames(std::set<std::string>&) const override;
-	virtual ~StandardBinaryFunction();
+	void getParametersNames(std::set<std::string>&) const override;
+	~StandardBinaryFunction() override;
       private:
         StandardBinaryFunction& operator=(const StandardBinaryFunction&) = delete;
 	StandardBinaryFunction& operator=(StandardBinaryFunction&&) = delete;

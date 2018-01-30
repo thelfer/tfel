@@ -78,10 +78,8 @@ namespace mtest
      */
     virtual const char*
     getBehaviourNameForUMATFunctionCall() const = 0;
-    /*!
-     * destructor
-     */
-    ~CastemStandardBehaviour();
+    //! destructor
+    ~CastemStandardBehaviour() override;
   protected:
     //! the umat fonction
     tfel::system::CastemFctPtr fct;

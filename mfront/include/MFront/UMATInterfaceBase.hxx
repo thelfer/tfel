@@ -246,7 +246,7 @@ namespace mfront{
 					      const DrivingVariable&,
 					      const SupportedTypes::TypeSize) const;
     //! destructor
-    virtual ~UMATInterfaceBase();
+     ~UMATInterfaceBase() override;
 
   protected:
 

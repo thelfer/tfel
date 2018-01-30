@@ -34,50 +34,44 @@ namespace mfront{
     /*!
      * \return the name of this interface
      */
-    static std::string 
-    getName();
+    static std::string getName();
     //! constructor
     ExcelMaterialPropertyInternalInterface();
     /*!
      * \param[out] os:  output file stream
      * \param[in]  mpd: material property description
      */
-    virtual void writeInterfaceSymbol(std::ostream&,
-				      const MaterialPropertyDescription&) const override;
+    void writeInterfaceSymbol(std::ostream&,
+			      const MaterialPropertyDescription&) const override;
     //! destructor
-    virtual ~ExcelMaterialPropertyInternalInterface();
+    ~ExcelMaterialPropertyInternalInterface() override;
   private:
 
-    virtual std::string
-    getCallingConvention() const override;
+    std::string getCallingConvention() const override;
     /*!
      * \return the name of the generated library
      * \param[in] mpd: material property description
      */
-    virtual std::string
-    getGeneratedLibraryName(const MaterialPropertyDescription&) const override;
+    std::string getGeneratedLibraryName(const MaterialPropertyDescription&) const override;
     /*!
      * \brief write the header preprocessor directives
      * \param[in] os:  output stream
      * \param[in] mpd: material property description
      */
-    virtual void
-    writeHeaderPreprocessorDirectives(std::ostream&,
-				      const MaterialPropertyDescription&) const override;
+    void writeHeaderPreprocessorDirectives(std::ostream&,
+					   const MaterialPropertyDescription&) const override;
     /*!
      * \param[in] m: material name
      * \param[in] c: class name
      */
-    virtual std::string
-    getHeaderFileName(const std::string&,
-		      const std::string&) const override;
+    std::string getHeaderFileName(const std::string&,
+				  const std::string&) const override;
     /*!
      * \param[in] m: material name
      * \param[in] c: class name
      */
-    virtual std::string
-    getSrcFileName(const std::string&,
-		   const std::string&) const override;
+    std::string getSrcFileName(const std::string&,
+			       const std::string&) const override;
   }; // end of MfrontExcelLawInternalInterface
 
 } // end of namespace mfront

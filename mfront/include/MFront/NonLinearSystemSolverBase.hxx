@@ -121,13 +121,10 @@ namespace mfront{
      * - iterMax   : maximum number of iteration
      * - converged : boolean stating that convergence is reached
      */
-    virtual std::vector<std::string>
-    getReservedNames() const override;
+    std::vector<std::string> getReservedNames() const override;
   protected:
-    /*!
-     * destructor
-     */
-    ~NonLinearSystemSolverBase();  
+    //! destructor
+    ~NonLinearSystemSolverBase() override;  
     
   }; // end of struct NonLinearSystemSolverBase
 

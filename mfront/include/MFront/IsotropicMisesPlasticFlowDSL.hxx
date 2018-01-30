@@ -32,30 +32,25 @@ namespace mfront{
     //! constructor
     IsotropicMisesPlasticFlowDSL();
 
-    virtual void
-    endsInputFileProcessing() override;
+    void endsInputFileProcessing() override;
     //! desctructor
-    virtual ~IsotropicMisesPlasticFlowDSL();
+    ~IsotropicMisesPlasticFlowDSL() override;
 
   protected:
 
-    virtual double getDefaultThetaValue() const override;
+    double getDefaultThetaValue() const override;
     
-    virtual void
-    writeBehaviourParserSpecificInitializeMethodPart(std::ostream&,
-						     const Hypothesis) const override;
+    void writeBehaviourParserSpecificInitializeMethodPart(std::ostream&,
+							  const Hypothesis) const override;
 
-    virtual void
-    writeBehaviourParserSpecificMembers(std::ostream&,
-					const Hypothesis) const override;
+    void writeBehaviourParserSpecificMembers(std::ostream&,
+					     const Hypothesis) const override;
 
-    virtual void
-    writeBehaviourIntegrator(std::ostream&,
-			     const Hypothesis) const override;
+    void writeBehaviourIntegrator(std::ostream&,
+				  const Hypothesis) const override;
 
-    virtual void
-    writeBehaviourComputeTangentOperator(std::ostream&,
-					 const Hypothesis) const override;
+    void writeBehaviourComputeTangentOperator(std::ostream&,
+					      const Hypothesis) const override;
   };
 
 } // end of namespace mfront  

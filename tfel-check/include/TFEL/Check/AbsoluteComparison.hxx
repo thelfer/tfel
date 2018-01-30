@@ -29,8 +29,8 @@ namespace tfel{
       : public Comparison
     {
       AbsoluteComparison();
-      virtual void compare() override;
-      virtual ~AbsoluteComparison();
+      void compare() override;
+       ~AbsoluteComparison() override;
     };
 
   } // end of namespace check

@@ -55,7 +55,7 @@ namespace mfront{
     //! treat the requests
     virtual void exe();
     //! destructor
-    virtual ~ModelQuery();
+    ~ModelQuery() override;
   private :
     //! a simple alias
     using query = std::function<void(const FileDescription&,
@@ -65,7 +65,7 @@ namespace mfront{
     //! \brief register call-backs associated with command line arguments
     virtual void registerCommandLineCallBacks();
     //! return the current argument
-    virtual const tfel::utilities::Argument&
+    const tfel::utilities::Argument&
     getCurrentCommandLineArgument() const override final;
     //! treat the "--generated-sources" query
     virtual void treatGeneratedSources() final;

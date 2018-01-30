@@ -62,7 +62,7 @@ struct DSLTest2 final
   {} // end of DSLTest2
 
   tfel::tests::TestResult
-  execute(void) override
+  execute() override
   {
     this->test();
     this->test2();
@@ -73,7 +73,7 @@ struct DSLTest2 final
    * Various checks on the BehaviourDescription object resulting from
    * the analysis of the 'test1.mfront' file
    */
-  void test(void){
+  void test(){
     using namespace tfel::glossary;
     const auto mh = tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     const auto f  = std::string{"@top_srcdir@/mfront/tests/unit-tests/mfront/test1.mfront"};
@@ -105,7 +105,7 @@ struct DSLTest2 final
    * Various checks on the BehaviourData object resulting from the
    * analysis of the 'test1.mfront' file
    */
-  void test2(void){
+  void test2(){
     using namespace tfel::glossary;
     const auto mh = tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     const auto f  = std::string{"@top_srcdir@/mfront/tests/unit-tests/mfront/test1.mfront"};
@@ -152,7 +152,7 @@ struct DSLTest2 final
 
 TFEL_TESTS_GENERATE_PROXY(DSLTest2,"DSLTest2");
 
-int main(void)
+int main()
 {
   mfront::initDSLs();
   auto& m = tfel::tests::TestManager::getTestManager();

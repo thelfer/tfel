@@ -45,10 +45,10 @@ namespace mfront{
      * \param[in] mpd : material property description
      * \param[in] fd  : mfront file description
      */
-    virtual void writeOutputFiles(const MaterialPropertyDescription&,
-				  const FileDescription&) const override;
+    void writeOutputFiles(const MaterialPropertyDescription&,
+			  const FileDescription&) const override;
     //! destructor
-    virtual ~CMaterialPropertyInterfaceBase();
+    ~CMaterialPropertyInterfaceBase() override;
     
   protected:
     

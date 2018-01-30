@@ -30,13 +30,11 @@ namespace cyrano {
 
     CyranoException(const CyranoException&);
 
-    virtual const char* 
-    what () const noexcept override final;
+    virtual const char* what () const noexcept override final;
 
-    virtual std::string 
-    getMsg() const noexcept final;
+    virtual std::string getMsg() const noexcept final;
     
-    virtual ~CyranoException() noexcept;
+    ~CyranoException() noexcept override;
 
   private:
     
@@ -49,37 +47,37 @@ namespace cyrano {
     
   }; // end of struct CyranoException
 
-  struct MFRONT_CYRANO_VISIBILITY_EXPORT CyranoIntegrationFailed
+  struct MFRONT_CYRANO_VISIBILITY_EXPORT CyranoIntegrationFailed final
     : public CyranoException
   {
     CyranoIntegrationFailed();
     CyranoIntegrationFailed(const std::string&);
     CyranoIntegrationFailed(const CyranoIntegrationFailed&);
-    virtual ~CyranoIntegrationFailed() noexcept;
+    ~CyranoIntegrationFailed() noexcept override;
   private:
     CyranoIntegrationFailed&
     operator=(const CyranoIntegrationFailed&);
   }; // end of struct CyranoIntegrationFailed
 
-  struct MFRONT_CYRANO_VISIBILITY_EXPORT CyranoInvalidNTENSValue
+  struct MFRONT_CYRANO_VISIBILITY_EXPORT CyranoInvalidNTENSValue final
     : public CyranoException
   {
     CyranoInvalidNTENSValue(const unsigned short);
     CyranoInvalidNTENSValue(const CyranoInvalidNTENSValue&);
-    virtual ~CyranoInvalidNTENSValue() noexcept;
+    ~CyranoInvalidNTENSValue() noexcept override;
   private:
     CyranoInvalidNTENSValue();
     CyranoInvalidNTENSValue&
     operator=(const CyranoInvalidNTENSValue&);
   }; // end of struct CyranoInvalidNTENSValue
 
-  struct MFRONT_CYRANO_VISIBILITY_EXPORT CyranoInvalidDimension
+  struct MFRONT_CYRANO_VISIBILITY_EXPORT CyranoInvalidDimension final
     : public CyranoException
   {
     CyranoInvalidDimension(const std::string&,
 			 const unsigned short);
     CyranoInvalidDimension(const CyranoInvalidDimension&);
-    virtual ~CyranoInvalidDimension() noexcept;
+    ~CyranoInvalidDimension() noexcept override;
   private:
     CyranoInvalidDimension();
     CyranoInvalidDimension&

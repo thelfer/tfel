@@ -50,10 +50,10 @@ namespace tfel
       TNegation(std::shared_ptr<Evaluator::TExpr>);
       TNegation(TNegation&&) = default;
       TNegation(const TNegation&) = default;
-      virtual bool isOperator() const override;
-      virtual parser::ExprPtr analyse() override;
-      virtual void reduce() override;
-      virtual ~TNegation() noexcept;
+      bool isOperator() const override;
+      parser::ExprPtr analyse() override;
+      void reduce() override;
+      ~TNegation() noexcept override;
     private:
       std::shared_ptr<Evaluator::TExpr> expr;
     }; // end of struct Evaluator::TNegation
@@ -64,11 +64,11 @@ namespace tfel
       TOperator(const std::string&);
       TOperator(TOperator&&) = default;
       TOperator(const TOperator&) = default;
-      virtual bool isOperator() const override;
-      virtual void reduce() override;
-      virtual parser::ExprPtr analyse() override;
+      bool isOperator() const override;
+      void reduce() override;
+      parser::ExprPtr analyse() override;
       std::string getOperatorType() const;
-      virtual ~TOperator() noexcept;
+      ~TOperator() noexcept override;
     private:
       const std::string type;
     }; // end of struct Evaluator::TOperator
@@ -79,10 +79,10 @@ namespace tfel
       TBinaryOperation(std::shared_ptr<Evaluator::TExpr>,
 		       const std::shared_ptr<TOperator>,
 		       std::shared_ptr<Evaluator::TExpr>);
-      virtual bool isOperator() const override;
-      virtual void reduce() override;
-      virtual parser::ExprPtr analyse() override;
-      virtual ~TBinaryOperation();
+      bool isOperator() const override;
+      void reduce() override;
+      parser::ExprPtr analyse() override;
+      ~TBinaryOperation() override;
     private:
       std::shared_ptr<Evaluator::TExpr> a;
       const std::shared_ptr<TOperator>op;
@@ -100,9 +100,9 @@ namespace tfel
       : public Evaluator::TLogicalExpr
     {
       TNegLogicalExpr(const std::shared_ptr<Evaluator::TLogicalExpr >);
-      virtual void reduce() override;
-      virtual parser::LogicalExprPtr analyse() override;
-      virtual ~TNegLogicalExpr();
+      void reduce() override;
+      parser::LogicalExprPtr analyse() override;
+      ~TNegLogicalExpr() override;
     private:
       std::shared_ptr<Evaluator::TLogicalExpr > e;
     }; // end of struct Evaluator::TNegLogicalExpr 
@@ -113,9 +113,9 @@ namespace tfel
     {
       TLogicalOperation(std::shared_ptr<Evaluator::TExpr>,
 			std::shared_ptr<Evaluator::TExpr>);
-      virtual void reduce() override;
-      virtual parser::LogicalExprPtr analyse() override;
-      virtual ~TLogicalOperation() noexcept;
+      void reduce() override;
+      parser::LogicalExprPtr analyse() override;
+      ~TLogicalOperation() noexcept override;
     private:
       std::shared_ptr<Evaluator::TExpr> a;
       std::shared_ptr<Evaluator::TExpr> b;
@@ -127,9 +127,9 @@ namespace tfel
     {
       TLogicalBinaryOperation(std::shared_ptr<Evaluator::TLogicalExpr>,
 			      std::shared_ptr<Evaluator::TLogicalExpr>);
-      virtual void reduce() override;
-      virtual parser::LogicalExprPtr analyse()  override;
-      virtual ~TLogicalBinaryOperation() noexcept;
+      void reduce() override;
+      parser::LogicalExprPtr analyse()  override;
+      ~TLogicalBinaryOperation() noexcept override;
     private:
       std::shared_ptr<Evaluator::TLogicalExpr> a;
       std::shared_ptr<Evaluator::TLogicalExpr> b;
@@ -141,10 +141,10 @@ namespace tfel
       TConditionalExpr(std::shared_ptr<Evaluator::TLogicalExpr>,
 		       std::shared_ptr<Evaluator::TExpr>,
 		       std::shared_ptr<Evaluator::TExpr>);
-      virtual bool isOperator() const override;
-      virtual void reduce() override;
-      virtual parser::ExprPtr analyse() override;
-      virtual ~TConditionalExpr();
+      bool isOperator() const override;
+      void reduce() override;
+      parser::ExprPtr analyse() override;
+      ~TConditionalExpr() override;
     private:
       std::shared_ptr<Evaluator::TLogicalExpr> c;
       std::shared_ptr<Evaluator::TExpr> a;
@@ -158,9 +158,10 @@ namespace tfel
 		Evaluator &);
       TVariable(const std::vector<double>::size_type,
 		std::vector<double>&);
-      virtual bool isOperator() const override;
-      virtual void reduce() override;
-      virtual parser::ExprPtr analyse() override;
+      bool isOperator() const override;
+      void reduce() override;
+      parser::ExprPtr analyse() override;
+      ~TVariable() override;
     private:
       std::vector<double>& vars;
       std::vector<double>::size_type pos;
@@ -170,10 +171,10 @@ namespace tfel
       : public Evaluator::TExpr
     {
       void add(std::shared_ptr<Evaluator::TExpr>const);
-      virtual bool isOperator() const override;
-      virtual void reduce() override;
-      virtual parser::ExprPtr  analyse() override;
-      virtual ~TGroup();
+      bool isOperator() const override;
+      void reduce() override;
+      parser::ExprPtr  analyse() override;
+      ~TGroup() override;
     private:
       void
       reduce(const std::string&);
@@ -186,10 +187,10 @@ namespace tfel
     {
       TFunction(Evaluator::FunctionGenerator,
 		std::shared_ptr<Evaluator::TExpr>);
-      virtual bool isOperator() const override;
-      virtual parser::ExprPtr analyse() override;
-      virtual void reduce() override;
-      virtual ~TFunction();
+      bool isOperator() const override;
+      parser::ExprPtr analyse() override;
+      void reduce() override;
+      ~TFunction() override;
     private:
       Evaluator::FunctionGenerator f;
       std::shared_ptr<Evaluator::TExpr>arg;
@@ -201,10 +202,10 @@ namespace tfel
       TBinaryFunction(Evaluator::BinaryFunctionGenerator,
 		      std::shared_ptr<Evaluator::TExpr>,
 		      std::shared_ptr<Evaluator::TExpr>);
-      virtual bool isOperator() const override;
-      virtual parser::ExprPtr analyse() override;
-      virtual void reduce() override;
-      virtual ~TBinaryFunction();
+      bool isOperator() const override;
+      parser::ExprPtr analyse() override;
+      void reduce() override;
+      ~TBinaryFunction() override;
     private:
       Evaluator::BinaryFunctionGenerator f;
       std::shared_ptr<Evaluator::TExpr> arg1;
@@ -217,10 +218,10 @@ namespace tfel
       TExternalOperator(const Evaluator::ExternalFunctionGenerator,
 			const std::vector<std::string>&,
 			std::vector<std::shared_ptr<Evaluator::TExpr> >&);
-      virtual bool isOperator() const override;
-      virtual parser::ExprPtr analyse() override;
-      virtual void reduce() override;
-      virtual ~TExternalOperator();
+      bool isOperator() const override;
+      parser::ExprPtr analyse() override;
+      void reduce() override;
+      ~TExternalOperator() override;
     private:
       Evaluator::ExternalFunctionGenerator f;
       std::vector<std::string> param;
@@ -244,10 +245,10 @@ namespace tfel
       TExternalFunctionExpr(const std::string&,
 			    std::vector<std::shared_ptr<Evaluator::TExpr> >&,
 			    std::shared_ptr<tfel::math::parser::ExternalFunctionManager>&);
-      virtual bool isOperator() const override;
-      virtual parser::ExprPtr analyse() override;
-      virtual void reduce() override;
-      virtual ~TExternalFunctionExpr() noexcept;
+      bool isOperator() const override;
+      parser::ExprPtr analyse() override;
+      void reduce() override;
+      ~TExternalFunctionExpr() noexcept override;
     private:
       std::string name;
       std::vector<std::shared_ptr<Evaluator::TExpr> > args;

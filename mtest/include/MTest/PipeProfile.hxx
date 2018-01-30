@@ -57,10 +57,10 @@ namespace mtest{
      * \param[out] os: output stream
      * \param[in]  s:  current state
      */
-    virtual void report(std::ostream&,
-			const CurrentState&) const override;
+    void report(std::ostream&,
+		const CurrentState&) const override;
     //! destructor
-    virtual ~PipeStressProfile();
+    ~PipeStressProfile() override;
   private:
     bool all;
     unsigned short c;
@@ -84,10 +84,10 @@ namespace mtest{
      * \param[out] os: output stream
      * \param[in]  s:  current state
      */
-    virtual void report(std::ostream&,
-			const CurrentState&) const override;
+    void report(std::ostream&,
+		const CurrentState&) const override;
     //! destructor
-    virtual ~PipeStrainProfile();
+    ~PipeStrainProfile() override;
   private:
     bool all;
     unsigned short c;
@@ -111,10 +111,10 @@ namespace mtest{
      * \param[out] os: output stream
      * \param[in]  s:  current state
      */
-    virtual void report(std::ostream&,
-			const CurrentState&) const override;
+    void report(std::ostream&,
+		const CurrentState&) const override;
     //! destructor
-    virtual ~PipeInternalStateVariableProfile();
+    ~PipeInternalStateVariableProfile() override;
   private:
     bool all;
     unsigned short c;

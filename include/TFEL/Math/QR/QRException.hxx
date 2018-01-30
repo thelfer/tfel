@@ -41,48 +41,48 @@ namespace tfel
      * Base class for the exception thrown by
      * the QRDecomp class
      */
-    struct TFELMATH_VISIBILITY_EXPORT QRUnmatchedSize
+    struct TFELMATH_VISIBILITY_EXPORT QRUnmatchedSize final
       : public QRException
     {
       QRUnmatchedSize();
       QRUnmatchedSize(QRUnmatchedSize&&);
       QRUnmatchedSize(const QRUnmatchedSize&);
       //! \return a string describing the error
-      virtual const char* what() const noexcept override final;
+      const char* what() const noexcept override final;
       //! destructor
-      virtual ~QRUnmatchedSize() noexcept;
+      ~QRUnmatchedSize() noexcept override;
     }; // end of struct QRException
 
     /*!
      * Base class for the exception thrown by
      * the QRDecomp class
      */
-    struct TFELMATH_VISIBILITY_EXPORT QRInvalidMatrixSize
+    struct TFELMATH_VISIBILITY_EXPORT QRInvalidMatrixSize final
       : public QRException
     {
       QRInvalidMatrixSize();
       QRInvalidMatrixSize(QRInvalidMatrixSize&&);
       QRInvalidMatrixSize(const QRInvalidMatrixSize&);
       //! \return a string describing the error
-      virtual const char* what() const noexcept override final;
+      const char* what() const noexcept override final;
       //! destructor
-      virtual ~QRInvalidMatrixSize() noexcept;
+      ~QRInvalidMatrixSize() noexcept override;
     }; // end of struct QRException
 
     /*!
      * Base class for the exception thrown by
      * the QRDecomp class
      */
-    struct TFELMATH_VISIBILITY_EXPORT QRNullPivot
+    struct TFELMATH_VISIBILITY_EXPORT QRNullPivot final
       : public QRException
     {
       QRNullPivot();
       QRNullPivot(QRNullPivot&&);
       QRNullPivot(const QRNullPivot&);
       //! \return a string describing the error
-      virtual const char* what() const noexcept override final;
+      const char* what() const noexcept override final;
       //! destructor
-      virtual ~QRNullPivot() noexcept;
+      ~QRNullPivot() noexcept override;
     }; // end of struct QRException
     
   } // end of namespace math

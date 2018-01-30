@@ -28,8 +28,8 @@ namespace tfel{
       : public Comparison
     {
       AreaComparison();
-      virtual void compare() override;
-      virtual ~AreaComparison();
+      void compare() override;
+      ~AreaComparison() override;
     };
 
   } // end of namespace check

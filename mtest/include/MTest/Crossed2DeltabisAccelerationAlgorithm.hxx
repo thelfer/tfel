@@ -31,27 +31,23 @@ namespace mtest
     /*!
      * \return the name of the acceleration algorithm
      */
-    virtual std::string
-    getName() const override;
+    std::string getName() const override;
     /*!
      * \param[in] psz : total number of unknowns (problem size)
      */
-    virtual void
-    initialize(const unsigned short) override;
+    void initialize(const unsigned short) override;
     /*!
      * set a parameter of the acceleration algorithm
      * \param[in] p : parameter name
      * \param[in] v : parameter value
      */
-    virtual void
-    setParameter(const std::string&,
-		 const std::string&) override;
+    void setParameter(const std::string&,
+		      const std::string&) override;
     /*!
      * called at each time step, before the beginning of the Newton
      * algorithm
      */
-    virtual void
-    preExecuteTasks() override;
+    void preExecuteTasks() override;
     /*!
      * \param[in,out] u1   : current estimate of the unknowns
      * \param[in]     ru   : fixed point residual on the unknowns
@@ -60,20 +56,18 @@ namespace mtest
      * \param[in]     seps : criterium on the thermodynamic forces
      * \param[in]     iter : current iteration number
      */
-    virtual void
-    execute(tfel::math::vector<real>&,
-	    const tfel::math::vector<real>&,
-	    const tfel::math::vector<real>&,
-	    const real,
-	    const real,
-	    const unsigned short) override;
+    void execute(tfel::math::vector<real>&,
+		 const tfel::math::vector<real>&,
+		 const tfel::math::vector<real>&,
+		 const real,
+		 const real,
+		 const unsigned short) override;
     /*!
      * called at each time step, once convergence is reached
      */
-    virtual void
-    postExecuteTasks() override;
+    void postExecuteTasks() override;
     //! destructor
-    virtual ~Crossed2DeltabisAccelerationAlgorithm();
+    ~Crossed2DeltabisAccelerationAlgorithm() override;
   protected:
     tfel::math::vector<real> csa_u0;
     tfel::math::vector<real> csa_u1;

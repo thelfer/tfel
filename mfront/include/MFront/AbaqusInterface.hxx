@@ -60,7 +60,7 @@ namespace mfront{
     void getTargetsDescription(TargetsDescription&,
 			       const BehaviourDescription&) override;
     //! destructor
-    virtual ~AbaqusInterface();
+    ~AbaqusInterface() override;
     
   protected:
 

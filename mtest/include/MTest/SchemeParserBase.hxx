@@ -43,148 +43,148 @@ namespace mtest{
      */
     virtual void handleLonelySeparator(SchemeBase&,tokens_iterator&);
     /*!
-     * \brief handle the @Author keyword
+     * \brief handle the `@Author` keyword
      * \param[in,out] p : position in the input file
      */
     virtual void handleAuthor(SchemeBase&,tokens_iterator&);
     /*!
-     * \brief handle the @Date keyword
+     * \brief handle the `@Date` keyword
      * \param[in,out] p : position in the input file
      */
     virtual void handleDate(SchemeBase&,tokens_iterator&);
     /*!
-     * \brief handle the @Import keyword
+     * \brief handle the `@Import`` keyword
      * \param[in,out] p : position in the input file
      */
     virtual void handleImport(SchemeBase&,tokens_iterator&);
     /*!
-     * \brief handle the @Message keyword
+     * \brief handle the `@Message` keyword
      * \param[in,out] p : position in the input file
      */
     virtual void handleMessage(SchemeBase&,tokens_iterator&);
     /*!
-     * \brief handle the @OutputFrequency keyword
+     * \brief handle the `@OutputFrequency` keyword
      * \param[in,out] p : position in the input file
      */
     virtual void handleOutputFrequency(SchemeBase&,tokens_iterator&);
     /*!
-     * \brief handle the @Description keyword
+     * \brief handle the `@Description` keyword
      * \param[in,out] p : position in the input file
      */
     virtual void handleDescription(SchemeBase&,tokens_iterator&);
     /*!
-     * \brief handle the @PredictionPolicy keyword
+     * \brief handle the `@PredictionPolicy` keyword
      * \param[in,out] p : position in the input file
      */
     virtual void 
     handlePredictionPolicy(SchemeBase&,tokens_iterator&);
     /*!
-     * \brief handle the @Times keyword
+     * \brief handle the `@Times` keyword
      * \param[in,out] p : position in the input file
      */
     virtual void handleTimes(SchemeBase&,tokens_iterator&);
     /*!
-     * \brief handle the @Real keyword
+     * \brief handle the `@Real` keyword
      * \param[in,out] p : position in the input file
      */
     virtual void handleReal(SchemeBase&,tokens_iterator&);
     /*!
-     * \brief handle the @StiffnessMatrixType keyword
+     * \brief handle the `@StiffnessMatrixType` keyword
      * \param[in,out] p : position in the input file
      */
     virtual void handleStiffnessMatrixType(SchemeBase&,tokens_iterator&);
     /*!
-     * \brief handle the @StiffnessUpdatePolicy keyword
+     * \brief handle the `@StiffnessUpdatePolicy` keyword
      * \param[in,out] p : position in the input file
      */
     virtual void handleStiffnessUpdatePolicy(SchemeBase&,tokens_iterator&);
     /*!
-     * \brief handle the @UseCastemAccelerationAlgorithm keyword
+     * \brief handle the `@UseCastemAccelerationAlgorithm` keyword
      * \param[in,out] p : position in the input file
      */
     virtual void handleUseCastemAccelerationAlgorithm(SchemeBase&,tokens_iterator&);
     /*!
-     * \brief handle the @CastemAccelerationTrigger keyword
+     * \brief handle the `@CastemAccelerationTrigger` keyword
      * \param[in,out] p : position in the input file
      */
     virtual void handleCastemAccelerationTrigger(SchemeBase&,tokens_iterator&);
     /*!
-     * \brief handle the @CastemAccelerationAlgorithm keyword
+     * \brief handle the `@CastemAccelerationAlgorithm` keyword
      * \param[in,out] p : position in the input file
      */
     virtual void handleCastemAccelerationPeriod(SchemeBase&,tokens_iterator&);
     /*!
-     * \brief handle the @AccelerationAlgorithm keyword
+     * \brief handle the `@AccelerationAlgorithm` keyword
      * \param[in,out] p : position in the input file
      */
     virtual void handleAccelerationAlgorithm(SchemeBase&,tokens_iterator&);
     /*!
-     * \brief handle the @AccelerationAlgorithmParameter keyword
+     * \brief handle the `@AccelerationAlgorithmParameter` keyword
      * \param[in,out] p : position in the input file
      */
     virtual void handleAccelerationAlgorithmParameter(SchemeBase&,tokens_iterator&);
     /*!
-     * \brief handle the @DynamicTimeStepScaling keyword
+     * \brief handle the `@DynamicTimeStepScaling` keyword
      * \param[in,out] p : position in the input file
      */
     virtual void handleDynamicTimeStepScaling(SchemeBase&,tokens_iterator&);
     /*!
-     * \brief handle the @MaximalTimeStep keyword
+     * \brief handle the `@MaximalTimeStep` keyword
      * \param[in,out] p : position in the input file
      */
     virtual void handleMaximalTimeStep(SchemeBase&,tokens_iterator&);
     /*!
-     * \brief handle the @MinimalTimeStep keyword
+     * \brief handle the `@MinimalTimeStep` keyword
      * \param[in,out] p : position in the input file
      */
     virtual void handleMinimalTimeStep(SchemeBase&,tokens_iterator&);
     /*!
-     * \brief handle the @MaximalTimeStepScalingFactor keyword
+     * \brief handle the `@MaximalTimeStepScalingFactor` keyword
      * \param[in,out] p : position in the input file
      */
     virtual void handleMaximalTimeStepScalingFactor(SchemeBase&,tokens_iterator&);
     /*!
-     * \brief handle the @MinimalTimeStepScalingFactor keyword
+     * \brief handle the `@MinimalTimeStepScalingFactor` keyword
      * \param[in,out] p : position in the input file
      */
     virtual void handleMinimalTimeStepScalingFactor(SchemeBase&,tokens_iterator&);
     /*!
-     * \brief handle the @MaximumNumberOfIterations keyword
+     * \brief handle the `@MaximumNumberOfIterations` keyword
      * \param[in,out] p : position in the input file
      */
     virtual void handleMaximumNumberOfIterations(SchemeBase&,tokens_iterator&);
     /*!
-     * \brief handle the @MaximumNumberOfSubSteps keyword
+     * \brief handle the `@MaximumNumberOfSubSteps` keyword
      * \param[in,out] p : position in the input file
      */
     virtual void handleMaximumNumberOfSubSteps(SchemeBase&,tokens_iterator&);
     /*!
-     * \brief handle the @Evolution keyword
+     * \brief handle the `@Evolution` keyword
      * \param[in,out] p : position in the input file
      */
     virtual void handleEvolution(SchemeBase&,tokens_iterator&);
     /*!
-     * \brief handle the @OutputFile keyword
+     * \brief handle the `@OutputFile` keyword
      * \param[in,out] p : position in the input file
      */
     virtual void handleOutputFile(SchemeBase&,tokens_iterator&);
     /*!
-     * \brief handle the @XMLOutputFile keyword
+     * \brief handle the `@XMLOutputFile` keyword
      * \param[in,out] p : position in the input file
      */
     virtual void handleXMLOutputFile(SchemeBase&,tokens_iterator&);
     /*!
-     * \brief handle the @OutputFilePrecision keyword
+     * \brief handle the `@OutputFilePrecision` keyword
      * \param[in,out] p : position in the input file
      */
     virtual void handleOutputFilePrecision(SchemeBase&,tokens_iterator&);
     /*!
-     * \brief handle the @ResidualFile keyword
+     * \brief handle the `@ResidualFile` keyword
      * \param[in,out] p : position in the input file
      */
     virtual void handleResidualFile(SchemeBase&,tokens_iterator&);
     /*!
-     * \brief handle the @ResidualFilePrecision keyword
+     * \brief handle the `@ResidualFilePrecision` keyword
      * \param[in,out] p : position in the input file
      */
     virtual void handleResidualFilePrecision(SchemeBase&,tokens_iterator&);

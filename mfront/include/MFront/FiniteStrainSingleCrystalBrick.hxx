@@ -44,16 +44,15 @@ namespace mfront{
 				   const Parameters&,
     				   const DataMap&);
     //! \return the name of the brick
-    virtual std::string getName() const override;
+    std::string getName() const override;
     //! \return the list of supported modelling hypotheses.
-    virtual std::vector<Hypothesis> 
-    getSupportedModellingHypotheses() const override;
+    std::vector<Hypothesis> getSupportedModellingHypotheses() const override;
     //! complete the variable description
-    virtual void completeVariableDeclaration() const override;
+    void completeVariableDeclaration() const override;
     //! method called at the end of the input file processing
-    virtual void endTreatment() const override;
+    void endTreatment() const override;
     //! destructor
-    virtual ~FiniteStrainSingleCrystalBrick();
+    ~FiniteStrainSingleCrystalBrick() override;
   }; // end of struct FiniteStrainSingleCrystalBrick
 
 } // end of namespace mfront

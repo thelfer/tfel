@@ -35,8 +35,8 @@ namespace mtest
      * \param[in] b : behaviour name
      */
     CalculiXStandardBehaviour(const Hypothesis,
-			    const std::string&,
-			    const std::string&);
+			      const std::string&,
+			      const std::string&);
     /*!
      * \brief compute the *real* rotation matrix
      * \param[in] mp : material properties
@@ -44,14 +44,13 @@ namespace mtest
      * \note this method is only meaningfull for the umat (Cast3M)
      * interface
      */
-    virtual tfel::math::tmatrix<3u,3u,real>
+    tfel::math::tmatrix<3u,3u,real>
     getRotationMatrix(const tfel::math::vector<real>&,
 		      const tfel::math::tmatrix<3u,3u,real>&) const override;
     /*!
      * \return the default type of stiffness matrix used by the behaviour
      */
-    virtual StiffnessMatrixType
-    getDefaultStiffnessMatrixType() const override;
+    StiffnessMatrixType getDefaultStiffnessMatrixType() const override;
     /*!
      * \brief integrate the mechanical behaviour over the time step
      * \return a pair. The first member is true if the integration was
@@ -61,7 +60,7 @@ namespace mtest
      * \param[in]  s     : current state
      * \param[in]  ktype : type of the stiffness matrix
      */
-    virtual std::pair<bool,real>
+    std::pair<bool,real>
     computePredictionOperator(BehaviourWorkSpace&,
 			      const CurrentState&,
 			      const StiffnessMatrixType) const override;
@@ -75,7 +74,7 @@ namespace mtest
      * \param[in]     dt    : time increment
      * \param[in]     ktype : type of the stiffness matrix
      */
-    virtual std::pair<bool,real>
+    std::pair<bool,real>
     integrate(CurrentState&,
 	      BehaviourWorkSpace&,
 	      const real,
@@ -84,10 +83,9 @@ namespace mtest
      * \brief allocate internal workspace
      * \param[out] wk : behaviour workspace
      */
-    virtual void
-    allocate(BehaviourWorkSpace&) const override;
+    void allocate(BehaviourWorkSpace&) const override;
     //! destructor
-    virtual ~CalculiXStandardBehaviour();
+    ~CalculiXStandardBehaviour() override;
   protected:
     /*!
      * \brief call the mechanical behaviour

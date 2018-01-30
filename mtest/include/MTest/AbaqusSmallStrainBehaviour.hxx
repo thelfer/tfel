@@ -39,10 +39,9 @@ namespace mtest
     /*!
      * \param[out] v : initial values of the driving variables
      */
-    virtual void
-    getDrivingVariablesDefaultInitialValues(tfel::math::vector<real>&) const override;
+    void getDrivingVariablesDefaultInitialValues(tfel::math::vector<real>&) const override;
     //! destructor
-    virtual ~AbaqusSmallStrainBehaviour();
+    ~AbaqusSmallStrainBehaviour() override;
   protected:
     /*!
      * \brief call the mechanical behaviour

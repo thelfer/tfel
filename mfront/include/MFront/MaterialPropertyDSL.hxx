@@ -35,42 +35,36 @@ namespace mfront{
     : public DSLBase
   {
     //! \return the target of the dsl
-    virtual DSLTarget getTargetType() const override final;
+    DSLTarget getTargetType() const override final;
     /*!
      * return the name of the parser
      */
-    static std::string 
-    getName();
+    static std::string getName();
     /*!
      * return a description of the parser
      */
-    static std::string
-    getDescription();
+    static std::string getDescription();
     /*!
      * default constructor
      */
     MaterialPropertyDSL();
 
-    virtual void
-    getKeywordsList(std::vector<std::string>&) const override;
+    void getKeywordsList(std::vector<std::string>&) const override;
 
-    virtual void
-    setInterfaces(const std::set<std::string>&) override;
+    void setInterfaces(const std::set<std::string>&) override;
     /*!
      * \brief analyse a file without generating any output
      * \param[in] f     : file name
      * \param[in] ecmds : additionnal commands inserted treated before
      */
-    virtual void
-    analyseFile(const std::string&,
-		const std::vector<std::string>& = {},
-		const std::map<std::string,std::string>& = {}) override;
+    void analyseFile(const std::string&,
+		     const std::vector<std::string>& = {},
+		     const std::map<std::string,std::string>& = {}) override;
     /*!
      * \brief analyse the specified string.
      * \param[in] s : analyse a string
      */
-    virtual void
-    analyseString(const std::string&) override;
+    void analyseString(const std::string&) override;
     /*!
      * \brief import a file
      * \param[in] f     : file name
@@ -80,32 +74,32 @@ namespace mfront{
      * substitutions are given through command-line options such as
      * `--@YYY@=XXX`)
      */
-    virtual void importFile(const std::string&,
-			    const std::vector<std::string>&,
-			    const std::map<std::string,std::string>&) override;
+    void importFile(const std::string&,
+		    const std::vector<std::string>&,
+		    const std::map<std::string,std::string>&) override;
     
     virtual const MaterialPropertyDescription&
     getMaterialPropertyDescription() const;
 
     //! destructor
-    virtual ~MaterialPropertyDSL();
+    ~MaterialPropertyDSL() override;
 
   protected:
 
     typedef void (MaterialPropertyDSL::* MemberFuncPtr)();
     typedef std::map<std::string,MemberFuncPtr> CallBackContainer;
     //! treat an unknown keyword
-    virtual void treatUnknownKeyword() override;
+    void treatUnknownKeyword() override;
     /*!
      * \brief register a name.
      * \param[in] n : name
      */
-    virtual void reserveName(const std::string&) override;
+    void reserveName(const std::string&) override;
     /*!
      * \brief look if a name is reserved
      * \param[in] n : name
      */
-    virtual bool isNameReserved(const std::string&) const override;
+    bool isNameReserved(const std::string&) const override;
     /*!
      * method called by the analyseFile and analyseString method
      */
@@ -113,44 +107,43 @@ namespace mfront{
     /*!
      * \return the name of the generated class
      */
-    virtual std::string getClassName() const override;
+    std::string getClassName() const override;
     /*!
      * \brief add a material law
      * \param[in] m : added material law name
      */
-    virtual void addMaterialLaw(const std::string&) override;
+    void addMaterialLaw(const std::string&) override;
     /*!
      * \brief append the given code to the includes
      */
-    virtual void appendToIncludes(const std::string&) override;
+    void appendToIncludes(const std::string&) override;
     /*!
      * \brief append the given code to the members
      */
-    virtual void appendToMembers(const std::string&) override;
+    void appendToMembers(const std::string&) override;
     /*!
      * \brief append the given code to the private code
      */
-    virtual void appendToPrivateCode(const std::string&) override;
+    void appendToPrivateCode(const std::string&) override;
     /*!
      * \brief append the given code to the sources
      */
-    virtual void appendToSources(const std::string&) override;
+    void appendToSources(const std::string&) override;
     /*!
      * \brief write the output files.
      * \note this shall be called after the analyseFile method.
      */
-    virtual void generateOutputFiles() override;
+    void generateOutputFiles() override;
     /*!
      * \brief add a static variable description
      * \param[in] v : variable description
      */
-    virtual void
-    addStaticVariableDescription(const StaticVariableDescription&) override;
+    void addStaticVariableDescription(const StaticVariableDescription&) override;
     /*!
      * \return the value of an integer constant
      * \param[in] n: variable name
      */
-    virtual int getIntegerConstant(const std::string&) const override;
+    int getIntegerConstant(const std::string&) const override;
     /*!
      * \brief add a new interface
      * \param[in] n: interface name

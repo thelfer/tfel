@@ -29,42 +29,42 @@ namespace castem {
     CastemException(const CastemException&) = default;
     CastemException(CastemException&&)      = default;
     virtual const char* what () const noexcept override final;
-    virtual ~CastemException() noexcept;
+    ~CastemException() noexcept override;
   private:
     const std::string msg;
   }; // end of struct CastemException
 
-  struct MFRONT_CASTEM_VISIBILITY_EXPORT CastemIntegrationFailed
+  struct MFRONT_CASTEM_VISIBILITY_EXPORT CastemIntegrationFailed final
     : public CastemException
   {
     CastemIntegrationFailed();
     CastemIntegrationFailed(const std::string&);
     CastemIntegrationFailed(const CastemIntegrationFailed&);
-    virtual ~CastemIntegrationFailed() noexcept;
+    ~CastemIntegrationFailed() noexcept override;
   private:
     CastemIntegrationFailed&
     operator=(const CastemIntegrationFailed&);
   }; // end of struct CastemIntegrationFailed
 
-  struct MFRONT_CASTEM_VISIBILITY_EXPORT CastemInvalidNTENSValue
+  struct MFRONT_CASTEM_VISIBILITY_EXPORT CastemInvalidNTENSValue final
     : public CastemException
   {
     CastemInvalidNTENSValue(const unsigned short);
     CastemInvalidNTENSValue(const CastemInvalidNTENSValue&);
-    virtual ~CastemInvalidNTENSValue() noexcept;
+    ~CastemInvalidNTENSValue() noexcept override;
   private:
     CastemInvalidNTENSValue();
     CastemInvalidNTENSValue&
     operator=(const CastemInvalidNTENSValue&);
   }; // end of struct CastemInvalidNTENSValue
 
-  struct MFRONT_CASTEM_VISIBILITY_EXPORT CastemInvalidDimension
+  struct MFRONT_CASTEM_VISIBILITY_EXPORT CastemInvalidDimension final
     : public CastemException
   {
     CastemInvalidDimension(const std::string&,
 			 const unsigned short);
     CastemInvalidDimension(const CastemInvalidDimension&);
-    virtual ~CastemInvalidDimension() noexcept;
+    ~CastemInvalidDimension() noexcept override;
   private:
     CastemInvalidDimension();
     CastemInvalidDimension&

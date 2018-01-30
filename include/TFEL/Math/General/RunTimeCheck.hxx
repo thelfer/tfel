@@ -33,9 +33,9 @@ namespace tfel{
       RuntimeCheckFailure(RuntimeCheckFailure&&) = default;
       RuntimeCheckFailure(const RuntimeCheckFailure&) = default;
       //! \return a string describing the error
-      virtual const char* what() const noexcept override final;
+      const char* what() const noexcept override final;
       //! destructor
-      virtual ~RuntimeCheckFailure() noexcept;
+      ~RuntimeCheckFailure() noexcept override;
     }; // end of struct RuntimeCheckFailure
 
     /*

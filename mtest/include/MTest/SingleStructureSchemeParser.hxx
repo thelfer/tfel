@@ -24,61 +24,61 @@ namespace mtest{
     : public SchemeParserBase
   {
     /*!
-     * handle the @Behaviour keyword
+     * \brief handle the `@Behaviour` keyword
      * \param[in,out] p : position in the input file
      */
     virtual void
     handleBehaviour(SingleStructureScheme&,tokens_iterator&);
     /*!
-     * handle the @Parameter keyword
+     * \brief handle the `@Parameter` keyword
      * \param[in,out] p : position in the input file
      */
     virtual void
     handleParameter(SingleStructureScheme&,tokens_iterator&);
     /*!
-     * handle the @IntegerParameter keyword
+     * \brief handle the `@IntegerParameter` keyword
      * \param[in,out] p : position in the input file
      */
     virtual void
     handleIntegerParameter(SingleStructureScheme&,tokens_iterator&);
     /*!
-     * handle the @UnsignedIntegerParameter keyword
+     * \brief handle the `@UnsignedIntegerParameter` keyword
      * \param[in,out] p : position in the input file
      */
     virtual void
     handleUnsignedIntegerParameter(SingleStructureScheme&,tokens_iterator&);
     /*!
-     * handle the @OutOfBoundsPolicy keyword
+     * \brief handle the `@OutOfBoundsPolicy` keyword
      * \param[in,out] p : position in the input file
      */
     virtual void
     handleOutOfBoundsPolicy(SingleStructureScheme&,tokens_iterator&);
     /*!
-     * handle the @MaterialProperty keyword
+     * \brief handle the `@MaterialProperty` keyword
      * \param[in,out] p : position in the input file
      */
     virtual void
     handleMaterialProperty(SingleStructureScheme&,tokens_iterator&);
     /*!
-     * handle the @HandleThermalExpansion keyword
+     * \brief handle the `@HandleThermalExpansion` keyword
      * \param[in,out] p : position in the input file
      */
     virtual void
     handleHandleThermalExpansion(SingleStructureScheme&,tokens_iterator&);
     /*!
-     * handle the @InternalStateVariable keyword
+     * \brief handle the `@InternalStateVariable` keyword
      * \param[in,out] p : position in the input file
      */
     virtual void
     handleInternalStateVariable(SingleStructureScheme&,tokens_iterator&);
     /*!
-     * handle the @ExternalStateVariable keyword
+     * \brief handle the `@ExternalStateVariable` keyword
      * \param[in,out] p : position in the input file
      */
     virtual void
     handleExternalStateVariable(SingleStructureScheme&,tokens_iterator&);
     //! destructor
-    ~SingleStructureSchemeParser();
+    ~SingleStructureSchemeParser() override;
   protected:
     /*!
      * \param[in,out] p : position in the input file
@@ -91,8 +91,7 @@ namespace mtest{
     /*!
      * register the call backs associated with each command
      */
-    virtual void
-    registerCallBacks() override;
+    void registerCallBacks() override;
     /*!
      * \brief treat the current keyword
      * \param[in,out] p : position in the input file

@@ -34,16 +34,16 @@ namespace mfront{
       public AbstractBehaviourInterface
   {
     //! a simple alias
-    typedef tfel::material::ModellingHypothesis ModellingHypothesis;
+    using  ModellingHypothesis = tfel::material::ModellingHypothesis;
     //! a simple alias
-    typedef ModellingHypothesis::Hypothesis Hypothesis;
+    using  Hypothesis = ModellingHypothesis::Hypothesis;
     //! \return the name of the interface
     static std::string getName();
 
     ZMATInterface();
 
     //! \return the name of the interface
-    virtual std::string getInterfaceName() const override;
+    std::string getInterfaceName() const override;
     /*!
      * \param[in,out] mb: behaviour description
      * \param[in] k:   keyword treated
@@ -54,7 +54,7 @@ namespace mfront{
      * treated by the interface. The second entry is an iterator after
      * the last token treated.
      */
-    virtual std::pair<bool,tokens_iterator>
+    std::pair<bool,tokens_iterator>
     treatKeyword(BehaviourDescription&,
 		 const std::string&,
 		 const std::vector<std::string>&,
@@ -65,25 +65,22 @@ namespace mfront{
      * \param[in] h  : modelling hypothesis
      * \param[in] mb : mechanical behaviour description
      */
-    virtual bool
-    isBehaviourConstructorRequired(const Hypothesis,
-				 const BehaviourDescription&) const override;
+    bool isBehaviourConstructorRequired(const Hypothesis,
+					const BehaviourDescription&) const override;
     
-    virtual std::set<Hypothesis>
+    std::set<Hypothesis>
     getModellingHypothesesToBeTreated(const BehaviourDescription&) const override;
     /*!
      * write interface specific includes
      * \param[in] out : output file
      * \param[in] mb  : mechanical behaviour description
      */
-    virtual void 
-    writeInterfaceSpecificIncludes(std::ostream&,
-				   const BehaviourDescription&) const override;
+    void writeInterfaceSpecificIncludes(std::ostream&,
+					const BehaviourDescription&) const override;
 
-    virtual void
-    exportMechanicalData(std::ostream&,
-			 const Hypothesis,
-			 const BehaviourDescription&) const override;
+    void exportMechanicalData(std::ostream&,
+			      const Hypothesis,
+			      const BehaviourDescription&) const override;
     /*!
      * write the behaviour constructor associated with the law
      * \param[in] behaviourFile           : output file
@@ -92,53 +89,47 @@ namespace mfront{
      *                                      default value (zero) to state
      *                                      variable increments
      */
-    virtual void
-    writeBehaviourConstructor(std::ostream&,
-			      const BehaviourDescription&,
-			      const std::string&) const override;
+    void writeBehaviourConstructor(std::ostream&,
+				   const BehaviourDescription&,
+				   const std::string&) const override;
 
-    virtual void
-    writeBehaviourDataConstructor(std::ostream&,
-				  const Hypothesis,
-				  const BehaviourDescription&) const override;
+    void writeBehaviourDataConstructor(std::ostream&,
+				       const Hypothesis,
+				       const BehaviourDescription&) const override;
 
     /*!
      * write the initialisation of the driving variables
      * \param[in] behaviourFile : output file
      * \param[in] mb            : mechanical behaviour description
      */
-    virtual void 
-    writeBehaviourDataMainVariablesSetters(std::ostream&,
-					   const BehaviourDescription&) const override;
+    void writeBehaviourDataMainVariablesSetters(std::ostream&,
+						const BehaviourDescription&) const override;
     
-    virtual void
-    writeIntegrationDataConstructor(std::ostream&,
-				    const Hypothesis,
-				    const BehaviourDescription&) const override;
+    void writeIntegrationDataConstructor(std::ostream&,
+					 const Hypothesis,
+					 const BehaviourDescription&) const override;
     /*!
      * write the initialisation of the driving variables
      * \param[in] behaviourFile : output file
      * \param[in] mb            : mechanical behaviour description
      */
-    virtual void 
-    writeIntegrationDataMainVariablesSetters(std::ostream&,
-					     const BehaviourDescription&) const override;
+    void writeIntegrationDataMainVariablesSetters(std::ostream&,
+						  const BehaviourDescription&) const override;
     /*!
      * \brief write output files
      * \param[in] mb        : mechanical behaviour description
      * \param[in] fd        : mfront file description
      */
-    virtual void
-    endTreatment(const BehaviourDescription&,
-		  const FileDescription&) const override;
+    void endTreatment(const BehaviourDescription&,
+		      const FileDescription&) const override;
     /*!
      * \param[out] d  : target description
      * \param[out] bd : behaviour description
      */
-    virtual void getTargetsDescription(TargetsDescription&,
-				       const BehaviourDescription&) override;
+    void getTargetsDescription(TargetsDescription&,
+			       const BehaviourDescription&) override;
     //! destructor
-    virtual ~ZMATInterface();
+    ~ZMATInterface() override;
 
   protected:
 

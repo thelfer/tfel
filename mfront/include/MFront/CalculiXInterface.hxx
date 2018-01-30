@@ -42,7 +42,7 @@ namespace mfront{
      * treated by the interface. The second entry is an iterator after
      * the last token treated.
      */
-    virtual std::pair<bool,tokens_iterator>
+    std::pair<bool,tokens_iterator>
     treatKeyword(BehaviourDescription&,
 		 const std::string&,
 		 const std::vector<std::string>&,
@@ -53,22 +53,20 @@ namespace mfront{
      * \param[in] mb        : mechanical behaviour description
      * \param[in] fd        : mfront file description
      */
-    virtual void
-    endTreatment(const BehaviourDescription&,
-		 const FileDescription&) const override;
+    void endTreatment(const BehaviourDescription&,
+		      const FileDescription&) const override;
     /*!
      * \param[out] d  : target description
      * \param[out] bd : behaviour description
      */
-    virtual void getTargetsDescription(TargetsDescription&,
-				       const BehaviourDescription&) override;
+    void getTargetsDescription(TargetsDescription&,
+			       const BehaviourDescription&) override;
     //! destructor
-    virtual ~CalculiXInterface();
+    ~CalculiXInterface() override;
     
   protected:
 
-    virtual std::string
-    getInterfaceName() const override;
+    std::string getInterfaceName() const override;
     /*!
      * \brief write the initialisation of a driving variables
      * \param[in] os : output file

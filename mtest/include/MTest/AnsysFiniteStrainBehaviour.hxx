@@ -42,7 +42,7 @@ namespace mtest
     virtual void
     getDrivingVariablesDefaultInitialValues(tfel::math::vector<real>&) const override;
     //! destructor
-    virtual ~AnsysFiniteStrainBehaviour();
+    ~AnsysFiniteStrainBehaviour() override;
   protected:
     /*!
      * \brief call the mechanical behaviour

@@ -68,17 +68,15 @@ namespace mtest
      * \param[out] mp  : evolution manager 
      * \param[in]  evm : evolution manager
      */
-    virtual void
-    setOptionalMaterialPropertiesDefaultValues(EvolutionManager&,
-					       const EvolutionManager&) const override;
+    void setOptionalMaterialPropertiesDefaultValues(EvolutionManager&,
+						    const EvolutionManager&) const override;
     /*!
      * \return the string passed to the UMAT function through the
      * CMNAME parameter.
      */
-    virtual const char*
-    getBehaviourNameForUMATFunctionCall() const override;
+    const char* getBehaviourNameForUMATFunctionCall() const override;
     //! destructor
-    virtual ~CastemUmatSmallStrainBehaviour();
+    ~CastemUmatSmallStrainBehaviour() override;
   protected:
     //! material name
     char mname[16u];

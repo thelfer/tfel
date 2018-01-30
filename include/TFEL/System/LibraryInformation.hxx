@@ -52,6 +52,14 @@ namespace tfel{
        */
       explicit LibraryInformation(const std::string&,
 				  const bool = true);
+      //! copy constructor
+      LibraryInformation(const LibraryInformation&);
+      //! move constructor
+      LibraryInformation(LibraryInformation&&);
+      //! standard assignement
+      LibraryInformation& operator=(const LibraryInformation&);
+      //! move constructor
+      LibraryInformation& operator=(LibraryInformation&&);
       /*!
        * \return List of sections that exist in binary file.
        */

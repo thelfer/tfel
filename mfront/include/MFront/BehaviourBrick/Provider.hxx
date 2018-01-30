@@ -70,10 +70,10 @@ namespace mfront{
        * \param[in] r : requirement
        * \param[in] b : check if units match
        */
-      virtual bool handleRequirement(const Requirement&,
-				     const bool) const override;
+      bool handleRequirement(const Requirement&,
+			     const bool) const override;
       //! destructor
-      virtual ~ProviderBase();
+      ~ProviderBase() override;
     }; // end of struct ProviderBase
     
     /*!
@@ -108,11 +108,11 @@ namespace mfront{
 		       const std::string&,
 		       const bool);
       //! \return the type of the variable that can be produced
-      virtual std::string getVariableType() const override final;
+      std::string getVariableType() const override final;
       //! \return the external name of the variable that can be produced
-      virtual std::string getExternalName() const override final;
+      std::string getExternalName() const override final;
       //! \return the array size of the variable
-      virtual unsigned short getArraySize() const override final;
+      unsigned short getArraySize() const override final;
       //! variable type
       const std::string type;
       //! variable name
@@ -122,7 +122,7 @@ namespace mfront{
       //! array size
       const unsigned short asize;
       //! destructor
-      virtual ~StandardProvider();
+      ~StandardProvider() override;
     private:
       StandardProvider& operator=(StandardProvider&&) = delete;
       StandardProvider& operator=(const StandardProvider&) = delete;
@@ -153,9 +153,9 @@ namespace mfront{
       MaterialPropertyProvider(const mfront::VariableDescription&,
 			       const std::string&);
       //! \return the identifier of the provider
-      virtual ProviderIdentifier getIdentifier() const override final;
+      ProviderIdentifier getIdentifier() const override final;
       //! destructor
-      virtual ~MaterialPropertyProvider();
+      ~MaterialPropertyProvider() override;
     }; // end of struct MaterialPropertyProvider
 
     /*!
@@ -183,9 +183,9 @@ namespace mfront{
       AuxiliaryStateVariableProvider(const mfront::VariableDescription&,
 				     const std::string&);
       //! \return the identifier of the provider
-      virtual ProviderIdentifier getIdentifier() const override final;
+      ProviderIdentifier getIdentifier() const override final;
       //! destructor
-      virtual ~AuxiliaryStateVariableProvider();
+      ~AuxiliaryStateVariableProvider() override;
     }; // end of struct AuxiliaryStateVariableProvider
 
     /*!
@@ -213,9 +213,9 @@ namespace mfront{
       ExternalStateVariableProvider(const mfront::VariableDescription&,
 				    const std::string&);
       //! \return the identifier of the provider
-      virtual ProviderIdentifier getIdentifier() const override final;
+      ProviderIdentifier getIdentifier() const override final;
       //! destructor
-      virtual ~ExternalStateVariableProvider();
+      ~ExternalStateVariableProvider() override;
     }; // end of struct ExternalStateVariableProvider
     
     /*!
@@ -243,9 +243,9 @@ namespace mfront{
       IntegrationVariableProvider(const mfront::VariableDescription&,
 				  const std::string&);
       //! \return the identifier of the provider
-      virtual ProviderIdentifier getIdentifier() const override final;
+      ProviderIdentifier getIdentifier() const override final;
       //! destructor
-      virtual ~IntegrationVariableProvider();
+      ~IntegrationVariableProvider() override;
     }; // end of struct IntegrationVariableProvider
     
     /*!
@@ -273,9 +273,9 @@ namespace mfront{
       LocalVariableProvider(const mfront::VariableDescription&,
 			    const std::string&);
       //! \return the identifier of the provider
-      virtual ProviderIdentifier getIdentifier() const override final;
+      ProviderIdentifier getIdentifier() const override final;
       //! destructor
-      virtual ~LocalVariableProvider();
+      ~LocalVariableProvider() override;
     }; // end of struct LocalVariableProvider
 
     /*!
@@ -301,13 +301,13 @@ namespace mfront{
       StaticVariableProvider(const mfront::StaticVariableDescription&,
 			     const std::string&);
       //! \return the type of the variable that can be produced
-      virtual std::string getVariableType() const override final;
+      std::string getVariableType() const override final;
       //! \return the external name of the variable that can be produced
-      virtual std::string getExternalName() const override final;
+      std::string getExternalName() const override final;
       //! \return the array size of the variable
-      virtual unsigned short getArraySize() const override final;
+      unsigned short getArraySize() const override final;
       //! \return the identifier of the provider
-      virtual ProviderIdentifier getIdentifier() const override final;
+      ProviderIdentifier getIdentifier() const override final;
       //! variable type
       const std::string type;
       //! variable name
@@ -315,7 +315,7 @@ namespace mfront{
       //! external variable name
       const std::string ename;
       //! destructor
-      virtual ~StaticVariableProvider();
+      ~StaticVariableProvider() override;
     private:
       StaticVariableProvider& operator=(StaticVariableProvider&&) = delete;
       StaticVariableProvider& operator=(const StaticVariableProvider&) = delete;
@@ -344,13 +344,13 @@ namespace mfront{
       ParameterProvider(const mfront::VariableDescription&,
 			const std::string&);
       //! \return the type of the variable that can be produced
-      virtual std::string getVariableType() const override final;
+      std::string getVariableType() const override final;
       //! \return the external name of the variable that can be produced
-      virtual std::string getExternalName() const override final;
+      std::string getExternalName() const override final;
       //! \return the array size of the variable
-      virtual unsigned short getArraySize() const override final;
+      unsigned short getArraySize() const override final;
       //! \return the identifier of the provider
-      virtual ProviderIdentifier getIdentifier() const override final;
+      ProviderIdentifier getIdentifier() const override final;
       //! variable type
       const std::string type;
       //! variable name
@@ -358,7 +358,7 @@ namespace mfront{
       //! external variable name
       const std::string ename;
       //! destructor
-      virtual ~ParameterProvider();
+      ~ParameterProvider() override;
     private:
       ParameterProvider& operator=(ParameterProvider&&) = delete;
       ParameterProvider& operator=(const ParameterProvider&) = delete;

@@ -68,7 +68,7 @@ namespace mtest
     virtual void
     displayKeyWordDescription(const std::string&) const;
     //! \brief destructor
-    virtual ~MTestParser();
+    ~MTestParser() override;
   protected:
     //! a simple alias
     typedef void (MTestParser::* CallBack)(MTest&,tokens_iterator&);
@@ -80,7 +80,7 @@ namespace mtest
     /*!
      * register the call backs associated with each command
      */
-    virtual void registerCallBacks() override;
+    void registerCallBacks() override;
     /*!
      * \brief handle the `@CompareToNumericalTangentOperator` keyword
      * \param[in,out] t: `MTest` object to be configured

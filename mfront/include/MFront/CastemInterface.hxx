@@ -67,7 +67,7 @@ namespace mfront{
      * treated by the interface. The second entry is an iterator after
      * the last token treated.
      */
-    virtual std::pair<bool,tokens_iterator>
+    std::pair<bool,tokens_iterator>
     treatKeyword(BehaviourDescription&,
 		 const std::string&,
 		 const std::vector<std::string>&,
@@ -77,32 +77,29 @@ namespace mfront{
      * \param[out] d  : target description
      * \param[out] bd : behaviour description
      */
-    virtual void getTargetsDescription(TargetsDescription&,
-				       const BehaviourDescription&) override;
+    void getTargetsDescription(TargetsDescription&,
+			       const BehaviourDescription&) override;
     /*!
      * write interface specific includes
      * \param[in] out : output file
      * \param[in] mb  : mechanical behaviour description
      */
-    virtual void 
-    writeInterfaceSpecificIncludes(std::ostream&,
-				   const BehaviourDescription&) const override;
+    void writeInterfaceSpecificIncludes(std::ostream&,
+					const BehaviourDescription&) const override;
     
     /*!
      * \brief write output files
      * \param[in] mb        : mechanical behaviour description
      * \param[in] fd        : mfront file description
      */
-    virtual void
-    endTreatment(const BehaviourDescription&,
-		  const FileDescription&) const override;
+    void endTreatment(const BehaviourDescription&,
+		      const FileDescription&) const override;
     //! destructor
-    virtual ~CastemInterface();
+    ~CastemInterface() override;
     
   protected:
 
-    virtual std::string
-    getLibraryName(const BehaviourDescription&) const override;
+    std::string getLibraryName(const BehaviourDescription&) const override;
 
     static std::string
     treatScalar(const std::string&);

@@ -78,8 +78,8 @@ namespace tfel{
       TensorInvalidIndexException()=default;
       TensorInvalidIndexException(const TensorInvalidIndexException&)=default;
       TensorInvalidIndexException(TensorInvalidIndexException&&)=default;
-      virtual const char* what() const noexcept override final;
-      virtual ~TensorInvalidIndexException() noexcept;
+      const char* what() const noexcept override final;
+      ~TensorInvalidIndexException() noexcept override;
     }; // end of struct TensorInvalidIndexException
     
     /*!
@@ -91,8 +91,8 @@ namespace tfel{
       TensorInvalidIndexesException() = default;
       TensorInvalidIndexesException(const TensorInvalidIndexesException&) = default;
       TensorInvalidIndexesException(TensorInvalidIndexesException&&) = default;
-      virtual const char* what() const noexcept override final;
-      virtual ~TensorInvalidIndexesException() noexcept;
+      const char* what() const noexcept override final;
+      ~TensorInvalidIndexesException() noexcept override;
     }; // end of struct TensorInvalidIndexesException
 
     /*!
@@ -105,8 +105,8 @@ namespace tfel{
       TensorInvalidInitializerListSizeException() = default;
       TensorInvalidInitializerListSizeException(const TensorInvalidInitializerListSizeException&) = default;
       TensorInvalidInitializerListSizeException(TensorInvalidInitializerListSizeException&&) = default;
-      virtual const char* what() const noexcept override final;
-      virtual ~TensorInvalidInitializerListSizeException() noexcept;
+      const char* what() const noexcept override final;
+      ~TensorInvalidInitializerListSizeException() noexcept override;
     }; // end of struct TensorInvalidInitializerListSizeException
     
     /*!

@@ -36,14 +36,13 @@ namespace tfel{
       NoInterpolation(const NoInterpolation&);
       NoInterpolation& operator=(NoInterpolation&&);
       NoInterpolation& operator=(const NoInterpolation&);
-      virtual ~NoInterpolation();
-      virtual void interpolate(const std::vector<double>&,
-			       const std::vector<double>&) override;
-      virtual double getValue(const double) const override;
-      virtual std::string getType() const override;
-      virtual bool isConform() const override;
-      virtual std::shared_ptr<Interpolation>
-	clone() const override;
+      void interpolate(const std::vector<double>&,
+		       const std::vector<double>&) override;
+      double getValue(const double) const override;
+      std::string getType() const override;
+      bool isConform() const override;
+      std::shared_ptr<Interpolation> clone() const override;
+      ~NoInterpolation() override;
     };
 
   } // end of namespace check

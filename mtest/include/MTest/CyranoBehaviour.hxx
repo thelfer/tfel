@@ -92,7 +92,7 @@ namespace mtest
 	      const real,
 	      const StiffnessMatrixType) const override;
     //! destructor
-    virtual ~CyranoBehaviour();
+    ~CyranoBehaviour() override;
   protected:
     /*!
      * \brief integrate the mechanical behaviour over the time step

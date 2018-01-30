@@ -44,18 +44,18 @@ struct PleiadesMaterialPropertyInterface
    * treated by the interface. The second entry is an iterator after
    * the last token treated.
    */
-  virtual std::pair<bool, const_iterator> treatKeyword(const std::string&,
-                                                       const std::vector<std::string>&,
-                                                       const_iterator,
-                                                       const const_iterator) override;
-
+  std::pair<bool, const_iterator>
+  treatKeyword(const std::string&,
+	       const std::vector<std::string>&,
+	       const_iterator,
+	       const const_iterator) override;
   /*!
    * \brief : fill the target descripton
    * \param[out] d   : target description
    * \param[in]  mpd : material property description
    */
-  virtual void getTargetsDescription(TargetsDescription&,
-                                     const MaterialPropertyDescription&) const override;
+  void getTargetsDescription(TargetsDescription&,
+			     const MaterialPropertyDescription&) const override;
 
   /*!
    * \brief generate the output files
@@ -65,7 +65,7 @@ struct PleiadesMaterialPropertyInterface
   void writeOutputFiles(const MaterialPropertyDescription& mpd,
                         const FileDescription& fd) const override;
 
-  virtual ~PleiadesMaterialPropertyInterface();
+  ~PleiadesMaterialPropertyInterface() override;
 
  private:
   /*!

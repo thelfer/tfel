@@ -55,7 +55,7 @@ namespace mfront{
      */
     virtual void exe();
     //! destructor
-    virtual ~MFront();
+    ~MFront() override;
 
   protected :
 

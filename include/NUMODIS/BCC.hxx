@@ -58,13 +58,11 @@ namespace numodis
 
     void PrintData(std::ostream & os) const;
 
-    virtual ~BCC();
+    ~BCC() override;
     
   private:
 
-    virtual void Init() override;
-
-
+    void Init() override;
   };
 
 } // end of namespace numodis

@@ -46,30 +46,27 @@ namespace tfel
 	: public ExternalFunction,
 	  protected ExternalCFunctionException
       {
-	virtual void
-	setVariableValue(const std::vector<double>::size_type,
-			 const double) override;
-	virtual std::vector<double>::size_type
+	void setVariableValue(const std::vector<double>::size_type,
+			      const double) override;
+	std::vector<double>::size_type
 	getNumberOfVariables() const override;
-	virtual void
-	checkCyclicDependency(const std::string&) const override;
-	virtual void
+	void checkCyclicDependency(const std::string&) const override;
+	void
 	checkCyclicDependency(std::vector<std::string>&) const override;
-	virtual std::shared_ptr<ExternalFunction>
+	std::shared_ptr<ExternalFunction>
 	differentiate(const std::vector<double>::size_type) const override;
-	virtual std::shared_ptr<ExternalFunction>
+	std::shared_ptr<ExternalFunction>
 	differentiate(const std::string&) const override;
-	virtual std::shared_ptr<ExternalFunction>
+	std::shared_ptr<ExternalFunction>
 	createFunctionByChangingParametersIntoVariables(const std::vector<std::string>&) const override;
-	virtual std::shared_ptr<ExternalFunction>
+	std::shared_ptr<ExternalFunction>
 	createFunctionByChangingParametersIntoVariables(std::vector<std::string>&,
 							const std::vector<double>&,
 							const std::vector<std::string>&,
 							const std::map<std::string,
 							std::vector<double>::size_type>&) const override;
-	virtual void
-	getParametersNames(std::set<std::string>&) const override;
-	virtual ~ExternalCFunctionBase() = default;
+	void getParametersNames(std::set<std::string>&) const override;
+	~ExternalCFunctionBase() override = default;
       protected:
 	double variables[N];
       }; // end of struct ExternalCFunction

@@ -95,6 +95,14 @@ namespace tfel{
       }
     } // end of LibraryInformation::LibraryInformation
 
+    LibraryInformation::LibraryInformation(const LibraryInformation&) = default;
+
+    LibraryInformation::LibraryInformation(LibraryInformation&&) = default;
+
+    LibraryInformation& LibraryInformation::operator=(const LibraryInformation&) = default;
+
+    LibraryInformation& LibraryInformation::operator=(LibraryInformation&&) = default;
+    
     std::vector<std::string> LibraryInformation::sections()
     {
       return this->impl->sections();

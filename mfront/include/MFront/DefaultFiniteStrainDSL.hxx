@@ -29,12 +29,11 @@ namespace mfront{
 
     DefaultFiniteStrainDSL();
 
-    ~DefaultFiniteStrainDSL();
+    ~DefaultFiniteStrainDSL() override;
 
   protected:
 
-    virtual void
-    writeBehaviourParserSpecificIncludes(std::ostream&) const override;
+    void writeBehaviourParserSpecificIncludes(std::ostream&) const override;
 
   }; // end of struct DefaultFiniteStrainDSL
 

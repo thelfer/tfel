@@ -44,7 +44,7 @@ namespace mfront{
     //! a simple alias
     using Hypothesis =  ModellingHypothesis::Hypothesis;
     //! \return the target of the dsl
-    virtual DSLTarget getTargetType() const override final;
+    DSLTarget getTargetType() const override final;
     //! \return the behaviour description
     virtual const BehaviourDescription&
     getBehaviourDescription() const = 0;
@@ -110,7 +110,7 @@ namespace mfront{
     virtual bool
     isModellingHypothesisSupported(const Hypothesis) const = 0;
     //! destructor
-    virtual ~AbstractBehaviourDSL();
+    ~AbstractBehaviourDSL() override;
   };
 
 } // end of namespace mfront

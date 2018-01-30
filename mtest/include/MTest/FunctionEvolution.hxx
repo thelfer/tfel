@@ -36,29 +36,26 @@ namespace mtest
      * \return the value of the evolution
      * at the given time
      */
-    virtual real
-    operator()(const real) const override;
+    real operator()(const real) const override;
     /*!
      * \return true if the evolution is constant
      */
-    virtual bool
-    isConstant() const override;
+    bool isConstant() const override;
     /*!
      * \brief set the evolution value for a given date
      * \param[in] v  : value
      * \note most evolution will throw an exception (this
      * method only makes sense for constant evolutions)
      */
-    virtual void setValue(const real) override;
+    void setValue(const real) override;
     /*!
      * \brief set the evolution value for a given date
      * \param[in] t  : time
      * \param[in] v  : value
      */
-    virtual void setValue(const real,
-			  const real) override;
+    void setValue(const real,const real) override;
     //! destructor
-    virtual ~FunctionEvolution();
+    ~FunctionEvolution() override;
   private:
     //! externally defined evolutions
     const EvolutionManager& evm;

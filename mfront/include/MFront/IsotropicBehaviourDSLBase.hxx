@@ -27,25 +27,15 @@ namespace mfront{
   {
     IsotropicBehaviourDSLBase();
 
-    virtual ~IsotropicBehaviourDSLBase();
+    ~IsotropicBehaviourDSLBase() override;
 
   protected:
 
-    virtual double getDefaultThetaValue() const;
+    void treatExternalStateVariable() override;
+
+    void completeVariableDeclaration() override;
     
-    virtual void treatExternalStateVariable() override;
-
-    virtual void treatFlowRule();
-
-    virtual void treatTheta();
-
-    virtual void treatEpsilon();
-
-    virtual void treatIterMax();
-
-    virtual void completeVariableDeclaration() override;
-    
-    virtual void endsInputFileProcessing() override;
+    void endsInputFileProcessing() override;
 
     /*!
      * \return true if the given modelling hypothesis is handled by
@@ -64,26 +54,30 @@ namespace mfront{
      * enable this modelling hypothesis by calling explicitely
      * `@ModellingHypothesis` or `@ModellingHypotheses` keywords.
      */
-    virtual bool
-    isModellingHypothesisSupported(const Hypothesis) const override;
+    bool isModellingHypothesisSupported(const Hypothesis) const override;
+    
+    void writeBehaviourParserSpecificIncludes(std::ostream&) const override;
 
-    virtual void
-    writeBehaviourParserSpecificIncludes(std::ostream&) const override;
+    void writeBehaviourParserSpecificTypedefs(std::ostream&) const override;
 
-    virtual void
-    writeBehaviourParserSpecificTypedefs(std::ostream&) const override;
+    void writeBehaviourLocalVariablesInitialisation(std::ostream&,
+						    const Hypothesis) const override;
 
-    virtual void
-    writeBehaviourLocalVariablesInitialisation(std::ostream&,
-					       const Hypothesis) const override;
+    void writeBehaviourComputePredictionOperator(std::ostream&,
+						 const Hypothesis) const override;
 
-    virtual void
-    writeBehaviourComputePredictionOperator(std::ostream&,
-					    const Hypothesis) const override;
+    void writeBehaviourComputeTangentOperator(std::ostream&,
+					      const Hypothesis) const override;
+    
+    virtual double getDefaultThetaValue() const;
+    
+    virtual void treatFlowRule();
 
-    virtual void
-    writeBehaviourComputeTangentOperator(std::ostream&,
-					 const Hypothesis) const override;
+    virtual void treatTheta();
+
+    virtual void treatEpsilon();
+
+    virtual void treatIterMax();
 
     virtual std::string
     flowRuleVariableModifier(const Hypothesis,

@@ -29,8 +29,8 @@ namespace check{
     : public Comparison
   {
     RelativeComparison();
-    virtual void compare() override;
-    virtual ~RelativeComparison();
+    void compare() override;
+    ~RelativeComparison() override;
   };
 
   } // end of namespace check

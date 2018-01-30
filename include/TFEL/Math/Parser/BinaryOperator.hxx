@@ -131,26 +131,19 @@ namespace tfel
 	 * be integrated in a C++ code.
 	 * \param[in] m: a map used to change the names of the variables
 	 */
-	std::string
-	getCxxFormula(const std::vector<std::string>&) const override final;
-	
-	virtual void
-        checkCyclicDependency(std::vector<std::string>&) const override final;
-	virtual std::shared_ptr<Expr>
-	resolveDependencies(const std::vector<double>&) const override final;
- 	virtual std::shared_ptr<Expr>
-	differentiate(const std::vector<double>::size_type,
-		      const std::vector<double>&) const  override final;
-	virtual std::shared_ptr<Expr>
-	clone(const std::vector<double>&) const override final;
-	virtual void
-	getParametersNames(std::set<std::string>&) const override final;
-	virtual std::shared_ptr<Expr>
+	std::string getCxxFormula(const std::vector<std::string>&) const override final;
+	void checkCyclicDependency(std::vector<std::string>&) const override final;
+	std::shared_ptr<Expr> resolveDependencies(const std::vector<double>&) const override final;
+ 	std::shared_ptr<Expr> differentiate(const std::vector<double>::size_type,
+					    const std::vector<double>&) const  override final;
+	std::shared_ptr<Expr> clone(const std::vector<double>&) const override final;
+	void getParametersNames(std::set<std::string>&) const override final;
+	std::shared_ptr<Expr>
 	createFunctionByChangingParametersIntoVariables(const std::vector<double>&,
 							const std::vector<std::string>&,
 							const std::map<std::string,
 							std::vector<double>::size_type>&) const override final;
-	virtual ~BinaryOperation();
+	~BinaryOperation() override;
       private:
 	BinaryOperation& operator=(const BinaryOperation&) = delete;
 	BinaryOperation& operator=(BinaryOperation&&) = delete;

@@ -67,8 +67,7 @@ namespace mtest
      * \return the number of Lagrange Multipliers
      * associated with this contraint
      */
-    virtual unsigned short
-    getNumberOfLagrangeMultipliers() const override;
+    unsigned short getNumberOfLagrangeMultipliers() const override;
     /*!
      * \brief builds up the stiffness matrix and the residual.
      * \param[out] K:  stiffness matrix
@@ -89,18 +88,17 @@ namespace mtest
      * \param[in]  dt: time increment
      * \param[in]  a:  normalisation factor
      */
-    virtual void
-    setValues(tfel::math::matrix<real>&,
-	      tfel::math::vector<real>&,
-	      const tfel::math::vector<real>&,
-	      const tfel::math::vector<real>&,
-	      const tfel::math::matrix<real>&,
-	      const tfel::math::vector<real>&,
-	      const unsigned short,
-	      const unsigned short,
-	      const real,
-	      const real,
-	      const real) const override;
+    void setValues(tfel::math::matrix<real>&,
+		   tfel::math::vector<real>&,
+		   const tfel::math::vector<real>&,
+		   const tfel::math::vector<real>&,
+		   const tfel::math::matrix<real>&,
+		   const tfel::math::vector<real>&,
+		   const unsigned short,
+		   const unsigned short,
+		   const real,
+		   const real,
+		   const real) const override;
     /*!
      * \param[in]  e    : driving variables
      * \param[in]  s    : stresses
@@ -109,13 +107,12 @@ namespace mtest
      * \param[in]  t    : beginning of the time step
      * \param[in]  dt   : time increment
      */
-    virtual bool
-    checkConvergence(const tfel::math::vector<real>&,
-		     const tfel::math::vector<real>&,
-		     const real,
-		     const real,
-		     const real,
-		     const real) const override;
+    bool checkConvergence(const tfel::math::vector<real>&,
+			  const tfel::math::vector<real>&,
+			  const real,
+			  const real,
+			  const real,
+			  const real) const override;
     /*!
      * \param[in]  e    : driving variables
      * \param[in]  s    : thermodynamic forces
@@ -124,15 +121,14 @@ namespace mtest
      * \param[in]  t    : beginning of the time step
      * \param[in]  dt   : time increment
      */
-    virtual std::string
-    getFailedCriteriaDiagnostic(const tfel::math::vector<real>&,
-				const tfel::math::vector<real>&,
-				const real,
-				const real,
-				const real,
-				const real) const override;
+    std::string getFailedCriteriaDiagnostic(const tfel::math::vector<real>&,
+					    const tfel::math::vector<real>&,
+					    const real,
+					    const real,
+					    const real,
+					    const real) const override;
     //! destructor
-    virtual ~NonLinearConstraint();
+    ~NonLinearConstraint() override;
   protected:
     // Internal structure
     struct Constraint;

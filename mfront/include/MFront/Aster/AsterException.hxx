@@ -29,13 +29,11 @@ namespace aster {
 
     AsterException(const AsterException&);
 
-    virtual const char* 
-    what () const noexcept override final;
+    const char* what () const noexcept override final;
 
-    virtual std::string 
-    getMsg() const noexcept final;
+    virtual std::string getMsg() const noexcept final;
     
-    virtual ~AsterException() noexcept;
+    ~AsterException() noexcept override;
 
   private:
     
@@ -48,24 +46,24 @@ namespace aster {
     
   }; // end of struct AsterException
 
-  struct MFRONT_ASTER_VISIBILITY_EXPORT AsterInvalidNTENSValue
+  struct MFRONT_ASTER_VISIBILITY_EXPORT AsterInvalidNTENSValue final
     : public AsterException
   {
     AsterInvalidNTENSValue(const unsigned short);
     AsterInvalidNTENSValue(const AsterInvalidNTENSValue&);
-    virtual ~AsterInvalidNTENSValue() noexcept;
+    ~AsterInvalidNTENSValue() noexcept override;
   private:
     AsterInvalidNTENSValue();
     AsterInvalidNTENSValue&
     operator=(const AsterInvalidNTENSValue&);
   }; // end of struct AsterInvalidNTENSValue
 
-  struct MFRONT_ASTER_VISIBILITY_EXPORT AsterInvalidModellingHypothesis
+  struct MFRONT_ASTER_VISIBILITY_EXPORT AsterInvalidModellingHypothesis final
     : public AsterException
   {
     AsterInvalidModellingHypothesis();
     AsterInvalidModellingHypothesis(const AsterInvalidModellingHypothesis&);
-    virtual ~AsterInvalidModellingHypothesis() noexcept;
+    ~AsterInvalidModellingHypothesis() noexcept override;
   private:
     AsterInvalidModellingHypothesis&
     operator=(const AsterInvalidModellingHypothesis&) = delete;
@@ -73,13 +71,13 @@ namespace aster {
     operator=(AsterInvalidModellingHypothesis&&) = delete;
   }; // end of struct AsterInvalidModellingHypothesis
   
-  struct MFRONT_ASTER_VISIBILITY_EXPORT AsterInvalidDimension
+  struct MFRONT_ASTER_VISIBILITY_EXPORT AsterInvalidDimension final
     : public AsterException
   {
     AsterInvalidDimension(const std::string&,
 			 const unsigned short);
     AsterInvalidDimension(const AsterInvalidDimension&);
-    virtual ~AsterInvalidDimension() noexcept;
+    ~AsterInvalidDimension() noexcept override;
   private:
     AsterInvalidDimension();
     AsterInvalidDimension&

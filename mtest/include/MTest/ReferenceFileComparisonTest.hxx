@@ -68,14 +68,13 @@ namespace mtest{
      * \param[in] dt: time increment
      * \param[in] p:  period
      */
-    virtual void check(const CurrentState&,
-		       const real,const real,
-		       const unsigned int) override;
+    void check(const CurrentState&,
+	       const real,const real,
+	       const unsigned int) override;
     //! \return the results of the test
-    virtual tfel::tests::TestResult
-    getResults() const override;
+    tfel::tests::TestResult getResults() const override;
     //! destructor
-    virtual ~ReferenceFileComparisonTest();
+    ~ReferenceFileComparisonTest() override;
   protected:
     ReferenceFileComparisonTest&
     operator=(const ReferenceFileComparisonTest&) = delete;

@@ -35,13 +35,10 @@ namespace ansys {
     //! copy constructor
     AnsysException(const AnsysException&);
 
-    virtual const char* 
-    what () const noexcept override final;
-
-    virtual std::string 
-    getMsg() const noexcept final;
+    const char*  what () const noexcept override final;
+    virtual std::string getMsg() const noexcept final;
     //! destructor    
-    virtual ~AnsysException() noexcept;
+    ~AnsysException() noexcept override;
   private:
     AnsysException() = delete;
     AnsysException& operator=(const AnsysException&) = delete;
@@ -53,7 +50,7 @@ namespace ansys {
    * \brief exception thrown when an invalid modelling hypothesis is
    * to be used
    */
-  struct MFRONT_ANSYS_VISIBILITY_EXPORT AnsysInvalidModellingHypothesis
+  struct MFRONT_ANSYS_VISIBILITY_EXPORT AnsysInvalidModellingHypothesis final
     : public AnsysException
   {
     /*!
@@ -65,15 +62,16 @@ namespace ansys {
     //! copy constructor
     AnsysInvalidModellingHypothesis(const AnsysInvalidModellingHypothesis&);
     //! destructor
-    virtual ~AnsysInvalidModellingHypothesis() noexcept;
+    ~AnsysInvalidModellingHypothesis() noexcept override;
+  private:
     AnsysInvalidModellingHypothesis&
-      operator=(const AnsysInvalidModellingHypothesis&) = delete;
+    operator=(const AnsysInvalidModellingHypothesis&) = delete;
   }; // end of struct AnsysInvalidModellingHypothesis
   /*!
    * \brief exception thrown when an invalid value of the *NTENS
    * parameter is given
    */
-  struct MFRONT_ANSYS_VISIBILITY_EXPORT AnsysInvalidNTENSValue
+  struct MFRONT_ANSYS_VISIBILITY_EXPORT AnsysInvalidNTENSValue final
     : public AnsysException
   {
     AnsysInvalidNTENSValue(const unsigned short);
@@ -82,7 +80,7 @@ namespace ansys {
     //! copy constructor
     AnsysInvalidNTENSValue(const AnsysInvalidNTENSValue&);
     //! desctructor
-    virtual ~AnsysInvalidNTENSValue() noexcept;
+    ~AnsysInvalidNTENSValue() noexcept override;
   private:
     AnsysInvalidNTENSValue() = delete;
     AnsysInvalidNTENSValue&
@@ -91,7 +89,7 @@ namespace ansys {
   /*!
    * \brief exception thrown when an invalid dimension is detected
    */
-  struct MFRONT_ANSYS_VISIBILITY_EXPORT AnsysInvalidDimension
+  struct MFRONT_ANSYS_VISIBILITY_EXPORT AnsysInvalidDimension final
     : public AnsysException
   {
     AnsysInvalidDimension(const std::string&,
@@ -101,7 +99,7 @@ namespace ansys {
     //! copy constructor
     AnsysInvalidDimension(const AnsysInvalidDimension&);
     //! destructor
-    virtual ~AnsysInvalidDimension() noexcept;
+    ~AnsysInvalidDimension() noexcept override;
   private:
     AnsysInvalidDimension() = delete;
     AnsysInvalidDimension&

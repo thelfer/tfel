@@ -32,21 +32,19 @@ namespace tfel{
 
       TestDocMain(const int, const char *const *const);
 
-      virtual void treatUnknownArgument() override;
+      void treatUnknownArgument() override;
       
       virtual int execute();
       
-      virtual ~TestDocMain();
+      ~TestDocMain() override;
 
     private :
       
       void registerArgumentCallBacks();    
 
-      virtual std::string
-      getVersionDescription() const override;
+      std::string getVersionDescription() const override;
       
-      virtual std::string
-      getUsageDescription() const override;
+      std::string getUsageDescription() const override;
 
       void treatLaTeX();
 
