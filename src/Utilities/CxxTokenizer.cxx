@@ -54,6 +54,10 @@ namespace tfel{
       this->charAsString = b;
     } // end of CxxTokenizer::treatCharAsString
 
+    void CxxTokenizer::keepCommentBoundaries(const bool b){
+      this->bKeepCommentBoundaries = b;
+    } // end of CxxTokenizer::keepCommentBoundaries
+    
     void CxxTokenizer::treatDotAsSeparator(const bool b){
       this->dotAsSeparator = b;
     } // end of CxxTokenizer::treatDotAsSeparator
@@ -74,14 +78,13 @@ namespace tfel{
       std::ifstream file{f};
       raise_if(!file,"CxxTokenizer::openFile: "
 	       "unable to open file '"+f+"'");
-      Token::size_type n{0};
+      auto n = Token::size_type{};
       this->parseStream(file,n," of file '"+f+"'");
     }
 
-    void CxxTokenizer::parseString(const std::string& s)
-    {
+    void CxxTokenizer::parseString(const std::string& s){
       std::istringstream iss(s);
-      Token::size_type n{0};
+      auto n = Token::size_type{};
       this->parseStream(iss,n," of string '"+s+"'");
     } // end of CxxTokenizer::parseOneString
     
@@ -115,7 +118,6 @@ namespace tfel{
 	}
 	return line;
       };
-      this->clear();
       try{
 	while(!in.eof()){
 	  throw_if(!in.good(),"error while parsing stream");
@@ -123,7 +125,7 @@ namespace tfel{
 	  try{
 	    this->splitLine(line,n);
 	  } catch(std::runtime_error& e){
-	    raise<std::runtime_error>(std::string(e.what())+".\n"+
+	    raise(std::string(e.what())+".\n"+
 				      "Error at line: "+
 				      std::to_string(n)+from);
 	  }
@@ -224,12 +226,11 @@ namespace tfel{
       }
     }
 
-    void
-    CxxTokenizer::treatString(Token::size_type& o,
-			      std::string::const_iterator& p,
-			      const std::string::const_iterator pe,
-			      const Token::size_type n,
-			      const char e)
+    void CxxTokenizer::treatString(Token::size_type& o,
+				   std::string::const_iterator& p,
+				   const std::string::const_iterator pe,
+				   const Token::size_type n,
+				   const char e)
     {
       auto throw_if = [](const bool b, const std::string& m){
 	raise_if(b,"CxxTokenizer::treatString: "+m);
@@ -261,12 +262,11 @@ namespace tfel{
       advance(o,p,ps);
     }
 
-    void
-    CxxTokenizer::try_join(Token::size_type& o,
-			   std::string::const_iterator& p,
-			   const std::string::const_iterator pe,
-			   const Token::size_type n,
-			   const char c)
+    void CxxTokenizer::try_join(Token::size_type& o,
+				std::string::const_iterator& p,
+				const std::string::const_iterator pe,
+				const Token::size_type n,
+				const char c)
     {
       const auto pn=std::next(p,1);
       if((pn!=pe)&&(*pn==c)){
@@ -278,13 +278,12 @@ namespace tfel{
       }
     }
 
-    void
-    CxxTokenizer::try_join(Token::size_type& o,
-			   std::string::const_iterator& p,
-			   const std::string::const_iterator pe,
-			   const Token::size_type n,
-			   const char c1,
-			   const char c2)
+    void CxxTokenizer::try_join(Token::size_type& o,
+				std::string::const_iterator& p,
+				const std::string::const_iterator pe,
+				const Token::size_type n,
+				const char c1,
+				const char c2)
     {
       const auto pn=std::next(p,1);
       if((pn!=pe)&&((*pn==c1)||(*pn==c2))){
@@ -480,7 +479,7 @@ namespace tfel{
 	}
       }
       throw_if((p!=pe)&&(*p=='.'),"invalid number");
-      this->tokens.emplace_back(std::string{b,p},n,o,Token::Standard);
+      this->tokens.emplace_back(std::string{b,p},n,o,Token::Number);
       const auto d = p-b;
       p=b;
       advance(o,p,d);
@@ -494,21 +493,23 @@ namespace tfel{
       auto throw_if = [](const bool b,const std::string& m){
 	raise_if(b,"CxxTokenizer::treatCComment: "+m);
       };
-      auto get_end = [&pe](std::string::const_iterator e)
+      auto get_end = [&pe](const std::string::const_iterator cp)
 	-> std::string::const_iterator{
-	while(e!=pe){
-	  if(*e=='*'){
-	    const auto en = std::next(e);
-	    if(en==pe){
+	auto c = cp;
+	while(c!=pe){
+	  if(*c=='*'){
+	    const auto cn = std::next(c);
+	    if(cn==pe){
 	      return pe;
-	    } else if(*en=='/'){
-	      return e;
+	    } else if(*cn=='/'){
+	      return c;
 	    }
 	  }
-	  ++e;
+	  ++c;
 	}
 	return pe;
       };
+      const auto b = p;
       throw_if((p==pe)||(*p!='/'),"invalid call");
       advance(o,p,1u);
       throw_if((p==pe)||(*p!='*'),"invalid call");
@@ -527,7 +528,24 @@ namespace tfel{
       }
       ignore_space(o,p,pe);
       auto e = get_end(p);
-      this->tokens.emplace_back(std::string{p,e},n,o,flag);
+      if(this->bKeepCommentBoundaries){
+	if(e==pe){
+	  this->tokens.emplace_back(std::string{b,e},n,o,flag);
+	} else {
+	  this->tokens.emplace_back(std::string{b,e+2},n,o,flag);
+	}
+      } else {
+	if(p!=e){
+	  auto ps = std::prev(e);
+	  while((std::isspace(*ps))&&(ps!=p)){
+	    --ps;
+	  }
+	  ++ps;
+	  this->tokens.emplace_back(std::string{p,ps},n,o,flag);
+	} else {
+	  this->tokens.emplace_back(std::string{p,e},n,o,flag);
+	}
+      }
       advance(o,p,e-p);
       if(e==pe){
 	this->cStyleCommentOpened=true;  
@@ -536,15 +554,15 @@ namespace tfel{
       }
     }
 
-    void
-    CxxTokenizer::treatCxxComment(Token::size_type& o,
-				  std::string::const_iterator& p,
-				  const std::string::const_iterator pe,
-				  const Token::size_type n)
+    void CxxTokenizer::treatCxxComment(Token::size_type& o,
+				       std::string::const_iterator& p,
+				       const std::string::const_iterator pe,
+				       const Token::size_type n)
     {
       auto throw_if = [](const bool b,const std::string& m){
 	raise_if(b,"CxxTokenizer::treatCxxComment: "+m);
       };
+      const auto b = p;
       throw_if((p==pe)||(*p!='/'),"invalid call");
       advance(o,p,1u);
       throw_if((p==pe)||(*p!='/'),"invalid call");
@@ -562,16 +580,19 @@ namespace tfel{
 	}
       }
       ignore_space(o,p,pe);
-      this->tokens.emplace_back(std::string{p,pe},n,o,flag);
+      if(this->bKeepCommentBoundaries){
+	this->tokens.emplace_back(std::string{b,pe},n,o,flag);
+      } else {
+	this->tokens.emplace_back(std::string{p,pe},n,o,flag);
+      }
       advance(o,p,pe-p);
     }
 
-    void
-    CxxTokenizer::treatPreprocessorDirective(Token::size_type& o,
-					     std::string::const_iterator& p,
-					     const std::string::const_iterator,
-					     const std::string::const_iterator pe,
-					     const Token::size_type n)
+    void CxxTokenizer::treatPreprocessorDirective(Token::size_type& o,
+						  std::string::const_iterator& p,
+						  const std::string::const_iterator,
+						  const std::string::const_iterator pe,
+						  const Token::size_type n)
     {
       auto is_preprocessor_keyword = [](const std::string& k){
 	const std::array<const char*,11> keys = {{"#define","#undef" ,"#include",
@@ -589,18 +610,19 @@ namespace tfel{
       advance(o,p,1);
       ignore_space(o,p,pe);
       throw_if(p==pe,"lonely ‘#’");
-      auto pn = std::find_if(p,pe,is_cxx_separator_or_space(this->dotAsSeparator,this->minusAsSeparator));
+      auto pn = std::find_if(p,pe,is_cxx_separator_or_space(this->dotAsSeparator,
+							    this->minusAsSeparator));
       throw_if(p==pn,"unexpected token '"+std::string(1u,*p)+"'");
       const auto key = std::string{p,pn};
       throw_if(!is_preprocessor_keyword('#'+key),
 	       "invalid preprocessor keyword '"+key+"'");
       this->tokens.emplace_back(std::string{p,pn},n,o,Token::Preprocessor);
       advance(o,p,pn);
-      // this->treatStandardLine(o,p,b,pe,n);
-      if(p!=pe){
-	this->tokens.emplace_back(std::string{p,pe},n,o,Token::Standard);
-	advance(o,p,pe);
-      }
+      this->treatStandardLine(o,p,p,pe,n);
+      // if(p!=pe){
+      // 	this->tokens.emplace_back(std::string{p,pe},n,o,Token::Standard);
+      // 	advance(o,p,pe);
+      // }
     } // end of CxxTokenizer::treatPreprocessorDirective
     
     void CxxTokenizer::treatStandardLine(Token::size_type& o,
@@ -681,10 +703,10 @@ namespace tfel{
 	  auto pw = std::find_if(p,pe,is_cxx_separator_or_space(this->dotAsSeparator,
 								this->minusAsSeparator));
 	  if(p==pw){
-	    this->tokens.emplace_back(std::string(1u,*p),n,Token::Standard);	      
+	    this->tokens.emplace_back(std::string(1u,*p),n,o,Token::Standard);	      
 	    advance(o,p,1u);
 	  } else {
-	    this->tokens.emplace_back(std::string{p,pw},n,Token::Standard);
+	    this->tokens.emplace_back(std::string{p,pw},n,o,Token::Standard);
 	    advance(o,p,pw);
 	  }
 	}
@@ -692,9 +714,8 @@ namespace tfel{
       }
     }
     
-    void
-    CxxTokenizer::splitLine(const std::string& line,
-			    const Token::size_type n)
+    void CxxTokenizer::splitLine(const std::string& line,
+				 const Token::size_type n)
     {
       auto throw_if = [](const bool b, const std::string& m){
 	raise_if(b,"CxxTokenizer::splitLine: "+m);
@@ -706,8 +727,10 @@ namespace tfel{
       auto o = Token::size_type{};
       if(this->cStyleCommentOpened){
 	const auto pos3 = line.find("*/");
-	throw_if((this->tokens.empty())||
-		 ((this->tokens.back().flag!=Token::Comment)&&
+	if(tokens.empty()){
+	  this->tokens.emplace_back("",n,o,Token::Comment);
+	}
+	throw_if(((this->tokens.back().flag!=Token::Comment)&&
 		  (this->tokens.back().flag!=Token::DoxygenComment)&&
 		  (this->tokens.back().flag!=Token::DoxygenBackwardComment)),
 		 "internal error (previous token is not a comment)");
@@ -716,7 +739,7 @@ namespace tfel{
 	}
 	if(pos3==std::string::npos){
 	  this->tokens.back().value += line;
-	    //	    stripSpaceAndStarAtBeginningOfCommentLine(line);
+	  advance(o,p,line.size());
 	  return;
 	}
 	advance(o,p,pos3+2);
@@ -730,8 +753,7 @@ namespace tfel{
       }
     } // end of CxxTokenizer::splitLine
 
-    void
-    CxxTokenizer::stripComments(){
+    void CxxTokenizer::stripComments(){
       for(auto p=this->tokens.begin();p!=this->tokens.end();){
 	if(p->flag==Token::Comment){
 	  if(this->comments.find(p->line)!=this->comments.end()){
@@ -769,8 +791,7 @@ namespace tfel{
       }
     } // end of CxxTokenizer::stripComments
     
-    void 
-    CxxTokenizer::printFileTokens(std::ostream& out) const
+    void CxxTokenizer::printFileTokens(std::ostream& out) const
     {
       auto p    = this->tokens.begin();
       auto line = p->line;
@@ -784,9 +805,8 @@ namespace tfel{
       out << '\n';
     }
 
-    bool
-    CxxTokenizer::isValidIdentifier(const std::string& s, 
-				    const bool b)
+    bool CxxTokenizer::isValidIdentifier(const std::string& s, 
+					 const bool b)
     {
       if(s.empty()){
 	return false;
@@ -811,9 +831,8 @@ namespace tfel{
       return true;
     } // end of CxxTokenizer::isValidIdentifier
 
-    bool
-    CxxTokenizer::isValidFunctionIdentifier(const std::string& s, 
-					    const bool checkCxxKeywords)
+    bool CxxTokenizer::isValidFunctionIdentifier(const std::string& s, 
+						 const bool checkCxxKeywords)
     {
       if(s.empty()){
 	return false;
@@ -852,8 +871,7 @@ namespace tfel{
       return true;
     } // end of CxxTokenizer::isValidFunctionIdentifier
 
-    const Token&
-    CxxTokenizer::operator[](const size_type i) const
+    const Token& CxxTokenizer::operator[](const size_type i) const
     {
       raise_if<std::out_of_range>(i>=this->size(),
 				  "CxxTokenizer::operator[]");
@@ -861,14 +879,12 @@ namespace tfel{
       return *p;
     } // end of CxxTokenizer::begin
     
-    CxxTokenizer::const_iterator
-    CxxTokenizer::begin() const
+    CxxTokenizer::const_iterator CxxTokenizer::begin() const
     {
       return this->tokens.begin();
     } // end of CxxTokenizer::begin
 
-    CxxTokenizer::const_iterator
-    CxxTokenizer::end() const
+    CxxTokenizer::const_iterator CxxTokenizer::end() const
     {
       return this->tokens.end();
     } // end of CxxTokenizer::end
@@ -876,6 +892,10 @@ namespace tfel{
     void CxxTokenizer::setCStyleCommentOpened(const bool b){
       this->cStyleCommentOpened = b;
     }
+    
+    bool CxxTokenizer::isCStyleCommentOpened() const{
+      return this->cStyleCommentOpened;
+    } // end of CxxTokenizer::isCStyleCommentOpened
     
     void CxxTokenizer::clear()
     {
@@ -981,9 +1001,10 @@ namespace tfel{
 				      "expected number",p,pe);
       std::istringstream is(p->value);
       is >> res;
-      raise_if(!is&&(!is.eof()),
-	       "CxxTokenizer::readUnsignedInt: "
-	       "could not read value from token '"+p->value+"'.\n");
+      if(!is&&(!is.eof())){
+	tfel::raise("CxxTokenizer::readUnsignedInt: "
+		    "could not read value from token '"+p->value+"'.\n");
+      }
       ++p;
       return res;
     } // end of CxxTokenizer::readUnsignedInt

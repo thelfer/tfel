@@ -6081,6 +6081,8 @@ tests/Tests/testproxy.cxx -text
 tests/Tests/testproxy2.cxx -text
 tests/Tests/testsuite.cxx -text
 tests/Utilities/CMakeLists.txt -text
+tests/Utilities/CxxTokenizerKeepCommentBoundariesTest.cxx -text
+tests/Utilities/CxxTokenizerOffsetTest.cxx -text
 tests/Utilities/CxxTokenizerTest.cxx -text
 tests/Utilities/CxxTokenizerTest2.cxx -text
 tests/Utilities/DataTest.cxx -text

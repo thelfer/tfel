@@ -35,7 +35,7 @@ void declareEvaluator(){
     .def("__call__",ptr2,"evaluates the formula")
     .def("getValue",ptr3,"evaluates the formula")
     .def("getValue",ptr4,"evaluates the formula")
-    .def("setVariableValue",ptr3,
+    .def("setVariableValue",ptr5,
 	 "set the value of a variable")
     .def("getVariablesNames",&Evaluator::getVariablesNames,
 	 "return the variable names")

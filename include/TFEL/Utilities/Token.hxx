@@ -29,7 +29,8 @@ namespace tfel{
       //! a simple alias
       using size_type = size_t;
       //! possible type of the token
-      enum TokenFlag{Standard,Comment,DoxygenComment,
+      enum TokenFlag{Standard,Comment,Number,
+		     DoxygenComment,
 		     DoxygenBackwardComment,
 		     String,Char,Preprocessor};
       //! default constructor
@@ -67,6 +68,12 @@ namespace tfel{
       TokenFlag flag = Standard;
     }; // end of struct Token
 
+    /*!
+     * \return true if the argument is a comment
+     * \param[in] t: token
+     */
+    TFELUTILITIES_VISIBILITY_EXPORT bool isComment(const Token&);
+    
   } // end of namespace utilities
 
 } // end of namespace tfel

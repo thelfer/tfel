@@ -12,6 +12,8 @@
  * project under specific licensing conditions. 
  */
 
+#include<iostream>
+
 #include<cctype>
 #include<iterator>
 #include<sstream>
@@ -180,9 +182,27 @@ namespace mfront
     res2 = this->readNextBlock(o2);
   } // end of DSLBase::readNextBlock
 
-  CodeBlock
-  DSLBase::readNextBlock(const CodeBlockParserOptions& options)
+  CodeBlock DSLBase::readNextBlock(const CodeBlockParserOptions& options)
   {
+    using tfel::utilities::Token;
+    auto addSpaceBetweenToken = [this](std::string& r,
+				       const TokensContainer::const_iterator c,
+				       const TokensContainer::const_iterator n){
+      if((n==this->tokens.end())||
+	 (n->line!=c->line)){
+	return;
+      }
+      const auto csize = [&c]{
+	if((c->flag==Token::String)||(c->flag==Token::Char)){
+	  return c->value.size()+2;
+	}
+	return c->value.size();
+      }();
+      if(n->offset>c->offset+csize){
+	const auto d = n->offset-csize-c->offset;
+	r += std::string(d,' ');
+      }
+    };    
     const auto& smn = options.smn;
     const auto& mn  = options.mn;
     const auto& delim1 = options.delim1;
@@ -272,7 +292,8 @@ namespace mfront
     } else {
       res += this->current->value;
     }
-    res += " ";
+    addSpaceBetweenToken(res,this->current,
+			 std::next(this->current));
     ++(this->current);
     while((this->current!=this->tokens.end())&&
 	  (!((this->current->value==delim2)&&(openedBlock==0)))){
@@ -343,7 +364,8 @@ namespace mfront
       } else {
 	res += this->current->value;
       }
-      res+=" ";
+      addSpaceBetweenToken(res,this->current,
+			   std::next(this->current));
       if(this->current->value==delim1){
 	++openedBlock;
       }
@@ -533,7 +555,8 @@ namespace mfront
 	++(this->current);
 	this->checkNotEndOfFile("DSLBase::readVarList");
 	while(this->current->value!="]"){
-	  throw_if((this->current->flag!=tfel::utilities::Token::Standard)||
+	  throw_if(((this->current->flag!=tfel::utilities::Token::Standard)&&
+		    (this->current->flag!=tfel::utilities::Token::Number))||
 		   (this->current->value==";"),
 		   "invalid array size for '"+varName+"'");
 	  array_size += this->current->value;

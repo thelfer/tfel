@@ -69,13 +69,18 @@ struct CxxTokenizerTest2 final
   }
   void check2(){
     CxxTokenizer t;
+    t.clear();
     TFEL_TESTS_CHECK_THROW(t.parseString("'a"),std::runtime_error);
+    t.clear();
     TFEL_TESTS_CHECK_THROW(t.parseString("'\a"),std::runtime_error);
+    t.clear();
     TFEL_TESTS_CHECK_THROW(t.parseString("'\ab'"),std::runtime_error);
+    t.clear();
     t.parseString("'\a'");
     TFEL_TESTS_ASSERT(t.size()==1u);
     TFEL_TESTS_ASSERT(t[0].value=="'\a'");
     TFEL_TESTS_ASSERT(t[0].flag==Token::Char);
+    t.clear();
     t.parseString("'a'");
     TFEL_TESTS_ASSERT(t.size()==1u);
     TFEL_TESTS_ASSERT(t[0].value=="'a'");

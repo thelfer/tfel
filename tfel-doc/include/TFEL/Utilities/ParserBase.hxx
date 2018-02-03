@@ -34,33 +34,27 @@ namespace tfel
        * check if the end of file has not been reached
        * \param p : current location in file
        */
-      void
-      checkNotEndOfFile(const_iterator);
+      void checkNotEndOfFile(const_iterator);
       
       /*!
        * check if the specified word is at the specified location
        * \param v : word to be read
        * \param p : current location in file
        */
-      void
-      readSpecifiedToken(const std::string&,
-			 const_iterator&);
-      
+      void readSpecifiedToken(const std::string &, const_iterator &);
+
       /*!
        * extract the value of a string
        * \param s : string to be read
        * \param p : current location in file
        */
-      void
-      readString(std::string&,
-		 const_iterator&);
-      
+      void readString(std::string &, const_iterator &);
+
       /*!
        * \return the value of the string at the specified location
        * \param p : current location in file
        */
-      std::string
-      readString(const_iterator&);
+      std::string readString(const_iterator&);
       //! destructor
       virtual ~ParserBase() noexcept;
     };

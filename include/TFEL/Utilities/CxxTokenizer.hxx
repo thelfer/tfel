@@ -44,20 +44,16 @@ namespace tfel{
        * \param[in] s : variable name
        * \param[in] b : boolean telling if C++ keywords are allowed.
        */
-      static bool
-      isValidIdentifier(const std::string&,const bool=true);
-      /*!
-       * \brief default constructor
-       */
+      static bool isValidIdentifier(const std::string&,
+				    const bool=true);
+      //! \brief default constructor
       CxxTokenizer();
-
       /*!
        * \brief constructor
        * Open the given file.
        * \param[in] f : file name
        */
       CxxTokenizer(const std::string&);
-
       /*!
        * \brief import the specified tokens
        * \param[in] p : iterator to the first token
@@ -90,6 +86,13 @@ namespace tfel{
        */
       void setCStyleCommentOpened(const bool);
       /*!
+       * \return is a C-style comment is opened at the
+       * opened at the end of the processing.
+       * This is usefull when parsing a file line by line
+       * \param[in] b: boolean
+       */
+      bool isCStyleCommentOpened() const;
+      /*!
        * \brief remove all comment tokens
        */ 
       void stripComments();
@@ -103,6 +106,13 @@ namespace tfel{
        * treated as string tokens
        */ 
       void treatCharAsString(const bool);
+      /*!
+       * \brief set if the comment boundaries must be left in the
+       * resulting tokens.
+       * \param[in] b : boolean telling if char tokens shall be
+       * treated as string tokens
+       */ 
+      void keepCommentBoundaries(const bool);
       /*!
        * \brief set if '.' shall be treated as as sperator
        * \param[in] b : boolean telling if '.' shall be treated as as sperator
@@ -307,73 +317,65 @@ namespace tfel{
       
     protected:
 
-      static bool
-      isValidFunctionIdentifier(const std::string&,const bool=true);
+      static bool isValidFunctionIdentifier(const std::string&,const bool=true);
       /*!
-       * \param[in] in:   input stream
+       * \param[in]     in:   input stream
+       * \param[in,out] n:    line number
+       * \param[in]     from: origin of the stream
+       */ 
+      virtual void parseStream(std::istream&,
+			       Token::size_type&,
+			       const std::string&);
+      /*!
+       * \param[in] l:    line
        * \param[in] n:    line number
        * \param[in] from: origin of the stream
        */ 
-      virtual void
-      parseStream(std::istream&,
-		  Token::size_type&,
-		  const std::string&);
+      virtual void splitLine(const std::string&,
+			     const Token::size_type);
 
-      virtual void
-      splitLine(const std::string&,
-		const Token::size_type);
-
-      virtual void
-      treatChar(Token::size_type&,
-		std::string::const_iterator&,
-		const std::string::const_iterator,
-		const Token::size_type);
-      virtual void
-      treatString(Token::size_type&,
-		  std::string::const_iterator&,
-		  const std::string::const_iterator,
-		  const Token::size_type,
-		  const char);
-      virtual void
-      treatCComment(Token::size_type&,
-		    std::string::const_iterator&,
-		    const std::string::const_iterator,
-		    const Token::size_type);
-      virtual void
-      treatCxxComment(Token::size_type&,
-		      std::string::const_iterator&,
-		      const std::string::const_iterator,
-		      const Token::size_type);
-      virtual void
-      try_join(Token::size_type&,
-	       std::string::const_iterator&,
-	       const std::string::const_iterator,
-	       const Token::size_type,
-	       const char);
-      virtual void
-      try_join(Token::size_type&,
-	       std::string::const_iterator&,
-	       const std::string::const_iterator,
-	       const Token::size_type,
-	       const char,
-	       const char);
-      virtual void
-      readNumber(Token::size_type&,
-		 std::string::const_iterator&,
-		 const std::string::const_iterator,
-		 const Token::size_type);
-      virtual void
-      treatPreprocessorDirective(Token::size_type&,
+      virtual void treatChar(Token::size_type&,
+			     std::string::const_iterator&,
+			     const std::string::const_iterator,
+			     const Token::size_type);
+      virtual void treatString(Token::size_type&,
+			       std::string::const_iterator&,
+			       const std::string::const_iterator,
+			       const Token::size_type,
+			       const char);
+      virtual void treatCComment(Token::size_type&,
 				 std::string::const_iterator&,
 				 const std::string::const_iterator,
-				 const std::string::const_iterator,
 				 const Token::size_type);
-      virtual void
-      treatStandardLine(Token::size_type&,
-			std::string::const_iterator&,
-			const std::string::const_iterator,
-			const std::string::const_iterator,
-			const Token::size_type);
+      virtual void treatCxxComment(Token::size_type&,
+				   std::string::const_iterator&,
+				   const std::string::const_iterator,
+				   const Token::size_type);
+      virtual void try_join(Token::size_type&,
+			    std::string::const_iterator&,
+			    const std::string::const_iterator,
+			    const Token::size_type,
+			    const char);
+      virtual void try_join(Token::size_type&,
+			    std::string::const_iterator&,
+			    const std::string::const_iterator,
+			    const Token::size_type,
+			    const char,
+			    const char);
+      virtual void readNumber(Token::size_type&,
+			      std::string::const_iterator&,
+			      const std::string::const_iterator,
+			      const Token::size_type);
+      virtual void treatPreprocessorDirective(Token::size_type&,
+					      std::string::const_iterator&,
+					      const std::string::const_iterator,
+					      const std::string::const_iterator,
+					      const Token::size_type);
+      virtual void treatStandardLine(Token::size_type&,
+				     std::string::const_iterator&,
+				     const std::string::const_iterator,
+				     const std::string::const_iterator,
+				     const Token::size_type);
       //! list of tokens read
       TokensContainer tokens;
       //! store all the comments of a line
@@ -387,6 +389,10 @@ namespace tfel{
        * a string
        */
       bool charAsString = false;
+      /*!
+       * if true, keep the comment boundaries
+       */
+      bool bKeepCommentBoundaries = false;
       /*!
        * if true, a cStyle comment what opened when the last line
        * treatment was finised

@@ -33,6 +33,12 @@ namespace tfel{
     
     Token::~Token() noexcept = default;
 
+    bool isComment(const Token& t){
+      return ((t.flag==Token::Comment)||
+	      (t.flag==Token::DoxygenComment)||
+	      (t.flag==Token::DoxygenBackwardComment));
+    } // end of isComment
+    
   } // end of namespace utilities
 
 } // end of namespace tfel
