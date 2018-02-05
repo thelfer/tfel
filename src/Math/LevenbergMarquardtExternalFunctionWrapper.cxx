@@ -31,10 +31,8 @@ namespace tfel
 	nv(nv_),
 	np(np_)
     {
-      using namespace std;
       using namespace tfel::math;
       using namespace tfel::math::parser;
-      using tfel::math::vector;
       vector<double>::size_type i;
       raise_if(this->ev->getNumberOfVariables()!=
 	       this->getNumberOfVariables()+this->getNumberOfParameters(),
@@ -75,32 +73,29 @@ namespace tfel
 							  const tfel::math::vector<double>& variables,
 							  const tfel::math::vector<double>& params)
     {
-      using namespace std;
       using namespace tfel::math;
       using namespace tfel::math::parser;
-      using tfel::math::vector;
-      vector<double>::const_iterator p;
-      vector<shared_ptr<ExternalFunction> >::iterator pdev;
-      vector<double>::size_type i;
       raise_if(variables.size()!=this->getNumberOfVariables(),
 	       "LevenbergMarquardtExternalFunctionWrapper::operator(): "
 	       "invalid number of variables");
       raise_if(params.size()!=this->getNumberOfParameters(),
 	       "LevenbergMarquardtExternalFunctionWrapper::operator(): "
 	       "invalid number of parameters");
-      i=0;
       g.resize(this->getNumberOfParameters());
-      for(p=variables.begin();p!=variables.end();++p,++i){
-	this->ev->setVariableValue(i,*p);
-	for(pdev=dev.begin();pdev!=dev.end();++pdev){
-	  (*pdev)->setVariableValue(i,*p);
+      vector<double>::size_type i=0;
+      for(const auto a : variables){
+	this->ev->setVariableValue(i,a);
+	for(auto pdev=dev.begin();pdev!=dev.end();++pdev){
+	  (*pdev)->setVariableValue(i,a);
 	}
+	++i;
       }
-      for(p=params.begin();p!=params.end();++p,++i){
-	this->ev->setVariableValue(i,*p);
-	for(pdev=dev.begin();pdev!=dev.end();++pdev){
-	  (*pdev)->setVariableValue(i,*p);
+      for(const auto& p : params){
+	this->ev->setVariableValue(i,p);
+	for(auto pdev=dev.begin();pdev!=dev.end();++pdev){
+	  (*pdev)->setVariableValue(i,p);
 	}
+	++i;
       }
       r = this->ev->getValue();
       for(i=0;i!=dev.size();++i){

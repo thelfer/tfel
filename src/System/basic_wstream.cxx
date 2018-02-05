@@ -15,7 +15,7 @@
 #include<cerrno>
 #include<limits>
 #include<unistd.h>
-
+#include"TFEL/Raise.hxx"
 #include"TFEL/System/basic_wstream.hxx"
 #include"TFEL/System/System.hxx"
 
@@ -25,15 +25,15 @@ namespace tfel
   namespace system
   {
 
-    void
-    BlockingStreamWriter::write(int fd,const void *const buf,const size_t count)
+    void BlockingStreamWriter::write(int fd,const void *const buf,
+				     const size_t count)
     {
-      using namespace std;
       auto start = static_cast<const char *>(buf); //< some strange
                                                    //  warning of gcc
       size_t  r = count;       //< remaining block to be written
-      if(count>static_cast<size_t>(numeric_limits<ssize_t>::max())){
-	throw(SystemError("BlockingStreamReader::write : number of bytes to write too high"));
+      if(count>static_cast<size_t>(std::numeric_limits<ssize_t>::max())){
+	tfel::raise<SystemError>("BlockingStreamReader::write: "
+				 "number of bytes to write too high");
       }
       while(r>0){
 	ssize_t w = 0;           //< number of written blocks
@@ -42,7 +42,7 @@ namespace tfel
 	    continue;
 	  }
 	  if(errno!=EAGAIN){
-	    systemCall::throwSystemError("BlockingStreamWriter::write : write failed",errno);
+	    systemCall::throwSystemError("BlockingStreamWriter::write: write failed",errno);
 	  }
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
 #pragma message("windows port")
@@ -56,17 +56,18 @@ namespace tfel
 
     } // end of BlockingStreamWriter::write
     
-    void
-    NonBlockingStreamWriter::write(int fd,const void *const buf,const size_t count)
+    void NonBlockingStreamWriter::write(int fd,const void *const buf,
+					const size_t count)
     {
-      using namespace std;
       ssize_t rwrite;
-      if(count>static_cast<size_t>(numeric_limits<ssize_t>::max())){
-	throw(SystemError("NonBlockingStreamReader::write : number of bytes to write too high"));
+      if(count>static_cast<size_t>(std::numeric_limits<ssize_t>::max())){
+	tfel::raise<SystemError>("NonBlockingStreamReader::write: "
+				 "number of bytes to write too high");
       }
       rwrite=::write(fd,buf,count);
       if(rwrite==-1){
-	systemCall::throwSystemError("NonBlockingStreamWriter::write : write failed",errno);
+	systemCall::throwSystemError("NonBlockingStreamWriter::write: "
+				     "write failed",errno);
       }
     } // end of NonBlockingStreamWriter::write
 

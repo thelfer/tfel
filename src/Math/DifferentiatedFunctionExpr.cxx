@@ -57,14 +57,12 @@ namespace tfel
       
       double DifferentiatedFunctionExpr::getValue() const
       {
-	using namespace std;
-	using namespace tfel::math::parser;
-	vector<shared_ptr<Expr> >::const_iterator p;
-	vector<shared_ptr<Expr> >::size_type i;
 	auto df = this->getDerivative();
-	for(p=this->args.begin(),i=0u;p!=this->args.end();++p,++i){
-	  const double val = (*p)->getValue();
+	decltype(this->args.size()) i = 0u;
+	for(const auto& a : this->args){
+	  const auto val = a->getValue();
 	  df->setVariableValue(i,val);
+	  ++i;
 	}
 	return df->getValue();
       } // end of DifferentiatedFunctionExpr::getValue
@@ -91,18 +89,16 @@ namespace tfel
       DifferentiatedFunctionExpr::differentiate(const std::vector<double>::size_type pos,
 						const std::vector<double>& v) const
       {
-	using namespace std;
-	vector<shared_ptr<Expr> > nargs(this->args.size());
+	std::vector<std::shared_ptr<Expr> > nargs(this->args.size());
         auto p = this->args.begin();
-	vector<shared_ptr<Expr> >::const_iterator p3;
-        vector<shared_ptr<Expr> >::iterator p4;
 	unsigned short i = 0;
 	if(args.empty()){
 	  return std::make_shared<Number>(0.);
 	}
-        for(p3=this->args.begin(),p4=nargs.begin();
-	    p3!=this->args.end();++p3,++p4){
-	  *p4 = (*p3)->clone(v);
+	auto p4=nargs.begin();
+        for(const auto& a : this->args){
+	  *p4 = a->clone(v);
+	  ++p4;
 	}
 	auto ndf = this->getDerivative();
         auto df_ = std::make_shared<ExternalFunctionExpr2>(ndf->differentiate(i),
@@ -126,14 +122,13 @@ namespace tfel
       std::shared_ptr<Expr>
       DifferentiatedFunctionExpr::clone(const std::vector<double>& v) const
       {
-	using namespace std;
-	vector<shared_ptr<Expr> > nargs(this->args.size());
-        vector<shared_ptr<Expr> >::const_iterator p;
-        vector<shared_ptr<Expr> >::iterator p2;
-        for(p=this->args.begin(),p2=nargs.begin();p!=this->args.end();++p,++p2){
-	  *p2 = (*p)->clone(v);
+	std::vector<std::shared_ptr<Expr>> nargs(this->args.size());
+	auto p = nargs.begin();
+        for(const auto& a : this->args){
+	  *p = a->clone(v);
 	}
-        return shared_ptr<Expr>(new DifferentiatedFunctionExpr(this->f,nargs,this->pvar));	
+        return std::make_shared<DifferentiatedFunctionExpr>(this->f,nargs,
+							    this->pvar);	
       } // end of DifferentiatedFunctionExpr::clone
 
       std::shared_ptr<Expr>

@@ -797,7 +797,6 @@ namespace tfel
 							   const std::string& f,
 							   const std::string& h)
     {
-      using namespace std;
       ExternalLibraryManagerCheckModellingHypothesisName(h);
       int res;
       const auto lib = this->loadLibrary(l);
@@ -909,7 +908,6 @@ namespace tfel
 						       const std::string& l,
 						       const std::string& f)
     {
-      using namespace std;
       const auto lib = this->loadLibrary(l);
       unsigned short nb = this->getCastemFunctionNumberOfVariables(l,f);
       char ** res = ::tfel_getCastemFunctionVariables(lib,f.c_str());
@@ -938,7 +936,6 @@ namespace tfel
     ExternalLibraryManager::getAbaqusExternalBehaviourFunction(const std::string& l,
 							       const std::string& f)
     {
-      using namespace std;
       const auto lib = this->loadLibrary(l);
       const auto fct = ::tfel_getAbaqusExternalBehaviourFunction(lib,f.c_str());
       raise_if(fct==nullptr,
@@ -1059,7 +1056,6 @@ namespace tfel
 									    const std::string& f,
 									    const std::string& h)
     {
-      using namespace std;
       ExternalLibraryManagerCheckModellingHypothesisName(h);
       const auto lib = this->loadLibrary(l);
       int b = ::tfel_getBool(lib,(f+"_"+h+"_UsableInPurelyImplicitResolution").c_str());
@@ -1122,7 +1118,6 @@ namespace tfel
     ExternalLibraryManager::getUMATElasticSymmetryType(const std::string& l,
 						       const std::string& f)
     {
-      using namespace std;
       const auto lib = this->loadLibrary(l);
       const auto u = ::tfel_getUnsignedShort(lib,(f+"_ElasticSymmetryType").c_str());
       raise_if(u==-1,"ExternalLibraryManager::getUMATElasticSymmetryType: "
@@ -1257,7 +1252,6 @@ namespace tfel
     CFunction1Ptr ExternalLibraryManager::getCFunction1(const std::string& l,
 							const std::string& f)
     {
-      using namespace std;
       const auto lib = this->loadLibrary(l);
       const auto fct = ::tfel_getCFunction1(lib,f.c_str());
       raise_if(fct==nullptr,

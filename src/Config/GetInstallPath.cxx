@@ -22,16 +22,15 @@
 #include<windows.h>
 #endif
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Config/GetInstallPath.hxx"
 #include"TFEL/Config/GetInstallPath-defines.hxx"
 
 namespace tfel{
 
 #if defined _WIN32 || defined _WIN64
-  static bool
-  getValueInRegistry(std::string &value)
+  static bool getValueInRegistry(std::string &value)
   {
-    using namespace std;
     HKEY  hKey;
     char  szBuffer[512];
     DWORD dwBufferSize = sizeof(szBuffer);
@@ -56,13 +55,12 @@ namespace tfel{
   static std::string
   handleSpace(const std::string& p)
   {
-    using namespace std;
     if(find(p.begin(),p.end(),' ')!=p.end()){
 #if defined _WIN32 || defined _WIN64
-      throw(runtime_error("tfel-config handleSpace: "
-			  "path to TFEL shall not contain space as "
-			  "MinGW can't handle it (Found '"+p+"'). "
-			  "Please change TFEL installation directory"));
+      tfel::raise("tfel-config handleSpace: "
+		  "path to TFEL shall not contain space as "
+		  "MinGW can't handle it (Found '"+p+"'). "
+		  "Please change TFEL installation directory");
 #else
       return '"'+p+'"';
 #endif

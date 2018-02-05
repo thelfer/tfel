@@ -34,7 +34,6 @@ namespace tfel{
     TestDocParser::addDocumentation(std::map<std::string,
 					     std::vector<TestDocumentation> >& tests)
     {
-      using namespace std;
       using namespace tfel::utilities;
       this->stripComments();
       auto p  = this->begin();
@@ -55,21 +54,20 @@ namespace tfel{
 	  }
 	  this->checkNotEndOfFile(p);
 	  this->readSpecifiedToken("{",p);
-	  auto c = string{};
+	  auto c = std::string{};
 	  this->treatTest(t,c,p);
 	  this->checkNotEndOfFile(p);
 	  this->readSpecifiedToken("}",p);
 	  raise_if(c.empty(),"no category defined for test '"+t.name+"'");
 	  tests[c].push_back(t);
 	}
-      } catch(exception& e){
-	ostringstream msg;
-	msg << "TestDocParser::addDocumentation : "
-	    << e.what();
+      } catch(std::exception& e){
+	auto msg = std::string("TestDocParser::addDocumentation: ");
+	msg += e.what();
 	if(p!=this->end()){
-	  msg << "\nError at line " << p->line;
+	  msg += "\nError at line "+std::to_string(p->line);
 	}
-	raise(msg.str());
+	tfel::raise(msg);
       }
     }
 
@@ -77,7 +75,6 @@ namespace tfel{
 				  std::string& c,
 				  const_iterator& p)
     {
-      using namespace std;
       using namespace tfel::utilities;
       this->checkNotEndOfFile(p);
       while(p->value!="}"){
@@ -94,14 +91,12 @@ namespace tfel{
 	  this->getStringValue(t.install,t.name,key,p);
 	} else if(key=="category"){
 	  auto& categories = getCategoriesMap("english");
-	  map<string,string>::const_iterator pc;
 	  this->getStringValue(c,t.name,key,p);
-	  pc = categories.find(c);
+	  auto pc = categories.find(c);
 	  if(pc==categories.end()){
-	    cerr << TerminalColors::Red;
-	    cerr << "undefined category '" << c 
-		 << "'" << endl;
-	    cerr << TerminalColors::Reset;
+	    std::cerr << TerminalColors::Red;
+	    std::cerr << "undefined category '" << c << "'\n";
+	    std::cerr << TerminalColors::Reset;
 	  }
 	} else if(key=="description"){
 	  this->treatDescription(t.descriptions,t.name,p);
@@ -118,16 +113,16 @@ namespace tfel{
       }
     }
 
-    void
-    TestDocParser::getStringValue(std::string& s,
-				  const std::string& name,
-				  const std::string& v,
-				  const_iterator& p)
+    void TestDocParser::getStringValue(std::string& s,
+				       const std::string& name,
+				       const std::string& v,
+				       const_iterator& p)
     {
       this->checkNotEndOfFile(p);
-      raise_if(!s.empty(),
-	       "TestDocParser::getStringValue : '"+
-	       v+"' already defined for test '"+name+"'");
+      if(!s.empty()){
+	tfel::raise("TestDocParser::getStringValue: "
+		    "'"+v+"' already defined for test '"+name+"'");
+      }
       this->readString(s,p);
     }
 
@@ -162,22 +157,20 @@ namespace tfel{
 			      const_iterator& p,
 			      const bool b)
     {
-      using namespace std;
       const auto& k = getKeysMap("english");
       this->checkNotEndOfFile(p);
       this->readSpecifiedToken("{",p);
       this->checkNotEndOfFile(p);
       while(p->value!="}"){
-	auto key1 = string{};
+	auto key1 = std::string{};
 	this->readString(key1,p);
 	if(b){
 	  if(!key1.empty()){
 	    if(key1[0]!='!'){
 	      if(k.find(key1)==k.end()){
-		cerr << TerminalColors::Red;
-		cerr << "undefined key '" << key1 
-		     << "'" << endl;
-		cerr << TerminalColors::Reset;
+		std::cerr << TerminalColors::Red;
+		std::cerr << "undefined key '" << key1 << "'\n";
+		std::cerr << TerminalColors::Reset;
 	      }
 	    }
 	  }
@@ -186,16 +179,15 @@ namespace tfel{
 	if(p->value=="@"){
 	  ++p;
 	  this->checkNotEndOfFile(p);
-	  auto key2 = string{};
+	  auto key2 = std::string{};
 	  this->readString(key2,p);
 	  if(b){
 	    if(!key2.empty()){
 	      if(key2[0]!='!'){
 		if(k.find(key2)==k.end()){
-		  cerr << TerminalColors::Red;
-		  cerr << "undefined key '" << key2 
-		       << "'" << endl;
-		  cerr << TerminalColors::Reset;
+		  std::cerr << TerminalColors::Red;
+		  std::cerr << "undefined key '" << key2 << "'\n";
+		  std::cerr << TerminalColors::Reset;
 		}
 	      }
 	    }
@@ -203,7 +195,7 @@ namespace tfel{
 	  this->checkNotEndOfFile(p);
 	  auto p2 = i.find(key2);
 	  if(p2==i.end()){
-	    p2 = i.insert(make_pair(key2,vector<string>())).first;
+	    p2 = i.insert({key2,{}}).first;
 	  }
 	  auto& keys = p2->second;
 	  raise_if(find(keys.begin(),keys.end(),key1)!=keys.end(),
@@ -214,7 +206,7 @@ namespace tfel{
 	} else {
 	  auto p2 = i.find(key1);
 	  if(p2==i.end()){	
-	    i.insert(make_pair(key1,vector<string>()));
+	    i.insert({key1,{}});
 	  }
 	}
 	if(p->value!="}"){

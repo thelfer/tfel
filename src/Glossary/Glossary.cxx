@@ -830,12 +830,12 @@ namespace tfel
     {
       const auto p=this->findGlossaryEntry(n);
       tfel::raise_if(p==this->entries.end(),
-		     "Glossary::getGlossaryEntry: no glossary entry matching '"+n+"'");
+		     "Glossary::getGlossaryEntry: "
+		     "no glossary entry matching '"+n+"'");
       return *p;
     } // end of Glossary::contains
 
-    const std::vector<std::string>&
-    Glossary::getKeys() const
+    const std::vector<std::string>& Glossary::getKeys() const
     {
       return this->keys;
     } // end of Glossary::contains
@@ -843,14 +843,12 @@ namespace tfel
     std::set<GlossaryEntry>::const_iterator
     Glossary::findGlossaryEntry(const std::string& n) const
     {
-      using namespace std;
-      set<GlossaryEntry>::const_iterator p;
-      for(p=this->entries.begin();p!=this->entries.end();++p){
+      for(auto p=this->entries.begin();p!=this->entries.end();++p){
 	if(p->getKey()==n){
 	  return p;
 	}
 	const auto& enames = p->getNames();
-	if(find(enames.begin(),enames.end(),n)!=enames.end()){
+	if(std::find(enames.begin(),enames.end(),n)!=enames.end()){
 	  return p;
 	}
       }

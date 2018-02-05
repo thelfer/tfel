@@ -74,10 +74,8 @@ namespace tfel
       void
       ExternalFunctionExpr2::getParametersNames(std::set<std::string>& p) const
       {
-	using namespace std;
-	vector<shared_ptr<Expr> >::const_iterator pa;
-	for(pa=this->args.begin();pa!=this->args.end();++pa){
-	  (*pa)->getParametersNames(p);
+	for(const auto& a: this->args){
+	  a->getParametersNames(p);
 	}
       } // end of ExternalFunctionExpr2::getParametersNames(std::set<std::string>&) const;
 
@@ -118,10 +116,9 @@ namespace tfel
 									     const std::map<std::string,
 									     std::vector<double>::size_type>& pos) const
       {
-	using namespace std;
-	vector<shared_ptr<Expr> > nargs(this->args.size());
-        vector<shared_ptr<Expr> >::const_iterator p;
-        vector<shared_ptr<Expr> >::iterator p2;
+	std::vector<std::shared_ptr<Expr>> nargs(this->args.size());
+        std::vector<std::shared_ptr<Expr>>::const_iterator p;
+        std::vector<std::shared_ptr<Expr>>::iterator p2;
         for(p=this->args.begin(),p2=nargs.begin();p!=this->args.end();++p,++p2){
 	  *p2 = (*p)->createFunctionByChangingParametersIntoVariables(v,params,pos);
 	}
@@ -131,11 +128,11 @@ namespace tfel
       std::shared_ptr<Expr>
       ExternalFunctionExpr2::clone(const std::vector<double>& v) const
       {
-	using namespace std;
-	vector<shared_ptr<Expr> > nargs(this->args.size());
-        vector<shared_ptr<Expr> >::const_iterator p;
-        vector<shared_ptr<Expr> >::iterator p2;
-        for(p=this->args.begin(),p2=nargs.begin();p!=this->args.end();++p,++p2){
+	std::vector<std::shared_ptr<Expr>> nargs(this->args.size());
+        std::vector<std::shared_ptr<Expr>>::const_iterator p;
+        std::vector<std::shared_ptr<Expr>>::iterator p2;
+        for(p=this->args.begin(),p2=nargs.begin();
+	    p!=this->args.end();++p,++p2){
 	  *p2 = (*p)->clone(v);
 	}
         return std::make_shared<ExternalFunctionExpr2>(this->f,nargs);	
@@ -144,11 +141,11 @@ namespace tfel
       std::shared_ptr<Expr>
       ExternalFunctionExpr2::resolveDependencies(const std::vector<double>& v) const
       {
-	using namespace std;
-	vector<shared_ptr<Expr> > nargs(this->args.size());
-        vector<shared_ptr<Expr> >::const_iterator p;
-        vector<shared_ptr<Expr> >::iterator p2;
-        for(p=this->args.begin(),p2=nargs.begin();p!=this->args.end();++p,++p2){
+	std::vector<std::shared_ptr<Expr>> nargs(this->args.size());
+        std::vector<std::shared_ptr<Expr>>::const_iterator p;
+        std::vector<std::shared_ptr<Expr>>::iterator p2;
+        for(p=this->args.begin(),p2=nargs.begin();
+	    p!=this->args.end();++p,++p2){
 	  *p2 = (*p)->resolveDependencies(v);
 	}
         return std::make_shared<ExternalFunctionExpr2>(this->f->resolveDependencies(),nargs);	

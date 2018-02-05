@@ -168,7 +168,6 @@ namespace tfel
 
     void Evaluator::TGroup::reduce()
     {
-      using namespace std;
       auto p  = this->subExpr.begin();
       auto pe = this->subExpr.end();
       while(p!=pe){

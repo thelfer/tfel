@@ -67,7 +67,7 @@ namespace tfel
 	  }
 	  catch(std::exception& e){
 	    log << TerminalColors::Reset;
-	    log << "treatment of file '"+f+"' failed : "
+	    log << "treatment of file '"+f+"' failed: "
 		<< e.what() << '\n';
 	    log << TerminalColors::Reset;
 	  }
@@ -75,33 +75,28 @@ namespace tfel
       }
     }
 
-    static std::string
-    getOutputDirectory(const std::string& f)
+    static std::string getOutputDirectory(const std::string& f)
     {
-      using namespace std;
-      string::size_type pos = f.rfind('/');
-      if(pos==string::npos){
+      const auto pos = f.rfind('/');
+      if(pos==std::string::npos){
 	return "";
       }
       return f.substr(0,pos);
     } // end of getOutputDirectory
    
-    static void
-    declareKeys(const std::string& f)
+    static void declareKeys(const std::string& f)
     {
       ConfigParser parser;
       parser.execute(getKeysMap(),f);
     }
 
-    static void
-    declareCategories(const std::string& f)
+    static void declareCategories(const std::string& f)
     {
       ConfigParser parser;
       parser.execute(getCategoriesMap(),f);
     }
 
-    static void
-    declareTranslations(const std::string& f)
+    static void declareTranslations(const std::string& f)
     {
       ConfigParser parser;
       parser.execute(getTranslationsMap(),f);
@@ -111,14 +106,13 @@ namespace tfel
 			     const char*const* argv)
       : ArgumentParserBase<TestDocMain>(argc,argv)
     {
-      using namespace std;
       using namespace tfel::utilities;
       this->registerArgumentCallBacks();
       this->parseArguments();
       if(this->outputFile.empty()){
-	cerr << "TestDocMain : no output file specified\n";
-	cerr << this->getUsageDescription() << endl;
-	exit(EXIT_FAILURE);
+	std::cerr << "TestDocMain: no output file specified\n";
+	std::cerr << this->getUsageDescription() << '\n';
+	std::exit(EXIT_FAILURE);
       }
       this->opts.outputDirectory = getOutputDirectory(this->outputFile);
       this->output.open(this->outputFile.c_str());
@@ -126,19 +120,19 @@ namespace tfel
 	       "TestDocMain: can't open output file "
 	       "'"+this->outputFile+'\'');
       if(!this->logFile.empty()){
-	this->logptr = shared_ptr<ostream>(new ofstream(argv[2]));
+	this->logptr = std::make_shared<std::ofstream>(argv[2]);
 	raise_if(!(*(this->logptr)),
-		 "TestDocMain : can't open log file "
+		 "TestDocMain: can't open log file "
 		 "'"+this->logFile+'\'');
 	this->log = this->logptr.get();
       } else{ 
-	this->log = &cerr;
+	this->log = &std::cerr;
       }
       if(this->opts.lang.empty()){
 	this->opts.lang = "english";
       }
       raise_if((this->latex)&&(this->markdown),
-	       "TestDocMain::TestDocMain : "
+	       "TestDocMain::TestDocMain: "
 	       "can't choose both latex and markdown "
 	       "generator at the same time");
       if((!this->latex)&&(!this->markdown)){
@@ -148,20 +142,19 @@ namespace tfel
 
     void TestDocMain::treatUnknownArgument()
     {
-      using namespace std;
       const auto& s = this->currentArgument->as_string();
       if(s[0]=='-'){
 	ArgumentParserBase<TestDocMain>::treatUnknownArgument();
-	cerr << "TestDocMain : unsupported option '" << s << "'\n";
-	cerr << this->getUsageDescription() << endl;
-	exit(EXIT_FAILURE);
+	std::cerr << "TestDocMain: unsupported option '" << s << "'\n";
+	std::cerr << this->getUsageDescription() << '\n';
+	std::exit(EXIT_FAILURE);
       }
       if(this->outputFile.empty()){
 	this->outputFile = s;
       } else {
-	cerr << "TestDocMain : output file already specified" << endl;
-	cerr << this->getUsageDescription() << endl;
-	exit(EXIT_FAILURE);
+	std::cerr << "TestDocMain: output file already specified\n";
+	std::cerr << this->getUsageDescription() << '\n';
+	std::exit(EXIT_FAILURE);
       }
     } // end of TestDocMain::treatUnknownArgument
 
@@ -222,11 +215,10 @@ namespace tfel
 
     void TestDocMain::treatLogFile()
     {
-      using namespace std;
       if(!this->logFile.empty()){
-	cerr << "TestDocMain : log file already specified" << endl;
-	cerr << this->getUsageDescription() << endl;
-	exit(EXIT_FAILURE);
+	std::cerr << "TestDocMain: log file already specified\n";
+	std::cerr << this->getUsageDescription() << '\n';
+	std::exit(EXIT_FAILURE);
       }
       this->logFile = this->currentArgument->getOption();
       raise_if(this->logFile.empty(),
@@ -236,10 +228,9 @@ namespace tfel
 
     void TestDocMain::treatPrefix()
     {
-      using namespace std;
       if(!this->opts.prefix.empty()){
-	cerr << "TestDocMain : prefix already specified" << endl;
-	cerr << this->getUsageDescription() << endl;
+	std::cerr << "TestDocMain: prefix already specified\n";
+	std::cerr << this->getUsageDescription() << '\n';
 	exit(EXIT_FAILURE);
       }
       this->opts.prefix = this->currentArgument->getOption();
@@ -250,10 +241,9 @@ namespace tfel
 
     void TestDocMain::treatSrc()
     {
-      using namespace std;
       if(!this->srcdir.empty()){
-	cerr << "TestDocMain : srcdir file already specified" << endl;
-	cerr << this->getUsageDescription() << endl;
+	std::cerr << "TestDocMain: srcdir file already specified\n";
+	std::cerr << this->getUsageDescription() << '\n';
 	exit(EXIT_FAILURE);
       }
       this->srcdir = this->currentArgument->getOption();
@@ -264,10 +254,9 @@ namespace tfel
 
     void TestDocMain::treatLang()
     {
-      using namespace std;
       if(!this->opts.lang.empty()){
-	cerr << "TestDocMain : lang file already specified" << endl;
-	cerr << this->getUsageDescription() << endl;
+	std::cerr << "TestDocMain: lang file already specified\n";
+	std::cerr << this->getUsageDescription() << '\n';
 	exit(EXIT_FAILURE);
       }
       this->opts.lang = this->currentArgument->getOption();
@@ -298,18 +287,17 @@ namespace tfel
     
     std::string TestDocMain::getUsageDescription() const
     {
-      return "Usage : tfel-doc [options] output";
+      return "Usage: tfel-doc [options] output";
     }
 
     int TestDocMain::execute()
     {
-      using namespace std;
       using namespace tfel::system;
       auto chdir = [](const std::string& d){
 	try{
 	  systemCall::changeCurrentWorkingDirectory(d);
 	} catch(std::exception& e){
-	  raise("TestDocMain::execute : "
+	  raise("TestDocMain::execute: "
 		"can't move to directory '"+d+"\' ("+
 		std::string(e.what())+")'");
 	}
@@ -326,7 +314,7 @@ namespace tfel
 	chdir(this->srcdir);
       }
       // all the tests, sorted by category
-      auto tests = map<string,vector<TestDocumentation>>{};
+      auto tests = std::map<std::string,std::vector<TestDocumentation>>{};
       // testdoc files
       parse_files<TestDocParser>(*(this->log),tests,"testdoc");
       if(this->mtest){
@@ -343,11 +331,12 @@ namespace tfel
 	writeMarkdownFile(this->output,tests,this->opts);
       }
       // a short summary
-      auto count = map<string,vector<TestDocumentation>>::size_type{0u};
+      auto count = std::vector<TestDocumentation>::size_type{0u};
       for(const auto& t : tests){
 	count += t.second.size();
       }
-      *(this->log) << count << " tests treated in " <<  tests.size() << " categories" << endl;
+      *(this->log) << count << " tests treated in "
+		   <<  tests.size() << " categories\n";
       return EXIT_SUCCESS;
     }
 

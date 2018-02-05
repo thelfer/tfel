@@ -60,16 +60,11 @@ namespace tfel
 				      const std::string& n,
 				      const TestResult& r)
     {
-      using namespace std;
       const char red[5]   = {033,'[','3','1','m'};
       const char reset[4] = {033,'[','0','m'};
-      TestResult::const_iterator p;
-      string out;
-      out += "Result of test '";
-      out += n;
-      out += "' ";
+      auto out =  "Result of test '"+n+"'";
       if(!g.empty()){
-	out += "of group '"+g+"' ";
+	out += " of group '"+g+"'";
       }
       if(out.size()<65){
 	out.resize(65,' ');
@@ -77,31 +72,28 @@ namespace tfel
 	out = out.substr(0,65);
       }
       if(r.success()){
-	this->os << out << ": SUCCESS" << endl;
+	this->os << out << ": SUCCESS\n";
       } else {
 	this->os << out << ": ";
 	if(this->colorOutput){
 	  this->os.write(red,sizeof(red));
 	}
-	this->os << "FAILED" << endl;
+	this->os << "FAILED\n";
 	if(this->colorOutput){
 	  this->os.write(reset,sizeof(reset));
 	}
       }
-      for(p=r.begin();p!=r.end();++p){
-	this->treatTest(*p,"* ");
+      for(const auto& t : r){
+	this->treatTest(t,"* ");
       }
     } // end of StdStreamTestOutput::addTest
 
-    void
-    StdStreamTestOutput::treatTest(const TestResult& r,
-				   const std::string& s)
+    void StdStreamTestOutput::treatTest(const TestResult& r,
+					const std::string& s)
     {
-      using namespace std;
       const char red[5]   = {033,'[','3','1','m'};
       const char reset[4] = {033,'[','0','m'};
-      TestResult::const_iterator p;
-      string out(s);
+      auto out = s;
       out += r.details();
       if(out.size()<65){
 	out.resize(65,' ');
@@ -109,44 +101,37 @@ namespace tfel
 	out = out.substr(0,65);
       }
       if(r.success()){
-	this->os << out << ": SUCCESS" << endl;
+	this->os << out << ": SUCCESS\n";
       } else {
 	this->os << out << ": ";
 	if(this->colorOutput){
 	  this->os.write(red,sizeof(red));
 	}
-	this->os << "FAILED" << endl;
-	this->os << r.details() << endl;
+	this->os << "FAILED\n";
+	this->os << r.details() << '\n';
 	if(this->colorOutput){
 	  this->os.write(reset,sizeof(reset));
 	}
       }
-      for(p=r.begin();p!=r.end();++p){
-	this->treatTest(*p,s+'*');
+      for(const auto& t : r){
+	this->treatTest(t,s+'*');
       }
     } // end of StdStreamTestOutput::treatTest
-
      
-    void
-    StdStreamTestOutput::endTestSuite(const TestResult& r)
+    void StdStreamTestOutput::endTestSuite(const TestResult& r)
     {
-      using namespace std;
       const char red[5]   = {033,'[','3','1','m'};
       const char reset[4] = {033,'[','0','m'};
-      string out("End of Test Suite ");
-      if(out.size()<65){
-	out.resize(65,' ');
-      } else {
-	out = out.substr(0,65);
-      }
+      auto out = std::string("End of Test Suite");
+      out.resize(65,' ');
       this->os << out << ": ";
       if(r.success()){
-	this-> os << "SUCCESS" << endl;
+	this-> os << "SUCCESS\n";
       } else {
 	if(this->colorOutput){
 	  this->os.write(red,sizeof(red));
 	}
-	this->os << "FAILED" << endl;
+	this->os << "FAILED\n";
 	if(this->colorOutput){
 	  this->os.write(reset,sizeof(reset));
 	}

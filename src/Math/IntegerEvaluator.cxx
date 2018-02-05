@@ -53,10 +53,10 @@ namespace tfel
     template<typename T>
     bool IntegerEvaluator::convert(const std::string& value)
     {
-      using namespace std;
       T res;
       std::istringstream is(value);
-      if((value=="+")||(value=="-")||(value=="*")||(value=="/")||(value==".")){
+      if((value=="+")||(value=="-")||(value=="*")||
+	 (value=="/")||(value==".")){
 	return false;
       }
       is >> res;
@@ -72,14 +72,12 @@ namespace tfel
     IntegerEvaluator::analyseParameters(std::vector<std::string>::const_iterator& p,
 				 const std::vector<std::string>::const_iterator  pe)
     {
-      using namespace std;
-      vector<string> params;
-      string::const_iterator ps;
+      std::vector<std::string> params;
       checkNotEndOfExpression("IntegerEvaluator::analyseParameters",p,pe);
       while(*p!=">"){
 	// check parameter validity
-	for(ps=p->begin();ps!=p->end();++ps){
-	  raise_if(!(isalpha(*ps)||isdigit(*ps))||(*ps=='_')||(*ps=='-'),
+	for(const auto c : *p){
+	  raise_if(!(isalpha(c)||isdigit(c))||(c=='_')||(c=='-'),
 		   "IntegerEvaluator::analyseParameters: "
 		   "invalid parameter '"+*p+"'");
 	}

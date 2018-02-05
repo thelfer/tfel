@@ -11,9 +11,7 @@
  * project under specific licensing conditions. 
  */
 
-
 #include<chrono>
-#include<iostream>
 #include<stdexcept>
 
 #include"TFEL/Tests/TestSuite.hxx"
@@ -46,7 +44,6 @@ namespace tfel
 
     TestResult TestSuite::execute()
     {
-      using namespace std;
       using namespace std::chrono;
       TestResult r;
       for(const auto& t : this->tests){
@@ -54,18 +51,12 @@ namespace tfel
 	const auto start = high_resolution_clock::now();
 	try{
 	  r1 = t->execute();
-	} catch(exception& e){
-	  string msg("test '"+t->name());
-	  msg += "' has thrown an exception (";
-	  msg += e.what();
-	  msg += ")";
-	  cerr << msg << endl;
-	  r1 = TestResult(false,msg);
+	} catch(std::exception& e){
+	  r1 = TestResult(false,"test '"+t->name()+"' has thrown "
+			  "an exception ("+std::string(e.what())+")");
 	} catch(...){
-	  string msg("test '"+t->name());
-	  msg += "' has thrown an unknown exception";
-	  cerr << msg << endl;
-	  r1 = TestResult(false,msg);
+	  r1 = TestResult(false,"test '"+t->name()+"' has thrown "
+			  "an unknown exception");
 	}
 	const auto stop = high_resolution_clock::now();
 	const auto nsec = duration_cast<nanoseconds>(stop-start).count();
@@ -77,11 +68,10 @@ namespace tfel
 
     TestResult TestSuite::execute(TestOutput& o)
     {
-      using namespace std;
       using namespace std::chrono;
       o.beginTestSuite(this->name());
       TestResult r;
-      bool success =true;
+      auto success = true;
       for(const auto& t : this->tests){
 	TestResult r1;
 	const auto start = high_resolution_clock::now();
@@ -90,19 +80,13 @@ namespace tfel
 	  if(!r1.success()){
 	    success = false;
 	  }
-	} catch(exception& e){
-	  string msg("test '"+t->name());
-	  msg += "' has thrown an exception (";
-	  msg += e.what();
-	  msg += ")";
-	  cerr << msg << endl;
-	  r1 = TestResult(false,msg);
+	} catch(std::exception& e){
+	  r1 = TestResult(false,"test '"+t->name()+"' has thrown an exception "
+			  "("+std::string(e.what())+")");
 	  success = false;
 	} catch(...){
-	  string msg("test '"+t->name());
-	  msg += "' has thrown an unknown exception";
-	  cerr << msg << endl;
-	  r1 = TestResult(false,msg);
+	  r1 = TestResult(false,"test '"+t->name()+"' has thrown an "
+			  "unknown exception");
 	  success = false;
 	}
 	const auto stop = high_resolution_clock::now();

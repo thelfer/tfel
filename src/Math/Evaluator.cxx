@@ -86,16 +86,17 @@ namespace tfel
     Evaluator::convertToUnsignedShort(const std::string& method,
 				      const std::string& value)
     {
-      using namespace std;
-      string::const_iterator ps;
-      istringstream converter(value);
-      for(ps=value.begin();ps!=value.end();++ps){
-	raise_if(!isdigit(*ps),method+" : invalid entry");
+      for(const auto c : value){
+	if(!isdigit(c)){
+	  tfel::raise(method+" : invalid entry");
+	}
       }
+      std::istringstream converter(value);
       unsigned short u;
       converter >> u;
-      raise_if(!converter||(!converter.eof()),
-	       method+": not read value from token '"+value+"'");
+      if((!converter)||(!converter.eof())){
+	tfel::raise(method+": not read value from token '"+value+"'");
+      }
       return u;
     } // end of Evaluator::convertToUnsignedShort
 
@@ -103,30 +104,34 @@ namespace tfel
     Evaluator::convertToUnsignedInt(const std::string& method,
 				    const std::string& value)
     {
-      std::string::const_iterator ps;
-      std::istringstream converter(value);
-      for(ps=value.begin();ps!=value.end();++ps){
-	raise_if(!isdigit(*ps),method+" : invalid entry");
+      for(const auto c : value){
+	if(!isdigit(c)){
+	  tfel::raise(method+": invalid entry");
+	}
       }
+      std::istringstream converter(value);
       unsigned int u;
       converter >> u;
-      raise_if(!converter||(!converter.eof()),
-	       method+": not read value from token '"+value+"'");
+      if(!converter||(!converter.eof())){
+	tfel::raise(method+": not read value from token '"+value+"'");
+      }
       return u;
     } // end of Evaluator::convertToUnsignedInt
 
     int Evaluator::convertToInt(const std::string& method,
 				const std::string& value)
     {
-      std::string::const_iterator ps;
       std::istringstream converter(value);
-      for(ps=value.begin();ps!=value.end();++ps){
-	raise_if(!isdigit(*ps),method+" : invalid entry");
+      for(const auto c : value){
+	if(!isdigit(c)){
+	  tfel::raise(method+": invalid entry");
+	}
       }
       int u;
       converter >> u;
-      raise_if(!converter||(!converter.eof()),
-	       method+": not read value from token '"+value+"'");
+      if(!converter||(!converter.eof())){
+	tfel::raise(method+": not read value from token '"+value+"'");
+      }
       return u;
     } // end of Evaluator::convertToInt
 
@@ -642,7 +647,6 @@ namespace tfel
     Evaluator::countNumberOfArguments(std::vector<std::string>::const_iterator p,
 				      const std::vector<std::string>::const_iterator pe)
     {
-      using namespace std;
       unsigned short opened = 1;
       unsigned short nbr = 1;
       Evaluator::checkNotEndOfExpression("Evaluator::countNumberOfArguments",p,pe);
@@ -664,7 +668,7 @@ namespace tfel
 	}
 	++p;
       }
-      ostringstream msg;
+      std::ostringstream msg;
       if(opened==1){
 	msg << "Evaluator::countNumberOfArguments : group ended while " 
 	    << "a parenthesis was still opened";
@@ -716,16 +720,15 @@ namespace tfel
 				      const std::vector<std::string>::const_iterator pe,
 				      const bool b)
     {
-      using namespace std;
       using namespace tfel::math::parser;
       auto throw_if = [](const bool c, const std::string& m){
 	raise_if(c,"Evaluator::treatLogicalExpression: "+m);
       };
-      vector<string>::const_iterator pb(p);           
-      vector<string>::const_iterator pbe(pe);
+      auto pb  = p;
+      auto pbe = pe;
       checkNotEndOfExpression("Evaluator::treatLogicalExpression",pb,pbe);
-      auto pa = this->search(pb,pbe,"&&","");
-      auto po = this->search(pb,pbe,"||","");
+      const auto pa = this->search(pb,pbe,"&&","");
+      const auto po = this->search(pb,pbe,"||","");
       if((pa.second!=pe)||(po.second!=pe)){
 	auto pt = pa.first ? pa.second : po.second;
 	throw_if(pt==pb,"no left logical expression");
@@ -758,15 +761,11 @@ namespace tfel
     Evaluator::searchComparisonOperator(const std::vector<std::string>::const_iterator pb,
 					const std::vector<std::string>::const_iterator pe)
     {
-      using namespace std;
       unsigned short openedParenthesis = 0;
       bool found = false;
       bool test;
-      map<string,Evaluator::ExternalFunctionGenerator>::const_iterator peo;
-      vector<string>::const_iterator prev;
-      vector<string>::const_iterator p;
-      vector<string>::const_iterator po;
-      p = pb;
+      auto p = pb;
+      std::vector<std::string>::const_iterator po;
       while(p!=pe){
 	if(*p=="("){
 	  ++openedParenthesis;
@@ -781,10 +780,10 @@ namespace tfel
 	  if((*p=="==")||(*p=="<=")||
 	     (*p==">")||(*p==">=")){
 	    if(found){
-	      ostringstream msg;
+	      std::ostringstream msg;
 	      msg << "Evaluator::treatLogicalExpression : "
 		  << "more than one logical operator found (error while parsing '";
-	      copy(pb,pe,ostream_iterator<string>(msg," "));
+	      std::copy(pb,pe,std::ostream_iterator<std::string>(msg," "));
 	      msg << "')";
 	      raise(msg.str());
 	    }
@@ -793,15 +792,15 @@ namespace tfel
 	  }
 	  if(*p=="<"){
 	    if(p==pb){
-	      ostringstream msg;
+	      std::ostringstream msg;
 	      msg << "Evaluator::treatLogicalExpression : "
 		  << "no left part to logical operator (error while parsing '";
-	      copy(p,pe,ostream_iterator<string>(msg," "));
+	      std::copy(p,pe,std::ostream_iterator<std::string>(msg," "));
 	      msg << "')";
 	      raise(msg.str());
 	    }
-	    prev = p-1;
-	    peo = Evaluator::getFunctionGeneratorManager().extOpGenerators.find(*prev);
+	    auto prev = p-1;
+	    auto peo = Evaluator::getFunctionGeneratorManager().extOpGenerators.find(*prev);
 	    if(peo!=Evaluator::getFunctionGeneratorManager().extOpGenerators.end()){
 	      ++p;
 	      Evaluator::checkNotEndOfExpression("Evaluator::searchComparisonOperator",p,pe);
@@ -818,10 +817,11 @@ namespace tfel
 	      ++openedParenthesis;
 	    } else {
 	      if(found){
-		ostringstream msg;
+		std::ostringstream msg;
 		msg << "Evaluator::treatLogicalExpression : "
-		    << "more than one logical operator found (error while parsing '";
-		copy(pb,pe,ostream_iterator<string>(msg," "));
+		    << "more than one logical operator found "
+		    << "(error while parsing '";
+		std::copy(pb,pe,std::ostream_iterator<std::string>(msg," "));
 		msg << "')";
 		raise(msg.str());
 	      }
@@ -833,26 +833,26 @@ namespace tfel
 	++p;
       }
       if(!found){
-	ostringstream msg;
+	std::ostringstream msg;
 	msg << "Evaluator::treatLogicalExpression : "
 	    << "no logical operator found (error while parsing '";
-	copy(pb,pe,ostream_iterator<string>(msg," "));
+	std::copy(pb,pe,std::ostream_iterator<std::string>(msg," "));
 	msg << "')";
 	raise(msg.str());
       }
       if(po==pb){
-	ostringstream msg;
+	std::ostringstream msg;
 	msg << "Evaluator::treatLogicalExpression : "
 	    << "no left part to logical operator (error while parsing '";
-	copy(p,pe,ostream_iterator<string>(msg," "));
+	std::copy(p,pe,std::ostream_iterator<std::string>(msg," "));
 	msg << "')";
 	raise(msg.str());
       }
       if(po+1==pe){
-	ostringstream msg;
+	std::ostringstream msg;
 	msg << "Evaluator::treatLogicalExpression : "
 	    << "no right part to logical operator (error while parsing '";
-	copy(pb,pe,ostream_iterator<string>(msg," "));
+	std::copy(pb,pe,std::ostream_iterator<std::string>(msg," "));
 	msg << "')";
 	raise(msg.str());
       }
@@ -891,7 +891,6 @@ namespace tfel
 			  const bool b,
 			  const std::string& s)
     {
-      using namespace std;
       using namespace tfel::math::parser;
       auto throw_if = [](const bool c, const std::string& m){
 	raise_if(c,"Evaluator::treatGroup: "+m);

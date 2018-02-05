@@ -42,11 +42,9 @@ namespace tfel
       return this->tname;
     } // end of TestCase::~TestCase
     
-    void
-    TestCase::registerResult(const std::string& n,
-			     const bool b)
+    void TestCase::registerResult(const std::string& n,
+				  const bool b)
     {
-      using namespace std;
       this->result.append(TestResult(b,n));
     } // end of TestCase::registerResult    
 

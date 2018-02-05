@@ -138,15 +138,14 @@ namespace tfel
       return s;
     } // end of systemCall::dirStringSeparator
 
-    void
-    systemCall::throwSystemError(const std::string& errMsg,
-				 const int errNbr)
+    void systemCall::throwSystemError(const std::string& errMsg,
+				      const int errNbr)
     {
-      using namespace std;
-      string err = strerror(errNbr);
-      transform(err.begin(),err.end(),err.begin(),ptr_fun(::tolower));
-      string msg(errMsg);
-      msg += " (system error : ";
+      std::string err = strerror(errNbr);
+      std::transform(err.begin(),err.end(),err.begin(),
+		     std::ptr_fun(::tolower));
+      auto msg = errMsg;
+      msg += " (system error: ";
       msg += err;
       msg += ")";
       switch(errNbr){
@@ -227,15 +226,13 @@ namespace tfel
       }
     } // end of throwSystemError
 
-    std::vector<std::string>
-    systemCall::tokenize(const std::string& s,
-			 const char c)
+    std::vector<std::string> systemCall::tokenize(const std::string& s,
+						  const char c)
     {
-      using namespace std;
-      vector<string> res;
-      string::size_type b = 0u;
-      string::size_type e = s.find_first_of(c, b);
-      while (string::npos != e || string::npos != b){
+      std::vector<std::string> res;
+      std::string::size_type b = 0u;
+      auto e = s.find_first_of(c, b);
+      while (std::string::npos != e || std::string::npos != b){
 	// Found a token, add it to the vector.
 	res.push_back(s.substr(b, e - b));
 	b = s.find_first_not_of(c, e);
@@ -248,11 +245,10 @@ namespace tfel
     systemCall::tokenize(const std::string& s,
 			 const std::string& delim)
     {
-      using namespace std;
-      vector<string> res;
-      string::size_type b = 0u;
-      string::size_type e = s.find_first_of(delim, b);
-      while (string::npos != e || string::npos != b){
+      std::vector<std::string> res;
+      std::string::size_type b = 0u;
+      auto e = s.find_first_of(delim, b);
+      while (std::string::npos != e || std::string::npos != b){
 	// Found a token, add it to the vector.
 	res.push_back(s.substr(b, e - b));
 	b = s.find_first_not_of(delim, e);
@@ -261,11 +257,9 @@ namespace tfel
       return res;
     } // end of systemCall::tokenize
 
-    void
-    systemCall::copy(const std::string& src,
-		     const std::string& dest)
+    void systemCall::copy(const std::string& src,
+			  const std::string& dest)
     {
-      using namespace std;
       struct stat srcInfos;
       struct stat destInfos;
       bool destStatus;
@@ -273,12 +267,14 @@ namespace tfel
 	return;
       }
       if(::stat(src.c_str(),&srcInfos)==-1){
-	systemCall::throwSystemError("systemCall::copy : can't stat file "+src,errno);
+	systemCall::throwSystemError("systemCall::copy: "
+				     "can't stat file '"+src+"'",errno);
       }
       destStatus=::stat(dest.c_str(),&destInfos)==0;
       if(!destStatus){
 	if(errno!=ENOENT){
-	  systemCall::throwSystemError("systemCall::copy : can't stat file "+dest,errno);
+	  systemCall::throwSystemError("systemCall::copy: "
+				       "can't stat file '"+dest+"'",errno);
 	}
       }
       if(S_ISDIR(srcInfos.st_mode)){
@@ -286,9 +282,10 @@ namespace tfel
 	if(destStatus){
 	  // the destination exist, it shall be a directory
 	  if(!S_ISDIR(destInfos.st_mode)){
-	    throw(SystemError("systemCall::copy : can't copy directory '"+
-			      src+"' on "+systemCall::fileType(destInfos.st_mode)
-			      +" '"+dest+"'."));
+	    tfel::raise<SystemError>("systemCall::copy: can't copy "
+				     "directory '"+src+"' on "+
+				     systemCall::fileType(destInfos.st_mode)
+				     +" '"+dest+"'.");
 	  }
 	  systemCall::copyDirectory(src,dest,true);
 	  return;
@@ -311,8 +308,10 @@ namespace tfel
 	    systemCall::copyFile(src, dest);
 	    return;
 	  }
-	  throw(SystemError("systemCall::copy : can't copy file '" + src + "' on " +
-			    systemCall::fileType(destInfos.st_mode) + " '" + dest + "'."));
+	  tfel::raise<SystemError>("systemCall::copy: can't copy file "
+				   "'" + src + "' on " +
+				   systemCall::fileType(destInfos.st_mode)+
+				   " '"+ dest+ "'.");
 	}
 	// destination don't exist, trying to copy to it
 	systemCall::copyFile(src, dest);
@@ -320,26 +319,23 @@ namespace tfel
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
 	  }
 #else
-	  } else if(S_ISCHR(destInfos.st_mode)||S_ISBLK(destInfos.st_mode)||
-		S_ISFIFO(destInfos.st_mode)){
-	string msg("systemCall::copy : can't copy object of type "+
-		   systemCall::fileType(destInfos.st_mode));	
-	throw(SystemError(msg));
-      }
+    } else if(S_ISCHR(destInfos.st_mode)||S_ISBLK(destInfos.st_mode)||
+	      S_ISFIFO(destInfos.st_mode)){
+      tfel::raise<SystemError>("systemCall::copy: can't copy object of type "+
+			       systemCall::fileType(destInfos.st_mode));	
+    }
 #endif /* defined _WIN32 || _WIN64 */      
-	} // end of systemCall::copy
-
+  } // end of systemCall::copy
+  
 #if defined _WIN32 || defined _WIN64
     void systemCall::mkdir(const std::string& dir)
 #else 
     void systemCall::mkdir(const std::string& dir,const mode_t mode)
 #endif /* defined _WIN32 || _WIN64 */      
     {
-      using namespace std;
-      string path;
+      std::string path;
       const auto& paths = systemCall::tokenize(dir,'/');
-      vector<string>::const_iterator p;
-      for(p=paths.begin();p!=paths.end();++p){
+      for(auto p=paths.begin();p!=paths.end();++p){
 	if(!path.empty()){
 	  path+="/"+*p;	  
 	} else {
@@ -362,20 +358,19 @@ namespace tfel
 		    return;
 		  }
 		} else {
-		  systemCall::throwSystemError("systemCall::mkdir : can't stat file '"+*p+"'",errno);
+		  systemCall::throwSystemError("systemCall::mkdir: can't stat file '"+*p+"'",errno);
 		}
 	      }
-	      systemCall::throwSystemError("systemCall::mkdir : can't create directory '"+dir+"'",errno);
+	      systemCall::throwSystemError("systemCall::mkdir: can't create directory '"+dir+"'",errno);
 	    }
 	  } else {
-	    systemCall::throwSystemError("systemCall::mkdir : can't stat file '"+*p+"'",errno);
+	    systemCall::throwSystemError("systemCall::mkdir: can't stat file '"+*p+"'",errno);
 	  }
 	} else {
 	  // the path is valid, check if it is a directory
 	  if(!S_ISDIR(infos.st_mode)){
-	    string msg("systemCall::mkdir : '");
-	    msg += path+"' exists and is not a directory.";
-	    throw(SystemError(msg));
+	    tfel::raise<SystemError>("systemCall::mkdir: '"+path+"' exists "
+				     "and is not a directory.");
 	  }
 	}
       }
@@ -384,7 +379,7 @@ namespace tfel
     void systemCall::unlink(const std::string& f)
     {
       if(::unlink(f.c_str())!=0){
-	systemCall::throwSystemError("systemCall::unlink : can't unlink file "+f,errno);
+	systemCall::throwSystemError("systemCall::unlink: can't unlink file "+f,errno);
       }
     } // end of systemCall::unlinkx
 
@@ -393,11 +388,11 @@ namespace tfel
 #if defined _WIN32 || defined _WIN64 
       System_rmdir(d);
 #else
-      using namespace std;
       struct stat dInfos;
-      vector<string> o;
+      std::vector<std::string> o;
       if(::stat(d.c_str(),&dInfos)==-1){
-	systemCall::throwSystemError("systemCall::rmdir : can't stat directory "+d,errno);
+	systemCall::throwSystemError("systemCall::rmdir: "
+				     "can't stat directory "+d,errno);
       }
       raise_if(!S_ISDIR(dInfos.st_mode),"systemCall::rmdir: "
 	       "'"+d+"' is not a directory");
@@ -441,7 +436,6 @@ namespace tfel
        * 2ème édition, 2005, Eyrolles
        * page 5009
        */ 
-      using namespace std;
       auto b = static_cast<const unsigned char*>(v);
       size_t  r = s;
       raise_if<SystemError>(s>=SSIZE_MAX,"systemCall::write: "
@@ -554,7 +548,6 @@ namespace tfel
     
     std::string systemCall::getCurrentWorkingDirectory()
     {
-      using namespace std;
       char *name  = nullptr;
       size_t size = 16u;
       while(1){
@@ -586,7 +579,6 @@ namespace tfel
 #if !(defined _WIN32 || defined _WIN64 )
     std::string systemCall::getHostName()
     {
-      using namespace std;
       char *name  = nullptr;
       size_t size = 16u;
       while(true){
@@ -634,15 +626,14 @@ namespace tfel
 #endif  /* (defined _WIN32 || defined _WIN64 ) && (! defined __CYGWIN__) */
     } // end of systemCall::getAbsolutePath
     
-    void
-    systemCall::changeCurrentWorkingDirectory(const std::string& name)
+    void  systemCall::changeCurrentWorkingDirectory(const std::string& name)
     {
 #if defined _WIN32 || defined _WIN64 
       if(_chdir(name.c_str())==-1){
 #else
       if (::chdir(name.c_str()) == -1) {
 #endif
-      systemCall::throwSystemError("systemCall::changeCurrentWorkingDirectory : "
+      systemCall::throwSystemError("systemCall::changeCurrentWorkingDirectory: "
 				   "can't change to directory "+name+".",errno);
       }
     } // end of systemCall::changeCurrentWorkingDirectory

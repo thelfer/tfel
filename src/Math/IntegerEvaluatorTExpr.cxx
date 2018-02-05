@@ -272,20 +272,17 @@ namespace tfel
 
     void IntegerEvaluator::TGroup::reduce(const std::string& op)
     {
-      using namespace std;
       using namespace tfel::math::parser;
       auto throw_if = [](const bool b, const std::string& m){
 	raise_if(b,"IntegerEvaluator::TGroup::reduce: "+m);
       };
       auto p  = this->subExpr.begin();
-      vector<shared_ptr<IntegerEvaluator::TExpr> >::iterator previous;
-      vector<shared_ptr<IntegerEvaluator::TExpr> >::iterator next;
       while(p!=this->subExpr.end()){
 	if ((*p)->isOperator()) {
-	  auto o = make_shared<TOperator>(static_cast<const TOperator &>(*(p->get())));
+	  auto o = std::make_shared<TOperator>(static_cast<const TOperator &>(*(p->get())));
 	  if(o->getOperatorType()==op){
-	    previous = p-1;
-	    next     = p+1;
+	    auto previous = p-1;
+	    auto next     = p+1;
 	    if(p==this->subExpr.begin()){
 	      if(op!="-"){
 		throw_if(true,"group began with an operator '"+op+"'");
@@ -301,7 +298,7 @@ namespace tfel
 	      throw_if(next==this->subExpr.end(),"group ends by operator '"+op+"'");
 	      if((*previous)->isOperator()){
 		throw_if(op!="-","group two successive operators");
-		auto po = shared_ptr<TOperator>(dynamic_cast<TOperator *>(previous->get()));
+		auto po = std::shared_ptr<TOperator>(dynamic_cast<TOperator *>(previous->get()));
 		throw_if(po->getOperatorType()!="+","group two successive operators");
 		throw_if((*next)->isOperator(),"group three successive operators");
 		*p = std::make_shared<TNegation>(*next);

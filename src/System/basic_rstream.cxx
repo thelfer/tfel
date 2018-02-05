@@ -18,6 +18,7 @@
 
 #include<unistd.h>
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/System/basic_rstream.hxx"
 #include"TFEL/System/System.hxx"
 
@@ -30,15 +31,16 @@ namespace tfel
     void
     BlockingStreamReader::read(int fd,void *const buf,const size_t count)
     {
-      using namespace std;
       ssize_t rread;
-      if(count>static_cast<size_t>(numeric_limits<ssize_t>::max())){
-	throw(SystemError("BlockingStreamReader::read : number of bytes to be read too high"));
+      if(count>static_cast<size_t>(std::numeric_limits<ssize_t>::max())){
+	tfel::raise<SystemError>("BlockingStreamReader::read: "
+				 "number of bytes to be read too high");
       }
       rread=::read(fd,buf,count);
       while(rread==-1){
 	if(errno!=EINTR){
-	  systemCall::throwSystemError("BlockingStreamReader::read : read failed",errno);
+	  systemCall::throwSystemError("BlockingStreamReader::read: "
+				       "read failed",errno);
 	}
 	rread=::read(fd,buf,count);
       }
@@ -47,15 +49,16 @@ namespace tfel
     void
     NonBlockingStreamReader::read(int fd,void *const buf,const size_t count)
     {
-      using namespace std;
       ssize_t rread;
-      if(count>static_cast<size_t>(numeric_limits<ssize_t>::max())){
-	throw(SystemError("NonBlockingStreamReader::read : number of bytes to be read too high"));
+      if(count>static_cast<size_t>(std::numeric_limits<ssize_t>::max())){
+	tfel::raise<SystemError>("NonBlockingStreamReader::read: "
+				 "number of bytes to be read too high");
       }
       rread=::read(fd,buf,count);
       while(rread==-1){
 	if(errno!=EINTR){
-	  systemCall::throwSystemError("BlockingStreamReader::read : read failed",errno);
+	  systemCall::throwSystemError("BlockingStreamReader::read: "
+				       "read failed",errno);
 	}
 	rread=::read(fd,buf,count);
       }

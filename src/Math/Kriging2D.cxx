@@ -24,11 +24,6 @@ namespace tfel
 			 const std::vector<double>& vy,
 			 const std::vector<double>& vz)
     {
-      using namespace std;
-      using tfel::math::tvector;
-      vector<double>::const_iterator px;
-      vector<double>::const_iterator py;
-      vector<double>::const_iterator pz;
       tvector<2u,double> v;
       raise_if<KrigingErrorInvalidLength>((vx.size()!=vy.size())||
 					  (vx.size()!=vz.size()));
@@ -38,8 +33,10 @@ namespace tfel
       const auto n2 = KrigingUtilities::normalize(vy);
       this->a2 = n2.first;
       this->b2 = n2.second;
-      for(px=vx.begin(),py=vy.begin(),pz=vz.begin();
-	  px!=vx.end();++px,++py,++pz){
+      auto px=vx.begin();
+      auto py=vy.begin();
+      auto pz=vz.begin();
+      for(;px!=vx.end();++px,++py,++pz){
 	v(0)=this->a1*(*px)+this->b1;
 	v(1)=this->a2*(*py)+this->b2;
 	Kriging<2u,double>::addValue(v,*pz);
@@ -51,12 +48,6 @@ namespace tfel
 			 const tfel::math::vector<double>& vy,
 			 const tfel::math::vector<double>& vz)
     {
-      using namespace std;
-      using namespace tfel::math;
-      using tfel::math::vector;
-      vector<double>::const_iterator px;
-      vector<double>::const_iterator py;
-      vector<double>::const_iterator pz;
       tvector<2u,double> v;
       raise_if<KrigingErrorInvalidLength>((vx.size()!=vy.size())||
 					  (vx.size()!=vz.size()));
@@ -66,8 +57,10 @@ namespace tfel
       const auto n2 = KrigingUtilities::normalize(vy);
       this->a2 = n2.first;
       this->b2 = n2.second;
-      for(px=vx.begin(),py=vy.begin(),pz=vz.begin();
-	  px!=vx.end();++px,++py,++pz){
+      auto px=vx.begin();
+      auto py=vy.begin();
+      auto pz=vz.begin();
+      for(;px!=vx.end();++px,++py,++pz){
 	v(0)=this->a1*(*px)+this->b1;
 	v(1)=this->a2*(*py)+this->b2;
 	Kriging<2u,double>::addValue(v,*pz);
@@ -78,7 +71,6 @@ namespace tfel
     double Kriging2D::operator()(const double vx,
 				 const double vy) const
     {
-      using namespace tfel::math;
       tvector<2u,double> v;
       v(0)=this->a1*vx+this->b1;
       v(1)=this->a2*vy+this->b2;
