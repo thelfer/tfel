@@ -514,6 +514,7 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Utilities/ArgumentParserBase.hxx                                                        \
 			TFEL/Utilities/ArgumentParserBase.ixx                                                        \
 			TFEL/Utilities/CxxKeywords.hxx                                                               \
+			TFEL/Utilities/CxxTokenizerOptions.hxx                                                       \
 			TFEL/Utilities/CxxTokenizer.hxx                                                              \
 			TFEL/Utilities/CxxTokenizer.ixx                                                              \
 		 	TFEL/Utilities/Token.hxx                                                                     \

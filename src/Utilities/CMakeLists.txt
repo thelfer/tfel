@@ -8,6 +8,7 @@ set(TFELUtilities_SOURCES
     Data.cxx
     CxxKeywords.cxx
     TerminalColors.cxx
+    CxxTokenizerOptions.cxx
     CxxTokenizer.cxx
     Argument.cxx
     ArgumentParser.cxx)

@@ -1995,6 +1995,7 @@ include/TFEL/Utilities/ArgumentParserBase.ixx -text
 include/TFEL/Utilities/CxxKeywords.hxx -text
 include/TFEL/Utilities/CxxTokenizer.hxx -text
 include/TFEL/Utilities/CxxTokenizer.ixx -text
+include/TFEL/Utilities/CxxTokenizerOptions.hxx -text
 include/TFEL/Utilities/Data.hxx -text
 include/TFEL/Utilities/Data.ixx -text
 include/TFEL/Utilities/FCString.hxx -text
@@ -5834,6 +5835,7 @@ src/Utilities/ArgumentParserBase.cxx -text
 src/Utilities/CMakeLists.txt -text
 src/Utilities/CxxKeywords.cxx -text
 src/Utilities/CxxTokenizer.cxx -text
+src/Utilities/CxxTokenizerOptions.cxx -text
 src/Utilities/Data.cxx -text
 src/Utilities/GenTypeCastError.cxx -text
 src/Utilities/Makefile.am -text

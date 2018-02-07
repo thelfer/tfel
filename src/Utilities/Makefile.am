@@ -7,14 +7,15 @@ endif
 
 lib_LTLIBRARIES = libTFELUtilities.la 
 libTFELUtilities_la_SOURCES = TextData.cxx           \
-			      GenTypeCastError.cxx   \
-			      Token.cxx              \
-			      Data.cxx               \
-			      CxxKeywords.cxx        \
-			      CxxTokenizer.cxx       \
-			      TerminalColors.cxx     \
-			      StringAlgorithms.cxx   \
-			      Argument.cxx           \
+			      GenTypeCastError.cxx    \
+			      Token.cxx               \
+			      Data.cxx                \
+			      CxxKeywords.cxx         \
+			      CxxTokenizer.cxx        \
+			      CxxTokenizerOptions.cxx \
+			      TerminalColors.cxx      \
+			      StringAlgorithms.cxx    \
+			      Argument.cxx            \
 			      ArgumentParser.cxx 
 
 EXTRA_DIST = CMakeLists.txt
