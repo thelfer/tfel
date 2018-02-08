@@ -140,7 +140,7 @@ namespace mfront{
     if(mb.hasCode(h,BehaviourData::ComputeStress)){
       out << "this->computeStress();\n";
     }
-    out << "const bool computeFdF_ok = this->computeFdF();\n"
+    out << "const auto computeFdF_ok = this->computeFdF(false);\n"
 	<< "if(computeFdF_ok){\n"
 	<< "error=norm(this->fzeros)/(real(" << n2 << "));\n"
 	<< "}\n"
@@ -161,16 +161,12 @@ namespace mfront{
 	  << "::integrate() : computFdF returned false, dividing increment by two...\" << endl;\n";
     }
     out << "const real integrate_one_half = real(1)/real(2);\n"
-	<< "this->zeros -= (this->zeros-this->zeros_1)*integrate_one_half;\n"
-	<< "}\n"
-	<< "} else {\n"
-	<< "this->zeros_1  = this->zeros;\n";
-    if(!this->requiresNumericalJacobian()){
-      NonLinearSystemSolverBase::writeEvaluateNumericallyComputedBlocks(out,mb,h);
-      NonLinearSystemSolverBase::writeComparisonToNumericalJacobian(out,mb,h,"njacobian");
-    }
+        << "this->zeros -= (this->zeros-this->zeros_1)*integrate_one_half;\n"
+        << "}\n"
+        << "} else {\n"
+        << "this->zeros_1  = this->zeros;\n";
     out << "converged = error<this->epsilon;\n"
-	<< "this->additionalConvergenceChecks(converged,error);\n";
+        << "this->additionalConvergenceChecks(converged,error);\n";
     if(this->requiresNumericalJacobian()){
       // We compute the numerical jacobian even if we converged since
       // most of the time, this tangent operator will be computed
@@ -193,6 +189,12 @@ namespace mfront{
       } else {
 	out << "this->computeNumericalJacobian(this->jacobian);\n";
       }	
+      out << "}\n";
+    }
+    if(mb.hasAttribute(h,BehaviourData::numericallyComputedJacobianBlocks)){
+      out << "if((!converged)||(smt!=NOSTIFFNESSREQUESTED)){\n";
+      NonLinearSystemSolverBase::writeEvaluateNumericallyComputedBlocks(out,mb,h);
+      NonLinearSystemSolverBase::writeComparisonToNumericalJacobian(out,mb,h,"njacobian");
       out << "}\n";
     }
     if(getDebugMode()){

@@ -249,27 +249,26 @@ namespace mfront{
     /*!
      * mode used when inserting code
      */
-    enum Mode
-    {
-      CREATE,               /*!< create a code block. Return an error
-			      if if fails */
-      CREATEORREPLACE,      /*!< create a code block or replace 
-			     *   it if it already exists. If the
-			     *   code is to be replaced, all 
-			     *   positions are cleard. This applies
-			     *   to the whole code block and not only
-			     *   to specific positions */
-      CREATEORAPPEND,       /*!< create a code block or append 
-			     *   a code block to an existing one */
-      CREATEBUTDONTREPLACE  /*!< create a code block but don't replace 
-			     *   it if it already exists. This applies
-			     *   to the whole code block and not only
-			     *   to specific positions. This option
-			     *   is meant to be used internally and
-			     *   is not accessible from a mfront file*/
-    }; // end of enum Mode
+    enum Mode {
+      CREATE,              /*!< create a code block. Return an error
+                             if if fails */
+      CREATEORREPLACE,     /*!< create a code block or replace
+                            *   it if it already exists. If the
+                            *   code is to be replaced, all
+                            *   positions are cleard. This applies
+                            *   to the whole code block and not only
+                            *   to specific positions */
+      CREATEORAPPEND,      /*!< create a code block or append
+                            *   a code block to an existing one */
+      CREATEBUTDONTREPLACE /*!< create a code block but don't replace
+                            *   it if it already exists. This applies
+                            *   to the whole code block and not only
+                            *   to specific positions. This option
+                            *   is meant to be used internally and
+                            *   is not accessible from a mfront file*/
+    };                     // end of enum Mode
     /*!
-     * position of the inserted code
+     * \brief position of the inserted code
      */
     enum Position
     {

@@ -103,33 +103,13 @@ namespace tfel {
       auto throw_if = [](const bool b, const std::string &m) {
         raise_if(b, "CxxTokenizer::parseStream: " + m);
       };
-      auto get_line = [&throw_if](std::istream &file,
-                                  Token::size_type &ln) -> std::string {
-        auto line = std::string{};
-        auto c = true;
-        while (c) {
-          throw_if(file.eof(), "unexpected end of stream");
-          throw_if(!file.good(), "error while parsing stream");
-          auto nl = std::string{};
-          std::getline(file, nl);
-          ++ln;
-          if (nl.empty()) {
-            c = false;
-          } else {
-            line += nl;
-            if (line.back() == '\\') {
-              line.pop_back();
-            } else {
-              c = false;
-            }
-          }
-        }
-        return line;
-      };
       try {
         while (!in.eof()) {
           throw_if(!in.good(), "error while parsing stream");
-          auto line = get_line(in, n);
+          throw_if(!in.good(), "error while parsing stream");
+          auto line = std::string{};
+          std::getline(in, line);
+          ++n;
           try {
             this->splitLine(line, n);
           } catch (std::runtime_error &e) {
@@ -644,9 +624,9 @@ namespace tfel {
         const std::string::const_iterator pe,
         const Token::size_type n) {
       auto is_preprocessor_keyword = [](const std::string &k) {
-        const std::array<const char *, 11> keys = {
+        const std::array<const char *, 12> keys = {
             {"#define", "#undef", "#include", "#line", "#error", "#if",
-             "#ifdef", "#ifndef", "elif", "#else", "#endif"}};
+             "#ifdef", "#ifndef", "elif", "#else", "#endif", "#program"}};
         return std::find(keys.begin(), keys.end(), k) != keys.end();
       };
       auto throw_if = [](const bool c, const std::string &m) {

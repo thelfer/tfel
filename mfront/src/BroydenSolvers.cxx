@@ -106,11 +106,9 @@ namespace mfront{
     }
   } // end of MFrontBroydenSolverBase::writeSpecificInitializeMethodPart
 
-  void
-  MFrontBroydenSolverBase::writeResolutionAlgorithm(std::ostream& out,
-						    const BehaviourDescription& mb,
-						    const Hypothesis h) const
-  {
+  void MFrontBroydenSolverBase::writeResolutionAlgorithm(std::ostream& out,
+                                                         const BehaviourDescription& mb,
+                                                         const Hypothesis h) const {
     const auto btype = mb.getBehaviourTypeFlag();
     const auto& d  = mb.getBehaviourData(h);
     const auto  n2 = d.getIntegrationVariables().getTypeSize();
@@ -132,12 +130,12 @@ namespace mfront{
     if(mb.hasCode(h,BehaviourData::ComputeStress)){
       out << "this->computeStress();\n";
     }
-    out << "const bool computeFdF_ok = this->computeFdF();\n"
-	<< "if(computeFdF_ok){\n"
-	<< "error=norm(this->fzeros)/(real(" << n2 << "));\n"
-	<< "}\n"
-	<< "if((!computeFdF_ok)||(!ieee754::isfinite(error))){\n"
-	<< "if(this->iter==1){\n";
+    out << "const auto computeFdF_ok = this->computeFdF(false);\n"
+        << "if(computeFdF_ok){\n"
+        << "error=norm(this->fzeros)/(real(" << n2 << "));\n"
+        << "}\n"
+        << "if((!computeFdF_ok)||(!ieee754::isfinite(error))){\n"
+        << "if(this->iter==1){\n";
     if(getDebugMode()){
       out << "cout << endl << \"" << mb.getClassName()
 	  << "::integrate() : computFdF returned false on first iteration, abording...\" << endl;\n";

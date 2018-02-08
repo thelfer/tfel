@@ -110,30 +110,33 @@ namespace mtest
 
   void MTestMain::registerArgumentCallBacks()
   {
-    this->registerNewCallBack("--verbose",&MTestMain::treatVerbose,
-			      "set verbose output",true);
-    this->registerNewCallBack("--scheme",&MTestMain::treatScheme,
-			      "set scheme",true);
-    this->registerNewCallBack("--xml-output",&MTestMain::treatXMLOutput,
-			      "control xml output (default no)",true);
-    this->registerNewCallBack("--result-file-output",&MTestMain::treatResultFileOutput,
-			      "control result output (default yes)",true);
-    this->registerNewCallBack("--residual-file-output",&MTestMain::treatResidualFileOutput,
-			      "control residual output (default no)",true);
-    this->registerNewCallBack("--help-keywords",
-			      &MTestMain::treatHelpCommands,
-			      "display the help of all available commands and exit.");
-    this->registerNewCallBack("--help-commands",
-			      &MTestMain::treatHelpCommands,
-			      "display the help of all available commands and exit."
-			      "(this is equivalent to --help-keywords option).");
+    this->registerNewCallBack("--verbose", &MTestMain::treatVerbose,
+                              "set verbose output", true);
+    this->registerNewCallBack("--scheme", &MTestMain::treatScheme,
+                              "set scheme", true);
+    this->registerNewCallBack("--xml-output",
+                              &MTestMain::treatXMLOutput,
+                              "control xml output (default no)", true);
+    this->registerNewCallBack(
+        "--result-file-output", &MTestMain::treatResultFileOutput,
+        "control result output (default yes)", true);
+    this->registerNewCallBack(
+        "--residual-file-output", &MTestMain::treatResidualFileOutput,
+        "control residual output (default no)", true);
+    this->registerNewCallBack(
+        "--help-keywords", &MTestMain::treatHelpCommands,
+        "display the help of all available commands and exit.");
+    this->registerNewCallBack(
+        "--help-commands", &MTestMain::treatHelpCommands,
+        "display the help of all available commands and exit."
+        "(this is equivalent to --help-keywords option).");
     this->registerNewCallBack("--help-keywords-list",
-			      &MTestMain::treatHelpCommandsList,
-			      "list available commands and exit.");
-    this->registerNewCallBack("--help-commands-list",
-			      &MTestMain::treatHelpCommandsList,
-			      "list available commands and exit "
-			      "(this is equivalent to --help-keywords-list option).");
+                              &MTestMain::treatHelpCommandsList,
+                              "list available commands and exit.");
+    this->registerNewCallBack(
+        "--help-commands-list", &MTestMain::treatHelpCommandsList,
+        "list available commands and exit "
+        "(this is equivalent to --help-keywords-list option).");
     this->registerNewCallBack("--help-keyword",
 			      &MTestMain::treatHelpCommand,
 			      "display the help associated with a "
@@ -403,72 +406,71 @@ namespace mtest
     using namespace std;
     using namespace tfel::tests;
     auto& tm = TestManager::getTestManager();
-    for(const auto& i : this->inputs){
+    for (const auto& i : this->inputs) {
       string tname;
       string ext;
       const auto pos = i.rfind('.');
-      if(pos!=string::npos){
-	tname = i.substr(0,pos);
-	ext   = i.substr(pos); 
+      if (pos != string::npos) {
+        tname = i.substr(0, pos);
+        ext = i.substr(pos);
       } else {
-	tname = i;
+        tname = i;
       }
-      tfel::raise_if(tname.back()=='/',
-		     "MTestMain::execute: "
-		     "invalid input file name '"+i+"'");
+      tfel::raise_if(tname.back() == '/',
+                     "MTestMain::execute: "
+                     "invalid input file name '" +
+                         i + "'");
       const auto pos2 = tname.rfind('/');
-      if(pos2!=string::npos){
-	tname = tname.substr(pos2+1);
+      if (pos2 != string::npos) {
+        tname = tname.substr(pos2 + 1);
       }
       tfel::raise_if(tname.empty(),
-		     "MTestMain::execute: "
-		     "invalid input file name '"+i+"'");
+                     "MTestMain::execute: "
+                     "invalid input file name '" +
+                         i + "'");
       auto t = std::shared_ptr<SchemeBase>{};
-      if(this->scheme==MTEST){
-	t = mtest(i,this->ecmds,this->substitutions);
-      } else if (this->scheme==PTEST){
-	t = ptest(i,this->ecmds,this->substitutions);
-      } else if (this->scheme==DEFAULT){
-	if(ext==".ptest"){
-	  t = ptest(i,this->ecmds,this->substitutions);
-	} else {
-	  t = mtest(i,this->ecmds,this->substitutions);
-	}
+      if (this->scheme == MTEST) {
+        t = mtest(i, this->ecmds, this->substitutions);
+      } else if (this->scheme == PTEST) {
+        t = ptest(i, this->ecmds, this->substitutions);
+      } else if (this->scheme == DEFAULT) {
+        if (ext == ".ptest") {
+          t = ptest(i, this->ecmds, this->substitutions);
+        } else {
+          t = mtest(i, this->ecmds, this->substitutions);
+        }
       }
-      if(this->result_file_output){
-	if(!t->isOutputFileNameDefined()){
-	  t->setOutputFileName(tname+".res");
-	}
+      if (this->result_file_output) {
+        if (!t->isOutputFileNameDefined()) {
+          t->setOutputFileName(tname + ".res");
+        }
       }
-      if(this->residual_file_output){
-	if(!t->isResidualFileNameDefined()){
-	  t->setResidualFileName(tname+"-residual.res");
-	}
+      if (this->residual_file_output) {
+        if(!t->isResidualFileNameDefined()){
+          t->setResidualFileName(tname + "-residual.res");
+        }
       }
-      tm.addTest("MTest/"+tname,t);
-      if(this->xml_output){
-	shared_ptr<TestOutput> o;
-	if(!t->isXMLOutputFileNameDefined()){
-	  o = shared_ptr<TestOutput>(new XMLTestOutput(tname+".xml"));
-	} else {
-	  o = shared_ptr<TestOutput>(new XMLTestOutput(t->getXMLOutputFileName()));
-	}
-	tm.addTestOutput("MTest/"+tname,o);
+      tm.addTest("MTest/" + tname, t);
+      if (this->xml_output) {
+        std::shared_ptr<TestOutput> o;
+        if(!t->isXMLOutputFileNameDefined()){
+          o = std::make_shared<XMLTestOutput>(tname + ".xml");
+        } else {
+          o = std::make_shared<XMLTestOutput>(t->getXMLOutputFileName());
+        }
+        tm.addTestOutput("MTest/" + tname, o);
       }
-      tm.addTestOutput("MTest/"+tname,cout);
+      tm.addTestOutput("MTest/" + tname, cout);
     }
     const auto r = tm.execute();
-    return r.success() ?  EXIT_SUCCESS : EXIT_FAILURE;
+    return r.success() ? EXIT_SUCCESS : EXIT_FAILURE;
   }
-
   MTestMain::~MTestMain() = default;
 
-} // end of namespace mtest
+}  // end of namespace mtest
 
 /* coverity [UNCAUGHT_EXCEPT]*/
-int main(const int argc,
-	 const char * const * const argv)
-{
+int main(const int argc, const char* const* const argv) {
   int r = EXIT_FAILURE;
 #if not defined(__GLIBCXX__)
   try{

@@ -21,6 +21,57 @@ $ tfel-config --cxx-standard
 
 # Tickets fixed
 
+## Ticket #111: Have a flag stating if the implicit system is called for the evaluation of the jacobian by perturbation
+
+In some cases, it is convenient to update auxiliary state variables
+in the `@Integrator` code block, rather than computing them in
+the `@UpdateAuxiliaryStateVariables` code block which is only called
+once the convergence is reached.
+
+However, if the jacobian matrix is computed numerically (at least
+partially), such updates could be wrong, because they can be based
+on the perturbated values of the unknowns. 
+
+In `TFEL 3.1`, this can be circumvented by testing the value of the
+`perturbatedSystemEvaluation` boolean value as follows:
+
+~~~~{.cpp}
+// let av be an auxiliary state variable
+@AuxiliaryStateVariable StrainStensor av;
+
+@Integrator{
+  // put updated value of av in a temporary variable
+  const auto av_ = eval(...);  
+  ...
+  definition of the implicit system
+  ...
+  if(!perturbatedSystemEvaluation){
+    // update auxiliary state variables
+    av = av_;
+  }
+} // end of @Integrator
+~~~~
+
+In many cases, rather than updating auxiliary variables during the
+Newton iterations, it can be more pratical to compute its increment,
+defined in by local variable and to update the auxiliary variable in
+the `@UpdateAuxiliaryStateVariables` code block. The previous trick can
+be used in this case in a straightforward manner.
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/111/>
+
+## Ticket #110: Numerically computed parts of the jacobian shall not be updated after convergence
+
+In previous versions, the numerically computed parts of the jacobian
+were updated after the convergence has been reached to ensure that
+a proper jacobian is available for the computation of the consistent
+tangent operator.
+
+In `TFEL-3.1.1`, those parts of the jacobian are no more updated after
+convergence if the consistent tangent operator is not requested.
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/110/>
+
 ## Ticket #108: Imcompatibility between `@StrainMeasure Hencky` and `@ModellingHypothesis AxisymmetricalGeneralisedPlaneStrain`
 
 This is a mistake in the `Cast3M` interface which happens when:

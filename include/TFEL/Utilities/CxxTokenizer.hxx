@@ -50,10 +50,10 @@ namespace tfel {
       //! \brief default constructor
       CxxTokenizer();
       /*!
-* \brief constructor with options
-* \param[in] o: options
-*/
-      CxxTokenizer(const CxxTokenizerOptions&);
+       * \brief constructor with options
+       * \param[in] o: options
+       */
+      CxxTokenizer(const CxxTokenizerOptions &);
       /*!
        * \brief constructor from a file
        * \param[in] f : file name
@@ -62,7 +62,7 @@ namespace tfel {
       /*!
        * \brief constructor from a file
        * \param[in] f : file name
-* \param[in] o: options
+       * \param[in] o: options
        */
       CxxTokenizer(const std::string&, const CxxTokenizerOptions&);
       /*!
@@ -393,6 +393,11 @@ namespace tfel {
       TokensContainer tokens;
       //! store all the comments of a line
       std::map<Token::size_type, std::string> comments;
+      /*!
+       * if true, a cStyle comment what opened when the last line
+       * treatment was finised
+       */
+      bool cStyleCommentOpened = false;
     };  // end of struct CxxTokenizer
 
   }  // end of namespace utilities

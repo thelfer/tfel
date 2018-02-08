@@ -21,20 +21,20 @@ namespace tfel {
   namespace utilities {
 
     /*!
-* \brief list of options that can be used to tune the behaviour of the
-* `CxxTokenizer` class.
-*/
+     * \brief list of options that can be used to tune the behaviour of the
+     * `CxxTokenizer` class.
+     */
     struct TFELUTILITIES_VISIBILITY_EXPORT CxxTokenizerOptions {
       //! default constructor
       CxxTokenizerOptions();
       //! copy constructor
-      CxxTokenizerOptions(const CxxTokenizerOptions&);
+      CxxTokenizerOptions(const CxxTokenizerOptions &);
       //! move constructor
-      CxxTokenizerOptions(CxxTokenizerOptions&&);
+      CxxTokenizerOptions(CxxTokenizerOptions &&);
       //! standard assignement
-      CxxTokenizerOptions& operator=(const CxxTokenizerOptions&);
+      CxxTokenizerOptions &operator=(const CxxTokenizerOptions &);
       //! move assignement
-      CxxTokenizerOptions& operator=(CxxTokenizerOptions&&);
+      CxxTokenizerOptions &operator=(CxxTokenizerOptions &&);
       //! destructor
       ~CxxTokenizerOptions();
       /*!
@@ -81,11 +81,6 @@ namespace tfel {
       void extractNumbers(const bool);
       //! \brief if true, keep the comment boundaries
       bool bKeepCommentBoundaries = false;
-      /*!
-       * if true, a cStyle comment what opened when the last line
-       * treatment was finised
-       */
-      bool cStyleCommentOpened = false;
       //! if true, successive strings are merged
       bool shallMergeStrings = false;
       //! allow stray hash character
@@ -124,10 +119,10 @@ namespace tfel {
       bool dotAsSeparator = true;
       //! treat `-` as a separator
       bool minusAsSeparator = true;
-    };  // end of struct CxxTokenizerOptions
+    }; // end of struct CxxTokenizerOptions
 
-  }  // end of namespace utilities
+  } // end of namespace utilities
 
-}  // end of namespace tfel
+} // end of namespace tfel
 
 #endif /* LIB_TFEL_UTILITIES_CXXTOKENIZEROPTIONS_HXX */
