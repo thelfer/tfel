@@ -140,7 +140,7 @@ namespace mfront{
     if(mb.hasCode(h,BehaviourData::ComputeStress)){
       out << "this->computeStress();\n";
     }
-    out << "const bool computeFdF_ok = this->computeFdF();\n"
+    out << "const auto computeFdF_ok = this->computeFdF(false);\n"
 	<< "if(computeFdF_ok){\n"
 	<< "error=norm(this->fzeros)/(real(" << n2 << "));\n"
 	<< "}\n"
@@ -165,10 +165,6 @@ namespace mfront{
 	<< "}\n"
 	<< "} else {\n"
 	<< "this->zeros_1  = this->zeros;\n";
-    if(!this->requiresNumericalJacobian()){
-      NonLinearSystemSolverBase::writeEvaluateNumericallyComputedBlocks(out,mb,h);
-      NonLinearSystemSolverBase::writeComparisonToNumericalJacobian(out,mb,h,"njacobian");
-    }
     out << "converged = error<this->epsilon;\n"
 	<< "this->additionalConvergenceChecks(converged,error);\n";
     if(this->requiresNumericalJacobian()){
@@ -193,6 +189,11 @@ namespace mfront{
       } else {
 	out << "this->computeNumericalJacobian(this->jacobian);\n";
       }	
+      out << "}\n";
+    } else {
+      out << "if((!converged)||(smt!=NOSTIFFNESSREQUESTED)){\n";
+      NonLinearSystemSolverBase::writeEvaluateNumericallyComputedBlocks(out,mb,h);
+      NonLinearSystemSolverBase::writeComparisonToNumericalJacobian(out,mb,h,"njacobian");
       out << "}\n";
     }
     if(getDebugMode()){

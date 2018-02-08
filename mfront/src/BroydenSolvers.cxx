@@ -132,7 +132,7 @@ namespace mfront{
     if(mb.hasCode(h,BehaviourData::ComputeStress)){
       out << "this->computeStress();\n";
     }
-    out << "const bool computeFdF_ok = this->computeFdF();\n"
+    out << "const bool computeFdF_ok = this->computeFdF(false);\n"
 	<< "if(computeFdF_ok){\n"
 	<< "error=norm(this->fzeros)/(real(" << n2 << "));\n"
 	<< "}\n"

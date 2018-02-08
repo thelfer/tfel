@@ -33,6 +33,7 @@ namespace mfront{
 
   ImplicitDSLBase::ImplicitDSLBase()
   {
+    constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     // dynamically allocated vectors are not yet allowed in implicit
     // parsers
     this->mb.areDynamicallyAllocatedVectorsAllowed(false);
@@ -58,10 +59,9 @@ namespace mfront{
     this->reserveName("idx");
     this->reserveName("idx2");
     this->reserveName("idx3");
-    this->mb.registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-				"computeNumericalJacobian");
-    this->mb.registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-				"additionalConvergenceChecks");
+    this->mb.registerMemberName(uh,"computeNumericalJacobian");
+    this->mb.registerMemberName(uh,"additionalConvergenceChecks");
+    this->mb.registerMemberName(uh, "perturbatedSystemEvaluation");
     this->reserveName("TinyMatrixSolve");
     // CallBacks
     this->registerNewCallBack("@UsableInPurelyImplicitResolution",
@@ -1679,14 +1679,14 @@ namespace mfront{
     if(this->mb.hasCode(h,BehaviourData::ComputeStress)){
       os << "this->computeStress();\n";
     }
-    os << "this->computeFdF();\n"
+    os << "this->computeFdF(true);\n"
        << "this->zeros = tzeros;\n"
        << "tvector<" << n << ",real> tfzeros2(this->fzeros);\n"
        << "this->zeros(idx) += this->numerical_jacobian_epsilon;\n";
     if(this->mb.hasCode(h,BehaviourData::ComputeStress)){
       os << "this->computeStress();\n";
     }
-    os << "this->computeFdF();\n"
+    os << "this->computeFdF(true);\n"
        << "this->fzeros = (this->fzeros-tfzeros2)/(2*(this->numerical_jacobian_epsilon));\n"
        << "for(unsigned short idx2 = 0; idx2!= "<< n <<  ";++idx2){\n"
        << "njacobian(idx2,idx) = this->fzeros(idx2);\n"
@@ -1833,7 +1833,7 @@ namespace mfront{
   }
 
   void ImplicitDSLBase::writeComputeFdF(std::ostream& os,
-					const Hypothesis h) const
+			 		const Hypothesis h) const
   {
     const auto& d = this->mb.getBehaviourData(h);
     SupportedTypes::TypeSize n;
@@ -1851,8 +1851,7 @@ namespace mfront{
     os << "/*!\n"
        << "* \\brief compute fzeros and jacobian\n"
        << "*/\n"
-       << "bool\n"
-       << "computeFdF(){\n"
+       << "bool computeFdF(const bool perturbatedSystemEvaluation){\n"
        << "using namespace std;\n"
        << "using namespace tfel::math;\n"
        << "using std::vector;\n";
@@ -1863,6 +1862,7 @@ namespace mfront{
     }
     writeMaterialLaws(os,this->mb.getMaterialLaws());
     n = SupportedTypes::TypeSize();
+    os << "static_cast<void>(perturbatedSystemEvaluation);\n";
     for(const auto & v : d.getIntegrationVariables()){
       if(SupportedTypes::getTypeFlag(v.type)==SupportedTypes::Scalar){
 	if(v.arraySize==1u){

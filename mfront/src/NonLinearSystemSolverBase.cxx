@@ -164,14 +164,14 @@ namespace mfront{
 	if(d.hasCode(BehaviourData::ComputeStress)){
 	  out << "this->computeStress();\n";
 	}
-	out << "this->computeFdF();\n"
+	out << "this->computeFdF(true);\n"
 	    << "this->zeros = this->zeros_1;\n"
 	    << "tvector<" << n << ",real> tfzeros2(this->fzeros);\n"
 	    << "this->zeros(" << j << ") += this->numerical_jacobian_epsilon;\n";
 	if(d.hasCode(BehaviourData::ComputeStress)){
 	  out << "this->computeStress();\n";
 	}
-	out << "this->computeFdF();\n"
+	out << "this->computeFdF(true);\n"
 	    << "this->zeros  = this->zeros_1;\n"
 	    << "this->fzeros = (this->fzeros-tfzeros2)/(2*(this->numerical_jacobian_epsilon));\n"
 	    << "// update jacobian\n";

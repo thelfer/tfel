@@ -132,7 +132,7 @@ namespace mfront{
     if(mb.hasCode(h,BehaviourData::ComputeStress)){
       out << "this->computeStress();\n";
     }
-    out << "if(!this->computeFdF()){\n";
+    out << "if(!this->computeFdF(false)){\n";
     if(getDebugMode()){
       out << "cout << endl << \"" << mb.getClassName()
 	  << "::integrate() : computFdF returned false on first call, abording...\\n\";\n";
@@ -206,7 +206,7 @@ namespace mfront{
     if(mb.hasCode(h,BehaviourData::ComputeStress)){
       out << "this->computeStress();\n";
     }
-    out << "if(!this->computeFdF()){\n"
+    out << "if(!this->computeFdF(false)){\n"
 	<< "// rejecting the step\n"
 	<< "this->zeros     = this->zeros_1;\n"; 
     out << "this->fzeros    = levmar_fzeros_1;\n"; 
