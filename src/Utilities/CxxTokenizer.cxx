@@ -626,7 +626,7 @@ namespace tfel {
       auto is_preprocessor_keyword = [](const std::string &k) {
         const std::array<const char *, 12> keys = {
             {"#define", "#undef", "#include", "#line", "#error", "#if",
-             "#ifdef", "#ifndef", "elif", "#else", "#endif", "#program"}};
+             "#ifdef", "#ifndef", "elif", "#else", "#endif", "#pragma"}};
         return std::find(keys.begin(), keys.end(), k) != keys.end();
       };
       auto throw_if = [](const bool c, const std::string &m) {

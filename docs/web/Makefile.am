@@ -11,6 +11,7 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./index.md					              \
 	   ./material-properties.md				      \
 	   ./behaviours.md				              \
+	   ./implicit.md				              \
 	   ./models.md				                      \
 	   ./castem.md						      \
 	   ./castem-fr.md					      \
