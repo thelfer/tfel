@@ -87,17 +87,15 @@ namespace mfront
     return std::shared_ptr<WordAnalyser>(new StandardWordAnalyser<T,T2>(i,h,p));
   } // end of makeWordAnalyser
 
-  template<typename T,
-	   typename T2>
-  BehaviourDSLCommon::CodeBlockOptions
-  BehaviourDSLCommon::readCodeBlock(T& child,
-				    const std::string& n,
-				    std::string (T2::* m)(const Hypothesis,
-							  const std::string&,
-							  const bool),
-				    const bool b,
-				    const bool s)
-    
+  template <typename T, typename T2>
+  BehaviourDSLCommon::CodeBlockOptions BehaviourDSLCommon::readCodeBlock(T& child,
+                                                                         const std::string& n,
+                                                                         std::string (T2::*m)(const Hypothesis,
+                                                                                              const std::string&,
+                                                                                              const bool),
+                                                                         const bool b,
+                                                                         const bool s)
+
   {
     CodeBlockOptions o;
     this->readCodeBlockOptions(o,s);
@@ -106,17 +104,14 @@ namespace mfront
     return o;
   }
 
-  template<typename T,typename T2,typename T3>
-  BehaviourDSLCommon::CodeBlockOptions
-  BehaviourDSLCommon::readCodeBlock(T& child,
-				    const std::string& n,
-				    std::string (T2::* m)(const Hypothesis,
-							  const std::string&,
-							  const bool),
-				    void (T3::* a)(const Hypothesis,
-						   const std::string&),
-				    const bool b,
-				    const bool s)
+  template <typename T, typename T2, typename T3>
+  BehaviourDSLCommon::CodeBlockOptions BehaviourDSLCommon::readCodeBlock(
+      T& child,
+      const std::string& n,
+      std::string (T2::*m)(const Hypothesis, const std::string&, const bool),
+      void (T3::*a)(const Hypothesis, const std::string&),
+      const bool b,
+      const bool s)
 
   {
     CodeBlockOptions o;
@@ -126,17 +121,13 @@ namespace mfront
     return o;
   } // end of BehaviourDSLCommon::readCodeBlock
 
-  template<typename T,typename T2,typename T3>
-  void
-  BehaviourDSLCommon::readCodeBlock(T& child,
-				    const BehaviourDSLCommon::CodeBlockOptions& o,
-				    const std::string& n,
-				    std::string (T2::* m)(const Hypothesis,
-							  const std::string&,
-							  const bool),
-				    void (T3::* a)(const Hypothesis,
-						   const std::string&),
-				    const bool b)
+  template <typename T, typename T2, typename T3>
+  void BehaviourDSLCommon::readCodeBlock(T& child,
+                                         const BehaviourDSLCommon::CodeBlockOptions& o,
+                                         const std::string& n,
+                                         std::string (T2::*m)(const Hypothesis, const std::string&, const bool),
+                                         void (T3::*a)(const Hypothesis, const std::string&),
+                                         const bool b)
 
   {
     const auto& h = o.hypotheses;

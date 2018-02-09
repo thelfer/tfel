@@ -43,6 +43,7 @@ namespace mfront {
     this->reserveName("numerical_jacobian_epsilon");
     this->reserveName("maximum_increment_value_per_iteration");
     this->reserveName("jacobianComparisonCriterion");
+    this->reserveName("perturbatedSystemEvaluation");
     // additional reserve name
     this->reserveName("vect_e");
     this->reserveName("zeros");
@@ -60,7 +61,6 @@ namespace mfront {
     this->reserveName("idx3");
     this->mb.registerMemberName(uh, "computeNumericalJacobian");
     this->mb.registerMemberName(uh, "additionalConvergenceChecks");
-    this->mb.registerMemberName(uh, "perturbatedSystemEvaluation");
     this->reserveName("TinyMatrixSolve");
     // CallBacks
     this->registerNewCallBack("@UsableInPurelyImplicitResolution",
@@ -1520,15 +1520,15 @@ namespace mfront {
           os << ",\n";
         }
       }
-      os << ")\n";
-      os << "{\n";
-      os << "using namespace tfel::math;\n";
-      os << "TinyPermutation<" << n << "> permuation;\n";
-      os << "TinyMatrixSolve<" << n << ",real>::decomp(this->jacobian,permuation);\n";
-      os << "for(unsigned short idx=0;idx!=StensorSize;++idx){\n";
-      os << "tvector<" << n << ",real> vect_e(real(0));\n";
-      os << "vect_e(idx) = real(1);\n";
-      os << "TinyMatrixSolve<" << n << ",real>::back_substitute(this->jacobian,permuation,vect_e);\n";
+      os << ")\n"
+         << "{\n"
+         << "using namespace tfel::math;\n"
+         << "TinyPermutation<" << n << "> permuation;\n"
+         << "TinyMatrixSolve<" << n << ",real>::decomp(this->jacobian,permuation);\n"
+         << "for(unsigned short idx=0;idx!=StensorSize;++idx){\n"
+         << "tvector<" << n << ",real> vect_e(real(0));\n"
+         << "vect_e(idx) = real(1);\n"
+         << "TinyMatrixSolve<" << n << ",real>::back_substitute(this->jacobian,permuation,vect_e);\n";
       SupportedTypes::TypeSize n2;
       for (size_type i2 = 0; i2 <= i; ++i2) {
         const auto& v = d.getIntegrationVariables()[i2];
@@ -1537,9 +1537,9 @@ namespace mfront {
           if (v.arraySize == 1u) {
             os << "partial_jacobian_" << v.name << "(idx)=vect_e(" << n2 << ");\n";
           } else {
-            os << "for(unsigned short idx2=0;idx2!=" << v.arraySize << ";++idx2){\n";
-            os << "partial_jacobian_" << v.name << "(idx2)(idx)=vect_e(" << n2 << "+idx2);\n";
-            os << "}\n";
+            os << "for(unsigned short idx2=0;idx2!=" << v.arraySize << ";++idx2){\n"
+               << "partial_jacobian_" << v.name << "(idx2)(idx)=vect_e(" << n2 << "+idx2);\n"
+               << "}\n";
           }
           n2 += this->getTypeSize(v.type, v.arraySize);
         } else if (flag == SupportedTypes::TVector) {
@@ -1651,10 +1651,10 @@ namespace mfront {
       n2 += this->getTypeSize(v.type, v.arraySize);
     }
     this->checkBehaviourFile(os);
-    os << "/*!\n";
-    os << "* \\brief Integrate behaviour law over the time step\n";
-    os << "*/\n";
-    os << "IntegrationResult\n";
+    os << "/*!\n"
+          " * \\brief Integrate behaviour law over the time step\n"
+          " */\n"
+          "IntegrationResult ";
     if (this->mb.hasAttribute(h, BehaviourData::hasConsistentTangentOperator)) {
       os << "integrate(const SMFlag smflag,const SMType smt) override{\n";
     } else {
