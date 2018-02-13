@@ -44,7 +44,8 @@ namespace mfront{
     this->reserveName("numerical_jacobian_epsilon");
     this->reserveName("maximum_increment_value_per_iteration");
     this->reserveName("jacobianComparisonCriterion");
-    // additional reserve name    
+    this->reserveName("perturbatedSystemEvaluation");
+    // additional reserve name
     this->reserveName("vect_e");
     this->reserveName("zeros");
     this->reserveName("tzeros");
@@ -61,7 +62,6 @@ namespace mfront{
     this->reserveName("idx3");
     this->mb.registerMemberName(uh,"computeNumericalJacobian");
     this->mb.registerMemberName(uh,"additionalConvergenceChecks");
-    this->mb.registerMemberName(uh, "perturbatedSystemEvaluation");
     this->reserveName("TinyMatrixSolve");
     // CallBacks
     this->registerNewCallBack("@UsableInPurelyImplicitResolution",
