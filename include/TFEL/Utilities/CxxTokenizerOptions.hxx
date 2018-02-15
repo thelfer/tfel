@@ -95,6 +95,8 @@ namespace tfel {
        * If `false`, the `'` and '"' are treated as indivdual tokens
        */
       bool treatStrings = true;
+      //! \brief extract number
+      bool treatNumbers = true;
       /*!
        * \brief treat comments
        */

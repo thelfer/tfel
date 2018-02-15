@@ -286,8 +286,8 @@ namespace tfel {
        * \throw std::runtime_error if the given iterator is egal to
        * the second argument or if the given token is not a string
        */
-      static std::vector<std::string> readStringArray(
-          const_iterator&, const const_iterator);
+      static std::vector<std::string> readStringArray(const_iterator&,
+                                                      const const_iterator);
       /*!
        * \brief an helper method to extract a double from the given
        * token

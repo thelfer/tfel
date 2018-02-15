@@ -60,6 +60,7 @@ nobase_include_HEADERS = MTest/Config.hxx	                         \
 			 MTest/CastemEvolution.hxx                       \
 			 MTest/FunctionEvolution.hxx                     \
 			 MTest/Constraint.hxx                            \
+			 MTest/ConstraintBase.hxx                        \
 			 MTest/NonLinearConstraint.hxx                   \
 			 MTest/ImposedDrivingVariable.hxx                \
 			 MTest/ImposedThermodynamicForce.hxx             \

@@ -20,6 +20,7 @@ mtest_python_module(_mtest
   Behaviour.cxx
   SchemeBase.cxx
   SingleStructureScheme.cxx
+  Constraint.cxx
   MTest.cxx
   MTestParser.cxx
   PipeMesh.cxx

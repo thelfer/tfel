@@ -25,7 +25,7 @@
 #include"MTest/Types.hxx"
 #include"MTest/Config.hxx"
 #include"MTest/Evolution.hxx"
-#include"MTest/Constraint.hxx"
+#include"MTest/ConstraintBase.hxx"
 
 namespace mtest
 {
@@ -35,7 +35,7 @@ namespace mtest
 
   //! \brief Impose a contraint on the driving variables.
   struct MTEST_VISIBILITY_EXPORT NonLinearConstraint final
-    : public Constraint
+    : public ConstraintBase
   {
     //! \brief define the normalisation policy
     enum NormalisationPolicy{

@@ -9,6 +9,25 @@ is specified, the `evolution` option is chosen.
 After the option, the name of the component of the stresses, which
 shall be given as string, is expected.
 
+Finally, one may optionnally set options on the active state of this
+contraint, the activating events and desactivating events using a
+JSON-like structure. See the `@Event` keyword to know how to define an
+event. This structure starts with an opening curly brace (`{`) and ends
+with a closing curly brace (`}`). An option is given by its name, an
+double-dot character (`:`) and the value of the option. Consecutive
+options are separated by a comma `,`. The following options are
+available:
+
+- `active`: states if the constraint is active at the beginning of the
+  computation. This is a boolean, so the expected value are either
+  `true` or `false`.
+- `activating_events`: gives the list of events which activate the
+  constraint. An array of string is expected.
+- `desactivating_events`: gives the list of events which desactivate the
+  constraint. An array of string is expected.
+
+## Name of the components of the stress
+
 According to the modelling hypothesis selected (see the
 `@ModellingHypothesis` keyword), the following components names are
 accepted:

@@ -18,6 +18,7 @@
 void declareBehaviour();
 void declareSchemeBase();
 void declareSingleStructureScheme();
+void declareConstraint();
 void declareMTest();
 void declareMTestParser();
 void declarePipeMesh();
@@ -67,6 +68,7 @@ BOOST_PYTHON_MODULE(_mtest)
   declareMTestParser();
   declareSchemeBase();
   declareSingleStructureScheme();
+  declareConstraint();
   declareMTest();
   declarePipeMesh();
   declarePipeTest();

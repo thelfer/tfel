@@ -1,31 +1,29 @@
-/*! 
+/*!
  * \file  mtest/include/MTest/ImposedDrivingVariable.hxx
  * \brief
  * \author Thomas Helfer
  * \brief 05 avril 2013
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MTEST_MTESTIMPOSEDDRIVINGVARIABLE_HXX
-#define LIB_MTEST_MTESTIMPOSEDDRIVINGVARIABLE_HXX 
+#define LIB_MTEST_MTESTIMPOSEDDRIVINGVARIABLE_HXX
 
-#include"TFEL/Math/matrix.hxx"
-#include"TFEL/Math/vector.hxx"
-#include"TFEL/Material/ModellingHypothesis.hxx"
-#include<memory>
+#include <memory>
+#include "TFEL/Math/matrix.hxx"
+#include "TFEL/Math/vector.hxx"
+#include "TFEL/Material/ModellingHypothesis.hxx"
+#include "MTest/Types.hxx"
+#include "MTest/Config.hxx"
+#include "MTest/Evolution.hxx"
+#include "MTest/ConstraintBase.hxx"
 
-#include"MTest/Types.hxx"
-#include"MTest/Config.hxx"
-#include"MTest/Evolution.hxx"
-#include"MTest/Constraint.hxx"
-
-namespace mtest
-{
+namespace mtest {
 
   // forward declaration
   struct Behaviour;
@@ -34,8 +32,7 @@ namespace mtest
    * Impose the value of a driving variable component
    */
   struct MTEST_VISIBILITY_EXPORT ImposedDrivingVariable final
-    : public Constraint
-  {
+      : public ConstraintBase {
     /*!
      * constructor
      * \param[in] b : behaviour
@@ -43,15 +40,15 @@ namespace mtest
      * \param[in] s : driving variable evolution
      */
     ImposedDrivingVariable(const Behaviour&,
-			   const std::string&,
-			   const std::shared_ptr<Evolution>);
+                           const std::string&,
+                           const std::shared_ptr<Evolution>);
     /*!
      * constructor
      * \param[in] c : component
      * \param[in] s : driving variable evolution
      */
     ImposedDrivingVariable(const unsigned short c,
-				const std::shared_ptr<Evolution>);
+                           const std::shared_ptr<Evolution>);
     /*!
      * \return the number of Lagrange Multipliers
      * associated with this contraint
@@ -71,23 +68,23 @@ namespace mtest
      * \param[in]  f: thermodynamic forces.
      * \param[in]  u1: current estimate of the unknowns
      * \param[in]  p:  position of the first lagrange multiplier
-     *                 in the residual 
+     *                 in the residual
      * \param[in]  d:  space dimension
      * \param[in]  t:  beginning of the time step
      * \param[in]  dt: time increment
      * \param[in]  a:  normalisation factor
      */
     void setValues(tfel::math::matrix<real>&,
-		   tfel::math::vector<real>&,
-		   const tfel::math::vector<real>&,
-		   const tfel::math::vector<real>&,
-		   const tfel::math::matrix<real>&,
-		   const tfel::math::vector<real>&,
-		   const unsigned short,
-		   const unsigned short,
-		   const real,
-		   const real,
-		   const real) const override;
+                   tfel::math::vector<real>&,
+                   const tfel::math::vector<real>&,
+                   const tfel::math::vector<real>&,
+                   const tfel::math::matrix<real>&,
+                   const tfel::math::vector<real>&,
+                   const unsigned short,
+                   const unsigned short,
+                   const real,
+                   const real,
+                   const real) const override;
     /*!
      * \param[in]  e    : driving variables
      * \param[in]  s    : stresses
@@ -97,11 +94,11 @@ namespace mtest
      * \param[in]  dt   : time increment
      */
     bool checkConvergence(const tfel::math::vector<real>&,
-			  const tfel::math::vector<real>&,
-			  const real,
-			  const real,
-			  const real,
-			  const real) const override;
+                          const tfel::math::vector<real>&,
+                          const real,
+                          const real,
+                          const real,
+                          const real) const override;
     /*!
      * \param[in]  e    : driving variables
      * \param[in]  s    : thermodynamic forces
@@ -111,23 +108,23 @@ namespace mtest
      * \param[in]  dt   : time increment
      */
     std::string getFailedCriteriaDiagnostic(const tfel::math::vector<real>&,
-					    const tfel::math::vector<real>&,
-					    const real,
-					    const real,
-					    const real,
-					    const real) const override;
+                                            const tfel::math::vector<real>&,
+                                            const real,
+                                            const real,
+                                            const real,
+                                            const real) const override;
     //! destructor
     ~ImposedDrivingVariable() override;
-  protected:
+
+   protected:
     ImposedDrivingVariable& operator=(const ImposedDrivingVariable&) = delete;
     ImposedDrivingVariable& operator=(ImposedDrivingVariable&&) = delete;
     //! driving variable evolution
     const std::shared_ptr<Evolution> eev;
     //! component value
     unsigned short c;
-  }; // end of struct ImposedDrivingVariable
-  
-} // end of namespace mtest
+  };  // end of struct ImposedDrivingVariable
+
+}  // end of namespace mtest
 
 #endif /* LIB_MTEST_MTESTIMPOSEDDRIVINGVARIABLE_HXX */
-

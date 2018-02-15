@@ -1,61 +1,64 @@
 /*!
  * \file   Data.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   12 sept. 2016
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
-
 
 #ifndef LIB_TFEL_UTILITIES_DATA_HXX
 #define LIB_TFEL_UTILITIES_DATA_HXX
 
-#include<map>
-#include<string>
-#include<vector>
-#include<utility>
-#include<functional>
-#include"TFEL/Config/TFELConfig.hxx"
-#include"TFEL/Utilities/GenTypeBase.hxx"
-#include"TFEL/Utilities/CxxTokenizer.hxx"
+#include <map>
+#include <string>
+#include <vector>
+#include <utility>
+#include <functional>
+#include "TFEL/Config/TFELConfig.hxx"
+#include "TFEL/Utilities/GenTypeBase.hxx"
+#include "TFEL/Utilities/CxxTokenizer.hxx"
 
-namespace tfel{
+namespace tfel {
 
-  namespace utilities{
+  namespace utilities {
 
     // forward declaration
     struct Data;
     //! list of all type handled by the Data structure
-    using DataTypes = tfel::meta::GenerateTypeList<bool,int,double,std::string,
-						   std::vector<Data>,
-						   std::map<std::string,Data>>::type;
+    using DataTypes =
+        tfel::meta::GenerateTypeList<bool,
+                                     int,
+                                     double,
+                                     std::string,
+                                     std::vector<Data>,
+                                     std::map<std::string, Data>>::type;
 
-    namespace internals{
-    
+    namespace internals {
+
       /*!
        * \brief a simple meta function to the check if the given type
        * is part of the `DataTypes` type list.
        * \tparam T: type to be checked
        */
-      template<typename T>
-      struct isDataTypeCheck{
-	//! \brief result type
-	static constexpr const bool value =
-	  tfel::meta::TLCountNbrOfT<typename std::decay<T>::type,
-				    tfel::utilities::DataTypes>::value==1;
+      template <typename T>
+      struct isDataTypeCheck {
+        //! \brief result type
+        static constexpr const bool value =
+            tfel::meta::TLCountNbrOfT<typename std::decay<T>::type,
+                                      tfel::utilities::DataTypes>::value == 1;
       };
-      
-    } // end of namespace internals
-    
+
+    }  // end of namespace internals
+
     //! a simple alias
-    template<typename T>
+    template <typename T>
     using isDataType = tfel::utilities::internals::isDataTypeCheck<T>;
-    
+
     /*!
      * \brief A structure able to contain values extracted from a
      * JSON-like file.
@@ -63,19 +66,16 @@ namespace tfel{
      * Data can contain.
      */
     struct TFELUTILITIES_VISIBILITY_EXPORT Data
-      : public GenTypeBase<DataTypes>
-    {
+        : public GenTypeBase<DataTypes> {
       //! a simple alias
       using CallBack = std::function<void(const Data&)>;
       //! constructor from a value
-      template<typename T1,
-	       typename std::enable_if<
-		 tfel::meta::TLCountNbrOfT<typename std::decay<T1>::type,
-					   DataTypes>::value==1, 
-		 bool>::type = true>
-      TFEL_INLINE Data(T1&& v)
-	: GenTypeBase<DataTypes>(std::forward<T1>(v))
-      {}
+      template <typename T1,
+                typename std::enable_if<
+                    tfel::meta::TLCountNbrOfT<typename std::decay<T1>::type,
+                                              DataTypes>::value == 1,
+                    bool>::type = true>
+      TFEL_INLINE Data(T1&& v) : GenTypeBase<DataTypes>(std::forward<T1>(v)) {}
       /*!
        * \brief read a JSON-like structure
        * \return the values read
@@ -83,7 +83,7 @@ namespace tfel{
        * \param[in]     pe: past-the-end iterator
        */
       static Data read(CxxTokenizer::const_iterator&,
-		       const CxxTokenizer::const_iterator);
+                       const CxxTokenizer::const_iterator);
       /*!
        * \brief read a map. For each read key, a callback must
        * available to treat the associated data. The result of the
@@ -94,8 +94,8 @@ namespace tfel{
        * \param[in]     callbacks: list of call-backs
        */
       static void parse(CxxTokenizer::const_iterator&,
-			const CxxTokenizer::const_iterator,
-			const std::map<std::string,CallBack>&);
+                        const CxxTokenizer::const_iterator,
+                        const std::map<std::string, CallBack>&);
       /*!
        * \brief read a standard value (string,double,int)
        * \return the values read
@@ -103,7 +103,7 @@ namespace tfel{
        * \param[in]     pe: past-the-end iterator
        */
       static Data read_value(CxxTokenizer::const_iterator&,
-			     const CxxTokenizer::const_iterator);
+                             const CxxTokenizer::const_iterator);
       /*!
        * \brief read a map
        * \return the values read
@@ -111,7 +111,7 @@ namespace tfel{
        * \param[in]     pe: past-the-end iterator
        */
       static Data read_vector(CxxTokenizer::const_iterator&,
-			      const CxxTokenizer::const_iterator);
+                              const CxxTokenizer::const_iterator);
       /*!
        * \brief read a map
        * \return the values read
@@ -119,7 +119,7 @@ namespace tfel{
        * \param[in]     pe: past-the-end iterator
        */
       static Data read_map(CxxTokenizer::const_iterator&,
-			   const CxxTokenizer::const_iterator);
+                           const CxxTokenizer::const_iterator);
       //! default constructor
       Data();
       //! move constructor
@@ -127,35 +127,35 @@ namespace tfel{
       //! copy constructor
       Data(const Data&);
       //! move assignement
-      Data& operator = (Data&&);
+      Data& operator=(Data&&);
       //! assignement
-      Data& operator = (const Data&);
+      Data& operator=(const Data&);
       //! destructor
       ~Data();
     };
 
     //! comparison operator
-    TFELUTILITIES_VISIBILITY_EXPORT bool operator==(const Data&,const Data&);
+    TFELUTILITIES_VISIBILITY_EXPORT bool operator==(const Data&, const Data&);
 
     /*!
      * \brief extract a value of the given type from a Data structure
      * \param[in] d: data
      * \return the extracted value
      */
-    template<typename T>
+    template <typename T>
     T convert(const Data&);
 
     /*!
      * \param[in] d: data
      * \return true if the Data can be converted to the given type
      */
-    template<typename T>
+    template <typename T>
     bool is_convertible(const Data&);
-    
-  } // end of namespace utilities
 
-} // end of namespace tfel
+  }  // end of namespace utilities
 
-#include"TFEL/Utilities/Data.ixx"
+}  // end of namespace tfel
+
+#include "TFEL/Utilities/Data.ixx"
 
 #endif /* LIB_TFEL_UTILITIES_DATA_HXX */

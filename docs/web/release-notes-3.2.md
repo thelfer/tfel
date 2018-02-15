@@ -53,8 +53,8 @@ const auto s = ev.getValue();
 #### An overload for the `getValue` method
 
 In the previous example, each variable value had to be set using the
-`setVariableValue` method. The new overloaded version of the
-`getValue` method can take a map as argument as follows:
+`setVariableValue` method. The new overloaded version of the `getValue`
+method can take a map as argument as follows:
 
 ~~~~{.cxx}
 Evalutator ev("sin(x)");
@@ -73,10 +73,10 @@ const auto s = ev({{"x",12}});
 
 #### The `getCxxFormula` method
 
-The `getCxxFormula` method returns a string representing the
-evaluation of the formula in standard `C++`. This method takes a map
-as argument which describes how certain variables shall be
-represented. This method can be used, as follows:
+The `getCxxFormula` method returns a string representing the evaluation
+of the formula in standard `C++`. This method takes a map as argument
+which describes how certain variables shall be represented. This method
+can be used, as follows:
 
 ~~~~{.cxx}
 Evalutator ev("2*sin(x)");
@@ -477,14 +477,61 @@ formulae, as follows:
 
 As for material properties defined in external `MFront` files, the
 material properties evaluated by formulae will be computed for updated
-values of their parameters. For example, if the previous lines were
-used in the `Implicit` DSL, two variables `young` and `young_tdt` will
-be automatically made available:
+values of their parameters. For example, if the previous lines were used
+in the `Implicit` DSL, two variables `young` and `young_tdt` will be
+automatically made available:
 
 - the `young` variable will be computed for the temperature
   \(T+\theta\,\Delta\,T\).
 - the `young_tdt` variable will be computed for the temperature
   \(T+\Delta\,T\).
+
+# New functionalities in `MTest`
+
+## Events, activation and desactivation of constraints
+
+Defining an event is a way to active/desactivate a constraint, (see
+`@ImposedStrain`, `@ImposedCohesiveForce`,
+`@ImposedOpeningDisplacement`, `@ImposedStrain`,
+`@ImposedDeformationGradient`, `@NonLinearConstraint`).
+
+### Defining a new event
+
+The `@Event` keyword is followed by the name of the event and a time or
+a list of times (given as an array of values).
+
+#### Example
+
+~~~~ {.cpp}
+@Event 'Stop' '1';
+~~~~~~~~
+
+### Activation and desactivation of constraints
+
+At the end of the definition of a constraint, one may now optionnally
+set options on the active state of this contraint at the beginning of
+the computation, the activating events and desactivating events using a
+JSON-like structure. This structure starts with an opening curly brace
+(`{`) and ends with a closing curly brace (`}`). An option is given by
+its name, an double-dot character (`:`) and the value of the option.
+Consecutive options are separated by a comma `,` (see below for an
+example). The following options are available:
+
+- `active`: states if the constraint is active at the beginning of the
+  computation. This is a boolean, so the expected value are either
+  `true` or `false`.
+- `activating_events`: gives the list of events which activate the
+  constraint. An array of string is expected.
+- `desactivating_events`: gives the list of events which desactivate the
+  constraint. An array of string is expected.
+
+#### Example
+
+~~~~ {.cpp}
+@ImposedStrain<evolution> 'EXX' {0.:0.,1:1e-3}{
+	desactivating_event : 'Stop'
+};
+~~~~~~~~
 
 # Known incompatibilities
 

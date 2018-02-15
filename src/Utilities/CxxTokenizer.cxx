@@ -78,7 +78,8 @@ namespace tfel {
       this->shallMergeStrings = b;
     }  // end of CxxTokenizer::mergeStrings
 
-    void CxxTokenizer::extractNumbers(const bool) {
+    void CxxTokenizer::extractNumbers(const bool b) {
+      this->treatNumbers = b;
     }  // end of CxxTokenizer::extractNumbers
 
     void CxxTokenizer::openFile(const std::string &f) {
@@ -675,7 +676,12 @@ namespace tfel {
           this->tokens.emplace_back("\\", n, o, Token::Standard);
           advance(o, p, 1u);
         } else if (std::isdigit(*p)) {
-          this->parseNumber(o, p, pe, n);
+          if(this->treatNumbers){
+            this->parseNumber(o, p, pe, n);
+          } else {
+            this->tokens.emplace_back(std::string(1u, *p), n, o, Token::Standard);
+            advance(o, p, 1u);
+          }
         } else if (*p == '\"') {
           // c-strings
           if (this->treatStrings) {
@@ -720,7 +726,12 @@ namespace tfel {
                           *(std::prev(p))))) &&
                      ((pn != pe) &&
                       ((*pn == '.') || (std::isdigit(*pn))))) {
-            this->parseNumber(o, p, pe, n);
+            if (this->treatNumbers) {
+              this->parseNumber(o, p, pe, n);
+            } else {
+             this->tokens.emplace_back(std::string(1u, *p), n, o, Token::Standard);
+             advance(o, p, 1u);
+            }
           } else {
             this->try_join(o, p, pe, n, '=');
           }
@@ -745,7 +756,12 @@ namespace tfel {
         } else if (*p == '.') {
           auto pn = std::next(p);
           if ((pn != pe) && (std::isdigit(*pn))) {
-            this->parseNumber(o, p, pe, n);
+            if(this->treatNumbers){
+              this->parseNumber(o, p, pe, n);
+            } else {
+              this->tokens.emplace_back(std::string(1u, *p), n, o, Token::Standard);
+              advance(o, p, 1u);
+            }
           } else {
             this->try_join(o, p, pe, n, '.', '*');
           }

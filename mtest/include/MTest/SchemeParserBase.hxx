@@ -238,33 +238,43 @@ namespace mtest{
      * \param[in,out] p : position in the input file
      */
     virtual void readArrayOfSpecifiedSize(std::vector<real>&,
-					  SchemeBase&,
-					  tokens_iterator&);
+                                          SchemeBase&,
+                                          tokens_iterator&);
+    /*!
+     * read an array
+     * The expected size of the array is given by the output vector
+     * \param[out]    v : array to be read
+     * \param[in,out] t : structure to be filled
+     * \param[in,out] p : position in the input file
+     */
+    virtual std::vector<real> readTimesArray(const std::string& m,
+                                             SchemeBase& t,
+                                             tokens_iterator& p);
     /*!
      * \brief treat the current keyword
      * \param[in,out] p : position in the input file
      */
-    bool treatKeyword(SchemeBase&,tokens_iterator&);
+    bool treatKeyword(SchemeBase&, tokens_iterator&);
     //! \return the list of keywords
     std::vector<std::string> getKeyWordsList() const;
     //! a simple alias
-    using CallBack = void (SchemeParserBase::*)(SchemeBase&,
-						tokens_iterator&);
+    using CallBack = void (SchemeParserBase::*)(SchemeBase&, tokens_iterator&);
     //! a simple alias
     using ExternalFunctionManager = tfel::math::parser::ExternalFunctionManager;
     //! external function imported through the `@Import` keyword
     std::shared_ptr<ExternalFunctionManager> externalFunctions;
     //! callbacks
-    std::map<std::string,CallBack> callbacks;
+    std::map<std::string, CallBack> callbacks;
     //! input file
     std::string file;
-  private:
+
+   private:
     /*!
      * register a call back
      * \param[in] k : key word
      * \param[in] p : pointer to a member function
      */
-    void registerCallBack(const std::string&,const CallBack&);
+    void registerCallBack(const std::string&, const CallBack&);
   }; // end of struct SchemeParserBase
   
 } // end of namespace mtest

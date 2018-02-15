@@ -1,18 +1,21 @@
-MTEST_MTEST_DOCS = ImposedStrain.md              \
+MTEST_MTEST_DOCS = \
+	     	   CohesiveForce.md              \
+	     	   CohesiveForceEpsilon.md       \
+	     	   DeformationGradient.md        \
+	     	   DeformationGradientEpsilon.md \
+               Event.md                      \
+               ImposedStrain.md              \
 	     	   ImposedDeformationGradient.md \
 	     	   ImposedStress.md              \
 	     	   ModellingHypothesis.md        \
+	     	   NonLinearConstraint.md        \
 	     	   RotationMatrix.md             \
 	     	   Strain.md                     \
 	     	   StrainEpsilon.md              \
-	     	   DeformationGradient.md        \
-	     	   DeformationGradientEpsilon.md \
 	     	   Stress.md                     \
 	     	   StressEpsilon.md              \
-	     	   CohesiveForce.md              \
-	     	   CohesiveForceEpsilon.md       \
-	     	   Test.md                       \
-	     	   NonLinearConstraint.md
+	     	   Test.md
+
 
 mtestdocdir   = $(datadir)/doc/mtest/mtest
 mtestdoc_DATA = $(MTEST_MTEST_DOCS)

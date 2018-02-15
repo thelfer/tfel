@@ -13,10 +13,22 @@
 
 #include"MTest/Constraint.hxx"
 
-namespace mtest
-{
+namespace mtest {
 
-  Constraint::~Constraint()
-  {} // end of Constraint::~Constraint
+  ConstraintOptions::ConstraintOptions() = default;
+  ConstraintOptions::ConstraintOptions(ConstraintOptions&&) = default;
+  ConstraintOptions::ConstraintOptions(const ConstraintOptions&) = default;
+  ConstraintOptions& ConstraintOptions::operator=(ConstraintOptions&&) =
+      default;
+  ConstraintOptions& ConstraintOptions::operator=(const ConstraintOptions&) =
+      default;
+
+  Constraint::~Constraint() = default;
+
+  void applyConstraintOptions(Constraint& c, const ConstraintOptions& o) {
+    c.setActive(o.active);
+    c.setActivatingEvents(o.activating_events);
+    c.setDesactivatingEvents(o.desactivating_events);
+  }  // end of applyConstraintOptions
 
 } // end of namespace mtest

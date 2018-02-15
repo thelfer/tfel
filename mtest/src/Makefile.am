@@ -1,5 +1,5 @@
-AM_CPPFLAGS = -I$(top_srcdir)/include          \
-	      -I$(top_srcdir)/mfront/include   \
+AM_CPPFLAGS = -I$(top_srcdir)/include    \
+	      -I$(top_srcdir)/mfront/include \
 	      -I$(top_srcdir)/mtest/include
 
 lib_LTLIBRARIES = libTFELMTest.la
@@ -7,7 +7,7 @@ lib_LTLIBRARIES = libTFELMTest.la
 bin_PROGRAMS  = mtest
 mtest_SOURCES = MTestMain.cxx
 
-libTFELMTest_la_SOURCES = RoundingMode.cxx                          \
+libTFELMTest_la_SOURCES = RoundingMode.cxx              \
 			  Study.cxx                                 \
 			  StudyCurrentState.cxx                     \
 			  StructureCurrentState.cxx                 \
@@ -26,6 +26,7 @@ libTFELMTest_la_SOURCES = RoundingMode.cxx                          \
 			  UmatBehaviourBase.cxx                     \
 			  UmatNormaliseTangentOperator.cxx          \
 			  Constraint.cxx                            \
+			  ConstraintBase.cxx                        \
 			  NonLinearConstraint.cxx                   \
 			  ImposedDrivingVariable.cxx                \
 			  ImposedThermodynamicForce.cxx             \

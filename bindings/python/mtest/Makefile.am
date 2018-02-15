@@ -9,10 +9,11 @@ mtestdir = @pythondir@/mtest
 mtest_LTLIBRARIES = _mtest.la
 mtest_PYTHON = __init__.py
 
-_mtest_la_SOURCES =  pymtest.cxx                \
+_mtest_la_SOURCES =  pymtest.cxx        \
 		     Behaviour.cxx              \
 		     SchemeBase.cxx             \
 		     SingleStructureScheme.cxx  \
+		     Constraint.cxx             \
 		     MTest.cxx                  \
 		     PipeMesh.cxx               \
 		     PipeTest.cxx               \
