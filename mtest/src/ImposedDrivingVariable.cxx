@@ -53,16 +53,14 @@ namespace mtest
 					 const real a) const
   {
     const auto& e = *(this->eev);
-    // K(pos,this->c) += a;
-    // K(this->c,pos) += a;
-    // // r(this->c)     += a*u1(pos);
-    // r(this->c)      = a*u1(pos);
-    // r(pos)         += a*(u1(this->c)-e(t+dt));
-    // 
-    K(pos,this->c) -= a;
-    K(this->c,pos) -= a;
-    r(this->c)     -= a*u1(pos);
-    r(pos)         -= a*(u1(this->c)-e(t+dt));
+    if (this->isActive()) {
+      K(pos, this->c) -= a;
+      K(this->c, pos) -= a;
+      r(this->c) -= a * u1(pos);
+      r(pos) -= a * (u1(this->c) - e(t + dt));
+    } else {
+      K(pos,pos) = 1;
+    }
   } // end of ImposedDrivingVariable::setValues
 
   bool ImposedDrivingVariable::checkConvergence(const tfel::math::vector<real>& u,

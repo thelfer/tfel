@@ -474,10 +474,17 @@ namespace mtest {
   }  // end of MTest::getNumberOfUnknowns
 
   tfel::tests::TestResult MTest::execute() {
-    auto report = [](const StudyCurrentState& s, const bool bs) {
+    auto report = [](const char* msg, const StudyCurrentState& s,
+                     const bool bs) {
       if (mfront::getVerboseMode() >= mfront::VERBOSE_LEVEL1) {
         auto& log = mfront::getLogStream();
-        log << "Execution " << (bs ? "succeeded" : "failed") << '\n'
+        log << "Execution " << (bs ? "succeeded" : "failed");
+        if(msg){
+          log << " (" << msg << ")";
+        } else if(!bs){
+          log << " (unknown reason)";
+        }
+        log << '\n'
             << "-number of period:     " << s.period - 1 << '\n'
             << "-number of iterations: " << s.iterations << '\n'
             << "-number of sub-steps:  " << s.subSteps << '\n';
@@ -507,11 +514,14 @@ namespace mtest {
         ++pt;
         ++pt2;
       }
+    } catch (std::exception& e) {
+      report(e.what(),state, false);
+      throw;
     } catch (...) {
-      report(state, false);
+      report(nullptr,state, false);
       throw;
     }
-    report(state, true);
+    report(nullptr,state, true);
     tfel::tests::TestResult tr;
     for (const auto& t : this->tests) {
       tr.append(t->getResults());
@@ -605,15 +615,8 @@ namespace mtest {
     size_type pos = ndv;
     for (const auto& c : this->constraints) {
       const auto nl = c->getNumberOfLagrangeMultipliers();
-      if(c->isActive()){
-        c->setValues(k, r, state.u0, state.u0, bwk.kt, s.s0, pos,
-                     getSpaceDimension(this->hypothesis), t, dt, a);
-      } else {
-        for(size_type i=0;i!=nl;++i){
-          k(i, i) = a;
-          r(i) = real(0);
-        }
-      }
+      c->setValues(k, r, state.u0, state.u0, bwk.kt, s.s0, pos,
+                   getSpaceDimension(this->hypothesis), t, dt, a);
       pos = static_cast<size_type>(pos + nl);
     }
     return res;
@@ -753,14 +756,7 @@ namespace mtest {
     size_type pos = ndv;
     for (const auto& c : this->constraints) {
       const auto nl = c->getNumberOfLagrangeMultipliers();
-      if(c->isActive()){
-        c->setValues(k, r, state.u0, state.u1, bwk.k, s.s1, pos, d, t, dt, a);
-      } else {
-        for(size_type i=0;i!=nl;++i){
-          k(i, i) = a;
-          r(i) = real(0);
-        }
-      }
+      c->setValues(k, r, state.u0, state.u1, bwk.k, s.s1, pos, d, t, dt, a);
       pos = static_cast<size_type>(pos + nl);
     }
     return rb;

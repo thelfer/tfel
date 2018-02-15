@@ -39,10 +39,10 @@ namespace mtest {
       //! \brief position
       unsigned short p;
     };  // end of struct Variable
-        /*!
-         * A structure containing the constraint derivative and the second
-         * derivative of the constraint
-         */
+    /*!
+     * A structure containing the constraint derivative and the second
+     * derivative of the constraint
+     */
     struct ConstraintDerivative {
       //! variable used to differentiate the constraint
       std::shared_ptr<Variable> v;
@@ -200,77 +200,82 @@ namespace mtest {
     auto find_tf = [this](const std::shared_ptr<Constraint::Variable>& v) {
       return std::find(this->c->tfs.begin(), this->c->tfs.end(), v);
     };
-    // current value of the Lagrange multiplier
-    const auto l = u1(pos);
-    const auto nf = this->c->np == DRIVINGVARIABLECONSTRAINT ? a : real(1);
-    // force associated to the lagrange multiplier
-    r(pos) -= nf * (this->eval(*(this->c->c), u1, s, t, dt));
-    // derivative of the force associated to the lagrange multiplier
-    for (const auto& d : this->c->d) {
-      const auto pdv = find_dv(d.v);
-      const auto ptf = find_tf(d.v);
-      if (pdv != this->c->dvs.end()) {
-        const auto dc_dv = this->eval(*(d.d), u1, s, t, dt);
-        K(pos, (*(pdv))->p) -= nf * dc_dv;
-      }
-      if (ptf != this->c->tfs.end()) {
-        const auto ndv = this->b.getDrivingVariablesSize();
-        const auto ps = (*ptf)->p;
-        const auto dc_dtf = this->eval(*(d.d), u1, s, t, dt);
-        for (unsigned short i = 0; i != ndv; ++i) {
-          K(pos, i) -= nf * dc_dtf * k(ps, i);
+    if (this->isActive()) {
+      // current value of the Lagrange multiplier
+      const auto l = u1(pos);
+      const auto nf = this->c->np == DRIVINGVARIABLECONSTRAINT ? a : real(1);
+      // force associated to the lagrange multiplier
+      r(pos) -= nf * (this->eval(*(this->c->c), u1, s, t, dt));
+      // derivative of the force associated to the lagrange multiplier
+      for (const auto& d : this->c->d) {
+        const auto pdv = find_dv(d.v);
+        const auto ptf = find_tf(d.v);
+        if (pdv != this->c->dvs.end()) {
+          const auto dc_dv = this->eval(*(d.d), u1, s, t, dt);
+          K(pos, (*(pdv))->p) -= nf * dc_dv;
         }
-      }
-    }
-    // computation of the forces associated with the constraint and
-    // its derivative
-    for (const auto& d : this->c->d) {
-      const auto pdv = find_dv(d.v);
-      const auto ptf = find_tf(d.v);
-      if (pdv != this->c->dvs.end()) {
-        const auto i = (*pdv)->p;
-        const auto dc_dv = this->eval(*(d.d), u1, s, t, dt);
-        const auto kv = nf * dc_dv;
-        r(i) -= kv * l;
-        // derivative of the force
-        K(i, pos) -= kv;
-        for (const auto& d2 : d.dd_dv) {
-          const auto j = d2.first->p;
-          const auto d2c_dij = this->eval(*(d2.second), u1, s, t, dt);
-          K(i, j) -= nf * d2c_dij * l;
-        }
-        for (const auto& d2 : d.dd_tf) {
+        if (ptf != this->c->tfs.end()) {
           const auto ndv = this->b.getDrivingVariablesSize();
-          const auto ps = d2.first->p;
-          const auto d2c_dis = this->eval(*(d2.second), u1, s, t, dt);
-          for (unsigned short j = 0; j != ndv; ++j) {
-            K(i, j) -= nf * d2c_dis * k(ps, j) * l;
+          const auto ps = (*ptf)->p;
+          const auto dc_dtf = this->eval(*(d.d), u1, s, t, dt);
+          for (unsigned short i = 0; i != ndv; ++i) {
+            K(pos, i) -= nf * dc_dtf * k(ps, i);
           }
         }
       }
-      if (ptf != this->c->tfs.end()) {
-        const auto ndv = this->b.getDrivingVariablesSize();
-        const auto dc_dtf = this->eval(*(d.d), u1, s, t, dt);
-        const auto ps = (*ptf)->p;
-        for (unsigned short i = 0; i != ndv; ++i) {
-          r(i) -= nf * dc_dtf * k(ps, i) * l;
-          K(i, pos) -= nf * dc_dtf * k(ps, i);
-          // approximation of the derivative of the force
+      // computation of the forces associated with the constraint and
+      // its derivative
+      for (const auto& d : this->c->d) {
+        const auto pdv = find_dv(d.v);
+        const auto ptf = find_tf(d.v);
+        if (pdv != this->c->dvs.end()) {
+          const auto i = (*pdv)->p;
+          const auto dc_dv = this->eval(*(d.d), u1, s, t, dt);
+          const auto kv = nf * dc_dv;
+          r(i) -= kv * l;
+          // derivative of the force
+          K(i, pos) -= kv;
           for (const auto& d2 : d.dd_dv) {
             const auto j = d2.first->p;
-            const auto d2c_dsj = this->eval(*(d2.second), u1, s, t, dt);
-            K(i, j) -= nf * d2c_dsj * k(ps, i) * l;  // missing term dk(ps_i)_dj
+            const auto d2c_dij = this->eval(*(d2.second), u1, s, t, dt);
+            K(i, j) -= nf * d2c_dij * l;
           }
           for (const auto& d2 : d.dd_tf) {
-            const auto ps2 = d2.first->p;
-            const auto d2c_dsds2 = this->eval(*(d2.second), u1, s, t, dt);
+            const auto ndv = this->b.getDrivingVariablesSize();
+            const auto ps = d2.first->p;
+            const auto d2c_dis = this->eval(*(d2.second), u1, s, t, dt);
             for (unsigned short j = 0; j != ndv; ++j) {
-              K(i, j) -= nf * d2c_dsds2 * k(ps, i) * k(ps2, j) *
-                         l;  // missing term dk(ps_i)_dj
+              K(i, j) -= nf * d2c_dis * k(ps, j) * l;
+            }
+          }
+        }
+        if (ptf != this->c->tfs.end()) {
+          const auto ndv = this->b.getDrivingVariablesSize();
+          const auto dc_dtf = this->eval(*(d.d), u1, s, t, dt);
+          const auto ps = (*ptf)->p;
+          for (unsigned short i = 0; i != ndv; ++i) {
+            r(i) -= nf * dc_dtf * k(ps, i) * l;
+            K(i, pos) -= nf * dc_dtf * k(ps, i);
+            // approximation of the derivative of the force
+            for (const auto& d2 : d.dd_dv) {
+              const auto j = d2.first->p;
+              const auto d2c_dsj = this->eval(*(d2.second), u1, s, t, dt);
+              K(i, j) -=
+                  nf * d2c_dsj * k(ps, i) * l;  // missing term dk(ps_i)_dj
+            }
+            for (const auto& d2 : d.dd_tf) {
+              const auto ps2 = d2.first->p;
+              const auto d2c_dsds2 = this->eval(*(d2.second), u1, s, t, dt);
+              for (unsigned short j = 0; j != ndv; ++j) {
+                K(i, j) -= nf * d2c_dsds2 * k(ps, i) * k(ps2, j) *
+                           l;  // missing term dk(ps_i)_dj
+              }
             }
           }
         }
       }
+    } else {
+      K(pos,pos)=1;
     }
   }  // end of NonLinearConstraint::setValues
 

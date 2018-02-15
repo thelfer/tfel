@@ -51,7 +51,9 @@ namespace mtest
 					    const real dt,
 					    const real) const
   {
-    r(this->c) -= this->sev->operator()(t+dt);
+    if (this->isActive()) {
+      r(this->c) -= this->sev->operator()(t + dt);
+    }
   } // end of ImposedThermodynamicForce::setValues
 
   bool
