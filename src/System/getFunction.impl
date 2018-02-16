@@ -542,6 +542,12 @@ extern "C" {
 				    const AsterRealType *const,AsterRealType *const,
 				    const AsterIntegerType  *const))dlsym(lib,name);
   }
+  
+  const char * (TFEL_ADDCALL_PTR tfel_getAsterIntegrationErrorMessage(LibraryHandlerPtr lib,
+								 const char * const name))()
+  {
+    return (const char* (TFEL_ADDCALL_PTR)())dlsym(lib,name);
+  }
 
   void (TFEL_ADDCALL_PTR tfel_getEuroplexusFunction(LibraryHandlerPtr l,
 						    const char * const n))(EuroplexusIntegerType *const,
@@ -624,8 +630,8 @@ extern "C" {
 				    const int))dlsym(l,n);
   }
   
-  double (TFEL_ADDCALL_PTR tfel_getCFunction0(LibraryHandlerPtr lib,const char * const name))(void){
-    return (double (TFEL_ADDCALL_PTR)(void)) dlsym(lib,name);
+  double (TFEL_ADDCALL_PTR tfel_getCFunction0(LibraryHandlerPtr lib,const char * const name))(){
+    return (double (TFEL_ADDCALL_PTR)()) dlsym(lib,name);
   } 
 
   double (TFEL_ADDCALL_PTR tfel_getCFunction1(LibraryHandlerPtr lib,const char * const name))(double){
@@ -771,8 +777,8 @@ extern "C" {
 				      double,double,double)) dlsym(lib,name);
   }
 
-  double (TFEL_ADDCALL_PTR tfel_getFortranFunction0(LibraryHandlerPtr lib,const char * const name))(void){
-    return (double (TFEL_ADDCALL_PTR)(void)) dlsym(lib,name);
+  double (TFEL_ADDCALL_PTR tfel_getFortranFunction0(LibraryHandlerPtr lib,const char * const name))(){
+    return (double (TFEL_ADDCALL_PTR)()) dlsym(lib,name);
   } 
 
 

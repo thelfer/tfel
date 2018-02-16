@@ -186,7 +186,7 @@ namespace mfront{
     
     bool savesTangentOperator = false;
 
-    bool errorReport = true;
+    bool errorReport = false;
     
   }; // end of AsterInterface
 

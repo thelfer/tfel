@@ -123,6 +123,8 @@ namespace mtest
 		   const bool) const;
     //! the aster fonction
     tfel::system::AsterFctPtr fct;
+    //! Pointer to function returing the integration error message
+    const char* (* emsg)();
   }; // end of struct AsterCohesiveZoneModel
   
 } // end of namespace mtest

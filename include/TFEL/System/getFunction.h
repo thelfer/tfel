@@ -394,6 +394,19 @@ extern "C" {
 										      AsterRealType *const,
 										      const AsterIntegerType  *const);
  /*!
+   * \brief this function returns a function of type
+   *  const char* (*)(void)
+   *
+   * This function is a simple wrapper around dlsym. We can check if a
+   * symbol with the given name exists but cannot check if it points to
+   * a function with that prototype.
+   *
+   * \param[in] lib: handler to the library opened through dlopen
+   * \param[in] f: name of the function to be checked
+   * \return a function pointer if the call succeed, the NULL pointer if not.
+   */
+  const char* (TFEL_ADDCALL_PTR tfel_getAsterIntegrationErrorMessage(LibraryHandlerPtr,const char * const))();
+ /*!
    * \brief this function returns a pointer to an europlexus external
    * function.
    *

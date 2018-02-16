@@ -18,6 +18,7 @@
 #include"TFEL/Math/tmatrix.hxx"
 #include"TFEL/Math/stensor.hxx"
 #include"TFEL/Math/st2tost2.hxx"
+#include"MFront/MFrontLogStream.hxx"
 #include"MFront/Aster/Aster.hxx"
 #include"MFront/Aster/AsterComputeStiffnessTensor.hxx"
 
@@ -33,7 +34,7 @@ namespace mtest
 						       const std::string& l,
 						       const std::string& b)
     : AsterStandardBehaviour(h,l,b)
-  {}
+  {} // end of AsterSmallStrainBehaviour::AsterSmallStrainBehaviour
 
   void
   AsterSmallStrainBehaviour::getDrivingVariablesDefaultInitialValues(tfel::math::vector<real>& v) const
@@ -124,6 +125,11 @@ namespace mtest
 		&ntens,&nstatv,&(wk.mps(0)),
 		&nprops,&drot(0,0),&ndt,&nummod);
     if(ndt<1){
+      if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL1){
+	if(this->emsg!=nullptr){
+	  mfront::getLogStream() << this->emsg() << std::endl;
+	}
+      }
       return {false,ndt};
     }
     if(ktype!=StiffnessMatrixType::NOSTIFFNESS){

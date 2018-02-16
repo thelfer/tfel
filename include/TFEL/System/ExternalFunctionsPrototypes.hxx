@@ -468,6 +468,8 @@ namespace tfel
 						  const AsterRealType *const, /* rotation matrix                       */
 						  AsterRealType *const,       /* estimation of the next time increment */
 						  const AsterIntegerType  *const);
+      //! a simple alias
+      using AsterIntegrationErrorMessageFctPtr = const char* (*)();
       /*!
        * a simple alias.
        * This is the prototype of the external functions used by the

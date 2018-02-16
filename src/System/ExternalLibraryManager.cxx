@@ -875,6 +875,15 @@ namespace tfel
 	       "invalid returned value");
       return static_cast<unsigned short>(res);
     } // end of ExternalLibraryManager::getAsterFiniteStrainFormulation
+
+    AsterIntegrationErrorMessageFctPtr
+    ExternalLibraryManager::getAsterIntegrationErrorMessageFunction(const std::string& l,
+								    const std::string& f)
+    {
+      const auto lib = this->loadLibrary(l);
+      const auto s   = f+"_getIntegrationErrorMessage";
+      return ::tfel_getAsterIntegrationErrorMessage(lib,s.c_str());
+    } // end of ExternalLibraryManager::getAsterIntegrationErrorMessage
     
     unsigned short
     ExternalLibraryManager::getAbaqusOrthotropyManagementPolicy(const std::string& l,
