@@ -66,6 +66,7 @@ bindings/python/mfront/umatxx/Makefile.am -text
 bindings/python/mfront/umatxx/__init__.py.in -text
 bindings/python/mtest/Behaviour.cxx -text
 bindings/python/mtest/CMakeLists.txt -text
+bindings/python/mtest/Constraint.cxx -text
 bindings/python/mtest/CurrentState.cxx -text
 bindings/python/mtest/MFrontLogStream.cxx -text
 bindings/python/mtest/MTest.cxx -text
