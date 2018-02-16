@@ -572,7 +572,14 @@ namespace tfel
       unsigned short
       getAsterFiniteStrainFormulation(const std::string&,
 				      const std::string&);
-      
+      /*!
+       * \return the error message if the behaviour did not converge
+       * \param[in] l: name of the library
+       * \param[in] f: law name
+       */
+      AsterIntegrationErrorMessageFctPtr
+      getAsterIntegrationErrorMessageFunction(const std::string&,
+					      const std::string&);
       /*!
        * \return the orthotropy management policy for the Abaqus and
        * Abaqus/Explicit interface. See the associated documentation

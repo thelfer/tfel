@@ -122,6 +122,8 @@ namespace mtest
 		   const bool) const = 0;
     //! the aster fonction
     tfel::system::AsterFctPtr fct;
+    //! Pointer to function returing the integration error message
+    const char* (* emsg)();
     //! save tangent operator
     bool savesTangentOperator;
   }; // end of struct Behaviour

@@ -17,6 +17,7 @@
 #include"TFEL/Raise.hxx"
 #include"TFEL/Math/tmatrix.hxx"
 #include"TFEL/System/ExternalLibraryManager.hxx"
+#include"MFront/MFrontLogStream.hxx"
 #include"MFront/Aster/Aster.hxx"
 #include"MTest/CurrentState.hxx"
 #include"MTest/BehaviourWorkSpace.hxx"
@@ -37,6 +38,7 @@ namespace mtest
     throw_if(elm.getInterface(l,b)!="Aster",
 	     "invalid interface '"+elm.getInterface(l,b)+"'");
     this->fct = elm.getAsterFunction(l,b);
+    this->emsg = elm.getAsterIntegrationErrorMessageFunction(l,b);
     const auto& nh = ModellingHypothesis::toString(h);
     this->mpnames = elm.getUMATMaterialPropertiesNames(l,b,nh);
     throw_if(this->btype!=3u,"unsupported hypothesis");
@@ -193,6 +195,11 @@ namespace mtest
 		&ntens,&nstatv,&(wk.mps(0)),
 		&nprops,&drot(0,0),&ndt,&nummod);
     if(ndt<1.){
+      if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL1){
+	if(this->emsg!=nullptr){
+	  mfront::getLogStream() << this->emsg() << std::endl;
+	}
+      }
       return {false,ndt};
     }
     if(b){

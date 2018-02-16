@@ -24,6 +24,7 @@
 #include"TFEL/Math/T2toST2/T2toST2ConceptIO.hxx"
 #include"TFEL/Material/FiniteStrainBehaviourTangentOperator.hxx"
 #include"TFEL/System/ExternalLibraryManager.hxx"
+#include"MFront/MFrontLogStream.hxx"
 #include"MFront/Aster/Aster.hxx"
 #include"MFront/Aster/AsterComputeStiffnessTensor.hxx"
 
@@ -255,6 +256,11 @@ namespace mtest
 		&ntens,&nstatv,&wk.mps(0),
 		&nprops,&drot(0,0),&ndt,&nummod);
     if(ndt<1){
+      if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL1){
+	if(this->emsg!=nullptr){
+	  mfront::getLogStream() << this->emsg() << std::endl;
+	}
+      }
       return {false,ndt};
     }
     if(b){

@@ -42,7 +42,8 @@ namespace mtest
     auto& elm = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
     throw_if(elm.getInterface(l,b)!="Aster",
 	     "invalid interface '"+elm.getInterface(l,b)+"'");
-    this->fct = elm.getAsterFunction(l,b);
+    this->fct  = elm.getAsterFunction(l,b);
+    this->emsg = elm.getAsterIntegrationErrorMessageFunction(l,b);
     this->savesTangentOperator = elm.checkIfAsterBehaviourSavesTangentOperator(l,b);
     auto tmp = std::vector<std::string>{};
     if(this->etype==0u){
