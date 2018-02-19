@@ -14,6 +14,7 @@
 #include <boost/python.hpp>
 #include <boost/python/stl_iterator.hpp>
 #include <boost/python/make_constructor.hpp>
+#include <boost/python/raw_function.hpp>
 #include "TFEL/Raise.hxx"
 #include "MTest/Constraint.hxx"
 
