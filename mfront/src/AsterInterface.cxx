@@ -398,16 +398,16 @@ namespace mfront {
     this->writeSetOutOfBoundsPolicyFunctionImplementation(out, name);
 
     out << "char *" << this->getFunctionName(name) << "_getIntegrationErrorMessage(){\n"
-	<< "#if (defined __GNUC__) && (!defined __clang__) && "
-      "(!defined __INTEL_COMPILER) && (!defined __PGI)\n"
-	<< "#if __GNUC__ * 10000+__GNUC_MINOR__ * 100 <  40800\n"
+        << "#if (defined __GNUC__) && (!defined __clang__) && "
+           "(!defined __INTEL_COMPILER) && (!defined __PGI)\n"
+        << "#if __GNUC__ * 10000+__GNUC_MINOR__ * 100 <  40800\n"
         << "static __thread char msg[128];\n"
-	<< "#else\n"
+        << "#else\n"
         << "static thread_local char msg[128];\n"
-	<< "#endif\n"
-	<< "#else /* (defined __GNUC__) ...*/\n"
+        << "#endif\n"
+        << "#else /* (defined __GNUC__) ...*/\n"
         << "static thread_local char msg[128];\n"
-	<< "#endif /* (defined __GNUC__) ...*/\n"
+        << "#endif /* (defined __GNUC__) ...*/\n"
         << "return msg;\n"
         << "} // end of " << this->getFunctionName(name) << "_getIntegrationErrorMessage\n\n";
 

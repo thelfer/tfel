@@ -28,26 +28,19 @@ namespace mfront{
   {
     typedef std::shared_ptr<AbstractDSL> (*ParserCreator)();
     typedef std::string (*DescriptionPtr)();
-    
-    static DSLFactory&
-    getDSLFactory();
 
-    std::vector<std::string>
-    getRegistredParsers();
+    static DSLFactory& getDSLFactory();
 
-    void registerParserCreator(const std::string&,
-			       ParserCreator,
-			       DescriptionPtr);
-    
-    std::shared_ptr<AbstractDSL>
-    createNewParser(const std::string&);
+    std::vector<std::string> getRegistredParsers();
 
-    std::shared_ptr<AbstractDSL>
-    createNewDSL(const std::string&);
+    void registerParserCreator(const std::string&, ParserCreator, DescriptionPtr);
 
-    std::string
-    getParserDescription(const std::string&);
-    
+    std::shared_ptr<AbstractDSL> createNewParser(const std::string&);
+
+    std::shared_ptr<AbstractDSL> createNewDSL(const std::string&);
+
+    std::string getParserDescription(const std::string&);
+
     ~DSLFactory();
 
   private:

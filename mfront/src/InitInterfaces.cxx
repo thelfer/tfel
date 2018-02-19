@@ -76,12 +76,9 @@
 #include"MFront/MFrontModelInterface.hxx"
 #include"MFront/InitInterfaces.hxx"
 
-namespace mfront
-{
+namespace mfront {
 
-  void initInterfaces()
-  {
-
+  void initInterfaces() {
     MaterialPropertyInterfaceProxy<CMaterialPropertyInterface> cLawProxy;
 
 #ifdef HAVE_FORTRAN
@@ -122,9 +119,10 @@ namespace mfront
 #endif /* HAVE_JAVA */
     
 #ifdef HAVE_CASTEM
-    constexpr const char * castemNames[3] = {"castem","Castem","Cast3M"};
-    MaterialPropertyInterfaceProxy<CastemMaterialPropertyInterface> castemLawProxy(castemNames,castemNames+3);
-    BehaviourInterfaceProxy<CastemInterface> umatProxy(castemNames,castemNames+3);
+    constexpr const char * castemINames[3] = {"castem","Castem","Cast3M"};
+    MaterialPropertyInterfaceProxy<CastemMaterialPropertyInterface> castemLawProxy(castemINames,castemINames+3);
+    constexpr const char * castemBNames[3] = {"umat","Castem","Cast3M"};
+    BehaviourInterfaceProxy<CastemInterface> umatProxy(castemBNames,castemBNames+3);
 #endif /* HAVE_CASTEM */
 
 #ifdef HAVE_CYRANO

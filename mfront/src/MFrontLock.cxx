@@ -29,21 +29,19 @@
 
 namespace mfront{
 
-  MFrontLock& MFrontLock::getMFrontLock()
-  {
+  MFrontLock& MFrontLock::getMFrontLock() {
     static MFrontLock lock;
     return lock;
   } // end of MFrontLock::getMFrontLock
 
-  MFrontLock::MFrontLock()
-  {
+  MFrontLock::MFrontLock() {
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-    this->ghMutex = CreateMutex(nullptr,   // default security attributes
-				FALSE,     // initially not owned
-				"mfront"); // named mutex
+    this->ghMutex = CreateMutex(nullptr,    // default security attributes
+                                FALSE,      // initially not owned
+                                "mfront");  // named mutex
     tfel::raise_if(this->ghMutex == nullptr,
-		   "MFrontLock::MFrontLock: "
-		   "semaphore creation failed");
+                   "MFrontLock::MFrontLock: "
+                   "semaphore creation failed");
 #else
     std::ostringstream sn;
     sn << "/mfront-" << ::geteuid();
@@ -54,34 +52,30 @@ namespace mfront{
 #endif
   } // end of MFrontLock::MFrontLock()
 
-  void MFrontLock::lock()
-  {
+  void MFrontLock::lock() {
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
     DWORD dwWaitResult;
-    dwWaitResult = ::WaitForSingleObject(this->ghMutex, // handle to mutex
-					 INFINITE);     // no time-out interval
-    tfel::raise_if(dwWaitResult==WAIT_ABANDONED,
-		   "MFrontLock::MFrontLock: "
-		   "semaphore can't be aquired");
+    dwWaitResult = ::WaitForSingleObject(this->ghMutex,  // handle to mutex
+                                         INFINITE);      // no time-out interval
+    tfel::raise_if(dwWaitResult == WAIT_ABANDONED,
+                   "MFrontLock::MFrontLock: "
+                   "semaphore can't be aquired");
 #else
-    tfel::raise_if(::sem_wait(this->l)==-1,
-		   "MFrontLock::MFrontLock: "
-		   "semaphore can't be aquired");
+    tfel::raise_if(::sem_wait(this->l) == -1,
+                   "MFrontLock::MFrontLock: "
+                   "semaphore can't be aquired");
 #endif
   } // end of MFrontLock::lock()
 
-  void
-  MFrontLock::unlock()
-  {
+  void MFrontLock::unlock() {
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
     ::ReleaseMutex(this->ghMutex);
 #else
     ::sem_post(this->l);
 #endif
   } // end of MFrontLock::unlock()
-    
-  MFrontLock::~MFrontLock()
-  {
+
+  MFrontLock::~MFrontLock() {
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
     ::CloseHandle(this->ghMutex);
 #else
@@ -89,13 +83,11 @@ namespace mfront{
 #endif
   } // end of MFrontLock::~MFrontLock()
 
-  MFrontLockGuard::MFrontLockGuard()
-  {
+  MFrontLockGuard::MFrontLockGuard() {
     MFrontLock::getMFrontLock().lock();
   } // end of MFrontLockGuard::MFrontLockGuard
 
-  MFrontLockGuard::~MFrontLockGuard()
-  {
+  MFrontLockGuard::~MFrontLockGuard() {
     MFrontLock::getMFrontLock().unlock();
   } // end of MFrontLockGuard::~MFrontLockGuard
 

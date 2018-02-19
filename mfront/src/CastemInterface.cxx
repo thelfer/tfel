@@ -39,20 +39,17 @@ static const char * const constexpr_c = "const";
 
 namespace mfront{
 
-  static void
-  writeUMATArguments(std::ostream& out,
-		     const BehaviourDescription::BehaviourType& t)
-  {
+  static void writeUMATArguments(std::ostream& out, const BehaviourDescription::BehaviourType& t) {
     out << "(castem::CastemReal *const STRESS,\n"
-	<< " castem::CastemReal *const STATEV,\n"
-	<< " castem::CastemReal *const DDSDDE,\n"
-	<< " castem::CastemReal *const,\n"
-	<< " castem::CastemReal *const,\n"
-	<< " castem::CastemReal *const,\n"
-	<< " castem::CastemReal *const,\n"
-	<< " castem::CastemReal *const,\n"
-	<< " castem::CastemReal *const,\n"
-	<< " castem::CastemReal *const,\n";
+        << " castem::CastemReal *const STATEV,\n"
+        << " castem::CastemReal *const DDSDDE,\n"
+        << " castem::CastemReal *const,\n"
+        << " castem::CastemReal *const,\n"
+        << " castem::CastemReal *const,\n"
+        << " castem::CastemReal *const,\n"
+        << " castem::CastemReal *const,\n"
+        << " castem::CastemReal *const,\n"
+        << " castem::CastemReal *const,\n";
     if(t!=BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR){
       out << " const castem::CastemReal *const STRAN,\n"
 	  << " const castem::CastemReal *const DSTRAN,\n";
@@ -61,79 +58,77 @@ namespace mfront{
 	  << " const castem::CastemReal *const,\n";
     }
     out << " const castem::CastemReal *const,\n"
-	<< " const castem::CastemReal *const DTIME,\n"
-	<< " const castem::CastemReal *const TEMP,\n"
-	<< " const castem::CastemReal *const DTEMP,\n"
-	<< " const castem::CastemReal *const PREDEF,\n"
-	<< " const castem::CastemReal *const DPRED,\n"
-	<< " const char           *const,\n"
-	<< " const castem::CastemInt  *const NDI,\n"
-	<< " const castem::CastemInt  *const,\n"
-	<< " const castem::CastemInt  *const NTENS,\n"
-	<< " const castem::CastemInt  *const NSTATV,\n"
-	<< " const castem::CastemReal *const PROPS,\n"
-	<< " const castem::CastemInt  *const NPROPS,\n"
-	<< " const castem::CastemReal *const,\n"
-	<< " const castem::CastemReal *const DROT,\n"
-	<< "       castem::CastemReal *const PNEWDT,\n"
-	<< " const castem::CastemReal *const,\n";
+        << " const castem::CastemReal *const DTIME,\n"
+        << " const castem::CastemReal *const TEMP,\n"
+        << " const castem::CastemReal *const DTEMP,\n"
+        << " const castem::CastemReal *const PREDEF,\n"
+        << " const castem::CastemReal *const DPRED,\n"
+        << " const char           *const,\n"
+        << " const castem::CastemInt  *const NDI,\n"
+        << " const castem::CastemInt  *const,\n"
+        << " const castem::CastemInt  *const NTENS,\n"
+        << " const castem::CastemInt  *const NSTATV,\n"
+        << " const castem::CastemReal *const PROPS,\n"
+        << " const castem::CastemInt  *const NPROPS,\n"
+        << " const castem::CastemReal *const,\n"
+        << " const castem::CastemReal *const DROT,\n"
+        << "       castem::CastemReal *const PNEWDT,\n"
+        << " const castem::CastemReal *const,\n";
     if(t==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR){
       out << " const castem::CastemReal *const F0,\n"
-	  << " const castem::CastemReal *const F1,\n";
+          << " const castem::CastemReal *const F1,\n";
     } else {
       out << " const castem::CastemReal *const,\n"
-	  << " const castem::CastemReal *const,\n";
+          << " const castem::CastemReal *const,\n";
     }
     out << " const castem::CastemInt  *const,\n"
-	<< " const castem::CastemInt  *const,\n"
-	<< " const castem::CastemInt  *const,\n"
-	<< " const castem::CastemInt  *const,\n"
-	<< " const castem::CastemInt  *const,\n"
-	<< "       castem::CastemInt  *const KINC,\n"
-	<< "const int)";
+        << " const castem::CastemInt  *const,\n"
+        << " const castem::CastemInt  *const,\n"
+        << " const castem::CastemInt  *const,\n"
+        << " const castem::CastemInt  *const,\n"
+        << "       castem::CastemInt  *const KINC,\n"
+        << "const int)";
   } // end of writeUMATArguments
 
-  static void
-  writeUMATArguments(std::ostream& out)
-  {
+  static void writeUMATArguments(std::ostream& out) {
     out << "(castem::CastemReal *const,\n"
-	<< " castem::CastemReal *const,\n"
-	<< " castem::CastemReal *const,\n"
-	<< " castem::CastemReal *const,\n"
-	<< " castem::CastemReal *const,\n"
-	<< " castem::CastemReal *const,\n"
-	<< " castem::CastemReal *const,\n"
-	<< " castem::CastemReal *const,\n"
-	<< " castem::CastemReal *const,\n"
-	<< " castem::CastemReal *const,\n"
-	<< " const castem::CastemReal *const,\n"
-	<< " const castem::CastemReal *const,\n"
-	<< " const castem::CastemReal *const,\n"
-	<< " const castem::CastemReal *const,\n"
-	<< " const castem::CastemReal *const,\n"
-	<< " const castem::CastemReal *const,\n"
-	<< " const castem::CastemReal *const,\n"
-	<< " const castem::CastemReal *const,\n"
-	<< " const char           *const,\n"
-	<< " const castem::CastemInt  *const,\n"
-	<< " const castem::CastemInt  *const,\n"
-	<< " const castem::CastemInt  *const,\n"
-	<< " const castem::CastemInt  *const,\n"
-	<< " const castem::CastemReal *const,\n"
-	<< " const castem::CastemInt  *const,\n"
-	<< " const castem::CastemReal *const,\n"
-	<< " const castem::CastemReal *const,\n"
-	<< "       castem::CastemReal *const,\n"
+        << " castem::CastemReal *const,\n"
+        << " castem::CastemReal *const,\n"
+        << " castem::CastemReal *const,\n"
+        << " castem::CastemReal *const,\n"
+        << " castem::CastemReal *const,\n"
+        << " castem::CastemReal *const,\n"
+        << " castem::CastemReal *const,\n"
+        << " castem::CastemReal *const,\n"
+        << " castem::CastemReal *const,\n"
         << " const castem::CastemReal *const,\n"
-	<< " const castem::CastemReal *const,\n"
-	<< " const castem::CastemReal *const,\n"
-	<< " const castem::CastemInt  *const,\n"
-	<< " const castem::CastemInt  *const,\n"
-	<< " const castem::CastemInt  *const,\n"
-	<< " const castem::CastemInt  *const,\n"
-	<< " const castem::CastemInt  *const,\n"
-	<< "       castem::CastemInt  *const,\n"
-	<< "const int)";
+        << " const castem::CastemReal *const,\n"
+        << " const castem::CastemReal *const,\n"
+        << " const castem::CastemReal *const,\n"
+        << " const castem::CastemReal *const,\n"
+        << " const castem::CastemReal *const,\n"
+        << " const castem::CastemReal *const,\n"
+        << " const castem::CastemReal *const,\n"
+        << " const char           *const,\n"
+        << " const castem::CastemInt  *const,\n"
+        << " const castem::CastemInt  *const,\n"
+        << " const castem::CastemInt  *const,\n"
+        << " const castem::CastemInt  *const,\n"
+        << " const castem::CastemReal *const,\n"
+        << " const castem::CastemInt  *const,\n"
+        << " const castem::CastemReal *const,\n"
+        << " const castem::CastemReal *const,\n"
+        << "       castem::CastemReal *const,\n"
+        << " const castem::CastemReal *const,\n"
+        << " const castem::CastemReal *const,\n"
+        << " const castem::CastemReal *const,\n"
+        << " const castem::CastemInt  *const,\n"
+        << " const castem::CastemInt  *const,\n"
+        << " const castem::CastemInt  *const,\n"
+        << " const castem::CastemInt  *const,\n"
+        << " const castem::CastemInt  *const,\n"
+        << "       castem::CastemInt  *const,\n"
+        << "const int)";
   } // end of writeUMATArguments
 
   static int
@@ -279,7 +274,7 @@ namespace mfront{
 
   std::string CastemInterface::getName()
   {
-    return "umat";
+    return "castem";
   }
 
   std::string CastemInterface::getInterfaceName() const
