@@ -92,8 +92,8 @@ In the following, we will suppose that:
   [here](https://git-scm.com/download/win)
 - `cmake` is installed. `cmake` can be downloaded
   [here](https://cmake.org/download/).
-- `Cast3M` `2017` is installed. `Cast3M` can be downloaded
-  [here](http://www-cast3m.cea.fr/index.php?xml=download1).
+- `Cast3M` `2017` **developer version** is installed. `Cast3M` can be
+  downloaded [here](http://www-cast3m.cea.fr/index.php?xml=download1).
 
 > **Notes**
 >
