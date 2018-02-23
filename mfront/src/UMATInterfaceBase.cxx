@@ -1825,34 +1825,32 @@ namespace mfront
       tfel::raise_if(b,"UMATInterfaceBase::"
 		     "writeUMATxxParameterDefaultValueSymbols: "+m);
     };
-    for(const auto& p: mb.getBehaviourData(h).getParameters()){
-      if(p.type=="int"){
-	throw_if(p.arraySize!=1u,"unsupported parameters array of type '"+p.type+"'");
-	out << "MFRONT_SHAREDOBJ int " << this->getSymbolName(name,h)
-	    << "_" << p.getExternalName() << "_ParameterDefaultValue  = "
-	    << mb.getIntegerParameterDefaultValue(h,p.name) << ";\n\n";
-      } else  if(p.type=="ushort"){
-	throw_if(p.arraySize!=1u,"unsupported parameters array of type '"+p.type+"'");
-	out << "MFRONT_SHAREDOBJ unsigned short " << this->getSymbolName(name,h)
-	    << "_" << p.getExternalName() << "_ParameterDefaultValue  = "
-	    << mb.getUnsignedShortParameterDefaultValue(h,p.name) << ";\n\n";
+    for (const auto& p : mb.getBehaviourData(h).getParameters()) {
+      if (p.type == "int") {
+        throw_if(p.arraySize != 1u, "unsupported parameters array of type '" + p.type + "'");
+        out << "MFRONT_SHAREDOBJ int " << this->getSymbolName(name, h) << "_" << p.getExternalName()
+            << "_ParameterDefaultValue  = " << mb.getIntegerParameterDefaultValue(h, p.name)
+            << ";\n\n";
+      } else if (p.type == "ushort") {
+        throw_if(p.arraySize != 1u, "unsupported parameters array of type '" + p.type + "'");
+        out << "MFRONT_SHAREDOBJ unsigned short " << this->getSymbolName(name, h) << "_"
+            << p.getExternalName()
+            << "_ParameterDefaultValue  = " << mb.getUnsignedShortParameterDefaultValue(h, p.name)
+            << ";\n\n";
       } else {
-	const auto f = SupportedTypes::getTypeFlag(p.type);
-	throw_if(f!=SupportedTypes::Scalar,
-		 "unsupported paramaeter type '"+p.type+"'");
-	if(p.arraySize==1u){
-	  out << "MFRONT_SHAREDOBJ double " << this->getSymbolName(name,h)
-	      << "_" << p.name << "_ParameterDefaultValue" << " = "
-	      << mb.getFloattingPointParameterDefaultValue(h,p.name)
-	      << ";\n\n";
-	} else {
-	  for(unsigned short is=0;is!=p.arraySize;++is){
-	    out << "MFRONT_SHAREDOBJ double " << this->getSymbolName(name,h)
-		<< "_" << p.name << "__" << is << "___ParameterDefaultValue = "
-		<< mb.getFloattingPointParameterDefaultValue(h,p.name,is)
-		<< ";\n\n";
-	  }
-	}
+        const auto f = SupportedTypes::getTypeFlag(p.type);
+        throw_if(f != SupportedTypes::Scalar, "unsupported paramaeter type '" + p.type + "'");
+        if (p.arraySize == 1u) {
+          out << "MFRONT_SHAREDOBJ double " << this->getSymbolName(name, h) << "_"
+              << p.getExternalName() << "_ParameterDefaultValue"
+              << " = " << mb.getFloattingPointParameterDefaultValue(h, p.name) << ";\n\n";
+        } else {
+          for (unsigned short is = 0; is != p.arraySize; ++is) {
+            out << "MFRONT_SHAREDOBJ double " << this->getSymbolName(name, h) << "_"
+                << p.getExternalName() << "__" << is << "___ParameterDefaultValue = "
+                << mb.getFloattingPointParameterDefaultValue(h, p.name, is) << ";\n\n";
+          }
+        }
       }
     }
   } // end of UMATInterfaceBase::writeUMATxxParameterDefaultValueSymbols
