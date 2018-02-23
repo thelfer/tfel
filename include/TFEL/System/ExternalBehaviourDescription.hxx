@@ -19,12 +19,10 @@
 
 #include"TFEL/Config/TFELConfig.hxx"
 
-namespace tfel
-{
+namespace tfel {
 
-  namespace system
-  {
-    
+  namespace system {
+
     /*!
      * A structure containing the information  a given behaviour 
      */
@@ -112,9 +110,7 @@ namespace tfel
        * \param[in] f : function
        * \param[in] h : hypothesis
        */
-      ExternalBehaviourDescription(const std::string&,
-				   const std::string&,
-				   const std::string&);
+      ExternalBehaviourDescription(const std::string&, const std::string&, const std::string&);
       //! default constructor
       ExternalBehaviourDescription();
       //! copy constructor
@@ -234,7 +230,7 @@ extern "C"{
 			   const char* const,
 			   const char* const,
 			   const char* const);
-  
-} // end of extern "C"
+
+}  // end of extern "C"
 
 #endif /* LIB_TFEL_SYSTEM_EXTERNALBEHAVIOURDESCRIPTION_HXX */

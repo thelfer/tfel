@@ -490,14 +490,13 @@ namespace mtest {
             << "-number of sub-steps:  " << s.subSteps << '\n';
       }
     };
-    // some checks
-    tfel::raise_if(times.empty(), "MTest::execute: no times defined");
-    tfel::raise_if(times.size() < 2,
-                   "MTest::execute: invalid number of times defined");
     // initialize current state and work space
     StudyCurrentState state;
     SolverWorkSpace wk;
     try {
+      // some checks
+      tfel::raise_if(times.empty(), "MTest::execute: no times defined");
+      tfel::raise_if(times.size() < 2, "MTest::execute: invalid number of times defined");
       // finish initialization
       this->completeInitialisation();
       this->initializeCurrentState(state);

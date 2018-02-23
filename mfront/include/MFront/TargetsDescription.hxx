@@ -72,9 +72,7 @@ namespace mfront{
      * \param[in] n : name of the library searched
      * \param[in] p : library prefix
      */
-    LibraryDescription&
-    operator()(const std::string&,
-	       const std::string&);
+    LibraryDescription& operator()(const std::string&, const std::string&);
     /*!
      * \return the library description associated with the given
      * library name or a newly created one if non existed

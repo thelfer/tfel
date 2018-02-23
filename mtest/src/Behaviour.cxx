@@ -1,275 +1,263 @@
-/*! 
+/*!
  * \file   mtest/src/Behaviour.cxx
  * \brief
  * \author Thomas Helfer
  * \brief 05 avril 2013
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
-#include<stdexcept>
+#include <stdexcept>
 
-#include"TFEL/Raise.hxx"
-#include"TFEL/System/ExternalLibraryManager.hxx"
+#include "TFEL/Raise.hxx"
+#include "TFEL/System/ExternalLibraryManager.hxx"
 
-#include"MFront/MFrontLogStream.hxx"
-#include"MTest/CurrentState.hxx"
-#include"MTest/Evolution.hxx"
-#include"MTest/Behaviour.hxx"
+#include "MFront/MFrontLogStream.hxx"
+#include "MTest/CurrentState.hxx"
+#include "MTest/Evolution.hxx"
+#include "MTest/Behaviour.hxx"
 
 #ifdef HAVE_CASTEM
-#include"MTest/CastemSmallStrainBehaviour.hxx"
-#include"MTest/CastemFiniteStrainBehaviour.hxx"
-#include"MTest/CastemFiniteStrainBehaviour2.hxx"
-#include"MTest/CastemCohesiveZoneModel.hxx"
-#include"MTest/MistralBehaviour.hxx"
-#include"MTest/CastemUmatSmallStrainBehaviour.hxx"
-#include"MTest/CastemUmatFiniteStrainBehaviour.hxx"
+#include "MTest/CastemSmallStrainBehaviour.hxx"
+#include "MTest/CastemFiniteStrainBehaviour.hxx"
+#include "MTest/CastemFiniteStrainBehaviour2.hxx"
+#include "MTest/CastemCohesiveZoneModel.hxx"
+#include "MTest/MistralBehaviour.hxx"
+#include "MTest/CastemUmatSmallStrainBehaviour.hxx"
+#include "MTest/CastemUmatFiniteStrainBehaviour.hxx"
 #endif /* HAVE_CASTEM */
 #ifdef HAVE_ASTER
-#include"MTest/AsterSmallStrainBehaviour.hxx"
-#include"MTest/AsterFiniteStrainBehaviour.hxx"
-#include"MTest/AsterCohesiveZoneModel.hxx"
+#include "MTest/AsterSmallStrainBehaviour.hxx"
+#include "MTest/AsterFiniteStrainBehaviour.hxx"
+#include "MTest/AsterCohesiveZoneModel.hxx"
 #endif /* HAVE_ASTER  */
 #ifdef HAVE_EUROPLEXUS
-#include"MTest/EuroplexusFiniteStrainBehaviour.hxx"
+#include "MTest/EuroplexusFiniteStrainBehaviour.hxx"
 #endif /* HAVE_EUROPLEXUS  */
 #ifdef HAVE_ABAQUS
-#include"MTest/AbaqusStandardBehaviour.hxx"
-#include"MTest/AbaqusSmallStrainBehaviour.hxx"
-#include"MTest/AbaqusFiniteStrainBehaviour.hxx"
-#include"MTest/AbaqusExplicitBehaviour.hxx"
+#include "MTest/AbaqusStandardBehaviour.hxx"
+#include "MTest/AbaqusSmallStrainBehaviour.hxx"
+#include "MTest/AbaqusFiniteStrainBehaviour.hxx"
+#include "MTest/AbaqusExplicitBehaviour.hxx"
 #endif /* HAVE_ABAQUS  */
 #ifdef HAVE_ANSYS
-#include"MTest/AnsysStandardBehaviour.hxx"
-#include"MTest/AnsysSmallStrainBehaviour.hxx"
-#include"MTest/AnsysFiniteStrainBehaviour.hxx"
+#include "MTest/AnsysStandardBehaviour.hxx"
+#include "MTest/AnsysSmallStrainBehaviour.hxx"
+#include "MTest/AnsysFiniteStrainBehaviour.hxx"
 #endif /* HAVE_ANSYS  */
 #ifdef HAVE_CYRANO
-#include"MTest/CyranoBehaviour.hxx"
+#include "MTest/CyranoBehaviour.hxx"
 #endif /* HAVE_CYRANO  */
 #ifdef HAVE_CALCULIX
-#include"MTest/CalculiXSmallStrainBehaviour.hxx"
-#include"MTest/CalculiXFiniteStrainBehaviour.hxx"
+#include "MTest/CalculiXSmallStrainBehaviour.hxx"
+#include "MTest/CalculiXFiniteStrainBehaviour.hxx"
 #endif /* HAVE_CALCULIX  */
 
-namespace mtest
-{
-  
+namespace mtest {
+
   std::shared_ptr<Behaviour> Behaviour::getBehaviour(const std::string& i,
-						     const std::string& l,
-						     const std::string& f,
-						     const Parameters& d,
-						     const Hypothesis h)
-  {
-    auto throw_if = [](const bool c, const std::string& m){
-      tfel::raise_if(c,"Behaviour::getBehaviour: "+m);
+                                                     const std::string& l,
+                                                     const std::string& f,
+                                                     const Parameters& d,
+                                                     const Hypothesis h) {
+    auto throw_if = [](const bool c, const std::string& m) {
+      tfel::raise_if(c, "Behaviour::getBehaviour: " + m);
     };
-    auto check_no_parameters = [&throw_if,&d]{
-      if(d.empty()){return;}
-      throw_if(!d.is<std::map<std::string,Parameters>>(),
-	       "unsupported parameters type");
-      const auto& p = d.get<std::map<std::string,Parameters>>();
-      throw_if(!p.empty(),"no parameter expected");
+    auto check_no_parameters = [&throw_if, &d] {
+      if (d.empty()) {
+        return;
+      }
+      throw_if(!d.is<std::map<std::string, Parameters>>(), "unsupported parameters type");
+      const auto& p = d.get<std::map<std::string, Parameters>>();
+      throw_if(!p.empty(), "no parameter expected");
     };
     auto& elm = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
-    throw_if(!elm.contains(l,f),"behaviour '"+f+"' not defined in library '"+l+"'");
-    auto b  = std::shared_ptr<Behaviour>{};
-    auto in = i.empty() ? elm.getInterface(l,f) : i ;
+    throw_if(!elm.contains(l, f), "behaviour '" + f + "' not defined in library '" + l + "'");
+    auto b = std::shared_ptr<Behaviour>{};
+    auto in = i.empty() ? elm.getInterface(l, f) : i;
 #ifdef HAVE_CASTEM
-    if((in=="castem")||(in=="umat")||(in=="Castem")||(in=="Cast3M")){
+    if ((in == "castem") || (in == "umat") || (in == "Castem") || (in == "Cast3M")) {
       check_no_parameters();
-      const auto type  = elm.getUMATBehaviourType(l,f);
-      const auto ktype = elm.getUMATBehaviourKinematic(l,f);
-      if(type==1u){
-	b = std::make_shared<CastemSmallStrainBehaviour>(h,l,f);
-      } else if(type==2u){
-	if(ktype==3u){
-	  b = std::make_shared<CastemFiniteStrainBehaviour>(h,l,f);
-	} else if (ktype==4u){
-	  b = std::make_shared<CastemFiniteStrainBehaviour2>(h,l,f);
-	} else {
-	  throw_if(true,"unsupported kinematic");
-	}
-      } else if(type==3u){
-	b = std::make_shared<CastemCohesiveZoneModel>(h,l,f);
+      const auto type = elm.getUMATBehaviourType(l, f);
+      const auto ktype = elm.getUMATBehaviourKinematic(l, f);
+      if (type == 1u) {
+        b = std::make_shared<CastemSmallStrainBehaviour>(h, l, f);
+      } else if (type == 2u) {
+        if (ktype == 3u) {
+          b = std::make_shared<CastemFiniteStrainBehaviour>(h, l, f);
+        } else if (ktype == 4u) {
+          b = std::make_shared<CastemFiniteStrainBehaviour2>(h, l, f);
+        } else {
+          throw_if(true, "unsupported kinematic");
+        }
+      } else if (type == 3u) {
+        b = std::make_shared<CastemCohesiveZoneModel>(h, l, f);
       } else {
-	throw_if(true,"unsupported behaviour type ("+std::to_string(type)+")");
+        throw_if(true, "unsupported behaviour type (" + std::to_string(type) + ")");
       }
     }
-    if(in=="mistral"){
-      b = MistralBehaviour::buildMistralBehaviour(l,f,d,h);
+    if (in == "mistral") {
+      b = MistralBehaviour::buildMistralBehaviour(l, f, d, h);
     }
-    if(in=="castem_umat_small_strain"){
-      b = CastemUmatSmallStrainBehaviour::buildCastemUmatSmallStrainBehaviour(l,f,d,h);
+    if (in == "castem_umat_small_strain") {
+      b = CastemUmatSmallStrainBehaviour::buildCastemUmatSmallStrainBehaviour(l, f, d, h);
     }
-    if(in=="castem_umat_finite_strain"){
-      b = CastemUmatFiniteStrainBehaviour::buildCastemUmatFiniteStrainBehaviour(l,f,d,h);
+    if (in == "castem_umat_finite_strain") {
+      b = CastemUmatFiniteStrainBehaviour::buildCastemUmatFiniteStrainBehaviour(l, f, d, h);
     }
 #endif
 #ifdef HAVE_ASTER
-    if((in=="aster")||(in=="Aster")){
+    if ((in == "aster") || (in == "Aster")) {
       check_no_parameters();
-      const auto type = elm.getUMATBehaviourType(l,f);
-      if(type==1u){
-	const auto ktype = elm.getUMATBehaviourKinematic(l,f);
-	throw_if((ktype!=0u)&&(ktype!=1u),
-		 "unsupported behaviour kinematic");
-	b = std::make_shared<AsterSmallStrainBehaviour>(h,l,f);
-      } else if(type==2u){
-	b = std::make_shared<AsterFiniteStrainBehaviour>(h,l,f);
-      } else if(type==3u){
-	b = std::make_shared<AsterCohesiveZoneModel>(h,l,f);
+      const auto type = elm.getUMATBehaviourType(l, f);
+      if (type == 1u) {
+        const auto ktype = elm.getUMATBehaviourKinematic(l, f);
+        throw_if((ktype != 0u) && (ktype != 1u), "unsupported behaviour kinematic");
+        b = std::make_shared<AsterSmallStrainBehaviour>(h, l, f);
+      } else if (type == 2u) {
+        b = std::make_shared<AsterFiniteStrainBehaviour>(h, l, f);
+      } else if (type == 3u) {
+        b = std::make_shared<AsterCohesiveZoneModel>(h, l, f);
       } else {
-	throw_if(true,"unsupported behaviour type ("+std::to_string(type)+")");
+        throw_if(true, "unsupported behaviour type (" + std::to_string(type) + ")");
       }
     }
 #endif
 #ifdef HAVE_EUROPLEXUS
-    if((in=="europlexus")||(in=="epx")||(in=="Europlexus")){
+    if ((in == "europlexus") || (in == "epx") || (in == "Europlexus")) {
       check_no_parameters();
-      const auto type = elm.getUMATBehaviourType(l,f);
-      if(type==2u){
-	b = std::make_shared<EuroplexusFiniteStrainBehaviour>(h,l,f);
+      const auto type = elm.getUMATBehaviourType(l, f);
+      if (type == 2u) {
+        b = std::make_shared<EuroplexusFiniteStrainBehaviour>(h, l, f);
       } else {
-	throw_if(true,"unsupported behaviour type ("+std::to_string(type)+")");
+        throw_if(true, "unsupported behaviour type (" + std::to_string(type) + ")");
       }
     }
 #endif
 #ifdef HAVE_ABAQUS
-    if((in=="abaqus")||(in=="abaqus_standard")||(in=="abaqus_umat")||(in=="Abaqus")){
+    if ((in == "abaqus") || (in == "abaqus_standard") || (in == "abaqus_umat") ||
+        (in == "Abaqus")) {
       check_no_parameters();
-      const auto bn   = AbaqusStandardBehaviour::getBehaviourName(f,h);
-      const auto type = elm.getUMATBehaviourType(l,bn);
-      if(type==1u){
-	b = std::make_shared<AbaqusSmallStrainBehaviour>(h,l,f);
-      } else if(type==2u){
-	b = std::make_shared<AbaqusFiniteStrainBehaviour>(h,l,f);
+      const auto bn = AbaqusStandardBehaviour::getBehaviourName(f, h);
+      const auto type = elm.getUMATBehaviourType(l, bn);
+      if (type == 1u) {
+        b = std::make_shared<AbaqusSmallStrainBehaviour>(h, l, f);
+      } else if (type == 2u) {
+        b = std::make_shared<AbaqusFiniteStrainBehaviour>(h, l, f);
       } else {
-	throw_if(true,"unsupported behaviour type ("+std::to_string(type)+")");
+        throw_if(true, "unsupported behaviour type (" + std::to_string(type) + ")");
       }
     }
-    if((in=="abaqus_explicit")||(in=="abaqus_vumat")||(in=="AbaqusExplicit")){
-      const auto bn   = AbaqusExplicitBehaviour::getBehaviourName(f,h);
+    if ((in == "abaqus_explicit") || (in == "abaqus_vumat") || (in == "AbaqusExplicit")) {
+      const auto bn = AbaqusExplicitBehaviour::getBehaviourName(f, h);
       check_no_parameters();
-      const auto type = elm.getUMATBehaviourType(l,bn);
-      if(type==2u){
-	b = std::make_shared<AbaqusExplicitBehaviour>(h,l,f);
+      const auto type = elm.getUMATBehaviourType(l, bn);
+      if (type == 2u) {
+        b = std::make_shared<AbaqusExplicitBehaviour>(h, l, f);
       } else {
-	throw_if(true,"unsupported behaviour type ("+std::to_string(type)+")");
+        throw_if(true, "unsupported behaviour type (" + std::to_string(type) + ")");
       }
     }
 #endif
 #ifdef HAVE_ANSYS
-    if((in=="ansys")||(in=="ansys_usermat")||(in=="Ansys")){
+    if ((in == "ansys") || (in == "ansys_usermat") || (in == "Ansys")) {
       check_no_parameters();
-      const auto bn   = AnsysStandardBehaviour::getBehaviourName(f,h);
-      const auto type = elm.getUMATBehaviourType(l,bn);
-      if(type==1u){
-	b = std::make_shared<AnsysSmallStrainBehaviour>(h,l,f);
-      } else if(type==2u){
-	b = std::make_shared<AnsysFiniteStrainBehaviour>(h,l,f);
+      const auto bn = AnsysStandardBehaviour::getBehaviourName(f, h);
+      const auto type = elm.getUMATBehaviourType(l, bn);
+      if (type == 1u) {
+        b = std::make_shared<AnsysSmallStrainBehaviour>(h, l, f);
+      } else if (type == 2u) {
+        b = std::make_shared<AnsysFiniteStrainBehaviour>(h, l, f);
       } else {
-	throw_if(true,"unsupported behaviour type ("+std::to_string(type)+")");
+        throw_if(true, "unsupported behaviour type (" + std::to_string(type) + ")");
       }
     }
 #endif
 #ifdef HAVE_CYRANO
-    if((in=="cyrano")||(in=="Cyrano")){
-      const auto btype = elm.getUMATBehaviourType(l,f);
-      const auto ktype = elm.getUMATBehaviourKinematic(l,f);
+    if ((in == "cyrano") || (in == "Cyrano")) {
+      const auto btype = elm.getUMATBehaviourType(l, f);
+      const auto ktype = elm.getUMATBehaviourKinematic(l, f);
       check_no_parameters();
-      if(btype==1u){
-	b = std::make_shared<CyranoBehaviour>(h,l,f);
-      } else if(btype==2u){
-	if(ktype==3u){
-	  b = std::make_shared<CyranoBehaviour>(h,l,f);
-	} else {
-	  throw_if(true,"unsupported behaviour kinematic");
-	}
+      if (btype == 1u) {
+        b = std::make_shared<CyranoBehaviour>(h, l, f);
+      } else if (btype == 2u) {
+        if (ktype == 3u) {
+          b = std::make_shared<CyranoBehaviour>(h, l, f);
+        } else {
+          throw_if(true, "unsupported behaviour kinematic");
+        }
       } else {
-	throw_if(true,"unsupported behaviour type");
+        throw_if(true, "unsupported behaviour type");
       }
     }
 #endif
 #ifdef HAVE_CALCULIX
-    if((in=="calculix")||(in=="CalculiX")){
+    if ((in == "calculix") || (in == "CalculiX")) {
       check_no_parameters();
-      const auto type = elm.getUMATBehaviourType(l,f);
-      if(type==1u){
-	b = std::make_shared<CalculiXSmallStrainBehaviour>(h,l,f);
-      } else if(type==2u){
-	b = std::make_shared<CalculiXFiniteStrainBehaviour>(h,l,f);
+      const auto type = elm.getUMATBehaviourType(l, f);
+      if (type == 1u) {
+        b = std::make_shared<CalculiXSmallStrainBehaviour>(h, l, f);
+      } else if (type == 2u) {
+        b = std::make_shared<CalculiXFiniteStrainBehaviour>(h, l, f);
       } else {
-	throw_if(true,"unsupported behaviour type ("+std::to_string(type)+")");
+        throw_if(true, "unsupported behaviour type (" + std::to_string(type) + ")");
       }
     }
 #endif
-    throw_if(b==nullptr,"unknown interface '"+in+"'");
+    throw_if(b == nullptr, "unknown interface '" + in + "'");
     return b;
   }
-  
-  void
-  Behaviour::setOptionalMaterialPropertyDefaultValue(EvolutionManager& mp,
-						     const EvolutionManager& evm,
-						     const std::string& n,
-						     const real v)
-  {
-    if(evm.find(n)==evm.end()){
-      if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL2){
-	auto& log = mfront::getLogStream();
-	log << "Behaviour::setOptionalMaterialPropertiesDefaultValues : "
-	    << "set material property '" << n << "' to default value\n";
+
+  void Behaviour::setOptionalMaterialPropertyDefaultValue(EvolutionManager& mp,
+                                                          const EvolutionManager& evm,
+                                                          const std::string& n,
+                                                          const real v) {
+    if (evm.find(n) == evm.end()) {
+      if (mfront::getVerboseMode() >= mfront::VERBOSE_LEVEL2) {
+        auto& log = mfront::getLogStream();
+        log << "Behaviour::setOptionalMaterialPropertiesDefaultValues : "
+            << "set material property '" << n << "' to default value\n";
       }
-      tfel::raise_if(!mp.insert({n,make_evolution(v)}).second,
-		     "Behaviour::setOptionalMaterialPropertiesDefaultValues: "
-		     "default value for material property '"+n+"' already declared");
+      tfel::raise_if(!mp.insert({n, make_evolution(v)}).second,
+                     "Behaviour::setOptionalMaterialPropertiesDefaultValues: "
+                     "default value for material property '" +
+                         n + "' already declared");
     }
-  } // end of Behaviour::setOptionalMaterialPropertyDefaultValue
+  }  // end of Behaviour::setOptionalMaterialPropertyDefaultValue
 
   Behaviour::~Behaviour() = default;
 
-  std::function<real (const CurrentState&)>
-  buildValueExtractor(const Behaviour& b, const std::string& n)
-  {
+  std::function<real(const CurrentState&)> buildValueExtractor(const Behaviour& b,
+                                                               const std::string& n) {
     const auto enames = b.getDrivingVariablesComponents();
-    auto p= std::find(enames.begin(),enames.end(),n);
-    if(p!=enames.end()){
-      const auto pos = static_cast<unsigned short>(p-enames.begin());
-      return [pos](const CurrentState& s){
-	return s.e1[pos];
-      };
-    } 
+    auto p = std::find(enames.begin(), enames.end(), n);
+    if (p != enames.end()) {
+      const auto pos = static_cast<unsigned short>(p - enames.begin());
+      return [pos](const CurrentState& s) { return s.e1[pos]; };
+    }
     const auto snames = b.getThermodynamicForcesComponents();
-    p=std::find(snames.begin(),snames.end(),n);
-    if(p!=snames.end()){
-      const auto pos  = static_cast<unsigned short>(p-snames.begin());
-      return [pos](const CurrentState& s){
-	return s.s1[pos];
-      };
-    } 
+    p = std::find(snames.begin(), snames.end(), n);
+    if (p != snames.end()) {
+      const auto pos = static_cast<unsigned short>(p - snames.begin());
+      return [pos](const CurrentState& s) { return s.s1[pos]; };
+    }
     const auto isvnames = b.expandInternalStateVariablesNames();
-    p=std::find(isvnames.begin(),isvnames.end(),n);
-    if(p!=isvnames.end()){
-      const auto pos  = static_cast<unsigned short>(p-isvnames.begin());
-      return [pos](const CurrentState& s){
-	return s.iv1[pos];
-      };
+    p = std::find(isvnames.begin(), isvnames.end(), n);
+    if (p != isvnames.end()) {
+      const auto pos = static_cast<unsigned short>(p - isvnames.begin());
+      return [pos](const CurrentState& s) { return s.iv1[pos]; };
     }
     const auto esvnames = b.getExternalStateVariablesNames();
-    p=std::find(esvnames.begin(),esvnames.end(),n);
-    if(p!=esvnames.end()){
-      const auto pos  = static_cast<unsigned short>(p-esvnames.begin());
-      return [pos](const CurrentState& s){
-	return s.esv0[pos]+s.desv[pos];
-      };
+    p = std::find(esvnames.begin(), esvnames.end(), n);
+    if (p != esvnames.end()) {
+      const auto pos = static_cast<unsigned short>(p - esvnames.begin());
+      return [pos](const CurrentState& s) { return s.esv0[pos] + s.desv[pos]; };
     }
-    tfel::raise("buildValueExtractor: no variable name '"+n+"'");
-  } // end of buildValueExtractor
-  
-} // end of namespace mtest
+    tfel::raise("buildValueExtractor: no variable name '" + n + "'");
+  }  // end of buildValueExtractor
 
+}  // end of namespace mtest

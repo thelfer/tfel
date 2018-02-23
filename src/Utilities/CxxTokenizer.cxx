@@ -625,9 +625,9 @@ namespace tfel {
         const std::string::const_iterator pe,
         const Token::size_type n) {
       auto is_preprocessor_keyword = [](const std::string &k) {
-        const std::array<const char *, 12> keys = {
-            {"#define", "#undef", "#include", "#line", "#error", "#if",
-             "#ifdef", "#ifndef", "#elif", "#else", "#endif", "#pragma"}};
+        const std::array<const char *, 13> keys = {{"#define", "#undef", "#include", "#line",
+                                                    "#error", "#if", "#ifdef", "#ifndef", "#elif",
+                                                    "#else", "#endif", "#pragma", "#warning"}};
         return std::find(keys.begin(), keys.end(), k) != keys.end();
       };
       auto throw_if = [](const bool c, const std::string &m) {
@@ -667,7 +667,12 @@ namespace tfel {
       ignore_space(o, p, pe);
       while (p != pe) {
         if (*p == '#') {
-          throw_if(!this->allowStrayHashCharacter, "stray ‘#’");
+          auto pn = std::next(p);
+          if (pn == pe) {
+            throw_if(!this->allowStrayHashCharacter, "stray ‘#’");
+          } else {
+            throw_if((!this->allowStrayHashCharacter) && (std::isalpha(*pn) == 0), "stray ‘#’");
+          }
           this->tokens.emplace_back("#", n, o, Token::Standard);
           advance(o, p, 1u);
         } else if (*p == '\\') {

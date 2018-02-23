@@ -97,9 +97,7 @@ namespace tfel {
       bool treatStrings = true;
       //! \brief extract number
       bool treatNumbers = true;
-      /*!
-       * \brief treat comments
-       */
+      //! \brief treat comments
       bool treatComments = true;
       /*!
        * In `C` and `C++`, two separator characters can be associated to
