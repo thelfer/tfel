@@ -42,14 +42,12 @@ namespace mtest
     std::fill(v.begin(),v.end(),real(0));
   }
 
-  std::pair<bool,real>
-  AbaqusSmallStrainBehaviour::call_behaviour(tfel::math::matrix<real>& Kt,
-					     CurrentState& s,
-					     BehaviourWorkSpace& wk,
-					     const real dt,
-					     const StiffnessMatrixType ktype,
-					     const bool b) const
-  {
+  std::pair<bool, real> AbaqusSmallStrainBehaviour::call_behaviour(tfel::math::matrix<real>& Kt,
+                                                                   CurrentState& s,
+                                                                   BehaviourWorkSpace& wk,
+                                                                   const real dt,
+                                                                   const StiffnessMatrixType ktype,
+                                                                   const bool b) const {
     using namespace std;
     using namespace tfel::math;
     using namespace abaqus;

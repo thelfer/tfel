@@ -25,18 +25,21 @@ namespace mtest
    * A class to handle mechanical beheaviours written using the abaqus
    * interface
    */
-  struct TFEL_VISIBILITY_LOCAL AbaqusExplicitBehaviour
+  struct MTEST_VISIBILITY_EXPORT AbaqusExplicitBehaviour
     : public UmatBehaviourBase
   {
+    /*!
+     * \return the suffix associated with a modelling hypothesis
+     * \param[in] h: hypothesis
+     */
+    static std::string getHypothesisSuffix(const Hypothesis);
     /*!
      * \return the name of the behaviour by stripping the function
      * name from the suffix describing the modelling hypothesis
      * \param[in] h : modelling hypothesis
      * \param[in] f : function implementation the behaviour
      */
-    static std::string
-    getBehaviourName(const std::string&,
-		     const Hypothesis);
+    static std::string getBehaviourName(const std::string&, const Hypothesis);
     /*!
      * \param[in] h : modelling hypothesis
      * \param[in] l : library name

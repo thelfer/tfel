@@ -36,35 +36,35 @@
 #include"MTest/UmatNormaliseTangentOperator.hxx"
 #include"MTest/AbaqusExplicitBehaviour.hxx"
 
-namespace mtest
-{
+namespace mtest {
 
-  std::string
-  AbaqusExplicitBehaviour::getBehaviourName(const std::string& b,
-					    const Hypothesis h)
-  {
-    auto ends = [&b](const std::string& s){
-      if(b.length()>=s.length()){
-        return b.compare(b.length()-s.length(),s.length(),s)==0;
+  std::string AbaqusExplicitBehaviour::getHypothesisSuffix(const Hypothesis h) {
+    if (h == ModellingHypothesis::AXISYMMETRICAL) {
+      return "_AXIS";
+    } else if (h == ModellingHypothesis::PLANESTRAIN) {
+      return "_PSTRAIN";
+    } else if (h == ModellingHypothesis::PLANESTRESS) {
+      return "_PSTRESS";
+    } else if (h == ModellingHypothesis::TRIDIMENSIONAL) {
+      return "_3D";
+    }
+    tfel::raise(
+        "AbaqusExplicitBehaviour::getHypothesisSuffix: "
+        "invalid hypothesis.");
+  }  // end of AbaqusExplicitBehaviour::getHypothesisSuffix
+
+  std::string AbaqusExplicitBehaviour::getBehaviourName(const std::string& b, const Hypothesis h) {
+    auto ends = [&b](const std::string& s) {
+      if (b.length() >= s.length()) {
+        return b.compare(b.length() - s.length(), s.length(), s) == 0;
       }
       return false;
     };
-    const auto s = [h]() -> std::string {
-      if(h==ModellingHypothesis::AXISYMMETRICAL){
-	return "_AXIS";
-      } else if(h==ModellingHypothesis::PLANESTRAIN){
-	return "_PSTRAIN";
-      } else if(h==ModellingHypothesis::PLANESTRESS){
-	return "_PSTRESS";
-      } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
-	return "_3D";
-      }
-      tfel::raise("AbaqusExplicitBehaviour::getBehaviourName: "
-		  "invalid hypothesis.");
-    }();
-    tfel::raise_if(!ends(s),"AbaqusExplicitBehaviour::getBehaviourName: "
-		   "invalid function name.");
-    return {b.begin(),b.begin()+b.length()-s.length()};    
+    const auto s = AbaqusExplicitBehaviour::getHypothesisSuffix(h);
+    tfel::raise_if(!ends(s),
+                   "AbaqusExplicitBehaviour::getBehaviourName: "
+                   "invalid function name.");
+    return {b.begin(), b.begin() + b.length() - s.length()};    
   }
   
   AbaqusExplicitBehaviour::AbaqusExplicitBehaviour(const Hypothesis h,

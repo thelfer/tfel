@@ -21,6 +21,14 @@ $ tfel-config --cxx-standard
 
 # Tickets fixed
 
+## Ticket #113: Use the external name to define the default value of real parameters
+
+The variable name was used to form the symbol which defines the default
+value of a real parameter. One should have used the external name has
+this was already the case for `integer` and `unsigned short` parameters.
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/113/>.
+
 ## Ticket #111: Have a flag stating if the implicit system is called for the evaluation of the jacobian by perturbation
 
 In some cases, it is convenient to update auxiliary state variables

@@ -26,42 +26,40 @@
 #include"MTest/BehaviourWorkSpace.hxx"
 #include"MTest/AnsysStandardBehaviour.hxx"
 
-namespace mtest
-{
+namespace mtest {
 
-  std::string
-  AnsysStandardBehaviour::getBehaviourName(const std::string& b,
-					    const Hypothesis h)
-  {
+  std::string AnsysStandardBehaviour::getHypothesisSuffix(const Hypothesis h) {
+    if (h == ModellingHypothesis::AXISYMMETRICAL) {
+      return "_axis";
+    } else if (h == ModellingHypothesis::PLANESTRAIN) {
+      return "_pstrain";
+    } else if (h == ModellingHypothesis::PLANESTRESS) {
+      return "_pstress";
+    } else if (h == ModellingHypothesis::TRIDIMENSIONAL) {
+      return "_3D";
+    }
+    tfel::raise(
+        "AnsysStandardBehaviour::getHypothesisSuffix: "
+        "invalid hypothesis.");
+  } // end of AnsysStandardBehaviour::getHypothesisSuffix
+
+  std::string AnsysStandardBehaviour::getBehaviourName(const std::string& b, const Hypothesis h) {
     auto ends = [&b](const std::string& s){
       if(b.length()>=s.length()){
         return b.compare(b.length()-s.length(),s.length(),s)==0;
       }
       return false;
     };
-    const auto s = [h]() -> std::string {
-      if(h==ModellingHypothesis::AXISYMMETRICAL){
-	return "_axis";
-      } else if(h==ModellingHypothesis::PLANESTRAIN){
-	return "_pstrain";
-      } else if(h==ModellingHypothesis::PLANESTRESS){
-	return "_pstress";
-      } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
-	return "_3D";
-      }
-      tfel::raise("AnsysStandardBehaviour::AnsysStandardBehaviour: "
-		  "invalid hypothesis.");
-    }();
+    const auto s = AnsysStandardBehaviour::getHypothesisSuffix(h);
     tfel::raise_if(!ends(s),"AnsysStandardBehaviour::AnsysStandardBehaviour: "
 		   "invalid function name.");
-    return {b.begin(),b.begin()+b.length()-s.length()};    
+    return {b.begin(), b.begin() + b.length() - s.length()};
   }
-  
+
   AnsysStandardBehaviour::AnsysStandardBehaviour(const Hypothesis h,
-						 const std::string& l,
-						 const std::string& b)
-    : UmatBehaviourBase(h,l,AnsysStandardBehaviour::getBehaviourName(b,h))
-  {
+                                                 const std::string& l,
+                                                 const std::string& b)
+      : UmatBehaviourBase(h, l, AnsysStandardBehaviour::getBehaviourName(b, h)) {
     auto throw_if = [](const bool c, const std::string& m){
       tfel::raise_if(c,"AnsysStandardBehaviour::AnsysStandardBehaviour: "+m);
     };

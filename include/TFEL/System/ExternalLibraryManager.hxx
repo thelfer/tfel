@@ -480,7 +480,6 @@ namespace tfel {
       std::vector<std::string> getUMATParametersNames(const std::string&,
                                                       const std::string&,
                                                       const std::string&);
-
       /*!
        * \return the types associated with each parameter. The integer
        * values returned have the following meaning:
