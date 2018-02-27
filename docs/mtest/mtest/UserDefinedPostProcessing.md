@@ -1,4 +1,4 @@
-The `@UserDefinedPostProcessing` lets the user define is own
+The `@UserDefinedPostProcessing` lets the user define its own
 post-processings.
 
 This keywords is followed by:

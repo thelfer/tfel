@@ -45,9 +45,7 @@ namespace mtest{
 		   const EvolutionManager&,
 		   const real);
     /*!
-     * \param[in] e  : strains
-     * \param[in] s  : strains
-     * \param[in] iv : internal state variables
+     * \param[in] s: current material state
      * \param[in] t  : time
      * \param[in] dt : time increment
      * \param[in] p  : period

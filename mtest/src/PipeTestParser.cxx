@@ -507,35 +507,27 @@ namespace mtest
     this->checkNotEndOfLine("PipeTestParser::handleProfile",p,
 			    this->tokens.end());
     auto v = std::vector<std::string>{};
-    if(p->flag==tfel::utilities::Token::String){
-      v.push_back(this->readString(p,this->tokens.end()));
+    if (p->flag == tfel::utilities::Token::String) {
+      v.push_back(this->readString(p, this->tokens.end()));
     } else {
-      this->readSpecifiedToken("PipeTestParser::handleProfile","{",
-			       p,this->tokens.end());
-      this->checkNotEndOfLine("PipeTestParser::handleProfile",p,
-			      this->tokens.end());
-      while(p->value!="}"){
-	v.push_back(this->readString(p,this->tokens.end()));
-	this->checkNotEndOfLine("PipeTestParser::handleProfile",p,
-				this->tokens.end());
-	if(p->value!="}"){
-	  this->readSpecifiedToken("PipeTestParser::handleProfile",",",
-				   p,this->tokens.end());	
-	  this->checkNotEndOfLine("PipeTestParser::handleProfile",p,
-				  this->tokens.end());
-	  tfel::raise_if(p->value=="}",
-			 "PipeTestParser::handleProfile: "
-			 "unexpected token '}'");
-	}
+      this->readSpecifiedToken("PipeTestParser::handleProfile", "{", p, this->tokens.end());
+      this->checkNotEndOfLine("PipeTestParser::handleProfile", p, this->tokens.end());
+      while (p->value != "}") {
+        v.push_back(this->readString(p, this->tokens.end()));
+        this->checkNotEndOfLine("PipeTestParser::handleProfile", p, this->tokens.end());
+        if (p->value != "}") {
+          this->readSpecifiedToken("PipeTestParser::handleProfile", ",", p, this->tokens.end());
+          this->checkNotEndOfLine("PipeTestParser::handleProfile", p, this->tokens.end());
+          tfel::raise_if(p->value == "}",
+                         "PipeTestParser::handleProfile: "
+                         "unexpected token '}'");
+        }
       }
-      this->readSpecifiedToken("PipeTestParser::handleProfile","}",
-			       p,this->tokens.end());	
+      this->readSpecifiedToken("PipeTestParser::handleProfile", "}", p, this->tokens.end());
     }
-    t.addProfile(f,v);
-    this->checkNotEndOfLine("PipeTestParser::handleProfile",
-			    p,this->tokens.end());
-    this->readSpecifiedToken("PipeTestParser::handleProfile",";",
-			     p,this->tokens.end());
+    t.addProfile(f, v);
+    this->checkNotEndOfLine("PipeTestParser::handleProfile", p, this->tokens.end());
+    this->readSpecifiedToken("PipeTestParser::handleProfile", ";", p, this->tokens.end());
   }
 
   void PipeTestParser::handleTest(PipeTest& t,tokens_iterator& p)
