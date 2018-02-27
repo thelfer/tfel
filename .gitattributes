@@ -401,6 +401,7 @@ docs/mfront/Images/sirius8.eps -text
 docs/mfront/Images/sirius8.png -text
 docs/mfront/Images/tubeaxi.eps -text
 docs/mfront/Images/tubeaxi2.eps -text
+docs/mfront/Implicit/HillTensor.md -text
 docs/mfront/Import.md -text
 docs/mfront/Includes.md -text
 docs/mfront/InitJacobian.md -text
