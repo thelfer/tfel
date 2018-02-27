@@ -714,6 +714,7 @@ docs/mtest/mtest/StrainEpsilon.md -text
 docs/mtest/mtest/Stress.md -text
 docs/mtest/mtest/StressEpsilon.md -text
 docs/mtest/mtest/Test.md -text
+docs/mtest/mtest/UserDefinedPostProcessing.md -text
 docs/mtest/ptest/AxialForceEvolution.md -text
 docs/mtest/ptest/AxialGrowthEvolution.md -text
 docs/mtest/ptest/AxialLoading.md -text
@@ -5539,6 +5540,7 @@ mtest/include/MTest/Types.hxx -text
 mtest/include/MTest/UAndersonAccelerationAlgorithm.hxx -text
 mtest/include/MTest/UmatBehaviourBase.hxx -text
 mtest/include/MTest/UmatNormaliseTangentOperator.hxx -text
+mtest/include/MTest/UserDefinedPostProcessing.hxx -text
 mtest/include/MTest/mtest.doxygen -text
 mtest/include/Makefile.am -text
 mtest/src/AbaqusExplicitBehaviour.cxx -text
@@ -5626,6 +5628,7 @@ mtest/src/TextDataUtilities.cxx -text
 mtest/src/UAndersonAccelerationAlgorithm.cxx -text
 mtest/src/UmatBehaviourBase.cxx -text
 mtest/src/UmatNormaliseTangentOperator.cxx -text
+mtest/src/UserDefinedPostProcessing.cxx -text
 mtest/tests/CMakeLists.txt -text
 mtest/tests/Makefile.am -text
 mtest/tests/mtest/CMakeLists.txt -text

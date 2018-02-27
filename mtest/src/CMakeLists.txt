@@ -53,6 +53,7 @@ set(TFELMTest_SOURCES
   IronsTuckAccelerationAlgorithm.cxx
   UAndersonAccelerationAlgorithm.cxx
   FAndersonAccelerationAlgorithm.cxx
+  UserDefinedPostProcessing.cxx
   MTest.cxx
   PipeTest.cxx
   PipeLinearElement.cxx

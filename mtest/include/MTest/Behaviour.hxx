@@ -318,6 +318,16 @@ namespace mtest {
   };  // end of struct Behaviour
 
   /*!
+   * \return true if the given variable is either:
+   * - a driving variable of the behaviour
+   * - a thermodynamic force the behaviour
+   * - an internal state variable
+   * - an external state variable
+   * \param[in] b: behaviour
+   * \param[in] n: variable name
+   */
+  MTEST_VISIBILITY_EXPORT bool isBehaviourVariable(const Behaviour&, const std::string&);
+  /*!
    * \return an object able to extract a specific value from the
    * current state
    * \param[in] b: behaviour

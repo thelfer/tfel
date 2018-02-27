@@ -256,12 +256,17 @@ namespace mtest {
      */
     virtual void handleImposedDrivingVariable(MTest&, tokens_iterator&);
     /*!
+     * \brief handle the `@UserDefinedPostprocessing` keyword
+     * \param[in,out] t: `MTest` object to be configured
+     * \param[in,out] p: position in the input file
+     */
+    virtual void handleUserDefinedPostprocessing(MTest&, tokens_iterator&);
+    /*!
      * \brief read the options associated with a constraint
      * \param[in] m: calling method
      * \param[in,out] p: position in the input file
      */
-    ConstraintOptions readConstraintOptions(const std::string&,
-                                            tokens_iterator&);
+    ConstraintOptions readConstraintOptions(const std::string&, tokens_iterator&);
     /*!
      * \brief treat the current keyword
      * \param[in,out] t: `MTest` object to be configured

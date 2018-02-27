@@ -48,6 +48,7 @@ libTFELMTest_la_SOURCES = RoundingMode.cxx              \
 			  SteffensenAccelerationAlgorithm.cxx       \
 			  UAndersonAccelerationAlgorithm.cxx        \
 			  FAndersonAccelerationAlgorithm.cxx        \
+			  UserDefinedPostProcessing.cxx             \
 			  MTest.cxx                                 \
 			  PipeTest.cxx                              \
 			  PipeLinearElement.cxx                     \

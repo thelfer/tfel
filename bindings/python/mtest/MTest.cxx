@@ -932,13 +932,11 @@ void declareMTest() {
       .def("initializeCurrentState", &MTest::initializeCurrentState)
       .def("initializeWorkSpace", &MTest::initializeWorkSpace)
       .def("setEvolutionValue", &MTest::setEvolutionValue)
-      .def("setDrivingVariablesInitialValues",
-           &MTest::setDrivingVariablesInitialValues)
+      .def("setDrivingVariablesInitialValues", &MTest::setDrivingVariablesInitialValues)
       .def("setStrain", MTest_setStrain)
       .def("setDeformationGradient", MTest_setDeformationGradient)
       .def("setOpeningDisplacement", MTest_setOpeningDisplacement)
-      .def("setThermodynamicForcesInitialValues",
-           &MTest::setThermodynamicForcesInitialValues)
+      .def("setThermodynamicForcesInitialValues", &MTest::setThermodynamicForcesInitialValues)
       .def("setCohesiveForce", MTest_setCohesiveForce)
       .def("setStress", MTest_setStress)
       .def("setDrivingVariableEpsilon", &MTest::setDrivingVariableEpsilon)
@@ -948,82 +946,74 @@ void declareMTest() {
       .def("setThermodynamicForceEpsilon", &MTest::setThermodynamicForceEpsilon)
       .def("setStressEpsilon", MTest_setStressEpsilon)
       .def("setCohesiveForceEpsilon", MTest_setCohesiveForceEpsilon)
-      .def(
-          "setImposedStress", MTest_setImposedStress1, (arg("name"), "values"),
-          "This method specify the constant evolution of a stresses "
-          "component.\n"
-          "* The first parameter (string) is the name of the choosen "
-          "stresses component. The allowed components (see the "
-          "'setModellingHypothesis' method) are:\n"
-          "- 'AxisymmetricalGeneralisedPlaneStrain' : SRR SZZ STT\n"
-          "- 'Axisymmetrical'                       : SRR SZZ STT SRZ\n"
-          "- 'PlaneStress'                          : SXX SYY SXY\n"
-          "- 'PlaneStrain'                          : SXX SYY SZZ SXY\n"
-          "- 'GeneralisedPlaneStrain'               : SXX SYY SZZ SXY\n"
-          "- 'Tridimensional'                       : SXX SYY SZZ SXY SXZ SYZ\n"
-          "* The second parameter (double) is the constant value "
-          "of the selected stresses component.")
-      .def(
-          "setImposedStress", MTest_setImposedStress1b,
-          (arg("name"), "values", "options"),
-          "This method specify the constant evolution of a stresses "
-          "component.\n"
-          "* The first parameter (string) is the name of the choosen "
-          "stresses component. The allowed components (see the "
-          "'setModellingHypothesis' method) are:\n"
-          "- 'AxisymmetricalGeneralisedPlaneStrain' : SRR SZZ STT\n"
-          "- 'Axisymmetrical'                       : SRR SZZ STT SRZ\n"
-          "- 'PlaneStress'                          : SXX SYY SXY\n"
-          "- 'PlaneStrain'                          : SXX SYY SZZ SXY\n"
-          "- 'GeneralisedPlaneStrain'               : SXX SYY SZZ SXY\n"
-          "- 'Tridimensional'                       : SXX SYY SZZ SXY SXZ SYZ\n"
-          "* The second parameter (double) is the constant value "
-          "of the selected stresses component.")
-      .def(
-          "setImposedStress", MTest_setImposedStress2, (arg("name"), "values"),
-          "This method specify the linear evolution of a stresses component.\n"
-          "* The first parameter (string) is the name of the choosen "
-          "stresses component. The allowed components (see the "
-          "'setModellingHypothesis' method) are:\n"
-          "- 'AxisymmetricalGeneralisedPlaneStrain' : SRR SZZ STT\n"
-          "- 'Axisymmetrical'                       : SRR SZZ STT SRZ\n"
-          "- 'PlaneStress'                          : SXX SYY SXY\n"
-          "- 'PlaneStrain'                          : SXX SYY SZZ SXY\n"
-          "- 'GeneralisedPlaneStrain'               : SXX SYY SZZ SXY\n"
-          "- 'Tridimensional'                       : SXX SYY SZZ SXY SXZ SYZ\n"
-          "* The second parameter (map<double, double>) specify "
-          "a linear evolution: the associative array of time-value "
-          "is used to perform an interpolation. That interpolation "
-          "is only performed between the minimum and maximum times "
-          "given in the array. Should a time be out of the array, "
-          "the returned value will be the one from the nearest "
-          "association available.")
-      .def(
-          "setImposedStress", MTest_setImposedStress2b,
-          (arg("name"), "values", "options"),
-          "This method specify the linear evolution of a stresses component.\n"
-          "* The first parameter (string) is the name of the choosen "
-          "stresses component. The allowed components (see the "
-          "'setModellingHypothesis' method) are:\n"
-          "- 'AxisymmetricalGeneralisedPlaneStrain' : SRR SZZ STT\n"
-          "- 'Axisymmetrical'                       : SRR SZZ STT SRZ\n"
-          "- 'PlaneStress'                          : SXX SYY SXY\n"
-          "- 'PlaneStrain'                          : SXX SYY SZZ SXY\n"
-          "- 'GeneralisedPlaneStrain'               : SXX SYY SZZ SXY\n"
-          "- 'Tridimensional'                       : SXX SYY SZZ SXY SXZ SYZ\n"
-          "* The second parameter (map<double, double>) specify "
-          "a linear evolution: the associative array of time-value "
-          "is used to perform an interpolation. That interpolation "
-          "is only performed between the minimum and maximum times "
-          "given in the array. Should a time be out of the array, "
-          "the returned value will be the one from the nearest "
-          "association available.")
-      .def("setImposedCohesiveForce", MTest_setImposedCohesiveForce1,
-           (arg("name"), "values"))
+      .def("setImposedStress", MTest_setImposedStress1, (arg("name"), "values"),
+           "This method specify the constant evolution of a stresses "
+           "component.\n"
+           "* The first parameter (string) is the name of the choosen "
+           "stresses component. The allowed components (see the "
+           "'setModellingHypothesis' method) are:\n"
+           "- 'AxisymmetricalGeneralisedPlaneStrain' : SRR SZZ STT\n"
+           "- 'Axisymmetrical'                       : SRR SZZ STT SRZ\n"
+           "- 'PlaneStress'                          : SXX SYY SXY\n"
+           "- 'PlaneStrain'                          : SXX SYY SZZ SXY\n"
+           "- 'GeneralisedPlaneStrain'               : SXX SYY SZZ SXY\n"
+           "- 'Tridimensional'                       : SXX SYY SZZ SXY SXZ SYZ\n"
+           "* The second parameter (double) is the constant value "
+           "of the selected stresses component.")
+      .def("setImposedStress", MTest_setImposedStress1b, (arg("name"), "values", "options"),
+           "This method specify the constant evolution of a stresses "
+           "component.\n"
+           "* The first parameter (string) is the name of the choosen "
+           "stresses component. The allowed components (see the "
+           "'setModellingHypothesis' method) are:\n"
+           "- 'AxisymmetricalGeneralisedPlaneStrain' : SRR SZZ STT\n"
+           "- 'Axisymmetrical'                       : SRR SZZ STT SRZ\n"
+           "- 'PlaneStress'                          : SXX SYY SXY\n"
+           "- 'PlaneStrain'                          : SXX SYY SZZ SXY\n"
+           "- 'GeneralisedPlaneStrain'               : SXX SYY SZZ SXY\n"
+           "- 'Tridimensional'                       : SXX SYY SZZ SXY SXZ SYZ\n"
+           "* The second parameter (double) is the constant value "
+           "of the selected stresses component.")
+      .def("setImposedStress", MTest_setImposedStress2, (arg("name"), "values"),
+           "This method specify the linear evolution of a stresses component.\n"
+           "* The first parameter (string) is the name of the choosen "
+           "stresses component. The allowed components (see the "
+           "'setModellingHypothesis' method) are:\n"
+           "- 'AxisymmetricalGeneralisedPlaneStrain' : SRR SZZ STT\n"
+           "- 'Axisymmetrical'                       : SRR SZZ STT SRZ\n"
+           "- 'PlaneStress'                          : SXX SYY SXY\n"
+           "- 'PlaneStrain'                          : SXX SYY SZZ SXY\n"
+           "- 'GeneralisedPlaneStrain'               : SXX SYY SZZ SXY\n"
+           "- 'Tridimensional'                       : SXX SYY SZZ SXY SXZ SYZ\n"
+           "* The second parameter (map<double, double>) specify "
+           "a linear evolution: the associative array of time-value "
+           "is used to perform an interpolation. That interpolation "
+           "is only performed between the minimum and maximum times "
+           "given in the array. Should a time be out of the array, "
+           "the returned value will be the one from the nearest "
+           "association available.")
+      .def("setImposedStress", MTest_setImposedStress2b, (arg("name"), "values", "options"),
+           "This method specify the linear evolution of a stresses component.\n"
+           "* The first parameter (string) is the name of the choosen "
+           "stresses component. The allowed components (see the "
+           "'setModellingHypothesis' method) are:\n"
+           "- 'AxisymmetricalGeneralisedPlaneStrain' : SRR SZZ STT\n"
+           "- 'Axisymmetrical'                       : SRR SZZ STT SRZ\n"
+           "- 'PlaneStress'                          : SXX SYY SXY\n"
+           "- 'PlaneStrain'                          : SXX SYY SZZ SXY\n"
+           "- 'GeneralisedPlaneStrain'               : SXX SYY SZZ SXY\n"
+           "- 'Tridimensional'                       : SXX SYY SZZ SXY SXZ SYZ\n"
+           "* The second parameter (map<double, double>) specify "
+           "a linear evolution: the associative array of time-value "
+           "is used to perform an interpolation. That interpolation "
+           "is only performed between the minimum and maximum times "
+           "given in the array. Should a time be out of the array, "
+           "the returned value will be the one from the nearest "
+           "association available.")
+      .def("setImposedCohesiveForce", MTest_setImposedCohesiveForce1, (arg("name"), "values"))
       .def("setImposedCohesiveForce", MTest_setImposedCohesiveForce1b,
            (arg("name"), "values", "options"))
-      .def("setImposedCohesiveForce", MTest_setImposedCohesiveForce2,
-           (arg("name"), "values"))
+      .def("setImposedCohesiveForce", MTest_setImposedCohesiveForce2, (arg("name"), "values"))
       .def("setImposedCohesiveForce", MTest_setImposedCohesiveForce2b,
            (arg("name"), "values", "options"))
       .def("setImposedThermodynamicForce", MTest_setImposedThermodynamicForce1,
@@ -1058,35 +1048,32 @@ void declareMTest() {
            "- `ThermodynamicForce`, `Stress`, `CohesiveForce` "
            "stating that the constraint is of the order "
            "of magnitude of the thermodynamic force'\n")
-      .def(
-          "setImposedStrain", MTest_setImposedStrain1, (arg("name"), "values"),
-          "This method specify the constant evolution of a strains component.\n"
-          "* The first parameter (string) is the name of the choosen "
-          "strains component. The allowed components (see the "
-          "'setModellingHypothesis' method) are:\n"
-          "- AxisymmetricalGeneralisedPlaneStrain : ERR EZZ ETT\n"
-          "- Axisymmetrical                       : ERR EZZ ETT ERZ\n"
-          "- PlaneStress                          : EXX EYY EZZ EXY\n"
-          "- PlaneStrain                          : EXX EYY     EXY\n"
-          "- GeneralisedPlaneStrain               : EXX EYY EZZ EXY\n"
-          "- Tridimensional                       :  EXX EYY EZZ EXY EXZ EYZ\n"
-          "* The second parameter (double) is the constant value "
-          "of the selected strains component.")
-      .def(
-          "setImposedStrain", MTest_setImposedStrain1b,
-          (arg("name"), "values", "options"),
-          "This method specify the constant evolution of a strains component.\n"
-          "* The first parameter (string) is the name of the choosen "
-          "strains component. The allowed components (see the "
-          "'setModellingHypothesis' method) are:\n"
-          "- AxisymmetricalGeneralisedPlaneStrain : ERR EZZ ETT\n"
-          "- Axisymmetrical                       : ERR EZZ ETT ERZ\n"
-          "- PlaneStress                          : EXX EYY EZZ EXY\n"
-          "- PlaneStrain                          : EXX EYY     EXY\n"
-          "- GeneralisedPlaneStrain               : EXX EYY EZZ EXY\n"
-          "- Tridimensional                       :  EXX EYY EZZ EXY EXZ EYZ\n"
-          "* The second parameter (double) is the constant value "
-          "of the selected strains component.")
+      .def("setImposedStrain", MTest_setImposedStrain1, (arg("name"), "values"),
+           "This method specify the constant evolution of a strains component.\n"
+           "* The first parameter (string) is the name of the choosen "
+           "strains component. The allowed components (see the "
+           "'setModellingHypothesis' method) are:\n"
+           "- AxisymmetricalGeneralisedPlaneStrain : ERR EZZ ETT\n"
+           "- Axisymmetrical                       : ERR EZZ ETT ERZ\n"
+           "- PlaneStress                          : EXX EYY EZZ EXY\n"
+           "- PlaneStrain                          : EXX EYY     EXY\n"
+           "- GeneralisedPlaneStrain               : EXX EYY EZZ EXY\n"
+           "- Tridimensional                       :  EXX EYY EZZ EXY EXZ EYZ\n"
+           "* The second parameter (double) is the constant value "
+           "of the selected strains component.")
+      .def("setImposedStrain", MTest_setImposedStrain1b, (arg("name"), "values", "options"),
+           "This method specify the constant evolution of a strains component.\n"
+           "* The first parameter (string) is the name of the choosen "
+           "strains component. The allowed components (see the "
+           "'setModellingHypothesis' method) are:\n"
+           "- AxisymmetricalGeneralisedPlaneStrain : ERR EZZ ETT\n"
+           "- Axisymmetrical                       : ERR EZZ ETT ERZ\n"
+           "- PlaneStress                          : EXX EYY EZZ EXY\n"
+           "- PlaneStrain                          : EXX EYY     EXY\n"
+           "- GeneralisedPlaneStrain               : EXX EYY EZZ EXY\n"
+           "- Tridimensional                       :  EXX EYY EZZ EXY EXZ EYZ\n"
+           "* The second parameter (double) is the constant value "
+           "of the selected strains component.")
       .def("setImposedStrain", MTest_setImposedStrain2, (arg("name"), "values"),
            "This method specify the linear evolution of a strains component.\n"
            "* The first parameter (string) is the name of the choosen "
@@ -1105,8 +1092,7 @@ void declareMTest() {
            "given in the array. Should a time be out of the array, "
            "the returned value will be the one from the nearest "
            "association available.")
-      .def("setImposedStrain", MTest_setImposedStrain2b,
-           (arg("name"), "values", "options"),
+      .def("setImposedStrain", MTest_setImposedStrain2b, (arg("name"), "values", "options"),
            "This method specify the linear evolution of a strains component.\n"
            "* The first parameter (string) is the name of the choosen "
            "strains component. The allowed components (see the "
@@ -1124,8 +1110,8 @@ void declareMTest() {
            "given in the array. Should a time be out of the array, "
            "the returned value will be the one from the nearest "
            "association available.")
-      .def("setImposedDeformationGradient",
-           MTest_setImposedDeformationGradient1, (arg("name"), "values"),
+      .def("setImposedDeformationGradient", MTest_setImposedDeformationGradient1,
+           (arg("name"), "values"),
            "This method specify the constant evolution of a deformation "
            "gradient component.\n"
            "* The first parameter (string) is the name of the choosen "
@@ -1140,8 +1126,7 @@ void declareMTest() {
            "FZX FYZ FZY\n"
            "* The second parameter (double) is the constant value "
            "of the selected deformation gradient component.")
-      .def("setImposedDeformationGradient",
-           MTest_setImposedDeformationGradient1b,
+      .def("setImposedDeformationGradient", MTest_setImposedDeformationGradient1b,
            (arg("name"), "values", "options"),
            "This method specify the constant evolution of a deformation "
            "gradient component.\n"
@@ -1157,8 +1142,8 @@ void declareMTest() {
            "FZX FYZ FZY\n"
            "* The second parameter (double) is the constant value "
            "of the selected deformation gradient component.")
-      .def("setImposedDeformationGradient",
-           MTest_setImposedDeformationGradient2, (arg("name"), "values"),
+      .def("setImposedDeformationGradient", MTest_setImposedDeformationGradient2,
+           (arg("name"), "values"),
            "This method specify the linear evolution of a deformation "
            "gradient component.\n"
            "* The first parameter (string) is the name of the choosen "
@@ -1178,8 +1163,7 @@ void declareMTest() {
            "given in the array. Should a time be out of the array, "
            "the returned value will be the one from the nearest "
            "association available.")
-      .def("setImposedDeformationGradient",
-           MTest_setImposedDeformationGradient2b,
+      .def("setImposedDeformationGradient", MTest_setImposedDeformationGradient2b,
            (arg("name"), "values", "options"),
            "This method specify the linear evolution of a deformation "
            "gradient component.\n"
@@ -1200,22 +1184,18 @@ void declareMTest() {
            "given in the array. Should a time be out of the array, "
            "the returned value will be the one from the nearest "
            "association available.")
-      .def("setImposedOpeningDisplacement",
-           MTest_setImposedOpeningDisplacement1, (arg("name"), "values"))
-      .def("setImposedOpeningDisplacement",
-           MTest_setImposedOpeningDisplacement1b,
-           (arg("name"), "values", "options"))
-      .def("setImposedOpeningDisplacement",
-           MTest_setImposedOpeningDisplacement2, (arg("name"), "values"))
-      .def("setImposedOpeningDisplacement",
-           MTest_setImposedOpeningDisplacement2b,
-           (arg("name"), "values", "options"))
-      .def("setImposedDrivingVariable", MTest_setImposedDrivingVariable1,
+      .def("setImposedOpeningDisplacement", MTest_setImposedOpeningDisplacement1,
            (arg("name"), "values"))
+      .def("setImposedOpeningDisplacement", MTest_setImposedOpeningDisplacement1b,
+           (arg("name"), "values", "options"))
+      .def("setImposedOpeningDisplacement", MTest_setImposedOpeningDisplacement2,
+           (arg("name"), "values"))
+      .def("setImposedOpeningDisplacement", MTest_setImposedOpeningDisplacement2b,
+           (arg("name"), "values", "options"))
+      .def("setImposedDrivingVariable", MTest_setImposedDrivingVariable1, (arg("name"), "values"))
       .def("setImposedDrivingVariable", MTest_setImposedDrivingVariable1b,
            (arg("name"), "values", "options"))
-      .def("setImposedDrivingVariable", MTest_setImposedDrivingVariable2,
-           (arg("name"), "values"))
+      .def("setImposedDrivingVariable", MTest_setImposedDrivingVariable2, (arg("name"), "values"))
       .def("setImposedDrivingVariable", MTest_setImposedDrivingVariable2b,
            (arg("name"), "values", "options"))
       .def("setScalarInternalStateVariableInitialValue",
@@ -1245,16 +1225,14 @@ void declareMTest() {
            "- result to be tested (strain, stress, internal state variable)\n"
            "- formulae giving the analytical solution\n"
            "- test criterion\n")
-      .def("addReferenceFileComparisonTest",
-           MTest_addReferenceFileComparisonTest1,
+      .def("addReferenceFileComparisonTest", MTest_addReferenceFileComparisonTest1,
            "Add a test comparing the results to the one given in a reference "
            "file:\n"
            "- result to be tested (strain, stress, internal state variable)\n"
            "- file name\n"
            "- column number\n"
            "- test criterion\n")
-      .def("addReferenceFileComparisonTest",
-           MTest_addReferenceFileComparisonTest2,
+      .def("addReferenceFileComparisonTest", MTest_addReferenceFileComparisonTest2,
            "Add a test comparing the results to the one given in a reference "
            "file:\n"
            "- result to be tested (strain, stress, internal state variable)\n"
@@ -1263,6 +1241,17 @@ void declareMTest() {
            "column)\n"
            "- test criterion\n")
       .def("addEvent", &MTest::addEvent, "Add a new event")
-      .def("addEvent", MTest_addEvent, "Add a new event");
+      .def("addEvent", MTest_addEvent, "Add a new event")
+      .def("addUserDefinedPostprocessing", &MTest::addUserDefinedPostprocessing,
+           "add a new user defined postprocessing.\n"
+           "- the first argument is the name of the output file\n"
+           "- the second argument gives a list of post-processings as an array of "
+           "  strings. Those strings defines formulae which are evaluated at the end "
+           "  of the time step. Those formulae may depend on:\n"
+           "    - the behaviour' driving variable\n"
+           "    - the behaviour' thermodynamic forces\n"
+           "    - the behaviour' internal state variables\n"
+           "    - the behaviour' external state variables\n"
+           "    - any evolution defined in the input file\n");
 
-}  // end of declareExternalLibraryManager
+  }  // end of declareExternalLibraryManager

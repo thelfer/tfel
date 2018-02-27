@@ -38,6 +38,9 @@
 
 namespace mtest {
 
+  //! forward declaration
+  struct UserDefinedPostProcessing;
+
   /*!
    * \brief MTest is a simple class to test mfront behaviours.
    *
@@ -313,6 +316,12 @@ namespace mtest {
      * \param[in] times: times
      */
     void addEvent(const std::string&, const std::vector<double>&);
+    /*!
+     * \brief add a user defined postprocessing
+     * \param[in] f: filename
+     * \param[in] p: list of postprocessings
+     */
+    void addUserDefinedPostprocessing(const std::string&, const std::vector<std::string>&);
     //! destructor
     ~MTest() override;
 
@@ -337,6 +346,8 @@ namespace mtest {
     std::vector<std::shared_ptr<UTest>> tests;
     //! constraints
     std::vector<std::shared_ptr<Constraint>> constraints;
+    //! user defined postprocessings
+    std::vector<std::shared_ptr<UserDefinedPostProcessing>> upostprocessings;
     //! rotation matrix
     tfel::math::tmatrix<3u, 3u, real> rm;
     //! boolean, true if the rotation matrix has been defined by the user

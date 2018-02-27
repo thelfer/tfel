@@ -21,6 +21,12 @@ $ tfel-config --cxx-standard
 
 # Tickets fixed
 
+## Ticket #112: Documentation of the `@HillTensor` keyword
+
+The `@HillTensor` keyword is now documented.
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/114/>
+
 ## Ticket #113: Use the external name to define the default value of real parameters
 
 The variable name was used to form the symbol which defines the default

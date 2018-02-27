@@ -32,18 +32,13 @@
 #include "TFEL/Math/tvector.hxx"
 #include "TFEL/Math/stensor.hxx"
 #include "TFEL/Math/tmatrix.hxx"
-
 #include "MFront/MFrontLogStream.hxx"
-
-#include "MTest/MTest.hxx"
 #include "MTest/RoundingMode.hxx"
 #include "MTest/Behaviour.hxx"
 #include "MTest/MTestParser.hxx"
-
 #include "MTest/Evolution.hxx"
 #include "MTest/FunctionEvolution.hxx"
 #include "MTest/CastemEvolution.hxx"
-
 #include "MTest/Constraint.hxx"
 #include "MTest/ImposedThermodynamicForce.hxx"
 #include "MTest/ImposedDrivingVariable.hxx"
@@ -51,6 +46,8 @@
 #include "MTest/BehaviourWorkSpace.hxx"
 #include "MTest/StructureCurrentState.hxx"
 #include "MTest/GenericSolver.hxx"
+#include "MTest/UserDefinedPostProcessing.hxx"
+#include "MTest/MTest.hxx"
 
 #ifdef min
 #undef min
@@ -309,7 +306,7 @@ namespace mtest {
     unsigned short cnbr = 2;
     const char* dvn;
     const char* thn;
-    this->out << "# first column : time" << endl;
+    this->out << "# first column : time\n";
     if (this->b->getBehaviourType() ==
         MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR) {
       dvn = "strain";
@@ -886,6 +883,9 @@ namespace mtest {
     for (const auto& test : this->tests) {
       test->check(s, t, dt, p);
     }
+    for (const auto& p: this->upostprocessings) {
+      p->exe(s, t, dt);
+    }
   }  // end of MTest::postConvergence
 
   void MTest::execute(StudyCurrentState& state,
@@ -939,6 +939,12 @@ namespace mtest {
       this->events[t].push_back(e);
     }
   }  // end of MTest::addEvent
+
+  void MTest::addUserDefinedPostprocessing(const std::string& f,
+                                           const std::vector<std::string>& p) {
+    this->upostprocessings.push_back(std::make_shared<UserDefinedPostProcessing>(
+        *(this->getBehaviour()), this->getEvolutions(), f, p));
+  }  // end of MTest::addUserDefinedPostprocessing
 
   MTest::~MTest() = default;
 

@@ -265,6 +265,8 @@ namespace mtest {
         &MTestParser::handleTangentOperatorComparisonCriterium);
     add("@NumericalTangentOperatorPerturbationValue",
         &MTestParser::handleNumericalTangentOperatorPerturbationValue);
+    add("@UserDefinedPostprocessing",
+        &MTestParser::handleUserDefinedPostprocessing);
   }
 
   void MTestParser::registerCallBack(const std::string& k,
@@ -848,6 +850,34 @@ namespace mtest {
                              this->tokens.end());
     t.setThermodynamicForcesInitialValues(s_t0);
   }  // end of MTestParser::handleThermodynamicForce
+
+  void MTestParser::handleUserDefinedPostprocessing(MTest& t, tokens_iterator& p) {
+    const std::string m = "MTestParser::handleUserDefinedPostprocessing";
+    // output file
+    const auto& f = this->readString(p, this->tokens.end());
+    this->checkNotEndOfLine(m, p, this->tokens.end());
+    auto v = std::vector<std::string>{};
+    if (p->flag == tfel::utilities::Token::String) {
+      v.push_back(this->readString(p, this->tokens.end()));
+    } else {
+      this->readSpecifiedToken(m, "{", p, this->tokens.end());
+      this->checkNotEndOfLine(m, p, this->tokens.end());
+      while (p->value != "}") {
+        v.push_back(this->readString(p, this->tokens.end()));
+        this->checkNotEndOfLine(m, p, this->tokens.end());
+        if (p->value != "}") {
+          this->readSpecifiedToken(m, ",", p, this->tokens.end());
+          this->checkNotEndOfLine(m, p, this->tokens.end());
+          tfel::raise_if(p->value == "}",
+                         "MTestParser::handleUserDefinedPostprocessing: "
+                         "unexpected token '}'");
+        }
+      }
+      this->readSpecifiedToken(m, "}", p, this->tokens.end());
+    }
+    this->readSpecifiedToken(m, ";", p, this->tokens.end());
+    t.addUserDefinedPostprocessing(f, v);
+  }  // end of MTestParser::handleUserDefinedPostprocessing
 
   ConstraintOptions MTestParser::readConstraintOptions(const std::string& m,
                                                        tokens_iterator& p) {
