@@ -137,6 +137,8 @@ install_mfront_desc(UpdateAuxiliaryStateVariables)
 install_mfront_desc(UsableInPurelyImplicitResolution)
 install_mfront_desc(UseQt)
 
+install_mfront_desc2(Implicit HillTensor)
+
 install_mfront_desc2(MaterialLaw Constant)
 install_mfront_desc2(MaterialLaw Function)
 install_mfront_desc2(MaterialLaw Input)

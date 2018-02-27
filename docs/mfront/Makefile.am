@@ -82,6 +82,7 @@ MFRONT_DOCS = AdditionalConvergenceChecks.md                            \
 	      UpdateAuxiliaryStateVariables.md                          \
 	      UsableInPurelyImplicitResolution.md                       \
 	      UseQt.md                                                  \
+	      Implicit/HillTensor.md                                    \
 	      MaterialLaw/Constant.md                                   \
 	      MaterialLaw/Function.md                                   \
 	      MaterialLaw/Input.md                                      \

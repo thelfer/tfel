@@ -36,11 +36,12 @@ order:
 - three Poisson ratio \((nu_{12},nu_{23},nu_{13})\)
 - three shear modulus \((G_{12},G_{23},G_{13})\)
 
-In the orthoropic case, computation of the stiffness tensor rely on
-the definition of an orthotropic convention. For example, the `Pipe`
+In the orthoropic case, computation of the stiffness tensor rely on the
+definition of an orthotropic convention. For example, the `Pipe`
 orthotropic convention will lead to automatically exchange the second
-and first axises when computing the stiffness tensor for the plane
-strain, plane stress and generalised plane strain hypotheses.
+and first axes when computing the stiffness tensor for the plane strain,
+plane stress and generalised plane strain hypotheses. See the
+`OrthotropicBehaviour` keyword for details.
 
 ## Tensors computed
 
