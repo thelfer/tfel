@@ -256,11 +256,11 @@ namespace mtest {
      */
     virtual void handleImposedDrivingVariable(MTest&, tokens_iterator&);
     /*!
-     * \brief handle the `@UserDefinedPostprocessing` keyword
+     * \brief handle the `@UserDefinedPostProcessing` keyword
      * \param[in,out] t: `MTest` object to be configured
      * \param[in,out] p: position in the input file
      */
-    virtual void handleUserDefinedPostprocessing(MTest&, tokens_iterator&);
+    virtual void handleUserDefinedPostProcessing(MTest&, tokens_iterator&);
     /*!
      * \brief read the options associated with a constraint
      * \param[in] m: calling method

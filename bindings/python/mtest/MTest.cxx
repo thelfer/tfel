@@ -1242,8 +1242,8 @@ void declareMTest() {
            "- test criterion\n")
       .def("addEvent", &MTest::addEvent, "Add a new event")
       .def("addEvent", MTest_addEvent, "Add a new event")
-      .def("addUserDefinedPostprocessing", &MTest::addUserDefinedPostprocessing,
-           "add a new user defined postprocessing.\n"
+      .def("addUserDefinedPostProcessing", &MTest::addUserDefinedPostProcessing,
+           "add a new user defined post-processing.\n"
            "- the first argument is the name of the output file\n"
            "- the second argument gives a list of post-processings as an array of "
            "  strings. Those strings defines formulae which are evaluated at the end "

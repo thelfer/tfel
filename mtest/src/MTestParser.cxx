@@ -265,8 +265,8 @@ namespace mtest {
         &MTestParser::handleTangentOperatorComparisonCriterium);
     add("@NumericalTangentOperatorPerturbationValue",
         &MTestParser::handleNumericalTangentOperatorPerturbationValue);
-    add("@UserDefinedPostprocessing",
-        &MTestParser::handleUserDefinedPostprocessing);
+    add("@UserDefinedPostProcessing",
+        &MTestParser::handleUserDefinedPostProcessing);
   }
 
   void MTestParser::registerCallBack(const std::string& k,
@@ -851,8 +851,8 @@ namespace mtest {
     t.setThermodynamicForcesInitialValues(s_t0);
   }  // end of MTestParser::handleThermodynamicForce
 
-  void MTestParser::handleUserDefinedPostprocessing(MTest& t, tokens_iterator& p) {
-    const std::string m = "MTestParser::handleUserDefinedPostprocessing";
+  void MTestParser::handleUserDefinedPostProcessing(MTest& t, tokens_iterator& p) {
+    const std::string m = "MTestParser::handleUserDefinedPostProcessing";
     // output file
     const auto& f = this->readString(p, this->tokens.end());
     this->checkNotEndOfLine(m, p, this->tokens.end());
@@ -868,16 +868,14 @@ namespace mtest {
         if (p->value != "}") {
           this->readSpecifiedToken(m, ",", p, this->tokens.end());
           this->checkNotEndOfLine(m, p, this->tokens.end());
-          tfel::raise_if(p->value == "}",
-                         "MTestParser::handleUserDefinedPostprocessing: "
-                         "unexpected token '}'");
+          tfel::raise_if(p->value == "}", m + ": unexpected token '}'");
         }
       }
       this->readSpecifiedToken(m, "}", p, this->tokens.end());
     }
     this->readSpecifiedToken(m, ";", p, this->tokens.end());
-    t.addUserDefinedPostprocessing(f, v);
-  }  // end of MTestParser::handleUserDefinedPostprocessing
+    t.addUserDefinedPostProcessing(f, v);
+  }  // end of MTestParser::handleUserDefinedPostProcessing
 
   ConstraintOptions MTestParser::readConstraintOptions(const std::string& m,
                                                        tokens_iterator& p) {

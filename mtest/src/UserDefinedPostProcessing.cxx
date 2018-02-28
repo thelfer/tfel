@@ -45,7 +45,8 @@ namespace mtest{
     this->out << "# first column : time\n";
     auto cnbr = int{2};
     for (const auto& p : ps) {
-      this->out << "# " << cnbr << "column : " << p << '\n';
+      this->out << "# " << cnbr << " column : " << p << '\n';
+      ++cnbr;
     }
   }  // end of UserDefinedPostProcessing::UserDefinedPostProcessing
 

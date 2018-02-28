@@ -313,15 +313,15 @@ namespace mtest {
     /*!
      * \brief add a new event
      * \param[in] e: event name
-     * \param[in] times: times
+     * \param[in] evtimes: times
      */
     void addEvent(const std::string&, const std::vector<double>&);
     /*!
-     * \brief add a user defined postprocessing
+     * \brief add a user defined PostProcessing
      * \param[in] f: filename
-     * \param[in] p: list of postprocessings
+     * \param[in] p: list of PostProcessings
      */
-    void addUserDefinedPostprocessing(const std::string&, const std::vector<std::string>&);
+    void addUserDefinedPostProcessing(const std::string&, const std::vector<std::string>&);
     //! destructor
     ~MTest() override;
 
@@ -346,7 +346,7 @@ namespace mtest {
     std::vector<std::shared_ptr<UTest>> tests;
     //! constraints
     std::vector<std::shared_ptr<Constraint>> constraints;
-    //! user defined postprocessings
+    //! user defined post-processings
     std::vector<std::shared_ptr<UserDefinedPostProcessing>> upostprocessings;
     //! rotation matrix
     tfel::math::tmatrix<3u, 3u, real> rm;

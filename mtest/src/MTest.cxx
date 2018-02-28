@@ -934,17 +934,17 @@ namespace mtest {
     }
   } // end of MTest::printOutput
 
-  void MTest::addEvent(const std::string& e, const std::vector<double>& times) {
-    for(const auto t:times){
+  void MTest::addEvent(const std::string& e, const std::vector<double>& evtimes) {
+    for(const auto t:evtimes){
       this->events[t].push_back(e);
     }
   }  // end of MTest::addEvent
 
-  void MTest::addUserDefinedPostprocessing(const std::string& f,
+  void MTest::addUserDefinedPostProcessing(const std::string& f,
                                            const std::vector<std::string>& p) {
     this->upostprocessings.push_back(std::make_shared<UserDefinedPostProcessing>(
         *(this->getBehaviour()), this->getEvolutions(), f, p));
-  }  // end of MTest::addUserDefinedPostprocessing
+  }  // end of MTest::addUserDefinedPostProcessing
 
   MTest::~MTest() = default;
 

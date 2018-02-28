@@ -16,7 +16,7 @@ This keywords is followed by:
 ## Example 
 
 ~~~~{.cpp}
-@UserDefinedPostprocessing 'test.txt' '(SXX+SYY+SZZ)/3';
+@UserDefinedPostProcessing 'test.txt' '(SXX+SYY+SZZ)/3';
 ~~~~
 
 ~~~~{.cpp}
