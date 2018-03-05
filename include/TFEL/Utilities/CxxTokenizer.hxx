@@ -114,7 +114,6 @@ namespace tfel {
        * \brief set if char tokens shall be treated as string tokens
        * \param[in] b : boolean telling if char tokens shall be
        * treated as string tokens
-
        */
       void treatCharAsString(const bool);
       /*!

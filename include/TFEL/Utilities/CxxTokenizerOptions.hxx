@@ -37,68 +37,29 @@ namespace tfel {
       CxxTokenizerOptions &operator=(CxxTokenizerOptions &&);
       //! destructor
       ~CxxTokenizerOptions();
-      /*!
-       * \brief set if char tokens shall be treated as string tokens
-       * \param[in] b : boolean telling if char tokens shall be
-       * treated as string tokens
-       * \deprecated
-       */
-      void treatCharAsString(const bool);
-      /*!
-       * \brief set if the comment boundaries must be left in the
-       * resulting tokens.
-       * \param[in] b : boolean telling if char tokens shall be
-       * treated as string tokens
-       * \deprecated
-       */
-      void keepCommentBoundaries(const bool);
-      /*!
-       * \brief set if '.' shall be treated as as sperator
-       * \param[in] b : boolean telling if '.' shall be treated as as
-       * separator
-       * \deprecated
-       */
-      void treatDotAsSeparator(const bool);
-      /*!
-       * \brief set if '-' shall be treated as as sperator
-       * \param[in] b : boolean telling if '-' shall be treated as as
-       * separator
-       * \deprecated
-       */
-      void treatMinusAsSeparator(const bool);
-      /*!
-       * \brief set if successive strings shall be merged
-       * \param[in] b : boolean
-       * \deprecated
-       */
-      void mergeStrings(const bool);
-      /*!
-       * \brief set if tokens shall be split to extract numbers
-       * \param[in] b : boolean telling numbers shall be extracted
-       * from tokens
-       * \deprecated
-       */
-      void extractNumbers(const bool);
       //! \brief if true, keep the comment boundaries
       bool bKeepCommentBoundaries = false;
       //! if true, successive strings are merged
       bool shallMergeStrings = false;
       //! allow stray hash character
       bool allowStrayHashCharacter = false;
+      //! the hash character can start a comment, as in python, shell, etc..
+      bool treatHashCharacterAsCommentDelimiter = false;
       //! allow stray backslash
       bool allowStrayBackSlash = false;
       //! treat preprocessor directives
       bool treatPreprocessorDirectives = true;
       /*!
        * \brief treat strings and characters
-       *
        * If `false`, the `'` and '"' are treated as indivdual tokens
        */
       bool treatStrings = true;
       //! \brief extract number
       bool treatNumbers = true;
       //! \brief treat comments
-      bool treatComments = true;
+      bool treatCComments = true;
+      //! \brief treat comments
+      bool treatCxxComments = true;
       /*!
        * In `C` and `C++`, two separator characters can be associated to
        * create a new separator: `->`, `&=`. If this flag is true, these

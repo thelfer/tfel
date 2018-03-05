@@ -667,14 +667,29 @@ namespace tfel {
       ignore_space(o, p, pe);
       while (p != pe) {
         if (*p == '#') {
-          auto pn = std::next(p);
-          if (pn == pe) {
-            throw_if(!this->allowStrayHashCharacter, "stray ‘#’");
+          if ((this->treatHashCharacterAsCommentDelimiter) && (this->allowStrayHashCharacter)) {
+            if (this->bKeepCommentBoundaries) {
+              this->tokens.emplace_back(std::string{p, pe}, n, o, Token::Comment);
+              p = pe;
+            } else {
+              ++p;
+              ignore_space(o, p, pe);
+              if (p != pe) {
+                this->tokens.emplace_back(std::string{p, pe}, n, o, Token::Comment);
+                p=pe;
+              }
+            }
+            advance(o, p, pe - p);
           } else {
-            throw_if((!this->allowStrayHashCharacter) && (std::isalpha(*pn) == 0), "stray ‘#’");
+            auto pn = std::next(p);
+            if (pn == pe) {
+              throw_if(!this->allowStrayHashCharacter, "stray ‘#’");
+            } else {
+              throw_if((!this->allowStrayHashCharacter) && (std::isalpha(*pn) == 0), "stray ‘#’");
+            }
+            this->tokens.emplace_back("#", n, o, Token::Standard);
+            advance(o, p, 1u);
           }
-          this->tokens.emplace_back("#", n, o, Token::Standard);
-          advance(o, p, 1u);
         } else if (*p == '\\') {
           throw_if((!this->allowStrayBackSlash) && (p != std::prev(pe)),
                    "stray ‘\\’");
@@ -741,15 +756,11 @@ namespace tfel {
             this->try_join(o, p, pe, n, '=');
           }
         } else if (*p == '/') {
-          if (this->treatComments) {
-            auto pn = std::next(p);
-            if ((pn != pe) && (*pn == '/')) {
-              this->parseCxxComment(o, p, pe, n);
-            } else if ((pn != pe) && (*pn == '*')) {
-              this->parseCComment(o, p, pe, n);
-            } else {
-              this->try_join(o, p, pe, n, '=');
-            }
+          auto pn = std::next(p);
+          if ((pn != pe) && (*pn == '/') && (this->treatCxxComments)) {
+            this->parseCxxComment(o, p, pe, n);
+          } else if ((pn != pe) && (*pn == '*') && (this->treatCComments)) {
+            this->parseCComment(o, p, pe, n);
           } else {
             this->try_join(o, p, pe, n, '=');
           }
