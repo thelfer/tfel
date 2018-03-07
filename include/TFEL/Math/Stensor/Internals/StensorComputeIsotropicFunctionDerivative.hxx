@@ -41,7 +41,7 @@ namespace tfel{
 	  (tfel::meta::Implements<ST2toST2Type,ST2toST2Concept>::cond)&&
 	  (ST2toST2Traits<ST2toST2Type>::dime==1u),
 	  void>::type
-	exe(ST2toST2Type& d,
+	exe2(ST2toST2Type& d,
 	    const Function&,
 	    const FunctionDerivative& df,
 	    const tvector<3u,T>& vp,
@@ -145,7 +145,7 @@ namespace tfel{
 	  (tfel::meta::Implements<ST2toST2Type,ST2toST2Concept>::cond)&&
 	  (ST2toST2Traits<ST2toST2Type>::dime==2u),
 	  void>::type
-	exe(ST2toST2Type& d,
+	exe2(ST2toST2Type& d,
 	    const Function& f,
 	    const FunctionDerivative& df,
 	    const tvector<3u,T>& vp,
@@ -254,7 +254,7 @@ namespace tfel{
 	  (tfel::meta::Implements<ST2toST2Type,ST2toST2Concept>::cond)&&
 	  (ST2toST2Traits<ST2toST2Type>::dime==3u),
 	  void>::type
-	exe(ST2toST2Type& d,
+	exe2(ST2toST2Type& d,
 	    const Function& f,
 	    const FunctionDerivative& df,
 	    const tvector<3u,T>& vp,

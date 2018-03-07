@@ -1625,7 +1625,7 @@ namespace mfront{
     auto throw_if = [this,m](const bool b,const std::string& msg){
       if(b){this->throwRuntimeError(m,msg);}
     };
-    auto addTref = [this,throw_if,n](const double v){
+    auto addTref = [this,throw_if,n,h](const double v){
       if(this->mb.hasParameter(h,n)){
 	const auto Tref = this->mb.getFloattingPointParameterDefaultValue(h,n);
 	throw_if(tfel::math::ieee754::fpclassify(Tref-v)!=FP_ZERO,
@@ -1639,7 +1639,7 @@ namespace mfront{
 	this->mb.setEntryName(h,n,"ThermalExpansionReferenceTemperature");
       }
     };
-    auto addTi = [this](const double v){
+    auto addTi = [this,h](const double v){
       VariableDescription Ti("temperature",
 			     "initial_geometry_reference_temperature",
 			     1u,0u);
