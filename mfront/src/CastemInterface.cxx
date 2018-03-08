@@ -1950,11 +1950,10 @@ namespace mfront{
   }
 
   void CastemInterface::writeStandardCastemFunction(std::ostream& out,
-						    const std::string& name,
-						    const std::string& fname,
-						    const std::string& suffix,
-						    const BehaviourDescription& mb) const
-  {
+                                                    const std::string& name,
+                                                    const std::string& fname,
+                                                    const std::string& suffix,
+                                                    const BehaviourDescription& mb) const {
     out << "MFRONT_SHAREDOBJ void\n" << fname;
     writeUMATArguments(out,mb.getBehaviourType());
     out << "\n{\n";
@@ -1966,17 +1965,15 @@ namespace mfront{
     }
     this->generateMTestFile1(out);
     if(mb.getBehaviourType()==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR){
-      out << "umat" << makeLowerCase(name)
-	  << "_base(NTENS, DTIME,DROT,DDSDDE,F0,F1,TEMP,DTEMP,\n"
-	  << "PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,\n"
-	  << "STRESS,PNEWDT,NDI,KINC,\n"
-	  << "castem::CastemStandardSmallStrainStressFreeExpansionHandler);\n";
+      out << "umat" << makeLowerCase(name) << "_base(NTENS, DTIME,DROT,DDSDDE,F0,F1,TEMP,DTEMP,\n"
+          << "PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,\n"
+          << "STRESS,PNEWDT,NDI,KINC,nullptr);\n";
     } else {
       out << "umat" << makeLowerCase(name)
-	  << "_base(NTENS, DTIME,DROT,DDSDDE,STRAN,DSTRAN,TEMP,DTEMP,\n"
-	  << "PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,\n"
-	  << "STRESS,PNEWDT,NDI,KINC,\n"
-	  << "castem::CastemStandardSmallStrainStressFreeExpansionHandler);\n";
+          << "_base(NTENS, DTIME,DROT,DDSDDE,STRAN,DSTRAN,TEMP,DTEMP,\n"
+          << "PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,\n"
+          << "STRESS,PNEWDT,NDI,KINC,\n"
+          << "castem::CastemStandardSmallStrainStressFreeExpansionHandler);\n";
     }
     if(this->generateMTestFile){
       out << "if(*KINC!=1){\n";
