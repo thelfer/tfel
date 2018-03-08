@@ -18,6 +18,15 @@
 \newcommand{\deriv}[2]{{\displaystyle \frac{\displaystyle \partial #1}{\displaystyle \partial #2}}}
 \newcommand{\sigmaeq}{\sigma_{\mathrm{eq}}}
 
+# Release of version 3.1.1 of `TFEL/MFront` (7/03/2017)
+
+In prevision of the 14.2 release of `Code_Aster` and 2018 release of
+`Salome-Meca`, `TFEL` 3.1.1 has been released. This is mostly a bug fix
+version with a few enhancements.
+
+A detailed version of the release notes is available
+[here](http://tfel.sourceforge.net/release-notes-3.1.1.html).
+
 # Orthotropic generalization of the invariants of the stress deviator tensor (16/11/2018)
 
 Within the framework of the theory of representation, generalizations

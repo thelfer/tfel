@@ -487,6 +487,8 @@ namespace mtest {
             "unsupported roation matrix type");
       }
       ++p;
+      this->readSpecifiedToken("MTestParser::handleRotationMatrix", ">", p,
+                               this->tokens.end());
       this->checkNotEndOfLine("MTestParser::handleRotationMatrix", p,
                               this->tokens.end());
     }

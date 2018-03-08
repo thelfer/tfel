@@ -1681,11 +1681,10 @@ namespace mfront{
     out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
 	<< "_BehaviourType = " ;
     if(mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
-      if(!AbaqusInterfaceBase::hasFiniteStrainStrategy(mb)){
-	tfel::raise("AbaqusExplicitInterface::writeUMATxxBehaviourTypeSymbols: "
-		    "behaviours written in the small strain framework "
-		    "must be embedded in a strain strategy");
-      }
+      tfel::raise_if(!AbaqusInterfaceBase::hasFiniteStrainStrategy(mb),
+                     "AbaqusExplicitInterface::writeUMATxxBehaviourTypeSymbols: "
+                     "behaviours written in the small strain framework "
+                     "must be embedded in a strain strategy");
       out << "2u;\n\n";
     } else if(mb.getBehaviourType()==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR){
       out << "2u;\n\n";
