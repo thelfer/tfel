@@ -2637,6 +2637,14 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/cyrano/cyranonorton_LogarithmicStrain1DWrapper-uniaxialloading-1-1D.mtest
            mfront/tests/behaviours/cyrano/cyranonorton_LogarithmicStrain1DWrapper-uniaxialloading-2-1D.mtest
            mfront/tests/behaviours/cyrano/cyranonorton_LogarithmicStrain1DWrapper-uniaxialloading-3-1D.mtest
+           mfront/tests/behaviours/cyrano/cyranoelasticity_LogarithmicStrain-uniaxialloading-1-1D.mtest
+           mfront/tests/behaviours/cyrano/cyranoelasticity_LogarithmicStrain-uniaxialloading-2-1D.mtest
+           mfront/tests/behaviours/cyrano/cyranoelasticity_LogarithmicStrain-uniaxialloading-3-1D.mtest
+           mfront/tests/behaviours/cyrano/cyranoelasticity_LogarithmicStrain-thermalstrain.mtest
+           mfront/tests/behaviours/cyrano/cyranoelasticity_LogarithmicStrain-thermalstrain2.mtest
+           mfront/tests/behaviours/cyrano/cyranonorton_LogarithmicStrain-uniaxialloading-1-1D.mtest
+           mfront/tests/behaviours/cyrano/cyranonorton_LogarithmicStrain-uniaxialloading-2-1D.mtest
+           mfront/tests/behaviours/cyrano/cyranonorton_LogarithmicStrain-uniaxialloading-3-1D.mtest
 	   mfront/tests/behaviours/cyrano/cyranoorthotropicelasticity5-1.mtest
 	   mfront/tests/behaviours/cyrano/cyranoorthotropicelasticity5-2.mtest
 	   mfront/tests/behaviours/cyrano/cyranoorthotropicelasticity5-3.mtest
@@ -2684,8 +2692,8 @@ AC_OUTPUT([debug.sh
   	   mfront/tests/behaviours/uanderson/uandersonelasticity_frst-uniaxialloading-2-3D.mtest
   	   mfront/tests/behaviours/uanderson/uandersonelasticity_frst-uniaxialloading-3-1D.mtest
   	   mfront/tests/behaviours/uanderson/uandersonelasticity_frst-uniaxialloading-3-2D.mtest
-  	   mfront/tests/behaviours/uanderson/uandersonelasticity_frst-uniaxialloading-3-3D.mtest
-  	   mfront/tests/behaviours/uanderson/uandersonelasticity_log1D-uniaxialloading-1-1D.mtest
+  	   mfront/tests/behaviours/uanderson/uandersonelasticity_frst-uniaxialloading-3-3D.mtest 
+ 	   mfront/tests/behaviours/uanderson/uandersonelasticity_log1D-uniaxialloading-1-1D.mtest
   	   mfront/tests/behaviours/uanderson/uandersonelasticity_log1D-uniaxialloading-2-1D.mtest
   	   mfront/tests/behaviours/uanderson/uandersonelasticity_log1D-uniaxialloading-3-1D.mtest
   	   mfront/tests/behaviours/uanderson/uandersonelasticity_LogarithmicStrain1DWrapper-thermalstrain2.mtest

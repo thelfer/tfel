@@ -6,6 +6,8 @@
  (the most simple one in fact).
 }
 
+@StrainMeasure Hencky;
+// The following keywords are redundant. They are kept for backward compatibility.
 @UMATFiniteStrainStrategy[umat]                    MieheApelLambrechtLogarithmicStrain;
 @CalculiXFiniteStrainStrategy[calculix]            MieheApelLambrechtLogarithmicStrain;
 @AbaqusFiniteStrainStrategy[abaqus,abaqusexplicit] MieheApelLambrechtLogarithmicStrain;

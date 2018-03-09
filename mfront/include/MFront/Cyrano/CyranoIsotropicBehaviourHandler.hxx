@@ -27,24 +27,22 @@ namespace cyrano
 	   template<tfel::material::ModellingHypothesis::Hypothesis,typename,bool> class Behaviour>
   struct TFEL_VISIBILITY_LOCAL CyranoIsotropicBehaviourHandler
   {
-
-    TFEL_CYRANO_INLINE static
-    void exe(const CyranoReal *const DTIME ,
-	     const CyranoReal *const,
-	     CyranoReal *const DDSOE,
-	     const CyranoReal *const STRAN ,
-	     const CyranoReal *const DSTRAN,
-	     const CyranoReal *const TEMP  ,
-	     const CyranoReal *const DTEMP,
-	     const CyranoReal *const PROPS ,
-	     const CyranoInt  *const NPROPS,
-	     const CyranoReal *const PREDEF,
-	     const CyranoReal *const DPRED,
-	     CyranoReal *const STATEV,
-	     const CyranoInt  *const NSTATV,
-	     CyranoReal *const STRESS,
-	     const tfel::material::OutOfBoundsPolicy op) 
-    {
+    TFEL_CYRANO_INLINE static void exe(const CyranoReal *const DTIME,
+                                       const CyranoReal *const,
+                                       CyranoReal *const DDSOE,
+                                       const CyranoReal *const STRAN,
+                                       const CyranoReal *const DSTRAN,
+                                       const CyranoReal *const TEMP,
+                                       const CyranoReal *const DTEMP,
+                                       const CyranoReal *const PROPS,
+                                       const CyranoInt *const NPROPS,
+                                       const CyranoReal *const PREDEF,
+                                       const CyranoReal *const DPRED,
+                                       CyranoReal *const STATEV,
+                                       const CyranoInt *const NSTATV,
+                                       CyranoReal *const STRESS,
+                                       const StressFreeExpansionHandler sfeh,
+                                       const tfel::material::OutOfBoundsPolicy op) {
       using namespace tfel::meta;
       using namespace tfel::material;
       typedef MechanicalBehaviourTraits<Behaviour<H,CyranoReal,false> > MTraits;
@@ -63,8 +61,8 @@ namespace cyrano
 	typename CyranoBehaviourHandler::Error>::type Handler;
       CyranoBehaviourHandler::checkNPROPS(*NPROPS);
       CyranoBehaviourHandler::checkNSTATV(*NSTATV);
-      Handler handler(DTIME,STRAN,DSTRAN,TEMP,DTEMP,PROPS,
-		      PREDEF,DPRED,STATEV,STRESS,op);
+      Handler handler(DTIME, STRAN, DSTRAN, TEMP, DTEMP, PROPS, PREDEF, DPRED, STATEV, STRESS, sfeh,
+                      op);
       handler.exe(DDSOE,STRESS,STATEV);
     } // end of CyranoIsotropicBehaviourHandler::exe
   };

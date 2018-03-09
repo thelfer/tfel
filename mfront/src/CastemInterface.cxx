@@ -828,7 +828,7 @@ namespace mfront {
             << "_Interface = 1u;\n\n";
       } else {
         const auto fss = getFiniteStrainStrategies(mb);
-        for (const auto fs : fss) {
+        for (const auto& fs : fss) {
           if (fs == "FiniteRotationSmallStrain") {
             this->generateUMATxxGeneralSymbols(out, name + "_frst", mb, fd);
             UMATInterfaceBase::writeUMATxxSupportedModellingHypothesis(out, name + "_frst", mb);

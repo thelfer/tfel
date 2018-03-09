@@ -1145,6 +1145,7 @@ docs/web/crossdomain.xml -text
 docs/web/css/main.css -text
 docs/web/css/normalize.css -text
 docs/web/css/slideshow.css -text
+docs/web/cyrano.md -text
 docs/web/ddif2.md -text
 docs/web/devel.md -text
 docs/web/doc/TOC.md -text
@@ -2230,6 +2231,7 @@ mfront/include/MFront/Cyrano/CyranoInterfaceExceptions.hxx -text
 mfront/include/MFront/Cyrano/CyranoIsotropicBehaviourHandler.hxx -text
 mfront/include/MFront/Cyrano/CyranoOrthotropicBehaviourHandler.hxx -text
 mfront/include/MFront/Cyrano/CyranoOutOfBoundsPolicy.hxx -text
+mfront/include/MFront/Cyrano/CyranoStressFreeExpansionHandler.hxx -text
 mfront/include/MFront/Cyrano/CyranoTraits.hxx -text
 mfront/include/MFront/Cyrano/cyrano.doxygen -text
 mfront/include/MFront/CyranoInterface.hxx -text
@@ -2431,6 +2433,7 @@ mfront/src/CyranoGetModellingHypothesis.cxx -text
 mfront/src/CyranoInterface.cxx -text
 mfront/src/CyranoInterfaceExceptions.cxx -text
 mfront/src/CyranoOutOfBoundsPolicy.cxx -text
+mfront/src/CyranoStressFreeExpansionHandler.cxx -text
 mfront/src/DDIF2Brick.cxx -text
 mfront/src/DSLBase.cxx -text
 mfront/src/DSLFactory.cxx -text
@@ -2595,7 +2598,9 @@ mfront/tests/behaviours/LogarithmicStrainAxialGrowth.mfront -text
 mfront/tests/behaviours/LogarithmicStrainElasticity.mfront -text
 mfront/tests/behaviours/LogarithmicStrainElasticity2.mfront -text
 mfront/tests/behaviours/LogarithmicStrainElasticity3.mfront -text
+mfront/tests/behaviours/LogarithmicStrainElasticity4.mfront -text
 mfront/tests/behaviours/LogarithmicStrainNortonCreep.mfront -text
+mfront/tests/behaviours/LogarithmicStrainOrthotropicElasticity.mfront -text
 mfront/tests/behaviours/LogarithmicStrainPlasticity.mfront -text
 mfront/tests/behaviours/Lorentz.mfront -text
 mfront/tests/behaviours/Lorentz2.mfront -text
@@ -4442,6 +4447,11 @@ mfront/tests/behaviours/cyrano/cyranoelasticity18.mtest.in -text
 mfront/tests/behaviours/cyrano/cyranoelasticity19.mtest.in -text
 mfront/tests/behaviours/cyrano/cyranoelasticity20.mtest.in -text
 mfront/tests/behaviours/cyrano/cyranoelasticity21.mtest.in -text
+mfront/tests/behaviours/cyrano/cyranoelasticity_LogarithmicStrain-thermalstrain.mtest.in -text
+mfront/tests/behaviours/cyrano/cyranoelasticity_LogarithmicStrain-thermalstrain2.mtest.in -text
+mfront/tests/behaviours/cyrano/cyranoelasticity_LogarithmicStrain-uniaxialloading-1-1D.mtest.in -text
+mfront/tests/behaviours/cyrano/cyranoelasticity_LogarithmicStrain-uniaxialloading-2-1D.mtest.in -text
+mfront/tests/behaviours/cyrano/cyranoelasticity_LogarithmicStrain-uniaxialloading-3-1D.mtest.in -text
 mfront/tests/behaviours/cyrano/cyranoelasticity_LogarithmicStrain1DWrapper-thermalstrain.mtest.in -text
 mfront/tests/behaviours/cyrano/cyranoelasticity_LogarithmicStrain1DWrapper-thermalstrain2.mtest.in -text
 mfront/tests/behaviours/cyrano/cyranoelasticity_LogarithmicStrain1DWrapper-uniaxialloading-1-1D.mtest.in -text
@@ -4469,6 +4479,9 @@ mfront/tests/behaviours/cyrano/cyranomaterialpropertiesboundscheck7.mtest.in -te
 mfront/tests/behaviours/cyrano/cyranomaterialpropertiesboundscheck8.mtest.in -text
 mfront/tests/behaviours/cyrano/cyranonorton.mtest.in -text
 mfront/tests/behaviours/cyrano/cyranonorton2.mtest.in -text
+mfront/tests/behaviours/cyrano/cyranonorton_LogarithmicStrain-uniaxialloading-1-1D.mtest.in -text
+mfront/tests/behaviours/cyrano/cyranonorton_LogarithmicStrain-uniaxialloading-2-1D.mtest.in -text
+mfront/tests/behaviours/cyrano/cyranonorton_LogarithmicStrain-uniaxialloading-3-1D.mtest.in -text
 mfront/tests/behaviours/cyrano/cyranonorton_LogarithmicStrain1DWrapper-uniaxialloading-1-1D.mtest.in -text
 mfront/tests/behaviours/cyrano/cyranonorton_LogarithmicStrain1DWrapper-uniaxialloading-2-1D.mtest.in -text
 mfront/tests/behaviours/cyrano/cyranonorton_LogarithmicStrain1DWrapper-uniaxialloading-3-1D.mtest.in -text

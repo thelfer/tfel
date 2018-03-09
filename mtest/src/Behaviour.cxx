@@ -185,7 +185,7 @@ namespace mtest {
       if (btype == 1u) {
         b = std::make_shared<CyranoBehaviour>(h, l, f);
       } else if (btype == 2u) {
-        if (ktype == 3u) {
+        if (ktype == 4u) {
           b = std::make_shared<CyranoBehaviour>(h, l, f);
         } else {
           throw_if(true, "unsupported behaviour kinematic");

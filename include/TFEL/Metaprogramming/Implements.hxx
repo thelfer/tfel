@@ -26,28 +26,28 @@ namespace tfel{
      * \class Implements
      *
      * \param T, class to be tested.
-     * \param concept, concept template class. 
+     * \param Concept, concept template class. 
      * \return bool.
      *
      * \see concepts_sec for more details about how concepts are modelled in TFEL.
      *
      * \brief the Implements metafunction returns true if the 
-     * class T is a subclass of concept<T>.
+     * class T is a subclass of Concept<T>.
      * \author Thomas Helfer
      * \date   28 Aug 2006
      */
-    template<typename T, template<typename> class concept>
+    template<typename T, template<typename> class Concept>
     struct TFEL_VISIBILITY_LOCAL Implements
     {
       /*!
        * The result of the metafunction.
        */
-      static constexpr bool cond = std::is_base_of<concept<T>,T>::value;
+      static constexpr bool cond = std::is_base_of<Concept<T>,T>::value;
     };
 
-    template<typename T, template<typename> class concept>
+    template<typename T, template<typename> class Concept>
     constexpr bool implements(){
-      return Implements<T,concept>::cond;
+      return Implements<T,Concept>::cond;
     }
     
   } // end of namespace meta

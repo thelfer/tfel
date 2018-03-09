@@ -101,6 +101,7 @@ MFRONTS= DDIF2.mfront                                                      \
 	 LogarithmicStrainElasticity.mfront                                \
 	 LogarithmicStrainElasticity2.mfront                               \
 	 LogarithmicStrainElasticity3.mfront                               \
+	 LogarithmicStrainElasticity4.mfront                               \
 	 LogarithmicStrainPlasticity.mfront                                \
 	 LogarithmicStrainNortonCreep.mfront                               \
 	 LogarithmicStrainAxialGrowth.mfront                               \
@@ -143,7 +144,8 @@ MFRONTS= DDIF2.mfront                                                      \
 	 ParameterTest.mfront                                              \
 	 ParameterTest2.mfront                                             \
 	 ElasticMaterialPropertiesBoundsCheckTest.mfront                   \
-	 TemperatureUpdateOnSubSteppingCheck.mfront
+	 TemperatureUpdateOnSubSteppingCheck.mfront                        \
+	 LogarithmicStrainOrthotropicElasticity.mfront
 
 testsdir = $(pkgdatadir)/mfront/tests/behaviours
 tests_DATA = $(MFRONTS)

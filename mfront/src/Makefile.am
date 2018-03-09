@@ -241,6 +241,7 @@ lib_LTLIBRARIES += libCyranoInterface.la
 libCyranoInterface_la_SOURCES = CyranoInterfaceExceptions.cxx                      \
 			        CyranoComputeStiffnessTensor.cxx                   \
 			        CyranoComputeThermalExpansionCoefficientTensor.cxx \
+			        CyranoStressFreeExpansionHandler.cxx               \
 		                CyranoOutOfBoundsPolicy.cxx                        \
 		                CyranoGetModellingHypothesis.cxx                   \
 		                CyranoException.cxx

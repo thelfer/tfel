@@ -188,7 +188,7 @@ namespace mfront {
       }
     } else if (a.is<BehaviourDescription::AnalyticMaterialProperty>()) {
       const auto& vn = a.get<BehaviourDescription::AnalyticMaterialProperty>().getVariablesNames();
-      for (const auto i : bd.getMaterialPropertyInputs(vn, false)) {
+      for (const auto& i : bd.getMaterialPropertyInputs(vn, false)) {
         const auto c = i.category;
         throw_if((c != BehaviourDescription::MaterialPropertyInput::TEMPERATURE) &&
                      (c != BehaviourDescription::MaterialPropertyInput::MATERIALPROPERTY) &&

@@ -184,6 +184,7 @@ nobase_include_HEADERS += MFront/Cyrano/Cyrano.hxx 				           \
 			  MFront/Cyrano/CyranoComputeStiffnessTensor.hxx 	           \
 			  MFront/Cyrano/CyranoGetModellingHypothesis.hxx 	           \
 			  MFront/Cyrano/CyranoComputeThermalExpansionCoefficientTensor.hxx \
+              MFront/Cyrano/CyranoStressFreeExpansionHandler.hxx                \
 			  MFront/CyranoInterface.hxx
 
 endif

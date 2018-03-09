@@ -31,15 +31,13 @@
 #include"MTest/CastemFiniteStrainBehaviour2.hxx"
 #include"MTest/UmatNormaliseTangentOperator.hxx"
 
-namespace mtest
-{
+namespace mtest {
 
   CastemFiniteStrainBehaviour2::CastemFiniteStrainBehaviour2(const Hypothesis h,
-							     const std::string& l,
-							     const std::string& b)
-    : CastemSmallStrainBehaviour(h,l,b)
-  {}
-  
+                                                             const std::string& l,
+                                                             const std::string& b)
+      : CastemSmallStrainBehaviour(h, l, b) {}
+
   CastemFiniteStrainBehaviour2::~CastemFiniteStrainBehaviour2() = default;
   
 } // end of namespace mtest

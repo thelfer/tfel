@@ -458,6 +458,43 @@ for a in [pi*(-1.+(2.*i)/(nmax-1)) for i in range(0,nmax)]:
 
 # New functionalities in `MFront`
 
+## Logarithmic strain framework support in the `cyrano` interface
+
+`Cyrano` is the state of the art fuel performance code developed by EDF
+(See [@thouvenin_edf_2010;@petry_advanced_2015]).
+
+### Extension of `Cyrano` to finite strain analysis
+
+As Cyrano, provides a mono-dimensional description of the fuel rod, its
+extension to finite strain follows the same treatment used for:
+
+- the extension of `MTest` to pipes.
+- the extension of `Alcyone1D` to finite strain analysis.
+
+### Logarithmic strain framework
+
+Miehe et al. have introduced a finite strain framework based on the
+Hencky strain measure (logarithmic strain) and its dual stress (see
+@miehe_anisotropic_2002). This framework has been introduced in
+`Code_Aster` in 2011 (see @edf_modeles_2013).
+
+A behaviour is declared to follow this framework by using the
+`@StrainMeasure` keyword:
+
+~~~~{.cpp}
+@StrainMeasure Hencky;
+~~~~
+
+The `cyrano` interface now provides support for behaviours based on this
+strain measure.
+
+The interface handles (See @helfer_extension_2015 for details):
+
+- the pre-processing stage (computation of the logarithmic strain from
+  the linearised strain).
+- the post-processing stage (conversion of the dual stress to the first
+  Piola-Kirchoff stress, conversion of the consistent tangent operator),
+
 ## Various improvements
 
 ### Inline material properties in mechanical behaviours {#sec:inline-mprops}

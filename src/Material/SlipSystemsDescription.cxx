@@ -748,7 +748,7 @@ namespace tfel{
 					      ss2_4d.plane.begin())));
       };
       auto i = size_type{};
-      for(const auto r : this->ranks){
+      for(const auto& r : this->ranks){
 	for(const auto& ssi : r){
 	  if((equal(ssi.g1,g1))&&(equal(ssi.g2,g2))){
 	    return i;

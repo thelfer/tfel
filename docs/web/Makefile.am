@@ -20,6 +20,7 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./abaqus.md						      \
 	   ./ansys.md						      \
 	   ./calculix.md					      \
+	   ./cyrano.md					      \
 	   ./zmat.md						      \
 	   ./getting-started.md					      \
 	   ./install.md						      \

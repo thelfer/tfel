@@ -3985,7 +3985,7 @@ namespace mfront {
     } else if (a.is<BehaviourDescription::AnalyticMaterialProperty>()) {
       const auto& amp = a.get<BehaviourDescription::AnalyticMaterialProperty>();
       auto m = std::map<std::string, std::string>{};
-      for (const auto i : this->mb.getMaterialPropertyInputs(amp.getVariablesNames())) {
+      for (const auto& i : this->mb.getMaterialPropertyInputs(amp.getVariablesNames())) {
         const auto c = i.category;
         if (c == BehaviourDescription::MaterialPropertyInput::TEMPERATURE) {
           m.insert({"T", T});

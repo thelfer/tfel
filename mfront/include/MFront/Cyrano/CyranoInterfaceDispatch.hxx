@@ -52,6 +52,7 @@ namespace cyrano{
 	     const CyranoReal *const PREDEF,const CyranoReal *const DPRED,
 	     CyranoReal *const STATEV,const CyranoInt  *const NSTATV,
 	     CyranoReal *const STRESS,
+	     const StressFreeExpansionHandler sfeh,
 	      const tfel::material::OutOfBoundsPolicy op)
     {
       using namespace std;
@@ -65,7 +66,7 @@ namespace cyrano{
 			  CyranoOrthotropicBehaviourHandler<H,Behaviour> >::type Handler;
       Handler::exe(DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,
 		   PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,
-		   STRESS,op);
+		   STRESS,sfeh,op);
     } // end of exe
   }; // end of struct CyranoInterfaceDispatch
 

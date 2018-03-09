@@ -237,6 +237,7 @@ if(HAVE_CYRANO)
   install_mfront_header(MFront/Cyrano CyranoOutOfBoundsPolicy.hxx)
   install_mfront_header(MFront/Cyrano CyranoComputeStiffnessTensor.hxx)
   install_mfront_header(MFront/Cyrano CyranoGetModellingHypothesis.hxx)
+  install_mfront_header(MFront/Cyrano CyranoStressFreeExpansionHandler.hxx)
   install_mfront_header(MFront/Cyrano CyranoComputeThermalExpansionCoefficientTensor.hxx)
 endif(HAVE_CYRANO)
 

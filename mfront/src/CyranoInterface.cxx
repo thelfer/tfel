@@ -366,6 +366,7 @@ namespace mfront {
     out << "#include\"MFront/Cyrano/CyranoInterface.hxx\"\n\n";
     out << "#include\"TFEL/Material/" << mb.getClassName() << ".hxx\"\n";
     out << "#include\"MFront/Cyrano/CyranoOutOfBoundsPolicy.hxx\"\n";
+    out << "#include\"MFront/Cyrano/CyranoStressFreeExpansionHandler.hxx\"\n";
     out << "#include\"MFront/Cyrano/cyrano" << name << ".hxx\"\n\n";
 
     this->writeGetOutOfBoundsPolicyFunctionImplementation(out, name);
@@ -564,7 +565,7 @@ namespace mfront {
     out << "MFRONT_SHAREDOBJ void\n"
         << fname
         << "(const cyrano::CyranoInt *const NTENS, const cyrano::CyranoReal *const DTIME,\n"
-        << "const cyrano::CyranoReal *const DROT,  cyrano::CyranoReal *const DDSOE,\n"
+        << "const cyrano::CyranoReal *const DROT,  cyrano::CyranoReal *const DDSDDE,\n"
         << "const cyrano::CyranoReal *const STRAN, const cyrano::CyranoReal *const DSTRAN,\n"
         << "const cyrano::CyranoReal *const TEMP,  const cyrano::CyranoReal *const DTEMP,\n"
         << "const cyrano::CyranoReal *const PROPS, const cyrano::CyranoInt    *const NPROPS,\n"
@@ -573,7 +574,7 @@ namespace mfront {
         << "cyrano::CyranoReal *const STRESS,const cyrano::CyranoInt    *const NDI,\n"
         << "cyrano::CyranoInt    *const KINC)\n"
         << "{\n"
-        << n << "(NTENS, DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,\n"
+        << n << "(NTENS, DTIME,DROT,DDSDDE,STRAN,DSTRAN,TEMP,DTEMP,\n"
         << "PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,\n"
         << "STRESS,NDI,KINC);\n";
     out << "}\n\n";
@@ -584,7 +585,7 @@ namespace mfront {
                                                     const BehaviourDescription& mb) const {
     out << "MFRONT_SHAREDOBJ void\n"
         << n << "(const cyrano::CyranoInt *const NTENS, const cyrano::CyranoReal *const DTIME,\n"
-        << "const cyrano::CyranoReal *const DROT,  cyrano::CyranoReal *const DDSOE,\n"
+        << "const cyrano::CyranoReal *const DROT,  cyrano::CyranoReal *const DDSDDE,\n"
         << "const cyrano::CyranoReal *const STRAN, const cyrano::CyranoReal *const DSTRAN,\n"
         << "const cyrano::CyranoReal *const TEMP,  const cyrano::CyranoReal *const DTEMP,\n"
         << "const cyrano::CyranoReal *const PROPS, const cyrano::CyranoInt    *const NPROPS,\n"
@@ -603,8 +604,9 @@ namespace mfront {
     }
     this->generateMTestFile1(out);
     out << "cyrano::CyranoInterface<tfel::material::" << mb.getClassName()
-        << ">::exe(NTENS,DTIME,DROT,DDSOE,STRAN,DSTRAN,TEMP,DTEMP,PROPS,NPROPS,"
-        << "PREDEF,DPRED,STATEV,NSTATV,STRESS,NDI,KINC,op);\n";
+        << ">::exe(NTENS,DTIME,DROT,DDSDDE,STRAN,DSTRAN,TEMP,DTEMP,PROPS,NPROPS,"
+        << "PREDEF,DPRED,STATEV,NSTATV,STRESS,NDI,KINC,"
+        << "cyrano::CyranoStandardSmallStrainStressFreeExpansionHandler,op);\n";
     if (this->generateMTestFile) {
       out << "if(*KINC!=1){\n";
       this->generateMTestFile2(out, BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR, n, "", mb);
@@ -619,7 +621,7 @@ namespace mfront {
                                                     const BehaviourDescription& mb) const {
     out << "MFRONT_SHAREDOBJ void\n"
         << n << "(const cyrano::CyranoInt *const NTENS, const cyrano::CyranoReal *const DTIME,\n"
-        << "const cyrano::CyranoReal *const DROT,  cyrano::CyranoReal *const DDSOE,\n"
+        << "const cyrano::CyranoReal *const DROT,  cyrano::CyranoReal *const DDSDDE,\n"
         << "const cyrano::CyranoReal *const STRAN, const cyrano::CyranoReal *const DSTRAN,\n"
         << "const cyrano::CyranoReal *const TEMP,  const cyrano::CyranoReal *const DTEMP,\n"
         << "const cyrano::CyranoReal *const PROPS, const cyrano::CyranoInt    *const NPROPS,\n"
@@ -643,10 +645,10 @@ namespace mfront {
     }
     out << "const auto k = std::abs(*DDSDDE)>0.5;\n"
         << "// computing the logarithmic strain\n"
-        << "CyranoReal eto[3];\n"
-        << "CyranoReal deto[3];\n"
-        << "CyranoReal s[3];\n"
-        << "CyranoReal K[9];\n";
+        << "cyrano::CyranoReal eto[3];\n"
+        << "cyrano::CyranoReal deto[3];\n"
+        << "cyrano::CyranoReal s[3];\n"
+        << "cyrano::CyranoReal K[9];\n";
     if(mb.getAttribute(BehaviourData::profiling,false)){
       out << "}\n";
     }
@@ -666,7 +668,8 @@ namespace mfront {
         << "K[0]=*DDSDDE;\n"
         << "cyrano::CyranoInterface<tfel::material::" << mb.getClassName()
         << ">::exe(NTENS,DTIME,DROT,K,eto,deto,TEMP,DTEMP,PROPS,NPROPS,"
-        << "PREDEF,DPRED,STATEV,NSTATV,STRESS,NDI,KINC,op);\n";
+        << "PREDEF,DPRED,STATEV,NSTATV,s,NDI,KINC,"
+        << "cyrano::CyranoLogarithmicStrainStressFreeExpansionHandler,op);\n";
     out << "if(*KINC==1){\n";
     if (mb.getAttribute(BehaviourData::profiling, false)) {
       out << "{\n"

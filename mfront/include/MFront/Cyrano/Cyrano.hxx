@@ -26,17 +26,17 @@ namespace cyrano{
 
 #if CYRANO_ARCH == 64
 #ifdef _WIN64
-  typedef long long   CyranoInt;
+  using CyranoInt = long long;
 #else
-  typedef long   CyranoInt;
+  using CyranoInt = long;
 #endif /* LIB_TFEL_CYRANO_MFRONT_CYRANO_HXX */
 #elif CYRANO_ARCH == 32
-  typedef int    CyranoInt;
+  using CyranoInt = int;
 #else
   #error "cyrano : unsupported machine type"
 #endif /* LIB_TFEL_CYRANO_MFRONT_CYRANO_HXX */
 
-  typedef double   CyranoReal;
+  using CyranoReal = double;
 
   /*!
    * prototype of a function handling stress-free expansion at the
@@ -49,10 +49,12 @@ namespace cyrano{
    *   step
    * - fourth paramater : expansion value at the end of the time step
    */
-  typedef void (*StressFreeExpansionHandler)(CyranoReal * const,
-					     CyranoReal * const,
-					     const CyranoReal *const,
-					     const CyranoReal *const);
+  using StressFreeExpansionHandler = void (*)(CyranoReal *const,
+                                              CyranoReal *const,
+                                              const CyranoReal *const,
+                                              const CyranoReal *const,
+                                              const CyranoReal *const,
+                                              const CyranoReal *const);
 
 } // end of namespace cyrano
 

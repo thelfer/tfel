@@ -286,6 +286,7 @@ if(HAVE_CYRANO)
     CyranoException.cxx
     CyranoInterfaceExceptions.cxx
     CyranoComputeStiffnessTensor.cxx
+    CyranoStressFreeExpansionHandler.cxx
     CyranoComputeThermalExpansionCoefficientTensor.cxx
     CyranoOutOfBoundsPolicy.cxx
     CyranoGetModellingHypothesis.cxx)

@@ -41,7 +41,11 @@ set(mfront_tests_SOURCES
   ParameterTest
   ParameterTest2
   ElasticMaterialPropertiesBoundsCheckTest
-  TemperatureUpdateOnSubSteppingCheck)
+  TemperatureUpdateOnSubSteppingCheck
+  LogarithmicStrainElasticity
+  LogarithmicStrainElasticity4
+  LogarithmicStrainOrthotropicElasticity
+  LogarithmicStrainNortonCreep)
 
 mfront_dependencies(MFrontCyranoBehaviours
   YoungModulusTest_1
@@ -230,6 +234,15 @@ test_cyrano(orthotropicswelling)
 test_cyrano(orthotropicswelling2)
 test_cyrano(parametertest)
 test_cyrano(parametertest2)
+
+test_cyrano(elasticity_LogarithmicStrain-uniaxialloading-1-1D)
+test_cyrano(elasticity_LogarithmicStrain-uniaxialloading-2-1D)
+test_cyrano(elasticity_LogarithmicStrain-uniaxialloading-3-1D)
+test_cyrano(elasticity_LogarithmicStrain-thermalstrain)
+test_cyrano(elasticity_LogarithmicStrain-thermalstrain2)
+test_cyrano(norton_LogarithmicStrain-uniaxialloading-1-1D)
+test_cyrano(norton_LogarithmicStrain-uniaxialloading-2-1D)
+test_cyrano(norton_LogarithmicStrain-uniaxialloading-3-1D)
 
 test_cyrano(elasticmaterialpropertiesboundschecktest
   NO_XML_OUTPUT WILL_FAIL)
