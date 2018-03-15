@@ -2600,6 +2600,7 @@ mfront/tests/behaviours/LogarithmicStrainElasticity2.mfront -text
 mfront/tests/behaviours/LogarithmicStrainElasticity3.mfront -text
 mfront/tests/behaviours/LogarithmicStrainElasticity4.mfront -text
 mfront/tests/behaviours/LogarithmicStrainNortonCreep.mfront -text
+mfront/tests/behaviours/LogarithmicStrainNortonCreep2.mfront -text
 mfront/tests/behaviours/LogarithmicStrainOrthotropicElasticity.mfront -text
 mfront/tests/behaviours/LogarithmicStrainPlasticity.mfront -text
 mfront/tests/behaviours/Lorentz.mfront -text

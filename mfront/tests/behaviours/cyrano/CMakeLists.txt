@@ -45,7 +45,8 @@ set(mfront_tests_SOURCES
   LogarithmicStrainElasticity
   LogarithmicStrainElasticity4
   LogarithmicStrainOrthotropicElasticity
-  LogarithmicStrainNortonCreep)
+  LogarithmicStrainNortonCreep
+  LogarithmicStrainNortonCreep2)
 
 mfront_dependencies(MFrontCyranoBehaviours
   YoungModulusTest_1

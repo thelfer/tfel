@@ -29,7 +29,9 @@ namespace cyrano{
     static constexpr unsigned short maximumSubStepping   = 0u;
     static constexpr bool requiresStiffnessTensor        = false;
     static constexpr bool requiresThermalExpansionCoefficientTensor = false;
+    static constexpr unsigned short material_properties_nb = 0u;
     static constexpr unsigned short propertiesOffset     = 0u;
+    static constexpr unsigned short elasticPropertiesOffset = 0u;
     static constexpr CyranoSymmetryType stype = cyrano::ISOTROPIC;
   }; // end of class CyranoTraits
 

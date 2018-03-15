@@ -516,7 +516,6 @@ namespace mfront{
     }
     return n;
   } // end of SupportedTypes::getNumberOfVariables
-
   
   VariableDescriptionContainer::~VariableDescriptionContainer() = default;
   

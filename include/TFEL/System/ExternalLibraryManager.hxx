@@ -455,7 +455,6 @@ namespace tfel {
       std::vector<std::string> getUMATInternalStateVariablesNames(const std::string&,
                                                                   const std::string&,
                                                                   const std::string&);
-
       /*!
        * \param[in] l : name of the library
        * \param[in] f : law name

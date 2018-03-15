@@ -161,7 +161,7 @@ f_{\tenseur{a}_{i}}&=\Delta\,\tenseur{a}_{i}-\Delta\,\tepsilonvis-g[i]\,\mts{\te
 > In the following, we will make use of the "classical" relationship
 > giving the derivative of the normal:
 > \[
-> \deriv{\mts{\tenseur{n}}}{\mts{\tenseur{s}}}=\Frac{1}{\mts{s^{e}_{\mathrm{eq}}}}\,\paren{\tenseurq{M}-\mts{\tenseur{n}}\otimes\mts{\tenseur{n}}}
+> \deriv{\mts{\tenseur{n}}}{\mts{\tenseur{s}^{e}}}=\Frac{1}{\mts{s^{e}_{\mathrm{eq}}}}\,\paren{\tenseurq{M}-\mts{\tenseur{n}}\otimes\mts{\tenseur{n}}}
 > \]
 >
 > Here, \(\tenseurq{M}\) is a tensor space defined by:
@@ -182,7 +182,7 @@ Here are the expressions of the term related to \(f_{\tepsilonel}\):
 \deriv{f_{\tepsilonel}}{\Delta\,\tepsilonel}&=\tenseurq{I}+\Delta\,p\deriv{\mts{\tenseur{n}}}{\Delta\,\tepsilonel}
 =\tenseurq{I}+\Delta\,p\,\cdot\,\underbrace{\deriv{\mts{\tenseur{n}}}{\mts{\tsigma}}}_{\Frac{1}{\mts{s^{e}_{\mathrm{eq}}}}\,\paren{\tenseurq{M}-\mts{\tenseur{n}}\otimes\mts{\tenseur{n}}}}\,\cdot\,\underbrace{\deriv{\mts{\tsigma}}{\mts{\tepsilonel}}}_{\lambda\,\tenseur{I}\otimes\tenseur{I}+2\,\mu\,\tenseur{I}}\,\cdot\,\underbrace{\deriv{\mts{\tepsilonel}}{\Delta\,\tepsilonel}}_{\theta\,\tenseur{I}}\\
 \deriv{f_{\tepsilonel}}{\Delta\,p}&=\mts{\tenseur{n}}\\
-\deriv{f_{\tepsilonel}}{\Delta\,\tenseur{a}_{i}}&=\Delta\,p\,\cdot\,\underbrace{\deriv{\mts{\tenseur{n}}}{\mts{\tenseur{s}}}}_{\Frac{1}{\mts{s^{e}_{\mathrm{eq}}}}\,\paren{\tenseurq{M}-\mts{\tenseur{n}}\otimes\mts{\tenseur{n}}}}\,\cdot\,\underbrace{\deriv{\mts{\tenseur{s}}}{\mts{\tenseur{a}_{i}}}}_{-\Frac{2}{3}\,C_{i}}\,\cdot\,\underbrace{\deriv{\mts{\tenseur{a}_{i}}}{\Delta\,a_{i}}}_{\theta\,\tenseurq{I}}\\
+\deriv{f_{\tepsilonel}}{\Delta\,\tenseur{a}_{i}}&=\Delta\,p\,\cdot\,\underbrace{\deriv{\mts{\tenseur{n}}}{\mts{\tenseur{s}^{e}}}}_{\Frac{1}{\mts{s^{e}_{\mathrm{eq}}}}\,\paren{\tenseurq{M}-\mts{\tenseur{n}}\otimes\mts{\tenseur{n}}}}\,\cdot\,\underbrace{\deriv{\mts{\tenseur{s}^{e}}}{\mts{\tenseur{a}_{i}}}}_{-\Frac{2}{3}\,C_{i}}\,\cdot\,\underbrace{\deriv{\mts{\tenseur{a}_{i}}}{\Delta\,a_{i}}}_{\theta\,\tenseurq{I}}\\
 \end{aligned}
 \right.
 \]
@@ -209,7 +209,7 @@ Finally,
 > In the following, we will make use of another "classical"
 > relationship giving the derivative of the equivalent stress:
 > \[
-> \deriv{\mts{s^{e}_{\mathrm{eq}}}}{\mts{\tenseur{s}}}=\mts{\tenseur{n}}
+> \deriv{\mts{s^{e}_{\mathrm{eq}}}}{\mts{\tenseur{s}^{e}}}=\mts{\tenseur{n}}
 > \]
 
 To compute the terms of the jacobian associated with \(f_{p}\), we
@@ -224,7 +224,7 @@ have:
 \deriv{\mts{F}}{\Delta\,\tepsilonel}
 &=\underbrace{\deriv{\mts{F}}{\mts{\tsigma}}}_{\mts{\tenseur{n}}}\,\cdot\,\underbrace{\deriv{\mts{\tsigma}}{\mts{\tepsilonel}}}_{\lambda\,\tenseur{I}\otimes\tenseur{I}+2\,\mu\,\tenseur{I}}\,\cdot\,\underbrace{\deriv{\mts{\tepsilonel}}{\Delta\,\tepsilonel}}_{\theta\,\tenseur{I}}=2\,\mu\,\theta\,\mts{\tenseur{n}}\\
 \deriv{\mts{F}}{\Delta\,p} &=-\theta\,\deriv{R}{p} \\
-\deriv{\mts{F}}{\Delta\,\tenseur{a}_{i}} &=-=\underbrace{\deriv{\mts{F}}{\tenseur{s}}}_{\mts{\tenseur{n}}}\,\cdot\,\underbrace{\deriv{\mts{\tenseur{s}}}{\mts{\tenseur{a}_{i}}}}_{-\Frac{2}{3}\,C_{i}\,\tenseurq{I}}\,\cdot\,\underbrace{\deriv{\mts{\tenseur{a}_{i}}}{\Delta\,\tenseur{a}_{i}}}_{\theta\,\tenseur{I}}=-\Frac{2}{3}\,C_{i}\,\mts{\tenseur{n}}\\
+\deriv{\mts{F}}{\Delta\,\tenseur{a}_{i}} &=-=\underbrace{\deriv{\mts{F}}{\mts{\tenseur{s}^{e}}}}_{\mts{\tenseur{n}}}\,\cdot\,\underbrace{\deriv{\mts{\tenseur{s}^{e}}}{\mts{\tenseur{a}_{i}}}}_{-\Frac{2}{3}\,C_{i}\,\tenseurq{I}}\,\cdot\,\underbrace{\deriv{\mts{\tenseur{a}_{i}}}{\Delta\,\tenseur{a}_{i}}}_{\theta\,\tenseur{I}}=-\Frac{2}{3}\,C_{i}\,\mts{\tenseur{n}}\\
 \end{aligned}
 \right.
 \]

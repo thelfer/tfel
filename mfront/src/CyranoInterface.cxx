@@ -20,6 +20,8 @@
 
 #include "TFEL/Raise.hxx"
 #include "TFEL/Config/GetInstallPath.hxx"
+#include "TFEL/Glossary/Glossary.hxx"
+#include "TFEL/Glossary/GlossaryEntry.hxx"
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "TFEL/System/System.hxx"
 
@@ -243,7 +245,7 @@ namespace mfront {
       tfel::raise_if(b, "Cyrano::endTreatment: " + m);
     };
     // get the modelling hypotheses to be treated
-    const auto& h = this->getModellingHypothesesToBeTreated(mb);
+    const auto& mh = this->getModellingHypothesesToBeTreated(mb);
     const auto name = mb.getLibrary() + mb.getClassName();
     // some checks
     throw_if(mb.getBehaviourType() != BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR,
@@ -275,11 +277,8 @@ namespace mfront {
     systemCall::mkdir("include/MFront/Cyrano");
 
     // opening header file
-    string fileName("cyrano");
-    fileName += name;
-    fileName += ".hxx";
-
-    ofstream out("include/MFront/Cyrano/" + fileName);
+    auto fileName = "cyrano"+name+".hxx";
+    std::ofstream out("include/MFront/Cyrano/" + fileName);
     throw_if(!out, "could not open file '" + fileName + "'");
 
     out << "/*!\n";
@@ -290,7 +289,7 @@ namespace mfront {
     out << "* \\date   " << fd.date << endl;
     out << "*/\n\n";
 
-    const string header = this->getHeaderDefine(mb);
+    const auto header = this->getHeaderDefine(mb);
     out << "#ifndef " << header << "\n";
     out << "#define " << header << "\n\n";
 
@@ -308,12 +307,12 @@ namespace mfront {
 
     out << "namespace cyrano{\n\n";
 
-    if (!mb.areAllMechanicalDataSpecialised(h)) {
+    if (!mb.areAllMechanicalDataSpecialised(mh)) {
       this->writeCyranoBehaviourTraits(out, mb, ModellingHypothesis::UNDEFINEDHYPOTHESIS);
     }
-    for (const auto& elem : h) {
-      if (mb.hasSpecialisedMechanicalData(elem)) {
-        this->writeCyranoBehaviourTraits(out, mb, elem);
+    for (const auto& h : mh) {
+      if (mb.hasSpecialisedMechanicalData(h)) {
+        this->writeCyranoBehaviourTraits(out, mb, h);
       }
     }
 
@@ -338,10 +337,7 @@ namespace mfront {
 
     out.close();
 
-    fileName = "cyrano";
-    fileName += name;
-    fileName += ".cxx";
-
+    fileName = "cyrano"+name+".cxx";
     out.open("src/" + fileName);
     tfel::raise_if(!out,
                    "CyranoInterface::endTreatment: "
@@ -374,13 +370,13 @@ namespace mfront {
     out << "extern \"C\"{\n\n";
 
     this->generateUMATxxGeneralSymbols(out, name, mb, fd);
-    if (!mb.areAllMechanicalDataSpecialised(h)) {
+    if (!mb.areAllMechanicalDataSpecialised(mh)) {
       const Hypothesis uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       this->generateUMATxxSymbols(out, name, uh, mb, fd);
     }
-    for (const auto& elem : h) {
-      if (mb.hasSpecialisedMechanicalData(elem)) {
-        this->generateUMATxxSymbols(out, name, elem, mb, fd);
+    for (const auto& h : mh) {
+      if (mb.hasSpecialisedMechanicalData(h)) {
+        this->generateUMATxxSymbols(out, name, h, mb, fd);
       }
     }
 
@@ -405,16 +401,16 @@ namespace mfront {
 
   void CyranoInterface::writeMTestFileGeneratorSetModellingHypothesis(std::ostream& out) const {
     out << "mg.setModellingHypothesis(cyrano::getModellingHypothesis(*NDI));\n";
-      }
+  }
 
-      CyranoInterface::~CyranoInterface() = default;
+  CyranoInterface::~CyranoInterface() = default;
 
-      void CyranoInterface::getTargetsDescription(TargetsDescription & d,
-                                                  const BehaviourDescription& bd) {
-        const auto lib = CyranoInterface::getLibraryName(bd);
-        const auto name = ((!bd.getLibrary().empty()) ? bd.getLibrary() : "") + bd.getClassName();
-        const auto tfel_config = tfel::getTFELConfigExecutableName();
-        insert_if(d[lib].cppflags, "$(shell " + tfel_config + " --cppflags --compiler-flags)");
+  void CyranoInterface::getTargetsDescription(TargetsDescription& d,
+                                              const BehaviourDescription& bd) {
+    const auto lib = CyranoInterface::getLibraryName(bd);
+    const auto name = ((!bd.getLibrary().empty()) ? bd.getLibrary() : "") + bd.getClassName();
+    const auto tfel_config = tfel::getTFELConfigExecutableName();
+    insert_if(d[lib].cppflags, "$(shell " + tfel_config + " --cppflags --compiler-flags)");
 #if CYRANO_ARCH == 64
     insert_if(d[lib].cppflags, "-DCYRANO_ARCH=64");
 #elif CYRANO_ARCH == 32
@@ -464,7 +460,7 @@ namespace mfront {
     out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) << "_BehaviourType = ";
     if (mb.getBehaviourType() == BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
       if (mb.isStrainMeasureDefined()) {
-        if (mb.getStrainMeasure() == BehaviourDescription::LINEARISED){
+        if (mb.getStrainMeasure() == BehaviourDescription::LINEARISED) {
           out << "1u;\n\n";
         } else if (mb.getStrainMeasure() == BehaviourDescription::HENCKY) {
           out << "2u;\n\n";
@@ -487,13 +483,15 @@ namespace mfront {
                                                              const std::string& name,
                                                              const BehaviourDescription& mb) const {
     auto throw_if = [](const bool b, const std::string& m) {
-      tfel::raise_if(b, "CyranoInterface::writeUMATxxBehaviourKinematicSymbols: " + m);
+      if (b) {
+        tfel::raise("CyranoInterface::writeUMATxxBehaviourKinematicSymbols: " + m);
+      }
     };
     out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name)
         << "_BehaviourKinematic = ";
     if (mb.getBehaviourType() == BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
       if (mb.isStrainMeasureDefined()) {
-        if (mb.getStrainMeasure() == BehaviourDescription::LINEARISED){
+        if (mb.getStrainMeasure() == BehaviourDescription::LINEARISED) {
           out << "1u;\n\n";
         } else if (mb.getStrainMeasure() == BehaviourDescription::HENCKY) {
           out << "4u;\n\n";
@@ -578,7 +576,7 @@ namespace mfront {
         << "PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,\n"
         << "STRESS,NDI,KINC);\n";
     out << "}\n\n";
-  } // end of writeSecondaryCyranoFunction
+  }  // end of writeSecondaryCyranoFunction
 
   void CyranoInterface::writeStandardCyranoFunction(std::ostream& out,
                                                     const std::string& n,
@@ -598,8 +596,7 @@ namespace mfront {
     if (mb.getAttribute(BehaviourData::profiling, false)) {
       out << "using mfront::BehaviourProfiler;\n";
       out << "using tfel::material::" << mb.getClassName() << "Profiler;\n";
-      out << "auto total_timer(" << mb.getClassName()
-          << "Profiler::getProfiler(),\n"
+      out << "auto total_timer(" << mb.getClassName() << "Profiler::getProfiler(),\n"
           << "BehaviourProfiler::TOTALTIME);\n";
     }
     this->generateMTestFile1(out);
@@ -614,11 +611,16 @@ namespace mfront {
     }
     out << "}\n\n";
     writeSecondaryCyranoFunction(out, this->getFunctionName(n), n);
-  } // end of CyranoInterface::writeStandardCyranoFunction
+  }  // end of CyranoInterface::writeStandardCyranoFunction
 
   void CyranoInterface::writeLogarithmicStrainCyranoFunction(std::ostream& out,
-                                                    const std::string& n,
-                                                    const BehaviourDescription& mb) const {
+                                                             const std::string& n,
+                                                             const BehaviourDescription& mb) const {
+    auto throw_if = [](const bool b, const std::string& m) {
+      if (b) {
+        tfel::raise("CyranoInterface::writeLogarithmicStrainCyranoFunction: " + m);
+      }
+    };
     out << "MFRONT_SHAREDOBJ void\n"
         << n << "(const cyrano::CyranoInt *const NTENS, const cyrano::CyranoReal *const DTIME,\n"
         << "const cyrano::CyranoReal *const DROT,  cyrano::CyranoReal *const DDSDDE,\n"
@@ -638,25 +640,116 @@ namespace mfront {
           << "BehaviourProfiler::TOTALTIME);\n";
     }
     this->generateMTestFile1(out);
-    if(mb.getAttribute(BehaviourData::profiling,false)){
-      out << "{\n"
-          << "auto pre_timer(" << mb.getClassName() << "Profiler::getProfiler(),\n"
-          << "BehaviourProfiler::FINITESTRAINPREPROCESSING);\n";
-    }
     out << "const auto k = std::abs(*DDSDDE)>0.5;\n"
         << "// computing the logarithmic strain\n"
         << "cyrano::CyranoReal eto[3];\n"
         << "cyrano::CyranoReal deto[3];\n"
         << "cyrano::CyranoReal s[3];\n"
         << "cyrano::CyranoReal K[9];\n";
-    if(mb.getAttribute(BehaviourData::profiling,false)){
-      out << "}\n";
-    }
+    // axisymmetrical generalised plane stress
     out << "if(*NDI!=1){\n"
-        << "*KINC=-7;\n"
-        << "return;\n"
-        << "}\n"
-        << "eto[0]=std::log1p(*STRAN);\n"
+        << "// axisymmetrical generalised plane stress\n";
+    if (mb.isModellingHypothesisSupported(
+            ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)) {
+      const auto& d =
+          mb.getBehaviourData(ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS);
+      const auto astress = [&d, throw_if]() -> std::pair<bool, SupportedTypes::TypeSize> {
+        SupportedTypes::TypeSize o;
+	// skipping the temperature
+	auto pev = std::next(d.getExternalStateVariables().begin());
+        while (pev!=d.getExternalStateVariables().end()) {
+          if (d.getExternalName(pev->name) == tfel::glossary::Glossary::AxialStress) {
+            throw_if(SupportedTypes::getTypeFlag(pev->type) != SupportedTypes::Scalar,
+                     "invalid type for the `AxialStrain` external state variable");
+            return {true, o};
+          }
+          o += SupportedTypes::getTypeSize(pev->type, pev->arraySize);
+        }
+        return {false, o};
+      }();
+      throw_if(!astress.first, "no external variable named 'AxialStrain'");
+      const auto nevs = d.getExternalStateVariables().getTypeSize().getValueForDimension(1)-1;
+      out << "cyrano::CyranoReal evs[" << nevs << "];\n";
+      out << "cyrano::CyranoReal devs[" << nevs << "];\n";
+      out << "if(*NSTATV<1){\n"
+          << "std::cerr << \"" << n << ": invalid number of state variables "
+          << "(can't get the current estimate of the axial strain)\\n\";\n"
+          << "*KINC = -1.;\n"
+          << "return;\n"
+          << "}\n";
+      out << "const auto nstatv = *NSTATV-1;\n";
+      const auto astrain = this->checkIfAxialStrainIsDefinedAndGetItsOffset(mb);
+      tfel::raise_if(!astrain.first, "no state variable standing for the axial strain");
+      if (mb.getAttribute(BehaviourData::profiling, false)) {
+        out << "{\n"
+            << "auto pre_timer(" << mb.getClassName() << "Profiler::getProfiler(),\n"
+            << "BehaviourProfiler::FINITESTRAINPREPROCESSING);\n";
+      }
+      out << "const auto Pzz0 = PREDEF[" << astress.second.getValueForDimension(1) << "];\n"
+          << "const auto Pzz1 = Pzz0+DPRED[" << astress.second.getValueForDimension(1) << "];\n"
+          << "const auto Tzz0 = "
+          << "Pzz0*std::exp(STATEV[" << astrain.second.getValueForDimension(1) << "]);\n"
+          << "const auto Tzz1 = Pzz1*std::exp(STATEV[nstatv]);\n"
+          << "tfel::fsalgo::copy<" << nevs << ">::exe(PREDEF,evs);\n"
+          << "tfel::fsalgo::copy<" << nevs << ">::exe(DPRED,devs);\n"
+          << "evs[" << astress.second.getValueForDimension(1) << "]=Tzz0;\n"
+          << "devs[" << astress.second.getValueForDimension(1) << "]=Tzz1-Tzz0;\n"
+          << "eto[0]=std::log1p(*STRAN);\n"
+          << "eto[1]=std::log1p(*(STRAN+1));\n"
+          << "eto[2]=0;\n"
+          << "deto[0]=std::log1p(*STRAN+*DSTRAN)-eto[0];\n"
+          << "deto[1]=std::log1p(*(STRAN+1)+*(DSTRAN+1))-eto[1];\n"
+          << "deto[2]=0;\n"
+          << "s[0]=(*STRESS)*(1+*STRAN);\n"
+          << "s[1]=(*(STRESS+1))*(1+*(STRAN+1));\n"
+          << "s[2]=Tzz0;\n"
+          << "K[0]=*DDSDDE;\n";
+      if (mb.getAttribute(BehaviourData::profiling, false)) {
+        out << "}\n";
+      }
+      out << "cyrano::CyranoInterface<tfel::material::" << mb.getClassName()
+          << ">::exe(NTENS,DTIME,DROT,K,eto,deto,TEMP,DTEMP,PROPS,NPROPS,"
+          << "evs,devs,STATEV,&nstatv,s,NDI,KINC,"
+          << "cyrano::CyranoLogarithmicStrainStressFreeExpansionHandler,op);\n";
+      out << "if(*KINC==1){\n";
+      if (mb.getAttribute(BehaviourData::profiling, false)) {
+        out << "{\n"
+            << "auto post_timer(" << mb.getClassName() << "Profiler::getProfiler(),\n"
+            << "BehaviourProfiler::FINITESTRAINPOSTPROCESSING);\n";
+      }
+      // First Piola-Kirchhoff stress
+      out << "STRESS[0]=s[0]/(1+*STRAN+*DSTRAN);\n"
+          << "STRESS[1]=s[1]/(1+*(STRAN+1)+*(DSTRAN+1));\n"
+          << "STRESS[2]=Pzz1;\n";
+      // computation of the stiffness matrix
+      out << "if(k){\n"
+          << "*DDSDDE     = (-STRESS[0]+K[0]/(1+STRAN[0]+DSTRAN[0]))/(1+STRAN[0]+DSTRAN[0]);\n"
+          << "*(DDSDDE+3) = K[3]/((1+STRAN[1]+DSTRAN[1])*(1+STRAN[0]+DSTRAN[0]));\n"
+          << "*(DDSDDE+6) = 0;\n"
+          << "*(DDSDDE+1) = K[1]/((1+STRAN[0]+DSTRAN[0])*(1+STRAN[1]+DSTRAN[1]));\n"
+          << "*(DDSDDE+4) = (-STRESS[1]+K[4]/(1+STRAN[1]+DSTRAN[1]))/(1+STRAN[1]+DSTRAN[1]);\n"
+          << "*(DDSDDE+7) = 0;\n"
+          << "*(DDSDDE+2) = 0;\n"
+          << "*(DDSDDE+5) = 0;\n"
+          << "*(DDSDDE+8) = 0;\n"
+          << "}\n";
+      if (mb.getAttribute(BehaviourData::profiling, false)) {
+        out << "}\n";
+      }
+      out << "}\n";
+    } else {
+      out << "*KINC=-7;\n"
+          << "return;\n";
+    }
+    // axisymmetrical generalised plane strain
+    out << "} else {\n"
+        << "// axisymmetrical generalised plane strain\n";
+    if (mb.getAttribute(BehaviourData::profiling, false)) {
+      out << "{\n"
+          << "auto pre_timer(" << mb.getClassName() << "Profiler::getProfiler(),\n"
+          << "BehaviourProfiler::FINITESTRAINPREPROCESSING);\n";
+    }
+    out << "eto[0]=std::log1p(*STRAN);\n"
         << "eto[1]=std::log1p(*(STRAN+1));\n"
         << "eto[2]=std::log1p(*(STRAN+2));\n"
         << "deto[0]=std::log1p(*STRAN+*DSTRAN)-eto[0];\n"
@@ -664,8 +757,11 @@ namespace mfront {
         << "deto[2]=std::log1p(*(STRAN+2)+*(DSTRAN+2))-eto[2];\n"
         << "s[0]=(*STRESS)*(1+*STRAN);\n"
         << "s[1]=(*(STRESS+1))*(1+*(STRAN+1));\n"
-        << "s[2]=(*(STRESS+2))*(1+*(STRAN+2));\n"
-        << "K[0]=*DDSDDE;\n"
+        << "s[2]=(*(STRESS+2))*(1+*(STRAN+2));\n";
+    if (mb.getAttribute(BehaviourData::profiling, false)) {
+      out << "}\n";
+    }
+    out << "K[0]=*DDSDDE;\n"
         << "cyrano::CyranoInterface<tfel::material::" << mb.getClassName()
         << ">::exe(NTENS,DTIME,DROT,K,eto,deto,TEMP,DTEMP,PROPS,NPROPS,"
         << "PREDEF,DPRED,STATEV,NSTATV,s,NDI,KINC,"
@@ -695,7 +791,8 @@ namespace mfront {
     if (mb.getAttribute(BehaviourData::profiling, false)) {
       out << "}\n";
     }
-    out << "}\n";
+    out << "} // end of if(*KINC==1)\n";
+    out << "} // end of if(*NDI!=1)\n";
     if (this->generateMTestFile) {
       out << "if(*KINC!=1){\n";
       this->generateMTestFile2(out, BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR, n, "", mb);
@@ -703,8 +800,7 @@ namespace mfront {
     }
     out << "}\n\n";
     writeSecondaryCyranoFunction(out, this->getFunctionName(n), n);
-  } // end of CyranoInterface::writeLogarithmicStrainCyranoFunction
-
+  }  // end of CyranoInterface::writeLogarithmicStrainCyranoFunction
 
   void CyranoInterface::writeCyranoBehaviourTraits(std::ostream& out,
                                                    const BehaviourDescription& mb,

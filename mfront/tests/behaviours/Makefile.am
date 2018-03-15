@@ -104,6 +104,7 @@ MFRONTS= DDIF2.mfront                                                      \
 	 LogarithmicStrainElasticity4.mfront                               \
 	 LogarithmicStrainPlasticity.mfront                                \
 	 LogarithmicStrainNortonCreep.mfront                               \
+	 LogarithmicStrainNortonCreep2.mfront                              \
 	 LogarithmicStrainAxialGrowth.mfront                               \
 	 CompressibleNeoHookeanBehaviour.mfront                            \
 	 IncompressibleMooneyRivlinBehaviour.mfront                        \

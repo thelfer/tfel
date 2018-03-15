@@ -4,7 +4,7 @@
 @Date      08/03/18;
 
 @StrainMeasure Hencky;
-@ModellingHypotheses {".+"};
+@ModellingHypothesis AxisymmetricalGeneralisedPlaneStrain;
 
 @OrthotropicBehaviour<Pipe>;
 @RequireStiffnessTensor<Altered>;

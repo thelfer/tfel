@@ -4,7 +4,7 @@
 
 ---
 nocite: |
-	@guenot-delahaie_simulation_2017
+	@guenot-delahaie_simulation_2018
 	@michel_new_2017
 	@bary_analytical_2017
 	@gelebart_fft_2017
