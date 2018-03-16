@@ -12,14 +12,14 @@
  */
 
 #ifndef LIB_MFRONT_MFRONTNONLINEARSYSTEMSOLVER_HXX
-#define LIB_MFRONT_MFRONTNONLINEARSYSTEMSOLVER_HXX 
+#define LIB_MFRONT_MFRONTNONLINEARSYSTEMSOLVER_HXX
 
-#include<iosfwd>
-#include<vector>
-#include<string>
-
-#include"TFEL/Utilities/CxxTokenizer.hxx"
-#include"TFEL/Material/ModellingHypothesis.hxx"
+#include <iosfwd>
+#include <vector>
+#include <string>
+#include "TFEL/Utilities/CxxTokenizer.hxx"
+#include "TFEL/Material/ModellingHypothesis.hxx"
+#include "MFront/MFrontConfig.hxx"
 
 namespace mfront
 {
@@ -31,7 +31,7 @@ namespace mfront
    * base class for non linear system solver used in by implicit
    * parser
    */
-  struct NonLinearSystemSolver
+  struct MFRONT_VISIBILITY_EXPORT NonLinearSystemSolver
   {
     //! a simple alias
     using Hypothesis = tfel::material::ModellingHypothesis::Hypothesis;
@@ -49,8 +49,7 @@ namespace mfront
      * (Newton-Raphson solvers) or an approximation of it (Broyden
      * method).
      */
-    virtual bool
-    usesJacobian() const = 0;
+    virtual bool usesJacobian() const = 0;
     /*!
      * \return true if the solver uses the invert jacobian of the system
      * or an approximation of it (second Broyden method).
@@ -60,8 +59,7 @@ namespace mfront
     /*!
      * \return true if the solver requires a numerical jacobian
      */
-    virtual bool
-    requiresNumericalJacobian() const = 0;
+    virtual bool requiresNumericalJacobian() const = 0;
     /*!
      * \return true if the solver allows the user to initialize the
      * jacobian.

@@ -2152,10 +2152,16 @@ mfront/include/MFront/Aster/AsterTraits.hxx -text
 mfront/include/MFront/Aster/aster.doxygen -text
 mfront/include/MFront/AsterInterface.hxx -text
 mfront/include/MFront/BehaviourAttribute.hxx -text
+mfront/include/MFront/BehaviourBrick/InelasticPotential.hxx -text
+mfront/include/MFront/BehaviourBrick/InelasticPotentialBase.hxx -text
+mfront/include/MFront/BehaviourBrick/InelasticPotentialFactory.hxx -text
+mfront/include/MFront/BehaviourBrick/MisesStressCriterion.hxx -text
 mfront/include/MFront/BehaviourBrick/Provider.hxx -text
 mfront/include/MFront/BehaviourBrick/ProviderIdentifier.hxx -text
 mfront/include/MFront/BehaviourBrick/Requirement.hxx -text
 mfront/include/MFront/BehaviourBrick/RequirementManager.hxx -text
+mfront/include/MFront/BehaviourBrick/StressCriterion.hxx -text
+mfront/include/MFront/BehaviourBrick/StressCriterionFactory.hxx -text
 mfront/include/MFront/BehaviourBrickBase.hxx -text
 mfront/include/MFront/BehaviourDSLBase.hxx -text
 mfront/include/MFront/BehaviourDSLBase.ixx -text
@@ -2332,6 +2338,7 @@ mfront/include/MFront/RungeKuttaFiniteStrainDSL.hxx -text
 mfront/include/MFront/SearchPathsHandler.hxx -text
 mfront/include/MFront/SecondBroydenSolver.hxx -text
 mfront/include/MFront/StandardElasticityBrick.hxx -text
+mfront/include/MFront/StandardElastoViscoPlasticityBrick.hxx -text
 mfront/include/MFront/StaticVarHandler.hxx -text
 mfront/include/MFront/StaticVariableDescription.hxx -text
 mfront/include/MFront/SupportedTypes.hxx -text
@@ -2464,6 +2471,9 @@ mfront/src/ImplicitDSL.cxx -text
 mfront/src/ImplicitDSLBase.cxx -text
 mfront/src/ImplicitDSLII.cxx -text
 mfront/src/ImplicitFiniteStrainDSL.cxx -text
+mfront/src/InelasticPotential.cxx -text
+mfront/src/InelasticPotentialBase.cxx -text
+mfront/src/InelasticPotentialFactory.cxx -text
 mfront/src/InitDSLs.cxx -text
 mfront/src/InitInterfaces.cxx -text
 mfront/src/InterfaceBase.cxx -text
@@ -2492,6 +2502,7 @@ mfront/src/MaterialPropertyDSL.cxx -text
 mfront/src/MaterialPropertyDescription.cxx -text
 mfront/src/MaterialPropertyInterfaceFactory.cxx -text
 mfront/src/MaterialPropertyParametersHandler.cxx -text
+mfront/src/MisesStressCriterion.cxx -text
 mfront/src/ModelDSL.cxx -text
 mfront/src/ModelDSLCommon.cxx -text
 mfront/src/ModelDescription.cxx -text
@@ -2513,6 +2524,8 @@ mfront/src/SearchPathsHandler.cxx -text
 mfront/src/SecondBroydenSolver.cxx -text
 mfront/src/StandardElasticityBrick.cxx -text
 mfront/src/StaticVariableDescription.cxx -text
+mfront/src/StressCriterion.cxx -text
+mfront/src/StressCriterionFactory.cxx -text
 mfront/src/SupportedTypes.cxx -text
 mfront/src/TargetsDescription.cxx -text
 mfront/src/ThermodynamicForce.cxx -text

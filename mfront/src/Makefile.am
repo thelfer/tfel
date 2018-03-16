@@ -113,7 +113,13 @@ libTFELMFront_la_SOURCES = MFront.cxx                                           
 			   FiniteStrainSingleCrystalBrick.cxx                     \
 		           LocalDataStructure.cxx                                 \
 		           AbstractBehaviourBrickFactory.cxx                      \
-		           UMATInterfaceBase.cxx
+		           UMATInterfaceBase.cxx                                  \
+		           InelasticPotential.cxx                                 \
+		           InelasticPotentialBase.cxx                             \
+		           InelasticPotentialFactory.cxx                          \
+		           StressCriterion.cxx                                    \
+		           MisesStressCriterion.cxx                               \
+		           StressCriterionFactory.cxx
 
 
 if HAVE_GNUPLOT

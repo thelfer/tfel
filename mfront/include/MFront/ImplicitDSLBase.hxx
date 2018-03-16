@@ -16,6 +16,7 @@
 
 #include<string>
 #include<memory>
+#include"MFront/MFrontConfig.hxx"
 #include"MFront/BehaviourDSLBase.hxx"
 
 namespace mfront{
@@ -24,7 +25,7 @@ namespace mfront{
   struct NonLinearSystemSolver;
 
   //! \brief Base class for all parser based on an implicit scheme
-  struct ImplicitDSLBase
+  struct MFRONT_VISIBILITY_EXPORT ImplicitDSLBase
     : public BehaviourDSLBase<ImplicitDSLBase>
   {
     //! \brief constructor

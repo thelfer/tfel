@@ -128,6 +128,12 @@ set(TFELMFront_SOURCES
     ExcelMaterialPropertyInternalInterface.cxx
     MFrontModelInterface.cxx
     UMATInterfaceBase.cxx
+    InelasticPotential.cxx
+    InelasticPotentialBase.cxx
+    InelasticPotentialFactory.cxx
+    StressCriterion.cxx
+    MisesStressCriterion.cxx
+    StressCriterionFactory.cxx
     ${PROJECT_BINARY_DIR}/mfront/src/MFrontHeader.cxx)
 
 if(HAVE_GNUPLOT)
