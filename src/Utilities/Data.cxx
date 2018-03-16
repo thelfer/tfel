@@ -147,7 +147,7 @@ namespace tfel {
           p = std::prev(p, 2);
           return read_map(p, pe);
         }
-        if (p->value != ",") {
+        if ((p->value != ",") && (p->value != "}")) {
           raise("expected ',' or ':' or '}', read '" + p->value + "'");
         }
         p = std::prev(p, 2);
