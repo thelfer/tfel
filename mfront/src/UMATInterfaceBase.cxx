@@ -1357,13 +1357,12 @@ namespace mfront {
           } else {
             if (v.arraySize >= SupportedTypes::ArraySizeLimit) {
               out << "for(unsigned short i=0;i!=" << v.arraySize << ";++i){\n";
-              out << "ostringstream name;\n";
-              out << "name << \"" << ivname << "[\" << i << \"]\";\n";
+              out << "auto name =  \"" << ivname << "[\" + std::to_string(i)+ \"]\";\n";
               if (flag == SupportedTypes::Scalar) {
-                out << "mg.addInternalStateVariable(name.str(),SupportedTypes::Scalar,&mg_STATEV["
+                out << "mg.addInternalStateVariable(name,SupportedTypes::Scalar,&mg_STATEV["
                     << ivoffset << "]+i);\n";
               } else {
-                out << "mg.addInternalStateVariable(name.str(),SupportedTypes::Stensor,&mg_STATEV["
+                out << "mg.addInternalStateVariable(name,SupportedTypes::Stensor,&mg_STATEV["
                     << ivoffset << "]+i);\n";
               }
               out << "}\n";
@@ -1412,17 +1411,16 @@ namespace mfront {
           } else {
             if (p->arraySize >= SupportedTypes::ArraySizeLimit) {
               out << "for(unsigned short i=0;i!=" << p->arraySize << ";++i){\n";
-              out << "ostringstream name;\n";
-              out << "name << \"" << evname << "[\" << i << \"]\";\n";
+              out << "auto name = \"" << evname << "[\" +std::to_string(i)+\"]\";\n";
               if (offset == 0) {
-                out << "mg.addExternalStateVariableValue(name.str(),0,*(PREDEF+i));\n";
-                out << "mg.addExternalStateVariableValue(name.str(),"
+                out << "mg.addExternalStateVariableValue(name,0,*(PREDEF+i));\n";
+                out << "mg.addExternalStateVariableValue(name,"
                        "*DTIME,*(PREDEF+i)+*(DPRED+i));\n";
               } else {
-                out << "mg.addExternalStateVariableValue(name.str(),"
+                out << "mg.addExternalStateVariableValue(name,"
                        "0,*(PREDEF+"
                     << offset << "+i));\n";
-                out << "mg.addExternalStateVariableValue(name.str(),"
+                out << "mg.addExternalStateVariableValue(name,"
                        "*DTIME,*(PREDEF+"
                     << offset << "+i)+*(DPRED+" << offset << "+i));\n";
               }
