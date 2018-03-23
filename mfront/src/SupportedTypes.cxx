@@ -211,9 +211,8 @@ namespace mfront{
     return res;
   }
 
-  std::string
-  SupportedTypes::getTimeDerivativeType(const std::string& type) const
-  {
+  std::string SupportedTypes::getTimeDerivativeType(
+      const std::string& type) const {
     if (type=="real"){
       return "frequency";
     } else if(type=="strain"){
@@ -228,6 +227,8 @@ namespace mfront{
       return "StrainRateStensor";
     } else if (type=="DeformationGradientTensor"){
       return "DeformationGradientRateTensor";
+    } else if (type=="Tensor"){
+      return "FrequencyTensor";
     } else {
       tfel::raise("SupportedTypes::getTimeDerivativeType: "
 		  "internal error, unsupported type '"+type+"'");

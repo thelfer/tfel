@@ -1,86 +1,86 @@
-/*! 
+/*!
  * \file   mfront/src/AbstractBehaviourBrickFactory.cxx
  * \brief
  * \author Thomas Helfer
  * \brief  October 20, 2014
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
-#include<stdexcept>
+#include <stdexcept>
 
-#include"TFEL/Raise.hxx"
-#include"TFEL/Utilities/Data.hxx"
-#include"MFront/AbstractBehaviourBrick.hxx"
-#include"MFront/AbstractBehaviourBrickFactory.hxx"
-#include"MFront/StandardElasticityBrick.hxx"
-#include"MFront/DDIF2Brick.hxx"
-#include"MFront/FiniteStrainSingleCrystalBrick.hxx"
+#include "TFEL/Raise.hxx"
+#include "TFEL/Utilities/Data.hxx"
+#include "MFront/AbstractBehaviourBrick.hxx"
+#include "MFront/AbstractBehaviourBrickFactory.hxx"
+#include "MFront/StandardElasticityBrick.hxx"
+#include "MFront/StandardElastoViscoPlasticityBrick.hxx"
+#include "MFront/DDIF2Brick.hxx"
+#include "MFront/FiniteStrainSingleCrystalBrick.hxx"
 
-namespace mfront
-{
+namespace mfront {
 
-  template<typename T>
-  static std::shared_ptr<AbstractBehaviourBrick>
-  buildBehaviourBrickConstructor(AbstractBehaviourDSL& dsl,
-				 BehaviourDescription& mb,
-				 const AbstractBehaviourBrick::Parameters& bp,
-				 AbstractBehaviourBrick::tokens_iterator& p,
-				 const AbstractBehaviourBrick::tokens_iterator pe)
-  {
-    const auto d = [&p,pe]{
-      using DataMap = std::map<std::string,tfel::utilities::Data>;
-      if((p!=pe)&&(p->value=="{")){
-	return tfel::utilities::Data::read(p,pe).get<DataMap>();
+  template <typename T>
+  static std::shared_ptr<AbstractBehaviourBrick> buildBehaviourBrickConstructor(
+      AbstractBehaviourDSL& dsl,
+      BehaviourDescription& mb,
+      const AbstractBehaviourBrick::Parameters& bp,
+      AbstractBehaviourBrick::tokens_iterator& p,
+      const AbstractBehaviourBrick::tokens_iterator pe) {
+    const auto d = [&p, pe] {
+      using DataMap = std::map<std::string, tfel::utilities::Data>;
+      if ((p != pe) && (p->value == "{")) {
+        return tfel::utilities::Data::read(p, pe).get<DataMap>();
       }
       return DataMap();
     }();
-    return std::make_shared<T>(dsl,mb,bp,d);
-  } // end of buildAlgoritmConstructor
+    return std::make_shared<T>(dsl, mb, bp, d);
+  }  // end of buildAlgoritmConstructor
 
-  AbstractBehaviourBrickFactory&
-  AbstractBehaviourBrickFactory::getFactory()
-  {
+  AbstractBehaviourBrickFactory& AbstractBehaviourBrickFactory::getFactory() {
     static AbstractBehaviourBrickFactory f;
     return f;
   }
-  
-  std::shared_ptr<AbstractBehaviourBrick>
-  AbstractBehaviourBrickFactory::get(const std::string& a,
-				     AbstractBehaviourDSL& dsl,
-				     BehaviourDescription& mb,
-				     const AbstractBehaviourBrick::Parameters& bp,
-				     tokens_iterator& p,
-				     const tokens_iterator pe) const
-  {
-    auto pc = this->constructors.find(a);
-    tfel::raise_if(pc==this->constructors.end(),
-		   "AbstractBehaviourBrickFactory::getAbstractBehaviourBrick : "
-		   "no AbstractBehaviourBrick '"+a+"' registred");
-    return (*(pc->second))(dsl,mb,bp,p,pe);
+
+  std::shared_ptr<AbstractBehaviourBrick> AbstractBehaviourBrickFactory::get(
+      const std::string& a,
+      AbstractBehaviourDSL& dsl,
+      BehaviourDescription& mb,
+      const AbstractBehaviourBrick::Parameters& bp,
+      tokens_iterator& p,
+      const tokens_iterator pe) const {
+    const auto pc = this->constructors.find(a);
+    tfel::raise_if(pc == this->constructors.end(),
+                   "AbstractBehaviourBrickFactory::getAbstractBehaviourBrick : "
+                   "no AbstractBehaviourBrick '" +
+                       a + "' registred");
+    return (*(pc->second))(dsl, mb, bp, p, pe);
   }
 
-  AbstractBehaviourBrickFactory::AbstractBehaviourBrickFactory()
-  {
-    auto add = [this](const char* n,const constructor c){
-      this->registerAbstractBehaviourBrick(n,c);
+  AbstractBehaviourBrickFactory::AbstractBehaviourBrickFactory() {
+    auto add = [this](const char* n, const constructor c) {
+      this->registerAbstractBehaviourBrick(n, c);
     };
-    add("DDIF2",buildBehaviourBrickConstructor<DDIF2Brick>);
-    add("StandardElasticity",buildBehaviourBrickConstructor<StandardElasticityBrick>);
-    add("FiniteStrainSingleCrystal",buildBehaviourBrickConstructor<FiniteStrainSingleCrystalBrick>);
-  } // end of AbstractBehaviourBrickFactory::AbstractBehaviourBrickFactory
+    add("DDIF2", buildBehaviourBrickConstructor<DDIF2Brick>);
+    add("StandardElasticity",
+        buildBehaviourBrickConstructor<StandardElasticityBrick>);
+    add("StandardElastoViscoPlasticity",
+        buildBehaviourBrickConstructor<StandardElastoViscoPlasticityBrick>);
+    add("FiniteStrainSingleCrystal",
+        buildBehaviourBrickConstructor<FiniteStrainSingleCrystalBrick>);
+  }  // end of AbstractBehaviourBrickFactory::AbstractBehaviourBrickFactory
 
-  void
-  AbstractBehaviourBrickFactory::registerAbstractBehaviourBrick(const std::string& a,
-								const constructor c)
-  {
-    tfel::raise_if(!this->constructors.insert({a,c}).second,
-		   "AbstractBehaviourBrickFactory::registerAbstractBehaviourBrick : "
-		   "BehaviourBrick '"+a+"' already declared");
-  } // end of AbstractBehaviourBrickFactory::registerAbstractBehaviourBrick
+  void AbstractBehaviourBrickFactory::registerAbstractBehaviourBrick(
+      const std::string& a, const constructor c) {
+    tfel::raise_if(
+        !this->constructors.insert({a, c}).second,
+        "AbstractBehaviourBrickFactory::registerAbstractBehaviourBrick : "
+        "BehaviourBrick '" +
+            a + "' already declared");
+  }  // end of AbstractBehaviourBrickFactory::registerAbstractBehaviourBrick
 
-} // end of namespace mfront
+}  // end of namespace mfront

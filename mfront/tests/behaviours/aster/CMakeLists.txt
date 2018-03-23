@@ -95,7 +95,7 @@ set(mfront_tests_SOURCES
   ComputeThermalExpansion3
   ParameterTest
   ParameterTest2
-  )
+  GenerateMTestFileOnFailure)
 mfront_dependencies(MFrontAsterBehaviours
   ThermalExpansionCoefficientTest
   ThermalExpansionCoefficientTest2

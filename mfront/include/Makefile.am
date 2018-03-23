@@ -10,7 +10,7 @@ nobase_include_HEADERS= MFront/MFront.hxx                          \
 			MFront/MakefileGenerator.hxx                          \
 			MFront/CodeBlock.hxx                                  \
 			MFront/MFrontConfig.hxx	                           \
-			MFront/MFrontDebugMode.hxx	                           \          
+			MFront/MFrontDebugMode.hxx	                           \
 			MFront/PerformanceProfiling.hxx                       \
 			MFront/PedanticMode.hxx	                           \
 			MFront/MFrontLogStream.hxx                            \
@@ -85,10 +85,16 @@ nobase_include_HEADERS= MFront/MFront.hxx                          \
 			MFront/AbstractBehaviourBrick.hxx                     \
 			MFront/BehaviourBrickBase.hxx                         \
 			MFront/AbstractBehaviourBrickFactory.hxx              \
+			MFront/BehaviourBrick/BrickUtilities.hxx          \
 			MFront/BehaviourBrick/ProviderIdentifier.hxx          \
 			MFront/BehaviourBrick/Requirement.hxx                 \
 			MFront/BehaviourBrick/RequirementManager.hxx          \
 			MFront/BehaviourBrick/Provider.hxx                    \
+			MFront/BehaviourBrick/StressPotential.hxx          \
+			MFront/BehaviourBrick/StressPotentialBase.hxx          \
+			MFront/BehaviourBrick/HookeStressPotential.hxx     \
+			MFront/BehaviourBrick/DDIF2StressPotential.hxx     \
+			MFront/BehaviourBrick/StressPotentialFactory.hxx   \
 			MFront/BehaviourBrick/InelasticPotential.hxx          \
 			MFront/BehaviourBrick/InelasticPotentialBase.hxx      \
 			MFront/BehaviourBrick/InelasticPotentialFactory.hxx   \
@@ -108,6 +114,7 @@ nobase_noinst_HEADERS = MFront/IsotropicBehaviourDSLBase.hxx                    
 			MFront/RungeKuttaFiniteStrainDSL.hxx                          \
 			MFront/PerformanceProfiling.hxx			              \
 			MFront/StandardElasticityBrick.hxx                            \
+			MFront/StandardElastoViscoPlasticityBrick.hxx                 \
 			MFront/DDIF2Brick.hxx                                         \
 			MFront/FiniteStrainSingleCrystalBrick.hxx                     \
 			MFront/NonLinearSystemSolver.hxx                              \

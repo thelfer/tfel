@@ -29,14 +29,54 @@ namespace tfel {
 
     // forward declaration
     struct Data;
+
+    /*!
+     * \brief a structure in charge of containing a complex data structure.
+     */
+    struct TFELUTILITIES_VISIBILITY_EXPORT DataStructure {
+      //! default constructor
+      DataStructure();
+      //! move constructor
+      DataStructure(DataStructure&&);
+      //! copy constructor
+      DataStructure(const DataStructure&);
+      //! move assignement
+      DataStructure& operator=(DataStructure&&);
+      //! assignement
+      DataStructure& operator=(const DataStructure&);
+      //! destructor
+      ~DataStructure();
+      //! name of the structure
+      std::string name;
+      //! name of the structure
+      std::map<std::string, Data> data;
+    };  // end of struct DataStructure
+
+    struct TFELUTILITIES_VISIBILITY_EXPORT DataParsingOptions {
+      //! default constructor
+      DataParsingOptions();
+      //! move constructor
+      DataParsingOptions(DataParsingOptions&&);
+      //! copy constructor
+      DataParsingOptions(const DataParsingOptions&);
+      //! move assignement
+      DataParsingOptions& operator=(DataParsingOptions&&);
+      //! assignement
+      DataParsingOptions& operator=(const DataParsingOptions&);
+      //! destructor
+      ~DataParsingOptions();
+      //!
+      bool allowMultipleKeysInMap = false;
+    };  // end of struct DataParsingOptions
+
     //! list of all type handled by the Data structure
-    using DataTypes =
-        tfel::meta::GenerateTypeList<bool,
-                                     int,
-                                     double,
-                                     std::string,
-                                     std::vector<Data>,
-                                     std::map<std::string, Data>>::type;
+    using DataTypes = tfel::meta::GenerateTypeList<bool,
+                                                   int,
+                                                   double,
+                                                   std::string,
+                                                   std::vector<Data>,
+                                                   std::map<std::string, Data>,
+                                                   DataStructure>::type;
 
     namespace internals {
 
@@ -81,9 +121,11 @@ namespace tfel {
        * \return the values read
        * \param[in,out] p:  current position in the tokens stream
        * \param[in]     pe: past-the-end iterator
+       * \param[in]     o: parsing options
        */
       static Data read(CxxTokenizer::const_iterator&,
-                       const CxxTokenizer::const_iterator);
+                       const CxxTokenizer::const_iterator,
+                       const DataParsingOptions& = {});
       /*!
        * \brief read a map. For each read key, a callback must
        * available to treat the associated data. The result of the
@@ -92,34 +134,42 @@ namespace tfel {
        * \param[in,out] p:  current position in the tokens stream
        * \param[in]     pe: past-the-end iterator
        * \param[in]     callbacks: list of call-backs
+       * \param[in]     o: parsing options
        */
       static void parse(CxxTokenizer::const_iterator&,
                         const CxxTokenizer::const_iterator,
-                        const std::map<std::string, CallBack>&);
+                        const std::map<std::string, CallBack>&,
+                        const DataParsingOptions& = {});
       /*!
        * \brief read a standard value (string,double,int)
        * \return the values read
        * \param[in,out] p:  current position in the tokens stream
        * \param[in]     pe: past-the-end iterator
+       * \param[in]     o: parsing options
        */
       static Data read_value(CxxTokenizer::const_iterator&,
-                             const CxxTokenizer::const_iterator);
+                             const CxxTokenizer::const_iterator,
+                             const DataParsingOptions& = {});
       /*!
        * \brief read a map
        * \return the values read
        * \param[in,out] p:  current position in the tokens stream
        * \param[in]     pe: past-the-end iterator
+       * \param[in]     o: parsing options
        */
       static Data read_vector(CxxTokenizer::const_iterator&,
-                              const CxxTokenizer::const_iterator);
+                              const CxxTokenizer::const_iterator,
+                              const DataParsingOptions& = {});
       /*!
        * \brief read a map
        * \return the values read
        * \param[in,out] p:  current position in the tokens stream
        * \param[in]     pe: past-the-end iterator
+       * \param[in]     o: parsing options
        */
       static Data read_map(CxxTokenizer::const_iterator&,
-                           const CxxTokenizer::const_iterator);
+                           const CxxTokenizer::const_iterator,
+                           const DataParsingOptions& = {});
       //! default constructor
       Data();
       //! move constructor
@@ -132,7 +182,7 @@ namespace tfel {
       Data& operator=(const Data&);
       //! destructor
       ~Data();
-    };
+    }; // end of struct Data
 
     //! comparison operator
     TFELUTILITIES_VISIBILITY_EXPORT bool operator==(const Data&, const Data&);

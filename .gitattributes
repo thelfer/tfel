@@ -2152,6 +2152,9 @@ mfront/include/MFront/Aster/AsterTraits.hxx -text
 mfront/include/MFront/Aster/aster.doxygen -text
 mfront/include/MFront/AsterInterface.hxx -text
 mfront/include/MFront/BehaviourAttribute.hxx -text
+mfront/include/MFront/BehaviourBrick/BrickUtilities.hxx -text
+mfront/include/MFront/BehaviourBrick/DDIF2StressPotential.hxx -text
+mfront/include/MFront/BehaviourBrick/HookeStressPotential.hxx -text
 mfront/include/MFront/BehaviourBrick/InelasticPotential.hxx -text
 mfront/include/MFront/BehaviourBrick/InelasticPotentialBase.hxx -text
 mfront/include/MFront/BehaviourBrick/InelasticPotentialFactory.hxx -text
@@ -2162,6 +2165,9 @@ mfront/include/MFront/BehaviourBrick/Requirement.hxx -text
 mfront/include/MFront/BehaviourBrick/RequirementManager.hxx -text
 mfront/include/MFront/BehaviourBrick/StressCriterion.hxx -text
 mfront/include/MFront/BehaviourBrick/StressCriterionFactory.hxx -text
+mfront/include/MFront/BehaviourBrick/StressPotential.hxx -text
+mfront/include/MFront/BehaviourBrick/StressPotentialBase.hxx -text
+mfront/include/MFront/BehaviourBrick/StressPotentialFactory.hxx -text
 mfront/include/MFront/BehaviourBrickBase.hxx -text
 mfront/include/MFront/BehaviourDSLBase.hxx -text
 mfront/include/MFront/BehaviourDSLBase.ixx -text
@@ -2406,6 +2412,7 @@ mfront/src/BehaviourData.cxx -text
 mfront/src/BehaviourDescription.cxx -text
 mfront/src/BehaviourInterfaceFactory.cxx -text
 mfront/src/BehaviourProfiler.cxx -text
+mfront/src/BrickUtilities.cxx -text
 mfront/src/BroydenSolvers.cxx -text
 mfront/src/CMakeGenerator.cxx -text
 mfront/src/CMakeLists.txt -text
@@ -2442,6 +2449,7 @@ mfront/src/CyranoInterfaceExceptions.cxx -text
 mfront/src/CyranoOutOfBoundsPolicy.cxx -text
 mfront/src/CyranoStressFreeExpansionHandler.cxx -text
 mfront/src/DDIF2Brick.cxx -text
+mfront/src/DDIF2StressPotential.cxx -text
 mfront/src/DSLBase.cxx -text
 mfront/src/DSLFactory.cxx -text
 mfront/src/DSLUtilities.cxx -text
@@ -2467,6 +2475,7 @@ mfront/src/Fortran03MaterialPropertyInterface.cxx -text
 mfront/src/FortranMaterialPropertyInterface.cxx -text
 mfront/src/GeneratorOptions.cxx -text
 mfront/src/GnuplotMaterialPropertyInterface.cxx -text
+mfront/src/HookeStressPotential.cxx -text
 mfront/src/ImplicitDSL.cxx -text
 mfront/src/ImplicitDSLBase.cxx -text
 mfront/src/ImplicitDSLII.cxx -text
@@ -2523,9 +2532,13 @@ mfront/src/RungeKuttaFiniteStrainDSL.cxx -text
 mfront/src/SearchPathsHandler.cxx -text
 mfront/src/SecondBroydenSolver.cxx -text
 mfront/src/StandardElasticityBrick.cxx -text
+mfront/src/StandardElastoViscoPlasticityBrick.cxx -text
 mfront/src/StaticVariableDescription.cxx -text
 mfront/src/StressCriterion.cxx -text
 mfront/src/StressCriterionFactory.cxx -text
+mfront/src/StressPotential.cxx -text
+mfront/src/StressPotentialBase.cxx -text
+mfront/src/StressPotentialFactory.cxx -text
 mfront/src/SupportedTypes.cxx -text
 mfront/src/TargetsDescription.cxx -text
 mfront/src/ThermodynamicForce.cxx -text
@@ -2578,6 +2591,7 @@ mfront/tests/behaviours/FiniteStrainSingleCrystal.mfront -text
 mfront/tests/behaviours/FiniteStrainSingleCrystal2.mfront -text
 mfront/tests/behaviours/FiniteStrainSingleCrystal_NumericalJacobian.mfront -text
 mfront/tests/behaviours/GeneralizedMaxwell.mfront -text
+mfront/tests/behaviours/GenerateMTestFileOnFailure.mfront -text
 mfront/tests/behaviours/Gurson.mfront -text
 mfront/tests/behaviours/GursonTvergaardNeedlemanPlasticFlow_NumericalJacobian.mfront -text
 mfront/tests/behaviours/GursonTvergaardNeedlemanViscoPlasticFlow_NumericalJacobian.mfront -text

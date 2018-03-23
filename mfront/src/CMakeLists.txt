@@ -112,6 +112,7 @@ set(TFELMFront_SOURCES
     BehaviourBrickRequirementManager.cxx
     BehaviourBrickBase.cxx
     StandardElasticityBrick.cxx
+    StandardElastoViscoPlasticityBrick.cxx
     DDIF2Brick.cxx
     FiniteStrainSingleCrystalBrick.cxx
     LocalDataStructure.cxx
@@ -128,6 +129,12 @@ set(TFELMFront_SOURCES
     ExcelMaterialPropertyInternalInterface.cxx
     MFrontModelInterface.cxx
     UMATInterfaceBase.cxx
+    BrickUtilities.cxx
+    StressPotential.cxx
+    StressPotentialBase.cxx
+    HookeStressPotential.cxx
+    DDIF2StressPotential.cxx
+    StressPotentialFactory.cxx
     InelasticPotential.cxx
     InelasticPotentialBase.cxx
     InelasticPotentialFactory.cxx

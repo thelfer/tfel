@@ -109,11 +109,18 @@ libTFELMFront_la_SOURCES = MFront.cxx                                           
 			   BehaviourBrickRequirementManager.cxx                   \
 			   BehaviourBrickProvider.cxx                             \
 		           StandardElasticityBrick.cxx                            \
+		           StandardElastoViscoPlasticityBrick.cxx                 \
 		           DDIF2Brick.cxx                                         \
 			   FiniteStrainSingleCrystalBrick.cxx                     \
 		           LocalDataStructure.cxx                                 \
 		           AbstractBehaviourBrickFactory.cxx                      \
 		           UMATInterfaceBase.cxx                                  \
+		           BrickUtilities.cxx                                 \
+		           StressPotential.cxx                                 \
+		           StressPotentialBase.cxx                                 \
+		           HookeStressPotential.cxx                                 \
+		           DDIF2StressPotential.cxx                                 \
+		           StressPotentialFactory.cxx                          \
 		           InelasticPotential.cxx                                 \
 		           InelasticPotentialBase.cxx                             \
 		           InelasticPotentialFactory.cxx                          \

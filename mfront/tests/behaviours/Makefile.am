@@ -146,7 +146,8 @@ MFRONTS= DDIF2.mfront                                                      \
 	 ParameterTest2.mfront                                             \
 	 ElasticMaterialPropertiesBoundsCheckTest.mfront                   \
 	 TemperatureUpdateOnSubSteppingCheck.mfront                        \
-	 LogarithmicStrainOrthotropicElasticity.mfront
+	 LogarithmicStrainOrthotropicElasticity.mfront                     \
+	 GenerateMTestFileOnFailure.mfront
 
 testsdir = $(pkgdatadir)/mfront/tests/behaviours
 tests_DATA = $(MFRONTS)

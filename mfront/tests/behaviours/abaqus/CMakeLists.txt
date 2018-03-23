@@ -96,7 +96,8 @@ set(mfront_tests_SOURCES
   LogarithmicStrainNortonCreep
   ComputeThermalExpansion
   ComputeThermalExpansion2
-  ComputeThermalExpansion3)
+  ComputeThermalExpansion3
+  GenerateMTestFileOnFailure)
 if((NOT WIN32) AND (NOT CYGWIN) AND (NOT MSYS))
   list(APPEND mfront_tests_SOURCES
        AbaqusAxialGrowth

@@ -2437,6 +2437,7 @@ namespace mfront {
          << "using StrainRateStensor   = typename Types::StrainRateStensor;\n"
          << "using StiffnessTensor     = typename Types::StiffnessTensor;\n"
          << "using Tensor              = typename Types::Tensor;\n"
+         << "using FrequencyTensor     = typename Types::FrequencyTensor;\n"
          << "using StressTensor        = typename Types::StressTensor;\n"
          << "using ThermalExpansionCoefficientTensor = typename Types::ThermalExpansionCoefficientTensor;\n"
          << "using DeformationGradientTensor         = typename Types::DeformationGradientTensor;\n"

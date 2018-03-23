@@ -13,7 +13,6 @@
  */
 
 #include <algorithm>
-
 #include "TFEL/Raise.hxx"
 #include "TFEL/Math/General/IEEE754.hxx"
 #include "TFEL/Utilities/StringAlgorithms.hxx"
@@ -30,8 +29,75 @@ namespace tfel {
     Data& Data::operator=(Data&&) = default;
     Data::~Data() = default;
 
+    DataStructure::DataStructure() = default;
+    DataStructure::DataStructure(const DataStructure&) = default;
+    DataStructure::DataStructure(DataStructure&&) = default;
+    DataStructure& DataStructure::operator=(const DataStructure&) = default;
+    DataStructure& DataStructure::operator=(DataStructure&&) = default;
+    DataStructure::~DataStructure() = default;
+
+    DataParsingOptions::DataParsingOptions() = default;
+    DataParsingOptions::DataParsingOptions(const DataParsingOptions&) = default;
+    DataParsingOptions::DataParsingOptions(DataParsingOptions&&) = default;
+    DataParsingOptions& DataParsingOptions::operator=(
+        const DataParsingOptions&) = default;
+    DataParsingOptions& DataParsingOptions::operator=(DataParsingOptions&&) =
+        default;
+    DataParsingOptions::~DataParsingOptions() = default;
+
+    static void read_map(std::map<std::string, Data>& r,
+                         CxxTokenizer::const_iterator& p,
+                         const CxxTokenizer::const_iterator pe,
+                         const DataParsingOptions& o) {
+      auto throw_if = [](const bool b, const std::string& msg) {
+        raise_if(b, "Data::read_map: " + msg);
+      };
+      CxxTokenizer::checkNotEndOfLine("Data::read_map", p, pe);
+      CxxTokenizer::readSpecifiedToken("Data::read_map", "{", p, pe);
+      CxxTokenizer::checkNotEndOfLine("Data::read_map", p, pe);
+      std::vector<std::string> mkeys;  // keys with multiple values;
+      while (p->value != "}") {
+        const auto k = [&p, pe]() -> std::string {
+          if (p->flag != Token::String) {
+            auto c = p;
+            ++p;
+            return c->value;
+          }
+          return CxxTokenizer::readString(p, pe);
+        }();
+        CxxTokenizer::readSpecifiedToken("Data::read_map", ":", p, pe);
+        const auto v = Data::read(p, pe, o);
+        if (p->value == ",") {
+          CxxTokenizer::readSpecifiedToken("Data::read_map", ",", p, pe);
+          CxxTokenizer::checkNotEndOfLine("Data::read_map", p, pe);
+          throw_if(p->value == "}", "unexpected token '}'");
+        } else {
+          throw_if(p->value != "}", "unexpected token '" + p->value + "'");
+        }
+        const auto pv = r.find (k);
+        if (pv == r.end()) {
+          r.insert({k, v});
+        } else {
+          throw_if(!o.allowMultipleKeysInMap,
+                   "key '" + k + "' multiply defined");
+          if (std::find(mkeys.begin(), mkeys.begin(), k) == mkeys.end()) {
+            std::vector<Data> mdata;
+            mdata.push_back(pv->second);
+            mdata.push_back(v);
+            pv->second = Data(std::move(mdata));
+            mkeys.push_back(k);
+          } else {
+            auto& vd = pv->second.get<std::vector<Data>>();
+            vd.push_back(v);
+          }
+        }
+      }
+      CxxTokenizer::readSpecifiedToken("Data::read_map", "}", p, pe);
+    }
+
     Data Data::read_value(CxxTokenizer::const_iterator& p,
-                          const CxxTokenizer::const_iterator pe) {
+                          const CxxTokenizer::const_iterator pe,
+                          const DataParsingOptions& o) {
       auto throw_if = [](const bool b, const std::string& msg) {
         raise_if(b, "Data::read: " + msg);
       };
@@ -50,18 +116,31 @@ namespace tfel {
         }
         return true;
       };
+      auto readDataStructureOrString = [&o, &p, pe](const std::string& name) {
+        if (p != pe) {
+          if (p->value == "{") {
+            DataStructure ds;
+            ds.name = name;
+            tfel::utilities::read_map(ds.data, p, pe, o);
+            return Data(std::move(ds));
+          }
+        }
+        return Data(name);
+      };
       if (p->value == "true") {
         ++p;
         return Data(true);
-      }
-      if (p->value == "false") {
+      } else if (p->value == "false") {
         ++p;
         return Data(false);
-      }
-      if (p->flag == Token::String) {
-        return Data(CxxTokenizer::readString(p, pe));
-      }
-      if (is_integer(p->value)) {
+      } else if (p->flag == Token::String) {
+        const auto name = CxxTokenizer::readString(p, pe);
+        return readDataStructureOrString(name);
+      } else if (CxxTokenizer::isValidIdentifier(p->value)) {
+        const auto name = p->value;
+        ++p;
+        return readDataStructureOrString(name);
+      } else if (is_integer(p->value)) {
         std::size_t pos;
         auto v = std::stoi(p->value, &pos);
         throw_if(pos != p->value.size(), "invalid number '" + p->value + "'");
@@ -74,63 +153,40 @@ namespace tfel {
     }
 
     Data Data::read_vector(CxxTokenizer::const_iterator& p,
-                           const CxxTokenizer::const_iterator pe) {
+                           const CxxTokenizer::const_iterator pe,
+                           const DataParsingOptions& o) {
       auto throw_if = [](const bool b, const std::string& msg) {
-        raise_if(b, "Data::read: " + msg);
+        raise_if(b, "Data::read_vector: " + msg);
       };
-      CxxTokenizer::checkNotEndOfLine("Data::read", p, pe);
-      CxxTokenizer::readSpecifiedToken("Data::read", "{", p, pe);
-      CxxTokenizer::checkNotEndOfLine("Data::read", p, pe);
+      CxxTokenizer::checkNotEndOfLine("Data::read_vector", p, pe);
+      CxxTokenizer::readSpecifiedToken("Data::read_vector", "{", p, pe);
+      CxxTokenizer::checkNotEndOfLine("Data::read_vector", p, pe);
       std::vector<Data> v;
       while (p->value != "}") {
-        v.push_back(Data::read(p, pe));
+        v.push_back(Data::read(p, pe,o));
         if (p->value == ",") {
-          CxxTokenizer::readSpecifiedToken("Data::read", ",", p, pe);
-          CxxTokenizer::checkNotEndOfLine("Data::read", p, pe);
+          CxxTokenizer::readSpecifiedToken("Data::read_vector", ",", p, pe);
+          CxxTokenizer::checkNotEndOfLine("Data::read_vector", p, pe);
           throw_if(p->value == "}", "unexpected token '}'");
         } else {
           throw_if(p->value != "}", "unexpected token '" + p->value + "'");
         }
       }
-      CxxTokenizer::readSpecifiedToken("Data::read", "}", p, pe);
+      CxxTokenizer::readSpecifiedToken("Data::read_vector", "}", p, pe);
       return std::move(v);
     }
 
     Data Data::read_map(CxxTokenizer::const_iterator& p,
-                        const CxxTokenizer::const_iterator pe) {
-      auto throw_if = [](const bool b, const std::string& msg) {
-        raise_if(b, "Data::read: " + msg);
-      };
-      CxxTokenizer::checkNotEndOfLine("Data::read", p, pe);
-      CxxTokenizer::readSpecifiedToken("Data::read", "{", p, pe);
-      CxxTokenizer::checkNotEndOfLine("Data::read", p, pe);
+                        const CxxTokenizer::const_iterator pe,
+                        const DataParsingOptions& o) {
       std::map<std::string, Data> r;
-      while (p->value != "}") {
-        const auto k = [&p, pe]() -> std::string {
-          if (p->flag != Token::String) {
-            auto c = p;
-            ++p;
-            return c->value;
-          }
-          return CxxTokenizer::readString(p, pe);
-        }();
-        CxxTokenizer::readSpecifiedToken("Data::read", ":", p, pe);
-        const auto v = Data::read(p, pe);
-        if (p->value == ",") {
-          CxxTokenizer::readSpecifiedToken("Data::read", ",", p, pe);
-          CxxTokenizer::checkNotEndOfLine("Data::read", p, pe);
-          throw_if(p->value == "}", "unexpected token '}'");
-        } else {
-          throw_if(p->value != "}", "unexpected token '" + p->value + "'");
-        }
-        throw_if(!r.insert({k, v}).second, "key '" + k + "' multiply defined");
-      }
-      CxxTokenizer::readSpecifiedToken("Data::read", "}", p, pe);
+      tfel::utilities::read_map(r, p, pe,o);
       return std::move(r);
     }
 
     Data Data::read(CxxTokenizer::const_iterator& p,
-                    const CxxTokenizer::const_iterator pe) {
+                    const CxxTokenizer::const_iterator pe,
+                    const DataParsingOptions& o) {
       CxxTokenizer::checkNotEndOfLine("Data::read", p, pe);
       if (p->value == "{") {
         ++p;
@@ -145,22 +201,22 @@ namespace tfel {
         CxxTokenizer::checkNotEndOfLine("Data::read", p, pe);
         if (p->value == ":") {
           p = std::prev(p, 2);
-          return read_map(p, pe);
+          return read_map(p, pe,o);
         }
         if ((p->value != ",") && (p->value != "}")) {
           raise("expected ',' or ':' or '}', read '" + p->value + "'");
         }
         p = std::prev(p, 2);
-        return read_vector(p, pe);
-      } else {
-        // standard value
-        return read_value(p, pe);
+        return read_vector(p, pe, o);
       }
-    } // end of Data::read
+      // standard value
+      return read_value(p, pe, o);
+    }  // end of Data::read
 
     void Data::parse(CxxTokenizer::const_iterator& p,
                      const CxxTokenizer::const_iterator pe,
-                     const std::map<std::string, CallBack>& callbacks) {
+                     const std::map<std::string, CallBack>& callbacks,
+                     const DataParsingOptions& o) {
       auto throw_if = [](const bool b, const std::string& msg) {
         raise_if(b, "Data::parse: " + msg);
       };
@@ -184,7 +240,7 @@ namespace tfel {
         CxxTokenizer::readSpecifiedToken("Data::parse", ":", p, pe);
         CxxTokenizer::checkNotEndOfLine("Data::parse", p, pe);
         try {
-          c(Data::read(p, pe));
+          c(Data::read(p, pe, o));
         } catch (std::exception& e) {
           raise<std::runtime_error>(
               "Data::read: error while "

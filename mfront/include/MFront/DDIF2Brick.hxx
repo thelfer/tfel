@@ -1,64 +1,36 @@
-/*! 
+/*!
  * \file   DDIF2Brick.hxx
  * \brief
  * \author Thomas Helfer
  * \date   October,20 2014
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MFRONT_DDIF2BRICKBEHAVIOURBRICK_HXX
-#define LIB_MFRONT_DDIF2BRICKBEHAVIOURBRICK_HXX 
+#define LIB_MFRONT_DDIF2BRICKBEHAVIOURBRICK_HXX
 
-#include <array>
-#include "TFEL/Utilities/GenTypeBase.hxx"
-#include "MFront/StandardElasticityBrick.hxx"
+#include <memory>
+#include "MFront/BehaviourBrickBase.hxx"
+#include "MFront/BehaviourBrick/StressPotential.hxx"
 
-namespace mfront{
+namespace mfront {
 
-  // forward declaration
-  struct AbstractBehaviourDSL;
-  // forward declaration
-  struct MaterialPropertyDescription;
-  // forward declaration
-  struct BehaviourDescription;
-  // forward declaration
-  struct LocalDataStructure;
+  namespace bbrick {
+
+    // forward declaration
+    struct StressPotential;
+  }
 
   /*!
-   * BehaviourBrick describing standard elasticity for small strain behaviours
-   * and handles various enhancements to behaviours based on standard
-   * elasticity:
-   * - Generic support to plane stress.
-   * - Generic way to compute the tangent operator (implicit parser
-   *   only)
-   * This extra features can be disabled using dedicated parameters.
-   *
-   * This BehaviourBricks allows the followig parameters:
-   * - `Isotropic`. This parameter can be used to declare that the
-   *   elastic stiffness is isotropic even though the behaviour is
-   *   orthotropic. This parameter can not be used if the
-   *   `@RequiresStiffnessTensor` has been used.
-   * - `Orthotropic`. This requires the behaviour to de declared
-   *   orthotropic (through `@OrthotropicBehaviour` keyword).  This
-   *   parameter can not be used if the `@RequiresStiffnessTensor` has
-   *   been used.
-   * - `NoPlaneStressSupport`. If this parameter is given, plane
-   *   stress support is desactivated.
-   * - `NoGenericTangentOperator`. If this parameter is given, the
-   *   generic computation of the tangent operator will not be
-   *   provided.
-   * - `NoGenericPredictionOperator`. If this parameter is given, the
-   *   generic computation of the prediction operator will not be
-   *   provided.
+   * This brick provides the DDIF2 damage behaviour as a basis to build complex
+   * behaviours.
    */
-  struct DDIF2Brick
-    : public StandardElasticityBrick
-  {
+  struct DDIF2Brick : public BehaviourBrickBase {
     /*!
      * \brief constructor
      * \param[in] dsl_ : calling domain specific language
@@ -67,9 +39,9 @@ namespace mfront{
      * \param[in] d    : data
      */
     DDIF2Brick(AbstractBehaviourDSL&,
-	       BehaviourDescription&,
-	       const Parameters&,
-	       const DataMap&);
+               BehaviourDescription&,
+               const Parameters&,
+               const DataMap&);
     //! \return the name of the brick
     std::string getName() const override;
     /*!
@@ -82,26 +54,11 @@ namespace mfront{
     void endTreatment() const override;
     //! destructor
     ~DDIF2Brick() override;
-  protected:
-    using FractureStress =
-      tfel::utilities::GenType<std::shared_ptr<MaterialPropertyDescription>,
-			       double>;
-    using SofteningSlope =
-      tfel::utilities::GenType<std::shared_ptr<MaterialPropertyDescription>,
-			       double>;
-    using FractureEnergy =
-      tfel::utilities::GenType<std::shared_ptr<MaterialPropertyDescription>,
-			       double>;
-    //! fracture stress
-    std::array<FractureStress,3u> sr;
-    //! softening slopes
-    std::array<SofteningSlope,3u> rp;
-    //! fracture energy
-    std::array<FractureEnergy,3u> gc;
-    //! handle pressure on crack surface
-    bool pr = false;
-  }; // end of struct DDIF2Brick
 
-} // end of namespace mfront
+   protected:
+    std::shared_ptr<bbrick::StressPotential> ddif2;
+  };  // end of struct DDIF2Brick
+
+}  // end of namespace mfront
 
 #endif /* LIB_MFRONT_DDIF2BRICKBEHAVIOURBRICK_H */

@@ -23,7 +23,8 @@ set(mfront_tests_SOURCES
   AbaqusAxialGrowth2
   AbaqusOrthotropicSwelling
   AbaqusOrthotropicSwelling2
-  ImplicitSimoMieheElastoPlasticity)
+  ImplicitSimoMieheElastoPlasticity
+  GenerateMTestFileOnFailure)
 
 mfront_behaviour_check_library(MFrontAbaqusExplicitBehaviours
   abaqusexplicit ${mfront_tests_SOURCES})
