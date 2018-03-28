@@ -577,7 +577,7 @@ namespace mfront{
        (this->mb.getBehaviourType()==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR)){
       if((mh.find(ModellingHypothesis::PLANESTRESS)!=mh.end())||
 	 (mh.find(ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)!=mh.end())){
-	if(this->mb.hasAttribute(BehaviourDescription::requiresStiffnessTensor)){
+	if(this->mb.getAttribute(BehaviourDescription::requiresStiffnessTensor,false)){
 	  if(!this->mb.hasAttribute(BehaviourDescription::requiresUnAlteredStiffnessTensor)){
 	    this->throwRuntimeError("BehaviourDSLCommon::completeVariableDeclaration",
 				    "No option was given to the '@RequireStiffnessTensor' keyword.\n"
