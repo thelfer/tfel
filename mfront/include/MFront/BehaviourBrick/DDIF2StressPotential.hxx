@@ -3,6 +3,13 @@
  * \brief
  * \author Thomas Helfer
  * \date   20/03/2018
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
+ * reserved. 
+ * This project is publicly released under either the GNU GPL Licence 
+ * or the CECILL-A licence. A copy of thoses licences are delivered 
+ * with the sources of TFEL. CEA or EDF may also distribute this 
+ * project under specific licensing conditions. 
+ * <!-- Local IspellDict: english -->
  */
 
 #ifndef LIB_MFRONT_BEHAVIOURBRICK_DDIF2STRESSPOTENTIAL_HXX
@@ -27,40 +34,29 @@ namespace mfront {
      * standard DDIF2 law.
      */
     struct DDIF2StressPotential : HookeStressPotential{
-      /*!
-       * \param[in] dsl_: abstract behaviour dsl
-       * \param[in] bd_: behaviour description
-       * \param[in] p: parameters of the stress potential
-       */
-      DDIF2StressPotential(AbstractBehaviourDSL&,
-                           BehaviourDescription&,
-                           const DataMap&);
+      //! \brief constructor
+      DDIF2StressPotential();
       std::string getName() const override;
-      std::vector<Hypothesis> getSupportedModellingHypotheses() const override;
-      void completeVariableDeclaration() const override;
-      void endTreatment() const override;
+      std::vector<OptionDescription> getOptions() const override;
+      void initialize(AbstractBehaviourDSL&,
+                      BehaviourDescription&,
+                      const DataMap&) override;
+      std::vector<Hypothesis> getSupportedModellingHypotheses(
+          AbstractBehaviourDSL&, BehaviourDescription&) const override;
+      void completeVariableDeclaration(AbstractBehaviourDSL&,
+                                       BehaviourDescription&) const override;
+      void endTreatment(AbstractBehaviourDSL&,
+                        BehaviourDescription&) const override;
       //! destructor
       ~DDIF2StressPotential() override;
 
      protected:
-      //! a simple alias
-      using FractureStress =
-          tfel::utilities::GenType<std::shared_ptr<MaterialPropertyDescription>,
-                                   double>;
-      //! a simple alias
-      using SofteningSlope =
-          tfel::utilities::GenType<std::shared_ptr<MaterialPropertyDescription>,
-                                   double>;
-      //! a simple alias
-      using FractureEnergy =
-          tfel::utilities::GenType<std::shared_ptr<MaterialPropertyDescription>,
-                                   double>;
       //! fracture stress
-      std::array<FractureStress, 3u> sr;
+      std::array<MaterialProperty, 3u> sr;
       //! softening slopes
-      std::array<SofteningSlope, 3u> rp;
+      std::array<MaterialProperty, 3u> rp;
       //! fracture energy
-      std::array<FractureEnergy, 3u> gc;
+      std::array<MaterialProperty, 3u> gc;
       //! handle pressure on crack surface
       bool pr = false;
     };  // end of struct DDIF2StressPotential

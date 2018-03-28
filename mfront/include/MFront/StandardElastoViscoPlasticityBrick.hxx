@@ -16,8 +16,17 @@ namespace mfront {
   namespace bbrick {
     // forward declaration
     struct StressPotential;
-  } // end of namespace bbrick
+    // forward declaration
+    struct InelasticFlow;
+  }  // end of namespace bbrick
 
+  /*!
+   * \brief The `StandardElastoViscoPlasticityBrick` is meant to describe a
+   * behaviour based on:
+   * - a stress potential describing how the stress is computed. The most
+   *   used one will probably be the `Hooke` stress potential.
+   * - a list of inelastic flows which describe how inelastic strains evolve.
+   */
   struct StandardElastoViscoPlasticityBrick : public BehaviourBrickBase {
     /*!
      * \brief constructor
@@ -27,9 +36,9 @@ namespace mfront {
      * \param[in] d    : data
      */
     StandardElastoViscoPlasticityBrick(AbstractBehaviourDSL&,
-                            BehaviourDescription&,
-                            const Parameters&,
-                            const DataMap&);
+                                       BehaviourDescription&,
+                                       const Parameters&,
+                                       const DataMap&);
     //! \return the name of the brick
     std::string getName() const override;
     //! \return the list of supported modelling hypotheses.
@@ -42,8 +51,12 @@ namespace mfront {
     ~StandardElastoViscoPlasticityBrick() override;
 
    private:
+    //! stress potential
     std::shared_ptr<bbrick::StressPotential> stress_potential;
-  }; // end of StandardElastoViscoPlasticityBrick
+    //! inelastic flows
+    std::vector<std::shared_ptr<bbrick::InelasticFlow>> flows;
+
+  };  // end of StandardElastoViscoPlasticityBrick
 
 }  // end of namespace mfront
 

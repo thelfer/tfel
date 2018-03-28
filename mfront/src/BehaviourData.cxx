@@ -300,13 +300,14 @@ namespace mfront{
 
   BehaviourData::BehaviourData(const BehaviourData&) = default;
 
-  static void
-  checkAlreadyRegistred(const std::set<std::string>& r,
-			const std::string& n){
-    tfel::raise_if(r.find(n)==r.end(),
-		   "checkAlreadyRegistred: "
-		   "variable '"+n+"' was declared "
-		   "a 'already registred' but is not");
+  static void checkAlreadyRegistred(const std::set<std::string>& r,
+                                    const std::string& n) {
+    if(r.find(n) == r.end()){
+      tfel::raise(
+          "checkAlreadyRegistred: "
+          "variable '" +
+          n + "' was not registred");
+    }
   }
   
   void BehaviourData::addStaticVariable(const StaticVariableDescription& v,

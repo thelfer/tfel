@@ -17,6 +17,7 @@ test_PROGRAMS = DSLTest                                    \
 		BehaviourBrickRequirementManagerTest       \
 		TargetsDescriptionTest                     \
 		StandardElasticityBrickTest                \
+         StandardElastoViscoPlasticityBrickTest     \
 		LocalDataStructureTest                     \
 		ComputeStiffnessTensorTest                 \
 		SlipSystemsTest                            \
@@ -35,6 +36,7 @@ BehaviourBrickProviderTest_SOURCES  = BehaviourBrickProviderTest.cxx
 BehaviourBrickRequirementManagerTest_SOURCES = BehaviourBrickRequirementManagerTest.cxx
 TargetsDescriptionTest_SOURCES      = TargetsDescriptionTest.cxx
 StandardElasticityBrickTest_SOURCES = StandardElasticityBrickTest.cxx
+StandardElastoViscoPlasticityBrickTest_SOURCES = StandardElastoViscoPlasticityBrickTest.cxx
 LocalDataStructureTest_SOURCES      = LocalDataStructureTest.cxx
 ComputeStiffnessTensorTest_SOURCES  = ComputeStiffnessTensorTest.cxx
 BehaviourDescriptionBoundsHandlingTest_SOURCES = BehaviourDescriptionBoundsHandlingTest.cxx

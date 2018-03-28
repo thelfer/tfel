@@ -8,7 +8,7 @@
 #ifndef LIB_MFRONT_BEHAVIOURBRICK_HOOKESTRESSPOTENTIAL_HXX
 #define LIB_MFRONT_BEHAVIOURBRICK_HOOKESTRESSPOTENTIAL_HXX
 
-#include "MFront/BehaviourBrick/StressPotentialBase.hxx"
+#include "MFront/BehaviourBrick/StressPotential.hxx"
 
 namespace mfront {
 
@@ -21,19 +21,19 @@ namespace mfront {
      * \brief class describing the computation of the stress through the
      * standard Hooke law.
      */
-    struct HookeStressPotential : StressPotentialBase {
-      /*!
-       * \param[in] dsl_: abstract behaviour dsl
-       * \param[in] bd_: behaviour description
-       * \param[in] p: parameters of the stress potential
-       */
-      HookeStressPotential(AbstractBehaviourDSL&,
-                           BehaviourDescription&,
-                           const DataMap&);
+    struct HookeStressPotential : StressPotential{
+      HookeStressPotential();
       std::string getName() const override;
-      std::vector<Hypothesis> getSupportedModellingHypotheses() const override;
-      void completeVariableDeclaration() const override;
-      void endTreatment() const override;
+      std::vector<OptionDescription> getOptions() const override;
+      void initialize(AbstractBehaviourDSL&,
+                      BehaviourDescription&,
+                      const DataMap&) override;
+      std::vector<Hypothesis> getSupportedModellingHypotheses(
+          AbstractBehaviourDSL&, BehaviourDescription&) const override;
+      void completeVariableDeclaration(AbstractBehaviourDSL&,
+                                       BehaviourDescription&) const override;
+      void endTreatment(AbstractBehaviourDSL&,
+                        BehaviourDescription&) const override;
       //! destructor
       ~HookeStressPotential() override;
 
@@ -42,37 +42,44 @@ namespace mfront {
        * \brief declared the computeStress and computeFinalStress when the
        * requiresStiffnessTensor attribute has been set.
        */
-      virtual void declareComputeStressWhenStiffnessTensorIsDefined() const;
+      virtual void declareComputeStressWhenStiffnessTensorIsDefined(
+          BehaviourDescription&) const;
       /*!
        * treat the case of isotropic behaviours
        * \param[in] d: local data structure
        */
-      virtual void treatIsotropicBehaviour(LocalDataStructure&) const;
+      virtual void treatIsotropicBehaviour(BehaviourDescription&,
+                                           LocalDataStructure&) const;
       /*!
        * treat the case of isotropic behaviours
        */
-      virtual void treatOrthotropicBehaviour() const;
+      virtual void treatOrthotropicBehaviour(BehaviourDescription&) const;
       /*!
        * \brief add support for the AXISYMMETRICALGENERALISEDPLANESTRESS
        * modelling hypothesis
        */
-      virtual void addAxisymmetricalGeneralisedPlaneStressSupport() const;
+      virtual void addAxisymmetricalGeneralisedPlaneStressSupport(
+          AbstractBehaviourDSL&, BehaviourDescription&) const;
       /*!
        * \brief add support for the PLANESTRESS modelling hypothesis
        */
-      virtual void addPlaneStressSupport() const;
+      virtual void addPlaneStressSupport(AbstractBehaviourDSL&,
+                                         BehaviourDescription&) const;
       /*!
        * \brief add the generic tangent operator computation
        */
-      virtual void addGenericTangentOperatorSupport() const;
+      virtual void addGenericTangentOperatorSupport(
+          AbstractBehaviourDSL&, BehaviourDescription&) const;
       /*!
        * \brief add the generic prediction operator computation
        */
-      virtual void addGenericPredictionOperatorSupport() const;
+      virtual void addGenericPredictionOperatorSupport(
+          AbstractBehaviourDSL&, BehaviourDescription&) const;
       /*!
        * \brief declare the compute elastic prediction method
        */
-      virtual void declareComputeElasticPredictionMethod() const;
+      virtual void declareComputeElasticPredictionMethod(
+          BehaviourDescription&) const;
       //! plane stress support;
       bool pss = true;
       //! generic prediction operator support

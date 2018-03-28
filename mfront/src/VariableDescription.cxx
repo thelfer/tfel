@@ -339,9 +339,11 @@ namespace mfront{
   void VariableDescription::setPhysicalBounds(const VariableBoundsDescription& b,
 					      const unsigned short i)
   {
-    auto throw_if = [](const bool c,const std::string& m){
-      tfel::raise_if(c,"VariableDescription::setPhysicalBounds: "+m);
-    };    
+    auto throw_if = [](const bool c, const std::string& m) {
+      if (c) {
+        tfel::raise("VariableDescription::setPhysicalBounds: " + m);
+      }
+    };
     throw_if(this->arraySize==1u,"invalid call on scalar variable");
     throw_if(i>this->arraySize,"invalid index");
     throw_if(this->physicalBounds.is<VariableBoundsDescription>(),

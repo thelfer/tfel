@@ -72,6 +72,7 @@ test_mfront(BehaviourBrickProviderTest)
 test_mfront2(BehaviourBrickRequirementManagerTest)
 test_mfront3(TargetsDescriptionTest)
 test_mfront3(StandardElasticityBrickTest)
+test_mfront3(StandardElastoViscoPlasticityBrickTest)
 test_mfront3(LocalDataStructureTest)
 
 test_mfront(UMATTest)

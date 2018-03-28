@@ -1,0 +1,15 @@
+add_subdirectory(castem)
+
+install_mfront_data(tests/behavioursbricks/StandardElastoViscoPlasticity
+  StandardElastoViscoPlasticityTest1.mfront)
+install_mfront_data(tests/behavioursbricks/StandardElastoViscoPlasticity
+  StandardElastoViscoPlasticityTest2.mfront)
+install_mfront_data(tests/behavioursbricks/StandardElastoViscoPlasticity
+  StandardElastoViscoPlasticityTest3.mfront)
+install_mfront_data(tests/behavioursbricks/StandardElastoViscoPlasticity
+  StandardElastoViscoPlasticityTest4.mfront)
+install_mfront_data(tests/behavioursbricks/StandardElastoViscoPlasticity
+  StandardElastoViscoPlasticityTest5.mfront)
+install_mfront_data(tests/behavioursbricks/StandardElastoViscoPlasticity
+  StandardElastoViscoPlasticityTest6.mfront)
+

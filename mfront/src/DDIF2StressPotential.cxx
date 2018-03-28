@@ -9,7 +9,16 @@
  * or the CECILL-A licence. A copy of thoses licences are delivered
  * with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
+ * <!-- Local IspellDict: english -->
  */
+
+#include <iostream>
 
 #include <sstream>
 #include <stdexcept>
@@ -24,43 +33,114 @@
 #include "MFront/ImplicitDSLBase.hxx"
 #include "MFront/NonLinearSystemSolver.hxx"
 #include "MFront/BehaviourBrick/BrickUtilities.hxx"
+#include "MFront/BehaviourBrick/OptionDescription.hxx"
 #include "MFront/BehaviourBrick/DDIF2StressPotential.hxx"
 
 namespace mfront {
 
   namespace bbrick {
 
-    DDIF2StressPotential::DDIF2StressPotential(AbstractBehaviourDSL& dsl_,
-                                               BehaviourDescription& mb_,
-                                               const DataMap& d)
-        : HookeStressPotential(dsl_, mb_, DataMap()) {
+    /*!
+     * \brief extract a material property or an array of material properties
+     * \param[out] mps: array of material properties. If only one material
+     * property is defined in the options, then only the first entry of the
+     * array is defined.
+     * \param[out] bd: behaviour description
+     * \param[in] dsl: abstract behaviour dsl
+     * \param[in] n: material property name
+     * \param[in] an: array name
+     * \param[in] vn: variable name
+     * \param[in] vt: variable type
+     * \param[in] en: entry name
+     * \param[in] d: options passed to the brick
+     * \param[in] b: if this parameter is true, the material property must be
+     * strictly positive, otherwise, it must be strictly negative.
+     */
+    static void extractDDIF2MaterialProperty(
+        std::array<BehaviourDescription::MaterialProperty, 3u>& mps,
+        BehaviourDescription& bd,
+        AbstractBehaviourDSL& dsl,
+        const std::string& n,
+        const std::string& an,
+        const std::string& vn,
+        const std::string& vt,
+        const std::string& en,
+        const std::map<std::string, tfel::utilities::Data>& d,
+        const bool b) {
+      using ConstantMaterialProperty =
+          BehaviourDescription::ConstantMaterialProperty;
+      if (d.count(n)) {
+        const auto& s = d.at(n);
+        mps[0] = getBehaviourDescriptionMaterialProperty(dsl, n, s);
+        if (mps[0].is<ConstantMaterialProperty>()) {
+          const auto& cmp = mps[0].get<ConstantMaterialProperty>();
+          if (b) {
+            checkIsStrictlyPositive(mps[0]);
+          } else {
+            checkIsStrictlyNegative(mps[0]);
+          }
+          mps[1] = mps[2] = mps[0];
+          addParameter(bd, vn, en, 3, cmp.value);
+        } else {
+          addLocalVariable(bd, vt, vn, 3);
+        }
+      }
+      if (d.count(an)) {
+        const auto& s = d.at(an);
+        mps = getArrayOfBehaviourDescriptionMaterialProperties<3u>(dsl, an, s);
+        if (mps[0].is<ConstantMaterialProperty>()) {
+          std::vector<double> values(3u);
+          for (unsigned short i = 0; i != 3; ++i) {
+            tfel::raise_if(!mps[i].is<ConstantMaterialProperty>(),
+                           "if one  component of '" + an +
+                               "' is a constant value, all components must be "
+                               "constant values");
+            if (b) {
+              checkIsStrictlyPositive(mps[i]);
+            } else {
+              checkIsStrictlyNegative(mps[i]);
+            }
+            values[i] = mps[i].get<ConstantMaterialProperty>().value;
+          }
+          addParameter(bd, vn, en, 3, values);
+        } else {
+          addLocalVariable(bd, vt, vn, 3);
+        }
+      }
+    }  // end of extractDDIF2MaterialProperty
+
+    DDIF2StressPotential::DDIF2StressPotential()
+        : HookeStressPotential() {
+    }  // end of DDIF2StressPotential::DDIF2StressPotential
+
+    void DDIF2StressPotential::initialize(AbstractBehaviourDSL& dsl,
+                                          BehaviourDescription& bd,
+                                          const DataMap& d) {
       auto throw_if = [](const bool b, const std::string& m) {
         tfel::raise_if(b, "DDIF2StressPotential::DDIF2StressPotential: " + m);
       };
+      // checking options
+      check(d, this->getOptions());
+      //
+      HookeStressPotential::initialize(dsl, bd, d);
       // undefined hypothesis
       constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-      throw_if(this->bd.getElasticSymmetryType() != mfront::ISOTROPIC,
+      throw_if(bd.getElasticSymmetryType() != mfront::ISOTROPIC,
                "the DDIF2 brick is only usable for isotropic behaviours");
       // reserve some specific variables
-      this->bd.reserveName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-                           "ddif2bdata");
+      bd.reserveName(ModellingHypothesis::UNDEFINEDHYPOTHESIS, "ddif2bdata");
       // reserve some specific variables
-      this->bd.appendToIncludes("#include\"TFEL/Material/DDIF2Base.hxx\"");
+      bd.appendToIncludes("#include\"TFEL/Material/DDIF2Base.hxx\"");
       VariableDescription ef("strain", "ef", 3u, 0u);
       ef.description = "fracture strain";
-      this->bd.addStateVariable(uh, ef);
-      this->bd.setEntryName(uh, "ef", "FractureStrain");
+      bd.addStateVariable(uh, ef);
+      bd.setEntryName(uh, "ef", "FractureStrain");
       VariableDescription efm("strain", "efm", 3u, 0u);
       efm.description = "fracture strain";
-      this->bd.addAuxiliaryStateVariable(uh, efm);
-      this->bd.setEntryName(uh, "efm", "MaximumFractureStrain");
-      addLocalVariable(this->bd,"StrainStensor", "nf", 3u);
+      bd.addAuxiliaryStateVariable(uh, efm);
+      bd.setEntryName(uh, "efm", "MaximumFractureStrain");
+      addLocalVariable(bd, "StrainStensor", "nf", 3u);
       // data
-      checkOptionsNames(
-          d, {"fracture_stress", "fracture_stresses", "softening_slope",
-              "softening_slopes", "fracture_energy", "fracture_energies",
-              "handle_pressure_on_crack_surface"},
-          this->getName());
       throw_if((d.count("fracture_stress")) && (d.count("fracture_stresses")),
                "can't specify 'fracture_stress' and 'fracture_stresses");
       throw_if((d.count("softening_slope")) && (d.count("softening_slopes")) &&
@@ -68,150 +148,178 @@ namespace mfront {
                    (d.count("fracture_energies")),
                "only of of 'softening_slope', 'softening_slopes', "
                "'fracture_energy' and 'fracture_energies' must be specified");
-      if (d.count("fracture_stress")) {
-        const auto& s = d.at("fracture_stress");
-        if (tfel::utilities::is_convertible<double>(s)) {
-          const auto v = tfel::utilities::convert<double>(s);
-          throw_if(v < 0,
-                   "invalid fracture stress (" + std::to_string(v) + ")");
-          this->sr[0] = this->sr[1] = this->sr[2] = v;
-          addParameter(this->bd,"sigr", "FractureStress", 3, v);
-        } else if (s.is<std::string>()) {
-          const auto& f = s.get<std::string>();
-          addLocalVariable(this->bd,"stress", "sigr", 3);
-          this->sr[0] = this->dsl.handleMaterialPropertyDescription(f);
-        } else {
-          throw_if(true, "invalid type for data 'fracture_stress'");
-        }
+      extractDDIF2MaterialProperty(this->sr, bd, dsl, "fracture_stress",
+                                   "fracture_stresses", "sigr", "stress",
+                                   "FractureStress", d, true);
+      extractDDIF2MaterialProperty(this->rp, bd, dsl, "softening_slope",
+                                   "softening_slopes", "Rp", "stress",
+                                   "SofteningSlope", d, false);
+      extractDDIF2MaterialProperty(this->gc, bd, dsl, "fracture_energy",
+                                   "fracture_energies", "Gc", "real",
+                                   "FractureEnergy", d, true);
+      //         const std::string& n,
+      //         const std::string& an,
+      //         const std::string& vn,
+      //         const std::string& vt,
+      //         const std::string& en,
+      //         const std::map<std::string, tfel::utilities::Data>& d) {
+      //
+      //
+      //       if (d.count("fracture_stress")) {
+      //         const auto& s = d.at("fracture_stress");
+      //         this->sr[0] =
+      //         mfront::bbrick::getBehaviourDescriptionMaterialProperty(
+      //             dsl, "fracture_stress", s);
+      //         if
+      //         (this->sr[0].is<BehaviourDescription::ConstantMaterialProperty>())
+      //         {
+      //           const auto& cmp =
+      //               this->sr[0].get<BehaviourDescription::ConstantMaterialProperty>();
+      //           checkIsStrictlyPositive(this->sr[0]);
+      //           this->sr[1] = this->sr[2] = this->sr[0];
+      //           addParameter(bd, "sigr", "FractureStress", 3, cmp.value);
+      //         } else {
+      //           addLocalVariable(bd, "stress", "sigr", 3);
+      //         }
+      //       }
+      //       if (d.count("fracture_stresses")) {
+      //         const auto& s = d.at("fracture_stresses");
+      //         this->sr =
+      //         getArrayOfBehaviourDescriptionMaterialProperties<3u>(
+      //             dsl, "fracture_stresses", s);
+      //         if
+      //         (this->sr[0].is<BehaviourDescription::ConstantMaterialProperty>())
+      //         {
+      //           std::vector<double> values(3u);
+      //           for (unsigned short i = 0; i != 3; ++i) {
+      //             tfel::raise_if(
+      //                 !this->sr[i]
+      //                      .is<BehaviourDescription::ConstantMaterialProperty>(),
+      //                 "if one fracture stress is a constant value, all the
+      //                 fracture "
+      //                 "stresses must be a constant value");
+      //             checkIsStrictlyPositive(this->sr[i]);
+      //             values[i] =
+      //                 this->sr[i]
+      //                     .get<BehaviourDescription::ConstantMaterialProperty>()
+      //                     .value;
+      //           }
+      //           addParameter(bd, "sigr", "FractureStress", 3, values);
+      //         } else {
+      //           addLocalVariable(bd, "stress", "sigr", 3);
+      //         }
+      //       }
+      //       if (d.count("softening_slope")) {
+      //         const auto& s = d.at("softening_slope");
+      //         if (tfel::utilities::is_convertible<double>(s)) {
+      //           const auto v = tfel::utilities::convert<double>(s);
+      //           throw_if(v > 0,
+      //                    "invalid softening slope (" + std::to_string(v) +
+      //                    ")");
+      //           this->rp[0] = this->rp[1] = this->rp[2] = v;
+      //           addParameter(bd, "Rp", "SofteningSlope", 3u, v);
+      //         } else if (s.is<std::string>()) {
+      //           const auto& f = s.get<std::string>();
+      //           addLocalVariable(bd, "stress", "Rp", 3);
+      //           this->rp[0] = dsl.handleMaterialPropertyDescription(f);
+      //         } else {
+      //           throw_if(true, "invalid type for data 'softening_slope'");
+      //         }
+      //       }
+      //       if (d.count("softening_slopes")) {
+      //         const auto& s = d.at("softening_slopes");
+      //         if (tfel::utilities::is_convertible<std::vector<double>>(s)) {
+      //           const auto v =
+      //           tfel::utilities::convert<std::vector<double>>(s);
+      //           throw_if(v.size() != 3u,
+      //                    "invalid array size for "
+      //                    "the `softening_slopes` parameters");
+      //           for (unsigned short i = 0; i != 3; ++i) {
+      //             throw_if(v[i] > 0,
+      //                      "invalid softening slope (" + std::to_string(v[i])
+      //                      + ")");
+      //             this->rp[i] = v[i];
+      //           }
+      //           addParameter(bd, "Rp", "SofteningSlope", 3, v);
+      //         } else if
+      //         (tfel::utilities::is_convertible<std::vector<std::string>>(
+      //                        s)) {
+      //           const auto v =
+      //           tfel::utilities::convert<std::vector<std::string>>(s);
+      //           throw_if(v.size() != 3u,
+      //                    "invalid array size for "
+      //                    "the `softening_slopes` parameters");
+      //           addLocalVariable(bd, "stress", "Rp", 3);
+      //           for (unsigned short i = 0; i != 3; ++i) {
+      //             this->rp[i] = dsl.handleMaterialPropertyDescription(v[i]);
+      //           }
+      //         } else {
+      //           throw_if(true,
+      //                    "invalid type for data 'softening_slopes', "
+      //                    "expected a list of values, or a list of string");
+      //         }
+      //       }
+      //       const auto& s = d.at("fracture_energy");
+      //       if (tfel::utilities::is_convertible<double>(s)) {
+      //         const auto v = tfel::utilities::convert<double>(s);
+      //         throw_if(v < 0, "invalid fracture energy (" + std::to_string(v)
+      //         + ")");
+      //         this->gc[0] = this->gc[1] = this->gc[2] = v;
+      //         addParameter(bd, "Gc", "FractureEnergy", 3u, v);
+      //         } else if (s.is<std::string>()) {
+      //           const auto& f = s.get<std::string>();
+      //           addLocalVariable(bd, "stress", "Gc", 3);
+      //           this->gc[0] = dsl.handleMaterialPropertyDescription(f);
+      //         } else {
+      //           throw_if(true, "invalid type for data 'fracture_energy'");
+      //         }
+      //       }
+      //       if (d.count("fracture_energies")) {
+      //         addLocalVariable(bd, "stress", "Rp", 3);
+      //         const auto& s = d.at("fracture_energies");
+      //         if (tfel::utilities::is_convertible<std::vector<double>>(s)) {
+      //           const auto v =
+      //           tfel::utilities::convert<std::vector<double>>(s);
+      //           throw_if(v.size() != 3u,
+      //                    "invalid array size for "
+      //                    "the `fracture_energies` parameters");
+      //           for (unsigned short i = 0; i != 3; ++i) {
+      //             throw_if(v[i] < 0,
+      //                      "invalid fracture energy (" + std::to_string(v[i])
+      //                      + ")");
+      //             this->gc[i] = v[i];
+      //           }
+      //           addParameter(bd, "Gc", "FractureEnergy", 3, v);
+      //         } else if
+      //         (tfel::utilities::is_convertible<std::vector<std::string>>(
+      //                        s)) {
+      //           const auto v =
+      //           tfel::utilities::convert<std::vector<std::string>>(s);
+      //           throw_if(v.size() != 3u,
+      //                    "invalid array size for "
+      //                    "the `fracture_energies` parameters");
+      //           addLocalVariable(bd, "stress", "Gc", 3);
+      //           for (unsigned short i = 0; i != 3; ++i) {
+      //             this->gc[i] = dsl.handleMaterialPropertyDescription(v[i]);
+      //           }
+      //         } else {
+      //           throw_if(true,
+      //                    "invalid type for data 'fracture_energies', "
+      //                    "expected a list of values, or a list of string");
+      //         }
+      //       }
+
+      if (d.count("fracture_energy") || d.count("fracture_energies")) {
+        addLocalVariable(bd, "stress", "Rp", 3);
       }
-      if (d.count("fracture_stresses")) {
-        const auto& s = d.at("fracture_stresses");
-        if (tfel::utilities::is_convertible<std::vector<double>>(s)) {
-          const auto v = tfel::utilities::convert<std::vector<double>>(s);
-          throw_if(v.size() != 3u,
-                   "invalid array size for "
-                   "the `fracture_stresses` parameters");
-          for (unsigned short i = 0; i != 3; ++i) {
-            throw_if(v[i] < 0,
-                     "invalid fracture stress (" + std::to_string(v[i]) + ")");
-            this->sr[i] = v[i];
-          }
-          addParameter(this->bd,"sigr", "FractureStress", 3, v);
-        } else if (tfel::utilities::is_convertible<std::vector<std::string>>(
-                       s)) {
-          const auto v = tfel::utilities::convert<std::vector<std::string>>(s);
-          throw_if(v.size() != 3u,
-                   "invalid array size for "
-                   "the `fracture_stresses` parameters");
-          addLocalVariable(this->bd,"stress", "sigr", 3);
-          for (unsigned short i = 0; i != 3; ++i) {
-            this->sr[i] = this->dsl.handleMaterialPropertyDescription(v[i]);
-          }
-        } else {
-          throw_if(true,
-                   "invalid type for data 'fracture_stresses', "
-                   "expected a list of values, or a list of string");
-        }
-      }
-      if (d.count("softening_slope")) {
-        const auto& s = d.at("softening_slope");
-        if (tfel::utilities::is_convertible<double>(s)) {
-          const auto v = tfel::utilities::convert<double>(s);
-          throw_if(v > 0,
-                   "invalid softening slope (" + std::to_string(v) + ")");
-          this->rp[0] = this->rp[1] = this->rp[2] = v;
-          addParameter(this->bd,"Rp", "SofteningSlope", 3u, v);
-        } else if (s.is<std::string>()) {
-          const auto& f = s.get<std::string>();
-          addLocalVariable(this->bd,"stress", "Rp", 3);
-          this->rp[0] = this->dsl.handleMaterialPropertyDescription(f);
-        } else {
-          throw_if(true, "invalid type for data 'softening_slope'");
-        }
-      }
-      if (d.count("softening_slopes")) {
-        const auto& s = d.at("softening_slopes");
-        if (tfel::utilities::is_convertible<std::vector<double>>(s)) {
-          const auto v = tfel::utilities::convert<std::vector<double>>(s);
-          throw_if(v.size() != 3u,
-                   "invalid array size for "
-                   "the `softening_slopes` parameters");
-          for (unsigned short i = 0; i != 3; ++i) {
-            throw_if(v[i] > 0,
-                     "invalid softening slope (" + std::to_string(v[i]) + ")");
-            this->rp[i] = v[i];
-          }
-          addParameter(this->bd,"Rp", "SofteningSlope", 3, v);
-        } else if (tfel::utilities::is_convertible<std::vector<std::string>>(
-                       s)) {
-          const auto v = tfel::utilities::convert<std::vector<std::string>>(s);
-          throw_if(v.size() != 3u,
-                   "invalid array size for "
-                   "the `softening_slopes` parameters");
-          addLocalVariable(this->bd,"stress", "Rp", 3);
-          for (unsigned short i = 0; i != 3; ++i) {
-            this->rp[i] = this->dsl.handleMaterialPropertyDescription(v[i]);
-          }
-        } else {
-          throw_if(true,
-                   "invalid type for data 'softening_slopes', "
-                   "expected a list of values, or a list of string");
-        }
-      }
-      if (d.count("fracture_energy")) {
-        addLocalVariable(this->bd,"stress", "Rp", 3);
-        const auto& s = d.at("fracture_energy");
-        if (tfel::utilities::is_convertible<double>(s)) {
-          const auto v = tfel::utilities::convert<double>(s);
-          throw_if(v < 0,
-                   "invalid fracture energy (" + std::to_string(v) + ")");
-          this->gc[0] = this->gc[1] = this->gc[2] = v;
-          addParameter(this->bd,"Gc", "FractureEnergy", 3u, v);
-        } else if (s.is<std::string>()) {
-          const auto& f = s.get<std::string>();
-          addLocalVariable(this->bd,"stress", "Gc", 3);
-          this->gc[0] = this->dsl.handleMaterialPropertyDescription(f);
-        } else {
-          throw_if(true, "invalid type for data 'fracture_energy'");
-        }
-      }
-      if (d.count("fracture_energies")) {
-        addLocalVariable(this->bd,"stress", "Rp", 3);
-        const auto& s = d.at("fracture_energies");
-        if (tfel::utilities::is_convertible<std::vector<double>>(s)) {
-          const auto v = tfel::utilities::convert<std::vector<double>>(s);
-          throw_if(v.size() != 3u,
-                   "invalid array size for "
-                   "the `fracture_energies` parameters");
-          for (unsigned short i = 0; i != 3; ++i) {
-            throw_if(v[i] < 0,
-                     "invalid fracture energy (" + std::to_string(v[i]) + ")");
-            this->gc[i] = v[i];
-          }
-          addParameter(this->bd,"Gc", "FractureEnergy", 3, v);
-        } else if (tfel::utilities::is_convertible<std::vector<std::string>>(
-                       s)) {
-          const auto v = tfel::utilities::convert<std::vector<std::string>>(s);
-          throw_if(v.size() != 3u,
-                   "invalid array size for "
-                   "the `fracture_energies` parameters");
-          addLocalVariable(this->bd,"stress", "Gc", 3);
-          for (unsigned short i = 0; i != 3; ++i) {
-            this->gc[i] = this->dsl.handleMaterialPropertyDescription(v[i]);
-          }
-        } else {
-          throw_if(true,
-                   "invalid type for data 'fracture_energies', "
-                   "expected a list of values, or a list of string");
-        }
-      }
+
       if (d.count("handle_pressure_on_crack_surface")) {
         const auto& b = d.at("handle_pressure_on_crack_surface");
         throw_if(!b.is<bool>(),
                  "invalid type for data 'handle_pressure_on_crack_surface'");
         this->pr = b.get<bool>();
         if (this->pr) {
-          addExternalStateVariable(this->bd, "stress", "pr",
+          addExternalStateVariable(bd, "stress", "pr",
                                    "PressureOnCrackSurface");
         }
       }
@@ -219,7 +327,8 @@ namespace mfront {
 
     std::string DDIF2StressPotential::getName() const { return "DDIF2"; }
 
-    void DDIF2StressPotential::completeVariableDeclaration() const {
+    void DDIF2StressPotential::completeVariableDeclaration(
+        AbstractBehaviourDSL& dsl, BehaviourDescription& bd) const {
       using tfel::glossary::Glossary;
       using MaterialPropertyInput = BehaviourDescription::MaterialPropertyInput;
       auto throw_if = [](const bool b, const std::string& m) {
@@ -227,7 +336,7 @@ namespace mfront {
             b, "DDIF2StressPotential::completeVariableDeclaration: " + m);
       };
       std::function<std::string(const MaterialPropertyInput&)> ets =
-          [this, throw_if](const MaterialPropertyInput& i) -> std::string {
+          [bd, throw_if](const MaterialPropertyInput& i) -> std::string {
         if ((i.category == MaterialPropertyInput::TEMPERATURE) ||
             (i.category ==
              MaterialPropertyInput::AUXILIARYSTATEVARIABLEFROMEXTERNALMODEL) ||
@@ -237,7 +346,7 @@ namespace mfront {
                    (i.category == MaterialPropertyInput::PARAMETER)) {
           return "this->" + i.name;
         } else if (i.category == MaterialPropertyInput::STATICVARIABLE) {
-          return this->bd.getClassName() + "::" + i.name;
+          return bd.getClassName() + "::" + i.name;
         }
         throw_if(true, "unsupported input type for variable '" + i.name + "'");
       };
@@ -246,93 +355,74 @@ namespace mfront {
         getLogStream()
             << "DDIF2StressPotential::completeVariableDeclaration: begin\n";
       }
-      HookeStressPotential::completeVariableDeclaration();
+      HookeStressPotential::completeVariableDeclaration(dsl, bd);
       std::string init_code;
       // fracture stresses
       if (this->sr[0].empty()) {
-        addMaterialPropertyIfNotDefined(this->bd, "stress", "sigr",
-                                        "FractureStress", 3u);
-      } else if (this->sr[0]
-                     .is<std::shared_ptr<MaterialPropertyDescription>>()) {
-        if (!this->sr[1].empty()) {
-          std::ostringstream ssigr;
+        addMaterialPropertyIfNotDefined(bd, "stress", "sigr", "FractureStress",
+                                        3u);
+      } else if (!this->sr[0]
+                      .is<BehaviourDescription::ConstantMaterialProperty>()) {
+        std::cout << "HERE" << std::endl;
+        std::ostringstream ssigr;
+        if (this->sr[1].empty()) {
           for (unsigned short i = 0; i != 3; ++i) {
-            BehaviourDescription::ExternalMFrontMaterialProperty mp_sr;
-            mp_sr.mpd =
-                this->sr[i].get<std::shared_ptr<MaterialPropertyDescription>>();
             ssigr << "this->sigr[" << i << "] = ";
-            this->dsl.writeMaterialPropertyEvaluation(ssigr, mp_sr, ets);
+            dsl.writeMaterialPropertyEvaluation(ssigr, this->sr[i], ets);
             ssigr << ";\n";
-            init_code += ssigr.str();
           }
         } else {
-          BehaviourDescription::ExternalMFrontMaterialProperty mp_sr;
-          mp_sr.mpd =
-              this->sr[0].get<std::shared_ptr<MaterialPropertyDescription>>();
-          std::ostringstream ssigr;
           ssigr << "this->sigr[0] = ";
-          this->dsl.writeMaterialPropertyEvaluation(ssigr, mp_sr, ets);
+          dsl.writeMaterialPropertyEvaluation(ssigr, this->sr[0], ets);
           ssigr << ";\n";
           ssigr << "this->sigr[2] = this->sigr[1] = this->sigr[0];\n";
-          init_code += ssigr.str();
         }
+        init_code += ssigr.str();
       }
       // softening slopes
       if ((this->rp[0].empty()) && (this->gc[0].empty())) {
-        addMaterialPropertyIfNotDefined(this->bd, "stress", "Rp",
-                                        "SofteningSlope", 3u);
+        addMaterialPropertyIfNotDefined(bd, "stress", "Rp", "SofteningSlope",
+                                        3u);
       }
-      if (this->rp[0].is<std::shared_ptr<MaterialPropertyDescription>>()) {
+      if ((!this->rp[0].empty()) &&
+          (!this->rp[0].is<BehaviourDescription::ConstantMaterialProperty>())) {
+        std::ostringstream srp;
         if (!this->rp[1].empty()) {
-          std::ostringstream sRp;
           for (unsigned short i = 0; i != 3; ++i) {
-            BehaviourDescription::ExternalMFrontMaterialProperty mp_rp;
-            mp_rp.mpd =
-                this->rp[i].get<std::shared_ptr<MaterialPropertyDescription>>();
-            sRp << "this->Rp[" << i << "] = ";
-            this->dsl.writeMaterialPropertyEvaluation(sRp, mp_rp, ets);
-            sRp << ";\n";
-            init_code += sRp.str();
+            srp << "this->Rp[" << i << "] = ";
+            dsl.writeMaterialPropertyEvaluation(srp, this->rp[i], ets);
+            srp << ";\n";
           }
         } else {
-          BehaviourDescription::ExternalMFrontMaterialProperty mp_rp;
-          mp_rp.mpd = this->rp[0];
-          std::ostringstream srp;
           srp << "this->Rp[0] = ";
-          this->dsl.writeMaterialPropertyEvaluation(srp, mp_rp, ets);
+          dsl.writeMaterialPropertyEvaluation(srp, this->rp[0], ets);
           srp << ";\n";
           srp << "this->Rp[2] = this->Rp[1] = this->Rp[0];\n";
-          init_code += srp.str();
         }
+        init_code += srp.str();
       }
+      std::cout << "fracture energies" << std::endl;
       //  fracture energies
-      if (this->gc[0].is<std::shared_ptr<MaterialPropertyDescription>>()) {
+      if ((!this->gc[0].empty()) &&
+          (!this->gc[0].is<BehaviourDescription::ConstantMaterialProperty>())) {
+        std::ostringstream sgc;
         if (!this->gc[1].empty()) {
-          std::ostringstream sGc;
           for (unsigned short i = 0; i != 3; ++i) {
-            BehaviourDescription::ExternalMFrontMaterialProperty mp_gc;
-            mp_gc.mpd =
-                this->gc[i].get<std::shared_ptr<MaterialPropertyDescription>>();
-            sGc << "this->Gc[" << i << "] = ";
-            this->dsl.writeMaterialPropertyEvaluation(sGc, mp_gc, ets);
-            sGc << ";\n";
-            init_code += sGc.str();
+            sgc << "this->Gc[" << i << "] = ";
+            dsl.writeMaterialPropertyEvaluation(sgc, this->gc[0], ets);
+            sgc << ";\n";
           }
         } else {
-          BehaviourDescription::ExternalMFrontMaterialProperty mp_gc;
-          mp_gc.mpd = this->gc[0];
-          std::ostringstream sgc;
           sgc << "this->Gc[0] = ";
-          this->dsl.writeMaterialPropertyEvaluation(sgc, mp_gc, ets);
+          dsl.writeMaterialPropertyEvaluation(sgc, this->gc[0], ets);
           sgc << ";\n";
           sgc << "this->Gc[2] = this->Gc[1] = this->Gc[0];\n";
-          init_code += sgc.str();
         }
+        init_code += sgc.str();
       }
       if (!this->gc[0].empty()) {
-        addMaterialPropertyIfNotDefined(this->bd, "length", "Lc", "ElementSize",
-                                        3u);
-        const std::string young = this->bd.areElasticMaterialPropertiesDefined()
+        addMaterialPropertyIfNotDefined(bd, "length", "Lc", "ElementSize", 3u);
+        const std::string young = bd.areElasticMaterialPropertiesDefined()
                                       ? "this->young_tdt"
                                       : "this->young";
         init_code +=
@@ -348,11 +438,11 @@ namespace mfront {
       LocalDataStructure d;
       d.name = "ddif2bdata";
       d.addVariable(uh, {"StressStensor", "sig"});
-      this->bd.addLocalDataStructure(d, BehaviourData::ALREADYREGISTRED);
+      bd.addLocalDataStructure(d, BehaviourData::ALREADYREGISTRED);
       // modelling hypotheses supported by the brick
-      const auto smh = this->getSupportedModellingHypotheses();
+      const auto smh = this->getSupportedModellingHypotheses(dsl, bd);
       // modelling hypotheses supported by the behaviour
-      const auto bmh = this->bd.getModellingHypotheses();
+      const auto bmh = bd.getModellingHypotheses();
       for (const auto& h : bmh) {
         throw_if(std::find(smh.begin(), smh.end(), h) == smh.end(),
                  "unsupported hypothesis '" + ModellingHypothesis::toString(h) +
@@ -364,18 +454,18 @@ namespace mfront {
           "this->nf[idx]      = Stensor(real(0));\n"
           "this->nf[idx][idx] = real(1);\n"
           "}\n";
-      for (const auto h : this->bd.getModellingHypotheses()) {
+      for (const auto h : bd.getModellingHypotheses()) {
         CodeBlock init;
         init.code = init_code;
         if (h != ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) {
-          addMaterialPropertyIfNotDefined(this->bd, "real", "angl",
+          addMaterialPropertyIfNotDefined(bd, "real", "angl",
                                           "AngularCoordinate");
           init.code +=
               "// change to cylindrical coordinates\n"
               "DDIF2Base::cart2cyl(this->deto,this->angl);\n";
         }
-        this->bd.setCode(h, BehaviourData::BeforeInitializeLocalVariables, init,
-                         BehaviourData::CREATEORAPPEND, BehaviourData::AT_END);
+        bd.setCode(h, BehaviourData::BeforeInitializeLocalVariables, init,
+                   BehaviourData::CREATEORAPPEND, BehaviourData::AT_END);
       }
       if (getVerboseMode() >= VERBOSE_DEBUG) {
         getLogStream()
@@ -383,14 +473,15 @@ namespace mfront {
       }
     }
 
-    void DDIF2StressPotential::endTreatment() const {
+    void DDIF2StressPotential::endTreatment(AbstractBehaviourDSL& dsl,
+                                            BehaviourDescription& bd) const {
       constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       if (getVerboseMode() >= VERBOSE_DEBUG) {
         getLogStream() << "DDIF2StressPotential::endTreatment: begin\n";
       }
-      HookeStressPotential::endTreatment();
+      HookeStressPotential::endTreatment(dsl, bd);
       // implicit equation associated with the crack strains
-      const auto& idsl = dynamic_cast<const ImplicitDSLBase&>(this->dsl);
+      const auto& idsl = dynamic_cast<const ImplicitDSLBase&>(dsl);
       CodeBlock integrator;
       integrator.code =
           "feel += "
@@ -399,14 +490,13 @@ namespace mfront {
           "((this->def)[2])*(this->nf[2]);\n";
       if ((idsl.getSolver().usesJacobian()) &&
           (!idsl.getSolver().requiresNumericalJacobian())) {
-        const std::string young = this->bd.areElasticMaterialPropertiesDefined()
+        const std::string young = bd.areElasticMaterialPropertiesDefined()
                                       ? "this->young_tdt"
                                       : "this->young";
-        const std::string lambda =
-            this->bd.areElasticMaterialPropertiesDefined()
-                ? "this->lambda_tdt"
-                : "this->sebdata.lambda";
-        const std::string mu = this->bd.areElasticMaterialPropertiesDefined()
+        const std::string lambda = bd.areElasticMaterialPropertiesDefined()
+                                       ? "this->lambda_tdt"
+                                       : "this->sebdata.lambda";
+        const std::string mu = bd.areElasticMaterialPropertiesDefined()
                                    ? "this->mu_tdt"
                                    : "this->sebdata.mu";
         integrator.code += "this->ddif2bdata.sig=(" + lambda +
@@ -445,10 +535,10 @@ namespace mfront {
         integrator.code += "}\n";
       }
       /* fracture */
-      this->bd.setCode(uh, BehaviourData::Integrator, integrator,
-                       BehaviourData::CREATEORAPPEND, BehaviourData::AT_END);
+      bd.setCode(uh, BehaviourData::Integrator, integrator,
+                 BehaviourData::CREATEORAPPEND, BehaviourData::AT_END);
       /* update auxiliary state variables */
-      for (const auto h : this->bd.getModellingHypotheses()) {
+      for (const auto h : bd.getModellingHypotheses()) {
         CodeBlock uasv;
         uasv.code =
             "this->efm[0]=std::max(this->efm[0],this->ef[0]);\n"
@@ -459,14 +549,47 @@ namespace mfront {
               "// change to cartesian coordinates\n"
               "DDIF2Base::cyl2cart(this->sig,this->angl);\n";
         }
-        this->bd.setCode(h, BehaviourData::UpdateAuxiliaryStateVariables, uasv,
-                         BehaviourData::CREATEORAPPEND, BehaviourData::AT_END);
+        bd.setCode(h, BehaviourData::UpdateAuxiliaryStateVariables, uasv,
+                   BehaviourData::CREATEORAPPEND, BehaviourData::AT_END);
       }
     }  // end of DDIF2StressPotential::endTreatment
 
+    std::vector<OptionDescription> DDIF2StressPotential::getOptions() const {
+      auto opts = HookeStressPotential::getOptions();
+      opts.emplace_back("fracture_stress",
+                        "fracture stress, assumed egal in all directions",
+                        OptionDescription::MATERIALPROPERTY, std::vector<std::string>{},
+                        std::vector<std::string>{"fracture_stresses"});
+      opts.emplace_back(
+          "fracture_stresses", "fracture stresses in all directions",
+          OptionDescription::ARRAYOFMATERIALPROPERTIES, std::vector<std::string>{},
+          std::vector<std::string>{"fracture_stress"});
+      opts.emplace_back("softening_slope",
+                        "softening slope, assumed egal in all directions",
+                        OptionDescription::MATERIALPROPERTY, std::vector<std::string>{},
+                        std::vector<std::string>{"softening_slopes"});
+      opts.emplace_back(
+          "softening_slopes", "softening slopes in all directions",
+          OptionDescription::ARRAYOFMATERIALPROPERTIES, std::vector<std::string>{},
+          std::vector<std::string>{"softening_slope"});
+      opts.emplace_back("fracture_energy",
+                        "fracture energy, assumed egal in all directions",
+                        OptionDescription::MATERIALPROPERTY, std::vector<std::string>{},
+                        std::vector<std::string>{"fracture_energies"});
+      opts.emplace_back(
+          "fracture_energies", "fracture energies in all directions",
+          OptionDescription::ARRAYOFMATERIALPROPERTIES, std::vector<std::string>{},
+          std::vector<std::string>{"fracture_energy"});
+      opts.emplace_back("handle_pressure_on_crack_surface",
+                        "if true, a pressure is applied on the crack surface",
+                        OptionDescription::BOOLEAN);
+      return opts;
+    }  // end of DDIF2StressPotential::getOptions
+
     std::vector<tfel::material::ModellingHypothesis::Hypothesis>
-    DDIF2StressPotential::getSupportedModellingHypotheses() const {
-      const auto mh = this->dsl.getDefaultModellingHypotheses();
+    DDIF2StressPotential::getSupportedModellingHypotheses(
+        AbstractBehaviourDSL& dsl, BehaviourDescription&) const {
+      const auto mh = dsl.getDefaultModellingHypotheses();
       return {mh.begin(), mh.end()};
     }  // end of DDIF2StressPotential::getSupportedModellingHypothesis
 

@@ -30,10 +30,7 @@ namespace mfront {
     }  // end of StressPotentialFactory::addGenerator
 
     std::shared_ptr<StressPotential> StressPotentialFactory::generate(
-        const std::string& n,
-        AbstractBehaviourDSL& dsl,
-        BehaviourDescription& bd,
-        const DataMap& d) const {
+        const std::string& n) const {
       const auto p = this->generators.find(n);
       if (p == this->generators.end()) {
         tfel::raise(
@@ -41,20 +38,16 @@ namespace mfront {
             "no generator named '" +
             n + "'");
       }
-      return p->second(dsl, bd, d);
+      return p->second();
     }  // end of StressPotentialFactory::generate
 
     StressPotentialFactory::StressPotentialFactory() {
-      this->addGenerator(
-          "Hooke", [](AbstractBehaviourDSL& dsl, BehaviourDescription& bd,
-                      const DataMap& d) {
-            return std::make_shared<bbrick::HookeStressPotential>(dsl, bd, d);
-          });
-      this->addGenerator(
-          "DDIF2", [](AbstractBehaviourDSL& dsl, BehaviourDescription& bd,
-                      const DataMap& d) {
-            return std::make_shared<bbrick::DDIF2StressPotential>(dsl, bd, d);
-          });
+      this->addGenerator("Hooke", []() {
+        return std::make_shared<bbrick::HookeStressPotential>();
+      });
+      this->addGenerator("DDIF2", [] {
+        return std::make_shared<bbrick::DDIF2StressPotential>();
+      });
     }  // end of StressPotentialFactory::StressPotentialFactory
 
     StressPotentialFactory::~StressPotentialFactory() = default;

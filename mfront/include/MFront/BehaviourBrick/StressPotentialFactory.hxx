@@ -12,14 +12,8 @@
 #include <string>
 #include <memory>
 #include <functional>
-#include "TFEL/Utilities/Data.hxx"
 
 namespace mfront {
-
-  // forward declaration
-  struct AbstractBehaviourDSL;
-  // forward declaration
-  struct BehaviourDescription;
 
   namespace bbrick {
 
@@ -31,10 +25,7 @@ namespace mfront {
      */
     struct StressPotentialFactory {
       //! a simple alias
-      using DataMap = std::map<std::string, tfel::utilities::Data>;
-      //! a simple alias
-      using Generator = std::function<std::shared_ptr<StressPotential>(
-          AbstractBehaviourDSL&, BehaviourDescription&, const DataMap&)>;
+      using Generator = std::function<std::shared_ptr<StressPotential>()>;
       //! \return the uniq instance of the class
       static StressPotentialFactory& getFactory();
       /*!
@@ -49,10 +40,7 @@ namespace mfront {
        * \param[in] bd: behaviour description
        * \param[in] p: parameters of the stress potential
        */
-      std::shared_ptr<StressPotential> generate(const std::string&,
-                                                AbstractBehaviourDSL&,
-                                                BehaviourDescription&,
-                                                const DataMap&) const;
+      std::shared_ptr<StressPotential> generate(const std::string&) const;
 
      private:
       //! default constructor

@@ -85,19 +85,20 @@ nobase_include_HEADERS= MFront/MFront.hxx                          \
 			MFront/AbstractBehaviourBrick.hxx                     \
 			MFront/BehaviourBrickBase.hxx                         \
 			MFront/AbstractBehaviourBrickFactory.hxx              \
-			MFront/BehaviourBrick/BrickUtilities.hxx          \
+			MFront/BehaviourBrick/OptionDescription.hxx           \
+			MFront/BehaviourBrick/BrickUtilities.hxx              \
+			MFront/BehaviourBrick/BrickUtilities.ixx              \
 			MFront/BehaviourBrick/ProviderIdentifier.hxx          \
 			MFront/BehaviourBrick/Requirement.hxx                 \
 			MFront/BehaviourBrick/RequirementManager.hxx          \
 			MFront/BehaviourBrick/Provider.hxx                    \
 			MFront/BehaviourBrick/StressPotential.hxx          \
-			MFront/BehaviourBrick/StressPotentialBase.hxx          \
 			MFront/BehaviourBrick/HookeStressPotential.hxx     \
 			MFront/BehaviourBrick/DDIF2StressPotential.hxx     \
 			MFront/BehaviourBrick/StressPotentialFactory.hxx   \
-			MFront/BehaviourBrick/InelasticPotential.hxx          \
-			MFront/BehaviourBrick/InelasticPotentialBase.hxx      \
-			MFront/BehaviourBrick/InelasticPotentialFactory.hxx   \
+			MFront/BehaviourBrick/InelasticFlow.hxx            \
+			MFront/BehaviourBrick/InelasticFlowBase.hxx        \
+			MFront/BehaviourBrick/InelasticFlowFactory.hxx     \
 			MFront/BehaviourBrick/StressCriterion.hxx             \
 			MFront/BehaviourBrick/MisesStressCriterion.hxx        \
 			MFront/BehaviourBrick/StressCriterionFactory.hxx      \

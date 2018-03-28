@@ -3,11 +3,18 @@
  * \brief
  * \author Thomas Helfer
  * \date   20/03/2018
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MFRONT_BEHAVIOURBRICK_BRICKUTILITIES_HXX
 #define LIB_MFRONT_BEHAVIOURBRICK_BRICKUTILITIES_HXX
 
+#include <array>
 #include <string>
 #include "TFEL/Utilities/Data.hxx"
 #include "MFront/MFrontConfig.hxx"
@@ -15,14 +22,10 @@
 #include "MFront/BehaviourDescription.hxx"
 
 namespace tfel {
-
   namespace glossary {
-
     // forward declaration
     struct GlossaryEntry;
-
   }  // end of namespace glossary
-
 }  // end of namespace tfel
 
 namespace mfront {
@@ -51,6 +54,21 @@ namespace mfront {
     getBehaviourDescriptionMaterialProperty(AbstractBehaviourDSL&,
                                             const std::string&,
                                             const tfel::utilities::Data&);
+    /*!
+     * \brief extract a material property usable in a behaviour from a value
+     * \parambricksbricksbricks[in]
+     * dsl:bricksbricksbricksbricksbricksbricksbricks behaviour dsl
+     * \tparam N: array size
+     * \param[in] n: material property name
+     * \param[in] d: data
+     */
+    template <unsigned short N>
+    MFRONT_VISIBILITY_EXPORT
+        std::array<BehaviourDescription::MaterialProperty, N>
+        getArrayOfBehaviourDescriptionMaterialProperties(
+            AbstractBehaviourDSL&,
+            const std::string&,
+            const tfel::utilities::Data&);
     /*!
      * \brief add a new material property
      * \param[in] bd: behaviour description
@@ -211,5 +229,7 @@ namespace mfront {
   }  // end of namespace bbrick
 
 }  // end of namespace mfront
+
+#include "MFront/BehaviourBrick/BrickUtilities.ixx"
 
 #endif /* LIB_MFRONT_BEHAVIOURBRICK_BRICKUTILITIES_HXX */

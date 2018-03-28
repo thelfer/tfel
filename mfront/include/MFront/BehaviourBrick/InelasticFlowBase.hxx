@@ -1,15 +1,15 @@
 /*!
- * \file   include/MFront/BehaviourBrick/InelasticPotentialBase.hxx
+ * \file   include/MFront/BehaviourBrick/InelasticFlowBase.hxx
  * \brief
  * \author Thomas Helfer
  * \date   15/03/2018
  */
 
-#ifndef LIB_MFRONT_BEHAVIOURBRICK_INELASTICPOTENTIALBASE_HXX
-#define LIB_MFRONT_BEHAVIOURBRICK_INELASTICPOTENTIALBASE_HXX
+#ifndef LIB_MFRONT_BEHAVIOURBRICK_INELASTICFLOWBASE_HXX
+#define LIB_MFRONT_BEHAVIOURBRICK_INELASTICFLOWBASE_HXX
 
 #include <vector>
-#include "MFront/BehaviourBrick/InelasticPotential.hxx"
+#include "MFront/BehaviourBrick/InelasticFlow.hxx"
 
 namespace mfront {
 
@@ -19,14 +19,14 @@ namespace mfront {
      * \brief an helper class which provide common method for all inelastic
      * potentials.
      */
-    struct InelasticPotentialBase : InelasticPotential {
+    struct InelasticFlowBase : InelasticFlow {
       void setStressCriterion(const std::shared_ptr<StressCriterion>&) override;
       void setIsotropicHardeningRule(
           const std::shared_ptr<IsotropicHardeningRule>&) override;
       void addKinematicHardeningRule(
           const std::shared_ptr<KinematicHardeningRule>&) override;
       //! destructor
-      ~InelasticPotentialBase() override;
+      ~InelasticFlowBase() override;
 
      private:
       //! stress criterion
@@ -35,10 +35,10 @@ namespace mfront {
       std::shared_ptr<IsotropicHardeningRule> ihr;
       //! kinematic hardening rules
       std::vector<std::shared_ptr<KinematicHardeningRule>> khrs;
-    };  // end of struct InelasticPotentialBase
+    };  // end of struct InelasticFlowBase
 
   }  // end of namespace bbrick
 
 }  // end of namespace mfront
 
-#endif /* LIB_MFRONT_BEHAVIOURBRICK_INELASTICPOTENTIALBASE_HXX */
+#endif /* LIB_MFRONT_BEHAVIOURBRICK_INELASTICFLOWBASE_HXX */

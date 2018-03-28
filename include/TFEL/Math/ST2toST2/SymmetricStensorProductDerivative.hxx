@@ -67,6 +67,43 @@ namespace tfel{
        (StensorTraits<StensorType1>::dime==3u)&&
        (StensorTraits<StensorType2>::dime==3u)),
       st2tost2<3u,decltype(a[0]*b[0])>>::type;
+
+    /*!
+     * \brief compute the derivative of the product
+     * \(a\,\dot\,b\,\dot\,a\) with respect to \(b\), where \(a\) and
+     * \(b) are two symmetric tensor.
+     * \param[in] a: the first symmetric tensor
+     */
+    template <typename StensorType>
+    auto symmetric_product_derivative_daba_db(const StensorType& a) ->
+        typename std::enable_if<
+            ((tfel::meta::Implements<StensorType, StensorConcept>::cond) &&
+             (StensorTraits<StensorType>::dime == 1u)),
+            st2tost2<1u, decltype(a[0] * a[0])>>::type;
+    /*!
+     * \brief compute the derivative of the product
+     * \(a\,\dot\,b\,\dot\,a\) with respect to \(b\), where \(a\) and
+     * \(b) are two symmetric tensor.
+     * \param[in] a: the first symmetric tensor
+     */
+    template <typename StensorType>
+    auto symmetric_product_derivative_daba_db(const StensorType& a) ->
+        typename std::enable_if<
+            ((tfel::meta::Implements<StensorType, StensorConcept>::cond) &&
+             (StensorTraits<StensorType>::dime == 2u)),
+            st2tost2<2u, decltype(a[0] * a[0])>>::type;
+    /*!
+     * \brief compute the derivative of the product
+     * \(a\,\dot\,b\,\dot\,a\) with respect to \(b\), where \(a\) and
+     * \(b) are two symmetric tensor.
+     * \param[in] a: the first symmetric tensor
+     */
+    template <typename StensorType>
+    auto symmetric_product_derivative_daba_db(const StensorType& a) ->
+        typename std::enable_if<
+            ((tfel::meta::Implements<StensorType, StensorConcept>::cond) &&
+             (StensorTraits<StensorType>::dime == 3u)),
+            st2tost2<3u, decltype(a[0] * a[0])>>::type;
 		      
   } // end of namespace math
 

@@ -115,15 +115,15 @@ libTFELMFront_la_SOURCES = MFront.cxx                                           
 		           LocalDataStructure.cxx                                 \
 		           AbstractBehaviourBrickFactory.cxx                      \
 		           UMATInterfaceBase.cxx                                  \
-		           BrickUtilities.cxx                                 \
+		           OptionDescription.cxx                                  \
+		           BrickUtilities.cxx                                     \
 		           StressPotential.cxx                                 \
-		           StressPotentialBase.cxx                                 \
 		           HookeStressPotential.cxx                                 \
 		           DDIF2StressPotential.cxx                                 \
 		           StressPotentialFactory.cxx                          \
-		           InelasticPotential.cxx                                 \
-		           InelasticPotentialBase.cxx                             \
-		           InelasticPotentialFactory.cxx                          \
+		           InelasticFlow.cxx                                 \
+		           InelasticFlowBase.cxx                             \
+		           InelasticFlowFactory.cxx                          \
 		           StressCriterion.cxx                                    \
 		           MisesStressCriterion.cxx                               \
 		           StressCriterionFactory.cxx

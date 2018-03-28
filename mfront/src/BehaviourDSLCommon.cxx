@@ -549,7 +549,7 @@ namespace mfront {
         (this->mb.getBehaviourType() == BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR)) {
       if ((mh.find(ModellingHypothesis::PLANESTRESS) != mh.end()) ||
           (mh.find(ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS) != mh.end())) {
-        if (this->mb.hasAttribute(BehaviourDescription::requiresStiffnessTensor)) {
+        if (this->mb.getAttribute(BehaviourDescription::requiresStiffnessTensor,false)) {
           if (!this->mb.hasAttribute(BehaviourDescription::requiresUnAlteredStiffnessTensor)) {
             this->throwRuntimeError("BehaviourDSLCommon::completeVariableDeclaration",
                                     "No option was given to the '@RequireStiffnessTensor' keyword.\n"
@@ -1702,7 +1702,7 @@ namespace mfront {
       this->treatStiffnessTensorOption();
     }
     this->readElasticMaterialProperties();
-    this->mb.setAttribute(BehaviourDescription::computesStiffnessTensor, true, true);
+    this->mb.setAttribute(BehaviourDescription::computesStiffnessTensor, true, false);
   }  // end of BehaviourDSLCommon::treatComputeStiffnessTensor
 
   void BehaviourDSLCommon::treatHillTensor() {
@@ -3930,8 +3930,9 @@ namespace mfront {
       }
       out << e.getCxxFormula(mi);
     } else {
-      this->throwRuntimeError("BehaviourDSLCommon::writeMaterialPropertyEvaluation",
-                              "unsupported material property type");
+      this->throwRuntimeError(
+          "BehaviourDSLCommon::writeMaterialPropertyEvaluation",
+          "unsupported material property type");
     }
   }  // end of BehaviourDSLCommon::writeMaterialPropertyEvaluation
 

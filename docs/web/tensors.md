@@ -264,10 +264,48 @@ This can be computed by the `symmetric_product` function.
 
 ### Derivative
 
-The derivative of the symmetric
+The derivative of the symmetric product
 \(\tenseur{a}\,\cdot_{s}\,\tenseur{b}\) with respect to
 \(\tenseur{a}\) can be computed using the `st2tost2::stpd` static
 method with takes \(\tenseur{b}\) as argument.
+
+## Second symmetric product of two symmetric second order tensors \(\tenseur{a}\,\cdot\,\tenseur{b}\,\cdot\,\tenseur{a}\)
+
+Another symmetric product of two symmetric second order tensors
+\(\tenseur{a}\) and \(\tenseur{b}\) can be defined as follows:
+
+\[
+\tenseur{a}\,\cdot\,\tenseur{b}\,\cdot\,\tenseur{a}
+\]
+
+This can be computed by the `symmetric_product_aba` function.
+
+### Derivative
+
+The derivative of
+\(\tenseur{a}\,\cdot\,\tenseur{b}\,\cdot\,\tenseur{a}\) with respect to
+\(\tenseur{a}\) can be computed using the
+`symmetric_product_derivative_daba_da` function.
+
+The derivative of
+\(\tenseur{a}\,\cdot\,\tenseur{b}\,\cdot\,\tenseur{a}\) with respect to
+\(\tenseur{b}\) can be computed using the
+`symmetric_product_derivative_daba_db` function.
+
+### Computation of \(\tenseur{a}\,\underline{\overline{\otimes}}\,\tenseur{a}\)
+
+By definition, given a symmetric tensor \(\tenseur{a}\), the tensor
+product \(\tenseur{a}\,\underline{\overline{\otimes}}\,\tenseur{a}\) is
+the fourth order tensor (of type `st2tost2`) which satisfies, for any
+tensor \(\tenseur{b}\):
+\[
+\left(\tenseur{a}\,\underline{\overline{\otimes}}\,\tenseur{a}\right)\,\colon\,\tenseur{b}=
+\tenseur{a}\,\cdot\,\tenseur{b}\,\cdot\,\tenseur{a}
+\]
+
+\(\tenseur{a}\,\underline{\overline{\otimes}}\,\tenseur{a}\) can thus
+readily be computed using the `symmetric_product_derivative_daba_db`
+function.
 
 # Special functions
 
