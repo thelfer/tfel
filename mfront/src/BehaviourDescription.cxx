@@ -564,10 +564,10 @@ namespace mfront
   bool BehaviourDescription::areMaterialPropertiesDependantOnStateVariables(const std::vector<MaterialProperty>& mps) const{
     for(const auto& mp : mps){
       if(this->isMaterialPropertyDependantOnStateVariables(mp)){
-	return true;
+        return true;
       }
     }
-    return true;
+    return false;
   } // end of BehaviourDescription::areMaterialPropertiesDependantOnStateVariables
   
   const std::vector<BehaviourDescription::MaterialProperty>&
