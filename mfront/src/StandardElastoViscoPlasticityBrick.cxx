@@ -16,6 +16,13 @@
 
 namespace mfront {
 
+  static std::string getId(const size_t i, const size_t m) {
+    if (m == 1) {
+      return "";
+    }
+    return std::to_string(i);
+  } // end of getId
+
   StandardElastoViscoPlasticityBrick::StandardElastoViscoPlasticityBrick(
       AbstractBehaviourDSL& dsl_,
       BehaviourDescription& mb_,
@@ -48,22 +55,24 @@ namespace mfront {
           raise("the stress potential has already been defined");
         }
         this->stress_potential = spf.generate(ds.name);
-        this->stress_potential->initialize(this->dsl, this->bd, ds.data);
+        this->stress_potential->initialize(this->bd, this->dsl, ds.data);
       } else if (e.first == "inelastic_flow") {
-        auto append_flow = [this, &iff, getDataStructure](const Data& ifd) {
+        auto append_flow = [this, &iff, getDataStructure](const Data& ifd,
+                                                          const size_t msize) {
           const auto ds = getDataStructure("inelatic_flow", ifd);
           auto iflow = iff.generate(ds.name);
-          iflow->initialize(this->dsl, this->bd, ds.data);
+          iflow->initialize(this->bd, this->dsl,
+                            getId(this->flows.size(), msize), ds.data);
           this->flows.push_back(iflow);
         };
         if (e.second.is<std::vector<Data>>()) {
           // multiple inelastic flows are defined
           const auto& ifs = e.second.get<std::vector<Data>>();
           for (const auto& iflow : ifs) {
-            append_flow(iflow);
+            append_flow(iflow, ifs.size());
           }
         } else {
-          append_flow(e.second);
+          append_flow(e.second, 1u);
         }
       } else {
         raise("unsupported entry '" + e.first + "'");
@@ -80,18 +89,31 @@ namespace mfront {
 
   std::vector<StandardElastoViscoPlasticityBrick::Hypothesis>
   StandardElastoViscoPlasticityBrick::getSupportedModellingHypotheses() const {
-    return this->stress_potential->getSupportedModellingHypotheses(this->dsl,
-                                                                   this->bd);
+    return this->stress_potential->getSupportedModellingHypotheses(this->bd,
+                                                                   this->dsl);
   }
 
   void StandardElastoViscoPlasticityBrick::completeVariableDeclaration() const {
-    this->stress_potential->completeVariableDeclaration(this->dsl, this->bd);
+    this->stress_potential->completeVariableDeclaration(this->bd, this->dsl);
+    auto i = size_t {};
+    for(const auto& f : this->flows){
+      f->completeVariableDeclaration(this->bd, this->dsl, getId(i,this->flows.size()));
+      ++i;
+    }
   }  // end of StandardElastoViscoPlasticityBrick::completeVariableDeclaration
 
   void StandardElastoViscoPlasticityBrick::endTreatment() const {
-    this->stress_potential->endTreatment(this->dsl, this->bd);
+    this->stress_potential->endTreatment(this->bd, this->dsl);
+    this->stress_potential->writeStressDerivatives(this->bd);
+    auto i = size_t {};
+    for(const auto& f : this->flows){
+      f->endTreatment(this->bd, this->dsl, *(this->stress_potential),
+                      getId(i, this->flows.size()));
+      ++i;
+    }
   }  // end of StandardElastoViscoPlasticityBrick::endTreatment
 
   StandardElastoViscoPlasticityBrick::~StandardElastoViscoPlasticityBrick() =
       default;
-}
+
+} // end of namespace mfront

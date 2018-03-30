@@ -19,6 +19,7 @@
 #include <string>
 #include <vector>
 #include "TFEL/Material/ModellingHypothesis.hxx"
+#include "MFront/VariableDescription.hxx"
 #include "MFront/BehaviourDescription.hxx"
 
 namespace tfel {
@@ -55,12 +56,12 @@ namespace mfront {
       //! \return the stress potential option description
       virtual std::vector<OptionDescription> getOptions() const = 0;
       /*!
-       * \param[in] dsl: abstract behaviour dsl
-       * \param[in] bd: behaviour description
+       * \param[in,out] bd: behaviour description
+       * \param[in,out] dsl: abstract behaviour dsl
        * \param[in] d: options
        */
-      virtual void initialize(AbstractBehaviourDSL&,
-                              BehaviourDescription&,
+      virtual void initialize(BehaviourDescription&,
+                              AbstractBehaviourDSL&,
                               const DataMap&) = 0;
       /*!
        * \brief This method returns the list of supported modelling
@@ -79,25 +80,37 @@ namespace mfront {
        *   modelling hypotheses selection. If all the stress potentials returns
        *   an empty list, a set of default modelling hypotheses is selected.
        *
+       * \param[in/out] bd: behaviour description
        * \param[in] dsl: abstract behaviour dsl
-       * \param[in] bd: behaviour description
        */
       virtual std::vector<Hypothesis> getSupportedModellingHypotheses(
-          AbstractBehaviourDSL&, BehaviourDescription&) const = 0;
-      /*!
-       * \brief method called at the end of the input file processing
-       * \param[in] dsl: abstract behaviour dsl
-       * \param[in] bd: behaviour description
-       */
-      virtual void endTreatment(AbstractBehaviourDSL&,
-                                BehaviourDescription&) const = 0;
+          const BehaviourDescription&, const AbstractBehaviourDSL&) const = 0;
       /*!
        * \brief complete the variable description
        * \param[in] dsl: abstract behaviour dsl
-       * \param[in] bd: behaviour description
+
        */
-      virtual void completeVariableDeclaration(AbstractBehaviourDSL&,
-                                               BehaviourDescription&) const = 0;
+      virtual void completeVariableDeclaration(
+          BehaviourDescription&, const AbstractBehaviourDSL&) const = 0;
+      /*!
+       * \brief method called at the end of the input file processing
+       * \param[in/out] bd: behaviour description
+       * \param[in] dsl: abstract behaviour dsl
+       */
+      virtual void endTreatment(BehaviourDescription&,
+                                const AbstractBehaviourDSL&) const = 0;
+      /*!
+       * \return the list of integration variables defined by the potential for
+       * which a derivative of the stress with respect to this variable exists.
+       */
+      virtual VariableDescriptionContainer getStressVariables() const = 0;
+      /*!
+       * \brief add the definition of the stress derivatives with respect to
+       * the integration variables used to define it. This definition is added
+       * to the `BehaviourData::Integrator` code block.
+       * \param[in/out] bd: behaviour description
+       */
+      virtual void writeStressDerivatives(BehaviourDescription&) const = 0;
       //! destructor
       virtual ~StressPotential();
     };  // end of struct StressPotential

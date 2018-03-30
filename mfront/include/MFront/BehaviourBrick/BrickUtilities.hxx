@@ -17,16 +17,10 @@
 #include <array>
 #include <string>
 #include "TFEL/Utilities/Data.hxx"
+#include "TFEL/Glossary/GlossaryEntry.hxx"
 #include "MFront/MFrontConfig.hxx"
 #include "MFront/AbstractBehaviourDSL.hxx"
 #include "MFront/BehaviourDescription.hxx"
-
-namespace tfel {
-  namespace glossary {
-    // forward declaration
-    struct GlossaryEntry;
-  }  // end of namespace glossary
-}  // end of namespace tfel
 
 namespace mfront {
 
@@ -44,31 +38,143 @@ namespace mfront {
         const std::vector<std::string>&,
         const std::string&);
     /*!
-     * \brief extract a material property usable in a behaviour from a value
-     * \parambricksbricksbricks[in]
-     * dsl:bricksbricksbricksbricksbricksbricksbricks behaviour dsl
+     * \brief extract a material property usable in a behaviour from a value. If
+     * the material property is handled through an external mfront file, the
+     * generation of the associated sources is added to the compilation process
+     * handled by the DSL.
+     * \param[in,out] bd: behaviour description
+     * \param[in,out] dsl: behaviour dsl
      * \param[in] n: material property name
+     * \param[in] en: external name
      * \param[in] d: data
+     * \param[in] bp: if true, a parameter is created if the material property
+     * is constant.
+     * \param[in] blv: if true, a local variable is created if no parameter is
+     * created.
      */
     MFRONT_VISIBILITY_EXPORT BehaviourDescription::MaterialProperty
-    getBehaviourDescriptionMaterialProperty(AbstractBehaviourDSL&,
+    getBehaviourDescriptionMaterialProperty(BehaviourDescription&,
+                                            AbstractBehaviourDSL&,
                                             const std::string&,
-                                            const tfel::utilities::Data&);
+                                            const std::string&,
+                                            const tfel::utilities::Data&,
+                                            const bool,
+                                            const bool);
     /*!
-     * \brief extract a material property usable in a behaviour from a value
-     * \parambricksbricksbricks[in]
-     * dsl:bricksbricksbricksbricksbricksbricksbricks behaviour dsl
-     * \tparam N: array size
+     * \brief extract a material property usable in a behaviour from a value. If
+     * the material property is handled through an external mfront file, the
+     * generation of the associated sources is added to the compilation process
+     * handled by the DSL.
+     * \param[in,out] bd: behaviour description
+     * \param[in,out] dsl: behaviour dsl
+     * \param[in] n: material property name
+     * \param[in] g: glossary entry
+     * \param[in] d: data
+     * \param[in] bp: if true, a parameter is created if the material property
+     * is constant.
+     * \param[in] blv: if true, a local variable is created if no parameter is
+     * created.
+     */
+    MFRONT_VISIBILITY_EXPORT BehaviourDescription::MaterialProperty
+    getBehaviourDescriptionMaterialProperty(
+        BehaviourDescription&,
+        AbstractBehaviourDSL&,
+        const std::string&,
+        const tfel::glossary::GlossaryEntry&,
+        const tfel::utilities::Data&,
+        const bool,
+        const bool);
+    /*!
+     * \brief extract a material property usable in a behaviour from a value. If
+     * the material property is handled through an external mfront file, the
+     * generation of the associated sources is added to the compilation process
+     * handled by the DSL.
+     * \param[in,out] bd: behaviour description
+     * \param[in,out] dsl: behaviour dsl
      * \param[in] n: material property name
      * \param[in] d: data
+     * \param[in] bp: if true, a parameter is created if the material property
+     * is constant.
+     * \param[in] blv: if true, a local variable is created if no parameter is
+     * created.
+     */
+    MFRONT_VISIBILITY_EXPORT BehaviourDescription::MaterialProperty
+    getBehaviourDescriptionMaterialProperty(BehaviourDescription&,
+                                            AbstractBehaviourDSL&,
+                                            const std::string&,
+                                            const tfel::utilities::Data&,
+                                            const bool,
+                                            const bool);
+    /*!
+     * \brief extract a material property usable in a behaviour from a value
+     * \tparam N: array size
+     * \param[in,out] bd: behaviour description
+     * \param[in,out] dsl: behaviour dsl
+     * \param[in] n: material property name
+     * \param[in] en: external name
+     * \param[in] d: data
+     * \param[in] bp: if true, a parameter is created if the material property
+     * is constant.
+     * \param[in] blv: if true, a local variable is created if no parameter is
+     * created.
      */
     template <unsigned short N>
     MFRONT_VISIBILITY_EXPORT
         std::array<BehaviourDescription::MaterialProperty, N>
         getArrayOfBehaviourDescriptionMaterialProperties(
+            BehaviourDescription&,
             AbstractBehaviourDSL&,
             const std::string&,
-            const tfel::utilities::Data&);
+            const std::string&,
+            const tfel::utilities::Data&,
+            const bool,
+            const bool);
+    /*!
+     * \brief extract a material property usable in a behaviour from a value
+     * \tparam N: array size
+     * \param[in,out] bd: behaviour description
+     * \param[in,out] dsl: behaviour dsl
+     * \param[in] n: material property name
+     * \param[in] g: glossary entry
+     * \param[in] d: data
+     * \param[in] bp: if true, a parameter is created if the material property
+     * is constant.
+     * \param[in] blv: if true, a local variable is created if no parameter is
+     * created.
+     */
+    template <unsigned short N>
+    MFRONT_VISIBILITY_EXPORT
+        std::array<BehaviourDescription::MaterialProperty, N>
+        getArrayOfBehaviourDescriptionMaterialProperties(
+            BehaviourDescription&,
+            AbstractBehaviourDSL&,
+            const std::string&,
+            const tfel::glossary::GlossaryEntry&,
+            const tfel::utilities::Data&,
+            const bool,
+            const bool);
+    /*!
+     * \brief extract a material property usable in a behaviour from a value
+     * \tparam N: array size
+     * \param[in,out] bd: behaviour description
+     * \param[in,out] dsl: behaviour dsl
+     * \param[in] n: material property name
+     * \param[in] d: data
+     * \param[in] bp: if true, a parameter is created if the material property
+     * is constant.
+     * \param[in] blv: if true, a local variable is created if no parameter is
+     * created.
+     */
+    template <unsigned short N>
+    MFRONT_VISIBILITY_EXPORT
+        std::array<BehaviourDescription::MaterialProperty, N>
+        getArrayOfBehaviourDescriptionMaterialProperties(
+            BehaviourDescription&,
+            AbstractBehaviourDSL&,
+            const std::string&,
+            const tfel::utilities::Data&,
+            const bool,
+            const bool);
     /*!
      * \brief add a new material property
      * \param[in] bd: behaviour description
@@ -97,6 +203,44 @@ namespace mfront {
         const std::string&,
         const std::string&,
         const unsigned short = 1u);
+    /*!
+     * \brief add a new state variable
+     * \param[in] bd: behaviour description
+     * \param[in] t: type of the material property
+     * \param[in] n: name of the variable
+     * \param[in] s: array size
+     */
+    MFRONT_VISIBILITY_EXPORT void addStateVariable(BehaviourDescription&,
+                                                   const std::string&,
+                                                   const std::string&,
+                                                   const unsigned short = 1u);
+    /*!
+     * \brief add a new state variable
+     * \param[in] bd: behaviour description
+     * \param[in] t: type of the material property
+     * \param[in] n: name of the variable
+     * \param[in] g: glossary entry
+     * \param[in] s: array size
+     */
+    MFRONT_VISIBILITY_EXPORT void addStateVariable(
+        BehaviourDescription&,
+        const std::string&,
+        const std::string&,
+        const tfel::glossary::GlossaryEntry&,
+        const unsigned short = 1u);
+    /*!
+     * \brief add a new state variable
+     * \param[in] bd: behaviour description
+     * \param[in] t: type of the material property
+     * \param[in] n: name of the variable
+     * \param[in] e: entry name
+     * \param[in] s: array size
+     */
+    MFRONT_VISIBILITY_EXPORT void addStateVariable(BehaviourDescription&,
+                                                   const std::string&,
+                                                   const std::string&,
+                                                   const std::string&,
+                                                   const unsigned short = 1u);
     /*!
      * \brief add a new external state variable
      * \param[in] bd: behaviour description

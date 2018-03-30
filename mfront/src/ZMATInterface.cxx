@@ -876,17 +876,17 @@ namespace mfront
     const auto& svs = getAllStateVariables(mb);
     if(!svs.empty()){
       for(const auto & sv : svs){
-	out << "//! '" << sv.name << "' state variable\n";
-	const SupportedTypes::TypeFlag flag = SupportedTypes::getTypeFlag(sv.type);
-	if(flag==SupportedTypes::Scalar){
-	  if(sv.arraySize==1u){
-	    out << "SCALAR_VINT " << sv.name << ";\n"; 
-	  } else {
-	    out << "VECTOR_VINT " << sv.name << ";\n"; 
-	  }
-	} else if ((flag==SupportedTypes::Stensor)||
-		   (flag==SupportedTypes::Tensor)){
-	  if(sv.arraySize==1u){
+        out << "//! '" << sv.name << "' state variable\n";
+        const auto flag = SupportedTypes::getTypeFlag(sv.type);
+        if(flag==SupportedTypes::Scalar){
+          if (sv.arraySize == 1u) {
+            out << "SCALAR_VINT " << sv.name << ";\n";
+          } else {
+            out << "VECTOR_VINT " << sv.name << ";\n";
+          }
+        } else if ((flag == SupportedTypes::Stensor) ||
+                   (flag == SupportedTypes::Tensor)) {
+          if(sv.arraySize==1u){
 	    out << "TENSOR2_VINT " << sv.name << ";\n"; 
 	  } else {
 	    out << "ARRAY<TENSOR2_VINT> " << sv.name << ";\n"; 

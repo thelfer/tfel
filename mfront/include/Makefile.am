@@ -98,6 +98,7 @@ nobase_include_HEADERS= MFront/MFront.hxx                          \
 			MFront/BehaviourBrick/StressPotentialFactory.hxx   \
 			MFront/BehaviourBrick/InelasticFlow.hxx            \
 			MFront/BehaviourBrick/InelasticFlowBase.hxx        \
+			MFront/BehaviourBrick/NortonInelasticFlow.hxx      \
 			MFront/BehaviourBrick/InelasticFlowFactory.hxx     \
 			MFront/BehaviourBrick/StressCriterion.hxx             \
 			MFront/BehaviourBrick/MisesStressCriterion.hxx        \

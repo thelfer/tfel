@@ -20,15 +20,15 @@ namespace mfront {
      * potentials.
      */
     struct InelasticFlowBase : InelasticFlow {
-      void setStressCriterion(const std::shared_ptr<StressCriterion>&) override;
-      void setIsotropicHardeningRule(
-          const std::shared_ptr<IsotropicHardeningRule>&) override;
-      void addKinematicHardeningRule(
-          const std::shared_ptr<KinematicHardeningRule>&) override;
+      void initialize(BehaviourDescription&,
+                      AbstractBehaviourDSL&,
+                      const std::string&,
+                      const DataMap&) override;
+      std::vector<OptionDescription> getOptions() const override;
       //! destructor
       ~InelasticFlowBase() override;
 
-     private:
+     protected:
       //! stress criterion
       std::shared_ptr<StressCriterion> sc;
       //! isotropic hardening rule

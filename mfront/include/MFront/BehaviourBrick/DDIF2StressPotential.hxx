@@ -38,15 +38,16 @@ namespace mfront {
       DDIF2StressPotential();
       std::string getName() const override;
       std::vector<OptionDescription> getOptions() const override;
-      void initialize(AbstractBehaviourDSL&,
-                      BehaviourDescription&,
+      void initialize(BehaviourDescription&,
+                      AbstractBehaviourDSL&,
                       const DataMap&) override;
       std::vector<Hypothesis> getSupportedModellingHypotheses(
-          AbstractBehaviourDSL&, BehaviourDescription&) const override;
-      void completeVariableDeclaration(AbstractBehaviourDSL&,
-                                       BehaviourDescription&) const override;
-      void endTreatment(AbstractBehaviourDSL&,
-                        BehaviourDescription&) const override;
+          const BehaviourDescription&,
+          const AbstractBehaviourDSL&) const override;
+      void completeVariableDeclaration(
+          BehaviourDescription&, const AbstractBehaviourDSL&) const override;
+      void endTreatment(BehaviourDescription&,
+                        const AbstractBehaviourDSL&) const override;
       //! destructor
       ~DDIF2StressPotential() override;
 

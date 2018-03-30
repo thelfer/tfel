@@ -6,6 +6,7 @@
  */
 
 #include "TFEL/Raise.hxx"
+#include "MFront/BehaviourBrick/MisesStressCriterion.hxx"
 #include "MFront/BehaviourBrick/StressCriterionFactory.hxx"
 
 namespace mfront {
@@ -39,7 +40,11 @@ namespace mfront {
       return p->second();
     }  // end of StressCriterionFactory::generate
 
-    StressCriterionFactory::StressCriterionFactory() = default;
+    StressCriterionFactory::StressCriterionFactory() {
+      this->addGenerator("Mises", []() {
+        return std::make_shared<bbrick::MisesStressCriterion>();
+      });
+    } // end of StressCriterionFactory::StressCriterionFactory
 
     StressCriterionFactory::~StressCriterionFactory() = default;
 

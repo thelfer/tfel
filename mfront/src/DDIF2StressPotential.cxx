@@ -18,8 +18,6 @@
  * <!-- Local IspellDict: english -->
  */
 
-#include <iostream>
-
 #include <sstream>
 #include <stdexcept>
 #include "TFEL/Raise.hxx"
@@ -71,7 +69,8 @@ namespace mfront {
           BehaviourDescription::ConstantMaterialProperty;
       if (d.count(n)) {
         const auto& s = d.at(n);
-        mps[0] = getBehaviourDescriptionMaterialProperty(dsl, n, s);
+        mps[0] = getBehaviourDescriptionMaterialProperty(bd, dsl, n, s, false,
+                                                         false);
         if (mps[0].is<ConstantMaterialProperty>()) {
           const auto& cmp = mps[0].get<ConstantMaterialProperty>();
           if (b) {
@@ -87,7 +86,8 @@ namespace mfront {
       }
       if (d.count(an)) {
         const auto& s = d.at(an);
-        mps = getArrayOfBehaviourDescriptionMaterialProperties<3u>(dsl, an, s);
+        mps = getArrayOfBehaviourDescriptionMaterialProperties<3u>(
+            bd, dsl, an, s, false, false);
         if (mps[0].is<ConstantMaterialProperty>()) {
           std::vector<double> values(3u);
           for (unsigned short i = 0; i != 3; ++i) {
@@ -109,12 +109,10 @@ namespace mfront {
       }
     }  // end of extractDDIF2MaterialProperty
 
-    DDIF2StressPotential::DDIF2StressPotential()
-        : HookeStressPotential() {
-    }  // end of DDIF2StressPotential::DDIF2StressPotential
+    DDIF2StressPotential::DDIF2StressPotential() = default;
 
-    void DDIF2StressPotential::initialize(AbstractBehaviourDSL& dsl,
-                                          BehaviourDescription& bd,
+    void DDIF2StressPotential::initialize(BehaviourDescription& bd,
+                                          AbstractBehaviourDSL& dsl,
                                           const DataMap& d) {
       auto throw_if = [](const bool b, const std::string& m) {
         tfel::raise_if(b, "DDIF2StressPotential::DDIF2StressPotential: " + m);
@@ -122,7 +120,7 @@ namespace mfront {
       // checking options
       check(d, this->getOptions());
       //
-      HookeStressPotential::initialize(dsl, bd, d);
+      HookeStressPotential::initialize(bd,dsl, d);
       // undefined hypothesis
       constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       throw_if(bd.getElasticSymmetryType() != mfront::ISOTROPIC,
@@ -328,7 +326,7 @@ namespace mfront {
     std::string DDIF2StressPotential::getName() const { return "DDIF2"; }
 
     void DDIF2StressPotential::completeVariableDeclaration(
-        AbstractBehaviourDSL& dsl, BehaviourDescription& bd) const {
+        BehaviourDescription& bd, const AbstractBehaviourDSL& dsl) const {
       using tfel::glossary::Glossary;
       using MaterialPropertyInput = BehaviourDescription::MaterialPropertyInput;
       auto throw_if = [](const bool b, const std::string& m) {
@@ -355,7 +353,7 @@ namespace mfront {
         getLogStream()
             << "DDIF2StressPotential::completeVariableDeclaration: begin\n";
       }
-      HookeStressPotential::completeVariableDeclaration(dsl, bd);
+      HookeStressPotential::completeVariableDeclaration(bd, dsl);
       std::string init_code;
       // fracture stresses
       if (this->sr[0].empty()) {
@@ -363,7 +361,6 @@ namespace mfront {
                                         3u);
       } else if (!this->sr[0]
                       .is<BehaviourDescription::ConstantMaterialProperty>()) {
-        std::cout << "HERE" << std::endl;
         std::ostringstream ssigr;
         if (this->sr[1].empty()) {
           for (unsigned short i = 0; i != 3; ++i) {
@@ -401,7 +398,6 @@ namespace mfront {
         }
         init_code += srp.str();
       }
-      std::cout << "fracture energies" << std::endl;
       //  fracture energies
       if ((!this->gc[0].empty()) &&
           (!this->gc[0].is<BehaviourDescription::ConstantMaterialProperty>())) {
@@ -440,7 +436,7 @@ namespace mfront {
       d.addVariable(uh, {"StressStensor", "sig"});
       bd.addLocalDataStructure(d, BehaviourData::ALREADYREGISTRED);
       // modelling hypotheses supported by the brick
-      const auto smh = this->getSupportedModellingHypotheses(dsl, bd);
+      const auto smh = this->getSupportedModellingHypotheses(bd, dsl);
       // modelling hypotheses supported by the behaviour
       const auto bmh = bd.getModellingHypotheses();
       for (const auto& h : bmh) {
@@ -473,13 +469,13 @@ namespace mfront {
       }
     }
 
-    void DDIF2StressPotential::endTreatment(AbstractBehaviourDSL& dsl,
-                                            BehaviourDescription& bd) const {
+    void DDIF2StressPotential::endTreatment(
+        BehaviourDescription& bd, const AbstractBehaviourDSL& dsl) const {
       constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       if (getVerboseMode() >= VERBOSE_DEBUG) {
         getLogStream() << "DDIF2StressPotential::endTreatment: begin\n";
       }
-      HookeStressPotential::endTreatment(dsl, bd);
+      HookeStressPotential::endTreatment(bd, dsl);
       // implicit equation associated with the crack strains
       const auto& idsl = dynamic_cast<const ImplicitDSLBase&>(dsl);
       CodeBlock integrator;
@@ -588,7 +584,7 @@ namespace mfront {
 
     std::vector<tfel::material::ModellingHypothesis::Hypothesis>
     DDIF2StressPotential::getSupportedModellingHypotheses(
-        AbstractBehaviourDSL& dsl, BehaviourDescription&) const {
+        const BehaviourDescription&, const AbstractBehaviourDSL& dsl) const {
       const auto mh = dsl.getDefaultModellingHypotheses();
       return {mh.begin(), mh.end()};
     }  // end of DDIF2StressPotential::getSupportedModellingHypothesis

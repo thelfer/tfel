@@ -6,6 +6,7 @@
  */
 
 #include "TFEL/Raise.hxx"
+#include "MFront/BehaviourBrick/NortonInelasticFlow.hxx"
 #include "MFront/BehaviourBrick/InelasticFlowFactory.hxx"
 
 namespace mfront {
@@ -39,7 +40,10 @@ namespace mfront {
       return p->second();
     }  // end of InelasticFlowFactory::generate
 
-    InelasticFlowFactory::InelasticFlowFactory() = default;
+    InelasticFlowFactory::InelasticFlowFactory() {
+      this->addGenerator(
+          "Norton", []() { return std::make_shared<NortonInelasticFlow>(); });
+    }  // end of InelasticFlowFactory::InelasticFlowFactory
 
     InelasticFlowFactory::~InelasticFlowFactory() = default;
 

@@ -15,18 +15,23 @@ namespace mfront {
 
   namespace bbrick {
 
-    BehaviourDescription::MaterialProperty
-    getBehaviourDescriptionMaterialProperty(AbstractBehaviourDSL& dsl,
-                                            const std::string& n,
-                                            const tfel::utilities::Data& d) {
+    static BehaviourDescription::MaterialProperty
+    getBehaviourDescriptionMaterialProperty_impl(AbstractBehaviourDSL& dsl,
+                                                 const std::string& n,
+                                                 const tfel::utilities::Data& d,
+                                                 const bool b) {
       if (d.is<double>()) {
         BehaviourDescription::ConstantMaterialProperty cmp;
-        cmp.name = n;
+        if (b) {
+          cmp.name = n;
+        }
         cmp.value = d.get<double>();
         return cmp;
       } else if (d.is<int>()) {
         BehaviourDescription::ConstantMaterialProperty cmp;
-        cmp.name = n;
+        if (b) {
+          cmp.name = n;
+        }
         cmp.value = static_cast<double>(d.get<int>());
         return cmp;
       }
@@ -46,6 +51,86 @@ namespace mfront {
       BehaviourDescription::AnalyticMaterialProperty amp;
       amp.f = mp;
       return amp;
+    }  // end of getBehaviourDescriptionMaterialProperty_impl
+
+    BehaviourDescription::MaterialProperty
+    getBehaviourDescriptionMaterialProperty(BehaviourDescription& bd,
+                                            AbstractBehaviourDSL& dsl,
+                                            const std::string& n,
+                                            const tfel::utilities::Data& d,
+                                            const bool bp,
+                                            const bool blv) {
+      constexpr const auto h =
+          tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+      const auto mp =
+          getBehaviourDescriptionMaterialProperty_impl(dsl, n, d, bp);
+      if ((bp) && (mp.is<BehaviourDescription::ConstantMaterialProperty>())) {
+        const auto& cmp =
+            mp.get<BehaviourDescription::ConstantMaterialProperty>();
+        // declare associated parameter
+        VariableDescription m("real", n, 1u, 0u);
+        bd.addParameter(h, m);
+        bd.setParameterDefaultValue(h, n, cmp.value);
+      } else if(blv){
+        VariableDescription m("real", n, 1u, 0u);
+        bd.addLocalVariable(h, m);
+      }
+      return mp;
+    }  // end of getBehaviourDescriptionMaterialProperty
+
+    BehaviourDescription::MaterialProperty
+    getBehaviourDescriptionMaterialProperty(BehaviourDescription& bd,
+                                            AbstractBehaviourDSL& dsl,
+                                            const std::string& n,
+                                            const std::string& en,
+                                            const tfel::utilities::Data& d,
+                                            const bool bp,
+                                            const bool blv) {
+      constexpr const auto h =
+          tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+      const auto mp =
+          getBehaviourDescriptionMaterialProperty_impl(dsl, n, d, bp);
+      if ((bp) && (mp.is<BehaviourDescription::ConstantMaterialProperty>())) {
+        const auto& cmp =
+            mp.get<BehaviourDescription::ConstantMaterialProperty>();
+        // declare associated parameter
+        VariableDescription m("real", n, 1u, 0u);
+        bd.addParameter(h, m);
+        bd.setParameterDefaultValue(h, n, cmp.value);
+        bd.setEntryName(h, n, en);
+      } else if(blv){
+        VariableDescription m("real", n, 1u, 0u);
+        bd.addLocalVariable(h, m);
+      }
+      return mp;
+    }  // end of getBehaviourDescriptionMaterialProperty
+
+    BehaviourDescription::MaterialProperty
+    getBehaviourDescriptionMaterialProperty(
+        BehaviourDescription& bd,
+        AbstractBehaviourDSL& dsl,
+        const std::string& n,
+        const tfel::glossary::GlossaryEntry& g,
+        const tfel::utilities::Data& d,
+        const bool bp,
+        const bool blv) {
+      constexpr const auto h =
+          tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+      const auto mp =
+          getBehaviourDescriptionMaterialProperty_impl(dsl, n, d, bp);
+      if ((bp) && (mp.is<BehaviourDescription::ConstantMaterialProperty>())) {
+        const auto& cmp =
+            mp.get<BehaviourDescription::ConstantMaterialProperty>();
+        // declare associated parameter
+        VariableDescription m("real", n, 1u, 0u);
+        bd.addParameter(h, m);
+        bd.setParameterDefaultValue(h, n, cmp.value);
+        bd.setGlossaryName(h, n, g);
+      } else if(blv){
+        VariableDescription m("real", n, 1u, 0u);
+        bd.addLocalVariable(h, m);
+      }
+      return mp;
     }  // end of getBehaviourDescriptionMaterialProperty
 
     void checkOptionsNames(
@@ -132,6 +217,40 @@ namespace mfront {
         bd.setEntryName(h, n, e);
       }
     }  // end of addMaterialPropertyIfNotDefined
+
+    void addStateVariable(BehaviourDescription& bd,
+                          const std::string& t,
+                          const std::string& n,
+                          const unsigned short s) {
+      using tfel::material::ModellingHypothesis;
+      const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+      VariableDescription v(t, n, s, 0u);
+      bd.addStateVariable(h, v);
+    }  // end of addStateVariable
+
+    void addStateVariable(BehaviourDescription& bd,
+                          const std::string& t,
+                          const std::string& n,
+                          const tfel::glossary::GlossaryEntry& g,
+                          const unsigned short s) {
+      using tfel::material::ModellingHypothesis;
+      const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+      VariableDescription v(t, n, s, 0u);
+      bd.addStateVariable(h, v);
+      bd.setGlossaryName(h, n, g);
+    }  // end of addStateVariable
+
+    void addStateVariable(BehaviourDescription& bd,
+                          const std::string& t,
+                          const std::string& n,
+                          const std::string& e,
+                          const unsigned short s) {
+      using tfel::material::ModellingHypothesis;
+      const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+      VariableDescription v(t, n, s, 0u);
+      bd.addStateVariable(h, v);
+      bd.setEntryName(h, n, e);
+    }  // end of addStateVariable
 
     void addExternalStateVariable(BehaviourDescription& bd,
                                   const std::string& t,

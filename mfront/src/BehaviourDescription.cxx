@@ -696,7 +696,7 @@ namespace mfront {
         return true;
       }
     }
-    return true;
+    return false;
   }  // end of
      // BehaviourDescription::areMaterialPropertiesDependantOnStateVariables
 

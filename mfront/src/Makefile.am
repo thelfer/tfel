@@ -123,6 +123,7 @@ libTFELMFront_la_SOURCES = MFront.cxx                                           
 		           StressPotentialFactory.cxx                          \
 		           InelasticFlow.cxx                                 \
 		           InelasticFlowBase.cxx                             \
+		           NortonInelasticFlow.cxx                             \
 		           InelasticFlowFactory.cxx                          \
 		           StressCriterion.cxx                                    \
 		           MisesStressCriterion.cxx                               \

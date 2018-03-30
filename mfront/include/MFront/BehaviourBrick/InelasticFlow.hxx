@@ -3,12 +3,19 @@
  * \brief
  * \author Thomas Helfer
  * \date   15/03/2018
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MFRONT_BEHAVIOURBRICK_INELASTICFLOW_HXX
 #define LIB_MFRONT_BEHAVIOURBRICK_INELASTICFLOW_HXX
 
 #include <memory>
+#include "TFEL/Material/ModellingHypothesis.hxx"
 #include "MFront/BehaviourDescription.hxx"
 
 namespace tfel {
@@ -26,6 +33,8 @@ namespace mfront {
   namespace bbrick {
 
     // forward declaration
+    struct StressPotential;
+    // forward declaration
     struct IsotropicHardeningRule;
     // forward declaration
     struct KinematicHardeningRule;
@@ -39,35 +48,47 @@ namespace mfront {
      */
     struct InelasticFlow {
       //! a simple alias
-      using DataMap = std::map<std::string, tfel::utilities::Data>;
+      using Data = tfel::utilities::Data;
+      //! a simple alias
+      using DataMap = std::map<std::string, Data>;
+      //! a simple alias
+      using ModellingHypothesis = tfel::material::ModellingHypothesis;
+      //! a simple alias
+      using Hypothesis = ModellingHypothesis::Hypothesis;
+      //! a simple alias
+      using MaterialPropertyInput = BehaviourDescription::MaterialPropertyInput;
       /*!
-       * \param[in] dsl: abstract behaviour dsl
-       * \param[in] bd: behaviour description
+       * \param[in,out] bd: behaviour description
+       * \param[in,out] dsl: abstract behaviour dsl
+       * \param[in] id: flow id
        * \param[in] d: options
        */
-      virtual void initialize(AbstractBehaviourDSL&,
-                              BehaviourDescription&,
+      virtual void initialize(BehaviourDescription&,
+                              AbstractBehaviourDSL&,
+                              const std::string&,
                               const DataMap&) = 0;
       //! \return the flow options
       virtual std::vector<OptionDescription> getOptions() const = 0;
       /*!
-       * \brief set the stress criterion
-       * \param[in] s: stress criterion
+       * \brief complete the variable description
+       * \param[in/out] bd: behaviour description
+       * \param[in] dsl: abstract behaviour dsl
+       * \param[in] id: flow id
        */
-      virtual void setStressCriterion(
-          const std::shared_ptr<StressCriterion>&) = 0;
+      virtual void completeVariableDeclaration(BehaviourDescription&,
+                                               const AbstractBehaviourDSL&,
+                                               const std::string&) const = 0;
       /*!
-       * \brief set the isotropic hardening rule
-       * \param[in] r: isotropic hardening rule
+       * \brief method called at the end of the input file processing
+       * \param[in] dsl: abstract behaviour dsl
+       * \param[in] bd: behaviour description
+       * \param[in] sp: stress potential
+       * \param[in] id: flow id
        */
-      virtual void setIsotropicHardeningRule(
-          const std::shared_ptr<IsotropicHardeningRule>&) = 0;
-      /*!
-       * \brief add a kinematic hardening rule
-       * \param[in] r: kinematic hardening rule
-       */
-      virtual void addKinematicHardeningRule(
-          const std::shared_ptr<KinematicHardeningRule>&) = 0;
+      virtual void endTreatment(BehaviourDescription&,
+                                const AbstractBehaviourDSL&,
+                                const StressPotential&,
+                                const std::string&) const = 0;
       //! destructor
       virtual ~InelasticFlow();
 

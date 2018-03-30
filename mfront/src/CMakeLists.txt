@@ -137,6 +137,7 @@ set(TFELMFront_SOURCES
     StressPotentialFactory.cxx
     InelasticFlow.cxx
     InelasticFlowBase.cxx
+    NortonInelasticFlow.cxx
     InelasticFlowFactory.cxx
     StressCriterion.cxx
     MisesStressCriterion.cxx

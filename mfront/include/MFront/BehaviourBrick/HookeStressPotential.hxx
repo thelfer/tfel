@@ -25,15 +25,17 @@ namespace mfront {
       HookeStressPotential();
       std::string getName() const override;
       std::vector<OptionDescription> getOptions() const override;
-      void initialize(AbstractBehaviourDSL&,
-                      BehaviourDescription&,
+      void initialize(BehaviourDescription&,
+                      AbstractBehaviourDSL&,
                       const DataMap&) override;
       std::vector<Hypothesis> getSupportedModellingHypotheses(
-          AbstractBehaviourDSL&, BehaviourDescription&) const override;
-      void completeVariableDeclaration(AbstractBehaviourDSL&,
-                                       BehaviourDescription&) const override;
-      void endTreatment(AbstractBehaviourDSL&,
-                        BehaviourDescription&) const override;
+          const BehaviourDescription&, const AbstractBehaviourDSL&) const override;
+      void completeVariableDeclaration(
+          BehaviourDescription&, const AbstractBehaviourDSL&) const override;
+      void endTreatment(BehaviourDescription&,
+                        const AbstractBehaviourDSL&) const override;
+      VariableDescriptionContainer getStressVariables() const override;
+      void writeStressDerivatives(BehaviourDescription&) const override;
       //! destructor
       ~HookeStressPotential() override;
 
@@ -59,22 +61,22 @@ namespace mfront {
        * modelling hypothesis
        */
       virtual void addAxisymmetricalGeneralisedPlaneStressSupport(
-          AbstractBehaviourDSL&, BehaviourDescription&) const;
+          BehaviourDescription&, const AbstractBehaviourDSL&) const;
       /*!
        * \brief add support for the PLANESTRESS modelling hypothesis
        */
-      virtual void addPlaneStressSupport(AbstractBehaviourDSL&,
-                                         BehaviourDescription&) const;
+      virtual void addPlaneStressSupport(BehaviourDescription&,
+                                         const AbstractBehaviourDSL&) const;
       /*!
        * \brief add the generic tangent operator computation
        */
       virtual void addGenericTangentOperatorSupport(
-          AbstractBehaviourDSL&, BehaviourDescription&) const;
+          BehaviourDescription&, const AbstractBehaviourDSL&) const;
       /*!
        * \brief add the generic prediction operator computation
        */
       virtual void addGenericPredictionOperatorSupport(
-          AbstractBehaviourDSL&, BehaviourDescription&) const;
+          BehaviourDescription&) const;
       /*!
        * \brief declare the compute elastic prediction method
        */

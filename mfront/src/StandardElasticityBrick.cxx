@@ -41,7 +41,7 @@ namespace mfront {
     };
     auto& spf = mfront::bbrick::StressPotentialFactory::getFactory();
     this->hooke = spf.generate("Hooke");
-    this->hooke->initialize(this->dsl, this->bd, d);
+    this->hooke->initialize(this->bd, this->dsl, d);
     // parameters
     for (const auto& pp : p) {
       if (pp.first == "Isotropic") {
@@ -64,16 +64,16 @@ namespace mfront {
   std::string StandardElasticityBrick::getName() const { return "Elasticity"; }
 
   void StandardElasticityBrick::completeVariableDeclaration() const {
-    this->hooke->completeVariableDeclaration(this->dsl, this->bd);
+    this->hooke->completeVariableDeclaration(this->bd, this->dsl);
   }
 
   void StandardElasticityBrick::endTreatment() const {
-    this->hooke->endTreatment(this->dsl, this->bd);
+    this->hooke->endTreatment(this->bd, this->dsl);
   }  // end of StandardElasticityBrick::endTreatment
 
   std::vector<StandardElasticityBrick::Hypothesis>
   StandardElasticityBrick::getSupportedModellingHypotheses() const {
-    return this->hooke->getSupportedModellingHypotheses(this->dsl, this->bd);
+    return this->hooke->getSupportedModellingHypotheses(this->bd, this->dsl);
   }  // end of StandardElasticityBrick::getSupportedModellingHypothesis
 
   StandardElasticityBrick::~StandardElasticityBrick() = default;

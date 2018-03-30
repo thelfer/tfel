@@ -24,7 +24,7 @@ namespace mfront {
       : BehaviourBrickBase(dsl_, mb_) {
     auto& spf = mfront::bbrick::StressPotentialFactory::getFactory();
     this->ddif2= spf.generate("DDIF2");
-    this->ddif2->initialize(this->dsl, this->bd, d);
+    this->ddif2->initialize(this->bd, this->dsl, d);
   }  // end of DDIF2Brick::DDIF2Brick
 
   std::string DDIF2Brick::getName() const {
@@ -32,16 +32,16 @@ namespace mfront {
   }  // end of DDIF2Brick::getName()
 
   void DDIF2Brick::completeVariableDeclaration() const {
-    this->ddif2->completeVariableDeclaration(this->dsl, this->bd);
+    this->ddif2->completeVariableDeclaration(this->bd, this->dsl);
   }  // end of DDIF2Brick::completeVariableDeclaration()
 
   void DDIF2Brick::endTreatment() const {
-    this->ddif2->endTreatment(this->dsl, this->bd);
+    this->ddif2->endTreatment(this->bd, this->dsl);
   }  // end of DDIF2Brick::endTreatment
 
   std::vector<tfel::material::ModellingHypothesis::Hypothesis>
   DDIF2Brick::getSupportedModellingHypotheses() const {
-    return this->ddif2->getSupportedModellingHypotheses(this->dsl, this->bd);
+    return this->ddif2->getSupportedModellingHypotheses(this->bd, this->dsl);
   }  // end of DDIF2Brick::getSupportedModellingHypothesis
 
   DDIF2Brick::~DDIF2Brick() = default;

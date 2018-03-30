@@ -303,8 +303,8 @@ namespace mfront {
     }
   }  // end of BehaviourDSLCommon::readCodeBlockOptions
 
-  std::shared_ptr<MaterialPropertyDescription> BehaviourDSLCommon::handleMaterialPropertyDescription(
-      const std::string& f) {
+  std::shared_ptr<MaterialPropertyDescription>
+  BehaviourDSLCommon::handleMaterialPropertyDescription(const std::string& f) {
     return DSLBase::handleMaterialPropertyDescription(f);
   }  // end of BehaviourDSLCommon::handleMaterialPropertyDescription
 

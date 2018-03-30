@@ -7,6 +7,15 @@ solved are described below.
 
 # Tickets fixed
 
+## Ticket #118: The `BehaviourDescription::areMaterialPropertiesDependantOnStateVariables` method always returns `true`
+
+The
+`BehaviourDescription::areMaterialPropertiesDependantOnStateVariables`
+method always returned `true`. This bugs led to unnecessary computations
+but did not affect the results.
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/118/>
+
 ## Ticket #117: Generated source fails to compile if one ask MTest file generation with array of internal state variables
 
 A `using namespace std;` statement has been removed in 3.1.0 in the generated code, which led to a compile time error (`ostringstream` undeclared) when:

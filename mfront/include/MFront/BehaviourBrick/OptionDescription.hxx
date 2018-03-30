@@ -45,7 +45,11 @@ namespace mfront {
       enum Type {
         MATERIALPROPERTY,           //<! \brief material property
         ARRAYOFMATERIALPROPERTIES,  //<! \brief array of material properties
-        BOOLEAN                     //<! \brief boolean value
+        BOOLEAN,                    //<! \brief boolean value
+        DATASTRUCTURE,              //<! \brief data structure
+        DATASTRUCTURES /*! \brief the option must be a data structure or an
+                        *  array of data structures.
+                        */
       };
       /*!
        * \brief constructor
@@ -63,10 +67,10 @@ namespace mfront {
        * \param[in] eo: incompatible options
        */
       OptionDescription(const std::string&,
-             const std::string&,
-             const Type,
-             const std::vector<std::string>&,
-             const std::vector<std::string>&);
+                        const std::string&,
+                        const Type,
+                        const std::vector<std::string>&,
+                        const std::vector<std::string>&);
       /*!
        * \brief constructor
        * \param[in] n: name
@@ -74,8 +78,8 @@ namespace mfront {
        * \param[in] t: type
        */
       OptionDescription(const std::string&,
-             const tfel::glossary::GlossaryEntry&,
-             const Type);
+                        const tfel::glossary::GlossaryEntry&,
+                        const Type);
       /*!
        * \brief constructor
        * \param[in] n: name
@@ -85,10 +89,10 @@ namespace mfront {
        * \param[in] eo: incompatible options
        */
       OptionDescription(const std::string&,
-             const tfel::glossary::GlossaryEntry&,
-             const Type,
-             const std::vector<std::string>&,
-             const std::vector<std::string>&);
+                        const tfel::glossary::GlossaryEntry&,
+                        const Type,
+                        const std::vector<std::string>&,
+                        const std::vector<std::string>&);
       //! \brief default constructor
       OptionDescription();
       //! \brief copy constructor

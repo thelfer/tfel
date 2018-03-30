@@ -113,6 +113,20 @@ namespace mfront {
             throw_if(!is_material_property(mp));
           }
           break;
+        case OptionDescription::DATASTRUCTURE:
+          throw_if(!((d.is<tfel::utilities::DataStructure>()) ||
+                     (d.is<std::string>())));
+          break;
+        case OptionDescription::DATASTRUCTURES:
+          if (d.is<std::vector<tfel::utilities::Data>>()) {
+            for (const auto e : d.get<std::vector<tfel::utilities::Data>>()) {
+              throw_if(!((e.is<tfel::utilities::DataStructure>()) ||
+                         (e.is<std::string>())));
+            }
+          } else {
+            throw_if(!d.is<tfel::utilities::DataStructure>());
+          }
+          break;
         default:
           tfel::raise("check: unknown option type");
       }

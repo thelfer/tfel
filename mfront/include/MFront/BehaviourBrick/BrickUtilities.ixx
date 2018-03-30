@@ -21,9 +21,13 @@ namespace mfront {
     template <unsigned short N>
     std::array<BehaviourDescription::MaterialProperty, N>
     getArrayOfBehaviourDescriptionMaterialProperties(
+        BehaviourDescription& bd,
         AbstractBehaviourDSL& dsl,
         const std::string& n,
-        const tfel::utilities::Data& d) {
+        const std::string& en,
+        const tfel::utilities::Data& d,
+        const bool bp,
+        const bool blv) {
       std::array<BehaviourDescription::MaterialProperty, N> mps;
       if (!d.is<std::vector<tfel::utilities::Data>>()) {
         tfel::raise(
@@ -44,10 +48,42 @@ namespace mfront {
       auto i = typename std::array<BehaviourDescription::MaterialProperty,
                                    N>::size_type{};
       for (const auto& e : vd) {
-        mps[i] = getBehaviourDescriptionMaterialProperty(dsl, n, e);
+        mps[i] = getBehaviourDescriptionMaterialProperty(bd, dsl, n, e, false,
+                                                         false);
         ++i;
       }
+      if (bp) {
+        //        ...
+      }
       return mps;
+    }  // end of getArrayOfBehaviourDescriptionMaterialProperties
+
+    template <unsigned short N>
+    std::array<BehaviourDescription::MaterialProperty, N>
+    getArrayOfBehaviourDescriptionMaterialProperties(
+        BehaviourDescription& bd,
+        AbstractBehaviourDSL& dsl,
+        const std::string& n,
+        const tfel::glossary::GlossaryEntry& g,
+        const tfel::utilities::Data& d,
+        const bool bp,
+        const bool blv) {
+      const auto& en = static_cast<const std::string&>(g);
+      getArrayOfBehaviourDescriptionMaterialProperties<N>(bd, dsl, n, g, d, bp,
+                                                          blv);
+    }  // end of getArrayOfBehaviourDescriptionMaterialProperties
+
+    template <unsigned short N>
+    std::array<BehaviourDescription::MaterialProperty, N>
+    getArrayOfBehaviourDescriptionMaterialProperties(
+        BehaviourDescription& bd,
+        AbstractBehaviourDSL& dsl,
+        const std::string& n,
+        const tfel::utilities::Data& d,
+        const bool bp,
+        const bool blv) {
+      getArrayOfBehaviourDescriptionMaterialProperties<N>(bd, dsl, n, n, d, bp,
+                                                          blv);
     }  // end of getArrayOfBehaviourDescriptionMaterialProperties
 
   }  // end of namespace bbrick
