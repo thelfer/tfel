@@ -1506,10 +1506,14 @@ namespace mfront{
     // additional convergence checks
     if(this->mb.hasCode(h,BehaviourData::AdditionalConvergenceChecks)){
       os << "void additionalConvergenceChecks(bool& converged,real& error){\n"
-	 << this->mb.getCode(h,BehaviourData::AdditionalConvergenceChecks) << '\n'
-	 << "static_cast<void>(converged);\n"
-	 << "static_cast<void>(error);\n"
-	 << "} // end of additionalConvergenceChecks\n\n";
+         << "using namespace std;\n"
+         << "using namespace tfel::math;\n"
+         << "using std::vector;\n";
+      writeMaterialLaws(os, this->mb.getMaterialLaws());
+      os << this->mb.getCode(h, BehaviourData::AdditionalConvergenceChecks) << '\n'
+         << "static_cast<void>(converged);\n"
+         << "static_cast<void>(error);\n"
+         << "} // end of additionalConvergenceChecks\n\n";
     } else {
       os << "void additionalConvergenceChecks(bool&,real&) const{\n"
 	 << "} // end of additionalConvergenceChecks\n\n";

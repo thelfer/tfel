@@ -141,9 +141,9 @@ namespace mtest{
     md.ivnames = get("C_VARINTER");
     md.ivtypes.resize(md.ivnames.size(),0);
     auto evnames = get("PARA_LOI");
-    if(evnames.size()>1u){
-      if(evnames.front()=="T"){
-	evnames.pop_back();
+    if(!evnames.empty()){
+      if (evnames.front() == "T") {
+        evnames.pop_back();
       }
     }
     evnames.insert(evnames.begin(),"Temperature");
