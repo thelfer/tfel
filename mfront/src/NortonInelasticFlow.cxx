@@ -18,6 +18,8 @@
 #include "MFront/BehaviourBrick/BrickUtilities.hxx"
 #include "MFront/BehaviourBrick/StressCriterion.hxx"
 #include "MFront/BehaviourBrick/StressPotential.hxx"
+#include "MFront/BehaviourBrick/IsotropicHardeningRule.hxx"
+#include "MFront/BehaviourBrick/KinematicHardeningRule.hxx"
 #include "MFront/BehaviourBrick/OptionDescription.hxx"
 #include "MFront/BehaviourBrick/NortonInelasticFlow.hxx"
 
@@ -30,15 +32,16 @@ namespace mfront {
                                          const std::string& id,
                                          const DataMap& d) {
       using namespace tfel::glossary;
-      auto get_mp = [&dsl, &bd, &d](const char* const mp) {
-        if (d.count(mp) == 0) {
+      auto get_mp = [&dsl, &bd, &id, &d](const std::string& mpn) {
+        if (d.count(mpn) == 0) {
           tfel::raise(
               "NortonInelasticFlow::initialize: "
               "material property '" +
-              std::string(mp) + "' is not defined");
+              mpn + "' is not defined");
         }
-        return getBehaviourDescriptionMaterialProperty(bd, dsl, mp, d.at(mp),
-                                                       true, true);
+        auto mp = getBehaviourDescriptionMaterialProperty(dsl, mpn, d.at(mpn));
+        declareParameterOrLocalVariable(bd, mp, mpn + id);
+        return mp;
       };
       // checking options
       mfront::bbrick::check(d, this->getOptions());
@@ -47,11 +50,13 @@ namespace mfront {
       // Norton flow options
       this->K = get_mp("K");
       this->n = get_mp("n");
-      if (!this->K.is<BehaviourDescription::ConstantMaterialProperty>()) {
-        addLocalVariable(bd, "stress", "K" + id);
-      }
-      if (!this->n.is<BehaviourDescription::ConstantMaterialProperty>()) {
-        addLocalVariable(bd, "real", "n" + id);
+      if (d.count("A") != 0) {
+        this->A = get_mp("A");
+      } else {
+        BehaviourDescription::ConstantMaterialProperty cmp;
+        cmp.value = 1;
+        this->A = cmp;
+        declareParameterOrLocalVariable(bd, this->A, "A" + id);
       }
       if (id.empty()) {
         addStateVariable(bd, "strain", "p",
@@ -64,111 +69,107 @@ namespace mfront {
       }
     }  // end of NortonInelasticFlow::initialize
 
-    void NortonInelasticFlow::completeVariableDeclaration(
-        BehaviourDescription&,
-        const AbstractBehaviourDSL&,
-        const std::string&) const {
-    }  // end of NortonInelasticFlow::completeVariableDeclaration
-
     void NortonInelasticFlow::endTreatment(BehaviourDescription& bd,
                                            const AbstractBehaviourDSL& dsl,
                                            const StressPotential& sp,
                                            const std::string& id) const {
-      const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-      const auto& idsl = dynamic_cast<const ImplicitDSLBase&>(dsl);
-      using Modifier = std::function<std::string(const MaterialPropertyInput&)>;
-      Modifier mts = [&bd](const MaterialPropertyInput& i) -> std::string {
-        if ((i.category == MaterialPropertyInput::TEMPERATURE) ||
-            (i.category ==
-             MaterialPropertyInput::AUXILIARYSTATEVARIABLEFROMEXTERNALMODEL) ||
-            (i.category == MaterialPropertyInput::EXTERNALSTATEVARIABLE)) {
-          return "this->" + i.name + "+theta*(this->d" + i.name + ')';
-        } else if ((i.category == MaterialPropertyInput::MATERIALPROPERTY) ||
-                   (i.category == MaterialPropertyInput::STATEVARIABLE) ||
-                   (i.category == MaterialPropertyInput::PARAMETER)) {
-          return "this->" + i.name;
-        } else if (i.category == MaterialPropertyInput::STATICVARIABLE) {
-          return bd.getClassName() + "::" + i.name;
-        } else {
-          tfel::raise(
-              "NortonInelasticFlow::endTreatment: "
-              "unsupported input type for variable '" +
-              i.name + "'");
-        }
-      };
-      // computation of the material properties
-      if ((!this->K.is<BehaviourDescription::ConstantMaterialProperty>()) &&
-          (!this->n.is<BehaviourDescription::ConstantMaterialProperty>())) {
+      constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+      InelasticFlowBase::endTreatment(bd, dsl, sp, id);
+      if ((!this->A.is<BehaviourDescription::ConstantMaterialProperty>()) ||
+          (!this->K.is<BehaviourDescription::ConstantMaterialProperty>()) ||
+          (!this->n.is<BehaviourDescription::ConstantMaterialProperty>())){
+        auto mts = getMiddleOfTimeStepModifier(bd);
         CodeBlock i;
-        std::ostringstream mps;
-        if (!this->K.is<BehaviourDescription::ConstantMaterialProperty>()) {
-          mps << "this->K" + id + " = ";
-          dsl.writeMaterialPropertyEvaluation(mps, this->K, mts);
-          mps << ";\n";
-        }
-        if (!this->n.is<BehaviourDescription::ConstantMaterialProperty>()) {
-          mps << "this->n" + id + " = ";
-          dsl.writeMaterialPropertyEvaluation(mps, this->n, mts);
-          mps << ";\n";
-        }
-        i.code += mps.str();
+        auto eval = [&mts, &dsl, &i](
+            const BehaviourDescription::MaterialProperty& mp,
+            const std::string& mpn) {
+          if (!mp.is<BehaviourDescription::ConstantMaterialProperty>()) {
+            std::ostringstream mps;
+            mps << "this->" + mpn + " = ";
+            dsl.writeMaterialPropertyEvaluation(mps, mp, mts);
+            mps << ";\n";
+            i.code += mps.str();
+          }
+        };
+        eval(this->A, "A" + id);
+        eval(this->K, "K" + id);
+        eval(this->n, "n" + id);
         bd.setCode(uh, BehaviourData::BeforeInitializeLocalVariables, i,
                    BehaviourData::CREATEORAPPEND, BehaviourData::AT_BEGINNING);
       }
-      // implicit equation associated with the elastic strain
-      CodeBlock ib;
-      if ((idsl.getSolver().usesJacobian()) &&
-          (!idsl.getSolver().requiresNumericalJacobian())) {
-        ib.code += this->sc->computeNormalDerivative(id);
-          } else {
-            ib.code += this->sc->computeNormal(id);
-          }
-          ib.code += "feel += this->dp" + id + "* dseq" + id + "_ds;\n";
-          if ((idsl.getSolver().usesJacobian()) &&
-              (!idsl.getSolver().requiresNumericalJacobian())) {
-            // jacobian terms
-            ib.code += "dfeel_ddp" + id + " = dseq" + id + "_ds;\n";
-            for (const auto& v : sp.getStressVariables()) {
-              if ((id == "0") && (v.name != "eel")) {
-                ib.code += "dfeel_dd" + v.name + "=";
-              } else {
-                ib.code += "dfeel_dd" + v.name + "+=";
-              }
-              ib.code += "dp" + id + "*d2seq" + id + "_ds2" + "*dsig_dd" +
-                         v.name + ";\n";
-            }
-          }
-          if ((idsl.getSolver().usesJacobian()) &&
-              (!idsl.getSolver().requiresNumericalJacobian())) {
-            ib.code += "const auto dvp" + id + " = ";
-            ib.code += "pow(seq" + id + "/(this->K" + id + "),this->n" + id +
-                       "-1)/this->K" + id + ";\n";
-            ib.code += "fp" + id + " -= dvp*seq*(this->dt);\n";
-            for (const auto& v : sp.getStressVariables()) {
-              ib.code += "dfp" + id + "_dd" + v.name + " = -(this->n" + id +
-                         ")*dvp*(this->dt)*dseq" + id + "_ds*dsig_dd" + v.name +
-                         ";\n";
-            }
-          } else {
-            ib.code += "fp" + id + " -= ";
-            ib.code += "pow(seq" + id + "/(this->K" + id + "),this->n" + id +
-                       ")*dt;\n";
-          }
-          bd.setCode(uh, BehaviourData::Integrator, ib,
-                     BehaviourData::CREATEORAPPEND,
-                     BehaviourData::AT_BEGINNING);
-        }  // end of NortonInelasticFlow::endTreatment
+    }  // end of KinematicHardeningRuleBase::endTreatment
 
-        std::vector<OptionDescription> NortonInelasticFlow::getOptions() const {
-          auto opts = InelasticFlowBase::getOptions();
-          opts.emplace_back("K", "Norton coefficient",
-                            OptionDescription::MATERIALPROPERTY);
-          opts.emplace_back("n", "Norton exponent",
-                            OptionDescription::MATERIALPROPERTY);
-          return opts;
-        }  // end of NortonInelasticFlow::getOptions
+    std::vector<OptionDescription> NortonInelasticFlow::getOptions() const {
+      auto opts = InelasticFlowBase::getOptions();
+      opts.emplace_back("A", "Norton coefficient (optional)",
+                        OptionDescription::MATERIALPROPERTY);
+      opts.emplace_back("K", "Stress normalisation factor",
+                        OptionDescription::MATERIALPROPERTY);
+      opts.emplace_back("n", "Norton exponent",
+                        OptionDescription::MATERIALPROPERTY);
+      return opts;
+    }  // end of NortonInelasticFlow::getOptions
 
-        NortonInelasticFlow::~NortonInelasticFlow() = default;
+    std::string NortonInelasticFlow::buildFlowImplicitEquations(
+        const BehaviourDescription& bd,
+        const StressPotential& sp,
+        const std::string& id,
+        const bool b) const {
+      auto c = std::string{};
+      if (this->ihr != nullptr) {
+        if (b) {
+          c += this->ihr->computeElasticLimitAndDerivative(id);
+          c += "const auto dvp" + id + " = ";
+          c += "(this->A" + id + ")*pow((seq" + id + "-R" + id + ")/(this->K" +
+               id + "),this->n" + id + "-1)/this->K" + id + ";\n";
+          c += "fp" + id + " -= dvp" + id + "*(seq" + id + "-R" + id +
+               ")*(this->dt);\n";
+          c += sp.computeDerivatives(bd, "p" + id, "-(this->n" + id + ")*dvp" +
+                                                       id + "*(this->dt)*dseq" +
+                                                       id + "_ds" + id);
+          c += "dfp" + id + "_ddp" + id + " += (this->n" + id + ")*dvp" + id +
+               "*(this->dt)*dR" + id + "_ddp" + id + ";\n";
+          auto kid = decltype(khrs.size()){};
+          for (const auto& khr : khrs) {
+            c += khr->computeDerivatives("p", "(this->n" + id + ")*dvp" + id +
+                                                  "*(this->dt)*dseq" + id +
+                                                  "_ds" + id,
+                                         id, std::to_string(kid));
+            ++kid;
+          }
+        } else {
+          c += this->ihr->computeElasticLimit(id);
+          c += "fp" + id + " -= ";
+          c += "(this->A" + id + ")*pow((seq" + id + "-R" + id + ")/(this->K" +
+               id + "),this->n" + id + ")*(this->dt);\n";
+        }
+      } else {
+        if (b) {
+          c += "const auto dvp" + id + " = ";
+          c += "(this->A" + id + ")*pow(seq" + id + "/(this->K" + id +
+               "),this->n" + id + "-1)/this->K" + id + ";\n";
+          c += "fp" + id + " -= dvp" + id + "*seq" + id + "*(this->dt);\n";
+          c += sp.computeDerivatives(bd, "p" + id, "-(this->n" + id + ")*dvp" +
+                                                       id + "*(this->dt)*dseq" +
+                                                       id + "_ds" + id);
+          auto kid = decltype(khrs.size()){};
+          for (const auto& khr : khrs) {
+            c += khr->computeDerivatives("p", "(this->n" + id + ")*dvp" + id +
+                                                  "*(this->dt)*dseq" + id +
+                                                  "_ds" + id,
+                                         id, std::to_string(kid));
+            ++kid;
+          }
+        } else {
+          c += "fp" + id + " -= ";
+          c += "(this->A" + id + ")*pow(seq" + id + "/(this->K" + id +
+               "),this->n" + id + ")*(this->dt);\n";
+        }
+      }
+      return c;
+    }  // end of NortonInelasticFlow::buildFlowImplicitEquations
+
+    NortonInelasticFlow::~NortonInelasticFlow() = default;
 
   }  // end of namespace bbrick
 

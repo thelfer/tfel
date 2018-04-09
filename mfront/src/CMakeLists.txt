@@ -138,10 +138,20 @@ set(TFELMFront_SOURCES
     InelasticFlow.cxx
     InelasticFlowBase.cxx
     NortonInelasticFlow.cxx
+    PlasticInelasticFlow.cxx
     InelasticFlowFactory.cxx
     StressCriterion.cxx
     MisesStressCriterion.cxx
+    Hill1948StressCriterion.cxx
     StressCriterionFactory.cxx
+    IsotropicHardeningRule.cxx
+    LinearIsotropicHardeningRule.cxx
+    VoceIsotropicHardeningRule.cxx
+    IsotropicHardeningRuleFactory.cxx
+    KinematicHardeningRule.cxx
+    KinematicHardeningRuleBase.cxx
+    PragerKinematicHardeningRule.cxx
+    KinematicHardeningRuleFactory.cxx
     ${PROJECT_BINARY_DIR}/mfront/src/MFrontHeader.cxx)
 
 if(HAVE_GNUPLOT)

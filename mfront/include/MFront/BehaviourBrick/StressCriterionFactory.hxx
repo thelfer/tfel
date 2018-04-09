@@ -21,7 +21,7 @@ namespace mfront {
     struct StressCriterion;
 
     /*!
-     * \brief abstract factory for inelastic potentials.
+     * \brief abstract factory for stress criteria.
      */
     struct StressCriterionFactory {
       //! a simple alias

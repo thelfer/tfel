@@ -26,8 +26,11 @@ namespace mfront {
     struct MisesStressCriterion final : StressCriterion {
       void initialize(BehaviourDescription&,
                       AbstractBehaviourDSL&,
+                      const std::string&,
                       const DataMap&) override;
       std::vector<OptionDescription> getOptions() const override;
+      std::string computeElasticPrediction(const std::string&) const override;
+      std::string computeCriterion(const std::string&) const override;
       std::string computeNormal(const std::string&) const override;
       std::string computeNormalDerivative(const std::string&) const override;
       //! destructor

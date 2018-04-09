@@ -7,6 +7,21 @@ solved are described below.
 
 # Tickets fixed
 
+## Ticket #120: Direct call to Cast3M' umat behaviours in `MTest` is broken
+
+Since `TFEL` `3.1`, `MTest` is able to call raw Cast3M' umat behaviours
+(not written using `MFront`). However, the handling of external state
+variables was broken.
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/120/>
+
+## Ticket #119:	Material laws are not declared in the `@AdditionalConvergenceChecks` code block
+
+In the generation of the `additionalConvergenceChecks` method, the
+material laws were not declared.
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/119/>
+
 ## Ticket #118: The `BehaviourDescription::areMaterialPropertiesDependantOnStateVariables` method always returns `true`
 
 The

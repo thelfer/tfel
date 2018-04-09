@@ -26,7 +26,7 @@ namespace mfront {
      * The Norton law is defined by the following associated flow rule:
      * \f[
      * \underline{\dot{\varepsilon}}^{\mathrm{vp}}=
-     * \left(\frac{\left<\phi\left(\underline{\sigma}-\displaystyle\sum_{i}\underline{X}_{i}\right)-R\left(p\right)\right>}{K}\right)^{n}
+     * A\,\left(\frac{\left<\phi\left(\underline{\sigma}-\displaystyle\sum_{i}\underline{X}_{i}\right)-R\left(p\right)\right>}{K}\right)^{n}
      * \frac{\partial \phi}{\partial \underline{\sigma}}
      * \f]
      * where:
@@ -34,7 +34,8 @@ namespace mfront {
      * - \f$\phi\f$ is the stress criterion
      * - \f$\underline{X}_{i}\f$ is the \f$i^{\mathrm{th}}\f$ back stress
      * - \f$R\left(p\right)\f$ is the isotropic hardening rule
-     * - \f$K\f$ is the Norton coefficient
+     * - \f$A\f$ is the Norton coefficient
+     * - \f$K\f$ is a stress normalisation coefficient
      * - \f$n\f$ is the Norton exponent
      */
     struct NortonInelasticFlow : InelasticFlowBase {
@@ -42,18 +43,21 @@ namespace mfront {
                       AbstractBehaviourDSL&,
                       const std::string&,
                       const DataMap&) override;
-      std::vector<OptionDescription> getOptions() const override;
-      void completeVariableDeclaration(BehaviourDescription&,
-                                       const AbstractBehaviourDSL&,
-                                       const std::string&) const override;
       void endTreatment(BehaviourDescription&,
                         const AbstractBehaviourDSL&,
                         const StressPotential&,
                         const std::string&) const override;
+      std::vector<OptionDescription> getOptions() const override;
       //! destructor
       ~NortonInelasticFlow() override;
 
      protected:
+      std::string buildFlowImplicitEquations(const BehaviourDescription&,
+                                             const StressPotential&,
+                                             const std::string&,
+                                             const bool) const override;
+      //! \brief A coefficient
+      BehaviourDescription::MaterialProperty A;
       //! \brief K coefficient
       BehaviourDescription::MaterialProperty K;
       //! \brief Norton exponent

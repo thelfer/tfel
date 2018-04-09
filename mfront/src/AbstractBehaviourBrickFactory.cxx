@@ -34,7 +34,9 @@ namespace mfront {
     const auto d = [&p, pe] {
       using DataMap = std::map<std::string, tfel::utilities::Data>;
       if ((p != pe) && (p->value == "{")) {
-        return tfel::utilities::Data::read(p, pe).get<DataMap>();
+	tfel::utilities::DataParsingOptions o;
+	o.allowMultipleKeysInMap = true;
+        return tfel::utilities::Data::read(p, pe,o).get<DataMap>();
       }
       return DataMap();
     }();

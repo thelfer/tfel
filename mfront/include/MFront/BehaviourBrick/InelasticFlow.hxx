@@ -29,7 +29,7 @@ namespace mfront {
 
   // forward declaration
   struct AbstractBehaviourDSL;
-  
+
   namespace bbrick {
 
     // forward declaration
@@ -89,6 +89,25 @@ namespace mfront {
                                 const AbstractBehaviourDSL&,
                                 const StressPotential&,
                                 const std::string&) const = 0;
+      /*!
+       * \brief returns if the flow requires an activation state for the
+       * resolution.
+       * \note this basically means that an isotropic hardening rule is defined
+       * and this method could also have been named
+       * `isIsotropicHardeningRuleDefined`, but this name does not reflect the
+       * true intention of the author.
+       */
+      virtual bool requiresActivationState() const = 0;
+      /*!
+       * \brief add the intialization of the activation state of the
+       * `BehaviourData::BeforeInitializeLocalVariables` code block`.
+       * \note at this stage, the stress potential has already been called and
+       * the elastic prediction of the stress `sigel` is available.
+       * \param[in/out] bd: behaviour description
+       * \param[in] id: flow id
+       */
+      virtual void computeInitialActivationState(BehaviourDescription&,
+                                                 const std::string&) const = 0;
       //! destructor
       virtual ~InelasticFlow();
 

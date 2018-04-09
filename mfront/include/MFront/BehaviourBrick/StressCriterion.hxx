@@ -37,7 +37,7 @@ namespace mfront {
     struct OptionDescription;
 
     /*!
-     * \brief class describing an inelastic potential.
+     * \brief class describing a stress criterion
      */
     struct StressCriterion {
       //! a simple alias
@@ -47,22 +47,37 @@ namespace mfront {
       /*!
        * \param[in,out] bd: behaviour description
        * \param[in,out] dsl: abstract behaviour dsl
+       * \param[in] id: flow id
        * \param[in] d: options
        */
       virtual void initialize(BehaviourDescription&,
                               AbstractBehaviourDSL&,
+                              const std::string&,
                               const DataMap&) = 0;
       //! \return the flow options
       virtual std::vector<OptionDescription> getOptions() const = 0;
       /*!
-       * \brief return the code computing the criterion and its normal.
-       * The code defined the variables named "seq"+id and "n"+id
+       * \return the code that defines `seqel`+id, the elastic prediction of
+       * the criterion.
+       * \param[in] id: flow id
+       */
+      virtual std::string computeElasticPrediction(
+          const std::string&) const = 0;
+      /*!
+       * \return the code computing the criterion.
+       * The code defines a variable named "seq"+id
+       * \param[in] id: flow id
+       */
+      virtual std::string computeCriterion(const std::string&) const = 0;
+      /*!
+       * \return the code computing the criterion and its normal.
+       * The code defines the variables named "seq"+id and "n"+id
        * \param[in] id: flow id
        */
       virtual std::string computeNormal(const std::string&) const = 0;
       /*!
        * \brief return the code computing the criterion and its normal.
-       * The code defined the variables named "seq"+id, "n"+id and
+       * The code defines the variables named "seq"+id, "n"+id and
        * "dn"+id+"_ds".
        * \param[in] id: flow id
        */

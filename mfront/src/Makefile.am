@@ -104,30 +104,40 @@ libTFELMFront_la_SOURCES = MFront.cxx                                           
 		           MFrontModelInterface.cxx                               \
 		           AbstractBehaviourBrick.cxx                             \
 		           BehaviourBrickBase.cxx                                 \
-			   BehaviourBrickProviderIdentifier.cxx                   \
-			   BehaviourBrickRequirement.cxx                          \
-			   BehaviourBrickRequirementManager.cxx                   \
-			   BehaviourBrickProvider.cxx                             \
+			   BehaviourBrickProviderIdentifier.cxx                      \
+			   BehaviourBrickRequirement.cxx                             \
+			   BehaviourBrickRequirementManager.cxx                      \
+			   BehaviourBrickProvider.cxx                                \
 		           StandardElasticityBrick.cxx                            \
 		           StandardElastoViscoPlasticityBrick.cxx                 \
 		           DDIF2Brick.cxx                                         \
-			   FiniteStrainSingleCrystalBrick.cxx                     \
+			   FiniteStrainSingleCrystalBrick.cxx                        \
 		           LocalDataStructure.cxx                                 \
 		           AbstractBehaviourBrickFactory.cxx                      \
 		           UMATInterfaceBase.cxx                                  \
 		           OptionDescription.cxx                                  \
 		           BrickUtilities.cxx                                     \
-		           StressPotential.cxx                                 \
-		           HookeStressPotential.cxx                                 \
-		           DDIF2StressPotential.cxx                                 \
-		           StressPotentialFactory.cxx                          \
-		           InelasticFlow.cxx                                 \
-		           InelasticFlowBase.cxx                             \
-		           NortonInelasticFlow.cxx                             \
-		           InelasticFlowFactory.cxx                          \
+		           StressPotential.cxx                                    \
+		           HookeStressPotential.cxx                               \
+		           DDIF2StressPotential.cxx                               \
+		           StressPotentialFactory.cxx                             \
+		           InelasticFlow.cxx                                      \
+		           InelasticFlowBase.cxx                                  \
+		           NortonInelasticFlow.cxx                                \
+		           PlasticInelasticFlow.cxx                               \
+		           InelasticFlowFactory.cxx                               \
 		           StressCriterion.cxx                                    \
 		           MisesStressCriterion.cxx                               \
-		           StressCriterionFactory.cxx
+		           Hill1948StressCriterion.cxx                            \
+		           StressCriterionFactory.cxx                             \
+		           IsotropicHardeningRule.cxx                             \
+		           LinearIsotropicHardeningRule.cxx                       \
+		           VoceIsotropicHardeningRule.cxx                         \
+		           IsotropicHardeningRuleFactory.cxx                      \
+		           KinematicHardeningRule.cxx                             \
+		           KinematicHardeningRuleBase.cxx                         \
+		           PragerKinematicHardeningRule.cxx                       \
+		           KinematicHardeningRuleFactory.cxx
 
 
 if HAVE_GNUPLOT

@@ -7,6 +7,8 @@
 
 #include "TFEL/Raise.hxx"
 #include "TFEL/Utilities/Data.hxx"
+#include "MFront/ImplicitDSLBase.hxx"
+#include "MFront/NonLinearSystemSolver.hxx"
 #include "MFront/BehaviourBrick/StressPotential.hxx"
 #include "MFront/BehaviourBrick/StressPotentialFactory.hxx"
 #include "MFront/BehaviourBrick/InelasticFlow.hxx"
@@ -21,7 +23,7 @@ namespace mfront {
       return "";
     }
     return std::to_string(i);
-  } // end of getId
+  }  // end of getId
 
   StandardElastoViscoPlasticityBrick::StandardElastoViscoPlasticityBrick(
       AbstractBehaviourDSL& dsl_,
@@ -34,7 +36,7 @@ namespace mfront {
           "StandardElastoViscoPlasticityBrick::"
           "StandardElastoViscoPlasticityBrick: " +
           m);
-    }; // end of raise
+    };  // end of raise
     auto& spf = bbrick::StressPotentialFactory::getFactory();
     auto& iff = bbrick::InelasticFlowFactory::getFactory();
     auto getDataStructure = [&raise](const std::string& n, const Data& ds) {
@@ -47,7 +49,7 @@ namespace mfront {
         raise("invalid data type for entry '" + n + "'");
       }
       return ds.get<tfel::utilities::DataStructure>();
-    }; // end of getDataStructure
+    };  // end of getDataStructure
     for (const auto& e : d) {
       if ((e.first == "elastic_potential") || (e.first == "stress_potential")) {
         const auto ds = getDataStructure(e.first, e.second);
@@ -78,8 +80,38 @@ namespace mfront {
         raise("unsupported entry '" + e.first + "'");
       }
     }
-    if(this->stress_potential == nullptr){
+    if (this->stress_potential == nullptr) {
       raise("no stress potential defined");
+    }
+    // at this stage, one assumes that the various components of the inelastic
+    // flow (stress_potential, isotropic hardening rule) have added the
+    // initialization of their material properties the
+    // `BeforeInitializeLocalVariables`. We then ask the inelastic flows if they
+    // require an  activation state (in practice, it mean that an isotropic
+    // hardening rule has been defined). If so, the initialization of the
+    // activation states requires the the computation of an elastic prediction
+    // of the stress. The brik asks the stress potential to compute it in a
+    // variable called sigel and the inelastic flows shall use it to compute
+    // their initial state. All thoses steps must be added to the
+    // `BeforeInitializeLocalVariables` code block.
+    const bool bep = [this] {
+      for (const auto& pf : this->flows) {
+        if (pf->requiresActivationState()) {
+          return true;
+        }
+      }
+      return false;
+    }();
+    if (bep) {
+      // compute the elastic prediction
+      this->stress_potential->computeElasticPrediction(bd);
+      auto i = size_t{};
+      for (const auto& pf : this->flows) {
+        if (pf->requiresActivationState()) {
+          pf->computeInitialActivationState(bd, getId(i, this->flows.size()));
+        }
+        ++i;
+      }
     }
   }  // end of StandardElastoViscoPlasticityBrick
 
@@ -95,18 +127,25 @@ namespace mfront {
 
   void StandardElastoViscoPlasticityBrick::completeVariableDeclaration() const {
     this->stress_potential->completeVariableDeclaration(this->bd, this->dsl);
-    auto i = size_t {};
-    for(const auto& f : this->flows){
-      f->completeVariableDeclaration(this->bd, this->dsl, getId(i,this->flows.size()));
+    auto i = size_t{};
+    for (const auto& f : this->flows) {
+      f->completeVariableDeclaration(this->bd, this->dsl,
+                                     getId(i, this->flows.size()));
       ++i;
     }
   }  // end of StandardElastoViscoPlasticityBrick::completeVariableDeclaration
 
   void StandardElastoViscoPlasticityBrick::endTreatment() const {
+    const auto& idsl = dynamic_cast<const ImplicitDSLBase&>(this->dsl);
     this->stress_potential->endTreatment(this->bd, this->dsl);
-    this->stress_potential->writeStressDerivatives(this->bd);
-    auto i = size_t {};
-    for(const auto& f : this->flows){
+    const bool requiresAnalyticalJacobian =
+        ((idsl.getSolver().usesJacobian()) &&
+         (!idsl.getSolver().requiresNumericalJacobian()));
+    if (requiresAnalyticalJacobian) {
+      this->stress_potential->writeStressDerivatives(this->bd);
+    }
+    auto i = size_t{};
+    for (const auto& f : this->flows) {
       f->endTreatment(this->bd, this->dsl, *(this->stress_potential),
                       getId(i, this->flows.size()));
       ++i;
@@ -116,4 +155,4 @@ namespace mfront {
   StandardElastoViscoPlasticityBrick::~StandardElastoViscoPlasticityBrick() =
       default;
 
-} // end of namespace mfront
+}  // end of namespace mfront

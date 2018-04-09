@@ -9,3 +9,4 @@
 }
 
 @Brick StandardElastoViscoPlasticity{stress_potential : Hooke};
+

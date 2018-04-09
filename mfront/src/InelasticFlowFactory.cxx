@@ -3,10 +3,17 @@
  * \brief
  * \author Thomas Helfer
  * \date   15/03/2018
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #include "TFEL/Raise.hxx"
 #include "MFront/BehaviourBrick/NortonInelasticFlow.hxx"
+#include "MFront/BehaviourBrick/PlasticInelasticFlow.hxx"
 #include "MFront/BehaviourBrick/InelasticFlowFactory.hxx"
 
 namespace mfront {
@@ -43,6 +50,8 @@ namespace mfront {
     InelasticFlowFactory::InelasticFlowFactory() {
       this->addGenerator(
           "Norton", []() { return std::make_shared<NortonInelasticFlow>(); });
+      this->addGenerator(
+          "Plastic", []() { return std::make_shared<PlasticInelasticFlow>(); });
     }  // end of InelasticFlowFactory::InelasticFlowFactory
 
     InelasticFlowFactory::~InelasticFlowFactory() = default;

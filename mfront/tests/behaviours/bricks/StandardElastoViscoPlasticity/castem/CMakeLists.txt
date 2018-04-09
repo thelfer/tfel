@@ -16,13 +16,35 @@ if(HAVE_CASTEM)
   StandardElastoViscoPlasticityTest3
   StandardElastoViscoPlasticityTest4
   StandardElastoViscoPlasticityTest5
-  StandardElastoViscoPlasticityTest6)
+  StandardElastoViscoPlasticityTest6
+  StandardElastoViscoPlasticityNortonTest
+  StandardElastoViscoPlasticityNortonTest_nj
+  StandardElastoViscoPlasticityNortonTest2
+  StandardElastoViscoPlasticityNortonTest2_nj
+  StandardElastoViscoPlasticityNortonTest3
+  StandardElastoViscoPlasticityNortonTest3_nj
+  StandardElastoViscoPlasticityNortonTest4
+  StandardElastoViscoPlasticityNortonTest4_nj
+  StandardElastoViscoPlasticityNortonTest5
+  StandardElastoViscoPlasticityNortonTest5_nj
+  StandardElastoViscoPlasticityNortonTest6
+  StandardElastoViscoPlasticityNortonTest6_nj
+  StandardElastoViscoPlasticityOrthotropicNortonTest
+  StandardElastoViscoPlasticityOrthotropicNortonTest_nj
+  StandardElastoViscoPlasticityPlasticityTest
+  StandardElastoViscoPlasticityPlasticityTest_nj
+  StandardElastoViscoPlasticityPlasticityTest2
+  StandardElastoViscoPlasticityPlasticityTest2_nj
+  StandardElastoViscoPlasticityPlasticityTest3
+  StandardElastoViscoPlasticityPlasticityTest3_nj
+  StandardElastoViscoPlasticityPlasticityTest4
+  StandardElastoViscoPlasticityPlasticityTest4_nj)
   target_link_libraries(MFrontCastemStandardElastoViscoPlasticityBrickBehaviours
   CastemInterface MFrontProfiling TFELMaterial TFELMath TFELUtilities
   TFELException)
 endif(HAVE_CASTEM)
 
-macro(castemtest_ddif2brick test_arg behaviour)
+macro(castemtest_standardelastovicoplasticitybrick test_arg behaviour)
   if(HAVE_CASTEM)
     set(_REFERENCE_FILE )
     if(NOT (${ARGC} EQUAL 0))
@@ -33,6 +55,7 @@ macro(castemtest_ddif2brick test_arg behaviour)
       if(NOT _REFERENCE_FILE)
 	add_test(NAME brick${test_arg}_${behaviour}_${rm}_mtest
 	  COMMAND mtest --rounding-direction-mode=${rm} --verbose=level0 --xml-output=true --result-file-output=false
+      --@AccelerationAlgorithm='Cast3M'
 	  --@library@="$<TARGET_FILE:MFrontCastemStandardElastoViscoPlasticityBrickBehaviours>" --@behaviour@="${behaviour}"
 	  --@xml_output@="${test_arg}-${behaviour}-${rm}.xml" ${file})
 	add_test(NAME brick${test_arg}_${behaviour}_consistenttangentoperator_${rm}_mtest
@@ -45,13 +68,13 @@ macro(castemtest_ddif2brick test_arg behaviour)
 	  COMMAND mtest --rounding-direction-mode=${rm} --verbose=level0 --xml-output=true --result-file-output=false
 	  --@library@="$<TARGET_FILE:MFrontCastemStandardElastoViscoPlasticityBrickBehaviours>" --@behaviour@="${behaviour}"
 	  --@xml_output@="${test_arg}-${behaviour}-${rm}.xml"
-	  --@reference_file@="${top_srcdir}/mfront/tests/behaviours/references/${_REFERENCE_FILE}" ${file})
+	  --@reference_file@="${top_srcdir}/mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/references/${_REFERENCE_FILE}" ${file})
 	add_test(NAME brick${test_arg}_${behaviour}_consistenttangentoperator_${rm}_mtest
 	  COMMAND mtest --rounding-direction-mode=${rm} --verbose=level0 --xml-output=true --result-file-output=false
 	  --@StiffnessMatrixType='ConsistentTangentOperator'
 	  --@library@="$<TARGET_FILE:MFrontCastemStandardElastoViscoPlasticityBrickBehaviours>" --@behaviour@="${behaviour}"
 	  --@xml_output@="${test_arg}-${behaviour}-consistenttangentoperator-${rm}.xml"
-	  --@reference_file@="${top_srcdir}/mfront/tests/behaviours/references/${_REFERENCE_FILE}" ${file})
+	  --@reference_file@="${top_srcdir}/mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/references/${_REFERENCE_FILE}" ${file})
       endif(NOT _REFERENCE_FILE)
       if((CMAKE_HOST_WIN32) AND (NOT MSYS))
 	set_property(TEST brick${test_arg}_${behaviour}_${rm}_mtest
@@ -77,11 +100,33 @@ macro(castemtest_ddif2brick test_arg behaviour)
 	COMPONENT mtest)
     endif(TFEL_APPEND_SUFFIX)
   endif(HAVE_CASTEM)
-endmacro(castemtest_ddif2brick)
+endmacro(castemtest_standardelastovicoplasticitybrick)
 
-# castemtest_ddif2brick(ddif2   umatddif2   ddif2-uniaxialtesting.ref)
-# castemtest_ddif2brick(ddif2_2 umatddif2_2 ddif2-uniaxialtesting.ref)
-# castemtest_ddif2brick(ddif2_3 umatddif2_3 ddif2-uniaxialtesting.ref)
-# castemtest_ddif2brick(ddif2_4 umatddif2_4 ddif2-uniaxialtesting.ref)
-# castemtest_ddif2brick(ddif2_5 umatddif2_5 ddif2-uniaxialtesting.ref)
-# castemtest_ddif2brick(ddif2_6 umatddif2_6 ddif2-uniaxialtesting.ref)
+castemtest_standardelastovicoplasticitybrick(castemstandardelastoviscoplasticitynortontest umatstandardelastoviscoplasticitynortontest)
+castemtest_standardelastovicoplasticitybrick(castemstandardelastoviscoplasticitynortontest umatstandardelastoviscoplasticitynortontest_nj)
+castemtest_standardelastovicoplasticitybrick(castemstandardelastoviscoplasticitynortontest2 umatstandardelastoviscoplasticitynortontest2)
+castemtest_standardelastovicoplasticitybrick(castemstandardelastoviscoplasticitynortontest2 umatstandardelastoviscoplasticitynortontest2_nj)
+castemtest_standardelastovicoplasticitybrick(castemstandardelastoviscoplasticitynortontest3 umatstandardelastoviscoplasticitynortontest3)
+castemtest_standardelastovicoplasticitybrick(castemstandardelastoviscoplasticitynortontest3 umatstandardelastoviscoplasticitynortontest3_nj)
+castemtest_standardelastovicoplasticitybrick(castemstandardelastoviscoplasticitynortontest4 umatstandardelastoviscoplasticitynortontest4)
+castemtest_standardelastovicoplasticitybrick(castemstandardelastoviscoplasticitynortontest4 umatstandardelastoviscoplasticitynortontest4_nj)
+castemtest_standardelastovicoplasticitybrick(castemstandardelastoviscoplasticitynortontest5 umatstandardelastoviscoplasticitynortontest5)
+castemtest_standardelastovicoplasticitybrick(castemstandardelastoviscoplasticitynortontest5 umatstandardelastoviscoplasticitynortontest5_nj)
+castemtest_standardelastovicoplasticitybrick(castemstandardelastoviscoplasticitynortontest6-1 umatstandardelastoviscoplasticitynortontest6)
+castemtest_standardelastovicoplasticitybrick(castemstandardelastoviscoplasticitynortontest6-1 umatstandardelastoviscoplasticitynortontest6_nj)
+castemtest_standardelastovicoplasticitybrick(castemstandardelastoviscoplasticitynortontest6-2 umatstandardelastoviscoplasticitynortontest6)
+castemtest_standardelastovicoplasticitybrick(castemstandardelastoviscoplasticitynortontest6-2 umatstandardelastoviscoplasticitynortontest6_nj)
+
+castemtest_standardelastovicoplasticitybrick(castemstandardelastoviscoplasticityorthotropicnortontest
+  umatstandardelastoviscoplasticityorthotropicnortontest)
+castemtest_standardelastovicoplasticitybrick(castemstandardelastoviscoplasticityorthotropicnortontest
+  umatstandardelastoviscoplasticityorthotropicnortontest_nj)
+
+castemtest_standardelastovicoplasticitybrick(castemstandardelastoviscoplasticityplasticitytest umatstandardelastoviscoplasticityplasticitytest)
+castemtest_standardelastovicoplasticitybrick(castemstandardelastoviscoplasticityplasticitytest_nj umatstandardelastoviscoplasticityplasticitytest_nj)
+castemtest_standardelastovicoplasticitybrick(castemstandardelastoviscoplasticityplasticitytest2 umatstandardelastoviscoplasticityplasticitytest2)
+castemtest_standardelastovicoplasticitybrick(castemstandardelastoviscoplasticityplasticitytest2_nj umatstandardelastoviscoplasticityplasticitytest2_nj)
+castemtest_standardelastovicoplasticitybrick(castemstandardelastoviscoplasticityplasticitytest3 umatstandardelastoviscoplasticityplasticitytest3)
+castemtest_standardelastovicoplasticitybrick(castemstandardelastoviscoplasticityplasticitytest3_nj umatstandardelastoviscoplasticityplasticitytest3_nj)
+
+castemtest_standardelastovicoplasticitybrick(castemstandardelastoviscoplasticityplasticitytest4 umatstandardelastoviscoplasticityplasticitytest4 standardelastoviscoplasticityplasticitytest4.res)

@@ -1,0 +1,23 @@
+@DSL Implicit;
+@Behaviour StandardElastoViscoPlasticityNortonTest6_nj;
+@Author Thomas Helfer;
+@Date 31/03/2018;
+
+@Algorithm NewtonRaphson_NumericalJacobian;
+@PerturbationValueForNumericalJacobianComputation 1.e-8;
+@Epsilon 1.e-16;
+@Theta 1;
+
+@Parameter Ta  = 700;
+@Parameter de0 = 1.4e-5;
+
+@Brick "StandardElastoViscoPlasticity" {
+  stress_potential : "Hooke" {young_modulus : 150e9, poisson_ratio : 0.3},
+  inelastic_flow : "Norton" {
+    criterion : "Mises",
+    // material properties
+    A : "de0*exp(-T/Ta)",
+    K : 100e6,
+    n : 3.2
+  }
+};

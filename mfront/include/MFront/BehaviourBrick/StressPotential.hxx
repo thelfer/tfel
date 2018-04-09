@@ -100,17 +100,38 @@ namespace mfront {
       virtual void endTreatment(BehaviourDescription&,
                                 const AbstractBehaviourDSL&) const = 0;
       /*!
-       * \return the list of integration variables defined by the potential for
-       * which a derivative of the stress with respect to this variable exists.
-       */
-      virtual VariableDescriptionContainer getStressVariables() const = 0;
-      /*!
        * \brief add the definition of the stress derivatives with respect to
        * the integration variables used to define it. This definition is added
-       * to the `BehaviourData::Integrator` code block.
+       * to the `BehaviourData::Integrator` code block before the definition of
+       * the implicit system.
        * \param[in/out] bd: behaviour description
        */
       virtual void writeStressDerivatives(BehaviourDescription&) const = 0;
+      /*!
+       * \brief compute the derivatives of a variable \f$v\f$ knowing the
+       * derivative of \f$\frac{d\,v}{d\underline{s}}\f$ where
+       * \f$\underline{s}\f$ is the effective stress.
+       * \param[in] bd: behaviour description
+       * \param[in] v: variable name
+       * \param[in] dv_ds: derivative of v with respect to the effective stress
+       */
+      virtual std::string computeDerivatives(const BehaviourDescription&,
+                                             const std::string&,
+                                             const std::string&) const = 0;
+      /*!
+       * \brief add the lines that defines `sigel`, the elastic prediction of
+       * the stress. This definition is added
+       * to the `BehaviourData::BeforeInitializeLocalVariables` code block.
+       * \param[in/out] bd: behaviour description
+       */
+      virtual void computeElasticPrediction(BehaviourDescription&) const = 0;
+      /*!
+       * \brief return an expression that can be used to normalise implicit
+       * equations of the order of the stress
+       * \param[in] bd: behaviour description
+       */
+      virtual std::string getStressNormalisationFactor(
+          const BehaviourDescription&) const = 0;
       //! destructor
       virtual ~StressPotential();
     };  // end of struct StressPotential

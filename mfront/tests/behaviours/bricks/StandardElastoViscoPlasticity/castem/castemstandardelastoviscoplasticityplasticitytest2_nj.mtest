@@ -1,0 +1,33 @@
+@Author Thomas Helfer;
+@Date   06/04/2018;
+@Description{
+
+};
+
+@XMLOutputFile @xml_output@;
+@MaximumNumberOfSubSteps 1;
+@Behaviour<castem> @library@ @behaviour@;
+
+@MaterialProperty<constant> 'YoungModulus' 150e9;
+@MaterialProperty<constant> 'PoissonRatio' 0.3;
+
+@ExternalStateVariable 'Temperature' 293.15 ;
+
+@ImposedStrain 'EXX' {0:0,1:0.2};
+// For the numerical jacobian, the first step must be elastic, otherwise, the
+// jacobian is singular
+@Times {0,1.e-4,1 in 10};
+
+@Real 'de_dt' 0.2;
+@Real 'R0' 33e6;
+@Real 'Hr' 438e6;
+@Real 'dp_de' 'YoungModulus/(Hr+YoungModulus)';
+@Real 'te' 'R0/(YoungModulus*de_dt)';
+
+@Evolution<function> 'p' 'dp_de*de_dt*(t-te)*H(t-te)';
+@Test<function> 'EquivalentPlasticStrain' 'p' 1.e-12;
+@Test<function> 'SXX' '((R0+Hr*p))*H(t-te)+(YoungModulus*de_dt*t)*H(te-t)' 1.e-2;
+@Test<function> {
+  'SYY' : '0', 'SZZ' : '0'
+}
+1.e-2;

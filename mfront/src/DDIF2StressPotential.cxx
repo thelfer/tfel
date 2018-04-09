@@ -69,8 +69,7 @@ namespace mfront {
           BehaviourDescription::ConstantMaterialProperty;
       if (d.count(n)) {
         const auto& s = d.at(n);
-        mps[0] = getBehaviourDescriptionMaterialProperty(bd, dsl, n, s, false,
-                                                         false);
+        mps[0] = getBehaviourDescriptionMaterialProperty(dsl, n, s);
         if (mps[0].is<ConstantMaterialProperty>()) {
           const auto& cmp = mps[0].get<ConstantMaterialProperty>();
           if (b) {
@@ -86,8 +85,7 @@ namespace mfront {
       }
       if (d.count(an)) {
         const auto& s = d.at(an);
-        mps = getArrayOfBehaviourDescriptionMaterialProperties<3u>(
-            bd, dsl, an, s, false, false);
+        mps = getArrayOfBehaviourDescriptionMaterialProperties<3u>(dsl, an, s);
         if (mps[0].is<ConstantMaterialProperty>()) {
           std::vector<double> values(3u);
           for (unsigned short i = 0; i != 3; ++i) {

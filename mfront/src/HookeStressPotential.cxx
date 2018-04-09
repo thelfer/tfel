@@ -49,8 +49,7 @@ namespace mfront {
       };
       auto get_mp = [&dsl, &bd, &d, check](const char* const n) {
         check(n);
-        return getBehaviourDescriptionMaterialProperty(bd, dsl, n, d.at(n),
-                                                       false, false);
+        return getBehaviourDescriptionMaterialProperty(dsl, n, d.at(n));
       };
       auto addTi = [&bd, &d]() {
         const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
@@ -138,7 +137,7 @@ namespace mfront {
             get_mp("young_modulus"), get_mp("poisson_ratio")};
         bd.setElasticMaterialProperties(emps);
       } else if ((d.count("young_modulus1") != 0) ||
-		 (d.count("young_modulus2") != 0) ||
+                 (d.count("young_modulus2") != 0) ||
                  (d.count("young_modulus3") != 0) ||
                  (d.count("poisson_ratio12") != 0) ||
                  (d.count("poisson_ratio23") != 0) ||
@@ -183,77 +182,88 @@ namespace mfront {
       using tfel::glossary::Glossary;
       std::vector<OptionDescription> opts;
       opts.emplace_back(
-          "young_modulus", Glossary::YoungModulus, OptionDescription::MATERIALPROPERTY,
+          "young_modulus", Glossary::YoungModulus,
+          OptionDescription::MATERIALPROPERTY,
           std::vector<std::string>{"poisson_ratio"},
           std::vector<std::string>{
               "young_modulus1", "young_modulus2", "young_modulus3",
               "poisson_ratio12", "poisson_ratio23", "poisson_ratio13",
               "shear_modulus12", "shear_modulus23", "shear_modulus13"});
       opts.emplace_back(
-          "young_modulus1", Glossary::YoungModulus1, OptionDescription::MATERIALPROPERTY,
+          "young_modulus1", Glossary::YoungModulus1,
+          OptionDescription::MATERIALPROPERTY,
           std::vector<std::string>{"young_modulus2", "young_modulus3",
                                    "poisson_ratio12", "poisson_ratio23",
                                    "poisson_ratio13", "shear_modulus12",
                                    "shear_modulus23", "shear_modulus13"},
           std::vector<std::string>{"young_modulus", "poisson_ratio"});
       opts.emplace_back(
-          "young_modulus2", Glossary::YoungModulus2, OptionDescription::MATERIALPROPERTY,
+          "young_modulus2", Glossary::YoungModulus2,
+          OptionDescription::MATERIALPROPERTY,
           std::vector<std::string>{"young_modulus1", "young_modulus3",
                                    "poisson_ratio12", "poisson_ratio23",
                                    "poisson_ratio13", "shear_modulus12",
                                    "shear_modulus23", "shear_modulus13"},
           std::vector<std::string>{"young_modulus", "poisson_ratio"});
       opts.emplace_back(
-          "young_modulus3", Glossary::YoungModulus3, OptionDescription::MATERIALPROPERTY,
+          "young_modulus3", Glossary::YoungModulus3,
+          OptionDescription::MATERIALPROPERTY,
           std::vector<std::string>{"young_modulus1", "young_modulus2",
                                    "poisson_ratio12", "poisson_ratio23",
                                    "poisson_ratio13", "shear_modulus12",
                                    "shear_modulus23", "shear_modulus13"},
           std::vector<std::string>{"young_modulus", "poisson_ratio"});
       opts.emplace_back(
-          "poisson_ratio", Glossary::PoissonRatio, OptionDescription::MATERIALPROPERTY,
+          "poisson_ratio", Glossary::PoissonRatio,
+          OptionDescription::MATERIALPROPERTY,
           std::vector<std::string>{"young_modulus"},
           std::vector<std::string>{
               "young_modulus1", "young_modulus2", "young_modulus3",
               "poisson_ratio12", "poisson_ratio23", "poisson_ratio13",
               "shear_modulus12", "shear_modulus23", "shear_modulus13"});
       opts.emplace_back(
-          "poisson_ratio12", Glossary::PoissonRatio12, OptionDescription::MATERIALPROPERTY,
+          "poisson_ratio12", Glossary::PoissonRatio12,
+          OptionDescription::MATERIALPROPERTY,
           std::vector<std::string>{"young_modulus1", "young_modulus2",
                                    "young_modulus3", "poisson_ratio23",
                                    "poisson_ratio13", "shear_modulus12",
                                    "shear_modulus23", "shear_modulus13"},
           std::vector<std::string>{"young_modulus", "poisson_ratio"});
       opts.emplace_back(
-          "poisson_ratio23", Glossary::PoissonRatio23, OptionDescription::MATERIALPROPERTY,
+          "poisson_ratio23", Glossary::PoissonRatio23,
+          OptionDescription::MATERIALPROPERTY,
           std::vector<std::string>{"young_modulus1", "young_modulus2",
                                    "young_modulus3", "poisson_ratio12",
                                    "poisson_ratio13", "shear_modulus12",
                                    "shear_modulus23", "shear_modulus13"},
           std::vector<std::string>{"young_modulus", "poisson_ratio"});
       opts.emplace_back(
-          "poisson_ratio13", Glossary::PoissonRatio13, OptionDescription::MATERIALPROPERTY,
+          "poisson_ratio13", Glossary::PoissonRatio13,
+          OptionDescription::MATERIALPROPERTY,
           std::vector<std::string>{"young_modulus1", "young_modulus2",
                                    "young_modulus3", "poisson_ratio12",
                                    "poisson_ratio23", "shear_modulus12",
                                    "shear_modulus23", "shear_modulus13"},
           std::vector<std::string>{"young_modulus", "poisson_ratio"});
       opts.emplace_back(
-          "shear_modulus12", Glossary::ShearModulus12, OptionDescription::MATERIALPROPERTY,
+          "shear_modulus12", Glossary::ShearModulus12,
+          OptionDescription::MATERIALPROPERTY,
           std::vector<std::string>{"young_modulus1", "young_modulus2",
                                    "young_modulus3", "poisson_ratio12",
                                    "poisson_ratio23", "poisson_ratio13",
                                    "shear_modulus23", "shear_modulus13"},
           std::vector<std::string>{"young_modulus", "poisson_ratio"});
       opts.emplace_back(
-          "shear_modulus23", Glossary::ShearModulus23, OptionDescription::MATERIALPROPERTY,
+          "shear_modulus23", Glossary::ShearModulus23,
+          OptionDescription::MATERIALPROPERTY,
           std::vector<std::string>{"young_modulus1", "young_modulus2",
                                    "young_modulus3", "poisson_ratio12",
                                    "poisson_ratio23", "poisson_ratio13",
                                    "shear_modulus12", "shear_modulus13"},
           std::vector<std::string>{"young_modulus", "poisson_ratio"});
       opts.emplace_back(
-          "shear_modulus13", Glossary::ShearModulus13, OptionDescription::MATERIALPROPERTY,
+          "shear_modulus13", Glossary::ShearModulus13,
+          OptionDescription::MATERIALPROPERTY,
           std::vector<std::string>{"young_modulus1", "young_modulus2",
                                    "young_modulus3", "poisson_ratio12",
                                    "poisson_ratio23", "poisson_ratio13",
@@ -280,8 +290,10 @@ namespace mfront {
           std::vector<std::string>{"thermal_expansion1", "thermal_expansion2"},
           std::vector<std::string>{"thermal_expansion"});
       opts.emplace_back("plane_stress_support", "", OptionDescription::BOOLEAN);
-      opts.emplace_back("generic_tangent_operator", "", OptionDescription::BOOLEAN);
-      opts.emplace_back("generic_prediction_operator", "", OptionDescription::BOOLEAN);
+      opts.emplace_back("generic_tangent_operator", "",
+                        OptionDescription::BOOLEAN);
+      opts.emplace_back("generic_prediction_operator", "",
+                        OptionDescription::BOOLEAN);
       return opts;
     }  // end of HookeStressPotential::getOptions()
 
@@ -387,8 +399,8 @@ namespace mfront {
       }
     }
 
-    void HookeStressPotential::endTreatment(BehaviourDescription& bd,
-                                            const AbstractBehaviourDSL& dsl) const {
+    void HookeStressPotential::endTreatment(
+        BehaviourDescription& bd, const AbstractBehaviourDSL& dsl) const {
       // modelling hypotheses supported by the behaviour
       const auto bmh = bd.getModellingHypotheses();
       const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
@@ -625,8 +637,7 @@ namespace mfront {
        // HookeStressPotential::declareComputeStressWhenStiffnessTensorIsDefined
 
     void HookeStressPotential::treatIsotropicBehaviour(
-        BehaviourDescription& bd,
-        LocalDataStructure& d) const {
+        BehaviourDescription& bd, LocalDataStructure& d) const {
       using tfel::glossary::Glossary;
       const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       if (getVerboseMode() >= VERBOSE_DEBUG) {
@@ -689,7 +700,8 @@ namespace mfront {
         getLogStream() << "HookeStressPotential::treatOrthotropic: begin\n";
       }
       if (!bd.hasAttribute(BehaviourDescription::requiresStiffnessTensor)) {
-        bd.setAttribute(BehaviourDescription::requiresStiffnessTensor, true,false);
+        bd.setAttribute(BehaviourDescription::requiresStiffnessTensor, true,
+                        false);
       }
       tfel::raise_if(
           !bd.getAttribute<bool>(BehaviourDescription::requiresStiffnessTensor),
@@ -1117,23 +1129,17 @@ namespace mfront {
       return mh;
     }  // end of HookeStressPotential::getSupportedModellingHypothesis
 
-    VariableDescriptionContainer HookeStressPotential::getStressVariables()
-        const {
-      VariableDescriptionContainer svs;
-      VariableDescription eel("StrainStensor", "eel", 1u, 0u);
-      svs.push_back(eel);
-      return svs;
-    }  // end of HookeStressPotential::getStressVariables
-
-    void HookeStressPotential::writeStressDerivatives(
-        BehaviourDescription& bd) const {
-      constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-      CodeBlock ib;
+    std::string HookeStressPotential::computeDerivatives(
+        const BehaviourDescription& bd,
+        const std::string& v,
+        const std::string& dv_ds) const {
+      auto c = std::string{};
+      c = "df" + v + "_ddeel += ";
       if ((bd.getAttribute(BehaviourDescription::requiresStiffnessTensor,
                            false)) ||
           (bd.getAttribute(BehaviourDescription::computesStiffnessTensor,
                            false))) {
-        ib.code = "const auto dsig_ddeel = theta*(this->D);\n";
+        c += "(this->theta)*" + dv_ds + " * (this->D);\n";
       } else {
         if (bd.getElasticSymmetryType() == mfront::ISOTROPIC) {
           auto b = bd.getAttribute(
@@ -1141,10 +1147,8 @@ namespace mfront {
           const std::string lambda =
               b ? "this->sebdata.lambda" : "this->lambda";
           const std::string mu = b ? "this->sebdata.mu" : "this->mu";
-          ib.code =
-              "StiffnessTensor dsig_ddeel;\n"
-              "computeElasticStiffness<N,Type>::exe(dsig_ddeel,theta*(" +
-              lambda + "),theta*(" + mu + "));\n";
+          c += "theta * " + dv_ds + " * (2 * (" + mu + ") * Stensor4::Id()+(" +
+               lambda + ") * Stensor4::IxI());\n";
         } else if (bd.getElasticSymmetryType() == mfront::ORTHOTROPIC) {
           if (!bd.getAttribute<bool>(
                   BehaviourDescription::computesStiffnessTensor, false)) {
@@ -1152,16 +1156,39 @@ namespace mfront {
                 "HookeStressPotential::writeStressDerivatives: "
                 "orthotropic behaviour shall require the stiffness tensor");
           }
-          ib.code = "const auto dsig_ddeel = theta*(this->D);\n";
+          c += "(this->theta)*" + dv_ds + " * (this->D);\n";
         } else {
           tfel::raise(
               "HookeStressPotential::writeStressDerivatives: "
               "unsupported elastic symmetry type");
         }
       }
-      bd.setCode(uh, BehaviourData::Integrator, ib,
-                 BehaviourData::CREATEORAPPEND, BehaviourData::AT_BEGINNING);
+      return c;
+    }  // end of HookeStressPotential::computeDerivatives
+
+    void HookeStressPotential::writeStressDerivatives(
+        BehaviourDescription&) const {
     }  // end of HookeStressPotential::writeStressDerivatives
+
+    void HookeStressPotential::computeElasticPrediction(
+        BehaviourDescription& bd) const {
+      CodeBlock i;
+      i.code = "const auto sigel = computeElasticPrediction();\n";
+      bd.setCode(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+                 BehaviourData::BeforeInitializeLocalVariables, i,
+                 BehaviourData::CREATEORAPPEND, BehaviourData::AT_BEGINNING);
+    }  // end of HookeStressPotential::computeElasticPrediction
+
+    std::string HookeStressPotential::getStressNormalisationFactor(
+        const BehaviourDescription& bd) const {
+      if ((bd.getAttribute<bool>(BehaviourDescription::requiresStiffnessTensor,
+                                 false)) ||
+          (bd.getAttribute<bool>(BehaviourDescription::computesStiffnessTensor,
+                                 false))) {
+        return "this->D(0,0)";
+      }
+      return "this->young";
+    } // end of HookeStressPotential::getStressNormalisationFactor
 
     HookeStressPotential::~HookeStressPotential() = default;
 
