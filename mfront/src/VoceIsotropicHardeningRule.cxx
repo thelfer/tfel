@@ -64,13 +64,13 @@ namespace mfront{
     std::string VoceIsotropicHardeningRule::computeElasticLimitAndDerivative(
         const std::string& id) const {
       return "const auto R" + id + " = this->Rinf" + id + "+(this->R0" + id +
-             "-Rinf" + id + ")*exp(-(this->b)*(this->p" + id +
+             "-this->Rinf" + id + ")*exp(-(this->b)*(this->p" + id +
              "+(this->theta)*(this->dp" + id +
              ")));\n"  //
              "const auto dR" +
              id + "_ddp" + id +
              " = "
-             "-b*(R" +
+             "-(this->theta)*(this->b)*(R" +
              id + "-(this->Rinf" + id + "));\n";
     }  // end of VoceIsotropicHardeningRule::computeElasticLimitAndDerivative
 

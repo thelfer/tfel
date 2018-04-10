@@ -60,7 +60,7 @@ namespace mfront {
       const auto Cn = KinematicHardeningRule::getVariableId("C", fid, kid);
       auto c = std::string{};
       c += "df" + v + "_dd" + an + " = ";
-      c += "(2*theta*" + Cn + ")/3*" + dv_ds + ";\n";
+      c += "(2*(this->theta)*(this->" + Cn + "))/3*" + dv_ds + ";\n";
       return c;
     }
 

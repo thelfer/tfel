@@ -151,6 +151,7 @@ set(TFELMFront_SOURCES
     KinematicHardeningRule.cxx
     KinematicHardeningRuleBase.cxx
     PragerKinematicHardeningRule.cxx
+    AmstrongFrederickKinematicHardeningRule.cxx
     KinematicHardeningRuleFactory.cxx
     ${PROJECT_BINARY_DIR}/mfront/src/MFrontHeader.cxx)
 

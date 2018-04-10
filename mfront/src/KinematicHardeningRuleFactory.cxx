@@ -13,6 +13,7 @@
 
 #include "TFEL/Raise.hxx"
 #include "MFront/BehaviourBrick/PragerKinematicHardeningRule.hxx"
+#include "MFront/BehaviourBrick/AmstrongFrederickKinematicHardeningRule.hxx"
 #include "MFront/BehaviourBrick/KinematicHardeningRuleFactory.hxx"
 
 namespace mfront {
@@ -49,6 +50,14 @@ namespace mfront {
     KinematicHardeningRuleFactory::KinematicHardeningRuleFactory() {
       this->addGenerator("Prager", []() {
         return std::make_shared<bbrick::PragerKinematicHardeningRule>();
+      });
+      this->addGenerator("AmstrongFrederick", []() {
+        return std::make_shared<
+            bbrick::AmstrongFrederickKinematicHardeningRule>();
+      });
+      this->addGenerator("Amstrong-Frederick", []() {
+        return std::make_shared<
+            bbrick::AmstrongFrederickKinematicHardeningRule>();
       });
     }  // end of KinematicHardeningRuleFactory::KinematicHardeningRuleFactory
 

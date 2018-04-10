@@ -137,6 +137,7 @@ libTFELMFront_la_SOURCES = MFront.cxx                                           
 		           KinematicHardeningRule.cxx                             \
 		           KinematicHardeningRuleBase.cxx                         \
 		           PragerKinematicHardeningRule.cxx                       \
+		           AmstrongFrederickKinematicHardeningRule.cxx            \
 		           KinematicHardeningRuleFactory.cxx
 
 

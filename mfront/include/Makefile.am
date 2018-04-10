@@ -101,18 +101,19 @@ nobase_include_HEADERS= MFront/MFront.hxx                          \
 			MFront/BehaviourBrick/NortonInelasticFlow.hxx      \
 			MFront/BehaviourBrick/PlasticInelasticFlow.hxx      \
 			MFront/BehaviourBrick/InelasticFlowFactory.hxx     \
-			MFront/BehaviourBrick/StressCriterion.hxx             \
-			MFront/BehaviourBrick/MisesStressCriterion.hxx        \
-			MFront/BehaviourBrick/Hill1948StressCriterion.hxx     \
-			MFront/BehaviourBrick/StressCriterionFactory.hxx      \
-			MFront/BehaviourBrick/IsotropicHardeningRule.hxx      \
-			MFront/BehaviourBrick/LinearIsotropicHardeningRule.hxx      \
-			MFront/BehaviourBrick/VoceIsotropicHardeningRule.hxx      \
-			MFront/BehaviourBrick/IsotropicHardeningRuleFactory.hxx      \
-			MFront/BehaviourBrick/KinematicHardeningRule.hxx             \
-			MFront/BehaviourBrick/KinematicHardeningRuleBase.hxx         \
-			MFront/BehaviourBrick/PragerKinematicHardeningRule.hxx       \
-			MFront/BehaviourBrick/KinematicHardeningRuleFactory.hxx      \
+			MFront/BehaviourBrick/StressCriterion.hxx                         \
+			MFront/BehaviourBrick/MisesStressCriterion.hxx                    \
+			MFront/BehaviourBrick/Hill1948StressCriterion.hxx                 \
+			MFront/BehaviourBrick/StressCriterionFactory.hxx                  \
+			MFront/BehaviourBrick/IsotropicHardeningRule.hxx                  \
+			MFront/BehaviourBrick/LinearIsotropicHardeningRule.hxx            \
+			MFront/BehaviourBrick/VoceIsotropicHardeningRule.hxx              \
+			MFront/BehaviourBrick/IsotropicHardeningRuleFactory.hxx           \
+			MFront/BehaviourBrick/KinematicHardeningRule.hxx                  \
+			MFront/BehaviourBrick/KinematicHardeningRuleBase.hxx              \
+			MFront/BehaviourBrick/PragerKinematicHardeningRule.hxx            \
+			MFront/BehaviourBrick/AmstrongFrederickKinematicHardeningRule.hxx \
+			MFront/BehaviourBrick/KinematicHardeningRuleFactory.hxx           \
 			MFront/LocalDataStructure.hxx
 
 

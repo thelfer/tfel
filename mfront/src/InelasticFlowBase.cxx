@@ -186,10 +186,17 @@ namespace mfront {
                                          const std::string& id) const {
       constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       const auto& idsl = dynamic_cast<const ImplicitDSLBase&>(dsl);
+      if (this->ihr != nullptr) {
+        this->ihr->endTreatment(bd, dsl, id);
+      }
+      auto kid = decltype(khrs.size()){};
+      for (const auto khr : this->khrs) {
+        khr->endTreatment(bd, dsl, id, std::to_string(kid));
+        ++kid;
+      }
       const auto requiresAnalyticalJacobian =
           ((idsl.getSolver().usesJacobian()) &&
            (!idsl.getSolver().requiresNumericalJacobian()));
-      auto kid = decltype(khrs.size()){};
       // implicit equation associated with the elastic strain
       CodeBlock ib;
       if (this->ihr != nullptr) {

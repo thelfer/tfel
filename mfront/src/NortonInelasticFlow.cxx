@@ -120,8 +120,8 @@ namespace mfront {
         if (b) {
           c += this->ihr->computeElasticLimitAndDerivative(id);
           c += "const auto dvp" + id + " = ";
-          c += "(this->A" + id + ")*pow((seq" + id + "-R" + id + ")/(this->K" +
-               id + "),this->n" + id + "-1)/this->K" + id + ";\n";
+          c += "(this->A" + id + ")*pow(std::max((seq" + id + "-R" + id + ")/(this->K" +
+               id + "),this->epsilon),this->n" + id + "-1)/this->K" + id + ";\n";
           c += "fp" + id + " -= dvp" + id + "*(seq" + id + "-R" + id +
                ")*(this->dt);\n";
           c += sp.computeDerivatives(bd, "p" + id, "-(this->n" + id + ")*dvp" +
@@ -140,14 +140,14 @@ namespace mfront {
         } else {
           c += this->ihr->computeElasticLimit(id);
           c += "fp" + id + " -= ";
-          c += "(this->A" + id + ")*pow((seq" + id + "-R" + id + ")/(this->K" +
-               id + "),this->n" + id + ")*(this->dt);\n";
+          c += "(this->A" + id + ")*pow(std::max((seq" + id + "-R" + id + ")/(this->K" +
+               id + "),real(0)),this->n" + id + ")*(this->dt);\n";
         }
       } else {
         if (b) {
           c += "const auto dvp" + id + " = ";
-          c += "(this->A" + id + ")*pow(seq" + id + "/(this->K" + id +
-               "),this->n" + id + "-1)/this->K" + id + ";\n";
+          c += "(this->A" + id + ")*pow(std::max(seq" + id + "/(this->K" + id +
+               "),real(0)),this->n" + id + "-1)/this->K" + id + ";\n";
           c += "fp" + id + " -= dvp" + id + "*seq" + id + "*(this->dt);\n";
           c += sp.computeDerivatives(bd, "p" + id, "-(this->n" + id + ")*dvp" +
                                                        id + "*(this->dt)*dseq" +
@@ -162,8 +162,8 @@ namespace mfront {
           }
         } else {
           c += "fp" + id + " -= ";
-          c += "(this->A" + id + ")*pow(seq" + id + "/(this->K" + id +
-               "),this->n" + id + ")*(this->dt);\n";
+          c += "(this->A" + id + ")*pow(std::max(seq" + id + "/(this->K" + id +
+               "),real(0)),this->n" + id + ")*(this->dt);\n";
         }
       }
       return c;

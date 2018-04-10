@@ -822,7 +822,7 @@ namespace mfront {
       if ((i.category == MaterialPropertyInput::TEMPERATURE) ||
           (i.category == MaterialPropertyInput::AUXILIARYSTATEVARIABLEFROMEXTERNALMODEL) ||
           (i.category == MaterialPropertyInput::EXTERNALSTATEVARIABLE)) {
-        return "this->" + i.name + "+theta*(this->d" + i.name + ')';
+        return "this->" + i.name + "+(this->theta)*(this->d" + i.name + ')';
       } else if ((i.category == MaterialPropertyInput::MATERIALPROPERTY) ||
                  (i.category == MaterialPropertyInput::STATEVARIABLE) ||
                  (i.category == MaterialPropertyInput::PARAMETER)) {
@@ -1013,7 +1013,7 @@ namespace mfront {
           (i.category == MaterialPropertyInput::AUXILIARYSTATEVARIABLEFROMEXTERNALMODEL) ||
           (i.category == MaterialPropertyInput::STATEVARIABLE) ||
           (i.category == MaterialPropertyInput::EXTERNALSTATEVARIABLE)) {
-        return "this->" + i.name + "+theta*(this->d" + i.name + ')';
+        return "this->" + i.name + "+(this->theta)*(this->d" + i.name + ')';
       } else if ((i.category == MaterialPropertyInput::MATERIALPROPERTY) ||
                  (i.category == MaterialPropertyInput::PARAMETER)) {
         return "this->" + i.name;

@@ -104,6 +104,9 @@ namespace mfront {
         case OptionDescription::BOOLEAN:
           throw_if(!d.is<bool>());
           break;
+        case OptionDescription::REAL:
+          throw_if((!d.is<double>()) && (!d.is<int>()));
+          break;
         case OptionDescription::MATERIALPROPERTY:
           throw_if(!is_material_property(d));
           break;

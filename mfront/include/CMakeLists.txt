@@ -117,6 +117,7 @@ install_mfront_header(MFront/BehaviourBrick IsotropicHardeningRuleFactory.hxx)
 install_mfront_header(MFront/BehaviourBrick KinematicHardeningRule.hxx)
 install_mfront_header(MFront/BehaviourBrick KinematicHardeningRuleBase.hxx)
 install_mfront_header(MFront/BehaviourBrick PragerKinematicHardeningRule.hxx)
+install_mfront_header(MFront/BehaviourBrick AmstrongFrederickKinematicHardeningRule.hxx)
 install_mfront_header(MFront/BehaviourBrick KinematicHardeningRuleFactory.hxx)
 
 if(HAVE_CASTEM)

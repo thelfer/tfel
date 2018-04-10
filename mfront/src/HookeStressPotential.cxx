@@ -73,7 +73,11 @@ namespace mfront {
         const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
         const auto v = [&d, &n] {
           if (d.count(n) != 0) {
-            return d.at(n).get<double>();
+            const auto Tref = d.at(n);
+            if (Tref.is<int>()) {
+              return static_cast<double>(Tref.get<int>());
+            }
+            return Tref.get<double>();
           } else {
             return 293.15;
           }
@@ -284,11 +288,13 @@ namespace mfront {
           OptionDescription::MATERIALPROPERTY,
           std::vector<std::string>{"thermal_expansion1", "thermal_expansion3"},
           std::vector<std::string>{"thermal_expansion"});
-      opts.emplace_back(
+      opts.emplace_back( 
           "thermal_expansion3", Glossary::ThermalExpansion3,
           OptionDescription::MATERIALPROPERTY,
           std::vector<std::string>{"thermal_expansion1", "thermal_expansion2"},
           std::vector<std::string>{"thermal_expansion"});
+      opts.emplace_back("thermal_expansion_reference_temperature",
+                        "reference temperature for the thermal expansion", OptionDescription::REAL);
       opts.emplace_back("plane_stress_support", "", OptionDescription::BOOLEAN);
       opts.emplace_back("generic_tangent_operator", "",
                         OptionDescription::BOOLEAN);
@@ -507,14 +513,14 @@ namespace mfront {
                    "))*(prediction_strain(0)+prediction_strain(2))+prediction_"
                    "strain(0))+\n";
               m += "(" + lambda + ")/(" + lambda + "+2*(" + mu +
-                   "))*(this->sigzz+theta*(this->dsigzz));\n";
+                   "))*(this->sigzz+(this->theta)*(this->dsigzz));\n";
               m += "prediction_stress(2) = 2*(" + mu + ")*((" + lambda + ")/(" +
                    lambda + "+2*(" + mu +
                    "))*(prediction_strain(0)+prediction_strain(2))+prediction_"
                    "strain(2))+\n";
               m += "(" + lambda + ")/(" + lambda + "+2*(" + mu +
-                   "))*(this->sigzz+theta*(this->dsigzz));\n";
-              m += "prediction_stress(1) = this->sigzz+theta*(this->dsigzz);\n";
+                   "))*(this->sigzz+(this->theta)*(this->dsigzz));\n";
+              m += "prediction_stress(1) = this->sigzz+(this->theta)*(this->dsigzz);\n";
               m += "return prediction_stress;\n";
             } else {
               tfel::raise_if(!bd.getAttribute<bool>(
@@ -627,7 +633,7 @@ namespace mfront {
         BehaviourDescription& bd) const {
       const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       CodeBlock smts, sets;
-      smts.code = "this->sig=(this->D)*(this->eel+theta*(this->deel));\n";
+      smts.code = "this->sig=(this->D)*(this->eel+(this->theta)*(this->deel));\n";
       sets.code = "this->sig=(this->D)*(this->eel);\n";
       bd.setCode(h, BehaviourData::ComputeStress, smts, BehaviourData::CREATE,
                  BehaviourData::AT_BEGINNING, false);
@@ -649,10 +655,10 @@ namespace mfront {
       CodeBlock sets;
       if (bd.areElasticMaterialPropertiesDefined()) {
         smts.code =
-            "this->sig=this->lambda*trace(this->eel+theta*(this->deel))*"
+            "this->sig=this->lambda*trace(this->eel+(this->theta)*(this->deel))*"
             "Stensor::"
             "Id()+"
-            "2*(this->mu)*(this->eel+theta*(this->deel));\n";
+            "2*(this->mu)*(this->eel+(this->theta)*(this->deel));\n";
         sets.code =
             "this->sig=this->lambda_tdt*trace(this->eel)*Stensor::Id()+2*(this-"
             ">"
@@ -680,10 +686,10 @@ namespace mfront {
                    true);
         // Hooke law
         smts.code =
-            "this->sig=(this->sebdata.lambda)*trace(this->eel+theta*(this->"
+            "this->sig=(this->sebdata.lambda)*trace(this->eel+(this->theta)*(this->"
             "deel))"
             "*Stensor::Id()+"
-            "2*(this->sebdata.mu)*(this->eel+theta*(this->deel));\n";
+            "2*(this->sebdata.mu)*(this->eel+(this->theta)*(this->deel));\n";
         sets.code =
             "this->sig=(this->sebdata.lambda)*trace(this->eel)*Stensor::Id()"
             "+2*(this->sebdata.mu)*this->eel;";
@@ -1147,7 +1153,7 @@ namespace mfront {
           const std::string lambda =
               b ? "this->sebdata.lambda" : "this->lambda";
           const std::string mu = b ? "this->sebdata.mu" : "this->mu";
-          c += "theta * " + dv_ds + " * (2 * (" + mu + ") * Stensor4::Id()+(" +
+          c += "(this->theta) * " + dv_ds + " * (2 * (" + mu + ") * Stensor4::Id()+(" +
                lambda + ") * Stensor4::IxI());\n";
         } else if (bd.getElasticSymmetryType() == mfront::ORTHOTROPIC) {
           if (!bd.getAttribute<bool>(
