@@ -44,6 +44,10 @@ namespace mfront {
        *   must be lower than the elastic limit given by the isotropic hardening
        *   rule. If this is not the case, the convergence flag is set to false
        *   and the flow is activated (`bpl`+id is set to `true`).
+       *
+       * \note if the stress criterion is the same as the flow criterion, the
+       * flow is associative.
+       *
        * \param[in,out] bd: behaviour description
        * \param[in,out] dsl: abstract behaviour dsl
        * \param[in] sp: stress potential
@@ -83,6 +87,8 @@ namespace mfront {
           const bool) const = 0;
       //! stress criterion
       std::shared_ptr<StressCriterion> sc;
+      //! flow criterion
+      std::shared_ptr<StressCriterion> fc;
       //! isotropic hardening rule
       std::shared_ptr<IsotropicHardeningRule> ihr;
       //! kinematic hardening rules

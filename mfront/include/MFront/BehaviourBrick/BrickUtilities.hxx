@@ -32,10 +32,9 @@ namespace mfront {
      * \(t+\theta\,dt\).
      * \param[in] bd: behaviour description
      */
-    std::function<
-        std::string(const BehaviourDescription::MaterialPropertyInput&)>
-    getMiddleOfTimeStepModifier(const BehaviourDescription&);
-
+    MFRONT_VISIBILITY_EXPORT std::function<
+        std::string(const BehaviourDescription::MaterialPropertyInput &)>
+    getMiddleOfTimeStepModifier(const BehaviourDescription &);
     /*!
      * \brief check that the options names are in a given set
      * of keys.
@@ -44,9 +43,9 @@ namespace mfront {
      * \param[in] b: calling brick name
      */
     MFRONT_VISIBILITY_EXPORT void checkOptionsNames(
-        const std::map<std::string, tfel::utilities::Data>&,
-        const std::vector<std::string>&,
-        const std::string&);
+        const std::map<std::string, tfel::utilities::Data> &,
+        const std::vector<std::string> &,
+        const std::string &);
     /*!
      * \brief extract a material property usable in a behaviour from a value. If
      * the material property is handled through an external mfront file, the
@@ -57,9 +56,9 @@ namespace mfront {
      * \param[in] d: data
      */
     MFRONT_VISIBILITY_EXPORT BehaviourDescription::MaterialProperty
-    getBehaviourDescriptionMaterialProperty(AbstractBehaviourDSL&,
-                                            const std::string&,
-                                            const tfel::utilities::Data&);
+    getBehaviourDescriptionMaterialProperty(AbstractBehaviourDSL &,
+                                            const std::string &,
+                                            const tfel::utilities::Data &);
     /*!
      * \brief declare a parameter or a local variable used to store the
      * evaluation of the material property.
@@ -68,9 +67,9 @@ namespace mfront {
      * \param[in] n: variable name
      */
     MFRONT_VISIBILITY_EXPORT void declareParameterOrLocalVariable(
-        BehaviourDescription&,
-        BehaviourDescription::MaterialProperty&,
-        const std::string&);
+        BehaviourDescription &,
+        BehaviourDescription::MaterialProperty &,
+        const std::string &);
     /*!
      * \brief declare a parameter or a local variable used to store the
      * evaluation of the material property.
@@ -80,10 +79,26 @@ namespace mfront {
      * \param[in] en: external name
      */
     MFRONT_VISIBILITY_EXPORT void declareParameterOrLocalVariable(
-        BehaviourDescription&,
-        BehaviourDescription::MaterialProperty&,
-        const std::string&,
-        const std::string&);
+        BehaviourDescription &,
+        BehaviourDescription::MaterialProperty &,
+        const std::string &,
+        const std::string &);
+    /*!
+     * \return the code initializing the variable containing the material
+     * property value at \(t+\theta\,dt\).
+     * \note If the material property is constant, an empty string is returned,
+     * as this material property is assumed to be associated with a parameter.
+     * \param[in] dsl: abstract behaviour dsl.
+     * \param[in] bd: behaviour description
+     * \param[in] n: name of the variable storing the material property value.
+     * \param[in] mp: material property description.
+     */
+    MFRONT_VISIBILITY_EXPORT std::string
+    generateMaterialPropertyInitializationCode(
+        const AbstractBehaviourDSL &,
+        const BehaviourDescription &bd,
+        const std::string &,
+        const BehaviourDescription::MaterialProperty &);
     /*!
      * \brief declare a parameter or a local variable used to store the
      * evaluation of the material property.
@@ -93,10 +108,10 @@ namespace mfront {
      * \param[in] g: glossary entry
      */
     MFRONT_VISIBILITY_EXPORT void declareParameterOrLocalVariable(
-        BehaviourDescription&,
-        BehaviourDescription::MaterialProperty&,
-        const std::string&,
-        const tfel::glossary::GlossaryEntry&);
+        BehaviourDescription &,
+        BehaviourDescription::MaterialProperty &,
+        const std::string &,
+        const tfel::glossary::GlossaryEntry &);
     /*!
    * \brief add a new material property
    * \param[in] bd: behaviour description
@@ -106,10 +121,10 @@ namespace mfront {
    * \param[in] s: array size
    */
     MFRONT_VISIBILITY_EXPORT void addMaterialPropertyIfNotDefined(
-        BehaviourDescription&,
-        const std::string&,
-        const std::string&,
-        const tfel::glossary::GlossaryEntry&,
+        BehaviourDescription &,
+        const std::string &,
+        const std::string &,
+        const tfel::glossary::GlossaryEntry &,
         const unsigned short = 1u);
     /*!
      * \brief add a new material property
@@ -120,10 +135,10 @@ namespace mfront {
      * \param[in] s: array size
      */
     MFRONT_VISIBILITY_EXPORT void addMaterialPropertyIfNotDefined(
-        BehaviourDescription&,
-        const std::string&,
-        const std::string&,
-        const std::string&,
+        BehaviourDescription &,
+        const std::string &,
+        const std::string &,
+        const std::string &,
         const unsigned short = 1u);
     /*!
      * \brief add a new state variable
@@ -132,9 +147,9 @@ namespace mfront {
      * \param[in] n: name of the variable
      * \param[in] s: array size
      */
-    MFRONT_VISIBILITY_EXPORT void addStateVariable(BehaviourDescription&,
-                                                   const std::string&,
-                                                   const std::string&,
+    MFRONT_VISIBILITY_EXPORT void addStateVariable(BehaviourDescription &,
+                                                   const std::string &,
+                                                   const std::string &,
                                                    const unsigned short = 1u);
     /*!
      * \brief add a new state variable
@@ -145,10 +160,10 @@ namespace mfront {
      * \param[in] s: array size
      */
     MFRONT_VISIBILITY_EXPORT void addStateVariable(
-        BehaviourDescription&,
-        const std::string&,
-        const std::string&,
-        const tfel::glossary::GlossaryEntry&,
+        BehaviourDescription &,
+        const std::string &,
+        const std::string &,
+        const tfel::glossary::GlossaryEntry &,
         const unsigned short = 1u);
     /*!
      * \brief add a new state variable
@@ -158,10 +173,10 @@ namespace mfront {
      * \param[in] e: entry name
      * \param[in] s: array size
      */
-    MFRONT_VISIBILITY_EXPORT void addStateVariable(BehaviourDescription&,
-                                                   const std::string&,
-                                                   const std::string&,
-                                                   const std::string&,
+    MFRONT_VISIBILITY_EXPORT void addStateVariable(BehaviourDescription &,
+                                                   const std::string &,
+                                                   const std::string &,
+                                                   const std::string &,
                                                    const unsigned short = 1u);
     /*!
      * \brief add a new external state variable
@@ -171,9 +186,9 @@ namespace mfront {
      * \param[in] s: array size
      */
     MFRONT_VISIBILITY_EXPORT void addExternalStateVariable(
-        BehaviourDescription&,
-        const std::string&,
-        const std::string&,
+        BehaviourDescription &,
+        const std::string &,
+        const std::string &,
         const unsigned short = 1u);
     /*!
      * \brief add a new external state variable
@@ -184,10 +199,10 @@ namespace mfront {
      * \param[in] s: array size
      */
     MFRONT_VISIBILITY_EXPORT void addExternalStateVariable(
-        BehaviourDescription&,
-        const std::string&,
-        const std::string&,
-        const tfel::glossary::GlossaryEntry&,
+        BehaviourDescription &,
+        const std::string &,
+        const std::string &,
+        const tfel::glossary::GlossaryEntry &,
         const unsigned short = 1u);
     /*!
      * \brief add a new external state variable
@@ -198,10 +213,10 @@ namespace mfront {
      * \param[in] s: array size
      */
     MFRONT_VISIBILITY_EXPORT void addExternalStateVariable(
-        BehaviourDescription&,
-        const std::string&,
-        const std::string&,
-        const std::string&,
+        BehaviourDescription &,
+        const std::string &,
+        const std::string &,
+        const std::string &,
         const unsigned short = 1u);
     /*!
      * \brief add a new local variable
@@ -210,9 +225,9 @@ namespace mfront {
      * \param[in] n: name of the variable
      * \param[in] s: array size
      */
-    MFRONT_VISIBILITY_EXPORT void addLocalVariable(BehaviourDescription&,
-                                                   const std::string&,
-                                                   const std::string&,
+    MFRONT_VISIBILITY_EXPORT void addLocalVariable(BehaviourDescription &,
+                                                   const std::string &,
+                                                   const std::string &,
                                                    const unsigned short = 1u);
     /*!
      * \brief add a new material property
@@ -222,9 +237,9 @@ namespace mfront {
      * \param[in] p: parameter default value
      */
     MFRONT_VISIBILITY_EXPORT void addParameter(
-        BehaviourDescription&,
-        const std::string&,
-        const tfel::glossary::GlossaryEntry& e,
+        BehaviourDescription &,
+        const std::string &,
+        const tfel::glossary::GlossaryEntry &e,
         const double);
     /*!
      * \brief add a new material property
@@ -235,9 +250,9 @@ namespace mfront {
      * \param[in] p: parameter default value
      */
     MFRONT_VISIBILITY_EXPORT void addParameter(
-        BehaviourDescription&,
-        const std::string&,
-        const tfel::glossary::GlossaryEntry&,
+        BehaviourDescription &,
+        const std::string &,
+        const tfel::glossary::GlossaryEntry &,
         const unsigned short,
         const double);
     /*!
@@ -249,11 +264,11 @@ namespace mfront {
      * \param[in] p: parameter default values
      */
     MFRONT_VISIBILITY_EXPORT void addParameter(
-        BehaviourDescription&,
-        const std::string&,
-        const tfel::glossary::GlossaryEntry&,
+        BehaviourDescription &,
+        const std::string &,
+        const tfel::glossary::GlossaryEntry &,
         const unsigned short,
-        const std::vector<double>&);
+        const std::vector<double> &);
     /*!
      * \brief add a new material property
      * \param[in] bd: behaviour description
@@ -261,9 +276,9 @@ namespace mfront {
      * \param[in] e: entry name
      * \param[in] p: parameter default value
      */
-    MFRONT_VISIBILITY_EXPORT void addParameter(BehaviourDescription&,
-                                               const std::string&,
-                                               const std::string&,
+    MFRONT_VISIBILITY_EXPORT void addParameter(BehaviourDescription &,
+                                               const std::string &,
+                                               const std::string &,
                                                const double);
     /*!
      * \brief add a new material property
@@ -273,9 +288,9 @@ namespace mfront {
      * \param[in] s: array size
      * \param[in] p: parameter default value
      */
-    MFRONT_VISIBILITY_EXPORT void addParameter(BehaviourDescription&,
-                                               const std::string&,
-                                               const std::string&,
+    MFRONT_VISIBILITY_EXPORT void addParameter(BehaviourDescription &,
+                                               const std::string &,
+                                               const std::string &,
                                                const unsigned short,
                                                const double);
     /*!
@@ -286,11 +301,11 @@ namespace mfront {
      * \param[in] s: array size
      * \param[in] p: parameter default values
      */
-    MFRONT_VISIBILITY_EXPORT void addParameter(BehaviourDescription&,
-                                               const std::string&,
-                                               const std::string&,
+    MFRONT_VISIBILITY_EXPORT void addParameter(BehaviourDescription &,
+                                               const std::string &,
+                                               const std::string &,
                                                const unsigned short,
-                                               const std::vector<double>&);
+                                               const std::vector<double> &);
 
   }  // end of namespace bbrick
 

@@ -1,5 +1,5 @@
 /*!
- * \file   AmstrongFrederickKinematicHardeningRule.cxx
+ * \file   BurletCailletaudKinematicHardeningRule.cxx
  * \brief
  * \author Thomas Helfer
  * \date   04/04/2018
@@ -16,43 +16,49 @@
 #include "MFront/BehaviourBrick/BrickUtilities.hxx"
 #include "MFront/BehaviourBrick/StressPotential.hxx"
 #include "MFront/BehaviourBrick/OptionDescription.hxx"
-#include "MFront/BehaviourBrick/AmstrongFrederickKinematicHardeningRule.hxx"
+#include "MFront/BehaviourBrick/BurletCailletaudKinematicHardeningRule.hxx"
 
 namespace mfront {
 
   namespace bbrick {
 
-    std::vector<OptionDescription> AmstrongFrederickKinematicHardeningRule::getOptions()
+    std::vector<OptionDescription> BurletCailletaudKinematicHardeningRule::getOptions()
         const {
       auto opts = KinematicHardeningRuleBase::getOptions();
       opts.emplace_back("D", "back-strain callback coefficient",
                         OptionDescription::MATERIALPROPERTY);
       return opts;
-    }  // end of AmstrongFrederickKinematicHardeningRule::getOptions()
+    }  // end of BurletCailletaudKinematicHardeningRule::getOptions()
 
-    void AmstrongFrederickKinematicHardeningRule::initialize(
+    void BurletCailletaudKinematicHardeningRule::initialize(
         BehaviourDescription& bd,
         AbstractBehaviourDSL& dsl,
         const std::string& fid,
         const std::string& kid,
         const DataMap& d) {
+      auto get_mp = [&bd, &dsl, &d, &fid, &kid](
+          BehaviourDescription::MaterialProperty& mp, const std::string& n) {
+        const auto nid = KinematicHardeningRule::getVariableId(n, fid, kid);
+        if (d.count(n) == 0) {
+          tfel::raise(
+              "BurletCailletaudKinematicHardeningRule::initialize: "
+              "material property '" +
+              n + "' is not defined");
+        }
+        mp = getBehaviourDescriptionMaterialProperty(dsl, n, d.at(n));
+        declareParameterOrLocalVariable(bd, mp, nid);
+      };
       KinematicHardeningRuleBase::initialize(bd, dsl, fid, kid, d);
-      const auto Dn = KinematicHardeningRule::getVariableId("D", fid, kid);
-      // kinematic moduli
-      tfel::raise_if(d.count("D") == 0,
-                     "AmstrongFrederickKinematicHardeningRule::initialize: "
-                     "material property 'D' is not defined");
-      this->D = getBehaviourDescriptionMaterialProperty(dsl, "D", d.at("D"));
-      declareParameterOrLocalVariable(bd, this->D, Dn);
-    }  // end of AmstrongFrederickKinematicHardeningRule::initialize
+      get_mp(this->D, "D");
+    }  // end of BurletCailletaudKinematicHardeningRule::initialize
 
-    void AmstrongFrederickKinematicHardeningRule::endTreatment(
+    void BurletCailletaudKinematicHardeningRule::endTreatment(
         BehaviourDescription& bd,
         const AbstractBehaviourDSL& dsl,
         const std::string& fid,
         const std::string& kid) const {
-      constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       KinematicHardeningRuleBase::endTreatment(bd, dsl, fid, kid);
+      constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       const auto Dn = KinematicHardeningRule::getVariableId("D", fid, kid);
       const auto c =
           generateMaterialPropertyInitializationCode(dsl, bd, Dn, this->D);
@@ -62,10 +68,10 @@ namespace mfront {
         bd.setCode(uh, BehaviourData::BeforeInitializeLocalVariables, i,
                    BehaviourData::CREATEORAPPEND, BehaviourData::AT_BEGINNING);
       }
-    }  // end of AmstrongFrederickKinematicHardeningRule::endTreatment
+    }  // end of BurletCailletaudKinematicHardeningRule::endTreatment
 
     std::string
-    AmstrongFrederickKinematicHardeningRule::buildBackStrainImplicitEquations(
+    BurletCailletaudKinematicHardeningRule::buildBackStrainImplicitEquations(
         const BehaviourDescription& bd,
         const StressPotential& sp,
         const std::vector<std::shared_ptr<KinematicHardeningRule>>& khrs,
@@ -73,35 +79,38 @@ namespace mfront {
         const std::string& kid,
         const bool b) const {
       const auto an = KinematicHardeningRule::getVariableId("a", fid, kid);
+      const auto Xn = KinematicHardeningRule::getVariableId("X", fid, kid)+"_";
       const auto Cn = KinematicHardeningRule::getVariableId("C", fid, kid);
       const auto Dn = KinematicHardeningRule::getVariableId("D", fid, kid);
-      auto c = std::string{};
-      c = "f" + an + " -= ";
-      c += "(this->dp" + fid + ")*(n" + fid + "-(this->" + Dn + ")*" + an +
-           "_);\n";
+      auto c = std::string {};
+      c += "f" + an + " -= ";
+      c += "(this->dp" + fid + ")*(n" + fid + "-(this->" + Dn + ")*(" + an +
+           "_|n" + fid + ")*" + an + "_);\n";
       if (b) {
         c += "df" + an + "_ddp" + fid + " = -(n" + fid + "-(this->" + Dn +
-             ")*" + an + "_);\n";
+             ")*(" + an + "_|n" + fid + ")*" + an + "_);\n";
         c += sp.computeDerivatives(
             bd, an, "-(this->dp" + fid + ")*dn" + fid + "_ds" + fid);
         // term specific to this back strain
         c += "df" + an + "_dd" + an + " += ";
-        c += "(this->theta)*(this->dp" + fid + ")*((this->" + Dn +
-             ")*Stensor4::Id());\n";
+        c += "(this->theta)*(this->" + Dn + ")*(this->dp" + fid + ")*(";
+        c += "("+an + "_^n" + fid + ")+(" + an + "_|n" + fid + ")*Stensor4::Id()";
+        c += ");\n";
         // terms in common for all back strains
         auto kid2 = decltype(khrs.size()){};
-        const auto df_ds = "(this->dp" + fid + ")*dn" + fid + "_ds" + fid;
-        for (const auto& khr : khrs) {
+        for (const auto khr : khrs) {
+          const auto df_ds = "(this->dp" + fid + ")*(dn" + fid + "_ds" + fid +
+                             "+(" + an + "_^(" + an + "_|dn" + fid + "_ds" +
+                             fid + ")))";
           c += computeDerivatives(an, df_ds, fid, std::to_string(kid2));
           ++kid2;
         }
       }
       return c;
     }  // end of
-       // AmstrongFrederickKinematicHardeningRule::buildBackStrainImplicitEquations
+    // BurletCailletaudKinematicHardeningRule::buildBackStrainImplicitEquations
 
-    AmstrongFrederickKinematicHardeningRule::
-        ~AmstrongFrederickKinematicHardeningRule() = default;
+    BurletCailletaudKinematicHardeningRule::~BurletCailletaudKinematicHardeningRule() = default;
 
   }  // end of namespace bbrick
 

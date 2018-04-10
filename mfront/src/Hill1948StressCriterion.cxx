@@ -23,7 +23,8 @@ namespace mfront{
     void Hill1948StressCriterion::initialize(BehaviourDescription& bd,
                                              AbstractBehaviourDSL& dsl,
                                              const std::string& id,
-                                             const DataMap& d) {
+                                             const DataMap& d,
+                                             const Role r) {
       auto get_mp = [&dsl, &bd, &d](const char* const n) {
         if (d.count(n) == 0) {
           tfel::raise("Hill1948StressCriterion::initialize: entry '" +
@@ -31,6 +32,7 @@ namespace mfront{
         }
         return getBehaviourDescriptionMaterialProperty(dsl, n, d.at(n));
       };
+      StressCriterionBase::initialize(bd, dsl, id, d, r);
       auto v = VariableDescription{"tfel::math::st2tost2<N,stress>", "H" + id,
                                    1u, 0u};
       v.description = "Hill tensor";
@@ -73,34 +75,67 @@ namespace mfront{
              " = sqrt(" + s + "|" + H + "*" + s + ");\n";
     }  // end of Hill1948StressCriterion::computeNormal
 
-    std::string Hill1948StressCriterion::computeNormal(
-        const std::string& id) const {
+    std::string Hill1948StressCriterion::computeNormal(const std::string& id,
+                                                       const Role r) const {
       const auto s = "s" + id;
-      const auto seq = "seq" + id;
+      const auto seq = [r, &id]() -> std::string {
+        if ((r == STRESSCRITERION) || (r == STRESSANDFLOWCRITERION)) {
+          return "seq" + id;
+        }
+        return "seqf" + id;
+      }();
+      const auto n = [r, &id]() -> std::string {
+        if ((r == STRESSCRITERION) || (r == STRESSANDFLOWCRITERION)) {
+          return "dseq" + id + "_ds" + id;
+        }
+        return "n" + id;
+      }();
       const auto H = "H" + id;
       auto c = std::string{};
       c += "const auto " + seq +  //
            " = sqrt(" + s + "|" + H + "*" + s + ");\n";
       c += "const auto i" + seq + " = 1/max(" + seq + ",1.e-12*young);\n";
-      c += "const auto d" + seq + "_d" + s +  //
-           " = " + H + "*" + s + "*i" + seq + ";\n";
+      c += "const auto " + n + " = " + H + "*" + s + "*i" + seq + ";\n";
+      if (r == STRESSANDFLOWCRITERION) {
+        c += "const auto& n" + id + " = dseq" + id + "_ds" + id + ";\n";
+      }
       return c;
     }  // end of Hill1948StressCriterion::computeNormal
 
     std::string Hill1948StressCriterion::computeNormalDerivative(
-        const std::string& id) const {
+        const std::string& id, const Role r) const {
       const auto s = "s" + id;
-      const auto seq = "seq" + id;
       const auto H = "H" + id;
+      const auto seq = [r, &id]() -> std::string {
+        if ((r == STRESSCRITERION) || (r == STRESSANDFLOWCRITERION)) {
+          return "seq" + id;
+        }
+        return "seqf" + id;
+      }();
+      const auto n = [r, &id]() -> std::string {
+        if ((r == STRESSCRITERION) || (r == STRESSANDFLOWCRITERION)) {
+          return "dseq" + id + "_ds" + id;
+        }
+        return "n" + id;
+      }();
+      const auto dn = [r, &id]() -> std::string {
+        if ((r == STRESSCRITERION) || (r == STRESSANDFLOWCRITERION)) {
+          return "d2seq" + id + "_ds" + id + "ds" + id;
+        }
+        return "dn" + id + "_ds" + id;
+      }();
       auto c = std::string{};
       c += "const auto " + seq +  //
            " = sqrt(" + s + "|" + H + "*" + s + ");\n";
       c += "const auto i" + seq + " = 1/max(" + seq + ",1.e-12*young);\n";
-      c += "const auto d" + seq + "_d" + s +  //
-           " = " + H + "*" + s + "*i" + seq + ";\n";
-      c += "const auto d2"+seq+ "_d"+s+"d"+s+" = ";
-      c += "(" + H + "-(d" + seq + "_d" + s + "^d" + seq + "_d" + s + "))*i" +
-           seq + ";\n";
+      c += "const auto " + n + " = " + H + "*" + s + "*i" + seq + ";\n";
+      c += "const auto " + dn + " = ";
+      c += "(" + H + "-(" + n + "^" + n + "))*i" + seq + ";\n";
+      if (r == STRESSANDFLOWCRITERION) {
+        c += "const auto& n" + id + " = dseq" + id + "_ds" + id + ";\n";
+        c += "const auto& dn" + id + "_ds" + id + " = ";
+        c += "d2seq" + id + "_ds" + id + "ds" + id + ";\n";
+      }
       return c;
     }  // end of Hill1948StressCriterion::computeNormalDerivative
 

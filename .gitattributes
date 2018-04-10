@@ -2155,6 +2155,7 @@ mfront/include/MFront/BehaviourAttribute.hxx -text
 mfront/include/MFront/BehaviourBrick/AmstrongFrederickKinematicHardeningRule.hxx -text
 mfront/include/MFront/BehaviourBrick/BrickUtilities.hxx -text
 mfront/include/MFront/BehaviourBrick/BrickUtilities.ixx -text
+mfront/include/MFront/BehaviourBrick/BurletCailletaudKinematicHardeningRule.hxx -text
 mfront/include/MFront/BehaviourBrick/DDIF2StressPotential.hxx -text
 mfront/include/MFront/BehaviourBrick/Hill1948StressCriterion.hxx -text
 mfront/include/MFront/BehaviourBrick/HookeStressPotential.hxx -text
@@ -2169,6 +2170,7 @@ mfront/include/MFront/BehaviourBrick/KinematicHardeningRuleFactory.hxx -text
 mfront/include/MFront/BehaviourBrick/LinearIsotropicHardeningRule.hxx -text
 mfront/include/MFront/BehaviourBrick/MisesStressCriterion.hxx -text
 mfront/include/MFront/BehaviourBrick/NortonInelasticFlow.hxx -text
+mfront/include/MFront/BehaviourBrick/OhnoWangKinematicHardeningRule.hxx -text
 mfront/include/MFront/BehaviourBrick/OptionDescription.hxx -text
 mfront/include/MFront/BehaviourBrick/PlasticInelasticFlow.hxx -text
 mfront/include/MFront/BehaviourBrick/PragerKinematicHardeningRule.hxx -text
@@ -2177,9 +2179,11 @@ mfront/include/MFront/BehaviourBrick/ProviderIdentifier.hxx -text
 mfront/include/MFront/BehaviourBrick/Requirement.hxx -text
 mfront/include/MFront/BehaviourBrick/RequirementManager.hxx -text
 mfront/include/MFront/BehaviourBrick/StressCriterion.hxx -text
+mfront/include/MFront/BehaviourBrick/StressCriterionBase.hxx -text
 mfront/include/MFront/BehaviourBrick/StressCriterionFactory.hxx -text
 mfront/include/MFront/BehaviourBrick/StressPotential.hxx -text
 mfront/include/MFront/BehaviourBrick/StressPotentialFactory.hxx -text
+mfront/include/MFront/BehaviourBrick/ViscoplasticFlowBase.hxx -text
 mfront/include/MFront/BehaviourBrick/VoceIsotropicHardeningRule.hxx -text
 mfront/include/MFront/BehaviourBrickBase.hxx -text
 mfront/include/MFront/BehaviourDSLBase.hxx -text
@@ -2428,6 +2432,7 @@ mfront/src/BehaviourInterfaceFactory.cxx -text
 mfront/src/BehaviourProfiler.cxx -text
 mfront/src/BrickUtilities.cxx -text
 mfront/src/BroydenSolvers.cxx -text
+mfront/src/BurletCailletaudKinematicHardeningRule.cxx -text
 mfront/src/CMakeGenerator.cxx -text
 mfront/src/CMakeLists.txt -text
 mfront/src/CMaterialPropertyInterface.cxx -text
@@ -2544,6 +2549,7 @@ mfront/src/NonLinearSystemSolverBase.cxx -text
 mfront/src/NonLinearSystemSolverFactory.cxx -text
 mfront/src/NortonInelasticFlow.cxx -text
 mfront/src/OctaveMaterialPropertyInterface.cxx -text
+mfront/src/OhnoWangKinematicHardeningRule.cxx -text
 mfront/src/OptionDescription.cxx -text
 mfront/src/PedanticMode.cxx -text
 mfront/src/PerformanceProfiling.cxx -text
@@ -2560,6 +2566,7 @@ mfront/src/StandardElasticityBrick.cxx -text
 mfront/src/StandardElastoViscoPlasticityBrick.cxx -text
 mfront/src/StaticVariableDescription.cxx -text
 mfront/src/StressCriterion.cxx -text
+mfront/src/StressCriterionBase.cxx -text
 mfront/src/StressCriterionFactory.cxx -text
 mfront/src/StressPotential.cxx -text
 mfront/src/StressPotentialFactory.cxx -text
@@ -2572,6 +2579,7 @@ mfront/src/UmatSmallStrainMTestFileGenerator.cxx -text
 mfront/src/VariableBoundsDescription.cxx -text
 mfront/src/VariableDescription.cxx -text
 mfront/src/VariableDescriptionBase.cxx -text
+mfront/src/ViscoplasticFlowBase.cxx -text
 mfront/src/VoceIsotropicHardeningRule.cxx -text
 mfront/src/ZMATInterface.cxx -text
 mfront/src/main.cxx -text

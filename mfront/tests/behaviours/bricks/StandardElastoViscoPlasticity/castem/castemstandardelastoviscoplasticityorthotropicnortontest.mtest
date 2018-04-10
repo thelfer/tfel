@@ -20,7 +20,7 @@
 
 @Parameter 'A' 8.e-67;
 @Parameter 'K' 1;
-@Parameter 'n' 8.2;
+@Parameter 'E' 8.2;
 
 @ExternalStateVariable 'Temperature' 293.15 ;
 

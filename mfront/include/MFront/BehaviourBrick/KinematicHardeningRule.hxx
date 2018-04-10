@@ -131,6 +131,7 @@ namespace mfront {
        * back-strains and the derivatives of those equations (if requested).
        * \param[in] bd: behaviour description
        * \param[in] sp: stress potential
+       * \param[in] khrs: list of kinematic hardening rules
        * \param[in] fid: flow id
        * \param[in] kid: kinematic hardening rule id
        * \param[in] b: compute derivatives
@@ -138,6 +139,7 @@ namespace mfront {
       virtual std::string buildBackStrainImplicitEquations(
           const BehaviourDescription&,
           const StressPotential&,
+          const std::vector<std::shared_ptr<KinematicHardeningRule>>&,
           const std::string&,
           const std::string&,
           const bool) const = 0;

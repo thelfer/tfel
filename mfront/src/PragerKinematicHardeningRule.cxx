@@ -25,6 +25,7 @@ namespace mfront {
     std::string PragerKinematicHardeningRule::buildBackStrainImplicitEquations(
         const BehaviourDescription& bd,
         const StressPotential& sp,
+        const std::vector<std::shared_ptr<KinematicHardeningRule>>& khrs,
         const std::string& fid,
         const std::string& kid,
         const bool b) const {
@@ -35,11 +36,14 @@ namespace mfront {
       c += "(this->dp" + fid + ")*dseq" + fid + "_ds" + fid + ";\n";
       if (b) {
         c += "df" + an + "_ddp" + fid + " = -dseq" + fid + "_ds" + fid + ";\n";
-        c += sp.computeDerivatives(bd, an, "-(this->dp" + fid + ")*d2seq" +
-                                               fid + "_ds" + fid + "ds" + fid);
-        c += "df" + an + "_dd" + an + " += ";
-        c += "(this->dp" + fid + ")*d2seq" + fid + "_ds" + fid + "ds" + fid +
-             "*theta*2*(this->" + Cn + ")/3;\n";
+        c += sp.computeDerivatives(
+            bd, an, "-(this->dp" + fid + ")*dn" + fid + "_ds" + fid);
+        auto kid2 = decltype(khrs.size()){};
+        for (const auto& khr : khrs) {
+          const auto df_ds = "(this->dp" + fid + ")*dn" + fid + "_ds" + fid;
+          c += computeDerivatives(an, df_ds, fid, std::to_string(kid2));
+          ++kid2;
+        }
       }
       return c;
     }  // end of PragerKinematicHardeningRule::buildBackStrainImplicitEquations

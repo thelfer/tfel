@@ -14,7 +14,7 @@
 #ifndef LIB_MFRONT_BEHAVIOURBRICK_NORTONINELASTICFLOW_HXX
 #define LIB_MFRONT_BEHAVIOURBRICK_NORTONINELASTICFLOW_HXX
 
-#include "MFront/BehaviourBrick/InelasticFlowBase.hxx"
+#include "MFront/BehaviourBrick/ViscoplasticFlowBase.hxx"
 
 namespace mfront {
 
@@ -38,7 +38,7 @@ namespace mfront {
      * - \f$K\f$ is a stress normalisation coefficient
      * - \f$n\f$ is the Norton exponent
      */
-    struct NortonInelasticFlow : InelasticFlowBase {
+    struct NortonInelasticFlow : ViscoplasticFlowBase {
       void initialize(BehaviourDescription&,
                       AbstractBehaviourDSL&,
                       const std::string&,
@@ -52,10 +52,9 @@ namespace mfront {
       ~NortonInelasticFlow() override;
 
      protected:
-      std::string buildFlowImplicitEquations(const BehaviourDescription&,
-                                             const StressPotential&,
-                                             const std::string&,
-                                             const bool) const override;
+      std::string computeFlowRate(const std::string&) const override;
+      std::string computeFlowRateAndDerivative(
+          const std::string&) const override;
       //! \brief A coefficient
       BehaviourDescription::MaterialProperty A;
       //! \brief K coefficient

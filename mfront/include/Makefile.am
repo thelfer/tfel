@@ -98,10 +98,12 @@ nobase_include_HEADERS= MFront/MFront.hxx                          \
 			MFront/BehaviourBrick/StressPotentialFactory.hxx   \
 			MFront/BehaviourBrick/InelasticFlow.hxx            \
 			MFront/BehaviourBrick/InelasticFlowBase.hxx        \
+			MFront/BehaviourBrick/ViscoplasticFlowBase.hxx      \
 			MFront/BehaviourBrick/NortonInelasticFlow.hxx      \
 			MFront/BehaviourBrick/PlasticInelasticFlow.hxx      \
 			MFront/BehaviourBrick/InelasticFlowFactory.hxx     \
 			MFront/BehaviourBrick/StressCriterion.hxx                         \
+			MFront/BehaviourBrick/StressCriterionBase.hxx                     \
 			MFront/BehaviourBrick/MisesStressCriterion.hxx                    \
 			MFront/BehaviourBrick/Hill1948StressCriterion.hxx                 \
 			MFront/BehaviourBrick/StressCriterionFactory.hxx                  \
@@ -113,6 +115,8 @@ nobase_include_HEADERS= MFront/MFront.hxx                          \
 			MFront/BehaviourBrick/KinematicHardeningRuleBase.hxx              \
 			MFront/BehaviourBrick/PragerKinematicHardeningRule.hxx            \
 			MFront/BehaviourBrick/AmstrongFrederickKinematicHardeningRule.hxx \
+			MFront/BehaviourBrick/OhnoWangKinematicHardeningRule.hxx          \
+			MFront/BehaviourBrick/BurletCailletaudKinematicHardeningRule.hxx  \
 			MFront/BehaviourBrick/KinematicHardeningRuleFactory.hxx           \
 			MFront/LocalDataStructure.hxx
 

@@ -1,5 +1,5 @@
 /*!
- * \file   AmstrongFrederickKinematicHardeningRule.hxx
+ * \file   OhnoWangKinematicHardeningRule.hxx
  * \brief
  * \author Thomas Helfer
  * \date   04/04/2018
@@ -11,8 +11,8 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_MFRONT_BEHAVIOURBRICK_AMSTRONGFREDERICKKINEMATICHARDENINGRULE_HXX
-#define LIB_MFRONT_BEHAVIOURBRICK_AMSTRONGFREDERICKKINEMATICHARDENINGRULE_HXX
+#ifndef LIB_MFRONT_BEHAVIOURBRICK_OHNOWANGKINEMATICHARDENINGRULE_HXX
+#define LIB_MFRONT_BEHAVIOURBRICK_OHNOWANGKINEMATICHARDENINGRULE_HXX
 
 #include "MFront/BehaviourBrick/KinematicHardeningRuleBase.hxx"
 
@@ -21,14 +21,18 @@ namespace mfront {
   namespace bbrick {
 
     /*!
-     * \brief class describing the Amstrong-Frederick kinematic hardening rule
+     * \brief This class describes the Ohno-Wang kinematic hardening rule
      * defined by the following evolution of the back-strain variable
      * \f$\underline{a}\f$:
      * \f[
-     * \underline{\dot{a}}=\underline{\dot{\varepsilon}}^{p}-D\,\underline{a}
+     * \underline{\dot{a}}=\underline{\dot{\varepsilon}}^{p}-D\,\Phi\left(\underline{X}\right)\,\underline{a}
+     * \f]
+     * with:
+     * \f[
+     * \Phi\left(\underline{X}\right)=\left<\frac{D\,J\left(\underline{X}\right)-\omega\,C}{1-\omega}\right>^{m_{1}}\,\left(\frac{1}{D\,J\left(\underline{X}\right)}\right)^{m_{2}}
      * \f]
      */
-    struct AmstrongFrederickKinematicHardeningRule
+    struct OhnoWangKinematicHardeningRule
         : KinematicHardeningRuleBase {
       std::vector<OptionDescription> getOptions() const override;
       void initialize(BehaviourDescription&,
@@ -48,11 +52,17 @@ namespace mfront {
           const std::string&,
           const bool) const override;
       //! destructor
-      ~AmstrongFrederickKinematicHardeningRule() override;
+      ~OhnoWangKinematicHardeningRule() override;
 
      protected:
       //! \brief call-back
       BehaviourDescription::MaterialProperty D;
+      //! \brief Ohno-Wang parameter
+      BehaviourDescription::MaterialProperty w;
+      //! \brief Ohno-Wang parameter
+      BehaviourDescription::MaterialProperty m1;
+      //! \brief Ohno-Wang parameter
+      BehaviourDescription::MaterialProperty m2;
 
     };  // end of struct KinematicHardeningRule
 
@@ -60,5 +70,4 @@ namespace mfront {
 
 }  // end of namespace mfront
 
-#endif /* LIB_MFRONT_BEHAVIOURBRICK_AMSTRONGFREDERICKKINEMATICHARDENINGRULE_HXX \
-          */
+#endif /* LIB_MFRONT_BEHAVIOURBRICK_OHNOWANGKINEMATICHARDENINGRULE_HXX */

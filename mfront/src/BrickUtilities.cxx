@@ -5,6 +5,7 @@
  * \date   20/03/2018
  */
 
+#include <sstream>
 #include "TFEL/Glossary/Glossary.hxx"
 #include "TFEL/Glossary/GlossaryEntry.hxx"
 #include "TFEL/Utilities/StringAlgorithms.hxx"
@@ -35,6 +36,23 @@ namespace mfront {
         }
       };
     }  // end of getMiddleOfTimeStepModifier
+
+    std::string generateMaterialPropertyInitializationCode(
+        const AbstractBehaviourDSL& dsl,
+        const BehaviourDescription& bd,
+        const std::string& n,
+        const BehaviourDescription::MaterialProperty& mp) {
+      auto c = std::string{};
+      if (!mp.is<BehaviourDescription::ConstantMaterialProperty>()) {
+        auto mts = getMiddleOfTimeStepModifier(bd);
+        std::ostringstream mps;
+        mps << "this->" + n + " = ";
+        dsl.writeMaterialPropertyEvaluation(mps, mp, mts);
+        mps << ";\n";
+        c = mps.str();
+      }
+      return c;
+    }  // end of generateMaterialPropertyInitializationCode
 
     BehaviourDescription::MaterialProperty
     getBehaviourDescriptionMaterialProperty(AbstractBehaviourDSL& dsl,

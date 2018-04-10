@@ -13,6 +13,8 @@
 
 #include "TFEL/Raise.hxx"
 #include "MFront/BehaviourBrick/PragerKinematicHardeningRule.hxx"
+#include "MFront/BehaviourBrick/OhnoWangKinematicHardeningRule.hxx"
+#include "MFront/BehaviourBrick/BurletCailletaudKinematicHardeningRule.hxx"
 #include "MFront/BehaviourBrick/AmstrongFrederickKinematicHardeningRule.hxx"
 #include "MFront/BehaviourBrick/KinematicHardeningRuleFactory.hxx"
 
@@ -58,6 +60,22 @@ namespace mfront {
       this->addGenerator("Amstrong-Frederick", []() {
         return std::make_shared<
             bbrick::AmstrongFrederickKinematicHardeningRule>();
+      });
+      this->addGenerator("OhnoWang", []() {
+        return std::make_shared<
+            bbrick::OhnoWangKinematicHardeningRule>();
+      });
+      this->addGenerator("Ohno-Wang", []() {
+        return std::make_shared<
+            bbrick::OhnoWangKinematicHardeningRule>();
+      });
+      this->addGenerator("BurletCailletaud", []() {
+        return std::make_shared<
+            bbrick::BurletCailletaudKinematicHardeningRule>();
+      });
+      this->addGenerator("Burlet-Cailletaud", []() {
+        return std::make_shared<
+            bbrick::BurletCailletaudKinematicHardeningRule>();
       });
     }  // end of KinematicHardeningRuleFactory::KinematicHardeningRuleFactory
 

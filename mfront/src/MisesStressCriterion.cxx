@@ -19,18 +19,16 @@ namespace mfront{
 
   namespace bbrick {
 
-    void MisesStressCriterion::initialize(BehaviourDescription&,
-                                          AbstractBehaviourDSL&,
-                                          const std::string&,
-                                          const DataMap& d) {
+    void MisesStressCriterion::initialize(BehaviourDescription& bd,
+                                          AbstractBehaviourDSL& dsl,
+                                          const std::string& id,
+                                          const DataMap& d,
+                                          const Role r) {
+      StressCriterionBase::initialize(bd, dsl, id, d, r);
       if (!d.empty()) {
         tfel::raise("MisesStressCriterion::initialize: no option expected");
       }
     }  // end of MisesStressCriterion::initialize
-
-    std::vector<OptionDescription> MisesStressCriterion::getOptions() const{
-      return {};
-    }  // end of MisesStressCriterion::getOptions
 
     std::string MisesStressCriterion::computeElasticPrediction(
         const std::string&id) const {
@@ -42,26 +40,52 @@ namespace mfront{
       return "const auto seq" + id + " = sigmaeq(s" + id + ");\n";
     }  // end of MisesStressCriterion::computeNormal
 
-    std::string MisesStressCriterion::computeNormal(
-        const std::string& id) const {
+    std::string MisesStressCriterion::computeNormal(const std::string& id,
+                                                    const Role r) const {
       auto c = std::string{};
-      c += "const auto seq" + id + " = sigmaeq(s"+id+");\n";
-      c += "const auto iseq" + id + " = 1/max(seq" + id + ",1.e-12*young);\n";
-      c += "const auto dseq" + id + "_ds" + id + " = 3*deviator(s" + id +
-           ")*(iseq" + id + "/2);\n";
+      if ((r == STRESSCRITERION) || (r == STRESSANDFLOWCRITERION)) {
+        c += "const auto seq" + id + " = sigmaeq(s" + id + ");\n";
+        c += "const auto iseq" + id + " = 1/max(seq" + id + ",1.e-12*young);\n";
+        c += "const auto dseq" + id + "_ds" + id + " = 3*deviator(s" + id +
+             ")*(iseq" + id + "/2);\n";
+      }
+      if (r == STRESSANDFLOWCRITERION) {
+        c += "const auto& n" + id + " = dseq" + id + "_ds" + id + ";\n";
+      }
+      if (r == FLOWCRITERION) {
+        c += "const auto seqf" + id + " = sigmaeq(s" + id + ");\n";
+        c += "const auto iseqf" + id + " = 1/max(seqf" + id + ",1.e-12*young);\n";
+        c += "const auto n" + id + " = 3*deviator(s" + id + ")*(iseqf" + id +
+             "/2);\n";
+      }
       return c;
     }  // end of MisesStressCriterion::computeNormal
 
     std::string MisesStressCriterion::computeNormalDerivative(
-        const std::string& id) const {
+        const std::string& id, const Role r) const {
       auto c = std::string{};
-      c += "const auto seq" + id + " = sigmaeq(s"+id+");\n";
-      c += "const auto iseq" + id + " = 1/max(seq" + id + ",1.e-12*young);\n";
-      c += "const auto dseq" + id + "_ds" + id + " = 3*deviator(s" + id +
-           ")*(iseq" + id + "/2);\n";
-      c += "const auto d2seq" + id + "_ds" + id + "ds" + id + " = ";
-      c += "(Stensor4::M()-(dseq" + id + "_ds" + id + "^dseq" + id + "_ds" +
-           id + "))*iseq" + id + ";\n";
+      if ((r == STRESSCRITERION) || (r == STRESSANDFLOWCRITERION)) {
+        c += "const auto seq" + id + " = sigmaeq(s" + id + ");\n";
+        c += "const auto iseq" + id + " = 1/max(seq" + id + ",1.e-12*young);\n";
+        c += "const auto dseq" + id + "_ds" + id + " = 3*deviator(s" + id +
+             ")*(iseq" + id + "/2);\n";
+        c += "const auto d2seq" + id + "_ds" + id + "ds" + id + " = ";
+        c += "(Stensor4::M()-(dseq" + id + "_ds" + id + "^dseq" + id + "_ds" +
+             id + "))*iseq" + id + ";\n";
+      }
+      if (r == STRESSANDFLOWCRITERION) {
+        c += "const auto& n" + id + " = dseq" + id + "_ds" + id + ";\n";
+        c += "const auto& dn" + id + "_ds" + id + " = ";
+        c += "d2seq" + id + "_ds" + id + "ds" + id + ";\n";
+      }
+      if (r == FLOWCRITERION) {
+        c += "const auto seqf" + id + " = sigmaeq(s" + id + ");\n";
+        c += "const auto iseqf" + id + " = 1/max(seq" + id + ",1.e-12*young);\n";
+        c += "const auto n" + id + " = 3*deviator(s" + id + ")*(iseqf" + id +
+             "/2);\n";
+        c += "const auto dn" + id + "_ds" + id + " = ";
+        c += "(Stensor4::M()-(n" + id + "^n" + id + "))*iseqf" + id + ";\n";
+      }
       return c;
     }  // end of MisesStressCriterion::computeNormalDerivative
 

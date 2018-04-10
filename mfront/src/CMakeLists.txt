@@ -137,10 +137,12 @@ set(TFELMFront_SOURCES
     StressPotentialFactory.cxx
     InelasticFlow.cxx
     InelasticFlowBase.cxx
+    ViscoplasticFlowBase.cxx
     NortonInelasticFlow.cxx
     PlasticInelasticFlow.cxx
     InelasticFlowFactory.cxx
     StressCriterion.cxx
+    StressCriterionBase.cxx
     MisesStressCriterion.cxx
     Hill1948StressCriterion.cxx
     StressCriterionFactory.cxx
@@ -151,6 +153,8 @@ set(TFELMFront_SOURCES
     KinematicHardeningRule.cxx
     KinematicHardeningRuleBase.cxx
     PragerKinematicHardeningRule.cxx
+    OhnoWangKinematicHardeningRule.cxx
+    BurletCailletaudKinematicHardeningRule.cxx
     AmstrongFrederickKinematicHardeningRule.cxx
     KinematicHardeningRuleFactory.cxx
     ${PROJECT_BINARY_DIR}/mfront/src/MFrontHeader.cxx)

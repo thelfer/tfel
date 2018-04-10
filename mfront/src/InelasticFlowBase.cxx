@@ -59,7 +59,22 @@ namespace mfront {
           const auto ds = getDataStructure(e.first, e.second);
           auto& cf = StressCriterionFactory::getFactory();
           this->sc = cf.generate(ds.name);
-          this->sc->initialize(bd, dsl, id, ds.data);
+          if (d.count("flow_criterion") == 0) {
+            this->sc->initialize(bd, dsl, id, ds.data,
+                                 StressCriterion::STRESSANDFLOWCRITERION);
+          } else {
+            this->sc->initialize(bd, dsl, id, ds.data,
+                                 StressCriterion::STRESSANDFLOWCRITERION);
+          }
+        } else if (e.first == "flow_criterion") {
+          if (this->fc != nullptr) {
+            raise("criterion has already been defined");
+          }
+          const auto ds = getDataStructure(e.first, e.second);
+          auto& cf = StressCriterionFactory::getFactory();
+          this->fc = cf.generate(ds.name);
+          this->fc->initialize(bd, dsl, id, ds.data,
+                               StressCriterion::FLOWCRITERION);
         } else if (e.first == "isotropic_hardening") {
           if (this->ihr != nullptr) {
             raise("isotropic hardening has already been defined");
@@ -204,23 +219,36 @@ namespace mfront {
       }
       ib.code += this->computeEffectiveStress(id);
       if (requiresAnalyticalJacobian) {
-        ib.code += this->sc->computeNormalDerivative(id);
+        if (this->fc == nullptr) {
+          ib.code += this->sc->computeNormalDerivative(
+              id, StressCriterion::STRESSANDFLOWCRITERION);
+        } else {
+          ib.code +=
+              this->sc->computeNormal(id, StressCriterion::STRESSCRITERION);
+          ib.code += this->fc->computeNormalDerivative(
+              id, StressCriterion::FLOWCRITERION);
+        }
       } else {
-        ib.code += this->sc->computeNormal(id);
+        if (this->fc == nullptr) {
+          ib.code += this->sc->computeNormal(
+              id, StressCriterion::STRESSANDFLOWCRITERION);
+        } else {
+          ib.code += this->sc->computeCriterion(id);
+          ib.code +=
+              this->fc->computeNormal(id, StressCriterion::FLOWCRITERION);
+        }
       }
       // elasticity
-      ib.code += "feel += this->dp" + id + "* dseq" + id + "_ds" + id + ";\n";
+      ib.code += "feel += this->dp" + id + "* n" + id + ";\n";
       if (requiresAnalyticalJacobian) {
         // jacobian terms
-        ib.code += "dfeel_ddp" + id + " = dseq" + id + "_ds" + id + ";\n";
-        ib.code +=
-            sp.computeDerivatives(bd, "eel", "(this->dp" + id + ")*d2seq" + id +
-                                                 "_ds" + id + "ds" + id);
+        ib.code += "dfeel_ddp" + id + " = n" + id + ";\n";
+        ib.code += sp.computeDerivatives(
+            bd, "eel", "(this->dp" + id + ")*dn" + id + "_ds" + id);
         kid = decltype(khrs.size()){};
         for (const auto& khr : khrs) {
           ib.code += khr->computeDerivatives(
-              "eel",
-              "-(this->dp" + id + ") * d2seq" + id + "_ds" + id + "ds" + id, id,
+              "eel", "-(this->dp" + id + ") * dn" + id + "_ds" + id, id,
               std::to_string(kid));
         }
       }
@@ -231,7 +259,8 @@ namespace mfront {
       kid = decltype(khrs.size()){};
       for (const auto& khr : khrs) {
         ib.code += khr->buildBackStrainImplicitEquations(
-            bd, sp, id, std::to_string(kid), requiresAnalyticalJacobian);
+            bd, sp, this->khrs, id, std::to_string(kid),
+            requiresAnalyticalJacobian);
         ++kid;
       }
       if (this->ihr != nullptr) {

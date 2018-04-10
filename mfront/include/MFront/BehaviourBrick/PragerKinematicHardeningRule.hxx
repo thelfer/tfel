@@ -27,6 +27,7 @@ namespace mfront {
       std::string buildBackStrainImplicitEquations(
           const BehaviourDescription&,
           const StressPotential&,
+          const std::vector<std::shared_ptr<KinematicHardeningRule>>&,
           const std::string&,
           const std::string&,
           const bool) const override;

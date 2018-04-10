@@ -31,8 +31,9 @@ namespace mfront {
                                          AbstractBehaviourDSL& dsl,
                                          const std::string& id,
                                          const DataMap& d) {
-      using namespace tfel::glossary;
-      auto get_mp = [&dsl, &bd, &id, &d](const std::string& mpn) {
+      constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+      auto get_mp = [&dsl, &bd, &id, &d](const std::string& mpn,
+                                         const std::string& vn) {
         if (d.count(mpn) == 0) {
           tfel::raise(
               "NortonInelasticFlow::initialize: "
@@ -40,33 +41,25 @@ namespace mfront {
               mpn + "' is not defined");
         }
         auto mp = getBehaviourDescriptionMaterialProperty(dsl, mpn, d.at(mpn));
-        declareParameterOrLocalVariable(bd, mp, mpn + id);
+        declareParameterOrLocalVariable(bd, mp, vn + id);
         return mp;
       };
       // checking options
       mfront::bbrick::check(d, this->getOptions());
       // the base class
-      InelasticFlowBase::initialize(bd, dsl, id, d);
+      ViscoplasticFlowBase::initialize(bd, dsl, id, d);
       // Norton flow options
-      this->K = get_mp("K");
-      this->n = get_mp("n");
+      this->K = get_mp("K", "K");
+      this->n = get_mp("n", "E");
       if (d.count("A") != 0) {
-        this->A = get_mp("A");
+        this->A = get_mp("A", "A");
       } else {
         BehaviourDescription::ConstantMaterialProperty cmp;
         cmp.value = 1;
         this->A = cmp;
         declareParameterOrLocalVariable(bd, this->A, "A" + id);
       }
-      if (id.empty()) {
-        addStateVariable(bd, "strain", "p",
-                         Glossary::EquivalentViscoplasticStrain);
-      } else {
-        addStateVariable(bd, "strain", "p" + id,
-                         static_cast<const std::string&>(
-                             Glossary::EquivalentViscoplasticStrain) +
-                             id);
-      }
+      bd.reserveName(uh, "seqe" + id + "_K__n_1");
     }  // end of NortonInelasticFlow::initialize
 
     void NortonInelasticFlow::endTreatment(BehaviourDescription& bd,
@@ -74,7 +67,7 @@ namespace mfront {
                                            const StressPotential& sp,
                                            const std::string& id) const {
       constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-      InelasticFlowBase::endTreatment(bd, dsl, sp, id);
+      ViscoplasticFlowBase::endTreatment(bd, dsl, sp, id);
       if ((!this->A.is<BehaviourDescription::ConstantMaterialProperty>()) ||
           (!this->K.is<BehaviourDescription::ConstantMaterialProperty>()) ||
           (!this->n.is<BehaviourDescription::ConstantMaterialProperty>())){
@@ -93,14 +86,14 @@ namespace mfront {
         };
         eval(this->A, "A" + id);
         eval(this->K, "K" + id);
-        eval(this->n, "n" + id);
+        eval(this->n, "E" + id);
         bd.setCode(uh, BehaviourData::BeforeInitializeLocalVariables, i,
                    BehaviourData::CREATEORAPPEND, BehaviourData::AT_BEGINNING);
       }
     }  // end of KinematicHardeningRuleBase::endTreatment
 
     std::vector<OptionDescription> NortonInelasticFlow::getOptions() const {
-      auto opts = InelasticFlowBase::getOptions();
+      auto opts = ViscoplasticFlowBase::getOptions();
       opts.emplace_back("A", "Norton coefficient (optional)",
                         OptionDescription::MATERIALPROPERTY);
       opts.emplace_back("K", "Stress normalisation factor",
@@ -110,64 +103,45 @@ namespace mfront {
       return opts;
     }  // end of NortonInelasticFlow::getOptions
 
-    std::string NortonInelasticFlow::buildFlowImplicitEquations(
-        const BehaviourDescription& bd,
-        const StressPotential& sp,
-        const std::string& id,
-        const bool b) const {
+    std::string NortonInelasticFlow::computeFlowRate(
+        const std::string& id) const {
       auto c = std::string{};
-      if (this->ihr != nullptr) {
-        if (b) {
-          c += this->ihr->computeElasticLimitAndDerivative(id);
-          c += "const auto dvp" + id + " = ";
-          c += "(this->A" + id + ")*pow(std::max((seq" + id + "-R" + id + ")/(this->K" +
-               id + "),this->epsilon),this->n" + id + "-1)/this->K" + id + ";\n";
-          c += "fp" + id + " -= dvp" + id + "*(seq" + id + "-R" + id +
-               ")*(this->dt);\n";
-          c += sp.computeDerivatives(bd, "p" + id, "-(this->n" + id + ")*dvp" +
-                                                       id + "*(this->dt)*dseq" +
-                                                       id + "_ds" + id);
-          c += "dfp" + id + "_ddp" + id + " += (this->n" + id + ")*dvp" + id +
-               "*(this->dt)*dR" + id + "_ddp" + id + ";\n";
-          auto kid = decltype(khrs.size()){};
-          for (const auto& khr : khrs) {
-            c += khr->computeDerivatives("p", "(this->n" + id + ")*dvp" + id +
-                                                  "*(this->dt)*dseq" + id +
-                                                  "_ds" + id,
-                                         id, std::to_string(kid));
-            ++kid;
-          }
-        } else {
-          c += this->ihr->computeElasticLimit(id);
-          c += "fp" + id + " -= ";
-          c += "(this->A" + id + ")*pow(std::max((seq" + id + "-R" + id + ")/(this->K" +
-               id + "),real(0)),this->n" + id + ")*(this->dt);\n";
-        }
+      if (this->ihr == nullptr) {
+        c += "const auto vp" + id + " = ";
+        c += "(this->A" + id + ")*pow(std::max((seq" + id + ")/(this->K" + id +
+             "),real(0)),this->E" + id + ");\n";
       } else {
-        if (b) {
-          c += "const auto dvp" + id + " = ";
-          c += "(this->A" + id + ")*pow(std::max(seq" + id + "/(this->K" + id +
-               "),real(0)),this->n" + id + "-1)/this->K" + id + ";\n";
-          c += "fp" + id + " -= dvp" + id + "*seq" + id + "*(this->dt);\n";
-          c += sp.computeDerivatives(bd, "p" + id, "-(this->n" + id + ")*dvp" +
-                                                       id + "*(this->dt)*dseq" +
-                                                       id + "_ds" + id);
-          auto kid = decltype(khrs.size()){};
-          for (const auto& khr : khrs) {
-            c += khr->computeDerivatives("p", "(this->n" + id + ")*dvp" + id +
-                                                  "*(this->dt)*dseq" + id +
-                                                  "_ds" + id,
-                                         id, std::to_string(kid));
-            ++kid;
-          }
-        } else {
-          c += "fp" + id + " -= ";
-          c += "(this->A" + id + ")*pow(std::max(seq" + id + "/(this->K" + id +
-               "),real(0)),this->n" + id + ")*(this->dt);\n";
-        }
+        c += "const auto vp" + id + " = ";
+        c += "(this->A" + id + ")*pow(std::max((seq" + id + "-R" + id +
+             ")/(this->K" + id + "),real(0)),this->E" + id + ");\n";
       }
       return c;
-    }  // end of NortonInelasticFlow::buildFlowImplicitEquations
+    } // end of NortonInelasticFlow::computeFlowRate
+
+    std::string NortonInelasticFlow::computeFlowRateAndDerivative(
+        const std::string& id) const {
+      auto c = std::string{};
+      if (this->ihr == nullptr) {
+        c += "const auto seqe" + id + "_K__n_1 = pow(std::max((seq" + id +
+             ")/(this->K" + id + "),this->epsilon),this->E" + id + "-1);\n";
+        c += "const auto dvp" + id + "_dseqe" + id + " = ";
+        c += "(this->E" + id + ")*(this->A" + id + ")*seqe" + id +
+             "_K__n_1/(this->K" + id + ");\n";
+        c += "const auto vp" + id + " = ";
+        c += "(this->A" + id + ")*seqe" + id + "_K__n_1*(seq" + id +
+             ")/(this->K" + id + ");\n";
+      } else {
+        c += "const auto seqe" + id + "_K__n_1 = pow(std::max((seq" + id +
+             "-R" + id + ")/(this->K" + id + "),this->epsilon),this->E" + id +
+             "-1);\n";
+        c += "const auto dvp" + id + "_dseqe" + id + " = ";
+        c += "(this->E" + id + ")*(this->A" + id + ")*seqe" + id + "_K__n_1/(this->K" + id + ");\n";
+        c += "const auto vp" + id + " = ";
+        c += "(this->A" + id + ")*seqe" + id + "_K__n_1*(seq" + id + "-R" + id +
+             ")/(this->K" + id + ");\n";
+      }
+      return c;
+    }  // end of NortonInelasticFlow::computeFlowRateAndDerivative
 
     NortonInelasticFlow::~NortonInelasticFlow() = default;
 

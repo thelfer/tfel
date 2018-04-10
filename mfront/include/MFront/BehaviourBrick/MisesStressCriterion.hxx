@@ -14,7 +14,7 @@
 #ifndef LIB_MFRONT_BEHAVIOURBRICK_MISESSTRESSCRITERION_HXX
 #define LIB_MFRONT_BEHAVIOURBRICK_MISESSTRESSCRITERION_HXX
 
-#include "MFront/BehaviourBrick/StressCriterion.hxx"
+#include "MFront/BehaviourBrick/StressCriterionBase.hxx"
 
 namespace mfront {
 
@@ -23,16 +23,17 @@ namespace mfront {
     /*!
      * \brief class describing an inelastic potential.
      */
-    struct MisesStressCriterion final : StressCriterion {
+    struct MisesStressCriterion final : StressCriterionBase {
       void initialize(BehaviourDescription&,
                       AbstractBehaviourDSL&,
                       const std::string&,
-                      const DataMap&) override;
-      std::vector<OptionDescription> getOptions() const override;
+                      const DataMap&,
+                      const Role) override;
       std::string computeElasticPrediction(const std::string&) const override;
       std::string computeCriterion(const std::string&) const override;
-      std::string computeNormal(const std::string&) const override;
-      std::string computeNormalDerivative(const std::string&) const override;
+      std::string computeNormal(const std::string&, const Role) const override;
+      std::string computeNormalDerivative(const std::string&,
+                                          const Role) const override;
       //! destructor
       ~MisesStressCriterion() override;
     };  // end of struct MisesStressCriterion
