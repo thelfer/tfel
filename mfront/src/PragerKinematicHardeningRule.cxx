@@ -41,7 +41,7 @@ namespace mfront {
         auto kid2 = decltype(khrs.size()){};
         for (const auto& khr : khrs) {
           const auto df_ds = "(this->dp" + fid + ")*dn" + fid + "_ds" + fid;
-          c += computeDerivatives(an, df_ds, fid, std::to_string(kid2));
+          c += khr->computeDerivatives(an, df_ds, fid, std::to_string(kid2));
           ++kid2;
         }
       }

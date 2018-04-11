@@ -43,7 +43,8 @@ namespace mfront {
         const std::string& kid,
         const DataMap& d) {
       constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-      auto get_mp = [&bd, &dsl, &d, &fid, &kid](
+      // `this` must be captured in gcc 4.7.2
+      auto get_mp = [&bd, &dsl, &d, &fid, &kid,this](
           BehaviourDescription::MaterialProperty& mp, const std::string& n) {
         const auto nid = KinematicHardeningRule::getVariableId(n, fid, kid);
         if (d.count(n) == 0) {

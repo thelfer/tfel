@@ -36,7 +36,8 @@ namespace mfront {
         const std::string& fid,
         const std::string& kid,
         const DataMap& d) {
-      auto get_mp = [&bd, &dsl, &d, &fid, &kid](
+      // `this` must be captured in gcc 4.7.2
+      auto get_mp = [&bd, &dsl, &d, &fid, &kid,this](
           BehaviourDescription::MaterialProperty& mp, const std::string& n) {
         const auto nid = KinematicHardeningRule::getVariableId(n, fid, kid);
         if (d.count(n) == 0) {
@@ -102,7 +103,7 @@ namespace mfront {
           const auto df_ds = "(this->dp" + fid + ")*(dn" + fid + "_ds" + fid +
                              "+(" + an + "_^(" + an + "_|dn" + fid + "_ds" +
                              fid + ")))";
-          c += computeDerivatives(an, df_ds, fid, std::to_string(kid2));
+          c += khr->computeDerivatives(an, df_ds, fid, std::to_string(kid2));
           ++kid2;
         }
       }
