@@ -18,6 +18,8 @@ MFRONTS=StandardElastoViscoPlasticityTest1.mfront                \
 	StandardElastoViscoPlasticityNortonTest5_nj.mfront           \
 	StandardElastoViscoPlasticityNortonTest6.mfront              \
 	StandardElastoViscoPlasticityNortonTest6_nj.mfront           \
+	StandardElastoViscoPlasticityNortonTest7.mfront              \
+	StandardElastoViscoPlasticityNortonTest7_nj.mfront           \
 	StandardElastoViscoPlasticityOrthotropicNortonTest.mfront    \
 	StandardElastoViscoPlasticityOrthotropicNortonTest_nj.mfront \
 	StandardElastoViscoPlasticityPlasticityTest.mfront           \
@@ -28,7 +30,12 @@ MFRONTS=StandardElastoViscoPlasticityTest1.mfront                \
 	StandardElastoViscoPlasticityPlasticityTest3_nj.mfront       \
 	StandardElastoViscoPlasticityPlasticityTest4.mfront          \
 	StandardElastoViscoPlasticityPlasticityTest4_nj.mfront       \
-	references/standardelastoviscoplasticityplasticitytest4.res
+	StandardElastoViscoPlasticityPlasticityTest5.mfront          \
+	StandardElastoViscoPlasticityPlasticityTest5_nj.mfront       \
+	StandardElastoViscoPlasticityPlasticityTest6.mfront          \
+	StandardElastoViscoPlasticityPlasticityTest6_nj.mfront       \
+	references/standardelastoviscoplasticityplasticitytest4.ref  \
+	references/standardelastoviscoplasticityplasticitytest6.ref
 
 testsdir = $(pkgdatadir)/mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity
 tests_DATA = $(MFRONTS)

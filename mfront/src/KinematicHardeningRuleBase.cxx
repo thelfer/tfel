@@ -55,14 +55,14 @@ namespace mfront {
 
     std::string KinematicHardeningRuleBase::computeDerivatives(
         const std::string& v,
-        const std::string& dv_ds,
+        const std::string& mdfv_ds,
         const std::string& fid,
         const std::string& kid) const {
       const auto an = KinematicHardeningRule::getVariableId("a", fid, kid);
       const auto Cn = KinematicHardeningRule::getVariableId("C", fid, kid);
       auto c = std::string{};
       c += "df" + v + "_dd" + an + " += ";
-      c += "(2*(this->theta)*(this->" + Cn + "))/3*" + dv_ds + ";\n";
+      c += "(2*(this->theta)*(this->" + Cn + "))/3*(" + mdfv_ds + ");\n";
       return c;
     }
 

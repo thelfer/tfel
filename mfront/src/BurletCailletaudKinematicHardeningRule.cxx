@@ -27,6 +27,10 @@ namespace mfront {
       auto opts = KinematicHardeningRuleBase::getOptions();
       opts.emplace_back("D", "back-strain callback coefficient",
                         OptionDescription::MATERIALPROPERTY);
+      opts.emplace_back("eta",
+                        "weigth between the Amstrong-Frederic contribuation "
+                        "and the pure radial contribution",
+                        OptionDescription::MATERIALPROPERTY);
       return opts;
     }  // end of BurletCailletaudKinematicHardeningRule::getOptions()
 
@@ -51,6 +55,7 @@ namespace mfront {
       };
       KinematicHardeningRuleBase::initialize(bd, dsl, fid, kid, d);
       get_mp(this->D, "D");
+      get_mp(this->eta, "eta");
     }  // end of BurletCailletaudKinematicHardeningRule::initialize
 
     void BurletCailletaudKinematicHardeningRule::endTreatment(
@@ -61,8 +66,9 @@ namespace mfront {
       KinematicHardeningRuleBase::endTreatment(bd, dsl, fid, kid);
       constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       const auto Dn = KinematicHardeningRule::getVariableId("D", fid, kid);
-      const auto c =
-          generateMaterialPropertyInitializationCode(dsl, bd, Dn, this->D);
+      const auto en = KinematicHardeningRule::getVariableId("eta", fid, kid);
+      auto c = generateMaterialPropertyInitializationCode(dsl, bd, Dn, this->D);
+      c += generateMaterialPropertyInitializationCode(dsl, bd, en, this->eta);
       if (!c.empty()) {
         CodeBlock i;
         i.code = c;
@@ -83,27 +89,36 @@ namespace mfront {
       const auto Xn = KinematicHardeningRule::getVariableId("X", fid, kid)+"_";
       const auto Cn = KinematicHardeningRule::getVariableId("C", fid, kid);
       const auto Dn = KinematicHardeningRule::getVariableId("D", fid, kid);
-      auto c = std::string {};
-      c += "f" + an + " -= ";
-      c += "(this->dp" + fid + ")*(n" + fid + "-(this->" + Dn + ")*(" + an +
-           "_|n" + fid + ")*" + an + "_);\n";
+      const auto en = KinematicHardeningRule::getVariableId("eta", fid, kid);
+      const auto n = "n" + fid;
+      auto df_ddp = "-" + n + "+(this->" + Dn + ")*((this->" + en + ")*" + an +
+                    "_+(1-this->" + en + ")*(" + an + "_|" + n + ")*" + n + ")";
+      auto c = std::string{};
       if (b) {
-        c += "df" + an + "_ddp" + fid + " = -(n" + fid + "-(this->" + Dn +
-             ")*(" + an + "_|n" + fid + ")*" + an + "_);\n";
-        c += sp.computeDerivatives(
-            bd, an, "-(this->dp" + fid + ")*dn" + fid + "_ds" + fid);
+        c += "df" + an + "_ddp" + fid + " = " + df_ddp + ";\n";
+      } else {
+        c += "const auto df" + an + "_ddp" + fid + " = eval(" + df_ddp + ");\n";
+      }
+      c += "f" + an + " += ";
+      c += "(this->dp" + fid + ")*(df" + an + "_ddp" + fid + ");\n";
+      if (b) {
+        // opposite of the derivative of fa with respect to s
+        const auto mdf_ds =
+            "(this->dp" + fid + ")*(d" + n + "_ds" + fid + "-(this->" + Dn +
+            ")*(1-this->" + en + ")*((" + an +
+            "_|" + n + ")*d" + n + "_ds" + fid + "+(" + n + "^(" + an +
+            "_|d" + n + "_ds" + fid + "))))";
+        c += sp.computeDerivatives(bd, an, "-" + mdf_ds);
         // term specific to this back strain
         c += "df" + an + "_dd" + an + " += ";
-        c += "(this->theta)*(this->" + Dn + ")*(this->dp" + fid + ")*(";
-        c += "("+an + "_^n" + fid + ")+(" + an + "_|n" + fid + ")*Stensor4::Id()";
-        c += ");\n";
+        c += "(this->theta)*(this->dp" + fid + ")*(this->" + Dn + ")*(";
+        c += "(this->" + en + ")*Stensor4::Id()+";
+        c += "(1-this->" + en + ")*(n"+fid + "^" + n + "));\n";
         // terms in common for all back strains
         auto kid2 = decltype(khrs.size()){};
         for (const auto khr : khrs) {
-          const auto df_ds = "(this->dp" + fid + ")*(dn" + fid + "_ds" + fid +
-                             "+(" + an + "_^(" + an + "_|dn" + fid + "_ds" +
-                             fid + ")))";
-          c += khr->computeDerivatives(an, df_ds, fid, std::to_string(kid2));
+          c += khr->computeDerivatives(an, mdf_ds, fid,
+                                       std::to_string(kid2));
           ++kid2;
         }
       }

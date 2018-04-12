@@ -106,7 +106,7 @@ namespace mfront {
     std::string NortonInelasticFlow::computeFlowRate(
         const std::string& id) const {
       auto c = std::string{};
-      if (this->ihr == nullptr) {
+      if (this->ihrs.empty()) {
         c += "const auto vp" + id + " = ";
         c += "(this->A" + id + ")*pow(std::max((seq" + id + ")/(this->K" + id +
              "),real(0)),this->E" + id + ");\n";
@@ -121,7 +121,7 @@ namespace mfront {
     std::string NortonInelasticFlow::computeFlowRateAndDerivative(
         const std::string& id) const {
       auto c = std::string{};
-      if (this->ihr == nullptr) {
+      if (this->ihrs.empty()) {
         c += "const auto seqe" + id + "_K__n_1 = pow(std::max((seq" + id +
              ")/(this->K" + id + "),this->epsilon),this->E" + id + "-1);\n";
         c += "const auto dvp" + id + "_dseqe" + id + " = ";

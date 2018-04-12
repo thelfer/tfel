@@ -11,8 +11,6 @@
 article,
 aside,
 details,
-figcaption,
-figure,
 footer,
 header,
 hgroup,
@@ -323,15 +321,6 @@ nav ol {
    Embedded content
    ========================================================================== */
 
-/**
- * 1. Remove border when inside `a` element in IE 6/7/8/9 and Firefox 3.
- * 2. Improve image quality when scaled in IE 7.
- */
-
-img {
-    border: 0; /* 1 */
-    -ms-interpolation-mode: bicubic; /* 2 */
-}
 
 /**
  * Correct overflow displayed oddly in IE 9.
@@ -345,13 +334,6 @@ svg:not(:root) {
    Figures
    ========================================================================== */
 
-/**
- * Address margin not present in IE 6/7/8/9, Safari 5, and Opera 11.
- */
-
-figure {
-    margin: 0;
-}
 
 /* ==========================================================================
    Forms

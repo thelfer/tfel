@@ -13,4 +13,7 @@ EXTRA_DIST = CMakeLists.txt                                        \
 	castemstandardelastoviscoplasticityplasticitytest2_nj.mtest    \
 	castemstandardelastoviscoplasticityplasticitytest3.mtest       \
 	castemstandardelastoviscoplasticityplasticitytest3_nj.mtest    \
-	castemstandardelastoviscoplasticityplasticitytest4.mtest
+	castemstandardelastoviscoplasticityplasticitytest4.mtest       \
+	castemstandardelastoviscoplasticityplasticitytest5.mtest       \
+	castemstandardelastoviscoplasticityplasticitytest5_nj.mtest    \
+	castemstandardelastoviscoplasticityplasticitytest6.mtest

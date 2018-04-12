@@ -34,6 +34,7 @@ namespace mfront {
                                        AbstractBehaviourDSL& dsl,
                                        const std::string& id,
                                        const DataMap& d) {
+      constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       auto raise = [](const std::string& m) {
         tfel::raise("InelasticFlowBase::initialize: " + m);
       };  // end of raise
@@ -76,13 +77,25 @@ namespace mfront {
           this->fc->initialize(bd, dsl, id, ds.data,
                                StressCriterion::FLOWCRITERION);
         } else if (e.first == "isotropic_hardening") {
-          if (this->ihr != nullptr) {
-            raise("isotropic hardening has already been defined");
+          auto add_isotropic_hardening_rule =
+              [this, &bd, &dsl, &id](const tfel::utilities::DataStructure& ds) {
+                auto& rf = IsotropicHardeningRuleFactory::getFactory();
+                const auto ihr = rf.generate(ds.name);
+                ihr->initialize(bd, dsl, id, std::to_string(this->ihrs.size()),
+                                ds.data);
+                this->ihrs.push_back(ihr);
+              };
+          if (e.second.is<std::vector<Data>>()) {
+            for (const auto ird : e.second.get<std::vector<Data>>()) {
+              add_isotropic_hardening_rule(getDataStructure(e.first, ird));
+            }
+          } else {
+            auto& rf = IsotropicHardeningRuleFactory::getFactory();
+            const auto ds = getDataStructure(e.first, e.second);
+            const auto ihr = rf.generate(ds.name);
+            ihr->initialize(bd, dsl, id, "",ds.data);
+            this->ihrs.push_back(ihr);
           }
-          const auto ds = getDataStructure(e.first, e.second);
-          auto& cf = IsotropicHardeningRuleFactory::getFactory();          
-          this->ihr = cf.generate(ds.name);
-          this->ihr->initialize(bd, dsl, id, ds.data);
         } else if (e.first == "kinematic_hardening") {
           auto add_kinematic_hardening_rule =
               [this, &bd, &dsl, &id](const tfel::utilities::DataStructure& ds) {
@@ -104,8 +117,16 @@ namespace mfront {
       if (this->sc == nullptr) {
         raise("criterion has not been defined");
       }
-      if (this->ihr != nullptr) {
+      if (!this->ihrs.empty()) {
         addLocalVariable(bd, "bool", "bpl" + id);
+        if (this->ihrs.size() != 1) {
+          const auto Rel = "Rel" + id;
+          const auto R = "R" + id;
+          const auto dR = "d" + R + "_ddp" + id;
+          bd.reserveName(uh, Rel);
+          bd.reserveName(uh, R);
+          bd.reserveName(uh, dR);
+        }
       }
     }  // end of InelasticFlowBase::initialize
 
@@ -117,8 +138,8 @@ namespace mfront {
           OptionDescription::DATASTRUCTURE);
       opts.emplace_back(
           "isotropic_hardening",
-          "choice of the isotropic hardening rule",
-          OptionDescription::DATASTRUCTURE);
+          "choice of an isotropic hardening rule",
+          OptionDescription::DATASTRUCTURES);
       opts.emplace_back(
           "kinematic_hardening",
           "description of an hardening rule",
@@ -133,12 +154,12 @@ namespace mfront {
     }  // end of InelasticFlowBase::completeVariableDeclaration
 
     bool InelasticFlowBase::requiresActivationState() const {
-      return this->ihr != nullptr;
+      return !this->ihrs.empty();
     }  // end of InelasticFlowBase::requiresActivationState
 
     void InelasticFlowBase::computeInitialActivationState(
         BehaviourDescription& bd, const std::string& id) const {
-      if (this->ihr != nullptr) {
+      if (!this->ihrs.empty()) {
         CodeBlock i;
         if (this->khrs.empty()) {
           i.code += "const auto& sel" + id + " = sigel;\n";
@@ -162,7 +183,7 @@ namespace mfront {
           i.code += ");\n";
         }
         i.code += this->sc->computeElasticPrediction(id);
-        i.code += this->ihr->computeElasticPrediction(id);
+        i.code += computeElasticLimitInitialValue(this->ihrs, id);
         i.code += "this->bpl" + id + " = seqel" + id + " > Rel" + id + ";\n";
         bd.setCode(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
                    BehaviourData::BeforeInitializeLocalVariables, i,
@@ -201,8 +222,10 @@ namespace mfront {
                                          const std::string& id) const {
       constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       const auto& idsl = dynamic_cast<const ImplicitDSLBase&>(dsl);
-      if (this->ihr != nullptr) {
-        this->ihr->endTreatment(bd, dsl, id);
+      auto iid = decltype(ihrs.size()){};
+      for(const auto& ihr : this->ihrs){
+        ihr->endTreatment(bd, dsl, id, std::to_string(iid));
+        ++iid;
       }
       auto kid = decltype(khrs.size()){};
       for (const auto khr : this->khrs) {
@@ -214,7 +237,7 @@ namespace mfront {
            (!idsl.getSolver().requiresNumericalJacobian()));
       // implicit equation associated with the elastic strain
       CodeBlock ib;
-      if (this->ihr != nullptr) {
+      if (!this->ihrs.empty()) {
         ib.code += "if(this->bpl" + id + "){\n";
       }
       ib.code += this->computeEffectiveStress(id);
@@ -263,13 +286,13 @@ namespace mfront {
             requiresAnalyticalJacobian);
         ++kid;
       }
-      if (this->ihr != nullptr) {
+      if (!this->ihrs.empty()) {
         ib.code += "} // end if(this->bpl" + id + ")\n";
       }
       bd.setCode(uh, BehaviourData::Integrator, ib,
                  BehaviourData::CREATEORAPPEND, BehaviourData::AT_BEGINNING);
       // additional checks
-      if (this->ihr != nullptr) {
+      if (!this->ihrs.empty()) {
         CodeBlock acc;
         acc.code += "if (converged) {\n";
         acc.code += "// checking status consistency\n";
@@ -281,7 +304,7 @@ namespace mfront {
         acc.code += "} else {\n";
         acc.code += this->computeEffectiveStress(id);
         acc.code += this->sc->computeCriterion(id);
-        acc.code += this->ihr->computeElasticLimit(id);
+        acc.code += computeElasticLimit(this->ihrs,id);
         acc.code += "if(seq" + id + " > R" + id + ") {\n";
         acc.code += "converged = false;\n";
         acc.code += "this->bpl" + id + " = true;\n";

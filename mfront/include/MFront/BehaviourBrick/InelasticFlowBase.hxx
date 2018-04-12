@@ -89,8 +89,8 @@ namespace mfront {
       std::shared_ptr<StressCriterion> sc;
       //! flow criterion
       std::shared_ptr<StressCriterion> fc;
-      //! isotropic hardening rule
-      std::shared_ptr<IsotropicHardeningRule> ihr;
+      //! isotropic hardening rules
+      std::vector<std::shared_ptr<IsotropicHardeningRule>> ihrs;
       //! kinematic hardening rules
       std::vector<std::shared_ptr<KinematicHardeningRule>> khrs;
     };  // end of struct InelasticFlowBase

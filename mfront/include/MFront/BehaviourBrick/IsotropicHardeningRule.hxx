@@ -17,6 +17,7 @@
 #include <string>
 #include <memory>
 #include <vector>
+#include "MFront/MFrontConfig.hxx"
 #include "MFront/BehaviourDescription.hxx"
 
 namespace tfel {
@@ -39,7 +40,7 @@ namespace mfront {
     /*!
      * \brief class describing an isotropic hardening rule
      */
-    struct IsotropicHardeningRule {
+    struct MFRONT_VISIBILITY_EXPORT IsotropicHardeningRule {
       //! a simple alias
       using Data = tfel::utilities::Data;
       //! a simple alias
@@ -53,42 +54,61 @@ namespace mfront {
       //! a simple alias
       using MaterialPropertyInput = BehaviourDescription::MaterialPropertyInput;
       /*!
+       * \return the name of a variable from a base name and an identifier
+       * \param[in] n: base name
+       * \param[in] fid: flow id
+       * \param[in] id: identifier
+       */
+      static std::string getVariableId(const std::string&,
+                                       const std::string&,
+                                       const std::string&);
+      /*!
        * \param[in,out] bd: behaviour description
        * \param[in,out] dsl: abstract behaviour dsl
-       * \param[in] id: flow id
+       * \param[in] fid: flow id
+       * \param[in] id: identifier
        * \param[in] d: options
        */
       virtual void initialize(BehaviourDescription&,
                               AbstractBehaviourDSL&,
                               const std::string&,
+                              const std::string&,
                               const DataMap&) = 0;
       /*!
        * \brief return the code computing the initial radius.
-       * The code defines a variable named "Rel"+id
-       * \param[in] id: flow id
+       * The code defines a variable named "Rel"+fid+"_"+id
+       * \param[in] fid: flow id
+       * \param[in] id: identifier
        */
-      virtual std::string computeElasticPrediction(const std::string&) const = 0;
+      virtual std::string computeElasticPrediction(const std::string&,
+                                                   const std::string&) const = 0;
       /*!
        * \brief return the code computing the radius of the elastic limit.
-       * The code defines a variable named "R"+id
-       * \param[in] id: flow id
+       * The code defines a variable named "R"+fid+"_"+id
+       * \param[in] fid: flow id
+       * \param[in] id: identifier
        */
-      virtual std::string computeElasticLimit(const std::string&) const = 0;
+      virtual std::string computeElasticLimit(const std::string&,
+                                              const std::string&) const = 0;
       /*!
        * \brief return the code computing the radius of the elastic limit.
-       * The code defines two variables named "R"+id and "dR"+id+"ddp"+id.
-       * \param[in] id: flow id
+       * The code defines two variables named "R"+fid+"_"+id and
+       * "dR"+fid+"_"+id+"ddp"+fid+"_"+id.
+       * \param[in] fid: flow id
+       * \param[in] id: identifier
        */
       virtual std::string computeElasticLimitAndDerivative(
-          const std::string&) const = 0;
+          const std::string&, const std::string&) const = 0;
       /*!
        * \brief method called at the end of the input file processing
        * \param[in] dsl: abstract behaviour dsl
        * \param[in] bd: behaviour description
-       * \param[in] id: flow id
+       * \param[in] fid: flow id
+       * \param[in] id: identifier
        */
       virtual void endTreatment(BehaviourDescription&,
                                 const AbstractBehaviourDSL&,
+                                const std::string&,
                                 const std::string&) const = 0;
       //! \return the flow options
       virtual std::vector<OptionDescription> getOptions() const = 0;

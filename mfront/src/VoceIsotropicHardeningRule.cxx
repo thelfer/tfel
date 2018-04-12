@@ -17,10 +17,13 @@ namespace mfront{
 
     void VoceIsotropicHardeningRule::initialize(BehaviourDescription& bd,
                                                   AbstractBehaviourDSL& dsl,
+                                                  const std::string& fid,
                                                   const std::string& id,
                                                   const DataMap& d) {
       using namespace tfel::glossary;
-      auto get_mp = [&dsl, &bd, &id, &d](const std::string& n) {
+      constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+      auto get_mp = [&dsl, &bd, &fid, &id, &d](const std::string& n) {
+        const auto ni = IsotropicHardeningRule::getVariableId(n, fid, id);
         if (d.count(n) == 0) {
           tfel::raise(
               "VoceIsotropicHardeningRule::initialize: "
@@ -28,13 +31,20 @@ namespace mfront{
               n + "' is not defined");
         }
         auto mp = getBehaviourDescriptionMaterialProperty(dsl, n, d.at(n));
-        declareParameterOrLocalVariable(bd, mp, n + id);
+        declareParameterOrLocalVariable(bd, mp, ni);
         return mp;
       };
       mfront::bbrick::check(d, this->getOptions());
       this->R0 = get_mp("R0");
       this->Rinf = get_mp("Rinf");
       this->b = get_mp("b");
+      //
+      const auto Rel = id.empty() ? "Rel" + fid : "Rel" + fid + "_" + id;
+      const auto R = id.empty() ? "R" + fid : "R" + fid + "_" + id;
+      const auto dR = "d" + R + "_ddp" + fid;
+      bd.reserveName(uh,Rel);
+      bd.reserveName(uh,R);
+      bd.reserveName(uh,dR);
     }  // end of VoceIsotropicHardeningRule::initialize
 
     std::vector<OptionDescription> VoceIsotropicHardeningRule::getOptions() const {
@@ -49,34 +59,50 @@ namespace mfront{
     }  // end of VoceIsotropicHardeningRule::getOptions
 
     std::string VoceIsotropicHardeningRule::computeElasticPrediction(
-        const std::string& id) const {
-      return "const auto Rel" + id + " = this->Rinf" + id + "+(this->R0" + id +
-             "-Rinf" + id + ")*exp(-(this->b)*(this->p" + id + "));\n";
+        const std::string& fid, const std::string& id) const {
+      const auto Rel = id.empty() ? "Rel" + fid : "Rel" + fid + "_"  + id;
+      const auto R0n = IsotropicHardeningRule::getVariableId("R0", fid, id);
+      const auto Rin = IsotropicHardeningRule::getVariableId("Rinf", fid, id);
+      const auto bn = IsotropicHardeningRule::getVariableId("b", fid, id);
+      return "const auto " + Rel + " = this->" + Rin + "+(this->" + R0n +
+             "-this->" + Rin + ")*exp(-(this->" + bn + ")*(this->p" + fid +
+             "));\n";
     }  // end of VoceIsotropicHardeningRule::computeElasticPrediction
 
     std::string VoceIsotropicHardeningRule::computeElasticLimit(
-        const std::string& id) const {
-      return "const auto R" + id + " = this->Rinf" + id + "+(this->R0" + id +
-             "-Rinf" + id + ")*exp(-(this->b)*(this->p" + id +
-             "+(this->theta)*(this->dp" + id + ")));\n";
+        const std::string& fid, const std::string& id) const {
+      const auto R = id.empty() ? "R" + fid : "R" + fid + "_"  + id;
+      const auto dR = "d" + R + "_ddp" + fid;
+      const auto R0n = IsotropicHardeningRule::getVariableId("R0", fid, id);
+      const auto Rin = IsotropicHardeningRule::getVariableId("Rinf", fid, id);
+      const auto bn = IsotropicHardeningRule::getVariableId("b", fid, id);
+      return "const auto " + R + " = this->" + Rin + "+(this->" + R0n +
+             "-this->" + Rin + ")*exp(-(this->" + bn + ")*(this->p" + fid +
+             "+(this->theta)*(this->dp" + fid + ")));\n";
     }  // end of VoceIsotropicHardeningRule::computeElasticLimit
 
     std::string VoceIsotropicHardeningRule::computeElasticLimitAndDerivative(
-        const std::string& id) const {
-      return "const auto R" + id + " = this->Rinf" + id + "+(this->R0" + id +
-             "-this->Rinf" + id + ")*exp(-(this->b)*(this->p" + id +
-             "+(this->theta)*(this->dp" + id +
+        const std::string& fid, const std::string& id) const {
+      const auto R = id.empty() ? "R" + fid : "R" + fid + "_"  + id;
+      const auto dR = "d" + R + "_ddp" + fid;
+      const auto R0n = IsotropicHardeningRule::getVariableId("R0", fid, id);
+      const auto Rin = IsotropicHardeningRule::getVariableId("Rinf", fid, id);
+      const auto bn = IsotropicHardeningRule::getVariableId("b", fid, id);
+      return "const auto " + R + " = this->" + Rin + "+(this->" + R0n +
+             "-this->" + Rin + ")*exp(-(this->" + bn + ")*(this->p" + fid +
+             "+(this->theta)*(this->dp" + fid +
              ")));\n"  //
-             "const auto dR" +
-             id + "_ddp" + id +
+             "const auto " +
+             dR +
              " = "
-             "-(this->theta)*(this->b)*(R" +
-             id + "-(this->Rinf" + id + "));\n";
+             "-(this->theta)*(this->" +
+             bn + ")*(" + R + "-(this->" + Rin + "));\n";
     }  // end of VoceIsotropicHardeningRule::computeElasticLimitAndDerivative
 
     void VoceIsotropicHardeningRule::endTreatment(
         BehaviourDescription& bd,
         const AbstractBehaviourDSL& dsl,
+        const std::string& fid,
         const std::string& id) const {
       auto mts = getMiddleOfTimeStepModifier(bd);
       // computation of the material properties
@@ -87,17 +113,20 @@ namespace mfront{
         CodeBlock i;
         std::ostringstream mps;
         if (!this->R0.is<BehaviourDescription::ConstantMaterialProperty>()) {
-          mps << "this->R0" + id + " = ";
+          const auto R0n = IsotropicHardeningRule::getVariableId("R0", fid, id);
+          mps << "this->" + R0n + " = ";
           dsl.writeMaterialPropertyEvaluation(mps, this->R0, mts);
           mps << ";\n";
         }
         if (!this->Rinf.is<BehaviourDescription::ConstantMaterialProperty>()) {
-          mps << "this->Rinf" + id + " = ";
+          const auto Rin = IsotropicHardeningRule::getVariableId("Ring", fid, id);
+          mps << "this->" + Rin + " = ";
           dsl.writeMaterialPropertyEvaluation(mps, this->Rinf, mts);
           mps << ";\n";
         }
         if (!this->b.is<BehaviourDescription::ConstantMaterialProperty>()) {
-          mps << "this->b" + id + " = ";
+          const auto bn = IsotropicHardeningRule::getVariableId("b", fid, id);
+          mps << "this->" + bn + " = ";
           dsl.writeMaterialPropertyEvaluation(mps, this->b, mts);
           mps << ";\n";
         }

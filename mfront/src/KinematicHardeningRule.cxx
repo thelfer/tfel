@@ -21,9 +21,9 @@ namespace mfront{
                                                       const std::string& fid,
                                                       const std::string& kid) {
       if (kid.empty()) {
-        return n + fid;
+        return "khr_"+n + fid;
       }
-      return n + fid + '_' + kid;
+      return "khr_" + n + fid + '_' + kid;
     }  // end of KinematicHardeningRule::getVariableId
 
     KinematicHardeningRule::~KinematicHardeningRule() = default;

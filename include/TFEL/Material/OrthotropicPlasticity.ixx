@@ -198,8 +198,8 @@ namespace tfel{
 			       const tfel::math::StensorBaseType<StensorType> a2,
 			       const tfel::math::StensorBaseType<StensorType> a3,
 			       const tfel::math::StensorBaseType<StensorType> a4,
-			       const tfel::math::StensorBaseType<StensorType> a5,
-			       const tfel::math::StensorBaseType<StensorType> a6)
+			       const tfel::math::StensorBaseType<StensorType>,
+			       const tfel::math::StensorBaseType<StensorType>)
     {
       using real = tfel::math::StensorBaseType<StensorType>;
       constexpr const auto zero = real{0};

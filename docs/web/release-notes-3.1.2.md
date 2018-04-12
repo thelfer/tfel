@@ -7,6 +7,16 @@ solved are described below.
 
 # Tickets fixed
 
+## Ticket #121: Modifying the reference values read in a file does not work in MTest
+
+In `MTest`, the following lines was not parsed appropriately:
+
+~~~~{.cpp}
+@Test<file> @reference_file@ {
+  'SXX' : '$8*1.e6'
+} 1.e3;
+~~~~
+
 ## Ticket #120: Direct call to Cast3M' umat behaviours in `MTest` is broken
 
 Since `TFEL` `3.1`, `MTest` is able to call raw Cast3M' umat behaviours

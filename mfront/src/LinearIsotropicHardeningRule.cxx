@@ -1,6 +1,6 @@
 /*!
  * \file   mfront/src/LinearIsotropicHardeningRule.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   15/03/2018
  */
@@ -11,16 +11,19 @@
 #include "MFront/BehaviourBrick/OptionDescription.hxx"
 #include "MFront/BehaviourBrick/LinearIsotropicHardeningRule.hxx"
 
-namespace mfront{
+namespace mfront {
 
   namespace bbrick {
 
     void LinearIsotropicHardeningRule::initialize(BehaviourDescription& bd,
                                                   AbstractBehaviourDSL& dsl,
+                                                  const std::string& fid,
                                                   const std::string& id,
                                                   const DataMap& d) {
       using namespace tfel::glossary;
-      auto get_mp = [&dsl, &bd, &id, &d](const std::string& n) {
+      constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+      auto get_mp = [&dsl, &bd, &fid, &id, &d](const std::string& n) {
+        const auto ni = IsotropicHardeningRule::getVariableId(n, fid, id);
         if (d.count(n) == 0) {
           tfel::raise(
               "LinearIsotropicHardeningRule::initialize: "
@@ -28,15 +31,22 @@ namespace mfront{
               n + "' is not defined");
         }
         auto mp = getBehaviourDescriptionMaterialProperty(dsl, n, d.at(n));
-        declareParameterOrLocalVariable(bd, mp, n + id);
+        declareParameterOrLocalVariable(bd, mp, ni);
         return mp;
       };
       mfront::bbrick::check(d, this->getOptions());
       this->R0 = get_mp("R0");
       this->H = get_mp("H");
+      const auto Rel = id.empty() ? "Rel" + fid : "Rel" + fid + "_" + id;
+      const auto R = id.empty() ? "R" + fid : "R" + fid + "_" + id;
+      const auto dR = "d" + R + "_ddp" + fid;
+      bd.reserveName(uh,Rel);
+      bd.reserveName(uh,R);
+      bd.reserveName(uh,dR);
     }  // end of LinearIsotropicHardeningRule::initialize
 
-    std::vector<OptionDescription> LinearIsotropicHardeningRule::getOptions() const {
+    std::vector<OptionDescription> LinearIsotropicHardeningRule::getOptions()
+        const {
       std::vector<OptionDescription> opts;
       opts.emplace_back("R0", "Yield strength",
                         OptionDescription::MATERIALPROPERTY);
@@ -46,30 +56,41 @@ namespace mfront{
     }  // end of LinearIsotropicHardeningRule::getOptions
 
     std::string LinearIsotropicHardeningRule::computeElasticPrediction(
-        const std::string& id) const {
-      return "const auto Rel" + id + " = this->R0" + id + "+(this->H" + id +
-          ")*(this->p" + id + ");\n";
+        const std::string& fid, const std::string& id) const {
+      const auto Rel = id.empty() ? "Rel" + fid : "Rel" + fid + "_" + id;
+      const auto R0n = IsotropicHardeningRule::getVariableId("R0", fid, id);
+      const auto Hn = IsotropicHardeningRule::getVariableId("H", fid, id);
+      return "const auto " + Rel + " = this->" + R0n + "+(this->" + Hn +
+             ")*(this->p" + fid + ");\n";
     }  // end of LinearIsotropicHardeningRule::computeElasticPrediction
 
     std::string LinearIsotropicHardeningRule::computeElasticLimit(
-        const std::string& id) const {
-      return "const auto R" + id + " = this->R0" + id + "+(this->H" + id +
-             ")*(this->p" + id + "+(this->theta)*(this->dp" + id + "));\n";
+        const std::string& fid, const std::string& id) const {
+      const auto R = id.empty() ? "R" + fid : "R" + fid + "_" + id;
+      const auto R0n = IsotropicHardeningRule::getVariableId("R0", fid, id);
+      const auto Hn = IsotropicHardeningRule::getVariableId("H", fid, id);
+      return "const auto " + R + " = this->" + R0n + "+(this->" + Hn +
+             ")*(this->p" + fid + "+(this->theta)*(this->dp" + fid + "));\n";
     }  // end of LinearIsotropicHardeningRule::computeElasticLimit
 
     std::string LinearIsotropicHardeningRule::computeElasticLimitAndDerivative(
-        const std::string& id) const {
+        const std::string& fid, const std::string& id) const {
+      const auto R = id.empty() ? "R" + fid : "R" + fid + "_" + id;
+      const auto dR = "d" + R + "_ddp" + fid;
+      const auto R0n = IsotropicHardeningRule::getVariableId("R0", fid, id);
+      const auto Hn = IsotropicHardeningRule::getVariableId("H", fid, id);
       return  //
-          "const auto R" + id + " = this->R0" + id + "+(this->H" + id +
-          ")*(this->p" + id + "+(this->theta)*(this->dp" + id +
+          "const auto " + R + " = this->" + R0n + "+(this->" + Hn +
+          ")*(this->p" + fid + "+(this->theta)*(this->dp" + fid +
           "));\n"  //
-          "const auto dR" +
-          id + "_ddp" + id + " = this->H" + id + ";\n";
+          "const auto " +
+          dR + " = this->" + Hn + ";\n";
     }  // end of LinearIsotropicHardeningRule::computeElasticLimitAndDerivative
 
     void LinearIsotropicHardeningRule::endTreatment(
         BehaviourDescription& bd,
         const AbstractBehaviourDSL& dsl,
+        const std::string& fid,
         const std::string& id) const {
       auto mts = getMiddleOfTimeStepModifier(bd);
       // computation of the material properties
@@ -79,12 +100,14 @@ namespace mfront{
         CodeBlock i;
         std::ostringstream mps;
         if (!this->R0.is<BehaviourDescription::ConstantMaterialProperty>()) {
-          mps << "this->R0" + id + " = ";
+          const auto R0n = IsotropicHardeningRule::getVariableId("R0", fid, id);
+          mps << "this->" + R0n + " = ";
           dsl.writeMaterialPropertyEvaluation(mps, this->R0, mts);
           mps << ";\n";
         }
         if (!this->H.is<BehaviourDescription::ConstantMaterialProperty>()) {
-          mps << "this->H" + id + " = ";
+          const auto Hn = IsotropicHardeningRule::getVariableId("H", fid, id);
+          mps << "this->" + Hn + " = ";
           dsl.writeMaterialPropertyEvaluation(mps, this->H, mts);
           mps << ";\n";
         }

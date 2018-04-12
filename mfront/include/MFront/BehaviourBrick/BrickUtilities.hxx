@@ -16,6 +16,8 @@
 
 #include <array>
 #include <string>
+#include <memory>
+#include <vector>
 #include <functional>
 #include "TFEL/Utilities/Data.hxx"
 #include "TFEL/Glossary/GlossaryEntry.hxx"
@@ -26,6 +28,9 @@
 namespace mfront {
 
   namespace bbrick {
+
+    // forward declaration
+    struct IsotropicHardeningRule;
 
     /*!
      * \return a modifier suitable for evaluating a material property at
@@ -113,13 +118,13 @@ namespace mfront {
         const std::string &,
         const tfel::glossary::GlossaryEntry &);
     /*!
-   * \brief add a new material property
-   * \param[in] bd: behaviour description
-   * \param[in] t: type of the material property
-   * \param[in] n: name of the variable
-   * \param[in] g: glossary name
-   * \param[in] s: array size
-   */
+    *\brief add a new material property
+    *\param[in] bd: behaviour description
+    *\param[in] t: type of the material property
+    *\param[in] n: name of the variable
+    *\param[in] g: glossary name
+    *\param[in] s: array size
+    */
     MFRONT_VISIBILITY_EXPORT void addMaterialPropertyIfNotDefined(
         BehaviourDescription &,
         const std::string &,
@@ -306,6 +311,18 @@ namespace mfront {
                                                const std::string &,
                                                const unsigned short,
                                                const std::vector<double> &);
+
+    MFRONT_VISIBILITY_EXPORT std::string computeElasticLimitInitialValue(
+        const std::vector<std::shared_ptr<IsotropicHardeningRule>> &,
+        const std::string &);
+
+    MFRONT_VISIBILITY_EXPORT std::string computeElasticLimitAndDerivative(
+        const std::vector<std::shared_ptr<IsotropicHardeningRule>> &,
+        const std::string &);
+
+    MFRONT_VISIBILITY_EXPORT std::string computeElasticLimit(
+        const std::vector<std::shared_ptr<IsotropicHardeningRule>> &,
+        const std::string &);
 
   }  // end of namespace bbrick
 

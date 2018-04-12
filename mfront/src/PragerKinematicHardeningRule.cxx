@@ -35,13 +35,13 @@ namespace mfront {
       c = "f" + an + " -= ";
       c += "(this->dp" + fid + ")*dseq" + fid + "_ds" + fid + ";\n";
       if (b) {
+        // opposite of dfa_ds
+        const auto mdf_ds = "(this->dp" + fid + ")*dn" + fid + "_ds" + fid;
         c += "df" + an + "_ddp" + fid + " = -dseq" + fid + "_ds" + fid + ";\n";
-        c += sp.computeDerivatives(
-            bd, an, "-(this->dp" + fid + ")*dn" + fid + "_ds" + fid);
+        c += sp.computeDerivatives(bd, an, "-" + mdf_ds);
         auto kid2 = decltype(khrs.size()){};
         for (const auto& khr : khrs) {
-          const auto df_ds = "(this->dp" + fid + ")*dn" + fid + "_ds" + fid;
-          c += khr->computeDerivatives(an, df_ds, fid, std::to_string(kid2));
+          c += khr->computeDerivatives(an, mdf_ds, fid, std::to_string(kid2));
           ++kid2;
         }
       }

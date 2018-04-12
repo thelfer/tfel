@@ -33,14 +33,18 @@ namespace mfront {
       void initialize(BehaviourDescription&,
                       AbstractBehaviourDSL&,
                       const std::string&,
+                      const std::string&,
                       const DataMap&) override;
       std::vector<OptionDescription> getOptions() const override;
-      std::string computeElasticPrediction(const std::string&) const override;
-      std::string computeElasticLimit(const std::string&) const override;
+      std::string computeElasticPrediction(const std::string&,
+                                           const std::string&) const override;
+      std::string computeElasticLimit(const std::string&,
+                                      const std::string&) const override;
       std::string computeElasticLimitAndDerivative(
-          const std::string&) const override;
+          const std::string&, const std::string&) const override;
       void endTreatment(BehaviourDescription&,
                         const AbstractBehaviourDSL&,
+                        const std::string&,
                         const std::string&) const override;
       //! destructor
       ~LinearIsotropicHardeningRule() override;

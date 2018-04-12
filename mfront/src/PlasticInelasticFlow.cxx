@@ -33,7 +33,7 @@ namespace mfront {
                                           const DataMap& d) {
       using namespace tfel::glossary;
       InelasticFlowBase::initialize(bd, dsl, id, d);
-      tfel::raise_if(this->ihr == nullptr,
+      tfel::raise_if(this->ihrs.empty(),
                      "PlasticInelasticFlow::initialize:"
                      "no isotropic hardening rule defined");
       if (id.empty()) {
@@ -52,7 +52,7 @@ namespace mfront {
         const std::string& id,
         const bool b) const {
       auto c = std::string{};
-      tfel::raise_if(this->ihr == nullptr,
+      tfel::raise_if(this->ihrs.empty(),
                      "PlasticInelasticFlow::buildFlowImplicitEquations :"
                      "no isotropic hardening rule defined");
       const auto snf = sp.getStressNormalisationFactor(bd);
@@ -63,7 +63,7 @@ namespace mfront {
       if (b) {
         const auto dR_ddp = "dR" + id + "_ddp" + id;
         const auto dfp_ddp = "dfp" + id + "_ddp" + id;
-        c += this->ihr->computeElasticLimitAndDerivative(id);
+        c += computeElasticLimitAndDerivative(this->ihrs, id);
         c += fp + " = (" + seq + "-" + R + ")/("+snf+");\n";
         c += sp.computeDerivatives(bd, "p" + id, dseq_ds + "/(" + snf + ")");
         c += "if(" + dR_ddp + ">0){";
@@ -80,7 +80,7 @@ namespace mfront {
           ++kid;
         }
       } else {
-        c += this->ihr->computeElasticLimit(id);
+        c += computeElasticLimit(this->ihrs, id);
         c += fp + " = (" + seq + "-" + R + ")/("+snf+");\n";
       }
       return c;

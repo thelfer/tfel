@@ -1233,6 +1233,8 @@ docs/web/img/ImplicitDSL.svg -text
 docs/web/img/Interfaces.svg -text
 docs/web/img/IsotropicEquivalentStressesInPiPlane.svg -text
 docs/web/img/IsotropicViscoplasticityAmstrongFredericKinematicHardening.svg -text
+docs/web/img/LoadInducedLoadInducedThermalStrain_Torelli2018.xcf -text
+docs/web/img/LoadInducedThermalStrain_Torelli2018.png -text
 docs/web/img/LogarithmicStrainPlasticity-ssna303.svg -text
 docs/web/img/Norton-full.docx -text
 docs/web/img/Norton-full.odt -text
@@ -3696,6 +3698,8 @@ mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/StandardElastoVisco
 mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/StandardElastoViscoPlasticityNortonTest5_nj.mfront -text
 mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/StandardElastoViscoPlasticityNortonTest6.mfront -text
 mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/StandardElastoViscoPlasticityNortonTest6_nj.mfront -text
+mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/StandardElastoViscoPlasticityNortonTest7.mfront -text
+mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/StandardElastoViscoPlasticityNortonTest7_nj.mfront -text
 mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/StandardElastoViscoPlasticityNortonTest_nj.mfront -text
 mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/StandardElastoViscoPlasticityOrthotropicNortonTest.mfront -text
 mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/StandardElastoViscoPlasticityOrthotropicNortonTest_nj.mfront -text
@@ -3706,6 +3710,10 @@ mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/StandardElastoVisco
 mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/StandardElastoViscoPlasticityPlasticityTest3_nj.mfront -text
 mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/StandardElastoViscoPlasticityPlasticityTest4.mfront -text
 mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/StandardElastoViscoPlasticityPlasticityTest4_nj.mfront -text
+mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/StandardElastoViscoPlasticityPlasticityTest5.mfront -text
+mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/StandardElastoViscoPlasticityPlasticityTest5_nj.mfront -text
+mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/StandardElastoViscoPlasticityPlasticityTest6.mfront -text
+mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/StandardElastoViscoPlasticityPlasticityTest6_nj.mfront -text
 mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/StandardElastoViscoPlasticityPlasticityTest_nj.mfront -text
 mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/StandardElastoViscoPlasticityTest1.mfront -text
 mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/StandardElastoViscoPlasticityTest2.mfront -text
@@ -3729,8 +3737,12 @@ mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/castem/castemstanda
 mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/castem/castemstandardelastoviscoplasticityplasticitytest3.mtest -text
 mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/castem/castemstandardelastoviscoplasticityplasticitytest3_nj.mtest -text
 mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/castem/castemstandardelastoviscoplasticityplasticitytest4.mtest -text
+mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/castem/castemstandardelastoviscoplasticityplasticitytest5.mtest -text
+mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/castem/castemstandardelastoviscoplasticityplasticitytest5_nj.mtest -text
+mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/castem/castemstandardelastoviscoplasticityplasticitytest6.mtest -text
 mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/castem/castemstandardelastoviscoplasticityplasticitytest_nj.mtest -text
-mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/references/standardelastoviscoplasticityplasticitytest4.res -text
+mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/references/standardelastoviscoplasticityplasticitytest4.ref -text
+mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/references/standardelastoviscoplasticityplasticitytest6.ref -text
 mfront/tests/behaviours/calculix/CMakeLists.txt -text
 mfront/tests/behaviours/calculix/Makefile.am -text
 mfront/tests/behaviours/calculix/calculixelasticity.mtest.in -text

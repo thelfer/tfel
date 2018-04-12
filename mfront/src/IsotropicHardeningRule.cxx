@@ -17,6 +17,15 @@ namespace mfront{
 
   namespace bbrick {
 
+    std::string IsotropicHardeningRule::getVariableId(const std::string& n,
+                                                      const std::string& fid,
+                                                      const std::string& id) {
+      if (id.empty()) {
+        return "ihr_" + n;
+      }
+      return "ihr_" + n + id;
+    }  // end of IsotropicHardeningRule::getVariableId
+
     IsotropicHardeningRule::~IsotropicHardeningRule() = default;
 
   }  // end of namespace bbrick

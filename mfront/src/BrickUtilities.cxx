@@ -10,6 +10,7 @@
 #include "TFEL/Glossary/GlossaryEntry.hxx"
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "TFEL/Material/ModellingHypothesis.hxx"
+#include "MFront/BehaviourBrick/IsotropicHardeningRule.hxx"
 #include "MFront/BehaviourBrick/BrickUtilities.hxx"
 
 namespace mfront {
@@ -379,6 +380,81 @@ namespace mfront {
         bd.setParameterDefaultValue(h, n, i, p[i]);
       }
     }  // end of addParameter
+
+    std::string computeElasticLimitInitialValue(
+        const std::vector<std::shared_ptr<IsotropicHardeningRule>>& ihrs,
+        const std::string& fid) {
+      tfel::raise_if(ihrs.empty(),
+                     "computeElasticLimitInitialValue: "
+                     "empty list of isotropic hardenings");
+      if (ihrs.size() == 1) {
+        return ihrs[0]->computeElasticPrediction(fid,"");
+      }
+      auto c = std::string{};
+      auto R = std::string{};
+      for (decltype(ihrs.size()) i = 0; i != ihrs.size();) {
+        const auto id = std::to_string(i);
+        c += ihrs[i]->computeElasticPrediction(fid, id);
+        R += "Rel" + fid + "_" + id;
+        if (++i != ihrs.size()) {
+          R += " + ";
+        }
+      }
+      c += "const auto Rel" + fid + " = " + R + "\n;";
+      return c;
+    }  // end of computeElasticLimitInitialValue
+
+    std::string computeElasticLimit(
+        const std::vector<std::shared_ptr<IsotropicHardeningRule>>& ihrs,
+        const std::string& fid) {
+      tfel::raise_if(ihrs.empty(),
+                     "computeElastic: "
+                     "empty list of isotropic hardenings");
+      if (ihrs.size() == 1) {
+        return ihrs[0]->computeElasticLimit(fid,"");
+      }
+     auto c = std::string{};
+     auto R = std::string{};
+     for (decltype(ihrs.size()) i = 0; i != ihrs.size();) {
+       const auto id = std::to_string(i);
+       c += ihrs[i]->computeElasticLimit(fid, id);
+       R += "R" + fid + "_" + id;
+       if (++i != ihrs.size()) {
+         R += " + ";
+       }
+     }
+     c += "const auto R" + fid + " = " + R + "\n;";
+     return c;
+    }  // end of computeElasticLimit
+
+    std::string computeElasticLimitAndDerivative(
+        const std::vector<std::shared_ptr<IsotropicHardeningRule>>& ihrs,
+        const std::string& fid) {
+      tfel::raise_if(ihrs.empty(),
+                     "computeElasticAndDerivative: "
+                     "empty list of isotropic hardenings");
+      if (ihrs.size() == 1) {
+        return ihrs[0]->computeElasticLimitAndDerivative(fid,"");
+      }
+     auto c = std::string{};
+     auto R = std::string{};
+     auto dR = std::string{};
+     for (decltype(ihrs.size()) i = 0; i != ihrs.size();) {
+       const auto id = std::to_string(i);
+       c += ihrs[i]->computeElasticLimitAndDerivative(fid, id);
+       const auto Ri = "R" + fid + "_" + id;
+       const auto dRi = "d" + Ri + "_ddp" + fid;
+       R += Ri;
+       dR += dRi;
+       if (++i != ihrs.size()) {
+         R += " + ";
+         dR += " + ";
+       }
+     }
+     c += "const auto R" + fid + " = " + R + ";\n";
+     c += "const auto dR" + fid + "_ddp" + fid + " = " + dR + ";\n";
+     return c;
+    }  // end of computeElasticLimitAndDerivative
 
   }  // end of namespace bbrick
 

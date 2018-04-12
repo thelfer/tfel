@@ -1138,14 +1138,14 @@ namespace mfront {
     std::string HookeStressPotential::computeDerivatives(
         const BehaviourDescription& bd,
         const std::string& v,
-        const std::string& dv_ds) const {
+        const std::string& dfv_ds) const {
       auto c = std::string{};
       c = "df" + v + "_ddeel += ";
       if ((bd.getAttribute(BehaviourDescription::requiresStiffnessTensor,
                            false)) ||
           (bd.getAttribute(BehaviourDescription::computesStiffnessTensor,
                            false))) {
-        c += "(this->theta)*" + dv_ds + " * (this->D);\n";
+        c += "(this->theta) * (" + dfv_ds + ") * (this->D);\n";
       } else {
         if (bd.getElasticSymmetryType() == mfront::ISOTROPIC) {
           auto b = bd.getAttribute(
@@ -1153,7 +1153,7 @@ namespace mfront {
           const std::string lambda =
               b ? "this->sebdata.lambda" : "this->lambda";
           const std::string mu = b ? "this->sebdata.mu" : "this->mu";
-          c += "(this->theta) * " + dv_ds + " * (2 * (" + mu + ") * Stensor4::Id()+(" +
+          c += "(this->theta) * (" + dfv_ds + ") * (2 * (" + mu + ") * Stensor4::Id()+(" +
                lambda + ") * Stensor4::IxI());\n";
         } else if (bd.getElasticSymmetryType() == mfront::ORTHOTROPIC) {
           if (!bd.getAttribute<bool>(
@@ -1162,7 +1162,7 @@ namespace mfront {
                 "HookeStressPotential::writeStressDerivatives: "
                 "orthotropic behaviour shall require the stiffness tensor");
           }
-          c += "(this->theta)*" + dv_ds + " * (this->D);\n";
+          c += "(this->theta)*(" + dfv_ds + ") * (this->D);\n";
         } else {
           tfel::raise(
               "HookeStressPotential::writeStressDerivatives: "

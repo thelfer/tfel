@@ -117,15 +117,15 @@ namespace mfront {
        * \brief compute the derivatives of a variable \f$v\f$ knowing the
        * derivative of \f$\frac{d\,v}{d\underline{s}}\f$.
        * \param[in] v: variable name
-       * \param[in] dv_ds: derivative of v with respect to the effective stress
+       * \param[in] mdfv_ds: opposite of the derivative of v with respect to the
+       * effective stress.
        * \param[in] fid: flow id
        * \param[in] kid: kinematic hardening rule id
        */
-      virtual std::string computeDerivatives(
-          const std::string&,
-          const std::string&,
-          const std::string&,
-          const std::string&) const = 0;
+      virtual std::string computeDerivatives(const std::string&,
+                                             const std::string&,
+                                             const std::string&,
+                                             const std::string&) const = 0;
       /*!
        * \return the code computing the implicit equations associated with the
        * back-strains and the derivatives of those equations (if requested).

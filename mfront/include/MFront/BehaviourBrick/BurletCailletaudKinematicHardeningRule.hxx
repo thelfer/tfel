@@ -25,7 +25,7 @@ namespace mfront {
      * defined by the following evolution of the back-strain variable
      * \f$\underline{a}\f$:
      * \f[
-     * \underline{\dot{a}}=\underline{\dot{\varepsilon}}^{p}-D\,\left(\underline{a}\,\colon\,\underline{n}\right)\,\underline{a}
+     * \underline{\dot{a}}=\underline{\dot{\varepsilon}}^{p}-\eta\,\,D\underline{a}-(1-\eta)\,D\,\left(\underline{a}\,\colon\,\underline{n}\right)\,\underline{a}
      * \f]
      */
     struct BurletCailletaudKinematicHardeningRule
@@ -53,6 +53,8 @@ namespace mfront {
      protected:
       //! \brief call-back
       BehaviourDescription::MaterialProperty D;
+      //! \brief parameter call-back
+      BehaviourDescription::MaterialProperty eta;
 
     };  // end of struct KinematicHardeningRule
 

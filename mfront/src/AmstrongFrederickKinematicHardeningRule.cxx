@@ -82,17 +82,17 @@ namespace mfront {
       if (b) {
         c += "df" + an + "_ddp" + fid + " = -(n" + fid + "-(this->" + Dn +
              ")*" + an + "_);\n";
-        c += sp.computeDerivatives(
-            bd, an, "-(this->dp" + fid + ")*dn" + fid + "_ds" + fid);
+        // opposite of the derivative of fa with respect to s
+        const auto mdf_ds = "(this->dp" + fid + ")*dn" + fid + "_ds" + fid;
+        c += sp.computeDerivatives(bd, an, "-" + mdf_ds);
         // term specific to this back strain
         c += "df" + an + "_dd" + an + " += ";
         c += "(this->theta)*(this->dp" + fid + ")*((this->" + Dn +
              ")*Stensor4::Id());\n";
         // terms in common for all back strains
         auto kid2 = decltype(khrs.size()){};
-        const auto df_ds = "(this->dp" + fid + ")*dn" + fid + "_ds" + fid;
         for (const auto& khr : khrs) {
-          c += khr->computeDerivatives(an, df_ds, fid, std::to_string(kid2));
+          c += khr->computeDerivatives(an, mdf_ds, fid, std::to_string(kid2));
           ++kid2;
         }
       }

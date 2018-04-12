@@ -18,6 +18,29 @@
 \newcommand{\deriv}[2]{{\displaystyle \frac{\displaystyle \partial #1}{\displaystyle \partial #2}}}
 \newcommand{\sigmaeq}{\sigma_{\mathrm{eq}}}
 
+# A new constitutive law to model the load induced thermal strain (LITS) of concrete materials (11/04/2018)
+
+![Illustration of load induced thermal strain (LITS)](img/LoadInducedThermalStrain_Torelli2018.png "Illustration of load induced thermal strain (LITS)"){width=100%}
+
+Giacomo Torelli (The University of Cambridge), Parthasarathi Mandal (The
+University of Manchester) and Martin Gillie (The University of Warwick)
+developed a new constitutive laws describing the Load-Induced-Thermal-Strain
+(LITS) which captures the experimentally demonstrated behaviour of
+concrete in the case of heating under multiaxial mechanical load, for
+temperatures up to \(500\mbox^{\circ{}}C\).
+
+In contrast to the models available in the literature, this new
+behaviour takes into account the observed dependency of LITS on stress
+confinement. Such a dependency is introduced through a confinement
+coefficient which makes LITS directly proportional to the confinement of
+the stress state.
+
+Details of theoretical and numerical implementation can be found in
+@torelli_confinement-dependent_2018.
+
+The implementation of the behaviour is available in the `MFrontGallery`
+[here](https://github.com/thelfer/MFrontGallery/blob/master/generic-behaviours/viscoplasticity/LoadInducedThermalStrain_Torelli2018.mfront).
+
 # Release of version 3.1.1 of `TFEL/MFront` (7/03/2017)
 
 In prevision of the 14.2 release of `Code_Aster` and 2018 release of

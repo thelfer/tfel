@@ -56,9 +56,9 @@ namespace mfront {
         const std::string& id,
         const bool b) const {
       auto c = std::string{};
-      if (this->ihr != nullptr) {
+      if (!this->ihrs.empty()) {
         if (b) {
-          c += this->ihr->computeElasticLimitAndDerivative(id);
+          c += computeElasticLimitAndDerivative(this->ihrs, id);
           c += this->computeFlowRateAndDerivative(id);
           c += "fp" + id + " -= (this->dt)*vp" + id + ";\n";
           c += sp.computeDerivatives(bd, "p" + id, "-(this->dt)*dvp" + id +
@@ -75,7 +75,7 @@ namespace mfront {
             ++kid;
           }
         } else {
-          c += this->ihr->computeElasticLimit(id);
+          c += computeElasticLimit(this->ihrs, id);
           c += this->computeFlowRate(id);
           c += "fp" + id + " -= (this->dt)*vp" + id + ";\n";
         }
