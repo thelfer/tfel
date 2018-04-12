@@ -410,6 +410,7 @@ namespace mtest
 				   p,this->tokens.end());
 	  if(p->flag==tfel::utilities::Token::String){
 	    columns.insert({v,p->value.substr(1,p->value.size()-2)});
+         ++p;
 	  } else {
 	    const unsigned short c = this->readUnsignedInt(p,this->tokens.end());
 	    columns.insert({v,gentype(c)});
