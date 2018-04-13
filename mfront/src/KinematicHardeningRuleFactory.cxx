@@ -14,8 +14,9 @@
 #include "TFEL/Raise.hxx"
 #include "MFront/BehaviourBrick/PragerKinematicHardeningRule.hxx"
 #include "MFront/BehaviourBrick/OhnoWangKinematicHardeningRule.hxx"
+#include "MFront/BehaviourBrick/Chaboche1991KinematicHardeningRule.hxx"
 #include "MFront/BehaviourBrick/BurletCailletaudKinematicHardeningRule.hxx"
-#include "MFront/BehaviourBrick/AmstrongFrederickKinematicHardeningRule.hxx"
+#include "MFront/BehaviourBrick/ArmstrongFrederickKinematicHardeningRule.hxx"
 #include "MFront/BehaviourBrick/KinematicHardeningRuleFactory.hxx"
 
 namespace mfront {
@@ -53,13 +54,13 @@ namespace mfront {
       this->addGenerator("Prager", []() {
         return std::make_shared<bbrick::PragerKinematicHardeningRule>();
       });
-      this->addGenerator("AmstrongFrederick", []() {
+      this->addGenerator("ArmstrongFrederick", []() {
         return std::make_shared<
-            bbrick::AmstrongFrederickKinematicHardeningRule>();
+            bbrick::ArmstrongFrederickKinematicHardeningRule>();
       });
-      this->addGenerator("Amstrong-Frederick", []() {
+      this->addGenerator("Armstrong-Frederick", []() {
         return std::make_shared<
-            bbrick::AmstrongFrederickKinematicHardeningRule>();
+            bbrick::ArmstrongFrederickKinematicHardeningRule>();
       });
       this->addGenerator("OhnoWang", []() {
         return std::make_shared<
@@ -76,6 +77,14 @@ namespace mfront {
       this->addGenerator("Burlet-Cailletaud", []() {
         return std::make_shared<
             bbrick::BurletCailletaudKinematicHardeningRule>();
+      });
+      this->addGenerator("Chaboche1991", []() {
+        return std::make_shared<
+            bbrick::Chaboche1991KinematicHardeningRule>();
+      });
+      this->addGenerator("Chaboche 1991", []() {
+        return std::make_shared<
+            bbrick::Chaboche1991KinematicHardeningRule>();
       });
     }  // end of KinematicHardeningRuleFactory::KinematicHardeningRuleFactory
 

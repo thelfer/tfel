@@ -140,8 +140,9 @@ libTFELMFront_la_SOURCES = MFront.cxx                                           
 		           KinematicHardeningRuleBase.cxx                         \
 		           PragerKinematicHardeningRule.cxx                       \
 		           OhnoWangKinematicHardeningRule.cxx                     \
+		           Chaboche1991KinematicHardeningRule.cxx                 \
 		           BurletCailletaudKinematicHardeningRule.cxx             \
-		           AmstrongFrederickKinematicHardeningRule.cxx            \
+		           ArmstrongFrederickKinematicHardeningRule.cxx            \
 		           KinematicHardeningRuleFactory.cxx
 
 

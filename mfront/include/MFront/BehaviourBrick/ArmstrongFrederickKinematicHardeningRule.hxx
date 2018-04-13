@@ -1,5 +1,5 @@
 /*!
- * \file   AmstrongFrederickKinematicHardeningRule.hxx
+ * \file   ArmstrongFrederickKinematicHardeningRule.hxx
  * \brief
  * \author Thomas Helfer
  * \date   04/04/2018
@@ -11,8 +11,8 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_MFRONT_BEHAVIOURBRICK_AMSTRONGFREDERICKKINEMATICHARDENINGRULE_HXX
-#define LIB_MFRONT_BEHAVIOURBRICK_AMSTRONGFREDERICKKINEMATICHARDENINGRULE_HXX
+#ifndef LIB_MFRONT_BEHAVIOURBRICK_ARMSTRONGFREDERICKKINEMATICHARDENINGRULE_HXX
+#define LIB_MFRONT_BEHAVIOURBRICK_ARMSTRONGFREDERICKKINEMATICHARDENINGRULE_HXX
 
 #include "MFront/BehaviourBrick/KinematicHardeningRuleBase.hxx"
 
@@ -21,14 +21,14 @@ namespace mfront {
   namespace bbrick {
 
     /*!
-     * \brief class describing the Amstrong-Frederick kinematic hardening rule
+     * \brief class describing the Armstrong-Frederick kinematic hardening rule
      * defined by the following evolution of the back-strain variable
      * \f$\underline{a}\f$:
      * \f[
      * \underline{\dot{a}}=\underline{\dot{\varepsilon}}^{p}-D\,\underline{a}
      * \f]
      */
-    struct AmstrongFrederickKinematicHardeningRule
+    struct ArmstrongFrederickKinematicHardeningRule
         : KinematicHardeningRuleBase {
       std::vector<OptionDescription> getOptions() const override;
       void initialize(BehaviourDescription&,
@@ -48,7 +48,7 @@ namespace mfront {
           const std::string&,
           const bool) const override;
       //! destructor
-      ~AmstrongFrederickKinematicHardeningRule() override;
+      ~ArmstrongFrederickKinematicHardeningRule() override;
 
      protected:
       //! \brief call-back
@@ -60,5 +60,5 @@ namespace mfront {
 
 }  // end of namespace mfront
 
-#endif /* LIB_MFRONT_BEHAVIOURBRICK_AMSTRONGFREDERICKKINEMATICHARDENINGRULE_HXX \
+#endif /* LIB_MFRONT_BEHAVIOURBRICK_ARMSTRONGFREDERICKKINEMATICHARDENINGRULE_HXX \
           */

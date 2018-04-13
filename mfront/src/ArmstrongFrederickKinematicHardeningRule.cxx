@@ -1,5 +1,5 @@
 /*!
- * \file   AmstrongFrederickKinematicHardeningRule.cxx
+ * \file   ArmstrongFrederickKinematicHardeningRule.cxx
  * \brief
  * \author Thomas Helfer
  * \date   04/04/2018
@@ -16,21 +16,21 @@
 #include "MFront/BehaviourBrick/BrickUtilities.hxx"
 #include "MFront/BehaviourBrick/StressPotential.hxx"
 #include "MFront/BehaviourBrick/OptionDescription.hxx"
-#include "MFront/BehaviourBrick/AmstrongFrederickKinematicHardeningRule.hxx"
+#include "MFront/BehaviourBrick/ArmstrongFrederickKinematicHardeningRule.hxx"
 
 namespace mfront {
 
   namespace bbrick {
 
-    std::vector<OptionDescription> AmstrongFrederickKinematicHardeningRule::getOptions()
+    std::vector<OptionDescription> ArmstrongFrederickKinematicHardeningRule::getOptions()
         const {
       auto opts = KinematicHardeningRuleBase::getOptions();
       opts.emplace_back("D", "back-strain callback coefficient",
                         OptionDescription::MATERIALPROPERTY);
       return opts;
-    }  // end of AmstrongFrederickKinematicHardeningRule::getOptions()
+    }  // end of ArmstrongFrederickKinematicHardeningRule::getOptions()
 
-    void AmstrongFrederickKinematicHardeningRule::initialize(
+    void ArmstrongFrederickKinematicHardeningRule::initialize(
         BehaviourDescription& bd,
         AbstractBehaviourDSL& dsl,
         const std::string& fid,
@@ -40,13 +40,13 @@ namespace mfront {
       const auto Dn = KinematicHardeningRule::getVariableId("D", fid, kid);
       // kinematic moduli
       tfel::raise_if(d.count("D") == 0,
-                     "AmstrongFrederickKinematicHardeningRule::initialize: "
+                     "ArmstrongFrederickKinematicHardeningRule::initialize: "
                      "material property 'D' is not defined");
       this->D = getBehaviourDescriptionMaterialProperty(dsl, "D", d.at("D"));
       declareParameterOrLocalVariable(bd, this->D, Dn);
-    }  // end of AmstrongFrederickKinematicHardeningRule::initialize
+    }  // end of ArmstrongFrederickKinematicHardeningRule::initialize
 
-    void AmstrongFrederickKinematicHardeningRule::endTreatment(
+    void ArmstrongFrederickKinematicHardeningRule::endTreatment(
         BehaviourDescription& bd,
         const AbstractBehaviourDSL& dsl,
         const std::string& fid,
@@ -62,10 +62,10 @@ namespace mfront {
         bd.setCode(uh, BehaviourData::BeforeInitializeLocalVariables, i,
                    BehaviourData::CREATEORAPPEND, BehaviourData::AT_BEGINNING);
       }
-    }  // end of AmstrongFrederickKinematicHardeningRule::endTreatment
+    }  // end of ArmstrongFrederickKinematicHardeningRule::endTreatment
 
     std::string
-    AmstrongFrederickKinematicHardeningRule::buildBackStrainImplicitEquations(
+    ArmstrongFrederickKinematicHardeningRule::buildBackStrainImplicitEquations(
         const BehaviourDescription& bd,
         const StressPotential& sp,
         const std::vector<std::shared_ptr<KinematicHardeningRule>>& khrs,
@@ -98,10 +98,10 @@ namespace mfront {
       }
       return c;
     }  // end of
-       // AmstrongFrederickKinematicHardeningRule::buildBackStrainImplicitEquations
+       // ArmstrongFrederickKinematicHardeningRule::buildBackStrainImplicitEquations
 
-    AmstrongFrederickKinematicHardeningRule::
-        ~AmstrongFrederickKinematicHardeningRule() = default;
+    ArmstrongFrederickKinematicHardeningRule::
+        ~ArmstrongFrederickKinematicHardeningRule() = default;
 
   }  // end of namespace bbrick
 

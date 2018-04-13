@@ -114,8 +114,9 @@ nobase_include_HEADERS= MFront/MFront.hxx                          \
 			MFront/BehaviourBrick/KinematicHardeningRule.hxx                  \
 			MFront/BehaviourBrick/KinematicHardeningRuleBase.hxx              \
 			MFront/BehaviourBrick/PragerKinematicHardeningRule.hxx            \
-			MFront/BehaviourBrick/AmstrongFrederickKinematicHardeningRule.hxx \
+			MFront/BehaviourBrick/ArmstrongFrederickKinematicHardeningRule.hxx \
 			MFront/BehaviourBrick/OhnoWangKinematicHardeningRule.hxx          \
+			MFront/BehaviourBrick/Chaboche1991KinematicHardeningRule.hxx      \
 			MFront/BehaviourBrick/BurletCailletaudKinematicHardeningRule.hxx  \
 			MFront/BehaviourBrick/KinematicHardeningRuleFactory.hxx           \
 			MFront/LocalDataStructure.hxx

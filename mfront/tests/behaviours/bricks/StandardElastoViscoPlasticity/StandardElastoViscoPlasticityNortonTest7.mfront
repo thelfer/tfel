@@ -17,7 +17,7 @@
   inelastic_flow : "Norton" {
     criterion : "Mises",
     isotropic_hardening : "Voce" {R0 : 200, Rinf : 100, b : 20},
-    kinematic_hardening : "Amstrong-Frederick" {
+    kinematic_hardening : "Armstrong-Frederick" {
       C : "1.e6 - 98500 * (T - 100) / 96",  //
       D : "5000 - 5* (T - 100)"
     },

@@ -1,5 +1,5 @@
 /*!
- * \file   BurletCailletaudKinematicHardeningRule.hxx
+ * \file   Chaboche1991KinematicHardeningRule.hxx
  * \brief
  * \author Thomas Helfer
  * \date   04/04/2018
@@ -11,8 +11,8 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_MFRONT_BEHAVIOURBRICK_BURLETCAILLETAUDKINEMATICHARDENINGRULE_HXX
-#define LIB_MFRONT_BEHAVIOURBRICK_BURLETCAILLETAUDKINEMATICHARDENINGRULE_HXX
+#ifndef LIB_MFRONT_BEHAVIOURBRICK_CHABOCHE1991KINEMATICHARDENINGRULE_HXX
+#define LIB_MFRONT_BEHAVIOURBRICK_CHABOCHE1991KINEMATICHARDENINGRULE_HXX
 
 #include "MFront/BehaviourBrick/KinematicHardeningRuleBase.hxx"
 
@@ -21,14 +21,21 @@ namespace mfront {
   namespace bbrick {
 
     /*!
-     * \brief This class describes the Burlet-Cailletaud kinematic hardening
-     * rule defined by the following evolution of the back-strain variable
-     * \f$\underline{a}\f$:
+     * \brief This class describes one modification of the Amstrong-Frederick
+     * kinematic hardening rule proposed by J.L. Chaboche in 1991 defined by the
+     * following evolution of the back-strain variable \f$\underline{a}\f$:
      * \f[
-     * \underline{\dot{a}}=\underline{\dot{\varepsilon}}^{p}-\eta\,\,D\underline{a}-(1-\eta)\,D\,\left(\underline{a}\,\colon\,\underline{n}\right)\,\underline{n}
+     * \underline{\dot{a}}=
+     * \underline{\dot{\varepsilon}}^{p}-D\,\Phi\left(\|\underline{a}\|\right)\underline{a}
+     * \f]
+     * with:
+     * \f[
+     * \Phi\left(\|\underline{a}\|\right)=
+     * \frac{\left<D\,J\left(\underline{a}\right)-\omega\right>^{m_{1}}}{1-\omega}\,
+     * \frac{1}{\left(D\,J\left(\underline{a}\right)\right)^{m_{2}}}
      * \f]
      */
-    struct BurletCailletaudKinematicHardeningRule : KinematicHardeningRuleBase {
+    struct Chaboche1991KinematicHardeningRule : KinematicHardeningRuleBase {
       std::vector<OptionDescription> getOptions() const override;
       void initialize(BehaviourDescription&,
                       AbstractBehaviourDSL&,
@@ -47,13 +54,14 @@ namespace mfront {
           const std::string&,
           const bool) const override;
       //! destructor
-      ~BurletCailletaudKinematicHardeningRule() override;
+      ~Chaboche1991KinematicHardeningRule() override;
 
      protected:
       //! \brief call-back
       BehaviourDescription::MaterialProperty D;
-      //! \brief parameter call-back
-      BehaviourDescription::MaterialProperty eta;
+      BehaviourDescription::MaterialProperty m1;
+      BehaviourDescription::MaterialProperty m2;
+      BehaviourDescription::MaterialProperty w;
 
     };  // end of struct KinematicHardeningRule
 
@@ -61,5 +69,4 @@ namespace mfront {
 
 }  // end of namespace mfront
 
-#endif /* LIB_MFRONT_BEHAVIOURBRICK_BURLETCAILLETAUDKINEMATICHARDENINGRULE_HXX \
-          */
+#endif /* LIB_MFRONT_BEHAVIOURBRICK_CHABOCHE1991KINEMATICHARDENINGRULE_HXX */

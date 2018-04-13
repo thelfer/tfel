@@ -154,8 +154,9 @@ set(TFELMFront_SOURCES
     KinematicHardeningRuleBase.cxx
     PragerKinematicHardeningRule.cxx
     OhnoWangKinematicHardeningRule.cxx
+    Chaboche1991KinematicHardeningRule.cxx
     BurletCailletaudKinematicHardeningRule.cxx
-    AmstrongFrederickKinematicHardeningRule.cxx
+    ArmstrongFrederickKinematicHardeningRule.cxx
     KinematicHardeningRuleFactory.cxx
     ${PROJECT_BINARY_DIR}/mfront/src/MFrontHeader.cxx)
 

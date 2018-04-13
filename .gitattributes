@@ -2154,10 +2154,11 @@ mfront/include/MFront/Aster/AsterTraits.hxx -text
 mfront/include/MFront/Aster/aster.doxygen -text
 mfront/include/MFront/AsterInterface.hxx -text
 mfront/include/MFront/BehaviourAttribute.hxx -text
-mfront/include/MFront/BehaviourBrick/AmstrongFrederickKinematicHardeningRule.hxx -text
+mfront/include/MFront/BehaviourBrick/ArmstrongFrederickKinematicHardeningRule.hxx -text
 mfront/include/MFront/BehaviourBrick/BrickUtilities.hxx -text
 mfront/include/MFront/BehaviourBrick/BrickUtilities.ixx -text
 mfront/include/MFront/BehaviourBrick/BurletCailletaudKinematicHardeningRule.hxx -text
+mfront/include/MFront/BehaviourBrick/Chaboche1991KinematicHardeningRule.hxx -text
 mfront/include/MFront/BehaviourBrick/DDIF2StressPotential.hxx -text
 mfront/include/MFront/BehaviourBrick/Hill1948StressCriterion.hxx -text
 mfront/include/MFront/BehaviourBrick/HookeStressPotential.hxx -text
@@ -2405,7 +2406,6 @@ mfront/src/AbstractBehaviourInterface.cxx -text
 mfront/src/AbstractDSL.cxx -text
 mfront/src/AbstractMaterialPropertyInterface.cxx -text
 mfront/src/AbstractModelInterface.cxx -text
-mfront/src/AmstrongFrederickKinematicHardeningRule.cxx -text
 mfront/src/AnsysComputeStiffnessTensor.cxx -text
 mfront/src/AnsysComputeThermalExpansionCoefficientTensor.cxx -text
 mfront/src/AnsysException.cxx -text
@@ -2413,6 +2413,7 @@ mfront/src/AnsysFiniteStrain.cxx -text
 mfront/src/AnsysInterface.cxx -text
 mfront/src/AnsysInterfaceExceptions.cxx -text
 mfront/src/AnsysStressFreeExpansionHandler.cxx -text
+mfront/src/ArmstrongFrederickKinematicHardeningRule.cxx -text
 mfront/src/AsterComputeStiffnessTensor.cxx -text
 mfront/src/AsterComputeThermalExpansionCoefficientTensor.cxx -text
 mfront/src/AsterException.cxx -text
@@ -2458,6 +2459,7 @@ mfront/src/CastemOutOfBoundsPolicy.cxx -text
 mfront/src/CastemRotationMatrix.cxx -text
 mfront/src/CastemStressFreeExpansionHandler.cxx -text
 mfront/src/CastemTangentOperator.cxx -text
+mfront/src/Chaboche1991KinematicHardeningRule.cxx -text
 mfront/src/CodeBlock.cxx -text
 mfront/src/CppMaterialPropertyInterface.cxx -text
 mfront/src/CppTestMaterialPropertyInterface.cxx -text
