@@ -94,6 +94,9 @@ namespace mfront{
     return MATERIALPROPERTYDSL;
   }
 
+  void MaterialPropertyDSL::endsInputFileProcessing() {
+  }  // end of MaterialPropertyDSL::endsInputFileProcessing
+
   void MaterialPropertyDSL::registerNewCallBack(const std::string& keyword,
 						const MemberFuncPtr ptr)
   {

@@ -35,14 +35,9 @@ namespace mfront{
   {
     //! constructor
     ModelDSLCommon();
-    //! \return the target of the dsl
     DSLTarget getTargetType() const override final;
-    /*!
-     * \brief write the output files.
-     * \note this shall be called after the analyseFile method.
-     */
+    void endsInputFileProcessing() override;
     void generateOutputFiles() override;
-
     void setInterfaces(const std::set<std::string>&) override;
     //! destructor
     ~ModelDSLCommon() override;

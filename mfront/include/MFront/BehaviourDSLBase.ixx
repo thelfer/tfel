@@ -23,10 +23,9 @@
 
 namespace mfront{
 
-  template<typename Child>
+  template <typename Child>
   void BehaviourDSLBase<Child>::registerNewCallBack(const std::string& keyword,
-						    const MemberFuncPtr f)
-  {
+                                                    const MemberFuncPtr f) {
     this->callBacks.insert(make_pair(keyword,f));
     this->registredKeyWords.insert(keyword);
   } // end of registerNewCallBack
@@ -234,20 +233,19 @@ namespace mfront{
       }
     }
   }
-  
-  template<typename Child>
-  void BehaviourDSLBase<Child>::importFile(const std::string& fn,
-					   const std::vector<std::string>& ecmds,
-					   const std::map<std::string,std::string>& s)
-  {
+
+  template <typename Child>
+  void BehaviourDSLBase<Child>::importFile(
+      const std::string& fn,
+      const std::vector<std::string>& ecmds,
+      const std::map<std::string, std::string>& s) {
     this->fd.fileName = fn;
     this->openFile(this->fd.fileName,ecmds,s);
     this->analyse();
   } // end of BehaviourDSLBase<Child>::importFile
 
-  template<typename Child>
-  void BehaviourDSLBase<Child>::analyseString(const std::string& s)
-  {
+  template <typename Child>
+  void BehaviourDSLBase<Child>::analyseString(const std::string& s) {
     this->fd.fileName = "user defined string";
     this->parseString(s);
     this->analyse();

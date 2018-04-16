@@ -1,5 +1,6 @@
-% Behaviour bricks
+% Description of the Hooke stress potential
 % Thomas Helfer
+% 15/05/2018
 
 \newcommand{\tenseur}[1]{\underline{#1}}
 \newcommand{\tenseurq}[1]{\underline{\mathbf{#1}}}
@@ -11,6 +12,7 @@
 
 \newcommand{\epsilonth}{\epsilon^{\mathrm{th}}}
 
+\newcommand{\epsilonto}{\epsilon^{\mathrm{to}}}
 \newcommand{\tepsilonto}{\underline{\epsilon}^{\mathrm{to}}}
 \newcommand{\tepsilonel}{\underline{\epsilon}^{\mathrm{el}}}
 \newcommand{\tepsilonth}{\underline{\epsilon}^{\mathrm{th}}}
@@ -37,14 +39,12 @@
 \newcommand{\mts}[1]{{\left.#1\right|_{t+\theta\,\Delta\,t}}}
 \newcommand{\ets}[1]{{\left.#1\right|_{t+\Delta\,t}}}
 
-# The StandardElasticity brick
+The `Hooke` stress potential describes the linear elastic part of the
+behaviour of an isotropic or orthotropic material.
 
-The `StandardElasticity` brick describes the linear elastic part of
-the behaviour of an isotropic or orthotropic material.
+# Evolution of the elastic strain
 
-## Evolution of the elastic strain
-
-This brick relies on the fact that the behaviour is based on the strain
+This stress potential relies on the fact that the behaviour is based on the strain
 split hypothesis.
 
 The elastic strain must be defined as the first integration
@@ -52,20 +52,21 @@ variable. The associated variable must be called `eel` and its
 glossary name must be `ElasticStrain`. This is automatically the case
 with the `@Implicit` dsl.
 
-The total strain increment `deto` is automatically substracted to the
-equation associated with the elastic (`feel`), which is equivalent to
-the following statement:
-\[
-feel -= deto
-\]
+The total strain increment \(\Delta\,\tepsilonto\) is automatically
+substracted to the equation associated with the elastic
+(\(f_{\tepsilonel}\)), which is equivalent to the following statement:
 
-## Computation of the stress
+~~~~{.cpp}
+feel -= deto
+~~~~
+
+# Computation of the stress
 
 If the elastic behaviour is orthotropic, the stiffness tensor must be
 available available (using the keyword `@RequireStiffnessTensor`) or
 computed by the behaviour (using the keyword
 `@ComputeStiffnessTensor`). If those keywords are not explicitly
-used, the brick will automatically sets the attribute
+used, the stress potential will automatically sets the attribute
 `requireStiffnessTensor` to `true` which has the same effect than the
 `@RequireStiffnessTensor` keyword.
 
@@ -77,9 +78,9 @@ Thus, two cases arise:
 - the behaviour has is an isotropic elastic behaviour and the
   stiffness tensor is not available.
 
-### First case: the stiffness tensor is available
+## First case: the stiffness tensor is available
 
-#### Computation of the stress at \(t+\theta\,dt\)
+### Computation of the stress at \(t+\theta\,dt\)
 
 At \(t+\theta\,dt\), the stress are computed using:
 
@@ -87,7 +88,7 @@ At \(t+\theta\,dt\), the stress are computed using:
 \mts{\sigma}=\tenseurq{D}\,\colon\,\mts{\tepsilonel}
 \]
 
-#### Computation of the final stress at \(t+dt\)
+### Computation of the final stress at \(t+dt\)
 
 If the stiffness tensor is avaible using the
 `@RequireStiffnessTensor`, the final stress \(\ets{\sigma}\) is
@@ -104,7 +105,7 @@ the final \(\ets{\sigma}\) stress is computed using:
 \ets{\sigma}=\ets{\tenseurq{D}}\,\colon\,\ets{\tepsilonel}
 \]
 
-### Second case: the stiffness tensor is not available
+## Second case: the stiffness tensor is not available
 
 In this case, the elastic behaviour of the material is isotropic. The
 computation of the stress requires the definition of the first Lamé
@@ -130,13 +131,13 @@ ratio. They can be defined using:
   must be `young` and the `nu` and the glossary names associated with
   those variables must be respectively `YoungModulus` and
   `PoissonRatio`. The Lamé coefficients will be computed and stored in
-  a data structure used internally by the brick.
+  a data structure used internally by the stress potential.
 
 If the material properties are not defined using one of those two
 ways, the appropriate material properties will be automatically
-defined by the brick.
+defined by the stress potential.
 
-#### Computation of the stress at \(t+\theta\,dt\)
+### Computation of the stress at \(t+\theta\,dt\)
 
 At \(t+\theta\,dt\), the stress are computed using the following
 formula:
@@ -146,7 +147,7 @@ formula:
 where \(\lambda\) and \(\mu\) are respectively the values of the first
 and second Lamé coefficients at \(t+\theta\,dt\)
 
-#### Computation of the final stress at \(t+dt\)
+### Computation of the final stress at \(t+dt\)
 
 The final stress \(\ets{\sigma}\) is computed using the following
 formula :
@@ -155,7 +156,7 @@ formula :
 \ets{\sigma}=\ets{\lambda}\,\trace{\ets{\tepsilonel}}+2\,\ets{\mu}\,\ets{\tepsilonel}
 \]
 
-## Enforcement of the plane stress conditions: computation of the axial strain
+# Enforcement of the plane stress conditions: computation of the axial strain
 
 If the user has explicitly specified that the axisymmetric generalised
 plane stress modelling hypothesis must be supported by the behaviour
@@ -182,7 +183,7 @@ equation to the implicit system ensuring that:
 This equation is appropriately normalised using one of the elastic
 properties. The associated jacobian term are added if necessary.
 
-## Enforcement of the generalised plane stress conditions: computation of the axial strain
+# Enforcement of the generalised plane stress conditions: computation of the axial strain
 
 If the user has explicitly specified that the axisymmetric generalised
 plane stress modelling hypothesis must be supported by the behaviour
@@ -199,13 +200,14 @@ The variable associated to the axial stress is `sigzz`, although this
 variable shall not be used by the end user. The glossary name of this
 variable is `AxialStress`.
 
-The introduction of the variable modify the strain split equation like
-this:
-\[
+The introduction of the variable modify the strain split equation as follows:
+
+~~~~{.cpp}
 feel(1) += detozz;
-\]
-where \(detozz\) is the increment of the axial strain. The associated
-jacobian term is added if necessary.
+~~~~
+
+where \(\epsilonto_{zz}\) is the increment of the axial strain. The
+associated jacobian term is added if necessary.
 
 The plane stress condition is enforced by adding an additional
 equation to the implicit system ensuring that:
@@ -231,24 +233,35 @@ stiffness matrix at the end of the time step by a partial invert of
 the jacobian matrix. This procedure is discussed in depth in the
 MFront manuals.
 
-## Options of the brick
+# Computation of the elastic prediction of the stress
 
-The `StandardElasticity` brick supports the following options:
+The `Hooke` stress potential automatically defines the
+`computeElasticPrediction` method which computes a prediction of the
+stress under the assumption that all states variables are equal to their
+values at the beginning of the time step except the elastic strain which
+are assumed to be equal to \(\bts{\tepsilonel}+\Delta\,\tepsilonto\).
 
-- `Isotropic`: the elastic part of the behaviour will be assumed
-  isotropic. This is the default for an isotropic material. This is
-  usefull if the material is declared orthotropic.
-- `Orthotropic`: the elastic part of the behaviour will be assumed
-  isotropic. This is the default for an isotropic material.
-- `NoPlaneStressSupport`: plane stress and axisymmetrical generalised
-  plane stress hypotheses support will not be added.
-- `NoGenericTangentOperator`: generic computation of the consistent
-  tangent operator will not be added.
-- `NoGenericPredictionOperator`: generic computation of the prediction
-  operator will not be added.
+# Options of the stress potential
 
-## Example
+The `Hooke` stress potential supports the following options:
 
-~~~~{.cpp}
-@Brick "StandardElasticity";
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+- `young_modulus`
+- `young_modulus1`
+- `young_modulus2`
+- `young_modulus3`
+- `poisson_ratio`
+- `poisson_ratio12`
+- `poisson_ratio23`
+- `poisson_ratio13`
+- `shear_modulus12`
+- `shear_modulus23`
+- `shear_modulus13`
+- `thermal_expansion`
+- `thermal_expansion1`
+- `thermal_expansion2`
+- `thermal_expansion3`
+- `thermal_expansion_reference_temperature`
+- `plane_stress_support`
+- `generic_tangent_operator`
+- `generic_prediction_operator`
+

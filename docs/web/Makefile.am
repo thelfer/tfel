@@ -73,10 +73,12 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./singlecrystal.md                                         \
 	   ./finitestrainsinglecrystal.md                             \
 	   ./finitestrainsinglecrystal-huang.md                       \
-	   ./phasefield.md				              \
+	   ./phasefield.md				                          \
 	   ./pandoc-crossref.yaml                                     \
-	   ./TODO.md						      \
-	   ./BehaviourBricks.md				              \
+	   ./TODO.md						                          \
+	   ./BehaviourBricks.md				                      \
+	   ./StandardElastoViscoPlasticityBrick.md				     \
+	   ./HookeStressPotential.md				     \
 	   ./DefaultCZMDSL-keywords.md				      \
 	   ./DefaultDSL-keywords.md				      \
 	   ./DefaultFiniteStrainDSL-keywords.md			      \

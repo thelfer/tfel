@@ -134,6 +134,7 @@ libTFELMFront_la_SOURCES = MFront.cxx                                           
 		           StressCriterionFactory.cxx                             \
 		           IsotropicHardeningRule.cxx                             \
 		           LinearIsotropicHardeningRule.cxx                       \
+		           SwiftIsotropicHardeningRule.cxx                        \
 		           VoceIsotropicHardeningRule.cxx                         \
 		           IsotropicHardeningRuleFactory.cxx                      \
 		           KinematicHardeningRule.cxx                             \

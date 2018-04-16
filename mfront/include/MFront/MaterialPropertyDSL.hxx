@@ -34,53 +34,32 @@ namespace mfront{
   struct MFRONT_VISIBILITY_EXPORT MaterialPropertyDSL
     : public DSLBase
   {
-    //! \return the target of the dsl
-    DSLTarget getTargetType() const override final;
-    /*!
-     * return the name of the parser
-     */
+    //! \return the name of the parser
     static std::string getName();
-    /*!
-     * return a description of the parser
-     */
+    //! \return a description of the parser
     static std::string getDescription();
-    /*!
-     * default constructor
-     */
+    //! default constructor
     MaterialPropertyDSL();
+
+    DSLTarget getTargetType() const override final;
 
     void getKeywordsList(std::vector<std::string>&) const override;
 
     void setInterfaces(const std::set<std::string>&) override;
-    /*!
-     * \brief analyse a file without generating any output
-     * \param[in] f     : file name
-     * \param[in] ecmds : additionnal commands inserted treated before
-     */
+
     void analyseFile(const std::string&,
-		     const std::vector<std::string>& = {},
-		     const std::map<std::string,std::string>& = {}) override;
-    /*!
-     * \brief analyse the specified string.
-     * \param[in] s : analyse a string
-     */
+                     const std::vector<std::string>& = {},
+                     const std::map<std::string, std::string>& = {}) override;
     void analyseString(const std::string&) override;
-    /*!
-     * \brief import a file
-     * \param[in] f     : file name
-     * \param[in] ecmds : additionnal commands inserted treated before
-     * the input file commands.
-     * \param[in] s : substitutions patterns inserted (those
-     * substitutions are given through command-line options such as
-     * `--@YYY@=XXX`)
-     */
+
     void importFile(const std::string&,
-		    const std::vector<std::string>&,
-		    const std::map<std::string,std::string>&) override;
-    
+                    const std::vector<std::string>&,
+                    const std::map<std::string, std::string>&) override;
+
+    void endsInputFileProcessing() override;
+
     virtual const MaterialPropertyDescription&
     getMaterialPropertyDescription() const;
-
     //! destructor
     ~MaterialPropertyDSL() override;
 

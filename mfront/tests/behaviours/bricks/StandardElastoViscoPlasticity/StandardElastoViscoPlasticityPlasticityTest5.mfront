@@ -11,7 +11,7 @@
   inelastic_flow : "Plastic" {
     //
     criterion : "Mises",
-    isotropic_hardening : "Linear" {R0 : 33e6, H : 0},
-    isotropic_hardening : "Linear" {R0 : 0, H : 438e6}
+    isotropic_hardening : "Linear" {R0 : 33e6},
+    isotropic_hardening : "Linear" {H : 438e6}
   }
 };

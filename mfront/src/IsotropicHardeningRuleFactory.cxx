@@ -13,6 +13,7 @@
 
 #include "TFEL/Raise.hxx"
 #include "MFront/BehaviourBrick/VoceIsotropicHardeningRule.hxx"
+#include "MFront/BehaviourBrick/SwiftIsotropicHardeningRule.hxx"
 #include "MFront/BehaviourBrick/LinearIsotropicHardeningRule.hxx"
 #include "MFront/BehaviourBrick/IsotropicHardeningRuleFactory.hxx"
 
@@ -50,6 +51,9 @@ namespace mfront {
     IsotropicHardeningRuleFactory::IsotropicHardeningRuleFactory() {
       this->addGenerator("Linear", []() {
         return std::make_shared<bbrick::LinearIsotropicHardeningRule>();
+      });
+      this->addGenerator("Swift", []() {
+        return std::make_shared<bbrick::SwiftIsotropicHardeningRule>();
       });
       this->addGenerator("Voce", []() {
         return std::make_shared<bbrick::VoceIsotropicHardeningRule>();

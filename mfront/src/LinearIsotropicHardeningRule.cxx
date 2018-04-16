@@ -3,6 +3,12 @@
  * \brief
  * \author Thomas Helfer
  * \date   15/03/2018
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #include <sstream>
@@ -25,25 +31,26 @@ namespace mfront {
       // this shall be captured in gcc 4.7.2
       auto get_mp = [&dsl, &bd, &fid, &id, &d,this](const std::string& n) {
         const auto ni = IsotropicHardeningRule::getVariableId(n, fid, id);
-        if (d.count(n) == 0) {
-          tfel::raise(
-              "LinearIsotropicHardeningRule::initialize: "
-              "material property '" +
-              n + "' is not defined");
-        }
         auto mp = getBehaviourDescriptionMaterialProperty(dsl, n, d.at(n));
         declareParameterOrLocalVariable(bd, mp, ni);
         return mp;
       };
       mfront::bbrick::check(d, this->getOptions());
-      this->R0 = get_mp("R0");
-      this->H = get_mp("H");
+      tfel::raise_if((d.count("R0") == 0) && (d.count("H") == 0),
+                     "LinearIsotropicHardeningRule::initialize: "
+                     "at least 'R0' or 'H' must be defined");
+      if (d.count("R0") != 0) {
+        this->R0 = get_mp("R0");
+      }
+      if (d.count("H") != 0) {
+        this->H = get_mp("H");
+      }
       const auto Rel = id.empty() ? "Rel" + fid : "Rel" + fid + "_" + id;
       const auto R = id.empty() ? "R" + fid : "R" + fid + "_" + id;
       const auto dR = "d" + R + "_ddp" + fid;
-      bd.reserveName(uh,Rel);
-      bd.reserveName(uh,R);
-      bd.reserveName(uh,dR);
+      bd.reserveName(uh, Rel);
+      bd.reserveName(uh, R);
+      bd.reserveName(uh, dR);
     }  // end of LinearIsotropicHardeningRule::initialize
 
     std::vector<OptionDescription> LinearIsotropicHardeningRule::getOptions()
@@ -61,8 +68,20 @@ namespace mfront {
       const auto Rel = id.empty() ? "Rel" + fid : "Rel" + fid + "_" + id;
       const auto R0n = IsotropicHardeningRule::getVariableId("R0", fid, id);
       const auto Hn = IsotropicHardeningRule::getVariableId("H", fid, id);
-      return "const auto " + Rel + " = this->" + R0n + "+(this->" + Hn +
-             ")*(this->p" + fid + ");\n";
+      tfel::raise_if((this->R0.empty()) && (this->H.empty()),
+                     "LinearIsotropicHardeningRule::computeElasticPrediction: "
+                     "at least 'R0' or 'H' must be defined");
+      auto c = "const auto " + Rel + " = ";
+      if (!this->R0.empty()) {
+        c += "this->" + R0n;
+      }
+      if (!this->H.empty()) {
+        if (!this->R0.empty()) {
+          c += " + ";
+        }
+        c += "(this->" + Hn + ")*(this->p" + fid + ")";
+      }
+      return c + ";\n";
     }  // end of LinearIsotropicHardeningRule::computeElasticPrediction
 
     std::string LinearIsotropicHardeningRule::computeElasticLimit(
@@ -70,8 +89,22 @@ namespace mfront {
       const auto R = id.empty() ? "R" + fid : "R" + fid + "_" + id;
       const auto R0n = IsotropicHardeningRule::getVariableId("R0", fid, id);
       const auto Hn = IsotropicHardeningRule::getVariableId("H", fid, id);
-      return "const auto " + R + " = this->" + R0n + "+(this->" + Hn +
-             ")*(this->p" + fid + "+(this->theta)*(this->dp" + fid + "));\n";
+      const auto pn = "p" + fid;
+      tfel::raise_if((this->R0.empty()) && (this->H.empty()),
+                     "LinearIsotropicHardeningRule::computeElastic: "
+                     "at least 'R0' or 'H' must be defined");
+      auto c = "const auto " + R + " = ";
+      if (!this->R0.empty()) {
+        c += "this->" + R0n;
+      }
+      if (!this->H.empty()) {
+        if (!this->R0.empty()) {
+          c += " + ";
+        }
+        c += "(this->" + Hn + ")*";
+        c += "(this->" + pn + "+(this->theta)*(this->d" + pn + "))";
+      }
+      return c + ";\n";
     }  // end of LinearIsotropicHardeningRule::computeElasticLimit
 
     std::string LinearIsotropicHardeningRule::computeElasticLimitAndDerivative(
@@ -80,12 +113,27 @@ namespace mfront {
       const auto dR = "d" + R + "_ddp" + fid;
       const auto R0n = IsotropicHardeningRule::getVariableId("R0", fid, id);
       const auto Hn = IsotropicHardeningRule::getVariableId("H", fid, id);
-      return  //
-          "const auto " + R + " = this->" + R0n + "+(this->" + Hn +
-          ")*(this->p" + fid + "+(this->theta)*(this->dp" + fid +
-          "));\n"  //
-          "const auto " +
-          dR + " = this->" + Hn + ";\n";
+      const auto pn = "p" + fid;
+      tfel::raise_if(
+          (this->R0.empty()) && (this->H.empty()),
+          "LinearIsotropicHardeningRule::computeElasticLimitAndDerivative: "
+          "at least 'R0' or 'H' must be defined");
+      auto c = "const auto " + R + " = ";
+      if (!this->R0.empty()) {
+        c += "this->" + R0n;
+      }
+      if (!this->H.empty()) {
+        if (!this->R0.empty()) {
+          c += " + ";
+        }
+        c += "(this->" + Hn + ")*";
+        c += "(this->" + pn + "+(this->theta)*(this->d" + pn + "));\n";
+        c += "const auto " + dR + " = this->" + Hn + ";\n";
+      } else {
+        c += ";\n";
+        c += "const auto " + dR + " = stress(0);\n";
+      }
+      return c;       
     }  // end of LinearIsotropicHardeningRule::computeElasticLimitAndDerivative
 
     void LinearIsotropicHardeningRule::endTreatment(

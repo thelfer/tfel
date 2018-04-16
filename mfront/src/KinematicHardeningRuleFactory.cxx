@@ -29,7 +29,7 @@ namespace mfront {
     }  // end of KinematicHardeningRuleFactory::getFactory
 
     void KinematicHardeningRuleFactory::addGenerator(const std::string& n,
-                                                 const Generator& g) {
+                                                     const Generator& g) {
       if (!this->generators.insert({n, g}).second) {
         tfel::raise(
             "KinematicHardeningRuleFactory::addGenerator: "

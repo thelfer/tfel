@@ -122,6 +122,8 @@ pandoc_html(Model-keywords "--toc" "--toc-depth=1")
 pandoc_html(MultipleIsotropicMisesFlows-keywords "--toc" "--toc-depth=1")
 pandoc_html(RungeKutta-keywords "--toc" "--toc-depth=1")
 pandoc_html(BehaviourBricks "--toc" "--toc-depth=2")
+pandoc_html(StandardElastoViscoPlasticityBrick "--toc" "--toc-depth=2")
+pandoc_html(HookeStressPotential "--toc" "--toc-depth=2")
 
 # mtest keywords
 

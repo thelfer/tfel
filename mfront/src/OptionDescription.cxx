@@ -67,7 +67,13 @@ namespace mfront {
             std::find_if(ov.begin(), ov.end(),
                          [&n](const OptionDescription& o) { return o.name == n; });
         if (p == ov.end()) {
-          tfel::raise("check: no option named '" + n + "'");
+          auto msg = std::string{};
+          msg += "check: no option named '" + n + "'.\n";
+          msg += "Available options are :";
+          for (const auto& o : ov) {
+            msg += "\n- " + o.name + ": " + o.description;
+          }
+          tfel::raise(msg);
         }
         return *p;
       };

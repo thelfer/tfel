@@ -61,6 +61,16 @@ namespace mfront {
       BehaviourDescription::MaterialProperty K;
       //! \brief Norton exponent
       BehaviourDescription::MaterialProperty n;
+      /*!
+       * \brief stress threshold factor (optional).
+       *
+       * If defined, this property is used to check if the stress prediction
+       * does not diverge during the Newton iterations.
+       *
+       * In pratice, it means that if the condition
+       * \f$\sigma_{\mathrm{eq}}-R>K_{sf}\,K\f$, the Newton step is rejected.
+       */
+      BehaviourDescription::MaterialProperty Ksf;
     };  // end of struct NortonInelasticFlow
 
   }  // end of namespace bbrick

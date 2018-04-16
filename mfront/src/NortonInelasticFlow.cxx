@@ -59,6 +59,9 @@ namespace mfront {
         this->A = cmp;
         declareParameterOrLocalVariable(bd, this->A, "A" + id);
       }
+      if (d.count("Ksf") != 0) {
+        this->Ksf = get_mp("Ksf", "Ksf");
+      }
       bd.reserveName(uh, "seqe" + id + "_K__n_1");
     }  // end of NortonInelasticFlow::initialize
 
@@ -87,6 +90,9 @@ namespace mfront {
         eval(this->A, "A" + id);
         eval(this->K, "K" + id);
         eval(this->n, "E" + id);
+        if (!this->Ksf.empty()) {
+          eval(this->Ksf, "Ksf" + id);
+        }
         bd.setCode(uh, BehaviourData::BeforeInitializeLocalVariables, i,
                    BehaviourData::CREATEORAPPEND, BehaviourData::AT_BEGINNING);
       }
@@ -98,6 +104,10 @@ namespace mfront {
                         OptionDescription::MATERIALPROPERTY);
       opts.emplace_back("K", "Stress normalisation factor",
                         OptionDescription::MATERIALPROPERTY);
+      opts.emplace_back("Ksf",
+                        "stress thresold factor. If the seq-R is greater "
+                        "than Ksf*K, the newton step is rejected",
+                        OptionDescription::MATERIALPROPERTY);
       opts.emplace_back("n", "Norton exponent",
                         OptionDescription::MATERIALPROPERTY);
       return opts;
@@ -107,10 +117,21 @@ namespace mfront {
         const std::string& id) const {
       auto c = std::string{};
       if (this->ihrs.empty()) {
+        if (!this->Ksf.empty()) {
+          c += "if(seq" + id + ">(this->Ksf" + id + ")*this->K" + id + "){\n";
+          c += "return false;\n";
+          c += "}\n";
+        }
         c += "const auto vp" + id + " = ";
         c += "(this->A" + id + ")*pow(std::max((seq" + id + ")/(this->K" + id +
              "),real(0)),this->E" + id + ");\n";
       } else {
+        if (!this->Ksf.empty()) {
+          c += "if((seq" + id + "-R" + id + ")>";
+          c += "(this->Ksf" + id + ")*this->K" + id + "){\n";
+          c += "return false;\n";
+          c += "}\n";
+        }
         c += "const auto vp" + id + " = ";
         c += "(this->A" + id + ")*pow(std::max((seq" + id + "-R" + id +
              ")/(this->K" + id + "),real(0)),this->E" + id + ");\n";
@@ -122,6 +143,11 @@ namespace mfront {
         const std::string& id) const {
       auto c = std::string{};
       if (this->ihrs.empty()) {
+        if (!this->Ksf.empty()) {
+          c += "if(seq" + id + ">(this->Ksf" + id + ")*this->K" + id + "){\n";
+          c += "return false;\n";
+          c += "}\n";
+        }
         c += "const auto seqe" + id + "_K__n_1 = pow(std::max((seq" + id +
              ")/(this->K" + id + "),this->epsilon),this->E" + id + "-1);\n";
         c += "const auto dvp" + id + "_dseqe" + id + " = ";
@@ -131,6 +157,12 @@ namespace mfront {
         c += "(this->A" + id + ")*seqe" + id + "_K__n_1*(seq" + id +
              ")/(this->K" + id + ");\n";
       } else {
+        if (!this->Ksf.empty()) {
+          c += "if((seq" + id + "-R" + id + ")>";
+          c += "(this->Ksf" + id + ")*this->K" + id + "){\n";
+          c += "return false;\n";
+          c += "}\n";
+        }
         c += "const auto seqe" + id + "_K__n_1 = pow(std::max((seq" + id +
              "-R" + id + ")/(this->K" + id + "),this->epsilon),this->E" + id +
              "-1);\n";
