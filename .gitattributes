@@ -1497,6 +1497,7 @@ include/TFEL/FSAlgorithm/for_each.hxx -text
 include/TFEL/FSAlgorithm/generate.hxx -text
 include/TFEL/FSAlgorithm/inner_product.hxx -text
 include/TFEL/FSAlgorithm/iota.hxx -text
+include/TFEL/FSAlgorithm/loop.hxx -text
 include/TFEL/FSAlgorithm/max_element.hxx -text
 include/TFEL/FSAlgorithm/min_element.hxx -text
 include/TFEL/FSAlgorithm/swap_ranges.hxx -text

@@ -377,7 +377,19 @@ namespace tfel{
       return tfel::math::internals::det3(m);
     }
 
-#endif /* LIB_TFEL_TINY_MATRIXIXX */
+    template <unsigned short N, unsigned short M, typename T>
+    tvector<M, T> getRow(const tmatrix<N, M, T>& m, const unsigned short i) {
+      using size_type = typename tfel::fsalgo::loop<M>::size_type;
+      tvector<M, T> r;
+      tfel::fsalgo::loop<M>::exe(
+          [&r, &m, i](const size_type j) { r(j) = m(i, j); });
+      return r;
+    }
+
+    template <unsigned short N, unsigned short M, typename T>
+    tvector<N, T> getColumn(const tmatrix<N, M, T>& m, const unsigned short);
+
+#endif /* DOXYGENSPECIFIC */
     
   } // end of namespace math
   

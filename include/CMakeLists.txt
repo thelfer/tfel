@@ -112,6 +112,7 @@ install_header(TFEL/Utilities FCString.ixx)
 
 install_header(TFEL/Exception TFELException.hxx)
 
+install_header(TFEL/FSAlgorithm loop.hxx)
 install_header(TFEL/FSAlgorithm swap_ranges.hxx)
 install_header(TFEL/FSAlgorithm copy.hxx)
 install_header(TFEL/FSAlgorithm generate.hxx)

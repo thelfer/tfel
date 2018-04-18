@@ -15,6 +15,7 @@
 #ifndef LIB_TFEL_FSALGORITHM_HXX
 #define LIB_TFEL_FSALGORITHM_HXX 
 
+#include"TFEL/FSAlgorithm/loop.hxx"
 #include"TFEL/FSAlgorithm/copy.hxx"
 #include"TFEL/FSAlgorithm/fill.hxx"
 #include"TFEL/FSAlgorithm/equal.hxx"
