@@ -1,9 +1,8 @@
 @ModellingHypothesis Tridimensional;
 @Theta 1.0;
-@Epsilon 1.e-8 ;
-@IterMax 100 ;
+@Epsilon 1.e-8;
+@IterMax 100;
 @MaximumIncrementValuePerIteration 1.e-4;
-
 
 @OrthotropicBehaviour;
 @RequireStiffnessTensor;
@@ -16,56 +15,56 @@
 @MaterialProperty real b;
 @MaterialProperty real d1;
 
-@TangentOperator{
-  if((smt==ELASTIC)||(smt==SECANTOPERATOR)){
-    Dt = D;
-  } else if (smt==CONSISTENTTANGENTOPERATOR){
-    Stensor4 Je;
-    getPartialJacobianInvert(Je);
-    Dt = D*Je;
-  } else {
-    return false;
-  }
+@ComputeStress {
+  sig = D * eel;
 }
 
-@ComputeStress{
-  sig = D*eel;
-}
-
-@Integrator{
+@Integrator {
   const SlidingSystems& ss = SlidingSystems::getSlidingSystems();
   StrainStensor vepsp(real(0));
   real vp[Nss];
   real ag[Nss];
   real pe[Nss];
-  for(unsigned short i=0;i!=Nss;++i){
+  for (unsigned short i = 0; i != Nss; ++i) {
     ag[i] = abs(dg[i]);
-    pe[i] = Q*(1.-exp(-b*(p[i]+theta*ag[i]))) ;
+    pe[i] = Q * (1. - exp(-b * (p[i] + theta * ag[i])));
   }
-  for(unsigned short i=0;i!=Nss;++i){
+  for (unsigned short i = 0; i != Nss; ++i) {
     real Rp = R0;
-    for(unsigned short j=0;j!=Nss;++j){
-      Rp += mh(i,j)*pe[j] ;
-    }     
-    const real tau = ss.mus[i] | sig ;
-    const real va  = (dg[i]-d1*a[i]*ag[i])/(1.+d1*theta*ag[i]);
-    const real tma = tau-C*(a[i]+theta*va) ;
-    const real tmR = abs(tma)-Rp;
-    if (tmR>0.){
-      real sgn=tma/abs(tma);
-      vp[i]  = dt*sgn*pow((tmR/K),m);
-    } else{
-      vp[i]=0.;
+    for (unsigned short j = 0; j != Nss; ++j) {
+      Rp += mh(i, j) * pe[j];
     }
-    vepsp+=vp[i]*ss.mus[i] ;
-    fg[i]  -= vp[i];
+    const real tau = ss.mus[i] | sig;
+    const real va = (dg[i] - d1 * a[i] * ag[i]) / (1. + d1 * theta * ag[i]);
+    const real tma = tau - C * (a[i] + theta * va);
+    const real tmR = abs(tma) - Rp;
+    if (tmR > 0.) {
+      real sgn = tma / abs(tma);
+      vp[i] = dt * sgn * pow((tmR / K), m);
+    } else {
+      vp[i] = 0.;
+    }
+    vepsp += vp[i] * ss.mus[i];
+    fg[i] -= vp[i];
   }
-  feel += vepsp-deto;
-} 
+  feel += vepsp - deto;
+}
 
-@UpdateAuxiliaryStateVars{
-  for(unsigned short i=0;i!=Nss;++i){
-    p[i]+=abs(dg[i]);
-    a[i]+=(dg[i]-d1*a[i]*abs(dg[i]))/(1.+d1*abs(dg[i]));
+@UpdateAuxiliaryStateVars {
+  for (unsigned short i = 0; i != Nss; ++i) {
+    p[i] += abs(dg[i]);
+    a[i] += (dg[i] - d1 * a[i] * abs(dg[i])) / (1. + d1 * abs(dg[i]));
+  }
+}
+
+@TangentOperator {
+  if ((smt == ELASTIC) || (smt == SECANTOPERATOR)) {
+    Dt = D;
+  } else if (smt == CONSISTENTTANGENTOPERATOR) {
+    Stensor4 Je;
+    getPartialJacobianInvert(Je);
+    Dt = D * Je;
+  } else {
+    return false;
   }
 }

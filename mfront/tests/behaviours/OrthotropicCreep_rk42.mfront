@@ -1,8 +1,8 @@
 @DSL RungeKutta;
 @Behaviour OrthotropicCreep_rk42;
-@Author    Helfer Thomas;
+@Author Helfer Thomas;
 @Algorithm rk42;
-@Date      8/03/11;
+@Date 8 / 03 / 11;
 
 @OrthotropicBehaviour;
 @RequireStiffnessTensor;
@@ -10,7 +10,7 @@
 
 @StateVariable Stensor evp; /* Viscoplastic strain            */
 evp.setGlossaryName("ViscoplasticStrain");
-@StateVariable real p;      /* Equivalent viscoplastic strain */
+@StateVariable real p; /* Equivalent viscoplastic strain */
 p.setGlossaryName("EquivalentViscoplasticStrain");
 
 @AuxiliaryStateVariable real seq;
@@ -23,45 +23,40 @@ seq.setGlossaryName("HillStress");
 @LocalVariable real H_M;
 @LocalVariable real H_N;
 
-@InitLocalVariables{
+@InitLocalVariables {
   H_F = 0.371;
-  H_G = 1-H_F;
+  H_G = 1 - H_F;
   H_H = 4.052;
   H_L = 1.5;
   H_M = 1.5;
   H_N = 1.5;
 }
 
-@ComputeStress{
-  sig = D*eel;
+@ComputeStress {
+  sig = D * eel;
 }
 
-@Derivative{
+@Derivative {
+  st2tost2<N, real> H = hillTensor<N, real>(H_F, H_G, H_H, H_L, H_M, H_N);
 
-  st2tost2<N,real> H = hillTensor<N,real>(H_F,H_G,H_H,
-                                          H_L,H_M,H_N);
+  real sigeq = sqrt(sig | H * sig);
 
-  real sigeq = sqrt(sig|H*sig);
-
-  if(sigeq>1e9){
+  if (sigeq > 1e9) {
     return false;
   }
 
-  Stensor  n(0.);
-  if(sigeq > 10.e-7){
-    n    = H*sig/sigeq;
+  Stensor n(0.);
+  if (sigeq > 10.e-7) {
+    n = H * sig / sigeq;
   }
 
-  dp   = 8.e-67*pow(sigeq,8.2);
-  devp = dp*n;
+  dp = 8.e-67 * pow(sigeq, 8.2);
+  devp = dp * n;
   deel = deto - devp;
-
 }
 
-@UpdateAuxiliaryStateVars{
+@UpdateAuxiliaryStateVars {
   using namespace tfel::math;
-  st2tost2<N,real> H = hillTensor<N,real>(H_F,H_G,H_H,
-                                          H_L,H_M,H_N);
-  seq = sqrt(sig|H*sig);
-
+  st2tost2<N, real> H = hillTensor<N, real>(H_F, H_G, H_H, H_L, H_M, H_N);
+  seq = sqrt(sig | H * sig);
 }
