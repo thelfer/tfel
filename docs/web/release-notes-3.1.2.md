@@ -7,6 +7,32 @@ solved are described below.
 
 # Tickets fixed
 
+## Ticket #123: Implementation mistakes in various behaviours based on Implicit DSL and using a numerical jacobian (use of perturbated values to update auxiliary state variables)
+
+Various behaviours in the MFront' tests base used local variables to
+compute the increment of auxiliary state variables (in order to safe
+some computational times and reduce the implementation size). This trick
+is quite often used with analytical jacobian but can cause various
+problems with numerical jacobian if the consistent tangent operator is
+requested (in this case, the system is perturbated once after
+convergence to get the upper part of the inverse of the jacobian, as
+needed by the `getPartialJacobianInvert` method).
+
+The issue can be circumvented using the `perturbatedSystemEvaluation`
+flag introduced in `TFEL` `3.1.1` (see
+<http://tfel.sourceforge.net/release-notes-3.1.1.html> and
+<https://sourceforge.net/p/tfel/tickets/111/> for details ).
+
+The concerned implementations were the following:
+
+- `mfront/tests/behaviours/MonoCrystal.mfront`
+- `mfront/tests/behaviours/MonoCrystalNewtonRaphson.mfront`
+- `mfront/tests/behaviours/MonoCrystal_DD_CC_Irradiation_NumericalJacobian.mfront`
+- `mfront/tests/behaviours/MonoCrystal_DD_CFC_Irradiation.mfront`
+- `mfront/tests/behaviours/MonoCrystal_DD_CFC_NumericalJacobian.mfront`
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/123/>
+
 ## Ticket #122: Missing file in the distributed tar ball (`mfront-query/include/CMakeLists`)
 
 The file `mfront-query/include/CMakeLists.txt` was not included in the distributed tar ball.
@@ -24,7 +50,7 @@ In `MTest`, the following lines was not parsed appropriately:
 } 1.e3;
 ~~~~
 
-For more details, see: <https://sourceforge.net/p/tfel/tickets/121/>
+For more details, see: <https://sourceforge.net/p/tfel/tickets/122/>
 
 ## Ticket #120: Direct call to Cast3M' umat behaviours in `MTest` is broken
 

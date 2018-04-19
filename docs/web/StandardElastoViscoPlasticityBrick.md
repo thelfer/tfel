@@ -6,7 +6,7 @@
 \newcommand{\tenseurq}[1]{\underline{\mathbf{#1}}}
 \newcommand{\tns}[1]{{\underset{\tilde{}}{\mathbf{#1}}}}
 \newcommand{\transpose}[1]{{#1^{\mathop{T}}}}
-
+\newcommand{\absvalue}[1]{{\left|#1\right|}}
 \newcommand{\tsigma}{\underline{\sigma}}
 \newcommand{\sigmaeq}{\sigma_{\mathrm{eq}}}
 
@@ -63,15 +63,119 @@ The brick decomposes the behaviour into two components:
 
 ## The Hooke stress potential
 
+This stress potential implements the Hooke law, i.e. a linear relation
+between the elastic strain and the stress. This stress potential applies
+to isotropic and orthotropic materials. This stress potential provides:
+
+- Automatic computation of the stress tensor at various stages of the
+  behaviour integration.
+- Automatic computation of the consistent tangent operator.
+- Automatic support for plane stress and generalized plane stress
+  modelling hypotheses (The axial strain is defined as an additional
+  state variable and the associated equation in the implicit system is
+  added to enforce the plane stess condition).
+- Automatic addition of the standard terms associated with the elastic
+  strain state variable.
+
+The Hooke stress potential is fully described
+[here](HookeStressPotential.html).
+
 ## The `DDIF2` stress potential
+
+The `DDIF2` behaviour is used to describe the brittle nature of nuclear
+fuel ceramics and is usually coupled with a description of the
+viscoplasticity of those ceramics (See for example
+[@monerie_overall_2006,@salvo_experimental_2015;@salvo_experimental_2015-1]).
+
+This stress potential adds to the Hooke stress potential the description
+of cracking through an additional strain. As such, it inherits all the
+features provided by the Hooke stress potential.
+
+The Hooke stress potential is fully described
+[here](HookeStressPotential.html).
+
+# List of available stress criterion
+
+## von Mises stress criterion
+
+### Definition
+
+The von Mises stress is defined by:
+\[
+\sigmaeq=\sqrt{\Frac{3}{2}\,\tenseur{s}\,\colon\,\tenseur{s}}=\sqrt{3\,J_{2}}
+\]
+where:
+- \(\tenseur{s}\) is the deviatoric stress defined as follows:
+\[
+\tenseur{s}=\tsigma-\Frac{1}{3}\,\trace{\tsigma}\,\tenseur{I}
+\]
+- \(J_{2}\) is the second invariant of \(\tenseur{s}\).
+
+In terms of the eigenvalues of the stress, denoted by \(\sigma_{1}\),
+\(\sigma_{2}\) and \(\sigma_{3}\), the von Mises stress can also be
+defined by:
+\[
+\sigmaeq=\sqrt{\Frac{1}{2}\paren{\absvalue{\sigma_{1}-\sigma_{2}}^{2}+\absvalue{\sigma_{1}-\sigma_{3}}^{2}+\absvalue{\sigma_{2}-\sigma_{3}}^{2}}}
+\]
+
+### Options
+
+This stress criterion does not have any option.
+
+## Hill stress criterion
+
+This `Hill` criterion, also called `Hill1948` criterion, is based on the
+equivalent stress \(\sigmaeq^{H}\) defined as follows:
+\[
+\begin{aligned}
+\sigmaeq^{H}&=\sqrt{\tsigma\,\colon\,\tenseurq{H}\,\colon\,\tsigma}\\
+	        &=\sqrt{F\,\paren{\sigma_{11}-\sigma_{22}}^2+
+                    G\,\paren{\sigma_{22}-\sigma_{33}}^2+
+			        H\,\paren{\sigma_{33}-\sigma_{11}}^2+
+					2\,L\sigma_{12}^{2}+
+					2\,M\sigma_{13}^{2}+
+					2\,N\sigma_{23}^{2}}
+\end{aligned}
+\]
+
+> **Warning** This convention is given in the book of Lemaître et
+> Chaboche and seems to differ from the one described in most other
+> books.
+
+### Options
+
+This stress criterion has \(6\) mandatory options: `F`, `G`, `H`, `L`,
+`M`, `N`. Each of these options must be interpreted as material
+property.
+
+> **Orthotropic axis convention** If an orthotropic axis convention
+> is defined (See the `@OrthotropicBehaviour` keyword' documentation), 
+> the coefficients of the Hill tensor can be exchanged for some
+> modelling hypotheses. The coefficients `F`, `G`, `H`, `L`, `M`, `N`
+> must always correspond to the three dimensional case.
 
 # List of available isotropic hardening rules
 
 ## The `Linear` isotropic hardening rule
 
+The `Linear` isotropic hardening rule is defined by:
+\[
+R\paren{p}=R_{0}+H\,p
+\]
+
 ## The `Swift` isotropic hardening rule
 
+The `Swift` isotropic hardening rule is defined by:
+\[
+R\paren{p}=R_{0}\,\paren{\Frac{p+p_{0}}{p_{0}}}^{n}
+\]
+
 ## The `Voce` isotropic hardening rule
+
+The `Voce` isotropic hardening rule is defined by:
+\[
+R\paren{p}=R_{\infty}+\paren{R_{0}-R_{\infty}}\,exp\paren{-b\,p}
+\]
 
 # List of available kinematic hardening rules
 

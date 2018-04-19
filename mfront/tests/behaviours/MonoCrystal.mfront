@@ -20,7 +20,6 @@
   static const unsigned short Nss = SlidingSystems::Nss;
 }
 
-
 @Import "MonoCrystalNewtonRaphson.mfront";
 
 //! interaction matrix

@@ -65,7 +65,6 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./orthotropiclinearhardeningplasticity.md                  \
 	   ./isotropicplasticityamstrongfrederickinematichardening.md \
 	   ./iwan.md                                                  \
-	   ./ddif2.md                                                 \
 	   ./drucker.md                                               \
 	   ./hosford.md                                               \
 	   ./barlat-yld2004.md                                        \
@@ -77,8 +76,10 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./pandoc-crossref.yaml                                     \
 	   ./TODO.md						                          \
 	   ./BehaviourBricks.md				                      \
+	   ./DDIF2Brick.md                                            \
 	   ./StandardElastoViscoPlasticityBrick.md				     \
 	   ./HookeStressPotential.md				     \
+	   ./DDIF2StressPotential.md				     \
 	   ./DefaultCZMDSL-keywords.md				      \
 	   ./DefaultDSL-keywords.md				      \
 	   ./DefaultFiniteStrainDSL-keywords.md			      \

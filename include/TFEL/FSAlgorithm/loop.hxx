@@ -41,7 +41,7 @@ namespace tfel {
           f(I);
           do_loop<I + 1, N>::exe(f);
         }  // end of exe
-        static_assert(I < N);
+        static_assert(I < N, "invalid loop index");
       };  // end of struct do_loop<I, N>
 
       /*!

@@ -1403,6 +1403,8 @@ namespace mfront {
     using Parameters = AbstractBehaviourBrick::Parameters;
     auto& f = AbstractBehaviourBrickFactory::getFactory();
     auto parameters = Parameters{};
+    this->checkNotEndOfFile("BehaviourDSLCommon::treatBehaviourBrick",
+                            "Expected brick name or '<'.");
     if (this->current->value == "<") {
       auto options = std::vector<tfel::utilities::Token>{};
       this->readList(options, "BehaviourDSLCommon::treatBehaviourBrick", "<", ">", true);
@@ -1427,7 +1429,8 @@ namespace mfront {
         }
       }
     }
-    this->checkNotEndOfFile("BehaviourDSLCommon::treatBehaviourBrick", "Expected 'true' or 'false'.");
+    this->checkNotEndOfFile("BehaviourDSLCommon::treatBehaviourBrick",
+                            "Expected brick name.");
     const auto b = [this]() -> std::string {
       if (this->current->flag == tfel::utilities::Token::String) {
         return this->readString("BehaviourDSLCommon::treatBehaviourBrick");

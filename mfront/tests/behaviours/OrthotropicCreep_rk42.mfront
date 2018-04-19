@@ -63,5 +63,4 @@ seq.setGlossaryName("HillStress");
   st2tost2<N,real> H = hillTensor<N,real>(H_F,H_G,H_H,
                                           H_L,H_M,H_N);
   seq = sqrt(sig|H*sig);
-
 }

@@ -88,7 +88,6 @@ pandoc_html(hyperviscoelasticity "--toc" "--toc-depth=2")
 pandoc_html(orthotropiclinearhardeningplasticity "--toc" "--toc-depth=2")
 pandoc_html(physical-constants)
 pandoc_html(isotropicplasticityamstrongfrederickinematichardening "--toc" "--toc-depth=2")
-pandoc_html(ddif2 "--toc" "--toc-depth=2")
 pandoc_html(singlecrystal "--toc" "--toc-depth=2")
 pandoc_html(finitestrainsinglecrystal "--toc" "--toc-depth=2")
 pandoc_html(finitestrainsinglecrystal-huang "--toc" "--toc-depth=2")
@@ -122,8 +121,10 @@ pandoc_html(Model-keywords "--toc" "--toc-depth=1")
 pandoc_html(MultipleIsotropicMisesFlows-keywords "--toc" "--toc-depth=1")
 pandoc_html(RungeKutta-keywords "--toc" "--toc-depth=1")
 pandoc_html(BehaviourBricks "--toc" "--toc-depth=2")
+pandoc_html(DDIF2Brick "--toc" "--toc-depth=2")
 pandoc_html(StandardElastoViscoPlasticityBrick "--toc" "--toc-depth=2")
 pandoc_html(HookeStressPotential "--toc" "--toc-depth=2")
+pandoc_html(DDIF2StressPotential "--toc" "--toc-depth=2")
 
 # mtest keywords
 

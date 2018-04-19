@@ -1109,6 +1109,8 @@ docs/web/BehaviourBricks.md -text
 docs/web/CHANGELOG.md -text
 docs/web/CMakeLists.txt -text
 docs/web/CONTRIBUTING.md -text
+docs/web/DDIF2Brick.md -text
+docs/web/DDIF2StressPotential.md -text
 docs/web/DefaultCZMDSL-keywords.md -text
 docs/web/DefaultDSL-keywords.md -text
 docs/web/DefaultFiniteStrainDSL-keywords.md -text
@@ -1150,7 +1152,6 @@ docs/web/css/main.css -text
 docs/web/css/normalize.css -text
 docs/web/css/slideshow.css -text
 docs/web/cyrano.md -text
-docs/web/ddif2.md -text
 docs/web/devel.md -text
 docs/web/doc/TOC.md -text
 docs/web/doc/crossdomain.md -text
