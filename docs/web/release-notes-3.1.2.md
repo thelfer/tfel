@@ -7,6 +7,13 @@ solved are described below.
 
 # Tickets fixed
 
+## Ticket #122: Missing file in the distributed tar ball (`mfront-query/include/CMakeLists`)
+
+The file `mfront-query/include/CMakeLists.txt` was not included in the distributed tar ball.
+This led to a warning when compiling with `cmake`, but it did not hinder the compilation.
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/122/>
+
 ## Ticket #121: Modifying the reference values read in a file does not work in MTest
 
 In `MTest`, the following lines was not parsed appropriately:
@@ -16,6 +23,8 @@ In `MTest`, the following lines was not parsed appropriately:
   'SXX' : '$8*1.e6'
 } 1.e3;
 ~~~~
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/121/>
 
 ## Ticket #120: Direct call to Cast3M' umat behaviours in `MTest` is broken
 
