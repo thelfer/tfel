@@ -37,7 +37,7 @@ namespace tfel
       auto throw_if = [l,f](const bool c,const std::string& m){
 	raise_if(c,"ExternalBehaviourDescription::"
 		 "ExternalBehaviourDescription: "
-		 +m+" for behaviour '"+l+"' "
+		 +m+" for behaviour '"+f+"' "
 		 "in library '"+l+"'");
       };
       auto& elm = ExternalLibraryManager::getExternalLibraryManager();
