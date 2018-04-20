@@ -282,7 +282,7 @@ namespace mtest {
     if (p->value == "{") {
       evt = this->readTimesArray("MTest::handleEvent", t, p);
     } else {
-      evt.push_back(CxxTokenizer::readDouble(p, this->tokens.end()));
+      evt.push_back(this->readDouble(t, p));
     }
     t.addEvent(n,evt);
     this->readSpecifiedToken("MTestParser::handleEvent", ";", p,
@@ -899,12 +899,22 @@ namespace mtest {
         throw_if(!kv.second.is<bool>(),
                  "invalid type for constraint option 'active'");
         opts.active = kv.second.get<bool>();
+      } else if (kv.first == "activating_event") {
+        throw_if(!tfel::utilities::is_convertible<std::string>(kv.second),
+                 "invalid type for constraint option 'activating_event'");
+        opts.activating_events.push_back(
+            tfel::utilities::convert<std::string>(kv.second));
       } else if (kv.first == "activating_events") {
         throw_if(!tfel::utilities::is_convertible<std::vector<std::string>>(
                      kv.second),
                  "invalid type for constraint option 'activating_events'");
         opts.activating_events =
             tfel::utilities::convert<std::vector<std::string>>(kv.second);
+      } else if (kv.first == "desactivating_event") {
+        throw_if(!tfel::utilities::is_convertible<std::string>(kv.second),
+                 "invalid type for constraint option 'desactivating_event'");
+        opts.desactivating_events.push_back(
+            tfel::utilities::convert<std::string>(kv.second));
       } else if (kv.first == "desactivating_events") {
         throw_if(!tfel::utilities::is_convertible<std::vector<std::string>>(
                      kv.second),

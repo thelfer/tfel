@@ -21,8 +21,12 @@ following options are available:
 - `active`: states if the constraint is active at the beginning of the
   computation. This is a boolean, so the expected value are either
   `true` or `false`.
+- `activating_event`: gives the name of the event which activate the
+  constraint. An array of string is expected.
 - `activating_events`: gives the list of events which activate the
   constraint. An array of string is expected.
+- `desactivating_event`: gives the name of the event which desactivate
+  the constraint. An array of string is expected.
 - `desactivating_events`: gives the list of events which desactivate the
   constraint. An array of string is expected.
 

@@ -35,10 +35,12 @@ namespace tfel
 							       const std::string& h)
     {
       auto throw_if = [l,f](const bool c,const std::string& m){
-	raise_if(c,"ExternalBehaviourDescription::"
-		 "ExternalBehaviourDescription: "
-		 +m+" for behaviour '"+l+"' "
-		 "in library '"+l+"'");
+	if(c){
+	  tfel::raise("ExternalBehaviourDescription::"
+		      "ExternalBehaviourDescription: "
+		      +m+" for behaviour '"+f+"' "
+		      "in library '"+l+"'");
+	}
       };
       auto& elm = ExternalLibraryManager::getExternalLibraryManager();
       const auto hypotheses = elm.getSupportedModellingHypotheses(l,f);
