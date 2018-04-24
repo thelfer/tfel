@@ -35,6 +35,8 @@ namespace mfront {
 
     // forward declaration
     struct OptionDescription;
+    // forward declaration
+    struct StressPotential;
 
     /*!
      * \brief class describing a stress criterion
@@ -60,6 +62,15 @@ namespace mfront {
       //! a simple alias
       using Hypothesis = ModellingHypothesis::Hypothesis;
       /*!
+       * \return the name of a variable from a base name and the flow id.
+       * \param[in] n: base name
+       * \param[in] fid: flow id
+       * \param[in] r: criterion' role
+       */
+      static std::string getVariableId(const std::string&,
+                                       const std::string&,
+                                       const Role);
+      /*!
        * \param[in,out] bd: behaviour description
        * \param[in,out] dsl: abstract behaviour dsl
        * \param[in] id: flow id
@@ -79,17 +90,25 @@ namespace mfront {
        * \note this is only meaningful if the criterion' role is
        * `STRESSCRITERION` or `STRESSANDFLOWCRITERION`.
        * \param[in] id: flow id
+       * \param[in] bd: behaviour description
+       * \param[in] sp: stress potential
        */
       virtual std::string computeElasticPrediction(
-          const std::string&) const = 0;
+          const std::string&,
+          const BehaviourDescription&,
+          const StressPotential&) const = 0;
       /*!
        * \return the code computing the criterion.
        * The code defines a variable named "seq"+id.
        * \note this is only meaningful if the criterion' role is
        * `STRESSCRITERION` or `STRESSANDFLOWCRITERION`.
        * \param[in] id: flow id
+       * \param[in] bd: behaviour description
+       * \param[in] sp: stress potential
        */
-      virtual std::string computeCriterion(const std::string&) const = 0;
+      virtual std::string computeCriterion(const std::string&,
+                                           const BehaviourDescription&,
+                                           const StressPotential&) const = 0;
       /*!
        * \return the code computing the criterion and its normal.
        *
@@ -110,9 +129,13 @@ namespace mfront {
        * variable named "iseq"+id.
        *
        * \param[in] id: flow id
+       * \param[in] bd: behaviour description
+       * \param[in] sp: stress potential
        * \param[in] r: criterion' role
        */
       virtual std::string computeNormal(const std::string&,
+                                        const BehaviourDescription&,
+                                        const StressPotential&,
                                         const Role) const = 0;
       /*!
        * \brief return the code computing the criterion, its derivative, and its
@@ -137,9 +160,13 @@ namespace mfront {
        * The code may also define a variable named "iseq"+id meant for internal
        * use.
        * \param[in] id: flow id
+       * \param[in] bd: behaviour description
+       * \param[in] sp: stress potential
        * \param[in] r: criterion' role
        */
       virtual std::string computeNormalDerivative(const std::string&,
+                                                  const BehaviourDescription&,
+                                                  const StressPotential&,
                                                   const Role) const = 0;
       //! destructor
       virtual ~StressCriterion();

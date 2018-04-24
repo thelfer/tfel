@@ -1,5 +1,5 @@
 /*!
- * \file   include/MFront/BehaviourBrick/MisesStressCriterion.hxx
+ * \file   include/MFront/BehaviourBrick/Hosford1972StressCriterion.hxx
  * \brief
  * \author Thomas Helfer
  * \date   15/03/2018
@@ -11,8 +11,8 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_MFRONT_BEHAVIOURBRICK_MISESSTRESSCRITERION_HXX
-#define LIB_MFRONT_BEHAVIOURBRICK_MISESSTRESSCRITERION_HXX
+#ifndef LIB_MFRONT_BEHAVIOURBRICK_HOSFORD1972STRESSCRITERION_HXX
+#define LIB_MFRONT_BEHAVIOURBRICK_HOSFORD1972STRESSCRITERION_HXX
 
 #include "MFront/BehaviourBrick/StressCriterionBase.hxx"
 
@@ -21,31 +21,19 @@ namespace mfront {
   namespace bbrick {
 
     /*!
-     * \brief This class describes the von Mises criterion defined by:
+     * \brief This class describes the Hosford1972 stress criterion defined by:
      * \f[
-     * \sigma_{\mathrm{eq}}
-     * = \sqrt{\frac{3}{2}\,\underline{s}\,\colon\,\underline{s}}
-     * = \sqrt{3\,J_{2}}
+     * \sigma_{\mathrm{eq}}^{H}=\sqrt[a]{\frac{1}{2}\left(
+     *   \left|\sigma_{1}-\sigma_{2}\right|^{a}+
+     *   \left|\sigma_{1}-\sigma_{3}\right|^{a}+
+     *   \left|\sigma_{2}-\sigma_{3}\right|^{a}\right)}
      * \f]
-     * where:
-     * - \f$\underline{s}\f$ is the deviatoric stress defined as follows:
-     * \f[
-     * \underline{s}=\underline{\sigma}-
-     * \frac{1}{3}\,\mathrm{trace}\left(\underline{\sigma}\right)\,\underline{I}
-     * \f]
-     * - \f$J_{2}\f$ is the second invariant of \f$\underline{s}\f$.
-     *
-     * In terms of the eigenvalues of the stress, denoted by \f$\sigma_{1}\f$,
-     * \f$\sigma_{2}\f$ and \f$\sigma_{3}\f$, the von Mises stress can also be
-     * defined by:
-     * \f[
-     * \sigma_{\mathrm{eq}}=\sqrt{\frac{1}{2}\left(
-     *   \left|\sigma_{1}-\sigma_{2}\right|^{2}+
-     *   \left|\sigma_{1}-\sigma_{3}\right|^{2}+
-     *   \left|\sigma_{2}-\sigma_{3}\right|^{2}\right)}
-     * \f]
+     * where \f$\sigma_{1}\f$, \f$\sigma_{2}\f$ and \f$\sigma_{3}\f$
+     * are the eigenvalues of the stress tensor
+     * \f$\underline{\sigma}\f$.
      */
-    struct MisesStressCriterion final : StressCriterionBase {
+    struct Hosford1972StressCriterion final : StressCriterionBase {
+      std::vector<OptionDescription> getOptions() const override;
       void initialize(BehaviourDescription&,
                       AbstractBehaviourDSL&,
                       const std::string&,
@@ -67,11 +55,14 @@ namespace mfront {
                                           const StressPotential&,
                                           const Role) const override;
       //! destructor
-      ~MisesStressCriterion() override;
-    };  // end of struct MisesStressCriterion
+      ~Hosford1972StressCriterion() override;
+     protected:
+      //! \brief hosford exponent
+      BehaviourDescription::MaterialProperty a;
+    };  // end of struct Hosford1972StressCriterion
 
   }  // end of namespace bbrick
 
 }  // end of namespace mfront
 
-#endif /* LIB_MFRONT_BEHAVIOURBRICK_MISESSTRESSCRITERION_HXX */
+#endif /* LIB_MFRONT_BEHAVIOURBRICK_HOSFORD1972STRESSCRITERION_HXX */

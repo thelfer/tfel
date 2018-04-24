@@ -62,19 +62,19 @@ namespace mfront {
         return std::make_shared<
             bbrick::ArmstrongFrederickKinematicHardeningRule>();
       });
-      this->addGenerator("OhnoWang", []() {
-        return std::make_shared<
-            bbrick::OhnoWangKinematicHardeningRule>();
-      });
-      this->addGenerator("Ohno-Wang", []() {
-        return std::make_shared<
-            bbrick::OhnoWangKinematicHardeningRule>();
-      });
       this->addGenerator("BurletCailletaud", []() {
         return std::make_shared<
             bbrick::BurletCailletaudKinematicHardeningRule>();
       });
       this->addGenerator("Burlet-Cailletaud", []() {
+        return std::make_shared<
+            bbrick::BurletCailletaudKinematicHardeningRule>();
+      });
+      this->addGenerator("BurletCailletaud1987", []() {
+        return std::make_shared<
+            bbrick::BurletCailletaudKinematicHardeningRule>();
+      });
+      this->addGenerator("Burlet-Cailletaud 1987", []() {
         return std::make_shared<
             bbrick::BurletCailletaudKinematicHardeningRule>();
       });

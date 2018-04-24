@@ -6,6 +6,7 @@
 \newcommand{\tenseur}[1]{\underline{#1}}
 \newcommand{\tenseurq}[1]{\underline{\underline{\mathbf{#1}}}}
 \newcommand{\tns}[1]{{\underset{\tilde{}}{\mathbf{#1}}}}
+\newcommand{\tnsq}[1]{{\underset{\tilde{}}{\underset{\tilde{}}{\mathbf{#1}}}}}
 \newcommand{\transpose}[1]{{#1^{\mathop{T}}}}
 
 \newcommand{\tsigma}{\underline{\sigma}}
@@ -38,10 +39,29 @@ Classes describing symmetric second order tensors satisfies the
 An end user will mostly use the `stensor` class, which have the
 following template arguments:
 
-- The space dimesion (`1`, `2` or `3`).
+- The space dimension (`1`, `2` or `3`).
 - The type used to perform the computation.
 
+The following code declares a symmetric second order tensor in \(2D\)
+using single precision floating-point number:
+
+~~~~{.cxx}
+stensor<2,float> s;
+~~~~
+
 Symmetric tensors are denoted as follows \(\s\).
+
+### Aliases used in `MFront`
+
+In `MFront`, various aliases are introduced to ease the implementation
+of mechanical behaviours:
+
+- `Stensor` is an alias to `stensor<N,real>` where `N` is the space
+  dimension and `real` is the numerical type used. The value of `N`
+  depends of the current modelling hypothesis. The concrete type for
+  `real` depends on the interface used.
+- `StrainStensor` is an alias to `stensor<N,strain>`.
+- `StressStensor` is an alias to `stensor<N,stess>`.
 
 ## Vector notations for symmetric tensors
 
@@ -61,11 +81,6 @@ A symmetric tensor is stored as an array of values, as follows in
 
 The contracted product of two symmetric tensors is the scalar product
 of their vector forms (hence the \(\sqrt{2}\)).
-
-### The identity tensor
-
-The symmetric second order identity tensor is returned by the `Id`
-static member of the `stensor` class.
 
 ## General (non symmetric) second order tensors
 
@@ -102,12 +117,11 @@ A tensor is stored as an array of values, as follows in
 ### The identity tensor
 
 The symmetric second order identity tensor is returned by the `Id`
-static member of the `stensor` class.
+static member of the `stensor` class as follows:
 
-### The identity tensor
-
-The second order identity tensor is returned by the `Id` static member
-of the `tensor` class.
+~~~~{.cpp}
+constexpr const auto id = stensor<3u,real>::Id();
+~~~~
 
 ## Fourth order tensors
 
@@ -133,7 +147,66 @@ respectively. Those classes have the following template arguments:
 - The space dimesion (`1`, `2` or `3`).
 - The type used to perform the computation.
 
+### Aliases used in `MFront`
+
+In `MFront`, various aliases are introduced to ease the implementation
+of mechanical behaviours:
+
+- `Stensor4` is an alias to `st2tost2<N,real>` where `N` is the space
+  dimension and `real` is the numerical type used. The value of `N`
+  depends of the current modelling hypothesis. The concrete type for
+  `real` depends on the interface used.
+- `StiffnessTensor` is an alias to `st2tost2<N,stress>`.
+
 ### Special values
+
+#### Special values of the `st2tost2` class
+
+The `st2tost2` provides the following static methods:
+
+- `Id`: returns the identity matrix.
+- `IxI`: returns the tensor defined by
+  \(\tenseur{I}\,\otimes\,\tenseur{I}\). This tensor
+  satisfies, for every symmetric tensor \(\s\):
+  \[
+  \tenseur{I}\,\otimes\,\tenseur{I}\,\colon\,\s=\trace{\s}\,\tenseur{I}
+  \]
+- `J`: returns the tensor defined by
+  \(\Frac{1}{3}\,\tenseur{I}\,\otimes\,\tenseur{I}\). This tensor
+  satisfies, for every symmetric tensor \(\s\):
+  \[
+  \tenseurq{J}\,\colon\,\s=\Frac{\trace{\s}}{3}\,\tenseur{I}
+  \]
+- `K`: returns the tensor defined by
+  \(\tenseur{I}-\Frac{1}{3}\,\tenseur{I}\,\otimes\,\tenseur{I}\). This
+  is tensor is indeed the projector on the deviatoric space.
+- `M`: returns the tensor defined by
+  \(\Frac{3}{2}\left(\tenseur{I}-\Frac{1}{3}\,\tenseur{I}\,\otimes\,\tenseur{I}\right)\).
+  This tensor appears in the definition of the von Mises stress:
+  \[
+  \sigmaeq=\sqrt{\tsigma\,\colon\,\tenseurq{M}\,\colon\,\tsigma}
+  \]
+
+#### Special values of the `t2tot2` class
+
+The `t2tot2` provides the following static method:
+
+- `Id`: returns the identity matrix.
+- `IxI`: returns the tensor defined by
+  \(\tns{I}\,\otimes\,\tns{I}\). This tensor
+  satisfies, for every tensor \(\a\):
+  \[
+  \tns{I}\,\otimes\,\tns{I}\,\colon\,\a=\trace{\a}\,\tns{I}
+  \]
+- `J`: returns the tensor defined by
+  \(\Frac{1}{3}\,\tns{I}\,\otimes\,\tns{I}\). This tensor
+  satisfies, for every tensor \(\a\):
+  \[
+  \tnsq{J}\,\colon\,\a=\Frac{\trace{\a}}{3}\,\tns{I}
+  \]
+- `K`: returns the tensor defined by
+  \(\tns{I}-\Frac{1}{3}\,\tns{I}\,\otimes\,\tns{I}\). This
+  is tensor is indeed the projector on the deviatoric space.
 
 # Standard operations
 
@@ -307,7 +380,62 @@ tensor \(\tenseur{b}\):
 readily be computed using the `symmetric_product_derivative_daba_db`
 function.
 
-# Special functions
+# Special mathematical functions
+
+## Change the basis
+
+The `change_basis` functions can:
+
+- rotate a symmetric tensor
+- rotate a (non-symmetric) tensor
+- rotate a fourth order tensor of type `st2tost2`.
+- rotate a fourth order tensor of type `t2tot2`.
+
+Those functions takes two constant arguments: the object to be rotated
+and the rotation matrix. The rotated object is returned.
+
+### Example
+
+~~~~{.cpp}
+const auto sr = change_basis(s,r);
+~~~~
+
+### Fourth order tensors standing for the rotation of tensors
+
+The `st2tost2` class provide the `fromRotationMatrix` static method
+which computes a fourth order tensor which has the same effect on a
+symmetric tensor than applying a given rotation.
+
+~~~~{.cpp}
+const auto rt = st2tost2<N,real>::fromRotationMatrix(r);
+~~~~
+
+The `t2tot2` class provide the `fromRotationMatrix` static method
+which computes a fourth order tensor which has the same effect on a
+(non-symmetric) tensor than applying a given rotation.
+
+~~~~{.cpp}
+const auto rt = t2tot2<N,real>::fromRotationMatrix(r);
+~~~~
+
+> **Note**
+> 
+> In pratice, the `fromRotationMatrix` static methods can be used to
+> compute the rotation of any second and fourth order tensors (including
+> the ones of the `t2tost2` and `st2tot2` types). They are used internally
+> in the implementation of the `change_basis` functions provided for the
+> fourth order tensors of types `st2tost2` and `t2tot2`.
+
+## Inverses
+
+The `invert` functions can compute:
+
+- the inverse of a symmetric tensor.
+- the inverse of a tensor.
+- the inverse of a fourth order tensor of type `st2tost2`.
+
+Those functions takes the object to be inverted as constant argument and
+returned the inverse.
 
 ## Square of a symmetric tensor
 

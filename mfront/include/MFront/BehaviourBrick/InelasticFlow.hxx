@@ -104,9 +104,11 @@ namespace mfront {
        * \note at this stage, the stress potential has already been called and
        * the elastic prediction of the stress `sigel` is available.
        * \param[in/out] bd: behaviour description
+       * \param[in] sp: stress potential
        * \param[in] id: flow id
        */
       virtual void computeInitialActivationState(BehaviourDescription&,
+                                                 const StressPotential&,
                                                  const std::string&) const = 0;
       //! destructor
       virtual ~InelasticFlow();

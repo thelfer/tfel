@@ -60,9 +60,9 @@ namespace mfront {
           const auto ds = getDataStructure(e.first, e.second);
           auto& cf = StressCriterionFactory::getFactory();
           this->sc = cf.generate(ds.name);
-          if (d.count("flow_criterion") == 0) {
+          if (d.count("flow_criterion") != 0) {
             this->sc->initialize(bd, dsl, id, ds.data,
-                                 StressCriterion::STRESSANDFLOWCRITERION);
+                                 StressCriterion::STRESSCRITERION);
           } else {
             this->sc->initialize(bd, dsl, id, ds.data,
                                  StressCriterion::STRESSANDFLOWCRITERION);
@@ -136,6 +136,10 @@ namespace mfront {
           "criterion",
           "stress criterion to be used (Mises, Hill, Hosford, Barlat)",
           OptionDescription::DATASTRUCTURE);
+      opts.emplace_back("flow_criterion",
+                        "stress criterion used to build the plastic potential "
+                        "(Mises, Hill, Hosford, Barlat)",
+                        OptionDescription::DATASTRUCTURE);
       opts.emplace_back(
           "isotropic_hardening",
           "choice of an isotropic hardening rule",
@@ -158,7 +162,9 @@ namespace mfront {
     }  // end of InelasticFlowBase::requiresActivationState
 
     void InelasticFlowBase::computeInitialActivationState(
-        BehaviourDescription& bd, const std::string& id) const {
+        BehaviourDescription& bd,
+        const StressPotential& sp,
+        const std::string& id) const {
       if (!this->ihrs.empty()) {
         CodeBlock i;
         if (this->khrs.empty()) {
@@ -182,7 +188,7 @@ namespace mfront {
           }
           i.code += ");\n";
         }
-        i.code += this->sc->computeElasticPrediction(id);
+        i.code += this->sc->computeElasticPrediction(id, bd, sp);
         i.code += computeElasticLimitInitialValue(this->ihrs, id);
         i.code += "this->bpl" + id + " = seqel" + id + " > Rel" + id + ";\n";
         bd.setCode(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
@@ -244,21 +250,21 @@ namespace mfront {
       if (requiresAnalyticalJacobian) {
         if (this->fc == nullptr) {
           ib.code += this->sc->computeNormalDerivative(
-              id, StressCriterion::STRESSANDFLOWCRITERION);
+              id, bd, sp, StressCriterion::STRESSANDFLOWCRITERION);
         } else {
-          ib.code +=
-              this->sc->computeNormal(id, StressCriterion::STRESSCRITERION);
+          ib.code += this->sc->computeNormal(id, bd, sp,
+                                             StressCriterion::STRESSCRITERION);
           ib.code += this->fc->computeNormalDerivative(
-              id, StressCriterion::FLOWCRITERION);
+              id, bd, sp, StressCriterion::FLOWCRITERION);
         }
       } else {
         if (this->fc == nullptr) {
           ib.code += this->sc->computeNormal(
-              id, StressCriterion::STRESSANDFLOWCRITERION);
+              id, bd, sp, StressCriterion::STRESSANDFLOWCRITERION);
         } else {
-          ib.code += this->sc->computeCriterion(id);
-          ib.code +=
-              this->fc->computeNormal(id, StressCriterion::FLOWCRITERION);
+          ib.code += this->sc->computeCriterion(id, bd, sp);
+          ib.code += this->fc->computeNormal(id, bd, sp,
+                                             StressCriterion::FLOWCRITERION);
         }
       }
       // elasticity
@@ -303,7 +309,7 @@ namespace mfront {
         acc.code += "}\n";
         acc.code += "} else {\n";
         acc.code += this->computeEffectiveStress(id);
-        acc.code += this->sc->computeCriterion(id);
+        acc.code += this->sc->computeCriterion(id, bd, sp);
         acc.code += computeElasticLimit(this->ihrs,id);
         acc.code += "if(seq" + id + " > R" + id + ") {\n";
         acc.code += "converged = false;\n";

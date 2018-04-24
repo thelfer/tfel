@@ -17,6 +17,15 @@ namespace mfront{
 
   namespace bbrick {
 
+    std::string StressCriterion::getVariableId(const std::string& n,
+                                               const std::string& fid,
+                                               const Role r) {
+      if (r == StressCriterion::FLOWCRITERION) {
+        return "scf_" + n + fid;
+      }
+      return "sc_" + n + fid;
+    }  // end of StressCriterion::getVariableId
+
     StressCriterion::~StressCriterion() = default;
 
   }  // end of namespace bbrick

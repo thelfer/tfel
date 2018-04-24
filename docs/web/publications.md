@@ -4,8 +4,10 @@
 
 ---
 nocite: |
+	@barrioz_void_2018
 	@torelli_confinement-dependent_2018
 	@guenot-delahaie_simulation_2018
+	@abbas_hybrid_2018
 	@michel_new_2017
 	@bary_analytical_2017
 	@gelebart_fft_2017

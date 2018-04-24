@@ -133,6 +133,13 @@ namespace mfront {
        */
       virtual std::string getStressNormalisationFactor(
           const BehaviourDescription&) const = 0;
+      /*!
+       * \brief return an expression that can be used as a lower bound for the
+       * equivalent stress,
+       * \param[in] bd: behaviour description
+       */
+      virtual std::string getEquivalentStressLowerBound(
+          const BehaviourDescription&) const = 0;
       //! destructor
       virtual ~StressPotential();
     };  // end of struct StressPotential

@@ -108,7 +108,8 @@ namespace mfront {
       auto i = size_t{};
       for (const auto& pf : this->flows) {
         if (pf->requiresActivationState()) {
-          pf->computeInitialActivationState(bd, getId(i, this->flows.size()));
+          pf->computeInitialActivationState(bd, *(this->stress_potential),
+                                            getId(i, this->flows.size()));
         }
         ++i;
       }

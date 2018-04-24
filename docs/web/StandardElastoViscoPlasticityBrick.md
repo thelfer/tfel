@@ -20,6 +20,7 @@
 
 \newcommand{\tepsilonvis}{\underline{\epsilon}^{\mathrm{vis}}}
 \newcommand{\tdepsilonvis}{\underline{\dot{\epsilon}}^{\mathrm{vis}}}
+\newcommand{\tdepsilonp}{\underline{\dot{\epsilon}}^{\mathrm{p}}}
 
 \newcommand{\talpha}{\underline{\alpha}}
 \newcommand{\tdalpha}{\underline{\dot{\alpha}}}
@@ -94,11 +95,58 @@ features provided by the Hooke stress potential.
 The Hooke stress potential is fully described
 [here](HookeStressPotential.html).
 
-# List of available stress criterion
+# Inelastic flows
 
-## von Mises stress criterion
+## List of available inelastic flows
 
-### Definition
+### The `Plastic` inelastic flow
+
+The plastic flow is defined by:
+
+- a yield surface \(f\)
+- a plastic potential \(g\)
+
+The plastic strain rate satisfies:
+\[
+\tdepsilonp=\dot{\lambda}\,\deriv{g}{\tsigma}
+\]
+
+The plastic multiplier satifies the Kuhn-Tucker relation:
+\[
+\left\{
+\begin{aligned}
+\dot{\lambda}\,f\paren{\tsigma,p}&=0\\
+\dot{\lambda}&\geq 0
+\end{aligned}
+\right.
+\]
+
+The flow is associated is \(f\) is equal to \(g\). In practice \(f\) is
+defined by a stress criterion \(\phi\) and an isotropic hardening rule
+\(R\paren{p}\), as follows:
+
+\[
+f\paren{\tsigma,p}= \phi\paren{\tsigma-\sum_{i}\tenseur{X}_{i}}-R\paren{p}
+\]
+
+where \(p\) is the equivalent plastic strain.
+
+### The `Norton` inelastic flow
+
+The plastic flow is defined by:
+
+- a function \(f\paren{\tsigma}\) giving the flow intensity
+- a viscoplastic potential \(g\)
+
+\[
+f\paren{\tsigma}=A\left<\Frac{\phi\paren{\tsigma-\sum_{i}\tenseur{X}_{i}}}{K}\right>^{n}
+\]
+
+## List of available stress criterion
+
+### von Mises stress criterion
+
+#### Definition
 
 The von Mises stress is defined by:
 \[
@@ -118,11 +166,11 @@ defined by:
 \sigmaeq=\sqrt{\Frac{1}{2}\paren{\absvalue{\sigma_{1}-\sigma_{2}}^{2}+\absvalue{\sigma_{1}-\sigma_{3}}^{2}+\absvalue{\sigma_{2}-\sigma_{3}}^{2}}}
 \]
 
-### Options
+#### Options
 
 This stress criterion does not have any option.
 
-## Hill stress criterion
+### Hill stress criterion
 
 This `Hill` criterion, also called `Hill1948` criterion, is based on the
 equivalent stress \(\sigmaeq^{H}\) defined as follows:
@@ -142,7 +190,7 @@ equivalent stress \(\sigmaeq^{H}\) defined as follows:
 > Chaboche and seems to differ from the one described in most other
 > books.
 
-### Options
+#### Options
 
 This stress criterion has \(6\) mandatory options: `F`, `G`, `H`, `L`,
 `M`, `N`. Each of these options must be interpreted as material
@@ -154,40 +202,163 @@ property.
 > modelling hypotheses. The coefficients `F`, `G`, `H`, `L`, `M`, `N`
 > must always correspond to the three dimensional case.
 
-# List of available isotropic hardening rules
+## List of available isotropic hardening rules
 
-## The `Linear` isotropic hardening rule
+> **Note**
+>
+> The follwing hardening rules can be combined to define
+> more complex hardening rules. For example, the following
+> code adds to Voce hardening:
+>
+> ~~~~{.cpp}
+>    isotropic_hardening : "Voce" {R0 : 600e6, Rinf : 900e6, b : 1},
+>    isotropic_hardening : "Voce" {R0 : 0, Rinf : 300e6, b : 10},
+> ~~~~
+>
+> The previous code is equalivent to the following hardening rule:
+> 
+> \[
+> R\paren{p}=R_{0}^{0}+\paren{R_{\infty}^{0}-R_{0}^{0}}\,\paren{1-\exp\paren{-b^{0}\,p}}+R_{\infty}^{1}\,\paren{1-\exp\paren{-b^{1}\,p}}
+> \]
+>
+> with:
+> 
+> - \(R_{0}^{0}=600\,.\,10^{6}\,Pa\) 
+> - \(R_{\infty}^{0}=900\,.\,10^{6}\,Pa\) 
+> - \(R_{\infty}^{1}=300\,.\,10^{6}\,Pa\) 
+> - \(b^{0}=1\) 
+> - \(b^{1}=10\) 
+
+### The `Linear` isotropic hardening rule
 
 The `Linear` isotropic hardening rule is defined by:
 \[
 R\paren{p}=R_{0}+H\,p
 \]
 
-## The `Swift` isotropic hardening rule
+#### Options
+
+The `Swift` isotropic hardening rule expects one of the two following
+material properties:
+
+- `R0`: the yield strength
+- `H`: the hardening slope
+
+> **Note**
+>
+> If one of the previous material property is not defined, the generated
+> code is optimised and there will be no parameter asscoiated with it.
+> To avoid this, you must define the material property and assign
+> it to a zero value.
+
+#### Example
+
+The following code can be added in a block defining an inelastic flow:
+
+~~~~{.cpp}
+    isotropic_hardening : "Linear" {R0 : 120e6, H : 438e6},
+~~~~
+
+### The `Swift` isotropic hardening rule
 
 The `Swift` isotropic hardening rule is defined by:
 \[
 R\paren{p}=R_{0}\,\paren{\Frac{p+p_{0}}{p_{0}}}^{n}
 \]
 
-## The `Voce` isotropic hardening rule
+#### Options
+
+The `Swift` isotropic hardening rule expects three material properties:
+
+- `R0`: the yield strength
+- `p0`
+- `n`
+
+#### Example
+
+The following code can be added in a block defining an inelastic flow:
+
+~~~~{.cpp}
+    isotropic_hardening : "Swift" {R0 : 120e6, p0 : 1e-8, n : 5.e-2}
+~~~~
+
+### The `Voce` isotropic hardening rule
 
 The `Voce` isotropic hardening rule is defined by:
 \[
 R\paren{p}=R_{\infty}+\paren{R_{0}-R_{\infty}}\,exp\paren{-b\,p}
 \]
 
-# List of available kinematic hardening rules
+#### Options
 
-## The `Prager` kinematic hardening rule
+The `Voce` isotropic hardening rule expects three material properties:
 
-## The `Armstrong-Frederick` kinematic hardening rule
+- `R0`: the yield strength
+- `Rinf`: the utimate strength
+- `b`
 
-## The `Burlet-Cailletaud` kinematic hardening rule
+#### Example
 
-# List of available inelastic flows
+The following code can be added in a block defining an inelastic flow:
 
-## The `Plastic` inelastic flow
+~~~~{.cpp}
+    isotropic_hardening : "Voce" {R0 : 200, Rinf : 100, b : 20}
+~~~~
 
-## The `Norton` inelastic flow
+## List of available kinematic hardening rules
 
+### The `Prager` kinematic hardening rule
+
+#### Example
+
+The following code can be added in a block defining an inelastic flow:
+
+~~~{.cpp}
+    kinematic_hardening : "Prager" {C : 33e6},
+~~~
+
+### The `Armstrong-Frederick` kinematic hardening rule
+
+
+The `Armstrong-Frederick` kinematic hardening rule can be described as
+follows (see @armstrong_mathematical_1966):
+\[
+\left\{
+\begin{aligned}
+\tenseur{X}&=\Frac{2}{3}\,C\,\tenseur{a} \\
+\tenseur{\dot{a}}&=\dot{p}\,\tenseur{n}-D\,\tenseur{a} \\
+\end{aligned}
+\right.
+\]
+
+#### Example
+
+The following code can be added in a block defining an inelastic flow:
+
+~~~{.cpp}
+    kinematic_hardening : "Armstrong-Frederick" {C : 1.5e9, D : 5}
+~~~
+
+### The `Burlet-Cailletaud` kinematic hardening rule
+
+The `Burlet-Cailletaud` kinematic hardening rule is defined as follows
+(see @burlet_modelling_1987):
+
+\[
+\left\{
+\begin{aligned}
+\tenseur{X}&=\Frac{2}{3}\,C\,\tenseur{a} \\
+\tenseur{\dot{a}}&=\dot{p}\,\tenseur{n}-\eta\,D\,\tenseur{a}-\paren{1-\eta}\,D\,\Frac{2}{3}\,\paren{\tenseur{a}\,\colon\,\tenseur{n}}\,\tenseur{n} \\
+\end{aligned}
+\right.
+\]
+
+#### Example
+
+The following code can be added in a block defining an inelastic flow:
+
+~~~{.cpp}
+    kinematic_hardening : "Burlet-Cailletaud" {C : 250e7, D : 100, eta : 0}
+~~~
+
+# References

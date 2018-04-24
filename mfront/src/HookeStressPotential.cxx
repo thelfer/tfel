@@ -32,6 +32,7 @@ namespace mfront {
     void HookeStressPotential::initialize(BehaviourDescription& bd,
                                           AbstractBehaviourDSL& dsl,
                                           const DataMap& d) {
+      constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       auto throw_if = [](const bool b, const std::string& m) {
         tfel::raise_if(b, "HookeStressPotential::HookeStressPotential: " + m);
       };
@@ -51,8 +52,7 @@ namespace mfront {
         check(n);
         return getBehaviourDescriptionMaterialProperty(dsl, n, d.at(n));
       };
-      auto addTi = [&bd, &d]() {
-        const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+      auto addTi = [&bd, &d,&uh]() {
         const auto n = "initial_geometry_reference_temperature";
         const auto v = [&d, &n] {
           if (d.count(n) != 0) {
@@ -64,13 +64,12 @@ namespace mfront {
         VariableDescription Ti("temperature", n, 1u, 0u);
         Ti.description =
             "value of the temperature when the initial geometry was measured";
-        bd.addParameter(h, Ti, BehaviourData::ALREADYREGISTRED);
-        bd.setParameterDefaultValue(h, n, v);
-        bd.setEntryName(h, n, "ReferenceTemperatureForInitialGeometry");
+        bd.addParameter(uh, Ti, BehaviourData::ALREADYREGISTRED);
+        bd.setParameterDefaultValue(uh, n, v);
+        bd.setEntryName(uh, n, "ReferenceTemperatureForInitialGeometry");
       };  // end of addTi
-      auto addTref = [&bd, &d]() {
+      auto addTref = [&bd, &d, &uh]() {
         const auto n = "thermal_expansion_reference_temperature";
-        const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
         const auto v = [&d, &n] {
           if (d.count(n) != 0) {
             const auto Tref = d.at(n);
@@ -85,9 +84,9 @@ namespace mfront {
         VariableDescription Tref("temperature", n, 1u, 0u);
         Tref.description =
             "reference value for the the thermal expansion coefficient";
-        bd.addParameter(h, Tref, BehaviourData::ALREADYREGISTRED);
-        bd.setParameterDefaultValue(h, n, v);
-        bd.setEntryName(h, n, "ThermalExpansionReferenceTemperature");
+        bd.addParameter(uh, Tref, BehaviourData::ALREADYREGISTRED);
+        bd.setParameterDefaultValue(uh, n, v);
+        bd.setEntryName(uh, n, "ThermalExpansionReferenceTemperature");
       };  // end of addTref
       // options
       auto update = [throw_if, &d](bool& b, const char* n) {
@@ -175,7 +174,31 @@ namespace mfront {
                                            get_mp("thermal_expansion2"),
                                            get_mp("thermal_expansion3"));
       }
-
+      // relative stress criterion
+      const auto seps_n =
+          "relative_value_for_the_equivalent_stress_lower_bound";
+      const auto seps_v = [&d,seps_n] {
+        if (d.count(seps_n)) {
+          const auto seps_d = d.at(seps_n);
+          if (seps_d.is<int>()) {
+            return static_cast<double>(seps_d.get<int>());
+          }
+          return seps_d.get<double>();
+        }
+        return 1.e-12;
+      }();
+      VariableDescription seps("real",seps_n, 1u, 0u);
+      seps.description =
+          "Relative value used to define a lower bound "
+          "for the equilavent stress. For isotropic parameters, "
+          "this lower bound will be equal to this value multiplied "
+          "by the Young modulus. For orthotropic materials, this lower "
+          "bound will be this value multiplied by the first component "
+          "of the stiffness tensor.";
+      bd.addParameter(uh, seps, BehaviourData::UNREGISTRED);
+      bd.setParameterDefaultValue(uh, seps_n, seps_v);
+      bd.setEntryName(
+          uh, seps_n, "RelativeValueForTheEquivalentStressLowerBoundDefinition");
     }  // end of HookeStressPotential::HookeStressPotential
 
     std::string HookeStressPotential::getName() const {
@@ -295,6 +318,15 @@ namespace mfront {
           std::vector<std::string>{"thermal_expansion"});
       opts.emplace_back("thermal_expansion_reference_temperature",
                         "reference temperature for the thermal expansion", OptionDescription::REAL);
+      opts.emplace_back(
+          "relative_value_for_the_equivalent_stress_lower_bound",
+          "Relative value used to define a lower bound "
+          "for the equilavent stress. For isotropic parameters, "
+          "this lower bound will be equal to this value multiplied "
+          "by the Young modulus. For orthotropic materials, this lower "
+          "bound will be this value multiplied by the first component "
+          "of the stiffness tensor.",
+          OptionDescription::REAL);
       opts.emplace_back("plane_stress_support", "", OptionDescription::BOOLEAN);
       opts.emplace_back("generic_tangent_operator", "",
                         OptionDescription::BOOLEAN);
@@ -1195,6 +1227,19 @@ namespace mfront {
       }
       return "this->young";
     } // end of HookeStressPotential::getStressNormalisationFactor
+
+    std::string HookeStressPotential::getEquivalentStressLowerBound(
+        const BehaviourDescription& bd) const {
+      if ((bd.getAttribute<bool>(BehaviourDescription::requiresStiffnessTensor,
+                                 false)) ||
+          (bd.getAttribute<bool>(BehaviourDescription::computesStiffnessTensor,
+                                 false))) {
+        return "(this->relative_value_for_the_equivalent_stress_lower_bound)*"
+               "(this->D(0,0))";
+      }
+      return "(this->relative_value_for_the_equivalent_stress_lower_bound)*"
+             "(this->young)";
+    }  // end of getEquivalentStressLowerBound
 
     HookeStressPotential::~HookeStressPotential() = default;
 

@@ -30,10 +30,20 @@ namespace mfront {
                       const DataMap&,
                       const Role) override;
       std::vector<OptionDescription> getOptions() const override;
-      std::string computeElasticPrediction(const std::string&) const override;
-      std::string computeCriterion(const std::string&) const override;
-      std::string computeNormal(const std::string&, const Role) const override;
+      std::string computeElasticPrediction(
+          const std::string&,
+          const BehaviourDescription&,
+          const StressPotential&) const override;
+      std::string computeCriterion(const std::string&,
+                                   const BehaviourDescription&,
+                                   const StressPotential&) const override;
+      std::string computeNormal(const std::string&,
+                                const BehaviourDescription&,
+                                const StressPotential&,
+                                const Role) const override;
       std::string computeNormalDerivative(const std::string&,
+                                          const BehaviourDescription&,
+                                          const StressPotential&,
                                           const Role) const override;
       //! destructor
       ~Hill1948StressCriterion() override;

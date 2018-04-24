@@ -145,6 +145,7 @@ set(TFELMFront_SOURCES
     StressCriterionBase.cxx
     MisesStressCriterion.cxx
     Hill1948StressCriterion.cxx
+    Hosford1972StressCriterion.cxx
     StressCriterionFactory.cxx
     IsotropicHardeningRule.cxx
     LinearIsotropicHardeningRule.cxx

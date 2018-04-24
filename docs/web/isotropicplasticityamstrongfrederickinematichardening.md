@@ -16,6 +16,7 @@
 \newcommand{\tepsilonvis}{\tenseur{\varepsilon}^{\mathrm{vis}}}
 \newcommand{\tdepsilonvis}{\tenseur{\dot{\varepsilon}}^{\mathrm{vis}}}
 \newcommand{\tsigma}{\underline{\sigma}}
+\newcommand{\tseff}{\underline{\sigma}^{e}}
 \newcommand{\sigmaeq}{\sigma_{\mathrm{eq}}}
 \newcommand{\sigmaH}{\sigma_{H}}
 \newcommand{\Frac}[2]{{{\displaystyle \frac{\displaystyle #1}{\displaystyle #2}}}}
@@ -69,7 +70,7 @@ stress and \(p\) is the equivalent plastic strain.
 
 The yield surface is defined by:
 \[
-F\paren{\tsigma,\tenseur{X}_{i},p}=\paren{\tsigma-\sum_{i=1}^{N}\tenseur{X}_{i}}_{\mathrm{eq}}-R\paren{p}=s^{e}_{\mathrm{eq}}-R\paren{p}
+F\paren{\tsigma,\tenseur{X}_{i},p}=\paren{\tsigma-\sum_{i=1}^{N}\tenseur{X}_{i}}_{\mathrm{eq}}-R\paren{p}=\tseff_{\mathrm{eq}}-R\paren{p}
 \]
 
 where:
@@ -80,16 +81,16 @@ where:
   backstresses describing the kinematic hardening.
 - \(\paren{.}_{\mathrm{eq}}\) is the Von Mises norm.
 
-We have introduced an effective deviatoric stress \(\tenseur{s}^{e}\) defined by:
+We have introduced an effective stress \(\tseff\) defined by:
 \[
-\tenseur{s}^{e}=\tenseur{s}-\sum_{i=1}^{N}\tenseur{X}_{i}
+\tseff=\tsigma-\sum_{i=1}^{N}\tenseur{X}_{i}
 \]
-where \(\tenseur{s}\) is the deviatoric part of the stress.
 
 The normal is then given by:
 \[
-\tenseur{n}=\deriv{F}{\tsigma}=\Frac{3}{2}\,\Frac{\tenseur{s}^{e}}{s^{e}_{\mathrm{eq}}}
+\tenseur{n}=\deriv{F}{\tsigma}=\Frac{3}{2}\,\Frac{\tenseur{s}^{e}}{\sigma^{e}_{\mathrm{eq}}}
 \]
+where \(\tenseur{s}^{e}\) is the deviator of \(\tseff\).
 
 ## Evolution of the isotropic hardening
 
@@ -133,9 +134,9 @@ where the following notations have been used:
 - \(\mts{p} = \bts{p}+\theta\Delta\,p\)
 - \(\mts{\tenseur{a}_{i}} = \bts{\tenseur{a}_{i}}+\theta\Delta\,\tenseur{a}\)
 - \(\mts{\tenseur{X}_{i}} = C_{i}\,\mts{\tenseur{a}_{i}}\)
-- \(\mts{\tenseur{s}^{e}}=\mts{\tenseur{s}}-\sum_{i=1}^{N}\mts{\tenseur{X}_{i}}\)
-- \(\mts{s^{e}_{\mathrm{eq}}}=\paren{\mts{\tenseur{s}^{e}}}_{\mathrm{eq}}\)
-- \(\mts{F}=\mts{s^{e}_{\mathrm{eq}}}-R\paren{\mts{p}}\)
+- \(\mts{\tseff}=\mts{\tsigma}-\sum_{i=1}^{N}\mts{\tenseur{X}_{i}}\)
+- \(\mts{\sigma^{e}_{\mathrm{eq}}}=\paren{\mts{\tsigma}}_{\mathrm{eq}}\)
+- \(\mts{F}=\mts{\sigma^{e}_{\mathrm{eq}}}-R\paren{\mts{p}}\)
 
 # Implicit system formulation and implementation
 
@@ -161,7 +162,7 @@ f_{\tenseur{a}_{i}}&=\Delta\,\tenseur{a}_{i}-\Delta\,\tepsilonvis-g[i]\,\mts{\te
 > In the following, we will make use of the "classical" relationship
 > giving the derivative of the normal:
 > \[
-> \deriv{\mts{\tenseur{n}}}{\mts{\tenseur{s}^{e}}}=\Frac{1}{\mts{s^{e}_{\mathrm{eq}}}}\,\paren{\tenseurq{M}-\mts{\tenseur{n}}\otimes\mts{\tenseur{n}}}
+> \deriv{\mts{\tenseur{n}}}{\mts{\tseff}}=\Frac{1}{\mts{\sigma^{e}_{\mathrm{eq}}}}\,\paren{\tenseurq{M}-\mts{\tenseur{n}}\otimes\mts{\tenseur{n}}}
 > \]
 >
 > Here, \(\tenseurq{M}\) is a tensor space defined by:
@@ -180,9 +181,9 @@ Here are the expressions of the term related to \(f_{\tepsilonel}\):
 \left\{
 \begin{aligned}
 \deriv{f_{\tepsilonel}}{\Delta\,\tepsilonel}&=\tenseurq{I}+\Delta\,p\deriv{\mts{\tenseur{n}}}{\Delta\,\tepsilonel}
-=\tenseurq{I}+\Delta\,p\,\cdot\,\underbrace{\deriv{\mts{\tenseur{n}}}{\mts{\tsigma}}}_{\Frac{1}{\mts{s^{e}_{\mathrm{eq}}}}\,\paren{\tenseurq{M}-\mts{\tenseur{n}}\otimes\mts{\tenseur{n}}}}\,\cdot\,\underbrace{\deriv{\mts{\tsigma}}{\mts{\tepsilonel}}}_{\lambda\,\tenseur{I}\otimes\tenseur{I}+2\,\mu\,\tenseur{I}}\,\cdot\,\underbrace{\deriv{\mts{\tepsilonel}}{\Delta\,\tepsilonel}}_{\theta\,\tenseur{I}}\\
+=\tenseurq{I}+\Delta\,p\,\cdot\,\underbrace{\deriv{\mts{\tenseur{n}}}{\mts{\tsigma}}}_{\Frac{1}{\mts{\sigma^{e}_{\mathrm{eq}}}}\,\paren{\tenseurq{M}-\mts{\tenseur{n}}\otimes\mts{\tenseur{n}}}}\,\cdot\,\underbrace{\deriv{\mts{\tsigma}}{\mts{\tepsilonel}}}_{\lambda\,\tenseur{I}\otimes\tenseur{I}+2\,\mu\,\tenseurq{I}}\,\cdot\,\underbrace{\deriv{\mts{\tepsilonel}}{\Delta\,\tepsilonel}}_{\theta\,\tenseurq{I}}\\
 \deriv{f_{\tepsilonel}}{\Delta\,p}&=\mts{\tenseur{n}}\\
-\deriv{f_{\tepsilonel}}{\Delta\,\tenseur{a}_{i}}&=\Delta\,p\,\cdot\,\underbrace{\deriv{\mts{\tenseur{n}}}{\mts{\tenseur{s}^{e}}}}_{\Frac{1}{\mts{s^{e}_{\mathrm{eq}}}}\,\paren{\tenseurq{M}-\mts{\tenseur{n}}\otimes\mts{\tenseur{n}}}}\,\cdot\,\underbrace{\deriv{\mts{\tenseur{s}^{e}}}{\mts{\tenseur{a}_{i}}}}_{-\Frac{2}{3}\,C_{i}}\,\cdot\,\underbrace{\deriv{\mts{\tenseur{a}_{i}}}{\Delta\,a_{i}}}_{\theta\,\tenseurq{I}}\\
+\deriv{f_{\tepsilonel}}{\Delta\,\tenseur{a}_{i}}&=\Delta\,p\,\cdot\,\underbrace{\deriv{\mts{\tenseur{n}}}{\mts{\tseff}}}_{\Frac{1}{\mts{\sigma^{e}_{\mathrm{eq}}}}\,\paren{\tenseurq{M}-\mts{\tenseur{n}}\otimes\mts{\tenseur{n}}}}\,\cdot\,\underbrace{\deriv{\mts{\tseff}}{\mts{\tenseur{a}_{i}}}}_{-\Frac{2}{3}\,C_{i}\,\tenseurq{I}}\,\cdot\,\underbrace{\deriv{\mts{\tenseur{a}_{i}}}{\Delta\,a_{i}}}_{\theta\,\tenseurq{I}}\\
 \end{aligned}
 \right.
 \]
@@ -193,11 +194,11 @@ Finally,
 \left\{
 \begin{aligned}
 \deriv{f_{\tepsilonel}}{\Delta\,\tepsilonel}
-&=\tenseurq{I}+\Frac{2\,\,\mu\,\theta\,\Delta\,p}{\mts{s^{e}_{\mathrm{eq}}}}\,\paren{\tenseurq{M}-\mts{\tenseur{n}}\otimes\mts{\tenseur{n}}}\\
+&=\tenseurq{I}+\Frac{2\,\,\mu\,\theta\,\Delta\,p}{\mts{\sigma^{e}_{\mathrm{eq}}}}\,\paren{\tenseurq{M}-\mts{\tenseur{n}}\otimes\mts{\tenseur{n}}}\\
 \deriv{f_{\tepsilonel}}{\Delta\,p}
 &=\mts{\tenseur{n}}\\
 \deriv{f_{\tepsilonel}}{\Delta\,\tenseur{a}_{i}}
-&=-\Frac{2\,C_{i}\,\theta\,\Delta\,p}{3\,\mts{s^{e}_{\mathrm{eq}}}}\,\paren{\tenseurq{M}-\mts{\tenseur{n}}\otimes\mts{\tenseur{n}}}\\
+&=-\Frac{2\,C_{i}\,\theta\,\Delta\,p}{3\,\mts{\sigma^{e}_{\mathrm{eq}}}}\,\paren{\tenseurq{M}-\mts{\tenseur{n}}\otimes\mts{\tenseur{n}}}\\
 \end{aligned}
 \right.
 \]
@@ -209,7 +210,7 @@ Finally,
 > In the following, we will make use of another "classical"
 > relationship giving the derivative of the equivalent stress:
 > \[
-> \deriv{\mts{s^{e}_{\mathrm{eq}}}}{\mts{\tenseur{s}^{e}}}=\mts{\tenseur{n}}
+> \deriv{\mts{\sigma^{e}_{\mathrm{eq}}}}{\mts{\tseff}}=\mts{\tenseur{n}}
 > \]
 
 To compute the terms of the jacobian associated with \(f_{p}\), we
@@ -222,9 +223,9 @@ have:
 \left\{
 \begin{aligned}
 \deriv{\mts{F}}{\Delta\,\tepsilonel}
-&=\underbrace{\deriv{\mts{F}}{\mts{\tsigma}}}_{\mts{\tenseur{n}}}\,\cdot\,\underbrace{\deriv{\mts{\tsigma}}{\mts{\tepsilonel}}}_{\lambda\,\tenseur{I}\otimes\tenseur{I}+2\,\mu\,\tenseur{I}}\,\cdot\,\underbrace{\deriv{\mts{\tepsilonel}}{\Delta\,\tepsilonel}}_{\theta\,\tenseur{I}}=2\,\mu\,\theta\,\mts{\tenseur{n}}\\
+&=\underbrace{\deriv{\mts{F}}{\mts{\tsigma}}}_{\mts{\tenseur{n}}}\,\cdot\,\underbrace{\deriv{\mts{\tsigma}}{\mts{\tepsilonel}}}_{\lambda\,\tenseur{I}\otimes\tenseur{I}+2\,\mu\,\tenseurq{I}}\,\cdot\,\underbrace{\deriv{\mts{\tepsilonel}}{\Delta\,\tepsilonel}}_{\theta\,\tenseurq{I}}=2\,\mu\,\theta\,\mts{\tenseur{n}}\\
 \deriv{\mts{F}}{\Delta\,p} &=-\theta\,\deriv{R}{p} \\
-\deriv{\mts{F}}{\Delta\,\tenseur{a}_{i}} &=-=\underbrace{\deriv{\mts{F}}{\mts{\tenseur{s}^{e}}}}_{\mts{\tenseur{n}}}\,\cdot\,\underbrace{\deriv{\mts{\tenseur{s}^{e}}}{\mts{\tenseur{a}_{i}}}}_{-\Frac{2}{3}\,C_{i}\,\tenseurq{I}}\,\cdot\,\underbrace{\deriv{\mts{\tenseur{a}_{i}}}{\Delta\,\tenseur{a}_{i}}}_{\theta\,\tenseur{I}}=-\Frac{2}{3}\,C_{i}\,\mts{\tenseur{n}}\\
+\deriv{\mts{F}}{\Delta\,\tenseur{a}_{i}} &=-=\underbrace{\deriv{\mts{F}}{\mts{\tseff}}}_{\mts{\tenseur{n}}}\,\cdot\,\underbrace{\deriv{\mts{\tseff}}{\mts{\tenseur{a}_{i}}}}_{-\Frac{2}{3}\,C_{i}\,\tenseurq{I}}\,\cdot\,\underbrace{\deriv{\mts{\tenseur{a}_{i}}}{\Delta\,\tenseur{a}_{i}}}_{\theta\,\tenseurq{I}}=-\Frac{2}{3}\,C_{i}\,\mts{\tenseur{n}}\\
 \end{aligned}
 \right.
 \]
@@ -250,11 +251,11 @@ where \(\deriv{f_{p}}{\mts{F}}=-\Frac{m\,\Delta\,t}{K}\left\langle\Frac{\mts{F}}
 \left\{
 \begin{aligned}
 \deriv{f_{\tenseur{a}_{i}}}{\Delta\,\tepsilonel}&
-=-\Frac{2\,\mu\,\theta\,\Delta\,p}{\mts{s^{e}_{\mathrm{eq}}}}\,\paren{\tenseurq{M}-\mts{\tenseur{n}}\otimes\mts{\tenseur{n}}} \\
+=-\Frac{2\,\mu\,\theta\,\Delta\,p}{\mts{\sigma^{e}_{\mathrm{eq}}}}\,\paren{\tenseurq{M}-\mts{\tenseur{n}}\otimes\mts{\tenseur{n}}} \\
 \deriv{f_{\tenseur{a}_{i}}}{\Delta\,p}&
 =-\paren{\tenseur{n}-g[i]\,\mts{\tenseur{a}_{i}}} \\
 \deriv{f_{\tenseur{a}_{i}}}{\Delta\,\tenseur{a}_{j}}&
-=\delta_{ij}\,\tenseurq{I}+\Frac{2\,C_{j}\,\theta\,\Delta\,p}{3\,\mts{s^{e}_{\mathrm{eq}}}}\,\paren{\tenseurq{M}-\mts{\tenseur{n}}\otimes\mts{\tenseur{n}}} \\
+=\delta_{ij}\,\tenseurq{I}+\Frac{2\,C_{j}\,\theta\,\Delta\,p}{3\,\mts{\sigma^{e}_{\mathrm{eq}}}}\,\paren{\tenseurq{M}-\mts{\tenseur{n}}\otimes\mts{\tenseur{n}}} \\
 \end{aligned}
 \right.
 \]

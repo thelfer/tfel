@@ -13,6 +13,7 @@
 
 #include "TFEL/Raise.hxx"
 #include "MFront/BehaviourBrick/BrickUtilities.hxx"
+#include "MFront/BehaviourBrick/StressPotential.hxx"
 #include "MFront/BehaviourBrick/OptionDescription.hxx"
 #include "MFront/BehaviourBrick/Hill1948StressCriterion.hxx"
 
@@ -33,8 +34,9 @@ namespace mfront{
         return getBehaviourDescriptionMaterialProperty(dsl, n, d.at(n));
       };
       StressCriterionBase::initialize(bd, dsl, id, d, r);
-      auto v = VariableDescription{"tfel::math::st2tost2<N,stress>", "H" + id,
-                                   1u, 0u};
+      const auto Hn = StressCriterion::getVariableId("H", id, r);
+      auto v =
+          VariableDescription{"tfel::math::st2tost2<N,stress>", Hn, 1u, 0u};
       v.description = "Hill tensor";
       std::vector<BehaviourDescription::MaterialProperty> Hmps = {
           get_mp("F"), get_mp("G"), get_mp("H"),
@@ -60,23 +62,33 @@ namespace mfront{
     }  // end of Hill1948StressCriterion::getOptions
 
     std::string Hill1948StressCriterion::computeElasticPrediction(
-        const std::string&id) const {
+        const std::string& id,
+        const BehaviourDescription&,
+        const StressPotential&) const {
+      const auto Hn = StressCriterion::getVariableId(
+          "H", id, StressCriterion::STRESSCRITERION);
       const auto sel = "sel" + id;
-      const auto H = "H" + id;
       return "const auto seqel" + id +  //
-             " = sqrt(" + sel + "|" + H + "*" + sel + ");\n";
+             " = sqrt(" + sel + "|((this->" + Hn + ")*" + sel + "));\n";
     }  // end of Hill1948StressCriterion::computeElasticPrediction
 
     std::string Hill1948StressCriterion::computeCriterion(
-        const std::string& id) const {
+        const std::string& id,
+        const BehaviourDescription&,
+        const StressPotential&) const {
       const auto s = "s" + id;
-      const auto H = "H" + id;
+      const auto Hn = StressCriterion::getVariableId(
+          "H", id, StressCriterion::STRESSCRITERION);
       return "const auto seq" + id +  //
-             " = sqrt(" + s + "|" + H + "*" + s + ");\n";
+             " = sqrt(" + s + "|((this->" + Hn + ")*" + s + "));\n";
     }  // end of Hill1948StressCriterion::computeNormal
 
-    std::string Hill1948StressCriterion::computeNormal(const std::string& id,
-                                                       const Role r) const {
+    std::string Hill1948StressCriterion::computeNormal(
+        const std::string& id,
+        const BehaviourDescription& bd,
+        const StressPotential& sp,
+        const Role r) const {
+      const auto Hn = StressCriterion::getVariableId("H", id, r);
       const auto s = "s" + id;
       const auto seq = [r, &id]() -> std::string {
         if ((r == STRESSCRITERION) || (r == STRESSANDFLOWCRITERION)) {
@@ -90,12 +102,12 @@ namespace mfront{
         }
         return "n" + id;
       }();
-      const auto H = "H" + id;
       auto c = std::string{};
       c += "const auto " + seq +  //
-           " = sqrt(" + s + "|" + H + "*" + s + ");\n";
-      c += "const auto i" + seq + " = 1/max(" + seq + ",1.e-12*young);\n";
-      c += "const auto " + n + " = " + H + "*" + s + "*i" + seq + ";\n";
+           " = sqrt(" + s + "|((this->" + Hn + ")*" + s + "));\n";
+      c += "const auto i" + seq + " = 1/max(" + seq + "," +
+           sp.getEquivalentStressLowerBound(bd) + ");\n";
+      c += "const auto " + n + " = (this->" + Hn + ")*" + s + "*i" + seq + ";\n";
       if (r == STRESSANDFLOWCRITERION) {
         c += "const auto& n" + id + " = dseq" + id + "_ds" + id + ";\n";
       }
@@ -103,9 +115,12 @@ namespace mfront{
     }  // end of Hill1948StressCriterion::computeNormal
 
     std::string Hill1948StressCriterion::computeNormalDerivative(
-        const std::string& id, const Role r) const {
+        const std::string& id,
+        const BehaviourDescription& bd,
+        const StressPotential& sp,
+        const Role r) const {
       const auto s = "s" + id;
-      const auto H = "H" + id;
+      const auto Hn = StressCriterion::getVariableId("H", id, r);
       const auto seq = [r, &id]() -> std::string {
         if ((r == STRESSCRITERION) || (r == STRESSANDFLOWCRITERION)) {
           return "seq" + id;
@@ -126,11 +141,13 @@ namespace mfront{
       }();
       auto c = std::string{};
       c += "const auto " + seq +  //
-           " = sqrt(" + s + "|" + H + "*" + s + ");\n";
-      c += "const auto i" + seq + " = 1/max(" + seq + ",1.e-12*young);\n";
-      c += "const auto " + n + " = " + H + "*" + s + "*i" + seq + ";\n";
+           " = sqrt(" + s + "|((this->" + Hn + ")*" + s + "));\n";
+      c += "const auto i" + seq + " = 1/max(" + seq + "," +
+           sp.getEquivalentStressLowerBound(bd) + ");\n";
+      c +=
+          "const auto " + n + " = (this->" + Hn + ")*" + s + "*i" + seq + ";\n";
       c += "const auto " + dn + " = ";
-      c += "(" + H + "-(" + n + "^" + n + "))*i" + seq + ";\n";
+      c += "((this->" + Hn + ")-(" + n + "^" + n + "))*i" + seq + ";\n";
       if (r == STRESSANDFLOWCRITERION) {
         c += "const auto& n" + id + " = dseq" + id + "_ds" + id + ";\n";
         c += "const auto& dn" + id + "_ds" + id + " = ";

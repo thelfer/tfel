@@ -106,6 +106,7 @@ nobase_include_HEADERS= MFront/MFront.hxx                          \
 			MFront/BehaviourBrick/StressCriterionBase.hxx                     \
 			MFront/BehaviourBrick/MisesStressCriterion.hxx                    \
 			MFront/BehaviourBrick/Hill1948StressCriterion.hxx                 \
+			MFront/BehaviourBrick/Hosford1972StressCriterion.hxx              \
 			MFront/BehaviourBrick/StressCriterionFactory.hxx                  \
 			MFront/BehaviourBrick/IsotropicHardeningRule.hxx                  \
 			MFront/BehaviourBrick/LinearIsotropicHardeningRule.hxx            \

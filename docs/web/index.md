@@ -4,6 +4,7 @@
 
 <div id="slideshow">
   <ul class="slides">
+	<li><img src="img/JUSM18_RDEGEILH_Fissuration_culasses.png" width="620" height="320" alt="Cylinder heads cracking of 900 MWe reactors back- up diesel generators" /></li>
 	<li><img src="img/CalculiX_MFRONT_WSL.png" width="620" height="320" alt="CalculiX and MFront in the bConverged environment" /></li>
     <li><img src="img/VeRCoRs.png" width="620" height="320" alt="Simulation of the VeRCoRs mock-up of a nuclear building" /></li>
 	<li><img src="img/AbaqusFLD.png" width="620" height="320" alt="Simulation of a Punching test" /></li>

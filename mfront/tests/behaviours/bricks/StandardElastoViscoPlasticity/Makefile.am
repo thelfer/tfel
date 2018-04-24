@@ -22,8 +22,12 @@ MFRONTS=StandardElastoViscoPlasticityTest1.mfront                  \
 	StandardElastoViscoPlasticityNortonTest7_nj.mfront             \
 	StandardElastoViscoPlasticityOrthotropicNortonTest.mfront      \
 	StandardElastoViscoPlasticityOrthotropicNortonTest_nj.mfront   \
+	StandardElastoViscoPlasticityOrthotropicNortonTest_na.mfront   \
+	StandardElastoViscoPlasticityOrthotropicNortonTest_nanj.mfront \
 	StandardElastoViscoPlasticityPlasticityTest.mfront             \
+	StandardElastoViscoPlasticityPlasticityTest_na.mfront          \
 	StandardElastoViscoPlasticityPlasticityTest_nj.mfront          \
+	StandardElastoViscoPlasticityPlasticityTest_nanj.mfront        \
 	StandardElastoViscoPlasticityPlasticityTest2.mfront            \
 	StandardElastoViscoPlasticityPlasticityTest2_nj.mfront         \
 	StandardElastoViscoPlasticityPlasticityTest3.mfront            \
@@ -38,6 +42,8 @@ MFRONTS=StandardElastoViscoPlasticityTest1.mfront                  \
 	StandardElastoViscoPlasticityPlasticityTest7_nj.mfront         \
 	StandardElastoViscoPlasticityPlasticityTest8.mfront            \
 	StandardElastoViscoPlasticityPlasticityTest8_nj.mfront         \
+	StandardElastoViscoPlasticityPlasticityTest9.mfront            \
+	StandardElastoViscoPlasticityPlasticityTest9_nj.mfront         \
 	references/standardelastoviscoplasticitynortontest7.ref        \
 	references/standardelastoviscoplasticityplasticitytest4.ref    \
 	references/standardelastoviscoplasticityplasticitytest6.ref    \

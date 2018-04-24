@@ -92,7 +92,7 @@ namespace mfront {
       const auto en = KinematicHardeningRule::getVariableId("eta", fid, kid);
       const auto n = "n" + fid;
       auto df_ddp = "-" + n + "+(this->" + Dn + ")*((this->" + en + ")*" + an +
-                    "_+(1-this->" + en + ")*(" + an + "_|" + n + ")*" + n + ")";
+                    "_+(1-this->" + en + ")*2*(" + an + "_|" + n + ")/3*" + n + ")";
       auto c = std::string{};
       if (b) {
         c += "df" + an + "_ddp" + fid + " = " + df_ddp + ";\n";
@@ -105,15 +105,15 @@ namespace mfront {
         // opposite of the derivative of fa with respect to s
         const auto mdf_ds =
             "(this->dp" + fid + ")*(d" + n + "_ds" + fid + "-(this->" + Dn +
-            ")*(1-this->" + en + ")*((" + an +
+            ")*(1-this->" + en + ")*2*((" + an +
             "_|" + n + ")*d" + n + "_ds" + fid + "+(" + n + "^(" + an +
-            "_|d" + n + "_ds" + fid + "))))";
+            "_|d" + n + "_ds" + fid + "))))/3";
         c += sp.computeDerivatives(bd, an, "-" + mdf_ds);
         // term specific to this back strain
         c += "df" + an + "_dd" + an + " += ";
         c += "(this->theta)*(this->dp" + fid + ")*(this->" + Dn + ")*(";
         c += "(this->" + en + ")*Stensor4::Id()+";
-        c += "(1-this->" + en + ")*(n"+fid + "^" + n + "));\n";
+        c += "(1-this->" + en + ")*2*(n"+fid + "^" + n + ")/3);\n";
         // terms in common for all back strains
         auto kid2 = decltype(khrs.size()){};
         for (const auto khr : khrs) {

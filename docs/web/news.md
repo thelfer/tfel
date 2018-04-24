@@ -18,6 +18,14 @@
 \newcommand{\deriv}[2]{{\displaystyle \frac{\displaystyle \partial #1}{\displaystyle \partial #2}}}
 \newcommand{\sigmaeq}{\sigma_{\mathrm{eq}}}
 
+# A newly published paper “Void Growth and Coalescence in Irradiated Copper Under Deformation.” (21/04/2018)
+
+![Numerical simulations of void growth and coalescence: local plastic strain field p](img/Barrioz2018.png "Numerical simulations of void growth and coalescence: local plastic strain field p"){width=100%}
+
+A new paper using `MFront` has been published in the Journal of Nuclear
+Materials (@barrioz_void_2018). See
+<https://doi.org/10.1016/j.jnucmat.2018.01.064> for the online version.
+
 # A new constitutive law to model the load induced thermal strain (LITS) of concrete materials (11/04/2018)
 
 ![Illustration of load induced thermal strain (LITS)](img/LoadInducedThermalStrain_Torelli2018.png "Illustration of load induced thermal strain (LITS)"){width=100%}

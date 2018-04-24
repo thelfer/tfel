@@ -262,6 +262,8 @@ EXTRA_DIST=CMakeLists.txt					      \
            ./img/pipe.svg					      \
            ./img/plate.svg					      \
            ./img/LoadInducedThermalStrain_Torelli2018.png         \
+           ./img/JUSM18_RDEGEILH_Fissuration_culasses.png         \
+           ./img/Barrioz2018.png                                  \
 	   ./img/Cazacu2001_2090-T3.svg                               \
 	   ./img/Cazacu2001_6016-T4-YdLin.svg                         \
 	   ./media/epx1.mp4                                           \

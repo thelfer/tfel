@@ -64,6 +64,7 @@ namespace mfront {
       std::vector<OptionDescription> getOptions() const override;
       bool requiresActivationState() const override;
       void computeInitialActivationState(BehaviourDescription&,
+                                         const StressPotential&,
                                          const std::string&) const override;
       //! destructor
       ~InelasticFlowBase() override;

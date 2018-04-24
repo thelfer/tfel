@@ -41,6 +41,8 @@ namespace mfront {
       void computeElasticPrediction(BehaviourDescription&) const override;
       std::string getStressNormalisationFactor(
           const BehaviourDescription&) const override;
+      std::string getEquivalentStressLowerBound(
+          const BehaviourDescription&) const override;
       //! destructor
       ~HookeStressPotential() override;
 
