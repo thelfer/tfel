@@ -43,7 +43,7 @@ namespace mfront {
                      "ArmstrongFrederickKinematicHardeningRule::initialize: "
                      "material property 'D' is not defined");
       this->D = getBehaviourDescriptionMaterialProperty(dsl, "D", d.at("D"));
-      declareParameterOrLocalVariable(bd, this->D, Dn);
+      declareParameterOrLocalVariable(bd, this->D, "real", Dn);
     }  // end of ArmstrongFrederickKinematicHardeningRule::initialize
 
     void ArmstrongFrederickKinematicHardeningRule::endTreatment(

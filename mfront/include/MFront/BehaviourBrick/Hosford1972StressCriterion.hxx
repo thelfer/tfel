@@ -39,6 +39,10 @@ namespace mfront {
                       const std::string&,
                       const DataMap&,
                       const Role) override;
+      void endTreatment(BehaviourDescription&,
+                        const AbstractBehaviourDSL&,
+                        const std::string&,
+                        const Role) override;
       std::string computeElasticPrediction(
           const std::string&,
           const BehaviourDescription&,

@@ -32,16 +32,17 @@ namespace mfront {
                                          const std::string& id,
                                          const DataMap& d) {
       constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-      auto get_mp = [&dsl, &bd, &id, &d](const std::string& mpn,
-                                         const std::string& vn) {
+      auto get_mp = [&dsl, &bd, &id, &d](
+          const std::string& mpn, const std::string& t, const std::string& vn) {
         if (d.count(mpn) == 0) {
           tfel::raise(
-              "NortonInelasticFlow::initialize: "
+              "NortonInelasticFlow::"
+              "initialize: "
               "material property '" +
               mpn + "' is not defined");
         }
         auto mp = getBehaviourDescriptionMaterialProperty(dsl, mpn, d.at(mpn));
-        declareParameterOrLocalVariable(bd, mp, vn + id);
+        declareParameterOrLocalVariable(bd, mp, t, vn + id);
         return mp;
       };
       // checking options
@@ -49,18 +50,18 @@ namespace mfront {
       // the base class
       ViscoplasticFlowBase::initialize(bd, dsl, id, d);
       // Norton flow options
-      this->K = get_mp("K", "K");
-      this->n = get_mp("n", "E");
+      this->K = get_mp("K", "stress", "K");
+      this->n = get_mp("n", "real", "E");
       if (d.count("A") != 0) {
-        this->A = get_mp("A", "A");
+        this->A = get_mp("A", "strainrate", "A");
       } else {
         BehaviourDescription::ConstantMaterialProperty cmp;
         cmp.value = 1;
         this->A = cmp;
-        declareParameterOrLocalVariable(bd, this->A, "A" + id);
+        declareParameterOrLocalVariable(bd, this->A, "strainrate", "A" + id);
       }
       if (d.count("Ksf") != 0) {
-        this->Ksf = get_mp("Ksf", "Ksf");
+        this->Ksf = get_mp("Ksf", "real", "Ksf");
       }
       bd.reserveName(uh, "seqe" + id + "_K__n_1");
     }  // end of NortonInelasticFlow::initialize
@@ -73,7 +74,7 @@ namespace mfront {
       ViscoplasticFlowBase::endTreatment(bd, dsl, sp, id);
       if ((!this->A.is<BehaviourDescription::ConstantMaterialProperty>()) ||
           (!this->K.is<BehaviourDescription::ConstantMaterialProperty>()) ||
-          (!this->n.is<BehaviourDescription::ConstantMaterialProperty>())){
+          (!this->n.is<BehaviourDescription::ConstantMaterialProperty>())) {
         auto mts = getMiddleOfTimeStepModifier(bd);
         CodeBlock i;
         auto eval = [&mts, &dsl, &i](
@@ -137,7 +138,7 @@ namespace mfront {
              ")/(this->K" + id + "),real(0)),this->E" + id + ");\n";
       }
       return c;
-    } // end of NortonInelasticFlow::computeFlowRate
+    }  // end of NortonInelasticFlow::computeFlowRate
 
     std::string NortonInelasticFlow::computeFlowRateAndDerivative(
         const std::string& id) const {
@@ -167,7 +168,8 @@ namespace mfront {
              "-R" + id + ")/(this->K" + id + "),this->epsilon),this->E" + id +
              "-1);\n";
         c += "const auto dvp" + id + "_dseqe" + id + " = ";
-        c += "(this->E" + id + ")*(this->A" + id + ")*seqe" + id + "_K__n_1/(this->K" + id + ");\n";
+        c += "(this->E" + id + ")*(this->A" + id + ")*seqe" + id +
+             "_K__n_1/(this->K" + id + ");\n";
         c += "const auto vp" + id + " = ";
         c += "(this->A" + id + ")*seqe" + id + "_K__n_1*(seq" + id + "-R" + id +
              ")/(this->K" + id + ");\n";

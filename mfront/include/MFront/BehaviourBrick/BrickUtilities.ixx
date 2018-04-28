@@ -18,7 +18,7 @@ namespace mfront {
 
   namespace bbrick {
 
-    template <unsigned short N>
+    template <std::size_t N>
     std::array<BehaviourDescription::MaterialProperty, N>
     getArrayOfBehaviourDescriptionMaterialProperties(
         AbstractBehaviourDSL& dsl,
@@ -49,6 +49,102 @@ namespace mfront {
       }
       return mps;
     }
+
+    template <std::size_t N>
+    bool areAllConstantMaterialProperties(
+        const std::array<BehaviourDescription::MaterialProperty, N> & mps){
+      for (const auto& mp : mps) {
+        if (!mp.template is<BehaviourDescription::ConstantMaterialProperty>()) {
+          return false;
+        }
+      }
+      return true;
+    }  // end of areAllConstantMaterialProperties
+
+    template <std::size_t N>
+    void declareParameterOrLocalVariable(
+        BehaviourDescription& bd,
+        std::array<BehaviourDescription::MaterialProperty, N>& mps,
+        const std::string& t,
+        const std::string& n) {
+      constexpr const auto h =
+          tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+      const auto b = areAllConstantMaterialProperties(mps);
+      if (b) {
+        for (auto& mp : mps) {
+          auto& cmp =
+              mp.template get<BehaviourDescription::ConstantMaterialProperty>();
+          cmp.name = n;
+        }
+        // declare associated parameter
+        VariableDescription m(t, n, N, 0u);
+        bd.addParameter(h, m);
+        for (decltype(mps.size()) i = 0; i != mps.size(); ++i) {
+          auto& cmp = mps[i]
+                          .template get<
+                              BehaviourDescription::ConstantMaterialProperty>();
+          bd.setParameterDefaultValue(h, n, i, cmp.value);
+        }
+      } else {
+        VariableDescription m(t, n, N, 0u);
+        bd.addLocalVariable(h, m);
+      }
+    } // end of declareParameterOrLocalVariable
+
+    template <std::size_t N>
+    void declareParameterOrLocalVariable(
+        BehaviourDescription& bd,
+        std::array<BehaviourDescription::MaterialProperty, N>& mps,
+        const std::string& t,
+        const std::string& n,
+        const std::string& en) {
+      constexpr const auto h =
+          tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+      declareParameterOrLocalVariable(bd, mps, t, n);
+      if (areAllConstantMaterialProperties(mps)){
+        bd.setEntryName(h, n, en);
+      }
+    } // end of declareParameterOrLocalVariable
+
+    template <std::size_t N>
+    void declareParameterOrLocalVariable(
+        BehaviourDescription& bd,
+        std::array<BehaviourDescription::MaterialProperty, N>& mps,
+        const std::string& t,
+        const std::string& n,
+        const tfel::glossary::GlossaryEntry& g) {
+      constexpr const auto h =
+          tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+      declareParameterOrLocalVariable(bd, mps, t, n);
+      if (areAllConstantMaterialProperties(mps)){
+        bd.setGlossaryName(h, n, g);
+      }
+    }  // end of declareParameterOrLocalVariable
+
+    template <std::size_t N>
+    std::string generateMaterialPropertiesInitializationCode(
+        const AbstractBehaviourDSL& dsl,
+        const BehaviourDescription& bd,
+        const std::string& n,
+        const std::array<BehaviourDescription::MaterialProperty, N>& mps) {
+      auto c = std::string{};
+      if (!areAllConstantMaterialProperties(mps)) {
+        for (decltype(mps.size()) i = 0; i != mps.size(); ++i) {
+          const auto& mp = mps[i];
+          const auto vn = n + "[" + std::to_string(i) + "]";
+          if (!mp.template is<
+                  BehaviourDescription::ConstantMaterialProperty>()) {
+            c += generateMaterialPropertyInitializationCode(dsl, bd, vn, mp);
+          } else {
+            const auto& cmp = mp.template get<
+                BehaviourDescription::ConstantMaterialProperty>();
+            c += "this->" + vn + " = " + std::to_string(i) + "] = " +
+                 std::to_string(cmp.value) + ";\n";
+          }
+        }
+      }
+      return c;
+    } // end of generateMaterialPropertiesInitializationCode
 
   }  // end of namespace bbrick
 

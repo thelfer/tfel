@@ -61,6 +61,8 @@ namespace mfront {
       using ModellingHypothesis = tfel::material::ModellingHypothesis;
       //! a simple alias
       using Hypothesis = ModellingHypothesis::Hypothesis;
+      //! a simple alias
+      using MaterialProperty = BehaviourDescription::MaterialProperty;
       /*!
        * \return the name of a variable from a base name and the flow id.
        * \param[in] n: base name
@@ -84,6 +86,16 @@ namespace mfront {
                               const Role) = 0;
       //! \return the flow options
       virtual std::vector<OptionDescription> getOptions() const = 0;
+      /*!
+       * \param[in,out] bd: behaviour description
+       * \param[in,out] dsl: abstract behaviour dsl
+       * \param[in] id: flow id
+       * \param[in] r: criterion' role
+       */
+      virtual void endTreatment(BehaviourDescription&,
+                                const AbstractBehaviourDSL&,
+                                const std::string&,
+                                const Role) = 0;
       /*!
        * \return the code that defines `seqel`+id, the elastic prediction of
        * the criterion.

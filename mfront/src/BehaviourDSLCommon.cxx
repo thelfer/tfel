@@ -3932,6 +3932,10 @@ namespace mfront {
         mi[i.name] = f(i);
       }
       out << e.getCxxFormula(mi);
+    } else if (m.empty()) {
+      this->throwRuntimeError(
+          "BehaviourDSLCommon::writeMaterialPropertyEvaluation",
+          "empty material property");
     } else {
       this->throwRuntimeError(
           "BehaviourDSLCommon::writeMaterialPropertyEvaluation",

@@ -52,6 +52,14 @@ namespace mfront {
         const std::vector<std::string> &,
         const std::string &);
     /*!
+     * \return true if all the elements of the array is constant.
+     * \tparam N: size of the array of material properties
+     * \param[in] mps: array of material properties
+     */
+    template <std::size_t N>
+    bool areAllConstantMaterialProperties(
+        const std::array<BehaviourDescription::MaterialProperty, N> &);
+    /*!
      * \brief extract a material property usable in a behaviour from a value. If
      * the material property is handled through an external mfront file, the
      * generation of the associated sources is added to the compilation process
@@ -69,19 +77,8 @@ namespace mfront {
      * evaluation of the material property.
      * \param[out] bd: behaviour description
      * \param[in,out] mp: material property
+     * \param[in] t: variable type
      * \param[in] n: variable name
-     */
-    MFRONT_VISIBILITY_EXPORT void declareParameterOrLocalVariable(
-        BehaviourDescription &,
-        BehaviourDescription::MaterialProperty &,
-        const std::string &);
-    /*!
-     * \brief declare a parameter or a local variable used to store the
-     * evaluation of the material property.
-     * \param[out] bd: behaviour description
-     * \param[in,out] mp: material property
-     * \param[in] n: variable name
-     * \param[in] en: external name
      */
     MFRONT_VISIBILITY_EXPORT void declareParameterOrLocalVariable(
         BehaviourDescription &,
@@ -89,9 +86,89 @@ namespace mfront {
         const std::string &,
         const std::string &);
     /*!
+     * \brief declare an array of parameters or an array of local variables used
+     * to store the evaluation of an array of material properties.
+     * \tparam N: size of the array of material properties
+     * \param[out] bd: behaviour description
+     * \param[in,out] mps: array of material property
+     * \param[in] t: variable type
+     * \param[in] n: variable name
+     */
+    template <std::size_t N>
+    void declareParameterOrLocalVariable(
+        BehaviourDescription &,
+        std::array<BehaviourDescription::MaterialProperty, N> &,
+        const std::string &,
+        const std::string &);
+    /*!
+     * \brief declare a parameter or a local variable used to store the
+     * evaluation of the material property.
+     * \param[out] bd: behaviour description
+     * \param[in,out] mp: material property
+     * \param[in] t: variable type
+     * \param[in] n: variable name
+     * \param[in] en: external name
+     */
+    MFRONT_VISIBILITY_EXPORT void declareParameterOrLocalVariable(
+        BehaviourDescription &,
+        BehaviourDescription::MaterialProperty &,
+        const std::string &,
+        const std::string &,
+        const std::string &);
+    /*!
+     * \brief declare an array of parameters or an array of local variables used
+     * to store the evaluation of an array of material properties.
+     * \tparam N: size of the array of material properties
+     * \param[out] bd: behaviour description
+     * \param[in,out] mps: array of material property
+     * \param[in] t: variable type
+     * \param[in] n: variable name
+     * \param[in] en: external name
+     */
+    template <std::size_t N>
+    void declareParameterOrLocalVariable(
+        BehaviourDescription &,
+        std::array<BehaviourDescription::MaterialProperty, N> &,
+        const std::string &,
+        const std::string &,
+        const std::string &);
+    /*!
+     * \brief declare a parameter or a local variable used to store the
+     * evaluation of the material property.
+     * \param[out] bd: behaviour description
+     * \param[in,out] mp: material property
+     * \param[in] t: variable type
+     * \param[in] n: variable name
+     * \param[in] g: glossary entry
+     */
+    MFRONT_VISIBILITY_EXPORT void declareParameterOrLocalVariable(
+        BehaviourDescription &,
+        BehaviourDescription::MaterialProperty &,
+        const std::string &,
+        const std::string &,
+        const tfel::glossary::GlossaryEntry &);
+    /*!
+     * \brief declare an array of parameters or an array of local variables used
+     * to store the evaluation of an array of material properties.
+     * \tparam N: size of the array of material properties
+     * \param[out] bd: behaviour description
+     * \param[in,out] mps: array of material property
+     * \param[in] t: variable type
+     * \param[in] n: variable name
+     * \param[in] g: glossary entry
+     */
+    template <std::size_t N>
+    void declareParameterOrLocalVariable(
+        BehaviourDescription &,
+        std::array<BehaviourDescription::MaterialProperty, N> &,
+        const std::string &,
+        const std::string &,
+        const tfel::glossary::GlossaryEntry &);
+    /*!
      * \return the code initializing the variable containing the material
      * property value at \(t+\theta\,dt\).
-     * \note If the material property is constant, an empty string is returned,
+     * \note If the material property is constant, an empty string is
+     * returned,
      * as this material property is assumed to be associated with a parameter.
      * \param[in] dsl: abstract behaviour dsl.
      * \param[in] bd: behaviour description
@@ -101,22 +178,26 @@ namespace mfront {
     MFRONT_VISIBILITY_EXPORT std::string
     generateMaterialPropertyInitializationCode(
         const AbstractBehaviourDSL &,
-        const BehaviourDescription &bd,
+        const BehaviourDescription &,
         const std::string &,
         const BehaviourDescription::MaterialProperty &);
     /*!
-     * \brief declare a parameter or a local variable used to store the
-     * evaluation of the material property.
-     * \param[out] bd: behaviour description
-     * \param[in,out] mp: material property
-     * \param[in] n: variable name
-     * \param[in] g: glossary entry
+     * \return the code initializing the arrays of variables containing the
+     * material properties' values at \(t+\theta\,dt\).
+     * \note If all the material properties areconstant, an empty string is
+     * returned, as those material properties are assumed to be associated with
+     * an array of parameters.
+     * \param[in] dsl: abstract behaviour dsl.
+     * \param[in] bd: behaviour description
+     * \param[in] n: name of the variable storing the material property value.
+     * \param[in] mps: array of material property description.
      */
-    MFRONT_VISIBILITY_EXPORT void declareParameterOrLocalVariable(
-        BehaviourDescription &,
-        BehaviourDescription::MaterialProperty &,
+    template <std::size_t N>
+    std::string generateMaterialPropertiesInitializationCode(
+        const AbstractBehaviourDSL &,
+        const BehaviourDescription &,
         const std::string &,
-        const tfel::glossary::GlossaryEntry &);
+        const std::array<BehaviourDescription::MaterialProperty, N> &);
     /*!
     *\brief add a new material property
     *\param[in] bd: behaviour description

@@ -29,8 +29,8 @@ namespace mfront {
       using namespace tfel::glossary;
       constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       // this shall be captured in gcc 4.7.2
-      auto get_mp = [&dsl, &bd, &fid, &id, &d, this](const std::string& mpn,
-                                                     const std::string& vn) {
+      auto get_mp = [&dsl, &bd, &fid, &id, &d, this](
+          const std::string& mpn, const std::string& t, const std::string& vn) {
         if (d.count(mpn) == 0) {
           tfel::raise(
               "SwiftIsotropicHardeningRule::initialize: "
@@ -39,13 +39,13 @@ namespace mfront {
         }
         const auto ni = IsotropicHardeningRule::getVariableId(vn, fid, id);
         auto mp = getBehaviourDescriptionMaterialProperty(dsl, mpn, d.at(mpn));
-        declareParameterOrLocalVariable(bd, mp, ni);
+        declareParameterOrLocalVariable(bd, mp, t, ni);
         return mp;
       };
       mfront::bbrick::check(d, this->getOptions());
-      this->R0 = get_mp("R0", "R0");
-      this->p0 = get_mp("p0", "p0");
-      this->n = get_mp("n", "E");
+      this->R0 = get_mp("R0", "stress", "R0");
+      this->p0 = get_mp("p0", "strain", "p0");
+      this->n = get_mp("n", "real", "E");
       const auto Rel = id.empty() ? "Rel" + fid : "Rel" + fid + "_" + id;
       const auto R = id.empty() ? "R" + fid : "R" + fid + "_" + id;
       const auto dR = "d" + R + "_ddp" + fid;

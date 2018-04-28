@@ -14,6 +14,7 @@
 #include "TFEL/Raise.hxx"
 #include "MFront/BehaviourBrick/MisesStressCriterion.hxx"
 #include "MFront/BehaviourBrick/Hill1948StressCriterion.hxx"
+#include "MFront/BehaviourBrick/Barlat2004StressCriterion.hxx"
 #include "MFront/BehaviourBrick/Hosford1972StressCriterion.hxx"
 #include "MFront/BehaviourBrick/StressCriterionFactory.hxx"
 
@@ -63,6 +64,12 @@ namespace mfront {
       });
       this->addGenerator("Hosford", []() {
         return std::make_shared<bbrick::Hosford1972StressCriterion>();
+      });
+      this->addGenerator("Barlat2004", []() {
+        return std::make_shared<bbrick::Barlat2004StressCriterion>();
+      });
+      this->addGenerator("Barlat", []() {
+        return std::make_shared<bbrick::Barlat2004StressCriterion>();
       });
     } // end of StressCriterionFactory::StressCriterionFactory
 

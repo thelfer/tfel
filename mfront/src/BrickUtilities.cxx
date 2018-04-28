@@ -89,6 +89,7 @@ namespace mfront {
     void declareParameterOrLocalVariable(
         BehaviourDescription& bd,
         BehaviourDescription::MaterialProperty& mp,
+        const std::string& t,
         const std::string& n) {
       constexpr const auto h =
           tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
@@ -96,11 +97,11 @@ namespace mfront {
         auto& cmp = mp.get<BehaviourDescription::ConstantMaterialProperty>();
         cmp.name = n;
         // declare associated parameter
-        VariableDescription m("real", n, 1u, 0u);
+        VariableDescription m(t, n, 1u, 0u);
         bd.addParameter(h, m);
         bd.setParameterDefaultValue(h, n, cmp.value);
       } else {
-        VariableDescription m("real", n, 1u, 0u);
+        VariableDescription m(t, n, 1u, 0u);
         bd.addLocalVariable(h, m);
       }
     } // end of declareParameterOrLocalVariable
@@ -108,11 +109,12 @@ namespace mfront {
     void declareParameterOrLocalVariable(
         BehaviourDescription& bd,
         BehaviourDescription::MaterialProperty& mp,
+        const std::string& t,
         const std::string& n,
         const std::string& en) {
       constexpr const auto h =
           tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-      declareParameterOrLocalVariable(bd, mp, n);
+      declareParameterOrLocalVariable(bd, mp, t, n);
       if (mp.is<BehaviourDescription::ConstantMaterialProperty>()) {
         bd.setEntryName(h,n,en);
       }
@@ -121,11 +123,12 @@ namespace mfront {
     void declareParameterOrLocalVariable(
         BehaviourDescription& bd,
         BehaviourDescription::MaterialProperty& mp,
+        const std::string& t,
         const std::string& n,
         const tfel::glossary::GlossaryEntry& g) {
       constexpr const auto h =
           tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-      declareParameterOrLocalVariable(bd, mp, n);
+      declareParameterOrLocalVariable(bd, mp, t, n);
       if (mp.is<BehaviourDescription::ConstantMaterialProperty>()) {
         bd.setGlossaryName(h, n, g);
       }
@@ -400,7 +403,7 @@ namespace mfront {
           R += " + ";
         }
       }
-      c += "const auto Rel" + fid + " = " + R + "\n;";
+      c += "const auto Rel" + fid + " = " + R + ";\n";
       return c;
     }  // end of computeElasticLimitInitialValue
 
@@ -423,7 +426,7 @@ namespace mfront {
          R += " + ";
        }
      }
-     c += "const auto R" + fid + " = " + R + "\n;";
+     c += "const auto R" + fid + " = " + R + ";\n";
      return c;
     }  // end of computeElasticLimit
 

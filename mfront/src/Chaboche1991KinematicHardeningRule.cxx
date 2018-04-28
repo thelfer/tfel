@@ -51,7 +51,7 @@ namespace mfront {
               n + "' is not defined");
         }
         mp = getBehaviourDescriptionMaterialProperty(dsl, n, d.at(n));
-        declareParameterOrLocalVariable(bd, mp, nid);
+        declareParameterOrLocalVariable(bd, mp, "real", nid);
       };
       KinematicHardeningRuleBase::initialize(bd, dsl, fid, kid, d);
       get_mp(this->D, "D");

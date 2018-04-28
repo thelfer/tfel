@@ -35,6 +35,10 @@ namespace mfront {
                       const std::string&,
                       const DataMap&,
                       const Role) override;
+      void endTreatment(BehaviourDescription&,
+                        const AbstractBehaviourDSL&,
+                        const std::string&,
+                        const Role) override;
       std::vector<OptionDescription> getOptions() const override;
       //! destructor
       ~StressCriterionBase() override;

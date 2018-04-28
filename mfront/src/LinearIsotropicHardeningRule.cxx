@@ -32,7 +32,7 @@ namespace mfront {
       auto get_mp = [&dsl, &bd, &fid, &id, &d,this](const std::string& n) {
         const auto ni = IsotropicHardeningRule::getVariableId(n, fid, id);
         auto mp = getBehaviourDescriptionMaterialProperty(dsl, n, d.at(n));
-        declareParameterOrLocalVariable(bd, mp, ni);
+        declareParameterOrLocalVariable(bd, mp, "stress", ni);
         return mp;
       };
       mfront::bbrick::check(d, this->getOptions());

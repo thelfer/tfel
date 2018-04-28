@@ -19,6 +19,10 @@ namespace mfront{
 
   namespace bbrick {
 
+    std::vector<OptionDescription> StressCriterionBase::getOptions() const{
+      return {};
+    }  // end of StressCriterionBase::getOptions
+
     void StressCriterionBase::initialize(BehaviourDescription& bd,
                                           AbstractBehaviourDSL&,
                                           const std::string& id,
@@ -45,9 +49,11 @@ namespace mfront{
       }
     }  // end of StressCriterionBase::initialize
 
-    std::vector<OptionDescription> StressCriterionBase::getOptions() const{
-      return {};
-    }  // end of StressCriterionBase::getOptions
+    void StressCriterionBase::endTreatment(BehaviourDescription&,
+                                           const AbstractBehaviourDSL&,
+                                           const std::string&,
+                                           const Role) {
+    }  // end of StressCriterionBase::endTreatment
 
     StressCriterionBase::~StressCriterionBase() = default;
 

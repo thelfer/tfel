@@ -23,7 +23,8 @@ namespace mfront{
       using namespace tfel::glossary;
       constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       // this shall be captured in gcc 4.7.2
-      auto get_mp = [&dsl, &bd, &fid, &id, &d,this](const std::string& n) {
+      auto get_mp = [&dsl, &bd, &fid, &id, &d, this](const std::string& t,
+                                                     const std::string& n) {
         const auto ni = IsotropicHardeningRule::getVariableId(n, fid, id);
         if (d.count(n) == 0) {
           tfel::raise(
@@ -32,13 +33,13 @@ namespace mfront{
               n + "' is not defined");
         }
         auto mp = getBehaviourDescriptionMaterialProperty(dsl, n, d.at(n));
-        declareParameterOrLocalVariable(bd, mp, ni);
+        declareParameterOrLocalVariable(bd, mp, t, ni);
         return mp;
       };
       mfront::bbrick::check(d, this->getOptions());
-      this->R0 = get_mp("R0");
-      this->Rinf = get_mp("Rinf");
-      this->b = get_mp("b");
+      this->R0 = get_mp("stress", "R0");
+      this->Rinf = get_mp("stress", "Rinf");
+      this->b = get_mp("real", "b");
       //
       const auto Rel = id.empty() ? "Rel" + fid : "Rel" + fid + "_" + id;
       const auto R = id.empty() ? "R" + fid : "R" + fid + "_" + id;

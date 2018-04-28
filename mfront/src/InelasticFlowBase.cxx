@@ -228,98 +228,106 @@ namespace mfront {
                                          const std::string& id) const {
       constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       const auto& idsl = dynamic_cast<const ImplicitDSLBase&>(dsl);
+      if (this->fc != nullptr) {
+        this->sc->endTreatment(bd, dsl, id, StressCriterion::STRESSCRITERION);
+        this->fc->endTreatment(bd, dsl, id, StressCriterion::FLOWCRITERION);
+      } else {
+        this->sc->endTreatment(bd, dsl, id,
+                               StressCriterion::STRESSANDFLOWCRITERION);
+      }
       auto iid = decltype(ihrs.size()){};
-      for(const auto& ihr : this->ihrs){
+      for (const auto& ihr : this->ihrs) {
         ihr->endTreatment(bd, dsl, id, std::to_string(iid));
         ++iid;
-      }
-      auto kid = decltype(khrs.size()){};
-      for (const auto khr : this->khrs) {
-        khr->endTreatment(bd, dsl, id, std::to_string(kid));
-        ++kid;
-      }
-      const auto requiresAnalyticalJacobian =
-          ((idsl.getSolver().usesJacobian()) &&
-           (!idsl.getSolver().requiresNumericalJacobian()));
-      // implicit equation associated with the elastic strain
-      CodeBlock ib;
-      if (!this->ihrs.empty()) {
-        ib.code += "if(this->bpl" + id + "){\n";
-      }
-      ib.code += this->computeEffectiveStress(id);
-      if (requiresAnalyticalJacobian) {
-        if (this->fc == nullptr) {
-          ib.code += this->sc->computeNormalDerivative(
-              id, bd, sp, StressCriterion::STRESSANDFLOWCRITERION);
-        } else {
-          ib.code += this->sc->computeNormal(id, bd, sp,
-                                             StressCriterion::STRESSCRITERION);
-          ib.code += this->fc->computeNormalDerivative(
-              id, bd, sp, StressCriterion::FLOWCRITERION);
         }
-      } else {
-        if (this->fc == nullptr) {
-          ib.code += this->sc->computeNormal(
-              id, bd, sp, StressCriterion::STRESSANDFLOWCRITERION);
-        } else {
-          ib.code += this->sc->computeCriterion(id, bd, sp);
-          ib.code += this->fc->computeNormal(id, bd, sp,
-                                             StressCriterion::FLOWCRITERION);
+        auto kid = decltype(khrs.size()){};
+        for (const auto khr : this->khrs) {
+          khr->endTreatment(bd, dsl, id, std::to_string(kid));
+          ++kid;
         }
-      }
-      // elasticity
-      ib.code += "feel += this->dp" + id + "* n" + id + ";\n";
-      if (requiresAnalyticalJacobian) {
-        // jacobian terms
-        ib.code += "dfeel_ddp" + id + " = n" + id + ";\n";
-        ib.code += sp.computeDerivatives(
-            bd, "eel", "(this->dp" + id + ")*dn" + id + "_ds" + id);
+        const auto requiresAnalyticalJacobian =
+            ((idsl.getSolver().usesJacobian()) &&
+             (!idsl.getSolver().requiresNumericalJacobian()));
+        // implicit equation associated with the elastic strain
+        CodeBlock ib;
+        if (!this->ihrs.empty()) {
+          ib.code += "if(this->bpl" + id + "){\n";
+        }
+        ib.code += this->computeEffectiveStress(id);
+        if (requiresAnalyticalJacobian) {
+          if (this->fc == nullptr) {
+            ib.code += this->sc->computeNormalDerivative(
+                id, bd, sp, StressCriterion::STRESSANDFLOWCRITERION);
+          } else {
+            ib.code += this->sc->computeNormal(
+                id, bd, sp, StressCriterion::STRESSCRITERION);
+            ib.code += this->fc->computeNormalDerivative(
+                id, bd, sp, StressCriterion::FLOWCRITERION);
+          }
+        } else {
+          if (this->fc == nullptr) {
+            ib.code += this->sc->computeNormal(
+                id, bd, sp, StressCriterion::STRESSANDFLOWCRITERION);
+          } else {
+            ib.code += this->sc->computeCriterion(id, bd, sp);
+            ib.code += this->fc->computeNormal(id, bd, sp,
+                                               StressCriterion::FLOWCRITERION);
+          }
+        }
+        // elasticity
+        ib.code += "feel += this->dp" + id + "* n" + id + ";\n";
+        if (requiresAnalyticalJacobian) {
+          // jacobian terms
+          ib.code += "dfeel_ddp" + id + " = n" + id + ";\n";
+          ib.code += sp.computeDerivatives(
+              bd, "eel", "(this->dp" + id + ")*dn" + id + "_ds" + id);
+          kid = decltype(khrs.size()){};
+          for (const auto& khr : khrs) {
+            ib.code += khr->computeDerivatives(
+                "eel", "-(this->dp" + id + ") * dn" + id + "_ds" + id, id,
+                std::to_string(kid));
+          }
+        }
+        // inelastic flow
+        ib.code += this->buildFlowImplicitEquations(bd, sp, id,
+                                                    requiresAnalyticalJacobian);
+        // hardening rules
         kid = decltype(khrs.size()){};
         for (const auto& khr : khrs) {
-          ib.code += khr->computeDerivatives(
-              "eel", "-(this->dp" + id + ") * dn" + id + "_ds" + id, id,
-              std::to_string(kid));
+          ib.code += khr->buildBackStrainImplicitEquations(
+              bd, sp, this->khrs, id, std::to_string(kid),
+              requiresAnalyticalJacobian);
+          ++kid;
         }
-      }
-      // inelastic flow
-      ib.code += this->buildFlowImplicitEquations(bd, sp, id,
-                                                  requiresAnalyticalJacobian);
-      // hardening rules
-      kid = decltype(khrs.size()){};
-      for (const auto& khr : khrs) {
-        ib.code += khr->buildBackStrainImplicitEquations(
-            bd, sp, this->khrs, id, std::to_string(kid),
-            requiresAnalyticalJacobian);
-        ++kid;
-      }
-      if (!this->ihrs.empty()) {
-        ib.code += "} // end if(this->bpl" + id + ")\n";
-      }
-      bd.setCode(uh, BehaviourData::Integrator, ib,
-                 BehaviourData::CREATEORAPPEND, BehaviourData::AT_BEGINNING);
-      // additional checks
-      if (!this->ihrs.empty()) {
-        CodeBlock acc;
-        acc.code += "if (converged) {\n";
-        acc.code += "// checking status consistency\n";
-        acc.code += "if (this->bpl" + id + ") {\n";
-        acc.code += "if (dp" + id + " < 0) {\n";
-        acc.code += "// desactivating this system\n";
-        acc.code += "converged = this->bpl" + id + " = false;\n";
-        acc.code += "}\n";
-        acc.code += "} else {\n";
-        acc.code += this->computeEffectiveStress(id);
-        acc.code += this->sc->computeCriterion(id, bd, sp);
-        acc.code += computeElasticLimit(this->ihrs,id);
-        acc.code += "if(seq" + id + " > R" + id + ") {\n";
-        acc.code += "converged = false;\n";
-        acc.code += "this->bpl" + id + " = true;\n";
-        acc.code += "}\n";
-        acc.code += "}\n";
-        acc.code += "} // end of if(converged)\n";
-        bd.setCode(uh, BehaviourData::AdditionalConvergenceChecks, acc,
+        if (!this->ihrs.empty()) {
+          ib.code += "} // end if(this->bpl" + id + ")\n";
+        }
+        bd.setCode(uh, BehaviourData::Integrator, ib,
                    BehaviourData::CREATEORAPPEND, BehaviourData::AT_BEGINNING);
-      }
+        // additional checks
+        if (!this->ihrs.empty()) {
+          CodeBlock acc;
+          acc.code += "if (converged) {\n";
+          acc.code += "// checking status consistency\n";
+          acc.code += "if (this->bpl" + id + ") {\n";
+          acc.code += "if (dp" + id + " < 0) {\n";
+          acc.code += "// desactivating this system\n";
+          acc.code += "converged = this->bpl" + id + " = false;\n";
+          acc.code += "}\n";
+          acc.code += "} else {\n";
+          acc.code += this->computeEffectiveStress(id);
+          acc.code += this->sc->computeCriterion(id, bd, sp);
+          acc.code += computeElasticLimit(this->ihrs, id);
+          acc.code += "if(seq" + id + " > R" + id + ") {\n";
+          acc.code += "converged = false;\n";
+          acc.code += "this->bpl" + id + " = true;\n";
+          acc.code += "}\n";
+          acc.code += "}\n";
+          acc.code += "} // end of if(converged)\n";
+          bd.setCode(uh, BehaviourData::AdditionalConvergenceChecks, acc,
+                     BehaviourData::CREATEORAPPEND,
+                     BehaviourData::AT_BEGINNING);
+        }
     } // end of InelasticFlowBase::endTreatment
 
     InelasticFlowBase::~InelasticFlowBase() = default;

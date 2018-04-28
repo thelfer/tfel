@@ -21,28 +21,6 @@ namespace mfront{
 
   namespace bbrick {
 
-    void Hill1948StressCriterion::initialize(BehaviourDescription& bd,
-                                             AbstractBehaviourDSL& dsl,
-                                             const std::string& id,
-                                             const DataMap& d,
-                                             const Role r) {
-      auto get_mp = [&dsl, &bd, &d](const char* const n) {
-        if (d.count(n) == 0) {
-          tfel::raise("Hill1948StressCriterion::initialize: entry '" +
-                      std::string(n) + "' is not defined");
-        }
-        return getBehaviourDescriptionMaterialProperty(dsl, n, d.at(n));
-      };
-      StressCriterionBase::initialize(bd, dsl, id, d, r);
-      const auto Hn = StressCriterion::getVariableId("H", id, r);
-      auto v =
-          VariableDescription{"tfel::math::st2tost2<N,stress>", Hn, 1u, 0u};
-      v.description = "Hill tensor";
-      std::vector<BehaviourDescription::MaterialProperty> Hmps = {
-          get_mp("F"), get_mp("G"), get_mp("H"),
-          get_mp("L"), get_mp("M"), get_mp("N")};
-      bd.addHillTensor(v, Hmps);
-    }  // end of Hill1948StressCriterion::initialize
 
     std::vector<OptionDescription> Hill1948StressCriterion::getOptions() const{
       std::vector<OptionDescription> opts;
@@ -60,6 +38,32 @@ namespace mfront{
                         OptionDescription::MATERIALPROPERTY);
       return opts;
     }  // end of Hill1948StressCriterion::getOptions
+
+    void Hill1948StressCriterion::initialize(BehaviourDescription& bd,
+                                             AbstractBehaviourDSL& dsl,
+                                             const std::string& id,
+                                             const DataMap& d,
+                                             const Role r) {
+      auto get_mp = [&dsl, &bd, &d](const char* const n) {
+        if (d.count(n) == 0) {
+          tfel::raise("Hill1948StressCriterion::initialize: entry '" +
+                      std::string(n) + "' is not defined");
+        }
+        return getBehaviourDescriptionMaterialProperty(dsl, n, d.at(n));
+      };
+      tfel::raise_if(bd.getSymmetryType() != mfront::ORTHOTROPIC,
+                     "Hill1948StressCriterion::initialize: "
+                     "the behaviour must be orthotropic");
+      StressCriterionBase::initialize(bd, dsl, id, d, r);
+      const auto Hn = StressCriterion::getVariableId("H", id, r);
+      auto v =
+          VariableDescription{"tfel::math::st2tost2<N,stress>", Hn, 1u, 0u};
+      v.description = "Hill tensor";
+      std::vector<BehaviourDescription::MaterialProperty> Hmps = {
+          get_mp("F"), get_mp("G"), get_mp("H"),
+          get_mp("L"), get_mp("M"), get_mp("N")};
+      bd.addHillTensor(v, Hmps);
+    }  // end of Hill1948StressCriterion::initialize
 
     std::string Hill1948StressCriterion::computeElasticPrediction(
         const std::string& id,

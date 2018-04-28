@@ -83,37 +83,6 @@ namespace mfront {
     if (this->stress_potential == nullptr) {
       raise("no stress potential defined");
     }
-    // at this stage, one assumes that the various components of the inelastic
-    // flow (stress_potential, isotropic hardening rule) have added the
-    // initialization of their material properties the
-    // `BeforeInitializeLocalVariables`. We then ask the inelastic flows if they
-    // require an  activation state (in practice, it mean that an isotropic
-    // hardening rule has been defined). If so, the initialization of the
-    // activation states requires the the computation of an elastic prediction
-    // of the stress. The brik asks the stress potential to compute it in a
-    // variable called sigel and the inelastic flows shall use it to compute
-    // their initial state. All thoses steps must be added to the
-    // `BeforeInitializeLocalVariables` code block.
-    const bool bep = [this] {
-      for (const auto& pf : this->flows) {
-        if (pf->requiresActivationState()) {
-          return true;
-        }
-      }
-      return false;
-    }();
-    if (bep) {
-      // compute the elastic prediction
-      this->stress_potential->computeElasticPrediction(bd);
-      auto i = size_t{};
-      for (const auto& pf : this->flows) {
-        if (pf->requiresActivationState()) {
-          pf->computeInitialActivationState(bd, *(this->stress_potential),
-                                            getId(i, this->flows.size()));
-        }
-        ++i;
-      }
-    }
   }  // end of StandardElastoViscoPlasticityBrick
 
   std::string StandardElastoViscoPlasticityBrick::getName() const {
@@ -150,6 +119,37 @@ namespace mfront {
       f->endTreatment(this->bd, this->dsl, *(this->stress_potential),
                       getId(i, this->flows.size()));
       ++i;
+    }
+    // at this stage, one assumes that the various components of the inelastic
+    // flow (stress_potential, isotropic hardening rule) have added the
+    // initialization of their material properties the
+    // `BeforeInitializeLocalVariables`. We then ask the inelastic flows if they
+    // require an  activation state (in practice, it mean that an isotropic
+    // hardening rule has been defined). If so, the initialization of the
+    // activation states requires the the computation of an elastic prediction
+    // of the stress. The brik asks the stress potential to compute it in a
+    // variable called sigel and the inelastic flows shall use it to compute
+    // their initial state. All thoses steps must be added to the
+    // `BeforeInitializeLocalVariables` code block.
+    const bool bep = [this] {
+      for (const auto& pf : this->flows) {
+        if (pf->requiresActivationState()) {
+          return true;
+        }
+      }
+      return false;
+    }();
+    if (bep) {
+      // compute the elastic prediction
+      this->stress_potential->computeElasticPrediction(bd);
+      auto i = size_t{};
+      for (const auto& pf : this->flows) {
+        if (pf->requiresActivationState()) {
+          pf->computeInitialActivationState(bd, *(this->stress_potential),
+                                            getId(i, this->flows.size()));
+        }
+        ++i;
+      }
     }
   }  // end of StandardElastoViscoPlasticityBrick::endTreatment
 

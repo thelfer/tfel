@@ -145,6 +145,7 @@ set(TFELMFront_SOURCES
     StressCriterionBase.cxx
     MisesStressCriterion.cxx
     Hill1948StressCriterion.cxx
+    Barlat2004StressCriterion.cxx
     Hosford1972StressCriterion.cxx
     StressCriterionFactory.cxx
     IsotropicHardeningRule.cxx
@@ -155,7 +156,6 @@ set(TFELMFront_SOURCES
     KinematicHardeningRule.cxx
     KinematicHardeningRuleBase.cxx
     PragerKinematicHardeningRule.cxx
-    OhnoWangKinematicHardeningRule.cxx
     Chaboche1991KinematicHardeningRule.cxx
     BurletCailletaudKinematicHardeningRule.cxx
     ArmstrongFrederickKinematicHardeningRule.cxx

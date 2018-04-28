@@ -47,7 +47,8 @@ namespace tfel
      * \right)
      * \f]
      * if \f$\sigma\f$ is a second order symetric tensor (stensor), 
-     * \f$\sigma|H_H*\sigma\f$ computes the Hill stress :
+     * \f$\underline{\sigma}\,\colon\,\underline{\underline{H}}\,\colon\,\underline{\sigma}\f$
+     * computes the Hill stress :
      * \f[
      * H_F\left(\sigma_{11}-\sigma_{22}\right)^2+H_G\left(\sigma_{22}-\sigma_{33}\right)^2+H_H\left(\sigma_{33}-\sigma_{11}\right)^2
      * + 2H_L\sigma_{12}^{2} + 2H_M\sigma_{13}^{2} + 2H_N\sigma_{23}^{2}

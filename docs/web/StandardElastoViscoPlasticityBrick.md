@@ -57,8 +57,46 @@ The brick decomposes the behaviour into two components:
 
 - the stress potential which defines the relation between the elastic
   strain \(\tepsilonel\) and possibly some damage variables and the
-  stress measure \(\tsigma\).
+  stress measure \(\tsigma\). As the definition of the elastic
+  properties can be part of the definition of the stress potential, the
+  thermal expansion coefficients can also be defined in the block
+  corresponding to the stress potential.
 - a list of inelastic flows.
+
+## A detailled Example
+
+~~~~{.cpp}
+@Brick "StandardElastoViscoPlasticity" {
+  // Here the stress potential is given by the Hooke law. We define:
+  // - the elastic properties (Young modulus and Poisson ratio).
+  //   Here the Young modulus is a function of the temperature.
+  //   The Poisson ratio is constant.
+  // - the thermal expansion coefficient
+  // - the reference temperature for the thermal expansion
+  stress_potential : "Hooke" {
+    young_modulus : "2.e5 - (1.e5*((T - 100.)/960.)**2)",
+    poisson_ratio : 0.3,
+    thermal_expansion : "1.e-5 + (1.e-5  * ((T - 100.)/960.) ** 4)",
+    thermal_expansion_reference_temperature : 0
+  },
+  // Here we define only one viscplastic flow defined by the Norton law,
+  // which is based:
+  // - the von Mises stress criterion
+  // - one isotorpic hardening rule based on Voce formalism
+  // - one kinematic hardening rule following the Armstrong-Frederick law
+  inelastic_flow : "Norton" {
+    criterion : "Mises",
+    isotropic_hardening : "Voce" {R0 : 200, Rinf : 100, b : 20},
+    kinematic_hardening : "Armstrong-Frederick" {
+      C : "1.e6 - 98500 * (T - 100) / 96",  //
+      D : "5000 - 5* (T - 100)"
+    },
+    K : "(4200. * (T + 20.) - 3. * (T + 20.0)**2)/4900.",
+    n : "7. - (T - 100.) / 160.",
+    Ksf : 3
+  }
+};
+~~~~
 
 # List of available stress potentials
 
@@ -170,6 +208,37 @@ defined by:
 
 This stress criterion does not have any option.
 
+~~~~{.cpp}
+    criterion : "Mises"
+~~~~
+
+### Hosford stress criterion
+
+The Hosford equivalent stress is defined by (see @hosford_generalized_1972):
+\[
+\sigmaeq^{H}=\sqrt[a]{\Frac{1}{2}\paren{\absvalue{\sigma_{1}-\sigma_{2}}^{a}+\absvalue{\sigma_{1}-\sigma_{3}}^{a}+\absvalue{\sigma_{2}-\sigma_{3}}^{a}}}
+\]
+where \(\sigma_{1}\), \(\sigma_{2}\) and \(\sigma_{3}\) are the eigenvalues of the
+stress.
+
+Therefore, when \(a\) goes to infinity, the Hosford stress reduces to
+the Tresca stress. When \(n = 2\) the Hosford stress reduces to the
+von Mises stress.
+
+![Comparison of the Hosford stress \(a=100,a=8\) and the von Mises stress in plane stress](img/HosfordStress.svg
+ "Comparison of the Hosford stress \(a=100,a=8\) and the von Mises
+ stress in plane stress"){width=70%}
+
+### Example
+
+~~~~{.cpp}
+    criterion : "Hosford" {a : 6}
+~~~~
+
+#### Options
+
+The user must provide the Hosford exponent \(a\).
+
 ### Hill stress criterion
 
 This `Hill` criterion, also called `Hill1948` criterion, is based on the
@@ -201,6 +270,111 @@ property.
 > the coefficients of the Hill tensor can be exchanged for some
 > modelling hypotheses. The coefficients `F`, `G`, `H`, `L`, `M`, `N`
 > must always correspond to the three dimensional case.
+
+### Example
+
+~~~~{.cpp}
+    criterion : "Hill" {F : 0.371, G : 0.629, H : 4.052, L : 1.5, M : 1.5, N : 1.5},
+~~~~
+
+### Barlat 2004 stress criterion
+
+The Barlat equivalent stress is defined as follows (See @barlat_linear_2005):
+\[
+\sigmaeq^{B}=
+\sqrt[a]{
+  \frac{1}{4}\left(
+  \sum_{i=0}^{3}
+  \sum_{j=0}^{3}
+  \absvalue{s'_{i}-s''_{j}}^{a}
+  \right)
+}
+\]
+
+where \(s'_{i}\) and \(s''_{i}\) are the eigenvalues of two
+transformed stresses \(\tenseur{s}'\) and \(\tenseur{s}''\) by two
+linear transformation \(\tenseurq{L}'\) and \(\tenseurq{L}''\):
+\[
+\left\{
+\begin{aligned}
+\tenseur{s}'  &= \tenseurq{L'} \,\colon\,\tsigma \\
+\tenseur{s}'' &= \tenseurq{L''}\,\colon\,\tsigma \\
+\end{aligned}
+\right.
+\]
+
+The linear transformations \(\tenseurq{L}'\) and \(\tenseurq{L}''\)
+are defined by \(9\) coefficients (each) which describe the material
+orthotropy. There are defined through auxiliary linear transformations
+\(\tenseurq{C}'\) and \(\tenseurq{C}''\) as follows:
+\[
+\begin{aligned}
+\tenseurq{L}' &=\tenseurq{C}'\,\colon\,\tenseurq{M} \\
+\tenseurq{L}''&=\tenseurq{C}''\,\colon\,\tenseurq{M}
+\end{aligned}
+\]
+where \(\tenseurq{M}\) is the transformation of the stress to its deviator:
+\[
+\tenseurq{M}=\tenseurq{I}-\Frac{1}{3}\tenseur{I}\,\otimes\,\tenseur{I}
+\]
+
+The linear transformations \(\tenseurq{C}'\) and \(\tenseurq{C}''\) of
+the deviator stress are defined as follows:
+\[
+\tenseurq{C}'=
+\begin{pmatrix}
+0 & -c'_{12} & -c'_{13} & 0 & 0 & 0 \\
+-c'_{21} & 0 & -c'_{23} & 0 & 0 & 0 \\
+-c'_{31} & -c'_{32} & 0 & 0 & 0 & 0 \\
+0 & 0 & 0 & c'_{44} & 0 & 0 \\
+0 & 0 & 0 & 0 & c'_{55} & 0 \\
+0 & 0 & 0 & 0 & 0 & c'_{66} \\
+\end{pmatrix}
+\quad
+\text{and}
+\quad
+\tenseurq{C}''=
+\begin{pmatrix}
+0 & -c''_{12} & -c''_{13} & 0 & 0 & 0 \\
+-c''_{21} & 0 & -c''_{23} & 0 & 0 & 0 \\
+-c''_{31} & -c''_{32} & 0 & 0 & 0 & 0 \\
+0 & 0 & 0 & c''_{44} & 0 & 0 \\
+0 & 0 & 0 & 0 & c''_{55} & 0 \\
+0 & 0 & 0 & 0 & 0 & c''_{66} \\
+\end{pmatrix}
+\]
+
+When all the coefficients \(c'_{ji}\) and \(c''_{ji}\) are equal to
+\(1\), the Barlat equivalent stress reduces to the Hosford equivalent
+stress.
+
+#### Options
+
+This stress criterion has \(3\) mandatory options:
+
+- the coefficients of the first linear transformation \(\tenseurq{L}'\),
+  as `l1`;
+- the coefficients of the second linear transformation
+  \(\tenseurq{L}''\), as `l2`;
+- the Barlat exponent \(a\)
+
+> **Orthotropic axis convention** If an orthotropic axis convention
+> is defined (See the `@OrthotropicBehaviour` keyword' documentation), 
+> the coefficients of the linear transformationscan be exchanged for some
+> modelling hypotheses. The coefficients given by the user must always
+> correspond to the three dimensional case.
+
+### Example
+
+~~~~{.cpp}
+    criterion : "Barlat" {
+      a : 8,
+      l1 : {-0.069888, 0.079143, 0.936408, 0.524741, 1.00306, 1.36318, 0.954322,
+            1.06906, 1.02377},
+      l2 : {0.981171, 0.575316, 0.476741, 1.14501, 0.866827, -0.079294, 1.40462,
+            1.1471, 1.05166}
+    }
+~~~~
 
 ## List of available isotropic hardening rules
 

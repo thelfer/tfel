@@ -44,7 +44,7 @@ namespace mfront {
                      "KinematicHardeningRuleBase::initialize: "
                      "material property 'C' is not defined");
       this->C = getBehaviourDescriptionMaterialProperty(dsl, "C", d.at("C"));
-      declareParameterOrLocalVariable(bd, this->C, Cn);
+      declareParameterOrLocalVariable(bd, this->C, "stress", Cn);
       // kinematic hardening at the beginning of the time step
       bd.reserveName(uh, Xn);
       // kinematic hardening at the middle of the time step

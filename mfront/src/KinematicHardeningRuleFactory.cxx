@@ -13,7 +13,6 @@
 
 #include "TFEL/Raise.hxx"
 #include "MFront/BehaviourBrick/PragerKinematicHardeningRule.hxx"
-#include "MFront/BehaviourBrick/OhnoWangKinematicHardeningRule.hxx"
 #include "MFront/BehaviourBrick/Chaboche1991KinematicHardeningRule.hxx"
 #include "MFront/BehaviourBrick/BurletCailletaudKinematicHardeningRule.hxx"
 #include "MFront/BehaviourBrick/ArmstrongFrederickKinematicHardeningRule.hxx"

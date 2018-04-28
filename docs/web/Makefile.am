@@ -62,6 +62,7 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./signorini.md				              \
 	   ./ogden.md				                      \
 	   ./hyperviscoelasticity.md				      \
+	   ./IsotropicLinearHardeningPlasticity.md                    \
 	   ./orthotropiclinearhardeningplasticity.md                  \
 	   ./isotropicplasticityamstrongfrederickinematichardening.md \
 	   ./iwan.md                                                  \
