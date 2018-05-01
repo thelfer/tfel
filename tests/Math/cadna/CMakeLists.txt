@@ -9,7 +9,7 @@ macro(tests_math_cadna test_arg)
   add_dependencies(check cadna_${test_arg})
   if((CMAKE_HOST_WIN32) AND (NOT MSYS))
     set_property(TEST cadna_${test_arg}
-      PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:TFELMath>\;${CADNA_LIBRARY_PATH}/lib\;$ENV{PATH}")
+      PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:TFELMath>\;${CADNA_LIBRARY_PATH}/lib\;$<TARGET_FILE_DIR:TFELPhysicalConstants>\;$ENV{PATH}")
   endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
   target_link_libraries(cadna_${test_arg} TFELMath TFELTests ${TFEL_CADNA_LIBRARY})
 endmacro(tests_math_cadna)
