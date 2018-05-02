@@ -8,7 +8,6 @@
 \newcommand{\mts}[1]{\left.#1\right|_{t+\theta\,\Delta\,t}}
 \newcommand{\ets}[1]{\left.#1\right|_{t+\Delta\,t}}
 
-
 Models describe the evolution of some state variables of the material
 during a time step.
 

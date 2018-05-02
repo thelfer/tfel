@@ -3,6 +3,8 @@
 @Author Thomas Helfer;
 @Date 23/04/2018;
 
+@ModellingHypotheses {".+"};
+
 @OrthotropicBehaviour<Pipe>;
 @Epsilon 1.e-16;
 @IterMax 100;

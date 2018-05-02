@@ -109,6 +109,38 @@ namespace mfront {
 
     DDIF2StressPotential::DDIF2StressPotential() = default;
 
+    std::vector<OptionDescription> DDIF2StressPotential::getOptions() const {
+      auto opts = HookeStressPotentialBase::getOptions();
+      opts.emplace_back("fracture_stress",
+                        "fracture stress, assumed egal in all directions",
+                        OptionDescription::MATERIALPROPERTY, std::vector<std::string>{},
+                        std::vector<std::string>{"fracture_stresses"});
+      opts.emplace_back(
+          "fracture_stresses", "fracture stresses in all directions",
+          OptionDescription::ARRAYOFMATERIALPROPERTIES, std::vector<std::string>{},
+          std::vector<std::string>{"fracture_stress"});
+      opts.emplace_back("softening_slope",
+                        "softening slope, assumed egal in all directions",
+                        OptionDescription::MATERIALPROPERTY, std::vector<std::string>{},
+                        std::vector<std::string>{"softening_slopes"});
+      opts.emplace_back(
+          "softening_slopes", "softening slopes in all directions",
+          OptionDescription::ARRAYOFMATERIALPROPERTIES, std::vector<std::string>{},
+          std::vector<std::string>{"softening_slope"});
+      opts.emplace_back("fracture_energy",
+                        "fracture energy, assumed egal in all directions",
+                        OptionDescription::MATERIALPROPERTY, std::vector<std::string>{},
+                        std::vector<std::string>{"fracture_energies"});
+      opts.emplace_back(
+          "fracture_energies", "fracture energies in all directions",
+          OptionDescription::ARRAYOFMATERIALPROPERTIES, std::vector<std::string>{},
+          std::vector<std::string>{"fracture_energy"});
+      opts.emplace_back("handle_pressure_on_crack_surface",
+                        "if true, a pressure is applied on the crack surface",
+                        OptionDescription::BOOLEAN);
+      return opts;
+    }  // end of DDIF2StressPotential::getOptions
+
     void DDIF2StressPotential::initialize(BehaviourDescription& bd,
                                           AbstractBehaviourDSL& dsl,
                                           const DataMap& d) {
@@ -118,7 +150,7 @@ namespace mfront {
       // checking options
       check(d, this->getOptions());
       //
-      HookeStressPotential::initialize(bd,dsl, d);
+      HookeStressPotentialBase::initialize(bd,dsl, d);
       // undefined hypothesis
       constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       throw_if(bd.getElasticSymmetryType() != mfront::ISOTROPIC,
@@ -173,11 +205,65 @@ namespace mfront {
 
     void DDIF2StressPotential::completeVariableDeclaration(
         BehaviourDescription& bd, const AbstractBehaviourDSL& dsl) const {
+      constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+      if (getVerboseMode() >= VERBOSE_DEBUG) {
+        getLogStream()
+            << "DDIF2StressPotential::completeVariableDeclaration: begin\n";
+      }
+      HookeStressPotentialBase::completeVariableDeclaration(bd, dsl);
+      LocalDataStructure d;
+      d.name = "ddif2bdata";
+      d.addVariable(uh, {"StressStensor", "sig"});
+      bd.addLocalDataStructure(d, BehaviourData::ALREADYREGISTRED);
+      // modelling hypotheses supported by the brick
+      const auto smh = this->getSupportedModellingHypotheses(bd, dsl);
+      // modelling hypotheses supported by the behaviour
+      const auto bmh = bd.getModellingHypotheses();
+      for (const auto& h : bmh) {
+        if(std::find(smh.begin(), smh.end(), h) == smh.end()){
+          tfel::raise(
+              "DDIF2StressPotential::completeVariableDeclaration: "
+              "unsupported hypothesis '" +
+              ModellingHypothesis::toString(h) + "'");
+        }
+      }
+      // fracture stresses
+      if (this->sr[0].empty()) {
+        addMaterialPropertyIfNotDefined(bd, "stress", "sigr", "FractureStress",
+                                        3u);
+      }
+      // softening slopes
+      if ((this->rp[0].empty()) && (this->gc[0].empty())) {
+        addMaterialPropertyIfNotDefined(bd, "stress", "Rp", "SofteningSlope",
+                                        3u);
+      }
+      if (!this->gc[0].empty()) {
+        addMaterialPropertyIfNotDefined(bd, "length", "Lc", "ElementSize", 3u);
+      }
+      for (const auto h : bd.getModellingHypotheses()) {
+        if (h != ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) {
+          addMaterialPropertyIfNotDefined(bd, "real", "angl",
+                                          "AngularCoordinate");
+        }
+      }
+      if (getVerboseMode() >= VERBOSE_DEBUG) {
+        getLogStream()
+            << "DDIF2StressPotential::completeVariableDeclaration: end\n";
+      }
+    }
+
+    void DDIF2StressPotential::endTreatment(
+        BehaviourDescription& bd, const AbstractBehaviourDSL& dsl) const {
       using tfel::glossary::Glossary;
       using MaterialPropertyInput = BehaviourDescription::MaterialPropertyInput;
+      constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+      if (getVerboseMode() >= VERBOSE_DEBUG) {
+        getLogStream() << "DDIF2StressPotential::endTreatment: begin\n";
+      }
+      HookeStressPotentialBase::endTreatment(bd, dsl);
       auto throw_if = [](const bool b, const std::string& m) {
         tfel::raise_if(
-            b, "DDIF2StressPotential::completeVariableDeclaration: " + m);
+            b, "DDIF2StressPotential::endTreatment: " + m);
       };
       std::function<std::string(const MaterialPropertyInput&)> ets =
           [bd, throw_if](const MaterialPropertyInput& i) -> std::string {
@@ -194,39 +280,27 @@ namespace mfront {
         }
         throw_if(true, "unsupported input type for variable '" + i.name + "'");
       };
-      constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-      if (getVerboseMode() >= VERBOSE_DEBUG) {
-        getLogStream()
-            << "DDIF2StressPotential::completeVariableDeclaration: begin\n";
-      }
-      HookeStressPotential::completeVariableDeclaration(bd, dsl);
       std::string init_code;
       // fracture stresses
-      if (this->sr[0].empty()) {
-        addMaterialPropertyIfNotDefined(bd, "stress", "sigr", "FractureStress",
-                                        3u);
-      } else if (!this->sr[0]
-                      .is<BehaviourDescription::ConstantMaterialProperty>()) {
-        std::ostringstream ssigr;
-        if (this->sr[1].empty()) {
-          for (unsigned short i = 0; i != 3; ++i) {
-            ssigr << "this->sigr[" << i << "] = ";
-            dsl.writeMaterialPropertyEvaluation(ssigr, this->sr[i], ets);
+      if (!this->sr[0].empty()) {
+        if (!this->sr[0].is<BehaviourDescription::ConstantMaterialProperty>()) {
+          std::ostringstream ssigr;
+          if (this->sr[1].empty()) {
+            for (unsigned short i = 0; i != 3; ++i) {
+              ssigr << "this->sigr[" << i << "] = ";
+              dsl.writeMaterialPropertyEvaluation(ssigr, this->sr[i], ets);
+              ssigr << ";\n";
+            }
+          } else {
+            ssigr << "this->sigr[0] = ";
+            dsl.writeMaterialPropertyEvaluation(ssigr, this->sr[0], ets);
             ssigr << ";\n";
+            ssigr << "this->sigr[2] = this->sigr[1] = this->sigr[0];\n";
           }
-        } else {
-          ssigr << "this->sigr[0] = ";
-          dsl.writeMaterialPropertyEvaluation(ssigr, this->sr[0], ets);
-          ssigr << ";\n";
-          ssigr << "this->sigr[2] = this->sigr[1] = this->sigr[0];\n";
+          init_code += ssigr.str();
         }
-        init_code += ssigr.str();
       }
       // softening slopes
-      if ((this->rp[0].empty()) && (this->gc[0].empty())) {
-        addMaterialPropertyIfNotDefined(bd, "stress", "Rp", "SofteningSlope",
-                                        3u);
-      }
       if ((!this->rp[0].empty()) &&
           (!this->rp[0].is<BehaviourDescription::ConstantMaterialProperty>())) {
         std::ostringstream srp;
@@ -263,7 +337,6 @@ namespace mfront {
         init_code += sgc.str();
       }
       if (!this->gc[0].empty()) {
-        addMaterialPropertyIfNotDefined(bd, "length", "Lc", "ElementSize", 3u);
         const std::string young = bd.areElasticMaterialPropertiesDefined()
                                       ? "this->young_tdt"
                                       : "this->young";
@@ -277,19 +350,6 @@ namespace mfront {
             "this->Rp[2]=-((this->Lc[2])*(this->sigr[2])*(this->sigr[2]))/"
             "(2*(this->Gc[2]));\n";
       }
-      LocalDataStructure d;
-      d.name = "ddif2bdata";
-      d.addVariable(uh, {"StressStensor", "sig"});
-      bd.addLocalDataStructure(d, BehaviourData::ALREADYREGISTRED);
-      // modelling hypotheses supported by the brick
-      const auto smh = this->getSupportedModellingHypotheses(bd, dsl);
-      // modelling hypotheses supported by the behaviour
-      const auto bmh = bd.getModellingHypotheses();
-      for (const auto& h : bmh) {
-        throw_if(std::find(smh.begin(), smh.end(), h) == smh.end(),
-                 "unsupported hypothesis '" + ModellingHypothesis::toString(h) +
-                     "'");
-      }
       // init local variables
       init_code +=
           "for(unsigned short idx=0;idx!=3;++idx){\n"
@@ -300,8 +360,6 @@ namespace mfront {
         CodeBlock init;
         init.code = init_code;
         if (h != ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) {
-          addMaterialPropertyIfNotDefined(bd, "real", "angl",
-                                          "AngularCoordinate");
           init.code +=
               "// change to cylindrical coordinates\n"
               "DDIF2Base::cart2cyl(this->deto,this->angl);\n";
@@ -309,19 +367,6 @@ namespace mfront {
         bd.setCode(h, BehaviourData::BeforeInitializeLocalVariables, init,
                    BehaviourData::CREATEORAPPEND, BehaviourData::AT_END);
       }
-      if (getVerboseMode() >= VERBOSE_DEBUG) {
-        getLogStream()
-            << "DDIF2StressPotential::completeVariableDeclaration: end\n";
-      }
-    }
-
-    void DDIF2StressPotential::endTreatment(
-        BehaviourDescription& bd, const AbstractBehaviourDSL& dsl) const {
-      constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-      if (getVerboseMode() >= VERBOSE_DEBUG) {
-        getLogStream() << "DDIF2StressPotential::endTreatment: begin\n";
-      }
-      HookeStressPotential::endTreatment(bd, dsl);
       // implicit equation associated with the crack strains
       const auto& idsl = dynamic_cast<const ImplicitDSLBase&>(dsl);
       CodeBlock integrator;
@@ -396,44 +441,9 @@ namespace mfront {
       }
     }  // end of DDIF2StressPotential::endTreatment
 
-    std::vector<OptionDescription> DDIF2StressPotential::getOptions() const {
-      auto opts = HookeStressPotential::getOptions();
-      opts.emplace_back("fracture_stress",
-                        "fracture stress, assumed egal in all directions",
-                        OptionDescription::MATERIALPROPERTY, std::vector<std::string>{},
-                        std::vector<std::string>{"fracture_stresses"});
-      opts.emplace_back(
-          "fracture_stresses", "fracture stresses in all directions",
-          OptionDescription::ARRAYOFMATERIALPROPERTIES, std::vector<std::string>{},
-          std::vector<std::string>{"fracture_stress"});
-      opts.emplace_back("softening_slope",
-                        "softening slope, assumed egal in all directions",
-                        OptionDescription::MATERIALPROPERTY, std::vector<std::string>{},
-                        std::vector<std::string>{"softening_slopes"});
-      opts.emplace_back(
-          "softening_slopes", "softening slopes in all directions",
-          OptionDescription::ARRAYOFMATERIALPROPERTIES, std::vector<std::string>{},
-          std::vector<std::string>{"softening_slope"});
-      opts.emplace_back("fracture_energy",
-                        "fracture energy, assumed egal in all directions",
-                        OptionDescription::MATERIALPROPERTY, std::vector<std::string>{},
-                        std::vector<std::string>{"fracture_energies"});
-      opts.emplace_back(
-          "fracture_energies", "fracture energies in all directions",
-          OptionDescription::ARRAYOFMATERIALPROPERTIES, std::vector<std::string>{},
-          std::vector<std::string>{"fracture_energy"});
-      opts.emplace_back("handle_pressure_on_crack_surface",
-                        "if true, a pressure is applied on the crack surface",
-                        OptionDescription::BOOLEAN);
-      return opts;
-    }  // end of DDIF2StressPotential::getOptions
-
-    std::vector<tfel::material::ModellingHypothesis::Hypothesis>
-    DDIF2StressPotential::getSupportedModellingHypotheses(
-        const BehaviourDescription&, const AbstractBehaviourDSL& dsl) const {
-      const auto mh = dsl.getDefaultModellingHypotheses();
-      return {mh.begin(), mh.end()};
-    }  // end of DDIF2StressPotential::getSupportedModellingHypothesis
+    bool DDIF2StressPotential::handleIsotropicDamage() const{
+      return false;
+    }  // end of DDIF2StressPotential::handleIsotropicDamage()
 
     DDIF2StressPotential::~DDIF2StressPotential() = default;
 

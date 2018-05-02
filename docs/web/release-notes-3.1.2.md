@@ -7,6 +7,10 @@ solved are described below.
 
 # Tickets fixed
 
+## Ticket #124: StandardElasticity brick: the elastic prediction is wrongly computed in plane stress if the stiffness tensor is computed (`@ComputeStiffnessTensor`) or given (`@RequireStiffnessTensor`)
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/124/>
+
 ## Ticket #123: Implementation mistakes in various behaviours based on Implicit DSL and using a numerical jacobian (use of perturbated values to update auxiliary state variables)
 
 Various behaviours in the MFront' tests base used local variables to

@@ -132,6 +132,7 @@ set(TFELMFront_SOURCES
     OptionDescription.cxx
     BrickUtilities.cxx
     StressPotential.cxx
+    HookeStressPotentialBase.cxx
     HookeStressPotential.cxx
     DDIF2StressPotential.cxx
     StressPotentialFactory.cxx

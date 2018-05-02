@@ -8,6 +8,8 @@
   "material properties."
 }
 
+@ModellingHypotheses {".+"};
+
 @Brick StandardElastoViscoPlasticity{
   stress_potential :
   Hooke{young_modulus : 150e9, poisson_ratio : 0.3, thermal_expansion : 3.e-5}

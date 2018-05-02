@@ -3,6 +3,8 @@
 @Author Thomas Helfer;
 @Date 11/04/2018;
 
+@ModellingHypotheses {".+"};
+
 @Algorithm NewtonRaphson_NumericalJacobian;
 @Epsilon 1.e-16;
 @PerturbationValueForNumericalJacobianComputation 1.e-8;

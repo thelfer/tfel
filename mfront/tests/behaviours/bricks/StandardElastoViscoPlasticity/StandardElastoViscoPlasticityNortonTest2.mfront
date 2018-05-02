@@ -1,8 +1,9 @@
 @DSL Implicit;
 @Behaviour StandardElastoViscoPlasticityNortonTest2;
-
 @Author Thomas Helfer;
 @Date 31/03/2018;
+
+@ModellingHypotheses {".+"};
 
 @Epsilon 1.e-16;
 @Theta 1;

@@ -93,7 +93,7 @@ macro(tests_model test_arg)
     set_property(TEST ${test_arg}
       PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:TFELMaterial>\;$<TARGET_FILE_DIR:TFELNUMODIS>\;$<TARGET_FILE_DIR:TFELMath>\;$<TARGET_FILE_DIR:TFELUtilities>\;$<TARGET_FILE_DIR:TFELException>\;$<TARGET_FILE_DIR:TFELTests>\;$ENV{PATH}")
   endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  target_link_libraries(${test_arg} TFELMaterial TFELMath TFELTests)
+  target_link_libraries(${test_arg} TFELMaterial TFELMath TFELTests TFELPhysicalConstants)
 endmacro(tests_model)
 
 tests_model(test_model)

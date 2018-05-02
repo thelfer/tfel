@@ -2174,10 +2174,12 @@ mfront/include/MFront/BehaviourBrick/Chaboche1991KinematicHardeningRule.hxx -tex
 mfront/include/MFront/BehaviourBrick/DDIF2StressPotential.hxx -text
 mfront/include/MFront/BehaviourBrick/Hill1948StressCriterion.hxx -text
 mfront/include/MFront/BehaviourBrick/HookeStressPotential.hxx -text
+mfront/include/MFront/BehaviourBrick/HookeStressPotentialBase.hxx -text
 mfront/include/MFront/BehaviourBrick/Hosford1972StressCriterion.hxx -text
 mfront/include/MFront/BehaviourBrick/InelasticFlow.hxx -text
 mfront/include/MFront/BehaviourBrick/InelasticFlowBase.hxx -text
 mfront/include/MFront/BehaviourBrick/InelasticFlowFactory.hxx -text
+mfront/include/MFront/BehaviourBrick/IsotropicDamageHookeStressPotential.hxx -text
 mfront/include/MFront/BehaviourBrick/IsotropicHardeningRule.hxx -text
 mfront/include/MFront/BehaviourBrick/IsotropicHardeningRuleFactory.hxx -text
 mfront/include/MFront/BehaviourBrick/KinematicHardeningRule.hxx -text
@@ -2514,6 +2516,7 @@ mfront/src/GeneratorOptions.cxx -text
 mfront/src/GnuplotMaterialPropertyInterface.cxx -text
 mfront/src/Hill1948StressCriterion.cxx -text
 mfront/src/HookeStressPotential.cxx -text
+mfront/src/HookeStressPotentialBase.cxx -text
 mfront/src/Hosford1972StressCriterion.cxx -text
 mfront/src/ImplicitDSL.cxx -text
 mfront/src/ImplicitDSLBase.cxx -text
@@ -2526,6 +2529,7 @@ mfront/src/InitDSLs.cxx -text
 mfront/src/InitInterfaces.cxx -text
 mfront/src/InterfaceBase.cxx -text
 mfront/src/IsotropicBehaviourDSLBase.cxx -text
+mfront/src/IsotropicDamageHookeStressPotential.cxx -text
 mfront/src/IsotropicHardeningRule.cxx -text
 mfront/src/IsotropicHardeningRuleFactory.cxx -text
 mfront/src/IsotropicMisesCreepDSL.cxx -text

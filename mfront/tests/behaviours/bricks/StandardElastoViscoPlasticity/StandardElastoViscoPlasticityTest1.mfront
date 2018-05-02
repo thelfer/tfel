@@ -8,5 +8,7 @@
   "material properties."
 }
 
+@ModellingHypotheses {".+"};
+
 @Brick StandardElastoViscoPlasticity{stress_potential : Hooke};
 

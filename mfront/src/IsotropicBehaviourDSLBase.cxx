@@ -355,8 +355,7 @@ namespace mfront{
   void IsotropicBehaviourDSLBase::writeBehaviourParserSpecificIncludes(std::ostream& os) const
   {
     this->checkBehaviourFile(os);
-    os << "#include\"TFEL/Math/General/BaseCast.hxx\"\n"
-       << "#include\"TFEL/Material/Lame.hxx\"\n\n";
+    os << "#include\"TFEL/Math/General/BaseCast.hxx\"\n\n";
   } // end of IsotropicBehaviourDSLBase::writeBehaviourParserSpecificIncludes
   
   void IsotropicBehaviourDSLBase::writeBehaviourParserSpecificTypedefs(std::ostream& os) const

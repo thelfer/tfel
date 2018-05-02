@@ -18,7 +18,7 @@
 #include <array>
 #include <memory>
 #include "TFEL/Utilities/GenTypeBase.hxx"
-#include "MFront/BehaviourBrick/HookeStressPotential.hxx"
+#include "MFront/BehaviourBrick/HookeStressPotentialBase.hxx"
 
 namespace mfront {
 
@@ -33,7 +33,7 @@ namespace mfront {
      * \brief class describing the computation of the stress through the
      * standard DDIF2 law.
      */
-    struct DDIF2StressPotential : HookeStressPotential{
+    struct DDIF2StressPotential : HookeStressPotentialBase {
       //! \brief constructor
       DDIF2StressPotential();
       std::string getName() const override;
@@ -41,9 +41,6 @@ namespace mfront {
       void initialize(BehaviourDescription&,
                       AbstractBehaviourDSL&,
                       const DataMap&) override;
-      std::vector<Hypothesis> getSupportedModellingHypotheses(
-          const BehaviourDescription&,
-          const AbstractBehaviourDSL&) const override;
       void completeVariableDeclaration(
           BehaviourDescription&, const AbstractBehaviourDSL&) const override;
       void endTreatment(BehaviourDescription&,
@@ -52,6 +49,7 @@ namespace mfront {
       ~DDIF2StressPotential() override;
 
      protected:
+      bool handleIsotropicDamage() const override;
       //! fracture stress
       std::array<MaterialProperty, 3u> sr;
       //! softening slopes

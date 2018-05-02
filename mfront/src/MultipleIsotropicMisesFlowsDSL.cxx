@@ -61,8 +61,7 @@ namespace mfront{
   {
     this->checkBehaviourFile(os);
     os << "#include\"TFEL/Math/General/BaseCast.hxx\"\n"
-       << "#include\"TFEL/Math/TinyMatrixSolve.hxx\"\n"
-       << "#include\"TFEL/Material/Lame.hxx\"\n\n";
+       << "#include\"TFEL/Math/TinyMatrixSolve.hxx\"\n\n";
   }
 
   void

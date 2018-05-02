@@ -20,13 +20,13 @@
   {'EYY' : 3, 'EZZ' : 4, 'EquivalentPlasticStrain' : 20} 1.e-12;
 
 @Test<function> {
-  'EXY' : '0', 'EXZ' : '0', 'EYZ' : '0'
+  'EXY' : '0'
 }
 1.e-12;
 
 @Test<file> @reference_file@ {'SXX' : 8} 1.e-2;
 
 @Test<function> {
-  'SYY' : '0', 'SZZ' : '0', 'SXY' : '0', 'SXZ' : '0', 'SYZ' : '0'
+  'SYY' : '0', 'SZZ' : '0', 'SXY' : '0'
 }
 1.e-2;

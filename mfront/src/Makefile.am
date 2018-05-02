@@ -118,6 +118,7 @@ libTFELMFront_la_SOURCES = MFront.cxx                                           
 		           OptionDescription.cxx                                  \
 		           BrickUtilities.cxx                                     \
 		           StressPotential.cxx                                    \
+		           HookeStressPotentialBase.cxx                           \
 		           HookeStressPotential.cxx                               \
 		           DDIF2StressPotential.cxx                               \
 		           StressPotentialFactory.cxx                             \

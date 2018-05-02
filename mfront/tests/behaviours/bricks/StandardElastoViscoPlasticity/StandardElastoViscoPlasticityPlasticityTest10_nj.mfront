@@ -4,6 +4,7 @@
 @Date 23/04/2018;
 
 @OrthotropicBehaviour<Pipe>;
+@ModellingHypotheses {".+"};
 
 @Algorithm NewtonRaphson_NumericalJacobian;
 @Epsilon 1.e-16;
