@@ -52,8 +52,12 @@ namespace tfel
       if (((r>DDIF2Base::eps)||(e+de>em_1))&&(e+de>=0.)){
 	// damage increase
 	fe        = r;
-	if(sigr+Rp*em>0.){
-	  dfe_dde   = -Rp/young;
+	if(sigr+Rp*em>0){
+if(e + de > em_1){
+          dfe_dde = -Rp / young;
+} else {
+          dfe_dde = 0;
+}
 	} else {
 	  dfe_dde   = 0;
 	}

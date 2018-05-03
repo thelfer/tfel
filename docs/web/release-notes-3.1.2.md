@@ -7,6 +7,13 @@ solved are described below.
 
 # Tickets fixed
 
+## Ticket #126: Jacobian error in `DDIF2Base.ixx`
+
+There was a mistake in the jacobian computed in `treatFracture` method
+of the `DDIF2Base` class du to the complex branching made.
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/126/>
+
 ## Ticket #125: Compiling on gcc 8.0.1 (Fedora 28) fails
 
 Compiling `TFEL\ with `gcc` 8.0.1 (`Fedora 28`) fails in
