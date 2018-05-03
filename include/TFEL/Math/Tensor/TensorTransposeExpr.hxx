@@ -98,7 +98,7 @@ namespace tfel{
       TFEL_MATH_INLINE typename TensorTransposeExprBase<A>::NumType 
       operator()(const typename TensorTransposeExprBase<A>::IndexType i) const 
       {
-	typedef typename TensorTransposeExprBase<A>::NumType NumType;
+	constexpr const typename TensorTransposeExprBase<A>::NumType zero{0};
 	switch(i){
 	case 0:
 	  return this->a(0);
@@ -118,7 +118,7 @@ namespace tfel{
 	default:
 	  break;
 	}
-	return NumType(0);
+	return zero;
       } // end of operator()
 
     private:
@@ -138,7 +138,7 @@ namespace tfel{
       TFEL_MATH_INLINE typename TensorTransposeExprBase<A>::NumType 
       operator()(const typename TensorTransposeExprBase<A>::IndexType i) const 
       {
-	typedef typename TensorTransposeExprBase<A>::NumType NumType;
+	constexpr const typename TensorTransposeExprBase<A>::NumType zero{0};
 	switch(i){
 	case 0:
 	  return this->a(0);
@@ -170,7 +170,7 @@ namespace tfel{
 	default:
 	  break;
 	}
-	return NumType(0);
+	return zero;
       } // end of operator()
 
     private:

@@ -8,6 +8,7 @@
 #include "TFEL/Raise.hxx"
 #include "MFront/BehaviourBrick/HookeStressPotential.hxx"
 #include "MFront/BehaviourBrick/DDIF2StressPotential.hxx"
+#include "MFront/BehaviourBrick/IsotropicDamageHookeStressPotential.hxx"
 #include "MFront/BehaviourBrick/StressPotentialFactory.hxx"
 
 namespace mfront {
@@ -47,6 +48,9 @@ namespace mfront {
       });
       this->addGenerator("DDIF2", [] {
         return std::make_shared<bbrick::DDIF2StressPotential>();
+      });
+      this->addGenerator("IsotropicDamage", [] {
+        return std::make_shared<bbrick::IsotropicDamageHookeStressPotential>();
       });
     }  // end of StressPotentialFactory::StressPotentialFactory
 

@@ -141,16 +141,16 @@ namespace aster
       using namespace tfel::math;
       typedef MechanicalBehaviourTraits<Behaviour<H,AsterReal,false> > MTraits;
       typedef AsterTraits<Behaviour<H,AsterReal,false> > Traits;
-      typedef AsterBehaviourHandler<H,Behaviour> AsterBehaviourHandler;
+      typedef AsterBehaviourHandler<H,Behaviour> ABHandler;
       const bool is_defined_ = MTraits::is_defined;
       const bool bs = Traits::requiresStiffnessTensor;
       const bool ba = Traits::requiresThermalExpansionCoefficientTensor;
       typedef typename std::conditional<
 	is_defined_,
-	typename AsterBehaviourHandler::template Integrator<bs,ba>,
-	typename AsterBehaviourHandler::Error>::type Handler;
-      AsterBehaviourHandler::checkNPROPS(*NPROPS);
-      AsterBehaviourHandler::checkNSTATV(*NSTATV);
+	typename ABHandler::template Integrator<bs,ba>,
+	typename ABHandler::Error>::type Handler;
+      ABHandler::checkNPROPS(*NPROPS);
+      ABHandler::checkNSTATV(*NSTATV);
       Handler handler(DTIME,STRAN,DSTRAN,TEMP,DTEMP,PROPS,
 		      PREDEF,DPRED,STATEV,STRESS,op,sfeh);
       handler.exe(DDSOE,STRESS,STATEV,nullptr);
@@ -186,20 +186,20 @@ namespace aster
       using namespace tfel::math;
       typedef MechanicalBehaviourTraits<Behaviour<H,AsterReal,false> > MTraits;
       typedef AsterTraits<Behaviour<H,AsterReal,false> > Traits;
-      typedef AsterBehaviourHandler<H,Behaviour> AsterBehaviourHandler;
+      typedef AsterBehaviourHandler<H,Behaviour> ABHandler;
       const bool is_defined_ = MTraits::is_defined;
       const bool bs = Traits::requiresStiffnessTensor;
       const bool ba = Traits::requiresThermalExpansionCoefficientTensor;
       typedef typename std::conditional<
 	is_defined_,
-	typename AsterBehaviourHandler::template Integrator<bs,ba>,
-	typename AsterBehaviourHandler::Error>::type Handler;
+	typename ABHandler::template Integrator<bs,ba>,
+	typename ABHandler::Error>::type Handler;
       AsterReal s[4];
       AsterReal e[4];
       AsterReal de[4];
       AsterRotationMatrix2D m(DROT);
-      AsterBehaviourHandler::checkNPROPS(*NPROPS);
-      AsterBehaviourHandler::checkNSTATV(*NSTATV);
+      ABHandler::checkNPROPS(*NPROPS);
+      ABHandler::checkNSTATV(*NSTATV);
       m.rotateStressesForward(STRESS,s);
       m.rotateStrainsForward(STRAN,e);
       m.rotateStrainsForward(DSTRAN,de);
@@ -246,20 +246,20 @@ namespace aster
       const ModellingHypothesis::Hypothesis H = ModellingHypothesis::PLANESTRESS;	   
       typedef MechanicalBehaviourTraits<Behaviour<H,AsterReal,false> > MTraits;
       typedef AsterTraits<Behaviour<H,AsterReal,false> > Traits;
-      typedef AsterBehaviourHandler<H,Behaviour> AsterBehaviourHandler;
+      typedef AsterBehaviourHandler<H,Behaviour> ABHandler;
       const bool is_defined_ = MTraits::is_defined;
       const bool bs = Traits::requiresStiffnessTensor;
       const bool ba = Traits::requiresThermalExpansionCoefficientTensor;
       typedef typename std::conditional<
 	is_defined_,
-	typename AsterBehaviourHandler::template Integrator<bs,ba>,
-	typename AsterBehaviourHandler::Error>::type Handler;
+	typename ABHandler::template Integrator<bs,ba>,
+	typename ABHandler::Error>::type Handler;
       AsterReal s[4];
       AsterReal e[4];
       AsterReal de[4];
       AsterRotationMatrix2D m(DROT);
-      AsterBehaviourHandler::checkNPROPS(*NPROPS);
-      AsterBehaviourHandler::checkNSTATV(*NSTATV);
+      ABHandler::checkNPROPS(*NPROPS);
+      ABHandler::checkNSTATV(*NSTATV);
       m.rotateStressesForward(STRESS,s);
       m.rotateStrainsForward(STRAN,e);
       m.rotateStrainsForward(DSTRAN,de);
@@ -303,14 +303,14 @@ namespace aster
       using namespace tfel::math;
       typedef MechanicalBehaviourTraits<Behaviour<H,AsterReal,false> > MTraits;
       typedef AsterTraits<Behaviour<H,AsterReal,false> > Traits;
-      typedef AsterBehaviourHandler<H,Behaviour> AsterBehaviourHandler;
+      typedef AsterBehaviourHandler<H,Behaviour> ABHandler;
       const bool is_defined_ = MTraits::is_defined;
       const bool bs = Traits::requiresStiffnessTensor;
       const bool ba = Traits::requiresThermalExpansionCoefficientTensor;
       typedef typename std::conditional<
 	is_defined_,
-	typename AsterBehaviourHandler::template Integrator<bs,ba>,
-	typename AsterBehaviourHandler::Error>::type Handler;
+	typename ABHandler::template Integrator<bs,ba>,
+	typename ABHandler::Error>::type Handler;
       AsterReal  s[6];
       AsterReal  e[6];
       AsterReal de[6];
@@ -319,8 +319,8 @@ namespace aster
       m.rotateStressesForward(STRESS,s);
       m.rotateStrainsForward(STRAN,e);
       m.rotateStrainsForward(DSTRAN,de);
-      AsterBehaviourHandler::checkNPROPS(*NPROPS);
-      AsterBehaviourHandler::checkNSTATV(*NSTATV);
+      ABHandler::checkNPROPS(*NPROPS);
+      ABHandler::checkNSTATV(*NSTATV);
       const bool bDDSOE = std::abs(*DDSOE)>0.5; 
       Handler handler(DTIME,e,de,TEMP,DTEMP,PROPS,
 		      PREDEF,DPRED,STATEV,s,op,sfeh);
@@ -373,16 +373,16 @@ namespace aster
       using namespace tfel::math;
       typedef MechanicalBehaviourTraits<Behaviour<H,AsterReal,false> > MTraits;
       typedef AsterTraits<Behaviour<H,AsterReal,false> > Traits;
-      typedef AsterBehaviourHandler<H,Behaviour> AsterBehaviourHandler;
+      typedef AsterBehaviourHandler<H,Behaviour> ABHandler;
       const bool is_defined_ = MTraits::is_defined;
       const bool bs = Traits::requiresStiffnessTensor;
       const bool ba = Traits::requiresThermalExpansionCoefficientTensor;
       typedef typename std::conditional<
 	is_defined_,
-	typename AsterBehaviourHandler::template Integrator<bs,ba>,
-	typename AsterBehaviourHandler::Error>::type Handler;
-      AsterBehaviourHandler::checkNPROPS(*NPROPS);
-      AsterBehaviourHandler::checkNSTATV(*NSTATV);
+	typename ABHandler::template Integrator<bs,ba>,
+	typename ABHandler::Error>::type Handler;
+      ABHandler::checkNPROPS(*NPROPS);
+      ABHandler::checkNSTATV(*NSTATV);
       Handler handler(DTIME,F0,F1,TEMP,DTEMP,PROPS,
 		      PREDEF,DPRED,STATEV,STRESS,op,sfeh);
       handler.exe(DDSOE,STRESS,STATEV,F1);
@@ -418,20 +418,20 @@ namespace aster
       using namespace tfel::math;
       typedef MechanicalBehaviourTraits<Behaviour<H,AsterReal,false> > MTraits;
       typedef AsterTraits<Behaviour<H,AsterReal,false> > Traits;
-      typedef AsterBehaviourHandler<H,Behaviour> AsterBehaviourHandler;
+      typedef AsterBehaviourHandler<H,Behaviour> ABHandler;
       const bool is_defined_ = MTraits::is_defined;
       const bool bs = Traits::requiresStiffnessTensor;
       const bool ba = Traits::requiresThermalExpansionCoefficientTensor;
       typedef typename std::conditional<
 	is_defined_,
-	typename AsterBehaviourHandler::template Integrator<bs,ba>,
-	typename AsterBehaviourHandler::Error>::type Handler;
+	typename ABHandler::template Integrator<bs,ba>,
+	typename ABHandler::Error>::type Handler;
       AsterReal s[4];
       AsterReal F0m[9];
       AsterReal F1m[9];
       AsterFiniteStrainRotationMatrix2D m(DROT);
-      AsterBehaviourHandler::checkNPROPS(*NPROPS);
-      AsterBehaviourHandler::checkNSTATV(*NSTATV);
+      ABHandler::checkNPROPS(*NPROPS);
+      ABHandler::checkNSTATV(*NSTATV);
       m.rotateStressesForward(STRESS,s);
       m.rotateDeformationGradientForward(F0,F0m);
       m.rotateDeformationGradientForward(F1,F1m);
@@ -479,20 +479,20 @@ namespace aster
       const ModellingHypothesis::Hypothesis H = ModellingHypothesis::PLANESTRESS;	   
       typedef MechanicalBehaviourTraits<Behaviour<H,AsterReal,false> > MTraits;
       typedef AsterTraits<Behaviour<H,AsterReal,false> > Traits;
-      typedef AsterBehaviourHandler<H,Behaviour> AsterBehaviourHandler;
+      typedef AsterBehaviourHandler<H,Behaviour> ABHandler;
       const bool is_defined_ = MTraits::is_defined;
       const bool bs = Traits::requiresStiffnessTensor;
       const bool ba = Traits::requiresThermalExpansionCoefficientTensor;
       typedef typename std::conditional<
 	is_defined_,
-	typename AsterBehaviourHandler::template Integrator<bs,ba>,
-	typename AsterBehaviourHandler::Error>::type Handler;
+	typename ABHandler::template Integrator<bs,ba>,
+	typename ABHandler::Error>::type Handler;
       AsterReal s[4];
       AsterReal F0m[9];
       AsterReal F1m[9];
       AsterFiniteStrainRotationMatrix2D m(DROT);
-      AsterBehaviourHandler::checkNPROPS(*NPROPS);
-      AsterBehaviourHandler::checkNSTATV(*NSTATV);
+      ABHandler::checkNPROPS(*NPROPS);
+      ABHandler::checkNSTATV(*NSTATV);
       m.rotateStressesForward(STRESS,s);
       m.rotateDeformationGradientForward(F0,F0m);
       m.rotateDeformationGradientForward(F1,F1m);
@@ -536,14 +536,14 @@ namespace aster
       using namespace tfel::math;
       typedef MechanicalBehaviourTraits<Behaviour<H,AsterReal,false> > MTraits;
       typedef AsterTraits<Behaviour<H,AsterReal,false> > Traits;
-      typedef AsterBehaviourHandler<H,Behaviour> AsterBehaviourHandler;
+      typedef AsterBehaviourHandler<H,Behaviour> ABHandler;
       const bool is_defined_ = MTraits::is_defined;
       const bool bs = Traits::requiresStiffnessTensor;
       const bool ba = Traits::requiresThermalExpansionCoefficientTensor;
       typedef typename std::conditional<
 	is_defined_,
-	typename AsterBehaviourHandler::template Integrator<bs,ba>,
-	typename AsterBehaviourHandler::Error>::type Handler;
+	typename ABHandler::template Integrator<bs,ba>,
+	typename ABHandler::Error>::type Handler;
       AsterReal sm[6];
       AsterReal F0m[9];
       AsterReal F1m[9];
@@ -552,8 +552,8 @@ namespace aster
       m.rotateStressesForward(STRESS,sm);
       m.rotateDeformationGradientForward(F0,F0m);
       m.rotateDeformationGradientForward(F1,F1m);
-      AsterBehaviourHandler::checkNPROPS(*NPROPS);
-      AsterBehaviourHandler::checkNSTATV(*NSTATV);
+      ABHandler::checkNPROPS(*NPROPS);
+      ABHandler::checkNSTATV(*NSTATV);
       const bool bDDSOE = std::abs(*DDSOE)>0.5; 
       Handler handler(DTIME,F0m,F1m,TEMP,DTEMP,PROPS,
 		      PREDEF,DPRED,STATEV,sm,op,sfeh);

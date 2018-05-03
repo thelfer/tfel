@@ -120,6 +120,8 @@ libTFELMFront_la_SOURCES = MFront.cxx                                           
 		           StressPotential.cxx                                    \
 		           HookeStressPotentialBase.cxx                           \
 		           HookeStressPotential.cxx                               \
+		           IsotropicDamageHookeStressPotentialBase.cxx            \
+		           IsotropicDamageHookeStressPotential.cxx                \
 		           DDIF2StressPotential.cxx                               \
 		           StressPotentialFactory.cxx                             \
 		           InelasticFlow.cxx                                      \

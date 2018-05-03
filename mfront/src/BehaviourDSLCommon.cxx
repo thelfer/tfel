@@ -910,7 +910,6 @@ namespace mfront {
 
   void BehaviourDSLCommon::generateSlipSystemsFiles() {
     using SlipSystemsDescription = BehaviourDescription::SlipSystemsDescription;
-    using size_type = SlipSystemsDescription::size_type;
     using vector = SlipSystemsDescription::vector;
     using tensor = SlipSystemsDescription::tensor;
     auto throw_if = [this](const bool b, const std::string& m) {

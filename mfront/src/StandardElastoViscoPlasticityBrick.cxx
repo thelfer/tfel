@@ -142,7 +142,7 @@ namespace mfront {
     if (bep) {
       // compute the elastic prediction
       this->stress_potential->computeElasticPrediction(bd);
-      auto i = size_t{};
+      i = size_t{};
       for (const auto& pf : this->flows) {
         if (pf->requiresActivationState()) {
           pf->computeInitialActivationState(bd, *(this->stress_potential),

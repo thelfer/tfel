@@ -7,6 +7,17 @@ solved are described below.
 
 # Tickets fixed
 
+## Ticket #125: Compiling on gcc 8.0.1 (Fedora 28) fails
+
+Compiling `TFEL\ with `gcc` 8.0.1 (`Fedora 28`) fails in
+`CastemGenericPlaneStressHandler.hxx`.
+
+Reported errors *a priori* look like regressions in the compiler rather
+than actual bugs in the code. However, as the incriminated code is quite
+ambiguous, it was worth fixing it.
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/125/>
+
 ## Ticket #124: StandardElasticity brick: the elastic prediction is wrongly computed in plane stress if the stiffness tensor is computed (`@ComputeStiffnessTensor`) or given (`@RequireStiffnessTensor`)
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/124/>

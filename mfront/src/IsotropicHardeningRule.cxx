@@ -20,10 +20,10 @@ namespace mfront{
     std::string IsotropicHardeningRule::getVariableId(const std::string& n,
                                                       const std::string& fid,
                                                       const std::string& id) {
-      if (id.empty()) {
-        return "ihr_" + n;
+      if (fid.empty()) {
+        return "ihr_" + n+"_"+id;
       }
-      return "ihr_" + n + id;
+      return "ihr_" + n + fid+"_"+id;
     }  // end of IsotropicHardeningRule::getVariableId
 
     IsotropicHardeningRule::~IsotropicHardeningRule() = default;

@@ -541,7 +541,6 @@ namespace mfront {
 
   std::set<CastemInterface::Hypothesis> CastemInterface::getModellingHypothesesToBeTreated(
       const BehaviourDescription& mb) const {
-    using Hypothesis = ModellingHypothesis::Hypothesis;
     const Hypothesis sh[6u] = {ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,
                                ModellingHypothesis::AXISYMMETRICAL,
                                ModellingHypothesis::PLANESTRESS,

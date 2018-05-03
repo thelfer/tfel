@@ -2180,6 +2180,7 @@ mfront/include/MFront/BehaviourBrick/InelasticFlow.hxx -text
 mfront/include/MFront/BehaviourBrick/InelasticFlowBase.hxx -text
 mfront/include/MFront/BehaviourBrick/InelasticFlowFactory.hxx -text
 mfront/include/MFront/BehaviourBrick/IsotropicDamageHookeStressPotential.hxx -text
+mfront/include/MFront/BehaviourBrick/IsotropicDamageHookeStressPotentialBase.hxx -text
 mfront/include/MFront/BehaviourBrick/IsotropicHardeningRule.hxx -text
 mfront/include/MFront/BehaviourBrick/IsotropicHardeningRuleFactory.hxx -text
 mfront/include/MFront/BehaviourBrick/KinematicHardeningRule.hxx -text
@@ -2530,6 +2531,7 @@ mfront/src/InitInterfaces.cxx -text
 mfront/src/InterfaceBase.cxx -text
 mfront/src/IsotropicBehaviourDSLBase.cxx -text
 mfront/src/IsotropicDamageHookeStressPotential.cxx -text
+mfront/src/IsotropicDamageHookeStressPotentialBase.cxx -text
 mfront/src/IsotropicHardeningRule.cxx -text
 mfront/src/IsotropicHardeningRuleFactory.cxx -text
 mfront/src/IsotropicMisesCreepDSL.cxx -text

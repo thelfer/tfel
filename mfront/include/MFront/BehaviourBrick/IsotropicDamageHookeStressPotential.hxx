@@ -1,6 +1,6 @@
 /*!
  * \file
- * mfront/include/MFront/BehaviourBrick/IsotropicDamageHookeStressPotentialBase.hxx
+ * mfront/include/MFront/BehaviourBrick/IsotropicDamageHookeStressPotential.hxx
  * \brief
  * \author Thomas Helfer
  * \date   30/04/2018
@@ -13,13 +13,10 @@
  * <!-- Local IspellDict: english -->
  */
 
-#ifndef LIB_MFRONT_BEHAVIOURBRICK_ISOTROPICDAMAGEHOOKESTRESSPOTENTIALBASE_HXX
-#define LIB_MFRONT_BEHAVIOURBRICK_ISOTROPICDAMAGEHOOKESTRESSPOTENTIALBASE_HXX
+#ifndef LIB_MFRONT_BEHAVIOURBRICK_ISOTROPICDAMAGEHOOKESTRESSPOTENTIAL_HXX
+#define LIB_MFRONT_BEHAVIOURBRICK_ISOTROPICDAMAGEHOOKESTRESSPOTENTIAL_HXX
 
-#include <array>
-#include <memory>
-#include "TFEL/Utilities/GenTypeBase.hxx"
-#include "MFront/BehaviourBrick/HookeStressPotentialBase.hxx"
+#include "MFront/BehaviourBrick/IsotropicDamageHookeStressPotentialBase.hxx"
 
 namespace mfront {
 
@@ -31,20 +28,19 @@ namespace mfront {
     /*!
      * \brief class describing the computation of the stress through the
      * Hooke law coupled with isotropic damage.
+     * The evolution of the damage must be defined by the user.
      */
-    struct IsotropicDamageHookeStressPotentialBase : HookeStressPotentialBase {
+    struct IsotropicDamageHookeStressPotential
+        : IsotropicDamageHookeStressPotentialBase {
       //! \brief constructor
-      IsotropicDamageHookeStressPotentialBase();
+      IsotropicDamageHookeStressPotential();
       //! destructor
-      ~IsotropicDamageHookeStressPotentialBase() override;
-
-     protected:
-      bool handleIsotropicDamage() override;
-    };  // end of struct IsotropicDamageHookeStressPotentialBase
+      ~IsotropicDamageHookeStressPotential() override;
+    };  // end of struct IsotropicDamageHookeStressPotential
 
   }  // end of namespace bbrick
 
 }  // end of namespace mfront
 
-#endif /* LIB_MFRONT_BEHAVIOURBRICK_ISOTROPICDAMAGEHOOKESTRESSPOTENTIALBASE_HXX \
+#endif /* LIB_MFRONT_BEHAVIOURBRICK_ISOTROPICDAMAGEHOOKESTRESSPOTENTIAL_HXX \
           */

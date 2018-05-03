@@ -162,7 +162,7 @@ namespace castem
       using namespace tfel::math;
       typedef MechanicalBehaviourTraits<Behaviour<H,CastemReal,false> > MTraits;
       typedef CastemTraits<Behaviour<H,CastemReal,false> > Traits;
-      typedef CastemBehaviourHandler<STANDARDSTRAINBASEDBEHAVIOUR,H,Behaviour> CastemBehaviourHandler;
+      typedef CastemBehaviourHandler<STANDARDSTRAINBASEDBEHAVIOUR,H,Behaviour> CBHandler;
       const bool is_defined_ = MTraits::is_defined;
       const bool bs = Traits::requiresStiffnessTensor;
       const bool ba = Traits::requiresThermalExpansionCoefficientTensor;
@@ -170,17 +170,17 @@ namespace castem
 	is_defined_,
 	typename std::conditional<
 	  Traits::useTimeSubStepping,
-	  typename CastemBehaviourHandler::template IntegratorWithTimeStepping<bs,ba>,
-	  typename CastemBehaviourHandler::template Integrator<bs,ba>
+	  typename CBHandler::template IntegratorWithTimeStepping<bs,ba>,
+	  typename CBHandler::template Integrator<bs,ba>
 	  >::type,
-	typename CastemBehaviourHandler::Error>::type Handler;
+	typename CBHandler::Error>::type Handler;
       typedef typename std::conditional<
 	MTraits::handlesThermalExpansion,
-	typename CastemBehaviourHandler::CheckThermalExpansionCoefficientIsNull,
-	typename CastemBehaviourHandler::DontCheckThermalExpansionCoefficientIsNull
+	typename CBHandler::CheckThermalExpansionCoefficientIsNull,
+	typename CBHandler::DontCheckThermalExpansionCoefficientIsNull
 	>::type ThermalExpansionCoefficientCheck;
-      CastemBehaviourHandler::checkNPROPS(*NPROPS);
-      CastemBehaviourHandler::checkNSTATV(*NSTATV);
+      CBHandler::checkNPROPS(*NPROPS);
+      CBHandler::checkNSTATV(*NSTATV);
       ThermalExpansionCoefficientCheck::exe(PROPS[7]);
       ThermalExpansionCoefficientCheck::exe(PROPS[8]);
       ThermalExpansionCoefficientCheck::exe(PROPS[9]);
@@ -220,7 +220,7 @@ namespace castem
       using namespace tfel::math;
       typedef MechanicalBehaviourTraits<Behaviour<H,CastemReal,false> > MTraits;
       typedef CastemTraits<Behaviour<H,CastemReal,false> > Traits;
-      typedef CastemBehaviourHandler<STANDARDSTRAINBASEDBEHAVIOUR,H,Behaviour> CastemBehaviourHandler;
+      typedef CastemBehaviourHandler<STANDARDSTRAINBASEDBEHAVIOUR,H,Behaviour> CBHandler;
       const bool is_defined_ = MTraits::is_defined;
       const bool bs = Traits::requiresStiffnessTensor;
       const bool ba = Traits::requiresThermalExpansionCoefficientTensor;
@@ -228,21 +228,21 @@ namespace castem
 	is_defined_,
 	typename std::conditional<
 	Traits::useTimeSubStepping,
-	typename CastemBehaviourHandler::template IntegratorWithTimeStepping<bs,ba>,
-	typename CastemBehaviourHandler::template Integrator<bs,ba>
+	typename CBHandler::template IntegratorWithTimeStepping<bs,ba>,
+	typename CBHandler::template Integrator<bs,ba>
 	>::type,
-	typename CastemBehaviourHandler::Error>::type Handler;
+	typename CBHandler::Error>::type Handler;
       typedef typename std::conditional<
 	MTraits::handlesThermalExpansion,
-	typename CastemBehaviourHandler::CheckThermalExpansionCoefficientIsNull,
-	typename CastemBehaviourHandler::DontCheckThermalExpansionCoefficientIsNull
+	typename CBHandler::CheckThermalExpansionCoefficientIsNull,
+	typename CBHandler::DontCheckThermalExpansionCoefficientIsNull
 	>::type ThermalExpansionCoefficientCheck;
       CastemReal s[4];
       CastemReal e[4];
       CastemReal de[4];
       CastemRotationMatrix2D m(PROPS+7,DROT);
-      CastemBehaviourHandler::checkNPROPS(*NPROPS);
-      CastemBehaviourHandler::checkNSTATV(*NSTATV);
+      CBHandler::checkNPROPS(*NPROPS);
+      CBHandler::checkNSTATV(*NSTATV);
       ThermalExpansionCoefficientCheck::exe(PROPS[10]);
       ThermalExpansionCoefficientCheck::exe(PROPS[11]);
       ThermalExpansionCoefficientCheck::exe(PROPS[12]);
@@ -294,7 +294,7 @@ namespace castem
       const ModellingHypothesis::Hypothesis H = ModellingHypothesis::PLANESTRESS;	   
       typedef MechanicalBehaviourTraits<Behaviour<H,CastemReal,false> > MTraits;
       typedef CastemTraits<Behaviour<H,CastemReal,false> > Traits;
-      typedef CastemBehaviourHandler<STANDARDSTRAINBASEDBEHAVIOUR,H,Behaviour> CastemBehaviourHandler;
+      typedef CastemBehaviourHandler<STANDARDSTRAINBASEDBEHAVIOUR,H,Behaviour> CBHandler;
       const bool is_defined_ = MTraits::is_defined;
       const bool bs = Traits::requiresStiffnessTensor;
       const bool ba = Traits::requiresThermalExpansionCoefficientTensor;
@@ -302,21 +302,21 @@ namespace castem
 	is_defined_,
 	typename std::conditional<
 	Traits::useTimeSubStepping,
-	typename CastemBehaviourHandler::template IntegratorWithTimeStepping<bs,ba>,
-	typename CastemBehaviourHandler::template Integrator<bs,ba>
+	typename CBHandler::template IntegratorWithTimeStepping<bs,ba>,
+	typename CBHandler::template Integrator<bs,ba>
 	>::type,
-	typename CastemBehaviourHandler::Error>::type Handler;
+	typename CBHandler::Error>::type Handler;
       typedef typename std::conditional<
 	MTraits::handlesThermalExpansion,
-	typename CastemBehaviourHandler::CheckThermalExpansionCoefficientIsNull,
-	typename CastemBehaviourHandler::DontCheckThermalExpansionCoefficientIsNull
+	typename CBHandler::CheckThermalExpansionCoefficientIsNull,
+	typename CBHandler::DontCheckThermalExpansionCoefficientIsNull
 	>::type ThermalExpansionCoefficientCheck;
       CastemReal s[4];
       CastemReal e[4];
       CastemReal de[4];
       CastemRotationMatrix2D m(PROPS+4,DROT);
-      CastemBehaviourHandler::checkNPROPS(*NPROPS);
-      CastemBehaviourHandler::checkNSTATV(*NSTATV);
+      CBHandler::checkNPROPS(*NPROPS);
+      CBHandler::checkNSTATV(*NSTATV);
       ThermalExpansionCoefficientCheck::exe(PROPS[10]);
       ThermalExpansionCoefficientCheck::exe(PROPS[11]);
       m.rotateStressesForward(STRESS,s);
@@ -363,7 +363,7 @@ namespace castem
       using namespace tfel::math;
       typedef MechanicalBehaviourTraits<Behaviour<H,CastemReal,false> > MTraits;
       typedef CastemTraits<Behaviour<H,CastemReal,false> > Traits;
-      typedef CastemBehaviourHandler<STANDARDSTRAINBASEDBEHAVIOUR,H,Behaviour> CastemBehaviourHandler;
+      typedef CastemBehaviourHandler<STANDARDSTRAINBASEDBEHAVIOUR,H,Behaviour> CBHandler;
       const bool is_defined_ = MTraits::is_defined;
       const bool bs = Traits::requiresStiffnessTensor;
       const bool ba = Traits::requiresThermalExpansionCoefficientTensor;
@@ -371,14 +371,14 @@ namespace castem
 	is_defined_,
 	typename std::conditional<
 	Traits::useTimeSubStepping,
-	typename CastemBehaviourHandler::template IntegratorWithTimeStepping<bs,ba>,
-	typename CastemBehaviourHandler::template Integrator<bs,ba>
+	typename CBHandler::template IntegratorWithTimeStepping<bs,ba>,
+	typename CBHandler::template Integrator<bs,ba>
 	>::type,
-	typename CastemBehaviourHandler::Error>::type Handler;
+	typename CBHandler::Error>::type Handler;
       typedef typename std::conditional<
 	MTraits::handlesThermalExpansion,
-	typename CastemBehaviourHandler::CheckThermalExpansionCoefficientIsNull,
-	typename CastemBehaviourHandler::DontCheckThermalExpansionCoefficientIsNull
+	typename CBHandler::CheckThermalExpansionCoefficientIsNull,
+	typename CBHandler::DontCheckThermalExpansionCoefficientIsNull
 	>::type ThermalExpansionCoefficientCheck;
       CastemReal  s[6];
       CastemReal  e[6];
@@ -388,8 +388,8 @@ namespace castem
       m.rotateStressesForward(STRESS,s);
       m.rotateStrainsForward(STRAN,e);
       m.rotateStrainsForward(DSTRAN,de);
-      CastemBehaviourHandler::checkNPROPS(*NPROPS);
-      CastemBehaviourHandler::checkNSTATV(*NSTATV);
+      CBHandler::checkNPROPS(*NPROPS);
+      CBHandler::checkNSTATV(*NSTATV);
       ThermalExpansionCoefficientCheck::exe(PROPS[16]);
       ThermalExpansionCoefficientCheck::exe(PROPS[17]);
       ThermalExpansionCoefficientCheck::exe(PROPS[18]);
@@ -446,7 +446,7 @@ namespace castem
       using namespace tfel::math;
       typedef MechanicalBehaviourTraits<Behaviour<H,CastemReal,false> > MTraits;
       typedef CastemTraits<Behaviour<H,CastemReal,false> > Traits;
-      typedef CastemBehaviourHandler<STANDARDFINITESTRAINBEHAVIOUR,H,Behaviour> CastemBehaviourHandler;
+      typedef CastemBehaviourHandler<STANDARDFINITESTRAINBEHAVIOUR,H,Behaviour> CBHandler;
       const bool is_defined_ = MTraits::is_defined;
       const bool bs = Traits::requiresStiffnessTensor;
       const bool ba = Traits::requiresThermalExpansionCoefficientTensor;
@@ -454,17 +454,17 @@ namespace castem
 	is_defined_,
 	typename std::conditional<
 	  Traits::useTimeSubStepping,
-	  typename CastemBehaviourHandler::template IntegratorWithTimeStepping<bs,ba>,
-	  typename CastemBehaviourHandler::template Integrator<bs,ba>
+	  typename CBHandler::template IntegratorWithTimeStepping<bs,ba>,
+	  typename CBHandler::template Integrator<bs,ba>
 	  >::type,
-	typename CastemBehaviourHandler::Error>::type Handler;
+	typename CBHandler::Error>::type Handler;
       typedef typename std::conditional<
 	MTraits::handlesThermalExpansion,
-	typename CastemBehaviourHandler::CheckThermalExpansionCoefficientIsNull,
-	typename CastemBehaviourHandler::DontCheckThermalExpansionCoefficientIsNull
+	typename CBHandler::CheckThermalExpansionCoefficientIsNull,
+	typename CBHandler::DontCheckThermalExpansionCoefficientIsNull
 	>::type ThermalExpansionCoefficientCheck;
-      CastemBehaviourHandler::checkNPROPS(*NPROPS);
-      CastemBehaviourHandler::checkNSTATV(*NSTATV);
+      CBHandler::checkNPROPS(*NPROPS);
+      CBHandler::checkNSTATV(*NSTATV);
       ThermalExpansionCoefficientCheck::exe(PROPS[7]);
       ThermalExpansionCoefficientCheck::exe(PROPS[8]);
       ThermalExpansionCoefficientCheck::exe(PROPS[9]);
@@ -504,7 +504,7 @@ namespace castem
       using namespace tfel::math;
       typedef MechanicalBehaviourTraits<Behaviour<H,CastemReal,false> > MTraits;
       typedef CastemTraits<Behaviour<H,CastemReal,false> > Traits;
-      typedef CastemBehaviourHandler<STANDARDFINITESTRAINBEHAVIOUR,H,Behaviour> CastemBehaviourHandler;
+      typedef CastemBehaviourHandler<STANDARDFINITESTRAINBEHAVIOUR,H,Behaviour> CBHandler;
       const bool is_defined_ = MTraits::is_defined;
       const bool bs = Traits::requiresStiffnessTensor;
       const bool ba = Traits::requiresThermalExpansionCoefficientTensor;
@@ -512,21 +512,21 @@ namespace castem
 	is_defined_,
 	typename std::conditional<
 	Traits::useTimeSubStepping,
-	typename CastemBehaviourHandler::template IntegratorWithTimeStepping<bs,ba>,
-	typename CastemBehaviourHandler::template Integrator<bs,ba>
+	typename CBHandler::template IntegratorWithTimeStepping<bs,ba>,
+	typename CBHandler::template Integrator<bs,ba>
 	>::type,
-	typename CastemBehaviourHandler::Error>::type Handler;
+	typename CBHandler::Error>::type Handler;
       typedef typename std::conditional<
 	MTraits::handlesThermalExpansion,
-	typename CastemBehaviourHandler::CheckThermalExpansionCoefficientIsNull,
-	typename CastemBehaviourHandler::DontCheckThermalExpansionCoefficientIsNull
+	typename CBHandler::CheckThermalExpansionCoefficientIsNull,
+	typename CBHandler::DontCheckThermalExpansionCoefficientIsNull
 	>::type ThermalExpansionCoefficientCheck;
       CastemReal s[4];
       CastemReal F0m[9];
       CastemReal F1m[9];
       CastemRotationMatrix2D m(PROPS+7,DROT);
-      CastemBehaviourHandler::checkNPROPS(*NPROPS);
-      CastemBehaviourHandler::checkNSTATV(*NSTATV);
+      CBHandler::checkNPROPS(*NPROPS);
+      CBHandler::checkNSTATV(*NSTATV);
       ThermalExpansionCoefficientCheck::exe(PROPS[10]);
       ThermalExpansionCoefficientCheck::exe(PROPS[11]);
       ThermalExpansionCoefficientCheck::exe(PROPS[12]);
@@ -578,7 +578,7 @@ namespace castem
       const ModellingHypothesis::Hypothesis H = ModellingHypothesis::PLANESTRESS;	   
       typedef MechanicalBehaviourTraits<Behaviour<H,CastemReal,false> > MTraits;
       typedef CastemTraits<Behaviour<H,CastemReal,false> > Traits;
-      typedef CastemBehaviourHandler<STANDARDFINITESTRAINBEHAVIOUR,H,Behaviour> CastemBehaviourHandler;
+      typedef CastemBehaviourHandler<STANDARDFINITESTRAINBEHAVIOUR,H,Behaviour> CBHandler;
       const bool is_defined_ = MTraits::is_defined;
       const bool bs = Traits::requiresStiffnessTensor;
       const bool ba = Traits::requiresThermalExpansionCoefficientTensor;
@@ -586,21 +586,21 @@ namespace castem
 	is_defined_,
 	typename std::conditional<
 	Traits::useTimeSubStepping,
-	typename CastemBehaviourHandler::template IntegratorWithTimeStepping<bs,ba>,
-	typename CastemBehaviourHandler::template Integrator<bs,ba>
+	typename CBHandler::template IntegratorWithTimeStepping<bs,ba>,
+	typename CBHandler::template Integrator<bs,ba>
 	>::type,
-	typename CastemBehaviourHandler::Error>::type Handler;
+	typename CBHandler::Error>::type Handler;
       typedef typename std::conditional<
 	MTraits::handlesThermalExpansion,
-	typename CastemBehaviourHandler::CheckThermalExpansionCoefficientIsNull,
-	typename CastemBehaviourHandler::DontCheckThermalExpansionCoefficientIsNull
+	typename CBHandler::CheckThermalExpansionCoefficientIsNull,
+	typename CBHandler::DontCheckThermalExpansionCoefficientIsNull
 	>::type ThermalExpansionCoefficientCheck;
       CastemReal s[4];
       CastemReal F0m[9];
       CastemReal F1m[9];
       CastemRotationMatrix2D m(PROPS+4,DROT);
-      CastemBehaviourHandler::checkNPROPS(*NPROPS);
-      CastemBehaviourHandler::checkNSTATV(*NSTATV);
+      CBHandler::checkNPROPS(*NPROPS);
+      CBHandler::checkNSTATV(*NSTATV);
       ThermalExpansionCoefficientCheck::exe(PROPS[10]);
       ThermalExpansionCoefficientCheck::exe(PROPS[11]);
       ThermalExpansionCoefficientCheck::exe(PROPS[12]);
@@ -648,7 +648,7 @@ namespace castem
       using namespace tfel::math;
       typedef MechanicalBehaviourTraits<Behaviour<H,CastemReal,false> > MTraits;
       typedef CastemTraits<Behaviour<H,CastemReal,false> > Traits;
-      typedef CastemBehaviourHandler<STANDARDFINITESTRAINBEHAVIOUR,H,Behaviour> CastemBehaviourHandler;
+      typedef CastemBehaviourHandler<STANDARDFINITESTRAINBEHAVIOUR,H,Behaviour> CBHandler;
       const bool is_defined_ = MTraits::is_defined;
       const bool bs = Traits::requiresStiffnessTensor;
       const bool ba = Traits::requiresThermalExpansionCoefficientTensor;
@@ -656,14 +656,14 @@ namespace castem
 	is_defined_,
 	typename std::conditional<
 	Traits::useTimeSubStepping,
-	typename CastemBehaviourHandler::template IntegratorWithTimeStepping<bs,ba>,
-	typename CastemBehaviourHandler::template Integrator<bs,ba>
+	typename CBHandler::template IntegratorWithTimeStepping<bs,ba>,
+	typename CBHandler::template Integrator<bs,ba>
 	>::type,
-	typename CastemBehaviourHandler::Error>::type Handler;
+	typename CBHandler::Error>::type Handler;
       typedef typename std::conditional<
 	MTraits::handlesThermalExpansion,
-	typename CastemBehaviourHandler::CheckThermalExpansionCoefficientIsNull,
-	typename CastemBehaviourHandler::DontCheckThermalExpansionCoefficientIsNull
+	typename CBHandler::CheckThermalExpansionCoefficientIsNull,
+	typename CBHandler::DontCheckThermalExpansionCoefficientIsNull
 	>::type ThermalExpansionCoefficientCheck;
       CastemReal sm[6];
       CastemReal F0m[9];
@@ -673,8 +673,8 @@ namespace castem
       m.rotateStressesForward(STRESS,sm);
       m.rotateDeformationGradientForward(F0,F0m);
       m.rotateDeformationGradientForward(F1,F1m);
-      CastemBehaviourHandler::checkNPROPS(*NPROPS);
-      CastemBehaviourHandler::checkNSTATV(*NSTATV);
+      CBHandler::checkNPROPS(*NPROPS);
+      CBHandler::checkNSTATV(*NSTATV);
       ThermalExpansionCoefficientCheck::exe(PROPS[16]);
       ThermalExpansionCoefficientCheck::exe(PROPS[17]);
       ThermalExpansionCoefficientCheck::exe(PROPS[18]);

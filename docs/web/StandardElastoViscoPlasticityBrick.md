@@ -103,8 +103,15 @@ The brick decomposes the behaviour into two components:
 ## The Hooke stress potential
 
 This stress potential implements the Hooke law, i.e. a linear relation
-between the elastic strain and the stress. This stress potential applies
-to isotropic and orthotropic materials. This stress potential provides:
+between the elastic strain and the stress, as follows:
+
+\[
+ \tsigma=\tenseurq{D}\,\colon\,\tepsilonel
+\]
+where \(\tenseurq{D}\) is the elastic stiffness tensor.
+
+This stress potential applies to isotropic and orthotropic materials.
+This stress potential provides:
 
 - Automatic computation of the stress tensor at various stages of the
   behaviour integration.
@@ -118,6 +125,20 @@ to isotropic and orthotropic materials. This stress potential provides:
 
 The Hooke stress potential is fully described
 [here](HookeStressPotential.html).
+
+## The `IsotropicDamage` stress potential
+
+This stress potential adds to the Hooke stress potential the description
+of an isotropioc damage. The relation 
+\[
+ \tsigma=\left(1-d\right)\,\tenseurq{D}\,\colon\,\tepsilonel
+\]
+where \(\tenseurq{D}\) is the elastic stiffness tensor and \(d\) is the
+isotropic damage variable.
+
+This stress potential inherits all the features and options provided by
+the Hooke stress potential. The Hooke stress potential is fully
+described [here](HookeStressPotential.html).
 
 ## The `DDIF2` stress potential
 

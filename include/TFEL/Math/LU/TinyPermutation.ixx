@@ -25,8 +25,8 @@ namespace tfel{
     TinyPermutation<N>::TinyPermutation()
       : is_identity(true)
     {
-      using value_type = unsigned short;
-      tfel::fsalgo::iota<N>::exe(this->begin(),value_type{0u});
+      typename tvector<N,unsigned short>::value_type s{0u};
+      tfel::fsalgo::iota<N>::exe(this->begin(),s);
     }
       
     template<unsigned short N>

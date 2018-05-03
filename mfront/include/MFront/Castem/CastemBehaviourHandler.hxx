@@ -780,7 +780,6 @@ namespace castem {
       static typename BV::IntegrationResult exe(BV &,
                                                 const typename BV::SMFlag,
                                                 const typename BV::SMType) {
-        typedef Behaviour<H, CastemReal, false> BV;
         typedef tfel::material::MechanicalBehaviourTraits<BV> Traits;
         throwPredictionOperatorIsNotAvalaible(Traits::getName());
         return BV::FAILURE;

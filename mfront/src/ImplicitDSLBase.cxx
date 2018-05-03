@@ -1479,7 +1479,6 @@ namespace mfront {
   }  // end of ImplicitDSLBase::writeBehaviourParserSpecificMembers
 
   void ImplicitDSLBase::writeGetPartialJacobianInvert(std::ostream& os, const Hypothesis h) const {
-    using size_type = VariableDescriptionContainer::size_type;
     const auto& d = this->mb.getBehaviourData(h);
     this->checkBehaviourFile(os);
     SupportedTypes::TypeSize n;
