@@ -50,16 +50,16 @@ namespace aster
       typedef Behaviour<H,AsterReal,false> BV;
       typedef MechanicalBehaviourTraits<BV> MTraits;
       typedef AsterTraits<BV> Traits;
-      typedef AsterBehaviourHandler<H,Behaviour> AsterBehaviourHandler;
+      typedef AsterBehaviourHandler<H,Behaviour> ABHandler;
       const bool is_defined_ = MTraits::is_defined;
       const bool bs = Traits::requiresStiffnessTensor;
       const bool ba = Traits::requiresThermalExpansionCoefficientTensor;
       typedef typename std::conditional<
 	is_defined_,
-	typename AsterBehaviourHandler::template Integrator<bs,ba>,
-	typename AsterBehaviourHandler::Error>::type Handler;
-      AsterBehaviourHandler::checkNPROPS(*NPROPS);
-      AsterBehaviourHandler::checkNSTATV(*NSTATV);
+	typename ABHandler::template Integrator<bs,ba>,
+	typename ABHandler::Error>::type Handler;
+      ABHandler::checkNPROPS(*NPROPS);
+      ABHandler::checkNSTATV(*NSTATV);
       Handler handler(DTIME,STRAN,DSTRAN,TEMP,DTEMP,PROPS,
 		      PREDEF,DPRED,STATEV,STRESS,op,sfeh);
       handler.exe(DDSOE,STRESS,STATEV,DSTRAN);

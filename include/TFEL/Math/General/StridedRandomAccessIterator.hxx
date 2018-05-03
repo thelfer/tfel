@@ -181,6 +181,12 @@ namespace tfel{
 	return *this+(-n);
       }
 
+      StridedRandomAccessIterator operator--(){
+	if(this->stride==0){throwNullStrideException();};
+	std::advance(this->current,-(this->stride));
+	return *this;
+      }
+      
       StridedRandomAccessIterator operator+=(const difference_type n){
 	if(this->stride==0){throwNullStrideException();};
 	std::advance(this->current,n*(this->stride));

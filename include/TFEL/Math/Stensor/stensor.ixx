@@ -250,8 +250,8 @@ namespace tfel{
     void stensor<N,T>::computeEigenValues(T& vp0,T& vp1,T& vp2,
 					  const bool b) const 
     {
-      using EigenSolver = tfel::math::internals::StensorEigenSolver<es,N,T>;
-      EigenSolver::computeEigenValues(vp0,vp1,vp2,this->v,b);
+      using ESolver = tfel::math::internals::StensorEigenSolver<es,N,T>;
+      ESolver::computeEigenValues(vp0,vp1,vp2,this->v,b);
     } // end of stensor<N,T>::computeEigenValues
     
     template<unsigned short N,typename T>
@@ -306,8 +306,8 @@ namespace tfel{
     					   tmatrix<3u,3u,tfel::typetraits::base_type<T>>& m,
     					   const bool b) const 
     {
-      using EigenSolver = tfel::math::internals::StensorEigenSolver<es,N,T>;
-      EigenSolver::computeEigenVectors(vp,m,this->v,b);
+      using ESolver = tfel::math::internals::StensorEigenSolver<es,N,T>;
+      ESolver::computeEigenVectors(vp,m,this->v,b);
     }
 
     // computeEigenVectors
@@ -1250,6 +1250,20 @@ namespace tfel{
 	      typename ComputeUnaryResult<StensorNumType<StensorType>,
 					  Power<2>>::Result> dJ;
       computeDeterminantDerivative(dJ,s);
+      return dJ;
+    }
+
+    template<typename StensorType>
+    typename std::enable_if<
+      tfel::meta::Implements<StensorType,StensorConcept>::cond,
+      stensor<StensorTraits<StensorType>::dime,
+	      typename ComputeUnaryResult<StensorNumType<StensorType>,
+					  Power<2>>::Result>>::type
+    computeDeviatorDeterminantDerivative(const StensorType& s){
+      stensor<StensorTraits<StensorType>::dime,
+	      typename ComputeUnaryResult<StensorNumType<StensorType>,
+					  Power<2>>::Result> dJ;
+      computeDeviatorDeterminantDerivative(dJ,s);
       return dJ;
     }
     

@@ -94,8 +94,8 @@ namespace castem
 
     template<typename GeneralisedPlaneStrainBehaviour>
     TFEL_CASTEM_INLINE2 static
-    void exe(const CastemReal c1,
-	     const CastemReal c2,
+    void exe2(const CastemReal c1,
+	      const CastemReal c2,
 	     const CastemReal c3,
 	     const CastemReal *const DTIME,
 	     const CastemReal *const DROT,  CastemReal *const DDSDDE,
@@ -121,7 +121,7 @@ namespace castem
 	tfel::math::tvector<NSTATV_,CastemReal>,
 	tfel::math::vector<CastemReal> >::type SVector;
       CastemGenericPlaneStressHandler::checkNSTATV(*NSTATV);
-      unsigned int iter;
+      unsigned int i;
       const unsigned int iterMax = 50;
 	
       CastemReal eto[4];
@@ -155,9 +155,9 @@ namespace castem
 										      op,sfeh);
       }	    
 	
-      iter = 2;
+      i = 2;
       while((abs(c3*s[2]) > 1.e-12)&&
-	    (iter<iterMax)){
+	    (i<iterMax)){
 	x[0] = x[1];
 	f[0] = f[1];
 	x[1] = dez;
@@ -170,9 +170,9 @@ namespace castem
 										      STRAN,DSTRAN,dez,
 										      &v[0],s,eto,deto,
 										      op,sfeh);
-	++iter;
+	++i;
       }
-      if(iter==iterMax){
+      if(i==iterMax){
 	throwPlaneStressMaximumNumberOfIterationsReachedException(Traits::getName());
       }
       copy<4>::exe(s,STRESS);
@@ -272,7 +272,7 @@ namespace castem
 	const CastemReal n = PROPS[1]; // Poisson ratio
 	const CastemReal c1 = -n/(1-n);
 	const CastemReal c3 = 1/y;
-	CastemGenericPlaneStressHandler::template exe<BehaviourHandler>(c1,c1,c3,
+	CastemGenericPlaneStressHandler::template exe2<BehaviourHandler>(c1,c1,c3,
 								      DTIME,DROT,DDSDDE,
 								      STRAN,DSTRAN,TEMP,
 								      DTEMP,nPROPS,NPROPS,
@@ -342,7 +342,7 @@ namespace castem
 	const CastemReal c1 = -C20/C22;
 	const CastemReal c2 = -C21/C22;
 	// calling the resolution
-	CastemGenericPlaneStressHandler::template exe<BehaviourHandler>(c1,c2,S22,
+	CastemGenericPlaneStressHandler::template exe2<BehaviourHandler>(c1,c2,S22,
 								      DTIME,DROT,DDSDDE,
 								      STRAN,DSTRAN,TEMP,
 								      DTEMP,nPROPS,NPROPS,

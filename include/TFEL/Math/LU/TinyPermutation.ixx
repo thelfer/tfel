@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_MATH_TINYPERMUTATION_I_
-#define LIB_TFEL_MATH_TINYPERMUTATION_I_ 
+#ifndef LIB_TFEL_MATH_TINYPERMUTATION_IXX
+#define LIB_TFEL_MATH_TINYPERMUTATION_IXX 
 
 #include"TFEL/FSAlgorithm/FSAlgorithm.hxx"
 
@@ -25,8 +25,8 @@ namespace tfel{
     TinyPermutation<N>::TinyPermutation()
       : is_identity(true)
     {
-      using value_type = unsigned short;
-      tfel::fsalgo::iota<N>::exe(this->begin(),value_type{0u});
+      typename tvector<N,unsigned short>::value_type s{0u};
+      tfel::fsalgo::iota<N>::exe(this->begin(),s);
     }
       
     template<unsigned short N>
@@ -61,5 +61,5 @@ namespace tfel{
 } // end of namespace tfel
 
 
-#endif /* LIB_TFEL_MATH_TINYPERMUTATION_I_ */
+#endif /* LIB_TFEL_MATH_TINYPERMUTATION_IXX */
 
