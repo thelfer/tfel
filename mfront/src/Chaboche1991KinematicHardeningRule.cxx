@@ -183,7 +183,7 @@ namespace mfront {
         //                             + n +
         //                             "^(" + an + "_|d" + n + "_ds" + fid +
         //                             "))))";
-        //         c += sp.computeDerivatives(bd, an, "-" + mdf_ds);
+        //         c += sp.computeDerivatives(bd, "StrainStensor", an, "-" + mdf_ds);
         //         // term specific to this back strain
         //         c += "df" + an + "_dd" + an + " += ";
         //         c += "(this->theta)*(this->dp" + fid + ")*(this->" + Dn +

@@ -280,7 +280,8 @@ namespace mfront {
           // jacobian terms
           ib.code += "dfeel_ddp" + id + " = n" + id + ";\n";
           ib.code += sp.computeDerivatives(
-              bd, "eel", "(this->dp" + id + ")*dn" + id + "_ds" + id);
+              bd, "StrainStensor", "eel",
+              "(this->dp" + id + ")*dn" + id + "_ds" + id);
           kid = decltype(khrs.size()){};
           for (const auto& khr : khrs) {
             ib.code += khr->computeDerivatives(

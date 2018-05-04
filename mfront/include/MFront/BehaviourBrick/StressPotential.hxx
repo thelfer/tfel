@@ -112,11 +112,13 @@ namespace mfront {
        * derivative of \f$\frac{d\,v}{d\underline{s}}\f$ where
        * \f$\underline{s}\f$ is the effective stress.
        * \param[in] bd: behaviour description
+       * \param[in] t: variable type
        * \param[in] v: variable name
        * \param[in] dfv_ds: derivative of the implicit equation associated to v
        * with respect to the effective stress
        */
       virtual std::string computeDerivatives(const BehaviourDescription&,
+                                             const std::string&,
                                              const std::string&,
                                              const std::string&) const = 0;
       /*!

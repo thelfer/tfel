@@ -37,7 +37,6 @@ namespace mfront {
           "StandardElastoViscoPlasticityBrick: " +
           m);
     };  // end of raise
-    auto& spf = bbrick::StressPotentialFactory::getFactory();
     auto& iff = bbrick::InelasticFlowFactory::getFactory();
     auto getDataStructure = [&raise](const std::string& n, const Data& ds) {
       if (ds.is<std::string>()) {
@@ -50,14 +49,25 @@ namespace mfront {
       }
       return ds.get<tfel::utilities::DataStructure>();
     };  // end of getDataStructure
-    for (const auto& e : d) {
-      if ((e.first == "elastic_potential") || (e.first == "stress_potential")) {
-        const auto ds = getDataStructure(e.first, e.second);
+    auto getStressPotential = [&d,&getDataStructure,&raise, this](const char* const n) {
+      if (d.count(n) != 0) {
+        const auto ds = getDataStructure(n, d.at(n));
         if (this->stress_potential != nullptr) {
           raise("the stress potential has already been defined");
         }
+        auto& spf = bbrick::StressPotentialFactory::getFactory();
         this->stress_potential = spf.generate(ds.name);
         this->stress_potential->initialize(this->bd, this->dsl, ds.data);
+      }
+    };
+    getStressPotential("elastic_potential");
+    getStressPotential("stress_potential");
+    if (this->stress_potential == nullptr) {
+      raise("no stress potential defined");
+    }
+    for (const auto& e : d) {
+      if ((e.first == "elastic_potential") || (e.first == "stress_potential")) {
+        // already treated
       } else if (e.first == "inelastic_flow") {
         auto append_flow = [this, &iff, getDataStructure](const Data& ifd,
                                                           const size_t msize) {
@@ -79,9 +89,6 @@ namespace mfront {
       } else {
         raise("unsupported entry '" + e.first + "'");
       }
-    }
-    if (this->stress_potential == nullptr) {
-      raise("no stress potential defined");
     }
   }  // end of StandardElastoViscoPlasticityBrick
 
@@ -123,7 +130,8 @@ namespace mfront {
     // at this stage, one assumes that the various components of the inelastic
     // flow (stress_potential, isotropic hardening rule) have added the
     // initialization of their material properties the
-    // `BeforeInitializeLocalVariables`. We then ask the inelastic flows if they
+    // `BeforeInitializeLocalVariables`. We then ask the inelastic flows if
+    // they
     // require an  activation state (in practice, it mean that an isotropic
     // hardening rule has been defined). If so, the initialization of the
     // activation states requires the the computation of an elastic prediction

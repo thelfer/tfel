@@ -3710,6 +3710,8 @@ mfront/tests/behaviours/bricks/StandardElasticity/cyrano/testcomputeelasticpredi
 mfront/tests/behaviours/bricks/StandardElasticity/cyrano/testcomputeelasticprediction4.mtest -text
 mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/CMakeLists.txt -text
 mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/Makefile.am -text
+mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/StandardElastoViscoPlasticityIsotropicDamageHookeLaw.mfront -text
+mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/StandardElastoViscoPlasticityIsotropicDamageHookeLaw_nj.mfront -text
 mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/StandardElastoViscoPlasticityNortonTest.mfront -text
 mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/StandardElastoViscoPlasticityNortonTest2.mfront -text
 mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/StandardElastoViscoPlasticityNortonTest2_nj.mfront -text
@@ -3764,6 +3766,7 @@ mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/StandardElastoVisco
 mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/StandardElastoViscoPlasticityTest6.mfront -text
 mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/castem/CMakeLists.txt -text
 mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/castem/Makefile.am -text
+mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/castem/castemstandardelastoviscoplasticityisotropicdamagehookelaw.mtest -text
 mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/castem/castemstandardelastoviscoplasticitynortontest.mtest -text
 mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/castem/castemstandardelastoviscoplasticitynortontest2.mtest -text
 mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/castem/castemstandardelastoviscoplasticitynortontest3.mtest -text

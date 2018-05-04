@@ -61,9 +61,9 @@ namespace mfront {
           c += computeElasticLimitAndDerivative(this->ihrs, id);
           c += this->computeFlowRateAndDerivative(id);
           c += "fp" + id + " -= (this->dt)*vp" + id + ";\n";
-          c += sp.computeDerivatives(bd, "p" + id, "-(this->dt)*dvp" + id +
-                                                       "_dseqe" + id + "*dseq" +
-                                                       id + "_ds" + id);
+          c += sp.computeDerivatives(bd, "strain", "p" + id,
+                                     "-(this->dt)*dvp" + id + "_dseqe" + id +
+                                         "*dseq" + id + "_ds" + id);
           c += "dfp" + id + "_ddp" + id + " += (this->dt)*dvp" + id + "_dseqe" +
                id + "*dR" + id + "_ddp" + id + ";\n";
           auto kid = decltype(khrs.size()){};
@@ -83,9 +83,9 @@ namespace mfront {
         if (b) {
           c += this->computeFlowRateAndDerivative(id);
           c += "fp" + id + " -= (this->dt)*vp" + id + ";\n";
-          c += sp.computeDerivatives(bd, "p" + id, "-(this->dt)*dvp" + id +
-                                                       "_dseqe" + id + "*dseq" +
-                                                       id + "_ds" + id);
+          c += sp.computeDerivatives(bd, "strain", "p" + id,
+                                     "-(this->dt)*dvp" + id + "_dseqe" + id +
+                                         "*dseq" + id + "_ds" + id);
           auto kid = decltype(khrs.size()){};
           for (const auto& khr : khrs) {
             c +=

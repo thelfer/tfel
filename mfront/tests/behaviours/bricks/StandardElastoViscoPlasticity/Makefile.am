@@ -52,6 +52,8 @@ MFRONTS=StandardElastoViscoPlasticityTest1.mfront                        \
 	StandardElastoViscoPlasticityPlasticityTest10_nj.mfront              \
 	StandardElastoViscoPlasticityPlasticityTest10_na.mfront              \
 	StandardElastoViscoPlasticityPlasticityTest10_nanj.mfront            \
+	StandardElastoViscoPlasticityIsotropicDamageHookeLaw.mfront          \
+	StandardElastoViscoPlasticityIsotropicDamageHookeLaw_nj.mfront       \
 	references/standardelastoviscoplasticitynortontest7.ref              \
 	references/standardelastoviscoplasticitynortontest8-cyclic_E.ref     \
 	references/standardelastoviscoplasticitynortontest8-cyclic_S.ref     \

@@ -108,7 +108,7 @@ namespace mfront {
             ")*(1-this->" + en + ")*2*((" + an +
             "_|" + n + ")*d" + n + "_ds" + fid + "+(" + n + "^(" + an +
             "_|d" + n + "_ds" + fid + "))))/3";
-        c += sp.computeDerivatives(bd, an, "-" + mdf_ds);
+        c += sp.computeDerivatives(bd, "StrainStensor", an, "-" + mdf_ds);
         // term specific to this back strain
         c += "df" + an + "_dd" + an + " += ";
         c += "(this->theta)*(this->dp" + fid + ")*(this->" + Dn + ")*(";

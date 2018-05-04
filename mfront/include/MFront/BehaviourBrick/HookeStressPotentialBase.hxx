@@ -38,6 +38,7 @@ namespace mfront {
       void writeStressDerivatives(BehaviourDescription&) const override;
       std::string computeDerivatives(const BehaviourDescription& bd,
                                      const std::string&,
+                                     const std::string&,
                                      const std::string&) const override;
       void computeElasticPrediction(BehaviourDescription&) const override;
       std::string getStressNormalisationFactor(

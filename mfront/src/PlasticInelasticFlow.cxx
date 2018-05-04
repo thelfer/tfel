@@ -65,7 +65,8 @@ namespace mfront {
         const auto dfp_ddp = "dfp" + id + "_ddp" + id;
         c += computeElasticLimitAndDerivative(this->ihrs, id);
         c += fp + " = (" + seq + "-" + R + ")/("+snf+");\n";
-        c += sp.computeDerivatives(bd, "p" + id, dseq_ds + "/(" + snf + ")");
+        c += sp.computeDerivatives(bd, "strain", "p" + id,
+                                   dseq_ds + "/(" + snf + ")");
         c += "if(" + dR_ddp + ">0){\n";
         c += dfp_ddp + " = -1*std::max(1.e-12,(" + dR_ddp +
              ")/("+snf+"));\n";
