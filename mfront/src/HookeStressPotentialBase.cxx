@@ -831,7 +831,7 @@ namespace mfront {
               : "this->D";
       if (this->handleIsotropicDamage()) {
         // damage effect
-        const std::string d_mts = "(1-this->d+(this->theta)*(this->dd))";
+        const std::string d_mts = "(1-this->d-(this->theta)*(this->dd))";
         const std::string d_ets = "(1-this->d)";
         smts.code = "this->sig = " + d_mts +
                     "*(this->D)*(this->eel+(this->theta)*(this->deel))"
@@ -863,7 +863,7 @@ namespace mfront {
       if (bd.areElasticMaterialPropertiesDefined()) {
         if (this->handleIsotropicDamage()) {
           // damage effect
-          const std::string d_mts = "(1-this->d+(this->theta)*(this->dd))";
+          const std::string d_mts = "(1-this->d-(this->theta)*(this->dd))";
           const std::string d_ets = "(1-this->d)";
           smts.code =
               "this->sig = " + d_mts +
@@ -905,7 +905,7 @@ namespace mfront {
         // Hooke law
         if (this->handleIsotropicDamage()) {
           // damage effect
-          const std::string d_mts = "(1-this->d+(this->theta)*(this->dd))";
+          const std::string d_mts = "(1-this->d-(this->theta)*(this->dd))";
           const std::string d_ets = "(1-this->d)";
           smts.code =
               "this->sig = " + d_mts +
@@ -1573,14 +1573,14 @@ namespace mfront {
             c = "df" + v + "_ddeel += ";
             c += "(this->theta) * (1-this->d-(this->theta)*(this->dd)) * ";
             c += "((" + dfv_ds + ") | (this->D));\n";
-            c += "df" + v + "_dd -= ";
+            c += "df" + v + "_ddd -= ";
             c += "(this->theta) * ((" + dfv_ds + ") | ((this->D) * ";
             c += "(this->eel + (this->theta) * (this->deel)));\n";
           } else if (vf == SupportedTypes::Stensor) {
             c = "df" + v + "_ddeel += ";
             c += "(this->theta) * (1-this->d-(this->theta)*(this->dd)) * ";
             c += "(" + dfv_ds + ") * (this->D);\n";
-            c += "df" + v + "_dd -= ";
+            c += "df" + v + "_ddd -= ";
             c += "(this->theta) * (" + dfv_ds + ") * (this->D) * ";
             c += "(this->eel + (this->theta) * (this->deel));\n";
           } else {
@@ -1601,7 +1601,7 @@ namespace mfront {
               c += "(this->theta) * (1-this->d-(this->theta)*(this->dd)) * ";
               c += "((" + dfv_ds + ") | (2 * (" + mu + ") * Stensor4::Id()+(" +
                    lambda + ") * Stensor4::IxI()));\n";
-              c += "df" + v + "_dd -= ";
+              c += "df" + v + "_ddd -= ";
               c += "(this->theta) * ((" + dfv_ds + ") | ";
               c += "(2 * (" + mu +
                    ") * (this->eel + (this->theta) * (this->deel)) + ";
@@ -1613,7 +1613,7 @@ namespace mfront {
               c += "(this->theta) * (1-this->d-(this->theta)*(this->dd)) * ";
               c += "(" + dfv_ds + ") * (2 * (" + mu + ") * Stensor4::Id()+(" +
                    lambda + ") * Stensor4::IxI());\n";
-              c += "df" + v + "_dd -= ";
+              c += "df" + v + "_ddd -= ";
               c += "(this->theta) * (" + dfv_ds + ") * ";
               c += "(2 * (" + mu +
                    ") * (this->eel + (this->theta) * (this->deel)) + ";
@@ -1637,14 +1637,14 @@ namespace mfront {
               c = "df" + v + "_ddeel += ";
               c += "(this->theta) * (1-this->d-(this->theta)*(this->dd)) * ";
               c += "((" + dfv_ds + ") | (this->D));\n";
-              c += "df" + v + "_dd -= ";
+              c += "df" + v + "_ddd -= ";
               c += "(this->theta) * ((" + dfv_ds + ") | ((this->D) * ";
               c += "(this->eel + (this->theta) * (this->deel)));\n";
             } else if (vf == SupportedTypes::Stensor) {
               c = "df" + v + "_ddeel += ";
               c += "(this->theta) * (1-this->d-(this->theta)*(this->dd)) * ";
               c += "(" + dfv_ds + ") * (this->D);\n";
-              c += "df" + v + "_dd -= ";
+              c += "df" + v + "_ddd -= ";
               c += "(this->theta) * (" + dfv_ds + ") * (this->D) * ";
               c += "(this->eel + (this->theta) * (this->deel));\n";
             } else {
