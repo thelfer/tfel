@@ -28,4 +28,5 @@ EXTRA_DIST = CMakeLists.txt                                           \
 	castemstandardelastoviscoplasticityplasticitytest7-cyclic_S.mtest \
 	castemstandardelastoviscoplasticityplasticitytest7_E.mtest        \
 	castemstandardelastoviscoplasticityplasticitytest7_S.mtest        \
-	castemstandardelastoviscoplasticityisotropicdamagehookelaw.mtest
+	castemstandardelastoviscoplasticityisotropicdamagehookelaw.mtest  \
+	castemstandardelastoviscoplasticityisotropicdamagehookelaw2.mtest

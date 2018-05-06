@@ -1,0 +1,20 @@
+@DSL Implicit;
+@Behaviour StandardElastoViscoPlasticityIsotropicDamageHookeLaw2_nj;
+@Author Thomas Helfer;
+@Date 2/05/2018;
+
+@Algorithm NewtonRaphson_NumericalJacobian;
+@Epsilon 1.e-16;
+@PerturbationValueForNumericalJacobianComputation 1.e-8;
+@Theta 1;
+
+@Brick StandardElastoViscoPlasticity{
+  stress_potential : IsotropicDamage{young_modulus : 150e9, poisson_ratio : 0.3},
+  inelastic_flow : "Norton" {criterion : "Mises", K : 100e6, n : 3.2}
+};
+
+@Parameter p0 = 1.;
+
+@Integrator{
+  fd = d + dd - (1 - exp(-(p + dp) / p0));
+}
