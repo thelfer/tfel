@@ -552,8 +552,8 @@ namespace castem {
         DVInitializer::exe(bData, iData, this->STRAN, this->DSTRAN, sfeh);
         bData.setCASTEMBehaviourDataThermodynamicForces(this->STRESS);
         iData.scale(bData, 0.5);
-        unsigned short subSteps = 1u;
-        unsigned short iterations = 2u;
+        unsigned int subSteps = 1u;
+        unsigned int iterations = 2u;
         const auto smflag = CastemTangentOperatorFlag<CastemTraits<BV>::btype>::value;
         *pnewdt = 0.5;
         while ((iterations != 0) && (subSteps != CastemTraits<BV>::maximumSubStepping)) {
@@ -600,12 +600,12 @@ namespace castem {
             }
           } else if ((result == BV::UNRELIABLE_RESULTS) &&
                      (CastemTraits<BV>::doSubSteppingOnInvalidResults)) {
-            iterations = static_cast<unsigned short>(iterations * 2u);
+            iterations = static_cast<unsigned int>(iterations * 2u);
             iData.scale(bData, 0.5);
             *pnewdt *= 0.5;
           } else {
             ++subSteps;
-            iterations = static_cast<unsigned short>(iterations * 2u);
+            iterations = static_cast<unsigned int>(iterations * 2u);
             iData.scale(bData, 0.5);
             *pnewdt *= 0.5;
           }

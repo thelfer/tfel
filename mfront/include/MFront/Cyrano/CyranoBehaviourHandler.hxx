@@ -294,8 +294,8 @@ namespace cyrano {
             Traits::hasPredictionOperator, StandardPredictionOperatorComputer,
             PredictionOperatorIsNotAvalaible>::type PredictionOperatorComputer;
         CyranoReal sig[3];
-        unsigned short subSteps = 0u;
-        unsigned short iterations = 1u;
+        unsigned int subSteps = 0u;
+        unsigned int iterations = 1u;
         if (this->dt < 0.) {
           throwNegativeTimeStepException(Traits::getName());
         }
@@ -351,11 +351,11 @@ namespace cyrano {
             }
           } else if ((r == BV::UNRELIABLE_RESULTS) &&
                      (CyranoTraits<BV>::doSubSteppingOnInvalidResults)) {
-            iterations = static_cast<unsigned short>(iterations * 2u);
+            iterations = static_cast<unsigned int>(iterations * 2u);
             this->iData.scale(this->bData, 0.5);
           } else {
             ++subSteps;
-            iterations = static_cast<unsigned short>(iterations * 2u);
+            iterations = static_cast<unsigned int>(iterations * 2u);
             this->iData.scale(this->bData, 0.5);
           }
         }
