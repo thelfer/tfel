@@ -32,11 +32,28 @@ namespace mfront {
     struct IsotropicDamageHookeStressPotentialBase : HookeStressPotentialBase {
       //! \brief constructor
       IsotropicDamageHookeStressPotentialBase();
-      //! destructor
+      std::vector<OptionDescription> getOptions() const override;
+      void initialize(BehaviourDescription&,
+                      AbstractBehaviourDSL&,
+                      const DataMap&) override;
+      std::string computeDerivatives(const BehaviourDescription&,
+                                     const std::string&,
+                                     const std::string&,
+                                     const std::string&) const override;
+      //! \brief destructor
       ~IsotropicDamageHookeStressPotentialBase() override;
 
      protected:
-      bool handleIsotropicDamage() const override;
+      void declareComputeElasticPredictionMethod(
+          BehaviourDescription&) const override;
+      void declareComputeStressWhenStiffnessTensorIsDefined(
+          BehaviourDescription&) const override;
+      void declareComputeStressForIsotropicBehaviour(
+          BehaviourDescription&, LocalDataStructure&) const override;
+      void addGenericTangentOperatorSupport(
+          BehaviourDescription&, const AbstractBehaviourDSL&) const override;
+      void addGenericPredictionOperatorSupport(
+          BehaviourDescription&) const override;
     };  // end of struct IsotropicDamageHookeStressPotentialBase
 
   }  // end of namespace bbrick

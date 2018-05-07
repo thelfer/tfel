@@ -110,7 +110,7 @@ namespace mfront {
     DDIF2StressPotential::DDIF2StressPotential() = default;
 
     std::vector<OptionDescription> DDIF2StressPotential::getOptions() const {
-      auto opts = HookeStressPotentialBase::getOptions();
+      auto opts = HookeStressPotential::getOptions();
       opts.emplace_back("fracture_stress",
                         "fracture stress, assumed egal in all directions",
                         OptionDescription::MATERIALPROPERTY, std::vector<std::string>{},
@@ -150,7 +150,7 @@ namespace mfront {
       // checking options
       check(d, this->getOptions());
       //
-      HookeStressPotentialBase::initialize(bd,dsl, d);
+      HookeStressPotential::initialize(bd,dsl, d);
       // undefined hypothesis
       constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       throw_if(bd.getElasticSymmetryType() != mfront::ISOTROPIC,
@@ -210,7 +210,7 @@ namespace mfront {
         getLogStream()
             << "DDIF2StressPotential::completeVariableDeclaration: begin\n";
       }
-      HookeStressPotentialBase::completeVariableDeclaration(bd, dsl);
+      HookeStressPotential::completeVariableDeclaration(bd, dsl);
       LocalDataStructure d;
       d.name = "ddif2bdata";
       d.addVariable(uh, {"StressStensor", "sig"});
@@ -260,7 +260,7 @@ namespace mfront {
       if (getVerboseMode() >= VERBOSE_DEBUG) {
         getLogStream() << "DDIF2StressPotential::endTreatment: begin\n";
       }
-      HookeStressPotentialBase::endTreatment(bd, dsl);
+      HookeStressPotential::endTreatment(bd, dsl);
       auto throw_if = [](const bool b, const std::string& m) {
         tfel::raise_if(
             b, "DDIF2StressPotential::endTreatment: " + m);
@@ -440,10 +440,6 @@ namespace mfront {
                    BehaviourData::CREATEORAPPEND, BehaviourData::AT_END);
       }
     }  // end of DDIF2StressPotential::endTreatment
-
-    bool DDIF2StressPotential::handleIsotropicDamage() const{
-      return false;
-    }  // end of DDIF2StressPotential::handleIsotropicDamage()
 
     DDIF2StressPotential::~DDIF2StressPotential() = default;
 

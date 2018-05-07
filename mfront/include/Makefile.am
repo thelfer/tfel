@@ -102,7 +102,8 @@ nobase_include_HEADERS= MFront/MFront.hxx                                      \
 			MFront/BehaviourBrick/InelasticFlow.hxx                           \
 			MFront/BehaviourBrick/InelasticFlowBase.hxx                       \
 			MFront/BehaviourBrick/ViscoplasticFlowBase.hxx                    \
-			MFront/BehaviourBrick/NortonInelasticFlow.hxx                     \
+			MFront/BehaviourBrick/NortonHoffViscoplasticFlow.hxx              \
+			MFront/BehaviourBrick/HyperbolicSineViscoplasticFlow.hxx          \
 			MFront/BehaviourBrick/PlasticInelasticFlow.hxx                    \
 			MFront/BehaviourBrick/InelasticFlowFactory.hxx                    \
 			MFront/BehaviourBrick/StressCriterion.hxx                         \

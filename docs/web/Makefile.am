@@ -267,6 +267,7 @@ EXTRA_DIST=CMakeLists.txt					      \
            ./img/Barrioz2018.png                                  \
 	   ./img/Cazacu2001_2090-T3.svg                               \
 	   ./img/Cazacu2001_6016-T4-YdLin.svg                         \
+	   ./img/StressPotentials.svg                                 \
 	   ./media/epx1.mp4                                           \
 	   ./media/epx2.mp4                                           \
 	   ./media/abaqus-explicit.mp4                                \

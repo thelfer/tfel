@@ -1,5 +1,5 @@
 /*!
- * \file   NortonInelasticFlow.hxx
+ * \file   HyperbolicSineViscoplasticFlow.hxx
  * \brief
  * \author Thomas Helfer
  * \date   28/03/2018
@@ -11,8 +11,8 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_MFRONT_BEHAVIOURBRICK_NORTONINELASTICFLOW_HXX
-#define LIB_MFRONT_BEHAVIOURBRICK_NORTONINELASTICFLOW_HXX
+#ifndef LIB_MFRONT_BEHAVIOURBRICK_HYPERBOLICSINEVISCOPLASTICFLOW_HXX
+#define LIB_MFRONT_BEHAVIOURBRICK_HYPERBOLICSINEVISCOPLASTICFLOW_HXX
 
 #include "MFront/BehaviourBrick/ViscoplasticFlowBase.hxx"
 
@@ -26,7 +26,7 @@ namespace mfront {
      * The Norton law is defined by the following associated flow rule:
      * \f[
      * \underline{\dot{\varepsilon}}^{\mathrm{vp}}=
-     * A\,\left(\frac{\left<\phi\left(\underline{\sigma}-\displaystyle\sum_{i}\underline{X}_{i}\right)-R\left(p\right)\right>}{K}\right)^{n}
+     * A\,\sinh^{n}\left(\frac{\left<\phi\left(\underline{\sigma}-\displaystyle\sum_{i}\underline{X}_{i}\right)-R\left(p\right)\right>}{K}\right)
      * \frac{\partial \phi}{\partial \underline{\sigma}}
      * \f]
      * where:
@@ -38,7 +38,7 @@ namespace mfront {
      * - \f$K\f$ is a stress normalisation coefficient
      * - \f$n\f$ is the Norton exponent
      */
-    struct NortonInelasticFlow : ViscoplasticFlowBase {
+    struct HyperbolicSineViscoplasticFlow : ViscoplasticFlowBase {
       void initialize(BehaviourDescription&,
                       AbstractBehaviourDSL&,
                       const std::string&,
@@ -49,7 +49,7 @@ namespace mfront {
                         const std::string&) const override;
       std::vector<OptionDescription> getOptions() const override;
       //! destructor
-      ~NortonInelasticFlow() override;
+      ~HyperbolicSineViscoplasticFlow() override;
 
      protected:
       std::string computeFlowRate(const std::string&) const override;
@@ -71,10 +71,10 @@ namespace mfront {
        * \f$\sigma_{\mathrm{eq}}-R>K_{sf}\,K\f$, the Newton step is rejected.
        */
       BehaviourDescription::MaterialProperty Ksf;
-    };  // end of struct NortonInelasticFlow
+    };  // end of struct HyperbolicSineViscoplasticFlow
 
   }  // end of namespace bbrick
 
 }  // end of namespace mfront
 
-#endif /* LIB_MFRONT_BEHAVIOURBRICK_NORTONINELASTICFLOW_HXX */
+#endif /* LIB_MFRONT_BEHAVIOURBRICK_HYPERBOLICSINEVISCOPLASTICFLOW_HXX */

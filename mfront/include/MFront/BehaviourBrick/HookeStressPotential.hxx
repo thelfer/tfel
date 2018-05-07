@@ -20,11 +20,24 @@ namespace mfront {
      */
     struct HookeStressPotential : HookeStressPotentialBase{
       HookeStressPotential();
-      //! destructor
+      std::string computeDerivatives(const BehaviourDescription&,
+                                     const std::string&,
+                                     const std::string&,
+                                     const std::string&) const override;
+      //! \brief destructor
       ~HookeStressPotential() override;
 
      protected:
-      bool handleIsotropicDamage() const override;
+      void declareComputeElasticPredictionMethod(
+          BehaviourDescription&) const override;
+      void declareComputeStressWhenStiffnessTensorIsDefined(
+          BehaviourDescription&) const override;
+      void declareComputeStressForIsotropicBehaviour(
+          BehaviourDescription&, LocalDataStructure&) const override;
+      void addGenericTangentOperatorSupport(
+          BehaviourDescription&, const AbstractBehaviourDSL&) const override;
+      void addGenericPredictionOperatorSupport(
+          BehaviourDescription&) const override;
     };  // end of struct HookeStressPotential
 
   }  // end of namespace bbrick

@@ -21,7 +21,7 @@
 #include "MFront/BehaviourBrick/IsotropicHardeningRule.hxx"
 #include "MFront/BehaviourBrick/KinematicHardeningRule.hxx"
 #include "MFront/BehaviourBrick/OptionDescription.hxx"
-#include "MFront/BehaviourBrick/NortonInelasticFlow.hxx"
+#include "MFront/BehaviourBrick/ViscoplasticFlowBase.hxx"
 
 namespace mfront {
 

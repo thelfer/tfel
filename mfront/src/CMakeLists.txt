@@ -141,7 +141,8 @@ set(TFELMFront_SOURCES
     InelasticFlow.cxx
     InelasticFlowBase.cxx
     ViscoplasticFlowBase.cxx
-    NortonInelasticFlow.cxx
+    NortonHoffViscoplasticFlow.cxx
+    HyperbolicSineViscoplasticFlow.cxx
     PlasticInelasticFlow.cxx
     InelasticFlowFactory.cxx
     StressCriterion.cxx

@@ -60,3 +60,5 @@ The effect of external pressure on the crack surface can be taken into
 account using the option `handle_pressure_on_crack_surface`. If this
 option is true, an external state variable called `pr`, which external
 name is `PressureOnCrackSurface`, is automatically declared.
+
+# References

@@ -12,10 +12,10 @@
  */
 
 #include "TFEL/Raise.hxx"
-#include "MFront/BehaviourBrick/NortonInelasticFlow.hxx"
 #include "MFront/BehaviourBrick/PlasticInelasticFlow.hxx"
+#include "MFront/BehaviourBrick/NortonHoffViscoplasticFlow.hxx"
+#include "MFront/BehaviourBrick/HyperbolicSineViscoplasticFlow.hxx"
 #include "MFront/BehaviourBrick/InelasticFlowFactory.hxx"
-
 namespace mfront {
 
   namespace bbrick {
@@ -48,8 +48,15 @@ namespace mfront {
     }  // end of InelasticFlowFactory::generate
 
     InelasticFlowFactory::InelasticFlowFactory() {
-      this->addGenerator(
-          "Norton", []() { return std::make_shared<NortonInelasticFlow>(); });
+      this->addGenerator("Norton", []() {
+        return std::make_shared<NortonHoffViscoplasticFlow>();
+      });
+      this->addGenerator("Norton-Hoff", []() {
+        return std::make_shared<NortonHoffViscoplasticFlow>();
+      });
+      this->addGenerator("HyperbolicSine", []() {
+        return std::make_shared<HyperbolicSineViscoplasticFlow>();
+      });
       this->addGenerator(
           "Plastic", []() { return std::make_shared<PlasticInelasticFlow>(); });
     }  // end of InelasticFlowFactory::InelasticFlowFactory

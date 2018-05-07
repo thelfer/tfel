@@ -26,6 +26,10 @@ MFRONTS=StandardElastoViscoPlasticityTest1.mfront                        \
 	StandardElastoViscoPlasticityOrthotropicNortonTest_nj.mfront         \
 	StandardElastoViscoPlasticityOrthotropicNortonTest_na.mfront         \
 	StandardElastoViscoPlasticityOrthotropicNortonTest_nanj.mfront       \
+	StandardElastoViscoPlasticityHyperbolicSineTest.mfront               \
+	StandardElastoViscoPlasticityHyperbolicSineTest_nj.mfront            \
+	StandardElastoViscoPlasticityHyperbolicSineTest2.mfront              \
+	StandardElastoViscoPlasticityHyperbolicSineTest2_nj.mfront           \
 	StandardElastoViscoPlasticityPlasticityTest.mfront                   \
 	StandardElastoViscoPlasticityPlasticityTest_na.mfront                \
 	StandardElastoViscoPlasticityPlasticityTest_nj.mfront                \

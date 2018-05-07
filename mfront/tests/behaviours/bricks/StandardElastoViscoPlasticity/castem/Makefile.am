@@ -12,6 +12,8 @@ EXTRA_DIST = CMakeLists.txt                                           \
 	castemstandardelastoviscoplasticitynortontest8_E.mtest            \
 	castemstandardelastoviscoplasticitynortontest8_S.mtest            \
 	castemstandardelastoviscoplasticityorthotropicnortontest.mtest    \
+	castemstandardelastoviscoplasticityhyperbolicsinetest.mtest       \
+	castemstandardelastoviscoplasticityhyperbolicsinetest2.mtest      \
 	castemstandardelastoviscoplasticityplasticitytest.mtest           \
 	castemstandardelastoviscoplasticityplasticitytest_nj.mtest        \
 	castemstandardelastoviscoplasticityplasticitytest2.mtest          \

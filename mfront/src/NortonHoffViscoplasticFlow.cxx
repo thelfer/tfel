@@ -1,5 +1,5 @@
 /*!
- * \file   NortonInelasticFlow.cxx
+ * \file   NortonHoffViscoplasticFlow.cxx
  * \brief
  * \author Thomas Helfer
  * \date   28/03/2018
@@ -21,13 +21,28 @@
 #include "MFront/BehaviourBrick/IsotropicHardeningRule.hxx"
 #include "MFront/BehaviourBrick/KinematicHardeningRule.hxx"
 #include "MFront/BehaviourBrick/OptionDescription.hxx"
-#include "MFront/BehaviourBrick/NortonInelasticFlow.hxx"
+#include "MFront/BehaviourBrick/NortonHoffViscoplasticFlow.hxx"
 
 namespace mfront {
 
   namespace bbrick {
 
-    void NortonInelasticFlow::initialize(BehaviourDescription& bd,
+    std::vector<OptionDescription> NortonHoffViscoplasticFlow::getOptions() const {
+      auto opts = ViscoplasticFlowBase::getOptions();
+      opts.emplace_back("A", "Norton coefficient (optional)",
+                        OptionDescription::MATERIALPROPERTY);
+      opts.emplace_back("K", "Stress normalisation factor",
+                        OptionDescription::MATERIALPROPERTY);
+      opts.emplace_back("Ksf",
+                        "stress thresold factor. If the seq-R is greater "
+                        "than Ksf*K, the newton step is rejected",
+                        OptionDescription::MATERIALPROPERTY);
+      opts.emplace_back("n", "Norton exponent",
+                        OptionDescription::MATERIALPROPERTY);
+      return opts;
+    }  // end of NortonHoffViscoplasticFlow::getOptions
+
+    void NortonHoffViscoplasticFlow::initialize(BehaviourDescription& bd,
                                          AbstractBehaviourDSL& dsl,
                                          const std::string& id,
                                          const DataMap& d) {
@@ -36,7 +51,7 @@ namespace mfront {
           const std::string& mpn, const std::string& t, const std::string& vn) {
         if (d.count(mpn) == 0) {
           tfel::raise(
-              "NortonInelasticFlow::"
+              "NortonHoffViscoplasticFlow::"
               "initialize: "
               "material property '" +
               mpn + "' is not defined");
@@ -64,9 +79,9 @@ namespace mfront {
         this->Ksf = get_mp("Ksf", "real", "Ksf");
       }
       bd.reserveName(uh, "seqe" + id + "_K__n_1");
-    }  // end of NortonInelasticFlow::initialize
+    }  // end of NortonHoffViscoplasticFlow::initialize
 
-    void NortonInelasticFlow::endTreatment(BehaviourDescription& bd,
+    void NortonHoffViscoplasticFlow::endTreatment(BehaviourDescription& bd,
                                            const AbstractBehaviourDSL& dsl,
                                            const StressPotential& sp,
                                            const std::string& id) const {
@@ -99,22 +114,7 @@ namespace mfront {
       }
     }  // end of KinematicHardeningRuleBase::endTreatment
 
-    std::vector<OptionDescription> NortonInelasticFlow::getOptions() const {
-      auto opts = ViscoplasticFlowBase::getOptions();
-      opts.emplace_back("A", "Norton coefficient (optional)",
-                        OptionDescription::MATERIALPROPERTY);
-      opts.emplace_back("K", "Stress normalisation factor",
-                        OptionDescription::MATERIALPROPERTY);
-      opts.emplace_back("Ksf",
-                        "stress thresold factor. If the seq-R is greater "
-                        "than Ksf*K, the newton step is rejected",
-                        OptionDescription::MATERIALPROPERTY);
-      opts.emplace_back("n", "Norton exponent",
-                        OptionDescription::MATERIALPROPERTY);
-      return opts;
-    }  // end of NortonInelasticFlow::getOptions
-
-    std::string NortonInelasticFlow::computeFlowRate(
+    std::string NortonHoffViscoplasticFlow::computeFlowRate(
         const std::string& id) const {
       auto c = std::string{};
       if (this->ihrs.empty()) {
@@ -138,9 +138,9 @@ namespace mfront {
              ")/(this->K" + id + "),real(0)),this->E" + id + ");\n";
       }
       return c;
-    }  // end of NortonInelasticFlow::computeFlowRate
+    }  // end of NortonHoffViscoplasticFlow::computeFlowRate
 
-    std::string NortonInelasticFlow::computeFlowRateAndDerivative(
+    std::string NortonHoffViscoplasticFlow::computeFlowRateAndDerivative(
         const std::string& id) const {
       auto c = std::string{};
       if (this->ihrs.empty()) {
@@ -175,9 +175,9 @@ namespace mfront {
              ")/(this->K" + id + ");\n";
       }
       return c;
-    }  // end of NortonInelasticFlow::computeFlowRateAndDerivative
+    }  // end of NortonHoffViscoplasticFlow::computeFlowRateAndDerivative
 
-    NortonInelasticFlow::~NortonInelasticFlow() = default;
+    NortonHoffViscoplasticFlow::~NortonHoffViscoplasticFlow() = default;
 
   }  // end of namespace bbrick
 

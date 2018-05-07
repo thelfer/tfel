@@ -100,6 +100,9 @@ The brick decomposes the behaviour into two components:
 
 # List of available stress potentials
 
+![Relations between stress potentials. The stress potentials usable by the end users are marked in red.](img/StressPotentials.svg
+ "Relations between stress potentials")
+
 ## The Hooke stress potential
 
 This stress potential implements the Hooke law, i.e. a linear relation
@@ -153,6 +156,10 @@ features provided by the Hooke stress potential.
 
 The Hooke stress potential is fully described
 [here](HookeStressPotential.html).
+
+The DDIF2 stress potential is fully described
+[here](DDIF2StressPotential.html).
+
 
 # Inelastic flows
 
