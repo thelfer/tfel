@@ -13,7 +13,7 @@
 
 #include "TFEL/Raise.hxx"
 #include "MFront/BehaviourBrick/PragerKinematicHardeningRule.hxx"
-#include "MFront/BehaviourBrick/Chaboche1991KinematicHardeningRule.hxx"
+#include "MFront/BehaviourBrick/Chaboche2012KinematicHardeningRule.hxx"
 #include "MFront/BehaviourBrick/BurletCailletaudKinematicHardeningRule.hxx"
 #include "MFront/BehaviourBrick/ArmstrongFrederickKinematicHardeningRule.hxx"
 #include "MFront/BehaviourBrick/KinematicHardeningRuleFactory.hxx"
@@ -77,13 +77,13 @@ namespace mfront {
         return std::make_shared<
             bbrick::BurletCailletaudKinematicHardeningRule>();
       });
-      this->addGenerator("Chaboche1991", []() {
+      this->addGenerator("Chaboche2012", []() {
         return std::make_shared<
-            bbrick::Chaboche1991KinematicHardeningRule>();
+            bbrick::Chaboche2012KinematicHardeningRule>();
       });
-      this->addGenerator("Chaboche 1991", []() {
+      this->addGenerator("Chaboche 2012", []() {
         return std::make_shared<
-            bbrick::Chaboche1991KinematicHardeningRule>();
+            bbrick::Chaboche2012KinematicHardeningRule>();
       });
     }  // end of KinematicHardeningRuleFactory::KinematicHardeningRuleFactory
 

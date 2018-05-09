@@ -30,14 +30,13 @@ namespace mfront {
         const std::string& kid,
         const bool b) const {
       const auto an = KinematicHardeningRule::getVariableId("a", fid, kid);
-      const auto Cn = KinematicHardeningRule::getVariableId("C", fid, kid);
       auto c = std::string{};
       c = "f" + an + " -= ";
-      c += "(this->dp" + fid + ")*dseq" + fid + "_ds" + fid + ";\n";
+      c += "(this->dp" + fid + ") * n" + fid + ";\n";
       if (b) {
         // opposite of dfa_ds
-        const auto mdf_ds = "(this->dp" + fid + ")*dn" + fid + "_ds" + fid;
-        c += "df" + an + "_ddp" + fid + " = -dseq" + fid + "_ds" + fid + ";\n";
+        const auto mdf_ds = "(this->dp" + fid + ") * dn" + fid + "_ds" + fid;
+        c += "df" + an + "_ddp" + fid + " = - n" + fid + ";\n";
         c += sp.computeDerivatives(bd, "StrainStensor", an, "-" + mdf_ds);
         auto kid2 = decltype(khrs.size()){};
         for (const auto& khr : khrs) {

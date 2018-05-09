@@ -7,10 +7,14 @@ EXTRA_DIST = CMakeLists.txt                                           \
 	castemstandardelastoviscoplasticitynortontest6-1.mtest            \
 	castemstandardelastoviscoplasticitynortontest6-2.mtest            \
 	castemstandardelastoviscoplasticitynortontest7.mtest              \
-	castemstandardelastoviscoplasticitynortontest8-cyclic_E.mtest     \
-	castemstandardelastoviscoplasticitynortontest8-cyclic_S.mtest     \
 	castemstandardelastoviscoplasticitynortontest8_E.mtest            \
 	castemstandardelastoviscoplasticitynortontest8_S.mtest            \
+	castemstandardelastoviscoplasticitynortontest8-cyclic_E.mtest     \
+	castemstandardelastoviscoplasticitynortontest8-cyclic_S.mtest     \
+	castemstandardelastoviscoplasticitynortontest9_E.mtest            \
+	castemstandardelastoviscoplasticitynortontest9_S.mtest            \
+	castemstandardelastoviscoplasticitynortontest9-cyclic_E.mtest     \
+	castemstandardelastoviscoplasticitynortontest9-cyclic_S.mtest     \
 	castemstandardelastoviscoplasticityorthotropicnortontest.mtest    \
 	castemstandardelastoviscoplasticityhyperbolicsinetest.mtest       \
 	castemstandardelastoviscoplasticityhyperbolicsinetest2.mtest      \
@@ -26,9 +30,13 @@ EXTRA_DIST = CMakeLists.txt                                           \
 	castemstandardelastoviscoplasticityplasticitytest6.mtest          \
 	castemstandardelastoviscoplasticityplasticitytest8.mtest          \
 	castemstandardelastoviscoplasticityplasticitytest8_nj.mtest       \
-	castemstandardelastoviscoplasticityplasticitytest7-cyclic_E.mtest \
-	castemstandardelastoviscoplasticityplasticitytest7-cyclic_S.mtest \
 	castemstandardelastoviscoplasticityplasticitytest7_E.mtest        \
 	castemstandardelastoviscoplasticityplasticitytest7_S.mtest        \
+	castemstandardelastoviscoplasticityplasticitytest7-cyclic_E.mtest \
+	castemstandardelastoviscoplasticityplasticitytest7-cyclic_S.mtest \
+	castemstandardelastoviscoplasticityplasticitytest11_E.mtest       \
+	castemstandardelastoviscoplasticityplasticitytest11_S.mtest        \
+	castemstandardelastoviscoplasticityplasticitytest11-cyclic_E.mtest \
+	castemstandardelastoviscoplasticityplasticitytest11-cyclic_S.mtest \
 	castemstandardelastoviscoplasticityisotropicdamagehookelaw.mtest  \
 	castemstandardelastoviscoplasticityisotropicdamagehookelaw2.mtest

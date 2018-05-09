@@ -7,6 +7,19 @@ solved are described below.
 
 # Tickets fixed
 
+## Ticket #127: Substepping in the `Cast3M` and `Cyrano` interface may lead to a invalid convergence du to integer overflow
+
+Using substeping with a high number of substeps may lead to a to integer
+overflow in the counter associated with the remaining steps that have to
+be performed.
+
+This counter was declared as an `unsigned short`. For more than 14
+substeps, this counter would overflow and was automatically set egal to
+0, leading to an erroneous convergence. This counter has been changed to
+`unsigned int` to avoid the problem.
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/127/>
+
 ## Ticket #126: Jacobian error in `DDIF2Base.ixx`
 
 There was a mistake in the jacobian computed in `treatFracture` method

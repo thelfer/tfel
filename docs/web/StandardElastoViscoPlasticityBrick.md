@@ -563,4 +563,48 @@ The following code can be added in a block defining an inelastic flow:
     kinematic_hardening : "Burlet-Cailletaud" {C : 250e7, D : 100, eta : 0}
 ~~~
 
+### The `Chaboche 2012` kinematic hardening rule
+
+The `Chaboche 2012` kinematic hardening rule is defined as follows
+(see @chaboche_cyclic_2012):
+
+\[
+\tenseur{\dot{a}}
+=\tenseur{\dot{\varepsilon}}^{p}-\frac{3\,D}{2\,C}\,\Phi\left(p\right)\,
+\Psi^{\left(\tenseur{X}\right)}\left(\tenseur{X}\right)\tenseur{X}
+=\tenseur{\dot{\varepsilon}}^{p}-
+D\,\Phi\left(p\right)\,\Psi\left(\tenseur{a}\right)\tenseur{a}
+\]
+
+with:
+
+- \(\tenseur{X}=\frac{2}{3}\,C\,\tenseur{a}\)
+- \(
+\Phi\left(p\right)=\phi_{\infty}+
+\left(1-\phi_{\infty}\right)\,\exp\left(-b\,p\right)
+\)
+- \(
+\Psi^{\left(\tenseur{X}\right)}\left(\tenseur{X}\right)=
+\frac{\left<D\,J\left(\tenseur{X}\right)-\omega\,C\right>^{m}}{1-\omega}\,
+\frac{1}{\left(D\,J\left(\tenseur{X}\right)\right)^{m}}
+\)
+- \(
+\Psi\left(\tenseur{a}\right)=
+\frac{\left<D\,J\left(\tenseur{a}\right)-\frac{3}{2}\omega\right>^{m}}{1-\omega}\,
+\frac{1}{\left(D\,J\left(\tenseur{a}\right)\right)^{m}}
+\)
+
+#### Example
+
+The following code can be added in a block defining an inelastic flow:
+
+~~~~{.cpp}
+    kinematic_hardening : "Chaboche 2012" {
+      C : 250e7,
+      D : 100,
+      m : 2,
+      w : 0.6,
+    }
+~~~~
+
 # References

@@ -160,7 +160,7 @@ set(TFELMFront_SOURCES
     KinematicHardeningRule.cxx
     KinematicHardeningRuleBase.cxx
     PragerKinematicHardeningRule.cxx
-    Chaboche1991KinematicHardeningRule.cxx
+    Chaboche2012KinematicHardeningRule.cxx
     BurletCailletaudKinematicHardeningRule.cxx
     ArmstrongFrederickKinematicHardeningRule.cxx
     KinematicHardeningRuleFactory.cxx

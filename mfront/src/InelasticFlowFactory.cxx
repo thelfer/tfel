@@ -51,6 +51,9 @@ namespace mfront {
       this->addGenerator("Norton", []() {
         return std::make_shared<NortonHoffViscoplasticFlow>();
       });
+      this->addGenerator("Norton Hoff", []() {
+        return std::make_shared<NortonHoffViscoplasticFlow>();
+      });
       this->addGenerator("Norton-Hoff", []() {
         return std::make_shared<NortonHoffViscoplasticFlow>();
       });

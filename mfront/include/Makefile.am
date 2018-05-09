@@ -122,7 +122,7 @@ nobase_include_HEADERS= MFront/MFront.hxx                                      \
 			MFront/BehaviourBrick/KinematicHardeningRuleBase.hxx              \
 			MFront/BehaviourBrick/PragerKinematicHardeningRule.hxx            \
 			MFront/BehaviourBrick/ArmstrongFrederickKinematicHardeningRule.hxx \
-			MFront/BehaviourBrick/Chaboche1991KinematicHardeningRule.hxx      \
+			MFront/BehaviourBrick/Chaboche2012KinematicHardeningRule.hxx      \
 			MFront/BehaviourBrick/BurletCailletaudKinematicHardeningRule.hxx  \
 			MFront/BehaviourBrick/KinematicHardeningRuleFactory.hxx           \
 			MFront/LocalDataStructure.hxx

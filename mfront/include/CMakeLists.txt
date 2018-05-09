@@ -127,7 +127,7 @@ install_mfront_header(MFront/BehaviourBrick KinematicHardeningRule.hxx)
 install_mfront_header(MFront/BehaviourBrick KinematicHardeningRuleBase.hxx)
 install_mfront_header(MFront/BehaviourBrick PragerKinematicHardeningRule.hxx)
 install_mfront_header(MFront/BehaviourBrick ArmstrongFrederickKinematicHardeningRule.hxx)
-install_mfront_header(MFront/BehaviourBrick Chaboche1991KinematicHardeningRule.hxx)
+install_mfront_header(MFront/BehaviourBrick Chaboche2012KinematicHardeningRule.hxx)
 install_mfront_header(MFront/BehaviourBrick BurletCailletaudKinematicHardeningRule.hxx)
 install_mfront_header(MFront/BehaviourBrick KinematicHardeningRuleFactory.hxx)
 
