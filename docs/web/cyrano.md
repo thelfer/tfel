@@ -1,4 +1,4 @@
-% Description of the `Cyrano` interface
+% Description of the `Cyrano3` interface
 % Thomas Helfer
 % 9/03/2018
 
@@ -12,6 +12,7 @@
 \newcommand{\paren}[1]{\left(#1\right)}
 \newcommand{\trace}[1]{\mathrm{tr}\left(#1\right)}
 \newcommand{\tsigma}{\underline{\sigma}}
+\newcommand{\epsilonto}{\varepsilon^{\mathrm{to}}}
 \newcommand{\tepsilonto}{\underline{\varepsilon}^{\mathrm{to}}}
 
 \newcommand{\Frac}[2]{{{\displaystyle \frac{\displaystyle #1}{\displaystyle #2}}}}
@@ -52,16 +53,19 @@ Performance Meeting in 2015 (Zurich, Switzerland), see
 
 # Supported modelling hypotheses
 
-The `Cyrano` code is based on a 1D description of the fuel rods using a
+The `Cyrano3` code is based on a 1D description of the fuel rods using a
 finite element kernel to solve the thermal and mechanical radial
 equilibrium at different axial positions.
 
+![Principle of the rod discretisation in CYRANO3 code](img/CyranoPrinciple.png "Principle of the rod discretisation in CYRANO3 code"){#fig:CyranoPrinciple width=100%}
+
 The principle of the geometrical discretisation of a single rod is
-illustrated in Figure 1. Due to revolution axisymmetry, only radial and
-axial directions are discretised. The fuel rod is axially divided in
-slices, leading to the so-called "1,5D" typical axisymmetric scheme -
-each slice being represented by a one-dimensional radial mesh including
-a pellet and a clad separated by a variable gap.
+illustrated in Figure @fig:CyranoPrinciple. Due to revolution
+axisymmetry, only radial and axial directions are discretised. The fuel
+rod is axially divided in slices, leading to the so-called "1,5D"
+typical axisymmetric scheme - each slice being represented by a
+one-dimensional radial mesh including a pellet and a clad separated by a
+variable gap.
 
 To solve the mechanical equilibrium of a slice, two distinct hypotheses
 concerning the axial direction are supported:
@@ -71,7 +75,7 @@ concerning the axial direction are supported:
 
 # Finite strain modelling
 
-`Cyrano` finite strain modelling is based on the approach described by
+`Cyrano3` finite strain modelling is based on the approach described by
 T. Helfer (See @helfer_extension_2015) which allows to easily extend
 small strain mono-dimensional code to support finite strain modelling.
 
@@ -124,35 +128,122 @@ In 1D, the normal is constant, so the radial component \(\Pi_{rr}\) of
 \Pi_{rr}=-P\,\Frac{S}{S_{0}}
 \]
 
+Here, the surface is defined by:
+\[
+S=2\,\pi\,R\,H
+\]
+where \(R\) is the actual radius and \(H\) is the actual height. Thus,
+
+\[
+\Pi_{rr}=-P\,\Frac{R}{R_{0}}\,\Frac{H}{H_{0}}=-P\,\paren{1+\Frac{u_r\paren{R_{0}}}{R_{0}}}\,\epsilonto_{zz}
+\]
+
+where \(u_{r}\) is the radial displacement, \(R_{0}\) is the initial
+radius and \(\epsilonto_{zz}\) is the axial strain.
+
+This relations are exactly the same as in small strain analysis, except
+for the dependency of \(S\) with the actual radius which adds additional
+terms to the stiffness matrix.
+
+In generalised plane stress, the axial strain is not known. As discussed
+later, the axial strain is generally computed by the behaviour to ensure
+that the axial stress is equal to the prescribed value. This provides a
+way to compute the axial strain for the computation of the radial force,
+but one can not derive the exact stiffness matrix of the system. Another
+simpler solution is to consider the axial strain as constant during the
+time step for the computation of the radial forces.
+
 #### Axial boundary conditions
 
 For a closed pipe, the axial force applied to the tube can be computed
 as follows:
 
 \[
-F = P_{i}\,S_{i} - P_{e}\,S_{e}
+F = P_{i}\,S^{c}_{i} - P_{e}\,S^{c}_{e}
 \]
 
 where:
 
 - \(P_{i}\) is the internal pressure.
 - \(P_{e}\) is the external pressure.
-- \(S_{i}\) is the internal surface in the current geometry.
-- \(S_{e}\) is the external surface in the current geometry.
+- \(S^{c}_{i}\) is the internal surface of the upper cap in the current
+  geometry, defined by \(S^{c}_{i}=\pi\,R_{i}^{2}\).
+- \(S^{c}_{e}\) is the external surface of the upper cap in the current
+  geometry, defined by \(S^{c}_{e}=\pi\,R_{e}^{2}\)..
 
-
+Here, the pressure is assumed constant over the time step : the
+sensibility with the geometrical changes is neglected. Dependency of the
+pressure with the volume can also be taken into account, as in `MTest`
+if all the slices are homogeneous, which is almost never the case.
 
 ##### Generalised plane stress
 
+In generalised plane stress, \(\Pi_{zz}\) is assumed uniform and can
+determined by:
+
+\[
+F = \Pi_{zz}\,\paren{\paren{S^{c}_{e}}^{0}-\paren{S^{c}_{i}}^{0}} = P_{i}\,S^{c}_{i} - P_{e}\,S^{c}_{e}
+\]
+
+This relation is exactly the same as in small strain analysis, except
+for the dependency of \(S^{c}_{i}\) and \(S^{c}_{e}\) with the actual inner and
+outer radius which adds additional terms to the stiffness matrix.
 
 ##### Generalised plane strain
 
-## Mechanical behaviours
+In generalised plane strain, the total force is given by:
+
+\[
+F = 2\,\pi\,\int_{R_{i}^{0}}^{R_{e}^{0}}\Pi_{zz}\,R\,dR = P_{i}\,S^{c}_{i} - P_{e}\,S^{c}_{e}
+\]
+
+This is exactly the same relation as in same strain analysis, except for
+the dependency of \(S^{c}_{i}\) and \(S^{c}_{e}\) with the actual inner
+and outer radius which adds additional terms to the stiffness matrix
+
+## Finite strain mechanical behaviours
 
 Currently, the `MFront` interface only supports strain-based behaviour
 based on the Hencky strain measure, as described by Miehe et al. (See
 @miehe_anisotropic_2002).
 
-# Specific keywords
+### Support of the Hencky strain measure
+
+The Hencky strain measure is defined by:
+
+\[
+\tenseur{\varepsilon}_{\log}^{\mathrm{tot}}=\Frac{1}{2}\,\log{\transpose{\tns{F}}\,\cdot\,\tns{F}}
+\]
+
+In \(1D\), this relation boils down to (See @helfer_extension_2015):
+
+\[
+  \left(\tepsilonto_{\text{log}}\right)_{i}=\log\paren{1+\tepsilonto_{i}}  
+\]
+
+Based on energetic consideration, this strain measure also defined its
+dual stress denoted \(\tenseur{T}\). The relation between \(\tns{\Pi}\)
+and \(\tenseur{T}\) is fairly complex in \(3D\), but quite simple in
+\(1D\):
+
+\[
+  \Pi_{i} = \Frac{T_{i}}{1+\left(\tepsilonto\right)_{i}}
+\]
+
+#### Generalised plane stress
+
+The generalised plane stress hypothesis is treated by introducing, at
+each integration point, an additional unknown: the axial logarithmic
+strain. Using the previous equations, the implicit equation associated
+with this unknown is:
+
+\[
+\exp\paren{\left(\tepsilonto_{\text{log}}\right)_{zz}}\,T_{zz}= \Pi_{zz}^{(i)}
+\]
+
+where \(\Pi_{zz}^{(i)}\) is the prescribed axial stress.
+
+This equation is automatically added by the Hooke stress potential used
+by the `StandardElasticity` and `StandardViscoplasticity` bricks.
 
 # References

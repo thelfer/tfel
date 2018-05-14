@@ -268,6 +268,7 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./img/Cazacu2001_2090-T3.svg                               \
 	   ./img/Cazacu2001_6016-T4-YdLin.svg                         \
 	   ./img/StressPotentials.svg                                 \
+	   ./img/CyranoPrinciple.png                                  \
 	   ./media/epx1.mp4                                           \
 	   ./media/epx2.mp4                                           \
 	   ./media/abaqus-explicit.mp4                                \
