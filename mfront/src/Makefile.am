@@ -137,6 +137,10 @@ libTFELMFront_la_SOURCES = MFront.cxx                                           
 		           Hill1948StressCriterion.cxx                            \
 		           Barlat2004StressCriterion.cxx                          \
 		           Hosford1972StressCriterion.cxx                         \
+		           Drucker1949StressCriterion.cxx                         \
+		           Cazacu2001StressCriterion.cxx                          \
+		           Cazacu2004IsotropicStressCriterion.cxx                 \
+		           Cazacu2004OrthotropicStressCriterion.cxx               \
 		           StressCriterionFactory.cxx                             \
 		           IsotropicHardeningRule.cxx                             \
 		           LinearIsotropicHardeningRule.cxx                       \

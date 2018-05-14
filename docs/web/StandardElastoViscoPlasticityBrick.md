@@ -240,7 +240,34 @@ This stress criterion does not have any option.
     criterion : "Mises"
 ~~~~
 
-### Hosford stress criterion
+### Drucker 1949 stress criterion
+
+The Drucker 1949 stress is defined by:
+\[
+\sigmaeq=\sqrt{3}\sqrt[6]{J_{2}^3-c\,J_{3}^{2}}
+\]
+where:
+
+- \(J_{2}=\Frac{1}{2}\,\tenseur{s}\,\colon\,\tenseur{s}\) is the second
+  invariant of \(\tenseur{s}\).
+- \(J_{3}=\mathrm{det}\paren{\tenseur{s}}\) is the third invariant of
+  \(\tenseur{s}\).
+- \(\tenseur{s}\) is the deviatoric stress defined as follows:
+\[
+\tenseur{s}=\tsigma-\Frac{1}{3}\,\trace{\tsigma}\,\tenseur{I}
+\]
+
+### Example
+
+~~~~{.cpp}
+    criterion : "Drucker 1949" {c : 1.285}
+~~~~
+
+#### Options
+
+The user must provide the \(c\) coefficient.
+
+### Hosford 1972 stress criterion
 
 The Hosford equivalent stress is defined by (see @hosford_generalized_1972):
 \[
@@ -266,6 +293,33 @@ von Mises stress.
 #### Options
 
 The user must provide the Hosford exponent \(a\).
+
+### Isotropic Cazacu 2004 stress criterion
+
+In order to describe yield differential effects, the isotropic Cazacu
+2004 equivalent stress criterion is defined by (see
+@cazacu_criterion_2004):
+
+\[
+\sigmaeq=\sqrt[3]{J_{2}^{3/2} - c \, J_{3}}
+\]
+
+where:
+
+- \(J_{2}=\Frac{1}{2}\,\tenseur{s}\,\colon\,\tenseur{s}\) is the second
+  invariant of \(\tenseur{s}\).
+- \(J_{3}=\mathrm{det}\paren{\tenseur{s}}\) is the third invariant of
+  \(\tenseur{s}\).
+- \(\tenseur{s}\) is the deviatoric stress defined as follows:
+\[
+\tenseur{s}=\tsigma-\Frac{1}{3}\,\trace{\tsigma}\,\tenseur{I}
+\]
+
+### Example
+
+~~~~{.cpp}
+    criterion : "Isotropic Cazacu 2004" {c : -1.056}
+~~~~
 
 ### Hill stress criterion
 
@@ -304,6 +358,127 @@ property.
 ~~~~{.cpp}
     criterion : "Hill" {F : 0.371, G : 0.629, H : 4.052, L : 1.5, M : 1.5, N : 1.5},
 ~~~~
+
+### Cazacu 2001 stress criterion
+
+Within the framework of the theory of representation, generalizations
+to orthotropic conditions of the invariants of the deviatoric stress
+have been proposed by Cazacu and Barlat (see
+@cazacu_generalization_2001):
+
+- The generalization of \(J_{2}\) is denoted \(J_{2}^{O}\). It is
+  defined by:
+  \[
+  J_{2}^{O}= a_6\,s_{yz}^2+a_5\,s_{xz}^2+a_4\,s_{xy}^2+\frac{a_2}{6}\,(s_{yy}-s_{zz})^2+\frac{a_3}{6}\,(s_{xx}-s_{zz})^2+\frac{a_1}{6}\,(s_{xx}-s_{yy})^2
+  \]
+  where the \(\left.a_{i}\right|_{i\in[1:6]}\) are six coefficients
+  describing the orthotropy of the material.
+- The generalization of \(J_{3}\) is denoted \(J_{3}^{O}\). It is
+  defined by:
+  \[
+  \begin{aligned}
+  J_{3}^{O}=
+  &\frac{1}{27}\,(b_1+b_2)\,s_{xx}^3+\frac{1}{27}\,(b_3+b_4)\,s_{yy}^3+\frac{1}{27}\,(2\,(b_1+b_4)-b_2-b_3)\,s_{zz}^3\\
+  &-\frac{1}{9}\,(b_1\,s_{yy}+b_2s_{zz})\,s_{xx}^2\\
+  &-\frac{1}{9}\,(b_3\,s_{zz}+b_4\,s_{xx})\,s_{yy}^2\\
+  &-\frac{1}{9}\,((b_1-b_2+b_4)\,s_{xx}+(b_1-b3+b_4)\,s_{yy})\,s_{zz}^3\\
+  &+\frac{2}{9}\,(b_1+b_4)\,s_{xx}\,s_{yy}\,s_{zz}\\
+  &-\frac{s_{xz}^2}{3}\,(2\,b_9\,s_{yy}-b_8\,s_{zz}-(2\,b_9-b_8)\,s_{xx})\\
+  &-\frac{s_{xy}^2}{3}\,(2\,b_{10}\,s_{zz}-b_5\,s_{yy}-(2\,b_{10}-b_5)\,s_{xx})\\
+  &-\frac{s_{yz}^2}{3}\,((b_6+b_7)\,s_{xx}-b_6\,s_{yy}-b_7\,s_{zz})\\
+  &+2\,b_{11}\,s_{xy}\,s_{xz}\,s_{yz}
+  \end{aligned}
+  \]
+  where the \(\left.b_{i}\right|_{i\in[1:11]}\) are eleven coefficients
+  describing the orthotropy of the material.
+
+Those invariants may be used to generalize isotropic yield criteria
+based on \(J_{2}\) and \(J_{3}\) invariants to orthotropy. The Cazacu
+2001 equivalent stress criterion is defined as the orthotropic
+counterpart of the Drucker 1949 yield criterion, as follows (see
+@cazacu_generalization_2001):
+
+\[
+\sigmaeq=\sqrt{3}\sqrt[6]{\left(J_{2}^{O}\right)^3-c\,\left(J_{3}^{O}\right)^{2}}
+\]
+
+#### Options
+
+This criterion requires the following options:
+
+- `a`, as an array of \(6\) material properties.
+- `b`, as an array of \(11\) material properties.
+- `c`, as a material property.
+
+#### Example
+
+~~~~{.cpp}
+    criterion : "Cazacu 2001" {
+      a : {0.586, 1.05, 0.823, 0.96, 1, 1},
+      b : {1.44, 0.061, -1.302, -0.281, -0.375, 1, 1, 1, 1, 0.445, 1},
+      c : 1.285
+    },
+~~~~
+
+#### Restrictions
+
+Proper support of orthotropic axes conventions has not been implemented
+yet for the computation of the \(J_{2}^{O}\) and \(J_{3}^{O}\). Thus,
+the following restrictions apply:
+
+- if no orthotropic axis convention is defined, only the
+  `Tridimensional` modelling hypothesis is supported.q
+- if the `Plate` orthotropic axis convention is used, only the
+  `Tridimensional` and `PlaneStress` modelling hypotheses are supported.
+- if the `Pipe` orthotropic axis convention is used, only the
+  `Tridimensional`, `Axisymmetrical`,
+  `AxisymmetricalGeneralisedPlainStrain`, and
+  `AxisymmetricalGeneralisedPlainStres` modelling hypotheses are
+  supported.
+
+
+### Orthotropic Cazacu 2004 stress criterion
+
+Using the invariants \(J_{2}^{O}\) and \(J_{3}^{O}\) previously defined,
+Cazacu and Barlat proposed the following criterion (See @cazacu_criterion_2004):
+
+\[
+\sigmaeq=\sqrt[3]{\left(J_{2}^{O}\right)^{3/2} - c\,J_{3}^{O}}
+\]
+
+#### Options
+
+This criterion requires the following options:
+
+- `a`, as an array of \(6\) material properties.
+- `b`, as an array of \(11\) material properties.
+- `c`, as a material property.
+
+#### Example
+
+~~~~{.cpp}
+    criterion : "Orthotropic Cazacu 2004" {
+      a : {0.586, 1.05, 0.823, 0.96, 1, 1},
+      b : {1.44, 0.061, -1.302, -0.281, -0.375, 1, 1, 1, 1, 0.445, 1},
+      c : 1.285
+    },
+~~~~
+
+#### Restrictions
+
+Proper support of orthotropic axes conventions has not been implemented
+yet for the computation of the \(J_{2}^{O}\) and \(J_{3}^{O}\). Thus,
+the following restrictions apply:
+
+- if no orthotropic axis convention is defined, only the
+  `Tridimensional` modelling hypothesis is supported.q
+- if the `Plate` orthotropic axis convention is used, only the
+  `Tridimensional` and `PlaneStress` modelling hypotheses are supported.
+- if the `Pipe` orthotropic axis convention is used, only the
+  `Tridimensional`, `Axisymmetrical`,
+  `AxisymmetricalGeneralisedPlainStrain`, and
+  `AxisymmetricalGeneralisedPlainStres` modelling hypotheses are
+  supported.
 
 ### Barlat 2004 stress criterion
 

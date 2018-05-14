@@ -62,6 +62,22 @@ MFRONTS=StandardElastoViscoPlasticityTest1.mfront                         \
 	StandardElastoViscoPlasticityPlasticityTest11_nj.mfront               \
 	StandardElastoViscoPlasticityPlasticityTest11_na.mfront               \
 	StandardElastoViscoPlasticityPlasticityTest11_nanj.mfront             \
+	StandardElastoViscoPlasticityPlasticityTest12.mfront                  \
+	StandardElastoViscoPlasticityPlasticityTest12_nj.mfront               \
+	StandardElastoViscoPlasticityPlasticityTest12_na.mfront               \
+	StandardElastoViscoPlasticityPlasticityTest12_nanj.mfront             \
+	StandardElastoViscoPlasticityPlasticityTest13.mfront                  \
+	StandardElastoViscoPlasticityPlasticityTest13_nj.mfront               \
+	StandardElastoViscoPlasticityPlasticityTest13_na.mfront               \
+	StandardElastoViscoPlasticityPlasticityTest13_nanj.mfront             \
+	StandardElastoViscoPlasticityPlasticityTest14.mfront                  \
+	StandardElastoViscoPlasticityPlasticityTest14_nj.mfront               \
+	StandardElastoViscoPlasticityPlasticityTest14_na.mfront               \
+	StandardElastoViscoPlasticityPlasticityTest14_nanj.mfront             \
+	StandardElastoViscoPlasticityPlasticityTest15.mfront                  \
+	StandardElastoViscoPlasticityPlasticityTest15_nj.mfront               \
+	StandardElastoViscoPlasticityPlasticityTest15_na.mfront               \
+	StandardElastoViscoPlasticityPlasticityTest15_nanj.mfront             \
 	StandardElastoViscoPlasticityIsotropicDamageHookeLaw.mfront           \
 	StandardElastoViscoPlasticityIsotropicDamageHookeLaw_nj.mfront        \
 	StandardElastoViscoPlasticityIsotropicDamageHookeLaw2.mfront          \

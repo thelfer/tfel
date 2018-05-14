@@ -311,7 +311,7 @@ namespace mfront {
           acc.code += "if (converged) {\n";
           acc.code += "// checking status consistency\n";
           acc.code += "if (this->bpl" + id + ") {\n";
-          acc.code += "if (dp" + id + " < 0) {\n";
+          acc.code += "if (this->dp" + id + " < 0) {\n";
           acc.code += "// desactivating this system\n";
           acc.code += "converged = this->bpl" + id + " = false;\n";
           acc.code += "}\n";

@@ -1,5 +1,5 @@
 /*!
- * \file   mfront/src/Hosford1972StressCriterion.cxx
+ * \file   mfront/src/Drucker1949StressCriterion.cxx
  * \brief
  * \author Thomas Helfer
  * \date   15/03/2018
@@ -15,91 +15,95 @@
 #include "MFront/BehaviourBrick/BrickUtilities.hxx"
 #include "MFront/BehaviourBrick/StressPotential.hxx"
 #include "MFront/BehaviourBrick/OptionDescription.hxx"
-#include "MFront/BehaviourBrick/Hosford1972StressCriterion.hxx"
+#include "MFront/BehaviourBrick/Drucker1949StressCriterion.hxx"
 
 namespace mfront {
 
   namespace bbrick {
 
-    std::vector<OptionDescription> Hosford1972StressCriterion::getOptions()
+    std::vector<OptionDescription> Drucker1949StressCriterion::getOptions()
         const {
       auto opts = StressCriterionBase::getOptions();
-      opts.emplace_back("a", "Hosford exponent",
+      opts.emplace_back("c", "",
                         OptionDescription::MATERIALPROPERTY);
       return opts;
-    }  // end of Hosford1972StressCriterion::getOptions()
+    }  // end of Drucker1949StressCriterion::getOptions()
 
-    void Hosford1972StressCriterion::initialize(BehaviourDescription& bd,
+    void Drucker1949StressCriterion::initialize(BehaviourDescription& bd,
                                                 AbstractBehaviourDSL& dsl,
                                                 const std::string& id,
                                                 const DataMap& d,
                                                 const Role r) {
       StressCriterionBase::initialize(bd, dsl, id, d, r);
-      const auto an = StressCriterion::getVariableId("a", id, r);
-      tfel::raise_if(d.count("a") == 0,
-                     "Hosford1972StressCriterion::initialize: "
-                     "material property 'a' is not defined");
-      this->a = getBehaviourDescriptionMaterialProperty(dsl, "a", d.at("a"));
-      declareParameterOrLocalVariable(bd, this->a, "real", an);
-    }  // end of Hosford1972StressCriterion::initialize
+      const auto cn = StressCriterion::getVariableId("c", id, r);
+      tfel::raise_if(d.count("c") == 0,
+                     "Drucker1949StressCriterion::initialize: "
+                     "material property 'c' is not defined");
+      bd.appendToIncludes(
+          "#include\"TFEL/Material/Drucker1949YieldCriterion.hxx\"");
+      this->cp = getBehaviourDescriptionMaterialProperty(dsl, "c", d.at("c"));
+      declareParameterOrLocalVariable(bd, this->cp, "real", cn);
+    }  // end of Drucker1949StressCriterion::initialize
 
-    void Hosford1972StressCriterion::endTreatment(
+    void Drucker1949StressCriterion::endTreatment(
         BehaviourDescription& bd,
         const AbstractBehaviourDSL& dsl,
         const std::string& id,
         const Role r) {
       constexpr const auto uh =
           tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-      const auto an = StressCriterion::getVariableId("a", id, r);
-      auto c = generateMaterialPropertyInitializationCode(dsl, bd, an, this->a);
+      const auto cn = StressCriterion::getVariableId("c", id, r);
+      auto c = generateMaterialPropertyInitializationCode(dsl, bd, cn, this->cp);
       if (!c.empty()) {
         CodeBlock i;
         i.code = c;
         bd.setCode(uh, BehaviourData::BeforeInitializeLocalVariables, i,
                    BehaviourData::CREATEORAPPEND, BehaviourData::AT_BEGINNING);
       }
-    }  // end of Hosford1972StressCriterion::endTreatment
+    }  // end of Drucker1949StressCriterion::endTreatment
 
-    std::string Hosford1972StressCriterion::computeElasticPrediction(
+    std::string Drucker1949StressCriterion::computeElasticPrediction(
         const std::string& id,
-        const BehaviourDescription& bd,
-        const StressPotential& sp) const {
-      const auto an = StressCriterion::getVariableId(
-          "a", id, StressCriterion::STRESSCRITERION);
-      return "const auto seqel" + id + " = computeHosfordStress(sel" + id +
-             ",this->" + an + "," + sp.getEquivalentStressLowerBound(bd) +
-             ");\n";
-    }  // end of Hosford1972StressCriterion::computeElasticPrediction
+        const BehaviourDescription&,
+        const StressPotential&) const {
+      const auto cn = StressCriterion::getVariableId(
+          "c", id, StressCriterion::STRESSCRITERION);
+      return "const auto seqel" + id +
+             " = computeDrucker1949StressCriterion(sel" + id +
+             ",this->" + cn + ");\n";
+    }  // end of Drucker1949StressCriterion::computeElasticPrediction
 
-    std::string Hosford1972StressCriterion::computeCriterion(
+    std::string Drucker1949StressCriterion::computeCriterion(
         const std::string& id,
-        const BehaviourDescription& bd,
-        const StressPotential& sp) const {
-      const auto an = StressCriterion::getVariableId(
-          "a", id, StressCriterion::STRESSCRITERION);
-      return "const auto seq" + id + " = computeHosfordStress(s" + id +
-             ",this->" + an + "," + sp.getEquivalentStressLowerBound(bd) +
-             ");\n";
-    }  // end of Hosford1972StressCriterion::computeCriterion
+        const BehaviourDescription&,
+        const StressPotential&) const {
+      const auto cn = StressCriterion::getVariableId(
+          "c", id, StressCriterion::STRESSCRITERION);
+      return "const auto seq" + id +
+             " = computeDrucker1949StressCriterion(s" + id + ",this->" +
+             cn + ");\n";
+    }  // end of Drucker1949StressCriterion::computeCriterion
 
-    std::string Hosford1972StressCriterion::computeNormal(
+    std::string Drucker1949StressCriterion::computeNormal(
         const std::string& id,
         const BehaviourDescription& bd,
         const StressPotential& sp,
         const Role r) const {
-      const auto an = StressCriterion::getVariableId("a", id, r);
+      const auto cn = StressCriterion::getVariableId("c", id, r);
       auto c = std::string{};
       if ((r == STRESSCRITERION) || (r == STRESSANDFLOWCRITERION)) {
 #if __cplusplus >= 201703L
         c += "const auto [seq" + id + ",dseq" + id + "_ds" + id + "] = ";
-        c += "computeHosfordStressNormal(s" + id + ", this->" + an + "," +
-             sp.getEquivalentStressLowerBound(bd) + ");\n";
+        c += "computeDrucker1949StressCriterionNormal(s" + id +
+             ", this->" + cn + "," + sp.getEquivalentStressLowerBound(bd) +
+             ");\n";
 #else  /* __cplusplus >= 201703L */
         c += "stress seq" + id + ";\n";
         c += "Stensor dseq" + id + "_ds" + id + ";\n";
         c += "std::tie(seq" + id + ",dseq" + id + "_ds" + id + ") = ";
-        c += "computeHosfordStressNormal(s" + id + ",this->" + an + "," +
-             sp.getEquivalentStressLowerBound(bd) + ");\n";
+        c += "computeDrucker1949StressCriterionNormal(s" + id +
+             ", this->" + cn + "," + sp.getEquivalentStressLowerBound(bd) +
+             ");\n";
 #endif /* __cplusplus >= 201703L */
       }
       if (r == STRESSANDFLOWCRITERION) {
@@ -108,40 +112,44 @@ namespace mfront {
       if (r == FLOWCRITERION) {
 #if __cplusplus >= 201703L
         c += "const auto [seqf" + id + ",dseq" + id + "_ds" + id + "] = ";
-        c += "computeHosfordStressNormal(s" + id + ",this->" + an + "," +
-             sp.getEquivalentStressLowerBound(bd) + ");\n";
+        c += "computeDrucker1949StressCriterionNormal(s" + id +
+             ", this->" + cn + "," + sp.getEquivalentStressLowerBound(bd) +
+             ");\n";
 #else  /* __cplusplus >= 201703L */
         c += "stress seqf" + id + ";\n";
         c += "Stensor n" + id + ";\n";
         c += "std::tie(seqf" + id + ",n" + id + ") = ";
-        c += "computeHosfordStressNormal(s" + id + ",this->" + an + "," +
-             sp.getEquivalentStressLowerBound(bd) + ");\n";
+        c += "computeDrucker1949StressCriterionNormal(s" + id +
+             ", this->" + cn + "," + sp.getEquivalentStressLowerBound(bd) +
+             ");\n";
 #endif /* __cplusplus >= 201703L */
       }
       return c;
-    }  // end of Hosford1972StressCriterion::computeNormal
+    }  // end of Drucker1949StressCriterion::computeNormal
 
-    std::string Hosford1972StressCriterion::computeNormalDerivative(
+    std::string Drucker1949StressCriterion::computeNormalDerivative(
         const std::string& id,
         const BehaviourDescription& bd,
         const StressPotential& sp,
         const Role r) const {
-      const auto an = StressCriterion::getVariableId("a", id, r);
+      const auto cn = StressCriterion::getVariableId("c", id, r);
       auto c = std::string{};
       if ((r == STRESSCRITERION) || (r == STRESSANDFLOWCRITERION)) {
 #if __cplusplus >= 201703L
         c += "const auto [seq" + id + ",dseq" + id + "_ds" + id + ",d2seq" +
              id + "_ds" + id + "ds" + id + "] = ";
-        c += "computeHosfordStressSecondDerivative(s" + id + ",this->" + an +
-             "," + sp.getEquivalentStressLowerBound(bd) + ");\n";
+        c += "computeDrucker1949StressCriterionSecondDerivative(s" +
+             id + ", this->" + cn + "," + sp.getEquivalentStressLowerBound(bd) +
+             ");\n";
 #else  /* __cplusplus >= 201703L */
         c += "stress seq" + id + ";\n";
         c += "Stensor dseq" + id + "_ds" + id + ";\n";
         c += "Stensor4 d2seq" + id + "_ds" + id + "ds" + id + ";\n";
         c += "std::tie(seq" + id + ",dseq" + id + "_ds" + id + ",d2seq" + id +
              "_ds" + id + "ds" + id + ") = ";
-        c += "computeHosfordStressSecondDerivative(s" + id + ",this->" + an +
-             "," + sp.getEquivalentStressLowerBound(bd) + ");\n";
+        c += "computeDrucker1949StressCriterionSecondDerivative(s" +
+             id + ", this->" + cn + "," + sp.getEquivalentStressLowerBound(bd) +
+             ");\n";
 #endif /* __cplusplus >= 201703L */
       }
       if (r == STRESSANDFLOWCRITERION) {
@@ -153,22 +161,24 @@ namespace mfront {
 #if __cplusplus >= 201703L
         c += "const auto [seq" + id + ", n" + id + ", dn" + id + "_ds" + id +
              "] = ";
-        c += "computeHosfordStressSecondDerivative(s" + id + ",this->" + an +
-             "," + sp.getEquivalentStressLowerBound(bd) + ");\n";
+        c += "computeDrucker1949StressCriterionSecondDerivative(s" +
+             id + ",this->" + cn + "," + sp.getEquivalentStressLowerBound(bd) +
+             ");\n";
 #else  /* __cplusplus >= 201703L */
         c += "stress seqf" + id + ";\n";
         c += "Stensor n" + id + ";\n";
         c += "Stensor4 dn" + id + "_ds" + id + ";\n";
         c +=
             "std::tie(seqf" + id + ",n" + id + ",dn" + id + "_ds" + id + ") = ";
-        c += "computeHosfordStressSecondDerivative(s" + id + ",this->" + an +
-             "," + sp.getEquivalentStressLowerBound(bd) + ");\n";
+        c += "computeDrucker1949StressCriterionSecondDerivative(s" +
+             id + ",this->" + cn + "," + sp.getEquivalentStressLowerBound(bd) +
+             ");\n";
 #endif /* __cplusplus >= 201703L */
       }
       return c;
-    }  // end of Hosford1972StressCriterion::computeNormalDerivative
+    }  // end of Drucker1949StressCriterion::computeNormalDerivative
 
-    Hosford1972StressCriterion::~Hosford1972StressCriterion() = default;
+    Drucker1949StressCriterion::~Drucker1949StressCriterion() = default;
 
   }  // end of namespace bbrick
 

@@ -37,8 +37,17 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Material/Hill.ixx			                                                     \
 			TFEL/Material/Hosford1972YieldCriterion.hxx	                                             \
 			TFEL/Material/Hosford1972YieldCriterion.ixx	                                             \
+			TFEL/Material/Drucker1949YieldCriterion.hxx                                          \
+			TFEL/Material/Drucker1949YieldCriterion.ixx                                          \
 			TFEL/Material/OrthotropicStressLinearTransformation.hxx                                      \
 			TFEL/Material/OrthotropicStressLinearTransformation.ixx                                      \
+			TFEL/Material/Cazacu2001YieldCriterion.hxx                                          \
+			TFEL/Material/Cazacu2001YieldCriterion.ixx                                          \
+			TFEL/Material/Cazacu2004YieldCriterionTypes.hxx                                          \
+			TFEL/Material/Cazacu2004IsotropicYieldCriterion.hxx                                          \
+			TFEL/Material/Cazacu2004IsotropicYieldCriterion.ixx                                          \
+			TFEL/Material/Cazacu2004OrthotropicYieldCriterion.hxx                                          \
+			TFEL/Material/Cazacu2004OrthotropicYieldCriterion.ixx                                          \
 			TFEL/Material/Barlat2004YieldCriterion.hxx			                             \
 			TFEL/Material/Barlat2004YieldCriterion.ixx			                             \
 			TFEL/Material/PiPlane.hxx                                                                    \

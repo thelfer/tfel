@@ -42,7 +42,7 @@
 - Fabien Onimus
 - Jordi Alberich
 - Pedro Giffuni
-
+- Jamel Tirari
 
 # Tools
 
