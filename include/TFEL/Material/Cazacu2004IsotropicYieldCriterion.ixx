@@ -46,7 +46,7 @@ namespace tfel {
       const auto dJ3 = tfel::math::computeDeviatorDeterminantDerivative(sig);
       // the normal is written n = nb/(seq*seq)
       const auto nb = (std::sqrt(J2) / 2) * s - (c / 3) * dJ3;
-      return {seq, tfel::math::eval(iseq * iseq * nb)};
+      return std::make_tuple(seq, tfel::math::eval(iseq * iseq * nb));
     }  // end of computeCazacu2004IsotropicStressCriterionNormal
 
     template <typename StressStensor>
@@ -74,7 +74,7 @@ namespace tfel {
       const auto dnb = 1 / (4 * std::sqrt(J2)) * (s ^ s) +
                        (std::sqrt(J2) / 2) * d2J2 - (c / 3) * d2J3;
       const auto n = tfel::math::eval(iseq * iseq * nb);
-      return {seq, n, tfel::math::eval(iseq * (-2 * (n ^ n) + iseq * dnb))};
+      return std::make_tuple(seq, n, tfel::math::eval(iseq * (-2 * (n ^ n) + iseq * dnb)));
     }  // end of computeCazacu2004IsotropicStressCriterionSecondDerivative
 
   }  // end of namespace material

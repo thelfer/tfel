@@ -46,7 +46,7 @@ namespace tfel {
       const auto dJ3O = computeJ3ODerivative(sig, b);
       // the normal is written n = nb/(seq*seq)
       const auto nb = (std::sqrt(J2O) / 2) * dJ2O - (c / 3) * dJ3O;
-      return {seq, tfel::math::eval(iseq * iseq * nb)};
+      return std::make_tuple(seq, tfel::math::eval(iseq * iseq * nb));
     }  // end of computeCazacu2004OrthotropicStressCriterion
 
     template <typename StressStensor>
@@ -72,7 +72,7 @@ namespace tfel {
       const auto dnb = 1 / (4 * std::sqrt(J2O)) * (dJ2O ^ dJ2O) +
                        (std::sqrt(J2O) / 2) * d2J2O - (c / 3) * d2J3O;
       const auto n = tfel::math::eval(iseq * iseq * nb);
-      return {seq, n, tfel::math::eval(iseq * (-2 * (n ^ n) + iseq * dnb))};
+      return std::make_tuple(seq, n, tfel::math::eval(iseq * (-2 * (n ^ n) + iseq * dnb)));
     }  // end of computeCazacu2004OrthotropicStressCriterionSecondDerivative
 
   }  // end of namespace material

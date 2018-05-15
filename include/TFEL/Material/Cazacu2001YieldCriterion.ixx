@@ -58,10 +58,10 @@ namespace tfel {
         const auto dseq_dJ2O = J2O_2 / (2 * s6) * seq;
         const auto dseq_dJ3O = -c * J3O / (3 * s6) * seq;
         const auto n = dseq_dJ2O * dJ2O + dseq_dJ3O * dJ3O;
-        return {seq, n};
+        return std::make_tuple(seq, n);
       }
-      return {Cazacu2001StressType<StressStensor>{stress{0}},
-              Cazacu2001StressNormalType<StressStensor>{real{0}}};
+      return std::make_tuple(Cazacu2001StressType<StressStensor>{stress{0}},
+			     Cazacu2001StressNormalType<StressStensor>{real{0}});
     }  // end of computeCazacu2001StressCriterion
 
     template <typename StressStensor>
@@ -111,11 +111,11 @@ namespace tfel {
             eval(d2seq_dJ2OdJ2O * (dJ2O ^ dJ2O) + dseq_dJ2O * d2J2O +
                  d2seq_dJ2OdJ3O * ((dJ2O ^ dJ3O) + (dJ3O ^ dJ2O)) +
                  d2seq_dJ3OdJ3O * (dJ3O ^ dJ3O) + dseq_dJ3O * d2J3O);
-        return {seq, n, dn};
+        return std::make_tuple(seq, n, dn);
       }
-      return {Cazacu2001StressType<StressStensor>{stress{0}},
-              Cazacu2001StressNormalType<StressStensor>{real{0}},
-              Cazacu2001StressSecondDerivativeType<StressStensor>{istress{0}}};
+      return std::make_tuple(Cazacu2001StressType<StressStensor>{stress{0}},
+			     Cazacu2001StressNormalType<StressStensor>{real{0}},
+			     Cazacu2001StressSecondDerivativeType<StressStensor>{istress{0}});
     }  // end of computeCazacu2001StressCriterionSecondDerivative
 
   }  // end of namespace material
