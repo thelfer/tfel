@@ -4653,11 +4653,15 @@ namespace mfront {
     if (this->mb.getAttribute(BehaviourDescription::computesStiffnessTensor, false)) {
       os << "#include\"TFEL/Material/StiffnessTensor.hxx\"\n";
     }
-    os << "#include\"" << this->getBehaviourDataFileName() << "\"\n"
-       << "#include\"" << this->getIntegrationDataFileName() << "\"\n";
+    if ((this->mb.isStrainMeasureDefined()) &&
+	(this->mb.getStrainMeasure() == BehaviourDescription::HENCKY)) {
+      os << "#include\"TFEL/Material/LogarithmicStrainComputeAxialStrainIncrementElasticPrediction.hxx\"\n";
+    }
     if (this->mb.getAttribute<bool>(BehaviourData::profiling, false)) {
       os << "#include\"MFront/BehaviourProfiler.hxx\"\n";
     }
+    os << "#include\"" << this->getBehaviourDataFileName() << "\"\n"
+       << "#include\"" << this->getIntegrationDataFileName() << "\"\n";
     os << '\n';
   }
 

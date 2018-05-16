@@ -56,10 +56,16 @@ namespace mfront {
       tokens_iterator& p,
       const tokens_iterator pe) const {
     const auto pc = this->constructors.find(a);
-    tfel::raise_if(pc == this->constructors.end(),
-                   "AbstractBehaviourBrickFactory::getAbstractBehaviourBrick : "
-                   "no AbstractBehaviourBrick '" +
-                       a + "' registred");
+    if(pc == this->constructors.end()){
+      auto msg = std::string{};
+      msg += "AbstractBehaviourBrickFactory::getAbstractBehaviourBrick: ";
+      msg += "no behaviour brick named '" + a + "' registred. ";
+      msg += "Available bricks are:";
+      for(const auto& c : this->constructors){
+        msg += "\n- " + c.first;
+      }
+      tfel::raise(msg);
+    }
     return (*(pc->second))(dsl, mb, bp, p, pe);
   }
 

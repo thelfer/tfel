@@ -361,6 +361,13 @@ property.
 
 ### Cazacu 2001 stress criterion
 
+![Plane stress yield surface (\(\sigma_{xy}=0\) and \(\sigma_{xy}=0.45\,\sigma_{0}\)) of 2090-T3 alloy sheet as predicted by the generalization of the Drucker yield criterion using generalized invariants (See @cazacu_generalization_2001, Figure 6).](img/Cazacu2001_2090-T3.svg
+ "Plane stress yield surface (\(\sigma_{xy}=0\) and
+ \(\sigma_{xy}=0.45\,\sigma_{0}\)) of 2090-T3 alloy sheet as predicted
+ by the generalization of the Drucker yield criterion using
+ generalized invariants (See @cazacu_generalization_2001, Figure
+ 3)"){width=80%}
+
 Within the framework of the theory of representation, generalizations
 to orthotropic conditions of the invariants of the deviatoric stress
 have been proposed by Cazacu and Barlat (see
@@ -430,7 +437,7 @@ the following restrictions apply:
   `Tridimensional` modelling hypothesis is supported.q
 - if the `Plate` orthotropic axis convention is used, only the
   `Tridimensional` and `PlaneStress` modelling hypotheses are supported.
-- if the `Pipe` orthotropic axis convention is used, only the
+- if the `Pipe` orthotropic axis convention is used, only theI
   `Tridimensional`, `Axisymmetrical`,
   `AxisymmetricalGeneralisedPlainStrain`, and
   `AxisymmetricalGeneralisedPlainStres` modelling hypotheses are
@@ -438,6 +445,8 @@ the following restrictions apply:
 
 
 ### Orthotropic Cazacu 2004 stress criterion
+
+![Plane stress yield loci for a magnesium sheet (See @cazacu_criterion_2004, Figure 6).](img/Cazacu2004.svg "Plane stress yield loci for a magnesium sheet"){width=80%}
 
 Using the invariants \(J_{2}^{O}\) and \(J_{3}^{O}\) previously defined,
 Cazacu and Barlat proposed the following criterion (See @cazacu_criterion_2004):

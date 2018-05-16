@@ -1,0 +1,46 @@
+@DSL Implicit;
+@Behaviour LogarithmicStrainStandardElasticity3;
+@Author Thomas Helfer;
+@Date   8/03/2018;
+@Description{
+  "This tests aims at:"
+  "- testing the axisymmetrical generalised plane stress"
+  "  modelling hypothesis used in the `Cyrano` fuel "
+  "  performance code"
+  "- testing the `computeElasticPrediction` method"
+}
+
+@ModellingHypotheses {".+"};
+@StrainMeasure Hencky;
+
+@Epsilon 1.e-16;
+
+@OrthotropicBehaviour<Pipe>;
+
+@Brick StandardElasticity{
+  young_modulus1 : 150e9,
+  young_modulus2 : 150e9,
+  young_modulus3 : 150e9,
+  poisson_ratio12 : 0.3,
+  poisson_ratio23 : 0.3,
+  poisson_ratio13 : 0.3,
+  shear_modulus12 : 150e9,
+  shear_modulus23 : 150e9,
+  shear_modulus13 : 150e9
+};
+
+@AuxiliaryStateVariable StressStensor sigel;
+
+@LocalVariable StressStensor sig0;
+
+@InitLocalVariables{
+  sig0 = sig;
+  sigel = computeElasticPrediction();
+}
+
+@UpdateAuxiliaryStateVariables {
+  const auto ds = eval(theta * sig + (1 - theta) * sig0 - sigel);
+  if (sqrt(ds | ds) > 10 * epsilon * D(0,0)) {
+    tfel::raise("invalid stress prediction");
+  }
+}

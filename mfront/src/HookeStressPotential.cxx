@@ -47,35 +47,50 @@ namespace mfront {
             } else {
               if (bd.hasAttribute(
                       BehaviourDescription::requiresUnAlteredStiffnessTensor)) {
-                m += "StressStensor prediction_stress;\n";
-                m += "StrainStensor prediction_strain = "
-                     "this->eel+(this->theta)*this->deto;\n";
-                m += "prediction_stress(1) = "
-                     "this->sigzz+(this->theta)*(this->dsigzz);\n";
-                m += "prediction_stress(0) = "
-                     "(this->D(0,0)-((this->D(0,1))*(this->D(1,0)))/"
-                     "(this->D(1,1)))*prediction_strain(0)+\n";
-                m += "                       "
-                     "(this->D(0,2)-((this->D(0,1))*(this->D(1,2)))/"
-                     "(this->D(1,1)))*prediction_strain(2)+\n";
-                m += "                       "
-                     "(this->D(0,1))/"
-                     "(this->D(1,1))*(this->sigzz+(this->theta)*(this->"
-                     "dsigzz));"
-                     "\n";
-                m += "prediction_stress(2) = "
-                     "(this->D(2,0)-((this->D(2,1))*(this->D(1,0)))/"
-                     "(this->D(1,1)))*prediction_strain(0)+\n";
-                m += "                       "
-                     "(this->D(2,2)-((this->D(2,1))*(this->D(1,2)))/"
-                     "(this->D(1,1)))*prediction_strain(2)+\n";
-                m += "                       "
-                     "(this->D(2,1))/"
-                     "(this->D(1,1))*(this->sigzz+(this->theta)*(this->"
-                     "dsigzz));"
-                     "\n";
-
-                m += "return prediction_stress;\n";
+                if ((bd.isStrainMeasureDefined()) &&
+                    (bd.getStrainMeasure() == BehaviourDescription::HENCKY)) {
+                  m += "StrainStensor prediction_strain = "
+                       "this->eel+(this->theta)*this->deto;\n";
+                  m += "prediction_strain(1) += ";
+                  m += "(this->theta)*";
+                  m += "computeAxialStrainIncrementElasticPrediction(";
+                  m += "this->D(1,0),this->D(1,1),this->D(1,2),";
+                  m += "this->eel,this->etozz,this->deto,";
+                  m += "this->sigzz + this->dsigzz,";
+                  m += "real(1),this->epsilon);\n";
+                  m += "const StressStensor prediction_stress = ";
+                  m += "(this->D)*prediction_strain;\n";
+                  m += "return prediction_stress;\n";
+                } else {
+                  m += "StressStensor prediction_stress;\n";
+                  m += "StrainStensor prediction_strain = "
+                       "this->eel+(this->theta)*this->deto;\n";
+                  m += "prediction_stress(1) = "
+                       "this->sigzz+(this->theta)*(this->dsigzz);\n";
+                  m += "prediction_stress(0) = "
+                       "(this->D(0,0)-((this->D(0,1))*(this->D(1,0)))/"
+                       "(this->D(1,1)))*prediction_strain(0)+\n";
+                  m += "                       "
+                       "(this->D(0,2)-((this->D(0,1))*(this->D(1,2)))/"
+                       "(this->D(1,1)))*prediction_strain(2)+\n";
+                  m += "                       "
+                       "(this->D(0,1))/"
+                       "(this->D(1,1))*(this->sigzz+(this->theta)*(this->"
+                       "dsigzz));"
+                       "\n";
+                  m += "prediction_stress(2) = "
+                       "(this->D(2,0)-((this->D(2,1))*(this->D(1,0)))/"
+                       "(this->D(1,1)))*prediction_strain(0)+\n";
+                  m += "                       "
+                       "(this->D(2,2)-((this->D(2,1))*(this->D(1,2)))/"
+                       "(this->D(1,1)))*prediction_strain(2)+\n";
+                  m += "                       "
+                       "(this->D(2,1))/"
+                       "(this->D(1,1))*(this->sigzz+(this->theta)*(this->"
+                       "dsigzz));"
+                       "\n";
+                  m += "return prediction_stress;\n";
+                }
               } else {
                 m += "throw(std::runtime_error(\"computeElasticPrediction: "
                      "unsupported case\"));\n";
@@ -88,27 +103,44 @@ namespace mfront {
               const std::string lambda =
                   b ? "this->sebdata.lambda" : "this->lambda";
               const std::string mu = b ? "this->sebdata.mu" : "this->mu";
-              m += "StressStensor prediction_stress;\n";
-              m += "StrainStensor prediction_strain = "
-                   "this->eel+(this->theta)*this->deto;\n";
-              m += "prediction_stress(0) = 2*(" + mu + ")*((" + lambda + ")/(" +
-                   lambda + "+2*(" + mu +
-                   "))*(prediction_strain(0)+prediction_strain(2))+"
-                   "prediction_"
-                   "strain(0))+\n";
-              m += "(" + lambda + ")/(" + lambda + "+2*(" + mu +
-                   "))*(this->sigzz+(this->theta)*(this->dsigzz));\n";
-              m += "prediction_stress(2) = 2*(" + mu + ")*((" + lambda + ")/(" +
-                   lambda + "+2*(" + mu +
-                   "))*(prediction_strain(0)+prediction_strain(2))+"
-                   "prediction_"
-                   "strain(2))+\n";
-              m += "(" + lambda + ")/(" + lambda + "+2*(" + mu +
-                   "))*(this->sigzz+(this->theta)*(this->dsigzz));\n";
+              if ((bd.isStrainMeasureDefined()) &&
+                  (bd.getStrainMeasure() == BehaviourDescription::HENCKY)) {
+                m += "StrainStensor prediction_strain = "
+                     "this->eel+(this->theta)*this->deto;\n";
+                m += "prediction_strain(1) += ";
+                m += "(this->theta)*";
+                m += "computeAxialStrainIncrementElasticPrediction(";
+                m += lambda + ",2*(" + mu + ")+" + lambda + "," + lambda + ",";
+                m += "this->eel,this->etozz,this->deto,";
+                m += "this->sigzz+this->dsigzz,";
+                m += "real(1),this->epsilon);\n";
+                m += "const StressStensor prediction_stress = ";
+                m += "("+lambda+") * trace(prediction_strain) * Stensor::Id() + ";
+                m += "2 * ("+mu+") * prediction_strain;\n";
+                m += "return prediction_stress;\n";
+              } else {
+                m += "StressStensor prediction_stress;\n";
+                m += "StrainStensor prediction_strain = "
+                     "this->eel+(this->theta)*this->deto;\n";
+                m += "prediction_stress(0) = 2*(" + mu + ")*((" + lambda +
+                     ")/(" + lambda + "+2*(" + mu +
+                     "))*(prediction_strain(0)+prediction_strain(2))+"
+                     "prediction_"
+                     "strain(0))+\n";
+                m += "(" + lambda + ")/(" + lambda + "+2*(" + mu +
+                     "))*(this->sigzz+(this->theta)*(this->dsigzz));\n";
+                m += "prediction_stress(2) = 2*(" + mu + ")*((" + lambda +
+                     ")/(" + lambda + "+2*(" + mu +
+                     "))*(prediction_strain(0)+prediction_strain(2))+"
+                     "prediction_"
+                     "strain(2))+\n";
+                m += "(" + lambda + ")/(" + lambda + "+2*(" + mu +
+                     "))*(this->sigzz+(this->theta)*(this->dsigzz));\n";
 
-              m += "prediction_stress(1) = "
-                   "this->sigzz+(this->theta)*(this->dsigzz);\n";
-              m += "return prediction_stress;\n";
+                m += "prediction_stress(1) = "
+                     "this->sigzz+(this->theta)*(this->dsigzz);\n";
+                m += "return prediction_stress;\n";
+              }
             } else {
               tfel::raise_if(!bd.getAttribute<bool>(
                                  BehaviourDescription::requiresStiffnessTensor),

@@ -44,6 +44,10 @@ set(mfront_tests_SOURCES
   TemperatureUpdateOnSubSteppingCheck
   LogarithmicStrainElasticity
   LogarithmicStrainElasticity4
+  LogarithmicStrainStandardElasticity
+  LogarithmicStrainStandardElasticity2
+  LogarithmicStrainStandardElasticity3
+  LogarithmicStrainStandardElasticity4
   LogarithmicStrainOrthotropicElasticity
   LogarithmicStrainNortonCreep
   LogarithmicStrainNortonCreep2
@@ -249,3 +253,8 @@ test_cyrano(norton_LogarithmicStrain-uniaxialloading-3-1D)
 test_cyrano(elasticmaterialpropertiesboundschecktest
   NO_XML_OUTPUT WILL_FAIL)
 test_cyrano(temperatureupdateonsubsteppingcheck)
+
+test_cyrano(logarithmicstrainstandardelasticity)
+test_cyrano(logarithmicstrainstandardelasticity2)
+test_cyrano(logarithmicstrainstandardelasticity3)
+test_cyrano(logarithmicstrainstandardelasticity4)

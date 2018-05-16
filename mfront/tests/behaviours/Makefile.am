@@ -102,6 +102,10 @@ MFRONTS= DDIF2.mfront                                                      \
 	 LogarithmicStrainElasticity2.mfront                               \
 	 LogarithmicStrainElasticity3.mfront                               \
 	 LogarithmicStrainElasticity4.mfront                               \
+	 LogarithmicStrainStandardElasticity.mfront                        \
+	 LogarithmicStrainStandardElasticity2.mfront                       \
+	 LogarithmicStrainStandardElasticity3.mfront                       \
+	 LogarithmicStrainStandardElasticity4.mfront                       \
 	 LogarithmicStrainPlasticity.mfront                                \
 	 LogarithmicStrainNortonCreep.mfront                               \
 	 LogarithmicStrainNortonCreep2.mfront                              \

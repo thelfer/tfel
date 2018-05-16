@@ -1218,7 +1218,9 @@ docs/web/img/CastemWebSite.png -text
 docs/web/img/CastemWebSite.xcf -text
 docs/web/img/CauchyStressComponents.png -text
 docs/web/img/Cazacu2001_2090-T3.svg -text
+docs/web/img/Cazacu2001_2090-T9.svg -text
 docs/web/img/Cazacu2001_6016-T4-YdLin.svg -text
+docs/web/img/Cazacu2004.svg -text
 docs/web/img/CodeAster2015Flyer.png -text
 docs/web/img/Configuration.pdf -text
 docs/web/img/Configuration.png -text
@@ -1545,6 +1547,8 @@ include/TFEL/Material/IsotropicLinearFourierLaw.hxx -text
 include/TFEL/Material/IsotropicPlasticity.hxx -text
 include/TFEL/Material/IsotropicPlasticity.ixx -text
 include/TFEL/Material/Lame.hxx -text
+include/TFEL/Material/LogarithmicStrainComputeAxialStrainIncrementElasticPrediction.hxx -text
+include/TFEL/Material/LogarithmicStrainComputeAxialStrainIncrementElasticPrediction.ixx -text
 include/TFEL/Material/LogarithmicStrainHandler.hxx -text
 include/TFEL/Material/LogarithmicStrainHandler.ixx -text
 include/TFEL/Material/MaterialException.hxx -text
@@ -2710,6 +2714,10 @@ mfront/tests/behaviours/LogarithmicStrainNortonCreep.mfront -text
 mfront/tests/behaviours/LogarithmicStrainNortonCreep2.mfront -text
 mfront/tests/behaviours/LogarithmicStrainOrthotropicElasticity.mfront -text
 mfront/tests/behaviours/LogarithmicStrainPlasticity.mfront -text
+mfront/tests/behaviours/LogarithmicStrainStandardElasticity.mfront -text
+mfront/tests/behaviours/LogarithmicStrainStandardElasticity2.mfront -text
+mfront/tests/behaviours/LogarithmicStrainStandardElasticity3.mfront -text
+mfront/tests/behaviours/LogarithmicStrainStandardElasticity4.mfront -text
 mfront/tests/behaviours/Lorentz.mfront -text
 mfront/tests/behaviours/Lorentz2.mfront -text
 mfront/tests/behaviours/Makefile.am -text
@@ -4728,6 +4736,10 @@ mfront/tests/behaviours/cyrano/cyranoimplicitnorton2.mtest.in -text
 mfront/tests/behaviours/cyrano/cyranoimplicitnorton3.mtest.in -text
 mfront/tests/behaviours/cyrano/cyranoisotropiclinearswelling.mtest.in -text
 mfront/tests/behaviours/cyrano/cyranoisotropicvolumeswelling.mtest.in -text
+mfront/tests/behaviours/cyrano/cyranologarithmicstrainstandardelasticity.mtest.in -text
+mfront/tests/behaviours/cyrano/cyranologarithmicstrainstandardelasticity2.mtest.in -text
+mfront/tests/behaviours/cyrano/cyranologarithmicstrainstandardelasticity3.mtest.in -text
+mfront/tests/behaviours/cyrano/cyranologarithmicstrainstandardelasticity4.mtest.in -text
 mfront/tests/behaviours/cyrano/cyranomaterialpropertiesboundscheck.mtest.in -text
 mfront/tests/behaviours/cyrano/cyranomaterialpropertiesboundscheck2.mtest.in -text
 mfront/tests/behaviours/cyrano/cyranomaterialpropertiesboundscheck3.mtest.in -text
@@ -6162,6 +6174,7 @@ tests/Material/HosfordSecondDerivativeTest.cxx -text
 tests/Material/Hyperelasticity.cxx -text
 tests/Material/IsotropicCazacuYieldTest.cxx -text
 tests/Material/IsotropicPlasticityTest.cxx -text
+tests/Material/LogarithmicStrainComputeAxialStrainIncrementElasticPredictionTest.cxx -text
 tests/Material/LogarithmicStrainHandlerTest.cxx -text
 tests/Material/Makefile.am -text
 tests/Material/Ogden.cxx -text

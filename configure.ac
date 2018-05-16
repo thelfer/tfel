@@ -2630,6 +2630,10 @@ AC_OUTPUT([debug.sh Makefile Doxyfile docs/Makefile docs/tfel/Makefile
 	   mfront/tests/behaviours/cyrano/cyranoparametertest2.mtest
 	   mfront/tests/behaviours/cyrano/cyranoelasticmaterialpropertiesboundschecktest.mtest
 	   mfront/tests/behaviours/cyrano/cyranotemperatureupdateonsubsteppingcheck.mtest
+	   mfront/tests/behaviours/cyrano/cyranologarithmicstrainstandardelasticity.mtest
+	   mfront/tests/behaviours/cyrano/cyranologarithmicstrainstandardelasticity2.mtest
+	   mfront/tests/behaviours/cyrano/cyranologarithmicstrainstandardelasticity3.mtest
+	   mfront/tests/behaviours/cyrano/cyranologarithmicstrainstandardelasticity4.mtest
 	   mfront/tests/behaviours/uanderson/Makefile
 	   mfront/tests/behaviours/uanderson/uandersonageingburger.mtest
 	   mfront/tests/behaviours/uanderson/uandersonanistropiclemaitreviscoplasticbehaviour.mtest

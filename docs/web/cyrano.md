@@ -14,6 +14,7 @@
 \newcommand{\tsigma}{\underline{\sigma}}
 \newcommand{\epsilonto}{\varepsilon^{\mathrm{to}}}
 \newcommand{\tepsilonto}{\underline{\varepsilon}^{\mathrm{to}}}
+\newcommand{\tepsilonel}{\underline{\varepsilon}^{\mathrm{el}}}
 
 \newcommand{\Frac}[2]{{{\displaystyle \frac{\displaystyle #1}{\displaystyle #2}}}}
 \newcommand{\deriv}[2]{{\displaystyle \frac{\displaystyle \partial #1}{\displaystyle \partial #2}}}
@@ -238,12 +239,43 @@ strain. Using the previous equations, the implicit equation associated
 with this unknown is:
 
 \[
-\exp\paren{\left(\tepsilonto_{\text{log}}\right)_{zz}}\,T_{zz}= \Pi_{zz}^{(i)}
+\exp\paren{
+\bts{\left(\tepsilonto_{\text{log}}\right)_{zz}}+
+\Delta\,\left(\tepsilonto_{\text{log}}\right)_{zz}
+}
+\,\ets{T_{zz}}= \ets{\Pi_{zz}^{(i)}}
 \]
 
 where \(\Pi_{zz}^{(i)}\) is the prescribed axial stress.
 
 This equation is automatically added by the Hooke stress potential used
 by the `StandardElasticity` and `StandardViscoplasticity` bricks.
+
+> **Elastic prediction of the stress**
+> 
+> Most stress potentials provide a `computeElasticPrediction` method.
+> Under the generalised plane stress hypothesis and using the
+> logarithmic strain, this method becomes non linear. The total axial
+> logarithmic strain is computed so that:
+> \[
+> \exp\paren{
+> \bts{\left(\tepsilonto_{\text{log}}\right)_{zz}}+
+> \Delta\,\left(\tepsilonto_{\text{log}}\right)_{zz}}
+> \,\ets{T_{zz}^{el}}= \ets{\Pi_{zz}^{(i)}}
+> \] 
+> where \(\ets{T_{zz}^{el}}\) is the elastic prediction of the stress,
+> computed as a function of
+> \(\left(\Delta\,\tepsilonto_{\text{log}}\right)_{zz}\)
+> among other variables (elastic strain at the beginning
+> of the time step, in plane total strain increment, etc...)
+>
+> The elastic prediction of the stress is then based on the following
+> approximation of the elastic strain at the middle of the time step:
+> \[
+> \bts{\tepsilonel}+\theta\,
+> \left(\Delta\,\tepsilonto-\Delta\underline{\varepsilon}^{sf}\right)
+> \]
+> where \(\Delta\underline{\varepsilon}^{sf}\) is the increment of all
+> the stress strains (thermal expansion, swelling, and so on.)
 
 # References

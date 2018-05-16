@@ -28,6 +28,8 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Material/FiniteStrainBehaviourTangentOperatorBase.hxx	                             \
 			TFEL/Material/LogarithmicStrainHandler.hxx	                                             \
 			TFEL/Material/LogarithmicStrainHandler.ixx	                                             \
+			TFEL/Material/LogarithmicStrainComputeAxialStrainIncrementElasticPrediction.hxx              \
+			TFEL/Material/LogarithmicStrainComputeAxialStrainIncrementElasticPrediction.ixx              \
 			TFEL/Material/IsotropicPlasticity.hxx	                                                     \
 			TFEL/Material/IsotropicPlasticity.ixx	                                                     \
 			TFEL/Material/OrthotropicPlasticity.hxx	                                                     \

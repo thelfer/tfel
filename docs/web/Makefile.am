@@ -266,7 +266,9 @@ EXTRA_DIST=CMakeLists.txt					      \
            ./img/JUSM18_RDEGEILH_Fissuration_culasses.png         \
            ./img/Barrioz2018.png                                  \
 	   ./img/Cazacu2001_2090-T3.svg                               \
+	   ./img/Cazacu2001_2090-T9.svg                               \
 	   ./img/Cazacu2001_6016-T4-YdLin.svg                         \
+	   ./img/Cazacu2004.svg                                       \
 	   ./img/StressPotentials.svg                                 \
 	   ./img/CyranoPrinciple.png                                  \
 	   ./media/epx1.mp4                                           \

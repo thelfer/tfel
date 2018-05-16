@@ -67,7 +67,7 @@ namespace mfront {
           "of the stiffness tensor.",
           OptionDescription::REAL);
       return opts;
-    } // end of HookeStressPotentialBase::getIsotropicBehaviourOptions()
+    }  // end of HookeStressPotentialBase::getIsotropicBehaviourOptions()
 
     std::vector<OptionDescription>
     HookeStressPotentialBase::getOrthotropicBehaviourOptions() {
@@ -161,7 +161,7 @@ namespace mfront {
           std::vector<std::string>{"thermal_expansion1", "thermal_expansion2"},
           std::vector<std::string>{"thermal_expansion"});
       return opts;
-    } // end of HookeStressPotentialBase::getOrthotropicBehaviourOptions()
+    }  // end of HookeStressPotentialBase::getOrthotropicBehaviourOptions()
 
     std::vector<OptionDescription>
     HookeStressPotentialBase::getGeneralOptions() {
@@ -412,7 +412,6 @@ namespace mfront {
           this->declareComputeStressForOrthotropicBehaviour(bd);
         } else {
           throw_if(true, "unsupported elastic symmetry type");
-
         }
       }
       if (this->pss) {
@@ -432,6 +431,10 @@ namespace mfront {
           bd.setGlossaryName(agps, "sigzz",
                              tfel::glossary::Glossary::AxialStress);
           d.addVariable(agps, {"stress", "szz"});
+          if ((bd.isStrainMeasureDefined()) &&
+              (bd.getStrainMeasure() == BehaviourDescription::HENCKY)) {
+            d.addVariable(agps, {"stress", "exp_etozz"});
+          }
         }
         if (bmh.count(ps) != 0) {
           VariableDescription etozz("strain", "etozz", 1u, 0u);
@@ -527,26 +530,32 @@ namespace mfront {
       }
       tfel::raise_if(
           !bd.getAttribute<bool>(BehaviourDescription::requiresStiffnessTensor),
-          "HookeStressPotentialBase::declareComputeStressForOrthotropicBehaviour: "
+          "HookeStressPotentialBase::"
+          "declareComputeStressForOrthotropicBehaviour: "
           "the stiffness tensor must be defined for "
           "orthotropic behaviours");
       if (getVerboseMode() >= VERBOSE_DEBUG) {
         getLogStream() << "HookeStressPotentialBase::"
                           "declareComputeStressForOrthotropicBehaviour: end\n";
       }
-    }  // end of HookeStressPotentialBase::declareComputeStressForOrthotropicBehaviour
+    }  // end of
+       // HookeStressPotentialBase::declareComputeStressForOrthotropicBehaviour
 
     void
     HookeStressPotentialBase::addAxisymmetricalGeneralisedPlaneStressSupport(
         BehaviourDescription& bd, const AbstractBehaviourDSL& dsl) const {
       const auto agps =
           ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS;
-      CodeBlock integrator;
+      auto c = std::string{};
       // The brick contains a reference to an abstract behaviour dsl.
       // We need to know if we have to define the jacobian terms. So we
       // downcast it to the ImplicitDSLBase class have access to the
       // solver. See the getSolver call below.
       const auto& idsl = dynamic_cast<const ImplicitDSLBase&>(dsl);
+      if ((bd.isStrainMeasureDefined()) &&
+          (bd.getStrainMeasure() == BehaviourDescription::HENCKY)) {
+        c += "this->sebdata.exp_etozz = std::exp(this->etozz+this->detozz);\n";
+      }
       if ((bd.getAttribute<bool>(BehaviourDescription::requiresStiffnessTensor,
                                  false)) ||
           (bd.getAttribute<bool>(BehaviourDescription::computesStiffnessTensor,
@@ -554,63 +563,80 @@ namespace mfront {
         const std::string D =
             bd.getAttribute<bool>(BehaviourDescription::computesStiffnessTensor,
                                   false)
-                ? "D_tdt"
-                : "D";
-        integrator.code +=
-            "// the generalised plane stress equation is satisfied at the end "
-            "of "
-            "the time step\n"
-            "this->sebdata.szz = (this->" +
-            D +
-            "(1,1))*(this->eel(1)+this->deel(1))+"
-            "(this->" +
-            D +
-            "(1,0))*(this->eel(0)+this->deel(0))+"
-            "(this->" +
-            D +
-            "(1,2))*(this->eel(2)+this->deel(2));\n"
-            "fetozz   = (this->sebdata.szz-this->sigzz-this->dsigzz)/(this->" +
-            D +
-            "(1,1));\n"
-            "// modification of the partition of strain\n"
-            "feel(1) -= this->detozz;\n";
+                ? "this->D_tdt"
+                : "this->D";
+        c += "// the generalised plane stress equation is satisfied\n";
+        c += "// at the end of the time step\n";
+        c += "this->sebdata.szz = ";
+        c += "(" + D + "(1,1))*(this->eel(1)+this->deel(1))+";
+        c += "(" + D + "(1,0))*(this->eel(0)+this->deel(0))+";
+        c += "(" + D + "(1,2))*(this->eel(2)+this->deel(2));\n";
+        if ((bd.isStrainMeasureDefined()) &&
+            (bd.getStrainMeasure() == BehaviourDescription::HENCKY)) {
+          c += "fetozz = ";
+          c += "(this->sebdata.szz-";
+          c += "this->sebdata.exp_etozz * (this->sigzz+this->dsigzz))/";
+          c += "(" + D + "(1,1));\n";
+        } else {
+          c += "fetozz = ";
+          c += "(this->sebdata.szz-this->sigzz-this->dsigzz)/";
+          c += "(" + D + "(1,1));\n";
+        }
+        c += "// modification of the partition of strain\n";
+        c += "feel(1) -= this->detozz;\n";
         if ((idsl.getSolver().usesJacobian()) &&
             (!idsl.getSolver().requiresNumericalJacobian())) {
-          integrator.code +=
-              "// jacobian\n"
-              "dfeel_ddetozz(1) = -1;\n"
-              "dfetozz_ddetozz  = real(0);\n"
-              "dfetozz_ddeel(1) = 1;\n"
-              "dfetozz_ddeel(0) = (this->" +
-              D + "(1,0))/(this->" + D +
-              "(1,1));\n"
-              "dfetozz_ddeel(2) = (this->" +
-              D + "(1,2))/(this->" + D + "(1,1));\n";
+          c += "// jacobian\n";
+          c += "dfeel_ddetozz(1) = -1;\n";
+          c += "dfetozz_ddetozz  = real(0);\n";
+          c += "dfetozz_ddeel(1) = 1;\n";
+          c += "dfetozz_ddeel(0) = (" + D + "(1,0))/(" + D + "(1,1));\n";
+          c += "dfetozz_ddeel(2) = (" + D + "(1,2))/(" + D + "(1,1));\n";
+          if ((bd.isStrainMeasureDefined()) &&
+              (bd.getStrainMeasure() == BehaviourDescription::HENCKY)) {
+            c += "dfetozz_ddetozz = ";
+            c += "-this->sebdata.exp_etozz * (this->sigzz+this->dsigzz)/";
+            c += "(" + D + "(1,1));\n";
+          }
         }
       } else {
         if (bd.areElasticMaterialPropertiesDefined()) {
-          integrator.code +=
-              "// the generalised plane stress equation is satisfied at the "
-              "end "
-              "of the time step\n"
-              "this->sebdata.szz = "
-              "(this->lambda_tdt+2*(this->mu_tdt))*(this->eel(1)+this->deel(1))"
-              "+ (this->lambda_tdt)*(this->eel(0)+this->deel(0)+"
-              "this->eel(2)+this->deel(2));\n"
-              "fetozz   = "
-              "(this->sebdata.szz-this->sigzz-this->dsigzz)/this->young_tdt;\n"
-              "// modification of the partition of strain\n"
-              "feel(1) -= this->detozz;\n";
+          c += "// the generalised plane stress equation \n";
+          c += "// is satisfied at the end of the time step\n";
+          c += "this->sebdata.szz = \n";
+          c += "(this->lambda_tdt+2*(this->mu_tdt))*";
+          c += "(this->eel(1)+this->deel(1))";
+          c += "+ (this->lambda_tdt)*";
+          c += "(this->eel(0)+this->deel(0)+";
+          c += " this->eel(2)+this->deel(2));\n";
+          if ((bd.isStrainMeasureDefined()) &&
+              (bd.getStrainMeasure() == BehaviourDescription::HENCKY)) {
+            c += "fetozz = ";
+            c += "(this->sebdata.szz-";
+            c += "this->sebdata.exp_etozz * (this->sigzz+this->dsigzz))/";
+            c += "this->young_tdt;\n";
+          } else {
+            c += "fetozz   = ";
+            c += "(this->sebdata.szz-this->sigzz-this->dsigzz)/"
+                 "this->young_tdt;\n";
+          }
+          c += "// modification of the partition of strain\n";
+          c += "feel(1) -= this->detozz;\n";
           if ((idsl.getSolver().usesJacobian()) &&
               (!idsl.getSolver().requiresNumericalJacobian())) {
-            integrator.code +=
-                "// jacobian\n"
-                "dfeel_ddetozz(1) = -1;\n"
-                "dfetozz_ddetozz  = real(0);\n"
-                "dfetozz_ddeel(1) = "
-                "(this->lambda_tdt+2*(this->mu_tdt))/this->young_tdt;\n"
-                "dfetozz_ddeel(0) = this->lambda_tdt/this->young_tdt;\n"
-                "dfetozz_ddeel(2) = this->lambda_tdt/this->young_tdt;\n";
+            c += "// jacobian\n";
+            c += "dfeel_ddetozz(1) = -1;\n";
+            c += "dfetozz_ddetozz  = real(0);\n";
+            c += "dfetozz_ddeel(1) = ";
+            c += "(this->lambda_tdt+2*(this->mu_tdt))/this->young_tdt;\n";
+            c += "dfetozz_ddeel(0) = this->lambda_tdt/this->young_tdt;\n";
+            c += "dfetozz_ddeel(2) = this->lambda_tdt/this->young_tdt;\n";
+            if ((bd.isStrainMeasureDefined()) &&
+                (bd.getStrainMeasure() == BehaviourDescription::HENCKY)) {
+              c += "dfetozz_ddetozz = ";
+              c += "-this->sebdata.exp_etozz * (this->sigzz+this->dsigzz)/";
+              c += "this->young_tdt;\n";
+            }
           }
         } else {
           auto b = bd.getAttribute(
@@ -618,37 +644,46 @@ namespace mfront {
           const std::string lambda =
               b ? "this->sebdata.lambda" : "this->lambda";
           const std::string mu = b ? "this->sebdata.mu" : "this->mu";
-          integrator.code +=
-              "// the generalised plane stress equation is satisfied at the "
-              "end "
-              "of the time step\n"
-              "this->sebdata.szz =   (" +
-              lambda + "+2*(" + mu +
-              "))*(this->eel(1)+this->deel(1))"
-              "                   + (" +
-              lambda +
-              ")*(this->eel(0)+this->deel(0)+this->eel(2)+this->deel(2));\n"
-              "fetozz   = "
-              "(this->sebdata.szz-this->sigzz-this->dsigzz)/this->young;\n"
-              "// modification of the partition of strain\n"
-              "feel(1) -= this->detozz;\n";
+          c += "// the generalised plane stress equation \n";
+          c += "// is satisfied at the end of the time step\n";
+          c += "this->sebdata.szz = ";
+          c += "(" + lambda + "+2*(" + mu + "))*(this->eel(1)+this->deel(1))";
+          c += " + ";
+          c += "(" + lambda +")*(this->eel(0)+this->deel(0)+";
+          c += "this->eel(2)+this->deel(2));\n";
+          if ((bd.isStrainMeasureDefined()) &&
+              (bd.getStrainMeasure() == BehaviourDescription::HENCKY)) {
+            c += "fetozz = ";
+            c += "(this->sebdata.szz-";
+            c += "this->sebdata.exp_etozz * (this->sigzz+this->dsigzz))/";
+            c += "this->young;\n";
+          } else {
+            c += "fetozz = ";
+            c += "(this->sebdata.szz-this->sigzz-this->dsigzz)/";
+            c += "this->young;\n";
+          }
+          c += "// modification of the partition of strain\n";
+          c += "feel(1) -= this->detozz;\n";
           if ((idsl.getSolver().usesJacobian()) &&
               (!idsl.getSolver().requiresNumericalJacobian())) {
-            integrator.code +=
-                "// jacobian\n"
-                "dfeel_ddetozz(1) = -1;\n"
-                "dfetozz_ddetozz  = real(0);\n"
-                "dfetozz_ddeel(1) = (" +
-                lambda + "+2*(" + mu +
-                "))/this->young;\n"
-                "dfetozz_ddeel(0) = " +
-                lambda +
-                "/this->young;\n"
-                "dfetozz_ddeel(2) = " +
-                lambda + "/this->young;\n";
+            c += "// jacobian\n";
+            c += "dfeel_ddetozz(1) = -1;\n";
+            c += "dfetozz_ddetozz  = real(0);\n";
+            c += "dfetozz_ddeel(1) = ";
+            c += "(" + lambda + "+2*(" + mu + "))/this->young;\n";
+            c += "dfetozz_ddeel(0) = " + lambda + "/this->young;\n";
+            c += "dfetozz_ddeel(2) = " + lambda + "/this->young;\n";
+          }
+          if ((bd.isStrainMeasureDefined()) &&
+              (bd.getStrainMeasure() == BehaviourDescription::HENCKY)) {
+            c += "dfetozz_ddetozz = ";
+            c += "-this->sebdata.exp_etozz * (this->sigzz+this->dsigzz)/";
+            c += "this->young;\n";
           }
         }
       }
+      CodeBlock integrator;
+      integrator.code = c;
       bd.setCode(agps, BehaviourData::Integrator, integrator,
                  BehaviourData::CREATEORAPPEND, BehaviourData::AT_BEGINNING);
     }
@@ -668,7 +703,8 @@ namespace mfront {
                 ? "D_tdt"
                 : "D";
         integrator.code +=
-            "// the plane stress equation is satisfied at the end of the time "
+            "// the plane stress equation is satisfied at the end of the "
+            "time "
             "step\n"
             "fetozz   = this->eel(2)+this->deel(2)+"
             "           ((this->" +
@@ -699,7 +735,8 @@ namespace mfront {
               "time "
               "step\n"
               "this->sebdata.szz = "
-              "(this->lambda_tdt+2*(this->mu_tdt))*(this->eel(2)+this->deel(2))"
+              "(this->lambda_tdt+2*(this->mu_tdt))*(this->eel(2)+this->"
+              "deel(2))"
               "+"
               "                   "
               "(this->lambda_tdt)*(this->eel(0)+this->deel(0)+this->eel(1)+"
@@ -808,7 +845,8 @@ namespace mfront {
                                  false)) ||
           (bd.getAttribute<bool>(BehaviourDescription::computesStiffnessTensor,
                                  false))) {
-        return "(this->relative_value_for_the_equivalent_stress_lower_bound)*"
+        return "(this->relative_value_for_the_equivalent_stress_lower_"
+               "bound)*"
                "(this->D(0,0))";
       }
       return "(this->relative_value_for_the_equivalent_stress_lower_bound)*"

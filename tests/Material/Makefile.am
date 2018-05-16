@@ -3,33 +3,34 @@ if WITH_TESTS
 AM_CPPFLAGS = -I$(top_srcdir)/include
 
 testdir = $(pkgdatadir)/tests/Material
-test_PROGRAMS = boundsCheck \
-		OrthotropicAxesConventionTest          \
-		AbaqusTangentOperator                  \
-		AbaqusTangentOperator2                 \
-		FiniteStrainBehaviourTangentOperator   \
-		FiniteStrainBehaviourTangentOperator2  \
-		FiniteStrainBehaviourTangentOperator3  \
-		FiniteStrainBehaviourTangentOperator4  \
-		FiniteStrainBehaviourTangentOperator5  \
-		FiniteStrainBehaviourTangentOperator6  \
-		FiniteStrainBehaviourTangentOperator7  \
-		FiniteStrainBehaviourTangentOperator8  \
-		FiniteStrainBehaviourTangentOperator9  \
-		FiniteStrainBehaviourTangentOperator10 \
-		FiniteStrainBehaviourTangentOperator11 \
-		FiniteStrainBehaviourTangentOperator12 \
-		FiniteStrainBehaviourTangentOperator13 \
-		LogarithmicStrainHandlerTest           \
-		Hyperelasticity                        \
-		Ogden                                  \
-		IsotropicPlasticityTest                \
-		OrthotropicPlasticityTest              \
-		SlipSystemsDescriptionTest             \
-		HosfordSecondDerivativeTest            \
-		BarlatSecondDerivativeTest             \
-		BarlatSecondDerivativeTest2            \
-		IsotropicCazacuYieldTest
+test_PROGRAMS = boundsCheck                                                       \
+                OrthotropicAxesConventionTest                                     \
+                AbaqusTangentOperator                                             \
+                AbaqusTangentOperator2                                            \
+                FiniteStrainBehaviourTangentOperator                              \
+                FiniteStrainBehaviourTangentOperator2                             \
+                FiniteStrainBehaviourTangentOperator3                             \
+                FiniteStrainBehaviourTangentOperator4                             \
+                FiniteStrainBehaviourTangentOperator5                             \
+                FiniteStrainBehaviourTangentOperator6                             \
+                FiniteStrainBehaviourTangentOperator7                             \
+                FiniteStrainBehaviourTangentOperator8                             \
+                FiniteStrainBehaviourTangentOperator9                             \
+                FiniteStrainBehaviourTangentOperator10                            \
+                FiniteStrainBehaviourTangentOperator11                            \
+                FiniteStrainBehaviourTangentOperator12                            \
+                FiniteStrainBehaviourTangentOperator13                            \
+                LogarithmicStrainHandlerTest                                      \
+                Hyperelasticity                                                   \
+                Ogden                                                             \
+                IsotropicPlasticityTest                                           \
+                OrthotropicPlasticityTest                                         \
+                SlipSystemsDescriptionTest                                        \
+                HosfordSecondDerivativeTest                                       \
+                BarlatSecondDerivativeTest                                        \
+                BarlatSecondDerivativeTest2                                       \
+                IsotropicCazacuYieldTest                                          \
+                LogarithmicStrainComputeAxialStrainIncrementElasticPredictionTest
 
 LDADD = -lTFELMaterial -lTFELMath       \
 	-lTFELUtilities -lTFELException \
@@ -67,6 +68,7 @@ HosfordSecondDerivativeTest_SOURCES = HosfordSecondDerivativeTest.cxx
 BarlatSecondDerivativeTest_SOURCES  = BarlatSecondDerivativeTest.cxx
 BarlatSecondDerivativeTest2_SOURCES = BarlatSecondDerivativeTest2.cxx
 IsotropicCazacuYieldTest_SOURCES    = IsotropicCazacuYieldTest.cxx
+LogarithmicStrainComputeAxialStrainIncrementElasticPredictionTest_SOURCES = LogarithmicStrainComputeAxialStrainIncrementElasticPredictionTest.cxx
 
 TESTS=$(test_PROGRAMS)
 

@@ -661,25 +661,15 @@ namespace mfront {
         while (pev!=d.getExternalStateVariables().end()) {
           if (d.getExternalName(pev->name) == tfel::glossary::Glossary::AxialStress) {
             throw_if(SupportedTypes::getTypeFlag(pev->type) != SupportedTypes::Scalar,
-                     "invalid type for the `AxialStrain` external state variable");
+                     "invalid type for the `AxialStress` external state variable");
             return {true, o};
           }
           o += SupportedTypes::getTypeSize(pev->type, pev->arraySize);
         }
         return {false, o};
       }();
-      throw_if(!astress.first, "no external variable named 'AxialStrain'");
-      const auto nevs = d.getExternalStateVariables().getTypeSize().getValueForDimension(1)-1;
-      out << "cyrano::CyranoReal evs[" << nevs << "];\n";
-      out << "cyrano::CyranoReal devs[" << nevs << "];\n";
-      out << "if(*NSTATV<1){\n"
-          << "std::cerr << \"" << n << ": invalid number of state variables "
-          << "(can't get the current estimate of the axial strain)\\n\";\n"
-          << "*KINC = -1.;\n"
-          << "return;\n"
-          << "}\n";
-      out << "const auto nstatv = *NSTATV-1;\n";
       const auto astrain = this->checkIfAxialStrainIsDefinedAndGetItsOffset(mb);
+      tfel::raise_if(!astress.first, "no external state state variable standing for the axial stress");
       tfel::raise_if(!astrain.first, "no state variable standing for the axial strain");
       if (mb.getAttribute(BehaviourData::profiling, false)) {
         out << "{\n"
@@ -688,13 +678,8 @@ namespace mfront {
       }
       out << "const auto Pzz0 = PREDEF[" << astress.second.getValueForDimension(1) << "];\n"
           << "const auto Pzz1 = Pzz0+DPRED[" << astress.second.getValueForDimension(1) << "];\n"
-          << "const auto Tzz0 = "
+	  << "const auto Tzz0 = "
           << "Pzz0*std::exp(STATEV[" << astrain.second.getValueForDimension(1) << "]);\n"
-          << "const auto Tzz1 = Pzz1*std::exp(STATEV[nstatv]);\n"
-          << "tfel::fsalgo::copy<" << nevs << ">::exe(PREDEF,evs);\n"
-          << "tfel::fsalgo::copy<" << nevs << ">::exe(DPRED,devs);\n"
-          << "evs[" << astress.second.getValueForDimension(1) << "]=Tzz0;\n"
-          << "devs[" << astress.second.getValueForDimension(1) << "]=Tzz1-Tzz0;\n"
           << "eto[0]=std::log1p(*STRAN);\n"
           << "eto[1]=std::log1p(*(STRAN+1));\n"
           << "eto[2]=0;\n"
@@ -710,7 +695,7 @@ namespace mfront {
       }
       out << "cyrano::CyranoInterface<tfel::material::" << mb.getClassName()
           << ">::exe(NTENS,DTIME,DROT,K,eto,deto,TEMP,DTEMP,PROPS,NPROPS,"
-          << "evs,devs,STATEV,&nstatv,s,NDI,KINC,"
+          << "PREDEF,DPRED,STATEV,NSTATV,s,NDI,KINC,"
           << "cyrano::CyranoLogarithmicStrainStressFreeExpansionHandler,op);\n";
       out << "if(*KINC==1){\n";
       if (mb.getAttribute(BehaviourData::profiling, false)) {
