@@ -304,7 +304,7 @@ namespace mtest
 	K(0,idx) = stressNew[0];
 	K(1,idx) = stressNew[1];
 	K(2,idx) = 0;
-	K(3,idx) = stressNew[2];
+	K(3,idx) = stressNew[3];
       } else if((h==ModellingHypothesis::AXISYMMETRICAL)||
 		(h==ModellingHypothesis::PLANESTRAIN)){
 	K(0,i) = stressNew[0];
@@ -586,7 +586,7 @@ namespace mtest
 	sig[0] = stressNew[0];
 	sig[1] = stressNew[1];
 	sig[2] = 0;
-	sig[3] = stressNew[2]*sqrt2;
+	sig[3] = stressNew[3]*sqrt2;
       } else {
 	sig[0] = stressNew[0];
 	sig[1] = stressNew[1];

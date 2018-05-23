@@ -53,7 +53,7 @@ namespace mfront {
       }
     }
     tfel::raise(
-        "UMATInterfaceBase::findUMATMaterialProperty : "
+        "UMATInterfaceBase::findUMATMaterialProperty: "
         "no material property associated with the "
         "glossary name '" +
         n + "'");
@@ -117,7 +117,7 @@ namespace mfront {
             // type check
             if (mb.useQt()) {
               throw_if(p->type != pum->type,
-                       "UMATInterfaceBase::completeMaterialPropertiesList : "
+                       "UMATInterfaceBase::completeMaterialPropertiesList: "
                        "incompatible type for variable '" +
                            n + "' ('" + p->type + "' vs '" + pum->type + "')");
             } else {
@@ -128,7 +128,7 @@ namespace mfront {
                       "')");
               if (p->type != pum->type) {
                 auto& log = getLogStream();
-                log << "UMATInterfaceBase::completeMaterialPropertiesList : "
+                log << "UMATInterfaceBase::completeMaterialPropertiesList: "
                     << "inconsistent type for variable '" << n << "' ('" << p->type << "' vs '"
                     << pum->type << "')\n";
               }
@@ -856,7 +856,7 @@ namespace mfront {
         }
       } else {
         tfel::raise(
-            "UMATInterfaceBase::writeBehaviourDataMainVariablesSetters : "
+            "UMATInterfaceBase::writeBehaviourDataMainVariablesSetters: "
             "unsupported driving variable type");
       }
     } else {
@@ -884,7 +884,7 @@ namespace mfront {
         }
       } else {
         tfel::raise(
-            "UMATInterfaceBase::writeBehaviourDataMainVariablesSetters : "
+            "UMATInterfaceBase::writeBehaviourDataMainVariablesSetters: "
             "unsupported driving variable type");
       }
     }
@@ -917,7 +917,7 @@ namespace mfront {
       }
     } else {
       tfel::raise(
-          "UMATInterfaceBase::writeBehaviourDataMainVariablesSetters : "
+          "UMATInterfaceBase::writeBehaviourDataMainVariablesSetters: "
           "unsupported forces type");
     }
   }  // end of UMATInterfaceBase::writeBehaviourDataThermodynamicForceSetter
@@ -964,7 +964,7 @@ namespace mfront {
         }
       } else {
         tfel::raise(
-            "UMATInterfaceBase::writeIntegrationDataMainVariablesSetters : "
+            "UMATInterfaceBase::writeIntegrationDataMainVariablesSetters: "
             "unsupported driving variable type");
       }
     } else {
@@ -992,7 +992,7 @@ namespace mfront {
         }
       } else {
         tfel::raise(
-            "UMATInterfaceBase::writeIntegrationDataMainVariablesSetters : "
+            "UMATInterfaceBase::writeIntegrationDataMainVariablesSetters: "
             "unsupported driving variable type");
       }
     }
@@ -1113,7 +1113,7 @@ namespace mfront {
         << this->getFunctionName(name) << "_getOutOfBoundsPolicy() = tfel::material::Strict;\n"
         << "} else {\n"
         << "std::cerr << \"" << this->getFunctionName(name)
-        << "_setOutOfBoundsPolicy : invalid argument\\n\";\n"
+        << "_setOutOfBoundsPolicy: invalid argument\\n\";\n"
         << "}\n"
         << "}\n\n";
   }
@@ -1265,9 +1265,8 @@ namespace mfront {
                                              const std::string& name,
                                              const std::string& suffix,
                                              const BehaviourDescription& mb) const {
-    using namespace std;
     if (this->generateMTestFile) {
-      string fname = name;
+      auto fname = name;
       if (!suffix.empty()) {
         fname += "_" + suffix;
       }
@@ -1289,9 +1288,10 @@ namespace mfront {
       out << "const auto TVectorSize = mg.getTVectorSize();\n"
           << "const auto StensorSize = mg.getStensorSize();\n"
           << "const auto TensorSize  = mg.getTensorSize();\n"
+          << "const auto dt = *DTIME>0 ? *DTIME : 1.e-50;\n"
           << "mg.setHandleThermalExpansion(false);\n"
           << "mg.addTime(0.);\n"
-          << "mg.addTime(*DTIME>0 ? *DTIME : 1.e-50);\n";
+          << "mg.addTime(dt);\n";
       if (type == BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
         out << "mg.setStrainTensor(STRAN);\n"
             << "mg.setStrainTensorIncrement(DSTRAN);\n"
@@ -1319,7 +1319,7 @@ namespace mfront {
         for (const auto& m : mprops.first) {
           auto flag = SupportedTypes::getTypeFlag(m.type);
           tfel::raise_if(flag != SupportedTypes::Scalar,
-                         "UMATInterfaceBase::generateFile2 : "
+                         "UMATInterfaceBase::generateFile2: "
                          "unsupported external state variable type "
                          "in mtest file generation");
           if (m.arraySize == 1u) {
@@ -1387,12 +1387,12 @@ namespace mfront {
           }
         }
         out << "mg.addExternalStateVariableValue(\"Temperature\",0.,*TEMP);\n";
-        out << "mg.addExternalStateVariableValue(\"Temperature\",*DTIME,*TEMP+*DTEMP);\n";
+        out << "mg.addExternalStateVariableValue(\"Temperature\",dt,*TEMP+*DTEMP);\n";
         auto p = std::next(externalStateVarsHolder.begin());
         for (offset = 0; p != externalStateVarsHolder.end(); ++p) {
           auto flag = SupportedTypes::getTypeFlag(p->type);
           tfel::raise_if(flag != SupportedTypes::Scalar,
-                         "UMATInterfaceBase::generateFile2 : "
+                         "UMATInterfaceBase::generateFile2: "
                          "unsupported external state variable type "
                          "in mtest file generation");
           const auto& evname = d.getExternalName(p->name);
@@ -1400,11 +1400,11 @@ namespace mfront {
             if (offset == 0) {
               out << "mg.addExternalStateVariableValue(\"" << evname << "\",0,*PREDEF);\n";
               out << "mg.addExternalStateVariableValue(\"" << evname
-                  << "\",*DTIME,*PREDEF+*DPRED);\n";
+                  << "\",dt,*PREDEF+*DPRED);\n";
             } else {
               out << "mg.addExternalStateVariableValue(\"" << evname << "\",0,*(PREDEF+" << offset
                   << "));\n";
-              out << "mg.addExternalStateVariableValue(\"" << evname << "\",*DTIME,*(PREDEF+"
+              out << "mg.addExternalStateVariableValue(\"" << evname << "\",dt,*(PREDEF+"
                   << offset << ")+*(DPRED+" << offset << "));\n";
             }
             ++offset;
@@ -1415,13 +1415,13 @@ namespace mfront {
               if (offset == 0) {
                 out << "mg.addExternalStateVariableValue(name,0,*(PREDEF+i));\n";
                 out << "mg.addExternalStateVariableValue(name,"
-                       "*DTIME,*(PREDEF+i)+*(DPRED+i));\n";
+                       "dt,*(PREDEF+i)+*(DPRED+i));\n";
               } else {
                 out << "mg.addExternalStateVariableValue(name,"
                        "0,*(PREDEF+"
                     << offset << "+i));\n";
                 out << "mg.addExternalStateVariableValue(name,"
-                       "*DTIME,*(PREDEF+"
+                       "dt,*(PREDEF+"
                     << offset << "+i)+*(DPRED+" << offset << "+i));\n";
               }
               out << "}\n";
@@ -1432,7 +1432,7 @@ namespace mfront {
                   out << "mg.addExternalStateVariableValue(\"" << evname << "[" << i
                       << "]\",0,*PREDEF);\n";
                   out << "mg.addExternalStateVariableValue(\"" << evname << "[" << i
-                      << "]\",*DTIME,*PREDEF+*DPRED);\n";
+                      << "]\",dt,*PREDEF+*DPRED);\n";
                 } else {
                   out << "mg.addExternalStateVariableValue(\"" << evname << "[" << i
                       << "]\","
@@ -1440,7 +1440,7 @@ namespace mfront {
                       << offset << "));\n";
                   out << "mg.addExternalStateVariableValue(\"" << evname << "[" << i
                       << "]\","
-                         "*DTIME,*(PREDEF+"
+                         "dt,*(PREDEF+"
                       << offset << ")+*(DPRED+" << offset << "));\n";
                 }
               }
@@ -1573,14 +1573,14 @@ namespace mfront {
       SupportedTypes::TypeSize s;
       throw_if((mprops.second.getTensorSize() != 0) || (mprops.second.getStensorSize() != 0) ||
                    (mprops.second.getTVectorSize() != 0),
-               "internal error : the material properties shall all be scalars");
+               "internal error: the material properties shall all be scalars");
       s = last.offset;
       s += SupportedTypes::getTypeSize(last.type, last.arraySize);
       s -= mprops.second;
       throw_if((s.getTensorSize() != 0) || (s.getStensorSize() != 0) || (s.getTVectorSize() != 0),
-               "internal error : the material properties shall all be scalars");
+               "internal error: the material properties shall all be scalars");
       throw_if(s.getScalarSize() < 0,
-               "internal error : negative number of the material properties");
+               "internal error: negative number of the material properties");
       vector<UMATMaterialProperty>::size_type ib =
           0; /* index of the first element which
               * is not imposed by the material properties */
@@ -1592,7 +1592,7 @@ namespace mfront {
         }
       }
       if (!found) {
-        throw_if(s.getScalarSize() != 0, "internal error : inconsistent offset declaration");
+        throw_if(s.getScalarSize() != 0, "internal error: inconsistent offset declaration");
         out << "MFRONT_SHAREDOBJ unsigned short " << this->getSymbolName(name, h)
             << "_nMaterialProperties = 0u;\n\n";
         out << "MFRONT_SHAREDOBJ const char * const *" << this->getSymbolName(name, h)

@@ -283,6 +283,13 @@ namespace mfront
     //! \brief read a C++ type
     std::pair<std::string,bool> readType();
     /*!
+     * \return the size of an array of variables, or 1 if the variable are not
+     * defined as an array.
+     * \param[in] n: variable name
+     * \param[in] b: allow arrays of variables to be defined
+     */
+    unsigned int readArrayOfVariablesSize(const std::string&, const bool);
+    /*!
      * \param[in] cont : variable container to wich variables are
      * added
      * \param[in] type : type of the variable
