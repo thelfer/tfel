@@ -4409,20 +4409,31 @@ namespace mfront {
     }
   }
 
-  void BehaviourDSLCommon::writeBehaviourParameterInitialisation(std::ostream& os, const Hypothesis h) const {
+  void BehaviourDSLCommon::writeBehaviourParameterInitialisation(
+      std::ostream& os, const Hypothesis h) const {
+    constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     this->checkBehaviourFile(os);
     const auto& d = this->mb.getBehaviourData(h);
     for (const auto& p : d.getParameters()) {
-      if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
-        os << "this->" << p.name << " = " << this->mb.getClassName() << "ParametersInitializer::get()." << p.name
-           << ";\n";
-      } else {
-        if (this->mb.hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS, p.name)) {
-          os << "this->" << p.name << " = " << this->mb.getClassName() << "ParametersInitializer::get()." << p.name
-             << ";\n";
-        } else {
-          os << "this->" << p.name << " = " << this->mb.getClassName() << ModellingHypothesis::toString(h)
+      if ((h == uh) || (this->mb.hasParameter(uh, p.name))) {
+        if (p.arraySize == 1u) {
+          os << "this->" << p.name << " = " << this->mb.getClassName()
              << "ParametersInitializer::get()." << p.name << ";\n";
+        } else {
+          os << "tfel::fsalgo::copy<" << p.arraySize << ">::exe("
+             << this->mb.getClassName() << "ParametersInitializer::get()."
+             << p.name << ".begin(),this->" << p.name << ".begin());\n";
+        }
+      } else {
+        if (p.arraySize == 1u) {
+          os << "this->" << p.name << " = " << this->mb.getClassName()
+             << ModellingHypothesis::toString(h)
+             << "ParametersInitializer::get()." << p.name << ";\n";
+        } else {
+          os << "tfel::fsalgo::copy<" << p.arraySize << ">::exe("
+             << this->mb.getClassName() << ModellingHypothesis::toString(h)
+             << "ParametersInitializer::get()." << p.name << ".begin(),this->"
+             << p.name << ".begin());\n";
         }
       }
     }
@@ -6361,15 +6372,7 @@ namespace mfront {
       const auto lineNumber = this->current->line;
       ++(this->current);
       this->checkNotEndOfFile("BehaviourDSLCommon::treatParameter");
-      unsigned short arraySize = 1u;
-      if (this->current->value == "[") {
-        ++(this->current);
-        this->checkNotEndOfFile("BehaviourDSLCommon::treatParameter");
-        arraySize = this->readUnsignedShort("BehaviourDSLCommon::treatParameter");
-        throw_if(arraySize == 0u, "invalid array size");
-        this->checkNotEndOfFile("BehaviourDSLCommon::treatParameter");
-        this->readSpecifiedToken("BehaviourDSLCommon::treatParameter", "]");
-      }
+      const auto arraySize = this->readArrayOfVariablesSize(n, true);
       this->checkNotEndOfFile("BehaviourDSLCommon::treatParameter");
       if ((this->current->value == "=") || (this->current->value == "{") || (this->current->value == "(")) {
         std::string ci;  // closing initializer

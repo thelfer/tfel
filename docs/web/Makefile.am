@@ -67,6 +67,7 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./isotropicplasticityamstrongfrederickinematichardening.md \
 	   ./iwan.md                                                  \
 	   ./drucker.md                                               \
+	   ./drucker-prager-cap.md                                    \
 	   ./hosford.md                                               \
 	   ./barlat-yld2004.md                                        \
 	   ./greenplasticity.md                                       \
@@ -277,6 +278,7 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./media/SignoriniCompression.mp4                           \
 	   ./media/SignoriniStrip.mp4                                 \
 	   ./media/CalculiXSheetForming-50.mp4                        \
+	   ./media/DeepDrawing.mp4                                    \
 	   ./doc/js.md						      \
 	   ./doc/usage.md					      \
 	   ./doc/css.md						      \

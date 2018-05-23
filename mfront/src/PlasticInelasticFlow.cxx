@@ -68,10 +68,10 @@ namespace mfront {
         c += sp.computeDerivatives(bd, "strain", "p" + id,
                                    dseq_ds + "/(" + snf + ")");
         c += "if(" + dR_ddp + ">0){\n";
-        c += dfp_ddp + " = -1*std::max(1.e-12,(" + dR_ddp +
+        c += dfp_ddp + " = -1*std::max(real(1.e-12),(" + dR_ddp +
              ")/("+snf+"));\n";
         c += "} else {\n";
-        c += dfp_ddp + " = -1*std::min(-1.e-12,(" + dR_ddp +
+        c += dfp_ddp + " = -1*std::min(-real(1.e-12),(" + dR_ddp +
              ")/("+snf+"));\n";
         c += "}\n";
         auto kid = decltype(khrs.size()){};

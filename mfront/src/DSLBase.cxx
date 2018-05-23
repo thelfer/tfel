@@ -480,6 +480,44 @@ namespace mfront {
     this->registerIntegerConstant(name, line, value.second);
   }  // end of DSLBase::treatIntegerConstant
 
+  unsigned int DSLBase::readArrayOfVariablesSize(const std::string& n,
+                                                 const bool b) {
+    auto throw_if = [this](const bool c, const std::string& m) {
+      if (c) {
+        this->throwRuntimeError("DSLBase::readArrayOfVariablesSize", m);
+      }
+    };
+    this->checkNotEndOfFile("DSLBase::readArrayOfVariablesSize");
+    unsigned int asize = 1u;
+    if (this->current->value == "[") {
+      throw_if(!b, "variable '" + n + "' can't be declared an array");
+      auto array_size = std::string{};
+      ++(this->current);
+      this->checkNotEndOfFile("DSLBase::readVarList");
+      while (this->current->value != "]") {
+        throw_if(((this->current->flag != tfel::utilities::Token::Standard) &&
+                  (this->current->flag != tfel::utilities::Token::Number)) ||
+                     (this->current->value == ";"),
+                 "invalid array size for '" + n + "'");
+        array_size += this->current->value;
+        ++(this->current);
+        this->checkNotEndOfFile("DSLBase::readVarList");
+      }
+      throw_if(array_size.empty(), "empty array size for '" + n + "'");
+      tfel::math::IntegerEvaluator ev(array_size);
+      const auto& vars = ev.getVariablesNames();
+      for (const auto& v : vars) {
+        ev.setVariableValue(v, this->getIntegerConstant(v));
+      }
+      const auto iv = ev.getValue();
+      throw_if(iv <= 0, "invalid array size for '" + n + "'");
+      asize = static_cast<unsigned int>(iv);
+      this->readSpecifiedToken("DSLBase::readVarList", "]");
+      this->checkNotEndOfFile("DSLBase::readVarList");
+    }
+    return asize;
+  }  // end of DSLBase::readArrayOfVariablesSize
+
   void DSLBase::readVarList(VariableDescriptionContainer& cont, const std::string& type, const bool allowArray) {
     auto throw_if = [this](const bool b, const std::string& m) {
       if (b) {
@@ -493,35 +531,9 @@ namespace mfront {
       throw_if(!this->isValidIdentifier(this->current->value),
                "variable given is not valid (read '" + this->current->value + "').");
       auto lineNumber = this->current->line;
-      unsigned int asize = 1u;
       ++(this->current);
       this->checkNotEndOfFile("DSLBase::readVarList");
-      if (this->current->value == "[") {
-        throw_if(!allowArray, "variable '" + varName + "' can't be declared an array");
-        auto array_size = std::string{};
-        ++(this->current);
-        this->checkNotEndOfFile("DSLBase::readVarList");
-        while (this->current->value != "]") {
-          throw_if(((this->current->flag != tfel::utilities::Token::Standard) &&
-                    (this->current->flag != tfel::utilities::Token::Number)) ||
-                       (this->current->value == ";"),
-                   "invalid array size for '" + varName + "'");
-          array_size += this->current->value;
-          ++(this->current);
-          this->checkNotEndOfFile("DSLBase::readVarList");
-        }
-        throw_if(array_size.empty(), "empty array size for '" + varName + "'");
-        tfel::math::IntegerEvaluator ev(array_size);
-        const auto& vars = ev.getVariablesNames();
-        for (const auto& v : vars) {
-          ev.setVariableValue(v, this->getIntegerConstant(v));
-        }
-        const auto iv = ev.getValue();
-        throw_if(iv <= 0, "invalid array size for '" + varName + "'");
-        asize = static_cast<unsigned int>(iv);
-        this->readSpecifiedToken("DSLBase::readVarList", "]");
-        this->checkNotEndOfFile("DSLBase::readVarList");
-      }
+      const auto asize = this->readArrayOfVariablesSize(varName, allowArray);
       if (this->current->value == ",") {
         ++(this->current);
       } else if (this->current->value == ";") {

@@ -7,7 +7,9 @@ nocite: |
 	@barrioz_void_2018
 	@torelli_confinement-dependent_2018
 	@guenot-delahaie_simulation_2018
+	@abbas_hybrid_2018_2
 	@abbas_hybrid_2018
+	@carre_implementation_2017
 	@michel_new_2017
 	@bary_analytical_2017
 	@gelebart_fft_2017

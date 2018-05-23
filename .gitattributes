@@ -1170,6 +1170,7 @@ docs/web/downloads/patchs-CalculiX-2.12.tar.bz2 -text
 docs/web/downloads/patchs-Cast3M-2014.tar.bz2 -text
 docs/web/downloads/patchs-Cast3M-2015.tar.bz2 -text
 docs/web/downloads/windows-install-scripts.tar.bz2 -text
+docs/web/drucker-prager-cap.md -text
 docs/web/drucker.md -text
 docs/web/epx.md -text
 docs/web/faq.md -text
@@ -1396,6 +1397,7 @@ docs/web/material-properties.md -text
 docs/web/material.md -text
 docs/web/math.md -text
 docs/web/media/CalculiXSheetForming-50.mp4 -text
+docs/web/media/DeepDrawing.mp4 -text
 docs/web/media/SignoriniCompression.mp4 -text
 docs/web/media/SignoriniStrip.mp4 -text
 docs/web/media/abaqus-explicit.mp4 -text

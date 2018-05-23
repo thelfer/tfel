@@ -1,38 +1,37 @@
 /*!
  * \file   mfront/include/MFront/DSLBase.hxx
- * \brief  
- * 
+ * \brief
+ *
  * \author Thomas Helfer
  * \date   04 jun 2007
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MFRONT_DSLBASE_HXX
-#define LIB_MFRONT_DSLBASE_HXX 
+#define LIB_MFRONT_DSLBASE_HXX
 
-#include<set>
-#include<map>
-#include<tuple>
-#include<memory>
-#include<string>
+#include <set>
+#include <map>
+#include <tuple>
+#include <memory>
+#include <string>
 
-#include"MFront/MFrontConfig.hxx"
-#include"TFEL/Utilities/CxxTokenizer.hxx"
+#include "MFront/MFrontConfig.hxx"
+#include "TFEL/Utilities/CxxTokenizer.hxx"
 
-#include"MFront/CodeBlock.hxx"
-#include"MFront/AbstractDSL.hxx"
-#include"MFront/FileDescription.hxx"
-#include"MFront/TargetsDescription.hxx"
-#include"MFront/VariableDescription.hxx"
-#include"MFront/StaticVariableDescription.hxx"
+#include "MFront/CodeBlock.hxx"
+#include "MFront/AbstractDSL.hxx"
+#include "MFront/FileDescription.hxx"
+#include "MFront/TargetsDescription.hxx"
+#include "MFront/VariableDescription.hxx"
+#include "MFront/StaticVariableDescription.hxx"
 
-namespace mfront
-{
+namespace mfront {
 
   // forward declaration
   struct MaterialPropertyDescription;
@@ -41,9 +40,8 @@ namespace mfront
    * base structure for domain specific languages
    */
   struct MFRONT_VISIBILITY_EXPORT DSLBase
-    : public virtual AbstractDSL,
-      public tfel::utilities::CxxTokenizer
-  {
+      : public virtual AbstractDSL,
+        public tfel::utilities::CxxTokenizer {
     //! \return the file description associated with the treated file
     const FileDescription& getFileDescription() const override final;
     /*!
@@ -60,54 +58,49 @@ namespace mfront
      * substitutions are given through command-line options such as
      * `--@YYY@=XXX`)
      */
-    virtual void
-    openFile(const std::string&,
-	     const std::vector<std::string>&,
-	     const std::map<std::string,std::string>&);
-  protected:
+    virtual void openFile(const std::string&,
+                          const std::vector<std::string>&,
+                          const std::map<std::string, std::string>&);
+
+   protected:
     /*!
      * \brief An helper structure used by the
      * BehaviourDSLCommon class to modify the code provided
      * by the user.
-     * 
+     *
      * These modifiers are called when the parser encounters variables.
      */
-    struct MFRONT_VISIBILITY_EXPORT VariableModifier
-    {
+    struct MFRONT_VISIBILITY_EXPORT VariableModifier {
       /*!
        * \param[in] v : the variable name
        * \param[in] b : true if "this" shall be added
        */
-      virtual std::string
-      exe(const std::string&,
-	  const bool) = 0;
+      virtual std::string exe(const std::string&, const bool) = 0;
       /*!
        * destructor
        */
       virtual ~VariableModifier();
-    }; // end of struct VariableModifier
-    /*!
-     * \brief An helper structure used by the DSLBase class to modify the
-     * code provided by the user.
-     * 
-     * These modifiers are called when the parser encounters variables.
-     */
-    struct MFRONT_VISIBILITY_EXPORT WordAnalyser
-    {
+    };  // end of struct VariableModifier
+        /*!
+         * \brief An helper structure used by the DSLBase class to modify the
+         * code provided by the user.
+         *
+         * These modifiers are called when the parser encounters variables.
+         */
+    struct MFRONT_VISIBILITY_EXPORT WordAnalyser {
       /*!
        * \param[in] k : the current word
        */
-      virtual void
-      exe(const std::string&) = 0;
+      virtual void exe(const std::string&) = 0;
       /*!
        * destructor
        */
       virtual ~WordAnalyser();
-    }; // end of struct WordAnalyser
-    /*!
-     * options passed to the readNextBlock member
-     */
-    struct CodeBlockParserOptions{
+    };  // end of struct WordAnalyser
+        /*!
+         * options passed to the readNextBlock member
+         */
+    struct CodeBlockParserOptions {
       /*!
        * default constructor
        */
@@ -115,7 +108,8 @@ namespace mfront
       CodeBlockParserOptions(CodeBlockParserOptions&&) = default;
       CodeBlockParserOptions(const CodeBlockParserOptions&) = default;
       CodeBlockParserOptions& operator=(CodeBlockParserOptions&&) = default;
-      CodeBlockParserOptions& operator=(const CodeBlockParserOptions&) = default;
+      CodeBlockParserOptions& operator=(const CodeBlockParserOptions&) =
+          default;
       //! destructor
       ~CodeBlockParserOptions() noexcept;
       //! member names
@@ -140,10 +134,9 @@ namespace mfront
       bool allowSemiColon = true;
       //! if true, line number will be registred
       bool registerLine = true;
-    }; // end of CodeBlockParserOptions
+    };  // end of CodeBlockParserOptions
     //! \return a list of names that shall be reserved
-    static std::vector<std::string>
-    getDefaultReservedNames();
+    static std::vector<std::string> getDefaultReservedNames();
     /*!
      * constructor
      */
@@ -158,7 +151,7 @@ namespace mfront
      * \param[in] n : name
      */
     virtual bool isNameReserved(const std::string&) const = 0;
-    /*! 
+    /*!
      * \return a temporary name which has not been reserved. This
      * method shall be used to get a temporary name at a
      * code block scope.
@@ -167,13 +160,13 @@ namespace mfront
      * \param[in]     p: prefix
      */
     virtual std::string getTemporaryVariableName(std::vector<std::string>&,
-						 const std::string&) const;
+                                                 const std::string&) const;
     /*!
      * \brief add a static variable description
      * \param[in] v : variable description
      */
-    virtual void
-    addStaticVariableDescription(const StaticVariableDescription&) = 0;
+    virtual void addStaticVariableDescription(
+        const StaticVariableDescription&) = 0;
     /*!
      * \return the value of an integer constant
      * \param[in] n: variable name
@@ -214,30 +207,27 @@ namespace mfront
      * `--@YYY@=XXX`)
      */
     virtual void importFile(const std::string&,
-			    const std::vector<std::string>&,
-			    const std::map<std::string,std::string>&) = 0;
+                            const std::vector<std::string>&,
+                            const std::map<std::string, std::string>&) = 0;
     /*!
      * \brief check that the end of file in not reached yet
      * \param[in] m: calling method name
      * \param[in] e: error message
      */
-    void checkNotEndOfFile(const std::string&,
-			   const std::string& = "") const;
+    void checkNotEndOfFile(const std::string&, const std::string& = "") const;
     /*!
      * \brief read a specified token and advance to the next token
      * \param[in] m: calling method name
      * \param[in] v: expected value
      */
-    void readSpecifiedToken(const std::string&,
-			    const std::string&);
+    void readSpecifiedToken(const std::string&, const std::string&);
     /*!
      * \brief throw an std::runtime_error
      * \param[in] m: calling method name
      * \param[in] e: error message
      */
-    TFEL_NORETURN void
-    throwRuntimeError(const std::string&,
-		      const std::string&) const;
+    TFEL_NORETURN void throwRuntimeError(const std::string&,
+                                         const std::string&) const;
     /*!
      * \return concatenate all the tokens from the current position up
      * to the first ';' token
@@ -247,40 +237,41 @@ namespace mfront
      * read an unsigned short in the file
      * \param[in] m : calling method
      */
-    unsigned short
-    readUnsignedShort(const std::string&);
+    unsigned short readUnsignedShort(const std::string&);
     /*!
      * \brief parse the next code block twice.
-     * \param[out] res1 : resulting code block with the first  option set. 
+     * \param[out] res1 : resulting code block with the first  option set.
      * \param[out] res2 : resulting code block with the second option set.
      * \param[in]  o1   : first  option set.
      * \param[in]  o2   : second option set.
      */
-    void
-    readNextBlock(CodeBlock&,
-		  CodeBlock&,
-		  const CodeBlockParserOptions&,
-		  const CodeBlockParserOptions&);
+    void readNextBlock(CodeBlock&,
+                       CodeBlock&,
+                       const CodeBlockParserOptions&,
+                       const CodeBlockParserOptions&);
     /*!
      * \return the code block read.
      * \param[in] o : options
      */
-    CodeBlock
-    readNextBlock(const CodeBlockParserOptions&);
+    CodeBlock readNextBlock(const CodeBlockParserOptions&);
     /*!
      * \brief read one token and increment "current"
      */
-    std::string
-    readOnlyOneToken();
+    std::string readOnlyOneToken();
     /*!
      *
      */
-    template<typename T>
-    std::pair<bool,T>
-    readInitialisationValue(const std::string&,
-			    const bool);
+    template <typename T>
+    std::pair<bool, T> readInitialisationValue(const std::string&, const bool);
     //! \brief read a C++ type
-    std::pair<std::string,bool> readType();
+    std::pair<std::string, bool> readType();
+    /*!
+     * \return the size of an array of variables, or 1 if the variable are not
+     * defined as an array.
+     * \param[in] n: variable name
+     * \param[in] b: allow arrays of variables to be defined
+     */
+    unsigned int readArrayOfVariablesSize(const std::string&, const bool);
     /*!
      * \param[in] cont : variable container to wich variables are
      * added
@@ -288,15 +279,14 @@ namespace mfront
      * \param[in] allowArray : allow arrays of variables to be defined
      */
     void readVarList(VariableDescriptionContainer&,
-		     const std::string&,
-		     const bool);
+                     const std::string&,
+                     const bool);
     /*!
      * \param[in] cont : variable container to wich variables are
      * added
      * \param[in] allowArray : allow arrays of variables to be defined
      */
-    void readVarList(VariableDescriptionContainer&,
-		     const bool);
+    void readVarList(VariableDescriptionContainer&, const bool);
     /*!
      * extract a boolean value from the current token and go the next
      * token
@@ -316,16 +306,14 @@ namespace mfront
      * \param[in] m : calling method name (used for error message)
      * \return the extracted array of strings
      */
-    std::vector<std::string>
-    readArrayOfString(const std::string&);
+    std::vector<std::string> readArrayOfString(const std::string&);
     /*!
      * extract an array of double starting from the current token and
      * go the token following the end of the array
      * \param[in] m : calling method name (used for error message)
      * \return the extracted array of doubles
      */
-    std::vector<double>
-    readArrayOfDouble(const std::string&);
+    std::vector<double> readArrayOfDouble(const std::string&);
     /*!
      * extract an array of string starting from the current token and
      * go the token following the end of the array
@@ -333,8 +321,7 @@ namespace mfront
      * \return the extracted array of strings which contains only one
      * element if a string was read
      */
-    std::vector<std::string>
-    readStringOrArrayOfString(const std::string&);
+    std::vector<std::string> readStringOrArrayOfString(const std::string&);
     /*!
      * \brief extract a list of token
      * \param[out] l  : list read
@@ -346,10 +333,10 @@ namespace mfront
      * if this parameter is true. An exception is thrown otherwise
      */
     void readList(std::vector<tfel::utilities::Token>&,
-		  const std::string&,
-		  const std::string&,
-		  const std::string&,
-		  const bool);
+                  const std::string&,
+                  const std::string&,
+                  const std::string&,
+                  const bool);
     /*!
      * \return a list of token
      * \param[in]  m  : calling method name (used for error message)
@@ -359,38 +346,31 @@ namespace mfront
      * delimiter (or is past the end of the file), nothing is returned
      * if this parameter is true. An exception is thrown otherwise
      */
-    std::vector<tfel::utilities::Token>
-    readList(const std::string&,
-	     const std::string&,
-	     const std::string&,
-	     const bool);
-    
-    std::string
-    readSpecifiedValue(const std::string&,
-		       const std::string&);
+    std::vector<tfel::utilities::Token> readList(const std::string&,
+                                                 const std::string&,
+                                                 const std::string&,
+                                                 const bool);
 
-    std::vector<std::string>
-    readSpecifiedValues(const std::string&,
-			const std::string&,
-			const std::string&);
-    
-    std::vector<std::string>
-    readSpecifiedValues(const std::string&,
-			const std::vector<std::string>&);
+    std::string readSpecifiedValue(const std::string&, const std::string&);
+
+    std::vector<std::string> readSpecifiedValues(const std::string&,
+                                                 const std::string&,
+                                                 const std::string&);
+
+    std::vector<std::string> readSpecifiedValues(
+        const std::string&, const std::vector<std::string>&);
     /*!
      * \brief read the bounds associated to a variable
      * \return a pair giving the variable name and the bounds
      */
-    std::pair<std::string,VariableBoundsDescription>
-    readVariableBounds();
+    std::pair<std::string, VariableBoundsDescription> readVariableBounds();
     /*!
      * call mfront in a subprocess
      * \param[in] interfaces : list of interfaces
      * \param[in] files      : list of files
      */
-    virtual void
-    callMFront(const std::vector<std::string>&,
-	       const std::vector<std::string>&);
+    virtual void callMFront(const std::vector<std::string>&,
+                            const std::vector<std::string>&);
     /*!
      * \brief This function handles a material property treated as a
      * dependency of the current file.
@@ -440,7 +420,7 @@ namespace mfront
     virtual void treatDescription();
     //! handle the `@LonelySeparator` keyword
     virtual void treatLonelySeparator();
-    //! 
+    //!
     virtual void ignoreKeyWord(const std::string&);
     //! treat an unknown keyword
     virtual void treatUnknownKeyword();
@@ -459,8 +439,8 @@ namespace mfront
      * \param[in] v: value
      */
     virtual void registerIntegerConstant(const std::string&,
-					 const size_t,
-					 const int);
+                                         const size_t,
+                                         const int);
     /*!
      * \brief extract a double from the current token
      */
@@ -474,7 +454,7 @@ namespace mfront
      *
      * Targets description are generated by the processing of the
      * input file. However, it is convenient to distinguish during the
-     * processing phase: 
+     * processing phase:
      * - the main targets which directly result from the processing of
      *   the current file. Those targets can only completly be defined
      *   at the end of the processing.
@@ -498,24 +478,24 @@ namespace mfront
      * This list of external mfront files will be used to generate the
      * associated sources.
      */
-    std::map<std::string,std::vector<std::string>> externalMFrontFiles;
+    std::map<std::string, std::vector<std::string>> externalMFrontFiles;
     //! current position in the input stream
     TokensContainer::const_iterator current;
     /*!
      * \brief current comment
      * This is the user comment associated with the current keyword,
      * if any.
-     * 
+     *
      * \note This variable is automatically set by parsers before
      * calling the callback associated with the keyword and
      * automatically unset once the callback returns.
      */
     std::string currentComment;
-    
-  }; // end of class DSLBase
 
-} // end of namespace mfront  
+  };  // end of class DSLBase
 
-#include"MFront/DSLBase.ixx"
+}  // end of namespace mfront
+
+#include "MFront/DSLBase.ixx"
 
 #endif /* LIB_MFRONT_DSLBASE_HXX */

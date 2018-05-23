@@ -29,6 +29,12 @@
   <ul class="slides">
   <li>
     <video style="display:block; margin: 0 auto;" width="640" height="320" controls>
+      <source src="media/DeepDrawing.mp4" type="video/mp4">
+	Your browser does not support the video tag.
+    </video>
+  </li>
+  <li>
+    <video style="display:block; margin: 0 auto;" width="640" height="320" controls>
       <source src="media/abaqus-explicit.mp4" type="video/mp4">
 	Your browser does not support the video tag.
     </video>

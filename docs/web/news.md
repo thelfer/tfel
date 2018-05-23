@@ -18,6 +18,20 @@
 \newcommand{\deriv}[2]{{\displaystyle \frac{\displaystyle \partial #1}{\displaystyle \partial #2}}}
 \newcommand{\sigmaeq}{\sigma_{\mathrm{eq}}}
 
+# Simulation of deep drawing for a very anisotropic material (23/05/2018)
+
+<div id="abaqus-video">
+  <video style="display:block; margin: 0 auto;" width="640" height="320" controls>
+    <source src="media/DeepDrawing.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+</div>
+ 
+This video reproduces the work of Yoon et al (See
+@yoon_prediction_2006). in Abaqus/Standard and Abaqus/Explicit. The
+material is described by Barlat' Yld2004-18p yield function (See
+@barlat_linear_2005), as described [here](barlat-yld2004.html).
+
 # A newly published paper “Void Growth and Coalescence in Irradiated Copper Under Deformation.” (21/04/2018)
 
 ![Numerical simulations of void growth and coalescence: local plastic strain field p](img/Barrioz2018.png "Numerical simulations of void growth and coalescence: local plastic strain field p"){width=100%}

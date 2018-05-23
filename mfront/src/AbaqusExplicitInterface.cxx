@@ -833,11 +833,11 @@ namespace mfront{
 	out << t << " eto[4u]  = {*(strainInc+i),\n"
 	    << "*(strainInc+i+(*nblock)),\n"
 	    << "0,\n"
-	    << "2*(*(strainInc+i+2*(*nblock)))};\n";
+	    << "2*(*(strainInc+i+3*(*nblock)))};\n";
       } else {
 	out << t << " eto[3u]  = {*(strainInc+i),\n"
 	    << "*(strainInc+i+(*nblock)),\n"
-	    << "2*(*(strainInc+i+2*(*nblock)))};\n";
+	    << "2*(*(strainInc+i+3*(*nblock)))};\n";
       }
       out<< t << " D[9u];\n";
     } else if ((h==ModellingHypothesis::AXISYMMETRICAL)||
@@ -891,7 +891,8 @@ namespace mfront{
 	    << "R.rotateStressesBackward(sm,sg);\n"
 	    << "*(stressNew+i)               = *(sg);\n"
 	    << "*(stressNew+i+   *(nblock))  = *(sg+1);\n"
-	    << "*(stressNew+i+2*(*(nblock))) = *(sg+3);\n";
+	    << "*(stressNew+i+2*(*(nblock))) = 0;\n"
+	    << "*(stressNew+i+3*(*(nblock))) = *(sg+3);\n";
       } else if ((h==ModellingHypothesis::AXISYMMETRICAL)||
 		 (h==ModellingHypothesis::PLANESTRAIN)){
 	out << "abaqus::AbaqusRotation2D<" << t << "> R(cview(stateOld+i));\n"
@@ -935,7 +936,8 @@ namespace mfront{
       if(h==ModellingHypothesis::PLANESTRESS){
 	out << "*(stressNew+i)               = D[0]*eto[0]+D[3]*eto[1]+D[6]*eto[2];\n"
 	    << "*(stressNew+i+   *(nblock))  = D[1]*eto[0]+D[4]*eto[1]+D[7]*eto[2];\n"
-	    << "*(stressNew+i+2*(*(nblock))) = D[2]*eto[0]+D[5]*eto[1]+D[8]*eto[2];\n";
+	    << "*(stressNew+i+2*(*(nblock))) = 0;\n"
+	    << "*(stressNew+i+3*(*(nblock))) = D[2]*eto[0]+D[5]*eto[1]+D[8]*eto[2];\n";
       } else if ((h==ModellingHypothesis::AXISYMMETRICAL)||
 		 (h==ModellingHypothesis::PLANESTRAIN)){
 	out << "*(stressNew+i)               = D[0]*eto[0]+D[4]*eto[1]+D[8]*eto[2] +D[12]*eto[3];\n"
@@ -1054,9 +1056,9 @@ namespace mfront{
       }
       out << "const stensor<2u," << t << "> eto  = {zero,zero,zero,zero};\n"
 	  << "const stensor<2u," << t << "> deto = {*(strainInc+i),*(strainInc+i+*nblock),\n"
-	  << "                                     zero,cste*(*(strainInc+i+2*(*nblock)))};\n"
+	  << "                                     zero,cste*(*(strainInc+i+3*(*nblock)))};\n"
 	  << "stensor<2u," << t << "> s    = {*(stressOld+i),*(stressOld+i+*nblock),\n"
-	  << "                                zero,cste*(*(stressOld+i+2*(*nblock)))};\n";
+	  << "                                zero,cste*(*(stressOld+i+3*(*nblock)))};\n";
     } else if ((h==ModellingHypothesis::AXISYMMETRICAL)||
 	       (h==ModellingHypothesis::PLANESTRAIN)){
       out << "const stensor<2u," << t << "> eto  = {zero,zero,zero,zero};\n"
@@ -1127,7 +1129,8 @@ namespace mfront{
     if(h==ModellingHypothesis::PLANESTRESS){
       out << "*(stressNew+i)               = s[0];\n";
       out << "*(stressNew+i+   *(nblock))  = s[1];\n";
-      out << "*(stressNew+i+2*(*(nblock))) = s[3]/cste;\n";
+      out << "*(stressNew+i+2*(*(nblock))) = zero;\n";
+      out << "*(stressNew+i+3*(*(nblock))) = s[3]/cste;\n";
     } else if ((h==ModellingHypothesis::AXISYMMETRICAL)||
 	       (h==ModellingHypothesis::PLANESTRAIN)){
       out << "*(stressNew+i)               = s[0];\n";
@@ -1188,13 +1191,13 @@ namespace mfront{
 	  << "const " << t << " ezz_old = "
 	  << "stateOld[i+" << v.second.getValueForDimension(2) << "*(*nblock)];\n"
 	  << "stensor<2u," << t << "> U0 = {*(stretchOld+i),*(stretchOld+i+*nblock),\n"
-	  << "                              zero,cste*(*(stretchOld+i+2*(*nblock)))};\n"
+	  << "                              zero,cste*(*(stretchOld+i+3*(*nblock)))};\n"
 	  << "stensor<2u," << t << "> U1 = {*(stretchNew+i),*(stretchNew+i+*nblock),\n"
-	  << "                              zero,cste*(*(stretchNew+i+2*(*nblock)))};\n"
+	  << "                              zero,cste*(*(stretchNew+i+3*(*nblock)))};\n"
 	  << "stensor<2u," << t << "> eto  = (square(U0)-stensor<2u," << t << ">::Id)/2;\n"
 	  << "stensor<2u," << t << "> deto = (square(U1)-stensor<2u," << t << ">::Id())/2-eto;\n\n"
 	  << "stensor<2u," << t << "> s    = {*(stressOld+i),*(stressOld+i+*nblock),\n"
-	  << "                                zero,cste*(*(stressOld+i+2*(*nblock)))};\n"
+	  << "                                zero,cste*(*(stressOld+i+3*(*nblock)))};\n"
 	// on affecte ezz à U0, sa valeur pour U1 étant inconnue à ce moment (ne sert à rien pour le calcul de eto et deto
 	  << "U0[2] = std::sqrt(1+2*ezz_old);\n";
     } else if ((h==ModellingHypothesis::AXISYMMETRICAL)||
@@ -1280,7 +1283,8 @@ namespace mfront{
     if(h==ModellingHypothesis::PLANESTRESS){
       out << "*(stressNew+i)               = s[0];\n";
       out << "*(stressNew+i+   *(nblock))  = s[1];\n";
-      out << "*(stressNew+i+2*(*(nblock))) = s[3]/cste;\n";
+      out << "*(stressNew+i+2*(*(nblock))) = zero;\n";
+      out << "*(stressNew+i+3*(*(nblock))) = s[3]/cste;\n";
     } else if ((h==ModellingHypothesis::AXISYMMETRICAL)||
 	       (h==ModellingHypothesis::PLANESTRAIN)){
       out << "*(stressNew+i)               = s[0];\n";
@@ -1567,15 +1571,15 @@ namespace mfront{
       // les composantes axiales sont mises à l'identité pour pouvoir
       // réaliser le calcul de la rotation
       out << "const stensor<2u," << t << "> U1 = {*(stretchNew+i),*(stretchNew+i+*nblock),\n"
-	  << "                                    1,cste*(*(stretchNew+i+2*(*nblock)))};\n"
+	  << "                                    1,cste*(*(stretchNew+i+3*(*nblock)))};\n"
 	  << "tensor<2u," << t << "> F0 = {*(defgradOld+i),*(defgradOld+i+*nblock),1,\n"
-	  << "                             *(defgradOld+i+2*(*nblock)),\n"
-	  << "                             *(defgradOld+i+3*(*nblock))};\n"
+	  << "                             *(defgradOld+i+3*(*nblock)),\n"
+	  << "                             *(defgradOld+i+4*(*nblock))};\n"
 	  << "tensor<2u," << t << "> F1 = {*(defgradNew+i),*(defgradNew+i+*nblock),1,\n"
-	  << "                             *(defgradNew+i+2*(*nblock)),\n"
-	  << "                             *(defgradNew+i+3*(*nblock))};\n"
+	  << "                             *(defgradNew+i+3*(*nblock)),\n"
+	  << "                             *(defgradNew+i+4*(*nblock))};\n"
 	  << "stensor<2u," << t << "> s = {*(stressOld+i),*(stressOld+i+*nblock),\n"
-	  << "                             0,cste*(*(stressOld+i+2*(*nblock)))};\n";
+	  << "                             0,cste*(*(stressOld+i+3*(*nblock)))};\n";
     } else if ((h==ModellingHypothesis::AXISYMMETRICAL)||
 	       (h==ModellingHypothesis::PLANESTRAIN)){
       out << "const stensor<2u," << t << "> U1 = {*(stretchNew+i),*(stretchNew+i+*nblock),\n"
@@ -1646,7 +1650,8 @@ namespace mfront{
     if(h==ModellingHypothesis::PLANESTRESS){
       out << "*(stressNew+i)               = s[0];\n";
       out << "*(stressNew+i+   *(nblock))  = s[1];\n";
-      out << "*(stressNew+i+2*(*(nblock))) = s[3]/cste;\n";
+      out << "*(stressNew+i+2*(*(nblock))) = zero;\n";
+      out << "*(stressNew+i+3*(*(nblock))) = s[3]/cste;\n";
     } else if ((h==ModellingHypothesis::AXISYMMETRICAL)||
 	       (h==ModellingHypothesis::PLANESTRAIN)){
       out << "*(stressNew+i)               = s[0];\n";

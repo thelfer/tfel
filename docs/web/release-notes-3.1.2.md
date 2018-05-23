@@ -7,6 +7,63 @@ solved are described below.
 
 # Tickets fixed
 
+## Ticket #131: Plane stress support in `Abaqus/Explicit` is broken
+
+The documentation of the `vumat` interface has been badly understood in
+plane stress. In some cases (namely using the `Native` finite strain
+strategy), the conventions about tensors has not been transcribed
+appropriately (there have been a confusion with the `Abaqus/Standard`
+conventions).
+
+> **Note**
+> 
+> The `Native` finite strain strategy in `Abaqus/Explicit` (based on a
+> corotational formulation) is not supported in `MTest`, so there is no
+> unit-tests associated.
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/131/>
+
+## Ticket #130: The size of arrays of parameters can't be declared using integer constants
+
+The following statement would not work in previous versions:
+
+~~~~{.cxx}
+@IntegerConstant Nss = 2;
+@Parameter tau0[Nss] = {100e6, 100e6};
+~~~~
+
+To solve this issue, a new method `readArrayOfVariablesSize` has been
+introduced in the `DSLBase` class. This method is now shared by all
+methods which reads the size of an array of variables.
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/130/>
+
+## Ticket #129: Arrays of parameters are not supported in simple precision
+
+The trouble boils down to the fact that, du to intended limitations of
+the `tvector` class, downcasting from double precision to single
+precision is not allowed by the assignment operator.
+
+The call to the assignment operator has been replaced by a call to
+`tfel::fsalgo::copy` which allows downcasting.
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/129/>
+
+## Ticket #128: Generation of `MTest` files throws an exception which can't be caught by `Cast3M` in case of forced convergence
+
+With the `Cast3M` interface, the generation of `MTest` files during a
+forced convergence sequence throws an exception which can't be caught by
+`Cast3M`, leading to a severe crash.
+
+The trouble comes from the fact that during the forced convergence
+sequence, the time step is null, which is not handled by the
+`MTestFileGenerator` class.
+
+The trouble has been circumvented by introducing a minimal time step of
+`1.e-50` (the unit depends on the specific case treated).
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/128/>
+
 ## Ticket #127: Substepping in the `Cast3M` and `Cyrano` interface may lead to a invalid convergence du to integer overflow
 
 Using substeping with a high number of substeps may lead to a to integer
