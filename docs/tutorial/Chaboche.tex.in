@@ -225,7 +225,7 @@ suivant~:
 \subsection{Loi élasto-viscoplastique de \nom{Chaboche}}
 
 Le modèle diffère peu du précédent, car seul le critère de plasticité~:
-$F({{\sigma ,X}})=(\sigma -X)_{\mathrm{eq}}-R(p)\le 0$ est remplacé
+$F({{\sigma ,X}})=(\tsigma -\tenseur{X})_{\mathrm{eq}}-R(p)\le 0$ est remplacé
 par une loi d'écoulement en puissance~:
 \[
 \dot{{p}}=\langle \Frac{F}{K}\rangle ^{m}
@@ -418,7 +418,7 @@ Listons les différentes dérivées à calculer~:
 \tepsilonel}\left(\Delta
 \tepsilonel+\Delta\,{\varepsilon
 }^{p}-\Delta\,{\varepsilon
-}\right)={\tilde {I}}+\Delta\,p\Frac{\partial
+}\right)={\tenseurq{I}}+\Delta\,p\Frac{\partial
 \tenseur{n}}{\partial \Delta\,\tepsilonel}~~$
 {avec} \ ~ ~${\tilde
 {I}}_{\mathit{ijkl}}=\Frac{1}{2}(\delta _{\mathit{ik}}\delta
@@ -447,16 +447,16 @@ $\text{dfp\_ddeel}=-\Delta\,t\Frac{m}{K}\left\langle
 -X)_{\mathrm{eq}}}{\partial \Delta\,\tepsilonel}$
 % \end{equation*}
 
- $\text{dfa1\_dda1}={\tilde {I}}-\Delta\,p\Frac{\partial
+ $\text{dfa1\_dda1}={\tenseurq{I}}-\Delta\,p\Frac{\partial
 \tenseur{n}}{\partial \Delta\,\alpha _{1}}+\Delta\,p\gamma
-_{1}\theta {\tilde {I}}$ \ \  
+_{1}\theta {\tenseurq{I}}$ \ \  
 
 $\text{dfa1\_dda2}=-\Delta
 p\Frac{\partial \tenseur{n}}{\partial \Delta\,\alpha _{2}}$
 
- $\text{dfa2\_dda2}={\tilde {I}}-\Delta\,p\Frac{\partial
+ $\text{dfa2\_dda2}={\tenseurq{I}}-\Delta\,p\Frac{\partial
 \tenseur{n}}{\partial \Delta\,\alpha _{2}}+\Delta\,p\gamma
-_{2}\theta {\tilde {I}}$ \ \  
+_{2}\theta {\tenseurq{I}}$ \ \  
 
 $\text{dfa2\_dda1}=-\Delta
 p\Frac{\partial \tenseur{n}}{\partial \Delta\,\alpha _{1}}$
@@ -471,12 +471,13 @@ $\text{dfa1\_ddp}=-\tenseur{n}-\Delta\,p\Frac{\partial \tenseur{n}}{\partial
 Les dérivées de la normale  $\tenseur{n}$ peuvent être
 calculées de la façon suivante~:
 \[
-\Frac{\partial \tenseur{n}}{\partial \Delta \tepsilonel}=\Frac{2\mu
-}{(\sigma -X)_{\mathrm{eq}}}\left({M}-\tenseur{n}\otimes
-  \tenseur{n}\right)\quad\quad\Frac{\partial \tenseur{n}}{\partial
-  \Delta\,{\alpha }_{1}}=\Frac{2C_{1}\theta }{3(\sigma
-  -X)_{\mathrm{eq}}}\left(\Frac{3}{2}{\tenseurq{I}}-\tenseur{n}\otimes
-  \tenseur{n}\right)
+\Frac{\partial \tenseur{n}}{\partial \Delta \tepsilonel}=
+\Frac{2\,\mu\,\theta}{(\tsigma -\tenseur{X})_{\mathrm{eq}}}
+\left(\tenseurq{M}-\tenseur{n}\otimes\tenseur{n}\right)
+\quad\quad
+\Frac{\partial \tenseur{n}}{\partial \Delta\,{\alpha }_{1}}
+=\Frac{-2\,C_{1}\,\theta }{3\,(\tsigma-\tenseur{X})_{\mathrm{eq}}}
+\left(\tenseurq{M}-\tenseur{n}\otimes\tenseur{n}\right)
 \]
 
 Le tenseur $\tenseurq{M}$ a été utilisé pour simplifier les

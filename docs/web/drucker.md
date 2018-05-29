@@ -199,8 +199,8 @@ are introduced:
 - the elastic strain \(\tepsilonel\).
 - the equivalent plastic strain \(p\).
 
-The elastic strain is automatically defined by the
-`StandardElasticity` brick.
+The elastic strain is automatically defined by the `Implicit` domain
+specific language.
 
 The latter could be considered as an integration variable, but, for
 post-processing purposes, we choose to keep it as a state variable.
@@ -218,7 +218,7 @@ hypothesis, see below):
 - Otherwise, the material state at the end of the time step lies on
   the yield surface.
 
-## Equations governing the material evolution under plastic loading
+## Equation assciated with the elastic strain
 
 The equation associated with the evolution of the elastic strain is
 given by the split of strain:
@@ -228,14 +228,18 @@ f_{\tepsilonel}=\Delta\,\tepsilonel-\Delta\,\tepsilonto+\Delta\,p\,\mts{\tenseur
 
 The derivatives of this equation with respect to
 \(\Delta\,\tepsilonel\) and \(\Delta\,p\) are given by:
+
 \[
 \left\{
 \begin{aligned}
 \deriv{f_{\tepsilonel}}{\Delta\,\tepsilonel} &= \tenseurq{I}+2\,\mu\,\theta\,\Delta\,p\,\deriv{\mts{\tenseur{n}^{D}}}{\mts{\tsigma}}\\
-\deriv{f_{\tepsilonel}}{\Delta\,\tepsilonel} &= \mts{\tenseur{n}^{D}}\\
+\deriv{f_{\tepsilonel}}{\Delta\, p} &= \mts{\tenseur{n}^{D}}\\
 \end{aligned}
 \right.
 \]
+
+## Equation governing the material evolution under plastic loading
+
 
 To determine the equivalent plastic strain increment, the following
 equation must be satisfied:

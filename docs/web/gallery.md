@@ -41,6 +41,9 @@ behaviour. This framework is described
 - The implementation of a perfect plastic behaviour based on the
 - The implementation of a perfect plastic behaviour based on the
   Green yield criterion is described [here](greenplasticity.html).
+- The implementation of a multi-surface, compressible and perfect
+  plastic behaviour using the Drucker-Prager yield criterion and a cap
+  is described [here](drucker-prager-cap.html)
 
 ## Viscoplasticity
 

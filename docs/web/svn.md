@@ -26,7 +26,7 @@ This server is used for historical and practical reasons.
 
 This server is not meant to receive a wide number of contributors, so
 the access is currently restricted. Access can be granted to the
-[PLEIADES project manger](mailto:vincent.marelle@cea.fr).
+[PLEIADES project manger](mailto:tfel-contact@cea.fr).
 
 We may consider moving to another server if the number of contributors
 grows significantly.

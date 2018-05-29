@@ -18,6 +18,52 @@
 \newcommand{\deriv}[2]{{\displaystyle \frac{\displaystyle \partial #1}{\displaystyle \partial #2}}}
 \newcommand{\sigmaeq}{\sigma_{\mathrm{eq}}}
 
+# New entry in the gallery: perfect plasticity based on the Drucker-Prager yield criterion and a cap (27/05/2018)
+
+The yield surface is combining two surfaces:
+
+- The first surface is based on the Drucker-Prager yield criterion defined as follows:
+  \[
+  \sigmaeq^{\mathrm{DP}}=q+\tan\paren{\beta}\,p
+  \]
+  where:
+    - \(p\) is the hydrostatique pressure:
+      \[
+      p = \Frac{1}{3}\,\trace{\tsigma}
+      \]
+    - \(q\) is the von Mises norm of the stress tensor \(\tsigma\):
+      \[
+      q = \sigmaeq = \sqrt{3\,J_{2}} = \sqrt{\Frac{3}{2}\,\tenseur{s}\,\colon\,\tenseur{s}}
+      \]
+      where \(\tenseur{s}\) is the deviatoric part of the stress tensor and \(J_{2}\)
+      the second invariant of \(\tenseur{s}\).
+  The plastic surface is defined using a constant yield stress
+  \(R_{0}^{\mathrm{DP}}\):
+  \[
+  \sigmaeq^{\mathrm{DP}}-R_{0}^{\mathrm{DP}}=0
+  \]
+  This surface is a line in the \(\paren{p,q}\) plane.
+- The second surface forms a so-called cap which closes the first
+  plastic surface. This plastic surface is based on a criterion close the Green one
+  (See @fritzen_computational_2013 and [this page](greenplasticity.html)
+  for details):
+  \[
+  \sigmaeq^{c}=\sqrt{\paren{p-p_{a}}^{2}+\paren{R\,q}^{2}}
+  \]
+  Again, the plastic surface is defined using a constant yield stress
+  \(R_{0}^{c}\), as follows:
+  \[
+  \sigmaeq^{c}-R_{0}^{c}=0
+  \]  
+  This surface is an ellipse in the \(\paren{p,q}\)
+  plane.
+
+![Yield surface based on the Drucker-Prager criterion and a cap. The
+point associated with the `MFront` key has been obtained with the
+implementation described in this page (see below for the material
+constants used)](img/DruckerPragerCap.svg "Yield surface based on the
+Drucker-Prager criterion and a cap"){width=80%}
+
 # Simulation of deep drawing for a very anisotropic material (23/05/2018)
 
 <div id="abaqus-video">
@@ -1748,9 +1794,9 @@ Here is the official announcement by Jean-Paul DEFFAIN (in French):
   > 
   > <https://svn-pleiades.cea.fr/SVN/TFEL>
   > 
-  > L’accès à ce dépôt est ouvert à tous mais nécessite l’ouverture d’un
+  > L’accès à ce dépôt est restreint mais nécessite l’ouverture d’un
   > compte spécifique sur demande au
-  > [chef du projet PLEIADES](mailto:vincent.marelle@cea.fr).
+  > [chef du projet PLEIADES](mailto:tfel-contact@cea.fr).
   > 
   > Nous remercions chaleureusement tous ceux qui ont contribué à cette
   > version et invitons toutes les personnes intéressées à se joindre au
