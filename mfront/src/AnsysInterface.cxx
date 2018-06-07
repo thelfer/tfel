@@ -40,21 +40,39 @@ static const char * const constexpr_c = "const";
 
 namespace mfront{
 
-  static void checkFiniteStrainStrategy(const std::string& fs){
-    tfel::raise_if((fs!="FiniteRotationSmallStrain")&&
-		   (fs!="Native")&&
-		   (fs!="MieheApelLambrechtLogarithmicStrain"),
-		   "checkFiniteStrainStrategy: "
-		   "unsupported strategy '"+fs+"'\n"
-		   "The only supported strategies are "
-		   "'Native', 'FiniteRotationSmallStrain' and "
-		   "'MieheApelLambrechtLogarithmicStrain'.");
+  static void copyAnsysFile(const std::string& f) {
+    const auto root = tfel::getInstallPath();
+    std::ofstream out("ansys/" + f);
+#ifdef TFEL_APPEND_SUFFIX
+    const auto fn = root + "/share/doc/mfront-" VERSION "/ansys/" + f;
+#else  /* TFEL_APPEND_SUFFIX */
+    const auto fn = root + "/share/doc/mfront/ansys/" + f;
+#endif /* TFEL_APPEND_SUFFIX */
+    std::ifstream in{fn};
+    if (in) {
+      out << in.rdbuf();
+      in.close();
+    } else {
+      std::cerr << "AnsysInterface::endTreatment: "
+                << "could not open file '" << fn << "'" << std::endl;
+    }
+    out.close();
+  }  // namespace copyAnsysFile
+
+  static void checkFiniteStrainStrategy(const std::string& fs) {
+    tfel::raise_if((fs != "FiniteRotationSmallStrain") && (fs != "Native") &&
+                       (fs != "MieheApelLambrechtLogarithmicStrain"),
+                   "checkFiniteStrainStrategy: "
+                   "unsupported strategy '" +
+                       fs +
+                       "'\n"
+                       "The only supported strategies are "
+                       "'Native', 'FiniteRotationSmallStrain' and "
+                       "'MieheApelLambrechtLogarithmicStrain'.");
   } // end of checkFiniteStrainStrategy
-  
-  static void
-  checkFiniteStrainStrategyDefinitionConsistency(const BehaviourDescription& bd,
-						 const std::string& fs)
-  {
+
+  static void checkFiniteStrainStrategyDefinitionConsistency(
+      const BehaviourDescription& bd, const std::string& fs) {
     auto throw_if = [](const bool c,const std::string& msg){
       tfel::raise_if(c,"checkFiniteStrainStrategyDefinitionConsistency: "+msg);
     };
@@ -78,8 +96,8 @@ namespace mfront{
     }
   } // end of checkFiniteStrainStrategyDefinitionConsistency
 
-  static void
-  checkFiniteStrainStrategyDefinitionConsistency(const BehaviourDescription& bd){
+  static void checkFiniteStrainStrategyDefinitionConsistency(
+      const BehaviourDescription& bd) {
     auto throw_if = [](const bool c,const std::string& msg){
       tfel::raise_if(c,"checkFiniteStrainStrategyDefinitionConsistency: "+msg);
     };
@@ -94,7 +112,7 @@ namespace mfront{
     }
   } // end of checkFiniteStrainStrategyDefinitionConsistency
 
-  static bool hasFiniteStrainStrategy(const BehaviourDescription& bd){
+  static bool hasFiniteStrainStrategy(const BehaviourDescription& bd) {
     checkFiniteStrainStrategyDefinitionConsistency(bd);
     if(bd.isStrainMeasureDefined()){
       return bd.getStrainMeasure()!=BehaviourDescription::LINEARISED;
@@ -874,36 +892,17 @@ namespace mfront{
     systemCall::mkdir("include/MFront/Ansys");
     systemCall::mkdir("ansys");
 
-    std::ofstream out;
     {
       // copy usermat.cpp locally
       MFrontLockGuard lock;
-      out.open("ansys/usermat.cpp");
-      if(out){
-	const auto root = tfel::getInstallPath();
-#ifdef TFEL_APPEND_SUFFIX
-	const auto fn = root+"/share/doc/mfront-" VERSION "/ansys/usermat.cppp";
-#else  /* TFEL_APPEND_SUFFIX */
-	const auto fn = root+"/share/doc/mfront/ansys/usermat.cpp";
-#endif /* TFEL_APPEND_SUFFIX */
-	std::ifstream in{fn};
-	if(in){
-	  out << in.rdbuf();
-	  in.close();
-	} else {
-	  std::cerr << "AnsysInterface::endTreatment: "
-		    << "could not open file '" << fn << "'" << std::endl;
-	}
-      } else {
-	  std::cerr << "AnsysInterface::endTreatment: "
-		    << "could not open file 'ansys/usermat.cpp'" << std::endl;
-      }
-      out.close();
+      copyAnsysFile("usermat.cpp");
+      copyAnsysFile("test-usermat.cxx");
+      copyAnsysFile("CMakeFiles.txt");
     }
     
     // header
     auto fname = "ansys"+name+".hxx";
-    out.open("include/MFront/Ansys/"+fname);
+    std::ofstream out("include/MFront/Ansys/"+fname);
     throw_if(!out,"could not open file '"+fname+"'");
     
     out << "/*!\n"
@@ -1442,11 +1441,11 @@ namespace mfront{
 	<< "}\n\n";
   }
 
-  void AnsysInterface::writeMieheApelLambrechtLogarithmicStrainFunction(std::ostream& out,
-									 const BehaviourDescription& mb,
-									 const std::string& name,
-									 const Hypothesis h) const
-  {
+  void AnsysInterface::writeMieheApelLambrechtLogarithmicStrainFunction(
+      std::ostream& out,
+      const BehaviourDescription& mb,
+      const std::string& name,
+      const Hypothesis h) const {
     auto throw_if = [](const bool b,const std::string& m){
       tfel::raise_if(b,"AnsysInterface::writeMieheApelLambrechtLogarithmicStrainFunction: "+m);
     };
@@ -1562,12 +1561,11 @@ namespace mfront{
     out << "}\n"
 	<< "}\n\n";
   }
-  
-  void
-  AnsysInterface::writeUMATxxBehaviourTypeSymbols(std::ostream& out,
-						  const std::string& name,
-						  const BehaviourDescription& mb) const
-  {
+
+  void AnsysInterface::writeUMATxxBehaviourTypeSymbols(
+      std::ostream& out,
+      const std::string& name,
+      const BehaviourDescription& mb) const {
     auto throw_if = [](const bool b,const std::string& m){
       tfel::raise_if(b,"AnsysInterface::writeUMATxxBehaviourTypeSymbols: "+m);
     };
@@ -1587,11 +1585,10 @@ namespace mfront{
     }
   } // end of AnsysInterface::writeUMATxxBehaviourTypeSymbols
 
-  void
-  AnsysInterface::writeUMATxxBehaviourKinematicSymbols(std::ostream& out,
-						   const std::string& name,
-						   const BehaviourDescription& mb) const
-  {
+  void AnsysInterface::writeUMATxxBehaviourKinematicSymbols(
+      std::ostream& out,
+      const std::string& name,
+      const BehaviourDescription& mb) const {
     auto throw_if = [](const bool b,const std::string& m){
       tfel::raise_if(b,"AnsysInterface::writeUMATxxBehaviourKinematicSymbols: "+m);
     };
@@ -1610,11 +1607,9 @@ namespace mfront{
       throw_if(true,"unsupported behaviour type");
     }
   } // end of AnsysInterface::writeUMATxxBehaviourKinematicSymbols
-  
-  void 
-  AnsysInterface::writeInterfaceSpecificIncludes(std::ostream& out,
-						  const BehaviourDescription&) const
-  {
+
+  void AnsysInterface::writeInterfaceSpecificIncludes(
+      std::ostream& out, const BehaviourDescription&) const {
     out << "#include\"MFront/Ansys/Ansys.hxx\"\n"
 	<< "#include\"MFront/Ansys/AnsysConvert.hxx\"\n\n";
   } // end of AnsysInterface::writeInterfaceSpecificIncludes
@@ -1624,10 +1619,8 @@ namespace mfront{
     return {{"DR","increment of rigid body rotation"}};
   } // end of AnsysInterface::getBehaviourDataConstructorAdditionalVariables
 
-  void 
-  AnsysInterface::writeBehaviourDataMainVariablesSetters(std::ostream& os,
-							  const BehaviourDescription& mb) const
-  {
+  void AnsysInterface::writeBehaviourDataMainVariablesSetters(
+      std::ostream& os, const BehaviourDescription& mb) const {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
     SupportedTypes::TypeSize ov,of;
     os << "void set"
@@ -1649,11 +1642,10 @@ namespace mfront{
     os << "}\n\n";
   } // end of AnsysInterface::writeBehaviourDataMainVariablesSetters
 
-  void 
-  AnsysInterface::writeBehaviourDataDrivingVariableSetter(std::ostream& os,
-							   const DrivingVariable& v,
-							   const SupportedTypes::TypeSize o) const
-  {
+  void AnsysInterface::writeBehaviourDataDrivingVariableSetter(
+      std::ostream& os,
+      const DrivingVariable& v,
+      const SupportedTypes::TypeSize o) const {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
     if(!o.isNull()){
       tfel::raise("AnsysInterface::writeBehaviourDataMainVariablesSetter : "
@@ -1668,11 +1660,10 @@ namespace mfront{
     }
   } // end of AnsysInterface::writeBehaviourDataDrivingVariableSetter
 
-  void 
-  AnsysInterface::writeIntegrationDataDrivingVariableSetter(std::ostream& os,
-							   const DrivingVariable& v,
-							   const SupportedTypes::TypeSize o) const
-  {
+  void AnsysInterface::writeIntegrationDataDrivingVariableSetter(
+      std::ostream& os,
+      const DrivingVariable& v,
+      const SupportedTypes::TypeSize o) const {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
     if(!o.isNull()){
       tfel::raise("AnsysInterface::writeIntegrationDataMainVariablesSetter : "
@@ -1686,12 +1677,11 @@ namespace mfront{
 	 << iprefix << "dstran);\n";
     }
   } // end of AnsysInterface::writeIntegrationDataDrivingVariableSetter
-  
-  void 
-  AnsysInterface::writeBehaviourDataThermodynamicForceSetter(std::ostream& os,
-							      const ThermodynamicForce& f,
-							      const SupportedTypes::TypeSize o) const
-  {
+
+  void AnsysInterface::writeBehaviourDataThermodynamicForceSetter(
+      std::ostream& os,
+      const ThermodynamicForce& f,
+      const SupportedTypes::TypeSize o) const {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
     if(SupportedTypes::getTypeFlag(f.type)==SupportedTypes::Stensor){
       os << "ansys::ImportThermodynamicForces<hypothesis>::exe(this->" << f.name << ",";
@@ -1776,15 +1766,17 @@ namespace mfront{
     const auto iprefix = makeUpperCase(this->getInterfaceName());
     const auto flag = SupportedTypes::getTypeFlag(f.type);
     if(flag==SupportedTypes::Stensor){
-      if(!o.isNull()){
-	out << "ansys::ExportThermodynamicForces<hypothesis>::exe("
-	    << a << "+" << o << ",this->sig);\n";
+      if (!o.isNull()) {
+        out << "ansys::ExportThermodynamicForces<hypothesis>::exe(" << a << "+"
+            << o << ",this->sig);\n";
       } else {
-	out << "ansys::ExportThermodynamicForces<hypothesis>::exe(" << a << ",this->sig);\n";
+        out << "ansys::ExportThermodynamicForces<hypothesis>::exe(" << a
+            << ",this->sig);\n";
       }
     } else {
-      tfel::raise("AnsysInterface::exportThermodynamicForce: "
-		  "unsupported forces type");
+      tfel::raise(
+          "AnsysInterface::exportThermodynamicForce: "
+          "unsupported forces type");
     }
   } // end of AnsysInterface::exportThermodynamicForce
 
@@ -1800,26 +1792,29 @@ namespace mfront{
     const auto name = bd.getLibrary()+bd.getClassName(); 
     const auto tfel_config = tfel::getTFELConfigExecutableName();
     insert_if(d[lib].cppflags,
-	      "$(shell "+tfel_config+" --cppflags --compiler-flags)");
+              "$(shell " + tfel_config + " --cppflags --compiler-flags)");
     insert_if(d[lib].include_directories,
-	      "$(shell "+tfel_config+" --include-path)");
-    insert_if(d[lib].sources,"ansys"+name+".cxx");
-    d.headers.push_back("MFront/Ansys/ansys"+name+".hxx");
-    insert_if(d[lib].link_directories,"$(shell "+tfel_config+" --library-path)");
-    insert_if(d[lib].link_libraries,tfel::getLibraryInstallName("AnsysInterface"));
-    if(this->generateMTestFile){
+              "$(shell " + tfel_config + " --include-path)");
+    insert_if(d[lib].sources, "ansys" + name + ".cxx");
+    d.headers.push_back("MFront/Ansys/ansys" + name + ".hxx");
+    insert_if(d[lib].link_directories,
+              "$(shell " + tfel_config + " --library-path)");
+    insert_if(d[lib].link_libraries,
+              tfel::getLibraryInstallName("AnsysInterface"));
+    if (this->generateMTestFile) {
       insert_if(d[lib].link_libraries,tfel::getLibraryInstallName("MTestFileGenerator"));
     }
 #if __cplusplus >= 201703L
-    insert_if(d[lib].link_libraries,
-	      "$(shell "+tfel_config+" --library-dependency "
-	      "--material --mfront-profiling)");
+    insert_if(d[lib].link_libraries, "$(shell " + tfel_config +
+                                         " --library-dependency "
+                                         "--material --mfront-profiling)");
 #else /* __cplusplus < 201703L */
     insert_if(d[lib].link_libraries,
-	      "$(shell "+tfel_config+" --library-dependency "
-	      "--material --mfront-profiling --physical-constants)");
+              "$(shell " + tfel_config +
+                  " --library-dependency "
+                  "--material --mfront-profiling --physical-constants)");
 #endif /* __cplusplus < 201703L */
-    for(const auto h : this->getModellingHypothesesToBeTreated(bd)){
+    for (const auto h : this->getModellingHypothesesToBeTreated(bd)) {
       insert_if(d[lib].epts,this->getFunctionNameForHypothesis(name,h));
     }
   } // end of AnsysInterface::getTargetsDescription

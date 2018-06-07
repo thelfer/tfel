@@ -508,6 +508,7 @@ docs/mfront/abaqus/img/abaqus_v6.env -text
 docs/mfront/abaqus/umat.cpp -text
 docs/mfront/abaqus/vumat-dp.cpp -text
 docs/mfront/abaqus/vumat-sp.cpp -text
+docs/mfront/ansys/CMakeLists-example.txt -text
 docs/mfront/ansys/CMakeLists.txt -text
 docs/mfront/ansys/Makefile.am -text
 docs/mfront/ansys/test-usermat.cxx -text
