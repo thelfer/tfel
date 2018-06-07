@@ -510,6 +510,7 @@ docs/mfront/abaqus/vumat-dp.cpp -text
 docs/mfront/abaqus/vumat-sp.cpp -text
 docs/mfront/ansys/CMakeLists.txt -text
 docs/mfront/ansys/Makefile.am -text
+docs/mfront/ansys/test-usermat.cxx -text
 docs/mfront/ansys/usermat.cpp -text
 docs/mfront/aster/CMakeLists.txt -text
 docs/mfront/aster/Makefile.doc.in -text

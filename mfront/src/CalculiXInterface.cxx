@@ -11,7 +11,6 @@
  * project under specific licensing conditions. 
  */
 
-#include<iostream>
 #include<fstream>
 #include<sstream>
 #include<cstdlib>
@@ -1328,7 +1327,7 @@ namespace mfront{
     for(const auto& v : persistentVarsHolder){
       vs+=SupportedTypes::getTypeSize(v.type,v.arraySize);
     }
-    const auto vsize = [mb,&vs]() -> unsigned int{
+    const auto vsize = [mb,&vs,h]() -> unsigned int{
       if((mb.getBehaviourType()==
 	  BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR)&&
 	 (hasFiniteStrainStrategy(mb))&&
