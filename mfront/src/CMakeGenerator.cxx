@@ -2,7 +2,7 @@
  * \file   CMakeGenerator.cxx
  * \brief    
  * \author Thomas Helfer
- * \date   16 août 2015
+ * \date   16 aoÃ»t 2015
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
  * reserved. 
  * This project is publicly released under either the GNU GPL Licence 
@@ -36,6 +36,7 @@
 #include<unistd.h>
 #endif
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Utilities/StringAlgorithms.hxx"
 #include"TFEL/System/System.hxx"
 #include"MFront/MFrontHeader.hxx"
@@ -74,7 +75,7 @@ namespace mfront{
 			      const GeneratorOptions& o,
 			      const std::string&){
     auto throw_if = [](const bool b,const std::string& m){
-      if(b){throw(std::runtime_error("generateCMakeListFile: "+m));}
+      tfel::raise_if(b,"generateCMakeListFile: "+m);
     };
     if(getVerboseMode()>=VERBOSE_LEVEL2){
       getLogStream() << "generating 'src/CMakeList.txt'\n";
@@ -202,6 +203,9 @@ namespace mfront{
       m << "# Setting compile flags for " << l.name << '\n'
 	<< "set(" << l. name << "_COMPILE_FLAGS)\n"
 	<< "list(APPEND " << l. name << "_COMPILE_FLAGS ${TFEL_OFLAGS})\n";
+      if ((o.sys == "win32") || (o.sys == "cygwin")) {
+        m << "list(APPEND " << l.name << "_COMPILE_FLAGS \"-DMFRONT_COMPILING\")\n";
+      }
       for(const auto& f : l.cppflags){
 	append(l. name+"_COMPILE_FLAGS",f);
       } 
@@ -314,11 +318,9 @@ namespace mfront{
       for(const char * const * a = args;*a!=nullptr;++a){
 	msg += *a;msg += ' ';
       }
-      throw(std::runtime_error(msg));
+      tfel::raise(msg);
     };
-    if(::strlen(cmake)==0u){
-      throw(std::runtime_error("callCmake: empty cmake command"));
-    }
+    tfel::raise_if(::strlen(cmake)==0u,"callCmake: empty cmake command");
     const auto pwd = systemCall::getCurrentWorkingDirectory();
     systemCall::changeCurrentWorkingDirectory(d);
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
