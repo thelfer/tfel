@@ -897,7 +897,7 @@ namespace mfront{
       MFrontLockGuard lock;
       copyAnsysFile("usermat.cpp");
       copyAnsysFile("test-usermat.cxx");
-      copyAnsysFile("CMakeFiles.txt");
+      copyAnsysFile("CMakeLists.txt");
     }
     
     // header
