@@ -2,7 +2,7 @@
  * \file   CMakeGenerator.cxx
  * \brief    
  * \author Thomas Helfer
- * \date   16 août 2015
+ * \date   16 aoÃ»t 2015
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
  * reserved. 
  * This project is publicly released under either the GNU GPL Licence 
@@ -203,6 +203,9 @@ namespace mfront{
       m << "# Setting compile flags for " << l.name << '\n'
 	<< "set(" << l. name << "_COMPILE_FLAGS)\n"
 	<< "list(APPEND " << l. name << "_COMPILE_FLAGS ${TFEL_OFLAGS})\n";
+      if ((o.sys == "win32") || (o.sys == "cygwin")) {
+        m << "list(APPEND " << l.name << "_COMPILE_FLAGS \"-DMFRONT_COMPILING\")\n";
+      }
       for(const auto& f : l.cppflags){
 	append(l. name+"_COMPILE_FLAGS",f);
       } 
