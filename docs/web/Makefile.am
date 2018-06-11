@@ -57,6 +57,7 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./release-notes-3.1.md				      \
 	   ./release-notes-3.1.1.md				      \
 	   ./release-notes-3.1.2.md				      \
+	   ./release-notes-3.1.3.md				      \
 	   ./release-notes-3.2.md				      \
 	   ./hyperelasticity.md				              \
 	   ./signorini.md				              \
@@ -150,6 +151,7 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./img/IconeCast3M_verte.png 				      \
 	   ./img/IconeCast3M_bleue.png 				      \
 	   ./img/IconeCast3M_jaune.png 				      \
+	   ./img/IconeCast3M_turquoise.png 				      \
 	   ./img/poster-giens2015.svg 				      \
 	   ./img/Norton.mfront  				      \
 	   ./img/Norton-web.docx				      \

@@ -524,12 +524,7 @@ namespace mfront {
                           "declareComputeStressForOrthotropicBehaviour: "
                           "begin\n";
       }
-      if (!bd.hasAttribute(BehaviourDescription::requiresStiffnessTensor)) {
-        bd.setAttribute(BehaviourDescription::requiresStiffnessTensor, true,
-                        false);
-      }
-      tfel::raise_if(
-          !bd.getAttribute<bool>(BehaviourDescription::requiresStiffnessTensor),
+      tfel::raise(
           "HookeStressPotentialBase::"
           "declareComputeStressForOrthotropicBehaviour: "
           "the stiffness tensor must be defined for "

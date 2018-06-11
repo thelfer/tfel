@@ -18,6 +18,45 @@
 \newcommand{\deriv}[2]{{\displaystyle \frac{\displaystyle \partial #1}{\displaystyle \partial #2}}}
 \newcommand{\sigmaeq}{\sigma_{\mathrm{eq}}}
 
+# A seminar about `TFEL/MFront` at the ENSMM (7/06/2018)
+
+On the 7th of May, we had the chance to make a seminar about
+`TFEL/MFront` at the [ENSMM (École nationale supérieure de mécanique et
+des microtechniques) Besançon](https://www.ens2m.fr/) on 7/06/2018 in
+the Departement of Applied Mechanics.
+
+The talk is available here:
+<https://github.com/thelfer/tfel-doc/tree/master/Talks/ENSMM2018>.
+
+# Release of version 3.1.2 of `TFEL/MFront` (31/05/2018)
+
+In prevision of the forthcoming release of the `Alcyone` fuel
+performance code, `TFEL` 3.1.2 has been released. This is mostly a bug
+fix. Thanks to all the users who reported the issues and contributed to
+the enhancement of `TFEL/MFront`.
+
+A special focus is made on [Ticket #127](http://tfel.sourceforge.net/release-notes-3.1.2.html#ticket-127-substepping-in-the-cast3m-and-cyrano-interface-may-lead-to-a-invalid-convergence-du-to-integer-overflow) that may change the results of badly convergent behaviours using sub-stepping with the `Cast3M` and `Cyrano` interfaces.
+
+A detailed version of the release notes is available
+[here](http://tfel.sourceforge.net/release-notes-3.1.2.html).
+
+# Castem 2018 is out (25/05/2018)
+
+![](img/IconeCast3M_turquoise.png "")
+
+[`Cast3M`](http://www-cast3m.cea.fr) 2018 has been released.
+
+Binary package for `Cast3M 2018` and `Windows 64` are now available for
+download:
+<https://sourceforge.net/projects/tfel/files>.
+
+See also the example:
+<http://tfel.sourceforge.net/downloads/windows-install-scripts.tar.bz2>.
+The test directory contains an example showing how to use this binary
+package. Be sure to change the `PATH` variable to match your
+installation directories at the beginning of the `mfront-Cast3M2018.bat`
+and `launch-Cast3M2018.bat` files.
+
 # New entry in the gallery: perfect plasticity based on the Drucker-Prager yield criterion and a cap (27/05/2018)
 
 The yield surface is combining two surfaces:

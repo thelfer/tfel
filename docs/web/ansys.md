@@ -209,13 +209,13 @@ Only two commands are actually supported:
 
 Here is an example of such a file:
 
-~~~~
+~~~~{.pure}
 /com, Associate the material id 2 to the Chaboche_3D behaviour
-/com, implemented in the libZircaloy4Behaviours.so shared library.
-tb,mfront,2,libZircaloy4Behaviours.so,Chaboche_3D
+/com, implemented in the Zircaloy4Behaviours shared library.
+tb,mfront,2,Zircaloy4Behaviours,Chaboche_3D
 /com, Associate the material id 3 to the Creep_3D behaviour
-/com, implemented in the libZircaloy4Behaviours.so shared library.
-tb,mfront,3,libUO2Behaviours.so,Creep_3D
+/com, implemented in the Zircaloy4Behaviours shared library.
+tb,mfront,3,UO2Behaviours,Creep_3D
 ~~~~
 
 New commands will eventually be introduced as needed to circumvent the
@@ -224,6 +224,14 @@ various shortcomings of the `USERMAT` interface, notably:
 - Adding the ability to give initial values to state variables
 - Adding the ability to override the default values of parameters.
 - etc.
+
+> **Library name**
+>
+> For portability reasons, the library name can be stripped from the
+> standard prefix (`lib` under `UNIX`) and from the file extension
+> (`.dll` under `Windows`, `.dylib` under `Mac Os`, `.so` under
+> `LiNuX`). The `usermat` function delivered with `MFront` will try every
+> combinaison until a suitable on is found.
 
 # Main features of the `ANSYS` interface
 
@@ -302,6 +310,11 @@ exist to:
 Through the `@ANSYSFiniteStrainStrategy`, the user can select on of
 various finite strain strategies supported by `MFront`, which are
 described in this paragraph.
+
+> **Note**
+>
+> The usage of the `@ANSYSFiniteStrainStrategy` keyword is mostly
+> deprecated since `MFront 3.1`: see the `@StrainMeasure` keyword.
 
 ### The `Native` finite strain strategy
 

@@ -409,6 +409,11 @@ Through the `@AbaqusFiniteStrainStrategy`, the user can select on of
 various finite strain strategies supported by `MFront`, which are
 described in this paragraph.
 
+> **Note**
+>
+> The usage of the `@AbaqusFiniteStrainStrategy` keyword is mostly
+> deprecated since `MFront 3.1`: see the `@StrainMeasure` keyword.
+
 ### The `Native` finite strain strategy
 
 Among them is the `Native` finite strain strategy which relies on

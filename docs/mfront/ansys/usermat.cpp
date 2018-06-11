@@ -13,6 +13,45 @@
 #include <iostream>
 #include <algorithm>
 
+#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
+// code retrieved from
+// http://www.codeproject.com/Tips/479880/GetLastError-as-std-string
+static std::string getLastWin32Error() {
+  const DWORD error = GetLastError();
+  if (error) {
+    LPVOID lpMsgBuf;
+    DWORD bufLen = FormatMessage(
+        FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+        nullptr, error, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPTSTR)&lpMsgBuf, 0, nullptr);
+    if (bufLen) {
+      LPCSTR lpMsgStr = (LPTSTR)lpMsgBuf;
+      std::string result(lpMsgStr, lpMsgStr + bufLen);
+      LocalFree(lpMsgBuf);
+      return result;
+    }
+  }
+  return std::string();
+}
+#endif /*  (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
+
+static std::string getErrorMessage() {
+#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
+  return getLastWin32Error();
+#else
+  const auto e = ::dlerror();
+  if (e != nullptr) {
+    return std::string(e);
+  }
+  return "";
+#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
+}  // end of  getErrorMessage
+
+static void usermat_log(const std::string &m) {
+  static std::ofstream log("mfront-usermat.log");
+  log << m << std::endl;
+  std::clog << m << std::endl;
+}
+
 static std::vector<std::string> tokenize(const std::string &s, const char c) {
   std::vector<std::string> res;
   std::string::size_type b = 0u;
@@ -67,13 +106,12 @@ static std::vector<std::string> strim(const std::vector<std::string> &v) {
 }  // end of tokenize
 
 static void usermat_exit(const std::string &m) {
+  usermat_log(m);
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
   MessageBox(nullptr, m.c_str(), "mfront", 0);
-#else /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
-  std::cerr << m << '\n';
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
   std::exit(-1);
-} // end of usermat_exit
+}  // end of usermat_exit
 
 namespace ansys {
 
@@ -143,7 +181,7 @@ namespace ansys {
 //! a simple alias
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
     using libhandler = HINSTANCE__ *;
-#else  /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
+#else /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
     using libhandler = void *;
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
        /*!
@@ -176,9 +214,8 @@ namespace ansys {
 
   UserMaterialManager::UserMaterialManager() {
     auto find_library = [this](const std::string &n) {
-      return std::find_if(
-          this->libraries.begin(), this->libraries.end(),
-          [&n](const ExternalLibraryHandler &l) { return l.name == n; });
+      return std::find_if(this->libraries.begin(), this->libraries.end(),
+                          [&n](const ExternalLibraryHandler &l) { return l.name == n; });
     };
     auto exit_if = [](const bool b, const std::string &m) {
       if (b) {
@@ -193,6 +230,11 @@ namespace ansys {
           const auto l = ::LoadLibrary(TEXT(library.c_str()));
           if (l != nullptr) {
             return l;
+          } else {
+            usermat_log(
+                "UserMaterialManager::UserMaterialManager: "
+                "failed to open library '" +
+                library + "' (" + getErrorMessage() + ")");
           }
         }
       }
@@ -203,6 +245,11 @@ namespace ansys {
           const auto l = ::dlopen(library.c_str(), RTLD_NOW);
           if (l != nullptr) {
             return l;
+          } else {
+            usermat_log(
+                "UserMaterialManager::UserMaterialManager: "
+                "failed to open library '" +
+                library + "' (" + getErrorMessage() + ")");
           }
         }
       }
@@ -216,21 +263,24 @@ namespace ansys {
     while (getline(in, line)) {
       auto tokens = strim(tokenize(line, ','));
       if ((tokens.empty()) || (tokens[0] == "/com")) {
+        ++ln;
         continue;
       }
-      exit_if(tokens[0] != "tb", "invalid line");
-      exit_if(tokens.size() < 2, "invalid line '" + std::to_string(ln) +
-                                     "' in file 'mfront-usermat.dat'");
-      exit_if(tokens[1] != "mfront", "invalid line '" + std::to_string(ln) +
-                                         "' in file 'mfront-usermat.dat'");
       exit_if(tokens.size() != 5, "invalid line '" + std::to_string(ln) +
-                                      "' in file 'mfront-usermat.dat'");
+                                      "' in file 'mfront-usermat.dat', "
+                                      "expected at least 5 tokens");
+      exit_if(tokens[0] != "tb", "invalid line, expected 'tb', read '"+tokens[0]+"'");
+      exit_if(tokens[1] != "mfront", "invalid line '" + std::to_string(ln) +
+                                         "' in file 'mfront-usermat.dat', "
+                                         "expected 'mfront', read '" +
+                                         tokens[1] + "'");
       const auto id = std::stoi(tokens[2]);
       const auto lib = tokens[3];
       const auto fct = tokens[4];
-      std::cout << "UserMaterialManager::UserMaterialManager: "
-                << "associating material '" << id << "' to behaviour '" << fct
-                << "' in library '" << lib << "'\n";
+      usermat_log(
+          "UserMaterialManager::UserMaterialManager: "
+          "associating material '" +
+          std::to_string(id) + "' to behaviour '" + fct + "' in library '" + lib);
       auto ptr = find_library(lib);
       if (ptr == this->libraries.end()) {
         const auto l = open_library(lib);
@@ -243,13 +293,12 @@ namespace ansys {
               "identifier '" +
                   std::to_string(id) + "'");
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
-      auto f =
-          reinterpret_cast<AnsysFctPtr>(::GetProcAddress(ptr->l, fct.c_str()));
+      auto f = reinterpret_cast<AnsysFctPtr>(::GetProcAddress(ptr->l, fct.c_str()));
 #else  /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
       auto f = reinterpret_cast<AnsysFctPtr>(::dlsym(ptr->l, fct.c_str()));
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
-      exit_if(f == nullptr,
-              "could not load behaviour '" + fct + "' in library '" + lib + "'");
+      exit_if(f == nullptr, "could not load behaviour '" + fct + "' in library '" + lib + "' (" +
+                                getErrorMessage() + ")");
       this->handlers.push_back(std::move(UserMaterialHander{id, f}));
       ++ln;
     }
@@ -328,15 +377,14 @@ void usermat(const int *const matId,
                                    const double *const var8) {
   static ansys::UserMaterialManager m;
   auto f = m.getBehaviour(*matId);
-  if(f == nullptr){
-    usermat_exit("usermat: no behaviour associated to material id '" +
-                 std::to_string(*matId) + "'\n");
+  if (f == nullptr) {
+    usermat_exit("usermat: no behaviour associated to material id '" + std::to_string(*matId) +
+                 "'\n");
   }
-  f(matId, elemId, kDomIntPt, kLayer, kSectPt, ldsetp, isubst, keycut, nDirect,
-    nShear, ncomp, nSatev, nProp, Time, dTime, Temp, dTemp, stress, statev,
-    dsdePl, sedEl, sedPl, epseq, Strain, dStrain, epsPl, prop, coords, rotateM,
-    defGrad_t, defGrad, tsstif, epsZZ, var1, var2, var3, var4, var5, var6, var7,
-    var8);
+  f(matId, elemId, kDomIntPt, kLayer, kSectPt, ldsetp, isubst, keycut, nDirect, nShear, ncomp,
+    nSatev, nProp, Time, dTime, Temp, dTemp, stress, statev, dsdePl, sedEl, sedPl, epseq, Strain,
+    dStrain, epsPl, prop, coords, rotateM, defGrad_t, defGrad, tsstif, epsZZ, var1, var2, var3,
+    var4, var5, var6, var7, var8);
 }  // end of usermat
 
 }  // end of extern "C"

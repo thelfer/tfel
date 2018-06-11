@@ -751,7 +751,7 @@ namespace mfront{
       for(const auto& mp: mps.first){
 	out << "/com, -" << mp.name << "\n";
       }
-      out << "tb,user,<mat_id>,<numer of temperatures>,"
+      out << "tb,user,<mat_id>,<number of temperatures>,"
 	  << msize.getValueForModellingHypothesis(h) << "\n"
 	  << "/com, you shall now declare your material properties\n"
 	  << "/com, using the tbtemp an tbdata commands.\n"

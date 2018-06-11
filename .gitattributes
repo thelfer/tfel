@@ -338,6 +338,10 @@ docs/html/reveal.js/test/test-pdf.html -text
 docs/html/reveal.js/test/test-pdf.js -text
 docs/html/reveal.js/test/test.html -text
 docs/html/reveal.js/test/test.js -text
+docs/mfront-en-square-with-guides.svg -text
+docs/mfront-en-square.pdf -text
+docs/mfront-en-square.png -text
+docs/mfront-en-square.svg -text
 docs/mfront-en.png -text
 docs/mfront-en.svg -text
 docs/mfront-fr-square-with-guides.svg -text
@@ -1243,6 +1247,7 @@ docs/web/img/HureCast3M2014.png -text
 docs/web/img/HureCast3M2014.xcf -text
 docs/web/img/IconeCast3M_bleue.png -text
 docs/web/img/IconeCast3M_jaune.png -text
+docs/web/img/IconeCast3M_turquoise.png -text
 docs/web/img/IconeCast3M_verte.png -text
 docs/web/img/ImplicitDSL.svg -text
 docs/web/img/Interfaces.svg -text
@@ -1429,6 +1434,7 @@ docs/web/release-notes-3.0.3.md -text
 docs/web/release-notes-3.0.md -text
 docs/web/release-notes-3.1.1.md -text
 docs/web/release-notes-3.1.2.md -text
+docs/web/release-notes-3.1.3.md -text
 docs/web/release-notes-3.1.md -text
 docs/web/release-notes-3.2.md -text
 docs/web/release-notes.md -text
