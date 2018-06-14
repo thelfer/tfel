@@ -1,4 +1,4 @@
-SUBDIRS=abaqus ansys
+SUBDIRS=abaqus ansys lsdyna
 
 MFRONT_DOCS = AdditionalConvergenceChecks.md                            \
 	      Algorithm.md				                \

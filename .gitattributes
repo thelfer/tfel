@@ -537,6 +537,11 @@ docs/mfront/general/Champs.tex.in -text
 docs/mfront/general/Makefile.doc.in -text
 docs/mfront/general/mfront.tex.in -text
 docs/mfront/glossary.tex.in -text
+docs/mfront/lsdyna/CMakeLists-example.txt -text
+docs/mfront/lsdyna/CMakeLists.txt -text
+docs/mfront/lsdyna/Makefile.am -text
+docs/mfront/lsdyna/mfront-lsdyna.cxx -text
+docs/mfront/lsdyna/test-lsdyna.cxx -text
 docs/mfront/mfront/A316TiHyperTrempe_CreepExponent.mfront -text
 docs/mfront/mfront/A316TiHyperTrempe_CreepExponent.tex -text
 docs/mfront/mfront/Bounds.mfront -text

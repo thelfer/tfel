@@ -558,7 +558,9 @@ AC_OUTPUT([debug.sh Makefile Doxyfile docs/Makefile docs/tfel/Makefile
 	   docs/mfront/castem/Makefile.doc docs/mfront/zmat/zmat.tex
 	   docs/mfront/zmat/Makefile.doc docs/mfront/abaqus/Makefile
 	   docs/mfront/abaqus/abaqus.tex
-	   docs/mfront/abaqus/Makefile.doc docs/mfront/ansys/Makefile
+	   docs/mfront/abaqus/Makefile.doc
+	   docs/mfront/ansys/Makefile
+   	   docs/mfront/lsdyna/Makefile
 	   docs/mfront/glossary.tex docs/presentations/Makefile
 	   docs/presentations/mfront-presentation/Makefile
 	   docs/presentations/mfront-presentation/mfront-presentation.tex
