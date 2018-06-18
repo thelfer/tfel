@@ -34,6 +34,8 @@ mtest_python_module(_mtest
 target_link_libraries(py_mtest__mtest
   TFELMTest
   TFELMaterial
-  TFELUtilities)
+  TFELMath
+  TFELUtilities
+  TFELException)
 
 tfel_python_script(mtest __init__.py)

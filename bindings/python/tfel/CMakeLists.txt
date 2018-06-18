@@ -39,7 +39,7 @@ tfel_python_module(math math.cxx
   stensor.cxx
   st2tost2.cxx
   Evaluator.cxx)
-target_link_libraries(py_tfel_math TFELMath TFELMathParser)
+target_link_libraries(py_tfel_math TFELMath TFELMathParser TFELException)
 
 tfel_python_module(material
   material.cxx
@@ -49,6 +49,7 @@ tfel_python_module(material
   PiPlane.cxx
   Barlat.cxx
   Hosford.cxx)
+target_link_libraries(py_tfel_material TFELMaterial TFELMath TFELException)
 
 if(NOT WIN32)
   tfel_python_module(system system.cxx
