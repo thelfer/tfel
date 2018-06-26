@@ -5,6 +5,7 @@
 ---
 nocite: |
 	@barrioz_void_2018
+	@shi_experimental_2018
 	@torelli_confinement-dependent_2018
 	@guenot-delahaie_simulation_2018
 	@abbas_hybrid_2018_2

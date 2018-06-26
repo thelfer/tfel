@@ -4,6 +4,13 @@
 
 <div id="slideshow">
   <ul class="slides">
+	<li><img src="img/PSACylinderHeadDesign.png" width="620" height="320" alt="This PSA study by Agathe Forré et al. deals with the Thermal-Mechanical Fatigue design of automotive cylinder heads." /></li>
+	<li>
+		<video style="display:block; margin: 0 auto;" width="640" height="320" controls>
+		<source src="media/DeepDrawing.mp4" type="video/mp4">
+		Your browser does not support the video tag.
+		</video>
+	</li>
 	<li><img src="img/JUSM18_RDEGEILH_Fissuration_culasses.png" width="620" height="320" alt="Cylinder heads cracking of 900 MWe reactors back- up diesel generators" /></li>
 	<li><img src="img/CalculiX_MFRONT_WSL.png" width="620" height="320" alt="CalculiX and MFront in the bConverged environment" /></li>
     <li><img src="img/VeRCoRs.png" width="620" height="320" alt="Simulation of the VeRCoRs mock-up of a nuclear building" /></li>

@@ -7,6 +7,18 @@ solved are described below.
 
 # Tickets fixed
 
+## Ticket #135: Declaration error of 'material_properties_nb' in `CyranoBehaviourHandler` with the `cyrano` interface
+
+The default version of the `CyranoTraits` class did not provide the
+`material_properties_nb` and `internal_state_variables_nb` members.
+
+As a consequence, the trouble appeared when the behaviour did not
+support the `AxisymmtricalGeneralisedPlaneStress` modelling
+hypotheses, which is the main modelling hypothesis used in
+`Cyrano`. This case was not tested.
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/135/>
+
 ## Ticket #134: The `MFRONT_COMPILING` flag is not defined when using the `CMake` generator
 
 This bug leads to the failure of the compilation of `MFront` files based

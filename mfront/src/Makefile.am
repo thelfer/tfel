@@ -188,6 +188,10 @@ libTFELMFront_la_SOURCES += AbaqusInterfaceBase.cxx     \
 			    AbaqusExplicitInterface.cxx
 endif
 
+if HAVE_LSDYNA
+libTFELMFront_la_SOURCES += LSDYNAInterface.cxx
+endif
+
 if HAVE_CALCULIX
 libTFELMFront_la_SOURCES += CalculiXInterface.cxx
 endif
@@ -398,6 +402,26 @@ if TFEL_WIN
 libEuroplexusInterface_la_LDFLAGS  = -no-undefined -avoid-version -Wl,--add-stdcall-alias -Wl,--kill-at
 endif # TFEL_WIN
 endif # HAVE_EUROPLEXUS
+
+# LSDYNA Interface
+if HAVE_LSDYNA
+lib_LTLIBRARIES += libLSDYNAInterface.la
+libLSDYNAInterface_la_SOURCES = LSDYNAInterfaceExceptions.cxx                      \
+		                LSDYNAException.cxx                                \
+			        LSDYNAComputeStiffnessTensor.cxx                   \
+			        LSDYNAStressFreeExpansionHandler.cxx               \
+			        LSDYNAComputeThermalExpansionCoefficientTensor.cxx \
+			        LSDYNAFiniteStrain.cxx
+
+libLSDYNAInterface_la_LIBADD  = -L$(top_builddir)/src/Utilities -lTFELUtilities          \
+			       -L$(top_builddir)/src/Exception -lTFELException          \
+			       -L$(top_builddir)/mfront/src    -lMTestFileGenerator
+libLSDYNAInterface_la_DEPENDENCIES = libMTestFileGenerator.la
+libLSDYNAInterface_la_CPPFLAGS     = $(AM_CPPFLAGS) -DLSDYNAInterface_EXPORTS
+if TFEL_WIN
+libLSDYNAInterface_la_LDFLAGS  = -no-undefined -avoid-version -Wl,--add-stdcall-alias -Wl,--kill-at
+endif # TFEL_WIN
+endif # HAVE_LSDYNA
 
 mfront_SOURCES = main.cxx
 mfront_LDADD = -L$(top_builddir)/mfront/src -lTFELMFront -lMFrontLogStream \

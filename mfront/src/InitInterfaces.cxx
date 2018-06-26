@@ -72,7 +72,14 @@
 #include"MFront/CalculiXInterface.hxx"
 #endif
 
+#ifdef HAVE_LSDYNA
+#include"MFront/LSDYNAInterface.hxx"
+#endif /* HAVE_LSDYNA */
+
+#ifdef HAVE_ZMAT
 #include"MFront/ZMATInterface.hxx"
+#endif /* HAVE_ZMAT */
+
 #include"MFront/MFrontModelInterface.hxx"
 #include"MFront/InitInterfaces.hxx"
 
@@ -154,6 +161,10 @@ namespace mfront {
 #ifdef HAVE_ZMAT
     BehaviourInterfaceProxy<ZMATInterface> zmatProxy;
 #endif /* HAVE_ZMAT */
+
+#ifdef HAVE_LSDYNA
+    BehaviourInterfaceProxy<LSDYNAInterface> lsdynaProxy;
+#endif /* HAVE_LSDYNA */
 
     ModelInterfaceProxy<MFrontModelInterface> mmi;
     

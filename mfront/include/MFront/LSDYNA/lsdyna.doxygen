@@ -1,0 +1,11 @@
+/*!
+ * \file  mfront/include/MFront/Abaqus/abaqus.doxygen
+ * \brief This file documents the `abaqus` namespace.
+ */
+
+/*!
+ * \namespace abaqus
+ * \brief the namespace abaqus contains material related to the MFront
+ * interface to the `Abaqus/Standard` and `Abaqus/Explicit` finite
+ * element solver.
+ */

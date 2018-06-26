@@ -27,6 +27,7 @@
 
 <div id="slideshow">
   <ul class="slides">
+  <li><img src="img/PSACylinderHeadDesign.png" width="620" height="320" alt="This PSA study by Agathe Forré et al. deals with the Thermal-Mechanical Fatigue design of automotive cylinder heads." /></li>
   <li>
     <video style="display:block; margin: 0 auto;" width="640" height="320" controls>
       <source src="media/DeepDrawing.mp4" type="video/mp4">

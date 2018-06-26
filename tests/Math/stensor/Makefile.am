@@ -21,6 +21,7 @@ test_PROGRAMS = stensor                                  \
 		stensor_eigenvectors                     \
 		stensor_eigenvectors2                    \
 		stensor_isotropic_function               \
+		stensor_isotropic_function2              \
 		StensorFromTinyMatrixColumnView          \
 		InvariantsDerivatives                    \
 		ComputeDeterminantDerivativeTest         \
@@ -51,6 +52,7 @@ stensor_eigenvalues_SOURCES   = stensor_eigenvalues.cxx
 stensor_eigenvectors_SOURCES  = stensor_eigenvectors.cxx 
 stensor_eigenvectors2_SOURCES = stensor_eigenvectors2.cxx
 stensor_isotropic_function_SOURCES = stensor_isotropic_function.cxx
+stensor_isotropic_function2_SOURCES = stensor_isotropic_function2.cxx
 StensorFromTinyMatrixColumnView_SOURCES = StensorFromTinyMatrixColumnView.cxx
 InvariantsDerivatives_SOURCES = InvariantsDerivatives.cxx
 ComputeDeterminantDerivativeTest_SOURCES = ComputeDeterminantDerivativeTest.cxx

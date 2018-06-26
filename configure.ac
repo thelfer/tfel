@@ -10,7 +10,7 @@ AC_CANONICAL_HOST
 AC_CANONICAL_TARGET
 
 # Automake specific stuff
-AM_INIT_AUTOMAKE([foreign dist-bzip2 tar-ustar subdir-objects subdir-objects subdir-objects subdir-objects subdir-objects subdir-objects subdir-objects])
+AM_INIT_AUTOMAKE([foreign dist-bzip2 tar-ustar subdir-objects subdir-objects subdir-objects subdir-objects subdir-objects subdir-objects subdir-objects subdir-objects])
 m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])])
 
 # ok, this is ugly, but is sufficient for our needs
@@ -443,6 +443,18 @@ AM_CONDITIONAL(HAVE_ABAQUS,[test x"$enable_abaqus" = "xtrue"])
 if(test "x$enable_abaqus" = "xtrue")
 then
     AC_DEFINE(HAVE_ABAQUS)
+fi
+
+# LS-DYNA
+AC_ARG_ENABLE([lsdyna],
+               AC_HELP_STRING([--enable-lsdyna],
+		   [build LS-DYNA interface for mechanical behaviours]),
+	       [enable_lsdyna=true],
+	       [enable_lsdyna=false])
+AM_CONDITIONAL(HAVE_LSDYNA,[test x"$enable_lsdyna" = "xtrue"])
+if(test "x$enable_lsdyna" = "xtrue")
+then
+    AC_DEFINE(HAVE_LSDYNA)
 fi
 
 # calculix

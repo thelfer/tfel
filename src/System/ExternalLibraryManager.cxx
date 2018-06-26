@@ -249,9 +249,6 @@ namespace tfel {
     void*
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
     ExternalLibraryManager::loadLibrary(const std::string& name, const bool b) {
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
-#else
-#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
       auto p = this->librairies.find(name);
       if (p == librairies.end()) {
         // this library has not been

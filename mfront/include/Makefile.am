@@ -277,7 +277,7 @@ nobase_include_HEADERS += MFront/Abaqus/Abaqus.hxx                              
 			  MFront/AbaqusExplicitInterface.hxx
 endif
 
-if HAVE_ABAQUS
+if HAVE_CALCULIX
 nobase_include_HEADERS += MFront/CalculiX/CalculiX.hxx                                         \
 			  MFront/CalculiX/CalculiXData.hxx                                     \
 			  MFront/CalculiX/CalculiXConvert.hxx                                  \
@@ -338,6 +338,30 @@ nobase_include_HEADERS += MFront/ZMATInterface.hxx \
 			  MFront/ZMAT/ZMATUndefs.hxx     \
 			  MFront/ZMAT/ZMATInterface.hxx  \
 			  MFront/ZMAT/ZMATInterface.ixx  
+endif
+
+if HAVE_LSDYNA
+nobase_include_HEADERS += MFront/LSDYNA/LSDYNA.hxx                                         \
+			  MFront/LSDYNA/LSDYNAData.hxx                                     \
+			  MFront/LSDYNA/LSDYNAExplicitData.hxx                             \
+			  MFront/LSDYNA/LSDYNAConvert.hxx                                  \
+			  MFront/LSDYNA/LSDYNAOrthotropicBehaviour.hxx                     \
+			  MFront/LSDYNA/LSDYNARotation.hxx                                 \
+			  MFront/LSDYNA/LSDYNARotation.ixx                                 \
+			  MFront/LSDYNA/LSDYNAConfig.hxx                                   \
+			  MFront/LSDYNA/LSDYNATraits.hxx                                   \
+			  MFront/LSDYNA/LSDYNAException.hxx 		                   \
+			  MFront/LSDYNA/LSDYNAInterface.hxx	                           \
+			  MFront/LSDYNA/LSDYNAExplicitInterface.hxx	                   \
+			  MFront/LSDYNA/LSDYNAInterfaceExceptions.hxx                      \
+			  MFront/LSDYNA/LSDYNABehaviourHandler.hxx                         \
+			  MFront/LSDYNA/LSDYNAComputeStiffnessTensor.hxx                   \
+			  MFront/LSDYNA/LSDYNAComputeThermalExpansionCoefficientTensor.hxx \
+			  MFront/LSDYNA/LSDYNAStressFreeExpansionHandler.hxx               \
+			  MFront/LSDYNA/LSDYNATangentOperator.hxx                          \
+			  MFront/LSDYNA/LSDYNATangentOperator.ixx                          \
+			  MFront/LSDYNA/LSDYNAFiniteStrain.hxx                             \
+			  MFront/LSDYNAInterface.hxx
 endif
 
 EXTRA_DIST = CMakeLists.txt               \

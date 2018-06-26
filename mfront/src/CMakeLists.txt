@@ -258,6 +258,24 @@ if(HAVE_ABAQUS)
     TFELException)
 endif(HAVE_ABAQUS)
 
+if(HAVE_LSDYNA)
+  set(TFELMFront_SOURCES
+    LSDYNAInterface.cxx
+    ${TFELMFront_SOURCES})
+  set(LSDYNAInterface_SOURCES
+    LSDYNAInterfaceExceptions.cxx
+    LSDYNAException.cxx
+    LSDYNAComputeStiffnessTensor.cxx
+    LSDYNAStressFreeExpansionHandler.cxx
+    LSDYNAComputeThermalExpansionCoefficientTensor.cxx
+    LSDYNAFiniteStrain.cxx)
+  mfront_library(LSDYNAInterface ${LSDYNAInterface_SOURCES})
+  target_link_libraries(LSDYNAInterface
+    MTestFileGenerator
+    TFELUtilities
+    TFELException)
+endif(HAVE_LSDYNA)
+
 if(HAVE_CALCULIX)
   set(TFELMFront_SOURCES
     CalculiXInterface.cxx

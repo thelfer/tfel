@@ -75,7 +75,7 @@ then
 fi
 mkdir build-autotools
 pushd build-autotools
-$src/configure --enable-python --enable-python-bindings --enable-fortran --enable-abaqus --enable-calculix --enable-ansys --enable-europlexus --enable-zmat --enable-tests --enable-local-castem-header --enable-cyrano --prefix=$build/build-check/autotools/install-autotools 
+$src/configure --enable-python --enable-python-bindings --enable-fortran --enable-abaqus --enable-calculix --enable-ansys --enable-europlexus --enable-zmat --enable-tests --enable-local-castem-header --enable-cyrano --enable-lsdyna --prefix=$build/build-check/autotools/install-autotools 
 $make_exec
 $make_exec check
 $make_exec distcheck
@@ -86,7 +86,7 @@ if test "x$fcheck" == "xno" ;
 then
     mkdir build-autotools-debug
     pushd build-autotools-debug
-    $src/configure --enable-debug --enable-python --enable-python-bindings --enable-fortran --enable-abaqus --enable-calculix --enable-ansys --enable-europlexus --enable-zmat --enable-tests --enable-local-castem-header --enable-cyrano --prefix=$build/build-check/autotools/install-autotools-debug 
+    $src/configure --enable-debug --enable-python --enable-python-bindings --enable-fortran --enable-abaqus --enable-calculix --enable-ansys --enable-europlexus --enable-zmat --enable-tests --enable-local-castem-header --enable-cyrano --enable-lsdyna --prefix=$build/build-check/autotools/install-autotools-debug 
     $make_exec
     $make_exec check
     $make_exec distcheck
@@ -109,7 +109,7 @@ then
     mkdir build-cmake-debug
 fi
 pushd build-cmake
-cmake ../tfel-$pkg_name/ -DTFEL_BROKEN_LIBMATH=$broken_libmath -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=ON -Denable-python-bindings=ON -Denable-aster=ON -Denable-abaqus=ON -Denable-calculix=ON -Denable-ansys=ON -Denable-europlexus=ON -Denable-zmat=ON -Denable-cyrano=ON -Denable-random-tests=${rtests} -Denable-reference-doc=${rdoc} -DCMAKE_INSTALL_PREFIX=$build/build-check/cmake/install-cmake
+cmake ../tfel-$pkg_name/ -DTFEL_BROKEN_LIBMATH=$broken_libmath -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=ON -Denable-python-bindings=ON -Denable-aster=ON -Denable-abaqus=ON -Denable-calculix=ON -Denable-ansys=ON -Denable-europlexus=ON -Denable-zmat=ON -Denable-cyrano=ON -Denable-lsdyna=ON -Denable-random-tests=${rtests} -Denable-reference-doc=${rdoc} -DCMAKE_INSTALL_PREFIX=$build/build-check/cmake/install-cmake
 $make_exec 
 if [ test "x$pbuild" == "xyes" ];
 then
@@ -122,7 +122,7 @@ popd #from build-cmake
 if test "x$fcheck" == "xno" ;
 then
     pushd build-cmake-release
-    cmake ../tfel-$pkg_name/ -DCMAKE_BUILD_TYPE=Release -DTFEL_BROKEN_LIBMATH=$broken_libmath -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=ON -Denable-python-bindings=ON -Denable-aster=ON -Denable-abaqus=ON -Denable-calculix=ON -Denable-ansys=ON -Denable-europlexus=ON -Denable-zmat=ON -Denable-cyrano=ON -Denable-random-tests=${rtests} -Denable-reference-doc=${rdoc} -DCMAKE_INSTALL_PREFIX=$build/build-check/cmake/install-cmake-release
+    cmake ../tfel-$pkg_name/ -DCMAKE_BUILD_TYPE=Release -DTFEL_BROKEN_LIBMATH=$broken_libmath -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=ON -Denable-python-bindings=ON -Denable-aster=ON -Denable-abaqus=ON -Denable-calculix=ON -Denable-ansys=ON -Denable-europlexus=ON -Denable-zmat=ON -Denable-cyrano=ON -Denable-lsdyna=ON -Denable-random-tests=${rtests} -Denable-reference-doc=${rdoc} -DCMAKE_INSTALL_PREFIX=$build/build-check/cmake/install-cmake-release
     $make_exec
     if [ test "x$pbuild" == "xyes" ];
     then
@@ -133,7 +133,7 @@ then
     $make_exec install
     popd #from build-cmake-release
     pushd build-cmake-debug
-    cmake ../tfel-$pkg_name/ -DCMAKE_BUILD_TYPE=Debug -DTFEL_BROKEN_LIBMATH=$broken_libmath -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=ON -Denable-python-bindings=ON -Denable-aster=ON -Denable-abaqus=ON -Denable-calculix=ON -Denable-ansys=ON -Denable-europlexus=ON -Denable-zmat=ON -Denable-cyrano=ON -Denable-random-tests=${rtests} -Denable-reference-doc=${rdoc} -DCMAKE_INSTALL_PREFIX=$build/build-check/cmake/install-cmake-debug
+    cmake ../tfel-$pkg_name/ -DCMAKE_BUILD_TYPE=Debug -DTFEL_BROKEN_LIBMATH=$broken_libmath -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=ON -Denable-python-bindings=ON -Denable-aster=ON -Denable-abaqus=ON -Denable-calculix=ON -Denable-ansys=ON -Denable-europlexus=ON -Denable-zmat=ON -Denable-cyrano=ON -Denable-lsdyna=ON -Denable-random-tests=${rtests} -Denable-reference-doc=${rdoc} -DCMAKE_INSTALL_PREFIX=$build/build-check/cmake/install-cmake-debug
     $make_exec
     if [ test "x$pbuild" == "xyes" ];
     then
@@ -151,7 +151,7 @@ then
     then
 	mkdir build-cmake-i686-w64-mingw32
 	pushd build-cmake-i686-w64-mingw32
-	cmake ../tfel-$pkg_name/ -DTFEL_BROKEN_LIBMATH=$broken_libmath -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=OFF -Denable-python-bindings=OFF -Denable-aster=ON -Denable-abaqus=ON -Denable-calculix=ON -Denable-ansys=ON -Denable-europlexus=ON -Denable-zmat=ON -Denable-cyrano=ON -Denable-random-tests=${rtests} -Denable-reference-doc=${rdoc} -DCMAKE_INSTALL_PREFIX=$build/build-check/cmake/install-cmake-i686-w64-mingw32 -DCMAKE_TOOLCHAIN_FILE=../tfel-$pkg_name/cmake/ToolChain-i686-w64-mingw32.cmake
+	cmake ../tfel-$pkg_name/ -DTFEL_BROKEN_LIBMATH=$broken_libmath -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=OFF -Denable-python-bindings=OFF -Denable-aster=ON -Denable-abaqus=ON -Denable-calculix=ON -Denable-ansys=ON -Denable-europlexus=ON -Denable-zmat=ON -Denable-cyrano=ON -Denable-lsdyna=ON -Denable-random-tests=${rtests} -Denable-reference-doc=${rdoc} -DCMAKE_INSTALL_PREFIX=$build/build-check/cmake/install-cmake-i686-w64-mingw32 -DCMAKE_TOOLCHAIN_FILE=../tfel-$pkg_name/cmake/ToolChain-i686-w64-mingw32.cmake
 	$make_exec
 	if [ "x$(which wine)" != "x" ];
 	then
@@ -170,7 +170,7 @@ then
     then
 	mkdir build-cmake-i586-mingw32msvc
 	pushd build-cmake-i586-mingw32msvc
-	cmake ../tfel-$pkg_name/ -DTFEL_BROKEN_LIBMATH=$broken_libmath -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=OFF -Denable-python-bindings=OFF -Denable-aster=ON -Denable-abaqus=ON -Denable-calculix=ON -Denable-ansys=ON -Denable-europlexus=ON -Denable-zmat=ON -Denable-cyrano=ON -Denable-random-tests=${rtests} -Denable-reference-doc=${rdoc} -DCMAKE_INSTALL_PREFIX=$build/build-check/cmake/install-cmake-i586-mingw32msvc -DCMAKE_TOOLCHAIN_FILE=../tfel-$pkg_name/cmake/ToolChain-i586-mingw32msvc.cmake
+	cmake ../tfel-$pkg_name/ -DTFEL_BROKEN_LIBMATH=$broken_libmath -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=OFF -Denable-python-bindings=OFF -Denable-aster=ON -Denable-abaqus=ON -Denable-calculix=ON -Denable-ansys=ON -Denable-europlexus=ON -Denable-zmat=ON -Denable-cyrano=ON -Denable-lsdyna=ON -Denable-random-tests=${rtests} -Denable-reference-doc=${rdoc} -DCMAKE_INSTALL_PREFIX=$build/build-check/cmake/install-cmake-i586-mingw32msvc -DCMAKE_TOOLCHAIN_FILE=../tfel-$pkg_name/cmake/ToolChain-i586-mingw32msvc.cmake
 	$make_exec
 	if [ "x$(which wine)" != "x" ];
 	then
