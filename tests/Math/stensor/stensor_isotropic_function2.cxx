@@ -45,7 +45,7 @@ struct StensorIsotropicFunctionDerivativeTest2 final
     using size_type = typename tfel::math::stensor<N, double>::size_type;
     constexpr const auto jes = tfel::math::stensor<N, double>::FSESJACOBIEIGENSOLVER;
     constexpr const double eps = 1.e-8;
-    constexpr const auto K = tfel::math::st2tost2<N, double>::K();
+    TFEL_CONSTEXPR const auto K = tfel::math::st2tost2<N, double>::K();
     constexpr const auto E = 150e9;
     constexpr const auto n = 0.3;
     constexpr const auto m = E / (2 * (1 + n));
