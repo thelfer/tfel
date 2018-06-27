@@ -255,6 +255,15 @@ namespace mfront {
       if (!this->ihrs.empty()) {
         ib.code += "if(this->bpl" + id + "){\n";
       }
+      if((idsl.getSolver().usesJacobian()) &&
+      	 (idsl.getSolver().requiresNumericalJacobian())){
+      	ib.code += "if(!perturbatedSystemEvaluation){\n";
+      }
+      ib.code += "this->dp" + id + " = max(this->dp" + id + ", strain(0));\n";
+      if((idsl.getSolver().usesJacobian()) &&
+      	 (idsl.getSolver().requiresNumericalJacobian())){
+      	ib.code += "}\n";
+      }
       ib.code += this->computeEffectiveStress(id);
       if (requiresAnalyticalJacobian) {
         if (this->fc == nullptr) {
@@ -313,10 +322,11 @@ namespace mfront {
         acc.code += "if (converged) {\n";
         acc.code += "// checking status consistency\n";
         acc.code += "if (this->bpl" + id + ") {\n";
-        acc.code += "if (this->dp" + id + " < 0) {\n";
+        acc.code += "if (this->dp" + id + " < -2*this->epsilon) {\n";
         acc.code += "// desactivating this system\n";
         acc.code += "converged = this->bpl" + id + " = false;\n";
-        acc.code += "}\n";
+        acc.code += "} else {\n";
+	acc.code += "}\n";
         acc.code += "} else {\n";
         acc.code += this->computeEffectiveStress(id);
         acc.code += this->sc->computeCriterion(id, bd, sp);

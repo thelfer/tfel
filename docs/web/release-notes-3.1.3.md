@@ -7,6 +7,32 @@ solved are described below.
 
 # Tickets fixed
 
+## Ticket #136: Removing unwanted output statements in windows
+
+The integration errors are reported on the standard output, since the
+`Cast3M` interface does not have any output for error messages.
+
+This can be cumbersome, in particular when driving the simulation from
+the behaviour.
+
+The `Cast3M` interface now checks if the `CASTEM_DISPLAY_ERROR_MESSAGE`
+variable environment is defined. If it is set to any value different
+from `true`, no error message is displayed.
+
+In `bash`:
+
+~~~~
+export CASTEM_DISPLAY_ERROR_MESSAGE=true
+~~~~
+
+In the `Windows` shell:
+
+~~~~
+set CASTEM_DISPLAY_ERROR_MESSAGE=true
+~~~~
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/135/>
+
 ## Ticket #135: Declaration error of 'material_properties_nb' in `CyranoBehaviourHandler` with the `cyrano` interface
 
 The default version of the `CyranoTraits` class did not provide the
