@@ -7,6 +7,30 @@ solved are described below.
 
 # Tickets fixed
 
+## Ticket #137: Compiling error fix `Mfront/Python` under `Windows`
+
+When compiling `MFront` with python bindings support using `Visual
+Studio 2015 Community`, the following error message is triggered:
+
+~~~~
+C:\Codes\tfel\sources\tfel\include\TFEL/Material/PiPlane.ixx(60): error C2131: l'expression n'a pas été évaluée en co
+nstante [C:\Codes\tfel\sources\build-vs-2015\bindings\python\tfel\py_tfel_material.vcxproj]
+
+0 Avertissement(s)
+1 Erreur(s)
+~~~~
+
+The problem is that `constexpr` variables are poorly handled by `Visual
+Studio 2015`. The `TFEL_CONSTEXPR` macro was introduced to handle this
+compiler (it boils down to `constexpr` for others compilers). The issue
+can be solved by changing the faulty line as as follows:
+
+~~~~
+TFEL_CONSTEXPR const auto isqrt6 = isqrt2 * isqrt3;
+~~~~
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/137/>
+
 ## Ticket #136: Removing unwanted output statements in windows
 
 The integration errors are reported on the standard output, since the
