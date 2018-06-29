@@ -712,7 +712,7 @@ follows (see @armstrong_mathematical_1966):
 \left\{
 \begin{aligned}
 \tenseur{X}&=\Frac{2}{3}\,C\,\tenseur{a} \\
-\tenseur{\dot{a}}&=\dot{p}\,\tenseur{n}-D\,\tenseur{a} \\
+\tenseur{\dot{a}}&=\dot{p}\,\tenseur{n}-D\,\dot{p}\,\tenseur{a} \\
 \end{aligned}
 \right.
 \]
@@ -734,7 +734,9 @@ The `Burlet-Cailletaud` kinematic hardening rule is defined as follows
 \left\{
 \begin{aligned}
 \tenseur{X}&=\Frac{2}{3}\,C\,\tenseur{a} \\
-\tenseur{\dot{a}}&=\dot{p}\,\tenseur{n}-\eta\,D\,\tenseur{a}-\paren{1-\eta}\,D\,\Frac{2}{3}\,\paren{\tenseur{a}\,\colon\,\tenseur{n}}\,\tenseur{n} \\
+\tenseur{\dot{a}}&=\dot{p}\,\tenseur{n}
+-\eta\,D\,\dot{p}\,\tenseur{a}
+-\paren{1-\eta}\,D\,\Frac{2}{3}\,\dot{p}\,\paren{\tenseur{a}\,\colon\,\tenseur{n}}\,\tenseur{n} \\
 \end{aligned}
 \right.
 \]
@@ -755,9 +757,9 @@ The `Chaboche 2012` kinematic hardening rule is defined as follows
 \[
 \tenseur{\dot{a}}
 =\tenseur{\dot{\varepsilon}}^{p}-\frac{3\,D}{2\,C}\,\Phi\left(p\right)\,
-\Psi^{\left(\tenseur{X}\right)}\left(\tenseur{X}\right)\tenseur{X}
+\Psi^{\left(\tenseur{X}\right)}\left(\tenseur{X}\right)\,\dot{p}\,\tenseur{X}
 =\tenseur{\dot{\varepsilon}}^{p}-
-D\,\Phi\left(p\right)\,\Psi\left(\tenseur{a}\right)\tenseur{a}
+D\,\Phi\left(p\right)\,\Psi\left(\tenseur{a}\right)\dot{p}\,\tenseur{a}
 \]
 
 with:

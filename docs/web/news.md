@@ -18,11 +18,51 @@
 \newcommand{\deriv}[2]{{\displaystyle \frac{\displaystyle \partial #1}{\displaystyle \partial #2}}}
 \newcommand{\sigmaeq}{\sigma_{\mathrm{eq}}}
 
+# Announcing the fourth MFront User Day (28/06/2018)
+
+We are pleased to announce the fourth MFront User Day that will held
+at Cadarche on October the 16th of 2018.
+
+This day will give the opportunity for the developers to present the
+numerous new features of the 3.2 version and for the users to present
+their works and to make feed-backs.
+
+All the contributions are welcomed, do not hesitate to contact the
+organizers to present your work.
+
+The agenda and the location will be communicated later.
+
+The event is free and open to all. However, registration is
+mandatory. Please send the organizers at
+[tfel-contact@cea.fr](mailto:tfel-contact@cea.fr) the following
+information:
+
+- Full name.
+- Company name.
+
+Please register your participation before September 15th 2018 to
+facilitate the organisation.
+
+# Follow the `TFEL/MFront` project on ResearchGate (28/06/2018)
+
+`TFEL/MFront` meets a growing success in the academic work. A
+`ResearchGate` project has been created to accompagny this rise:
+
+<https://www.researchgate.net/project/TFEL-MFront>
+
+# A seminar introducing `TFEL/MFront` at Centrale Lille (21/06/2018)
+
+On the 21th of May, we had the chance to make a seminar about
+`TFEL/MFront` at [Centrale Lille.
+
+The talk is available here:
+<https://github.com/thelfer/tfel-doc/tree/master/Talks/CentraleLille2018>.
+
 # A seminar about `TFEL/MFront` at the ENSMM (7/06/2018)
 
 On the 7th of May, we had the chance to make a seminar about
 `TFEL/MFront` at the [ENSMM (École nationale supérieure de mécanique et
-des microtechniques) Besançon](https://www.ens2m.fr/) on 7/06/2018 in
+des microtechniques) Besançon](https://www.ens2m.fr/) in
 the Departement of Applied Mechanics.
 
 The talk is available here:

@@ -143,8 +143,7 @@ namespace mfront {
       auto c = std::string{};
       c += "const auto " + DJan + " = ";
       c += "(this->" + Dn + ")*sigmaeq(" + an + "_);\n";
-      c += "if((2 * " + DJan + " > 3 * (this->" + wn + "))&&";
-      c += "(this->dp" + fid + ">0)){\n";
+      c += "if(2 * " + DJan + " > 3 * (this->" + wn + ")){\n";
       if (b) {
 #if __cplusplus >= 201703L
         c += "const auto [" + Psin + "," + dPsin + "] = ";
@@ -193,17 +192,17 @@ namespace mfront {
         c += "3 * (this->" + Dn + ") * deviator(" + an + "_) / ";
         c += "(2 * " + DJan + ");\n";
         if (!this->bp.empty()) {
-          c += "df" + an + "_ddp" + fid + " -= ";
+          c += "df" + an + "_ddp" + fid + " = - (";
           c += "n" + fid + "- (this->" + Dn + ") * " + Phin + " * " + Psin +
-               " * " + an + "_;\n";
+               " * " + an + "_);\n";
           c += "df" + an + "_ddp" + fid + " += ";
           c += "(this->dp" + fid + ") *";
           c += "(this->" + Dn + ") * " + dPhin + " * " + Psin + " * " + an +
                "_);\n";
         } else {
-          c += "df" + an + "_ddp" + fid + " -= ";
+          c += "df" + an + "_ddp" + fid + " = -(";
           c += "n" + fid + "- (this->" + Dn + ") * " + Psin + " * " + an +
-               "_;\n";
+               "_);\n";
         }
         // opposite of dfa_ds
         const auto mdf_ds = "(this->dp" + fid + ") * dn" + fid + "_ds" + fid;

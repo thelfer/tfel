@@ -255,13 +255,11 @@ namespace mfront {
       if (!this->ihrs.empty()) {
         ib.code += "if(this->bpl" + id + "){\n";
       }
-      if((idsl.getSolver().usesJacobian()) &&
-      	 (idsl.getSolver().requiresNumericalJacobian())){
+      if(idsl.getSolver().usesJacobian()){
       	ib.code += "if(!perturbatedSystemEvaluation){\n";
       }
       ib.code += "this->dp" + id + " = max(this->dp" + id + ", strain(0));\n";
-      if((idsl.getSolver().usesJacobian()) &&
-      	 (idsl.getSolver().requiresNumericalJacobian())){
+      if(idsl.getSolver().usesJacobian()){
       	ib.code += "}\n";
       }
       ib.code += this->computeEffectiveStress(id);

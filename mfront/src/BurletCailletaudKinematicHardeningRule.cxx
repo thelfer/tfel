@@ -103,11 +103,11 @@ namespace mfront {
       c += "(this->dp" + fid + ")*(df" + an + "_ddp" + fid + ");\n";
       if (b) {
         // opposite of the derivative of fa with respect to s
-        const auto mdf_ds =
-            "(this->dp" + fid + ")*(d" + n + "_ds" + fid + "-(this->" + Dn +
-            ")*(1-this->" + en + ")*2*((" + an +
-            "_|" + n + ")*d" + n + "_ds" + fid + "+(" + n + "^(" + an +
-            "_|d" + n + "_ds" + fid + "))))/3";
+        auto mdf_ds = "(this->dp" + fid +")*(";
+        mdf_ds += "d" + n + "_ds" + fid;
+        mdf_ds += "-(this->" + Dn + ")*(1-this->" + en + ")*2*(";
+        mdf_ds += "(" + an + "_|" + n + ")*d" + n + "_ds" + fid + "+";
+        mdf_ds += "(" + n + "^(" + an + "_|d" + n + "_ds" + fid + ")))/3)";
         c += sp.computeDerivatives(bd, "StrainStensor", an, "-" + mdf_ds);
         // term specific to this back strain
         c += "df" + an + "_dd" + an + " += ";
