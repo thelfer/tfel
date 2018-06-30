@@ -143,7 +143,8 @@ namespace mfront {
       auto c = std::string{};
       c += "const auto " + DJan + " = ";
       c += "(this->" + Dn + ")*sigmaeq(" + an + "_);\n";
-      c += "if(2 * " + DJan + " > 3 * (this->" + wn + ")){\n";
+      c += "if((2 * " + DJan + " > 3 * (this->" + wn + "))&&";
+      c += "(this->dp" + fid + ">0)){\n";
       if (b) {
 #if __cplusplus >= 201703L
         c += "const auto [" + Psin + "," + dPsin + "] = ";

@@ -113,7 +113,7 @@ namespace mfront {
         c += "df" + an + "_dd" + an + " += ";
         c += "(this->theta)*(this->dp" + fid + ")*(this->" + Dn + ")*(";
         c += "(this->" + en + ")*Stensor4::Id()+";
-        c += "(1-this->" + en + ")*2*(n"+fid + "^" + n + ")/3);\n";
+        c += "(1-this->" + en + ")*2*(" + n + "^" + n + ")/3);\n";
         // terms in common for all back strains
         auto kid2 = decltype(khrs.size()){};
         for (const auto khr : khrs) {
