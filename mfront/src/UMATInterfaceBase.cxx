@@ -30,12 +30,16 @@
 
 namespace mfront {
 
-  UMATInterfaceBase::UMATMaterialProperty::UMATMaterialProperty(const std::string& t,
-                                                                const std::string& n,
-                                                                const std::string& v,
-                                                                const unsigned short a,
-                                                                const SupportedTypes::TypeSize o,
-                                                                const bool d)
+  const char* const UMATInterfaceBase::generateMTestFileAttribute =
+      "GenerateMTestFileOnFailure";
+
+  UMATInterfaceBase::UMATMaterialProperty::UMATMaterialProperty(
+      const std::string& t,
+      const std::string& n,
+      const std::string& v,
+      const unsigned short a,
+      const SupportedTypes::TypeSize o,
+      const bool d)
       : type(t),
         name(n),
         var_name(v),
@@ -72,10 +76,140 @@ namespace mfront {
 
   std::string UMATInterfaceBase::getSymbolName(const std::string& n, const Hypothesis h) const {
     if (h != ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
-      return this->getFunctionName(n) + "_" + ModellingHypothesis::toString(h);
+      return this->getFunctionNameBasis(n) + "_" + ModellingHypothesis::toString(h);
     }
-    return this->getFunctionName(n);
+    return this->getFunctionNameBasis(n);
   }  // end of UMATInterfaceBase::getLibraryName
+
+  std::pair<std::vector<UMATInterfaceBase::UMATMaterialProperty>,
+            UMATInterfaceBase::TypeSize>
+  UMATInterfaceBase::buildMaterialPropertiesList(
+      const BehaviourDescription& bd, const Hypothesis h) const {
+    auto raise = [](const std::string& m) {
+      tfel::raise("UMATInterfaceBase::buildMaterialPropertiesList: " +
+                  m);
+    };
+    auto throw_if = [&raise](const bool b, const char* const m) {
+      if (b) {
+        raise(m);
+      }
+    };
+    if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
+      const auto ah = this->getModellingHypothesesToBeTreated(bd);
+      std::set<Hypothesis> uh;
+      for (const auto& lh : ah) {
+        if (!bd.hasSpecialisedMechanicalData(lh)) {
+          uh.insert(lh);
+        }
+      }
+      throw_if(
+          uh.empty(),
+          "internal error : the mechanical behaviour says that not "
+          "all handled mechanical data are specialised, but we found none.");
+      // material properties for all the selected hypothesis
+      auto mpositions = std::vector<std::pair<std::vector<UMATMaterialProperty>,
+                                              SupportedTypes::TypeSize>>{};
+      for (const auto& lh : uh) {
+        mpositions.push_back(this->buildMaterialPropertiesList(bd, lh));
+      }
+      auto ph = uh.begin();
+      auto pum = mpositions.begin();
+      const auto& mfirst = *pum;
+      ++ph;
+      ++pum;
+      for (; ph != uh.end(); ++ph, ++pum) {
+        const auto& d =
+            bd.getBehaviourData(ModellingHypothesis::UNDEFINEDHYPOTHESIS);
+        const auto& mps = d.getMaterialProperties();
+        for (const auto& mp : mps) {
+          const auto& mp1 = findUMATMaterialProperty(
+              mfirst.first, bd.getExternalName(h, mp.name));
+          const auto& mp2 = findUMATMaterialProperty(
+              pum->first, bd.getExternalName(h, mp.name));
+          auto o1 = mp1.offset;
+          o1 += pum->second;
+          auto o2 = mp2.offset;
+          o2 += mfirst.second;
+          if (o1 != o2) {
+            raise("incompatible offset for material property '" + mp.name +
+                  "' (aka '" + mp1.name +
+                  "'). This is one pitfall of the umat interface. "
+                  "To by-pass this limitation, you may want to explicitely "
+                  "specialise some modelling hypotheses");
+          }
+        }
+      }
+      return mfirst;
+    }
+    auto res = std::pair<std::vector<UMATMaterialProperty>,
+                         SupportedTypes::TypeSize>{};
+    auto& mprops = res.first;
+    auto add_mp = [this, &mprops](const char* const type, const char* const gn,
+                                  const char* const vn, const bool b) {
+      this->appendToMaterialPropertiesList(mprops, type, gn, vn, b);
+    };
+    if ((h != ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) &&
+        (h != ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS) &&
+        (h != ModellingHypothesis::GENERALISEDPLANESTRAIN) &&
+        (h != ModellingHypothesis::AXISYMMETRICAL) &&
+        (h != ModellingHypothesis::PLANESTRAIN) &&
+        (h != ModellingHypothesis::PLANESTRESS) &&
+        (h != ModellingHypothesis::TRIDIMENSIONAL)) {
+      if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
+        raise("unexepected undefined hypothesis");
+      } else {
+        raise("unexepected hypothesis '" + ModellingHypothesis::toString(h) +
+              "'");
+      }
+    }
+    if (bd.getAttribute(BehaviourDescription::requiresStiffnessTensor, false)) {
+      if (bd.getSymmetryType() == mfront::ISOTROPIC) {
+        add_mp("stress", "YoungModulus", "youn", false);
+        add_mp("real", "PoissonRatio", "nu", false);
+      } else if (bd.getSymmetryType() == mfront::ORTHOTROPIC) {
+        add_mp("stress", "YoungModulus1", "yg1", false);
+        add_mp("stress", "YoungModulus2", "yg2", false);
+        add_mp("stress", "YoungModulus3", "yg3", false);
+        add_mp("real", "PoissonRatio12", "nu12", false);
+        add_mp("real", "PoissonRatio23", "nu23", false);
+        add_mp("real", "PoissonRatio13", "nu13", false);
+        if ((h == ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS) ||
+            (h == ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) ||
+            (h == ModellingHypothesis::GENERALISEDPLANESTRAIN) ||
+            (h == ModellingHypothesis::AXISYMMETRICAL) ||
+            (h == ModellingHypothesis::PLANESTRAIN) ||
+            (h == ModellingHypothesis::PLANESTRESS)) {
+          add_mp("stress", "ShearModulus12", "g12", false);
+        } else if (h == ModellingHypothesis::TRIDIMENSIONAL) {
+          add_mp("stress", "ShearModulus12", "g12", false);
+          add_mp("stress", "ShearModulus23", "g23", false);
+          add_mp("stress", "ShearModulus13", "g13", false);
+        }
+      } else {
+        throw_if(true, "unsupported behaviour symmetry type");
+      }
+    }
+    if (bd.getAttribute(
+            BehaviourDescription::requiresThermalExpansionCoefficientTensor,
+            false)) {
+      if (bd.getSymmetryType() == mfront::ISOTROPIC) {
+        add_mp("thermalexpansion", "ThermalExpansion", "alph", false);
+      } else if (bd.getSymmetryType() == mfront::ORTHOTROPIC) {
+        add_mp("thermalexpansion", "ThermalExpansion1", "alp1", false);
+        add_mp("thermalexpansion", "ThermalExpansion2", "alp2", false);
+        add_mp("thermalexpansion", "ThermalExpansion3", "alp3", false);
+      } else {
+        throw_if(true, "unsupported behaviour symmetry type");
+      }
+    }
+    if (!mprops.empty()) {
+      const auto& m = mprops.back();
+      res.second = m.offset;
+      res.second += SupportedTypes::getTypeSize(m.type, m.arraySize);
+    }
+    this->completeMaterialPropertiesList(mprops, bd, h);
+    return res;
+  }  // end of UMATInterfaceBase::buildMaterialPropertiesList
 
   void UMATInterfaceBase::appendToMaterialPropertiesList(std::vector<UMATMaterialProperty>& l,
                                                          const std::string& t,
@@ -1088,13 +1222,13 @@ namespace mfront {
   void UMATInterfaceBase::writeSetOutOfBoundsPolicyFunctionDeclaration(
       std::ostream& out, const std::string& name) const {
     out << "MFRONT_SHAREDOBJ void\n"
-        << this->getFunctionName(name) << "_setOutOfBoundsPolicy(const int);\n\n";
+        << this->getFunctionNameBasis(name) << "_setOutOfBoundsPolicy(const int);\n\n";
   }
 
   void UMATInterfaceBase::writeGetOutOfBoundsPolicyFunctionImplementation(
       std::ostream& out, const std::string& name) const {
     out << "static tfel::material::OutOfBoundsPolicy&\n"
-        << this->getFunctionName(name) << "_getOutOfBoundsPolicy(){\n"
+        << this->getFunctionNameBasis(name) << "_getOutOfBoundsPolicy(){\n"
         << "using namespace tfel::material;\n"
         << "static OutOfBoundsPolicy policy = None;\n"
         << "return policy;\n"
@@ -1104,15 +1238,15 @@ namespace mfront {
   void UMATInterfaceBase::writeSetOutOfBoundsPolicyFunctionImplementation(
       std::ostream& out, const std::string& name) const {
     out << "MFRONT_SHAREDOBJ void\n"
-        << this->getFunctionName(name) << "_setOutOfBoundsPolicy(const int p){\n"
+        << this->getFunctionNameBasis(name) << "_setOutOfBoundsPolicy(const int p){\n"
         << "if(p==0){\n"
-        << this->getFunctionName(name) << "_getOutOfBoundsPolicy() = tfel::material::None;\n"
+        << this->getFunctionNameBasis(name) << "_getOutOfBoundsPolicy() = tfel::material::None;\n"
         << "} else if(p==1){\n"
-        << this->getFunctionName(name) << "_getOutOfBoundsPolicy() = tfel::material::Warning;\n"
+        << this->getFunctionNameBasis(name) << "_getOutOfBoundsPolicy() = tfel::material::Warning;\n"
         << "} else if(p==2){\n"
-        << this->getFunctionName(name) << "_getOutOfBoundsPolicy() = tfel::material::Strict;\n"
+        << this->getFunctionNameBasis(name) << "_getOutOfBoundsPolicy() = tfel::material::Strict;\n"
         << "} else {\n"
-        << "std::cerr << \"" << this->getFunctionName(name)
+        << "std::cerr << \"" << this->getFunctionNameBasis(name)
         << "_setOutOfBoundsPolicy: invalid argument\\n\";\n"
         << "}\n"
         << "}\n\n";
@@ -1128,7 +1262,7 @@ namespace mfront {
         const auto& d = mb.getBehaviourData(h);
         const auto& pc = d.getParameters();
         this->checkParametersType(rp, ip, up, pc);
-        auto fctName = this->getFunctionName(name);
+        auto fctName = this->getFunctionNameBasis(name);
         auto suffix = std::string{};
         if (h != ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
           suffix += ModellingHypothesis::toString(h);
@@ -1161,7 +1295,7 @@ namespace mfront {
         const auto& pc = d.getParameters();
         bool rp, ip, up;
         this->checkParametersType(rp, ip, up, pc);
-        auto fctName = this->getFunctionName(name);
+        auto fctName = this->getFunctionNameBasis(name);
         std::string suffix;
         if (h != ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
           suffix += ModellingHypothesis::toString(h);
@@ -1238,7 +1372,7 @@ namespace mfront {
       out << "#include<iostream>\n"
           << "#include<stdexcept>\n";
     }
-    if (this->generateMTestFile) {
+    if (this->shallGenerateMTestFileOnFailure(mb)) {
       out << "#include<vector>\n"
           << "#include<sstream>\n"
           << "#include\"TFEL/Material/ModellingHypothesis.hxx\"\n"
@@ -1248,8 +1382,9 @@ namespace mfront {
     }
   }  // end of UMATInterfaceBase::getExtraSrcIncludes
 
-  void UMATInterfaceBase::generateMTestFile1(std::ostream& out) const {
-    if (this->generateMTestFile) {
+  void UMATInterfaceBase::generateMTestFile1(
+      std::ostream& out, const BehaviourDescription& bd) const {
+    if (this->shallGenerateMTestFileOnFailure(bd)) {
       out << "using tfel::material::ModellingHypothesis;\n"
           << "using mfront::SupportedTypes;\n"
           << "// double is used by MTestFileGeneratorBase\n"
@@ -1260,203 +1395,233 @@ namespace mfront {
     }
   }  // end of UMATInterfaceBase::generateMTestFile1
 
-  void UMATInterfaceBase::generateMTestFile2(std::ostream& out,
-                                             const BehaviourDescription::BehaviourType type,
-                                             const std::string& name,
-                                             const std::string& suffix,
-                                             const BehaviourDescription& mb) const {
-    if (this->generateMTestFile) {
-      auto fname = name;
-      if (!suffix.empty()) {
-        fname += "_" + suffix;
-      }
-      if (type == BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
-        out << "mfront::UmatSmallStrainMTestFileGenerator mg(\""
-            << makeLowerCase(this->getInterfaceName()) << "\",\"" << this->getLibraryName(mb)
-            << "\",\"" << this->getFunctionName(fname) << "\");\n";
-      } else if (type == BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
-        out << "mfront::UmatFiniteStrainMTestFileGenerator mg(\""
-            << makeLowerCase(this->getInterfaceName()) << "\",\"" << this->getLibraryName(mb)
-            << "\",\"" << this->getFunctionName(fname) << "\");\n";
-      } else {
-        tfel::raise(
-            "UMATInterfaceBase::generateMTestFile2: "
-            "only small strain or finite strain behaviours are supported");
-      }
-      this->writeMTestFileGeneratorSetModellingHypothesis(out);
-      this->writeMTestFileGeneratorSetRotationMatrix(out, mb);
-      out << "const auto TVectorSize = mg.getTVectorSize();\n"
-          << "const auto StensorSize = mg.getStensorSize();\n"
-          << "const auto TensorSize  = mg.getTensorSize();\n"
-          << "const auto dt = *DTIME>0 ? *DTIME : 1.e-50;\n"
-          << "mg.setHandleThermalExpansion(false);\n"
-          << "mg.addTime(0.);\n"
-          << "mg.addTime(dt);\n";
-      if (type == BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
-        out << "mg.setStrainTensor(STRAN);\n"
-            << "mg.setStrainTensorIncrement(DSTRAN);\n"
-            << "mg.setStressTensor(&mg_STRESS[0]);\n";
-      } else if (type == BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
-        out << "mg.setDeformationGradientAtTheBeginningOfTheStimeStep(F0);\n"
-            << "mg.setDeformationGradientAtTheEndOfTheStimeStep(F1);\n"
-            << "mg.setStressTensor(&mg_STRESS[0]);\n";
-      } else {
-        tfel::raise(
-            "UMATInterfaceBase::generateMTestFile2: "
-            "only small strain or finite strain behaviours are supported");
-      }
+  void UMATInterfaceBase::generateMTestFile2(
+      std::ostream& out,
+      const BehaviourDescription& mb,
+      const BehaviourDescription::BehaviourType type,
+      const std::string& name,
+      const std::string& suffix) const {
+    if (this->shallGenerateMTestFileOnFailure(mb)) {
       const auto& gh = this->gatherModellingHypothesesAndTests(mb);
-      for (const auto& elem : gh) {
-        const auto& d = mb.getBehaviourData(elem.first);
-        const auto& persistentVarsHolder = d.getPersistentVariables();
-        const auto& externalStateVarsHolder = d.getExternalStateVariables();
-        const auto mprops = this->buildMaterialPropertiesList(mb, elem.first);
-        const auto b = elem.second != "true";
+      for (const auto& e : gh) {
+        const auto b = e.second != "true";
         if (b) {
-          out << "if(" << elem.second << "){\n";
+          out << "if(" << e.second << "){\n";
         }
-        unsigned int offset = 0;
-        for (const auto& m : mprops.first) {
-          auto flag = SupportedTypes::getTypeFlag(m.type);
-          tfel::raise_if(flag != SupportedTypes::Scalar,
-                         "UMATInterfaceBase::generateFile2: "
-                         "unsupported external state variable type "
-                         "in mtest file generation");
-          if (m.arraySize == 1u) {
-            if (offset == 0) {
-              out << "mg.addMaterialProperty(\"" << m.name << "\",*(PROPS));\n";
-            } else {
-              out << "mg.addMaterialProperty(\"" << m.name << "\",*(PROPS+" << offset << "));\n";
-            }
-            ++offset;
-          } else {
-            for (unsigned short s = 0; s != m.arraySize; ++s, ++offset) {
-              if (offset == 0) {
-                out << "mg.addMaterialProperty(\"" << m.name << "[" << s << "]\",*(PROPS));\n";
-              } else {
-                out << "mg.addMaterialProperty(\"" << m.name << "[" << s << "]\","
-                    << "*(PROPS+" << offset << "));\n";
-              }
-            }
-          }
-        }
-        SupportedTypes::TypeSize ivoffset;
-        for (const auto& v : persistentVarsHolder) {
-          auto flag = SupportedTypes::getTypeFlag(v.type);
-          const auto& ivname = d.getExternalName(v.name);
-          if (v.arraySize == 1u) {
-            if (flag == SupportedTypes::Scalar) {
-              out << "mg.addInternalStateVariable(\"" << ivname
-                  << "\",SupportedTypes::Scalar,&mg_STATEV[" << ivoffset << "]);\n";
-              ivoffset += SupportedTypes::TypeSize(1u, 0u, 0u, 0u);
-            } else {
-              out << "mg.addInternalStateVariable(\"" << ivname
-                  << "\",SupportedTypes::Stensor,&mg_STATEV[" << ivoffset << "]);\n";
-              ivoffset += SupportedTypes::TypeSize(0u, 0u, 1u, 0u);
-            }
-          } else {
-            if (v.arraySize >= SupportedTypes::ArraySizeLimit) {
-              out << "for(unsigned short i=0;i!=" << v.arraySize << ";++i){\n";
-              out << "auto name =  \"" << ivname << "[\" + std::to_string(i)+ \"]\";\n";
-              if (flag == SupportedTypes::Scalar) {
-                out << "mg.addInternalStateVariable(name,SupportedTypes::Scalar,&mg_STATEV["
-                    << ivoffset << "]+i);\n";
-              } else {
-                out << "mg.addInternalStateVariable(name,SupportedTypes::Stensor,&mg_STATEV["
-                    << ivoffset << "]+i);\n";
-              }
-              out << "}\n";
-              if (flag == SupportedTypes::Scalar) {
-                ivoffset += SupportedTypes::TypeSize(v.arraySize, 0u, 0u, 0u);
-              } else {
-                ivoffset += SupportedTypes::TypeSize(0u, 0u, v.arraySize, 0u);
-              }
-            } else {
-              for (unsigned short i = 0; i != v.arraySize; ++i) {
-                if (flag == SupportedTypes::Scalar) {
-                  out << "mg.addInternalStateVariable(\"" << ivname << "[" << i
-                      << "]\",SupportedTypes::Scalar,&mg_STATEV[" << ivoffset << "]);\n";
-                  ivoffset += SupportedTypes::TypeSize(1u, 0u, 0u, 0u);
-                } else {
-                  out << "mg.addInternalStateVariable(\"" << ivname << "[" << i
-                      << "]\",SupportedTypes::Stensor,&mg_STATEV[" << ivoffset << "]);\n";
-                  ivoffset += SupportedTypes::TypeSize(0u, 0u, 1u, 0u);
-                }
-              }
-            }
-          }
-        }
-        out << "mg.addExternalStateVariableValue(\"Temperature\",0.,*TEMP);\n";
-        out << "mg.addExternalStateVariableValue(\"Temperature\",dt,*TEMP+*DTEMP);\n";
-        auto p = std::next(externalStateVarsHolder.begin());
-        for (offset = 0; p != externalStateVarsHolder.end(); ++p) {
-          auto flag = SupportedTypes::getTypeFlag(p->type);
-          tfel::raise_if(flag != SupportedTypes::Scalar,
-                         "UMATInterfaceBase::generateFile2: "
-                         "unsupported external state variable type "
-                         "in mtest file generation");
-          const auto& evname = d.getExternalName(p->name);
-          if (p->arraySize == 1u) {
-            if (offset == 0) {
-              out << "mg.addExternalStateVariableValue(\"" << evname << "\",0,*PREDEF);\n";
-              out << "mg.addExternalStateVariableValue(\"" << evname
-                  << "\",dt,*PREDEF+*DPRED);\n";
-            } else {
-              out << "mg.addExternalStateVariableValue(\"" << evname << "\",0,*(PREDEF+" << offset
-                  << "));\n";
-              out << "mg.addExternalStateVariableValue(\"" << evname << "\",dt,*(PREDEF+"
-                  << offset << ")+*(DPRED+" << offset << "));\n";
-            }
-            ++offset;
-          } else {
-            if (p->arraySize >= SupportedTypes::ArraySizeLimit) {
-              out << "for(unsigned short i=0;i!=" << p->arraySize << ";++i){\n";
-              out << "auto name = \"" << evname << "[\" +std::to_string(i)+\"]\";\n";
-              if (offset == 0) {
-                out << "mg.addExternalStateVariableValue(name,0,*(PREDEF+i));\n";
-                out << "mg.addExternalStateVariableValue(name,"
-                       "dt,*(PREDEF+i)+*(DPRED+i));\n";
-              } else {
-                out << "mg.addExternalStateVariableValue(name,"
-                       "0,*(PREDEF+"
-                    << offset << "+i));\n";
-                out << "mg.addExternalStateVariableValue(name,"
-                       "dt,*(PREDEF+"
-                    << offset << "+i)+*(DPRED+" << offset << "+i));\n";
-              }
-              out << "}\n";
-              offset += p->arraySize;
-            } else {
-              for (unsigned short i = 0; i != p->arraySize; ++i, ++offset) {
-                if (offset == 0) {
-                  out << "mg.addExternalStateVariableValue(\"" << evname << "[" << i
-                      << "]\",0,*PREDEF);\n";
-                  out << "mg.addExternalStateVariableValue(\"" << evname << "[" << i
-                      << "]\",dt,*PREDEF+*DPRED);\n";
-                } else {
-                  out << "mg.addExternalStateVariableValue(\"" << evname << "[" << i
-                      << "]\","
-                         "0,*(PREDEF+"
-                      << offset << "));\n";
-                  out << "mg.addExternalStateVariableValue(\"" << evname << "[" << i
-                      << "]\","
-                         "dt,*(PREDEF+"
-                      << offset << ")+*(DPRED+" << offset << "));\n";
-                }
-              }
-            }
-          }
-        }
+        this->generateMTestFileForHypothesis(out, mb, type, name, suffix,
+                                             e.first);
         if (b) {
           out << "}\n";
         }
       }
-      out << "mg.generate(\"" + name + "\");\n"
-          << "static_cast<void>(TVectorSize); // remove gcc warning\n"
-          << "static_cast<void>(StensorSize); // remove gcc warning\n"
-          << "static_cast<void>(TensorSize);  // remove gcc warning\n";
     }
-  }
+  } // end of UMATInterfaceBase::generateMTestFile2
+
+  void UMATInterfaceBase::generateMTestFileForHypothesis(
+      std::ostream& out,
+      const BehaviourDescription& bd,
+      const BehaviourDescription::BehaviourType type,
+      const std::string& name,
+      const std::string& suffix,
+      const Hypothesis h) const {
+    const auto& d = bd.getBehaviourData(h);
+    const auto& persistentVarsHolder = d.getPersistentVariables();
+    const auto& externalStateVarsHolder = d.getExternalStateVariables();
+    const auto mprops = this->buildMaterialPropertiesList(bd, h);
+    unsigned int offset = 0;
+    const auto fname = [&name, &suffix] {
+      if (!suffix.empty()) {
+        return name + "_" + suffix;
+      }
+      return name;
+    }();
+    if (type == BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
+      out << "mfront::UmatSmallStrainMTestFileGenerator mg(\""
+          << makeLowerCase(this->getInterfaceName()) << "\",\""
+          << this->getLibraryName(bd) << "\",\""
+          << this->getFunctionNameBasis(fname) << "\");\n";
+    }
+    else if (type == BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
+      out << "mfront::UmatFiniteStrainMTestFileGenerator mg(\""
+          << makeLowerCase(this->getInterfaceName()) << "\",\""
+          << this->getLibraryName(bd) << "\",\""
+          << this->getFunctionNameBasis(fname) << "\");\n";
+    }
+    else {
+      tfel::raise(
+          "UMATInterfaceBase::generateMTestFileForHypothesis: "
+          "only small strain or finite strain behaviours are supported");
+    }
+    this->writeMTestFileGeneratorSetModellingHypothesis(out);
+    this->writeMTestFileGeneratorSetRotationMatrix(out, bd);
+    out << "const auto TVectorSize = mg.getTVectorSize();\n"
+        << "const auto StensorSize = mg.getStensorSize();\n"
+        << "const auto TensorSize  = mg.getTensorSize();\n"
+        << "const auto dt = *DTIME>0 ? *DTIME : 1.e-50;\n"
+        << "mg.setHandleThermalExpansion(false);\n"
+        << "mg.addTime(0.);\n"
+        << "mg.addTime(dt);\n";
+    if (type == BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
+      out << "mg.setStrainTensor(STRAN);\n"
+          << "mg.setStrainTensorIncrement(DSTRAN);\n"
+          << "mg.setStressTensor(&mg_STRESS[0]);\n";
+    } else if (type == BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
+      out << "mg.setDeformationGradientAtTheBeginningOfTheStimeStep(F0);\n"
+          << "mg.setDeformationGradientAtTheEndOfTheStimeStep(F1);\n"
+          << "mg.setStressTensor(&mg_STRESS[0]);\n";
+    } else {
+      tfel::raise(
+          "UMATInterfaceBase::generateMTestFileForHypothesis: "
+          "only small strain or finite strain behaviours are supported");
+    }
+    for (const auto& m : mprops.first) {
+      auto flag = SupportedTypes::getTypeFlag(m.type);
+      tfel::raise_if(flag != SupportedTypes::Scalar,
+                     "UMATInterfaceBase::generateFile2: "
+                     "unsupported external state variable type "
+                     "in mtest file generation");
+      if (m.arraySize == 1u) {
+        if (offset == 0) {
+          out << "mg.addMaterialProperty(\"" << m.name << "\",*(PROPS));\n";
+        } else {
+          out << "mg.addMaterialProperty(\"" << m.name << "\",*(PROPS+"
+              << offset << "));\n";
+        }
+        ++offset;
+      } else {
+        for (unsigned short s = 0; s != m.arraySize; ++s, ++offset) {
+          if (offset == 0) {
+            out << "mg.addMaterialProperty(\"" << m.name << "[" << s
+                << "]\",*(PROPS));\n";
+          } else {
+            out << "mg.addMaterialProperty(\"" << m.name << "[" << s << "]\","
+                << "*(PROPS+" << offset << "));\n";
+          }
+        }
+      }
+    }
+    SupportedTypes::TypeSize ivoffset;
+    for (const auto& v : persistentVarsHolder) {
+      auto flag = SupportedTypes::getTypeFlag(v.type);
+      const auto& ivname = d.getExternalName(v.name);
+      if (v.arraySize == 1u) {
+        if (flag == SupportedTypes::Scalar) {
+          out << "mg.addInternalStateVariable(\"" << ivname
+              << "\",SupportedTypes::Scalar,&mg_STATEV[" << ivoffset << "]);\n";
+          ivoffset += SupportedTypes::TypeSize(1u, 0u, 0u, 0u);
+        } else {
+          out << "mg.addInternalStateVariable(\"" << ivname
+              << "\",SupportedTypes::Stensor,&mg_STATEV[" << ivoffset
+              << "]);\n";
+          ivoffset += SupportedTypes::TypeSize(0u, 0u, 1u, 0u);
+        }
+      } else {
+        if (v.arraySize >= SupportedTypes::ArraySizeLimit) {
+          out << "for(unsigned short i=0;i!=" << v.arraySize << ";++i){\n";
+          out << "auto name =  \"" << ivname
+              << "[\" + std::to_string(i)+ \"]\";\n";
+          if (flag == SupportedTypes::Scalar) {
+            out << "mg.addInternalStateVariable(name,SupportedTypes::Scalar,&"
+                   "mg_STATEV["
+                << ivoffset << "]+i);\n";
+          } else {
+            out << "mg.addInternalStateVariable(name,SupportedTypes::Stensor,&"
+                   "mg_STATEV["
+                << ivoffset << "]+i);\n";
+          }
+          out << "}\n";
+          if (flag == SupportedTypes::Scalar) {
+            ivoffset += SupportedTypes::TypeSize(v.arraySize, 0u, 0u, 0u);
+          } else {
+            ivoffset += SupportedTypes::TypeSize(0u, 0u, v.arraySize, 0u);
+          }
+        } else {
+          for (unsigned short i = 0; i != v.arraySize; ++i) {
+            if (flag == SupportedTypes::Scalar) {
+              out << "mg.addInternalStateVariable(\"" << ivname << "[" << i
+                  << "]\",SupportedTypes::Scalar,&mg_STATEV[" << ivoffset
+                  << "]);\n";
+              ivoffset += SupportedTypes::TypeSize(1u, 0u, 0u, 0u);
+            } else {
+              out << "mg.addInternalStateVariable(\"" << ivname << "[" << i
+                  << "]\",SupportedTypes::Stensor,&mg_STATEV[" << ivoffset
+                  << "]);\n";
+              ivoffset += SupportedTypes::TypeSize(0u, 0u, 1u, 0u);
+            }
+          }
+        }
+      }
+    }
+    out << "mg.addExternalStateVariableValue(\"Temperature\",0.,*TEMP);\n";
+    out << "mg.addExternalStateVariableValue(\"Temperature\",dt,*TEMP+*DTEMP);"
+           "\n";
+    auto p = std::next(externalStateVarsHolder.begin());
+    for (offset = 0; p != externalStateVarsHolder.end(); ++p) {
+      auto flag = SupportedTypes::getTypeFlag(p->type);
+      tfel::raise_if(flag != SupportedTypes::Scalar,
+                     "UMATInterfaceBase::generateFile2: "
+                     "unsupported external state variable type "
+                     "in mtest file generation");
+      const auto& evname = d.getExternalName(p->name);
+      if (p->arraySize == 1u) {
+        if (offset == 0) {
+          out << "mg.addExternalStateVariableValue(\"" << evname
+              << "\",0,*PREDEF);\n";
+          out << "mg.addExternalStateVariableValue(\"" << evname
+              << "\",dt,*PREDEF+*DPRED);\n";
+        } else {
+          out << "mg.addExternalStateVariableValue(\"" << evname
+              << "\",0,*(PREDEF+" << offset << "));\n";
+          out << "mg.addExternalStateVariableValue(\"" << evname
+              << "\",dt,*(PREDEF+" << offset << ")+*(DPRED+" << offset
+              << "));\n";
+        }
+        ++offset;
+      } else {
+        if (p->arraySize >= SupportedTypes::ArraySizeLimit) {
+          out << "for(unsigned short i=0;i!=" << p->arraySize << ";++i){\n";
+          out << "auto name = \"" << evname
+              << "[\" +std::to_string(i)+\"]\";\n";
+          if (offset == 0) {
+            out << "mg.addExternalStateVariableValue(name,0,*(PREDEF+i));\n";
+            out << "mg.addExternalStateVariableValue(name,"
+                   "dt,*(PREDEF+i)+*(DPRED+i));\n";
+          } else {
+            out << "mg.addExternalStateVariableValue(name,"
+                   "0,*(PREDEF+"
+                << offset << "+i));\n";
+            out << "mg.addExternalStateVariableValue(name,"
+                   "dt,*(PREDEF+"
+                << offset << "+i)+*(DPRED+" << offset << "+i));\n";
+          }
+          out << "}\n";
+          offset += p->arraySize;
+        } else {
+          for (unsigned short i = 0; i != p->arraySize; ++i, ++offset) {
+            if (offset == 0) {
+              out << "mg.addExternalStateVariableValue(\"" << evname << "[" << i
+                  << "]\",0,*PREDEF);\n";
+              out << "mg.addExternalStateVariableValue(\"" << evname << "[" << i
+                  << "]\",dt,*PREDEF+*DPRED);\n";
+            } else {
+              out << "mg.addExternalStateVariableValue(\"" << evname << "[" << i
+                  << "]\","
+                     "0,*(PREDEF+"
+                  << offset << "));\n";
+              out << "mg.addExternalStateVariableValue(\"" << evname << "[" << i
+                  << "]\","
+                     "dt,*(PREDEF+"
+                  << offset << ")+*(DPRED+" << offset << "));\n";
+            }
+          }
+        }
+      }
+    }
+    out << "mg.generate(\"" + name + "\");\n"
+        << "static_cast<void>(TVectorSize); // remove gcc warning\n"
+        << "static_cast<void>(StensorSize); // remove gcc warning\n"
+        << "static_cast<void>(TensorSize);  // remove gcc warning\n";
+  } // end of UMATInterfaceBase::generateMTestFileForHypothesis();
 
   void UMATInterfaceBase::writeMTestFileGeneratorSetRotationMatrix(
       std::ostream& out, const BehaviourDescription& mb) const {
@@ -1466,543 +1631,581 @@ namespace mfront {
           << "DROT[1],DROT[4],DROT[7],"
           << "DROT[2],DROT[5],DROT[8]);\n";
     }
-  }  // end of UMATInterfaceBase::writeMTestFileGeneratorSetRotationMatrix
+    }  // end of UMATInterfaceBase::writeMTestFileGeneratorSetRotationMatrix
 
-  void UMATInterfaceBase::generateUMATxxGeneralSymbols(std::ostream& out,
-                                                       const std::string& name,
-                                                       const BehaviourDescription& mb,
-                                                       const FileDescription& fd) const {
-    this->writeUMATxxEntryPointSymbol(out, name);
-    this->writeUMATxxTFELVersionSymbol(out, name);
-    this->writeUMATxxMaterialSymbol(out, name, mb);
-    this->writeUMATxxMaterialKnowledgeTypeSymbol(out, name);
-    this->writeUMATxxInterfaceNameSymbols(out, name, mb, fd);
-    this->writeUMATxxSourceFileSymbols(out, name, mb, fd);
-    this->writeUMATxxSupportedModellingHypothesis(out, name, mb);
-    this->writeUMATxxBehaviourTypeSymbols(out, name, mb);
-    this->writeUMATxxBehaviourKinematicSymbols(out, name, mb);
-    this->writeUMATxxSymmetryTypeSymbols(out, name, mb);
-    this->writeUMATxxElasticSymmetryTypeSymbols(out, name, mb);
-    this->writeUMATxxSpecificSymbols(out, name, mb, fd);
-  }
-
-  void UMATInterfaceBase::writeUMATxxEntryPointSymbol(std::ostream& out,
-                                                      const std::string& n) const {
-    writeEntryPointSymbol(out, this->getFunctionName(n));
-  }  // end of UMATInterfaceBase::writeUMATxxEntryPointSymbol
-
-  void UMATInterfaceBase::writeUMATxxTFELVersionSymbol(std::ostream& out,
-                                                       const std::string& n) const {
-    writeTFELVersionSymbol(out, this->getFunctionName(n));
-  }  // end of UMATInterfaceBase::writeUMATxxTFELVersionSymbol
-
-  void UMATInterfaceBase::writeUMATxxMaterialSymbol(std::ostream& out,
-                                                    const std::string& n,
-                                                    const BehaviourDescription& mb) const {
-    writeMaterialSymbol(out, this->getFunctionName(n), mb.getMaterialName());
-  }  // end of UMATInterfaceBase::writeUMATxxEntryPointSymbol
-
-  void UMATInterfaceBase::writeUMATxxMaterialKnowledgeTypeSymbol(std::ostream& out,
-                                                                 const std::string& n) const {
-    writeMaterialKnowledgeTypeSymbol(out, this->getFunctionName(n), BEHAVIOUR);
-  }  // end of UMATInterfaceBase::writeUMATxxEntryPointSymbol
-
-  void UMATInterfaceBase::generateUMATxxSymbols(std::ostream& out,
-                                                const std::string& name,
-                                                const Hypothesis h,
-                                                const BehaviourDescription& mb,
-                                                const FileDescription& fd) const {
-    this->writeUMATxxIsUsableInPurelyImplicitResolutionSymbols(out, name, h, mb);
-    this->writeUMATxxMaterialPropertiesSymbols(out, name, h, mb);
-    this->writeUMATxxStateVariablesSymbols(out, name, h, mb);
-    this->writeUMATxxExternalStateVariablesSymbols(out, name, h, mb);
-    this->writeUMATxxParametersSymbols(out, name, h, mb);
-    this->writeUMATxxParameterDefaultValueSymbols(out, name, h, mb);
-    this->writeUMATxxBoundsSymbols(out, name, h, mb);
-    this->writeUMATxxPhysicalBoundsSymbols(out, name, h, mb);
-    this->writeUMATxxRequirementsSymbols(out, name, h, mb);
-    this->writeUMATxxAdditionalSymbols(out, name, h, mb, fd);
-  }
-
-  void UMATInterfaceBase::writeUMATxxSpecificSymbols(std::ostream&,
-                                                     const std::string&,
-                                                     const BehaviourDescription&,
-                                                     const FileDescription&) const {
-  }  // end of UMATInterfaceBase::writeUMATxxSpecificSymbols
-
-  void UMATInterfaceBase::writeUMATxxSupportedModellingHypothesis(
-      std::ostream& out, const std::string& name, const BehaviourDescription& mb) const {
-    auto ih = this->getModellingHypothesesToBeTreated(mb);
-    if (ih.empty()) {
-      out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name)
-          << "_nModellingHypotheses = 0u;\n\n"
-          << "MFRONT_SHAREDOBJ const char * const * " << this->getFunctionName(name)
-          << "_ModellingHypotheses = 0;\n\n";
-    } else {
-      out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name)
-          << "_nModellingHypotheses = " << ih.size() << "u;\n\n"
-          << "MFRONT_SHAREDOBJ const char * \n"
-          << this->getFunctionName(name) << "_ModellingHypotheses[" << ih.size() << "u] = {";
-      for (auto ph = ih.begin(); ph != ih.end();) {
-        out << "\"" << ModellingHypothesis::toString(*ph) << "\"";
-        if (++ph != ih.end()) {
-          out << ",\n";
-        }
-      }
-      out << "};\n\n";
+    void UMATInterfaceBase::generateUMATxxGeneralSymbols(
+        std::ostream & out, const std::string& name,
+        const BehaviourDescription& mb, const FileDescription& fd) const {
+      this->writeUMATxxEntryPointSymbol(out, name);
+      this->writeUMATxxTFELVersionSymbol(out, name);
+      this->writeUMATxxMaterialSymbol(out, name, mb);
+      this->writeUMATxxMaterialKnowledgeTypeSymbol(out, name);
+      this->writeUMATxxInterfaceNameSymbols(out, name, mb, fd);
+      this->writeUMATxxSourceFileSymbols(out, name, mb, fd);
+      this->writeUMATxxSupportedModellingHypothesis(out, name, mb);
+      this->writeUMATxxBehaviourTypeSymbols(out, name, mb);
+      this->writeUMATxxBehaviourKinematicSymbols(out, name, mb);
+      this->writeUMATxxSymmetryTypeSymbols(out, name, mb);
+      this->writeUMATxxElasticSymmetryTypeSymbols(out, name, mb);
+      this->writeUMATxxSpecificSymbols(out, name, mb, fd);
     }
-  }  // end of UMATInterfaceBase::writeUMATxxSupportedModellingHypothesis
 
-  void UMATInterfaceBase::writeUMATxxMaterialPropertiesSymbols(
-      std::ostream& out,
-      const std::string& name,
-      const Hypothesis h,
-      const BehaviourDescription& mb) const {
-    using namespace std;
-    auto throw_if = [](const bool b, const std::string& m) {
-      tfel::raise_if(b, "UMATInterfaceBase::writeUMATxxMaterialPropertiesSymbols: " + m);
-    };
-    const auto mprops = this->buildMaterialPropertiesList(mb, h);
-    if (mprops.first.empty()) {
-      out << "MFRONT_SHAREDOBJ unsigned short " << this->getSymbolName(name, h)
-          << "_nMaterialProperties = 0u;\n\n"
-          << "MFRONT_SHAREDOBJ const char * const *" << this->getSymbolName(name, h)
-          << "_MaterialProperties = nullptr;\n\n";
-    } else {
-      const auto& last = mprops.first.back();
-      SupportedTypes::TypeSize s;
-      throw_if((mprops.second.getTensorSize() != 0) || (mprops.second.getStensorSize() != 0) ||
-                   (mprops.second.getTVectorSize() != 0),
-               "internal error: the material properties shall all be scalars");
-      s = last.offset;
-      s += SupportedTypes::getTypeSize(last.type, last.arraySize);
-      s -= mprops.second;
-      throw_if((s.getTensorSize() != 0) || (s.getStensorSize() != 0) || (s.getTVectorSize() != 0),
-               "internal error: the material properties shall all be scalars");
-      throw_if(s.getScalarSize() < 0,
-               "internal error: negative number of the material properties");
-      vector<UMATMaterialProperty>::size_type ib =
-          0; /* index of the first element which
-              * is not imposed by the material properties */
-      bool found = false;
-      for (decltype(mprops.first.size()) i = 0; (i != mprops.first.size()) && (!found); ++i) {
-        if (mprops.first[i].offset == mprops.second) {
-          ib = i;
-          found = true;
-        }
-      }
-      if (!found) {
-        throw_if(s.getScalarSize() != 0, "internal error: inconsistent offset declaration");
-        out << "MFRONT_SHAREDOBJ unsigned short " << this->getSymbolName(name, h)
-            << "_nMaterialProperties = 0u;\n\n";
-        out << "MFRONT_SHAREDOBJ const char * const *" << this->getSymbolName(name, h)
-            << "_MaterialProperties = nullptr;\n\n";
+    void UMATInterfaceBase::writeUMATxxEntryPointSymbol(
+        std::ostream & out, const std::string& n) const {
+      writeEntryPointSymbol(out, this->getFunctionNameBasis(n));
+    }  // end of UMATInterfaceBase::writeUMATxxEntryPointSymbol
+
+    void UMATInterfaceBase::writeUMATxxTFELVersionSymbol(
+        std::ostream & out, const std::string& n) const {
+      writeTFELVersionSymbol(out, this->getFunctionNameBasis(n));
+    }  // end of UMATInterfaceBase::writeUMATxxTFELVersionSymbol
+
+    void UMATInterfaceBase::writeUMATxxMaterialSymbol(
+        std::ostream & out, const std::string& n,
+        const BehaviourDescription& mb) const {
+      writeMaterialSymbol(out, this->getFunctionNameBasis(n),
+                          mb.getMaterialName());
+    }  // end of UMATInterfaceBase::writeUMATxxEntryPointSymbol
+
+    void UMATInterfaceBase::writeUMATxxMaterialKnowledgeTypeSymbol(
+        std::ostream & out, const std::string& n) const {
+      writeMaterialKnowledgeTypeSymbol(out, this->getFunctionNameBasis(n),
+                                       BEHAVIOUR);
+    }  // end of UMATInterfaceBase::writeUMATxxEntryPointSymbol
+
+    void UMATInterfaceBase::generateUMATxxSymbols(
+        std::ostream & out, const std::string& name, const Hypothesis h,
+        const BehaviourDescription& mb, const FileDescription& fd) const {
+      this->writeUMATxxIsUsableInPurelyImplicitResolutionSymbols(out, name, h,
+                                                                 mb);
+      this->writeUMATxxMaterialPropertiesSymbols(out, name, h, mb);
+      this->writeUMATxxStateVariablesSymbols(out, name, h, mb);
+      this->writeUMATxxExternalStateVariablesSymbols(out, name, h, mb);
+      this->writeUMATxxParametersSymbols(out, name, h, mb);
+      this->writeUMATxxParameterDefaultValueSymbols(out, name, h, mb);
+      this->writeUMATxxBoundsSymbols(out, name, h, mb);
+      this->writeUMATxxPhysicalBoundsSymbols(out, name, h, mb);
+      this->writeUMATxxRequirementsSymbols(out, name, h, mb);
+      this->writeUMATxxAdditionalSymbols(out, name, h, mb, fd);
+    }
+
+    void UMATInterfaceBase::writeUMATxxSpecificSymbols(
+        std::ostream&, const std::string&, const BehaviourDescription&,
+        const FileDescription&) const {
+    }  // end of UMATInterfaceBase::writeUMATxxSpecificSymbols
+
+    void UMATInterfaceBase::writeUMATxxSupportedModellingHypothesis(
+        std::ostream & out, const std::string& name,
+        const BehaviourDescription& mb) const {
+      auto ih = this->getModellingHypothesesToBeTreated(mb);
+      if (ih.empty()) {
+        out << "MFRONT_SHAREDOBJ unsigned short "
+            << this->getFunctionNameBasis(name)
+            << "_nModellingHypotheses = 0u;\n\n"
+            << "MFRONT_SHAREDOBJ const char * const * "
+            << this->getFunctionNameBasis(name)
+            << "_ModellingHypotheses = 0;\n\n";
       } else {
-        out << "MFRONT_SHAREDOBJ unsigned short " << this->getSymbolName(name, h)
-            << "_nMaterialProperties = " << s.getScalarSize() << "u;\n\n";
-        out << "MFRONT_SHAREDOBJ const char *" << this->getSymbolName(name, h)
-            << "_MaterialProperties[" << s.getScalarSize() << "u] = {";
-        for (auto i = ib; i != mprops.first.size();) {
-          const auto& m = mprops.first[i];
-          if (m.arraySize == 1u) {
-            out << "\"" << m.name << "\"";
-          } else {
-            for (unsigned short j = 0; j != m.arraySize;) {
-              out << "\"" << m.name << "[" << j << "]\"";
-              if (++j != m.arraySize) {
-                out << ",\n";
-              }
-            }
-          }
-          if (++i != mprops.first.size()) {
+        out << "MFRONT_SHAREDOBJ unsigned short "
+            << this->getFunctionNameBasis(name)
+            << "_nModellingHypotheses = " << ih.size() << "u;\n\n"
+            << "MFRONT_SHAREDOBJ const char * \n"
+            << this->getFunctionNameBasis(name) << "_ModellingHypotheses["
+            << ih.size() << "u] = {";
+        for (auto ph = ih.begin(); ph != ih.end();) {
+          out << "\"" << ModellingHypothesis::toString(*ph) << "\"";
+          if (++ph != ih.end()) {
             out << ",\n";
           }
         }
         out << "};\n\n";
       }
-    }
-  }  // end of UMATInterface::writeUMATxxMaterialPropertiesSymbol
+    }  // end of UMATInterfaceBase::writeUMATxxSupportedModellingHypothesis
 
-  void UMATInterfaceBase::writeUMATxxStateVariablesSymbols(std::ostream& out,
-                                                           const std::string& name,
-                                                           const Hypothesis h,
-                                                           const BehaviourDescription& mb) const {
-    using namespace std;
-    const auto& d = mb.getBehaviourData(h);
-    const auto& persistentVarsHolder = d.getPersistentVariables();
-    const unsigned short nStateVariables =
-        static_cast<unsigned short>(persistentVarsHolder.getNumberOfVariables());
-    VariableDescriptionContainer::const_iterator p;
-    out << "MFRONT_SHAREDOBJ unsigned short " << this->getSymbolName(name, h)
-        << "_nInternalStateVariables = " << nStateVariables << ";\n";
-    vector<string> stateVariablesNames;
-    mb.getExternalNames(stateVariablesNames, h, persistentVarsHolder);
-    this->writeExternalNames(out, name, h, stateVariablesNames, "InternalStateVariables");
-    if (!persistentVarsHolder.empty()) {
-      out << "MFRONT_SHAREDOBJ int " << this->getSymbolName(name, h)
-          << "_InternalStateVariablesTypes [] = {";
-      for (p = persistentVarsHolder.begin(); p != persistentVarsHolder.end();) {
-        const auto flag = SupportedTypes::getTypeFlag(p->type);
-        for (unsigned short is = 0; is != p->arraySize;) {
-          switch (flag) {
-            case SupportedTypes::Scalar:
-              out << 0;
-              break;
-            case SupportedTypes::Stensor:
-              out << 1;
-              break;
-            case SupportedTypes::TVector:
-              out << 2;
-              break;
-            case SupportedTypes::Tensor:
-              out << 3;
-              break;
-            default:
-              tfel::raise(
-                  "UMATInterfaceBase::writeUMATxxStateVariablesSymbols: "
-                  "internal error, tag unsupported for "
-                  "variable '" +
-                  p->name + "'");
+    void UMATInterfaceBase::writeUMATxxMaterialPropertiesSymbols(
+        std::ostream & out, const std::string& name, const Hypothesis h,
+        const BehaviourDescription& mb) const {
+      using namespace std;
+      auto throw_if = [](const bool b, const std::string& m) {
+        tfel::raise_if(
+            b, "UMATInterfaceBase::writeUMATxxMaterialPropertiesSymbols: " + m);
+      };
+      const auto mprops = this->buildMaterialPropertiesList(mb, h);
+      if (mprops.first.empty()) {
+        out << "MFRONT_SHAREDOBJ unsigned short "
+            << this->getSymbolName(name, h) << "_nMaterialProperties = 0u;\n\n"
+            << "MFRONT_SHAREDOBJ const char * const *"
+            << this->getSymbolName(name, h)
+            << "_MaterialProperties = nullptr;\n\n";
+      } else {
+        const auto& last = mprops.first.back();
+        SupportedTypes::TypeSize s;
+        throw_if(
+            (mprops.second.getTensorSize() != 0) ||
+                (mprops.second.getStensorSize() != 0) ||
+                (mprops.second.getTVectorSize() != 0),
+            "internal error: the material properties shall all be scalars");
+        s = last.offset;
+        s += SupportedTypes::getTypeSize(last.type, last.arraySize);
+        s -= mprops.second;
+        throw_if(
+            (s.getTensorSize() != 0) || (s.getStensorSize() != 0) ||
+                (s.getTVectorSize() != 0),
+            "internal error: the material properties shall all be scalars");
+        throw_if(s.getScalarSize() < 0,
+                 "internal error: negative number of the material properties");
+        vector<UMATMaterialProperty>::size_type ib =
+            0; /* index of the first element which
+                * is not imposed by the material properties */
+        bool found = false;
+        for (decltype(mprops.first.size()) i = 0;
+             (i != mprops.first.size()) && (!found); ++i) {
+          if (mprops.first[i].offset == mprops.second) {
+            ib = i;
+            found = true;
           }
-          if (++is != p->arraySize) {
+        }
+        if (!found) {
+          throw_if(s.getScalarSize() != 0,
+                   "internal error: inconsistent offset declaration");
+          out << "MFRONT_SHAREDOBJ unsigned short "
+              << this->getSymbolName(name, h)
+              << "_nMaterialProperties = 0u;\n\n";
+          out << "MFRONT_SHAREDOBJ const char * const *"
+              << this->getSymbolName(name, h)
+              << "_MaterialProperties = nullptr;\n\n";
+        } else {
+          out << "MFRONT_SHAREDOBJ unsigned short "
+              << this->getSymbolName(name, h)
+              << "_nMaterialProperties = " << s.getScalarSize() << "u;\n\n";
+          out << "MFRONT_SHAREDOBJ const char *" << this->getSymbolName(name, h)
+              << "_MaterialProperties[" << s.getScalarSize() << "u] = {";
+          for (auto i = ib; i != mprops.first.size();) {
+            const auto& m = mprops.first[i];
+            if (m.arraySize == 1u) {
+              out << "\"" << m.name << "\"";
+            } else {
+              for (unsigned short j = 0; j != m.arraySize;) {
+                out << "\"" << m.name << "[" << j << "]\"";
+                if (++j != m.arraySize) {
+                  out << ",\n";
+                }
+              }
+            }
+            if (++i != mprops.first.size()) {
+              out << ",\n";
+            }
+          }
+          out << "};\n\n";
+        }
+      }
+    }  // end of UMATInterface::writeUMATxxMaterialPropertiesSymbol
+
+    void UMATInterfaceBase::writeUMATxxStateVariablesSymbols(
+        std::ostream & out, const std::string& name, const Hypothesis h,
+        const BehaviourDescription& mb) const {
+      using namespace std;
+      const auto& d = mb.getBehaviourData(h);
+      const auto& persistentVarsHolder = d.getPersistentVariables();
+      const unsigned short nStateVariables = static_cast<unsigned short>(
+          persistentVarsHolder.getNumberOfVariables());
+      VariableDescriptionContainer::const_iterator p;
+      out << "MFRONT_SHAREDOBJ unsigned short " << this->getSymbolName(name, h)
+          << "_nInternalStateVariables = " << nStateVariables << ";\n";
+      vector<string> stateVariablesNames;
+      mb.getExternalNames(stateVariablesNames, h, persistentVarsHolder);
+      this->writeExternalNames(out, name, h, stateVariablesNames,
+                               "InternalStateVariables");
+      if (!persistentVarsHolder.empty()) {
+        out << "MFRONT_SHAREDOBJ int " << this->getSymbolName(name, h)
+            << "_InternalStateVariablesTypes [] = {";
+        for (p = persistentVarsHolder.begin();
+             p != persistentVarsHolder.end();) {
+          const auto flag = SupportedTypes::getTypeFlag(p->type);
+          for (unsigned short is = 0; is != p->arraySize;) {
+            switch (flag) {
+              case SupportedTypes::Scalar:
+                out << 0;
+                break;
+              case SupportedTypes::Stensor:
+                out << 1;
+                break;
+              case SupportedTypes::TVector:
+                out << 2;
+                break;
+              case SupportedTypes::Tensor:
+                out << 3;
+                break;
+              default:
+                tfel::raise(
+                    "UMATInterfaceBase::writeUMATxxStateVariablesSymbols: "
+                    "internal error, tag unsupported for "
+                    "variable '" +
+                    p->name + "'");
+            }
+            if (++is != p->arraySize) {
+              out << ",";
+            }
+          }
+          if (++p != persistentVarsHolder.end()) {
             out << ",";
           }
         }
-        if (++p != persistentVarsHolder.end()) {
-          out << ",";
-        }
+        out << "};\n\n";
+      } else {
+        out << "MFRONT_SHAREDOBJ const int * " << this->getSymbolName(name, h)
+            << "_InternalStateVariablesTypes = nullptr;\n\n";
       }
-      out << "};\n\n";
-    } else {
-      out << "MFRONT_SHAREDOBJ const int * " << this->getSymbolName(name, h)
-          << "_InternalStateVariablesTypes = nullptr;\n\n";
-    }
-  }  // end of UMATInterfaceBase::writeUMATxxStateVariablesSymbols
+    }  // end of UMATInterfaceBase::writeUMATxxStateVariablesSymbols
 
-  void UMATInterfaceBase::writeUMATxxExternalStateVariablesSymbols(
-      std::ostream& out,
-      const std::string& name,
-      const Hypothesis h,
-      const BehaviourDescription& mb) const {
-    const auto& d = mb.getBehaviourData(h);
-    auto evs = d.getExternalStateVariables();
-    // removing the temperature
-    evs.erase(evs.begin());
-    out << "MFRONT_SHAREDOBJ unsigned short " << this->getSymbolName(name, h)
-        << "_nExternalStateVariables = " << evs.getNumberOfVariables() << ";\n";
-    this->writeExternalNames(out, name, h, mb.getExternalNames(h, evs), "ExternalStateVariables");
-  }  // end of UMATInterfaceBase::writeUMATxxExternalStateVariablesSymbols
+    void UMATInterfaceBase::writeUMATxxExternalStateVariablesSymbols(
+        std::ostream & out, const std::string& name, const Hypothesis h,
+        const BehaviourDescription& mb) const {
+      const auto& d = mb.getBehaviourData(h);
+      auto evs = d.getExternalStateVariables();
+      // removing the temperature
+      evs.erase(evs.begin());
+      out << "MFRONT_SHAREDOBJ unsigned short " << this->getSymbolName(name, h)
+          << "_nExternalStateVariables = " << evs.getNumberOfVariables()
+          << ";\n";
+      this->writeExternalNames(out, name, h, mb.getExternalNames(h, evs),
+                               "ExternalStateVariables");
+    }  // end of UMATInterfaceBase::writeUMATxxExternalStateVariablesSymbols
 
-  void UMATInterfaceBase::writeUMATxxParametersSymbols(std::ostream& out,
-                                                       const std::string& name,
-                                                       const Hypothesis h,
-                                                       const BehaviourDescription& mb) const {
-    const auto& d = mb.getBehaviourData(h);
-    const auto& parameters = d.getParameters();
-    out << "MFRONT_SHAREDOBJ unsigned short " << this->getSymbolName(name, h)
-        << "_nParameters = " << parameters.getNumberOfVariables() << ";\n";
-    this->writeExternalNames(out, name, h, mb.getExternalNames(h, parameters), "Parameters");
-    if (!parameters.empty()) {
-      out << "MFRONT_SHAREDOBJ int " << this->getSymbolName(name, h) << "_ParametersTypes [] = {";
-      for (auto p = parameters.begin(); p != parameters.end();) {
-        for (unsigned short is = 0; is != p->arraySize;) {
-          if (p->type == "int") {
-            out << "1";
-          } else if (p->type == "ushort") {
-            out << "2";
+    void UMATInterfaceBase::writeUMATxxParametersSymbols(
+        std::ostream & out, const std::string& name, const Hypothesis h,
+        const BehaviourDescription& mb) const {
+      const auto& d = mb.getBehaviourData(h);
+      const auto& parameters = d.getParameters();
+      out << "MFRONT_SHAREDOBJ unsigned short " << this->getSymbolName(name, h)
+          << "_nParameters = " << parameters.getNumberOfVariables() << ";\n";
+      this->writeExternalNames(out, name, h, mb.getExternalNames(h, parameters),
+                               "Parameters");
+      if (!parameters.empty()) {
+        out << "MFRONT_SHAREDOBJ int " << this->getSymbolName(name, h)
+            << "_ParametersTypes [] = {";
+        for (auto p = parameters.begin(); p != parameters.end();) {
+          for (unsigned short is = 0; is != p->arraySize;) {
+            if (p->type == "int") {
+              out << "1";
+            } else if (p->type == "ushort") {
+              out << "2";
+            } else {
+              const auto f = SupportedTypes::getTypeFlag(p->type);
+              tfel::raise_if(f != SupportedTypes::Scalar,
+                             "UMATInterfaceBase::writeUMATxxParametersSymbols: "
+                             "internal error, unsupported type "
+                             "for parameter '" +
+                                 p->name + "'");
+              out << "0";
+            }
+            if (++is != p->arraySize) {
+              out << ",";
+            }
+          }
+          if (++p != parameters.end()) {
+            out << ",";
+          }
+        }
+        out << "};\n\n";
+      } else {
+        out << "MFRONT_SHAREDOBJ const int * " << this->getSymbolName(name, h)
+            << "_ParametersTypes = nullptr;\n\n";
+      }
+    }  // end of UMATInterfaceBase::writeUMATxxParametersSymbols
+
+    void UMATInterfaceBase::writeUMATxxParameterDefaultValueSymbols(
+        std::ostream & out, const std::string& name, const Hypothesis h,
+        const BehaviourDescription& mb) const {
+      auto throw_if = [](const bool b, const std::string& m) {
+        tfel::raise_if(b,
+                       "UMATInterfaceBase::"
+                       "writeUMATxxParameterDefaultValueSymbols: " +
+                           m);
+      };
+      for (const auto& p : mb.getBehaviourData(h).getParameters()) {
+        if (p.type == "int") {
+          throw_if(p.arraySize != 1u,
+                   "unsupported parameters array of type '" + p.type + "'");
+          out << "MFRONT_SHAREDOBJ int " << this->getSymbolName(name, h) << "_"
+              << p.getExternalName() << "_ParameterDefaultValue  = "
+              << mb.getIntegerParameterDefaultValue(h, p.name) << ";\n\n";
+        } else if (p.type == "ushort") {
+          throw_if(p.arraySize != 1u,
+                   "unsupported parameters array of type '" + p.type + "'");
+          out << "MFRONT_SHAREDOBJ unsigned short "
+              << this->getSymbolName(name, h) << "_" << p.getExternalName()
+              << "_ParameterDefaultValue  = "
+              << mb.getUnsignedShortParameterDefaultValue(h, p.name) << ";\n\n";
+        } else {
+          const auto f = SupportedTypes::getTypeFlag(p.type);
+          throw_if(f != SupportedTypes::Scalar,
+                   "unsupported paramaeter type '" + p.type + "'");
+          if (p.arraySize == 1u) {
+            out << "MFRONT_SHAREDOBJ double " << this->getSymbolName(name, h)
+                << "_" << p.getExternalName() << "_ParameterDefaultValue"
+                << " = " << mb.getFloattingPointParameterDefaultValue(h, p.name)
+                << ";\n\n";
           } else {
-            const auto f = SupportedTypes::getTypeFlag(p->type);
-            tfel::raise_if(f != SupportedTypes::Scalar,
-                           "UMATInterfaceBase::writeUMATxxParametersSymbols: "
-                           "internal error, unsupported type "
-                           "for parameter '" +
-                               p->name + "'");
-            out << "0";
-          }
-          if (++is != p->arraySize) {
-            out << ",";
-          }
-        }
-        if (++p != parameters.end()) {
-          out << ",";
-        }
-      }
-      out << "};\n\n";
-    } else {
-      out << "MFRONT_SHAREDOBJ const int * " << this->getSymbolName(name, h)
-          << "_ParametersTypes = nullptr;\n\n";
-    }
-  }  // end of UMATInterfaceBase::writeUMATxxParametersSymbols
-
-  void UMATInterfaceBase::writeUMATxxParameterDefaultValueSymbols(
-      std::ostream& out,
-      const std::string& name,
-      const Hypothesis h,
-      const BehaviourDescription& mb) const {
-    auto throw_if = [](const bool b, const std::string& m) {
-      tfel::raise_if(b,
-                     "UMATInterfaceBase::"
-                     "writeUMATxxParameterDefaultValueSymbols: " +
-                         m);
-    };
-    for (const auto& p : mb.getBehaviourData(h).getParameters()) {
-      if (p.type == "int") {
-        throw_if(p.arraySize != 1u, "unsupported parameters array of type '" + p.type + "'");
-        out << "MFRONT_SHAREDOBJ int " << this->getSymbolName(name, h) << "_" << p.getExternalName()
-            << "_ParameterDefaultValue  = " << mb.getIntegerParameterDefaultValue(h, p.name)
-            << ";\n\n";
-      } else if (p.type == "ushort") {
-        throw_if(p.arraySize != 1u, "unsupported parameters array of type '" + p.type + "'");
-        out << "MFRONT_SHAREDOBJ unsigned short " << this->getSymbolName(name, h) << "_"
-            << p.getExternalName()
-            << "_ParameterDefaultValue  = " << mb.getUnsignedShortParameterDefaultValue(h, p.name)
-            << ";\n\n";
-      } else {
-        const auto f = SupportedTypes::getTypeFlag(p.type);
-        throw_if(f != SupportedTypes::Scalar, "unsupported paramaeter type '" + p.type + "'");
-        if (p.arraySize == 1u) {
-          out << "MFRONT_SHAREDOBJ double " << this->getSymbolName(name, h) << "_"
-              << p.getExternalName() << "_ParameterDefaultValue"
-              << " = " << mb.getFloattingPointParameterDefaultValue(h, p.name) << ";\n\n";
-        } else {
-          for (unsigned short is = 0; is != p.arraySize; ++is) {
-            out << "MFRONT_SHAREDOBJ double " << this->getSymbolName(name, h) << "_"
-                << p.getExternalName() << "__" << is << "___ParameterDefaultValue = "
-                << mb.getFloattingPointParameterDefaultValue(h, p.name, is) << ";\n\n";
+            for (unsigned short is = 0; is != p.arraySize; ++is) {
+              out << "MFRONT_SHAREDOBJ double " << this->getSymbolName(name, h)
+                  << "_" << p.getExternalName() << "__" << is
+                  << "___ParameterDefaultValue = "
+                  << mb.getFloattingPointParameterDefaultValue(h, p.name, is)
+                  << ";\n\n";
+            }
           }
         }
       }
-    }
-  }  // end of UMATInterfaceBase::writeUMATxxParameterDefaultValueSymbols
+    }  // end of UMATInterfaceBase::writeUMATxxParameterDefaultValueSymbols
 
-  static void writewriteUMATxxBoundsSymbol(std::ostream& out,
-                                           const std::string& bn,
-                                           const std::string& vn,
-                                           const std::string& bt,
-                                           const VariableBoundsDescription& b) {
-    if ((b.boundsType == VariableBoundsDescription::LOWER) ||
-        (b.boundsType == VariableBoundsDescription::LOWERANDUPPER)) {
-      out << "MFRONT_SHAREDOBJ long double " << bn << "_" << vn << "_"
-          << "Lower" << bt << "Bound = " << b.lowerBound << ";\n\n";
-    }
-    if ((b.boundsType == VariableBoundsDescription::UPPER) ||
-        (b.boundsType == VariableBoundsDescription::LOWERANDUPPER)) {
-      out << "MFRONT_SHAREDOBJ long double " << bn << "_" << vn << "_"
-          << "Upper" << bt << "Bound = " << b.upperBound << ";\n\n";
-    }
-  }  // end of writewriteUMATxxBoundsSymbol
+    static void writewriteUMATxxBoundsSymbol(
+        std::ostream & out, const std::string& bn, const std::string& vn,
+        const std::string& bt, const VariableBoundsDescription& b) {
+      if ((b.boundsType == VariableBoundsDescription::LOWER) ||
+          (b.boundsType == VariableBoundsDescription::LOWERANDUPPER)) {
+        out << "MFRONT_SHAREDOBJ long double " << bn << "_" << vn << "_"
+            << "Lower" << bt << "Bound = " << b.lowerBound << ";\n\n";
+      }
+      if ((b.boundsType == VariableBoundsDescription::UPPER) ||
+          (b.boundsType == VariableBoundsDescription::LOWERANDUPPER)) {
+        out << "MFRONT_SHAREDOBJ long double " << bn << "_" << vn << "_"
+            << "Upper" << bt << "Bound = " << b.upperBound << ";\n\n";
+      }
+    }  // end of writewriteUMATxxBoundsSymbol
 
-  void UMATInterfaceBase::writeUMATxxBoundsSymbols(std::ostream& out,
-                                                   const std::string& name,
-                                                   const Hypothesis h,
-                                                   const BehaviourDescription& mb) const {
-    auto write = [this, &out, &name, h](const VariableDescriptionContainer& vc) {
-      for (const auto& v : vc) {
-        if (v.arraySize == 1u) {
-          if (!v.hasBounds()) {
-            continue;
-          }
-          mfront::writewriteUMATxxBoundsSymbol(out, this->getSymbolName(name, h),
-                                               v.getExternalName(), "", v.getBounds());
-        } else {
-          for (auto i = 0; i != v.arraySize; ++i) {
-            if (!v.hasBounds(i)) {
+    void UMATInterfaceBase::writeUMATxxBoundsSymbols(
+        std::ostream & out, const std::string& name, const Hypothesis h,
+        const BehaviourDescription& mb) const {
+      auto write = [this, &out, &name,
+                    h](const VariableDescriptionContainer& vc) {
+        for (const auto& v : vc) {
+          if (v.arraySize == 1u) {
+            if (!v.hasBounds()) {
               continue;
             }
             mfront::writewriteUMATxxBoundsSymbol(
-                out, this->getSymbolName(name, h),
-                v.getExternalName() + "__" + std::to_string(i) + "__", "", v.getBounds(i));
+                out, this->getSymbolName(name, h), v.getExternalName(), "",
+                v.getBounds());
+          } else {
+            for (auto i = 0; i != v.arraySize; ++i) {
+              if (!v.hasBounds(i)) {
+                continue;
+              }
+              mfront::writewriteUMATxxBoundsSymbol(
+                  out, this->getSymbolName(name, h),
+                  v.getExternalName() + "__" + std::to_string(i) + "__", "",
+                  v.getBounds(i));
+            }
           }
         }
-      }
-    };
-    const auto& d = mb.getBehaviourData(h);
-    write(d.getMaterialProperties());
-    write(d.getPersistentVariables());
-    write(d.getExternalStateVariables());
-    write(d.getParameters());
-  }  // end of UMATInterfaceBase::writeUMATxxBoundsSymbols
+      };
+      const auto& d = mb.getBehaviourData(h);
+      write(d.getMaterialProperties());
+      write(d.getPersistentVariables());
+      write(d.getExternalStateVariables());
+      write(d.getParameters());
+    }  // end of UMATInterfaceBase::writeUMATxxBoundsSymbols
 
-  void UMATInterfaceBase::writeUMATxxPhysicalBoundsSymbols(std::ostream& out,
-                                                           const std::string& name,
-                                                           const Hypothesis h,
-                                                           const BehaviourDescription& mb) const {
-    auto write = [this, &out, &name, h](const VariableDescriptionContainer& vc) {
-      for (const auto& v : vc) {
-        if (v.arraySize == 1u) {
-          if (!v.hasPhysicalBounds()) {
-            continue;
-          }
-          mfront::writewriteUMATxxBoundsSymbol(out, this->getSymbolName(name, h),
-                                               v.getExternalName(), "Physical",
-                                               v.getPhysicalBounds());
-        } else {
-          for (auto i = 0; i != v.arraySize; ++i) {
-            if (!v.hasPhysicalBounds(i)) {
+    void UMATInterfaceBase::writeUMATxxPhysicalBoundsSymbols(
+        std::ostream & out, const std::string& name, const Hypothesis h,
+        const BehaviourDescription& mb) const {
+      auto write = [this, &out, &name,
+                    h](const VariableDescriptionContainer& vc) {
+        for (const auto& v : vc) {
+          if (v.arraySize == 1u) {
+            if (!v.hasPhysicalBounds()) {
               continue;
             }
             mfront::writewriteUMATxxBoundsSymbol(
-                out, this->getSymbolName(name, h),
-                v.getExternalName() + "__" + std::to_string(i) + "__", "Physical",
-                v.getPhysicalBounds(i));
+                out, this->getSymbolName(name, h), v.getExternalName(),
+                "Physical", v.getPhysicalBounds());
+          } else {
+            for (auto i = 0; i != v.arraySize; ++i) {
+              if (!v.hasPhysicalBounds(i)) {
+                continue;
+              }
+              mfront::writewriteUMATxxBoundsSymbol(
+                  out, this->getSymbolName(name, h),
+                  v.getExternalName() + "__" + std::to_string(i) + "__",
+                  "Physical", v.getPhysicalBounds(i));
+            }
           }
         }
-      }
-    };
-    const auto& d = mb.getBehaviourData(h);
-    write(d.getMaterialProperties());
-    write(d.getPersistentVariables());
-    write(d.getExternalStateVariables());
-    write(d.getParameters());
-  }  // end of UMATInterfaceBase::writeUMATxxPhysicalBoundsSymbols
+      };
+      const auto& d = mb.getBehaviourData(h);
+      write(d.getMaterialProperties());
+      write(d.getPersistentVariables());
+      write(d.getExternalStateVariables());
+      write(d.getParameters());
+    }  // end of UMATInterfaceBase::writeUMATxxPhysicalBoundsSymbols
 
-  void UMATInterfaceBase::writeUMATxxRequirementsSymbols(std::ostream& out,
-                                                         const std::string& name,
-                                                         const Hypothesis h,
-                                                         const BehaviourDescription& mb) const {
-    out << "MFRONT_SHAREDOBJ unsigned short " << this->getSymbolName(name, h);
-    out << "_requiresStiffnessTensor = ";
-    if (mb.getAttribute(BehaviourDescription::requiresStiffnessTensor, false)) {
-      out << "1";
-    } else {
-      out << "0";
-    }
-    out << ";\n";
-    out << "MFRONT_SHAREDOBJ unsigned short " << this->getSymbolName(name, h);
-    out << "_requiresThermalExpansionCoefficientTensor = ";
-    if (mb.getAttribute(BehaviourDescription::requiresThermalExpansionCoefficientTensor, false)) {
-      out << "1";
-    } else {
-      out << "0";
-    }
-    out << ";\n";
-
-  }  // end of UMATInterfaceBase::writeUMATxxRequirementsSymbols
-
-  void UMATInterfaceBase::writeUMATxxIsUsableInPurelyImplicitResolutionSymbols(
-      std::ostream& out,
-      const std::string& name,
-      const Hypothesis h,
-      const BehaviourDescription& mb) const {
-    const auto& d = mb.getBehaviourData(h);
-    out << "MFRONT_SHAREDOBJ unsigned short " << this->getSymbolName(name, h)
-        << "_UsableInPurelyImplicitResolution = ";
-    if (d.isUsableInPurelyImplicitResolution()) {
-      out << "1;\n\n";
-    } else {
-      out << "0;\n\n";
-    }
-  }  // end of UMATInterfaceBase::writeUMATxxIsUsableInPurelyImplicitResolution
-
-  void UMATInterfaceBase::writeUMATxxSymmetryTypeSymbols(std::ostream& out,
-                                                         const std::string& name,
-                                                         const BehaviourDescription& mb) const {
-    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) << "_SymmetryType = ";
-    if (mb.getSymmetryType() == mfront::ISOTROPIC) {
-      out << "0u;\n\n";
-    } else if (mb.getSymmetryType() == mfront::ORTHOTROPIC) {
-      out << "1u;\n\n";
-    } else {
-      tfel::raise(
-          "UMATInterfaceBase::writeUMATxxSymmetryTypeSymbols: "
-          "unsupported behaviour type.\n"
-          "only isotropic or orthotropic behaviours "
-          "are supported at this time.");
-    }
-  }  // end of UMATInterfaceBase::writeUMATxxSymmetryTypeSymbols
-
-  void UMATInterfaceBase::writeUMATxxElasticSymmetryTypeSymbols(
-      std::ostream& out, const std::string& name, const BehaviourDescription& mb) const {
-    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name)
-        << "_ElasticSymmetryType = ";
-    if (mb.getElasticSymmetryType() == mfront::ISOTROPIC) {
-      out << "0u;\n\n";
-    } else if (mb.getElasticSymmetryType() == mfront::ORTHOTROPIC) {
-      out << "1u;\n\n";
-    } else {
-      tfel::raise(
-          "UMATInterfaceBase::writeUMATxxElasticSymmetryTypeSymbols: "
-          "unsupported behaviour type.\n"
-          "only isotropic or orthotropic behaviours are "
-          "supported at this time.");
-    }
-  }  // end of UMATInterfaceBase::writeUMATxxElasticSymmetryTypeSymbols
-
-  void UMATInterfaceBase::writeUMATxxSourceFileSymbols(std::ostream& out,
-                                                       const std::string& name,
-                                                       const BehaviourDescription&,
-                                                       const mfront::FileDescription& fd) const {
-    using namespace tfel::system;
-    using namespace tfel::utilities;
-    out << "MFRONT_SHAREDOBJ const char *\n"
-        << this->getFunctionName(name) << "_src = \""
-        << tokenize(fd.fileName, dirSeparator()).back() << "\";\n\n";
-  }
-
-  void UMATInterfaceBase::writeUMATxxInterfaceNameSymbols(std::ostream& out,
-                                                          const std::string& name,
-                                                          const BehaviourDescription&,
-                                                          const mfront::FileDescription&) const {
-    writeInterfaceSymbol(out, this->getFunctionName(name), this->getInterfaceName());
-  }
-
-  std::map<UMATInterfaceBase::Hypothesis, std::string>
-  UMATInterfaceBase::gatherModellingHypothesesAndTests(const BehaviourDescription& mb) const {
-    const auto mh = this->getModellingHypothesesToBeTreated(mb);
-    auto res = std::map<Hypothesis, std::string>{};
-    auto h1 = std::set<Hypothesis>{};
-    auto h2 = std::set<Hypothesis>{};
-    for (const auto& h : mh) {
-      if (!mb.hasSpecialisedMechanicalData(h)) {
-        h1.insert(h);
+    void UMATInterfaceBase::writeUMATxxRequirementsSymbols(
+        std::ostream & out, const std::string& name, const Hypothesis h,
+        const BehaviourDescription& mb) const {
+      out << "MFRONT_SHAREDOBJ unsigned short " << this->getSymbolName(name, h);
+      out << "_requiresStiffnessTensor = ";
+      if (mb.getAttribute(BehaviourDescription::requiresStiffnessTensor,
+                          false)) {
+        out << "1";
       } else {
-        h2.insert(h);
+        out << "0";
       }
-    }
-    if (!h1.empty()) {
-      if (h1.size() == 1u) {
-        res.insert({ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-                    this->getModellingHypothesisTest(*(h1.begin()))});
+      out << ";\n";
+      out << "MFRONT_SHAREDOBJ unsigned short " << this->getSymbolName(name, h);
+      out << "_requiresThermalExpansionCoefficientTensor = ";
+      if (mb.getAttribute(
+              BehaviourDescription::requiresThermalExpansionCoefficientTensor,
+              false)) {
+        out << "1";
       } else {
-        auto p = h1.begin();
-        std::string r = "(" + this->getModellingHypothesisTest(*(h1.begin())) + ")";
-        ++p;
-        for (; p != h1.end(); ++p) {
-          r += "||(" + this->getModellingHypothesisTest(*p) + ")";
+        out << "0";
+      }
+      out << ";\n";
+
+    }  // end of UMATInterfaceBase::writeUMATxxRequirementsSymbols
+
+    void
+    UMATInterfaceBase::writeUMATxxIsUsableInPurelyImplicitResolutionSymbols(
+        std::ostream & out, const std::string& name, const Hypothesis h,
+        const BehaviourDescription& mb) const {
+      const auto& d = mb.getBehaviourData(h);
+      out << "MFRONT_SHAREDOBJ unsigned short " << this->getSymbolName(name, h)
+          << "_UsableInPurelyImplicitResolution = ";
+      if (d.isUsableInPurelyImplicitResolution()) {
+        out << "1;\n\n";
+      } else {
+        out << "0;\n\n";
+      }
+    }  // end of
+       // UMATInterfaceBase::writeUMATxxIsUsableInPurelyImplicitResolution
+
+    void UMATInterfaceBase::writeUMATxxSymmetryTypeSymbols(
+        std::ostream & out, const std::string& name,
+        const BehaviourDescription& mb) const {
+      out << "MFRONT_SHAREDOBJ unsigned short "
+          << this->getFunctionNameBasis(name) << "_SymmetryType = ";
+      if (mb.getSymmetryType() == mfront::ISOTROPIC) {
+        out << "0u;\n\n";
+      } else if (mb.getSymmetryType() == mfront::ORTHOTROPIC) {
+        out << "1u;\n\n";
+      } else {
+        tfel::raise(
+            "UMATInterfaceBase::writeUMATxxSymmetryTypeSymbols: "
+            "unsupported behaviour type.\n"
+            "only isotropic or orthotropic behaviours "
+            "are supported at this time.");
+      }
+    }  // end of UMATInterfaceBase::writeUMATxxSymmetryTypeSymbols
+
+    void UMATInterfaceBase::writeUMATxxElasticSymmetryTypeSymbols(
+        std::ostream & out, const std::string& name,
+        const BehaviourDescription& mb) const {
+      out << "MFRONT_SHAREDOBJ unsigned short "
+          << this->getFunctionNameBasis(name) << "_ElasticSymmetryType = ";
+      if (mb.getElasticSymmetryType() == mfront::ISOTROPIC) {
+        out << "0u;\n\n";
+      } else if (mb.getElasticSymmetryType() == mfront::ORTHOTROPIC) {
+        out << "1u;\n\n";
+      } else {
+        tfel::raise(
+            "UMATInterfaceBase::writeUMATxxElasticSymmetryTypeSymbols: "
+            "unsupported behaviour type.\n"
+            "only isotropic or orthotropic behaviours are "
+            "supported at this time.");
+      }
+    }  // end of UMATInterfaceBase::writeUMATxxElasticSymmetryTypeSymbols
+
+    void UMATInterfaceBase::writeUMATxxSourceFileSymbols(
+        std::ostream & out, const std::string& name,
+        const BehaviourDescription&, const mfront::FileDescription& fd) const {
+      using namespace tfel::system;
+      using namespace tfel::utilities;
+      out << "MFRONT_SHAREDOBJ const char *\n"
+          << this->getFunctionNameBasis(name) << "_src = \""
+          << tokenize(fd.fileName, dirSeparator()).back() << "\";\n\n";
+    }
+
+    void UMATInterfaceBase::writeUMATxxInterfaceNameSymbols(
+        std::ostream & out, const std::string& name,
+        const BehaviourDescription&, const mfront::FileDescription&) const {
+      writeInterfaceSymbol(out, this->getFunctionNameBasis(name),
+                           this->getInterfaceName());
+    }
+
+    std::map<UMATInterfaceBase::Hypothesis, std::string>
+    UMATInterfaceBase::gatherModellingHypothesesAndTests(
+        const BehaviourDescription& mb) const {
+      const auto mh = this->getModellingHypothesesToBeTreated(mb);
+      auto res = std::map<Hypothesis, std::string>{};
+      auto h1 = std::set<Hypothesis>{};
+      auto h2 = std::set<Hypothesis>{};
+      for (const auto& h : mh) {
+        if (!mb.hasSpecialisedMechanicalData(h)) {
+          h1.insert(h);
+        } else {
+          h2.insert(h);
         }
-        res.insert({ModellingHypothesis::UNDEFINEDHYPOTHESIS, r});
       }
-    }
-    for (const auto& h : h2) {
-      res.insert({h, this->getModellingHypothesisTest(h)});
-    }
-    return res;
-  }  // end of UMATInterface::gatherModellingHypothesesAndTests
-
-  std::pair<bool, SupportedTypes::TypeSize>
-  UMATInterfaceBase::checkIfAxialStrainIsDefinedAndGetItsOffset(
-      const BehaviourDescription& mb) const {
-    using tfel::glossary::Glossary;
-    const auto& d = mb.getBehaviourData(ModellingHypothesis::PLANESTRESS);
-    const auto& sv = d.getPersistentVariables();
-    SupportedTypes::TypeSize o;
-    for (const auto& elem : sv) {
-      if (d.getExternalName(elem.name) == Glossary::AxialStrain) {
-        return {true, o};
+      if (!h1.empty()) {
+        if (h1.size() == 1u) {
+          res.insert({ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+                      this->getModellingHypothesisTest(*(h1.begin()))});
+        } else {
+          auto p = h1.begin();
+          std::string r =
+              "(" + this->getModellingHypothesisTest(*(h1.begin())) + ")";
+          ++p;
+          for (; p != h1.end(); ++p) {
+            r += "||(" + this->getModellingHypothesisTest(*p) + ")";
+          }
+          res.insert({ModellingHypothesis::UNDEFINEDHYPOTHESIS, r});
+        }
       }
-      o += SupportedTypes::getTypeSize(elem.type, elem.arraySize);
+      for (const auto& h : h2) {
+        res.insert({h, this->getModellingHypothesisTest(h)});
+      }
+      return res;
+    }  // end of UMATInterface::gatherModellingHypothesesAndTests
+
+    std::pair<bool, SupportedTypes::TypeSize>
+    UMATInterfaceBase::checkIfAxialStrainIsDefinedAndGetItsOffset(
+        const BehaviourDescription& mb) const {
+      using tfel::glossary::Glossary;
+      const auto& d = mb.getBehaviourData(ModellingHypothesis::PLANESTRESS);
+      const auto& sv = d.getPersistentVariables();
+      SupportedTypes::TypeSize o;
+      for (const auto& elem : sv) {
+        if (d.getExternalName(elem.name) == Glossary::AxialStrain) {
+          return {true, o};
+        }
+        o += SupportedTypes::getTypeSize(elem.type, elem.arraySize);
+      }
+      return {false, o};
     }
-    return {false, o};
-  }
 
-  bool UMATInterfaceBase::areExternalStateVariablesSupported() const {
-    return true;
-  }  // end of UMATInterfaceBase::areExternalStateVariablesSupported()
+    void UMATInterfaceBase::setGenerateMTestFileOnFailureAttribute(
+        BehaviourDescription & bd, const bool b) const {
+      const auto a = this->getInterfaceName() + "::" +
+                     UMATInterfaceBase::generateMTestFileAttribute;
+      bd.setAttribute(a, b, false);
+    }  // end of UMATInterfaceBase::setGenerateMTestFileOnFailureAttribute
 
-  bool UMATInterfaceBase::isTemperatureIncrementSupported() const {
-    return true;
-  }  // end of UMATInterfaceBase::isTemperatureIncrementSupported()
+    bool UMATInterfaceBase::shallGenerateMTestFileOnFailure(
+        const BehaviourDescription& bd) const {
+      const auto a = this->getInterfaceName() + "::" +
+                     UMATInterfaceBase::generateMTestFileAttribute;
+      return bd.getAttribute<bool>(a, false);
+    }  // end of UMATInterfaceBase::shallGenerateMTestFileOnFailure
 
-  UMATInterfaceBase::~UMATInterfaceBase() = default;
+    bool UMATInterfaceBase::areExternalStateVariablesSupported() const {
+      return true;
+    }  // end of UMATInterfaceBase::areExternalStateVariablesSupported()
+
+    bool UMATInterfaceBase::isTemperatureIncrementSupported() const {
+      return true;
+    }  // end of UMATInterfaceBase::isTemperatureIncrementSupported()
+
+    UMATInterfaceBase::~UMATInterfaceBase() = default;
 
 }  // end of namespace mfront

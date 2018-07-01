@@ -79,6 +79,7 @@ nobase_include_HEADERS= MFront/MFront.hxx                                      \
 			MFront/MaterialPropertyDSL.hxx                                    \
 			MFront/ModelDSL.hxx                                               \
 			MFront/UMATInterfaceBase.hxx                                      \
+			MFront/GenericBehaviourInterface.hxx                              \
 			MFront/MTestFileGeneratorBase.hxx                                 \
 			MFront/UmatSmallStrainMTestFileGenerator.hxx                      \
 			MFront/UmatFiniteStrainMTestFileGenerator.hxx                     \

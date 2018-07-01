@@ -311,7 +311,8 @@ namespace mfront {
       bd.setAttribute(CalculiXInterface::finiteStrainStrategy, fs, false);
       return {true, current};
     } else if (k == "@CalculiXGenerateMTestFileOnFailure") {
-      this->generateMTestFile = this->readBooleanValue(k, current, end);
+      this->setGenerateMTestFileOnFailureAttribute(
+          bd, this->readBooleanValue(k, current, end));
       return {true, current};
     }
     return {false, current};
@@ -394,7 +395,7 @@ namespace mfront {
     this->writeSetOutOfBoundsPolicyFunctionDeclaration(out, name);
     this->writeSetParametersFunctionsDeclarations(out, name, mb);
 
-    out << "MFRONT_SHAREDOBJ void\n" << this->getFunctionName(name);
+    out << "MFRONT_SHAREDOBJ void\n" << this->getFunctionNameBasis(name);
     writeArguments(out);
     out << ";\n\n";
 
@@ -498,7 +499,8 @@ namespace mfront {
         << "const auto ivs1 =  STATEV1+(*NSTATV)*((*iint-1)+(*mi)*(*iel-1));\n"
         << "CalculiXData d = {STRESS,PNEWDT,DDSDDE,ivs1,*DTIME,ivs0,\n"
         << "                  " << dv0 << "," << dv1 << ",TEMP1,MPROPS,\n"
-        << getFunctionName(name) << "_getOutOfBoundsPolicy()," << sfeh << "};\n"
+        << this->getFunctionNameBasis(name) << "_getOutOfBoundsPolicy(),"
+        << sfeh << "};\n"
         << "if(calculix::CalculiXInterface<tfel::material::"
         << mb.getClassName() << ">::exe(d)!=0){\n"
         << "*PNEWDT = 0.2;\n"
@@ -516,7 +518,7 @@ namespace mfront {
     };
     const std::string sfeh = "nullptr";
     this->writeFunctionBase(out, mb, name, sfeh);
-    out << "MFRONT_SHAREDOBJ void\n" << this->getFunctionName(name);
+    out << "MFRONT_SHAREDOBJ void\n" << this->getFunctionNameBasis(name);
     writeArguments(out, mb, false);
     out << "{\n"
         << "using namespace tfel::math;\n"
@@ -536,7 +538,7 @@ namespace mfront {
         << "                       0,0,0,0,0,0};\n";
     if (mb.getSymmetryType() == mfront::ORTHOTROPIC) {
       out << "if(*iorien==0){\n"
-          << "  std::cerr << \"" << this->getFunctionName(name) << ":\"\n"
+          << "  std::cerr << \"" << this->getFunctionNameBasis(name) << ":\"\n"
           << "            << \"no orientation defined for an orthotropic "
              "behaviour\\n\";\n"
           << "  std::exit(-1);\n"
@@ -548,7 +550,7 @@ namespace mfront {
       throw_if(mb.getSymmetryType() != mfront::ISOTROPIC,
                "unsupported symmetry type");
       out << "if(*iorien!=0){\n"
-          << "  std::cerr << \"" << this->getFunctionName(name) << ":\"\n"
+          << "  std::cerr << \"" << this->getFunctionNameBasis(name) << ":\"\n"
           << "            << \"no orientation shall be defined for an istropic "
              "behaviour\\n\";\n"
           << "  std::exit(-1);\n"
@@ -600,7 +602,7 @@ namespace mfront {
           << "std::cout << std::endl;\n";
     }
     out << "}\n"
-        << "} // end of " << this->getFunctionName(name) << "\n\n";
+        << "} // end of " << this->getFunctionNameBasis(name) << "\n\n";
   }
 
   void CalculiXInterface::writeSmallStrainFunction(
@@ -613,7 +615,7 @@ namespace mfront {
     const std::string sfeh =
         "calculix::CalculiXStandardSmallStrainStressFreeExpansionHandler";
     this->writeFunctionBase(out, mb, name, sfeh);
-    out << "MFRONT_SHAREDOBJ void\n" << this->getFunctionName(name);
+    out << "MFRONT_SHAREDOBJ void\n" << this->getFunctionNameBasis(name);
     writeArguments(out, mb, false);
     out << "{\n"
         << "using namespace tfel::math;\n"
@@ -626,8 +628,8 @@ namespace mfront {
           << "Profiler::getProfiler(),\n"
           << "BehaviourProfiler::TOTALTIME);\n";
     }
-    if (this->generateMTestFile) {
-      this->generateMTestFile1(out);
+    if (this->shallGenerateMTestFileOnFailure(mb)) {
+      this->generateMTestFile1(out, mb);
     }
     out << "st2tost2<3u,real> D = {0,0,0,0,0,0,\n"
         << "                       0,0,0,0,0,0,\n"
@@ -651,7 +653,7 @@ namespace mfront {
           << "stensor<3u,real> s;\n"
           << "s.importTab(STRESS);\n"
           << "if(*iorien==0){\n"
-          << "  std::cerr << \"" << this->getFunctionName(name) << ":\"\n"
+          << "  std::cerr << \"" << this->getFunctionNameBasis(name) << ":\"\n"
           << "            << \"no orientation defined for an orthotropic "
              "behaviour\\n\";\n"
           << "  std::exit(-1);\n"
@@ -679,7 +681,7 @@ namespace mfront {
           << "stensor<3u,real> s;\n"
           << "s.importTab(STRESS);\n"
           << "if(*iorien!=0){\n"
-          << "  std::cerr << \"" << this->getFunctionName(name) << ":\"\n"
+          << "  std::cerr << \"" << this->getFunctionNameBasis(name) << ":\"\n"
           << "            << \"no orientation shall be defined for an istropic "
              "behaviour\\n\";\n"
           << "  std::exit(-1);\n"
@@ -712,12 +714,12 @@ namespace mfront {
           << "}\n"
           << "std::cout << std::endl;\n";
     }
-    if (this->generateMTestFile) {
+    if (this->shallGenerateMTestFileOnFailure(mb)) {
       out << "} else {\n";
-      this->generateMTestFile2(out, mb.getBehaviourType(), name, "", mb);
+      this->generateMTestFile2(out, mb, mb.getBehaviourType(), name, "");
     }
     out << "}\n";
-    out << "} // end of " << this->getFunctionName(name) << "\n\n";
+    out << "} // end of " << this->getFunctionNameBasis(name) << "\n\n";
   }
 
   void CalculiXInterface::writeFiniteRotationSmallStrainFunction(
@@ -750,14 +752,14 @@ namespace mfront {
       return fs == "MieheApelLambrechtLogarithmicStrain";
     }();
     this->writeFunctionBase(out, mb, name, sfeh);
-    out << "MFRONT_SHAREDOBJ void\n" << this->getFunctionName(name);
+    out << "MFRONT_SHAREDOBJ void\n" << this->getFunctionNameBasis(name);
     writeArguments(out, mb, false);
     out << "{\n"
         << "using namespace tfel::math;\n"
         << "using namespace tfel::material;\n"
         << "using real = calculix::CalculiXReal;\n";
-    if (this->generateMTestFile) {
-      this->generateMTestFile1(out);
+    if (this->shallGenerateMTestFileOnFailure(mb)) {
+      this->generateMTestFile1(out, mb);
     }
     out << "st2tost2<3u,real> D = {0,0,0,0,0,0,\n"
         << "                       0,0,0,0,0,0,\n"
@@ -792,7 +794,7 @@ namespace mfront {
     out << "auto eto1 = lsh1.getHenckyLogarithmicStrain();\n";
     if (mb.getSymmetryType() == mfront::ORTHOTROPIC) {
       out << "if(*iorien==0){\n"
-          << "  std::cerr << \"" << this->getFunctionName(name) << ":\"\n"
+          << "  std::cerr << \"" << this->getFunctionNameBasis(name) << ":\"\n"
           << "            << \"no orientation defined for an orthotropic "
              "behaviour\\n\";\n"
           << "  std::exit(-1);\n"
@@ -811,7 +813,7 @@ namespace mfront {
       throw_if(mb.getSymmetryType() != mfront::ISOTROPIC,
                "unsupported symmetry type");
       out << "if(*iorien!=0){\n"
-          << "  std::cerr << \"" << this->getFunctionName(name) << ":\"\n"
+          << "  std::cerr << \"" << this->getFunctionNameBasis(name) << ":\"\n"
           << "            << \"no orientation shall be defined for an istropic "
              "behaviour\\n\";\n"
           << "  std::exit(-1);\n"
@@ -859,12 +861,12 @@ namespace mfront {
           << "}\n"
           << "std::cout << std::endl;\n";
     }
-    if (this->generateMTestFile) {
+    if (this->shallGenerateMTestFileOnFailure(mb)) {
       out << "} else {\n";
-      this->generateMTestFile2(out, mb.getBehaviourType(), name, "", mb);
+      this->generateMTestFile2(out, mb, mb.getBehaviourType(), name, "");
     }
     out << "}\n"
-        << "} // end of " << this->getFunctionName(name) << "\n\n";
+        << "} // end of " << this->getFunctionNameBasis(name) << "\n\n";
   }  // end of
      // CalculiXInterface::writeMieheApelLambrechtLogarithmicStrainFunction
 
@@ -875,7 +877,7 @@ namespace mfront {
     auto throw_if = [](const bool b, const std::string& m) {
       tfel::raise_if(b, "CalculiXInterface::writexxBehaviourTypeSymbols: " + m);
     };
-    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name)
+    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name)
         << "_BehaviourType = ";
     if (mb.getBehaviourType() ==
         BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
@@ -900,7 +902,7 @@ namespace mfront {
       tfel::raise_if(
           b, "CalculiXInterface::writexxBehaviourKinematicSymbols: " + m);
     };
-    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name)
+    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name)
         << "_BehaviourKinematic = ";
     if (mb.getBehaviourType() ==
         BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
@@ -1014,7 +1016,7 @@ namespace mfront {
               "$(shell " + tfel_config + " --library-path)");
     insert_if(d[lib].link_libraries,
               tfel::getLibraryInstallName("CalculiXInterface"));
-    if (this->generateMTestFile) {
+    if (this->shallGenerateMTestFileOnFailure(bd)) {
       insert_if(d[lib].link_libraries,
                 tfel::getLibraryInstallName("MTestFileGenerator"));
     }
@@ -1028,7 +1030,7 @@ namespace mfront {
                   " --library-dependency "
                   "--material --mfront-profiling --physical-constants)");
 #endif /* __cplusplus < 201703L */
-    insert_if(d[lib].epts, this->getFunctionName(name));
+    insert_if(d[lib].epts, this->getFunctionNameBasis(name));
   }  // end of CalculiXInterface::getTargetsDescription
 
   std::string CalculiXInterface::getLibraryName(
@@ -1046,7 +1048,7 @@ namespace mfront {
     return makeUpperCase(lib);
   }  // end of CalculiXInterface::getLibraryName
 
-  std::string CalculiXInterface::getFunctionName(
+  std::string CalculiXInterface::getFunctionNameBasis(
       const std::string& name) const {
     return makeUpperCase(name);
   }  // end of CalculiXInterface::getFunctionName
@@ -1061,136 +1063,6 @@ namespace mfront {
                    "which is required for the CalculiX interface");
     return {ModellingHypothesis::TRIDIMENSIONAL};
   }  // end of CalculiXInterface::getModellingHypothesesToBeTreated
-
-  std::pair<std::vector<UMATInterfaceBase::UMATMaterialProperty>,
-            SupportedTypes::TypeSize>
-  CalculiXInterface::buildMaterialPropertiesList(const BehaviourDescription& mb,
-                                                 const Hypothesis h) const {
-    using namespace std;
-    if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
-      const auto ah = this->getModellingHypothesesToBeTreated(mb);
-      set<Hypothesis> uh;
-      for (const auto& lh : ah) {
-        if (!mb.hasSpecialisedMechanicalData(lh)) {
-          uh.insert(lh);
-        }
-      }
-      tfel::raise_if(
-          uh.empty(),
-          "CalculiXInterface::buildMaterialPropertiesList: "
-          "internal error : the mechanical behaviour says that not "
-          "all handled mechanical data are specialised, but we found none.");
-      // material properties for all the selected hypothesis
-      auto mpositions = vector<
-          pair<vector<UMATMaterialProperty>, SupportedTypes::TypeSize>>{};
-      for (const auto& lh : uh) {
-        mpositions.push_back(this->buildMaterialPropertiesList(mb, lh));
-      }
-      auto ph = uh.begin();
-      auto pum = mpositions.begin();
-      const auto& mfirst = *pum;
-      ++ph;
-      ++pum;
-      for (; ph != uh.end(); ++ph, ++pum) {
-        const auto& d =
-            mb.getBehaviourData(ModellingHypothesis::UNDEFINEDHYPOTHESIS);
-        const auto& mps = d.getMaterialProperties();
-        for (const auto& mp : mps) {
-          const auto& mp1 = findUMATMaterialProperty(
-              mfirst.first, mb.getExternalName(h, mp.name));
-          const auto& mp2 = findUMATMaterialProperty(
-              pum->first, mb.getExternalName(h, mp.name));
-          auto o1 = mp1.offset;
-          o1 += pum->second;
-          auto o2 = mp2.offset;
-          o2 += mfirst.second;
-          tfel::raise_if(
-              o1 != o2,
-              "CalculiXInterface::buildMaterialPropertiesList : "
-              "incompatible offset for material property '" +
-                  mp.name + "' (aka '" + mp1.name +
-                  "'). This is one pitfall of the umat interface. "
-                  "To by-pass this limitation, you may want to explicitely "
-                  "specialise some modelling hypotheses");
-        }
-      }
-      return mfirst;
-    }
-    auto res = pair<vector<UMATMaterialProperty>, SupportedTypes::TypeSize>{};
-    auto& mprops = res.first;
-    if ((h != ModellingHypothesis::GENERALISEDPLANESTRAIN) &&
-        (h != ModellingHypothesis::AXISYMMETRICAL) &&
-        (h != ModellingHypothesis::PLANESTRAIN) &&
-        (h != ModellingHypothesis::PLANESTRESS) &&
-        (h != ModellingHypothesis::TRIDIMENSIONAL)) {
-      string msg(
-          "CalculiXInterface::buildMaterialPropertiesList : "
-          "unsupported modelling hypothesis");
-      if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
-        msg += " (default)";
-      } else {
-        msg += " '" + ModellingHypothesis::toString(h) + "'";
-      }
-      tfel::raise(msg);
-    }
-    if (mb.getAttribute(BehaviourDescription::requiresStiffnessTensor, false)) {
-      if (mb.getSymmetryType() == mfront::ISOTROPIC) {
-        this->appendToMaterialPropertiesList(mprops, "stress", "YoungModulus",
-                                             "youn", false);
-        this->appendToMaterialPropertiesList(mprops, "real", "PoissonRatio",
-                                             "nu", false);
-      } else if (mb.getSymmetryType() == mfront::ORTHOTROPIC) {
-        this->appendToMaterialPropertiesList(mprops, "stress", "YoungModulus1",
-                                             "yg1", false);
-        this->appendToMaterialPropertiesList(mprops, "stress", "YoungModulus2",
-                                             "yg2", false);
-        this->appendToMaterialPropertiesList(mprops, "stress", "YoungModulus3",
-                                             "yg3", false);
-        this->appendToMaterialPropertiesList(mprops, "real", "PoissonRatio12",
-                                             "nu12", false);
-        this->appendToMaterialPropertiesList(mprops, "real", "PoissonRatio23",
-                                             "nu23", false);
-        this->appendToMaterialPropertiesList(mprops, "real", "PoissonRatio13",
-                                             "nu13", false);
-        this->appendToMaterialPropertiesList(mprops, "stress", "ShearModulus12",
-                                             "g12", false);
-        this->appendToMaterialPropertiesList(mprops, "stress", "ShearModulus23",
-                                             "g23", false);
-        this->appendToMaterialPropertiesList(mprops, "stress", "ShearModulus13",
-                                             "g13", false);
-      } else {
-        tfel::raise(
-            "CalculiXInterface::buildMaterialPropertiesList : "
-            "unsupported behaviour symmetry type");
-      }
-    }
-    if (mb.getAttribute(
-            BehaviourDescription::requiresThermalExpansionCoefficientTensor,
-            false)) {
-      if (mb.getSymmetryType() == mfront::ISOTROPIC) {
-        this->appendToMaterialPropertiesList(mprops, "thermalexpansion",
-                                             "ThermalExpansion", "alph", false);
-      } else if (mb.getSymmetryType() == mfront::ORTHOTROPIC) {
-        this->appendToMaterialPropertiesList(
-            mprops, "thermalexpansion", "ThermalExpansion1", "alp1", false);
-        this->appendToMaterialPropertiesList(
-            mprops, "thermalexpansion", "ThermalExpansion2", "alp2", false);
-        this->appendToMaterialPropertiesList(
-            mprops, "thermalexpansion", "ThermalExpansion3", "alp3", false);
-      } else {
-        tfel::raise(
-            "CalculiXInterface::buildMaterialPropertiesList : "
-            "unsupported behaviour symmetry type");
-      }
-    }
-    if (!mprops.empty()) {
-      const auto& m = mprops.back();
-      res.second = m.offset;
-      res.second += SupportedTypes::getTypeSize(m.type, m.arraySize);
-    }
-    this->completeMaterialPropertiesList(mprops, mb, h);
-    return res;
-  }  // end of CalculiXInterface::buildMaterialPropertiesList
 
   void CalculiXInterface::writeCalculiXBehaviourTraits(
       std::ostream& out, const BehaviourDescription& mb) const {
@@ -1441,7 +1313,7 @@ namespace mfront {
       }
       return vs.getValueForModellingHypothesis(h);
     }();
-    out << "*Material, name=@" << this->getFunctionName(mn) << '\n';
+    out << "*Material, name=@" << this->getFunctionNameBasis(mn) << '\n';
     if (!b) {
       out << "*DENSITY\n<density>\n";
     }

@@ -269,7 +269,8 @@ namespace mfront{
       return r;
     }
     if (k=="@AbaqusGenerateMTestFileOnFailure"){
-      this->generateMTestFile = this->readBooleanValue(k,current,end);
+      this->setGenerateMTestFileOnFailureAttribute(
+          bd, this->readBooleanValue(k, current, end));
       return {true,current};      
     } else if(k=="@AbaqusCompareToNumericalTangentOperator"){
       checkCompareToNumericalTangentOperatorConsistency(bd);
@@ -725,7 +726,7 @@ namespace mfront{
 	<< "                        *NTENS,*NPROPS," << nstatev << ",*DTIME,\n"
 	<< "                        DROT," << dv0 << "," << dv1 << ",TEMP,DTEMP,\n"
 	<< "                        PROPS,PREDEF,DPRED,\n"
-	<< getFunctionName(name) << "_getOutOfBoundsPolicy()," << sfeh << "};\n"
+	<< this->getFunctionNameBasis(name) << "_getOutOfBoundsPolicy()," << sfeh << "};\n"
 	<< "if(abaqus::AbaqusInterface<tfel::material::ModellingHypothesis::"
 	<< ModellingHypothesis::toUpperCaseString(h) << ",tfel::material::" << mb.getClassName() 
 	<< ">::exe(d)!=0){\n";
@@ -829,18 +830,17 @@ namespace mfront{
 	  << "std::copy(STRESS,STRESS+*(NTENS),sig0.begin());\n"
 	  << "std::copy(STATEV,STATEV+*(NSTATV),sv0.begin());\n";
     }
-    if(this->generateMTestFile){
-      this->generateMTestFile1(out);
+    if(this->shallGenerateMTestFileOnFailure(mb)){
+      this->generateMTestFile1(out, mb);
     }
     out << name << "_base" << this->getFunctionNameForHypothesis("",h)
 	<< "(STRESS,STATEV,DDSDDE,SSE,SPD,SCD,RPL,DDSDDT,DRPLDE,DRPLDT,\n"
 	<< "STRAN,DSTRAN,TIME,DTIME,TEMP,DTEMP,PREDEF,DPRED,CMNAME,\n"
 	<< "NDI,NSHR,NTENS,NSTATV,PROPS,NPROPS,COORDS,DROT,PNEWDT,\n"
 	<< "CELENT,DFGRD0,DFGRD1,NOEL,NPT,LAYER,KSPT,KSTEP,KINC,size);\n";
-    if(this->generateMTestFile){
+    if(this->shallGenerateMTestFileOnFailure(mb)){
       out << "if(*PNEWDT<1){\n";
-      this->generateMTestFile2(out,mb.getBehaviourType(),
-			       name,"",mb);
+      this->generateMTestFile2(out, mb, mb.getBehaviourType(), name, "");
       out << "}\n";
     }
     if(this->compareToNumericalTangentOperator){
@@ -865,7 +865,7 @@ namespace mfront{
 	  << "                         *NTENS,*NPROPS,*NSTATV,*DTIME,\n"
 	  << "                         DROT,STRAN,&deto[0],TEMP,DTEMP,\n"
 	  << "                         PROPS,PREDEF,DPRED,\n"
-	  << getFunctionName(name) << "_getOutOfBoundsPolicy()," << sfeh << "};\n"
+	  << this->getFunctionNameBasis(name) << "_getOutOfBoundsPolicy()," << sfeh << "};\n"
 	  << "if(abaqus::AbaqusInterface<tfel::material::ModellingHypothesis::"
 	  << ModellingHypothesis::toUpperCaseString(h) << ","
 	  << "tfel::material::" << mb.getClassName() << ">::exe(d2)!=0){\n"
@@ -1069,7 +1069,7 @@ namespace mfront{
     auto throw_if = [](const bool b,const std::string& m){
       tfel::raise_if(b,"AbaqusInterface::writeUMATxxBehaviourTypeSymbols: "+m);
     };
-    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
+    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name) 
 	<< "_BehaviourType = " ;
     if(mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
       if((AbaqusInterfaceBase::hasFiniteStrainStrategy(mb))&&
@@ -1093,7 +1093,7 @@ namespace mfront{
     auto throw_if = [](const bool b,const std::string& m){
       tfel::raise_if(b,"AbaqusInterface::writeUMATxxBehaviourKinematicSymbols: "+m);
     };
-    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
+    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name) 
 	<< "_BehaviourKinematic = " ;
     if(mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
       if(AbaqusInterfaceBase::hasFiniteStrainStrategy(mb)){
@@ -1285,8 +1285,7 @@ namespace mfront{
   } // end of AbaqusInterface::exportThermodynamicForce
 
   void AbaqusInterface::getTargetsDescription(TargetsDescription& d,
-					      const BehaviourDescription& bd)
-  {
+                                              const BehaviourDescription& bd) {
     const auto lib  = this->getLibraryName(bd);
     const auto name = bd.getLibrary()+bd.getClassName(); 
     const auto tfel_config = tfel::getTFELConfigExecutableName();
@@ -1298,7 +1297,7 @@ namespace mfront{
     d.headers.push_back("MFront/Abaqus/abaqus"+name+".hxx");
     insert_if(d[lib].link_directories,"$(shell "+tfel_config+" --library-path)");
     insert_if(d[lib].link_libraries,tfel::getLibraryInstallName("AbaqusInterface"));
-    if(this->generateMTestFile){
+    if(this->shallGenerateMTestFileOnFailure(bd)){
       insert_if(d[lib].link_libraries,tfel::getLibraryInstallName("MTestFileGenerator"));
     }
 #if __cplusplus >= 201703L

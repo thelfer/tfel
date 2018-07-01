@@ -17,6 +17,7 @@
 #include"MFront/ModelInterfaceProxy.hxx"
 
 #include"MFront/MFrontMaterialPropertyInterface.hxx"
+#include"MFront/GenericBehaviourInterface.hxx"
 #include"MFront/CMaterialPropertyInterface.hxx"
 #include"MFront/ExcelMaterialPropertyInterface.hxx"
 #include"MFront/ExcelMaterialPropertyInternalInterface.hxx"
@@ -124,7 +125,7 @@ namespace mfront {
     constexpr const char * javaNames[2] = {"java","Java"};
     MaterialPropertyInterfaceProxy<JavaMaterialPropertyInterface> javaLawProxy(javaNames,javaNames+2);
 #endif /* HAVE_JAVA */
-    
+
 #ifdef HAVE_CASTEM
     constexpr const char * castemINames[3] = {"castem","Castem","Cast3M"};
     MaterialPropertyInterfaceProxy<CastemMaterialPropertyInterface> castemLawProxy(castemINames,castemINames+3);
@@ -154,8 +155,7 @@ namespace mfront {
 #endif /* HAVE_EUROPLEXUS */
 
 #ifdef HAVE_CALCULIX
-    constexpr const char * ccxNames[1] = {"CalculiX"};
-    BehaviourInterfaceProxy<CalculiXInterface> ccxProxy(ccxNames,ccxNames+1);
+    BehaviourInterfaceProxy<CalculiXInterface> ccxProxy;
 #endif /* HAVE_CALCULIX */
     
 #ifdef HAVE_ZMAT
@@ -165,6 +165,8 @@ namespace mfront {
 #ifdef HAVE_LSDYNA
     BehaviourInterfaceProxy<LSDYNAInterface> lsdynaProxy;
 #endif /* HAVE_LSDYNA */
+
+    BehaviourInterfaceProxy<GenericBehaviourInterface> gbProxy;
 
     ModelInterfaceProxy<MFrontModelInterface> mmi;
     

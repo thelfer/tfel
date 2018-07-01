@@ -115,6 +115,7 @@ libTFELMFront_la_SOURCES = MFront.cxx                                           
 		           LocalDataStructure.cxx                                 \
 		           AbstractBehaviourBrickFactory.cxx                      \
 		           UMATInterfaceBase.cxx                                  \
+		           GenericBehaviourInterface.cxx                          \
 		           OptionDescription.cxx                                  \
 		           BrickUtilities.cxx                                     \
 		           StressPotential.cxx                                    \

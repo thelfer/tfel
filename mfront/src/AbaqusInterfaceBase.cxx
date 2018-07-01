@@ -215,9 +215,9 @@ namespace mfront{
   AbaqusInterfaceBase::getCommonKeywords() const{
     return {"@AbaqusFiniteStrainStrategy","@AbaqusOrthotropyManagementPolicy"};
   } // end of AbaqusInterfaceBase::getCommonKeywords
-  
-  std::string AbaqusInterfaceBase::getFunctionName(const std::string& name) const
-  {
+
+  std::string AbaqusInterfaceBase::getFunctionNameBasis(
+      const std::string& name) const {
     return makeUpperCase(name);
   } // end of AbaqusInterfaceBase::getFunctionName
 
@@ -267,131 +267,10 @@ namespace mfront{
     return h;
   } // end of AbaqusInterfaceBase::getModellingHypothesesToBeTreated
 
-  std::pair<std::vector<UMATInterfaceBase::UMATMaterialProperty>,
-	    SupportedTypes::TypeSize>
-  AbaqusInterfaceBase::buildMaterialPropertiesList(const BehaviourDescription& mb,
-						   const Hypothesis h) const
-  {
-    using namespace std;
-    if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
-      const auto ah = this->getModellingHypothesesToBeTreated(mb);
-      set<Hypothesis> uh;
-      for(const auto &lh : ah){
-	if(!mb.hasSpecialisedMechanicalData(lh)){
-	  uh.insert(lh);
-	}
-      }
-      tfel::raise_if(uh.empty(),
-		     "AbaqusInterfaceBase::buildMaterialPropertiesList: "
-		     "internal error : the mechanical behaviour says that not "
-		     "all handled mechanical data are specialised, but we found none.");
-      // material properties for all the selected hypothesis
-      auto mpositions = vector<pair<vector<UMATMaterialProperty>,
-				    SupportedTypes::TypeSize>>{};
-      for(const auto & lh : uh){
-	mpositions.push_back(this->buildMaterialPropertiesList(mb,lh));
-      }
-      auto ph=uh.begin();
-      auto pum = mpositions.begin();
-      const auto& mfirst = *pum;
-      ++ph;
-      ++pum;
-      for(;ph!=uh.end();++ph,++pum){
-	const auto& d = mb.getBehaviourData(ModellingHypothesis::UNDEFINEDHYPOTHESIS);
-	const auto& mps = d.getMaterialProperties();
-	for(const auto & mp : mps){
-	  const auto& mp1 = findUMATMaterialProperty(mfirst.first,
-						     mb.getExternalName(h,mp.name));
-	  const auto& mp2 = findUMATMaterialProperty(pum->first,
-						     mb.getExternalName(h,mp.name));
-	  auto o1 = mp1.offset;
-	  o1+=pum->second;
-	  auto o2 = mp2.offset;
-	  o2+=mfirst.second;
-	  tfel::raise_if(o1!=o2,"AbaqusInterfaceBase::buildMaterialPropertiesList : "
-			 "incompatible offset for material property '"+mp.name+
-			 "' (aka '"+mp1.name+"'). This is one pitfall of the umat interface. "
-			 "To by-pass this limitation, you may want to explicitely "
-			 "specialise some modelling hypotheses");
-	}
-      }
-      return mfirst;
-    }
-    auto res = pair<vector<UMATMaterialProperty>,
-		    SupportedTypes::TypeSize>{};
-    auto& mprops = res.first;
-    if((h!=ModellingHypothesis::GENERALISEDPLANESTRAIN)&&
-       (h!=ModellingHypothesis::AXISYMMETRICAL)&&
-       (h!=ModellingHypothesis::PLANESTRAIN)&&
-       (h!=ModellingHypothesis::PLANESTRESS)&&
-       (h!=ModellingHypothesis::TRIDIMENSIONAL)){
-      string msg("AbaqusInterfaceBase::buildMaterialPropertiesList : "
-		 "unsupported modelling hypothesis");
-      if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
-	msg += " (default)";
-      } else {
-	msg += " '"+ModellingHypothesis::toString(h)+"'";
-      }
-      tfel::raise(msg);
-    }
-    if(mb.getAttribute(BehaviourDescription::requiresStiffnessTensor,false)){
-      if(mb.getSymmetryType()==mfront::ISOTROPIC){
-	this->appendToMaterialPropertiesList(mprops,"stress","YoungModulus","youn",false);
-	this->appendToMaterialPropertiesList(mprops,"real","PoissonRatio","nu",false);
-      } else if (mb.getSymmetryType()==mfront::ORTHOTROPIC){
-	this->appendToMaterialPropertiesList(mprops,"stress","YoungModulus1","yg1",false);
-	this->appendToMaterialPropertiesList(mprops,"stress","YoungModulus2","yg2",false);
-	this->appendToMaterialPropertiesList(mprops,"stress","YoungModulus3","yg3",false);
-	this->appendToMaterialPropertiesList(mprops,"real",  "PoissonRatio12","nu12",false);
-	this->appendToMaterialPropertiesList(mprops,"real",  "PoissonRatio23","nu23",false);
-	this->appendToMaterialPropertiesList(mprops,"real",  "PoissonRatio13","nu13",false);
-	this->appendToMaterialPropertiesList(mprops,"stress","ShearModulus12","g12",false);
-	if (h==ModellingHypothesis::TRIDIMENSIONAL){
-	  this->appendToMaterialPropertiesList(mprops,"stress","ShearModulus23","g23",false);
-	  this->appendToMaterialPropertiesList(mprops,"stress","ShearModulus13","g13",false);
-	} else if((h!=ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)&&
-		  (h!=ModellingHypothesis::GENERALISEDPLANESTRAIN)&&
-		  (h!=ModellingHypothesis::AXISYMMETRICAL)&&
-		  (h!=ModellingHypothesis::PLANESTRAIN)&&
-		  (h!=ModellingHypothesis::PLANESTRESS)){
-	  tfel::raise("AbaqusInterfaceBase::buildMaterialPropertiesList : "
-		      "unsupported modelling hypothesis");
-	}
-      } else {
-	tfel::raise("AbaqusInterfaceBase::buildMaterialPropertiesList : "
-		    "unsupported behaviour symmetry type");
-      }
-    }
-    if(mb.getAttribute(BehaviourDescription::requiresThermalExpansionCoefficientTensor,false)){
-      if(mb.getSymmetryType()==mfront::ISOTROPIC){
-	this->appendToMaterialPropertiesList(mprops,"thermalexpansion","ThermalExpansion",
-					     "alph",false);
-      } else if (mb.getSymmetryType()==mfront::ORTHOTROPIC){
-	this->appendToMaterialPropertiesList(mprops,"thermalexpansion","ThermalExpansion1",
-					     "alp1",false);
-	this->appendToMaterialPropertiesList(mprops,"thermalexpansion","ThermalExpansion2",
-					     "alp2",false);
-	this->appendToMaterialPropertiesList(mprops,"thermalexpansion","ThermalExpansion3",
-					     "alp3",false);
-      } else {
-	tfel::raise("AbaqusInterfaceBase::buildMaterialPropertiesList : "
-		    "unsupported behaviour symmetry type");
-      }
-    }
-    if(!mprops.empty()){
-      const auto& m = mprops.back();
-      res.second  = m.offset;
-      res.second += SupportedTypes::getTypeSize(m.type,m.arraySize);
-    }
-    this->completeMaterialPropertiesList(mprops,mb,h);
-    return res;
-  } // end of AbaqusInterfaceBase::buildMaterialPropertiesList
-
-  void
-  AbaqusInterfaceBase::writeAbaqusBehaviourTraits(std::ostream& out,
-						  const BehaviourDescription& mb,
-						  const Hypothesis h) const
-  {
+  void AbaqusInterfaceBase::writeAbaqusBehaviourTraits(
+      std::ostream& out,
+      const BehaviourDescription& mb,
+      const Hypothesis h) const {
     using namespace std;
     const auto mvs = mb.getMainVariablesSize();
     const auto mprops = this->buildMaterialPropertiesList(mb,h);
@@ -520,22 +399,24 @@ namespace mfront{
   std::map<UMATInterfaceBase::Hypothesis,std::string>
   AbaqusInterfaceBase::gatherModellingHypothesesAndTests(const BehaviourDescription& mb) const
   {
-    auto res = std::map<Hypothesis,std::string>{};
-    if((mb.getSymmetryType()==mfront::ORTHOTROPIC)&&
-       ((mb.getAttribute(BehaviourDescription::requiresStiffnessTensor,false))||
-	(mb.getAttribute(BehaviourDescription::requiresThermalExpansionCoefficientTensor,false)))){
+    auto res = std::map<Hypothesis, std::string>{};
+    if ((mb.getSymmetryType() == mfront::ORTHOTROPIC) &&
+        ((mb.getAttribute(BehaviourDescription::requiresStiffnessTensor,
+                          false)) ||
+         (mb.getAttribute(
+             BehaviourDescription::requiresThermalExpansionCoefficientTensor,
+             false)))) {
       auto h = this->getModellingHypothesesToBeTreated(mb);
       for(const auto & mh : h){
-	res.insert({mh,this->getModellingHypothesisTest(mh)});
+        res.insert({mh, this->getModellingHypothesisTest(mh)});
       }
       return res;
     }
     return UMATInterfaceBase::gatherModellingHypothesesAndTests(mb);
   } // end of AbaqusInterfaceBase::gatherModellingHypothesesAndTests
 
-  std::string
-  AbaqusInterfaceBase::getModellingHypothesisTest(const Hypothesis h) const
-  {
+  std::string AbaqusInterfaceBase::getModellingHypothesisTest(
+      const Hypothesis h) const {
     if(h==ModellingHypothesis::GENERALISEDPLANESTRAIN){
       return "*NTENS==4";
     } else if(h==ModellingHypothesis::PLANESTRESS){
@@ -562,16 +443,16 @@ namespace mfront{
   {
     if(mb.getSymmetryType()==mfront::ORTHOTROPIC){
       if(!mb.hasAttribute(AbaqusInterfaceBase::orthotropyManagementPolicy)){
-	out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name)
+	out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name)
 	    << "_OrthotropyManagementPolicy = 0u;\n\n";    
       } else {
 	const auto omp =
 	  mb.getAttribute<std::string>(AbaqusInterfaceBase::orthotropyManagementPolicy);
 	if(omp=="MFront"){
-	  out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name)
+	  out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name)
 	      << "_OrthotropyManagementPolicy = 2u;\n\n";    
 	} else if(omp=="Native"){
-	  out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name)
+	  out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name)
 	      << "_OrthotropyManagementPolicy = 1u;\n\n";
 	} else {
 	  tfel::raise("AbaqusInterfaceBase::writeUMATxxSpecificSymbols: "
@@ -580,21 +461,20 @@ namespace mfront{
       }
     }
   } // end of AbaqusInterfaceBase::writeUMATxxSpecificSymbols
-  
-  void
-  AbaqusInterfaceBase::writeMTestFileGeneratorSetModellingHypothesis(std::ostream& out) const
-  {
+
+  void AbaqusInterfaceBase::writeMTestFileGeneratorSetModellingHypothesis(
+      std::ostream& out) const {
     out << "ModellingHypothesis::Hypothesis h;\n"
-	<< "if( *NTENS == 6 ){\n"
-	<< "  h = ModellingHypothesis::TRIDIMENSIONAL;\n"
-	<< "} else if(*NTENS==3){\n"
-	<< "  h = ModellingHypothesis::PLANESTRESS;\n"
-	<< "} else if(*NTENS==4){\n"
-	<< "  h = ModellingHypothesis::GENERALISEDPLANESTRAIN;\n"
-	<< "} else {\n"
-	<< "  return;\n"
-	<< "}\n"
-	<< "mg.setModellingHypothesis(h);\n";
+        << "if( *NTENS == 6 ){\n"
+        << "  h = ModellingHypothesis::TRIDIMENSIONAL;\n"
+        << "} else if(*NTENS==3){\n"
+        << "  h = ModellingHypothesis::PLANESTRESS;\n"
+        << "} else if(*NTENS==4){\n"
+        << "  h = ModellingHypothesis::GENERALISEDPLANESTRAIN;\n"
+        << "} else {\n"
+        << "  return;\n"
+        << "}\n"
+        << "mg.setModellingHypothesis(h);\n";
   } // end of AbaqusInterfaceBase::writeMTestFileGeneratorSetModellingHypothesis
 
   void

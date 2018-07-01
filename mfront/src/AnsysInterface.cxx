@@ -73,19 +73,23 @@ namespace mfront{
 
   static void checkFiniteStrainStrategyDefinitionConsistency(
       const BehaviourDescription& bd, const std::string& fs) {
-    auto throw_if = [](const bool c,const std::string& msg){
-      tfel::raise_if(c,"checkFiniteStrainStrategyDefinitionConsistency: "+msg);
+    auto throw_if = [](const bool c, const std::string& msg) {
+      tfel::raise_if(c,
+                     "checkFiniteStrainStrategyDefinitionConsistency: " + msg);
     };
     checkFiniteStrainStrategy(fs);
-    if(bd.isStrainMeasureDefined()){
+    if (bd.isStrainMeasureDefined()) {
       const auto ms = bd.getStrainMeasure();
       if(ms==BehaviourDescription::LINEARISED){
-	throw_if(fs!="Native","incompatible finite strain strategy "
-		 "'"+fs+"' (only `Native` accepted)");
-      } else if(ms==BehaviourDescription::GREENLAGRANGE){
-	throw_if(fs!="FiniteRotationSmallStrain",
-		 "incompatible finite strain strategy "
-		 "'"+fs+"' (only `FiniteRotationSmallStrain` accepted)");
+        throw_if(fs != "Native",
+                 "incompatible finite strain strategy "
+                 "'" +
+                     fs + "' (only `Native` accepted)");
+      } else if (ms == BehaviourDescription::GREENLAGRANGE) {
+        throw_if(fs != "FiniteRotationSmallStrain",
+                 "incompatible finite strain strategy "
+                 "'" +
+                     fs + "' (only `FiniteRotationSmallStrain` accepted)");
       } else if(ms==BehaviourDescription::HENCKY){
  	throw_if(fs!="MieheApelLambrechtLogarithmicStrain",
 		 "incompatible finite strain strategy '"+fs+"' "
@@ -348,15 +352,14 @@ namespace mfront{
     }
     return 0u;
   }
-    
-  std::string AnsysInterface::getFunctionName(const std::string& name) const
-  {
+
+  std::string AnsysInterface::getFunctionNameBasis(
+      const std::string& name) const {
     return name;
   } // end of AnsysInterface::getFunctionName
 
-  std::string AnsysInterface::getFunctionNameForHypothesis(const std::string& name,
-								const Hypothesis h) const
-  {
+  std::string AnsysInterface::getFunctionNameForHypothesis(
+      const std::string& name, const Hypothesis h) const {
     const auto s = [h]() -> std::string {
       if(h==ModellingHypothesis::AXISYMMETRICAL){
 	return "axis";
@@ -398,134 +401,6 @@ namespace mfront{
 		   "make sense to use the Ansys interface");
     return h;
   } // end of AnsysInterface::getModellingHypothesesToBeTreated
-
-  std::pair<std::vector<UMATInterfaceBase::UMATMaterialProperty>,
-	    SupportedTypes::TypeSize>
-  AnsysInterface::buildMaterialPropertiesList(const BehaviourDescription& mb,
-						   const Hypothesis h) const
-  {
-    using namespace std;
-    auto throw_if = [](const bool c,const std::string& m){
-      tfel::raise_if(c,"AnsysInterface:buildMaterialPropertiesList: "+m);
-    };
-    if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
-      const auto ah = this->getModellingHypothesesToBeTreated(mb);
-      std::set<Hypothesis> uh;
-      for(const auto &lh : ah){
-	if(!mb.hasSpecialisedMechanicalData(lh)){
-	  uh.insert(lh);
-	}
-      }
-      throw_if(uh.empty(),"internal error : the mechanical behaviour says that not "
-	       "all handled mechanical data are specialised, but we found none.");
-      // material properties for all the selected hypothesis
-      auto mpositions = vector<pair<vector<UMATMaterialProperty>,
-				    SupportedTypes::TypeSize>>{};
-      for(const auto & lh : uh){
-	mpositions.push_back(this->buildMaterialPropertiesList(mb,lh));
-      }
-      auto ph=uh.begin();
-      auto pum = mpositions.begin();
-      const auto& mfirst = *pum;
-      ++ph;
-      ++pum;
-      for(;ph!=uh.end();++ph,++pum){
-	const auto& d = mb.getBehaviourData(ModellingHypothesis::UNDEFINEDHYPOTHESIS);
-	const auto& mps = d.getMaterialProperties();
-	for(const auto & mp : mps){
-	  const auto& mp1 = findUMATMaterialProperty(mfirst.first,
-						     mb.getExternalName(h,mp.name));
-	  const auto& mp2 = findUMATMaterialProperty(pum->first,
-						     mb.getExternalName(h,mp.name));
-	  auto o1 = mp1.offset;
-	  o1+=pum->second;
-	  auto o2 = mp2.offset;
-	  o2+=mfirst.second;
-	  throw_if(o1!=o2,"incompatible offset for material property '"+mp.name+
-		   "' (aka '"+mp1.name+"'). This is one pitfall of the umat interface. "
-		   "To by-pass this limitation, you may want to explicitely "
-		   "specialise some modelling hypotheses");
-	}
-      }
-      return mfirst;
-    }
-    auto res = pair<vector<UMATMaterialProperty>,
-		    SupportedTypes::TypeSize>{};
-    auto& mprops = res.first;
-    throw_if((h!=ModellingHypothesis::GENERALISEDPLANESTRAIN)&&
-	     (h!=ModellingHypothesis::AXISYMMETRICAL)&&
-	     (h!=ModellingHypothesis::PLANESTRAIN)&&
-	     (h!=ModellingHypothesis::PLANESTRESS)&&
-	     (h!=ModellingHypothesis::TRIDIMENSIONAL),
-	     std::string("unsupported modelling hypothesis ")+
-	     ((h==ModellingHypothesis::UNDEFINEDHYPOTHESIS) ? "(default)" : 
-	      "'"+ModellingHypothesis::toString(h)+"'"));
-    if(mb.getAttribute(BehaviourDescription::requiresStiffnessTensor,false)){
-      if(mb.getSymmetryType()==mfront::ISOTROPIC){
-	this->appendToMaterialPropertiesList(mprops,"stress","YoungModulus","youn",false);
-	this->appendToMaterialPropertiesList(mprops,"real","PoissonRatio","nu",false);
-      } else if (mb.getSymmetryType()==mfront::ORTHOTROPIC){
-	this->appendToMaterialPropertiesList(mprops,"stress","YoungModulus1","yg1",false);
-	this->appendToMaterialPropertiesList(mprops,"stress","YoungModulus2","yg2",false);
-	this->appendToMaterialPropertiesList(mprops,"stress","YoungModulus3","yg3",false);
-	this->appendToMaterialPropertiesList(mprops,"real",  "PoissonRatio12","nu12",false);
-	this->appendToMaterialPropertiesList(mprops,"real",  "PoissonRatio23","nu23",false);
-	this->appendToMaterialPropertiesList(mprops,"real",  "PoissonRatio13","nu13",false);
-	this->appendToMaterialPropertiesList(mprops,"stress","ShearModulus12","g12",false);
-	if (h==ModellingHypothesis::TRIDIMENSIONAL){
-	  this->appendToMaterialPropertiesList(mprops,"stress","ShearModulus23","g23",false);
-	  this->appendToMaterialPropertiesList(mprops,"stress","ShearModulus13","g13",false);
-	} else if((h!=ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)&&
-		  (h!=ModellingHypothesis::GENERALISEDPLANESTRAIN)&&
-		  (h!=ModellingHypothesis::AXISYMMETRICAL)&&
-		  (h!=ModellingHypothesis::PLANESTRAIN)&&
-		  (h!=ModellingHypothesis::PLANESTRESS)){
-	  throw_if(true,"unsupported modelling hypothesis");
-	}
-      } else {
-	throw_if(true,"unsupported behaviour symmetry type");
-      }
-    }
-    if(mb.getAttribute(BehaviourDescription::requiresThermalExpansionCoefficientTensor,false)){
-      if(mb.getSymmetryType()==mfront::ISOTROPIC){
-	this->appendToMaterialPropertiesList(mprops,"thermalexpansion","ThermalExpansion",
-					     "alph",false);
-      } else if (mb.getSymmetryType()==mfront::ORTHOTROPIC){
-	this->appendToMaterialPropertiesList(mprops,"thermalexpansion","ThermalExpansion1",
-					     "alp1",false);
-	this->appendToMaterialPropertiesList(mprops,"thermalexpansion","ThermalExpansion2",
-					     "alp2",false);
-	this->appendToMaterialPropertiesList(mprops,"thermalexpansion","ThermalExpansion3",
-					     "alp3",false);
-      } else {
-	throw_if(true,"unsupported behaviour symmetry type");
-      }
-    }
-    if(mb.getSymmetryType()==mfront::ORTHOTROPIC){
-      if((h==ModellingHypothesis::AXISYMMETRICAL)||
-	 (h==ModellingHypothesis::PLANESTRAIN)||
-	 (h==ModellingHypothesis::PLANESTRESS)){
-	this->appendToMaterialPropertiesList(mprops,"real","FirstOrthotropicAxis_1","v1x",false);
-	this->appendToMaterialPropertiesList(mprops,"real","FirstOrthotropicAxis_2","v1y",false);
-      } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
-	this->appendToMaterialPropertiesList(mprops,"real","FirstOrthotropicAxis_1","v1x",false);
-	this->appendToMaterialPropertiesList(mprops,"real","FirstOrthotropicAxis_2","v1y",false);
-	this->appendToMaterialPropertiesList(mprops,"real","FirstOrthotropicAxis_2","v1z",false);
-	this->appendToMaterialPropertiesList(mprops,"real","SecondOrthotropicAxis_1","v2x",false);
-	this->appendToMaterialPropertiesList(mprops,"real","SecondOrthotropicAxis_2","v2y",false);
-	this->appendToMaterialPropertiesList(mprops,"real","SecondOrthotropicAxis_2","v2z",false);
-      } else {
-	throw_if(true,"unsupported modellinh hypothesis");
-      }
-    }
-    if(!mprops.empty()){
-      const auto& m = mprops.back();
-      res.second  = m.offset;
-      res.second += SupportedTypes::getTypeSize(m.type,m.arraySize);
-    }
-    this->completeMaterialPropertiesList(mprops,mb,h);
-    return res;
-  } // end of AnsysInterface::buildMaterialPropertiesList
 
   void AnsysInterface::writeAnsysBehaviourTraits(std::ostream& out,
 						 const BehaviourDescription& mb,
@@ -820,8 +695,9 @@ namespace mfront{
       return {true,current};
     }
     if (key=="@AnsysGenerateMTestFileOnFailure"){
-      this->generateMTestFile = this->readBooleanValue(key,current,end);
-      return {true,current};      
+      this->setGenerateMTestFileOnFailureAttribute(
+          bd, this->readBooleanValue(key, current, end));
+      return {true,current};
     } else if(key=="@AnsysCompareToNumericalTangentOperator"){
       this->compareToNumericalTangentOperator  = this->readBooleanValue(key,current,end);
       return make_pair(true,current);
@@ -1185,16 +1061,17 @@ namespace mfront{
       sig = "STRESS";
     }
     out << "ansys::AnsysData d = {" << sig << ",DDSDDE,STATEV,\n"
-	<< "                      SEDEL,SEDPL,EPSEQ,EPSPL,EPSZZ,\n"
-	<< "                      *NTENS,*NPROPS,*NSTATV,*DTIME,DROT,\n"
-	<< "                      " << dv0 << "," << dv1 << ",TEMP,DTEMP,PROPS,"
-	<< getFunctionName(name) << "_getOutOfBoundsPolicy()," << sfeh << "};\n"
-	<< "if(ansys::AnsysInterface<tfel::material::ModellingHypothesis::"
-	<< ModellingHypothesis::toUpperCaseString(h) << ",tfel::material::" << mb.getClassName() 
-	<< ">::exe(d)!=0){\n"
-	<< "*keycut = 1;\n"
-	<< "return;\n"
-	<< "}\n";
+        << "                      SEDEL,SEDPL,EPSEQ,EPSPL,EPSZZ,\n"
+        << "                      *NTENS,*NPROPS,*NSTATV,*DTIME,DROT,\n"
+        << "                      " << dv0 << "," << dv1 << ",TEMP,DTEMP,PROPS,"
+        << this->getFunctionNameBasis(name) << "_getOutOfBoundsPolicy(),"
+        << sfeh << "};\n"
+        << "if(ansys::AnsysInterface<tfel::material::ModellingHypothesis::"
+        << ModellingHypothesis::toUpperCaseString(h)
+        << ",tfel::material::" << mb.getClassName() << ">::exe(d)!=0){\n"
+        << "*keycut = 1;\n"
+        << "return;\n"
+        << "}\n";
     if(mb.getSymmetryType()==mfront::ORTHOTROPIC){
       if(h==ModellingHypothesis::PLANESTRESS){
 	out << "ansys::AnsysReal D[16u] = {DDSDDE[0],DDSDDE[3],0,DDSDDE[6],\n"
@@ -1287,8 +1164,8 @@ namespace mfront{
 	  << "std::copy(STRESS,STRESS+*(NTENS),sig0.begin());\n"
 	  << "std::copy(STATEV,STATEV+*(NSTATV),sv0.begin());\n";
     }
-    if(this->generateMTestFile){
-      this->generateMTestFile1(out);
+    if(this->shallGenerateMTestFileOnFailure(mb)){
+      this->generateMTestFile1(out, mb);
     }
     out << name << "_base" << this->getFunctionNameForHypothesis("",h)
 	<< "(matId,elemId,kDomIntPt,kLayer,kSectPt,ldsetp,isubst,keycut,\n"
@@ -1296,84 +1173,86 @@ namespace mfront{
 	<< " STRESS,STATEV,DDSDDE,SEDEL,SEDPL,EPSEQ,STRAN,DSTRAN,\n"
 	<< " EPSPL,PROPS,coords,DROT,F0,F1,tsstif,EPSZZ,\n"
 	<< " var1,var2,var3,var4,var5,var6,var7,var8);\n";
-    if(this->generateMTestFile){
+    if(this->shallGenerateMTestFileOnFailure(mb)){
       out << "if(*keycut!=0){\n";
-      this->generateMTestFile2(out,mb.getBehaviourType(),
-			       name,"",mb);
+      this->generateMTestFile2(out, mb, mb.getBehaviourType(), name, "");
       out << "}\n";
     }
     if(this->compareToNumericalTangentOperator){
       out << "// computing the tangent operator by pertubation\n"
-	  << "std::vector<ansys::AnsysReal> nD((*NTENS)*(*NTENS));\n"
-	  << "std::vector<ansys::AnsysReal> deto(*NTENS);\n"
-	  << "std::vector<ansys::AnsysReal> sigf(*NTENS);\n"
-	  << "std::vector<ansys::AnsysReal> sigb(*NTENS);\n"
-	  << "std::vector<ansys::AnsysReal> sv(*NSTATV);\n"
-	  << "std::vector<ansys::AnsysReal> D((*NTENS)*(*NTENS));\n"
-	  << "ansys::AnsysReal keycut0 = 0;\n"
-	  << "ansys::AnsysReal m;\n"
-	  << "ansys::AnsysReal mDt;\n"
-	  << "ansys::AnsysReal mnDt;\n"
-	  << "for(ansys::AnsysInt i=0;i!=*NTENS;++i){\n"
-	  << "std::copy(deto0.begin(),deto0.end(),deto.begin());\n"
-	  << "std::copy(sig0.begin(),sig0.end(),sigf.begin());\n"
-	  << "std::copy(sv0.begin(),sv0.end(),sv.begin());\n"
-	  << "deto[i] += " << this->strainPerturbationValue << ";\n"
-	  << "ansys::AnsysData d2 = {&sigf[0],&D[0],&sv[0],\n"
-	  << "                         SEDEL,SEDPL,EPSEQ,EPSPL,EPSZZ,\n"
-	  << "                         *NTENS,*NPROPS,*NSTATV,*DTIME,DROT,\n"
-	  << "                         STRAN,&deto[0],TEMP,DTEMP,PROPS,"
-	  << getFunctionName(name) << "_getOutOfBoundsPolicy()," << sfeh << "};\n"
-	  << "if(ansys::AnsysInterface<tfel::material::ModellingHypothesis::"
-	  << ModellingHypothesis::toUpperCaseString(h) << ","
-	  << "tfel::material::" << mb.getClassName() << ">::exe(d2)!=0){\n"
-	  << "return;\n"
-	  << "}\n"
-	  << "ansys::AnsysReal keycut0 = 0;\n"
-	  << "std::copy(deto0.begin(),deto0.end(),deto.begin());\n"
-	  << "std::copy(sig0.begin(),sig0.end(),sigb.begin());\n"
-	  << "std::copy(sv0.begin(),sv0.end(),sv.begin());\n"
-	  << "deto[i] -= " << this->strainPerturbationValue << ";\n"
-	  << "ansys::AnsysData d3 = {&sigf[0],&D[0],&sv[0],\n"
-	  << "                         SEDEL,SEDPL,EPSEQ,EPSPL,EPSZZ,\n"
-	  << "                         *NTENS,*NPROPS,*NSTATV,*DTIME,DROT,\n"
-	  << "                         STRAN,&deto[0],TEMP,DTEMP,PROPS,"
-	  << "if(ansys::AnsysInterface<tfel::material::ModellingHypothesis::"
-	  << ModellingHypothesis::toUpperCaseString(h) << ","
-	  << "tfel::material::" << mb.getClassName() << ">::exe(d3)!=0){\n"
-	  << "return;\n"
-	  << "}\n"
-	  << "for(ansys::AnsysInt j=0;j!=*NTENS;++j){\n"
-	  << "nD[j*(*NTENS)+i] = (sigf[j]-sigb[j])/(2.*" << this->strainPerturbationValue << ");\n"
-	  << "}\n"
-	  << "}\n"
-	  << "// comparison\n"
-	  << "m=0.;\n"
-	  << "mDt=0.;\n"
-	  << "mnDt=0.;\n"
-	  << "for(i=0;i!=(*NTENS)*(*NTENS);++i){\n"
-	  << "mDt=std::max(mDt,*(DDSDDE+i));\n"
-	  << "mnDt=std::max(mnDt,nD[i]);\n"
-	  << "m=std::max(m,std::abs(nD[i]-*(DDSDDE+i)));\n"
-	  << "}\n"
-	  << "if(m>" << this->tangentOperatorComparisonCriterion << "){\n"
-	  << "std::cout << \"||nDt-Dt|| = \" << m << \" (\" << 100.*m/(0.5*(mDt+mnDt)) << \"%)\"<< std::endl;\n"
-	  << "std::cout << \"Dt :\" << std::endl;\n"
-	  << "for(ansys::AnsysInt i=0;i!=*NTENS;++i){\n"
-	  << "for(ansys::AnsysInt j=0;j!=*NTENS;++j){\n"
-	  << "std::cout << *(DDSDDE+j*(*NTENS)+i) << \" \";\n"
-	  << "}\n"
-	  << "std::cout << std::endl;\n"
-	  << "}\n"
-	  << "std::cout << \"nDt :\" << std::endl;\n"
-	  << "for(ansys::AnsysInt i=0;i!=*NTENS;++i){\n"
-	  << "for(ansys::AnsysInt j=0;j!=*NTENS;++j){\n"
-	  << "std::cout << nD[j*(*NTENS)+i] << \" \";\n"
-	  << "}\n"
-	  << "std::cout << std::endl;\n"
-	  << "}\n"
-	  << "std::cout << std::endl;\n"
-	  << "}\n";
+          << "std::vector<ansys::AnsysReal> nD((*NTENS)*(*NTENS));\n"
+          << "std::vector<ansys::AnsysReal> deto(*NTENS);\n"
+          << "std::vector<ansys::AnsysReal> sigf(*NTENS);\n"
+          << "std::vector<ansys::AnsysReal> sigb(*NTENS);\n"
+          << "std::vector<ansys::AnsysReal> sv(*NSTATV);\n"
+          << "std::vector<ansys::AnsysReal> D((*NTENS)*(*NTENS));\n"
+          << "ansys::AnsysReal keycut0 = 0;\n"
+          << "ansys::AnsysReal m;\n"
+          << "ansys::AnsysReal mDt;\n"
+          << "ansys::AnsysReal mnDt;\n"
+          << "for(ansys::AnsysInt i=0;i!=*NTENS;++i){\n"
+          << "std::copy(deto0.begin(),deto0.end(),deto.begin());\n"
+          << "std::copy(sig0.begin(),sig0.end(),sigf.begin());\n"
+          << "std::copy(sv0.begin(),sv0.end(),sv.begin());\n"
+          << "deto[i] += " << this->strainPerturbationValue << ";\n"
+          << "ansys::AnsysData d2 = {&sigf[0],&D[0],&sv[0],\n"
+          << "                         SEDEL,SEDPL,EPSEQ,EPSPL,EPSZZ,\n"
+          << "                         *NTENS,*NPROPS,*NSTATV,*DTIME,DROT,\n"
+          << "                         STRAN,&deto[0],TEMP,DTEMP,PROPS,"
+          << this->getFunctionNameBasis(name) << "_getOutOfBoundsPolicy(),"
+          << sfeh << "};\n"
+          << "if(ansys::AnsysInterface<tfel::material::ModellingHypothesis::"
+          << ModellingHypothesis::toUpperCaseString(h) << ","
+          << "tfel::material::" << mb.getClassName() << ">::exe(d2)!=0){\n"
+          << "return;\n"
+          << "}\n"
+          << "ansys::AnsysReal keycut0 = 0;\n"
+          << "std::copy(deto0.begin(),deto0.end(),deto.begin());\n"
+          << "std::copy(sig0.begin(),sig0.end(),sigb.begin());\n"
+          << "std::copy(sv0.begin(),sv0.end(),sv.begin());\n"
+          << "deto[i] -= " << this->strainPerturbationValue << ";\n"
+          << "ansys::AnsysData d3 = {&sigf[0],&D[0],&sv[0],\n"
+          << "                         SEDEL,SEDPL,EPSEQ,EPSPL,EPSZZ,\n"
+          << "                         *NTENS,*NPROPS,*NSTATV,*DTIME,DROT,\n"
+          << "                         STRAN,&deto[0],TEMP,DTEMP,PROPS,"
+          << "if(ansys::AnsysInterface<tfel::material::ModellingHypothesis::"
+          << ModellingHypothesis::toUpperCaseString(h) << ","
+          << "tfel::material::" << mb.getClassName() << ">::exe(d3)!=0){\n"
+          << "return;\n"
+          << "}\n"
+          << "for(ansys::AnsysInt j=0;j!=*NTENS;++j){\n"
+          << "nD[j*(*NTENS)+i] = (sigf[j]-sigb[j])/(2.*"
+          << this->strainPerturbationValue << ");\n"
+          << "}\n"
+          << "}\n"
+          << "// comparison\n"
+          << "m=0.;\n"
+          << "mDt=0.;\n"
+          << "mnDt=0.;\n"
+          << "for(i=0;i!=(*NTENS)*(*NTENS);++i){\n"
+          << "mDt=std::max(mDt,*(DDSDDE+i));\n"
+          << "mnDt=std::max(mnDt,nD[i]);\n"
+          << "m=std::max(m,std::abs(nD[i]-*(DDSDDE+i)));\n"
+          << "}\n"
+          << "if(m>" << this->tangentOperatorComparisonCriterion << "){\n"
+          << "std::cout << \"||nDt-Dt|| = \" << m << \" (\" << "
+             "100.*m/(0.5*(mDt+mnDt)) << \"%)\"<< std::endl;\n"
+          << "std::cout << \"Dt :\" << std::endl;\n"
+          << "for(ansys::AnsysInt i=0;i!=*NTENS;++i){\n"
+          << "for(ansys::AnsysInt j=0;j!=*NTENS;++j){\n"
+          << "std::cout << *(DDSDDE+j*(*NTENS)+i) << \" \";\n"
+          << "}\n"
+          << "std::cout << std::endl;\n"
+          << "}\n"
+          << "std::cout << \"nDt :\" << std::endl;\n"
+          << "for(ansys::AnsysInt i=0;i!=*NTENS;++i){\n"
+          << "for(ansys::AnsysInt j=0;j!=*NTENS;++j){\n"
+          << "std::cout << nD[j*(*NTENS)+i] << \" \";\n"
+          << "}\n"
+          << "std::cout << std::endl;\n"
+          << "}\n"
+          << "std::cout << std::endl;\n"
+          << "}\n";
     }
     // if(hasFiniteStrainStrategy(mb)){
     //   if(getFiniteStrainStrategy(mb)=="Native"){
@@ -1569,8 +1448,8 @@ namespace mfront{
     auto throw_if = [](const bool b,const std::string& m){
       tfel::raise_if(b,"AnsysInterface::writeUMATxxBehaviourTypeSymbols: "+m);
     };
-    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
-	<< "_BehaviourType = " ;
+    out << "MFRONT_SHAREDOBJ unsigned short "
+        << this->getFunctionNameBasis(name) << "_BehaviourType = ";
     if(mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
       if((hasFiniteStrainStrategy(mb))&&
 	 (getFiniteStrainStrategy(mb)!="Native")){
@@ -1592,8 +1471,8 @@ namespace mfront{
     auto throw_if = [](const bool b,const std::string& m){
       tfel::raise_if(b,"AnsysInterface::writeUMATxxBehaviourKinematicSymbols: "+m);
     };
-    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
-	<< "_BehaviourKinematic = " ;
+    out << "MFRONT_SHAREDOBJ unsigned short "
+        << this->getFunctionNameBasis(name) << "_BehaviourKinematic = ";
     if(mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
       if((hasFiniteStrainStrategy(mb))&&
 	 (getFiniteStrainStrategy(mb)!="Native")){
@@ -1801,7 +1680,7 @@ namespace mfront{
               "$(shell " + tfel_config + " --library-path)");
     insert_if(d[lib].link_libraries,
               tfel::getLibraryInstallName("AnsysInterface"));
-    if (this->generateMTestFile) {
+    if (this->shallGenerateMTestFileOnFailure(bd)) {
       insert_if(d[lib].link_libraries,tfel::getLibraryInstallName("MTestFileGenerator"));
     }
 #if __cplusplus >= 201703L

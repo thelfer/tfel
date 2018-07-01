@@ -820,7 +820,7 @@ namespace mfront{
 	  << "::exit(-1);\n";
     }
     out << "for(int i=0;i!=*nblock;++i){\n";
-    writeAbaqusExplicitDataInitialisation(out,this->getFunctionName(name),this->getStateVariablesOffset(mb,h));
+    writeAbaqusExplicitDataInitialisation(out,this->getFunctionNameBasis(name),this->getStateVariablesOffset(mb,h));
     // this is required for gcc 4.7.2
     const bool mfront_omp = [&mb,this]{
       if(AbaqusInterfaceBase::hasOrthotropyManagementPolicy(mb)){
@@ -1040,7 +1040,7 @@ namespace mfront{
       }
     }
     out << "auto integrate = [&](const int i){\n";
-    writeAbaqusExplicitDataInitialisation(out,this->getFunctionName(name),ivoffset);
+    writeAbaqusExplicitDataInitialisation(out,this->getFunctionNameBasis(name),ivoffset);
     out << "TFEL_CONSTEXPR const " << t << " zero = " << t <<  "(0);\n";
     if(h==ModellingHypothesis::PLANESTRESS){
       // axial strain !
@@ -1184,7 +1184,7 @@ namespace mfront{
       }
     }
     out << "auto integrate = [&](const int i){\n";
-    writeAbaqusExplicitDataInitialisation(out,this->getFunctionName(name),ivoffset);
+    writeAbaqusExplicitDataInitialisation(out,this->getFunctionNameBasis(name),ivoffset);
     if(h==ModellingHypothesis::PLANESTRESS){
       const auto v = this->checkIfAxialStrainIsDefinedAndGetItsOffset(mb);
       out << "TFEL_CONSTEXPR const " << t << " zero = " << t <<  "(0);\n"
@@ -1357,7 +1357,7 @@ namespace mfront{
     out << "const auto  f = [](const " << t << " x){return std::log1p(x-1)/2;};\n"
 	<< "const auto df = [](const " << t << " x){return 1/(2*x);};\n"
 	<< "auto integrate = [&](const int i){\n";
-    writeAbaqusExplicitDataInitialisation(out,this->getFunctionName(name),ivoffset);
+    writeAbaqusExplicitDataInitialisation(out,this->getFunctionNameBasis(name),ivoffset);
     auto dime = (h==ModellingHypothesis::TRIDIMENSIONAL) ? "3u" : "2u";
     if(h==ModellingHypothesis::PLANESTRESS){
       out << "TFEL_CONSTEXPR const " << t << " zero = " << t <<  "(0);\n"
@@ -1566,7 +1566,7 @@ namespace mfront{
       return;
     }
     out << "auto integrate = [&](const int i){\n";
-    writeAbaqusExplicitDataInitialisation(out,this->getFunctionName(name),ivoffset);
+    writeAbaqusExplicitDataInitialisation(out,this->getFunctionNameBasis(name),ivoffset);
     if(h==ModellingHypothesis::PLANESTRESS){
       // les composantes axiales sont mises à l'identité pour pouvoir
       // réaliser le calcul de la rotation
@@ -1683,7 +1683,7 @@ namespace mfront{
 							   const std::string& name,
 							   const BehaviourDescription& mb) const
   {
-    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
+    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name) 
 	<< "_BehaviourType = " ;
     if(mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
       tfel::raise_if(!AbaqusInterfaceBase::hasFiniteStrainStrategy(mb),
@@ -1704,7 +1704,7 @@ namespace mfront{
 							   const std::string& name,
 							   const BehaviourDescription& mb) const
   {
-    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
+    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name) 
 	<< "_BehaviourKinematic = " ;
     if(mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
       tfel::raise_if(!AbaqusInterfaceBase::hasFiniteStrainStrategy(mb),

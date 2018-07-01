@@ -54,7 +54,8 @@ namespace mfront {
     return "Aster";
   }  // end of AsterInterface::getInterfaceName
 
-  std::string AsterInterface::getFunctionName(const std::string& name) const {
+  std::string AsterInterface::getFunctionNameBasis(
+      const std::string& name) const {
     return "aster" + makeLowerCase(name);
   }  // end of AsterInterface::getLibraryName
 
@@ -86,7 +87,8 @@ namespace mfront {
       }
     }
     if (key == "@AsterGenerateMTestFileOnFailure") {
-      this->generateMTestFile = this->readBooleanValue(key, current, end);
+      this->setGenerateMTestFileOnFailureAttribute(
+          bd, this->readBooleanValue(key, current, end));
       return {true, current};
     } else if (key == "@AsterCompareToNumericalTangentOperator") {
       this->compareToNumericalTangentOperator = this->readBooleanValue(key, current, end);
@@ -260,7 +262,7 @@ namespace mfront {
     this->writeSetOutOfBoundsPolicyFunctionDeclaration(out, name);
     this->writeSetParametersFunctionsDeclarations(out, name, mb);
 
-    out << "MFRONT_SHAREDOBJ char *" << this->getFunctionName(name)
+    out << "MFRONT_SHAREDOBJ char *" << this->getFunctionNameBasis(name)
         << "_getIntegrationErrorMessage();\n\n";
 
     out << "MFRONT_SHAREDOBJ void\n"
@@ -397,7 +399,7 @@ namespace mfront {
     this->writeSetParametersFunctionsImplementations(out, name, mb);
     this->writeSetOutOfBoundsPolicyFunctionImplementation(out, name);
 
-    out << "char *" << this->getFunctionName(name) << "_getIntegrationErrorMessage(){\n"
+    out << "char *" << this->getFunctionNameBasis(name) << "_getIntegrationErrorMessage(){\n"
         << "#if (defined __GNUC__) && (!defined __clang__) && "
            "(!defined __INTEL_COMPILER) && (!defined __PGI)\n"
         << "#if __GNUC__ * 10000+__GNUC_MINOR__ * 100 <  40800\n"
@@ -409,7 +411,7 @@ namespace mfront {
         << "static thread_local char msg[128];\n"
         << "#endif /* (defined __GNUC__) ...*/\n"
         << "return msg;\n"
-        << "} // end of " << this->getFunctionName(name) << "_getIntegrationErrorMessage\n\n";
+        << "} // end of " << this->getFunctionNameBasis(name) << "_getIntegrationErrorMessage\n\n";
 
     string dv0;
     string dv1;
@@ -465,10 +467,10 @@ namespace mfront {
         << "const aster::AsterInt *const NUMMOD"   /*< type de modélisation */
         << ")\n";
     out << "{\n";
-    out << "char * msg = " << this->getFunctionName(name) << "_getIntegrationErrorMessage();\n";
+    out << "char * msg = " << this->getFunctionNameBasis(name) << "_getIntegrationErrorMessage();\n";
     if (((getDebugMode()) || (this->compareToNumericalTangentOperator) ||
          (this->savesTangentOperator)) &&
-        (!this->generateMTestFile)) {
+        (!this->shallGenerateMTestFileOnFailure(mb))) {
       out << "using namespace std;\n";
     }
     if (mb.getAttribute(BehaviourData::profiling, false)) {
@@ -478,7 +480,7 @@ namespace mfront {
           << "Profiler::getProfiler(),\n"
           << "BehaviourProfiler::TOTALTIME);\n";
     }
-    this->generateMTestFile1(out);
+    this->generateMTestFile1(out, mb);
     if ((getDebugMode()) || (this->compareToNumericalTangentOperator)) {
       out << "const bool computeTangentOperator = (*DDSOE>0.5);\n";
     }
@@ -493,9 +495,9 @@ namespace mfront {
     if (!this->savesTangentOperator) {
       out << "if(aster::AsterInterface<tfel::material::" << mb.getClassName()
           << ">::exe(msg,NTENS,DTIME,DROT,DDSOE," << dv0 << "," << dv1 << ",TEMP,DTEMP,PROPS,NPROPS,"
-          << "PREDEF,DPRED,STATEV,NSTATV,STRESS,NUMMOD," << getFunctionName(name)
+          << "PREDEF,DPRED,STATEV,NSTATV,STRESS,NUMMOD," << this->getFunctionNameBasis(name)
           << "_getOutOfBoundsPolicy()," << sfeh << ")!=0){\n";
-      this->generateMTestFile2(out, mb.getBehaviourType(), name, "", mb);
+      this->generateMTestFile2(out,mb, mb.getBehaviourType(), name, "");
       out << "*PNEWDT = -1.;\n";
       out << "return;\n";
       out << "}\n";
@@ -510,9 +512,9 @@ namespace mfront {
              "std::max(*(NSTATV)-(*NTENS)*(*NTENS),aster::AsterInt(1));\n"
           << "if(aster::AsterInterface<tfel::material::" << mb.getClassName()
           << ">::exe(msg,NTENS,DTIME,DROT,DDSOE," << dv0 << "," << dv1 << ",TEMP,DTEMP,PROPS,NPROPS,"
-          << "PREDEF,DPRED,STATEV,&nNSTATV,STRESS,NUMMOD," << getFunctionName(name)
+          << "PREDEF,DPRED,STATEV,&nNSTATV,STRESS,NUMMOD," << this->getFunctionNameBasis(name)
           << "_getOutOfBoundsPolicy()," << sfeh << ")!=0){\n";
-      this->generateMTestFile2(out, mb.getBehaviourType(), name, "", mb);
+      this->generateMTestFile2(out, mb, mb.getBehaviourType(), name, "");
       out << "*PNEWDT = -1.;\n"
           << "return;\n"
           << "}\n"
@@ -556,12 +558,12 @@ namespace mfront {
       if (!this->savesTangentOperator) {
         out << "if(aster::AsterInterface<tfel::material::" << mb.getClassName()
             << ">::exe(nullptr,NTENS,DTIME,DROT,&D[0],STRAN,&deto[0],TEMP,DTEMP,PROPS,NPROPS,"
-            << "PREDEF,DPRED,&sv[0],NSTATV,&sigf[0],NUMMOD," << getFunctionName(name)
+            << "PREDEF,DPRED,&sv[0],NSTATV,&sigf[0],NUMMOD," << this->getFunctionNameBasis(name)
             << "_getOutOfBoundsPolicy()," << sfeh << ")!=0){\n";
       } else {
         out << "if(aster::AsterInterface<tfel::material::" << mb.getClassName()
             << ">::exe(nullptr,NTENS,DTIME,DROT,&D[0],STRAN,&deto[0],TEMP,DTEMP,PROPS,NPROPS,"
-            << "PREDEF,DPRED,&sv[0],&nNSTATV,&sigf[0],NUMMOD," << getFunctionName(name)
+            << "PREDEF,DPRED,&sv[0],&nNSTATV,&sigf[0],NUMMOD," << this->getFunctionNameBasis(name)
             << "_getOutOfBoundsPolicy()," << sfeh << ")!=0){\n";
       }
       out << "return;\n"
@@ -574,12 +576,12 @@ namespace mfront {
       if (!this->savesTangentOperator) {
         out << "if(aster::AsterInterface<tfel::material::" << mb.getClassName()
             << ">::exe(nullptr,NTENS,DTIME,DROT,&D[0],STRAN,&deto[0],TEMP,DTEMP,PROPS,NPROPS,"
-            << "PREDEF,DPRED,&sv[0],NSTATV,&sigb[0],NUMMOD," << getFunctionName(name)
+            << "PREDEF,DPRED,&sv[0],NSTATV,&sigb[0],NUMMOD," << this->getFunctionNameBasis(name)
             << "_getOutOfBoundsPolicy()," << sfeh << ")!=0){\n";
       } else {
         out << "if(aster::AsterInterface<tfel::material::" << mb.getClassName()
             << ">::exe(nullptr,NTENS,DTIME,DROT,&D[0],STRAN,&deto[0],TEMP,DTEMP,PROPS,NPROPS,"
-            << "PREDEF,DPRED,&sv[0],&nNSTATV,&sigb[0],NUMMOD," << getFunctionName(name)
+            << "PREDEF,DPRED,&sv[0],&nNSTATV,&sigb[0],NUMMOD," << this->getFunctionNameBasis(name)
             << "_getOutOfBoundsPolicy()," << sfeh << ")!=0){\n";
       }
       out << "return;\n"
@@ -620,7 +622,7 @@ namespace mfront {
     }
     out << "}\n\n";
     out << "MFRONT_SHAREDOBJ void\n"
-        << this->getFunctionName(name) << "("
+        << this->getFunctionNameBasis(name) << "("
         << "aster::AsterReal *const STRESS," /*< tenseur des contraintes */
         << "aster::AsterReal *const STATEV," /*< variables internes */
         << "aster::AsterReal *const DDSOE,"  /*< matrice jacobienne du modèle */
@@ -705,7 +707,7 @@ namespace mfront {
     insert_if(d[lib].sources, "aster" + name + ".cxx");
     d.headers.push_back("MFront/Aster/aster" + name + ".hxx");
     insert_if(d[lib].link_libraries, tfel::getLibraryInstallName("AsterInterface"));
-    if (this->generateMTestFile) {
+    if (this->shallGenerateMTestFileOnFailure(bd)) {
       insert_if(d[lib].link_libraries, tfel::getLibraryInstallName("MTestFileGenerator"));
     }
     insert_if(d[lib].link_directories, "$(shell " + tfel_config + " --library-path)");
@@ -719,115 +721,8 @@ namespace mfront {
                                          "--material --mfront-profiling --physical-constants)");
 #endif /* __cplusplus < 201703L */
     // insert_if(d[lib].epts,name);
-    insert_if(d[lib].epts, this->getFunctionName(name));
+    insert_if(d[lib].epts, this->getFunctionNameBasis(name));
   }  // end of AsterInterface::getTargetsDescription
-
-  std::pair<std::vector<UMATInterfaceBase::UMATMaterialProperty>, SupportedTypes::TypeSize>
-  AsterInterface::buildMaterialPropertiesList(const BehaviourDescription& mb,
-                                              const Hypothesis h) const {
-    auto throw_if = [](const bool b, const std::string& m) {
-      tfel::raise_if(b, "AsterInterface::buildMaterialPropertiesList: " + m);
-    };
-    if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
-      const auto ah = this->getModellingHypothesesToBeTreated(mb);
-      std::set<Hypothesis> uh;
-      for (const auto& lh : ah) {
-        if (!mb.hasSpecialisedMechanicalData(lh)) {
-          uh.insert(lh);
-        }
-      }
-      throw_if(uh.empty(),
-               "internal error : the mechanical behaviour says that not "
-               "all handled mechanical data are specialised, but we found none.");
-      // material properties for all the selected hypothesis
-      auto mpositions =
-          std::vector<std::pair<std::vector<UMATMaterialProperty>, SupportedTypes::TypeSize>>{};
-      for (const auto& lh : uh) {
-        mpositions.push_back(this->buildMaterialPropertiesList(mb, lh));
-      }
-      auto ph = uh.begin();
-      auto pum = mpositions.begin();
-      const auto& mfirst = *pum;
-      ++ph;
-      ++pum;
-      for (; ph != uh.end(); ++ph, ++pum) {
-        const auto& d = mb.getBehaviourData(ModellingHypothesis::UNDEFINEDHYPOTHESIS);
-        const auto& mps = d.getMaterialProperties();
-        for (const auto& mp : mps) {
-          const auto& mp1 = findUMATMaterialProperty(mfirst.first, mb.getExternalName(h, mp.name));
-          const auto& mp2 = findUMATMaterialProperty(pum->first, mb.getExternalName(h, mp.name));
-          auto o1 = mp1.offset;
-          o1 += pum->second;
-          auto o2 = mp2.offset;
-          o2 += mfirst.second;
-          throw_if(o1 != o2, "incompatible offset for material property '" + mp.name + "' (aka '" +
-                                 mp1.name +
-                                 "'). This is one pitfall of the umat interface. "
-                                 "To by-pass this limitation, you may want to explicitely "
-                                 "specialise some modelling hypotheses");
-        }
-      }
-      return mfirst;
-    }
-    auto res = std::pair<std::vector<UMATMaterialProperty>, SupportedTypes::TypeSize>{};
-    auto& mprops = res.first;
-    throw_if(
-        (h != ModellingHypothesis::GENERALISEDPLANESTRAIN) &&
-            (h != ModellingHypothesis::AXISYMMETRICAL) && (h != ModellingHypothesis::PLANESTRAIN) &&
-            (h != ModellingHypothesis::PLANESTRESS) && (h != ModellingHypothesis::TRIDIMENSIONAL),
-        std::string("unsupported modelling hypothesis") +
-            ((h == ModellingHypothesis::UNDEFINEDHYPOTHESIS)
-                 ? " (default)"
-                 : " '" + ModellingHypothesis::toString(h) + "'"));
-    if (mb.getAttribute(BehaviourDescription::requiresStiffnessTensor, false)) {
-      if (mb.getSymmetryType() == mfront::ISOTROPIC) {
-        this->appendToMaterialPropertiesList(mprops, "stress", "YoungModulus", "youn", false);
-        this->appendToMaterialPropertiesList(mprops, "real", "PoissonRatio", "nu", false);
-      } else if (mb.getSymmetryType() == mfront::ORTHOTROPIC) {
-        this->appendToMaterialPropertiesList(mprops, "stress", "YoungModulus1", "yg1", false);
-        this->appendToMaterialPropertiesList(mprops, "stress", "YoungModulus2", "yg2", false);
-        this->appendToMaterialPropertiesList(mprops, "stress", "YoungModulus3", "yg3", false);
-        this->appendToMaterialPropertiesList(mprops, "real", "PoissonRatio12", "nu12", false);
-        this->appendToMaterialPropertiesList(mprops, "real", "PoissonRatio23", "nu23", false);
-        this->appendToMaterialPropertiesList(mprops, "real", "PoissonRatio13", "nu13", false);
-        this->appendToMaterialPropertiesList(mprops, "stress", "ShearModulus12", "g12", false);
-        if (h == ModellingHypothesis::TRIDIMENSIONAL) {
-          this->appendToMaterialPropertiesList(mprops, "stress", "ShearModulus23", "g23", false);
-          this->appendToMaterialPropertiesList(mprops, "stress", "ShearModulus13", "g13", false);
-        } else if ((h != ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) &&
-                   (h != ModellingHypothesis::GENERALISEDPLANESTRAIN) &&
-                   (h != ModellingHypothesis::AXISYMMETRICAL) &&
-                   (h != ModellingHypothesis::PLANESTRAIN) &&
-                   (h != ModellingHypothesis::PLANESTRESS)) {
-          throw_if(true, "unsupported modelling hypothesis");
-        }
-      } else {
-        throw_if(true, "unsupported behaviour symmetry type");
-      }
-    }
-    if (mb.getAttribute(BehaviourDescription::requiresThermalExpansionCoefficientTensor, false)) {
-      if (mb.getSymmetryType() == mfront::ISOTROPIC) {
-        this->appendToMaterialPropertiesList(mprops, "thermalexpansion", "ThermalExpansion", "alph",
-                                             false);
-      } else if (mb.getSymmetryType() == mfront::ORTHOTROPIC) {
-        this->appendToMaterialPropertiesList(mprops, "thermalexpansion", "ThermalExpansion1",
-                                             "alp1", false);
-        this->appendToMaterialPropertiesList(mprops, "thermalexpansion", "ThermalExpansion2",
-                                             "alp2", false);
-        this->appendToMaterialPropertiesList(mprops, "thermalexpansion", "ThermalExpansion3",
-                                             "alp3", false);
-      } else {
-        throw_if(true, "unsupported behaviour symmetry type");
-      }
-    }
-    if (!mprops.empty()) {
-      const auto& m = mprops.back();
-      res.second = m.offset;
-      res.second += SupportedTypes::getTypeSize(m.type, m.arraySize);
-    }
-    this->completeMaterialPropertiesList(mprops, mb, h);
-    return res;
-  }  // end of AsterInterface::buildMaterialPropertiesList
 
   void AsterInterface::writeUMATxxAdditionalSymbols(std::ostream&,
                                                     const std::string&,
@@ -842,7 +737,7 @@ namespace mfront {
     auto throw_if = [](const bool b, const std::string& m) {
       tfel::raise_if(b, "AsterInterface::writeUMATxxBehaviourTypeSymbols: " + m);
     };
-    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) << "_BehaviourType = ";
+    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name) << "_BehaviourType = ";
     if (mb.getBehaviourType() == BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
       out << "1u;\n\n";
     } else if (mb.getBehaviourType() == BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
@@ -860,7 +755,7 @@ namespace mfront {
     auto throw_if = [](const bool b, const std::string& m) {
       tfel::raise_if(b, "AsterInterface::writeUMATxxBehaviourKinematicSymbols: " + m);
     };
-    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name)
+    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name)
         << "_BehaviourKinematic = ";
     if (mb.getBehaviourType() == BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
       if (mb.isStrainMeasureDefined()) {
@@ -893,7 +788,7 @@ namespace mfront {
     auto throw_if = [](const bool c, const std::string& m) {
       tfel::raise_if(c, "AsterInterface::writeUMATxxSpecificSymbols: " + m);
     };
-    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name)
+    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name)
         << "_savesTangentOperator = ";
     if (this->savesTangentOperator) {
       out << "1";
@@ -902,7 +797,7 @@ namespace mfront {
     }
     out << ";\n";
     if (bd.getBehaviourType() == BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
-      out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name)
+      out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name)
           << "_FiniteStrainFormulation = ";
       if ((this->afsf == SIMO_MIEHE) || (this->afsf == UNDEFINEDFINITESTRAINFORMULATION)) {
         out << "1u;\n";

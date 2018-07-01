@@ -518,7 +518,7 @@ namespace mfront {
     }  // end of HookeStressPotentialBase::endTreatment
 
     void HookeStressPotentialBase::declareComputeStressForOrthotropicBehaviour(
-        BehaviourDescription& bd) const {
+        BehaviourDescription&) const {
       if (getVerboseMode() >= VERBOSE_DEBUG) {
         getLogStream() << "HookeStressPotentialBase::"
                           "declareComputeStressForOrthotropicBehaviour: "

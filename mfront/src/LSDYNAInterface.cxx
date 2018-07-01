@@ -227,7 +227,8 @@ namespace mfront {
     return this->getInterfaceName() + bd.getLibrary();
   }  // end of LSDYNAInterface::getLibraryName
 
-  std::string LSDYNAInterface::getFunctionName(const std::string& name) const {
+  std::string LSDYNAInterface::getFunctionNameBasis(
+      const std::string& name) const {
     return name;
   } // end of LSDYNAInterface::getFunctionName
 
@@ -880,13 +881,6 @@ namespace mfront {
       const Hypothesis) const {
     return {};
   };
-
-  std::pair<std::vector<LSDYNAInterface::UMATMaterialProperty>,
-            SupportedTypes::TypeSize>
-  LSDYNAInterface::buildMaterialPropertiesList(const BehaviourDescription&,
-                                               const Hypothesis) const {
-    return {};
-  }
 
   void LSDYNAInterface::writeMTestFileGeneratorSetModellingHypothesis(
       std::ostream&) const {

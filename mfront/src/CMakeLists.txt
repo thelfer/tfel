@@ -129,6 +129,7 @@ set(TFELMFront_SOURCES
     ExcelMaterialPropertyInternalInterface.cxx
     MFrontModelInterface.cxx
     UMATInterfaceBase.cxx
+    GenericBehaviourInterface.cxx
     OptionDescription.cxx
     BrickUtilities.cxx
     StressPotential.cxx

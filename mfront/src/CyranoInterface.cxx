@@ -80,7 +80,8 @@ namespace mfront {
     return "Cyrano";
   }  // end of CyranoInterface::getInterfaceName
 
-  std::string CyranoInterface::getFunctionName(const std::string& n) const {
+  std::string CyranoInterface::getFunctionNameBasis(
+      const std::string& n) const {
     return "cyrano" + makeLowerCase(n);
   }  // end of CyranoInterface::getLibraryName
 
@@ -100,7 +101,7 @@ namespace mfront {
         maximumSubStepping(0u) {}  // end of CyranoInterface::CyranoInterface
 
   std::pair<bool, CyranoInterface::tokens_iterator> CyranoInterface::treatKeyword(
-      BehaviourDescription&,
+      BehaviourDescription& bd,
       const std::string& key,
       const std::vector<std::string>& i,
       tokens_iterator current,
@@ -115,7 +116,8 @@ namespace mfront {
     }
     if ((key == "@CyranoGenerateMTestFileOnFailure") ||
         (key == "@UMATGenerateMTestFileOnFailure")) {
-      this->generateMTestFile = this->readBooleanValue(key, current, end);
+      this->setGenerateMTestFileOnFailureAttribute(
+          bd, this->readBooleanValue(key, current, end));
       return {true, current};
     } else if ((key == "@CyranoUseTimeSubStepping") || (key == "@UMATUseTimeSubStepping")) {
       this->useTimeSubStepping = this->readBooleanValue(key, current, end);
@@ -147,60 +149,6 @@ namespace mfront {
     return {false, current};
   }  // end of treatKeyword
 
-  std::pair<std::vector<UMATInterfaceBase::UMATMaterialProperty>, SupportedTypes::TypeSize>
-  CyranoInterface::buildMaterialPropertiesList(const BehaviourDescription& mb,
-                                               const Hypothesis h) const {
-    using namespace std;
-    pair<vector<UMATMaterialProperty>, SupportedTypes::TypeSize> res;
-    auto& mprops = res.first;
-    tfel::raise_if((h != ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) &&
-                       (h != ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS) &&
-                       (h != ModellingHypothesis::UNDEFINEDHYPOTHESIS),
-                   "CyranoInterface::buildMaterialPropertiesList: "
-                   "unsupported modelling hypothesis ");
-    if (mb.getAttribute(BehaviourDescription::requiresStiffnessTensor, false)) {
-      if (mb.getSymmetryType() == mfront::ISOTROPIC) {
-        this->appendToMaterialPropertiesList(mprops, "stress", "YoungModulus", "youn", false);
-        this->appendToMaterialPropertiesList(mprops, "real", "PoissonRatio", "nu", false);
-      } else if (mb.getSymmetryType() == mfront::ORTHOTROPIC) {
-        this->appendToMaterialPropertiesList(mprops, "stress", "YoungModulus1", "yg1", false);
-        this->appendToMaterialPropertiesList(mprops, "stress", "YoungModulus2", "yg2", false);
-        this->appendToMaterialPropertiesList(mprops, "stress", "YoungModulus3", "yg3", false);
-        this->appendToMaterialPropertiesList(mprops, "real", "PoissonRatio12", "nu12", false);
-        this->appendToMaterialPropertiesList(mprops, "real", "PoissonRatio23", "nu23", false);
-        this->appendToMaterialPropertiesList(mprops, "real", "PoissonRatio13", "nu13", false);
-      } else {
-        tfel::raise(
-            "CyranoInterface::buildMaterialPropertiesList : "
-            "unsupported behaviour symmetry type");
-      }
-    }
-    if (mb.getAttribute(BehaviourDescription::requiresThermalExpansionCoefficientTensor, false)) {
-      if (mb.getSymmetryType() == mfront::ISOTROPIC) {
-        this->appendToMaterialPropertiesList(mprops, "thermalexpansion", "ThermalExpansion", "alph",
-                                             false);
-      } else if (mb.getSymmetryType() == mfront::ORTHOTROPIC) {
-        this->appendToMaterialPropertiesList(mprops, "thermalexpansion", "ThermalExpansion1",
-                                             "alp1", false);
-        this->appendToMaterialPropertiesList(mprops, "thermalexpansion", "ThermalExpansion2",
-                                             "alp2", false);
-        this->appendToMaterialPropertiesList(mprops, "thermalexpansion", "ThermalExpansion3",
-                                             "alp3", false);
-      } else {
-        tfel::raise(
-            "CyranoInterface::buildMaterialPropertiesList: "
-            "unsupported behaviour symmetry type");
-      }
-    }
-    if (!mprops.empty()) {
-      const auto& m = mprops.back();
-      res.second = m.offset;
-      res.second += SupportedTypes::getTypeSize(m.type, m.arraySize);
-    }
-    this->completeMaterialPropertiesList(mprops, mb, h);
-    return res;
-  }  // end of CyranoInterface::buildMaterialPropertiesList
-
   std::set<CyranoInterface::Hypothesis> CyranoInterface::getModellingHypothesesToBeTreated(
       const BehaviourDescription& mb) const {
     // treatment
@@ -227,11 +175,12 @@ namespace mfront {
   void CyranoInterface::writeGetOutOfBoundsPolicyFunctionImplementation(
       std::ostream& out, const std::string& name) const {
     out << "static tfel::material::OutOfBoundsPolicy&\n"
-        << getFunctionName(name) << "_getOutOfBoundsPolicy(){\n"
+        << this->getFunctionNameBasis(name) << "_getOutOfBoundsPolicy(){\n"
         << "using namespace cyrano;\n"
         << "using namespace tfel::material;\n"
         << "static OutOfBoundsPolicy policy = "
-           "CyranoOutOfBoundsPolicy::getCyranoOutOfBoundsPolicy().getOutOfBoundsPolicy();\n"
+           "CyranoOutOfBoundsPolicy::getCyranoOutOfBoundsPolicy()."
+           "getOutOfBoundsPolicy();\n"
         << "return policy;\n"
         << "}\n\n";
   }  // end of MFrontCyranoInterface::writeGetOutOfBoundsPolicyFunctionImplementation
@@ -356,7 +305,7 @@ namespace mfront {
     if (mb.getAttribute(BehaviourData::profiling, false)) {
       out << "#include\"MFront/BehaviourProfiler.hxx\"\n\n";
     }
-    if (this->generateMTestFile) {
+    if (this->shallGenerateMTestFileOnFailure(mb)) {
       out << "#include\"MFront/Cyrano/CyranoGetModellingHypothesis.hxx\"\n";
     }
     out << "#include\"MFront/Cyrano/CyranoInterface.hxx\"\n\n";
@@ -421,11 +370,11 @@ namespace mfront {
     insert_if(d[lib].include_directories, "$(shell " + tfel_config + " --include-path)");
     insert_if(d[lib].sources, "cyrano" + name + ".cxx");
     insert_if(d[lib].epts, name);
-    insert_if(d[lib].epts, this->getFunctionName(name));
+    insert_if(d[lib].epts, this->getFunctionNameBasis(name));
     insert_if(d.headers, "MFront/Cyrano/cyrano" + name + ".hxx");
     insert_if(d[lib].link_directories, "$(shell " + tfel_config + " --library-path)");
     insert_if(d[lib].link_libraries, tfel::getLibraryInstallName("CyranoInterface"));
-    if (this->generateMTestFile) {
+    if (this->shallGenerateMTestFileOnFailure(bd)) {
       insert_if(d[lib].link_libraries, tfel::getLibraryInstallName("MTestFileGenerator"));
     }
 #if __cplusplus >= 201703L
@@ -457,7 +406,8 @@ namespace mfront {
     auto throw_if = [](const bool b, const std::string& m) {
       tfel::raise_if(b, "CyranoInterface::writeUMATxxBehaviourTypeSymbols: " + m);
     };
-    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) << "_BehaviourType = ";
+    out << "MFRONT_SHAREDOBJ unsigned short "
+        << this->getFunctionNameBasis(name) << "_BehaviourType = ";
     if (mb.getBehaviourType() == BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
       if (mb.isStrainMeasureDefined()) {
         if (mb.getStrainMeasure() == BehaviourDescription::LINEARISED) {
@@ -487,8 +437,8 @@ namespace mfront {
         tfel::raise("CyranoInterface::writeUMATxxBehaviourKinematicSymbols: " + m);
       }
     };
-    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name)
-        << "_BehaviourKinematic = ";
+    out << "MFRONT_SHAREDOBJ unsigned short "
+        << this->getFunctionNameBasis(name) << "_BehaviourKinematic = ";
     if (mb.getBehaviourType() == BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
       if (mb.isStrainMeasureDefined()) {
         if (mb.getStrainMeasure() == BehaviourDescription::LINEARISED) {
@@ -592,25 +542,26 @@ namespace mfront {
         << "cyrano::CyranoReal *const STRESS,const cyrano::CyranoInt    *const NDI,\n"
         << "cyrano::CyranoInt    *const KINC)\n";
     out << "{\n";
-    out << "const auto op = " << getFunctionName(n) << "_getOutOfBoundsPolicy();\n";
+    out << "const auto op = " << this->getFunctionNameBasis(n)
+        << "_getOutOfBoundsPolicy();\n";
     if (mb.getAttribute(BehaviourData::profiling, false)) {
       out << "using mfront::BehaviourProfiler;\n";
       out << "using tfel::material::" << mb.getClassName() << "Profiler;\n";
       out << "auto total_timer(" << mb.getClassName() << "Profiler::getProfiler(),\n"
           << "BehaviourProfiler::TOTALTIME);\n";
     }
-    this->generateMTestFile1(out);
+    this->generateMTestFile1(out, mb);
     out << "cyrano::CyranoInterface<tfel::material::" << mb.getClassName()
         << ">::exe(NTENS,DTIME,DROT,DDSDDE,STRAN,DSTRAN,TEMP,DTEMP,PROPS,NPROPS,"
         << "PREDEF,DPRED,STATEV,NSTATV,STRESS,NDI,KINC,"
         << "cyrano::CyranoStandardSmallStrainStressFreeExpansionHandler,op);\n";
-    if (this->generateMTestFile) {
+    if (this->shallGenerateMTestFileOnFailure(mb)) {
       out << "if(*KINC!=1){\n";
-      this->generateMTestFile2(out, BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR, n, "", mb);
+      this->generateMTestFile2(out, mb, BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR, n, "");
       out << "}\n";
     }
     out << "}\n\n";
-    writeSecondaryCyranoFunction(out, this->getFunctionName(n), n);
+    writeSecondaryCyranoFunction(out, this->getFunctionNameBasis(n), n);
   }  // end of CyranoInterface::writeStandardCyranoFunction
 
   void CyranoInterface::writeLogarithmicStrainCyranoFunction(std::ostream& out,
@@ -631,15 +582,16 @@ namespace mfront {
         << "cyrano::CyranoReal *const STATEV,const cyrano::CyranoInt    *const NSTATV,\n"
         << "cyrano::CyranoReal *const STRESS,const cyrano::CyranoInt    *const NDI,\n"
         << "cyrano::CyranoInt    *const KINC)\n"
-        << "{\n"
-        << "const auto op = " << getFunctionName(n) << "_getOutOfBoundsPolicy();\n";
+        << "{\n";
+    out << "const auto op = " << this->getFunctionNameBasis(n)
+        << "_getOutOfBoundsPolicy();\n";
     if (mb.getAttribute(BehaviourData::profiling, false)) {
       out << "using mfront::BehaviourProfiler;\n"
           << "using tfel::material::" << mb.getClassName() << "Profiler;\n"
           << "auto total_timer(" << mb.getClassName() << "Profiler::getProfiler(),\n"
           << "BehaviourProfiler::TOTALTIME);\n";
     }
-    this->generateMTestFile1(out);
+    this->generateMTestFile1(out, mb);
     out << "const auto k = std::abs(*DDSDDE)>0.5;\n"
         << "// computing the logarithmic strain\n"
         << "cyrano::CyranoReal eto[3];\n"
@@ -779,13 +731,13 @@ namespace mfront {
     }
     out << "} // end of if(*KINC==1)\n";
     out << "} // end of if(*NDI!=1)\n";
-    if (this->generateMTestFile) {
+    if (this->shallGenerateMTestFileOnFailure(mb)) {
       out << "if(*KINC!=1){\n";
-      this->generateMTestFile2(out, BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR, n, "", mb);
+      this->generateMTestFile2(out, mb,BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR, n, "");
       out << "}\n";
     }
     out << "}\n\n";
-    writeSecondaryCyranoFunction(out, this->getFunctionName(n), n);
+    writeSecondaryCyranoFunction(out, this->getFunctionNameBasis(n), n);
   }  // end of CyranoInterface::writeLogarithmicStrainCyranoFunction
 
   void CyranoInterface::writeCyranoBehaviourTraits(std::ostream& out,

@@ -279,20 +279,17 @@ namespace mfront {
   }  // end of CastemInterface::getInterfaceName
 
   std::string CastemInterface::getLibraryName(const BehaviourDescription& mb) const {
-    auto lib = std::string{};
     if (mb.getLibrary().empty()) {
       if (!mb.getMaterialName().empty()) {
-        lib = "Umat" + mb.getMaterialName();
+        return "Umat" + mb.getMaterialName();
       } else {
-        lib = "UmatBehaviour";
+        return "UmatBehaviour";
       }
-    } else {
-      lib = "Umat" + mb.getLibrary();
     }
-    return lib;
+    return "Umat" + mb.getLibrary();
   }  // end of CastemInterface::getLibraryName
 
-  std::string CastemInterface::getFunctionName(const std::string& name) const {
+  std::string CastemInterface::getFunctionNameBasis(const std::string& name) const {
     return "umat" + makeLowerCase(name);
   }  // end of CastemInterface::getLibraryName
 
@@ -335,7 +332,8 @@ namespace mfront {
     }
     if ((key == "@CastemGenerateMTestFileOnFailure") ||
         (key == "@UMATGenerateMTestFileOnFailure")) {
-      this->generateMTestFile = this->readBooleanValue(key, current, end);
+      this->setGenerateMTestFileOnFailureAttribute(
+          bd, this->readBooleanValue(key, current, end));
       return {true, current};
     } else if ((key == "@CastemUseTimeSubStepping") || (key == "@UMATUseTimeSubStepping")) {
       bd.setAttribute(CastemInterface::useTimeSubStepping,
@@ -589,7 +587,7 @@ namespace mfront {
   void CastemInterface::writeGetOutOfBoundsPolicyFunctionImplementation(
       std::ostream& out, const std::string& name) const {
     out << "static tfel::material::OutOfBoundsPolicy&\n"
-        << getFunctionName(name) << "_getOutOfBoundsPolicy(){\n"
+        << this->getFunctionNameBasis(name) << "_getOutOfBoundsPolicy(){\n"
         << "using namespace castem;\n"
         << "using namespace tfel::material;\n"
         << "static OutOfBoundsPolicy policy = "
@@ -601,8 +599,8 @@ namespace mfront {
   void CastemInterface::writeSetOutOfBoundsPolicyFunctionImplementation2(
       std::ostream& out, const std::string& name, const std::string& name2) const {
     out << "MFRONT_SHAREDOBJ void\n"
-        << this->getFunctionName(name2) << "_setOutOfBoundsPolicy(const int p){\n"
-        << this->getFunctionName(name) << "_setOutOfBoundsPolicy(p);\n"
+        << this->getFunctionNameBasis(name2) << "_setOutOfBoundsPolicy(const int p){\n"
+        << this->getFunctionNameBasis(name) << "_setOutOfBoundsPolicy(p);\n"
         << "}\n\n";
   }
 
@@ -779,7 +777,7 @@ namespace mfront {
     if (mb.getAttribute(BehaviourData::profiling, false)) {
       out << "#include\"MFront/BehaviourProfiler.hxx\"\n\n";
     }
-    if (this->generateMTestFile) {
+    if (this->shallGenerateMTestFileOnFailure(mb)) {
       throw_if((mb.getBehaviourType() != BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) &&
                    (mb.getBehaviourType() != BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR),
                "MTest file generation is not unsupported for this behaviour type");
@@ -819,9 +817,9 @@ namespace mfront {
             this->generateUMATxxSymbols(out, name, h, mb, fd);
           }
         }
-        out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name)
+        out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name)
             << "_BehaviourType = 1u;\n\n";
-        out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name)
+        out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name)
             << "_BehaviourKinematic = 1u;\n\n";
         out << "MFRONT_SHAREDOBJ unsigned short umat" << makeLowerCase(name)
             << "_Interface = 1u;\n\n";
@@ -840,9 +838,9 @@ namespace mfront {
                 this->generateUMATxxSymbols(out, name + "_frst", h, mb, fd);
               }
             }
-            out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name + "_frst")
+            out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name + "_frst")
                 << "_BehaviourType = 2u;\n\n";
-            out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name + "_frst")
+            out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name + "_frst")
                 << "_BehaviourKinematic = 3u;\n\n";
             out << "MFRONT_SHAREDOBJ unsigned short umat" << makeLowerCase(name + "_frst")
                 << "_Interface = 2u;\n\n";
@@ -858,9 +856,9 @@ namespace mfront {
                   this->generateUMATxxSymbols(out, name, h, mb, fd);
                 }
               }
-              out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name)
+              out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name)
                   << "_BehaviourType = 2u;\n\n";
-              out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name)
+              out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name)
                   << "_BehaviourKinematic = 3u;\n\n";
               out << "MFRONT_SHAREDOBJ unsigned short umat" << makeLowerCase(name)
                   << "_Interface = 2u;\n\n";
@@ -877,9 +875,9 @@ namespace mfront {
                 this->generateUMATxxSymbols(out, name + "_malls", h, mb, fd);
               }
             }
-            out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name + "_malls")
+            out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name + "_malls")
                 << "_BehaviourType = 2u;\n\n";
-            out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name + "_malls")
+            out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name + "_malls")
                 << "_BehaviourKinematic = 3u;\n\n";
             out << "MFRONT_SHAREDOBJ unsigned short umat" << makeLowerCase(name + "_malls")
                 << "_Interface = 2u;\n\n";
@@ -895,9 +893,9 @@ namespace mfront {
                   this->generateUMATxxSymbols(out, name, h, mb, fd);
                 }
               }
-              out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name)
+              out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name)
                   << "_BehaviourType = 2u;\n\n";
-              out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name)
+              out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name)
                   << "_BehaviourKinematic = 3u;\n\n";
               out << "MFRONT_SHAREDOBJ unsigned short umat" << makeLowerCase(name)
                   << "_Interface = 2u;\n\n";
@@ -916,23 +914,23 @@ namespace mfront {
                 }
               }
             }
-            out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name + "_log1D")
+            out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name + "_log1D")
                 << "_BehaviourType = 2u;\n\n";
-            out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name + "_log1D")
+            out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name + "_log1D")
                 << "_BehaviourKinematic = 4u;\n\n";
             out << "MFRONT_SHAREDOBJ unsigned short umat" << makeLowerCase(name + "_log1D")
                 << "_Interface = 1u;\n\n";
-            out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name + "_log1D")
+            out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name + "_log1D")
                 << "_nModellingHypotheses = " << 1u << "u;\n\n";
             out << "MFRONT_SHAREDOBJ const char * \n"
-                << this->getFunctionName(name + "_log1D") << "_ModellingHypotheses[1u] = {\""
+                << this->getFunctionNameBasis(name + "_log1D") << "_ModellingHypotheses[1u] = {\""
                 << ModellingHypothesis::toString(agps) << "\"};\n";
             if (fss.size() == 1u) {
               this->generateUMATxxGeneralSymbols(out, name, mb, fd);
-              out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name)
+              out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name)
                   << "_nModellingHypotheses = " << 1u << "u;\n\n";
               out << "MFRONT_SHAREDOBJ const char * \n"
-                  << this->getFunctionName(name) << "_ModellingHypotheses[1u] = {\""
+                  << this->getFunctionNameBasis(name) << "_ModellingHypotheses[1u] = {\""
                   << ModellingHypothesis::toString(agps) << "\"};\n";
               if (!mb.areAllMechanicalDataSpecialised(mh)) {
                 const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
@@ -943,9 +941,9 @@ namespace mfront {
                   this->generateUMATxxSymbols(out, name, h, mb, fd);
                 }
               }
-              out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name)
+              out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name)
                   << "_BehaviourType = 2u;\n\n";
-              out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name)
+              out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name)
                   << "_BehaviourKinematic = 4u;\n\n";
               out << "MFRONT_SHAREDOBJ unsigned short umat" << makeLowerCase(name)
                   << "_Interface = 1u;\n\n";
@@ -962,9 +960,9 @@ namespace mfront {
                 this->generateUMATxxSymbols(out, name + "_ss", h, mb, fd);
               }
             }
-            out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name + "_ss")
+            out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name + "_ss")
                 << "_BehaviourType = 1u;\n\n";
-            out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name + "_ss")
+            out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name + "_ss")
                 << "_BehaviourKinematic = 1u;\n\n";
             out << "MFRONT_SHAREDOBJ unsigned short umat" << makeLowerCase(name + "_ss")
                 << "_Interface = 1u;\n\n";
@@ -980,9 +978,9 @@ namespace mfront {
                   this->generateUMATxxSymbols(out, name, h, mb, fd);
                 }
               }
-              out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name)
+              out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name)
                   << "_BehaviourType = 1u;\n\n";
-              out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name)
+              out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name)
                   << "_BehaviourKinematic = 1u;\n\n";
               out << "MFRONT_SHAREDOBJ unsigned short umat" << makeLowerCase(name)
                   << "_Interface = 1u;\n\n";
@@ -1003,9 +1001,9 @@ namespace mfront {
               this->generateUMATxxSymbols(out, name, h, mb, fd);
             }
           }
-          out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name)
+          out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name)
               << "_BehaviourType = 1u;\n\n";
-          out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name)
+          out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name)
               << "_BehaviourKinematic = 1u;\n\n";
           out << "MFRONT_SHAREDOBJ unsigned short umat" << makeLowerCase(name)
               << "_Interface = 1u;\n\n";
@@ -1024,17 +1022,17 @@ namespace mfront {
         }
       }
       if (mb.getBehaviourType() == BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
-        out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name)
+        out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name)
             << "_BehaviourType = 2u;\n\n";
-        out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name)
+        out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name)
             << "_BehaviourKinematic = 3u;\n\n";
         out << "MFRONT_SHAREDOBJ unsigned short umat" << makeLowerCase(name)
             << "_Interface = 2u;\n\n";
       } else {
         // cohesize zone model
-        out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name)
+        out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name)
             << "_BehaviourType = 3u;\n\n";
-        out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name)
+        out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name)
             << "_BehaviourKinematic = 2u;\n\n";
         out << "MFRONT_SHAREDOBJ unsigned short umat" << makeLowerCase(name)
             << "_Interface = 1u;\n\n";
@@ -1091,7 +1089,7 @@ namespace mfront {
             << "castem::CastemInt  *const KINC,\n"
             << "const castem::StressFreeExpansionHandler& sfeh)\n"
             << "{\n"
-            << "const auto op = " << this->getFunctionName(name) << "_getOutOfBoundsPolicy();\n"
+            << "const auto op = " << this->getFunctionNameBasis(name) << "_getOutOfBoundsPolicy();\n"
             << "castem::CastemInterface<tfel::material::ModellingHypothesis::"
             << ModellingHypothesis::toUpperCaseString(h) << ","
             << "tfel::material::" << mb.getClassName()
@@ -1249,7 +1247,7 @@ namespace mfront {
     insert_if(d.headers, "MFront/Castem/umat" + name + ".hxx");
     insert_if(d[lib].link_directories, "$(shell " + tfel_config + " --library-path)");
     insert_if(d[lib].link_libraries, tfel::getLibraryInstallName("CastemInterface"));
-    if (this->generateMTestFile) {
+    if (this->shallGenerateMTestFileOnFailure(bd)) {
       insert_if(d[lib].link_libraries, tfel::getLibraryInstallName("MTestFileGenerator"));
     }
 #if __cplusplus >= 201703L
@@ -1508,10 +1506,10 @@ namespace mfront {
                                                    const BehaviourDescription& mb,
                                                    const FileDescription&) const {
     if (CastemInterface::usesGenericPlaneStressAlgorithm(mb)) {
-      out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name)
+      out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name)
           << "_UsesGenericPlaneStressAlgorithm = 1u;\n\n";
     } else {
-      out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name)
+      out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name)
           << "_UsesGenericPlaneStressAlgorithm = 0u;\n\n";
     }
   }
@@ -1616,7 +1614,7 @@ namespace mfront {
           << "BehaviourProfiler::TOTALTIME);\n";
     }
     out << "const auto k = std::abs(*DDSDDE)>0.5;\n";
-    this->generateMTestFile1(out);
+    this->generateMTestFile1(out, mb);
     out << "// computing the Green Lagrange strains\n"
         << "CastemReal eto[6];\n"
         << "CastemReal deto[6];\n"
@@ -1662,10 +1660,11 @@ namespace mfront {
                                                              '1');
     out << "}\n"
         << "}\n";
-    if (this->generateMTestFile) {
+    if (this->shallGenerateMTestFileOnFailure(mb)) {
       out << "if(*KINC!=1){\n";
-      this->generateMTestFile2(out, BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR, name,
-                               suffix, mb);
+      this->generateMTestFile2(
+          out, mb, BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR, name,
+          suffix);
       out << "}\n";
     }
     out << "}\n\n";
@@ -1698,7 +1697,7 @@ namespace mfront {
           << "BehaviourProfiler::TOTALTIME);\n";
     }
     out << "const auto k = std::abs(*DDSDDE)>0.5;\n";
-    this->generateMTestFile1(out);
+    this->generateMTestFile1(out, mb);
     auto preprocessing = [&out, this, &mb](const unsigned short d, const unsigned short n,
                                            const bool ps) {
       if (ps) {
@@ -1799,10 +1798,11 @@ namespace mfront {
         postprocessing(false);
       }
       out << "}\n";
-      if (this->generateMTestFile) {
+      if (this->shallGenerateMTestFileOnFailure(mb)) {
         out << "if(*KINC!=1){\n";
-        this->generateMTestFile2(out, BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR, name,
-                                 suffix, mb);
+        this->generateMTestFile2(
+            out, mb, BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR, name,
+            suffix);
         out << "}\n";
       }
       out << "}";
@@ -1841,7 +1841,7 @@ namespace mfront {
           << "Profiler::getProfiler(),\n"
           << "BehaviourProfiler::TOTALTIME);\n";
     }
-    this->generateMTestFile1(out);
+    this->generateMTestFile1(out, mb);
     out << "bool k = std::abs(*DDSDDE)>0.5;\n"
         << "// computing the logarithmic strain\n"
         << "CastemReal eto[3];\n"
@@ -1901,10 +1901,11 @@ namespace mfront {
       out << "}\n";
     }
     out << "}\n";
-    if (this->generateMTestFile) {
+    if (this->shallGenerateMTestFileOnFailure(mb)) {
       out << "if(*KINC!=1){\n";
-      this->generateMTestFile2(out, BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR, name,
-                               suffix, mb);
+      this->generateMTestFile2(
+          out, mb, BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR, name,
+          suffix);
       out << "}\n";
     }
     out << "}\n\n";
@@ -1925,7 +1926,7 @@ namespace mfront {
           << "Profiler::getProfiler(),\n"
           << "BehaviourProfiler::TOTALTIME);\n";
     }
-    this->generateMTestFile1(out);
+    this->generateMTestFile1(out, mb);
     if (mb.getBehaviourType() == BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
       out << "umat" << makeLowerCase(name) << "_base(NTENS, DTIME,DROT,DDSDDE,F0,F1,TEMP,DTEMP,\n"
           << "PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,\n"
@@ -1937,9 +1938,9 @@ namespace mfront {
           << "STRESS,PNEWDT,NDI,KINC,\n"
           << "castem::CastemStandardSmallStrainStressFreeExpansionHandler);\n";
     }
-    if (this->generateMTestFile) {
+    if (this->shallGenerateMTestFileOnFailure(mb)) {
       out << "if(*KINC!=1){\n";
-      this->generateMTestFile2(out, mb.getBehaviourType(), name, suffix, mb);
+      this->generateMTestFile2(out, mb, mb.getBehaviourType(), name, suffix);
       out << "}\n";
     }
     out << "}\n\n";
