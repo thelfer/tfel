@@ -134,13 +134,20 @@ namespace mfront{
     //! code block index in the measures array
     static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER
     unsigned short TOTALTIME  = 19;
+    //! code block index in the measures array
+    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER
+    unsigned short ADDITIONALCONVERGENCECHECKS = 20;
+    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER
+    unsigned short APRIORITIMESTEPSCALINGFACTOR = 21;
+    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER
+    unsigned short APOSTERIORITIMESTEPSCALINGFACTOR = 22;
     //! destructor
     ~BehaviourProfiler();
   protected:
     //! name of the behaviour
     const std::string name;
     //! time spend in each code block (nanoseconds)
-    std::array<std::atomic<intmax_t>,20> measures;
+    std::array<std::atomic<intmax_t>, 23> measures;
   }; // end of BehaviourProfiler
 
 } // end of namespace mfront
