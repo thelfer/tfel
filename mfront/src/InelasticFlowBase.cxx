@@ -296,6 +296,7 @@ namespace mfront {
           ib.code += khr->computeDerivatives(
               "eel", "-(this->dp" + id + ") * dn" + id + "_ds" + id, id,
               std::to_string(kid));
+          ++kid;
         }
       }
       // inelastic flow
