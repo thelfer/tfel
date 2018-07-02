@@ -796,11 +796,25 @@ namespace mfront {
     virtual void writeMTestFileGeneratorSetModellingHypothesis(
         std::ostream&) const = 0;
     /*!
-     * \brief associates each distinct modelling hypothesis to appropriate tests
+     * \brief When the interface only provide one entry point (i.e. does not
+     * provide an entry point by modelling hypothesis), the generation of
+     * `MTest` files, provided by the `generateMTestFile2` method, must have
+     * access to tests to distinguish modelling hypotheses.
+     * \return a map associating each distinct modelling hypothesis to
+     * appropriate tests.
+     * This method is called internally by `generateMTestFile2` method.
      * \param[in] mb : behaviour description
      */
     virtual std::map<Hypothesis, std::string> gatherModellingHypothesesAndTests(
         const BehaviourDescription&) const;
+    /*!
+     * \return a test for the given modelling hypotesis
+     * This method is called by the `gatherModellingHypothesesAndTests`.
+     * As this method is only meaningfull for interfaces which only provide one
+     * entry point (i.e. does not provide an entry point by modelling
+     * hypothesis), the default implementation throws an exception.
+     */
+    virtual std::string getModellingHypothesisTest(const Hypothesis) const;
     /*!
      * \return true if the interface handles the given modelling hypothesis
      * \param[in] h  : modelling hypothesis
@@ -812,8 +826,6 @@ namespace mfront {
     virtual bool areExternalStateVariablesSupported() const;
     //! \return true if the interface handles temperature increment
     virtual bool isTemperatureIncrementSupported() const;
-    //! \return a test for the given modelling hypotesis
-    virtual std::string getModellingHypothesisTest(const Hypothesis) const = 0;
     /*!
      * \brief set an attribute stating that a `MTest` file shall be generated on
      * integration failure.

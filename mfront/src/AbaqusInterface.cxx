@@ -491,7 +491,7 @@ namespace mfront{
     }
     for(const auto &h : mh){
       if(mb.hasSpecialisedMechanicalData(h)){
-	this->generateUMATxxSymbols(out,name,h,mb,fd);
+        this->generateUMATxxSymbols(out, name, h, mb, fd);
       }
     }
     
@@ -811,7 +811,7 @@ namespace mfront{
     const std::string sfeh = "abaqus::AbaqusStandardSmallStrainStressFreeExpansionHandler";
     this->writeFunctionBase(out,mb,name,sfeh,h);
     out << "MFRONT_SHAREDOBJ void\n"
-	<< this->getFunctionNameForHypothesis(name,h);
+        << this->getFunctionNameForHypothesis(name, h);
     writeArguments(out,mb,true);
     out << "{\n";
     if(mb.getAttribute(BehaviourData::profiling,false)){
@@ -820,6 +820,11 @@ namespace mfront{
 	  << "BehaviourProfiler::Timer total_timer(" << mb.getClassName()
 	  << "Profiler::getProfiler(),\n"
 	  << "BehaviourProfiler::TOTALTIME);\n";
+    }
+    if (this->shallGenerateMTestFileOnFailure(mb)) {
+      out << "constexpr const auto h = "
+          << "tfel::material::ModellingHypothesis::"
+          << ModellingHypothesis::toUpperCaseString(h) << ";\n";
     }
     if(this->compareToNumericalTangentOperator){
       out << "abaqus::AbaqusReal pnewdt0(*PNEWDT);\n"
@@ -830,7 +835,7 @@ namespace mfront{
 	  << "std::copy(STRESS,STRESS+*(NTENS),sig0.begin());\n"
 	  << "std::copy(STATEV,STATEV+*(NSTATV),sv0.begin());\n";
     }
-    if(this->shallGenerateMTestFileOnFailure(mb)){
+    if (this->shallGenerateMTestFileOnFailure(mb)) {
       this->generateMTestFile1(out, mb);
     }
     out << name << "_base" << this->getFunctionNameForHypothesis("",h)
@@ -840,7 +845,7 @@ namespace mfront{
 	<< "CELENT,DFGRD0,DFGRD1,NOEL,NPT,LAYER,KSPT,KSTEP,KINC,size);\n";
     if(this->shallGenerateMTestFileOnFailure(mb)){
       out << "if(*PNEWDT<1){\n";
-      this->generateMTestFile2(out, mb, mb.getBehaviourType(), name, "");
+      this->generateMTestFileForHypothesis(out, mb, mb.getBehaviourType(), name, "",h);
       out << "}\n";
     }
     if(this->compareToNumericalTangentOperator){

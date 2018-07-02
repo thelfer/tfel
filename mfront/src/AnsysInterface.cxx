@@ -533,50 +533,9 @@ namespace mfront{
     out << "}; // end of class AnsysTraits\n\n";
   }
 
-  std::map<UMATInterfaceBase::Hypothesis,std::string>
-  AnsysInterface::gatherModellingHypothesesAndTests(const BehaviourDescription& mb) const
-  {
-    auto res = std::map<Hypothesis,std::string>{};
-    if((mb.getSymmetryType()==mfront::ORTHOTROPIC)&&
-       ((mb.getAttribute(BehaviourDescription::requiresStiffnessTensor,false))||
-	(mb.getAttribute(BehaviourDescription::requiresThermalExpansionCoefficientTensor,false)))){
-      auto h = this->getModellingHypothesesToBeTreated(mb);
-      for(const auto & mh : h){
-	res.insert({mh,this->getModellingHypothesisTest(mh)});
-      }
-      return res;
-    }
-    return UMATInterfaceBase::gatherModellingHypothesesAndTests(mb);
-  } // end of AnsysInterface::gatherModellingHypothesesAndTests
-
-  std::string
-  AnsysInterface::getModellingHypothesisTest(const Hypothesis h) const
-  {
-    if(h==ModellingHypothesis::GENERALISEDPLANESTRAIN){
-      return "*NTENS==4";
-    } else if(h==ModellingHypothesis::PLANESTRESS){
-      return "*NTENS==3";
-    } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
-      return "*NTENS==6";
-    }
-    tfel::raise("AnsysInterface::getModellingHypothesisTest : "
-		"unsupported modelling hypothesis");
-  } // end of AnsysInterface::gatherModellingHypothesesAndTests
-  
-  void
-  AnsysInterface::writeMTestFileGeneratorSetModellingHypothesis(std::ostream& out) const
-  {
-    out << "ModellingHypothesis::Hypothesis h;\n"
-	<< "if( *NTENS == 6 ){\n"
-	<< "  h = ModellingHypothesis::TRIDIMENSIONAL;\n"
-	<< "} else if(*NTENS==3){\n"
-	<< "  h = ModellingHypothesis::PLANESTRESS;\n"
-	<< "} else if(*NTENS==4){\n"
-	<< "  h = ModellingHypothesis::GENERALISEDPLANESTRAIN;\n"
-	<< "} else {\n"
-	<< "  return;\n"
-	<< "}\n"
-	<< "mg.setModellingHypothesis(h);\n";
+  void AnsysInterface::writeMTestFileGeneratorSetModellingHypothesis(
+      std::ostream& out) const {
+    out << "mg.setModellingHypothesis(h);\n";
   } // end of AnsysInterface::writeMTestFileGeneratorSetModellingHypothesis
 
   void
@@ -900,40 +859,43 @@ namespace mfront{
     this->writeSetParametersFunctionsImplementations(out,name,mb);
     this->writeSetOutOfBoundsPolicyFunctionImplementation(out,name);
 
-    for(const auto h: mh){
-      if(mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
-	if(hasFiniteStrainStrategy(mb)){
-	  const auto fs = getFiniteStrainStrategy(mb);
-	  if(fs=="Native"){
-	    this->writeSmallStrainFunction(out,mb,name,h);
-	  } else if(fs=="FiniteRotationSmallStrain"){
-	    this->writeFiniteRotationSmallStrainFunction(out,mb,name,h);
-	  } else if(fs=="MieheApelLambrechtLogarithmicStrain"){
-	    this->writeMieheApelLambrechtLogarithmicStrainFunction(out,mb,name,h);
-	  } else {
-	    throw_if(true,"unsupported finite strain strategy !");
-	  }
-	} else {
-	  this->writeSmallStrainFunction(out,mb,name,h);
-	}
-      } else if(mb.getBehaviourType()==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR){
-	this->writeFiniteStrainFunction(out,mb,name,h);
+    for (const auto h : mh) {
+      if (mb.getBehaviourType() ==
+          BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
+        if (hasFiniteStrainStrategy(mb)) {
+          const auto fs = getFiniteStrainStrategy(mb);
+          if (fs == "Native") {
+            this->writeSmallStrainFunction(out, mb, name, h);
+          } else if (fs == "FiniteRotationSmallStrain") {
+            this->writeFiniteRotationSmallStrainFunction(out, mb, name, h);
+          } else if (fs == "MieheApelLambrechtLogarithmicStrain") {
+            this->writeMieheApelLambrechtLogarithmicStrainFunction(out, mb,
+                                                                   name, h);
+          } else {
+            throw_if(true, "unsupported finite strain strategy !");
+          }
+        } else {
+          this->writeSmallStrainFunction(out, mb, name, h);
+        }
+      } else if (mb.getBehaviourType() ==
+                 BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
+        this->writeFiniteStrainFunction(out, mb, name, h);
       } else {
-	throw_if(true,"the ansys interface only supports small "
-		 "and finite strain behaviours");
+        throw_if(true,
+                 "the ansys interface only supports small "
+                 "and finite strain behaviours");
       }
     }
     out << "} // end of extern \"C\"\n";
     out.close();
     this->writeInputFileExample(mb,fd);
   } // end of AnsysInterface::endTreatment
-  
+
   void AnsysInterface::writeFunctionBase(std::ostream& out,
-					 const BehaviourDescription& mb,
-					 const std::string& name,
-					 const std::string& sfeh,
-					 const Hypothesis h) const
-  {
+                                         const BehaviourDescription& mb,
+                                         const std::string& name,
+                                         const std::string& sfeh,
+                                         const Hypothesis h) const {
     auto throw_if = [](const bool b,const std::string& m){
       tfel::raise_if(b,"AnsysInterface::writeFunctionBase: "+m);
     };
@@ -1044,19 +1006,21 @@ namespace mfront{
 	dv1 = "Fm1";
 	sig = "sm";
       } else {
-    	throw_if(true,"the ansys interface only supports small "
-    		 "and finite strain behaviours");
+        throw_if(true,
+                 "the ansys interface only supports small "
+                 "and finite strain behaviours");
       }
     } else {
       if(btype==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
-	dv0 = "STRAN";
-	dv1 = "DSTRAN";
+        dv0 = "STRAN";
+        dv1 = "DSTRAN";
       } else if(btype==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR){
-	dv0 = "F0";
-	dv1 = "F1";
+        dv0 = "F0";
+        dv1 = "F1";
       } else {
-    	throw_if(true,"the ansys interface only supports small "
-    		 "and finite strain behaviours");
+        throw_if(true,
+                 "the ansys interface only supports small "
+                 "and finite strain behaviours");
       }
       sig = "STRESS";
     }
@@ -1112,10 +1076,9 @@ namespace mfront{
   } // end of AnsysInterface::writeFunctionBase
 
   void AnsysInterface::writeFiniteStrainFunction(std::ostream& out,
-						 const BehaviourDescription& mb,
-						 const std::string& name,
-						 const Hypothesis h) const
-  {
+                                                 const BehaviourDescription& mb,
+                                                 const std::string& name,
+                                                 const Hypothesis h) const {
     const std::string sfeh = "nullptr";
     this->writeFunctionBase(out,mb,name,sfeh,h);
     out << "MFRONT_SHAREDOBJ void\n"
@@ -1137,12 +1100,11 @@ namespace mfront{
 	<< " var1,var2,var3,var4,var5,var6,var7,var8);\n"
 	<< "}\n\n";
   }
-  
+
   void AnsysInterface::writeSmallStrainFunction(std::ostream& out,
-						const BehaviourDescription& mb,
-						const std::string& name,
-						const Hypothesis h) const
-  {
+                                                const BehaviourDescription& mb,
+                                                const std::string& name,
+                                                const Hypothesis h) const {
     const std::string sfeh = "ansys::AnsysStandardSmallStrainStressFreeExpansionHandler";
     this->writeFunctionBase(out,mb,name,sfeh,h);
     out << "MFRONT_SHAREDOBJ void\n"
@@ -1155,6 +1117,11 @@ namespace mfront{
 	  << "BehaviourProfiler::Timer total_timer(" << mb.getClassName()
 	  << "Profiler::getProfiler(),\n"
 	  << "BehaviourProfiler::TOTALTIME);\n";
+    }
+    if (this->shallGenerateMTestFileOnFailure(mb)) {
+      out << "constexpr const auto h = "
+          << "tfel::material::ModellingHypothesis::"
+          << ModellingHypothesis::toUpperCaseString(h) << ";\n";
     }
     if(this->compareToNumericalTangentOperator){
       out << "std::vector<ansys::AnsysReal> deto0(*NTENS);\n"
@@ -1175,7 +1142,8 @@ namespace mfront{
 	<< " var1,var2,var3,var4,var5,var6,var7,var8);\n";
     if(this->shallGenerateMTestFileOnFailure(mb)){
       out << "if(*keycut!=0){\n";
-      this->generateMTestFile2(out, mb, mb.getBehaviourType(), name, "");
+      this->generateMTestFileForHypothesis(out, mb, mb.getBehaviourType(), name,
+                                           "", h);
       out << "}\n";
     }
     if(this->compareToNumericalTangentOperator){

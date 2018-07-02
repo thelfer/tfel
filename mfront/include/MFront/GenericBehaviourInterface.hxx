@@ -69,7 +69,6 @@ namespace mfront {
                                       const FileDescription&) const override;
     void writeMTestFileGeneratorSetModellingHypothesis(
         std::ostream&) const override;
-    std::string getModellingHypothesisTest(const Hypothesis) const override;
   };  // end of struct GenericBehaviourInterface
 
 }  // end of namespace mfront

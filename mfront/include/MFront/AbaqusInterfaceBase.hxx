@@ -153,12 +153,6 @@ namespace mfront {
     virtual void writeMTestFileGeneratorSetModellingHypothesis(
         std::ostream &) const override;
 
-    virtual std::string getModellingHypothesisTest(
-        const Hypothesis) const override;
-
-    virtual std::map<UMATInterfaceBase::Hypothesis, std::string>
-    gatherModellingHypothesesAndTests(
-        const BehaviourDescription &) const override;
     virtual std::string getFunctionNameBasis(
         const std::string &) const override;
     /*!

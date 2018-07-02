@@ -396,45 +396,13 @@ namespace mfront{
     out << "}; // end of class AbaqusTraits\n\n";
   }
 
-  std::map<UMATInterfaceBase::Hypothesis,std::string>
-  AbaqusInterfaceBase::gatherModellingHypothesesAndTests(const BehaviourDescription& mb) const
-  {
-    auto res = std::map<Hypothesis, std::string>{};
-    if ((mb.getSymmetryType() == mfront::ORTHOTROPIC) &&
-        ((mb.getAttribute(BehaviourDescription::requiresStiffnessTensor,
-                          false)) ||
-         (mb.getAttribute(
-             BehaviourDescription::requiresThermalExpansionCoefficientTensor,
-             false)))) {
-      auto h = this->getModellingHypothesesToBeTreated(mb);
-      for(const auto & mh : h){
-        res.insert({mh, this->getModellingHypothesisTest(mh)});
-      }
-      return res;
-    }
-    return UMATInterfaceBase::gatherModellingHypothesesAndTests(mb);
-  } // end of AbaqusInterfaceBase::gatherModellingHypothesesAndTests
-
-  std::string AbaqusInterfaceBase::getModellingHypothesisTest(
-      const Hypothesis h) const {
-    if(h==ModellingHypothesis::GENERALISEDPLANESTRAIN){
-      return "*NTENS==4";
-    } else if(h==ModellingHypothesis::PLANESTRESS){
-      return "*NTENS==3";
-    } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
-      return "*NTENS==6";
-    }
-    tfel::raise("AbaqusInterfaceBase::getModellingHypothesisTest : "
-		"unsupported modelling hypothesis");
-  } // end of AbaqusInterfaceBase::gatherModellingHypothesesAndTests
-
-  void
-  AbaqusInterfaceBase::writeUMATxxAdditionalSymbols(std::ostream&,
-					      const std::string&,
-					      const Hypothesis,
-					      const BehaviourDescription&,
-					      const FileDescription&) const
-  {} // end of AbaqusInterfaceBase::writeUMATxxAdditionalSymbols
+  void AbaqusInterfaceBase::writeUMATxxAdditionalSymbols(
+      std::ostream&,
+      const std::string&,
+      const Hypothesis,
+      const BehaviourDescription&,
+      const FileDescription&) const {
+  }  // end of AbaqusInterfaceBase::writeUMATxxAdditionalSymbols
 
   void AbaqusInterfaceBase::writeUMATxxSpecificSymbols(std::ostream& out,
 						       const std::string& name,
@@ -464,17 +432,7 @@ namespace mfront{
 
   void AbaqusInterfaceBase::writeMTestFileGeneratorSetModellingHypothesis(
       std::ostream& out) const {
-    out << "ModellingHypothesis::Hypothesis h;\n"
-        << "if( *NTENS == 6 ){\n"
-        << "  h = ModellingHypothesis::TRIDIMENSIONAL;\n"
-        << "} else if(*NTENS==3){\n"
-        << "  h = ModellingHypothesis::PLANESTRESS;\n"
-        << "} else if(*NTENS==4){\n"
-        << "  h = ModellingHypothesis::GENERALISEDPLANESTRAIN;\n"
-        << "} else {\n"
-        << "  return;\n"
-        << "}\n"
-        << "mg.setModellingHypothesis(h);\n";
+    out << "mg.setModellingHypothesis(h);\n";
   } // end of AbaqusInterfaceBase::writeMTestFileGeneratorSetModellingHypothesis
 
   void

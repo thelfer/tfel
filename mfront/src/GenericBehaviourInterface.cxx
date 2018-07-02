@@ -127,10 +127,6 @@ namespace mfront {
   }  // end of
   // GenericBehaviourInterface::writeMTestFileGeneratorSetModellingHypothesis
 
-  std::string GenericBehaviourInterface::getModellingHypothesisTest(
-      const Hypothesis) const {
-  }  // end of GenericBehaviourInterface::getModellingHypothesisTest
-
   GenericBehaviourInterface::~GenericBehaviourInterface() = default;
 
   }  // end of namespace mfront

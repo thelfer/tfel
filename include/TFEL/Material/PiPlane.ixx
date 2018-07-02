@@ -26,7 +26,7 @@ namespace tfel {
       constexpr const auto zero = stress{0};
       constexpr const auto isqrt2 = Cste<stress>::isqrt2;
       constexpr const auto isqrt3 = Cste<stress>::isqrt3;
-      constexpr const auto isqrt6 = isqrt2 * isqrt3;
+      TFEL_CONSTEXPR const auto isqrt6 = isqrt2 * isqrt3;
       const auto n0 = tvector<3u, real>{{isqrt2, -isqrt2, zero}};
       const auto n1 = tvector<3u, real>{{-isqrt6, -isqrt6, 2 * isqrt6}};
       return std::tuple<stress, stress>{(s | n0), (s | n1)};

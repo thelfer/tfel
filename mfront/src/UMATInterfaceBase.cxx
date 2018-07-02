@@ -1417,6 +1417,49 @@ namespace mfront {
     }
   } // end of UMATInterfaceBase::generateMTestFile2
 
+  std::map<UMATInterfaceBase::Hypothesis, std::string>
+  UMATInterfaceBase::gatherModellingHypothesesAndTests(
+      const BehaviourDescription& mb) const {
+    const auto mh = this->getModellingHypothesesToBeTreated(mb);
+    auto res = std::map<Hypothesis, std::string>{};
+    auto h1 = std::set<Hypothesis>{};
+    auto h2 = std::set<Hypothesis>{};
+    for (const auto& h : mh) {
+      if (!mb.hasSpecialisedMechanicalData(h)) {
+        h1.insert(h);
+      } else {
+        h2.insert(h);
+      }
+    }
+    if (!h1.empty()) {
+      if (h1.size() == 1u) {
+        res.insert({ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+                    this->getModellingHypothesisTest(*(h1.begin()))});
+      } else {
+        auto p = h1.begin();
+        std::string r =
+            "(" + this->getModellingHypothesisTest(*(h1.begin())) + ")";
+        ++p;
+        for (; p != h1.end(); ++p) {
+          r += "||(" + this->getModellingHypothesisTest(*p) + ")";
+        }
+        res.insert({ModellingHypothesis::UNDEFINEDHYPOTHESIS, r});
+      }
+    }
+    for (const auto& h : h2) {
+      res.insert({h, this->getModellingHypothesisTest(h)});
+    }
+    return res;
+  }  // end of UMATInterface::gatherModellingHypothesesAndTests
+
+  std::string UMATInterfaceBase::getModellingHypothesisTest(
+      const Hypothesis h) const {
+    tfel::raise(
+        "UMATInterfaceBase::getModellingHypothesisTest: "
+        "invalid call, this method is only valid for some interfaces "
+        "that must override it.");
+  }  // end of UMATInterfaceBase::getModellingHypothesisTest
+
   void UMATInterfaceBase::generateMTestFileForHypothesis(
       std::ostream& out,
       const BehaviourDescription& bd,
@@ -1440,14 +1483,12 @@ namespace mfront {
           << makeLowerCase(this->getInterfaceName()) << "\",\""
           << this->getLibraryName(bd) << "\",\""
           << this->getFunctionNameBasis(fname) << "\");\n";
-    }
-    else if (type == BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
+    } else if (type == BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
       out << "mfront::UmatFiniteStrainMTestFileGenerator mg(\""
           << makeLowerCase(this->getInterfaceName()) << "\",\""
           << this->getLibraryName(bd) << "\",\""
           << this->getFunctionNameBasis(fname) << "\");\n";
-    }
-    else {
+    } else {
       tfel::raise(
           "UMATInterfaceBase::generateMTestFileForHypothesis: "
           "only small strain or finite strain behaviours are supported");
@@ -1525,7 +1566,8 @@ namespace mfront {
                    "mg_STATEV["
                 << ivoffset << "]+i);\n";
           } else {
-            out << "mg.addInternalStateVariable(name,SupportedTypes::Stensor,&"
+            out << "mg.addInternalStateVariable(name,SupportedTypes::Stensor,"
+                   "&"
                    "mg_STATEV["
                 << ivoffset << "]+i);\n";
           }
@@ -1553,7 +1595,8 @@ namespace mfront {
       }
     }
     out << "mg.addExternalStateVariableValue(\"Temperature\",0.,*TEMP);\n";
-    out << "mg.addExternalStateVariableValue(\"Temperature\",dt,*TEMP+*DTEMP);"
+    out << "mg.addExternalStateVariableValue(\"Temperature\",dt,*TEMP+*DTEMP)"
+           ";"
            "\n";
     auto p = std::next(externalStateVarsHolder.begin());
     for (offset = 0; p != externalStateVarsHolder.end(); ++p) {
@@ -1621,16 +1664,16 @@ namespace mfront {
         << "static_cast<void>(TVectorSize); // remove gcc warning\n"
         << "static_cast<void>(StensorSize); // remove gcc warning\n"
         << "static_cast<void>(TensorSize);  // remove gcc warning\n";
-  } // end of UMATInterfaceBase::generateMTestFileForHypothesis();
+    }  // end of UMATInterfaceBase::generateMTestFileForHypothesis();
 
-  void UMATInterfaceBase::writeMTestFileGeneratorSetRotationMatrix(
-      std::ostream& out, const BehaviourDescription& mb) const {
-    if (mb.getSymmetryType() == mfront::ORTHOTROPIC) {
-      out << "mg.setRotationMatrix("
-          << "DROT[0],DROT[3],DROT[6],"
-          << "DROT[1],DROT[4],DROT[7],"
-          << "DROT[2],DROT[5],DROT[8]);\n";
-    }
+    void UMATInterfaceBase::writeMTestFileGeneratorSetRotationMatrix(
+        std::ostream & out, const BehaviourDescription& mb) const {
+      if (mb.getSymmetryType() == mfront::ORTHOTROPIC) {
+        out << "mg.setRotationMatrix("
+            << "DROT[0],DROT[3],DROT[6],"
+            << "DROT[1],DROT[4],DROT[7],"
+            << "DROT[2],DROT[5],DROT[8]);\n";
+      }
     }  // end of UMATInterfaceBase::writeMTestFileGeneratorSetRotationMatrix
 
     void UMATInterfaceBase::generateUMATxxGeneralSymbols(
@@ -2132,41 +2175,6 @@ namespace mfront {
       writeInterfaceSymbol(out, this->getFunctionNameBasis(name),
                            this->getInterfaceName());
     }
-
-    std::map<UMATInterfaceBase::Hypothesis, std::string>
-    UMATInterfaceBase::gatherModellingHypothesesAndTests(
-        const BehaviourDescription& mb) const {
-      const auto mh = this->getModellingHypothesesToBeTreated(mb);
-      auto res = std::map<Hypothesis, std::string>{};
-      auto h1 = std::set<Hypothesis>{};
-      auto h2 = std::set<Hypothesis>{};
-      for (const auto& h : mh) {
-        if (!mb.hasSpecialisedMechanicalData(h)) {
-          h1.insert(h);
-        } else {
-          h2.insert(h);
-        }
-      }
-      if (!h1.empty()) {
-        if (h1.size() == 1u) {
-          res.insert({ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-                      this->getModellingHypothesisTest(*(h1.begin()))});
-        } else {
-          auto p = h1.begin();
-          std::string r =
-              "(" + this->getModellingHypothesisTest(*(h1.begin())) + ")";
-          ++p;
-          for (; p != h1.end(); ++p) {
-            r += "||(" + this->getModellingHypothesisTest(*p) + ")";
-          }
-          res.insert({ModellingHypothesis::UNDEFINEDHYPOTHESIS, r});
-        }
-      }
-      for (const auto& h : h2) {
-        res.insert({h, this->getModellingHypothesisTest(h)});
-      }
-      return res;
-    }  // end of UMATInterface::gatherModellingHypothesesAndTests
 
     std::pair<bool, SupportedTypes::TypeSize>
     UMATInterfaceBase::checkIfAxialStrainIsDefinedAndGetItsOffset(
