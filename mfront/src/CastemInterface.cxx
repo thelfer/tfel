@@ -628,6 +628,7 @@ namespace mfront {
                "maximum number of substeps defined.\n"
                "Please use the @CastemMaximumSubStepping directive");
     }
+
     systemCall::mkdir("include/MFront");
     systemCall::mkdir("include/MFront/Castem");
 
@@ -645,7 +646,7 @@ namespace mfront {
         << "* \\date   " << fd.date << '\n'
         << "*/\n\n";
 
-    const string header = this->getHeaderDefine(mb);
+    const string header = this->getHeaderGuard(mb);
     out << "#ifndef " << header << "\n"
         << "#define " << header << "\n\n";
 

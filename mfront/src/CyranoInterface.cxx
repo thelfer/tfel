@@ -238,7 +238,7 @@ namespace mfront {
     out << "* \\date   " << fd.date << endl;
     out << "*/\n\n";
 
-    const auto header = this->getHeaderDefine(mb);
+    const auto header = this->getHeaderGuard(mb);
     out << "#ifndef " << header << "\n";
     out << "#define " << header << "\n\n";
 

@@ -15,6 +15,7 @@
 #include "TFEL/Raise.hxx"
 #include "MFront/BehaviourBrick/BrickUtilities.hxx"
 #include "MFront/BehaviourBrick/StressPotential.hxx"
+#include "MFront/BehaviourBrick/StressCriterion.hxx"
 #include "MFront/BehaviourBrick/OptionDescription.hxx"
 #include "MFront/BehaviourBrick/ArmstrongFrederickKinematicHardeningRule.hxx"
 
@@ -68,6 +69,7 @@ namespace mfront {
     ArmstrongFrederickKinematicHardeningRule::buildBackStrainImplicitEquations(
         const BehaviourDescription& bd,
         const StressPotential& sp,
+        const StressCriterion& fc,
         const std::vector<std::shared_ptr<KinematicHardeningRule>>& khrs,
         const std::string& fid,
         const std::string& kid,
@@ -84,7 +86,8 @@ namespace mfront {
              ")*" + an + "_);\n";
         // opposite of the derivative of fa with respect to s
         const auto mdf_ds = "(this->dp" + fid + ")*dn" + fid + "_ds" + fid;
-        c += sp.computeDerivatives(bd, "StrainStensor", an, "-" + mdf_ds);
+        c += sp.computeDerivatives(bd, "StrainStensor", an, "-" + mdf_ds,
+                                   fc.isNormalDeviatoric());
         // term specific to this back strain
         c += "df" + an + "_dd" + an + " += ";
         c += "(this->theta)*(this->dp" + fid + ")*((this->" + Dn +

@@ -116,11 +116,13 @@ namespace mfront {
        * \param[in] v: variable name
        * \param[in] dfv_ds: derivative of the implicit equation associated to v
        * with respect to the effective stress
+       * \param[in] b: boolean static that the flow criterion is deviatoric
        */
       virtual std::string computeDerivatives(const BehaviourDescription&,
                                              const std::string&,
                                              const std::string&,
-                                             const std::string&) const = 0;
+                                             const std::string&,
+                                             const bool) const = 0;
       /*!
        * \brief add the lines that defines `sigel`, the elastic prediction of
        * the stress. This definition is added

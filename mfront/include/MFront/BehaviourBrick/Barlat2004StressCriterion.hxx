@@ -120,6 +120,7 @@ namespace mfront {
                                           const BehaviourDescription&,
                                           const StressPotential&,
                                           const Role) const override;
+      bool isNormalDeviatoric() const override;
       //! destructor
       ~Barlat2004StressCriterion() override;
 

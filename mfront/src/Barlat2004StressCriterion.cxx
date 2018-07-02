@@ -297,6 +297,10 @@ namespace mfront {
       return c;
     }  // end of Barlat2004StressCriterion::computeNormalDerivative
 
+    bool Barlat2004StressCriterion::isNormalDeviatoric() const {
+      return true;
+    }  // end of Barlat2004StressCriterion::isNormalDeviatoric
+
     Barlat2004StressCriterion::~Barlat2004StressCriterion() = default;
 
   }  // end of namespace bbrick

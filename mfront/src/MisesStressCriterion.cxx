@@ -104,6 +104,10 @@ namespace mfront{
       return c;
     }  // end of MisesStressCriterion::computeNormalDerivative
 
+    bool MisesStressCriterion::isNormalDeviatoric() const {
+      return true;
+    }  // end of MisesStressCriterion::isNormalDeviatoric
+
     MisesStressCriterion::~MisesStressCriterion() = default;
 
   }  // end of namespace bbrick

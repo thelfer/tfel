@@ -178,6 +178,10 @@ namespace mfront {
       return c;
     }  // end of Cazacu2004IsotropicStressCriterion::computeNormalDerivative
 
+    bool Cazacu2004IsotropicStressCriterion::isNormalDeviatoric() const {
+      return true;
+    }  // end of Cazacu2004IsotropicStressCriterion::isNormalDeviatoric
+
     Cazacu2004IsotropicStressCriterion::~Cazacu2004IsotropicStressCriterion() = default;
 
   }  // end of namespace bbrick

@@ -63,7 +63,8 @@ namespace mfront {
           c += "fp" + id + " -= (this->dt)*vp" + id + ";\n";
           c += sp.computeDerivatives(bd, "strain", "p" + id,
                                      "-(this->dt)*dvp" + id + "_dseqe" + id +
-                                         "*dseq" + id + "_ds" + id);
+                                         "*dseq" + id + "_ds" + id,
+                                     this->sc->isNormalDeviatoric());
           c += "dfp" + id + "_ddp" + id + " += (this->dt)*dvp" + id + "_dseqe" +
                id + "*dR" + id + "_ddp" + id + ";\n";
           auto kid = decltype(khrs.size()){};
@@ -85,7 +86,8 @@ namespace mfront {
           c += "fp" + id + " -= (this->dt)*vp" + id + ";\n";
           c += sp.computeDerivatives(bd, "strain", "p" + id,
                                      "-(this->dt)*dvp" + id + "_dseqe" + id +
-                                         "*dseq" + id + "_ds" + id);
+                                         "*dseq" + id + "_ds" + id,
+                                     this->sc->isNormalDeviatoric());
           auto kid = decltype(khrs.size()){};
           for (const auto& khr : khrs) {
             c +=

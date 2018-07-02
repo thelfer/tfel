@@ -24,9 +24,7 @@
 
 namespace mfront{
 
-  static std::string
-  getHeaderDefine(const ModelDescription& mb)
-  {
+  static std::string getHeaderGuard(const ModelDescription& mb) {
     const auto& m = mb.material;
     std::string header = "LIB_MFRONTMODEL_";
     if(!mb.library.empty()){
@@ -42,9 +40,8 @@ namespace mfront{
     header += "_HXX";
     return header;
   }
-  
-  static std::string
-  getSrcFileName(const ModelDescription& md){
+
+  static std::string getSrcFileName(const ModelDescription& md) {
     if(md.className.empty()){
       throw("getSrcFileName: no class name defined");
     }
@@ -130,8 +127,8 @@ namespace mfront{
 	   << " * \\author "  << fd.authorName << '\n'
 	   << " * \\date   "  << fd.date       << '\n'
 	   << " */\n\n"
-	   << "#ifndef "<< getHeaderDefine(md) << "\n"
-	   << "#define "<< getHeaderDefine(md) << "\n\n"
+	   << "#ifndef "<< getHeaderGuard(md) << "\n"
+	   << "#define "<< getHeaderGuard(md) << "\n\n"
 	   << "#include\"TFEL/Material/BoundsCheck.hxx\"\n"
 	   << "#include\"TFEL/Material/OutOfBoundsPolicy.hxx\"\n";
     const auto hasBounds = [&md]{
@@ -306,7 +303,7 @@ namespace mfront{
 	   << "OutOfBoundsPolicy policy = OutOfBoundsPolicy::None;\n"
 	   << "}; // end of struct " << md.className << "\n\n"
       	   << "} // end of namespace mfront\n\n"
-	   << "#endif /* "<< getHeaderDefine(md) << " */\n";
+	   << "#endif /* "<< getHeaderGuard(md) << " */\n";
   } // end of MFrontModelInterface::writeOutputFiles
 
   void MFrontModelInterface::getTargetsDescription(TargetsDescription& td,

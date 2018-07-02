@@ -318,6 +318,10 @@ namespace mfront {
       return c;
     }  // end of Cazacu2001StressCriterion::computeNormalDerivative
 
+    bool Cazacu2001StressCriterion::isNormalDeviatoric() const {
+      return true;
+    }  // end of Cazacu2001StressCriterion::isNormalDeviatoric
+
     Cazacu2001StressCriterion::~Cazacu2001StressCriterion() = default;
 
   }  // end of namespace bbrick

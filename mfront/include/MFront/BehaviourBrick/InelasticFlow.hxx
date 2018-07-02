@@ -35,6 +35,8 @@ namespace mfront {
     // forward declaration
     struct StressPotential;
     // forward declaration
+    struct StressCriterion;
+    // forward declaration
     struct IsotropicHardeningRule;
     // forward declaration
     struct KinematicHardeningRule;

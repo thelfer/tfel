@@ -510,7 +510,8 @@ namespace mfront {
         const BehaviourDescription& bd,
         const std::string& t,
         const std::string& v,
-        const std::string& dfv_ds) const {
+        const std::string& dfv_ds,
+        const bool b) const {
       auto c = std::string{};
       const auto vf = SupportedTypes::getTypeFlag(t);
       c = "df" + v + "_ddeel += ";
@@ -529,21 +530,33 @@ namespace mfront {
         }
       } else {
         if (bd.getElasticSymmetryType() == mfront::ISOTROPIC) {
-          auto b = bd.getAttribute(
+          const auto bl = bd.getAttribute(
               "HookeStressPotentialBase::UseLocalLameCoeficients", false);
           const std::string lambda =
-              b ? "this->sebdata.lambda" : "this->lambda";
-          const std::string mu = b ? "this->sebdata.mu" : "this->mu";
-          if (vf == SupportedTypes::Scalar) {
-            c += "(this->theta) * ((" + dfv_ds + ") | (2 * (" + mu +
-                 ") * Stensor4::Id()+(" + lambda + ") * Stensor4::IxI()));\n";
-          } else if (vf == SupportedTypes::Stensor) {
-            c += "(this->theta) * (" + dfv_ds + ") * (2 * (" + mu +
-                 ") * Stensor4::Id()+(" + lambda + ") * Stensor4::IxI());\n";
+              bl ? "this->sebdata.lambda" : "this->lambda";
+          const std::string mu = bl ? "this->sebdata.mu" : "this->mu";
+          if (b) {
+            if (vf == SupportedTypes::Scalar) {
+              c += "(2 * " + mu + ")*(this->theta) * (" + dfv_ds + ");\n";
+            } else if (vf == SupportedTypes::Stensor) {
+              c += "(2 * " + mu + ")*(this->theta) * (" + dfv_ds + ");\n";
+            } else {
+              tfel::raise(
+                  "HookeStressPotential::computeDerivatives: "
+                  "unsupported elastic symmetry type");
+            }
           } else {
-            tfel::raise(
-                "HookeStressPotential::computeDerivatives: "
-                "unsupported elastic symmetry type");
+            if (vf == SupportedTypes::Scalar) {
+              c += "(this->theta) * ((" + dfv_ds + ") | (2 * (" + mu +
+                   ") * Stensor4::Id()+(" + lambda + ") * Stensor4::IxI()));\n";
+            } else if (vf == SupportedTypes::Stensor) {
+              c += "(this->theta) * (" + dfv_ds + ") * (2 * (" + mu +
+                   ") * Stensor4::Id()+(" + lambda + ") * Stensor4::IxI());\n";
+            } else {
+              tfel::raise(
+                  "HookeStressPotential::computeDerivatives: "
+                  "unsupported elastic symmetry type");
+            }
           }
         } else if (bd.getElasticSymmetryType() == mfront::ORTHOTROPIC) {
           if (!bd.getAttribute<bool>(

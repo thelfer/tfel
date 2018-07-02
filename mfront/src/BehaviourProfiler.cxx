@@ -31,11 +31,9 @@ namespace mfront
    * start : start of the measure
    * end   : end of the measure
    */
-  static inline void
-  add_measure(std::atomic<intmax_t>& t,
-	      const timespec& start,
-	      const timespec& end)
-  {
+  static inline void add_measure(std::atomic<intmax_t>& t,
+                                 const timespec& start,
+                                 const timespec& end) {
     /* http://www.guyrutenberg.com/2007/09/22/profiling-code-using-clock_gettime */
     timespec temp;
     if ((end.tv_nsec-start.tv_nsec)<0) {
@@ -52,9 +50,7 @@ namespace mfront
   /*!
    * print a time to the specified stream
    */
-  static void print_time(std::ostream& os,
-			 const intmax_t time)
-  {
+  static void print_time(std::ostream& os, const intmax_t time) {
     constexpr intmax_t musec_d = 1000;
     constexpr intmax_t msec_d  = 1000*musec_d;
     constexpr intmax_t sec_d   = msec_d*1000;
@@ -95,9 +91,7 @@ namespace mfront
     os << t << "nsecs";
   } // end pf print
 
-  static std::string
-  getCodeBlockName(const unsigned int c)
-  {
+  static std::string getCodeBlockName(const unsigned int c) {
     auto n = std::string{};
     switch(c){
     case BehaviourProfiler::FLOWRULE:
@@ -127,6 +121,9 @@ namespace mfront
     case BehaviourProfiler::COMPUTESTRESS:
       n = "Integrator::ComputeStress";
       break;
+    case BehaviourProfiler::ADDITIONALCONVERGENCECHECKS:
+      n = "Integrator::AdditionalConvergenceChecks";
+      break;
     case BehaviourProfiler::COMPUTEDERIVATIVE:
       n = "Integrator::ComputeDerivative";
       break;
@@ -141,6 +138,12 @@ namespace mfront
       break;
     case BehaviourProfiler::COMPUTETANGENTOPERATOR:
       n = "ComputeTangentOperator";
+      break;
+    case BehaviourProfiler::APRIORITIMESTEPSCALINGFACTOR:
+      n = "APrioriTimeStepScalingFactor";
+      break;
+    case BehaviourProfiler::APOSTERIORITIMESTEPSCALINGFACTOR:
+      n = "APosterioriTimeStepScalingFactor";
       break;
     case BehaviourProfiler::UPDATEAUXILIARYSTATEVARIABLES:
       n = "UpdateAuxiliaryStateVariables";
@@ -193,21 +196,22 @@ namespace mfront
 
   BehaviourProfiler::~BehaviourProfiler()
   {
-    using size_type = std::array<std::atomic<std::intmax_t>, 21>::size_type;
+    using size_type = std::array<std::atomic<std::intmax_t>, 23>::size_type;
     std::cout << "\nResults of " << this->name << " profiling : ";
     print_time(std::cout,measures.back());
     std::cout << '\n';
     std::string::size_type w{0};
     for(size_type i=0;i+1!=measures.size();++i){
       if(measures[i]!=0){
-	w = std::max(w,getCodeBlockName(i).size());
+        w = std::max(w, getCodeBlockName(i).size());
       }
     }
     for(size_type i=0;i+1!=measures.size();++i){
       if(measures[i]!=0){
-	std::cout << "- " << std::setw(w) << std::left << getCodeBlockName(i) << " : ";
-	print_time(std::cout,measures[i]);
-	std::cout << " (" << measures[i] << " ns)\n";
+        std::cout << "- " << std::setw(w) << std::left << getCodeBlockName(i)
+                  << " : ";
+        print_time(std::cout,measures[i]);
+        std::cout << " (" << measures[i] << " ns)\n";
       }
     }
     std::cout << std::endl;

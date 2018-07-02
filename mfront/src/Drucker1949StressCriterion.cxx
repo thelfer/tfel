@@ -178,6 +178,10 @@ namespace mfront {
       return c;
     }  // end of Drucker1949StressCriterion::computeNormalDerivative
 
+    bool Drucker1949StressCriterion::isNormalDeviatoric() const {
+      return true;
+    }  // end of Drucker1949StressCriterion::isNormalDeviatoric
+
     Drucker1949StressCriterion::~Drucker1949StressCriterion() = default;
 
   }  // end of namespace bbrick

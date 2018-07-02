@@ -748,7 +748,7 @@ namespace mfront{
 	<< "* \\date   "  << fd.date       << '\n'
 	<< "*/\n\n";
 
-    const auto header = this->getHeaderDefine(mb);
+    const auto header = this->getHeaderGuard(mb);
     out << "#ifndef "<< header << "\n"
 	<< "#define "<< header << "\n\n"
 	<< "#include\"TFEL/Config/TFELConfig.hxx\"\n\n"

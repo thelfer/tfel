@@ -66,7 +66,8 @@ namespace mfront {
         c += computeElasticLimitAndDerivative(this->ihrs, id);
         c += fp + " = (" + seq + "-" + R + ")/("+snf+");\n";
         c += sp.computeDerivatives(bd, "strain", "p" + id,
-                                   dseq_ds + "/(" + snf + ")");
+                                   dseq_ds + "/(" + snf + ")",
+                                   this->sc->isNormalDeviatoric());
         c += "if(" + dR_ddp + ">0){\n";
         c += dfp_ddp + " = -1*std::max(real(1.e-12),(" + dR_ddp +
              ")/("+snf+"));\n";

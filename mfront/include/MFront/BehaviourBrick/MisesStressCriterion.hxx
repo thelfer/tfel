@@ -66,6 +66,7 @@ namespace mfront {
                                           const BehaviourDescription&,
                                           const StressPotential&,
                                           const Role) const override;
+      bool isNormalDeviatoric() const override;
       //! destructor
       ~MisesStressCriterion() override;
     };  // end of struct MisesStressCriterion

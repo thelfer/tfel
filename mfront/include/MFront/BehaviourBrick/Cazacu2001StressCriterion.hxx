@@ -59,6 +59,7 @@ namespace mfront {
                                           const BehaviourDescription&,
                                           const StressPotential&,
                                           const Role) const override;
+      bool isNormalDeviatoric() const override;
       //! destructor
       ~Cazacu2001StressCriterion() override;
 

@@ -160,6 +160,10 @@ namespace mfront{
       return c;
     }  // end of Hill1948StressCriterion::computeNormalDerivative
 
+    bool Hill1948StressCriterion::isNormalDeviatoric() const {
+      return true;
+    }  // end of Hill1948StressCriterion::isNormalDeviatoric
+
     Hill1948StressCriterion::~Hill1948StressCriterion() = default;
 
   }  // end of namespace bbrick

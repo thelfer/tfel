@@ -1349,7 +1349,7 @@ namespace mfront {
     }
   }
 
-  std::string UMATInterfaceBase::getHeaderDefine(const BehaviourDescription& mb) const {
+  std::string UMATInterfaceBase::getHeaderGuard(const BehaviourDescription& mb) const {
     const auto& m = mb.getMaterialName();
     auto header = "LIB_" + makeUpperCase(this->getInterfaceName());
     if (!mb.getLibrary().empty()) {
@@ -1364,7 +1364,7 @@ namespace mfront {
     header += makeUpperCase(mb.getClassName());
     header += "_HXX";
     return header;
-  }
+  } // end of UMATInterfaceBase::getHeaderGuard
 
   void UMATInterfaceBase::getExtraSrcIncludes(std::ostream& out,
                                               const BehaviourDescription& mb) const {

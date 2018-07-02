@@ -135,6 +135,8 @@ install_mfront_header(MFront/BehaviourBrick ArmstrongFrederickKinematicHardening
 install_mfront_header(MFront/BehaviourBrick Chaboche2012KinematicHardeningRule.hxx)
 install_mfront_header(MFront/BehaviourBrick BurletCailletaudKinematicHardeningRule.hxx)
 install_mfront_header(MFront/BehaviourBrick KinematicHardeningRuleFactory.hxx)
+install_mfront_header(MFront/GenericBehaviour State.h)
+install_mfront_header(MFront/GenericBehaviour BehaviourData.h)
 
 if(HAVE_CASTEM)
 install_mfront_header(MFront/Castem Castem.hxx)

@@ -476,9 +476,11 @@ namespace mfront {
                                      bool&,
                                      const VariableDescriptionContainer&) const;
     /*!
-     * \return the header define
+     * \return an header guard based on the name of the interface, as returned
+     * by `getInterfaceName`, and the name of the behaviour.
+     * \param[in] bd: behaviour description
      */
-    virtual std::string getHeaderDefine(const BehaviourDescription&) const;
+    virtual std::string getHeaderGuard(const BehaviourDescription&) const;
 
     virtual void getExtraSrcIncludes(std::ostream&,
                                      const BehaviourDescription&) const;

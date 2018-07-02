@@ -233,6 +233,9 @@ namespace mfront {
         this->sc->endTreatment(bd, dsl, id,
                                StressCriterion::STRESSANDFLOWCRITERION);
       }
+      const bool is_deviatoric = (this->fc != nullptr)
+                                     ? this->fc->isNormalDeviatoric()
+                                     : this->sc->isNormalDeviatoric();
       auto iid = decltype(ihrs.size()){};
       if (this->ihrs.size() == 1) {
         ihrs[0]->endTreatment(bd, dsl, id, "");
@@ -288,9 +291,9 @@ namespace mfront {
       if (requiresAnalyticalJacobian) {
         // jacobian terms
         ib.code += "dfeel_ddp" + id + " = n" + id + ";\n";
-        ib.code +=
-            sp.computeDerivatives(bd, "StrainStensor", "eel",
-                                  "(this->dp" + id + ")*dn" + id + "_ds" + id);
+        ib.code += sp.computeDerivatives(
+            bd, "StrainStensor", "eel",
+            "(this->dp" + id + ")*dn" + id + "_ds" + id, is_deviatoric);
         kid = decltype(khrs.size()){};
         for (const auto& khr : khrs) {
           ib.code += khr->computeDerivatives(
@@ -305,9 +308,15 @@ namespace mfront {
       // hardening rules
       kid = decltype(khrs.size()){};
       for (const auto& khr : khrs) {
-        ib.code += khr->buildBackStrainImplicitEquations(
-            bd, sp, this->khrs, id, std::to_string(kid),
-            requiresAnalyticalJacobian);
+        if (this->fc != nullptr) {
+          ib.code += khr->buildBackStrainImplicitEquations(
+              bd, sp, *(this->fc), this->khrs, id, std::to_string(kid),
+              requiresAnalyticalJacobian);
+        } else {
+          ib.code += khr->buildBackStrainImplicitEquations(
+              bd, sp, *(this->sc), this->khrs, id, std::to_string(kid),
+              requiresAnalyticalJacobian);
+        }
         ++kid;
       }
       if (!this->ihrs.empty()) {

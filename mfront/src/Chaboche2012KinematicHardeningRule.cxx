@@ -15,6 +15,7 @@
 #include "TFEL/Raise.hxx"
 #include "MFront/BehaviourBrick/BrickUtilities.hxx"
 #include "MFront/BehaviourBrick/StressPotential.hxx"
+#include "MFront/BehaviourBrick/StressCriterion.hxx"
 #include "MFront/BehaviourBrick/OptionDescription.hxx"
 #include "MFront/BehaviourBrick/Chaboche2012KinematicHardeningRule.hxx"
 
@@ -118,6 +119,7 @@ namespace mfront {
     Chaboche2012KinematicHardeningRule::buildBackStrainImplicitEquations(
         const BehaviourDescription& bd,
         const StressPotential& sp,
+        const StressCriterion& fc,
         const std::vector<std::shared_ptr<KinematicHardeningRule>>& khrs,
         const std::string& fid,
         const std::string& kid,
@@ -207,7 +209,8 @@ namespace mfront {
         }
         // opposite of dfa_ds
         const auto mdf_ds = "(this->dp" + fid + ") * dn" + fid + "_ds" + fid;
-        c += sp.computeDerivatives(bd, "StrainStensor", an, "-" + mdf_ds);
+        c += sp.computeDerivatives(bd, "StrainStensor", an, "-" + mdf_ds,
+                                   fc.isNormalDeviatoric());
         auto kid2 = decltype(khrs.size()){};
         for (const auto& khr : khrs) {
           c += khr->computeDerivatives(an, mdf_ds, fid, std::to_string(kid2));
@@ -229,7 +232,8 @@ namespace mfront {
         // opposite of dfa_ds
         const auto mdf_ds = "(this->dp" + fid + ")*dn" + fid + "_ds" + fid;
         c += "df" + an + "_ddp" + fid + " = - n" + fid + ";\n";
-        c += sp.computeDerivatives(bd, "StrainStensor", an, "-" + mdf_ds);
+        c += sp.computeDerivatives(bd, "StrainStensor", an, "-" + mdf_ds,
+                                   fc.isNormalDeviatoric());
         auto kid2 = decltype(khrs.size()){};
         for (const auto& khr : khrs) {
           c += khr->computeDerivatives(an, mdf_ds, fid, std::to_string(kid2));

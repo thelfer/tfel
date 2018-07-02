@@ -23,7 +23,8 @@ namespace mfront {
       std::string computeDerivatives(const BehaviourDescription&,
                                      const std::string&,
                                      const std::string&,
-                                     const std::string&) const override;
+                                     const std::string&,
+                                     const bool) const override;
       //! \brief destructor
       ~HookeStressPotential() override;
 

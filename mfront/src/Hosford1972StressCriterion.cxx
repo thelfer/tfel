@@ -168,6 +168,10 @@ namespace mfront {
       return c;
     }  // end of Hosford1972StressCriterion::computeNormalDerivative
 
+    bool Hosford1972StressCriterion::isNormalDeviatoric() const {
+      return true;
+    }  // end of Hosford1972StressCriterion::isNormalDeviatoric
+
     Hosford1972StressCriterion::~Hosford1972StressCriterion() = default;
 
   }  // end of namespace bbrick

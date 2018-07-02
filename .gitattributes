@@ -2358,6 +2358,8 @@ mfront/include/MFront/FiniteStrainSingleCrystalBrick.hxx -text
 mfront/include/MFront/Fortran03MaterialPropertyInterface.hxx -text
 mfront/include/MFront/FortranMaterialPropertyInterface.hxx -text
 mfront/include/MFront/GeneratorOptions.hxx -text
+mfront/include/MFront/GenericBehaviour/BehaviourData.h -text
+mfront/include/MFront/GenericBehaviour/State.h -text
 mfront/include/MFront/GenericBehaviourInterface.hxx -text
 mfront/include/MFront/GenericData.hxx -text
 mfront/include/MFront/GnuplotMaterialPropertyInterface.hxx -text

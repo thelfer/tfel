@@ -76,6 +76,7 @@ namespace mfront {
                                           const BehaviourDescription&,
                                           const StressPotential&,
                                           const Role) const override;
+      bool isNormalDeviatoric() const override;
       //! destructor
       ~Hill1948StressCriterion() override;
     };  // end of struct Hill1948StressCriterion

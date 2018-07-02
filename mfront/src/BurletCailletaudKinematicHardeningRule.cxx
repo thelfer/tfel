@@ -15,6 +15,7 @@
 #include "TFEL/Raise.hxx"
 #include "MFront/BehaviourBrick/BrickUtilities.hxx"
 #include "MFront/BehaviourBrick/StressPotential.hxx"
+#include "MFront/BehaviourBrick/StressCriterion.hxx"
 #include "MFront/BehaviourBrick/OptionDescription.hxx"
 #include "MFront/BehaviourBrick/BurletCailletaudKinematicHardeningRule.hxx"
 
@@ -81,6 +82,7 @@ namespace mfront {
     BurletCailletaudKinematicHardeningRule::buildBackStrainImplicitEquations(
         const BehaviourDescription& bd,
         const StressPotential& sp,
+        const StressCriterion& fc,
         const std::vector<std::shared_ptr<KinematicHardeningRule>>& khrs,
         const std::string& fid,
         const std::string& kid,
@@ -108,7 +110,8 @@ namespace mfront {
         mdf_ds += "-(this->" + Dn + ")*(1-this->" + en + ")*2*(";
         mdf_ds += "(" + an + "_|" + n + ")*d" + n + "_ds" + fid + "+";
         mdf_ds += "(" + n + "^(" + an + "_|d" + n + "_ds" + fid + ")))/3)";
-        c += sp.computeDerivatives(bd, "StrainStensor", an, "-" + mdf_ds);
+        c += sp.computeDerivatives(bd, "StrainStensor", an, "-" + mdf_ds,
+                                   fc.isNormalDeviatoric());
         // term specific to this back strain
         c += "df" + an + "_dd" + an + " += ";
         c += "(this->theta)*(this->dp" + fid + ")*(this->" + Dn + ")*(";
