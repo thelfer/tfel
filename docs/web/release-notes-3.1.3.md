@@ -7,6 +7,17 @@ solved are described below.
 
 # Tickets fixed
 
+## Ticket #139: Invalid system flags when using the official `castem.h` header for `Cast3M 2018`
+
+The `castem.h` header relies on the definition of some system flags to
+work appropriately (in particular to define the `cast_int` typedef).
+This file changed in `Cast3M 2018`. The system flags defined by
+`TFEL/MFront` (`-DSUN -DUNIX64` or `-DSUN -DUNIX32`) were no more
+appropriate under `Linux` and had to be changed to `-DLINUX64` or
+`-DLINUX32`.
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/139/>
+
 ## Ticket #138: Profiling is broken when one of the following code blocks is defined: `@APrioriTimeStepScalingFactor`, `@APosterioriTimeStepScalingFactor`, `@AdditionalConvergenceChecks`
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/138/>
