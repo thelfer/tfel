@@ -32,6 +32,7 @@ EXTRA_DIST = CMakeLists.txt                                                \
              elasticity23.mtest                                            \
              elasticity24.mtest                                            \
              elasticity25.mtest                                            \
+             elasticity26.mtest                                            \
              elasticity27.mtest                                            \
              elasticity28.mtest                                            \
              saintvenantkirchhoffelasticity-uniaxialloading-sig11-1D.mtest \

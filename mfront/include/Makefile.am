@@ -134,7 +134,9 @@ nobase_include_HEADERS= MFront/MFront.hxx                                      \
 			MFront/BehaviourBrick/Chaboche2012KinematicHardeningRule.hxx       \
 			MFront/BehaviourBrick/BurletCailletaudKinematicHardeningRule.hxx   \
 			MFront/BehaviourBrick/KinematicHardeningRuleFactory.hxx            \
-			MFront/GenericBehaviour/State.h                                    \
+			MFront/GenericBehaviour/Types.h                                    \
+			MFront/GenericBehaviour/Types.hxx                                  \
+                        MFront/GenericBehaviour/State.h                                    \
 			MFront/GenericBehaviour/State.hxx                                  \
 			MFront/GenericBehaviour/BehaviourData.h                            \
 			MFront/GenericBehaviour/BehaviourData.hxx                          \
