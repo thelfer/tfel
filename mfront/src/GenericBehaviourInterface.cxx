@@ -11,6 +11,7 @@
  * project under specific licensing conditions.
  */
 
+#include <sstream>
 #include <fstream>
 #include "TFEL/Raise.hxx"
 #include "TFEL/Config/GetInstallPath.hxx"
@@ -18,12 +19,14 @@
 #include "MFront/FileDescription.hxx"
 #include "MFront/LibraryDescription.hxx"
 #include "MFront/TargetsDescription.hxx"
+#include "MFront/BehaviourDescription.hxx"
+#include "MFront/GenericBehaviourSymbolsGenerator.hxx"
 #include "MFront/GenericBehaviourInterface.hxx"
 
 namespace mfront {
 
   std::string GenericBehaviourInterface::getName() {
-    return "generic-behaviour";
+    return "generic";
   }  // end of getName
 
   std::string GenericBehaviourInterface::getInterfaceName() const {
@@ -46,7 +49,12 @@ namespace mfront {
   }  // end of GenericBehaviourInterface::getModellingHypothesesToBeTreated
 
   void GenericBehaviourInterface::writeInterfaceSpecificIncludes(
-      std::ostream&, const BehaviourDescription&) const {
+      std::ostream& os, const BehaviourDescription& bd) const {
+    os << "#include \"MFront/GenericBehaviour/State.hxx\"\n"
+       << "#include \"MFront/GenericBehaviour/BehaviourData.hxx\"\n";
+    if (bd.getAttribute(BehaviourDescription::requiresStiffnessTensor, false)){
+      os << "#include \"MFront/GenericBehaviour/ComputeStiffnessTensor.hxx\"\n";
+    }
   }  // end of GenericBehaviourInterface::writeInterfaceSpecificIncludes
 
   void GenericBehaviourInterface::getTargetsDescription(
@@ -62,10 +70,10 @@ namespace mfront {
     d.headers.push_back("MFront/GenericBehaviour/" + name + "-generic.hxx");
     insert_if(d[lib].link_directories,
               "$(shell " + tfel_config + " --library-path)");
-    if (this->shallGenerateMTestFileOnFailure(bd)) {
-      insert_if(d[lib].link_libraries,
-                tfel::getLibraryInstallName("MTestFileGenerator"));
-    }
+    // if (this->shallGenerateMTestFileOnFailure(bd)) {
+    //   insert_if(d[lib].link_libraries,
+    //             tfel::getLibraryInstallName("MTestFileGenerator"));
+    // }
 #if __cplusplus >= 201703L
     insert_if(d[lib].link_libraries, "$(shell " + tfel_config +
                                          " --library-dependency "
@@ -88,7 +96,7 @@ namespace mfront {
     };
     tfel::system::systemCall::mkdir("include/MFront");
     tfel::system::systemCall::mkdir("include/MFront/GenericBehaviour");
-    const auto mh = this->getModellingHypothesesToBeTreated(bd);
+    const auto mhs = this->getModellingHypothesesToBeTreated(bd);
     const auto name = bd.getBehaviourName();
     const auto header = name + "-generic.hxx";
     std::ofstream out("include/MFront/GenericBehaviour/" + header);
@@ -113,15 +121,16 @@ namespace mfront {
     out << "#ifdef __cplusplus\n"
         << "extern \"C\"{\n"
         << "#endif /* __cplusplus */\n\n";
-    this->writeSetParametersFunctionsDeclarations(out, name, bd);
-    this->writeSetOutOfBoundsPolicyFunctionDeclaration(out, name);
 
-    for (const auto h : this->getModellingHypothesesToBeTreated(bd)) {
+    this->writeSetOutOfBoundsPolicyFunctionDeclaration(out, name);
+    this->writeSetParametersFunctionsDeclarations(out, bd, name);
+
+    for (const auto h : mhs) {
       const auto f = this->getFunctionNameForHypothesis(name, h);
       out << "/*!\n"
           << " * \\param[in,out] d: material data\n"
           << " */\n"
-          << "MFRONT_SHAREDOBJ void " << f << "(MFront_GB_BehaviourData* const);\n\n";
+          << "MFRONT_SHAREDOBJ int " << f << "(MFront_GB_BehaviourData* const);\n\n";
     }
 
     out << "#ifdef __cplusplus\n"
@@ -143,31 +152,246 @@ namespace mfront {
         << "* \\author " << fd.authorName << '\n'
         << "* \\date   " << fd.date << '\n'
         << "*/\n\n";
+
+    this->writeVisibilityDefines(out);
+    
     out << "#include\"TFEL/Material/OutOfBoundsPolicy.hxx\"\n";
+    if(((bd.getBehaviourType() == BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR)||
+	(bd.getBehaviourType() == BehaviourDescription::GENERALBEHAVIOUR))&&
+       (bd.isStrainMeasureDefined())) {
+      out << "#include\"TFEL/Math/T2toST2/T2toST2View.hxx\"\n";
+      out << "#include\"TFEL/Material/FiniteStrainBehaviourTangentOperator.hxx\"\n";
+    }
     out << "#include\"TFEL/Material/" << bd.getClassName() << ".hxx\"\n";
     if (bd.getAttribute(BehaviourData::profiling, false)) {
       out << "#include\"MFront/BehaviourProfiler.hxx\"\n";
     }
-    out << '\n';
+    out << "#include\"MFront/GenericBehaviour/"
+           "Integrate.hxx\"\n\n";
+    out << "#include\"MFront/GenericBehaviour/" << header << "\"\n\n";
+
     this->writeGetOutOfBoundsPolicyFunctionImplementation(out, name);
-    this->generateUMATxxGeneralSymbols(out, name, bd, fd);
-    if (!bd.areAllMechanicalDataSpecialised(mh)) {
+    
+    out << "#ifdef __cplusplus\n"
+        << "extern \"C\"{\n"
+        << "#endif /* __cplusplus */\n\n";
+    
+    GenericBehaviourSymbolsGenerator sg;
+    sg.generateGeneralSymbols(out, *this, bd, fd, mhs,name);
+    if (!bd.areAllMechanicalDataSpecialised(mhs)) {
       const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-      this->generateUMATxxSymbols(out, name, uh, bd, fd);
+      sg.generateSymbols(out, *this, bd, fd, name, uh);
     }
-    for (const auto& h : mh) {
+    for (const auto& h : mhs) {
       if (bd.hasSpecialisedMechanicalData(h)) {
-        this->generateUMATxxSymbols(out, name, h, bd, fd);
+        sg.generateSymbols(out, *this, bd, fd, name, h);
       }
     }
 
-    for (const auto h : this->getModellingHypothesesToBeTreated(bd)) {
+    this->writeSetOutOfBoundsPolicyFunctionImplementation(out, name);
+    // parameters
+    this->writeSetParametersFunctionsImplementations(out, bd, name);
+    // behaviour implementations
+    const auto type = bd.getBehaviourType();
+    for (const auto h : mhs) {
+      auto oC   = SupportedTypes::TypeSize{}; // Cauchy stress offset      
       const auto f = this->getFunctionNameForHypothesis(name, h);
-      out << "MFRONT_SHAREDOBJ void " << f
+      auto get_ptr = [h](const char* ptr,const SupportedTypes::TypeSize o) -> std::string{
+	if(o.isNull()){
+	  return ptr;
+	}
+	return ptr+("+"+std::to_string(o.getValueForModellingHypothesis(h)));
+      };
+      out << "MFRONT_SHAREDOBJ int " << f
           << "(MFront_GB_BehaviourData* const d){\n"
-          << "}; // end of " << f << "\n\n";
+	  << "using namespace tfel::material;\n"
+	  << "using real = mfront::gb::real;\n"
+          << "constexpr const auto h = ModellingHypothesis::"
+          << ModellingHypothesis::toUpperCaseString(h) << ";\n"
+          << "using Behaviour = " << bd.getClassName() << "<h,real,false>;\n";
+      // treating strain measures
+      if(((bd.getBehaviourType() == BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR)||
+	  (bd.getBehaviourType() == BehaviourDescription::GENERALBEHAVIOUR))&&
+	 (bd.isStrainMeasureDefined())) {
+	auto oF   = SupportedTypes::TypeSize{}; // deformation gradient offset
+	auto oe   = SupportedTypes::TypeSize{}; // Hencky strain offset
+	auto ocig = SupportedTypes::TypeSize{}; // current gradients offset on input
+	auto ocog = SupportedTypes::TypeSize{}; // current gradients offset on output
+	auto octh = SupportedTypes::TypeSize{}; // current thermodynamic forces offset
+	// determining the size of the new arrays of gradients and thermodynamic forces
+	for(const auto& mv: bd.getMainVariables()){
+	  ocig += SupportedTypes::getTypeSize(mv.first.type,mv.first.arraySize);
+	  octh += SupportedTypes::getTypeSize(mv.second.type,mv.second.arraySize);
+	}
+	out << "mfront::gb::real gradients0["
+	    << ocig.getValueForModellingHypothesis(h) << "];\n";
+	out << "mfront::gb::real gradients1["
+	    << ocig.getValueForModellingHypothesis(h) << "];\n";
+	out << "mfront::gb::real thermodynamic_forces0["
+	    << octh.getValueForModellingHypothesis(h) << "];\n";
+	out << "mfront::gb::real thermodynamic_forces1["
+	    << octh.getValueForModellingHypothesis(h) << "];\n";
+	out << "mfront::gb::real K["
+	    << octh.getValueForModellingHypothesis(h)*ocig.getValueForModellingHypothesis(h)
+	    << "];\n";
+	// copying
+	ocig = SupportedTypes::TypeSize{};
+	octh = SupportedTypes::TypeSize{};
+	for(const auto& mv: bd.getMainVariables()){
+	  if(mv.first.name=="eto"){
+	    oe = ocig;
+	    oF = ocig;
+	    oC = octh;
+	    ocig += SupportedTypes::getTypeSize(mv.first.type,mv.first.arraySize);
+	    ocog += SupportedTypes::getTypeSize("strain",1);
+	  } else {
+	    const auto ng  =
+	      SupportedTypes::getTypeSize(mv.first.type,mv.first.arraySize).getValueForModellingHypothesis(h);
+	    const auto nth =
+	      SupportedTypes::getTypeSize(mv.second.type,mv.second.arraySize).getValueForModellingHypothesis(h);
+	    out << "tfel::fsalgo::copy<" <<  ng << ">::exe("
+		<< "d->s0.gradients[" << ocig << "],"
+		<< "gradients0[" << ocog << "]);\n";
+	    out << "tfel::fsalgo::copy<" <<  ng << ">::exe("
+		<< "d->s1.gradients[" << ocig << "],"
+		<< "gradients1[" << ocog << "]);\n";
+	    out << "tfel::fsalgo::copy<" << nth << ">::exe("
+		<< "d->s0.thermodynamic_forces[" << ocig << "],"
+		<< "thermodynamic_forces0[" << ocog << "]);\n";
+	    out << "tfel::fsalgo::copy<" << nth << ">::exe("
+		<< "d->s1.thermodynamic_forces[" << ocig << "],"
+		<< "thermodynamic_forces1[" << ocog << "]);\n";
+	    ocig += SupportedTypes::getTypeSize("DeformationGradientTensor",1);
+	    ocog += SupportedTypes::getTypeSize("strain",1);
+	  }
+	  octh += SupportedTypes::getTypeSize(mv.second.type,mv.second.arraySize);
+	}
+	// now converting the deformation gradient
+	const auto ms = bd.getStrainMeasure();
+	const auto N = tfel::material::getSpaceDimension(h);
+	if (ms == BehaviourDescription::GREENLAGRANGE) {
+	  
+	} else if (ms == BehaviourDescription::HENCKY) {
+	  out << "tfel::math::tensor<" << N << ",real> F0(d->s0.gradients["
+	      << oF.getValueForModellingHypothesis(h) << "]);\n";
+	  out << "tfel::math::tensor<" << N << ",real> F1(d->s1.gradients["
+	      << oF.getValueForModellingHypothesis(h) << "]);\n";
+	  out << "tfel::math::stensor<" << N << ",real> s0(d->s0.thermodynamic_forces["
+	      << oC.getValueForModellingHypothesis(h) << "]);\n";
+	  out << "LogarithmicStrainHandler<" << N << ",real> lgh0("
+	      << "LogarithmicStrainHandler<" << N << ",real>::EULERIAN,F0);\n";
+	  out << "LogarithmicStrainHandler<" << N << ",real> lgh1("
+	      << "LogarithmicStrainHandler<" << N << ",real>::EULERIAN,F1);\n";
+	  out << "lgh0.getHenckyLogarithmicStrain().exportTab("
+	      << get_ptr("gradients0",oe) << ");\n";
+	  out << "lgh1.getHenckyLogarithmicStrain().exportTab("
+	      << get_ptr("gradients1",oe) << ");\n";
+	  if((h==ModellingHypothesis::PLANESTRESS)||
+	     (h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)){
+	    const auto as = this->checkIfAxialStrainIsDefinedAndGetItsOffset(bd);
+	    if(!as.first){
+	      raise("the axial strain is not defined");
+	    }
+	    out << "lgh0.updateAxialDeformationGradient("
+		<< "std::exp(d->s0.internal_state_variables["
+		<< as.second.getValueForModellingHypothesis(h) << "]));\n";
+	  }
+	  out << "lgh0.convertFromCauchyStress(s0).exportTab("
+	      << get_ptr("thermodynamic_forces0",oC) << ");\n";
+	  out << "auto *const gradients0_old = d->s0.gradients;\n"
+	      << "auto *const gradients1_old = d->s1.gradients;\n"
+	      << "auto *const thermodynamic_forces0_old = d->s0.thermodynamic_forces;\n"
+	      << "auto *const thermodynamic_forces1_old = d->s1.thermodynamic_forces;\n"
+	      << "auto *const K_old = d->K;\n"
+	      << "K[0] = d->K[0];\n"
+	      << "d->s0.gradients = gradients0;\n"
+	      << "d->s1.gradients = gradients1;\n"
+	      << "d->s0.thermodynamic_forces = thermodynamic_forces0;\n"
+	      << "d->s1.thermodynamic_forces = thermodynamic_forces1;\n"
+	      << "d->K = K;\n"
+	      << "const auto bp = K[0]<0.5;\n"
+	      << "const auto bk = K[0]>0.5;\n";
+	} else {
+	  raise("unsupported strain measure");
+	}
+      }
+      // behaviour integration
+      out << "const auto r = mfront::gb::integrate<Behaviour>(*d,";
+      if (type == BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
+	out << "Behaviour::STANDARDTANGENTOPERATOR";
+      } else if (type == BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
+	out << "Behaviour::DSIG_DF";
+      } else if (type == BehaviourDescription::COHESIVEZONEMODEL) {
+	out << "Behaviour::STANDARDTANGENTOPERATOR";
+      } else {
+	raise("unsupported behaviour type");
+      }
+      out << ", " << name << "_getOutOfBoundsPolicy());\n";
+      // treating strain measures
+      if(((bd.getBehaviourType() == BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR)||
+	  (bd.getBehaviourType() == BehaviourDescription::GENERALBEHAVIOUR))&&
+	 (bd.isStrainMeasureDefined())) {
+	out << "d->s0.gradients = gradients0_old;\n"
+	    << "d->s1.gradients = gradients1_old;\n"
+	    << "d->s0.thermodynamic_forces = thermodynamic_forces0_old;\n"
+	    << "d->s1.thermodynamic_forces = thermodynamic_forces1_old;\n"
+	    << "d->K = K_old;\n";
+	out << "if(r){\n";
+	// post-processing
+	const auto ms = bd.getStrainMeasure();
+	if (ms == BehaviourDescription::GREENLAGRANGE) {
+	  
+	} else if (ms == BehaviourDescription::HENCKY) {
+	  const auto N = tfel::material::getSpaceDimension(h);
+	  out << "if(bp){\n"
+	      << "const tfel::math::stensor<" << N << ",real> T0("
+	      << get_ptr("thermodynamic_forces0", oC) << ");\n"
+	      << "const tfel::math::st2tost2<" << N << ",real> K0(K);\n"
+	      << "const auto Cs = lgh0.convertToSpatialTangentModuli(K0,T0);\n"
+	      << "const auto Dt = convert<TangentOperator::DTAU_DF,"
+	      << "                        TangentOperator::SPATIAL_MODULI>(Cs,F0,F0,s0);\n"
+	      << "tfel::math::T2toST2V<" << N << ",real>(d->K) = "
+	      << "convert<TangentOperator::DSIG_DF,"
+	      << "        TangentOperator::DTAU_DF>(Dt,F0,F0,s0);\n"
+	      << "} else {\n";
+	  if((h==ModellingHypothesis::PLANESTRESS)||
+	     (h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)){
+	    const auto as = this->checkIfAxialStrainIsDefinedAndGetItsOffset(bd);
+	    if(!as.first){
+	      raise("the axial strain is not defined");
+	    }
+	    out << "lgh1.updateAxialDeformationGradient("
+		<< "std::exp(d->s1.internal_state_variables["
+		<< as.second.getValueForModellingHypothesis(h) << "]));\n";
+	  }
+	  out << "const tfel::math::stensor<" << N << ",real> T1("
+	      << get_ptr("thermodynamic_forces1", oC) << ");\n"
+	      << "const auto s1 = lgh1.convertToCauchyStress(T1);\n"
+	      << "s1.exportTab("
+	      << get_ptr("d->s1.thermodynamic_forces", oC) << ");\n"
+	      << "if(bk){\n"
+	      << "const tfel::math::st2tost2<" << N << ",real> K1(K);\n"
+	      << "const auto Cs = lgh1.convertToSpatialTangentModuli(K1,T1);\n"
+	      << "const auto Dt = convert<TangentOperator::DTAU_DF,"
+	      << "                        TangentOperator::SPATIAL_MODULI>(Cs,F0,F1,s1);\n"
+	      << "tfel::math::T2toST2V<" << N << ",real>(d->K) = "
+	      << "convert<TangentOperator::DSIG_DF,"
+	      << "        TangentOperator::DTAU_DF>(Dt,F0,F1,s1);\n"
+	      << "}\n"
+	      << "}\n";
+	} else {
+	  raise("unsupported strain measure");
+	}
+	out << "}\n";
+      }
+      out << "}\n";
+      out << "return r;\n"
+      	  << "} // end of " << f << "\n\n";
     }
-
+    out << "#ifdef __cplusplus\n"
+        << "}\n"
+        << "#endif /* __cplusplus */\n\n";
+    out.close();
   }  // end of GenericBehaviourInterface::endTreatment
 
   std::string GenericBehaviourInterface::getLibraryName(
@@ -192,91 +416,533 @@ namespace mfront {
     return n + "_" + ModellingHypothesis::toString(h);
   }  // end of GenericBehaviourInterface::getFunctionNameForHypothesis
 
-  void GenericBehaviourInterface::writeUMATxxBehaviourTypeSymbols(
-      std::ostream& os, const std::string& name, const BehaviourDescription& bd) const {
-    os << "MFRONT_SHAREDOBJ unsigned short "
-        << this->getFunctionNameBasis(name) << "_BehaviourType = ";
-    if (bd.getBehaviourType() == BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
-      if (bd.isStrainMeasureDefined()) {
-        const auto fs = bd.getStrainMeasure();
-        if (fs == BehaviourDescription::LINEARISED) {
-          os << "1u";
-        } else if (fs == BehaviourDescription::GREENLAGRANGE) {
-          os << "3u";
-        } else if (fs == BehaviourDescription::HENCKY) {
-          os << "3u";
-        } else {
-          tfel::raise(
-              "GenericBehaviourInterface::writeUMATxxBehaviourTypeSymbols: "
-              "unsupported strain measure");
-          os << "0u";
-        }
-      } else {
-        os << "1u";
-      }
-    } else if (bd.getBehaviourType() == BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
-      os << "3u";
-    } else if (bd.getBehaviourType() == BehaviourDescription::COHESIVEZONEMODEL) {
-      os << "2u";
+  void GenericBehaviourInterface::writeBehaviourConstructorHeader(std::ostream& os,
+								  const BehaviourDescription& bd,
+								  const Hypothesis,
+								  const std::string& initStateVarsIncrements) const{
+    os << "/*\n"
+       << " * \\brief constructor for the " << this->getInterfaceName() << " interface\n"
+       << " * \\param[in] mgb_d: behaviour data\n"
+       << " */\n"
+       << bd.getClassName() << "(const mfront::gb::BehaviourData& mgb_d)\n";
+    if (bd.useQt()) {
+      os << ": " << bd.getClassName()
+	 << "BehaviourData<hypothesis,Type,use_qt>(mgb_d),\n"
+	 << bd.getClassName()
+	 << "IntegrationData<hypothesis,Type,use_qt>(mgb_d)";
     } else {
-      tfel::raise(
-          "GenericBehaviourInterface::writeUMATxxBehaviourTypeSymbols: "
-          "unsupported strain measure");
+      os << ": "
+	 << bd.getClassName()
+	 << "BehaviourData<hypothesis,Type,false>(mgb_d),\n"
+	 << bd.getClassName()
+	 << "IntegrationData<hypothesis,Type,false>(mgb_d)";
     }
-    os << ";\n\n";
-  }  // end of GenericBehaviourInterface::writeUMATxxBehaviourTypeSymbols
+    if (!initStateVarsIncrements.empty()) {
+      os << ",\n" << initStateVarsIncrements;
+    }
+  } // end of GenericBehaviourInterface::writeBehaviourConstructorHeader
 
-  void GenericBehaviourInterface::writeUMATxxBehaviourKinematicSymbols(
-      std::ostream& os,
-      const std::string& name,
-      const BehaviourDescription& bd) const {
-    os << "MFRONT_SHAREDOBJ unsigned short "
-        << this->getFunctionNameBasis(name) << "_BehaviourKinematic = ";
-    if (bd.getBehaviourType() == BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
-      if (bd.isStrainMeasureDefined()) {
-        const auto fs = bd.getStrainMeasure();
-        if (fs == BehaviourDescription::LINEARISED) {
-          os << "1u";
-        } else if (fs == BehaviourDescription::GREENLAGRANGE) {
-          os << "3u";
-        } else if (fs == BehaviourDescription::HENCKY) {
-          os << "3u";
-        } else {
-          tfel::raise(
-              "GenericBehaviourInterface::writeUMATxxBehaviourTypeSymbols: "
-              "unsupported strain measure");
-          os << "0u";
-        }
-      } else {
-        os << "1u";
+  void GenericBehaviourInterface::writeBehaviourConstructorBody(std::ostream& os,
+								const BehaviourDescription& bd,
+								const Hypothesis h) const{
+    auto throw_if = [](const bool b, const char* msg){
+      if(b){
+	tfel::raise("GenericBehaviourInterface::writeBehaviourConstructorBody: "
+		    +std::string(msg));
       }
-    } else if (bd.getBehaviourType() == BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
-      os << "3u";
-    } else if (bd.getBehaviourType() == BehaviourDescription::COHESIVEZONEMODEL) {
-      os << "2u";
-    } else {
-      tfel::raise(
-          "GenericBehaviourInterface::writeUMATxxBehaviourTypeSymbols: "
-          "unsupported strain measure");
+    };
+    // setting driving variables and thermodynamic forces
+    auto vsize = [&throw_if](const SupportedTypes::TypeFlag f){
+      if(f==SupportedTypes::TVector){
+    	return "TVectorSize";
+      } else if (f==SupportedTypes::Stensor){
+    	return "StensorSize";
+      } else if (f!=SupportedTypes::Tensor){
+    	throw_if(true,"invalid variable type");
+      }
+      return "TensorSize";
+    };
+    auto init = [&os,&vsize,this](SupportedTypes::TypeSize& o,
+				  const VariableDescription& v,
+				  const std::string& n,
+				  const std::string& src){
+      const auto f = this->getTypeFlag(v.type);
+      if(f==SupportedTypes::Scalar){
+    	os << "this->" << n << " = mgb_d." << src << "[" << o <<"];\n";
+      } else {
+    	const auto s = vsize(f);
+    	if(!o.isNull()){
+    	  os << "tfel::fsalgo::copy<" << s << ">::exe(mgb_d." << src << "+" << o << ","
+    	     << "this->" << n << ".begin());\n";
+    	} else {
+    	  os << "tfel::fsalgo::copy<" << s << " >::exe(mgb_d." << src << ",this->"
+	  << n << ".begin());\n";
+    	}
+      }
+    }; // end of init
+    auto odv = SupportedTypes::TypeSize{};
+    auto oth = SupportedTypes::TypeSize{};
+    for (const auto& mv : bd.getMainVariables()) {
+      const auto& dv = mv.first;
+      const auto& th = mv.second;
+      throw_if(dv.arraySize!=1,"arrays of gradients are not supported");
+      throw_if(th.arraySize!=1,"arrays of thermodynamic forces are not supported");
+      // driving variable
+      const auto dvname = dv.increment_known ? dv.name : dv.name + "0";
+      init(odv,dv,dvname,"s0.gradients");
+      if(!dv.increment_known){
+    	const auto f = this->getTypeFlag(dv.type);
+    	if(f==SupportedTypes::Scalar){
+    	  os << "this->" << dv.name << "1 = mgb_d.s1.gradients[" << odv <<"];\n";
+    	} else {
+    	  const auto s = vsize(f);
+    	  if(!odv.isNull()){
+    	    os << "tfel::fsalgo::copy<" << s << ">::exe("
+	       << "mgb_d.s1.gradients+" << odv << ","
+    	       << "this->" << dv.name << "1.begin());\n";
+    	  } else {
+    	    os << "tfel::fsalgo::copy<" << s << " >::exe("
+	       << "mgb_d.s1.gradients,"
+	       << "this->" << dv.name << "1.begin());\n";
+    	  }
+    	}
+      } else {
+    	const auto f = this->getTypeFlag(dv.type);
+    	if(f==SupportedTypes::Scalar){
+    	  os << "this->d" << dv.name << " = "
+	     << "mgb_d.s1.gradients[" << odv <<"] - "
+	     << "mgb_d.s0.gradients[" << odv <<"];\n";
+    	} else {
+    	  const auto s = vsize(f);
+    	  if(!odv.isNull()){
+    	    os << "tfel::fsalgo::transform<" << s << ">::exe("
+	       << "mgb_d.s1.gradients+" << odv << ","
+    	       << "mgb_d.s0.gradients+" << odv << ","
+    	       << "this->d" << dv.name << ".begin(),std::minus<real>());\n";
+    	  } else {
+    	    os << "tfel::fsalgo::transform<" << s << ">::exe("
+	       << "mgb_d.s1.gradients,"
+	       << "mgb_d.s0.gradients,"
+    	       << "this->d" << dv.name << ".begin(),std::minus<real>());\n";
+    	  }
+    	}
+      }
+      init(oth,th,th.name,"s0.thermodynamic_forces");
+      odv +=  SupportedTypes::getTypeSize(dv.type, dv.arraySize);
+      oth +=  SupportedTypes::getTypeSize(th.type, th.arraySize);
     }
-    os << ";\n\n";
-  }  // end of
-     // GenericBehaviourInterface::writeUMATxxBehaviourKinematicSymbols
+    if (bd.requiresStressFreeExpansionTreatment(h)) {
+      os << "std::pair<StressFreeExpansionType,StressFreeExpansionType> mgb_dl01_l0;\n"
+	 << "this->computeStressFreeExpansion(mgb_dl01_l0);\n";
+      if(bd.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
+	if(bd.isStrainMeasureDefined()){
+	  const auto ms = bd.getStrainMeasure();
+	  if((ms==BehaviourDescription::LINEARISED)||
+	     (ms==BehaviourDescription::GREENLAGRANGE)){
+	    os << "this->eto  -= mgb_dl01_l0.first;\n"
+	       << "this->deto -= mgb_dl01_l0.second-mgb_dl01_l0.first;\n";
+	  } else if(ms==BehaviourDescription::HENCKY){
+	    os << "this->eto[0]  -= std::ln(1+mgb_dl01_l0.first[0]);\n"
+	       << "this->eto[1]  -= std::ln(1+mgb_dl01_l0.first[1]);\n"
+	       << "this->eto[2]  -= std::ln(1+mgb_dl01_l0.first[2]);\n"
+	       << "this->deto[0] -= std::ln((1+mgb_dl01_l0.second[0])/(1+mgb_dl01_l0.first[0]));\n"
+	       << "this->deto[1] -= std::ln((1+mgb_dl01_l0.second[1])/(1+mgb_dl01_l0.first[1]));\n"
+	       << "this->deto[2] -= std::ln((1+mgb_dl01_l0.second[2])/(1+mgb_dl01_l0.first[2]));\n";
+	  } else {
+	    throw_if(true,"unsupported finite strain strategy");
+	  }
+	} else {
+	  os << "this->eto  -= mgb_dl01_l0.first;\n"
+	     << "this->deto -= mgb_dl01_l0.second-mgb_dl01_l0.first;\n";
+	}
+      }
+    }
+  } // end of GenericBehaviourInterface::writeBehaviourConstructorBody
+  
+  void GenericBehaviourInterface::writeBehaviourDataConstructor(std::ostream& os,
+								const Hypothesis h,
+								const BehaviourDescription& bd) const{
+    // write variable initializer
+    auto wvi = [&os](bool& first,const VariableDescription& v,
+		     const std::string& src,
+		     const SupportedTypes::TypeSize& o,
+		     const std::string& eo){
+      if (v.arraySize != 1u) {
+        return;
+      }
+      os << (first ?  "\n: " : ",\n");
+      const auto flag = SupportedTypes::getTypeFlag(v.type);
+      if (flag == SupportedTypes::Scalar) {
+	if(eo.empty()){
+	  os << v.name << "(" << src << "[" << o << "])";
+	} else {
+	  os << v.name << "(" << src << "[" << eo << "+" << o << "])";
+	}
+      } else if ((flag == SupportedTypes::TVector) ||
+                 (flag == SupportedTypes::Stensor) ||
+                 (flag == SupportedTypes::Tensor)) {
+	if(eo.empty()){
+	  os << v.name << "(&" << src
+ 	     << "[" << o << "])";
+	} else {
+	  os << v.name << "(&" << src
+	     << "[" << eo << " " << o << "])";
+	}
+      } else {
+        tfel::raise("GenericBehaviourInterface::writeBehaviourDataConstructor: "
+		    "internal error, tag unsupported");
+      }
+      first = false;
+    }; // end of wvi
+    auto wvci = [&wvi,this](bool& first,const VariableDescriptionContainer& vs,
+			    const std::string& src,
+			    const std::string& eo){
+      auto o =  SupportedTypes::TypeSize{};
+      for(const auto& v : vs){
+	wvi(first,v,src,o,eo);
+	o += this->getTypeSize(v.type, v.arraySize);
+      }
+    }; // end of wvci
+    // write variable initializer
+    auto wvi2 = [&os,&bd](const VariableDescription& v,
+			  const std::string& src,
+			  const SupportedTypes::TypeSize& c,
+			  const std::string& eo){
+      auto get_offset = [&eo](const SupportedTypes::TypeSize o){
+	std::ostringstream out;
+	out << o;
+	if(!eo.empty()){
+	  return eo+'+'+out.str();
+	}
+	return out.str();
+      };
+      auto o = c;
+      if (v.arraySize == 1u) {
+        return;
+      }
+      const auto flag = SupportedTypes::getTypeFlag(v.type);
+      if (bd.useDynamicallyAllocatedVector(v.arraySize)) {
+        os << "this->" << v.name << ".resize(" << v.arraySize << ");\n";
+        os << "for(unsigned short idx=0;idx!=" << v.arraySize << ";++idx){\n";
+        switch (flag) {
+	case SupportedTypes::Scalar:
+	  os << "this->" << v.name << "[idx] = " << src << "[" << get_offset(o) << "+idx];\n";
+	  break;
+	case SupportedTypes::TVector:
+	  os << "tfel::fsalgo::copy<TVectorSize>::exe(&" << src << "[" << get_offset(o)
+	    << "+idx*TVectorSize],this->" << v.name << "[idx].begin());\n";
+	  break;
+	case SupportedTypes::Stensor:
+	  os << "this->" << v.name << "[idx].import(&" << src << "[" << get_offset(o)
+	    << "+idx*StensorSize]);\n";
+	  break;
+	case SupportedTypes::Tensor:
+	  os << "tfel::fsalgo::copy<TensorSize>::exe(&" << src << "[" << get_offset(o)
+	    << "+idx*TensorSize],this->" << v.name << "[idx].begin());\n";
+	  break;
+	default:
+	  tfel::raise("GenericBehaviourInterface::writeBehaviourDataConstructor: "
+		      "internal error, tag unsupported");
+        }
+        os << "}\n";
+      } else {
+        for (int index = 0; index != v.arraySize; ++index) {
+          switch (flag) {
+	  case SupportedTypes::Scalar:
+	  os << "this->" << v.name << "[" << index << "] = " << src << "[" << get_offset(o) << "];\n";
+	  break;
+	  case SupportedTypes::TVector:
+	  os << "tfel::fsalgo::copy<TVectorSize>::exe(&" << src << "["
+	  << get_offset(o) << "],this->" << v.name << "[" << index << "].begin());\n";
+	  break;
+	  case SupportedTypes::Stensor:
+	  os << "this->" << v.name << "[" << index << "].import(&" << src << "[" << get_offset(o)
+	  << "]);\n";
+	  break;
+	  case SupportedTypes::Tensor:
+	  os << "tfel::fsalgo::copy<TensorSize>::exe(&" << src
+	     << "[" << get_offset(o) << "],"
+	     << "this->" << v.name << "[" << index << "].begin());\n";
+	  break;
+	  default:
+	  tfel::raise("GenericBehaviourInterface::writeBehaviourDataConstructor: "
+		      "internal error, tag unsupported");
+          }
+          o += SupportedTypes::getTypeSize(v.type, 1u);
+        }
+      }
+    }; // end of wvi2
+    auto wvci2 = [&wvi2,this](const VariableDescriptionContainer& vs,
+			      const std::string& src,
+			      const std::string& eo){
+      auto o =  SupportedTypes::TypeSize{};
+      for(const auto& v : vs){
+	wvi2(v,src,o,eo);
+	o += this->getTypeSize(v.type, v.arraySize);
+      }
+    }; // end of wvci2
+    const auto& d = bd.getBehaviourData(h);
+    os << "/*\n"
+       << " * \\brief constructor for the " << this->getInterfaceName() << " interface\n"
+       << " * \\param[in] mgb_d: behaviour data\n"
+       << " */\n"
+       << bd.getClassName() << "BehaviourData(const mfront::gb::BehaviourData& mgb_d)";
+    auto first = true;
+    const auto mprops = this->buildMaterialPropertiesList(bd,h);
+    auto ioffset = mprops.second;
+    auto mps_offset = std::string{};
+    auto emps_offset = std::string{};
+    if ((bd.getAttribute(BehaviourDescription::requiresStiffnessTensor, false))||
+	(bd.getAttribute(BehaviourDescription::requiresThermalExpansionCoefficientTensor, false))) {
+      mps_offset = "mfront::gb::ThermoElasticMaterialPropertiesNumber<hypothesis,";
+      if(bd.getAttribute(BehaviourDescription::requiresStiffnessTensor, false)){
+	emps_offset = "mfront::gb::ElasticMaterialPropertiesNumber<hypothesis,";
+	if(bd.getElasticSymmetryType() == mfront::ISOTROPIC){
+	  mps_offset  += "true, true";
+	  emps_offset += "true";
+	} else if(bd.getElasticSymmetryType() == mfront::ORTHOTROPIC){
+	  mps_offset  += "true, false";
+	  emps_offset += "false";
+	} else {
+	  tfel::raise("GenericBehaviourInterface::writeBehaviourDataConstructor:"
+		      "unsupported elastic symmetry type");
+	}
+	emps_offset += ">::value";
+      } else {
+	mps_offset += "false, false";
+      }
+      if(bd.getAttribute(BehaviourDescription::requiresThermalExpansionCoefficientTensor, false)){
+	if(bd.getSymmetryType() == mfront::ISOTROPIC){
+	  mps_offset += ", true, true";
+	} else if(bd.getSymmetryType() == mfront::ORTHOTROPIC){
+	  mps_offset += ", true, false";
+	} else {
+	  tfel::raise("GenericBehaviourInterface::writeBehaviourDataConstructor:"
+		      "unsupported elastic symmetry type");
+	}
+      } else {
+	mps_offset += ", false, false";
+      }
+      mps_offset += ">::value";
+    }
+    for (const auto& mp : d.getMaterialProperties()) {
+      const auto& m = findBehaviourMaterialProperty(mprops.first, mp.getExternalName());
+      auto offset = m.offset;
+      offset -= ioffset;
+      wvi(first,mp,"mgb_d.s1.material_properties",offset,mps_offset);
+    }
+    wvci(first,d.getPersistentVariables(),"mgb_d.s0.internal_state_variables","");
+    wvci(first,d.getExternalStateVariables(),"mgb_d.s0.external_state_variables","");
+    os << "\n{\n";
+    for (const auto& mp : d.getMaterialProperties()) {
+      const auto& m = findBehaviourMaterialProperty(mprops.first, mp.getExternalName());
+      auto offset = m.offset;
+      offset -= ioffset;
+      wvi2(mp,"mgb_d.s1.material_properties",offset,mps_offset);
+    }
+    wvci2(d.getPersistentVariables(),"mgb_d.s0.internal_state_variables","");
+    wvci2(d.getExternalStateVariables(),"mgb_d.s0.external_state_variables","");
+    if (bd.getAttribute(BehaviourDescription::requiresStiffnessTensor, false)) {
+      if(bd.getElasticSymmetryType() == mfront::ISOTROPIC){
+	const auto stac = [&bd]{
+	  if (bd.getAttribute(BehaviourDescription::requiresUnAlteredStiffnessTensor, false)) {
+	    return "StiffnessTensorAlterationCharacteristic::UNALTERED";
+	  }
+	  return "StiffnessTensorAlterationCharacteristic::ALTERED";
+	}();
+    	os << "computeIsotropicStiffnessTensor"
+    	   << "<hypothesis,"<< stac << ",stress,real>(this->D,"
+    	   << "mgb_d.s1.material_properties[0],\n"
+    	   << "mgb_d.s1.material_properties[1]);\n";
+      } else if(bd.getElasticSymmetryType() == mfront::ORTHOTROPIC){
+	if (bd.getAttribute(BehaviourDescription::requiresUnAlteredStiffnessTensor, false)) {
+	  os << "mfront::gb::computeOrthotropicUnAlteredElasticStiffnessTensor<hypothesis>(this->D,"
+	     << "mgb_d.s1.material_properties);\n";
+	} else {
+	  os << "mfront::gb::computeOrthotropicAlteredElasticStiffnessTensor<hypothesis>(this->D,"
+	     << "mgb_d.s1.material_properties);\n";
+	}
+      } else {
+    	tfel::raise("GenericBehaviourInterface::writeBehaviourDataConstructor:"
+    		    "unsupported symmetry type");
+      }
+    }
+    if (bd.getAttribute(BehaviourDescription::requiresThermalExpansionCoefficientTensor, false)) {
+      auto eoffset = std::string{};
+      if (bd.getAttribute(BehaviourDescription::requiresStiffnessTensor, false)) {
+	eoffset = "mgb_eoffset";
+	os << "constexpr const auto mgb_eoffset = " << emps_offset << ";\n";
+      }
+      if(bd.getSymmetryType() == mfront::ISOTROPIC){
+	if(eoffset.empty()){
+ 	  os << "this->A = mgb_d.s1.material_properties[0] * "
+	     << "ThermalExpansionCoefficientTensor::Id();\n";
+	} else {
+ 	  os << "this->A = mgb_d.s1.material_properties[" << eoffset << "] * "
+	     << "ThermalExpansionCoefficientTensor::Id();\n";
+	}
+      } else if(bd.getSymmetryType() == mfront::ORTHOTROPIC){
+	os << "this->A = ThermalExpansionCoefficientTensor(thermalexpansion(0));\n";
+	if(eoffset.empty()){
+	  os << "this->A[0] = thermalexpansion(mgb_d.s1.material_properties[0]);\n"
+	     << "this->A[1] = thermalexpansion(mgb_d.s1.material_properties[1]);\n"
+	     << "this->A[2] = thermalexpansion(mgb_d.s1.material_properties[2]);\n";
+	} else {
+	  os << "this->A[0] = thermalexpansion(mgb_d.s1.material_properties[" << eoffset << "]);\n"
+	     << "this->A[1] = thermalexpansion(mgb_d.s1.material_properties[" << eoffset << "+1]);\n"
+	     << "this->A[2] = thermalexpansion(mgb_d.s1.material_properties[" << eoffset << "+2]);\n";
+	}
+      } else {
+    	tfel::raise("GenericBehaviourInterface::writeBehaviourDataConstructor:"
+    		    "unsupported symmetry type");
+      }
+      os << ";\n";
+    }	  
+    os << "}\n\n";
+  } // end of GenericBehaviourInterface::writeBehaviourDataConstructor
+  
+  void GenericBehaviourInterface::writeIntegrationDataConstructor(std::ostream& os,
+								  const Hypothesis h,
+								  const BehaviourDescription& bd) const{
+    const auto& evs = bd.getBehaviourData(h).getExternalStateVariables();
+    os << "/*\n"
+       << " * \\brief constructor for the " << this->getInterfaceName() << " interface\n"
+       << " * \\param[in] mgb_d: behaviour data\n"
+       << " */\n"
+       << bd.getClassName() << "IntegrationData(const mfront::gb::BehaviourData& mgb_d)\n"
+       << ": dt(mgb_d.dt)";
+    auto o =  SupportedTypes::TypeSize{};
+    for(const auto& ev: evs){
+      if (ev.arraySize != 1u) {
+	o += this->getTypeSize(ev.type, ev.arraySize);
+        continue;
+      }
+      if(SupportedTypes::getTypeFlag(ev.type)!=SupportedTypes::Scalar){
+        tfel::raise("GenericBehaviourInterface::writeIntegrationDataConstructor: "
+		    "internal error, tag unsupported");
+      }
+      os << ",\nd" << ev.name
+	 << "(mgb_d.s1.external_state_variables[" << o << "]-"
+	 << "mgb_d.s0.external_state_variables[" << o << "])";
+      o += this->getTypeSize(ev.type, ev.arraySize);
+    }
+    os << "\n{\n";
+    o =  SupportedTypes::TypeSize{};
+    for(const auto& ev : evs){
+      if (ev.arraySize == 1u) {
+	o += this->getTypeSize(ev.type, ev.arraySize);
+        continue;
+      }
+      if(SupportedTypes::getTypeFlag(ev.type)!=SupportedTypes::Scalar){
+        tfel::raise("GenericBehaviourInterface::writeIntegrationDataConstructor: "
+		    "internal error, tag unsupported");
+      }
+      if (bd.useDynamicallyAllocatedVector(ev.arraySize)) {
+        os << "this->d" << ev.name << ".resize(" << ev.arraySize << ");\n";
+        os << "for(unsigned short idx=0;idx!=" << ev.arraySize << ";++idx){\n";
+	os << "this->d" << ev.name << "[idx] = "
+	   << "mgb_d.s1.external_state_variables[" << o << "+idx] - "
+	   << "mgb_d.s0.external_state_variables[" << o << "+idx];\n";
+        os << "}\n";
+	o += this->getTypeSize(ev.type, ev.arraySize);
+      } else {
+        for (int index = 0; index != ev.arraySize; ++index) {
+	  os << "this->d" << ev.name << "[" << index << "] = "
+	     << "mgb_d.s1.external_state_variables[" << o << "] - "
+	     << "mgb_d.s0.external_state_variables[" << o << "];\n";
+          o += SupportedTypes::getTypeSize(ev.type, 1u);
+        }
+      }
+    }
+    os << "}\n\n";
+  } // end of GenericBehaviourInterface::writeIntegrationDataConstructor
+  
+  void GenericBehaviourInterface::writeBehaviourDataMainVariablesSetters(std::ostream&,
+									 const BehaviourDescription&) const{
+  } // end of GenericBehaviourInterface::writeBehaviourDataMainVariablesSetters
 
-  void GenericBehaviourInterface::writeUMATxxAdditionalSymbols(
-      std::ostream&,
-      const std::string&,
-      Hypothesis,
-      const BehaviourDescription&,
-      const FileDescription&) const {
-  }  // end of GenericBehaviourInterface::writeUMATxxAdditionalSymbols
+  void GenericBehaviourInterface::writeIntegrationDataMainVariablesSetters(std::ostream&,
+									   const BehaviourDescription&) const{
+  } // end of GenericBehaviourInterface::writeIntegrationDataMainVariablesSetters
 
-  void GenericBehaviourInterface::writeMTestFileGeneratorSetModellingHypothesis(
-      std::ostream& out) const {
-    out << "mg.setModellingHypothesis(h);\n";
-  }  // end of
-  // GenericBehaviourInterface::writeMTestFileGeneratorSetModellingHypothesis
-
+  void GenericBehaviourInterface::exportMechanicalData(std::ostream& os,
+						       const Hypothesis h,
+						       const BehaviourDescription& bd) const{
+    auto vsize = [](const SupportedTypes::TypeFlag f){
+      if(f==SupportedTypes::TVector){
+	return "TVectorSize";
+      } else if (f==SupportedTypes::Stensor){
+	return "StensorSize";
+      } else if (f!=SupportedTypes::Tensor){
+	tfel::raise("GenericBehaviourInterface::writeBehaviourDataMainVariablesSetters: "
+		    "invalid variable type");
+      }
+      return "TensorSize";
+    };
+    auto export_variable = [this,&os,&vsize](const VariableDescription& v,
+					     const char* const dest,
+					     const SupportedTypes::TypeSize o){
+      const auto f = this->getTypeFlag(v.type);
+      if(v.arraySize==1u){
+	if(f==SupportedTypes::Scalar){
+	  os << "mbg_s1." << dest << "[" << o <<"] "
+	     << "= this->" << v.name << ";\n";
+	} else {
+	  const auto s = vsize(f);
+	  if(o.isNull()){
+	    os << "tfel::fsalgo::copy<" << s << ">::exe("
+	       << "this->" << v.name << ".begin(), "
+	       <<"mbg_s1." << dest << ");\n";
+	  } else {
+	    os << "tfel::fsalgo::copy<" << s << ">::exe("
+	       << "this->" << v.name << ".begin(), " 
+	       << "mbg_s1." << dest << " + " << o << ");\n";
+	  }
+	}
+      } else {
+	auto c = o;
+	for(unsigned short idx=0;idx!=v.arraySize;++idx){
+	  if(f==SupportedTypes::Scalar){
+	    os << "mbg_s1." << dest << "[" << c <<"] "
+	       << "= this->" << v.name << "[" << idx << "];\n";
+	  } else {
+	    const auto s = vsize(f);
+	    if(c.isNull()){
+	      os << "tfel::fsalgo::copy<" << s << ">::exe("
+		 << "this->" << v.name << "[" << idx << "].begin(), "
+		 <<"mbg_s1." << dest << ");\n";
+	    } else {
+	      os << "tfel::fsalgo::copy<" << s << ">::exe("
+		 << "this->" << v.name << "[" << idx << "].begin(), " 
+		 << "mbg_s1." << dest << " + " << c << ");\n";
+	    }
+	  }
+	  c += this->getTypeSize(v.type,1u);
+	}
+      }
+    };
+    const auto& d = bd.getBehaviourData(h);
+    os << "void exportStateData(mfront::gb::State& mbg_s1) const\n";
+    os << "{\n";
+    os << "using namespace tfel::math;\n";
+    auto o = SupportedTypes::TypeSize{};
+    for (const auto& v : bd.getMainVariables()) {
+      const auto& th = v.second;
+      if(th.arraySize!=1){
+	tfel::raise("GenericBehaviourInterface::exportMechancialData: "
+		    "array of thermodynamical forces are not supported");
+      }
+      export_variable(th,"thermodynamic_forces",o);
+      o += SupportedTypes::getTypeSize(th.type, th.arraySize);
+    }
+    o = SupportedTypes::TypeSize{};
+    for(const auto& iv : d.getPersistentVariables()){
+      export_variable(iv,"internal_state_variables",o);
+      o += SupportedTypes::getTypeSize(iv.type, iv.arraySize);
+    }
+    os << "} // end of exportStateData\n\n";
+  } // end of GenericBehaviourInterface::exportMechanicalData
+  
   GenericBehaviourInterface::~GenericBehaviourInterface() = default;
 
-  }  // end of namespace mfront
+}  // end of namespace mfront

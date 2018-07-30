@@ -1,5 +1,5 @@
 /*!
- * \file   mfront/mtest/CastemSmallStrainBehaviour.cxx
+ * \file   mtest/src/CastemSmallStrainBehaviour.cxx
  * \brief
  * \author Thomas Helfer
  * \brief 07 avril 2013
@@ -65,7 +65,7 @@ namespace mtest
     }
   }
 
-  CastemSmallStrainBehaviour::CastemSmallStrainBehaviour(const UmatBehaviourDescription& umb)
+  CastemSmallStrainBehaviour::CastemSmallStrainBehaviour(const StandardBehaviourDescription& umb)
     : CastemStandardBehaviour(umb)
   {} // end of CastemSmallStrainBehaviour::CastemSmallStrainBehaviour
 
@@ -216,7 +216,7 @@ namespace mtest
 	     "the memory has not been allocated correctly (2)");
     std::fill(wk.D.begin(),wk.D.end(),0.);
     // choosing the type of stiffness matrix
-    UmatBehaviourBase::initializeTangentOperator(wk.D,ktype,b);
+    StandardBehaviourBase::initializeTangentOperator(wk.D,ktype,b);
     // state variable initial values
     if(s.iv0.size()!=0){
       copy(s.iv0.begin(),s.iv0.end(),wk.ivs.begin());

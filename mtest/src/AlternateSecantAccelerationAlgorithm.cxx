@@ -1,5 +1,5 @@
 /*! 
- * \file  mfront/mtest/AlternateSecantAccelerationAlgorithm.cxx
+ * \file  mtest/src/AlternateSecantAccelerationAlgorithm.cxx
  * \brief
  * \author Ramiere Isabelle
  * \brief 16 mars 2015

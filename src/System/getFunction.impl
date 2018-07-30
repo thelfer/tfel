@@ -183,8 +183,8 @@ extern "C" {
   }
 
   int *
-  tfel_getArrayOfInt(LibraryHandlerPtr lib,
-		     const char * const name)
+  tfel_getArrayOfInts(LibraryHandlerPtr lib,
+		      const char * const name)
   {
     int * v;
     v = (int *) dlsym(lib,name);
@@ -240,6 +240,11 @@ extern "C" {
     return (double (TFEL_ADDCALL_PTR)(const double*const)) dlsym(lib,name);
   } 
 
+  int (TFEL_ADDCALL_PTR tfel_getGenericBehaviourFunction(LibraryHandlerPtr l,
+						         const char * const f))(struct MFront_GB_BehaviourData* const){
+    return (int (TFEL_ADDCALL_PTR)(struct MFront_GB_BehaviourData* const)) dlsym(l,f);
+  } // end of tfel_getGenericBehaviourFunction
+  
   void (TFEL_ADDCALL_PTR tfel_getCyranoFunction(LibraryHandlerPtr lib,
 						const char * const name))(const CyranoIntegerType  *const,
 									  const CyranoRealType *const,

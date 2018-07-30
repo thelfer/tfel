@@ -340,6 +340,11 @@ namespace tfel {
        */
       bool contains(const std::string&, const std::string&);
       /*!
+       * \param[in] l: name of the library
+       * \param[in] f: function name
+       */
+      GenericBehaviourFctPtr getGenericBehaviourFunction(const std::string&, const std::string&);
+      /*!
        * \param[in] l : name of the library
        * \param[in] f : law name
        */
@@ -439,6 +444,30 @@ namespace tfel {
        */
       bool checkIfUMATBehaviourUsesGenericPlaneStressAlgorithm(const std::string&,
                                                                const std::string&);
+      /*!
+       * \param[in] l : name of the library
+       * \param[in] f : law name
+       */
+      std::vector<std::string> getUMATDrivingVariablesNames(const std::string&,
+							    const std::string&);
+      /*!
+       * \param[in] l : name of the library
+       * \param[in] f : law name
+       */
+      std::vector<int> getUMATDrivingVariablesTypes(const std::string&,
+						    const std::string&);
+      /*!
+       * \param[in] l : name of the library
+       * \param[in] f : law name
+       */
+      std::vector<std::string> getUMATThermodynamicForcesNames(const std::string&,
+							       const std::string&);
+      /*!
+       * \param[in] l : name of the library
+       * \param[in] f : law name
+       */
+      std::vector<int> getUMATThermodynamicForcesTypes(const std::string&,
+						       const std::string&);
       /*!
        * \param[in] l : name of the library
        * \param[in] f : law name
@@ -846,6 +875,11 @@ namespace tfel {
       TFEL_VISIBILITY_LOCAL ExternalLibraryManager& operator=(const ExternalLibraryManager&);
 
       TFEL_VISIBILITY_LOCAL void getUMATNames(std::vector<std::string>&,
+                                              const std::string&,
+                                              const std::string&,
+                                              const std::string&,
+                                              const std::string&);
+      TFEL_VISIBILITY_LOCAL void getUMATTypes(std::vector<int>&,
                                               const std::string&,
                                               const std::string&,
                                               const std::string&,

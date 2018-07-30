@@ -15,7 +15,7 @@
 #define LIB_MTEST_MTESTASTERCOHESIVEZONEMODELBEHAVIOUR_HXX 
 
 #include"TFEL/System/ExternalFunctionsPrototypes.hxx"
-#include"MTest/UmatBehaviourBase.hxx"
+#include"MTest/StandardBehaviourBase.hxx"
 
 namespace mtest
 {
@@ -25,7 +25,7 @@ namespace mtest
    * interface
    */
   struct TFEL_VISIBILITY_LOCAL AsterCohesiveZoneModel
-    : public UmatBehaviourBase
+    : public StandardBehaviourBase
   {
     /*!
      * \param[in] h : modelling hypothesis

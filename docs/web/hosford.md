@@ -598,28 +598,28 @@ Again, Algorithm 2 shows a remarkable benefit in terms of robustness.
 For a very high exponent \(a=100\), the yield surface is very close to
 the Tresca yield surface and shows very sharp edges.
 
-![Robustness of Algorithm 1 for \(a=8\)](img/Scherzinger/Hosford100/Newton.png
- "Robustness of Algorithm 1 for \(a=8\)"){#fig:hosford100:alg1 width=70%}
+![Robustness of Algorithm 1 for \(a=100\)](img/Scherzinger/Hosford100/Newton.png
+ "Robustness of Algorithm 1 for \(a=100\)"){#fig:hosford100:alg1 width=70%}
 
 Figure @fig:hosford100:alg1 shows that the standard Newton algorithm
 performs very poorly.
 
-![Robustness of Algorithm 2 for \(a=8\)](img/Scherzinger/Hosford100/TestOnYieldStress.png
- "Robustness of Algorithm 2 for \(a=8\)"){#fig:hosford100:alg2 width=70%}
+![Robustness of Algorithm 2 for \(a=100\)](img/Scherzinger/Hosford100/TestOnYieldStress.png
+ "Robustness of Algorithm 2 for \(a=100\)"){#fig:hosford100:alg2 width=70%}
 
 In this case, the second algorithm does not improve the robustness as
 shown on Figure @#fig:hosford100:alg2. This algorithm performs almost
 as poorly than the standard Newton algorithm.
 
-![Robustness of Algorithm 3 for \(a=8\)](img/Scherzinger/Hosford100/MaximumIncrementValuePerIteration.png
- "Robustness of Algorithm 3 for \(a=8\)"){#fig:hosford100:alg3 width=70%}
+![Robustness of Algorithm 3 for \(a=100\)](img/Scherzinger/Hosford100/MaximumIncrementValuePerIteration.png
+ "Robustness of Algorithm 3 for \(a=100\)"){#fig:hosford100:alg3 width=70%}
 
 Figure @fig:hosford100:alg3 shows that the third algorithm clearly
 increases the robustness in some directions but the robustness remains
 low for angles close the edges of the yield surfaces.
 
-![Robustness of Algorithm 4 for \(a=8\)](img/Scherzinger/Hosford100/LevenbergMarquardt.png
- "Robustness of Algorithm 4 for \(a=8\)"){#fig:hosford100:alg4 width=70%}
+![Robustness of Algorithm 4 for \(a=100\)](img/Scherzinger/Hosford100/LevenbergMarquardt.png
+ "Robustness of Algorithm 4 for \(a=100\)"){#fig:hosford100:alg4 width=70%}
 
 Figure @fig:hosford100:alg3 shows that the Levenberg-Marquardt
 algorithm outperforms Algorithm 3. However, the robustness remains low
@@ -641,14 +641,14 @@ Our tests, not reported here, shows that changing the eigen solver:
 - does not increase the robustness of the first and second algorithms
   for \(a=100\).
 
-![Robustness of Algorithm 3 for \(a=8\)](img/Scherzinger/Hosford100/MaximumIncrementValuePerIterationJacobi.png
- "Robustness of Algorithm 3 for \(a=8\)"){#fig:hosford100:alg3:jacobi width=70%}
+![Robustness of Algorithm 3 for \(a=100\)](img/Scherzinger/Hosford100/MaximumIncrementValuePerIterationJacobi.png
+ "Robustness of Algorithm 3 for \(a=100\)"){#fig:hosford100:alg3:jacobi width=70%}
 
 Figure @fig:hosford100:alg3:jacobi shows that using the Jacobi eigen
 solver has a strong influence on the robustness of Algorithm 3.
 
-![Robustness of Algorithm 4 for \(a=8\)](img/Scherzinger/Hosford100/LevenbergMarquardtJacobi.png
- "Robustness of Algorithm 4 for \(a=8\)"){#fig:hosford100:alg4:jacobi width=70%}
+![Robustness of Algorithm 4 for \(a=100\)](img/Scherzinger/Hosford100/LevenbergMarquardtJacobi.png
+ "Robustness of Algorithm 4 for \(a=100\)"){#fig:hosford100:alg4:jacobi width=70%}
 
 Using the Jacobi eigen solver with Algorithm 4 shows that convergence
 is reached for all tested values of \(\alpha\) and \(x\).

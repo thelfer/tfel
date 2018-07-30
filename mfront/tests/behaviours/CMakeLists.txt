@@ -1,5 +1,6 @@
 add_subdirectory(unit-tests)
 add_subdirectory(bricks)
+add_subdirectory(generic)
 if(HAVE_CASTEM)
   add_subdirectory(castem)
   add_subdirectory(castem2)

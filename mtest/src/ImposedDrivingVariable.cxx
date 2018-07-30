@@ -1,5 +1,5 @@
 /*! 
- * \file  mfront/mtest/ImposedDrivingVariable.cxx
+ * \file  mtest/src/ImposedDrivingVariable.cxx
  * \brief
  * \author Thomas Helfer
  * \date 05 avril 2013

@@ -11,12 +11,10 @@
  * project under specific licensing conditions.
  */
 
-#include <iostream>
-
 #include "TFEL/Raise.hxx"
 #include "MFront/MFrontLogStream.hxx"
 #include "MTest/Evolution.hxx"
-#include "MTest/UmatBehaviourBase.hxx"
+#include "MTest/StandardBehaviourBase.hxx"
 #include "MTest/CastemUmatStandardBehaviour.hxx"
 #include "MTest/CastemUmatSmallStrainBehaviour.hxx"
 #include "MTest/CastemUmatFiniteStrainBehaviour.hxx"
@@ -35,7 +33,7 @@ namespace mtest {
           b, "CastemUmatStandardBehaviour::buildCastemUmatStandardBehaviour: " +
                  msg);
     };
-    UmatBehaviourDescription md;
+    StandardBehaviourDescription md;
     md.library = l;
     md.behaviour = f;
     md.hypothesis = ModellingHypothesis::toString(h);
@@ -159,8 +157,6 @@ namespace mtest {
     }
     evnames.insert(evnames.begin(), "Temperature");
     md.evnames = evnames;
-    std::cout << "evnames: " << evnames.size() << '\n';
-
     std::shared_ptr<Behaviour> ptr;
     if (t == 1u) {
       ptr = std::make_shared<CastemUmatSmallStrainBehaviour>(md, mname);

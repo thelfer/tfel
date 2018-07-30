@@ -1,5 +1,5 @@
 /*! 
- * \file  mfront/mtest/UmatBehaviourBase.cxx
+ * \file  mtest/src/StandardBehaviourBase.cxx
  * \brief
  * \author Thomas Helfer
  * \brief 07 avril 2013
@@ -18,20 +18,20 @@
 #include"TFEL/Math/st2tost2.hxx"
 #include"TFEL/System/ExternalLibraryManager.hxx"
 #include"MTest/BehaviourWorkSpace.hxx"
-#include"MTest/UmatBehaviourBase.hxx"
+#include"MTest/StandardBehaviourBase.hxx"
 
 namespace mtest
 {
 
-  UmatBehaviourDescription::UmatBehaviourDescription() = default;
-  UmatBehaviourDescription::UmatBehaviourDescription(UmatBehaviourDescription&&) = default;
-  UmatBehaviourDescription::UmatBehaviourDescription(const UmatBehaviourDescription&) = default;
-  UmatBehaviourDescription&
-  UmatBehaviourDescription::operator=(UmatBehaviourDescription&&) = default;
-  UmatBehaviourDescription&
-  UmatBehaviourDescription::operator=(const UmatBehaviourDescription&) = default;
+  StandardBehaviourDescription::StandardBehaviourDescription() = default;
+  StandardBehaviourDescription::StandardBehaviourDescription(StandardBehaviourDescription&&) = default;
+  StandardBehaviourDescription::StandardBehaviourDescription(const StandardBehaviourDescription&) = default;
+  StandardBehaviourDescription&
+  StandardBehaviourDescription::operator=(StandardBehaviourDescription&&) = default;
+  StandardBehaviourDescription&
+  StandardBehaviourDescription::operator=(const StandardBehaviourDescription&) = default;
 
-  UmatBehaviourDescription::UmatBehaviourDescription(const std::string& l,
+  StandardBehaviourDescription::StandardBehaviourDescription(const std::string& l,
 						     const std::string& b,
 						     const std::string& h)
   {
@@ -39,89 +39,89 @@ namespace mtest
     ExternalBehaviourData::operator=(ExternalBehaviourDescription(l,b,h));
   }
   
-  UmatBehaviourBase::UmatBehaviourBase(const Hypothesis h,
-				       const std::string& l,
-				       const std::string& b)
-    : UmatBehaviourDescription(l,b,ModellingHypothesis::toString(h))
+  StandardBehaviourBase::StandardBehaviourBase(const Hypothesis h,
+					       const std::string& l,
+					       const std::string& b)
+    : StandardBehaviourDescription(l,b,ModellingHypothesis::toString(h))
   {
     tfel::raise_if(this->stype>=2u,
-		   "UmatBehaviourBase::UmatBehaviourBase: "
+		   "StandardBehaviourBase::StandardBehaviourBase: "
 		   "unsupported behaviour type "
 		   "(neither isotropic nor orthotropic)");
     this->evnames.insert(this->evnames.begin(),"Temperature");
   }
 
-  UmatBehaviourBase::UmatBehaviourBase(const UmatBehaviourDescription& umb)
-    : UmatBehaviourDescription(umb)
+  StandardBehaviourBase::StandardBehaviourBase(const StandardBehaviourDescription& umb)
+    : StandardBehaviourDescription(umb)
   {
     tfel::raise_if(this->stype>=2u,
-		   "UmatBehaviourBase::UmatBehaviourBase: "
+		   "StandardBehaviourBase::StandardBehaviourBase: "
 		   "unsupported behaviour type "
 		   "(neither isotropic nor orthotropic)");
   }
   
-  UmatBehaviourBase::Hypothesis UmatBehaviourBase::getHypothesis() const{
+  StandardBehaviourBase::Hypothesis StandardBehaviourBase::getHypothesis() const{
     return ModellingHypothesis::fromString(this->hypothesis);
-  } // end of UmatBehaviourBase::getHypothesis
+  } // end of StandardBehaviourBase::getHypothesis
   
-  void UmatBehaviourBase::setOutOfBoundsPolicy(const tfel::material::OutOfBoundsPolicy p) const
+  void StandardBehaviourBase::setOutOfBoundsPolicy(const tfel::material::OutOfBoundsPolicy p) const
   {
     auto& elm = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
     elm.setOutOfBoundsPolicy(this->library,this->behaviour,p);
-  } // end of UmatBehaviourBase::setOutOfBoundsPolicy
+  } // end of StandardBehaviourBase::setOutOfBoundsPolicy
 
-  bool UmatBehaviourBase::hasBounds(const std::string& v) const{
+  bool StandardBehaviourBase::hasBounds(const std::string& v) const{
     auto& elm = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
     return elm.hasBounds(this->library,this->behaviour,this->hypothesis,v);
-  } // end of UmatBehaviourBase::hasBounds
+  } // end of StandardBehaviourBase::hasBounds
 
-  bool UmatBehaviourBase::hasLowerBound(const std::string& v) const{
+  bool StandardBehaviourBase::hasLowerBound(const std::string& v) const{
     auto& elm = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
     return elm.hasLowerBound(this->library,this->behaviour,this->hypothesis,v);
-  } // end of UmatBehaviourBase::hasLowerBound
+  } // end of StandardBehaviourBase::hasLowerBound
 
-  bool UmatBehaviourBase::hasUpperBound(const std::string& v) const{
+  bool StandardBehaviourBase::hasUpperBound(const std::string& v) const{
     auto& elm = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
     return elm.hasUpperBound(this->library,this->behaviour,this->hypothesis,v);
-  } // end of UmatBehaviourBase::hasUpperBound
+  } // end of StandardBehaviourBase::hasUpperBound
 
-  long double UmatBehaviourBase::getLowerBound(const std::string& v) const{
+  long double StandardBehaviourBase::getLowerBound(const std::string& v) const{
     auto& elm = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
     return elm.getLowerBound(this->library,this->behaviour,this->hypothesis,v);
-  } // end of UmatBehaviourBase::getLowerBound
+  } // end of StandardBehaviourBase::getLowerBound
 
-  long double UmatBehaviourBase::getUpperBound(const std::string& v) const{
+  long double StandardBehaviourBase::getUpperBound(const std::string& v) const{
     auto& elm = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
     return elm.getUpperBound(this->library,this->behaviour,this->hypothesis,v);
-  } // end of UmatBehaviourBase::getUpperBound
+  } // end of StandardBehaviourBase::getUpperBound
 
-  bool UmatBehaviourBase::hasPhysicalBounds(const std::string& v) const{
+  bool StandardBehaviourBase::hasPhysicalBounds(const std::string& v) const{
     auto& elm = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
     return elm.hasPhysicalBounds(this->library,this->behaviour,this->hypothesis,v);
-  } // end of UmatBehaviourBase::hasPhysicalBounds
+  } // end of StandardBehaviourBase::hasPhysicalBounds
 
-  bool UmatBehaviourBase::hasLowerPhysicalBound(const std::string& v) const{
+  bool StandardBehaviourBase::hasLowerPhysicalBound(const std::string& v) const{
     auto& elm = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
     return elm.hasLowerPhysicalBound(this->library,this->behaviour,this->hypothesis,v);
-  } // end of UmatBehaviourBase::hasLowerPhysicalBound
+  } // end of StandardBehaviourBase::hasLowerPhysicalBound
 
-  bool UmatBehaviourBase::hasUpperPhysicalBound(const std::string& v) const{
+  bool StandardBehaviourBase::hasUpperPhysicalBound(const std::string& v) const{
     auto& elm = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
     return elm.hasUpperPhysicalBound(this->library,this->behaviour,this->hypothesis,v);
-  } // end of UmatBehaviourBase::hasUpperPhysicalBound
+  } // end of StandardBehaviourBase::hasUpperPhysicalBound
 
-  long double UmatBehaviourBase::getLowerPhysicalBound(const std::string& v) const{
+  long double StandardBehaviourBase::getLowerPhysicalBound(const std::string& v) const{
     auto& elm = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
     return elm.getLowerPhysicalBound(this->library,this->behaviour,this->hypothesis,v);
-  } // end of UmatBehaviourBase::getLowerPhysicalBound
+  } // end of StandardBehaviourBase::getLowerPhysicalBound
 
-  long double UmatBehaviourBase::getUpperPhysicalBound(const std::string& v) const{
+  long double StandardBehaviourBase::getUpperPhysicalBound(const std::string& v) const{
     auto& elm = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
     return elm.getUpperPhysicalBound(this->library,this->behaviour,this->hypothesis,v);
-  } // end of UmatBehaviourBase::getUpperPhysicalBound
+  } // end of StandardBehaviourBase::getUpperPhysicalBound
 
   tfel::material::MechanicalBehaviourBase::BehaviourType
-  UmatBehaviourBase::getBehaviourType() const
+  StandardBehaviourBase::getBehaviourType() const
   {
     using namespace tfel::material;
     switch(this->btype){
@@ -134,12 +134,12 @@ namespace mtest
     case 3:
       return MechanicalBehaviourBase::COHESIVEZONEMODEL;
     }
-    tfel::raise("UmatBehaviourBase::getBehaviourType: "
+    tfel::raise("StandardBehaviourBase::getBehaviourType: "
 		"unsupported behaviour type");
-  } // end of UmatBehaviourBase::getBehaviourType
+  } // end of StandardBehaviourBase::getBehaviourType
 
   tfel::material::MechanicalBehaviourBase::Kinematic
-  UmatBehaviourBase::getBehaviourKinematic() const
+  StandardBehaviourBase::getBehaviourKinematic() const
   {
     using namespace tfel::material;
     switch(this->kinematic){
@@ -154,12 +154,11 @@ namespace mtest
     case 4:
       return MechanicalBehaviourBase::FINITESTRAINKINEMATIC_ETO_PK1;
     }
-    tfel::raise("UmatBehaviourBase::getBehaviourKinematic: "
+    tfel::raise("StandardBehaviourBase::getBehaviourKinematic: "
 		"unsupported behaviour type");
-  } // end of UmatBehaviourBase::getBehaviourKinematic
+  } // end of StandardBehaviourBase::getBehaviourKinematic
   
-  unsigned short UmatBehaviourBase::getDrivingVariablesSize() const
-  {
+  unsigned short StandardBehaviourBase::getDrivingVariablesSize() const {
     const auto h = this->getHypothesis();
     if((this->btype==1)||((this->btype==2u)&&(this->kinematic==4u))){
       // small strain behaviours
@@ -174,7 +173,7 @@ namespace mtest
       } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
 	return 6u;
       } else {
-	tfel::raise("UmatBehaviourBase::getDrivingVariablesSize: "
+	tfel::raise("StandardBehaviourBase::getDrivingVariablesSize: "
 		    "unsupported modelling hypothesis");
       }
     } else if(this->btype==2){
@@ -190,7 +189,7 @@ namespace mtest
       } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
 	return 9u;
       } else {
-	tfel::raise("UmatBehaviourBase::getDrivingVariablesSize: "
+	tfel::raise("StandardBehaviourBase::getDrivingVariablesSize: "
 		    "unsupported modelling hypothesis");
       }
     } else if(this->btype==3){
@@ -203,15 +202,15 @@ namespace mtest
       } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
 	return 3u;
       } else {
-	tfel::raise("UmatBehaviourBase::getDrivingVariablesSize: "
+	tfel::raise("StandardBehaviourBase::getDrivingVariablesSize: "
 		    "unsupported modelling hypothesis");
       }      
     } 
-    tfel::raise("UmatBehaviourBase::getDrivingVariablesSize: "
+    tfel::raise("StandardBehaviourBase::getDrivingVariablesSize: "
 		"unsupported behaviour type");
-  } // end of UmatBehaviourBase::getDrivingVariablesSize
+  } // end of StandardBehaviourBase::getDrivingVariablesSize
 
-  unsigned short UmatBehaviourBase::getThermodynamicForcesSize() const
+  unsigned short StandardBehaviourBase::getThermodynamicForcesSize() const
   {
     const auto h = this->getHypothesis();
     if((this->btype==1)||((this->btype==2u)&&(this->kinematic==4u))){
@@ -227,7 +226,7 @@ namespace mtest
       } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
 	return 6u;
       } else {
-	tfel::raise("UmatBehaviourBase::getThermodynamicForcesSize: "
+	tfel::raise("StandardBehaviourBase::getThermodynamicForcesSize: "
 				 "unsupported modelling hypothesis");
       }
     } else if(this->btype==2){
@@ -243,7 +242,7 @@ namespace mtest
       } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
 	return 6u;
       } else {
-	tfel::raise("UmatBehaviourBase::getThermodynamicForcesSize: "
+	tfel::raise("StandardBehaviourBase::getThermodynamicForcesSize: "
 		    "unsupported modelling hypothesis");
       }
     } else if(this->btype==3){
@@ -256,16 +255,16 @@ namespace mtest
       } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
 	return 3u;
       } else {
-	tfel::raise("UmatBehaviourBase::getThermodynamicForcesSize: "
+	tfel::raise("StandardBehaviourBase::getThermodynamicForcesSize: "
 		    "unsupported modelling hypothesis");
       }      
     }
-    tfel::raise("UmatBehaviourBase::getThermodynamicForcesSize: "
+    tfel::raise("StandardBehaviourBase::getThermodynamicForcesSize: "
 		"unsupported behaviour type");
-  } // end of UmatBehaviourBase::getThermodynamicForcesSize
+  } // end of StandardBehaviourBase::getThermodynamicForcesSize
 
   std::vector<std::string>
-  UmatBehaviourBase::getStensorComponentsSuffixes() const
+  StandardBehaviourBase::getStensorComponentsSuffixes() const
   {
     const auto h = this->getHypothesis();
     auto c = std::vector<std::string>{};
@@ -285,14 +284,14 @@ namespace mtest
 	c.push_back("RZ");
       }
     } else {
-      tfel::raise("UmatBehaviourBase::getDrivingVariablesComponents: "
+      tfel::raise("StandardBehaviourBase::getDrivingVariablesComponents: "
 		  "unsupported modelling hypothesis");
     }
     return c;
-  } // end of UmatBehaviourBase::getStensorComponentsSuffixes
+  } // end of StandardBehaviourBase::getStensorComponentsSuffixes
 
   std::vector<std::string>
-  UmatBehaviourBase::getVectorComponentsSuffixes() const
+  StandardBehaviourBase::getVectorComponentsSuffixes() const
   {
     const auto h = this->getHypothesis();
     if(h==ModellingHypothesis::TRIDIMENSIONAL){
@@ -307,12 +306,12 @@ namespace mtest
 	       (h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)){
       return {"R"};
     }
-    tfel::raise("UmatBehaviourBase::VectorComponentsSuffixes: "
+    tfel::raise("StandardBehaviourBase::VectorComponentsSuffixes: "
 		"unsupported modelling hypothesis");
-  } // end of UmatBehaviourBase::getVectorComponentsSuffixes
+  } // end of StandardBehaviourBase::getVectorComponentsSuffixes
 
   std::vector<std::string>
-  UmatBehaviourBase::getTensorComponentsSuffixes() const
+  StandardBehaviourBase::getTensorComponentsSuffixes() const
   {
     const auto h = this->getHypothesis();
     auto c = std::vector<std::string>{};
@@ -332,14 +331,14 @@ namespace mtest
 	c.insert(c.end(),{"RZ","ZR"});
       }
     } else {
-      tfel::raise("UmatBehaviourBase::getDrivingVariablesComponents: "
+      tfel::raise("StandardBehaviourBase::getTensorComponentsSuffixes: "
 		  "unsupported modelling hypothesis");
     }
     return c;
-  } // end of UmatBehaviourBase::getTensorComponentsSuffixes
+  } // end of StandardBehaviourBase::getTensorComponentsSuffixes
   
   std::vector<std::string>
-  UmatBehaviourBase::getDrivingVariablesComponents() const
+  StandardBehaviourBase::getDrivingVariablesComponents() const
   {
     const auto h = this->getHypothesis();
     auto c = std::vector<std::string>{};
@@ -365,18 +364,18 @@ namespace mtest
 	  c.push_back("Ut");
 	}
       } else {
-	tfel::raise("UmatBehaviourBase::getDrivingVariablesComponents: "
+	tfel::raise("StandardBehaviourBase::getDrivingVariablesComponents: "
 		    "unsupported modelling hypothesis");
       }
     } else {
-      tfel::raise("UmatBehaviourBase::getDrivingVariablesComponents: "
+      tfel::raise("StandardBehaviourBase::getDrivingVariablesComponents: "
 		  "unsupported behaviour type");
     }
     return c;
-  } // end of UmatBehaviourBase::getDrivingVariablesComponents
+  } // end of StandardBehaviourBase::getDrivingVariablesComponents
 
   std::vector<std::string>
-  UmatBehaviourBase::getThermodynamicForcesComponents() const
+  StandardBehaviourBase::getThermodynamicForcesComponents() const
   {
     using namespace std;
     const auto h = this->getHypothesis();
@@ -399,71 +398,73 @@ namespace mtest
 	  c.push_back("Tt");
 	}
       } else {
-	tfel::raise("UmatBehaviourBase::getThermodynamicForcesComponents: "
+	tfel::raise("StandardBehaviourBase::getThermodynamicForcesComponents: "
 		    "unsupported modelling hypothesis");
       }
     } else {
-      tfel::raise("UmatBehaviourBase::getThermodynamicForcesComponents: "
+      tfel::raise("StandardBehaviourBase::getThermodynamicForcesComponents: "
 		  "unsupported behaviour type");
     }
     return c;
-  } // end of UmatBehaviourBase::getThermodynamicForcesComponents
+  } // end of StandardBehaviourBase::getThermodynamicForcesComponents
 
   unsigned short
-  UmatBehaviourBase::getDrivingVariableComponentPosition(const std::string& cname) const
+  StandardBehaviourBase::getDrivingVariableComponentPosition(const std::string& cname) const
   {
-    using namespace std;
     const auto c = this->getDrivingVariablesComponents();
-    auto p = find(c.begin(),c.end(),cname);
-    if(p==c.end()){
-      ostringstream msg;
-      msg << "UmatBehaviourBase::getDrivingVariableComponentPosition: "
-	"component '" << cname << "' is not valid. Valid components are:\n";
-      copy(c.begin(),c.end(),ostream_iterator<string>(msg," "));
-      tfel::raise(msg.str());
-    }
-    return static_cast<unsigned short>(p-c.begin());
-  } // end of UmatBehaviourBase::getDrivingVariableComponentPosition
-
-  unsigned short
-  UmatBehaviourBase::getThermodynamicForceComponentPosition(const std::string& cname) const
-  {
-    const auto c = this->getThermodynamicForcesComponents();
     auto p = std::find(c.begin(),c.end(),cname);
     if(p==c.end()){
       std::ostringstream msg;
-      msg << "UmatBehaviourBase::getThermodynamicForceComponentPosition: "
+      msg << "StandardBehaviourBase::getDrivingVariableComponentPosition: "
 	"component '" << cname << "' is not valid. Valid components are:\n";
       std::copy(c.begin(),c.end(),std::ostream_iterator<std::string>(msg," "));
       tfel::raise(msg.str());
     }
     return static_cast<unsigned short>(p-c.begin());
-  } // end of UmatBehaviourBase::getThermodynamicForceComponentPosition
+  } // end of StandardBehaviourBase::getDrivingVariableComponentPosition
 
-  unsigned short UmatBehaviourBase::getSymmetryType() const
+  unsigned short
+  StandardBehaviourBase::getThermodynamicForceComponentPosition(const std::string& cname) const
   {
+    const auto c = this->getThermodynamicForcesComponents();
+    auto p = std::find(c.begin(),c.end(),cname);
+    if(p==c.end()){
+      std::ostringstream msg;
+      msg << "StandardBehaviourBase::getThermodynamicForceComponentPosition: "
+	"component '" << cname << "' is not valid. Valid components are:\n";
+      std::copy(c.begin(),c.end(),std::ostream_iterator<std::string>(msg," "));
+      tfel::raise(msg.str());
+    }
+    return static_cast<unsigned short>(p-c.begin());
+  } // end of StandardBehaviourBase::getThermodynamicForceComponentPosition
+
+  unsigned short StandardBehaviourBase::getSymmetryType() const {
     if(this->stype==0){
       return 0u;
     } else if(this->stype==1){
       return 1u;
     }
-    tfel::raise("UmatBehaviourBase::getSymmetryType: "
+    tfel::raise("StandardBehaviourBase::getSymmetryType: "
 		"unsupported behaviour type "
 		"(neither isotropic nor orthotropic)");
-  } // end of UmatBehaviourBase::getSymmetryType
+  } // end of StandardBehaviourBase::getSymmetryType
 
+  size_t StandardBehaviourBase::getMaterialPropertiesSize() const {
+    return this->mpnames.size();
+  } // end of StandardBehaviourBase::getMaterialPropertiesSize
+  
   std::vector<std::string>
-  UmatBehaviourBase::getMaterialPropertiesNames() const {
+  StandardBehaviourBase::getMaterialPropertiesNames() const {
     return this->mpnames;
   }
 
   std::vector<std::string>
-  UmatBehaviourBase::getInternalStateVariablesNames() const {
+  StandardBehaviourBase::getInternalStateVariablesNames() const {
     return this->ivnames;
   }
 
   std::vector<std::string>
-  UmatBehaviourBase::expandInternalStateVariablesNames() const {
+  StandardBehaviourBase::expandInternalStateVariablesNames() const {
     auto ivfullnames = std::vector<std::string>{};
     for(const auto& n : this->ivnames){
       const auto t = this->getInternalStateVariableType(n);
@@ -484,7 +485,7 @@ namespace mtest
 	  ivfullnames.push_back(vn);
 	}
       } else {
-	tfel::raise("UmatBehaviourBase::expandInternalStateVariablesNames: "
+	tfel::raise("StandardBehaviourBase::expandInternalStateVariablesNames: "
 		    "unsupported variable type for variable '"+n+"'");
       }
     }
@@ -492,33 +493,33 @@ namespace mtest
   }
   
   std::vector<std::string>
-  UmatBehaviourBase::getExternalStateVariablesNames() const
+  StandardBehaviourBase::getExternalStateVariablesNames() const
   {
     return this->evnames;
   }
 
-  std::vector<std::string> UmatBehaviourBase::getParametersNames() const
+  std::vector<std::string> StandardBehaviourBase::getParametersNames() const
   {
     return this->pnames;
-  } // end of UmatBehaviourBase::getParametersNames
+  } // end of StandardBehaviourBase::getParametersNames
 
-  std::vector<std::string> UmatBehaviourBase::getIntegerParametersNames() const
+  std::vector<std::string> StandardBehaviourBase::getIntegerParametersNames() const
   {
     return this->ipnames;
-  } // end of UmatBehaviourBase::getIntegerParametersNames
+  } // end of StandardBehaviourBase::getIntegerParametersNames
 
-  std::vector<std::string> UmatBehaviourBase::getUnsignedShortParametersNames() const
+  std::vector<std::string> StandardBehaviourBase::getUnsignedShortParametersNames() const
   {
     return this->upnames;
-  } // end of UmatBehaviourBase::getUnsignedShortParametersNames
+  } // end of StandardBehaviourBase::getUnsignedShortParametersNames
 
-  double UmatBehaviourBase::getRealParameterDefaultValue(const std::string& p) const
+  double StandardBehaviourBase::getRealParameterDefaultValue(const std::string& p) const
   {
     auto& elm = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
     return elm.getRealParameterDefaultValue(this->library,this->behaviour,this->hypothesis,p);
   }
 
-  int UmatBehaviourBase::getIntegerParameterDefaultValue(const std::string& p) const
+  int StandardBehaviourBase::getIntegerParameterDefaultValue(const std::string& p) const
   {
     auto& elm = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
     return elm.getIntegerParameterDefaultValue(this->library,this->behaviour,
@@ -526,14 +527,14 @@ namespace mtest
   }
 
   unsigned short
-  UmatBehaviourBase::getUnsignedShortParameterDefaultValue(const std::string& p) const
+  StandardBehaviourBase::getUnsignedShortParameterDefaultValue(const std::string& p) const
   {
     auto& elm = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
     return elm.getUnsignedShortParameterDefaultValue(this->library,this->behaviour,
 					      this->hypothesis,p);
   }
   
-  size_t UmatBehaviourBase::getInternalStateVariablesSize() const
+  size_t StandardBehaviourBase::getInternalStateVariablesSize() const
   {
     const auto h = this->getHypothesis();    
     size_t s = 0;
@@ -541,45 +542,22 @@ namespace mtest
       if(t==0){
 	s+=1;
       } else if(t==1){
-	if((h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)||
-	   (h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)){
-	  s+=3;
-	} else if((h==ModellingHypothesis::AXISYMMETRICAL)||
-		  (h==ModellingHypothesis::PLANESTRESS)||
-		  (h==ModellingHypothesis::PLANESTRAIN)||
-		  (h==ModellingHypothesis::GENERALISEDPLANESTRAIN)){
-	  s+=4;
-	} else if(h==ModellingHypothesis::TRIDIMENSIONAL){
-	  s+=6;
-	} else {
-	  tfel::raise("UmatBehaviourBase::getInternalStateVariablesSize: "
-		      "unsupported modelling hypothesis");
-	}
+	s+= tfel::material::getStensorSize(h);
+      } else if(t==2){
+	s+= tfel::material::getSpaceDimension(h);
       } else if(t==3){
-	if((h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)||
-	   (h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)){
-	  s+=3;
-	} else if((h==ModellingHypothesis::AXISYMMETRICAL)||
-		  (h==ModellingHypothesis::PLANESTRESS)||
-		  (h==ModellingHypothesis::PLANESTRAIN)||
-		  (h==ModellingHypothesis::GENERALISEDPLANESTRAIN)){
-	  s+=5;
-	} else if(h==ModellingHypothesis::TRIDIMENSIONAL){
-	  s+=9;
-	} else {
-	  tfel::raise("UmatBehaviourBase::getInternalStateVariablesSize: "
-		      "unsupported modelling hypothesis");
-	}
-      } else {
-	tfel::raise("UmatBehaviourBase::getInternalStateVariablesSize: "
-		    "unsupported variable type");
+	s+= tfel::material::getTensorSize(h);
       }
     }
     return s;
-  } // end of UmatBehaviourBase::getInternalStateVariablesSize
+  } // end of StandardBehaviourBase::getInternalStateVariablesSize
 
+  size_t StandardBehaviourBase::getExternalStateVariablesSize() const{
+    return this->evnames.size();
+  } // end of StandardBehaviourBase::getExternalStateVariablesSize
+  
   std::vector<std::string>
-  UmatBehaviourBase::getInternalStateVariablesDescriptions() const
+  StandardBehaviourBase::getInternalStateVariablesDescriptions() const
   {
     using namespace std;
     const auto h = this->getHypothesis();    
@@ -587,7 +565,7 @@ namespace mtest
     vector<int>::const_iterator p;
     vector<string>::const_iterator pn;
     tfel::raise_if(this->ivnames.size()!=this->ivtypes.size(),
-		   "UmatBehaviourBase::getInternalStateVariablesDescriptions: "
+		   "StandardBehaviourBase::getInternalStateVariablesDescriptions: "
 		   "internal error (the number of internal state variables names "
 		   "dont match the number of internal state variables types)");
     for(p=this->ivtypes.begin(),pn=this->ivnames.begin();
@@ -609,7 +587,7 @@ namespace mtest
 	    desc.push_back("fifth   component of internal variable '"+*pn+"'");
 	    desc.push_back("sixth   component of internal variable '"+*pn+"'");
 	  } else {
-	    tfel::raise("UmatBehaviourBase::getInternalStateVariablesDescriptions: "
+	    tfel::raise("StandardBehaviourBase::getInternalStateVariablesDescriptions: "
 			"invalid modelling hypothesis");
 	  }
 	}
@@ -632,27 +610,27 @@ namespace mtest
 	    desc.push_back("eighth  component of internal variable '"+*pn+"'");
 	    desc.push_back("ninth   component of internal variable '"+*pn+"'");
 	  } else {
-	    tfel::raise("UmatBehaviourBase::getInternalStateVariablesDescriptions: "
+	    tfel::raise("StandardBehaviourBase::getInternalStateVariablesDescriptions: "
 			"invalid modelling hypothesis");
 	  }
 	}
       } else {
-	tfel::raise("UmatBehaviourBase::getInternalStateVariablesDescriptions: "
+	tfel::raise("StandardBehaviourBase::getInternalStateVariablesDescriptions: "
 		    "unsupported variable type");
       }
     }
     return desc;
-  } // end of UmatBehaviourBase::getInternalStateVariablesDescriptions
+  } // end of StandardBehaviourBase::getInternalStateVariablesDescriptions
 
   unsigned short
-  UmatBehaviourBase::getInternalStateVariableType(const std::string& n) const
+  StandardBehaviourBase::getInternalStateVariableType(const std::string& n) const
   {
     auto p=find(this->ivnames.begin(),this->ivnames.end(),n);
     tfel::raise_if(p==this->ivnames.end(),
-		   "UmatBehaviourBase::getInternalStateVariableType: "
+		   "StandardBehaviourBase::getInternalStateVariableType: "
 		   "no internal variable named '"+n+"' declared");
     tfel::raise_if(this->ivnames.size()!=this->ivtypes.size(),
-		   "UmatBehaviourBase::getInternalStateVariableType: "
+		   "StandardBehaviourBase::getInternalStateVariableType: "
 		   "the number of internal variables names and "
 		   "the number of internal variables types do not match");
     const auto t = this->ivtypes[p-this->ivnames.begin()];
@@ -663,16 +641,16 @@ namespace mtest
     } else if(t==3){
       return 3u;
     }
-    tfel::raise("UmatBehaviourBase::getInternalStateVariableType: "
+    tfel::raise("StandardBehaviourBase::getInternalStateVariableType: "
 		"unsupported internal variable type");
   }
   
   unsigned short
-  UmatBehaviourBase::getInternalStateVariablePosition(const std::string& n) const
+  StandardBehaviourBase::getInternalStateVariablePosition(const std::string& n) const
   {
     using namespace std;
     auto throw_if = [](const bool c, const std::string& m){
-      tfel::raise_if(c,"UmatBehaviourBase::getInternalStateVariablePosition: "+m);
+      tfel::raise_if(c,"StandardBehaviourBase::getInternalStateVariablePosition: "+m);
     };
     const auto h = this->getHypothesis();    
     auto p=find(this->ivnames.begin(),this->ivnames.end(),n);
@@ -719,38 +697,38 @@ namespace mtest
     return s;
   }
 
-  void UmatBehaviourBase::setParameter(const std::string& n,
+  void StandardBehaviourBase::setParameter(const std::string& n,
 				       const real v) const
   {
     using namespace tfel::system;
     auto& elm = ExternalLibraryManager::getExternalLibraryManager();
     elm.setParameter(this->library,this->behaviour,this->hypothesis,n,v);
-  } // end of UmatBehaviourBase::setParameter
+  } // end of StandardBehaviourBase::setParameter
 
   void
-  UmatBehaviourBase::setIntegerParameter(const std::string& n,
+  StandardBehaviourBase::setIntegerParameter(const std::string& n,
 					 const int v) const
   {
     using namespace tfel::system;
     auto& elm = ExternalLibraryManager::getExternalLibraryManager();
     elm.setParameter(this->library,this->behaviour,this->hypothesis,n,v);
-  } // end of UmatBehaviourBase::setIntegerParameter
+  } // end of StandardBehaviourBase::setIntegerParameter
 
-  void UmatBehaviourBase::setUnsignedIntegerParameter(const std::string& n,
+  void StandardBehaviourBase::setUnsignedIntegerParameter(const std::string& n,
 						      const unsigned short v) const
   {
     using namespace tfel::system;
     auto& elm = ExternalLibraryManager::getExternalLibraryManager();
     elm.setParameter(this->library,this->behaviour,this->hypothesis,n,v);
-  } // end of UmatBehaviourBase::setUnsignedIntegerParameter
+  } // end of StandardBehaviourBase::setUnsignedIntegerParameter
 
   void
-  UmatBehaviourBase::setOptionalMaterialPropertiesDefaultValues(EvolutionManager&,
+  StandardBehaviourBase::setOptionalMaterialPropertiesDefaultValues(EvolutionManager&,
 								const EvolutionManager&) const
-  {} // end of UmatBehaviourBase::setOptionalMaterialPropertiesDefaultValues
+  {} // end of StandardBehaviourBase::setOptionalMaterialPropertiesDefaultValues
 
   void
-  UmatBehaviourBase::initializeTangentOperator(tfel::math::matrix<real>& D,
+  StandardBehaviourBase::initializeTangentOperator(tfel::math::matrix<real>& D,
 					       const StiffnessMatrixType ktype,
 					       const bool b) const
   {
@@ -767,7 +745,7 @@ namespace mtest
       } else if(ktype==StiffnessMatrixType::CONSISTENTTANGENTOPERATOR){
 	D(0,0) = real(4);
       } else {
-	tfel::raise("UmatBehaviourBase::call_behaviour: "
+	tfel::raise("StandardBehaviourBase::call_behaviour: "
 		    "invalid or unspecified stiffness matrix type");
       }
     } else {
@@ -778,18 +756,18 @@ namespace mtest
       } else if(ktype==StiffnessMatrixType::TANGENTOPERATOR){
 	D(0,0) = real(-3);
       } else {
-	tfel::raise("UmatBehaviourBase::call_behaviour: "
+	tfel::raise("StandardBehaviourBase::call_behaviour: "
 		    "invalid or unspecified stiffness matrix type");
       }
     }
-  } // end of UmatBehaviourBase::initializeTangentOperator
+  } // end of StandardBehaviourBase::initializeTangentOperator
 
-  bool UmatBehaviourBase::doPackagingStep(CurrentState&,
+  bool StandardBehaviourBase::doPackagingStep(CurrentState&,
 					  BehaviourWorkSpace&) const
   {
     return true;
-  } // end of UmatBehaviourBase::doPackagingStep
+  } // end of StandardBehaviourBase::doPackagingStep
   
-  UmatBehaviourBase::~UmatBehaviourBase() = default;
+  StandardBehaviourBase::~StandardBehaviourBase() = default;
   
 } // end of namespace mtest

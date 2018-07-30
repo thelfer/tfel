@@ -53,6 +53,8 @@ MFRONT_DOCS = AdditionalConvergenceChecks.md                            \
 	      MaterialLaw.md                                            \
 	      MaterialProperty.md                                       \
 	      MaximumNumberOfIterations.md                              \
+	      MaximalTimeStepScalingFactor.md                           \
+	      MinimalTimeStepScalingFactor.md                           \
 	      NumericallyComputedJacobianBlocks.md                      \
 	      OrthotropicBehaviour.md                                   \
 	      Parameter.md                                              \

@@ -35,6 +35,16 @@ namespace mfront{
      * \return the name of the interface
      */
     static std::string getName();
+    /*!
+     * \return true if a finite strain strategy has been set up
+     * \param[in] bd: behaviour description
+     */
+    static bool hasFiniteStrainStrategy(const BehaviourDescription&);
+    /*!
+     * \return the name of the finite strain strategy that has been set up
+     * \param[in] bd: behaviour description
+     */
+    static std::string getFiniteStrainStrategy(const BehaviourDescription &);
     std::pair<bool, tokens_iterator> treatKeyword(
         BehaviourDescription &,
         const std::string &,
@@ -66,23 +76,6 @@ namespace mfront{
    virtual void writeAnsysBehaviourTraits(std::ostream &,
                                           const BehaviourDescription &,
                                           const Hypothesis) const;
-   void writeUMATxxAdditionalSymbols(std::ostream &,
-                                     const std::string &,
-                                     const Hypothesis,
-                                     const BehaviourDescription &,
-                                     const FileDescription &) const override;
-   void writeUMATxxBehaviourTypeSymbols(
-       std::ostream &,
-       const std::string &,
-       const BehaviourDescription &) const override;
-   void writeUMATxxBehaviourKinematicSymbols(
-       std::ostream &,
-       const std::string &,
-       const BehaviourDescription &) const override;
-   void writeUMATxxSpecificSymbols(std::ostream &,
-                                   const std::string &,
-                                   const BehaviourDescription &,
-                                   const FileDescription &) const override;
    void writeMTestFileGeneratorSetModellingHypothesis(
        std::ostream &) const override;
    std::string getFunctionNameBasis(const std::string &) const override;

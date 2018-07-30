@@ -79,7 +79,7 @@ namespace mtest
      * \param[in] SENSIP2: 
      * \param[in] ICBASE: 
      */
-    MistralBehaviour(const UmatBehaviourDescription&,
+    MistralBehaviour(const StandardBehaviourDescription&,
 		     const std::string&,
 		     const std::vector<double>&,
 		     const std::pair<double,double>&,

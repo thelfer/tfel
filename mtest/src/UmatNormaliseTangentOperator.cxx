@@ -1,5 +1,5 @@
 /*! 
- * \file  mfront/mtest/UmatNormaliseTangentOperator.cxx
+ * \file  mtest/src/UmatNormaliseTangentOperator.cxx
  * \brief
  * \author Thomas Helfer
  * \brief 15 avril 2013

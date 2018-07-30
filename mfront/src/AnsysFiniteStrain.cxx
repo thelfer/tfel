@@ -56,12 +56,12 @@ namespace ansys
       e[2]=0.;
     }
     if(NTENS==4){
-      e[3]= (F[2]*F[5]+F[1]*F[4]+F[0]*F[3])/2;
+      e[3]= F[2]*F[5]+F[1]*F[4]+F[0]*F[3];
     } else if (NTENS==6){
-      e[3]=(F[2]*F[5]+F[1]*F[4]+F[0]*F[3])/2;
+      e[3]= F[2]*F[5]+F[1]*F[4]+F[0]*F[3]/2;
       // Ansys ordering conventions differs from TFEL' ones
-      e[5]=(F[2]*F[8]+F[1]*F[7]+F[0]*F[6])/2;
-      e[4]=(F[5]*F[8]+F[4]*F[7]+F[3]*F[6])/2;
+      e[5]= F[2]*F[8]+F[1]*F[7]+F[0]*F[6];
+      e[4]= F[5]*F[8]+F[4]*F[7]+F[3]*F[6];
     }
   } // end of AnsysFiniteStrain::computeGreenLagrangeStrain
 
@@ -243,73 +243,5 @@ namespace ansys
       AnsysTangentOperator<AnsysReal>::normalize(Ca);
     }
   } // end of AnsysFiniteStrain::computeAnsysTangentOperatorFromCSE
-
-  void
-  AnsysFiniteStrain::applyNativeFiniteStrainCorrection(AnsysReal* DDSDDE,
-							const AnsysReal* const F1,
-							const AnsysReal* const s,
-							const AnsysInt NTENS)
-  {
-    using namespace tfel::math;
-    // 1/J d(Js)/dde = ds/dde+1/J*(s^dJ_dde)
-    auto add = [&DDSDDE,NTENS](const AnsysInt i,
-			       const AnsysInt j,
-			       const AnsysReal v){
-      *(DDSDDE+i+j*NTENS)+=v;
-    };
-    if(NTENS==3u){
-      // plane stress
-      const auto F = tensor<2u,AnsysReal>::buildFromFortranMatrix(F1);
-      const auto iJ = 1/det(F);
-      add(0,0,(*(s+0))*iJ);
-      add(1,0,(*(s+1))*iJ);
-      add(2,0,(*(s+2))*iJ);
-      add(0,1,(*(s+0))*iJ);
-      add(1,1,(*(s+1))*iJ);
-      add(2,1,(*(s+2))*iJ);
-    } else if(NTENS==4u){
-      const auto  F = tensor<2u,AnsysReal>::buildFromFortranMatrix(F1);
-      const auto iJ = 1/det(F);
-      // plane strain, axisymmetrical
-      add(0,0,(*(s+0))*iJ);
-      add(1,0,(*(s+1))*iJ);
-      add(2,0,(*(s+2))*iJ);
-      add(3,0,(*(s+3))*iJ);
-      add(0,1,(*(s+0))*iJ);
-      add(1,1,(*(s+1))*iJ);
-      add(2,1,(*(s+2))*iJ);
-      add(3,1,(*(s+3))*iJ);
-      add(0,2,(*(s+0))*iJ);
-      add(1,2,(*(s+1))*iJ);
-      add(2,2,(*(s+2))*iJ);
-      add(3,2,(*(s+3))*iJ);
-    } else if(NTENS==6u){
-      // tridimensional
-      const auto F = tensor<3u,AnsysReal>::buildFromFortranMatrix(F1);
-      const auto iJ = 1/det(F);
-      add(0,0,(*(s+0))*iJ);
-      add(1,0,(*(s+1))*iJ);
-      add(2,0,(*(s+2))*iJ);
-      add(3,0,(*(s+3))*iJ);
-      add(4,0,(*(s+4))*iJ);
-      add(5,0,(*(s+5))*iJ);
-      add(0,1,(*(s+0))*iJ);
-      add(1,1,(*(s+1))*iJ);
-      add(2,1,(*(s+2))*iJ);
-      add(3,1,(*(s+3))*iJ);
-      add(4,1,(*(s+4))*iJ);
-      add(5,1,(*(s+5))*iJ);
-      add(0,2,(*(s+0))*iJ);
-      add(1,2,(*(s+1))*iJ);
-      add(2,2,(*(s+2))*iJ);
-      add(3,2,(*(s+3))*iJ);
-      add(4,2,(*(s+4))*iJ);
-      add(5,2,(*(s+5))*iJ);
-    } else {
-      tfel::raise("AnsysFiniteStrain::applyNativeFiniteStrainCorrection: "
-		  "invalid NTENS value ("+std::to_string(NTENS)+")");
-    }
-  } // end of AnsysFiniteStrain::applyNativeFiniteStrainCorrection
-
   
 } // end of namespace ansys

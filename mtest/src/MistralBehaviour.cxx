@@ -1,5 +1,5 @@
 /*!
- * \file   mfront/mtest/MistralBehaviour.cxx
+ * \file   mtest/src/MistralBehaviour.cxx
  * \brief
  * \author Thomas Helfer
  * \brief 07 avril 2013
@@ -22,7 +22,7 @@ namespace mtest
 {
 
   struct MistralBehaviourDescription
-    : public UmatBehaviourDescription
+    : public StandardBehaviourDescription
   {
     //! Young modulus
     std::pair<double,double> young_modulus;
@@ -268,7 +268,7 @@ namespace mtest
 							   md.SENSIP1,md.SENSIP2,md.ICBASE));
   } // end of MistralBehaviour::buildMistralBehaviour
     
-  MistralBehaviour::MistralBehaviour(const UmatBehaviourDescription& bd,
+  MistralBehaviour::MistralBehaviour(const StandardBehaviourDescription& bd,
 				     const std::string& cn, 
 				     const std::vector<double>& cvalues,
 				     const std::pair<double,double>& yg,
@@ -294,7 +294,7 @@ namespace mtest
   MistralBehaviour::setOptionalMaterialPropertiesDefaultValues(EvolutionManager& mp,
 							       const EvolutionManager& evm) const{
     auto throw_if = [](const bool c,const std::string& m){
-      tfel::raise_if(c,"MTestStandardUmatBehaviour::"
+      tfel::raise_if(c,"MTestStandardStandardBehaviour::"
 		     "setOptionalMaterialPropertiesDefaultValues: "+m);
     };
     CastemSmallStrainBehaviour::setOptionalMaterialPropertiesDefaultValues(mp,evm);

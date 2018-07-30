@@ -36,9 +36,9 @@ namespace mtest
     BehaviourWorkSpace(BehaviourWorkSpace&&) = delete;
     BehaviourWorkSpace(const BehaviourWorkSpace&) = delete;
     BehaviourWorkSpace&
-    operator=(BehaviourWorkSpace&&) = delete;
+      operator=(BehaviourWorkSpace&&) = delete;
     BehaviourWorkSpace&
-    operator=(const BehaviourWorkSpace&) = delete;
+      operator=(const BehaviourWorkSpace&) = delete;
     //! destructor
     ~BehaviourWorkSpace();
     //! current state
@@ -53,18 +53,39 @@ namespace mtest
     tfel::math::matrix<real> D;
     //! temporary vector for material properties
     tfel::math::vector<real> mps;
-   //! temporary vector for internal variables
+    //! temporary vector for internal variables at the beginning of
+    //! the time step
+    tfel::math::vector<real> ivs0;
+    //! temporary vector for internal variables
     tfel::math::vector<real> ivs;
-   //! temporary vector for external state variables
+    //! temporary vector for external state variables at the beginning
+    //! of the time step
+    tfel::math::vector<real> evs0;
+    //! temporary vector for external state variables
     tfel::math::vector<real> evs;
     //! numerical stiffness operator
     tfel::math::matrix<real> nk;
-   //! temporary vector for internal state variables
+    //! temporary vector for internal state variables
     tfel::math::vector<real> nivs;
-   //! temporary vector for driving variables
+    //! temporary vector for driving variables
     tfel::math::vector<real> ne;
-   //! temporary vector for stresses
+    //! temporary vector for stresses
     tfel::math::vector<real> ns;
+    /*!
+     * \brief temporary vector for driving variables at the beginning
+     *  of the time step (for internal use by the behaviour)
+     */
+    tfel::math::vector<real> e0;
+    /*!
+     * \brief temporary vector for driving variables at the end of the
+     *  time step (for internal use by the behaviour)
+     */
+    tfel::math::vector<real> e1;
+    /*!
+     * \brief temporary vector for thermodynamic forces at the end of the
+     *  time step (for internal use by the behaviour)
+     */
+    tfel::math::vector<real> s0;
   }; // end of struct BehaviourWorkSpace
   
 } // end of namespace mtest

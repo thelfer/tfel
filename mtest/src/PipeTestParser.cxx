@@ -1,5 +1,5 @@
 /*!
- * \file   mfront/mtest/PipeTestParser.cxx
+ * \file   mtest/src/PipeTestParser.cxx
  * \brief
  * \author Thomas Helfer
  * \brief  12 avril 2013

@@ -33,6 +33,11 @@ namespace mfront{
     //! \return the name of the interface
     static std::string getName();
     /*!
+     * \return true if a finite strain strategy has been set up
+     * \param[in] bd: behaviour description
+     */
+    static bool hasFiniteStrainStrategy(const BehaviourDescription&);
+    /*!
      * \param[in,out] mb: behaviour description
      * \param[in] k  : keyword treated
      * \param[in] i:   list of interfaces to which the keyword is restricted
@@ -113,32 +118,10 @@ namespace mfront{
      * \param[in] v  : variable to be initialised
      * \param[in] o  : variable offsert
      */
-    virtual void
-    writeBehaviourDataThermodynamicForceSetter(std::ostream&,
-					       const ThermodynamicForce&,
-					       const SupportedTypes::TypeSize) const override;
-    /*!
-     * \param[in] out  : output file
-     * \param[in] name : name of the behaviour as defined by interface
-     *                   (generally taking into account the material
-     *                    and the behaviour name)
-     * \param[in] mb   : behaviour description
-     */
-    virtual void
-    writeUMATxxBehaviourTypeSymbols(std::ostream&,
-				    const std::string&,
-				    const BehaviourDescription&) const override;
-    /*!
-     * \param[in] out  : output file
-     * \param[in] name : name of the behaviour as defined by interface
-     *                   (generally taking into account the material
-     *                    and the behaviour name)
-     * \param[in] mb   : behaviour description
-     */
-    virtual void
-    writeUMATxxBehaviourKinematicSymbols(std::ostream&,
-					 const std::string&,
-					 const BehaviourDescription&) const override;
+    void writeBehaviourDataThermodynamicForceSetter(
+        std::ostream &,
+        const ThermodynamicForce &,
+        const SupportedTypes::TypeSize) const override;
     /*!
      * \brief write the call to the base function
      * \param[in] out:  output file
@@ -208,11 +191,6 @@ namespace mfront{
     std::string getLibraryName(const BehaviourDescription &) const override;
     void writeCalculiXBehaviourTraits(std::ostream &,
                                       const BehaviourDescription &) const;
-    void writeUMATxxAdditionalSymbols(std::ostream &,
-                                      const std::string &,
-                                      const Hypothesis,
-                                      const BehaviourDescription &,
-                                      const FileDescription &) const override;
     void writeMTestFileGeneratorSetModellingHypothesis(
         std::ostream &) const override;
     std::string getModellingHypothesisTest(const Hypothesis) const override;

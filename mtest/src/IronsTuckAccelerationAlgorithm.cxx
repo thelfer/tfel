@@ -1,5 +1,5 @@
 /*! 
- * \file  mfront/mtest/IronsTuckAccelerationAlgorithm.cxx
+ * \file  mtest/src/IronsTuckAccelerationAlgorithm.cxx
  * \brief
  * \author Thomas Helfer
  * \brief 10 juin 2014

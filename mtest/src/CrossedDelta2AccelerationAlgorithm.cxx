@@ -1,5 +1,5 @@
 /*! 
- * \file  mfront/mtest/CrossedDelta2AccelerationAlgorithm.cxx
+ * \file  mtest/src/CrossedDelta2AccelerationAlgorithm.cxx
  * \brief
  * \author Ramière Isabelle
  * \brief 19 mars 2015

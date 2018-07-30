@@ -46,6 +46,29 @@ namespace tfel{
 	  C(2,2)=C11;
 	}
       };
+
+      template<>
+      struct ComputeIsotropicStiffnessTensorI<1u,StiffnessTensorAlterationCharacteristic::ALTERED>
+      {
+	template<typename StressType,typename RealType>
+	static TFEL_MATERIAL_INLINE void
+	exe(tfel::math::st2tost2<1u,StressType>& C,
+	    const StressType E,const RealType n)
+	  
+	{
+	  constexpr const StressType zero = StressType(0);
+	  const StressType C1  = E/(1-n*n);
+	  const StressType C2  = n*C1;
+	  const StressType C3  = (1-n)*C1;
+	  C(0,0)=C1;
+	  C(0,1)=C2;
+	  C(0,2)=C(0,3)=zero;
+	  C(1,0)=C2;
+	  C(1,1)=C1;
+	  C(1,2)=C(1,3)=zero;
+	  C(2,0)=C(2,1)=zero;
+	} // end of struct computeIsotropicPlaneStressAlteredStiffnessTensor
+      };
       
       template<>
       struct ComputeIsotropicStiffnessTensorI<2u,StiffnessTensorAlterationCharacteristic::UNALTERED>
@@ -163,6 +186,42 @@ namespace tfel{
 	  C(2,2)=(S11*S22-S12*S12)*inv_detS;
 	}
       };
+
+      template<>
+      struct ComputeOrthotropicStiffnessTensorI<1u,StiffnessTensorAlterationCharacteristic::ALTERED>
+      {
+	template<typename StressType,typename RealType>
+	static TFEL_MATERIAL_INLINE void
+	exe(tfel::math::st2tost2<1u,StressType>& C,
+	    const StressType E1,const StressType E2,const StressType E3,
+	    const RealType n12,const RealType n23,const RealType n13,
+	    const StressType,const StressType,const StressType)
+	{
+	  const auto S11=1/E1;
+	  const auto S22=1/E2;
+	  const auto S33=1/E3;
+	  const auto S12=-n12/E1;
+	  const auto S13=-n13/E1;
+	  const auto S23=-n23/E2;
+	  const auto inv_detS=1/(S11*S22*S33+2*S23*S13*S12-S11*S23*S23-S22*S13*S13-S33*S12*S12);
+	  const auto C00=(S22*S33-S23*S23)*inv_detS;
+	  const auto C01=(S13*S23-S12*S33)*inv_detS;
+	  const auto C02=(S12*S23-S13*S22)*inv_detS;
+	  const auto C10=(S13*S23-S12*S33)*inv_detS;
+	  const auto C11=(S11*S33-S13*S13)*inv_detS;
+	  const auto C12=(S12*S13-S11*S23)*inv_detS;
+	  const auto C20=(S12*S23-S13*S22)*inv_detS;
+	  const auto C21=(S12*S13-S11*S23)*inv_detS;
+	  const auto C22=(S11*S22-S12*S12)*inv_detS;
+	  const auto tmp20 = C20/C22;
+	  const auto tmp21 = C21/C22;
+	  std::fill(C.begin(),C.end(),StressType(0.));
+	  C(0,0)=C00-C02*tmp20;
+	  C(0,1)=C01-C02*tmp21;
+	  C(1,0)=C10-C12*tmp20;
+	  C(1,1)=C11-C12*tmp21;
+	} // end of exe
+      };
       
       template<>
       struct ComputeOrthotropicStiffnessTensorI<2u,StiffnessTensorAlterationCharacteristic::UNALTERED>
@@ -232,8 +291,8 @@ namespace tfel{
 	} // end of exe
       };
 
-      template<>
-      struct ComputeOrthotropicStiffnessTensorI<3u,StiffnessTensorAlterationCharacteristic::UNALTERED>
+      template<StiffnessTensorAlterationCharacteristic smt>
+      struct ComputeOrthotropicStiffnessTensorI<3u,smt>
       {
 	template<typename StressType,typename RealType>
 	static TFEL_MATERIAL_INLINE void
@@ -263,7 +322,7 @@ namespace tfel{
       };
 
       template<ModellingHypothesis::Hypothesis H,
-	       StiffnessTensorAlterationCharacteristic smt>
+	       StiffnessTensorAlterationCharacteristic>
       struct ComputeIsotropicStiffnessTensorII
 	: public ComputeIsotropicStiffnessTensorI<ModellingHypothesisToSpaceDimension<H>::value,
 						  StiffnessTensorAlterationCharacteristic::UNALTERED>
@@ -273,6 +332,12 @@ namespace tfel{
       struct ComputeIsotropicStiffnessTensorII<ModellingHypothesis::PLANESTRESS,
 					       StiffnessTensorAlterationCharacteristic::ALTERED>
 	: public ComputeIsotropicStiffnessTensorI<2u,StiffnessTensorAlterationCharacteristic::ALTERED>
+      {};
+
+      template<>
+      struct ComputeIsotropicStiffnessTensorII<ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS,
+					       StiffnessTensorAlterationCharacteristic::ALTERED>
+	: public ComputeIsotropicStiffnessTensorI<1u,StiffnessTensorAlterationCharacteristic::ALTERED>
       {};
       
       template<ModellingHypothesis::Hypothesis H,
@@ -288,6 +353,12 @@ namespace tfel{
 	: public ComputeOrthotropicStiffnessTensorI<2u,StiffnessTensorAlterationCharacteristic::ALTERED>
       {};
 
+      template<>
+      struct ComputeOrthotropicStiffnessTensorII<ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS,
+						 StiffnessTensorAlterationCharacteristic::ALTERED>
+	: public ComputeOrthotropicStiffnessTensorI<1u,StiffnessTensorAlterationCharacteristic::ALTERED>
+      {};
+      
       /*!
        * \brief class in charge of computing an orthotropic stiffness
        * tensor according to:

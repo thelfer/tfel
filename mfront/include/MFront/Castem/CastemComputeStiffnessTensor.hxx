@@ -459,4 +459,3 @@ namespace castem
 } // end of namespace castem
 
 #endif /* LIB_MFRONT_CASTEMCOMPUTESTIFFNESSTENSOR_HXX */
-

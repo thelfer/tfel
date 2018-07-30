@@ -1,5 +1,5 @@
 /*!
- * \file   mfront/mtest/CastemFiniteStrainBehaviour2.cxx
+ * \file   mtest/src/CastemFiniteStrainBehaviour2.cxx
  * \brief
  * \author Thomas Helfer
  * \brief 07 avril 2013

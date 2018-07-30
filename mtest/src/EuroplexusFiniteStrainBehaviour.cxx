@@ -1,5 +1,5 @@
 /*! 
- * \file   mfront/mtest/EuroplexusFiniteStrainBehaviour.cxx
+ * \file   mtest/src/EuroplexusFiniteStrainBehaviour.cxx
  * \brief
  * \author Thomas Helfer
  * \brief  07 avril 2013
@@ -76,7 +76,7 @@ namespace mtest
 		    "unsupported hypothesis");
       }
     }();
-    UmatBehaviourBase::initializeTangentOperator(Kt,ktype,b);
+    StandardBehaviourBase::initializeTangentOperator(Kt,ktype,b);
     tfel::math::tensor<3u,real> uu0(real(0));
     tfel::math::tensor<3u,real> uu1(real(0));
     tfel::math::stensor<3u,real> s1(real(0));

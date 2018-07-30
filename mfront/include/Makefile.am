@@ -78,8 +78,12 @@ nobase_include_HEADERS= MFront/MFront.hxx                                      \
 			MFront/DefaultFiniteStrainDSL.hxx                                 \
 			MFront/MaterialPropertyDSL.hxx                                    \
 			MFront/ModelDSL.hxx                                               \
+             MFront/BehaviourMaterialProperty.hxx                              \
+			MFront/StandardBehaviourInterface.hxx                             \
 			MFront/UMATInterfaceBase.hxx                                      \
 			MFront/GenericBehaviourInterface.hxx                              \
+             MFront/SymbolsGenerator.hxx                                 \
+                        MFront/GenericBehaviourSymbolsGenerator.hxx                       \
 			MFront/MTestFileGeneratorBase.hxx                                 \
 			MFront/UmatSmallStrainMTestFileGenerator.hxx                      \
 			MFront/UmatFiniteStrainMTestFileGenerator.hxx                     \
@@ -131,7 +135,12 @@ nobase_include_HEADERS= MFront/MFront.hxx                                      \
 			MFront/BehaviourBrick/BurletCailletaudKinematicHardeningRule.hxx   \
 			MFront/BehaviourBrick/KinematicHardeningRuleFactory.hxx            \
 			MFront/GenericBehaviour/State.h                                    \
+			MFront/GenericBehaviour/State.hxx                                  \
 			MFront/GenericBehaviour/BehaviourData.h                            \
+			MFront/GenericBehaviour/BehaviourData.hxx                          \
+			MFront/GenericBehaviour/Integrate.hxx                              \
+			MFront/GenericBehaviour/ComputeStiffnessTensor.hxx                 \
+			MFront/GenericBehaviour/ComputeStiffnessTensor.ixx                 \
 			MFront/LocalDataStructure.hxx
 
 
@@ -183,7 +192,8 @@ nobase_include_HEADERS += MFront/BehaviourProfiler.hxx
 
 if HAVE_CASTEM
 nobase_include_HEADERS += MFront/CastemMaterialPropertyInterface.hxx   \
-	 	          MFront/CastemInterface.hxx
+	 	                 MFront/CastemInterface.hxx                   \
+	 	                 MFront/CastemSymbolsGenerator.hxx
 if LOCAL_CASTEM_HEADER
 nobase_include_HEADERS += castem.h
 endif 
@@ -228,8 +238,9 @@ nobase_include_HEADERS += MFront/Cyrano/Cyrano.hxx 				           \
 			  MFront/Cyrano/CyranoComputeStiffnessTensor.hxx 	           \
 			  MFront/Cyrano/CyranoGetModellingHypothesis.hxx 	           \
 			  MFront/Cyrano/CyranoComputeThermalExpansionCoefficientTensor.hxx \
-              MFront/Cyrano/CyranoStressFreeExpansionHandler.hxx                \
-			  MFront/CyranoInterface.hxx
+               MFront/Cyrano/CyranoStressFreeExpansionHandler.hxx                \
+			  MFront/CyranoInterface.hxx                                        \
+			  MFront/CyranoSymbolsGenerator.hxx
 
 endif
 
@@ -251,7 +262,8 @@ nobase_include_HEADERS += MFront/Aster/Aster.hxx                                
 			  MFront/Aster/AsterStressFreeExpansionHandler.hxx               \
 			  MFront/Aster/AsterTangentOperator.hxx                          \
 			  MFront/Aster/AsterConvertStress.hxx                            \
-			  MFront/AsterInterface.hxx                             
+			  MFront/AsterInterface.hxx                                      \
+			  MFront/AsterSymbolsGenerator.hxx
 endif
 
 if HAVE_ABAQUS
@@ -264,9 +276,9 @@ nobase_include_HEADERS += MFront/Abaqus/Abaqus.hxx                              
 			  MFront/Abaqus/AbaqusRotation.ixx                                 \
 			  MFront/Abaqus/AbaqusConfig.hxx                                   \
 			  MFront/Abaqus/AbaqusTraits.hxx                                   \
-			  MFront/Abaqus/AbaqusException.hxx 		                   \
-			  MFront/Abaqus/AbaqusInterface.hxx	                           \
-			  MFront/Abaqus/AbaqusExplicitInterface.hxx	                   \
+			  MFront/Abaqus/AbaqusException.hxx 		                       \
+			  MFront/Abaqus/AbaqusInterface.hxx	                               \
+			  MFront/Abaqus/AbaqusExplicitInterface.hxx	                      \
 			  MFront/Abaqus/AbaqusInterfaceExceptions.hxx                      \
 			  MFront/Abaqus/AbaqusBehaviourHandler.hxx                         \
 			  MFront/Abaqus/AbaqusComputeStiffnessTensor.hxx                   \
@@ -275,18 +287,20 @@ nobase_include_HEADERS += MFront/Abaqus/Abaqus.hxx                              
 			  MFront/Abaqus/AbaqusTangentOperator.hxx                          \
 			  MFront/Abaqus/AbaqusTangentOperator.ixx                          \
 			  MFront/Abaqus/AbaqusFiniteStrain.hxx                             \
-			  MFront/AbaqusInterfaceBase.hxx	                           \
-			  MFront/AbaqusInterface.hxx	                                   \
-			  MFront/AbaqusExplicitInterface.hxx
+			  MFront/AbaqusInterfaceBase.hxx	                               \
+			  MFront/AbaqusInterface.hxx	                                    \
+			  MFront/AbaqusSymbolsGenerator.hxx	                                \
+			  MFront/AbaqusExplicitInterface.hxx                               \
+			  MFront/AbaqusExplicitSymbolsGenerator.hxx
 endif
 
 if HAVE_CALCULIX
-nobase_include_HEADERS += MFront/CalculiX/CalculiX.hxx                                         \
+nobase_include_HEADERS += MFront/CalculiX/CalculiX.hxx                              \
 			  MFront/CalculiX/CalculiXData.hxx                                     \
 			  MFront/CalculiX/CalculiXConvert.hxx                                  \
 			  MFront/CalculiX/CalculiXConfig.hxx                                   \
 			  MFront/CalculiX/CalculiXTraits.hxx                                   \
-			  MFront/CalculiX/CalculiXException.hxx 		               \
+			  MFront/CalculiX/CalculiXException.hxx 		                      \
 			  MFront/CalculiX/CalculiXInterface.hxx	                               \
 			  MFront/CalculiX/CalculiXInterfaceExceptions.hxx                      \
 			  MFront/CalculiX/CalculiXBehaviourHandler.hxx                         \
@@ -295,7 +309,8 @@ nobase_include_HEADERS += MFront/CalculiX/CalculiX.hxx                          
 			  MFront/CalculiX/CalculiXComputeThermalExpansionCoefficientTensor.hxx \
 			  MFront/CalculiX/CalculiXStressFreeExpansionHandler.hxx               \
 			  MFront/CalculiX/CalculiXTangentOperator.hxx                          \
-			  MFront/CalculiXInterface.hxx
+			  MFront/CalculiXInterface.hxx                                         \
+			  MFront/CalculiXSymbolsGenerator.hxx
 endif
 
 if HAVE_ANSYS
@@ -307,8 +322,8 @@ nobase_include_HEADERS += MFront/Ansys/Ansys.hxx                                
 			  MFront/Ansys/AnsysRotation.ixx                                 \
 			  MFront/Ansys/AnsysConfig.hxx                                   \
 			  MFront/Ansys/AnsysTraits.hxx                                   \
-			  MFront/Ansys/AnsysException.hxx 		                 \
-			  MFront/Ansys/AnsysInterface.hxx	                         \
+			  MFront/Ansys/AnsysException.hxx 		                         \
+			  MFront/Ansys/AnsysInterface.hxx	                             \
 			  MFront/Ansys/AnsysInterfaceExceptions.hxx                      \
 			  MFront/Ansys/AnsysBehaviourHandler.hxx                         \
 			  MFront/Ansys/AnsysComputeStiffnessTensor.hxx                   \
@@ -317,23 +332,25 @@ nobase_include_HEADERS += MFront/Ansys/Ansys.hxx                                
 			  MFront/Ansys/AnsysTangentOperator.hxx                          \
 			  MFront/Ansys/AnsysTangentOperator.ixx                          \
 			  MFront/Ansys/AnsysFiniteStrain.hxx                             \
-			  MFront/AnsysInterface.hxx	                                 
+			  MFront/AnsysInterface.hxx	                                  \
+			  MFront/AnsysSymbolsGenerator.hxx	                                 
 endif
 
 if HAVE_EUROPLEXUS
-nobase_include_HEADERS += MFront/Europlexus/Europlexus.hxx                                         \
+nobase_include_HEADERS += MFront/Europlexus/Europlexus.hxx                              \
 			  MFront/Europlexus/EuroplexusOrthotropicBehaviour.hxx                     \
 			  MFront/Europlexus/EuroplexusConfig.hxx                                   \
 			  MFront/Europlexus/EuroplexusTraits.hxx                                   \
-			  MFront/Europlexus/EuroplexusException.hxx 		                   \
-			  MFront/Europlexus/EuroplexusInterface.hxx	                           \
+			  MFront/Europlexus/EuroplexusException.hxx 		                          \
+			  MFront/Europlexus/EuroplexusInterface.hxx	                              \
 			  MFront/Europlexus/EuroplexusInterfaceExceptions.hxx                      \
 			  MFront/Europlexus/EuroplexusBehaviourHandler.hxx                         \
 			  MFront/Europlexus/EuroplexusComputeStiffnessTensor.hxx                   \
 			  MFront/Europlexus/EuroplexusComputeThermalExpansionCoefficientTensor.hxx \
 			  MFront/Europlexus/EuroplexusStressFreeExpansionHandler.hxx               \
 			  MFront/Europlexus/EuroplexusFiniteStrain.hxx                             \
-			  MFront/EuroplexusInterface.hxx
+			  MFront/EuroplexusInterface.hxx                                           \
+			  MFront/EuroplexusSymbolsGenerator.hxx
 endif
 
 if HAVE_ZMAT
@@ -364,7 +381,8 @@ nobase_include_HEADERS += MFront/LSDYNA/LSDYNA.hxx                              
 			  MFront/LSDYNA/LSDYNATangentOperator.hxx                          \
 			  MFront/LSDYNA/LSDYNATangentOperator.ixx                          \
 			  MFront/LSDYNA/LSDYNAFiniteStrain.hxx                             \
-			  MFront/LSDYNAInterface.hxx
+			  MFront/LSDYNAInterface.hxx                                       \
+			  MFront/LSDYNASymbolsGenerator.hxx
 endif
 
 EXTRA_DIST = CMakeLists.txt               \

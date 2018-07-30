@@ -128,8 +128,12 @@ set(TFELMFront_SOURCES
     OctaveMaterialPropertyInterface.cxx
     ExcelMaterialPropertyInternalInterface.cxx
     MFrontModelInterface.cxx
+    BehaviourMaterialProperty.cxx
+    StandardBehaviourInterface.cxx
+    SymbolsGenerator.cxx
     UMATInterfaceBase.cxx
     GenericBehaviourInterface.cxx
+    GenericBehaviourSymbolsGenerator.cxx
     OptionDescription.cxx
     BrickUtilities.cxx
     StressPotential.cxx
@@ -199,6 +203,7 @@ endif(HAVE_FORTRAN)
 if(HAVE_CASTEM)
     set(TFELMFront_SOURCES
 	CastemInterface.cxx
+	CastemSymbolsGenerator.cxx
 	CastemMaterialPropertyInterface.cxx
 	${TFELMFront_SOURCES})
     set(CastemInterface_SOURCES
@@ -222,6 +227,7 @@ endif(HAVE_CASTEM)
 if(HAVE_ASTER)
   set(TFELMFront_SOURCES
     AsterInterface.cxx
+    AsterSymbolsGenerator.cxx
     ${TFELMFront_SOURCES})
   set(AsterInterface_SOURCES
     AsterInterfaceExceptions.cxx
@@ -244,6 +250,8 @@ if(HAVE_ABAQUS)
     AbaqusInterfaceBase.cxx
     AbaqusInterface.cxx
     AbaqusExplicitInterface.cxx
+    AbaqusSymbolsGenerator.cxx
+    AbaqusExplicitSymbolsGenerator.cxx
     ${TFELMFront_SOURCES})
   set(AbaqusInterface_SOURCES
     AbaqusInterfaceExceptions.cxx
@@ -262,6 +270,7 @@ endif(HAVE_ABAQUS)
 if(HAVE_LSDYNA)
   set(TFELMFront_SOURCES
     LSDYNAInterface.cxx
+    LSDYNASymbolsGenerator.cxx
     ${TFELMFront_SOURCES})
   set(LSDYNAInterface_SOURCES
     LSDYNAInterfaceExceptions.cxx
@@ -280,6 +289,7 @@ endif(HAVE_LSDYNA)
 if(HAVE_CALCULIX)
   set(TFELMFront_SOURCES
     CalculiXInterface.cxx
+    CalculiXSymbolsGenerator.cxx
     ${TFELMFront_SOURCES})
   set(CalculiXInterface_SOURCES
     CalculiXInterfaceExceptions.cxx
@@ -298,6 +308,7 @@ endif(HAVE_CALCULIX)
 if(HAVE_ANSYS)
   set(TFELMFront_SOURCES
     AnsysInterface.cxx
+    AnsysSymbolsGenerator.cxx
     ${TFELMFront_SOURCES})
   set(AnsysInterface_SOURCES
     AnsysInterfaceExceptions.cxx
@@ -316,6 +327,7 @@ endif(HAVE_ANSYS)
 if(HAVE_EUROPLEXUS)
   set(TFELMFront_SOURCES
     EuroplexusInterface.cxx
+    EuroplexusSymbolsGenerator.cxx
     ${TFELMFront_SOURCES})
   set(EuroplexusInterface_SOURCES
     EuroplexusInterfaceExceptions.cxx
@@ -340,6 +352,7 @@ endif(HAVE_ZMAT)
 if(HAVE_CYRANO)
   set(TFELMFront_SOURCES
     CyranoInterface.cxx
+    CyranoSymbolsGenerator.cxx
     ${TFELMFront_SOURCES})
   set(CyranoInterface_SOURCES
     CyranoException.cxx

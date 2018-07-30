@@ -26,6 +26,7 @@
 #include "MFront/MFrontDebugMode.hxx"
 #include "MFront/FileDescription.hxx"
 #include "MFront/TargetsDescription.hxx"
+#include "MFront/EuroplexusSymbolsGenerator.hxx"
 #include "MFront/EuroplexusInterface.hxx"
 
 #ifndef _MSC_VER
@@ -98,13 +99,14 @@ namespace mfront {
     }
   }  // end of checkFiniteStrainStrategyDefinitionConsistency
 
-  static bool hasFiniteStrainStrategy(const BehaviourDescription& bd) {
+  bool EuroplexusInterface::hasFiniteStrainStrategy(
+      const BehaviourDescription& bd) {
     checkFiniteStrainStrategyDefinitionConsistency(bd);
     if (bd.isStrainMeasureDefined()) {
       return bd.getStrainMeasure() != BehaviourDescription::LINEARISED;
     }
     return bd.hasAttribute(EuroplexusInterface::finiteStrainStrategy);
-  }  // end of hasFiniteStrainStrategy
+  }  // end of EuroplexusInterface::hasFiniteStrainStrategy
 
   static std::string getFiniteStrainStrategy(const BehaviourDescription& bd) {
     checkFiniteStrainStrategyDefinitionConsistency(bd);
@@ -282,12 +284,12 @@ namespace mfront {
               BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) &&
                  ((mb.getBehaviourType() ==
                    BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) &&
-                  (!hasFiniteStrainStrategy(mb))),
+                  (!EuroplexusInterface::hasFiniteStrainStrategy(mb))),
              "the europlexus interface only supports "
              "finite strain behaviours");
     checkFiniteStrainStrategyDefinitionConsistency(mb);
     // get the modelling hypotheses to be treated
-    const auto& mh = this->getModellingHypothesesToBeTreated(mb);
+    const auto& mhs = this->getModellingHypothesesToBeTreated(mb);
     const auto name = mb.getLibrary() + mb.getClassName();
     // output directories
     systemCall::mkdir("include/MFront");
@@ -327,11 +329,11 @@ namespace mfront {
     out << "#ifdef __cplusplus\n\n"
         << "namespace epx{\n\n";
 
-    if (!mb.areAllMechanicalDataSpecialised(mh)) {
+    if (!mb.areAllMechanicalDataSpecialised(mhs)) {
       this->writeEuroplexusBehaviourTraits(
           out, mb, ModellingHypothesis::UNDEFINEDHYPOTHESIS);
     }
-    for (const auto& h : mh) {
+    for (const auto& h : mhs) {
       if (mb.hasSpecialisedMechanicalData(h)) {
         this->writeEuroplexusBehaviourTraits(out, mb, h);
       }
@@ -344,7 +346,7 @@ namespace mfront {
         << "#endif /* __cplusplus */\n\n";
 
     this->writeSetOutOfBoundsPolicyFunctionDeclaration(out, name);
-    this->writeSetParametersFunctionsDeclarations(out, name, mb);
+    this->writeSetParametersFunctionsDeclarations(out, mb, name);
 
     out << "MFRONT_SHAREDOBJ void\n" << this->getFunctionNameBasis(name);
     writeEPXArguments(out);
@@ -388,18 +390,19 @@ namespace mfront {
 
     out << "extern \"C\"{\n\n";
 
-    this->generateUMATxxGeneralSymbols(out, name, mb, fd);
-    if (!mb.areAllMechanicalDataSpecialised(mh)) {
+    EuroplexusSymbolsGenerator sg;
+    sg.generateGeneralSymbols(out, *this, mb, fd, mhs, name);
+    if (!mb.areAllMechanicalDataSpecialised(mhs)) {
       const Hypothesis uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-      this->generateUMATxxSymbols(out, name, uh, mb, fd);
+      sg.generateSymbols(out, *this, mb, fd, name, uh);
     }
-    for (const auto& h : mh) {
+    for (const auto& h : mhs) {
       if (mb.hasSpecialisedMechanicalData(h)) {
-        this->generateUMATxxSymbols(out, name, h, mb, fd);
+        sg.generateSymbols(out, *this, mb, fd, name, h);
       }
     }
 
-    this->writeSetParametersFunctionsImplementations(out, name, mb);
+    this->writeSetParametersFunctionsImplementations(out, mb, name);
     this->writeSetOutOfBoundsPolicyFunctionImplementation(out, name);
 
     out << "MFRONT_SHAREDOBJ void\n" << this->getFunctionNameBasis(name);
@@ -461,7 +464,7 @@ namespace mfront {
       out << "LIB 'lib" << this->getLibraryName(mb) << ".so'\n";
       out << "LAW '" << this->getFunctionNameBasis(name) << "'\n"
           << "!! material properties\n";
-      for (const auto& mp : this->buildMaterialPropertiesList(mb, h).first) {
+      for (const auto& mp : buildMaterialPropertiesList(mb, h).first) {
         throw_if(SupportedTypes::getTypeFlag(mp.type) != SupportedTypes::Scalar,
                  "material property '" + mp.name +
                      "' is not a scalar. "
@@ -1070,9 +1073,8 @@ namespace mfront {
          (mb.getAttribute(
              BehaviourDescription::requiresThermalExpansionCoefficientTensor,
              false)))) {
-      auto h = this->getModellingHypothesesToBeTreated(mb);
-      for (const auto& mh : h) {
-        res.insert({mh, this->getModellingHypothesisTest(mh)});
+      for (const auto& h : this->getModellingHypothesesToBeTreated(mb)) {
+        res.insert({h, this->getModellingHypothesisTest(h)});
       }
       return res;
     }
@@ -1094,60 +1096,5 @@ namespace mfront {
         "EuroplexusInterface::getModellingHypothesisTest : "
         "unsupported modelling hypothesis");
   }  // end of EuroplexusInterface::gatherModellingHypothesesAndTests
-
-  void EuroplexusInterface::writeUMATxxBehaviourTypeSymbols(
-      std::ostream& out,
-      const std::string& name,
-      const BehaviourDescription& mb) const {
-    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name)
-        << "_BehaviourType = ";
-    if (mb.getBehaviourType() ==
-        BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
-      tfel::raise_if(!hasFiniteStrainStrategy(mb),
-                     "EuroplexusInterface::writeUMATxxBehaviourTypeSymbols: "
-                     "behaviours written in the small strain framework "
-                     "must be embedded in a strain strategy");
-      out << "2u;\n\n";
-    } else if (mb.getBehaviourType() ==
-               BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
-      out << "2u;\n\n";
-    } else {
-      tfel::raise(
-          "EuroplexusInterface::writeUMATxxBehaviourTypeSymbols: "
-          "unsupported behaviour type");
-    }
-  }  // end of EuroplexusInterface::writeUMATxxBehaviourTypeSymbols
-
-  void EuroplexusInterface::writeUMATxxBehaviourKinematicSymbols(
-      std::ostream& out,
-      const std::string& name,
-      const BehaviourDescription& mb) const {
-    out << "MFRONT_SHAREDOBJ unsigned short "
-        << this->getFunctionNameBasis(name) << "_BehaviourKinematic = ";
-    if (mb.getBehaviourType() ==
-        BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
-      tfel::raise_if(
-          !hasFiniteStrainStrategy(mb),
-          "EuroplexusInterface::writeUMATxxBehaviourKinematicSymbols: "
-          "behaviours written in the small strain framework "
-          "must be embedded in a strain strategy");
-      out << "3u;\n\n";
-    } else if (mb.getBehaviourType() ==
-               BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
-      out << "3u;\n\n";
-    } else {
-      tfel::raise(
-          "EuroplexusInterface::writeUMATxxBehaviourKinematicSymbols: "
-          "unsupported behaviour type");
-    }
-  }  // end of EuroplexusInterface::writeUMATxxBehaviourKinematicSymbols
-
-  void EuroplexusInterface::writeUMATxxAdditionalSymbols(
-      std::ostream&,
-      const std::string&,
-      const Hypothesis,
-      const BehaviourDescription&,
-      const FileDescription&) const {
-  }  // end of EuroplexusInterface::writeUMATxxAdditionalSymbols
 
 }  // end of namespace mfront

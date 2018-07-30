@@ -3666,8 +3666,7 @@ namespace mfront {
   void BehaviourDSLCommon::writeBehaviourConstructors(std::ostream& os, const Hypothesis h) const {
     auto tmpnames = std::vector<std::string>{};
     auto write_body = [this, &os, &tmpnames, h] {
-      os << "\n{\n"
-         << "using namespace std;\n"
+      os << "using namespace std;\n"
          << "using namespace tfel::math;\n"
          << "using std::vector;\n";
       writeMaterialLaws(os, this->mb.getMaterialLaws());
@@ -3684,7 +3683,6 @@ namespace mfront {
         }
       }
       this->writeBehaviourLocalVariablesInitialisation(os, h);
-      os << "}\n\n";
     };
     this->checkBehaviourFile(os);
     // initializers
@@ -3710,12 +3708,17 @@ namespace mfront {
     if (!init.empty()) {
       os << ",\n" << init;
     }
+    os << "\n{\n";
     write_body();
+    os << "}\n\n";
     // constructor specific to interfaces
     for (const auto& i : this->interfaces) {
       if (i.second->isBehaviourConstructorRequired(h, this->mb)) {
-        i.second->writeBehaviourConstructor(os, this->mb, init);
-        write_body();
+        i.second->writeBehaviourConstructorHeader(os, this->mb, h, init);
+	os << "\n{\n";
+	write_body();
+	i.second->writeBehaviourConstructorBody(os, this->mb, h);
+	os << "}\n\n";
       }
     }
   }

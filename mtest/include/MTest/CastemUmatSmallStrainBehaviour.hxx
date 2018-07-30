@@ -50,7 +50,7 @@ namespace mtest
      * \param[in] bd: umat behaviour description
      * \param[in] cn: material name
      */
-    CastemUmatSmallStrainBehaviour(const UmatBehaviourDescription&,
+    CastemUmatSmallStrainBehaviour(const StandardBehaviourDescription&,
 				   const std::string&);
     /*!
      * \brief This method solves two issues:

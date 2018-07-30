@@ -123,4 +123,3 @@ AxisymmetricalGeneralisedPlaneStress::sigzz.setGlossaryName("AxialStress");
     return false;
   }
 }
-			  

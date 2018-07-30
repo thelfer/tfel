@@ -81,27 +81,16 @@ namespace mfront{
     void exportMechanicalData(std::ostream&,
 			      const Hypothesis,
 			      const BehaviourDescription&) const override;
-    /*!
-     * write the behaviour constructor associated with the law
-     * \param[in] behaviourFile           : output file
-     * \param[in] mb                      : mechanical behaviour description
-     * \param[in] initStateVarsIncrements : constructor part assigning
-     *                                      default value (zero) to state
-     *                                      variable increments
-     */
-    void writeBehaviourConstructor(std::ostream&,
-				   const BehaviourDescription&,
-				   const std::string&) const override;
-
+    void writeBehaviourConstructorHeader(std::ostream&,
+					 const BehaviourDescription&,
+					 const Hypothesis,
+					 const std::string&) const override;
+    void writeBehaviourConstructorBody(std::ostream&,
+				       const BehaviourDescription&,
+				       const Hypothesis) const override;
     void writeBehaviourDataConstructor(std::ostream&,
 				       const Hypothesis,
 				       const BehaviourDescription&) const override;
-
-    /*!
-     * write the initialisation of the driving variables
-     * \param[in] behaviourFile : output file
-     * \param[in] mb            : mechanical behaviour description
-     */
     void writeBehaviourDataMainVariablesSetters(std::ostream&,
 						const BehaviourDescription&) const override;
     

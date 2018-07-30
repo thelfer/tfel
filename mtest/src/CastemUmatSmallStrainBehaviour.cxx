@@ -1,5 +1,5 @@
 /*!
- * \file   mfront/mtest/CastemUmatSmallStrainBehaviour.cxx
+ * \file   mtest/src/CastemUmatSmallStrainBehaviour.cxx
  * \brief
  * \author Thomas Helfer
  * \brief 07 avril 2013
@@ -27,7 +27,7 @@ namespace mtest
     return CastemUmatStandardBehaviour::buildCastemUmatStandardBehaviour(l,f,p,1u,h);
   } // end of CastemUmatSmallStrainBehaviour::buildCastemUmatSmallStrainBehaviour
   
-  CastemUmatSmallStrainBehaviour::CastemUmatSmallStrainBehaviour(const UmatBehaviourDescription& bd,
+  CastemUmatSmallStrainBehaviour::CastemUmatSmallStrainBehaviour(const StandardBehaviourDescription& bd,
 								 const std::string& cn)
     : CastemSmallStrainBehaviour(bd)
   {

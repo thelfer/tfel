@@ -27,6 +27,7 @@
 #include "MFront/MFrontDebugMode.hxx"
 #include "MFront/FileDescription.hxx"
 #include "MFront/TargetsDescription.hxx"
+#include "MFront/AsterSymbolsGenerator.hxx"
 #include "MFront/AsterInterface.hxx"
 
 #ifndef _MSC_VER
@@ -36,6 +37,16 @@ static const char* const constexpr_c = "const";
 #endif
 
 namespace mfront {
+
+  const char* const AsterInterface::saveTangentOperator =
+      "aster::saveTangentOperator";
+
+  const char* const AsterInterface::finiteStrainFormulation =
+      "aster::finiteStrainFormulation";
+
+  const char* const AsterInterface::simo_miehe = "aster::SIMO_MIEHE";
+
+  const char* const AsterInterface::grot_gdep = "aster::GROT_GDEP";
 
   std::string AsterInterface::getName() { return "aster"; }
 
@@ -117,7 +128,9 @@ namespace mfront {
       ++(current);
       return {true, current};
     } else if (key == "@AsterSaveTangentOperator") {
-      this->savesTangentOperator = this->readBooleanValue(key, current, end);
+
+      bd.setAttribute(AsterInterface::saveTangentOperator,
+                      this->readBooleanValue(key, current, end), false);
       return {true, current};
     } else if (key == "@AsterErrorReport") {
       this->errorReport = this->readBooleanValue(key, current, end);
@@ -126,13 +139,13 @@ namespace mfront {
       throw_if(bd.getBehaviourType() != BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR,
                "the '@AsterFiniteStrainFormulation' is only valid "
                "for finite strain behaviour");
-      throw_if(this->afsf != UNDEFINEDFINITESTRAINFORMULATION,
-               "finite strain formulation already defined");
       const auto s = current->value;
       if (s == "SIMO_MIEHE") {
-        this->afsf = SIMO_MIEHE;
+        bd.setAttribute(AsterInterface::finiteStrainFormulation,
+                        std::string(AsterInterface::simo_miehe), false);
       } else if ((s == "GROT_GDEP") || (s == "TotalLagrangian")) {
-        this->afsf = GROT_GDEP;
+        bd.setAttribute(AsterInterface::finiteStrainFormulation,
+                        std::string(AsterInterface::grot_gdep),false);
       } else {
         throw_if(true, "invalid finite strain formuluation '" + s + "'");
       }
@@ -190,14 +203,15 @@ namespace mfront {
              "the aster interface only supports "
              "small and finite strain behaviours "
              "and cohesive zone models");
-    if ((this->compareToNumericalTangentOperator) || (this->savesTangentOperator)) {
+    if ((this->compareToNumericalTangentOperator) ||
+        (mb.getAttribute<bool>(AsterInterface::saveTangentOperator, false))) {
       throw_if(mb.getBehaviourType() != BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR,
                "unsupported feature @AsterSaveTangentOperator "
                "and @AsterCompareToNumericalTangentOperator : "
                "those are only valid for small strain beahviours");
     }
     // get the modelling hypotheses to be treated
-    const auto& mh = this->getModellingHypothesesToBeTreated(mb);
+    const auto& mhs = this->getModellingHypothesesToBeTreated(mb);
     const auto name = [&mb]() -> std::string {
       if (!mb.getLibrary().empty()) {
         return mb.getLibrary() + mb.getClassName();
@@ -242,10 +256,10 @@ namespace mfront {
 
     out << "namespace aster{\n\n";
 
-    if (!mb.areAllMechanicalDataSpecialised(mh)) {
+    if (!mb.areAllMechanicalDataSpecialised(mhs)) {
       this->writeAsterBehaviourTraits(out, mb, ModellingHypothesis::UNDEFINEDHYPOTHESIS);
     }
-    for (const auto& h : mh) {
+    for (const auto& h : mhs) {
       if (mb.hasSpecialisedMechanicalData(h)) {
         this->writeAsterBehaviourTraits(out, mb, h);
       }
@@ -260,7 +274,7 @@ namespace mfront {
     out << "#endif /* __cplusplus */\n\n";
 
     this->writeSetOutOfBoundsPolicyFunctionDeclaration(out, name);
-    this->writeSetParametersFunctionsDeclarations(out, name, mb);
+    this->writeSetParametersFunctionsDeclarations(out, mb, name);
 
     out << "MFRONT_SHAREDOBJ char *" << this->getFunctionNameBasis(name)
         << "_getIntegrationErrorMessage();\n\n";
@@ -369,7 +383,8 @@ namespace mfront {
       out << "#include<cmath>\n";
       out << "#include<vector>\n";
     }
-    if ((this->compareToNumericalTangentOperator) || (this->savesTangentOperator)) {
+    if ((this->compareToNumericalTangentOperator) ||
+        (mb.getAttribute<bool>(AsterInterface::saveTangentOperator, false))) {
       out << "#include<algorithm>\n";
     }
     out << "#include\"TFEL/Material/OutOfBoundsPolicy.hxx\"\n";
@@ -385,18 +400,19 @@ namespace mfront {
 
     out << "extern \"C\"{\n\n";
 
-    this->generateUMATxxGeneralSymbols(out, name, mb, fd);
-    if (!mb.areAllMechanicalDataSpecialised(mh)) {
+    AsterSymbolsGenerator sg;
+    sg.generateGeneralSymbols(out, *this, mb, fd, mhs, name);
+    if (!mb.areAllMechanicalDataSpecialised(mhs)) {
       const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-      this->generateUMATxxSymbols(out, name, uh, mb, fd);
+      sg.generateSymbols(out, *this, mb, fd, name, uh);
     }
-    for (const auto& h : mh) {
+    for (const auto& h : mhs) {
       if (mb.hasSpecialisedMechanicalData(h)) {
-        this->generateUMATxxSymbols(out, name, h, mb, fd);
+        sg.generateSymbols(out, *this, mb, fd, name, h);
       }
     }
 
-    this->writeSetParametersFunctionsImplementations(out, name, mb);
+    this->writeSetParametersFunctionsImplementations(out, mb, name);
     this->writeSetOutOfBoundsPolicyFunctionImplementation(out, name);
 
     out << "char *" << this->getFunctionNameBasis(name) << "_getIntegrationErrorMessage(){\n"
@@ -469,7 +485,7 @@ namespace mfront {
     out << "{\n";
     out << "char * msg = " << this->getFunctionNameBasis(name) << "_getIntegrationErrorMessage();\n";
     if (((getDebugMode()) || (this->compareToNumericalTangentOperator) ||
-         (this->savesTangentOperator)) &&
+         (mb.getAttribute<bool>(AsterInterface::saveTangentOperator, false))) &&
         (!this->shallGenerateMTestFileOnFailure(mb))) {
       out << "using namespace std;\n";
     }
@@ -492,7 +508,7 @@ namespace mfront {
       out << "copy(STRESS,STRESS+*(NTENS),sig0.begin());\n";
       out << "copy(STATEV,STATEV+*(NSTATV),sv0.begin());\n";
     }
-    if (!this->savesTangentOperator) {
+    if (!mb.getAttribute<bool>(AsterInterface::saveTangentOperator, false)) {
       out << "if(aster::AsterInterface<tfel::material::" << mb.getClassName()
           << ">::exe(msg,NTENS,DTIME,DROT,DDSOE," << dv0 << "," << dv1 << ",TEMP,DTEMP,PROPS,NPROPS,"
           << "PREDEF,DPRED,STATEV,NSTATV,STRESS,NUMMOD," << this->getFunctionNameBasis(name)
@@ -555,7 +571,7 @@ namespace mfront {
           << "copy(sv0.begin(),sv0.end(),sv.begin());\n"
           << "deto[i] += " << this->strainPerturbationValue << ";\n"
           << "D[0] = 0.;\n";
-      if (!this->savesTangentOperator) {
+      if (!mb.getAttribute<bool>(AsterInterface::saveTangentOperator, false)) {
         out << "if(aster::AsterInterface<tfel::material::" << mb.getClassName()
             << ">::exe(nullptr,NTENS,DTIME,DROT,&D[0],STRAN,&deto[0],TEMP,DTEMP,PROPS,NPROPS,"
             << "PREDEF,DPRED,&sv[0],NSTATV,&sigf[0],NUMMOD," << this->getFunctionNameBasis(name)
@@ -573,7 +589,7 @@ namespace mfront {
           << "std::copy(sv0.begin(),sv0.end(),sv.begin());\n"
           << "deto[i] -= " << this->strainPerturbationValue << ";\n"
           << "D[0] = 0.;\n";
-      if (!this->savesTangentOperator) {
+      if (!mb.getAttribute<bool>(AsterInterface::saveTangentOperator, false)) {
         out << "if(aster::AsterInterface<tfel::material::" << mb.getClassName()
             << ">::exe(nullptr,NTENS,DTIME,DROT,&D[0],STRAN,&deto[0],TEMP,DTEMP,PROPS,NPROPS,"
             << "PREDEF,DPRED,&sv[0],NSTATV,&sigb[0],NUMMOD," << this->getFunctionNameBasis(name)
@@ -724,91 +740,6 @@ namespace mfront {
     insert_if(d[lib].epts, this->getFunctionNameBasis(name));
   }  // end of AsterInterface::getTargetsDescription
 
-  void AsterInterface::writeUMATxxAdditionalSymbols(std::ostream&,
-                                                    const std::string&,
-                                                    const Hypothesis,
-                                                    const BehaviourDescription&,
-                                                    const FileDescription&) const {
-  }  // end of AsterInterface::writeUMATxxAdditionalSymbols
-
-  void AsterInterface::writeUMATxxBehaviourTypeSymbols(std::ostream& out,
-                                                       const std::string& name,
-                                                       const BehaviourDescription& mb) const {
-    auto throw_if = [](const bool b, const std::string& m) {
-      tfel::raise_if(b, "AsterInterface::writeUMATxxBehaviourTypeSymbols: " + m);
-    };
-    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name) << "_BehaviourType = ";
-    if (mb.getBehaviourType() == BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
-      out << "1u;\n\n";
-    } else if (mb.getBehaviourType() == BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
-      out << "2u;\n\n";
-    } else if (mb.getBehaviourType() == BehaviourDescription::COHESIVEZONEMODEL) {
-      out << "3u;\n\n";
-    } else {
-      throw_if(true, "unsupported behaviour type");
-    }
-  }  // end of AsterInterface::writeUMATxxBehaviourTypeSymbols
-
-  void AsterInterface::writeUMATxxBehaviourKinematicSymbols(std::ostream& out,
-                                                            const std::string& name,
-                                                            const BehaviourDescription& mb) const {
-    auto throw_if = [](const bool b, const std::string& m) {
-      tfel::raise_if(b, "AsterInterface::writeUMATxxBehaviourKinematicSymbols: " + m);
-    };
-    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name)
-        << "_BehaviourKinematic = ";
-    if (mb.getBehaviourType() == BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
-      if (mb.isStrainMeasureDefined()) {
-        const auto fs = mb.getStrainMeasure();
-        if (fs == BehaviourDescription::LINEARISED) {
-          out << "1u;\n\n";
-        } else if (fs == BehaviourDescription::GREENLAGRANGE) {
-          out << "5u;\n\n";
-        } else if (fs == BehaviourDescription::HENCKY) {
-          out << "6u;\n\n";
-        } else {
-          out << "0u;\n\n";
-        }
-      } else {
-        out << "0u;\n\n";
-      }
-    } else if (mb.getBehaviourType() == BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
-      out << "3u;\n\n";
-    } else if (mb.getBehaviourType() == BehaviourDescription::COHESIVEZONEMODEL) {
-      out << "2u;\n\n";
-    } else {
-      throw_if(true, "unsupported behaviour type");
-    }
-  }  // end of AsterInterface::writeUMATxxBehaviourKinematicSymbols
-
-  void AsterInterface::writeUMATxxSpecificSymbols(std::ostream& out,
-                                                  const std::string& name,
-                                                  const BehaviourDescription& bd,
-                                                  const FileDescription&) const {
-    auto throw_if = [](const bool c, const std::string& m) {
-      tfel::raise_if(c, "AsterInterface::writeUMATxxSpecificSymbols: " + m);
-    };
-    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name)
-        << "_savesTangentOperator = ";
-    if (this->savesTangentOperator) {
-      out << "1";
-    } else {
-      out << "0";
-    }
-    out << ";\n";
-    if (bd.getBehaviourType() == BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
-      out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name)
-          << "_FiniteStrainFormulation = ";
-      if ((this->afsf == SIMO_MIEHE) || (this->afsf == UNDEFINEDFINITESTRAINFORMULATION)) {
-        out << "1u;\n";
-      } else if (this->afsf == GROT_GDEP) {
-        out << "2u;\n";
-      } else {
-        throw_if(true, "internal error: unsupported finite strain formulation");
-      }
-    }
-  }  // end of AsterInterface::writeUMATxxSpecificSymbols
-
   void AsterInterface::writeAsterBehaviourTraits(std::ostream& out,
                                                  const BehaviourDescription& mb,
                                                  const Hypothesis h) const {
@@ -923,14 +854,20 @@ namespace mfront {
     }
     out << "static " << constexpr_c << " AsterFiniteStrainFormulation afsf = aster::";
     if (mb.getBehaviourType() == BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
-      if ((this->afsf == SIMO_MIEHE) || (this->afsf == UNDEFINEDFINITESTRAINFORMULATION)) {
+      if (!mb.hasAttribute(AsterInterface::finiteStrainFormulation)) {
         out << "SIMO_MIEHE;\n";
-      } else if (this->afsf == GROT_GDEP) {
-        out << "GROT_GDEP;\n";
       } else {
-        throw_if(true,
-                 "internal error: unsupported "
-                 "finite strain formulation");
+        const auto& afsf = mb.getAttribute<std::string>(
+            AsterInterface::finiteStrainFormulation);
+        if (afsf == AsterInterface::simo_miehe) {
+          out << "SIMO_MIEHE;\n";
+        } else if (afsf == AsterInterface::grot_gdep) {
+          out << "GROT_GDEP;\n";
+        } else {
+          throw_if(true,
+                   "internal error: unsupported "
+                   "finite strain formulation");
+        }
       }
     } else {
       out << "UNDEFINEDFINITESTRAINFORMULATION;\n";
@@ -990,9 +927,8 @@ namespace mfront {
         ((mb.getAttribute(BehaviourDescription::requiresStiffnessTensor, false)) ||
          (mb.getAttribute(BehaviourDescription::requiresThermalExpansionCoefficientTensor,
                           false)))) {
-      const auto h = this->getModellingHypothesesToBeTreated(mb);
-      for (const auto& mh : h) {
-        res.insert({mh, this->getModellingHypothesisTest(mh)});
+      for (const auto& h : this->getModellingHypothesesToBeTreated(mb)) {
+        res.insert({h, this->getModellingHypothesisTest(h)});
       }
       return res;
     }

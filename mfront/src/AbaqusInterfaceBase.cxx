@@ -396,40 +396,6 @@ namespace mfront{
     out << "}; // end of class AbaqusTraits\n\n";
   }
 
-  void AbaqusInterfaceBase::writeUMATxxAdditionalSymbols(
-      std::ostream&,
-      const std::string&,
-      const Hypothesis,
-      const BehaviourDescription&,
-      const FileDescription&) const {
-  }  // end of AbaqusInterfaceBase::writeUMATxxAdditionalSymbols
-
-  void AbaqusInterfaceBase::writeUMATxxSpecificSymbols(std::ostream& out,
-						       const std::string& name,
-						       const BehaviourDescription& mb,
-						       const FileDescription&) const
-  {
-    if(mb.getSymmetryType()==mfront::ORTHOTROPIC){
-      if(!mb.hasAttribute(AbaqusInterfaceBase::orthotropyManagementPolicy)){
-	out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name)
-	    << "_OrthotropyManagementPolicy = 0u;\n\n";    
-      } else {
-	const auto omp =
-	  mb.getAttribute<std::string>(AbaqusInterfaceBase::orthotropyManagementPolicy);
-	if(omp=="MFront"){
-	  out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name)
-	      << "_OrthotropyManagementPolicy = 2u;\n\n";    
-	} else if(omp=="Native"){
-	  out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name)
-	      << "_OrthotropyManagementPolicy = 1u;\n\n";
-	} else {
-	  tfel::raise("AbaqusInterfaceBase::writeUMATxxSpecificSymbols: "
-		      "unsupported orthotropy management policy");
-	}
-      }
-    }
-  } // end of AbaqusInterfaceBase::writeUMATxxSpecificSymbols
-
   void AbaqusInterfaceBase::writeMTestFileGeneratorSetModellingHypothesis(
       std::ostream& out) const {
     out << "mg.setModellingHypothesis(h);\n";

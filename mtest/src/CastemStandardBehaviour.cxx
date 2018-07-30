@@ -1,5 +1,5 @@
 /*!
- * \file   mfront/mtest/CastemStandardBehaviour.cxx
+ * \file   mtest/src/CastemStandardBehaviour.cxx
  * \brief
  * \author Thomas Helfer
  * \brief  18 november 2013
@@ -21,7 +21,7 @@
 namespace mtest
 {
 
-  static void setMaterialProperties(UmatBehaviourDescription& umb,
+  static void setMaterialProperties(StandardBehaviourDescription& umb,
 				    const tfel::material::ModellingHypothesis::Hypothesis h){
     using tfel::material::ModellingHypothesis;
     auto& elm = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
@@ -73,7 +73,7 @@ namespace mtest
   CastemStandardBehaviour::CastemStandardBehaviour(const Hypothesis h,
 						   const std::string& l,
 						   const std::string& b)
-    : UmatBehaviourBase(h,l,b)
+    : StandardBehaviourBase(h,l,b)
   {
     auto& elm = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
     tfel::raise_if(elm.getInterface(l,b)!="Castem",
@@ -83,8 +83,8 @@ namespace mtest
     setMaterialProperties(*this,h);
   } // end of CastemStandardBehaviour::CastemStandardBehaviour
 
-  CastemStandardBehaviour::CastemStandardBehaviour(const UmatBehaviourDescription& umb)
-    : UmatBehaviourBase(umb)
+  CastemStandardBehaviour::CastemStandardBehaviour(const StandardBehaviourDescription& umb)
+    : StandardBehaviourBase(umb)
   {
     auto& elm = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
     this->fct = elm.getCastemExternalBehaviourFunction(this->library,this->behaviour);
@@ -136,9 +136,7 @@ namespace mtest
     return nr;
   } // end of CastemStandardBehaviour::getRotationMatrix
 
-  void
-  CastemStandardBehaviour::allocate(BehaviourWorkSpace& wk) const
-  {
+  void CastemStandardBehaviour::allocate(BehaviourWorkSpace& wk) const{
     const auto ndv     = this->getDrivingVariablesSize();
     const auto nth     = this->getThermodynamicForcesSize();
     const auto nstatev = this->getInternalStateVariablesSize();
@@ -151,7 +149,7 @@ namespace mtest
     wk.ns.resize(nth);
     wk.nivs.resize(nstatev);
     mtest::allocate(wk.cs,this->shared_from_this());
-  }
+  } // end of CastemStandardBehaviour::allocate
 
   StiffnessMatrixType
   CastemStandardBehaviour::getDefaultStiffnessMatrixType() const

@@ -1,5 +1,5 @@
 /*! 
- * \file  mfront/mtest/AsterCohesiveZoneModel.cxx
+ * \file  mtest/src/AsterCohesiveZoneModel.cxx
  * \brief
  * \author Thomas Helfer
  * \brief 07 avril 2013
@@ -29,7 +29,7 @@ namespace mtest
   AsterCohesiveZoneModel::AsterCohesiveZoneModel(const Hypothesis h,
 						 const std::string& l,
 						 const std::string& b)
-    : UmatBehaviourBase(h,l,b)
+    : StandardBehaviourBase(h,l,b)
   {
     auto throw_if = [](const bool c, const std::string& m){
       tfel::raise_if(c,"AsterCohesiveZoneModel::AsterCohesiveZoneModel: "+m);

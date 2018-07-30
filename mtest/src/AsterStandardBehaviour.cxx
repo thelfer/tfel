@@ -1,5 +1,5 @@
 /*! 
- * \file  mfront/mtest/AsterStandardBehaviour.cxx
+ * \file  mtest/src/AsterStandardBehaviour.cxx
  * \brief
  * \author Thomas Helfer
  * \brief 07 avril 2013
@@ -33,7 +33,7 @@ namespace mtest
   AsterStandardBehaviour::AsterStandardBehaviour(const Hypothesis h,
 						 const std::string& l,
 						 const std::string& b)
-    : UmatBehaviourBase(h,l,b),
+    : StandardBehaviourBase(h,l,b),
       savesTangentOperator(false)
   {
     auto throw_if = [](const bool c, const std::string& m){
@@ -121,13 +121,13 @@ namespace mtest
 		    "invalid modelling hypothesis");
       }	
     }
-    return s+ UmatBehaviourBase::getInternalStateVariablesSize();
+    return s+ StandardBehaviourBase::getInternalStateVariablesSize();
   } // end of AsterStandardBehaviour::getInternalStateVariablesSize() const
 
   std::vector<std::string>
   AsterStandardBehaviour::getInternalStateVariablesDescriptions() const
   {
-    auto desc = UmatBehaviourBase::getInternalStateVariablesDescriptions();
+    auto desc = StandardBehaviourBase::getInternalStateVariablesDescriptions();
     if(this->savesTangentOperator){
       size_t s(0);
       const auto h = this->getHypothesis();

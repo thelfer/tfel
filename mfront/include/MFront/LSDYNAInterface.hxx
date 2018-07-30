@@ -66,9 +66,10 @@ namespace mfront {
                                                      const Hypothesis) const;
     std::string getInterfaceName() const override;
     std::string getModellingHypothesisTest(const Hypothesis) const override;
-    void writeBehaviourConstructor(std::ostream&,
-                                   const BehaviourDescription&,
-                                   const std::string&) const override;
+    void writeBehaviourConstructorHeader(std::ostream&,
+					 const BehaviourDescription&,
+					 const Hypothesis,
+					 const std::string&) const override;
     void writeBehaviourDataConstructor(
         std::ostream&,
         const Hypothesis,
@@ -96,19 +97,6 @@ namespace mfront {
     void exportMechanicalData(std::ostream&,
                               const Hypothesis,
                               const BehaviourDescription&) const override;
-    void writeUMATxxBehaviourTypeSymbols(
-        std::ostream&,
-        const std::string&,
-        const BehaviourDescription&) const override;
-    void writeUMATxxBehaviourKinematicSymbols(
-        std::ostream&,
-        const std::string&,
-        const BehaviourDescription&) const override;
-    void writeUMATxxAdditionalSymbols(std::ostream&,
-                                      const std::string&,
-                                      const Hypothesis,
-                                      const BehaviourDescription&,
-                                      const FileDescription&) const override;
     void writeMTestFileGeneratorSetModellingHypothesis(
         std::ostream&) const override;
   };

@@ -134,7 +134,7 @@ namespace mfront{
 
     virtual std::string getUmatFunctionName(const BehaviourDescription &) const;
 
-    std::pair<std::vector<UMATMaterialProperty>, SupportedTypes::TypeSize>
+    std::pair<std::vector<BehaviourMaterialProperty>, SupportedTypes::TypeSize>
     buildMaterialPropertiesList(const BehaviourDescription &,
                                 const Hypothesis) const override;
 
@@ -151,27 +151,6 @@ namespace mfront{
      */
     virtual void writeSetOutOfBoundsPolicyFunctionImplementation2(
         std::ostream &, const std::string &, const std::string &) const;
-    void writeUMATxxBehaviourTypeSymbols(
-        std::ostream &,
-        const std::string &,
-        const BehaviourDescription &) const override;
-    void writeUMATxxBehaviourKinematicSymbols(
-        std::ostream &,
-        const std::string &,
-        const BehaviourDescription &) const override;
-    void writeUMATxxAdditionalSymbols(std::ostream &,
-                                      const std::string &,
-                                      const Hypothesis,
-                                      const BehaviourDescription &,
-                                      const FileDescription &) const override;
-    void writeUMATxxSpecificSymbols(std::ostream &,
-                                    const std::string &,
-                                    const BehaviourDescription &,
-                                    const FileDescription &) const override;
-    void writeUMATxxSupportedModellingHypothesis(
-        std::ostream &,
-        const std::string &,
-        const BehaviourDescription &) const override;
 
     virtual void generateGibianeDeclaration(const BehaviourDescription &,
                                             const FileDescription &) const;

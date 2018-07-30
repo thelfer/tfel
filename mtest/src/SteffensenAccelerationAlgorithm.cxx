@@ -1,5 +1,5 @@
 /*! 
- * \file  mfront/mtest/SteffensenAccelerationAlgorithm.cxx
+ * \file  mtest/src/SteffensenAccelerationAlgorithm.cxx
  * \brief
  * \author Thomas Helfer
  * \brief 10 juin 2014

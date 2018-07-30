@@ -21,6 +21,7 @@
 #include "MTest/Evolution.hxx"
 #include "MTest/Behaviour.hxx"
 
+#include "MTest/GenericBehaviour.hxx"
 #ifdef HAVE_CASTEM
 #include "MTest/CastemSmallStrainBehaviour.hxx"
 #include "MTest/CastemFiniteStrainBehaviour.hxx"
@@ -76,9 +77,15 @@ namespace mtest {
       throw_if(!p.empty(), "no parameter expected");
     };
     auto& elm = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
-    throw_if(!elm.contains(l, f), "behaviour '" + f + "' not defined in library '" + l + "'");
     auto b = std::shared_ptr<Behaviour>{};
     auto in = i.empty() ? elm.getInterface(l, f) : i;
+    if ((in == "generic") || (in == "Generic")){
+      check_no_parameters();
+      b = std::make_shared<GenericBehaviour>(h, l, f);
+    } else {
+      throw_if(!elm.contains(l, f),
+	       "behaviour '" + f + "' not defined in library '" + l + "'");
+    }
 #ifdef HAVE_CASTEM
     if ((in == "castem") || (in == "umat") || (in == "Castem") || (in == "Cast3M")) {
       check_no_parameters();

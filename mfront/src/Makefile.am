@@ -114,8 +114,12 @@ libTFELMFront_la_SOURCES = MFront.cxx                                           
 			   FiniteStrainSingleCrystalBrick.cxx                        \
 		           LocalDataStructure.cxx                                 \
 		           AbstractBehaviourBrickFactory.cxx                      \
-		           UMATInterfaceBase.cxx                                  \
+		           BehaviourMaterialProperty.cxx                               \
+		           StandardBehaviourInterface.cxx                         \
+                           UMATInterfaceBase.cxx                                  \
+		           SymbolsGenerator.cxx                                   \
 		           GenericBehaviourInterface.cxx                          \
+		           GenericBehaviourSymbolsGenerator.cxx                   \
 		           OptionDescription.cxx                                  \
 		           BrickUtilities.cxx                                     \
 		           StressPotential.cxx                                    \
@@ -175,34 +179,42 @@ libTFELMFront_la_SOURCES += JavaMaterialPropertyInterface.cxx
 endif
 
 if HAVE_CASTEM
-libTFELMFront_la_SOURCES += CastemInterface.cxx      \
-		  CastemMaterialPropertyInterface.cxx
+libTFELMFront_la_SOURCES += CastemInterface.cxx                 \
+                            CastemSymbolsGenerator.cxx           \
+                            CastemMaterialPropertyInterface.cxx
 endif
 
 if HAVE_ASTER
-libTFELMFront_la_SOURCES += AsterInterface.cxx
+libTFELMFront_la_SOURCES += AsterInterface.cxx \
+                            AsterSymbolsGenerator.cxx
 endif
 
 if HAVE_ABAQUS
-libTFELMFront_la_SOURCES += AbaqusInterfaceBase.cxx     \
-			    AbaqusInterface.cxx         \
-			    AbaqusExplicitInterface.cxx
+libTFELMFront_la_SOURCES += AbaqusInterfaceBase.cxx            \
+			    AbaqusInterface.cxx                \
+			    AbaqusSymbolsGenerator.cxx         \
+			    AbaqusExplicitInterface.cxx        \
+			    AbaqusExplicitSymbolsGenerator.cxx
 endif
 
 if HAVE_LSDYNA
-libTFELMFront_la_SOURCES += LSDYNAInterface.cxx
+libTFELMFront_la_SOURCES += LSDYNAInterface.cxx \
+                            LSDYNASymbolsGenerator.cxx
 endif
 
 if HAVE_CALCULIX
-libTFELMFront_la_SOURCES += CalculiXInterface.cxx
+libTFELMFront_la_SOURCES += CalculiXInterface.cxx \
+                            CalculiXSymbolsGenerator.cxx
 endif
 
 if HAVE_ANSYS
-libTFELMFront_la_SOURCES += AnsysInterface.cxx
+libTFELMFront_la_SOURCES += AnsysInterface.cxx \
+                            AnsysSymbolsGenerator.cxx
 endif
 
 if HAVE_EUROPLEXUS
-libTFELMFront_la_SOURCES += EuroplexusInterface.cxx
+libTFELMFront_la_SOURCES += EuroplexusInterface.cxx        \
+                            EuroplexusSymbolsGenerator.cxx
 endif
 
 if HAVE_ZMAT
@@ -210,7 +222,8 @@ libTFELMFront_la_SOURCES += ZMATInterface.cxx
 endif
 
 if HAVE_CYRANO
-libTFELMFront_la_SOURCES += CyranoInterface.cxx
+libTFELMFront_la_SOURCES += CyranoInterface.cxx        \
+                            CyranoSymbolsGenerator.cxx
 endif
 libTFELMFront_la_CPPFLAGS = $(AM_CPPFLAGS) -DTFELMTest_EXPORTS
 

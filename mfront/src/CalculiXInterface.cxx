@@ -28,6 +28,7 @@
 #include "MFront/MFrontDebugMode.hxx"
 #include "MFront/FileDescription.hxx"
 #include "MFront/TargetsDescription.hxx"
+#include "MFront/CalculiXSymbolsGenerator.hxx"
 #include "MFront/CalculiXInterface.hxx"
 
 #ifndef _MSC_VER
@@ -102,13 +103,14 @@ namespace mfront {
     }
   }  // end of checkFiniteStrainStrategyDefinitionConsistency
 
-  static bool hasFiniteStrainStrategy(const BehaviourDescription& bd) {
+  bool CalculiXInterface::hasFiniteStrainStrategy(
+      const BehaviourDescription& bd) {
     checkFiniteStrainStrategyDefinitionConsistency(bd);
     if (bd.isStrainMeasureDefined()) {
       return bd.getStrainMeasure() != BehaviourDescription::LINEARISED;
     }
     return bd.hasAttribute(CalculiXInterface::finiteStrainStrategy);
-  }  // end of hasFiniteStrainStrategy
+  }  // end of CalculiXInterface::hasFiniteStrainStrategy
 
   static std::string getFiniteStrainStrategy(const BehaviourDescription& bd) {
     checkFiniteStrainStrategyDefinitionConsistency(bd);
@@ -138,7 +140,7 @@ namespace mfront {
       const auto requires_strain = [&mb] {
         if (mb.getBehaviourType() ==
             BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
-          if (hasFiniteStrainStrategy(mb)) {
+          if (CalculiXInterface::hasFiniteStrainStrategy(mb)) {
             return getFiniteStrainStrategy(mb) == "FiniteRotationSmallStrain";
           }
         }
@@ -365,7 +367,7 @@ namespace mfront {
         << "#include\"TFEL/Config/TFELConfig.hxx\"\n\n";
     if ((mb.getBehaviourType() ==
          BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) &&
-        (hasFiniteStrainStrategy(mb))) {
+        (CalculiXInterface::hasFiniteStrainStrategy(mb))) {
       const auto fs = getFiniteStrainStrategy(mb);
       if ((fs == "MieheApelLambrechtLogarithmicStrain") ||
           (fs == "MieheApelLambrechtLogarithmicStrainII")) {
@@ -393,7 +395,7 @@ namespace mfront {
         << "#endif /* __cplusplus */\n\n";
 
     this->writeSetOutOfBoundsPolicyFunctionDeclaration(out, name);
-    this->writeSetParametersFunctionsDeclarations(out, name, mb);
+    this->writeSetParametersFunctionsDeclarations(out, mb, name);
 
     out << "MFRONT_SHAREDOBJ void\n" << this->getFunctionNameBasis(name);
     writeArguments(out);
@@ -437,15 +439,16 @@ namespace mfront {
 
     out << "extern \"C\"{\n\n";
 
-    this->generateUMATxxGeneralSymbols(out, name, mb, fd);
-    this->generateUMATxxSymbols(out, name, h, mb, fd);
+    CalculiXSymbolsGenerator sg;
+    sg.generateGeneralSymbols(out, *this, mb, fd, {h}, name);
+    sg.generateSymbols(out, *this, mb, fd, name, h);
 
-    this->writeSetParametersFunctionsImplementations(out, name, mb);
+    this->writeSetParametersFunctionsImplementations(out, mb, name);
     this->writeSetOutOfBoundsPolicyFunctionImplementation(out, name);
 
     if (mb.getBehaviourType() ==
         BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
-      if (hasFiniteStrainStrategy(mb)) {
+      if (CalculiXInterface::hasFiniteStrainStrategy(mb)) {
         const auto fs = getFiniteStrainStrategy(mb);
         if (fs == "FiniteRotationSmallStrain") {
           this->writeFiniteRotationSmallStrainFunction(out, mb, name);
@@ -870,55 +873,6 @@ namespace mfront {
   }  // end of
      // CalculiXInterface::writeMieheApelLambrechtLogarithmicStrainFunction
 
-  void CalculiXInterface::writeUMATxxBehaviourTypeSymbols(
-      std::ostream& out,
-      const std::string& name,
-      const BehaviourDescription& mb) const {
-    auto throw_if = [](const bool b, const std::string& m) {
-      tfel::raise_if(b, "CalculiXInterface::writexxBehaviourTypeSymbols: " + m);
-    };
-    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name)
-        << "_BehaviourType = ";
-    if (mb.getBehaviourType() ==
-        BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
-      if (!hasFiniteStrainStrategy(mb)) {
-        out << "1u;\n\n";
-      } else {
-        out << "2u;\n\n";
-      }
-    } else if (mb.getBehaviourType() ==
-               BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
-      out << "2u;\n\n";
-    } else {
-      throw_if(true, "unsupported behaviour type");
-    }
-  }  // end of CalculiXInterface::writexxBehaviourTypeSymbols
-
-  void CalculiXInterface::writeUMATxxBehaviourKinematicSymbols(
-      std::ostream& out,
-      const std::string& name,
-      const BehaviourDescription& mb) const {
-    auto throw_if = [](const bool b, const std::string& m) {
-      tfel::raise_if(
-          b, "CalculiXInterface::writexxBehaviourKinematicSymbols: " + m);
-    };
-    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name)
-        << "_BehaviourKinematic = ";
-    if (mb.getBehaviourType() ==
-        BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
-      if (hasFiniteStrainStrategy(mb)) {
-        out << "1u;\n\n";
-      } else {
-        out << "3u;\n\n";
-      }
-    } else if (mb.getBehaviourType() ==
-               BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
-      out << "3u;\n\n";
-    } else {
-      throw_if(true, "unsupported behaviour type");
-    }
-  }  // end of CalculiXInterface::writexxBehaviourKinematicSymbols
-
   void CalculiXInterface::writeInterfaceSpecificIncludes(
       std::ostream& out, const BehaviourDescription&) const {
     out << "#include\"MFront/CalculiX/CalculiX.hxx\"\n"
@@ -1229,9 +1183,8 @@ namespace mfront {
          (mb.getAttribute(
              BehaviourDescription::requiresThermalExpansionCoefficientTensor,
              false)))) {
-      auto h = this->getModellingHypothesesToBeTreated(mb);
-      for (const auto& mh : h) {
-        res.insert({mh, this->getModellingHypothesisTest(mh)});
+      for (const auto& h : this->getModellingHypothesesToBeTreated(mb)) {
+        res.insert({h, this->getModellingHypothesisTest(h)});
       }
       return res;
     }
@@ -1255,14 +1208,6 @@ namespace mfront {
   bool CalculiXInterface::isTemperatureIncrementSupported() const {
     return false;
   }  // end of CalculiXInterface::isTemperatureIncrementSupported()
-
-  void CalculiXInterface::writeUMATxxAdditionalSymbols(
-      std::ostream&,
-      const std::string&,
-      const Hypothesis,
-      const BehaviourDescription&,
-      const FileDescription&) const {
-  }  // end of CalculiXInterface::writeUMATxxAdditionalSymbols
 
   void CalculiXInterface::writeMTestFileGeneratorSetModellingHypothesis(
       std::ostream& out) const {
@@ -1306,7 +1251,7 @@ namespace mfront {
     const auto vsize = [mb, &vs, h]() -> unsigned int {
       if ((mb.getBehaviourType() ==
            BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) &&
-          (hasFiniteStrainStrategy(mb)) &&
+          (CalculiXInterface::hasFiniteStrainStrategy(mb)) &&
           (getFiniteStrainStrategy(mb) ==
            "MieheApelLambrechtLogarithmicStrainII")) {
         return vs.getValueForModellingHypothesis(h) + 12u;

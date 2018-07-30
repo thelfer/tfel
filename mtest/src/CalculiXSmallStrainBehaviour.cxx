@@ -1,5 +1,5 @@
 /*! 
- * \file   mfront/mtest/CalculiXSmallStrainBehaviour.cxx
+ * \file   mtest/src/CalculiXSmallStrainBehaviour.cxx
  * \brief
  * \author Thomas Helfer
  * \brief  03/08/2017

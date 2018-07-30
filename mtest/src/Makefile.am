@@ -23,7 +23,8 @@ libTFELMTest_la_SOURCES = RoundingMode.cxx              \
 			  Behaviour.cxx                             \
 			  BehaviourWorkSpace.cxx                    \
 			  LogarithmicStrain1DBehaviourWrapper.cxx   \
-			  UmatBehaviourBase.cxx                     \
+			  GenericBehaviour.cxx                      \
+			  StandardBehaviourBase.cxx                 \
 			  UmatNormaliseTangentOperator.cxx          \
 			  Constraint.cxx                            \
 			  ConstraintBase.cxx                        \

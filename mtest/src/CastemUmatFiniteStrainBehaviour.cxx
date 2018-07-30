@@ -1,5 +1,5 @@
 /*!
- * \file   mfront/mtest/CastemUmatFiniteStrainBehaviour.cxx
+ * \file   mtest/src/CastemUmatFiniteStrainBehaviour.cxx
  * \brief
  * \author Thomas Helfer
  * \brief 07 avril 2013
@@ -27,7 +27,7 @@ namespace mtest
     return CastemUmatStandardBehaviour::buildCastemUmatStandardBehaviour(l,f,p,2u,h);
   } // end of CastemUmatFiniteStrainBehaviour::buildCastemUmatFiniteStrainBehaviour
   
-  CastemUmatFiniteStrainBehaviour::CastemUmatFiniteStrainBehaviour(const UmatBehaviourDescription& bd,
+  CastemUmatFiniteStrainBehaviour::CastemUmatFiniteStrainBehaviour(const StandardBehaviourDescription& bd,
 								   const std::string& cn)
     : CastemFiniteStrainBehaviour(bd)
   {

@@ -40,12 +40,12 @@ namespace mfront{
      * treated by the interface. The second entry is an iterator after
      * the last token treated.
      */
-    std::pair<bool,tokens_iterator>
-    treatKeyword(BehaviourDescription&,
-		 const std::string&,
-		 const std::vector<std::string>&,
-		 tokens_iterator,
-		 const tokens_iterator) override;
+    std::pair<bool, tokens_iterator> treatKeyword(
+        BehaviourDescription&,
+        const std::string&,
+        const std::vector<std::string>&,
+        tokens_iterator,
+        const tokens_iterator) override;
     /*!
      * \brief write output files
      * \param[in] mb        : mechanical behaviour description
@@ -123,46 +123,12 @@ namespace mfront{
     writeBehaviourDataThermodynamicForceSetter(std::ostream&,
 					       const ThermodynamicForce&,
 					       const SupportedTypes::TypeSize) const override;
-    /*!
-     * \return the list of additional variables to be passed to the
-     * behaviour data constructor which are specific to the interface.
-     *
-     * For each item in the list, the first element is the variable
-     * name and the second element is the variable description.
-     */
-    virtual std::vector<std::pair<std::string,std::string>>
+    std::vector<std::pair<std::string, std::string>>
     getBehaviourDataConstructorAdditionalVariables() const override;
-    /*!
-     * \brief add interface specific lines at the end of the behaviour
-     * data constructor
-     * \param[in] out : output file
-     * \param[in] h   : modelling hypothesis
-     * \param[in] mb  : mechanical behaviour description
-     */
-    virtual void 
-    completeBehaviourDataConstructor(std::ostream&,
-				     const Hypothesis,
-				     const BehaviourDescription&) const override;
-    /*!
-     * \param[in] out  : output file
-     * \param[in] name : name of the behaviour as defined by interface
-     *                   (generally taking into account the material
-     *                    and the behaviour name)
-     * \param[in] mb   : behaviour description
-     */
-    void writeUMATxxBehaviourTypeSymbols(std::ostream&,
-					 const std::string&,
-					 const BehaviourDescription&) const override;
-    /*!
-     * \param[in] out  : output file
-     * \param[in] name : name of the behaviour as defined by interface
-     *                   (generally taking into account the material
-     *                    and the behaviour name)
-     * \param[in] mb   : behaviour description
-     */
-    void writeUMATxxBehaviourKinematicSymbols(std::ostream&,
-					      const std::string&,
-					      const BehaviourDescription&) const override;
+    void completeBehaviourDataConstructor(
+        std::ostream&,
+        const Hypothesis,
+        const BehaviourDescription&) const override;
     /*!
      * \brief write the call to the base function
      * \param[in] out:  output file
@@ -175,10 +141,10 @@ namespace mfront{
      * \param[in] h:    modelling hypothesis
      */
     virtual void writeFunctionBase(std::ostream&,
-				       const BehaviourDescription&,
-				       const std::string&,
-				       const std::string&,
-				       const Hypothesis) const;
+                                   const BehaviourDescription&,
+                                   const std::string&,
+                                   const std::string&,
+                                   const Hypothesis) const;
     /*!
      * \brief write the call to the base function
      * \param[in] out:  output file
@@ -189,9 +155,9 @@ namespace mfront{
      * \param[in] h:    modelling hypothesis
      */
     virtual void writeSmallStrainFunction(std::ostream&,
-					  const BehaviourDescription&,
-					  const std::string&,
-					  const Hypothesis) const;
+                                          const BehaviourDescription&,
+                                          const std::string&,
+                                          const Hypothesis) const;
     /*!
      * \brief write the call to the base function
      * \param[in] out:  output file

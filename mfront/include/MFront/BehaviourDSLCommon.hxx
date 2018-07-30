@@ -1027,9 +1027,10 @@ namespace mfront {
     virtual void writeBehaviourTraits(std::ostream&) const;
 
     /*!
-     * \param[in] h : modelling hypothesis
-     * \param[in] b : true if the behaviour is defined for the given modelling
-     * hypothesis
+     * \param[out] out: os file stream
+     * \param[in]  h:   modelling hypothesis
+     * \param[in]  b    true if the behaviour is defined for the given
+     * modelling hypothesis
      */
     virtual void writeBehaviourTraitsSpecialisation(std::ostream&,
                                                     const Hypothesis,

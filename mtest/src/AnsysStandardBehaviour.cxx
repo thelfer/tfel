@@ -1,5 +1,5 @@
 /*! 
- * \file  mfront/mtest/AnsysStandardBehaviour.cxx
+ * \file  mtest/src/AnsysStandardBehaviour.cxx
  * \brief
  * \author Thomas Helfer
  * \brief 07 avril 2013
@@ -59,7 +59,7 @@ namespace mtest {
   AnsysStandardBehaviour::AnsysStandardBehaviour(const Hypothesis h,
                                                  const std::string& l,
                                                  const std::string& b)
-      : UmatBehaviourBase(h, l, AnsysStandardBehaviour::getBehaviourName(b, h)) {
+      : StandardBehaviourBase(h, l, AnsysStandardBehaviour::getBehaviourName(b, h)) {
     auto throw_if = [](const bool c, const std::string& m){
       tfel::raise_if(c,"AnsysStandardBehaviour::AnsysStandardBehaviour: "+m);
     };

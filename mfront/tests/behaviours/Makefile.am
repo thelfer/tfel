@@ -1,4 +1,4 @@
-SUBDIRS = unit-tests bricks                              \
+SUBDIRS = unit-tests bricks generic                      \
 	  aster epx castem castem2 cyrano secant         \
 	  steffensen ironstuck  alternatesecant          \
 	  alternatedelta2 alternate2delta crossedsecant  \

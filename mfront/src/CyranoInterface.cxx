@@ -30,6 +30,7 @@
 #include "MFront/MFrontLogStream.hxx"
 #include "MFront/FileDescription.hxx"
 #include "MFront/TargetsDescription.hxx"
+#include "MFront/CyranoSymbolsGenerator.hxx"
 #include "MFront/CyranoInterface.hxx"
 
 #ifndef _MSC_VER
@@ -194,7 +195,7 @@ namespace mfront {
       tfel::raise_if(b, "Cyrano::endTreatment: " + m);
     };
     // get the modelling hypotheses to be treated
-    const auto& mh = this->getModellingHypothesesToBeTreated(mb);
+    const auto& mhs = this->getModellingHypothesesToBeTreated(mb);
     const auto name = mb.getLibrary() + mb.getClassName();
     // some checks
     throw_if(mb.getBehaviourType() != BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR,
@@ -256,10 +257,10 @@ namespace mfront {
 
     out << "namespace cyrano{\n\n";
 
-    if (!mb.areAllMechanicalDataSpecialised(mh)) {
+    if (!mb.areAllMechanicalDataSpecialised(mhs)) {
       this->writeCyranoBehaviourTraits(out, mb, ModellingHypothesis::UNDEFINEDHYPOTHESIS);
     }
-    for (const auto& h : mh) {
+    for (const auto& h : mhs) {
       if (mb.hasSpecialisedMechanicalData(h)) {
         this->writeCyranoBehaviourTraits(out, mb, h);
       }
@@ -273,7 +274,7 @@ namespace mfront {
     out << "extern \"C\"{\n";
     out << "#endif /* __cplusplus */\n\n";
 
-    this->writeSetParametersFunctionsDeclarations(out, name, mb);
+    this->writeSetParametersFunctionsDeclarations(out, mb, name);
     this->writeSetOutOfBoundsPolicyFunctionDeclaration(out, name);
 
     this->writeCyranoFunctionDeclaration(out, name);
@@ -318,21 +319,22 @@ namespace mfront {
 
     out << "extern \"C\"{\n\n";
 
-    this->generateUMATxxGeneralSymbols(out, name, mb, fd);
-    if (!mb.areAllMechanicalDataSpecialised(mh)) {
+    CyranoSymbolsGenerator sg;
+    sg.generateGeneralSymbols(out, *this, mb, fd, mhs, name);
+    if (!mb.areAllMechanicalDataSpecialised(mhs)) {
       const Hypothesis uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-      this->generateUMATxxSymbols(out, name, uh, mb, fd);
+      sg.generateSymbols(out, *this, mb, fd, name, uh);
     }
-    for (const auto& h : mh) {
+    for (const auto& h : mhs) {
       if (mb.hasSpecialisedMechanicalData(h)) {
-        this->generateUMATxxSymbols(out, name, h, mb, fd);
+        sg.generateSymbols(out, *this, mb, fd, name, h);
       }
     }
 
     out << "MFRONT_SHAREDOBJ unsigned short cyrano" << makeLowerCase(name)
         << "_Interface = 1u;\n\n";
 
-    this->writeSetParametersFunctionsImplementations(out, name, mb);
+    this->writeSetParametersFunctionsImplementations(out, mb, name);
     this->writeSetOutOfBoundsPolicyFunctionImplementation(out, name);
 
     if (mb.isStrainMeasureDefined()) {
@@ -392,73 +394,6 @@ namespace mfront {
                                                        const BehaviourDescription&) const {
     out << "#include\"MFront/Cyrano/Cyrano.hxx\"\n\n";
   }
-
-  void CyranoInterface::writeUMATxxAdditionalSymbols(std::ostream&,
-                                                     const std::string&,
-                                                     const Hypothesis,
-                                                     const BehaviourDescription&,
-                                                     const FileDescription&) const {
-  }  // end of CyranoInterface::writeUMATxxAdditionalSymbols
-
-  void CyranoInterface::writeUMATxxBehaviourTypeSymbols(std::ostream& out,
-                                                        const std::string& name,
-                                                        const BehaviourDescription& mb) const {
-    auto throw_if = [](const bool b, const std::string& m) {
-      tfel::raise_if(b, "CyranoInterface::writeUMATxxBehaviourTypeSymbols: " + m);
-    };
-    out << "MFRONT_SHAREDOBJ unsigned short "
-        << this->getFunctionNameBasis(name) << "_BehaviourType = ";
-    if (mb.getBehaviourType() == BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
-      if (mb.isStrainMeasureDefined()) {
-        if (mb.getStrainMeasure() == BehaviourDescription::LINEARISED) {
-          out << "1u;\n\n";
-        } else if (mb.getStrainMeasure() == BehaviourDescription::HENCKY) {
-          out << "2u;\n\n";
-        } else {
-          throw_if(true,
-                   "the cyrano interface only supports:\n"
-                   "- small strain behaviours: the only strain measure "
-                   "supported is the HPP one (linearised)\n"
-                   "- finite strain behaviours based on the Hencky strain measure");
-        }
-      } else {
-        out << "1u;\n\n";
-      }
-    } else {
-      throw_if(true, "unsupported behaviour type");
-    }
-  }  // end of CyranoInterface::writeUMATxxBehaviourTypeSymbols
-
-  void CyranoInterface::writeUMATxxBehaviourKinematicSymbols(std::ostream& out,
-                                                             const std::string& name,
-                                                             const BehaviourDescription& mb) const {
-    auto throw_if = [](const bool b, const std::string& m) {
-      if (b) {
-        tfel::raise("CyranoInterface::writeUMATxxBehaviourKinematicSymbols: " + m);
-      }
-    };
-    out << "MFRONT_SHAREDOBJ unsigned short "
-        << this->getFunctionNameBasis(name) << "_BehaviourKinematic = ";
-    if (mb.getBehaviourType() == BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
-      if (mb.isStrainMeasureDefined()) {
-        if (mb.getStrainMeasure() == BehaviourDescription::LINEARISED) {
-          out << "1u;\n\n";
-        } else if (mb.getStrainMeasure() == BehaviourDescription::HENCKY) {
-          out << "4u;\n\n";
-        } else {
-          throw_if(true,
-                   "the cyrano interface only supports:\n"
-                   "- small strain behaviours: the only strain measure "
-                   "supported is the HPP one (linearised)\n"
-                   "- finite strain behaviours based on the Hencky strain measure");
-        }
-      } else {
-        out << "1u;\n\n";
-      }
-    } else {
-      throw_if(true, "unsupported behaviour type");
-    }
-  }  // end of CyranoInterface::writeUMATxxBehaviourKinematicSymbols
 
   void CyranoInterface::writeCyranoFunctionDeclaration(std::ostream& out,
                                                        const std::string& name) const {

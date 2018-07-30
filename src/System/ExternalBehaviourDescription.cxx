@@ -55,6 +55,10 @@ namespace tfel
       this->kinematic    = elm.getUMATBehaviourKinematic(l,f);
       this->stype        = elm.getUMATSymmetryType(l,f);
       this->etype        = elm.getUMATElasticSymmetryType(l,f);
+      this->dvnames      = elm.getUMATDrivingVariablesNames(l,f);
+      this->dvtypes      = elm.getUMATDrivingVariablesTypes(l,f);
+      this->thnames      = elm.getUMATThermodynamicForcesNames(l,f);
+      this->thtypes      = elm.getUMATThermodynamicForcesTypes(l,f);
       this->isUPUIR      = elm.isUMATBehaviourUsableInPurelyImplicitResolution(l,f,h);
       this->mpnames      = elm.getUMATMaterialPropertiesNames(l,f,h);
       this->ivnames      = elm.getUMATInternalStateVariablesNames(l,f,h);

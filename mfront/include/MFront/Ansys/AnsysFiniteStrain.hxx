@@ -104,26 +104,6 @@ namespace ansys
 					const AnsysReal* const,
 					const AnsysInt,
 					const bool);
-    /*!
-     * \brief apply a correction to the consistent tangent operator to
-     * take into account that the real operator is not the derivative
-     * of the Cauchy stress with respect to the deformation increment
-     * but the derivative of the Kirchhoff stress divided but the
-     * determinant of the jacobian;
-     * 
-     * \param[out/in] DDSDDE: on input, the derivative of the Cauchy
-     *                        stress with respect to the deformation
-     *                        increment. On output, the expected
-     *                        tangent operator
-     * \param[in] F1:    deformation gradient at the end of the time step
-     * \param[in] s:     Cauchy stress at the end of the time step
-     * \param[in] NTENS: number of components of the stresses
-     */
-    static void
-    applyNativeFiniteStrainCorrection(AnsysReal*,
-				      const AnsysReal* const,
-				      const AnsysReal* const,
-				      const AnsysInt);
   }; // end of struct AnsysFiniteStrain
 
 } // end of namespace ansys

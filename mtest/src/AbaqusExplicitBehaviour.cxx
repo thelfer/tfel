@@ -1,5 +1,5 @@
 /*! 
- * \file  mfront/mtest/AbaqusExplicitBehaviour.cxx
+ * \file  mtest/src/AbaqusExplicitBehaviour.cxx
  * \brief
  * \author Thomas Helfer
  * \brief 07 avril 2013
@@ -70,7 +70,7 @@ namespace mtest {
   AbaqusExplicitBehaviour::AbaqusExplicitBehaviour(const Hypothesis h,
 						   const std::string& l,
 						   const std::string& b)
-    : UmatBehaviourBase(h,l,AbaqusExplicitBehaviour::getBehaviourName(b,h))
+    : StandardBehaviourBase(h,l,AbaqusExplicitBehaviour::getBehaviourName(b,h))
   {
     auto throw_if = [](const bool c, const std::string& m){
       tfel::raise_if(c,"AbaqusExplicitBehaviour::AbaqusExplicitBehaviour: "+m);

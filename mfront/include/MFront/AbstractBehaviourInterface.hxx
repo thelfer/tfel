@@ -103,17 +103,38 @@ namespace mfront{
 			 const Hypothesis,
 			 const BehaviourDescription&) const = 0;
     /*!
-     * write the behaviour constructor associated with the law
+     * \brief write the behaviour constructor header associated with
+     * the interface. This method allow the interface to add a new
+     * constructor containing specific arguments and the call specific
+     * constructors for the behaviour data and integration data, as
+     * build by the `writeBehaviourDataConstructor` and the
+     * `writeIntegrationDataConstructor` methods respectively.
+     * This body of this constructor will be populated by the
+     * `writeBehaviourConstructorBody` method.
+     * 
      * \param[in] behaviourFile           : output file
      * \param[in] mb                      : behaviour description
+     * \param[in] h                       : modelling hypothesis
      * \param[in] initStateVarsIncrements : constructor part assigning
      *                                      default value (zero) to state
      *                                      variable increments
      */
     virtual void 
-    writeBehaviourConstructor(std::ostream&,
-			      const BehaviourDescription&,
-			      const std::string&) const = 0;
+    writeBehaviourConstructorHeader(std::ostream&,
+				    const BehaviourDescription&,
+				    const Hypothesis,
+				    const std::string&) const = 0;
+    /*!
+     * \brief complete the body of the behaviour constructor
+     * associated with the interface.
+     * \param[in] os: output file
+     * \param[in] mb: behaviour description
+     * \param[in] h:  modelling hypothesis
+     */
+    virtual void 
+    writeBehaviourConstructorBody(std::ostream&,
+				  const BehaviourDescription&,
+				  const Hypothesis) const = 0;
     
     virtual void
     writeBehaviourDataConstructor(std::ostream&,

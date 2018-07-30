@@ -894,6 +894,18 @@ namespace tfel {
       }
     }  // end of ExternalLibraryManager::getCastemFunctionVariables
 
+    GenericBehaviourFctPtr ExternalLibraryManager::getGenericBehaviourFunction(const std::string& l,
+                                                           const std::string& f) {
+      const auto lib = this->loadLibrary(l);
+      const auto fct = ::tfel_getGenericBehaviourFunction(lib, f.c_str());
+      raise_if(fct == nullptr,
+               "ExternalLibraryManager::getGenericBehaviourFunction: "
+               "could not load generic gehaviour function '" +
+	       f + "' (" + getErrorMessage() + ")");
+      return fct;
+    }
+
+    
     CyranoFctPtr ExternalLibraryManager::getCyranoFunction(const std::string& l,
                                                            const std::string& f) {
       const auto lib = this->loadLibrary(l);
@@ -1012,31 +1024,69 @@ namespace tfel {
                                               const std::string& f,
                                               const std::string& h,
                                               const std::string& n) {
-      ExternalLibraryManagerCheckModellingHypothesisName(h);
-      const auto lib = this->loadLibrary(l);
-      ExternalLibraryManagerCheckModellingHypothesisName(h);
-      auto nb = ::tfel_getUnsignedShort(lib, (f + "_" + h + "_n" + n).c_str());
-      if (nb == -1) {
-        nb = ::tfel_getUnsignedShort(lib, (f + "_n" + n).c_str());
+      if(!h.empty()){
+	ExternalLibraryManagerCheckModellingHypothesisName(h);
       }
-      char** res;
+      const auto lib = this->loadLibrary(l);
+      auto nb = -1;
+      if(!h.empty()){
+	nb = ::tfel_getUnsignedShort(lib, (f + "_" + h + "_n" + n).c_str());
+      }
+      if (nb == -1) {
+	nb = ::tfel_getUnsignedShort(lib, (f + "_n" + n).c_str());
+      }
       raise_if(nb == -1,
                "ExternalLibraryManager::getUMATNames: "
                "number of variables names could not be read "
-               "(" +
-                   getErrorMessage() + ")");
-      res = ::tfel_getArrayOfStrings(lib, (f + "_" + h + '_' + n).c_str());
+               "(" + getErrorMessage() + ")");
+      char** res = nullptr;
+      if(!h.empty()){
+	res = ::tfel_getArrayOfStrings(lib, (f + "_" + h + '_' + n).c_str());
+      }
       if (res == nullptr) {
         res = ::tfel_getArrayOfStrings(lib, (f + '_' + n).c_str());
       }
       raise_if(res == nullptr,
                "ExternalLibraryManager::getUMATNames: "
                "variables names could not be read "
-               "(" +
-                   getErrorMessage() + ")");
+               "(" + getErrorMessage() + ")");
       std::copy(res, res + nb, std::back_inserter(vars));
     }  // end of ExternalLibraryManager::getUMATNames
 
+    void ExternalLibraryManager::getUMATTypes(std::vector<int>& types,
+                                              const std::string& l,
+                                              const std::string& f,
+                                              const std::string& h,
+                                              const std::string& n) {
+      if(!h.empty()){
+	ExternalLibraryManagerCheckModellingHypothesisName(h);
+      }
+      const auto lib = this->loadLibrary(l);
+      auto nb = -1;
+      if(!h.empty()){
+	nb = ::tfel_getUnsignedShort(lib, (f + "_" + h + "_n" + n).c_str());
+      }
+      if (nb == -1) {
+	nb = ::tfel_getUnsignedShort(lib, (f + "_n" + n).c_str());
+      }
+      raise_if(nb == -1,
+               "ExternalLibraryManager::getUMATTypes: "
+               "number of variables names could not be read "
+               "(" + getErrorMessage() + ")");
+      int* res = nullptr;
+      if(!h.empty()){
+	res = ::tfel_getArrayOfInts(lib, (f + "_" + h + '_' + n+"Types").c_str());
+      }
+      if (res == nullptr) {
+        res = ::tfel_getArrayOfInts(lib, (f + '_' + n+"Types").c_str());
+      }
+      raise_if(res == nullptr,
+               "ExternalLibraryManager::getUMATTypes: "
+               "variables names could not be read "
+               "(" + getErrorMessage() + ")");
+      std::copy(res, res + nb, std::back_inserter(types));
+    }  // end of ExternalLibraryManager::getUMATTypes
+    
     bool ExternalLibraryManager::isUMATBehaviourUsableInPurelyImplicitResolution(
         const std::string& l, const std::string& f, const std::string& h) {
       ExternalLibraryManagerCheckModellingHypothesisName(h);
@@ -1101,8 +1151,7 @@ namespace tfel {
       raise_if(u == -1,
                "ExternalLibraryManager::getUMATElasticSymmetryType: "
                "elastic symmetry type could not be read "
-               "(" +
-                   getErrorMessage() + ")");
+               "(" + getErrorMessage() + ")");
       return static_cast<unsigned short>(u);
     }  // end of ExternalLibraryManager::getUMATElasticSymmetryType
 
@@ -1113,39 +1162,45 @@ namespace tfel {
       return vars;
     }  // end of ExternalLibraryManager::getUMATMaterialPropertiesNames
 
+    std::vector<std::string> ExternalLibraryManager::getUMATDrivingVariablesNames(
+        const std::string& l, const std::string& f) {
+      std::vector<std::string> names;
+      this->getUMATNames(names, l, f, "", "DrivingVariables");
+      return names;
+    }  // end of ExternalLibraryManager::getUMATDrivingVariablesNames
+
+    std::vector<int> ExternalLibraryManager::getUMATDrivingVariablesTypes(
+        const std::string& l, const std::string& f) {
+      std::vector<int> types;
+      this->getUMATTypes(types, l, f, "", "DrivingVariables");
+      return types;
+    }  // end of ExternalLibraryManager::getUMATDrivingVariablesTypes
+    
+    std::vector<std::string> ExternalLibraryManager::getUMATThermodynamicForcesNames(
+        const std::string& l, const std::string& f) {
+      std::vector<std::string> names;
+      this->getUMATNames(names, l, f, "", "ThermodynamicForces");
+      return names;
+    }  // end of ExternalLibraryManager::getUMATThermodynamicForcesNames
+
+    std::vector<int> ExternalLibraryManager::getUMATThermodynamicForcesTypes(
+        const std::string& l, const std::string& f) {
+      std::vector<int> types;
+      this->getUMATTypes(types, l, f, "", "ThermodynamicForces");
+      return types;
+    }  // end of ExternalLibraryManager::getUMATThermodynamicForcesTypes
+
     std::vector<std::string> ExternalLibraryManager::getUMATInternalStateVariablesNames(
         const std::string& l, const std::string& f, const std::string& h) {
       std::vector<std::string> vars;
       this->getUMATNames(vars, l, f, h, "InternalStateVariables");
       return vars;
-    }  // end of ExternalLibraryManager::getUMATMaterialPropertiesNames
-
+    }  // end of ExternalLibraryManager::getUMATInternalStateVariablesNames
+    
     std::vector<int> ExternalLibraryManager::getUMATInternalStateVariablesTypes(
         const std::string& l, const std::string& f, const std::string& h) {
-      ExternalLibraryManagerCheckModellingHypothesisName(h);
       std::vector<int> types;
-      const auto lib = this->loadLibrary(l);
-      auto nb = ::tfel_getUnsignedShort(lib, (f + "_" + h + "_nInternalStateVariables").c_str());
-      if (nb == -1) {
-        nb = ::tfel_getUnsignedShort(lib, (f + "_nInternalStateVariables").c_str());
-      }
-      int* res;
-      raise_if(nb == -1,
-               "ExternalLibraryManager::getUMATInternalStateVariablesTypes: "
-               "number of variables names could not be read "
-               "(" +
-                   getErrorMessage() + ")");
-      res = ::tfel_getArrayOfInt(lib, (f + "_" + h + "_InternalStateVariablesTypes").c_str());
-      if (res == nullptr) {
-        res = ::tfel_getArrayOfInt(lib, (f + "_InternalStateVariablesTypes").c_str());
-      }
-      raise_if(res == nullptr,
-               "ExternalLibraryManager::"
-               "getUMATInternalStateVariablesTypes: "
-               "internal state variables types could not be read "
-               "(" +
-                   getErrorMessage() + ")");
-      std::copy(res, res + nb, std::back_inserter(types));
+      this->getUMATTypes(types,l,f,h,"InternalStateVariables");
       return types;
     }  // end of ExternalLibraryManager::getUMATInternalVariablesTypes
 
@@ -1159,37 +1214,16 @@ namespace tfel {
     std::vector<std::string> ExternalLibraryManager::getUMATParametersNames(const std::string& l,
                                                                             const std::string& f,
                                                                             const std::string& h) {
-      std::vector<std::string> vars;
-      this->getUMATNames(vars, l, f, h, "Parameters");
-      return vars;
+      std::vector<std::string> names;
+      this->getUMATNames(names, l, f, h, "Parameters");
+      return names;
     }  // end of ExternalLibraryManager::getUMATMaterialPropertiesNames
 
     std::vector<int> ExternalLibraryManager::getUMATParametersTypes(const std::string& l,
                                                                     const std::string& f,
                                                                     const std::string& h) {
-      ExternalLibraryManagerCheckModellingHypothesisName(h);
       std::vector<int> types;
-      const auto lib = this->loadLibrary(l);
-      auto nb = ::tfel_getUnsignedShort(lib, (f + "_" + h + "_nParameters").c_str());
-      if (nb == -1) {
-        nb = ::tfel_getUnsignedShort(lib, (f + "_nParameters").c_str());
-      }
-      int* res;
-      raise_if(nb == -1,
-               "ExternalLibraryManager::getUMATParametersTypes: "
-               "number of variables names could not be read "
-               "(" +
-                   getErrorMessage() + ")");
-      res = ::tfel_getArrayOfInt(lib, (f + "_" + h + "_ParametersTypes").c_str());
-      if (res == nullptr) {
-        res = ::tfel_getArrayOfInt(lib, (f + "_ParametersTypes").c_str());
-      }
-      raise_if(res == nullptr,
-               "ExternalLibraryManager::getUMATParametersTypes: "
-               "internal state variables types could not be read "
-               "(" +
-                   getErrorMessage() + ")");
-      std::copy(res, res + nb, std::back_inserter(types));
+      this->getUMATTypes(types,l,f,h,"Parameters");
       return types;
     }  // end of ExternalLibraryManager::getUMATInternalVariablesTypes
 

@@ -1,5 +1,5 @@
 /*! 
- * \file   mfront/mtest/AbaqusFiniteStrainBehaviour.cxx
+ * \file   mtest/src/AbaqusFiniteStrainBehaviour.cxx
  * \brief
  * \author Thomas Helfer
  * \brief  07 avril 2013

@@ -29,6 +29,7 @@
 #include"MFront/MFrontDebugMode.hxx"
 #include"MFront/FileDescription.hxx"
 #include"MFront/TargetsDescription.hxx"
+#include"MFront/AbaqusSymbolsGenerator.hxx"
 #include"MFront/AbaqusInterface.hxx"
 
 namespace mfront{
@@ -341,7 +342,7 @@ namespace mfront{
 	       "'@AbaqusOrthotropyManagementPolicy' for details");
     }
     // get the modelling hypotheses to be treated
-    const auto& mh = this->getModellingHypothesesToBeTreated(mb);
+    const auto& mhs = this->getModellingHypothesesToBeTreated(mb);
     const auto name =  mb.getLibrary()+mb.getClassName();
     // output directories
     systemCall::mkdir("include/MFront");
@@ -415,10 +416,10 @@ namespace mfront{
     out << "#ifdef __cplusplus\n\n"
 	<< "namespace abaqus{\n\n";
 
-    if(!mb.areAllMechanicalDataSpecialised(mh)){
+    if(!mb.areAllMechanicalDataSpecialised(mhs)){
       this->writeAbaqusBehaviourTraits(out,mb,ModellingHypothesis::UNDEFINEDHYPOTHESIS);
     }
-    for(const auto & h : mh){
+    for(const auto & h : mhs){
       if(mb.hasSpecialisedMechanicalData(h)){
 	this->writeAbaqusBehaviourTraits(out,mb,h);
       }
@@ -431,9 +432,9 @@ namespace mfront{
 	<< "#endif /* __cplusplus */\n\n";
 
     this->writeSetOutOfBoundsPolicyFunctionDeclaration(out,name);
-    this->writeSetParametersFunctionsDeclarations(out,name,mb);
+    this->writeSetParametersFunctionsDeclarations(out, mb, name);
 
-    for(const auto h: mh){
+    for(const auto h: mhs){
       out << "MFRONT_SHAREDOBJ void\n"
 	  << this->getFunctionNameForHypothesis(name,h);
       writeArguments(out);
@@ -483,22 +484,22 @@ namespace mfront{
     this->writeGetOutOfBoundsPolicyFunctionImplementation(out,name);
     
     out << "extern \"C\"{\n\n";
- 
-    this->generateUMATxxGeneralSymbols(out,name,mb,fd);
-    if(!mb.areAllMechanicalDataSpecialised(mh)){
-      const Hypothesis uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-      this->generateUMATxxSymbols(out,name,uh,mb,fd);
+    AbaqusSymbolsGenerator sg;
+    sg.generateGeneralSymbols(out, *this, mb, fd, mhs, name);
+    if(!mb.areAllMechanicalDataSpecialised(mhs)){
+      const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+      sg.generateSymbols(out, *this, mb,fd,name,uh);
     }
-    for(const auto &h : mh){
+    for(const auto &h : mhs){
       if(mb.hasSpecialisedMechanicalData(h)){
-        this->generateUMATxxSymbols(out, name, h, mb, fd);
+        sg.generateSymbols(out, *this, mb, fd, name, h);
       }
     }
     
-    this->writeSetParametersFunctionsImplementations(out,name,mb);
+    this->writeSetParametersFunctionsImplementations(out, mb, name);
     this->writeSetOutOfBoundsPolicyFunctionImplementation(out,name);
 
-    for(const auto h: mh){
+    for(const auto h: mhs){
       if(mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
 	if(AbaqusInterfaceBase::hasFiniteStrainStrategy(mb)){
 	  const auto fs = AbaqusInterfaceBase::getFiniteStrainStrategy(mb);
@@ -1066,52 +1067,7 @@ namespace mfront{
 	<< "}\n"
 	<< "}\n\n";
   }
-  
-  void AbaqusInterface::writeUMATxxBehaviourTypeSymbols(std::ostream& out,
-							const std::string& name,
-							const BehaviourDescription& mb) const
-  {
-    auto throw_if = [](const bool b,const std::string& m){
-      tfel::raise_if(b,"AbaqusInterface::writeUMATxxBehaviourTypeSymbols: "+m);
-    };
-    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name) 
-	<< "_BehaviourType = " ;
-    if(mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
-      if((AbaqusInterfaceBase::hasFiniteStrainStrategy(mb))&&
-	 (AbaqusInterfaceBase::getFiniteStrainStrategy(mb)!="Native")){
-	out << "2u;\n\n";
-      } else {
-	out << "1u;\n\n";
-      }
-    } else if(mb.getBehaviourType()==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR){
-      out << "2u;\n\n";
-    } else {
-      throw_if(true,"unsupported behaviour type");
-    }
-  } // end of AbaqusInterface::writeUMATxxBehaviourTypeSymbols
 
-  void
-  AbaqusInterface::writeUMATxxBehaviourKinematicSymbols(std::ostream& out,
-						   const std::string& name,
-						   const BehaviourDescription& mb) const
-  {
-    auto throw_if = [](const bool b,const std::string& m){
-      tfel::raise_if(b,"AbaqusInterface::writeUMATxxBehaviourKinematicSymbols: "+m);
-    };
-    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name) 
-	<< "_BehaviourKinematic = " ;
-    if(mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
-      if(AbaqusInterfaceBase::hasFiniteStrainStrategy(mb)){
-	out << "1u;\n\n";
-      } else {
-	out << "3u;\n\n";
-      }
-    } else if(mb.getBehaviourType()==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR){
-      out << "3u;\n\n";
-    } else {
-      throw_if(true,"unsupported behaviour type");
-    }
-  } // end of AbaqusInterface::writeUMATxxBehaviourKinematicSymbols
   
   void 
   AbaqusInterface::writeInterfaceSpecificIncludes(std::ostream& out,

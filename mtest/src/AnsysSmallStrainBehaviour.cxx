@@ -1,5 +1,5 @@
 /*! 
- * \file   mfront/mtest/AnsysSmallStrainBehaviour.cxx
+ * \file   mtest/src/AnsysSmallStrainBehaviour.cxx
  * \brief
  * \author Thomas Helfer
  * \brief  07 avril 2013
@@ -27,8 +27,7 @@
 #include"MTest/AnsysNormaliseTangentOperator.hxx"
 #include"MTest/AnsysSmallStrainBehaviour.hxx"
 
-namespace mtest
-{
+namespace mtest{
 
   AnsysSmallStrainBehaviour::AnsysSmallStrainBehaviour(const Hypothesis h,
 							 const std::string& l,
@@ -147,8 +146,8 @@ namespace mtest
     }
     // ansys standard convention
     for(AnsysInt i=3;i!=s.e1.size();++i){
-      ue0(i) /= sqrt2;
-      ude(i) /= sqrt2;
+      ue0(i) *= sqrt2;
+      ude(i) *= sqrt2;
     }
     for(AnsysInt i=3;i!=static_cast<unsigned short>(ntens);++i){
       us(i) /= sqrt2;
@@ -188,21 +187,6 @@ namespace mtest
     }
     // treating the consistent tangent operator
     if(h==ModellingHypothesis::TRIDIMENSIONAL){
-      // Convertion from Voigt 23 <-> 13
-      // changing last columns
-      std::swap(wk.D(0,4),wk.D(0,5));
-      std::swap(wk.D(1,4),wk.D(1,5));
-      std::swap(wk.D(2,4),wk.D(2,5));
-      std::swap(wk.D(3,4),wk.D(3,5));
-      std::swap(wk.D(4,4),wk.D(4,5));
-      std::swap(wk.D(5,4),wk.D(5,5));
-      // changing last rows
-      std::swap(wk.D(4,0),wk.D(5,0));
-      std::swap(wk.D(4,1),wk.D(5,1));
-      std::swap(wk.D(4,2),wk.D(5,2));
-      std::swap(wk.D(4,3),wk.D(5,3));
-      std::swap(wk.D(4,4),wk.D(5,4));
-      std::swap(wk.D(4,5),wk.D(5,5));
       // normalizing
       AnsysNormaliseTangentOperator::exe(&Kt(0,0),wk.D,3u);
     } else if (h==ModellingHypothesis::AXISYMMETRICAL){
@@ -255,7 +239,7 @@ namespace mtest
       if(h==ModellingHypothesis::TRIDIMENSIONAL){
 	std::swap(us[4],us[5]);
       }
-      copy(us.begin(),us.begin()+s.s1.size(),s.s1.begin());
+      std::copy(us.begin(),us.begin()+s.s1.size(),s.s1.begin());
     }
     return {true,1};
   }

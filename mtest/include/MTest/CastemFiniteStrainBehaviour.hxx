@@ -37,7 +37,7 @@ namespace mtest
     /*!
      * \param[in] umb: behaviour description
      */
-    CastemFiniteStrainBehaviour(const UmatBehaviourDescription&);
+    CastemFiniteStrainBehaviour(const StandardBehaviourDescription&);
     /*!
      * \param[out] v : initial values of the driving variables
      */

@@ -59,6 +59,12 @@ extern "C" {
   typedef double AsterRealType;
   typedef double EuroplexusRealType;
   typedef double CalculiXRealType;
+
+#ifndef LIB_MFRONT_GENERICBEHAVIOUR_BEHAVIOURDATA_H
+#define MFRONT_GB_BEHAVIOURDATA_FORWARD_DECLARATION
+  // forward declaration
+  typedef struct MFront_GB_BehaviourData MFront_GB_BehaviourData;
+#endif /* LIB_MFRONT_GENERICBEHAVIOUR_BEHAVIOURDATA_H */
   
 #ifdef	__cplusplus
 }
@@ -251,10 +257,12 @@ namespace tfel
 							     const double *,const double *,
 							     const double *,const double *,
 							     const double *);
+      //! \brief a simple alias.
+      typedef int (TFEL_ADDCALL_PTR GenericBehaviourFctPtr)(::MFront_GB_BehaviourData* const);
+
       /*!
        * a simple alias. This is the prototype of the external
-       * functions used by the pleiades version of the castem finite
-       * element solver for the castem version prior to 2014.
+       * functions used by the `Cyrano` fuel performance code.
        */
       typedef void (TFEL_ADDCALL_PTR CyranoFctPtr)(const CyranoIntegerType  *const, /* nombre de composantes des contraintes  */
 						   const CyranoRealType *const, /* incrément de temps                     */

@@ -31,7 +31,8 @@ set(TFELMTest_SOURCES
   Behaviour.cxx
   BehaviourWorkSpace.cxx
   LogarithmicStrain1DBehaviourWrapper.cxx
-  UmatBehaviourBase.cxx
+  StandardBehaviourBase.cxx
+  GenericBehaviour.cxx
   UmatNormaliseTangentOperator.cxx
   Constraint.cxx
   ConstraintBase.cxx

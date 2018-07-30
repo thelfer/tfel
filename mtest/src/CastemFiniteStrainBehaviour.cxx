@@ -1,5 +1,5 @@
 /*!
- * \file   mfront/mtest/CastemFiniteStrainBehaviour.cxx
+ * \file   mtest/src/CastemFiniteStrainBehaviour.cxx
  * \brief
  * \author Thomas Helfer
  * \brief  18 november 2013
@@ -205,7 +205,7 @@ namespace mtest
     }
   } // end of CastemFiniteStrainBehaviour::CastemFiniteStrainBehaviour
 
-  CastemFiniteStrainBehaviour::CastemFiniteStrainBehaviour(const UmatBehaviourDescription& umb)
+  CastemFiniteStrainBehaviour::CastemFiniteStrainBehaviour(const StandardBehaviourDescription& umb)
     : CastemStandardBehaviour(umb)
   {} // end of CastemFiniteStrainBehaviour::CastemFiniteStrainBehaviour
   
@@ -328,7 +328,7 @@ namespace mtest
     }
     fill(wk.D.begin(),wk.D.end(),CastemReal(0));
     // choosing the type of stiffness matrix
-    UmatBehaviourBase::initializeTangentOperator(wk.D,ktype,true);
+    StandardBehaviourBase::initializeTangentOperator(wk.D,ktype,true);
     CastemReal ndt = std::numeric_limits<CastemReal>::max();
     const auto name = this->getBehaviourNameForUMATFunctionCall();
     (this->fct)(&(s.s1(0)),&(wk.ivs(0)),&(wk.D(0,0)),

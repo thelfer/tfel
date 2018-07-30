@@ -41,6 +41,14 @@ namespace tfel {
       std::string behaviour;
       //! name of the hypothesis
       std::string hypothesis;
+      //! names of the driving variables
+      std::vector<std::string> dvnames;
+      //! types of the driving variables
+      std::vector<int> dvtypes;
+      //! names of the thermodynamic forces
+      std::vector<std::string> thnames;
+      //! types of the thermodynamic forces
+      std::vector<int> thtypes;
       //! names of the material properties
       std::vector<std::string> mpnames;
       //! names of the internal state variables

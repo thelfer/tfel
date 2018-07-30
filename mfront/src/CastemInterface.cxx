@@ -29,6 +29,7 @@
 #include "MFront/MFrontLogStream.hxx"
 #include "MFront/FileDescription.hxx"
 #include "MFront/TargetsDescription.hxx"
+#include "MFront/CastemSymbolsGenerator.hxx"
 #include "MFront/CastemInterface.hxx"
 
 #ifndef _MSC_VER
@@ -546,15 +547,15 @@ namespace mfront {
                                ModellingHypothesis::GENERALISEDPLANESTRAIN,
                                ModellingHypothesis::TRIDIMENSIONAL};
     // treatment
-    std::set<Hypothesis> mh;
+    std::set<Hypothesis> mhs;
     // modelling hypotheses handled by the behaviour
     const auto& bh = mb.getModellingHypotheses();
     for (const auto& h : sh) {
       if (bh.find(h) != bh.end()) {
-        mh.insert(h);
+        mhs.insert(h);
       }
     }
-    tfel::raise_if(mh.empty(),
+    tfel::raise_if(mhs.empty(),
                    "CastemInterface::getModellingHypothesesToBeTreated: "
                    "no hypotheses selected. This means that the "
                    "given beahviour can't be used neither in "
@@ -566,16 +567,16 @@ namespace mfront {
                    "and nor in 'Tridimensional', "
                    "so it does not make sense to use "
                    "the Castem interface");
-    return mh;
+    return mhs;
   }  // end of CastemInterfaceModellingHypothesesToBeTreated
 
   bool CastemInterface::isModellingHypothesisSupported(const Hypothesis h,
                                                        const BehaviourDescription& mb) const {
-    const auto mh = this->getModellingHypothesesToBeTreated(mb);
+    const auto mhs = this->getModellingHypothesesToBeTreated(mb);
     if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
-      return !mb.areAllMechanicalDataSpecialised(mh);
+      return !mb.areAllMechanicalDataSpecialised(mhs);
     }
-    if (mh.find(h) != mh.end()) {
+    if (mhs.find(h) != mhs.end()) {
       return true;
     }
     if (h == ModellingHypothesis::PLANESTRESS) {
@@ -612,7 +613,7 @@ namespace mfront {
       tfel::raise_if(b, "CastemInterface::endTreatment: " + m);
     };
     // get the modelling hypotheses to be treated
-    const auto& mh = this->getModellingHypothesesToBeTreated(mb);
+    const auto& mhs = this->getModellingHypothesesToBeTreated(mb);
     // some consistency checks
     if (mb.getAttribute(BehaviourDescription::requiresStiffnessTensor, false)) {
       throw_if(mb.getSymmetryType() != mb.getElasticSymmetryType(),
@@ -672,10 +673,10 @@ namespace mfront {
 
     out << "namespace castem{\n\n";
 
-    if (!mb.areAllMechanicalDataSpecialised(mh)) {
+    if (!mb.areAllMechanicalDataSpecialised(mhs)) {
       this->writeUMATBehaviourTraits(out, mb, ModellingHypothesis::UNDEFINEDHYPOTHESIS);
     }
-    for (const auto& h : mh) {
+    for (const auto& h : mhs) {
       if (mb.hasSpecialisedMechanicalData(h)) {
         this->writeUMATBehaviourTraits(out, mb, h);
       }
@@ -688,22 +689,22 @@ namespace mfront {
     out << "#ifdef __cplusplus\n"
         << "extern \"C\"{\n"
         << "#endif /* __cplusplus */\n\n";
-    this->writeSetParametersFunctionsDeclarations(out, name, mb);
+    this->writeSetParametersFunctionsDeclarations(out, mb, name);
     this->writeSetOutOfBoundsPolicyFunctionDeclaration(out, name);
     if ((mb.getBehaviourType() == BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) &&
         (areFiniteStrainStrategiesDefined(mb))) {
       for (const auto& fs : getFiniteStrainStrategies(mb)) {
         if (fs == "FiniteRotationSmallStrain") {
-          this->writeSetParametersFunctionsDeclarations(out, name + "_frst", mb);
+          this->writeSetParametersFunctionsDeclarations(out, mb, name + "_frst");
           this->writeSetOutOfBoundsPolicyFunctionDeclaration(out, name + "_frst");
         } else if (fs == "MieheApelLambrechtLogarithmicStrain") {
-          this->writeSetParametersFunctionsDeclarations(out, name + "_malls", mb);
+          this->writeSetParametersFunctionsDeclarations(out, mb, name + "_malls");
           this->writeSetOutOfBoundsPolicyFunctionDeclaration(out, name + "_malls");
         } else if (fs == "LogarithmicStrain1D") {
-          this->writeSetParametersFunctionsDeclarations(out, name + "_log1D", mb);
+          this->writeSetParametersFunctionsDeclarations(out, mb, name + "_log1D");
           this->writeSetOutOfBoundsPolicyFunctionDeclaration(out, name + "_log1D");
         } else if (fs == "None") {
-          this->writeSetParametersFunctionsDeclarations(out, name + "_ss", mb);
+          this->writeSetParametersFunctionsDeclarations(out, mb, name + "_ss");
           this->writeSetOutOfBoundsPolicyFunctionDeclaration(out, name + "_ss");
         } else {
           throw_if(true, "internal error, unsupported finite strain strategy");
@@ -807,15 +808,15 @@ namespace mfront {
 
     if (mb.getBehaviourType() == BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
       if (!areFiniteStrainStrategiesDefined(mb)) {
-        this->generateUMATxxGeneralSymbols(out, name, mb, fd);
-        UMATInterfaceBase::writeUMATxxSupportedModellingHypothesis(out, name, mb);
-        if (!mb.areAllMechanicalDataSpecialised(mh)) {
+        CastemSymbolsGenerator sg;
+        sg.generateGeneralSymbols(out, *this, mb, fd, mhs, name);
+        if (!mb.areAllMechanicalDataSpecialised(mhs)) {
           const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-          this->generateUMATxxSymbols(out, name, uh, mb, fd);
+          sg.generateSymbols(out, *this, mb, fd, name, uh);
         }
-        for (const auto& h : mh) {
+        for (const auto& h : mhs) {
           if (mb.hasSpecialisedMechanicalData(h)) {
-            this->generateUMATxxSymbols(out, name, h, mb, fd);
+            sg.generateSymbols(out, *this, mb, fd, name, h);
           }
         }
         out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name)
@@ -828,15 +829,15 @@ namespace mfront {
         const auto fss = getFiniteStrainStrategies(mb);
         for (const auto& fs : fss) {
           if (fs == "FiniteRotationSmallStrain") {
-            this->generateUMATxxGeneralSymbols(out, name + "_frst", mb, fd);
-            UMATInterfaceBase::writeUMATxxSupportedModellingHypothesis(out, name + "_frst", mb);
-            if (!mb.areAllMechanicalDataSpecialised(mh)) {
+            CastemSymbolsGenerator sg;
+            sg.generateGeneralSymbols(out, *this, mb, fd, mhs, name + "_frst");
+            if (!mb.areAllMechanicalDataSpecialised(mhs)) {
               const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-              this->generateUMATxxSymbols(out, name + "_frst", uh, mb, fd);
+              sg.generateSymbols(out, *this, mb, fd, name + "_frst", uh);
             }
-            for (const auto& h : mh) {
+            for (const auto& h : mhs) {
               if (mb.hasSpecialisedMechanicalData(h)) {
-                this->generateUMATxxSymbols(out, name + "_frst", h, mb, fd);
+                sg.generateSymbols(out, *this, mb, fd, name + "_frst", h);
               }
             }
             out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name + "_frst")
@@ -846,15 +847,14 @@ namespace mfront {
             out << "MFRONT_SHAREDOBJ unsigned short umat" << makeLowerCase(name + "_frst")
                 << "_Interface = 2u;\n\n";
             if (fss.size() == 1u) {
-              this->generateUMATxxGeneralSymbols(out, name, mb, fd);
-              UMATInterfaceBase::writeUMATxxSupportedModellingHypothesis(out, name, mb);
-              if (!mb.areAllMechanicalDataSpecialised(mh)) {
+              sg.generateGeneralSymbols(out, *this, mb, fd, mhs, name);
+	      if (!mb.areAllMechanicalDataSpecialised(mhs)) {
                 const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-                this->generateUMATxxSymbols(out, name, uh, mb, fd);
+                sg.generateSymbols(out, *this, mb, fd, name, uh);
               }
-              for (const auto& h : mh) {
+              for (const auto& h : mhs) {
                 if (mb.hasSpecialisedMechanicalData(h)) {
-                  this->generateUMATxxSymbols(out, name, h, mb, fd);
+                  sg.generateSymbols(out, *this, mb, fd, name, h);
                 }
               }
               out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name)
@@ -865,15 +865,15 @@ namespace mfront {
                   << "_Interface = 2u;\n\n";
             }
           } else if (fs == "MieheApelLambrechtLogarithmicStrain") {
-            this->generateUMATxxGeneralSymbols(out, name + "_malls", mb, fd);
-            UMATInterfaceBase::writeUMATxxSupportedModellingHypothesis(out, name + "_malls", mb);
-            if (!mb.areAllMechanicalDataSpecialised(mh)) {
+            CastemSymbolsGenerator sg;
+            sg.generateGeneralSymbols(out, *this, mb, fd, mhs, name + "_malls");
+            if (!mb.areAllMechanicalDataSpecialised(mhs)) {
               const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-              this->generateUMATxxSymbols(out, name + "_malls", uh, mb, fd);
+              sg.generateSymbols(out, *this, mb, fd, name + "_malls", uh);
             }
-            for (const auto& h : mh) {
+            for (const auto& h : mhs) {
               if (mb.hasSpecialisedMechanicalData(h)) {
-                this->generateUMATxxSymbols(out, name + "_malls", h, mb, fd);
+                sg.generateSymbols(out, *this, mb, fd, name + "_malls", h);
               }
             }
             out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name + "_malls")
@@ -883,15 +883,14 @@ namespace mfront {
             out << "MFRONT_SHAREDOBJ unsigned short umat" << makeLowerCase(name + "_malls")
                 << "_Interface = 2u;\n\n";
             if (fss.size() == 1u) {
-              this->generateUMATxxGeneralSymbols(out, name, mb, fd);
-              UMATInterfaceBase::writeUMATxxSupportedModellingHypothesis(out, name, mb);
-              if (!mb.areAllMechanicalDataSpecialised(mh)) {
+              sg.generateGeneralSymbols(out, *this, mb, fd, mhs, name);
+              if (!mb.areAllMechanicalDataSpecialised(mhs)) {
                 const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-                this->generateUMATxxSymbols(out, name, uh, mb, fd);
+                sg.generateSymbols(out, *this, mb, fd, name, uh);
               }
-              for (const auto& h : mh) {
+              for (const auto& h : mhs) {
                 if (mb.hasSpecialisedMechanicalData(h)) {
-                  this->generateUMATxxSymbols(out, name, h, mb, fd);
+                  sg.generateSymbols(out, *this, mb, fd, name, h);
                 }
               }
               out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name)
@@ -903,15 +902,16 @@ namespace mfront {
             }
           } else if (fs == "LogarithmicStrain1D") {
             const auto agps = ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN;
-            this->generateUMATxxGeneralSymbols(out, name + "_log1D", mb, fd);
-            if (!mb.areAllMechanicalDataSpecialised(mh)) {
+            CastemSymbolsGenerator sg;
+            sg.generateGeneralSymbols(out, *this, mb, fd, {agps}, name + "_log1D");
+            if (!mb.areAllMechanicalDataSpecialised(mhs)) {
               const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-              this->generateUMATxxSymbols(out, name + "_log1D", uh, mb, fd);
+              sg.generateSymbols(out, *this, mb, fd, name + "_log1D", uh);
             }
-            for (const auto& h : mh) {
+            for (const auto& h : mhs) {
               if (h == agps) {
                 if (mb.hasSpecialisedMechanicalData(h)) {
-                  this->generateUMATxxSymbols(out, name + "_log1D", h, mb, fd);
+                  sg.generateSymbols(out, *this, mb, fd, name + "_log1D", h);
                 }
               }
             }
@@ -921,25 +921,20 @@ namespace mfront {
                 << "_BehaviourKinematic = 4u;\n\n";
             out << "MFRONT_SHAREDOBJ unsigned short umat" << makeLowerCase(name + "_log1D")
                 << "_Interface = 1u;\n\n";
-            out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name + "_log1D")
-                << "_nModellingHypotheses = " << 1u << "u;\n\n";
-            out << "MFRONT_SHAREDOBJ const char * \n"
-                << this->getFunctionNameBasis(name + "_log1D") << "_ModellingHypotheses[1u] = {\""
-                << ModellingHypothesis::toString(agps) << "\"};\n";
             if (fss.size() == 1u) {
-              this->generateUMATxxGeneralSymbols(out, name, mb, fd);
+              sg.generateGeneralSymbols(out, *this, mb, fd, mhs, name);
               out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name)
                   << "_nModellingHypotheses = " << 1u << "u;\n\n";
               out << "MFRONT_SHAREDOBJ const char * \n"
                   << this->getFunctionNameBasis(name) << "_ModellingHypotheses[1u] = {\""
                   << ModellingHypothesis::toString(agps) << "\"};\n";
-              if (!mb.areAllMechanicalDataSpecialised(mh)) {
+              if (!mb.areAllMechanicalDataSpecialised(mhs)) {
                 const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-                this->generateUMATxxSymbols(out, name, uh, mb, fd);
+                sg.generateSymbols(out, *this, mb, fd, name, uh);
               }
-              for (const auto& h : mh) {
+              for (const auto& h : mhs) {
                 if (mb.hasSpecialisedMechanicalData(h)) {
-                  this->generateUMATxxSymbols(out, name, h, mb, fd);
+                  sg.generateSymbols(out, *this, mb, fd, name, h);
                 }
               }
               out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name)
@@ -950,15 +945,15 @@ namespace mfront {
                   << "_Interface = 1u;\n\n";
             }
           } else if (fs == "None") {
-            this->generateUMATxxGeneralSymbols(out, name + "_ss", mb, fd);
-            UMATInterfaceBase::writeUMATxxSupportedModellingHypothesis(out, name + "_ss", mb);
-            if (!mb.areAllMechanicalDataSpecialised(mh)) {
+            CastemSymbolsGenerator sg;
+            sg.generateGeneralSymbols(out, *this, mb, fd, mhs, name + "_ss");
+            if (!mb.areAllMechanicalDataSpecialised(mhs)) {
               const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-              this->generateUMATxxSymbols(out, name + "_ss", uh, mb, fd);
+              sg.generateSymbols(out, *this, mb, fd, name + "_ss", uh);
             }
-            for (const auto& h : mh) {
+            for (const auto& h : mhs) {
               if (mb.hasSpecialisedMechanicalData(h)) {
-                this->generateUMATxxSymbols(out, name + "_ss", h, mb, fd);
+                sg.generateSymbols(out, *this, mb, fd, name + "_ss", h);
               }
             }
             out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name + "_ss")
@@ -968,15 +963,14 @@ namespace mfront {
             out << "MFRONT_SHAREDOBJ unsigned short umat" << makeLowerCase(name + "_ss")
                 << "_Interface = 1u;\n\n";
             if (fss.size() == 1u) {
-              this->generateUMATxxGeneralSymbols(out, name, mb, fd);
-              UMATInterfaceBase::writeUMATxxSupportedModellingHypothesis(out, name, mb);
-              if (!mb.areAllMechanicalDataSpecialised(mh)) {
+              sg.generateGeneralSymbols(out, *this, mb, fd, mhs, name);
+              if (!mb.areAllMechanicalDataSpecialised(mhs)) {
                 const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-                this->generateUMATxxSymbols(out, name, uh, mb, fd);
+                sg.generateSymbols(out, *this, mb, fd, name, uh);
               }
-              for (const auto& h : mh) {
+              for (const auto& h : mhs) {
                 if (mb.hasSpecialisedMechanicalData(h)) {
-                  this->generateUMATxxSymbols(out, name, h, mb, fd);
+                  sg.generateSymbols(out, *this, mb, fd, name, h);
                 }
               }
               out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name)
@@ -991,15 +985,15 @@ namespace mfront {
           }
         }
         if ((fss.size() != 1u) && (std::find(fss.begin(), fss.end(), "None") != fss.end())) {
-          this->generateUMATxxGeneralSymbols(out, name, mb, fd);
-          UMATInterfaceBase::writeUMATxxSupportedModellingHypothesis(out, name, mb);
-          if (!mb.areAllMechanicalDataSpecialised(mh)) {
+          CastemSymbolsGenerator sg;
+          sg.generateGeneralSymbols(out, *this, mb, fd, mhs, name);
+          if (!mb.areAllMechanicalDataSpecialised(mhs)) {
             const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-            this->generateUMATxxSymbols(out, name, uh, mb, fd);
+            sg.generateSymbols(out, *this, mb, fd, name, uh);
           }
-          for (const auto& h : mh) {
+          for (const auto& h : mhs) {
             if (mb.hasSpecialisedMechanicalData(h)) {
-              this->generateUMATxxSymbols(out, name, h, mb, fd);
+              sg.generateSymbols(out, *this, mb, fd, name, h);
             }
           }
           out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name)
@@ -1011,15 +1005,15 @@ namespace mfront {
         }
       }
     } else {
-      this->generateUMATxxGeneralSymbols(out, name, mb, fd);
-      UMATInterfaceBase::writeUMATxxSupportedModellingHypothesis(out, name, mb);
-      if (!mb.areAllMechanicalDataSpecialised(mh)) {
+      CastemSymbolsGenerator sg;
+      sg.generateGeneralSymbols(out, *this, mb, fd, mhs, name);
+      if (!mb.areAllMechanicalDataSpecialised(mhs)) {
         const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-        this->generateUMATxxSymbols(out, name, uh, mb, fd);
+        sg.generateSymbols(out, *this, mb, fd, name, uh);
       }
-      for (const auto& h : mh) {
+      for (const auto& h : mhs) {
         if (mb.hasSpecialisedMechanicalData(h)) {
-          this->generateUMATxxSymbols(out, name, h, mb, fd);
+          sg.generateSymbols(out, *this, mb, fd, name, h);
         }
       }
       if (mb.getBehaviourType() == BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
@@ -1040,29 +1034,29 @@ namespace mfront {
       }
     }
 
-    this->writeSetParametersFunctionsImplementations(out, name, mb);
+    this->writeSetParametersFunctionsImplementations(out, mb, name);
     this->writeSetOutOfBoundsPolicyFunctionImplementation(out, name);
     if ((mb.getBehaviourType() == BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) &&
         (areFiniteStrainStrategiesDefined(mb))) {
       const auto fss = getFiniteStrainStrategies(mb);
       for (const auto& fs : fss) {
         if (fs == "FiniteRotationSmallStrain") {
-          this->writeSetParametersFunctionsImplementations(out, name + "_frst", mb);
+          this->writeSetParametersFunctionsImplementations(out, mb, name + "_frst");
           if (fss.size() != 1u) {
             this->writeSetOutOfBoundsPolicyFunctionImplementation2(out, name, name + "_frst");
           }
         } else if (fs == "MieheApelLambrechtLogarithmicStrain") {
-          this->writeSetParametersFunctionsImplementations(out, name + "_malls", mb);
+          this->writeSetParametersFunctionsImplementations(out, mb, name + "_malls");
           if (fss.size() != 1u) {
             this->writeSetOutOfBoundsPolicyFunctionImplementation2(out, name, name + "_malls");
           }
         } else if (fs == "LogarithmicStrain1D") {
-          this->writeSetParametersFunctionsImplementations(out, name + "_log1D", mb);
+          this->writeSetParametersFunctionsImplementations(out, mb, name + "_log1D");
           if (fss.size() != 1u) {
             this->writeSetOutOfBoundsPolicyFunctionImplementation2(out, name, name + "_log1D");
           }
         } else if (fs == "None") {
-          this->writeSetParametersFunctionsImplementations(out, name + "_ss", mb);
+          this->writeSetParametersFunctionsImplementations(out, mb, name + "_ss");
           if (fss.size() != 1u) {
             this->writeSetOutOfBoundsPolicyFunctionImplementation2(out, name, name + "_ss");
           }
@@ -1304,7 +1298,7 @@ namespace mfront {
     insert_if(d[lib].epts, b);
   }  // end of CastemInterface::getTargetsDescription
 
-  std::pair<std::vector<UMATInterfaceBase::UMATMaterialProperty>, SupportedTypes::TypeSize>
+  std::pair<std::vector<BehaviourMaterialProperty>, SupportedTypes::TypeSize>
   CastemInterface::buildMaterialPropertiesList(const BehaviourDescription& mb,
                                                const Hypothesis h) const {
     using namespace std;
@@ -1322,7 +1316,8 @@ namespace mfront {
                      "says that not all handled mechanical data "
                      "are specialised, but we found none.");
       // material properties for all the selected hypothesis
-      auto mpositions = vector<pair<vector<UMATMaterialProperty>, SupportedTypes::TypeSize>>{};
+      auto mpositions = vector<
+          pair<vector<BehaviourMaterialProperty>, SupportedTypes::TypeSize>>{};
       for (const auto& lh : uh) {
         mpositions.push_back(this->buildMaterialPropertiesList(mb, lh));
       }
@@ -1332,114 +1327,159 @@ namespace mfront {
       ++ph;
       ++pum;
       for (; ph != uh.end(); ++ph, ++pum) {
-        const auto& d = mb.getBehaviourData(ModellingHypothesis::UNDEFINEDHYPOTHESIS);
+        const auto& d =
+            mb.getBehaviourData(ModellingHypothesis::UNDEFINEDHYPOTHESIS);
         const auto& mps = d.getMaterialProperties();
         for (const auto& mp : mps) {
-          const auto& mp1 = findUMATMaterialProperty(mfirst.first, mb.getExternalName(h, mp.name));
-          const auto& mp2 = findUMATMaterialProperty(pum->first, mb.getExternalName(h, mp.name));
+          const auto& mp1 = findBehaviourMaterialProperty(
+              mfirst.first, mb.getExternalName(h, mp.name));
+          const auto& mp2 = findBehaviourMaterialProperty(
+              pum->first, mb.getExternalName(h, mp.name));
           SupportedTypes::TypeSize o1 = mp1.offset;
           o1 += pum->second;
           SupportedTypes::TypeSize o2 = mp2.offset;
           o2 += mfirst.second;
-          tfel::raise_if(o1 != o2,
-                         "CastemInterface::buildMaterialPropertiesList: "
-                         "incompatible offset for material "
-                         "property '" +
-                             mp.name + "' (aka '" + mp1.name +
-                             "'). "
-                             "This is one pitfall of the umat interface. "
-                             "To by-pass this limitation, you may want to "
-                             "explicitely specialise some modelling hypotheses");
+          tfel::raise_if(
+              o1 != o2,
+              "CastemInterface::buildMaterialPropertiesList: "
+              "incompatible offset for material "
+              "property '" +
+                  mp.name + "' (aka '" + mp1.name +
+                  "'). "
+                  "This is one pitfall of the umat interface. "
+                  "To by-pass this limitation, you may want to "
+                  "explicitely specialise some modelling hypotheses");
         }
       }
       return mfirst;
     }
-    auto res = std::pair<std::vector<UMATMaterialProperty>, SupportedTypes::TypeSize>{};
+    auto res = std::pair<std::vector<BehaviourMaterialProperty>,
+                         SupportedTypes::TypeSize>{};
     auto& mprops = res.first;
-    if ((mb.getBehaviourType() == BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) ||
-        (mb.getBehaviourType() == BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR)) {
+    if ((mb.getBehaviourType() ==
+         BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) ||
+        (mb.getBehaviourType() ==
+         BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR)) {
       if (mb.getSymmetryType() == mfront::ISOTROPIC) {
-        this->appendToMaterialPropertiesList(mprops, "stress", "YoungModulus", "youn", false);
-        this->appendToMaterialPropertiesList(mprops, "real", "PoissonRatio", "nu", false);
-        this->appendToMaterialPropertiesList(mprops, "massdensity", "MassDensity", "rho", false);
-        this->appendToMaterialPropertiesList(mprops, "thermalexpansion", "ThermalExpansion", "alph",
-                                             false);
+        appendToMaterialPropertiesList(mprops, "stress", "YoungModulus", "youn",
+                                       false);
+        appendToMaterialPropertiesList(mprops, "real", "PoissonRatio", "nu",
+                                       false);
+        appendToMaterialPropertiesList(mprops, "massdensity", "MassDensity",
+                                       "rho", false);
+        appendToMaterialPropertiesList(mprops, "thermalexpansion",
+                                       "ThermalExpansion", "alph", false);
         if (h == ModellingHypothesis::PLANESTRESS) {
-          this->appendToMaterialPropertiesList(mprops, "length", "PlateWidth", "dim3", false);
+          appendToMaterialPropertiesList(mprops, "length", "PlateWidth", "dim3",
+                                         false);
         }
       } else if (mb.getSymmetryType() == mfront::ORTHOTROPIC) {
         if (h == ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) {
-          this->appendToMaterialPropertiesList(mprops, "stress", "YoungModulus1", "yg1", false);
-          this->appendToMaterialPropertiesList(mprops, "stress", "YoungModulus2", "yg2", false);
-          this->appendToMaterialPropertiesList(mprops, "stress", "YoungModulus3", "yg3", false);
-          this->appendToMaterialPropertiesList(mprops, "real", "PoissonRatio12", "nu12", false);
-          this->appendToMaterialPropertiesList(mprops, "real", "PoissonRatio23", "nu23", false);
-          this->appendToMaterialPropertiesList(mprops, "real", "PoissonRatio13", "nu13", false);
-          this->appendToMaterialPropertiesList(mprops, "massdensity", "MassDensity", "rho", false);
-          this->appendToMaterialPropertiesList(mprops, "thermalexpansion", "ThermalExpansion1",
-                                               "alp1", false);
-          this->appendToMaterialPropertiesList(mprops, "thermalexpansion", "ThermalExpansion2",
-                                               "alp2", false);
-          this->appendToMaterialPropertiesList(mprops, "thermalexpansion", "ThermalExpansion3",
-                                               "alp3", false);
+          appendToMaterialPropertiesList(mprops, "stress", "YoungModulus1",
+                                         "yg1", false);
+          appendToMaterialPropertiesList(mprops, "stress", "YoungModulus2",
+                                         "yg2", false);
+          appendToMaterialPropertiesList(mprops, "stress", "YoungModulus3",
+                                         "yg3", false);
+          appendToMaterialPropertiesList(mprops, "real", "PoissonRatio12",
+                                         "nu12", false);
+          appendToMaterialPropertiesList(mprops, "real", "PoissonRatio23",
+                                         "nu23", false);
+          appendToMaterialPropertiesList(mprops, "real", "PoissonRatio13",
+                                         "nu13", false);
+          appendToMaterialPropertiesList(mprops, "massdensity", "MassDensity",
+                                         "rho", false);
+          appendToMaterialPropertiesList(mprops, "thermalexpansion",
+                                         "ThermalExpansion1", "alp1", false);
+          appendToMaterialPropertiesList(mprops, "thermalexpansion",
+                                         "ThermalExpansion2", "alp2", false);
+          appendToMaterialPropertiesList(mprops, "thermalexpansion",
+                                         "ThermalExpansion3", "alp3", false);
         } else if (h == ModellingHypothesis::PLANESTRESS) {
-          this->appendToMaterialPropertiesList(mprops, "stress", "YoungModulus1", "yg1", false);
-          this->appendToMaterialPropertiesList(mprops, "stress", "YoungModulus2", "yg2", false);
-          this->appendToMaterialPropertiesList(mprops, "real", "PoissonRatio12", "nu12", false);
-          this->appendToMaterialPropertiesList(mprops, "stress", "ShearModulus12", "g12", false);
-          this->appendToMaterialPropertiesList(mprops, "real", "V1X", "v1x", true);
-          this->appendToMaterialPropertiesList(mprops, "real", "V1Y", "v1y", true);
-          this->appendToMaterialPropertiesList(mprops, "stress", "YoungModulus3", "yg3", false);
-          this->appendToMaterialPropertiesList(mprops, "real", "PoissonRatio23", "nu23", false);
-          this->appendToMaterialPropertiesList(mprops, "real", "PoissonRatio13", "nu13", false);
-          this->appendToMaterialPropertiesList(mprops, "massdensity", "MassDensity", "rho", false);
-          this->appendToMaterialPropertiesList(mprops, "thermalexpansion", "ThermalExpansion1",
-                                               "alp1", false);
-          this->appendToMaterialPropertiesList(mprops, "thermalexpansion", "ThermalExpansion2",
-                                               "alp2", false);
-          this->appendToMaterialPropertiesList(mprops, "length", "PlateWidth", "dim3", false);
+          appendToMaterialPropertiesList(mprops, "stress", "YoungModulus1",
+                                         "yg1", false);
+          appendToMaterialPropertiesList(mprops, "stress", "YoungModulus2",
+                                         "yg2", false);
+          appendToMaterialPropertiesList(mprops, "real", "PoissonRatio12",
+                                         "nu12", false);
+          appendToMaterialPropertiesList(mprops, "stress", "ShearModulus12",
+                                         "g12", false);
+          appendToMaterialPropertiesList(mprops, "real", "V1X", "v1x", true);
+          appendToMaterialPropertiesList(mprops, "real", "V1Y", "v1y", true);
+          appendToMaterialPropertiesList(mprops, "stress", "YoungModulus3",
+                                         "yg3", false);
+          appendToMaterialPropertiesList(mprops, "real", "PoissonRatio23",
+                                         "nu23", false);
+          appendToMaterialPropertiesList(mprops, "real", "PoissonRatio13",
+                                         "nu13", false);
+          appendToMaterialPropertiesList(mprops, "massdensity", "MassDensity",
+                                         "rho", false);
+          appendToMaterialPropertiesList(mprops, "thermalexpansion",
+                                         "ThermalExpansion1", "alp1", false);
+          appendToMaterialPropertiesList(mprops, "thermalexpansion",
+                                         "ThermalExpansion2", "alp2", false);
+          appendToMaterialPropertiesList(mprops, "length", "PlateWidth", "dim3",
+                                         false);
         } else if ((h == ModellingHypothesis::AXISYMMETRICAL) ||
                    (h == ModellingHypothesis::PLANESTRAIN) ||
                    (h == ModellingHypothesis::GENERALISEDPLANESTRAIN)) {
-          this->appendToMaterialPropertiesList(mprops, "stress", "YoungModulus1", "yg1", false);
-          this->appendToMaterialPropertiesList(mprops, "stress", "YoungModulus2", "yg2", false);
-          this->appendToMaterialPropertiesList(mprops, "stress", "YoungModulus3", "yg3", false);
-          this->appendToMaterialPropertiesList(mprops, "real", "PoissonRatio12", "nu12", false);
-          this->appendToMaterialPropertiesList(mprops, "real", "PoissonRatio23", "nu23", false);
-          this->appendToMaterialPropertiesList(mprops, "real", "PoissonRatio13", "nu13", false);
-          this->appendToMaterialPropertiesList(mprops, "stress", "ShearModulus12", "g12", false);
-          this->appendToMaterialPropertiesList(mprops, "real", "V1X", "v1x", true);
-          this->appendToMaterialPropertiesList(mprops, "real", "V1Y", "v1y", true);
-          this->appendToMaterialPropertiesList(mprops, "massdensity", "MassDensity", "rho", false);
-          this->appendToMaterialPropertiesList(mprops, "thermalexpansion", "ThermalExpansion1",
-                                               "alp1", false);
-          this->appendToMaterialPropertiesList(mprops, "thermalexpansion", "ThermalExpansion2",
-                                               "alp2", false);
-          this->appendToMaterialPropertiesList(mprops, "thermalexpansion", "ThermalExpansion3",
-                                               "alp3", false);
+          appendToMaterialPropertiesList(mprops, "stress", "YoungModulus1",
+                                         "yg1", false);
+          appendToMaterialPropertiesList(mprops, "stress", "YoungModulus2",
+                                         "yg2", false);
+          appendToMaterialPropertiesList(mprops, "stress", "YoungModulus3",
+                                         "yg3", false);
+          appendToMaterialPropertiesList(mprops, "real", "PoissonRatio12",
+                                         "nu12", false);
+          appendToMaterialPropertiesList(mprops, "real", "PoissonRatio23",
+                                         "nu23", false);
+          appendToMaterialPropertiesList(mprops, "real", "PoissonRatio13",
+                                         "nu13", false);
+          appendToMaterialPropertiesList(mprops, "stress", "ShearModulus12",
+                                         "g12", false);
+          appendToMaterialPropertiesList(mprops, "real", "V1X", "v1x", true);
+          appendToMaterialPropertiesList(mprops, "real", "V1Y", "v1y", true);
+          appendToMaterialPropertiesList(mprops, "massdensity", "MassDensity",
+                                         "rho", false);
+          appendToMaterialPropertiesList(mprops, "thermalexpansion",
+                                         "ThermalExpansion1", "alp1", false);
+          appendToMaterialPropertiesList(mprops, "thermalexpansion",
+                                         "ThermalExpansion2", "alp2", false);
+          appendToMaterialPropertiesList(mprops, "thermalexpansion",
+                                         "ThermalExpansion3", "alp3", false);
         } else if (h == ModellingHypothesis::TRIDIMENSIONAL) {
-          this->appendToMaterialPropertiesList(mprops, "stress", "YoungModulus1", "yg1", false);
-          this->appendToMaterialPropertiesList(mprops, "stress", "YoungModulus2", "yg2", false);
-          this->appendToMaterialPropertiesList(mprops, "stress", "YoungModulus3", "yg3", false);
-          this->appendToMaterialPropertiesList(mprops, "real", "PoissonRatio12", "nu12", false);
-          this->appendToMaterialPropertiesList(mprops, "real", "PoissonRatio23", "nu23", false);
-          this->appendToMaterialPropertiesList(mprops, "real", "PoissonRatio13", "nu13", false);
-          this->appendToMaterialPropertiesList(mprops, "stress", "ShearModulus12", "g12", false);
-          this->appendToMaterialPropertiesList(mprops, "stress", "ShearModulus23", "g23", false);
-          this->appendToMaterialPropertiesList(mprops, "stress", "ShearModulus13", "g13", false);
-          this->appendToMaterialPropertiesList(mprops, "real", "V1X", "v1x", true);
-          this->appendToMaterialPropertiesList(mprops, "real", "V1Y", "v1y", true);
-          this->appendToMaterialPropertiesList(mprops, "real", "V1Z", "v1z", true);
-          this->appendToMaterialPropertiesList(mprops, "real", "V2X", "v2x", true);
-          this->appendToMaterialPropertiesList(mprops, "real", "V2Y", "v2y", true);
-          this->appendToMaterialPropertiesList(mprops, "real", "V2Z", "v2z", true);
-          this->appendToMaterialPropertiesList(mprops, "massdensity", "MassDensity", "rho", false);
-          this->appendToMaterialPropertiesList(mprops, "thermalexpansion", "ThermalExpansion1",
-                                               "alp1", false);
-          this->appendToMaterialPropertiesList(mprops, "thermalexpansion", "ThermalExpansion2",
-                                               "alp2", false);
-          this->appendToMaterialPropertiesList(mprops, "thermalexpansion", "ThermalExpansion3",
-                                               "alp3", false);
+          appendToMaterialPropertiesList(mprops, "stress", "YoungModulus1",
+                                         "yg1", false);
+          appendToMaterialPropertiesList(mprops, "stress", "YoungModulus2",
+                                         "yg2", false);
+          appendToMaterialPropertiesList(mprops, "stress", "YoungModulus3",
+                                         "yg3", false);
+          appendToMaterialPropertiesList(mprops, "real", "PoissonRatio12",
+                                         "nu12", false);
+          appendToMaterialPropertiesList(mprops, "real", "PoissonRatio23",
+                                         "nu23", false);
+          appendToMaterialPropertiesList(mprops, "real", "PoissonRatio13",
+                                         "nu13", false);
+          appendToMaterialPropertiesList(mprops, "stress", "ShearModulus12",
+                                         "g12", false);
+          appendToMaterialPropertiesList(mprops, "stress", "ShearModulus23",
+                                         "g23", false);
+          appendToMaterialPropertiesList(mprops, "stress", "ShearModulus13",
+                                         "g13", false);
+          appendToMaterialPropertiesList(mprops, "real", "V1X", "v1x", true);
+          appendToMaterialPropertiesList(mprops, "real", "V1Y", "v1y", true);
+          appendToMaterialPropertiesList(mprops, "real", "V1Z", "v1z", true);
+          appendToMaterialPropertiesList(mprops, "real", "V2X", "v2x", true);
+          appendToMaterialPropertiesList(mprops, "real", "V2Y", "v2y", true);
+          appendToMaterialPropertiesList(mprops, "real", "V2Z", "v2z", true);
+          appendToMaterialPropertiesList(mprops, "massdensity", "MassDensity",
+                                         "rho", false);
+          appendToMaterialPropertiesList(mprops, "thermalexpansion",
+                                         "ThermalExpansion1", "alp1", false);
+          appendToMaterialPropertiesList(mprops, "thermalexpansion",
+                                         "ThermalExpansion2", "alp2", false);
+          appendToMaterialPropertiesList(mprops, "thermalexpansion",
+                                         "ThermalExpansion3", "alp3", false);
         } else {
           tfel::raise(
               "CastemInterface::buildMaterialPropertiesList: "
@@ -1452,15 +1492,19 @@ namespace mfront {
             "The umat interface only support isotropic or "
             "orthotropic behaviour at this time.");
       }
-    } else if (mb.getBehaviourType() == BehaviourDescription::COHESIVEZONEMODEL) {
+    } else if (mb.getBehaviourType() ==
+               BehaviourDescription::COHESIVEZONEMODEL) {
       if (mb.getSymmetryType() == mfront::ISOTROPIC) {
         //! those are not the Cast3M conventions, switch is performed
         //! below the CastemInterface class
-        this->appendToMaterialPropertiesList(mprops, "real", "NormalStiffness", "kn", false);
-        this->appendToMaterialPropertiesList(mprops, "real", "TangentialStiffness", "kt", false);
-        this->appendToMaterialPropertiesList(mprops, "massdensity", "MassDensity", "rho", false);
-        this->appendToMaterialPropertiesList(mprops, "thermalexpansion", "NormalThermalExpansion",
-                                             "ALPN", false);
+        appendToMaterialPropertiesList(mprops, "real", "NormalStiffness", "kn",
+                                       false);
+        appendToMaterialPropertiesList(mprops, "real", "TangentialStiffness",
+                                       "kt", false);
+        appendToMaterialPropertiesList(mprops, "massdensity", "MassDensity",
+                                       "rho", false);
+        appendToMaterialPropertiesList(mprops, "thermalexpansion",
+                                       "NormalThermalExpansion", "ALPN", false);
       } else {
         tfel::raise(
             "CastemInterface::buildMaterialPropertiesList: "
@@ -1476,44 +1520,9 @@ namespace mfront {
       res.second = m.offset;
       res.second += SupportedTypes::getTypeSize(m.type, m.arraySize);
     }
-    this->completeMaterialPropertiesList(mprops, mb, h);
+    completeMaterialPropertiesList(mprops, mb, h);
     return res;
   }  // end of CastemInterface::buildMaterialPropertiesList
-
-  void CastemInterface::writeUMATxxSupportedModellingHypothesis(std::ostream&,
-                                                                const std::string&,
-                                                                const BehaviourDescription&) const {
-  }  // end of CastemInterface::::writeUMATxxSupportedModellingHypothesis
-
-  void CastemInterface::writeUMATxxBehaviourTypeSymbols(std::ostream&,
-                                                        const std::string&,
-                                                        const BehaviourDescription&) const {
-  }  // end of CastemInterface::writeUMATxxBehaviourTypeSymbols
-
-  void CastemInterface::writeUMATxxBehaviourKinematicSymbols(std::ostream&,
-                                                             const std::string&,
-                                                             const BehaviourDescription&) const {
-  }  // end of CastemInterface::writeUMATxxBehaviourKinematicSymbols
-
-  void CastemInterface::writeUMATxxAdditionalSymbols(std::ostream&,
-                                                     const std::string&,
-                                                     const Hypothesis,
-                                                     const BehaviourDescription&,
-                                                     const FileDescription&) const {
-  }  // end of CastemInterface::writeUMATxxAdditionalSymbols
-
-  void CastemInterface::writeUMATxxSpecificSymbols(std::ostream& out,
-                                                   const std::string& name,
-                                                   const BehaviourDescription& mb,
-                                                   const FileDescription&) const {
-    if (CastemInterface::usesGenericPlaneStressAlgorithm(mb)) {
-      out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name)
-          << "_UsesGenericPlaneStressAlgorithm = 1u;\n\n";
-    } else {
-      out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name)
-          << "_UsesGenericPlaneStressAlgorithm = 0u;\n\n";
-    }
-  }
 
   void CastemInterface::writeCastemFunctionDeclaration(std::ostream& out,
                                                        const std::string& name) const {
@@ -2345,8 +2354,8 @@ namespace mfront {
     auto res = std::map<Hypothesis, std::string>{};
     if (mb.getSymmetryType() == mfront::ORTHOTROPIC) {
       const auto h = this->getModellingHypothesesToBeTreated(mb);
-      for (const auto& mh : h) {
-        res.insert({mh, this->getModellingHypothesisTest(mh)});
+      for (const auto& mhs : h) {
+        res.insert({mhs, this->getModellingHypothesisTest(mhs)});
       }
       return res;
     }

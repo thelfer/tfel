@@ -1,5 +1,5 @@
 /*!
- * \file  mfront/mtest/MTest.cxx
+ * \file  mtest/src/MTest.cxx
  * \brief
  * \author Thomas Helfer
  * \brief 12 avril 2013
@@ -883,8 +883,8 @@ namespace mtest {
     for (const auto& test : this->tests) {
       test->check(s, t, dt, p);
     }
-    for (const auto& p: this->upostprocessings) {
-      p->exe(s, t, dt);
+    for (const auto& up: this->upostprocessings) {
+      up->exe(s, t, dt);
     }
   }  // end of MTest::postConvergence
 

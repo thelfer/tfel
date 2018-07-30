@@ -1,5 +1,5 @@
 /*! 
- * \file   mfront/mtest/AnsysFiniteStrainBehaviour.cxx
+ * \file   mtest/src/AnsysFiniteStrainBehaviour.cxx
  * \brief
  * \author Thomas Helfer
  * \brief  07 avril 2013
@@ -25,7 +25,6 @@
 
 #include"MTest/CurrentState.hxx"
 #include"MTest/BehaviourWorkSpace.hxx"
-#include"MTest/UmatNormaliseTangentOperator.hxx"
 #include"MTest/AnsysNormaliseTangentOperator.hxx"
 #include"MTest/AnsysFiniteStrainBehaviour.hxx"
 
@@ -214,7 +213,7 @@ namespace mtest
     }
     if(h==ModellingHypothesis::TRIDIMENSIONAL){
       st2tost2<3u,AnsysReal> K;
-      UmatNormaliseTangentOperator::exe(&K(0,0),wk.D,3u);
+      AnsysNormaliseTangentOperator::exe(&K(0,0),wk.D,3u);
       const auto ds = convert<TangentOperator::DSIG_DF,
 			      TangentOperator::ABAQUS>(K,tensor<3u,double>(&s.e0[0]),
 						       tensor<3u,double>(&s.e1[0]),
@@ -255,7 +254,7 @@ namespace mtest
 	*(p+15) = D2[8];
       }
       st2tost2<2u,AnsysReal> K;
-      UmatNormaliseTangentOperator::exe(&K(0,0),wk.D,2u);
+      AnsysNormaliseTangentOperator::exe(&K(0,0),wk.D,2u);
       const auto ds = convert<TangentOperator::DSIG_DF,
 			      TangentOperator::ABAQUS>(K,tensor<2u,double>(&s.e0[0]),
 						       tensor<2u,double>(&s.e1[0]),

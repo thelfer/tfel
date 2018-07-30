@@ -134,12 +134,14 @@ namespace mtest{
     return this->b->getThermodynamicForceComponentPosition(c);
   } // end of LogarithmicStrain1DBehaviourWrapper::getThermodynamicForceComponentPosition
 
-  unsigned short
-  LogarithmicStrain1DBehaviourWrapper::getSymmetryType() const
-  {
+  unsigned short LogarithmicStrain1DBehaviourWrapper::getSymmetryType() const {
     return this->b->getSymmetryType();
   } // end of LogarithmicStrain1DBehaviourWrapper::getSymmetryType
 
+  size_t LogarithmicStrain1DBehaviourWrapper::getMaterialPropertiesSize() const{
+    return this->b->getMaterialPropertiesSize();
+  } // end of LogarithmicStrain1DBehaviourWrapper::getMaterialPropertiesSize
+  
   std::vector<std::string>
   LogarithmicStrain1DBehaviourWrapper::getMaterialPropertiesNames() const
   {
@@ -195,6 +197,12 @@ namespace mtest{
     return this->b->getExternalStateVariablesNames();
   } // end of LogarithmicStrain1DBehaviourWrapper::getExternalStateVariablesNames
 
+  size_t
+  LogarithmicStrain1DBehaviourWrapper::getExternalStateVariablesSize() const
+  {
+    return this->b->getExternalStateVariablesSize();
+  } // end of LogarithmicStrain1DBehaviourWrapper::getExternalStateVariablesSize
+  
   std::vector<std::string>
   LogarithmicStrain1DBehaviourWrapper::getParametersNames() const 
   {

@@ -16,7 +16,7 @@
 
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/System/ExternalFunctionsPrototypes.hxx"
-#include"MTest/UmatBehaviourBase.hxx"
+#include"MTest/StandardBehaviourBase.hxx"
 
 namespace mtest {
 
@@ -25,7 +25,7 @@ namespace mtest {
    * interface
    */
   struct MTEST_VISIBILITY_EXPORT AbaqusStandardBehaviour
-    : public UmatBehaviourBase
+    : public StandardBehaviourBase
   {
     /*!
      * \return the suffix associated with a modelling hypothesis

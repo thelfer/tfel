@@ -1,5 +1,5 @@
 /*!
- * \file   mfront/mtest/CyranoBehaviour.cxx
+ * \file   mtest/src/CyranoBehaviour.cxx
  * \brief
  * \author Thomas Helfer
  * \brief 07 avril 2013
@@ -31,7 +31,7 @@ namespace mtest
   CyranoBehaviour::CyranoBehaviour(const Hypothesis h,
 				   const std::string& l,
 				   const std::string& b)
-    : UmatBehaviourBase(h,l,b)
+    : StandardBehaviourBase(h,l,b)
   {
     auto throw_if = [](const bool c, const std::string& m){
       tfel::raise_if(c,"CyranoBehaviour::CyranoBehaviour: "+m);
@@ -159,7 +159,7 @@ namespace mtest
 	     "the memory has not been allocated correctly");
     std::fill(wk.D.begin(),wk.D.end(),0.);
     // choosing the type of stiffness matrix
-    UmatBehaviourBase::initializeTangentOperator(wk.D,ktype,b);
+    StandardBehaviourBase::initializeTangentOperator(wk.D,ktype,b);
     // using a local copy of material properties to handle the
     // case where s.mprops1 is empty
     std::copy(s.mprops1.begin(),s.mprops1.end(),wk.mps.begin());

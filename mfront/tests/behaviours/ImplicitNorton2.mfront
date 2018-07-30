@@ -13,7 +13,7 @@
 
 // @CompareToNumericalJacobian true;
 // @JacobianComparisonCriterium 1.e-8;
-@PerturbationValueForNumericalJacobianComputation 1.e-8;
+// @PerturbationValueForNumericalJacobianComputation 1.e-8;
 
 @MaterialProperty stress young;
 young.setGlossaryName("YoungModulus");
@@ -44,20 +44,6 @@ evp.setGlossaryName("ViscoplasticStrain");
   mu = computeMu(young,nu);
 } // end of @InitLocalVariables
 
-@TangentOperator{
-  if((smt==ELASTIC)||(smt==SECANTOPERATOR)){
-    computeAlteredElasticStiffness<hypothesis,Type>::exe(Dt,lambda,mu);
-  } else if (smt==CONSISTENTTANGENTOPERATOR){
-    StiffnessTensor De;
-    Stensor4 Je;
-    computeUnalteredElasticStiffness<N,Type>::exe(De,lambda,mu);
-    getPartialJacobianInvert(Je);
-    Dt = De*Je;
-  } else {
-    return false;
-  }
-}
-
 @ComputeStress{
   sig = lambda*trace(eel)*Stensor::Id()+2*mu*eel;
 } // end of @ComputeStresss
@@ -86,3 +72,17 @@ evp.setGlossaryName("ViscoplasticStrain");
     dfp_ddeel(i)    = -2*mu*theta*tmp*E*dt*n;
   }
 } // end of @Integrator
+
+@TangentOperator{
+  if((smt==ELASTIC)||(smt==SECANTOPERATOR)){
+    computeAlteredElasticStiffness<hypothesis,Type>::exe(Dt,lambda,mu);
+  } else if (smt==CONSISTENTTANGENTOPERATOR){
+    StiffnessTensor De;
+    Stensor4 Je;
+    computeUnalteredElasticStiffness<N,Type>::exe(De,lambda,mu);
+    getPartialJacobianInvert(Je);
+    Dt = De*Je;
+  } else {
+    return false;
+  }
+}

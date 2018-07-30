@@ -22,6 +22,7 @@
 #include"MFront/MFrontLock.hxx"
 #include"MFront/FileDescription.hxx"
 #include"MFront/TargetsDescription.hxx"
+#include"MFront/AbaqusExplicitSymbolsGenerator.hxx"
 #include"MFront/AbaqusExplicitInterface.hxx"
 
 static const std::string
@@ -30,8 +31,7 @@ AbaqusExplicitParallelizationPolicy = "AbaqusExplicit::ParallelizationPolicy";
 namespace mfront{
   
   //! copy vumat-sp.cpp and vumat-dp locally
-  static void copyVUMATFiles()
-  {
+  static void copyVUMATFiles() {
     std::ofstream out;
     MFrontLockGuard lock;
     for(const std::string f: {"vumat-sp.cpp","vumat-dp.cpp"}){
@@ -217,17 +217,11 @@ namespace mfront{
 	  << type << "* const,\n"
 	  << "const int)";
   } // end of writeVUMATArguments
-  
-  std::string
-  AbaqusExplicitInterface::getName()
-  {
-    return "abaqusexplicit";
-  }
 
-  void
-  AbaqusExplicitInterface::getTargetsDescription(TargetsDescription& d,
-						 const BehaviourDescription& bd)
-  {
+  std::string AbaqusExplicitInterface::getName() { return "abaqusexplicit"; }
+
+  void AbaqusExplicitInterface::getTargetsDescription(
+      TargetsDescription& d, const BehaviourDescription& bd) {
     const auto ppolicy =
       bd.getAttribute<std::string>(AbaqusExplicitParallelizationPolicy,"None");
     const auto lib  = this->getLibraryName(bd);
@@ -267,17 +261,13 @@ namespace mfront{
     }
   } // end of AbaqusExplicitInterface::getTargetsDescription
 
-  void 
-  AbaqusExplicitInterface::writeInterfaceSpecificIncludes(std::ostream& out,
-							  const BehaviourDescription&) const
-  {
+  void AbaqusExplicitInterface::writeInterfaceSpecificIncludes(
+      std::ostream& out, const BehaviourDescription&) const {
     out << "#include\"MFront/Abaqus/AbaqusExplicitInterface.hxx\"\n\n";
   } // end of AbaqusExplicitInterface::writeInterfaceSpecificIncludes
-  
-  void
-  AbaqusExplicitInterface::endTreatment(const BehaviourDescription& mb,
-					const FileDescription& fd) const
-  {
+
+  void AbaqusExplicitInterface::endTreatment(const BehaviourDescription& mb,
+                                             const FileDescription& fd) const {
     auto throw_if = [](const bool b,const std::string& m){
       tfel::raise_if(b,"AbaqusExplicitInterface::endTreatment: "+m);
     };
@@ -293,7 +283,7 @@ namespace mfront{
 	     "must be embedded in a strain strategy. See the "
 	     "'@AbaqusFiniteStrainStrategy' keyword");
     // get the modelling hypotheses to be treated
-    const auto& mh = this->getModellingHypothesesToBeTreated(mb);
+    const auto& mhs = this->getModellingHypothesesToBeTreated(mb);
     const auto name =  mb.getLibrary()+mb.getClassName();
     const auto ppolicy =
       mb.getAttribute<std::string>(AbaqusExplicitParallelizationPolicy,"None");
@@ -333,10 +323,10 @@ namespace mfront{
     out << "#ifdef __cplusplus\n\n"
 	<< "namespace abaqus{\n\n";
 
-    if(!mb.areAllMechanicalDataSpecialised(mh)){
+    if(!mb.areAllMechanicalDataSpecialised(mhs)){
       this->writeAbaqusBehaviourTraits(out,mb,ModellingHypothesis::UNDEFINEDHYPOTHESIS);
     }
-    for(const auto & h : mh){
+    for(const auto & h : mhs){
       if(mb.hasSpecialisedMechanicalData(h)){
 	this->writeAbaqusBehaviourTraits(out,mb,h);
       }
@@ -349,9 +339,9 @@ namespace mfront{
 	<< "#endif /* __cplusplus */\n\n";
 
     this->writeSetOutOfBoundsPolicyFunctionDeclaration(out,name);
-    this->writeSetParametersFunctionsDeclarations(out,name,mb);
+    this->writeSetParametersFunctionsDeclarations(out, mb, name);
 
-    for(const auto & h : mh){
+    for(const auto & h : mhs){
       out << "MFRONT_SHAREDOBJ void\n" << this->getFunctionNameForHypothesis(name,h) << "_f";
       writeVUMATArguments(out,"float");
       out << ";\n\n";
@@ -413,22 +403,22 @@ namespace mfront{
     }
 
     out << "extern \"C\"{\n\n";
- 
-    this->generateUMATxxGeneralSymbols(out,name,mb,fd);
-    if(!mb.areAllMechanicalDataSpecialised(mh)){
+    AbaqusExplicitSymbolsGenerator sg;
+    sg.generateGeneralSymbols(out, *this, mb, fd, mhs, name);
+    if (!mb.areAllMechanicalDataSpecialised(mhs)) {
       const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-      this->generateUMATxxSymbols(out,name,uh,mb,fd);
+      sg.generateSymbols(out, *this, mb, fd, name, uh);
     }
-    for(const auto &h : mh){
+    for(const auto &h : mhs){
       if(mb.hasSpecialisedMechanicalData(h)){
-	this->generateUMATxxSymbols(out,name,h,mb,fd);
+        sg.generateSymbols(out, *this, mb, fd, name, h);
       }
     }
     
-    this->writeSetParametersFunctionsImplementations(out,name,mb);
+    this->writeSetParametersFunctionsImplementations(out, mb, name);
     this->writeSetOutOfBoundsPolicyFunctionImplementation(out,name);
 
-    for(const auto h : mh){
+    for(const auto h : mhs){
       for(const std::string t : {"float","double"}){
 	out << "MFRONT_SHAREDOBJ void\n"
 	    << this->getFunctionNameForHypothesis(name,h);
@@ -529,13 +519,13 @@ namespace mfront{
     } else {
       tfel::raise("writeGetRotationMatrix: unsupported hypothesis");
     }
-  }	  
-  
-  void
-  AbaqusExplicitInterface::writeBehaviourConstructor(std::ostream& out,
-						     const BehaviourDescription& mb,
-						     const std::string& initStateVarsIncrements) const
-  {
+  }
+
+  void AbaqusExplicitInterface::writeBehaviourConstructorHeader(
+      std::ostream& out,
+      const BehaviourDescription& mb,
+      const Hypothesis,
+      const std::string& initStateVarsIncrements) const {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
     const auto av   = this->getBehaviourConstructorsAdditionalVariables();
     const auto abdv = this->getBehaviourDataConstructorAdditionalVariables();
@@ -560,13 +550,12 @@ namespace mfront{
     if(!initStateVarsIncrements.empty()){
       out << ",\n" << initStateVarsIncrements;
     }
-  } // end of AbaqusExplicitInterface::writeBehaviourConstructor
+  } // end of AbaqusExplicitInterface::writeBehaviourConstructorHeader
 
-  void 
-  AbaqusExplicitInterface::writeBehaviourDataConstructor(std::ostream& out,
-							 const Hypothesis h,
-							 const BehaviourDescription& mb) const
-  {
+  void AbaqusExplicitInterface::writeBehaviourDataConstructor(
+      std::ostream& out,
+      const Hypothesis h,
+      const BehaviourDescription& mb) const {
     const auto& d = mb.getBehaviourData(h);
     const auto iprefix = makeUpperCase(this->getInterfaceName());
     const auto mprops = this->buildMaterialPropertiesList(mb,h);
@@ -607,12 +596,11 @@ namespace mfront{
     this->completeBehaviourDataConstructor(out,h,mb);
     out << "}\n\n";
   }
-  
-  void 
-  AbaqusExplicitInterface::writeIntegrationDataConstructor(std::ostream& out,
-							   const Hypothesis h,
-							   const BehaviourDescription& mb) const
-  {
+
+  void AbaqusExplicitInterface::writeIntegrationDataConstructor(
+      std::ostream& out,
+      const Hypothesis h,
+      const BehaviourDescription& mb) const {
     const auto av   = this->getBehaviourConstructorsAdditionalVariables();
     const auto aidv = this->getIntegrationDataConstructorAdditionalVariables();
     const auto& d = mb.getBehaviourData(h);
@@ -639,10 +627,8 @@ namespace mfront{
     out << "}\n\n";
   }
 
-  void 
-  AbaqusExplicitInterface::writeBehaviourDataMainVariablesSetters(std::ostream& os,
-								  const BehaviourDescription& mb) const
-  {
+  void AbaqusExplicitInterface::writeBehaviourDataMainVariablesSetters(
+      std::ostream& os, const BehaviourDescription& mb) const {
     auto throw_unsupported_hypothesis = []{
       tfel::raise("AbaqusExplicitInterface::writeBehaviourDataMainVariablesSetters: "
 		  "only small strain or finite behaviours are supported");
@@ -671,11 +657,11 @@ namespace mfront{
        << "}\n\n";
   } // end of AbaqusExplicitInterface::writeBehaviourDataMainVariablesSetters
 
-  void 
-  AbaqusExplicitInterface::writeBehaviourDataDrivingVariableSetter(std::ostream&,
-								   const DrivingVariable&,
-								   const SupportedTypes::TypeSize) const
-  {} // end of AbaqusExplicitInterface::writeBehaviourDataDrivingVariableSetter
+  void AbaqusExplicitInterface::writeBehaviourDataDrivingVariableSetter(
+      std::ostream&,
+      const DrivingVariable&,
+      const SupportedTypes::TypeSize) const {
+  }  // end of AbaqusExplicitInterface::writeBehaviourDataDrivingVariableSetter
 
   void 
   AbaqusExplicitInterface::writeBehaviourDataThermodynamicForceSetter(std::ostream&,
@@ -813,9 +799,9 @@ namespace mfront{
 							 const std::string& t,
 							 const Hypothesis h) const
   {
-    const auto& mh = this->getModellingHypothesesToBeTreated(mb);
+    const auto& mhs = this->getModellingHypothesesToBeTreated(mb);
     const auto name =  mb.getLibrary()+mb.getClassName();
-    if(mh.find(h)==mh.end()){
+    if(mhs.find(h)==mhs.end()){
       out << "std::cerr << \"" << mb.getClassName() << ": unsupported hypothesis\\n\";\n"
 	  << "::exit(-1);\n";
     }
@@ -1018,10 +1004,10 @@ namespace mfront{
       tfel::raise("AbaqusExplicitInterface::writeNativeBehaviourIntegration: "
 		  "internal error, unsupported hypothesis");
     };
-    const auto& mh = this->getModellingHypothesesToBeTreated(mb);
+    const auto& mhs = this->getModellingHypothesesToBeTreated(mb);
     const auto name =  mb.getLibrary()+mb.getClassName();
     const auto ivoffset = this->getStateVariablesOffset(mb,h);
-    if(mh.find(h)==mh.end()){
+    if(mhs.find(h)==mhs.end()){
       out << "std::cerr << \"" << mb.getClassName()
 	  << ": unsupported hypothesis\";\n"
   	  << "::exit(-1);\n";
@@ -1162,10 +1148,10 @@ namespace mfront{
       tfel::raise("AbaqusExplicitInterface::writeFiniteRotationSmallStrainIntegration: "
 		  "internal error, unsupported hypothesis");
     };
-    const auto& mh = this->getModellingHypothesesToBeTreated(mb);
+    const auto& mhs = this->getModellingHypothesesToBeTreated(mb);
     const auto name =  mb.getLibrary()+mb.getClassName();
     const auto ivoffset = this->getStateVariablesOffset(mb,h);
-    if(mh.find(h)==mh.end()){
+    if(mhs.find(h)==mhs.end()){
       out << "std::cerr << \"" << mb.getClassName()
 	  << ": unsupported hypothesis\";\n"
   	  << "::exit(-1);\n";
@@ -1335,10 +1321,10 @@ namespace mfront{
       tfel::raise("AbaqusExplicitInterface::writeLogarithmicStrainIntegration: "
 		  "internal error, unsupported hypothesis");
     };
-    const auto& mh = this->getModellingHypothesesToBeTreated(mb);
+    const auto& mhs = this->getModellingHypothesesToBeTreated(mb);
     const auto name =  mb.getLibrary()+mb.getClassName();
     const auto ivoffset = this->getStateVariablesOffset(mb,h);
-    if(mh.find(h)==mh.end()){
+    if(mhs.find(h)==mhs.end()){
       out << "std::cerr << \"" << mb.getClassName() << ": unsupported hypothesis\";\n"
   	  << "::exit(-1);\n";
       return;
@@ -1551,16 +1537,15 @@ namespace mfront{
     out << "}\n";      
   } // end of AbaqusExplicitInterface::endTreatment
 
-  void
-  AbaqusExplicitInterface::writeFiniteStrainIntegration(std::ostream& out,
-							const BehaviourDescription& mb,
-							const std::string& t,
-							const Hypothesis h) const
-  {
+  void AbaqusExplicitInterface::writeFiniteStrainIntegration(
+      std::ostream& out,
+      const BehaviourDescription& mb,
+      const std::string& t,
+      const Hypothesis h) const {
     const auto name =  mb.getLibrary()+mb.getClassName();
-    const auto& mh = this->getModellingHypothesesToBeTreated(mb);
+    const auto& mhs = this->getModellingHypothesesToBeTreated(mb);
     const auto ivoffset = this->getStateVariablesOffset(mb,h);
-    if(mh.find(h)==mh.end()){
+    if(mhs.find(h)==mhs.end()){
       out << "std::cerr << \"" << mb.getClassName() << ": unsupported hypothesis\";\n"
   	  << "::exit(-1);\n";
       return;
@@ -1672,54 +1657,11 @@ namespace mfront{
     out << "};\n";
     this->writeIntegrateLoop(out,mb);
   }
-  
-  std::string AbaqusExplicitInterface::getInterfaceName() const
-  {
+
+  std::string AbaqusExplicitInterface::getInterfaceName() const {
     return "AbaqusExplicit";
   } // end of AbaqusExplicitInterface::getInterfaceName
 
-  void
-  AbaqusExplicitInterface::writeUMATxxBehaviourTypeSymbols(std::ostream& out,
-							   const std::string& name,
-							   const BehaviourDescription& mb) const
-  {
-    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name) 
-	<< "_BehaviourType = " ;
-    if(mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
-      tfel::raise_if(!AbaqusInterfaceBase::hasFiniteStrainStrategy(mb),
-                     "AbaqusExplicitInterface::writeUMATxxBehaviourTypeSymbols: "
-                     "behaviours written in the small strain framework "
-                     "must be embedded in a strain strategy");
-      out << "2u;\n\n";
-    } else if(mb.getBehaviourType()==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR){
-      out << "2u;\n\n";
-    } else {
-      tfel::raise("AbaqusExplicitInterface::writeUMATxxBehaviourTypeSymbols: "
-		  "unsupported behaviour type");
-    }
-  } // end of AbaqusExplicitInterface::writeUMATxxBehaviourTypeSymbols
-
-  void
-  AbaqusExplicitInterface::writeUMATxxBehaviourKinematicSymbols(std::ostream& out,
-							   const std::string& name,
-							   const BehaviourDescription& mb) const
-  {
-    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name) 
-	<< "_BehaviourKinematic = " ;
-    if(mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
-      tfel::raise_if(!AbaqusInterfaceBase::hasFiniteStrainStrategy(mb),
-		     "AbaqusExplicitInterface::writeUMATxxBehaviourKinematicSymbols: "
-		     "behaviours written in the small strain framework "
-		     "must be embedded in a strain strategy");
-      out << "3u;\n\n";
-    } else if(mb.getBehaviourType()==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR){
-      out << "3u;\n\n";
-    } else {
-      tfel::raise("AbaqusExplicitInterface::writeUMATxxBehaviourKinematicSymbols: "
-		  "unsupported behaviour type");
-    }
-  } // end of AbaqusExplicitInterface::writeUMATxxBehaviourKinematicSymbols
-  
   AbaqusExplicitInterface::~AbaqusExplicitInterface() = default;
   
 } // end of namespace mfront

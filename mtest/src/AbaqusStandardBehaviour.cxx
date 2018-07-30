@@ -1,5 +1,5 @@
 /*!
- * \file  mfront/mtest/AbaqusStandardBehaviour.cxx
+ * \file  mtest/src/AbaqusStandardBehaviour.cxx
  * \brief
  * \author Thomas Helfer
  * \brief 07 avril 2013
@@ -61,7 +61,7 @@ namespace mtest {
   AbaqusStandardBehaviour::AbaqusStandardBehaviour(const Hypothesis h,
                                                    const std::string& l,
                                                    const std::string& b)
-      : UmatBehaviourBase(h, l, AbaqusStandardBehaviour::getBehaviourName(b, h)) {
+      : StandardBehaviourBase(h, l, AbaqusStandardBehaviour::getBehaviourName(b, h)) {
     auto throw_if = [](const bool c, const std::string& m) {
       tfel::raise_if(c,
                      "AbaqusStandardBehaviour::"

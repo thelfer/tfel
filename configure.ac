@@ -10,7 +10,7 @@ AC_CANONICAL_HOST
 AC_CANONICAL_TARGET
 
 # Automake specific stuff
-AM_INIT_AUTOMAKE([foreign dist-bzip2 tar-ustar subdir-objects subdir-objects subdir-objects subdir-objects subdir-objects subdir-objects subdir-objects subdir-objects])
+AM_INIT_AUTOMAKE([foreign dist-bzip2 tar-ustar subdir-objects subdir-objects subdir-objects subdir-objects subdir-objects subdir-objects subdir-objects subdir-objects subdir-objects])
 m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])])
 
 # ok, this is ugly, but is sufficient for our needs
@@ -1298,6 +1298,7 @@ AC_OUTPUT([debug.sh Makefile Doxyfile docs/Makefile docs/tfel/Makefile
 	   mfront/tests/behaviours/bricks/DDIF2/castem/Makefile
 	   mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/Makefile
 	   mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/castem/Makefile
+	   mfront/tests/behaviours/generic/Makefile
 	   mfront/tests/behaviours/castem/Makefile
 	   mfront/tests/behaviours/castem/UMATExternalBehaviourDescription.cxx
 	   mfront/tests/behaviours/castem/LibraryInformationCastemTest.cxx

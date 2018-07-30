@@ -108,6 +108,9 @@ namespace mtest {
                                this->tokens.end());
       this->checkNotEndOfLine("SingleStructureSchemeParser::handleBehaviour", p,
                               this->tokens.end());
+      if((p->value == "generic") || (p->value == "Generic")){
+	i = "Generic";
+      }
 #ifdef HAVE_CASTEM
       if ((p->value == "umat") || (p->value == "castem") || (p->value == "Castem") ||
           (p->value == "Cast3M")) {

@@ -38,7 +38,7 @@ namespace mtest
     /*!
      * \param[in] umb: behaviour description
      */
-    CastemSmallStrainBehaviour(const UmatBehaviourDescription&);
+    CastemSmallStrainBehaviour(const StandardBehaviourDescription&);
     /*!
      * \param[out] v : initial values of the driving variables
      */

@@ -456,14 +456,14 @@ namespace mfront {
     //
     //     out << "extern \"C\"{\n\n";
     //
-    //     this->generateUMATxxGeneralSymbols(out, name, mb, fd);
+    //     this->generateGeneralSymbols(out, name, mb, fd);
     //     if (!mb.areAllMechanicalDataSpecialised(mh)) {
     //       const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-    //       this->generateUMATxxSymbols(out, name, uh, mb, fd);
+    //       this->generateSymbols(out, name, uh, mb, fd);
     //     }
     //     for (const auto& h : mh) {
     //       if (mb.hasSpecialisedMechanicalData(h)) {
-    //         this->generateUMATxxSymbols(out, name, h, mb, fd);
+    //         this->generateSymbols(out, name, h, mb, fd);
     //       }
     //     }
     //
@@ -573,9 +573,10 @@ namespace mfront {
   //     }
   //   }
 
-  void LSDYNAInterface::writeBehaviourConstructor(
+  void LSDYNAInterface::writeBehaviourConstructorHeader(
       std::ostream& out,
       const BehaviourDescription& mb,
+      const Hypothesis,
       const std::string& initStateVarsIncrements) const {
     //     const auto iprefix = makeUpperCase(this->getInterfaceName());
     //     const auto av = this->getBehaviourConstructorsAdditionalVariables();
@@ -608,7 +609,7 @@ namespace mfront {
     //     if (!initStateVarsIncrements.empty()) {
     //       out << ",\n" << initStateVarsIncrements;
     //     }
-  }  // end of LSDYNAInterface::writeBehaviourConstructor
+  }  // end of LSDYNAInterface::writeBehaviourConstructorHeader
 
   void LSDYNAInterface::writeBehaviourDataConstructor(
       std::ostream& out,
@@ -885,65 +886,6 @@ namespace mfront {
   void LSDYNAInterface::writeMTestFileGeneratorSetModellingHypothesis(
       std::ostream&) const {
   }  // end of LSDYNAInterface::writeMTestFileGeneratorSetModellingHypothesis
-
-  void LSDYNAInterface::writeUMATxxAdditionalSymbols(
-      std::ostream&,
-      const std::string&,
-      const Hypothesis,
-      const BehaviourDescription&,
-      const FileDescription&) const {
-  }  // end of LSDYNAInterface::writeUMATxxAdditionalSymbols
-
-  void LSDYNAInterface::writeUMATxxBehaviourTypeSymbols(
-      std::ostream& out,
-      const std::string& name,
-      const BehaviourDescription& mb) const {
-    //     out << "MFRONT_SHAREDOBJ unsigned short " <<
-    //     this->getFunctionName(name)
-    //         << "_BehaviourType = ";
-    //     if (mb.getBehaviourType() ==
-    //         BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
-    //       tfel::raise_if(!hasFiniteStrainStrategy(mb),
-    //                      "LSDYNAInterface::writeUMATxxBehaviourTypeSymbols:
-    //                      "
-    //                      "behaviours written in the small strain framework
-    //                      "
-    //                      "must be embedded in a strain strategy");
-    //       out << "2u;\n\n";
-    //     } else if (mb.getBehaviourType() ==
-    //                BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
-    //       out << "2u;\n\n";
-    //     } else {
-    //       tfel::raise(
-    //           "LSDYNAInterface::writeUMATxxBehaviourTypeSymbols: "
-    //           "unsupported behaviour type");
-    //     }
-  }  // end of LSDYNAInterface::writeUMATxxBehaviourTypeSymbols
-
-  void LSDYNAInterface::writeUMATxxBehaviourKinematicSymbols(
-      std::ostream& out,
-      const std::string& name,
-      const BehaviourDescription& mb) const {
-    //     out << "MFRONT_SHAREDOBJ unsigned short " <<
-    //     this->getFunctionName(name)
-    //         << "_BehaviourKinematic = ";
-    //     if (mb.getBehaviourType() ==
-    //         BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
-    //       tfel::raise_if(!hasFiniteStrainStrategy(mb),
-    //                      "LSDYNAInterface::writeUMATxxBehaviourKinematicSymbols:
-    //                      "
-    //                      "behaviours written in the small strain framework "
-    //                      "must be embedded in a strain strategy");
-    //       out << "3u;\n\n";
-    //     } else if (mb.getBehaviourType() ==
-    //                BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
-    //       out << "3u;\n\n";
-    //     } else {
-    //       tfel::raise(
-    //           "LSDYNAInterface::writeUMATxxBehaviourKinematicSymbols: "
-    //           "unsupported behaviour type");
-    //     }
-  }  // end of LSDYNAInterface::writeUMATxxBehaviourKinematicSymbols
 
   LSDYNAInterface::~LSDYNAInterface() = default;
 

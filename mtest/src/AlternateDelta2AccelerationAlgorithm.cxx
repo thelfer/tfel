@@ -1,5 +1,5 @@
 /*! 
- * \file  mfront/mtest/AlternateDelta2AccelerationAlgorithm.cxx
+ * \file  mtest/src/AlternateDelta2AccelerationAlgorithm.cxx
  * \brief
  * \author Ramiere Isabelle
  * \brief 19 mars 2015

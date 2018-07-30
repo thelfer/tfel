@@ -1,5 +1,5 @@
 /*!
- * \file  mfront/mtest/ConstraintBase.cxx
+ * \file  mtest/src/ConstraintBase.cxx
  * \brief
  * \author Thomas Helfer
  * \brief 05 avril 2013

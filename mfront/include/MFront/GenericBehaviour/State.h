@@ -14,6 +14,8 @@
 #ifndef LIB_MFRONT_GENERICBEHAVIOUR_STATE_H
 #define LIB_MFRONT_GENERICBEHAVIOUR_STATE_H
 
+#include "MFront/GenericBehaviour/Types.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
@@ -22,18 +24,16 @@ extern "C" {
  * \brief state of the material
  */
 typedef struct{
-  /*!
-   * \brief gradients
-   */
-  double *const gradients;
-  //! \brief values of the fluxes
-  double *const fluxes;
+  //! \brief value of the gradients
+  double * gradients;
+  //! \brief values of the thermodynamic_forces
+  double * thermodynamic_forces;
   //! \brief values of the material properties
-  const double *const material properties;
+  double * material_properties;
   //! \brief values of the internal state variables
-  const double *const internal_state_variables;
+  double * internal_state_variables;
   //! \brief values of the external state variables
-  const double *const external_state_variables;
+  double * external_state_variables;
 } MFront_GB_State;
 
 #ifdef __cplusplus

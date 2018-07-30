@@ -529,13 +529,14 @@ namespace mfront
   } // end of ZMATInterface::writeBehaviourDataConstructor
 
   void
-  ZMATInterface::writeBehaviourConstructor(std::ostream& out,
-					   const BehaviourDescription& mb,
-					   const std::string& initStateVarsIncrements) const
+  ZMATInterface::writeBehaviourConstructorHeader(std::ostream& out,
+						 const BehaviourDescription& mb,
+						 const Hypothesis,
+						 const std::string& initStateVarsIncrements) const
   {
     using namespace std;
     auto throw_if = [](const bool c,const std::string& m){
-      tfel::raise_if(c,"ZMATInterface::writeBehaviourConstructor: "+m);
+      tfel::raise_if(c,"ZMATInterface::writeBehaviourConstructorHeader: "+m);
     };
     throw_if(!((mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR)||
 	       (mb.getBehaviourType()==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR)),
@@ -621,6 +622,11 @@ namespace mfront
       out << ",\n" << initStateVarsIncrements;
     }
   }
+
+  void ZMATInterface::writeBehaviourConstructorBody(std::ostream&,
+						    const BehaviourDescription&,
+						    const Hypothesis) const {
+  } // end of ZMATInterface::writeBehaviourConstructorBody
   
   void 
   ZMATInterface::writeIntegrationDataConstructor(std::ostream& out,

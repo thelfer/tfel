@@ -222,7 +222,8 @@ namespace ansys {
         usermat_exit("UserMaterialManager::UserMaterialManager: " + m);
       }
     };
-    auto open_library = [](const std::string &lib) -> libhandler {
+    auto emsg = std::string{};
+    auto open_library = [&emsg](const std::string &lib) -> libhandler {
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
       for (const auto prefix : {"", "lib"}) {
         for (const auto suffix : {"", ".dll"}) {
@@ -231,10 +232,9 @@ namespace ansys {
           if (l != nullptr) {
             return l;
           } else {
-            usermat_log(
-                "UserMaterialManager::UserMaterialManager: "
-                "failed to open library '" +
-                library + "' (" + getErrorMessage() + ")");
+	    emsg += "UserMaterialManager::UserMaterialManager: "
+	    "failed to open library '"
+	    library + "' (" + getErrorMessage() + ")\n";
           }
         }
       }
@@ -246,10 +246,9 @@ namespace ansys {
           if (l != nullptr) {
             return l;
           } else {
-            usermat_log(
-                "UserMaterialManager::UserMaterialManager: "
-                "failed to open library '" +
-                library + "' (" + getErrorMessage() + ")");
+            emsg += "UserMaterialManager::UserMaterialManager: "
+	    "failed to open library '" +
+	    library + "' (" + getErrorMessage() + ")\n";
           }
         }
       }
@@ -281,17 +280,16 @@ namespace ansys {
           "UserMaterialManager::UserMaterialManager: "
           "associating material '" +
           std::to_string(id) + "' to behaviour '" + fct + "' in library '" + lib);
+      exit_if(this->getBehaviour(id) != nullptr,
+              "a behaviour has already been associated to material "
+              "identifier '" + std::to_string(id) + "'");
       auto ptr = find_library(lib);
       if (ptr == this->libraries.end()) {
         const auto l = open_library(lib);
-        exit_if(l == nullptr, "unable to load library '" + lib + "'");
+        exit_if(l == nullptr, "unable to load library '" + lib + "'\n"+emsg);
         this->libraries.push_back(ExternalLibraryHandler{lib, l});
         ptr = std::prev(this->libraries.end());
       }
-      exit_if(this->getBehaviour(id) != nullptr,
-              "a behaviour has already been associated to material "
-              "identifier '" +
-                  std::to_string(id) + "'");
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
       auto f = reinterpret_cast<AnsysFctPtr>(::GetProcAddress(ptr->l, fct.c_str()));
 #else  /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
@@ -333,7 +331,7 @@ extern "C" {
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
 __declspec(dllexport) void USERMAT(const int *const matId,
 #else  /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
-void usermat(const int *const matId,
+void usermat_(const int *const matId,
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
                                    const int *const elemId,
                                    const int *const kDomIntPt,

@@ -28,9 +28,10 @@ nobase_include_HEADERS = MTest/Config.hxx	                         \
 			 MTest/Behaviour.hxx                             \
 			 MTest/LogarithmicStrain1DBehaviourWrapper.hxx   \
 			 MTest/BehaviourWorkSpace.hxx                    \
-			 MTest/UmatBehaviourBase.hxx                     \
+			 MTest/StandardBehaviourBase.hxx                 \
+			 MTest/GenericBehaviour.hxx                      \
 			 MTest/UmatNormaliseTangentOperator.hxx          \
-			 MTest/CastemStandardBehaviour.hxx               \
+                         MTest/CastemStandardBehaviour.hxx               \
 			 MTest/CastemSmallStrainBehaviour.hxx            \
 			 MTest/CastemFiniteStrainBehaviour.hxx           \
 			 MTest/CastemFiniteStrainBehaviour2.hxx          \

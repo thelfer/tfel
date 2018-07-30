@@ -1,5 +1,5 @@
 /*! 
- * \file   mfront/mtest/AsterFiniteStrainBehaviour.cxx
+ * \file   mtest/src/AsterFiniteStrainBehaviour.cxx
  * \brief
  * \author Thomas Helfer
  * \brief  07 avril 2013
@@ -201,7 +201,7 @@ namespace mtest
     }
     fill(wk.D.begin(),wk.D.end(),0.);
     // choosing the type of stiffness matrix
-    UmatBehaviourBase::initializeTangentOperator(wk.D,ktype,b);
+    StandardBehaviourBase::initializeTangentOperator(wk.D,ktype,b);
     // using a local copy of material properties to handle the
     // case where s.mprops1 is empty
     copy(s.mprops1.begin(),s.mprops1.end(),wk.mps.begin());

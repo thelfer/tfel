@@ -8,11 +8,14 @@
 @Theta 1;
 
 @OrthotropicBehaviour<Pipe>;
-@ComputeStiffnessTensor<Altered>{
+@ComputeStiffnessTensor<UnAltered>{
   "YoungModulusTest_1.mfront", "YoungModulusTest_2.mfront", "YoungModulusTest_3.mfront" ,
   "PoissonRatioTest_12.mfront","PoissonRatioTest_23.mfront","PoissonRatioTest_13.mfront",
   "ShearModulusTest_12.mfront","ShearModulusTest_23.mfront","ShearModulusTest_13.mfront"};
 @ComputeThermalExpansion {"ThermalExpansionCoefficientTest_1.mfront"};
+
+@StateVariable<PlaneStress> real etozz;
+PlaneStress::etozz.setGlossaryName("AxialStrain");
 
 @StateVariable<AxisymmetricalGeneralisedPlaneStress> real etozz;
 AxisymmetricalGeneralisedPlaneStress::etozz.setGlossaryName("AxialStrain");
@@ -25,6 +28,22 @@ AxisymmetricalGeneralisedPlaneStress::sigzz.setGlossaryName("AxialStress");
 
 @ComputeFinalStress {
   sig = D_tdt*eel;
+}
+
+@Integrator<PlaneStress,Append,AtEnd>{
+  // the plane stress equation is satisfied at the end of the time
+  // step
+  const stress szz = D_tdt(2,2)*(eel(2)+deel(2))+
+    D_tdt(2,0)*(eel(0)+deel(0))+
+    D_tdt(2,1)*(eel(1)+deel(1));
+  fetozz   = szz/D_tdt(2,2);
+  // modification of the partition of strain
+  feel(2) -= detozz;
+  // jacobian
+  dfeel_ddetozz(2) = -1;
+  dfetozz_ddeel(2) =  1;
+  dfetozz_ddeel(0) = D_tdt(2,0)/D_tdt(2,2);
+  dfetozz_ddeel(1) = D_tdt(2,1)/D_tdt(2,2);
 }
 
 @Integrator<AxisymmetricalGeneralisedPlaneStress,Append,AtEnd>{

@@ -15,7 +15,7 @@
 #define LIB_MTEST_CASTEMSTANDARDUMATBEHAVIOUR_HXX 
 
 #include"TFEL/System/ExternalFunctionsPrototypes.hxx"
-#include"MTest/UmatBehaviourBase.hxx"
+#include"MTest/StandardBehaviourBase.hxx"
 
 namespace mtest
 {
@@ -25,7 +25,7 @@ namespace mtest
    * interface
    */
   struct TFEL_VISIBILITY_LOCAL CastemStandardBehaviour
-    : public UmatBehaviourBase
+    : public StandardBehaviourBase
   {
     /*!
      * \param[in] h : modelling hypothesis
@@ -38,7 +38,7 @@ namespace mtest
     /*!
      * \param[in] umb: behaviour description
      */
-    CastemStandardBehaviour(const UmatBehaviourDescription&);
+    CastemStandardBehaviour(const StandardBehaviourDescription&);
     /*!
      * \return the default type of stiffness matrix used by the behaviour
      */

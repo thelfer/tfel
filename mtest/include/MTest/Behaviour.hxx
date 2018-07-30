@@ -125,10 +125,10 @@ namespace mtest {
      * 1 means that the behaviour is orthotropic.
      */
     virtual unsigned short getSymmetryType() const = 0;
-    /*!
-     * \return the names of the material properties
-     */
+    //! \return the names of the material properties
     virtual std::vector<std::string> getMaterialPropertiesNames() const = 0;
+    //! \return the number of the material properties
+    virtual size_t getMaterialPropertiesSize() const = 0;
     /*!
      * \brief This method solves two issues:
      *
@@ -166,6 +166,8 @@ namespace mtest {
     virtual unsigned short getInternalStateVariablePosition(const std::string&) const = 0;
     //! \return the names of external variables
     virtual std::vector<std::string> getExternalStateVariablesNames() const = 0;
+    //! \return the size of the array of exernal variables
+    virtual size_t  getExternalStateVariablesSize() const =0;
     //! \return the names of floating point parameters
     virtual std::vector<std::string> getParametersNames() const = 0;
     //! \return the names of integer parameters
