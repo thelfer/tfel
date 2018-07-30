@@ -1579,6 +1579,8 @@ namespace mfront
     insert_if(d[lib].cppflags,"$(shell "+tfel_config+" --zmat)");
 #pragma message("Linux specific")
     insert_if(d[lib].cppflags,"-DLinux");
+    insert_if(d[lib].cppflags,"-DLinux_64");
+    insert_if(d[lib].cppflags,"-D_REENTRANT");
     insert_if(d[lib].include_directories,
 	      "$(shell "+tfel_config+" --include-path)");
     insert_if(d.headers,"MFront/ZMAT/ZMAT"+name+".hxx");

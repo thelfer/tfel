@@ -159,8 +159,8 @@ namespace mfront {
     if(((bd.getBehaviourType() == BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR)||
 	(bd.getBehaviourType() == BehaviourDescription::GENERALBEHAVIOUR))&&
        (bd.isStrainMeasureDefined())) {
-      out << "#include\"TFEL/Math/T2toST2/T2toST2View.hxx\"\n";
-      out << "#include\"TFEL/Material/FiniteStrainBehaviourTangentOperator.hxx\"\n";
+      out << "#include\"TFEL/Math/T2toST2/T2toST2View.hxx\"\n"
+	  << "#include\"TFEL/Material/FiniteStrainBehaviourTangentOperator.hxx\"\n";
     }
     out << "#include\"TFEL/Material/" << bd.getClassName() << ".hxx\"\n";
     if (bd.getAttribute(BehaviourData::profiling, false)) {
@@ -204,8 +204,13 @@ namespace mfront {
       };
       out << "MFRONT_SHAREDOBJ int " << f
           << "(MFront_GB_BehaviourData* const d){\n"
-	  << "using namespace tfel::material;\n"
-	  << "using real = mfront::gb::real;\n"
+	  << "using namespace tfel::material;\n";
+      if(((bd.getBehaviourType() == BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR)||
+	  (bd.getBehaviourType() == BehaviourDescription::GENERALBEHAVIOUR))&&
+	 (bd.isStrainMeasureDefined())) {
+	out << "using TangentOperator = FiniteStrainBehaviourTangentOperatorBase;\n";
+      }
+      out << "using real = mfront::gb::real;\n"
           << "constexpr const auto h = ModellingHypothesis::"
           << ModellingHypothesis::toUpperCaseString(h) << ";\n"
           << "using Behaviour = " << bd.getClassName() << "<h,real,false>;\n";
@@ -343,14 +348,16 @@ namespace mfront {
 	  
 	} else if (ms == BehaviourDescription::HENCKY) {
 	  const auto N = tfel::material::getSpaceDimension(h);
+	  const auto s = tfel::material::getStensorSize(h);
 	  out << "if(bp){\n"
 	      << "const tfel::math::stensor<" << N << ",real> T0("
 	      << get_ptr("thermodynamic_forces0", oC) << ");\n"
-	      << "const tfel::math::st2tost2<" << N << ",real> K0(K);\n"
+	      << "tfel::math::st2tost2<" << N << ",real> K0;\n"
+	      << "tfel::fsalgo::copy<" << s*s << ">::exe(K,K0.begin());\n"
 	      << "const auto Cs = lgh0.convertToSpatialTangentModuli(K0,T0);\n"
 	      << "const auto Dt = convert<TangentOperator::DTAU_DF,"
 	      << "                        TangentOperator::SPATIAL_MODULI>(Cs,F0,F0,s0);\n"
-	      << "tfel::math::T2toST2V<" << N << ",real>(d->K) = "
+	      << "tfel::math::T2toST2View<" << N << ",real>(d->K) = "
 	      << "convert<TangentOperator::DSIG_DF,"
 	      << "        TangentOperator::DTAU_DF>(Dt,F0,F0,s0);\n"
 	      << "} else {\n";
@@ -370,11 +377,12 @@ namespace mfront {
 	      << "s1.exportTab("
 	      << get_ptr("d->s1.thermodynamic_forces", oC) << ");\n"
 	      << "if(bk){\n"
-	      << "const tfel::math::st2tost2<" << N << ",real> K1(K);\n"
+	      << "tfel::math::st2tost2<" << N << ",real> K1;\n"
+	      << "tfel::fsalgo::copy<" << s*s << ">::exe(K,K1.begin());\n"
 	      << "const auto Cs = lgh1.convertToSpatialTangentModuli(K1,T1);\n"
 	      << "const auto Dt = convert<TangentOperator::DTAU_DF,"
 	      << "                        TangentOperator::SPATIAL_MODULI>(Cs,F0,F1,s1);\n"
-	      << "tfel::math::T2toST2V<" << N << ",real>(d->K) = "
+	      << "tfel::math::T2toST2View<" << N << ",real>(d->K) = "
 	      << "convert<TangentOperator::DSIG_DF,"
 	      << "        TangentOperator::DTAU_DF>(Dt,F0,F1,s1);\n"
 	      << "}\n"
@@ -384,7 +392,6 @@ namespace mfront {
 	}
 	out << "}\n";
       }
-      out << "}\n";
       out << "return r;\n"
       	  << "} // end of " << f << "\n\n";
     }

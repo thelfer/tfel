@@ -59,7 +59,6 @@ namespace tfel{
 	  constexpr const StressType zero = StressType(0);
 	  const StressType C1  = E/(1-n*n);
 	  const StressType C2  = n*C1;
-	  const StressType C3  = (1-n)*C1;
 	  C(0,0)=C1;
 	  C(0,1)=C2;
 	  C(0,2)=C(0,3)=zero;

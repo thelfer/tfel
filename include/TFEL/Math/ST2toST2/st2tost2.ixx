@@ -199,7 +199,7 @@ namespace tfel{
       : fsarray<StensorDimeToSize<N>::value*
 		StensorDimeToSize<N>::value,T>(init)
     {}
-
+    
     template<unsigned short N, typename T>
     struct ComputeSpecialST2ST2Values;
 

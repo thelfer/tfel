@@ -226,14 +226,6 @@ namespace tfel{
 	       typename std::enable_if<tfel::typetraits::IsAssignableTo<T2,T>::cond,bool>::type = true>
       TFEL_MATH_INLINE constexpr
       st2tost2(const std::initializer_list<T2>&);
-      /*!
-       * \brief Default Constructor.
-       * \param const typename tfel::typetraits::BaseType<T>::type* const,
-       *  pointer to a tabular used to initialise the components of
-       *  the st2tost2. This tabular is left unchanged.
-       */
-      TFEL_MATH_INLINE
-      explicit st2tost2(const tfel::typetraits::base_type<T>* const);
       //! copy Constructor
       constexpr st2tost2(const st2tost2<N,T>&) = default;
       // Copy Constructor
