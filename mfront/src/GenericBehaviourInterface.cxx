@@ -570,10 +570,11 @@ namespace mfront {
 								const Hypothesis h,
 								const BehaviourDescription& bd) const{
     // write variable initializer
-    auto wvi = [&os](bool& first,const VariableDescription& v,
-		     const std::string& src,
-		     const SupportedTypes::TypeSize& o,
-		     const std::string& eo){
+    // this is captured for gcc 4.7.2
+    auto wvi = [&os,this](bool& first,const VariableDescription& v,
+			  const std::string& src,
+			  const SupportedTypes::TypeSize& o,
+			  const std::string& eo){
       if (v.arraySize != 1u) {
         return;
       }
@@ -611,10 +612,11 @@ namespace mfront {
       }
     }; // end of wvci
     // write variable initializer
-    auto wvi2 = [&os,&bd](const VariableDescription& v,
-			  const std::string& src,
-			  const SupportedTypes::TypeSize& c,
-			  const std::string& eo){
+    // this is captured for gcc 4.7.2
+    auto wvi2 = [&os,&bd,this](const VariableDescription& v,
+			       const std::string& src,
+			       const SupportedTypes::TypeSize& c,
+			       const std::string& eo){
       auto get_offset = [&eo](const SupportedTypes::TypeSize o){
 	std::ostringstream out;
 	out << o;
