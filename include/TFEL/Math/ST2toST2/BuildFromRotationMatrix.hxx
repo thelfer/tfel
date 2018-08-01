@@ -30,36 +30,34 @@ namespace tfel {
        * \brief an auxiliary structure used to dispatch over the
        * dimension
        */
-      template <unsigned short>
+      template <unsigned short, typename T>
       struct BuildFromRotationMatrix;
       /*!
        * \brief partial specialisation in 1D
        */
-      template <>
-      struct BuildFromRotationMatrix<1u> {
+      template <typename T>
+      struct BuildFromRotationMatrix<1u, T> {
         /*!
          * \return the st2tost2 that has the same effect as applying
          * the rotation
          */
-        template <typename T>
         static TFEL_MATH_INLINE2 tfel::math::st2tost2<1u, T> exe(
-            const tfel::math::tmatrix<3, 3, T>&) {
+            const rotation_matrix<T>&) {
           return tfel::math::st2tost2<1u, T>::Id();
         }
       };  // end of struct BuildFromRotationMatrix<1u>
-          /*!
-           * \brief partial specialisation in 2D
-           */
-      template <>
-      struct BuildFromRotationMatrix<2u> {
+      /*!
+       * \brief partial specialisation in 2D
+       */
+      template <typename T>
+      struct BuildFromRotationMatrix<2u, T> {
         /*!
          * \return the st2tost2 that has the same effect as applying
          * the rotation
          * \param[in] r : rotation matrix
          */
-        template <typename T>
         static TFEL_MATH_INLINE2 tfel::math::st2tost2<2u, T> exe(
-            const tfel::math::tmatrix<3, 3, T>& r) {
+            const rotation_matrix<T>& r) {
           tfel::math::st2tost2<2u, T> s;
           constexpr const auto cste = Cste<T>::sqrt2;
           constexpr const T zero = T{0};
@@ -93,16 +91,15 @@ namespace tfel {
       /*!
        * \brief partial specialisation in 3D
        */
-      template <>
-      struct BuildFromRotationMatrix<3u> {
+      template <typename T>
+      struct BuildFromRotationMatrix<3u,T> {
         /*!
          * \return the st2tost2 that has the same effect as applying
          * the rotation
          * \param[in] r : rotation matrix
          */
-        template <typename T>
         static TFEL_MATH_INLINE2 tfel::math::st2tost2<3u, T> exe(
-            const tfel::math::tmatrix<3, 3, T>& r) {
+            const rotation_matrix<T>& r) {
           constexpr const auto cste = Cste<T>::sqrt2;
           tfel::math::st2tost2<3u, T> s;
           const T a = r(0, 0);

@@ -31,9 +31,8 @@ namespace tfel
      * \tparam N : size of the array
      * \tparam T : value type
      */
-    template<unsigned short N,typename T>
-    struct array_container
-    {
+    template <unsigned short N, typename T>
+    struct array_container {
       //! values holded
       T v[N];
     };

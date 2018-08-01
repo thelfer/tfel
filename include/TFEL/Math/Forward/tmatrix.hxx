@@ -12,13 +12,13 @@
  */
 
 #ifndef LIB_TFEL_MATH_FORWARD_TMATRIX_HXX
-#define LIB_TFEL_MATH_FORWARD_TMATRIX_HXX 
+#define LIB_TFEL_MATH_FORWARD_TMATRIX_HXX
 
-namespace tfel
-{
+#include "TFEL/TypeTraits/BaseType.hxx"
 
-  namespace math
-  {
+namespace tfel {
+
+  namespace math {
 
     /*
      * \class tmatrix.
@@ -27,10 +27,12 @@ namespace tfel
      * \param unsigned short, the number of columns hold by the tmatrix.
      * \param typename T, the type hold by the tmatrix.
      */
-    template<unsigned short N,
-	     unsigned short M,
-	     typename T>
+    template <unsigned short N, unsigned short M, typename T>
     struct tmatrix;
+    
+    //! a simple alias
+    template <typename T>
+    using rotation_matrix = tmatrix<3, 3, tfel::typetraits::base_type<T>>;
 
   } // end of namespace math
 

@@ -34,92 +34,94 @@
 namespace mtest{
 
   static void applyRotation(real* const v,
-			    const std::vector<int>& types,
-			    const GenericBehaviour::Hypothesis h,
-			    const tfel::math::tmatrix<3u,3u,real>& r){
+                            const std::vector<int>& types,
+                            const GenericBehaviour::Hypothesis h,
+                            const tfel::math::tmatrix<3u, 3u, real>& r) {
     auto o = size_t{};
     const auto n = tfel::material::getSpaceDimension(h);
-    for(const auto& type: types){
+    for (const auto& type : types) {
       if(type==0){
-	o+=1;
-      } else if(type==1){
-	if(n==2u){
-	  tfel::math::stensor<2u,real> s(v+o);
-	  const auto rs = change_basis(s,r);
-	  tfel::fsalgo::copy<4u>::exe(rs.begin(),v+o);
-	} else if(n==3u){
-	  tfel::math::stensor<3u,real> s(v+o);
-	  const auto rs = change_basis(s,r);
-	  tfel::fsalgo::copy<6u>::exe(rs.begin(),v+o);
-	}
-	o+= tfel::material::getStensorSize(h);
-      } else if(type==2){
-	tfel::raise("applyRotation: vector are not supported yet");
-	o+= tfel::material::getSpaceDimension(h);
-      } else if(type==3){
-	if(n==2u){
-	  tfel::math::tensor<2u,real> t(v+o);
-	  const auto rt = change_basis(t,r);
-	  tfel::fsalgo::copy<5u>::exe(rt.begin(),v+o);
-	} else if(n==3u){
-	  tfel::math::tensor<3u,real> t(v+o);
-	  const auto rt = change_basis(t,r);
-	  tfel::fsalgo::copy<9u>::exe(rt.begin(),v+o);
-	}
-	o+= tfel::material::getTensorSize(h);
+        o += 1;
+      } else if (type == 1) {
+        if (n == 2u) {
+          tfel::math::stensor<2u, real> s(v + o);
+          const auto rs = change_basis(s, r);
+          tfel::fsalgo::copy<4u>::exe(rs.begin(), v + o);
+        } else if (n == 3u) {
+          tfel::math::stensor<3u, real> s(v + o);
+          const auto rs = change_basis(s, r);
+          tfel::fsalgo::copy<6u>::exe(rs.begin(), v + o);
+        }
+        o += tfel::material::getStensorSize(h);
+      } else if (type == 2) {
+        tfel::raise("applyRotation: vector are not supported yet");
+        o += tfel::material::getSpaceDimension(h);
+      } else if (type == 3) {
+        if (n == 2u) {
+          tfel::math::tensor<2u, real> t(v + o);
+          const auto rt = change_basis(t, r);
+          tfel::fsalgo::copy<5u>::exe(rt.begin(), v + o);
+        } else if (n == 3u) {
+          tfel::math::tensor<3u, real> t(v + o);
+          const auto rt = change_basis(t, r);
+          tfel::fsalgo::copy<9u>::exe(rt.begin(), v + o);
+        }
+        o += tfel::material::getTensorSize(h);
       }
     }
   } // end of applyRotation
 
   static void applyRotation(real* const v,
-			    const std::vector<int>& dvtypes,
-			    const std::vector<int>& thtypes,
-			    const GenericBehaviour::Hypothesis h,
-			    const tfel::math::tmatrix<3u,3u,real>& r){
+                            const std::vector<int>& dvtypes,
+                            const std::vector<int>& thtypes,
+                            const GenericBehaviour::Hypothesis h,
+                            const tfel::math::tmatrix<3u, 3u, real>& r) {
     auto o = size_t{};
     const auto n = tfel::material::getSpaceDimension(h);
-    tfel::raise_if(dvtypes.size()!=thtypes.size(),
-		   "applyRotation: the number of driving variables "
-		   "does not match the number of thermodynamic fores");
-    tfel::raise_if(dvtypes.size()!=1u,
-		   "applyRotation: unsupported case");
+    tfel::raise_if(dvtypes.size() != thtypes.size(),
+                   "applyRotation: the number of driving variables "
+                   "does not match the number of thermodynamic fores");
+    tfel::raise_if(dvtypes.size() != 1u, "applyRotation: unsupported case");
     for(decltype(dvtypes.size()) i=0;i!=dvtypes.size();++i){
-      if(dvtypes[i]==1){
-	// symmetric tensors
-	tfel::raise_if(thtypes[i]!=1,"applyRotation: "
-		       "unsupported case");
-	if(n==2u){
-	  tfel::math::st2tost2<2u,real> k;
-	  std::copy(v+o,v+o+k.size(),k.begin());
-	  const auto rk = change_basis(k,r);
-	  std::copy(rk.begin(),rk.end(),v+o);
-	} else if(n==3u){
-	  tfel::math::st2tost2<3u,real> k;
-	  std::copy(v+o,v+o+k.size(),k.begin());
-	  const auto rk = change_basis(k,r);
-	  std::copy(rk.begin(),rk.end(),v+o);
-	}
-      // } else if(dvtypes[i]==2){
-      // 	tfel::raise_if(dvtypes[i]!=1,"applyRotation: "
-      // 		       "unsupported case");
-      // 	if(n==2u){
-      // 	  tfel::math::t2tost2<2u,real> k;
-      // 	  std::copy(v+o,v+o+k.size(),k.begin());
-      // 	  const auto rk = change_basis(k,r);
-      // 	  std::copy(rk.begin(),rk.end(),v+o);
-      // 	} else if(n==3u){
-      // 	  tfel::math::t2tost2<3u,real> k;
-      // 	  std::copy(v+o,v+o+k.size(),k.begin());
-      // 	  const auto rk = change_basis(k,r);
-      // 	  std::copy(rk.begin(),rk.end(),v+o);
-      // 	}
+      if (dvtypes[i] == 1) {
+        // symmetric tensors
+        tfel::raise_if(thtypes[i] != 1,
+                       "applyRotation: "
+                       "unsupported case");
+        if (n == 2u) {
+          tfel::math::st2tost2<2u, real> k;
+          std::copy(v + o, v + o + k.size(), k.begin());
+          const auto rk = change_basis(k, r);
+          std::copy(rk.begin(),rk.end(),v+o);
+        } else if (n == 3u) {
+          tfel::math::st2tost2<3u, real> k;
+          std::copy(v + o, v + o + k.size(), k.begin());
+          const auto rk = change_basis(k, r);
+          std::copy(rk.begin(), rk.end(), v + o);
+        }
+      } else if (dvtypes[i] == 2) {
+        tfel::raise_if(dvtypes[i] != 1,
+                       "applyRotation: "
+                       "unsupported case");
+        if (n == 2u) {
+          tfel::math::t2tost2<2u, real> k;
+          std::copy(v + o, v + o + k.size(), k.begin());
+          const auto rk = change_basis(k, r);
+          std::copy(rk.begin(), rk.end(), v + o);
+        } else if (n == 3u) {
+          tfel::math::t2tost2<3u, real> k;
+          std::copy(v + o, v + o + k.size(), k.begin());
+          const auto rk = change_basis(k, r);
+          std::copy(rk.begin(), rk.end(), v + o);
+        }
       } else {
-	tfel::raise("applyRotation: "
-		    "unsupported driving variable type");
+        tfel::raise(
+            "applyRotation: "
+            "unsupported driving variable type");
       }
     }
-  } // end of applyRotation
-  
+  }  // end of applyRotation
+
   GenericBehaviour::GenericBehaviour(const Hypothesis h,
 				     const std::string& l,
 				     const std::string& b)

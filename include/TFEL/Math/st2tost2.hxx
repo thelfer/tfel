@@ -189,7 +189,7 @@ namespace tfel{
        * \param[in] r : rotation matrix
        */
       static tfel::math::st2tost2<N,tfel::typetraits::base_type<T>>
-      fromRotationMatrix(const tmatrix<3u,3u,typename tfel::typetraits::base_type<T>>&);
+      fromRotationMatrix(const rotation_matrix<T>&);
       /*!
        * \brief compute the derivative of the symmetric tensor product:
        * \f[
@@ -291,15 +291,11 @@ namespace tfel{
      * \param[in] s : st2tost2
      * \param[in] r : rotation matrix 
      */
-    template<typename ST2toST2Type>
-    TFEL_MATH_INLINE2
-    typename std::enable_if<
-      tfel::meta::Implements<ST2toST2Type,ST2toST2Concept>::cond,
-      st2tost2<ST2toST2Traits<ST2toST2Type>::dime,
-	       ST2toST2NumType<ST2toST2Type>>
-    >::type
-    change_basis(const ST2toST2Type&,
-		 const tfel::math::tmatrix<3u,3u,tfel::typetraits::base_type<ST2toST2NumType<ST2toST2Type>>>&);
+    template <typename ST2toST2Type>
+    TFEL_MATH_INLINE2 typename std::enable_if<
+        tfel::meta::Implements<ST2toST2Type, ST2toST2Concept>::cond,
+        st2tost2<ST2toST2Traits<ST2toST2Type>::dime, ST2toST2NumType<ST2toST2Type>>>::type
+    change_basis(const ST2toST2Type&, const rotation_matrix<ST2toST2NumType<ST2toST2Type>>&);
     /*!
      * \return the invert of a st2tost2
      * \param[in] s : st2tost2 to be inverted

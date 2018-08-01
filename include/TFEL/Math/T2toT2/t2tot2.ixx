@@ -367,7 +367,7 @@ namespace tfel{
     template<unsigned short N, typename T>
     t2tot2<N,typename tfel::typetraits::BaseType<T>::type>
     t2tot2<N,T>::fromRotationMatrix(const tmatrix<3u,3u,typename tfel::typetraits::BaseType<T>::type>& r){
-      return t2tot2_internals::BuildFromRotationMatrix<N>::exe(r);
+      return t2tot2_internals::BuildFromRotationMatrix<N,T>::exe(r);
     } // end of t2tot2<N,T>::fromRotationMatrix
     
     template<unsigned short N, typename T>

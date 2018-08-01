@@ -442,7 +442,34 @@ namespace tfel{
       computePushForwardDerivative(r,K,S,F);
       return r;
     }
-    
+
+    template <typename T2toST2Type>
+    typename std::enable_if<
+        tfel::meta::Implements<T2toST2Type, T2toST2Concept>::cond &&
+            T2toST2Traits<T2toST2Type>::dime == 1u,
+        t2tost2<1u, T2toST2NumType<T2toST2Type>>>::type
+    change_basis(const T2toST2Type& s,
+                 const rotation_matrix<T2toST2NumType<T2toST2Type>>&) {
+      return s;
+    } // end of change_basis
+
+    template <typename T2toST2Type>
+    typename std::enable_if<
+        ((tfel::meta::Implements<T2toST2Type, T2toST2Concept>::cond) &&
+         (T2toST2Traits<T2toST2Type>::dime != 1u)),
+        t2tost2<T2toST2Traits<T2toST2Type>::dime,
+                T2toST2NumType<T2toST2Type>>>::type
+    change_basis(const T2toST2Type& s,
+                 const rotation_matrix<T2toST2NumType<T2toST2Type>>& r) {
+      constexpr const auto N = T2toST2Traits<T2toST2Type>::dime;
+      using t2tot2   = tfel::math::t2tot2<N, T2toST2NumType<T2toST2Type>>;
+      using st2tost2 = tfel::math::st2tost2<N, T2toST2NumType<T2toST2Type>>;
+      const auto sr = st2tost2::fromRotationMatrix(r);
+      const auto sir = t2tot2::fromRotationMatrix(transpose(r));
+      return sr * s * sir;
+      return s;
+    } // end of change_basis
+
   } //end of namespace math
 
 } // end of namespace tfel

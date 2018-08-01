@@ -223,11 +223,8 @@ namespace tfel{
       //! assignement operator
       using tensor_base<tensor<N,T> >::operator=;
 
-      /*!
-       * change basis
-       */
-      TFEL_MATH_INLINE2 void
-      changeBasis(const tmatrix<3u,3u,tfel::typetraits::base_type<T>>&);
+      //! change basis
+      TFEL_MATH_INLINE2 void changeBasis(const rotation_matrix<T>&);
 
       /*!
        * \return the identity tensor
@@ -323,14 +320,12 @@ namespace tfel{
      * \param[in] r: rotation matrix
      * \return the rotated tensor
      */
-    template<typename TensorType>
+    template <typename TensorType>
     TFEL_MATH_INLINE2 typename std::enable_if<
-      tfel::meta::Implements<TensorType,TensorConcept>::cond,
-      tensor<TensorTraits<TensorType>::dime,
-	     TensorNumType<TensorType>>
-      >::type
+        tfel::meta::Implements<TensorType, TensorConcept>::cond,
+        tensor<TensorTraits<TensorType>::dime, TensorNumType<TensorType>>>::type
     change_basis(const TensorType&,
-		 const tmatrix<3u,3u,tfel::typetraits::base_type<TensorNumType<TensorType>>>&);
+                 const rotation_matrix<TensorNumType<TensorType>>&);
 
     template<class T>
     TFEL_MATH_INLINE 

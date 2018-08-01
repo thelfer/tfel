@@ -404,7 +404,7 @@ namespace tfel{
     stensor<N,T>::computeEigenTensors(StensorType& n0,
 				      StensorType& n1,
 				      StensorType& n2,
-				      const tmatrix<3u,3u,tfel::typetraits::base_type<T>>& m)
+				      const rotation_matrix<T>& m)
     {
       return tfel::math::internals::StensorComputeEigenValuesDerivatives<N>::exe(n0,n1,n2,m);      
     } // end of stensor<N,T>::computeEigenTensors
@@ -422,7 +422,7 @@ namespace tfel{
 						 ST2toST2Type& dn1_ds,
 						 ST2toST2Type& dn2_ds,
 						 const tvector<3u,T>& vp,
-						 const tmatrix<3u,3u,tfel::typetraits::base_type<T>>& m,
+						 const rotation_matrix<T>& m,
 						 const T eps)
     {
       return tfel::math::internals::StensorComputeEigenTensorsDerivatives<N>::exe(dn0_ds,dn1_ds,dn2_ds,
@@ -434,7 +434,7 @@ namespace tfel{
     stensor<N,typename std::result_of<Function(T)>::type>
     stensor<N,T>::computeIsotropicFunction(const Function& f,
 					   const tvector<3u,T>& vp,
-					   const tmatrix<3u,3u,tfel::typetraits::base_type<T>>& m){
+					   const rotation_matrix<T>& m){
       return stensor<N,T>::buildFromEigenValuesAndVectors(f(vp(0)),f(vp(1)),f(vp(2)),m);
     }
 
@@ -442,7 +442,7 @@ namespace tfel{
     template<typename T2>
     stensor<N,T2>
     stensor<N,T>::computeIsotropicFunction(const tvector<3u,T2>& f,
-					   const tmatrix<3u,3u,tfel::typetraits::base_type<T>>& m){
+					   const rotation_matrix<T>& m){
       return stensor<N,T>::buildFromEigenValuesAndVectors(f[0],f[1],f[2],m);
     }
 
@@ -452,7 +452,7 @@ namespace tfel{
     stensor<N,T>::computeIsotropicFunctionDerivative(const Function& f,
 						     const FunctionDerivative& df,
 						     const tvector<3u,T>& vp,
-						     const tmatrix<3u,3u,tfel::typetraits::base_type<T>>& m,
+						     const rotation_matrix<T>& m,
 						     const T eps){
       st2tost2<N,typename std::result_of<FunctionDerivative(T)>::type> r;
       stensor<N,T>::computeIsotropicFunctionDerivative(r,f,df,vp,m,eps);
@@ -474,7 +474,7 @@ namespace tfel{
 						     const Function& f,
 						     const FunctionDerivative&df ,
 						     const tvector<3u,T>& vp,
-						     const tmatrix<3u,3u,tfel::typetraits::base_type<T>>& m,
+						     const rotation_matrix<T>& m,
 						     const T eps){
       tfel::math::internals::StensorComputeIsotropicFunctionDerivative<N>::exe2(d,f,df,vp,m,eps); 
     }
@@ -485,7 +485,7 @@ namespace tfel{
     stensor<N,T>::computeIsotropicFunctionDerivative(const tvector<3u,T1>& f,
 						     const tvector<3u,T2>& df,
 						     const tvector<3u,T>&  vp,
-						     const tmatrix<3u,3u,tfel::typetraits::base_type<T>>& m,
+						     const rotation_matrix<T>& m,
 						     const T eps){
       st2tost2<N,T2> r;
       stensor<N,T>::computeIsotropicFunctionDerivative(r,f,df,vp,m,eps);
@@ -507,7 +507,7 @@ namespace tfel{
 						     const tvector<3u,T1>& f,
 						     const tvector<3u,T2>& df,
 						     const tvector<3u,T>&  vp,
-						     const tmatrix<3u,3u,tfel::typetraits::base_type<T>>& m,
+						     const rotation_matrix<T>& m,
 						     const T eps){
       tfel::math::internals::StensorComputeIsotropicFunctionDerivative<N>::exe(d,f,df,vp,m,eps); 
     }
@@ -561,10 +561,8 @@ namespace tfel{
     } // end of stensor<N,T>::computeIsotropicFunctionAndDerivative
     
     // ChangeBasis
-    template<unsigned short N,typename T>
-    void 
-    stensor<N,T>::changeBasis(const tmatrix<3u,3u,tfel::typetraits::base_type<T>>& m)
-    {
+    template <unsigned short N, typename T>
+    void stensor<N, T>::changeBasis(const rotation_matrix<T>& m) {
       return tfel::math::internals::StensorChangeBasis<N>::exe(this->v,m);
     }
 

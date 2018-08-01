@@ -325,10 +325,8 @@ namespace tfel{
        * \tparam    es: eigen solver
        * \param[in] b:  refine eigenvalues
        */
-      template<EigenSolver = TFELEIGENSOLVER>
-      TFEL_MATH_INLINE2
-      std::tuple<tvector<3u,T>,
-		 tmatrix<3u,3u,tfel::typetraits::base_type<T>>>
+      template <EigenSolver = TFELEIGENSOLVER>
+      TFEL_MATH_INLINE2 std::tuple<tvector<3u, T>, rotation_matrix<T>>
       computeEigenVectors(const bool = false) const;
       /*!
        * compute eigenvectors and eigenvalues 
@@ -340,7 +338,7 @@ namespace tfel{
       template<EigenSolver = TFELEIGENSOLVER>
       TFEL_MATH_INLINE2 void
       computeEigenVectors(tvector<3u,T>&,
-			  tmatrix<3u,3u,tfel::typetraits::base_type<T>>&,
+			  rotation_matrix<T>&,
 			  const bool = false) const;
       /*!
        * compute eigenvectors and eigenvalues 
@@ -351,7 +349,7 @@ namespace tfel{
       template<EigenSolver = TFELEIGENSOLVER>
       TFEL_MATH_INLINE2
       std::tuple<tvector<3u,T>,
-		 tmatrix<3u,3u,tfel::typetraits::base_type<T>>>
+		 rotation_matrix<T>>
       computeEigenVectors(const EigenValuesOrdering,
 			  const bool = false) const;
       /*!
@@ -365,7 +363,7 @@ namespace tfel{
       template<EigenSolver = TFELEIGENSOLVER>
       TFEL_MATH_INLINE2 void
       computeEigenVectors(tvector<3u,T>&,
-			  tmatrix<3u,3u,tfel::typetraits::base_type<T>>&,
+			  rotation_matrix<T>&,
 			  const EigenValuesOrdering,
 			  const bool = false) const;
       /*!
@@ -386,7 +384,7 @@ namespace tfel{
        * change basis
        */
       TFEL_MATH_INLINE2 void
-      changeBasis(const tmatrix<3u,3u,tfel::typetraits::base_type<T>>&);
+      changeBasis(const rotation_matrix<T>&);
       /*!
        * Return Identity
        */
@@ -461,22 +459,17 @@ namespace tfel{
        * \param[in] v2 : third  eigen value
        * \param[in] m  : matrix containing the eigen vectors
        */
-      static stensor<N,T>
-      buildFromEigenValuesAndVectors(const T&,const T&,const T&,
-				     const tmatrix<3u,3u,
-				     tfel::typetraits::base_type<T>>&);
+      static stensor<N, T> buildFromEigenValuesAndVectors(
+          const T&, const T&, const T&, const rotation_matrix<T>&);
 
       /*!
        * build a symmetric tensor from its eigen values and vectors
        * \param[in] vp : eigen values
        * \param[in] m  : matrix containing the eigen vectors
        */
-      static stensor<N,T>
-      buildFromEigenValuesAndVectors(const tvector<3u,T>&,
-				     const tmatrix<3u,3u,
-				     tfel::typetraits::base_type<T>>&);
+      static stensor<N, T> buildFromEigenValuesAndVectors(
+          const tvector<3u, T>&, const rotation_matrix<T>&);
 
-      
       /*!
        * build the logarithm of a symmetric tensor given through its eigen values and vectors
        * \param[in] v1 : first  eigen value
@@ -484,20 +477,16 @@ namespace tfel{
        * \param[in] v2 : third  eigen value
        * \param[in] m  : matrix containing the eigen vectors
        */
-      static stensor<N,T>
-      buildLogarithmFromEigenValuesAndVectors(const T&,const T&,const T&,
-					      const tmatrix<3u,3u,
-					      tfel::typetraits::base_type<T>>&);
+      static stensor<N, T> buildLogarithmFromEigenValuesAndVectors(
+          const T&, const T&, const T&, const rotation_matrix<T>&);
 
       /*!
        * build the logarithm of a symmetric tensor given through its eigen values and vectors
        * \param[in] vp : eigen values
        * \param[in] m  : matrix containing the eigen vectors
        */
-      static stensor<N,T>
-      buildLogarithmFromEigenValuesAndVectors(const tvector<3u,T>&,
-					      const tmatrix<3u,3u,
-					      tfel::typetraits::base_type<T>>&);
+      static stensor<N, T> buildLogarithmFromEigenValuesAndVectors(
+          const tvector<3u, T>&, const rotation_matrix<T>&);
 
       /*!
        * build the absolute value of a symmetric tensor given through its eigen values and vectors
@@ -506,20 +495,16 @@ namespace tfel{
        * \param[in] v2 : third  eigen value
        * \param[in] m  : matrix containing the eigen vectors
        */
-      static stensor<N,T>
-      buildAbsoluteValueFromEigenValuesAndVectors(const T&,const T&,const T&,
-						  const tmatrix<3u,3u,
-						  tfel::typetraits::base_type<T>>&);
+      static stensor<N, T> buildAbsoluteValueFromEigenValuesAndVectors(
+          const T&, const T&, const T&, const rotation_matrix<T>&);
 
       /*!
        * build the absolute value of a symmetric tensor given through its eigen values and vectors
        * \param[in] vp : eigen values
        * \param[in] m  : matrix containing the eigen vectors
        */
-      static stensor<N,T>
-      buildAbsoluteValueFromEigenValuesAndVectors(const tvector<3u,T>&,
-						  const tmatrix<3u,3u,
-						  tfel::typetraits::base_type<T>>&);
+      static stensor<N, T> buildAbsoluteValueFromEigenValuesAndVectors(
+          const tvector<3u, T>&, const rotation_matrix<T>&);
 
       /*!
        * build the positive part of a symmetric tensor given through its eigen values and vectors
@@ -528,19 +513,15 @@ namespace tfel{
        * \param[in] v2 : third  eigen value
        * \param[in] m  : matrix containing the eigen vectors
        */
-      static  stensor<N,T>
-      buildPositivePartFromEigenValuesAndVectors(const T&,const T&,const T&,
-						 const tmatrix<3u,3u,
-						 tfel::typetraits::base_type<T>>&);
+      static stensor<N, T> buildPositivePartFromEigenValuesAndVectors(
+          const T&, const T&, const T&, const rotation_matrix<T>&);
       /*!
        * build the positive part of a symmetric tensor given through its eigen values and vectors
        * \param[in] vp : eigen values
        * \param[in] m  : matrix containing the eigen vectors
        */
-      static stensor<N,T>
-      buildPositivePartFromEigenValuesAndVectors(const tvector<3u,T>&,
-						 const tmatrix<3u,3u,
-						 tfel::typetraits::base_type<T>>&);
+      static stensor<N, T> buildPositivePartFromEigenValuesAndVectors(
+          const tvector<3u, T>&, const rotation_matrix<T>&);
       /*!
        * build the positive part of a symmetric tensor given through its eigen values and vectors
        * \param[in] v1 : first  eigen value
@@ -548,20 +529,16 @@ namespace tfel{
        * \param[in] v2 : third  eigen value
        * \param[in] m  : matrix containing the eigen vectors
        */
-      static stensor<N,T>
-      buildNegativePartFromEigenValuesAndVectors(const T&,const T&,const T&,
-						 const tmatrix<3u,3u,
-						 tfel::typetraits::base_type<T>>&);
+      static stensor<N, T> buildNegativePartFromEigenValuesAndVectors(
+          const T&, const T&, const T&, const rotation_matrix<T>&);
 
       /*!
        * build the negative part of a symmetric tensor given through its eigen values and vectors
        * \param[in] vp : eigen values
        * \param[in] m  : matrix containing the eigen vectors
        */
-      static stensor<N,T>
-      buildNegativePartFromEigenValuesAndVectors(const tvector<3u,T>&,
-						 const tmatrix<3u,3u,
-						 tfel::typetraits::base_type<T>>&);
+      static stensor<N, T> buildNegativePartFromEigenValuesAndVectors(
+          const tvector<3u, T>&, const rotation_matrix<T>&);
       /*!
        * compute the eigenvalues derivatives with respect with this tensor
        * \param[out] n : derivatives of the  eigenvalues
@@ -573,7 +550,7 @@ namespace tfel{
        * \(\underbrace{n}_{i}\) are the eigen tensors associated to the given tensor.
        */
       std::tuple<stensor<N,T>,stensor<N,T>,stensor<N,T>>
-      computeEigenValuesDerivatives(const tmatrix<3u,3u,tfel::typetraits::base_type<T>>&);
+      computeEigenValuesDerivatives(const rotation_matrix<T>&);
       /*!
        * compute the eigenvalues derivatives with respect with this tensor
        * \param[out] n0 : derivative of the first eigenvalue
@@ -596,14 +573,14 @@ namespace tfel{
 	computeEigenValuesDerivatives(StensorType&,
 				      StensorType&,
 				      StensorType&,
-				      const tmatrix<3u,3u,tfel::typetraits::base_type<T>>&);
+				      const rotation_matrix<T>&);
       /*!
        * \brief compute the "eigentensors"
        * \param[out] n: derivativse of the eigenvalues
        * \param[in]  m: eigenvectors
        */
       static std::tuple<stensor<N,T>,stensor<N,T>,stensor<N,T>>
-      computeEigenTensors(const tmatrix<3u,3u,tfel::typetraits::base_type<T>>&);
+      computeEigenTensors(const rotation_matrix<T>&);
       /*!
        * compute the "eigentensors"
        * \param[out] n0: derivative of the first  eigenvalue
@@ -621,7 +598,7 @@ namespace tfel{
       computeEigenTensors(StensorType&,
 			  StensorType&,
 			  StensorType&,
-			  const tmatrix<3u,3u,tfel::typetraits::base_type<T>>&);
+			  const rotation_matrix<T>&);
       /*!
        * \brief compute the "eigentensors" derivatives
        * \param[out] dn0_ds: derivative of the first  eigenvalue
@@ -643,7 +620,7 @@ namespace tfel{
 				     ST2toST2Type&,
 				     ST2toST2Type&,
 				     const tvector<3u,T>&,
-				     const tmatrix<3u,3u,tfel::typetraits::base_type<T>>&,
+				     const rotation_matrix<T>&,
 				     const T);
       /*!
        * compute an isotropic function
@@ -655,7 +632,7 @@ namespace tfel{
       static stensor<N,typename std::result_of<Function(T)>::type>
       computeIsotropicFunction(const Function&,
 			       const tvector<3u,T>&,
-			       const tmatrix<3u,3u,tfel::typetraits::base_type<T>>&);
+			       const rotation_matrix<T>&);
       /*!
        * compute an isotropic function
        * \param[in]  f: function values for each eigen values
@@ -664,7 +641,7 @@ namespace tfel{
       template<typename T2>
       static stensor<N,T2>
       computeIsotropicFunction(const tvector<3u,T2>&,
-			       const tmatrix<3u,3u,tfel::typetraits::base_type<T>>&);
+			       const rotation_matrix<T>&);
       /*!
        * \return the derivative of an isotropic function
        * \param[in]  f:   function values
@@ -678,7 +655,7 @@ namespace tfel{
       computeIsotropicFunctionDerivative(const tvector<3u,T1>&,
 					 const tvector<3u,T2>&,
 					 const tvector<3u,T>&,
-					 const tmatrix<3u,3u,tfel::typetraits::base_type<T>>&,
+					 const rotation_matrix<T>&,
 					 const T);
       /*!
        * compute the derivative of an isotropic function
@@ -701,7 +678,7 @@ namespace tfel{
 					 const tvector<3u,T1>&,
 					 const tvector<3u,T2>&,
 					 const tvector<3u,T>&,
-					 const tmatrix<3u,3u,tfel::typetraits::base_type<T>>&,
+					 const rotation_matrix<T>&,
 					 const T);
       /*!
        * compute the derivative of an isotropic function
@@ -717,7 +694,7 @@ namespace tfel{
       computeIsotropicFunctionDerivative(const Function&,
 					 const FunctionDerivative&,
 					 const tvector<3u,T>&,
-					 const tmatrix<3u,3u,tfel::typetraits::base_type<T>>&,
+					 const rotation_matrix<T>&,
 					 const T);
       /*!
        * compute the derivative of an isotropic function
@@ -742,7 +719,7 @@ namespace tfel{
 					 const Function&,
 					 const FunctionDerivative&,
 					 const tvector<3u,T>&,
-					 const tmatrix<3u,3u,tfel::typetraits::base_type<T>>&,
+					 const rotation_matrix<T>&,
 					 const T);
       /*!
        * \return the value of an isotropic function
@@ -874,15 +851,14 @@ namespace tfel{
      * \param[in] r: rotation matrix
      * \return the rotated symmetric tensor
      */
-    template<typename StensorType>
+    template <typename StensorType>
     TFEL_MATH_INLINE2 typename std::enable_if<
-      tfel::meta::Implements<StensorType,StensorConcept>::cond,
-      stensor<StensorTraits<StensorType>::dime,
-	      StensorNumType<StensorType>>
-      >::type
+        tfel::meta::Implements<StensorType, StensorConcept>::cond,
+        stensor<StensorTraits<StensorType>::dime,
+                StensorNumType<StensorType>>>::type
     change_basis(const StensorType&,
-		 const tmatrix<3u,3u,tfel::typetraits::base_type<StensorNumType<StensorType>>>&);
-    
+                 const rotation_matrix<StensorNumType<StensorType>>&);
+
     template<typename StensorType>
     TFEL_MATH_INLINE2 typename std::enable_if<
       tfel::meta::Implements<StensorType,StensorConcept>::cond,

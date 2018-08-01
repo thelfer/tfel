@@ -222,6 +222,32 @@ namespace tfel{
     }; // end of struct t2tost2
 
     /*!
+     * \return change the basis of a 1D t2tost2
+     * \param[in] s: t2tost2
+     * \param[in] r: rotation matrix 
+     */
+    template <typename T2toST2Type>
+    typename std::enable_if<
+        ((tfel::meta::Implements<T2toST2Type, T2toST2Concept>::cond) &&
+         (T2toST2Traits<T2toST2Type>::dime == 1u)),
+        t2tost2<1u, T2toST2NumType<T2toST2Type>>>::type
+    change_basis(const T2toST2Type& s,
+                 const rotation_matrix<T2toST2NumType<T2toST2Type>>&);
+    /*!
+     * \return change the basis of a 2D or 3D t2tost2
+     * \param[in] s: t2tost2
+     * \param[in] r: rotation matrix 
+     */
+    template <typename T2toST2Type>
+    typename std::enable_if<
+        ((tfel::meta::Implements<T2toST2Type, T2toST2Concept>::cond) &&
+         (T2toST2Traits<T2toST2Type>::dime != 1u)),
+        t2tost2<T2toST2Traits<T2toST2Type>::dime,
+                T2toST2NumType<T2toST2Type>>>::type
+    change_basis(const T2toST2Type& s,
+                 const rotation_matrix<T2toST2NumType<T2toST2Type>>&);
+
+    /*!
      * convert a t2tot2 tensor to a t2tost2
      */
     template<typename T2toT2Type>

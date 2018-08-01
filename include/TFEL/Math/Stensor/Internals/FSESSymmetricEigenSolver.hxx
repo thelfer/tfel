@@ -47,47 +47,49 @@ namespace tfel{
     
     namespace internals{
 
-      template <typename real> 
-      struct FSESAnalyticalSymmetricEigensolver2x2
-      {
-	/*!
-	 * \brief calculates the eigenvalues of a real symmetric 2x2 matrix
-n	 *    [ A  B ]
-	 *    [ B  C ]
-	 * \param[out] vp: eigen values
-	 * \param[in]  A:  component of the matrix
-	 * \param[in]  B:  component of the matrix
-	 * \param[in]  C:  component of the matrix
-	 */
-	static void computeEigenValues(tvector<3u,real>&,
-				       const real,const real,const real);
-	/*!
-	 * \brief calculates the eigensystem of a real symmetric 2x2 matrix
-	 *    [ A  B ]
-	 *    [ B  C ]
-	 * in the form
-	 *    [ A  B ]  =  [ cs  -sn ] [ rt1   0  ] [  cs  sn ]
-	 *    [ B  C ]     [ sn   cs ] [  0   rt2 ] [ -sn  cs ]
-	 * where rt1 >= rt2.
-	 * \param[out] vp: eigen values
-	 * \param[out] m:  eigen vectors
-	 * \param[in]  A:  component of the matrix
-	 * \param[in]  B:  component of the matrix
-	 * \param[in]  C:  component of the matrix
-	 */
-	static void computeEigenVectors(tvector<3u,real>&,
-					tmatrix<3u,3u,real>&,
-					const real,const real,const real);
+      template <typename real>
+      struct FSESAnalyticalSymmetricEigensolver2x2 {
+        /*!
+         * \brief calculates the eigenvalues of a real symmetric 2x2 matrix
+         *    [ A  B ]
+         *    [ B  C ]
+         * \param[out] vp: eigen values
+         * \param[in]  A:  component of the matrix
+         * \param[in]  B:  component of the matrix
+         * \param[in]  C:  component of the matrix
+         */
+        static void computeEigenValues(tvector<3u, real>&,
+                                       const real,
+                                       const real,
+                                       const real);
+        /*!
+         * \brief calculates the eigensystem of a real symmetric 2x2 matrix
+         *    [ A  B ]
+         *    [ B  C ]
+         * in the form
+         *    [ A  B ]  =  [ cs  -sn ] [ rt1   0  ] [  cs  sn ]
+         *    [ B  C ]     [ sn   cs ] [  0   rt2 ] [ -sn  cs ]
+         * where rt1 >= rt2.
+         * \param[out] vp: eigen values
+         * \param[out] m:  eigen vectors
+         * \param[in]  A:  component of the matrix
+         * \param[in]  B:  component of the matrix
+         * \param[in]  C:  component of the matrix
+         */
+        static void computeEigenVectors(tvector<3u, real>&,
+                                        tmatrix<3u, 3u, real>&,
+                                        const real,
+                                        const real,
+                                        const real);
       };
 
-      template <typename real> 
-      struct FSESAnalyticalSymmetricEigensolver3x3
-      {
-	static void computeEigenValues(tvector<3u,real>&,
-				       const tmatrix<3u,3u,real>&);
-	static void computeEigenVectors(tvector<3u,real>&,
-					tmatrix<3u,3u,real>&,
-					tmatrix<3u,3u,real>&);
+      template <typename real>
+      struct FSESAnalyticalSymmetricEigensolver3x3 {
+        static void computeEigenValues(tvector<3u, real>&,
+                                       const tmatrix<3u, 3u, real>&);
+        static void computeEigenVectors(tvector<3u, real>&,
+                                        tmatrix<3u, 3u, real>&,
+                                        tmatrix<3u, 3u, real>&);
       };
 
     } // end of namespace internals

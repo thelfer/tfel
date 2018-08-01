@@ -130,8 +130,8 @@ namespace tfel{
        * \return a t2tot2 which acts on a tensor as a rotation of the coordinate system
        * \param[in] r : rotation matrix
        */
-      static tfel::math::t2tot2<N,typename tfel::typetraits::BaseType<T>::type>
-      fromRotationMatrix(const tmatrix<3u,3u,typename tfel::typetraits::BaseType<T>::type>&);
+      static tfel::math::t2tot2<N, typename tfel::typetraits::BaseType<T>::type>
+      fromRotationMatrix(const rotation_matrix<T>&);
       /*!
        * \param[in] B : second tensor of the product
        * \return the left part of the derivative of a tensor product
@@ -281,15 +281,13 @@ namespace tfel{
      * \param[in] s : t2tot2
      * \param[in] r : rotation matrix 
      */
-    template<typename T2toT2Type>
-    TFEL_MATH_INLINE2
-    typename std::enable_if<
-      tfel::meta::Implements<T2toT2Type,T2toT2Concept>::cond,
-      t2tot2<T2toT2Traits<T2toT2Type>::dime,
-	       typename T2toT2Traits<T2toT2Type>::NumType>
-    >::type
+    template <typename T2toT2Type>
+    TFEL_MATH_INLINE2 typename std::enable_if<
+        tfel::meta::Implements<T2toT2Type, T2toT2Concept>::cond,
+        t2tot2<T2toT2Traits<T2toT2Type>::dime,
+               typename T2toT2Traits<T2toT2Type>::NumType>>::type
     change_basis(const T2toT2Type&,
-		 const tfel::math::tmatrix<3u,3u,typename tfel::typetraits::BaseType<typename T2toT2Traits<T2toT2Type>::NumType>::type>&);
+                 const rotation_matrix<T2toT2NumType<T2toT2Type>>&);
 
     /*!
      * \return compute the derivative of the velocity gradient

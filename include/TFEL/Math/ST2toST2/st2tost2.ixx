@@ -178,10 +178,10 @@ namespace tfel{
       return Expr<st2tost2<N,T>,ConvertT2toST2ToST2toST2Expr<N> >(src);
     }
 
-    template<unsigned short N, typename T>
-    st2tost2<N,tfel::typetraits::base_type<T>>
-    st2tost2<N,T>::fromRotationMatrix(const tmatrix<3u,3u,tfel::typetraits::base_type<T>>& r){
-      return st2tost2_internals::BuildFromRotationMatrix<N>::exe(r);
+    template <unsigned short N, typename T>
+    st2tost2<N, tfel::typetraits::base_type<T>>
+    st2tost2<N, T>::fromRotationMatrix(const rotation_matrix<T>& r) {
+      return st2tost2_internals::BuildFromRotationMatrix<N,T>::exe(r);
     } // end of st2tost2<N,T>::fromRotationMatrix
     
     template<unsigned short N, typename T>

@@ -350,7 +350,7 @@ namespace tfel{
     // ChangeBasis
     template<unsigned short N,typename T>
     void 
-    tensor<N,T>::changeBasis(const tmatrix<3u,3u,tfel::typetraits::base_type<T>>& m)
+    tensor<N,T>::changeBasis(const rotation_matrix<T>& m)
     {
       TensorChangeBasis<N,T>::exe(this->v,m);
     }

@@ -21,15 +21,13 @@
 namespace tfel{
 
   namespace math{
-    
-    template<typename T>
-    tmatrix<3u,3u,T>
-    getRandomRotationMatrix()
-    {
+
+    template <typename T>
+    rotation_matrix<T> getRandomRotationMatrix() {
       using namespace std;
       const T rmax = static_cast<T>(RAND_MAX);
-      const T pi = T(4)* atan(T(1));  
-      tmatrix<3u,3u,T> drot;
+      const T pi = T(4)* atan(T(1));
+      rotation_matrix<T> drot;
       T psi=T(2)*pi*(static_cast<T>(rand())/rmax);
       T cthe=T(2)*((static_cast<T>(rand())/rmax)-T(1)/T(2));
       T the=acos(cthe);
