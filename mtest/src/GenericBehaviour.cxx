@@ -298,8 +298,16 @@ namespace mtest{
     if(ktype!=StiffnessMatrixType::NOSTIFFNESS){ 
       const auto ndv     = this->getDrivingVariablesSize();
       const auto nth     = this->getThermodynamicForcesSize();
-      applyRotation(&(wk.D(0,0)),this->dvtypes,this->thtypes,
-		    this->getHypothesis(),transpose(s.r));
+      if(this->stype==1u){
+	if((this->btype==1u)||(this->btype==2u)){
+	  applyRotation(&(wk.D(0,0)),this->dvtypes,this->thtypes,
+			this->getHypothesis(),transpose(s.r));
+	} else {
+	  tfel::raise("GenericBehaviour::call_behaviour: "
+		      "orthotropic behaviours are only "
+		      "supported for small or finite strain behaviours");
+	}
+      }
       for(unsigned short i=0;i!=nth;++i){
 	for(unsigned short j=0;j!=ndv;++j){
 	  Kt(i,j) = wk.D(i,j);
@@ -314,7 +322,7 @@ namespace mtest{
       std::copy(wk.ivs.begin(),wk.ivs.end(),s.iv1.begin());
     }
     return {true,d.rdt};
-  } // end of GenericBehaviour::integrate
+  } // end of GenericBehaviour::call_behaviour
 
   tfel::math::tmatrix<3u,3u,real>
   GenericBehaviour::getRotationMatrix(const tfel::math::vector<real>&,

@@ -82,14 +82,11 @@ namespace mtest
     tfel::raise_if(this->values.empty(),
 		   "LPILoadingEvolution::getValue: "
 		   "no values specified");
-    auto p = this->values.lower_bound(t);
-    real x0;
-    real x1;
-    real y0;
-    real y1;
+    real x0,x1,y0,y1;
     if(this->values.size()==1u){
       return this->values.begin()->second;
     }
+    auto p = this->values.lower_bound(t);
     if(p==this->values.begin()){
       return p->second;
     } else if(p==this->values.end()){
