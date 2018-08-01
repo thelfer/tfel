@@ -20,6 +20,7 @@
 #include"TFEL/Math/tmatrix.hxx"
 #include"TFEL/Math/stensor.hxx"
 #include"TFEL/Math/tensor.hxx"
+#include"TFEL/Math/t2tost2.hxx"
 #include"TFEL/Math/st2tost2.hxx"
 #include"TFEL/Math/ST2toST2/ST2toST2View.hxx"
 #include"TFEL/System/ExternalLibraryManager.hxx"
@@ -71,22 +72,51 @@ namespace mtest{
   } // end of applyRotation
 
   static void applyRotation(real* const v,
-			    const std::vector<int>&,
-			    const std::vector<int>&,
+			    const std::vector<int>& dvtypes,
+			    const std::vector<int>& thtypes,
 			    const GenericBehaviour::Hypothesis h,
 			    const tfel::math::tmatrix<3u,3u,real>& r){
     auto o = size_t{};
     const auto n = tfel::material::getSpaceDimension(h);
-    if(n==2u){
-      tfel::math::st2tost2<2u,real> k;
-      std::copy(v+o,v+o+k.size(),k.begin());
-      const auto rk = change_basis(k,r);
-      std::copy(rk.begin(),rk.end(),v+o);
-    } else if(n==3u){
-      tfel::math::st2tost2<3u,real> k;
-      std::copy(v+o,v+o+k.size(),k.begin());
-      const auto rk = change_basis(k,r);
-      std::copy(rk.begin(),rk.end(),v+o);
+    tfel::raise_if(dvtypes.size()!=thtypes.size(),
+		   "applyRotation: the number of driving variables "
+		   "does not match the number of thermodynamic fores");
+    tfel::raise_if(dvtypes.size()!=1u,
+		   "applyRotation: unsupported case");
+    for(decltype(dvtypes.size()) i=0;i!=dvtypes.size();++i){
+      if(dvtypes[i]==1){
+	// symmetric tensors
+	tfel::raise_if(thtypes[i]!=1,"applyRotation: "
+		       "unsupported case");
+	if(n==2u){
+	  tfel::math::st2tost2<2u,real> k;
+	  std::copy(v+o,v+o+k.size(),k.begin());
+	  const auto rk = change_basis(k,r);
+	  std::copy(rk.begin(),rk.end(),v+o);
+	} else if(n==3u){
+	  tfel::math::st2tost2<3u,real> k;
+	  std::copy(v+o,v+o+k.size(),k.begin());
+	  const auto rk = change_basis(k,r);
+	  std::copy(rk.begin(),rk.end(),v+o);
+	}
+      // } else if(dvtypes[i]==2){
+      // 	tfel::raise_if(dvtypes[i]!=1,"applyRotation: "
+      // 		       "unsupported case");
+      // 	if(n==2u){
+      // 	  tfel::math::t2tost2<2u,real> k;
+      // 	  std::copy(v+o,v+o+k.size(),k.begin());
+      // 	  const auto rk = change_basis(k,r);
+      // 	  std::copy(rk.begin(),rk.end(),v+o);
+      // 	} else if(n==3u){
+      // 	  tfel::math::t2tost2<3u,real> k;
+      // 	  std::copy(v+o,v+o+k.size(),k.begin());
+      // 	  const auto rk = change_basis(k,r);
+      // 	  std::copy(rk.begin(),rk.end(),v+o);
+      // 	}
+      } else {
+	tfel::raise("applyRotation: "
+		    "unsupported driving variable type");
+      }
     }
   } // end of applyRotation
   
