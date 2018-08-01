@@ -1494,8 +1494,9 @@ namespace mfront{
      * - the behaviour symmetry is isotropic
      * - the behaviour is written in small strain
      * - the finite strain strategy is either undefined or `Native`
+     * note: this is included to comply with gcc 4.7.2
      */
-    const auto c = [&mb]{
+    const auto c = [&mb,this]{
       if(mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
         if ((AnsysInterface::hasFiniteStrainStrategy(mb)) &&
             (AnsysInterface::getFiniteStrainStrategy(mb) != "Native")) {

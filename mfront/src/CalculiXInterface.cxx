@@ -1248,7 +1248,8 @@ namespace mfront {
     for (const auto& v : persistentVarsHolder) {
       vs += SupportedTypes::getTypeSize(v.type, v.arraySize);
     }
-    const auto vsize = [mb, &vs, h]() -> unsigned int {
+    // this is included for gcc 4.7.2
+    const auto vsize = [mb, &vs, h, this]() -> unsigned int {
       if ((mb.getBehaviourType() ==
            BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) &&
           (CalculiXInterface::hasFiniteStrainStrategy(mb)) &&
