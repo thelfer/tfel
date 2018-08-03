@@ -866,7 +866,9 @@ namespace mfront {
         "some driving variables are already declared");
     DrivingVariable eto("StrainStensor", "eto");
     eto.increment_known = true;
+    eto.setGlossaryName("Strain");
     ThermodynamicForce sig("StressStensor", "sig");
+    sig.setGlossaryName("Stress");
     this->mvariables.push_back({eto, sig});
     this->type = BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR;
     this->registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS, "eto");
@@ -881,8 +883,10 @@ namespace mfront {
         "BehaviourDescription::declareAsAFiniteStrainStandardBehaviour: "
         "some driving variables are already declared");
     DrivingVariable F("DeformationGradientTensor", "F");
+    F.setGlossaryName("DeformationGradient");
     F.increment_known = false;
     ThermodynamicForce sig("StressStensor", "sig");
+    sig.setGlossaryName("Stress");
     this->mvariables.push_back({F, sig});
     this->type = BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR;
     if (b) {
@@ -899,8 +903,10 @@ namespace mfront {
                    "BehaviourDescription::declareAsACohesiveZoneModel: "
                    "some driving variables are already declared");
     DrivingVariable u("DisplacementTVector", "u");
+    u.setGlossaryName("OpeningDisplacement");
     u.increment_known = true;
     ThermodynamicForce t("ForceTVector", "t");
+    t.setGlossaryName("CohesiveForce");
     this->mvariables.push_back({u, t});
     this->type = BehaviourDescription::COHESIVEZONEMODEL;
     this->registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS, "u");

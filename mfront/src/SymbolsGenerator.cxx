@@ -113,33 +113,37 @@ namespace mfront {
     std::vector<std::string> thnames;
     std::vector<int> thtypes;
     auto nmvs = decltype(mvs.size()){};
-    for(const auto& mv : mvs){
+    for (const auto& mv : mvs) {
       const auto& dv = mv.first;
       const auto& th = mv.second;
-      if(dv.arraySize!=th.arraySize){
-	tfel::raise("SymbolsGenerator::writeMainVariablesSymbols: "
-		    "array size for driving variable '"+dv.name+"' "
-		    "does not match the array size of the associated "
-		    "thermodynamic forces '"+th.name+"'");
+      if (dv.arraySize != th.arraySize) {
+        tfel::raise(
+            "SymbolsGenerator::writeMainVariablesSymbols: "
+            "array size for driving variable '" +
+            dv.name +
+            "' "
+            "does not match the array size of the associated "
+            "thermodynamic forces '" +
+            th.name + "'");
       }
       const auto dvname = dv.getExternalName();
       const auto dvtype = getVariableTypeId(dv);
       const auto thname = th.getExternalName();
       const auto thtype = getVariableTypeId(th);
-      if(dv.arraySize==1u){
-	dvnames.push_back(dvname);
-	thnames.push_back(thname);
-	dvtypes.push_back(dvtype);
-	thtypes.push_back(thtype);
+      if (dv.arraySize == 1u) {
+        dvnames.push_back(dvname);
+        thnames.push_back(thname);
+        dvtypes.push_back(dvtype);
+        thtypes.push_back(thtype);
       } else {
-	for(unsigned short idx=0;idx!=dv.arraySize;++idx){
-	  std::ostringstream nb;
-	  nb << '[' << idx << ']';
-	  dvnames.push_back(dvname+nb.str());
-	  thnames.push_back(thname+nb.str());
-	  dvtypes.push_back(dvtype);
-	  thtypes.push_back(thtype);
-	}
+        for (unsigned short idx = 0; idx != dv.arraySize; ++idx) {
+          std::ostringstream nb;
+          nb << '[' << idx << ']';
+          dvnames.push_back(dvname + nb.str());
+          thnames.push_back(thname + nb.str());
+          dvtypes.push_back(dvtype);
+          thtypes.push_back(thtype);
+        }
       }
       nmvs += dv.arraySize;
     }

@@ -291,6 +291,17 @@
  short_description : "la déformation";
 };
 
+"DeformationGradient"{
+ type : "tensor";
+ short_description : "gradient of the transformation";
+};
+
+"OpeningDisplacement"{
+ unit: "m";
+ type: "vector";
+ short_description : "opening displacement in cohesive zone models";
+};
+
 "ElasticStrain"{
  type : "tensor";
  short_description : "The elastic strain";
@@ -337,6 +348,12 @@
  unit : "Pa";
  type : "tensor";
  short_description : "les contraintes";
+};
+
+"CohesiveForce"{
+ unit : "Newton";
+ type : "vector";
+ short_description : "cohesive force for cohesize zone models";
 };
 
 "AxialStress"{

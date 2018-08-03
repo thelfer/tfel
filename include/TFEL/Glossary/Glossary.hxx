@@ -1,5 +1,5 @@
 /*!
- * \file   include/TFEL/Glossary/Glossary.hxx
+ * \file   Glossary.hxx
  * \author Thomas Helfer
  * \date   09/06/14
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
@@ -44,10 +44,12 @@ static const GlossaryEntry B10BurnUp;
 static const GlossaryEntry BulkModulus;
 static const GlossaryEntry BurnUp_AtPercent;
 static const GlossaryEntry BurnUp_MWJperTm;
+static const GlossaryEntry CohesiveForce;
 static const GlossaryEntry ConvectiveHeatTransferCoefficient;
 static const GlossaryEntry CrossSectionArea;
 static const GlossaryEntry CylindricalStress;
 static const GlossaryEntry Damage;
+static const GlossaryEntry DeformationGradient;
 static const GlossaryEntry Displacement;
 static const GlossaryEntry ElasticStrain;
 static const GlossaryEntry Emissivity;
@@ -81,6 +83,7 @@ static const GlossaryEntry NeutronFluence;
 static const GlossaryEntry NeutronFlux;
 static const GlossaryEntry NormalStiffness;
 static const GlossaryEntry NumberOfMoles;
+static const GlossaryEntry OpeningDisplacement;
 static const GlossaryEntry OrthotropicAxisX1;
 static const GlossaryEntry OrthotropicAxisX2;
 static const GlossaryEntry OrthotropicAxisY1;
@@ -153,7 +156,7 @@ getKeys() const;
 
 protected :
 //! all glossary names (to initialise glossary entries)
-static const char * names[97];
+static const char * names[100];
 /*!
  * \brief insert a new entry
  */

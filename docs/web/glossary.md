@@ -71,6 +71,14 @@ Cette entrée décrit le taux de combustion en MegaWattJour par tonne (métal).
 * unité: \(MWJ/tm\)
 * type: scalaire 
 
+# L'entrée CohesiveForce
+
+Cette entrée décrit cohesive force for cohesize zone models.
+
+* noms : CohesiveForce
+* unité: \(Newton\)
+* type: vecteur 
+
 # L'entrée ConvectiveHeatTransferCoefficient
 
 Cette entrée décrit le coefficient d'échange par convection.
@@ -102,6 +110,14 @@ Cette entrée décrit l'endommagement d'un matériau.
 * noms : Damage
 * unité: sans unité
 * type: scalaire 
+
+# L'entrée DeformationGradient
+
+Cette entrée décrit gradient of the transformation.
+
+* noms : DeformationGradient
+* unité: sans unité
+* type: tenseur symétrique
 
 # L'entrée Displacement
 
@@ -423,6 +439,14 @@ Cette entrée décrit le nombre de moles d'une substance.
 * noms : NumberOfMoles
 * unité: \(mol\)
 * type: scalaire 
+
+# L'entrée OpeningDisplacement
+
+Cette entrée décrit opening displacement in cohesive zone models.
+
+* noms : OpeningDisplacement
+* unité: \(m\)
+* type: vecteur 
 
 # L'entrée OrthotropicAxisX1
 

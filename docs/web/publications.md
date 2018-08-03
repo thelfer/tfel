@@ -4,6 +4,7 @@
 
 ---
 nocite: |
+	@portelette_crystal_2018
 	@barrioz_void_2018
 	@shi_experimental_2018
 	@torelli_confinement-dependent_2018

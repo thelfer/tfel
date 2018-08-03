@@ -13,7 +13,7 @@
 
 // g++ -std=c++11 `tfel-config --includes --libs --utilities --glossary` generate_glossary.cxx -o generate_glossary
 
-// g++ -std=c++11 generate_glossary.cxx  -o generate_glossary -I/home/th202608/codes/tfel/trunk/install/include -L/home/th202608/codes/tfel/trunk/install/lib -lTFELUtilities  -lTFELGlossary && ./generate_glossary && mv Glossary.hxx ../../include/TFEL/Glossary/Glossary.hxx && mv Glossary.cxx ../../src/Glossary/Glossary.cxx && mv PythonGlossary.cxx ../../bindings/python/tfel/Glossary.cxx && pandoc -f markdown+tex_math_single_backslash --toc  glossary-pandoc.txt -o /tmp/glossary.docx && mv glossary-pandoc.txt ../../docs/web/glossary.md
+// g++ -std=c++11 generate_glossary.cxx  -o generate_glossary `tfel-config --includes` `tfel-config --libs` -lTFELUtilities  -lTFELGlossary && ./generate_glossary && mv Glossary.hxx ../../include/TFEL/Glossary/Glossary.hxx && mv Glossary.cxx ../../src/Glossary/Glossary.cxx && mv PythonGlossary.cxx ../../bindings/python/tfel/Glossary.cxx && pandoc -f markdown+tex_math_single_backslash --toc  glossary-pandoc.txt -o /tmp/glossary.docx && mv glossary-pandoc.txt ../../docs/web/glossary.md
 
 #include<iostream>
 #include<stdexcept>

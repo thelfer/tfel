@@ -40,6 +40,8 @@ return_value_policy<reference_existing_object>())
 "le taux de combustion en atome pour cent")
 .def_readonly("BurnUp_MWJperTm",&Glossary::BurnUp_MWJperTm,
 "le taux de combustion en MegaWattJour par tonne (métal)")
+.def_readonly("CohesiveForce",&Glossary::CohesiveForce,
+"cohesive force for cohesize zone models")
 .def_readonly("ConvectiveHeatTransferCoefficient",&Glossary::ConvectiveHeatTransferCoefficient,
 "le coefficient d'échange par convection")
 .def_readonly("CrossSectionArea",&Glossary::CrossSectionArea,
@@ -48,6 +50,8 @@ return_value_policy<reference_existing_object>())
 "les contraintes exprimées dans le repère cylindrique")
 .def_readonly("Damage",&Glossary::Damage,
 "l'endommagement d'un matériau")
+.def_readonly("DeformationGradient",&Glossary::DeformationGradient,
+"gradient of the transformation")
 .def_readonly("Displacement",&Glossary::Displacement,
 "le déplacement")
 .def_readonly("ElasticStrain",&Glossary::ElasticStrain,
@@ -114,6 +118,8 @@ return_value_policy<reference_existing_object>())
 "la raideur normale pour un modèle de zone cohésive")
 .def_readonly("NumberOfMoles",&Glossary::NumberOfMoles,
 "le nombre de moles d'une substance")
+.def_readonly("OpeningDisplacement",&Glossary::OpeningDisplacement,
+"opening displacement in cohesive zone models")
 .def_readonly("OrthotropicAxisX1",&Glossary::OrthotropicAxisX1,
 "la première coordonnée du premier axe d'orthotropie")
 .def_readonly("OrthotropicAxisX2",&Glossary::OrthotropicAxisX2,
