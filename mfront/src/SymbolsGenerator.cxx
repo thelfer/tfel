@@ -25,34 +25,35 @@
 
 namespace mfront {
 
-  static int getVariableTypeId(const VariableDescription& v){
+  static int getVariableTypeId(const VariableDescription& v) {
     switch (SupportedTypes::getTypeFlag(v.type)) {
-    case SupportedTypes::Scalar:
-      return 0;
-      break;
-    case SupportedTypes::Stensor:
-      return 1;
-      break;
-    case SupportedTypes::TVector:
-      return 2;
-      break;
-    case SupportedTypes::Tensor:
-      return 3;
-      break;
-    default:
-      tfel::raise("getVariableTypeId: "
-                  "internal error, tag unsupported for "
-                  "variable '" + v.name + "'");
+      case SupportedTypes::Scalar:
+        return 0;
+        break;
+      case SupportedTypes::Stensor:
+        return 1;
+        break;
+      case SupportedTypes::TVector:
+        return 2;
+        break;
+      case SupportedTypes::Tensor:
+        return 3;
+        break;
+      default:
+        tfel::raise(
+            "getVariableTypeId: "
+            "internal error, tag unsupported for "
+            "variable '" +
+            v.name + "'");
     }
-  } // end of getVariableTypeId
-  
+  }  // end of getVariableTypeId
+
   std::string SymbolsGenerator::getSymbolName(
       const StandardBehaviourInterface& i,
       const std::string& n,
       const Hypothesis h) const {
     if (h != ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
-      return i.getFunctionNameBasis(n) + "_" +
-             ModellingHypothesis::toString(h);
+      return i.getFunctionNameBasis(n) + "_" + ModellingHypothesis::toString(h);
     }
     return i.getFunctionNameBasis(n);
   }  // end of SymbolsGenerator::getSymbolName
@@ -74,7 +75,7 @@ namespace mfront {
     this->writeMainVariablesSymbols(out, i, bd, name);
     this->writeBehaviourTypeSymbols(out, i, bd, name);
     this->writeBehaviourKinematicSymbols(out, i, bd, name);
-    this->writeSymmetryTypeSymbols(out,i, bd, name);
+    this->writeSymmetryTypeSymbols(out, i, bd, name);
     this->writeElasticSymmetryTypeSymbols(out, i, bd, name);
     this->writeSpecificSymbols(out, i, bd, fd, name);
   }
@@ -99,7 +100,7 @@ namespace mfront {
       const BehaviourDescription& mb,
       const std::string& n) const {
     mfront::writeMaterialSymbol(out, i.getFunctionNameBasis(n),
-				mb.getMaterialName());
+                                mb.getMaterialName());
   }  // end of SymbolsGenerator::writeEntryPointSymbol
 
   void SymbolsGenerator::writeMainVariablesSymbols(
@@ -130,51 +131,101 @@ namespace mfront {
       const auto dvtype = getVariableTypeId(dv);
       const auto thname = th.getExternalName();
       const auto thtype = getVariableTypeId(th);
-      if (dv.arraySize == 1u) {
-        dvnames.push_back(dvname);
-        thnames.push_back(thname);
-        dvtypes.push_back(dvtype);
-        thtypes.push_back(thtype);
-      } else {
-        for (unsigned short idx = 0; idx != dv.arraySize; ++idx) {
-          std::ostringstream nb;
-          nb << '[' << idx << ']';
-          dvnames.push_back(dvname + nb.str());
-          thnames.push_back(thname + nb.str());
+      if (dvname == "Strain") {
+        if (thname != "Stress") {
+          tfel::raise(
+              "SymbolsGenerator::writeMainVariablesSymbols: "
+              "the thermodynamic force associated with the "
+              "strain is not the stress");
+        }
+        if (dvtype != 1) {
+          tfel::raise(
+              "SymbolsGenerator::writeMainVariablesSymbols: "
+              "invalid type for the strain");
+        }
+        if (thtype != 1) {
+          tfel::raise(
+              "SymbolsGenerator::writeMainVariablesSymbols: "
+              "invalid type for the stress");
+        }
+        if (dv.arraySize != 1) {
+          tfel::raise(
+              "SymbolsGenerator::writeMainVariablesSymbols: "
+              "the strain shall not be declared as an array");
+        }
+        if (th.arraySize != 1) {
+          tfel::raise(
+              "SymbolsGenerator::writeMainVariablesSymbols: "
+              "the stress shall not be declared as an array");
+        }
+        if ((bd.isStrainMeasureDefined()) &&
+            (bd.getStrainMeasure() != BehaviourDescription::LINEARISED)) {
+          if (this->handleStrainMeasure()) {
+            // strain measure is handled by the interface
+            dvnames.push_back("DeformationGradient");
+            thnames.push_back("Stress");
+            dvtypes.push_back(3);
+            thtypes.push_back(thtype);
+          } else {
+            // strain measure is handled by the calling finite element solver
+            dvnames.push_back(dvname);
+            thnames.push_back(thname);
+            dvtypes.push_back(dvtype);
+            thtypes.push_back(thtype);
+          }
+        } else {
+          dvnames.push_back(dvname);
+          thnames.push_back(thname);
           dvtypes.push_back(dvtype);
           thtypes.push_back(thtype);
+        }
+      } else {
+        if (dv.arraySize == 1u) {
+          dvnames.push_back(dvname);
+          thnames.push_back(thname);
+          dvtypes.push_back(dvtype);
+          thtypes.push_back(thtype);
+        } else {
+          for (unsigned short idx = 0; idx != dv.arraySize; ++idx) {
+            std::ostringstream nb;
+            nb << '[' << idx << ']';
+            dvnames.push_back(dvname + nb.str());
+            thnames.push_back(thname + nb.str());
+            dvtypes.push_back(dvtype);
+            thtypes.push_back(thtype);
+          }
         }
       }
       nmvs += dv.arraySize;
     }
     const auto fn = i.getFunctionNameBasis(name);
-    out << "MFRONT_SHAREDOBJ unsigned short "
-	<< fn << "_nMainVariables = " << nmvs << ";\n";
-    out << "MFRONT_SHAREDOBJ unsigned short "
-	<< fn << "_nDrivingVariables = " << nmvs << ";\n\n";
-    this->writeArrayOfIntsSymbol(out,fn+"_DrivingVariablesTypes",dvtypes);
-    this->writeArrayOfStringsSymbol(out,fn+"_DrivingVariables",dvnames);
-    out << "MFRONT_SHAREDOBJ unsigned short "
-	<< fn << "_nThermodynamicForces = " << nmvs << ";\n\n";
-    this->writeArrayOfIntsSymbol(out,fn+"_ThermodynamicForcesTypes",thtypes);
-    this->writeArrayOfStringsSymbol(out,fn+"_ThermodynamicForces",thnames);
-  } // end of SymbolsGenerator::writeMainVariablesSymbols
-  
+    out << "MFRONT_SHAREDOBJ unsigned short " << fn
+        << "_nMainVariables = " << nmvs << ";\n";
+    out << "MFRONT_SHAREDOBJ unsigned short " << fn
+        << "_nDrivingVariables = " << nmvs << ";\n\n";
+    this->writeArrayOfIntsSymbol(out, fn + "_DrivingVariablesTypes", dvtypes);
+    this->writeArrayOfStringsSymbol(out, fn + "_DrivingVariables", dvnames);
+    out << "MFRONT_SHAREDOBJ unsigned short " << fn
+        << "_nThermodynamicForces = " << nmvs << ";\n\n";
+    this->writeArrayOfIntsSymbol(out, fn + "_ThermodynamicForcesTypes",
+                                 thtypes);
+    this->writeArrayOfStringsSymbol(out, fn + "_ThermodynamicForces", thnames);
+  }  // end of SymbolsGenerator::writeMainVariablesSymbols
+
   void SymbolsGenerator::writeMaterialKnowledgeTypeSymbol(
       std::ostream& out,
       const StandardBehaviourInterface& i,
       const std::string& n) const {
     mfront::writeMaterialKnowledgeTypeSymbol(out, i.getFunctionNameBasis(n),
-					     BEHAVIOUR);
+                                             BEHAVIOUR);
   }  // end of SymbolsGenerator::writeEntryPointSymbol
 
-  void SymbolsGenerator::generateSymbols(
-      std::ostream& out,
-      const StandardBehaviourInterface& i,
-      const BehaviourDescription& bd,
-      const FileDescription& fd,
-      const std::string& name,
-      const Hypothesis h) const {
+  void SymbolsGenerator::generateSymbols(std::ostream& out,
+                                         const StandardBehaviourInterface& i,
+                                         const BehaviourDescription& bd,
+                                         const FileDescription& fd,
+                                         const std::string& name,
+                                         const Hypothesis h) const {
     this->writeIsUsableInPurelyImplicitResolutionSymbols(out, i, bd, name, h);
     this->writeMaterialPropertiesSymbols(out, i, bd, name, h);
     this->writeStateVariablesSymbols(out, i, bd, name, h);
@@ -187,12 +238,11 @@ namespace mfront {
     this->writeAdditionalSymbols(out, i, bd, fd, name, h);
   }
 
-  void SymbolsGenerator::writeSpecificSymbols(
-      std::ostream&,
-      const StandardBehaviourInterface&,
-      const BehaviourDescription&,
-      const FileDescription&,
-      const std::string&) const {
+  void SymbolsGenerator::writeSpecificSymbols(std::ostream&,
+                                              const StandardBehaviourInterface&,
+                                              const BehaviourDescription&,
+                                              const FileDescription&,
+                                              const std::string&) const {
   }  // end of SymbolsGenerator::writeSpecificSymbols
 
   void SymbolsGenerator::writeSupportedModellingHypothesis(
@@ -202,15 +252,12 @@ namespace mfront {
       const std::set<Hypothesis>& mhs,
       const std::string& name) const {
     if (mhs.empty()) {
-      out << "MFRONT_SHAREDOBJ unsigned short "
-          << i.getFunctionNameBasis(name)
+      out << "MFRONT_SHAREDOBJ unsigned short " << i.getFunctionNameBasis(name)
           << "_nModellingHypotheses = 0u;\n\n"
           << "MFRONT_SHAREDOBJ const char * const * "
-          << i.getFunctionNameBasis(name)
-          << "_ModellingHypotheses = 0;\n\n";
+          << i.getFunctionNameBasis(name) << "_ModellingHypotheses = 0;\n\n";
     } else {
-      out << "MFRONT_SHAREDOBJ unsigned short "
-          << i.getFunctionNameBasis(name)
+      out << "MFRONT_SHAREDOBJ unsigned short " << i.getFunctionNameBasis(name)
           << "_nModellingHypotheses = " << mhs.size() << "u;\n\n"
           << "MFRONT_SHAREDOBJ const char * \n"
           << i.getFunctionNameBasis(name) << "_ModellingHypotheses["
@@ -224,7 +271,7 @@ namespace mfront {
       out << "};\n\n";
     }
   }  // end of SymbolsGenerator::writeSupportedModellingHypothesis
-  
+
   void SymbolsGenerator::writeMaterialPropertiesSymbols(
       std::ostream& out,
       const StandardBehaviourInterface& i,
@@ -233,13 +280,13 @@ namespace mfront {
       const Hypothesis h) const {
     using namespace std;
     auto throw_if = [](const bool b, const std::string& m) {
-      tfel::raise_if(
-          b, "SymbolsGenerator::writeMaterialPropertiesSymbols: " + m);
+      tfel::raise_if(b,
+                     "SymbolsGenerator::writeMaterialPropertiesSymbols: " + m);
     };
     const auto mprops = i.buildMaterialPropertiesList(mb, h);
     if (mprops.first.empty()) {
-      out << "MFRONT_SHAREDOBJ unsigned short " << this->getSymbolName(i, name, h)
-          << "_nMaterialProperties = 0u;\n\n"
+      out << "MFRONT_SHAREDOBJ unsigned short "
+          << this->getSymbolName(i, name, h) << "_nMaterialProperties = 0u;\n\n"
           << "MFRONT_SHAREDOBJ const char * const *"
           << this->getSymbolName(i, name, h)
           << "_MaterialProperties = nullptr;\n\n";
@@ -273,7 +320,8 @@ namespace mfront {
         throw_if(s.getScalarSize() != 0,
                  "internal error: inconsistent offset declaration");
         out << "MFRONT_SHAREDOBJ unsigned short "
-            << this->getSymbolName(i, name, h) << "_nMaterialProperties = 0u;\n\n";
+            << this->getSymbolName(i, name, h)
+            << "_nMaterialProperties = 0u;\n\n";
         out << "MFRONT_SHAREDOBJ const char * const *"
             << this->getSymbolName(i, name, h)
             << "_MaterialProperties = nullptr;\n\n";
@@ -281,8 +329,9 @@ namespace mfront {
         out << "MFRONT_SHAREDOBJ unsigned short "
             << this->getSymbolName(i, name, h)
             << "_nMaterialProperties = " << s.getScalarSize() << "u;\n\n";
-        out << "MFRONT_SHAREDOBJ const char *" << this->getSymbolName(i, name, h)
-            << "_MaterialProperties[" << s.getScalarSize() << "u] = {";
+        out << "MFRONT_SHAREDOBJ const char *"
+            << this->getSymbolName(i, name, h) << "_MaterialProperties["
+            << s.getScalarSize() << "u] = {";
         for (auto idx = ib; idx != mprops.first.size();) {
           const auto& m = mprops.first[idx];
           if (m.arraySize == 1u) {
@@ -323,10 +372,11 @@ namespace mfront {
     if (!persistentVarsHolder.empty()) {
       out << "MFRONT_SHAREDOBJ int " << this->getSymbolName(i, name, h)
           << "_InternalStateVariablesTypes [] = {";
-      for (auto p = persistentVarsHolder.begin(); p != persistentVarsHolder.end();) {
-	const auto t = getVariableTypeId(*p);
+      for (auto p = persistentVarsHolder.begin();
+           p != persistentVarsHolder.end();) {
+        const auto t = getVariableTypeId(*p);
         for (unsigned short is = 0; is != p->arraySize;) {
-	  out << t;
+          out << t;
           if (++is != p->arraySize) {
             out << ",";
           }
@@ -452,10 +502,10 @@ namespace mfront {
   }  // end of SymbolsGenerator::writeParameterDefaultValueSymbols
 
   static void writeBoundsSymbol(std::ostream& out,
-                                      const std::string& bn,
-                                      const std::string& vn,
-                                      const std::string& bt,
-                                      const VariableBoundsDescription& b) {
+                                const std::string& bn,
+                                const std::string& vn,
+                                const std::string& bt,
+                                const VariableBoundsDescription& b) {
     if ((b.boundsType == VariableBoundsDescription::LOWER) ||
         (b.boundsType == VariableBoundsDescription::LOWERANDUPPER)) {
       out << "MFRONT_SHAREDOBJ long double " << bn << "_" << vn << "_"
@@ -468,13 +518,12 @@ namespace mfront {
     }
   }  // end of writeBoundsSymbol
 
-  void SymbolsGenerator::writeBoundsSymbols(
-      std::ostream& out,
-      const StandardBehaviourInterface& i,
-      const BehaviourDescription& mb,
-      const std::string& name,
-      const Hypothesis h) const {
-    auto write = [this, &out, &name,&i,
+  void SymbolsGenerator::writeBoundsSymbols(std::ostream& out,
+                                            const StandardBehaviourInterface& i,
+                                            const BehaviourDescription& mb,
+                                            const std::string& name,
+                                            const Hypothesis h) const {
+    auto write = [this, &out, &name, &i,
                   h](const VariableDescriptionContainer& vc) {
       for (const auto& v : vc) {
         if (v.arraySize == 1u) {
@@ -482,8 +531,7 @@ namespace mfront {
             continue;
           }
           mfront::writeBoundsSymbol(out, this->getSymbolName(i, name, h),
-                                          v.getExternalName(), "",
-                                          v.getBounds());
+                                    v.getExternalName(), "", v.getBounds());
         } else {
           for (auto idx = 0; idx != v.arraySize; ++idx) {
             if (!v.hasBounds(idx)) {
@@ -518,8 +566,8 @@ namespace mfront {
             continue;
           }
           mfront::writeBoundsSymbol(out, this->getSymbolName(i, name, h),
-                                          v.getExternalName(), "Physical",
-                                          v.getPhysicalBounds());
+                                    v.getExternalName(), "Physical",
+                                    v.getPhysicalBounds());
         } else {
           for (auto idx = 0; idx != v.arraySize; ++idx) {
             if (!v.hasPhysicalBounds(idx)) {
@@ -546,7 +594,8 @@ namespace mfront {
       const BehaviourDescription& mb,
       const std::string& name,
       const Hypothesis h) const {
-    out << "MFRONT_SHAREDOBJ unsigned short " << this->getSymbolName(i, name, h);
+    out << "MFRONT_SHAREDOBJ unsigned short "
+        << this->getSymbolName(i, name, h);
     out << "_requiresStiffnessTensor = ";
     if (mb.getAttribute(BehaviourDescription::requiresStiffnessTensor, false)) {
       out << "1";
@@ -554,7 +603,8 @@ namespace mfront {
       out << "0";
     }
     out << ";\n";
-    out << "MFRONT_SHAREDOBJ unsigned short " << this->getSymbolName(i, name, h);
+    out << "MFRONT_SHAREDOBJ unsigned short "
+        << this->getSymbolName(i, name, h);
     out << "_requiresThermalExpansionCoefficientTensor = ";
     if (mb.getAttribute(
             BehaviourDescription::requiresThermalExpansionCoefficientTensor,
@@ -589,8 +639,8 @@ namespace mfront {
       const StandardBehaviourInterface& i,
       const BehaviourDescription& mb,
       const std::string& name) const {
-    out << "MFRONT_SHAREDOBJ unsigned short "
-        << i.getFunctionNameBasis(name) << "_SymmetryType = ";
+    out << "MFRONT_SHAREDOBJ unsigned short " << i.getFunctionNameBasis(name)
+        << "_SymmetryType = ";
     if (mb.getSymmetryType() == mfront::ISOTROPIC) {
       out << "0u;\n\n";
     } else if (mb.getSymmetryType() == mfront::ORTHOTROPIC) {
@@ -609,8 +659,8 @@ namespace mfront {
       const StandardBehaviourInterface& i,
       const BehaviourDescription& mb,
       const std::string& name) const {
-    out << "MFRONT_SHAREDOBJ unsigned short "
-        << i.getFunctionNameBasis(name) << "_ElasticSymmetryType = ";
+    out << "MFRONT_SHAREDOBJ unsigned short " << i.getFunctionNameBasis(name)
+        << "_ElasticSymmetryType = ";
     if (mb.getElasticSymmetryType() == mfront::ISOTROPIC) {
       out << "0u;\n\n";
     } else if (mb.getElasticSymmetryType() == mfront::ORTHOTROPIC) {
@@ -647,14 +697,14 @@ namespace mfront {
                          i.getInterfaceName());
   }
 
-  void SymbolsGenerator::writeExternalNames(
-      std::ostream& f,
-      const StandardBehaviourInterface& i,
-      const std::string& name,
-      const Hypothesis& h,
-      const std::vector<std::string>& v,
-      const std::string& t) const {
-    this->writeArrayOfStringsSymbol(f,this->getSymbolName(i, name, h) + "_" + t,v);
+  void SymbolsGenerator::writeExternalNames(std::ostream& f,
+                                            const StandardBehaviourInterface& i,
+                                            const std::string& name,
+                                            const Hypothesis& h,
+                                            const std::vector<std::string>& v,
+                                            const std::string& t) const {
+    this->writeArrayOfStringsSymbol(
+        f, this->getSymbolName(i, name, h) + "_" + t, v);
   }  // end of SymbolsGenerator::writeExternalNames
 
   void SymbolsGenerator::writeArrayOfStringsSymbol(
@@ -662,13 +712,11 @@ namespace mfront {
       const std::string& s,
       const std::vector<std::string>& v) const {
     if (v.empty()) {
-      f << "MFRONT_SHAREDOBJ const char * const * "
-        << s << " = nullptr;\n\n";
+      f << "MFRONT_SHAREDOBJ const char * const * " << s << " = nullptr;\n\n";
     } else {
       auto i = decltype(v.size()){};
       auto p = v.begin();
-      f << "MFRONT_SHAREDOBJ const char * "
-	<< s << "[" << v.size() << "] = {";
+      f << "MFRONT_SHAREDOBJ const char * " << s << "[" << v.size() << "] = {";
       while (p != v.end()) {
         f << '"' << *p << '"';
         if (++p != v.end()) {
@@ -685,19 +733,15 @@ namespace mfront {
   }  // end of SymbolsGenerator::writeArrayOfStringsSymbol
 
   void SymbolsGenerator::writeArrayOfIntsSymbol(
-      std::ostream& f,
-      const std::string& s,
-      const std::vector<int>& v) const {
+      std::ostream& f, const std::string& s, const std::vector<int>& v) const {
     if (v.empty()) {
-      f << "MFRONT_SHAREDOBJ const int * "
-        << s << " = nullptr;\n\n";
+      f << "MFRONT_SHAREDOBJ const int * " << s << " = nullptr;\n\n";
     } else {
       auto i = decltype(v.size()){};
       auto p = v.begin();
-      f << "MFRONT_SHAREDOBJ int "
-	<< s << "[" << v.size() << "] = {";
+      f << "MFRONT_SHAREDOBJ int " << s << "[" << v.size() << "] = {";
       while (p != v.end()) {
-        f << *p ;
+        f << *p;
         if (++p != v.end()) {
           if (i % 5 == 0) {
             f << ",\n";
@@ -710,7 +754,7 @@ namespace mfront {
       f << "};\n";
     }
   }  // end of SymbolsGenerator::writeArrayOfIntsSymbol
-  
+
   SymbolsGenerator::~SymbolsGenerator() = default;
 
 }  // end of namespace mfront

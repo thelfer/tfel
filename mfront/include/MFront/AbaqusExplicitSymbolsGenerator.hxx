@@ -46,6 +46,7 @@ namespace mfront {
                                     const BehaviourDescription &,
                                     const FileDescription &,
                                     const std::string &) const override;
+    bool handleStrainMeasure() const override;
     //! destructor
     ~AbaqusExplicitSymbolsGenerator();
   };  // end of struct AbaqusExplicitSymbolsGenerator

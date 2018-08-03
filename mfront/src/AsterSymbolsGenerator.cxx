@@ -123,6 +123,10 @@ namespace mfront {
     }
   }  // end of AsterSymbolsGenerator::writeSpecificSymbols
 
+  bool AsterSymbolsGenerator::handleStrainMeasure() const{
+    return false;
+  }  // end of AsterSymbolsGenerator::handleStrainMeasure
+
   AsterSymbolsGenerator::~AsterSymbolsGenerator() = default;
 
 }  // end of namespace mfront

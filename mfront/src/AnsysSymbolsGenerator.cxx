@@ -93,6 +93,10 @@ namespace mfront {
     }
   }  // end of AnsysSymbolsGenerator::writeBehaviourKinematicSymbols
 
+  bool AnsysSymbolsGenerator::handleStrainMeasure() const{
+    return true;
+  }  // end of AnsysSymbolsGenerator::handleStrainMeasure
+
   AnsysSymbolsGenerator::~AnsysSymbolsGenerator() = default;
 
 }  // end of namespace mfront

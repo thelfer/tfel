@@ -82,6 +82,10 @@ namespace mfront {
       const Hypothesis) const {
   }  // end of CalculiXSymbolsGenerator::writeAdditionalSymbols
 
+  bool CalculiXSymbolsGenerator::handleStrainMeasure() const{
+    return true;
+  }  // end of CalculiXSymbolsGenerator::handleStrainMeasure
+
   CalculiXSymbolsGenerator::~CalculiXSymbolsGenerator() = default;
 
 }  // end of namespace mfront

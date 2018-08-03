@@ -104,6 +104,10 @@ namespace mfront {
     os << '\n';
   }  // end of GenericBehaviourSymbolsGenerator::writeAdditionalSymbols
 
+  bool GenericBehaviourSymbolsGenerator::handleStrainMeasure() const{
+    return true;
+  }  // end of GenericBehaviourSymbolsGenerator::handleStrainMeasure
+
   GenericBehaviourSymbolsGenerator::~GenericBehaviourSymbolsGenerator() =
       default;
 

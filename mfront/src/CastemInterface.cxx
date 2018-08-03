@@ -819,12 +819,27 @@ namespace mfront {
             sg.generateSymbols(out, *this, mb, fd, name, h);
           }
         }
-        out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name)
+        const auto fn = this->getFunctionNameBasis(name);
+        out << "MFRONT_SHAREDOBJ unsigned short " << fn 
             << "_BehaviourType = 1u;\n\n";
-        out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name)
+        out << "MFRONT_SHAREDOBJ unsigned short " << fn
             << "_BehaviourKinematic = 1u;\n\n";
-        out << "MFRONT_SHAREDOBJ unsigned short umat" << makeLowerCase(name)
+        out << "MFRONT_SHAREDOBJ unsigned short " << fn
             << "_Interface = 1u;\n\n";
+        out << "MFRONT_SHAREDOBJ unsigned short "
+            << fn << "_nMainVariables = 1u;\n\n";
+        out << "MFRONT_SHAREDOBJ unsigned short " << fn
+            << "_nDrivingVariables = 1u;\n";
+        out << "MFRONT_SHAREDOBJ int " << fn
+            << "_DrivingVariablesTypes[1u] = {1};\n";
+        out << "MFRONT_SHAREDOBJ const char* " << fn
+            << "_DrivingVariables[1u] = {\"Strain\"};\n\n";
+        out << "MFRONT_SHAREDOBJ unsigned short " << fn
+            << "_nThermodynamicForces = 1u;\n";
+        out << "MFRONT_SHAREDOBJ int " << fn
+            << "_ThermodynamicForcesTypes[1u] = {1};\n";
+        out << "MFRONT_SHAREDOBJ const char* " << fn
+            << "_ThermodynamicForces[1u] = {\"Stress\"};\n\n";
       } else {
         const auto fss = getFiniteStrainStrategies(mb);
         for (const auto& fs : fss) {
@@ -840,15 +855,30 @@ namespace mfront {
                 sg.generateSymbols(out, *this, mb, fd, name + "_frst", h);
               }
             }
-            out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name + "_frst")
+            const auto fn = this->getFunctionNameBasis(name + "_frst");
+            out << "MFRONT_SHAREDOBJ unsigned short " << fn
                 << "_BehaviourType = 2u;\n\n";
-            out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name + "_frst")
+            out << "MFRONT_SHAREDOBJ unsigned short " << fn
                 << "_BehaviourKinematic = 3u;\n\n";
-            out << "MFRONT_SHAREDOBJ unsigned short umat" << makeLowerCase(name + "_frst")
+            out << "MFRONT_SHAREDOBJ unsigned short " << fn
                 << "_Interface = 2u;\n\n";
+            out << "MFRONT_SHAREDOBJ unsigned short " << fn
+                << "_nMainVariables = 1u;\n\n";
+            out << "MFRONT_SHAREDOBJ unsigned short " << fn
+                << "_nDrivingVariables = 1u;\n";
+            out << "MFRONT_SHAREDOBJ int " << fn
+                << "_DrivingVariablesTypes[1u] = {3};\n";
+            out << "MFRONT_SHAREDOBJ const char* " << fn
+                << "_DrivingVariables[1u] = {\"DeformationGradient\"};\n\n";
+            out << "MFRONT_SHAREDOBJ unsigned short " << fn
+                << "_nThermodynamicForces = 1u;\n";
+            out << "MFRONT_SHAREDOBJ int " << fn
+                << "_ThermodynamicForcesTypes[1u] = {1};\n";
+            out << "MFRONT_SHAREDOBJ const char* " << fn
+                << "_ThermodynamicForces[1u] = {\"Stress\"};\n\n";
             if (fss.size() == 1u) {
               sg.generateGeneralSymbols(out, *this, mb, fd, mhs, name);
-	      if (!mb.areAllMechanicalDataSpecialised(mhs)) {
+              if (!mb.areAllMechanicalDataSpecialised(mhs)) {
                 const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
                 sg.generateSymbols(out, *this, mb, fd, name, uh);
               }
@@ -857,12 +887,27 @@ namespace mfront {
                   sg.generateSymbols(out, *this, mb, fd, name, h);
                 }
               }
-              out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name)
+              const auto fn2 = this->getFunctionNameBasis(name);
+              out << "MFRONT_SHAREDOBJ unsigned short " << fn2
                   << "_BehaviourType = 2u;\n\n";
-              out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name)
+              out << "MFRONT_SHAREDOBJ unsigned short " << fn2
                   << "_BehaviourKinematic = 3u;\n\n";
-              out << "MFRONT_SHAREDOBJ unsigned short umat" << makeLowerCase(name)
+              out << "MFRONT_SHAREDOBJ unsigned short " << fn2
                   << "_Interface = 2u;\n\n";
+              out << "MFRONT_SHAREDOBJ unsigned short " << fn2
+                  << "_nMainVariables = 1u;\n\n";
+              out << "MFRONT_SHAREDOBJ unsigned short " << fn2
+                  << "_nDrivingVariables = 1u;\n";
+              out << "MFRONT_SHAREDOBJ int " << fn2
+                  << "_DrivingVariablesTypes[1u] = {3};\n";
+              out << "MFRONT_SHAREDOBJ const char* " << fn2
+                  << "_DrivingVariables[1u] = {\"DeformationGradient\"};\n\n";
+              out << "MFRONT_SHAREDOBJ unsigned short " << fn2
+                  << "_nThermodynamicForces = 1u;\n";
+              out << "MFRONT_SHAREDOBJ int " << fn2
+                  << "_ThermodynamicForcesTypes[1u] = {1};\n";
+              out << "MFRONT_SHAREDOBJ const char* " << fn2
+                  << "_ThermodynamicForces[1u] = {\"Stress\"};\n\n";
             }
           } else if (fs == "MieheApelLambrechtLogarithmicStrain") {
             CastemSymbolsGenerator sg;
@@ -876,12 +921,27 @@ namespace mfront {
                 sg.generateSymbols(out, *this, mb, fd, name + "_malls", h);
               }
             }
-            out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name + "_malls")
+            const auto fn = this->getFunctionNameBasis(name + "_malls");
+            out << "MFRONT_SHAREDOBJ unsigned short " << fn
                 << "_BehaviourType = 2u;\n\n";
-            out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name + "_malls")
+            out << "MFRONT_SHAREDOBJ unsigned short " << fn
                 << "_BehaviourKinematic = 3u;\n\n";
-            out << "MFRONT_SHAREDOBJ unsigned short umat" << makeLowerCase(name + "_malls")
+            out << "MFRONT_SHAREDOBJ unsigned short " << fn
                 << "_Interface = 2u;\n\n";
+            out << "MFRONT_SHAREDOBJ unsigned short " << fn
+                << "_nMainVariables = 1u;\n\n";
+            out << "MFRONT_SHAREDOBJ unsigned short " << fn
+                << "_nDrivingVariables = 1u;\n";
+            out << "MFRONT_SHAREDOBJ int " << fn
+                << "_DrivingVariablesTypes[1u] = {3};\n";
+            out << "MFRONT_SHAREDOBJ const char* " << fn
+                << "_DrivingVariables[1u] = {\"DeformationGradient\"};\n\n";
+            out << "MFRONT_SHAREDOBJ unsigned short " << fn
+                << "_nThermodynamicForces = 1u;\n";
+            out << "MFRONT_SHAREDOBJ int " << fn
+                << "_ThermodynamicForcesTypes[1u] = {1};\n";
+            out << "MFRONT_SHAREDOBJ const char* " << fn
+                << "_ThermodynamicForces[1u] = {\"Stress\"};\n\n";
             if (fss.size() == 1u) {
               sg.generateGeneralSymbols(out, *this, mb, fd, mhs, name);
               if (!mb.areAllMechanicalDataSpecialised(mhs)) {
@@ -893,12 +953,27 @@ namespace mfront {
                   sg.generateSymbols(out, *this, mb, fd, name, h);
                 }
               }
-              out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name)
+              const auto fn2 = this->getFunctionNameBasis(name);
+              out << "MFRONT_SHAREDOBJ unsigned short " << fn2
                   << "_BehaviourType = 2u;\n\n";
-              out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name)
+              out << "MFRONT_SHAREDOBJ unsigned short " << fn2
                   << "_BehaviourKinematic = 3u;\n\n";
-              out << "MFRONT_SHAREDOBJ unsigned short umat" << makeLowerCase(name)
+              out << "MFRONT_SHAREDOBJ unsigned short " << fn2
                   << "_Interface = 2u;\n\n";
+              out << "MFRONT_SHAREDOBJ unsigned short " << fn2
+                  << "_nMainVariables = 1u;\n\n";
+              out << "MFRONT_SHAREDOBJ unsigned short " << fn2
+                  << "_nDrivingVariables = 1u;\n";
+              out << "MFRONT_SHAREDOBJ int " << fn2
+                  << "_DrivingVariablesTypes[1u] = {3};\n";
+              out << "MFRONT_SHAREDOBJ const char* " << fn2
+                  << "_DrivingVariables[1u] = {\"DeformationGradient\"};\n\n";
+              out << "MFRONT_SHAREDOBJ unsigned short " << fn2
+                  << "_nThermodynamicForces = 1u;\n";
+              out << "MFRONT_SHAREDOBJ int " << fn2
+                  << "_ThermodynamicForcesTypes[1u] = {1};\n";
+              out << "MFRONT_SHAREDOBJ const char* " << fn2
+                  << "_ThermodynamicForces[1u] = {\"Stress\"};\n\n";
             }
           } else if (fs == "LogarithmicStrain1D") {
             const auto agps = ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN;
@@ -915,12 +990,27 @@ namespace mfront {
                 }
               }
             }
-            out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name + "_log1D")
+            const auto fn = this->getFunctionNameBasis(name + "_log1D");
+            out << "MFRONT_SHAREDOBJ unsigned short " << fn
                 << "_BehaviourType = 2u;\n\n";
-            out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name + "_log1D")
+            out << "MFRONT_SHAREDOBJ unsigned short " << fn
                 << "_BehaviourKinematic = 4u;\n\n";
-            out << "MFRONT_SHAREDOBJ unsigned short umat" << makeLowerCase(name + "_log1D")
+            out << "MFRONT_SHAREDOBJ unsigned short " << fn
                 << "_Interface = 1u;\n\n";
+            out << "MFRONT_SHAREDOBJ unsigned short " << fn
+                << "_nMainVariables = 1u;\n\n";
+            out << "MFRONT_SHAREDOBJ unsigned short " << fn
+                << "_nDrivingVariables = 1u;\n";
+            out << "MFRONT_SHAREDOBJ int " << fn
+                << "_DrivingVariablesTypes[1u] = {1};\n";
+            out << "MFRONT_SHAREDOBJ const char* " << fn
+                << "_DrivingVariables[1u] = {\"Strain\"};\n\n";
+            out << "MFRONT_SHAREDOBJ unsigned short " << fn
+                << "_nThermodynamicForces = 1u;\n";
+            out << "MFRONT_SHAREDOBJ int " << fn
+                << "_ThermodynamicForcesTypes[1u] = {1};\n";
+            out << "MFRONT_SHAREDOBJ const char* " << fn
+                << "_ThermodynamicForces[1u] = {\"Stress\"};\n\n";
             if (fss.size() == 1u) {
               sg.generateGeneralSymbols(out, *this, mb, fd, mhs, name);
               out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name)
@@ -937,12 +1027,27 @@ namespace mfront {
                   sg.generateSymbols(out, *this, mb, fd, name, h);
                 }
               }
-              out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name)
+              const auto fn2 = this->getFunctionNameBasis(name);
+              out << "MFRONT_SHAREDOBJ unsigned short " << fn2
                   << "_BehaviourType = 2u;\n\n";
-              out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name)
+              out << "MFRONT_SHAREDOBJ unsigned short " << fn2
                   << "_BehaviourKinematic = 4u;\n\n";
-              out << "MFRONT_SHAREDOBJ unsigned short umat" << makeLowerCase(name)
+              out << "MFRONT_SHAREDOBJ unsigned short " << fn2
                   << "_Interface = 1u;\n\n";
+              out << "MFRONT_SHAREDOBJ unsigned short " << fn2
+                  << "_nMainVariables = 1u;\n\n";
+              out << "MFRONT_SHAREDOBJ unsigned short " << fn2
+                  << "_nDrivingVariables = 1u;\n";
+              out << "MFRONT_SHAREDOBJ int " << fn2
+                  << "_DrivingVariablesTypes[1u] = {1};\n";
+              out << "MFRONT_SHAREDOBJ const char* " << fn2
+                  << "_DrivingVariables[1u] = {\"Strain\"};\n\n";
+              out << "MFRONT_SHAREDOBJ unsigned short " << fn2
+                  << "_nThermodynamicForces = 1u;\n";
+              out << "MFRONT_SHAREDOBJ int " << fn2
+                  << "_ThermodynamicForcesTypes[1u] = {1};\n";
+              out << "MFRONT_SHAREDOBJ const char* " << fn2
+                  << "_ThermodynamicForces[1u] = {\"Stress\"};\n\n";
             }
           } else if (fs == "None") {
             CastemSymbolsGenerator sg;
@@ -956,12 +1061,27 @@ namespace mfront {
                 sg.generateSymbols(out, *this, mb, fd, name + "_ss", h);
               }
             }
-            out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name + "_ss")
+            const auto fn = this->getFunctionNameBasis(name + "_ss");
+            out << "MFRONT_SHAREDOBJ unsigned short " << fn
                 << "_BehaviourType = 1u;\n\n";
-            out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name + "_ss")
+            out << "MFRONT_SHAREDOBJ unsigned short " << fn
                 << "_BehaviourKinematic = 1u;\n\n";
-            out << "MFRONT_SHAREDOBJ unsigned short umat" << makeLowerCase(name + "_ss")
+            out << "MFRONT_SHAREDOBJ unsigned short " << fn
                 << "_Interface = 1u;\n\n";
+            out << "MFRONT_SHAREDOBJ unsigned short " << fn
+                << "_nMainVariables = 1u;\n\n";
+            out << "MFRONT_SHAREDOBJ unsigned short " << fn
+                << "_nDrivingVariables = 1u;\n";
+            out << "MFRONT_SHAREDOBJ int " << fn
+                << "_DrivingVariablesTypes[1u] = {1};\n";
+            out << "MFRONT_SHAREDOBJ const char* " << fn
+                << "_DrivingVariables[1u] = {\"Strain\"};\n\n";
+            out << "MFRONT_SHAREDOBJ unsigned short " << fn
+                << "_nThermodynamicForces = 1u;\n";
+            out << "MFRONT_SHAREDOBJ int " << fn
+                << "_ThermodynamicForcesTypes[1u] = {1};\n";
+            out << "MFRONT_SHAREDOBJ const char* " << fn
+                << "_ThermodynamicForces[1u] = {\"Stress\"};\n\n";
             if (fss.size() == 1u) {
               sg.generateGeneralSymbols(out, *this, mb, fd, mhs, name);
               if (!mb.areAllMechanicalDataSpecialised(mhs)) {
@@ -973,12 +1093,27 @@ namespace mfront {
                   sg.generateSymbols(out, *this, mb, fd, name, h);
                 }
               }
-              out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name)
+              const auto fn2 = this->getFunctionNameBasis(name);
+              out << "MFRONT_SHAREDOBJ unsigned short " << fn2
                   << "_BehaviourType = 1u;\n\n";
-              out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name)
+              out << "MFRONT_SHAREDOBJ unsigned short " << fn2
                   << "_BehaviourKinematic = 1u;\n\n";
-              out << "MFRONT_SHAREDOBJ unsigned short umat" << makeLowerCase(name)
+              out << "MFRONT_SHAREDOBJ unsigned short " << fn2
                   << "_Interface = 1u;\n\n";
+              out << "MFRONT_SHAREDOBJ unsigned short " << fn2
+                  << "_nMainVariables = 1u;\n\n";
+              out << "MFRONT_SHAREDOBJ unsigned short " << fn2
+                  << "_nDrivingVariables = 1u;\n";
+              out << "MFRONT_SHAREDOBJ int " << fn2
+                  << "_DrivingVariablesTypes[1u] = {1};\n";
+              out << "MFRONT_SHAREDOBJ const char* " << fn2
+                  << "_DrivingVariables[1u] = {\"Strain\"};\n\n";
+              out << "MFRONT_SHAREDOBJ unsigned short " << fn2
+                  << "_nThermodynamicForces = 1u;\n";
+              out << "MFRONT_SHAREDOBJ int " << fn2
+                  << "_ThermodynamicForcesTypes[1u] = {1};\n";
+              out << "MFRONT_SHAREDOBJ const char* " << fn2
+                  << "_ThermodynamicForces[1u] = {\"Stress\"};\n\n";
             }
           } else {
             throw_if(true, "internal error, unsupported finite strain strategy");
@@ -996,12 +1131,27 @@ namespace mfront {
               sg.generateSymbols(out, *this, mb, fd, name, h);
             }
           }
-          out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name)
+          const auto fn = this->getFunctionNameBasis(name);
+          out << "MFRONT_SHAREDOBJ unsigned short " << fn
               << "_BehaviourType = 1u;\n\n";
-          out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name)
+          out << "MFRONT_SHAREDOBJ unsigned short " << fn
               << "_BehaviourKinematic = 1u;\n\n";
-          out << "MFRONT_SHAREDOBJ unsigned short umat" << makeLowerCase(name)
+          out << "MFRONT_SHAREDOBJ unsigned short " << fn
               << "_Interface = 1u;\n\n";
+          out << "MFRONT_SHAREDOBJ unsigned short " << fn
+              << "_nMainVariables = 1u;\n\n";
+          out << "MFRONT_SHAREDOBJ unsigned short " << fn
+              << "_nDrivingVariables = 1u;\n";
+          out << "MFRONT_SHAREDOBJ int " << fn
+              << "_DrivingVariablesTypes[1u] = {1};\n";
+          out << "MFRONT_SHAREDOBJ const char* " << fn
+              << "_DrivingVariables[1u] = {\"Strain\"};\n\n";
+          out << "MFRONT_SHAREDOBJ unsigned short " << fn
+              << "_nThermodynamicForces = 1u;\n";
+          out << "MFRONT_SHAREDOBJ int " << fn
+              << "_ThermodynamicForcesTypes[1u] = {1};\n";
+          out << "MFRONT_SHAREDOBJ const char* " << fn
+              << "_ThermodynamicForces[1u] = {\"Stress\"};\n\n";
         }
       }
     } else {
@@ -1017,20 +1167,50 @@ namespace mfront {
         }
       }
       if (mb.getBehaviourType() == BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
-        out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name)
+        const auto fn = this->getFunctionNameBasis(name);
+        out << "MFRONT_SHAREDOBJ unsigned short " << fn
             << "_BehaviourType = 2u;\n\n";
-        out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name)
+        out << "MFRONT_SHAREDOBJ unsigned short " << fn
             << "_BehaviourKinematic = 3u;\n\n";
-        out << "MFRONT_SHAREDOBJ unsigned short umat" << makeLowerCase(name)
+        out << "MFRONT_SHAREDOBJ unsigned short " << fn
             << "_Interface = 2u;\n\n";
+        out << "MFRONT_SHAREDOBJ unsigned short " << fn
+            << "_nMainVariables = 1u;\n\n";
+        out << "MFRONT_SHAREDOBJ unsigned short " << fn
+            << "_nDrivingVariables = 1u;\n";
+        out << "MFRONT_SHAREDOBJ int " << fn
+            << "_DrivingVariablesTypes[1u] = {3};\n";
+        out << "MFRONT_SHAREDOBJ const char* " << fn
+            << "_DrivingVariables[1u] = {\"DeformationGradient\"};\n\n";
+        out << "MFRONT_SHAREDOBJ unsigned short " << fn
+            << "_nThermodynamicForces = 1u;\n";
+        out << "MFRONT_SHAREDOBJ int " << fn
+            << "_ThermodynamicForcesTypes[1u] = {1};\n";
+        out << "MFRONT_SHAREDOBJ const char* " << fn
+            << "_ThermodynamicForces[1u] = {\"Stress\"};\n\n";
       } else {
         // cohesize zone model
-        out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name)
+        const auto fn = this->getFunctionNameBasis(name);
+        out << "MFRONT_SHAREDOBJ unsigned short " << fn
             << "_BehaviourType = 3u;\n\n";
-        out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionNameBasis(name)
+        out << "MFRONT_SHAREDOBJ unsigned short " << fn
             << "_BehaviourKinematic = 2u;\n\n";
-        out << "MFRONT_SHAREDOBJ unsigned short umat" << makeLowerCase(name)
+        out << "MFRONT_SHAREDOBJ unsigned short " << fn
             << "_Interface = 1u;\n\n";
+        out << "MFRONT_SHAREDOBJ unsigned short " << fn
+            << "_nMainVariables = 1u;\n\n";
+        out << "MFRONT_SHAREDOBJ unsigned short " << fn
+            << "_nDrivingVariables = 1u;\n";
+        out << "MFRONT_SHAREDOBJ int " << fn
+            << "_DrivingVariablesTypes[1u] = {2};\n";
+        out << "MFRONT_SHAREDOBJ const char* " << fn
+            << "_DrivingVariables[1u] = {\"OpeningDisplacement\"};\n\n";
+        out << "MFRONT_SHAREDOBJ unsigned short " << fn
+            << "_nThermodynamicForces = 1u;\n";
+        out << "MFRONT_SHAREDOBJ int " << fn
+            << "_ThermodynamicForcesTypes[1u] = {2};\n";
+        out << "MFRONT_SHAREDOBJ const char* " << fn
+            << "_ThermodynamicForces[1u] = {\"CohesiveForce\"};\n\n";
       }
     }
 
@@ -1071,7 +1251,7 @@ namespace mfront {
                           ModellingHypothesis::GENERALISEDPLANESTRAIN,
                           ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN}) {
       if (this->isModellingHypothesisSupported(h, mb)) {
-        out << "static void \numat" << makeLowerCase(name) << "_base_"
+        out << "static void \n" << this->getFunctionNameBasis(name) << "_base_"
             << ModellingHypothesis::toUpperCaseString(h)
             << "(const castem::CastemInt *const NTENS, const castem::CastemReal *const DTIME,\n"
             << "const castem::CastemReal *const DROT,  castem::CastemReal *const DDSDDE,\n"
@@ -1094,7 +1274,7 @@ namespace mfront {
             << "STRESS,PNEWDT,KINC,op,sfeh);\n"
             << "}\n\n";
       } else {
-        out << "static void \numat" << makeLowerCase(name) << "_base_"
+        out << "static void \n" << this->getFunctionNameBasis(name) << "_base_"
             << ModellingHypothesis::toUpperCaseString(h)
             << "(const castem::CastemInt *const, const castem::CastemReal *const,\n"
             << "const castem::CastemReal *const,  castem::CastemReal *const,\n"
@@ -1113,16 +1293,17 @@ namespace mfront {
       }
     }
 
-    auto ndi_dispatch = [&out, &name](const int ndi, const Hypothesis h, const bool b) {
+    auto ndi_dispatch = [&out, &name, this](const int ndi, const Hypothesis h,
+                                            const bool b) {
       out << (b ? "if" : " else if") << "(*NDI==" << ndi << "){\n"
-          << "	umat" << makeLowerCase(name) << "_base_"
+          << "	" << this->getFunctionNameBasis(name) << "_base_"
           << ModellingHypothesis::toUpperCaseString(h) << "(NTENS,DTIME,DROT,DDSDDE,STRAN,DSTRAN,\n"
           << " TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,\n"
           << " STATEV,NSTATV,STRESS,PNEWDT,KINC,sfeh);\n"
           << " }";
     };
 
-    out << "static void \numat" << makeLowerCase(name) << "_base"
+    out << "static void \n" << this->getFunctionNameBasis(name) << "_base"
         << "(const castem::CastemInt *const NTENS, const castem::CastemReal *const DTIME,\n"
         << "const castem::CastemReal *const DROT,  castem::CastemReal *const DDSDDE,\n"
         << "const castem::CastemReal *const STRAN, const castem::CastemReal *const DSTRAN,\n"
@@ -1526,7 +1707,7 @@ namespace mfront {
 
   void CastemInterface::writeCastemFunctionDeclaration(std::ostream& out,
                                                        const std::string& name) const {
-    out << "MFRONT_SHAREDOBJ void\numat" << makeLowerCase(name);
+    out << "MFRONT_SHAREDOBJ void\n" << this->getFunctionNameBasis(name);
     writeUMATArguments(out);
     out << ";\n\n";
   }  // end of CastemInterface::writeCastemFunctionDeclaration
@@ -1648,7 +1829,7 @@ namespace mfront {
     if (mb.getAttribute(BehaviourData::profiling, false)) {
       out << "}\n";
     }
-    out << "umat" << makeLowerCase(name) << "_base(NTENS, DTIME,DROT,DDSDDE,eto,deto,TEMP,DTEMP,\n"
+    out  << this->getFunctionNameBasis(name) << "_base(NTENS, DTIME,DROT,DDSDDE,eto,deto,TEMP,DTEMP,\n"
         << "PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,\n"
         << "STRESS,PNEWDT,NDI,KINC,\n"
         << "castem::CastemStandardSmallStrainStressFreeExpansionHandler);\n"
@@ -1756,7 +1937,7 @@ namespace mfront {
       if (!this->isModellingHypothesisSupported(h, mb)) {
         // don't do any pre- or post-processing
         // See Ticket 108 for details
-        out << "	umat" << makeLowerCase(name) << "_base_"
+        out << "	" << this->getFunctionNameBasis(name) << "_base_"
             << ModellingHypothesis::toUpperCaseString(h)
             << "(NTENS,DTIME,DROT,DDSDDE,nullptr,nullptr,\n"
             << " TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,\n"
@@ -1783,7 +1964,7 @@ namespace mfront {
                  "unsupported modelling hypothesis");
         preprocessing(1u, 3u, false);
       }
-      out << "	umat" << makeLowerCase(name) << "_base_"
+      out << "	" << this->getFunctionNameBasis(name) << "_base_"
           << ModellingHypothesis::toUpperCaseString(h)
           << "(NTENS,DTIME,DROT,DDSDDE,&eto[0],&deto[0],\n"
           << " TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,\n"
@@ -1881,7 +2062,7 @@ namespace mfront {
     if (mb.getAttribute(BehaviourData::profiling, false)) {
       out << "}\n";
     }
-    out << "umat" << makeLowerCase(name) << "_base(NTENS, DTIME,DROT,K,eto,deto,TEMP,DTEMP,\n"
+    out  << this->getFunctionNameBasis(name) << "_base(NTENS, DTIME,DROT,K,eto,deto,TEMP,DTEMP,\n"
         << "PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,\n"
         << "s,PNEWDT,NDI,KINC,\n"
         << "castem::CastemLogarithmicStrainStressFreeExpansionHandler);\n"
@@ -1938,11 +2119,11 @@ namespace mfront {
     }
     this->generateMTestFile1(out, mb);
     if (mb.getBehaviourType() == BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
-      out << "umat" << makeLowerCase(name) << "_base(NTENS, DTIME,DROT,DDSDDE,F0,F1,TEMP,DTEMP,\n"
+      out  << this->getFunctionNameBasis(name) << "_base(NTENS, DTIME,DROT,DDSDDE,F0,F1,TEMP,DTEMP,\n"
           << "PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,\n"
           << "STRESS,PNEWDT,NDI,KINC,nullptr);\n";
     } else {
-      out << "umat" << makeLowerCase(name)
+      out << this->getFunctionNameBasis(name)
           << "_base(NTENS, DTIME,DROT,DDSDDE,STRAN,DSTRAN,TEMP,DTEMP,\n"
           << "PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,\n"
           << "STRESS,PNEWDT,NDI,KINC,\n"

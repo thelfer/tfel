@@ -100,6 +100,10 @@ namespace mfront {
     }
   } // end of AbaqusExplicitSymbolsGenerator::writeBehaviourKinematicSymbols
 
+  bool AbaqusExplicitSymbolsGenerator::handleStrainMeasure() const{
+    return true;
+  }  // end of AbaqusExplicitSymbolsGenerator::handleStrainMeasure
+
   AbaqusExplicitSymbolsGenerator::~AbaqusExplicitSymbolsGenerator() = default;
 
 }  // end of namespace mfront

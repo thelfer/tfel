@@ -42,6 +42,7 @@ namespace mfront {
         const StandardBehaviourInterface&,
         const BehaviourDescription&,
         const std::string&) const override;
+    bool handleStrainMeasure() const override;
     //! destructor
     ~CyranoSymbolsGenerator();
   };  // end of struct CyranoSymbolsGenerator

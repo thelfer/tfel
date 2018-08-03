@@ -42,6 +42,7 @@ namespace mfront {
                                       const FileDescription&,
                                       const std::string&,
                                       const Hypothesis) const override;
+    bool handleStrainMeasure() const override;
     //! destructor
     ~LSDYNASymbolsGenerator();
   };  // end of struct LSDYNASymbolsGenerator

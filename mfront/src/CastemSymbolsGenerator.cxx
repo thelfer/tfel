@@ -21,7 +21,14 @@
 namespace mfront {
 
   CastemSymbolsGenerator::CastemSymbolsGenerator() = default;
-  
+
+  void CastemSymbolsGenerator::writeMainVariablesSymbols(
+      std::ostream&,
+      const StandardBehaviourInterface&,
+      const BehaviourDescription&,
+      const std::string&) const {
+  }  // end of CastemSymbolsGenerator::writeMainVariablesSymbols
+
   void CastemSymbolsGenerator::writeBehaviourTypeSymbols(
       std::ostream&,
       const StandardBehaviourInterface&,
@@ -59,6 +66,10 @@ namespace mfront {
           << "_UsesGenericPlaneStressAlgorithm = 0u;\n\n";
     }
   }
+
+  bool CastemSymbolsGenerator::handleStrainMeasure() const{
+    return true;
+  }  // end of CastemSymbolsGenerator::handleStrainMeasure
 
   CastemSymbolsGenerator::~CastemSymbolsGenerator() = default;
 

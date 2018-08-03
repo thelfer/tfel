@@ -41,6 +41,7 @@ namespace mfront {
                                       const FileDescription &,
                                       const std::string &,
                                       const Hypothesis) const override;
+    bool handleStrainMeasure() const override;
     //! destructor
     ~CalculiXSymbolsGenerator();
   };  // end of struct CalculiXSymbolsGenerator

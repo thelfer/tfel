@@ -80,6 +80,10 @@ namespace mfront {
       const Hypothesis) const {
   }  // end of EuroplexusSymbolsGenerator::writeAdditionalSymbols
 
+  bool EuroplexusSymbolsGenerator::handleStrainMeasure() const{
+    return true;
+  }  // end of EuroplexusSymbolsGenerator::handleStrainMeasure
+
   EuroplexusSymbolsGenerator::~EuroplexusSymbolsGenerator() = default;
 
 }  // end of namespace mfront

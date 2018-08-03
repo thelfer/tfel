@@ -101,6 +101,10 @@ namespace mfront {
     }
   }  // end of CyranoSymbolsGenerator::writeBehaviourKinematicSymbols
 
+  bool CyranoSymbolsGenerator::handleStrainMeasure() const{
+    return true;
+  }  // end of CyranoSymbolsGenerator::handleStrainMeasure
+
   CyranoSymbolsGenerator::~CyranoSymbolsGenerator() = default;
 
 }  // end of namespace mfront
