@@ -214,6 +214,13 @@ namespace mfront {
           << "constexpr const auto h = ModellingHypothesis::"
           << ModellingHypothesis::toUpperCaseString(h) << ";\n"
           << "using Behaviour = " << bd.getClassName() << "<h,real,false>;\n";
+      if (bd.getAttribute(BehaviourData::profiling, false)) {
+	out << "using mfront::BehaviourProfiler;\n"
+	    << "using tfel::material::" << bd.getClassName() << "Profiler;\n"
+	    << "BehaviourProfiler::Timer total_timer(" << bd.getClassName()
+	    << "Profiler::getProfiler(),\n"
+	    << "BehaviourProfiler::TOTALTIME);\n";
+      }
       // treating strain measures
       if(((bd.getBehaviourType() == BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR)||
 	  (bd.getBehaviourType() == BehaviourDescription::GENERALBEHAVIOUR))&&

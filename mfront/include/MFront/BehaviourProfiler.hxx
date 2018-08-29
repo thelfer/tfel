@@ -134,14 +134,14 @@ namespace mfront{
     index_type USERDEFINEDCODE2 = 18;
     //! code block index in the measures array
     static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER
-    index_type TOTALTIME  = 19;
+    index_type ADDITIONALCONVERGENCECHECKS = 19;
+    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER
+    index_type APRIORITIMESTEPSCALINGFACTOR = 20;
+    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER
+    index_type APOSTERIORITIMESTEPSCALINGFACTOR = 21;
     //! code block index in the measures array
     static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER
-    index_type ADDITIONALCONVERGENCECHECKS = 20;
-    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER
-    index_type APRIORITIMESTEPSCALINGFACTOR = 21;
-    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER
-    index_type APOSTERIORITIMESTEPSCALINGFACTOR = 22;
+    index_type TOTALTIME  = 22;
     //! destructor
     ~BehaviourProfiler();
   protected:

@@ -1,58 +1,61 @@
 /*!
  * \file   ThreadedTaskResult.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   19 juin 2016
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
-#include<typeinfo>
-#include<stdexcept>
-#include"TFEL/Raise.hxx"
-#include"TFEL/System/ThreadedTaskResult.hxx"
+#include <typeinfo>
+#include <stdexcept>
+#include "TFEL/Raise.hxx"
+#include "TFEL/System/ThreadedTaskResult.hxx"
 
-namespace tfel{
+namespace tfel {
 
-  namespace system{
+  namespace system {
 
-    void ThreadedTaskResultBase::throwBadCastException(){
+    void ThreadedTaskResultBase::throwBadCastException() {
       throw(std::bad_cast());
-    } // end of ThreadPool::ResultBase::throwBadCastException
-    
-    void ThreadedTaskResultBase::throwNullException(){
-      raise<std::runtime_error>("ThreadPool::Result::rethrow: "
-				"no exception defined");
-    } // end of ThreadPool::ResultBase::throwNullException
-    
+    }  // end of ThreadPool::ResultBase::throwBadCastException
+
+    void ThreadedTaskResultBase::throwNullException() {
+      raise<std::runtime_error>(
+          "ThreadPool::Result::rethrow: "
+          "no exception defined");
+    }  // end of ThreadPool::ResultBase::throwNullException
+
     ThreadedTaskResult<void>::ThreadedTaskResult() = default;
-    ThreadedTaskResult<void>::ThreadedTaskResult(ThreadedTaskResult&&) = default;
-    ThreadedTaskResult<void>::ThreadedTaskResult(const ThreadedTaskResult&) = default;
-    ThreadedTaskResult<void>&
-    ThreadedTaskResult<void>::operator=(ThreadedTaskResult&&) = default;
-    ThreadedTaskResult<void>&
-    ThreadedTaskResult<void>::operator=(const ThreadedTaskResult&) = default;
+    ThreadedTaskResult<void>::ThreadedTaskResult(ThreadedTaskResult&&) =
+        default;
+    ThreadedTaskResult<void>::ThreadedTaskResult(const ThreadedTaskResult&) =
+        default;
+    ThreadedTaskResult<void>& ThreadedTaskResult<void>::operator=(
+        ThreadedTaskResult&&) = default;
+    ThreadedTaskResult<void>& ThreadedTaskResult<void>::operator=(
+        const ThreadedTaskResult&) = default;
     ThreadedTaskResult<void>::~ThreadedTaskResult() = default;
 
-    ThreadedTaskResult<void>::operator bool () const {
-      return this->eptr==nullptr;
+    ThreadedTaskResult<void>::operator bool() const {
+      return this->eptr == nullptr;
     }
 
-    void ThreadedTaskResult<void>::setException(const std::exception_ptr& e){
+    void ThreadedTaskResult<void>::setException(const std::exception_ptr& e) {
       this->eptr = e;
-    } // end of ThreadedTaskResult<void>::setException
+    }  // end of ThreadedTaskResult<void>::setException
 
-    void ThreadedTaskResult<void>::rethrow(){
-      if(this->eptr==nullptr){
-	ThreadedTaskResultBase::throwNullException();
+    void ThreadedTaskResult<void>::rethrow() {
+      if (this->eptr == nullptr) {
+        ThreadedTaskResultBase::throwNullException();
       }
       std::rethrow_exception(eptr);
-    } // end of ThreadedTaskResult<void>::setException
-    
-  } // end of namespace system
+    }  // end of ThreadedTaskResult<void>::setException
 
-} // end of namespace tfel
+  }  // end of namespace system
+
+}  // end of namespace tfel

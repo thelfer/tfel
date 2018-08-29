@@ -2374,7 +2374,6 @@ mfront/include/MFront/GenericBehaviour/BehaviourData.hxx -text
 mfront/include/MFront/GenericBehaviour/ComputeStiffnessTensor.hxx -text
 mfront/include/MFront/GenericBehaviour/ComputeStiffnessTensor.ixx -text
 mfront/include/MFront/GenericBehaviour/Integrate.hxx -text
-mfront/include/MFront/GenericBehaviour/Result.h -text
 mfront/include/MFront/GenericBehaviour/State.h -text
 mfront/include/MFront/GenericBehaviour/State.hxx -text
 mfront/include/MFront/GenericBehaviour/Types.h -text
