@@ -133,14 +133,14 @@ namespace mfront{
     unsigned short USERDEFINEDCODE2 = 18;
     //! code block index in the measures array
     static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER
-    unsigned short TOTALTIME  = 19;
-    //! code block index in the measures array
+    unsigned short ADDITIONALCONVERGENCECHECKS = 19;
     static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER
-    unsigned short ADDITIONALCONVERGENCECHECKS = 20;
+    unsigned short APRIORITIMESTEPSCALINGFACTOR = 20;
     static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER
-    unsigned short APRIORITIMESTEPSCALINGFACTOR = 21;
+    unsigned short APOSTERIORITIMESTEPSCALINGFACTOR = 21;
+    //! code block index in the measures array (must be the last one !)
     static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER
-    unsigned short APOSTERIORITIMESTEPSCALINGFACTOR = 22;
+    unsigned short TOTALTIME  = 22;
     //! destructor
     ~BehaviourProfiler();
   protected:
