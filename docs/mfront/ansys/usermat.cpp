@@ -233,7 +233,7 @@ namespace ansys {
             return l;
           } else {
 	    emsg += "UserMaterialManager::UserMaterialManager: "
-	    "failed to open library '"
+	    "failed to open library '"+
 	    library + "' (" + getErrorMessage() + ")\n";
           }
         }
