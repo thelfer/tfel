@@ -132,14 +132,16 @@ namespace castem {
   }  // end of CastemInterfaceExceptions::throwPlaneStressMaximumNumberOfIterationsReachedException
 
   void CastemInterfaceExceptions::checkNTENSValue(const CastemInt NTENS, const unsigned short s) {
-    tfel::raise_if(NTENS != s,
-                   "CastemInterfaceExceptions::checkNTENSValue : "
-                   "invalid value for the NTENS parameter "
-                   "(got '" +
-                       std::to_string(NTENS) +
-                       "', "
-                       "expected '" +
-                       std::to_string(static_cast<unsigned int>(s)) + "')");
+    if (NTENS != s) {
+      tfel::raise(
+          "CastemInterfaceExceptions::checkNTENSValue : "
+          "invalid value for the NTENS parameter "
+          "(got '" +
+          std::to_string(NTENS) +
+          "', "
+          "expected '" +
+          std::to_string(static_cast<unsigned int>(s)) + "')");
+    }
   }  // end of CastemInterfaceExceptions::checkNTENSValue
 
   void CastemInterfaceExceptions::displayInvalidModellingHypothesisErrorMessage() {
