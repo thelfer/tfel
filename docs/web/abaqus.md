@@ -144,10 +144,10 @@ name*: the name of the material shall thus define the function to be
 called and the library in which this function is implemented.
 
 The function name includes the modelling hypothesis, see below. An
-identifier can optionnaly be added to reuse the same behaviour for
-several material (with different material properties for
-instance). The identifier is discarded in the `umat.cpp`,
-`vumat-sp.cpp` and and `vumat-dp.cpp` files.
+identifier can *optionnaly* be added to reuse the same behaviour for
+several material (with different material properties for instance). The
+identifier is discarded in the `umat.cpp`, `vumat-sp.cpp` and and
+`vumat-dp.cpp` files.
 
 Thus, the material name in `Abaqus/Standard` and `Abaqus/Explicit` is
 expected to have the following form:

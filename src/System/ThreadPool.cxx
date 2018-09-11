@@ -50,7 +50,7 @@ namespace tfel {
         };
         this->workers.emplace_back(f);
       }
-    }
+    } // end of ThreadPool::ThreadPool
 
     ThreadPool::size_type ThreadPool::getNumberOfThreads() const {
       return this->workers.size();
@@ -61,8 +61,7 @@ namespace tfel {
       while (!this->tasks.empty()) {
         this->c.wait(lock, [this] { return this->tasks.empty(); });
       }
-      for (decltype(this->statuses.size()) i = 0; i != this->statuses.size();
-           ++i) {
+      for (size_t i = 0; i != this->statuses.size(); ++i) {
         while (this->statuses[i] != Status::IDLE) {
           this->c.wait(lock,
                        [this, i] { return this->statuses[i] == Status::IDLE; });
@@ -80,7 +79,7 @@ namespace tfel {
       for (auto &w : this->workers) {
         w.join();
       }
-    }
+    } // end of ThreadPool::~ThreadPool
 
   }  // end of namespace system
 

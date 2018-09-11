@@ -683,8 +683,8 @@ namespace mfront
     out << "const double ZMATdt)\n"
 	<< ": dt(ZMATdt)\n"; 
     out << "{\n"
-	<< "const ZSET::EXTERNAL_PARAMETER_VECTOR& ZMATextvars_t   = *(ZMATdata.param_set_ini());\n"
-	<< "const ZSET::EXTERNAL_PARAMETER_VECTOR& ZMATextvars_tdt = *(ZMATdata.param_set());\n";
+	<< "const auto& ZMATextvars_t   = *(ZMATdata.param_set_ini());\n"
+	<< "const auto& ZMATextvars_tdt = *(ZMATdata.param_set());\n";
     switch(mb.getBehaviourType()){
     case BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR:
       out << "zmat::ZMATInterface::convert(this->deto,ZMATdeto);\n";
@@ -1025,11 +1025,11 @@ namespace mfront
 	<< "MATRIX*& tg_matrix,\n"
 	<< "int flags){\n"
 	<< "int keep_verbose  = ZSET::Verbose; \n"
-	<< "CLOCK* keep_clock = ZSET::stored_thread_zbase_globals->ptr()->active_clock; \n"
+	<< "auto* const keep_clock = ZSET::stored_thread_zbase_globals->ptr()->active_clock; \n"
 	<< "tg_matrix = &(this->tg_mat);\n"
 	<< "this->set_var_aux_to_var_aux_ini();\n"
 	<< "this->set_var_int_to_var_int_ini();\n"
-	<< "LIST<EXTERNAL_PARAM*>* ep_save = &EXTERNAL_PARAM::Get_EP_list();\n"
+	<< "auto* const ep_save = &EXTERNAL_PARAM::Get_EP_list();\n"
 	<< "EXTERNAL_PARAM::set_EP_list(this->zbb_keep_ep);\n"
 	<< "if(!this->curr_ext_param){\n"
 	<< "this->curr_ext_param = *mdat.param_set();\n"

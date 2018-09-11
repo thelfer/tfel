@@ -62,10 +62,10 @@ namespace tfel{
                                         const rotation_matrix<real>& m) {
         using tfel::fsalgo::copy;
         T nv[5u];
-        const T a = m(0, 0);
-        const T b = m(0, 1);
-        const T d = m(1, 0);
-        const T e = m(1, 1);
+        const auto a = m(0, 0);
+        const auto b = m(0, 1);
+        const auto d = m(1, 0);
+        const auto e = m(1, 1);
         nv[0] = a * d * v[4] + a * d * v[3] + d * d * v[1] + a * a * v[0];
         nv[1] = b * e * v[4] + b * e * v[3] + e * e * v[1] + b * b * v[0];
         nv[3] = b * d * v[4] + a * e * v[3] + d * e * v[1] + a * b * v[0];
@@ -91,15 +91,15 @@ namespace tfel{
                                         const rotation_matrix<real>& m) {
         using tfel::fsalgo::copy;
         T nv[9u];
-        const T a = m(0, 0);
-        const T b = m(0, 1);
-        const T c = m(0, 2);
-        const T d = m(1, 0);
-        const T e = m(1, 1);
-        const T f = m(1, 2);
-        const T g = m(2, 0);
-        const T h = m(2, 1);
-        const T i = m(2, 2);
+        const auto a = m(0, 0);
+        const auto b = m(0, 1);
+        const auto c = m(0, 2);
+        const auto d = m(1, 0);
+        const auto e = m(1, 1);
+        const auto f = m(1, 2);
+        const auto g = m(2, 0);
+        const auto h = m(2, 1);
+        const auto i = m(2, 2);
         nv[0] = d * g * v[8] + d * g * v[7] + a * g * v[6] + a * g * v[5] +
                 a * d * v[4] + a * d * v[3] + g * g * v[2] + d * d * v[1] +
                 a * a * v[0];
