@@ -491,7 +491,7 @@ namespace mfront {
         << "PREDEF,DPRED,STATEV,NSTATV,STRESS,NDI,KINC,"
         << "cyrano::CyranoStandardSmallStrainStressFreeExpansionHandler,op);\n";
     if (this->shallGenerateMTestFileOnFailure(mb)) {
-      out << "if(*KINC!=1){\n";
+      out << "if(*KINC<0){\n";
       this->generateMTestFile2(out, mb, BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR, n, "");
       out << "}\n";
     }
@@ -584,7 +584,7 @@ namespace mfront {
           << ">::exe(NTENS,DTIME,DROT,K,eto,deto,TEMP,DTEMP,PROPS,NPROPS,"
           << "PREDEF,DPRED,STATEV,NSTATV,s,NDI,KINC,"
           << "cyrano::CyranoLogarithmicStrainStressFreeExpansionHandler,op);\n";
-      out << "if(*KINC==1){\n";
+      out << "if(*KINC>=0){\n";
       if (mb.getAttribute(BehaviourData::profiling, false)) {
         out << "{\n"
             << "auto post_timer(" << mb.getClassName() << "Profiler::getProfiler(),\n"
@@ -639,7 +639,7 @@ namespace mfront {
         << ">::exe(NTENS,DTIME,DROT,K,eto,deto,TEMP,DTEMP,PROPS,NPROPS,"
         << "PREDEF,DPRED,STATEV,NSTATV,s,NDI,KINC,"
         << "cyrano::CyranoLogarithmicStrainStressFreeExpansionHandler,op);\n";
-    out << "if(*KINC==1){\n";
+    out << "if(*KINC>=0){\n";
     if (mb.getAttribute(BehaviourData::profiling, false)) {
       out << "{\n"
           << "auto post_timer(" << mb.getClassName() << "Profiler::getProfiler(),\n"
@@ -664,10 +664,10 @@ namespace mfront {
     if (mb.getAttribute(BehaviourData::profiling, false)) {
       out << "}\n";
     }
-    out << "} // end of if(*KINC==1)\n";
+    out << "} // end of if(*KINC>=0)\n";
     out << "} // end of if(*NDI!=1)\n";
     if (this->shallGenerateMTestFileOnFailure(mb)) {
-      out << "if(*KINC!=1){\n";
+      out << "if(*KINC<0){\n";
       this->generateMTestFile2(out, mb,BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR, n, "");
       out << "}\n";
     }
