@@ -18,6 +18,22 @@
 \newcommand{\deriv}[2]{{\displaystyle \frac{\displaystyle \partial #1}{\displaystyle \partial #2}}}
 \newcommand{\sigmaeq}{\sigma_{\mathrm{eq}}}
 
+
+# Introducing the MFrontGenericInterfaceSupport project (11/09/2018)
+
+This project is meant to ease the integration of MFront in various
+environments, including homebrew solvers (FE, FFT, etc...). Source code
+can be found here:
+
+<https://github.com/thelfer/MFrontGenericInterfaceSupport.git>
+
+The project has a permissive licence for it to be used in both
+commercial or open-source codes.
+
+Bindings for `C` are already available. Do not hesitate to consider
+developping bindings for other languages, such as `Python`, `Fortran`,
+`Julia`, `Java`, `Matlab`, `GNU` `Octave`, `Scilab`, etc.
+
 # Announcing the fourth MFront User Day (28/06/2018)
 
 We are pleased to announce the fourth MFront User Day that will held

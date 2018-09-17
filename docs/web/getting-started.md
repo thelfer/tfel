@@ -28,8 +28,8 @@ Before writing your own behaviours, a few advices are helpful:
   crystal plasticity, do not try to directly study the examples found in
   the `MFront` tests base.**. It highly recommended to have some basic
   understanding of the algorithms used to integrate a constitutive
-  equation. See
-  [@besson_numerical_2004,@lemaitre_engineering_2005,@besson_non-linear_2009].
+  equation (see
+  [@besson_numerical_2004;@lemaitre_engineering_2005;@besson_non-linear_2009]).
 - You must develop your behaviour *step by step*. Do not neglect unit
   testing. This is what [`MTest`](.md) has been made for.
 - You must have some knowledge about your finite element solver, in
@@ -37,7 +37,8 @@ Before writing your own behaviours, a few advices are helpful:
   models).
 
 The final advice is the more important: as every open-source project,
-`MFront` has its community of users. Do not hesitate to ask questions:
+`MFront` has its community of users. **Do not hesitate to ask
+questions**:
 
 - [on the forum](https://sourceforge.net/p/tfel/discussion/).
 - [on the mailing lists](https://sourceforge.net/p/tfel/tfel/).
@@ -62,14 +63,13 @@ The main points are the followings:
   and `FreeBSD`). This is not the case under `Windows` where you have to
   install a compiler beforehand.
 - *You must understand how extending your solver works and ensure that
-  you do use a compatible compiler*. This is more specifically true
-  under the `Windows` platform than under `LinuX`: on `LinuX`, most
-  compilers strives to be binary compatible with `gcc`. For example, if
-  you use `Cast3M` under windows, you may want to use the compiler which
-  is package with the `Cast3M` distribution (see
-  [here](install-windows-Cast3M2017.html) for details). For `Abaqus`,
-  you may need to have the Intel compilers (or at least the Intel
-  fortran compiler).
+  you do use a compatible compiler*. This is particulary important under
+  the `Windows` platform: on `LinuX`, most compilers strives to be
+  binary compatible with `gcc`. For example, if you use `Cast3M` under
+  windows, you may want to use the compiler which is package with the
+  `Cast3M` distribution (see [here](install-windows-Cast3M2017.html) for
+  details). For `Abaqus`, you may need to have the Intel compilers (or
+  at least the Intel fortran compiler).
 - It is required to have [`cmake`](https://cmake.org/) installed to
   build `MFront` under `Windows`. It is strongly recommended under the
   other platform.
@@ -87,25 +87,22 @@ model, finite strain behaviour, strain based behaviour, cohesive zone
 moel) and/or the algorithm used to integrate the state variables'
 evolution. One highly used `DSL` is called `Implicit` and described a
 strain based behaviour whose integration is based on a generalised
-mid-point rule.
+mid-point rule (see
+[@besson_numerical_2004;@lemaitre_engineering_2005;@besson_non-linear_2009]).
 
 Each `DSL` has its own conventions, keywords and automatically declared
 variables.
 
-**For most mechanical behaviours, the `@Implicit` DSL is recommended:
-  the behaviour integration is performed using a generalised mid-point
-  rule and the consistent tangent operator, which is required by most
-  finite element sovler to have decent numerical performances, can be
-  computed**.
-
-> **Detailed documentation**
+> **The `Implicit` DSL**
 > 
-> The complete description of the `DSL`s available can be found
-> [here](documents/mfront/mfront.pdf) and
-> [here](documents/mfront/behaviours.pdf), in French.
+> For most mechanical behaviours, the `Implicit` DSL is recommended: the
+> behaviour integration is performed using a generalised mid-point rule
+> and allow the consistent tangent operator, which is required by most
+> finite element sovler to have decent numerical performances, to be
+> computed.
 
-Once the `DSL` choosen (using the `@DSL` keyword), the list of available
-keywords can be retrieved from the command line:
+Once the appropriate `DSL` choosen, the list of available keywords can
+be retrieved from the command line:
 
 ~~~~{.bash}
 $ mfront --help-keywords-list=Implicit
@@ -128,9 +125,32 @@ A good way to get familiar with a specific DSL is to look in the
 Otherwise, one may want to look at the tests distributed with `MFront`
 in the `mfront/tests/behaviours` directory (online access on github
 [here](https://github.com/thelfer/tfel/tree/master/mfront/tests/behaviours)).
-Beware that the tests may not reflect the current best way to implement
-a specific behaviour (`MFront` evolves a lot and each version introduces
-new features): they can be kept outdated to test backward compatibility.
+
+> **About the tests cases**
+> 
+> Beware that the tests may not reflect the current best way to
+> implement a specific behaviour (`MFront` evolves a lot and each
+> version introduces new features): they can be kept outdated to ensure
+> backward compatibility.
+
+> **Detailed documentation**
+> 
+> This [page](documentations.html) references most of the available
+> documentations.
+> 
+> For example, the complete description of the `DSL`s available can
+> be found [here](documents/mfront/mfront.pdf) and
+> [here](documents/mfront/behaviours.pdf), in French.
+> 
+> However, such detailed documentation is not required for most users.
+> We even consider that beginning with `MFront` from these documents
+> can be overwhelmingly difficult. Reading the detailed example of the
+> gallery is much easier: `Longum iter est per praecepta, breve et
+> efficax per exempla` (It's a long way by the rules, but short and
+> efficient with examples).
+> 
+> For French users, a detailed tutorial can be found
+> [here](documents/tutoriel/tutoriel.pdf)
 
 # Third step: before starting to write our first behaviour
 
@@ -149,11 +169,11 @@ behaviours. If one of the described behaviour is close to the one you
 plan to implement, it is highly recommend to start by modifying the one
 described in the gallery.
 
-## Write your discretized equations by hand
+## Write your discretized equations by hand in tensor notations
 
-## If starting from scratch, proceed step by step
+# Fourth step: your first implementation
 
-## Do not forget that you can ask for help
+
 
 # References
 

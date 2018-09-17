@@ -88,7 +88,7 @@ The brick decomposes the behaviour into two components:
     criterion : "Mises",
     isotropic_hardening : "Voce" {R0 : 200, Rinf : 100, b : 20},
     kinematic_hardening : "Armstrong-Frederick" {
-      C : "1.e6 - 98500 * (T - 100) / 96",  //
+      C : "1.e6 - 98500 * (T - 100) / 96",
       D : "5000 - 5* (T - 100)"
     },
     K : "(4200. * (T + 20.) - 3. * (T + 20.0)**2)/4900.",

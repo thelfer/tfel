@@ -458,6 +458,71 @@ for a in [pi*(-1.+(2.*i)/(nmax-1)) for i in range(0,nmax)]:
 
 # New functionalities in `MFront`
 
+## The `StandardElastoViscoPlasticity` brick
+
+This brick is used to describe a specific class of strain based
+behaviours based on an additive split of the total strain
+\(\tepsilonto\) into an elastic part \(\tepsilonel\) and an one or
+several inelastic strains describing plastic (time-independent) flows
+and/or viscoplastic (time-dependent) flows:
+\[
+ \tepsilonto=\tepsilonel
++\sum_{i_{\mathrm{p}}=0}^{n_{\mathrm{p}}}\tepsilonp_{i_{\mathrm{p}}}
++\sum_{i_{\mathrm{vp}}=0}^{n_{\mathrm{vp}}}\tepsilonvp_{i_{\mathrm{vp}}}
+\]
+
+This equation defines the equation associated with the elastic strain
+\(\tepsilonel\).
+
+The brick decomposes the behaviour into two components:
+
+- the stress potential which defines the relation between the elastic
+  strain \(\tepsilonel\) and possibly some damage variables and the
+  stress measure \(\tsigma\). As the definition of the elastic
+  properties can be part of the definition of the stress potential, the
+  thermal expansion coefficients can also be defined in the block
+  corresponding to the stress potential.
+- a list of inelastic flows. Inelastic flows are defined by:
+    - a criterion
+    - a flow criterion
+    - a set of isotropic hardening rules
+    - a set of kinematic hardening rules
+
+Here is a complete usage:
+
+~~~~{.cpp}
+@Brick "StandardElastoViscoPlasticity" {
+  // Here the stress potential is given by the Hooke law. We define:
+  // - the elastic properties (Young modulus and Poisson ratio).
+  //   Here the Young modulus is a function of the temperature.
+  //   The Poisson ratio is constant.
+  // - the thermal expansion coefficient
+  // - the reference temperature for the thermal expansion
+  stress_potential : "Hooke" {
+    young_modulus : "2.e5 - (1.e5*((T - 100.)/960.)**2)",
+    poisson_ratio : 0.3,
+    thermal_expansion : "1.e-5 + (1.e-5  * ((T - 100.)/960.) ** 4)",
+    thermal_expansion_reference_temperature : 0
+  },
+  // Here we define only one viscplastic flow defined by the Norton law,
+  // which is based:
+  // - the von Mises stress criterion
+  // - one isotorpic hardening rule based on Voce formalism
+  // - one kinematic hardening rule following the Armstrong-Frederick law
+  inelastic_flow : "Norton" {
+    criterion : "Mises",
+    isotropic_hardening : "Voce" {R0 : 200, Rinf : 100, b : 20},
+    kinematic_hardening : "Armstrong-Frederick" {
+      C : "1.e6 - 98500 * (T - 100) / 96",
+      D : "5000 - 5* (T - 100)"
+    },
+    K : "(4200. * (T + 20.) - 3. * (T + 20.0)**2)/4900.",
+    n : "7. - (T - 100.) / 160.",
+    Ksf : 3
+  }
+};
+~~~~
+
 ## Logarithmic strain framework support in the `cyrano` interface
 
 `Cyrano` is the state of the art fuel performance code developed by EDF
@@ -494,6 +559,23 @@ The interface handles (See @helfer_extension_2015 for details):
   the linearised strain).
 - the post-processing stage (conversion of the dual stress to the first
   Piola-Kirchoff stress, conversion of the consistent tangent operator),
+
+## The generic behaviour interface
+
+The generic behaviour interface has been introduced to provide an
+interface suitable for most needs.
+
+Whereas other interfaces target a specific solver and thus are
+restricted by choices made by this specific solver, this interface has
+been created for developers of homebrew solvers who are able to modify
+their code to take full advantage of `MFront` behaviours.
+
+This interface is tightly linked with the
+`MFrontGenericInterfaceSupport` project which is available on `github`:
+<https://github.com/thelfer/MFrontGenericInterfaceSupport>. This project
+has a more liberal licence which allows it to be included in both
+commercial and open-source solvers/library. This licensing choice
+explains why this project is not part of the `TFEL`.
 
 ## Various improvements
 
