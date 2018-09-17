@@ -34,9 +34,7 @@ namespace mfront{
 
   MTestFileGeneratorBase::InternalStateVariable::~InternalStateVariable() = default;
 
-  unsigned int
-  MTestFileGeneratorBase::getIdentifier()
-  {
+  unsigned int MTestFileGeneratorBase::getIdentifier() {
     static unsigned int i = 0;
     return ++i;
   }
@@ -47,15 +45,12 @@ namespace mfront{
       hasRotationMatrix(false)
   {} // end of MTestFileGeneratorBase::MTestFileGeneratorBase
 
-  void
-  MTestFileGeneratorBase::setHandleThermalExpansion(const bool b)
-  {
+  void MTestFileGeneratorBase::setHandleThermalExpansion(const bool b) {
     this->handleThermalExpansion = b;
   }
 
-  void
-  MTestFileGeneratorBase::setModellingHypothesis(const tfel::material::ModellingHypothesis::Hypothesis h)
-  {
+  void MTestFileGeneratorBase::setModellingHypothesis(
+      const tfel::material::ModellingHypothesis::Hypothesis h) {
     using namespace tfel::material;
     tfel::raise_if(this->hypothesis!=ModellingHypothesis::UNDEFINEDHYPOTHESIS,
 		   "MTestFileGeneratorBase::setModellingHypothesis: "
@@ -74,11 +69,15 @@ namespace mfront{
 		   "time '"+std::to_string(t)+"' already defined");
   } // end of MTestFileGeneratorBase::addTime
 
-  void
-  MTestFileGeneratorBase::setRotationMatrix(const real m00,const real m01,const real m02,
-					    const real m10,const real m11,const real m12,
-					    const real m20,const real m21,const real m22)
-  {
+  void MTestFileGeneratorBase::setRotationMatrix(const real m00,
+                                                 const real m01,
+                                                 const real m02,
+                                                 const real m10,
+                                                 const real m11,
+                                                 const real m12,
+                                                 const real m20,
+                                                 const real m21,
+                                                 const real m22) {
     this->hasRotationMatrix = true;
     this->m[0] = m00;
     this->m[1] = m01;
@@ -91,10 +90,8 @@ namespace mfront{
     this->m[8] = m22;
   } // end of MTestFileGeneratorBase::addTime
 
-  void
-  MTestFileGeneratorBase::addMaterialProperty(const std::string& n,
-					      const MTestFileGeneratorBase::real v)
-  {
+  void MTestFileGeneratorBase::addMaterialProperty(
+      const std::string& n, const MTestFileGeneratorBase::real v) {
     tfel::raise_if(!(this->mps.insert({n,v}).second),
 		   "MTestFileGeneratorBase::addMaterialProperty: "
 		   "material property '"+n+"' already defined");
@@ -156,20 +153,18 @@ namespace mfront{
     this->writeTimes(file);
   } // end of MTestFileGeneratorBase::generate
 
-  void
-  MTestFileGeneratorBase::writeRotationMatrix(std::ostream& os) const
-  {
+  void MTestFileGeneratorBase::writeRotationMatrix(std::ostream& os) const {
     if(this->hasRotationMatrix){
       os.precision(14);
       os << "@RotationMatrix {{" << m[0] << "," << m[1] << "," << m[2] << "},\n"
-	 << "                 {" << m[3] << "," << m[4] << "," << m[5] << "},\n"
-	 << "                 {" << m[6] << "," << m[7] << "," << m[8] << "}};\n\n";
+         << "                 {" << m[3] << "," << m[4] << "," << m[5] << "},\n"
+         << "                 {" << m[6] << "," << m[7] << "," << m[8]
+         << "}};\n\n";
     }
   }
 
-  void
-  MTestFileGeneratorBase::writeModellingHypothesis(std::ostream& os) const
-  {
+  void MTestFileGeneratorBase::writeModellingHypothesis(
+      std::ostream& os) const {
     using namespace tfel::material;
     tfel::raise_if(this->hypothesis==ModellingHypothesis::UNDEFINEDHYPOTHESIS,
 		   "MTestFileGeneratorBase::writeModellingHypothesis: "
@@ -179,9 +174,7 @@ namespace mfront{
        << "';\n";
   }
 
-  void
-  MTestFileGeneratorBase::writeMaterialProperties(std::ostream& os) const
-  {
+  void MTestFileGeneratorBase::writeMaterialProperties(std::ostream& os) const {
     if(this->mps.empty()){
       return;
     }
