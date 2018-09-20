@@ -210,13 +210,13 @@ namespace mtest
   {} // end of CastemFiniteStrainBehaviour::CastemFiniteStrainBehaviour
   
   void
-  CastemFiniteStrainBehaviour::getDrivingVariablesDefaultInitialValues(tfel::math::vector<real>& v) const
+  CastemFiniteStrainBehaviour::getGradientsDefaultInitialValues(tfel::math::vector<real>& v) const
   {
     v[0] = real(1);
     v[1] = real(1);
     v[2] = real(1);
     std::fill(v.begin()+3,v.end(),real(0));
-  } // end of CastemFiniteStrainBehaviour::setDrivingVariablesDefaultInitialValue  
+  } // end of CastemFiniteStrainBehaviour::setGradientsDefaultInitialValue  
 
   std::pair<bool,real>
   CastemFiniteStrainBehaviour::computePredictionOperator(BehaviourWorkSpace& wk,

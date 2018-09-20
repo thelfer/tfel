@@ -48,7 +48,7 @@ namespace mfront {
                                       const Hypothesis) const override;
     bool handleStrainMeasure() const override;
     //! destructor
-    ~AsterSymbolsGenerator();
+    ~AsterSymbolsGenerator() override;
   };  // end of struct AsterSymbolsGenerator
 
 }  // end of namespace mfront

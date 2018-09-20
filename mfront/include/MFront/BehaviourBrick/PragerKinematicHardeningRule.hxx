@@ -34,11 +34,6 @@ namespace mfront {
           const bool) const override;
       //! destructor
       ~PragerKinematicHardeningRule() override;
-
-     protected:
-      //! \brief kinematic hardening moduli
-      BehaviourDescription::MaterialProperty C;
-
     };  // end of struct KinematicHardeningRule
 
   }  // end of namespace bbrick

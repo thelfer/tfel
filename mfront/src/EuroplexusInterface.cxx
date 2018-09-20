@@ -725,11 +725,11 @@ namespace mfront {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
     SupportedTypes::TypeSize ov, of;
     os << "void set" << iprefix
-       << "BehaviourDataDrivingVariables(const Type* const " << iprefix
+       << "BehaviourDataGradients(const Type* const " << iprefix
        << "stran)\n"
        << "{\n";
     for (const auto& v : mb.getMainVariables()) {
-      this->writeBehaviourDataDrivingVariableSetter(os, v.first, ov);
+      this->writeBehaviourDataGradientSetter(os, v.first, ov);
       ov += SupportedTypes::getTypeSize(v.first.type, 1u);
     }
     os << "}\n\n";
@@ -744,15 +744,15 @@ namespace mfront {
     os << "}\n\n";
   }  // end of EuroplexusInterface::writeBehaviourDataMainVariablesSetters
 
-  void EuroplexusInterface::writeBehaviourDataDrivingVariableSetter(
+  void EuroplexusInterface::writeBehaviourDataGradientSetter(
       std::ostream& os,
-      const DrivingVariable& v,
+      const Gradient& v,
       const SupportedTypes::TypeSize o) const {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
     if (!v.increment_known) {
       tfel::raise_if(
           SupportedTypes::getTypeFlag(v.type) != SupportedTypes::Tensor,
-          "EuroplexusInterface::writeBehaviourDataDrivingVariableSetter: "
+          "EuroplexusInterface::writeBehaviourDataGradientSetter: "
           "unsupported driving variable type");
       if (!o.isNull()) {
         os << "tfel::fsalgo::copy<TensorSize>::exe(" << iprefix << "stran+" << o
@@ -764,7 +764,7 @@ namespace mfront {
     } else {
       tfel::raise_if(
           SupportedTypes::getTypeFlag(v.type) != SupportedTypes::Stensor,
-          "EuroplexusInterface::writeBehaviourDataDrivingVariableSetter: "
+          "EuroplexusInterface::writeBehaviourDataGradientSetter: "
           "unsupported driving variable type");
       if (!o.isNull()) {
         os << "tfel::fsalgo::copy<StensorSize>::exe(" << iprefix << "stran+"
@@ -776,15 +776,15 @@ namespace mfront {
     }
   }
 
-  void EuroplexusInterface::writeIntegrationDataDrivingVariableSetter(
+  void EuroplexusInterface::writeIntegrationDataGradientSetter(
       std::ostream& os,
-      const DrivingVariable& v,
+      const Gradient& v,
       const SupportedTypes::TypeSize o) const {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
     if (!v.increment_known) {
       tfel::raise_if(
           SupportedTypes::getTypeFlag(v.type) != SupportedTypes::Tensor,
-          "EuroplexusInterface::writeIntegrationDataDrivingVariableSetter: "
+          "EuroplexusInterface::writeIntegrationDataGradientSetter: "
           "unsupported driving variable type");
       if (!o.isNull()) {
         os << "tfel::fsalgo::copy<TensorSize>::exe(" << iprefix << "dstran+"
@@ -796,7 +796,7 @@ namespace mfront {
     } else {
       tfel::raise_if(
           SupportedTypes::getTypeFlag(v.type) != SupportedTypes::Stensor,
-          "EuroplexusInterface::writeIntegrationDataDrivingVariableSetter: "
+          "EuroplexusInterface::writeIntegrationDataGradientSetter: "
           "unsupported driving variable type");
       if (!o.isNull()) {
         os << "tfel::fsalgo::copy<StensorSize>::exe(" << iprefix << "dstran+"
@@ -962,7 +962,7 @@ namespace mfront {
         << "tfel::math::TensorDimeToSize<N>::value;\n"
         << "// size of the driving variable array\n"
         << "static " << constexpr_c
-        << " unsigned short DrivingVariableSize = " << mvs.first << ";\n"
+        << " unsigned short GradientSize = " << mvs.first << ";\n"
         << "// size of the thermodynamic force variable array (STRESS)\n"
         << "static " << constexpr_c
         << " unsigned short ThermodynamicForceVariableSize = " << mvs.second

@@ -123,7 +123,7 @@ namespace aster
     /*!
      * An helper structure used to initialise the driving variables
      */
-    struct TFEL_VISIBILITY_LOCAL DrivingVariableInitialiserWithStressFreeExpansion
+    struct TFEL_VISIBILITY_LOCAL GradientInitialiserWithStressFreeExpansion
       : public AsterInterfaceExceptions
       {
       //! a simple alias
@@ -149,10 +149,10 @@ namespace aster
 	typedef typename BV::StressFreeExpansionType StressFreeExpansionType;
 	typedef tfel::material::MechanicalBehaviourTraits<BV> Traits;
 	const AsterInt N = ModellingHypothesisToSpaceDimension<H>::value;
-	AsterReal dv0[AsterTraits<BV>::DrivingVariableSize];
-	AsterReal dv1[AsterTraits<BV>::DrivingVariableSize];
-	copy<AsterTraits<BV>::DrivingVariableSize>::exe(STRAN,dv0);
-	copy<AsterTraits<BV>::DrivingVariableSize>::exe(DSTRAN,dv1);
+	AsterReal dv0[AsterTraits<BV>::GradientSize];
+	AsterReal dv1[AsterTraits<BV>::GradientSize];
+	copy<AsterTraits<BV>::GradientSize>::exe(STRAN,dv0);
+	copy<AsterTraits<BV>::GradientSize>::exe(DSTRAN,dv1);
 	// check that the function pointer are not null
 	if(sfeh==nullptr){
 	  throwUnsupportedStressFreeExpansionException(Traits::getName());
@@ -162,16 +162,16 @@ namespace aster
 	const auto& s0 = s.first;
 	const auto& s1 = s.second;
 	sfeh(dv0,dv1,&s0[0],&s1[0],N);
-	b.setASTERBehaviourDataDrivingVariables(dv0);
-	b.setASTERIntegrationDataDrivingVariables(dv1);
+	b.setASTERBehaviourDataGradients(dv0);
+	b.setASTERIntegrationDataGradients(dv1);
       } // end of exe
 
-    }; // end of struct DrivingVariableInitialiserWithStressFreeExpansion
+    }; // end of struct GradientInitialiserWithStressFreeExpansion
 
     /*!
      * An helper structure used to initialise the driving variables
      */
-    struct TFEL_VISIBILITY_LOCAL DrivingVariableInitialiserWithoutStressFreeExpansion
+    struct TFEL_VISIBILITY_LOCAL GradientInitialiserWithoutStressFreeExpansion
     {
       //! a simple alias
       typedef Behaviour<H,AsterReal,false> BV;
@@ -190,10 +190,10 @@ namespace aster
 	       const AsterReal *const DSTRAN,
 	       const StressFreeExpansionHandler&)
       {
-	b.setASTERBehaviourDataDrivingVariables(STRAN);
-	b.setASTERIntegrationDataDrivingVariables(DSTRAN);
+	b.setASTERBehaviourDataGradients(STRAN);
+	b.setASTERIntegrationDataGradients(DSTRAN);
       } // end of exe
-    }; // end of struct DrivingVariableInitialiserWithoutStressFreeExpansion
+    }; // end of struct GradientInitialiserWithoutStressFreeExpansion
 
     struct TFEL_VISIBILITY_LOCAL StiffnessOperatorInitializer
     {
@@ -294,8 +294,8 @@ namespace aster
 	    typedef MechanicalBehaviourTraits<BV> Traits;
 	    typedef typename std::conditional<
 	      Traits::hasStressFreeExpansion,
-	      DrivingVariableInitialiserWithStressFreeExpansion,
-	      DrivingVariableInitialiserWithoutStressFreeExpansion>::type DVInitializer;
+	      GradientInitialiserWithStressFreeExpansion,
+	      GradientInitialiserWithoutStressFreeExpansion>::type DVInitializer;
 	    SInitializer::exe(this->behaviour,PROPS);
 	    AInitializer::exe(this->behaviour,PROPS);
 	    DVInitializer::exe(this->behaviour,STRAN,DSTRAN,sfeh);

@@ -24,7 +24,7 @@ namespace mfront {
   // forward declaration
   struct VariableDescriptionContainer;
   // forward declaration
-  struct DrivingVariable;
+  struct Gradient;
   // forward declaration
   struct ThermodynamicForce;
 
@@ -210,8 +210,8 @@ namespace mfront {
      * \param[in] v  : variable to be initialised
      * \param[in] o  : variable offsert
      */
-    virtual void writeBehaviourDataDrivingVariableSetter(std::ostream&,
-							 const DrivingVariable&,
+    virtual void writeBehaviourDataGradientSetter(std::ostream&,
+							 const Gradient&,
 							 const SupportedTypes::TypeSize) const;
     /*!
      * \brief write the initialisation of a thermodynamic force
@@ -234,9 +234,9 @@ namespace mfront {
      * \param[in] v  : variable to be initialised
      * \param[in] o  : variable offsert
      */
-    virtual void writeIntegrationDataDrivingVariableSetter(
+    virtual void writeIntegrationDataGradientSetter(
         std::ostream&,
-        const DrivingVariable&,
+        const Gradient&,
         const SupportedTypes::TypeSize) const;
     //! destructor
     ~UMATInterfaceBase() override;

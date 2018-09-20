@@ -163,7 +163,6 @@ namespace mfront {
         const std::string& id,
         const BehaviourDescription& bd,
         const StressPotential& sp) const {
-      auto c = std::string{};
       const auto an = StressCriterion::getVariableId(
           "a", id, StressCriterion::STRESSCRITERION);
       const auto l1n = StressCriterion::getVariableId(
@@ -173,14 +172,12 @@ namespace mfront {
       return "const auto seqel" + id + " = computeBarlatStress(sel" + id +
              ",this->" + l1n + ",this->" + l2n + ",this->" + an + "," +
              sp.getEquivalentStressLowerBound(bd) + ");\n";
-      return c;
     }  // end of Barlat2004StressCriterion::computeElasticPrediction
 
     std::string Barlat2004StressCriterion::computeCriterion(
         const std::string& id,
         const BehaviourDescription& bd,
         const StressPotential& sp) const {
-      auto c = std::string{};
       const auto an = StressCriterion::getVariableId(
           "a", id, StressCriterion::STRESSCRITERION);
       const auto l1n = StressCriterion::getVariableId(
@@ -190,7 +187,6 @@ namespace mfront {
       return "const auto seq" + id + " = computeBarlatStress(s" + id +
              ",this->" + l1n + ",this->" + l2n + ",this->" + an + "," +
              sp.getEquivalentStressLowerBound(bd) + ");\n";
-      return c;
     }  // end of Barlat2004StressCriterion::computeNormal
 
     std::string Barlat2004StressCriterion::computeNormal(

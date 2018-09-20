@@ -193,7 +193,7 @@ namespace mfront
      * \param[in] os : output stream
      */
     virtual void
-    writeDrivingVariables(std::ostream&) const = 0;
+    writeGradients(std::ostream&) const = 0;
     /*!
      * structure representing an internal state variable
      */

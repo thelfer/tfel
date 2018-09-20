@@ -36,7 +36,7 @@ namespace mtest{
   {}
 
   void
-  AnsysSmallStrainBehaviour::getDrivingVariablesDefaultInitialValues(tfel::math::vector<real>& v) const
+  AnsysSmallStrainBehaviour::getGradientsDefaultInitialValues(tfel::math::vector<real>& v) const
   {
     std::fill(v.begin(),v.end(),real(0));
   }

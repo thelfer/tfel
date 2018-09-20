@@ -62,7 +62,7 @@ namespace mtest
      * \param[out] v : initial values of the driving variables
      */
     virtual void
-    getDrivingVariablesDefaultInitialValues(tfel::math::vector<real>&) const override;
+    getGradientsDefaultInitialValues(tfel::math::vector<real>&) const override;
     /*!
      * \brief integrate the mechanical behaviour over the time step
      * \return a pair. The first member is true if the integration was

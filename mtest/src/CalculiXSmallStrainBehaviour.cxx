@@ -37,7 +37,7 @@ namespace mtest
   {}
 
   void
-  CalculiXSmallStrainBehaviour::getDrivingVariablesDefaultInitialValues(tfel::math::vector<real>& v) const
+  CalculiXSmallStrainBehaviour::getGradientsDefaultInitialValues(tfel::math::vector<real>& v) const
   {
     std::fill(v.begin(),v.end(),real(0));
   }

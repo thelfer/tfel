@@ -37,7 +37,7 @@ namespace mtest
   {} // end of AsterSmallStrainBehaviour::AsterSmallStrainBehaviour
 
   void
-  AsterSmallStrainBehaviour::getDrivingVariablesDefaultInitialValues(tfel::math::vector<real>& v) const
+  AsterSmallStrainBehaviour::getGradientsDefaultInitialValues(tfel::math::vector<real>& v) const
   {
     std::fill(v.begin(),v.end(),real(0));
   }

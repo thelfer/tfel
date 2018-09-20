@@ -148,7 +148,7 @@ namespace castem {
     /*!
      * An helper structure used to initialise the driving variables
      */
-    struct TFEL_VISIBILITY_LOCAL DrivingVariableInitialiserWithStressFreeExpansion
+    struct TFEL_VISIBILITY_LOCAL GradientInitialiserWithStressFreeExpansion
         : public CastemInterfaceExceptions {
       //! a simple alias
       typedef Behaviour<H, CastemReal, false> BV;
@@ -179,10 +179,10 @@ namespace castem {
                                          const StressFreeExpansionHandler &sfeh) {
         using Traits = tfel::material::MechanicalBehaviourTraits<BV>;
         using StressFreeExpansionType = typename BV::StressFreeExpansionType;
-        CastemReal dv0[CastemTraits<BV>::DrivingVariableSize];
-        CastemReal dv1[CastemTraits<BV>::DrivingVariableSize];
-        tfel::fsalgo::copy<CastemTraits<BV>::DrivingVariableSize>::exe(STRAN, dv0);
-        tfel::fsalgo::copy<CastemTraits<BV>::DrivingVariableSize>::exe(DSTRAN, dv1);
+        CastemReal dv0[CastemTraits<BV>::GradientSize];
+        CastemReal dv1[CastemTraits<BV>::GradientSize];
+        tfel::fsalgo::copy<CastemTraits<BV>::GradientSize>::exe(STRAN, dv0);
+        tfel::fsalgo::copy<CastemTraits<BV>::GradientSize>::exe(DSTRAN, dv1);
         // check that the function pointer are not null
         if (sfeh == nullptr) {
           throwUnsupportedStressFreeExpansionException(Traits::getName());
@@ -195,8 +195,8 @@ namespace castem {
         const auto &s0 = s.first;
         const auto &s1 = s.second;
         sfeh(dv0, dv1, &s0[0], &s1[0], CastemInt(N));
-        bData.setCASTEMBehaviourDataDrivingVariables(dv0);
-        iData.setCASTEMIntegrationDataDrivingVariables(dv1);
+        bData.setCASTEMBehaviourDataGradients(dv0);
+        iData.setCASTEMIntegrationDataGradients(dv1);
       }  // end of exe
       /*!
        * \param[out] b      : behaviour
@@ -216,10 +216,10 @@ namespace castem {
         using tfel::material::MechanicalBehaviourTraits;
         typedef MechanicalBehaviourTraits<BV> Traits;
         typedef typename BV::StressFreeExpansionType StressFreeExpansionType;
-        CastemReal dv0[CastemTraits<BV>::DrivingVariableSize];
-        CastemReal dv1[CastemTraits<BV>::DrivingVariableSize];
-        copy<CastemTraits<BV>::DrivingVariableSize>::exe(STRAN, dv0);
-        copy<CastemTraits<BV>::DrivingVariableSize>::exe(DSTRAN, dv1);
+        CastemReal dv0[CastemTraits<BV>::GradientSize];
+        CastemReal dv1[CastemTraits<BV>::GradientSize];
+        copy<CastemTraits<BV>::GradientSize>::exe(STRAN, dv0);
+        copy<CastemTraits<BV>::GradientSize>::exe(DSTRAN, dv1);
         // check that the function pointer are not null
         if (sfeh == nullptr) {
           throwUnsupportedStressFreeExpansionException(Traits::getName());
@@ -229,16 +229,16 @@ namespace castem {
         const auto &s0 = s.first;
         const auto &s1 = s.second;
         sfeh(dv0, dv1, &s0[0], &s1[0], CastemInt(N));
-        b.setCASTEMBehaviourDataDrivingVariables(dv0);
-        b.setCASTEMIntegrationDataDrivingVariables(dv1);
+        b.setCASTEMBehaviourDataGradients(dv0);
+        b.setCASTEMIntegrationDataGradients(dv1);
       }  // end of exe
 
-    };  // end of struct DrivingVariableInitialiserWithStressFreeExpansion
+    };  // end of struct GradientInitialiserWithStressFreeExpansion
 
     /*!
      * An helper structure used to initialise the driving variables
      */
-    struct TFEL_VISIBILITY_LOCAL DrivingVariableInitialiserWithoutStressFreeExpansion {
+    struct TFEL_VISIBILITY_LOCAL GradientInitialiserWithoutStressFreeExpansion {
       //! a simple alias
       typedef Behaviour<H, CastemReal, false> BV;
       //! a simple alias for the behaviour data
@@ -260,8 +260,8 @@ namespace castem {
                                          const CastemReal *const STRAN,
                                          const CastemReal *const DSTRAN,
                                          const StressFreeExpansionHandler) {
-        bData.setCASTEMBehaviourDataDrivingVariables(STRAN);
-        iData.setCASTEMIntegrationDataDrivingVariables(DSTRAN);
+        bData.setCASTEMBehaviourDataGradients(STRAN);
+        iData.setCASTEMIntegrationDataGradients(DSTRAN);
       }  // end of exe
          /*!
           * \param[out] b      : b
@@ -276,10 +276,10 @@ namespace castem {
                                          const CastemReal *const STRAN,
                                          const CastemReal *const DSTRAN,
                                          const StressFreeExpansionHandler &) {
-        b.setCASTEMBehaviourDataDrivingVariables(STRAN);
-        b.setCASTEMIntegrationDataDrivingVariables(DSTRAN);
+        b.setCASTEMBehaviourDataGradients(STRAN);
+        b.setCASTEMIntegrationDataGradients(DSTRAN);
       }  // end of exe
-    };   // end of struct DrivingVariableInitialiserWithoutStressFreeExpansion
+    };   // end of struct GradientInitialiserWithoutStressFreeExpansion
 
     /*!
      * An helper structure which is used to compute the stiffness
@@ -409,8 +409,8 @@ namespace castem {
             Traits::hasPredictionOperator, StandardPredictionOperatorComputer,
             PredictionOperatorIsNotAvalaible>::type PredictionOperatorComputer;
         typedef typename std::conditional<
-            Traits::hasStressFreeExpansion, DrivingVariableInitialiserWithStressFreeExpansion,
-            DrivingVariableInitialiserWithoutStressFreeExpansion>::type DVInitializer;
+            Traits::hasStressFreeExpansion, GradientInitialiserWithStressFreeExpansion,
+            GradientInitialiserWithoutStressFreeExpansion>::type DVInitializer;
         typedef typename std::conditional<Traits::isConsistentTangentOperatorSymmetric,
                                           SymmetricConsistentTangentOperatorComputer,
                                           GeneralConsistentTangentOperatorComputer>::type
@@ -451,8 +451,8 @@ namespace castem {
         using namespace tfel::material;
         typedef MechanicalBehaviourTraits<BV> Traits;
         typedef typename std::conditional<
-            Traits::hasStressFreeExpansion, DrivingVariableInitialiserWithStressFreeExpansion,
-            DrivingVariableInitialiserWithoutStressFreeExpansion>::type DVInitializer;
+            Traits::hasStressFreeExpansion, GradientInitialiserWithStressFreeExpansion,
+            GradientInitialiserWithoutStressFreeExpansion>::type DVInitializer;
         typedef typename std::conditional<
             Traits::hasConsistentTangentOperator,
             typename std::conditional<Traits::isConsistentTangentOperatorSymmetric,
@@ -536,8 +536,8 @@ namespace castem {
         using namespace tfel::material;
         typedef MechanicalBehaviourTraits<BV> Traits;
         typedef typename std::conditional<
-            Traits::hasStressFreeExpansion, DrivingVariableInitialiserWithStressFreeExpansion,
-            DrivingVariableInitialiserWithoutStressFreeExpansion>::type DVInitializer;
+            Traits::hasStressFreeExpansion, GradientInitialiserWithStressFreeExpansion,
+            GradientInitialiserWithoutStressFreeExpansion>::type DVInitializer;
         typedef typename std::conditional<
             Traits::hasConsistentTangentOperator,
             typename std::conditional<Traits::isConsistentTangentOperatorSymmetric,
@@ -667,8 +667,8 @@ namespace castem {
         using namespace tfel::material;
         typedef MechanicalBehaviourTraits<BV> Traits;
         typedef typename std::conditional<
-            Traits::hasStressFreeExpansion, DrivingVariableInitialiserWithStressFreeExpansion,
-            DrivingVariableInitialiserWithoutStressFreeExpansion>::type DVInitializer;
+            Traits::hasStressFreeExpansion, GradientInitialiserWithStressFreeExpansion,
+            GradientInitialiserWithoutStressFreeExpansion>::type DVInitializer;
         SInitializer::exe(this->behaviour, PROPS);
         AInitializer::exe(this->behaviour, PROPS);
         DVInitializer::exe(this->behaviour, STRAN, DSTRAN, sfeh);

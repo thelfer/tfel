@@ -162,7 +162,7 @@ namespace mtest {
   }
 
   void
-  AbaqusExplicitBehaviour::getDrivingVariablesDefaultInitialValues(tfel::math::vector<real>& v) const
+  AbaqusExplicitBehaviour::getGradientsDefaultInitialValues(tfel::math::vector<real>& v) const
   {
     std::fill(v.begin(),v.end(),real(0));
     v[0] = v[1] = v[2] = real(1);
@@ -177,7 +177,7 @@ namespace mtest {
 
   void AbaqusExplicitBehaviour::allocate(BehaviourWorkSpace& wk) const
   {
-    const auto ndv     = this->getDrivingVariablesSize();
+    const auto ndv     = this->getGradientsSize();
     const auto nth     = this->getThermodynamicForcesSize();
     wk.D.resize(nth,nth);
     wk.kt.resize(nth,ndv);

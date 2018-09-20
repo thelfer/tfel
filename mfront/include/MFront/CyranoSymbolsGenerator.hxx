@@ -44,7 +44,7 @@ namespace mfront {
         const std::string&) const override;
     bool handleStrainMeasure() const override;
     //! destructor
-    ~CyranoSymbolsGenerator();
+    ~CyranoSymbolsGenerator() override;
   };  // end of struct CyranoSymbolsGenerator
 
 }  // end of namespace mfront

@@ -38,7 +38,7 @@ namespace cyrano {
     /*!
      * An helper structure used to initialise the driving variables
      */
-    struct TFEL_VISIBILITY_LOCAL DrivingVariableInitialiserWithStressFreeExpansion
+    struct TFEL_VISIBILITY_LOCAL GradientInitialiserWithStressFreeExpansion
         : public CyranoInterfaceExceptions {
       //! a simple alias
       typedef Behaviour<H, CyranoReal, false> BV;
@@ -78,8 +78,8 @@ namespace cyrano {
         const auto &s0 = s.first;
         const auto &s1 = s.second;
         sfeh(eto, deto, STRAN, DSTRAN, &s0[0], &s1[0]);
-        bData.setCYRANOBehaviourDataDrivingVariables(eto);
-        iData.setCYRANOIntegrationDataDrivingVariables(deto);
+        bData.setCYRANOBehaviourDataGradients(eto);
+        iData.setCYRANOIntegrationDataGradients(deto);
       }  // end of exe
       /*!
        * \param[out] b      : behaviour
@@ -102,16 +102,16 @@ namespace cyrano {
         const auto &s0 = s.first;
         const auto &s1 = s.second;
         sfeh(eto, deto, STRAN, DSTRAN, &s0[0], &s1[0]);
-        b.setCYRANOBehaviourDataDrivingVariables(eto);
-        b.setCYRANOIntegrationDataDrivingVariables(deto);
+        b.setCYRANOBehaviourDataGradients(eto);
+        b.setCYRANOIntegrationDataGradients(deto);
       }  // end of exe
 
-    };  // end of struct DrivingVariableInitialiserWithStressFreeExpansion
+    };  // end of struct GradientInitialiserWithStressFreeExpansion
 
     /*!
      * An helper structure used to initialise the driving variables
      */
-    struct TFEL_VISIBILITY_LOCAL DrivingVariableInitialiserWithoutStressFreeExpansion {
+    struct TFEL_VISIBILITY_LOCAL GradientInitialiserWithoutStressFreeExpansion {
       //! a simple alias
       typedef Behaviour<H, CyranoReal, false> BV;
       //! a simple alias for the behaviour data
@@ -140,8 +140,8 @@ namespace cyrano {
         deto[0] = DSTRAN[0];
         deto[1] = DSTRAN[2];
         deto[2] = DSTRAN[1];
-        bData.setCYRANOBehaviourDataDrivingVariables(eto);
-        iData.setCYRANOIntegrationDataDrivingVariables(deto);
+        bData.setCYRANOBehaviourDataGradients(eto);
+        iData.setCYRANOIntegrationDataGradients(deto);
       }  // end of exe
       /*!
        * \param[out] b      : b
@@ -163,10 +163,10 @@ namespace cyrano {
         deto[0] = DSTRAN[0];
         deto[1] = DSTRAN[2];
         deto[2] = DSTRAN[1];
-        b.setCYRANOBehaviourDataDrivingVariables(eto);
-        b.setCYRANOIntegrationDataDrivingVariables(deto);
+        b.setCYRANOBehaviourDataGradients(eto);
+        b.setCYRANOIntegrationDataGradients(deto);
       }  // end of exe
-    };   // end of struct DrivingVariableInitialiserWithoutStressFreeExpansion
+    };   // end of struct GradientInitialiserWithoutStressFreeExpansion
 
     /*!
      * An helper structure which is used to compute the stiffness
@@ -265,8 +265,8 @@ namespace cyrano {
         using namespace tfel::material;
         typedef MechanicalBehaviourTraits<BV> Traits;
         typedef typename std::conditional<
-            Traits::hasStressFreeExpansion, DrivingVariableInitialiserWithStressFreeExpansion,
-            DrivingVariableInitialiserWithoutStressFreeExpansion>::type DVInitializer;
+            Traits::hasStressFreeExpansion, GradientInitialiserWithStressFreeExpansion,
+            GradientInitialiserWithoutStressFreeExpansion>::type DVInitializer;
         SInitializer::exe(this->bData, PROPS);
         AInitializer::exe(this->bData, PROPS);
         DVInitializer::exe(this->bData, this->iData, STRAN, DSTRAN, sfeh);
@@ -417,8 +417,8 @@ namespace cyrano {
         typedef MechanicalBehaviourTraits<BV> Traits;
         using DVInitializer =
             typename std::conditional<Traits::hasStressFreeExpansion,
-                                      DrivingVariableInitialiserWithStressFreeExpansion,
-                                      DrivingVariableInitialiserWithoutStressFreeExpansion>::type;
+                                      GradientInitialiserWithStressFreeExpansion,
+                                      GradientInitialiserWithoutStressFreeExpansion>::type;
         this->behaviour.setOutOfBoundsPolicy(op);
         // elastic tensor
         SInitializer::exe(this->behaviour, PROPS);

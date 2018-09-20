@@ -160,9 +160,9 @@ namespace abaqus{
       Behaviour<H,T,false> b(d);
       SInitializer::exe(b,d.eth_props);
       AInitializer::exe(b,d.eth_props);
-      b.setBehaviourDataDrivingVariables(e);
+      b.setBehaviourDataGradients(e);
       b.setBehaviourDataThermodynamicForces(s);
-      b.setIntegrationDataDrivingVariables(de);
+      b.setIntegrationDataGradients(de);
       b.setOutOfBoundsPolicy(d.policy);
       b.initialize();
       b.checkBounds();
@@ -189,8 +189,8 @@ namespace abaqus{
       Behaviour<H,T,false> b(d);
       SInitializer::exe(b,d.eth_props);
       AInitializer::exe(b,d.eth_props);
-      b.setBehaviourDataDrivingVariables(F0);
-      b.setIntegrationDataDrivingVariables(F1);
+      b.setBehaviourDataGradients(F0);
+      b.setIntegrationDataGradients(F1);
       b.setBehaviourDataThermodynamicForces(s);
       b.setOutOfBoundsPolicy(d.policy);
       b.initialize();
@@ -220,8 +220,8 @@ namespace abaqus{
 	tfel::material::TangentOperatorTraits<MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR>;
       using DVInitializer = typename std::conditional<
 	tfel::material::MechanicalBehaviourTraits<BV>::hasStressFreeExpansion,
-	DrivingVariableInitialiserWithStressFreeExpansion,
-	DrivingVariableInitialiserWithoutStressFreeExpansion>::type;
+	GradientInitialiserWithStressFreeExpansion,
+	GradientInitialiserWithoutStressFreeExpansion>::type;
       Behaviour<H,T,false> b(d);
       SInitializer::exe(b,d.eth_props);
       AInitializer::exe(b,d.eth_props);
@@ -269,8 +269,8 @@ namespace abaqus{
       Behaviour<H,T,false> b(d);
       SInitializer::exe(b,d.eth_props);
       AInitializer::exe(b,d.eth_props);
-      b.setBehaviourDataDrivingVariables(F0);
-      b.setIntegrationDataDrivingVariables(F1);
+      b.setBehaviourDataGradients(F0);
+      b.setIntegrationDataGradients(F1);
       b.setBehaviourDataThermodynamicForces(s);
       b.setOutOfBoundsPolicy(d.policy);
       b.initialize();
@@ -297,7 +297,7 @@ namespace abaqus{
     }
   private:
     //! An helper structure used to initialise the driving variables
-    struct TFEL_VISIBILITY_LOCAL DrivingVariableInitialiserWithStressFreeExpansion
+    struct TFEL_VISIBILITY_LOCAL GradientInitialiserWithStressFreeExpansion
       : public AbaqusInterfaceExceptions
       {
 	/*!
@@ -321,12 +321,12 @@ namespace abaqus{
 	  std::pair<StressFreeExpansionType,StressFreeExpansionType> s;
 	  b.computeStressFreeExpansion(s);
 	  sfeh(e,de,s.first,s.second);
-	  b.setBehaviourDataDrivingVariables(e);
-	  b.setIntegrationDataDrivingVariables(de);
+	  b.setBehaviourDataGradients(e);
+	  b.setIntegrationDataGradients(de);
 	} // end of exe
-      }; // end of struct DrivingVariableInitialiserWithStressFreeExpansion
+      }; // end of struct GradientInitialiserWithStressFreeExpansion
     //! An helper structure used to initialise the driving variables
-    struct TFEL_VISIBILITY_LOCAL DrivingVariableInitialiserWithoutStressFreeExpansion
+    struct TFEL_VISIBILITY_LOCAL GradientInitialiserWithoutStressFreeExpansion
     {
       /*!
        * \param[out] b:    behaviour
@@ -344,10 +344,10 @@ namespace abaqus{
 		 const tfel::math::stensor<N,T>& de,
 		 const SFEHType&)
       {
-	b.setBehaviourDataDrivingVariables(e);
-	b.setIntegrationDataDrivingVariables(de);
+	b.setBehaviourDataGradients(e);
+	b.setIntegrationDataGradients(de);
       } // end of exe
-    }; // end of struct DrivingVariableInitialiserWithoutStressFreeExpansion
+    }; // end of struct GradientInitialiserWithoutStressFreeExpansion
   }; // end of struct AbaqusExplicitInterface
       
 } // end of namespace abaqus

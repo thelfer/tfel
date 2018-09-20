@@ -86,7 +86,7 @@ namespace mfront {
                 this->ihrs.push_back(ihr);
               };
           if (e.second.is<std::vector<Data>>()) {
-            for (const auto ird : e.second.get<std::vector<Data>>()) {
+            for (const auto& ird : e.second.get<std::vector<Data>>()) {
               add_isotropic_hardening_rule(getDataStructure(e.first, ird));
             }
           } else {
@@ -106,7 +106,7 @@ namespace mfront {
                 this->khrs.push_back(k);
               };
           if (e.second.is<std::vector<Data>>()) {
-            for (const auto krd : e.second.get<std::vector<Data>>()) {
+            for (const auto& krd : e.second.get<std::vector<Data>>()) {
               add_kinematic_hardening_rule(getDataStructure(e.first, krd));
             }
           } else {
@@ -169,7 +169,7 @@ namespace mfront {
           i.code += "const auto& sel" + id + " = sigel;\n";
         } else {
           auto kid = decltype(khrs.size()){};
-          for (const auto khr : khrs) {
+          for (const auto& khr : khrs) {
             i.code += khr->computeKinematicHardeningsInitialValues(
                 id, std::to_string(kid));
             ++kid;
@@ -202,7 +202,7 @@ namespace mfront {
       }
       auto c = std::string{};
       auto kid = decltype(khrs.size()){};
-      for (const auto khr : khrs) {
+      for (const auto& khr : khrs) {
         c += khr->computeKinematicHardenings(id, std::to_string(kid));
         ++kid;
       }
@@ -246,7 +246,7 @@ namespace mfront {
         }
       }
       auto kid = decltype(khrs.size()){};
-      for (const auto khr : this->khrs) {
+      for (const auto& khr : this->khrs) {
         khr->endTreatment(bd, dsl, id, std::to_string(kid));
         ++kid;
       }

@@ -65,7 +65,7 @@ namespace mtest
     /*!
      * \param[out] v : initial values of the driving variables
      */
-    void getDrivingVariablesDefaultInitialValues(tfel::math::vector<real>&) const override;
+    void getGradientsDefaultInitialValues(tfel::math::vector<real>&) const override;
     /*!
      * \brief execute the packaging step. This victious step is done
      * at the beginning of the computation.

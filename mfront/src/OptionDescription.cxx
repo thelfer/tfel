@@ -118,7 +118,7 @@ namespace mfront {
           break;
         case OptionDescription::ARRAYOFMATERIALPROPERTIES:
           throw_if(!d.is<std::vector<tfel::utilities::Data>>());
-          for (const auto mp : d.get<std::vector<tfel::utilities::Data>>()) {
+          for (const auto& mp : d.get<std::vector<tfel::utilities::Data>>()) {
             throw_if(!is_material_property(mp));
           }
           break;
@@ -128,7 +128,7 @@ namespace mfront {
           break;
         case OptionDescription::DATASTRUCTURES:
           if (d.is<std::vector<tfel::utilities::Data>>()) {
-            for (const auto e : d.get<std::vector<tfel::utilities::Data>>()) {
+            for (const auto& e : d.get<std::vector<tfel::utilities::Data>>()) {
               throw_if(!((e.is<tfel::utilities::DataStructure>()) ||
                          (e.is<std::string>())));
             }

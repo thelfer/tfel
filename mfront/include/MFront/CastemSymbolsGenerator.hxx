@@ -52,7 +52,7 @@ namespace mfront {
                               const std::string &) const override;
     bool handleStrainMeasure() const override;
     //! destructor
-    ~CastemSymbolsGenerator();
+    ~CastemSymbolsGenerator() override;
   };  // end of struct CastemSymbolsGenerator
 
 }  // end of namespace mfront

@@ -43,7 +43,7 @@ namespace mfront {
                                       const Hypothesis) const override;
     bool handleStrainMeasure() const override;
     //! destructor
-    ~CalculiXSymbolsGenerator();
+    ~CalculiXSymbolsGenerator() override;
   };  // end of struct CalculiXSymbolsGenerator
 
 }  // end of namespace mfront

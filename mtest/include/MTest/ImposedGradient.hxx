@@ -1,5 +1,5 @@
 /*!
- * \file  mtest/include/MTest/ImposedDrivingVariable.hxx
+ * \file  mtest/include/MTest/ImposedGradient.hxx
  * \brief
  * \author Thomas Helfer
  * \brief 05 avril 2013
@@ -31,7 +31,7 @@ namespace mtest {
   /*!
    * Impose the value of a driving variable component
    */
-  struct MTEST_VISIBILITY_EXPORT ImposedDrivingVariable final
+  struct MTEST_VISIBILITY_EXPORT ImposedGradient final
       : public ConstraintBase {
     /*!
      * constructor
@@ -39,7 +39,7 @@ namespace mtest {
      * \param[in] c : driving variable component
      * \param[in] s : driving variable evolution
      */
-    ImposedDrivingVariable(const Behaviour&,
+    ImposedGradient(const Behaviour&,
                            const std::string&,
                            const std::shared_ptr<Evolution>);
     /*!
@@ -47,7 +47,7 @@ namespace mtest {
      * \param[in] c : component
      * \param[in] s : driving variable evolution
      */
-    ImposedDrivingVariable(const unsigned short c,
+    ImposedGradient(const unsigned short c,
                            const std::shared_ptr<Evolution>);
     /*!
      * \return the number of Lagrange Multipliers
@@ -114,16 +114,16 @@ namespace mtest {
                                             const real,
                                             const real) const override;
     //! destructor
-    ~ImposedDrivingVariable() override;
+    ~ImposedGradient() override;
 
    protected:
-    ImposedDrivingVariable& operator=(const ImposedDrivingVariable&) = delete;
-    ImposedDrivingVariable& operator=(ImposedDrivingVariable&&) = delete;
+    ImposedGradient& operator=(const ImposedGradient&) = delete;
+    ImposedGradient& operator=(ImposedGradient&&) = delete;
     //! driving variable evolution
     const std::shared_ptr<Evolution> eev;
     //! component value
     unsigned short c;
-  };  // end of struct ImposedDrivingVariable
+  };  // end of struct ImposedGradient
 
 }  // end of namespace mtest
 

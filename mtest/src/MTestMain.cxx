@@ -13,6 +13,7 @@
 
 #include<iostream>
 #include<cstdlib>
+#include<utility>
 #include<vector>
 #include<string>
 #include<cfenv>
@@ -393,7 +394,7 @@ namespace mtest
       -> std::shared_ptr<SchemeBase> {
       auto t = std::make_shared<MTest>();
       t->readInputFile(f,e,s);
-      return t;
+      return std::move(t);
     };
     auto ptest = [](const std::string& f,
 		    const std::vector<std::string>& e,
@@ -401,7 +402,7 @@ namespace mtest
       -> std::shared_ptr<SchemeBase> {
       auto t = std::make_shared<PipeTest>();
       PipeTestParser().execute(*t,f,e,s);
-      return t;
+      return std::move(t);
     };
     using namespace std;
     using namespace tfel::tests;

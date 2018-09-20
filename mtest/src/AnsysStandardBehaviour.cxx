@@ -124,7 +124,7 @@ namespace mtest {
   void
   AnsysStandardBehaviour::allocate(BehaviourWorkSpace& wk) const
   {
-    const auto ndv     = this->getDrivingVariablesSize();
+    const auto ndv     = this->getGradientsSize();
     const auto nth     = this->getThermodynamicForcesSize();
     const auto nstatev = this->getInternalStateVariablesSize();
     wk.D.resize(nth,nth);

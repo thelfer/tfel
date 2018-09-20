@@ -52,7 +52,7 @@ namespace mtest {
     s.esv0.clear();
     s.desv.clear();
     // resizing
-    const auto ndv = b->getDrivingVariablesSize();
+    const auto ndv = b->getGradientsSize();
     const auto nth = b->getThermodynamicForcesSize();
     s.s_1.resize(nth, 0.);
     s.s0.resize(nth, 0.);

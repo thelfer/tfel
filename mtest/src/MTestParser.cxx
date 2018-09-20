@@ -49,7 +49,7 @@
 #include "MTest/Constraint.hxx"
 #include "MTest/NonLinearConstraint.hxx"
 #include "MTest/ImposedThermodynamicForce.hxx"
-#include "MTest/ImposedDrivingVariable.hxx"
+#include "MTest/ImposedGradient.hxx"
 #include "MTest/MTestParser.hxx"
 
 namespace mtest {
@@ -235,7 +235,8 @@ namespace mtest {
         &MTestParser::handleDeformationGradientEpsilon);
     add("@OpeningDisplacementEpsilon",
         &MTestParser::handleOpeningDisplacementEpsilon);
-    add("@DrivingVariableEpsilon", &MTestParser::handleDrivingVariableEpsilon);
+    add("@DrivingVariableEpsilon", &MTestParser::handleGradientEpsilon);
+    add("@GradientEpsilon", &MTestParser::handleGradientEpsilon);
     add("@StressEpsilon", &MTestParser::handleStressEpsilon);
     add("@CohesiveForceEpsilon", &MTestParser::handleCohesiveForceEpsilon);
     add("@ThermodynamicForceEpsilon",
@@ -243,7 +244,8 @@ namespace mtest {
     add("@ModellingHypothesis", &MTestParser::handleModellingHypothesis);
     add("@Strain", &MTestParser::handleStrain);
     add("@OpeningDisplacement", &MTestParser::handleOpeningDisplacement);
-    add("@DrivingVariable", &MTestParser::handleDrivingVariable);
+    add("@DrivingVariable", &MTestParser::handleGradient);
+    add("@Gradient", &MTestParser::handleGradient);
     add("@DeformationGradient", &MTestParser::handleDeformationGradient);
     add("@Stress", &MTestParser::handleStress);
     add("@CohesiveForce", &MTestParser::handleCohesiveForce);
@@ -253,7 +255,8 @@ namespace mtest {
         &MTestParser::handleImposedOpeningDisplacement);
     add("@ImposedDeformationGradient",
         &MTestParser::handleImposedDeformationGradient);
-    add("@ImposedDrivingVariable", &MTestParser::handleImposedDrivingVariable);
+    add("@ImposedDrivingVariable", &MTestParser::handleImposedGradient);
+    add("@ImposedGradient", &MTestParser::handleImposedGradient);
     add("@ImposedStress", &MTestParser::handleImposedStress);
     add("@ImposedCohesiveForce", &MTestParser::handleImposedCohesiveForce);
     add("@ImposedThermodynamicForce",
@@ -560,7 +563,7 @@ namespace mtest {
         "MTestParser::handleStrainEpsilon: "
         "the @StrainEpsilon keyword is only valid "
         "for small strain behaviours");
-    this->handleDrivingVariableEpsilon(t, p);
+    this->handleGradientEpsilon(t, p);
   }
 
   void MTestParser::handleDeformationGradientEpsilon(MTest& t,
@@ -573,7 +576,7 @@ namespace mtest {
                    "MTestParser::handleDeformationGradientEpsilon: "
                    "the @DeformationGradientEpsilon keyword is only valid "
                    "for finite strain behaviours");
-    this->handleDrivingVariableEpsilon(t, p);
+    this->handleGradientEpsilon(t, p);
   }  // end of MTestParser::handleDeformationGradientEpsilon
 
   void MTestParser::handleOpeningDisplacementEpsilon(MTest& t,
@@ -584,14 +587,14 @@ namespace mtest {
         "MTestParser::handleOpeningDisplacementEpsilon: "
         "the @OpeningDisplacementEpsilon keyword is only valid "
         "for cohesive zone model behaviours");
-    this->handleDrivingVariableEpsilon(t, p);
+    this->handleGradientEpsilon(t, p);
   }
 
-  void MTestParser::handleDrivingVariableEpsilon(MTest& t, tokens_iterator& p) {
-    t.setDrivingVariableEpsilon(this->readDouble(t, p));
-    this->readSpecifiedToken("MTestParser::handleDrivingVariableEpsilon", ";",
+  void MTestParser::handleGradientEpsilon(MTest& t, tokens_iterator& p) {
+    t.setGradientEpsilon(this->readDouble(t, p));
+    this->readSpecifiedToken("MTestParser::handleGradientEpsilon", ";",
                              p, this->tokens.end());
-  }  // end of MTestParser::handleDrivingVariableEpsilon
+  }  // end of MTestParser::handleGradientEpsilon
 
   void MTestParser::handleStressEpsilon(MTest& t, tokens_iterator& p) {
     using namespace tfel::material;
@@ -675,7 +678,7 @@ namespace mtest {
                              this->tokens.end());
     this->checkNotEndOfLine("MTestParser::handleNonLinearConstraint", p,
                             this->tokens.end());
-    if ((p->value == "DrivingVariable") ||
+    if ((p->value == "Gradient") ||
         ((p->value == "Strain") &&
          (t.getBehaviourType() ==
           MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR)) ||
@@ -728,7 +731,7 @@ namespace mtest {
         "MTestParser::handleImposedStrain: "
         "the @ImposedStrain keyword is only valid "
         "for small strain behaviours");
-    this->handleImposedDrivingVariable(t, p);
+    this->handleImposedGradient(t, p);
   }
 
   void MTestParser::handleImposedDeformationGradient(MTest& t,
@@ -744,7 +747,7 @@ namespace mtest {
                    "MTestParser::handleImposedDeformationGradient: "
                    "the @ImposedDeformationGradient keyword is only valid "
                    "invalid finite strain kinematic");
-    this->handleImposedDrivingVariable(t, p);
+    this->handleImposedGradient(t, p);
   }
 
   void MTestParser::handleImposedOpeningDisplacement(MTest& t,
@@ -755,25 +758,25 @@ namespace mtest {
         "MTestParser::ImposedOpeningDisplacement: "
         "the @ImposedOpeningDisplacement keyword is only valid "
         "for cohesive zone model behaviours");
-    this->handleImposedDrivingVariable(t, p);
+    this->handleImposedGradient(t, p);
   }
 
-  void MTestParser::handleImposedDrivingVariable(MTest& t, tokens_iterator& p) {
+  void MTestParser::handleImposedGradient(MTest& t, tokens_iterator& p) {
     const auto& evt = this->readEvolutionType(p);
     const auto& c = this->readString(p, this->tokens.end());
-    this->checkNotEndOfLine("MTestParser::handleImposedDrivingVariable", p,
+    this->checkNotEndOfLine("MTestParser::handleImposedGradient", p,
                             this->tokens.end());
     auto sev = this->parseEvolution(t, evt, p);
     const auto opts = this->readConstraintOptions(
-        "MTestParser::handleImposedDrivingVariable", p);
-    this->readSpecifiedToken("MTestParser::handleImposedDrivingVariable", ";",
+        "MTestParser::handleImposedGradient", p);
+    this->readSpecifiedToken("MTestParser::handleImposedGradient", ";",
                              p, this->tokens.end());
     auto sc =
-        std::make_shared<ImposedDrivingVariable>(*(t.getBehaviour()), c, sev);
+        std::make_shared<ImposedGradient>(*(t.getBehaviour()), c, sev);
     applyConstraintOptions(*(sc.get()), opts);
     t.addEvolution(c, sev, false, true);
     t.addConstraint(sc);
-  }  // end of MTestParser::handleImposedDrivingVariable
+  }  // end of MTestParser::handleImposedGradient
 
   void MTestParser::handleStrain(MTest& t, tokens_iterator& p) {
     using namespace tfel::material;
@@ -787,7 +790,7 @@ namespace mtest {
         "MTestParser::handleStrain: "
         "the @Strain keyword is only valid "
         "for small strain behaviours");
-    this->handleDrivingVariable(t, p);
+    this->handleGradient(t, p);
   }
 
   void MTestParser::handleDeformationGradient(MTest& t, tokens_iterator& p) {
@@ -799,7 +802,7 @@ namespace mtest {
                    "MTestParser::handleDeformationGradient: "
                    "the @DeformationGradient keyword is only valid "
                    "for finite strain behaviours");
-    this->handleDrivingVariable(t, p);
+    this->handleGradient(t, p);
   }
 
   void MTestParser::handleOpeningDisplacement(MTest& t, tokens_iterator& p) {
@@ -809,18 +812,18 @@ namespace mtest {
                    "MTestParser::handleOpeningDisplacement: "
                    "the @OpeningDisplacement keyword is only valid "
                    "for cohesive zone models behaviours");
-    this->handleDrivingVariable(t, p);
+    this->handleGradient(t, p);
   }
 
-  void MTestParser::handleDrivingVariable(MTest& t, tokens_iterator& p) {
-    const auto N = t.getBehaviour()->getDrivingVariablesSize();
+  void MTestParser::handleGradient(MTest& t, tokens_iterator& p) {
+    const auto N = t.getBehaviour()->getGradientsSize();
     std::vector<real> e_t0;
     e_t0.resize(N, 0);
     this->readArrayOfSpecifiedSize(e_t0, t, p);
-    this->readSpecifiedToken("MTestParser::handleDrivingVariable", ";", p,
+    this->readSpecifiedToken("MTestParser::handleGradient", ";", p,
                              this->tokens.end());
-    t.setDrivingVariablesInitialValues(e_t0);
-  }  // end of MTestParser::handleDrivingVariable
+    t.setGradientsInitialValues(e_t0);
+  }  // end of MTestParser::handleGradient
 
   void MTestParser::handleStress(MTest& t, tokens_iterator& p) {
     using namespace tfel::material;

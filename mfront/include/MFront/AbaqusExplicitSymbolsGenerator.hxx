@@ -48,7 +48,7 @@ namespace mfront {
                                     const std::string &) const override;
     bool handleStrainMeasure() const override;
     //! destructor
-    ~AbaqusExplicitSymbolsGenerator();
+    ~AbaqusExplicitSymbolsGenerator() override;
   };  // end of struct AbaqusExplicitSymbolsGenerator
 
 }  // end of namespace mfront

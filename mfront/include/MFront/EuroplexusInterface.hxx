@@ -72,13 +72,13 @@ namespace mfront {
     std::string getInterfaceName() const override;
     void writeBehaviourDataMainVariablesSetters(
         std::ostream &, const BehaviourDescription &) const override;
-    void writeBehaviourDataDrivingVariableSetter(
+    void writeBehaviourDataGradientSetter(
         std::ostream &,
-        const DrivingVariable &,
+        const Gradient &,
         const SupportedTypes::TypeSize) const override;
-    void writeIntegrationDataDrivingVariableSetter(
+    void writeIntegrationDataGradientSetter(
         std::ostream &,
-        const DrivingVariable &,
+        const Gradient &,
         const SupportedTypes::TypeSize) const override;
     void exportThermodynamicForce(
         std::ostream &,

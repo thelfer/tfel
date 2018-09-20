@@ -87,7 +87,7 @@ namespace calculix
      * \brief An helper structure used to initialise the driving
      * variables.
      */
-    struct TFEL_VISIBILITY_LOCAL DrivingVariableInitialiserWithStressFreeExpansion
+    struct TFEL_VISIBILITY_LOCAL GradientInitialiserWithStressFreeExpansion
       : public CalculiXInterfaceExceptions
     {
       //! a simple alias
@@ -113,10 +113,10 @@ namespace calculix
 	typedef typename BV::StressFreeExpansionType StressFreeExpansionType;
 	typedef tfel::material::MechanicalBehaviourTraits<BV> Traits;
 	const CalculiXInt N = ModellingHypothesisToSpaceDimension<H>::value;
-	CalculiXReal dv0[CalculiXTraits<BV>::DrivingVariableSize];
-	CalculiXReal dv1[CalculiXTraits<BV>::DrivingVariableSize];
-	copy<CalculiXTraits<BV>::DrivingVariableSize>::exe(DV0,dv0);
-	copy<CalculiXTraits<BV>::DrivingVariableSize>::exe(DV1,dv1);
+	CalculiXReal dv0[CalculiXTraits<BV>::GradientSize];
+	CalculiXReal dv1[CalculiXTraits<BV>::GradientSize];
+	copy<CalculiXTraits<BV>::GradientSize>::exe(DV0,dv0);
+	copy<CalculiXTraits<BV>::GradientSize>::exe(DV1,dv1);
 	// check that the function pointer are not null
 	if(sfeh==nullptr){
 	  throwUnsupportedStressFreeExpansionException(Traits::getName());
@@ -126,16 +126,16 @@ namespace calculix
 	const auto& s0 = s.first;
 	const auto& s1 = s.second;
 	sfeh(dv0,dv1,&s0[0],&s1[0],N);
-	b.setCALCULIXBehaviourDataDrivingVariables(dv0);
-	b.setCALCULIXIntegrationDataDrivingVariables(dv1);
+	b.setCALCULIXBehaviourDataGradients(dv0);
+	b.setCALCULIXIntegrationDataGradients(dv1);
       } // end of exe
 
-    }; // end of struct DrivingVariableInitialiserWithStressFreeExpansion
+    }; // end of struct GradientInitialiserWithStressFreeExpansion
 
     /*!
      * An helper structure used to initialise the driving variables
      */
-    struct TFEL_VISIBILITY_LOCAL DrivingVariableInitialiserWithoutStressFreeExpansion
+    struct TFEL_VISIBILITY_LOCAL GradientInitialiserWithoutStressFreeExpansion
     {
       //! a simple alias
       typedef Behaviour<H,CalculiXReal,false> BV;
@@ -154,10 +154,10 @@ namespace calculix
 		 const CalculiXReal *const DV1,
 		 const StressFreeExpansionHandler&)
       {
-	b.setCALCULIXBehaviourDataDrivingVariables(DV0);
-	b.setCALCULIXIntegrationDataDrivingVariables(DV1);
+	b.setCALCULIXBehaviourDataGradients(DV0);
+	b.setCALCULIXIntegrationDataGradients(DV1);
       } // end of exe
-    }; // end of struct DrivingVariableInitialiserWithoutStressFreeExpansion
+    }; // end of struct GradientInitialiserWithoutStressFreeExpansion
 
     struct TFEL_VISIBILITY_LOCAL StiffnessOperatorInitializer
     {
@@ -212,8 +212,8 @@ namespace calculix
 	 typedef MechanicalBehaviourTraits<BV> Traits;
 	 typedef typename std::conditional<
 	   Traits::hasStressFreeExpansion,
-	   DrivingVariableInitialiserWithStressFreeExpansion,
-	   DrivingVariableInitialiserWithoutStressFreeExpansion>::type DVInitializer;
+	   GradientInitialiserWithStressFreeExpansion,
+	   GradientInitialiserWithoutStressFreeExpansion>::type DVInitializer;
 	 SInitializer::exe(this->behaviour,d.MPROPS);
 	 AInitializer::exe(this->behaviour,d.MPROPS);
 	 DVInitializer::exe(this->behaviour,d.DV0,d.DV1,d.sfeh);

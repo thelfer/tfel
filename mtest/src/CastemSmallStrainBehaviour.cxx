@@ -80,10 +80,10 @@ namespace mtest
   } // end f CastemSmallStrainBehaviour::allocate
   
   void
-  CastemSmallStrainBehaviour::getDrivingVariablesDefaultInitialValues(tfel::math::vector<real>& v) const
+  CastemSmallStrainBehaviour::getGradientsDefaultInitialValues(tfel::math::vector<real>& v) const
   {
     std::fill(v.begin(),v.end(),real(0));
-  } // end of CastemSmallStrainBehaviour::setDrivingVariablesDefaultInitialValue  
+  } // end of CastemSmallStrainBehaviour::setGradientsDefaultInitialValue  
 
   std::pair<bool,real>
   CastemSmallStrainBehaviour::computePredictionOperator(BehaviourWorkSpace& wk,

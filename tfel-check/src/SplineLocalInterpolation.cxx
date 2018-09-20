@@ -18,6 +18,12 @@ namespace tfel{
   namespace check{
 
     SplineLocalInterpolation::SplineLocalInterpolation()  = default;
+    SplineLocalInterpolation::SplineLocalInterpolation(const SplineLocalInterpolation&)  = default;
+    SplineLocalInterpolation::SplineLocalInterpolation(SplineLocalInterpolation&&)  = default;
+    SplineLocalInterpolation&
+    SplineLocalInterpolation::operator=(const SplineLocalInterpolation&)  = default;
+    SplineLocalInterpolation&
+    SplineLocalInterpolation::operator=(SplineLocalInterpolation&&)  = default;
     SplineLocalInterpolation::~SplineLocalInterpolation() = default;
   
     void SplineLocalInterpolation::interpolate(const std::vector<double>& times,

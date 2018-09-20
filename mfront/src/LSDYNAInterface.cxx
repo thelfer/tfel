@@ -117,7 +117,7 @@ namespace mfront {
     }
   }  // end of checkFiniteStrainStrategyDefinitionConsistency
 
-  bool hasFiniteStrainStrategy(const BehaviourDescription& bd) {
+  static bool hasFiniteStrainStrategy(const BehaviourDescription& bd) {
     checkFiniteStrainStrategyDefinitionConsistency(bd);
     if (bd.isStrainMeasureDefined()) {
       return bd.getStrainMeasure() != BehaviourDescription::LINEARISED;
@@ -700,14 +700,14 @@ namespace mfront {
     }
     if (mb.getBehaviourType() ==
         BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
-      os << "void setBehaviourDataDrivingVariables(const Stensor& " << iprefix
+      os << "void setBehaviourDataGradients(const Stensor& " << iprefix
          << "stran)\n"
          << "{\n"
          << "this->eto = " << iprefix << "stran;\n"
          << "}\n\n";
     } else if (mb.getBehaviourType() ==
                BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
-      os << "void setBehaviourDataDrivingVariables(const Tensor& " << iprefix
+      os << "void setBehaviourDataGradients(const Tensor& " << iprefix
          << "stran)\n"
          << "{\n"
          << "this->F0 = " << iprefix << "stran;\n"
@@ -722,11 +722,11 @@ namespace mfront {
        << "}\n\n";
   }  // end of LSDYNAInterface::writeBehaviourDataMainVariablesSetters
 
-  void LSDYNAInterface::writeBehaviourDataDrivingVariableSetter(
+  void LSDYNAInterface::writeBehaviourDataGradientSetter(
       std::ostream&,
-      const DrivingVariable&,
+      const Gradient&,
       const SupportedTypes::TypeSize) const {
-  }  // end of LSDYNAInterface::writeBehaviourDataDrivingVariableSetter
+  }  // end of LSDYNAInterface::writeBehaviourDataGradientSetter
 
   void LSDYNAInterface::writeBehaviourDataThermodynamicForceSetter(
       std::ostream&,
@@ -750,14 +750,14 @@ namespace mfront {
     }
     if (mb.getBehaviourType() ==
         BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
-      os << "void setIntegrationDataDrivingVariables(const Stensor& " << iprefix
+      os << "void setIntegrationDataGradients(const Stensor& " << iprefix
          << "dstran)\n"
          << "{\n"
          << "this->deto = " << iprefix << "dstran;\n"
          << "}\n\n";
     } else if (mb.getBehaviourType() ==
                BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
-      os << "void setIntegrationDataDrivingVariables(const Tensor& " << iprefix
+      os << "void setIntegrationDataGradients(const Tensor& " << iprefix
          << "dstran)\n"
          << "{\n"
          << "this->F1 = " << iprefix << "dstran;\n"
@@ -767,11 +767,11 @@ namespace mfront {
     }
   }  // end of writeIntegrationDataMainVariablesSetters
 
-  void LSDYNAInterface::writeIntegrationDataDrivingVariableSetter(
+  void LSDYNAInterface::writeIntegrationDataGradientSetter(
       std::ostream&,
-      const DrivingVariable&,
+      const Gradient&,
       const SupportedTypes::TypeSize) const {
-  }  // end of LSDYNAInterface::writeIntegrationDataDrivingVariableSetter
+  }  // end of LSDYNAInterface::writeIntegrationDataGradientSetter
 
   void LSDYNAInterface::exportMechanicalData(
       std::ostream& out,
@@ -881,7 +881,7 @@ namespace mfront {
   std::string LSDYNAInterface::getModellingHypothesisTest(
       const Hypothesis) const {
     return {};
-  };
+  } // end of LSDYNAInterface::getModellingHypothesisTest
 
   void LSDYNAInterface::writeMTestFileGeneratorSetModellingHypothesis(
       std::ostream&) const {

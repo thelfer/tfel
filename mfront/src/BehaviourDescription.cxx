@@ -864,7 +864,7 @@ namespace mfront {
         !this->mvariables.empty(),
         "BehaviourDescription::declareAsASmallStrainStandardBehaviour: "
         "some driving variables are already declared");
-    DrivingVariable eto("StrainStensor", "eto");
+    Gradient eto("StrainStensor", "eto");
     eto.increment_known = true;
     eto.setGlossaryName("Strain");
     ThermodynamicForce sig("StressStensor", "sig");
@@ -882,7 +882,7 @@ namespace mfront {
         !this->mvariables.empty(),
         "BehaviourDescription::declareAsAFiniteStrainStandardBehaviour: "
         "some driving variables are already declared");
-    DrivingVariable F("DeformationGradientTensor", "F");
+    Gradient F("DeformationGradientTensor", "F");
     F.setGlossaryName("DeformationGradient");
     F.increment_known = false;
     ThermodynamicForce sig("StressStensor", "sig");
@@ -902,7 +902,7 @@ namespace mfront {
     tfel::raise_if(!this->mvariables.empty(),
                    "BehaviourDescription::declareAsACohesiveZoneModel: "
                    "some driving variables are already declared");
-    DrivingVariable u("DisplacementTVector", "u");
+    Gradient u("DisplacementTVector", "u");
     u.setGlossaryName("OpeningDisplacement");
     u.increment_known = true;
     ThermodynamicForce t("ForceTVector", "t");
@@ -951,7 +951,7 @@ namespace mfront {
     }
   }
 
-  void BehaviourDescription::addMainVariable(const DrivingVariable& dv,
+  void BehaviourDescription::addMainVariable(const Gradient& dv,
                                              const ThermodynamicForce& f) {
     tfel::raise_if(this->type != BehaviourDescription::GENERALBEHAVIOUR,
                    "BehaviourDescription::addMainVariables: "
@@ -974,45 +974,45 @@ namespace mfront {
     this->mvariables.push_back({dv, f});
   }  // end of BehaviourDescription::addMainVariables
 
-  const std::vector<std::pair<DrivingVariable, ThermodynamicForce>>&
+  const std::vector<std::pair<Gradient, ThermodynamicForce>>&
   BehaviourDescription::getMainVariables() const {
     return this->mvariables;
   }  // end of BehaviourDescription::getMainVariables
 
-  DrivingVariable& BehaviourDescription::getDrivingVariable(
+  Gradient& BehaviourDescription::getGradient(
       const std::string& n) {
-    using value_type = std::pair<DrivingVariable, ThermodynamicForce>;
+    using value_type = std::pair<Gradient, ThermodynamicForce>;
     const auto p =
         std::find_if(this->mvariables.begin(), this->mvariables.end(),
                      [&n](const value_type& v) { return v.first.name == n; });
     tfel::raise_if(p == this->mvariables.end(),
-                   "BehaviourDescription::getDrivingVariable: "
+                   "BehaviourDescription::getGradient: "
                    "unknown driving variable '" +
                        n + "'");
     return p->first;
-  }  // end of BehaviourDescription::getDrivingVariable
+  }  // end of BehaviourDescription::getGradient
 
-  const DrivingVariable& BehaviourDescription::getDrivingVariable(
+  const Gradient& BehaviourDescription::getGradient(
       const std::string& n) const {
-    using value_type = std::pair<DrivingVariable, ThermodynamicForce>;
+    using value_type = std::pair<Gradient, ThermodynamicForce>;
     const auto p =
         std::find_if(this->mvariables.begin(), this->mvariables.end(),
                      [&n](const value_type& v) { return v.first.name == n; });
     tfel::raise_if(p == this->mvariables.end(),
-                   "BehaviourDescription::getDrivingVariable: "
+                   "BehaviourDescription::getGradient: "
                    "unknown driving variable '" +
                        n + "'");
     return p->first;
-  }  // end of BehaviourDescription::getDrivingVariable
+  }  // end of BehaviourDescription::getGradient
 
   ThermodynamicForce& BehaviourDescription::getThermodynamicForce(
       const std::string& n) {
-    using value_type = std::pair<DrivingVariable, ThermodynamicForce>;
+    using value_type = std::pair<Gradient, ThermodynamicForce>;
     const auto p =
         std::find_if(this->mvariables.begin(), this->mvariables.end(),
                      [&n](const value_type& v) { return v.second.name == n; });
     tfel::raise_if(p == this->mvariables.end(),
-                   "BehaviourDescription::getDrivingVariable: "
+                   "BehaviourDescription::getGradient: "
                    "unknown driving variable '" +
                        n + "'");
     return p->second;
@@ -1020,27 +1020,27 @@ namespace mfront {
 
   const ThermodynamicForce& BehaviourDescription::getThermodynamicForce(
       const std::string& n) const {
-    using value_type = std::pair<DrivingVariable, ThermodynamicForce>;
+    using value_type = std::pair<Gradient, ThermodynamicForce>;
     const auto p =
         std::find_if(this->mvariables.begin(), this->mvariables.end(),
                      [&n](const value_type& v) { return v.second.name == n; });
     tfel::raise_if(p == this->mvariables.end(),
-                   "BehaviourDescription::getDrivingVariable: "
+                   "BehaviourDescription::getGradient: "
                    "unknown driving variable '" +
                        n + "'");
     return p->second;
   }  // end of BehaviourDescription::getThermodynamicForce
 
-  bool BehaviourDescription::isDrivingVariableName(const std::string& n) const {
+  bool BehaviourDescription::isGradientName(const std::string& n) const {
     for (const auto& v : this->getMainVariables()) {
       if (v.first.name == n) {
         return true;
       }
     }
     return false;
-  }  // end of BehaviourDescription::isDrivingVariableName
+  }  // end of BehaviourDescription::isGradientName
 
-  bool BehaviourDescription::isDrivingVariableIncrementName(
+  bool BehaviourDescription::isGradientIncrementName(
       const std::string& n) const {
     for (const auto& v : this->getMainVariables()) {
       const auto& dv = v.first;
@@ -1049,7 +1049,7 @@ namespace mfront {
       }
     }
     return false;
-  }  // end of BehaviourDescription::isDrivingVariableIncrementName
+  }  // end of BehaviourDescription::isGradientIncrementName
 
   bool BehaviourDescription::isThermodynamicForceName(
       const std::string& n) const {
@@ -2177,10 +2177,10 @@ namespace mfront {
     auto throw_if = [](const bool c, const std::string& m) {
       tfel::raise_if(c, "BehaviourDescription::setBounds: " + m);
     };
-    if (this->isDrivingVariableName(n)) {
+    if (this->isGradientName(n)) {
       throw_if(h != ModellingHypothesis::UNDEFINEDHYPOTHESIS,
                "invalid modelling hypothesis");
-      this->getDrivingVariable(n).setBounds(b);
+      this->getGradient(n).setBounds(b);
     } else if (this->isThermodynamicForceName(n)) {
       throw_if(h != ModellingHypothesis::UNDEFINEDHYPOTHESIS,
                "invalid modelling hypothesis");
@@ -2197,10 +2197,10 @@ namespace mfront {
     auto throw_if = [](const bool c, const std::string& m) {
       tfel::raise_if(c, "BehaviourDescription::setBounds: " + m);
     };
-    if (this->isDrivingVariableName(n)) {
+    if (this->isGradientName(n)) {
       throw_if(h != ModellingHypothesis::UNDEFINEDHYPOTHESIS,
                "invalid modelling hypothesis");
-      this->getDrivingVariable(n).setBounds(b, i);
+      this->getGradient(n).setBounds(b, i);
     } else if (this->isThermodynamicForceName(n)) {
       throw_if(h != ModellingHypothesis::UNDEFINEDHYPOTHESIS,
                "invalid modelling hypothesis");
@@ -2224,10 +2224,10 @@ namespace mfront {
     auto throw_if = [](const bool c, const std::string& m) {
       tfel::raise_if(c, "BehaviourDescription::setPhysicalBounds: " + m);
     };
-    if (this->isDrivingVariableName(n)) {
+    if (this->isGradientName(n)) {
       throw_if(h != ModellingHypothesis::UNDEFINEDHYPOTHESIS,
                "invalid modelling hypothesis");
-      this->getDrivingVariable(n).setBounds(b);
+      this->getGradient(n).setBounds(b);
     } else if (this->isThermodynamicForceName(n)) {
       throw_if(h != ModellingHypothesis::UNDEFINEDHYPOTHESIS,
                "invalid modelling hypothesis");
@@ -2245,10 +2245,10 @@ namespace mfront {
     auto throw_if = [](const bool c, const std::string& m) {
       tfel::raise_if(c, "BehaviourDescription::setPhysicalBounds: " + m);
     };
-    if (this->isDrivingVariableName(n)) {
+    if (this->isGradientName(n)) {
       throw_if(h != ModellingHypothesis::UNDEFINEDHYPOTHESIS,
                "invalid modelling hypothesis");
-      this->getDrivingVariable(n).setBounds(b, i);
+      this->getGradient(n).setBounds(b, i);
     } else if (this->isThermodynamicForceName(n)) {
       throw_if(h != ModellingHypothesis::UNDEFINEDHYPOTHESIS,
                "invalid modelling hypothesis");

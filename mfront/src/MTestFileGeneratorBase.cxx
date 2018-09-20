@@ -149,7 +149,7 @@ namespace mfront{
     this->writeMaterialProperties(file);
     this->writeInternalStateVariables(file);
     this->writeExternalStateVariables(file);
-    this->writeDrivingVariables(file);
+    this->writeGradients(file);
     this->writeTimes(file);
   } // end of MTestFileGeneratorBase::generate
 

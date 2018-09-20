@@ -639,12 +639,12 @@ namespace mfront{
       throw_unsupported_hypothesis();
     }
     if(mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
-      os << "void setBehaviourDataDrivingVariables(const Stensor& " << iprefix << "stran)\n"
+      os << "void setBehaviourDataGradients(const Stensor& " << iprefix << "stran)\n"
 	 << "{\n"
 	 << "this->eto = " << iprefix << "stran;\n"
 	 << "}\n\n";
     } else if(mb.getBehaviourType()==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR){
-      os << "void setBehaviourDataDrivingVariables(const Tensor& " << iprefix << "stran)\n"
+      os << "void setBehaviourDataGradients(const Tensor& " << iprefix << "stran)\n"
 	 << "{\n"
 	 << "this->F0 = " << iprefix << "stran;\n"
 	 << "}\n\n";
@@ -657,11 +657,11 @@ namespace mfront{
        << "}\n\n";
   } // end of AbaqusExplicitInterface::writeBehaviourDataMainVariablesSetters
 
-  void AbaqusExplicitInterface::writeBehaviourDataDrivingVariableSetter(
+  void AbaqusExplicitInterface::writeBehaviourDataGradientSetter(
       std::ostream&,
-      const DrivingVariable&,
+      const Gradient&,
       const SupportedTypes::TypeSize) const {
-  }  // end of AbaqusExplicitInterface::writeBehaviourDataDrivingVariableSetter
+  }  // end of AbaqusExplicitInterface::writeBehaviourDataGradientSetter
 
   void 
   AbaqusExplicitInterface::writeBehaviourDataThermodynamicForceSetter(std::ostream&,
@@ -683,12 +683,12 @@ namespace mfront{
       throw_unsupported_hypothesis();
     }
     if(mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
-      os << "void setIntegrationDataDrivingVariables(const Stensor& " << iprefix << "dstran)\n"
+      os << "void setIntegrationDataGradients(const Stensor& " << iprefix << "dstran)\n"
 	 << "{\n"
 	 << "this->deto = " << iprefix << "dstran;\n"
 	 << "}\n\n";
     } else if(mb.getBehaviourType()==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR){
-      os << "void setIntegrationDataDrivingVariables(const Tensor& " << iprefix << "dstran)\n"
+      os << "void setIntegrationDataGradients(const Tensor& " << iprefix << "dstran)\n"
 	 << "{\n"
 	 << "this->F1 = " << iprefix << "dstran;\n"
 	 << "}\n\n";
@@ -698,10 +698,10 @@ namespace mfront{
   } // end of writeIntegrationDataMainVariablesSetters
 
   void 
-  AbaqusExplicitInterface::writeIntegrationDataDrivingVariableSetter(std::ostream&,
-								     const DrivingVariable&,
+  AbaqusExplicitInterface::writeIntegrationDataGradientSetter(std::ostream&,
+								     const Gradient&,
 								     const SupportedTypes::TypeSize) const
-  {} // end of AbaqusExplicitInterface::writeIntegrationDataDrivingVariableSetter
+  {} // end of AbaqusExplicitInterface::writeIntegrationDataGradientSetter
 
   void 
   AbaqusExplicitInterface::exportMechanicalData(std::ostream& out,

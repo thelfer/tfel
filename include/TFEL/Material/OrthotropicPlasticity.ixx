@@ -39,9 +39,9 @@ namespace tfel{
 	       const tfel::math::StensorBaseType<StensorType> a1,
 	       const tfel::math::StensorBaseType<StensorType> a2,
 	       const tfel::math::StensorBaseType<StensorType> a3,
-	       const tfel::math::StensorBaseType<StensorType> a4,
-	       const tfel::math::StensorBaseType<StensorType> a5,
-	       const tfel::math::StensorBaseType<StensorType> a6)
+	       const tfel::math::StensorBaseType<StensorType>,
+	       const tfel::math::StensorBaseType<StensorType>,
+	       const tfel::math::StensorBaseType<StensorType>)
     {
       return (a2*(s[1]-s[2])*(s[1]-s[2])+
 	      a3*(s[0]-s[2])*(s[0]-s[2])+

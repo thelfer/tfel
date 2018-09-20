@@ -1,5 +1,5 @@
 /*! 
- * \file   mfront/include/MFront/DrivingVariable.hxx
+ * \file   mfront/include/MFront/Gradient.hxx
  * \brief
  * \author Thomas Helfer
  * \brief  11 mai 2013
@@ -26,7 +26,7 @@ namespace mfront
    * and their associated thermodynamic forces.  For example, small
    * strain behaviours have the total strain as driving variable.
    */
-  struct MFRONT_VISIBILITY_EXPORT DrivingVariable
+  struct MFRONT_VISIBILITY_EXPORT Gradient
     : public VariableDescription
   {
     /*!
@@ -34,18 +34,18 @@ namespace mfront
      * \param[in] t : variable type
      * \param[in] n : variable name
      */
-    DrivingVariable(const std::string&,
+    Gradient(const std::string&,
 		    const std::string&);
-    DrivingVariable(DrivingVariable&&);
-    DrivingVariable(const DrivingVariable&);
-    DrivingVariable& operator=(DrivingVariable&&);
-    DrivingVariable& operator=(const DrivingVariable&);
-    ~DrivingVariable() noexcept;
+    Gradient(Gradient&&);
+    Gradient(const Gradient&);
+    Gradient& operator=(Gradient&&);
+    Gradient& operator=(const Gradient&);
+    ~Gradient() noexcept;
     //! This flags tells which of the driving variable increment or of
     //! the value of driving variable at the end of the time step is
     //! given.
     bool increment_known = false;
-  }; // end of struct DrivingVariable
+  }; // end of struct Gradient
   
 } // end of namespace mfront
 

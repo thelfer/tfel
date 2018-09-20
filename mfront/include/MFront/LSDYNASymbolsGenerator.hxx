@@ -44,7 +44,7 @@ namespace mfront {
                                       const Hypothesis) const override;
     bool handleStrainMeasure() const override;
     //! destructor
-    ~LSDYNASymbolsGenerator();
+    ~LSDYNASymbolsGenerator() override;
   };  // end of struct LSDYNASymbolsGenerator
 
 }  // end of namespace mfront

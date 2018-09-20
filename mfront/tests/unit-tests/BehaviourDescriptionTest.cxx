@@ -151,16 +151,16 @@ private:
   void test5() {
     using std::runtime_error;
     BehaviourDescription bd;
-    TFEL_TESTS_ASSERT(!bd.isDrivingVariableName("test"));
-    TFEL_TESTS_ASSERT(!bd.isDrivingVariableIncrementName("test"));
+    TFEL_TESTS_ASSERT(!bd.isGradientName("test"));
+    TFEL_TESTS_ASSERT(!bd.isGradientIncrementName("test"));
     BehaviourDescription bd2;
     bd2.declareAsASmallStrainStandardBehaviour();
     TFEL_TESTS_CHECK_THROW(bd2.declareAsASmallStrainStandardBehaviour(), runtime_error);
     TFEL_TESTS_CHECK_THROW(bd2.declareAsAFiniteStrainStandardBehaviour(false), runtime_error);
     TFEL_TESTS_CHECK_THROW(bd2.declareAsACohesiveZoneModel(), runtime_error);
     TFEL_TESTS_ASSERT(bd2.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR);
-    TFEL_TESTS_ASSERT(bd2.isDrivingVariableName("eto"));
-    TFEL_TESTS_ASSERT(bd2.isDrivingVariableIncrementName("deto"));
+    TFEL_TESTS_ASSERT(bd2.isGradientName("eto"));
+    TFEL_TESTS_ASSERT(bd2.isGradientIncrementName("deto"));
     TFEL_TESTS_ASSERT(bd2.getMainVariables().size()==1);
     TFEL_TESTS_ASSERT(bd2.getMainVariables().begin()->first.name == "eto");
     TFEL_TESTS_ASSERT(bd2.getMainVariables().begin()->first.type == "StrainStensor");
@@ -175,7 +175,7 @@ private:
     TFEL_TESTS_CHECK_THROW(bd3.declareAsASmallStrainStandardBehaviour(), runtime_error);
     TFEL_TESTS_CHECK_THROW(bd3.declareAsAFiniteStrainStandardBehaviour(true), runtime_error);
     TFEL_TESTS_CHECK_THROW(bd3.declareAsACohesiveZoneModel(), runtime_error);
-    TFEL_TESTS_ASSERT(bd3.isDrivingVariableName("F"));
+    TFEL_TESTS_ASSERT(bd3.isGradientName("F"));
     TFEL_TESTS_ASSERT(bd3.getMainVariables().size() == 1);
     TFEL_TESTS_ASSERT(bd3.getMainVariables().begin()->first.name == "F");
     TFEL_TESTS_ASSERT(bd3.getMainVariables().begin()->first.type == "DeformationGradientTensor");
@@ -190,7 +190,7 @@ private:
     TFEL_TESTS_CHECK_THROW(bd4.declareAsASmallStrainStandardBehaviour(), runtime_error);
     TFEL_TESTS_CHECK_THROW(bd4.declareAsAFiniteStrainStandardBehaviour(false), runtime_error);
     TFEL_TESTS_CHECK_THROW(bd4.declareAsACohesiveZoneModel(), runtime_error);
-    TFEL_TESTS_ASSERT(bd4.isDrivingVariableName("u"));
+    TFEL_TESTS_ASSERT(bd4.isGradientName("u"));
     TFEL_TESTS_ASSERT(bd4.getMainVariables().size() == 1);
     TFEL_TESTS_ASSERT(bd4.getMainVariables().begin()->first.name == "u");
     TFEL_TESTS_ASSERT(bd4.getMainVariables().begin()->first.type == "DisplacementTVector");

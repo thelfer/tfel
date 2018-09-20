@@ -63,7 +63,7 @@ namespace mfront
      * \param[in] os : output stream
      */
     virtual void
-    writeDrivingVariables(std::ostream&) const override;
+    writeGradients(std::ostream&) const override;
     //! interface name
     std::string interface;
     //! library name

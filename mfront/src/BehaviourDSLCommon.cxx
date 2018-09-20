@@ -1647,11 +1647,11 @@ namespace mfront {
         // file name
         BehaviourDescription::ExternalMFrontMaterialProperty mp;
         mp.mpd = this->handleMaterialPropertyDescription(f);
-        return mp;
+        return std::move(mp);
       } else {
         BehaviourDescription::AnalyticMaterialProperty mp;
         mp.f = f;
-        return mp;
+        return std::move(mp);
       }
     }
     BehaviourDescription::ConstantMaterialProperty mp;
@@ -1663,7 +1663,7 @@ namespace mfront {
                                      "(" +
                                      std::string(e.what()) + ")");
     }
-    return mp;
+    return std::move(mp);
   }
 
   std::vector<BehaviourDescription::MaterialProperty>

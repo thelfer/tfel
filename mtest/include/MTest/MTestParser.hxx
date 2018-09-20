@@ -136,11 +136,11 @@ namespace mtest {
      */
     virtual void handleOpeningDisplacementEpsilon(MTest&, tokens_iterator&);
     /*!
-     * \brief handle the `@DrivingVariableEpsilon` keyword
+     * \brief handle the `@GradientEpsilon` keyword
      * \param[in,out] t: `MTest` object to be configured
      * \param[in,out] p: position in the input file
      */
-    virtual void handleDrivingVariableEpsilon(MTest&, tokens_iterator&);
+    virtual void handleGradientEpsilon(MTest&, tokens_iterator&);
     /*!
      * \brief handle the `@StressEpsilon` keyword
      * \param[in,out] t: `MTest` object to be configured
@@ -184,11 +184,11 @@ namespace mtest {
      */
     virtual void handleOpeningDisplacement(MTest&, tokens_iterator&);
     /*!
-     * \brief handle the `@DrivingVariable` keyword
+     * \brief handle the `@Gradient` keyword
      * \param[in,out] t: `MTest` object to be configured
      * \param[in,out] p: position in the input file
      */
-    virtual void handleDrivingVariable(MTest&, tokens_iterator&);
+    virtual void handleGradient(MTest&, tokens_iterator&);
     /*!
      * \brief handle the `@Stress` keyword
      * \param[in,out] t: `MTest` object to be configured
@@ -250,11 +250,11 @@ namespace mtest {
      */
     virtual void handleImposedOpeningDisplacement(MTest&, tokens_iterator&);
     /*!
-     * \brief handle the `@ImposedDrivingVariable` keyword
+     * \brief handle the `@ImposedGradient` keyword
      * \param[in,out] t: `MTest` object to be configured
      * \param[in,out] p: position in the input file
      */
-    virtual void handleImposedDrivingVariable(MTest&, tokens_iterator&);
+    virtual void handleImposedGradient(MTest&, tokens_iterator&);
     /*!
      * \brief handle the `@UserDefinedPostProcessing` keyword
      * \param[in,out] t: `MTest` object to be configured

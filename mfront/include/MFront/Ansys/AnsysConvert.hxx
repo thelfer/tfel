@@ -39,7 +39,7 @@ namespace ansys{
    * \tparam H: modelling hypothesis
    */
   template<tfel::material::ModellingHypothesis::Hypothesis H>
-  struct ImportDrivingVariables
+  struct ImportGradients
   {
     //! space dimension
     static constexpr const unsigned short N =
@@ -64,7 +64,7 @@ namespace ansys{
     exe(tfel::math::tensor<N,T>& F,const AnsysReal* const v){
       tfel::math::tensor<N,T>::buildFromFortranMatrix(F,v);
     } // end of exe
-  }; // end of struct ImportDrivingVariables
+  }; // end of struct ImportGradients
   /*!
    * \brief class defining the convertion from ansys to mfront for
    * thermodynamic forces

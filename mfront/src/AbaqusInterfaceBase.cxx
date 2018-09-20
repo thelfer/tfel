@@ -325,7 +325,7 @@ namespace mfront{
     out << "// tensor size\n";
     out << "static " << constexpr_c << " unsigned short TensorSize  = tfel::math::TensorDimeToSize<N>::value;\n";
     out << "// size of the driving variable array\n";
-    out << "static " << constexpr_c << " unsigned short DrivingVariableSize = " << mvs.first <<  ";\n";
+    out << "static " << constexpr_c << " unsigned short GradientSize = " << mvs.first <<  ";\n";
     out << "// size of the thermodynamic force variable array (STRESS)\n";
     out << "static " << constexpr_c << " unsigned short ThermodynamicForceVariableSize = " << mvs.second <<  ";\n";
     if(mb.getAttribute(BehaviourDescription::requiresUnAlteredStiffnessTensor,false)){

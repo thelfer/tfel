@@ -41,7 +41,7 @@
 #include "MTest/CastemEvolution.hxx"
 #include "MTest/Constraint.hxx"
 #include "MTest/ImposedThermodynamicForce.hxx"
-#include "MTest/ImposedDrivingVariable.hxx"
+#include "MTest/ImposedGradient.hxx"
 #include "MTest/CurrentState.hxx"
 #include "MTest/BehaviourWorkSpace.hxx"
 #include "MTest/StructureCurrentState.hxx"
@@ -62,7 +62,7 @@ namespace mtest {
                                          const tfel::math::vector<real>& s) {
     using namespace tfel::material;
     using size_type = tfel::math::matrix<real>::size_type;
-    const auto ndv = b.getDrivingVariablesSize();
+    const auto ndv = b.getGradientsSize();
     const auto nth = b.getThermodynamicForcesSize();
     std::fill(k.begin(), k.end(), real(0));
     std::fill(r.begin(), r.end(), real(0));
@@ -114,12 +114,12 @@ namespace mtest {
     this->constraints.push_back(c);
   }
 
-  void MTest::setDrivingVariableEpsilon(const real e) {
+  void MTest::setGradientEpsilon(const real e) {
     tfel::raise_if(this->options.eeps > 0,
-                   "MTest::setDrivingVariableEpsilon: the epsilon "
+                   "MTest::setGradientEpsilon: the epsilon "
                    "value has already been declared");
     tfel::raise_if(e < 100 * std::numeric_limits<real>::min(),
-                   "MTest::setDrivingVariableEpsilon:"
+                   "MTest::setGradientEpsilon:"
                    " invalid value");
     this->options.eeps = e;
   }
@@ -188,14 +188,14 @@ namespace mtest {
     this->tests.push_back(t);
   }
 
-  void MTest::setDrivingVariablesInitialValues(const std::vector<real>& v) {
+  void MTest::setGradientsInitialValues(const std::vector<real>& v) {
     tfel::raise_if(!this->e_t0.empty(),
-                   "MTest::setDrivingVariablesInitialValues: "
+                   "MTest::setGradientsInitialValues: "
                    "the initial values of the strains have "
                    "already been declared");
-    const auto N = this->b->getDrivingVariablesSize();
+    const auto N = this->b->getGradientsSize();
     tfel::raise_if(v.size() != N,
-                   "MTest::setDrivingVariablesInitialValues: "
+                   "MTest::setGradientsInitialValues: "
                    "invalid initial values size");
     this->e_t0.resize(N, 0);
     std::copy(v.begin(), v.end(), this->e_t0.begin());
@@ -235,7 +235,7 @@ namespace mtest {
         } else {
           eev = make_evolution(0.);
         }
-        auto ec = std::make_shared<ImposedDrivingVariable>(2, eev);
+        auto ec = std::make_shared<ImposedGradient>(2, eev);
         this->constraints.push_back(ec);
       } else {
         tfel::raise(
@@ -258,7 +258,7 @@ namespace mtest {
         } else {
           eev = make_evolution(0.);
         }
-        auto ec = std::make_shared<ImposedDrivingVariable>(1, eev);
+        auto ec = std::make_shared<ImposedGradient>(1, eev);
         shared_ptr<Evolution> sev;
         auto pev = this->evm->find("AxialStress");
         if (pev != this->evm->end()) {
@@ -289,7 +289,7 @@ namespace mtest {
         } else {
           eev = make_evolution(0.);
         }
-        auto ec = std::make_shared<ImposedDrivingVariable>(2, eev);
+        auto ec = std::make_shared<ImposedGradient>(2, eev);
         auto sev = make_evolution(0.);
         auto sc = std::make_shared<ImposedThermodynamicForce>(2, sev);
         this->constraints.push_back(ec);
@@ -323,7 +323,7 @@ namespace mtest {
       dvn = "driving variables";
       thn = "thermodynamic forces";
     }
-    const auto ndv = this->b->getDrivingVariablesSize();
+    const auto ndv = this->b->getGradientsSize();
     const auto nth = this->b->getThermodynamicForcesSize();
     for (unsigned short i = 0; i != ndv; ++i) {
       this->out << "# " << cnbr << " column : " << i + 1
@@ -405,7 +405,7 @@ namespace mtest {
     auto& cs = ss.istates[0];
     mtest::allocate(cs, this->b);
     // setting the intial  values of strains
-    this->b->getDrivingVariablesDefaultInitialValues(s.u_1);
+    this->b->getGradientsDefaultInitialValues(s.u_1);
     copy(this->e_t0.begin(), this->e_t0.end(), s.u_1.begin());
     s.u0 = s.u_1;
     s.u1 = s.u_1;
@@ -460,7 +460,7 @@ namespace mtest {
                    "MTest::getNumberOfUnknowns: "
                    "object not initialised");
     // number of components of the driving variables
-    const auto N = this->b->getDrivingVariablesSize();
+    const auto N = this->b->getGradientsSize();
     // getting the total number of unknowns
     size_t s = N;
     for (const auto& pc : this->constraints) {
@@ -550,7 +550,7 @@ namespace mtest {
     tfel::raise_if(scs.istates.size() != 1u, "MTest::prepare: invalid state");
     // driving variables at the beginning of the time step
     for (auto& s : scs.istates) {
-      const auto ndv = this->b->getDrivingVariablesSize();
+      const auto ndv = this->b->getGradientsSize();
       for (unsigned short i = 0; i != ndv; ++i) {
         s.e0[i] = state.u0[i];
       }
@@ -591,7 +591,7 @@ namespace mtest {
     std::fill(k.begin(), k.end(), 0.);
     std::fill(r.begin(), r.end(), 0.);
     updateStiffnessAndResidual(k, r, *(this->b), bwk.kt, s.s0);
-    const auto ndv = this->b->getDrivingVariablesSize();
+    const auto ndv = this->b->getGradientsSize();
     const auto nth = this->b->getThermodynamicForcesSize();
     // free dilatation treatment
     if (this->b->getBehaviourType() ==
@@ -650,7 +650,7 @@ namespace mtest {
     auto& bwk = scs.getBehaviourWorkSpace();
     tfel::raise_if(scs.istates.size() != 1u, "MTest::prepare: invalid state");
     auto& s = scs.istates[0];
-    const auto ndv = this->b->getDrivingVariablesSize();
+    const auto ndv = this->b->getGradientsSize();
     const auto nth = this->b->getThermodynamicForcesSize();
     for (size_type i = 0; i != ndv; ++i) {
       s.e1[i] = state.u1[i];
@@ -774,7 +774,7 @@ namespace mtest {
   }
 
   real MTest::getErrorNorm(const tfel::math::vector<real>& du) const {
-    const auto ndv = this->b->getDrivingVariablesSize();
+    const auto ndv = this->b->getGradientsSize();
     return MTest_getErrorNorm(du, ndv);
   }  // end of MTest::getErrorNorm
 
@@ -800,7 +800,7 @@ namespace mtest {
     const auto& scs = state.getStructureCurrentState("");
     tfel::raise_if(scs.istates.size() != 1u, "MTest::prepare: invalid state");
     const auto& s = scs.istates[0];
-    const auto ndv = this->b->getDrivingVariablesSize();
+    const auto ndv = this->b->getGradientsSize();
     const auto ne = getErrorNorm(du);
     const auto nr = MTest_getErrorNorm(r, ndv);
     if (mfront::getVerboseMode() >= mfront::VERBOSE_LEVEL1) {
@@ -838,7 +838,7 @@ namespace mtest {
     tfel::raise_if(scs.istates.size() != 1u,
                    "MTest::getFailedCriteriaDiagnostic: invalid state");
     const auto& s = scs.istates[0];
-    const auto ndv = this->b->getDrivingVariablesSize();
+    const auto ndv = this->b->getGradientsSize();
     const auto ne = this->getErrorNorm(du);
     const auto nr = MTest_getErrorNorm(r, ndv);
     auto fc = std::vector<std::string>{};
@@ -918,7 +918,7 @@ namespace mtest {
       auto& cs = s.getStructureCurrentState("").istates[0];
       // number of components of the driving variables and the thermodynamic
       // forces
-      const auto ndv = this->b->getDrivingVariablesSize();
+      const auto ndv = this->b->getGradientsSize();
       const auto nth = this->b->getThermodynamicForcesSize();
       unsigned short i;
       this->out << t << " ";

@@ -36,7 +36,7 @@ namespace mtest
 			      const std::string&,
 			      const std::string&);
 
-    void getDrivingVariablesDefaultInitialValues(tfel::math::vector<real>&) const override;
+    void getGradientsDefaultInitialValues(tfel::math::vector<real>&) const override;
 
     std::pair<bool,real>
     computePredictionOperator(BehaviourWorkSpace&,

@@ -23,7 +23,7 @@
 #include"MFront/MFrontConfig.hxx"
 #include"MFront/CodeBlock.hxx"
 #include"MFront/VariableDescription.hxx"
-#include"MFront/DrivingVariable.hxx"
+#include"MFront/Gradient.hxx"
 #include"MFront/ThermodynamicForce.hxx"
 #include"MFront/SupportedTypes.hxx"
 #include"MFront/VariableDescription.hxx"

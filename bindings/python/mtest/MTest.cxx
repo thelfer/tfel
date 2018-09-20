@@ -23,7 +23,7 @@
 #include "MTest/StructureCurrentState.hxx"
 #include "MTest/ReferenceFileComparisonTest.hxx"
 #include "MTest/NonLinearConstraint.hxx"
-#include "MTest/ImposedDrivingVariable.hxx"
+#include "MTest/ImposedGradient.hxx"
 #include "MTest/ImposedThermodynamicForce.hxx"
 
 namespace mtest {
@@ -91,7 +91,7 @@ static void MTest_setStrain(mtest::MTest& t,
          (k == MechanicalBehaviourBase::FINITESTRAINKINEMATIC_ETO_PK1))),
       "MTest::setStrain: this method is only valid "
       "small strain behaviour");
-  t.setDrivingVariablesInitialValues(v);
+  t.setGradientsInitialValues(v);
 }  // end of MTest_setStrain
 
 static void MTest_setDeformationGradient(mtest::MTest& t,
@@ -104,7 +104,7 @@ static void MTest_setDeformationGradient(mtest::MTest& t,
         (k == MechanicalBehaviourBase::FINITESTRAINKINEMATIC_F_CAUCHY)),
       "MTest::setDeformationGradient: this method is only valid "
       "for finite strain behaviour");
-  t.setDrivingVariablesInitialValues(v);
+  t.setGradientsInitialValues(v);
 }  // end of MTest_setDeformationGradient
 
 static void MTest_setOpeningDisplacement(mtest::MTest& t,
@@ -115,7 +115,7 @@ static void MTest_setOpeningDisplacement(mtest::MTest& t,
       "MTest::setOpeningDisplacement: "
       "this method is only valid "
       "for cohesive zone models");
-  t.setDrivingVariablesInitialValues(v);
+  t.setGradientsInitialValues(v);
 }  // end of MTest_setOpeningDisplacement
 
 static void MTest_setStress(mtest::MTest& t,
@@ -151,7 +151,7 @@ static void MTest_setStrainEpsilon(mtest::MTest& t, const mtest::real& v) {
          (k == MechanicalBehaviourBase::FINITESTRAINKINEMATIC_ETO_PK1))),
       "MTest::setStrainEpsilon: this method is only valid "
       "for small strain behaviour");
-  t.setDrivingVariableEpsilon(v);
+  t.setGradientEpsilon(v);
 }
 
 static void MTest_setDeformationGradientEpsilon(mtest::MTest& t,
@@ -164,7 +164,7 @@ static void MTest_setDeformationGradientEpsilon(mtest::MTest& t,
         (k == MechanicalBehaviourBase::FINITESTRAINKINEMATIC_F_CAUCHY)),
       "MTest::setDeformationGradientEpsilon: "
       "this method is only valid finite strain behaviour");
-  t.setDrivingVariableEpsilon(v);
+  t.setGradientEpsilon(v);
 }
 
 static void MTest_setOpeningDisplacementEpsilon(mtest::MTest& t,
@@ -174,7 +174,7 @@ static void MTest_setOpeningDisplacementEpsilon(mtest::MTest& t,
       t.getBehaviourType() != MechanicalBehaviourBase::COHESIVEZONEMODEL,
       "MTest::setOpeningDisplacementEpsilon: "
       "this method is only valid for cohesize zone model");
-  t.setDrivingVariableEpsilon(v);
+  t.setGradientEpsilon(v);
 }
 
 static void MTest_setStressEpsilon(mtest::MTest& t, const mtest::real& v) {
@@ -347,7 +347,7 @@ static void MTest_setNonLinearConstraint1(mtest::MTest& t,
                                           const std::string& np) {
   using MB = tfel::material::MechanicalBehaviourBase;
   const auto b = t.getBehaviourType();
-  if ((np == "DrivingVariable") ||
+  if ((np == "Gradient") ||
       ((np == "Strain") && (b == MB::STANDARDSTRAINBASEDBEHAVIOUR)) ||
       ((np == "DeformationGradient") &&
        (b == MB::STANDARDFINITESTRAINBEHAVIOUR)) ||
@@ -378,7 +378,7 @@ static void MTest_setNonLinearConstraint1b(
     const mtest::ConstraintOptions& opts) {
   using MB = tfel::material::MechanicalBehaviourBase;
   const auto b = t.getBehaviourType();
-  if ((np == "DrivingVariable") ||
+  if ((np == "Gradient") ||
       ((np == "Strain") && (b == MB::STANDARDSTRAINBASEDBEHAVIOUR)) ||
       ((np == "DeformationGradient") &&
        (b == MB::STANDARDFINITESTRAINBEHAVIOUR)) ||
@@ -404,34 +404,34 @@ static void MTest_setNonLinearConstraint1b(
   }
 } // end of MTest_setNonLinearConstraint1b
 
-static void MTest_setImposedDrivingVariable1(mtest::MTest& t,
+static void MTest_setImposedGradient1(mtest::MTest& t,
                                             const std::string& n,
                                             const mtest::real& v) {
-  MTest_setConstraint<mtest::ImposedDrivingVariable>(t, n, v);
-}  // end of MTest_setImposedDrivingVariable1
+  MTest_setConstraint<mtest::ImposedGradient>(t, n, v);
+}  // end of MTest_setImposedGradient1
 
-static void MTest_setImposedDrivingVariable1b(
+static void MTest_setImposedGradient1b(
     mtest::MTest& t,
     const std::string& n,
     const mtest::real& v,
     const mtest::ConstraintOptions& opts) {
-  MTest_setConstraint<mtest::ImposedDrivingVariable>(t, n, v, opts);
-}  // end of MTest_setImposedDrivingVariable1b
+  MTest_setConstraint<mtest::ImposedGradient>(t, n, v, opts);
+}  // end of MTest_setImposedGradient1b
 
-static void MTest_setImposedDrivingVariable2(
+static void MTest_setImposedGradient2(
     mtest::MTest& t,
     const std::string& n,
     const std::map<mtest::real, mtest::real>& v) {
-  MTest_setConstraint<mtest::ImposedDrivingVariable>(t, n, v);
-}  // end of MTest_setImposedDrivingVariable2
+  MTest_setConstraint<mtest::ImposedGradient>(t, n, v);
+}  // end of MTest_setImposedGradient2
 
-static void MTest_setImposedDrivingVariable2b(
+static void MTest_setImposedGradient2b(
     mtest::MTest& t,
     const std::string& n,
     const std::map<mtest::real, mtest::real>& v,
     const mtest::ConstraintOptions& opts) {
-  MTest_setConstraint<mtest::ImposedDrivingVariable>(t, n, v, opts);
-}  // end of MTest_setImposedDrivingVariable2b
+  MTest_setConstraint<mtest::ImposedGradient>(t, n, v, opts);
+}  // end of MTest_setImposedGradient2b
 
 static void MTest_setImposedStrain1(mtest::MTest& t,
                                    const std::string& n,
@@ -446,7 +446,7 @@ static void MTest_setImposedStrain1(mtest::MTest& t,
       "MTest::setImposedStrain: "
       "the setImposedStrain method is only valid "
       "for small strain behaviours");
-  MTest_setImposedDrivingVariable1(t, n, v);
+  MTest_setImposedGradient1(t, n, v);
 } // end of MTest_setImposedStrain1
 
 static void MTest_setImposedStrain1b(mtest::MTest& t,
@@ -463,7 +463,7 @@ static void MTest_setImposedStrain1b(mtest::MTest& t,
       "MTest::setImposedStrain: "
       "the setImposedStrain method is only valid "
       "for small strain behaviours");
-  MTest_setImposedDrivingVariable1b(t, n, v, opts);
+  MTest_setImposedGradient1b(t, n, v, opts);
 } // end of MTest_setImposedStrain1b
 
 static void MTest_setImposedStrain2(
@@ -480,7 +480,7 @@ static void MTest_setImposedStrain2(
                  "MTest::handleImposedStrain: "
                  "the setImposedStrain method is only valid "
                  "for small strain behaviours");
-  MTest_setImposedDrivingVariable2(t, n, v);
+  MTest_setImposedGradient2(t, n, v);
 } // end of MTest_setImposedStrain2
 
 static void MTest_setImposedStrain2b(
@@ -498,7 +498,7 @@ static void MTest_setImposedStrain2b(
                  "MTest::handleImposedStrain: "
                  "the setImposedStrain method is only valid "
                  "for small strain behaviours");
-  MTest_setImposedDrivingVariable2b(t, n, v,opts);
+  MTest_setImposedGradient2b(t, n, v,opts);
 } // end of MTest_setImposedStrain2b
 
 static void MTest_setImposedDeformationGradient1(mtest::MTest& t,
@@ -512,7 +512,7 @@ static void MTest_setImposedDeformationGradient1(mtest::MTest& t,
                  "MTest::setImposedDeformationGradient: "
                  "the setImposedDeformationGradient method is only valid "
                  "for finite strain behaviours");
-  MTest_setImposedDrivingVariable1(t, n, v);
+  MTest_setImposedGradient1(t, n, v);
 }
 
 static void MTest_setImposedDeformationGradient1b(
@@ -528,7 +528,7 @@ static void MTest_setImposedDeformationGradient1b(
                  "MTest::setImposedDeformationGradient: "
                  "the setImposedDeformationGradient method is only valid "
                  "for finite strain behaviours");
-  MTest_setImposedDrivingVariable1b(t, n, v,opts);
+  MTest_setImposedGradient1b(t, n, v,opts);
 } // end of MTest_setImposedDeformationGradient1b
 
 static void MTest_setImposedDeformationGradient2(
@@ -543,7 +543,7 @@ static void MTest_setImposedDeformationGradient2(
                  "MTestParser::setImposedDeformationGradient: "
                  "the setImposedDeformationGradient method is only valid "
                  "for finite strain behaviours");
-  MTest_setImposedDrivingVariable2(t, n, v);
+  MTest_setImposedGradient2(t, n, v);
 } //end of MTest_setImposedDeformationGradient2
 
 static void MTest_setImposedDeformationGradient2b(
@@ -559,7 +559,7 @@ static void MTest_setImposedDeformationGradient2b(
                  "MTestParser::setImposedDeformationGradient: "
                  "the setImposedDeformationGradient method is only valid "
                  "for finite strain behaviours");
-  MTest_setImposedDrivingVariable2b(t, n, v,opts);
+  MTest_setImposedGradient2b(t, n, v,opts);
 } //end of MTest_setImposedDeformationGradient2b
 
 static void MTest_setImposedOpeningDisplacement1(mtest::MTest& t,
@@ -571,7 +571,7 @@ static void MTest_setImposedOpeningDisplacement1(mtest::MTest& t,
       "MTest::handleImposedOpeningDisplacement : "
       "the setImposedOpeningDisplacement method is only valid "
       "for small strain behaviours");
-  MTest_setImposedDrivingVariable1(t, n, v);
+  MTest_setImposedGradient1(t, n, v);
 } // end of MTest_setImposedOpeningDisplacement1
 
 static void MTest_setImposedOpeningDisplacement1b(
@@ -585,7 +585,7 @@ static void MTest_setImposedOpeningDisplacement1b(
       "MTest::handleImposedOpeningDisplacement : "
       "the setImposedOpeningDisplacement method is only valid "
       "for small strain behaviours");
-  MTest_setImposedDrivingVariable1b(t, n, v, opts);
+  MTest_setImposedGradient1b(t, n, v, opts);
 } // end of MTest_setImposedOpeningDisplacement1b
 
 static void MTest_setImposedOpeningDisplacement2(
@@ -598,7 +598,7 @@ static void MTest_setImposedOpeningDisplacement2(
       "MTestParser::setImposedOpeningDisplacement : "
       "the setImposedOpeningDisplacement method is only valid "
       "for small strain behaviours");
-  MTest_setImposedDrivingVariable2(t, n, v);
+  MTest_setImposedGradient2(t, n, v);
 } // end of MTest_setImposedOpeningDisplacement2
 
 static void MTest_setImposedOpeningDisplacement2b(
@@ -612,7 +612,7 @@ static void MTest_setImposedOpeningDisplacement2b(
       "MTestParser::setImposedOpeningDisplacement : "
       "the setImposedOpeningDisplacement method is only valid "
       "for small strain behaviours");
-  MTest_setImposedDrivingVariable2b(t, n, v,opts);
+  MTest_setImposedGradient2b(t, n, v,opts);
 } // end of MTest_setImposedOpeningDisplacement2b
 
 static mtest::MTestCurrentState MTestCurrentState_copy(
@@ -932,14 +932,14 @@ void declareMTest() {
       .def("initializeCurrentState", &MTest::initializeCurrentState)
       .def("initializeWorkSpace", &MTest::initializeWorkSpace)
       .def("setEvolutionValue", &MTest::setEvolutionValue)
-      .def("setDrivingVariablesInitialValues", &MTest::setDrivingVariablesInitialValues)
+      .def("setGradientsInitialValues", &MTest::setGradientsInitialValues)
       .def("setStrain", MTest_setStrain)
       .def("setDeformationGradient", MTest_setDeformationGradient)
       .def("setOpeningDisplacement", MTest_setOpeningDisplacement)
       .def("setThermodynamicForcesInitialValues", &MTest::setThermodynamicForcesInitialValues)
       .def("setCohesiveForce", MTest_setCohesiveForce)
       .def("setStress", MTest_setStress)
-      .def("setDrivingVariableEpsilon", &MTest::setDrivingVariableEpsilon)
+      .def("setGradientEpsilon", &MTest::setGradientEpsilon)
       .def("setStrainEpsilon", MTest_setStrainEpsilon)
       .def("setDeformationGradientEpsilon", MTest_setDeformationGradientEpsilon)
       .def("setOpeningDisplacementEpsilon", MTest_setOpeningDisplacementEpsilon)
@@ -1029,7 +1029,7 @@ void declareMTest() {
            "This method add a non linear constraint "
            "on driving variables or thermodynamic forces.\n"
            "The normalisation policy can have one of the following values:\n"
-           "- `DrivingVariable`, `Strain`, `DeformationGradient`, "
+           "- `Gradient`, `Strain`, `DeformationGradient`, "
            "`OpeningDisplacement` "
            "stating that the constraint is of the order "
            "of magnitude of the driving variable\n"
@@ -1041,7 +1041,7 @@ void declareMTest() {
            "This method add a non linear constraint "
            "on driving variables or thermodynamic forces.\n"
            "The normalisation policy can have one of the following values:\n"
-           "- `DrivingVariable`, `Strain`, `DeformationGradient`, "
+           "- `Gradient`, `Strain`, `DeformationGradient`, "
            "`OpeningDisplacement` "
            "stating that the constraint is of the order "
            "of magnitude of the driving variable\n"
@@ -1192,11 +1192,11 @@ void declareMTest() {
            (arg("name"), "values"))
       .def("setImposedOpeningDisplacement", MTest_setImposedOpeningDisplacement2b,
            (arg("name"), "values", "options"))
-      .def("setImposedDrivingVariable", MTest_setImposedDrivingVariable1, (arg("name"), "values"))
-      .def("setImposedDrivingVariable", MTest_setImposedDrivingVariable1b,
+      .def("setImposedGradient", MTest_setImposedGradient1, (arg("name"), "values"))
+      .def("setImposedGradient", MTest_setImposedGradient1b,
            (arg("name"), "values", "options"))
-      .def("setImposedDrivingVariable", MTest_setImposedDrivingVariable2, (arg("name"), "values"))
-      .def("setImposedDrivingVariable", MTest_setImposedDrivingVariable2b,
+      .def("setImposedGradient", MTest_setImposedGradient2, (arg("name"), "values"))
+      .def("setImposedGradient", MTest_setImposedGradient2b,
            (arg("name"), "values", "options"))
       .def("setScalarInternalStateVariableInitialValue",
            &MTest::setScalarInternalStateVariableInitialValue)

@@ -114,11 +114,11 @@ namespace mtest {
     this->c->c = std::make_shared<Evaluator>(f);
     this->c->np = p;
     // creating all the variables
-    const auto all_dvs = this->b.getDrivingVariablesComponents();
+    const auto all_dvs = this->b.getGradientsComponents();
     const auto all_tfs = this->b.getThermodynamicForcesComponents();
     for (const auto& v : this->c->c->getVariablesNames()) {
       if (std::find(all_dvs.begin(), all_dvs.end(), v) != all_dvs.end()) {
-        add_variable(this->c->dvs, v, b.getDrivingVariableComponentPosition(v));
+        add_variable(this->c->dvs, v, b.getGradientComponentPosition(v));
       } else if (std::find(all_tfs.begin(), all_tfs.end(), v) !=
                  all_tfs.end()) {
         add_variable(this->c->tfs, v,
@@ -215,7 +215,7 @@ namespace mtest {
           K(pos, (*(pdv))->p) -= nf * dc_dv;
         }
         if (ptf != this->c->tfs.end()) {
-          const auto ndv = this->b.getDrivingVariablesSize();
+          const auto ndv = this->b.getGradientsSize();
           const auto ps = (*ptf)->p;
           const auto dc_dtf = this->eval(*(d.d), u1, s, t, dt);
           for (unsigned short i = 0; i != ndv; ++i) {
@@ -241,7 +241,7 @@ namespace mtest {
             K(i, j) -= nf * d2c_dij * l;
           }
           for (const auto& d2 : d.dd_tf) {
-            const auto ndv = this->b.getDrivingVariablesSize();
+            const auto ndv = this->b.getGradientsSize();
             const auto ps = d2.first->p;
             const auto d2c_dis = this->eval(*(d2.second), u1, s, t, dt);
             for (unsigned short j = 0; j != ndv; ++j) {
@@ -250,7 +250,7 @@ namespace mtest {
           }
         }
         if (ptf != this->c->tfs.end()) {
-          const auto ndv = this->b.getDrivingVariablesSize();
+          const auto ndv = this->b.getGradientsSize();
           const auto dc_dtf = this->eval(*(d.d), u1, s, t, dt);
           const auto ps = (*ptf)->p;
           for (unsigned short i = 0; i != ndv; ++i) {

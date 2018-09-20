@@ -879,26 +879,26 @@ namespace mfront {
         << "#include\"MFront/CalculiX/CalculiXConvert.hxx\"\n\n";
   }  // end of CalculiXInterface::writeInterfaceSpecificIncludes
 
-  void CalculiXInterface::writeBehaviourDataDrivingVariableSetter(
+  void CalculiXInterface::writeBehaviourDataGradientSetter(
       std::ostream& os,
-      const DrivingVariable& v,
+      const Gradient& v,
       const SupportedTypes::TypeSize o) const {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
     tfel::raise_if(!o.isNull(),
                    "CalculiXInterface::writeBehaviourDataMainVariablesSetter : "
                    "only one driving variable supported");
     if (v.increment_known) {
-      os << "calculix::ImportDrivingVariables::exe(this->" << v.name << ","
+      os << "calculix::ImportGradients::exe(this->" << v.name << ","
          << iprefix << "stran);\n";
     } else {
-      os << "calculix::ImportDrivingVariables::exe(this->" << v.name << "0,"
+      os << "calculix::ImportGradients::exe(this->" << v.name << "0,"
          << iprefix << "stran);\n";
     }
-  }  // end of CalculiXInterface::writeBehaviourDataDrivingVariableSetter
+  }  // end of CalculiXInterface::writeBehaviourDataGradientSetter
 
-  void CalculiXInterface::writeIntegrationDataDrivingVariableSetter(
+  void CalculiXInterface::writeIntegrationDataGradientSetter(
       std::ostream& os,
-      const DrivingVariable& v,
+      const Gradient& v,
       const SupportedTypes::TypeSize o) const {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
     tfel::raise_if(
@@ -906,13 +906,13 @@ namespace mfront {
         "CalculiXInterface::writeIntegrationDataMainVariablesSetter : "
         "only one driving variable supported");
     if (v.increment_known) {
-      os << "calculix::ImportDrivingVariables::exe(this->d" << v.name << ","
+      os << "calculix::ImportGradients::exe(this->d" << v.name << ","
          << iprefix << "dstran);\n";
     } else {
-      os << "calculix::ImportDrivingVariables::exe(this->" << v.name << "1,"
+      os << "calculix::ImportGradients::exe(this->" << v.name << "1,"
          << iprefix << "dstran);\n";
     }
-  }  // end of CalculiXInterface::writeIntegrationDataDrivingVariableSetter
+  }  // end of CalculiXInterface::writeIntegrationDataGradientSetter
 
   void CalculiXInterface::writeBehaviourDataThermodynamicForceSetter(
       std::ostream& os,
@@ -1070,7 +1070,7 @@ namespace mfront {
            "tfel::math::TensorDimeToSize<N>::value;\n"
         << "// size of the driving variable array\n"
         << "static " << constexpr_c
-        << " unsigned short DrivingVariableSize = " << mvs.first << ";\n"
+        << " unsigned short GradientSize = " << mvs.first << ";\n"
         << "// size of the thermodynamic force variable array (STRESS)\n"
         << "static " << constexpr_c
         << " unsigned short ThermodynamicForceVariableSize = " << mvs.second

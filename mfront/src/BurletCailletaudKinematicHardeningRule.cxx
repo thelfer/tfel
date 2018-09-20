@@ -119,7 +119,7 @@ namespace mfront {
         c += "(1-this->" + en + ")*2*(" + n + "^" + n + ")/3);\n";
         // terms in common for all back strains
         auto kid2 = decltype(khrs.size()){};
-        for (const auto khr : khrs) {
+        for (const auto& khr : khrs) {
           c += khr->computeDerivatives(an, mdf_ds, fid,
                                        std::to_string(kid2));
           ++kid2;

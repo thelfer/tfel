@@ -277,8 +277,8 @@ namespace mfront{
 						    const bool addThisPtr)
   {
     const auto& d = this->mb.getBehaviourData(h);
-    if((this->mb.isDrivingVariableName(var))||
-       (this->mb.isDrivingVariableIncrementName(var))||
+    if((this->mb.isGradientName(var))||
+       (this->mb.isGradientIncrementName(var))||
        (d.isIntegrationVariableName(var))||
        (d.isExternalStateVariableName(var))){
       if(addThisPtr){
@@ -324,7 +324,7 @@ namespace mfront{
 						    const bool addThisPtr)
   {
     const auto& d = this->mb.getBehaviourData(h);
-    if((this->mb.isDrivingVariableName(var))||
+    if((this->mb.isGradientName(var))||
        (d.isExternalStateVariableName(var))){
       if(addThisPtr){
 	return "this->"+var+"+this->d"+var;
@@ -333,7 +333,7 @@ namespace mfront{
       }
     }
     if((d.isExternalStateVariableIncrementName(var))||
-       (var=="dT")||(this->mb.isDrivingVariableIncrementName(var))){
+       (var=="dT")||(this->mb.isGradientIncrementName(var))){
       if((d.isExternalStateVariableIncrementName(var))||(var=="dT")){
 	this->declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution(h,var.substr(1));
       }

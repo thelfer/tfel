@@ -79,8 +79,8 @@ namespace mfront{
      * \param[in] o  : variable offsert
      */
     virtual void
-    writeBehaviourDataDrivingVariableSetter(std::ostream&,
-					    const DrivingVariable&,
+    writeBehaviourDataGradientSetter(std::ostream&,
+					    const Gradient&,
 					    const SupportedTypes::TypeSize) const override;
     /*!
      * \brief write the initialisation of a driving variables
@@ -89,8 +89,8 @@ namespace mfront{
      * \param[in] o  : variable offsert
      */
     virtual void
-    writeIntegrationDataDrivingVariableSetter(std::ostream&,
-					      const DrivingVariable&,
+    writeIntegrationDataGradientSetter(std::ostream&,
+					      const Gradient&,
 					      const SupportedTypes::TypeSize) const override;
     /*!
      * \brief write the instruction of exporting a thermodynamic force in an array

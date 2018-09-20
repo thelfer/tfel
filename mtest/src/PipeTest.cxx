@@ -539,8 +539,8 @@ namespace mtest {
           "unknown element type");
     }
     // intial values of strains
-    tfel::math::vector<real> e0(this->b->getDrivingVariablesSize());
-    this->b->getDrivingVariablesDefaultInitialValues(e0);
+    tfel::math::vector<real> e0(this->b->getGradientsSize());
+    this->b->getGradientsDefaultInitialValues(e0);
     // intial values of stresses
     for (auto& cs : ss.istates) {
       mtest::allocate(cs, this->b);

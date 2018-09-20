@@ -23,7 +23,7 @@ namespace calculix{
    * \brief class defining the convertion from calculix to mfront for
    * driving variables
    */
-  struct ImportDrivingVariables
+  struct ImportGradients
   {
      /*!
      * \tparam T: type of the thermodynamique forces
@@ -45,7 +45,7 @@ namespace calculix{
     exe(tfel::math::tensor<3u,T>& F,const CalculiXReal* const v){
       tfel::fsalgo::copy<9u>::exe(v,F.begin());
     } // end of exe
-  }; // end of struct ImportDrivingVariables
+  }; // end of struct ImportGradients
   /*!
    * \brief class defining the convertion from calculix to mfront for
    * thermodynamic forces

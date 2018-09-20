@@ -740,11 +740,11 @@ namespace mfront {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
     SupportedTypes::TypeSize ov, of;
     os << "void set" << iprefix
-       << "BehaviourDataDrivingVariables(const Type* const " << iprefix
+       << "BehaviourDataGradients(const Type* const " << iprefix
        << "stran)\n"
        << "{\n";
     for (const auto& v : mb.getMainVariables()) {
-      this->writeBehaviourDataDrivingVariableSetter(os, v.first, ov);
+      this->writeBehaviourDataGradientSetter(os, v.first, ov);
       ov += SupportedTypes::getTypeSize(v.first.type, 1u);
     }
     os << "}\n\n";
@@ -759,9 +759,9 @@ namespace mfront {
     os << "}\n\n";
   }  // end of UMATInterfaceBase::writeBehaviourDataMainVariablesSetters
 
-  void UMATInterfaceBase::writeBehaviourDataDrivingVariableSetter(
+  void UMATInterfaceBase::writeBehaviourDataGradientSetter(
       std::ostream& os,
-      const DrivingVariable& v,
+      const Gradient& v,
       const SupportedTypes::TypeSize o) const {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
     if (!v.increment_known) {
@@ -828,7 +828,7 @@ namespace mfront {
             "unsupported driving variable type");
       }
     }
-  }  // end of UMATInterfaceBase::writeBehaviourDataDrivingVariableSetter
+  }  // end of UMATInterfaceBase::writeBehaviourDataGradientSetter
 
   void UMATInterfaceBase::writeBehaviourDataThermodynamicForceSetter(
       std::ostream& os,
@@ -870,19 +870,19 @@ namespace mfront {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
     SupportedTypes::TypeSize ov;
     os << "void set" << iprefix
-       << "IntegrationDataDrivingVariables(const Type* const " << iprefix
+       << "IntegrationDataGradients(const Type* const " << iprefix
        << "dstran)\n"
        << "{\n";
     for (const auto& v : mb.getMainVariables()) {
-      this->writeIntegrationDataDrivingVariableSetter(os, v.first, ov);
+      this->writeIntegrationDataGradientSetter(os, v.first, ov);
       ov += SupportedTypes::getTypeSize(v.first.type, 1u);
     }
     os << "}\n\n";
   }  // end of writeIntegrationDataMainVariablesSetters
 
-  void UMATInterfaceBase::writeIntegrationDataDrivingVariableSetter(
+  void UMATInterfaceBase::writeIntegrationDataGradientSetter(
       std::ostream& os,
-      const DrivingVariable& v,
+      const Gradient& v,
       const SupportedTypes::TypeSize o) const {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
     if (!v.increment_known) {
@@ -950,7 +950,7 @@ namespace mfront {
             "unsupported driving variable type");
       }
     }
-  }  // end of UMATInterfaceBase::writeIntegrationDataDrivingVariableSetter
+  }  // end of UMATInterfaceBase::writeIntegrationDataGradientSetter
 
   bool UMATInterfaceBase::readBooleanValue(const std::string& key,
                                            tokens_iterator& current,

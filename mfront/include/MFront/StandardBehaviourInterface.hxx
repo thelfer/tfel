@@ -127,7 +127,7 @@ namespace mfront {
     checkIfAxialStrainIsDefinedAndGetItsOffset(
         const BehaviourDescription&) const;
     //! destructor
-    ~StandardBehaviourInterface();
+    ~StandardBehaviourInterface() override;
   };  // end of struct StandardBehaviourInterface
 
 }  // end of namespace mfront

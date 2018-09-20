@@ -1089,10 +1089,10 @@ namespace mfront{
     const auto iprefix = makeUpperCase(this->getInterfaceName());
     SupportedTypes::TypeSize ov,of;
     os << "void set"
-       << iprefix << "BehaviourDataDrivingVariables(const Type* const " << iprefix << "stran)\n"
+       << iprefix << "BehaviourDataGradients(const Type* const " << iprefix << "stran)\n"
        << "{\n";
     for(const auto& v : mb.getMainVariables()){
-      this->writeBehaviourDataDrivingVariableSetter(os,v.first,ov);
+      this->writeBehaviourDataGradientSetter(os,v.first,ov);
       ov += SupportedTypes::getTypeSize(v.first.type,1u);
     }
     os << "}\n\n";
@@ -1108,38 +1108,38 @@ namespace mfront{
   } // end of AbaqusInterface::writeBehaviourDataMainVariablesSetters
 
   void 
-  AbaqusInterface::writeBehaviourDataDrivingVariableSetter(std::ostream& os,
-							   const DrivingVariable& v,
+  AbaqusInterface::writeBehaviourDataGradientSetter(std::ostream& os,
+							   const Gradient& v,
 							   const SupportedTypes::TypeSize o) const
   {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
     tfel::raise_if(!o.isNull(),"AbaqusInterface::writeBehaviourDataMainVariablesSetter : "
 		   "only one driving variable supported");
     if(v.increment_known){
-      os << "abaqus::UMATImportDrivingVariables<hypothesis>::exe(this->" << v.name << ","
+      os << "abaqus::UMATImportGradients<hypothesis>::exe(this->" << v.name << ","
 	 << iprefix << "stran);\n";
     } else {
-      os << "abaqus::UMATImportDrivingVariables<hypothesis>::exe(this->" << v.name << "0,"
+      os << "abaqus::UMATImportGradients<hypothesis>::exe(this->" << v.name << "0,"
 	 << iprefix << "stran);\n";
     }
-  } // end of AbaqusInterface::writeBehaviourDataDrivingVariableSetter
+  } // end of AbaqusInterface::writeBehaviourDataGradientSetter
 
   void 
-  AbaqusInterface::writeIntegrationDataDrivingVariableSetter(std::ostream& os,
-							   const DrivingVariable& v,
+  AbaqusInterface::writeIntegrationDataGradientSetter(std::ostream& os,
+							   const Gradient& v,
 							   const SupportedTypes::TypeSize o) const
   {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
     tfel::raise_if(!o.isNull(),"AbaqusInterface::writeIntegrationDataMainVariablesSetter : "
 		   "only one driving variable supported");
     if(v.increment_known){
-      os << "abaqus::UMATImportDrivingVariables<hypothesis>::exe(this->d" << v.name << ","
+      os << "abaqus::UMATImportGradients<hypothesis>::exe(this->d" << v.name << ","
 	 << iprefix << "dstran);\n";
     } else {
-      os << "abaqus::UMATImportDrivingVariables<hypothesis>::exe(this->" << v.name << "1,"
+      os << "abaqus::UMATImportGradients<hypothesis>::exe(this->" << v.name << "1,"
 	 << iprefix << "dstran);\n";
     }
-  } // end of AbaqusInterface::writeIntegrationDataDrivingVariableSetter
+  } // end of AbaqusInterface::writeIntegrationDataGradientSetter
   
   void 
   AbaqusInterface::writeBehaviourDataThermodynamicForceSetter(std::ostream& os,

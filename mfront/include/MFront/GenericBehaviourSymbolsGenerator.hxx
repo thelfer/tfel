@@ -43,7 +43,7 @@ namespace mfront {
                                       const Hypothesis) const override;
     bool handleStrainMeasure() const override;
     //! destructor
-    ~GenericBehaviourSymbolsGenerator();
+    ~GenericBehaviourSymbolsGenerator() override;
   };  // end of struct GenericBehaviourSymbolsGenerator
 
 }  // end of namespace mfront

@@ -158,7 +158,7 @@ namespace mtest
 		"unsupported behaviour type");
   } // end of StandardBehaviourBase::getBehaviourKinematic
   
-  unsigned short StandardBehaviourBase::getDrivingVariablesSize() const {
+  unsigned short StandardBehaviourBase::getGradientsSize() const {
     const auto h = this->getHypothesis();
     if((this->btype==1)||((this->btype==2u)&&(this->kinematic==4u))){
       // small strain behaviours
@@ -173,7 +173,7 @@ namespace mtest
       } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
 	return 6u;
       } else {
-	tfel::raise("StandardBehaviourBase::getDrivingVariablesSize: "
+	tfel::raise("StandardBehaviourBase::getGradientsSize: "
 		    "unsupported modelling hypothesis");
       }
     } else if(this->btype==2){
@@ -189,7 +189,7 @@ namespace mtest
       } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
 	return 9u;
       } else {
-	tfel::raise("StandardBehaviourBase::getDrivingVariablesSize: "
+	tfel::raise("StandardBehaviourBase::getGradientsSize: "
 		    "unsupported modelling hypothesis");
       }
     } else if(this->btype==3){
@@ -202,13 +202,13 @@ namespace mtest
       } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
 	return 3u;
       } else {
-	tfel::raise("StandardBehaviourBase::getDrivingVariablesSize: "
+	tfel::raise("StandardBehaviourBase::getGradientsSize: "
 		    "unsupported modelling hypothesis");
       }      
     } 
-    tfel::raise("StandardBehaviourBase::getDrivingVariablesSize: "
+    tfel::raise("StandardBehaviourBase::getGradientsSize: "
 		"unsupported behaviour type");
-  } // end of StandardBehaviourBase::getDrivingVariablesSize
+  } // end of StandardBehaviourBase::getGradientsSize
 
   unsigned short StandardBehaviourBase::getThermodynamicForcesSize() const
   {
@@ -284,7 +284,7 @@ namespace mtest
 	c.push_back("RZ");
       }
     } else {
-      tfel::raise("StandardBehaviourBase::getDrivingVariablesComponents: "
+      tfel::raise("StandardBehaviourBase::getGradientsComponents: "
 		  "unsupported modelling hypothesis");
     }
     return c;
@@ -338,7 +338,7 @@ namespace mtest
   } // end of StandardBehaviourBase::getTensorComponentsSuffixes
   
   std::vector<std::string>
-  StandardBehaviourBase::getDrivingVariablesComponents() const
+  StandardBehaviourBase::getGradientsComponents() const
   {
     const auto h = this->getHypothesis();
     auto c = std::vector<std::string>{};
@@ -364,15 +364,15 @@ namespace mtest
 	  c.push_back("Ut");
 	}
       } else {
-	tfel::raise("StandardBehaviourBase::getDrivingVariablesComponents: "
+	tfel::raise("StandardBehaviourBase::getGradientsComponents: "
 		    "unsupported modelling hypothesis");
       }
     } else {
-      tfel::raise("StandardBehaviourBase::getDrivingVariablesComponents: "
+      tfel::raise("StandardBehaviourBase::getGradientsComponents: "
 		  "unsupported behaviour type");
     }
     return c;
-  } // end of StandardBehaviourBase::getDrivingVariablesComponents
+  } // end of StandardBehaviourBase::getGradientsComponents
 
   std::vector<std::string>
   StandardBehaviourBase::getThermodynamicForcesComponents() const
@@ -409,19 +409,19 @@ namespace mtest
   } // end of StandardBehaviourBase::getThermodynamicForcesComponents
 
   unsigned short
-  StandardBehaviourBase::getDrivingVariableComponentPosition(const std::string& cname) const
+  StandardBehaviourBase::getGradientComponentPosition(const std::string& cname) const
   {
-    const auto c = this->getDrivingVariablesComponents();
+    const auto c = this->getGradientsComponents();
     auto p = std::find(c.begin(),c.end(),cname);
     if(p==c.end()){
       std::ostringstream msg;
-      msg << "StandardBehaviourBase::getDrivingVariableComponentPosition: "
+      msg << "StandardBehaviourBase::getGradientComponentPosition: "
 	"component '" << cname << "' is not valid. Valid components are:\n";
       std::copy(c.begin(),c.end(),std::ostream_iterator<std::string>(msg," "));
       tfel::raise(msg.str());
     }
     return static_cast<unsigned short>(p-c.begin());
-  } // end of StandardBehaviourBase::getDrivingVariableComponentPosition
+  } // end of StandardBehaviourBase::getGradientComponentPosition
 
   unsigned short
   StandardBehaviourBase::getThermodynamicForceComponentPosition(const std::string& cname) const

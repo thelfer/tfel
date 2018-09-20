@@ -90,12 +90,12 @@ namespace mfront
   } // end of UmatFiniteStrainMTestFileGenerator::setStressTensor
 
   void
-  UmatFiniteStrainMTestFileGenerator::writeDrivingVariables(std::ostream& os) const
+  UmatFiniteStrainMTestFileGenerator::writeGradients(std::ostream& os) const
   {
     constexpr const auto cste = tfel::math::Cste<real>::sqrt2;
     const auto& n = this->getDeformationGradientComponentsNames();
     tfel::raise_if(this->times.size()!=2,
-		   "UmatFiniteStrainMTestFileGenerator::writeDrivingVariables: "
+		   "UmatFiniteStrainMTestFileGenerator::writeGradients: "
 		   "invalid number of times");
     const auto t0 = *(this->times.begin());
     const auto t1 = *(this->times.rbegin());
@@ -131,7 +131,7 @@ namespace mfront
 	 << t1 << ":" << this->F1[i]<< "};\n";
     }
     os << '\n';
-  } // end of UmatFiniteStrainMTestFileGenerator::writeDrivingVariables
+  } // end of UmatFiniteStrainMTestFileGenerator::writeGradients
   
   UmatFiniteStrainMTestFileGenerator::~UmatFiniteStrainMTestFileGenerator() = default;
 

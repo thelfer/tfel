@@ -202,9 +202,9 @@ namespace mfront {
     out << "MFRONT_SHAREDOBJ unsigned short " << fn
         << "_nMainVariables = " << nmvs << ";\n";
     out << "MFRONT_SHAREDOBJ unsigned short " << fn
-        << "_nDrivingVariables = " << nmvs << ";\n\n";
-    this->writeArrayOfIntsSymbol(out, fn + "_DrivingVariablesTypes", dvtypes);
-    this->writeArrayOfStringsSymbol(out, fn + "_DrivingVariables", dvnames);
+        << "_nGradients = " << nmvs << ";\n\n";
+    this->writeArrayOfIntsSymbol(out, fn + "_GradientsTypes", dvtypes);
+    this->writeArrayOfStringsSymbol(out, fn + "_Gradients", dvnames);
     out << "MFRONT_SHAREDOBJ unsigned short " << fn
         << "_nThermodynamicForces = " << nmvs << ";\n\n";
     this->writeArrayOfIntsSymbol(out, fn + "_ThermodynamicForcesTypes",

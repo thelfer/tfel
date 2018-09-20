@@ -725,7 +725,7 @@ namespace mfront {
     out << "static " << constexpr_c
         << " unsigned short TensorSize  = tfel::math::TensorDimeToSize<N>::value;\n";
     out << "// size of the driving variable array (STRAN)\n";
-    out << "static " << constexpr_c << " unsigned short DrivingVariableSize  = " << mvs.first
+    out << "static " << constexpr_c << " unsigned short GradientSize  = " << mvs.first
         << ";\n";
     out << "// size of the thermodynamic force variable array (STRAN)\n";
     out << "static " << constexpr_c

@@ -78,7 +78,7 @@ namespace abaqus
     /*!
      * An helper structure used to initialise the driving variables
      */
-    struct TFEL_VISIBILITY_LOCAL DrivingVariableInitialiserWithStressFreeExpansion
+    struct TFEL_VISIBILITY_LOCAL GradientInitialiserWithStressFreeExpansion
       : public AbaqusInterfaceExceptions
     {
       //! a simple alias
@@ -104,10 +104,10 @@ namespace abaqus
 	typedef typename BV::StressFreeExpansionType StressFreeExpansionType;
 	typedef tfel::material::MechanicalBehaviourTraits<BV> Traits;
 	const AbaqusInt N = ModellingHypothesisToSpaceDimension<H>::value;
-	AbaqusReal dv0[AbaqusTraits<BV>::DrivingVariableSize];
-	AbaqusReal dv1[AbaqusTraits<BV>::DrivingVariableSize];
-	copy<AbaqusTraits<BV>::DrivingVariableSize>::exe(STRAN,dv0);
-	copy<AbaqusTraits<BV>::DrivingVariableSize>::exe(DSTRAN,dv1);
+	AbaqusReal dv0[AbaqusTraits<BV>::GradientSize];
+	AbaqusReal dv1[AbaqusTraits<BV>::GradientSize];
+	copy<AbaqusTraits<BV>::GradientSize>::exe(STRAN,dv0);
+	copy<AbaqusTraits<BV>::GradientSize>::exe(DSTRAN,dv1);
 	// check that the function pointer are not null
 	if(sfeh==nullptr){
 	  throwUnsupportedStressFreeExpansionException(Traits::getName());
@@ -117,16 +117,16 @@ namespace abaqus
 	const auto& s0 = s.first;
 	const auto& s1 = s.second;
 	sfeh(dv0,dv1,&s0[0],&s1[0],N);
-	b.setABAQUSBehaviourDataDrivingVariables(dv0);
-	b.setABAQUSIntegrationDataDrivingVariables(dv1);
+	b.setABAQUSBehaviourDataGradients(dv0);
+	b.setABAQUSIntegrationDataGradients(dv1);
       } // end of exe
 
-    }; // end of struct DrivingVariableInitialiserWithStressFreeExpansion
+    }; // end of struct GradientInitialiserWithStressFreeExpansion
 
     /*!
      * An helper structure used to initialise the driving variables
      */
-    struct TFEL_VISIBILITY_LOCAL DrivingVariableInitialiserWithoutStressFreeExpansion
+    struct TFEL_VISIBILITY_LOCAL GradientInitialiserWithoutStressFreeExpansion
     {
       //! a simple alias
       typedef Behaviour<H,AbaqusReal,false> BV;
@@ -145,10 +145,10 @@ namespace abaqus
 		 const AbaqusReal *const DSTRAN,
 		 const StressFreeExpansionHandler<AbaqusReal>&)
       {
-	b.setABAQUSBehaviourDataDrivingVariables(STRAN);
-	b.setABAQUSIntegrationDataDrivingVariables(DSTRAN);
+	b.setABAQUSBehaviourDataGradients(STRAN);
+	b.setABAQUSIntegrationDataGradients(DSTRAN);
       } // end of exe
-    }; // end of struct DrivingVariableInitialiserWithoutStressFreeExpansion
+    }; // end of struct GradientInitialiserWithoutStressFreeExpansion
 
     struct TFEL_VISIBILITY_LOCAL StiffnessOperatorInitializer
     {
@@ -208,8 +208,8 @@ namespace abaqus
 	 typedef MechanicalBehaviourTraits<BV> Traits;
 	 typedef typename std::conditional<
 	   Traits::hasStressFreeExpansion,
-	   DrivingVariableInitialiserWithStressFreeExpansion,
-	   DrivingVariableInitialiserWithoutStressFreeExpansion>::type DVInitializer;
+	   GradientInitialiserWithStressFreeExpansion,
+	   GradientInitialiserWithoutStressFreeExpansion>::type DVInitializer;
 	 SInitializer::exe(this->behaviour,d.PROPS);
 	 AInitializer::exe(this->behaviour,d.PROPS);
 	 DVInitializer::exe(this->behaviour,d.STRAN,d.DSTRAN,d.sfeh);

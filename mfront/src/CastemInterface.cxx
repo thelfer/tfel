@@ -829,11 +829,11 @@ namespace mfront {
         out << "MFRONT_SHAREDOBJ unsigned short "
             << fn << "_nMainVariables = 1u;\n\n";
         out << "MFRONT_SHAREDOBJ unsigned short " << fn
-            << "_nDrivingVariables = 1u;\n";
+            << "_nGradients = 1u;\n";
         out << "MFRONT_SHAREDOBJ int " << fn
-            << "_DrivingVariablesTypes[1u] = {1};\n";
+            << "_GradientsTypes[1u] = {1};\n";
         out << "MFRONT_SHAREDOBJ const char* " << fn
-            << "_DrivingVariables[1u] = {\"Strain\"};\n\n";
+            << "_Gradients[1u] = {\"Strain\"};\n\n";
         out << "MFRONT_SHAREDOBJ unsigned short " << fn
             << "_nThermodynamicForces = 1u;\n";
         out << "MFRONT_SHAREDOBJ int " << fn
@@ -865,11 +865,11 @@ namespace mfront {
             out << "MFRONT_SHAREDOBJ unsigned short " << fn
                 << "_nMainVariables = 1u;\n\n";
             out << "MFRONT_SHAREDOBJ unsigned short " << fn
-                << "_nDrivingVariables = 1u;\n";
+                << "_nGradients = 1u;\n";
             out << "MFRONT_SHAREDOBJ int " << fn
-                << "_DrivingVariablesTypes[1u] = {3};\n";
+                << "_GradientsTypes[1u] = {3};\n";
             out << "MFRONT_SHAREDOBJ const char* " << fn
-                << "_DrivingVariables[1u] = {\"DeformationGradient\"};\n\n";
+                << "_Gradients[1u] = {\"DeformationGradient\"};\n\n";
             out << "MFRONT_SHAREDOBJ unsigned short " << fn
                 << "_nThermodynamicForces = 1u;\n";
             out << "MFRONT_SHAREDOBJ int " << fn
@@ -897,11 +897,11 @@ namespace mfront {
               out << "MFRONT_SHAREDOBJ unsigned short " << fn2
                   << "_nMainVariables = 1u;\n\n";
               out << "MFRONT_SHAREDOBJ unsigned short " << fn2
-                  << "_nDrivingVariables = 1u;\n";
+                  << "_nGradients = 1u;\n";
               out << "MFRONT_SHAREDOBJ int " << fn2
-                  << "_DrivingVariablesTypes[1u] = {3};\n";
+                  << "_GradientsTypes[1u] = {3};\n";
               out << "MFRONT_SHAREDOBJ const char* " << fn2
-                  << "_DrivingVariables[1u] = {\"DeformationGradient\"};\n\n";
+                  << "_Gradients[1u] = {\"DeformationGradient\"};\n\n";
               out << "MFRONT_SHAREDOBJ unsigned short " << fn2
                   << "_nThermodynamicForces = 1u;\n";
               out << "MFRONT_SHAREDOBJ int " << fn2
@@ -931,11 +931,11 @@ namespace mfront {
             out << "MFRONT_SHAREDOBJ unsigned short " << fn
                 << "_nMainVariables = 1u;\n\n";
             out << "MFRONT_SHAREDOBJ unsigned short " << fn
-                << "_nDrivingVariables = 1u;\n";
+                << "_nGradients = 1u;\n";
             out << "MFRONT_SHAREDOBJ int " << fn
-                << "_DrivingVariablesTypes[1u] = {3};\n";
+                << "_GradientsTypes[1u] = {3};\n";
             out << "MFRONT_SHAREDOBJ const char* " << fn
-                << "_DrivingVariables[1u] = {\"DeformationGradient\"};\n\n";
+                << "_Gradients[1u] = {\"DeformationGradient\"};\n\n";
             out << "MFRONT_SHAREDOBJ unsigned short " << fn
                 << "_nThermodynamicForces = 1u;\n";
             out << "MFRONT_SHAREDOBJ int " << fn
@@ -963,11 +963,11 @@ namespace mfront {
               out << "MFRONT_SHAREDOBJ unsigned short " << fn2
                   << "_nMainVariables = 1u;\n\n";
               out << "MFRONT_SHAREDOBJ unsigned short " << fn2
-                  << "_nDrivingVariables = 1u;\n";
+                  << "_nGradients = 1u;\n";
               out << "MFRONT_SHAREDOBJ int " << fn2
-                  << "_DrivingVariablesTypes[1u] = {3};\n";
+                  << "_GradientsTypes[1u] = {3};\n";
               out << "MFRONT_SHAREDOBJ const char* " << fn2
-                  << "_DrivingVariables[1u] = {\"DeformationGradient\"};\n\n";
+                  << "_Gradients[1u] = {\"DeformationGradient\"};\n\n";
               out << "MFRONT_SHAREDOBJ unsigned short " << fn2
                   << "_nThermodynamicForces = 1u;\n";
               out << "MFRONT_SHAREDOBJ int " << fn2
@@ -1000,11 +1000,11 @@ namespace mfront {
             out << "MFRONT_SHAREDOBJ unsigned short " << fn
                 << "_nMainVariables = 1u;\n\n";
             out << "MFRONT_SHAREDOBJ unsigned short " << fn
-                << "_nDrivingVariables = 1u;\n";
+                << "_nGradients = 1u;\n";
             out << "MFRONT_SHAREDOBJ int " << fn
-                << "_DrivingVariablesTypes[1u] = {1};\n";
+                << "_GradientsTypes[1u] = {1};\n";
             out << "MFRONT_SHAREDOBJ const char* " << fn
-                << "_DrivingVariables[1u] = {\"Strain\"};\n\n";
+                << "_Gradients[1u] = {\"Strain\"};\n\n";
             out << "MFRONT_SHAREDOBJ unsigned short " << fn
                 << "_nThermodynamicForces = 1u;\n";
             out << "MFRONT_SHAREDOBJ int " << fn
@@ -1037,11 +1037,11 @@ namespace mfront {
               out << "MFRONT_SHAREDOBJ unsigned short " << fn2
                   << "_nMainVariables = 1u;\n\n";
               out << "MFRONT_SHAREDOBJ unsigned short " << fn2
-                  << "_nDrivingVariables = 1u;\n";
+                  << "_nGradients = 1u;\n";
               out << "MFRONT_SHAREDOBJ int " << fn2
-                  << "_DrivingVariablesTypes[1u] = {1};\n";
+                  << "_GradientsTypes[1u] = {1};\n";
               out << "MFRONT_SHAREDOBJ const char* " << fn2
-                  << "_DrivingVariables[1u] = {\"Strain\"};\n\n";
+                  << "_Gradients[1u] = {\"Strain\"};\n\n";
               out << "MFRONT_SHAREDOBJ unsigned short " << fn2
                   << "_nThermodynamicForces = 1u;\n";
               out << "MFRONT_SHAREDOBJ int " << fn2
@@ -1071,11 +1071,11 @@ namespace mfront {
             out << "MFRONT_SHAREDOBJ unsigned short " << fn
                 << "_nMainVariables = 1u;\n\n";
             out << "MFRONT_SHAREDOBJ unsigned short " << fn
-                << "_nDrivingVariables = 1u;\n";
+                << "_nGradients = 1u;\n";
             out << "MFRONT_SHAREDOBJ int " << fn
-                << "_DrivingVariablesTypes[1u] = {1};\n";
+                << "_GradientsTypes[1u] = {1};\n";
             out << "MFRONT_SHAREDOBJ const char* " << fn
-                << "_DrivingVariables[1u] = {\"Strain\"};\n\n";
+                << "_Gradients[1u] = {\"Strain\"};\n\n";
             out << "MFRONT_SHAREDOBJ unsigned short " << fn
                 << "_nThermodynamicForces = 1u;\n";
             out << "MFRONT_SHAREDOBJ int " << fn
@@ -1103,11 +1103,11 @@ namespace mfront {
               out << "MFRONT_SHAREDOBJ unsigned short " << fn2
                   << "_nMainVariables = 1u;\n\n";
               out << "MFRONT_SHAREDOBJ unsigned short " << fn2
-                  << "_nDrivingVariables = 1u;\n";
+                  << "_nGradients = 1u;\n";
               out << "MFRONT_SHAREDOBJ int " << fn2
-                  << "_DrivingVariablesTypes[1u] = {1};\n";
+                  << "_GradientsTypes[1u] = {1};\n";
               out << "MFRONT_SHAREDOBJ const char* " << fn2
-                  << "_DrivingVariables[1u] = {\"Strain\"};\n\n";
+                  << "_Gradients[1u] = {\"Strain\"};\n\n";
               out << "MFRONT_SHAREDOBJ unsigned short " << fn2
                   << "_nThermodynamicForces = 1u;\n";
               out << "MFRONT_SHAREDOBJ int " << fn2
@@ -1141,11 +1141,11 @@ namespace mfront {
           out << "MFRONT_SHAREDOBJ unsigned short " << fn
               << "_nMainVariables = 1u;\n\n";
           out << "MFRONT_SHAREDOBJ unsigned short " << fn
-              << "_nDrivingVariables = 1u;\n";
+              << "_nGradients = 1u;\n";
           out << "MFRONT_SHAREDOBJ int " << fn
-              << "_DrivingVariablesTypes[1u] = {1};\n";
+              << "_GradientsTypes[1u] = {1};\n";
           out << "MFRONT_SHAREDOBJ const char* " << fn
-              << "_DrivingVariables[1u] = {\"Strain\"};\n\n";
+              << "_Gradients[1u] = {\"Strain\"};\n\n";
           out << "MFRONT_SHAREDOBJ unsigned short " << fn
               << "_nThermodynamicForces = 1u;\n";
           out << "MFRONT_SHAREDOBJ int " << fn
@@ -1177,11 +1177,11 @@ namespace mfront {
         out << "MFRONT_SHAREDOBJ unsigned short " << fn
             << "_nMainVariables = 1u;\n\n";
         out << "MFRONT_SHAREDOBJ unsigned short " << fn
-            << "_nDrivingVariables = 1u;\n";
+            << "_nGradients = 1u;\n";
         out << "MFRONT_SHAREDOBJ int " << fn
-            << "_DrivingVariablesTypes[1u] = {3};\n";
+            << "_GradientsTypes[1u] = {3};\n";
         out << "MFRONT_SHAREDOBJ const char* " << fn
-            << "_DrivingVariables[1u] = {\"DeformationGradient\"};\n\n";
+            << "_Gradients[1u] = {\"DeformationGradient\"};\n\n";
         out << "MFRONT_SHAREDOBJ unsigned short " << fn
             << "_nThermodynamicForces = 1u;\n";
         out << "MFRONT_SHAREDOBJ int " << fn
@@ -1200,11 +1200,11 @@ namespace mfront {
         out << "MFRONT_SHAREDOBJ unsigned short " << fn
             << "_nMainVariables = 1u;\n\n";
         out << "MFRONT_SHAREDOBJ unsigned short " << fn
-            << "_nDrivingVariables = 1u;\n";
+            << "_nGradients = 1u;\n";
         out << "MFRONT_SHAREDOBJ int " << fn
-            << "_DrivingVariablesTypes[1u] = {2};\n";
+            << "_GradientsTypes[1u] = {2};\n";
         out << "MFRONT_SHAREDOBJ const char* " << fn
-            << "_DrivingVariables[1u] = {\"OpeningDisplacement\"};\n\n";
+            << "_Gradients[1u] = {\"OpeningDisplacement\"};\n\n";
         out << "MFRONT_SHAREDOBJ unsigned short " << fn
             << "_nThermodynamicForces = 1u;\n";
         out << "MFRONT_SHAREDOBJ int " << fn
@@ -2438,7 +2438,7 @@ namespace mfront {
         << "static " << constexpr_c
         << " unsigned short TensorSize  = tfel::math::TensorDimeToSize<N>::value;\n"
         << "// size of the driving variable array (STRAN)\n"
-        << "static " << constexpr_c << " unsigned short DrivingVariableSize = " << mvs.first
+        << "static " << constexpr_c << " unsigned short GradientSize = " << mvs.first
         << ";\n"
         << "// size of the thermodynamic force variable array (STRESS)\n"
         << "static " << constexpr_c

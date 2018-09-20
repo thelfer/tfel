@@ -55,7 +55,7 @@ namespace aster{
   struct AsterTraits{
     static constexpr AsterBehaviourType btype = aster::STANDARDSTRAINBASEDBEHAVIOUR;
     // size of the driving variable array (STRAN)
-    static constexpr unsigned short DrivingVariableSize = 0u;
+    static constexpr unsigned short GradientSize = 0u;
     // size of the thermodynamic force variable array (STESS)
     static constexpr unsigned short ThermodynamicForceVariableSize = 0u;
     static constexpr AsterErrorReportPolicy errorReportPolicy = ASTER_WRITEONSTDOUT;

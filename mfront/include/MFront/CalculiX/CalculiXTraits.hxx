@@ -31,7 +31,7 @@ namespace calculix{
   struct CalculiXTraits{
     static constexpr CalculiXBehaviourType btype = calculix::STANDARDSTRAINBASEDBEHAVIOUR;
     // size of the driving variable array (STRAN)
-    static constexpr unsigned short DrivingVariableSize = 0u;
+    static constexpr unsigned short GradientSize = 0u;
     // size of the thermodynamic force variable array (STESS)
     static constexpr unsigned short ThermodynamicForceVariableSize = 0u;
     static constexpr bool requiresStiffnessTensor             = false;

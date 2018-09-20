@@ -81,12 +81,12 @@ namespace mtest {
     //! \return the type of the behaviour
     virtual Kinematic getBehaviourKinematic() const = 0;
     //! \return the size of a vector able to contain all the components of the driving variables
-    virtual unsigned short getDrivingVariablesSize() const = 0;
+    virtual unsigned short getGradientsSize() const = 0;
     /*!
      * \param[out] v : initial values of the driving variables
      * \note : the vector shall have been correctly allocated
      */
-    virtual void getDrivingVariablesDefaultInitialValues(tfel::math::vector<real>&) const = 0;
+    virtual void getGradientsDefaultInitialValues(tfel::math::vector<real>&) const = 0;
     /*!
      * \return the size of a vector able to contain all the components of the thermodynamic forces
      */
@@ -106,7 +106,7 @@ namespace mtest {
     /*!
      * \return the components of the driving variables
      */
-    virtual std::vector<std::string> getDrivingVariablesComponents() const = 0;
+    virtual std::vector<std::string> getGradientsComponents() const = 0;
     /*!
      * \return the components of the thermodynamic forces
      */
@@ -114,7 +114,7 @@ namespace mtest {
     /*!
      * \param[in] c : component
      */
-    virtual unsigned short getDrivingVariableComponentPosition(const std::string&) const = 0;
+    virtual unsigned short getGradientComponentPosition(const std::string&) const = 0;
     /*!
      * \param[in] c : component
      */

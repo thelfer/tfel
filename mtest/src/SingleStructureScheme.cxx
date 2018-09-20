@@ -166,7 +166,7 @@ namespace mtest{
       this->declareVariable(n,true);
     }
     // declaring behaviour variables
-    this->declareVariables(this->b->getDrivingVariablesComponents(),true);
+    this->declareVariables(this->b->getGradientsComponents(),true);
     this->declareVariables(this->b->getThermodynamicForcesComponents(),true);
   } // end of SingleStructureScheme::setBehaviour
 

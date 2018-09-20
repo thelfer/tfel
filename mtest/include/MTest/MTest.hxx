@@ -273,7 +273,7 @@ namespace mtest {
      * the driving variable
      * \param[in] e : criterium
      */
-    virtual void setDrivingVariableEpsilon(const real);
+    virtual void setGradientEpsilon(const real);
     /*!
      * \brief set criterium value for the convergence test on the
      * thermodynamic forces
@@ -289,7 +289,7 @@ namespace mtest {
      * \brief set the inital values of the driving variable
      * \param[in] v : values
      */
-    virtual void setDrivingVariablesInitialValues(const std::vector<real>&);
+    virtual void setGradientsInitialValues(const std::vector<real>&);
     /*!
      * \brief set the inital values of the thermodynamic forces
      * \param[in] v : values

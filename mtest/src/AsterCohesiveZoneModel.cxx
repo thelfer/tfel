@@ -55,7 +55,7 @@ namespace mtest
   void
   AsterCohesiveZoneModel::allocate(BehaviourWorkSpace& wk) const
   {
-    const auto ndv     = this->getDrivingVariablesSize();
+    const auto ndv     = this->getGradientsSize();
     const auto nth     = this->getThermodynamicForcesSize();
     const auto nstatev = this->getInternalStateVariablesSize();
     wk.kt.resize(nth,ndv);
@@ -70,10 +70,10 @@ namespace mtest
   }
 
   void
-  AsterCohesiveZoneModel::getDrivingVariablesDefaultInitialValues(tfel::math::vector<real>& v) const
+  AsterCohesiveZoneModel::getGradientsDefaultInitialValues(tfel::math::vector<real>& v) const
   {
     std::fill(v.begin(),v.end(),real(0));
-  } // end of AsterCohesiveZoneModel::setDrivingVariablesDefaultInitialValue  
+  } // end of AsterCohesiveZoneModel::setGradientsDefaultInitialValue  
 
   StiffnessMatrixType
   AsterCohesiveZoneModel::getDefaultStiffnessMatrixType() const

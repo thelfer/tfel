@@ -52,7 +52,7 @@ set(TFELMFront_SOURCES
     InitInterfaces.cxx
     InitDSLs.cxx
     DSLFactory.cxx
-    DrivingVariable.cxx
+    Gradient.cxx
     ThermodynamicForce.cxx
     LawFunction.cxx
     MaterialPropertyDescription.cxx

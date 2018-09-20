@@ -64,7 +64,7 @@ namespace mtest
   void
   CastemCohesiveZoneModel::allocate(BehaviourWorkSpace& wk) const
   {
-    const auto ndv     = this->getDrivingVariablesSize();
+    const auto ndv     = this->getGradientsSize();
     const auto nth     = this->getThermodynamicForcesSize();
     const auto nstatev = this->getInternalStateVariablesSize();
     wk.D.resize(nth,ndv);
@@ -79,10 +79,10 @@ namespace mtest
   }
 
   void
-  CastemCohesiveZoneModel::getDrivingVariablesDefaultInitialValues(tfel::math::vector<real>& v) const
+  CastemCohesiveZoneModel::getGradientsDefaultInitialValues(tfel::math::vector<real>& v) const
   {
     std::fill(v.begin(),v.end(),real(0));
-  } // end of CastemCohesiveZoneModel::setDrivingVariablesDefaultInitialValue  
+  } // end of CastemCohesiveZoneModel::setGradientsDefaultInitialValue  
 
   StiffnessMatrixType
   CastemCohesiveZoneModel::getDefaultStiffnessMatrixType() const

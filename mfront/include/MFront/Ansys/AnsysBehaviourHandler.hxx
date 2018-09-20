@@ -66,7 +66,7 @@ namespace ansys
     /*!
      * An helper structure used to initialise the driving variables
      */
-    struct TFEL_VISIBILITY_LOCAL DrivingVariableInitialiserWithStressFreeExpansion
+    struct TFEL_VISIBILITY_LOCAL GradientInitialiserWithStressFreeExpansion
       : public AnsysInterfaceExceptions
     {
       //! a simple alias
@@ -92,10 +92,10 @@ namespace ansys
 	typedef typename BV::StressFreeExpansionType StressFreeExpansionType;
 	typedef tfel::material::MechanicalBehaviourTraits<BV> Traits;
 	const AnsysInt N = ModellingHypothesisToSpaceDimension<H>::value;
-	AnsysReal dv0[AnsysTraits<BV>::DrivingVariableSize];
-	AnsysReal dv1[AnsysTraits<BV>::DrivingVariableSize];
-	copy<AnsysTraits<BV>::DrivingVariableSize>::exe(STRAN,dv0);
-	copy<AnsysTraits<BV>::DrivingVariableSize>::exe(DSTRAN,dv1);
+	AnsysReal dv0[AnsysTraits<BV>::GradientSize];
+	AnsysReal dv1[AnsysTraits<BV>::GradientSize];
+	copy<AnsysTraits<BV>::GradientSize>::exe(STRAN,dv0);
+	copy<AnsysTraits<BV>::GradientSize>::exe(DSTRAN,dv1);
 	// check that the function pointer are not null
 	if(sfeh==nullptr){
 	  throwUnsupportedStressFreeExpansionException(Traits::getName());
@@ -105,16 +105,16 @@ namespace ansys
 	const auto& s0 = s.first;
 	const auto& s1 = s.second;
 	sfeh(dv0,dv1,&s0[0],&s1[0],N);
-	b.setANSYSBehaviourDataDrivingVariables(dv0);
-	b.setANSYSIntegrationDataDrivingVariables(dv1);
+	b.setANSYSBehaviourDataGradients(dv0);
+	b.setANSYSIntegrationDataGradients(dv1);
       } // end of exe
 
-    }; // end of struct DrivingVariableInitialiserWithStressFreeExpansion
+    }; // end of struct GradientInitialiserWithStressFreeExpansion
 
     /*!
      * An helper structure used to initialise the driving variables
      */
-    struct TFEL_VISIBILITY_LOCAL DrivingVariableInitialiserWithoutStressFreeExpansion
+    struct TFEL_VISIBILITY_LOCAL GradientInitialiserWithoutStressFreeExpansion
     {
       //! a simple alias
       typedef Behaviour<H,AnsysReal,false> BV;
@@ -133,10 +133,10 @@ namespace ansys
 		 const AnsysReal *const DSTRAN,
 		 const StressFreeExpansionHandler<AnsysReal>&)
       {
-	b.setANSYSBehaviourDataDrivingVariables(STRAN);
-	b.setANSYSIntegrationDataDrivingVariables(DSTRAN);
+	b.setANSYSBehaviourDataGradients(STRAN);
+	b.setANSYSIntegrationDataGradients(DSTRAN);
       } // end of exe
-    }; // end of struct DrivingVariableInitialiserWithoutStressFreeExpansion
+    }; // end of struct GradientInitialiserWithoutStressFreeExpansion
 
     struct TFEL_VISIBILITY_LOCAL StiffnessOperatorInitializer
     {
@@ -196,8 +196,8 @@ namespace ansys
 	 typedef MechanicalBehaviourTraits<BV> Traits;
 	 typedef typename std::conditional<
 	   Traits::hasStressFreeExpansion,
-	   DrivingVariableInitialiserWithStressFreeExpansion,
-	   DrivingVariableInitialiserWithoutStressFreeExpansion>::type DVInitializer;
+	   GradientInitialiserWithStressFreeExpansion,
+	   GradientInitialiserWithoutStressFreeExpansion>::type DVInitializer;
 	 SInitializer::exe(this->behaviour,d.PROPS);
 	 AInitializer::exe(this->behaviour,d.PROPS);
 	 DVInitializer::exe(this->behaviour,d.STRAN,d.DSTRAN,d.sfeh);

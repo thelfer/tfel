@@ -75,16 +75,16 @@ namespace mtest{
   } // end of LogarithmicStrain1DBehaviourWrapper::getBehaviourKinematic
   
   unsigned short
-  LogarithmicStrain1DBehaviourWrapper::getDrivingVariablesSize() const
+  LogarithmicStrain1DBehaviourWrapper::getGradientsSize() const
   {
-    return this->b->getDrivingVariablesSize();
-  } // end of LogarithmicStrain1DBehaviourWrapper::getDrivingVariablesSize
+    return this->b->getGradientsSize();
+  } // end of LogarithmicStrain1DBehaviourWrapper::getGradientsSize
 
   void
-  LogarithmicStrain1DBehaviourWrapper::getDrivingVariablesDefaultInitialValues(tfel::math::vector<real>& v) const
+  LogarithmicStrain1DBehaviourWrapper::getGradientsDefaultInitialValues(tfel::math::vector<real>& v) const
   {
-    return this->b->getDrivingVariablesDefaultInitialValues(v);
-  } // end of LogarithmicStrain1DBehaviourWrapper::getDrivingVariablesDefaultInitialValues
+    return this->b->getGradientsDefaultInitialValues(v);
+  } // end of LogarithmicStrain1DBehaviourWrapper::getGradientsDefaultInitialValues
 
   unsigned short
   LogarithmicStrain1DBehaviourWrapper::getThermodynamicForcesSize() const
@@ -111,10 +111,10 @@ namespace mtest{
   } // end of LogarithmicStrain1DBehaviourWrapper::getTensorComponentsSuffixes
 
   std::vector<std::string>
-  LogarithmicStrain1DBehaviourWrapper::getDrivingVariablesComponents() const
+  LogarithmicStrain1DBehaviourWrapper::getGradientsComponents() const
   {
-    return this->b->getDrivingVariablesComponents();
-  } // end of LogarithmicStrain1DBehaviourWrapper::getDrivingVariablesComponents
+    return this->b->getGradientsComponents();
+  } // end of LogarithmicStrain1DBehaviourWrapper::getGradientsComponents
 
   std::vector<std::string>
   LogarithmicStrain1DBehaviourWrapper::getThermodynamicForcesComponents() const
@@ -123,10 +123,10 @@ namespace mtest{
   } // end of LogarithmicStrain1DBehaviourWrapper::getThermodynamicForcesComponents
 
   unsigned short
-  LogarithmicStrain1DBehaviourWrapper::getDrivingVariableComponentPosition(const std::string& c) const
+  LogarithmicStrain1DBehaviourWrapper::getGradientComponentPosition(const std::string& c) const
   {
-    return this->b->getDrivingVariableComponentPosition(c);
-  } // end of LogarithmicStrain1DBehaviourWrapper::getDrivingVariableComponentPosition
+    return this->b->getGradientComponentPosition(c);
+  } // end of LogarithmicStrain1DBehaviourWrapper::getGradientComponentPosition
 
   unsigned short
   LogarithmicStrain1DBehaviourWrapper::getThermodynamicForceComponentPosition(const std::string& c) const

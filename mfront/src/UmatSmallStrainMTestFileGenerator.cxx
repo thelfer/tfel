@@ -65,7 +65,7 @@ namespace mfront
   } // end of UmatSmallStrainMTestFileGenerator::setStressTensor
 
   void
-  UmatSmallStrainMTestFileGenerator::writeDrivingVariables(std::ostream& os) const
+  UmatSmallStrainMTestFileGenerator::writeGradients(std::ostream& os) const
   {
     using namespace tfel::material;
     constexpr const auto cste  = tfel::math::Cste<real>::sqrt2;
@@ -73,7 +73,7 @@ namespace mfront
     const auto& n = this->getStrainComponentsNames();
     unsigned short i;
     tfel::raise_if(this->times.size()!=2,
-		   "UmatSmallStrainMTestFileGenerator::writeDrivingVariables: "
+		   "UmatSmallStrainMTestFileGenerator::writeGradients: "
 		   "invalid number of times");
     const real t0 = *(this->times.begin());
     const real t1 = *(this->times.rbegin());
@@ -115,7 +115,7 @@ namespace mfront
       }
     }
     os << '\n';
-  } // end of UmatSmallStrainMTestFileGenerator::writeDrivingVariables
+  } // end of UmatSmallStrainMTestFileGenerator::writeGradients
   
   UmatSmallStrainMTestFileGenerator::~UmatSmallStrainMTestFileGenerator() = default;
 

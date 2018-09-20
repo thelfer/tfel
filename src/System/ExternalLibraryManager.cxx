@@ -1162,19 +1162,29 @@ namespace tfel {
       return vars;
     }  // end of ExternalLibraryManager::getUMATMaterialPropertiesNames
 
-    std::vector<std::string> ExternalLibraryManager::getUMATDrivingVariablesNames(
+    std::vector<std::string> ExternalLibraryManager::getUMATGradientsNames(
         const std::string& l, const std::string& f) {
       std::vector<std::string> names;
-      this->getUMATNames(names, l, f, "", "DrivingVariables");
+      this->getUMATNames(names, l, f, "", "Gradients");
       return names;
+    }  // end of ExternalLibraryManager::getUMATGradientsNames
+
+    std::vector<std::string> ExternalLibraryManager::getUMATDrivingVariablesNames(
+        const std::string& l, const std::string& f) {
+      return this->getUMATGradientsNames(l,f);
     }  // end of ExternalLibraryManager::getUMATDrivingVariablesNames
+    
+    std::vector<int> ExternalLibraryManager::getUMATGradientsTypes(
+        const std::string& l, const std::string& f) {
+      std::vector<int> types;
+      this->getUMATTypes(types, l, f, "", "Gradients");
+      return types;
+    }  // end of ExternalLibraryManager::getUMATGradientsTypes
 
     std::vector<int> ExternalLibraryManager::getUMATDrivingVariablesTypes(
         const std::string& l, const std::string& f) {
-      std::vector<int> types;
-      this->getUMATTypes(types, l, f, "", "DrivingVariables");
-      return types;
-    }  // end of ExternalLibraryManager::getUMATDrivingVariablesTypes
+      return this->getUMATGradientsTypes(l,f);
+    } // end of ExternalLibraryManager::getUMATDrivingVariablesTypes
     
     std::vector<std::string> ExternalLibraryManager::getUMATThermodynamicForcesNames(
         const std::string& l, const std::string& f) {

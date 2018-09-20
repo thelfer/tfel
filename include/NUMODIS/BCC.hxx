@@ -53,11 +53,15 @@ namespace numodis
   struct TFELNUMODIS_VISIBILITY_EXPORT BCC
     : public Cubic
   {
-
+    //! \brief default constructor
     BCC();
+    //! \brief copy constructor
+    BCC(const BCC&);
+    //! \brief move constructor
+    BCC(BCC&&);
 
     void PrintData(std::ostream & os) const;
-
+   //! \brief destructor
     ~BCC() override;
     
   private:

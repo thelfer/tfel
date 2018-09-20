@@ -78,7 +78,7 @@ namespace lsdyna
     /*!
      * An helper structure used to initialise the driving variables
      */
-    struct TFEL_VISIBILITY_LOCAL DrivingVariableInitialiserWithStressFreeExpansion
+    struct TFEL_VISIBILITY_LOCAL GradientInitialiserWithStressFreeExpansion
       : public LSDYNAInterfaceExceptions
     {
       //! a simple alias
@@ -104,10 +104,10 @@ namespace lsdyna
 	typedef typename BV::StressFreeExpansionType StressFreeExpansionType;
 	typedef tfel::material::MechanicalBehaviourTraits<BV> Traits;
 	const LSDYNAInt N = ModellingHypothesisToSpaceDimension<H>::value;
-	LSDYNAReal dv0[LSDYNATraits<BV>::DrivingVariableSize];
-	LSDYNAReal dv1[LSDYNATraits<BV>::DrivingVariableSize];
-	copy<LSDYNATraits<BV>::DrivingVariableSize>::exe(STRAN,dv0);
-	copy<LSDYNATraits<BV>::DrivingVariableSize>::exe(DSTRAN,dv1);
+	LSDYNAReal dv0[LSDYNATraits<BV>::GradientSize];
+	LSDYNAReal dv1[LSDYNATraits<BV>::GradientSize];
+	copy<LSDYNATraits<BV>::GradientSize>::exe(STRAN,dv0);
+	copy<LSDYNATraits<BV>::GradientSize>::exe(DSTRAN,dv1);
 	// check that the function pointer are not null
 	if(sfeh==nullptr){
 	  throwUnsupportedStressFreeExpansionException(Traits::getName());
@@ -117,16 +117,16 @@ namespace lsdyna
 	const auto& s0 = s.first;
 	const auto& s1 = s.second;
 	sfeh(dv0,dv1,&s0[0],&s1[0],N);
-	b.setLSDYNABehaviourDataDrivingVariables(dv0);
-	b.setLSDYNAIntegrationDataDrivingVariables(dv1);
+	b.setLSDYNABehaviourDataGradients(dv0);
+	b.setLSDYNAIntegrationDataGradients(dv1);
       } // end of exe
 
-    }; // end of struct DrivingVariableInitialiserWithStressFreeExpansion
+    }; // end of struct GradientInitialiserWithStressFreeExpansion
 
     /*!
      * An helper structure used to initialise the driving variables
      */
-    struct TFEL_VISIBILITY_LOCAL DrivingVariableInitialiserWithoutStressFreeExpansion
+    struct TFEL_VISIBILITY_LOCAL GradientInitialiserWithoutStressFreeExpansion
     {
       //! a simple alias
       typedef Behaviour<H,LSDYNAReal,false> BV;
@@ -145,10 +145,10 @@ namespace lsdyna
 		 const LSDYNAReal *const DSTRAN,
 		 const StressFreeExpansionHandler<LSDYNAReal>&)
       {
-	b.setLSDYNABehaviourDataDrivingVariables(STRAN);
-	b.setLSDYNAIntegrationDataDrivingVariables(DSTRAN);
+	b.setLSDYNABehaviourDataGradients(STRAN);
+	b.setLSDYNAIntegrationDataGradients(DSTRAN);
       } // end of exe
-    }; // end of struct DrivingVariableInitialiserWithoutStressFreeExpansion
+    }; // end of struct GradientInitialiserWithoutStressFreeExpansion
 
     struct TFEL_VISIBILITY_LOCAL StiffnessOperatorInitializer
     {
@@ -208,8 +208,8 @@ namespace lsdyna
 	 typedef MechanicalBehaviourTraits<BV> Traits;
 	 typedef typename std::conditional<
 	   Traits::hasStressFreeExpansion,
-	   DrivingVariableInitialiserWithStressFreeExpansion,
-	   DrivingVariableInitialiserWithoutStressFreeExpansion>::type DVInitializer;
+	   GradientInitialiserWithStressFreeExpansion,
+	   GradientInitialiserWithoutStressFreeExpansion>::type DVInitializer;
 	 SInitializer::exe(this->behaviour,d.PROPS);
 	 AInitializer::exe(this->behaviour,d.PROPS);
 	 DVInitializer::exe(this->behaviour,d.STRAN,d.DSTRAN,d.sfeh);

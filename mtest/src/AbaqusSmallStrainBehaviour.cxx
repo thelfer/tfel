@@ -37,7 +37,7 @@ namespace mtest
   {}
 
   void
-  AbaqusSmallStrainBehaviour::getDrivingVariablesDefaultInitialValues(tfel::math::vector<real>& v) const
+  AbaqusSmallStrainBehaviour::getGradientsDefaultInitialValues(tfel::math::vector<real>& v) const
   {
     std::fill(v.begin(),v.end(),real(0));
   }

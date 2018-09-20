@@ -44,7 +44,7 @@ namespace mfront {
         const std::string&) const override;
     bool handleStrainMeasure() const override;
     //! destructor
-    ~EuroplexusSymbolsGenerator();
+    ~EuroplexusSymbolsGenerator() override;
   };  // end of struct EuroplexusSymbolsGenerator
 
 }  // end of namespace mfront

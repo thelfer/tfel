@@ -529,10 +529,10 @@ namespace mfront {
           "declareComputeStressForOrthotropicBehaviour: "
           "the stiffness tensor must be defined for "
           "orthotropic behaviours");
-      if (getVerboseMode() >= VERBOSE_DEBUG) {
-        getLogStream() << "HookeStressPotentialBase::"
-                          "declareComputeStressForOrthotropicBehaviour: end\n";
-      }
+      // if (getVerboseMode() >= VERBOSE_DEBUG) {
+      //   getLogStream() << "HookeStressPotentialBase::"
+      //                     "declareComputeStressForOrthotropicBehaviour: end\n";
+      // }
     }  // end of
        // HookeStressPotentialBase::declareComputeStressForOrthotropicBehaviour
 

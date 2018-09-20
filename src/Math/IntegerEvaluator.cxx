@@ -11,14 +11,14 @@
  * with the sources of TFEL. CEA or EDF may also distribute this 
  * project under specific licensing conditions. 
  */
-
 #include<cmath>
+#include<cctype>
 #include<cassert>
+#include<utility>
+#include<sstream>
+#include<iterator>
 #include<stdexcept>
 #include<algorithm>
-#include<iterator>
-#include<sstream>
-#include<cctype>
 
 #include"TFEL/Raise.hxx"
 #include"TFEL/Math/IntegerEvaluator.hxx"
@@ -265,7 +265,7 @@ namespace tfel
       }
       throw_if((!s.empty())&&(p==pe),
 	       "unterminated group (group began with '"+s+"').");
-      return g;
+      return std::move(g);
     } // end of IntegerEvaluator::treatGroup2
 
     std::vector<double>::size_type

@@ -102,7 +102,7 @@ namespace mtest
   void
   EuroplexusStandardBehaviour::allocate(BehaviourWorkSpace& wk) const
   {
-    const auto ndv     = this->getDrivingVariablesSize();
+    const auto ndv     = this->getGradientsSize();
     const auto nth     = this->getThermodynamicForcesSize();
     const auto nstatev = this->getInternalStateVariablesSize();
     wk.kt.resize(nth,ndv);

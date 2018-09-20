@@ -141,7 +141,7 @@ namespace mtest
   } // end of AsterFiniteStrainBehaviour::AsterFiniteStrainBehaviour
 
   void
-  AsterFiniteStrainBehaviour::getDrivingVariablesDefaultInitialValues(tfel::math::vector<real>& v) const
+  AsterFiniteStrainBehaviour::getGradientsDefaultInitialValues(tfel::math::vector<real>& v) const
   {
     std::fill(v.begin(),v.end(),real(0));
     v[0] = v[1] = v[2] = real(1);

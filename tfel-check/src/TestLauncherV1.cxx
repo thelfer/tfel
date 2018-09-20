@@ -711,9 +711,7 @@ namespace tfel{
       using namespace tfel::system;
       using namespace tfel::utilities;
       ProcessManager manager;
-      vector<Test>::iterator p;
       map<string, vector<Test> >::iterator p2;
-      vector<Test>::iterator p3;
       vector<string>::const_iterator p4;
 
       bool gsuccess = true; /* global success indicator : false only

@@ -178,7 +178,7 @@ namespace mtest{
   } // end of GenericBehaviour::GenericBehaviour
 
   void GenericBehaviour::allocate(BehaviourWorkSpace& wk) const{
-    const auto ndv     = this->getDrivingVariablesSize();
+    const auto ndv     = this->getGradientsSize();
     const auto nth     = this->getThermodynamicForcesSize();
     const auto nstatev = this->getInternalStateVariablesSize();
     const auto nevs    = this->getExternalStateVariablesSize();
@@ -202,14 +202,14 @@ namespace mtest{
     mtest::allocate(wk.cs,this->shared_from_this());
   } // end f GenericBehaviour::allocate
   
-  void GenericBehaviour::getDrivingVariablesDefaultInitialValues(tfel::math::vector<real>& v) const
+  void GenericBehaviour::getGradientsDefaultInitialValues(tfel::math::vector<real>& v) const
   {
     std::fill(v.begin(),v.end(),real(0));
     if(this->btype == 2u){
       // finite strain behaviour
       v[0] = v[1] = v[2] = real(1);
     }
-  } // end of GenericBehaviour::setDrivingVariablesDefaultInitialValue  
+  } // end of GenericBehaviour::setGradientsDefaultInitialValue  
 
   std::pair<bool,real>
   GenericBehaviour::computePredictionOperator(BehaviourWorkSpace& wk,
@@ -328,7 +328,7 @@ namespace mtest{
     }
     // tangent operator (...)
     if(ktype!=StiffnessMatrixType::NOSTIFFNESS){ 
-      const auto ndv     = this->getDrivingVariablesSize();
+      const auto ndv     = this->getGradientsSize();
       const auto nth     = this->getThermodynamicForcesSize();
       if(this->stype==1u){
 	if((this->btype==1u)||(this->btype==2u)){

@@ -77,7 +77,7 @@ namespace epx
     /*!
      * An helper structure used to initialise the driving variables
      */
-    struct TFEL_VISIBILITY_LOCAL DrivingVariableInitialiserWithStressFreeExpansion
+    struct TFEL_VISIBILITY_LOCAL GradientInitialiserWithStressFreeExpansion
       : public EuroplexusInterfaceExceptions
     {
       //! a simple alias
@@ -103,10 +103,10 @@ namespace epx
 	typedef typename BV::StressFreeExpansionType StressFreeExpansionType;
 	typedef tfel::material::MechanicalBehaviourTraits<BV> Traits;
 	const EuroplexusInt N = ModellingHypothesisToSpaceDimension<H>::value;
-	EuroplexusReal dv0[EuroplexusTraits<BV>::DrivingVariableSize];
-	EuroplexusReal dv1[EuroplexusTraits<BV>::DrivingVariableSize];
-	copy<EuroplexusTraits<BV>::DrivingVariableSize>::exe(STRAN,dv0);
-	copy<EuroplexusTraits<BV>::DrivingVariableSize>::exe(DSTRAN,dv1);
+	EuroplexusReal dv0[EuroplexusTraits<BV>::GradientSize];
+	EuroplexusReal dv1[EuroplexusTraits<BV>::GradientSize];
+	copy<EuroplexusTraits<BV>::GradientSize>::exe(STRAN,dv0);
+	copy<EuroplexusTraits<BV>::GradientSize>::exe(DSTRAN,dv1);
 	// check that the function pointer are not null
 	if(sfeh==nullptr){
 	  throwUnsupportedStressFreeExpansionException(Traits::getName());
@@ -116,16 +116,16 @@ namespace epx
 	const auto& s0 = s.first;
 	const auto& s1 = s.second;
 	sfeh(dv0,dv1,&s0[0],&s1[0],N);
-	b.setEUROPLEXUSBehaviourDataDrivingVariables(dv0);
-	b.setEUROPLEXUSIntegrationDataDrivingVariables(dv1);
+	b.setEUROPLEXUSBehaviourDataGradients(dv0);
+	b.setEUROPLEXUSIntegrationDataGradients(dv1);
       } // end of exe
 
-    }; // end of struct DrivingVariableInitialiserWithStressFreeExpansion
+    }; // end of struct GradientInitialiserWithStressFreeExpansion
 
     /*!
      * An helper structure used to initialise the driving variables
      */
-    struct TFEL_VISIBILITY_LOCAL DrivingVariableInitialiserWithoutStressFreeExpansion
+    struct TFEL_VISIBILITY_LOCAL GradientInitialiserWithoutStressFreeExpansion
     {
       //! a simple alias
       typedef Behaviour<H,EuroplexusReal,false> BV;
@@ -144,10 +144,10 @@ namespace epx
 		 const EuroplexusReal *const DSTRAN,
 		 const StressFreeExpansionHandler&)
       {
-	b.setEUROPLEXUSBehaviourDataDrivingVariables(STRAN);
-	b.setEUROPLEXUSIntegrationDataDrivingVariables(DSTRAN);
+	b.setEUROPLEXUSBehaviourDataGradients(STRAN);
+	b.setEUROPLEXUSIntegrationDataGradients(DSTRAN);
       } // end of exe
-    }; // end of struct DrivingVariableInitialiserWithoutStressFreeExpansion
+    }; // end of struct GradientInitialiserWithoutStressFreeExpansion
 
     struct TFEL_VISIBILITY_LOCAL StiffnessOperatorInitializer
     {
@@ -212,8 +212,8 @@ namespace epx
 	typedef MechanicalBehaviourTraits<BV> Traits;
 	typedef typename std::conditional<
 	  Traits::hasStressFreeExpansion,
-	  DrivingVariableInitialiserWithStressFreeExpansion,
-	  DrivingVariableInitialiserWithoutStressFreeExpansion>::type DVInitializer;
+	  GradientInitialiserWithStressFreeExpansion,
+	  GradientInitialiserWithoutStressFreeExpansion>::type DVInitializer;
 	SInitializer::exe(this->behaviour,d.PROPS);
 	AInitializer::exe(this->behaviour,d.PROPS);
 	DVInitializer::exe(this->behaviour,dv0,dv1,d.sfeh);

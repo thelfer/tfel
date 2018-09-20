@@ -41,9 +41,9 @@ namespace tfel {
       std::string behaviour;
       //! name of the hypothesis
       std::string hypothesis;
-      //! names of the driving variables
+      //! names of the gradients (driving variables)
       std::vector<std::string> dvnames;
-      //! types of the driving variables
+      //! types of the gradients (driving variables)
       std::vector<int> dvtypes;
       //! names of the thermodynamic forces
       std::vector<std::string> thnames;

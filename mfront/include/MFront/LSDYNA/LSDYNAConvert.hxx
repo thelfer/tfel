@@ -24,7 +24,7 @@ namespace lsdyna{
    * \tparam H: modelling hypothesis
    */
   template<tfel::material::ModellingHypothesis::Hypothesis H>
-  struct UMATImportDrivingVariables
+  struct UMATImportGradients
   {
     //! space dimension
     static constexpr const unsigned short N =
@@ -49,13 +49,13 @@ namespace lsdyna{
     exe(tfel::math::tensor<N,T>& F,const LSDYNAReal* const v){
       tfel::math::tensor<N,T>::buildFromFortranMatrix(F,v);
     } // end of exe
-  }; // end of struct UMATImportDrivingVariables
+  }; // end of struct UMATImportGradients
   /*!
-   * \brief partial specialisation of the UMATImportDrivingVariables
+   * \brief partial specialisation of the UMATImportGradients
    * for the plane stress modelling hypothesis.
    */
   template<>
-  struct UMATImportDrivingVariables<tfel::material::ModellingHypothesis::PLANESTRESS>
+  struct UMATImportGradients<tfel::material::ModellingHypothesis::PLANESTRESS>
   {
     /*!
      * \tparam T: type of the thermodynamique forces
@@ -81,7 +81,7 @@ namespace lsdyna{
     exe(tfel::math::tensor<2u,T>& F,const LSDYNAReal* const v){
       tfel::math::tensor<2u,T>::buildFromFortranMatrix(F,v);
     } // end of exe
-  }; // end of struct UMATImportDrivingVariables
+  }; // end of struct UMATImportGradients
   /*!
    * \brief class defining the convertion from lsdyna to mfront for
    * thermodynamic forces

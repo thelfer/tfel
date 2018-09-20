@@ -222,8 +222,8 @@ namespace epx
 	AHandler::checkNPROPS(d.NPROPS);
 	AHandler::checkNSTATV(d.NSTATV);
 	AHandler::checkNPREDEF(d.NPREDEF);
-	EuroplexusReal dv0[EuroplexusTraits<BV>::DrivingVariableSize];
-	EuroplexusReal dv1[EuroplexusTraits<BV>::DrivingVariableSize];
+	EuroplexusReal dv0[EuroplexusTraits<BV>::GradientSize];
+	EuroplexusReal dv1[EuroplexusTraits<BV>::GradientSize];
 	using ChangeBasis =
 	  typename std::conditional<type==epx::ISOTROPIC,DoNothing<H>,
 				    typename std::conditional<btype==epx::STANDARDSTRAINBASEDBEHAVIOUR,

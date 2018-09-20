@@ -449,7 +449,7 @@ namespace mfront{
     out << "// tensor size\n";
     out << "static " << constexpr_c << " unsigned short TensorSize  = tfel::math::TensorDimeToSize<N>::value;\n";
     out << "// size of the driving variable array\n";
-    out << "static " << constexpr_c << " unsigned short DrivingVariableSize = " << mvs.first <<  ";\n";
+    out << "static " << constexpr_c << " unsigned short GradientSize = " << mvs.first <<  ";\n";
     out << "// size of the thermodynamic force variable array (STRESS)\n";
     out << "static " << constexpr_c << " unsigned short ThermodynamicForceVariableSize = " << mvs.second <<  ";\n";
     if(mb.getAttribute(BehaviourDescription::requiresUnAlteredStiffnessTensor,false)){
@@ -1408,10 +1408,10 @@ namespace mfront{
     const auto iprefix = makeUpperCase(this->getInterfaceName());
     SupportedTypes::TypeSize ov,of;
     os << "void set"
-       << iprefix << "BehaviourDataDrivingVariables(const Type* const " << iprefix << "stran)\n"
+       << iprefix << "BehaviourDataGradients(const Type* const " << iprefix << "stran)\n"
        << "{\n";
     for(const auto& v : mb.getMainVariables()){
-      this->writeBehaviourDataDrivingVariableSetter(os,v.first,ov);
+      this->writeBehaviourDataGradientSetter(os,v.first,ov);
       ov += SupportedTypes::getTypeSize(v.first.type,1u);
     }
     os << "}\n\n";
@@ -1426,9 +1426,9 @@ namespace mfront{
     os << "}\n\n";
   } // end of AnsysInterface::writeBehaviourDataMainVariablesSetters
 
-  void AnsysInterface::writeBehaviourDataDrivingVariableSetter(
+  void AnsysInterface::writeBehaviourDataGradientSetter(
       std::ostream& os,
-      const DrivingVariable& v,
+      const Gradient& v,
       const SupportedTypes::TypeSize o) const {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
     if(!o.isNull()){
@@ -1436,17 +1436,17 @@ namespace mfront{
 		  "only one driving variable supported");
     }
     if(v.increment_known){
-      os << "ansys::ImportDrivingVariables<hypothesis>::exe(this->" << v.name << ","
+      os << "ansys::ImportGradients<hypothesis>::exe(this->" << v.name << ","
 	 << iprefix << "stran);\n";
     } else {
-      os << "ansys::ImportDrivingVariables<hypothesis>::exe(this->" << v.name << "0,"
+      os << "ansys::ImportGradients<hypothesis>::exe(this->" << v.name << "0,"
 	 << iprefix << "stran);\n";
     }
-  } // end of AnsysInterface::writeBehaviourDataDrivingVariableSetter
+  } // end of AnsysInterface::writeBehaviourDataGradientSetter
 
-  void AnsysInterface::writeIntegrationDataDrivingVariableSetter(
+  void AnsysInterface::writeIntegrationDataGradientSetter(
       std::ostream& os,
-      const DrivingVariable& v,
+      const Gradient& v,
       const SupportedTypes::TypeSize o) const {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
     if(!o.isNull()){
@@ -1454,13 +1454,13 @@ namespace mfront{
 		  "only one driving variable supported");
     }
     if(v.increment_known){
-      os << "ansys::ImportDrivingVariables<hypothesis>::exe(this->d" << v.name << ","
+      os << "ansys::ImportGradients<hypothesis>::exe(this->d" << v.name << ","
 	 << iprefix << "dstran);\n";
     } else {
-      os << "ansys::ImportDrivingVariables<hypothesis>::exe(this->" << v.name << "1,"
+      os << "ansys::ImportGradients<hypothesis>::exe(this->" << v.name << "1,"
 	 << iprefix << "dstran);\n";
     }
-  } // end of AnsysInterface::writeIntegrationDataDrivingVariableSetter
+  } // end of AnsysInterface::writeIntegrationDataGradientSetter
 
   void AnsysInterface::writeBehaviourDataThermodynamicForceSetter(
       std::ostream& os,

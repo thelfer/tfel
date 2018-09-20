@@ -239,7 +239,7 @@ namespace mtest {
   Behaviour::~Behaviour() = default;
 
   bool isBehaviourVariable(const Behaviour& b, const std::string& n) {
-    const auto enames = b.getDrivingVariablesComponents();
+    const auto enames = b.getGradientsComponents();
     auto p = std::find(enames.begin(), enames.end(), n);
     if (p != enames.end()) {
       return true;
@@ -264,7 +264,7 @@ namespace mtest {
 
   std::function<real(const CurrentState&)> buildValueExtractor(const Behaviour& b,
                                                                const std::string& n) {
-    const auto enames = b.getDrivingVariablesComponents();
+    const auto enames = b.getGradientsComponents();
     auto p = std::find(enames.begin(), enames.end(), n);
     if (p != enames.end()) {
       const auto pos = static_cast<unsigned short>(p - enames.begin());

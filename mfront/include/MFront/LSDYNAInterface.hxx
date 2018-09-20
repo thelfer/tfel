@@ -76,9 +76,9 @@ namespace mfront {
         const BehaviourDescription&) const override;
     void writeBehaviourDataMainVariablesSetters(
         std::ostream&, const BehaviourDescription&) const override;
-    void writeBehaviourDataDrivingVariableSetter(
+    void writeBehaviourDataGradientSetter(
         std::ostream&,
-        const DrivingVariable&,
+        const Gradient&,
         const SupportedTypes::TypeSize) const override;
     void writeBehaviourDataThermodynamicForceSetter(
         std::ostream&,
@@ -90,9 +90,9 @@ namespace mfront {
         const BehaviourDescription&) const override;
     void writeIntegrationDataMainVariablesSetters(
         std::ostream&, const BehaviourDescription&) const override;
-    void writeIntegrationDataDrivingVariableSetter(
+    void writeIntegrationDataGradientSetter(
         std::ostream&,
-        const DrivingVariable&,
+        const Gradient&,
         const SupportedTypes::TypeSize) const override;
     void exportMechanicalData(std::ostream&,
                               const Hypothesis,

@@ -123,6 +123,10 @@ void declareExternalLibraryManager()
     .def("getUnsignedShortParameterDefaultValue",
 	 &ELM::getUnsignedShortParameterDefaultValue,
 	 "return the default value of an unsigned short parameter")
+    .def("getUMATDrivingVariablesNames",&ELM::getUMATDrivingVariablesNames,
+	 "return the list of the gradients")
+    .def("getUMATGradientsNames",&ELM::getUMATGradientsNames,
+	 "return the list of the gradients")
     .def("getUMATParametersNames",&ELM::getUMATParametersNames,
 	 "return the list of the parameters")
     .def("getUMATParametersTypes",&ELM::getUMATParametersTypes,

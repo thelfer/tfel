@@ -131,7 +131,7 @@ void declareBehaviour() {
            "- 2: cohesive zone model kinematic\n"
            "- 3: standard finite strain kinematic (F-Cauchy)\n"
            "- 4: ptest finite strain kinematic (eto-pk1)\n")
-      .def("getDrivingVariablesSize", &Behaviour::getDrivingVariablesSize,
+      .def("getGradientsSize", &Behaviour::getGradientsSize,
            "Return the size of a vector able to contain "
            "all the components of the driving variables")
       .def("getThermodynamicForcesSize", &Behaviour::getThermodynamicForcesSize,
@@ -143,11 +143,11 @@ void declareBehaviour() {
            "Return the components suffixes of a vector")
       .def("getTensorComponentsSuffixes", &Behaviour::getTensorComponentsSuffixes,
            "Return the components suffixes of a tensor")
-      .def("getDrivingVariablesComponents", &Behaviour::getDrivingVariablesComponents,
+      .def("getGradientsComponents", &Behaviour::getGradientsComponents,
            "Return the components of the driving variables")
       .def("getThermodynamicForcesComponents", &Behaviour::getThermodynamicForcesComponents,
            "Return the components of the thermodynamic forces")
-      .def("getDrivingVariableComponentPosition", &Behaviour::getDrivingVariableComponentPosition,
+      .def("getGradientComponentPosition", &Behaviour::getGradientComponentPosition,
            "Return the position of the component of a driving variable")
       .def("getThermodynamicForceComponentPosition",
            &Behaviour::getThermodynamicForceComponentPosition,

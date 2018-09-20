@@ -48,7 +48,7 @@ namespace mfront {
                                     const std::string &) const override;
     bool handleStrainMeasure() const override;
     //! destructor
-    ~AnsysSymbolsGenerator();
+    ~AnsysSymbolsGenerator() override;
   };  // end of struct AnsysSymbolsGenerator
 
 }  // end of namespace mfront

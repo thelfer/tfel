@@ -5,6 +5,7 @@
  * \date   20/03/2018
  */
 
+#include <utility>
 #include <sstream>
 #include "TFEL/Glossary/Glossary.hxx"
 #include "TFEL/Glossary/GlossaryEntry.hxx"
@@ -62,11 +63,11 @@ namespace mfront {
       if (d.is<double>()) {
         BehaviourDescription::ConstantMaterialProperty cmp;
         cmp.value = d.get<double>();
-        return cmp;
+        return std::move(cmp);
       } else if (d.is<int>()) {
         BehaviourDescription::ConstantMaterialProperty cmp;
         cmp.value = static_cast<double>(d.get<int>());
-        return cmp;
+        return std::move(cmp);
       }
       if (!d.is<std::string>()) {
         tfel::raise(
@@ -79,11 +80,11 @@ namespace mfront {
         // file name
         BehaviourDescription::ExternalMFrontMaterialProperty emp;
         emp.mpd = dsl.handleMaterialPropertyDescription(mp);
-        return emp;
+        return std::move(emp);
       }
       BehaviourDescription::AnalyticMaterialProperty amp;
       amp.f = mp;
-      return amp;
+      return std::move(amp);
     }  // end of getBehaviourDescriptionMaterialProperty_impl
 
     void declareParameterOrLocalVariable(

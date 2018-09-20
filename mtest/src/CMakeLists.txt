@@ -37,7 +37,7 @@ set(TFELMTest_SOURCES
   Constraint.cxx
   ConstraintBase.cxx
   NonLinearConstraint.cxx
-  ImposedDrivingVariable.cxx
+  ImposedGradient.cxx
   ImposedThermodynamicForce.cxx
   AccelerationAlgorithmFactory.cxx
   AccelerationAlgorithm.cxx

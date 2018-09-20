@@ -1,5 +1,5 @@
 /*! 
- * \file  mtest/src/ImposedDrivingVariable.cxx
+ * \file  mtest/src/ImposedGradient.cxx
  * \brief
  * \author Thomas Helfer
  * \date 05 avril 2013
@@ -15,32 +15,32 @@
 #include<sstream>
 
 #include"MTest/Behaviour.hxx"
-#include"MTest/ImposedDrivingVariable.hxx"
+#include"MTest/ImposedGradient.hxx"
 
 namespace mtest
 {
 
-  ImposedDrivingVariable::ImposedDrivingVariable(const Behaviour& b,
+  ImposedGradient::ImposedGradient(const Behaviour& b,
 						 const std::string& cname,
 						 const std::shared_ptr<Evolution> e_)
     : eev(e_)
   {
-    this->c = b.getDrivingVariableComponentPosition(cname);
-  } // end of ImposedDrivingVariable::ImposedDrivingVariable
+    this->c = b.getGradientComponentPosition(cname);
+  } // end of ImposedGradient::ImposedGradient
 
-  ImposedDrivingVariable::ImposedDrivingVariable(const unsigned short c_,
+  ImposedGradient::ImposedGradient(const unsigned short c_,
 						 const std::shared_ptr<Evolution> e_)
     : eev(e_),
       c(c_)
-  {} // end of ImposedDrivingVariable::ImposedDrivingVariable
+  {} // end of ImposedGradient::ImposedGradient
 
   unsigned short
-  ImposedDrivingVariable::getNumberOfLagrangeMultipliers() const
+  ImposedGradient::getNumberOfLagrangeMultipliers() const
   {
     return 1u;
-  } // end of ImposedDrivingVariable::getNumberOfLagrangeMultipliers
+  } // end of ImposedGradient::getNumberOfLagrangeMultipliers
 
-  void ImposedDrivingVariable::setValues(tfel::math::matrix<real>& K,
+  void ImposedGradient::setValues(tfel::math::matrix<real>& K,
 					 tfel::math::vector<real>& r,
 					 const tfel::math::vector<real>&,
 					 const tfel::math::vector<real>& u1,
@@ -61,9 +61,9 @@ namespace mtest
     } else {
       K(pos,pos) = 1;
     }
-  } // end of ImposedDrivingVariable::setValues
+  } // end of ImposedGradient::setValues
 
-  bool ImposedDrivingVariable::checkConvergence(const tfel::math::vector<real>& u,
+  bool ImposedGradient::checkConvergence(const tfel::math::vector<real>& u,
 						const tfel::math::vector<real>&,
 						const real eeps,
 						const real,
@@ -75,7 +75,7 @@ namespace mtest
   }
   
   std::string
-  ImposedDrivingVariable::getFailedCriteriaDiagnostic(const tfel::math::vector<real>& e,
+  ImposedGradient::getFailedCriteriaDiagnostic(const tfel::math::vector<real>& e,
 						      const tfel::math::vector<real>&,
 						      const real eeps,
 						      const real ,
@@ -90,7 +90,7 @@ namespace mtest
     return msg.str();
   }
 
-  ImposedDrivingVariable::~ImposedDrivingVariable() = default;
+  ImposedGradient::~ImposedGradient() = default;
 
 } // end of namespace mtest
 

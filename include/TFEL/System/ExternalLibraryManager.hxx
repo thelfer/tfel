@@ -448,6 +448,18 @@ namespace tfel {
        * \param[in] l : name of the library
        * \param[in] f : law name
        */
+      std::vector<std::string> getUMATGradientsNames(const std::string&,
+						     const std::string&);
+      /*!
+       * \param[in] l : name of the library
+       * \param[in] f : law name
+       */
+      std::vector<int> getUMATGradientsTypes(const std::string&,
+					     const std::string&);
+      /*!
+       * \param[in] l : name of the library
+       * \param[in] f : law name
+       */
       std::vector<std::string> getUMATDrivingVariablesNames(const std::string&,
 							    const std::string&);
       /*!

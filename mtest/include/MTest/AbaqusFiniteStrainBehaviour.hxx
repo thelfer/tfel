@@ -39,7 +39,7 @@ namespace mtest
     /*!
      * \param[out] v : initial values of the driving variables
      */
-    void getDrivingVariablesDefaultInitialValues(tfel::math::vector<real>&) const override;
+    void getGradientsDefaultInitialValues(tfel::math::vector<real>&) const override;
     //! destructor
     ~AbaqusFiniteStrainBehaviour() override;
   protected:

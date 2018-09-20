@@ -330,15 +330,15 @@ namespace mfront {
      * \note using this method means that the behaviour type is always
      * 'GENERALBEHAVIOUR'. This can't be changed afterwards.
      */
-    void addMainVariable(const DrivingVariable&, const ThermodynamicForce&);
+    void addMainVariable(const Gradient&, const ThermodynamicForce&);
     //! \return the main variables of the behaviour
-    const std::vector<std::pair<DrivingVariable, ThermodynamicForce>>&
+    const std::vector<std::pair<Gradient, ThermodynamicForce>>&
     getMainVariables() const;
     /*!
      * \return the driving variable with the associated name
      * \param[in] n: name
      */
-    const DrivingVariable& getDrivingVariable(const std::string&) const;
+    const Gradient& getGradient(const std::string&) const;
     /*!
      * \return the thermodynamic force with the associated name
      * \param[in] n: name
@@ -373,9 +373,9 @@ namespace mfront {
 
     void setUseQt(const bool);
 
-    bool isDrivingVariableName(const std::string&) const;
+    bool isGradientName(const std::string&) const;
 
-    bool isDrivingVariableIncrementName(const std::string&) const;
+    bool isGradientIncrementName(const std::string&) const;
 
     bool isThermodynamicForceName(const std::string&) const;
     //! \return the behaviour type
@@ -1418,7 +1418,7 @@ namespace mfront {
      * \return the driving variable with the associated name
      * \param[in] n: name
      */
-    DrivingVariable& getDrivingVariable(const std::string&);
+    Gradient& getGradient(const std::string&);
     /*!
      * \return the thermodynamic force with the associated name
      * \param[in] n: name
@@ -1632,7 +1632,7 @@ namespace mfront {
      * main variables, association of a driving variable and a
      * thermodynamicforce
      */
-    std::vector<std::pair<DrivingVariable, ThermodynamicForce>> mvariables;
+    std::vector<std::pair<Gradient, ThermodynamicForce>> mvariables;
     /*!
      * elastic material properties
      * For isotropic   behaviours, only two elastic material properties must be

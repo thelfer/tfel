@@ -42,7 +42,7 @@
 #include "MTest/Behaviour.hxx"
 #include "MTest/Constraint.hxx"
 #include "MTest/ImposedThermodynamicForce.hxx"
-#include "MTest/ImposedDrivingVariable.hxx"
+#include "MTest/ImposedGradient.hxx"
 #include "MTest/PipeTest.hxx"
 #include "MTest/PipeTestParser.hxx"
 

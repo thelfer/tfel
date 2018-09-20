@@ -96,10 +96,10 @@ namespace mtest
   } // end of CyranoBehaviour::getDefaultStiffnessMatrixType
 
   void
-  CyranoBehaviour::getDrivingVariablesDefaultInitialValues(tfel::math::vector<real>& v) const
+  CyranoBehaviour::getGradientsDefaultInitialValues(tfel::math::vector<real>& v) const
   {
     std::fill(v.begin(),v.end(),real(0));
-  } // end of CyranoBehaviour::setDrivingVariablesDefaultInitialValue  
+  } // end of CyranoBehaviour::setGradientsDefaultInitialValue  
 
   std::pair<bool,real>
   CyranoBehaviour::computePredictionOperator(BehaviourWorkSpace& wk,

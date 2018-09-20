@@ -417,7 +417,7 @@ namespace mfront {
                                                               const std::string& var,
                                                               const bool addThisPtr) {
     const auto& d = this->mb.getBehaviourData(h);
-    if (this->mb.isDrivingVariableName(var) || (d.isExternalStateVariableName(var))) {
+    if (this->mb.isGradientName(var) || (d.isExternalStateVariableName(var))) {
       if (addThisPtr) {
         return "(this->" + var + "+(this->theta)*(this->d" + var + "))";
       } else {
@@ -453,7 +453,7 @@ namespace mfront {
                                                               const std::string& var,
                                                               const bool addThisPtr) {
     const auto& d = this->mb.getBehaviourData(h);
-    if ((this->mb.isDrivingVariableName(var)) || (d.isExternalStateVariableName(var))) {
+    if ((this->mb.isGradientName(var)) || (d.isExternalStateVariableName(var))) {
       if (addThisPtr) {
         return "(this->" + var + "+this->d" + var + ")";
       } else {
