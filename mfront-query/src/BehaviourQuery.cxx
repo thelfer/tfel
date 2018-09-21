@@ -164,6 +164,8 @@ namespace mfront {
     Parser::registerNewCallBack("--modelling-hypothesis",
                                 &BehaviourQuery::treatModellingHypothesis,
                                 "select a modelling hypothesis", true);
+    Parser::registerCallBack("--no-gui",CallBack("do not display errors using "
+						 "a message box (windows only)",[]{},false));
     // standard queries
     const vector<pair<const char*, const char*>> sq = {
         {"--author", "show the author name"},

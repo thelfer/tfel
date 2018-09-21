@@ -12,17 +12,19 @@ For a new (English speaking) user, we would highly recommend:
 - Read the **reference paper** @helfer_introducing_2015. Altough this
   paper covers versions `2.0.x`, it gives an good general overiew of
   `TFEL` and `MFront`'s abilities.
+- Read the [`getting-started` page](getting-started.html).
 - Read the page dedicated to second and fourth order tensors,
   [here](tensors.html).
 - Have a look at the [**gallery**](gallery.html) which details the
   implementations of various classical mechanical behaviours. Those
   implementations are kept up-to-date to use the latest developments
   and techniques introduced in `TFEL` and `MFront`.
-- If none of implementation described in the gallery match the user
+- If none of the implementation described in the gallery match the user
   need, one may have a look at the implementations provided in the
-  `mfront/tests/behaviours` directory in the sources. Beware that
-  those implementations are not updated to ensure back-ward
+  `mfront/tests/behaviours` directory in the sources. Beware that those
+  implementations are not updated on purpose to ensure back-ward
   compatibility. Most of them can be simplified by using
+  [bricks](BehaviourBricks.html).
 - Finally, you may want to have a look at the documentation of the
   interface of the solver that you plan to use (see below for links).
 

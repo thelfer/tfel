@@ -37,8 +37,8 @@ namespace tfel {
         CallBack() = delete;
         /*!
          * \brief constructor
-         * \param[out/in] d_: description
-         * \param[out/in] c_: action
+         * \param[in] d_: description
+         * \param[in] c_: action
          * \param[in] b : true if the callback requires an option
          */
         CallBack(const std::string&, const std::function<void()>&, const bool);

@@ -55,7 +55,9 @@ namespace mfront{
 				"print pedantic warning message");
     Parser::registerNewCallBack("--interface",&MaterialPropertyQuery::treatInterface,
 				"define an interface",true);
-    // // standard queries
+    Parser::registerCallBack("--no-gui",CallBack("do not display errors using "
+						 "a message box (windows only)",[]{},false));
+    // standard queries
     const std::vector<std::pair<const char*,const char*>> sq = {
       {"--author","show the author name"},
       {"--description","show the file description"},

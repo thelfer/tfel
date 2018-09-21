@@ -64,7 +64,7 @@ nobase_include_HEADERS = MTest/Config.hxx	                         \
 			 MTest/Constraint.hxx                            \
 			 MTest/ConstraintBase.hxx                        \
 			 MTest/NonLinearConstraint.hxx                   \
-			 MTest/ImposedDrivingVariable.hxx                \
+			 MTest/ImposedGradient.hxx                       \
 			 MTest/ImposedThermodynamicForce.hxx             \
 			 MTest/AccelerationAlgorithmFactory.hxx          \
 			 MTest/AccelerationAlgorithm.hxx                 \

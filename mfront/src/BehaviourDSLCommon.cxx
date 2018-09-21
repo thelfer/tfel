@@ -3027,7 +3027,7 @@ namespace mfront {
     if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
       if (this->mb.useQt()) {
         os << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type,bool use_qt>\n";
-        os << "class " << this->mb.getClassName() << '\n';
+        os << "class " << this->mb.getClassName() << " final\n";
         os << ": public MechanicalBehaviour<" << btype << ",hypothesis,Type,use_qt>,\n";
         if (this->mb.getAttribute(BehaviourData::profiling, false)) {
           os << "public " << this->mb.getClassName() << "Profiler,\n";
@@ -3037,7 +3037,7 @@ namespace mfront {
         this->writeBehaviourParserSpecificInheritanceRelationship(os);
       } else {
         os << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type>\n";
-        os << "class " << this->mb.getClassName() << "<hypothesis,Type,false>\n";
+        os << "class " << this->mb.getClassName() << "<hypothesis,Type,false> final\n";
         os << ": public MechanicalBehaviour<" << btype << ",hypothesis,Type,false>,\n";
         if (this->mb.getAttribute(BehaviourData::profiling, false)) {
           os << "public " << this->mb.getClassName() << "Profiler,\n";
@@ -3050,7 +3050,7 @@ namespace mfront {
       if (this->mb.useQt()) {
         os << "template<typename Type,bool use_qt>\n";
         os << "class " << this->mb.getClassName()
-           << "<ModellingHypothesis::" << ModellingHypothesis::toUpperCaseString(h) << ",Type,use_qt>\n";
+           << "<ModellingHypothesis::" << ModellingHypothesis::toUpperCaseString(h) << ",Type,use_qt> final\n";
         os << ": public MechanicalBehaviour<" << btype
            << ",ModellingHypothesis::" << ModellingHypothesis::toUpperCaseString(h) << ",Type,use_qt>,\n";
         if (this->mb.getAttribute(BehaviourData::profiling, false)) {
@@ -3064,7 +3064,7 @@ namespace mfront {
       } else {
         os << "template<typename Type>\n";
         os << "class " << this->mb.getClassName()
-           << "<ModellingHypothesis::" << ModellingHypothesis::toUpperCaseString(h) << ",Type,false>\n";
+           << "<ModellingHypothesis::" << ModellingHypothesis::toUpperCaseString(h) << ",Type,false> final\n";
         os << ": public MechanicalBehaviour<" << btype
            << ",ModellingHypothesis::" << ModellingHypothesis::toUpperCaseString(h) << ",Type,false>,\n";
         if (this->mb.getAttribute(BehaviourData::profiling, false)) {

@@ -29,7 +29,7 @@ libTFELMTest_la_SOURCES = RoundingMode.cxx              \
 			  Constraint.cxx                            \
 			  ConstraintBase.cxx                        \
 			  NonLinearConstraint.cxx                   \
-			  ImposedDrivingVariable.cxx                \
+			  ImposedGradient.cxx                       \
 			  ImposedThermodynamicForce.cxx             \
 			  Solver.cxx                                \
 		 	  SolverOptions.cxx                         \

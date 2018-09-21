@@ -77,6 +77,8 @@ namespace mfront{
 				"show all the libraries dependencies");
     Parser::registerNewCallBack("--specific-targets",&ModelQuery::treatSpecificTargets,
 				"show all the specific targets");
+    Parser::registerCallBack("--no-gui",CallBack("do not display errors using "
+						 "a message box (windows only)",[]{},false));
   } // end of ModelQuery::registerCommandLineCallBacks
 
   void ModelQuery::treatStandardQuery(){
