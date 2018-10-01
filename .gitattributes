@@ -527,6 +527,7 @@ docs/mfront/behaviours/InternalNames.tex.in -text
 docs/mfront/behaviours/Makefile.doc.in -text
 docs/mfront/behaviours/annexe-orthotropie.tex.in -text
 docs/mfront/behaviours/behaviours.tex.in -text
+docs/mfront/bricks/DDIF2.md -text
 docs/mfront/bricks/StandardElasticity.md -text
 docs/mfront/castem/CMakeLists.txt -text
 docs/mfront/castem/Makefile.doc.in -text
@@ -618,6 +619,8 @@ docs/mfront/mtest/cyranonorton.mtest -text
 docs/mfront/planestress/CMakeLists.txt -text
 docs/mfront/planestress/Makefile.doc.in -text
 docs/mfront/planestress/planestress.tex.in -text
+docs/mfront/stress-potential/DDIF2.md -text
+docs/mfront/stress-potential/Hooke.md -text
 docs/mfront/style.ist -text
 docs/mfront/zmat/CMakeLists.txt -text
 docs/mfront/zmat/Makefile.doc.in -text

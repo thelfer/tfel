@@ -82,6 +82,8 @@ namespace mfront{
     virtual void treatHelpCommands();
     //! treat the --help-command
     virtual void treatHelpCommand();
+    //! treat the --help-behaviour-brick
+    virtual void treatHelpBehaviourBrick();
     //! treat the --no-melt command line option
     virtual void treatNoMelt();
     //! treat the --silent-build command line option

@@ -38,6 +38,7 @@
 #include "MFront/DSLFactory.hxx"
 #include "MFront/MaterialPropertyInterfaceFactory.hxx"
 #include "MFront/BehaviourInterfaceFactory.hxx"
+#include "MFront/AbstractBehaviourBrickFactory.hxx"
 #include "MFront/ModelInterfaceFactory.hxx"
 #include "MFront/MFrontLock.hxx"
 #include "MFront/MFrontDebugMode.hxx"
@@ -57,18 +58,18 @@ namespace mfront {
   static std::string getDocumentationFilePath(const std::string& pn, const std::string& k) {
     const auto root = tfel::getInstallPath();
 #ifdef TFEL_APPEND_SUFFIX
-    auto fn = root + "/share/doc/mfront-" TFEL_SUFFIX "/" + pn + "/" + k.substr(1) + ".md";
+    auto fn = root + "/share/doc/mfront-" TFEL_SUFFIX "/" + pn + "/" + k + ".md";
 #else  /* TFEL_APPEND_SUFFIX */
-    auto fn = root + "/share/doc/mfront/" + pn + "/" + k.substr(1) + ".md";
+    auto fn = root + "/share/doc/mfront/" + pn + "/" + k + ".md";
 #endif /* TFEL_APPEND_SUFFIX */
     std::ifstream desc{fn};
     if (desc) {
       return fn;
     }
 #ifdef TFEL_APPEND_SUFFIX
-    fn = root + "/share/doc/mfront-" TFEL_SUFFIX "/" + k.substr(1) + ".md";
+    fn = root + "/share/doc/mfront-" TFEL_SUFFIX "/" + k + ".md";
 #else  /* TFEL_APPEND_SUFFIX */
-    fn = root + "/share/doc/mfront/" + k.substr(1) + ".md";
+    fn = root + "/share/doc/mfront/" + k + ".md";
 #endif /* TFEL_APPEND_SUFFIX */
     desc.open(fn);
     if (desc) {
@@ -76,6 +77,38 @@ namespace mfront {
     }
     return "";
   }
+
+  static void displayList(const std::string& d,
+			  const std::vector<std::string>& names) {
+    using tfel::utilities::TerminalColors;
+    auto msize = std::string::size_type{};
+    for (const auto& n : names) {
+      msize = std::max(msize, n.size());
+    }
+    for (const auto& n : names) {
+      const auto fp = getDocumentationFilePath(d, n);
+      auto l = n;
+      l.resize(msize, ' ');
+      std::cout << "- " << l << " ";
+      if (!fp.empty()) {
+        std::cout.write(TerminalColors::Green, sizeof(TerminalColors::Green));
+        std::cout << "(documented)";
+      } else {
+        std::cout.write(TerminalColors::Red, sizeof(TerminalColors::Red));
+        std::cout << "(undocumented)";
+      }
+      std::cout.write(TerminalColors::Reset, sizeof(TerminalColors::Reset));
+      std::cout << std::endl;
+    }
+    std::exit(EXIT_SUCCESS);
+  }  // end of displayList
+
+  static void displayList(const std::vector<std::string>& names) {
+    for (const auto& n : names) {
+      std::cout << "- " << n << "\n";
+    }
+    std::exit(EXIT_SUCCESS);
+  } // end of displayList
 
   std::string MFront::getVersionDescription() const { return MFrontHeader::getHeader(); }
 
@@ -263,6 +296,12 @@ namespace mfront {
         "--help-keyword", &MFront::treatHelpCommand,
         "display the help associated for the given domain specific language and exits", true);
     this->registerNewCallBack(
+        "--help-behaviour-brick", &MFront::treatHelpBehaviourBrick,
+        "display the help associated with the given behaviour brick", true);
+    // this->registerNewCallBack(
+    //     "--help-stress-potential", &MFront::treatHelpStressPotential,
+    //     "display the help associated with the given stress potential", true);
+    this->registerNewCallBack(
         "--help-command", &MFront::treatHelpCommand,
         "display the help associated for the given domain specific language and exits", true);
     this->registerNewCallBack("--debug", &MFront::treatDebug,
@@ -305,10 +344,7 @@ namespace mfront {
                  [] {
                    auto& mpif =
                        MaterialPropertyInterfaceFactory::getMaterialPropertyInterfaceFactory();
-                   for (const auto& i : mpif.getRegistredInterfaces()) {
-                     std::cout << "- " << i << '\n';
-                   }
-                   std::exit(EXIT_SUCCESS);
+                   displayList(mpif.getRegistredInterfaces());
                  },
                  false));
     this->registerCallBack("--list-behaviour-interfaces",
@@ -316,22 +352,24 @@ namespace mfront {
                                     [] {
                                       auto& bif =
                                           BehaviourInterfaceFactory::getBehaviourInterfaceFactory();
-                                      for (const auto& i : bif.getRegistredInterfaces()) {
-                                        std::cout << "- " << i << '\n';
-                                      }
-                                      std::exit(EXIT_SUCCESS);
+                                      displayList(bif.getRegistredInterfaces());
                                     },
                                     false));
     this->registerCallBack("--list-model-interfaces",
                            CallBack("list available model interfaces",
                                     [] {
                                       auto& mif = ModelInterfaceFactory::getModelInterfaceFactory();
-                                      for (const auto& i : mif.getRegistredInterfaces()) {
-                                        std::cout << "- " << i << '\n';
-                                      }
-                                      std::exit(EXIT_SUCCESS);
+                                      displayList(mif.getRegistredInterfaces());
                                     },
                                     false));
+    this->registerCallBack(
+        "--list-behaviour-bricks",
+        CallBack("list available behaviour bricks",
+                 [] {
+                   auto& bbf = AbstractBehaviourBrickFactory::getFactory();
+                   displayList("bricks",bbf.getRegistredBricks());
+                 },
+                 false));
 #if (defined _WIN32 || defined _WIN64 || defined __CYGWIN__)
     this->registerNewCallBack("--nodeps", &MFront::treatNoDeps,
                               "don't generate compilation dependencies");
@@ -369,29 +407,7 @@ namespace mfront {
     std::shared_ptr<AbstractDSL> p{f.createNewParser(o)};
     std::vector<std::string> keys;
     p->getKeywordsList(keys);
-    std::string::size_type msize = 0;
-    for (const auto& k : keys) {
-      msize = std::max(msize, k.size());
-    }
-    for (const auto& key : keys) {
-      if (key == ";") {
-        continue;
-      }
-      const auto fp = getDocumentationFilePath(o, key);
-      auto k = key;
-      k.resize(msize, ' ');
-      std::cout << k << "  ";
-      if (!fp.empty()) {
-        std::cout.write(TerminalColors::Green, sizeof(TerminalColors::Green));
-        std::cout << "(documented)";
-      } else {
-        std::cout.write(TerminalColors::Red, sizeof(TerminalColors::Red));
-        std::cout << "(undocumented)";
-      }
-      std::cout.write(TerminalColors::Reset, sizeof(TerminalColors::Reset));
-      std::cout << std::endl;
-    }
-    exit(EXIT_SUCCESS);
+    displayList(o, keys);
   }  // end of MFront::treatHelpCommandsList
 
   void MFront::treatHelpCommands() {
@@ -404,7 +420,7 @@ namespace mfront {
     f.createNewParser(o)->getKeywordsList(keys);
     std::cout << "% `" << o << "` keywords\n\n";
     for (const auto& k : keys) {
-      const auto fp = getDocumentationFilePath(o, k);
+      const auto fp = getDocumentationFilePath(o, k.substr(1));
       std::cout << "\n# The `" << k << "` keyword\n\n";
       if (!fp.empty()) {
         std::ifstream desc{fp};
@@ -449,20 +465,38 @@ namespace mfront {
                    "MFront::treatHelpCommand: "
                    "keyword '" +
                        k + "' is not declared ");
-    const auto fp = getDocumentationFilePath(pn, k);
+    const auto fp = getDocumentationFilePath(pn, k.substr(1));
     if (fp.empty()) {
-      std::cout << "no description available for keyword '" << k << "'" << std::endl;
+      std::cout << "no description available for keyword '" << k << "'\n";
     } else {
       std::ifstream desc(fp);
       if (!desc) {
         // note, this shall never append...
-        std::cout << "can't access to the description of keyword '" << k << "'" << std::endl;
+        std::cout << "can't access to the description of keyword '" << k
+                  << "'\n";
       } else {
         std::cout << desc.rdbuf();
       }
     }
     exit(EXIT_SUCCESS);
   }  // end of MFront::treatHelpCommand
+
+  void  MFront::treatHelpBehaviourBrick() {
+    const auto& b = this->currentArgument->getOption();
+    const auto fp = getDocumentationFilePath("bricks", b);
+    if (fp.empty()) {
+      std::cout << "no description available for keyword '" << b << "'\n";
+    } else {
+      std::ifstream desc(fp);
+      if (!desc) {
+        std::cout << "can't access to the description of keyword '" << b
+                  << "'\n";
+      } else {
+        std::cout << desc.rdbuf();
+      }
+    }
+    exit(EXIT_SUCCESS);
+  }  // end of MFront::treatHelpBehaviourBrick
 
   void MFront::treatNoDeps() { this->opts.nodeps = true; }  // end of MFront::treatNoDeps
 

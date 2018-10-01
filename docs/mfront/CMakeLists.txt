@@ -159,6 +159,10 @@ install_mfront_desc2(Model Model)
 install_mfront_desc2(Model Output)
 
 install_mfront_desc2(bricks StandardElasticity)
+install_mfront_desc2(bricks DDIF2)
+
+install_mfront_desc2(stress-potential Hooke)
+install_mfront_desc2(stress-potential DDIF2)
 
 if(HAVE_LATEX AND GENERATE_REFERENCE_DOC)
 

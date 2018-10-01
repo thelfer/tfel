@@ -605,6 +605,33 @@ automatically made available:
 - the `young_tdt` variable will be computed for the temperature
   \(T+\Delta\,T\).
 
+## New command line arguments
+
+### The `--list-behaviour-bricks` argument
+
+The `--list-behaviour-bricks` argument returns the list of all available
+behaviour bricks.
+
+~~~~{.sh}
+$ mfront --list-behaviour-bricks
+DDIF2                         (undocumented)
+FiniteStrainSingleCrystal     (undocumented)
+StandardElasticity            (documented)
+StandardElastoViscoPlasticity (undocumented)
+~~~~
+
+### The `--help-behaviour-brick` argument
+
+The `--help-behaviour-brick` argument returns the help associated with a
+given behaviour brick.
+
+
+~~~~{.sh}
+$ mfront --help-behaviour-brick=StandardElasticity
+The `StandardElasticity` brick describes the linear elastic part of
+the behaviour of an isotropic or orthotropic material.
+~~~~
+
 # New functionalities in `MTest`
 
 ## Events, activation and desactivation of constraints

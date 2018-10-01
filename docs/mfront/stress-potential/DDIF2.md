@@ -1,10 +1,4 @@
-% The `DDIF2` brick
-% Bruno Michel, Thomas Helfer
-% 12/2017
-
-This page describes the `DDIF2` brick.
-
-The `DDIF2` behaviour is used to describe the brittle nature of
+The `DDIF2` stress potential is used to describe the brittle nature of
 nuclear fuel ceramics and is usually coupled with a description of the
 viscoplasticity of those ceramics (See for example
 [@monerie_overall_2006,@salvo_experimental_2015;@salvo_experimental_2015-1]).

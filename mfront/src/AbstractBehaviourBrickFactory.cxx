@@ -12,6 +12,7 @@
  */
 
 #include <stdexcept>
+#include <algorithm>
 
 #include "TFEL/Raise.hxx"
 #include "TFEL/Utilities/Data.hxx"
@@ -81,6 +82,16 @@ namespace mfront {
     add("FiniteStrainSingleCrystal",
         buildBehaviourBrickConstructor<FiniteStrainSingleCrystalBrick>);
   }  // end of AbstractBehaviourBrickFactory::AbstractBehaviourBrickFactory
+
+  std::vector<std::string> AbstractBehaviourBrickFactory::getRegistredBricks()
+      const {
+    auto names = std::vector<std::string>{};
+    std::for_each(std::begin(this->constructors), std::end(this->constructors),
+                  [&names](const std::pair<std::string, constructor>& c) {
+                    names.push_back(c.first);
+                  });
+    return names;
+}  // end of AbstractBehaviourBrickFactory::getRegistredBricks
 
   void AbstractBehaviourBrickFactory::registerAbstractBehaviourBrick(
       const std::string& a, const constructor c) {
