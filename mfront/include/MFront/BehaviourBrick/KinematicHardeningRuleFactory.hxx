@@ -28,6 +28,8 @@ namespace mfront {
       using Generator = std::function<std::shared_ptr<KinematicHardeningRule>()>;
       //! \return the uniq instance of the class
       static KinematicHardeningRuleFactory& getFactory();
+      //! \brief return the list of kinematic hardening rules
+      std::vector<std::string> getRegistredKinematicHardeningRules() const;
       /*!
        * \brief add a new generator
        * \param[in] n: name of the generator

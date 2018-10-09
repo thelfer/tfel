@@ -16,6 +16,16 @@
 
 namespace mfront{
 
+  template <typename Value>
+  std::vector<std::string> getKeys(const std::map<std::string, Value>& m) {
+    std::vector<std::string> keys;
+    keys.reserve(m.size());
+    for (const auto& v : m) {
+      keys.push_back(v.first);
+    }
+    return keys;
+  }  // end of get Keys
+
   template<typename Container>
   void insert_if(std::vector<std::string>& d,
 		 const Container& s)
@@ -34,10 +44,10 @@ namespace mfront{
     }
   }
 
-  template<typename T>
+  template <typename T>
   void read(T& r,
-	    tfel::utilities::CxxTokenizer::const_iterator& p,
-	    const tfel::utilities::CxxTokenizer::const_iterator pe){
+            tfel::utilities::CxxTokenizer::const_iterator& p,
+            const tfel::utilities::CxxTokenizer::const_iterator pe) {
     r = read<T>(p,pe);
   } // end of read
   

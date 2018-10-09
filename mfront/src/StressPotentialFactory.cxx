@@ -6,6 +6,7 @@
  */
 
 #include "TFEL/Raise.hxx"
+#include "MFront/MFrontUtilities.hxx"
 #include "MFront/BehaviourBrick/HookeStressPotential.hxx"
 #include "MFront/BehaviourBrick/DDIF2StressPotential.hxx"
 #include "MFront/BehaviourBrick/IsotropicDamageHookeStressPotential.hxx"
@@ -29,6 +30,11 @@ namespace mfront {
             n + "' already registred");
       }
     }  // end of StressPotentialFactory::addGenerator
+
+    std::vector<std::string>
+    StressPotentialFactory::getRegistredStressPotentials() const {
+      return getKeys(this->generators);
+    }  // end of StressPotentialFactory::getRegistredStressPotentials
 
     std::shared_ptr<StressPotential> StressPotentialFactory::generate(
         const std::string& n) const {

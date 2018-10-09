@@ -12,6 +12,11 @@
 \newcommand{\tsigma}{\underline{\sigma}}
 \newcommand{\trace}[1]{{\mathrm{tr}\paren{#1}}}
 \newcommand{\sigmaH}{\sigma_{H}}
+\newcommand{\tepsilonto}{\underline{\epsilon}^{\mathrm{to}}}
+\newcommand{\tepsilonel}{\underline{\epsilon}^{\mathrm{el}}}
+\newcommand{\tepsilonp}{\underline{\epsilon}^{\mathrm{p}}}
+\newcommand{\tepsilonvp}{\underline{\epsilon}^{\mathrm{vp}}}
+\newcommand{\tepsilonth}{\underline{\epsilon}^{\mathrm{th}}}
 
 The page declares the new functionalities of the 3.2 version of
 the `TFEL` project.
@@ -631,6 +636,41 @@ $ mfront --help-behaviour-brick=StandardElasticity
 The `StandardElasticity` brick describes the linear elastic part of
 the behaviour of an isotropic or orthotropic material.
 ~~~~
+
+### Arguments related to the `StandardElastoViscoplasticity` brick
+
+The `StandardElastoViscoplasticity` brick is based on the concepts of:
+
+- stress-potential
+- criterion
+- isotropic hardening rule
+- kinematic hardening rule
+
+For each concept, one can query the list of concrete implementations of
+this concept and the associated help, as in the following example:
+
+~~~~{.sh}
+$ mfront --list-stress-potentials
+- DDIF2           (documented)
+- Hooke           (documented)
+- IsotropicDamage (undocumented)
+$ mfront --help-stress-potential=Hooke
+The `Hooke` brick describes the linear elastic part of
+the behaviour of an isotropic or orthotropic material.
+.....
+~~~~
+
+The following arguments are thus avaiable:
+
+- `--list-isotropic-hardening-rules`
+- `--list-kinematic-hardening-rules`
+- `--list-stress-criteria`
+- `--list-stress-potentials`
+- `--help-isotropic-hardening-rule`
+- `--help-kinematic-hardening-rule`
+- `--help-stress-criterion`
+- `--help-stress-potential`
+
 
 # New functionalities in `MTest`
 

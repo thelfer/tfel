@@ -12,6 +12,7 @@
  */
 
 #include "TFEL/Raise.hxx"
+#include "MFront/MFrontUtilities.hxx"
 #include "MFront/BehaviourBrick/PragerKinematicHardeningRule.hxx"
 #include "MFront/BehaviourBrick/Chaboche2012KinematicHardeningRule.hxx"
 #include "MFront/BehaviourBrick/BurletCailletaudKinematicHardeningRule.hxx"
@@ -26,6 +27,11 @@ namespace mfront {
       static KinematicHardeningRuleFactory i;
       return i;
     }  // end of KinematicHardeningRuleFactory::getFactory
+
+    std::vector<std::string>
+    KinematicHardeningRuleFactory::getRegistredKinematicHardeningRules() const {
+      return getKeys(this->generators);
+    }  // end of KinematicHardeningRuleFactory::getRegistredKinematicHardeningRules
 
     void KinematicHardeningRuleFactory::addGenerator(const std::string& n,
                                                      const Generator& g) {

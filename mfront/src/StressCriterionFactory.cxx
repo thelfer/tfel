@@ -12,6 +12,7 @@
  */
 
 #include "TFEL/Raise.hxx"
+#include "MFront/MFrontUtilities.hxx"
 #include "MFront/BehaviourBrick/MisesStressCriterion.hxx"
 #include "MFront/BehaviourBrick/Hill1948StressCriterion.hxx"
 #include "MFront/BehaviourBrick/Barlat2004StressCriterion.hxx"
@@ -30,6 +31,11 @@ namespace mfront {
       static StressCriterionFactory i;
       return i;
     }  // end of StressCriterionFactory::getFactory
+
+    std::vector<std::string>
+    StressCriterionFactory::getRegistredStressCriteria() const {
+      return getKeys(this->generators);
+    }  // end of StressCriterionFactory::getRegistredStressCriteria
 
     void StressCriterionFactory::addGenerator(const std::string& n,
                                                  const Generator& g) {

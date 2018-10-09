@@ -10,6 +10,7 @@
 
 #include <map>
 #include <string>
+#include <vector>
 #include <memory>
 #include <functional>
 
@@ -34,6 +35,8 @@ namespace mfront {
        * \param[in] g: generator
        */
       void addGenerator(const std::string&, const Generator&);
+      //! \return the list of available stress potentials
+      std::vector<std::string> getRegistredStressPotentials() const;
       /*!
        * \brief generate a new stress potential
        * \param[in] n: name of the stress potential

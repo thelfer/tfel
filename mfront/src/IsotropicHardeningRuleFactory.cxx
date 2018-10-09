@@ -12,6 +12,7 @@
  */
 
 #include "TFEL/Raise.hxx"
+#include "MFront/MFrontUtilities.hxx"
 #include "MFront/BehaviourBrick/VoceIsotropicHardeningRule.hxx"
 #include "MFront/BehaviourBrick/SwiftIsotropicHardeningRule.hxx"
 #include "MFront/BehaviourBrick/LinearIsotropicHardeningRule.hxx"
@@ -25,6 +26,11 @@ namespace mfront {
       static IsotropicHardeningRuleFactory i;
       return i;
     }  // end of IsotropicHardeningRuleFactory::getFactory
+
+    std::vector<std::string>
+    IsotropicHardeningRuleFactory::getRegistredIsotropicHardeningRules() const {
+      return getKeys(this->generators);
+    }  // end of IsotropicHardeningRuleFactory::getRegistredIsotropicHardeningRules
 
     void IsotropicHardeningRuleFactory::addGenerator(const std::string& n,
                                                  const Generator& g) {

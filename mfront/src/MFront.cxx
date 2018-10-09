@@ -39,6 +39,10 @@
 #include "MFront/MaterialPropertyInterfaceFactory.hxx"
 #include "MFront/BehaviourInterfaceFactory.hxx"
 #include "MFront/AbstractBehaviourBrickFactory.hxx"
+#include "MFront/BehaviourBrick/StressPotentialFactory.hxx"
+#include "MFront/BehaviourBrick/StressCriterionFactory.hxx"
+#include "MFront/BehaviourBrick/IsotropicHardeningRuleFactory.hxx"
+#include "MFront/BehaviourBrick/KinematicHardeningRuleFactory.hxx"
 #include "MFront/ModelInterfaceFactory.hxx"
 #include "MFront/MFrontLock.hxx"
 #include "MFront/MFrontDebugMode.hxx"
@@ -79,7 +83,7 @@ namespace mfront {
   }
 
   static void displayList(const std::string& d,
-			  const std::vector<std::string>& names) {
+                          const std::vector<std::string>& names) {
     using tfel::utilities::TerminalColors;
     auto msize = std::string::size_type{};
     for (const auto& n : names) {
@@ -109,6 +113,23 @@ namespace mfront {
     }
     std::exit(EXIT_SUCCESS);
   } // end of displayList
+
+  static void displayHelpFile(const std::string& f,
+                              const std::string& t,
+                              const std::string& n) {
+    if (f.empty()) {
+      std::cout << "no description available for " << t << " '" << n << "'\n";
+    } else {
+      std::ifstream desc(f);
+      if (!desc) {
+        std::cout << "can't access to the description of " << t << " '" << n
+                  << "'\n";
+      } else {
+        std::cout << desc.rdbuf();
+      }
+    }
+    exit(EXIT_SUCCESS);
+  }  // end of displayHelp
 
   std::string MFront::getVersionDescription() const { return MFrontHeader::getHeader(); }
 
@@ -269,7 +290,7 @@ namespace mfront {
                               "does not report errors by a message box");
     this->registerNewCallBack("--verbose", &MFront::treatVerbose, "set verbose output", true);
     this->registerNewCallBack("--list-parsers", &MFront::treatListParsers,
-                              "list all available domain specific languages (deprecated)");
+                              "list all available domain specific languages (deprecated, use --list-dsl)");
     this->registerNewCallBack("--list-dsl", &MFront::treatListParsers,
                               "list all available domain specific languages");
     this->registerNewCallBack("--help-commands", &MFront::treatHelpCommands,
@@ -298,15 +319,15 @@ namespace mfront {
     this->registerNewCallBack(
         "--help-behaviour-brick", &MFront::treatHelpBehaviourBrick,
         "display the help associated with the given behaviour brick", true);
-    // this->registerNewCallBack(
-    //     "--help-stress-potential", &MFront::treatHelpStressPotential,
-    //     "display the help associated with the given stress potential", true);
+    this->registerNewCallBack("--help-command", &MFront::treatHelpCommand,
+                              "display the help associated for the given "
+                              "domain specific language and exits",
+                              true);
     this->registerNewCallBack(
-        "--help-command", &MFront::treatHelpCommand,
-        "display the help associated for the given domain specific language and exits", true);
-    this->registerNewCallBack("--debug", &MFront::treatDebug,
-                              "set debug mode (remove references to initial file)");
-    this->registerNewCallBack("--warning", "-W", &MFront::treatWarning, "print warnings");
+        "--debug", &MFront::treatDebug,
+        "set debug mode (remove references to initial file)");
+    this->registerNewCallBack("--warning", "-W", &MFront::treatWarning,
+                              "print warnings");
     this->registerNewCallBack("--pedantic", &MFront::treatPedantic,
                               "print pedantic warning message");
     this->registerNewCallBack("--interface", "-i", &MFront::treatInterface,
@@ -338,6 +359,7 @@ namespace mfront {
                               "generate build file and clean libraries");
     this->registerNewCallBack("--generator", "-G", &MFront::treatGenerator, "choose build system",
                               true);
+
     this->registerCallBack(
         "--list-material-property-interfaces",
         CallBack("list available material property interfaces",
@@ -362,6 +384,91 @@ namespace mfront {
                                       displayList(mif.getRegistredInterfaces());
                                     },
                                     false));
+    // stress potentials
+    this->registerCallBack(
+        "--list-stress-potentials",
+        CallBack("list available stress potentials",
+                 [] {
+                   auto& spf =
+                       mfront::bbrick::StressPotentialFactory::getFactory();
+                   displayList("stress-potentials",
+                               spf.getRegistredStressPotentials());
+                 },
+                 false));
+    this->registerCallBack(
+        "--help-stress-potential",
+        CallBack("display the help associated with the given stress potential",
+                 [this] {
+                   const auto& sp = this->currentArgument->getOption();
+                   const auto fp =
+                       getDocumentationFilePath("stress-potentials", sp);
+                   displayHelpFile(fp, "stress potential", sp);
+                 },
+                 true));
+    // stress criteria
+    this->registerCallBack(
+        "--list-stress-criteria",
+        CallBack("list available stress criteria",
+                 [] {
+                   auto& spf =
+                       mfront::bbrick::StressCriterionFactory::getFactory();
+                   displayList("stress-criteria",
+                               spf.getRegistredStressCriteria());
+                 },
+                 false));
+    this->registerCallBack(
+        "--help-stress-criterion",
+        CallBack("display the help associated with the given stress criterion",
+                 [this] {
+                   const auto& sp = this->currentArgument->getOption();
+                   const auto fp =
+                       getDocumentationFilePath("stress-criteria", sp);
+                   displayHelpFile(fp, "stress criterion", sp);
+                 },
+                 true));
+    // isotropic hardening rule
+    this->registerCallBack(
+        "--list-isotropic-hardening-rules",
+        CallBack("list available isotropic hardening rules",
+                 [] {
+                   auto& spf =
+                       mfront::bbrick::IsotropicHardeningRuleFactory::getFactory();
+                   displayList("isotropic-hardening-rules",
+                               spf.getRegistredIsotropicHardeningRules());
+                 },
+                 false));
+    this->registerCallBack(
+        "--help-isotropic-hardening-rule",
+        CallBack("display the help associated with the given isotropic hardening rule",
+                 [this] {
+                   const auto& sp = this->currentArgument->getOption();
+                   const auto fp =
+                       getDocumentationFilePath("isotropic-hardening-rules", sp);
+                   displayHelpFile(fp, "isotropic hardening rule", sp);
+                 },
+                 true));
+    // kinematic hardening rule
+    this->registerCallBack(
+        "--list-kinematic-hardening-rules",
+        CallBack("list available kinematic hardening rules",
+                 [] {
+                   auto& spf =
+                       mfront::bbrick::KinematicHardeningRuleFactory::getFactory();
+                   displayList("kinematic-hardening-rules",
+                               spf.getRegistredKinematicHardeningRules());
+                 },
+                 false));
+    this->registerCallBack(
+        "--help-kinematic-hardening-rule",
+        CallBack("display the help associated with the given kinematic hardening rule",
+                 [this] {
+                   const auto& sp = this->currentArgument->getOption();
+                   const auto fp =
+                       getDocumentationFilePath("kinematic-hardening-rules", sp);
+                   displayHelpFile(fp, "kinematic hardening rule", sp);
+                 },
+                 true));
+
     this->registerCallBack(
         "--list-behaviour-bricks",
         CallBack("list available behaviour bricks",
@@ -466,36 +573,13 @@ namespace mfront {
                    "keyword '" +
                        k + "' is not declared ");
     const auto fp = getDocumentationFilePath(pn, k.substr(1));
-    if (fp.empty()) {
-      std::cout << "no description available for keyword '" << k << "'\n";
-    } else {
-      std::ifstream desc(fp);
-      if (!desc) {
-        // note, this shall never append...
-        std::cout << "can't access to the description of keyword '" << k
-                  << "'\n";
-      } else {
-        std::cout << desc.rdbuf();
-      }
-    }
-    exit(EXIT_SUCCESS);
+    displayHelpFile(fp, "keyword", k);
   }  // end of MFront::treatHelpCommand
 
   void  MFront::treatHelpBehaviourBrick() {
     const auto& b = this->currentArgument->getOption();
     const auto fp = getDocumentationFilePath("bricks", b);
-    if (fp.empty()) {
-      std::cout << "no description available for keyword '" << b << "'\n";
-    } else {
-      std::ifstream desc(fp);
-      if (!desc) {
-        std::cout << "can't access to the description of keyword '" << b
-                  << "'\n";
-      } else {
-        std::cout << desc.rdbuf();
-      }
-    }
-    exit(EXIT_SUCCESS);
+    displayHelpFile(fp, "behaviour brick", b);
   }  // end of MFront::treatHelpBehaviourBrick
 
   void MFront::treatNoDeps() { this->opts.nodeps = true; }  // end of MFront::treatNoDeps

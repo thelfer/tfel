@@ -103,8 +103,8 @@ MFRONT_DOCS = AdditionalConvergenceChecks.md                            \
 	      Model/Output.md                                           \
 	      bricks/StandardElasticity.md                              \
 	      bricks/DDIF2.md                                           \
-	      stress-potential/Hooke.md                                 \
-	      stress-potential/DDIF2.md
+	      stress-potentials/Hooke.md                                 \
+	      stress-potentials/DDIF2.md
 
 mfrontdocdir   = $(datadir)/doc/mfront
 nobase_mfrontdoc_DATA = $(MFRONT_DOCS)

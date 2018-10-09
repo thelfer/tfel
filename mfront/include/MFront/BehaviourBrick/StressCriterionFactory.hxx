@@ -28,6 +28,8 @@ namespace mfront {
       using Generator = std::function<std::shared_ptr<StressCriterion>()>;
       //! \return the uniq instance of the class
       static StressCriterionFactory& getFactory();
+      //! \brief return the list of available stress criteria
+      std::vector<std::string> getRegistredStressCriteria() const;
       /*!
        * \brief add a new generator
        * \param[in] n: name of the generator

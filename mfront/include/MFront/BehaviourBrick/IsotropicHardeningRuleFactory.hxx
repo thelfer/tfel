@@ -25,9 +25,12 @@ namespace mfront {
      */
     struct IsotropicHardeningRuleFactory {
       //! a simple alias
-      using Generator = std::function<std::shared_ptr<IsotropicHardeningRule>()>;
+      using Generator =
+          std::function<std::shared_ptr<IsotropicHardeningRule>()>;
       //! \return the uniq instance of the class
       static IsotropicHardeningRuleFactory& getFactory();
+      //! \brief return the list of available isotropic hardening rules
+      std::vector<std::string> getRegistredIsotropicHardeningRules() const;
       /*!
        * \brief add a new generator
        * \param[in] n: name of the generator

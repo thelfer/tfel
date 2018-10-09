@@ -619,8 +619,8 @@ docs/mfront/mtest/cyranonorton.mtest -text
 docs/mfront/planestress/CMakeLists.txt -text
 docs/mfront/planestress/Makefile.doc.in -text
 docs/mfront/planestress/planestress.tex.in -text
-docs/mfront/stress-potential/DDIF2.md -text
-docs/mfront/stress-potential/Hooke.md -text
+docs/mfront/stress-potentials/DDIF2.md -text
+docs/mfront/stress-potentials/Hooke.md -text
 docs/mfront/style.ist -text
 docs/mfront/zmat/CMakeLists.txt -text
 docs/mfront/zmat/Makefile.doc.in -text
