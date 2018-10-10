@@ -47,14 +47,16 @@ namespace tfel
 			   const T q1,
 			   const T q2)
     {
-      using namespace std;
-      T sst = seq;
-      T S = pow((seq/sst),2) + 2*q1*fst*cosh((q2*skk)/(2*sst)) - 1 - pow((q1*fst),2);
-      T SP = (-2*pow((seq/sst),2)/(sst)) - ((q1*q2*fst*skk)/(sst*sst))*sinh((q2*skk)/(2*sst));
+      auto square = [](const T& v){return v*v;};
+      auto sst = seq;
+      auto isst = 1/std::max(sst,1.e-6);
+      auto S = square(seq*isst) + 2*q1*fst*cosh(q2*skk*isst/2) - 1 - square(q1*fst);
+      auto SP = -2*square(seq*isst)*isst - q1*q2*fst*skk*square(isst)*sinh(q2*skk*isst/2);
       while(S>1.e-10){
 	sst = sst - S/SP;
-	S =  pow((seq/sst),2) + 2*q1*fst*cosh((q2*skk)/(2*sst)) - 1 - pow((q1*fst),2);
-	SP = (-2*pow((seq/sst),2)/(sst)) - ((q1*q2*fst*skk)/(sst*sst))*sinh((q2*skk)/(2*sst));   
+	isst = 1/std::max(sst,1.e-6);
+	S =  square(seq/sst) + 2*q1*fst*cosh(q2*skk/(2*sst)) - 1 - square(q1*fst);
+	SP = -2*square(seq*isst)*isst - q1*q2*fst*skk*square(isst)*sinh(q2*skk*isst/2);   
       }
       return sst;
     } // end of computeFlowStressGTN

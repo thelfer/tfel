@@ -14,10 +14,14 @@
  "situation d'APRP."
 }
 
+
+@Brick StandardElasticity;
 @OrthotropicBehaviour;
+@IsotropicElasticBehaviour;
 @Algorithm NewtonRaphson_NumericalJacobian;
 @Theta 1.;
-@Epsilon 1.e-10;
+@PerturbationValueForNumericalJacobianComputation 1.e-11;
+@Epsilon 1.e-16;
 
 @MaterialProperty real young;
 young.setGlossaryName("YoungModulus");
@@ -32,42 +36,24 @@ nu.setGlossaryName("PoissonRatio");
 @MaterialProperty real M3[6];
 
 @StateVariable real p;      /* Equivalent viscoplastic strain */
+p.setGlossaryName("EquivalentViscoplasticStrain");
 
 @AuxiliaryStateVariable real seq;
 seq.setGlossaryName("HillStress");
-@AuxiliaryStateVariable real fvi[3];
 @AuxiliaryStateVariable real svi[3];
 
-@LocalVariable stress lambda;
-@LocalVariable stress mu;
 @LocalVariable tfel::math::st2tost2<N,real> H;
-@LocalVariable real T_ ;
 @LocalVariable real invn[3], f[3], gamma[3], sv[3]  ;
 
 // variables de commande aster
 @ExternalStateVariable real ALPHPUR,ALPHBETA;
 
 @IsTangentOperatorSymmetric true;
-@TangentOperator{
-  if((smt==ELASTIC)||(smt==SECANTOPERATOR)){
-    computeElasticStiffness<N,Type>::exe(Dt,lambda,mu);
-  } else if(smt==CONSISTENTTANGENTOPERATOR){
-    StiffnessTensor Hooke;
-    Stensor4 Je;
-    computeElasticStiffness<N,Type>::exe(Hooke,lambda,mu);
-    getPartialJacobianInvert(Je);
-    Dt = Hooke*Je;
-  } else {
-    return false;
-  }
-}
 
 @InitLocalVariables{
-  lambda = computeLambda(young,nu);
-  mu = computeMu(young,nu);
   // proportion en phase alpha en milieu de pas de temps
   const real Z = min(max(ALPHPUR  + theta*dALPHPUR+
-			 ALPHBETA + theta*dALPHBETA,0.),1.);
+  			 ALPHBETA + theta*dALPHBETA,0.),1.);
   if (Z >= 0.99) {
     f[0]=1. ;
   } else if (Z >= 0.9) {
@@ -95,7 +81,7 @@ seq.setGlossaryName("HillStress");
   }
 
   // Temperature Aster en Celsius
-  T_ = 273.0 + T + theta * dT ;
+  const auto T_ = 273.0 + T + theta * dT ;
   for(unsigned short i=0;i!=3;++i){
     invn[i] = 1.0 / pn[i] ;
     gamma[i] = a[i]* exp(Q[i]/T_*invn[i]) ;
@@ -125,37 +111,20 @@ seq.setGlossaryName("HillStress");
 			 H_L,H_M,H_N);
 }
 
-@ComputeStress{
-  sig = lambda*trace(eel)*Stensor::Id()+2*mu*eel;
-}
-
 @Integrator{
-  const real sigeq = sqrt(sig|H*sig);
-  real p_=p+theta*dp ;
-  real sigv =  0. ;
-  real pm[3];
-  real dpn[3] ;
-  for(unsigned short i=0;i!=3;++i){
-    pm[i]  = (p_ > 0.) ? pow(p_,m[i])         : 0.;
-    dpn[i] = (dp > 0.) ? pow((dp/dt),invn[i]) : 0. ;
-    sv[i]=gamma[i]*pm[i]*dpn[i] ;
-    sigv += f[i]*sv[i] ;
-  }
-  // normale à l'écoulement
-  Stensor  n(0.);
-  real inv_sigeq(0);     
-  if(sigeq > 1.e-10*young){
-    inv_sigeq = 1/sigeq;
-    n  = (H*sig)*inv_sigeq;
-  }
-  feel += dp*n-deto;
-  fp    = (sigeq-sigv)/young;
-}
-
-@UpdateAuxiliaryStateVars{
   seq = sqrt(sig|H*sig);
-  for(unsigned short i=0;i!=3;++i){
-    fvi[i]=f[i] ;
-    svi[i]=sv[i] ;
+  if(seq > 1.e-10*young){
+    const auto p_=p+theta*dp ;
+    real sigv =  0. ;
+    for(unsigned short i=0;i!=3;++i){
+      const auto pm  = (p_ > 0) ? pow(p_,m[i])         : 0;
+      const auto dpn = (dp > 0) ? pow((dp/dt),invn[i]) : 0;
+      svi[i]=gamma[i]*pm*dpn ;
+      sigv += f[i]*svi[i] ;
+    }
+    // normale à l'écoulement
+    const auto n  = (H*sig)/seq;
+    fp    = (seq-sigv)/young;
+    feel += dp*n;
   }
 }
