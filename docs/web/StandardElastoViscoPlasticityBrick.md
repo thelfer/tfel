@@ -41,7 +41,7 @@
 This page describes the `StandardElastoViscoPlasticity` brick. This
 brick is used to describe a specific class of strain based behaviours
 based on an additive split of the total strain \(\tepsilonto\) into an
-elastic part \(\tepsilonel\) and an one or several inelastic strains
+elastic part \(\tepsilonel\) and one or several inelastic strains
 describing plastic (time-independent) flows and/or viscoplastic
 (time-dependent) flows:
 \[

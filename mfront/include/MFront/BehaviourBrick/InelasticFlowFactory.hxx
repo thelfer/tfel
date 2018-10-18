@@ -34,6 +34,8 @@ namespace mfront {
        * \param[in] g: generator
        */
       void addGenerator(const std::string&, const Generator&);
+      //! \return the list of available inelastic flows
+      std::vector<std::string> getRegistredInelasticFlows() const;
       /*!
        * \brief generate a new inelastic flow
        * \param[in] n: name of the inelastic flow

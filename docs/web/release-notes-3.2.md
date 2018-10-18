@@ -589,7 +589,7 @@ explains why this project is not part of the `TFEL`.
 Various keywords (such as `@ElasticMaterialProperties`,
 `@ComputeThermalExpansion`, `@HillTensor`, etc.)  expects one or more
 material properties. In previous versions, those material properties
-were constants or defined by an external `MFront`.
+were constants or defined by an external `MFront` file.
 
 This new version allows those material properties to be defined by
 formulae, as follows:

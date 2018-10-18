@@ -12,10 +12,12 @@
  */
 
 #include "TFEL/Raise.hxx"
+#include "MFront/MFrontUtilities.hxx"
 #include "MFront/BehaviourBrick/PlasticInelasticFlow.hxx"
 #include "MFront/BehaviourBrick/NortonHoffViscoplasticFlow.hxx"
 #include "MFront/BehaviourBrick/HyperbolicSineViscoplasticFlow.hxx"
 #include "MFront/BehaviourBrick/InelasticFlowFactory.hxx"
+
 namespace mfront {
 
   namespace bbrick {
@@ -34,6 +36,11 @@ namespace mfront {
             n + "' already registred");
       }
     }  // end of InelasticFlowFactory::addGenerator
+
+    std::vector<std::string>
+    InelasticFlowFactory::getRegistredInelasticFlows() const {
+      return getKeys(this->generators);
+    }  // end of InelasticFlowFactory::getRegistredInelasticFlows
 
     std::shared_ptr<InelasticFlow> InelasticFlowFactory::generate(
         const std::string& n) const {

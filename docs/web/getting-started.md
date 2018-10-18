@@ -23,7 +23,7 @@ Before writing your own behaviours, a few advices are helpful:
 
 - You must have some knowledge of this behaviour and of its physical
   meaning. See
-  [@doghri_mechanics_2000,@besson_non-linear_2009,@forest_mecanique_2013]
+  [@doghri_mechanics_2000;@besson_non-linear_2009;@forest_mecanique_2013]
   for a good introduction. **If you are new to finite strain single
   crystal plasticity, do not try to directly study the examples found in
   the `MFront` tests base.**. It highly recommended to have some basic

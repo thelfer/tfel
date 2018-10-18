@@ -40,6 +40,7 @@
 #include "MFront/BehaviourInterfaceFactory.hxx"
 #include "MFront/AbstractBehaviourBrickFactory.hxx"
 #include "MFront/BehaviourBrick/StressPotentialFactory.hxx"
+#include "MFront/BehaviourBrick/InelasticFlowFactory.hxx"
 #include "MFront/BehaviourBrick/StressCriterionFactory.hxx"
 #include "MFront/BehaviourBrick/IsotropicHardeningRuleFactory.hxx"
 #include "MFront/BehaviourBrick/KinematicHardeningRuleFactory.hxx"
@@ -61,19 +62,23 @@ namespace mfront {
    */
   static std::string getDocumentationFilePath(const std::string& pn, const std::string& k) {
     const auto root = tfel::getInstallPath();
+    if (k.empty()) {
+      return "";
+    }
+    const auto key = (k[0] == '@') ? k.substr(1) : k;
 #ifdef TFEL_APPEND_SUFFIX
-    auto fn = root + "/share/doc/mfront-" TFEL_SUFFIX "/" + pn + "/" + k + ".md";
+    auto fn = root + "/share/doc/mfront-" TFEL_SUFFIX "/" + pn + "/" + key + ".md";
 #else  /* TFEL_APPEND_SUFFIX */
-    auto fn = root + "/share/doc/mfront/" + pn + "/" + k + ".md";
+      auto fn = root + "/share/doc/mfront/" + pn + "/" + key + ".md";
 #endif /* TFEL_APPEND_SUFFIX */
     std::ifstream desc{fn};
     if (desc) {
       return fn;
     }
 #ifdef TFEL_APPEND_SUFFIX
-    fn = root + "/share/doc/mfront-" TFEL_SUFFIX "/" + k + ".md";
+    fn = root + "/share/doc/mfront-" TFEL_SUFFIX "/" + key + ".md";
 #else  /* TFEL_APPEND_SUFFIX */
-    fn = root + "/share/doc/mfront/" + k + ".md";
+    fn = root + "/share/doc/mfront/" + key + ".md";
 #endif /* TFEL_APPEND_SUFFIX */
     desc.open(fn);
     if (desc) {
@@ -405,6 +410,27 @@ namespace mfront {
                    displayHelpFile(fp, "stress potential", sp);
                  },
                  true));
+    // inelastic flows
+    this->registerCallBack(
+        "--list-inelastic-flows",
+        CallBack("list available inelastic flows",
+                 [] {
+                   auto& spf =
+                       mfront::bbrick::InelasticFlowFactory::getFactory();
+                   displayList("inelastic-flows",
+                               spf.getRegistredInelasticFlows());
+                 },
+                 false));
+    this->registerCallBack(
+        "--help-inelastic-flow",
+        CallBack("display the help associated with the given inelastic flow",
+                 [this] {
+                   const auto& sp = this->currentArgument->getOption();
+                   const auto fp =
+                       getDocumentationFilePath("inelastic-flows", sp);
+                   displayHelpFile(fp, "inelastic flow", sp);
+                 },
+                 true));
     // stress criteria
     this->registerCallBack(
         "--list-stress-criteria",
@@ -514,6 +540,11 @@ namespace mfront {
     std::shared_ptr<AbstractDSL> p{f.createNewParser(o)};
     std::vector<std::string> keys;
     p->getKeywordsList(keys);
+    for (auto& k : keys) {
+      if (k.empty()) {
+        continue;
+      }
+    }
     displayList(o, keys);
   }  // end of MFront::treatHelpCommandsList
 
