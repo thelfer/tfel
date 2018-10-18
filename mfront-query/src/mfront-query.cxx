@@ -47,7 +47,14 @@ int main(const int argc, const char *const *const argv)
   auto bqueries  = vector<shared_ptr<BehaviourQuery>>{};
   auto mqueries  = vector<shared_ptr<ModelQuery>>{};
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-  const auto bg = !find("--no-gui");
+  const auto bg = [argv, argc] {
+    for (auto a = argv; a != argv + argc; ++a) {
+      if (::strcmp(*a, "--no-gui") == 0) {
+        return false;
+      }
+    }
+    return true;
+  }();
 #endif
 #if not defined(__GLIBCXX__)
   try{
