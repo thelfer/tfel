@@ -1,7 +1,7 @@
 # Process this file with autoconf to produce a configure script.
 # Process this file with automake to produce Makefile.in files.
 
-AC_INIT(tfel,3.1.3-dev,tfel-contact@cea.fr)
+AC_INIT(tfel,3.1.3,tfel-contact@cea.fr)
 AC_CONFIG_SRCDIR([include/TFEL/Config/TFELConfig.hxx])
 AC_CONFIG_COMMANDS
 AC_CONFIG_MACRO_DIR([m4])
