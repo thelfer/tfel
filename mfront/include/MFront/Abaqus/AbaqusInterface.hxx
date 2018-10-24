@@ -57,12 +57,14 @@ namespace abaqus {
       class Behaviour>
   struct TFEL_VISIBILITY_LOCAL AbaqusInterface
       : protected AbaqusInterfaceExceptions {
+    //! a simple alias
+    using BV = Behaviour<H, AbaqusReal, false>;
+    //! a simple alias
+    using MTraits = tfel::material::MechanicalBehaviourTraits<BV>;
+
     TFEL_ABAQUS_INLINE2 static int exe(const AbaqusData& d) {
-      using BV = Behaviour<H, AbaqusReal, false>;
-      using MTraits = tfel::material::MechanicalBehaviourTraits<BV>;
-      const bool is_defined_ = MTraits::is_defined;
       using Handler =
-          typename std::conditional<is_defined_, CallBehaviour,
+          typename std::conditional<MTraits::is_defined, CallBehaviour,
                                     UnsupportedHypothesisHandler>::type;
       try {
         Handler::exe(d);
@@ -98,21 +100,14 @@ namespace abaqus {
    private:
     struct UnsupportedHypothesisHandler {
       TFEL_ABAQUS_INLINE2 static void exe(const AbaqusData&) {
-        using BV = Behaviour<H, AbaqusReal, false>;
-        using MTraits = tfel::material::MechanicalBehaviourTraits<BV>;
         throw(AbaqusInvalidModellingHypothesis(MTraits::getName()));
       }
     };  // end of struct UnsupportedHypothesisHandler
 
     struct CallBehaviour {
       TFEL_ABAQUS_INLINE2 static void exe(const AbaqusData& d) {
-        typedef AbaqusBehaviourHandler<H, Behaviour> AHandler;
-        using BV = Behaviour<H, AbaqusReal, false>;
-        using ATraits = AbaqusTraits<BV>;
-        TFEL_CONSTEXPR const auto bs = ATraits::requiresStiffnessTensor;
-        TFEL_CONSTEXPR const auto ba =
-            ATraits::requiresThermalExpansionCoefficientTensor;
-        using Integrator = typename AHandler::template Integrator<bs, ba>;
+        using AHandler = AbaqusBehaviourHandler<H, Behaviour>;
+        using Integrator = typename AHandler::Integrator;
 #ifndef MFRONT_ABAQUS_NORUNTIMECHECKS
         AHandler::checkNPROPS(d.NPROPS);
         AHandler::checkNSTATV(d.NSTATV);

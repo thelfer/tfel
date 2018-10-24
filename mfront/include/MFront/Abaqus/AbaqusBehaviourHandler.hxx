@@ -75,13 +75,16 @@ namespace abaqus {
       class Behaviour>
   struct TFEL_VISIBILITY_LOCAL AbaqusBehaviourHandler
       : public AbaqusInterfaceExceptions {
+    //! a simple alias
+    using BV = Behaviour<H, AbaqusReal, false>;
+    //! a simple alias
+    using MTraits = tfel::material::MechanicalBehaviourTraits<BV>;
+
     /*!
      * An helper structure used to initialise the driving variables
      */
     struct TFEL_VISIBILITY_LOCAL GradientInitialiserWithStressFreeExpansion
         : public AbaqusInterfaceExceptions {
-      //! a simple alias
-      typedef Behaviour<H, AbaqusReal, false> BV;
       /*!
        * \param[out] b      : behaviour
        * \param[in]  STRAN  : driving variable at the beginning of the
@@ -96,21 +99,18 @@ namespace abaqus {
           const AbaqusReal* const STRAN,
           const AbaqusReal* const DSTRAN,
           const StressFreeExpansionHandler<AbaqusReal>& sfeh) {
-        using std::pair;
-        using tfel::fsalgo::copy;
         using namespace tfel::material;
         typedef typename BV::StressFreeExpansionType StressFreeExpansionType;
-        typedef tfel::material::MechanicalBehaviourTraits<BV> Traits;
         const AbaqusInt N = ModellingHypothesisToSpaceDimension<H>::value;
         AbaqusReal dv0[AbaqusTraits<BV>::GradientSize];
         AbaqusReal dv1[AbaqusTraits<BV>::GradientSize];
-        copy<AbaqusTraits<BV>::GradientSize>::exe(STRAN, dv0);
-        copy<AbaqusTraits<BV>::GradientSize>::exe(DSTRAN, dv1);
+        tfel::fsalgo::copy<AbaqusTraits<BV>::GradientSize>::exe(STRAN, dv0);
+        tfel::fsalgo::copy<AbaqusTraits<BV>::GradientSize>::exe(DSTRAN, dv1);
         // check that the function pointer are not null
         if (sfeh == nullptr) {
-          throwUnsupportedStressFreeExpansionException(Traits::getName());
+          throwUnsupportedStressFreeExpansionException(MTraits::getName());
         }
-        pair<StressFreeExpansionType, StressFreeExpansionType> s;
+        std::pair<StressFreeExpansionType, StressFreeExpansionType> s;
         b.computeStressFreeExpansion(s);
         const auto& s0 = s.first;
         const auto& s1 = s.second;
@@ -125,8 +125,6 @@ namespace abaqus {
      * An helper structure used to initialise the driving variables
      */
     struct TFEL_VISIBILITY_LOCAL GradientInitialiserWithoutStressFreeExpansion {
-      //! a simple alias
-      typedef Behaviour<H, AbaqusReal, false> BV;
       /*!
        * \param[out] b      : b
        * \param[in]  STRAN  : driving variable at the beginning of the
@@ -147,7 +145,6 @@ namespace abaqus {
     };   // end of struct GradientInitialiserWithoutStressFreeExpansion
 
     struct TFEL_VISIBILITY_LOCAL StiffnessOperatorInitializer {
-      typedef Behaviour<H, AbaqusReal, false> BV;
       typedef typename BV::BehaviourData BData;
       TFEL_ABAQUS_INLINE static void exe(BData& data,
                                          const AbaqusReal* const props) {
@@ -161,11 +158,10 @@ namespace abaqus {
     };   // end of struct StiffnessOperatorInitializer
 
     struct TFEL_VISIBILITY_LOCAL ThermalExpansionCoefficientTensorInitializer {
-      typedef Behaviour<H, AbaqusReal, false> BV;
       typedef typename BV::BehaviourData BData;
       TFEL_ABAQUS_INLINE static void exe(BData& data,
                                          const AbaqusReal* const props) {
-        const unsigned short o = AbaqusTraits<BV>::elasticPropertiesOffset;
+        const auto o = AbaqusTraits<BV>::elasticPropertiesOffset;
         AbaqusComputeThermalExpansionCoefficientTensor<
             AbaqusTraits<BV>::btype, H, AbaqusTraits<BV>::stype>::
             exe(props + o, data.getThermalExpansionCoefficientTensor());
@@ -173,23 +169,50 @@ namespace abaqus {
     };   // end of struct ThermalExpansionCoefficientTensorInitializer
 
     struct TFEL_VISIBILITY_LOCAL DoNothingInitializer {
-      typedef Behaviour<H, AbaqusReal, false> BV;
       typedef typename BV::BehaviourData BData;
       TFEL_ABAQUS_INLINE static void exe(BData&, const AbaqusReal* const) {}
     };  // end of struct DoNothingInitializer
 
-    template <const bool bs,  // requires StiffnessOperator
-              const bool ba>  // requires ThermalExpansionCoefficientTensor
     struct TFEL_VISIBILITY_LOCAL Integrator {
-      typedef
-          typename std::conditional<bs,
+      //! structure in charge of calling the computeInternalEnergy method
+      struct TFEL_VISIBILITY_LOCAL InternalEnergyComputer {
+        template <typename T>
+        TFEL_ABAQUS_INLINE static void exe(T& Psi_s, const BV& b) {
+          b.computeInternalEnergy(Psi_s);
+        }
+      };  // end of struct InternalEnergyComputer
+      //! structure in charge of calling the computeDissipatedEnergy method
+      struct TFEL_VISIBILITY_LOCAL DissipatedEnergyComputer {
+        template <typename T>
+        TFEL_ABAQUS_INLINE static void exe(T& Psi_d, const BV& b) {
+          b.computeDissipatedEnergy(Psi_d);
+        }  // end of exe
+      };   // end of struct DissipatedEnergyComputer
+      //! place holder for tag dispatching
+      struct TFEL_VISIBILITY_LOCAL DoNothingEnergyComputer {
+        template <typename T>
+        TFEL_ABAQUS_INLINE static void exe(T&, const BV&) {}
+      };  // end of struct DoNothingEnergyComputer
+      //! a simple alias
+      using SInitializer =
+          typename std::conditional<AbaqusTraits<BV>::requiresStiffnessTensor,
                                     StiffnessOperatorInitializer,
-                                    DoNothingInitializer>::type SInitializer;
-
-      typedef typename std::conditional<
-          ba,
+                                    DoNothingInitializer>::type;
+      //! a simple alias
+      using AInitializer = typename std::conditional<
+          AbaqusTraits<BV>::requiresThermalExpansionCoefficientTensor,
           ThermalExpansionCoefficientTensorInitializer,
-          DoNothingInitializer>::type AInitializer;
+          DoNothingInitializer>::type;
+      //! a simple alias
+      using IEnergyComputer =
+          typename std::conditional<MTraits::hasComputeInternalEnergy,
+                                    InternalEnergyComputer,
+                                    DoNothingEnergyComputer>::type;
+      //! a simple alias
+      using DEnergyComputer =
+          typename std::conditional<MTraits::hasComputeDissipatedEnergy,
+                                    DissipatedEnergyComputer,
+                                    DoNothingEnergyComputer>::type;
 
       TFEL_ABAQUS_INLINE Integrator(const AbaqusData& d)
           : behaviour(&(d.DTIME),
@@ -202,12 +225,10 @@ namespace abaqus {
                       d.DPRED,
                       d.DROT),
             dt(d.DTIME) {
-        using namespace tfel::material;
-        typedef MechanicalBehaviourTraits<BV> Traits;
-        typedef typename std::conditional<
-            Traits::hasStressFreeExpansion,
+        using DVInitializer = typename std::conditional<
+            MTraits::hasStressFreeExpansion,
             GradientInitialiserWithStressFreeExpansion,
-            GradientInitialiserWithoutStressFreeExpansion>::type DVInitializer;
+            GradientInitialiserWithoutStressFreeExpansion>::type;
         SInitializer::exe(this->behaviour, d.PROPS);
         AInitializer::exe(this->behaviour, d.PROPS);
         DVInitializer::exe(this->behaviour, d.STRAN, d.DSTRAN, d.sfeh);
@@ -219,15 +240,12 @@ namespace abaqus {
 
       TFEL_ABAQUS_INLINE2
       void exe(const AbaqusData& d) {
-        using namespace tfel::material;
-        typedef MechanicalBehaviourTraits<BV> Traits;
-        typedef
-            typename std::conditional<Traits::hasConsistentTangentOperator,
-                                      ExtractAndConvertTangentOperator<H>,
-                                      ConsistentTangentOperatorIsNotAvalaible>::
-                type ConsistentTangentOperatorHandler;
+        using ConsistentTangentOperatorHandler = typename std::conditional<
+            MTraits::hasConsistentTangentOperator,
+            ExtractAndConvertTangentOperator<H>,
+            ConsistentTangentOperatorIsNotAvalaible>::type;
         if (this->dt < 0.) {
-          throwNegativeTimeStepException(Traits::getName());
+          throwNegativeTimeStepException(MTraits::getName());
         }
         this->behaviour.checkBounds();
         auto r = BV::SUCCESS;
@@ -241,7 +259,7 @@ namespace abaqus {
           try {
             r = this->behaviour.integrate(smflag,
                                           BV::CONSISTENTTANGENTOPERATOR);
-          } catch (DivergenceException&) {
+          } catch (tfel::material::DivergenceException&) {
             r = BV::FAILURE;
           }
           if (r == BV::FAILURE) {
@@ -261,44 +279,38 @@ namespace abaqus {
         this->behaviour.checkBounds();
         this->behaviour.ABAQUSexportStateData(d.STRESS, d.STATEV);
         ConsistentTangentOperatorHandler::exe(this->behaviour, d.DDSDDE);
+        IEnergyComputer::exe(*(d.SSE), this->behaviour);
+        DEnergyComputer::exe(*(d.SPD), this->behaviour);
       }  // end of Integrator::exe
 
      private:
       struct ConsistentTangentOperatorIsNotAvalaible {
-        typedef Behaviour<H, AbaqusReal, false> BV;
         static void exe(BV&, AbaqusReal* const) {
-          typedef tfel::material::MechanicalBehaviourTraits<BV> Traits;
-          throwConsistentTangentOperatorIsNotAvalaible(Traits::getName());
+          throwConsistentTangentOperatorIsNotAvalaible(MTraits::getName());
         }  // end of exe
       };
-
-      typedef Behaviour<H, AbaqusReal, false> BV;
       BV behaviour;
       AbaqusReal dt;
     };  // end of struct Integrator
 
     TFEL_ABAQUS_INLINE2 static void checkNPROPS(const AbaqusInt NPROPS) {
-      using namespace tfel::material;
-      typedef Behaviour<H, AbaqusReal, false> BV;
-      typedef MechanicalBehaviourTraits<BV> Traits;
       const unsigned short offset =
           (AbaqusTraits<BV>::elasticPropertiesOffset +
            AbaqusTraits<BV>::thermalExpansionPropertiesOffset);
       const unsigned short nprops = AbaqusTraits<BV>::material_properties_nb;
       const unsigned short NPROPS_ = offset + nprops == 0 ? 1 : offset + nprops;
-      const bool is_defined_ = Traits::is_defined;
+      const bool is_defined_ = MTraits::is_defined;
       // Test if the nb of properties matches Behaviour requirements
       if ((NPROPS != NPROPS_) && is_defined_) {
-        throwUnMatchedNumberOfMaterialProperties(Traits::getName(), NPROPS_,
+        throwUnMatchedNumberOfMaterialProperties(MTraits::getName(), NPROPS_,
                                                  NPROPS);
       }
     }  // end of checkNPROPS
 
     TFEL_ABAQUS_INLINE2 static void checkNSTATV(const AbaqusInt NSTATV) {
-      typedef Behaviour<H, AbaqusReal, false> BV;
       typedef tfel::material::MechanicalBehaviourTraits<BV> Traits;
       const unsigned short nstatv = Traits::internal_variables_nb;
-      const bool is_defined_ = Traits::is_defined;
+      const bool is_defined_ = MTraits::is_defined;
       // Test if the nb of state variables matches Behaviour requirements
       if ((nstatv != NSTATV) && is_defined_) {
         throwUnMatchedNumberOfStateVariables(Traits::getName(), nstatv, NSTATV);
@@ -306,10 +318,9 @@ namespace abaqus {
     }  // end of checkNSTATV
 
     TFEL_ABAQUS_INLINE2 static void checkNTENS(const AbaqusInt ntens) {
-      typedef Behaviour<H, AbaqusReal, false> BV;
       typedef tfel::material::MechanicalBehaviourTraits<BV> Traits;
       TFEL_CONSTEXPR const auto size = AbaqusStensorSize<H>::value;
-      TFEL_CONSTEXPR const bool is_defined_ = Traits::is_defined;
+      TFEL_CONSTEXPR const bool is_defined_ = MTraits::is_defined;
       // Test if the nb of state variables matches Behaviour requirements
       if ((ntens != size) && is_defined_) {
         throwInvalidTensorSize(Traits::getName(), ntens, size);

@@ -58,7 +58,9 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./release-notes-3.1.1.md				      \
 	   ./release-notes-3.1.2.md				      \
 	   ./release-notes-3.1.3.md				      \
+	   ./release-notes-3.1.4.md				      \
 	   ./release-notes-3.2.md				      \
+	   ./release-notes-3.2.1.md				      \
 	   ./hyperelasticity.md				              \
 	   ./signorini.md				              \
 	   ./ogden.md				                      \

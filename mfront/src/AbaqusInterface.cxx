@@ -135,19 +135,19 @@ namespace mfront{
       out << "(abaqus::AbaqusReal *const STRESS,\n"
 	  << " abaqus::AbaqusReal *const STATEV,\n"
 	  << " abaqus::AbaqusReal *const DDSDDE,\n"
-	  << " abaqus::AbaqusReal *const,\n"
-	  << " abaqus::AbaqusReal *const,\n"
-	  << " abaqus::AbaqusReal *const,\n"
+	  << " abaqus::AbaqusReal *const SSE,\n"
+	  << " abaqus::AbaqusReal *const SPD,\n"
+	  << " abaqus::AbaqusReal *const SCD,\n"
 	  << " abaqus::AbaqusReal *const,\n"
 	  << " abaqus::AbaqusReal *const,\n"
 	  << " abaqus::AbaqusReal *const,\n"
 	  << " abaqus::AbaqusReal *const,\n";
       if(sb){
-	out << " const abaqus::AbaqusReal *const STRAN,\n"
-	    << " const abaqus::AbaqusReal *const DSTRAN,\n";
+        out << " const abaqus::AbaqusReal *const STRAN,\n"
+            << " const abaqus::AbaqusReal *const DSTRAN,\n";
       } else {
-	out << " const abaqus::AbaqusReal *const,\n"
-	    << " const abaqus::AbaqusReal *const,\n";
+        out << " const abaqus::AbaqusReal *const,\n"
+            << " const abaqus::AbaqusReal *const,\n";
       }
       out << " const abaqus::AbaqusReal *const,\n"
 	  << " const abaqus::AbaqusReal *const DTIME,\n"
@@ -724,6 +724,7 @@ namespace mfront{
       nstatev="*NSTATV";
     }
     out << "abaqus::AbaqusData d = {" << sig << ",PNEWDT,DDSDDE," << statev << ",\n"
+	<< "                        SSE,SPD,SCD,\n"
 	<< "                        *NTENS,*NPROPS," << nstatev << ",*DTIME,\n"
 	<< "                        DROT," << dv0 << "," << dv1 << ",TEMP,DTEMP,\n"
 	<< "                        PROPS,PREDEF,DPRED,\n"
@@ -829,12 +830,15 @@ namespace mfront{
     }
     if(this->compareToNumericalTangentOperator){
       out << "abaqus::AbaqusReal pnewdt0(*PNEWDT);\n"
-	  << "std::vector<abaqus::AbaqusReal> deto0(*NTENS);\n"
-	  << "std::vector<abaqus::AbaqusReal> sig0(*NTENS);\n"
-	  << "std::vector<abaqus::AbaqusReal> sv0(*NSTATV);\n"
-	  << "std::copy(DSTRAN,DSTRAN+*(NTENS),deto0.begin());\n"
-	  << "std::copy(STRESS,STRESS+*(NTENS),sig0.begin());\n"
-	  << "std::copy(STATEV,STATEV+*(NSTATV),sv0.begin());\n";
+          << "abaqus::AbaqusReal sse0(*SSE);\n"
+          << "abaqus::AbaqusReal spd0(*SPD);\n"
+          << "abaqus::AbaqusReal scd0(*SCD);\n"
+          << "std::vector<abaqus::AbaqusReal> deto0(*NTENS);\n"
+          << "std::vector<abaqus::AbaqusReal> sig0(*NTENS);\n"
+          << "std::vector<abaqus::AbaqusReal> sv0(*NSTATV);\n"
+          << "std::copy(DSTRAN,DSTRAN+*(NTENS),deto0.begin());\n"
+          << "std::copy(STRESS,STRESS+*(NTENS),sig0.begin());\n"
+          << "std::copy(STATEV,STATEV+*(NSTATV),sv0.begin());\n";
     }
     if (this->shallGenerateMTestFileOnFailure(mb)) {
       this->generateMTestFile1(out, mb);
@@ -858,6 +862,9 @@ namespace mfront{
 	  << "std::vector<abaqus::AbaqusReal> sv(*NSTATV);\n"
 	  << "std::vector<abaqus::AbaqusReal> D((*NTENS)*(*NTENS));\n"
 	  << "abaqus::AbaqusReal pnewdt(pnewdt0);\n"
+	  << "abaqus::AbaqusReal sse(sse0);\n"
+	  << "abaqus::AbaqusReal spd(spd0);\n"
+	  << "abaqus::AbaqusReal scd(scd0);\n"
 	  << "abaqus::AbaqusReal m;\n"
 	  << "abaqus::AbaqusReal mDt;\n"
 	  << "abaqus::AbaqusReal mnDt;\n"
@@ -868,6 +875,7 @@ namespace mfront{
 	  << "deto[i] += " << this->strainPerturbationValue << ";\n"
 	  << "D[0] = 0.;\n"
 	  << "abaqus::AbaqusData d2 = {&sigf[0],&pnewdt0,&D[0],&sv[0],\n"
+	  << "                         &sse,&spd,&scd,\n"
 	  << "                         *NTENS,*NPROPS,*NSTATV,*DTIME,\n"
 	  << "                         DROT,STRAN,&deto[0],TEMP,DTEMP,\n"
 	  << "                         PROPS,PREDEF,DPRED,\n"
@@ -878,12 +886,16 @@ namespace mfront{
 	  << "return;\n"
 	  << "}\n"
 	  << "abaqus::AbaqusReal pnewdt(pnewdt0);\n"
+	  << "abaqus::AbaqusReal sse(sse0);\n"
+	  << "abaqus::AbaqusReal spd(spd0);\n"
+	  << "abaqus::AbaqusReal scd(scd0);\n"
 	  << "std::copy(deto0.begin(),deto0.end(),deto.begin());\n"
 	  << "std::copy(sig0.begin(),sig0.end(),sigb.begin());\n"
 	  << "std::copy(sv0.begin(),sv0.end(),sv.begin());\n"
 	  << "deto[i] -= " << this->strainPerturbationValue << ";\n"
 	  << "D[0] = 0.;\n"
 	  << "abaqus::AbaqusData d3 = {&sigf[0],&pnewdt0,&D[0],&sv[0],\n"
+	  << "                         &sse,&spd,&scd,\n"
 	  << "                         *NTENS,*NPROPS,*NSTATV,*DTIME,\n"
 	  << "                         DROT,STRAN,&deto[0],TEMP,DTEMP,\n"
 	  << "                         PROPS,PREDEF,DPRED,\n"
@@ -931,12 +943,12 @@ namespace mfront{
     // }
     out << "}\n\n";
   }
-  
-  void AbaqusInterface::writeFiniteRotationSmallStrainFunction(std::ostream& out,
-							       const BehaviourDescription& mb,
-							       const std::string& name,
-							       const Hypothesis h) const
-  {
+
+  void AbaqusInterface::writeFiniteRotationSmallStrainFunction(
+      std::ostream& out,
+      const BehaviourDescription& mb,
+      const std::string& name,
+      const Hypothesis h) const {
     tfel::raise_if(h==ModellingHypothesis::PLANESTRESS,
 		   "AbaqusInterface::writeFiniteRotationSmallStrainFunction: "
 		   "plane stress is not supported yet");
