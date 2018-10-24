@@ -132,7 +132,7 @@ namespace abaqus {
                                   InternalEnergyComputer,
                                   DoNothingEnergyComputer>::type;
     using DEnergyComputer =
-        typename std::conditional<bi,
+        typename std::conditional<bd,
                                   DissipatedEnergyComputer,
                                   DoNothingEnergyComputer>::type;
     /*!
