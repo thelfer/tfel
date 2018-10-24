@@ -140,7 +140,7 @@ namespace abaqus{
 						   DoNothingInitializer>::type;
     using IEnergyComputer = typename std::conditional<bi,InternalEnergyComputer,
 						      DoNothingEnergyComputer>::type;
-    using DEnergyComputer = typename std::conditional<bi,DissipatedEnergyComputer,
+    using DEnergyComputer = typename std::conditional<bd,DissipatedEnergyComputer,
 						      DoNothingEnergyComputer>::type;
     /*!
      * \param[out] D: elastic stiffness
