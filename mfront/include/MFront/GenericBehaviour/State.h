@@ -23,17 +23,27 @@ extern "C" {
 /*!
  * \brief state of the material
  */
-typedef struct{
+typedef struct {
   //! \brief value of the gradients
-  double * gradients;
+  double* gradients;
   //! \brief values of the thermodynamic_forces
-  double * thermodynamic_forces;
+  double* thermodynamic_forces;
   //! \brief values of the material properties
-  double * material_properties;
+  double* material_properties;
   //! \brief values of the internal state variables
-  double * internal_state_variables;
+  double* internal_state_variables;
+  /*!
+   * \brief stored energy (computed by `@InternalEnergy` in `MFront` files).
+   * This output is optional.
+   */
+  double* stored_energy;
+  /*!
+   * \brief dissipated energy (computed by `@DissipatedEnergy` in `MFront`
+   * files). This output is optional.
+   */
+  double* dissipated_energy;
   //! \brief values of the external state variables
-  double * external_state_variables;
+  double* external_state_variables;
 } MFront_GB_State;
 
 #ifdef __cplusplus

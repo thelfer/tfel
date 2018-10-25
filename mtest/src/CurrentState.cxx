@@ -51,7 +51,7 @@ namespace mtest {
     s.iv1.clear();
     s.esv0.clear();
     s.desv.clear();
-    // resizing
+    // resizing and initialization
     const auto ndv = b->getGradientsSize();
     const auto nth = b->getThermodynamicForcesSize();
     s.s_1.resize(nth, 0.);
@@ -65,6 +65,10 @@ namespace mtest {
     s.iv_1.resize(b->getInternalStateVariablesSize(), 0.);
     s.iv0.resize(s.iv_1.size(), 0.);
     s.iv1.resize(s.iv0.size(), 0.);
+    s.se0 = 0;
+    s.se1 = 0;
+    s.de0 = 0;
+    s.de1 = 0;
     s.esv0.resize(esvnames.size(), 0.);
     s.desv.resize(esvnames.size(), 0.);
   }
@@ -216,12 +220,16 @@ namespace mtest {
     s.iv_1 = s.iv0;
     s.s0 = s.s1;
     s.iv0 = s.iv1;
+    s.se0 = s.se1;
+    s.de0 = s.de1;
   }
 
   void revert(CurrentState& s) {
     s.e1 = s.e0;
     s.s1 = s.s0;
     s.iv1 = s.iv0;
+    s.se1 = s.se0;
+    s.de1 = s.de0;
   }
 
   void setInternalStateVariableValue(CurrentState& s, const std::string& n, const real v) {

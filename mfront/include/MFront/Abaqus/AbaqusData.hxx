@@ -22,12 +22,17 @@ namespace abaqus{
    * \brief a structure used to collect the parameters passed through
    * the umat interface
    */
-  struct AbaqusData
-  {
+  struct AbaqusData {
     AbaqusReal *const STRESS;
     AbaqusReal *const PNEWDT;
     AbaqusReal *const DDSDDE;
     AbaqusReal *const STATEV;
+    //! internal energy
+    AbaqusReal *const SSE;
+    //! plastic dissipation
+    AbaqusReal *const SPD;
+    //! visoplastic dissipation
+    AbaqusReal *const SCD;
     const AbaqusInt  NTENS;
     const AbaqusInt  NPROPS;
     const AbaqusInt  NSTATV;

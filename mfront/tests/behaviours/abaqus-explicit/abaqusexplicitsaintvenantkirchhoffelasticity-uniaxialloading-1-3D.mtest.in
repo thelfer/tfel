@@ -31,5 +31,3 @@
 @Test<function> {'SYY':'FYY*(lambda+2*mu)*(FYY**2-1)/2'} 1.e-2;
 @Test<function> {'SZZ':'lambda*(FYY**2-1)/(2*FYY)'}      1.e-2;
 @Test<function> {'SXY':'0','SXZ':'0','SYZ':'0'}          1.e-2;
-@Test<function> {'InternalEnergy':'(lambda/2+mu)*(FYY**2-1)**2/4/MassDensity'} 1.e-7;
-@Test<function> 'DissipatedEnergy' '0' 1.e-7;

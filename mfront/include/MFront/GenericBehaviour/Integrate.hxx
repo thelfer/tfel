@@ -85,6 +85,37 @@ namespace mfront {
       return 1;
     }  // end of computePredictionOperator
 
+    //! structure in charge of calling the computeInternalEnergy method
+    struct InternalEnergyComputer {
+      /*!
+       * \brief call the `computeInternalEnergy` method
+       * \param[in] d: behaviour data
+       * \param[in] b: behaviour
+       */
+      template <typename Behaviour>
+      static void exe(MFront_GB_BehaviourData& d, const Behaviour& b) {
+        b.computeInternalEnergy(*(d.s1.stored_energy));
+      }
+    };  // end of struct InternalEnergyComputer
+    //! structure in charge of calling the computeDissipatedEnergy method
+    struct DissipatedEnergyComputer {
+      /*!
+       * \brief call the `computeDissipatedEnergy` method
+       * \param[in] d: behaviour data
+       * \param[in] b: behaviour
+       */
+      template <typename Behaviour>
+      static void exe(MFront_GB_BehaviourData& d, const Behaviour& b) {
+        b.computeDissipatedEnergy(*(d.s1.dissipated_energy));
+      }  // end of exe
+    };   // end of struct DissipatedEnergyComputer
+    //! place holder for tag dispatching
+    struct DoNothingEnergyComputer {
+      //! \brief empty function
+      template <typename Behaviour>
+      static void exe(MFront_GB_BehaviourData&, const Behaviour&) {}
+    };  // end of struct DoNothingEnergyComputer
+
     /*!
      * \brief integrate the behaviour over a time step
      * \tparam Behaviour: class implementing the behaviour
@@ -96,6 +127,18 @@ namespace mfront {
     int integrate(MFront_GB_BehaviourData& d,
                   const typename Behaviour::SMFlag f,
                   const tfel::material::OutOfBoundsPolicy p) {
+      //! a simple alias
+      using MTraits = tfel::material::MechanicalBehaviourTraits<Behaviour>;
+      //! a simple alias
+      using IEnergyComputer =
+          typename std::conditional<MTraits::hasComputeInternalEnergy,
+                                    InternalEnergyComputer,
+                                    DoNothingEnergyComputer>::type;
+      //! a simple alias
+      using DEnergyComputer =
+          typename std::conditional<MTraits::hasComputeDissipatedEnergy,
+                                    DissipatedEnergyComputer,
+                                    DoNothingEnergyComputer>::type;
       Behaviour b(d);
       b.setOutOfBoundsPolicy(p);
       b.initialize();
@@ -135,6 +178,8 @@ namespace mfront {
         if (d.K[0] > 0.5) {
           exportTangentOperator(d.K, b.getTangentOperator());
         }
+        IEnergyComputer::exe(d, b);
+        DEnergyComputer::exe(d, b);
       } catch (...) {
         d.rdt = b.getMinimalTimeStepScalingFactor();
         return -1;

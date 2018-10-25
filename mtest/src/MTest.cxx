@@ -306,83 +306,89 @@ namespace mtest {
     unsigned short cnbr = 2;
     const char* dvn;
     const char* thn;
-    this->out << "# first column : time\n";
-    if (this->b->getBehaviourType() ==
-        MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR) {
-      dvn = "strain";
-      thn = "stress";
-    } else if (this->b->getBehaviourType() ==
-               MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR) {
-      dvn = "deformation gradient";
-      thn = "Cauchy stress";
-    } else if (this->b->getBehaviourType() ==
-               MechanicalBehaviourBase::COHESIVEZONEMODEL) {
-      dvn = "opening displacement";
-      thn = "cohesive force";
-    } else {
-      dvn = "driving variables";
-      thn = "thermodynamic forces";
-    }
-    const auto ndv = this->b->getGradientsSize();
-    const auto nth = this->b->getThermodynamicForcesSize();
-    for (unsigned short i = 0; i != ndv; ++i) {
-      this->out << "# " << cnbr << " column : " << i + 1
-                << "th component of the " << dvn << '\n';
+    if (this->out) {
+      this->out << "# first column: time\n";
+      if (this->b->getBehaviourType() ==
+          MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR) {
+        dvn = "strain";
+        thn = "stress";
+      } else if (this->b->getBehaviourType() ==
+                 MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR) {
+        dvn = "deformation gradient";
+        thn = "Cauchy stress";
+      } else if (this->b->getBehaviourType() ==
+                 MechanicalBehaviourBase::COHESIVEZONEMODEL) {
+        dvn = "opening displacement";
+        thn = "cohesive force";
+      } else {
+        dvn = "driving variables";
+        thn = "thermodynamic forces";
+      }
+      const auto ndv = this->b->getGradientsSize();
+      const auto nth = this->b->getThermodynamicForcesSize();
+      for (unsigned short i = 0; i != ndv; ++i) {
+        this->out << "# " << cnbr << " column: " << i + 1
+                  << "th component of the " << dvn << '\n';
+        ++cnbr;
+      }
+      for (unsigned short i = 0; i != nth; ++i) {
+        this->out << "# " << cnbr << " column: " << i + 1
+                  << "th component of the " << thn << '\n';
+        ++cnbr;
+      }
+      const auto& ivdes = this->b->getInternalStateVariablesDescriptions();
+      tfel::raise_if(ivdes.size() != this->b->getInternalStateVariablesSize(),
+                     "MTest::completeInitialisation : internal error "
+                     "(the number of descriptions given by "
+                     "the mechanical behaviour don't match "
+                     "the number of internal state variables)");
+      for (std::vector<string>::size_type i = 0; i != ivdes.size(); ++i) {
+        this->out << "# " << cnbr << " column: " << ivdes[i] << '\n';
+        ++cnbr;
+      }
+      this->out << "# " << cnbr << " column: stored energy\n";
+      this->out << "# " << cnbr+1 << " column: disspated energy\n";
       ++cnbr;
-    }
-    for (unsigned short i = 0; i != nth; ++i) {
-      this->out << "# " << cnbr << " column : " << i + 1
-                << "th component of the " << thn << '\n';
-      ++cnbr;
-    }
-    const auto& ivdes = this->b->getInternalStateVariablesDescriptions();
-    tfel::raise_if(ivdes.size() != this->b->getInternalStateVariablesSize(),
-                   "MTest::completeInitialisation : internal error "
-                   "(the number of descriptions given by "
-                   "the mechanical behaviour don't match "
-                   "the number of internal state variables)");
-    for (std::vector<string>::size_type i = 0; i != ivdes.size(); ++i) {
-      this->out << "# " << cnbr << " column : " << ivdes[i] << '\n';
-      ++cnbr;
+
     }
     // convergence criterion value for driving variables
     if (this->options.eeps < 0) {
       this->options.eeps = 1.e-12;
-    }
-    // convergence criterion value for thermodynamic forces
-    if (this->options.seps < 0) {
-      this->options.seps = 1.e-3;
-    }
-    // tangent operator comparison criterion
-    if (this->toeps < 0) {
-      this->toeps = (this->options.seps / 1e-3) * 1.e7;
-    }
-    // perturbation value
-    if (this->pv < 0) {
-      this->pv = 10 * this->options.eeps;
-    }
-    if (!this->isRmDefined) {
-      for (unsigned short i = 0; i != 3; ++i) {
-        rm(i, i) = real(1);
       }
-    }
-    // thermal expansion reference temperature
-    auto pev = this->evm->find("ThermalExpansionReferenceTemperature");
-    if (pev != this->evm->end()) {
-      const auto& ev = *(pev->second);
-      tfel::raise_if(!ev.isConstant(),
-                     "MTest::completeInitialisation: "
-                     "'ThermalExpansionReferenceTemperature' "
-                     "must be a constant evolution");
-    }
-    // residual file
-    if (this->residual) {
-      this->residual << "#first  column : iteration number\n"
-                     << "#second column : driving variable residual\n"
-                     << "#third  column : thermodynamic force residual\n"
-                     << "#The following columns are the components of the "
-                        "driving variable\n";
-    }
+      // convergence criterion value for thermodynamic forces
+      if (this->options.seps < 0) {
+        this->options.seps = 1.e-3;
+      }
+      // tangent operator comparison criterion
+      if (this->toeps < 0) {
+        this->toeps = (this->options.seps / 1e-3) * 1.e7;
+      }
+      // perturbation value
+      if (this->pv < 0) {
+        this->pv = 10 * this->options.eeps;
+      }
+      if (!this->isRmDefined) {
+        for (unsigned short i = 0; i != 3; ++i) {
+          rm(i, i) = real(1);
+        }
+      }
+      // thermal expansion reference temperature
+      auto pev = this->evm->find("ThermalExpansionReferenceTemperature");
+      if (pev != this->evm->end()) {
+        const auto& ev = *(pev->second);
+        tfel::raise_if(!ev.isConstant(),
+                       "MTest::completeInitialisation: "
+                       "'ThermalExpansionReferenceTemperature' "
+                       "must be a constant evolution");
+      }
+      // residual file
+      if (this->residual) {
+        this->residual << "#first  column: iteration number\n"
+                       << "#second column: driving variable residual\n"
+                       << "#third  column: thermodynamic force residual\n"
+                       << "#The following columns are the components of the "
+                          "driving variable\n";
+      }
   }
 
   void MTest::initializeCurrentState(StudyCurrentState& s) const {
@@ -930,7 +936,8 @@ namespace mtest {
       }
       std::copy(cs.iv0.begin(), cs.iv0.end(),
                 std::ostream_iterator<real>(this->out, " "));
-      this->out << '\n';
+      // stored and dissipated energies
+      this->out << cs.se0 << " " << cs.de0 << '\n';
     }
   } // end of MTest::printOutput
 
