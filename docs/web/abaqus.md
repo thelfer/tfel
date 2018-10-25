@@ -577,6 +577,18 @@ also available for the `Abaqus/Explicit` interface:
 
 ## Energies
 
+`MFront` behaviours can optionally compute the stored and dissipated
+energies through the `@InternalEnergy` and `@DissipatedEnergy` keywords.
+
+In `Abaqus/Standard`, the stored energy is returned in the `SSE` output
+and the dissipated energy is returned in the `SPD` output.
+
+In `Abaqus/Explicit`, the stored energy is returned in the
+`enerInternNew` variable and the the dissipated energy is returned in
+the `enerInelasNew` output.
+
+### A
+
 <!-- - Internal energy per unit mass -->
 <!-- - Dissipated inelastic energy per unit mass -->
 
