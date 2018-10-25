@@ -106,14 +106,12 @@ namespace abaqus {
 
     struct CallBehaviour {
       TFEL_ABAQUS_INLINE2 static void exe(const AbaqusData& d) {
-        using AHandler = AbaqusBehaviourHandler<H, Behaviour>;
-        using Integrator = typename AHandler::Integrator;
 #ifndef MFRONT_ABAQUS_NORUNTIMECHECKS
-        AHandler::checkNPROPS(d.NPROPS);
-        AHandler::checkNSTATV(d.NSTATV);
-        AHandler::checkNTENS(d.NTENS);
+        AbaqusBehaviourHandler<H, Behaviour>::checkNPROPS(d.NPROPS);
+        AbaqusBehaviourHandler<H, Behaviour>::checkNSTATV(d.NSTATV);
+        AbaqusBehaviourHandler<H, Behaviour>::checkNTENS(d.NTENS);
 #endif /* MFRONT_ABAQUS_NORUNTIMECHECKS */
-        Integrator i(d);
+        typename AbaqusBehaviourHandler<H, Behaviour>::Integrator i(d);
         i.exe(d);
       }
     };  // end of struct CallBehaviour2
