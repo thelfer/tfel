@@ -1701,7 +1701,16 @@ namespace mfront {
       res.second = m.offset;
       res.second += SupportedTypes::getTypeSize(m.type, m.arraySize);
     }
-    completeMaterialPropertiesList(mprops, mb, h);
+    if(h == ModellingHypothesis::PLANESTRESS){
+      if (this->usesGenericPlaneStressAlgorithm(mb)) {
+        completeMaterialPropertiesList(
+            mprops, mb, ModellingHypothesis::GENERALISEDPLANESTRAIN);
+      } else {
+        completeMaterialPropertiesList(mprops, mb, h);
+      }
+    } else {
+      completeMaterialPropertiesList(mprops, mb, h);
+    }
     return res;
   }  // end of CastemInterface::buildMaterialPropertiesList
 
@@ -2214,157 +2223,206 @@ namespace mfront {
     out << buffer << '\n';
   }  // end of CastemInterface::writeGibianeInstruction
 
-  void CastemInterface::generateGibianeDeclaration(const BehaviourDescription& mb,
-                                                   const FileDescription& fd) const {
+  void CastemInterface::generateGibianeDeclarationForHypothesis(
+      std::ostream& out, const BehaviourDescription& bd, const Hypothesis h) const {
     auto throw_if = [](const bool b, const std::string& m) {
-      tfel::raise_if(b, "CastemInterface::generateGibianeDeclaration: " + m);
+      tfel::raise_if(
+          b, "CastemInterface::generateGibianeDeclarationForHypothesis: " + m);
     };
-    std::map<ModellingHypothesis::Hypothesis, std::string> mo = {
-        {ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN, "'UNID' 'AXIS' 'AXGZ'"},
+    const std::map<ModellingHypothesis::Hypothesis, std::string> mo = {
+        {ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,
+         "'UNID' 'AXIS' 'AXGZ'"},
         {ModellingHypothesis::AXISYMMETRICAL, "'AXIS'"},
         {ModellingHypothesis::PLANESTRESS, "'PLAN' 'CONT'"},
         {ModellingHypothesis::PLANESTRAIN, "'PLAN' 'DEFO'"},
         {ModellingHypothesis::GENERALISEDPLANESTRAIN, "'PLAN' 'GENE'"},
         {ModellingHypothesis::TRIDIMENSIONAL, "'TRID'"}};
-    const auto name((!mb.getLibrary().empty()) ? mb.getLibrary() + mb.getClassName()
-                                               : mb.getClassName());
+    // effective modelling hypothesis
+    const auto eh = [this, &bd, &h] {
+      if ((h == ModellingHypothesis::PLANESTRESS) &&
+          (this->usesGenericPlaneStressAlgorithm(bd))) {
+        return ModellingHypothesis::GENERALISEDPLANESTRAIN;
+      }
+      return h;
+    }();
+    const auto& d = bd.getBehaviourData(eh);
+    auto persistentVarsHolder = d.getPersistentVariables();
+    if ((h == ModellingHypothesis::PLANESTRESS) &&
+        (this->usesGenericPlaneStressAlgorithm(bd))) {
+      VariableDescription ezz("strain", "etozz", 1, 0u);
+      ezz.setGlossaryName("AxialStrain");
+      persistentVarsHolder.push_back(std::move(ezz));
+    }
+    const auto& externalStateVarsHolder = d.getExternalStateVariables();
+    // list of material properties (must use the real hypothesis)
+    const auto mprops = this->buildMaterialPropertiesList(bd, h);
+    //
+    const auto nonlin = [&bd, &throw_if]() -> std::string {
+      if (bd.getBehaviourType() ==
+          BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
+        return "'NON_LINEAIRE' 'UTILISATEUR'";
+      } else if (bd.getBehaviourType() ==
+                 BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
+        return "'NON_LINEAIRE' 'UTILISATEUR' 'EPSILON' 'UTILISATEUR'";
+      }
+      throw_if(true, "internal error, unsupported behaviour type");
+    }();
+    // gibiane declaration starts here
+    auto tmp = std::string{};
+    out << "** " << ModellingHypothesis::toString(h) << " example\n";
+    if (mo.find(h) != mo.end()) {
+      out << "** 'OPTION' 'DIMENSION' " << getSpaceDimension(h)
+          << " 'MODELISER' " << mo.at(h) << " ;\n\n";
+    }
+    std::ostringstream mcoel;
+    mcoel << "coel = 'MOTS' ";
+    for (auto pm = mprops.first.cbegin(); pm != mprops.first.cend();) {
+      const auto flag = SupportedTypes::getTypeFlag(pm->type);
+      throw_if(flag != SupportedTypes::Scalar,
+               "material properties shall be scalars");
+      if (pm->arraySize == 1) {
+        mcoel << treatScalar(pm->var_name);
+      } else {
+        for (unsigned short j = 0; j != pm->arraySize;) {
+          mcoel << treatScalar(pm->var_name, j);
+          if (++j != pm->arraySize) {
+            mcoel << " ";
+          }
+        }
+      }
+      if (++pm != mprops.first.end()) {
+        mcoel << " ";
+      }
+    }
+    mcoel << ";";
+    writeGibianeInstruction(out, mcoel.str());
+    out << '\n';
+    if (!persistentVarsHolder.empty()) {
+      std::ostringstream mstatev;
+      mstatev << "statev = 'MOTS' ";
+      this->writeVariableDescriptionContainerToGibiane(mstatev, h,
+                                                       persistentVarsHolder);
+      mstatev << ";";
+      writeGibianeInstruction(out, mstatev.str());
+      out << '\n';
+    }
+    std::ostringstream mparam;
+    mparam << "params = 'MOTS' 'T'";
+    if (!externalStateVarsHolder.empty()) {
+      mparam << " ";
+      const auto pb = std::next(externalStateVarsHolder.begin());
+      const auto pe = externalStateVarsHolder.end();
+      this->writeVariableDescriptionsToGibiane(mparam, h, pb, pe);
+    }
+    mparam << ";";
+    writeGibianeInstruction(out, mparam.str());
+    out << '\n';
+    std::ostringstream mmod;
+    mmod << "MO = 'MODELISER' v 'MECANIQUE' 'ELASTIQUE' ";
+    if (bd.getSymmetryType() == mfront::ORTHOTROPIC) {
+      mmod << "'ORTHOTROPE'";
+    }
+    mmod << nonlin << "\n"
+         << "'LIB_LOI' 'lib" + this->getLibraryName(bd) + ".so'\n"
+         << "'FCT_LOI' '" + this->getUmatFunctionName(bd) + "'\n"
+         << "'C_MATERIAU' coel ";
+    if (!persistentVarsHolder.empty()) {
+      mmod << "'C_VARINTER' statev ";
+    }
+    mmod << "'PARA_LOI'   params 'CONS' M;";
+    writeGibianeInstruction(out, mmod.str());
+    out << '\n';
+    std::ostringstream mi;
+    mi << "MA = 'MATERIAU' MO ";
+    auto mpos = 0;
+    for (auto pm = mprops.first.cbegin(); pm != mprops.first.cend(); ++mpos) {
+      const auto flag = SupportedTypes::getTypeFlag(pm->type);
+      throw_if(flag != SupportedTypes::Scalar,
+               "material properties shall be scalars");
+      // skipping variables V1* and V2* imposed by Cast3M
+      if (bd.getSymmetryType() == mfront::ORTHOTROPIC) {
+        if (((h == ModellingHypothesis::PLANESTRESS) &&
+             ((mpos >= 4) && (mpos <= 5))) ||
+            (((h == ModellingHypothesis::AXISYMMETRICAL) ||
+              (h == ModellingHypothesis::PLANESTRAIN) ||
+              (h == ModellingHypothesis::GENERALISEDPLANESTRAIN)) &&
+             ((mpos >= 7) && (mpos <= 8))) ||
+            ((h == ModellingHypothesis::TRIDIMENSIONAL) &&
+             ((mpos >= 9) && (mpos <= 14)))) {
+          ++pm;
+          continue;
+        }
+      }
+      if (pm->arraySize == 1) {
+        tmp = treatScalar(pm->var_name);
+        mi << tmp << " x" << makeLowerCase(pm->var_name);
+      } else {
+        for (unsigned short j = 0; j != pm->arraySize;) {
+          tmp = treatScalar(pm->var_name, j);
+          mi << tmp << " x" << makeLowerCase(pm->var_name) << j;
+          if (++j != pm->arraySize) {
+            mi << " ";
+          }
+        }
+      }
+      if (++pm != mprops.first.end()) {
+        mi << " ";
+      }
+    }
+    if (bd.getSymmetryType() == mfront::ORTHOTROPIC) {
+      if ((h == ModellingHypothesis::PLANESTRESS) ||
+          (h == ModellingHypothesis::AXISYMMETRICAL) ||
+          (h == ModellingHypothesis::PLANESTRAIN) ||
+          (h == ModellingHypothesis::GENERALISEDPLANESTRAIN)) {
+        mi << " 'DIRECTION' (1 0) 'PARALLELE'";
+      } else if (h == ModellingHypothesis::TRIDIMENSIONAL) {
+        mi << " 'DIRECTION' (1 0 0) (0 0 1) 'PARALLELE'";
+      }
+    }
+    mi << ";";
+    writeGibianeInstruction(out, mi.str());
+    out << '\n';
+  }  // end of CastemInterface::generateGibianeDeclarationForHypothesis
+
+  void CastemInterface::generateGibianeDeclaration(
+      const BehaviourDescription& bd, const FileDescription& fd) const {
+    const auto name((!bd.getLibrary().empty())
+                        ? bd.getLibrary() + bd.getClassName()
+                        : bd.getClassName());
     const auto fileName("castem/" + name + ".dgibi");
     // opening output file
     tfel::system::systemCall::mkdir("castem");
     std::ofstream out;
     out.open(fileName);
-    throw_if(!out, "could not open file '" + fileName + "'");
+    tfel::raise_if(!out,
+                   "CastemInterface::generateGibianeDeclaration: "
+                   "could not open file '" +
+                       fileName + "'");
     // header
     out << "*\n"
         << "* \\file   " << fd.fileName << '\n'
-        << "* \\brief  example of how to use the " << mb.getClassName() << " behaviour law\n"
+        << "* \\brief  example of how to use the " << bd.getClassName()
+        << " behaviour law\n"
         << "* in the Cast3M finite element solver\n"
         << "* \\author " << fd.authorName << '\n'
         << "* \\date   " << fd.date << '\n'
         << "*\n\n";
-    // specific declaration
-    auto nonlin = std::string{};
-    if (mb.getBehaviourType() == BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
-      nonlin = "'NON_LINEAIRE' 'UTILISATEUR'";
-    } else if (mb.getBehaviourType() == BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
-      nonlin = "'NON_LINEAIRE' 'UTILISATEUR' 'EPSILON' 'UTILISATEUR'";
-    } else {
-      throw_if(true, "internal error, unsupported behaviour type");
-    }
     // loop over hypothesis
-    for (const auto& h : this->getModellingHypothesesToBeTreated(mb)) {
-      const auto& d = mb.getBehaviourData(h);
-      const auto& persistentVarsHolder = d.getPersistentVariables();
-      const auto& externalStateVarsHolder = d.getExternalStateVariables();
-      const auto mprops = this->buildMaterialPropertiesList(mb, h);
-      auto tmp = std::string{};
-      out << "** " << ModellingHypothesis::toString(h) << " example\n";
-      if (mo.find(h) != mo.end()) {
-        out << "** 'OPTION' 'DIMENSION' " << getSpaceDimension(h) << " 'MODELISER' " << mo[h]
-            << " ;\n\n";
-      }
-      std::ostringstream mcoel;
-      mcoel << "coel = 'MOTS' ";
-      for (auto pm = mprops.first.cbegin(); pm != mprops.first.cend();) {
-        const auto flag = SupportedTypes::getTypeFlag(pm->type);
-        throw_if(flag != SupportedTypes::Scalar, "material properties shall be scalars");
-        if (pm->arraySize == 1) {
-          mcoel << treatScalar(pm->var_name);
-        } else {
-          for (unsigned short j = 0; j != pm->arraySize;) {
-            mcoel << treatScalar(pm->var_name, j);
-            if (++j != pm->arraySize) {
-              mcoel << " ";
-            }
-          }
-        }
-        if (++pm != mprops.first.end()) {
-          mcoel << " ";
-        }
-      }
-      mcoel << ";";
-      writeGibianeInstruction(out, mcoel.str());
-      out << '\n';
-      if (!persistentVarsHolder.empty()) {
-        std::ostringstream mstatev;
-        mstatev << "statev = 'MOTS' ";
-        this->writeVariableDescriptionContainerToGibiane(mstatev, h, persistentVarsHolder);
-        mstatev << ";";
-        writeGibianeInstruction(out, mstatev.str());
-        out << '\n';
-      }
-      std::ostringstream mparam;
-      mparam << "params = 'MOTS' 'T'";
-      if (!externalStateVarsHolder.empty()) {
-        mparam << " ";
-        const auto pb = std::next(externalStateVarsHolder.begin());
-        const auto pe = externalStateVarsHolder.end();
-        this->writeVariableDescriptionsToGibiane(mparam, h, pb, pe);
-      }
-      mparam << ";";
-      writeGibianeInstruction(out, mparam.str());
-      out << '\n';
-      std::ostringstream mmod;
-      mmod << "MO = 'MODELISER' v 'MECANIQUE' 'ELASTIQUE' ";
-      if (mb.getSymmetryType() == mfront::ORTHOTROPIC) {
-        mmod << "'ORTHOTROPE'";
-      }
-      mmod << nonlin << "\n"
-           << "'LIB_LOI' 'lib" + this->getLibraryName(mb) + ".so'\n"
-           << "'FCT_LOI' '" + this->getUmatFunctionName(mb) + "'\n"
-           << "'C_MATERIAU' coel ";
-      if (!persistentVarsHolder.empty()) {
-        mmod << "'C_VARINTER' statev ";
-      }
-      mmod << "'PARA_LOI'   params 'CONS' M;";
-      writeGibianeInstruction(out, mmod.str());
-      out << '\n';
-      std::ostringstream mi;
-      mi << "MA = 'MATERIAU' MO ";
-      auto mpos = 0;
-      for (auto pm = mprops.first.cbegin(); pm != mprops.first.cend(); ++mpos) {
-        const auto flag = SupportedTypes::getTypeFlag(pm->type);
-        throw_if(flag != SupportedTypes::Scalar, "material properties shall be scalars");
-        // skipping variables V1* and V2* imposed by Cast3M
-        if (mb.getSymmetryType() == mfront::ORTHOTROPIC) {
-          if (((h == ModellingHypothesis::PLANESTRESS) && ((mpos >= 4) && (mpos <= 5))) ||
-              (((h == ModellingHypothesis::AXISYMMETRICAL) ||
-                (h == ModellingHypothesis::PLANESTRAIN) ||
-                (h == ModellingHypothesis::GENERALISEDPLANESTRAIN)) &&
-               ((mpos >= 7) && (mpos <= 8))) ||
-              ((h == ModellingHypothesis::TRIDIMENSIONAL) && ((mpos >= 9) && (mpos <= 14)))) {
-            ++pm;
-            continue;
-          }
-        }
-        if (pm->arraySize == 1) {
-          tmp = treatScalar(pm->var_name);
-          mi << tmp << " x" << makeLowerCase(pm->var_name);
-        } else {
-          for (unsigned short j = 0; j != pm->arraySize;) {
-            tmp = treatScalar(pm->var_name, j);
-            mi << tmp << " x" << makeLowerCase(pm->var_name) << j;
-            if (++j != pm->arraySize) {
-              mi << " ";
-            }
-          }
-        }
-        if (++pm != mprops.first.end()) {
-          mi << " ";
-        }
-      }
-      if (mb.getSymmetryType() == mfront::ORTHOTROPIC) {
-        if ((h == ModellingHypothesis::PLANESTRESS) || (h == ModellingHypothesis::AXISYMMETRICAL) ||
-            (h == ModellingHypothesis::PLANESTRAIN) ||
-            (h == ModellingHypothesis::GENERALISEDPLANESTRAIN)) {
-          mi << " 'DIRECTION' (1 0) 'PARALLELE'";
-        } else if (h == ModellingHypothesis::TRIDIMENSIONAL) {
-          mi << " 'DIRECTION' (1 0 0) (0 0 1) 'PARALLELE'";
-        }
-      }
-      mi << ";";
-      writeGibianeInstruction(out, mi.str());
-      out << '\n';
+    for (const auto& h : this->getModellingHypothesesToBeTreated(bd)) {
+      this->generateGibianeDeclarationForHypothesis(out, bd, h);
+    }
+    if (this->usesGenericPlaneStressAlgorithm(bd)) {
+      out << "* The behaviour does not support the plane stress hypothesis\n"
+          << "* natively.\n"
+          << "* Support for the plane stress hypothesis\n"
+          << "* is added through the generic plane stress handler\n"
+          << "* provided by the Cast3M interface. This requires some tricky\n"
+          << "* manipulations of the material properties and can be quite\n"
+          << "* inefficient. Use it with care and consider adding proper\n"
+          << "* plane stress support to your behaviour.\n"
+          << "*\n";
+      this->generateGibianeDeclarationForHypothesis(
+          out, bd, ModellingHypothesis::PLANESTRESS);
     }
     out.close();
   }  // end of CastemInterface::generateGibianeDeclaration
