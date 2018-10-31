@@ -88,11 +88,6 @@ namespace mtest
      * CMNAME parameter.
      */
     const char* getBehaviourNameForUMATFunctionCall() const override;
-    /*!
-     * \brief allocate internal workspace
-     * \param[out] wk : workspace
-     */
-    void allocate(BehaviourWorkSpace&) const override;
     //! destructor
     ~CastemSmallStrainBehaviour() override;
   protected:
@@ -126,14 +121,6 @@ namespace mtest
     computeElasticStiffness(tfel::math::matrix<real>&,
 			    const tfel::math::vector<real>&,
 			    const tfel::math::tmatrix<3u,3u,real>&) const;
-    /*!
-     * The umat interface can handle plane stress by calling the
-     * generalised plane strain version of the behaviour.  In this
-     * case, the hypothesis used by the behaviour is different than
-     * the hypothesis used to perform the computation. This flag
-     * distinguishes this case.
-     */
-    bool usesGenericPlaneStressAlgorithm = false;
 
   }; // end of struct Behaviour
   

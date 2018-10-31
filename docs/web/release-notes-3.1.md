@@ -1134,7 +1134,7 @@ The following library has been built :
 - materiallaw.so :  YoungModulusTest
 ~~~~
 
-### Chaning the build system targeted used by `cmake`
+### Changing the build system targeted used by `cmake`
 
 By default, `cmake` generates configuration files for a default build
 system which is determined as follows:

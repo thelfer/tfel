@@ -249,7 +249,8 @@ namespace mtest
     const auto h = this->usesGenericPlaneStressAlgorithm ?
                    ModellingHypothesis::PLANESTRESS :this->getHypothesis();
     CastemInt ntens,ndi;
-    const auto nprops = static_cast<CastemInt>(s.mprops1.size());
+    this->buildMaterialProperties(wk,s);
+    const auto nprops = static_cast<CastemInt>(wk.mps.size());
     CastemInt nstatv;
     if(h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN){
       ndi   = 14;
@@ -336,7 +337,7 @@ namespace mtest
 		nullptr,nullptr,nullptr,&dt,
 		&(s.esv0(0))  ,&(s.desv(0)),
 		&(s.esv0(0))+1,&(s.desv(0))+1,
-		name,&ndi,nullptr,&ntens,&nstatv,&(s.mprops1(0)),
+		name,&ndi,nullptr,&ntens,&nstatv,&(wk.mps(0)),
 		&nprops,nullptr,&drot(0,0),&ndt,
 		nullptr,&uu0(0,0),&uu1(0,0),nullptr,nullptr,
 		nullptr,nullptr,nullptr,&kinc,0);

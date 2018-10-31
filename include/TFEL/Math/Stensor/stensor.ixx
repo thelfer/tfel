@@ -905,17 +905,16 @@ namespace tfel{
 	  std::max(s(2),NumType(0))};
     }
 
-    template<typename StensorType>
+    template <typename StensorType>
     typename std::enable_if<
-      ((tfel::meta::Implements<StensorType,StensorConcept>::cond)&&
-       ((StensorTraits<StensorType>::dime==2u)||
-	(StensorTraits<StensorType>::dime==3u))&&
-       (tfel::typetraits::IsFundamentalNumericType<StensorNumType<StensorType>>::cond)),
-      stensor<StensorTraits<StensorType>::dime,StensorNumType<StensorType>>
-   >::type
-    positive_part(const StensorType& s_,
-		  const bool b)
-    {
+        ((tfel::meta::Implements<StensorType, StensorConcept>::cond) &&
+         ((StensorTraits<StensorType>::dime == 2u) ||
+          (StensorTraits<StensorType>::dime == 3u)) &&
+         (tfel::typetraits::IsFundamentalNumericType<
+             StensorNumType<StensorType>>::cond)),
+        stensor<StensorTraits<StensorType>::dime,
+                StensorNumType<StensorType>>>::type
+    positive_part(const StensorType& s_, const bool b) {
       typedef StensorNumType<StensorType> NumType;
       typedef tfel::typetraits::base_type<NumType> base;
       typedef stensor<StensorTraits<StensorType>::dime,NumType> Stensor;
@@ -923,38 +922,35 @@ namespace tfel{
       tmatrix<3u,3u,base> m;
       stensor<StensorTraits<StensorType>::dime,NumType> s(s_);
       s.computeEigenVectors(vp,m,b);
-      return Stensor::buildFromEigenValuesAndVectors(std::max(vp(0),NumType(0)),
-						     std::max(vp(1),NumType(0)),
-						     std::max(vp(2),NumType(0)),m);
+      return Stensor::buildFromEigenValuesAndVectors(
+          std::max(vp(0), NumType(0)), std::max(vp(1), NumType(0)),
+          std::max(vp(2), NumType(0)), m);
     }
 
-    template<typename StensorType>
+    template <typename StensorType>
     typename std::enable_if<
-      ((tfel::meta::Implements<StensorType,StensorConcept>::cond)&&
-       (StensorTraits<StensorType>::dime==1u) &&
-       (tfel::typetraits::IsFundamentalNumericType<StensorNumType<StensorType>>::cond)),
-      stensor<1u,StensorNumType<StensorType>>
-   >::type
-    negative_part(const StensorType& s,
-		  const bool)
-    {
+        ((tfel::meta::Implements<StensorType, StensorConcept>::cond) &&
+         (StensorTraits<StensorType>::dime == 1u) &&
+         (tfel::typetraits::IsFundamentalNumericType<
+             StensorNumType<StensorType>>::cond)),
+        stensor<1u, StensorNumType<StensorType>>>::type
+    negative_part(const StensorType& s, const bool) {
       typedef StensorNumType<StensorType> NumType;
       return {std::min(s(0),NumType(0)),
 	  std::min(s(1),NumType(0)),
 	  std::min(s(2),NumType(0))};
     }
 
-    template<typename StensorType>
+    template <typename StensorType>
     typename std::enable_if<
-      ((tfel::meta::Implements<StensorType,StensorConcept>::cond)&&
-       ((StensorTraits<StensorType>::dime==2u)||
-	(StensorTraits<StensorType>::dime==3u))&&
-       (tfel::typetraits::IsFundamentalNumericType<StensorNumType<StensorType>>::cond)),
-      stensor<StensorTraits<StensorType>::dime,StensorNumType<StensorType>>
-   >::type
-    negative_part(const StensorType& s_,
-		  const bool b)
-    {
+        ((tfel::meta::Implements<StensorType, StensorConcept>::cond) &&
+         ((StensorTraits<StensorType>::dime == 2u) ||
+          (StensorTraits<StensorType>::dime == 3u)) &&
+         (tfel::typetraits::IsFundamentalNumericType<
+             StensorNumType<StensorType>>::cond)),
+        stensor<StensorTraits<StensorType>::dime,
+                StensorNumType<StensorType>>>::type
+    negative_part(const StensorType& s_, const bool b) {
       typedef StensorNumType<StensorType> NumType;
       typedef tfel::typetraits::base_type<NumType> base;
       typedef stensor<StensorTraits<StensorType>::dime,NumType> Stensor;

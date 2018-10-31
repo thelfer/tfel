@@ -18,8 +18,10 @@
 \newcommand{\tepsilonvp}{\underline{\epsilon}^{\mathrm{vp}}}
 \newcommand{\tepsilonth}{\underline{\epsilon}^{\mathrm{th}}}
 
-The page declares the new functionalities of the 3.2 version of
-the `TFEL` project.
+The page declares the new functionalities of the 3.2 version of the
+`TFEL` project. This version has been released along with version 3.1.3
+and benefits from all the associated fixes. See [this
+page](release-notes-3.1.3.html) for details.
 
 The `TFEL` project is a collaborative development of
 [CEA](http://www.cea.fr/english-portal "Commissariat à l'énergie

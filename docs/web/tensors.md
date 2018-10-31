@@ -816,6 +816,11 @@ follows:
 const auto vp = s.computeEigenValues();
 ~~~~
 
+> **Note**
+>
+> In `2D`, the last eigenvalue always corresponds to the out-of-plane
+> direction.
+
 Those eigen values can be ordered by using one of the following argument:
 
 - `ASCENDING`: eigenvalues are sorted from the lowest to the greatest.
@@ -824,6 +829,12 @@ Those eigen values can be ordered by using one of the following argument:
 ~~~~{.cpp}
 const auto vp = s.computeEigenValues(stensor::ASCENDING);
 ~~~~
+
+> **Note**
+>
+> In `1D`, the sorting parameter has no effect.
+> In `2D`, the last eigenvalue always corresponds to the out-of-plane
+> direction.
 
 By default, the eigenvalues are computed using Cardano
 formula. However, one may use one of the following eigensolver
@@ -882,6 +893,21 @@ tmatrix<3u,3u,real> m2;
 tvector<3u,real>    vp2;
 std::tie(vp,m)=s.computeEigenVectors<stensor::GTESYMMETRICQREIGENSOLVER>();
 ~~~~~
+
+> **Note**
+>
+> In `2D`, the last eigenvector always corresponds to the out-of-plane
+> direction.
+
+The `computeEigenVectors` method can also order the eigenvalues in
+ascending or descending order, see the `computeEigenValues` method for
+details.
+
+> **Note**
+>
+> In `1D`, the ordering parameter has no effect.
+> In `2D`, the last eigenvector always corresponds to the out-of-plane
+> direction.
 
 ## Isotropic functions of a symmetric tensor
 
