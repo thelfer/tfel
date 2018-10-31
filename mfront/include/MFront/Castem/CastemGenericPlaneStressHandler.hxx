@@ -272,10 +272,11 @@ namespace castem
 	const CastemReal n = PROPS[1]; // Poisson ratio
 	const CastemReal c1 = -n/(1-n);
 	const CastemReal c3 = 1/y;
+	const CastemInt nb = *NPROPS-1;
 	CastemGenericPlaneStressHandler::template exe<BehaviourHandler>(c1,c1,c3,
 								      DTIME,DROT,DDSDDE,
 								      STRAN,DSTRAN,TEMP,
-								      DTEMP,nPROPS,NPROPS,
+								      DTEMP,nPROPS,&nb,
 								      PREDEF,DPRED,STATEV,
 								      NSTATV,STRESS,PNEWDT,op,sfeh);
       } // end of exe
