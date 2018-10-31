@@ -81,8 +81,31 @@ namespace mtest
     //! destructor
     ~CastemStandardBehaviour() override;
   protected:
-    //! the umat fonction
-    tfel::system::CastemFctPtr fct;
+    /*!
+     * \brief build the appropriate material properties for the
+     * modelling hypothesis from the ones declared in the current
+     * state and store them in `wk.mps`. This method has been
+     * introduced to properly handle the plane stress hypothesis if
+     * this hypothesis is handled by the `Cast3M` interface and not
+     * the the behaviour directly.
+     * 
+     * \param[out] wk: workspace
+     * \param[in] s: current state
+     */
+   virtual void buildMaterialProperties(BehaviourWorkSpace&,
+                                        const CurrentState&) const;
+   /*!
+    * The umat interface can handle plane stress by calling the
+    * generalised plane strain version of the behaviour.  In this
+    * case, the hypothesis used by the behaviour is different than
+    * the hypothesis used to perform the computation. This flag
+    * distinguishes this case.
+    *
+    * This flag must be set but the derived classes.
+    */
+   bool usesGenericPlaneStressAlgorithm = false;
+   //! the umat fonction
+   tfel::system::CastemFctPtr fct;
   }; // end of struct Behaviour
   
 } // end of namespace mtest
