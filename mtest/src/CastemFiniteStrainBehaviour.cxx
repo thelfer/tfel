@@ -235,22 +235,21 @@ namespace mtest
 		"is not supported");
   } // end of CastemFiniteStrainBehaviour::computePredictionOperator
 
-  std::pair<bool,real>
-  CastemFiniteStrainBehaviour::integrate(CurrentState& s,
-					 BehaviourWorkSpace& wk,
-					 const real dt,
-					 const StiffnessMatrixType ktype) const
-  {
+  std::pair<bool, real> CastemFiniteStrainBehaviour::integrate(
+      CurrentState& s,
+      BehaviourWorkSpace& wk,
+      const real dt,
+      const StiffnessMatrixType ktype) const {
     using namespace std;
     using namespace tfel::math;
     using namespace castem;
     using tfel::math::vector;
     constexpr const auto sqrt2 = Cste<real>::sqrt2;
-    const auto h = this->usesGenericPlaneStressAlgorithm ?
-                   ModellingHypothesis::PLANESTRESS :this->getHypothesis();
-    CastemInt ntens,ndi;
-    const auto nprops = static_cast<CastemInt>(s.mprops1.size());
-    CastemInt nstatv;
+    const auto h = this->usesGenericPlaneStressAlgorithm ? ModellingHypothesis::PLANESTRESS
+                                                         : this->getHypothesis();
+    this->buildMaterialProperties(wk,s);
+    const auto nprops = static_cast<CastemInt>(wk.mps.size());
+    CastemInt ntens,ndi,nstatv;
     if(h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN){
       ndi   = 14;
       ntens = 3;
@@ -336,7 +335,7 @@ namespace mtest
 		nullptr,nullptr,nullptr,&dt,
 		&(s.esv0(0))  ,&(s.desv(0)),
 		&(s.esv0(0))+1,&(s.desv(0))+1,
-		name,&ndi,nullptr,&ntens,&nstatv,&(s.mprops1(0)),
+		name,&ndi,nullptr,&ntens,&nstatv,&(wk.mps(0)),
 		&nprops,nullptr,&drot(0,0),&ndt,
 		nullptr,&uu0(0,0),&uu1(0,0),nullptr,nullptr,
 		nullptr,nullptr,nullptr,&kinc,0);

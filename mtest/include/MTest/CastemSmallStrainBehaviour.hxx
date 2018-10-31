@@ -91,11 +91,6 @@ namespace mtest
      */
     virtual const char*
     getBehaviourNameForUMATFunctionCall() const override;
-    /*!
-     * \brief allocate internal workspace
-     * \param[out] wk : workspace
-     */
-    virtual void allocate(BehaviourWorkSpace&) const override;
     //! destructor
     virtual ~CastemSmallStrainBehaviour();
   protected:
@@ -112,31 +107,21 @@ namespace mtest
      * \param[in]     b     : if true, integrate the behaviour over the time
      * step, if false compute a prediction of the stiffness matrix
      */
-    virtual std::pair<bool,real>
-    call_behaviour(tfel::math::matrix<real>&,
-		   CurrentState&,
-		   BehaviourWorkSpace&,
-		   const real,
-		   const StiffnessMatrixType,
-		   const bool) const;
-    /*!
-     * \brief compute the elastic stiffness
-     * \param[out] Kt   : tangent operator
-     * \param[in]  mp   : material properties
-     * \param[in]  drot : rotation matrix (Fortran convention)
-     */
-    virtual void
-    computeElasticStiffness(tfel::math::matrix<real>&,
-			    const tfel::math::vector<real>&,
-			    const tfel::math::tmatrix<3u,3u,real>&) const;
-    /*!
-     * The umat interface can handle plane stress by calling the
-     * generalised plane strain version of the behaviour.  In this
-     * case, the hypothesis used by the behaviour is different than
-     * the hypothesis used to perform the computation. This flag
-     * distinguishes this case.
-     */
-    bool usesGenericPlaneStressAlgorithm = false;
+   virtual std::pair<bool, real> call_behaviour(tfel::math::matrix<real>&,
+                                                CurrentState&,
+                                                BehaviourWorkSpace&,
+                                                const real,
+                                                const StiffnessMatrixType,
+                                                const bool) const;
+   /*!
+    * \brief compute the elastic stiffness
+    * \param[out] Kt   : tangent operator
+    * \param[in]  mp   : material properties
+    * \param[in]  drot : rotation matrix (Fortran convention)
+    */
+   virtual void computeElasticStiffness(tfel::math::matrix<real>&,
+                                        const tfel::math::vector<real>&,
+                                        const tfel::math::tmatrix<3u, 3u, real>&) const;
 
   }; // end of struct Behaviour
   

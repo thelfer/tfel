@@ -13,6 +13,7 @@
 
 #include"TFEL/Raise.hxx"
 #include"TFEL/System/ExternalLibraryManager.hxx"
+#include"MFront/Castem/Castem.hxx"
 #include"MFront/MFrontLogStream.hxx"
 #include"MTest/Evolution.hxx"
 #include"MTest/BehaviourWorkSpace.hxx"
@@ -27,45 +28,43 @@ namespace mtest
     auto& elm = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
     umb.mpnames = elm.getUMATMaterialPropertiesNames(umb.library,umb.behaviour,
 						     ModellingHypothesis::toString(h));
-    if(umb.stype==0){
-      if(h==ModellingHypothesis::PLANESTRESS){
-	umb.mpnames.insert(umb.mpnames.begin(),{
+    if (umb.stype == 0) {
+      if (h == ModellingHypothesis::PLANESTRESS) {
+        umb.mpnames.insert(umb.mpnames.begin(),{
 	    "YoungModulus","PoissonRatio","MassDensity",
 	    "ThermalExpansion","PlateWidth"});
       } else {
-	umb.mpnames.insert(umb.mpnames.begin(),{
+        umb.mpnames.insert(umb.mpnames.begin(),{
 	    "YoungModulus","PoissonRatio","MassDensity","ThermalExpansion"});
       }
     } else {
-      if(h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN){
-	umb.mpnames.insert(umb.mpnames.begin(),{
-	    "YoungModulus1","YoungModulus2","YoungModulus3",
-	    "PoissonRatio12","PoissonRatio23","PoissonRatio13",
-	    "MassDensity",
-	    "ThermalExpansion1","ThermalExpansion2","ThermalExpansion3"});
-      } else if(h==ModellingHypothesis::PLANESTRESS){
-	umb.mpnames.insert(umb.mpnames.begin(),{
-	    "YoungModulus1","YoungModulus2","PoissonRatio12",
-	    "ShearModulus12","V1X","V1Y","YoungModulus3",
-	    "PoissonRatio23","PoissonRatio13","MassDensity",
-            "ThermalExpansion1","ThermalExpansion2","PlateWidth"});
-      } else if((h==ModellingHypothesis::PLANESTRAIN)||
-		(h==ModellingHypothesis::AXISYMMETRICAL)||
-		(h==ModellingHypothesis::GENERALISEDPLANESTRAIN)){
-	umb.mpnames.insert(umb.mpnames.begin(),{
-	    "YoungModulus1","YoungModulus2","YoungModulus3",
-	    "PoissonRatio12","PoissonRatio23","PoissonRatio13",
-	    "ShearModulus12","V1X","V1Y","MassDensity",
-            "ThermalExpansion1","ThermalExpansion2","ThermalExpansion3"});
-      } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
-	umb.mpnames.insert(umb.mpnames.begin(),{
-	    "YoungModulus1","YoungModulus2","YoungModulus3",
-	    "PoissonRatio12","PoissonRatio23","PoissonRatio13",
-	    "ShearModulus12","ShearModulus23","ShearModulus13",
-	    "V1X","V1Y","V1Z","V2X","V2Y","V2Z","MassDensity",
-            "ThermalExpansion1","ThermalExpansion2","ThermalExpansion3"});
+      if (h == ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) {
+        umb.mpnames.insert(umb.mpnames.begin(),
+                           {"YoungModulus1", "YoungModulus2", "YoungModulus3", "PoissonRatio12",
+                            "PoissonRatio23", "PoissonRatio13", "MassDensity", "ThermalExpansion1",
+                            "ThermalExpansion2", "ThermalExpansion3"});
+      } else if (h == ModellingHypothesis::PLANESTRESS) {
+        umb.mpnames.insert(umb.mpnames.begin(),
+                           {"YoungModulus1", "YoungModulus2", "PoissonRatio12", "ShearModulus12",
+                            "V1X", "V1Y", "YoungModulus3", "PoissonRatio23", "PoissonRatio13",
+                            "MassDensity", "ThermalExpansion1", "ThermalExpansion2", "PlateWidth"});
+      } else if ((h == ModellingHypothesis::PLANESTRAIN) ||
+                 (h == ModellingHypothesis::AXISYMMETRICAL) ||
+                 (h == ModellingHypothesis::GENERALISEDPLANESTRAIN)) {
+        umb.mpnames.insert(
+            umb.mpnames.begin(),
+            {"YoungModulus1", "YoungModulus2", "YoungModulus3", "PoissonRatio12", "PoissonRatio23",
+             "PoissonRatio13", "ShearModulus12", "V1X", "V1Y", "MassDensity", "ThermalExpansion1",
+             "ThermalExpansion2", "ThermalExpansion3"});
+      } else if (h == ModellingHypothesis::TRIDIMENSIONAL) {
+        umb.mpnames.insert(
+            umb.mpnames.begin(),
+            {"YoungModulus1", "YoungModulus2", "YoungModulus3", "PoissonRatio12", "PoissonRatio23",
+             "PoissonRatio13", "ShearModulus12", "ShearModulus23", "ShearModulus13", "V1X", "V1Y",
+             "V1Z", "V2X", "V2Y", "V2Z", "MassDensity", "ThermalExpansion1", "ThermalExpansion2",
+             "ThermalExpansion3"});
       } else {
-	tfel::raise("setMaterialProperties: unsupported hypothesis");
+        tfel::raise("setMaterialProperties: unsupported hypothesis");
       }
     }
   } // end of setMaterialProperties
@@ -150,6 +149,11 @@ namespace mtest
     wk.ne.resize(ndv);
     wk.ns.resize(nth);
     wk.nivs.resize(nstatev);
+    if((this->usesGenericPlaneStressAlgorithm)&&(this->stype==0u)){
+      wk.mps.resize(this->mpnames.size()+1);
+    } else {
+      wk.mps.resize(this->mpnames.size());
+    }
     mtest::allocate(wk.cs,this->shared_from_this());
   }
 
@@ -207,7 +211,64 @@ namespace mtest
     Behaviour::setOptionalMaterialPropertyDefaultValue(mp,evm,"PlateWidth",1.);
   } // end of CastemStandardBehaviour::setOptionalMaterialPropertiesDefaultValues
 
-  CastemStandardBehaviour::~CastemStandardBehaviour()
-  {} // end of CastemStandardBehaviour::~CastemStandardBehaviour
-  
+  void CastemStandardBehaviour::buildMaterialProperties(BehaviourWorkSpace& wk,
+                                                        const CurrentState& s) const {
+    auto throw_if = [](const bool c, const std::string& m) {
+      tfel::raise_if(c, "CastemSmallStrainBehaviour::buildMaterialProperties: " + m);
+    };
+    if (this->usesGenericPlaneStressAlgorithm) {
+      if (this->stype == 0u) {
+        throw_if(wk.mps.size() != s.mprops1.size() + 1,
+                 "temporary material properties vector was not allocated properly");
+        throw_if(s.mprops1.size() < 3, "invalid number of material properties");
+        wk.mps[0] = s.mprops1[0];
+        wk.mps[1] = s.mprops1[1];
+        wk.mps[2] = s.mprops1[2];
+        wk.mps[3] = s.mprops1[3];
+        // plate width
+        wk.mps[4] = castem::CastemReal(1);
+        std::copy(s.mprops1.begin() + 4u, s.mprops1.end(), wk.mps.begin() + 5u);
+      } else if (this->stype == 1u) {
+        throw_if(wk.mps.size() != s.mprops1.size(),
+                 "temporary material properties vector was not allocated properly");
+        throw_if(s.mprops1.size() < 13, "invalid number of material properties");
+        // YoungModulus1
+        wk.mps[0] = s.mprops1[0];
+        // YoungModulus2
+        wk.mps[1] = s.mprops1[1];
+        // PoissonRatio12
+        wk.mps[2] = s.mprops1[3];
+        // ShearModulus12
+        wk.mps[3] = s.mprops1[6];
+        // V1X
+        wk.mps[4] = s.mprops1[7];
+        // V1Y
+        wk.mps[5] = s.mprops1[8];
+        // YoungModulus3
+        wk.mps[6] = s.mprops1[2];
+        // PoissonRatio23
+        wk.mps[7] = s.mprops1[4];
+        // PoissonRatio13
+        wk.mps[8] = s.mprops1[5];
+        // MassDensity
+        wk.mps[9] = s.mprops1[9];
+        // ThermalExpansion1
+        wk.mps[10] = s.mprops1[10];
+        // ThermalExpansion2
+        wk.mps[11] = s.mprops1[11];
+        // ThermalExpansion3 (does not exists in mps)
+        // plate width
+        wk.mps[12] = castem::CastemReal(1);
+        std::copy(s.mprops1.begin() + 13u, s.mprops1.end(), wk.mps.begin() + 13u);
+      } else {
+        throw_if(true, "unsupported symmetry type");
+      }
+    } else {
+      throw_if(wk.mps.size() != s.mprops1.size(),
+               "temporary material properties vector was not allocated properly");
+      std::copy(s.mprops1.begin(), s.mprops1.end(), wk.mps.begin());
+    }
+  }  // end of CastemStandardBehaviour::buildMaterialProperties
+
+  CastemStandardBehaviour::~CastemStandardBehaviour() = default;
 }
