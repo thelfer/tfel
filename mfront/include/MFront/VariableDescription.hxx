@@ -3,44 +3,42 @@
  * \brief  This file declares the VariableDescription class
  * \author Thomas Helfer
  * \date   17 Jan 2007
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MFRONT_VARIABLEDESCRIPTION_HXX
-#define LIB_MFRONT_VARIABLEDESCRIPTION_HXX 
+#define LIB_MFRONT_VARIABLEDESCRIPTION_HXX
 
-#include<map>
-#include<vector>
-#include<string>
-#include<initializer_list>
+#include <map>
+#include <vector>
+#include <string>
+#include <initializer_list>
 
-#include"TFEL/Utilities/GenTypeBase.hxx"
-#include"MFront/MFrontConfig.hxx"
-#include"MFront/SupportedTypes.hxx"
-#include"MFront/VariableAttribute.hxx"
-#include"MFront/VariableBoundsDescription.hxx"
-#include"MFront/VariableDescriptionBase.hxx"
+#include "TFEL/Utilities/GenTypeBase.hxx"
+#include "MFront/MFrontConfig.hxx"
+#include "MFront/SupportedTypes.hxx"
+#include "MFront/VariableAttribute.hxx"
+#include "MFront/VariableBoundsDescription.hxx"
+#include "MFront/VariableDescriptionBase.hxx"
 
-namespace mfront
-{
+namespace mfront {
 
   //! \brief structure standing for a standard (non static) variable
   struct MFRONT_VISIBILITY_EXPORT VariableDescription
-    : public VariableDescriptionBase
-  {
+      : public VariableDescriptionBase {
     //! standard attribute name
-    static const char *const depth;
+    static const char* const depth;
     //! standard attribute name
-    static const char *const initialValue;
+    static const char* const initialValue;
     //! standard attribute name
-    static const char *const defaultValue;
+    static const char* const defaultValue;
     //! error normalisation factor
-    static const char *const errorNormalisationFactor;
+    static const char* const errorNormalisationFactor;
     //! default constructor
     VariableDescription();
     //! copy constructor
@@ -56,8 +54,7 @@ namespace mfront
      * given name exists
      * \param[in] n: name of the attribute
      */
-    TFEL_NORETURN static void
-    throwUndefinedAttribute(const std::string&);
+    TFEL_NORETURN static void throwUndefinedAttribute(const std::string&);
     /*!
      * Constructor
      * \param[in] t : variable type
@@ -67,9 +64,9 @@ namespace mfront
      * \param[in] l : line number
      */
     VariableDescription(const std::string&,
-			const std::string&,
-			const unsigned short,
-			const size_t);
+                        const std::string&,
+                        const unsigned short,
+                        const size_t);
     //! \return the type flag associated to a the variable
     SupportedTypes::TypeFlag getTypeFlag() const;
     //! \return the size of the variable
@@ -82,9 +79,7 @@ namespace mfront
      * this case, the attribute is left unchanged. However the type of
      * the attribute is checked.
      */
-    void setAttribute(const std::string&,
-		      const VariableAttribute&,
-		      const bool);
+    void setAttribute(const std::string&, const VariableAttribute&, const bool);
     /*!
      * \return true if an attribute with the given name as been registred
      * \param[in] n : name
@@ -94,19 +89,19 @@ namespace mfront
      * \return the attribute with the given name
      * \param[in] n : name
      */
-    template<typename T>
+    template <typename T>
     typename std::enable_if<
-      tfel::meta::TLCountNbrOfT<T,VariableAttributeTypes>::value==1, 
-      T&>::type
+        tfel::meta::TLCountNbrOfT<T, VariableAttributeTypes>::value == 1,
+        T&>::type
     getAttribute(const std::string&);
     /*!
      * \return the attribute with the given name
      * \param[in] n : name
      */
-    template<typename T>
+    template <typename T>
     typename std::enable_if<
-      tfel::meta::TLCountNbrOfT<T,VariableAttributeTypes>::value==1, 
-      const T&>::type
+        tfel::meta::TLCountNbrOfT<T, VariableAttributeTypes>::value == 1,
+        const T&>::type
     getAttribute(const std::string&) const;
     /*!
      * \return the attribute with the given name or the given default
@@ -114,18 +109,16 @@ namespace mfront
      * \param[in] n : name
      * \param[in] v : value
      */
-    template<typename T>
+    template <typename T>
     typename std::enable_if<
-      tfel::meta::TLCountNbrOfT<T,VariableAttributeTypes>::value==1, 
-      T>::type
-    getAttribute(const std::string&,
-		 const T&) const;
+        tfel::meta::TLCountNbrOfT<T, VariableAttributeTypes>::value == 1,
+        T>::type
+    getAttribute(const std::string&, const T&) const;
     /*!
      * \return all the attribute registred
      * \param[in] n : name
      */
-    const std::map<std::string,VariableAttribute>&
-    getAttributes() const;
+    const std::map<std::string, VariableAttribute>& getAttributes() const;
     //! \return true if bounds has been specified for this variable
     bool hasBounds() const;
     /*!
@@ -143,16 +136,14 @@ namespace mfront
      * \param[in] b: bounds
      * \param[in] i: position
      */
-    void setBounds(const VariableBoundsDescription&,
-		   const unsigned short);
+    void setBounds(const VariableBoundsDescription&, const unsigned short);
     //! \return the bounds of this variable
     const VariableBoundsDescription& getBounds() const;
     /*!
      * \return the bounds of this variable
      * \param[in] i: position
      */
-    const VariableBoundsDescription&
-    getBounds(const unsigned short) const;
+    const VariableBoundsDescription& getBounds(const unsigned short) const;
     //! \return true if physical bounds has been specified for this variable
     bool hasPhysicalBounds() const;
     /*!
@@ -170,15 +161,15 @@ namespace mfront
      * \param[in] b: physical bounds
      */
     void setPhysicalBounds(const VariableBoundsDescription&,
-			   const unsigned short);
+                           const unsigned short);
     //! \return the physical bounds of this variable
     const VariableBoundsDescription& getPhysicalBounds() const;
     /*!
      * \return the physical bounds of this variable
      * \param[in] i: position
      */
-    const VariableBoundsDescription&
-    getPhysicalBounds(const unsigned short) const;
+    const VariableBoundsDescription& getPhysicalBounds(
+        const unsigned short) const;
     /*!
      * \brief associate a glossary name to the variable
      * \param[in] g: glossary name
@@ -197,12 +188,12 @@ namespace mfront
     const std::string& getExternalName() const;
     //! destructor
     ~VariableDescription();
-  private:
+
+   private:
     //! a simple alias
-    using OptionalVariableBoundsDescription =
-      tfel::utilities::GenType<VariableBoundsDescription,
-			       std::map<unsigned short,
-					VariableBoundsDescription>>;
+    using OptionalVariableBoundsDescription = tfel::utilities::GenType<
+        VariableBoundsDescription,
+        std::map<unsigned short, VariableBoundsDescription>>;
     //! a simple alias
     using OptionalString = tfel::utilities::GenType<std::string>;
     //! standard bounds
@@ -214,33 +205,30 @@ namespace mfront
     //! entry name
     OptionalString entryName;
     //! variable attributes
-    std::map<std::string,VariableAttribute> attributes;
-  }; // end of struct VariableDescription
+    std::map<std::string, VariableAttribute> attributes;
+  };  // end of struct VariableDescription
 
   /*!
    * \return true if the variable has bounds.
    * \param[in] v: variable description
    * \note this is a simple wrapper around the `hasBounds` method
    */
-  MFRONT_VISIBILITY_EXPORT bool
-  hasBounds(const VariableDescription&);
+  MFRONT_VISIBILITY_EXPORT bool hasBounds(const VariableDescription&);
   /*!
    * \return true if the variable has bounds.
    * \param[in] c: variable description container
    * \param[in] i: index
    * \note this is a simple wrapper around the `hasBounds` method
    */
-  MFRONT_VISIBILITY_EXPORT bool
-  hasBounds(const VariableDescription&,
-	    const unsigned short);
+  MFRONT_VISIBILITY_EXPORT bool hasBounds(const VariableDescription&,
+                                          const unsigned short);
   /*!
    * \return true if the variable has physical bounds.
    * \param[in] v: variable description
    * \note this is a simple wrapper around the `hasPhysicalBounds`
    * method.
    */
-  MFRONT_VISIBILITY_EXPORT bool
-  hasPhysicalBounds(const VariableDescription&);
+  MFRONT_VISIBILITY_EXPORT bool hasPhysicalBounds(const VariableDescription&);
   /*!
    * \return true if the variable has physical bounds.
    * \param[in] c: variable description container
@@ -248,23 +236,23 @@ namespace mfront
    * \note this is a simple wrapper around the `hasPhysicalBounds`
    * method.
    */
-  MFRONT_VISIBILITY_EXPORT bool
-  hasPhysicalBounds(const VariableDescription&,
-		    const unsigned short);
-  
+  MFRONT_VISIBILITY_EXPORT bool hasPhysicalBounds(const VariableDescription&,
+                                                  const unsigned short);
+
   //! a simple alias for backward compatibility
-  typedef VariableDescription  VarHandler;
+  typedef VariableDescription VarHandler;
 
   //! a simple wrapper around the std::vector class
   struct MFRONT_VISIBILITY_EXPORT VariableDescriptionContainer
-    : private std::vector<VariableDescription>
-  {
+      : private std::vector<VariableDescription> {
     VariableDescriptionContainer();
-    VariableDescriptionContainer(const std::initializer_list<VariableDescription>&);    
+    VariableDescriptionContainer(
+        const std::initializer_list<VariableDescription>&);
     VariableDescriptionContainer(VariableDescriptionContainer&&);
     VariableDescriptionContainer(const VariableDescriptionContainer&);
     VariableDescriptionContainer& operator=(VariableDescriptionContainer&&);
-    VariableDescriptionContainer& operator=(const VariableDescriptionContainer&);
+    VariableDescriptionContainer& operator=(
+        const VariableDescriptionContainer&);
     // resusing method from std::vector
     using std::vector<VariableDescription>::size_type;
     using std::vector<VariableDescription>::value_type;
@@ -306,16 +294,14 @@ namespace mfront
      * \see VariableDescription::getExternalName
      * \param[out] n: glossary names of the function
      */
-    void
-    getExternalNames(std::vector<std::string>&) const;
+    void getExternalNames(std::vector<std::string>&) const;
     /*!
      * append the list of external names associated with this
      * container at the end of the given list.
      * \see VariableDescription::getExternalName
      * \param[in] n: list of names
      */
-    void
-    appendExternalNames(std::vector<std::string>&) const;
+    void appendExternalNames(std::vector<std::string>&) const;
     /*!
      * \return the variable with the given name
      * \param[in] n : name
@@ -325,36 +311,34 @@ namespace mfront
      * \return the variable with the given name
      * \param[in] n : name
      */
-    const VariableDescription&
-    getVariable(const std::string&) const;
+    const VariableDescription& getVariable(const std::string&) const;
     /*!
      * \return the variable with the given name
      * \param[in] n:  external name
      */
-    const VariableDescription&
-    getVariableByExternalName(const std::string&) const;
+    const VariableDescription& getVariableByExternalName(
+        const std::string&) const;
     //! destructor
     ~VariableDescriptionContainer();
-  }; // end of struct VariableDescriptionContainer
+  };  // end of struct VariableDescriptionContainer
 
   /*!
    * \return true if one of the variables has bounds.
    * \param[in] c: variable description container
    */
-  MFRONT_VISIBILITY_EXPORT bool
-  hasBounds(const VariableDescriptionContainer&);
+  MFRONT_VISIBILITY_EXPORT bool hasBounds(const VariableDescriptionContainer&);
   /*!
    * \return true if one of the variables has physical bounds.
    * \param[in] c: variable description container
    */
-  MFRONT_VISIBILITY_EXPORT bool
-  hasPhysicalBounds(const VariableDescriptionContainer&);
-  
+  MFRONT_VISIBILITY_EXPORT bool hasPhysicalBounds(
+      const VariableDescriptionContainer&);
+
   //! a simple alias for backward compatibility
-  typedef VariableDescriptionContainer VarContainer;  
+  typedef VariableDescriptionContainer VarContainer;
 
-} // end of namespace mfront
+}  // end of namespace mfront
 
-#include"MFront/VariableDescription.ixx"
+#include "MFront/VariableDescription.ixx"
 
 #endif /* LIB_MFRONT_VARIABLEDESCRIPTION_HXX */
