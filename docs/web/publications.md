@@ -4,6 +4,8 @@
 
 ---
 nocite: |
+    @hure_coalescence_2018
+    @barrioz_void_shape_2018
 	@portelette_crystal_2018
 	@barrioz_void_2018
 	@shi_experimental_2018

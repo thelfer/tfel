@@ -109,7 +109,5 @@ class ViscoChabochMemoNRad(unittest.TestCase):
         for i in range(len(ltime)):
             f.write('{0} {1} {2}\n'.format(ltime[i],SXX[i],SXY[i]))
 
-        self.assertEqual(10, 7 + 3)
-
 if __name__ == '__main__':
     unittest.main()

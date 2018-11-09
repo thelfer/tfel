@@ -24,33 +24,33 @@
  // explicit specialisation to fix a bug in Visual Studio 2015 update 3
 namespace boost
 {
-	template <>
-	const volatile mfront::BehaviourDescription*
-		get_pointer<const volatile mfront::BehaviourDescription>(
-			const volatile mfront::BehaviourDescription*c)
+  template <>
+  const volatile mfront::BehaviourDescription*
+  get_pointer<const volatile mfront::BehaviourDescription>(
+							   const volatile mfront::BehaviourDescription*c)
 	{
-		return c;
+	  return c;
 	}
-	template <>
-	const volatile mfront::AbstractBehaviourDSL*
-		get_pointer<const volatile mfront::AbstractBehaviourDSL>(
-			const volatile mfront::AbstractBehaviourDSL*c)
-	{
-		return c;
-	}
-	template <>
-	const volatile mfront::AbstractDSL*
-		get_pointer<const volatile mfront::AbstractDSL>(
+  template <>
+  const volatile mfront::AbstractBehaviourDSL*
+  get_pointer<const volatile mfront::AbstractBehaviourDSL>(
+							   const volatile mfront::AbstractBehaviourDSL*c)
+  {
+    return c;
+  }
+  template <>
+  const volatile mfront::AbstractDSL*
+  get_pointer<const volatile mfront::AbstractDSL>(
 			const volatile mfront::AbstractDSL*c)
+  {
+    return c;
+  }
+  template <>
+  const volatile mfront::BehaviourData*
+  get_pointer<const volatile mfront::BehaviourData>(
+						    const volatile mfront::BehaviourData*c)
 	{
-		return c;
-	}
-	template <>
-	const volatile mfront::BehaviourData*
-		get_pointer<const volatile mfront::BehaviourData>(
-			const volatile mfront::BehaviourData*c)
-	{
-		return c;
+	  return c;
 	}
 }
 #endif /* _MSC_VER */
