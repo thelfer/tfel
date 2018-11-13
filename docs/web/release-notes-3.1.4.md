@@ -7,6 +7,12 @@ solved are described below.
 
 # Tickets fixed
 
+## Ticket #146: `ExternalLibraryManager::hasBounds` is broken
+
+
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/146/>
+
 ## Ticket #144: Issue in the generic plane stress handler of the `Cast3M` interface
 
 The generic plane stress handler provided by the `Cast3M` interface has
