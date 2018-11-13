@@ -441,7 +441,7 @@ namespace tfel {
             "ExternalLibraryManager::setOutOfBoundsPolicy: "
             "unsupported policy");
       }
-    }  // end of ExternalLibraryManager::setParameter
+    }  // end of ExternalLibraryManager::setOutOfBoundsPolicy
 
     void ExternalLibraryManager::setParameter(const std::string& l,
                                               const std::string& f,
@@ -621,8 +621,8 @@ namespace tfel {
       const auto vn = decomposeVariableName(n);
       const auto n1 = f + "_" + h + "_" + vn + "_LowerBound";
       const auto n2 = f + "_" + h + "_" + vn + "_UpperBound";
-      const auto n3 = f + "_" + n + "_LowerBound";
-      const auto n4 = f + "_" + n + "_UpperBound";
+      const auto n3 = f + "_" + vn + "_LowerBound";
+      const auto n4 = f + "_" + vn + "_UpperBound";
       return ((this->contains(l, n1)) || (this->contains(l, n2)) || (this->contains(l, n3)) ||
               (this->contains(l, n4)));
     }  // end of ExternalLibraryManager::hasBounds
@@ -1058,24 +1058,26 @@ namespace tfel {
                                               const std::string& f,
                                               const std::string& h,
                                               const std::string& n) {
-      if(!h.empty()){
-	ExternalLibraryManagerCheckModellingHypothesisName(h);
+      if (!h.empty()) {
+        ExternalLibraryManagerCheckModellingHypothesisName(h);
       }
       const auto lib = this->loadLibrary(l);
       auto nb = -1;
-      if(!h.empty()){
-	nb = ::tfel_getUnsignedShort(lib, (f + "_" + h + "_n" + n).c_str());
+      if (!h.empty()) {
+        nb = ::tfel_getUnsignedShort(lib, (f + "_" + h + "_n" + n).c_str());
       }
       if (nb == -1) {
-	nb = ::tfel_getUnsignedShort(lib, (f + "_n" + n).c_str());
+        nb = ::tfel_getUnsignedShort(lib, (f + "_n" + n).c_str());
       }
       raise_if(nb == -1,
                "ExternalLibraryManager::getUMATTypes: "
                "number of variables names could not be read "
-               "(" + getErrorMessage() + ")");
+               "(" +
+                   getErrorMessage() + ")");
       int* res = nullptr;
       if(!h.empty()){
-	res = ::tfel_getArrayOfInts(lib, (f + "_" + h + '_' + n+"Types").c_str());
+        res = ::tfel_getArrayOfInts(lib,
+                                    (f + "_" + h + '_' + n + "Types").c_str());
       }
       if (res == nullptr) {
         res = ::tfel_getArrayOfInts(lib, (f + '_' + n+"Types").c_str());
