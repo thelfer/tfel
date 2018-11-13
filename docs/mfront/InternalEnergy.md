@@ -15,13 +15,13 @@ convergence was reached, after that:
 @InternalEnergy{
   // updating the previous value
   // of the stored energy
-  Psi_s += sig|deel
+  Psi_s += (sig|deel)/2;
 }
 ~~~~
 
 ~~~~ {#InternalEnergy2 .cpp}
 @InternalEnergy{
-	Psi_s = sig|eel
+	Psi_s = (sig|eel)/2;
 }
 ~~~~
 
