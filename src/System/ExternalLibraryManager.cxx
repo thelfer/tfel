@@ -643,8 +643,8 @@ namespace tfel
       const auto vn = decomposeVariableName(n);
       const auto n1 = f+"_"+h+"_"+vn+"_LowerBound";
       const auto n2 = f+"_"+h+"_"+vn+"_UpperBound";
-      const auto n3 = f+"_"+n+"_LowerBound";
-      const auto n4 = f+"_"+n+"_UpperBound";
+      const auto n3 = f+"_"+vn+"_LowerBound";
+      const auto n4 = f+"_"+vn+"_UpperBound";
       return ((this->contains(l,n1))||(this->contains(l,n2))||
 	      (this->contains(l,n3))||(this->contains(l,n4)));
     } // end of ExternalLibraryManager::hasBounds
