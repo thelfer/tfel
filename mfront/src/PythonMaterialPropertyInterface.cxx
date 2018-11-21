@@ -90,7 +90,7 @@ namespace mfront
     auto& l =
         d(lib, "",
           LibraryDescription::getDefaultLibrarySuffix(d.system, d.libraryType),
-          LibraryDescription::, LibraryDescription::MODULE);
+          LibraryDescription::MODULE);
 #endif  /* (defined _WIN32) */
     insert_if(l.cppflags,TFEL_PYTHON_INCLUDES);
     insert_if(l.cppflags,
