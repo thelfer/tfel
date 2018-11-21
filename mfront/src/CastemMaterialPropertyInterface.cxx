@@ -81,7 +81,9 @@ namespace mfront
     insert_if(d[lib].cppflags,
 	      "$(shell "+tfel_config+" --cppflags --compiler-flags)");
     insert_if(d[lib].sources,this->getSourceFileName(name));
+#if  !((defined _WIN32) && (defined _MSC_VER))
     insert_if(d[lib].link_libraries,"m");
+#endif /* !((defined _WIN32) && (defined _MSC_VER)) */
     d.headers.push_back("include/"+this->getHeaderFileName(name));    
     insert_if(d[lib].epts,name);
   } // end of CastemMaterialPropertyInterface::getTargetsDescription

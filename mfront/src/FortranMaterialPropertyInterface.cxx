@@ -3,7 +3,7 @@
  * \brief  
  * 
  * \author Thomas Helfer
- * \date   01 déc 2008
+ * \date   01 dÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¾ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¾ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©c 2008
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
  * reserved. 
  * This project is publicly released under either the GNU GPL Licence 
@@ -28,11 +28,7 @@
 namespace mfront
 {
 
-  std::string
-  FortranMaterialPropertyInterface::getName()
-  {
-    return "fortran";
-  }
+  std::string FortranMaterialPropertyInterface::getName() { return "fortran"; }
 
   FortranMaterialPropertyInterface::FortranMaterialPropertyInterface() = default;
 
@@ -48,10 +44,9 @@ namespace mfront
     }
     return {false,current};
   }
-  
-  void
-  FortranMaterialPropertyInterface::getTargetsDescription(TargetsDescription& d,
-							  const MaterialPropertyDescription& mpd) const
+
+  void FortranMaterialPropertyInterface::getTargetsDescription(
+      TargetsDescription& d, const MaterialPropertyDescription& mpd) const
 
   {
     const auto lib  = "Fortran"+getMaterialLawLibraryNameBase(mpd);
@@ -64,45 +59,40 @@ namespace mfront
     insert_if(d[lib].include_directories,
 	      "$(shell "+tfel_config+" --include-path)");
     insert_if(d[lib].sources,name+".cxx");
+#if  !((defined _WIN32) && (defined _MSC_VER))
     insert_if(d[lib].link_libraries,"m");
+#endif /* !((defined _WIN32) && (defined _MSC_VER)) */
     insert_if(d[lib].epts,{f,f+"_checkBounds"});
   } // end of FortranMaterialPropertyInterface::getTargetsDescription
 
-  std::string
-  FortranMaterialPropertyInterface::getHeaderFileName(const std::string&,
-						      const std::string&) const
-  {
+  std::string FortranMaterialPropertyInterface::getHeaderFileName(
+      const std::string&, const std::string&) const {
     return "";
   } // end of FortranMaterialPropertyInterface::getHeaderFileName
 
-  std::string
-  FortranMaterialPropertyInterface::getSrcFileName(const std::string& material,
-						   const std::string& className) const
-  {
+  std::string FortranMaterialPropertyInterface::getSrcFileName(
+      const std::string& material, const std::string& className) const {
     if(material.empty()){
       return className+"-fortran";
     }
     return material+"_"+className+"-fortran";
   } // end of FortranMaterialPropertyInterface::getSrcFileName
 
-  void FortranMaterialPropertyInterface::writeInterfaceSymbol(std::ostream& out,
-							      const MaterialPropertyDescription& mpd) const{
+  void FortranMaterialPropertyInterface::writeInterfaceSymbol(
+      std::ostream& out, const MaterialPropertyDescription& mpd) const {
     mfront::writeInterfaceSymbol(out,this->getFunctionName(mpd),"Fortran");
   } // end of FortranMaterialPropertyInterface
-  
-  void
-  FortranMaterialPropertyInterface::writeInterfaceSpecificVariables(std::ostream& os,
-								    const VariableDescriptionContainer& inputs) const
-  {
+
+  void FortranMaterialPropertyInterface::writeInterfaceSpecificVariables(
+      std::ostream& os, const VariableDescriptionContainer& inputs) const {
     for(const auto& i : inputs){
       os << "const mfront_fortran_real8 " << i.name
 	 << " =  *(_mfront_var_" << i.name << ");\n";
     }
   } // end of FortranMaterialPropertyInterface::writeInterfaceSpecificVariables
 
-  void
-  FortranMaterialPropertyInterface::writeParameterList(std::ostream& file,
-						       const VariableDescriptionContainer& inputs) const{
+  void FortranMaterialPropertyInterface::writeParameterList(
+      std::ostream& file, const VariableDescriptionContainer& inputs) const {
     if(!inputs.empty()){
       for(auto p=inputs.begin();p!=inputs.end();){
 	file << "const mfront_fortran_real8 * const _mfront_var_" << p->name;
@@ -115,10 +105,8 @@ namespace mfront
     }
   } // end of FortranMaterialPropertyInterface::writeParameterList
 
-  void
-  FortranMaterialPropertyInterface::writeSrcPreprocessorDirectives(std::ostream& os,
-								   const MaterialPropertyDescription& mpd) const
-  {
+  void FortranMaterialPropertyInterface::writeSrcPreprocessorDirectives(
+      std::ostream& os, const MaterialPropertyDescription& mpd) const {
     const auto name = (!mpd.material.empty()) ? mpd.material+"_"+mpd.className : mpd.className;
     const auto f77_func = (name.find('_')!=std::string::npos) ? "F77_FUNC_" : "F77_FUNC";
     writeExportDirectives(os);
@@ -147,9 +135,10 @@ namespace mfront
        << "#endif /* __cplusplus */\n\n";
   } // end of FortranMaterialPropertyInterface::writeSrcPreprocessorDirectives
 
-  void FortranMaterialPropertyInterface::writeBeginHeaderNamespace(std::ostream&) const
-  {} // end of FortranMaterialPropertyInterface::writeBeginHeaderNamespace
-  
+  void FortranMaterialPropertyInterface::writeBeginHeaderNamespace(
+      std::ostream&) const {
+  }  // end of FortranMaterialPropertyInterface::writeBeginHeaderNamespace
+
   void FortranMaterialPropertyInterface::writeEndHeaderNamespace(std::ostream&) const
   {} // end of FortranMaterialPropertyInterface::writeEndHeaderNamespace()
 

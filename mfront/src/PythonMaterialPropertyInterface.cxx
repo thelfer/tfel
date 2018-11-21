@@ -51,11 +51,7 @@
 namespace mfront
 {
 
-  std::string
-  PythonMaterialPropertyInterface::getName()
-  {
-    return "python";
-  }
+  std::string PythonMaterialPropertyInterface::getName() { return "python"; }
 
   PythonMaterialPropertyInterface::PythonMaterialPropertyInterface() = default;
 
@@ -72,10 +68,8 @@ namespace mfront
     return {false,current};
   } // end of treatKeyword
 
-  void
-  PythonMaterialPropertyInterface::getTargetsDescription(TargetsDescription& d,
-							 const MaterialPropertyDescription& mpd) const
-  {
+  void PythonMaterialPropertyInterface::getTargetsDescription(
+      TargetsDescription& d, const MaterialPropertyDescription& mpd) const {
     const auto lib = makeLowerCase(getMaterialLawLibraryNameBase(mpd));
     const auto name = (mpd.material.empty()) ? mpd.className : mpd.material+"_"+mpd.className;
     const auto headerFileName  = "include/"+name+"-python.hxx";
@@ -90,14 +84,28 @@ namespace mfront
     } else {
       src = mpd.library+"wrapper.cxx";
     }
-    auto& l = d(lib,"");
+#if  (defined _WIN32)
+    auto& l = d(lib,"","pyd", LibraryDescription::MODULE );
+#else    /* (defined _WIN32) */
+    auto& l =
+        d(lib, "",
+          LibraryDescription::getDefaultLibrarySuffix(d.system, d.libraryType),
+          LibraryDescription::, LibraryDescription::MODULE);
+#endif  /* (defined _WIN32) */
     insert_if(l.cppflags,TFEL_PYTHON_INCLUDES);
     insert_if(l.cppflags,
 	      "$(shell "+tfel_config+" --cppflags --compiler-flags)");
     insert_if(d[lib].include_directories,
 	      "$(shell "+tfel_config+" --include-path)");
+#if  !((defined _WIN32) && (defined _MSC_VER))
     insert_if(l.link_libraries,"m");    
+#endif /* !((defined _WIN32) && (defined _MSC_VER)) */
+#ifdef TFEL_PYTHON_LIBRARY_PATH
+    insert_if(l.link_directories, TFEL_PYTHON_LIBRARY_PATH);
+    insert_if(l.link_libraries, TFEL_PYTHON_LIBRARY);
+#else
     insert_if(l.ldflags,TFEL_PYTHON_LIBS);
+#endif
     insert_if(l.sources,name+"-python.cxx");
     insert_if(l.sources,src);
     insert_if(l.epts,name);
@@ -482,41 +490,53 @@ namespace mfront
 #else
     wrapper << "PyMODINIT_FUNC ";
 #endif
-    wrapper << "PyInit_" << md << "()\n"
-	    << "{\n"
-	    << "  struct ModuleState {\n"
-	    << "    PyObject *error;\n"
-	    << "  };\n"
-	    << "  auto traverse = [](PyObject *m, visitproc visit, void * arg) {\n"
-	    << "    auto s = static_cast<ModuleState*>(PyModule_GetState(m));\n"
-	    << "    Py_VISIT(s->error);\n"
-	    << "    return 0;\n"
-	    << "  };\n"
-	    << "  auto clear = [](PyObject *m) {\n"
-	    << "    auto s = static_cast<ModuleState*>(PyModule_GetState(m));\n"
-	    << "    Py_CLEAR(s->error);\n"
-	    << "    return 0;\n"
-	    << "  };\n"
-	    << "  static PyModuleDef d = {\n"
-	    << "    PyModuleDef_HEAD_INIT,\n"
-	    << "    \"" << md << "\",\n"
-	    << "    nullptr,sizeof(ModuleState),\n"
-	    << "    " << mlm << ",\n"
-	    << "    nullptr,+traverse,+clear,nullptr\n"
-	    << "  };\n"
-	    << "  auto *m = PyModule_Create(&d);\n"
-	    << "  if (m == nullptr){\n"
-	    << "    return nullptr;\n"
-	    << "  }\n"
-	    << "  auto st = static_cast<ModuleState*>(PyModule_GetState(m));\n"
-	    << "  st->error = PyErr_NewException(\"" << md << ".error\", nullptr, nullptr);\n"
-	    << "  if (st->error == nullptr) {\n"
-	    << "    Py_DECREF(m);\n"
-	    << "    return nullptr;\n"
-	    << "  }\n"
-	    << "  return m;\n"
-	    << "} /* end of init " << md << " */\n"
-	    << "#else\n";
+    wrapper
+        << "PyInit_" << md << "()\n"
+        << "{\n"
+        << "  struct ModuleState {\n"
+        << "    PyObject *error;\n"
+        << "  };\n"
+        << "  auto traverse = [](PyObject *m, visitproc visit, void * arg) {\n"
+        << "    auto s = static_cast<ModuleState*>(PyModule_GetState(m));\n"
+        << "    Py_VISIT(s->error);\n"
+        << "    return 0;\n"
+        << "  };\n"
+        << "  auto clear = [](PyObject *m) {\n"
+        << "    auto s = static_cast<ModuleState*>(PyModule_GetState(m));\n"
+        << "    Py_CLEAR(s->error);\n"
+        << "    return 0;\n"
+        << "  };\n"
+        << "#if (defined _MSC_VER)\n"
+        << "  static PyModuleDef d = {\n"
+        << "    PyModuleDef_HEAD_INIT,\n"
+        << "    \"" << md << "\",\n"
+        << "    nullptr,sizeof(ModuleState),\n"
+        << "    " << mlm << ",\n"
+        << "    nullptr,traverse,clear,nullptr\n"
+        << "  };\n"
+        << "#else /* (defined _MSC_VER) */\n"
+        << "  static PyModuleDef d = {\n"
+        << "    PyModuleDef_HEAD_INIT,\n"
+        << "    \"" << md << "\",\n"
+        << "    nullptr,sizeof(ModuleState),\n"
+        << "    " << mlm << ",\n"
+        << "    nullptr,+traverse,+clear,nullptr\n"
+        << "  };\n"
+        << "#endif/* (defined _MSC_VER) */\n"
+        << "  auto *m = PyModule_Create(&d);\n"
+        << "  if (m == nullptr){\n"
+        << "    return nullptr;\n"
+        << "  }\n"
+        << "  auto st = static_cast<ModuleState*>(PyModule_GetState(m));\n"
+        << "  st->error = PyErr_NewException(\"" << md
+        << ".error\", nullptr, nullptr);\n"
+        << "  if (st->error == nullptr) {\n"
+        << "    Py_DECREF(m);\n"
+        << "    return nullptr;\n"
+        << "  }\n"
+        << "  return m;\n"
+        << "} /* end of init " << md << " */\n"
+        << "#else\n";
 #ifndef _WIN32
     wrapper << "extern \"C\" MFRONT_SHAREDOBJ  void ";
 #else

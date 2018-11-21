@@ -3,7 +3,7 @@
  * \brief  
  * 
  * \author Thomas Helfer
- * \date   01 déc 2008
+ * \date   01 dÃƒÆ’Ã‚Â©c 2008
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
  * reserved. 
  * This project is publicly released under either the GNU GPL Licence 
@@ -55,12 +55,13 @@ namespace mfront
 
   Fortran03MaterialPropertyInterface::Fortran03MaterialPropertyInterface() = default;
 
-  std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
-  Fortran03MaterialPropertyInterface::treatKeyword(const std::string& key,
-						   const std::vector<std::string>& i,
-						   tokens_iterator current,
-						   const tokens_iterator end)
-  {
+  std::pair<bool,
+            tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
+  Fortran03MaterialPropertyInterface::treatKeyword(
+      const std::string& key,
+      const std::vector<std::string>& i,
+      tokens_iterator current,
+      const tokens_iterator end) {
     auto throw_if = [](const bool b, const std::string& m){
       tfel::raise_if(b,"Fortran03MaterialPropertyInterface::treatKeyword : "+m);
     };
@@ -81,10 +82,9 @@ namespace mfront
     }
     return {false,current};
   } // end of treatKeyword
-  
-  void
-  Fortran03MaterialPropertyInterface::getTargetsDescription(TargetsDescription& d,
-							    const MaterialPropertyDescription& mpd) const
+
+  void Fortran03MaterialPropertyInterface::getTargetsDescription(
+      TargetsDescription& d, const MaterialPropertyDescription& mpd) const
 
   {
     auto fmname = (mpd.material.empty()) ? "mfront_mp" : mpd.material;
@@ -96,7 +96,9 @@ namespace mfront
     insert_if(d[lib].include_directories,
 	      "$(shell "+tfel_config+" --include-path)");
     insert_if(d[lib].sources,name+".cxx");
+#if  !((defined _WIN32) && (defined _MSC_VER))
     insert_if(d[lib].link_libraries,"m");
+#endif /* !((defined _WIN32) && (defined _MSC_VER)) */
     insert_if(d[lib].epts,{fmname+"::"+mpd.law,fmname+"::"+mpd.law+"_checkBounds"});
   } // end of Fortran03MaterialPropertyInterface::getTargetsDescription
 
