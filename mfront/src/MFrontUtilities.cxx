@@ -34,7 +34,7 @@ namespace mfront{
       d.push_back(v);
     }
   }
-
+  
   void insert_if(std::vector<std::string>& d,
 		 const char* const v){
     if(v==nullptr){

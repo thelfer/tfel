@@ -252,11 +252,15 @@ namespace mfront{
 	}
       }
       m << ")\n";
-      m << "set_target_properties(" << l.name << '\n'
-	<< "PROPERTIES COMPILE_FLAGS \"${" << l. name << "_COMPILE_FLAGS}\")\n";
       if(!l.link_libraries.empty()){
 	m << "target_link_libraries(" << l.name << '\n'
 	  << "${" << l. name << "_LINK_LIBRARIES})\n";
+      }
+      m << "set_target_properties(" << l.name << '\n'
+	<< "PROPERTIES COMPILE_FLAGS \"${" << l. name << "_COMPILE_FLAGS}\")\n";
+      if(l.suffix!=LibraryDescription::getDefaultLibrarySuffix(t.system, t.libraryType)){
+	m << "set_target_properties(" << l.name << '\n'
+	  << "PROPERTIES SUFFIX " << l.suffix << ")\n";
       }
       if(!l.ldflags.empty()){
 	m << "set_target_properties(" << l.name << '\n'

@@ -36,7 +36,6 @@ namespace mfront {
    */
   template <typename Value>
   std::vector<std::string> getKeys(const std::map<std::string, Value>&);
-
   /*!
    * \brief conditionnally insert a string into
    * a vector of string : an element is inserted if not already
@@ -46,7 +45,6 @@ namespace mfront {
    */
   MFRONT_VISIBILITY_EXPORT void insert_if(std::vector<std::string>&,
                                           const std::string&);
-
   /*!
    * \brief conditionnally insert a string into
    * a vector of string : an element is inserted if not already
