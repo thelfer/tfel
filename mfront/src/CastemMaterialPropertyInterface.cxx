@@ -79,7 +79,9 @@ namespace mfront
 							    mpd.material);
     const auto name    = this->getCastemFunctionName(mpd.material,
 						     mpd.className);
+#if  !((defined _WIN32) && (defined _MSC_VER))
     insert_if(d[lib].ldflags,"-lm");
+#endif /* !((defined _WIN32) && (defined _MSC_VER)) */
     insert_if(d[lib].cppflags,CASTEM_CPPFLAGS);
     insert_if(d[lib].sources,this->getSourceFileName(name));
     d.headers.push_back("include/"+this->getHeaderFileName(name));    

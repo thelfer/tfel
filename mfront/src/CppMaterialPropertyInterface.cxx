@@ -63,7 +63,9 @@ namespace mfront
   {
     const auto lib  = "Cpp"+getMaterialLawLibraryNameBase(mpd.library,mpd.material);
     const auto name = mpd.material.empty() ? mpd.className : mpd.material+"_"+mpd.className;
+#if  !((defined _WIN32) && (defined _MSC_VER))
     insert_if(d[lib].ldflags,"-lm");
+#endif /* !((defined _WIN32) && (defined _MSC_VER)) */
     insert_if(d[lib].sources,name+"-cxx.cxx");
     insert_if(d.headers,this->headerFileName);
     auto cn = std::string{};

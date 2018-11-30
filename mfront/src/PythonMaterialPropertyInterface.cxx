@@ -89,7 +89,9 @@ namespace mfront
       src = mpd.library+"wrapper.cxx";
     }
     auto& l = d(lib,"");
+#if  !((defined _WIN32) && (defined _MSC_VER))
     insert_if(l.ldflags,"-lm");    
+#endif /* !((defined _WIN32) && (defined _MSC_VER)) */
     insert_if(l.ldflags,TFEL_PYTHON_LIBS);
     insert_if(l.cppflags,TFEL_PYTHON_INCLUDES);
     insert_if(l.sources,name+"-python.cxx");

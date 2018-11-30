@@ -60,7 +60,9 @@ namespace mfront
     const auto lib  = "Fortran"+getMaterialLawLibraryNameBase(mpd.library,mpd.material);
     const auto name = this->getSrcFileName(mpd.material,mpd.className);
     const auto f = makeLowerCase(mpd.material.empty() ? mpd.className : mpd.material+"_"+mpd.className);
+#if  !((defined _WIN32) && (defined _MSC_VER))
     insert_if(d[lib].ldflags,"-lm");
+#endif /* !((defined _WIN32) && (defined _MSC_VER)) */
     insert_if(d[lib].sources,name+".cxx");
     insert_if(d[lib].epts,{f,f+"_checkBounds"});
   } // end of FortranMaterialPropertyInterface::getTargetsDescription

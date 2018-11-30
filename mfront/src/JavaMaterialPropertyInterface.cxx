@@ -127,7 +127,9 @@ namespace mfront
   {
     const auto lib = getMaterialLawLibraryNameBase(mpd.library,mpd.material)+"-java";
     const auto name = (mpd.material.empty()) ? mpd.className : mpd.material+"_"+mpd.className;
+#if  !((defined _WIN32) && (defined _MSC_VER))
     insert_if(d[lib].ldflags,"-lm");    
+#endif /* !((defined _WIN32) && (defined _MSC_VER)) */
     // the jni part
     insert_if(d[lib].cppflags,TFEL_JAVA_INCLUDES);
     insert_if(d[lib].sources,name+"-java.cxx");

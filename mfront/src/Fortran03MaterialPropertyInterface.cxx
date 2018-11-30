@@ -91,7 +91,9 @@ namespace mfront
     auto fmname = (mpd.material.empty()) ? "mfront_mp" : mpd.material;
     const auto lib  = "Fortran03"+getMaterialLawLibraryNameBase(mpd.library,mpd.material);
     const auto name = this->getSrcFileName(mpd.material,mpd.className);
+#if  !((defined _WIN32) && (defined _MSC_VER))
     insert_if(d[lib].ldflags,"-lm");
+#endif /* !((defined _WIN32) && (defined _MSC_VER)) */
     insert_if(d[lib].sources,name+".cxx");
     insert_if(d[lib].epts,{fmname+"::"+mpd.law,fmname+"::"+mpd.law+"_checkBounds"});
   } // end of Fortran03MaterialPropertyInterface::getTargetsDescription

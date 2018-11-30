@@ -61,7 +61,9 @@ namespace mfront
     const auto name = this->getSrcFileName(mpd.material,mpd.className);
     const auto f    = mpd.material.empty() ? mpd.className : mpd.material+"_"+mpd.className;
     const auto header = this->getHeaderFileName(mpd.material,mpd.className);
+#if  !((defined _WIN32) && (defined _MSC_VER))
     insert_if(d[lib].ldflags,"-lm");
+#endif /* !((defined _WIN32) && (defined _MSC_VER)) */
     insert_if(d[lib].sources,name+".cxx");
     insert_if(d[lib].epts,{f,f+"_checkBounds"});
     if(!header.empty()){
