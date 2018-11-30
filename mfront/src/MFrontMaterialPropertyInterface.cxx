@@ -62,7 +62,9 @@ namespace mfront
       insert_if(d.headers,header+".hxx");
     }
     insert_if(d[lib].sources,name+".cxx");
+#if  !((defined _WIN32) && (defined _MSC_VER))
     insert_if(d[lib].link_libraries,"m");
+#endif /* !((defined _WIN32) && (defined _MSC_VER)) */
     insert_if(d[lib].epts,{f,f+"_checkBounds"});
   } // end of MFrontMaterialPropertyInterface::getTargetsDescription
 

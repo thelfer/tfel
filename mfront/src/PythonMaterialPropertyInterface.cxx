@@ -96,7 +96,9 @@ namespace mfront
 	      "$(shell "+tfel_config+" --cppflags --compiler-flags)");
     insert_if(d[lib].include_directories,
 	      "$(shell "+tfel_config+" --include-path)");
+#if  !((defined _WIN32) && (defined _MSC_VER))
     insert_if(l.link_libraries,"m");    
+#endif /* !((defined _WIN32) && (defined _MSC_VER)) */
     insert_if(l.ldflags,TFEL_PYTHON_LIBS);
     insert_if(l.sources,name+"-python.cxx");
     insert_if(l.sources,src);

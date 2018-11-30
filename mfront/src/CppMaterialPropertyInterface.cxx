@@ -72,7 +72,9 @@ namespace mfront
 	      "$(shell "+tfel_config+" --include-path)");
       insert_if(d[lib].sources,name+"-cxx.cxx");
       insert_if(d.headers,getHeaderFileName(name));
+#if  !((defined _WIN32) && (defined _MSC_VER))
       insert_if(d[lib].link_libraries,"m");
+#endif /* !((defined _WIN32) && (defined _MSC_VER)) */
       auto cn = std::string{};
 #pragma message("handle namespace")
       // for(const auto& ns : this->namespaces){
