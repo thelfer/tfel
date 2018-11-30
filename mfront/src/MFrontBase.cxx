@@ -86,8 +86,8 @@ namespace mfront {
             << " (" << r.what() << ")\n";
         msg << "Available dsls:\n";
         const auto& dsls = dslFactory.getRegistredParsers();
-        copy(dsls.begin(), dsls.end(),
-             std::ostream_iterator<std::string>(msg, " "));
+        std::copy(dsls.begin(), dsls.end(),
+                  std::ostream_iterator<std::string>(msg, " "));
         tfel::raise(msg.str());
       }
     } else {
@@ -121,47 +121,53 @@ namespace mfront {
   }
 
   bool MFrontBase::treatUnknownArgumentBase() {
+    using tfel::utilities::starts_with;
     const auto& a = this->getCurrentCommandLineArgument();
     const auto& an = a.as_string();
-    if (an[0] == '-') {
-      auto ok = false;
-      if (an.size() >= 4) {
-        if ((an[1] == '-') && (an[2] == '@')) {
-          const auto& o = a.getOption();
-          if (an.back() == '@') {
-            if (o.empty()) {
-              return false;
-            }
-            const auto s1 = an.substr(2);
-            tfel::raise_if(std::count(s1.begin(), s1.end(), '@') != 2,
-                           "MFrontBase::treatUnknownArgumentBase: "
-                           "bad substitution pattern '" +
-                               s1 + "'");
-            if (s1.empty()) {
-              return false;
-            }
-            if (getVerboseMode() >= VERBOSE_LEVEL2) {
-              getLogStream() << "substituting '" << s1 << "' by '" << o
-                             << "'\n";
-            }
-            tfel::raise_if(!this->substitutions.insert({s1, o}).second,
-                           "MFrontBase::treatUnknownArgumentBase: "
-                           "a substitution for '" +
-                               s1 +
-                               "' has "
-                               "already been defined");
-          } else {
-            auto cmd = an.substr(2);
-            if (!o.empty()) {
-              cmd += ' ' + o;
-            }
-            cmd += ';';
-            this->ecmds.push_back(cmd);
-          }
-          ok = true;
+#ifdef _WIN32
+    if (starts_with(an, "--@") || starts_with(an, "/@")) {
+#else  /* _WIN32 */
+    if (starts_with(an, "--@")) {
+#endif /* _WIN32 */
+      const auto& o = a.getOption();
+      if (an.back() == '@') {
+        if (o.empty()) {
+          return false;
         }
+#ifdef _WIN32
+        const auto s1 = starts_with(an, "/@") ? an.substr(1) : an.substr(2);
+#else  /* _WIN32 */
+        const auto s1 = an.substr(2);
+#endif /* _WIN32 */
+        tfel::raise_if(std::count(s1.begin(), s1.end(), '@') != 2,
+                       "MFrontBase::treatUnknownArgumentBase: "
+                       "bad substitution pattern '" +
+                           s1 + "'");
+        if (s1.empty()) {
+          return false;
+        }
+        if (getVerboseMode() >= VERBOSE_LEVEL2) {
+          getLogStream() << "substituting '" << s1 << "' by '" << o << "'\n";
+        }
+        tfel::raise_if(!this->substitutions.insert({s1, o}).second,
+                       "MFrontBase::treatUnknownArgumentBase: "
+                       "a substitution for '" +
+                           s1 +
+                           "' has "
+                           "already been defined");
+      } else {
+#ifdef _WIN32
+        auto cmd = starts_with(an, "/@") ? an.substr(1) : an.substr(2);
+#else  /* _WIN32 */
+        auto cmd = an.substr(2);
+#endif /* _WIN32 */
+        if (!o.empty()) {
+          cmd += ' ' + o;
+        }
+        cmd += ';';
+        this->ecmds.push_back(cmd);
       }
-      return ok;
+      return true;
     }
     this->inputs.insert(an);
     return true;

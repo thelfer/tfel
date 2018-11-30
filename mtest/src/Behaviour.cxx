@@ -146,8 +146,8 @@ namespace mtest {
     }
 #endif
 #ifdef HAVE_ABAQUS
-    if ((in == "abaqus") || (in == "abaqus_standard") || (in == "abaqus_umat") ||
-        (in == "Abaqus")) {
+    if ((in == "Abaqus") || (in == "abaqus") || (in == "abaqus_standard") ||
+        (in == "abaqus_umat")) {
       check_no_parameters();
       const auto bn = AbaqusStandardBehaviour::getBehaviourName(f, h);
       const auto type = elm.getUMATBehaviourType(l, bn);
@@ -159,7 +159,8 @@ namespace mtest {
         throw_if(true, "unsupported behaviour type (" + std::to_string(type) + ")");
       }
     }
-    if ((in == "abaqus_explicit") || (in == "abaqus_vumat") || (in == "AbaqusExplicit")) {
+    if ((in == "AbaqusExplicit") || (in == "abaqus_explicit") ||
+        (in == "abaqus_vumat")) {
       const auto bn = AbaqusExplicitBehaviour::getBehaviourName(f, h);
       check_no_parameters();
       const auto type = elm.getUMATBehaviourType(l, bn);
@@ -171,7 +172,7 @@ namespace mtest {
     }
 #endif
 #ifdef HAVE_ANSYS
-    if ((in == "ansys") || (in == "ansys_usermat") || (in == "Ansys")) {
+    if ((in == "Ansys") || (in == "ansys") || (in == "ansys_usermat")) {
       check_no_parameters();
       const auto bn = AnsysStandardBehaviour::getBehaviourName(f, h);
       const auto type = elm.getUMATBehaviourType(l, bn);
