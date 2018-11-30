@@ -15,6 +15,7 @@
 #include<stdexcept>
 #include<iterator>
 #include<sstream>
+#include<cstdlib>
 #include<string>
 #include<set>
 
@@ -51,11 +52,7 @@
 namespace mfront
 {
 
-  std::string
-  PythonMaterialPropertyInterface::getName()
-  {
-    return "python";
-  }
+  std::string PythonMaterialPropertyInterface::getName() { return "python"; }
 
   PythonMaterialPropertyInterface::PythonMaterialPropertyInterface() = default;
 
@@ -72,32 +69,58 @@ namespace mfront
     return {false,current};
   } // end of treatKeyword
 
-  void
-  PythonMaterialPropertyInterface::getTargetsDescription(TargetsDescription& d,
-							 const MaterialPropertyDescription& mpd) const
-  {
+  void PythonMaterialPropertyInterface::getTargetsDescription(
+      TargetsDescription& d, const MaterialPropertyDescription& mpd) const {
     const auto lib = makeLowerCase(getMaterialLawLibraryNameBase(mpd));
     const auto name = (mpd.material.empty()) ? mpd.className : mpd.material+"_"+mpd.className;
     const auto headerFileName  = "include/"+name+"-python.hxx";
     const auto tfel_config = tfel::getTFELConfigExecutableName();
-    auto src = std::string{};
-    if(mpd.library.empty()){
-      if(!mpd.material.empty()){
-	src = mpd.material+"lawwrapper.cxx";
-      } else {
-	src = "materiallawwrapper.cxx";
+    const auto * const  python_include_path = std::getenv("PYTHON_INCLUDE_PATH");
+    const auto * const  python_library_path = std::getenv("PYTHON_LIBRARY_PATH");
+    const auto * const  python_library      = std::getenv("PYTHON_LIBRARY");
+    const auto src = [&mpd] () -> std::string {
+      if(mpd.library.empty()){
+	if(!mpd.material.empty()){
+	  return mpd.material+"lawwrapper.cxx";
+	} else {
+	  return "materiallawwrapper.cxx";
+	}
       }
+      return mpd.library+"wrapper.cxx";
+    }();
+#if  (defined _WIN32)
+    auto& l = d(lib,"","pyd", LibraryDescription::MODULE);
+#else    /* (defined _WIN32) */
+    auto& l = d(lib, "",
+		LibraryDescription::getDefaultLibrarySuffix(d.system, d.libraryType),
+		LibraryDescription::MODULE);
+#endif  /* (defined _WIN32) */
+    if(python_include_path != nullptr){
+      insert_if(l.include_directories,python_include_path);
     } else {
-      src = mpd.library+"wrapper.cxx";
+      insert_if(l.cppflags, TFEL_PYTHON_INCLUDES);
     }
-    auto& l = d(lib,"");
-    insert_if(l.cppflags,TFEL_PYTHON_INCLUDES);
     insert_if(l.cppflags,
 	      "$(shell "+tfel_config+" --cppflags --compiler-flags)");
     insert_if(d[lib].include_directories,
 	      "$(shell "+tfel_config+" --include-path)");
+#if  !((defined _WIN32) && (defined _MSC_VER))
     insert_if(l.link_libraries,"m");    
+#endif /* !((defined _WIN32) && (defined _MSC_VER)) */
+#ifdef TFEL_PYTHON_LIBRARY_PATH
+    if(python_library_path != nullptr){
+      insert_if(l.link_directories, python_library_path);
+    } else {
+      insert_if(l.link_directories, TFEL_PYTHON_LIBRARY_PATH);
+    }
+    if(python_library != nullptr){
+      insert_if(l.link_libraries, python_library);
+    } else {
+      insert_if(l.link_libraries, TFEL_PYTHON_LIBRARY);
+    }
+#else
     insert_if(l.ldflags,TFEL_PYTHON_LIBS);
+#endif
     insert_if(l.sources,name+"-python.cxx");
     insert_if(l.sources,src);
     insert_if(l.epts,name);

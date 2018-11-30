@@ -64,7 +64,9 @@ namespace mfront
     insert_if(d[lib].include_directories,
 	      "$(shell "+tfel_config+" --include-path)");
     insert_if(d[lib].sources,name+".cxx");
+#if  !((defined _WIN32) && (defined _MSC_VER))
     insert_if(d[lib].link_libraries,"m");
+#endif /* !((defined _WIN32) && (defined _MSC_VER)) */
     insert_if(d[lib].epts,{f,f+"_checkBounds"});
   } // end of FortranMaterialPropertyInterface::getTargetsDescription
 
