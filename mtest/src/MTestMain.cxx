@@ -28,6 +28,7 @@
 #include"TFEL/Raise.hxx"
 #include"TFEL/Tests/TestManager.hxx"
 #include"TFEL/Tests/XMLTestOutput.hxx"
+#include"TFEL/Utilities/StringAlgorithms.hxx"
 #include"TFEL/Utilities/ArgumentParserBase.hxx"
 
 #if ! (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
@@ -335,43 +336,61 @@ namespace mtest
 
   void MTestMain::treatUnknownArgument()
   {
+    using tfel::utilities::starts_with;
     const auto& a = this->currentArgument->as_string();
-    if(a[0]=='-'){
-      if((a.size()>4)&&((a[1]=='-')&&(a[2]=='@'))){
-	if(a.back()=='@'){
-	  const auto s1 = a.substr(2);
-	  tfel::raise_if(std::count(s1.begin(),s1.end(),'@')!=2,
-			 "MTestMain::treatUnknownArgument: "
-			 "bas substitution pattern '"+s1+"'");
-	  const auto s2 = this->currentArgument->getOption();
-	  tfel::raise_if(s2.empty(),
-			 "MTestMain::treatUnknownArgument: "
-			 "no substitution given for pattern '"+s1+"'");
-	  if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL2){
-	    mfront::getLogStream() << "substituting '" << s1 << "' by '" << s2 << "'\n";
-	  }
-	  tfel::raise_if(!this->substitutions.insert({s1,s2}).second,
-			 "MTestMain::treatUnknownArgument: "
-			 "a substitution for '"+s1+"' has "
-			 "already been defined");
-	  return;
-	} else {
-	  const auto o = this->currentArgument->getOption();
-	  auto cmd = a.substr(2);
-	  if(!o.empty()){
-	    cmd += ' '+o;
-	  }
-	  cmd += ';';
-	  this->ecmds.push_back(cmd);
-	  return;
-	}
+#ifdef _WIN32
+    if (starts_with(a, "--@") || starts_with(a, "/@")) {
+#else  /* _WIN32 */
+    if (starts_with(a, "--@")) {
+#endif /* _WIN32 */
+      if (a.back() == '@') {
+#ifdef _WIN32
+        const auto s1 = starts_with(a, "/@") ? a.substr(1) : a.substr(2);
+#else  /* _WIN32 */
+        const auto s1 = a.substr(2);
+#endif /* _WIN32 */
+        tfel::raise_if(std::count(s1.begin(), s1.end(), '@') != 2,
+                       "MTestMain::treatUnknownArgument: "
+                       "bas substitution pattern '" +
+                           s1 + "'");
+        const auto s2 = this->currentArgument->getOption();
+        tfel::raise_if(s2.empty(),
+                       "MTestMain::treatUnknownArgument: "
+                       "no substitution given for pattern '" +
+                           s1 + "'");
+        if (mfront::getVerboseMode() >= mfront::VERBOSE_LEVEL2) {
+          mfront::getLogStream() << "substituting '" << s1 << "' by '" << s2
+                                 << "'\n";
+        }
+        tfel::raise_if(!this->substitutions.insert({s1, s2}).second,
+                       "MTestMain::treatUnknownArgument: "
+                       "a substitution for '" +
+                           s1 +
+                           "' has "
+                           "already been defined");
+        return;
+      } else {
+        const auto o = this->currentArgument->getOption();
+#ifdef _WIN32
+        auto cmd = starts_with(a, "/@") ? a.substr(1) : a.substr(2);
+#else  /* _WIN32 */
+        auto cmd = a.substr(2);
+#endif /* _WIN32 */
+        if (!o.empty()) {
+          cmd += ' ' + o;
+        }
+        cmd += ';';
+        this->ecmds.push_back(cmd);
+        return;
       }
+    }
+    if (a[0] == '-') {
 #if ! (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
       ArgumentParserBase<MTestMain>::treatUnknownArgument();
 #else
       std::cerr << "mtest : unsupported option '" << a << "'\n";
       exit(EXIT_FAILURE);
-#endif /* __CYGWIN__ */
+#endif /* ! (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__) */
     }
     this->inputs.push_back(this->currentArgument->as_string());
   } // end of MTestMain::treatUnknownArgument()

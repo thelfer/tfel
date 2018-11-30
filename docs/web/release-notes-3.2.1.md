@@ -7,6 +7,20 @@ solved are described below.
 
 # Tickets fixed
 
+#Ticket #150: Option specification for additonal keywords or variable substitution is inconsistent under Windows
+
+Options under Windows are allowed to be specified with `'/'` in place
+of `'--'` (both specifications are accepted). However, this did not
+work for additonal keywords or variable substitution.
+
+The following example failed:
+
+~~~~
+$ mfront /@CompareToNumericalJacobian=true ...
+~~~~
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/150/>
+
 #Ticket #149: Ability to specify the path the python library at runtime
 
 The following environment variable can now be used to customize how `python` modules for material properties are build:

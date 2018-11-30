@@ -206,33 +206,27 @@ namespace tfel{
     template<typename T>
     struct ComputeSpecialST2ST2Values<1u,T>
     {
-      static TFEL_MATH_INLINE constexpr st2tost2<1u,T>
-      getId(){
-	return st2tost2<1u,T>{{T{1},T{0},T{0},
+      static TFEL_MATH_INLINE constexpr st2tost2<1u, T> getId() {
+        return st2tost2<1u,T>{{T{1},T{0},T{0},
 			       T{0},T{1},T{0},
 			       T{0},T{0},T{1}}};
       } // end of getId()
-      static TFEL_MATH_INLINE constexpr st2tost2<1u,T>
-      getIxI(){
-	return st2tost2<1u,T>{{T{1},T{1},T{1},
-			       T{1},T{1},T{1},
-			       T{1},T{1},T{1}}};
+      static TFEL_MATH_INLINE constexpr st2tost2<1u, T> getIxI() {
+        return st2tost2<1u, T>{
+            {T{1}, T{1}, T{1}, T{1}, T{1}, T{1}, T{1}, T{1}, T{1}}};
       } // end of getIxI()
-      static TFEL_MATH_INLINE constexpr st2tost2<1u,T>
-      getJ(){
-	return st2tost2<1u,T>{{T{1}/T{3},T{1}/T{3},T{1}/T{3},
+      static TFEL_MATH_INLINE constexpr st2tost2<1u, T> getJ() {
+        return st2tost2<1u,T>{{T{1}/T{3},T{1}/T{3},T{1}/T{3},
 			       T{1}/T{3},T{1}/T{3},T{1}/T{3},
 			       T{1}/T{3},T{1}/T{3},T{1}/T{3}}};
       } // end of getJ()
-      static TFEL_MATH_INLINE constexpr st2tost2<1u,T>
-      getK(){
-	return st2tost2<1u,T>{{ T{2}/T{3},-T{1}/T{3},-T{1}/T{3},
+      static TFEL_MATH_INLINE constexpr st2tost2<1u, T> getK() {
+        return st2tost2<1u,T>{{ T{2}/T{3},-T{1}/T{3},-T{1}/T{3},
 			       -T{1}/T{3}, T{2}/T{3},-T{1}/T{3},
 			       -T{1}/T{3},-T{1}/T{3}, T{2}/T{3}}};
       } // end of getK()
-      static TFEL_MATH_INLINE constexpr st2tost2<1u,T>
-      getM(){
-	return st2tost2<1u,T>{{ T{1}     ,-T{1}/T{2},-T{1}/T{2},
+      static TFEL_MATH_INLINE constexpr st2tost2<1u, T> getM() {
+        return st2tost2<1u,T>{{ T{1}     ,-T{1}/T{2},-T{1}/T{2},
 			       -T{1}/T{2}, T{1}     ,-T{1}/T{2},
 			       -T{1}/T{2},-T{1}/T{2}, T{1}}};
       } // end of getM()

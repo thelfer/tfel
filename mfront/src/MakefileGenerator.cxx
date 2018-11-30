@@ -74,11 +74,11 @@ namespace mfront{
     const auto& l = t[name];
     auto res = std::string{};
     for(const auto& d : l.link_directories){
-      if((tfel::utilities::starts_with(d,"$(shell "))||
-	 (tfel::utilities::ends_with(d,")"))){
-	res += "$(patsubst %,-L%,"+d+") ";
+      if ((tfel::utilities::starts_with(d, "$(shell ")) ||
+          (tfel::utilities::ends_with(d, ")"))) {
+        res += "$(patsubst %,-L%,"+d+") ";
       } else {
-	res += "-L"+d+" ";
+        res += "-L" + d + " ";
       }
     }    
     for(const auto& ll : l.link_libraries){
