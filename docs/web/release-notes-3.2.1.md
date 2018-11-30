@@ -7,6 +7,16 @@ solved are described below.
 
 # Tickets fixed
 
+#Ticket #149: Ability to specify the path the python library at runtime
+
+The following environment variable can now be used to customize how `python` modules for material properties are build:
+
+- `PYTHON_INCLUDE_PATH`: path to the `python` header files.
+- `PYTHON_LIBRARY_PATH`: path to the `python` library.
+- `PYTHON_LIBRARY`: name of the `python` library.
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/149/>
+
 #Ticket #142: get energies (elastic, plastic...) in the `generic` interface
 
 Two outputs have been added in the `MFront_GB_State` structure:

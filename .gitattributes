@@ -1318,6 +1318,8 @@ docs/web/img/VoidsGrowth.png -text
 docs/web/img/VoidsGrowth.xcf -text
 docs/web/img/Win64.png -text
 docs/web/img/Win64.xcf -text
+docs/web/img/XperMFront.png -text
+docs/web/img/XperMFront.xcf -text
 docs/web/img/abaqus-isotropichardening1.png -text
 docs/web/img/abaqus-isotropichardening2.png -text
 docs/web/img/anderson-withwithoutacceleration.svg -text
@@ -1445,6 +1447,7 @@ docs/web/release-notes-2.0.5.md -text
 docs/web/release-notes-3.0.1.md -text
 docs/web/release-notes-3.0.2.md -text
 docs/web/release-notes-3.0.3.md -text
+docs/web/release-notes-3.0.4.md -text
 docs/web/release-notes-3.0.md -text
 docs/web/release-notes-3.1.1.md -text
 docs/web/release-notes-3.1.2.md -text

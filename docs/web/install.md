@@ -5,10 +5,26 @@
 The latest version of this document is always available at
 <http://tfel.sourceforge.net/install.html>.
 
-* Note : `TFEL` is a part of the
-[`Code-Aster`](http://www.code-aster.org/) (>12.03) and
-[`Salome-Meca`](www.code-aster.org/) (> 2015.1) packages: no extra
-installation is required if you use one of these products*
+> **Note** `TFEL` is a part of the
+> [`Code-Aster`](http://www.code-aster.org/) (>12.03) and
+> [`Salome-Meca`](www.code-aster.org/) (> 2015.1) packages: no extra
+> installation is required if you use one of these products*
+
+> **Note** `TFEL` is available as a `spack` package.
+>
+> One easy way to install `TFEL` under `LiNuX` and `MacOs`
+> is to use the following instructions:
+>
+> ~~~~{.bash}
+> $ git clone --single-branch -b develop https://github.com/spack/spack.git 
+> $ . spack/share/spack/setup-env.sh
+> $ spack install tfel@master
+> ~~~~
+> The `TFEL` package can then be loaded as follows:
+>
+> ~~~~{.bash}
+> $ spack load tfel@master
+> ~~~~
 
 It refers to the **current development sources**, instructions for
 specific released versions are included with the sources and detailled

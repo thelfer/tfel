@@ -18,6 +18,30 @@
 \newcommand{\deriv}[2]{{\displaystyle \frac{\displaystyle \partial #1}{\displaystyle \partial #2}}}
 \newcommand{\sigmaeq}{\sigma_{\mathrm{eq}}}
 
+# `TFEL` is available as a `spack` package (27/11/2018)
+
+One easy way to install `TFEL` under `LiNuX` and `MacOs` is to use the
+`spack` package manager.
+
+The `spack` package manager is fully described here:
+<https://spack.readthedocs.io/en/latest/index.html>
+
+The following instructions will build the latest development versions:
+
+~~~~{.bash}
+$ git clone --single-branch -b develop https://github.com/spack/spack.git 
+$ . spack/share/spack/setup-env.sh
+$ spack install tfel@master
+~~~~
+
+The `TFEL` package can then be loaded as follows:
+
+~~~~{.bash}
+$ spack load tfel@master
+~~~~
+
+One nifty feature of `spack` is that you can install various versions of
+`TFEL` in parallel.
 
 # Introducing the MFrontGenericInterfaceSupport project (11/09/2018)
 

@@ -54,6 +54,7 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./release-notes-3.0.1.md				      \
 	   ./release-notes-3.0.2.md				      \
 	   ./release-notes-3.0.3.md				      \
+	   ./release-notes-3.0.4.md				      \
 	   ./release-notes-3.1.md				      \
 	   ./release-notes-3.1.1.md				      \
 	   ./release-notes-3.1.2.md				      \
@@ -281,6 +282,8 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./img/PSACylinderHeadDesign.png			      \
 	   ./img/PSACylinderHeadDesign.svg			      \
 	   ./img/PSACylinderHeadDesign.xcf			      \
+	   ./img/XperMFront.xcf			                      \
+	   ./img/XperMFront.png			                      \
 	   ./media/epx1.mp4                                           \
 	   ./media/epx2.mp4                                           \
 	   ./media/abaqus-explicit.mp4                                \
