@@ -7,9 +7,11 @@ solved are described below.
 
 # Tickets fixed
 
+## Ticket #148: Library suffix is not taken into account by the `cmake` generator
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/148/>
+
 ## Ticket #146: `ExternalLibraryManager::hasBounds` is broken
-
-
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/146/>
 
