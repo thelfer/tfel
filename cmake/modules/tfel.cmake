@@ -399,11 +399,11 @@ endmacro(python_module_base)
 #   python_module_base(${name} ${name} ${ARGN})
 #     if(TFEL_APPEND_SUFFIX)
 #       install(TARGETS py_${name}
-# 	DESTINATION lib${LIB_SUFFIX}/tfel-${TFEL_SUFFIX}/${PYTHON_LIBRARY}/site-packages/
+# 	DESTINATION lib${LIB_SUFFIX}/tfel-${TFEL_SUFFIX}/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}/site-packages/
 # 	COMPONENT python_bindings)
 #     else(TFEL_APPEND_SUFFIX)
 #       install(TARGETS py_${name}
-# 	DESTINATION lib${LIB_SUFFIX}/${PYTHON_LIBRARY}/site-packages/
+# 	DESTINATION lib${LIB_SUFFIX}/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}/site-packages/
 # 	COMPONENT python_bindings)
 #     endif(TFEL_APPEND_SUFFIX)
 # endmacro(python_module)
@@ -413,21 +413,21 @@ macro(python_lib_module name package)
   if(TFEL_APPEND_SUFFIX)
     if(WIN32)
       install(TARGETS py_${package}_${name}
-        DESTINATION bin/${PYTHON_LIBRARY}/site-packages/${package}_${TFEL_SUFFIX_FOR_PYTHON_MODULES}
+        DESTINATION bin/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}/site-packages/${package}_${TFEL_SUFFIX_FOR_PYTHON_MODULES}
         COMPONENT python_bindings)
     else(WIN32)
       install(TARGETS py_${package}_${name}
-        DESTINATION lib${LIB_SUFFIX}/${PYTHON_LIBRARY}/site-packages/${package}_${TFEL_SUFFIX_FOR_PYTHON_MODULES}
+        DESTINATION lib${LIB_SUFFIX}/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}/site-packages/${package}_${TFEL_SUFFIX_FOR_PYTHON_MODULES}
         COMPONENT python_bindings)
     endif(WIN32)
   else(TFEL_APPEND_SUFFIX)
     if(WIN32)
       install(TARGETS py_${package}_${name}
-        DESTINATION bin/${PYTHON_LIBRARY}/site-packages/${package}
+        DESTINATION bin/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}/site-packages/${package}
         COMPONENT python_bindings)
     else(WIN32)
       install(TARGETS py_${package}_${name}
-        DESTINATION lib${LIB_SUFFIX}/${PYTHON_LIBRARY}/site-packages/${package}
+        DESTINATION lib${LIB_SUFFIX}/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}/site-packages/${package}
         COMPONENT python_bindings)
     endif(WIN32)
   endif(TFEL_APPEND_SUFFIX)
@@ -473,11 +473,11 @@ macro(tfel_python_script_base dir)
     endif(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${pyscript}.in")
     if(WIN32)
       install(PROGRAMS ${python_script}
-        DESTINATION bin/${PYTHON_LIBRARY}/site-packages/${dir}/
+        DESTINATION bin/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}/site-packages/${dir}/
         COMPONENT python_bindings)
     else(WIN32)
       install(PROGRAMS ${python_script}
-        DESTINATION lib${LIB_SUFFIX}/${PYTHON_LIBRARY}/site-packages/${dir}/
+        DESTINATION lib${LIB_SUFFIX}/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}/site-packages/${dir}/
         COMPONENT python_bindings)
     endif(WIN32)
   endforeach(pyscript ${ARGN})
