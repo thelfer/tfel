@@ -7,6 +7,12 @@ solved are described below.
 
 # Tickets fixed
 
+#Ticket #153: `SignalManager.cxx` does not compile under `Mac OS`
+
+The issue is related to the fact that `sigfillset` is a macro under `Mac OS`.
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/153/>
+
 #Ticket #150: Option specification for additonal keywords or variable substitution is inconsistent under Windows
 
 Options under Windows are allowed to be specified with `'/'` in place
