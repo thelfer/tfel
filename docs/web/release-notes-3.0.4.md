@@ -7,6 +7,19 @@ solved are described below.
 
 # Tickets fixed
 
+## Ticket #154: The `enable-portable-build` option does not work with `Visual Studio`
+
+The issue is related to the `cmake` build system.
+
+The processor' optimized flags were not separed from the other
+optimisation flags and stored in the generic
+`OPTIMISATION_FLAGS` variable.
+
+Those are now appropriately placed in the `OPTIMISATION_FLAGS_MARCH`
+variable.
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/154/>
+
 ## Ticket #151: Correct the python modules install path
 
 In `tfel.cmake`, the python modules install path was defined as follows:
