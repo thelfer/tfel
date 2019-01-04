@@ -29,8 +29,7 @@
 namespace tfel{
 
 #if defined _WIN32 || defined _WIN64
-  static bool getValueInRegistry(std::string &value)
-  {
+  static bool getValueInRegistry(std::string& value) {
     HKEY  hKey;
     char  szBuffer[512];
     DWORD dwBufferSize = sizeof(szBuffer);
@@ -51,16 +50,17 @@ namespace tfel{
     return false;
   }
 #endif
-  
-  static std::string
-  handleSpace(const std::string& p)
-  {
-    if(find(p.begin(),p.end(),' ')!=p.end()){
-#if defined _WIN32 || defined _WIN64
-      tfel::raise("tfel-config handleSpace: "
-		  "path to TFEL shall not contain space as "
-		  "MinGW can't handle it (Found '"+p+"'). "
-		  "Please change TFEL installation directory");
+
+  static std::string handleSpace(const std::string& p) {
+    if(std::find(p.begin(),p.end(),' ')!=p.end()){
+#if (defined _WIN32 || defined _WIN64) && \
+    (defined __MINGW32__ || defined __MINGW64__)
+      tfel::raise(
+          "handleSpace: path to TFEL shall not contain space as "
+          "MinGW can't handle it (Found '" +
+          p +
+          "'). "
+          "Please change TFEL installation directory");
 #else
       return '"'+p+'"';
 #endif
