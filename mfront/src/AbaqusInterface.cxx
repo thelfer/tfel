@@ -34,8 +34,8 @@
 
 namespace mfront{
 
-  static void
-  checkCompareToNumericalTangentOperatorConsistency(const BehaviourDescription& bd){
+  static void checkCompareToNumericalTangentOperatorConsistency(
+      const BehaviourDescription& bd) {
     auto throw_if = [](const bool b,const std::string& m){
       tfel::raise_if(b,"checkCompareToNumericalTangentOperatorConsistency "
 		     "(AbaqusInterface): "+m);

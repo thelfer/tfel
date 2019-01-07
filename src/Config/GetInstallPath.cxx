@@ -2,7 +2,7 @@
  * \file   GetInstallPath.cxx
  * \brief    
  * \author Thomas Helfer
- * \date   21 déc. 2015
+ * \date   21 dÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©c. 2015
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
  * reserved. 
  * This project is publicly released under either the GNU GPL Licence 
@@ -52,22 +52,21 @@ namespace tfel{
 #endif
 
   static std::string handleSpace(const std::string& p) {
-    if(std::find(p.begin(),p.end(),' ')!=p.end()){
 #if (defined _WIN32 || defined _WIN64) && \
     (defined __MINGW32__ || defined __MINGW64__)
+    if(std::find(p.begin(),p.end(),' ')!=p.end()){
       tfel::raise(
           "handleSpace: path to TFEL shall not contain space as "
           "MinGW can't handle it (Found '" +
           p +
           "'). "
           "Please change TFEL installation directory");
-#else
-      return '"'+p+'"';
-#endif
     }
+#endif /* (defined _WIN32 || defined _WIN64) && \
+    (defined __MINGW32__ || defined __MINGW64__) */
     return p;
-  }
-  
+  } // end of handleSpace
+
   std::string getInstallPath(){
 #if defined _WIN32 || defined _WIN64
     // check in the registry (installation through NSIS)
