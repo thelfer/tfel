@@ -7,6 +7,17 @@ solved are described below.
 
 # Tickets fixed
 
+## Ticket #155: Installation path with space characters for WIndows environment
+
+The installation process of `MFront` in `C:\Program Files (x86)`
+path worked in windows environment, but MFront execution used to stop
+because the installation path contained space characters.
+
+The problem was related on how spaces where handled by the `Makefile`
+and `CMake` generators.
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/155/>
+
 ## Ticket #148: Library suffix is not taken into account by the `cmake` generator
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/148/>
