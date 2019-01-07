@@ -2,7 +2,7 @@
  * \file   GetInstallPath.cxx
  * \brief    
  * \author Thomas Helfer
- * \date   21 déc. 2015
+ * \date   21/12/2015
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
  * reserved. 
  * This project is publicly released under either the GNU GPL Licence 
@@ -29,8 +29,7 @@
 namespace tfel{
 
 #if defined _WIN32 || defined _WIN64
-  static bool getValueInRegistry(std::string &value)
-  {
+  static bool getValueInRegistry(std::string& value) {
     HKEY  hKey;
     char  szBuffer[512];
     DWORD dwBufferSize = sizeof(szBuffer);
@@ -51,23 +50,23 @@ namespace tfel{
     return false;
   }
 #endif
-  
-  static std::string
-  handleSpace(const std::string& p)
-  {
-    if(find(p.begin(),p.end(),' ')!=p.end()){
-#if defined _WIN32 || defined _WIN64
-      tfel::raise("tfel-config handleSpace: "
-		  "path to TFEL shall not contain space as "
-		  "MinGW can't handle it (Found '"+p+"'). "
-		  "Please change TFEL installation directory");
-#else
-      return '"'+p+'"';
-#endif
+
+  static std::string handleSpace(const std::string& p) {
+#if (defined _WIN32 || defined _WIN64) && \
+    (defined __MINGW32__ || defined __MINGW64__)
+    if(std::find(p.begin(),p.end(),' ')!=p.end()){
+      tfel::raise(
+          "handleSpace: path to TFEL shall not contain space as "
+          "MinGW can't handle it (Found '" +
+          p +
+          "'). "
+          "Please change TFEL installation directory");
     }
+#endif /* (defined _WIN32 || defined _WIN64) && \
+    (defined __MINGW32__ || defined __MINGW64__) */
     return p;
-  }
-  
+  } // end of handleSpace
+
   std::string getInstallPath(){
 #if defined _WIN32 || defined _WIN64
     // check in the registry (installation through NSIS)

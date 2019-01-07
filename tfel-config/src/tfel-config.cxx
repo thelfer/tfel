@@ -2,7 +2,7 @@
  * \file   src/TFELConfig/tfel-config.cxx
  * \brief  
  * \author Thomas Helfer
- * \date   27 août 2007
+ * \date   27/08/2007
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
  * reserved. 
  * This project is publicly released under either the GNU GPL Licence 
@@ -19,6 +19,7 @@
 #include<algorithm>
 #include<stdexcept>
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Config/GetInstallPath-defines.hxx"
 #include"tfel-config.hxx"
@@ -33,9 +34,7 @@
 using FuncPtr = void (*)();
 using CallBacksContainer = std::map<std::string,std::pair<FuncPtr,std::string>>;
 
-static std::vector<std::string>
-tokenize(const std::string& s,const char c)
-{
+static std::vector<std::string> tokenize(const std::string& s, const char c) {
   auto res = std::vector<std::string>{};
   std::string::size_type b = 0u;
   std::string::size_type e = s.find_first_of(c, b);
@@ -48,18 +47,20 @@ tokenize(const std::string& s,const char c)
   return res;
 } // end of tokenize
 
-static std::string handleSpace(const std::string& p)
-{
-  if(find(p.begin(),p.end(),' ')!=p.end()){
-#if defined _WIN32 || defined _WIN64
-    throw(std::runtime_error("tfel-config handleSpace: "
-			     "path to TFEL shall not contain space as "
-			     "MinGW can't handle it (Found '"+p+"'). "
-			     "Please change TFEL installation directory"));
-#else
-    return '"'+p+'"';
-#endif
+static std::string handleSpace(const std::string& p) {
+#if (defined _WIN32 || defined _WIN64) && \
+    (defined __MINGW32__ || defined __MINGW64__)
+  if (std::find(p.begin(), p.end(), ' ') != p.end()) {
+    tfel::raise(
+        "tfel-config handleSpace: "
+        "path to TFEL shall not contain space as "
+        "MinGW can't handle it (Found '" +
+        p +
+        "'). "
+        "Please change TFEL installation directory");
   }
+#endif /* (defined _WIN32 || defined _WIN64) && \
+          (defined __MINGW32__ || defined __MINGW64__) */
   return p;
 }
 
