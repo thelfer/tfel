@@ -48,18 +48,20 @@ tokenize(const std::string& s,const char c)
   return res;
 } // end of tokenize
 
-static std::string handleSpace(const std::string& p)
-{
-  if(find(p.begin(),p.end(),' ')!=p.end()){
-#if defined _WIN32 || defined _WIN64
-    throw(std::runtime_error("tfel-config handleSpace: "
-			     "path to TFEL shall not contain space as "
-			     "MinGW can't handle it (Found '"+p+"'). "
-			     "Please change TFEL installation directory"));
-#else
-    return '"'+p+'"';
-#endif
+static std::string handleSpace(const std::string& p) {
+#if (defined _WIN32 || defined _WIN64) && \
+    (defined __MINGW32__ || defined __MINGW64__)
+  if (std::find(p.begin(), p.end(), ' ') != p.end()) {
+    throw(std::runtime_error(
+        "tfel-config handleSpace: "
+        "path to TFEL shall not contain space as "
+        "MinGW can't handle it (Found '" +
+        p +
+        "'). "
+        "Please change TFEL installation directory"))
   }
+#endif /* (defined _WIN32 || defined _WIN64) && \
+          (defined __MINGW32__ || defined __MINGW64__) */
   return p;
 }
 

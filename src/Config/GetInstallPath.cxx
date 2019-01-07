@@ -52,24 +52,23 @@ namespace tfel{
     return false;
   }
 #endif
-  
-  static std::string
-  handleSpace(const std::string& p)
-  {
-    using namespace std;
-    if(find(p.begin(),p.end(),' ')!=p.end()){
-#if defined _WIN32 || defined _WIN64
-      throw(runtime_error("tfel-config handleSpace: "
-			  "path to TFEL shall not contain space as "
-			  "MinGW can't handle it (Found '"+p+"'). "
-			  "Please change TFEL installation directory"));
-#else
-      return '"'+p+'"';
-#endif
+
+  static std::string handleSpace(const std::string& p) {
+#if (defined _WIN32 || defined _WIN64) && \
+    (defined __MINGW32__ || defined __MINGW64__)
+    if(std::find(p.begin(),p.end(),' ')!=p.end()){
+      throw(std::runtime_error(
+          "handleSpace: path to TFEL shall not contain space as "
+          "MinGW can't handle it (Found '" +
+          p +
+          "'). "
+          "Please change TFEL installation directory"));
     }
+#endif /* (defined _WIN32 || defined _WIN64) && \
+    (defined __MINGW32__ || defined __MINGW64__) */
     return p;
-  }
-  
+  } // end of handleSpace
+
   std::string getInstallPath(){
 #if defined _WIN32 || defined _WIN64
     // check in the registry (installation through NSIS)
