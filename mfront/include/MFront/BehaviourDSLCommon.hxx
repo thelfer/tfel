@@ -837,6 +837,9 @@ namespace mfront{
     writeIntegrationDataScaleOperators(std::ostream&,
 					 const Hypothesis) const;
 
+    virtual void writeIntegrationDataUpdateDrivingVariablesMethod(std::ostream&) const;
+
+    
     virtual void writeIntegrationDataClassBegin(std::ostream&,
 						const Hypothesis) const;
 

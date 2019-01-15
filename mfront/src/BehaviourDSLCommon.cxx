@@ -6039,6 +6039,44 @@ namespace mfront{
        << "}\n\n";
   } // end of BehaviourDSLCommon::writeIntegrationDataScaleOpeartors
 
+  void BehaviourDSLCommon::writeIntegrationDataUpdateDrivingVariablesMethod(std::ostream& os) const {
+    bool iknown = true;
+    for (const auto& v : this->mb.getMainVariables()) {
+      iknown = v.first.increment_known;
+    }
+    this->checkIntegrationDataFile(os);
+    os << "/*!\n"
+       << "* \\brief update the driving variable in case of substepping.\n"
+       << "*/\n"
+       << this->mb.getClassName() << "IntegrationData&\n";
+    if (!iknown) {
+      if (this->mb.useQt()) {
+        os << "updateDrivingVariables(const " << this->mb.getClassName()
+           << "BehaviourData<hypothesis,Type,use_qt>& behaviourData){\n";
+      } else {
+        os << "updateDrivingVariables(const " << this->mb.getClassName()
+           << "BehaviourData<hypothesis,Type,false>& behaviourData){\n";
+      }
+    } else {
+      if (this->mb.useQt()) {
+        os << "updateDrivingVariables(const " << this->mb.getClassName()
+           << "BehaviourData<hypothesis,Type,use_qt>&){\n";
+      } else {
+        os << "updateDrivingVariables(const " << this->mb.getClassName()
+           << "BehaviourData<hypothesis,Type,false>&){\n";
+      }
+    }
+    for (const auto& v : this->mb.getMainVariables()) {
+      if (!v.first.increment_known) {
+        os << "this->" << v.first.name << "1 += "
+           << "this->" << v.first.name << "1 - (behaviourData."
+           << v.first.name << "0);\n";
+      }
+    }
+    os << "return *this;\n"
+       << "}\n\n";
+  }  // end of BehaviourDSLCommon::writeIntegrationUpdateDrivingVariablesMethod
+  
   void BehaviourDSLCommon::writeIntegrationDataClassHeader(std::ostream& os) const
   {
     this->checkIntegrationDataFile(os);
@@ -6234,6 +6272,7 @@ namespace mfront{
     this->writeIntegrationDataConstructors(os,h);
     this->writeIntegrationDataMainVariablesSetters(os);
     this->writeIntegrationDataScaleOperators(os,h);
+    this->writeIntegrationDataUpdateDrivingVariablesMethod(os);
     this->writeIntegrationDataClassEnd(os);
     this->writeIntegrationDataOutputOperator(os,h);
   }

@@ -589,6 +589,7 @@ namespace castem {
             --(iterations);
             *pnewdt *= tsf.second;
             behaviour.checkBounds();
+            iData.updateDrivingVariables(bData);
             behaviour.updateExternalStateVariables();
             if (iterations == 0) {
               behaviour.CASTEMexportStateData(stress, statev);

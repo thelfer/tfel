@@ -117,6 +117,7 @@ set(mfront_tests_SOURCES
   Tvergaard
   SaintVenantKirchhoffElasticity
   SaintVenantKirchhoffElasticity2
+  SaintVenantKirchhoffElasticityWithSubStepping
   OrthotropicSaintVenantKirchhoffElasticity
   CompressibleNeoHookeanBehaviour
   IncompressibleMooneyRivlinBehaviour
@@ -522,6 +523,7 @@ test_castem(saintvenantkirchhoffelasticity-shear-3-3D)
 test_castem(saintvenantkirchhoffelasticity-shear-4-3D)
 test_castem(saintvenantkirchhoffelasticity-shear-5-3D)
 test_castem(saintvenantkirchhoffelasticity-shear-6-3D)
+test_castem(saintvenantkirchhoffelasticitywithsubstepping-uniaxialloading-1-3D)
 test_castem(elasticity_frst-uniaxialloading-1-1D)
 test_castem(elasticity_frst-uniaxialloading-2-1D)
 test_castem(elasticity_frst-uniaxialloading-3-1D)
