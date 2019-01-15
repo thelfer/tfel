@@ -5481,6 +5481,44 @@ namespace mfront{
 			      << "}\n\n";
   } // end of BehaviourDSLCommon::writeIntegrationDataScaleOpeartors
 
+  void BehaviourDSLCommon::writeIntegrationDataUpdateDrivingVariablesMethod() {
+    bool iknown = true;
+    for (const auto& v : this->mb.getMainVariables()) {
+      iknown = v.first.increment_known;
+    }
+    this->checkIntegrationDataFile();
+    this->integrationDataFile << "/*!\n"
+       << "* \\brief update the driving variable in case of substepping.\n"
+       << "*/\n"
+       << this->mb.getClassName() << "IntegrationData&\n";
+    if (!iknown) {
+      if (this->mb.useQt()) {
+        this->integrationDataFile << "updateDrivingVariables(const " << this->mb.getClassName()
+				  << "BehaviourData<hypothesis,Type,use_qt>& behaviourData){\n";
+      } else {
+        this->integrationDataFile << "updateDrivingVariables(const " << this->mb.getClassName()
+				  << "BehaviourData<hypothesis,Type,false>& behaviourData){\n";
+      }
+    } else {
+      if (this->mb.useQt()) {
+        this->integrationDataFile << "updateDrivingVariables(const " << this->mb.getClassName()
+				  << "BehaviourData<hypothesis,Type,use_qt>&){\n";
+      } else {
+        this->integrationDataFile << "updateDrivingVariables(const " << this->mb.getClassName()
+				  << "BehaviourData<hypothesis,Type,false>&){\n";
+      }
+    }
+    for (const auto& v : this->mb.getMainVariables()) {
+      if (!v.first.increment_known) {
+        this->integrationDataFile << "this->" << v.first.name << "1 += "
+				  << "this->" << v.first.name << "1 - (behaviourData."
+				  << v.first.name << "0);\n";
+      }
+    }
+    this->integrationDataFile << "return *this;\n"
+			      << "}\n\n";
+  }  // end of BehaviourDSLCommon::writeIntegrationUpdateDrivingVariablesMethod
+  
   void BehaviourDSLCommon::writeIntegrationDataClassHeader() 
   {
     this->checkIntegrationDataFile();
@@ -5678,6 +5716,7 @@ namespace mfront{
     this->writeIntegrationDataConstructors(h);
     this->writeIntegrationDataMainVariablesSetters();
     this->writeIntegrationDataScaleOperators(h);
+    this->writeIntegrationDataUpdateDrivingVariablesMethod();
     this->writeIntegrationDataClassEnd();
     this->writeIntegrationDataOutputOperator(h);
   }

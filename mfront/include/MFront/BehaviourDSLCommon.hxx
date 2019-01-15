@@ -778,6 +778,8 @@ namespace mfront{
     virtual void
     writeIntegrationDataScaleOperators(const Hypothesis);
 
+    virtual void writeIntegrationDataUpdateDrivingVariablesMethod();
+
     virtual void
     writeIntegrationDataClassBegin(const Hypothesis);
 
