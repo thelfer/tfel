@@ -1500,6 +1500,7 @@ AC_OUTPUT([debug.sh Makefile Doxyfile docs/Makefile docs/tfel/Makefile
 	   mfront/tests/behaviours/castem/castemsaintvenantkirchhoffelasticity-shear-4-3D.mtest
 	   mfront/tests/behaviours/castem/castemsaintvenantkirchhoffelasticity-shear-5-3D.mtest
 	   mfront/tests/behaviours/castem/castemsaintvenantkirchhoffelasticity-shear-6-3D.mtest
+   	   mfront/tests/behaviours/castem/castemsaintvenantkirchhoffelasticitywithsubstepping-uniaxialloading-1-3D.mtest
 	   mfront/tests/behaviours/castem/castemfiniterotationsmallstrainelasticity-uniaxialloading-1-1D.mtest
 	   mfront/tests/behaviours/castem/castemfiniterotationsmallstrainelasticity-uniaxialloading-2-1D.mtest
 	   mfront/tests/behaviours/castem/castemfiniterotationsmallstrainelasticity-uniaxialloading-3-1D.mtest

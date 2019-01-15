@@ -342,6 +342,7 @@ namespace cyrano {
                                      (!CyranoTraits<BV>::doSubSteppingOnInvalidResults))) {
             --(iterations);
             behaviour.checkBounds();
+            this->iData.updateDrivingVariables(this->bData);
             behaviour.updateExternalStateVariables();
             this->bData = static_cast<const BData &>(behaviour);
             if (iterations == 0) {

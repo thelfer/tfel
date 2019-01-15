@@ -2863,6 +2863,7 @@ mfront/tests/behaviours/SaintVenantKirchhoffElasticity.mfront -text
 mfront/tests/behaviours/SaintVenantKirchhoffElasticity2.mfront -text
 mfront/tests/behaviours/SaintVenantKirchhoffElasticity3.mfront -text
 mfront/tests/behaviours/SaintVenantKirchhoffElasticityTotalLagrangian.mfront -text
+mfront/tests/behaviours/SaintVenantKirchhoffElasticityWithSubStepping.mfront -text
 mfront/tests/behaviours/SlidingSystemsCC.mfront -text
 mfront/tests/behaviours/StateVariablesBoundsCheck.mfront -text
 mfront/tests/behaviours/StrainHardeningCreep.mfront -text
@@ -4370,6 +4371,7 @@ mfront/tests/behaviours/castem/castemsaintvenantkirchhoffelasticity-uniaxialload
 mfront/tests/behaviours/castem/castemsaintvenantkirchhoffelasticity-uniaxialloading-sig33-1D.mtest.in -text
 mfront/tests/behaviours/castem/castemsaintvenantkirchhoffelasticity-uniaxialloading-sig33-2D.mtest.in -text
 mfront/tests/behaviours/castem/castemsaintvenantkirchhoffelasticity-uniaxialloading-sig33-3D.mtest.in -text
+mfront/tests/behaviours/castem/castemsaintvenantkirchhoffelasticitywithsubstepping-uniaxialloading-1-3D.mtest.in -text
 mfront/tests/behaviours/castem/castemstatevariablesboundscheck.mtest.in -text
 mfront/tests/behaviours/castem/castemstatevariablesboundscheck2.mtest.in -text
 mfront/tests/behaviours/castem/castemstrainhardeningcreep.mtest.in -text
