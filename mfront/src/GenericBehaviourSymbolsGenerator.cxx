@@ -1,7 +1,7 @@
 /*!
  * \file   GenericBehaviourSymbolsGenerator.cxx
  * \brief
- * \author th202608
+ * \author Thomas Helfer
  * \date   19/07/2018
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
@@ -21,10 +21,12 @@ namespace mfront {
 
   GenericBehaviourSymbolsGenerator::GenericBehaviourSymbolsGenerator() =
       default;
-      
+
   void GenericBehaviourSymbolsGenerator::writeBehaviourTypeSymbols(
-									 std::ostream& os, const StandardBehaviourInterface& i, const BehaviourDescription& bd,
-									 const std::string& name) const {
+      std::ostream& os,
+      const StandardBehaviourInterface& i,
+      const BehaviourDescription& bd,
+      const std::string& name) const {
     os << "MFRONT_SHAREDOBJ unsigned short "
         << i.getFunctionNameBasis(name) << "_BehaviourType = ";
     if (bd.getBehaviourType() == BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {

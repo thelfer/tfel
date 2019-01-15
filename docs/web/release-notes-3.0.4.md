@@ -7,6 +7,18 @@ solved are described below.
 
 # Tickets fixed
 
+## Ticket #156: Sub-stepping in the `Cast3M` interface is broken for true finite strain behaviours
+
+The `Cast3M` interface allows substepping at the Gauss point level in
+case of non convergence of the behaviour integration.
+
+This mechanism was broken for "true" finite strain behaviours
+(behaviours directly using the deformation gradient). This means that
+strain based behaviours (using the GreenLagrange strain or the Hencky
+strain) are not affected by this issue.
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/156/>
+
 ## Ticket #154: The `enable-portable-build` option does not work with `Visual Studio`
 
 The issue is related to the `cmake` build system.

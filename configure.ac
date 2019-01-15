@@ -469,6 +469,19 @@ then
     AC_DEFINE(HAVE_CALCULIX)
 fi
 
+# diana-fea
+AC_ARG_ENABLE([Diana FEA],
+               AC_HELP_STRING([--enable-diana-fea],
+		   [build DIANA FEA' interface for mechanical behaviours]),
+	       [enable_diana_fea=true],
+	       [enable_diana_fea=false])
+AM_CONDITIONAL(HAVE_DIANAFEA,[test x"$enable_diana_fea" = "xtrue"])
+if(test "x$enable_diana-fea" = "xtrue")
+then
+    AC_DEFINE(HAVE_DIANAFEA)
+fi
+
+
 #ansys
 AC_ARG_ENABLE([ansys],
                AC_HELP_STRING([--enable-ansys],
@@ -1500,6 +1513,7 @@ AC_OUTPUT([debug.sh Makefile Doxyfile docs/Makefile docs/tfel/Makefile
 	   mfront/tests/behaviours/castem/castemsaintvenantkirchhoffelasticity-shear-4-3D.mtest
 	   mfront/tests/behaviours/castem/castemsaintvenantkirchhoffelasticity-shear-5-3D.mtest
 	   mfront/tests/behaviours/castem/castemsaintvenantkirchhoffelasticity-shear-6-3D.mtest
+   	   mfront/tests/behaviours/castem/castemsaintvenantkirchhoffelasticitywithsubstepping-uniaxialloading-1-3D.mtest
 	   mfront/tests/behaviours/castem/castemfiniterotationsmallstrainelasticity-uniaxialloading-1-1D.mtest
 	   mfront/tests/behaviours/castem/castemfiniterotationsmallstrainelasticity-uniaxialloading-2-1D.mtest
 	   mfront/tests/behaviours/castem/castemfiniterotationsmallstrainelasticity-uniaxialloading-3-1D.mtest

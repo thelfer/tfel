@@ -1,7 +1,7 @@
 /*!
  * \file   AsterSymbolsGenerator.cxx
  * \brief
- * \author th202608
+ * \author Thomas Helfer
  * \date   19/07/2018
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.

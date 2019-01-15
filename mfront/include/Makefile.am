@@ -296,6 +296,13 @@ nobase_include_HEADERS += MFront/Abaqus/Abaqus.hxx                              
 			  MFront/AbaqusExplicitSymbolsGenerator.hxx
 endif
 
+if HAVE_DIANAFEA
+nobase_include_HEADERS +=                                                       \
+			  MFront/DianaFEAInterface.hxx                                      \
+			  MFront/DianaFEASymbolsGenerator.hxx
+endif
+
+
 if HAVE_CALCULIX
 nobase_include_HEADERS += MFront/CalculiX/CalculiX.hxx                              \
 			  MFront/CalculiX/CalculiXData.hxx                                     \

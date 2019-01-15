@@ -338,7 +338,7 @@ namespace mfront {
     const auto& d = mb.getBehaviourData(h);
     throw_if(d.getExternalStateVariables().size() != 1u,
              "external state variables are not supported "
-             "by CaculiX's native interface");
+             "by CalculiX's native interface");
     // get the modelling hypotheses to be treated
     const auto name = mb.getLibrary() + mb.getClassName();
     // output directories

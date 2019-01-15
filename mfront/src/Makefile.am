@@ -202,6 +202,11 @@ libTFELMFront_la_SOURCES += LSDYNAInterface.cxx \
                             LSDYNASymbolsGenerator.cxx
 endif
 
+if HAVE_DIANAFEA
+libTFELMFront_la_SOURCES += DianaFEAInterface.cxx \
+                            DianaFEASymbolsGenerator.cxx
+endif
+
 if HAVE_CALCULIX
 libTFELMFront_la_SOURCES += CalculiXInterface.cxx \
                             CalculiXSymbolsGenerator.cxx

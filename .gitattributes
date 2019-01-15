@@ -2353,6 +2353,8 @@ mfront/include/MFront/DefaultCZMDSL.hxx -text
 mfront/include/MFront/DefaultDSL.hxx -text
 mfront/include/MFront/DefaultDSLBase.hxx -text
 mfront/include/MFront/DefaultFiniteStrainDSL.hxx -text
+mfront/include/MFront/DianaFEAInterface.hxx -text
+mfront/include/MFront/DianaFEASymbolsGenerator.hxx -text
 mfront/include/MFront/Europlexus/Europlexus.hxx -text
 mfront/include/MFront/Europlexus/EuroplexusBehaviourHandler.hxx -text
 mfront/include/MFront/Europlexus/EuroplexusComputeStiffnessTensor.hxx -text
@@ -2604,6 +2606,8 @@ mfront/src/DefaultCZMDSL.cxx -text
 mfront/src/DefaultDSL.cxx -text
 mfront/src/DefaultDSLBase.cxx -text
 mfront/src/DefaultFiniteStrainDSL.cxx -text
+mfront/src/DianaFEAInterface.cxx -text
+mfront/src/DianaFEASymbolsGenerator.cxx -text
 mfront/src/Drucker1949StressCriterion.cxx -text
 mfront/src/EuroplexusComputeStiffnessTensor.cxx -text
 mfront/src/EuroplexusComputeThermalExpansionCoefficientTensor.cxx -text
@@ -2703,6 +2707,7 @@ mfront/src/PragerKinematicHardeningRule.cxx -text
 mfront/src/PythonMaterialPropertyInterface.cxx -text
 mfront/src/RungeKuttaDSL.cxx -text
 mfront/src/RungeKuttaDSLBase.cxx -text
+mfront/src/RungeKuttaDSLBase.cxx_withinitialisation -text
 mfront/src/RungeKuttaFiniteStrainDSL.cxx -text
 mfront/src/SearchPathsHandler.cxx -text
 mfront/src/SecondBroydenSolver.cxx -text
@@ -2868,6 +2873,7 @@ mfront/tests/behaviours/SaintVenantKirchhoffElasticity.mfront -text
 mfront/tests/behaviours/SaintVenantKirchhoffElasticity2.mfront -text
 mfront/tests/behaviours/SaintVenantKirchhoffElasticity3.mfront -text
 mfront/tests/behaviours/SaintVenantKirchhoffElasticityTotalLagrangian.mfront -text
+mfront/tests/behaviours/SaintVenantKirchhoffElasticityWithSubStepping.mfront -text
 mfront/tests/behaviours/SlidingSystemsCC.mfront -text
 mfront/tests/behaviours/StateVariablesBoundsCheck.mfront -text
 mfront/tests/behaviours/StrainHardeningCreep.mfront -text
@@ -4375,6 +4381,7 @@ mfront/tests/behaviours/castem/castemsaintvenantkirchhoffelasticity-uniaxialload
 mfront/tests/behaviours/castem/castemsaintvenantkirchhoffelasticity-uniaxialloading-sig33-1D.mtest.in -text
 mfront/tests/behaviours/castem/castemsaintvenantkirchhoffelasticity-uniaxialloading-sig33-2D.mtest.in -text
 mfront/tests/behaviours/castem/castemsaintvenantkirchhoffelasticity-uniaxialloading-sig33-3D.mtest.in -text
+mfront/tests/behaviours/castem/castemsaintvenantkirchhoffelasticitywithsubstepping-uniaxialloading-1-3D.mtest.in -text
 mfront/tests/behaviours/castem/castemstatevariablesboundscheck.mtest.in -text
 mfront/tests/behaviours/castem/castemstatevariablesboundscheck2.mtest.in -text
 mfront/tests/behaviours/castem/castemstrainhardeningcreep.mtest.in -text

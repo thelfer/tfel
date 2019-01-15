@@ -1,0 +1,52 @@
+@DSL DefaultFiniteStrainDSL;
+@Behaviour SaintVenantKirchhoffElasticityWithSubStepping;
+@Author T. Helfer;
+@Date 14/01/2019;
+@Description{
+  "La loi de SaintVenantKirchhoffElasticity est une extension "
+  "de la loi de Hooke au cas des grandes rotations. "
+  "Elle ne peut être utilisée que pour des petites déformations."
+}
+
+@UMATUseTimeSubStepping[umat] true;
+@UMATMaximumSubStepping[umat] 10;
+
+@MaterialProperty stress young;
+young.setGlossaryName("YoungModulus");
+@MaterialProperty real nu;
+nu.setGlossaryName("PoissonRatio");
+
+@LocalVariable stress lambda;   //<! Premier coefficient de Lamé
+@LocalVariable stress mu;       //<! Second  coefficient de Lamé
+@LocalVariable StrainStensor e; //<! Déformation de Green-Lagrange
+
+@InitLocalVariables{
+  if(dt>0.025){
+    throw(DivergenceException("invalid time step"));
+  }
+  lambda = computeLambda(young,nu);
+  mu     = computeMu(young,nu);
+}
+
+@PredictionOperator<DS_DEGL>{
+  static_cast<void>(smt); // suppression d'un warning : la matrice de
+			  // prédiction est toujours l'élastique
+  Dt = lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
+}
+
+@Integrator{
+  e = computeGreenLagrangeTensor(F1);
+  const auto s = lambda*trace(e)*StrainStensor::Id()+2*mu*e;
+  sig = convertSecondPiolaKirchhoffStressToCauchyStress(s,F1);
+}
+
+@TangentOperator<DS_DEGL>{
+  static_cast<void>(smt); // suppression d'un warning : la matrice
+			  // tangente est toujours l'élastique
+  Dt = lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
+}
+
+@InternalEnergy{
+  const auto tr = trace(e);
+  Psi_s = lambda*tr*tr/2+mu*(e|e);
+}

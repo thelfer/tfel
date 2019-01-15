@@ -34,14 +34,6 @@ nu.setGlossaryName("PoissonRatio");
   Dt=lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
 }
 
-@IsTangentOperatorSymmetric true;
-@TangentOperator{
-  if(!((smt==ELASTIC)||(smt==SECANTOPERATOR)||(smt==TANGENTOPERATOR))){
-    return FAILURE;
-  }
-  Dt=lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
-}
-
 @ComputeStress{
   sig = lambda*trace(eel)*StrainStensor::Id()+2*mu*eel;
 }
@@ -55,8 +47,16 @@ nu.setGlossaryName("PoissonRatio");
   const Stensor n = (sigeq > 10.e-7) ? cste*deviator(sig)/sigeq : Stensor(0);
   deel = deto;
   for(unsigned short i=0;i!=evp.size();++i){
-    dp[i]    = (A[i]+dA[i])*pow(sigeq,E[i]);
+    dp[i]    = (A[i]+dA[i])* pow(sigeq,E[i]);
     devp[i]  = dp[i]*n;
     deel    -= devp[i];
   }
+}
+
+@IsTangentOperatorSymmetric true;
+@TangentOperator{
+  if(!((smt==ELASTIC)||(smt==SECANTOPERATOR)||(smt==TANGENTOPERATOR))){
+    return FAILURE;
+  }
+  Dt=lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
 }

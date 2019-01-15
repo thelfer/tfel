@@ -73,6 +73,10 @@
 #include"MFront/CalculiXInterface.hxx"
 #endif
 
+#ifdef HAVE_DIANAFEA
+#include"MFront/DianaFEAInterface.hxx"
+#endif
+
 #ifdef HAVE_LSDYNA
 #include"MFront/LSDYNAInterface.hxx"
 #endif /* HAVE_LSDYNA */
@@ -142,17 +146,21 @@ namespace mfront {
 #endif /* HAVE_ASTER */
 
 #ifdef HAVE_ABAQUS
-    BehaviourInterfaceProxy<AbaqusInterface>         abaqusProxy;
+    BehaviourInterfaceProxy<AbaqusInterface> abaqusProxy;
     BehaviourInterfaceProxy<AbaqusExplicitInterface> abaqusExplicitProxy;
 #endif /* HAVE_ABAQUS */
 
 #ifdef HAVE_ANSYS
-    BehaviourInterfaceProxy<AnsysInterface>         ansysProxy;
+    BehaviourInterfaceProxy<AnsysInterface> ansysProxy;
 #endif /* HAVE_ANSYS */
     
 #ifdef HAVE_EUROPLEXUS
     BehaviourInterfaceProxy<EuroplexusInterface> europlexusProxy;
 #endif /* HAVE_EUROPLEXUS */
+
+#ifdef HAVE_DIANAFEA
+    BehaviourInterfaceProxy<DianaFEAInterface> dianaFEAProxy;
+#endif /* HAVE_DIANAFEA */
 
 #ifdef HAVE_CALCULIX
     BehaviourInterfaceProxy<CalculiXInterface> ccxProxy;

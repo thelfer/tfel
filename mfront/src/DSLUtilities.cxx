@@ -148,8 +148,8 @@ namespace mfront
     os << '\n';
   } // end of writeStaticVariables
 
-  std::string getMaterialLawLibraryNameBase(const MaterialPropertyDescription& mpd)
-  {
+  std::string getMaterialLawLibraryNameBase(
+      const MaterialPropertyDescription& mpd) {
     const auto material = mpd.material;
     const auto library  = mpd.library;
     if(library.empty()){
@@ -159,7 +159,7 @@ namespace mfront
       return material;
     }
     return library;
-  } // end of getLibraryNameBase
+  } // end of getMaterialLawLibraryNameBase
 
   void writeF77FUNCMacros(std::ostream& f)
   {

@@ -286,6 +286,13 @@ if(HAVE_LSDYNA)
     TFELException)
 endif(HAVE_LSDYNA)
 
+if(HAVE_DIANAFEA)
+  set(TFELMFront_SOURCES
+    DianaFEAInterface.cxx
+    DianaFEASymbolsGenerator.cxx
+    ${TFELMFront_SOURCES})
+endif(HAVE_DIANAFEA)
+
 if(HAVE_CALCULIX)
   set(TFELMFront_SOURCES
     CalculiXInterface.cxx

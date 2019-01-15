@@ -179,6 +179,14 @@ if(enable-lsdyna)
   add_definitions("-DHAVE_LSDYNA=1")
 endif(enable-lsdyna)
 
+#diana-fea
+option(enable-diana-fea "build Diana FEA interface for mechanical behaviours" OFF)
+if(enable-diana-fea)
+  message(STATUS "Diana FEA support enabled")
+  set(HAVE_DIANAFEA ON)
+  add_definitions("-DHAVE_DIANAFEA=1")
+endif(enable-diana-fea)
+
 #calculix
 option(enable-calculix "build CalculiX interface for mechanical behaviours" OFF)
 if(enable-calculix)
