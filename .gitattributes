@@ -2707,7 +2707,6 @@ mfront/src/PragerKinematicHardeningRule.cxx -text
 mfront/src/PythonMaterialPropertyInterface.cxx -text
 mfront/src/RungeKuttaDSL.cxx -text
 mfront/src/RungeKuttaDSLBase.cxx -text
-mfront/src/RungeKuttaDSLBase.cxx_withinitialisation -text
 mfront/src/RungeKuttaFiniteStrainDSL.cxx -text
 mfront/src/SearchPathsHandler.cxx -text
 mfront/src/SecondBroydenSolver.cxx -text
