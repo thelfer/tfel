@@ -470,7 +470,7 @@ then
 fi
 
 # diana-fea
-AC_ARG_ENABLE([Diana FEA],
+AC_ARG_ENABLE([Diana_FEA],
                AC_HELP_STRING([--enable-diana-fea],
 		   [build DIANA FEA' interface for mechanical behaviours]),
 	       [enable_diana_fea=true],
