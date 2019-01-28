@@ -161,7 +161,8 @@ namespace mfront {
           BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) ||
          (bd.getBehaviourType() == BehaviourDescription::GENERALBEHAVIOUR)) &&
         (bd.isStrainMeasureDefined())) {
-      out << "#include\"TFEL/Math/T2toST2/T2toST2View.hxx\"\n"
+      out << "#include\"TFEL/Math/Stensor/StensorView.hxx\"\n"
+          << "#include\"TFEL/Math/T2toST2/T2toST2View.hxx\"\n"
           << "#include\"TFEL/Material/"
              "FiniteStrainBehaviourTangentOperator.hxx\"\n";
     }
@@ -302,21 +303,43 @@ namespace mfront {
         const auto N = tfel::material::getSpaceDimension(h);
         if (ms == BehaviourDescription::GREENLAGRANGE) {
         } else if (ms == BehaviourDescription::HENCKY) {
-          out << "tfel::math::tensor<" << N << ",real> F0(d->s0.gradients["
-              << oF.getValueForModellingHypothesis(h) << "]);\n";
-          out << "tfel::math::tensor<" << N << ",real> F1(d->s1.gradients["
-              << oF.getValueForModellingHypothesis(h) << "]);\n";
-          out << "tfel::math::stensor<" << N
-              << ",real> s0(d->s0.thermodynamic_forces["
-              << oC.getValueForModellingHypothesis(h) << "]);\n";
+          const auto fs = SupportedTypes::getTypeSize("DeformationGradientTensor", 1).getValueForModellingHypothesis(h);
+          const auto ss =
+              SupportedTypes::getTypeSize("DeformationGradientTensor", 1)
+                  .getValueForModellingHypothesis(h);
+          out << "tfel::math::tensor<" << N << ",real> F0;\n";
+          out << "tfel::math::tensor<" << N << ",real> F1;\n";
+          out << "tfel::math::stensor<" << N << ",real> s0;\n";
+          if (oF.getValueForModellingHypothesis(h) == 0) {
+            out << "tfel::fsalgo::copy<" << fs << ">::exe(d->s0.gradients"
+                << ",F0.begin());\n";
+            out << "tfel::fsalgo::copy<" << fs << ">::exe(d->s1.gradients"
+                << ",F1.begin());\n";
+          } else {
+            out << "tfel::fsalgo::copy<" << fs << ">::exe(d->s0.gradients+"
+                << oF.getValueForModellingHypothesis(h) << ",F0.begin());\n";
+            out << "tfel::fsalgo::copy<" << fs << ">::exe(d->s1.gradients+"
+                << oF.getValueForModellingHypothesis(h) << ",F1.begin());\n";
+          }
+          if (oC.getValueForModellingHypothesis(h) == 0) {
+            out << "tfel::fsalgo::copy<" << ss
+                << ">::exe(d->s0.thermodynamic_forces"
+                << ",s0.begin());\n";
+          } else {
+            out << "tfel::fsalgo::copy<" << ss
+                << ">::exe(d->s0.thermodynamic_forces+"
+                << oC.getValueForModellingHypothesis(h) << ",s0.begin());\n";
+          }
           out << "LogarithmicStrainHandler<" << N << ",real> lgh0("
               << "LogarithmicStrainHandler<" << N << ",real>::EULERIAN,F0);\n";
           out << "LogarithmicStrainHandler<" << N << ",real> lgh1("
               << "LogarithmicStrainHandler<" << N << ",real>::EULERIAN,F1);\n";
-          out << "lgh0.getHenckyLogarithmicStrain().exportTab("
-              << get_ptr("gradients0", oe) << ");\n";
-          out << "lgh1.getHenckyLogarithmicStrain().exportTab("
-              << get_ptr("gradients1", oe) << ");\n";
+          out << "tfel::math::StensorView<" << N << ",real> g0_view("
+              << get_ptr("gradients0", oe) << ");\n"
+              << "g0_view = lgh0.getHenckyLogarithmicStrain();\n";
+          out << "tfel::math::StensorView<" << N << ",real> g1_view("
+              << get_ptr("gradients1", oe) << ");\n"
+              << "g1_view = lgh1.getHenckyLogarithmicStrain();\n";
           if ((h == ModellingHypothesis::PLANESTRESS) ||
               (h ==
                ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)) {
@@ -329,9 +352,10 @@ namespace mfront {
                 << "std::exp(d->s0.internal_state_variables["
                 << as.second.getValueForModellingHypothesis(h) << "]));\n";
           }
-          out << "lgh0.convertFromCauchyStress(s0).exportTab("
-              << get_ptr("thermodynamic_forces0", oC) << ");\n";
-          out << "auto *const gradients0_old = d->s0.gradients;\n"
+          out << "tfel::math::StensorView<" << N << ",real> s0_view("
+              << get_ptr("thermodynamic_forces0", oC) << ");\n"
+              << "s0_view = lgh0.convertFromCauchyStress(s0);\n"
+              << "auto *const gradients0_old = d->s0.gradients;\n"
               << "auto *const gradients1_old = d->s1.gradients;\n"
               << "auto *const thermodynamic_forces0_old = "
                  "d->s0.thermodynamic_forces;\n"
@@ -406,9 +430,10 @@ namespace mfront {
           }
           out << "const tfel::math::stensor<" << N << ",real> T1("
               << get_ptr("thermodynamic_forces1", oC) << ");\n"
-              << "const auto s1 = lgh1.convertToCauchyStress(T1);\n"
-              << "s1.exportTab(" << get_ptr("d->s1.thermodynamic_forces", oC)
-              << ");\n"
+	      << "const auto s1 = lgh1.convertToCauchyStress(T1);\n"
+              << "tfel::math::StensorView<" << N << ",real> s1_view("
+              << get_ptr("d->s1.thermodynamic_forces", oC) << ");\n"
+              << "s1_view = s1;\n"
               << "if(bk){\n"
               << "tfel::math::st2tost2<" << N << ",real> K1;\n"
               << "tfel::fsalgo::copy<" << s * s << ">::exe(K,K1.begin());\n"
