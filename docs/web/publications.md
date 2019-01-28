@@ -4,6 +4,8 @@
 
 ---
 nocite: |
+    @bernachy-barbe_effect_2019
+    @bejaoui_description_2019
     @hure_coalescence_2018
     @barrioz_void_shape_2018
 	@portelette_crystal_2018

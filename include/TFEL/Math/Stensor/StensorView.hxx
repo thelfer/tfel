@@ -42,11 +42,10 @@ namespace tfel
      * \param N  : space dimension
      * \param T  : value type
      */
-    template<unsigned short N,typename T>
-    struct Expr<stensor<N,T>,StensorViewExpr<N,T> >
-      : public StensorConcept<Expr<stensor<N,T>,StensorViewExpr<N,T> > >,
-	public stensor_base<Expr<stensor<N,T>,StensorViewExpr<N,T> > >
-    {
+    template <unsigned short N, typename T>
+    struct Expr<stensor<N, T>, StensorViewExpr<N, T>>
+        : public StensorConcept<Expr<stensor<N, T>, StensorViewExpr<N, T>>>,
+          public stensor_base<Expr<stensor<N, T>, StensorViewExpr<N, T>>> {
       typedef EmptyRunTimeProperties RunTimeProperties;
       typedef typename stensor<N,T>::value_type      value_type;      
       typedef typename stensor<N,T>::pointer	   pointer;	    
@@ -56,48 +55,44 @@ namespace tfel
       typedef typename stensor<N,T>::size_type 	   size_type;	    
       typedef typename stensor<N,T>::difference_type difference_type;
 
-      RunTimeProperties getRunTimeProperties() const
-      {
-	return RunTimeProperties();
+      RunTimeProperties getRunTimeProperties() const {
+        return RunTimeProperties();
       }
 
       /*!
        * \param[in] v : v_ values
        */
-      explicit Expr(T * const v_) noexcept
-	: v(v_)
-      {} // end of Expr
+      explicit Expr(T* const v_) noexcept : v(v_) {}  // end of Expr
 
       Expr(Expr&&)  noexcept = default;
 
       Expr(const Expr&)  noexcept = default;
-      
-      const T& operator()(const unsigned short i) const noexcept
-      {
-	return this->v[i];
+
+      const T& operator()(const unsigned short i) const noexcept {
+        return this->v[i];
       } // end of operator() const
 
       T& operator()(const unsigned short i) noexcept
       {
-	return this->v[i];
+        return this->v[i];
       } // end of operator()
 
       const T& operator[](const unsigned short i) const noexcept
       {
-	return this->v[i];
+        return this->v[i];
       } // end of operator[] const
 
       T& operator[](const unsigned short i) noexcept
       {
-	return this->v[i];
+        return this->v[i];
       } // end of operator[]
 
       //! using stensor_base::operator=
       using stensor_base<Expr>::operator=;
       //! assignement operator
-      Expr& operator=(const Expr& src){
-	stensor_base<Expr>::operator=(src);
-	return *this;
+      Expr& operator=(const Expr& src) {
+        stensor_base<Expr>::operator=(src);
+        return *this;
       }
 
       /*!
@@ -106,7 +101,7 @@ namespace tfel
        */
       constexpr TFEL_MATH_INLINE size_type
       size() const noexcept{
-	return StensorDimeToSize<N>::value;
+        return StensorDimeToSize<N>::value;
       }      
       
     protected:

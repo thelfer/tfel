@@ -18,6 +18,24 @@
 \newcommand{\deriv}[2]{{\displaystyle \frac{\displaystyle \partial #1}{\displaystyle \partial #2}}}
 \newcommand{\sigmaeq}{\sigma_{\mathrm{eq}}}
 
+# New FEniCS tour of elastoplasticity using the `MFront` code generator (24/01/2019)
+
+Du to Jeremy Bleyer a new tutorial on how to use `MFront` with `FEniCS`
+in pure `python` is available:
+<https://comet-fenics.readthedocs.io/en/latest/demo/plasticity_mfront/plasticity_mfront.py.html>
+
+This is based on the `MGIS` (`MFrontGenericInterfaceSupport`) python
+bindings (and not the `FEniCS` bindings which are only available in
+`C++` and currently quite limited), which makes it very easy to use and
+extend.
+
+You can now use any small strain behaviours written in `MFront`.
+Extension to finite strain behaviours is underway and shall be soon
+available. This development will also help testing the extension of
+`MFront` to generalised behaviours,able to cope with higher order
+mechanical theories (Cosserat medium for instance) and/or multi-physics
+problems.
+
 # `TFEL` is available as a `spack` package (27/11/2018)
 
 One easy way to install `TFEL` under `LiNuX` and `MacOs` is to use the
