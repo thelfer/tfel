@@ -70,6 +70,7 @@ libTFELMFront_la_SOURCES = MFront.cxx                                           
 		           DefaultDSL.cxx                                         \
 		           DefaultCZMDSL.cxx                                      \
 		           DefaultFiniteStrainDSL.cxx                             \
+		           DefaultGenericBehaviourDSL.cxx                         \
 		           ModelDSL.cxx                                           \
 		           MaterialPropertyDSL.cxx                                \
 		           IsotropicMisesCreepDSL.cxx                             \
@@ -82,6 +83,7 @@ libTFELMFront_la_SOURCES = MFront.cxx                                           
 		           ImplicitDSL.cxx                                        \
 		           ImplicitDSLII.cxx                                      \
 		           ImplicitFiniteStrainDSL.cxx                            \
+		           ImplicitGenericBehaviourDSL.cxx                        \
 		           NonLinearSystemSolver.cxx                              \
 		           NonLinearSystemSolverBase.cxx                          \
 		           NonLinearSystemSolverFactory.cxx                       \

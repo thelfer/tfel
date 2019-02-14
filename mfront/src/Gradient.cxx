@@ -16,10 +16,11 @@
 namespace mfront
 {
 
-  Gradient::Gradient(const std::string& t,
-				   const std::string& n)
-    : VariableDescription(t,n,1u,0u)
-  {} // end of Gradient::Gradient
+  Gradient::Gradient(const std::string& t, const std::string& n)
+      : VariableDescription(t, n, 1u, 0u) {}  // end of Gradient::Gradient
+
+  Gradient::Gradient(const VariableDescription& v)
+      : VariableDescription(v) {}  // end of Gradient::Gradient
 
   Gradient::Gradient(Gradient&&) = default;
   Gradient::Gradient(const Gradient&) = default;

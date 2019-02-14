@@ -376,7 +376,9 @@ namespace mfront {
       }
       // behaviour integration
       out << "const auto r = mfront::gb::integrate<Behaviour>(*d,";
-      if (type == BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
+      if (type == BehaviourDescription::GENERALBEHAVIOUR) {
+        out << "Behaviour::STANDARDTANGENTOPERATOR";
+      } else if (type == BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
         out << "Behaviour::STANDARDTANGENTOPERATOR";
       } else if (type == BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
         out << "Behaviour::DSIG_DF";

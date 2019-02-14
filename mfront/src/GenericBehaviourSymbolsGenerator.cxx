@@ -29,7 +29,10 @@ namespace mfront {
       const std::string& name) const {
     os << "MFRONT_SHAREDOBJ unsigned short "
         << i.getFunctionNameBasis(name) << "_BehaviourType = ";
-    if (bd.getBehaviourType() == BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
+    if (bd.getBehaviourType() == BehaviourDescription::GENERALBEHAVIOUR) {
+      os << "0u";
+    } else if (bd.getBehaviourType() ==
+               BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
       if (bd.isStrainMeasureDefined()) {
         const auto fs = bd.getStrainMeasure();
         if (fs == BehaviourDescription::LINEARISED) {
@@ -54,7 +57,7 @@ namespace mfront {
     } else {
       tfel::raise(
           "GenericBehaviourSymbolsGenerator::writeBehaviourTypeSymbols: "
-          "unsupported strain measure");
+          "unsupported behaviour type");
     }
     os << ";\n\n";
   }  // end of GenericBehaviourSymbolsGenerator::writeBehaviourTypeSymbols
@@ -66,7 +69,10 @@ namespace mfront {
       const std::string& name) const {
     os << "MFRONT_SHAREDOBJ unsigned short "
         << i.getFunctionNameBasis(name) << "_BehaviourKinematic = ";
-    if (bd.getBehaviourType() == BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
+    if (bd.getBehaviourType() == BehaviourDescription::GENERALBEHAVIOUR) {
+      os << "0u";
+    } else if (bd.getBehaviourType() ==
+               BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
       if (bd.isStrainMeasureDefined()) {
         const auto fs = bd.getStrainMeasure();
         if (fs == BehaviourDescription::LINEARISED) {
@@ -77,7 +83,7 @@ namespace mfront {
           os << "3u";
         } else {
           tfel::raise(
-              "GenericBehaviourSymbolsGenerator::writeBehaviourTypeSymbols: "
+              "GenericBehaviourSymbolsGenerator::writeBehaviourKinematicSymbols: "
               "unsupported strain measure");
         }
       } else {
@@ -89,8 +95,8 @@ namespace mfront {
       os << "2u";
     } else {
       tfel::raise(
-          "GenericBehaviourSymbolsGenerator::writeBehaviourTypeSymbols: "
-          "unsupported strain measure");
+          "GenericBehaviourSymbolsGenerator::writeBehaviourKinematicSymbols: "
+          "unsupported behaviour type");
     }
     os << ";\n\n";
   }  // end of

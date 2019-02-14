@@ -30,16 +30,25 @@ namespace mfront
     : public VariableDescription
   {
     /*!
-     * Constructor
+     * \brief Constructor
      * \param[in] t : variable type
      * \param[in] n : variable name
      */
-    Gradient(const std::string&,
-		    const std::string&);
+    Gradient(const std::string&, const std::string&);
+    /*!
+     * \brief constructor from a variable description
+     * \param[in] v: variable description
+     */
+    Gradient(const VariableDescription&);
+    //! \brief move constructor
     Gradient(Gradient&&);
+    //! \brief copy constructor
     Gradient(const Gradient&);
+    //! \brief move assignement
     Gradient& operator=(Gradient&&);
+    //! \brief standard assignement
     Gradient& operator=(const Gradient&);
+    //! destructor
     ~Gradient() noexcept;
     //! This flags tells which of the driving variable increment or of
     //! the value of driving variable at the end of the time step is

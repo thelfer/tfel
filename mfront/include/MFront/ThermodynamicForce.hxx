@@ -33,12 +33,21 @@ namespace mfront
      * \param[in] t : variable type
      * \param[in] n : variable name
      */
-    ThermodynamicForce(const std::string&,
-		       const std::string&);
+    ThermodynamicForce(const std::string&, const std::string&);
+    /*!
+     * \brief constructor from a variable description
+     * \param[in] v: variable description
+     */
+    ThermodynamicForce(const VariableDescription&);
+    //! \brief move constructor
     ThermodynamicForce(ThermodynamicForce&&);
+    //! \brief copy constructor
     ThermodynamicForce(const ThermodynamicForce&);
+    //! \brief move assignement
     ThermodynamicForce& operator=(ThermodynamicForce&&);
+    //! \brief standard assignement
     ThermodynamicForce& operator=(const ThermodynamicForce&);
+    //! destructor
     ~ThermodynamicForce() noexcept;
   }; // end of struct ThermodynamicForce
   

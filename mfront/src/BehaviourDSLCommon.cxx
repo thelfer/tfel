@@ -76,6 +76,262 @@ static const char* const constexpr_c = "const";
 
 namespace mfront {
 
+  BehaviourDSLCommon::BehaviourDSLCommon()
+      : useStateVarTimeDerivative(false), explicitlyDeclaredUsableInPurelyImplicitResolution(false) {
+    using MemberFunc = void (BehaviourDSLCommon::*)();
+    // By default disable use of quantities
+    this->mb.setUseQt(false);
+    // By default, a behaviour can be used in a purely implicit resolution
+    const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    this->mb.setUsableInPurelyImplicitResolution(h, true);
+    // reserve names
+    for (const auto& v : DSLBase::getDefaultReservedNames()) {
+      this->mb.reserveName(h, v);
+    }
+    // register behaviours specific names
+    this->registerDefaultVarNames();
+    this->reserveName("minimal_time_step_scaling_factor");
+    this->reserveName("maximal_time_step_scaling_factor");
+    this->reserveName("current_time_step_scaling_factor");
+    // default call backs
+    auto add = [this](const std::string& k, const MemberFunc f) {
+      this->callBacks.insert({k, [this, f] { (this->*f)(); }});
+      this->registredKeyWords.insert(k);
+    };
+    add(";", &BehaviourDSLCommon::treatLonelySeparator);
+    add("@DSL", &BehaviourDSLCommon::treatParser);
+    add("@Parser", &BehaviourDSLCommon::treatParser);
+    add("@Model", &BehaviourDSLCommon::treatModel);
+    add("@Brick", &BehaviourDSLCommon::treatBrick);
+    add("@ModellingHypothesis", &BehaviourDSLCommon::treatModellingHypothesis);
+    add("@ModellingHypotheses", &BehaviourDSLCommon::treatModellingHypotheses);
+    add("@Import", &BehaviourDSLCommon::treatImport);
+    add("@Material", &BehaviourDSLCommon::treatMaterial);
+    add("@Library", &BehaviourDSLCommon::treatLibrary);
+    add("@Profiling", &BehaviourDSLCommon::treatProfiling);
+    add("@Behaviour", &BehaviourDSLCommon::treatBehaviour);
+    add("@StrainMeasure", &BehaviourDSLCommon::treatStrainMeasure);
+    add("@Author", &BehaviourDSLCommon::treatAuthor);
+    add("@Date", &BehaviourDSLCommon::treatDate);
+    add("@MFront", &BehaviourDSLCommon::treatMFront);
+    add("@Link", &BehaviourDSLCommon::treatLink);
+    add("@Includes", &BehaviourDSLCommon::treatIncludes);
+    add("@Members", &BehaviourDSLCommon::treatMembers);
+    add("@Coef", &BehaviourDSLCommon::treatCoef);
+    add("@MaterialProperty", &BehaviourDSLCommon::treatCoef);
+    add("@LocalVar", &BehaviourDSLCommon::treatLocalVar);
+    add("@LocalVariable", &BehaviourDSLCommon::treatLocalVar);
+    add("@Parameter", &BehaviourDSLCommon::treatParameter);
+    add("@StateVar", &BehaviourDSLCommon::treatStateVariable);
+    add("@StateVariable", &BehaviourDSLCommon::treatStateVariable);
+    add("@AuxiliaryStateVar", &BehaviourDSLCommon::treatAuxiliaryStateVariable);
+    add("@AuxiliaryStateVariable",
+        &BehaviourDSLCommon::treatAuxiliaryStateVariable);
+    add("@ExternalStateVar", &BehaviourDSLCommon::treatExternalStateVariable);
+    add("@ExternalStateVariable",
+        &BehaviourDSLCommon::treatExternalStateVariable);
+    add("@InitLocalVars", &BehaviourDSLCommon::treatInitLocalVariables);
+    add("@InitLocalVariables", &BehaviourDSLCommon::treatInitLocalVariables);
+    add("@InitializeLocalVariables",
+        &BehaviourDSLCommon::treatInitLocalVariables);
+    add("@MinimalTimeStepScalingFactor",
+        &BehaviourDSLCommon::treatMinimalTimeStepScalingFactor);
+    add("@MaximalTimeStepScalingFactor",
+        &BehaviourDSLCommon::treatMaximalTimeStepScalingFactor);
+    add("@APrioriTimeStepScalingFactor",
+        &BehaviourDSLCommon::treatAPrioriTimeStepScalingFactor);
+    add("@Integrator", &BehaviourDSLCommon::treatIntegrator);
+    add("@APosterioriTimeStepScalingFactor",
+        &BehaviourDSLCommon::treatAPosterioriTimeStepScalingFactor);
+    add("@Interface", &BehaviourDSLCommon::treatInterface);
+    add("@StaticVar", &BehaviourDSLCommon::treatStaticVar);
+    add("@StaticVariable", &BehaviourDSLCommon::treatStaticVar);
+    add("@IntegerConstant", &BehaviourDSLCommon::treatIntegerConstant);
+    add("@UseQt", &BehaviourDSLCommon::treatUseQt);
+    add("@Description", &BehaviourDSLCommon::treatDescription);
+    add("@Bounds", &BehaviourDSLCommon::treatBounds);
+    add("@PhysicalBounds", &BehaviourDSLCommon::treatPhysicalBounds);
+    add("@RequireStiffnessOperator",
+        &BehaviourDSLCommon::treatRequireStiffnessOperator);
+    add("@RequireStiffnessTensor",
+        &BehaviourDSLCommon::treatRequireStiffnessTensor);
+    add("@RequireThermalExpansionCoefficientTensor",
+        &BehaviourDSLCommon::treatRequireThermalExpansionCoefficientTensor);
+    add("@OrthotropicBehaviour",
+        &BehaviourDSLCommon::treatOrthotropicBehaviour);
+    add("@IsotropicElasticBehaviour",
+        &BehaviourDSLCommon::treatIsotropicElasticBehaviour);
+    add("@IsotropicBehaviour", &BehaviourDSLCommon::treatIsotropicBehaviour);
+    add("@PredictionOperator", &BehaviourDSLCommon::treatPredictionOperator);
+    add("@Private", &BehaviourDSLCommon::treatPrivate);
+    add("@Sources", &BehaviourDSLCommon::treatSources);
+    add("@UpdateAuxiliaryStateVars",
+        &BehaviourDSLCommon::treatUpdateAuxiliaryStateVariables);
+    add("@UpdateAuxiliaryStateVariables",
+        &BehaviourDSLCommon::treatUpdateAuxiliaryStateVariables);
+    add("@ComputeThermalExpansion",
+        &BehaviourDSLCommon::treatComputeThermalExpansion);
+    add("@ComputeStressFreeExpansion",
+        &BehaviourDSLCommon::treatComputeStressFreeExpansion);
+    add("@Swelling", &BehaviourDSLCommon::treatSwelling);
+    add("@AxialGrowth", &BehaviourDSLCommon::treatAxialGrowth);
+    add("@Relocation", &BehaviourDSLCommon::treatRelocation);
+    add("@InternalEnergy", &BehaviourDSLCommon::treatInternalEnergy);
+    add("@DissipatedEnergy", &BehaviourDSLCommon::treatDissipatedEnergy);
+    add("@CrystalStructure", &BehaviourDSLCommon::treatCrystalStructure);
+    add("@SlipSystem", &BehaviourDSLCommon::treatSlipSystem);
+    add("@GlidingSystem", &BehaviourDSLCommon::treatSlipSystem);
+    add("@SlidingSystem", &BehaviourDSLCommon::treatSlipSystem);
+    add("@SlipSystems", &BehaviourDSLCommon::treatSlipSystems);
+    add("@GlidingSystems", &BehaviourDSLCommon::treatSlipSystems);
+    add("@SlidingSystems", &BehaviourDSLCommon::treatSlipSystems);
+    add("@InteractionMatrix", &BehaviourDSLCommon::treatInteractionMatrix);
+    add("@DislocationsMeanFreePathInteractionMatrix",
+        &BehaviourDSLCommon::treatDislocationsMeanFreePathInteractionMatrix);
+  }  // end of BehaviourDSLCommon::BehaviourDSLCommon
+
+  void BehaviourDSLCommon::analyse() {
+    const auto& mh = ModellingHypothesis::getModellingHypotheses();
+    std::vector<std::string> hn(mh.size());
+    std::vector<Hypothesis>::const_iterator pmh;
+    std::vector<std::string>::iterator phn;
+    for (pmh = mh.begin(), phn = hn.begin(); pmh != mh.end(); ++pmh, ++phn) {
+      *phn = ModellingHypothesis::toString(*pmh);
+    }
+    // strip comments from file
+    this->stripComments();
+    // begin treatement
+    this->current = this->tokens.begin();
+    while (this->current != this->tokens.end()) {
+      if (find(hn.begin(), hn.end(), this->current->value) != hn.end()) {
+        const auto h = ModellingHypothesis::fromString(this->current->value);
+        ++(this->current);
+        this->checkNotEndOfFile("BehaviourDSLCommon::analyse");
+        this->readSpecifiedToken("BehaviourDSLCommon::analyse", "::");
+        if (!this->isCallableVariable(h, this->current->value)) {
+          throw(
+              std::runtime_error("BehaviourDSLCommon::analyse : "
+                                 "no variable named '" +
+                                 this->current->value + "' "
+                                                        "for hypothesis '" +
+                                 ModellingHypothesis::toString(h) + "'"));
+        }
+        if (this->mb.isParameterName(h, this->current->value)) {
+          this->treatParameterMethod(h);
+        } else {
+          this->treatVariableMethod(h);
+        }
+      } else {
+        const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+        if (this->isCallableVariable(h, this->current->value)) {
+          const auto isGradient = [this] {
+            for (const auto& g : this->gradients) {
+              if (g.name == this->current->value) {
+                return true;
+              }
+            }
+            return this->mb.isGradientName(this->current->value);
+          }();
+          const auto isThermodynamicForce = [this] {
+            for (const auto& f : this->thermodynamic_forces) {
+              if (f.name == this->current->value) {
+                return true;
+              }
+            }
+            return this->mb.isThermodynamicForceName(this->current->value);
+          }();
+          if (isGradient) {
+            this->treatGradientMethod();
+          } else if (isThermodynamicForce) {
+            this->treatThermodynamicForceMethod();
+          } else if (this->mb.isParameterName(h, this->current->value)) {
+              this->treatParameterMethod(h);
+            } else {
+              this->treatVariableMethod(h);
+            }
+        } else {
+          const auto k = this->current->value;
+          const auto l = this->current->line;
+          CallBack handler;
+          auto p = this->callBacks.find(k);
+          if (p == this->callBacks.end()) {
+            if (getVerboseMode() >= VERBOSE_DEBUG) {
+              auto& log = getLogStream();
+              log << "treating unknown keyword\n";
+            }
+            handler = [this] { this->treatUnknownKeyword(); };
+          } else {
+            if (getVerboseMode() >= VERBOSE_DEBUG) {
+              auto& log = getLogStream();
+              log << "treating keyword : " << this->current->value << '\n';
+            }
+            handler = p->second;
+          }
+          this->currentComment = this->current->comment;
+          ++(this->current);
+          try {
+            handler();
+          } catch (std::exception& e) {
+            std::ostringstream msg;
+            msg << "BehaviourDSLCommon::analyse: "
+                << "error while treating keyword '" << k << "' at line '" << l
+                << "' of file '" << this->fd.fileName << "'.\n"
+                << e.what();
+            tfel::raise(msg.str());
+          } catch (...) {
+            this->currentComment.clear();
+            throw;
+          }
+          this->currentComment.clear();
+        }
+      }
+    }
+  } // end of BehaviourDSLCommon::analyse
+
+  void BehaviourDSLCommon::importFile(
+      const std::string& fn,
+      const std::vector<std::string>& ecmds,
+      const std::map<std::string, std::string>& s) {
+    this->fd.fileName = fn;
+    this->openFile(this->fd.fileName, ecmds, s);
+    this->analyse();
+  }  // end of BehaviourDSLCommon::importFile
+
+  void BehaviourDSLCommon::analyseString(const std::string& s) {
+    this->fd.fileName = "user defined string";
+    this->parseString(s);
+    this->analyse();
+  }  // end of BehaviourDSLCommon::analyseString
+
+  void BehaviourDSLCommon::getKeywordsList(
+      std::vector<std::string>& k) const {
+    for (const auto& c : this->callBacks) {
+      k.push_back(c.first);
+    }
+  }  // end of BehaviourDSLCommon::getKeywordsList
+
+  void BehaviourDSLCommon::addCallBack(const std::string& k, const CallBack c) {
+    this->callBacks.insert({k, c});
+    this->registredKeyWords.insert(k);
+  }  // end of BehaviourDSLCommon::addCallBack
+
+  void BehaviourDSLCommon::treatDisabledCallBack() {
+    --(this->current);
+    tfel::raise("The keyword: '" + this->current->value +
+                "' has been disabled");
+  }  // end of treatDisabledCallBack
+
+  void BehaviourDSLCommon::disableCallBack(const std::string& k) {
+    auto c = [this] { this->treatDisabledCallBack(); };
+    auto p = this->callBacks.find(k);
+    if (p == this->callBacks.end()) {
+      this->callBacks.insert({k, c});
+      this->registredKeyWords.insert(k);
+      return;
+    }
+    p->second = c;
+  }  // end of disableCallBack
+
   void BehaviourDSLCommon::writeModelCall(std::ostream& out,
                                           std::vector<std::string>& tmpnames,
                                           const Hypothesis h,
@@ -247,37 +503,43 @@ namespace mfront {
     for (const auto& t : options) {
       if (t.value == "Append") {
         if (cmode) {
-          this->throwRuntimeError("BehaviourDSLCommon::readCodeBlockOptions", "insertion mode already specificed");
+          this->throwRuntimeError("BehaviourDSLCommon::readCodeBlockOptions",
+                                  "insertion mode already specificed");
         }
         cmode = true;
         o.m = BehaviourData::CREATEORAPPEND;
       } else if (t.value == "Replace") {
         if (cmode) {
-          this->throwRuntimeError("BehaviourDSLCommon::readCodeBlockOptions", "insertion mode already specificed");
+          this->throwRuntimeError("BehaviourDSLCommon::readCodeBlockOptions",
+                                  "insertion mode already specificed");
         }
         cmode = true;
         o.m = BehaviourData::CREATEORREPLACE;
       } else if (t.value == "Create") {
         if (cmode) {
-          this->throwRuntimeError("BehaviourDSLCommon::readCodeBlockOptions", "insertion mode already specificed");
+          this->throwRuntimeError("BehaviourDSLCommon::readCodeBlockOptions",
+                                  "insertion mode already specificed");
         }
         cmode = true;
         o.m = BehaviourData::CREATE;
       } else if (t.value == "Body") {
         if (cposition) {
-          this->throwRuntimeError("BehaviourDSLCommon::readCodeBlockOptions", "insertion position already specificed");
+          this->throwRuntimeError("BehaviourDSLCommon::readCodeBlockOptions",
+                                  "insertion position already specificed");
         }
         cposition = true;
         o.p = BehaviourData::BODY;
       } else if (t.value == "AtBeginning") {
         if (cposition) {
-          this->throwRuntimeError("BehaviourDSLCommon::readCodeBlockOptions", "insertion position already specificed");
+          this->throwRuntimeError("BehaviourDSLCommon::readCodeBlockOptions",
+                                  "insertion position already specificed");
         }
         cposition = true;
         o.p = BehaviourData::AT_BEGINNING;
       } else if (t.value == "AtEnd") {
         if (cposition) {
-          this->throwRuntimeError("BehaviourDSLCommon::readCodeBlockOptions", "insertion position already specificed");
+          this->throwRuntimeError("BehaviourDSLCommon::readCodeBlockOptions",
+                                  "insertion position already specificed");
         }
         cposition = true;
         o.p = BehaviourData::AT_END;
@@ -295,10 +557,12 @@ namespace mfront {
     // checks
     if (!s) {
       if (o.hypotheses.size() != 1u) {
-        this->throwRuntimeError("BehaviourDSLCommon::readCodeBlockOptions: ", "specialisation is not allowed");
+        this->throwRuntimeError("BehaviourDSLCommon::readCodeBlockOptions: ",
+                                "specialisation is not allowed");
       }
       if (*(o.hypotheses.begin()) != dh) {
-        this->throwRuntimeError("BehaviourDSLCommon::readCodeBlockOptions: ", "specialisation is not allowed");
+        this->throwRuntimeError("BehaviourDSLCommon::readCodeBlockOptions: ",
+                                "specialisation is not allowed");
       }
     }
   }  // end of BehaviourDSLCommon::readCodeBlockOptions
@@ -321,9 +585,10 @@ namespace mfront {
       dsl.analyseFile(path, {}, {});
       const auto t = dsl.getTargetsDescription();
       if (!t.specific_targets.empty()) {
-        this->throwRuntimeError("BehaviourDSLCommon::getModelDescription", "error while treating file '" + f +
-                                                                               "'.\n"
-                                                                               "Specific targets are not supported");
+        this->throwRuntimeError("BehaviourDSLCommon::getModelDescription",
+                                "error while treating file '" + f +
+                                    "'.\n"
+                                    "Specific targets are not supported");
       }
       for (const auto& h : t.headers) {
         this->appendToIncludes("#include\"" + h + "\"");
@@ -344,6 +609,26 @@ namespace mfront {
     }
     return md;
   }  // end of BehaviourDSLCommon::getModelDescription
+
+  void BehaviourDSLCommon::treatGradient() {
+    VariableDescriptionContainer ngradients;
+    this->readVarList(ngradients, true);
+    std::for_each(ngradients.begin(), ngradients.end(),
+                  [this](const VariableDescription& v) {
+                    Gradient g(v);
+                    g.increment_known = true;
+                    this->gradients.emplace_back(std::move(g));
+                  });
+  }  // end of BehaviourDSLCommon::treatGradient
+
+  void BehaviourDSLCommon::treatThermodynamicForce() {
+    VariableDescriptionContainer ntfs;
+    this->readVarList(ntfs, true);
+    std::for_each(ntfs.begin(), ntfs.end(),
+                  [this](const VariableDescription& f) {
+                    this->thermodynamic_forces.emplace_back(f);
+                  });
+  }  // end of BehaviourDSLCommon::treatThermodynamicForce
 
   void BehaviourDSLCommon::treatModel() {
     if (getVerboseMode() >= VERBOSE_DEBUG) {
@@ -462,6 +747,20 @@ namespace mfront {
       this->mb.setModellingHypotheses(dmh);
     }
     const auto& mh = this->mb.getModellingHypotheses();
+    // treating user defined main variables
+    if (this->gradients.size() != this->thermodynamic_forces.size()) {
+      this->throwRuntimeError(
+          "BehaviourDSLCommon::completeVariableDeclaration",
+          "The number of gradients does not match the number of "
+          "thermodynamic forces");
+    }
+    for (decltype(this->gradients.size()) i = 0; i != this->gradients.size();
+         ++i) {
+      this->mb.addMainVariable(this->gradients[i],
+                               this->thermodynamic_forces[i]);
+    }
+    this->gradients.clear();
+    this->thermodynamic_forces.clear();
     // treating bricks
     if (!this->bricks.empty()) {
       if (getVerboseMode() >= VERBOSE_DEBUG) {
@@ -1818,56 +2117,208 @@ namespace mfront {
     }
   }  // end of BehaviourDSLCommon::treatParameterMethod
 
-  bool BehaviourDSLCommon::isCallableVariable(const Hypothesis h, const std::string& n) const {
-    return ((this->mb.isMaterialPropertyName(h, n)) || (this->mb.isStateVariableName(h, n)) ||
-            (this->mb.isAuxiliaryStateVariableName(h, n)) || (this->mb.isExternalStateVariableName(h, n)) ||
-            (this->mb.isLocalVariableName(h, n)) || (this->mb.isStaticVariableName(h, n)) ||
-            (this->mb.isParameterName(h, n)) || (this->mb.isIntegrationVariableName(h, n)));
+  bool BehaviourDSLCommon::isCallableVariable(const Hypothesis h,
+                                              const std::string& n) const {
+    if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
+      for (const auto& g : this->gradients) {
+        if (g.name == n) {
+          return true;
+        }
+      }
+      for (const auto& f : this->thermodynamic_forces) {
+        if (f.name == n) {
+          return true;
+        }
+      }
+      if (this->mb.isGradientName(n) || this->mb.isThermodynamicForceName(n)) {
+        return true;
+      }
+    }
+    return ((this->mb.isMaterialPropertyName(h, n)) ||
+            (this->mb.isStateVariableName(h, n)) ||
+            (this->mb.isAuxiliaryStateVariableName(h, n)) ||
+            (this->mb.isExternalStateVariableName(h, n)) ||
+            (this->mb.isLocalVariableName(h, n)) ||
+            (this->mb.isStaticVariableName(h, n)) ||
+            (this->mb.isParameterName(h, n)) ||
+            (this->mb.isIntegrationVariableName(h, n)));
   }  // end of BehaviourDSLCommon::isCallableVariable
+
+  std::string BehaviourDSLCommon::treatSetGlossaryNameMethod() {
+    using namespace tfel::utilities;
+    using namespace tfel::glossary;
+    const auto& glossary = Glossary::getGlossary();
+    this->checkNotEndOfFile("BehaviourDSLCommon::treatSetGlossaryMethod");
+    this->readSpecifiedToken("BehaviourDSLCommon::treatSetGlossaryMethod",
+                             "setGlossaryName");
+    this->readSpecifiedToken("BehaviourDSLCommon::treatSetGlossaryMethod", "(");
+    this->checkNotEndOfFile("BehaviourDSLCommon::treatSetGlossaryMethod");
+    if (this->current->flag != Token::String) {
+      this->throwRuntimeError("BehaviourDSLCommon::treatSetGlossaryMethod: ",
+                              "expected to read a string");
+    }
+    const auto& g =
+        this->current->value.substr(1, this->current->value.size() - 2);
+    if (!glossary.contains(g)) {
+      this->throwRuntimeError("BehaviourDSLCommon::treatSetGlossaryMethod: ",
+                              "'" + g + "' is not a glossary name");
+    }
+    ++(this->current);
+    this->checkNotEndOfFile("BehaviourDSLCommon::treatSetGlossaryMethod");
+    this->readSpecifiedToken("BehaviourDSLCommon::treatSetGlossaryMethod", ")");
+    return g;
+  }  // end of treatSetGlossaryNameMethod
+
+  std::string BehaviourDSLCommon::treatSetEntryNameMethod() {
+    using namespace tfel::utilities;
+    this->checkNotEndOfFile("BehaviourDSLCommon::treatSetEntryNameMethod");
+    this->readSpecifiedToken("BehaviourDSLCommon::treatSetEntryNameMethod",
+                             "setEntryName");
+    this->checkNotEndOfFile("BehaviourDSLCommon::treatSetEntryNameMethod");
+    this->readSpecifiedToken("BehaviourDSLCommon::treatSetEntryNameMethod", "(");
+    this->checkNotEndOfFile("BehaviourDSLCommon::treatSetEntryNameMethod");
+    if (this->current->flag != Token::String) {
+      this->throwRuntimeError("BehaviourDSLCommon::treatSetEntryNameMethod: ",
+                              "expected to read a string");
+    }
+    const auto& e =
+        this->current->value.substr(1, this->current->value.size() - 2);
+    if (!this->isValidIdentifier(e)) {
+      this->throwRuntimeError("BehaviourDSLCommon::treatSetEntryNameMethod: ",
+                              "invalid entry name '" + e + "'");
+    }
+    ++(this->current);
+    this->readSpecifiedToken("BehaviourDSLCommon::treatSetEntryNameMethod",
+                             ")");
+    return e;
+  }  // end of treatSetEntryNameMethod
+
+  void BehaviourDSLCommon::treatGradientMethod() {
+    const auto& n = this->current->value;
+    ++(this->current);
+    this->checkNotEndOfFile("BehaviourDSLCommon::treatGradientMethod");
+    this->readSpecifiedToken("BehaviourDSLCommon::treatGradientMethod", ".");
+    this->checkNotEndOfFile("BehaviourDSLCommon::treatGradientMethod");
+    if (this->current->value == "setGlossaryName") {
+      const auto gn = this->treatSetGlossaryNameMethod();
+      bool treated = false;
+      for (auto& g : this->gradients) {
+        if (g.name == n) {
+          g.setGlossaryName(gn);
+          treated = true;
+          break;
+        }
+      }
+      if (!treated) {
+        if (!this->mb.isGradientName(n)) {
+          this->throwRuntimeError(
+              "BehaviourDSLCommon::treatGradientMethod",
+              "invalid call, '" +
+              n + "' is not a registred gradient");
+        }
+        this->mb.setGlossaryName(n, gn);
+      }
+    } else if (this->current->value == "setEntryName") {
+      const auto e = this->treatSetEntryNameMethod();
+      bool treated = false;
+      for (auto& g : this->gradients) {
+        if (g.name == n) {
+          g.setEntryName(e);
+          treated = true;
+          break;
+        }
+      }
+      if (!treated) {
+        if (!this->mb.isGradientName(n)) {
+          this->throwRuntimeError(
+              "BehaviourDSLCommon::treatGradientMethod",
+              "invalid call, '" +
+              n + "' is not a registred gradient");
+        }
+        this->mb.setEntryName(n, e);
+      }
+    } else {
+      this->throwRuntimeError(
+          "BehaviourDSLCommon::treatGradientMethod",
+          "unsupported method '" + this->current->value + "'");
+    }
+    this->checkNotEndOfFile("BehaviourDSLCommon::treatGradientMethod");
+    this->readSpecifiedToken("BehaviourDSLCommon::treatGradientMethod", ";");
+  }  // end of BehaviourDSLCommon::treatGradientMethod
+
+  void BehaviourDSLCommon::treatThermodynamicForceMethod() {
+    const auto& n = this->current->value;
+    ++(this->current);
+    this->checkNotEndOfFile(
+        "BehaviourDSLCommon::treatThermodynamicForceMethod");
+    this->readSpecifiedToken(
+        "BehaviourDSLCommon::treatThermodynamicForceMethod", ".");
+    this->checkNotEndOfFile("BehaviourDSLCommon::treatThermodynamicForceMethod");
+    if (this->current->value == "setGlossaryName") {
+      const auto gn = this->treatSetGlossaryNameMethod();
+      bool treated = false;
+      for (auto& f : this->thermodynamic_forces) {
+        if (f.name == n) {
+          f.setGlossaryName(gn);
+          treated = true;
+          break;
+        }
+      }
+      if (!treated) {
+        if (!this->mb.isThermodynamicForceName(n)) {
+          this->throwRuntimeError(
+              "BehaviourDSLCommon::treatThermodynamicForceMethod",
+              "invalid call, '" +
+              n + "' is not a registred thermodynamic force");
+        }
+        this->mb.setGlossaryName(n, gn);
+      }
+    } else if (this->current->value == "setEntryName") {
+      const auto e = this->treatSetEntryNameMethod();
+      bool treated = false;
+      for (auto& f : this->thermodynamic_forces) {
+        if (f.name == n) {
+          f.setEntryName(e);
+          treated = true;
+          break;
+        }
+      }
+      if (!treated) {
+        if (!this->mb.isThermodynamicForceName(n)) {
+          this->throwRuntimeError(
+              "BehaviourDSLCommon::treatThermodynamicForceMethod",
+              "invalid call, '" +
+              n + "' is not a registred thermodynamic force");
+        }
+        this->mb.setEntryName(n, e);
+      }
+    } else {
+      this->throwRuntimeError(
+          "BehaviourDSLCommon::treatThermodynamicForceMethod",
+          "unsupported method '" + this->current->value + "'");
+    }
+    this->checkNotEndOfFile(
+        "BehaviourDSLCommon::treatThermodynamicForceMethod");
+    this->readSpecifiedToken(
+        "BehaviourDSLCommon::treatThermodynamicForceMethod", ";");
+  }  // end of BehaviourDSLCommon::treatThermodynamicForceMethod
 
   void BehaviourDSLCommon::treatVariableMethod(const Hypothesis h) {
     using namespace std;
     using namespace tfel::utilities;
     using namespace tfel::glossary;
-    const auto& glossary = Glossary::getGlossary();
     const auto& n = this->current->value;
     ++(this->current);
     this->checkNotEndOfFile("BehaviourDSLCommon::treatVariableMethod");
     this->readSpecifiedToken("BehaviourDSLCommon::treatVariableMethod", ".");
     this->checkNotEndOfFile("BehaviourDSLCommon::treatVariableMethod");
     if (this->current->value == "setGlossaryName") {
-      ++(this->current);
-      this->checkNotEndOfFile("BehaviourDSLCommon::treatVariableMethod");
-      this->readSpecifiedToken("BehaviourDSLCommon::treatVariableMethod", "(");
-      this->checkNotEndOfFile("BehaviourDSLCommon::treatVariableMethod");
-      if (this->current->flag != Token::String) {
-        this->throwRuntimeError("BehaviourDSLCommon::treatVariableMethod: ", "expected to read a string");
-      }
-      const auto& g = this->current->value.substr(1, this->current->value.size() - 2);
-      if (!glossary.contains(g)) {
-        this->throwRuntimeError("BehaviourDSLCommon::treatVariableMethod: ", "'" + g + "' is not a glossary name");
-      }
-      this->mb.setGlossaryName(h, n, g);
-      ++(this->current);
+      this->mb.setGlossaryName(h, n, this->treatSetGlossaryNameMethod());
     } else if (this->current->value == "setEntryName") {
-      ++(this->current);
-      this->checkNotEndOfFile("BehaviourDSLCommon::treatVariableMethod");
-      this->readSpecifiedToken("BehaviourDSLCommon::treatVariableMethod", "(");
-      this->checkNotEndOfFile("BehaviourDSLCommon::treatVariableMethod");
-      if (this->current->flag != Token::String) {
-        this->throwRuntimeError("BehaviourDSLCommon::treatVariableMethod: ", "expected to read a string");
-      }
-      const auto& e = this->current->value.substr(1, this->current->value.size() - 2);
-      if (!this->isValidIdentifier(e)) {
-        this->throwRuntimeError("BehaviourDSLCommon::treatVariableMethod: ", "invalid entry name '" + e + "'");
-      }
-      ++(this->current);
-      this->mb.setEntryName(h, n, e);
+      this->mb.setEntryName(h, n, this->treatSetEntryNameMethod());
     } else {
       this->treatUnknownVariableMethod(h, n);
     }
-    this->checkNotEndOfFile("BehaviourDSLCommon::treatVariableMethod");
-    this->readSpecifiedToken("BehaviourDSLCommon::treatVariableMethod", ")");
     this->checkNotEndOfFile("BehaviourDSLCommon::treatVariableMethod");
     this->readSpecifiedToken("BehaviourDSLCommon::treatVariableMethod", ";");
   }  // end of BehaviourDSLCommon::treatVariableMethod
@@ -2217,19 +2668,19 @@ namespace mfront {
     VarContainer v;
     auto h = std::set<Hypothesis>{};
     this->readVariableList(v, h, &BehaviourDescription::addStateVariables, true);
-  }
+  } // end of BehaviourDSLCommon::treatStateVariable
 
   void BehaviourDSLCommon::treatAuxiliaryStateVariable() {
     VarContainer v;
     auto h = std::set<Hypothesis>{};
     this->readVariableList(v, h, &BehaviourDescription::addAuxiliaryStateVariables, true);
-  }
+  }  // end of BehaviourDSLCommon::treatAuxiliaryStateVariable
 
   void BehaviourDSLCommon::treatExternalStateVariable() {
     VarContainer v;
     auto h = std::set<Hypothesis>{};
     this->readVariableList(v, h, &BehaviourDescription::addExternalStateVariables, true);
-  }
+  } // end of BehaviourDSLCommon::treatExternalStateVariable()
 
   void BehaviourDSLCommon::treatBounds() {
     auto hs = std::set<Hypothesis>{};
@@ -2334,24 +2785,6 @@ namespace mfront {
     this->reserveName("mp_bounds_check_status");
   }  // end of BehaviourDSLCommon::registerDefaultVarNames
 
-  BehaviourDSLCommon::BehaviourDSLCommon()
-      : useStateVarTimeDerivative(false), explicitlyDeclaredUsableInPurelyImplicitResolution(false) {
-    // By default disable use of quantities
-    this->mb.setUseQt(false);
-    // By default, a behaviour can be used in a purely implicit resolution
-    const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-    this->mb.setUsableInPurelyImplicitResolution(h, true);
-    // reserve names
-    for (const auto& v : DSLBase::getDefaultReservedNames()) {
-      this->mb.reserveName(h, v);
-    }
-    // register behaviours specific names
-    this->registerDefaultVarNames();
-    this->reserveName("minimal_time_step_scaling_factor");
-    this->reserveName("maximal_time_step_scaling_factor");
-    this->reserveName("current_time_step_scaling_factor");
-  }  // end of BehaviourDSLCommon::MFrontParserCommon
-
   void BehaviourDSLCommon::reserveName(const std::string& n) {
     this->mb.reserveName(ModellingHypothesis::UNDEFINEDHYPOTHESIS, n);
   }
@@ -2437,6 +2870,7 @@ namespace mfront {
          << "using stressrate          = typename Types::stressrate;\n"
          << "using temperature         = typename Types::temperature;\n"
          << "using thermalexpansion    = typename Types::thermalexpansion;\n"
+         << "using thermalconductivity = typename Types::thermalconductivity;\n"
          << "using massdensity         = typename Types::massdensity;\n"
          << "using TVector             = typename Types::TVector;\n"
          << "using Stensor             = typename Types::Stensor;\n"
@@ -2455,6 +2889,8 @@ namespace mfront {
          << "using ThermalExpansionCoefficientTensor = typename Types::ThermalExpansionCoefficientTensor;\n"
          << "using DeformationGradientTensor         = typename Types::DeformationGradientTensor;\n"
          << "using DeformationGradientRateTensor     = typename Types::DeformationGradientRateTensor;\n"
+         << "using TemperatureGradient = typename Types::TemperatureGradient;\n"
+         << "using HeatFlux = typename Types::HeatFlux;\n"
          // tangent operator
          << "using TangentOperator   = " << this->mb.getTangentOperatorType() << ";\n"
          << "using PhysicalConstants = tfel::PhysicalConstants<real>;\n";
@@ -3149,7 +3585,7 @@ namespace mfront {
                  (this->mb.getBehaviourType() != BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR),
              "the @Swelling keyword is only valid for small or "
              "finite strain behaviours");
-    this->checkNotEndOfFile("DSLBase::treatSwelling");
+    this->checkNotEndOfFile("BehaviourDSLCommon::treatSwelling");
     if (this->current->value == "<") {
       auto options = std::vector<tfel::utilities::Token>{};
       this->readList(options, "BehaviourDSLCommon::treatSwelling", "<", ">", true);
@@ -6515,19 +6951,19 @@ namespace mfront {
   void BehaviourDSLCommon::treatMinimalTimeStepScalingFactor() {
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     double r_dt;
-    this->checkNotEndOfFile("ImplicitDSLBase::treatMinimalTimeStepScalingFactor", "Cannot read value.");
+    this->checkNotEndOfFile("BehaviourDSLCommon::treatMinimalTimeStepScalingFactor", "Cannot read value.");
     std::istringstream flux(current->value);
     flux >> r_dt;
     if ((flux.fail()) || (!flux.eof())) {
-      this->throwRuntimeError("ImplicitDSLBase::treatMinimalTimeStepScalingFactor", "Failed to read value.");
+      this->throwRuntimeError("BehaviourDSLCommon::treatMinimalTimeStepScalingFactor", "Failed to read value.");
     }
     if (r_dt < 10 * std::numeric_limits<double>::min()) {
-      this->throwRuntimeError("ImplicitDSLBase::treatMinimalTimeStepScalingFactor",
+      this->throwRuntimeError("BehaviourDSLCommon::treatMinimalTimeStepScalingFactor",
                               "minimal time step scaling factor either too "
                               "low value or negative.");
     }
     ++(this->current);
-    this->readSpecifiedToken("ImplicitDSLBase::treatMinimalTimeStepScalingFactor", ";");
+    this->readSpecifiedToken("BehaviourDSLCommon::treatMinimalTimeStepScalingFactor", ";");
     VariableDescription e("real", "minimal_time_step_scaling_factor", 1u, 0u);
     e.description = "minimal value for the time step scaling factor";
     this->mb.addParameter(h, e, BehaviourData::ALREADYREGISTRED);
@@ -6538,19 +6974,19 @@ namespace mfront {
   void BehaviourDSLCommon::treatMaximalTimeStepScalingFactor() {
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     double r_dt;
-    this->checkNotEndOfFile("ImplicitDSLBase::treatMaximalTimeStepScalingFactor", "Cannot read value.");
+    this->checkNotEndOfFile("BehaviourDSLCommon::treatMaximalTimeStepScalingFactor", "Cannot read value.");
     std::istringstream flux(current->value);
     flux >> r_dt;
     if ((flux.fail()) || (!flux.eof())) {
-      this->throwRuntimeError("ImplicitDSLBase::treatMaximalTimeStepScalingFactor", "Failed to read value.");
+      this->throwRuntimeError("BehaviourDSLCommon::treatMaximalTimeStepScalingFactor", "Failed to read value.");
     }
     if (r_dt < 1) {
-      this->throwRuntimeError("ImplicitDSLBase::treatMaximalTimeStepScalingFactor",
+      this->throwRuntimeError("BehaviourDSLCommon::treatMaximalTimeStepScalingFactor",
                               "maximal time step scaling factor value either too "
                               "low or negative.");
     }
     ++(this->current);
-    this->readSpecifiedToken("ImplicitDSLBase::treatMaximalTimeStepScalingFactor", ";");
+    this->readSpecifiedToken("BehaviourDSLCommon::treatMaximalTimeStepScalingFactor", ";");
     VariableDescription e("real", "maximal_time_step_scaling_factor", 1u, 0u);
     e.description = "maximal value for the time step scaling factor";
     this->mb.addParameter(h, e, BehaviourData::ALREADYREGISTRED);

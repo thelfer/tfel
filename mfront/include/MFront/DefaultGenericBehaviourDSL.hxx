@@ -1,0 +1,39 @@
+/*!
+ * \file   mfront/include/MFront/DefaultGenericBehaviourDSL.hxx
+ * \brief  
+ * \author Thomas Helfer
+ * \date   08 nov 2006
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
+ * reserved. 
+ * This project is publicly released under either the GNU GPL Licence 
+ * or the CECILL-A licence. A copy of thoses licences are delivered 
+ * with the sources of TFEL. CEA or EDF may also distribute this 
+ * project under specific licensing conditions. 
+ */
+
+#ifndef LIB_MFRONT_MFRONTDEFAULTGENERICBEHAVIOURDSL_HXX
+#define LIB_MFRONT_MFRONTDEFAULTGENERICBEHAVIOURDSL_HXX 
+
+#include<string>
+#include"MFront/DefaultDSLBase.hxx"
+
+namespace mfront{
+
+  /*!
+   * \brief Implementation of a generic behaviour
+   */
+  struct DefaultGenericBehaviourDSL : public DefaultDSLBase {
+    //! constructor
+    DefaultGenericBehaviourDSL();
+    //! \return the name of the DSL
+    static std::string getName();
+    //! \return a description of the DSL
+    static std::string getDescription();
+    //! \brief destructor
+    ~DefaultGenericBehaviourDSL() noexcept override ;
+  };  // end of struct DefaultGenericBehaviourDSL
+
+} // end of namespace mfront  
+
+#endif /* LIB_MFRONT_MFRONTDEFAULTGENERICBEHAVIOURDSL_HXX */
+

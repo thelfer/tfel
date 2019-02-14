@@ -26,8 +26,7 @@ namespace tfel {
     /*!
      * A structure containing the information  a given behaviour 
      */
-    struct TFELSYSTEM_VISIBILITY_EXPORT ExternalBehaviourData
-    {
+    struct TFELSYSTEM_VISIBILITY_EXPORT ExternalBehaviourData {
       ExternalBehaviourData();
       ExternalBehaviourData(ExternalBehaviourData&&);
       ExternalBehaviourData(const ExternalBehaviourData&);
@@ -233,11 +232,11 @@ extern "C"{
    * If an error message is set, it must be freed  using std::free
    * If the allocation of the error message fails, std::exit is called
    */
-  TFELSYSTEM_VISIBILITY_EXPORT char*
-  getExternalBehaviourData(tfel::system::ExternalBehaviourData *const,
-			   const char* const,
-			   const char* const,
-			   const char* const);
+  TFELSYSTEM_VISIBILITY_EXPORT char* getExternalBehaviourData(
+      tfel::system::ExternalBehaviourData* const,
+      const char* const,
+      const char* const,
+      const char* const);
 
 }  // end of extern "C"
 

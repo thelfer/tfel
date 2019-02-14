@@ -45,18 +45,15 @@ namespace mfront{
   VariableDescription&
   VariableDescription::operator=(const VariableDescription&) = default;
 
-  SupportedTypes::TypeFlag VariableDescription::getTypeFlag() const
-  {
+  SupportedTypes::TypeFlag VariableDescription::getTypeFlag() const {
     return SupportedTypes::getTypeFlag(this->type);
   }
 
-  SupportedTypes::TypeSize VariableDescription::getTypeSize() const
-  {
+  SupportedTypes::TypeSize VariableDescription::getTypeSize() const {
     return SupportedTypes::getTypeSize(this->type,this->arraySize);
   }
-  
-  void VariableDescription::setGlossaryName(const std::string& g)
-  {
+
+  void VariableDescription::setGlossaryName(const std::string& g) {
     using tfel::glossary::Glossary;
     auto throw_if = [](const bool b,const std::string& m){
       tfel::raise_if(b,"VariableDescription::setGlossaryName: "+m);
@@ -70,8 +67,7 @@ namespace mfront{
     this->glossaryName = glossary.getGlossaryEntry(g).getKey();
   } // end of VariableDescription::setGlossaryName
 
-  void VariableDescription::setEntryName(const std::string& e)
-  {
+  void VariableDescription::setEntryName(const std::string& e) {
     using tfel::glossary::Glossary;
     auto throw_if = [](const bool b,const std::string& m){
       tfel::raise_if(b,"VariableDescription::setEntryName: "+m);
@@ -89,12 +85,11 @@ namespace mfront{
     return this->glossaryName.is<std::string>();
   }
 
-  bool VariableDescription::hasEntryName() const{
+  bool VariableDescription::hasEntryName() const {
     return this->entryName.is<std::string>();
   }
-  
-  const std::string& VariableDescription::getExternalName() const
-  {
+
+  const std::string& VariableDescription::getExternalName() const {
     if(this->hasGlossaryName()){
       return this->glossaryName.get<std::string>();
     }
@@ -104,16 +99,14 @@ namespace mfront{
     return this->name;
   } // end of VariableDescription::getExternalName
 
-  void VariableDescription::throwUndefinedAttribute(const std::string& n)
-  {
+  void VariableDescription::throwUndefinedAttribute(const std::string& n) {
     tfel::raise("VariableDescription::getAttribute : "
 		"no attribute named '"+n+"'");
   } // end of VariableDescription::throwUndefinedAttribute
 
   void VariableDescription::setAttribute(const std::string& n,
-					 const VariableAttribute& a,
-					 const bool b)
-  {
+                                         const VariableAttribute& a,
+                                         const bool b) {
     auto throw_if = [](const bool c, const std::string& m){
       tfel::raise_if(c,"VariableDescription::setAttribute: "+m);
     };    
@@ -127,19 +120,17 @@ namespace mfront{
     }
   } // end of VariableDescription::setAttribute
 
-  bool VariableDescription::hasAttribute(const std::string& n) const
-  {
+  bool VariableDescription::hasAttribute(const std::string& n) const {
     return this->attributes.count(n)!=0u;
   } // end of VariableDescription::hasAttribute
 
-  const std::map<std::string,VariableAttribute>&
-  VariableDescription::getAttributes() const
-  {
+  const std::map<std::string, VariableAttribute>&
+  VariableDescription::getAttributes() const {
     return this->attributes;
   } // end of VariableDescription::getAttributes
-  
+
   static void checkBoundsCompatibility(const VariableDescription& v,
-				       const VariableBoundsDescription& b){
+                                       const VariableBoundsDescription& b) {
     auto throw_if = [](const bool c,const std::string& m){
       tfel::raise_if(c,"mfront::checkBoundsCompatibility: "+m);
     };    
@@ -163,8 +154,8 @@ namespace mfront{
    * \param[in] b2: physical bounds
    */
   static void checkBoundsCompatibility(const VariableBoundsDescription& b1,
-				       const VariableBoundsDescription& b2,
-				       const std::string& n){
+                                       const VariableBoundsDescription& b2,
+                                       const std::string& n) {
     auto throw_if = [](const bool c,const std::string& m){
       tfel::raise_if(c,"mfront::checkBoundsCompatibility: "+m);
     };
@@ -185,14 +176,12 @@ namespace mfront{
 	       "in the physical bounds.");
     }
   } // end of checkBoundsCompatibility
-  
-  bool VariableDescription::hasBounds() const
-  {
+
+  bool VariableDescription::hasBounds() const {
     return this->bounds.is<VariableBoundsDescription>();
   } // end of VariableDescription::hasBounds
 
-  bool VariableDescription::hasBounds(const unsigned short i) const
-  {
+  bool VariableDescription::hasBounds(const unsigned short i) const {
     tfel::raise_if(this->arraySize==1u,
 		   "VariableDescription::hasBounds: "
 		   "invalid call on scalar variable '"+
@@ -207,9 +196,8 @@ namespace mfront{
     }
     return false;
   } // end of VariableDescription::hasBounds
-  
-  void VariableDescription::setBounds(const VariableBoundsDescription& b)
-  {
+
+  void VariableDescription::setBounds(const VariableBoundsDescription& b) {
     tfel::raise_if(!this->bounds.empty(),
 		   "VariableDescription::setBounds: "
 		   "bounds have already been set on variable "
@@ -232,8 +220,7 @@ namespace mfront{
   } // end of VariableDescription::setBounds
 
   void VariableDescription::setBounds(const VariableBoundsDescription& b,
-				      const unsigned short i)
-  {
+                                      const unsigned short i) {
     auto throw_if = [](const bool c,const std::string& m){
       tfel::raise_if(c,"VariableDescription::setBounds: "+m);
     };    
@@ -250,8 +237,8 @@ namespace mfront{
     }
     for(unsigned short j=0;j!=this->arraySize;++j){
       if(this->hasPhysicalBounds(j)){
-	mfront::checkBoundsCompatibility(b,this->getPhysicalBounds(j),
-					 this->name);
+        mfront::checkBoundsCompatibility(b, this->getPhysicalBounds(j),
+                                         this->name);
       }
     }
     if(this->bounds.empty()){
@@ -266,9 +253,8 @@ namespace mfront{
 					VariableBoundsDescription>>();
     m.insert({i,b});
   } // end of VariableDescription::setBounds
-  
-  const VariableBoundsDescription& VariableDescription::getBounds() const
-  {
+
+  const VariableBoundsDescription& VariableDescription::getBounds() const {
     tfel::raise_if(!this->hasBounds(),
 		   "VariableDescription::getBounds: "
 		   "no bounds set on variable "

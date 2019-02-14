@@ -85,6 +85,7 @@ set(TFELMFront_SOURCES
     DefaultDSL.cxx
     DefaultCZMDSL.cxx
     DefaultFiniteStrainDSL.cxx
+    DefaultGenericBehaviourDSL.cxx
     MaterialPropertyDSL.cxx
     IsotropicMisesCreepDSL.cxx
     IsotropicStrainHardeningMisesCreepDSL.cxx
@@ -96,6 +97,7 @@ set(TFELMFront_SOURCES
     ImplicitDSL.cxx
     ImplicitDSLII.cxx
     ImplicitFiniteStrainDSL.cxx
+    ImplicitGenericBehaviourDSL.cxx
     NonLinearSystemSolver.cxx
     NonLinearSystemSolverBase.cxx
     NonLinearSystemSolverFactory.cxx

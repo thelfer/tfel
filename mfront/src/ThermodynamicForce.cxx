@@ -16,9 +16,13 @@
 namespace mfront{
 
   ThermodynamicForce::ThermodynamicForce(const std::string& t,
-				   const std::string& n)
-    : VariableDescription(t,n,1u,0u)
-  {} // end of ThermodynamicForce::ThermodynamicForce
+                                         const std::string& n)
+      : VariableDescription(t, n, 1u, 0u) {
+  }  // end of ThermodynamicForce::ThermodynamicForce
+
+  ThermodynamicForce::ThermodynamicForce(const VariableDescription& v)
+      : VariableDescription(v) {
+  }  // end of ThermodynamicForce::ThermodynamicForce
 
   ThermodynamicForce::ThermodynamicForce(ThermodynamicForce&&) = default;
   ThermodynamicForce::ThermodynamicForce(const ThermodynamicForce&) = default;

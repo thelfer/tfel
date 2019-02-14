@@ -567,6 +567,11 @@ namespace mfront {
 
   BehaviourDescription::BehaviourType BehaviourDescription::getBehaviourType()
       const {
+    if (this->type.empty()) {
+      tfel::raise(
+          "BehaviourDescription::getBehaviourType: "
+          "undefined behaviour type");
+    }
     return this->type;
   }  // end of BehaviourDescription::getBehaviourType
 
@@ -581,6 +586,12 @@ namespace mfront {
     } else if (this->getBehaviourType() ==
                BehaviourDescription::COHESIVEZONEMODEL) {
       btype = "MechanicalBehaviourBase::COHESIVEZONEMODEL";
+    } else if (this->getBehaviourType() ==
+               BehaviourDescription::COHESIVEZONEMODEL) {
+      btype = "MechanicalBehaviourBase::COHESIVEZONEMODEL";
+    } else if (this->getBehaviourType() ==
+               BehaviourDescription::GENERALBEHAVIOUR) {
+      btype = "MechanicalBehaviourBase::GENERALBEHAVIOUR";
     } else {
       tfel::raise(
           "BehaviourDescription::getBehaviourTypeFlag: "
@@ -839,8 +850,8 @@ namespace mfront {
       tfel::raise_if(c, "BehaviourDescription::addHillTensor: " + m);
     };
     throw_if(
-        (this->type != BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) &&
-            (this->type != BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR),
+        (this->getBehaviourType() != BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) &&
+            (this->getBehaviourType() != BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR),
         "this method is only valid for small and finite strain behaviours");
     throw_if(this->getSymmetryType() != mfront::ORTHOTROPIC,
              "the behaviour is not orthotropic.");
@@ -859,7 +870,20 @@ namespace mfront {
     return this->hillTensors;
   }  // end of BehaviourDescription::getHillTensors
 
+  void BehaviourDescription::declareAsGenericBehaviour() {
+    tfel::raise_if(
+        !this->type.empty(),
+        "BehaviourDescription::declareAsGenericBehaviour: "
+        "behaviour type has already been defined");
+    this->type = GENERALBEHAVIOUR;
+  }  // end of BehaviourDescription::declareAsGenericBehaviour
+
   void BehaviourDescription::declareAsASmallStrainStandardBehaviour() {
+    constexpr const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    tfel::raise_if(
+        !this->type.empty(),
+        "BehaviourDescription::declareAsASmallStrainStandardBehaviour: "
+        "behaviour type has already been defined");
     tfel::raise_if(
         !this->mvariables.empty(),
         "BehaviourDescription::declareAsASmallStrainStandardBehaviour: "
@@ -871,13 +895,20 @@ namespace mfront {
     sig.setGlossaryName("Stress");
     this->mvariables.push_back({eto, sig});
     this->type = BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR;
-    this->registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS, "eto");
-    this->registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS, "deto");
-    this->registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS, "sig");
-  }
+    this->registerMemberName(h, "eto");
+    this->registerMemberName(h, "deto");
+    this->registerMemberName(h, "sig");
+    this->registerGlossaryName(h, "eto", "Strain");
+    this->registerGlossaryName(h, "sig", "Stress");
+  } // end of BehaviourDescription::declareAsASmallStrainStandardBehaviour
 
   void BehaviourDescription::declareAsAFiniteStrainStandardBehaviour(
       const bool b) {
+    constexpr const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    tfel::raise_if(
+        !this->type.empty(),
+        "BehaviourDescription::declareAsAFiniteStrainStandardBehaviour: "
+        "behaviour type has already been defined");
     tfel::raise_if(
         !this->mvariables.empty(),
         "BehaviourDescription::declareAsAFiniteStrainStandardBehaviour: "
@@ -890,15 +921,22 @@ namespace mfront {
     this->mvariables.push_back({F, sig});
     this->type = BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR;
     if (b) {
-      this->registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS, "F");
-      this->registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS, "dF");
+      this->registerMemberName(h, "F");
+      this->registerMemberName(h, "dF");
     }
-    this->registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS, "F0");
-    this->registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS, "F1");
-    this->registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS, "sig");
+    this->registerMemberName(h, "F0");
+    this->registerMemberName(h, "F1");
+    this->registerMemberName(h, "sig");
+    this->registerGlossaryName(h, "F1", "DeformationGradient");
+    this->registerGlossaryName(h, "sig", "Stress");
   }
 
   void BehaviourDescription::declareAsACohesiveZoneModel() {
+    constexpr const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    tfel::raise_if(
+        !this->type.empty(),
+        "BehaviourDescription::declareAsACohesiveZoneModel: "
+        "behaviour type has already been defined");
     tfel::raise_if(!this->mvariables.empty(),
                    "BehaviourDescription::declareAsACohesiveZoneModel: "
                    "some driving variables are already declared");
@@ -909,9 +947,11 @@ namespace mfront {
     t.setGlossaryName("CohesiveForce");
     this->mvariables.push_back({u, t});
     this->type = BehaviourDescription::COHESIVEZONEMODEL;
-    this->registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS, "u");
-    this->registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS, "du");
-    this->registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS, "t");
+    this->registerMemberName(h, "u");
+    this->registerMemberName(h, "du");
+    this->registerMemberName(h, "t");
+    this->registerGlossaryName(h, "u", "OpeningDisplacement");
+    this->registerGlossaryName(h, "t", "CohesiveForce");
   }
 
   void BehaviourDescription::addLocalDataStructure(
@@ -951,17 +991,17 @@ namespace mfront {
     }
   }
 
-  void BehaviourDescription::addMainVariable(const Gradient& dv,
+  void BehaviourDescription::addMainVariable(const Gradient& g,
                                              const ThermodynamicForce& f) {
-    tfel::raise_if(this->type != BehaviourDescription::GENERALBEHAVIOUR,
+    tfel::raise_if(this->getBehaviourType() != BehaviourDescription::GENERALBEHAVIOUR,
                    "BehaviourDescription::addMainVariables: "
                    "one can not add a main variable if the behaviour "
                    "don't have a general behaviour type");
     for (const auto& v : this->mvariables) {
-      tfel::raise_if(dv.name == v.first.name,
+      tfel::raise_if(g.name == v.first.name,
                      "BehaviourDescription::addMainVariables: "
                      "a driving variable '" +
-                         dv.name +
+                         g.name +
                          "' has "
                          "already been declared");
       tfel::raise_if(f.name == v.second.name,
@@ -971,7 +1011,19 @@ namespace mfront {
                          "' has "
                          "already been declared");
     }
-    this->mvariables.push_back({dv, f});
+    if (g.increment_known) {
+      this->registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+                               g.name);
+      this->registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+                               "d" + g.name);
+    } else {
+      this->registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+                               g.name + "0");
+      this->registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+                               g.name + "1");
+    }
+    this->registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS, f.name);
+    this->mvariables.push_back({g, f});
   }  // end of BehaviourDescription::addMainVariables
 
   const std::vector<std::pair<Gradient, ThermodynamicForce>>&
@@ -1306,17 +1358,17 @@ namespace mfront {
   }  // end of BehaviourDescription::useQt
 
   std::string BehaviourDescription::getTangentOperatorType() const {
-    if (this->type == GENERALBEHAVIOUR) {
+    if (this->getBehaviourType() == GENERALBEHAVIOUR) {
       auto msizes = this->getMainVariablesSize();
       std::ostringstream t;
       t << "tfel::math::tmatrix<" << msizes.first << "," << msizes.second
         << ",real>";
       return t.str();
-    } else if (this->type == STANDARDSTRAINBASEDBEHAVIOUR) {
+    } else if (this->getBehaviourType() == STANDARDSTRAINBASEDBEHAVIOUR) {
       return "StiffnessTensor";
-    } else if (this->type == STANDARDFINITESTRAINBEHAVIOUR) {
+    } else if (this->getBehaviourType() == STANDARDFINITESTRAINBEHAVIOUR) {
       return "FiniteStrainBehaviourTangentOperator<N,stress>";
-    } else if (this->type == COHESIVEZONEMODEL) {
+    } else if (this->getBehaviourType() == COHESIVEZONEMODEL) {
       return "tfel::math::tmatrix<N,N,stress>";
     }
     tfel::raise(
@@ -1331,8 +1383,8 @@ namespace mfront {
   }  // end of BehaviourDescription::getStressFreeExpansionDescriptions
 
   std::string BehaviourDescription::getStressFreeExpansionType() const {
-    if ((this->type == STANDARDSTRAINBASEDBEHAVIOUR) ||
-        (this->type == STANDARDFINITESTRAINBEHAVIOUR)) {
+    if ((this->getBehaviourType() == STANDARDSTRAINBASEDBEHAVIOUR) ||
+        (this->getBehaviourType() == STANDARDFINITESTRAINBEHAVIOUR)) {
       return "StrainStensor";
     }
     tfel::raise(
@@ -2132,6 +2184,54 @@ namespace mfront {
     return this->getBehaviourData(h).appendExternalNames(n, v);
   }  // end of BehaviourDescription::appendExternalNames
 
+  void BehaviourDescription::setGlossaryName(const std::string& n,
+                                             const std::string& gn) {
+    using tfel::glossary::Glossary;
+    using MainVariable = std::pair<Gradient, ThermodynamicForce>;
+    const auto& glossary = Glossary::getGlossary();
+    tfel::raise_if(!glossary.contains(gn),
+                   "BehaviourDescription::setGlossaryName: "
+                   "'" +
+                       gn + "' is not a glossary name");
+    std::for_each(this->mvariables.begin(), this->mvariables.end(),
+                  [this, &n, &gn](MainVariable& v) {
+                    constexpr const auto h =
+                        ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+                    if (v.first.name == n) {
+                      v.first.setGlossaryName(gn);
+                      this->registerGlossaryName(h, n, gn);
+                    }
+                    if (v.second.name == n) {
+                      v.second.setGlossaryName(gn);
+                      this->registerGlossaryName(h, n, gn);
+                    }
+                  });
+  }  // end of BehaviourDescription::setGlossaryName
+
+  void BehaviourDescription::setEntryName(const std::string& n,
+                                          const std::string& e) {
+    using tfel::glossary::Glossary;
+    using MainVariable = std::pair<Gradient, ThermodynamicForce>;
+    const auto& glossary = Glossary::getGlossary();
+    tfel::raise_if(glossary.contains(e),
+                   "BehaviourDescription::setEntryName: "
+                   "'" +
+                       e + "' is a glossary name");
+    std::for_each(this->mvariables.begin(), this->mvariables.end(),
+                  [this, &n, &e](MainVariable& v) {
+                    constexpr const auto h =
+                        ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+                    if (v.first.name == n) {
+                      v.first.setEntryName(e);
+                      this->registerEntryName(h, n, e);
+                    }
+                    if (v.second.name == n) {
+                      v.second.setEntryName(e);
+                      this->registerEntryName(h, n, e);
+                    }
+                  });
+  }  // end of BehaviourDescription::setEntryName
+
   void BehaviourDescription::setGlossaryName(const Hypothesis h,
                                              const std::string& n,
                                              const std::string& g) {
@@ -2308,6 +2408,19 @@ namespace mfront {
     }
     return false;
   }  // end of BehaviourDescription::isNameReserved
+
+  void BehaviourDescription::registerGlossaryName(const Hypothesis h,
+                                                  const std::string& n,
+                                                  const std::string& g) {
+    this->callBehaviourData(h, &BehaviourData::registerGlossaryName, n, g,
+                            true);
+  }  // end of BehaviourDescription::registerGlossaryName
+
+  void BehaviourDescription::registerEntryName(const Hypothesis h,
+                                                const std::string& n,
+                                                const std::string& e) {
+    this->callBehaviourData(h, &BehaviourData::registerEntryName, n, e, true);
+  }  // end of BehaviourDescription::registerEntryName
 
   void BehaviourDescription::registerMemberName(const Hypothesis h,
                                                 const std::string& n) {

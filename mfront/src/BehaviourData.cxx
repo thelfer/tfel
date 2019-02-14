@@ -102,16 +102,15 @@ namespace mfront{
    * \param[in] em : entry names
    * \param[in] n  : glossary name
    */
-  static void
-  BehaviourDataCheckIfNameIsAnEntryNameOrAGlossaryName(const std::map<std::string,std::string>& gm,
-						       const std::map<std::string,std::string>& em,
-						       const std::string& n)
-  {
+  static void BehaviourDataCheckIfNameIsAnEntryNameOrAGlossaryName(
+      const std::map<std::string, std::string>& gm,
+      const std::map<std::string, std::string>& em,
+      const std::string& n) {
     auto check = [&n](const std::map<std::string,std::string>& m,
 		      const char* const t){
       for(const auto& v : m){
 	tfel::raise_if(v.second==n,
-		       "BehaviourDataCheckIfNameIsAnEntryNameOrAGlossaryName : "
+		       "BehaviourDataCheckIfNameIsAnEntryNameOrAGlossaryName: "
 		       "name '"+n+"' is already used as a "+std::string(t));
       }
     };
@@ -128,14 +127,13 @@ namespace mfront{
    * \param[in] n  : variable name
    * \param[in] g  : glossray name or entry name
    */
-  static void
-  BehaviourDataAddToGlossaryOrEntryNames(std::map<std::string,std::string>& m,
-					 const std::map<std::string,std::string>& gn,
-					 const std::map<std::string,std::string>& en,
-					 const std::set<std::string>& vn,
-					 const std::string& n,
-					 const std::string& g)
-  {
+  static void BehaviourDataAddToGlossaryOrEntryNames(
+      std::map<std::string, std::string>& m,
+      const std::map<std::string, std::string>& gn,
+      const std::map<std::string, std::string>& en,
+      const std::set<std::string>& vn,
+      const std::string& n,
+      const std::string& g) {
     auto throw_if = [](const bool c, const std::string& msg){
       tfel::raise_if(c,"BehaviourDataAddToGlossaryOrEntryNames: "+msg);
     };
@@ -155,115 +153,109 @@ namespace mfront{
 	     "glossary name for variable '"+n+"' "
 	     "already specified");
   }
-  
-  void BehaviourData::throwUndefinedAttribute(const std::string& n)
-  {
-    tfel::raise("BehaviourData::getAttribute : "
+
+  void BehaviourData::throwUndefinedAttribute(const std::string& n) {
+    tfel::raise("BehaviourData::getAttribute: "
 		"no attribute named '"+n+"'");
   } // end of BehaviourData::throwUndefinedAttribute
   
   BehaviourData::CodeBlocksAggregator::CodeBlocksAggregator() = default;
 
-  bool BehaviourData::CodeBlocksAggregator::isMutable() const
-  {
+  bool BehaviourData::CodeBlocksAggregator::isMutable() const {
     return this->is_mutable;
-  } // end of BehaviourData::CodeBlocksAggregator::isMutable
+  }  // end of BehaviourData::CodeBlocksAggregator::isMutable
 
-  void BehaviourData::CodeBlocksAggregator::update()
-  {
+  void BehaviourData::CodeBlocksAggregator::update() {
     // updating code
-    this->cblock.code  = cblock_begin;
-    if(!this->cblock_body.empty()){
-      if(!this->cblock.code.empty()){
-	if(*(this->cblock.code.rbegin())!='\n'){
-	  this->cblock.code.push_back('\n');
-	}
+    this->cblock.code = cblock_begin;
+    if (!this->cblock_body.empty()) {
+      if (!this->cblock.code.empty()) {
+        if (*(this->cblock.code.rbegin()) != '\n') {
+          this->cblock.code.push_back('\n');
+        }
       }
     }
     this->cblock.code += cblock_body;
-    if(!this->cblock_end.empty()){
-      if(!this->cblock.code.empty()){
-	if(*(this->cblock.code.rbegin())!='\n'){
-	  this->cblock.code.push_back('\n');
-	}
+    if (!this->cblock_end.empty()) {
+      if (!this->cblock.code.empty()) {
+        if (*(this->cblock.code.rbegin()) != '\n') {
+          this->cblock.code.push_back('\n');
+        }
       }
     }
     this->cblock.code += cblock_end;
     // updating description
-    this->cblock.description  = cdoc_begin;
-    if(!this->cdoc_body.empty()){
-      if(!this->cblock.description.empty()){
-	if(*(this->cblock.description.rbegin())!='\n'){
-	  this->cblock.description.push_back('\n');
-	}
+    this->cblock.description = cdoc_begin;
+    if (!this->cdoc_body.empty()) {
+      if (!this->cblock.description.empty()) {
+        if (*(this->cblock.description.rbegin()) != '\n') {
+          this->cblock.description.push_back('\n');
+        }
       }
     }
     this->cblock.description += cdoc_body;
-    if(!this->cdoc_end.empty()){
-      if(!this->cblock.description.empty()){
-	if(*(this->cblock.description.rbegin())!='\n'){
-	  this->cblock.description.push_back('\n');
-	}
+    if (!this->cdoc_end.empty()) {
+      if (!this->cblock.description.empty()) {
+        if (*(this->cblock.description.rbegin()) != '\n') {
+          this->cblock.description.push_back('\n');
+        }
       }
     }
     this->cblock.description += cdoc_end;
-  } // end of BehaviourData::update
+  }  // end of BehaviourData::update
 
   void BehaviourData::CodeBlocksAggregator::set(const CodeBlock& c,
-						const Position p,
-						const bool b)
-  {
+                                                const Position p,
+                                                const bool b) {
     this->check();
     this->cblock.staticMembers.insert(c.staticMembers.begin(),
-				      c.staticMembers.end());
-    this->cblock.members.insert(c.members.begin(),
-				c.members.end());
-    switch(p){
-    case AT_BEGINNING:
-      if(!this->cblock_begin.empty()){
-	this->cblock_begin += '\n';
-      }
-      this->cblock_begin += c.code;
-      if(!c.description.empty()){
-	if(!this->cdoc_begin.empty()){
-	  this->cdoc_begin += '\n';
-	}
-	this->cdoc_begin += c.description;
-      }
-      break;
-    case BODY:
-      if(!this->cblock_body.empty()){
-	this->cblock_body += '\n';
-      }
-      this->cblock_body  += c.code;
-      if(!c.description.empty()){
-	if(!this->cdoc_body.empty()){
-	  this->cdoc_body += '\n';
-	}
-	this->cdoc_body += c.description;
-      }
-      break;
-    case AT_END:
-      if(!this->cblock_end.empty()){
-	this->cblock_end += '\n';
-      }
-      this->cblock_end   += c.code;
-      if(!c.description.empty()){
-	if(!this->cdoc_end.empty()){
-	  this->cdoc_end += '\n';
-	}
-	this->cdoc_end += c.description;
-      }
-      break; 
+                                      c.staticMembers.end());
+    this->cblock.members.insert(c.members.begin(), c.members.end());
+    switch (p) {
+      case AT_BEGINNING:
+        if (!this->cblock_begin.empty()) {
+          this->cblock_begin += '\n';
+        }
+        this->cblock_begin += c.code;
+        if (!c.description.empty()) {
+          if (!this->cdoc_begin.empty()) {
+            this->cdoc_begin += '\n';
+          }
+          this->cdoc_begin += c.description;
+        }
+        break;
+      case BODY:
+        if (!this->cblock_body.empty()) {
+          this->cblock_body += '\n';
+        }
+        this->cblock_body += c.code;
+        if (!c.description.empty()) {
+          if (!this->cdoc_body.empty()) {
+            this->cdoc_body += '\n';
+          }
+          this->cdoc_body += c.description;
+        }
+        break;
+      case AT_END:
+        if (!this->cblock_end.empty()) {
+          this->cblock_end += '\n';
+        }
+        this->cblock_end += c.code;
+        if (!c.description.empty()) {
+          if (!this->cdoc_end.empty()) {
+            this->cdoc_end += '\n';
+          }
+          this->cdoc_end += c.description;
+        }
+        break;
     }
     this->update();
     this->is_mutable = b;
-  } // end of BehaviourData::CodeBlocksAggregator::set
+  }  // end of BehaviourData::CodeBlocksAggregator::set
 
   void BehaviourData::CodeBlocksAggregator::replace(const CodeBlock& c,
-						    const Position p,
-						    const bool b)
-  {
+                                                    const Position p,
+                                                    const bool b) {
     this->check();
     this->cblock_begin.clear();
     this->cblock_body.clear();
@@ -271,26 +263,23 @@ namespace mfront{
     this->cblock.code.clear();
     this->cblock.members.clear();
     this->cblock.staticMembers.clear();
-    this->set(c,p,b);
-  } // end of BehaviourData::CodeBlocksAggregator::set
+    this->set(c, p, b);
+  }  // end of BehaviourData::CodeBlocksAggregator::set
 
-  void BehaviourData::CodeBlocksAggregator::check() const
-  {
+  void BehaviourData::CodeBlocksAggregator::check() const {
     tfel::raise_if(!this->is_mutable,
-		   "BehaviourData::CodeBlocksAggregator::set : "
-		   "can't modifiy a code block");
-  } // end of BehaviourData::CodeBlocksAggregator::check
+                   "BehaviourData::CodeBlocksAggregator::set: "
+                   "can't modifiy a code block");
+  }  // end of BehaviourData::CodeBlocksAggregator::check
 
-  const CodeBlock& BehaviourData::CodeBlocksAggregator::get() const
-  {
+  const CodeBlock& BehaviourData::CodeBlocksAggregator::get() const {
     this->is_mutable = false;
     return this->cblock;
-  } // end of BehaviourData::CodeBlocksAggregator::get
+  }  // end of BehaviourData::CodeBlocksAggregator::get
 
   BehaviourData::CodeBlocksAggregator::~CodeBlocksAggregator() = default;
 
-  BehaviourData::BehaviourData()
-  {
+  BehaviourData::BehaviourData() {
     this->registerMemberName("dt");
     // treating the temperature
     auto T = VariableDescription{"temperature","T",1u,0u};
@@ -317,12 +306,12 @@ namespace mfront{
        (!this->getAttribute<bool>(BehaviourData::allowsNewUserDefinedVariables))){
       const auto cbn = this->getCodeBlockNames();
       tfel::raise_if(cbn.empty(),
-		     "BehaviourData::addStaticVariable: "
-		     "no more variable can be defined. This may mean that "
-		     "the parser does not expect you to add variables");
+                     "BehaviourData::addStaticVariable: "
+                     "no more variable can be defined. This may mean that "
+                     "the parser does not expect you to add variables");
       auto cbs = std::string{};
-      for(const auto& n : cbn){
-	cbs += "\n- "+n;
+      for (const auto& n : cbn) {
+        cbs += "\n- "+n;
       }
       tfel::raise("BehaviourData::addStaticVariable: "
 		  "no more variable can be defined. This may mean that "
@@ -653,7 +642,7 @@ namespace mfront{
     } else if(t=="Parameter"){
       m = &BehaviourData::getParameters;
     } else {
-      tfel::raise("BehaviourData::getVariables : "
+      tfel::raise("BehaviourData::getVariables: "
 		  "invalid variables type '"+t+"'");
     }
     return (this->*m)();
@@ -998,28 +987,85 @@ namespace mfront{
   bool BehaviourData::isNameReserved(const std::string& n) const{
     return this->reservedNames.count(n)!=0;
   }
-  
-  void BehaviourData::registerMemberName(const std::string& n)
-  {
+
+  void BehaviourData::registerGlossaryName(const std::string& n,
+                                           const std::string& g) {
+    using namespace tfel::glossary;
+    const auto& glossary = Glossary::getGlossary();
+    if (glossary.contains(n)) {
+      std::ostringstream msg;
+      msg << "BehaviourData::registerEntryName: "
+          << "the name '" << n << "' is a registred as a glossary name.\n";
+      displayGlossaryEntryCompleteDescription(msg,
+                                              glossary.getGlossaryEntry(n));
+      tfel::raise(msg.str());
+    }
+    if (!glossary.contains(g)) {
+      tfel::raise(
+          "BehaviourData::registerGlossaryName: "
+          "the name '" +
+          g + "' is a not known as a glossary name");
+    }
+    if (!this->isNameReserved(n)) {
+      tfel::raise(
+          "BehaviourData::registerGlossaryName: "
+          "the variable name '" +
+          n + "' is registred");
+    }
+    this->reserveName(g);
+    tfel::raise_if(!this->glossaryNames.insert({n, g}).second,
+                   "BehaviourData::registerGlossaryName: "
+                   "a variable named '" +
+                       n + "' has already been registred");
+  } // end of BehaviourData::registerGlossaryName
+
+  void BehaviourData::registerEntryName(const std::string& n,
+                                        const std::string& e) {
+    using namespace tfel::glossary;
+    const auto& glossary = Glossary::getGlossary();
+    if (glossary.contains(e)) {
+      std::ostringstream msg;
+      msg << "BehaviourData::registerEntryName: "
+          << "the name '" << e << "' is a registred as a glossary name.\n";
+      displayGlossaryEntryCompleteDescription(msg,
+                                              glossary.getGlossaryEntry(e));
+      tfel::raise(msg.str());
+    }
+    if (!this->isNameReserved(n)) {
+      tfel::raise(
+          "BehaviourData::registerGlossaryName: "
+          "the variable name '" +
+          n + "' is registred");
+    }
+    this->reserveName(e);
+    tfel::raise_if(!this->entryNames.insert({n,e}).second,
+                   "BehaviourData::registerEntryName: "
+                   "a variable named '" +
+                       n + "' has already been registred");
+  }  // end of BehaviourData::registerEntryName
+
+  void BehaviourData::registerMemberName(const std::string& n) {
     using namespace tfel::glossary;
     const auto& glossary = Glossary::getGlossary();
     for(auto& e : this->entryNames){
       tfel::raise_if(e.second==n,
-		     "BehaviourData::registerMemberName : "
+		     "BehaviourData::registerMemberName: "
 		     "the name '"+n+"' is already been used "
 		     "for an entry name");
     }
     if(glossary.contains(n)){
       std::ostringstream msg;
-      msg << "BehaviourData::registerMemberName : "
-	  << "the name '" << n << "' is a registred as a glossary name.\n";
-      displayGlossaryEntryCompleteDescription(msg,glossary.getGlossaryEntry(n));
+      msg << "BehaviourData::registerMemberName: "
+          << "the name '" << n << "' is a registred as a glossary name.\n";
+      displayGlossaryEntryCompleteDescription(msg,
+                                              glossary.getGlossaryEntry(n));
       tfel::raise(msg.str());
     }
     this->reserveName(n);
     tfel::raise_if(!this->membersNames.insert(n).second,
-		   "BehaviourData::registerMemberName : "
-		   "a variable named '"+n+"' has already been registred");
+                   "BehaviourData::registerMemberName: "
+                   "a variable named '" +
+                       n + "' has already been registred");
   } // end of BehaviourData::registerMemberName
 
   void BehaviourData::registerStaticMemberName(const std::string& n)
@@ -1027,20 +1073,20 @@ namespace mfront{
     const auto& g = tfel::glossary::Glossary::getGlossary();
     for(auto& e : this->entryNames){
       tfel::raise_if(e.second==n,
-		     "BehaviourData::registerStaticMemberName : "
+		     "BehaviourData::registerStaticMemberName: "
 		     "the name '"+n+"' is already been used "
 		     "for an entry name");
     }
     if(g.contains(n)){
       std::ostringstream msg;
-      msg << "BehaviourData::registerStaticMemberName : "
+      msg << "BehaviourData::registerStaticMemberName: "
 	  << "the name '" << n << "' is a registred as a glossary name.\n";
       displayGlossaryEntryCompleteDescription(msg,g.getGlossaryEntry(n));
       tfel::raise(msg.str());
     }
     this->reserveName(n);
     tfel::raise_if(!this->staticMembersNames.insert(n).second,
-		   "BehaviourData::registerStaticMemberName : "
+		   "BehaviourData::registerStaticMemberName: "
 		   "a variable named '"+n+"' has already been registred");
   } // end of BehaviourData::registerStaticMemberName
   
@@ -1067,7 +1113,7 @@ namespace mfront{
        (this->staticVariables.contains(n))){
       return;
     }
-    tfel::raise("BehaviourData::checkVariableName : "
+    tfel::raise("BehaviourData::checkVariableName: "
 		"no variable named '"+n+"'");
   } // end of BehaviourData::checkVariableName
 
@@ -1082,7 +1128,7 @@ namespace mfront{
       pc = this->cblocks.insert({n,CodeBlocksAggregator{}}).first;
     } else {
       if(m==CREATE){
-	tfel::raise("BehaviourData::setCode : "
+	tfel::raise("BehaviourData::setCode: "
 		    "a code block named '"+n+"' already exists.\n"
 		    "If you wanted to append this new code to the "
 		    "existing one, you shall use the 'Append' option.\n"
@@ -1224,11 +1270,11 @@ namespace mfront{
   int BehaviourData::getIntegerParameterDefaultValue(const std::string& n) const
   {
     tfel::raise_if(!this->parameters.contains(n),
-		   "BehaviourData::getIntegerParameterDefaultValue : "
+		   "BehaviourData::getIntegerParameterDefaultValue: "
 		   "no parameter '"+n+"' defined");
     auto p = this->iParametersDefaultValues.find(n);
     tfel::raise_if(p==this->iParametersDefaultValues.end(),
-		   "BehaviourData::getIntegerParameterDefaultValue : "
+		   "BehaviourData::getIntegerParameterDefaultValue: "
 		   "no default value defined for parameter '"+n+"'");
     return p->second;
   } // end of BehaviourData::getIntegerParameterDefaultValue
@@ -1237,11 +1283,11 @@ namespace mfront{
   BehaviourData::getUnsignedShortParameterDefaultValue(const std::string& n) const
   {
     tfel::raise_if(!this->parameters.contains(n),
-		   "BehaviourData::getUnsignedShortParameterDefaultValue : "
+		   "BehaviourData::getUnsignedShortParameterDefaultValue: "
 		   "no parameter '"+n+"' defined");
     auto p = this->uParametersDefaultValues.find(n);
     tfel::raise_if(p==this->uParametersDefaultValues.end(),
-		   "BehaviourData::getUnsignedShortParameterDefaultValue : "
+		   "BehaviourData::getUnsignedShortParameterDefaultValue: "
 		   "no default value defined for parameter '"+n+"'");
     return p->second;
   } // end of BehaviourData::getUnsignedShortParameterDefaultValue
@@ -1339,28 +1385,26 @@ namespace mfront{
   {
     v.appendExternalNames(names);
   } // end of BehaviourData::appendExternalNames
-  
+
   void BehaviourData::setGlossaryName(const std::string& n,
-				      const std::string& g)
-  {
+                                      const std::string& g) {
     using tfel::glossary::Glossary;
     const auto& glossary = Glossary::getGlossary();
     tfel::raise_if(!glossary.contains(g),
-		   "BehaviourData::setGlossaryName : "
+		   "BehaviourData::setGlossaryName: "
 		   "'"+g+"' is not a glossary name");
     bool treated = false;
-    auto set_glossary_name = [&n,&g,&treated](VariableDescriptionContainer& c){
+    auto set_glossary_name = [&n, &g,
+                              &treated](VariableDescriptionContainer& c) {
       if(c.contains(n)){
 	c.getVariable(n).setGlossaryName(g);
 	treated = true;
       }
     };
     this->checkVariableName(n);
-    BehaviourDataAddToGlossaryOrEntryNames(this->glossaryNames,
-					   this->glossaryNames,
-					   this->entryNames,
-					   this->reservedNames,n,
-					   glossary.getGlossaryEntry(g).getKey());
+    BehaviourDataAddToGlossaryOrEntryNames(
+        this->glossaryNames, this->glossaryNames, this->entryNames,
+        this->reservedNames, n, glossary.getGlossaryEntry(g).getKey());
     set_glossary_name(this->materialProperties);
     set_glossary_name(this->localVariables);
     set_glossary_name(this->stateVariables);
@@ -1401,7 +1445,7 @@ namespace mfront{
     };
     if(glossary.contains(e)){
       std::ostringstream msg;
-      msg << "BehaviourData::setEntryName : "
+      msg << "BehaviourData::setEntryName: "
 	  << "'" << e << "' is a glossary name. " << std::endl
 	  << "Please use 'setGlossaryName' method instead or choose another entry name.";
       displayGlossaryEntryCompleteDescription(msg,glossary.getGlossaryEntry(e));

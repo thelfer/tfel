@@ -54,7 +54,7 @@ namespace tfel {
       typedef tfel::math::qt<tfel::math::Temperature, T> temperature;
       typedef tfel::math::qt<tfel::math::InvTemperature, T> thermalexpansion;
       typedef tfel::math::qt<tfel::math::Density, T> massdensity;
-      typedef tfel::math::qt<tfel::math::EnergyDensity, T> energy_density;
+      typedef tfel::math::qt<tfel::math::EnergyDensity, T> energydensity;
       typedef tfel::math::tvector<N, real> TVector;
       typedef tfel::math::stensor<N, real> Stensor;
       typedef tfel::math::stensor<N, frequency> FrequencyStensor;
@@ -89,11 +89,19 @@ namespace tfel {
           typename tfel::config::internals::InvJacobianType<N, T, true>::type
               InvJacobianType;
       /* Thermal related stuff */
-      typedef tfel::math::qt<tfel::math::ThermalConductivity, T>
-          thermal_conductivity;
-      typedef
-          typename tfel::config::internals::HeatFluxVectorType<N, T, true>::type
-              HeatFluxVector;
+      using thermalconductivity = tfel::math::qt<tfel::math::ThermalConductivity, T>;
+      using TemperatureGradient =
+          typename tfel::config::internals::TemperatureGradientType<N,
+                                                                    T,
+                                                                    true>::type;
+      using HeatFluxVector =
+          typename tfel::config::internals::HeatFluxVectorType<N,
+                                                               T,
+                                                               true>::type;
+      using HeatFlux =
+          typename tfel::config::internals::HeatFluxVectorType<N,
+                                                               T,
+                                                               true>::type;
       typedef typename tfel::config::internals::
           ThermalConductivityMatrixType<N, T, true>::type
               ThermalConductivityMatrix;
@@ -118,7 +126,7 @@ namespace tfel {
       typedef T temperature;
       typedef T thermalexpansion;
       typedef T massdensity;
-      typedef T energy_density;
+      typedef T energydensity;
       typedef tfel::math::tvector<N, T> TVector;
       typedef tfel::math::stensor<N, T> Stensor;
       typedef tfel::math::stensor<N, T> FrequencyStensor;
@@ -147,9 +155,15 @@ namespace tfel {
           typename tfel::config::internals::InvJacobianType<N, T, false>::type
               InvJacobianType;
       /* Thermal related stuff */
-      typedef T thermal_conductivity;
+      using thermalconductivity = T;
+      using TemperatureGradient = typename tfel::config::internals::
+          TemperatureGradientType<N, T, false>::type;
       typedef typename tfel::config::internals::
           HeatFluxVectorType<N, T, false>::type HeatFluxVector;
+      using HeatFlux =
+          typename tfel::config::internals::HeatFluxVectorType<N,
+                                                               T,
+                                                               false>::type;
       typedef typename tfel::config::internals::
           ThermalConductivityMatrixType<N, T, false>::type
               ThermalConductivityMatrix;

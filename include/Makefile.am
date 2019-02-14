@@ -80,9 +80,10 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Material/CrystalStructure.hxx                                                           \
 			TFEL/Material/SlipSystemsDescription.hxx                                                     \
 			TFEL/Config/Internals/TFELTypesInternals.hxx	                                             \
-			TFEL/Config/Internals/SpatialGradType.hxx	                                             \
+			TFEL/Config/Internals/SpatialGradType.hxx	                                                 \
+			TFEL/Config/Internals/TemperatureGradientType.hxx	                                         \
 			TFEL/Config/Internals/HeatFluxVectorType.hxx	                                             \
-			TFEL/Config/Internals/InvJacobianType.hxx	                                             \
+			TFEL/Config/Internals/InvJacobianType.hxx	                                                 \
 			TFEL/Config/Internals/PositionType.hxx	                                                     \
 			TFEL/Config/Internals/JacobianType.hxx	                                                     \
 			TFEL/Config/Internals/ThermalConductivityMatrixType.hxx                                      \

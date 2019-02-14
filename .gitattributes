@@ -1524,6 +1524,7 @@ include/TFEL/Config/Internals/JacobianType.hxx -text
 include/TFEL/Config/Internals/PositionType.hxx -text
 include/TFEL/Config/Internals/SpatialGradType.hxx -text
 include/TFEL/Config/Internals/TFELTypesInternals.hxx -text
+include/TFEL/Config/Internals/TemperatureGradientType.hxx -text
 include/TFEL/Config/Internals/ThermalConductivityMatrixType.hxx -text
 include/TFEL/Config/TFELConfig.hxx -text
 include/TFEL/Config/TFELTypes.hxx -text
@@ -2353,6 +2354,7 @@ mfront/include/MFront/DefaultCZMDSL.hxx -text
 mfront/include/MFront/DefaultDSL.hxx -text
 mfront/include/MFront/DefaultDSLBase.hxx -text
 mfront/include/MFront/DefaultFiniteStrainDSL.hxx -text
+mfront/include/MFront/DefaultGenericBehaviourDSL.hxx -text
 mfront/include/MFront/DianaFEAInterface.hxx -text
 mfront/include/MFront/DianaFEASymbolsGenerator.hxx -text
 mfront/include/MFront/Europlexus/Europlexus.hxx -text
@@ -2397,6 +2399,7 @@ mfront/include/MFront/ImplicitDSL.hxx -text
 mfront/include/MFront/ImplicitDSLBase.hxx -text
 mfront/include/MFront/ImplicitDSLII.hxx -text
 mfront/include/MFront/ImplicitFiniteStrainDSL.hxx -text
+mfront/include/MFront/ImplicitGenericBehaviourDSL.hxx -text
 mfront/include/MFront/InitDSLs.hxx -text
 mfront/include/MFront/InitInterfaces.hxx -text
 mfront/include/MFront/InterfaceBase.hxx -text
@@ -2606,6 +2609,7 @@ mfront/src/DefaultCZMDSL.cxx -text
 mfront/src/DefaultDSL.cxx -text
 mfront/src/DefaultDSLBase.cxx -text
 mfront/src/DefaultFiniteStrainDSL.cxx -text
+mfront/src/DefaultGenericBehaviourDSL.cxx -text
 mfront/src/DianaFEAInterface.cxx -text
 mfront/src/DianaFEASymbolsGenerator.cxx -text
 mfront/src/Drucker1949StressCriterion.cxx -text
@@ -2639,6 +2643,7 @@ mfront/src/ImplicitDSL.cxx -text
 mfront/src/ImplicitDSLBase.cxx -text
 mfront/src/ImplicitDSLII.cxx -text
 mfront/src/ImplicitFiniteStrainDSL.cxx -text
+mfront/src/ImplicitGenericBehaviourDSL.cxx -text
 mfront/src/InelasticFlow.cxx -text
 mfront/src/InelasticFlowBase.cxx -text
 mfront/src/InelasticFlowFactory.cxx -text

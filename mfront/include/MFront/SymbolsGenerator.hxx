@@ -11,8 +11,8 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_MFRONT_UMATXXSYMBOLSGENERATOR_HXX
-#define LIB_MFRONT_UMATXXSYMBOLSGENERATOR_HXX
+#ifndef LIB_MFRONT_SYMBOLSGENERATOR_HXX
+#define LIB_MFRONT_SYMBOLSGENERATOR_HXX
 
 #include <set>
 #include <iosfwd>
@@ -214,7 +214,7 @@ namespace mfront {
         const std::set<Hypothesis> &,
         const std::string &) const;
     /*!
-     * \brief write the symbols associated with the driving variables
+     * \brief write the symbols associated with the gradients
      * and the associated thermodynamic forces (number, names and types)
      * \param[in] out:  output file
      * \param[in] i:    behaviour interface
@@ -227,6 +227,19 @@ namespace mfront {
                                            const StandardBehaviourInterface &,
                                            const BehaviourDescription &,
                                            const std::string &) const;
+    /*!
+     * \brief write the symbols associated with the tangent operator structure
+     * \param[in] out:  output file
+     * \param[in] i:    behaviour interface
+     * \param[in] mb:   behaviour description
+     * \param[in] name: name of the behaviour as defined by the interface
+     *                  (generally taking into account the material
+     *                   and the behaviour name)
+     */
+    virtual void writeTangentOperatorSymbols(std::ostream &,
+					     const StandardBehaviourInterface &,
+					     const BehaviourDescription &,
+					     const std::string &) const;
     /*!
      * \brief write symbols associated with material properties for the
      * given hypothesis
@@ -413,4 +426,4 @@ namespace mfront {
 
 }  // end of namespace mfront
 
-#endif /* LIB_MFRONT_UMATXXSYMBOLSGENERATOR_HXX */
+#endif /* LIB_MFRONT_SYMBOLSGENERATOR_HXX */

@@ -19,15 +19,13 @@ namespace cyrano
 {
 
   const CyranoOutOfBoundsPolicy&
-  CyranoOutOfBoundsPolicy::getCyranoOutOfBoundsPolicy()
-  {
+  CyranoOutOfBoundsPolicy::getCyranoOutOfBoundsPolicy() {
     static CyranoOutOfBoundsPolicy u;
     return u;
   } // end of getCyranoOutOfBoundsPolicy
 
   CyranoOutOfBoundsPolicy::CyranoOutOfBoundsPolicy()
-    : policy(tfel::material::None)
-  {
+      : policy(tfel::material::None) {
     using namespace tfel::material;
     const char * const p = ::getenv("CYRANO_OUT_OF_BOUNDS_POLICY");
     if(p!=nullptr){

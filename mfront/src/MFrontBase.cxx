@@ -169,6 +169,9 @@ namespace mfront {
       }
       return true;
     }
+    if (starts_with(an, "-")) {
+      return false;
+    }
     this->inputs.insert(an);
     return true;
   }  // end of MFrontBase::treatUnknownArgument

@@ -17,20 +17,17 @@
 namespace mfront
 {
 
-  template<typename T>
-  const T&
-  BehaviourDescription::getAttribute(const Hypothesis h,
-				     const std::string& n) const
-  {
+  template <typename T>
+  const T& BehaviourDescription::getAttribute(const Hypothesis h,
+                                              const std::string& n) const {
     const auto& bdata = this->getBehaviourData(h);
     return bdata.template getAttribute<T>(n);
   } // end of BehaviourDescription::getAttribute
 
-  template<typename T>
+  template <typename T>
   T BehaviourDescription::getAttribute(const Hypothesis h,
-				       const std::string& n,
-				       const T& v) const
-  {
+                                       const std::string& n,
+                                       const T& v) const {
     const auto& bdata = this->getBehaviourData(h);
     if(!bdata.hasAttribute(n)){
       return v;
@@ -38,12 +35,11 @@ namespace mfront
     return bdata.template getAttribute<T>(n);
   }
 
-  template<typename T>
+  template <typename T>
   typename std::enable_if<
-    tfel::meta::TLCountNbrOfT<T,BehaviourAttributeTypes>::value==1, 
-    T&>::type
-  BehaviourDescription::getAttribute(const std::string& n)
-  {
+      tfel::meta::TLCountNbrOfT<T, BehaviourAttributeTypes>::value == 1,
+      T&>::type
+  BehaviourDescription::getAttribute(const std::string& n) {
     auto p = this->attributes.find(n);
     if(p==this->attributes.end()){
       p = this->attributes.insert({n,BehaviourAttribute(T())}).first;
@@ -51,12 +47,11 @@ namespace mfront
     return p->second.template get<T>();
   } // end of BehaviourDescription::getAttribute
 
-  template<typename T>
+  template <typename T>
   typename std::enable_if<
-    tfel::meta::TLCountNbrOfT<T,BehaviourAttributeTypes>::value==1, 
-    const T&>::type
-  BehaviourDescription::getAttribute(const std::string& n) const
-  {
+      tfel::meta::TLCountNbrOfT<T, BehaviourAttributeTypes>::value == 1,
+      const T&>::type
+  BehaviourDescription::getAttribute(const std::string& n) const {
     const auto p = this->attributes.find(n);
     if(p==this->attributes.end()){
       BehaviourDescription::throwUndefinedAttribute(n);
@@ -64,13 +59,11 @@ namespace mfront
     return p->second.template get<T>();
   } // end of BehaviourDescription::getAttribute
 
-  template<typename T>
+  template <typename T>
   typename std::enable_if<
-    tfel::meta::TLCountNbrOfT<T,BehaviourAttributeTypes>::value==1, 
-    T>::type
-  BehaviourDescription::getAttribute(const std::string& n,
-					       const T& v) const
-  {
+      tfel::meta::TLCountNbrOfT<T, BehaviourAttributeTypes>::value == 1,
+      T>::type
+  BehaviourDescription::getAttribute(const std::string& n, const T& v) const {
     const auto p = this->attributes.find(n);
     if(p==this->attributes.end()){
       return v;

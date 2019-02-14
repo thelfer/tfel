@@ -364,35 +364,42 @@ namespace mfront{
       if(b){this->throwRuntimeError("RungeKuttaDSLBase::treatUnknowVariableMethod",m);}
     };
     if(this->mb.isIntegrationVariableName(h,n)){
-      if(this->current->value=="setErrorNormalisationFactor"){
-    	++(this->current);
-    	this->checkNotEndOfFile("RungeKuttaDSLBase::treatUnknowVariableMethod");
-    	this->readSpecifiedToken("RungeKuttaDSLBase::treatUnknowVariableMethod","(");
-    	this->checkNotEndOfFile("RungeKuttaDSLBase::treatUnknowVariableMethod");
-    	auto enf = this->current->value;
-    	++(this->current);
-    	if((this->mb.isMaterialPropertyName(h,enf))||
-	   (this->mb.isLocalVariableName(h,enf))){
-    	  enf = "this->" + enf;
-    	} else {
-    	  // the current value shall be a number
-	  auto value = double{};
-	  try{
-	    value = tfel::utilities::convert<double>(enf);
-	  } catch(...){
-    	    throw_if(true,"Failed to read error normalisation factor.");
-	  }
-    	  throw_if(value<0.,"invalid error normalisation factor.");
-    	}
-	try{
-	  this->mb.setVariableAttribute(h,n,VariableDescription::errorNormalisationFactor,
-					VariableAttribute(enf),false);
-	} catch(std::exception& e){
-	  throw_if(true,"error normalisation factor can't be set "
-		   "for variable '"+n+"' ("+std::string(e.what())+").");
-	}
-    	this->checkNotEndOfFile("RungeKuttaDSLBase::treatUnknowVariableMethod");
-    	return;
+      if (this->current->value == "setErrorNormalisationFactor") {
+        ++(this->current);
+        this->checkNotEndOfFile("RungeKuttaDSLBase::treatUnknowVariableMethod");
+        this->readSpecifiedToken("RungeKuttaDSLBase::treatUnknowVariableMethod",
+                                 "(");
+        this->checkNotEndOfFile("RungeKuttaDSLBase::treatUnknowVariableMethod");
+        auto enf = this->current->value;
+        ++(this->current);
+        if ((this->mb.isMaterialPropertyName(h, enf)) ||
+            (this->mb.isLocalVariableName(h, enf))) {
+          enf = "this->" + enf;
+        } else {
+          // the current value shall be a number
+          auto value = double{};
+          try {
+            value = tfel::utilities::convert<double>(enf);
+          } catch (...) {
+            throw_if(true, "Failed to read error normalisation factor.");
+          }
+          throw_if(value < 0., "invalid error normalisation factor.");
+        }
+        this->checkNotEndOfFile("RungeKuttaDSLBase::treatUnknowVariableMethod");
+        this->readSpecifiedToken("RungeKuttaDSLBase::treatUnknowVariableMethod",
+                                 ")");
+        try {
+          this->mb.setVariableAttribute(
+              h, n, VariableDescription::errorNormalisationFactor,
+              VariableAttribute(enf), false);
+        } catch(std::exception& e){
+          throw_if(true,
+                   "error normalisation factor can't be set "
+                   "for variable '" +
+                       n + "' (" + std::string(e.what()) + ").");
+        }
+        this->checkNotEndOfFile("RungeKuttaDSLBase::treatUnknowVariableMethod");
+        return;
       }
     }
     BehaviourDSLCommon::treatUnknownVariableMethod(h,n);

@@ -345,6 +345,10 @@ namespace mfront {
      */
     const ThermodynamicForce& getThermodynamicForce(const std::string&) const;
     /*!
+     * \brief set the behaviour to be a generic behaviour
+     */
+    void declareAsGenericBehaviour();
+    /*!
      * \brief set the behaviour to be a small strain standard
      * behaviour
      */
@@ -1040,6 +1044,13 @@ namespace mfront {
     unsigned short getUnsignedShortParameterDefaultValue(
         const Hypothesis, const std::string&) const;
     /*!
+     * \brief associate a glossary name to a gradient or a thermodynamic force
+     * \param[in] n: variable name
+     * \param[in] g: glossary name
+     */
+    void setGlossaryName(const std::string&,
+                         const std::string&);
+    /*!
      * associate a glossary name to a variable
      * \param[in] h: modelling Hypothesis
      * \param[in] n: variable name
@@ -1061,6 +1072,12 @@ namespace mfront {
      * \param[in] n: name
      */
     bool hasGlossaryName(const Hypothesis, const std::string&) const;
+    /*!
+     * \brief associate a glossary name to a gradient or a thermodynamic force
+     * \param[in] n: variable name
+     * \param[in] e: entry name
+     */
+    void setEntryName(const std::string&, const std::string&);
     /*!
      * \return true if the given variable name is associated with a
      * entry name
@@ -1332,6 +1349,24 @@ namespace mfront {
      * \param[in] n: name
      */
     bool isNameReserved(const std::string&) const;
+    /*!
+     * \brief register the given glossary name
+     * \param[in] h: hypothesis
+     * \param[in] n: variable name
+     * \param[in] g: glossary name
+     */
+    void registerGlossaryName(const Hypothesis,
+                              const std::string&,
+                              const std::string&);
+    /*!
+     * \brief register the given entry name
+     * \param[in] h: hypothesis
+     * \param[in] n: variable name
+     * \param[in] e: entry name
+     */
+    void registerEntryName(const Hypothesis,
+                           const std::string&,
+                           const std::string&);
     /*!
      * register the given member name
      * \param[in] h: hypothesis
@@ -1629,8 +1664,8 @@ namespace mfront {
     //! specialisations
     std::map<Hypothesis, MBDPtr> sd;
     /*!
-     * main variables, association of a driving variable and a
-     * thermodynamicforce
+     * \brief list of main variables, association of a gradient and a
+     * thermodynamic force
      */
     std::vector<std::pair<Gradient, ThermodynamicForce>> mvariables;
     /*!
@@ -1666,7 +1701,7 @@ namespace mfront {
     //! use units
     bool use_qt = false;
     //! type of behaviour
-    BehaviourType type = GENERALBEHAVIOUR;
+    tfel::utilities::GenType<BehaviourType> type;
     //! symmetry of behaviour (isotropic or orthotropic)
     mutable BehaviourSymmetryType stype = mfront::ISOTROPIC;
     //! orthotropic axes convention

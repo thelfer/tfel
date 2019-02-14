@@ -1145,13 +1145,13 @@ namespace mfront {
       }
     }
     // treating the queries
-    for (const auto& q : queries) {
+    for (const auto& q : this->queries) {
       if (getVerboseMode() >= VERBOSE_LEVEL2) {
         getLogStream() << "Treating query '" << q.first << "'\n";
       }
       q.second(fd, d, this->hypothesis);
     }
-    for (const auto& q : queries2) {
+    for (const auto& q : this->queries2) {
       if (getVerboseMode() >= VERBOSE_LEVEL2) {
         getLogStream() << "Treating query '" << q.first << "'\n";
       }

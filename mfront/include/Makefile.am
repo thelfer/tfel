@@ -171,6 +171,8 @@ nobase_noinst_HEADERS = MFront/IsotropicBehaviourDSLBase.hxx                    
 			MFront/ImplicitDSL.hxx                                        \
 			MFront/ImplicitDSLII.hxx                                      \
 			MFront/ImplicitFiniteStrainDSL.hxx                            \
+			MFront/DefaultGenericBehaviourDSL.hxx                        \
+			MFront/ImplicitGenericBehaviourDSL.hxx                        \
 			MFront/NewtonRaphsonSolvers.hxx                               \
 			MFront/FiniteStrainBehaviourTangentOperatorConversion.hxx     \
 			MFront/FiniteStrainBehaviourTangentOperatorConversionPath.hxx

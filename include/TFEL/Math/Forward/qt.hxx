@@ -16,11 +16,9 @@
 
 #include<type_traits>
 
-namespace tfel
-{
+namespace tfel {
 
-  namespace math
-  {
+  namespace math {
 
     /*
      * \class qt
@@ -210,7 +208,12 @@ namespace tfel
     typedef GenerateUnit<1,-3,0,0,0,0,0>::type  Density; // k.m-3
 
     /*!
-     * \brief Declares the ThermalConductivity unit
+     * \brief Declares the TemperatureGradient unit
+     */
+    using TemperatureGradient = GenerateUnit<0,-1,0,0,1,0,0>::type;  // K.m^{-1}
+    /*!
+     * \brief Declares the ThermalConductivity
+     * unit
      */
     typedef GenerateUnit<1,1,-3,0,-1,0,0>::type ThermalConductivity;  // kg.m.s-3.K-1
 

@@ -23,6 +23,7 @@
 #include"TFEL/Config/Internals/SpatialGradType.hxx"
 #include"TFEL/Config/Internals/InvJacobianType.hxx"
 #include"TFEL/Config/Internals/JacobianType.hxx"
+#include"TFEL/Config/Internals/TemperatureGradientType.hxx"
 #include"TFEL/Config/Internals/HeatFluxVectorType.hxx"
 #include"TFEL/Config/Internals/ThermalConductivityMatrixType.hxx"
 

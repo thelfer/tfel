@@ -42,8 +42,10 @@ namespace mfront {
         {"temperature", SupportedTypes::Scalar},
         {"energy_density", SupportedTypes::Scalar},
         {"thermalexpansion", SupportedTypes::Scalar},
+        {"thermalconductivity", SupportedTypes::Scalar},
         {"massdensity", SupportedTypes::Scalar},
         {"TVector", SupportedTypes::TVector},
+        {"Vector", SupportedTypes::TVector},
         {"Stensor", SupportedTypes::Stensor},
         {"Tensor", SupportedTypes::Tensor},
         {"StressStensor", SupportedTypes::Stensor},
@@ -54,7 +56,11 @@ namespace mfront {
         {"DisplacementTVector", SupportedTypes::TVector},
         {"ForceTVector", SupportedTypes::TVector},
         // Finite Strain
-        {"DeformationGradientTensor", SupportedTypes::Tensor}};
+        {"DeformationGradientTensor", SupportedTypes::Tensor},
+        // GenericBehaviour
+        {"HeatFlux", SupportedTypes::TVector},
+        {"TemperatureGradient", SupportedTypes::TVector},
+    };
     return flags;
   }  // end of SupportedTypes_getFlags
 

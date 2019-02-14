@@ -194,11 +194,14 @@ namespace mfront {
                                     "Failed to read normalisation factor.");
           }
           if (value <= 0.) {
-            this->throwRuntimeError("ImplicitDSLBase::treatUnknowVariableMethod", "invalid normalisation factor.");
+            this->throwRuntimeError(
+                "ImplicitDSLBase::treatUnknowVariableMethod",
+                "invalid normalisation factor.");
           }
         }
-        this->mb.setAttribute(h, n + "_normalisation_factor", var);
         ++(this->current);
+        this->readSpecifiedToken("ImplicitDSLBase::treatUnknowVariableMethod", ")");
+        this->mb.setAttribute(h, n + "_normalisation_factor", var);
         return;
       } else if (this->current->value == "setMaximumIncrementValuePerIteration") {
         ++(this->current);
@@ -210,18 +213,25 @@ namespace mfront {
         std::istringstream flux(var);
         flux >> value;
         if (flux.fail()) {
-          this->throwRuntimeError("ImplicitDSLBase::treatUnknowVariableMethod",
-                                  "Failed to read maximum increment value per iteration from '" + var + "'.");
+          this->throwRuntimeError(
+              "ImplicitDSLBase::treatUnknowVariableMethod",
+              "Failed to read maximum increment value per iteration from '" +
+                  var + "'.");
         }
         if (value <= 0.) {
           this->throwRuntimeError("ImplicitDSLBase::treatUnknowVariableMethod",
                                   "invalid maximum increment value per iteration.");
         }
-        VariableDescription miv("real", n + "_maximum_increment_value_per_iteration", 1u, 0u);
-        miv.description = "maximum increment allowed per iteration for variable '" + n + "'";
-        this->mb.addParameter(h, miv);
-        this->mb.setParameterDefaultValue(h, n + "_maximum_increment_value_per_iteration", value);
         ++(this->current);
+        this->checkNotEndOfFile("ImplicitDSLBase::treatUnknowVariableMethod");
+        this->readSpecifiedToken("ImplicitDSLBase::treatUnknowVariableMethod", ")");
+        VariableDescription miv(
+            "real", n + "_maximum_increment_value_per_iteration", 1u, 0u);
+        miv.description =
+            "maximum increment allowed per iteration for variable '" + n + "'";
+        this->mb.addParameter(h, miv);
+        this->mb.setParameterDefaultValue(
+            h, n + "_maximum_increment_value_per_iteration", value);
         return;
       }
     }
@@ -1109,303 +1119,393 @@ namespace mfront {
     const auto& d = this->mb.getBehaviourData(h);
     SupportedTypes::TypeSize n;
     const auto n3 = d.getIntegrationVariables().getTypeSize();
-    for (const auto& v : d.getIntegrationVariables()) {
-      SupportedTypes::TypeSize n2;
-      for (const auto& v2 : d.getIntegrationVariables()) {
-        const auto flag = SupportedTypes::getTypeFlag(v.type);
-        const auto flag2 = SupportedTypes::getTypeFlag(v2.type);
-        if ((v.arraySize != 1u) || (v2.arraySize != 1u)) {
-          os << "/*!\n"
-             << " * \\return the part of the jacobian matrix "
-             << "corresponding to the derivative "
-             << "of variable " << v.name << " by variable " << v2.name << "\n"
-             << " */\n";
+    if ((this->solver->usesJacobian()) &&
+        (!this->solver->requiresNumericalJacobian())) {
+      for (const auto& v : d.getIntegrationVariables()) {
+        SupportedTypes::TypeSize n2;
+        for (const auto& v2 : d.getIntegrationVariables()) {
+          const auto flag = SupportedTypes::getTypeFlag(v.type);
+          const auto flag2 = SupportedTypes::getTypeFlag(v2.type);
+          if ((v.arraySize != 1u) || (v2.arraySize != 1u)) {
+            os << "/*!\n"
+               << " * \\return the part of the jacobian matrix "
+               << "corresponding to the derivative "
+               << "of variable " << v.name << " by variable " << v2.name << "\n"
+               << " */\n";
+          }
+          if ((v.arraySize != 1u) && (v2.arraySize == 1u)) {
+            if (flag == SupportedTypes::Scalar) {
+              if (flag2 == SupportedTypes::Scalar) {
+                os << "real&\n"
+                   << "df" << v.name << "_dd" << v2.name
+                   << "(tfel::math::tmatrix<" << n3 << "," << n3
+                   << ">& tjacobian,\n"
+                   << "const unsigned short idx){\n"
+                   << "return tjacobian(" << n << "+idx, " << n2 << ");\n"
+                   << "}\n\n";
+                os << "real&\n"
+                   << "df" << v.name << "_dd" << v2.name
+                   << "(const unsigned short idx){\n"
+                   << "return this->jacobian(" << n << "+idx, " << n2 << ");\n"
+                   << "}\n\n";
+              } else if (flag2 == SupportedTypes::TVector) {
+                // Le résultat est un tenseur, une ligne dans la matrice
+                // jacobienne
+                os << "typename tfel::math::TVectorFromTinyMatrixRowView2<N,"
+                   << n3 << "," << n3 << "," << n << "," << n2
+                   << ",real>::type\n"
+                   << "df" << v.name << "_dd" << v2.name
+                   << "(tfel::math::tmatrix<" << n3 << "," << n3
+                   << ">& tjacobian,\n"
+                   << "const unsigned short idx){\n"
+                   << "using namespace tfel::math;\n"
+                   << "return typename TVectorFromTinyMatrixRowView2<N," << n3
+                   << "," << n3 << "," << n << "," << n2
+                   << ",real>::type(tjacobian,idx,0);\n"
+                   << "}\n\n";
+                os << "typename tfel::math::TVectorFromTinyMatrixRowView2<N,"
+                   << n3 << "," << n3 << "," << n << "," << n2
+                   << ",real>::type\n"
+                   << "df" << v.name << "_dd" << v2.name
+                   << "(const unsigned short idx){\n"
+                   << "using namespace tfel::math;\n"
+                   << "return typename TVectorFromTinyMatrixRowView2<N," << n3
+                   << "," << n3 << "," << n << "," << n2
+                   << ",real>::type(this->jacobian,idx,0);\n"
+                   << "}\n\n";
+              } else {
+                // Le résultat est un tenseur, une ligne dans la matrice
+                // jacobienne
+                os << "typename tfel::math::StensorFromTinyMatrixRowView2<N,"
+                   << n3 << "," << n3 << "," << n << "," << n2
+                   << ",real>::type\n"
+                   << "df" << v.name << "_dd" << v2.name
+                   << "(tfel::math::tmatrix<" << n3 << "," << n3
+                   << ">& tjacobian,\n"
+                   << "const unsigned short idx){\n"
+                   << "using namespace tfel::math;\n"
+                   << "return typename StensorFromTinyMatrixRowView2<N," << n3
+                   << "," << n3 << "," << n << "," << n2
+                   << ",real>::type(tjacobian,idx,0);\n"
+                   << "}\n\n";
+                os << "typename tfel::math::StensorFromTinyMatrixRowView2<N,"
+                   << n3 << "," << n3 << "," << n << "," << n2
+                   << ",real>::type\n"
+                   << "df" << v.name << "_dd" << v2.name
+                   << "(const unsigned short idx){\n"
+                   << "using namespace tfel::math;\n"
+                   << "return typename StensorFromTinyMatrixRowView2<N," << n3
+                   << "," << n3 << "," << n << "," << n2
+                   << ",real>::type(this->jacobian,idx,0);\n"
+                   << "}\n\n";
+              }
+            } else if (flag == SupportedTypes::TVector) {
+              if (flag2 == SupportedTypes::Scalar) {
+                // Le résultat est un tenseur, une colonne dans la matrice
+                // jacobienne
+                os << "typename tfel::math::StensorFromTinyMatrixColumnView2<N,"
+                   << n3 << "," << n3 << "," << n << "," << n2
+                   << ",real>::type\n"
+                   << "df" << v.name << "_dd" << v2.name
+                   << "(tfel::math::tmatrix<" << n3 << "," << n3
+                   << ">& tjacobian,\n"
+                   << "const unsigned short idx){\n"
+                   << "using namespace tfel::math;\n"
+                   << "return typename StensorFromTinyMatrixColumnView2<N,"
+                   << n3 << "," << n3 << "," << n << "," << n2
+                   << ",real>::type(tjacobian,idx,0);\n"
+                   << "}\n\n";
+                os << "typename tfel::math::StensorFromTinyMatrixColumnView2<N,"
+                   << n3 << "," << n3 << "," << n << "," << n2
+                   << ",real>::type\n"
+                   << "df" << v.name << "_dd" << v2.name
+                   << "(const unsigned short idx){\n"
+                   << "using namespace tfel::math;\n"
+                   << "return typename StensorFromTinyMatrixColumnView2<N,"
+                   << n3 << "," << n3 << "," << n << "," << n2
+                   << ",real>::type(this->jacobian,idx,0);\n"
+                   << "}\n\n";
+              } else if (flag2 == SupportedTypes::TVector) {
+                // Le résultat est une sous-matrice
+                os << "typename tfel::math::TMatrixFromTinyMatrixView2<N," << n3
+                   << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
+                   << "df" << v.name << "_dd" << v2.name
+                   << "(tfel::math::tmatrix<" << n3 << "," << n3
+                   << ">& tjacobian,\n"
+                   << "const unsigned short idx){\n"
+                   << "using namespace tfel::math;\n"
+                   << "return typename TMatrixFromTinyMatrixView2<N," << n3
+                   << "," << n3 << "," << n << "," << n2
+                   << ",real>::type(tjacobian,idx,0u);\n"
+                   << "}\n\n";
+                os << "typename tfel::math::TMatrixFromTinyMatrixView2<N," << n3
+                   << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
+                   << "df" << v.name << "_dd" << v2.name
+                   << "(const unsigned short idx){\n"
+                   << "using namespace tfel::math;\n"
+                   << "return typename TMatrixFromTinyMatrixView2<N," << n3
+                   << "," << n3 << "," << n << "," << n2
+                   << ",real>::type(this->jacobian,idx,0u);\n"
+                   << "}\n\n";
+              } else {
+                this->throwRuntimeError(
+                    "ImplicitDSLBase::writeBehaviourParserSpecificMembers",
+                    "derivation of a vector by a tensor is not defined");
+              }
+            } else {
+              if (flag2 == SupportedTypes::Scalar) {
+                // Le résultat est un tenseur, une colonne dans la matrice
+                // jacobienne
+                os << "typename tfel::math::StensorFromTinyMatrixColumnView2<N,"
+                   << n3 << "," << n3 << "," << n << "," << n2
+                   << ",real>::type\n"
+                   << "df" << v.name << "_dd" << v2.name
+                   << "(tfel::math::tmatrix<" << n3 << "," << n3
+                   << ">& tjacobian,\n"
+                   << "const unsigned short idx){\n"
+                   << "using namespace tfel::math;\n"
+                   << "return typename StensorFromTinyMatrixColumnView2<N,"
+                   << n3 << "," << n3 << "," << n << "," << n2
+                   << ",real>::type(tjacobian,idx,0);\n"
+                   << "}\n\n";
+                os << "typename tfel::math::StensorFromTinyMatrixColumnView2<N,"
+                   << n3 << "," << n3 << "," << n << "," << n2
+                   << ",real>::type\n"
+                   << "df" << v.name << "_dd" << v2.name
+                   << "(const unsigned short idx){\n"
+                   << "using namespace tfel::math;\n"
+                   << "return typename StensorFromTinyMatrixColumnView2<N,"
+                   << n3 << "," << n3 << "," << n << "," << n2
+                   << ",real>::type(this->jacobian,idx,0);\n"
+                   << "}\n\n";
+              } else if (flag2 == SupportedTypes::Stensor) {
+                // Le résultat est un tenseur d'ordre 4
+                os << "typename tfel::math::ST2toST2FromTinyMatrixView2<N,"
+                   << n3 << "," << n3 << "," << n << "," << n2
+                   << ",real>::type\n"
+                   << "df" << v.name << "_dd" << v2.name
+                   << "(tfel::math::tmatrix<" << n3 << "," << n3
+                   << ">& tjacobian,\n"
+                   << "const unsigned short idx){\n"
+                   << "using namespace tfel::math;\n"
+                   << "return typename ST2toST2FromTinyMatrixView2<N," << n3
+                   << "," << n3 << "," << n << "," << n2
+                   << ",real>::type(tjacobian,idx,0u);\n"
+                   << "}\n\n";
+                os << "typename tfel::math::ST2toST2FromTinyMatrixView2<N,"
+                   << n3 << "," << n3 << "," << n << "," << n2
+                   << ",real>::type\n"
+                   << "df" << v.name << "_dd" << v2.name
+                   << "(const unsigned short idx){\n"
+                   << "using namespace tfel::math;\n"
+                   << "return typename ST2toST2FromTinyMatrixView2<N," << n3
+                   << "," << n3 << "," << n << "," << n2
+                   << ",real>::type(this->jacobian,idx,0u);\n"
+                   << "}\n\n";
+              } else {
+                this->throwRuntimeError(
+                    "ImplicitDSLBase::writeBehaviourParserSpecificMembers",
+                    "derivation of a tensor by a vector is not defined");
+              }
+            }
+          } else if ((v.arraySize == 1u) && (v2.arraySize != 1u)) {
+            if (flag == SupportedTypes::Scalar) {
+              if (flag2 == SupportedTypes::Scalar) {
+                os << "real&\n"
+                   << "df" << v.name << "_dd" << v2.name
+                   << "(tfel::math::tmatrix<" << n3 << "," << n3
+                   << ">& tjacobian,\n"
+                   << "const unsigned short idx){\n"
+                   << "return tjacobian(" << n << ", " << n2 << "+idx);\n"
+                   << "}\n\n";
+                os << "real&\n"
+                   << "df" << v.name << "_dd" << v2.name
+                   << "(const unsigned short idx){\n"
+                   << "return this->jacobian(" << n << ", " << n2 << "+idx);\n"
+                   << "}\n\n";
+              } else {
+                // Le résultat est un tenseur, une ligne dans la matrice
+                // jacobienne
+                os << "typename tfel::math::StensorFromTinyMatrixRowView2<N,"
+                   << n3 << "," << n3 << "," << n << "," << n2
+                   << ",real>::type\n"
+                   << "df" << v.name << "_dd" << v2.name
+                   << "(tfel::math::tmatrix<" << n3 << "," << n3
+                   << ">& tjacobian,\n"
+                   << "const unsigned short idx){\n"
+                   << "using namespace tfel::math;\n"
+                   << "return typename StensorFromTinyMatrixRowView2<N," << n3
+                   << "," << n3 << "," << n << "," << n2
+                   << ",real>::type(tjacobian,0,idx);\n"
+                   << "}\n\n";
+                os << "typename tfel::math::StensorFromTinyMatrixRowView2<N,"
+                   << n3 << "," << n3 << "," << n << "," << n2
+                   << ",real>::type\n"
+                   << "df" << v.name << "_dd" << v2.name
+                   << "(const unsigned short idx){\n"
+                   << "using namespace tfel::math;\n"
+                   << "return typename StensorFromTinyMatrixRowView2<N," << n3
+                   << "," << n3 << "," << n << "," << n2
+                   << ",real>::type(this->jacobian,0,idx);\n"
+                   << "}\n\n";
+              }
+            } else {
+              if (flag2 == SupportedTypes::Scalar) {
+                // Le résultat est un tenseur, une colonne dans la matrice
+                // jacobienne
+                os << "typename tfel::math::StensorFromTinyMatrixColumnView2<N,"
+                   << n3 << "," << n3 << "," << n << "," << n2
+                   << ",real>::type\n"
+                   << "df" << v.name << "_dd" << v2.name
+                   << "(tfel::math::tmatrix<" << n3 << "," << n3
+                   << ">& tjacobian,\n"
+                   << "const unsigned short idx){\n"
+                   << "using namespace tfel::math;\n"
+                   << "return typename StensorFromTinyMatrixColumnView2<N,"
+                   << n3 << "," << n3 << "," << n << "," << n2
+                   << ",real>::type(tjacobian,0,idx);\n"
+                   << "}\n\n";
+                os << "typename tfel::math::StensorFromTinyMatrixColumnView2<N,"
+                   << n3 << "," << n3 << "," << n << "," << n2
+                   << ",real>::type\n"
+                   << "df" << v.name << "_dd" << v2.name
+                   << "(const unsigned short idx){\n"
+                   << "using namespace tfel::math;\n"
+                   << "return typename StensorFromTinyMatrixColumnView2<N,"
+                   << n3 << "," << n3 << "," << n << "," << n2
+                   << ",real>::type(this->jacobian,0,idx);\n"
+                   << "}\n\n";
+              } else {
+                os << "typename tfel::math::ST2toST2FromTinyMatrixView2<N,"
+                   << n3 << "," << n3 << "," << n << "," << n2
+                   << ",real>::type\n"
+                   << "df" << v.name << "_dd" << v2.name
+                   << "(tfel::math::tmatrix<" << n3 << "," << n3
+                   << ">& tjacobian,\n"
+                   << "const unsigned short idx){\n"
+                   << "using namespace tfel::math;\n"
+                   << "return typename ST2toST2FromTinyMatrixView2<N," << n3
+                   << "," << n3 << "," << n << "," << n2
+                   << ",real>::type(tjacobian,0,idx);\n"
+                   << "}\n\n";
+                os << "typename tfel::math::ST2toST2FromTinyMatrixView2<N,"
+                   << n3 << "," << n3 << "," << n << "," << n2
+                   << ",real>::type\n"
+                   << "df" << v.name << "_dd" << v2.name
+                   << "(const unsigned short idx){\n"
+                   << "using namespace tfel::math;\n"
+                   << "return typename ST2toST2FromTinyMatrixView2<N," << n3
+                   << "," << n3 << "," << n << "," << n2
+                   << ",real>::type(this->jacobian,0,idx);\n"
+                   << "}\n\n";
+              }
+            }
+          } else if ((v.arraySize != 1u) && (v2.arraySize != 1u)) {
+            if (flag == SupportedTypes::Scalar) {
+              if (flag2 == SupportedTypes::Scalar) {
+                os << "real&\n"
+                   << "df" << v.name << "_dd" << v2.name
+                   << "(tfel::math::tmatrix<" << n3 << "," << n3
+                   << ">& tjacobian,\n"
+                   << "const unsigned short idx,"
+                   << " const unsigned short idx2){\n"
+                   << "return tjacobian(" << n << "+idx, " << n2 << "+idx2);\n"
+                   << "}\n\n";
+                os << "real&\n"
+                   << "df" << v.name << "_dd" << v2.name
+                   << "(const unsigned short idx,"
+                   << " const unsigned short idx2){\n"
+                   << "return this->jacobian(" << n << "+idx, " << n2
+                   << "+idx2);\n"
+                   << "}\n\n";
+              } else {
+                // Le résultat est un tenseur, une ligne dans la matrice
+                // jacobienne
+                os << "typename tfel::math::StensorFromTinyMatrixRowView2<N,"
+                   << n3 << "," << n3 << "," << n << "," << n2
+                   << ",real>::type\n"
+                   << "df" << v.name << "_dd" << v2.name
+                   << "(tfel::math::tmatrix<" << n3 << "," << n3
+                   << ">& tjacobian,\n"
+                   << "const unsigned short idx,"
+                   << " const unsigned short idx2){\n"
+                   << "using namespace tfel::math;\n"
+                   << "return typename StensorFromTinyMatrixRowView2<N," << n3
+                   << "," << n3 << "," << n << "," << n2
+                   << ",real>::type(tjacobian,idx,idx2);\n"
+                   << "}\n\n";
+                os << "typename tfel::math::StensorFromTinyMatrixRowView2<N,"
+                   << n3 << "," << n3 << "," << n << "," << n2
+                   << ",real>::type\n"
+                   << "df" << v.name << "_dd" << v2.name
+                   << "(const unsigned short idx,"
+                   << " const unsigned short idx2){\n"
+                   << "using namespace tfel::math;\n"
+                   << "return typename StensorFromTinyMatrixRowView2<N," << n3
+                   << "," << n3 << "," << n << "," << n2
+                   << ",real>::type(this->jacobian,idx,idx2);\n"
+                   << "}\n\n";
+              }
+            } else {
+              if (flag2 == SupportedTypes::Scalar) {
+                // Le résultat est un tenseur, une colonne dans la matrice
+                // jacobienne
+                os << "typename tfel::math::StensorFromTinyMatrixColumnView2<N,"
+                   << n3 << "," << n3 << "," << n << "," << n2
+                   << ",real>::type\n"
+                   << "df" << v.name << "_dd" << v2.name
+                   << "(tfel::math::tmatrix<" << n3 << "," << n3
+                   << ">& tjacobian,\n"
+                   << "const unsigned short idx,"
+                   << " const unsigned short idx2){\n"
+                   << "using namespace tfel::math;\n"
+                   << "return typename StensorFromTinyMatrixColumnView2<N,"
+                   << n3 << "," << n3 << "," << n << "," << n2
+                   << ",real>::type(tjacobian,idx,idx2);\n"
+                   << "}\n\n";
+                os << "typename tfel::math::StensorFromTinyMatrixColumnView2<N,"
+                   << n3 << "," << n3 << "," << n << "," << n2
+                   << ",real>::type\n"
+                   << "df" << v.name << "_dd" << v2.name
+                   << "(const unsigned short idx,"
+                   << " const unsigned short idx2){\n"
+                   << "using namespace tfel::math;\n"
+                   << "return typename StensorFromTinyMatrixColumnView2<N,"
+                   << n3 << "," << n3 << "," << n << "," << n2
+                   << ",real>::type(this->jacobian,idx,idx2);\n"
+                   << "}\n\n";
+              } else {
+                os << "typename tfel::math::ST2toST2FromTinyMatrixView2<N,"
+                   << n3 << "," << n3 << "," << n << "," << n2
+                   << ",real>::type\n"
+                   << "df" << v.name << "_dd" << v2.name
+                   << "(tfel::math::tmatrix<" << n3 << "," << n3
+                   << ">& tjacobian,\n"
+                   << "const unsigned short idx,"
+                   << " const unsigned short idx2){\n"
+                   << "using namespace tfel::math;\n"
+                   << "return typename ST2toST2FromTinyMatrixView2<N," << n3
+                   << "," << n3 << "," << n << "," << n2
+                   << ",real>::type(tjacobian,idx,idx2);\n"
+                   << "}\n\n";
+                os << "typename tfel::math::ST2toST2FromTinyMatrixView2<N,"
+                   << n3 << "," << n3 << "," << n << "," << n2
+                   << ",real>::type\n"
+                   << "df" << v.name << "_dd" << v2.name
+                   << "(const unsigned short idx,"
+                   << " const unsigned short idx2){\n"
+                   << "using namespace tfel::math;\n"
+                   << "return typename ST2toST2FromTinyMatrixView2<N," << n3
+                   << "," << n3 << "," << n << "," << n2
+                   << ",real>::type(this->jacobian,idx,idx2);\n"
+                   << "}\n\n";
+              }
+            }
+          }
+          n2 += this->getTypeSize(v2.type, v2.arraySize);
         }
-        if ((v.arraySize != 1u) && (v2.arraySize == 1u)) {
-          if (flag == SupportedTypes::Scalar) {
-            if (flag2 == SupportedTypes::Scalar) {
-              os << "real&\n"
-                 << "df" << v.name << "_dd" << v2.name << "(tfel::math::tmatrix<" << n3 << "," << n3
-                 << ">& tjacobian,\n"
-                 << "const unsigned short idx){\n"
-                 << "return tjacobian(" << n << "+idx, " << n2 << ");\n"
-                 << "}\n\n";
-              os << "real&\n"
-                 << "df" << v.name << "_dd" << v2.name << "(const unsigned short idx){\n"
-                 << "return this->jacobian(" << n << "+idx, " << n2 << ");\n"
-                 << "}\n\n";
-            } else if (flag2 == SupportedTypes::TVector) {
-              // Le résultat est un tenseur, une ligne dans la matrice jacobienne
-              os << "typename tfel::math::TVectorFromTinyMatrixRowView2<N," << n3 << "," << n3 << "," << n << "," << n2
-                 << ",real>::type\n"
-                 << "df" << v.name << "_dd" << v2.name << "(tfel::math::tmatrix<" << n3 << "," << n3
-                 << ">& tjacobian,\n"
-                 << "const unsigned short idx){\n"
-                 << "using namespace tfel::math;\n"
-                 << "return typename TVectorFromTinyMatrixRowView2<N," << n3 << "," << n3 << "," << n << "," << n2
-                 << ",real>::type(tjacobian,idx,0);\n"
-                 << "}\n\n";
-              os << "typename tfel::math::TVectorFromTinyMatrixRowView2<N," << n3 << "," << n3 << "," << n << "," << n2
-                 << ",real>::type\n"
-                 << "df" << v.name << "_dd" << v2.name << "(const unsigned short idx){\n"
-                 << "using namespace tfel::math;\n"
-                 << "return typename TVectorFromTinyMatrixRowView2<N," << n3 << "," << n3 << "," << n << "," << n2
-                 << ",real>::type(this->jacobian,idx,0);\n"
-                 << "}\n\n";
-            } else {
-              // Le résultat est un tenseur, une ligne dans la matrice jacobienne
-              os << "typename tfel::math::StensorFromTinyMatrixRowView2<N," << n3 << "," << n3 << "," << n << "," << n2
-                 << ",real>::type\n"
-                 << "df" << v.name << "_dd" << v2.name << "(tfel::math::tmatrix<" << n3 << "," << n3
-                 << ">& tjacobian,\n"
-                 << "const unsigned short idx){\n"
-                 << "using namespace tfel::math;\n"
-                 << "return typename StensorFromTinyMatrixRowView2<N," << n3 << "," << n3 << "," << n << "," << n2
-                 << ",real>::type(tjacobian,idx,0);\n"
-                 << "}\n\n";
-              os << "typename tfel::math::StensorFromTinyMatrixRowView2<N," << n3 << "," << n3 << "," << n << "," << n2
-                 << ",real>::type\n"
-                 << "df" << v.name << "_dd" << v2.name << "(const unsigned short idx){\n"
-                 << "using namespace tfel::math;\n"
-                 << "return typename StensorFromTinyMatrixRowView2<N," << n3 << "," << n3 << "," << n << "," << n2
-                 << ",real>::type(this->jacobian,idx,0);\n"
-                 << "}\n\n";
-            }
-          } else if (flag == SupportedTypes::TVector) {
-            if (flag2 == SupportedTypes::Scalar) {
-              // Le résultat est un tenseur, une colonne dans la matrice jacobienne
-              os << "typename tfel::math::StensorFromTinyMatrixColumnView2<N," << n3 << "," << n3 << "," << n << ","
-                 << n2 << ",real>::type\n"
-                 << "df" << v.name << "_dd" << v2.name << "(tfel::math::tmatrix<" << n3 << "," << n3
-                 << ">& tjacobian,\n"
-                 << "const unsigned short idx){\n"
-                 << "using namespace tfel::math;\n"
-                 << "return typename StensorFromTinyMatrixColumnView2<N," << n3 << "," << n3 << "," << n << "," << n2
-                 << ",real>::type(tjacobian,idx,0);\n"
-                 << "}\n\n";
-              os << "typename tfel::math::StensorFromTinyMatrixColumnView2<N," << n3 << "," << n3 << "," << n << ","
-                 << n2 << ",real>::type\n"
-                 << "df" << v.name << "_dd" << v2.name << "(const unsigned short idx){\n"
-                 << "using namespace tfel::math;\n"
-                 << "return typename StensorFromTinyMatrixColumnView2<N," << n3 << "," << n3 << "," << n << "," << n2
-                 << ",real>::type(this->jacobian,idx,0);\n"
-                 << "}\n\n";
-            } else if (flag2 == SupportedTypes::TVector) {
-              // Le résultat est une sous-matrice
-              os << "typename tfel::math::TMatrixFromTinyMatrixView2<N," << n3 << "," << n3 << "," << n << "," << n2
-                 << ",real>::type\n"
-                 << "df" << v.name << "_dd" << v2.name << "(tfel::math::tmatrix<" << n3 << "," << n3
-                 << ">& tjacobian,\n"
-                 << "const unsigned short idx){\n"
-                 << "using namespace tfel::math;\n"
-                 << "return typename TMatrixFromTinyMatrixView2<N," << n3 << "," << n3 << "," << n << "," << n2
-                 << ",real>::type(tjacobian,idx,0u);\n"
-                 << "}\n\n";
-              os << "typename tfel::math::TMatrixFromTinyMatrixView2<N," << n3 << "," << n3 << "," << n << "," << n2
-                 << ",real>::type\n"
-                 << "df" << v.name << "_dd" << v2.name << "(const unsigned short idx){\n"
-                 << "using namespace tfel::math;\n"
-                 << "return typename TMatrixFromTinyMatrixView2<N," << n3 << "," << n3 << "," << n << "," << n2
-                 << ",real>::type(this->jacobian,idx,0u);\n"
-                 << "}\n\n";
-            } else {
-              this->throwRuntimeError("ImplicitDSLBase::writeBehaviourParserSpecificMembers",
-                                      "derivation of a vector by a tensor is not defined");
-            }
-          } else {
-            if (flag2 == SupportedTypes::Scalar) {
-              // Le résultat est un tenseur, une colonne dans la matrice jacobienne
-              os << "typename tfel::math::StensorFromTinyMatrixColumnView2<N," << n3 << "," << n3 << "," << n << ","
-                 << n2 << ",real>::type\n"
-                 << "df" << v.name << "_dd" << v2.name << "(tfel::math::tmatrix<" << n3 << "," << n3
-                 << ">& tjacobian,\n"
-                 << "const unsigned short idx){\n"
-                 << "using namespace tfel::math;\n"
-                 << "return typename StensorFromTinyMatrixColumnView2<N," << n3 << "," << n3 << "," << n << "," << n2
-                 << ",real>::type(tjacobian,idx,0);\n"
-                 << "}\n\n";
-              os << "typename tfel::math::StensorFromTinyMatrixColumnView2<N," << n3 << "," << n3 << "," << n << ","
-                 << n2 << ",real>::type\n"
-                 << "df" << v.name << "_dd" << v2.name << "(const unsigned short idx){\n"
-                 << "using namespace tfel::math;\n"
-                 << "return typename StensorFromTinyMatrixColumnView2<N," << n3 << "," << n3 << "," << n << "," << n2
-                 << ",real>::type(this->jacobian,idx,0);\n"
-                 << "}\n\n";
-            } else if (flag2 == SupportedTypes::Stensor) {
-              // Le résultat est un tenseur d'ordre 4
-              os << "typename tfel::math::ST2toST2FromTinyMatrixView2<N," << n3 << "," << n3 << "," << n << "," << n2
-                 << ",real>::type\n"
-                 << "df" << v.name << "_dd" << v2.name << "(tfel::math::tmatrix<" << n3 << "," << n3
-                 << ">& tjacobian,\n"
-                 << "const unsigned short idx){\n"
-                 << "using namespace tfel::math;\n"
-                 << "return typename ST2toST2FromTinyMatrixView2<N," << n3 << "," << n3 << "," << n << "," << n2
-                 << ",real>::type(tjacobian,idx,0u);\n"
-                 << "}\n\n";
-              os << "typename tfel::math::ST2toST2FromTinyMatrixView2<N," << n3 << "," << n3 << "," << n << "," << n2
-                 << ",real>::type\n"
-                 << "df" << v.name << "_dd" << v2.name << "(const unsigned short idx){\n"
-                 << "using namespace tfel::math;\n"
-                 << "return typename ST2toST2FromTinyMatrixView2<N," << n3 << "," << n3 << "," << n << "," << n2
-                 << ",real>::type(this->jacobian,idx,0u);\n"
-                 << "}\n\n";
-            } else {
-              this->throwRuntimeError("ImplicitDSLBase::writeBehaviourParserSpecificMembers",
-                                      "derivation of a tensor by a vector is not defined");
-            }
-          }
-        } else if ((v.arraySize == 1u) && (v2.arraySize != 1u)) {
-          if (flag == SupportedTypes::Scalar) {
-            if (flag2 == SupportedTypes::Scalar) {
-              os << "real&\n"
-                 << "df" << v.name << "_dd" << v2.name << "(tfel::math::tmatrix<" << n3 << "," << n3
-                 << ">& tjacobian,\n"
-                 << "const unsigned short idx){\n"
-                 << "return tjacobian(" << n << ", " << n2 << "+idx);\n"
-                 << "}\n\n";
-              os << "real&\n"
-                 << "df" << v.name << "_dd" << v2.name << "(const unsigned short idx){\n"
-                 << "return this->jacobian(" << n << ", " << n2 << "+idx);\n"
-                 << "}\n\n";
-            } else {
-              // Le résultat est un tenseur, une ligne dans la matrice jacobienne
-              os << "typename tfel::math::StensorFromTinyMatrixRowView2<N," << n3 << "," << n3 << "," << n << "," << n2
-                 << ",real>::type\n"
-                 << "df" << v.name << "_dd" << v2.name << "(tfel::math::tmatrix<" << n3 << "," << n3
-                 << ">& tjacobian,\n"
-                 << "const unsigned short idx){\n"
-                 << "using namespace tfel::math;\n"
-                 << "return typename StensorFromTinyMatrixRowView2<N," << n3 << "," << n3 << "," << n << "," << n2
-                 << ",real>::type(tjacobian,0,idx);\n"
-                 << "}\n\n";
-              os << "typename tfel::math::StensorFromTinyMatrixRowView2<N," << n3 << "," << n3 << "," << n << "," << n2
-                 << ",real>::type\n"
-                 << "df" << v.name << "_dd" << v2.name << "(const unsigned short idx){\n"
-                 << "using namespace tfel::math;\n"
-                 << "return typename StensorFromTinyMatrixRowView2<N," << n3 << "," << n3 << "," << n << "," << n2
-                 << ",real>::type(this->jacobian,0,idx);\n"
-                 << "}\n\n";
-            }
-          } else {
-            if (flag2 == SupportedTypes::Scalar) {
-              // Le résultat est un tenseur, une colonne dans la matrice jacobienne
-              os << "typename tfel::math::StensorFromTinyMatrixColumnView2<N," << n3 << "," << n3 << "," << n << ","
-                 << n2 << ",real>::type\n"
-                 << "df" << v.name << "_dd" << v2.name << "(tfel::math::tmatrix<" << n3 << "," << n3
-                 << ">& tjacobian,\n"
-                 << "const unsigned short idx){\n"
-                 << "using namespace tfel::math;\n"
-                 << "return typename StensorFromTinyMatrixColumnView2<N," << n3 << "," << n3 << "," << n << "," << n2
-                 << ",real>::type(tjacobian,0,idx);\n"
-                 << "}\n\n";
-              os << "typename tfel::math::StensorFromTinyMatrixColumnView2<N," << n3 << "," << n3 << "," << n << ","
-                 << n2 << ",real>::type\n"
-                 << "df" << v.name << "_dd" << v2.name << "(const unsigned short idx){\n"
-                 << "using namespace tfel::math;\n"
-                 << "return typename StensorFromTinyMatrixColumnView2<N," << n3 << "," << n3 << "," << n << "," << n2
-                 << ",real>::type(this->jacobian,0,idx);\n"
-                 << "}\n\n";
-            } else {
-              os << "typename tfel::math::ST2toST2FromTinyMatrixView2<N," << n3 << "," << n3 << "," << n << "," << n2
-                 << ",real>::type\n"
-                 << "df" << v.name << "_dd" << v2.name << "(tfel::math::tmatrix<" << n3 << "," << n3
-                 << ">& tjacobian,\n"
-                 << "const unsigned short idx){\n"
-                 << "using namespace tfel::math;\n"
-                 << "return typename ST2toST2FromTinyMatrixView2<N," << n3 << "," << n3 << "," << n << "," << n2
-                 << ",real>::type(tjacobian,0,idx);\n"
-                 << "}\n\n";
-              os << "typename tfel::math::ST2toST2FromTinyMatrixView2<N," << n3 << "," << n3 << "," << n << "," << n2
-                 << ",real>::type\n"
-                 << "df" << v.name << "_dd" << v2.name << "(const unsigned short idx){\n"
-                 << "using namespace tfel::math;\n"
-                 << "return typename ST2toST2FromTinyMatrixView2<N," << n3 << "," << n3 << "," << n << "," << n2
-                 << ",real>::type(this->jacobian,0,idx);\n"
-                 << "}\n\n";
-            }
-          }
-        } else if ((v.arraySize != 1u) && (v2.arraySize != 1u)) {
-          if (flag == SupportedTypes::Scalar) {
-            if (flag2 == SupportedTypes::Scalar) {
-              os << "real&\n"
-                 << "df" << v.name << "_dd" << v2.name << "(tfel::math::tmatrix<" << n3 << "," << n3
-                 << ">& tjacobian,\n"
-                 << "const unsigned short idx,"
-                 << " const unsigned short idx2){\n"
-                 << "return tjacobian(" << n << "+idx, " << n2 << "+idx2);\n"
-                 << "}\n\n";
-              os << "real&\n"
-                 << "df" << v.name << "_dd" << v2.name << "(const unsigned short idx,"
-                 << " const unsigned short idx2){\n"
-                 << "return this->jacobian(" << n << "+idx, " << n2 << "+idx2);\n"
-                 << "}\n\n";
-            } else {
-              // Le résultat est un tenseur, une ligne dans la matrice jacobienne
-              os << "typename tfel::math::StensorFromTinyMatrixRowView2<N," << n3 << "," << n3 << "," << n << "," << n2
-                 << ",real>::type\n"
-                 << "df" << v.name << "_dd" << v2.name << "(tfel::math::tmatrix<" << n3 << "," << n3
-                 << ">& tjacobian,\n"
-                 << "const unsigned short idx,"
-                 << " const unsigned short idx2){\n"
-                 << "using namespace tfel::math;\n"
-                 << "return typename StensorFromTinyMatrixRowView2<N," << n3 << "," << n3 << "," << n << "," << n2
-                 << ",real>::type(tjacobian,idx,idx2);\n"
-                 << "}\n\n";
-              os << "typename tfel::math::StensorFromTinyMatrixRowView2<N," << n3 << "," << n3 << "," << n << "," << n2
-                 << ",real>::type\n"
-                 << "df" << v.name << "_dd" << v2.name << "(const unsigned short idx,"
-                 << " const unsigned short idx2){\n"
-                 << "using namespace tfel::math;\n"
-                 << "return typename StensorFromTinyMatrixRowView2<N," << n3 << "," << n3 << "," << n << "," << n2
-                 << ",real>::type(this->jacobian,idx,idx2);\n"
-                 << "}\n\n";
-            }
-          } else {
-            if (flag2 == SupportedTypes::Scalar) {
-              // Le résultat est un tenseur, une colonne dans la matrice jacobienne
-              os << "typename tfel::math::StensorFromTinyMatrixColumnView2<N," << n3 << "," << n3 << "," << n << ","
-                 << n2 << ",real>::type\n"
-                 << "df" << v.name << "_dd" << v2.name << "(tfel::math::tmatrix<" << n3 << "," << n3
-                 << ">& tjacobian,\n"
-                 << "const unsigned short idx,"
-                 << " const unsigned short idx2){\n"
-                 << "using namespace tfel::math;\n"
-                 << "return typename StensorFromTinyMatrixColumnView2<N," << n3 << "," << n3 << "," << n << "," << n2
-                 << ",real>::type(tjacobian,idx,idx2);\n"
-                 << "}\n\n";
-              os << "typename tfel::math::StensorFromTinyMatrixColumnView2<N," << n3 << "," << n3 << "," << n << ","
-                 << n2 << ",real>::type\n"
-                 << "df" << v.name << "_dd" << v2.name << "(const unsigned short idx,"
-                 << " const unsigned short idx2){\n"
-                 << "using namespace tfel::math;\n"
-                 << "return typename StensorFromTinyMatrixColumnView2<N," << n3 << "," << n3 << "," << n << "," << n2
-                 << ",real>::type(this->jacobian,idx,idx2);\n"
-                 << "}\n\n";
-            } else {
-              os << "typename tfel::math::ST2toST2FromTinyMatrixView2<N," << n3 << "," << n3 << "," << n << "," << n2
-                 << ",real>::type\n"
-                 << "df" << v.name << "_dd" << v2.name << "(tfel::math::tmatrix<" << n3 << "," << n3
-                 << ">& tjacobian,\n"
-                 << "const unsigned short idx,"
-                 << " const unsigned short idx2){\n"
-                 << "using namespace tfel::math;\n"
-                 << "return typename ST2toST2FromTinyMatrixView2<N," << n3 << "," << n3 << "," << n << "," << n2
-                 << ",real>::type(tjacobian,idx,idx2);\n"
-                 << "}\n\n";
-              os << "typename tfel::math::ST2toST2FromTinyMatrixView2<N," << n3 << "," << n3 << "," << n << "," << n2
-                 << ",real>::type\n"
-                 << "df" << v.name << "_dd" << v2.name << "(const unsigned short idx,"
-                 << " const unsigned short idx2){\n"
-                 << "using namespace tfel::math;\n"
-                 << "return typename ST2toST2FromTinyMatrixView2<N," << n3 << "," << n3 << "," << n << "," << n2
-                 << ",real>::type(this->jacobian,idx,idx2);\n"
-                 << "}\n\n";
-            }
-          }
-        }
-        n2 += this->getTypeSize(v2.type, v2.arraySize);
+        n += this->getTypeSize(v.type, v.arraySize);
       }
-      n += this->getTypeSize(v.type, v.arraySize);
     }
     // size of linear system
     n = n3;

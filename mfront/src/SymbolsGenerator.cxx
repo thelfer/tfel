@@ -73,6 +73,7 @@ namespace mfront {
     this->writeSourceFileSymbols(out, i, bd, fd, name);
     this->writeSupportedModellingHypothesis(out, i, bd, mhs, name);
     this->writeMainVariablesSymbols(out, i, bd, name);
+    this->writeTangentOperatorSymbols(out, i, bd, name);
     this->writeBehaviourTypeSymbols(out, i, bd, name);
     this->writeBehaviourKinematicSymbols(out, i, bd, name);
     this->writeSymmetryTypeSymbols(out, i, bd, name);
@@ -212,6 +213,30 @@ namespace mfront {
     this->writeArrayOfStringsSymbol(out, fn + "_ThermodynamicForces", thnames);
   }  // end of SymbolsGenerator::writeMainVariablesSymbols
 
+  void SymbolsGenerator::writeTangentOperatorSymbols(
+      std::ostream& out,
+      const StandardBehaviourInterface& i,
+      const BehaviourDescription& bd,
+      const std::string& name) const {
+    const auto& mvs = bd.getMainVariables();
+    const auto fn = i.getFunctionNameBasis(name);
+    std::vector<std::string> blocks_names;
+    //    const auto a = bd.getAdditionnalTangentOperatorBlocks();
+    const auto n = mvs.size()*mvs.size(); // + a.size() ;
+    out << "MFRONT_SHAREDOBJ unsigned short " << fn
+        << "_nTangentOperatorBlocks = " << n  << ";\n\n";
+    for(const auto& f : mvs){
+      for(const auto& g : mvs){
+	if(g.first.increment_known){
+	  blocks_names.push_back("d"+f.second.name+"_dd"+g.first.name);
+	} else {
+	  blocks_names.push_back("d"+f.second.name+"_d"+g.first.name+"1");
+	}
+      }
+    }
+    this->writeArrayOfStringsSymbol(out, fn + "_TangentOperatorBlocks", blocks_names);
+  } // end of SymbolsGenerator::writeTangentOperatorSymbols
+  
   void SymbolsGenerator::writeMaterialKnowledgeTypeSymbol(
       std::ostream& out,
       const StandardBehaviourInterface& i,

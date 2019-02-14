@@ -880,13 +880,35 @@ namespace mfront{
      */
     bool isNameReserved(const std::string&) const;
     /*!
-     * register a member name
+     * \brief register a member name
      * \param[in] n : member name
      * \note an exception is thrown is the given name has already been
      * registred
      * \note : this method automatically calls the reserveName method
      */
     void registerMemberName(const std::string&);
+    /*!
+     * \brief register a glossary name
+     * \param[in] n: variable name
+     * \param[in] g: glossary name
+     * \note an exception is thrown if:
+     * - the variable name has not been reserved
+     * - the given glossary name is not a real glossary name
+     * - the given glossary name has already been registred
+     * \note : this method automatically calls the reserveName method
+     */
+    void registerGlossaryName(const std::string&, const std::string&);
+    /*!
+     * \brief register a entry name
+     * \param[in] n: variable name
+     * \param[in] e: entry name
+     * \note an exception is thrown if:
+     * - the variable name has not been reserved
+     * - the given entry name is a glossary name
+     * - the given entry name has already been registred
+     * \note : this method automatically calls the reserveName method
+     */
+    void registerEntryName(const std::string&, const std::string&);
     /*!
      * register a static member name
      * \param[in] n : static member name

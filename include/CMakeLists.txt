@@ -5,6 +5,7 @@ install_header(TFEL PhysicalConstants.hxx)
 
 install_header(TFEL/Config/Internals TFELTypesInternals.hxx)
 install_header(TFEL/Config/Internals SpatialGradType.hxx)
+install_header(TFEL/Config/Internals TemperatureGradientType.hxx)
 install_header(TFEL/Config/Internals HeatFluxVectorType.hxx)
 install_header(TFEL/Config/Internals InvJacobianType.hxx)
 install_header(TFEL/Config/Internals PositionType.hxx)

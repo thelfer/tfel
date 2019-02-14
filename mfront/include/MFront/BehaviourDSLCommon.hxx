@@ -71,9 +71,34 @@ namespace mfront {
     void analyseFile(const std::string&,
                      const std::vector<std::string>&,
                      const std::map<std::string, std::string>&) override;
+    /*!
+     * \brief analyse a file
+     * \param[in] f     : file name
+     * \param[in] ecmds : additionnal commands inserted treated before
+     * the input file commands
+     * \param[in] s : substitutions patterns inserted (those
+     * substitutions are given through command-line options such as
+     * `--@YYY@=XXX`)
+     */
+    void importFile(const std::string&,
+                    const std::vector<std::string>&,
+                    const std::map<std::string, std::string>&) override;
+    /*!
+     * \brief analyse the specified string.
+     * \param[in] s : analyse a string
+     */
+    void analyseString(const std::string&) override;
+
     void endsInputFileProcessing() override;
+    /*!
+     * \brief return the list of keywords usable with this parser
+     * \param[out] k : the list of keywords registred for this parser
+     */
+    void getKeywordsList(std::vector<std::string>&) const override;
 
    protected:
+    //! a simple alias
+    using CallBack = std::function<void()>;
     /*!
      * create a variable modifier from a method
      */
@@ -145,9 +170,9 @@ namespace mfront {
      */
     struct CodeBlockOptions {
       //! a simple alias
-      typedef BehaviourData::Mode Mode;
+      using Mode = BehaviourData::Mode;
       //! a simple alias
-      typedef BehaviourData::Position Position;
+      using Position = BehaviourData::Position;
       //! constructor
       CodeBlockOptions();
       CodeBlockOptions(CodeBlockOptions&&) = default;
@@ -164,9 +189,9 @@ namespace mfront {
       //! list of untreated options
       std::vector<tfel::utilities::Token> untreated;
     };
-    /*!
-     * \return the name of the generated class
-     */
+    //! \brief constructor
+    BehaviourDSLCommon();
+    //! \return the name of the generated class
     std::string getClassName() const override;
     /*!
      * \brief add a material law
@@ -189,6 +214,15 @@ namespace mfront {
      * \brief append the given code to the sources
      */
     void appendToSources(const std::string&) override;
+
+    virtual void analyse();
+
+    virtual void treatDisabledCallBack();
+
+    virtual void disableCallBack(const std::string&);
+
+    virtual void addCallBack(const std::string&, const CallBack);
+
     /*!
      * \param[out] o : options to be read
      * \param[in]  s : allow specialisation
@@ -303,9 +337,7 @@ namespace mfront {
         std::string (T2::*)(const Hypothesis, const std::string&, const bool),
         std::string (T2::*)(const Hypothesis, const std::string&, const bool),
         const bool);
-    /*!
-     * \brief throw an exception is some options were not recognized
-     */
+    //! \brief throw an exception is some options were not recognized
     void treatUnsupportedCodeBlockOptions(const CodeBlockOptions&);
     /*!
      * \brief add a static variable description
@@ -325,13 +357,9 @@ namespace mfront {
     virtual void disableVariableDeclaration();
     //! \brief method called at the end of the input file processing.
     virtual void completeVariableDeclaration();
-    /*!
-     * write the output files
-     */
+    //! \brief write the output files
     void generateOutputFiles() override;
-    /*!
-     * \brief write the header files declaring the slip systems
-     */
+    //! \brief write the header files declaring the slip systems
     virtual void generateSlipSystemsFiles();
     /*!
      * \return the list of hypothesis a priori supported by
@@ -463,10 +491,15 @@ namespace mfront {
      * \param[in] n : name
      */
     bool isNameReserved(const std::string&) const override;
-    /*!
-     * register the default variable names
-     */
+    //! \brief register the default variable names
     virtual void registerDefaultVarNames();
+    //!\brief treat the `@Gradient` keyword.
+    virtual void treatGradient();
+    /*!
+     * \brief treat the `@ThermodynamicForce` keyword. Also treat the `@Flux`
+     * keyword.
+     */
+    virtual void treatThermodynamicForce();
     //!\brief treat the `@Brick` keyword
     virtual void treatBrick();
     //!\brief treat the `@Model` keyword
@@ -1100,11 +1133,19 @@ namespace mfront {
                                 const std::string&,
                                 const std::string&,
                                 const std::string&) const;
+    //! \brief treat methods associated with a gradient
+    virtual void treatGradientMethod();
+    //! \brief treat methods associated with a thermodynamic force
+    virtual void treatThermodynamicForceMethod();
     /*!
-     * \brief treat methods associated with parameters
+     * \brief treat methods associated with a parameter
      * \param[in] h : modelling hypothesis
      */
     virtual void treatParameterMethod(const Hypothesis);
+    //! \brief analyse the `setGlossaryNameMethod` and returns its argument
+    virtual std::string treatSetGlossaryNameMethod();
+    //! \brief analyse the `setEntryNameMethod` and returns its argument
+    virtual std::string treatSetEntryNameMethod();
     /*!
      * \return true if the the given variable may have methods
      * \param[in] h : modelling hypothesis
@@ -1164,21 +1205,25 @@ namespace mfront {
      * \param[in] h : modelling hypothesis
      */
     virtual bool hasUserDefinedTangentOperatorCode(const Hypothesis) const;
-    //! constructor
-    BehaviourDSLCommon();
-    //! behaviour description
+    //! \brief behaviour description
     BehaviourDescription mb;
-    //! registred bricks
+    //! \brief registred bricks
     std::vector<std::shared_ptr<AbstractBehaviourBrick>> bricks;
-    //! the list of registred keywords
+    //! \brief the list of registred keywords
     std::set<std::string> registredKeyWords;
-    //! list of registred interfaces, indexed by their name
+    //! \brief list of registred interfaces, indexed by their name
     std::map<std::string, std::shared_ptr<AbstractBehaviourInterface>>
         interfaces;
+    //! \brief list of call backs
+    std::map<std::string, CallBack> callBacks;
+    //! \brief list of declared gradients
+    std::vector<Gradient> gradients;
+    //! \brief list of declared thermodynamic forces
+    std::vector<ThermodynamicForce> thermodynamic_forces;
     /*!
-     * local variables initalizers. This variable to initialize local
-     * variables defined by domains specific languages and shall not
-     * be accessible to the end user.
+     * \brief Local variables initalizers. This variable to initialize
+     * local variables defined by domains specific languages and shall
+     * not be accessible to the end user.
      */
     std::string localVariablesInitializers;
 
