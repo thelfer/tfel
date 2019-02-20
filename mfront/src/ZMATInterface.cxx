@@ -229,7 +229,7 @@ namespace mfront
       for(const auto& v : persistentVarsHolder){
 	const auto flag = SupportedTypes::getTypeFlag(v.type);
 	if(v.arraySize==1u){
-	  if(flag==SupportedTypes::Scalar){
+	  if(flag==SupportedTypes::SCALAR){
 	    if(mb.useQt()){
 	      out << "ZMATstatev" << "[" 
 		  << currentOffset << "] = base_cast(this->"
@@ -239,9 +239,9 @@ namespace mfront
 		  << currentOffset << "] = this->"
 		  << v.name << ";\n"; 
 	    } 
-	  } else if((flag==SupportedTypes::TVector)||
-		    (flag==SupportedTypes::Stensor)||
-		    (flag==SupportedTypes::Tensor)){
+	  } else if((flag==SupportedTypes::TVECTOR)||
+		    (flag==SupportedTypes::STENSOR)||
+		    (flag==SupportedTypes::TENSOR)){
 	    out << "zmat::ZMATInterface::convert(&" << "ZMATstatev" << "[" 
 		<< currentOffset << "],this->" << v.name 
 		<< ");\n";  
@@ -253,7 +253,7 @@ namespace mfront
 	} else {
 	  if(mb.useDynamicallyAllocatedVector(v.arraySize)){
 	    out << "for(unsigned short idx=0;idx!=" << v.arraySize << ";++idx){\n";
-	    if(flag==SupportedTypes::Scalar){ 
+	    if(flag==SupportedTypes::SCALAR){ 
 	      if(mb.useQt()){
 		out << "ZMATstatev" << "[" 
 		    << currentOffset << "+idx] = common_cast(this->"
@@ -263,9 +263,9 @@ namespace mfront
 		    << currentOffset << "+idx] = this->"
 		    << v.name << "[idx];\n"; 
 	      }
-	    } else if((flag==SupportedTypes::TVector)||
-		      (flag==SupportedTypes::Stensor)||
-		      (flag==SupportedTypes::Tensor)){
+	    } else if((flag==SupportedTypes::TVECTOR)||
+		      (flag==SupportedTypes::STENSOR)||
+		      (flag==SupportedTypes::TENSOR)){
 	      out << "zmat::ZMATInterface::convert(&ZMATstatev" << "[" 
 		  << currentOffset << "+idx*StensorSize],this->" << v.name
 		  << "[idx]);\n";  
@@ -277,7 +277,7 @@ namespace mfront
 	    currentOffset+=this->getTypeSize(v.type,v.arraySize);
 	  } else {
 	    for(unsigned short i=0;i!=v.arraySize;++i){
-	      if(flag==SupportedTypes::Scalar){
+	      if(flag==SupportedTypes::SCALAR){
 		if(mb.useQt()){
 		  out << "ZMATstatev" << "[" 
 		      << currentOffset << "] = common_cast(this->"
@@ -287,9 +287,9 @@ namespace mfront
 		      << currentOffset << "] = this->"
 		      << v.name << "[" << i << "];\n"; 
 		} 
-	      } else if((flag==SupportedTypes::TVector)||
-			(flag==SupportedTypes::Stensor)||
-			(flag==SupportedTypes::Tensor)){
+	      } else if((flag==SupportedTypes::TVECTOR)||
+			(flag==SupportedTypes::STENSOR)||
+			(flag==SupportedTypes::TENSOR)){
 		out << "zmat::ZMATInterface::convert(&" << "ZMATstatev" << "[" 
 		    << currentOffset << "],this->" << v.name
 		    << "[" << i << "]);\n";  
@@ -404,7 +404,7 @@ namespace mfront
       SupportedTypes::TypeSize o;
       for(const auto & mp : mps){
 	const SupportedTypes::TypeFlag flag = SupportedTypes::getTypeFlag(mp.type);
-	if(flag==SupportedTypes::Scalar){
+	if(flag==SupportedTypes::SCALAR){
 	  if(mp.arraySize==1u){
 	    out << "this->" << mp.name << " = ZMATmprops[" << o << "]();\n";
 	    o+=this->getTypeSize(mp.type,1u);
@@ -436,11 +436,11 @@ namespace mfront
 	const SupportedTypes::TypeFlag flag = SupportedTypes::getTypeFlag(iv.type);
 	if(iv.arraySize==1u){
 	  switch(flag){
-	  case SupportedTypes::Scalar : 	  
+	  case SupportedTypes::SCALAR : 	  
 	    out << n << " = ZMATstatev[" << o << "];\n";
 	    break;
-	  case SupportedTypes::Stensor :
-	  case SupportedTypes::Tensor  :
+	  case SupportedTypes::STENSOR :
+	  case SupportedTypes::TENSOR  :
 	    out << "zmat::ZMATInterface::convert(" << n << "," << "&ZMATstatev[" << o << "]);\n";
 	    break;
 	  default:
@@ -453,17 +453,17 @@ namespace mfront
 	    out << n << ".resize(" << iv.arraySize << ");\n";
 	    out << "for(unsigned short idx=0;idx!=" << iv.arraySize << ";++idx){\n";
 	    switch(flag){
-	    case SupportedTypes::Scalar : 
+	    case SupportedTypes::SCALAR : 
 	      out << n << "[idx] = ZMATstatev[" 
 		  << o << "+idx];\n";  
 	      break;
-	      // case SupportedTypes::TVector :
+	      // case SupportedTypes::TVECTOR :
 	      //   out << "tfel::fsalgo::copy<TVectorSize>::exe(&"+src+"[" 
 	      // 	<< o << "+idx*TVectorSize],"
 	      // 	<< n << "[idx].begin());\n";  
 	      //   break;
-	    case SupportedTypes::Stensor :
-	    case SupportedTypes::Tensor :
+	    case SupportedTypes::STENSOR :
+	    case SupportedTypes::TENSOR :
 	      out << "zmat::ZMATInterface::convert(" << n << "[idx],&ZMATstatev[" 
 		  << o << "+idx*StensorSize]);\n";  
 	      break;
@@ -476,12 +476,12 @@ namespace mfront
 	  } else {
 	    for(int i=0;i!=iv.arraySize;++i){
 	      switch(flag){
-	      case SupportedTypes::Scalar : 
+	      case SupportedTypes::SCALAR : 
 		out << n << "[" << i << "] = ZMATstatev[" 
 		    << o << "];\n";  
 		break;
-	      case SupportedTypes::Stensor :
-	      case SupportedTypes::Tensor :
+	      case SupportedTypes::STENSOR :
+	      case SupportedTypes::TENSOR :
 		out << "zmat::ZMATInterface::convert(" <<  n << "["<< i << "],&ZMATstatev[" 
 		    << o << "]);\n";  
 		break;
@@ -499,7 +499,7 @@ namespace mfront
       SupportedTypes::TypeSize o;
       for(const auto & ev : evs){
 	const auto flag = SupportedTypes::getTypeFlag(ev.type);
-	if(flag==SupportedTypes::Scalar){
+	if(flag==SupportedTypes::SCALAR){
 	  if(ev.arraySize==1u){
 	    out << "this->" << ev.name << " = ZMATextvars_t[ZMATevs_pos[" << o << "]];\n";
 	    o+=this->getTypeSize(ev.type,1u);
@@ -699,7 +699,7 @@ namespace mfront
       SupportedTypes::TypeSize o;
       for(const auto & ev : evs){
 	const auto flag = SupportedTypes::getTypeFlag(ev.type);
-	if(flag==SupportedTypes::Scalar){
+	if(flag==SupportedTypes::SCALAR){
 	  if(ev.arraySize==1u){
 	    out << "this->d" << ev.name << " = ZMATextvars_tdt[ZMATevs_pos[" << o << "]]-ZMATextvars_t[ZMATevs_pos[" << o << "]];\n";
 	    o+=this->getTypeSize(ev.type,1u);
@@ -884,14 +884,14 @@ namespace mfront
       for(const auto & sv : svs){
         out << "//! '" << sv.name << "' state variable\n";
         const auto flag = SupportedTypes::getTypeFlag(sv.type);
-        if(flag==SupportedTypes::Scalar){
+        if(flag==SupportedTypes::SCALAR){
           if (sv.arraySize == 1u) {
             out << "SCALAR_VINT " << sv.name << ";\n";
           } else {
             out << "VECTOR_VINT " << sv.name << ";\n";
           }
-        } else if ((flag == SupportedTypes::Stensor) ||
-                   (flag == SupportedTypes::Tensor)) {
+        } else if ((flag == SupportedTypes::STENSOR) ||
+                   (flag == SupportedTypes::TENSOR)) {
           if(sv.arraySize==1u){
 	    out << "TENSOR2_VINT " << sv.name << ";\n"; 
 	  } else {
@@ -1171,7 +1171,7 @@ namespace mfront
 	      out << d.getUnsignedShortParameterDefaultValue(p.name) << '\n';
 	    } else {
 	      const auto f = SupportedTypes::getTypeFlag(p.type);
-	      throw_if(f!=SupportedTypes::Scalar,
+	      throw_if(f!=SupportedTypes::SCALAR,
 		       "unsupported parameter type '"+p.type+"'");
 	      if(p.arraySize==1){
 		out << d.getFloattingPointParameterDefaultValue(p.name) << '\n';
@@ -1220,10 +1220,10 @@ namespace mfront
     for(const auto & isv : isvs){
       const auto flag = SupportedTypes::getTypeFlag(isv.type);
       const auto& name = d.getExternalName(isv.name);
-      if(flag==SupportedTypes::Scalar){
+      if(flag==SupportedTypes::SCALAR){
 	out << "this->" << isv.name << ".initialize(this,\"" << name 
 	    << "\"," << isv.arraySize << ",1);\n"; 
-      } else if (flag==SupportedTypes::Stensor){
+      } else if (flag==SupportedTypes::STENSOR){
 	if(isv.arraySize==1u){
 	  out << "this->" << isv.name << ".initialize(this,\"" << name 
 	      << "\",this->tsz(),1);\n"; 
@@ -1234,7 +1234,7 @@ namespace mfront
 		<< "\",this->tsz(),1);\n";
 	  }
 	}
-      } else if (flag==SupportedTypes::Tensor){
+      } else if (flag==SupportedTypes::TENSOR){
 	if(isv.arraySize==1u){
 	  out << "this->" << isv.name << ".initialize(this,\""
 	      << name << "\",this->utsz(),1);\n"; 
@@ -1351,7 +1351,7 @@ namespace mfront
 	}
       } else {
 	const auto f = SupportedTypes::getTypeFlag(p->type);
-	tfel::raise_if(f!=SupportedTypes::Scalar,
+	tfel::raise_if(f!=SupportedTypes::SCALAR,
 		       "ZMATInterface::writeParametersInitialisation: "
 		       "unsupported type '"+p->type+"' for parameter '"+p->name+"'");
 	if(p->arraySize==1u){

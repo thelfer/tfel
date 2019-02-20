@@ -222,6 +222,70 @@ namespace mfront {
     }
   }  // end of checkThermalExpansionCoefficientArgument
 
+  static std::pair<VariableDescription, VariableDescription>
+  decomposeAdditionalTangentOperatorBlock(const BehaviourDescription& bd,
+                                          const std::string& bn) {
+    const auto h = [&bd] {
+      if (bd.areModellingHypothesesDefined()) {
+        const auto mhs = bd.getModellingHypotheses();
+        if (mhs.size() == 1u) {
+          return *(mhs.begin());
+        }
+      }
+      return BehaviourDescription::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    }();
+    auto a = VariableDescription{};
+    auto b = VariableDescription{};
+    auto found = false;
+    auto check = [&found, &bn] {
+      if (found) {
+        tfel::raise(
+            "decomposeAdditionalTangentOperatorBlock: "
+            "multiple match for block '" +
+            bn + "'");
+      }
+    };
+    auto assign_if_2 = [&check, &a, &b, &found, &bn](
+        const VariableDescription& v1, const VariableDescription& v2,
+        const std::string& n) {
+      if (bn == "d" + v1.name + "_" + "d" + n) {
+        check();
+        a = v1;
+        b = v2;
+        found = true;
+      }
+    };
+    auto assign_if = [&assign_if_2](const VariableDescription& v1,
+                                    const VariableDescription& v2) {
+      assign_if_2(v1, v2, "d" + v2.name);
+    };
+    const auto& d = bd.getBehaviourData(h);
+    for (const auto& mv : bd.getMainVariables()) {
+      for (const auto& e : d.getExternalStateVariables()) {
+        assign_if(mv.second, e);
+      }
+    }
+    for (const auto& s : d.getPersistentVariables()) {
+      for (const auto& mv : bd.getMainVariables()) {
+        if (Gradient::isIncrementKnown(mv.first)) {
+          assign_if(s, mv.first);
+        } else {
+          assign_if_2(s, mv.first, "d" + mv.first.name + "1");
+        }
+      }
+      for (const auto& e : d.getExternalStateVariables()) {
+        assign_if(s, e);
+      }
+    }
+    if (!found) {
+      tfel::raise(
+          "decomposeAdditionalTangentOperatorBlock: "
+          "no match for '" +
+          bn + "'");
+    }
+    return {a, b};
+  }  // end of decomposeTangentOperatorBlock
+
   const char* const BehaviourDescription::requiresStiffnessTensor =
       "requiresStiffnessTensor";
 
@@ -889,7 +953,7 @@ namespace mfront {
         "BehaviourDescription::declareAsASmallStrainStandardBehaviour: "
         "some driving variables are already declared");
     Gradient eto("StrainStensor", "eto");
-    eto.increment_known = true;
+    Gradient::setIsIncrementKnownAttribute(eto,true);
     eto.setGlossaryName("Strain");
     ThermodynamicForce sig("StressStensor", "sig");
     sig.setGlossaryName("Stress");
@@ -915,7 +979,7 @@ namespace mfront {
         "some driving variables are already declared");
     Gradient F("DeformationGradientTensor", "F");
     F.setGlossaryName("DeformationGradient");
-    F.increment_known = false;
+    Gradient::setIsIncrementKnownAttribute(F,false);
     ThermodynamicForce sig("StressStensor", "sig");
     sig.setGlossaryName("Stress");
     this->mvariables.push_back({F, sig});
@@ -942,7 +1006,7 @@ namespace mfront {
                    "some driving variables are already declared");
     Gradient u("DisplacementTVector", "u");
     u.setGlossaryName("OpeningDisplacement");
-    u.increment_known = true;
+    Gradient::setIsIncrementKnownAttribute(u,true);
     ThermodynamicForce t("ForceTVector", "t");
     t.setGlossaryName("CohesiveForce");
     this->mvariables.push_back({u, t});
@@ -993,10 +1057,15 @@ namespace mfront {
 
   void BehaviourDescription::addMainVariable(const Gradient& g,
                                              const ThermodynamicForce& f) {
+    constexpr const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     tfel::raise_if(this->getBehaviourType() != BehaviourDescription::GENERALBEHAVIOUR,
                    "BehaviourDescription::addMainVariables: "
                    "one can not add a main variable if the behaviour "
                    "don't have a general behaviour type");
+    tfel::raise_if(
+        !this->allowsNewUserDefinedVariables(),
+        "BehaviourDescription::addMainVariables: "
+        "new variables are can't be defined after the first code block.");
     for (const auto& v : this->mvariables) {
       tfel::raise_if(g.name == v.first.name,
                      "BehaviourDescription::addMainVariables: "
@@ -1011,18 +1080,27 @@ namespace mfront {
                          "' has "
                          "already been declared");
     }
-    if (g.increment_known) {
-      this->registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-                               g.name);
-      this->registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-                               "d" + g.name);
+    if (Gradient::isIncrementKnown(g)) {
+      this->registerMemberName(h, g.name);
+      this->registerMemberName(h, "d" + g.name);
     } else {
-      this->registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-                               g.name + "0");
-      this->registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-                               g.name + "1");
+      this->registerMemberName(h, g.name + "0");
+      this->registerMemberName(h, g.name + "1");
     }
-    this->registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS, f.name);
+    if (g.hasGlossaryName()) {
+      this->registerGlossaryName(h, g.name, g.getExternalName());
+    }
+    if (g.hasEntryName()) {
+      this->registerEntryName(h, g.name, g.getExternalName());
+    }
+    this->registerMemberName(h, f.name);
+    if (f.hasGlossaryName()) {
+      this->registerGlossaryName(h, f.name, f.getExternalName());
+    }
+    if (f.hasEntryName()) {
+      this->registerEntryName(h, f.name, f.getExternalName());
+    }
+    this->registerMemberName(h, getTangentOperatorBlockName({f, g}));
     this->mvariables.push_back({g, f});
   }  // end of BehaviourDescription::addMainVariables
 
@@ -1095,8 +1173,8 @@ namespace mfront {
   bool BehaviourDescription::isGradientIncrementName(
       const std::string& n) const {
     for (const auto& v : this->getMainVariables()) {
-      const auto& dv = v.first;
-      if ("d" + dv.name == n) {
+      const auto& g = v.first;
+      if ((Gradient::isIncrementKnown(g)) && ("d" + g.name == n)) {
         return true;
       }
     }
@@ -1125,6 +1203,59 @@ namespace mfront {
     return {ov, of};
   }  // end of BehaviourDescription::getMainVariablesSize
 
+  std::string BehaviourDescription::getTangentOperatorBlockName(
+      const std::pair<VariableDescription, VariableDescription>& block) const {
+    const auto& a = block.first;
+    const auto& b = block.second;
+    if (this->isGradientName(b.name)) {
+      if (Gradient::isIncrementKnown(b)) {
+        return "d" + a.name + "_dd" + b.name;
+      } else {
+        return "d" + a.name + "_d" + b.name + "1";
+      }
+    }
+    return "d" + a.name + "_dd" + b.name;
+  } // end of BehaviourDescription::getTangentOperatorBlockName
+
+  void BehaviourDescription::addTangentOperatorBlock(const std::string& bn) {
+    tfel::raise_if(
+        this->getBehaviourType() != BehaviourDescription::GENERALBEHAVIOUR,
+        "BehaviourDescription::addTangentOperatorBlock: "
+        "the behaviour must be generic "
+        "to add a tangent operator block");
+    // check that the operator blocks exists
+    const auto b = decomposeAdditionalTangentOperatorBlock(*this, bn);
+    for (const auto& eb : this->getTangentOperatorBlocks()) {
+      if (bn == this->getTangentOperatorBlockName(eb)) {
+        tfel::raise(
+            "BehaviourDescription::addTangentOperatorBlock: "
+            "tangent operator block '" +
+            bn + "' already defined");
+      }
+    }
+    this->additionalTangentOperatorBlocks.push_back(b);
+  }  // end of addTangentOperatorBlock
+
+  void BehaviourDescription::addTangentOperatorBlocks(
+      const std::vector<std::string>& blocks) {
+    for (const auto& b : blocks) {
+      this->addTangentOperatorBlock(b);
+    }
+  }  // end of BehaviourDescription::addTangentOperatorBlocks
+
+  const std::vector<std::pair<VariableDescription,VariableDescription>>
+  BehaviourDescription::getTangentOperatorBlocks() const {
+    std::vector<std::pair<VariableDescription, VariableDescription>> blocks;
+    for (const auto& f : this->getMainVariables()) {
+      for (const auto& g : this->getMainVariables()) {
+        blocks.push_back({f.second, g.first});
+      }
+    }
+    blocks.insert(blocks.end(), this->additionalTangentOperatorBlocks.begin(),
+                  this->additionalTangentOperatorBlocks.end());
+    return blocks;
+  }  // end of BehaviourDescription::getTangentOperatorBlocks
+
   void BehaviourDescription::setThermalExpansionCoefficient(
       MaterialProperty a) {
     using tfel::glossary::Glossary;
@@ -1143,1525 +1274,1569 @@ namespace mfront {
     checkThermalExpansionCoefficientArgument(
         *this, a, Glossary::ThermalExpansion, "alpha");
     this->thermalExpansionCoefficients.push_back(a);
-  }  // end of BehaviourDescription::setThermalExpansionCoefficient
+    }  // end of BehaviourDescription::setThermalExpansionCoefficient
 
-  void BehaviourDescription::setThermalExpansionCoefficients(
-      MaterialProperty a1, MaterialProperty a2, MaterialProperty a3) {
-    using tfel::glossary::Glossary;
-    auto throw_if = [](const bool c, const std::string& m) {
-      tfel::raise_if(
-          c, "BehaviourDescription::setThermalExpansionCoefficients: " + m);
-    };
-    throw_if(!this->allowsNewUserDefinedVariables(),
-             "new variables are can't be defined after the first code block.");
-    throw_if(this->areThermalExpansionCoefficientsDefined(),
-             "thermal expansion coefficient already defined");
-    throw_if(this->getSymmetryType() != mfront::ORTHOTROPIC,
-             "the behaviour is not orthotropic.");
-    this->setAttribute(
-        ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-        BehaviourDescription::requiresThermalExpansionCoefficientTensor, false);
-    checkThermalExpansionCoefficientArgument(
-        *this, a1, Glossary::ThermalExpansion1, "alpha1");
-    checkThermalExpansionCoefficientArgument(
-        *this, a2, Glossary::ThermalExpansion2, "alpha2");
-    checkThermalExpansionCoefficientArgument(
-        *this, a3, Glossary::ThermalExpansion3, "alpha3");
-    this->thermalExpansionCoefficients.push_back(a1);
-    this->thermalExpansionCoefficients.push_back(a2);
-    this->thermalExpansionCoefficients.push_back(a3);
-  }  // end of BehaviourDescription::setThermalExpansionCoefficients
-
-  void BehaviourDescription::addStressFreeExpansion(
-      const Hypothesis h, const StressFreeExpansionDescription& sfed) {
-    auto throw_if = [](const bool c, const std::string& m) {
-      tfel::raise_if(c, "BehaviourDescription::addStressFreeExpansion: " + m);
-    };
-    throw_if(!this->allowsNewUserDefinedVariables(),
-             "new variables are can't be defined after the first code block.");
-    if ((sfed.is<BehaviourData::AxialGrowth>()) ||
-        (sfed.is<BehaviourData::OrthotropicStressFreeExpansion>()) ||
-        (sfed.is<BehaviourData::OrthotropicStressFreeExpansionII>())) {
-      throw_if((this->getBehaviourType() !=
-                BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) &&
-                   (this->getBehaviourType() !=
-                    BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR),
-               "AxialGrowth or OrthotropicStressFreeExpansion "
-               "are only valid for small or "
-               "finite strain behaviours");
+    void BehaviourDescription::setThermalExpansionCoefficients(
+        MaterialProperty a1, MaterialProperty a2, MaterialProperty a3) {
+      using tfel::glossary::Glossary;
+      auto throw_if = [](const bool c, const std::string& m) {
+        tfel::raise_if(
+            c, "BehaviourDescription::setThermalExpansionCoefficients: " + m);
+      };
+      throw_if(
+          !this->allowsNewUserDefinedVariables(),
+          "new variables are can't be defined after the first code block.");
+      throw_if(this->areThermalExpansionCoefficientsDefined(),
+               "thermal expansion coefficient already defined");
       throw_if(this->getSymmetryType() != mfront::ORTHOTROPIC,
-               "axial growth is only valid for orthotropic behaviour");
-    } else {
-      throw_if((!sfed.is<BehaviourData::VolumeSwellingStressFreeExpansion>()) &&
-                   (!sfed.is<BehaviourData::Relocation>()) &&
-                   (!sfed.is<BehaviourData::IsotropicStressFreeExpansion>()),
-               "internal error, unsupported stress free expansion type");
-      throw_if((this->getBehaviourType() !=
-                BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) &&
-                   (this->getBehaviourType() !=
-                    BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR),
-               "Isotropic, Relocation or VolumeSwelling "
-               "are only valid for small or "
-               "finite strain behaviours");
-    }
-    if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
-      this->d.addStressFreeExpansion(sfed);
-      for (auto& md : this->sd) {
-        md.second->addStressFreeExpansion(sfed);
-      }
-    } else {
-      this->getBehaviourData2(h).addStressFreeExpansion(sfed);
-    }
-  }  // end of BehaviourDescription::addStressFreeExpansion
+               "the behaviour is not orthotropic.");
+      this->setAttribute(
+          ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+          BehaviourDescription::requiresThermalExpansionCoefficientTensor,
+          false);
+      checkThermalExpansionCoefficientArgument(
+          *this, a1, Glossary::ThermalExpansion1, "alpha1");
+      checkThermalExpansionCoefficientArgument(
+          *this, a2, Glossary::ThermalExpansion2, "alpha2");
+      checkThermalExpansionCoefficientArgument(
+          *this, a3, Glossary::ThermalExpansion3, "alpha3");
+      this->thermalExpansionCoefficients.push_back(a1);
+      this->thermalExpansionCoefficients.push_back(a2);
+      this->thermalExpansionCoefficients.push_back(a3);
+    }  // end of BehaviourDescription::setThermalExpansionCoefficients
 
-  bool BehaviourDescription::requiresStressFreeExpansionTreatment(
-      const Hypothesis h) const {
-    return ((this->areThermalExpansionCoefficientsDefined()) ||
-            (!this->getBehaviourData(h)
-                  .getStressFreeExpansionDescriptions()
-                  .empty()) ||
-            (this->hasCode(h, BehaviourData::ComputeStressFreeExpansion)));
-  }  // end of BehaviourDescription::requiresStressFreeExpansionTreatment
-
-  bool BehaviourDescription::areThermalExpansionCoefficientsDefined() const {
-    return !this->thermalExpansionCoefficients.empty();
-  }  // end of BehaviourDescription::areThermalExpansionCoefficientsDefined
-
-  const std::vector<BehaviourDescription::MaterialProperty>&
-  BehaviourDescription::getThermalExpansionCoefficients() const {
-    tfel::raise_if(!this->areThermalExpansionCoefficientsDefined(),
-                   "BehaviourDescription::getThermalExpansionCoefficients: "
-                   "no thermal expansion coefficients defined");
-    return this->thermalExpansionCoefficients;
-  }
-
-  void BehaviourDescription::setSlipSystems(const std::vector<SlipSystem>& ss) {
-    auto throw_if = [](const bool c, const std::string& m) {
-      tfel::raise_if(c, "BehaviourDescription::setSlipSystems: " + m);
-    };
-    const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-    throw_if(!this->allowsNewUserDefinedVariables(),
-             "new variables are can't be defined after the first code block.");
-    throw_if(ss.empty(), "empty number of slip systems specified");
-    throw_if(this->getSymmetryType() != mfront::ORTHOTROPIC,
-             "the behaviour is not orthotropic");
-    throw_if(this->getSymmetryType() != mfront::ORTHOTROPIC,
-             "the behaviour is not orthotropic");
-    throw_if(!this->hasCrystalStructure(),
-             "crystal structure is not defined yet");
-    for (const auto& s : ss) {
-      auto& ssd = this->gs.get<SlipSystemsDescription>();
-      const auto nb = ssd.getNumberOfSlipSystemsFamilies();
-      if (s.is<SlipSystemsDescription::system3d>()) {
-        const auto& s3d = s.get<SlipSystemsDescription::system3d>();
-        ssd.addSlipSystemsFamily(s3d.burgers, s3d.plane);
+    void BehaviourDescription::addStressFreeExpansion(
+        const Hypothesis h, const StressFreeExpansionDescription& sfed) {
+      auto throw_if = [](const bool c, const std::string& m) {
+        tfel::raise_if(c, "BehaviourDescription::addStressFreeExpansion: " + m);
+      };
+      throw_if(
+          !this->allowsNewUserDefinedVariables(),
+          "new variables are can't be defined after the first code block.");
+      if ((sfed.is<BehaviourData::AxialGrowth>()) ||
+          (sfed.is<BehaviourData::OrthotropicStressFreeExpansion>()) ||
+          (sfed.is<BehaviourData::OrthotropicStressFreeExpansionII>())) {
+        throw_if((this->getBehaviourType() !=
+                  BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) &&
+                     (this->getBehaviourType() !=
+                      BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR),
+                 "AxialGrowth or OrthotropicStressFreeExpansion "
+                 "are only valid for small or "
+                 "finite strain behaviours");
+        throw_if(this->getSymmetryType() != mfront::ORTHOTROPIC,
+                 "axial growth is only valid for orthotropic behaviour");
       } else {
-        throw_if(!s.is<SlipSystemsDescription::system4d>(),
-                 "internal error (unsupported slip system definition)");
-        const auto& s4d = s.get<SlipSystemsDescription::system4d>();
-        ssd.addSlipSystemsFamily(s4d.burgers, s4d.plane);
+        throw_if(
+            (!sfed.is<BehaviourData::VolumeSwellingStressFreeExpansion>()) &&
+                (!sfed.is<BehaviourData::Relocation>()) &&
+                (!sfed.is<BehaviourData::IsotropicStressFreeExpansion>()),
+            "internal error, unsupported stress free expansion type");
+        throw_if((this->getBehaviourType() !=
+                  BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) &&
+                     (this->getBehaviourType() !=
+                      BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR),
+                 "Isotropic, Relocation or VolumeSwelling "
+                 "are only valid for small or "
+                 "finite strain behaviours");
       }
-      const auto css = ssd.getSlipSystems(nb);
-      StaticVariableDescription v("int", "Nss" + std::to_string(nb), 0u,
-                                  static_cast<int>(css.size()));
+      if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
+        this->d.addStressFreeExpansion(sfed);
+        for (auto& md : this->sd) {
+          md.second->addStressFreeExpansion(sfed);
+        }
+      } else {
+        this->getBehaviourData2(h).addStressFreeExpansion(sfed);
+      }
+    }  // end of BehaviourDescription::addStressFreeExpansion
+
+    bool BehaviourDescription::requiresStressFreeExpansionTreatment(
+        const Hypothesis h) const {
+      return ((this->areThermalExpansionCoefficientsDefined()) ||
+              (!this->getBehaviourData(h)
+                    .getStressFreeExpansionDescriptions()
+                    .empty()) ||
+              (this->hasCode(h, BehaviourData::ComputeStressFreeExpansion)));
+    }  // end of BehaviourDescription::requiresStressFreeExpansionTreatment
+
+    bool BehaviourDescription::areThermalExpansionCoefficientsDefined() const {
+      return !this->thermalExpansionCoefficients.empty();
+    }  // end of BehaviourDescription::areThermalExpansionCoefficientsDefined
+
+    const std::vector<BehaviourDescription::MaterialProperty>&
+    BehaviourDescription::getThermalExpansionCoefficients() const {
+      tfel::raise_if(!this->areThermalExpansionCoefficientsDefined(),
+                     "BehaviourDescription::getThermalExpansionCoefficients: "
+                     "no thermal expansion coefficients defined");
+      return this->thermalExpansionCoefficients;
+    }
+
+    void BehaviourDescription::setSlipSystems(
+        const std::vector<SlipSystem>& ss) {
+      auto throw_if = [](const bool c, const std::string& m) {
+        tfel::raise_if(c, "BehaviourDescription::setSlipSystems: " + m);
+      };
+      const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+      throw_if(
+          !this->allowsNewUserDefinedVariables(),
+          "new variables are can't be defined after the first code block.");
+      throw_if(ss.empty(), "empty number of slip systems specified");
+      throw_if(this->getSymmetryType() != mfront::ORTHOTROPIC,
+               "the behaviour is not orthotropic");
+      throw_if(this->getSymmetryType() != mfront::ORTHOTROPIC,
+               "the behaviour is not orthotropic");
+      throw_if(!this->hasCrystalStructure(),
+               "crystal structure is not defined yet");
+      for (const auto& s : ss) {
+        auto& ssd = this->gs.get<SlipSystemsDescription>();
+        const auto nb = ssd.getNumberOfSlipSystemsFamilies();
+        if (s.is<SlipSystemsDescription::system3d>()) {
+          const auto& s3d = s.get<SlipSystemsDescription::system3d>();
+          ssd.addSlipSystemsFamily(s3d.burgers, s3d.plane);
+        } else {
+          throw_if(!s.is<SlipSystemsDescription::system4d>(),
+                   "internal error (unsupported slip system definition)");
+          const auto& s4d = s.get<SlipSystemsDescription::system4d>();
+          ssd.addSlipSystemsFamily(s4d.burgers, s4d.plane);
+        }
+        const auto css = ssd.getSlipSystems(nb);
+        StaticVariableDescription v("int", "Nss" + std::to_string(nb), 0u,
+                                    static_cast<int>(css.size()));
+        this->addStaticVariable(uh, v, BehaviourData::UNREGISTRED);
+      }
+      const auto& ssd = this->gs.get<SlipSystemsDescription>();
+      auto n = int{};
+      for (SlipSystemsDescription::size_type i = 0;
+           i != ssd.getNumberOfSlipSystemsFamilies(); ++i) {
+        const auto css = ssd.getSlipSystems(i);
+        n += static_cast<int>(css.size());
+      }
+      StaticVariableDescription v("int", "Nss", 0u, n);
       this->addStaticVariable(uh, v, BehaviourData::UNREGISTRED);
     }
-    const auto& ssd = this->gs.get<SlipSystemsDescription>();
-    auto n = int{};
-    for (SlipSystemsDescription::size_type i = 0;
-         i != ssd.getNumberOfSlipSystemsFamilies(); ++i) {
-      const auto css = ssd.getSlipSystems(i);
-      n += static_cast<int>(css.size());
-    }
-    StaticVariableDescription v("int", "Nss", 0u, n);
-    this->addStaticVariable(uh, v, BehaviourData::UNREGISTRED);
-  }
 
-  bool BehaviourDescription::areSlipSystemsDefined() const {
-    if (this->gs.empty()) {
-      return false;
-    }
-    auto& ssd = this->gs.get<SlipSystemsDescription>();
-    return ssd.getNumberOfSlipSystemsFamilies() != 0;
-  }  // end of BehaviourDescription::areSlipSystemsDefined
-
-  const tfel::material::SlipSystemsDescription&
-  BehaviourDescription::getSlipSystems() const {
-    tfel::raise_if(!this->areSlipSystemsDefined(),
-                   "BehaviourDescription::getSlipSystems: "
-                   "no slip systems defined");
-    return this->gs;
-  }  // end of BehaviourDescription::getSlipSystems
-
-  BehaviourDescription::InteractionMatrixStructure
-  BehaviourDescription::getInteractionMatrixStructure() const {
-    tfel::raise_if(!this->areSlipSystemsDefined(),
-                   "BehaviourDescription::getInteractionMatrixStructure: "
-                   "no slip system defined");
-    return this->gs.get<SlipSystemsDescription>()
-        .getInteractionMatrixStructure();
-  }  // end of BehaviourDescription::getInteractionMatrix
-
-  bool BehaviourDescription::hasInteractionMatrix() const {
-    if (!this->gs.is<SlipSystemsDescription>()) {
-      return false;
-    }
-    return this->gs.get<SlipSystemsDescription>().hasInteractionMatrix();
-  }  // end of BehaviourDescription::hasInteractionMatrix
-
-  void BehaviourDescription::setInteractionMatrix(
-      const std::vector<long double>& m) {
-    auto throw_if = [](const bool c, const std::string& msg) {
-      tfel::raise_if(c, "BehaviourDescription::setInteractionMatrix: " + msg);
-    };
-    throw_if(!this->allowsNewUserDefinedVariables(),
-             "new variables are can't be defined after the first code block.");
-    throw_if(!this->areSlipSystemsDefined(), "no slip system defined");
-    this->gs.get<SlipSystemsDescription>().setInteractionMatrix(m);
-  }  // end of BehaviourDescription::setInteractionMatrix
-
-  bool BehaviourDescription::hasDislocationsMeanFreePathInteractionMatrix()
-      const {
-    if (!this->gs.is<SlipSystemsDescription>()) {
-      return false;
-    }
-    return this->gs.get<SlipSystemsDescription>()
-        .hasDislocationsMeanFreePathInteractionMatrix();
-  }  // end of
-     // BehaviourDescription::hasDislocationsMeanFreePathInteractionMatrix
-
-  void BehaviourDescription::setDislocationsMeanFreePathInteractionMatrix(
-      const std::vector<long double>& m) {
-    auto throw_if = [](const bool c, const std::string& msg) {
-      tfel::raise_if(c,
-                     "BehaviourDescription::"
-                     "setDislocationsMeanFreePathInteractionMatrix: " +
-                         msg);
-    };
-    throw_if(!this->allowsNewUserDefinedVariables(),
-             "new variables are can't be defined after the first code block.");
-    throw_if(!this->areSlipSystemsDefined(), "no slip system defined");
-    this->gs.get<SlipSystemsDescription>()
-        .setDislocationsMeanFreePathInteractionMatrix(m);
-  }  // end of
-     // BehaviourDescription::setDislocationsMeanFreePathInteractionMatrix
-
-  void BehaviourDescription::setUseQt(const bool b) {
-    tfel::raise_if(this->use_qt,
-                   "BehaviourDescription::setUseQt: "
-                   "setUseQt already called");
-    this->use_qt = b;
-  }  // end of BehaviourDescription::setUseQt
-
-  bool BehaviourDescription::useQt() const {
-    return this->use_qt;
-  }  // end of BehaviourDescription::useQt
-
-  std::string BehaviourDescription::getTangentOperatorType() const {
-    if (this->getBehaviourType() == GENERALBEHAVIOUR) {
-      auto msizes = this->getMainVariablesSize();
-      std::ostringstream t;
-      t << "tfel::math::tmatrix<" << msizes.first << "," << msizes.second
-        << ",real>";
-      return t.str();
-    } else if (this->getBehaviourType() == STANDARDSTRAINBASEDBEHAVIOUR) {
-      return "StiffnessTensor";
-    } else if (this->getBehaviourType() == STANDARDFINITESTRAINBEHAVIOUR) {
-      return "FiniteStrainBehaviourTangentOperator<N,stress>";
-    } else if (this->getBehaviourType() == COHESIVEZONEMODEL) {
-      return "tfel::math::tmatrix<N,N,stress>";
-    }
-    tfel::raise(
-        "BehaviourDescription::getStiffnessOperatorType: "
-        "internal error (unsupported behaviour type)");
-  }  // end of BehaviourDescription::getStiffnessOperatorType
-
-  const std::vector<BehaviourData::StressFreeExpansionDescription>&
-  BehaviourDescription::getStressFreeExpansionDescriptions(
-      const Hypothesis h) const {
-    return this->getBehaviourData(h).getStressFreeExpansionDescriptions();
-  }  // end of BehaviourDescription::getStressFreeExpansionDescriptions
-
-  std::string BehaviourDescription::getStressFreeExpansionType() const {
-    if ((this->getBehaviourType() == STANDARDSTRAINBASEDBEHAVIOUR) ||
-        (this->getBehaviourType() == STANDARDFINITESTRAINBEHAVIOUR)) {
-      return "StrainStensor";
-    }
-    tfel::raise(
-        "BehaviourDescription::getStressFreeExpansionType: "
-        "internal error (unsupported behaviour type)");
-  }  // end of BehaviourDescription::getStressFreeExpansionType
-
-  bool BehaviourDescription::isStressFreeExansionAnisotropic(
-      const Hypothesis h) const {
-    return this->getBehaviourData(h).isStressFreeExansionAnisotropic();
-  }  // end of BehaviourDescription::isStressFreeExansionAnisotropic
-
-  void BehaviourDescription::checkModellingHypothesis(
-      const Hypothesis& h) const {
-    if (this->getModellingHypotheses().find(h) ==
-        this->getModellingHypotheses().end()) {
-      std::ostringstream msg;
-      msg << "BehaviourDescription::checkModellingHypothesis: "
-          << "modelling hypothesis '" << ModellingHypothesis::toString(h)
-          << "' is not supported. Refer to the documentation of "
-          << "the '@ModellingHypothesis' or "
-          << "the '@ModellingHypotheses' keywords for details.\n";
-      msg << "Supported modelling hypotheses are :";
-      for (const auto& lh : this->hypotheses) {
-        msg << "\n- '" << ModellingHypothesis::toString(lh) << "'";
-      }
-      tfel::raise(msg.str());
-    }
-  }  // end of BehaviourDescription::checkModellingHypothesis
-
-  bool BehaviourDescription::areModellingHypothesesDefined() const {
-    return !this->hypotheses.empty();
-  }  // end of BehaviourDescription::areModellingHypothesesDefined
-
-  const std::set<BehaviourDescription::Hypothesis>&
-  BehaviourDescription::getModellingHypotheses() const {
-    tfel::raise_if(this->hypotheses.empty(),
-                   "BehaviourDescription::getModellingHypotheses: "
-                   "hypothesis undefined yet");
-    return this->hypotheses;
-  }  // end of BehaviourDescription::getModellingHypotheses
-
-  std::set<BehaviourDescription::Hypothesis>
-  BehaviourDescription::getDistinctModellingHypotheses() const {
-    const auto& mh = this->getModellingHypotheses();
-    if (mh.size() == 1u) {
-      // if only one modelling hypothesis is supported, it is not
-      // considered as specialised, so we return it.
-      return mh;
-    }
-    std::set<Hypothesis> dh;
-    if (!this->areAllMechanicalDataSpecialised()) {
-      // We return UNDEFINEDHYPOTHESIS to take into account all the
-      // modelling hypotheses that were not specialised
-      dh.insert(ModellingHypothesis::UNDEFINEDHYPOTHESIS);
-    }
-    for (const auto& h : mh) {
-      if (this->hasSpecialisedMechanicalData(h)) {
-        dh.insert(h);
-      }
-    }
-    return dh;
-  }  // end of BehaviourDescription::getDistinctModellingHypotheses
-
-  bool BehaviourDescription::isModellingHypothesisSupported(
-      const Hypothesis h) const {
-    return this->getModellingHypotheses().count(h) != 0u;
-  }
-
-  void BehaviourDescription::setModellingHypotheses(
-      const std::set<Hypothesis>& mh, const bool b) {
-    constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-    auto throw_if = [](const bool c, const std::string& m) {
-      tfel::raise_if(c, "BehaviourDescription::setHypotheses: " + m);
-    };
-    // never ever trust a user
-    throw_if(mh.empty(), "empty set of modelling hypotheses specificied");
-    // never ever trust a user
-    throw_if(mh.find(uh) != mh.end(),
-             "undefined modelling hypothesis specified");
-    // check that the user did not already set the modelling hypotheses
-    throw_if(!this->hypotheses.empty(),
-             "supported modelling hypotheses have already been declared");
-    // check that if a specialised version of the behaviour
-    // is defined, it is present in the set of hypotheses defined here
-    for (const auto& ld : this->sd) {
-      throw_if(mh.find(ld.first) == mh.end(),
-               "partial specialisation of the behaviour exists for "
-               "the hypothesis '" +
-                   ModellingHypothesis::toString(ld.first) +
-                   "' "
-                   "which is not in the set of hypotheses which have to be "
-                   "supported by the behaviour.");
-    }
-    for (const auto h : this->requestedHypotheses) {
-      throw_if(
-          mh.find(h) == mh.end(),
-          "a description of the behaviour for "
-          "the hypothesis '" +
-              ModellingHypothesis::toString(h) +
-              "' "
-              "has been requested earlier, but this hypothesis is not "
-              "in the set of hypotheses which will to be "
-              "supported by the behaviour. This may lead to inconsistencies. "
-              "Cowardly aborting.");
-    }
-    if (this->hypotheses.empty()) {
-      if ((this->stypeIsDefined) &&
-          (this->getSymmetryType() == mfront::ORTHOTROPIC) &&
-          (this->oacIsDefined) && (this->getOrthotropicAxesConvention() ==
-                                   OrthotropicAxesConvention::PLATE)) {
-        for (const auto h : mh) {
-          throw_if((h != ModellingHypothesis::TRIDIMENSIONAL) &&
-                       (h != ModellingHypothesis::PLANESTRESS) &&
-                       (h != ModellingHypothesis::PLANESTRAIN) &&
-                       (h != ModellingHypothesis::GENERALISEDPLANESTRAIN),
-                   "Modelling hypothesis '" + ModellingHypothesis::toString(h) +
-                       "' is not compatible "
-                       "with the `Plate` orthotropic axes convention");
-        }
-      }
-      this->hypotheses.insert(mh.begin(), mh.end());
-    } else {
-      if (b) {
-        // find the intersection of the given hypotheses and the
-        // existing one
-        std::set<Hypothesis> nh;
-        for (const auto h : this->hypotheses) {
-          if (mh.find(h) != mh.end()) {
-            nh.insert(h);
-          }
-        }
-        throw_if(nh.empty(),
-                 "intersection of previously modelling hypotheses "
-                 "with the new ones is empty");
-        // as this is the intersection with previously defined
-        // hyppotheses, restrictions related to the orthotropic axes
-        // conditions does not have to be checked.
-        this->hypotheses.swap(nh);
-      } else {
-        throw_if(true,
-                 "supported modelling hypotheses have already been declared");
-      }
-    }
-  }  // end of BehaviourDescription::setModellingHypotheses
-
-  const std::vector<ModelDescription>&
-  BehaviourDescription::getModelsDescriptions() const {
-    return this->models;
-  }  // end of BehaviourDescription::getModelsDescriptions
-
-  void BehaviourDescription::addModelDescription(const ModelDescription& md) {
-    constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-    for (auto ov : md.outputs) {
-      VariableDescription dov{ov.type, "d" + ov.name, ov.arraySize,
-                              ov.lineNumber};
-      ov.setAttribute("ComputedByExternalModel", true, false);
-      this->addAuxiliaryStateVariable(uh, ov, BehaviourData::UNREGISTRED);
-      this->addLocalVariable(uh, dov, BehaviourData::UNREGISTRED);
-    }
-    this->models.push_back(md);
-  }  // end of BehaviourDescription::addModelDescription
-
-  void BehaviourDescription::addMaterialProperties(
-      const Hypothesis h,
-      const VariableDescriptionContainer& v,
-      const BehaviourData::RegistrationStatus s) {
-    using mptr = void (mfront::BehaviourData::*)(
-        const mfront::VariableDescription&,
-        const BehaviourData::RegistrationStatus);
-    mptr f = &BehaviourData::addMaterialProperty;
-    this->addVariables(h, v, s, f);
-  }  // end of BehaviourDescription::addMaterialProperties
-
-  void BehaviourDescription::addMaterialProperty(
-      const Hypothesis h,
-      const VariableDescription& v,
-      const BehaviourData::RegistrationStatus s) {
-    using mptr = void (mfront::BehaviourData::*)(
-        const mfront::VariableDescription&,
-        const BehaviourData::RegistrationStatus);
-    mptr f = &BehaviourData::addMaterialProperty;
-    this->addVariable(h, v, s, f);
-  }
-
-  void BehaviourDescription::addIntegrationVariables(
-      const Hypothesis h,
-      const VariableDescriptionContainer& v,
-      const BehaviourData::RegistrationStatus s) {
-    using mptr = void (mfront::BehaviourData::*)(
-        const mfront::VariableDescription&,
-        const BehaviourData::RegistrationStatus);
-    mptr f = &BehaviourData::addIntegrationVariable;
-    this->addVariables(h, v, s, f);
-  }
-
-  void BehaviourDescription::addStateVariables(
-      const Hypothesis h,
-      const VariableDescriptionContainer& v,
-      const BehaviourData::RegistrationStatus s) {
-    using mptr = void (mfront::BehaviourData::*)(
-        const mfront::VariableDescription&,
-        const BehaviourData::RegistrationStatus);
-    mptr f = &BehaviourData::addStateVariable;
-    this->addVariables(h, v, s, f);
-  }
-
-  void BehaviourDescription::addIntegrationVariable(
-      const Hypothesis h,
-      const VariableDescription& v,
-      const BehaviourData::RegistrationStatus s) {
-    using mptr = void (mfront::BehaviourData::*)(
-        const mfront::VariableDescription&,
-        const BehaviourData::RegistrationStatus);
-    mptr f = &BehaviourData::addIntegrationVariable;
-    this->addVariable(h, v, s, f);
-  }
-
-  void BehaviourDescription::addStateVariable(
-      const Hypothesis h,
-      const VariableDescription& v,
-      const BehaviourData::RegistrationStatus s) {
-    using mptr = void (mfront::BehaviourData::*)(
-        const mfront::VariableDescription&,
-        const BehaviourData::RegistrationStatus);
-    mptr f = &BehaviourData::addStateVariable;
-    this->addVariable(h, v, s, f);
-  }
-
-  void BehaviourDescription::addAuxiliaryStateVariables(
-      const Hypothesis h,
-      const VariableDescriptionContainer& v,
-      const BehaviourData::RegistrationStatus s) {
-    using mptr = void (mfront::BehaviourData::*)(
-        const mfront::VariableDescription&,
-        const BehaviourData::RegistrationStatus);
-    mptr f = &BehaviourData::addAuxiliaryStateVariable;
-    this->addVariables(h, v, s, f);
-  }
-
-  void BehaviourDescription::addAuxiliaryStateVariable(
-      const Hypothesis h,
-      const VariableDescription& v,
-      const BehaviourData::RegistrationStatus s) {
-    using mptr = void (mfront::BehaviourData::*)(
-        const mfront::VariableDescription&,
-        const BehaviourData::RegistrationStatus);
-    mptr f = &BehaviourData::addAuxiliaryStateVariable;
-    this->addVariable(h, v, s, f);
-  }
-
-  void BehaviourDescription::addExternalStateVariables(
-      const Hypothesis h,
-      const VariableDescriptionContainer& v,
-      const BehaviourData::RegistrationStatus s) {
-    using mptr = void (mfront::BehaviourData::*)(
-        const mfront::VariableDescription&,
-        const BehaviourData::RegistrationStatus);
-    mptr f = &BehaviourData::addExternalStateVariable;
-    this->addVariables(h, v, s, f);
-  }
-
-  void BehaviourDescription::addExternalStateVariable(
-      const Hypothesis h,
-      const VariableDescription& v,
-      const BehaviourData::RegistrationStatus s) {
-    using mptr = void (mfront::BehaviourData::*)(
-        const mfront::VariableDescription&,
-        const BehaviourData::RegistrationStatus);
-    mptr f = &BehaviourData::addExternalStateVariable;
-    this->addVariable(h, v, s, f);
-  }
-
-  void BehaviourDescription::addLocalVariables(
-      const Hypothesis h,
-      const VariableDescriptionContainer& v,
-      const BehaviourData::RegistrationStatus s) {
-    using mptr = void (mfront::BehaviourData::*)(
-        const mfront::VariableDescription&,
-        const BehaviourData::RegistrationStatus);
-    mptr f = &BehaviourData::addLocalVariable;
-    this->addVariables(h, v, s, f);
-  }
-
-  void BehaviourDescription::addLocalVariable(
-      const Hypothesis h,
-      const VariableDescription& v,
-      const BehaviourData::RegistrationStatus s) {
-    using mptr = void (mfront::BehaviourData::*)(
-        const mfront::VariableDescription&,
-        const BehaviourData::RegistrationStatus);
-    mptr f = &BehaviourData::addLocalVariable;
-    this->addVariable(h, v, s, f);
-  }
-
-  void BehaviourDescription::addParameter(
-      const Hypothesis h,
-      const VariableDescription& v,
-      const BehaviourData::RegistrationStatus s) {
-    using mptr = void (mfront::BehaviourData::*)(
-        const mfront::VariableDescription&,
-        const BehaviourData::RegistrationStatus);
-    mptr f = &BehaviourData::addParameter;
-    this->addVariable(h, v, s, f);
-  }
-
-  void BehaviourDescription::setVariableAttribute(const Hypothesis h,
-                                                  const std::string& v,
-                                                  const std::string& n,
-                                                  const VariableAttribute& a,
-                                                  const bool b) {
-    auto set = [&v, &n, &a, b](BehaviourData& bd) {
-      bd.setVariableAttribute(v, n, a, b);
-    };
-    if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
-      set(this->d);
-      for (auto md : this->sd) {
-        set(*(md.second));
-      }
-    } else {
-      set(this->getBehaviourData2(h));
-    }
-  }  // end of BehaviourDescription::setVariableAttribute
-
-  bool BehaviourDescription::hasGlossaryName(const Hypothesis h,
-                                             const std::string& v) const {
-    return this->getData(h, &BehaviourData::hasGlossaryName, v);
-  }  // end of BehaviourDescription::hasGlossaryName
-
-  bool BehaviourDescription::hasEntryName(const Hypothesis h,
-                                          const std::string& v) const {
-    return this->getData(h, &BehaviourData::hasEntryName, v);
-  }  // end of BehaviourDescription::hasEntryName
-
-  bool BehaviourDescription::hasParameter(const Hypothesis h,
-                                          const std::string& v) const {
-    return this->getData(h, &BehaviourData::hasParameter, v);
-  }  // end of BehaviourDescription::hasParameter
-
-  bool BehaviourDescription::hasParameters(const Hypothesis h) const {
-    return this->getBehaviourData(h).hasParameters();
-  }  // end of BehaviourDescription::hasParameters
-
-  bool BehaviourDescription::hasParameters() const {
-    if (this->d.hasParameters()) {
-      return true;
-    }
-    for (const auto& ld : this->sd) {
-      if (ld.second->hasParameters()) {
-        return true;
-      }
-    }
-    return false;
-  }  // end of BehaviourDescription::hasParameters
-
-  void BehaviourDescription::setParameterDefaultValue(const Hypothesis h,
-                                                      const std::string& n,
-                                                      const double v) {
-    void (BehaviourData::*mptr)(const std::string&, const double);
-    mptr = &BehaviourData::setParameterDefaultValue;
-    this->callBehaviourData(h, mptr, n, v, true);
-  }
-
-  void BehaviourDescription::setParameterDefaultValue(const Hypothesis h,
-                                                      const std::string& n,
-                                                      const unsigned short i,
-                                                      const double v) {
-    void (BehaviourData::*m)(const std::string&, const unsigned short,
-                             const double) =
-        &BehaviourData::setParameterDefaultValue;
-    if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
-      (this->d.*m)(n, i, v);
-      for (auto md : this->sd) {
-        (md.second.get()->*m)(n, i, v);
-      }
-    } else {
-      (this->getBehaviourData2(h).*m)(n, i, v);
-    }
-  }
-
-  void BehaviourDescription::setParameterDefaultValue(const Hypothesis h,
-                                                      const std::string& n,
-                                                      const int v) {
-    void (BehaviourData::*mptr)(const std::string&, const int v);
-    mptr = &BehaviourData::setParameterDefaultValue;
-    this->callBehaviourData(h, mptr, n, v, true);
-  }
-
-  void BehaviourDescription::setParameterDefaultValue(const Hypothesis h,
-                                                      const std::string& n,
-                                                      const unsigned short v) {
-    void (BehaviourData::*mptr)(const std::string&, const unsigned short v);
-    mptr = &BehaviourData::setParameterDefaultValue;
-    this->callBehaviourData(h, mptr, n, v, true);
-  }
-
-  unsigned short BehaviourDescription::getUnsignedShortParameterDefaultValue(
-      const Hypothesis h, const std::string& n) const {
-    return this->getData(
-        h, &BehaviourData::getUnsignedShortParameterDefaultValue, n);
-  }  // end of BehaviourDescription::getUnsignedShortParameterDefaultValue
-
-  int BehaviourDescription::getIntegerParameterDefaultValue(
-      const Hypothesis h, const std::string& n) const {
-    return this->getData(h, &BehaviourData::getIntegerParameterDefaultValue, n);
-  }  // end of BehaviourDescription::getIntegerParameterDefaultValue
-
-  double BehaviourDescription::getFloattingPointParameterDefaultValue(
-      const Hypothesis h, const std::string& n) const {
-    return this->getData(
-        h, &BehaviourData::getFloattingPointParameterDefaultValue, n);
-  }  // end of BehaviourDescription::getFloattingPointParameterDefaultValue
-
-  double BehaviourDescription::getFloattingPointParameterDefaultValue(
-      const Hypothesis h, const std::string& n, const unsigned short i) const {
-    return this->getBehaviourData(h).getFloattingPointParameterDefaultValue(n,
-                                                                            i);
-  }  // end of BehaviourDescription::getFloattingPointParameterDefaultValue
-
-  void BehaviourDescription::addStaticVariable(
-      const Hypothesis h,
-      const StaticVariableDescription& v,
-      const BehaviourData::RegistrationStatus s) {
-    if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
-      this->d.addStaticVariable(v, s);
-      for (const auto& md : this->sd) {
-        md.second->addStaticVariable(v, s);
-      }
-    } else {
-      this->getBehaviourData2(h).addStaticVariable(v, s);
-    }
-  }  // end of BehaviourDescription::addStaticVariable
-
-  int BehaviourDescription::getIntegerConstant(const Hypothesis h,
-                                               const std::string& n) const {
-    return this->getData(h, &BehaviourData::getIntegerConstant, n);
-  }  // end of BehaviourDescription::getIntegerConstant
-
-  void BehaviourDescription::addVariables(
-      const Hypothesis h,
-      const VariableDescriptionContainer& v,
-      const BehaviourData::RegistrationStatus s,
-      void (BehaviourData::*m)(const VariableDescription&,
-                               const BehaviourData::RegistrationStatus)) {
-    if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
-      this->addVariables(this->d, v, s, m);
-      for (auto& md : this->sd) {
-        this->addVariables(*(md.second), v, s, m);
-      }
-    } else {
-      this->addVariables(this->getBehaviourData2(h), v, s, m);
-    }
-  }
-
-  void BehaviourDescription::addVariable(
-      const Hypothesis h,
-      const VariableDescription& v,
-      const BehaviourData::RegistrationStatus s,
-      void (BehaviourData::*m)(const VariableDescription&,
-                               const BehaviourData::RegistrationStatus)) {
-    if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
-      this->addVariable(this->d, v, s, m);
-      for (auto& md : this->sd) {
-        this->addVariable(*(md.second), v, s, m);
-      }
-    } else {
-      this->addVariable(this->getBehaviourData2(h), v, s, m);
-    }
-  }
-
-  void BehaviourDescription::addVariables(
-      BehaviourData& b,
-      const VariableDescriptionContainer& v,
-      const BehaviourData::RegistrationStatus s,
-      void (BehaviourData::*m)(const VariableDescription&,
-                               const BehaviourData::RegistrationStatus)) {
-    for (const auto& e : v) {
-      this->addVariable(b, e, s, m);
-    }
-  }
-
-  void BehaviourDescription::addVariable(
-      BehaviourData& b,
-      const VariableDescription& v,
-      const BehaviourData::RegistrationStatus s,
-      void (BehaviourData::*m)(const VariableDescription&,
-                               const BehaviourData::RegistrationStatus)) {
-    (b.*m)(v, s);
-  }
-
-  bool BehaviourDescription::areAllMechanicalDataSpecialised() const {
-    return this->getModellingHypotheses().size() == this->sd.size();
-  }  // end of BehaviourDescription::areAllMechanicalDataSpecialised
-
-  bool BehaviourDescription::areAllMechanicalDataSpecialised(
-      const std::set<Hypothesis>& h) const {
-    for (const auto& mh : h) {
-      if (!this->hasSpecialisedMechanicalData(mh)) {
+    bool BehaviourDescription::areSlipSystemsDefined() const {
+      if (this->gs.empty()) {
         return false;
       }
-    }
-    return true;
-  }  // end of BehaviourDescription::areAllMechanicalDataSpecialised
+      auto& ssd = this->gs.get<SlipSystemsDescription>();
+      return ssd.getNumberOfSlipSystemsFamilies() != 0;
+    }  // end of BehaviourDescription::areSlipSystemsDefined
 
-  bool BehaviourDescription::hasSpecialisedMechanicalData(
-      const Hypothesis h) const {
-    tfel::raise_if(this->getModellingHypotheses().find(h) ==
-                       this->getModellingHypotheses().end(),
-                   "BehaviourDescription::areAllMechanicalDataSpecialised: "
-                   "hypothesis '" +
-                       ModellingHypothesis::toString(h) + "' is not supported");
-    return this->sd.find(h) != this->sd.end();
-  }
+    const tfel::material::SlipSystemsDescription&
+    BehaviourDescription::getSlipSystems() const {
+      tfel::raise_if(!this->areSlipSystemsDefined(),
+                     "BehaviourDescription::getSlipSystems: "
+                     "no slip systems defined");
+      return this->gs;
+    }  // end of BehaviourDescription::getSlipSystems
 
-  void BehaviourDescription::requiresTVectorOrVectorIncludes(
-      bool& b1, bool& b2, const BehaviourData& bd) const {
-    for (const auto& v : bd.getMaterialProperties()) {
-      if (v.arraySize > 1) {
-        if (this->useDynamicallyAllocatedVector(v.arraySize)) {
-          b2 = true;
-        } else {
-          b1 = true;
+    BehaviourDescription::InteractionMatrixStructure
+    BehaviourDescription::getInteractionMatrixStructure() const {
+      tfel::raise_if(!this->areSlipSystemsDefined(),
+                     "BehaviourDescription::getInteractionMatrixStructure: "
+                     "no slip system defined");
+      return this->gs.get<SlipSystemsDescription>()
+          .getInteractionMatrixStructure();
+    }  // end of BehaviourDescription::getInteractionMatrix
+
+    bool BehaviourDescription::hasInteractionMatrix() const {
+      if (!this->gs.is<SlipSystemsDescription>()) {
+        return false;
+      }
+      return this->gs.get<SlipSystemsDescription>().hasInteractionMatrix();
+    }  // end of BehaviourDescription::hasInteractionMatrix
+
+    void BehaviourDescription::setInteractionMatrix(
+        const std::vector<long double>& m) {
+      auto throw_if = [](const bool c, const std::string& msg) {
+        tfel::raise_if(c, "BehaviourDescription::setInteractionMatrix: " + msg);
+      };
+      throw_if(
+          !this->allowsNewUserDefinedVariables(),
+          "new variables are can't be defined after the first code block.");
+      throw_if(!this->areSlipSystemsDefined(), "no slip system defined");
+      this->gs.get<SlipSystemsDescription>().setInteractionMatrix(m);
+    }  // end of BehaviourDescription::setInteractionMatrix
+
+    bool BehaviourDescription::hasDislocationsMeanFreePathInteractionMatrix()
+        const {
+      if (!this->gs.is<SlipSystemsDescription>()) {
+        return false;
+      }
+      return this->gs.get<SlipSystemsDescription>()
+          .hasDislocationsMeanFreePathInteractionMatrix();
+    }  // end of
+       // BehaviourDescription::hasDislocationsMeanFreePathInteractionMatrix
+
+    void BehaviourDescription::setDislocationsMeanFreePathInteractionMatrix(
+        const std::vector<long double>& m) {
+      auto throw_if = [](const bool c, const std::string& msg) {
+        tfel::raise_if(c,
+                       "BehaviourDescription::"
+                       "setDislocationsMeanFreePathInteractionMatrix: " +
+                           msg);
+      };
+      throw_if(
+          !this->allowsNewUserDefinedVariables(),
+          "new variables are can't be defined after the first code block.");
+      throw_if(!this->areSlipSystemsDefined(), "no slip system defined");
+      this->gs.get<SlipSystemsDescription>()
+          .setDislocationsMeanFreePathInteractionMatrix(m);
+    }  // end of
+       // BehaviourDescription::setDislocationsMeanFreePathInteractionMatrix
+
+    void BehaviourDescription::setUseQt(const bool b) {
+      tfel::raise_if(this->use_qt,
+                     "BehaviourDescription::setUseQt: "
+                     "setUseQt already called");
+      this->use_qt = b;
+    }  // end of BehaviourDescription::setUseQt
+
+    bool BehaviourDescription::useQt() const {
+      return this->use_qt;
+    }  // end of BehaviourDescription::useQt
+
+    bool BehaviourDescription::hasTangentOperator() const {
+      const auto& mvs = this->getMainVariables();
+      return (!mvs.empty()) || (!this->additionalTangentOperatorBlocks.empty());
+    }  // end of BehaviourDescription::hasTangentOperator
+
+    bool BehaviourDescription::hasTrivialTangentOperatorStructure() const {
+      const auto& mvs = this->getMainVariables();
+      return (mvs.size() == 1) && (mvs.front().first.arraySize == 1u) &&
+             (mvs.front().second.arraySize == 1u) &&
+             (this->additionalTangentOperatorBlocks.empty());
+    }  // end of BehaviourDescription::hasTrivialTangentOperatorStructure
+
+    std::string BehaviourDescription::computeTangentOperatorSize() const {
+      const auto& blocks = this->getTangentOperatorBlocks();
+      if (blocks.empty()) {
+        return "0";
+      }
+      std::ostringstream t;
+      auto p = blocks.begin();
+      const auto pe = blocks.end();
+      t << "(" << p->first.getTypeSize() << ")"
+        << "*(" << p->second.getTypeSize() << ")";
+      ++p;
+      while (p != pe) {
+        t << "+"
+          << "(" << p->first.getTypeSize() << ")"
+          << "*(" << p->second.getTypeSize() << ")";
+        ++p;
+      }
+      return t.str();
+    }  // end of BehaviourDescription::computeTangentOperatorSize
+
+    std::string BehaviourDescription::getTangentOperatorType() const {
+      if (this->getBehaviourType() == GENERALBEHAVIOUR) {
+        const auto& mvs = this->getMainVariables();
+        if (this->hasTrivialTangentOperatorStructure()) {
+          const auto& mv = mvs.front();
+          const auto gflags = mv.first.getTypeFlag();
+          const auto fflags = mv.second.getTypeFlag();
+          auto throw_unmatch = [&mv] {
+            tfel::raise(
+                "BehaviourDescription::getTangentOperatorType: "
+                "gradient '" +
+                mv.first.name + "' is not conjugated with flux '" +
+                mv.second.name + "'");
+          };
+          if(gflags==SupportedTypes::SCALAR){
+            if (fflags != SupportedTypes::SCALAR) {
+              throw_unmatch();
+            }
+            return "real";
+          } else if(gflags==SupportedTypes::TVECTOR){
+            if (fflags != SupportedTypes::TVECTOR) {
+              throw_unmatch();
+            }
+            return "tfel::math::tmatrix<N,N,real>";
+          } else if (gflags == SupportedTypes::STENSOR) {
+            if (fflags != SupportedTypes::STENSOR) {
+              throw_unmatch();
+            }
+            return "tfel::math::st2tost2<N,real>";
+          } else if (gflags == SupportedTypes::TENSOR) {
+            if (fflags == SupportedTypes::STENSOR) {
+              return "tfel::math::t2tost2<N,real>";
+            } else if (fflags == SupportedTypes::TENSOR) {
+              return "tfel::math::t2tot2<N,real>";
+            } else {
+              throw_unmatch();
+            }
+          } else {
+            tfel::raise(
+                "BehaviourDescription::getTangentOperatorType: "
+                "unsupported type for gradient '" +
+                mv.first.name + "'");
+          }
+        }
+        return "tfel::math::tvector<" + this->computeTangentOperatorSize() +
+               ",real>";
+      } else if (this->getBehaviourType() == STANDARDSTRAINBASEDBEHAVIOUR) {
+        return "StiffnessTensor";
+      } else if (this->getBehaviourType() == STANDARDFINITESTRAINBEHAVIOUR) {
+        return "FiniteStrainBehaviourTangentOperator<N,stress>";
+      } else if (this->getBehaviourType() == COHESIVEZONEMODEL) {
+        return "tfel::math::tmatrix<N,N,stress>";
+      }
+      tfel::raise(
+          "BehaviourDescription::getStiffnessOperatorType: "
+          "internal error (unsupported behaviour type)");
+    }  // end of BehaviourDescription::getStiffnessOperatorType
+
+    const std::vector<BehaviourData::StressFreeExpansionDescription>&
+    BehaviourDescription::getStressFreeExpansionDescriptions(const Hypothesis h)
+        const {
+      return this->getBehaviourData(h).getStressFreeExpansionDescriptions();
+    }  // end of BehaviourDescription::getStressFreeExpansionDescriptions
+
+    std::string BehaviourDescription::getStressFreeExpansionType() const {
+      if ((this->getBehaviourType() == STANDARDSTRAINBASEDBEHAVIOUR) ||
+          (this->getBehaviourType() == STANDARDFINITESTRAINBEHAVIOUR)) {
+        return "StrainStensor";
+      }
+      tfel::raise(
+          "BehaviourDescription::getStressFreeExpansionType: "
+          "internal error (unsupported behaviour type)");
+    }  // end of BehaviourDescription::getStressFreeExpansionType
+
+    bool BehaviourDescription::isStressFreeExansionAnisotropic(
+        const Hypothesis h) const {
+      return this->getBehaviourData(h).isStressFreeExansionAnisotropic();
+    }  // end of BehaviourDescription::isStressFreeExansionAnisotropic
+
+    void BehaviourDescription::checkModellingHypothesis(const Hypothesis& h)
+        const {
+      if (this->getModellingHypotheses().find(h) ==
+          this->getModellingHypotheses().end()) {
+        std::ostringstream msg;
+        msg << "BehaviourDescription::checkModellingHypothesis: "
+            << "modelling hypothesis '" << ModellingHypothesis::toString(h)
+            << "' is not supported. Refer to the documentation of "
+            << "the '@ModellingHypothesis' or "
+            << "the '@ModellingHypotheses' keywords for details.\n";
+        msg << "Supported modelling hypotheses are :";
+        for (const auto& lh : this->hypotheses) {
+          msg << "\n- '" << ModellingHypothesis::toString(lh) << "'";
+        }
+        tfel::raise(msg.str());
+      }
+    }  // end of BehaviourDescription::checkModellingHypothesis
+
+    bool BehaviourDescription::areModellingHypothesesDefined() const {
+      return !this->hypotheses.empty();
+    }  // end of BehaviourDescription::areModellingHypothesesDefined
+
+    const std::set<BehaviourDescription::Hypothesis>&
+    BehaviourDescription::getModellingHypotheses() const {
+      tfel::raise_if(this->hypotheses.empty(),
+                     "BehaviourDescription::getModellingHypotheses: "
+                     "hypothesis undefined yet");
+      return this->hypotheses;
+    }  // end of BehaviourDescription::getModellingHypotheses
+
+    std::set<BehaviourDescription::Hypothesis>
+    BehaviourDescription::getDistinctModellingHypotheses() const {
+      const auto& mh = this->getModellingHypotheses();
+      if (mh.size() == 1u) {
+        // if only one modelling hypothesis is supported, it is not
+        // considered as specialised, so we return it.
+        return mh;
+      }
+      std::set<Hypothesis> dh;
+      if (!this->areAllMechanicalDataSpecialised()) {
+        // We return UNDEFINEDHYPOTHESIS to take into account all the
+        // modelling hypotheses that were not specialised
+        dh.insert(ModellingHypothesis::UNDEFINEDHYPOTHESIS);
+      }
+      for (const auto& h : mh) {
+        if (this->hasSpecialisedMechanicalData(h)) {
+          dh.insert(h);
         }
       }
-      if (b1 && b2) {
-        return;
-      }
+      return dh;
+    }  // end of BehaviourDescription::getDistinctModellingHypotheses
+
+    bool BehaviourDescription::isModellingHypothesisSupported(
+        const Hypothesis h) const {
+      return this->getModellingHypotheses().count(h) != 0u;
     }
-    for (const auto& v : bd.getIntegrationVariables()) {
-      if (v.arraySize > 1) {
-        if (this->useDynamicallyAllocatedVector(v.arraySize)) {
-          b2 = true;
+
+    void BehaviourDescription::setModellingHypotheses(
+        const std::set<Hypothesis>& mh, const bool b) {
+      constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+      auto throw_if = [](const bool c, const std::string& m) {
+        tfel::raise_if(c, "BehaviourDescription::setHypotheses: " + m);
+      };
+      // never ever trust a user
+      throw_if(mh.empty(), "empty set of modelling hypotheses specificied");
+      // never ever trust a user
+      throw_if(mh.find(uh) != mh.end(),
+               "undefined modelling hypothesis specified");
+      // check that the user did not already set the modelling hypotheses
+      throw_if(!this->hypotheses.empty(),
+               "supported modelling hypotheses have already been declared");
+      // check that if a specialised version of the behaviour
+      // is defined, it is present in the set of hypotheses defined here
+      for (const auto& ld : this->sd) {
+        throw_if(mh.find(ld.first) == mh.end(),
+                 "partial specialisation of the behaviour exists for "
+                 "the hypothesis '" +
+                     ModellingHypothesis::toString(ld.first) +
+                     "' "
+                     "which is not in the set of hypotheses which have to be "
+                     "supported by the behaviour.");
+      }
+      for (const auto h : this->requestedHypotheses) {
+        throw_if(mh.find(h) == mh.end(),
+                 "a description of the behaviour for "
+                 "the hypothesis '" +
+                     ModellingHypothesis::toString(h) +
+                     "' "
+                     "has been requested earlier, but this hypothesis is not "
+                     "in the set of hypotheses which will to be "
+                     "supported by the behaviour. This may lead to "
+                     "inconsistencies. "
+                     "Cowardly aborting.");
+      }
+      if (this->hypotheses.empty()) {
+        if ((this->stypeIsDefined) &&
+            (this->getSymmetryType() == mfront::ORTHOTROPIC) &&
+            (this->oacIsDefined) && (this->getOrthotropicAxesConvention() ==
+                                     OrthotropicAxesConvention::PLATE)) {
+          for (const auto h : mh) {
+            throw_if((h != ModellingHypothesis::TRIDIMENSIONAL) &&
+                         (h != ModellingHypothesis::PLANESTRESS) &&
+                         (h != ModellingHypothesis::PLANESTRAIN) &&
+                         (h != ModellingHypothesis::GENERALISEDPLANESTRAIN),
+                     "Modelling hypothesis '" +
+                         ModellingHypothesis::toString(h) +
+                         "' is not compatible "
+                         "with the `Plate` orthotropic axes convention");
+          }
+        }
+        this->hypotheses.insert(mh.begin(), mh.end());
+      } else {
+        if (b) {
+          // find the intersection of the given hypotheses and the
+          // existing one
+          std::set<Hypothesis> nh;
+          for (const auto h : this->hypotheses) {
+            if (mh.find(h) != mh.end()) {
+              nh.insert(h);
+            }
+          }
+          throw_if(nh.empty(),
+                   "intersection of previously modelling hypotheses "
+                   "with the new ones is empty");
+          // as this is the intersection with previously defined
+          // hyppotheses, restrictions related to the orthotropic axes
+          // conditions does not have to be checked.
+          this->hypotheses.swap(nh);
         } else {
-          b1 = true;
+          throw_if(true,
+                   "supported modelling hypotheses have already been declared");
         }
       }
-      if (b1 && b2) {
-        return;
+    }  // end of BehaviourDescription::setModellingHypotheses
+
+    const std::vector<ModelDescription>&
+    BehaviourDescription::getModelsDescriptions() const {
+      return this->models;
+    }  // end of BehaviourDescription::getModelsDescriptions
+
+    void BehaviourDescription::addModelDescription(const ModelDescription& md) {
+      constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+      for (auto ov : md.outputs) {
+        VariableDescription dov{ov.type, "d" + ov.name, ov.arraySize,
+                                ov.lineNumber};
+        ov.setAttribute("ComputedByExternalModel", true, false);
+        this->addAuxiliaryStateVariable(uh, ov, BehaviourData::UNREGISTRED);
+        this->addLocalVariable(uh, dov, BehaviourData::UNREGISTRED);
       }
+      this->models.push_back(md);
+    }  // end of BehaviourDescription::addModelDescription
+
+    void BehaviourDescription::addMaterialProperties(
+        const Hypothesis h, const VariableDescriptionContainer& v,
+        const BehaviourData::RegistrationStatus s) {
+      using mptr = void (mfront::BehaviourData::*)(
+          const mfront::VariableDescription&,
+          const BehaviourData::RegistrationStatus);
+      mptr f = &BehaviourData::addMaterialProperty;
+      this->addVariables(h, v, s, f);
+    }  // end of BehaviourDescription::addMaterialProperties
+
+    void BehaviourDescription::addMaterialProperty(
+        const Hypothesis h, const VariableDescription& v,
+        const BehaviourData::RegistrationStatus s) {
+      using mptr = void (mfront::BehaviourData::*)(
+          const mfront::VariableDescription&,
+          const BehaviourData::RegistrationStatus);
+      mptr f = &BehaviourData::addMaterialProperty;
+      this->addVariable(h, v, s, f);
     }
-    for (const auto& v : bd.getStateVariables()) {
-      if (v.arraySize > 1) {
-        if (this->useDynamicallyAllocatedVector(v.arraySize)) {
-          b2 = true;
-        } else {
-          b1 = true;
+
+    void BehaviourDescription::addIntegrationVariables(
+        const Hypothesis h, const VariableDescriptionContainer& v,
+        const BehaviourData::RegistrationStatus s) {
+      using mptr = void (mfront::BehaviourData::*)(
+          const mfront::VariableDescription&,
+          const BehaviourData::RegistrationStatus);
+      mptr f = &BehaviourData::addIntegrationVariable;
+      this->addVariables(h, v, s, f);
+    }
+
+    void BehaviourDescription::addStateVariables(
+        const Hypothesis h, const VariableDescriptionContainer& v,
+        const BehaviourData::RegistrationStatus s) {
+      using mptr = void (mfront::BehaviourData::*)(
+          const mfront::VariableDescription&,
+          const BehaviourData::RegistrationStatus);
+      mptr f = &BehaviourData::addStateVariable;
+      this->addVariables(h, v, s, f);
+    }
+
+    void BehaviourDescription::addIntegrationVariable(
+        const Hypothesis h, const VariableDescription& v,
+        const BehaviourData::RegistrationStatus s) {
+      using mptr = void (mfront::BehaviourData::*)(
+          const mfront::VariableDescription&,
+          const BehaviourData::RegistrationStatus);
+      mptr f = &BehaviourData::addIntegrationVariable;
+      this->addVariable(h, v, s, f);
+    }
+
+    void BehaviourDescription::addStateVariable(
+        const Hypothesis h, const VariableDescription& v,
+        const BehaviourData::RegistrationStatus s) {
+      using mptr = void (mfront::BehaviourData::*)(
+          const mfront::VariableDescription&,
+          const BehaviourData::RegistrationStatus);
+      mptr f = &BehaviourData::addStateVariable;
+      this->addVariable(h, v, s, f);
+    }
+
+    void BehaviourDescription::addAuxiliaryStateVariables(
+        const Hypothesis h, const VariableDescriptionContainer& v,
+        const BehaviourData::RegistrationStatus s) {
+      using mptr = void (mfront::BehaviourData::*)(
+          const mfront::VariableDescription&,
+          const BehaviourData::RegistrationStatus);
+      mptr f = &BehaviourData::addAuxiliaryStateVariable;
+      this->addVariables(h, v, s, f);
+    }
+
+    void BehaviourDescription::addAuxiliaryStateVariable(
+        const Hypothesis h, const VariableDescription& v,
+        const BehaviourData::RegistrationStatus s) {
+      using mptr = void (mfront::BehaviourData::*)(
+          const mfront::VariableDescription&,
+          const BehaviourData::RegistrationStatus);
+      mptr f = &BehaviourData::addAuxiliaryStateVariable;
+      this->addVariable(h, v, s, f);
+    }
+
+    void BehaviourDescription::addExternalStateVariables(
+        const Hypothesis h, const VariableDescriptionContainer& v,
+        const BehaviourData::RegistrationStatus s) {
+      using mptr = void (mfront::BehaviourData::*)(
+          const mfront::VariableDescription&,
+          const BehaviourData::RegistrationStatus);
+      mptr f = &BehaviourData::addExternalStateVariable;
+      this->addVariables(h, v, s, f);
+    }
+
+    void BehaviourDescription::addExternalStateVariable(
+        const Hypothesis h, const VariableDescription& v,
+        const BehaviourData::RegistrationStatus s) {
+      using mptr = void (mfront::BehaviourData::*)(
+          const mfront::VariableDescription&,
+          const BehaviourData::RegistrationStatus);
+      mptr f = &BehaviourData::addExternalStateVariable;
+      this->addVariable(h, v, s, f);
+    }
+
+    void BehaviourDescription::addLocalVariables(
+        const Hypothesis h, const VariableDescriptionContainer& v,
+        const BehaviourData::RegistrationStatus s) {
+      using mptr = void (mfront::BehaviourData::*)(
+          const mfront::VariableDescription&,
+          const BehaviourData::RegistrationStatus);
+      mptr f = &BehaviourData::addLocalVariable;
+      this->addVariables(h, v, s, f);
+    }
+
+    void BehaviourDescription::addLocalVariable(
+        const Hypothesis h, const VariableDescription& v,
+        const BehaviourData::RegistrationStatus s) {
+      using mptr = void (mfront::BehaviourData::*)(
+          const mfront::VariableDescription&,
+          const BehaviourData::RegistrationStatus);
+      mptr f = &BehaviourData::addLocalVariable;
+      this->addVariable(h, v, s, f);
+    }
+
+    void BehaviourDescription::addParameter(
+        const Hypothesis h, const VariableDescription& v,
+        const BehaviourData::RegistrationStatus s) {
+      using mptr = void (mfront::BehaviourData::*)(
+          const mfront::VariableDescription&,
+          const BehaviourData::RegistrationStatus);
+      mptr f = &BehaviourData::addParameter;
+      this->addVariable(h, v, s, f);
+    }
+
+    void BehaviourDescription::setVariableAttribute(
+        const Hypothesis h, const std::string& v, const std::string& n,
+        const VariableAttribute& a, const bool b) {
+      auto set = [&v, &n, &a, b](BehaviourData& bd) {
+        bd.setVariableAttribute(v, n, a, b);
+      };
+      if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
+        set(this->d);
+        for (auto md : this->sd) {
+          set(*(md.second));
+        }
+      } else {
+        set(this->getBehaviourData2(h));
+      }
+    }  // end of BehaviourDescription::setVariableAttribute
+
+    bool BehaviourDescription::hasGlossaryName(const Hypothesis h,
+                                               const std::string& v) const {
+      return this->getData(h, &BehaviourData::hasGlossaryName, v);
+    }  // end of BehaviourDescription::hasGlossaryName
+
+    bool BehaviourDescription::hasEntryName(const Hypothesis h,
+                                            const std::string& v) const {
+      return this->getData(h, &BehaviourData::hasEntryName, v);
+    }  // end of BehaviourDescription::hasEntryName
+
+    bool BehaviourDescription::hasParameter(const Hypothesis h,
+                                            const std::string& v) const {
+      return this->getData(h, &BehaviourData::hasParameter, v);
+    }  // end of BehaviourDescription::hasParameter
+
+    bool BehaviourDescription::hasParameters(const Hypothesis h) const {
+      return this->getBehaviourData(h).hasParameters();
+    }  // end of BehaviourDescription::hasParameters
+
+    bool BehaviourDescription::hasParameters() const {
+      if (this->d.hasParameters()) {
+        return true;
+      }
+      for (const auto& ld : this->sd) {
+        if (ld.second->hasParameters()) {
+          return true;
         }
       }
-      if (b1 && b2) {
-        return;
-      }
+      return false;
+    }  // end of BehaviourDescription::hasParameters
+
+    void BehaviourDescription::setParameterDefaultValue(
+        const Hypothesis h, const std::string& n, const double v) {
+      void (BehaviourData::*mptr)(const std::string&, const double);
+      mptr = &BehaviourData::setParameterDefaultValue;
+      this->callBehaviourData(h, mptr, n, v, true);
     }
-    for (const auto& v : bd.getAuxiliaryStateVariables()) {
-      if (v.arraySize > 1) {
-        if (this->useDynamicallyAllocatedVector(v.arraySize)) {
-          b2 = true;
-        } else {
-          b1 = true;
+
+    void BehaviourDescription::setParameterDefaultValue(
+        const Hypothesis h, const std::string& n, const unsigned short i,
+        const double v) {
+      void (BehaviourData::*m)(const std::string&, const unsigned short,
+                               const double) =
+          &BehaviourData::setParameterDefaultValue;
+      if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
+        (this->d.*m)(n, i, v);
+        for (auto md : this->sd) {
+          (md.second.get()->*m)(n, i, v);
         }
-      }
-      if (b1 && b2) {
-        return;
+      } else {
+        (this->getBehaviourData2(h).*m)(n, i, v);
       }
     }
-    for (const auto& v : bd.getLocalVariables()) {
-      if (v.arraySize > 1) {
-        if (this->useDynamicallyAllocatedVector(v.arraySize)) {
-          b2 = true;
-        } else {
-          b1 = true;
+
+    void BehaviourDescription::setParameterDefaultValue(
+        const Hypothesis h, const std::string& n, const int v) {
+      void (BehaviourData::*mptr)(const std::string&, const int v);
+      mptr = &BehaviourData::setParameterDefaultValue;
+      this->callBehaviourData(h, mptr, n, v, true);
+    }
+
+    void BehaviourDescription::setParameterDefaultValue(
+        const Hypothesis h, const std::string& n, const unsigned short v) {
+      void (BehaviourData::*mptr)(const std::string&, const unsigned short v);
+      mptr = &BehaviourData::setParameterDefaultValue;
+      this->callBehaviourData(h, mptr, n, v, true);
+    }
+
+    unsigned short BehaviourDescription::getUnsignedShortParameterDefaultValue(
+        const Hypothesis h, const std::string& n) const {
+      return this->getData(
+          h, &BehaviourData::getUnsignedShortParameterDefaultValue, n);
+    }  // end of BehaviourDescription::getUnsignedShortParameterDefaultValue
+
+    int BehaviourDescription::getIntegerParameterDefaultValue(
+        const Hypothesis h, const std::string& n) const {
+      return this->getData(h, &BehaviourData::getIntegerParameterDefaultValue,
+                           n);
+    }  // end of BehaviourDescription::getIntegerParameterDefaultValue
+
+    double BehaviourDescription::getFloattingPointParameterDefaultValue(
+        const Hypothesis h, const std::string& n) const {
+      return this->getData(
+          h, &BehaviourData::getFloattingPointParameterDefaultValue, n);
+    }  // end of BehaviourDescription::getFloattingPointParameterDefaultValue
+
+    double BehaviourDescription::getFloattingPointParameterDefaultValue(
+        const Hypothesis h, const std::string& n, const unsigned short i)
+        const {
+      return this->getBehaviourData(h).getFloattingPointParameterDefaultValue(
+          n, i);
+    }  // end of BehaviourDescription::getFloattingPointParameterDefaultValue
+
+    void BehaviourDescription::addStaticVariable(
+        const Hypothesis h, const StaticVariableDescription& v,
+        const BehaviourData::RegistrationStatus s) {
+      if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
+        this->d.addStaticVariable(v, s);
+        for (const auto& md : this->sd) {
+          md.second->addStaticVariable(v, s);
         }
+      } else {
+        this->getBehaviourData2(h).addStaticVariable(v, s);
       }
-      if (b1 && b2) {
-        return;
-      }
-    }
-    for (const auto& v : bd.getExternalStateVariables()) {
-      if (v.arraySize > 1) {
-        if (this->useDynamicallyAllocatedVector(v.arraySize)) {
-          b2 = true;
-        } else {
-          b1 = true;
-        }
-      }
-      if (b1 && b2) {
-        return;
-      }
-    }
-  }  // end of BehaviourData::requiresTVectorOrVectorIncludes
+    }  // end of BehaviourDescription::addStaticVariable
 
-  void BehaviourDescription::requiresTVectorOrVectorIncludes(bool& b1,
-                                                             bool& b2) const {
-    b1 = b2 = false;
-    tfel::raise_if(this->hypotheses.empty(),
-                   "BehaviourDescription::areAllMechanicalDataSpecialised: "
-                   "no hypothesis defined");
-    if (!this->areAllMechanicalDataSpecialised()) {
-      this->requiresTVectorOrVectorIncludes(b1, b2, d);
-    }
-    for (const auto& md : this->sd) {
-      this->requiresTVectorOrVectorIncludes(b1, b2, *(md.second));
-    }
-  }  // end of BehaviourDescription::requiresTVectorOrVectorIncludes
-
-  void BehaviourDescription::
-      declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution(
-          const Hypothesis h, const std::string& n) {
-    void (BehaviourData::*m)(const std::string&) =
-        &BehaviourData::
-            declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution;
-    this->callBehaviourData(h, m, n, true);
-  }  // end of
-     // BehaviourDescription::declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution
-
-  void BehaviourDescription::setUsableInPurelyImplicitResolution(
-      const Hypothesis h, const bool b) {
-    void (BehaviourData::*m)(const bool) =
-        &BehaviourData::setUsableInPurelyImplicitResolution;
-    this->callBehaviourData(h, m, b, true);
-  }  // end of
-     // BehaviourDescription::declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution
-
-  bool BehaviourDescription::isMemberUsedInCodeBlocks(
-      const Hypothesis h, const std::string& v) const {
-    return this->getData(h, &BehaviourData::isMemberUsedInCodeBlocks, v);
-  }  // end of BehaviourDescription::isMaterialPropertyName
-
-  bool BehaviourDescription::isMaterialPropertyName(
-      const Hypothesis h, const std::string& v) const {
-    return this->getData(h, &BehaviourData::isMaterialPropertyName, v);
-  }  // end of BehaviourDescription::isMaterialPropertyName
-
-  bool BehaviourDescription::isLocalVariableName(const Hypothesis h,
+    int BehaviourDescription::getIntegerConstant(const Hypothesis h,
                                                  const std::string& n) const {
-    return this->getData(h, &BehaviourData::isLocalVariableName, n);
-  }  // end of BehaviourDescription::isLocalVariableName
+      return this->getData(h, &BehaviourData::getIntegerConstant, n);
+    }  // end of BehaviourDescription::getIntegerConstant
 
-  bool BehaviourDescription::isPersistentVariableName(
-      const Hypothesis h, const std::string& n) const {
-    return this->getData(h, &BehaviourData::isPersistentVariableName, n);
-  }  // end of BehaviourDescription::isPersistentVariableName
-
-  bool BehaviourDescription::isIntegrationVariableName(
-      const Hypothesis h, const std::string& n) const {
-    return this->getData(h, &BehaviourData::isIntegrationVariableName, n);
-  }  // end of BehaviourDescription::isIntegrationVariableName
-
-  bool BehaviourDescription::isIntegrationVariableIncrementName(
-      const Hypothesis h, const std::string& n) const {
-    return this->getData(h, &BehaviourData::isIntegrationVariableIncrementName,
-                         n);
-  }  // end of BehaviourDescription::isIntegrationVariableIncrementName
-
-  bool BehaviourDescription::isStateVariableName(const Hypothesis h,
-                                                 const std::string& n) const {
-    return this->getData(h, &BehaviourData::isStateVariableName, n);
-  }  // end of BehaviourDescription::isStateVariableName
-
-  bool BehaviourDescription::isStateVariableIncrementName(
-      const Hypothesis h, const std::string& n) const {
-    return this->getData(h, &BehaviourData::isStateVariableIncrementName, n);
-  }  // end of BehaviourDescription::isStateVariableIncrementName
-
-  bool BehaviourDescription::isAuxiliaryStateVariableName(
-      const Hypothesis h, const std::string& n) const {
-    return this->getData(h, &BehaviourData::isAuxiliaryStateVariableName, n);
-  }  // end of BehaviourDescription::isAuxiliaryStateVariableName
-
-  bool BehaviourDescription::isExternalStateVariableName(
-      const Hypothesis h, const std::string& n) const {
-    return this->getData(h, &BehaviourData::isExternalStateVariableName, n);
-  }  // end of BehaviourDescription::isExternalStateVariableName
-
-  bool BehaviourDescription::isExternalStateVariableIncrementName(
-      const Hypothesis h, const std::string& n) const {
-    return this->getData(
-        h, &BehaviourData::isExternalStateVariableIncrementName, n);
-  }  // end of BehaviourDescription::isExternalStateVariableIncrementName
-
-  bool BehaviourDescription::isParameterName(const Hypothesis h,
-                                             const std::string& v) const {
-    return this->getData(h, &BehaviourData::isParameterName, v);
-  }  // end of BehaviourDescription::isParameterName
-
-  bool BehaviourDescription::isStaticVariableName(const Hypothesis h,
-                                                  const std::string& n) const {
-    return this->getData(h, &BehaviourData::isStaticVariableName, n);
-  }  // end of BehaviourDescription::isStaticVariableName
-
-  void BehaviourDescription::updateClassName() {
-    if ((!this->behaviour.empty()) || (!this->material.empty())) {
-      this->className = this->material + this->behaviour;
-    }
-  }  // end of BehaviourDescription::updateClassName
-
-  void BehaviourDescription::setCode(const Hypothesis h,
-                                     const std::string& n,
-                                     const CodeBlock& c,
-                                     const Mode m,
-                                     const Position p,
-                                     const bool b) {
-    if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
-      if (getVerboseMode() >= VERBOSE_DEBUG) {
-        auto& log = getLogStream();
-        log << "BehaviourDescription::setCode : setting '" << n
-            << "' on default hypothesis" << std::endl;
+    void BehaviourDescription::addVariables(
+        const Hypothesis h, const VariableDescriptionContainer& v,
+        const BehaviourData::RegistrationStatus s,
+        void (BehaviourData::*m)(const VariableDescription&,
+                                 const BehaviourData::RegistrationStatus)) {
+      if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
+        this->addVariables(this->d, v, s, m);
+        for (auto& md : this->sd) {
+          this->addVariables(*(md.second), v, s, m);
+        }
+      } else {
+        this->addVariables(this->getBehaviourData2(h), v, s, m);
       }
-      this->d.setCode(n, c, m, p, b);
-      for (const auto& pd : sd) {
+    }  // end of BehaviourDescription::addVariables
+
+    void BehaviourDescription::addVariable(
+        const Hypothesis h, const VariableDescription& v,
+        const BehaviourData::RegistrationStatus s,
+        void (BehaviourData::*m)(const VariableDescription&,
+                                 const BehaviourData::RegistrationStatus)) {
+      if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
+        this->addVariable(this->d, v, s, m);
+        for (auto& md : this->sd) {
+          this->addVariable(*(md.second), v, s, m);
+        }
+      } else {
+        this->addVariable(this->getBehaviourData2(h), v, s, m);
+      }
+    }  // end of BehaviourDescription::addVariable
+
+    void BehaviourDescription::addVariables(
+        BehaviourData & b, const VariableDescriptionContainer& v,
+        const BehaviourData::RegistrationStatus s,
+        void (BehaviourData::*m)(const VariableDescription&,
+                                 const BehaviourData::RegistrationStatus)) {
+      for (const auto& e : v) {
+        this->addVariable(b, e, s, m);
+      }
+    }  // end of BehaviourDescription::addVariables
+
+    void BehaviourDescription::addVariable(
+        BehaviourData & b, const VariableDescription& v,
+        const BehaviourData::RegistrationStatus s,
+        void (BehaviourData::*m)(const VariableDescription&,
+                                 const BehaviourData::RegistrationStatus)) {
+      (b.*m)(v, s);
+    }
+
+    bool BehaviourDescription::areAllMechanicalDataSpecialised() const {
+      return this->getModellingHypotheses().size() == this->sd.size();
+    }  // end of BehaviourDescription::areAllMechanicalDataSpecialised
+
+    bool BehaviourDescription::areAllMechanicalDataSpecialised(
+        const std::set<Hypothesis>& h) const {
+      for (const auto& mh : h) {
+        if (!this->hasSpecialisedMechanicalData(mh)) {
+          return false;
+        }
+      }
+      return true;
+    }  // end of BehaviourDescription::areAllMechanicalDataSpecialised
+
+    bool BehaviourDescription::hasSpecialisedMechanicalData(const Hypothesis h)
+        const {
+      tfel::raise_if(this->getModellingHypotheses().find(h) ==
+                         this->getModellingHypotheses().end(),
+                     "BehaviourDescription::areAllMechanicalDataSpecialised: "
+                     "hypothesis '" +
+                         ModellingHypothesis::toString(h) +
+                         "' is not supported");
+      return this->sd.find(h) != this->sd.end();
+    }
+
+    void BehaviourDescription::requiresTVectorOrVectorIncludes(
+        bool& b1, bool& b2, const BehaviourData& bd) const {
+      for (const auto& v : bd.getMaterialProperties()) {
+        if (v.arraySize > 1) {
+          if (this->useDynamicallyAllocatedVector(v.arraySize)) {
+            b2 = true;
+          } else {
+            b1 = true;
+          }
+        }
+        if (b1 && b2) {
+          return;
+        }
+      }
+      for (const auto& v : bd.getIntegrationVariables()) {
+        if (v.arraySize > 1) {
+          if (this->useDynamicallyAllocatedVector(v.arraySize)) {
+            b2 = true;
+          } else {
+            b1 = true;
+          }
+        }
+        if (b1 && b2) {
+          return;
+        }
+      }
+      for (const auto& v : bd.getStateVariables()) {
+        if (v.arraySize > 1) {
+          if (this->useDynamicallyAllocatedVector(v.arraySize)) {
+            b2 = true;
+          } else {
+            b1 = true;
+          }
+        }
+        if (b1 && b2) {
+          return;
+        }
+      }
+      for (const auto& v : bd.getAuxiliaryStateVariables()) {
+        if (v.arraySize > 1) {
+          if (this->useDynamicallyAllocatedVector(v.arraySize)) {
+            b2 = true;
+          } else {
+            b1 = true;
+          }
+        }
+        if (b1 && b2) {
+          return;
+        }
+      }
+      for (const auto& v : bd.getLocalVariables()) {
+        if (v.arraySize > 1) {
+          if (this->useDynamicallyAllocatedVector(v.arraySize)) {
+            b2 = true;
+          } else {
+            b1 = true;
+          }
+        }
+        if (b1 && b2) {
+          return;
+        }
+      }
+      for (const auto& v : bd.getExternalStateVariables()) {
+        if (v.arraySize > 1) {
+          if (this->useDynamicallyAllocatedVector(v.arraySize)) {
+            b2 = true;
+          } else {
+            b1 = true;
+          }
+        }
+        if (b1 && b2) {
+          return;
+        }
+      }
+    }  // end of BehaviourData::requiresTVectorOrVectorIncludes
+
+    void BehaviourDescription::requiresTVectorOrVectorIncludes(bool& b1,
+                                                               bool& b2) const {
+      b1 = b2 = false;
+      tfel::raise_if(this->hypotheses.empty(),
+                     "BehaviourDescription::areAllMechanicalDataSpecialised: "
+                     "no hypothesis defined");
+      if (!this->areAllMechanicalDataSpecialised()) {
+        this->requiresTVectorOrVectorIncludes(b1, b2, d);
+      }
+      for (const auto& md : this->sd) {
+        this->requiresTVectorOrVectorIncludes(b1, b2, *(md.second));
+      }
+    }  // end of BehaviourDescription::requiresTVectorOrVectorIncludes
+
+    void BehaviourDescription::
+        declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution(
+            const Hypothesis h, const std::string& n) {
+      void (BehaviourData::*m)(const std::string&) =
+          &BehaviourData::
+              declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution;
+      this->callBehaviourData(h, m, n, true);
+    }  // end of
+       // BehaviourDescription::declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution
+
+    void BehaviourDescription::setUsableInPurelyImplicitResolution(
+        const Hypothesis h, const bool b) {
+      void (BehaviourData::*m)(const bool) =
+          &BehaviourData::setUsableInPurelyImplicitResolution;
+      this->callBehaviourData(h, m, b, true);
+    }  // end of
+       // BehaviourDescription::declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution
+
+    bool BehaviourDescription::isMemberUsedInCodeBlocks(
+        const Hypothesis h, const std::string& v) const {
+      return this->getData(h, &BehaviourData::isMemberUsedInCodeBlocks, v);
+    }  // end of BehaviourDescription::isMaterialPropertyName
+
+    bool BehaviourDescription::isMaterialPropertyName(
+        const Hypothesis h, const std::string& v) const {
+      return this->getData(h, &BehaviourData::isMaterialPropertyName, v);
+    }  // end of BehaviourDescription::isMaterialPropertyName
+
+    bool BehaviourDescription::isLocalVariableName(const Hypothesis h,
+                                                   const std::string& n) const {
+      return this->getData(h, &BehaviourData::isLocalVariableName, n);
+    }  // end of BehaviourDescription::isLocalVariableName
+
+    bool BehaviourDescription::isPersistentVariableName(
+        const Hypothesis h, const std::string& n) const {
+      return this->getData(h, &BehaviourData::isPersistentVariableName, n);
+    }  // end of BehaviourDescription::isPersistentVariableName
+
+    bool BehaviourDescription::isIntegrationVariableName(
+        const Hypothesis h, const std::string& n) const {
+      return this->getData(h, &BehaviourData::isIntegrationVariableName, n);
+    }  // end of BehaviourDescription::isIntegrationVariableName
+
+    bool BehaviourDescription::isIntegrationVariableIncrementName(
+        const Hypothesis h, const std::string& n) const {
+      return this->getData(
+          h, &BehaviourData::isIntegrationVariableIncrementName, n);
+    }  // end of BehaviourDescription::isIntegrationVariableIncrementName
+
+    bool BehaviourDescription::isStateVariableName(const Hypothesis h,
+                                                   const std::string& n) const {
+      return this->getData(h, &BehaviourData::isStateVariableName, n);
+    }  // end of BehaviourDescription::isStateVariableName
+
+    bool BehaviourDescription::isStateVariableIncrementName(
+        const Hypothesis h, const std::string& n) const {
+      return this->getData(h, &BehaviourData::isStateVariableIncrementName, n);
+    }  // end of BehaviourDescription::isStateVariableIncrementName
+
+    bool BehaviourDescription::isAuxiliaryStateVariableName(
+        const Hypothesis h, const std::string& n) const {
+      return this->getData(h, &BehaviourData::isAuxiliaryStateVariableName, n);
+    }  // end of BehaviourDescription::isAuxiliaryStateVariableName
+
+    bool BehaviourDescription::isExternalStateVariableName(
+        const Hypothesis h, const std::string& n) const {
+      return this->getData(h, &BehaviourData::isExternalStateVariableName, n);
+    }  // end of BehaviourDescription::isExternalStateVariableName
+
+    bool BehaviourDescription::isExternalStateVariableIncrementName(
+        const Hypothesis h, const std::string& n) const {
+      return this->getData(
+          h, &BehaviourData::isExternalStateVariableIncrementName, n);
+    }  // end of BehaviourDescription::isExternalStateVariableIncrementName
+
+    bool BehaviourDescription::isParameterName(const Hypothesis h,
+                                               const std::string& v) const {
+      return this->getData(h, &BehaviourData::isParameterName, v);
+    }  // end of BehaviourDescription::isParameterName
+
+    bool BehaviourDescription::isStaticVariableName(
+        const Hypothesis h, const std::string& n) const {
+      return this->getData(h, &BehaviourData::isStaticVariableName, n);
+    }  // end of BehaviourDescription::isStaticVariableName
+
+    void BehaviourDescription::updateClassName() {
+      if ((!this->behaviour.empty()) || (!this->material.empty())) {
+        this->className = this->material + this->behaviour;
+      }
+    }  // end of BehaviourDescription::updateClassName
+
+    void BehaviourDescription::setCode(const Hypothesis h, const std::string& n,
+                                       const CodeBlock& c, const Mode m,
+                                       const Position p, const bool b) {
+      if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
         if (getVerboseMode() >= VERBOSE_DEBUG) {
           auto& log = getLogStream();
           log << "BehaviourDescription::setCode : setting '" << n
-              << "' on hypothesis '" << ModellingHypothesis::toString(pd.first)
-              << "'" << std::endl;
+              << "' on default hypothesis" << std::endl;
         }
-        pd.second->setCode(n, c, m, p, b);
+        this->d.setCode(n, c, m, p, b);
+        for (const auto& pd : sd) {
+          if (getVerboseMode() >= VERBOSE_DEBUG) {
+            auto& log = getLogStream();
+            log << "BehaviourDescription::setCode : setting '" << n
+                << "' on hypothesis '"
+                << ModellingHypothesis::toString(pd.first) << "'" << std::endl;
+          }
+          pd.second->setCode(n, c, m, p, b);
+        }
+      } else {
+        if (getVerboseMode() >= VERBOSE_DEBUG) {
+          auto& log = getLogStream();
+          log << "BehaviourDescription::setCode : setting '" << n
+              << "' on hypothesis '" << ModellingHypothesis::toString(h) << "'"
+              << std::endl;
+        }
+        this->getBehaviourData2(h).setCode(n, c, m, p, b);
       }
-    } else {
-      if (getVerboseMode() >= VERBOSE_DEBUG) {
-        auto& log = getLogStream();
-        log << "BehaviourDescription::setCode : setting '" << n
-            << "' on hypothesis '" << ModellingHypothesis::toString(h) << "'"
-            << std::endl;
+    }  // end of BehaviourDescription::setCode
+
+    const CodeBlock& BehaviourDescription::getCodeBlock(
+        const Hypothesis h, const std::string& n) const {
+      return this->getBehaviourData(h).getCodeBlock(n);
+    }  // end of BehaviourDescription::getCode
+
+    std::string BehaviourDescription::getCode(const Hypothesis h,
+                                              const std::string& n) const {
+      const auto b = this->getAttribute(BehaviourData::profiling, false);
+      return this->getBehaviourData(h).getCode(n, this->getClassName(), b);
+    }  // end of BehaviourDescription::getCode
+
+    bool BehaviourDescription::hasCode(const Hypothesis h, const std::string& n)
+        const {
+      return this->getBehaviourData(h).hasCode(n);
+    }  // end of BehaviourDescription::getCode
+
+    void BehaviourDescription::setAttribute(
+        const Hypothesis h, const std::string& n, const BehaviourAttribute& a,
+        const bool b) {
+      if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
+        this->d.setAttribute(n, a, b);
+        for (const auto& md : this->sd) {
+          BehaviourData& bdata = *(md.second);
+          bdata.setAttribute(n, a, b);
+        }
+      } else {
+        this->getBehaviourData2(h).setAttribute(n, a, b);
       }
-      this->getBehaviourData2(h).setCode(n, c, m, p, b);
-    }
-  }  // end of BehaviourDescription::setCode
+    }  // end of BehaviourDescription::setAttribute
 
-  const CodeBlock& BehaviourDescription::getCodeBlock(
-      const Hypothesis h, const std::string& n) const {
-    return this->getBehaviourData(h).getCodeBlock(n);
-  }  // end of BehaviourDescription::getCode
+    void BehaviourDescription::updateAttribute(
+        const Hypothesis h, const std::string& n, const BehaviourAttribute& a) {
+      if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
+        this->d.updateAttribute(n, a);
+        for (const auto& md : this->sd) {
+          md.second->updateAttribute(n, a);
+        }
+      } else {
+        this->getBehaviourData2(h).updateAttribute(n, a);
+      }
+    }  // end of BehaviourDescription::updateAttribute
 
-  std::string BehaviourDescription::getCode(const Hypothesis h,
+    bool BehaviourDescription::hasAttribute(const Hypothesis h,
                                             const std::string& n) const {
-    const auto b = this->getAttribute(BehaviourData::profiling, false);
-    return this->getBehaviourData(h).getCode(n, this->getClassName(), b);
-  }  // end of BehaviourDescription::getCode
+      return this->getBehaviourData(h).hasAttribute(n);
+    }  // end of BehaviourDescription::hasAttribute
 
-  bool BehaviourDescription::hasCode(const Hypothesis h,
-                                     const std::string& n) const {
-    return this->getBehaviourData(h).hasCode(n);
-  }  // end of BehaviourDescription::getCode
-
-  void BehaviourDescription::setAttribute(const Hypothesis h,
-                                          const std::string& n,
-                                          const BehaviourAttribute& a,
-                                          const bool b) {
-    if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
-      this->d.setAttribute(n, a, b);
-      for (const auto& md : this->sd) {
-        BehaviourData& bdata = *(md.second);
-        bdata.setAttribute(n, a, b);
-      }
-    } else {
-      this->getBehaviourData2(h).setAttribute(n, a, b);
+    std::vector<std::string> BehaviourDescription::getCodeBlockNames(
+        const Hypothesis h) const {
+      return this->getBehaviourData(h).getCodeBlockNames();
     }
-  }  // end of BehaviourDescription::setAttribute
 
-  void BehaviourDescription::updateAttribute(const Hypothesis h,
-                                             const std::string& n,
-                                             const BehaviourAttribute& a) {
-    if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
-      this->d.updateAttribute(n, a);
-      for (const auto& md : this->sd) {
-        md.second->updateAttribute(n, a);
-      }
-    } else {
-      this->getBehaviourData2(h).updateAttribute(n, a);
+    std::vector<std::string> BehaviourDescription::getExternalNames(
+        const Hypothesis h, const VarContainer& v) const {
+      return this->getBehaviourData(h).getExternalNames(v);
     }
-  }  // end of BehaviourDescription::updateAttribute
 
-  bool BehaviourDescription::hasAttribute(const Hypothesis h,
-                                          const std::string& n) const {
-    return this->getBehaviourData(h).hasAttribute(n);
-  }  // end of BehaviourDescription::hasAttribute
+    void BehaviourDescription::getExternalNames(
+        std::vector<std::string> & n, const Hypothesis h, const VarContainer& v)
+        const {
+      return this->getBehaviourData(h).getExternalNames(n, v);
+    }  // end of BehaviourDescription::getExternalNames
 
-  std::vector<std::string> BehaviourDescription::getCodeBlockNames(
-      const Hypothesis h) const {
-    return this->getBehaviourData(h).getCodeBlockNames();
-  }
+    void BehaviourDescription::appendExternalNames(
+        std::vector<std::string> & n, const Hypothesis h, const VarContainer& v)
+        const {
+      return this->getBehaviourData(h).appendExternalNames(n, v);
+    }  // end of BehaviourDescription::appendExternalNames
 
-  std::vector<std::string> BehaviourDescription::getExternalNames(
-      const Hypothesis h, const VarContainer& v) const {
-    return this->getBehaviourData(h).getExternalNames(v);
-  }
+    void BehaviourDescription::setGlossaryName(const std::string& n,
+                                               const std::string& gn) {
+      using tfel::glossary::Glossary;
+      const auto& glossary = Glossary::getGlossary();
+      tfel::raise_if(!glossary.contains(gn),
+                     "BehaviourDescription::setGlossaryName: "
+                     "'" +
+                         gn + "' is not a glossary name");
+     for(auto& v: this->mvariables){
+       constexpr const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+       if (v.first.name == n) {
+         v.first.setGlossaryName(gn);
+         this->registerGlossaryName(h, n, gn);
+       }
+       if (v.second.name == n) {
+         v.second.setGlossaryName(gn);
+         this->registerGlossaryName(h, n, gn);
+       }
+     }
+    }  // end of BehaviourDescription::setGlossaryName
 
-  void BehaviourDescription::getExternalNames(std::vector<std::string>& n,
-                                              const Hypothesis h,
-                                              const VarContainer& v) const {
-    return this->getBehaviourData(h).getExternalNames(n, v);
-  }  // end of BehaviourDescription::getExternalNames
+    void BehaviourDescription::setEntryName(const std::string& n,
+                                            const std::string& e) {
+      using tfel::glossary::Glossary;
+      using MainVariable = std::pair<Gradient, ThermodynamicForce>;
+      const auto& glossary = Glossary::getGlossary();
+      tfel::raise_if(glossary.contains(e),
+                     "BehaviourDescription::setEntryName: "
+                     "'" +
+                         e + "' is a glossary name");
+      std::for_each(this->mvariables.begin(), this->mvariables.end(),
+                    [this, &n, &e](MainVariable& v) {
+                      constexpr const auto h =
+                          ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+                      if (v.first.name == n) {
+                        v.first.setEntryName(e);
+                        this->registerEntryName(h, n, e);
+                      }
+                      if (v.second.name == n) {
+                        v.second.setEntryName(e);
+                        this->registerEntryName(h, n, e);
+                      }
+                    });
+    }  // end of BehaviourDescription::setEntryName
 
-  void BehaviourDescription::appendExternalNames(std::vector<std::string>& n,
-                                                 const Hypothesis h,
-                                                 const VarContainer& v) const {
-    return this->getBehaviourData(h).appendExternalNames(n, v);
-  }  // end of BehaviourDescription::appendExternalNames
+    void BehaviourDescription::setGlossaryName(
+        const Hypothesis h, const std::string& n, const std::string& g) {
+      this->callBehaviourData(h, &BehaviourData::setGlossaryName, n, g, true);
+    }  // end of BehaviourDescription::setGlossaryName
 
-  void BehaviourDescription::setGlossaryName(const std::string& n,
-                                             const std::string& gn) {
-    using tfel::glossary::Glossary;
-    using MainVariable = std::pair<Gradient, ThermodynamicForce>;
-    const auto& glossary = Glossary::getGlossary();
-    tfel::raise_if(!glossary.contains(gn),
-                   "BehaviourDescription::setGlossaryName: "
-                   "'" +
-                       gn + "' is not a glossary name");
-    std::for_each(this->mvariables.begin(), this->mvariables.end(),
-                  [this, &n, &gn](MainVariable& v) {
-                    constexpr const auto h =
-                        ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-                    if (v.first.name == n) {
-                      v.first.setGlossaryName(gn);
-                      this->registerGlossaryName(h, n, gn);
-                    }
-                    if (v.second.name == n) {
-                      v.second.setGlossaryName(gn);
-                      this->registerGlossaryName(h, n, gn);
-                    }
-                  });
-  }  // end of BehaviourDescription::setGlossaryName
+    bool BehaviourDescription::isGlossaryNameUsed(const Hypothesis h,
+                                                  const std::string& n) const {
+      return this->getBehaviourData(h).isGlossaryNameUsed(n);
+    }  // end of BehaviourDescription::isGlossaryName
 
-  void BehaviourDescription::setEntryName(const std::string& n,
-                                          const std::string& e) {
-    using tfel::glossary::Glossary;
-    using MainVariable = std::pair<Gradient, ThermodynamicForce>;
-    const auto& glossary = Glossary::getGlossary();
-    tfel::raise_if(glossary.contains(e),
-                   "BehaviourDescription::setEntryName: "
-                   "'" +
-                       e + "' is a glossary name");
-    std::for_each(this->mvariables.begin(), this->mvariables.end(),
-                  [this, &n, &e](MainVariable& v) {
-                    constexpr const auto h =
-                        ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-                    if (v.first.name == n) {
-                      v.first.setEntryName(e);
-                      this->registerEntryName(h, n, e);
-                    }
-                    if (v.second.name == n) {
-                      v.second.setEntryName(e);
-                      this->registerEntryName(h, n, e);
-                    }
-                  });
-  }  // end of BehaviourDescription::setEntryName
+    void BehaviourDescription::setEntryName(
+        const Hypothesis h, const std::string& n, const std::string& g) {
+      this->callBehaviourData(h, &BehaviourData::setEntryName, n, g, true);
+    }  // end of BehaviourDescription::setEntryName
 
-  void BehaviourDescription::setGlossaryName(const Hypothesis h,
-                                             const std::string& n,
-                                             const std::string& g) {
-    this->callBehaviourData(h, &BehaviourData::setGlossaryName, n, g, true);
-  }  // end of BehaviourDescription::setGlossaryName
+    bool BehaviourDescription::isUsedAsEntryName(const Hypothesis h,
+                                                 const std::string& n) const {
+      return this->getBehaviourData(h).isUsedAsEntryName(n);
+    }  // end of BehaviourDescription::isEntryName
 
-  bool BehaviourDescription::isGlossaryNameUsed(const Hypothesis h,
-                                                const std::string& n) const {
-    return this->getBehaviourData(h).isGlossaryNameUsed(n);
-  }  // end of BehaviourDescription::isGlossaryName
+    std::string BehaviourDescription::getExternalName(
+        const Hypothesis h, const std::string& n) const {
+      return this->getData(h, &BehaviourData::getExternalName, n);
+    }  // end of BehaviourDescription::getGlossaryName
 
-  void BehaviourDescription::setEntryName(const Hypothesis h,
-                                          const std::string& n,
-                                          const std::string& g) {
-    this->callBehaviourData(h, &BehaviourData::setEntryName, n, g, true);
-  }  // end of BehaviourDescription::setEntryName
+    std::string
+    BehaviourDescription::getVariableNameFromGlossaryNameOrEntryName(
+        const Hypothesis h, const std::string& n) const {
+      return this->getBehaviourData(h)
+          .getVariableNameFromGlossaryNameOrEntryName(n);
+    }  // end of
+       // BehaviourDescription::getVariableNameFromGlossaryNameOrEntryName
 
-  bool BehaviourDescription::isUsedAsEntryName(const Hypothesis h,
-                                               const std::string& n) const {
-    return this->getBehaviourData(h).isUsedAsEntryName(n);
-  }  // end of BehaviourDescription::isEntryName
+    const VariableDescription&
+    BehaviourDescription::getVariableDescriptionByExternalName(
+        const Hypothesis h, const std::string& n) const {
+      return this->getBehaviourData(h).getVariableDescriptionByExternalName(n);
+    }  // end of BehaviourDescription::getVariableDescriptionByExternalName
 
-  std::string BehaviourDescription::getExternalName(
-      const Hypothesis h, const std::string& n) const {
-    return this->getData(h, &BehaviourData::getExternalName, n);
-  }  // end of BehaviourDescription::getGlossaryName
-
-  std::string BehaviourDescription::getVariableNameFromGlossaryNameOrEntryName(
-      const Hypothesis h, const std::string& n) const {
-    return this->getBehaviourData(h).getVariableNameFromGlossaryNameOrEntryName(
-        n);
-  }  // end of BehaviourDescription::getVariableNameFromGlossaryNameOrEntryName
-
-  const VariableDescription&
-  BehaviourDescription::getVariableDescriptionByExternalName(
-      const Hypothesis h, const std::string& n) const {
-    return this->getBehaviourData(h).getVariableDescriptionByExternalName(n);
-  }  // end of BehaviourDescription::getVariableDescriptionByExternalName
-
-  void BehaviourDescription::setBounds(const Hypothesis h,
-                                       const std::string& n,
-                                       const VariableBoundsDescription& b) {
-    auto throw_if = [](const bool c, const std::string& m) {
-      tfel::raise_if(c, "BehaviourDescription::setBounds: " + m);
-    };
-    if (this->isGradientName(n)) {
-      throw_if(h != ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-               "invalid modelling hypothesis");
-      this->getGradient(n).setBounds(b);
-    } else if (this->isThermodynamicForceName(n)) {
-      throw_if(h != ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-               "invalid modelling hypothesis");
-      this->getThermodynamicForce(n).setBounds(b);
-    } else {
-      this->callBehaviourData(h, &BehaviourData::setBounds, n, b, true);
-    }
-  }  // end of BehaviourDescription::setBounds
-
-  void BehaviourDescription::setBounds(const Hypothesis h,
-                                       const std::string& n,
-                                       const unsigned short i,
-                                       const VariableBoundsDescription& b) {
-    auto throw_if = [](const bool c, const std::string& m) {
-      tfel::raise_if(c, "BehaviourDescription::setBounds: " + m);
-    };
-    if (this->isGradientName(n)) {
-      throw_if(h != ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-               "invalid modelling hypothesis");
-      this->getGradient(n).setBounds(b, i);
-    } else if (this->isThermodynamicForceName(n)) {
-      throw_if(h != ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-               "invalid modelling hypothesis");
-      this->getThermodynamicForce(n).setBounds(b, i);
-    } else {
-      if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
-        this->d.setBounds(n, i, b);
-        for (auto md : this->sd) {
-          md.second.get()->setBounds(n, i, b);
-        }
+    void BehaviourDescription::setBounds(const Hypothesis h,
+                                         const std::string& n,
+                                         const VariableBoundsDescription& b) {
+      auto throw_if = [](const bool c, const std::string& m) {
+        tfel::raise_if(c, "BehaviourDescription::setBounds: " + m);
+      };
+      if (this->isGradientName(n)) {
+        throw_if(h != ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+                 "invalid modelling hypothesis");
+        this->getGradient(n).setBounds(b);
+      } else if (this->isThermodynamicForceName(n)) {
+        throw_if(h != ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+                 "invalid modelling hypothesis");
+        this->getThermodynamicForce(n).setBounds(b);
       } else {
-        this->getBehaviourData2(h).setBounds(n, i, b);
+        this->callBehaviourData(h, &BehaviourData::setBounds, n, b, true);
       }
-    }
-  }  // end of BehaviourDescription::setBounds
+    }  // end of BehaviourDescription::setBounds
 
-  void BehaviourDescription::setPhysicalBounds(
-      const Hypothesis h,
-      const std::string& n,
-      const VariableBoundsDescription& b) {
-    auto throw_if = [](const bool c, const std::string& m) {
-      tfel::raise_if(c, "BehaviourDescription::setPhysicalBounds: " + m);
-    };
-    if (this->isGradientName(n)) {
-      throw_if(h != ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-               "invalid modelling hypothesis");
-      this->getGradient(n).setBounds(b);
-    } else if (this->isThermodynamicForceName(n)) {
-      throw_if(h != ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-               "invalid modelling hypothesis");
-      this->getThermodynamicForce(n).setBounds(b);
-    } else {
-      this->callBehaviourData(h, &BehaviourData::setPhysicalBounds, n, b, true);
-    }
-  }  // end of BehaviourDescription::setPhysicalBounds
-
-  void BehaviourDescription::setPhysicalBounds(
-      const Hypothesis h,
-      const std::string& n,
-      const unsigned short i,
-      const VariableBoundsDescription& b) {
-    auto throw_if = [](const bool c, const std::string& m) {
-      tfel::raise_if(c, "BehaviourDescription::setPhysicalBounds: " + m);
-    };
-    if (this->isGradientName(n)) {
-      throw_if(h != ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-               "invalid modelling hypothesis");
-      this->getGradient(n).setBounds(b, i);
-    } else if (this->isThermodynamicForceName(n)) {
-      throw_if(h != ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-               "invalid modelling hypothesis");
-      this->getThermodynamicForce(n).setBounds(b, i);
-    } else {
-      if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
-        this->d.setPhysicalBounds(n, i, b);
-        for (auto md : this->sd) {
-          md.second.get()->setPhysicalBounds(n, i, b);
-        }
+    void BehaviourDescription::setBounds(
+        const Hypothesis h, const std::string& n, const unsigned short i,
+        const VariableBoundsDescription& b) {
+      auto throw_if = [](const bool c, const std::string& m) {
+        tfel::raise_if(c, "BehaviourDescription::setBounds: " + m);
+      };
+      if (this->isGradientName(n)) {
+        throw_if(h != ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+                 "invalid modelling hypothesis");
+        this->getGradient(n).setBounds(b, i);
+      } else if (this->isThermodynamicForceName(n)) {
+        throw_if(h != ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+                 "invalid modelling hypothesis");
+        this->getThermodynamicForce(n).setBounds(b, i);
       } else {
-        this->getBehaviourData2(h).setPhysicalBounds(n, i, b);
+        if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
+          this->d.setBounds(n, i, b);
+          for (auto md : this->sd) {
+            md.second.get()->setBounds(n, i, b);
+          }
+        } else {
+          this->getBehaviourData2(h).setBounds(n, i, b);
+        }
       }
-    }
-  }  // end of BehaviourDescription::setPhysicalBounds
+    }  // end of BehaviourDescription::setBounds
 
-  void BehaviourDescription::setAttribute(const std::string& n,
-                                          const BehaviourAttribute& a,
-                                          const bool b) {
-    if (b) {
-      auto p = this->attributes.find(n);
-      if (p != this->attributes.end()) {
-        tfel::raise_if(a.getTypeIndex() != p->second.getTypeIndex(),
-                       "BehaviourDescription::setAttribute: "
-                       "attribute already exists with a different type");
-        return;
+    void BehaviourDescription::setPhysicalBounds(
+        const Hypothesis h, const std::string& n,
+        const VariableBoundsDescription& b) {
+      auto throw_if = [](const bool c, const std::string& m) {
+        tfel::raise_if(c, "BehaviourDescription::setPhysicalBounds: " + m);
+      };
+      if (this->isGradientName(n)) {
+        throw_if(h != ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+                 "invalid modelling hypothesis");
+        this->getGradient(n).setBounds(b);
+      } else if (this->isThermodynamicForceName(n)) {
+        throw_if(h != ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+                 "invalid modelling hypothesis");
+        this->getThermodynamicForce(n).setBounds(b);
+      } else {
+        this->callBehaviourData(h, &BehaviourData::setPhysicalBounds, n, b,
+                                true);
       }
+    }  // end of BehaviourDescription::setPhysicalBounds
+
+    void BehaviourDescription::setPhysicalBounds(
+        const Hypothesis h, const std::string& n, const unsigned short i,
+        const VariableBoundsDescription& b) {
+      auto throw_if = [](const bool c, const std::string& m) {
+        tfel::raise_if(c, "BehaviourDescription::setPhysicalBounds: " + m);
+      };
+      if (this->isGradientName(n)) {
+        throw_if(h != ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+                 "invalid modelling hypothesis");
+        this->getGradient(n).setBounds(b, i);
+      } else if (this->isThermodynamicForceName(n)) {
+        throw_if(h != ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+                 "invalid modelling hypothesis");
+        this->getThermodynamicForce(n).setBounds(b, i);
+      } else {
+        if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
+          this->d.setPhysicalBounds(n, i, b);
+          for (auto md : this->sd) {
+            md.second.get()->setPhysicalBounds(n, i, b);
+          }
+        } else {
+          this->getBehaviourData2(h).setPhysicalBounds(n, i, b);
+        }
+      }
+    }  // end of BehaviourDescription::setPhysicalBounds
+
+    void BehaviourDescription::setAttribute(
+        const std::string& n, const BehaviourAttribute& a, const bool b) {
+      if (b) {
+        auto p = this->attributes.find(n);
+        if (p != this->attributes.end()) {
+          tfel::raise_if(a.getTypeIndex() != p->second.getTypeIndex(),
+                         "BehaviourDescription::setAttribute: "
+                         "attribute already exists with a different type");
+          return;
+        }
+      }
+      tfel::raise_if(!this->attributes.insert({n, a}).second,
+                     "BehaviourDescription::setAttribute: "
+                     "attribute '" +
+                         n + "' already declared");
+    }  // end of BehaviourDescription::setAttribute
+
+    bool BehaviourDescription::hasAttribute(const std::string& n) const {
+      return this->attributes.count(n) != 0u;
+    }  // end of BehaviourDescription::hasAttribute
+
+    const std::map<std::string, BehaviourAttribute>&
+    BehaviourDescription::getAttributes() const {
+      return this->attributes;
+    }  // end of BehaviourDescription::getAttributes
+
+    void BehaviourDescription::reserveName(const Hypothesis h,
+                                           const std::string& n) {
+      this->callBehaviourData(h, &BehaviourData::reserveName, n, true);
     }
-    tfel::raise_if(!this->attributes.insert({n, a}).second,
-                   "BehaviourDescription::setAttribute: "
-                   "attribute '" +
-                       n + "' already declared");
-  }  // end of BehaviourDescription::setAttribute
 
-  bool BehaviourDescription::hasAttribute(const std::string& n) const {
-    return this->attributes.count(n) != 0u;
-  }  // end of BehaviourDescription::hasAttribute
-
-  const std::map<std::string, BehaviourAttribute>&
-  BehaviourDescription::getAttributes() const {
-    return this->attributes;
-  }  // end of BehaviourDescription::getAttributes
-
-  void BehaviourDescription::reserveName(const Hypothesis h,
-                                         const std::string& n) {
-    this->callBehaviourData(h, &BehaviourData::reserveName, n, true);
-  }
-
-  bool BehaviourDescription::isNameReserved(const std::string& n) const {
-    if (this->d.isNameReserved(n)) {
-      return true;
-    }
-    for (auto md : this->sd) {
-      if (md.second->isNameReserved(n)) {
+    bool BehaviourDescription::isNameReserved(const std::string& n) const {
+      if (this->d.isNameReserved(n)) {
         return true;
       }
-    }
-    return false;
-  }  // end of BehaviourDescription::isNameReserved
-
-  void BehaviourDescription::registerGlossaryName(const Hypothesis h,
-                                                  const std::string& n,
-                                                  const std::string& g) {
-    this->callBehaviourData(h, &BehaviourData::registerGlossaryName, n, g,
-                            true);
-  }  // end of BehaviourDescription::registerGlossaryName
-
-  void BehaviourDescription::registerEntryName(const Hypothesis h,
-                                                const std::string& n,
-                                                const std::string& e) {
-    this->callBehaviourData(h, &BehaviourData::registerEntryName, n, e, true);
-  }  // end of BehaviourDescription::registerEntryName
-
-  void BehaviourDescription::registerMemberName(const Hypothesis h,
-                                                const std::string& n) {
-    this->callBehaviourData(h, &BehaviourData::registerMemberName, n, true);
-  }  // end of BehaviourDescription::registerMemberName
-
-  void BehaviourDescription::registerStaticMemberName(const Hypothesis h,
-                                                      const std::string& n) {
-    this->callBehaviourData(h, &BehaviourData::registerStaticMemberName, n,
-                            true);
-  }  // end of BehaviourDescription::registerMemberName
-
-  void BehaviourDescription::addMaterialLaw(const std::string& m) {
-    if (std::find(this->materialLaws.begin(), this->materialLaws.end(), m) ==
-        this->materialLaws.end()) {
-      this->materialLaws.push_back(m);
-    }
-  }  // end of BehaviourDescription::getMaterialLaws
-
-  const std::vector<std::string>& BehaviourDescription::getMaterialLaws()
-      const {
-    return this->materialLaws;
-  }
-
-  std::pair<bool, bool> BehaviourDescription::checkVariableExistence(
-      const std::string& v) const {
-    const auto& mh = this->getDistinctModellingHypotheses();
-    std::pair<bool, bool> r{true, false};
-    for (const auto& h : mh) {
-      const auto& bdata = this->getBehaviourData(h);
-      const auto& vn = bdata.getVariablesNames();
-      const bool b = vn.find(v) != vn.end();
-      r.first = r.first && b;
-      r.second = r.second || b;
-    }
-    if (!r.second) {
-      r.first = false;
-    }
-    return r;
-  }  // end of checkVariableExistence
-
-  std::pair<bool, bool> BehaviourDescription::checkVariableExistence(
-      const std::string& n, const std::string& c, const bool b) const {
-    const auto& mh = this->getDistinctModellingHypotheses();
-    std::pair<bool, bool> r = {true, false};
-    for (const auto h : mh) {
-      const auto& bd = this->getBehaviourData(h);
-      const auto f = bd.getVariables(c).contains(n);
-      tfel::raise_if(!f && b,
-                     "BehaviourDescription::checkVariableExistence: "
-                     "no '" +
-                         c + "' named '" + n +
-                         "' found for at "
-                         "least one modelling hypothesis");
-      r.first = r.first && f;
-      r.second = r.second || f;
-    }
-    if (!r.second) {
-      r.first = false;
-    }
-    return r;
-  }
-
-  void BehaviourDescription::checkVariableGlossaryName(
-      const std::string& n, const std::string& g) const {
-    auto throw_if = [](const bool c, const std::string& m) {
-      tfel::raise_if(c,
-                     "BehaviourDescription::"
-                     "checkVariableGlossaryName: " +
-                         m);
-    };
-    for (const auto& h : this->getDistinctModellingHypotheses()) {
-      const auto& bdata = this->getBehaviourData(h);
-      throw_if(!bdata.hasGlossaryName(n),
-               "no glossary name associated with variable '" + n + "'");
-      const auto& en = bdata.getExternalName(n);
-      throw_if(en != g,
-               "the glossary name associated with "
-               "variable '" +
-                   n + "' is not '" + g + "', but '" + en + "'");
-    }
-  }  // end of BehaviourDescription::checkVariableGlossaryName
-
-  void BehaviourDescription::checkVariableEntryName(
-      const std::string& n, const std::string& e) const {
-    auto throw_if = [](const bool c, const std::string& m) {
-      tfel::raise_if(c,
-                     "BehaviourDescription::"
-                     "checkVariableEntryName: " +
-                         m);
-    };
-    for (const auto& h : this->getDistinctModellingHypotheses()) {
-      const auto& bdata = this->getBehaviourData(h);
-      throw_if(!bdata.hasEntryName(n),
-               "no entry name associated with variable '" + n + "'");
-      const auto& en = bdata.getExternalName(n);
-      throw_if(en != e,
-               "the entry name associated with "
-               "variable '" +
-                   n + "' is not '" + e + "', but '" + en + "'");
-    }
-  }  // end of BehaviourDescription::checkVariableEntryName
-
-  void BehaviourDescription::checkVariablePosition(const std::string& n,
-                                                   const std::string& c,
-                                                   const size_t p) {
-    for (const auto& h : this->getDistinctModellingHypotheses()) {
-      const auto& bdata = this->getBehaviourData(h);
-      const auto& vc = bdata.getVariables(c);
-      tfel::raise_if(p >= vc.size(),
-                     "BehaviourDescription::checkVariablePosition: "
-                     "position given is greater than the number "
-                     "of variables of category '" +
-                         c + "'");
-      const auto& v = vc[p];
-      tfel::raise_if(v.name != n,
-                     "BehaviourDescription::checkVariablePosition: "
-                     "variable at the given position is not named '" +
-                         n + "' but '" + v.name + "'");
-    }
-  }  // end of BehaviourDescription::checkVariablePosition
-
-  void BehaviourDescription::setOrthotropicAxesConvention(
-      const OrthotropicAxesConvention c) {
-    tfel::raise_if(this->oacIsDefined,
-                   "BehaviourDescription::setOrthotropicAxesConvention: "
-                   "orthotropic axes convention already defined");
-    tfel::raise_if(this->getSymmetryType() != mfront::ORTHOTROPIC,
-                   "BehaviourDescription::setOrthotropicAxesConvention: "
-                   "the behaviour is not orthotropic.");
-    if (c == OrthotropicAxesConvention::PLATE) {
-      if (this->areModellingHypothesesDefined()) {
-        for (const auto h : this->getModellingHypotheses()) {
-          tfel::raise_if((h != ModellingHypothesis::TRIDIMENSIONAL) &&
-                             (h != ModellingHypothesis::PLANESTRESS) &&
-                             (h != ModellingHypothesis::PLANESTRAIN) &&
-                             (h != ModellingHypothesis::GENERALISEDPLANESTRAIN),
-                         "Modelling hypothesis '" +
-                             ModellingHypothesis::toString(h) +
-                             "' is not compatible "
-                             "with the `Plate` orthotropic axes convention");
+      for (auto md : this->sd) {
+        if (md.second->isNameReserved(n)) {
+          return true;
         }
       }
-    }
-    this->oacIsDefined = true;
-    this->oac = c;
-  }
+      return false;
+    }  // end of BehaviourDescription::isNameReserved
 
-  tfel::material::OrthotropicAxesConvention
-  BehaviourDescription::getOrthotropicAxesConvention() const {
-    tfel::raise_if(this->getSymmetryType() != mfront::ORTHOTROPIC,
-                   "BehaviourDescription::getOrthotropicAxesConvention: "
-                   "the behaviour is not orthotropic.");
-    if (!this->oacIsDefined) {
+    void BehaviourDescription::registerGlossaryName(
+        const Hypothesis h, const std::string& n, const std::string& g) {
+      this->callBehaviourData(h, &BehaviourData::registerGlossaryName, n, g,
+                              true);
+    }  // end of BehaviourDescription::registerGlossaryName
+
+    void BehaviourDescription::registerEntryName(
+        const Hypothesis h, const std::string& n, const std::string& e) {
+      this->callBehaviourData(h, &BehaviourData::registerEntryName, n, e, true);
+    }  // end of BehaviourDescription::registerEntryName
+
+    void BehaviourDescription::registerMemberName(const Hypothesis h,
+                                                  const std::string& n) {
+      this->callBehaviourData(h, &BehaviourData::registerMemberName, n, true);
+    }  // end of BehaviourDescription::registerMemberName
+
+    void BehaviourDescription::registerStaticMemberName(const Hypothesis h,
+                                                        const std::string& n) {
+      this->callBehaviourData(h, &BehaviourData::registerStaticMemberName, n,
+                              true);
+    }  // end of BehaviourDescription::registerMemberName
+
+    void BehaviourDescription::addMaterialLaw(const std::string& m) {
+      if (std::find(this->materialLaws.begin(), this->materialLaws.end(), m) ==
+          this->materialLaws.end()) {
+        this->materialLaws.push_back(m);
+      }
+    }  // end of BehaviourDescription::getMaterialLaws
+
+    const std::vector<std::string>& BehaviourDescription::getMaterialLaws()
+        const {
+      return this->materialLaws;
+    }
+
+    std::pair<bool, bool> BehaviourDescription::checkVariableExistence(
+        const std::string& v) const {
+      const auto& mh = this->getDistinctModellingHypotheses();
+      std::pair<bool, bool> r{true, false};
+      for (const auto& h : mh) {
+        const auto& bdata = this->getBehaviourData(h);
+        const auto& vn = bdata.getVariablesNames();
+        const bool b = vn.find(v) != vn.end();
+        r.first = r.first && b;
+        r.second = r.second || b;
+      }
+      if (!r.second) {
+        r.first = false;
+      }
+      return r;
+    }  // end of checkVariableExistence
+
+    std::pair<bool, bool> BehaviourDescription::checkVariableExistence(
+        const std::string& n, const std::string& c, const bool b) const {
+      const auto& mh = this->getDistinctModellingHypotheses();
+      std::pair<bool, bool> r = {true, false};
+      for (const auto h : mh) {
+        const auto& bd = this->getBehaviourData(h);
+        const auto f = bd.getVariables(c).contains(n);
+        tfel::raise_if(!f && b,
+                       "BehaviourDescription::checkVariableExistence: "
+                       "no '" +
+                           c + "' named '" + n +
+                           "' found for at "
+                           "least one modelling hypothesis");
+        r.first = r.first && f;
+        r.second = r.second || f;
+      }
+      if (!r.second) {
+        r.first = false;
+      }
+      return r;
+    }
+
+    void BehaviourDescription::checkVariableGlossaryName(
+        const std::string& n, const std::string& g) const {
+      auto throw_if = [](const bool c, const std::string& m) {
+        tfel::raise_if(c,
+                       "BehaviourDescription::"
+                       "checkVariableGlossaryName: " +
+                           m);
+      };
+      for (const auto& h : this->getDistinctModellingHypotheses()) {
+        const auto& bdata = this->getBehaviourData(h);
+        throw_if(!bdata.hasGlossaryName(n),
+                 "no glossary name associated with variable '" + n + "'");
+        const auto& en = bdata.getExternalName(n);
+        throw_if(en != g,
+                 "the glossary name associated with "
+                 "variable '" +
+                     n + "' is not '" + g + "', but '" + en + "'");
+      }
+    }  // end of BehaviourDescription::checkVariableGlossaryName
+
+    void BehaviourDescription::checkVariableEntryName(
+        const std::string& n, const std::string& e) const {
+      auto throw_if = [](const bool c, const std::string& m) {
+        tfel::raise_if(c,
+                       "BehaviourDescription::"
+                       "checkVariableEntryName: " +
+                           m);
+      };
+      for (const auto& h : this->getDistinctModellingHypotheses()) {
+        const auto& bdata = this->getBehaviourData(h);
+        throw_if(!bdata.hasEntryName(n),
+                 "no entry name associated with variable '" + n + "'");
+        const auto& en = bdata.getExternalName(n);
+        throw_if(en != e,
+                 "the entry name associated with "
+                 "variable '" +
+                     n + "' is not '" + e + "', but '" + en + "'");
+      }
+    }  // end of BehaviourDescription::checkVariableEntryName
+
+    void BehaviourDescription::checkVariablePosition(
+        const std::string& n, const std::string& c, const size_t p) {
+      for (const auto& h : this->getDistinctModellingHypotheses()) {
+        const auto& bdata = this->getBehaviourData(h);
+        const auto& vc = bdata.getVariables(c);
+        tfel::raise_if(p >= vc.size(),
+                       "BehaviourDescription::checkVariablePosition: "
+                       "position given is greater than the number "
+                       "of variables of category '" +
+                           c + "'");
+        const auto& v = vc[p];
+        tfel::raise_if(v.name != n,
+                       "BehaviourDescription::checkVariablePosition: "
+                       "variable at the given position is not named '" +
+                           n + "' but '" + v.name + "'");
+      }
+    }  // end of BehaviourDescription::checkVariablePosition
+
+    void BehaviourDescription::setOrthotropicAxesConvention(
+        const OrthotropicAxesConvention c) {
+      tfel::raise_if(this->oacIsDefined,
+                     "BehaviourDescription::setOrthotropicAxesConvention: "
+                     "orthotropic axes convention already defined");
+      tfel::raise_if(this->getSymmetryType() != mfront::ORTHOTROPIC,
+                     "BehaviourDescription::setOrthotropicAxesConvention: "
+                     "the behaviour is not orthotropic.");
+      if (c == OrthotropicAxesConvention::PLATE) {
+        if (this->areModellingHypothesesDefined()) {
+          for (const auto h : this->getModellingHypotheses()) {
+            tfel::raise_if(
+                (h != ModellingHypothesis::TRIDIMENSIONAL) &&
+                    (h != ModellingHypothesis::PLANESTRESS) &&
+                    (h != ModellingHypothesis::PLANESTRAIN) &&
+                    (h != ModellingHypothesis::GENERALISEDPLANESTRAIN),
+                "Modelling hypothesis '" + ModellingHypothesis::toString(h) +
+                    "' is not compatible "
+                    "with the `Plate` orthotropic axes convention");
+          }
+        }
+      }
       this->oacIsDefined = true;
+      this->oac = c;
     }
-    return this->oac;
-  }
 
-  bool BehaviourDescription::useDynamicallyAllocatedVector(
-      const unsigned short s) const {
-    return (s >= SupportedTypes::ArraySizeLimit) &&
-           (this->areDynamicallyAllocatedVectorsAllowed());
-  }  // end of SupportedTypes::useDynamicallyAllocatedVector
-
-  bool BehaviourDescription::areDynamicallyAllocatedVectorsAllowed() const {
-    if (this->areDynamicallyAllocatedVectorsAllowed_.is<bool>()) {
-      return this->areDynamicallyAllocatedVectorsAllowed_.get<bool>();
-    }
-    return true;
-  }  // end of SupportedTypes::areDynamicallyAllocatedVectorsAllowed
-
-  void BehaviourDescription::areDynamicallyAllocatedVectorsAllowed(
-      const bool b) {
-    if (this->areDynamicallyAllocatedVectorsAllowed_.is<bool>()) {
-      tfel::raise_if(
-          this->areDynamicallyAllocatedVectorsAllowed_.get<bool>() != b,
-          "BehaviourDescription::areDynamicallyAllocatedVectorsAllowed: "
-          "inconsistent policy for dynamically allocated vectors");
-      return;
-    }
-    this->areDynamicallyAllocatedVectorsAllowed_ = b;
-  }  // end of SupportedTypes::areDynamicallyAllocatedVectorsAllowed
-
-  void BehaviourDescription::setStrainMeasure(const StrainMeasure sm) {
-    tfel::raise_if(this->getBehaviourType() !=
-                       BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR,
-                   "BehaviourDescription::setStrainMeasure: "
-                   "invalid behaviour type");
-    tfel::raise_if(this->isStrainMeasureDefined(),
-                   "BehaviourDescription::setStrainMeasure: "
-                   "strain measure already defined");
-    this->strainMeasure = sm;
-  }
-
-  BehaviourDescription::StrainMeasure BehaviourDescription::getStrainMeasure()
-      const {
-    tfel::raise_if(!this->isStrainMeasureDefined(),
-                   "BehaviourDescription::getStrainMeasure: "
-                   "no strain measure defined");
-    return this->strainMeasure.get<StrainMeasure>();
-  }  // end of BehaviourDescription::setStrainMeasure()
-
-  bool BehaviourDescription::isStrainMeasureDefined() const {
-    return this->strainMeasure.is<StrainMeasure>();
-  }  // end of BehaviourDescription::isStrainMeasureDefined()
-
-  BehaviourDescription::~BehaviourDescription() = default;
-
-  void setElasticSymmetryType(BehaviourDescription& bd,
-                              const BehaviourSymmetryType s) {
-    if (bd.isElasticSymmetryTypeDefined()) {
-      tfel::raise_if(bd.getElasticSymmetryType() != s,
-                     "setElasticSymmetryType: "
-                     "the elastic symmetry type defined for "
-                     "the behaviour is inconsistent.");
-    } else {
-      bd.setElasticSymmetryType(s);
-    }
-  }  // end of setElasticSymmetryType
-
-  void checkIsStrictlyPositive(
-      const BehaviourDescription::MaterialProperty& mp) {
-    if (mp.is<BehaviourDescription::ConstantMaterialProperty>()) {
-      auto& cmp = mp.get<BehaviourDescription::ConstantMaterialProperty>();
-      if (!(cmp.value > 0)) {
-        tfel::raise("checkIsStrictlyPositive: material property '" + cmp.name +
-                    "' is not strictly positive");
+    tfel::material::OrthotropicAxesConvention
+    BehaviourDescription::getOrthotropicAxesConvention() const {
+      tfel::raise_if(this->getSymmetryType() != mfront::ORTHOTROPIC,
+                     "BehaviourDescription::getOrthotropicAxesConvention: "
+                     "the behaviour is not orthotropic.");
+      if (!this->oacIsDefined) {
+        this->oacIsDefined = true;
       }
+      return this->oac;
     }
-  } // end of checkIsStrictlyPositive
 
-  void checkIsStrictlyNegative(
-      const BehaviourDescription::MaterialProperty& mp) {
-    if (mp.is<BehaviourDescription::ConstantMaterialProperty>()) {
-      auto& cmp = mp.get<BehaviourDescription::ConstantMaterialProperty>();
-      if (!(cmp.value < 0)) {
-        tfel::raise("checkIsStrictlyNegative: material property '" + cmp.name +
-                    "' is not strictly negative");
+    bool BehaviourDescription::useDynamicallyAllocatedVector(
+        const unsigned short s) const {
+      return (s >= SupportedTypes::ArraySizeLimit) &&
+             (this->areDynamicallyAllocatedVectorsAllowed());
+    }  // end of SupportedTypes::useDynamicallyAllocatedVector
+
+    bool BehaviourDescription::areDynamicallyAllocatedVectorsAllowed() const {
+      if (this->areDynamicallyAllocatedVectorsAllowed_.is<bool>()) {
+        return this->areDynamicallyAllocatedVectorsAllowed_.get<bool>();
       }
+      return true;
+    }  // end of SupportedTypes::areDynamicallyAllocatedVectorsAllowed
+
+    void BehaviourDescription::areDynamicallyAllocatedVectorsAllowed(
+        const bool b) {
+      if (this->areDynamicallyAllocatedVectorsAllowed_.is<bool>()) {
+        tfel::raise_if(
+            this->areDynamicallyAllocatedVectorsAllowed_.get<bool>() != b,
+            "BehaviourDescription::areDynamicallyAllocatedVectorsAllowed: "
+            "inconsistent policy for dynamically allocated vectors");
+        return;
+      }
+      this->areDynamicallyAllocatedVectorsAllowed_ = b;
+    }  // end of SupportedTypes::areDynamicallyAllocatedVectorsAllowed
+
+    void BehaviourDescription::setStrainMeasure(const StrainMeasure sm) {
+      tfel::raise_if(this->getBehaviourType() !=
+                         BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR,
+                     "BehaviourDescription::setStrainMeasure: "
+                     "invalid behaviour type");
+      tfel::raise_if(this->isStrainMeasureDefined(),
+                     "BehaviourDescription::setStrainMeasure: "
+                     "strain measure already defined");
+      this->strainMeasure = sm;
     }
-  } // end of checkIsStrictlyNegative
+
+    BehaviourDescription::StrainMeasure BehaviourDescription::getStrainMeasure()
+        const {
+      tfel::raise_if(!this->isStrainMeasureDefined(),
+                     "BehaviourDescription::getStrainMeasure: "
+                     "no strain measure defined");
+      return this->strainMeasure.get<StrainMeasure>();
+    }  // end of BehaviourDescription::setStrainMeasure()
+
+    bool BehaviourDescription::isStrainMeasureDefined() const {
+      return this->strainMeasure.is<StrainMeasure>();
+    }  // end of BehaviourDescription::isStrainMeasureDefined()
+
+    BehaviourDescription::~BehaviourDescription() = default;
+
+    void setElasticSymmetryType(BehaviourDescription & bd,
+                                const BehaviourSymmetryType s) {
+      if (bd.isElasticSymmetryTypeDefined()) {
+        tfel::raise_if(bd.getElasticSymmetryType() != s,
+                       "setElasticSymmetryType: "
+                       "the elastic symmetry type defined for "
+                       "the behaviour is inconsistent.");
+      } else {
+        bd.setElasticSymmetryType(s);
+      }
+    }  // end of setElasticSymmetryType
+
+    void checkIsStrictlyPositive(
+        const BehaviourDescription::MaterialProperty& mp) {
+      if (mp.is<BehaviourDescription::ConstantMaterialProperty>()) {
+        auto& cmp = mp.get<BehaviourDescription::ConstantMaterialProperty>();
+        if (!(cmp.value > 0)) {
+          tfel::raise("checkIsStrictlyPositive: material property '" +
+                      cmp.name + "' is not strictly positive");
+        }
+      }
+    }  // end of checkIsStrictlyPositive
+
+    void checkIsStrictlyNegative(
+        const BehaviourDescription::MaterialProperty& mp) {
+      if (mp.is<BehaviourDescription::ConstantMaterialProperty>()) {
+        auto& cmp = mp.get<BehaviourDescription::ConstantMaterialProperty>();
+        if (!(cmp.value < 0)) {
+          tfel::raise("checkIsStrictlyNegative: material property '" +
+                      cmp.name + "' is not strictly negative");
+        }
+      }
+    }  // end of checkIsStrictlyNegative
 
 }  // end of namespace mfront

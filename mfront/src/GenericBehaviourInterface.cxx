@@ -524,11 +524,11 @@ namespace mfront {
     };
     // setting driving variables and thermodynamic forces
     auto vsize = [&throw_if](const SupportedTypes::TypeFlag f) {
-      if (f == SupportedTypes::TVector) {
+      if (f == SupportedTypes::TVECTOR) {
         return "TVectorSize";
-      } else if (f == SupportedTypes::Stensor) {
+      } else if (f == SupportedTypes::STENSOR) {
         return "StensorSize";
-      } else if (f != SupportedTypes::Tensor) {
+      } else if (f != SupportedTypes::TENSOR) {
         throw_if(true, "invalid variable type");
       }
       return "TensorSize";
@@ -537,7 +537,7 @@ namespace mfront {
         SupportedTypes::TypeSize& o, const VariableDescription& v,
         const std::string& n, const std::string& src) {
       const auto f = this->getTypeFlag(v.type);
-      if (f == SupportedTypes::Scalar) {
+      if (f == SupportedTypes::SCALAR) {
         os << "this->" << n << " = mgb_d." << src << "[" << o << "];\n";
       } else {
         const auto s = vsize(f);
@@ -560,11 +560,11 @@ namespace mfront {
       throw_if(th.arraySize != 1,
                "arrays of thermodynamic forces are not supported");
       // driving variable
-      const auto dvname = dv.increment_known ? dv.name : dv.name + "0";
+      const auto dvname = Gradient::isIncrementKnown(dv) ? dv.name : dv.name + "0";
       init(odv, dv, dvname, "s0.gradients");
-      if (!dv.increment_known) {
+      if (!Gradient::isIncrementKnown(dv)) {
         const auto f = this->getTypeFlag(dv.type);
-        if (f == SupportedTypes::Scalar) {
+        if (f == SupportedTypes::SCALAR) {
           os << "this->" << dv.name << "1 = mgb_d.s1.gradients[" << odv
              << "];\n";
         } else {
@@ -581,7 +581,7 @@ namespace mfront {
         }
       } else {
         const auto f = this->getTypeFlag(dv.type);
-        if (f == SupportedTypes::Scalar) {
+        if (f == SupportedTypes::SCALAR) {
           os << "this->d" << dv.name << " = "
              << "mgb_d.s1.gradients[" << odv << "] - "
              << "mgb_d.s0.gradients[" << odv << "];\n";
@@ -654,15 +654,15 @@ namespace mfront {
       }
       os << (first ? "\n: " : ",\n");
       const auto flag = SupportedTypes::getTypeFlag(v.type);
-      if (flag == SupportedTypes::Scalar) {
+      if (flag == SupportedTypes::SCALAR) {
         if (eo.empty()) {
           os << v.name << "(" << src << "[" << o << "])";
         } else {
           os << v.name << "(" << src << "[" << eo << "+" << o << "])";
         }
-      } else if ((flag == SupportedTypes::TVector) ||
-                 (flag == SupportedTypes::Stensor) ||
-                 (flag == SupportedTypes::Tensor)) {
+      } else if ((flag == SupportedTypes::TVECTOR) ||
+                 (flag == SupportedTypes::STENSOR) ||
+                 (flag == SupportedTypes::TENSOR)) {
         if (eo.empty()) {
           os << v.name << "(&" << src << "[" << o << "])";
         } else {
@@ -706,20 +706,20 @@ namespace mfront {
         os << "this->" << v.name << ".resize(" << v.arraySize << ");\n";
         os << "for(unsigned short idx=0;idx!=" << v.arraySize << ";++idx){\n";
         switch (flag) {
-          case SupportedTypes::Scalar:
+          case SupportedTypes::SCALAR:
             os << "this->" << v.name << "[idx] = " << src << "["
                << get_offset(o) << "+idx];\n";
             break;
-          case SupportedTypes::TVector:
+          case SupportedTypes::TVECTOR:
             os << "tfel::fsalgo::copy<TVectorSize>::exe(&" << src << "["
                << get_offset(o) << "+idx*TVectorSize],this->" << v.name
                << "[idx].begin());\n";
             break;
-          case SupportedTypes::Stensor:
+          case SupportedTypes::STENSOR:
             os << "this->" << v.name << "[idx].import(&" << src << "["
                << get_offset(o) << "+idx*StensorSize]);\n";
             break;
-          case SupportedTypes::Tensor:
+          case SupportedTypes::TENSOR:
             os << "tfel::fsalgo::copy<TensorSize>::exe(&" << src << "["
                << get_offset(o) << "+idx*TensorSize],this->" << v.name
                << "[idx].begin());\n";
@@ -733,20 +733,20 @@ namespace mfront {
       } else {
         for (int index = 0; index != v.arraySize; ++index) {
           switch (flag) {
-            case SupportedTypes::Scalar:
+            case SupportedTypes::SCALAR:
               os << "this->" << v.name << "[" << index << "] = " << src << "["
                  << get_offset(o) << "];\n";
               break;
-            case SupportedTypes::TVector:
+            case SupportedTypes::TVECTOR:
               os << "tfel::fsalgo::copy<TVectorSize>::exe(&" << src << "["
                  << get_offset(o) << "],this->" << v.name << "[" << index
                  << "].begin());\n";
               break;
-            case SupportedTypes::Stensor:
+            case SupportedTypes::STENSOR:
               os << "this->" << v.name << "[" << index << "].import(&" << src
                  << "[" << get_offset(o) << "]);\n";
               break;
-            case SupportedTypes::Tensor:
+            case SupportedTypes::TENSOR:
               os << "tfel::fsalgo::copy<TensorSize>::exe(&" << src << "["
                  << get_offset(o) << "],"
                  << "this->" << v.name << "[" << index << "].begin());\n";
@@ -941,7 +941,7 @@ namespace mfront {
         o += this->getTypeSize(ev.type, ev.arraySize);
         continue;
       }
-      if (SupportedTypes::getTypeFlag(ev.type) != SupportedTypes::Scalar) {
+      if (SupportedTypes::getTypeFlag(ev.type) != SupportedTypes::SCALAR) {
         tfel::raise(
             "GenericBehaviourInterface::writeIntegrationDataConstructor: "
             "internal error, tag unsupported");
@@ -958,7 +958,7 @@ namespace mfront {
         o += this->getTypeSize(ev.type, ev.arraySize);
         continue;
       }
-      if (SupportedTypes::getTypeFlag(ev.type) != SupportedTypes::Scalar) {
+      if (SupportedTypes::getTypeFlag(ev.type) != SupportedTypes::SCALAR) {
         tfel::raise(
             "GenericBehaviourInterface::writeIntegrationDataConstructor: "
             "internal error, tag unsupported");
@@ -997,11 +997,11 @@ namespace mfront {
       const Hypothesis h,
       const BehaviourDescription& bd) const {
     auto vsize = [](const SupportedTypes::TypeFlag f) {
-      if (f == SupportedTypes::TVector) {
+      if (f == SupportedTypes::TVECTOR) {
         return "TVectorSize";
-      } else if (f == SupportedTypes::Stensor) {
+      } else if (f == SupportedTypes::STENSOR) {
         return "StensorSize";
-      } else if (f != SupportedTypes::Tensor) {
+      } else if (f != SupportedTypes::TENSOR) {
         tfel::raise(
             "GenericBehaviourInterface::writeBehaviourDataMainVariablesSetters:"
             " "
@@ -1014,7 +1014,7 @@ namespace mfront {
         const SupportedTypes::TypeSize o) {
       const auto f = this->getTypeFlag(v.type);
       if (v.arraySize == 1u) {
-        if (f == SupportedTypes::Scalar) {
+        if (f == SupportedTypes::SCALAR) {
           os << "mbg_s1." << dest << "[" << o << "] "
              << "= this->" << v.name << ";\n";
         } else {
@@ -1032,7 +1032,7 @@ namespace mfront {
       } else {
         auto c = o;
         for (unsigned short idx = 0; idx != v.arraySize; ++idx) {
-          if (f == SupportedTypes::Scalar) {
+          if (f == SupportedTypes::SCALAR) {
             os << "mbg_s1." << dest << "[" << c << "] "
                << "= this->" << v.name << "[" << idx << "];\n";
           } else {

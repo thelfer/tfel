@@ -43,7 +43,7 @@ namespace mfront {
         up = true;
       } else {
         const auto f = SupportedTypes::getTypeFlag(v.type);
-        tfel::raise_if(f != SupportedTypes::Scalar,
+        tfel::raise_if(f != SupportedTypes::SCALAR,
                        "checkParametersType: "
                        "unsupport parameter type '" +
                            v.type + "'.");

@@ -2880,6 +2880,8 @@ mfront/tests/behaviours/SaintVenantKirchhoffElasticityTotalLagrangian.mfront -te
 mfront/tests/behaviours/SaintVenantKirchhoffElasticityWithSubStepping.mfront -text
 mfront/tests/behaviours/SlidingSystemsCC.mfront -text
 mfront/tests/behaviours/StateVariablesBoundsCheck.mfront -text
+mfront/tests/behaviours/StationaryHeatTransfer.mfront -text
+mfront/tests/behaviours/StationaryHeatTransfer2.mfront -text
 mfront/tests/behaviours/StrainHardeningCreep.mfront -text
 mfront/tests/behaviours/StrainHardeningCreep2.mfront -text
 mfront/tests/behaviours/StrainHardeningCreep3.mfront -text

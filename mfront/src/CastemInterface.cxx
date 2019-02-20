@@ -2160,7 +2160,7 @@ namespace mfront {
       const auto flag = SupportedTypes::getTypeFlag(p->type);
       std::string tmp;
       tmp += ' ';
-      if (flag == SupportedTypes::Scalar) {
+      if (flag == SupportedTypes::SCALAR) {
         if (p->arraySize == 1) {
           tmp += treatScalar(p->name);
         } else {
@@ -2171,7 +2171,7 @@ namespace mfront {
             }
           }
         }
-      } else if (flag == SupportedTypes::Stensor) {
+      } else if (flag == SupportedTypes::STENSOR) {
         if (p->arraySize == 1) {
           tmp += treatStensor(h, p->name);
         } else {
@@ -2182,7 +2182,7 @@ namespace mfront {
             }
           }
         }
-      } else if (flag == SupportedTypes::Tensor) {
+      } else if (flag == SupportedTypes::TENSOR) {
         if (p->arraySize == 1) {
           tmp += treatTensor(h, p->name);
         } else {
@@ -2278,7 +2278,7 @@ namespace mfront {
     mcoel << "coel = 'MOTS' ";
     for (auto pm = mprops.first.cbegin(); pm != mprops.first.cend();) {
       const auto flag = SupportedTypes::getTypeFlag(pm->type);
-      throw_if(flag != SupportedTypes::Scalar,
+      throw_if(flag != SupportedTypes::SCALAR,
                "material properties shall be scalars");
       if (pm->arraySize == 1) {
         mcoel << treatScalar(pm->var_name);
@@ -2337,7 +2337,7 @@ namespace mfront {
     auto mpos = 0;
     for (auto pm = mprops.first.cbegin(); pm != mprops.first.cend(); ++mpos) {
       const auto flag = SupportedTypes::getTypeFlag(pm->type);
-      throw_if(flag != SupportedTypes::Scalar,
+      throw_if(flag != SupportedTypes::SCALAR,
                "material properties shall be scalars");
       // skipping variables V1* and V2* imposed by Cast3M
       if (bd.getSymmetryType() == mfront::ORTHOTROPIC) {

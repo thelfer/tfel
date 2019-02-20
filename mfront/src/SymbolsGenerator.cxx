@@ -27,16 +27,16 @@ namespace mfront {
 
   static int getVariableTypeId(const VariableDescription& v) {
     switch (SupportedTypes::getTypeFlag(v.type)) {
-      case SupportedTypes::Scalar:
+      case SupportedTypes::SCALAR:
         return 0;
         break;
-      case SupportedTypes::Stensor:
+      case SupportedTypes::STENSOR:
         return 1;
         break;
-      case SupportedTypes::TVector:
+      case SupportedTypes::TVECTOR:
         return 2;
         break;
-      case SupportedTypes::Tensor:
+      case SupportedTypes::TENSOR:
         return 3;
         break;
       default:
@@ -218,23 +218,15 @@ namespace mfront {
       const StandardBehaviourInterface& i,
       const BehaviourDescription& bd,
       const std::string& name) const {
-    const auto& mvs = bd.getMainVariables();
     const auto fn = i.getFunctionNameBasis(name);
-    std::vector<std::string> blocks_names;
-    //    const auto a = bd.getAdditionnalTangentOperatorBlocks();
-    const auto n = mvs.size()*mvs.size(); // + a.size() ;
-    out << "MFRONT_SHAREDOBJ unsigned short " << fn
-        << "_nTangentOperatorBlocks = " << n  << ";\n\n";
-    for(const auto& f : mvs){
-      for(const auto& g : mvs){
-	if(g.first.increment_known){
-	  blocks_names.push_back("d"+f.second.name+"_dd"+g.first.name);
-	} else {
-	  blocks_names.push_back("d"+f.second.name+"_d"+g.first.name+"1");
-	}
-      }
+    std::vector<std::string> bns;
+    for(const auto& b : bd.getTangentOperatorBlocks()){
+      bns.push_back(b.first.getExternalName());
+      bns.push_back(b.second.getExternalName());
     }
-    this->writeArrayOfStringsSymbol(out, fn + "_TangentOperatorBlocks", blocks_names);
+    out << "MFRONT_SHAREDOBJ unsigned short " << fn
+        << "_nTangentOperatorBlocks = " << bns.size() << ";\n\n";
+    this->writeArrayOfStringsSymbol(out, fn + "_TangentOperatorBlocks", bns);
   } // end of SymbolsGenerator::writeTangentOperatorSymbols
   
   void SymbolsGenerator::writeMaterialKnowledgeTypeSymbol(
@@ -456,7 +448,7 @@ namespace mfront {
             out << "2";
           } else {
             const auto f = SupportedTypes::getTypeFlag(p->type);
-            tfel::raise_if(f != SupportedTypes::Scalar,
+            tfel::raise_if(f != SupportedTypes::SCALAR,
                            "SymbolsGenerator::writeParametersSymbols: "
                            "internal error, unsupported type "
                            "for parameter '" +
@@ -506,7 +498,7 @@ namespace mfront {
             << mb.getUnsignedShortParameterDefaultValue(h, p.name) << ";\n\n";
       } else {
         const auto f = SupportedTypes::getTypeFlag(p.type);
-        throw_if(f != SupportedTypes::Scalar,
+        throw_if(f != SupportedTypes::SCALAR,
                  "unsupported paramaeter type '" + p.type + "'");
         if (p.arraySize == 1u) {
           out << "MFRONT_SHAREDOBJ double " << this->getSymbolName(i, name, h)

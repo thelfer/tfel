@@ -1127,7 +1127,7 @@ namespace mfront{
     const auto iprefix = makeUpperCase(this->getInterfaceName());
     tfel::raise_if(!o.isNull(),"AbaqusInterface::writeBehaviourDataMainVariablesSetter : "
 		   "only one driving variable supported");
-    if(v.increment_known){
+    if(Gradient::isIncrementKnown(v)){
       os << "abaqus::UMATImportGradients<hypothesis>::exe(this->" << v.name << ","
 	 << iprefix << "stran);\n";
     } else {
@@ -1144,7 +1144,7 @@ namespace mfront{
     const auto iprefix = makeUpperCase(this->getInterfaceName());
     tfel::raise_if(!o.isNull(),"AbaqusInterface::writeIntegrationDataMainVariablesSetter : "
 		   "only one driving variable supported");
-    if(v.increment_known){
+    if(Gradient::isIncrementKnown(v)){
       os << "abaqus::UMATImportGradients<hypothesis>::exe(this->d" << v.name << ","
 	 << iprefix << "dstran);\n";
     } else {
@@ -1159,7 +1159,7 @@ namespace mfront{
 							      const SupportedTypes::TypeSize o) const
   {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
-    if(SupportedTypes::getTypeFlag(f.type)==SupportedTypes::Stensor){
+    if(SupportedTypes::getTypeFlag(f.type)==SupportedTypes::STENSOR){
       os << "abaqus::UMATImportThermodynamicForces<hypothesis>::exe(this->" << f.name << ",";
       if(!o.isNull()){
 	os << iprefix << "stress_+" << o << ");\n";
@@ -1207,8 +1207,8 @@ namespace mfront{
     bool b = false; // have persistent variables that have to be updated
     for(const auto& v:d.getPersistentVariables()){
       const auto flag = SupportedTypes::getTypeFlag(v.type);
-      if((flag==SupportedTypes::Stensor)||
-	 (flag==SupportedTypes::Tensor)){
+      if((flag==SupportedTypes::STENSOR)||
+	 (flag==SupportedTypes::TENSOR)){
 	b = true;
 	break;
       }
@@ -1223,8 +1223,8 @@ namespace mfront{
       "                                                        ABAQUSDR[6],ABAQUSDR[7],ABAQUSDR[8]};\n";
     for(const auto& v:d.getPersistentVariables()){
       const auto flag = SupportedTypes::getTypeFlag(v.type);
-      if((flag==SupportedTypes::Stensor)||
-	 (flag==SupportedTypes::Tensor)){
+      if((flag==SupportedTypes::STENSOR)||
+	 (flag==SupportedTypes::TENSOR)){
 	if(v.arraySize==1u){
 	  out << "this->" << v.name << ".changeBasis(abaqus_dr);\n";
 	} else {
@@ -1244,7 +1244,7 @@ namespace mfront{
    {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
     const auto flag = SupportedTypes::getTypeFlag(f.type);
-    if(flag==SupportedTypes::Stensor){
+    if(flag==SupportedTypes::STENSOR){
       if(!o.isNull()){
 	out << "abaqus::UMATExportThermodynamicForces<hypothesis>::exe("
 	    << a << "+" << o << ",this->sig);\n";

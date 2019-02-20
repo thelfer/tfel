@@ -13,8 +13,16 @@
 
 #include"MFront/Gradient.hxx"
 
-namespace mfront
-{
+namespace mfront {
+
+  void Gradient::setIsIncrementKnownAttribute(VariableDescription& v,
+                                              const bool b) {
+    return v.setAttribute("Gradient::is_increment_known", b, false);
+  }  // end of Gradient::setIsIncrementKnownAttribute
+
+  bool Gradient::isIncrementKnown(const VariableDescription& v) {
+    return v.getAttribute<bool>("Gradient::is_increment_known", false);
+  }  // end of Gradient::isIncrementKnown
 
   Gradient::Gradient(const std::string& t, const std::string& n)
       : VariableDescription(t, n, 1u, 0u) {}  // end of Gradient::Gradient

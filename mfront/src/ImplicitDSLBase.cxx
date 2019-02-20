@@ -945,19 +945,19 @@ namespace mfront {
       const auto& d = this->mb.getBehaviourData(h);
       for (const auto& v : d.getIntegrationVariables()) {
         const auto flag = SupportedTypes::getTypeFlag(v.type);
-        if (flag == SupportedTypes::Scalar) {
+        if (flag == SupportedTypes::SCALAR) {
           has_scalar = true;
           if (v.arraySize >= 1) {
             has_scalar_array = true;
           }
         }
-        if (flag == SupportedTypes::Stensor) {
+        if (flag == SupportedTypes::STENSOR) {
           has_stensor = true;
           if (v.arraySize >= 1) {
             has_stensor_array = true;
           }
         }
-        if (flag == SupportedTypes::TVector) {
+        if (flag == SupportedTypes::TVECTOR) {
           has_tvector = true;
           if (v.arraySize >= 1) {
             has_tvector_array = true;
@@ -1134,8 +1134,8 @@ namespace mfront {
                << " */\n";
           }
           if ((v.arraySize != 1u) && (v2.arraySize == 1u)) {
-            if (flag == SupportedTypes::Scalar) {
-              if (flag2 == SupportedTypes::Scalar) {
+            if (flag == SupportedTypes::SCALAR) {
+              if (flag2 == SupportedTypes::SCALAR) {
                 os << "real&\n"
                    << "df" << v.name << "_dd" << v2.name
                    << "(tfel::math::tmatrix<" << n3 << "," << n3
@@ -1148,7 +1148,7 @@ namespace mfront {
                    << "(const unsigned short idx){\n"
                    << "return this->jacobian(" << n << "+idx, " << n2 << ");\n"
                    << "}\n\n";
-              } else if (flag2 == SupportedTypes::TVector) {
+              } else if (flag2 == SupportedTypes::TVECTOR) {
                 // Le résultat est un tenseur, une ligne dans la matrice
                 // jacobienne
                 os << "typename tfel::math::TVectorFromTinyMatrixRowView2<N,"
@@ -1199,8 +1199,8 @@ namespace mfront {
                    << ",real>::type(this->jacobian,idx,0);\n"
                    << "}\n\n";
               }
-            } else if (flag == SupportedTypes::TVector) {
-              if (flag2 == SupportedTypes::Scalar) {
+            } else if (flag == SupportedTypes::TVECTOR) {
+              if (flag2 == SupportedTypes::SCALAR) {
                 // Le résultat est un tenseur, une colonne dans la matrice
                 // jacobienne
                 os << "typename tfel::math::StensorFromTinyMatrixColumnView2<N,"
@@ -1225,7 +1225,7 @@ namespace mfront {
                    << n3 << "," << n3 << "," << n << "," << n2
                    << ",real>::type(this->jacobian,idx,0);\n"
                    << "}\n\n";
-              } else if (flag2 == SupportedTypes::TVector) {
+              } else if (flag2 == SupportedTypes::TVECTOR) {
                 // Le résultat est une sous-matrice
                 os << "typename tfel::math::TMatrixFromTinyMatrixView2<N," << n3
                    << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
@@ -1253,7 +1253,7 @@ namespace mfront {
                     "derivation of a vector by a tensor is not defined");
               }
             } else {
-              if (flag2 == SupportedTypes::Scalar) {
+              if (flag2 == SupportedTypes::SCALAR) {
                 // Le résultat est un tenseur, une colonne dans la matrice
                 // jacobienne
                 os << "typename tfel::math::StensorFromTinyMatrixColumnView2<N,"
@@ -1278,7 +1278,7 @@ namespace mfront {
                    << n3 << "," << n3 << "," << n << "," << n2
                    << ",real>::type(this->jacobian,idx,0);\n"
                    << "}\n\n";
-              } else if (flag2 == SupportedTypes::Stensor) {
+              } else if (flag2 == SupportedTypes::STENSOR) {
                 // Le résultat est un tenseur d'ordre 4
                 os << "typename tfel::math::ST2toST2FromTinyMatrixView2<N,"
                    << n3 << "," << n3 << "," << n << "," << n2
@@ -1309,8 +1309,8 @@ namespace mfront {
               }
             }
           } else if ((v.arraySize == 1u) && (v2.arraySize != 1u)) {
-            if (flag == SupportedTypes::Scalar) {
-              if (flag2 == SupportedTypes::Scalar) {
+            if (flag == SupportedTypes::SCALAR) {
+              if (flag2 == SupportedTypes::SCALAR) {
                 os << "real&\n"
                    << "df" << v.name << "_dd" << v2.name
                    << "(tfel::math::tmatrix<" << n3 << "," << n3
@@ -1350,7 +1350,7 @@ namespace mfront {
                    << "}\n\n";
               }
             } else {
-              if (flag2 == SupportedTypes::Scalar) {
+              if (flag2 == SupportedTypes::SCALAR) {
                 // Le résultat est un tenseur, une colonne dans la matrice
                 // jacobienne
                 os << "typename tfel::math::StensorFromTinyMatrixColumnView2<N,"
@@ -1401,8 +1401,8 @@ namespace mfront {
               }
             }
           } else if ((v.arraySize != 1u) && (v2.arraySize != 1u)) {
-            if (flag == SupportedTypes::Scalar) {
-              if (flag2 == SupportedTypes::Scalar) {
+            if (flag == SupportedTypes::SCALAR) {
+              if (flag2 == SupportedTypes::SCALAR) {
                 os << "real&\n"
                    << "df" << v.name << "_dd" << v2.name
                    << "(tfel::math::tmatrix<" << n3 << "," << n3
@@ -1447,7 +1447,7 @@ namespace mfront {
                    << "}\n\n";
               }
             } else {
-              if (flag2 == SupportedTypes::Scalar) {
+              if (flag2 == SupportedTypes::SCALAR) {
                 // Le résultat est un tenseur, une colonne dans la matrice
                 // jacobienne
                 os << "typename tfel::math::StensorFromTinyMatrixColumnView2<N,"
@@ -1592,28 +1592,28 @@ namespace mfront {
         const auto flag = SupportedTypes::getTypeFlag(v.type);
         if (v.arraySize == 1u) {
           switch (flag) {
-            case SupportedTypes::Scalar:
+            case SupportedTypes::SCALAR:
               os << "Stensor& ";
               break;
-            case SupportedTypes::Stensor:
+            case SupportedTypes::STENSOR:
               os << "Stensor4& ";
               break;
-            case SupportedTypes::TVector:
-            case SupportedTypes::Tensor:
+            case SupportedTypes::TVECTOR:
+            case SupportedTypes::TENSOR:
             default:
               this->throwRuntimeError("ImplicitDSLBase::writeGetPartialJacobianInvert",
                                       "internal error, tag unsupported");
           }
         } else {
           switch (flag) {
-            case SupportedTypes::Scalar:
+            case SupportedTypes::SCALAR:
               os << "tfel::math::tvector<" << v.arraySize << "u,Stensor>& ";
               break;
-            case SupportedTypes::Stensor:
+            case SupportedTypes::STENSOR:
               os << "tfel::math::tvector<" << v.arraySize << "u,Stensor4>& ";
               break;
-            case SupportedTypes::TVector:
-            case SupportedTypes::Tensor:
+            case SupportedTypes::TVECTOR:
+            case SupportedTypes::TENSOR:
             default:
               this->throwRuntimeError("ImplicitDSLBase::writeGetPartialJacobianInvert",
                                       "internal error, tag unsupported");
@@ -1637,7 +1637,7 @@ namespace mfront {
       for (size_type i2 = 0; i2 <= i; ++i2) {
         const auto& v = d.getIntegrationVariables()[i2];
         const auto flag = SupportedTypes::getTypeFlag(v.type);
-        if (flag == SupportedTypes::Scalar) {
+        if (flag == SupportedTypes::SCALAR) {
           if (v.arraySize == 1u) {
             os << "partial_jacobian_" << v.name << "(idx)=vect_e(" << n2 << ");\n";
           } else {
@@ -1646,7 +1646,7 @@ namespace mfront {
                << "}\n";
           }
           n2 += this->getTypeSize(v.type, v.arraySize);
-        } else if (flag == SupportedTypes::TVector) {
+        } else if (flag == SupportedTypes::TVECTOR) {
           if (v.arraySize == 1u) {
             os << "for(unsigned short idx2=" << n2;
             os << ";idx2!=";
@@ -1663,7 +1663,7 @@ namespace mfront {
             os << "}\n";
             n2 += this->getTypeSize(v.type, v.arraySize);
           }
-        } else if (flag == SupportedTypes::Stensor) {
+        } else if (flag == SupportedTypes::STENSOR) {
           if (v.arraySize == 1u) {
             os << "for(unsigned short idx2=" << n2;
             os << ";idx2!=";
@@ -1735,7 +1735,7 @@ namespace mfront {
 
   std::string ImplicitDSLBase::getVectorMappingClass(const VariableDescription& v) const {
     const auto f = SupportedTypes::getTypeFlag(v.type);
-    if (f == SupportedTypes::Stensor) {
+    if (f == SupportedTypes::STENSOR) {
       if (v.arraySize == 1u) {
         return "StensorFromTinyVectorView";
       } else {
@@ -1885,7 +1885,7 @@ namespace mfront {
        << "static_cast<void>(perturbatedSystemEvaluation); \n";
     n = SupportedTypes::TypeSize();
     for (const auto& v : d.getIntegrationVariables()) {
-      if (SupportedTypes::getTypeFlag(v.type) == SupportedTypes::Scalar) {
+      if (SupportedTypes::getTypeFlag(v.type) == SupportedTypes::SCALAR) {
         if (v.arraySize == 1u) {
           os << "real& f" << v.name << "(this->fzeros(" << n << "));\n";
         } else {
@@ -2033,10 +2033,10 @@ namespace mfront {
       if (!first) {
         init << ",\n";
       }
-      if ((flag != SupportedTypes::Scalar) && (flag != SupportedTypes::Stensor)) {
+      if ((flag != SupportedTypes::SCALAR) && (flag != SupportedTypes::STENSOR)) {
         this->throwRuntimeError("getIntegrationVariablesIncrementsInitializers", "internal error, tag unsupported");
       }
-      if ((flag == SupportedTypes::Scalar) && (v.arraySize == 1u)) {
+      if ((flag == SupportedTypes::SCALAR) && (v.arraySize == 1u)) {
         init << "d" << v.name << "(this->zeros(" << n << "))";
       } else {
         init << "d" << v.name << "(this->zeros)";
@@ -2086,7 +2086,7 @@ namespace mfront {
       if ((!getDebugMode()) && (v.lineNumber != 0u)) {
         os << "#line " << v.lineNumber << " \"" << this->fd.fileName << "\"\n";
       }
-      if (SupportedTypes::getTypeFlag(v.type) == SupportedTypes::Scalar) {
+      if (SupportedTypes::getTypeFlag(v.type) == SupportedTypes::SCALAR) {
         if (v.arraySize == 1u) {
           os << "real& d" << v.name << ";\n";
         } else {

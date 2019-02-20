@@ -15,8 +15,9 @@
 #define LIB_MFRONT_GENERICBEHAVIOUR_INTEGRATE_HXX
 
 #include <algorithm>
-#include "TFEL/Math/st2tost2.hxx"
+#include "TFEL/Math/t2tot2.hxx"
 #include "TFEL/Math/t2tost2.hxx"
+#include "TFEL/Math/st2tost2.hxx"
 #include "TFEL/Material/OutOfBoundsPolicy.hxx"
 #include "TFEL/Material/FiniteStrainBehaviourTangentOperator.hxx"
 #include "MFront/GenericBehaviour/BehaviourData.h"
@@ -25,12 +26,73 @@ namespace mfront {
 
   namespace gb {
 
+    /*!
+     * \brief export the tangent operator used by some generic behaviours.
+     * \tparam real: numeric type used
+     * \param[out] v: exported values
+     * \param[in] K: computed tangent operator
+     */
+    template <typename real>
+    void exportTangentOperator(real* const v, const real K) {
+      *v = K;
+    }  // end of exportTangentOperator
+    /*!
+     * \brief export the tangent operator used by some generic behaviours.
+     * \tparam real: numeric type used
+     * \tparam N: size of the array containing the tangent operator
+     * \param[out] v: exported values
+     * \param[in] K: computed tangent operator
+     */
+    template <typename real, unsigned short N>
+    void exportTangentOperator(real* const v, const tfel::math::tvector<N,real>& K) {
+      std::copy(K.begin(), K.end(), v);
+    }  // end of exportTangentOperator
+    /*!
+     * \brief export the tangent operator used by some generic behaviours.
+     * \tparam real: numeric type used
+     * \tparam N: space dimension
+     * \param[out] v: exported values
+     * \param[in] K: computed tangent operator
+     */
+    template <typename real, unsigned short N>
+    void exportTangentOperator(real* const v,
+                               const tfel::math::t2tost2<N, real>& K) {
+      std::copy(K.begin(), K.end(), v);
+    }  // end of exportTangentOperator
+    /*!
+     * \brief export the tangent operator used by some generic behaviours.
+     * \tparam real: numeric type used
+     * \tparam N: space dimension
+     * \param[out] v: exported values
+     * \param[in] K: computed tangent operator
+     */
+    template <typename real, unsigned short N>
+    void exportTangentOperator(real* const v,
+			       const tfel::math::t2tot2<N, real>& K) {
+      std::copy(K.begin(), K.end(), v);
+    }  // end of exportTangentOperator
+    /*!
+     * \brief export the tangent operator used by standard small
+     * strain behaviours.
+     * \tparam real: numeric type used
+     * \tparam N: space dimension
+     * \param[out] v: exported values
+     * \param[in] K: computed tangent operator
+     */
     template <typename real, unsigned short N>
     void exportTangentOperator(real* const v,
                                const tfel::math::st2tost2<N, real>& K) {
       std::copy(K.begin(), K.end(), v);
     }  // end of exportTangentOperator
 
+    /*!
+     * \brief export the tangent operator used by finite strain
+     * strain behaviours.
+     * \tparam real: numeric type used
+     * \tparam N: space dimension
+     * \param[out] v: exported values
+     * \param[in] K: computed tangent operator
+     */
     template <typename real, unsigned short N>
     void exportTangentOperator(
         real* const v,
@@ -55,6 +117,13 @@ namespace mfront {
       }
     }  // end of exportTangentOperator
 
+    /*!
+     * \brief export the tangent operator used by cohesive zone models.
+     * \tparam real: numeric type used
+     * \tparam N: space dimension
+     * \param[out] v: exported values
+     * \param[in] K: computed tangent operator
+     */
     template <typename real, unsigned short N>
     void exportTangentOperator(real* const v,
                                const tfel::math::tmatrix<N, N, real>& K) {
@@ -94,7 +163,7 @@ namespace mfront {
        */
       template <typename Behaviour>
       static void exe(MFront_GB_BehaviourData& d, const Behaviour& b) {
-	*(d.s1.stored_energy) = *(d.s0.stored_energy);
+        *(d.s1.stored_energy) = *(d.s0.stored_energy);
         b.computeInternalEnergy(*(d.s1.stored_energy));
       }
     };  // end of struct InternalEnergyComputer
@@ -107,7 +176,7 @@ namespace mfront {
        */
       template <typename Behaviour>
       static void exe(MFront_GB_BehaviourData& d, const Behaviour& b) {
-	*(d.s1.dissipated_energy) = *(d.s0.dissipated_energy);
+        *(d.s1.dissipated_energy) = *(d.s0.dissipated_energy);
         b.computeDissipatedEnergy(*(d.s1.dissipated_energy));
       }  // end of exe
     };   // end of struct DissipatedEnergyComputer

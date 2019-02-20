@@ -83,7 +83,7 @@ namespace mfront{
     for(const auto& mv : mb.getMainVariables()){
       const auto& dv = mv.first;
       if(uvs.find(dv.name)!=uvs.end()){
-	if(dv.increment_known){
+	if(Gradient::isIncrementKnown(dv)){
 	  f << "this->"+dv.name+"_ = this->"+dv.name+"+(this->d"+dv.name+")*" << t << ";\n";
 	} else {
 	  f << "this->"+dv.name+"_ = this->"+dv.name+"0+(this->"+dv.name+"1-this->"+dv.name+"0)*" << t << ";\n";
@@ -187,7 +187,7 @@ namespace mfront{
     for(const auto& mv : mb.getMainVariables()){
       const auto& dv = mv.first;
       if(uvs.find(dv.name)!=uvs.end()){
-	writeExternalVariableCurrentValue2(f,dv.name,p,dv.increment_known);
+	writeExternalVariableCurrentValue2(f,dv.name,p,Gradient::isIncrementKnown(dv));
       }
     }
     for(const auto& v : d.getExternalStateVariables()){
@@ -694,7 +694,7 @@ namespace mfront{
     // part introduced at the end of the initialize local variables
     for(const auto& vm : this->mb.getMainVariables()){
       const auto& dv = vm.first;
-      if(dv.increment_known){
+      if(Gradient::isIncrementKnown(dv)){
 	ie.code += "this->d" + dv.name + "_ = (this->d"+dv.name+")/(this->dt);\n";
       } else {
 	ie.code += "this->d" + dv.name + "_ = (this->"+dv.name+"1-this->"+dv.name+"0)/(this->dt);\n";

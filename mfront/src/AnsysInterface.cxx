@@ -1435,7 +1435,7 @@ namespace mfront{
       tfel::raise("AnsysInterface::writeBehaviourDataMainVariablesSetter : "
 		  "only one driving variable supported");
     }
-    if(v.increment_known){
+    if(Gradient::isIncrementKnown(v)){
       os << "ansys::ImportGradients<hypothesis>::exe(this->" << v.name << ","
 	 << iprefix << "stran);\n";
     } else {
@@ -1453,7 +1453,7 @@ namespace mfront{
       tfel::raise("AnsysInterface::writeIntegrationDataMainVariablesSetter : "
 		  "only one driving variable supported");
     }
-    if(v.increment_known){
+    if(Gradient::isIncrementKnown(v)){
       os << "ansys::ImportGradients<hypothesis>::exe(this->d" << v.name << ","
 	 << iprefix << "dstran);\n";
     } else {
@@ -1467,7 +1467,7 @@ namespace mfront{
       const ThermodynamicForce& f,
       const SupportedTypes::TypeSize o) const {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
-    if (SupportedTypes::getTypeFlag(f.type) == SupportedTypes::Stensor) {
+    if (SupportedTypes::getTypeFlag(f.type) == SupportedTypes::STENSOR) {
       os << "ansys::ImportThermodynamicForces<hypothesis>::exe(this->" << f.name
          << ",";
       if (!o.isNull()) {
@@ -1515,8 +1515,8 @@ namespace mfront{
     bool b = false; // have persistent variables that have to be updated
     for(const auto& v:d.getPersistentVariables()){
       const auto flag = SupportedTypes::getTypeFlag(v.type);
-      if((flag==SupportedTypes::Stensor)||
-	 (flag==SupportedTypes::Tensor)){
+      if((flag==SupportedTypes::STENSOR)||
+	 (flag==SupportedTypes::TENSOR)){
 	b = true;
 	break;
       }
@@ -1531,8 +1531,8 @@ namespace mfront{
       "                                                       ANSYSDR[6],ANSYSDR[7],ANSYSDR[8]};\n";
     for(const auto& v:d.getPersistentVariables()){
       const auto flag = SupportedTypes::getTypeFlag(v.type);
-      if((flag==SupportedTypes::Stensor)||
-	 (flag==SupportedTypes::Tensor)){
+      if((flag==SupportedTypes::STENSOR)||
+	 (flag==SupportedTypes::TENSOR)){
 	if(v.arraySize==1u){
 	  out << "this->" << v.name << ".changeBasis(ansys_dr);\n";
 	} else {
@@ -1551,7 +1551,7 @@ namespace mfront{
    {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
     const auto flag = SupportedTypes::getTypeFlag(f.type);
-    if(flag==SupportedTypes::Stensor){
+    if(flag==SupportedTypes::STENSOR){
       if (!o.isNull()) {
         out << "ansys::ExportThermodynamicForces<hypothesis>::exe(" << a << "+"
             << o << ",this->sig);\n";

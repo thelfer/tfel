@@ -465,7 +465,7 @@ namespace mfront {
       out << "LAW '" << this->getFunctionNameBasis(name) << "'\n"
           << "!! material properties\n";
       for (const auto& mp : buildMaterialPropertiesList(mb, h).first) {
-        throw_if(SupportedTypes::getTypeFlag(mp.type) != SupportedTypes::Scalar,
+        throw_if(SupportedTypes::getTypeFlag(mp.type) != SupportedTypes::SCALAR,
                  "material property '" + mp.name +
                      "' is not a scalar. "
                      "This is not supported yet");
@@ -481,9 +481,9 @@ namespace mfront {
       out << "!! by default, internal state variables are set to zero\n";
       for (const auto& iv : d.getPersistentVariables()) {
         auto display = [&h, &out, &throw_if](const SupportedTypes::TypeFlag f) {
-          if (f == SupportedTypes::Scalar) {
+          if (f == SupportedTypes::SCALAR) {
             out << " ???";
-          } else if (f == SupportedTypes::Stensor) {
+          } else if (f == SupportedTypes::STENSOR) {
             if (h == ModellingHypothesis::TRIDIMENSIONAL) {
               out << " ??? ??? ??? ??? ??? ???";
             } else if ((h == ModellingHypothesis::AXISYMMETRICAL) ||
@@ -491,7 +491,7 @@ namespace mfront {
                        (h == ModellingHypothesis::PLANESTRESS)) {
               out << " ??? ??? ??? ???";
             }
-          } else if (f == SupportedTypes::Tensor) {
+          } else if (f == SupportedTypes::TENSOR) {
             if (h == ModellingHypothesis::TRIDIMENSIONAL) {
               out << " ??? ??? ??? ??? ??? ??? ??? ??? ???";
             } else if ((h == ModellingHypothesis::AXISYMMETRICAL) ||
@@ -518,7 +518,7 @@ namespace mfront {
       }
       out << "!! external state variables\n";
       for (const auto& e : d.getExternalStateVariables()) {
-        throw_if(SupportedTypes::getTypeFlag(e.type) != SupportedTypes::Scalar,
+        throw_if(SupportedTypes::getTypeFlag(e.type) != SupportedTypes::SCALAR,
                  "external state variable '" + e.name +
                      "' is not a scalar. This is not supported yet");
         if (e.arraySize == 1u) {
@@ -749,9 +749,9 @@ namespace mfront {
       const Gradient& v,
       const SupportedTypes::TypeSize o) const {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
-    if (!v.increment_known) {
+    if (!Gradient::isIncrementKnown(v)) {
       tfel::raise_if(
-          SupportedTypes::getTypeFlag(v.type) != SupportedTypes::Tensor,
+          SupportedTypes::getTypeFlag(v.type) != SupportedTypes::TENSOR,
           "EuroplexusInterface::writeBehaviourDataGradientSetter: "
           "unsupported driving variable type");
       if (!o.isNull()) {
@@ -763,7 +763,7 @@ namespace mfront {
       }
     } else {
       tfel::raise_if(
-          SupportedTypes::getTypeFlag(v.type) != SupportedTypes::Stensor,
+          SupportedTypes::getTypeFlag(v.type) != SupportedTypes::STENSOR,
           "EuroplexusInterface::writeBehaviourDataGradientSetter: "
           "unsupported driving variable type");
       if (!o.isNull()) {
@@ -781,9 +781,9 @@ namespace mfront {
       const Gradient& v,
       const SupportedTypes::TypeSize o) const {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
-    if (!v.increment_known) {
+    if (!Gradient::isIncrementKnown(v)) {
       tfel::raise_if(
-          SupportedTypes::getTypeFlag(v.type) != SupportedTypes::Tensor,
+          SupportedTypes::getTypeFlag(v.type) != SupportedTypes::TENSOR,
           "EuroplexusInterface::writeIntegrationDataGradientSetter: "
           "unsupported driving variable type");
       if (!o.isNull()) {
@@ -795,7 +795,7 @@ namespace mfront {
       }
     } else {
       tfel::raise_if(
-          SupportedTypes::getTypeFlag(v.type) != SupportedTypes::Stensor,
+          SupportedTypes::getTypeFlag(v.type) != SupportedTypes::STENSOR,
           "EuroplexusInterface::writeIntegrationDataGradientSetter: "
           "unsupported driving variable type");
       if (!o.isNull()) {
@@ -813,7 +813,7 @@ namespace mfront {
       const ThermodynamicForce& f,
       const SupportedTypes::TypeSize o) const {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
-    if (SupportedTypes::getTypeFlag(f.type) == SupportedTypes::Stensor) {
+    if (SupportedTypes::getTypeFlag(f.type) == SupportedTypes::STENSOR) {
       os << "tfel::fsalgo::copy<StensorSize>::exe(";
       if (!o.isNull()) {
         os << iprefix << "stress_+" << o;
@@ -835,7 +835,7 @@ namespace mfront {
       const SupportedTypes::TypeSize o) const {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
     const auto flag = SupportedTypes::getTypeFlag(f.type);
-    if (flag == SupportedTypes::Stensor) {
+    if (flag == SupportedTypes::STENSOR) {
       out << "tfel::fsalgo::copy<StensorSize>::exe(this->" << f.name
           << ".begin()," << a;
       if (!o.isNull()) {

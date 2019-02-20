@@ -194,7 +194,7 @@ namespace mfront {
                                       const std::string& v,
                                       const bool b) {
     const auto flag = SupportedTypes::getTypeFlag(t);
-    tfel::raise_if(flag != SupportedTypes::Scalar,
+    tfel::raise_if(flag != SupportedTypes::SCALAR,
                    "BehaviourMaterialProperty::BehaviourMaterialProperty: "
                    "material properties shall be scalars");
     auto o = SupportedTypes::TypeSize{};
@@ -219,7 +219,7 @@ namespace mfront {
       const auto& n = mb.getExternalName(h, p->name);
       bool found = false;
       const auto flag = SupportedTypes::getTypeFlag(p->type);
-      throw_if(flag != SupportedTypes::Scalar,
+      throw_if(flag != SupportedTypes::SCALAR,
                "Invalid type for material property '" + p->name + "' (" +
                    p->type +
                    ").\n"

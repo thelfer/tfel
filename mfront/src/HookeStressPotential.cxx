@@ -519,9 +519,9 @@ namespace mfront {
                            false)) ||
           (bd.getAttribute(BehaviourDescription::computesStiffnessTensor,
                            false))) {
-        if (vf == SupportedTypes::Scalar) {
+        if (vf == SupportedTypes::SCALAR) {
           c += "(this->theta) * ((" + dfv_ds + ") | (this->D));\n";
-        } else if (vf == SupportedTypes::Stensor) {
+        } else if (vf == SupportedTypes::STENSOR) {
           c += "(this->theta) * (" + dfv_ds + ") * (this->D);\n";
         } else {
           tfel::raise(
@@ -536,9 +536,9 @@ namespace mfront {
               bl ? "this->sebdata.lambda" : "this->lambda";
           const std::string mu = bl ? "this->sebdata.mu" : "this->mu";
           if (b) {
-            if (vf == SupportedTypes::Scalar) {
+            if (vf == SupportedTypes::SCALAR) {
               c += "(2 * " + mu + ")*(this->theta) * (" + dfv_ds + ");\n";
-            } else if (vf == SupportedTypes::Stensor) {
+            } else if (vf == SupportedTypes::STENSOR) {
               c += "(2 * " + mu + ")*(this->theta) * (" + dfv_ds + ");\n";
             } else {
               tfel::raise(
@@ -546,10 +546,10 @@ namespace mfront {
                   "unsupported elastic symmetry type");
             }
           } else {
-            if (vf == SupportedTypes::Scalar) {
+            if (vf == SupportedTypes::SCALAR) {
               c += "(this->theta) * ((" + dfv_ds + ") | (2 * (" + mu +
                    ") * Stensor4::Id()+(" + lambda + ") * Stensor4::IxI()));\n";
-            } else if (vf == SupportedTypes::Stensor) {
+            } else if (vf == SupportedTypes::STENSOR) {
               c += "(this->theta) * (" + dfv_ds + ") * (2 * (" + mu +
                    ") * Stensor4::Id()+(" + lambda + ") * Stensor4::IxI());\n";
             } else {
@@ -565,9 +565,9 @@ namespace mfront {
                 "HookeStressPotential::computeDerivatives: "
                 "orthotropic behaviour shall require the stiffness tensor");
           }
-          if (vf == SupportedTypes::Scalar) {
+          if (vf == SupportedTypes::SCALAR) {
             c += "(this->theta) * ((" + dfv_ds + ") | (this->D));\n";
-          } else if (vf == SupportedTypes::Stensor) {
+          } else if (vf == SupportedTypes::STENSOR) {
             c += "(this->theta) * (" + dfv_ds + ") * (this->D);\n";
           } else {
             tfel::raise(

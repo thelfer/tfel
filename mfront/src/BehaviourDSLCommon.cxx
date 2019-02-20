@@ -610,15 +610,28 @@ namespace mfront {
     return md;
   }  // end of BehaviourDSLCommon::getModelDescription
 
+  void BehaviourDSLCommon::declareMainVariables() {
+    decltype(this->gradients.size()) n =
+        std::min(this->gradients.size(), this->thermodynamic_forces.size());
+    while (n != 0) {
+      this->mb.addMainVariable(this->gradients.front(),
+                               this->thermodynamic_forces.front());
+      this->gradients.erase(this->gradients.begin());
+      this->thermodynamic_forces.erase(this->thermodynamic_forces.begin());
+      --n;
+    }
+  }  // end of BehaviourDSLCommon::declareMainVariables
+
   void BehaviourDSLCommon::treatGradient() {
     VariableDescriptionContainer ngradients;
     this->readVarList(ngradients, true);
     std::for_each(ngradients.begin(), ngradients.end(),
                   [this](const VariableDescription& v) {
                     Gradient g(v);
-                    g.increment_known = true;
+                    Gradient::setIsIncrementKnownAttribute(g, true);
                     this->gradients.emplace_back(std::move(g));
                   });
+    this->declareMainVariables();
   }  // end of BehaviourDSLCommon::treatGradient
 
   void BehaviourDSLCommon::treatThermodynamicForce() {
@@ -628,7 +641,32 @@ namespace mfront {
                   [this](const VariableDescription& f) {
                     this->thermodynamic_forces.emplace_back(f);
                   });
+    this->declareMainVariables();
   }  // end of BehaviourDSLCommon::treatThermodynamicForce
+
+  void BehaviourDSLCommon::treatAdditionalTangentOperatorBlock() {
+    const char* const m =
+        "BehaviourDSLCommon::treatAdditionalTangentOperatorBlock";
+    this->checkNotEndOfFile(m);
+    this->mb.addTangentOperatorBlock(this->current->value);
+    ++(this->current);
+    this->checkNotEndOfFile(m);
+    this->readSpecifiedToken(m, ";");
+  }  // end of BehaviourDSLCommon::treatAdditionalTangentOperatorBlock
+
+  void BehaviourDSLCommon::treatAdditionalTangentOperatorBlocks() {
+    const char* const m =
+        "BehaviourDSLCommon::treatAdditionalTangentOperatorBlocks";
+    this->checkNotEndOfFile(m);
+    auto values = std::vector<tfel::utilities::Token>{};
+    this->checkNotEndOfFile(m);
+    this->readList(values, m, "{", "}", false);
+    this->checkNotEndOfFile(m);
+    this->readSpecifiedToken(m, ";");
+    for (const auto& v : values) {
+      this->mb.addTangentOperatorBlock(v.value);
+    }
+  }  // end of BehaviourDSLCommon::treatAdditionalTangentOperatorBlock
 
   void BehaviourDSLCommon::treatModel() {
     if (getVerboseMode() >= VERBOSE_DEBUG) {
@@ -720,13 +758,19 @@ namespace mfront {
       this->completeVariableDeclaration();
       this->mb.disallowNewUserDefinedVariables();
     }
-  }
+  } // end of BehaviourDSLCommon::disableVariableDeclaration
 
   void BehaviourDSLCommon::completeVariableDeclaration() {
     using namespace mfront::bbrick;
     const auto& g = tfel::glossary::Glossary::getGlossary();
     if (getVerboseMode() >= VERBOSE_DEBUG) {
       getLogStream() << "BehaviourDSLCommon::completeVariableDeclaration: begin\n";
+    }
+    if ((!this->gradients.empty()) || (!this->thermodynamic_forces.empty())) {
+      this->throwRuntimeError(
+          "BehaviourDSLCommon::completeVariableDeclaration",
+          "The number of gradients does not match the number of "
+          "thermodynamic forces");
     }
     // defining modelling hypotheses
     if (!this->mb.areModellingHypothesesDefined()) {
@@ -747,20 +791,6 @@ namespace mfront {
       this->mb.setModellingHypotheses(dmh);
     }
     const auto& mh = this->mb.getModellingHypotheses();
-    // treating user defined main variables
-    if (this->gradients.size() != this->thermodynamic_forces.size()) {
-      this->throwRuntimeError(
-          "BehaviourDSLCommon::completeVariableDeclaration",
-          "The number of gradients does not match the number of "
-          "thermodynamic forces");
-    }
-    for (decltype(this->gradients.size()) i = 0; i != this->gradients.size();
-         ++i) {
-      this->mb.addMainVariable(this->gradients[i],
-                               this->thermodynamic_forces[i]);
-    }
-    this->gradients.clear();
-    this->thermodynamic_forces.clear();
     // treating bricks
     if (!this->bricks.empty()) {
       if (getVerboseMode() >= VERBOSE_DEBUG) {
@@ -782,7 +812,7 @@ namespace mfront {
         for (const auto& n : urs) {
           const auto s = SupportedTypes{};
           const auto& ur = r.getRequirement(n);
-          if ((s.getTypeFlag(ur.type) != SupportedTypes::Scalar) ||
+          if ((s.getTypeFlag(ur.type) != SupportedTypes::SCALAR) ||
               (find(ur.aproviders.begin(), ur.aproviders.end(), ProviderIdentifier::MATERIALPROPERTY) ==
                ur.aproviders.end())) {
             umrqs.push_back(ur.name);
@@ -2304,9 +2334,6 @@ namespace mfront {
   }  // end of BehaviourDSLCommon::treatThermodynamicForceMethod
 
   void BehaviourDSLCommon::treatVariableMethod(const Hypothesis h) {
-    using namespace std;
-    using namespace tfel::utilities;
-    using namespace tfel::glossary;
     const auto& n = this->current->value;
     ++(this->current);
     this->checkNotEndOfFile("BehaviourDSLCommon::treatVariableMethod");
@@ -2890,15 +2917,18 @@ namespace mfront {
          << "using DeformationGradientTensor         = typename Types::DeformationGradientTensor;\n"
          << "using DeformationGradientRateTensor     = typename Types::DeformationGradientRateTensor;\n"
          << "using TemperatureGradient = typename Types::TemperatureGradient;\n"
-         << "using HeatFlux = typename Types::HeatFlux;\n"
+         << "using HeatFlux = typename Types::HeatFlux;\n";
          // tangent operator
-         << "using TangentOperator   = " << this->mb.getTangentOperatorType() << ";\n"
-         << "using PhysicalConstants = tfel::PhysicalConstants<real>;\n";
+    if (this->mb.hasTangentOperator()) {
+      file << "using TangentOperator   = " << this->mb.getTangentOperatorType()
+           << ";\n";
+    }
+    // physical constants
+    file << "using PhysicalConstants = tfel::PhysicalConstants<real>;\n";
   }  // end of BehaviourDSLCommon::writeStandardTFELTypedefs
 
   std::string BehaviourDSLCommon::getIntegrationVariablesIncrementsInitializers(const Hypothesis h) const {
-    using namespace std;
-    ostringstream f;
+    std::ostringstream f;
     const auto& vc = this->mb.getBehaviourData(h).getIntegrationVariables();
     for (auto p = vc.begin(); p != vc.end(); ++p) {
       const auto& v = *p;
@@ -2908,20 +2938,20 @@ namespace mfront {
       if (p != vc.begin()) {
         f << ",\n";
       }
-      if (flag == SupportedTypes::Scalar) {
+      if (flag == SupportedTypes::SCALAR) {
         if (this->mb.useDynamicallyAllocatedVector(v.arraySize)) {
           f << "d" << n << "(" << v.arraySize << "," << t << "(0))";
         } else {
           f << "d" << n << "(" << t << "(0))";
         }
-      } else if ((flag == SupportedTypes::TVector) || (flag == SupportedTypes::Stensor) ||
-                 (flag == SupportedTypes::Tensor)) {
-        string traits;
-        if (flag == SupportedTypes::TVector) {
+      } else if ((flag == SupportedTypes::TVECTOR) || (flag == SupportedTypes::STENSOR) ||
+                 (flag == SupportedTypes::TENSOR)) {
+        std::string traits;
+        if (flag == SupportedTypes::TVECTOR) {
           traits = "VectorTraits";
-        } else if (flag == SupportedTypes::Stensor) {
+        } else if (flag == SupportedTypes::STENSOR) {
           traits = "StensorTraits";
-        } else if (flag == SupportedTypes::Tensor) {
+        } else if (flag == SupportedTypes::TENSOR) {
           traits = "TensorTraits";
         } else {
           this->throwRuntimeError("BehaviourDSLCommon::getIntegrationVariablesIncrementsInitializers",
@@ -3041,7 +3071,7 @@ namespace mfront {
       os << "ThermalExpansionCoefficientTensor A;\n";
     }
     for (const auto& mv : this->mb.getMainVariables()) {
-      if (mv.first.increment_known) {
+      if (Gradient::isIncrementKnown(mv.first)) {
         os << mv.first.type << " " << mv.first.name << ";\n\n";
       } else {
         os << mv.first.type << " " << mv.first.name << "0;\n\n";
@@ -3087,7 +3117,7 @@ namespace mfront {
       os << "A(src.A),\n";
     }
     for (const auto& mv : this->mb.getMainVariables()) {
-      if (mv.first.increment_known) {
+      if (Gradient::isIncrementKnown(mv.first)) {
         os << mv.first.name << "(src." << mv.first.name << "),\n";
       } else {
         os << mv.first.name << "0(src." << mv.first.name << "0),\n";
@@ -3128,7 +3158,7 @@ namespace mfront {
        << this->mb.getClassName() << "BehaviourData&\n"
        << "operator=(const " << this->mb.getClassName() << "BehaviourData& src){\n";
     for (const auto& dv : this->mb.getMainVariables()) {
-      if (dv.first.increment_known) {
+      if (Gradient::isIncrementKnown(dv.first)) {
         os << "this->" << dv.first.name << " = src." << dv.first.name << ";\n";
       } else {
         os << "this->" << dv.first.name << "0 = src." << dv.first.name << "0;\n";
@@ -3333,7 +3363,7 @@ namespace mfront {
     os << "{\n"
        << "using namespace std;\n";
     for (const auto& v : this->mb.getMainVariables()) {
-      if (v.first.increment_known) {
+      if (Gradient::isIncrementKnown(v.first)) {
         os << "os << \"" << v.first.name << " : \" << b." << v.first.name << " << '\\n';\n";
       } else {
         os << "os << \"" << v.first.name << "0 : \" << b." << v.first.name << "0 << endl;\n";
@@ -5018,7 +5048,7 @@ namespace mfront {
     os << "{\n"
        << "using namespace std;\n";
     for (const auto& v : this->mb.getMainVariables()) {
-      if (v.first.increment_known) {
+      if (Gradient::isIncrementKnown(v.first)) {
         os << "os << \"" << v.first.name << " : \" << b." << v.first.name << " << '\\n';\n"
            << "os << \"d" << v.first.name << " : \" << b.d" << v.first.name << " << '\\n';\n";
       } else {
@@ -5069,7 +5099,7 @@ namespace mfront {
     this->checkBehaviourFile(os);
     os << "void updateExternalStateVariables(){\n";
     for (const auto& v : this->mb.getMainVariables()) {
-      if (v.first.increment_known) {
+      if (Gradient::isIncrementKnown(v.first)) {
         os << "this->" << v.first.name << "  += this->d" << v.first.name << ";\n";
       } else {
         os << "this->" << v.first.name << "0  = this->" << v.first.name << "1;\n";
@@ -5095,8 +5125,12 @@ namespace mfront {
        << "#include\"TFEL/Metaprogramming/StaticAssert.hxx\"\n"
        << "#include\"TFEL/TypeTraits/IsFundamentalNumericType.hxx\"\n"
        << "#include\"TFEL/TypeTraits/IsReal.hxx\"\n"
-       << "#include\"TFEL/Math/General/IEEE754.hxx\"\n"
-       << "#include\"TFEL/Material/MaterialException.hxx\"\n"
+       << "#include\"TFEL/Math/General/IEEE754.hxx\"\n";
+    if(!this->mb.hasTrivialTangentOperatorStructure()){
+      os << "#include\"TFEL/Math/Vector/TVectorView.hxx\"\n"
+	 << "#include\"TFEL/Math/Matrix/TMatrixView.hxx\"\n";
+    }
+    os << "#include\"TFEL/Material/MaterialException.hxx\"\n"
        << "#include\"TFEL/Material/MechanicalBehaviour.hxx\"\n"
        << "#include\"TFEL/Material/MechanicalBehaviourTraits.hxx\"\n"
        << "#include\"TFEL/Material/OutOfBoundsPolicy.hxx\"\n"
@@ -5454,7 +5488,7 @@ namespace mfront {
         }
       } else {
         const auto f = SupportedTypes::getTypeFlag(p.type);
-        if (f != SupportedTypes::Scalar) {
+        if (f != SupportedTypes::SCALAR) {
           this->throwRuntimeError("BehaviourDSLCommon::writeBehaviourParametersInitializer",
                                   "invalid type for parameter '" + p.name + "' ('" + p.type + "')");
         }
@@ -5911,15 +5945,126 @@ namespace mfront {
        << "}\n\n";
   }  // end of BehaviourDSLCommon::writeBehaviourComputeAPosterioriTimeStepScalingFactor
 
-  void BehaviourDSLCommon::writeBehaviourTangentOperator(std::ostream& os) const {
+  void BehaviourDSLCommon::writeBehaviourTangentOperator(
+      std::ostream& os) const {
     this->checkBehaviourFile(os);
+    if (!this->mb.hasTangentOperator()) {
+      return;
+    }
+    const auto& blocks = this->mb.getTangentOperatorBlocks();
     os << "//! Tangent operator;\n"
        << "TangentOperator Dt;\n";
+    if (this->mb.hasTrivialTangentOperatorStructure()) {
+      tfel::raise_if(
+          ((blocks.size() != 1u) || (blocks.front().first.arraySize != 1u) ||
+           (blocks.front().second.arraySize != 1u)),
+          "BehaviourDSLCommon::writeBehaviourTangentOperator: internal error");
+      if (this->mb.getBehaviourType() !=
+          BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
+        os << "//! alias to the tangent operator;\n"
+           << "TangentOperator& "
+           << this->mb.getTangentOperatorBlockName(blocks.front())
+           << " = Dt;\n";
+      }
+      return;
+    }
+    tfel::math::tvector<10, int> offset;
+    tfel::fsalgo::fill<10>::exe(offset.begin(), 0);
+    auto update_offset = [&offset](const SupportedTypes::TypeSize s1,
+                                   const SupportedTypes::TypeSize s2) {
+      offset[0] = s1.getScalarSize() * s2.getScalarSize();
+      offset[1] = s1.getTVectorSize() * s2.getTVectorSize();
+      offset[2] = s1.getStensorSize() * s2.getStensorSize();
+      offset[3] = s1.getTensorSize() * s2.getTensorSize();
+      offset[4] = s1.getScalarSize() * s2.getTVectorSize() +
+                  s2.getScalarSize() * s1.getTVectorSize();
+      offset[5] = s1.getScalarSize() * s2.getStensorSize() +
+                  s2.getScalarSize() * s1.getStensorSize();
+      offset[6] = s1.getScalarSize() * s2.getTensorSize() +
+                  s2.getScalarSize() * s1.getTensorSize();
+      offset[7] = s1.getTVectorSize() * s2.getStensorSize() +
+                  s2.getTVectorSize() * s1.getStensorSize();
+      offset[8] = s1.getTVectorSize() * s2.getTensorSize() +
+                  s2.getTVectorSize() * s1.getTensorSize();
+      offset[9] = s1.getStensorSize() * s2.getTensorSize() +
+                  s2.getStensorSize() * s1.getTensorSize();
+    };
+    auto get_offset = [&offset]() -> std::string {
+      const char* sizes[10] = {"",
+                              "TVectorSize*TVectorSize",
+                              "StensorSize*StensorSize",
+                              "TensorSize*TensorSize",
+                              "TVectorSize",
+                              "StensorSize",
+                              "TensorSize",
+                              "TVectorSize*StensorSize",
+                              "TVectorSize*TensorSize",
+                              "StensorSize*TensorSize"};
+      std::string o;
+      if (offset[0] != 0) {
+        o += std::to_string(offset[0]);
+      }
+      for (int i = 1; i != 10; ++i) {
+        if (offset[i] != 0) {
+          if (!o.empty()) {
+            o += "+";
+          }
+          o += std::to_string(offset[i]) + "*" + sizes[i];
+        }
+      }
+      if (o.empty()) {
+        return "0";
+      }
+      return o;
+    };
+    // write blocks
+    for (const auto& b : blocks) {
+      const auto& v1 = b.first;
+      const auto& v2 = b.second;
+      if ((v1.arraySize != 1u) || (v2.arraySize != 1u)) {
+        break;
+      }
+      auto throw_unsupported_block = [&v1, &v2] {
+        tfel::raise(
+            "BehaviourDSLCommon::writeBehaviourTangentOperator:"
+            "tangent operator blocks associated with "
+            "the derivative of '" +
+            v1.name + "' (of type '" + v1.type + "') with respect to '" +
+            v2.name + "' (of type '" + v2.type + "') is not supported");
+      };
+      if (v1.getTypeFlag() == SupportedTypes::SCALAR) {
+        if (v2.getTypeFlag() == SupportedTypes::SCALAR) {
+          os << "real& " << this->mb.getTangentOperatorBlockName(b)
+             << " = Dt[" << get_offset() << "];\n";
+        } else {
+          throw_unsupported_block();
+        }
+      } else if (v1.getTypeFlag() == SupportedTypes::TVECTOR) {
+        if (v2.getTypeFlag() == SupportedTypes::SCALAR) {
+          os << "tfel::math::TVectorView<N,real> "
+             << this->mb.getTangentOperatorBlockName(b)
+             << " = tfel::math::TVectorView<N,real>(Dt.begin()+"
+             << get_offset() << ");\n";
+        } else if (v2.getTypeFlag() == SupportedTypes::TVECTOR) {
+          os << "tfel::math::TMatrixView<N,N,real> "
+             << this->mb.getTangentOperatorBlockName(b)
+             << " = tfel::math::TMatrixView<N,N,real>(Dt.begin()+"
+             << get_offset() << ");\n";
+        } else {
+          throw_unsupported_block();
+        }
+      } else {
+        throw_unsupported_block();
+      }
+      update_offset(v1.getTypeSize(), v2.getTypeSize());
+    }
   }  // end of BehaviourDSLCommon::writeBehaviourTangentOperator()
 
   void BehaviourDSLCommon::checkIntegrationDataFile(std::ostream& os) const {
     if ((!os) || (!os.good())) {
-      this->throwRuntimeError("BehaviourDSLCommon::checkIntegrationDataOutputFile", "ouput file is not valid");
+      this->throwRuntimeError(
+          "BehaviourDSLCommon::checkIntegrationDataOutputFile",
+          "ouput file is not valid");
     }
   }
 
@@ -5995,7 +6140,7 @@ namespace mfront {
     this->checkIntegrationDataFile(os);
     os << "protected: \n\n";
     for (const auto& v : this->mb.getMainVariables()) {
-      if (v.first.increment_known) {
+      if (Gradient::isIncrementKnown(v.first)) {
         os << "/*!\n"
            << " * \\brief " << v.first.name << " increment\n"
            << " */\n"
@@ -6044,7 +6189,7 @@ namespace mfront {
        << this->mb.getClassName() << "IntegrationData(const " << this->mb.getClassName() << "IntegrationData& src)\n"
        << ": ";
     for (const auto& v : this->mb.getMainVariables()) {
-      if (v.first.increment_known) {
+      if (Gradient::isIncrementKnown(v.first)) {
         os << "d" << v.first.name << "(src.d" << v.first.name << "),\n";
       } else {
         os << v.first.name << "1(src." << v.first.name << "1),\n";
@@ -6067,7 +6212,7 @@ namespace mfront {
     const auto& md = this->mb.getBehaviourData(h);
     bool iknown = true;
     for (const auto& v : this->mb.getMainVariables()) {
-      iknown = v.first.increment_known;
+      iknown = Gradient::isIncrementKnown(v.first);
     }
     this->checkIntegrationDataFile(os);
     os << "/*\n"
@@ -6102,7 +6247,7 @@ namespace mfront {
     }
     os << "this->dt   *= time_scaling_factor;\n";
     for (const auto& v : this->mb.getMainVariables()) {
-      if (v.first.increment_known) {
+      if (Gradient::isIncrementKnown(v.first)) {
         os << "this->d" << v.first.name << " *= time_scaling_factor;\n";
       } else {
         os << "this->" << v.first.name << "1 = (1-time_scaling_factor)*(behaviourData." << v.first.name
@@ -6119,7 +6264,7 @@ namespace mfront {
   void BehaviourDSLCommon::writeIntegrationDataUpdateDrivingVariablesMethod(std::ostream& os) const {
     bool iknown = true;
     for (const auto& v : this->mb.getMainVariables()) {
-      iknown = v.first.increment_known;
+      iknown = Gradient::isIncrementKnown(v.first);
     }
     this->checkIntegrationDataFile(os);
     os << "/*!\n"
@@ -6144,7 +6289,7 @@ namespace mfront {
       }
     }
     for (const auto& v : this->mb.getMainVariables()) {
-      if (!v.first.increment_known) {
+      if (!Gradient::isIncrementKnown(v.first)) {
         os << "this->" << v.first.name << "1 += "
            << "this->" << v.first.name << "1 - (behaviourData."
            << v.first.name << "0);\n";
@@ -6281,7 +6426,7 @@ namespace mfront {
     os << "{\n";
     os << "using namespace std;\n";
     for (const auto& dv : this->mb.getMainVariables()) {
-      if (dv.first.increment_known) {
+      if (Gradient::isIncrementKnown(dv.first)) {
         os << "os << \"d" << dv.first.name << " : \" << b.d" << dv.first.name << " << '\\n';\n";
       } else {
         os << "os << \"" << dv.first.name << "1 : \" << b." << dv.first.name << "1 << endl;\n";
@@ -6502,7 +6647,7 @@ namespace mfront {
         }
       } else {
         const auto f = SupportedTypes::getTypeFlag(p.type);
-        if (f != SupportedTypes::Scalar) {
+        if (f != SupportedTypes::SCALAR) {
           this->throwRuntimeError("BehaviourDSLCommon::writeSrcFileParametersInitializer",
                                   "unsupported parameter type '" + p.type +
                                       "' "
@@ -6551,7 +6696,7 @@ namespace mfront {
           continue;
         }
         const auto f = SupportedTypes::getTypeFlag(p.type);
-        if (f != SupportedTypes::Scalar) {
+        if (f != SupportedTypes::SCALAR) {
           this->throwRuntimeError("BehaviourDSLCommon::writeSrcFileParametersInitializer",
                                   "unsupported parameter type '" + p.type +
                                       "' "
@@ -6702,7 +6847,7 @@ namespace mfront {
             os << cname << "::getUnsignedShort(tokens[0],tokens[1]);\n";
           } else {
             const auto f = SupportedTypes::getTypeFlag(p.type);
-            if (f != SupportedTypes::Scalar) {
+            if (f != SupportedTypes::SCALAR) {
               this->throwRuntimeError("BehaviourDSLCommon::writeSrcFileParametersInitializer",
                                       "invalid parameter type '" + p.type + "'");
             }
@@ -6716,7 +6861,7 @@ namespace mfront {
             os << dcname << "::getUnsignedShort(tokens[0],tokens[1])";
           } else {
             const auto f = SupportedTypes::getTypeFlag(p.type);
-            if (f != SupportedTypes::Scalar) {
+            if (f != SupportedTypes::SCALAR) {
               this->throwRuntimeError("BehaviourDSLCommon::writeSrcFileParametersInitializer",
                                       "invalid parameter type '" + p.type + "'");
             }

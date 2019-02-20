@@ -618,14 +618,14 @@ namespace mfront {
                            false)) ||
           (bd.getAttribute(BehaviourDescription::computesStiffnessTensor,
                            false))) {
-        if (vf == SupportedTypes::Scalar) {
+        if (vf == SupportedTypes::SCALAR) {
           c = "df" + v + "_ddeel += ";
           c += "(this->theta) * (1-this->d-(this->theta)*(this->dd)) * ";
           c += "((" + dfv_ds + ") | (this->D));\n";
           c += "df" + v + "_ddd -= ";
           c += "(this->theta) * ((" + dfv_ds + ") | ((this->D) * ";
           c += "(this->eel + (this->theta) * (this->deel)));\n";
-        } else if (vf == SupportedTypes::Stensor) {
+        } else if (vf == SupportedTypes::STENSOR) {
           c = "df" + v + "_ddeel += ";
           c += "(this->theta) * (1-this->d-(this->theta)*(this->dd)) * ";
           c += "(" + dfv_ds + ") * (this->D);\n";
@@ -646,7 +646,7 @@ namespace mfront {
               bl ? "this->sebdata.lambda" : "this->lambda";
           const std::string mu = bl ? "this->sebdata.mu" : "this->mu";
           if (b) {
-            if (vf == SupportedTypes::Scalar) {
+            if (vf == SupportedTypes::SCALAR) {
               c = "df" + v + "_ddeel += ";
               c += "2 * (" + mu + ") * ";
               c += "(this->theta) * (1-this->d-(this->theta)*(this->dd)) * ";
@@ -654,7 +654,7 @@ namespace mfront {
               c += "df" + v + "_ddd -= ";
               c += "2 * (" + mu + ") * (this->theta) * (" + dfv_ds + ") | ";
               c += "deviator(this->eel + (this->theta) * (this->deel));\n";
-            } else if (vf == SupportedTypes::Stensor) {
+            } else if (vf == SupportedTypes::STENSOR) {
               c = "df" + v + "_ddeel += ";
               c += "2 * (" + mu + ") * (this->theta) * (1-this->d-(this->theta)*(this->dd)) * ";
               c += "(" + dfv_ds + ");\n";
@@ -668,7 +668,7 @@ namespace mfront {
                   t + "'");
             }
           } else {
-            if (vf == SupportedTypes::Scalar) {
+            if (vf == SupportedTypes::SCALAR) {
               c = "df" + v + "_ddeel += ";
               c += "(this->theta) * (1-this->d-(this->theta)*(this->dd)) * ";
               c += "((" + dfv_ds + ") | (2 * (" + mu + ") * Stensor4::Id()+(" +
@@ -680,7 +680,7 @@ namespace mfront {
               c += "(" + lambda +
                    ") * trace(this->eel + (this->theta) * (this->deel)) * "
                    "Stensor::Id()));\n";
-            } else if (vf == SupportedTypes::Stensor) {
+            } else if (vf == SupportedTypes::STENSOR) {
               c = "df" + v + "_ddeel += ";
               c += "(this->theta) * (1-this->d-(this->theta)*(this->dd)) * ";
               c += "(" + dfv_ds + ") * (2 * (" + mu + ") * Stensor4::Id()+(" +
@@ -707,14 +707,14 @@ namespace mfront {
                 "IsotropicDamageHookeStressPotentialBase::computeDerivatives: "
                 "orthotropic behaviour shall require the stiffness tensor");
           }
-          if (vf == SupportedTypes::Scalar) {
+          if (vf == SupportedTypes::SCALAR) {
             c = "df" + v + "_ddeel += ";
             c += "(this->theta) * (1-this->d-(this->theta)*(this->dd)) * ";
             c += "((" + dfv_ds + ") | (this->D));\n";
             c += "df" + v + "_ddd -= ";
             c += "(this->theta) * ((" + dfv_ds + ") | ((this->D) * ";
             c += "(this->eel + (this->theta) * (this->deel)));\n";
-          } else if (vf == SupportedTypes::Stensor) {
+          } else if (vf == SupportedTypes::STENSOR) {
             c = "df" + v + "_ddeel += ";
             c += "(this->theta) * (1-this->d-(this->theta)*(this->dd)) * ";
             c += "(" + dfv_ds + ") * (this->D);\n";

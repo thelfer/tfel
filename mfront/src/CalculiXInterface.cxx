@@ -887,7 +887,7 @@ namespace mfront {
     tfel::raise_if(!o.isNull(),
                    "CalculiXInterface::writeBehaviourDataMainVariablesSetter : "
                    "only one driving variable supported");
-    if (v.increment_known) {
+    if (Gradient::isIncrementKnown(v)) {
       os << "calculix::ImportGradients::exe(this->" << v.name << ","
          << iprefix << "stran);\n";
     } else {
@@ -905,7 +905,7 @@ namespace mfront {
         !o.isNull(),
         "CalculiXInterface::writeIntegrationDataMainVariablesSetter : "
         "only one driving variable supported");
-    if (v.increment_known) {
+    if (Gradient::isIncrementKnown(v)) {
       os << "calculix::ImportGradients::exe(this->d" << v.name << ","
          << iprefix << "dstran);\n";
     } else {
@@ -919,7 +919,7 @@ namespace mfront {
       const ThermodynamicForce& f,
       const SupportedTypes::TypeSize o) const {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
-    if (SupportedTypes::getTypeFlag(f.type) == SupportedTypes::Stensor) {
+    if (SupportedTypes::getTypeFlag(f.type) == SupportedTypes::STENSOR) {
       os << "calculix::ImportThermodynamicForces::exe(this->" << f.name << ",";
       if (!o.isNull()) {
         os << iprefix << "stress_+" << o << ");\n";
@@ -940,7 +940,7 @@ namespace mfront {
       const SupportedTypes::TypeSize o) const {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
     const auto flag = SupportedTypes::getTypeFlag(f.type);
-    if (flag == SupportedTypes::Stensor) {
+    if (flag == SupportedTypes::STENSOR) {
       if (!o.isNull()) {
         out << "calculix::ExportThermodynamicForces::exe(" << a << "+" << o
             << ",this->sig);\n";

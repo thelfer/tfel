@@ -547,7 +547,7 @@ namespace mfront {
 	auto pev = std::next(d.getExternalStateVariables().begin());
         while (pev!=d.getExternalStateVariables().end()) {
           if (d.getExternalName(pev->name) == tfel::glossary::Glossary::AxialStress) {
-            throw_if(SupportedTypes::getTypeFlag(pev->type) != SupportedTypes::Scalar,
+            throw_if(SupportedTypes::getTypeFlag(pev->type) != SupportedTypes::SCALAR,
                      "invalid type for the `AxialStress` external state variable");
             return {true, o};
           }

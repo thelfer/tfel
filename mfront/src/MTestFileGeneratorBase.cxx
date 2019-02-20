@@ -110,9 +110,9 @@ namespace mfront{
     InternalStateVariable iv;
     iv.name = n;
     iv.type = f;
-    if(iv.type==SupportedTypes::Scalar){
+    if(iv.type==SupportedTypes::SCALAR){
       iv.values[0] = v[0];
-    } else if(iv.type==SupportedTypes::Stensor){
+    } else if(iv.type==SupportedTypes::STENSOR){
       std::copy(v,v+this->getStensorSize(),iv.values);
     } else {
       tfel::raise("MTestFileGeneratorBase::addInternalStateVariable : "
@@ -217,9 +217,9 @@ namespace mfront{
     for(const auto& iv : this->ivs){
       os << "@InternalStateVariable '" << iv.name << "' ";
       os.precision(14);
-      if(iv.type==SupportedTypes::Scalar){
+      if(iv.type==SupportedTypes::SCALAR){
 	os << iv.values[0] << ";\n";
-      } else if(iv.type==SupportedTypes::Stensor){
+      } else if(iv.type==SupportedTypes::STENSOR){
 	os << "{";
 	for(unsigned short i=0;i!=this->getStensorSize();){
 	  os << iv.values[i];

@@ -88,6 +88,12 @@ namespace mfront {
      * \param[in] s : analyse a string
      */
     void analyseString(const std::string&) override;
+    /*!
+     * \brief method called when a new gradient or a new thermodynamic force is
+     * defined. It declares as many pair of gradient and thermodynamic force as
+     * possible.
+     */
+    virtual void declareMainVariables();
 
     void endsInputFileProcessing() override;
     /*!
@@ -500,6 +506,10 @@ namespace mfront {
      * keyword.
      */
     virtual void treatThermodynamicForce();
+    //!\brief treat the `@AdditionalTangentOperatorBlock` keyword.
+    virtual void treatAdditionalTangentOperatorBlock();
+    //!\brief treat the `@AdditionalTangentOperatorBlocks` keyword.
+    virtual void treatAdditionalTangentOperatorBlocks();
     //!\brief treat the `@Brick` keyword
     virtual void treatBrick();
     //!\brief treat the `@Model` keyword
@@ -1110,9 +1120,12 @@ namespace mfront {
 
     virtual void writeBehaviourComputeTangentOperator(std::ostream&,
                                                       const Hypothesis) const;
-
+    //! \brief write the code returning the tangent operator
     virtual void writeBehaviourGetTangentOperator(std::ostream&) const;
-
+    /*!
+     * \brief write the code declaring with the tangent operator and its blocks,
+     * if required.
+     */
     virtual void writeBehaviourTangentOperator(std::ostream&) const;
     /*!
      * \brief write the call to a model

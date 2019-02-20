@@ -31,35 +31,35 @@ namespace mfront {
     using namespace std;
     using TypeFlag = SupportedTypes::TypeFlag;
     static map<string, TypeFlag> flags = {
-        {"real", SupportedTypes::Scalar},
-        {"frequency", SupportedTypes::Scalar},
-        {"stress", SupportedTypes::Scalar},
-        {"length", SupportedTypes::Scalar},
-        {"time", SupportedTypes::Scalar},
-        //    {"stressrate",SupportedTypes::Scalar},
-        {"strain", SupportedTypes::Scalar},
-        {"strainrate", SupportedTypes::Scalar},
-        {"temperature", SupportedTypes::Scalar},
-        {"energy_density", SupportedTypes::Scalar},
-        {"thermalexpansion", SupportedTypes::Scalar},
-        {"thermalconductivity", SupportedTypes::Scalar},
-        {"massdensity", SupportedTypes::Scalar},
-        {"TVector", SupportedTypes::TVector},
-        {"Vector", SupportedTypes::TVector},
-        {"Stensor", SupportedTypes::Stensor},
-        {"Tensor", SupportedTypes::Tensor},
-        {"StressStensor", SupportedTypes::Stensor},
-        {"StressRateStensor", SupportedTypes::Stensor},
-        {"StrainStensor", SupportedTypes::Stensor},
-        {"StrainRateStensor", SupportedTypes::Stensor},
+        {"real", SupportedTypes::SCALAR},
+        {"frequency", SupportedTypes::SCALAR},
+        {"stress", SupportedTypes::SCALAR},
+        {"length", SupportedTypes::SCALAR},
+        {"time", SupportedTypes::SCALAR},
+        //    {"stressrate",SupportedTypes::SCALAR},
+        {"strain", SupportedTypes::SCALAR},
+        {"strainrate", SupportedTypes::SCALAR},
+        {"temperature", SupportedTypes::SCALAR},
+        {"energy_density", SupportedTypes::SCALAR},
+        {"thermalexpansion", SupportedTypes::SCALAR},
+        {"thermalconductivity", SupportedTypes::SCALAR},
+        {"massdensity", SupportedTypes::SCALAR},
+        {"TVector", SupportedTypes::TVECTOR},
+        {"Vector", SupportedTypes::TVECTOR},
+        {"Stensor", SupportedTypes::STENSOR},
+        {"Tensor", SupportedTypes::TENSOR},
+        {"StressStensor", SupportedTypes::STENSOR},
+        {"StressRateStensor", SupportedTypes::STENSOR},
+        {"StrainStensor", SupportedTypes::STENSOR},
+        {"StrainRateStensor", SupportedTypes::STENSOR},
         // CZM
-        {"DisplacementTVector", SupportedTypes::TVector},
-        {"ForceTVector", SupportedTypes::TVector},
+        {"DisplacementTVector", SupportedTypes::TVECTOR},
+        {"ForceTVector", SupportedTypes::TVECTOR},
         // Finite Strain
-        {"DeformationGradientTensor", SupportedTypes::Tensor},
+        {"DeformationGradientTensor", SupportedTypes::TENSOR},
         // GenericBehaviour
-        {"HeatFlux", SupportedTypes::TVector},
-        {"TemperatureGradient", SupportedTypes::TVector},
+        {"HeatFlux", SupportedTypes::TVECTOR},
+        {"TemperatureGradient", SupportedTypes::TVECTOR},
     };
     return flags;
   }  // end of SupportedTypes_getFlags
@@ -191,16 +191,16 @@ namespace mfront {
                                                        const unsigned short a) {
     TypeSize res;
     switch (SupportedTypes::getTypeFlag(type)) {
-      case Scalar:
+      case SCALAR:
         res = TypeSize(a, 0u, 0u, 0u);
         break;
-      case TVector:
+      case TVECTOR:
         res = TypeSize(0u, a, 0u, 0u);
         break;
-      case Stensor:
+      case STENSOR:
         res = TypeSize(0u, 0u, a, 0u);
         break;
-      case Tensor:
+      case TENSOR:
         res = TypeSize(0u, 0u, 0u, a);
         break;
       default:

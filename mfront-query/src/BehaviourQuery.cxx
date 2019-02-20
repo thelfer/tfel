@@ -35,6 +35,26 @@
 
 namespace mfront {
 
+  static void display_variable(const mfront::VariableDescription& v) {
+    const auto& n = v.getExternalName();
+    std::cout << "- " << n;
+    if (v.arraySize != 1u) {
+      std::cout << '[' << v.arraySize << ']';
+    }
+    if (n != v.name) {
+      std::cout << " (" << v.name << ")";
+    }
+    if (!v.description.empty()) {
+      std::cout << ": " << v.description;
+    } else {
+      const auto& glossary = tfel::glossary::Glossary::getGlossary();
+      if (glossary.contains(n)) {
+        std::cout << ": " << glossary.getGlossaryEntry(n).getShortDescription();
+      }
+    }
+    std::cout << '\n';
+  }  // end of display_variable
+
   static const BehaviourAttribute& getAttribute(
       const std::string& n,
       const BehaviourDescription& d,
@@ -218,6 +238,9 @@ namespace mfront {
          "show the structure of the interaction matrix"},
         {"--supported-modelling-hypotheses",
          "show the list of supported modelling hypothesis"},
+        {"--gradients", "show the list of the gradients"},
+        {"--thermodynamic-forces", "show the list of the thermodynamic forces"},
+        {"--tangent-operator-blocks", "show the list of blocks in the tangent operator"},
         {"--material-properties",
          "show the list of material properties for the selected modelling "
          "hypothesis"},
@@ -637,6 +660,34 @@ namespace mfront {
              }
              cout << '\n';
            }});
+    } else if (qn == "--gradients"){
+      this->queries2.push_back(
+          {"gradients",
+           [](const FileDescription&, const BehaviourDescription& d) {
+             for (const auto& v : d.getMainVariables()) {
+               display_variable(v.first);
+             }
+           }});
+    } else if (qn == "--thermodynamic-forces"){
+      this->queries2.push_back(
+          {"thermodynamic-forces",
+           [](const FileDescription&, const BehaviourDescription& d) {
+             for (const auto& v : d.getMainVariables()) {
+               display_variable(v.second);
+             }
+           }});
+    } else if (qn == "--tangent-operator-blocks"){
+      this->queries2.push_back(
+          {"tangent-operator-blocks",
+           [](const FileDescription&, const BehaviourDescription& d) {
+             for (const auto& b : d.getTangentOperatorBlocks()) {
+               std::cout << "-" << d.getTangentOperatorBlockName(b)
+                         << ": derivative of '" << b.first.getExternalName()
+                         << "' with respect to '" << b.second.getExternalName()
+                         << "'\n";
+             }
+             std::cout << '\n';
+           }});
     } else if (qn == "--material-properties") {
       this->queries.emplace_back("material-properties",
                                  this->generateVariablesListQuery<
@@ -999,28 +1050,10 @@ namespace mfront {
   typename BehaviourQuery::query BehaviourQuery::generateVariablesListQuery() {
     return [](const FileDescription&, const BehaviourDescription& bd,
               const Hypothesis h) {
-      using namespace std;
-      using namespace tfel::glossary;
       const auto& d = bd.getBehaviourData(h);
       const auto& vars = (d.*m)();
       for (const auto& v : vars) {
-        const auto& n = d.getExternalName(v.name);
-        cout << "- " << n;
-        if (v.arraySize != 1u) {
-          cout << '[' << v.arraySize << ']';
-        }
-        if (n != v.name) {
-          cout << " (" << v.name << ")";
-        }
-        if (!v.description.empty()) {
-          cout << ": " << v.description;
-        } else {
-          const auto& glossary = Glossary::getGlossary();
-          if (glossary.contains(n)) {
-            cout << ": " << glossary.getGlossaryEntry(n).getShortDescription();
-          }
-        }
-        cout << '\n';
+        display_variable(v);
       }
     };
   }

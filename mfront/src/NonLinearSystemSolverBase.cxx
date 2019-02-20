@@ -37,13 +37,13 @@ namespace mfront {
       tfel::raise("NonLinearSystemSolverBase::getJacobianPart: " + m);
     };
     std::ostringstream d;
-    if (mb.getTypeFlag(v1.type) == SupportedTypes::Stensor) {
-      if (mb.getTypeFlag(v2.type) == SupportedTypes::Stensor) {
+    if (mb.getTypeFlag(v1.type) == SupportedTypes::STENSOR) {
+      if (mb.getTypeFlag(v2.type) == SupportedTypes::STENSOR) {
         d << "typename tfel::math::ST2toST2FromTinyMatrixView<N," << n2 << ","
           << n2 << ",\n"
           << n << "," << n3 << ",real>::type " + p + "df" << v1.name << "_dd"
           << v2.name << "(" + j + ");\n";
-      } else if (mb.getTypeFlag(v2.type) == SupportedTypes::Scalar) {
+      } else if (mb.getTypeFlag(v2.type) == SupportedTypes::SCALAR) {
         d << "typename tfel::math::StensorFromTinyMatrixColumnView<N," << n2
           << "," << n2 << ",\n"
           << n << "," << n3 << ",real>::type " + p + "df" << v1.name << "_dd"
@@ -51,13 +51,13 @@ namespace mfront {
       } else {
         lthrow("unsupported type for integration variable '" + v2.name + "'");
       }
-    } else if (mb.getTypeFlag(v1.type) == SupportedTypes::Scalar) {
-      if (mb.getTypeFlag(v2.type) == SupportedTypes::Stensor) {
+    } else if (mb.getTypeFlag(v1.type) == SupportedTypes::SCALAR) {
+      if (mb.getTypeFlag(v2.type) == SupportedTypes::STENSOR) {
         d << "typename tfel::math::StensorFromTinyMatrixRowView<N," << n2 << ","
           << n2 << ",\n"
           << n << "," << n3 << ",real>::type " + p + "df" << v1.name << "_dd"
           << v2.name << "(" + j + ");\n";
-      } else if (mb.getTypeFlag(v2.type) == SupportedTypes::Scalar) {
+      } else if (mb.getTypeFlag(v2.type) == SupportedTypes::SCALAR) {
         d << "real& " + p + "df" << v1.name << "_dd" << v2.name
           << " = " + j + "(" << n << "," << n3 << ");\n";
       } else {
@@ -415,7 +415,7 @@ namespace mfront {
       // treating lower bounds
       if ((b.boundsType == VariableBoundsDescription::LOWER) ||
           (b.boundsType == VariableBoundsDescription::LOWERANDUPPER)) {
-        if ((mb.getTypeFlag(v.type) == SupportedTypes::Scalar) &&
+        if ((mb.getTypeFlag(v.type) == SupportedTypes::SCALAR) &&
             (v.arraySize == 1u)) {
           if (mb.hasAttribute(h, v.name + "_normalisation_factor")) {
             const auto& nf = mb.getAttribute<std::string>(
@@ -449,7 +449,7 @@ namespace mfront {
           }
           out << "}\n";
         }
-        if ((mb.getTypeFlag(v.type) == SupportedTypes::Scalar) &&
+        if ((mb.getTypeFlag(v.type) == SupportedTypes::SCALAR) &&
             (v.arraySize != 1u)) {
           out << "for(unsigned short idx=0;idx!=" << v.arraySize
               << ";++idx){\n";
@@ -487,7 +487,7 @@ namespace mfront {
           out << "}\n"
               << "}\n";
         }
-        if ((mb.getTypeFlag(v.type) != SupportedTypes::Scalar) &&
+        if ((mb.getTypeFlag(v.type) != SupportedTypes::SCALAR) &&
             (v.arraySize == 1u)) {
           if (b.component == -1) {
             const auto n2 = mb.getTypeSize(v.type, 1u);
@@ -567,7 +567,7 @@ namespace mfront {
             out << "}\n";
           }
         }
-        if ((mb.getTypeFlag(v.type) != SupportedTypes::Scalar) &&
+        if ((mb.getTypeFlag(v.type) != SupportedTypes::SCALAR) &&
             (v.arraySize != 1u)) {
           const auto n2 = mb.getTypeSize(v.type, 1u);
           out << "for(unsigned short idx=0;idx!=" << v.arraySize
@@ -658,7 +658,7 @@ namespace mfront {
       // treating upper bounds
       if ((b.boundsType == VariableBoundsDescription::UPPER) ||
           (b.boundsType == VariableBoundsDescription::LOWERANDUPPER)) {
-        if ((mb.getTypeFlag(v.type) == SupportedTypes::Scalar) &&
+        if ((mb.getTypeFlag(v.type) == SupportedTypes::SCALAR) &&
             (v.arraySize == 1u)) {
           if (mb.hasAttribute(h, v.name + "_normalisation_factor")) {
             const auto& nf = mb.getAttribute<std::string>(
@@ -692,7 +692,7 @@ namespace mfront {
           }
           out << "}\n";
         }
-        if ((mb.getTypeFlag(v.type) == SupportedTypes::Scalar) &&
+        if ((mb.getTypeFlag(v.type) == SupportedTypes::SCALAR) &&
             (v.arraySize != 1u)) {
           out << "for(unsigned short idx=0;idx!=" << v.arraySize
               << ";++idx){\n";
@@ -730,7 +730,7 @@ namespace mfront {
           out << "}\n";
           out << "}\n";
         }
-        if ((mb.getTypeFlag(v.type) != SupportedTypes::Scalar) &&
+        if ((mb.getTypeFlag(v.type) != SupportedTypes::SCALAR) &&
             (v.arraySize == 1u)) {
           if (b.component == -1) {
             const auto n2 = mb.getTypeSize(v.type, 1u);
@@ -810,7 +810,7 @@ namespace mfront {
             out << "}\n";
           }
         }
-        if ((mb.getTypeFlag(v.type) != SupportedTypes::Scalar) &&
+        if ((mb.getTypeFlag(v.type) != SupportedTypes::SCALAR) &&
             (v.arraySize != 1u)) {
           const auto n2 = mb.getTypeSize(v.type, 1u);
           out << "for(unsigned short idx=0;idx!=" << v.arraySize

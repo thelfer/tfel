@@ -335,6 +335,24 @@ namespace mfront {
     const std::vector<std::pair<Gradient, ThermodynamicForce>>&
     getMainVariables() const;
     /*!
+     * \brief add new block to the tangent operator
+     * \param[in] b: block name
+     * \note a valid block defines either:
+     * - the derivative of a thermodynamic force with respect to an external
+     * state
+     *   variable.
+     * - the derivative of a state variable or an auxiliary state variable with
+     *   respect to a gradient or an external state variable.
+     * \note This method is only valid for general behaviours
+     */
+    void addTangentOperatorBlock(const std::string&);
+    /*!
+     * \brief add new blocks to the tangent operator
+     * \param[in] bns: list of blocks names
+     * \note This method is only valid for general behaviours
+     */
+    void addTangentOperatorBlocks(const std::vector<std::string>&);
+    /*!
      * \return the driving variable with the associated name
      * \param[in] n: name
      */
@@ -344,6 +362,15 @@ namespace mfront {
      * \param[in] n: name
      */
     const ThermodynamicForce& getThermodynamicForce(const std::string&) const;
+    //! \return the list of tangent operator blocks
+    const std::vector<std::pair<VariableDescription, VariableDescription>>
+    getTangentOperatorBlocks() const;
+    /*!
+     * \return the name of variable associated with a tangent operator block
+     * \param[in] block: block name
+     */
+    std::string getTangentOperatorBlockName(
+        const std::pair<VariableDescription, VariableDescription>&) const;
     /*!
      * \brief set the behaviour to be a generic behaviour
      */
@@ -370,6 +397,17 @@ namespace mfront {
     StrainMeasure getStrainMeasure() const;
     //! \return if the strain measure has been set
     bool isStrainMeasureDefined() const;
+    //! \return true if the behaviour defines a tangent operator
+    bool hasTangentOperator() const;
+    /*!
+     * \return true if the behaviour's tangent operator only contains one block
+     */
+    bool hasTrivialTangentOperatorStructure() const;
+    /*!
+     * \return the size of an array able to store all the tangent operator
+     * blocks.
+     */
+    std::string computeTangentOperatorSize() const;
     //! \return the type of the stiffness operator
     std::string getTangentOperatorType() const;
 
@@ -1048,8 +1086,7 @@ namespace mfront {
      * \param[in] n: variable name
      * \param[in] g: glossary name
      */
-    void setGlossaryName(const std::string&,
-                         const std::string&);
+    void setGlossaryName(const std::string&, const std::string&);
     /*!
      * associate a glossary name to a variable
      * \param[in] h: modelling Hypothesis
@@ -1668,6 +1705,9 @@ namespace mfront {
      * thermodynamic force
      */
     std::vector<std::pair<Gradient, ThermodynamicForce>> mvariables;
+    //! list of additional tangent operator blocks
+    std::vector<std::pair<VariableDescription, VariableDescription>>
+        additionalTangentOperatorBlocks;
     /*!
      * elastic material properties
      * For isotropic   behaviours, only two elastic material properties must be

@@ -536,9 +536,9 @@ namespace mfront{
 				   const Hypothesis& h,
 				   const VariableDescription& v,
 				   const std::string& n) const {
-    if(SupportedTypes::getTypeFlag(v.type)==SupportedTypes::Scalar){
+    if(SupportedTypes::getTypeFlag(v.type)==SupportedTypes::SCALAR){
       out << i++ << ", " << n << '\n';
-    } else if(SupportedTypes::getTypeFlag(v.type)==SupportedTypes::Stensor){
+    } else if(SupportedTypes::getTypeFlag(v.type)==SupportedTypes::STENSOR){
       out << i++ << ", " << n << "_11\n";
       out << i++ << ", " << n << "_22\n";
       out << i++ << ", " << n << "_33\n";
@@ -547,7 +547,7 @@ namespace mfront{
 	out << i++ << ", " << n << "_13\n";
 	out << i++ << ", " << n << "_23\n";
       }
-    } else if(SupportedTypes::getTypeFlag(v.type)==SupportedTypes::Tensor){
+    } else if(SupportedTypes::getTypeFlag(v.type)==SupportedTypes::TENSOR){
       out << i++ << ", " << n << "_11\n";
       out << i++ << ", " << n << "_22\n";
       out << i++ << ", " << n << "_33\n";

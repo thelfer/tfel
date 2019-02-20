@@ -164,7 +164,7 @@ private:
     TFEL_TESTS_ASSERT(bd2.getMainVariables().size()==1);
     TFEL_TESTS_ASSERT(bd2.getMainVariables().begin()->first.name == "eto");
     TFEL_TESTS_ASSERT(bd2.getMainVariables().begin()->first.type == "StrainStensor");
-    TFEL_TESTS_ASSERT(bd2.getMainVariables().begin()->first.increment_known);
+    TFEL_TESTS_ASSERT(mfront::Gradient::isIncrementKnown(bd2.getMainVariables().begin()->first));
     TFEL_TESTS_ASSERT(bd2.getMainVariables().begin()->second.name == "sig");
     TFEL_TESTS_ASSERT(bd2.getMainVariables().begin()->second.type == "StressStensor");
     TFEL_TESTS_ASSERT(bd2.getTangentOperatorType() == "StiffnessTensor");
@@ -179,7 +179,7 @@ private:
     TFEL_TESTS_ASSERT(bd3.getMainVariables().size() == 1);
     TFEL_TESTS_ASSERT(bd3.getMainVariables().begin()->first.name == "F");
     TFEL_TESTS_ASSERT(bd3.getMainVariables().begin()->first.type == "DeformationGradientTensor");
-    TFEL_TESTS_ASSERT(!(bd3.getMainVariables().begin()->first.increment_known));
+    TFEL_TESTS_ASSERT(!mfront::Gradient::isIncrementKnown(bd3.getMainVariables().begin()->first));
     TFEL_TESTS_ASSERT(bd3.getMainVariables().begin()->second.name == "sig");
     TFEL_TESTS_ASSERT(bd3.getMainVariables().begin()->second.type == "StressStensor");
     TFEL_TESTS_ASSERT(bd3.getTangentOperatorType()=="FiniteStrainBehaviourTangentOperator<N,stress>");
@@ -194,7 +194,7 @@ private:
     TFEL_TESTS_ASSERT(bd4.getMainVariables().size() == 1);
     TFEL_TESTS_ASSERT(bd4.getMainVariables().begin()->first.name == "u");
     TFEL_TESTS_ASSERT(bd4.getMainVariables().begin()->first.type == "DisplacementTVector");
-    TFEL_TESTS_ASSERT(bd4.getMainVariables().begin()->first.increment_known);
+    TFEL_TESTS_ASSERT(mfront::Gradient::isIncrementKnown(bd4.getMainVariables().begin()->first));
     TFEL_TESTS_ASSERT(bd4.getMainVariables().begin()->second.name == "t");
     TFEL_TESTS_ASSERT(bd4.getMainVariables().begin()->second.type == "ForceTVector");
     TFEL_TESTS_ASSERT(bd4.getTangentOperatorType() == "tfel::math::tmatrix<N,N,stress>");

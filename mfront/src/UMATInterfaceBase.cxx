@@ -68,21 +68,21 @@ namespace mfront {
       const SupportedTypes::TypeSize o) const {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
     const auto flag = SupportedTypes::getTypeFlag(f.type);
-    if (flag == SupportedTypes::Scalar) {
+    if (flag == SupportedTypes::SCALAR) {
       if (!o.isNull()) {
         out << "*(" << a << "+" << o << ") = this->" << f.name << ";\n";
       } else {
         out << "*(" << a << ") = this->" << f.name << ";\n";
       }
-    } else if (flag == SupportedTypes::Stensor) {
+    } else if (flag == SupportedTypes::STENSOR) {
       if (!o.isNull()) {
         out << "this->sig.exportTab(" << a << "+" << o << ");\n";
       } else {
         out << "this->sig.exportTab(" << a << ""
                                               ");\n";
       }
-    } else if ((flag == SupportedTypes::TVector) ||
-               (flag == SupportedTypes::Tensor)) {
+    } else if ((flag == SupportedTypes::TVECTOR) ||
+               (flag == SupportedTypes::TENSOR)) {
       if (!o.isNull()) {
         out << "exportToBaseTypeArray(this->" << f.name << "," << a << "+" << o
             << ");\n";
@@ -140,11 +140,11 @@ namespace mfront {
         }
         first = false;
         auto flag = SupportedTypes::getTypeFlag(p->type);
-        if (flag == SupportedTypes::Scalar) {
+        if (flag == SupportedTypes::SCALAR) {
           f << n << "(" + src + "[" << currentOffset << "])";
-        } else if ((flag == SupportedTypes::TVector) ||
-                   (flag == SupportedTypes::Stensor) ||
-                   (flag == SupportedTypes::Tensor)) {
+        } else if ((flag == SupportedTypes::TVECTOR) ||
+                   (flag == SupportedTypes::STENSOR) ||
+                   (flag == SupportedTypes::TENSOR)) {
           f << n << "(&" + src + "[" << currentOffset << "])";
         } else {
           tfel::raise(
@@ -188,19 +188,19 @@ namespace mfront {
           f << n << ".resize(" << p->arraySize << ");\n";
           f << "for(unsigned short idx=0;idx!=" << p->arraySize << ";++idx){\n";
           switch (flag) {
-            case SupportedTypes::Scalar:
+            case SupportedTypes::SCALAR:
               f << n << "[idx] = " + src + "[" << currentOffset << "+idx];\n";
               break;
-            case SupportedTypes::TVector:
+            case SupportedTypes::TVECTOR:
               f << "tfel::fsalgo::copy<TVectorSize>::exe(&" + src + "["
                 << currentOffset << "+idx*TVectorSize]," << n
                 << "[idx].begin());\n";
               break;
-            case SupportedTypes::Stensor:
+            case SupportedTypes::STENSOR:
               f << n << "[idx].import(&" + src + "[" << currentOffset
                 << "+idx*StensorSize]);\n";
               break;
-            case SupportedTypes::Tensor:
+            case SupportedTypes::TENSOR:
               f << "tfel::fsalgo::copy<TensorSize>::exe(&" + src + "["
                 << currentOffset << "+idx*TensorSize]," << n
                 << "[idx].begin());\n";
@@ -216,19 +216,19 @@ namespace mfront {
         } else {
           for (int i = 0; i != p->arraySize; ++i) {
             switch (flag) {
-              case SupportedTypes::Scalar:
+              case SupportedTypes::SCALAR:
                 f << n << "[" << i << "] = " + src + "[" << currentOffset
                   << "];\n";
                 break;
-              case SupportedTypes::TVector:
+              case SupportedTypes::TVECTOR:
                 f << "tfel::fsalgo::copy<TVectorSize>::exe(&" + src + "["
                   << currentOffset << "]," << n << "[" << i << "].begin());\n";
                 break;
-              case SupportedTypes::Stensor:
+              case SupportedTypes::STENSOR:
                 f << n << "[" << i << "].import(&" + src + "[" << currentOffset
                   << "]);\n";
                 break;
-              case SupportedTypes::Tensor:
+              case SupportedTypes::TENSOR:
                 f << "tfel::fsalgo::copy<TensorSize>::exe(&" + src + "["
                   << currentOffset << "]," << n << "[" << i << "].begin());\n";
                 break;
@@ -270,7 +270,7 @@ namespace mfront {
     for (auto p = v.begin(); p != v.end(); ++p) {
       auto flag = SupportedTypes::getTypeFlag(p->type);
       if (p->arraySize == 1u) {
-        if (flag == SupportedTypes::Scalar) {
+        if (flag == SupportedTypes::SCALAR) {
           if (mb.useQt()) {
             f << dest << "[" << currentOffset << "] = base_cast(this->"
               << p->name << ");\n";
@@ -278,9 +278,9 @@ namespace mfront {
             f << dest << "[" << currentOffset << "] = this->" << p->name
               << ";\n";
           }
-        } else if ((flag == SupportedTypes::TVector) ||
-                   (flag == SupportedTypes::Stensor) ||
-                   (flag == SupportedTypes::Tensor)) {
+        } else if ((flag == SupportedTypes::TVECTOR) ||
+                   (flag == SupportedTypes::STENSOR) ||
+                   (flag == SupportedTypes::TENSOR)) {
           f << "exportToBaseTypeArray(this->" << p->name << ",&" << dest << "["
             << currentOffset << "]);\n";
         } else {
@@ -292,7 +292,7 @@ namespace mfront {
       } else {
         if (mb.useDynamicallyAllocatedVector(p->arraySize)) {
           f << "for(unsigned short idx=0;idx!=" << p->arraySize << ";++idx){\n";
-          if (flag == SupportedTypes::Scalar) {
+          if (flag == SupportedTypes::SCALAR) {
             if (mb.useQt()) {
               f << dest << "[" << currentOffset << "+idx] = common_cast(this->"
                 << p->name << "[idx]);\n";
@@ -300,9 +300,9 @@ namespace mfront {
               f << dest << "[" << currentOffset << "+idx] = this->" << p->name
                 << "[idx];\n";
             }
-          } else if ((flag == SupportedTypes::TVector) ||
-                     (flag == SupportedTypes::Stensor) ||
-                     (flag == SupportedTypes::Tensor)) {
+          } else if ((flag == SupportedTypes::TVECTOR) ||
+                     (flag == SupportedTypes::STENSOR) ||
+                     (flag == SupportedTypes::TENSOR)) {
             f << "exportToBaseTypeArray(this->" << p->name << "[idx],&" << dest
               << "[" << currentOffset << "+idx*StensorSize]);\n";
           } else {
@@ -314,7 +314,7 @@ namespace mfront {
           currentOffset += this->getTypeSize(p->type, p->arraySize);
         } else {
           for (unsigned short i = 0; i != p->arraySize; ++i) {
-            if (flag == SupportedTypes::Scalar) {
+            if (flag == SupportedTypes::SCALAR) {
               if (mb.useQt()) {
                 f << dest << "[" << currentOffset << "] = common_cast(this->"
                   << p->name << "[" << i << "]);\n";
@@ -322,9 +322,9 @@ namespace mfront {
                 f << dest << "[" << currentOffset << "] = this->" << p->name
                   << "[" << i << "];\n";
               }
-            } else if ((flag == SupportedTypes::TVector) ||
-                       (flag == SupportedTypes::Stensor) ||
-                       (flag == SupportedTypes::Tensor)) {
+            } else if ((flag == SupportedTypes::TVECTOR) ||
+                       (flag == SupportedTypes::STENSOR) ||
+                       (flag == SupportedTypes::TENSOR)) {
               f << "exportToBaseTypeArray(this->" << p->name << "[" << i
                 << "],&" << dest << "[" << currentOffset << "]);\n";
             } else {
@@ -492,11 +492,11 @@ namespace mfront {
       }
       first = false;
       const auto flag = SupportedTypes::getTypeFlag(mp.type);
-      if (flag == SupportedTypes::Scalar) {
+      if (flag == SupportedTypes::SCALAR) {
         f << n << "(" + src + "[" << offset << "])";
-      } else if ((flag == SupportedTypes::TVector) ||
-                 (flag == SupportedTypes::Stensor) ||
-                 (flag == SupportedTypes::Tensor)) {
+      } else if ((flag == SupportedTypes::TVECTOR) ||
+                 (flag == SupportedTypes::STENSOR) ||
+                 (flag == SupportedTypes::TENSOR)) {
         f << n << "(&" + src + "[" << offset << "])";
       } else {
         tfel::raise(
@@ -532,18 +532,18 @@ namespace mfront {
         f << n << ".resize(" << mp.arraySize << ");\n";
         f << "for(unsigned short idx=0;idx!=" << mp.arraySize << ";++idx){\n";
         switch (flag) {
-          case SupportedTypes::Scalar:
+          case SupportedTypes::SCALAR:
             f << n << "[idx] = " + src + "[" << offset << "+idx];\n";
             break;
-          case SupportedTypes::TVector:
+          case SupportedTypes::TVECTOR:
             f << "tfel::fsalgo::copy<TVectorSize>::exe(&" + src + "[" << offset
               << "+idx*TVectorSize]," << n << "[idx].begin());\n";
             break;
-          case SupportedTypes::Stensor:
+          case SupportedTypes::STENSOR:
             f << n << "[idx].import(&" + src + "[" << offset
               << "+idx*StensorSize]);\n";
             break;
-          case SupportedTypes::Tensor:
+          case SupportedTypes::TENSOR:
             f << "tfel::fsalgo::copy<TensorSize>::exe(&" + src + "[" << offset
               << "+idx*TensorSize]," << n << "[idx].begin());\n";
             break;
@@ -557,18 +557,18 @@ namespace mfront {
       } else {
         for (int index = 0; index != mp.arraySize; ++index) {
           switch (flag) {
-            case SupportedTypes::Scalar:
+            case SupportedTypes::SCALAR:
               f << n << "[" << index << "] = " + src + "[" << offset << "];\n";
               break;
-            case SupportedTypes::TVector:
+            case SupportedTypes::TVECTOR:
               f << "tfel::fsalgo::copy<TVectorSize>::exe(&" + src + "["
                 << offset << "]," << n << "[" << index << "].begin());\n";
               break;
-            case SupportedTypes::Stensor:
+            case SupportedTypes::STENSOR:
               f << n << "[" << index << "].import(&" + src + "[" << offset
                 << "]);\n";
               break;
-            case SupportedTypes::Tensor:
+            case SupportedTypes::TENSOR:
               f << "tfel::fsalgo::copy<TensorSize>::exe(&" + src + "[" << offset
                 << "]," << n << "[" << index << "].begin());\n";
               break;
@@ -764,8 +764,8 @@ namespace mfront {
       const Gradient& v,
       const SupportedTypes::TypeSize o) const {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
-    if (!v.increment_known) {
-      if (SupportedTypes::getTypeFlag(v.type) == SupportedTypes::TVector) {
+    if (!Gradient::isIncrementKnown(v)) {
+      if (SupportedTypes::getTypeFlag(v.type) == SupportedTypes::TVECTOR) {
         if (!o.isNull()) {
           os << "tfel::fsalgo::copy<N>::exe(" << iprefix << "stran+" << o
              << ",this->" << v.name << "0.begin());\n";
@@ -774,7 +774,7 @@ namespace mfront {
              << v.name << "0.begin());\n";
         }
       } else if (SupportedTypes::getTypeFlag(v.type) ==
-                 SupportedTypes::Stensor) {
+                 SupportedTypes::STENSOR) {
         if (!o.isNull()) {
           os << "this->" << v.name << "0.importVoigt(" << iprefix << "stran+"
              << o << ");\n";
@@ -783,7 +783,7 @@ namespace mfront {
              << "stran);\n";
         }
       } else if (SupportedTypes::getTypeFlag(v.type) ==
-                 SupportedTypes::Tensor) {
+                 SupportedTypes::TENSOR) {
         if (!o.isNull()) {
           os << v.type << "::buildFromFortranMatrix(this->" << v.name << "0,"
              << iprefix << "stran+" << o << ");\n";
@@ -797,7 +797,7 @@ namespace mfront {
             "unsupported driving variable type");
       }
     } else {
-      if (SupportedTypes::getTypeFlag(v.type) == SupportedTypes::TVector) {
+      if (SupportedTypes::getTypeFlag(v.type) == SupportedTypes::TVECTOR) {
         if (!o.isNull()) {
           os << "tfel::fsalgo::copy<N>::exe(" << iprefix << "stran+" << o
              << ",this->" << v.name << ".begin());\n";
@@ -806,7 +806,7 @@ namespace mfront {
              << v.name << ".begin());\n";
         }
       } else if (SupportedTypes::getTypeFlag(v.type) ==
-                 SupportedTypes::Stensor) {
+                 SupportedTypes::STENSOR) {
         if (!o.isNull()) {
           os << "this->" << v.name << ".importVoigt(" << iprefix << "stran+"
              << o << ");\n";
@@ -814,7 +814,7 @@ namespace mfront {
           os << "this->" << v.name << ".importVoigt(" << iprefix << "stran);\n";
         }
       } else if (SupportedTypes::getTypeFlag(v.type) ==
-                 SupportedTypes::Tensor) {
+                 SupportedTypes::TENSOR) {
         if (!o.isNull()) {
           os << v.type << "::buildFromFortranMatrix(this->" << v.name << ","
              << iprefix << "stran+" << o << ");\n";
@@ -835,7 +835,7 @@ namespace mfront {
       const ThermodynamicForce& f,
       const SupportedTypes::TypeSize o) const {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
-    if (SupportedTypes::getTypeFlag(f.type) == SupportedTypes::TVector) {
+    if (SupportedTypes::getTypeFlag(f.type) == SupportedTypes::TVECTOR) {
       if (!o.isNull()) {
         os << "tfel::fsalgo::copy<N>::exe(" << iprefix << "stress_+" << o
            << ",this->" << f.name << ".begin());\n";
@@ -843,14 +843,14 @@ namespace mfront {
         os << "tfel::fsalgo::copy<N>::exe(" << iprefix << "stress_,this->"
            << f.name << ".begin());\n";
       }
-    } else if (SupportedTypes::getTypeFlag(f.type) == SupportedTypes::Stensor) {
+    } else if (SupportedTypes::getTypeFlag(f.type) == SupportedTypes::STENSOR) {
       if (!o.isNull()) {
         os << "this->" << f.name << ".importTab(" << iprefix << "stress_+" << o
            << ");\n";
       } else {
         os << "this->" << f.name << ".importTab(" << iprefix << "stress_);\n";
       }
-    } else if (SupportedTypes::getTypeFlag(f.type) == SupportedTypes::Tensor) {
+    } else if (SupportedTypes::getTypeFlag(f.type) == SupportedTypes::TENSOR) {
       if (!o.isNull()) {
         os << f.type << "::buildFromFortranMatrix(this->" << f.name << ","
            << iprefix << "stress_+" << o << ");\n";
@@ -885,8 +885,8 @@ namespace mfront {
       const Gradient& v,
       const SupportedTypes::TypeSize o) const {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
-    if (!v.increment_known) {
-      if (SupportedTypes::getTypeFlag(v.type) == SupportedTypes::TVector) {
+    if (!Gradient::isIncrementKnown(v)) {
+      if (SupportedTypes::getTypeFlag(v.type) == SupportedTypes::TVECTOR) {
         if (!o.isNull()) {
           os << "tfel::fsalgo::copy<N>::exe(" << iprefix << "dstran+" << o
              << ",this->" << v.name << "1.begin());\n";
@@ -895,7 +895,7 @@ namespace mfront {
              << v.name << "1.begin());\n";
         }
       } else if (SupportedTypes::getTypeFlag(v.type) ==
-                 SupportedTypes::Stensor) {
+                 SupportedTypes::STENSOR) {
         if (!o.isNull()) {
           os << "this->" << v.name << "1.importVoigt(" << iprefix << "dstran+"
              << o << ");\n";
@@ -904,7 +904,7 @@ namespace mfront {
              << "dstran);\n";
         }
       } else if (SupportedTypes::getTypeFlag(v.type) ==
-                 SupportedTypes::Tensor) {
+                 SupportedTypes::TENSOR) {
         if (!o.isNull()) {
           os << v.type << "::buildFromFortranMatrix(this->" << v.name << "1,"
              << iprefix << "dstran+" << o << ");\n";
@@ -918,7 +918,7 @@ namespace mfront {
             "unsupported driving variable type");
       }
     } else {
-      if (SupportedTypes::getTypeFlag(v.type) == SupportedTypes::TVector) {
+      if (SupportedTypes::getTypeFlag(v.type) == SupportedTypes::TVECTOR) {
         if (!o.isNull()) {
           os << "tfel::fsalgo::copy<N>::exe(" << iprefix << "dstran+" << o
              << ",this->d" << v.name << ".begin());\n";
@@ -927,7 +927,7 @@ namespace mfront {
              << v.name << ".begin());\n";
         }
       } else if (SupportedTypes::getTypeFlag(v.type) ==
-                 SupportedTypes::Stensor) {
+                 SupportedTypes::STENSOR) {
         if (!o.isNull()) {
           os << "this->d" << v.name << ".importVoigt(" << iprefix << "dstran+"
              << o << ");\n";
@@ -936,7 +936,7 @@ namespace mfront {
              << "dstran);\n";
         }
       } else if (SupportedTypes::getTypeFlag(v.type) ==
-                 SupportedTypes::Tensor) {
+                 SupportedTypes::TENSOR) {
         if (!o.isNull()) {
           os << v.type << "::buildFromFortranMatrix(this->d" << v.name << ","
              << iprefix << "dstran+" << o << ");\n";
@@ -1128,7 +1128,7 @@ namespace mfront {
     }
     for (const auto& m : mprops.first) {
       auto flag = SupportedTypes::getTypeFlag(m.type);
-      tfel::raise_if(flag != SupportedTypes::Scalar,
+      tfel::raise_if(flag != SupportedTypes::SCALAR,
                      "UMATInterfaceBase::generateFile2: "
                      "unsupported external state variable type "
                      "in mtest file generation");
@@ -1157,13 +1157,13 @@ namespace mfront {
       auto flag = SupportedTypes::getTypeFlag(v.type);
       const auto& ivname = d.getExternalName(v.name);
       if (v.arraySize == 1u) {
-        if (flag == SupportedTypes::Scalar) {
+        if (flag == SupportedTypes::SCALAR) {
           out << "mg.addInternalStateVariable(\"" << ivname
-              << "\",SupportedTypes::Scalar,&mg_STATEV[" << ivoffset << "]);\n";
+              << "\",SupportedTypes::SCALAR,&mg_STATEV[" << ivoffset << "]);\n";
           ivoffset += SupportedTypes::TypeSize(1u, 0u, 0u, 0u);
         } else {
           out << "mg.addInternalStateVariable(\"" << ivname
-              << "\",SupportedTypes::Stensor,&mg_STATEV[" << ivoffset
+              << "\",SupportedTypes::STENSOR,&mg_STATEV[" << ivoffset
               << "]);\n";
           ivoffset += SupportedTypes::TypeSize(0u, 0u, 1u, 0u);
         }
@@ -1172,32 +1172,32 @@ namespace mfront {
           out << "for(unsigned short i=0;i!=" << v.arraySize << ";++i){\n";
           out << "auto name =  \"" << ivname
               << "[\" + std::to_string(i)+ \"]\";\n";
-          if (flag == SupportedTypes::Scalar) {
-            out << "mg.addInternalStateVariable(name,SupportedTypes::Scalar,&"
+          if (flag == SupportedTypes::SCALAR) {
+            out << "mg.addInternalStateVariable(name,SupportedTypes::SCALAR,&"
                    "mg_STATEV["
                 << ivoffset << "]+i);\n";
           } else {
-            out << "mg.addInternalStateVariable(name,SupportedTypes::Stensor,"
+            out << "mg.addInternalStateVariable(name,SupportedTypes::STENSOR,"
                    "&"
                    "mg_STATEV["
                 << ivoffset << "]+i);\n";
           }
           out << "}\n";
-          if (flag == SupportedTypes::Scalar) {
+          if (flag == SupportedTypes::SCALAR) {
             ivoffset += SupportedTypes::TypeSize(v.arraySize, 0u, 0u, 0u);
           } else {
             ivoffset += SupportedTypes::TypeSize(0u, 0u, v.arraySize, 0u);
           }
         } else {
           for (unsigned short i = 0; i != v.arraySize; ++i) {
-            if (flag == SupportedTypes::Scalar) {
+            if (flag == SupportedTypes::SCALAR) {
               out << "mg.addInternalStateVariable(\"" << ivname << "[" << i
-                  << "]\",SupportedTypes::Scalar,&mg_STATEV[" << ivoffset
+                  << "]\",SupportedTypes::SCALAR,&mg_STATEV[" << ivoffset
                   << "]);\n";
               ivoffset += SupportedTypes::TypeSize(1u, 0u, 0u, 0u);
             } else {
               out << "mg.addInternalStateVariable(\"" << ivname << "[" << i
-                  << "]\",SupportedTypes::Stensor,&mg_STATEV[" << ivoffset
+                  << "]\",SupportedTypes::STENSOR,&mg_STATEV[" << ivoffset
                   << "]);\n";
               ivoffset += SupportedTypes::TypeSize(0u, 0u, 1u, 0u);
             }
@@ -1212,7 +1212,7 @@ namespace mfront {
     auto p = std::next(externalStateVarsHolder.begin());
     for (offset = 0; p != externalStateVarsHolder.end(); ++p) {
       auto flag = SupportedTypes::getTypeFlag(p->type);
-      tfel::raise_if(flag != SupportedTypes::Scalar,
+      tfel::raise_if(flag != SupportedTypes::SCALAR,
                      "UMATInterfaceBase::generateFile2: "
                      "unsupported external state variable type "
                      "in mtest file generation");
