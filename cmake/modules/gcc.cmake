@@ -40,9 +40,17 @@ endif(enable-fast-math)
 
 option(enable-sanitize-options "enable various gcc sanitize options (undefined, address,...)" OFF)
 
+option(enable-glibcxx-debug "use the debug version of the C++ standard as implemented by the glib C++ library" OFF)
+if(enable-glibcxx-debug)
 SET(CMAKE_CXX_FLAGS_DEBUG "-g -D_GLIBCXX_DEBUG" CACHE STRING
     "Flags used by the C++ compiler during debug builds."
     FORCE)
+else(enable-glibcxx-debug)
+SET(CMAKE_CXX_FLAGS_DEBUG "-g" CACHE STRING
+    "Flags used by the C++ compiler during debug builds."
+    FORCE)
+endif(enable-glibcxx-debug)
+
 SET(CMAKE_C_FLAGS_DEBUG "-g" CACHE STRING
     "Flags used by the C compiler during debug builds."
     FORCE)

@@ -53,6 +53,7 @@ Options
                           (enabled by default if pandoc is found)
   enable-fast-math      : use advance options to optimize code further.
   			  Compiler can then ignore IEEE 754 compatibility
+  enable-glibcxx-debug  : use the debug version of the STL implemented by the GLIB
 
 cmake usefull variables
 =======================
