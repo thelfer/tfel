@@ -24,6 +24,21 @@ namespace tfel{
   namespace utilities{
 
     /*!
+     * \param[in] s1: first string
+     * \param[in] s2: second string
+     * \return true if the first string starts with the second
+     */
+    TFELUTILITIES_VISIBILITY_EXPORT 
+    bool starts_with(const std::string&,const std::string&);
+    /*!
+     * \param[in] s1: first string
+     * \param[in] s2: second string
+     * \return true if the first string ends with the second
+     */
+    TFELUTILITIES_VISIBILITY_EXPORT 
+    bool ends_with(const std::string&,const std::string&);
+    
+    /*!
      * split a string into tokens using the specified delimiter
      * \param s : string to be splitted
      * \param c : delimiter

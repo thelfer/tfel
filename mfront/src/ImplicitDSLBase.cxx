@@ -899,7 +899,7 @@ namespace mfront{
 	    if(flag2==SupportedTypes::Scalar){
 	      this->behaviourFile << "real&\n"
 				  << "df" << p->name << "_dd" << p2->name
-				  << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
+				  << "(tfel::math::tmatrix<" << n3 << "," << n3 << ",real>& tjacobian,\n"
 				  << "const unsigned short idx){\n"
 				  << "return tjacobian(" << n << "+idx, " << n2 << ");\n"
 				  << "}\n\n";
@@ -911,7 +911,7 @@ namespace mfront{
 	      // Le résultat est un tenseur, une ligne dans la matrice jacobienne
 	      this->behaviourFile << "typename tfel::math::TVectorFromTinyMatrixRowView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
 				  << "df" << p->name << "_dd" << p2->name 
-				  << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
+				  << "(tfel::math::tmatrix<" << n3 << "," << n3 << ",real>& tjacobian,\n"
 				  << "const unsigned short idx){\n"
 				  << "using namespace tfel::math;\n"
 				  << "return typename TVectorFromTinyMatrixRowView2<N,"
@@ -928,7 +928,7 @@ namespace mfront{
 	      // Le résultat est un tenseur, une ligne dans la matrice jacobienne
 	      this->behaviourFile << "typename tfel::math::StensorFromTinyMatrixRowView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
 				  << "df" << p->name << "_dd" << p2->name 
-				  << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
+				  << "(tfel::math::tmatrix<" << n3 << "," << n3 << ",real>& tjacobian,\n"
 				  << "const unsigned short idx){\n"
 				  << "using namespace tfel::math;\n"
 				  << "return typename StensorFromTinyMatrixRowView2<N,"
@@ -947,7 +947,7 @@ namespace mfront{
 	      // Le résultat est un tenseur, une colonne dans la matrice jacobienne
 	      this->behaviourFile << "typename tfel::math::StensorFromTinyMatrixColumnView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
 				  << "df" << p->name << "_dd" << p2->name 
-				  << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
+				  << "(tfel::math::tmatrix<" << n3 << "," << n3 << ",real>& tjacobian,\n"
 				  << "const unsigned short idx){\n"
 				  << "using namespace tfel::math;\n"
 				  << "return typename StensorFromTinyMatrixColumnView2<N,"
@@ -964,7 +964,7 @@ namespace mfront{
 	      // Le résultat est une sous-matrice
 	      this->behaviourFile << "typename tfel::math::TMatrixFromTinyMatrixView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
 	      			  << "df" << p->name << "_dd" << p2->name 
-	      			  << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
+	      			  << "(tfel::math::tmatrix<" << n3 << "," << n3 << ",real>& tjacobian,\n"
 	      			  << "const unsigned short idx){\n"
 	      			  << "using namespace tfel::math;\n"
 	      			  << "return typename TMatrixFromTinyMatrixView2<N,"
@@ -986,7 +986,7 @@ namespace mfront{
 	      // Le résultat est un tenseur, une colonne dans la matrice jacobienne
 	      this->behaviourFile << "typename tfel::math::StensorFromTinyMatrixColumnView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
 				  << "df" << p->name << "_dd" << p2->name 
-				  << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
+				  << "(tfel::math::tmatrix<" << n3 << "," << n3 << ",real>& tjacobian,\n"
 				  << "const unsigned short idx){\n"
 				  << "using namespace tfel::math;\n"
 				  << "return typename StensorFromTinyMatrixColumnView2<N,"
@@ -1003,7 +1003,7 @@ namespace mfront{
 	      // Le résultat est un tenseur d'ordre 4
 	      this->behaviourFile << "typename tfel::math::ST2toST2FromTinyMatrixView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
 				  << "df" << p->name << "_dd" << p2->name 
-				  << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
+				  << "(tfel::math::tmatrix<" << n3 << "," << n3 << ",real>& tjacobian,\n"
 				  << "const unsigned short idx){\n"
 				  << "using namespace tfel::math;\n"
 				  << "return typename ST2toST2FromTinyMatrixView2<N,"
@@ -1026,7 +1026,7 @@ namespace mfront{
 	    if(flag2==SupportedTypes::Scalar){
 	      this->behaviourFile << "real&\n"
 				  << "df" << p->name << "_dd" << p2->name 
-				  << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
+				  << "(tfel::math::tmatrix<" << n3 << "," << n3 << ",real>& tjacobian,\n"
 				  << "const unsigned short idx){\n"
 				  << "return tjacobian(" << n << ", " << n2 << "+idx);\n"
 				  << "}\n\n";
@@ -1039,7 +1039,7 @@ namespace mfront{
 	      // Le résultat est un tenseur, une ligne dans la matrice jacobienne
 	      this->behaviourFile << "typename tfel::math::StensorFromTinyMatrixRowView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
 				  << "df" << p->name << "_dd" << p2->name 
-				  << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
+				  << "(tfel::math::tmatrix<" << n3 << "," << n3 << ",real>& tjacobian,\n"
 				  << "const unsigned short idx){\n"
 				  << "using namespace tfel::math;\n"
 				  << "return typename StensorFromTinyMatrixRowView2<N,"
@@ -1058,7 +1058,7 @@ namespace mfront{
 	      // Le résultat est un tenseur, une colonne dans la matrice jacobienne
 	      this->behaviourFile << "typename tfel::math::StensorFromTinyMatrixColumnView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
 				  << "df" << p->name << "_dd" << p2->name 
-				  << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
+				  << "(tfel::math::tmatrix<" << n3 << "," << n3 << ",real>& tjacobian,\n"
 				  << "const unsigned short idx){\n"
 				  << "using namespace tfel::math;\n"
 				  << "return typename StensorFromTinyMatrixColumnView2<N,"
@@ -1074,7 +1074,7 @@ namespace mfront{
 	    } else {
 	      this->behaviourFile << "typename tfel::math::ST2toST2FromTinyMatrixView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
 				  << "df" << p->name << "_dd" << p2->name 
-				  << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
+				  << "(tfel::math::tmatrix<" << n3 << "," << n3 << ",real>& tjacobian,\n"
 				  << "const unsigned short idx){\n"
 				  << "using namespace tfel::math;\n"
 				  << "return typename ST2toST2FromTinyMatrixView2<N,"
@@ -1094,7 +1094,7 @@ namespace mfront{
 	    if(flag2==SupportedTypes::Scalar){
 	      this->behaviourFile << "real&\n"
 				  << "df" << p->name << "_dd" << p2->name 
-				  << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
+				  << "(tfel::math::tmatrix<" << n3 << "," << n3 << ",real>& tjacobian,\n"
 				  << "const unsigned short idx,"
 				  << " const unsigned short idx2){\n"
 				  << "return tjacobian(" << n << "+idx, " << n2 << "+idx2);\n"
@@ -1109,7 +1109,7 @@ namespace mfront{
 	      // Le résultat est un tenseur, une ligne dans la matrice jacobienne
 	      this->behaviourFile << "typename tfel::math::StensorFromTinyMatrixRowView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
 				  << "df" << p->name << "_dd" << p2->name 
-				  << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
+				  << "(tfel::math::tmatrix<" << n3 << "," << n3 << ",real>& tjacobian,\n"
 				  << "const unsigned short idx,"
 				  << " const unsigned short idx2){\n"
 				  << "using namespace tfel::math;\n"
@@ -1130,7 +1130,7 @@ namespace mfront{
 	      // Le résultat est un tenseur, une colonne dans la matrice jacobienne
 	      this->behaviourFile << "typename tfel::math::StensorFromTinyMatrixColumnView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
 				  << "df" << p->name << "_dd" << p2->name 
-				  << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
+				  << "(tfel::math::tmatrix<" << n3 << "," << n3 << ",real>& tjacobian,\n"
 				  << "const unsigned short idx,"
 				  << " const unsigned short idx2){\n"
 				  << "using namespace tfel::math;\n"
@@ -1148,7 +1148,7 @@ namespace mfront{
 	    } else {
 	      this->behaviourFile << "typename tfel::math::ST2toST2FromTinyMatrixView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
 				  << "df" << p->name << "_dd" << p2->name 
-				  << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
+				  << "(tfel::math::tmatrix<" << n3 << "," << n3 << ",real>& tjacobian,\n"
 				  << "const unsigned short idx,"
 				  << " const unsigned short idx2){\n"
 				  << "using namespace tfel::math;\n"
@@ -1174,19 +1174,19 @@ namespace mfront{
     n = n3;
     if(this->solver->usesJacobian()){
       this->behaviourFile << "// Jacobian\n";
-      this->behaviourFile << "tfel::math::tmatrix<" << n << "," << n << ",Type> jacobian;\n";
+      this->behaviourFile << "tfel::math::tmatrix<" << n << "," << n << ",real> jacobian;\n";
     }
     if(this->solver->usesJacobianInvert()){
       this->behaviourFile << "// Jacobian\n";
-      this->behaviourFile << "tfel::math::tmatrix<" << n << "," << n << ",Type> inv_jacobian;\n";
+      this->behaviourFile << "tfel::math::tmatrix<" << n << "," << n << ",real> inv_jacobian;\n";
     }
     this->solver->writeSpecificMembers(this->behaviourFile,this->mb,h);
     this->behaviourFile << "// zeros\n";
-    this->behaviourFile << "tfel::math::tvector<" << n << ",Type> zeros;\n\n";
+    this->behaviourFile << "tfel::math::tvector<" << n << ",real> zeros;\n\n";
     this->behaviourFile << "// previous zeros\n";
-    this->behaviourFile << "tfel::math::tvector<" << n << ",Type> zeros_1;\n\n";
+    this->behaviourFile << "tfel::math::tvector<" << n << ",real> zeros_1;\n\n";
     this->behaviourFile << "// function\n";
-    this->behaviourFile << "tfel::math::tvector<" << n << ",Type> fzeros;\n\n";
+    this->behaviourFile << "tfel::math::tvector<" << n << ",real> fzeros;\n\n";
     this->behaviourFile << "// number of iterations\n";
     this->behaviourFile << "unsigned int iter = 0u;\n\n";
     //

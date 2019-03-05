@@ -20,6 +20,18 @@ namespace tfel
   namespace utilities
   {
 
+    bool starts_with(const std::string& s1,const std::string& s2)
+    {
+      return ((s1.size()>=s2.size()) &&
+	      (std::equal(s2.begin(),s2.end(),s1.begin())));
+    } // end of starts_with
+
+    bool ends_with(const std::string& s1,const std::string& s2)
+    {
+      return ((s1.size()>=s2.size()) &&
+	      (std::equal(s2.rbegin(),s2.rend(),s1.rbegin())));
+    } // end of ends_with
+
     std::vector<std::string>
     tokenize(const std::string& s,
 	     const char c)
