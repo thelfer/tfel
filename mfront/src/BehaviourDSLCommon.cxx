@@ -4130,13 +4130,122 @@ namespace mfront {
 
   std::string BehaviourDSLCommon::getBehaviourConstructorsInitializers(const Hypothesis h) const {
     // variable initialisation
-    auto init = this->getIntegrationVariablesIncrementsInitializers(h);
-    if (!this->localVariablesInitializers.empty()) {
+    auto init = std::string();
+    auto append = [&init](const std::string& s) {
+      if (s.empty()) {
+        return;
+      }
       if (!init.empty()) {
         init += ",\n";
       }
-      init += this->localVariablesInitializers;
+      init += s;
+    };
+    append(this->getIntegrationVariablesIncrementsInitializers(h));
+    // tangent operator blocks
+    const auto& blocks = this->mb.getTangentOperatorBlocks();
+    if (this->mb.hasTrivialTangentOperatorStructure()) {
+      tfel::raise_if(
+          ((blocks.size() != 1u) || (blocks.front().first.arraySize != 1u) ||
+           (blocks.front().second.arraySize != 1u)),
+          "BehaviourDSLCommon::writeBehaviourTangentOperator: internal error");
+      if (this->mb.getBehaviourType() !=
+          BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
+        append(this->mb.getTangentOperatorBlockName(blocks.front()) + "(Dt)");
+      }
+    } else {
+      tfel::math::tvector<10, int> offset;
+      tfel::fsalgo::fill<10>::exe(offset.begin(), 0);
+      auto update_offset = [&offset](const SupportedTypes::TypeSize s1,
+                                     const SupportedTypes::TypeSize s2) {
+        offset[0] = s1.getScalarSize() * s2.getScalarSize();
+        offset[1] = s1.getTVectorSize() * s2.getTVectorSize();
+        offset[2] = s1.getStensorSize() * s2.getStensorSize();
+        offset[3] = s1.getTensorSize() * s2.getTensorSize();
+        offset[4] = s1.getScalarSize() * s2.getTVectorSize() +
+                    s2.getScalarSize() * s1.getTVectorSize();
+        offset[5] = s1.getScalarSize() * s2.getStensorSize() +
+                    s2.getScalarSize() * s1.getStensorSize();
+        offset[6] = s1.getScalarSize() * s2.getTensorSize() +
+                    s2.getScalarSize() * s1.getTensorSize();
+        offset[7] = s1.getTVectorSize() * s2.getStensorSize() +
+                    s2.getTVectorSize() * s1.getStensorSize();
+        offset[8] = s1.getTVectorSize() * s2.getTensorSize() +
+                    s2.getTVectorSize() * s1.getTensorSize();
+        offset[9] = s1.getStensorSize() * s2.getTensorSize() +
+                    s2.getStensorSize() * s1.getTensorSize();
+      };
+      auto get_offset = [&offset]() -> std::string {
+        const char* sizes[10] = {"",
+                                 "TVectorSize*TVectorSize",
+                                 "StensorSize*StensorSize",
+                                 "TensorSize*TensorSize",
+                                 "TVectorSize",
+                                 "StensorSize",
+                                 "TensorSize",
+                                 "TVectorSize*StensorSize",
+                                 "TVectorSize*TensorSize",
+                                 "StensorSize*TensorSize"};
+        std::string o;
+        if (offset[0] != 0) {
+          o += std::to_string(offset[0]);
+        }
+        for (int i = 1; i != 10; ++i) {
+          if (offset[i] != 0) {
+            if (!o.empty()) {
+              o += "+";
+            }
+            if (offset[i] != 1) {
+              o += std::to_string(offset[i]) + "*";
+            }
+            o += sizes[i];
+          }
+        }
+        if (o.empty()) {
+          return "0";
+        }
+        return o;
+      };
+      // write blocks
+      for (const auto& b : blocks) {
+        const auto& v1 = b.first;
+        const auto& v2 = b.second;
+        if ((v1.arraySize != 1u) || (v2.arraySize != 1u)) {
+          break;
+        }
+        auto throw_unsupported_block = [&v1, &v2] {
+          tfel::raise(
+              "BehaviourDSLCommon::writeBehaviourTangentOperator:"
+              "tangent operator blocks associated with "
+              "the derivative of '" +
+              v1.name + "' (of type '" + v1.type + "') with respect to '" +
+              v2.name + "' (of type '" + v2.type + "') is not supported");
+        };
+        const auto bn = this->mb.getTangentOperatorBlockName(b);
+        if (v1.getTypeFlag() == SupportedTypes::SCALAR) {
+          if (v2.getTypeFlag() == SupportedTypes::SCALAR) {
+            append(bn + "(Dt[" + get_offset() + "])");
+          } else {
+            throw_unsupported_block();
+          }
+        } else if (v1.getTypeFlag() == SupportedTypes::TVECTOR) {
+          if ((v2.getTypeFlag() == SupportedTypes::SCALAR) ||
+              (v2.getTypeFlag() == SupportedTypes::TVECTOR)) {
+            const auto o = get_offset();
+            if (o != "0") {
+              append(bn + "(Dt.begin()+" + o + ")");
+            } else {
+              append(bn + "(Dt.begin())");
+            }
+          } else {
+            throw_unsupported_block();
+          }
+        } else {
+          throw_unsupported_block();
+        }
+        update_offset(v1.getTypeSize(), v2.getTypeSize());
+      }
     }
+    append(this->localVariablesInitializers);
     return init;
   }  // end of BehaviourDSLCommon::getBehaviourConstructorsInitializers
 
@@ -5963,60 +6072,10 @@ namespace mfront {
           BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
         os << "//! alias to the tangent operator;\n"
            << "TangentOperator& "
-           << this->mb.getTangentOperatorBlockName(blocks.front())
-           << " = Dt;\n";
+           << this->mb.getTangentOperatorBlockName(blocks.front()) << ";\n";
       }
       return;
     }
-    tfel::math::tvector<10, int> offset;
-    tfel::fsalgo::fill<10>::exe(offset.begin(), 0);
-    auto update_offset = [&offset](const SupportedTypes::TypeSize s1,
-                                   const SupportedTypes::TypeSize s2) {
-      offset[0] = s1.getScalarSize() * s2.getScalarSize();
-      offset[1] = s1.getTVectorSize() * s2.getTVectorSize();
-      offset[2] = s1.getStensorSize() * s2.getStensorSize();
-      offset[3] = s1.getTensorSize() * s2.getTensorSize();
-      offset[4] = s1.getScalarSize() * s2.getTVectorSize() +
-                  s2.getScalarSize() * s1.getTVectorSize();
-      offset[5] = s1.getScalarSize() * s2.getStensorSize() +
-                  s2.getScalarSize() * s1.getStensorSize();
-      offset[6] = s1.getScalarSize() * s2.getTensorSize() +
-                  s2.getScalarSize() * s1.getTensorSize();
-      offset[7] = s1.getTVectorSize() * s2.getStensorSize() +
-                  s2.getTVectorSize() * s1.getStensorSize();
-      offset[8] = s1.getTVectorSize() * s2.getTensorSize() +
-                  s2.getTVectorSize() * s1.getTensorSize();
-      offset[9] = s1.getStensorSize() * s2.getTensorSize() +
-                  s2.getStensorSize() * s1.getTensorSize();
-    };
-    auto get_offset = [&offset]() -> std::string {
-      const char* sizes[10] = {"",
-                              "TVectorSize*TVectorSize",
-                              "StensorSize*StensorSize",
-                              "TensorSize*TensorSize",
-                              "TVectorSize",
-                              "StensorSize",
-                              "TensorSize",
-                              "TVectorSize*StensorSize",
-                              "TVectorSize*TensorSize",
-                              "StensorSize*TensorSize"};
-      std::string o;
-      if (offset[0] != 0) {
-        o += std::to_string(offset[0]);
-      }
-      for (int i = 1; i != 10; ++i) {
-        if (offset[i] != 0) {
-          if (!o.empty()) {
-            o += "+";
-          }
-          o += std::to_string(offset[i]) + "*" + sizes[i];
-        }
-      }
-      if (o.empty()) {
-        return "0";
-      }
-      return o;
-    };
     // write blocks
     for (const auto& b : blocks) {
       const auto& v1 = b.first;
@@ -6032,31 +6091,24 @@ namespace mfront {
             v1.name + "' (of type '" + v1.type + "') with respect to '" +
             v2.name + "' (of type '" + v2.type + "') is not supported");
       };
+      const auto bn = this->mb.getTangentOperatorBlockName(b);
       if (v1.getTypeFlag() == SupportedTypes::SCALAR) {
         if (v2.getTypeFlag() == SupportedTypes::SCALAR) {
-          os << "real& " << this->mb.getTangentOperatorBlockName(b)
-             << " = Dt[" << get_offset() << "];\n";
+          os << "real& " << bn << ";\n";
         } else {
           throw_unsupported_block();
         }
       } else if (v1.getTypeFlag() == SupportedTypes::TVECTOR) {
         if (v2.getTypeFlag() == SupportedTypes::SCALAR) {
-          os << "tfel::math::TVectorView<N,real> "
-             << this->mb.getTangentOperatorBlockName(b)
-             << " = tfel::math::TVectorView<N,real>(Dt.begin()+"
-             << get_offset() << ");\n";
+          os << "tfel::math::TVectorView<N,real> " << bn << ";\n";
         } else if (v2.getTypeFlag() == SupportedTypes::TVECTOR) {
-          os << "tfel::math::TMatrixView<N,N,real> "
-             << this->mb.getTangentOperatorBlockName(b)
-             << " = tfel::math::TMatrixView<N,N,real>(Dt.begin()+"
-             << get_offset() << ");\n";
+          os << "tfel::math::TMatrixView<N,N,real> " << bn << ";\n";
         } else {
           throw_unsupported_block();
         }
       } else {
         throw_unsupported_block();
       }
-      update_offset(v1.getTypeSize(), v2.getTypeSize());
     }
   }  // end of BehaviourDSLCommon::writeBehaviourTangentOperator()
 

@@ -150,6 +150,26 @@ namespace mfront {
     return res;
   }  // end of getLibrarySourcesAndDependencies
 
+  static std::string getLibraryFullName(const LibraryDescription& l) {
+    return l.prefix + l.name + '.' + l.suffix;
+  } // end of getLibraryFullName
+ 
+  static std::string getTargetName(const TargetsDescription& t,
+                                   const std::string& n) {
+    for (const auto& l : t) {
+      if (n == l.name) {
+        return getLibraryFullName(l);
+      }
+    }
+    for (const auto& tg : t.specific_targets) {
+      if (tg.first == n) {
+        return tg.first;
+      }
+    }
+    tfel::raise("getTargetName: no target associated with '" + n + "'");
+    return "";
+  }  // end of getTargetName
+
   void generateMakeFile(const TargetsDescription& t,
                         const GeneratorOptions& o,
                         const std::string& d,
@@ -202,7 +222,7 @@ namespace mfront {
       m << "CXX := " << env_cxx << "\n";
     }
     if ((env_cc != nullptr) || (env_cxx != nullptr)) {
-      m << endl;
+      m << '\n';
     }
     // INCLUDES
     m << "INCLUDES := ";
@@ -247,10 +267,10 @@ namespace mfront {
       }
     }
     //
-    m << endl << endl;
+    m << '\n' << '\n';
     // LDFLAGS
     if (ldflags != nullptr) {
-      m << "LDFLAGS := " << ldflags << endl;
+      m << "LDFLAGS := " << ldflags << '\n';
     }
     // CXXFLAGS
     if (!cppSources.empty()) {
@@ -347,15 +367,15 @@ namespace mfront {
     }
     m << "\n\n";
     m << ".PHONY = ";
-    m << "all clean ";
+    m << "all clean";
     for (const auto& l : t) {
       if (l.name != "MFrontMaterialLaw") {
-        m << l.prefix << l.name << "." << l.suffix << " ";
+        m << " " << getLibraryFullName(l);
       }
     }
     for (const auto& target : t.specific_targets) {
       if ((target.first != "all") && (target.first != "clean")) {
-        m << target.first << " ";
+        m << " " << target.first;
       }
     }
     m << "\n\n";
@@ -377,12 +397,13 @@ namespace mfront {
     m << "\n\n";
     for (const auto& target : t.specific_targets) {
       if ((target.first != "all") && (target.first != "clean")) {
-        m << target.first << " : ";
-        copy(target.second.first.begin(), target.second.first.end(),
-             ostream_iterator<string>(m, " "));
-        m << endl;
+        m << target.first << " :";
+        for (const auto& dependency : target.second.first) {
+          m << " " << getTargetName(t, dependency);
+        }
+        m << '\n';
         for (const auto& cmd : target.second.second) {
-          m << "\t" << cmd << endl;
+          m << "\t" << cmd << '\n';
         }
         m << "\n";
       }
@@ -441,7 +462,7 @@ namespace mfront {
     }
     if (p5 != t.specific_targets.end()) {
       for (const auto& cmd : p5->second.second) {
-        m << "\t" << cmd << endl;
+        m << "\t" << cmd << '\n';
       }
     }
     m << "\n";

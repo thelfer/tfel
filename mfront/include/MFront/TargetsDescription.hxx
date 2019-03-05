@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_TARGETSDESCRIPTION_H
-#define LIB_MFRONT_TARGETSDESCRIPTION_H 
+#ifndef LIB_MFRONT_TARGETSDESCRIPTION_HXX
+#define LIB_MFRONT_TARGETSDESCRIPTION_HXX 
 
 #include<map>
 #include<string>
@@ -170,5 +170,4 @@ namespace mfront{
 
 } // end of namespace mfront
 
-#endif /* LIB_MFRONT_TARGETSDESCRIPTION_H */
-
+#endif /* LIB_MFRONT_TARGETSDESCRIPTION_HXX */

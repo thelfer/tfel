@@ -477,10 +477,14 @@ int main(const int argc,const char *const *const argv)
     if(!incs){
       std::cout << ZMATFLAGS1 << " ";
     }
-    const auto zmatpath = getenv("ZSET_ROOT");
+    auto zmatpath = getenv("ZSET_ROOT");
     if(zmatpath!=nullptr){
       std::cout << "-I" << zmatpath << "/include ";
-    } else {
+    } 
+    else if( (zmatpath = getenv("Z7PATH")) != nullptr ){
+      std::cout << "-I" << zmatpath << "/include";
+    }
+    else {
 #ifndef ZSET_ROOT
       throw(std::runtime_error("tfel-config : no installation path "
 			       "to the ZSET softwares.\n"
