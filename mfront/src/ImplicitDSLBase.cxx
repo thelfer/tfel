@@ -1139,7 +1139,7 @@ namespace mfront {
                 os << "real&\n"
                    << "df" << v.name << "_dd" << v2.name
                    << "(tfel::math::tmatrix<" << n3 << "," << n3
-                   << ">& tjacobian,\n"
+                   << ",real>& tjacobian,\n"
                    << "const unsigned short idx){\n"
                    << "return tjacobian(" << n << "+idx, " << n2 << ");\n"
                    << "}\n\n";
@@ -1156,7 +1156,7 @@ namespace mfront {
                    << ",real>::type\n"
                    << "df" << v.name << "_dd" << v2.name
                    << "(tfel::math::tmatrix<" << n3 << "," << n3
-                   << ">& tjacobian,\n"
+                   << ",real>& tjacobian,\n"
                    << "const unsigned short idx){\n"
                    << "using namespace tfel::math;\n"
                    << "return typename TVectorFromTinyMatrixRowView2<N," << n3
@@ -1181,7 +1181,7 @@ namespace mfront {
                    << ",real>::type\n"
                    << "df" << v.name << "_dd" << v2.name
                    << "(tfel::math::tmatrix<" << n3 << "," << n3
-                   << ">& tjacobian,\n"
+                   << ",real>& tjacobian,\n"
                    << "const unsigned short idx){\n"
                    << "using namespace tfel::math;\n"
                    << "return typename StensorFromTinyMatrixRowView2<N," << n3
@@ -1208,7 +1208,7 @@ namespace mfront {
                    << ",real>::type\n"
                    << "df" << v.name << "_dd" << v2.name
                    << "(tfel::math::tmatrix<" << n3 << "," << n3
-                   << ">& tjacobian,\n"
+                   << ",real>& tjacobian,\n"
                    << "const unsigned short idx){\n"
                    << "using namespace tfel::math;\n"
                    << "return typename StensorFromTinyMatrixColumnView2<N,"
@@ -1231,7 +1231,7 @@ namespace mfront {
                    << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
                    << "df" << v.name << "_dd" << v2.name
                    << "(tfel::math::tmatrix<" << n3 << "," << n3
-                   << ">& tjacobian,\n"
+                   << ",real>& tjacobian,\n"
                    << "const unsigned short idx){\n"
                    << "using namespace tfel::math;\n"
                    << "return typename TMatrixFromTinyMatrixView2<N," << n3
@@ -1261,7 +1261,7 @@ namespace mfront {
                    << ",real>::type\n"
                    << "df" << v.name << "_dd" << v2.name
                    << "(tfel::math::tmatrix<" << n3 << "," << n3
-                   << ">& tjacobian,\n"
+                   << ",real>& tjacobian,\n"
                    << "const unsigned short idx){\n"
                    << "using namespace tfel::math;\n"
                    << "return typename StensorFromTinyMatrixColumnView2<N,"
@@ -1285,7 +1285,7 @@ namespace mfront {
                    << ",real>::type\n"
                    << "df" << v.name << "_dd" << v2.name
                    << "(tfel::math::tmatrix<" << n3 << "," << n3
-                   << ">& tjacobian,\n"
+                   << ",real>& tjacobian,\n"
                    << "const unsigned short idx){\n"
                    << "using namespace tfel::math;\n"
                    << "return typename ST2toST2FromTinyMatrixView2<N," << n3
@@ -1314,7 +1314,7 @@ namespace mfront {
                 os << "real&\n"
                    << "df" << v.name << "_dd" << v2.name
                    << "(tfel::math::tmatrix<" << n3 << "," << n3
-                   << ">& tjacobian,\n"
+                   << ",real>& tjacobian,\n"
                    << "const unsigned short idx){\n"
                    << "return tjacobian(" << n << ", " << n2 << "+idx);\n"
                    << "}\n\n";
@@ -1331,7 +1331,7 @@ namespace mfront {
                    << ",real>::type\n"
                    << "df" << v.name << "_dd" << v2.name
                    << "(tfel::math::tmatrix<" << n3 << "," << n3
-                   << ">& tjacobian,\n"
+                   << ",real>& tjacobian,\n"
                    << "const unsigned short idx){\n"
                    << "using namespace tfel::math;\n"
                    << "return typename StensorFromTinyMatrixRowView2<N," << n3
@@ -1358,7 +1358,7 @@ namespace mfront {
                    << ",real>::type\n"
                    << "df" << v.name << "_dd" << v2.name
                    << "(tfel::math::tmatrix<" << n3 << "," << n3
-                   << ">& tjacobian,\n"
+                   << ",real>& tjacobian,\n"
                    << "const unsigned short idx){\n"
                    << "using namespace tfel::math;\n"
                    << "return typename StensorFromTinyMatrixColumnView2<N,"
@@ -1381,7 +1381,7 @@ namespace mfront {
                    << ",real>::type\n"
                    << "df" << v.name << "_dd" << v2.name
                    << "(tfel::math::tmatrix<" << n3 << "," << n3
-                   << ">& tjacobian,\n"
+                   << ",real>& tjacobian,\n"
                    << "const unsigned short idx){\n"
                    << "using namespace tfel::math;\n"
                    << "return typename ST2toST2FromTinyMatrixView2<N," << n3
@@ -1406,7 +1406,7 @@ namespace mfront {
                 os << "real&\n"
                    << "df" << v.name << "_dd" << v2.name
                    << "(tfel::math::tmatrix<" << n3 << "," << n3
-                   << ">& tjacobian,\n"
+                   << ",real>& tjacobian,\n"
                    << "const unsigned short idx,"
                    << " const unsigned short idx2){\n"
                    << "return tjacobian(" << n << "+idx, " << n2 << "+idx2);\n"
@@ -1426,7 +1426,7 @@ namespace mfront {
                    << ",real>::type\n"
                    << "df" << v.name << "_dd" << v2.name
                    << "(tfel::math::tmatrix<" << n3 << "," << n3
-                   << ">& tjacobian,\n"
+                   << ",real>& tjacobian,\n"
                    << "const unsigned short idx,"
                    << " const unsigned short idx2){\n"
                    << "using namespace tfel::math;\n"
@@ -1455,7 +1455,7 @@ namespace mfront {
                    << ",real>::type\n"
                    << "df" << v.name << "_dd" << v2.name
                    << "(tfel::math::tmatrix<" << n3 << "," << n3
-                   << ">& tjacobian,\n"
+                   << ",real>& tjacobian,\n"
                    << "const unsigned short idx,"
                    << " const unsigned short idx2){\n"
                    << "using namespace tfel::math;\n"
@@ -1480,7 +1480,7 @@ namespace mfront {
                    << ",real>::type\n"
                    << "df" << v.name << "_dd" << v2.name
                    << "(tfel::math::tmatrix<" << n3 << "," << n3
-                   << ">& tjacobian,\n"
+                   << ",real>& tjacobian,\n"
                    << "const unsigned short idx,"
                    << " const unsigned short idx2){\n"
                    << "using namespace tfel::math;\n"
@@ -1511,19 +1511,19 @@ namespace mfront {
     n = n3;
     if (this->solver->usesJacobian()) {
       os << "// Jacobian\n";
-      os << "tfel::math::tmatrix<" << n << "," << n << ",Type> jacobian;\n";
+      os << "tfel::math::tmatrix<" << n << "," << n << ",real> jacobian;\n";
     }
     if (this->solver->usesJacobianInvert()) {
       os << "// Jacobian\n";
-      os << "tfel::math::tmatrix<" << n << "," << n << ",Type> inv_jacobian;\n";
+      os << "tfel::math::tmatrix<" << n << "," << n << ",real> inv_jacobian;\n";
     }
     this->solver->writeSpecificMembers(os, this->mb, h);
     os << "// zeros\n";
-    os << "tfel::math::tvector<" << n << ",Type> zeros;\n\n";
+    os << "tfel::math::tvector<" << n << ",real> zeros;\n\n";
     os << "// previous zeros\n";
-    os << "tfel::math::tvector<" << n << ",Type> zeros_1;\n\n";
+    os << "tfel::math::tvector<" << n << ",real> zeros_1;\n\n";
     os << "// function\n";
-    os << "tfel::math::tvector<" << n << ",Type> fzeros;\n\n";
+    os << "tfel::math::tvector<" << n << ",real> fzeros;\n\n";
     os << "// number of iterations\n";
     os << "unsigned int iter = 0u;\n\n";
     //
