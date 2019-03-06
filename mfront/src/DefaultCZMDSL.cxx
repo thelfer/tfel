@@ -21,8 +21,7 @@
 
 namespace mfront{
 
-  DefaultCZMDSL::DefaultCZMDSL()
-  {
+  DefaultCZMDSL::DefaultCZMDSL(){
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     this->mb.setDSLName("DefaultCZM");
     this->mb.declareAsACohesiveZoneModel();
@@ -36,25 +35,18 @@ namespace mfront{
     this->mb.addLocalVariable(h,VariableDescription("tfel::math::tmatrix_row_view<N,N,0,1,N-1,real>","Dt_nt",1u,0u));
     this->mb.addLocalVariable(h,VariableDescription("tfel::math::tmatrix_column_view<N,N,0,1,N-1,real>","Dt_tn",1u,0u));
     this->mb.addLocalVariable(h,VariableDescription("tfel::math::tmatrix_submatrix_view<N,N,1,1,N-1,N-1,real>","Dt_tt",1u,0u));
-    this->localVariablesInitializers += 
-	"u_n(this->u(0)),\ndu_n(this->du(0)),\nt_n(this->t(0)),\n"
-      "u_t(this->u),\ndu_t(this->du),\nt_t(this->t),\n"
-      "Dt_nn(this->Dt(0,0)),\nDt_nt(this->Dt),\nDt_tn(this->Dt),\nDt_tt(this->Dt)";
   }
 
-  std::string DefaultCZMDSL::getDescription()
-  {
+  std::string DefaultCZMDSL::getDescription(){
     return "this parser is the most generic one as it does not make any restriction "
            "on the behaviour or the integration method that may be used";
   } // end of DefaultCZMDSL::getDescription
   
-  std::string DefaultCZMDSL::getName()
-  {
+  std::string DefaultCZMDSL::getName(){
     return "DefaultCZMDSL";
   }
 
-  void DefaultCZMDSL::writeBehaviourParserSpecificIncludes(std::ostream& os) const
-  {
+  void DefaultCZMDSL::writeBehaviourParserSpecificIncludes(std::ostream& os) const{
     DefaultDSLBase::writeBehaviourParserSpecificIncludes(os);
     os << "#include\"TFEL/Math/tmatrix.hxx\"\n"
        << "#include\"TFEL/Math/tvector.hxx\"\n"
@@ -62,6 +54,13 @@ namespace mfront{
        << "#include\"TFEL/Math/Matrix/tmatrixIO.hxx\"\n";
   } // end of DefaultCZMDSL::writeBehaviourParserSpecificIncludes
 
+  std::string DefaultCZMDSL::getLocalVariablesInitializers(const Hypothesis) const{
+    return "u_n(this->u(0)),\ndu_n(this->du(0)),\nt_n(this->t(0)),\n"
+      "u_t(this->u),\ndu_t(this->du),\nt_t(this->t),\n"
+      "Dt_nn(this->Dt(0,0)),\nDt_nt(this->Dt),\nDt_tn(this->Dt),\nDt_tt(this->Dt)";
+  } // end of DefaultCZMDSL::getLocalVariablesInitializers
+
+  
   DefaultCZMDSL::~DefaultCZMDSL() = default;
 
 } // end of namespace mfront  

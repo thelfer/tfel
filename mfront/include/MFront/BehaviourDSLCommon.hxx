@@ -873,11 +873,11 @@ namespace mfront {
     virtual void writeBehaviourConstructors(std::ostream&,
                                             const Hypothesis) const;
 
-    /*!
-     * \return behaviour constructor initializers.
-     */
+    //! \return behaviour constructor initializers.
     virtual std::string getBehaviourConstructorsInitializers(
         const Hypothesis) const;
+    //! \return local variables initalizers.
+    virtual std::string getLocalVariablesInitializers(const Hypothesis) const;
     /*!
      * \brief write the arguments of a material property, including
      * the the surrounding parenthesis. Those arguments are used to
@@ -1233,12 +1233,6 @@ namespace mfront {
     std::vector<Gradient> gradients;
     //! \brief list of declared thermodynamic forces
     std::vector<ThermodynamicForce> thermodynamic_forces;
-    /*!
-     * \brief Local variables initalizers. This variable to initialize
-     * local variables defined by domains specific languages and shall
-     * not be accessible to the end user.
-     */
-    std::string localVariablesInitializers;
 
     bool useStateVarTimeDerivative;
     bool explicitlyDeclaredUsableInPurelyImplicitResolution;

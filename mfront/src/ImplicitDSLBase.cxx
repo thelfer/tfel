@@ -2034,7 +2034,8 @@ namespace mfront {
         init << ",\n";
       }
       if ((flag != SupportedTypes::SCALAR) && (flag != SupportedTypes::STENSOR)) {
-        this->throwRuntimeError("getIntegrationVariablesIncrementsInitializers", "internal error, tag unsupported");
+        this->throwRuntimeError("getIntegrationVariablesIncrementsInitializers",
+				"internal error, tag unsupported");
       }
       if ((flag == SupportedTypes::SCALAR) && (v.arraySize == 1u)) {
         init << "d" << v.name << "(this->zeros(" << n << "))";
@@ -2047,25 +2048,39 @@ namespace mfront {
     return init.str();
   }  // end of ImplicitDSLBase::getIntegrationVariableIncrementsInitializers
 
-  std::string ImplicitDSLBase::getBehaviourConstructorsInitializers(const Hypothesis h) const {
-    auto init = BehaviourDSLCommon::getBehaviourConstructorsInitializers(h);
-    init += (!init.empty()) ? ",\n" : "";
+  std::string ImplicitDSLBase::getLocalVariablesInitializers(const Hypothesis) const{
+    auto init = std::string{};
+    auto append = [&init](const std::string& s) {
+      if (s.empty()) {
+        return;
+      }
+      if (!init.empty()) {
+        init += ",\n";
+      }
+      init += s;
+    };
     if (this->mb.getAttribute(BehaviourDescription::computesStiffnessTensor, false)) {
       if (this->mb.areElasticMaterialPropertiesConstantDuringTheTimeStep()) {
-        init += "D_tdt(D),\n";
+        append("D_tdt(D)");
       }
     }
     for (const auto& ht : this->mb.getHillTensors()) {
       if ((this->mb.getBehaviourType() != BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) &&
           (this->mb.getBehaviourType() != BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR)) {
-        this->throwRuntimeError("ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation",
+        this->throwRuntimeError("ImplicitDSLBase::getLocalVariablesInitializers",
                                 "Hill tensors shall only be defined for finite strain "
                                 "or small strain behaviours");
       }
       if (this->mb.areMaterialPropertiesConstantDuringTheTimeStep(ht.c)) {
-        init += ht.name + "_tdt(" + ht.name + "),\n";
+        append(ht.name + "_tdt(" + ht.name + ")");
       }
     }
+    return init;
+  } // end of ImplicitDSLBase::getLocalVariablesInitializers
+  
+  std::string ImplicitDSLBase::getBehaviourConstructorsInitializers(const Hypothesis h) const {
+    auto init = BehaviourDSLCommon::getBehaviourConstructorsInitializers(h);
+    init += (!init.empty()) ? ",\n" : "";
     init += "zeros(real(0)),\nfzeros(real(0))";
     return init;
   }

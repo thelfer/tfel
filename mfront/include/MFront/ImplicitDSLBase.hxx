@@ -120,7 +120,9 @@ namespace mfront{
 
     void writeBehaviourIntegrationVariablesIncrements(std::ostream&,
 						      const Hypothesis) const override;
-    
+
+    std::string getLocalVariablesInitializers(const Hypothesis) const override;
+
     std::string getBehaviourConstructorsInitializers(const Hypothesis) const override;
 
     std::string getIntegrationVariablesIncrementsInitializers(const Hypothesis) const override;

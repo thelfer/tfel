@@ -11,14 +11,17 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_MFRONTDEFAULTCZMPARSER_HXX
-#define LIB_MFRONT_MFRONTDEFAULTCZMPARSER_HXX 
+#ifndef LIB_MFRONT_MFRONTDEFAULTCZMDSL_HXX
+#define LIB_MFRONT_MFRONTDEFAULTCZMDSL_HXX 
 
 #include<string>
 #include"MFront/DefaultDSLBase.hxx"
 
 namespace mfront{
 
+  /*!
+   * \brief DSL associated with Cohesive Zone Models
+   */
   struct DefaultCZMDSL
     : public DefaultDSLBase
   {
@@ -31,12 +34,13 @@ namespace mfront{
     ~DefaultCZMDSL() override;
 
   protected:
+   std::string getLocalVariablesInitializers(const Hypothesis) const override;
 
-    void writeBehaviourParserSpecificIncludes(std::ostream&) const override;
+   void writeBehaviourParserSpecificIncludes(std::ostream&) const override;
 
   }; // end of struct DefaultCZMDSL
 
 } // end of namespace mfront  
 
-#endif /* LIB_MFRONT_MFRONTDEFAULTCZMPARSER_HXX */
+#endif /* LIB_MFRONT_MFRONTDEFAULTCZMDSL_HXX */
 

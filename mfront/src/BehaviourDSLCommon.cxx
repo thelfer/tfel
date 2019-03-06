@@ -4141,6 +4141,7 @@ namespace mfront {
       init += s;
     };
     append(this->getIntegrationVariablesIncrementsInitializers(h));
+    append(this->getLocalVariablesInitializers(h));
     // tangent operator blocks
     const auto& blocks = this->mb.getTangentOperatorBlocks();
     if (this->mb.hasTrivialTangentOperatorStructure()) {
@@ -4245,10 +4246,13 @@ namespace mfront {
         update_offset(v1.getTypeSize(), v2.getTypeSize());
       }
     }
-    append(this->localVariablesInitializers);
     return init;
   }  // end of BehaviourDSLCommon::getBehaviourConstructorsInitializers
 
+  std::string BehaviourDSLCommon::getLocalVariablesInitializers(const Hypothesis) const{
+    return {};
+  } // end of BehaviourDSLCommon::getLocalVariablesInitializers
+  
   void BehaviourDSLCommon::writeBehaviourConstructors(std::ostream& os, const Hypothesis h) const {
     auto tmpnames = std::vector<std::string>{};
     auto write_body = [this, &os, &tmpnames, h] {
@@ -5710,6 +5714,7 @@ namespace mfront {
     this->writeBehaviourIntegrationVariablesIncrements(os, h);
     this->writeBehaviourLocalVariables(os, h);
     this->writeBehaviourParameters(os, h);
+    this->writeBehaviourTangentOperator(os);
     this->writeBehaviourParserSpecificMembers(os, h);
     this->writeBehaviourUpdateIntegrationVariables(os, h);
     this->writeBehaviourUpdateStateVariables(os, h);
@@ -5740,7 +5745,6 @@ namespace mfront {
     os << "private:\n\n";
     this->writeBehaviourComputeAPrioriTimeStepScalingFactorII(os, h);
     this->writeBehaviourComputeAPosterioriTimeStepScalingFactorII(os, h);
-    this->writeBehaviourTangentOperator(os);
     this->writeBehaviourPolicyVariable(os);
     this->writeBehaviourClassEnd(os);
     this->writeBehaviourOutputOperator(os, h);
