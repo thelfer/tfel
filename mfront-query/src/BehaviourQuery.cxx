@@ -170,6 +170,14 @@ namespace mfront {
     Parser::registerNewCallBack(
         "--include", "-I", &BehaviourQuery::treatSearchPath,
         "add a new path at the beginning of the search paths", true);
+    Parser::registerNewCallBack("--install-path",
+                                &BehaviourQuery::treatInstallPath,
+                                "set the installation directory", true);
+    Parser::registerNewCallBack("--install-prefix",
+                                &BehaviourQuery::treatInstallPath,
+                                "set the installation directory "
+                                "(same as --install-path)",
+                                true);
     Parser::registerNewCallBack(
         "--search-path", &BehaviourQuery::treatSearchPath,
         "add a new path at the beginning of the search paths", true);

@@ -32,11 +32,11 @@ namespace mfront{
    * \param[in] d : directory
    * \param[in] f : file name
    */
-  MFRONT_VISIBILITY_EXPORT void
-  generateMakeFile(const TargetsDescription&,
-		   const GeneratorOptions&,
-		   const std::string& = "src",
-		   const std::string& = "Makefile.mfront");
+  MFRONT_VISIBILITY_EXPORT void generateMakeFile(
+      const TargetsDescription&,
+      const GeneratorOptions&,
+      const std::string& = "src",
+      const std::string& = "Makefile.mfront");
   /*!
    * \brief a function calling the `make` utility in the given
    * directory using the specified file.
@@ -44,11 +44,11 @@ namespace mfront{
    * \param[in] d : directory
    * \param[in] f : file name
    */
-  MFRONT_VISIBILITY_EXPORT void
-  callMake(const std::string&,
-	   const std::string& = "src",
-	   const std::string& = "Makefile.mfront");
-  
+  MFRONT_VISIBILITY_EXPORT void callMake(
+      const std::string&,
+      const std::string& = "src",
+      const std::string& = "Makefile.mfront");
+
 } // end of namespace mfront
 
 #endif /* LIB_MFRONT_MAKEFILEGENERATOR_HXX */

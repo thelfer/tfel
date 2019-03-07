@@ -477,11 +477,10 @@ int main(const int argc,const char *const *const argv)
     if(!incs){
       std::cout << ZMATFLAGS1 << " ";
     }
-    auto zmatpath = getenv("ZSET_ROOT");
+    const auto* zmatpath = getenv("Z7PATH");
     if(zmatpath!=nullptr){
       std::cout << "-I" << zmatpath << "/include ";
-    } 
-    else if( (zmatpath = getenv("Z7PATH")) != nullptr ){
+    } else if ((zmatpath = getenv("ZSET_ROOT")) != nullptr) {
       std::cout << "-I" << zmatpath << "/include";
     }
     else {

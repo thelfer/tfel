@@ -42,6 +42,7 @@
 #include "TFEL/System/System.hxx"
 #include "MFront/MFrontHeader.hxx"
 #include "MFront/MFrontLogStream.hxx"
+#include "MFront/InstallPath.hxx"
 #include "MFront/SearchPathsHandler.hxx"
 #include "MFront/MFrontLock.hxx"
 #include "MFront/MFrontDebugMode.hxx"
@@ -152,8 +153,8 @@ namespace mfront {
 
   static std::string getLibraryFullName(const LibraryDescription& l) {
     return l.prefix + l.name + '.' + l.suffix;
-  } // end of getLibraryFullName
- 
+  }  // end of getLibraryFullName
+
   static std::string getTargetName(const TargetsDescription& t,
                                    const std::string& n) {
     for (const auto& l : t) {
@@ -176,8 +177,7 @@ namespace mfront {
                         const std::string& f) {
     using namespace std;
     if (getVerboseMode() >= VERBOSE_LEVEL2) {
-      auto& log = getLogStream();
-      log << "generating Makefile\n";
+      getLogStream() << "generating Makefile\n";
     }
     MFrontLockGuard lock;
     const auto env_cc = ::getenv("CC");
@@ -367,7 +367,7 @@ namespace mfront {
     }
     m << "\n\n";
     m << ".PHONY = ";
-    m << "all clean";
+    m << "all install clean";
     for (const auto& l : t) {
       if (l.name != "MFrontMaterialLaw") {
         m << " " << getLibraryFullName(l);
@@ -382,7 +382,7 @@ namespace mfront {
     m << "all : ";
     for (const auto& l : t) {
       if (l.name != "MFrontMaterialLaw") {
-        m << l.prefix << l.name << "." << l.suffix << " ";
+        m << getLibraryFullName(l) << " ";
       }
     }
     auto p5 = t.specific_targets.find("all");
@@ -412,7 +412,7 @@ namespace mfront {
       if (l.name == "MFrontMaterialLaw") {
         continue;
       }
-      m << l.prefix << l.name << "." << l.suffix << " : ";
+      m << getLibraryFullName(l) << " : ";
       auto dep = getLibrarySourcesAndDependencies(t, o, l.name);
       const auto hasCxxSources = dep.first;
       if (!dep.second.first.empty()) {
@@ -446,11 +446,46 @@ namespace mfront {
       m << getLibraryLinkFlags(t, o, l.name);
       m << "\n\n";
     }
+    // install target
+    auto get_install_path = [](const LibraryDescription& l) {
+      const auto ipath =
+          l.install_path.empty() ? getInstallPath() : l.install_path;
+      if ((tfel::utilities::starts_with(ipath, "$(env ")) ||
+          (tfel::utilities::ends_with(ipath, ")"))) {
+        return "$(" + ipath.substr(6, ipath.size() - 7) + ")";
+      }
+      return ipath;
+    };
+    m << "install : ";
+    for (const auto& l : t) {
+      const auto ipath = get_install_path(l);
+      if (!ipath.empty()) {
+        m << " " << getLibraryFullName(l);
+      }
+    }
+    // creating installation directories
+    auto install_paths = std::set<std::string>{};
+    for (const auto& l : t) {
+      const auto ipath = get_install_path(l);
+      if ((!ipath.empty()) && (install_paths.count(ipath) == 0)) {
+        m << "\n\t" << sb << "mkdir -p " << ipath;
+        install_paths.insert(ipath);
+      }
+    }
+    // copying links
+    for (const auto& l : t) {
+      const auto ipath = get_install_path(l);
+      if (!ipath.empty()) {
+        m << "\n\t" << sb << "cp " << getLibraryFullName(l) << " " << ipath;
+      }
+    }
+    m << "\n\n";
+    // clean target
     m << "clean : ";
     p5 = t.specific_targets.find("clean");
     if (p5 != t.specific_targets.end()) {
-      copy(p5->second.first.begin(), p5->second.first.end(),
-           ostream_iterator<string>(m, " "));
+      std::copy(p5->second.first.begin(), p5->second.first.end(),
+                std::ostream_iterator<string>(m, " "));
     }
     m << "\n";
     if ((o.sys == "win32") || (o.sys == "cygwin")) {
@@ -485,19 +520,22 @@ namespace mfront {
         m << "%.d:%.cxx\n";
         m << "\t" << sb << "set -e; rm -f $@;	    \\\n";
         m << "\t$(CXX) -M $(CXXFLAGS) $< > $@.$$$$; \\\n";
-        m << "\tsed 's,\\($*\\)\\.o[ :]*,\\1.o $@ : ,g' < $@.$$$$ > $@; \\\n";
+        m << "\tsed 's,\\($*\\)\\.o[ :]*,\\1.o $@ : ,g' < $@.$$$$ > $@; "
+             "\\\n";
         m << "\trm -f $@.$$$$\n\n";
         m << "%.d:%.cpp\n";
         m << "\t" << sb << "set -e; rm -f $@;       \\\n";
         m << "\t$(CXX) -M $(CXXFLAGS) $< > $@.$$$$; \\\n";
-        m << "\tsed 's,\\($*\\)\\.o[ :]*,\\1.o $@ : ,g' < $@.$$$$ > $@; \\\n";
+        m << "\tsed 's,\\($*\\)\\.o[ :]*,\\1.o $@ : ,g' < $@.$$$$ > $@; "
+             "\\\n";
         m << "\trm -f $@.$$$$\n\n";
       }
       if (!cSources.empty()) {
         m << "%.d:%.c\n";
         m << "\t" << sb << "set -e; rm -f $@;    \\\n";
         m << "\t$(CC) -M $(CFLAGS) $< > $@.$$$$; \\\n";
-        m << "\tsed 's,\\($*\\)\\.o[ :]*,\\1.o $@ : ,g' < $@.$$$$ > $@; \\\n";
+        m << "\tsed 's,\\($*\\)\\.o[ :]*,\\1.o $@ : ,g' < $@.$$$$ > $@; "
+             "\\\n";
         m << "\trm -f $@.$$$$\n";
       }
     }
