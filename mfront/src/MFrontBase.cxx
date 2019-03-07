@@ -19,6 +19,7 @@
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "TFEL/System/ExternalLibraryManager.hxx"
 
+#include "MFront/InstallPath.hxx"
 #include "MFront/SearchPathsHandler.hxx"
 #include "MFront/PedanticMode.hxx"
 #include "MFront/MFrontLogStream.hxx"
@@ -204,11 +205,15 @@ namespace mfront {
     }
   }
 
-  void MFrontBase::treatDebug() { setDebugMode(true); }
+  void MFrontBase::treatInstallPath() {
+    setInstallPath(this->getCurrentCommandLineArgument().getOption());
+  }  // end of MFrontBase::treatInstallPath
 
   void MFrontBase::treatPedantic() { setPedanticMode(true); }
 
   void MFrontBase::treatWarning() {}
+
+  void MFrontBase::treatDebug() { setDebugMode(true); }
 
   void MFrontBase::setInterface(const std::string& i) {
     tfel::raise_if(!this->interfaces.insert(i).second,

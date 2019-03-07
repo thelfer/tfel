@@ -15,6 +15,7 @@
 #include <stdexcept>
 #include <algorithm>
 #include "TFEL/Raise.hxx"
+#include "MFront/MFrontLogStream.hxx"
 #include "MFront/MFrontUtilities.hxx"
 #include "MFront/LibraryDescription.hxx"
 
@@ -41,7 +42,8 @@ namespace mfront {
     return "module";
   }  // end of to string
 
-  void mergeLibraryDescription(LibraryDescription& d, const LibraryDescription& s) {
+  void mergeLibraryDescription(LibraryDescription& d,
+                               const LibraryDescription& s) {
     tfel::raise_if(
         (d.name != s.name) || (d.prefix != s.prefix) || (d.suffix != s.suffix) ||
             (d.type != s.type),
@@ -57,6 +59,18 @@ namespace mfront {
             "' ("
             "prefix: '" +
             s.prefix + "', " + "suffix: '" + s.suffix + "', " + "type: '" + convert(s.type) + "')");
+    if (!d.install_path.empty()) {
+      if (d.install_path != s.install_path) {
+        getLogStream() << "mergeLibraryDescription : "
+                       << "two descriptions of library' " << d.name
+                       << "', installation paths don't match ('"
+                       << d.install_path << "' vs '" << s.install_path
+                       << "'), keeping '" << s.install_path << "'\n";
+        d.install_path = s.install_path;
+      }
+    } else {
+      d.install_path = s.install_path;
+    }
     insert_if(d.sources, s.sources);
     insert_if(d.cppflags, s.cppflags);
     insert_if(d.include_directories, s.include_directories);
@@ -152,6 +166,7 @@ namespace mfront {
     os << ";\n";
     os << "prefix : \"" << l.prefix << "\";\n";
     os << "suffix : \"" << l.suffix << "\";\n";
+    os << "install_path : \"" << l.install_path << "\";\n";
     write(os, l.sources, "sources");
     write(os, l.cppflags, "cppflags");
     write(os, l.include_directories, "include_directories");
@@ -171,16 +186,6 @@ namespace mfront {
     using tfel::utilities::CxxTokenizer;
     const auto f = "read<LibraryDescription>";
     auto error = [&f](const std::string& m) { tfel::raise(std::string{f} + ": " + m); };
-    auto get_vector = [&f](
-        std::vector<std::string>& v, tfel::utilities::CxxTokenizer::const_iterator& pc,
-        const tfel::utilities::CxxTokenizer::const_iterator e, const std::string& n) {
-      tfel::raise_if(!v.empty(), std::string{f} + ": library member '" + n + "' multiply defined");
-      auto c = pc;
-      CxxTokenizer::readSpecifiedToken(f, ":", c, e);
-      v = read<std::vector<std::string>>(c, e);
-      CxxTokenizer::readSpecifiedToken(f, ";", c, e);
-      pc = c;
-    };
     LibraryDescription::LibraryType type = LibraryDescription::SHARED_LIBRARY;
     auto btype = false;
     auto name = std::string{};
@@ -194,35 +199,38 @@ namespace mfront {
     auto link_libraries = std::vector<std::string>{};
     auto epts = std::vector<std::string>{};
     auto deps = std::vector<std::string>{};
+    auto install_path = std::string{};
     // parsing
     auto c = p;
     CxxTokenizer::readSpecifiedToken(f, "{", c, pe);
     CxxTokenizer::checkNotEndOfLine(f, c, pe);
+    auto get_string = [&c, pe, &error, &f](std::string& s,
+					   const char* const e) {
+      if (!s.empty()) {
+        error(std::string(e) + " multiply defined");
+      }
+      ++c;
+      CxxTokenizer::readSpecifiedToken(f, ":", c, pe);
+      s = CxxTokenizer::readString(c, pe);
+      CxxTokenizer::readSpecifiedToken(f, ";", c, pe);
+    };
+    auto get_vector = [&c, pe, &error, &f](std::vector<std::string>& v,
+                                           const char* const e) {
+      if(!v.empty()){
+        error("library member '" + std::string(e) + "' multiply defined");
+      }
+      ++c;
+      CxxTokenizer::readSpecifiedToken(f, ":", c, pe);
+      v = read<std::vector<std::string>>(c, pe);
+      CxxTokenizer::readSpecifiedToken(f, ";", c, pe);
+    };
     while (c->value != "}") {
       if (c->value == "name") {
-        if (!name.empty()) {
-          error("library name '" + name + "' multiply defined");
-        }
-        ++c;
-        CxxTokenizer::readSpecifiedToken(f, ":", c, pe);
-        name = CxxTokenizer::readString(c, pe);
-        CxxTokenizer::readSpecifiedToken(f, ";", c, pe);
+        get_string(name, "library name");
       } else if (c->value == "prefix") {
-        if (!prefix.empty()) {
-          error("library prefix multiply defined");
-        }
-        ++c;
-        CxxTokenizer::readSpecifiedToken(f, ":", c, pe);
-        prefix = CxxTokenizer::readString(c, pe);
-        CxxTokenizer::readSpecifiedToken(f, ";", c, pe);
+        get_string(prefix, "library prefix");
       } else if (c->value == "suffix") {
-        if (!suffix.empty()) {
-          error("library suffix multiply defined");
-        }
-        ++c;
-        CxxTokenizer::readSpecifiedToken(f, ":", c, pe);
-        suffix = CxxTokenizer::readString(c, pe);
-        CxxTokenizer::readSpecifiedToken(f, ";", c, pe);
+        get_string(suffix, "library suffix");
       } else if (c->value == "type") {
         ++c;
         if (btype) {
@@ -242,29 +250,23 @@ namespace mfront {
         ++c;
         CxxTokenizer::readSpecifiedToken(f, ";", c, pe);
       } else if (c->value == "sources") {
-        ++c;
-        get_vector(sources, c, pe, "sources");
+        get_vector(sources, "sources");
       } else if (c->value == "cppflags") {
-        ++c;
-        get_vector(cppflags, c, pe, "cppflags");
+        get_vector(cppflags, "cppflags");
       } else if (c->value == "include_directories") {
-        ++c;
-        get_vector(include_directories, c, pe, "include_directories");
+        get_vector(include_directories, "include_directories");
       } else if (c->value == "ldflags") {
-        ++c;
-        get_vector(ldflags, c, pe, "ldflags");
+        get_vector(ldflags, "ldflags");
       } else if (c->value == "link_directories") {
-        ++c;
-        get_vector(link_directories, c, pe, "link_directories");
+        get_vector(link_directories, "link_directories");
       } else if (c->value == "link_libraries") {
-        ++c;
-        get_vector(link_libraries, c, pe, "link_libraries");
+        get_vector(link_libraries, "link_libraries");
       } else if (c->value == "epts") {
-        ++c;
-        get_vector(epts, c, pe, "epts");
+        get_vector(epts, "epts");
       } else if (c->value == "deps") {
-        ++c;
-        get_vector(deps, c, pe, "deps");
+        get_vector(deps, "deps");
+      } else if (c->value == "install_path") {
+        get_string(install_path, "installation path");
       } else {
         error("unsupported entry type '" + c->value + "'");
       }
@@ -282,6 +284,7 @@ namespace mfront {
     std::swap(l.link_libraries, link_libraries);
     std::swap(l.epts, epts);
     std::swap(l.deps, deps);
+    std::swap(l.install_path, install_path);
     p = c;
     return l;
   }

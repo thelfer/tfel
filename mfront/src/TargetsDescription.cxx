@@ -113,7 +113,9 @@ namespace mfront {
     return this->libraries.cend();
   }
 
-  void mergeTargetsDescription(TargetsDescription& d, const TargetsDescription& s, const bool b) {
+  void mergeTargetsDescription(TargetsDescription& d,
+                               const TargetsDescription& s,
+                               const bool b) {
     for (const auto& ls : s) {
       auto& ld = d(ls.name, ls.prefix, ls.suffix, ls.type);
       mergeLibraryDescription(ld, ls);
@@ -163,8 +165,9 @@ namespace mfront {
   }
 
   template <>
-  TargetsDescription read(tfel::utilities::CxxTokenizer::const_iterator& p,
-                          const tfel::utilities::CxxTokenizer::const_iterator pe) {
+  TargetsDescription read(
+      tfel::utilities::CxxTokenizer::const_iterator& p,
+      const tfel::utilities::CxxTokenizer::const_iterator pe) {
     using tfel::utilities::CxxTokenizer;
     const auto f = "read<TargetsDescription>";
     auto error = [&f](const std::string& m) { tfel::raise(std::string{f} + ": " + m); };

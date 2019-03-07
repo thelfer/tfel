@@ -32,10 +32,10 @@ namespace mfront{
    * \param[in] d : directory
    * \param[in] f : file name
    */
-  MFRONT_VISIBILITY_EXPORT void
-  generateCMakeListsFile(const TargetsDescription&,
-			 const GeneratorOptions&,
-			 const std::string& = "src");
+  MFRONT_VISIBILITY_EXPORT void generateCMakeListsFile(
+      const TargetsDescription&,
+      const GeneratorOptions&,
+      const std::string& = "src");
   /*!
    * \brief a function calling the `make` utility in the given
    * directory using the specified file.
@@ -43,10 +43,9 @@ namespace mfront{
    * \param[in] d : directory
    * \param[in] f : file name
    */
-  MFRONT_VISIBILITY_EXPORT void
-  callCMake(const std::string&,
-	    const std::string& = "src");
-  
+  MFRONT_VISIBILITY_EXPORT void callCMake(const std::string&,
+                                          const std::string& = "src");
+
 } // end of namespace mfront
 
 #endif /* LIB_MFRONT_CMAKEGENERATOR_HXX */

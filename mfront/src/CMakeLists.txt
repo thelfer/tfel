@@ -48,6 +48,7 @@ set(TFELMFront_SOURCES
     MFrontDebugMode.cxx
     PedanticMode.cxx
     MFrontLock.cxx
+    InstallPath.cxx
     SearchPathsHandler.cxx
     InitInterfaces.cxx
     InitDSLs.cxx

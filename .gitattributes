@@ -2392,6 +2392,7 @@ mfront/include/MFront/ImplicitDSLII.hxx -text
 mfront/include/MFront/ImplicitFiniteStrainDSL.hxx -text
 mfront/include/MFront/InitDSLs.hxx -text
 mfront/include/MFront/InitInterfaces.hxx -text
+mfront/include/MFront/InstallPath.hxx -text
 mfront/include/MFront/InterfaceBase.hxx -text
 mfront/include/MFront/IsotropicBehaviourDSLBase.hxx -text
 mfront/include/MFront/IsotropicMisesCreepDSL.hxx -text
@@ -2635,6 +2636,7 @@ mfront/src/InelasticFlowBase.cxx -text
 mfront/src/InelasticFlowFactory.cxx -text
 mfront/src/InitDSLs.cxx -text
 mfront/src/InitInterfaces.cxx -text
+mfront/src/InstallPath.cxx -text
 mfront/src/InterfaceBase.cxx -text
 mfront/src/IsotropicBehaviourDSLBase.cxx -text
 mfront/src/IsotropicDamageHookeStressPotential.cxx -text

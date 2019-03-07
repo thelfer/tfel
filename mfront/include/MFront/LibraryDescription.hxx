@@ -56,14 +56,16 @@ namespace mfront {
      * \param[in] s : target system
      * \param[in] t : library type
      */
-    static const char* getDefaultLibraryPrefix(const TargetSystem, const LibraryType) noexcept;
+    static const char* getDefaultLibraryPrefix(const TargetSystem,
+                                               const LibraryType) noexcept;
     /*!
       * \return the default library suffix for the given target system
       * and library type
       * \param[in] s : target system
       * \param[in] t : library type
       */
-    static const char* getDefaultLibrarySuffix(const TargetSystem, const LibraryType) noexcept;
+    static const char* getDefaultLibrarySuffix(const TargetSystem,
+                                               const LibraryType) noexcept;
     /*!
      * Constructor
      * \param[in] n : name   of the library
@@ -79,54 +81,58 @@ namespace mfront {
     LibraryDescription(LibraryDescription&&);
     LibraryDescription& operator=(const LibraryDescription&) = delete;
     LibraryDescription& operator=(LibraryDescription&&) = delete;
-    //! destructor
+    //! \brief destructor
     ~LibraryDescription();
-    //! library name
+    //! \brief library name
     const std::string name;
-    //! libray suffix
+    //! \brief libray suffix
     const std::string prefix;
-    //! libray suffix
+    //! \brief libray suffix
     const std::string suffix;
-    //! libray type
+    //! \brief libray type
     const LibraryType type;
-    //! list of mfront files used to generate the C++ sources
+    //! \brief list of mfront files used to generate the C++ sources
     std::vector<std::string> mfront_sources;
-    //! generated sources
+    //! \brief generated sources
     std::vector<std::string> sources;
-    //! additional preprocessor flags
+    //! \brief additional preprocessor flags
     std::vector<std::string> cppflags;
-    //! path to the libraries to be linked
+    //! \brief path to the libraries to be linked
     std::vector<std::string> include_directories;
-    //! path to the libraries to be linked
+    //! \brief path to the libraries to be linked
     std::vector<std::string> link_directories;
-    //! libraries to be linked
+    //! \brief libraries to be linked
     std::vector<std::string> link_libraries;
-    //! dependencies to other generated libraries
+    //! \brief dependencies to other generated libraries
     std::vector<std::string> deps;
-    //! the linker flags
+    //! \brief the linker flags
     std::vector<std::string> ldflags;
-    //! generated entry points
+    //! \brief generated entry points
     std::vector<std::string> epts;
+    //! \brief installation path
+    std::string install_path;
   };  // end of struct LibraryDescription
 
   /*!
    * \return a string describing the library type
    * \param[in] t : library type
    */
-  MFRONT_VISIBILITY_EXPORT std::string convert(const LibraryDescription::LibraryType);
+  MFRONT_VISIBILITY_EXPORT std::string convert(
+      const LibraryDescription::LibraryType);
   /*!
    * \brief merge two library description
    * \param[out] d : destination
    * \param[in]  s : source
    */
-  MFRONT_VISIBILITY_EXPORT void mergeLibraryDescription(LibraryDescription&,
-                                                        const LibraryDescription&);
+  MFRONT_VISIBILITY_EXPORT void mergeLibraryDescription(
+      LibraryDescription&, const LibraryDescription&);
   /*!
    * \brief write a library description to a stream
    * \param[out] os : output stream
    * \param[in]  t  : library description
    */
-  MFRONT_VISIBILITY_EXPORT std::ostream& operator<<(std::ostream&, const LibraryDescription&);
+  MFRONT_VISIBILITY_EXPORT std::ostream& operator<<(std::ostream&,
+                                                    const LibraryDescription&);
   /*!
    * \brief read a LibraryDescription from a stream created by the
    * CxxTokenizer class

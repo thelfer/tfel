@@ -748,7 +748,8 @@ namespace mfront {
     }
   }  // end of DSLBase::treatLink
 
-  void DSLBase::callMFront(const std::vector<std::string>& interfaces, const std::vector<std::string>& files) {
+  void DSLBase::callMFront(const std::vector<std::string>& interfaces,
+                           const std::vector<std::string>& files) {
     MFront m;
     for (const auto& i : interfaces) {
       m.setInterface(i);
