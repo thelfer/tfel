@@ -19,10 +19,10 @@ j.setGlossaryName("HeatFlux");
 @Integrator{
   const auto T_ = T + dT;
   k = 1 / (A + B * T_);
-  j = k * (gT + dgT);
+  j = -k * (gT + dgT);
 } // end of @Integrator
 
 @TangentOperator {
-  dj_ddT = -B * k * k * (gT + dgT);
-  dj_ddgT = k * tmatrix<N, N, real>::Id();
+  dj_ddT  =  B * k * k * (gT + dgT);
+  dj_ddgT = -k * tmatrix<N, N, real>::Id();
 } // end of @TangentOperator 

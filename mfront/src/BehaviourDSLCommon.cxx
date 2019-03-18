@@ -4158,22 +4158,22 @@ namespace mfront {
       tfel::fsalgo::fill<10>::exe(offset.begin(), 0);
       auto update_offset = [&offset](const SupportedTypes::TypeSize s1,
                                      const SupportedTypes::TypeSize s2) {
-        offset[0] = s1.getScalarSize() * s2.getScalarSize();
-        offset[1] = s1.getTVectorSize() * s2.getTVectorSize();
-        offset[2] = s1.getStensorSize() * s2.getStensorSize();
-        offset[3] = s1.getTensorSize() * s2.getTensorSize();
-        offset[4] = s1.getScalarSize() * s2.getTVectorSize() +
-                    s2.getScalarSize() * s1.getTVectorSize();
-        offset[5] = s1.getScalarSize() * s2.getStensorSize() +
-                    s2.getScalarSize() * s1.getStensorSize();
-        offset[6] = s1.getScalarSize() * s2.getTensorSize() +
-                    s2.getScalarSize() * s1.getTensorSize();
-        offset[7] = s1.getTVectorSize() * s2.getStensorSize() +
-                    s2.getTVectorSize() * s1.getStensorSize();
-        offset[8] = s1.getTVectorSize() * s2.getTensorSize() +
-                    s2.getTVectorSize() * s1.getTensorSize();
-        offset[9] = s1.getStensorSize() * s2.getTensorSize() +
-                    s2.getStensorSize() * s1.getTensorSize();
+        offset[0] += s1.getScalarSize() * s2.getScalarSize();
+        offset[1] += s1.getTVectorSize() * s2.getTVectorSize();
+        offset[2] += s1.getStensorSize() * s2.getStensorSize();
+        offset[3] += s1.getTensorSize() * s2.getTensorSize();
+        offset[4] += s1.getScalarSize() * s2.getTVectorSize() +
+                     s2.getScalarSize() * s1.getTVectorSize();
+        offset[5] += s1.getScalarSize() * s2.getStensorSize() +
+                     s2.getScalarSize() * s1.getStensorSize();
+        offset[6] += s1.getScalarSize() * s2.getTensorSize() +
+                     s2.getScalarSize() * s1.getTensorSize();
+        offset[7] += s1.getTVectorSize() * s2.getStensorSize() +
+                     s2.getTVectorSize() * s1.getStensorSize();
+        offset[8] += s1.getTVectorSize() * s2.getTensorSize() +
+                     s2.getTVectorSize() * s1.getTensorSize();
+        offset[9] += s1.getStensorSize() * s2.getTensorSize() +
+                     s2.getStensorSize() * s1.getTensorSize();
       };
       auto get_offset = [&offset]() -> std::string {
         const char* sizes[10] = {"",

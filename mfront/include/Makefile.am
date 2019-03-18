@@ -300,9 +300,23 @@ nobase_include_HEADERS += MFront/Abaqus/Abaqus.hxx                              
 endif
 
 if HAVE_DIANAFEA
-nobase_include_HEADERS +=                                                       \
-			  MFront/DianaFEAInterface.hxx                                      \
-			  MFront/DianaFEASymbolsGenerator.hxx
+nobase_include_HEADERS +=                                                          \
+			  MFront/DianaFEAInterface.hxx                                         \
+			  MFront/DianaFEASymbolsGenerator.hxx                                  \
+			  MFront/DianaFEA/DianaFEAData.hxx                                     \
+			  MFront/DianaFEA/DianaFEAConvert.hxx                                  \
+			  MFront/DianaFEA/DianaFEAConfig.hxx                                   \
+			  MFront/DianaFEA/DianaFEATraits.hxx                                   \
+			  MFront/DianaFEA/DianaFEAException.hxx 		                       \
+			  MFront/DianaFEA/DianaFEAInterface.hxx	                               \
+			  MFront/DianaFEA/DianaFEAInterfaceExceptions.hxx                      \
+			  MFront/DianaFEA/DianaFEABehaviourHandler.hxx                         \
+			  MFront/DianaFEA/DianaFEAComputeStiffnessTensor.hxx                   \
+			  MFront/DianaFEA/DianaFEAComputeThermalExpansionCoefficientTensor.hxx \
+			  MFront/DianaFEA/DianaFEAStressFreeExpansionHandler.hxx               \
+			  MFront/DianaFEA/DianaFEATangentOperator.hxx                          \
+			  MFront/DianaFEA/DianaFEATangentOperator.ixx
+
 endif
 
 

@@ -262,10 +262,10 @@ namespace mfront {
                    "DianaFEAInterface::writeBehaviourDataMainVariablesSetter : "
                    "only one driving variable supported");
     if (Gradient::isIncrementKnown(v)) {
-      os << "dianafea::ImportGradients::exe(this->" << v.name << ","
+      os << "dianafea::ImportGradients<this->hypothesis>::exe(this->" << v.name << ","
          << iprefix << "stran);\n";
     } else {
-      os << "dianafea::ImportGradients::exe(this->" << v.name << "0,"
+      os << "dianafea::ImportGradients<this->hypothesis>::exe(this->" << v.name << "0,"
          << iprefix << "stran);\n";
     }
   }  // end of DianaFEAInterface::writeBehaviourDataGradientSetter
@@ -280,10 +280,10 @@ namespace mfront {
         "DianaFEAInterface::writeIntegrationDataMainVariablesSetter : "
         "only one driving variable supported");
     if (Gradient::isIncrementKnown(v)) {
-      os << "dianafea::ImportGradients::exe(this->d" << v.name << ","
+      os << "dianafea::ImportGradients<this->hypothesis>::exe(this->d" << v.name << ","
          << iprefix << "dstran);\n";
     } else {
-      os << "dianafea::ImportGradients::exe(this->" << v.name << "1,"
+      os << "dianafea::ImportGradients<this->hypothesis>::exe(this->" << v.name << "1,"
          << iprefix << "dstran);\n";
     }
   }  // end of DianaFEAInterface::writeIntegrationDataGradientSetter
@@ -294,7 +294,7 @@ namespace mfront {
       const SupportedTypes::TypeSize o) const {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
     if (SupportedTypes::getTypeFlag(f.type) == SupportedTypes::STENSOR) {
-      os << "dianafea::ImportThermodynamicForces::exe(this->" << f.name << ",";
+      os << "dianafea::ImportThermodynamicForces<this->hypothesis>::exe(this->" << f.name << ",";
       if (!o.isNull()) {
         os << iprefix << "stress_+" << o << ");\n";
       } else {
@@ -316,10 +316,10 @@ namespace mfront {
     const auto flag = SupportedTypes::getTypeFlag(f.type);
     if (flag == SupportedTypes::STENSOR) {
       if (!o.isNull()) {
-        out << "dianafea::ExportThermodynamicForces::exe(" << a << "+" << o
+        out << "dianafea::ExportThermodynamicForces<this->hypothesis>::exe(" << a << "+" << o
             << ",this->sig);\n";
       } else {
-        out << "dianafea::ExportThermodynamicForces::exe(" << a
+        out << "dianafea::ExportThermodynamicForces<this->hypothesis>::exe(" << a
             << ",this->sig);\n";
       }
     } else {

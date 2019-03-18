@@ -35,9 +35,9 @@ namespace mfront {
     const auto d = [&p, pe] {
       using DataMap = std::map<std::string, tfel::utilities::Data>;
       if ((p != pe) && (p->value == "{")) {
-	tfel::utilities::DataParsingOptions o;
-	o.allowMultipleKeysInMap = true;
-        return tfel::utilities::Data::read(p, pe,o).get<DataMap>();
+        tfel::utilities::DataParsingOptions o;
+        o.allowMultipleKeysInMap = true;
+        return tfel::utilities::Data::read(p, pe, o).get<DataMap>();
       }
       return DataMap();
     }();
@@ -57,12 +57,12 @@ namespace mfront {
       tokens_iterator& p,
       const tokens_iterator pe) const {
     const auto pc = this->constructors.find(a);
-    if(pc == this->constructors.end()){
+    if (pc == this->constructors.end()) {
       auto msg = std::string{};
       msg += "AbstractBehaviourBrickFactory::getAbstractBehaviourBrick: ";
       msg += "no behaviour brick named '" + a + "' registred. ";
       msg += "Available bricks are:";
-      for(const auto& c : this->constructors){
+      for (const auto& c : this->constructors) {
         msg += "\n- " + c.first;
       }
       tfel::raise(msg);
@@ -91,7 +91,7 @@ namespace mfront {
                     names.push_back(c.first);
                   });
     return names;
-}  // end of AbstractBehaviourBrickFactory::getRegistredBricks
+  }  // end of AbstractBehaviourBrickFactory::getRegistredBricks
 
   void AbstractBehaviourBrickFactory::registerAbstractBehaviourBrick(
       const std::string& a, const constructor c) {

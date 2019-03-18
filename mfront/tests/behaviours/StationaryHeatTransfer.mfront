@@ -13,9 +13,9 @@ j.setGlossaryName("HeatFlux");
 k.setGlossaryName("ThermalConductivity");
 
 @Integrator{
-  j = k * (gT + dgT);
+  j = -k * (gT + dgT);
 } // end of @Integrator
 
 @TangentOperator {
-  Dt = k * tmatrix<N, N, real>::Id();
+  Dt = -k * tmatrix<N, N, real>::Id();
 }

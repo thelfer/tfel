@@ -237,9 +237,9 @@ namespace mfront {
      *                   and the behaviour name)
      */
     virtual void writeTangentOperatorSymbols(std::ostream &,
-					     const StandardBehaviourInterface &,
-					     const BehaviourDescription &,
-					     const std::string &) const;
+                                             const StandardBehaviourInterface &,
+                                             const BehaviourDescription &,
+                                             const std::string &) const;
     /*!
      * \brief write symbols associated with material properties for the
      * given hypothesis
@@ -418,7 +418,6 @@ namespace mfront {
      * strain measure is handled by the calling code.
      */
     virtual bool handleStrainMeasure() const = 0;
-
     //! \brief destructor
     virtual ~SymbolsGenerator();
 

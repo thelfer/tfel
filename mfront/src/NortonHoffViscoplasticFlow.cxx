@@ -87,28 +87,27 @@ namespace mfront {
                                            const std::string& id) const {
       constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       ViscoplasticFlowBase::endTreatment(bd, dsl, sp, id);
-      if ((!this->A.is<BehaviourDescription::ConstantMaterialProperty>()) ||
-          (!this->K.is<BehaviourDescription::ConstantMaterialProperty>()) ||
-          (!this->n.is<BehaviourDescription::ConstantMaterialProperty>())) {
-        auto mts = getMiddleOfTimeStepModifier(bd);
-        CodeBlock i;
-        auto eval = [&mts, &dsl, &i](
-            const BehaviourDescription::MaterialProperty& mp,
-            const std::string& mpn) {
-          if (!mp.is<BehaviourDescription::ConstantMaterialProperty>()) {
-            std::ostringstream mps;
-            mps << "this->" + mpn + " = ";
-            dsl.writeMaterialPropertyEvaluation(mps, mp, mts);
-            mps << ";\n";
-            i.code += mps.str();
-          }
-        };
-        eval(this->A, "A" + id);
-        eval(this->K, "K" + id);
-        eval(this->n, "E" + id);
-        if (!this->Ksf.empty()) {
-          eval(this->Ksf, "Ksf" + id);
+      auto mts = getMiddleOfTimeStepModifier(bd);
+      CodeBlock i;
+      auto eval = [&mts, &dsl, &i](
+          const BehaviourDescription::MaterialProperty& mp,
+          const std::string& mpn) {
+        if ((!mp.empty()) &&
+            (!mp.is<BehaviourDescription::ConstantMaterialProperty>())) {
+          std::ostringstream mps;
+          mps << "this->" + mpn + " = ";
+          dsl.writeMaterialPropertyEvaluation(mps, mp, mts);
+          mps << ";\n";
+          i.code += mps.str();
         }
+      };
+      eval(this->A, "A" + id);
+      eval(this->K, "K" + id);
+      eval(this->n, "E" + id);
+      if (!this->Ksf.empty()) {
+        eval(this->Ksf, "Ksf" + id);
+      }
+      if (!i.code.empty()) {
         bd.setCode(uh, BehaviourData::BeforeInitializeLocalVariables, i,
                    BehaviourData::CREATEORAPPEND, BehaviourData::AT_BEGINNING);
       }

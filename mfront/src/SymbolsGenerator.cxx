@@ -202,8 +202,8 @@ namespace mfront {
     const auto fn = i.getFunctionNameBasis(name);
     out << "MFRONT_SHAREDOBJ unsigned short " << fn
         << "_nMainVariables = " << nmvs << ";\n";
-    out << "MFRONT_SHAREDOBJ unsigned short " << fn
-        << "_nGradients = " << nmvs << ";\n\n";
+    out << "MFRONT_SHAREDOBJ unsigned short " << fn << "_nGradients = " << nmvs
+        << ";\n\n";
     this->writeArrayOfIntsSymbol(out, fn + "_GradientsTypes", dvtypes);
     this->writeArrayOfStringsSymbol(out, fn + "_Gradients", dvnames);
     out << "MFRONT_SHAREDOBJ unsigned short " << fn
@@ -218,17 +218,52 @@ namespace mfront {
       const StandardBehaviourInterface& i,
       const BehaviourDescription& bd,
       const std::string& name) const {
-    const auto fn = i.getFunctionNameBasis(name);
-    std::vector<std::string> bns;
-    for(const auto& b : bd.getTangentOperatorBlocks()){
-      bns.push_back(b.first.getExternalName());
-      bns.push_back(b.second.getExternalName());
+    auto write_impl = [this, &out, &i,
+                       &name](const std::vector<std::string>& bns) {
+      const auto fn = i.getFunctionNameBasis(name);
+      out << "MFRONT_SHAREDOBJ unsigned short " << fn
+          << "_nTangentOperatorBlocks = " << bns.size() << ";\n\n";
+      this->writeArrayOfStringsSymbol(out, fn + "_TangentOperatorBlocks", bns);
+    };
+    auto default_impl = [this, &bd, &write_impl] {
+      std::vector<std::string> bns;
+      for (const auto& b : bd.getTangentOperatorBlocks()) {
+        bns.push_back(b.first.getExternalName());
+        bns.push_back(b.second.getExternalName());
+      }
+      write_impl(bns);
+    };
+    if (bd.getBehaviourType() ==
+        BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
+      if ((bd.isStrainMeasureDefined()) &&
+          (bd.getStrainMeasure() != BehaviourDescription::LINEARISED)) {
+        if (this->handleStrainMeasure()) {
+          // strain measure is handled by the interface
+          // we don't write any tangent operator here
+          // as the consistent tangent operator
+          // in finite strain is very dependant of the
+          // interface is generally not related
+          // the derivative of a flux with respect to
+          // a gradient
+        } else {
+          default_impl();
+        }
+      } else {
+        default_impl();
+      }
+    } else if (bd.getBehaviourType() ==
+               BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
+      // we don't write any tangent operator here
+      // as the consistent tangent operator
+      // in finite strain is very dependant of the
+      // interface is generally not related
+      // the derivative of a flux with respect to
+      // a gradient
+    } else {
+      default_impl();
     }
-    out << "MFRONT_SHAREDOBJ unsigned short " << fn
-        << "_nTangentOperatorBlocks = " << bns.size() << ";\n\n";
-    this->writeArrayOfStringsSymbol(out, fn + "_TangentOperatorBlocks", bns);
-  } // end of SymbolsGenerator::writeTangentOperatorSymbols
-  
+  }  // end of SymbolsGenerator::writeTangentOperatorSymbols
+
   void SymbolsGenerator::writeMaterialKnowledgeTypeSymbol(
       std::ostream& out,
       const StandardBehaviourInterface& i,

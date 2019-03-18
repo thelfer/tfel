@@ -404,6 +404,24 @@ libAnsysInterface_la_LDFLAGS  = -no-undefined -avoid-version -Wl,--add-stdcall-a
 endif # TFEL_WIN
 endif # HAVE_ANSYS
 
+# DianaFEA Interface
+if HAVE_DIANAFEA
+lib_LTLIBRARIES += libDianaFEAInterface.la
+libDianaFEAInterface_la_SOURCES = DianaFEAInterfaceExceptions.cxx                   \
+		               DianaFEAException.cxx                                \
+			       DianaFEAComputeStiffnessTensor.cxx                   \
+			       DianaFEAStressFreeExpansionHandler.cxx               \
+			       DianaFEAComputeThermalExpansionCoefficientTensor.cxx
+
+libDianaFEAInterface_la_LIBADD  = -L$(top_builddir)/src/Utilities -lTFELUtilities          \
+			       -L$(top_builddir)/src/Exception -lTFELException          \
+			       -L$(top_builddir)/mfront/src    -lMTestFileGenerator
+libDianaFEAInterface_la_DEPENDENCIES = libMTestFileGenerator.la
+libDianaFEAInterface_la_CPPFLAGS     = $(AM_CPPFLAGS) -DDianaFEAInterface_EXPORTS
+if TFEL_WIN
+libDianaFEAInterface_la_LDFLAGS  = -no-undefined -avoid-version -Wl,--add-stdcall-alias -Wl,--kill-at
+endif # TFEL_WIN
+endif # HAVE_DIANAFEA
 
 # Europlexus Interface
 if HAVE_EUROPLEXUS

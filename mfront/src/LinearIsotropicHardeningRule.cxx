@@ -143,24 +143,25 @@ namespace mfront {
         const std::string& id) const {
       auto mts = getMiddleOfTimeStepModifier(bd);
       // computation of the material properties
-      if ((!this->R0.is<BehaviourDescription::ConstantMaterialProperty>()) &&
+      constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+      CodeBlock i;
+      std::ostringstream mps;
+      if ((!this->R0.empty()) &&
+          (!this->R0.is<BehaviourDescription::ConstantMaterialProperty>())) {
+        const auto R0n = IsotropicHardeningRule::getVariableId("R0", fid, id);
+        mps << "this->" + R0n + " = ";
+        dsl.writeMaterialPropertyEvaluation(mps, this->R0, mts);
+        mps << ";\n";
+      }
+      if ((!this->H.empty()) &&
           (!this->H.is<BehaviourDescription::ConstantMaterialProperty>())) {
-        constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-        CodeBlock i;
-        std::ostringstream mps;
-        if (!this->R0.is<BehaviourDescription::ConstantMaterialProperty>()) {
-          const auto R0n = IsotropicHardeningRule::getVariableId("R0", fid, id);
-          mps << "this->" + R0n + " = ";
-          dsl.writeMaterialPropertyEvaluation(mps, this->R0, mts);
-          mps << ";\n";
-        }
-        if (!this->H.is<BehaviourDescription::ConstantMaterialProperty>()) {
-          const auto Hn = IsotropicHardeningRule::getVariableId("H", fid, id);
-          mps << "this->" + Hn + " = ";
-          dsl.writeMaterialPropertyEvaluation(mps, this->H, mts);
-          mps << ";\n";
-        }
-        i.code += mps.str();
+        const auto Hn = IsotropicHardeningRule::getVariableId("H", fid, id);
+        mps << "this->" + Hn + " = ";
+        dsl.writeMaterialPropertyEvaluation(mps, this->H, mts);
+        mps << ";\n";
+      }
+      i.code += mps.str();
+      if (!i.code.empty()) {
         bd.setCode(uh, BehaviourData::BeforeInitializeLocalVariables, i,
                    BehaviourData::CREATEORAPPEND, BehaviourData::AT_BEGINNING);
       }

@@ -294,6 +294,17 @@ if(HAVE_DIANAFEA)
     DianaFEAInterface.cxx
     DianaFEASymbolsGenerator.cxx
     ${TFELMFront_SOURCES})
+  set(DianaFEAInterface_SOURCES
+    DianaFEAInterfaceExceptions.cxx
+    DianaFEAException.cxx
+    DianaFEAComputeStiffnessTensor.cxx
+    DianaFEAStressFreeExpansionHandler.cxx
+    DianaFEAComputeThermalExpansionCoefficientTensor.cxx)
+  mfront_library(DianaFEAInterface ${DianaFEAInterface_SOURCES})
+  target_link_libraries(DianaFEAInterface
+    MTestFileGenerator
+    TFELUtilities
+    TFELException)
 endif(HAVE_DIANAFEA)
 
 if(HAVE_CALCULIX)
