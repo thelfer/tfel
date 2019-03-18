@@ -235,6 +235,12 @@ namespace mfront {
      * \param[in] name: name of the behaviour as defined by the interface
      *                  (generally taking into account the material
      *                   and the behaviour name)
+     *
+     * \note By default, no tangent operator blocks are defined for finite
+     * strain behaviours (including strain based behaviours based on a strain
+     * measure different than the linearised strain), because most consistent
+     * tangent operators used by the targeted solvers are not the derivative of
+     * the Cauchy stress with respect to the deformation gradient.
      */
     virtual void writeTangentOperatorSymbols(std::ostream &,
                                              const StandardBehaviourInterface &,

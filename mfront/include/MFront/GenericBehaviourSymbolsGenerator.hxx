@@ -30,11 +30,14 @@ namespace mfront {
 					 const StandardBehaviourInterface&,
                                          const BehaviourDescription&,
                                          const std::string&) const override;
-    void writeBehaviourKinematicSymbols(
-        std::ostream&,
-	const StandardBehaviourInterface&,
-        const BehaviourDescription&,
-        const std::string&) const override;
+    void writeBehaviourKinematicSymbols(std::ostream &,
+                                        const StandardBehaviourInterface &,
+                                        const BehaviourDescription &,
+                                        const std::string &) const override;
+    void writeTangentOperatorSymbols(std::ostream &,
+                                     const StandardBehaviourInterface &,
+                                     const BehaviourDescription &,
+                                     const std::string &) const override;
     void writeAdditionalSymbols(std::ostream&,
 				      const StandardBehaviourInterface&,
                                       const BehaviourDescription&,

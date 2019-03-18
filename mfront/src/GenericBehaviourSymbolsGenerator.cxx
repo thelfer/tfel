@@ -102,6 +102,38 @@ namespace mfront {
   }  // end of
      // GenericBehaviourSymbolsGenerator::writeBehaviourKinematicSymbols
 
+  void GenericBehaviourSymbolsGenerator::writeTangentOperatorSymbols(
+      std::ostream& out,
+      const StandardBehaviourInterface& i,
+      const BehaviourDescription& bd,
+      const std::string& name) const {
+    auto write_impl = [this, &out, &i, &name] {
+      const auto fn = i.getFunctionNameBasis(name);
+      out << "MFRONT_SHAREDOBJ unsigned short " << fn
+          << "_nTangentOperatorBlocks = 2u;\n\n";
+      this->writeArrayOfStringsSymbol(out, fn + "_TangentOperatorBlocks",
+                                      {"Stress", "DeformationGradient"});
+    };
+    if (bd.getBehaviourType() ==
+        BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
+      if ((bd.isStrainMeasureDefined()) &&
+          (bd.getStrainMeasure() != BehaviourDescription::LINEARISED)) {
+        if (this->handleStrainMeasure()) {
+          write_impl();
+        } else {
+          SymbolsGenerator::writeTangentOperatorSymbols(out, i, bd, name);
+        }
+      } else {
+        SymbolsGenerator::writeTangentOperatorSymbols(out, i, bd, name);
+      }
+    } else if (bd.getBehaviourType() ==
+               BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
+      write_impl();
+    } else {
+      SymbolsGenerator::writeTangentOperatorSymbols(out, i, bd, name);
+    }
+  }  // end of GenericBehaviourSymbolsGenerator::writeTangentOperatorSymbols
+
   void GenericBehaviourSymbolsGenerator::writeAdditionalSymbols(
       std::ostream& os,
       const StandardBehaviourInterface&,
