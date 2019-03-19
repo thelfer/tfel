@@ -257,7 +257,7 @@ namespace tfel {
           const typename tfel::config::Types<1u, T, true>::stress lambda,
           const typename tfel::config::Types<1u, T, true>::stress mu) {
         typedef typename tfel::config::Types<1u, T, true>::stress stress;
-        const stress D1 = lambda * (lambda + 4 * mu) / (lambda + 2 * mu);
+        const stress D1 = 4 * mu * (lambda + mu) / (lambda + 2 * mu);
         const stress D2 = 2 * mu * lambda / (lambda + 2 * mu);
         D(0, 0) = D1;
         D(0, 1) = D2;
@@ -270,7 +270,7 @@ namespace tfel {
           const typename tfel::config::Types<1u, T, false>::stress lambda,
           const typename tfel::config::Types<1u, T, false>::stress mu) {
         typedef typename tfel::config::Types<1u, T, false>::stress stress;
-        const stress D1 = lambda * (lambda + 4 * mu) / (lambda + 2 * mu);
+        const stress D1 = 4 * mu * (lambda + mu) / (lambda + 2 * mu);
         const stress D2 = 2 * mu * lambda / (lambda + 2 * mu);
         D(0, 0) = D1;
         D(0, 1) = D2;
@@ -287,7 +287,7 @@ namespace tfel {
           const typename tfel::config::Types<2u, T, true>::stress lambda,
           const typename tfel::config::Types<2u, T, true>::stress mu) {
         typedef typename tfel::config::Types<2u, T, true>::stress stress;
-        const stress D1 = lambda * (lambda + 4 * mu) / (lambda + 2 * mu);
+        const stress D1 = 4 * mu * (lambda + mu) / (lambda + 2 * mu);
         const stress D2 = 2 * mu * lambda / (lambda + 2 * mu);
         D(0, 0) = D1;
         D(0, 1) = D2;
@@ -303,7 +303,7 @@ namespace tfel {
           const typename tfel::config::Types<2u, T, false>::stress lambda,
           const typename tfel::config::Types<2u, T, false>::stress mu) {
         typedef typename tfel::config::Types<2u, T, false>::stress stress;
-        const stress D1 = lambda * (lambda + 4 * mu) / (lambda + 2 * mu);
+        const stress D1 = 4 * mu * (lambda + mu) / (lambda + 2 * mu);
         const stress D2 = 2 * mu * lambda / (lambda + 2 * mu);
         D(0, 0) = D1;
         D(0, 1) = D2;
