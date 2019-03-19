@@ -303,11 +303,12 @@ if HAVE_DIANAFEA
 nobase_include_HEADERS +=                                                          \
 			  MFront/DianaFEAInterface.hxx                                         \
 			  MFront/DianaFEASymbolsGenerator.hxx                                  \
+			  MFront/DianaFEA/DianaFEA.hxx                                         \
 			  MFront/DianaFEA/DianaFEAData.hxx                                     \
 			  MFront/DianaFEA/DianaFEAConvert.hxx                                  \
 			  MFront/DianaFEA/DianaFEAConfig.hxx                                   \
 			  MFront/DianaFEA/DianaFEATraits.hxx                                   \
-			  MFront/DianaFEA/DianaFEAException.hxx 		                       \
+			  MFront/DianaFEA/DianaFEAException.hxx 		               \
 			  MFront/DianaFEA/DianaFEAInterface.hxx	                               \
 			  MFront/DianaFEA/DianaFEAInterfaceExceptions.hxx                      \
 			  MFront/DianaFEA/DianaFEABehaviourHandler.hxx                         \
