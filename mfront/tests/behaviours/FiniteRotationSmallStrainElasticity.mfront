@@ -5,7 +5,8 @@
   A test of the finite rotation small strain
   of the umat interface
 }
-                           
+
+@StrainMeasure GreenLagrange;
 @UMATFiniteStrainStrategy[umat]                    FiniteRotationSmallStrain;
 @AbaqusFiniteStrainStrategy[abaqus,abaqusexplicit] FiniteRotationSmallStrain;
 @EPXFiniteStrainStrategy[epx]                      FiniteRotationSmallStrain;

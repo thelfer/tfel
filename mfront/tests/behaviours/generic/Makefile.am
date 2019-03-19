@@ -35,6 +35,40 @@ EXTRA_DIST = CMakeLists.txt                                                     
              elasticity26.mtest                                                        \
              elasticity27.mtest                                                        \
              elasticity28.mtest                                                        \
+             finiterotationsmallstrainelasticity2-shear-1-2D.mtest		       \
+             finiterotationsmallstrainelasticity2-shear-1-3D.mtest		       \
+             finiterotationsmallstrainelasticity2-shear-2-2D.mtest		       \
+             finiterotationsmallstrainelasticity2-shear-2-3D.mtest		       \
+             finiterotationsmallstrainelasticity2-shear-3-3D.mtest		       \
+             finiterotationsmallstrainelasticity2-shear-4-3D.mtest		       \
+             finiterotationsmallstrainelasticity2-shear-5-3D.mtest		       \
+             finiterotationsmallstrainelasticity2-shear-6-3D.mtest		       \
+             finiterotationsmallstrainelasticity2-uniaxialloading-1-1D.mtest	       \
+             finiterotationsmallstrainelasticity2-uniaxialloading-1-2D.mtest	       \
+             finiterotationsmallstrainelasticity2-uniaxialloading-1-3D.mtest	       \
+             finiterotationsmallstrainelasticity2-uniaxialloading-2-1D.mtest	       \
+             finiterotationsmallstrainelasticity2-uniaxialloading-2-2D.mtest	       \
+             finiterotationsmallstrainelasticity2-uniaxialloading-2-3D.mtest	       \
+             finiterotationsmallstrainelasticity2-uniaxialloading-3-1D.mtest	       \
+             finiterotationsmallstrainelasticity2-uniaxialloading-3-2D.mtest	       \
+             finiterotationsmallstrainelasticity2-uniaxialloading-3-3D.mtest	       \
+             finiterotationsmallstrainelasticity-shear-1-2D.mtest		       \
+             finiterotationsmallstrainelasticity-shear-1-3D.mtest		       \
+             finiterotationsmallstrainelasticity-shear-2-2D.mtest		       \
+             finiterotationsmallstrainelasticity-shear-2-3D.mtest		       \
+             finiterotationsmallstrainelasticity-shear-3-3D.mtest		       \
+             finiterotationsmallstrainelasticity-shear-4-3D.mtest		       \
+             finiterotationsmallstrainelasticity-shear-5-3D.mtest		       \
+             finiterotationsmallstrainelasticity-shear-6-3D.mtest		       \
+             finiterotationsmallstrainelasticity-uniaxialloading-1-1D.mtest	       \
+             finiterotationsmallstrainelasticity-uniaxialloading-1-2D.mtest	       \
+             finiterotationsmallstrainelasticity-uniaxialloading-1-3D.mtest	       \
+             finiterotationsmallstrainelasticity-uniaxialloading-2-1D.mtest	       \
+             finiterotationsmallstrainelasticity-uniaxialloading-2-2D.mtest	       \
+             finiterotationsmallstrainelasticity-uniaxialloading-2-3D.mtest	       \
+             finiterotationsmallstrainelasticity-uniaxialloading-3-1D.mtest	       \
+             finiterotationsmallstrainelasticity-uniaxialloading-3-2D.mtest	       \
+             finiterotationsmallstrainelasticity-uniaxialloading-3-3D.mtest	       \
              mieheapellambrechtlogarithmicstrainelasticity-shear-2D.mtest	       \
              mieheapellambrechtlogarithmicstrainelasticity-shear-FXY-3D.mtest	       \
              mieheapellambrechtlogarithmicstrainelasticity-shear-FXZ-3D.mtest	       \

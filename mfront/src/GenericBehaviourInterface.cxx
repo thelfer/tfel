@@ -301,11 +301,11 @@ namespace mfront {
         // now converting the deformation gradient
         const auto ms = bd.getStrainMeasure();
         const auto N = tfel::material::getSpaceDimension(h);
-        if (ms == BehaviourDescription::GREENLAGRANGE) {
-        } else if (ms == BehaviourDescription::HENCKY) {
+        if ((ms == BehaviourDescription::GREENLAGRANGE) ||
+            (ms == BehaviourDescription::HENCKY)) {
           const auto fs = SupportedTypes::getTypeSize("DeformationGradientTensor", 1).getValueForModellingHypothesis(h);
           const auto ss =
-              SupportedTypes::getTypeSize("DeformationGradientTensor", 1)
+              SupportedTypes::getTypeSize("StressStensor", 1)
                   .getValueForModellingHypothesis(h);
           out << "tfel::math::tensor<" << N << ",real> F0;\n";
           out << "tfel::math::tensor<" << N << ",real> F1;\n";
@@ -330,32 +330,66 @@ namespace mfront {
                 << ">::exe(d->s0.thermodynamic_forces+"
                 << oC.getValueForModellingHypothesis(h) << ",s0.begin());\n";
           }
-          out << "LogarithmicStrainHandler<" << N << ",real> lgh0("
-              << "LogarithmicStrainHandler<" << N << ",real>::EULERIAN,F0);\n";
-          out << "LogarithmicStrainHandler<" << N << ",real> lgh1("
-              << "LogarithmicStrainHandler<" << N << ",real>::EULERIAN,F1);\n";
-          out << "tfel::math::StensorView<" << N << ",real> g0_view("
-              << get_ptr("gradients0", oe) << ");\n"
-              << "g0_view = lgh0.getHenckyLogarithmicStrain();\n";
-          out << "tfel::math::StensorView<" << N << ",real> g1_view("
-              << get_ptr("gradients1", oe) << ");\n"
-              << "g1_view = lgh1.getHenckyLogarithmicStrain();\n";
-          if ((h == ModellingHypothesis::PLANESTRESS) ||
-              (h ==
-               ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)) {
-            const auto as =
-                this->checkIfAxialStrainIsDefinedAndGetItsOffset(bd);
-            if (!as.first) {
-              raise("the axial strain is not defined");
+          if (ms == BehaviourDescription::GREENLAGRANGE) {
+            out << "tfel::math::StensorView<" << N << ",real> g0_view("
+                << get_ptr("gradients0", oe) << ");\n"
+                << "g0_view = tfel::math::computeGreenLagrangeTensor(F0);\n"
+                << "tfel::math::StensorView<" << N << ",real> g1_view("
+                << get_ptr("gradients1", oe) << ");\n"
+                << "g1_view = tfel::math::computeGreenLagrangeTensor(F1);\n";
+            if ((h == ModellingHypothesis::PLANESTRESS) ||
+                (h ==
+                 ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)) {
+              const auto as =
+                  this->checkIfAxialStrainIsDefinedAndGetItsOffset(bd);
+              out << "const auto F0zz = "
+                     "std::sqrt(1+2*(d->s0.internal_state_variables["
+                  << as.second.getValueForModellingHypothesis(h) << "]));\n";
+              if (!as.first) {
+                raise("the axial strain is not defined");
+              }
+              if (h == ModellingHypothesis::PLANESTRESS) {
+                out << "F0[2] += F0zz;\n";
+              } else {
+                out << "F0[1] += F0zz;\n";
+              }
             }
-            out << "lgh0.updateAxialDeformationGradient("
-                << "std::exp(d->s0.internal_state_variables["
-                << as.second.getValueForModellingHypothesis(h) << "]));\n";
+            out << "tfel::math::StensorView<" << N << ",real> s0_view("
+                << get_ptr("thermodynamic_forces0", oC) << ");\n"
+                << "s0_view = "
+                   "tfel::math::"
+                   "convertCauchyStressToSecondPiolaKirchhoffStress("
+                   "s0, F0);\n";
+          } else {
+            out << "LogarithmicStrainHandler<" << N << ",real> lgh0("
+                << "LogarithmicStrainHandler<" << N
+                << ",real>::EULERIAN,F0);\n";
+            out << "LogarithmicStrainHandler<" << N << ",real> lgh1("
+                << "LogarithmicStrainHandler<" << N
+                << ",real>::EULERIAN,F1);\n";
+            out << "tfel::math::StensorView<" << N << ",real> g0_view("
+                << get_ptr("gradients0", oe) << ");\n"
+                << "g0_view = lgh0.getHenckyLogarithmicStrain();\n";
+            out << "tfel::math::StensorView<" << N << ",real> g1_view("
+                << get_ptr("gradients1", oe) << ");\n"
+                << "g1_view = lgh1.getHenckyLogarithmicStrain();\n";
+            if ((h == ModellingHypothesis::PLANESTRESS) ||
+                (h ==
+                 ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)) {
+              const auto as =
+                  this->checkIfAxialStrainIsDefinedAndGetItsOffset(bd);
+              if (!as.first) {
+                raise("the axial strain is not defined");
+              }
+              out << "lgh0.updateAxialDeformationGradient("
+                  << "std::exp(d->s0.internal_state_variables["
+                  << as.second.getValueForModellingHypothesis(h) << "]));\n";
+            }
+            out << "tfel::math::StensorView<" << N << ",real> s0_view("
+                << get_ptr("thermodynamic_forces0", oC) << ");\n"
+                << "s0_view = lgh0.convertFromCauchyStress(s0);\n";
           }
-          out << "tfel::math::StensorView<" << N << ",real> s0_view("
-              << get_ptr("thermodynamic_forces0", oC) << ");\n"
-              << "s0_view = lgh0.convertFromCauchyStress(s0);\n"
-              << "auto *const gradients0_old = d->s0.gradients;\n"
+          out << "auto *const gradients0_old = d->s0.gradients;\n"
               << "auto *const gradients1_old = d->s1.gradients;\n"
               << "auto *const thermodynamic_forces0_old = "
                  "d->s0.thermodynamic_forces;\n"
@@ -402,6 +436,49 @@ namespace mfront {
         // post-processing
         const auto ms = bd.getStrainMeasure();
         if (ms == BehaviourDescription::GREENLAGRANGE) {
+          const auto N = tfel::material::getSpaceDimension(h);
+          const auto s = tfel::material::getStensorSize(h);
+          out << "if(bp){\n"
+              << "const tfel::math::stensor<" << N << ",real> S0("
+              << get_ptr("thermodynamic_forces0", oC) << ");\n"
+              << "tfel::math::st2tost2<" << N << ",real> K0;\n"
+              << "tfel::fsalgo::copy<" << s * s << ">::exe(K,K0.begin());\n"
+              << "tfel::math::T2toST2View<" << N << ",real>(d->K) = "
+              << "convert<TangentOperator::DSIG_DF,"
+              << "TangentOperator::DS_DEGL>(K0,F0,F0,S0);\n"
+              << "} else {\n";
+          if ((h == ModellingHypothesis::PLANESTRESS) ||
+              (h ==
+               ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)) {
+            const auto as =
+                this->checkIfAxialStrainIsDefinedAndGetItsOffset(bd);
+            if (!as.first) {
+              raise("the axial strain is not defined");
+            }
+            out << "const auto F1zz = "
+                   "std::sqrt(1+2*(d->s1.internal_state_variables["
+                << as.second.getValueForModellingHypothesis(h) << "]));\n";
+            if (h == ModellingHypothesis::PLANESTRESS) {
+              out << "F0[2] += F0zz;\n";
+            } else {
+              out << "F0[1] += F0zz;\n";
+            }
+          }
+          out << "const tfel::math::stensor<" << N << ",real> S1("
+              << get_ptr("thermodynamic_forces1", oC) << ");\n"
+              << "tfel::math::StensorView<" << N << ",real> s1_view("
+              << get_ptr("d->s1.thermodynamic_forces", oC) << ");\n"
+              << "s1_view = "
+                 "tfel::math::convertSecondPiolaKirchhoffStressToCauchyStress("
+                 "S1,F1);\n"
+              << "if(bk){\n"
+              << "tfel::math::st2tost2<" << N << ",real> K1;\n"
+              << "tfel::fsalgo::copy<" << s * s << ">::exe(K,K1.begin());\n"
+              << "tfel::math::T2toST2View<" << N << ",real>(d->K) = "
+              << "convert<TangentOperator::DSIG_DF,"
+              << "TangentOperator::DS_DEGL>(K1,F0,F1,S1);\n"
+              << "}\n"
+              << "}\n";
         } else if (ms == BehaviourDescription::HENCKY) {
           const auto N = tfel::material::getSpaceDimension(h);
           const auto s = tfel::material::getStensorSize(h);
@@ -412,8 +489,7 @@ namespace mfront {
               << "tfel::fsalgo::copy<" << s * s << ">::exe(K,K0.begin());\n"
               << "const auto Cs = lgh0.convertToSpatialTangentModuli(K0,T0);\n"
               << "const auto Dt = convert<TangentOperator::DTAU_DF,"
-              << "                        "
-                 "TangentOperator::SPATIAL_MODULI>(Cs,F0,F0,s0);\n"
+              << "TangentOperator::SPATIAL_MODULI>(Cs,F0,F0,s0);\n"
               << "tfel::math::T2toST2View<" << N << ",real>(d->K) = "
               << "convert<TangentOperator::DSIG_DF,"
               << "        TangentOperator::DTAU_DF>(Dt,F0,F0,s0);\n"
@@ -432,7 +508,7 @@ namespace mfront {
           }
           out << "const tfel::math::stensor<" << N << ",real> T1("
               << get_ptr("thermodynamic_forces1", oC) << ");\n"
-	      << "const auto s1 = lgh1.convertToCauchyStress(T1);\n"
+              << "const auto s1 = lgh1.convertToCauchyStress(T1);\n"
               << "tfel::math::StensorView<" << N << ",real> s1_view("
               << get_ptr("d->s1.thermodynamic_forces", oC) << ");\n"
               << "s1_view = s1;\n"

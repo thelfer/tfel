@@ -13,7 +13,8 @@
  "(before it was turned into the Cauchy stress "
  "after the integration."
 }
-                           
+
+@StrainMeasure GreenLagrange;
 @CastemFiniteStrainStrategy[castem] FiniteRotationSmallStrain;
 @AbaqusFiniteStrainStrategy[abaqus] FiniteRotationSmallStrain;
 

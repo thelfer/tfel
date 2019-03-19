@@ -386,17 +386,15 @@ namespace tfel{
     push_forward(const T&,
 		 const T2&);
 
-  template<typename T,typename T2>
+    template <typename T, typename T2>
     typename std::enable_if<
-      ((tfel::meta::Implements<T,StensorConcept>::cond) &&
-       (StensorTraits<T>::dime==1u)&&
-       (tfel::meta::Implements<T2,TensorConcept>::cond) &&
-       (TensorTraits<T2>::dime==1u)&&
-       (tfel::typetraits::IsFundamentalNumericType<TensorNumType<T2>>::cond)),
-      stensor<1u,StensorNumType<T>>
-      >::type
-    convertCauchyStressToSecondPiolaKirchhoffStress(const T&,
-						    const T2&);
+        ((tfel::meta::Implements<T, StensorConcept>::cond) &&
+         (StensorTraits<T>::dime == 1u) &&
+         (tfel::meta::Implements<T2, TensorConcept>::cond) &&
+         (TensorTraits<T2>::dime == 1u) &&
+         (tfel::typetraits::IsFundamentalNumericType<TensorNumType<T2>>::cond)),
+        stensor<1u, StensorNumType<T>>>::type
+    convertCauchyStressToSecondPiolaKirchhoffStress(const T&, const T2&);
 
     template<typename T,typename T2>
     typename std::enable_if<
