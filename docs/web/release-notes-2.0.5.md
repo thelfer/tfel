@@ -1,4 +1,4 @@
-% Release notes of the 2.0.4 version of `TFEL`, `MFront` and `MTest`
+% Release notes of the 2.0.5 version of `TFEL`, `MFront` and `MTest`
 % Thomas Helfer
 % 2017
 
@@ -6,7 +6,7 @@
 
 # Tickets fixed
 
-## Ticket 38:  Bad normalisation of the tensor when computing eigenvalues
+## Ticket #38:  Bad normalisation of the tensor when computing eigenvalues
 
 Tensors are normalised when computing the eigenvalues. There was a
 mistake in the normalisation which can lead to severe numerical
@@ -51,3 +51,8 @@ Abandon
 ~~~~
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/44/>
+
+## Ticket #162: The `tfel::material::computeAlteredElasticStiffness` function  is wrong in  plane stress and axisymmetrical generalised plane stress
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/162/>
+
