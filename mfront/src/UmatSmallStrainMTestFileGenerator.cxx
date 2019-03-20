@@ -22,21 +22,16 @@
 namespace mfront
 {
 
-  UmatSmallStrainMTestFileGenerator::UmatSmallStrainMTestFileGenerator(const std::string& i,
-								       const std::string& l,
-								       const std::string& b)
-    : interface(i),
-      library(l),
-      behaviour(b)
-  {
+  UmatSmallStrainMTestFileGenerator::UmatSmallStrainMTestFileGenerator(
+      const std::string& i, const std::string& l, const std::string& b)
+      : interface(i), library(l), behaviour(b) {
     std::fill(eto,eto+6,0.);
     std::fill(deto,deto+6,0.);
     std::fill(stress,stress+6,0.);
   } // end of UmatSmallStrainMTestFileGenerator::UmatSmallStrainMTestFileGenerator
 
-  void
-  UmatSmallStrainMTestFileGenerator::writeBehaviourDeclaration(std::ostream& os) const
-  {
+  void UmatSmallStrainMTestFileGenerator::writeBehaviourDeclaration(
+      std::ostream& os) const {
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
     os << "@Behaviour<" << this->interface << "> '" << this->library << ".dll' '"
        << this->behaviour << "';" << std::endl;
@@ -46,27 +41,23 @@ namespace mfront
 #endif
   } // end of UmatSmallStrainMTestFileGenerator::writeBehaviourDeclaration
 
-  void
-  UmatSmallStrainMTestFileGenerator::setStrainTensor(const double*const e)
-  {
+  void UmatSmallStrainMTestFileGenerator::setStrainTensor(
+      const double* const e) {
     std::copy(e,e+this->getStensorSize(),this->eto);
   } // end of UmatSmallStrainMTestFileGenerator::setStrainTensor
 
-  void
-  UmatSmallStrainMTestFileGenerator::setStrainTensorIncrement(const double*const de)
-  {
+  void UmatSmallStrainMTestFileGenerator::setStrainTensorIncrement(
+      const double* const de) {
     std::copy(de,de+this->getStensorSize(),this->deto);
   } // end of UmatSmallStrainMTestFileGenerator::setStrainTensorIncrement
 
-  void
-  UmatSmallStrainMTestFileGenerator::setStressTensor(const double*const s)
-  {
+  void UmatSmallStrainMTestFileGenerator::setStressTensor(
+      const double* const s) {
     std::copy(s,s+this->getStensorSize(),this->stress);
   } // end of UmatSmallStrainMTestFileGenerator::setStressTensor
 
-  void
-  UmatSmallStrainMTestFileGenerator::writeGradients(std::ostream& os) const
-  {
+  void UmatSmallStrainMTestFileGenerator::writeGradients(
+      std::ostream& os) const {
     using namespace tfel::material;
     constexpr const auto cste  = tfel::math::Cste<real>::sqrt2;
     constexpr const auto icste = tfel::math::Cste<real>::isqrt2;
@@ -80,38 +71,43 @@ namespace mfront
     os << "@Stress {";
     os.precision(14);
     for(i=0;i!=this->getStensorSize();){
-      if(i<3){
-	os << this->stress[i];
+      if (i < 3) {
+        os << this->stress[i];
       } else {
-	os << (this->stress[i])*cste;
+        os << (this->stress[i]) * cste;
       }
-      if(++i!=this->getStensorSize()){
-	os << ",";
+      if (++i != this->getStensorSize()) {
+        os << ",";
       }
     }
     os << "};\n\n";
     os << "@Strain {";
-    auto p=n.begin();
-    for(i=0;p!=n.end();++i){
+    auto p = n.begin();
+    for (i = 0; p != n.end(); ++i) {
       os.precision(14);
-      os << this->eto[i];
-      if(++p!=n.end()){
-	os << ",";
+      if (i < 3) {
+        os << this->eto[i];
+      } else {
+        os << this->eto[i] * icste;
+      }
+      if (++p != n.end()) {
+        os << ",";
       }
     }
     os << "};\n\n";
     for(p=n.begin(),i=0;p!=n.end();++p,++i){
       os.precision(14);
       if(i<3){
-	if(!((i==2)&&(this->hypothesis==ModellingHypothesis::PLANESTRAIN))){
-	  os << "@ImposedStrain<evolution> '" << *p << "' {" 
-	     << t0 << ":" << this->eto[i]<< ","
-	     << t1 << ":" << this->eto[i]+this->deto[i]<< "};\n";
-	}
+        if (!((i == 2) &&
+              (this->hypothesis == ModellingHypothesis::PLANESTRAIN))) {
+          os << "@ImposedStrain<evolution> '" << *p << "' {" << t0 << ":"
+             << this->eto[i] << "," << t1 << ":" << this->eto[i] + this->deto[i]
+             << "};\n";
+        }
       } else {
-	os << "@ImposedStrain<evolution> '" << *p << "' {" 
-	   << t0 << ":" << this->eto[i]*icste << ","
-	   << t1 << ":" << (this->eto[i]+this->deto[i])*icste << "};\n";
+        os << "@ImposedStrain<evolution> '" << *p << "' {" << t0 << ":"
+           << this->eto[i] * icste << "," << t1 << ":"
+           << (this->eto[i] + this->deto[i]) * icste << "};\n";
       }
     }
     os << '\n';

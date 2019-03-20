@@ -7,6 +7,15 @@ solved are described below.
 
 # Tickets fixed
 
+## Ticket #163: MTest file generation: shear components of the strain are ill initialized
+
+When generating MTest files on failure, the off-diagonal values of the
+strain were not initialized correctly. However, the strain increment
+was correctly computed, so this bug may only affect a very limited
+number of behaviours.
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/163/>
+
 ## Ticket #156: Sub-stepping in the `Cast3M` interface is broken for true finite strain behaviours
 
 The `Cast3M` interface allows substepping at the Gauss point level in
