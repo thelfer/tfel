@@ -80,6 +80,16 @@ namespace mfront {
      */
     virtual std::string getFunctionNameForHypothesis(const std::string&,
 						     const Hypothesis) const;
+    /*!
+     * \brief write the generation of an MTest file for the given hypothesis
+     * \param[out] out: output stream
+     * \param[in]  bd: behaviour description
+     * \param[in]  h: modelling hypothesis
+     */
+    virtual void generateMTestFile(std::ostream&,
+                                   const BehaviourDescription&,
+                                   const Hypothesis) const;
+
   };  // end of struct GenericBehaviourInterface
 
 }  // end of namespace mfront

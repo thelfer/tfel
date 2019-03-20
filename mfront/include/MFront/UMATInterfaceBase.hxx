@@ -249,9 +249,6 @@ namespace mfront {
      */
     virtual std::string getLibraryName(const BehaviourDescription&) const = 0;
 
-    virtual bool readBooleanValue(const std::string&,
-                                  tokens_iterator&,
-                                  const tokens_iterator) const;
     /*!
      * \param[out] f      : output file
      * \param[out] first  : boolean stating if the an initializer has already

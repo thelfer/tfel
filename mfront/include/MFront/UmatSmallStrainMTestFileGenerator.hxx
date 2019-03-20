@@ -30,8 +30,8 @@ namespace mfront
      * \param[in] b : behaviour
      */
     UmatSmallStrainMTestFileGenerator(const std::string&,
-				      const std::string&,
-				      const std::string&);
+                                      const std::string&,
+                                      const std::string&);
     /*!
      * set the strain at the beginning of the time step
      * \param[in] e : strain
@@ -56,26 +56,24 @@ namespace mfront
      * write behaviour declaration
      * \param[in] os : output stream
      */
-    virtual void
-    writeBehaviourDeclaration(std::ostream&) const override;
-    /*!
-     * write driving variables
-     * \param[in] os : output stream
-     */
-    virtual void
-    writeGradients(std::ostream&) const override;
-    //! interface name
-    std::string interface;
-    //! library name
-    std::string library;
-    //! behaviour name
-    std::string behaviour;
-    //! strain
-    double eto[6];
-    //! strain increment
-    double deto[6];
-    //! stress increment
-    double stress[6];
+   void writeBehaviourDeclaration(std::ostream&) const override;
+   /*!
+    * write driving variables
+    * \param[in] os : output stream
+    */
+   void writeGradients(std::ostream&) const override;
+   //! interface name
+   std::string interface;
+   //! library name
+   std::string library;
+   //! behaviour name
+   std::string behaviour;
+   //! strain
+   double eto[6];
+   //! strain increment
+   double deto[6];
+   //! stress increment
+   double stress[6];
   }; // end of struct UmatSmallStrainMTestFileGenerator
 
 } // end of namespace mfront
