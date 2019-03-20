@@ -34,12 +34,33 @@ namespace mfront {
   }  // end of GenericBehaviourInterface::getInterfaceName
 
   std::pair<bool, GenericBehaviourInterface::tokens_iterator>
-  GenericBehaviourInterface::treatKeyword(BehaviourDescription&,
-                                          const std::string&,
-                                          const std::vector<std::string>&,
-                                          tokens_iterator p,
-                                          const tokens_iterator) {
-    return {false, p};
+  GenericBehaviourInterface::treatKeyword(BehaviourDescription& bd,
+                                          const std::string& k,
+                                          const std::vector<std::string>& i,
+                                          tokens_iterator current,
+                                          const tokens_iterator end) {
+    using tfel::utilities::CxxTokenizer;
+    auto throw_if = [](const bool b,const std::string& m){
+      tfel::raise_if(b,"GenericBehaviourInterface::treatKeyword: "+m);
+    };
+    if(!i.empty()){
+      if(std::find(i.begin(),i.end(),this->getName())!=i.end()){
+        const auto keys = std::vector<std::string>{
+            {"@GenericInterfaceGenerateMTestFileOnFailure",
+             "@GenerateMTestFileOnFailure"}};
+        throw_if(std::find(keys.begin(), keys.end(), k) == keys.end(),
+                 "unsupported key '" + k + "'");
+      } else {
+        return {false, current};
+      }
+    }
+    if ((k == "@GenericInterfaceGenerateMTestFileOnFailure") ||
+        (k == "@GenerateMTestFileOnFailure")) {
+      this->setGenerateMTestFileOnFailureAttribute(
+          bd, this->readBooleanValue(k, current, end));
+      return {true, current};
+    }
+    return {false, current};
   }  // end of GenericBehaviourInterface::treatKeyword
 
   std::set<GenericBehaviourInterface::Hypothesis>
@@ -70,10 +91,10 @@ namespace mfront {
     d.headers.push_back("MFront/GenericBehaviour/" + name + "-generic.hxx");
     insert_if(d[lib].link_directories,
               "$(shell " + tfel_config + " --library-path)");
-// if (this->shallGenerateMTestFileOnFailure(bd)) {
-//   insert_if(d[lib].link_libraries,
-//             tfel::getLibraryInstallName("MTestFileGenerator"));
-// }
+    if (this->shallGenerateMTestFileOnFailure(bd)) {
+      insert_if(d[lib].link_libraries,
+                tfel::getLibraryInstallName("MTestFileGenerator"));
+    }
 #if __cplusplus >= 201703L
     insert_if(d[lib].link_libraries, "$(shell " + tfel_config +
                                          " --library-dependency "
@@ -170,6 +191,36 @@ namespace mfront {
     if (bd.getAttribute(BehaviourData::profiling, false)) {
       out << "#include\"MFront/BehaviourProfiler.hxx\"\n";
     }
+    if (this->shallGenerateMTestFileOnFailure(bd)) {
+      if (bd.getBehaviourType() ==
+          BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
+        if (bd.isStrainMeasureDefined()){
+          const auto ms = bd.getStrainMeasure();
+          if (ms == BehaviourDescription::LINEARISED) {
+            out << "#include "
+                << "\"MFront/"
+                   "GenericBehaviourSmallStrainMTestFileGenerator.hxx\"\n";
+          } else {
+            out << "#include "
+                << "\"MFront/"
+                   "GenericBehaviourFiniteStrainMTestFileGenerator.hxx\"\n";
+          }
+        } else {
+          out << "#include "
+              << "\"MFront/"
+                 "GenericBehaviourSmallStrainMTestFileGenerator.hxx\"\n";
+        }
+      } else if (bd.getBehaviourType() ==
+                 BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
+        out << "#include "
+            << "\"MFront/"
+               "GenericBehaviourFiniteStrainMTestFileGenerator.hxx\"\n";
+      } else {
+        tfel::raise(
+            "GenericBehaviourInterface::writeInterfaceSpecificIncludes: "
+            "unsupported behaviour type for MTest file generation");
+      }
+    }
     out << "#include\"MFront/GenericBehaviour/"
            "Integrate.hxx\"\n\n";
     out << "#include\"MFront/GenericBehaviour/" << header << "\"\n\n";
@@ -228,6 +279,9 @@ namespace mfront {
             << "BehaviourProfiler::Timer total_timer(" << bd.getClassName()
             << "Profiler::getProfiler(),\n"
             << "BehaviourProfiler::TOTALTIME);\n";
+      }
+      if (this->shallGenerateMTestFileOnFailure(bd)) {
+	out << "using mfront::SupportedTypes;\n";
       }
       // treating strain measures
       if (((bd.getBehaviourType() ==
@@ -529,6 +583,11 @@ namespace mfront {
         }
         out << "}\n";
       }
+      if (this->shallGenerateMTestFileOnFailure(bd)) {
+        out << "if(!r){\n";
+        this->generateMTestFile(out, bd, h);
+        out << "}\n";
+      }
       out << "return r;\n"
           << "} // end of " << f << "\n\n";
     }
@@ -537,6 +596,221 @@ namespace mfront {
         << "#endif /* __cplusplus */\n\n";
     out.close();
   }  // end of GenericBehaviourInterface::endTreatment
+
+  void GenericBehaviourInterface::generateMTestFile(
+      std::ostream& out,
+      const BehaviourDescription& bd,
+      const Hypothesis h) const {
+    const auto& d = bd.getBehaviourData(h);
+    const auto& persistentVarsHolder = d.getPersistentVariables();
+    const auto& externalStateVarsHolder = d.getExternalStateVariables();
+    const auto mprops = this->buildMaterialPropertiesList(bd, h);
+    const auto fs = [&bd] {
+      if (bd.getBehaviourType() ==
+          BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
+        if (bd.isStrainMeasureDefined()){
+          const auto ms = bd.getStrainMeasure();
+          return  ms != BehaviourDescription::LINEARISED;
+        } else {
+          return false;
+        }
+      } else if (bd.getBehaviourType() !=
+                 BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
+        tfel::raise(
+            "GenericBehaviourInterface::writeInterfaceSpecificIncludes: "
+            "unsupported behaviour type for MTest file generation");
+      }
+      return true;
+    }();
+    unsigned int offset = 0;
+    const auto name = bd.getLibrary() + bd.getClassName();
+    if (fs) {
+      out << "mfront::GenericBehaviourFiniteStrainMTestFileGenerator mg(\""
+          << this->getLibraryName(bd) << "\",\"" << name << "\");\n";
+    } else {
+      out << "mfront::GenericBehaviourSmallStrainMTestFileGenerator mg(\""
+          << this->getLibraryName(bd) << "\",\"" << name << "\");\n";
+    }
+    out << "const auto TVectorSize = mg.getTVectorSize();\n"
+        << "const auto StensorSize = mg.getStensorSize();\n"
+        << "const auto TensorSize  = mg.getTensorSize();\n"
+        << "const auto dt = std::max(d->dt,1.e-50);\n"
+        << "mg.setModellingHypothesis(tfel::material::ModellingHypothesis:"
+           ":"
+        << tfel::material::ModellingHypothesis::toUpperCaseString(h) << ");\n"
+        << "mg.setHandleThermalExpansion(false);\n"
+        << "mg.addTime(0.);\n"
+        << "mg.addTime(dt);\n";
+    if (fs) {
+      out << "mg.setDeformationGradientTensorAtTheBeginningOfTheTimeStep(d->"
+             "s0.gradients);\n"
+          << "mg.setDeformationGradientTensorAtTheEndOfTheTimeStep(d->s1."
+             "gradients);\n"
+          << "mg.setStressTensor(d->s0.thermodynamic_forces);\n";
+    } else {
+      out << "mg.setStrainTensorAtTheBeginningOfTheTimeStep(d->"
+             "s0.gradients);\n"
+          << "mg.setStrainTensorAtTheEndOfTheTimeStep(d->s1."
+             "gradients);\n"
+          << "mg.setStressTensor(d->s0.thermodynamic_forces);\n";
+    }
+     for (const auto& m : mprops.first) {
+       const auto flag = SupportedTypes::getTypeFlag(m.type);
+       tfel::raise_if(flag != SupportedTypes::SCALAR,
+                      "GenericBehaviourInterface::generateMTestFile: "
+                      "unsupported external state variable type "
+                      "in mtest file generation");
+       if (m.arraySize == 1u) {
+         if (offset == 0) {
+           out << "mg.addMaterialProperty(\"" << m.name <<
+           "\",*(d->s1.material_properties));\n";
+         } else {
+           out << "mg.addMaterialProperty(\"" << m.name << "\",*(d->s1.material_properties+"
+               << offset << "));\n";
+         }
+         ++offset;
+       } else {
+         for (unsigned short s = 0; s != m.arraySize; ++s, ++offset) {
+           if (offset == 0) {
+             out << "mg.addMaterialProperty(\"" << m.name << "[" << s
+                 << "]\",*(d->s1.material_properties));\n";
+           } else {
+             out << "mg.addMaterialProperty(\"" << m.name << "[" << s <<
+             "]\","
+                 << "*(d->s1.material_properties+" << offset << "));\n";
+           }
+         }
+       }
+     }
+     SupportedTypes::TypeSize ivoffset;
+     for (const auto& v : persistentVarsHolder) {
+       auto flag = SupportedTypes::getTypeFlag(v.type);
+       const auto& ivname = d.getExternalName(v.name);
+       if (v.arraySize == 1u) {
+         if (flag == SupportedTypes::SCALAR) {
+           out << "mg.addInternalStateVariable(\"" << ivname
+               << "\",SupportedTypes::SCALAR,&(d->s0.internal_state_variables["
+               << ivoffset << "]));\n";
+           ivoffset += SupportedTypes::TypeSize(1u, 0u, 0u, 0u);
+         } else {
+           out << "mg.addInternalStateVariable(\"" << ivname
+               << "\",SupportedTypes::STENSOR,&(d->s0.internal_state_variables["
+               << ivoffset << "]));\n";
+           ivoffset += SupportedTypes::TypeSize(0u, 0u, 1u, 0u);
+         }
+       } else {
+         if (v.arraySize >= SupportedTypes::ArraySizeLimit) {
+           out << "for(unsigned short i=0;i!=" << v.arraySize <<
+           ";++i){\n";
+           out << "auto name =  \"" << ivname
+               << "[\" + std::to_string(i)+ \"]\";\n";
+           if (flag == SupportedTypes::SCALAR) {
+             out << "mg.addInternalStateVariable(name,SupportedTypes::SCALAR,&"
+                    "d->s0.internal_state_variables["
+                 << ivoffset << "]+i);\n";
+           } else {
+             out <<
+             "mg.addInternalStateVariable(name,SupportedTypes::STENSOR,"
+                    "&"
+                    "d->s0.internal_state_variables["
+                 << ivoffset << "]+i);\n";
+           }
+           out << "}\n";
+           if (flag == SupportedTypes::SCALAR) {
+             ivoffset += SupportedTypes::TypeSize(v.arraySize, 0u, 0u, 0u);
+           } else {
+             ivoffset += SupportedTypes::TypeSize(0u, 0u, v.arraySize,
+             0u);
+           }
+         } else {
+           for (unsigned short i = 0; i != v.arraySize; ++i) {
+             if (flag == SupportedTypes::SCALAR) {
+               out << "mg.addInternalStateVariable(\"" << ivname << "[" << i
+                   << "]\",SupportedTypes::SCALAR,&(d->s0.internal_state_"
+                      "variables["
+                   << ivoffset << "]));\n";
+               ivoffset += SupportedTypes::TypeSize(1u, 0u, 0u, 0u);
+             } else {
+               out << "mg.addInternalStateVariable(\"" << ivname << "[" << i
+                   << "]\",SupportedTypes::STENSOR,&(d->s0.internal_state_"
+                      "variables["
+                   << ivoffset << "]));\n";
+               ivoffset += SupportedTypes::TypeSize(0u, 0u, 1u, 0u);
+             }
+           }
+         }
+       }
+     }
+     auto p = externalStateVarsHolder.begin();
+     for (offset = 0; p != externalStateVarsHolder.end(); ++p) {
+       auto flag = SupportedTypes::getTypeFlag(p->type);
+       tfel::raise_if(flag != SupportedTypes::SCALAR,
+                      "GenericBehaviourInterface::generateMTestFile: "
+                      "unsupported external state variable type "
+                      "in mtest file generation");
+       const auto& evname = d.getExternalName(p->name);
+       if (p->arraySize == 1u) {
+         if (offset == 0) {
+           out << "mg.addExternalStateVariableValue(\"" << evname
+               << "\",0,*(d->s0.external_state_variables));\n"
+               << "mg.addExternalStateVariableValue(\"" << evname
+               << "\",dt,*(d->s1.external_state_variables));\n";
+         } else {
+           out << "mg.addExternalStateVariableValue(\"" << evname
+               << "\",0,*(d->s0.external_state_variables+" << offset << "));\n"
+               << "mg.addExternalStateVariableValue(\"" << evname
+               << "\",dt,*(d->s1.external_state_variables+" << offset
+               << "));\n";
+         }
+         ++offset;
+       } else {
+         if (p->arraySize >= SupportedTypes::ArraySizeLimit) {
+           out << "for(unsigned short i=0;i!=" << p->arraySize <<
+           ";++i){\n";
+           out << "auto name = \"" << evname
+               << "[\" +std::to_string(i)+\"]\";\n";
+           if (offset == 0) {
+             out << "mg.addExternalStateVariableValue(name,0,*(d->s0.external_"
+                    "state_variables+i));\n"
+                    "mg.addExternalStateVariableValue(name,dt,*(d->s1."
+                    "external_state_variables+i));\n";
+           } else {
+             out << "mg.addExternalStateVariableValue(name,"
+                    "0,*(d->s0.external_state_variables+"
+                 << offset << "+i));\n";
+             out << "mg.addExternalStateVariableValue(name,"
+                    "dt,*(d->s1.external_state_variables+"
+                 << offset << "+i));\n";
+
+           }
+           out << "}\n";
+           offset += p->arraySize;
+         } else {
+           for (unsigned short i = 0; i != p->arraySize; ++i, ++offset) {
+             if (offset == 0) {
+               out << "mg.addExternalStateVariableValue(\"" << evname << "["
+                   << i << "]\",0,*(d->s0.external_state_variables));\n"
+                   << "mg.addExternalStateVariableValue(\"" << evname << "["
+                   << i << "]\",dt,*(d->s1.external_state_variables));\n";
+             } else {
+               out << "mg.addExternalStateVariableValue(\"" << evname << "["
+                   << i << "]\","
+                           "0,*(d->s0.external_state_variables+"
+                   << offset << "));\n"
+                   << "mg.addExternalStateVariableValue(\"" << evname << "["
+                   << i << "]\","
+                           "dt,*(d->s1.external_state_variables+"
+                   << offset << "))\n";
+             }
+           }
+         }
+       }
+     }
+     out << "mg.generate(\"" + name + "\");\n"
+         << "static_cast<void>(TVectorSize); // remove gcc warning\n"
+         << "static_cast<void>(StensorSize); // remove gcc warning\n"
+         << "static_cast<void>(TensorSize);  // remove gcc warning\n";
+  }  // end of GenericBehaviourInterface::generateMTestFile
 
   std::string GenericBehaviourInterface::getLibraryName(
       const BehaviourDescription& bd) const {

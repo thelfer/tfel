@@ -253,23 +253,26 @@ namespace mfront{
     };
     if(!i.empty()){
       if(std::find(i.begin(),i.end(),this->getName())!=i.end()){
-	auto keys =  AbaqusInterfaceBase::getCommonKeywords();
-	keys.insert(keys.end(),{"@AbaqusGenerateMTestFileOnFailure",
-	      "@AbaqusCompareToNumericalTangentOperator",
-	      "@AbaqusTangentOperatorComparisonCriterium",
-	      "@AbaqusTangentOperatorComparisonCriterion",
-	      "@AbaqusStrainPerturbationValue"});
-	throw_if(std::find(keys.begin(),keys.end(),k)==keys.end(),
+        auto keys = AbaqusInterfaceBase::getCommonKeywords();
+        keys.insert(keys.end(), {"@AbaqusGenerateMTestFileOnFailure",
+                                 "@GenerateMTestFileOnFailure",
+                                 "@AbaqusCompareToNumericalTangentOperator",
+                                 "@AbaqusTangentOperatorComparisonCriterium",
+                                 "@AbaqusTangentOperatorComparisonCriterion",
+                                 "@AbaqusStrainPerturbationValue"});
+        throw_if(std::find(keys.begin(),keys.end(),k)==keys.end(),
 		 "unsupported key '"+k+"'");
       } else {
-	return {false,current};
+        return {false, current};
       }
     }
-    const auto r = AbaqusInterfaceBase::treatCommonKeywords(bd,k,current,end);
+    const auto r =
+        AbaqusInterfaceBase::treatCommonKeywords(bd, k, current, end);
     if(r.first){
       return r;
     }
-    if (k=="@AbaqusGenerateMTestFileOnFailure"){
+    if ((k == "@AbaqusGenerateMTestFileOnFailure") ||
+        (k == "@GenerateMTestFileOnFailure")) {
       this->setGenerateMTestFileOnFailureAttribute(
           bd, this->readBooleanValue(k, current, end));
       return {true,current};      

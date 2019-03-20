@@ -2405,7 +2405,9 @@ mfront/include/MFront/GenericBehaviour/State.h -text
 mfront/include/MFront/GenericBehaviour/State.hxx -text
 mfront/include/MFront/GenericBehaviour/Types.h -text
 mfront/include/MFront/GenericBehaviour/Types.hxx -text
+mfront/include/MFront/GenericBehaviourFiniteStrainMTestFileGenerator.hxx -text
 mfront/include/MFront/GenericBehaviourInterface.hxx -text
+mfront/include/MFront/GenericBehaviourSmallStrainMTestFileGenerator.hxx -text
 mfront/include/MFront/GenericBehaviourSymbolsGenerator.hxx -text
 mfront/include/MFront/GenericData.hxx -text
 mfront/include/MFront/GnuplotMaterialPropertyInterface.hxx -text
@@ -2651,7 +2653,9 @@ mfront/src/FiniteStrainSingleCrystalBrick.cxx -text
 mfront/src/Fortran03MaterialPropertyInterface.cxx -text
 mfront/src/FortranMaterialPropertyInterface.cxx -text
 mfront/src/GeneratorOptions.cxx -text
+mfront/src/GenericBehaviourFiniteStrainMTestFileGenerator.cxx -text
 mfront/src/GenericBehaviourInterface.cxx -text
+mfront/src/GenericBehaviourSmallStrainMTestFileGenerator.cxx -text
 mfront/src/GenericBehaviourSymbolsGenerator.cxx -text
 mfront/src/GnuplotMaterialPropertyInterface.cxx -text
 mfront/src/Gradient.cxx -text
@@ -5238,6 +5242,7 @@ mfront/tests/behaviours/generic/elasticity26.mtest -text
 mfront/tests/behaviours/generic/elasticity27.mtest -text
 mfront/tests/behaviours/generic/elasticity28.mtest -text
 mfront/tests/behaviours/generic/elasticity3.mtest -text
+mfront/tests/behaviours/generic/elasticity4-0.mtest -text
 mfront/tests/behaviours/generic/elasticity4-1.mtest -text
 mfront/tests/behaviours/generic/elasticity4-2.mtest -text
 mfront/tests/behaviours/generic/elasticity4-3.mtest -text

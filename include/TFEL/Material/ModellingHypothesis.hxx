@@ -19,31 +19,27 @@
 
 #include"TFEL/Config/TFELConfig.hxx"
 
-namespace tfel
-{
+namespace tfel {
 
-  namespace material
-  {
-    
+  namespace material {
+
     /*!
      * a helper structure defining the Hypothesis enum.
      */
-    struct TFELMATERIAL_VISIBILITY_EXPORT ModellingHypothesis
-    {
+    struct TFELMATERIAL_VISIBILITY_EXPORT ModellingHypothesis {
       /*!
        * the list of supported modelling hypothesis
        */
-      enum Hypothesis
-      {
-	AXISYMMETRICALGENERALISEDPLANESTRAIN,
-	AXISYMMETRICALGENERALISEDPLANESTRESS,
-	AXISYMMETRICAL,
-	PLANESTRESS,
-	PLANESTRAIN,
-	GENERALISEDPLANESTRAIN,
-	TRIDIMENSIONAL,
-	UNDEFINEDHYPOTHESIS
-      }; // end of enum ModellingHypothesis
+      enum Hypothesis {
+        AXISYMMETRICALGENERALISEDPLANESTRAIN,
+        AXISYMMETRICALGENERALISEDPLANESTRESS,
+        AXISYMMETRICAL,
+        PLANESTRESS,
+        PLANESTRAIN,
+        GENERALISEDPLANESTRAIN,
+        TRIDIMENSIONAL,
+        UNDEFINEDHYPOTHESIS
+      };  // end of enum ModellingHypothesis
 
       static const std::vector<Hypothesis>&
       getModellingHypotheses();

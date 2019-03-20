@@ -7,6 +7,10 @@ solved are described below.
 
 # Tickets fixed
 
+#Ticket #161: Buffer overflow in initial stress computation in the `generic` interface when using a strain measure
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/161/>
+
 #Ticket #153: `SignalManager.cxx` does not compile under `Mac OS`
 
 The issue is related to the fact that `sigfillset` is a macro under `Mac OS`.

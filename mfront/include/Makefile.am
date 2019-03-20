@@ -88,6 +88,8 @@ nobase_include_HEADERS= MFront/MFront.hxx                                      \
 			MFront/MTestFileGeneratorBase.hxx                                 \
 			MFront/UmatSmallStrainMTestFileGenerator.hxx                      \
 			MFront/UmatFiniteStrainMTestFileGenerator.hxx                     \
+			MFront/GenericBehaviourSmallStrainMTestFileGenerator.hxx          \
+			MFront/GenericBehaviourFiniteStrainMTestFileGenerator.hxx         \
 			MFront/AbstractBehaviourBrick.hxx                                 \
 			MFront/BehaviourBrickBase.hxx                                     \
 			MFront/AbstractBehaviourBrickFactory.hxx                          \

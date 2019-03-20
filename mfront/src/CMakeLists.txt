@@ -434,7 +434,9 @@ endif(UNIX)
 mfront_library(MTestFileGenerator
   MTestFileGeneratorBase.cxx
   UmatSmallStrainMTestFileGenerator.cxx
-  UmatFiniteStrainMTestFileGenerator.cxx)
+  UmatFiniteStrainMTestFileGenerator.cxx
+  GenericBehaviourSmallStrainMTestFileGenerator.cxx
+  GenericBehaviourFiniteStrainMTestFileGenerator.cxx)
 target_link_libraries(MTestFileGenerator
   TFELMaterial
   TFELMath

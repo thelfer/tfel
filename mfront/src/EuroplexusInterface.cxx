@@ -219,7 +219,8 @@ namespace mfront {
         throw_if((key != "@EuroplexusFiniteStrainStrategy") &&
                      (key != "@EPXFiniteStrainStrategy") &&
                      (key != "@EuroplexusGenerateMTestFileOnFailure") &&
-                     (key != "@EPXGenerateMTestFileOnFailure"),
+                     (key != "@EPXGenerateMTestFileOnFailure") &&
+                     (key != "@GenerateMTestFileOnFailure"),
                  "unsupported key '" + key + "'");
       } else {
         return {false, current};
@@ -244,7 +245,8 @@ namespace mfront {
       bd.setAttribute(EuroplexusInterface::finiteStrainStrategy, fs, false);
       return {true, current};
     } else if ((key == "@EuroplexusGenerateMTestFileOnFailure") ||
-               (key == "@EPXGenerateMTestFileOnFailure")) {
+               (key == "@EPXGenerateMTestFileOnFailure") ||
+               (key == "@GenerateMTestFileOnFailure")) {
       this->setGenerateMTestFileOnFailureAttribute(
           bd, this->readBooleanValue(key, current, end));
       return {true, current};

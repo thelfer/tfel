@@ -266,9 +266,11 @@ if TFEL_WIN
 libMFrontProfiling_la_LDFLAGS  = -no-undefined -avoid-version -Wl,--add-stdcall-alias -Wl,--kill-at
 endif # TFEL_WIN
 
-libMTestFileGenerator_la_SOURCES = MTestFileGeneratorBase.cxx             \
-				   UmatSmallStrainMTestFileGenerator.cxx  \
-				   UmatFiniteStrainMTestFileGenerator.cxx
+libMTestFileGenerator_la_SOURCES = MTestFileGeneratorBase.cxx         \
+				   UmatSmallStrainMTestFileGenerator.cxx              \
+				   UmatFiniteStrainMTestFileGenerator.cxx             \
+				   GenericBehaviourSmallStrainMTestFileGenerator.cxx  \
+				   GenericBehaviourFiniteStrainMTestFileGenerator.cxx
 
 libMTestFileGenerator_la_LIBADD  = -L$(top_builddir)/src/Utilities -lTFELUtilities \
 				   -L$(top_builddir)/src/Material  -lTFELMaterial  \

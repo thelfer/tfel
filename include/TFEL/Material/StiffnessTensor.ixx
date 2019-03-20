@@ -506,7 +506,7 @@ namespace tfel{
       Da(3,1)=StressType(0);
       Da(3,2)=StressType(0);
       Da(3,3)=D(3,3);
-    } // end of computeAlteredStiffnessTensor
+    } // end of ComputeAlteredStiffnessTensor
 
     template<unsigned short N,StiffnessTensorAlterationCharacteristic smt,
 	     typename StressType,typename RealType>

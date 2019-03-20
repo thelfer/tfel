@@ -952,31 +952,6 @@ namespace mfront {
     }
   }  // end of UMATInterfaceBase::writeIntegrationDataGradientSetter
 
-  bool UMATInterfaceBase::readBooleanValue(const std::string& key,
-                                           tokens_iterator& current,
-                                           const tokens_iterator end) const {
-    auto throw_if = [&key](const bool b, const std::string& m) {
-      tfel::raise_if(b, "UMATInterfaceBase::readBooleanValue: " + m +
-                            ".\nError while treating key (" + key + ")\n");
-    };
-    throw_if(current == end, "unexpected end of file");
-    const auto b = [&current, &throw_if]() -> bool {
-      if (current->value == "true") {
-        return true;
-      } else if (current->value == "false") {
-        return false;
-      } else {
-        throw_if(true, "expected 'true' or 'false'");
-      }
-    }();
-    ++(current);
-    throw_if(current == end, "unexpected end of file");
-    throw_if(current->value != ";",
-             "expected ';', read '" + current->value + "'");
-    ++(current);
-    return b;
-  }
-
   void UMATInterfaceBase::getExtraSrcIncludes(
       std::ostream& out, const BehaviourDescription& mb) const {
     if (mb.hasParameters()) {

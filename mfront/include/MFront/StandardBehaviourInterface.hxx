@@ -126,6 +126,15 @@ namespace mfront {
     virtual std::pair<bool, SupportedTypes::TypeSize>
     checkIfAxialStrainIsDefinedAndGetItsOffset(
         const BehaviourDescription&) const;
+    /*!
+     * \brief extract a boolean value from the current token
+     * \param[in] key: currently treated keyword
+     * \param[in] current: iterator to the current token
+     * \param[in] end: iterator after the last token
+     */
+    virtual bool readBooleanValue(const std::string &,
+                                  tokens_iterator &,
+                                  const tokens_iterator) const;
     //! destructor
     ~StandardBehaviourInterface() override;
   };  // end of struct StandardBehaviourInterface

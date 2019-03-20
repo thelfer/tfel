@@ -317,26 +317,32 @@ namespace mfront {
           (std::find(i.begin(), i.end(), "umat") != i.end()) ||
           (std::find(i.begin(), i.end(), "Castem") != i.end()) ||
           (std::find(i.begin(), i.end(), "Cast3M") != i.end())) {
-        throw_if(
-            (key != "@CastemGenerateMTestFileOnFailure") &&
-                (key != "@UMATGenerateMTestFileOnFailure") &&
-                (key != "@CastemUseTimeSubStepping") && (key != "@UMATUseTimeSubStepping") &&
-                (key != "@CastemMaximumSubStepping") && (key != "@UMATMaximumSubStepping") &&
-                (key != "@CastemDoSubSteppingOnInvalidResults") &&
-                (key != "@UMATDoSubSteppingOnInvalidResults") &&
-                (key != "@CastemFiniteStrainStrategy") && (key != "@UMATFiniteStrainStrategy") &&
-                (key != "@CastemFiniteStrainStrategies") && (key != "@UMATFiniteStrainStrategies"),
-            "unsupported keyword '" + key + "'");
+        throw_if((key != "@CastemGenerateMTestFileOnFailure") &&
+                     (key != "@GenerateMTestFileOnFailure") &&
+                     (key != "@UMATGenerateMTestFileOnFailure") &&
+                     (key != "@CastemUseTimeSubStepping") &&
+                     (key != "@UMATUseTimeSubStepping") &&
+                     (key != "@CastemMaximumSubStepping") &&
+                     (key != "@UMATMaximumSubStepping") &&
+                     (key != "@CastemDoSubSteppingOnInvalidResults") &&
+                     (key != "@UMATDoSubSteppingOnInvalidResults") &&
+                     (key != "@CastemFiniteStrainStrategy") &&
+                     (key != "@UMATFiniteStrainStrategy") &&
+                     (key != "@CastemFiniteStrainStrategies") &&
+                     (key != "@UMATFiniteStrainStrategies"),
+                 "unsupported keyword '" + key + "'");
       } else {
         return {false, current};
       }
     }
     if ((key == "@CastemGenerateMTestFileOnFailure") ||
-        (key == "@UMATGenerateMTestFileOnFailure")) {
+        (key == "@UMATGenerateMTestFileOnFailure") ||
+        (key == "@GenerateMTestFileOnFailure")) {
       this->setGenerateMTestFileOnFailureAttribute(
           bd, this->readBooleanValue(key, current, end));
       return {true, current};
-    } else if ((key == "@CastemUseTimeSubStepping") || (key == "@UMATUseTimeSubStepping")) {
+    } else if ((key == "@CastemUseTimeSubStepping") ||
+               (key == "@UMATUseTimeSubStepping")) {
       bd.setAttribute(CastemInterface::useTimeSubStepping,
                       this->readBooleanValue(key, current, end), false);
       return {true, current};

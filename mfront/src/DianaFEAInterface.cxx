@@ -108,6 +108,7 @@ namespace mfront {
       if (std::find(i.begin(), i.end(), this->getName()) != i.end()) {
         const auto keys =
             std::vector<std::string>{"@DianaFEAGenerateMTestFileOnFailure",
+                                     "@GenerateMTestFileOnFailure",
                                      "@DianaFEAStrainPerturbationValue"};
         throw_if(std::find(keys.begin(), keys.end(), k) == keys.end(),
                  "unsupported key '" + k + "'");
@@ -115,7 +116,8 @@ namespace mfront {
         return {false, current};
       }
     }
-    if (k == "@DianaFEAGenerateMTestFileOnFailure") {
+    if ((k == "@DianaFEAGenerateMTestFileOnFailure") ||
+        (k == "@GenerateMTestFileOnFailure")) {
       this->setGenerateMTestFileOnFailureAttribute(
           bd, this->readBooleanValue(k, current, end));
       return {true, current};

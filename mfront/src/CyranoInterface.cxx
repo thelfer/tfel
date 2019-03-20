@@ -116,7 +116,8 @@ namespace mfront {
       }
     }
     if ((key == "@CyranoGenerateMTestFileOnFailure") ||
-        (key == "@UMATGenerateMTestFileOnFailure")) {
+        (key == "@UMATGenerateMTestFileOnFailure") ||
+        (key == "@GenerateMTestFileOnFailure")) {
       this->setGenerateMTestFileOnFailureAttribute(
           bd, this->readBooleanValue(key, current, end));
       return {true, current};

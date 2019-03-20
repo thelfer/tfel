@@ -3,6 +3,7 @@ EXTRA_DIST = CMakeLists.txt                                                     
              elasticity2.mtest                                                         \
              elasticity3.mtest                                                         \
              elasticity4.mtest                                                         \
+             elasticity4-0.mtest                                                       \
              elasticity4-1.mtest                                                       \
              elasticity4-2.mtest                                                       \
              elasticity4-3.mtest                                                       \
