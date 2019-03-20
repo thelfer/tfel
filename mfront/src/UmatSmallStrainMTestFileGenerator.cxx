@@ -94,9 +94,13 @@ namespace mfront
     auto p=n.begin();
     for(i=0;p!=n.end();++i){
       os.precision(14);
-      os << this->eto[i];
+      if (i < 3) {
+        os << this->eto[i];
+      } else {
+        os << this->eto[i] * icste;
+      }
       if(++p!=n.end()){
-	os << ",";
+        os << ",";
       }
     }
     os << "};\n\n";
