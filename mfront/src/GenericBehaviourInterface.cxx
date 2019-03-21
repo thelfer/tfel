@@ -456,7 +456,7 @@ namespace mfront {
               << "d->s0.thermodynamic_forces = thermodynamic_forces0;\n"
               << "d->s1.thermodynamic_forces = thermodynamic_forces1;\n"
               << "d->K = K;\n"
-              << "const auto bp = K[0]<0.5;\n"
+              << "const auto bp = K[0]<-0.5;\n"
               << "const auto bk = K[0]>0.5;\n";
         } else {
           raise("unsupported strain measure");
