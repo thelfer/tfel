@@ -5218,8 +5218,15 @@ mfront/tests/behaviours/fanderson/fandersonviscochaboche.mtest.in -text
 mfront/tests/behaviours/fanderson/fandersonviscoplasisocin.mtest.in -text
 mfront/tests/behaviours/generic/CMakeLists.txt -text
 mfront/tests/behaviours/generic/Makefile.am -text
+mfront/tests/behaviours/generic/axialgrowth.mtest -text
+mfront/tests/behaviours/generic/axialgrowth2.mtest -text
+mfront/tests/behaviours/generic/axialgrowth3.mtest -text
 mfront/tests/behaviours/generic/chaboche.mtest -text
 mfront/tests/behaviours/generic/chaboche2.mtest -text
+mfront/tests/behaviours/generic/computestressfreeexpansion.mtest -text
+mfront/tests/behaviours/generic/computethermalexpansion.mtest -text
+mfront/tests/behaviours/generic/computethermalexpansion2.mtest -text
+mfront/tests/behaviours/generic/computethermalexpansion3.mtest -text
 mfront/tests/behaviours/generic/elasticity.mtest -text
 mfront/tests/behaviours/generic/elasticity10.mtest -text
 mfront/tests/behaviours/generic/elasticity11.mtest -text
@@ -5294,6 +5301,10 @@ mfront/tests/behaviours/generic/finiterotationsmallstrainelasticity2-uniaxialloa
 mfront/tests/behaviours/generic/implicitnorton-planestress.mtest -text
 mfront/tests/behaviours/generic/implicitnorton.mtest -text
 mfront/tests/behaviours/generic/implicitnorton2.mtest -text
+mfront/tests/behaviours/generic/isotropiclinearswelling.mtest -text
+mfront/tests/behaviours/generic/isotropiclinearswelling2.mtest -text
+mfront/tests/behaviours/generic/isotropicvolumeswelling.mtest -text
+mfront/tests/behaviours/generic/isotropicvolumeswelling2.mtest -text
 mfront/tests/behaviours/generic/lorentz.mtest -text
 mfront/tests/behaviours/generic/lorentz2.mtest -text
 mfront/tests/behaviours/generic/mieheapellambrechtlogarithmicstrainelasticity-shear-2D.mtest -text
@@ -5333,6 +5344,10 @@ mfront/tests/behaviours/generic/mieheapellambrechtlogarithmicstrainnortoncreep-u
 mfront/tests/behaviours/generic/mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-3-1D.mtest -text
 mfront/tests/behaviours/generic/mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-3-2D.mtest -text
 mfront/tests/behaviours/generic/mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-3-3D.mtest -text
+mfront/tests/behaviours/generic/orthotropicswelling.mtest -text
+mfront/tests/behaviours/generic/orthotropicswelling2.mtest -text
+mfront/tests/behaviours/generic/orthotropicswelling3.mtest -text
+mfront/tests/behaviours/generic/relocationtest.mtest -text
 mfront/tests/behaviours/generic/saintvenantkirchhoffelasticity-shear-1-2D.mtest -text
 mfront/tests/behaviours/generic/saintvenantkirchhoffelasticity-shear-1-3D.mtest -text
 mfront/tests/behaviours/generic/saintvenantkirchhoffelasticity-shear-2-2D.mtest -text

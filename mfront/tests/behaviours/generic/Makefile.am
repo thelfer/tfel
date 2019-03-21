@@ -140,4 +140,19 @@ EXTRA_DIST = CMakeLists.txt                                                     
              implicitnorton2.mtest                                                     \
              implicitnorton-planestress.mtest                                          \
              chaboche.mtest                                                            \
-             chaboche2.mtest
+             chaboche2.mtest							       \
+             axialgrowth.mtest							       \
+             axialgrowth2.mtest							       \
+             axialgrowth3.mtest							       \
+             computestressfreeexpansion.mtest					       \
+             computethermalexpansion.mtest					       \
+             computethermalexpansion2.mtest					       \
+             computethermalexpansion3.mtest					       \
+             isotropiclinearswelling.mtest					       \
+             isotropiclinearswelling2.mtest					       \
+             isotropicvolumeswelling.mtest					       \
+             isotropicvolumeswelling2.mtest					       \
+             orthotropicswelling.mtest						       \
+             orthotropicswelling2.mtest						       \
+             orthotropicswelling3.mtest						       \
+             relocationtest.mtest
