@@ -1018,6 +1018,21 @@ namespace tfel {
       return fct;
     }
 
+    DianaFEAFctPtr ExternalLibraryManager::getDianaFEAExternalBehaviourFunction(
+        const std::string& l, const std::string& f) {
+      const auto lib = this->loadLibrary(l);
+      auto fct = ::tfel_getDianaFEAExternalBehaviourFunction(lib, f.c_str());
+      raise_if(fct == nullptr,
+               "ExternalLibraryManager::"
+               "getDianaFEAExternalBehaviourFunction: "
+               "could not load Diana FEA external behaviour '" +
+                   f +
+                   "' "
+                   "(" +
+                   getErrorMessage() + ")");
+      return fct;
+    } // end of ExternalLibraryManager::getDianaFEAExternalBehaviourFunction
+
     CastemFctPtr ExternalLibraryManager::getCastemExternalBehaviourFunction(
         const std::string& l, const std::string& f) {
       const auto lib = this->loadLibrary(l);

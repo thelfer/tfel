@@ -51,6 +51,7 @@ extern "C" {
   typedef int AnsysIntegerType;
   typedef int EuroplexusIntegerType;
   typedef int CalculiXIntegerType;
+  typedef int DianaFEAIntegerType;
   
   typedef double AbaqusRealType;
   typedef double AnsysRealType;
@@ -59,6 +60,7 @@ extern "C" {
   typedef double AsterRealType;
   typedef double EuroplexusRealType;
   typedef double CalculiXRealType;
+  typedef double DianaFEARealType;
 
 #ifndef LIB_MFRONT_GENERICBEHAVIOUR_BEHAVIOURDATA_H
 #define MFRONT_GB_BEHAVIOURDATA_FORWARD_DECLARATION
@@ -72,11 +74,9 @@ extern "C" {
 
 #ifdef	__cplusplus
 
-namespace tfel
-{
+namespace tfel {
 
-  namespace system
-  {
+  namespace system {
 
     extern "C" {
 
@@ -540,7 +540,24 @@ namespace tfel
 						     const CalculiXIntegerType* const,
 						     const int /* hidden fortran parameter */);
       
-    }
+      /*!
+       * \brief a simple alias.
+       * This is the prototype of the external functions used by the
+       * Diana FEA finite element solver
+       */
+      typedef void(TFEL_ADDCALL_PTR DianaFEAFctPtr)(
+          DianaFEARealType *const,
+          DianaFEARealType *const,
+          DianaFEARealType *const,
+          const DianaFEAIntegerType *const,
+          const DianaFEARealType *const,
+          const DianaFEARealType *const,
+          const DianaFEARealType *const,
+          const DianaFEARealType *const,
+          const DianaFEARealType *const,
+          const DianaFEARealType *const);
+
+    } // end of extern "C"
     
   } // end of namespace system
     

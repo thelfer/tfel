@@ -70,3 +70,5 @@ install_mtest_header(MTest TextDataUtilities.hxx)
 install_mtest_header(MTest MTestParser.hxx)
 install_mtest_header(MTest PipeTestParser.hxx)
 install_mtest_header(MTest GasEquationOfState.hxx)
+install_mtest_header(MTest DianaFEASmallStrainBehaviour.hxx)
+

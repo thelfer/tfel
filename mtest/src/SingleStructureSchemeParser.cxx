@@ -160,6 +160,11 @@ namespace mtest {
         i = "CalculiX";
       }
 #endif /* HAVE_CALCULIX */
+#ifdef HAVE_DIANAFEA
+      if((p->value=="dianafea")||(p->value=="DianaFEA")){
+        i = "DianaFEA";
+      }
+#endif /* HAVE_DIANAFEA */
       tfel::raise_if(i.empty(),
 		     "SingleStructureSchemeParser::handleBehaviour: "
 		     "unknown interface '"+p->value+"'");

@@ -86,7 +86,8 @@ nobase_include_HEADERS = MTest/Config.hxx	                         \
 			 MTest/SingleStructureSchemeParser.hxx	         \
 			 MTest/MTestParser.hxx                           \
 			 MTest/PipeTestParser.hxx                        \
-			 MTest/GasEquationOfState.hxx
+			 MTest/GasEquationOfState.hxx                    \
+			 MTest/DianaFEASmallStrainBehaviour.hxx
 
 EXTRA_DIST = CMakeLists.txt      \
 	     MTest/mtest.doxygen

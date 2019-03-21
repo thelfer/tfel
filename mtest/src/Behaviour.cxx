@@ -57,6 +57,9 @@
 #include "MTest/CalculiXSmallStrainBehaviour.hxx"
 #include "MTest/CalculiXFiniteStrainBehaviour.hxx"
 #endif /* HAVE_CALCULIX  */
+#ifdef HAVE_DIANAFEA
+#include "MTest/DianaFEASmallStrainBehaviour.hxx"
+#endif /* HAVE_DIANAFEA  */
 
 namespace mtest {
 
@@ -211,6 +214,17 @@ namespace mtest {
         b = std::make_shared<CalculiXSmallStrainBehaviour>(h, l, f);
       } else if (type == 2u) {
         b = std::make_shared<CalculiXFiniteStrainBehaviour>(h, l, f);
+      } else {
+        throw_if(true, "unsupported behaviour type (" + std::to_string(type) + ")");
+      }
+    }
+#endif
+#ifdef HAVE_DIANAFEA
+    if ((in == "dianafea") || (in == "DianaFEA")) {
+      check_no_parameters();
+      const auto type = elm.getUMATBehaviourType(l, f);
+      if (type == 1u) {
+        b = std::make_shared<DianaFEASmallStrainBehaviour>(h, l, f);
       } else {
         throw_if(true, "unsupported behaviour type (" + std::to_string(type) + ")");
       }

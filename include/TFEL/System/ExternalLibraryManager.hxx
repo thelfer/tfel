@@ -399,6 +399,12 @@ namespace tfel {
       CalculiXFctPtr getCalculiXExternalBehaviourFunction(const std::string&,
                                                           const std::string&);
       /*!
+       * \param[in] l : name of the library
+       * \param[in] f : law name
+       */
+      DianaFEAFctPtr getDianaFEAExternalBehaviourFunction(const std::string&,
+                                                          const std::string&);
+      /*!
        * \note the loadLibrary must have already been called with this name
        */
       bool isUMATBehaviourUsableInPurelyImplicitResolution(const std::string&,

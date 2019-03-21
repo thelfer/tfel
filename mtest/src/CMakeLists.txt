@@ -160,6 +160,15 @@ set(TFELMTest_LDADD
     ${TFELMTest_LDADD})
 endif(HAVE_CYRANO)
 
+if(HAVE_DIANAFEA)
+  set(TFELMTest_SOURCES
+    DianaFEASmallStrainBehaviour.cxx
+    ${TFELMTest_SOURCES})
+set(TFELMTest_LDADD
+  DianaFEAInterface
+  ${TFELMTest_LDADD})
+endif(HAVE_DIANAFEA)
+
 mtest_library(TFELMTest ${TFELMTest_SOURCES})
 target_link_libraries(TFELMTest ${TFELMTest_LDADD})
 

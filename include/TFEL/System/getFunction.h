@@ -224,41 +224,41 @@ extern "C" {
    * \param[in] n: name of the function to be checked
    * \return a function pointer if the call succeed, the NULL pointer if not.
    */
-  void (TFEL_ADDCALL_PTR tfel_getAbaqusExplicitExternalBehaviourFunction(LibraryHandlerPtr,
-									 const char * const))(const AbaqusIntegerType *const,
-											     const AbaqusIntegerType *const,
-											     const AbaqusIntegerType *const,
-											     const AbaqusIntegerType *const,
-											     const AbaqusIntegerType *const,
-											     const AbaqusIntegerType *const,
-											     const AbaqusIntegerType *const,
-											     const AbaqusRealType* const,
-											     const AbaqusRealType* const,
-											     const AbaqusRealType* const,
-											     const char* const,
-											     const AbaqusRealType* const,
-											     const AbaqusRealType* const,
-											     const AbaqusRealType* const,
-											     const AbaqusRealType* const,
-											     const AbaqusRealType* const,
-											     const AbaqusRealType* const,
-											     const AbaqusRealType* const,
-											     const AbaqusRealType* const,
-											     const AbaqusRealType* const,
-											     const AbaqusRealType* const,
-											     const AbaqusRealType* const,
-											     const AbaqusRealType* const,
-											     const AbaqusRealType* const,
-											     const AbaqusRealType* const,
-											     const AbaqusRealType* const,
-											     const AbaqusRealType* const,
-											     const AbaqusRealType* const,
-											     const AbaqusRealType* const,
-											     AbaqusRealType* const,
-											     AbaqusRealType* const,
-											     AbaqusRealType* const,
-											      AbaqusRealType* const,
-											      const int);
+  void(TFEL_ADDCALL_PTR tfel_getAbaqusExplicitExternalBehaviourFunction(
+      LibraryHandlerPtr, const char* const))(const AbaqusIntegerType* const,
+                                             const AbaqusIntegerType* const,
+                                             const AbaqusIntegerType* const,
+                                             const AbaqusIntegerType* const,
+                                             const AbaqusIntegerType* const,
+                                             const AbaqusIntegerType* const,
+                                             const AbaqusIntegerType* const,
+                                             const AbaqusRealType* const,
+                                             const AbaqusRealType* const,
+                                             const AbaqusRealType* const,
+                                             const char* const,
+                                             const AbaqusRealType* const,
+                                             const AbaqusRealType* const,
+                                             const AbaqusRealType* const,
+                                             const AbaqusRealType* const,
+                                             const AbaqusRealType* const,
+                                             const AbaqusRealType* const,
+                                             const AbaqusRealType* const,
+                                             const AbaqusRealType* const,
+                                             const AbaqusRealType* const,
+                                             const AbaqusRealType* const,
+                                             const AbaqusRealType* const,
+                                             const AbaqusRealType* const,
+                                             const AbaqusRealType* const,
+                                             const AbaqusRealType* const,
+                                             const AbaqusRealType* const,
+                                             const AbaqusRealType* const,
+                                             const AbaqusRealType* const,
+                                             const AbaqusRealType* const,
+                                             AbaqusRealType* const,
+                                             AbaqusRealType* const,
+                                             AbaqusRealType* const,
+                                             AbaqusRealType* const,
+                                             const int);
   /*!
    * \return a pointer to an Ansys (usermat) behaviour
    *
@@ -270,181 +270,187 @@ extern "C" {
    * \param[in] n: name of the function to be checked
    * \return a function pointer if the call succeed, the NULL pointer if not.
    */
-  void (TFEL_ADDCALL_PTR tfel_getAnsysExternalBehaviourFunction(LibraryHandlerPtr,const char * const))(const AnsysIntegerType *const,
-												       const AnsysIntegerType *const,
-												       const AnsysIntegerType *const,
-												       const AnsysIntegerType *const,
-												       const AnsysIntegerType *const,
-												       const AnsysIntegerType *const,
-												       const AnsysIntegerType *const,
-												       AnsysIntegerType *const,
-												       const AnsysIntegerType *const,
-												       const AnsysIntegerType *const,
-												       const AnsysIntegerType *const,
-												       const AnsysIntegerType *const,
-												       const AnsysIntegerType *const,
-												       const AnsysRealType *const,
-												       const AnsysRealType *const,
-												       const AnsysRealType *const,
-												       const AnsysRealType *const,
-												       AnsysRealType *const,
-												       AnsysRealType *const,
-												       AnsysRealType *const,
-												       AnsysRealType *const,
-												       AnsysRealType *const,
-												       AnsysRealType *const,
-												       const AnsysRealType *const,
-												       const AnsysRealType *const,
-												       AnsysRealType *const,
-												       const AnsysRealType *const,
-												       const AnsysRealType *const,
-												       const AnsysRealType *const,
-												       const AnsysRealType *const,
-												       const AnsysRealType *const,
-												       const AnsysRealType *const,
-												       AnsysRealType *const,
-												       const AnsysRealType *const,
-												       const AnsysRealType *const,
-												       const AnsysRealType *const,
-												       const AnsysRealType *const,
-												       const AnsysRealType *const,
-												       const AnsysRealType *const,
-												       const AnsysRealType *const,
-												       const AnsysRealType *const);
+  void(TFEL_ADDCALL_PTR tfel_getAnsysExternalBehaviourFunction(
+      LibraryHandlerPtr, const char* const))(const AnsysIntegerType* const,
+                                             const AnsysIntegerType* const,
+                                             const AnsysIntegerType* const,
+                                             const AnsysIntegerType* const,
+                                             const AnsysIntegerType* const,
+                                             const AnsysIntegerType* const,
+                                             const AnsysIntegerType* const,
+                                             AnsysIntegerType* const,
+                                             const AnsysIntegerType* const,
+                                             const AnsysIntegerType* const,
+                                             const AnsysIntegerType* const,
+                                             const AnsysIntegerType* const,
+                                             const AnsysIntegerType* const,
+                                             const AnsysRealType* const,
+                                             const AnsysRealType* const,
+                                             const AnsysRealType* const,
+                                             const AnsysRealType* const,
+                                             AnsysRealType* const,
+                                             AnsysRealType* const,
+                                             AnsysRealType* const,
+                                             AnsysRealType* const,
+                                             AnsysRealType* const,
+                                             AnsysRealType* const,
+                                             const AnsysRealType* const,
+                                             const AnsysRealType* const,
+                                             AnsysRealType* const,
+                                             const AnsysRealType* const,
+                                             const AnsysRealType* const,
+                                             const AnsysRealType* const,
+                                             const AnsysRealType* const,
+                                             const AnsysRealType* const,
+                                             const AnsysRealType* const,
+                                             AnsysRealType* const,
+                                             const AnsysRealType* const,
+                                             const AnsysRealType* const,
+                                             const AnsysRealType* const,
+                                             const AnsysRealType* const,
+                                             const AnsysRealType* const,
+                                             const AnsysRealType* const,
+                                             const AnsysRealType* const,
+                                             const AnsysRealType* const);
   /*!
    * \return a pointer to a Castem external behaviour
    * \param[in] l : library
    * \param[in] n : external behaviour name
    */
-  void (TFEL_ADDCALL_PTR tfel_getCastemExternalBehaviourFunction(LibraryHandlerPtr,const char * const))(CastemRealType *const,
-												CastemRealType *const,
-												CastemRealType *const,
-												CastemRealType *const,
-												CastemRealType *const,
-												CastemRealType *const,
-												CastemRealType *const,
-												CastemRealType *const,
-												CastemRealType *const,
-												CastemRealType *const,
-												const CastemRealType *const,
-												const CastemRealType *const,
-												const CastemRealType *const,
-												const CastemRealType *const,
-												const CastemRealType *const,
-												const CastemRealType *const,
-												const CastemRealType *const,
-												const CastemRealType *const,
-												const char      *const,
-												const CastemIntegerType  *const,
-												const CastemIntegerType  *const,
-												const CastemIntegerType  *const,
-												const CastemIntegerType  *const,
-												const CastemRealType *const,
-												const CastemIntegerType  *const,
-												const CastemRealType *const,
-												const CastemRealType *const,
-												CastemRealType *const,
-												const CastemRealType *const,
-												const CastemRealType *const,
-												const CastemRealType *const,
-												const CastemIntegerType  *const,
-												const CastemIntegerType  *const,
-												const CastemIntegerType  *const,
-												const CastemIntegerType  *const,
-												const CastemIntegerType  *const,
-												CastemIntegerType  *const,
-												const int);
+  void(TFEL_ADDCALL_PTR tfel_getCastemExternalBehaviourFunction(
+      LibraryHandlerPtr, const char* const))(CastemRealType* const,
+                                             CastemRealType* const,
+                                             CastemRealType* const,
+                                             CastemRealType* const,
+                                             CastemRealType* const,
+                                             CastemRealType* const,
+                                             CastemRealType* const,
+                                             CastemRealType* const,
+                                             CastemRealType* const,
+                                             CastemRealType* const,
+                                             const CastemRealType* const,
+                                             const CastemRealType* const,
+                                             const CastemRealType* const,
+                                             const CastemRealType* const,
+                                             const CastemRealType* const,
+                                             const CastemRealType* const,
+                                             const CastemRealType* const,
+                                             const CastemRealType* const,
+                                             const char* const,
+                                             const CastemIntegerType* const,
+                                             const CastemIntegerType* const,
+                                             const CastemIntegerType* const,
+                                             const CastemIntegerType* const,
+                                             const CastemRealType* const,
+                                             const CastemIntegerType* const,
+                                             const CastemRealType* const,
+                                             const CastemRealType* const,
+                                             CastemRealType* const,
+                                             const CastemRealType* const,
+                                             const CastemRealType* const,
+                                             const CastemRealType* const,
+                                             const CastemIntegerType* const,
+                                             const CastemIntegerType* const,
+                                             const CastemIntegerType* const,
+                                             const CastemIntegerType* const,
+                                             const CastemIntegerType* const,
+                                             CastemIntegerType* const,
+                                             const int);
 
- /*!
-   * \brief this function returns a function of type
-   *  void (*)(AsterRealType *const,
-   *	       AsterRealType *const,
-   *	       AsterRealType *const,
-   *	       const AsterRealType *const,
-   *	       const AsterRealType *const,
-   *	       const AsterRealType *const,
-   *	       const AsterRealType *const,
-   *	       const AsterRealType *const,
-   *	       const AsterRealType *const,
-   *	       const AsterRealType *const,
-   *	       const AsterIntegerType  *const,
-   *	       const AsterIntegerType  *const,
-   *	       const AsterRealType *const,
-   *	       const AsterIntegerType  *const,
-   *	       const AsterRealType *const,
-   *	       AsterRealType *const,
-   *	       const AsterIntegerType  *const)
-   *
-   * This function is a simple wrapper around dlsym. We can check if a
-   * symbol with the given name exists but cannot check if it points to
-   * a function with that prototype.
-   *
-   * \param LibraryHandlerPtr, link to library opened through dlopen
-   * \param const char * const, name of the function to be checked
-   * \return a function pointer if the call succeed, the NULL pointer if not.
-   */
-  void (TFEL_ADDCALL_PTR tfel_getAsterFunction(LibraryHandlerPtr,const char * const))(AsterRealType *const,
-										      AsterRealType *const,
-										      AsterRealType *const,
-										      const AsterRealType *const,
-										      const AsterRealType *const,
-										      const AsterRealType *const,
-										      const AsterRealType *const,
-										      const AsterRealType *const,
-										      const AsterRealType *const,
-										      const AsterRealType *const,
-										      const AsterIntegerType  *const,
-										      const AsterIntegerType  *const,
-										      const AsterRealType *const,
-										      const AsterIntegerType  *const,
-										      const AsterRealType *const,
-										      AsterRealType *const,
-										      const AsterIntegerType  *const);
- /*!
-   * \brief this function returns a function of type
-   *  const char* (*)(void)
-   *
-   * This function is a simple wrapper around dlsym. We can check if a
-   * symbol with the given name exists but cannot check if it points to
-   * a function with that prototype.
-   *
-   * \param[in] lib: handler to the library opened through dlopen
-   * \param[in] f: name of the function to be checked
-   * \return a function pointer if the call succeed, the NULL pointer if not.
-   */
-  const char* (TFEL_ADDCALL_PTR tfel_getAsterIntegrationErrorMessage(LibraryHandlerPtr,const char * const))();
- /*!
-   * \brief this function returns a pointer to an europlexus external
-   * function.
-   *
-   * This function is a simple wrapper around dlsym. We can check if a
-   * symbol with the given name exists but cannot check if it points to
-   * a function with that prototype.
-   *
-   * \param l: library opened through dlopen
-   * \param f: name of the function to be checked
-   * \return a function pointer if the call succeed, the NULL pointer if not.
-   */
-  void (TFEL_ADDCALL_PTR tfel_getEuroplexusFunction(LibraryHandlerPtr,const char * const))(EuroplexusIntegerType *const,
-											   EuroplexusRealType *const,
-											   EuroplexusRealType *const,
-											   EuroplexusRealType *const,
-											   EuroplexusRealType *const,
-											   EuroplexusIntegerType *const,
-											   char *const,
-											   const EuroplexusIntegerType  *const,
-											   const EuroplexusIntegerType  *const,
-											   const EuroplexusRealType *const,
-											   const EuroplexusRealType *const,
-											   const EuroplexusRealType *const,
-											   const EuroplexusRealType *const,
-											   const EuroplexusRealType *const,
-											   const EuroplexusIntegerType  *const,
-											   const EuroplexusRealType *const,
-											   const EuroplexusRealType *const,
-											   const EuroplexusRealType *const,
-											   const EuroplexusRealType *const,
-											   const EuroplexusIntegerType  *const);
+  /*!
+    * \brief this function returns a function of type
+    *  void (*)(AsterRealType *const,
+    *	       AsterRealType *const,
+    *	       AsterRealType *const,
+    *	       const AsterRealType *const,
+    *	       const AsterRealType *const,
+    *	       const AsterRealType *const,
+    *	       const AsterRealType *const,
+    *	       const AsterRealType *const,
+    *	       const AsterRealType *const,
+    *	       const AsterRealType *const,
+    *	       const AsterIntegerType  *const,
+    *	       const AsterIntegerType  *const,
+    *	       const AsterRealType *const,
+    *	       const AsterIntegerType  *const,
+    *	       const AsterRealType *const,
+    *	       AsterRealType *const,
+    *	       const AsterIntegerType  *const)
+    *
+    * This function is a simple wrapper around dlsym. We can check if a
+    * symbol with the given name exists but cannot check if it points to
+    * a function with that prototype.
+    *
+    * \param LibraryHandlerPtr, link to library opened through dlopen
+    * \param const char * const, name of the function to be checked
+    * \return a function pointer if the call succeed, the NULL pointer if not.
+    */
+  void(TFEL_ADDCALL_PTR tfel_getAsterFunction(
+      LibraryHandlerPtr, const char* const))(AsterRealType* const,
+                                             AsterRealType* const,
+                                             AsterRealType* const,
+                                             const AsterRealType* const,
+                                             const AsterRealType* const,
+                                             const AsterRealType* const,
+                                             const AsterRealType* const,
+                                             const AsterRealType* const,
+                                             const AsterRealType* const,
+                                             const AsterRealType* const,
+                                             const AsterIntegerType* const,
+                                             const AsterIntegerType* const,
+                                             const AsterRealType* const,
+                                             const AsterIntegerType* const,
+                                             const AsterRealType* const,
+                                             AsterRealType* const,
+                                             const AsterIntegerType* const);
+  /*!
+    * \brief this function returns a function of type
+    *  const char* (*)(void)
+    *
+    * This function is a simple wrapper around dlsym. We can check if a
+    * symbol with the given name exists but cannot check if it points to
+    * a function with that prototype.
+    *
+    * \param[in] lib: handler to the library opened through dlopen
+    * \param[in] f: name of the function to be checked
+    * \return a function pointer if the call succeed, the NULL pointer if not.
+    */
+  const char*(TFEL_ADDCALL_PTR tfel_getAsterIntegrationErrorMessage(
+      LibraryHandlerPtr, const char* const))();
+  /*!
+    * \brief this function returns a pointer to an europlexus external
+    * function.
+    *
+    * This function is a simple wrapper around dlsym. We can check if a
+    * symbol with the given name exists but cannot check if it points to
+    * a function with that prototype.
+    *
+    * \param l: library opened through dlopen
+    * \param f: name of the function to be checked
+    * \return a function pointer if the call succeed, the NULL pointer if not.
+    */
+  void(TFEL_ADDCALL_PTR tfel_getEuroplexusFunction(LibraryHandlerPtr,
+                                                   const char* const))(
+      EuroplexusIntegerType* const,
+      EuroplexusRealType* const,
+      EuroplexusRealType* const,
+      EuroplexusRealType* const,
+      EuroplexusRealType* const,
+      EuroplexusIntegerType* const,
+      char* const,
+      const EuroplexusIntegerType* const,
+      const EuroplexusIntegerType* const,
+      const EuroplexusRealType* const,
+      const EuroplexusRealType* const,
+      const EuroplexusRealType* const,
+      const EuroplexusRealType* const,
+      const EuroplexusRealType* const,
+      const EuroplexusIntegerType* const,
+      const EuroplexusRealType* const,
+      const EuroplexusRealType* const,
+      const EuroplexusRealType* const,
+      const EuroplexusRealType* const,
+      const EuroplexusIntegerType* const);
   /*!
    * \return a pointer to an CalculiX external behaviour
    *
@@ -456,54 +462,78 @@ extern "C" {
    * \param[in] n: name of the function to be checked
    * \return a function pointer if the call succeed, the NULL pointer if not.
    */
-  void (TFEL_ADDCALL_PTR tfel_getCalculiXExternalBehaviourFunction(LibraryHandlerPtr,const char * const))(const char * const,
-													  const CalculiXIntegerType* const,
-													  const CalculiXIntegerType* const,
-													  const CalculiXIntegerType* const,
-													  const CalculiXRealType* const,
-													  const CalculiXRealType* const,
-													  const CalculiXRealType* const,
-													  const CalculiXRealType* const,
-													  const CalculiXRealType* const,
-													  const CalculiXRealType* const,
-													  const CalculiXRealType* const,
-													  const CalculiXRealType* const,
-													  const CalculiXIntegerType* const,
-													  const CalculiXRealType* const,
-													  const CalculiXRealType* const,
-													  const CalculiXRealType* const,
-													  const CalculiXRealType* const,
-													  const CalculiXIntegerType* const,
-													  const CalculiXIntegerType* const,
-													  const CalculiXIntegerType* const,
-													  const CalculiXIntegerType* const,
-													  const CalculiXRealType* const,
-													  CalculiXRealType* const,
-													  CalculiXRealType* const,
-													  CalculiXRealType* const,
-													  const CalculiXIntegerType* const,
-													  const CalculiXRealType* const,
-													  const CalculiXRealType* const,
-													  CalculiXRealType* const,
-													  const CalculiXIntegerType* const,
-													  const int);
+  void(TFEL_ADDCALL_PTR tfel_getCalculiXExternalBehaviourFunction(
+      LibraryHandlerPtr, const char* const))(const char* const,
+                                             const CalculiXIntegerType* const,
+                                             const CalculiXIntegerType* const,
+                                             const CalculiXIntegerType* const,
+                                             const CalculiXRealType* const,
+                                             const CalculiXRealType* const,
+                                             const CalculiXRealType* const,
+                                             const CalculiXRealType* const,
+                                             const CalculiXRealType* const,
+                                             const CalculiXRealType* const,
+                                             const CalculiXRealType* const,
+                                             const CalculiXRealType* const,
+                                             const CalculiXIntegerType* const,
+                                             const CalculiXRealType* const,
+                                             const CalculiXRealType* const,
+                                             const CalculiXRealType* const,
+                                             const CalculiXRealType* const,
+                                             const CalculiXIntegerType* const,
+                                             const CalculiXIntegerType* const,
+                                             const CalculiXIntegerType* const,
+                                             const CalculiXIntegerType* const,
+                                             const CalculiXRealType* const,
+                                             CalculiXRealType* const,
+                                             CalculiXRealType* const,
+                                             CalculiXRealType* const,
+                                             const CalculiXIntegerType* const,
+                                             const CalculiXRealType* const,
+                                             const CalculiXRealType* const,
+                                             CalculiXRealType* const,
+                                             const CalculiXIntegerType* const,
+                                             const int);
   /*!
-   * \brief this function returns a function of type
-   * double (*)(const double * const)
-   *
-   * The name 'castem' comes from an extension we wrote for that
-   * finite element code that uses function with the following
-   * prototype double (*)(const double* const);
+   * \return a pointer toan Diana FEA external behaviour
    *
    * This function is a simple wrapper around dlsym. We can check if a
    * symbol with the given name exists but cannot check if it points to
    * a function with that prototype.
    *
-   * \param LibraryHandlerPtr, link to library opened through dlopen
-   * \param const char * const, name of the function to be checked
+   * \param[in] l: link to library opened through dlopen
+   * \param[in] n: name of the function to be checked
    * \return a function pointer if the call succeed, the NULL pointer if not.
    */
-  double (TFEL_ADDCALL_PTR tfel_getCastemFunction(LibraryHandlerPtr,const char * const))(const double*const);
+  void(TFEL_ADDCALL_PTR tfel_getDianaFEAExternalBehaviourFunction(
+      LibraryHandlerPtr, const char* const))(DianaFEARealType* const,
+                                             DianaFEARealType* const,
+                                             DianaFEARealType* const,
+                                             const DianaFEAIntegerType* const,
+                                             const DianaFEARealType* const,
+                                             const DianaFEARealType* const,
+                                             const DianaFEARealType* const,
+                                             const DianaFEARealType* const,
+                                             const DianaFEARealType* const,
+                                             const DianaFEARealType* const);
+  /*!
+   * \brief this function returns a function of type
+  * double (*)(const double * const)
+  *
+  * The name 'castem' comes from an extension we wrote for that
+  * finite element code that uses function with the following
+  * prototype double (*)(const double* const);
+  *
+  * This function is a simple wrapper around dlsym. We can check if a
+  * symbol with the given name exists but cannot check if it points to
+  * a function with that prototype.
+  *
+  * \param LibraryHandlerPtr, link to library opened through dlopen
+  * \param const char * const, name of the function to be checked
+  * \return a function pointer if the call succeed, the NULL pointer if not.
+  */
+  double(TFEL_ADDCALL_PTR tfel_getCastemFunction(
+      LibraryHandlerPtr, const char* const))(const double* const);
 
   /*!
    * \brief this function returns a function of type

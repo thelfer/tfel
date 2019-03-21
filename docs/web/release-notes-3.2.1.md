@@ -7,6 +7,23 @@ solved are described below.
 
 # Tickets fixed
 
+#Ticket #164: 
+
+There was a error in the generated code, so the type of computation was
+not handled properly:
+
+~~~~
+const auto bp = K[0]<0.5;
+~~~~
+
+shall be (as documented):
+
+~~~~
+const auto bp = K[0]<-0.5;
+~~~~
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/164/>
+
 #Ticket #161: Buffer overflow in initial stress computation in the `generic` interface when using a strain measure
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/161/>

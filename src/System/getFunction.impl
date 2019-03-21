@@ -634,7 +634,28 @@ extern "C" {
 				    const CalculiXRealType* const,CalculiXRealType* const,const CalculiXIntegerType* const,
 				    const int))dlsym(l,n);
   }
-  
+
+  void(TFEL_ADDCALL_PTR tfel_getDianaFEAExternalBehaviourFunction(
+      LibraryHandlerPtr l,
+      const char *const n))(DianaFEARealType *const,
+                            DianaFEARealType *const,
+                            DianaFEARealType *const,
+                            const DianaFEAIntegerType *const,
+                            const DianaFEARealType *const,
+                            const DianaFEARealType *const,
+                            const DianaFEARealType *const,
+                            const DianaFEARealType *const,
+                            const DianaFEARealType *const,
+                            const DianaFEARealType *const) {
+    typedef void(TFEL_ADDCALL_PTR FctPtr)(
+        DianaFEARealType * const, DianaFEARealType *const,
+        DianaFEARealType *const, const DianaFEAIntegerType *const,
+        const DianaFEARealType *const, const DianaFEARealType *const,
+        const DianaFEARealType *const, const DianaFEARealType *const,
+        const DianaFEARealType *const, const DianaFEARealType *const);
+    return (FctPtr)dlsym(l, n);
+  }  // end of tfel_getDianaFEAExternalBehaviourFunction
+
   double (TFEL_ADDCALL_PTR tfel_getCFunction0(LibraryHandlerPtr lib,const char * const name))(){
     return (double (TFEL_ADDCALL_PTR)()) dlsym(lib,name);
   } 

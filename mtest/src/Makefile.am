@@ -141,4 +141,9 @@ libTFELMTest_la_SOURCES += CyranoBehaviour.cxx
 libTFELMTest_la_LIBADD  += -L$(top_builddir)/mfront/src -lCyranoInterface
 endif
 
+if HAVE_DIANAFEA
+libTFELMTest_la_SOURCES += DianaFEASmallStrainBehaviour.cxx
+libTFELMTest_la_LIBADD  += -L$(top_builddir)/mfront/src -lDianaFEAInterface
+endif
+
 EXTRA_DIST=CMakeLists.txt
