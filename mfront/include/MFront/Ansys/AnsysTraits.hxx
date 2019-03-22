@@ -39,6 +39,7 @@ namespace ansys{
     static constexpr bool requiresThermalExpansionCoefficientTensor  = false;
     static constexpr unsigned short elasticPropertiesOffset          = 0u;
     static constexpr unsigned short thermalExpansionPropertiesOffset = 0u;
+    static constexpr unsigned short orthotropicAxesOffset = 0u;
     // Type of the behaviour of the material (isotropic or orthotropic)
     static constexpr AnsysSymmetryType type   = ansys::ISOTROPIC;
     // Type of the elastic behaviour of the material (isotropic or orthotropic)
