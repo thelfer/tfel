@@ -7,7 +7,15 @@ solved are described below.
 
 # Tickets fixed
 
-#Ticket #164: 
+#Ticket #166: The offset in material properties associated with the rotation matrix is not taken into account propertly in the `Ansys` interface
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/166/>
+
+#Ticket #165: Integration failure is not always properly handled in the `Ansys` interface
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/165/>
+
+#Ticket #164: Prediction is not handled properly in the generic interface
 
 There was a error in the generated code, so the type of computation was
 not handled properly:

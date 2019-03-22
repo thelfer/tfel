@@ -22,8 +22,7 @@ namespace ansys{
    * \brief a structure used to collect the parameters passed through
    * the usermat interface.
    */
-  struct AnsysData
-  {
+  struct AnsysData {
     //! stress values
     AnsysReal *const STRESS;
     //! tangent operator

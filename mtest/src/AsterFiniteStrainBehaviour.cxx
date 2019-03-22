@@ -36,9 +36,7 @@
 namespace mtest
 {
 
-  static unsigned short
-  getRowIndex(const unsigned short i)
-  {
+  static unsigned short getRowIndex(const unsigned short i) {
     switch(i){
     case 0:
       return 0;
@@ -61,10 +59,8 @@ namespace mtest
     }
     return 0;
   }
-  
-  static unsigned short
-  getColumnIndex(const unsigned short j)
-  {
+
+  static unsigned short getColumnIndex(const unsigned short j) {
     switch(j){
     case 0:
       return 0;
@@ -88,15 +84,15 @@ namespace mtest
     return 0;
   }
 
-  template<unsigned short N>
-  static void
-  convertTangentOperator(tfel::math::matrix<real>& Kt,
-			 const tfel::math::matrix<aster::AsterReal>& D,
-			 const tfel::math::vector<real>& sv,
-			 const tfel::math::vector<real>& Fv0,
-			 const tfel::math::vector<real>& Fv1)
-  {
+  template <unsigned short N>
+  static void convertTangentOperator(
+      tfel::math::matrix<real>& Kt,
+      const tfel::math::matrix<aster::AsterReal>& D,
+      const tfel::math::vector<real>& sv,
+      const tfel::math::vector<real>& Fv0,
+      const tfel::math::vector<real>& Fv1) {
     using namespace tfel::math;
+    using size_type = unsigned short;
     t2tost2<N,real> dtau_ddF;
     t2tost2<N,real> dtau;
     t2tost2<N,real> dsig;
@@ -106,17 +102,19 @@ namespace mtest
     tensor<N,real>  inv_F0 = invert(F0);
     // reverting things
     const aster::AsterReal *v = &D(0,0);
-    for(unsigned short i=0;i!=StensorDimeToSize<N>::value;++i){  // boucle sur tau
-      for(unsigned short j=0;j!=TensorDimeToSize<N>::value;++j){  // boucle sur F
-	const unsigned short mi = getRowIndex(j);
-	const unsigned short mj = getColumnIndex(j);	
-	dtau_ddF(i,j) = v[i+6*(mi+3*mj)];
+    for (size_type i = 0; i != StensorDimeToSize<N>::value;
+         ++i) {  // boucle sur tau
+      for (size_type j = 0; j != TensorDimeToSize<N>::value;
+           ++j) {  // boucle sur F
+        const size_type mi = getRowIndex(j);
+        const size_type mj = getColumnIndex(j);
+        dtau_ddF(i,j) = v[i+6*(mi+3*mj)];
       }
     }
-    dtau = dtau_ddF*t2tot2<N,real>::tpld(inv_F0);
+    dtau = dtau_ddF * t2tot2<N, real>::tpld(inv_F0);
     computeCauchyStressDerivativeFromKirchhoffStressDerivative(dsig,dtau,sig,F1);
-    for(unsigned short i=0;i!=StensorDimeToSize<N>::value;++i){  // boucle sur tau
-      for(unsigned short j=0;j!=TensorDimeToSize<N>::value;++j){  // boucle sur F
+    for(size_type i=0;i!=StensorDimeToSize<N>::value;++i){  // boucle sur tau
+      for(size_type j=0;j!=TensorDimeToSize<N>::value;++j){  // boucle sur F
     	Kt(i,j)=dsig(i,j);
       }
     }
@@ -140,30 +138,26 @@ namespace mtest
     }
   } // end of AsterFiniteStrainBehaviour::AsterFiniteStrainBehaviour
 
-  void
-  AsterFiniteStrainBehaviour::getGradientsDefaultInitialValues(tfel::math::vector<real>& v) const
-  {
+  void AsterFiniteStrainBehaviour::getGradientsDefaultInitialValues(
+      tfel::math::vector<real>& v) const {
     std::fill(v.begin(),v.end(),real(0));
     v[0] = v[1] = v[2] = real(1);
   }
 
-  void
-  AsterFiniteStrainBehaviour::allocate(BehaviourWorkSpace& wk) const
-  {
+  void AsterFiniteStrainBehaviour::allocate(BehaviourWorkSpace& wk) const {
     AsterStandardBehaviour::allocate(wk);
     if(this->afsf==1u){
       wk.D.resize(6u,9u);
     }
   }
 
-  std::pair<bool,real>
-  AsterFiniteStrainBehaviour::call_behaviour(tfel::math::matrix<real>& Kt,
-					     CurrentState& s,
-					     BehaviourWorkSpace& wk,
-					     const real dt,
-					     const StiffnessMatrixType ktype,
-					     const bool b) const
-  {
+  std::pair<bool, real> AsterFiniteStrainBehaviour::call_behaviour(
+      tfel::math::matrix<real>& Kt,
+      CurrentState& s,
+      BehaviourWorkSpace& wk,
+      const real dt,
+      const StiffnessMatrixType ktype,
+      const bool b) const {
     using namespace std;
     using namespace tfel::math;
     using namespace tfel::material;
