@@ -14,6 +14,9 @@
 #define NOMINMAX
 #endif
 #include <windows.h>
+#ifdef small
+#undef small
+#endif /* small */
 typedef HINSTANCE__* LibraryHandlerPtr;
 #else
 typedef void*        LibraryHandlerPtr;

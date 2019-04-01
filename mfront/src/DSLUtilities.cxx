@@ -148,8 +148,8 @@ namespace mfront
     os << '\n';
   } // end of writeStaticVariables
 
-  std::string getMaterialLawLibraryNameBase(const MaterialPropertyDescription& mpd)
-  {
+  std::string getMaterialLawLibraryNameBase(
+      const MaterialPropertyDescription& mpd) {
     const auto material = mpd.material;
     const auto library  = mpd.library;
     if(library.empty()){
@@ -159,7 +159,7 @@ namespace mfront
       return material;
     }
     return library;
-  } // end of getLibraryNameBase
+  } // end of getMaterialLawLibraryNameBase
 
   void writeF77FUNCMacros(std::ostream& f)
   {
@@ -189,29 +189,32 @@ namespace mfront
     f << "#endif\n\n";
   } // end of writeF77FuncMacros
   
-  void writeExportDirectives(std::ostream& file)
-  {
-    file << "#ifdef _WIN32\n"
-	 << "#ifndef NOMINMAX\n"
-	 << "#define NOMINMAX\n"
-	 << "#endif /* NOMINMAX */\n"
-	 << "#include <windows.h>\n"
-	 << "#ifndef MFRONT_SHAREDOBJ\n"
-	 << "#ifdef  MFRONT_COMPILING\n"
-	 << "#define MFRONT_SHAREDOBJ __declspec(dllexport)\n"
-	 << "#else /* MFRONT_COMPILING */\n"
-	 << "#define MFRONT_SHAREDOBJ __declspec(dllimport)\n"
-	 << "#endif /* MFRONT_COMPILING */\n"
-	 << "#endif /* MFRONT_SHAREDOBJ */\n"
-	 << "#else\n"
-	 << "#ifndef MFRONT_SHAREDOBJ\n"
-	 << "#ifdef __GNUC__\n"
-	 << "#define MFRONT_SHAREDOBJ __attribute__((visibility(\"default\")))\n"
-	 << "#else\n"
-	 << "#define MFRONT_SHAREDOBJ\n"
-	 << "#endif /* __GNUC__ */\n"
-	 << "#endif /* MFRONT_SHAREDOBJ */\n"
-	 << "#endif /* _WIN32 */\n\n";
+  void writeExportDirectives(std::ostream& file){
+    file
+        << "#ifdef _WIN32\n"
+        << "#ifndef NOMINMAX\n"
+        << "#define NOMINMAX\n"
+        << "#endif /* NOMINMAX */\n"
+        << "#include <windows.h>\n"
+        << "#ifdef small\n"
+        << "#undef small\n"
+        << "#endif /* small */\n"
+        << "#ifndef MFRONT_SHAREDOBJ\n"
+        << "#ifdef  MFRONT_COMPILING\n"
+        << "#define MFRONT_SHAREDOBJ __declspec(dllexport)\n"
+        << "#else /* MFRONT_COMPILING */\n"
+        << "#define MFRONT_SHAREDOBJ __declspec(dllimport)\n"
+        << "#endif /* MFRONT_COMPILING */\n"
+        << "#endif /* MFRONT_SHAREDOBJ */\n"
+        << "#else\n"
+        << "#ifndef MFRONT_SHAREDOBJ\n"
+        << "#ifdef __GNUC__\n"
+        << "#define MFRONT_SHAREDOBJ __attribute__((visibility(\"default\")))\n"
+        << "#else\n"
+        << "#define MFRONT_SHAREDOBJ\n"
+        << "#endif /* __GNUC__ */\n"
+        << "#endif /* MFRONT_SHAREDOBJ */\n"
+        << "#endif /* _WIN32 */\n\n";
   } // end of writeExportDirectives
 
   std::string makeUpperCase(const std::string& n)
