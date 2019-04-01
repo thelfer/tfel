@@ -20,6 +20,9 @@
 
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
 #include <windows.h>
+#ifdef small
+#undef small
+#endif /* small */
 #endif /* LIB_EXTERNALLIBRARYMANAGER_HXX */
 
 #include "TFEL/Config/TFELConfig.hxx"
