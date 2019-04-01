@@ -31,41 +31,38 @@ namespace mtest
   StandardBehaviourDescription&
   StandardBehaviourDescription::operator=(const StandardBehaviourDescription&) = default;
 
-  StandardBehaviourDescription::StandardBehaviourDescription(const std::string& l,
-						     const std::string& b,
-						     const std::string& h)
-  {
+  StandardBehaviourDescription::StandardBehaviourDescription(
+      const std::string& l, const std::string& b, const std::string& h) {
     using namespace tfel::system;
     ExternalBehaviourData::operator=(ExternalBehaviourDescription(l,b,h));
-  }
-  
+  } // end of StandardBehaviourDescription::StandardBehaviourDescription
+
   StandardBehaviourBase::StandardBehaviourBase(const Hypothesis h,
-					       const std::string& l,
-					       const std::string& b)
-    : StandardBehaviourDescription(l,b,ModellingHypothesis::toString(h))
-  {
+                                               const std::string& l,
+                                               const std::string& b)
+      : StandardBehaviourDescription(l, b, ModellingHypothesis::toString(h)) {
     tfel::raise_if(this->stype>=2u,
 		   "StandardBehaviourBase::StandardBehaviourBase: "
 		   "unsupported behaviour type "
 		   "(neither isotropic nor orthotropic)");
     this->evnames.insert(this->evnames.begin(),"Temperature");
-  }
+  } // end of StandardBehaviourBase::StandardBehaviourBase
 
-  StandardBehaviourBase::StandardBehaviourBase(const StandardBehaviourDescription& umb)
-    : StandardBehaviourDescription(umb)
-  {
+  StandardBehaviourBase::StandardBehaviourBase(
+      const StandardBehaviourDescription& umb)
+      : StandardBehaviourDescription(umb) {
     tfel::raise_if(this->stype>=2u,
 		   "StandardBehaviourBase::StandardBehaviourBase: "
 		   "unsupported behaviour type "
 		   "(neither isotropic nor orthotropic)");
-  }
-  
+  } // end of StandardBehaviourBase::StandardBehaviourBase
+
   StandardBehaviourBase::Hypothesis StandardBehaviourBase::getHypothesis() const{
     return ModellingHypothesis::fromString(this->hypothesis);
   } // end of StandardBehaviourBase::getHypothesis
-  
-  void StandardBehaviourBase::setOutOfBoundsPolicy(const tfel::material::OutOfBoundsPolicy p) const
-  {
+
+  void StandardBehaviourBase::setOutOfBoundsPolicy(
+      const tfel::material::OutOfBoundsPolicy p) const {
     auto& elm = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
     elm.setOutOfBoundsPolicy(this->library,this->behaviour,p);
   } // end of StandardBehaviourBase::setOutOfBoundsPolicy

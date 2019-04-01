@@ -161,7 +161,9 @@ namespace mtest {
   }
 
   std::pair<bool, real> AbaqusStandardBehaviour::computePredictionOperator(
-      BehaviourWorkSpace& wk, const CurrentState& s, const StiffnessMatrixType ktype) const {
+      BehaviourWorkSpace& wk,
+      const CurrentState& s,
+      const StiffnessMatrixType ktype) const {
     if (ktype == StiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES) {
       return {false, real(-1)};
     }
@@ -169,10 +171,11 @@ namespace mtest {
     return this->call_behaviour(wk.kt, wk.cs, wk, real(1), ktype, false);
   }
 
-  std::pair<bool, real> AbaqusStandardBehaviour::integrate(CurrentState& s,
-                                                           BehaviourWorkSpace& wk,
-                                                           const real dt,
-                                                           const StiffnessMatrixType ktype) const {
+  std::pair<bool, real> AbaqusStandardBehaviour::integrate(
+      CurrentState& s,
+      BehaviourWorkSpace& wk,
+      const real dt,
+      const StiffnessMatrixType ktype) const {
     return this->call_behaviour(wk.k, s, wk, dt, ktype, true);
   }  // end of AbaqusStandardBehaviour::integrate
 

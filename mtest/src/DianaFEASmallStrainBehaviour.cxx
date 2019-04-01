@@ -37,6 +37,21 @@ namespace mtest {
   DianaFEASmallStrainBehaviour::DianaFEASmallStrainBehaviour(
       const Hypothesis h, const std::string& l, const std::string& b)
       : StandardBehaviourBase(h, l, b) {
+    auto& elm = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
+    this->fct = elm.getDianaFEAExternalBehaviourFunction(l, b);
+    if (this->stype != 0) {
+      tfel::raise(
+          "DianaFEASmallStrainBehaviour::DianaFEASmallStrainBehaviour: "
+          "only isotropic behaviours are supported");
+    }
+    auto tmp = std::vector<std::string>{};
+    if (this->requiresStiffnessTensor) {
+      tmp.insert(tmp.end(), {"YoungModulus", "PoissonRatio"});
+    }
+    if (this->requiresThermalExpansionCoefficientTensor) {
+      tmp.push_back("ThermalExpansion");
+    }
+    this->mpnames.insert(this->mpnames.begin(),tmp.begin(),tmp.end());
   }  // end of DianaFEASmallStrainBehaviour::DianaFEASmallStrainBehaviour
 
   void DianaFEASmallStrainBehaviour::allocate(BehaviourWorkSpace& wk) const{
@@ -46,7 +61,7 @@ namespace mtest {
     wk.D.resize(nth,nth);
     wk.k.resize(nth,ndv);
     wk.kt.resize(nth,ndv);
-    wk.ivs.resize(nstatev==0 ? 1u : nstatev,real(0));
+    wk.ivs.resize(nstatev);
     wk.nk.resize(nth,ndv);
     wk.ne.resize(ndv);
     wk.ns.resize(nth);
@@ -94,77 +109,63 @@ namespace mtest {
       const bool b) const {
     using namespace std;
     using namespace tfel::math;
+    using namespace dianafea;
     using tfel::math::vector;
+    using tfel::material::getSpaceDimension;
     constexpr const auto sqrt2 = Cste<real>::sqrt2;
     auto throw_if = [](const bool c, const std::string& m) {
       tfel::raise_if(c, "DianaFEASmallStrainBehaviour::call_behaviour: " + m);
     };
-
-    //     throw_if((wk.D.getNbRows() != Kt.getNbRows()) ||
-    //                  (wk.D.getNbCols() != Kt.getNbCols()),
-    //              "the memory has not been allocated correctly");
-    //     throw_if(((s.iv0.size() == 0) && (wk.ivs.size() != 1u)) ||
-    //                  ((s.iv0.size() != 0) && (s.iv0.size() !=
-    //                  wk.ivs.size())),
-    //              "the memory has not been allocated correctly (2)");
-    //     std::fill(wk.D.begin(), wk.D.end(), 0.);
-    //     // choosing the type of stiffness matrix
-    //     StandardBehaviourBase::initializeTangentOperator(wk.D, ktype, b);
-    //     // state variable initial values
-    //     if (s.iv0.size() != 0) {
-    //       copy(s.iv0.begin(), s.iv0.end(), wk.ivs.begin());
-    //     }
-    //     nstatv = static_cast<DianaFEAInt>(wk.ivs.size());
-    //     // rotation matrix
-    //     tmatrix<3u, 3u, real> drot = transpose(s.r);
-    //     tmatrix<3u, 3u, real>::size_type i;
-    //     DianaFEAInt kinc(1);
-    //     stensor<3u, real> ue0(real(0));
-    //     stensor<3u, real> ude(real(0));
-    //     copy(s.e0.begin(), s.e0.end(), ue0.begin());
-    //     for (i = 0; i != s.e1.size(); ++i) {
-    //       ude(i) = s.e1(i) - s.e0(i);
-    //     }
-    //     copy(s.s0.begin(), s.s0.end(), s.s1.begin());
-    //     // thermal strain
-    //     for (i = 0; i != s.e1.size(); ++i) {
-    //       ue0(i) -= s.e_th0(i);
-    //       ude(i) -= s.e_th1(i) - s.e_th0(i);
-    //     }
-    //     // castem conventions
-    //     for (i = 3; i != static_cast<unsigned short>(ntens); ++i) {
-    //       s.s1(i) /= sqrt2;
-    //       ue0(i) *= sqrt2;
-    //       ude(i) *= sqrt2;
-    //     }
-    //     auto ndt = std::numeric_limits<DianaFEAReal>::max();
-    //     const auto name = this->getBehaviourNameForUMATFunctionCall();
-    //     const real time[2] = {0, dt};
-    //     (this->fct)(&(s.s1(0)), &wk.ivs(0), &(wk.D(0, 0)), nullptr, nullptr,
-    //                 nullptr, nullptr, nullptr, nullptr, nullptr, &ue0(0),
-    //                 &ude(0),
-    //                 time, &dt, &(s.esv0(0)), &(s.desv(0)), &(s.esv0(0)) + 1,
-    //                 &(s.desv(0)) + 1, name, &ndi, nullptr, &ntens, &nstatv,
-    //                 &(wk.mps(0)), &nprops, nullptr, &drot(0, 0), &ndt,
-    //                 nullptr,
-    //                 nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
-    //                 nullptr,
-    //                 &kinc, name == nullptr ? 0 : ::strlen(name));
-    //     if (kinc != 1) {
-    //       return {false, ndt};
-    //     }
-    //     // tangent operator (...)
-    //     if (ktype != StiffnessMatrixType::NOSTIFFNESS) {
-    //       UmatNormaliseTangentOperator::exe(&Kt(0, 0), wk.D, dimension);
-    //     }
-    //     if (!s.iv1.empty()) {
-    //       std::copy_n(wk.ivs.begin(), s.iv1.size(), s.iv1.begin());
-    //     }
-    //     // turning things in standard conventions
-    //     for (i = 3; i != static_cast<unsigned short>(ntens); ++i) {
-    //       s.s1(i) *= sqrt2;
-    //     }
-    //     return {true, ndt};
+    throw_if((wk.D.getNbRows() != Kt.getNbRows()) ||
+                 (wk.D.getNbCols() != Kt.getNbCols()),
+             "the memory has not been allocated correctly");
+    throw_if(s.iv0.size() != wk.ivs.size(),
+             "the memory has not been allocated correctly (2)");
+    std::fill(wk.D.begin(), wk.D.end(), 0.);
+    // choosing the type of stiffness matrix
+    StandardBehaviourBase::initializeTangentOperator(wk.D, ktype, b);
+    // state variable initial values
+    std::copy(s.iv0.begin(), s.iv0.end(), wk.ivs.begin());
+    // strain
+    stensor<3u, real> ue0(real(0));
+    stensor<3u, real> ude(real(0));
+    std::copy(s.e0.begin(), s.e0.end(), ue0.begin());
+    for (decltype(s.e1.size()) i = 0; i != s.e1.size(); ++i) {
+      ude(i) = s.e1(i) - s.e0(i);
+    }
+    std::copy(s.s0.begin(), s.s0.end(), s.s1.begin());
+    // thermal strain
+    for (decltype(s.e1.size()) i = 0; i != s.e1.size(); ++i) {
+      ue0(i) -= s.e_th0(i);
+      ude(i) -= s.e_th1(i) - s.e_th0(i);
+    }
+    // convert from umat conventions
+    for (decltype(s.e1.size()) i = 3; i != this->getThermodynamicForcesSize(); ++i) {
+      s.s1(i) /= sqrt2;
+      ue0(i) *= sqrt2;
+      ude(i) *= sqrt2;
+    }
+    const auto nprops = static_cast<DianaFEAInt>(s.mprops1.size());
+    const auto ntens =
+        static_cast<DianaFEAInt>(this->getThermodynamicForcesSize());
+    const auto nstatv = static_cast<DianaFEAInt>(wk.ivs.size());
+    (this->fct)(&(s.s1(0)), &(wk.D(0, 0)),
+                wk.ivs.empty() ? nullptr : &wk.ivs(0), &ntens, &nprops, &nstatv,
+                &ue0(0), &ude(0), &dt,
+                s.mprops1.empty() ? nullptr : &s.mprops1(0), &(s.esv0(0)),
+                &(s.desv(0)));
+    // tangent operator
+    if (ktype != StiffnessMatrixType::NOSTIFFNESS) {
+      UmatNormaliseTangentOperator::exe(
+          &Kt(0, 0), wk.D, getSpaceDimension(this->getHypothesis()));
+    }
+    std::copy(wk.ivs.begin(), wk.ivs.end(), s.iv1.begin());
+    // turning things in standard conventions
+    for (decltype(s.e1.size()) i = 3; i != this->getThermodynamicForcesSize();
+         ++i) {
+      s.s1(i) *= sqrt2;
+    }
+    return {true, std::numeric_limits<DianaFEAReal>::max()};
   }  // end of DianaFEASmallStrainBehaviour::integrate
 
   void DianaFEASmallStrainBehaviour::setOptionalMaterialPropertiesDefaultValues(

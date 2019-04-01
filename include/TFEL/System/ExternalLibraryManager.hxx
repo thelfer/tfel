@@ -20,6 +20,9 @@
 
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
 #include <windows.h>
+#ifdef small
+#undef small
+#endif /* small */
 #endif /* LIB_EXTERNALLIBRARYMANAGER_HXX */
 
 #include "TFEL/Config/TFELConfig.hxx"
@@ -37,16 +40,16 @@ namespace tfel {
     struct TFELSYSTEM_VISIBILITY_EXPORT ExternalLibraryManager {
       //! \return the uniq instance of this class
       static ExternalLibraryManager& getExternalLibraryManager();
-/*!
- * \brief a wrapper around the ::dlopen system call
- * \param[in] name : name of the library
- * \param[in] b : boolean allowing ::dlopen to fail. If ::dlopen
- * fails, a null pointer is returned. This library is *not*
- * registred.
- * \return a pointer to the library
- * \note on success, the pointer is registred in a map using its
- * name as a key. This name is used in the methods of this call
- */
+      /*!
+       * \brief a wrapper around the ::dlopen system call
+       * \param[in] name : name of the library
+       * \param[in] b : boolean allowing ::dlopen to fail. If ::dlopen
+       * fails, a null pointer is returned. This library is *not*
+       * registred.
+       * \return a pointer to the library
+       * \note on success, the pointer is registred in a map using its
+       * name as a key. This name is used in the methods of this call
+       */
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
       HINSTANCE__* loadLibrary(const std::string&, const bool = false);
 #else

@@ -408,6 +408,12 @@ if(enable-java)
   add_definitions("-DTFEL_JAVA_INCLUDES=\\\"\"${JNI_INCLUDES_FLAGS}\"\\\"")
 endif(enable-java)
 
+option(enable-eigen-backend "enable eigen backend support" OFF)
+if(enable-eigen-backend)
+  find_package (Eigen3 REQUIRED)
+  add_definitions("-DTFEL_EIGEN_BACKEND=1")
+endif (enable-eigen-backend)
+
 # cadna
 include(cmake/modules/cadna.cmake)
 

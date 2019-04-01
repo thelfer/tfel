@@ -46,38 +46,29 @@ namespace mfront{
   protected:
     
     //! a simple alias
-    typedef std::shared_ptr<NonLinearSystemSolver> Solver;
+    using Solver = std::shared_ptr<NonLinearSystemSolver>;
 
-    virtual bool
-    isJacobianPart(const Hypothesis,
-		   const std::string&);
+    virtual bool isJacobianPart(const Hypothesis, const std::string&);
 
-    virtual void
-    predictorAnalyser(const Hypothesis,
-		      const std::string&);
-    
-    virtual void
-    integratorAnalyser(const Hypothesis,
-		       const std::string&);
+    virtual void predictorAnalyser(const Hypothesis, const std::string&);
+
+    virtual void integratorAnalyser(const Hypothesis, const std::string&);
 
     std::string tangentOperatorVariableModifier(const Hypothesis,
-						const std::string&,
-						const bool) override;
+                                                const std::string&,
+                                                const bool) override;
 
-    virtual std::string
-    integratorVariableModifier(const Hypothesis,
-			       const std::string&,
-			       const bool);
+    virtual std::string integratorVariableModifier(const Hypothesis,
+                                                   const std::string&,
+                                                   const bool);
 
-    virtual std::string
-    computeStressVariableModifier1(const Hypothesis,
-				   const std::string&,
-				   const bool);
+    virtual std::string computeStressVariableModifier1(const Hypothesis,
+                                                       const std::string&,
+                                                       const bool);
 
-    virtual std::string
-    computeStressVariableModifier2(const Hypothesis,
-				   const std::string&,
-				   const bool);
+    virtual std::string computeStressVariableModifier2(const Hypothesis,
+                                                       const std::string&,
+                                                       const bool);
     /*!
      * treat an unknown keyword. This method is overriden so the
      * solver may have specific keywords
@@ -169,14 +160,13 @@ namespace mfront{
      * \param[in] n : name
      */
     bool isCallableVariable(const Hypothesis,
-			    const std::string&) const override;
+                            const std::string&) const override;
     /*!
      * \return a type able to do the mapping of a variable with the
      * vector used by the root-finding algorithm.
      * \param[in] v : variable
      */
-    virtual std::string
-    getVectorMappingClass(const VariableDescription&) const;
+    virtual std::string getVectorMappingClass(const VariableDescription&) const;
 
     // let the BehaviourDSLBase access specific keywords
     friend struct BehaviourDSLBase<ImplicitDSLBase>;

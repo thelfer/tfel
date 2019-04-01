@@ -1703,6 +1703,7 @@ include/TFEL/Math/Kriging1D.hxx -text
 include/TFEL/Math/Kriging2D.hxx -text
 include/TFEL/Math/Kriging3D.hxx -text
 include/TFEL/Math/LU/LUDecomp.hxx -text
+include/TFEL/Math/LU/LUDecomp.ixx -text
 include/TFEL/Math/LU/LUException.hxx -text
 include/TFEL/Math/LU/Permutation.hxx -text
 include/TFEL/Math/LU/Permutation.ixx -text
@@ -4903,6 +4904,16 @@ mfront/tests/behaviours/cyrano/cyranoorthotropicswelling2.mtest.in -text
 mfront/tests/behaviours/cyrano/cyranoparametertest.mtest.in -text
 mfront/tests/behaviours/cyrano/cyranoparametertest2.mtest.in -text
 mfront/tests/behaviours/cyrano/cyranotemperatureupdateonsubsteppingcheck.mtest.in -text
+mfront/tests/behaviours/dianafea/CMakeLists.txt -text
+mfront/tests/behaviours/dianafea/Makefile.am -text
+mfront/tests/behaviours/dianafea/druckerprager.mtest -text
+mfront/tests/behaviours/dianafea/druckerprager2.mtest -text
+mfront/tests/behaviours/dianafea/elasticity.mtest -text
+mfront/tests/behaviours/dianafea/implicitnorton.mtest -text
+mfront/tests/behaviours/dianafea/mazars.mtest -text
+mfront/tests/behaviours/dianafea/mazars2.mtest -text
+mfront/tests/behaviours/dianafea/norton.mtest -text
+mfront/tests/behaviours/dianafea/plasticity.mtest -text
 mfront/tests/behaviours/epx/CMakeLists.txt -text
 mfront/tests/behaviours/epx/Makefile.am -text
 mfront/tests/behaviours/epx/epxaxialgrowth.mtest.in -text

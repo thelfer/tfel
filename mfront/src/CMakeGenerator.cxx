@@ -29,6 +29,9 @@
 #include <conio.h>
 #include <windows.h>
 #include <process.h>
+#ifdef small
+#undef small
+#endif /* small */
 #else
 #include <dlfcn.h>
 #include <sys/wait.h>

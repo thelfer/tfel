@@ -550,6 +550,8 @@ namespace tfel {
           DianaFEARealType *const,
           DianaFEARealType *const,
           const DianaFEAIntegerType *const,
+          const DianaFEAIntegerType *const,
+          const DianaFEAIntegerType *const,
           const DianaFEARealType *const,
           const DianaFEARealType *const,
           const DianaFEARealType *const,

@@ -174,12 +174,11 @@ namespace dianafea {
 
       TFEL_DIANAFEA_INLINE Integrator(const DianaFEAData& d)
           : behaviour(&(d.DTIME),
-                      d.TEMP,
-                      d.DTEMP,
+                      &(d.TEMP),
+                      &(d.DTEMP),
                       d.PROPS + DianaFEATraits<BV>::elasticPropertiesOffset +
                           DianaFEATraits<BV>::thermalExpansionPropertiesOffset,
-                      d.STATEV,
-                      d.DROT),
+                      d.STATEV),
             dt(d.DTIME) {
         using namespace tfel::material;
         typedef MechanicalBehaviourTraits<BV> Traits;
@@ -190,8 +189,7 @@ namespace dianafea {
         SInitializer::exe(this->behaviour, d.PROPS);
         AInitializer::exe(this->behaviour, d.PROPS);
         DVInitializer::exe(this->behaviour, d.STRAN, d.DSTRAN, d.sfeh);
-        this->behaviour.setDIANAFEABehaviourDataThermodynamicForces(d.STRESS,
-                                                                    d.DROT);
+        this->behaviour.setDIANAFEABehaviourDataThermodynamicForces(d.STRESS);
         this->behaviour.setOutOfBoundsPolicy(d.op);
         this->behaviour.initialize();
       }  // end of Integrator::Integrator

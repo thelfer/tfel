@@ -43,6 +43,10 @@ if(HAVE_CALCULIX)
   add_subdirectory(calculix)
 endif(HAVE_CALCULIX)
 
+if(HAVE_DIANAFEA)
+  add_subdirectory(dianafea)
+endif(HAVE_DIANAFEA)
+
 configure_file(PolyCrystals_DD_CC.mfront PolyCrystals_DD_CC.mfront.in @ONLY)
 
 install_mfront_data(tests/behaviours MaterialPropertiesBoundsCheck.mfront)

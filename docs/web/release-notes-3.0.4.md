@@ -7,6 +7,17 @@ solved are described below.
 
 # Tickets fixed
 
+## Ticket #168: Fix another Windows' oddity: disabling the `small` macro
+
+Including `windows.h` comes with a lot of noise. Apart from defining
+by default the `min` and `max` macros (this is already disabled in
+`MFront` from a long time), it also defines a macro called `small`.
+
+This shall be undefined to avoid strange and stupid errors (very
+difficult to debug even for advanced developers).
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/168/>
+
 ## Ticket #163: MTest file generation: shear components of the strain are ill initialized
 
 When generating MTest files on failure, the off-diagonal values of the

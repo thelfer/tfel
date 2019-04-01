@@ -22,24 +22,13 @@ namespace dianafea{
    * \brief a structure used to collect the parameters passed through
    * the usermat interface.
    */
-  struct DianaFEAData
-  {
+  struct DianaFEAData {
     //! stress values
     DianaFEAReal *const STRESS;
     //! tangent operator
     DianaFEAReal *const DDSDDE;
     //! state variables
     DianaFEAReal *const STATEV;
-    //! internal energy
-    DianaFEAReal *const SEDEL;
-    //! dissipated energy (e.g. plastic work)
-    DianaFEAReal *const SEDPL;
-    //! equivalent plastic strain
-    DianaFEAReal *const EPSEQ;
-    //! plastic strain
-    DianaFEAReal *const EPSPL;
-    //! axial strain
-    DianaFEAReal *const EPSZZ;
     //! number of components of symmetric tensors
     const DianaFEAInt  NTENS;
     //! number of material properties
@@ -48,18 +37,16 @@ namespace dianafea{
     const DianaFEAInt  NSTATV;
     //! time increment
     const DianaFEAReal DTIME;
-    //! infinitesimal rotation matrix increment
-    const DianaFEAReal *const DROT;
     //! strain
     const DianaFEAReal *const STRAN;
     //! strain increment
     const DianaFEAReal *const DSTRAN;
-    //! temperature
-    const DianaFEAReal *const TEMP;
-    //! temperature increment
-    const DianaFEAReal *const DTEMP;
     //! material properties
     const DianaFEAReal *const PROPS;
+    //! temperature
+    const DianaFEAReal TEMP;
+    //! temperature increment
+    const DianaFEAReal DTEMP;
     //! out of bounds policy
     const tfel::material::OutOfBoundsPolicy op;
     //! stress free expansion handler

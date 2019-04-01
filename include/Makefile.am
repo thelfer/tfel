@@ -197,6 +197,7 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/LU/TinyPermutation.ixx                                                             \
 			TFEL/Math/LU/TinyMatrixSolve.ixx		                                             \
 			TFEL/Math/LU/LUDecomp.hxx			                                             \
+			TFEL/Math/LU/LUDecomp.ixx			                                             \
 			TFEL/Math/QR/QRDecomp.hxx			                                             \
 			TFEL/Math/QR/QRDecomp.ixx			                                             \
 			TFEL/Math/QR/QRException.hxx			                                             \

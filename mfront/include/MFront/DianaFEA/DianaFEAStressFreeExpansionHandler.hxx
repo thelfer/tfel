@@ -17,8 +17,7 @@
 #include"MFront/DianaFEA/DianaFEA.hxx"
 #include"MFront/DianaFEA/DianaFEAConfig.hxx"
 
-namespace dianafea
-{
+namespace dianafea {
 
   /*!
    * standard handler of stress free expansion handler for small
@@ -34,69 +33,12 @@ namespace dianafea
    * \param[in] d      : spatial dimension
    */
   MFRONT_DIANAFEA_VISIBILITY_EXPORT void
-  DianaFEAStandardSmallStrainStressFreeExpansionHandler(float * const,
-						      float * const,
-						      const float *const,
-						      const float *const,
-						      const DianaFEAInt);
-  /*!
-   * standard handler of stress free expansion handler for small
-   * strain behaviours
-   * \param[in,out] e  : total deformation at the beginning of the time
-   *                     step (DianaFEA conventions)
-   * \param[in,out] de : total deformation increment over the time
-   *                     step (DianaFEA conventions)
-   * \param[in] s0     : stress free expansion at beginning of the time
-   *                     step (TFEL conventions)
-   * \param[in] s1     : stress free expansion at end of the time
-   *                     step (TFEL conventions)
-   * \param[in] d      : spatial dimension
-   */
-  MFRONT_DIANAFEA_VISIBILITY_EXPORT void
-  DianaFEAStandardSmallStrainStressFreeExpansionHandler(double * const,
-						      double * const,
-						      const double *const,
-						      const double *const,
-						      const DianaFEAInt);
-  /*!
-   * standard handler of stress free expansion handler for logarithmic
-   * strain behaviours
-   * \param[in,out] e  : total deformation at the beginning of the time
-   *                     step (DianaFEA conventions)
-   * \param[in,out] de : total deformation increment over the time
-   *                     step (DianaFEA conventions)
-   * \param[in] s0     : stress free expansion at beginning of the time
-   *                     step (TFEL conventions)
-   * \param[in] s1     : stress free expansion at end of the time
-   *                     step (TFEL conventions)
-   * \param[in] d      : spatial dimension
-   */
-  MFRONT_DIANAFEA_VISIBILITY_EXPORT void
-  DianaFEALogarithmicStrainStressFreeExpansionHandler(float * const,
-						    float * const,
-						    const float *const,
-						    const float *const,
-						    const DianaFEAInt);
-  /*!
-   * standard handler of stress free expansion handler for logarithmic
-   * strain behaviours
-   * \param[in,out] e  : total deformation at the beginning of the time
-   *                     step (DianaFEA conventions)
-   * \param[in,out] de : total deformation increment over the time
-   *                     step (DianaFEA conventions)
-   * \param[in] s0     : stress free expansion at beginning of the time
-   *                     step (TFEL conventions)
-   * \param[in] s1     : stress free expansion at end of the time
-   *                     step (TFEL conventions)
-   * \param[in] d      : spatial dimension
-   */
-  MFRONT_DIANAFEA_VISIBILITY_EXPORT void
-  DianaFEALogarithmicStrainStressFreeExpansionHandler(double * const,
-						    double * const,
-						    const double *const,
-						    const double *const,
-						    const DianaFEAInt);
-  
+  DianaFEAStandardSmallStrainStressFreeExpansionHandler(double *const,
+                                                        double *const,
+                                                        const double *const,
+                                                        const double *const,
+                                                        const DianaFEAInt);
+
 } // end of namespace dianafea
 
 #endif /* LIB_MFRONT_DIANAFEA_DIANAFEASTRESSFREEEXPANSIONHANDLER_HXX */

@@ -3134,6 +3134,7 @@ AC_OUTPUT([debug.sh Makefile Doxyfile docs/Makefile docs/tfel/Makefile
 	   mfront/tests/behaviours/calculix/calculixfinitestrainsinglecrystal-159.mtest
 	   mfront/tests/behaviours/calculix/calculixparametertest.mtest
 	   mfront/tests/behaviours/calculix/calculixparametertest2.mtest
+	   mfront/tests/behaviours/dianafea/Makefile
 	   mfront/tests/models/Makefile
 	   mfront/tests/models/interfaces/Makefile
 	   mfront/tests/models/interfaces/include/Makefile

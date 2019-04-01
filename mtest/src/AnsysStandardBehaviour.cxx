@@ -59,71 +59,74 @@ namespace mtest {
   AnsysStandardBehaviour::AnsysStandardBehaviour(const Hypothesis h,
                                                  const std::string& l,
                                                  const std::string& b)
-      : StandardBehaviourBase(h, l, AnsysStandardBehaviour::getBehaviourName(b, h)) {
-    auto throw_if = [](const bool c, const std::string& m){
-      tfel::raise_if(c,"AnsysStandardBehaviour::AnsysStandardBehaviour: "+m);
+      : StandardBehaviourBase(
+            h, l, AnsysStandardBehaviour::getBehaviourName(b, h)) {
+    auto throw_if = [](const bool c, const std::string& m) {
+      tfel::raise_if(c, "AnsysStandardBehaviour::AnsysStandardBehaviour: " + m);
     };
-    auto& elm = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
-    const auto bn = AnsysStandardBehaviour::getBehaviourName(b,h);
-    throw_if(elm.getInterface(l,bn)!="Ansys",
-	     "invalid interface '"+elm.getInterface(l,bn)+"'");
-    this->fct = elm.getAnsysExternalBehaviourFunction(l,b);
+    auto& elm =
+        tfel::system::ExternalLibraryManager::getExternalLibraryManager();
+    const auto bn = AnsysStandardBehaviour::getBehaviourName(b, h);
+    throw_if(elm.getInterface(l, bn) != "Ansys",
+             "invalid interface '" + elm.getInterface(l, bn) + "'");
+    this->fct = elm.getAnsysExternalBehaviourFunction(l, b);
     auto tmp = std::vector<std::string>{};
-    if(this->etype==0u){
-      if(this->requiresStiffnessTensor){
-	tmp.insert(tmp.end(),{"YoungModulus","PoissonRatio"});
+    if (this->etype == 0u) {
+      if (this->requiresStiffnessTensor) {
+        tmp.insert(tmp.end(), {"YoungModulus", "PoissonRatio"});
       }
-      if(this->requiresThermalExpansionCoefficientTensor){
-	tmp.push_back("ThermalExpansion");
+      if (this->requiresThermalExpansionCoefficientTensor) {
+        tmp.push_back("ThermalExpansion");
       }
-    } else if(this->etype==1u){
-      if((h==ModellingHypothesis::PLANESTRESS)||
-	 (h==ModellingHypothesis::PLANESTRAIN)||
-	 (h==ModellingHypothesis::AXISYMMETRICAL)){
-	if(this->requiresStiffnessTensor){
-	  tmp.insert(tmp.end(),{"YoungModulus1","YoungModulus2","YoungModulus3",
-		"PoissonRatio12","PoissonRatio23",
-		"PoissonRatio13","ShearModulus12"});
-	}
-	if(this->requiresThermalExpansionCoefficientTensor){
-	  tmp.insert(tmp.end(),{"ThermalExpansion1",
-		"ThermalExpansion2","ThermalExpansion3"});
-	}
-	tmp.insert(tmp.end(),{"FirstOrthotropicAxis_1","FirstOrthotropicAxis_2"});
-      } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
-	if(this->requiresStiffnessTensor){
-	  tmp.insert(tmp.end(),{"YoungModulus1","YoungModulus2","YoungModulus3",
-		"PoissonRatio12","PoissonRatio23","PoissonRatio13",
-		"ShearModulus12","ShearModulus23","ShearModulus13"});
-	}
-	if(this->requiresThermalExpansionCoefficientTensor){
-	  tmp.insert(tmp.end(),{"ThermalExpansion1",
-		"ThermalExpansion2","ThermalExpansion3"});
-	}
-	tmp.insert(tmp.end(),{"FirstOrthotropicAxis_1",
-	      "FirstOrthotropicAxis_2","FirstOrthotropicAxis_3",
-	      "SecondOrthotropicAxis_1",
-	      "SecondOrthotropicAxis_2","SecondOrthotropicAxis_3"});
-      } else { 
-	throw_if(true,"unsupported modelling hypothesis");
+    } else if (this->etype == 1u) {
+      if ((h == ModellingHypothesis::PLANESTRESS) ||
+          (h == ModellingHypothesis::PLANESTRAIN) ||
+          (h == ModellingHypothesis::AXISYMMETRICAL)) {
+        if (this->requiresStiffnessTensor) {
+          tmp.insert(tmp.end(),
+                     {"YoungModulus1", "YoungModulus2", "YoungModulus3",
+                      "PoissonRatio12", "PoissonRatio23", "PoissonRatio13",
+                      "ShearModulus12"});
+        }
+        if (this->requiresThermalExpansionCoefficientTensor) {
+          tmp.insert(tmp.end(), {"ThermalExpansion1", "ThermalExpansion2",
+                                 "ThermalExpansion3"});
+        }
+        tmp.insert(tmp.end(),
+                   {"FirstOrthotropicAxis_1", "FirstOrthotropicAxis_2"});
+      } else if (h == ModellingHypothesis::TRIDIMENSIONAL) {
+        if (this->requiresStiffnessTensor) {
+          tmp.insert(tmp.end(),
+                     {"YoungModulus1", "YoungModulus2", "YoungModulus3",
+                      "PoissonRatio12", "PoissonRatio23", "PoissonRatio13",
+                      "ShearModulus12", "ShearModulus23", "ShearModulus13"});
+        }
+        if (this->requiresThermalExpansionCoefficientTensor) {
+          tmp.insert(tmp.end(), {"ThermalExpansion1", "ThermalExpansion2",
+                                 "ThermalExpansion3"});
+        }
+        tmp.insert(tmp.end(),
+                   {"FirstOrthotropicAxis_1", "FirstOrthotropicAxis_2",
+                    "FirstOrthotropicAxis_3", "SecondOrthotropicAxis_1",
+                    "SecondOrthotropicAxis_2", "SecondOrthotropicAxis_3"});
+      } else {
+        throw_if(true, "unsupported modelling hypothesis");
       }
     } else {
-      throw_if(true,"unsupported behaviour type "
-	       "(neither isotropic nor orthotropic)");
+      throw_if(true,
+               "unsupported behaviour type "
+               "(neither isotropic nor orthotropic)");
     }
-    this->mpnames.insert(this->mpnames.begin(),tmp.begin(),tmp.end());
+    this->mpnames.insert(this->mpnames.begin(), tmp.begin(), tmp.end());
   }
 
-  tfel::math::tmatrix<3u,3u,real>
-  AnsysStandardBehaviour::getRotationMatrix(const tfel::math::vector<real>&,
-					    const tfel::math::tmatrix<3u,3u,real>& r) const
-  {
+  tfel::math::tmatrix<3u, 3u, real> AnsysStandardBehaviour::getRotationMatrix(
+      const tfel::math::vector<real>&,
+      const tfel::math::tmatrix<3u, 3u, real>& r) const {
     return r;
   } // end of AnsysStandardBehaviour::getRotationMatrix
 
-  void
-  AnsysStandardBehaviour::allocate(BehaviourWorkSpace& wk) const
-  {
+  void AnsysStandardBehaviour::allocate(BehaviourWorkSpace& wk) const {
     const auto ndv     = this->getGradientsSize();
     const auto nth     = this->getThermodynamicForcesSize();
     const auto nstatev = this->getInternalStateVariablesSize();
@@ -139,17 +142,15 @@ namespace mtest {
     mtest::allocate(wk.cs,this->shared_from_this());
   } // end of AnsysStandardBehaviour::allocate
 
-  StiffnessMatrixType
-  AnsysStandardBehaviour::getDefaultStiffnessMatrixType() const
-  {
+  StiffnessMatrixType AnsysStandardBehaviour::getDefaultStiffnessMatrixType()
+      const {
     return StiffnessMatrixType::CONSISTENTTANGENTOPERATOR;
   }
-  
-  std::pair<bool,real>
-  AnsysStandardBehaviour::computePredictionOperator(BehaviourWorkSpace& wk,
-						     const CurrentState& s,
-						     const StiffnessMatrixType ktype) const
-  {
+
+  std::pair<bool, real> AnsysStandardBehaviour::computePredictionOperator(
+      BehaviourWorkSpace& wk,
+      const CurrentState& s,
+      const StiffnessMatrixType ktype) const {
     if(ktype==StiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES){
       return {false,real(-1)};
     }
@@ -157,18 +158,16 @@ namespace mtest {
     return this->call_behaviour(wk.kt,wk.cs,wk,real(1),ktype,false);
   }
 
-  std::pair<bool,real>
-  AnsysStandardBehaviour::integrate(CurrentState& s,
-				     BehaviourWorkSpace& wk,
-				     const real dt,
-				     const StiffnessMatrixType ktype) const
-  {
+  std::pair<bool, real> AnsysStandardBehaviour::integrate(
+      CurrentState& s,
+      BehaviourWorkSpace& wk,
+      const real dt,
+      const StiffnessMatrixType ktype) const {
     return this->call_behaviour(wk.k,s,wk,dt,ktype,true);
   } // end of AnsysStandardBehaviour::integrate
 
   std::vector<std::string>::size_type
-  AnsysStandardBehaviour::getOrthototropicAxesOffset() const
-  {
+  AnsysStandardBehaviour::getOrthototropicAxesOffset() const {
     const auto b = this->mpnames.begin();
     const auto e = this->mpnames.end();
     const auto p = std::find(b,e,"FirstOrthotropicAxis_1");
@@ -177,47 +176,56 @@ namespace mtest {
 		   "orthotropic axes not found");
     return static_cast<std::vector<std::string>::size_type>(p-b);
   } // end of AnsysStandardBehaviour::getOrthototropicAxesOffset
-  
-  void
-  AnsysStandardBehaviour::setOptionalMaterialPropertiesDefaultValues(EvolutionManager& mp,
-								     const EvolutionManager& evm) const
-  {
+
+  void AnsysStandardBehaviour::setOptionalMaterialPropertiesDefaultValues(
+      EvolutionManager& mp, const EvolutionManager& evm) const {
     auto throw_if = [](const bool c, const std::string& m){
       tfel::raise_if(c,"AnsysStandardBehaviour::"
 		     "setOptionalMaterialPropertiesDefaultValues: "+m);
     };
-    if(this->stype==1){
+    if (this->stype == 1) {
       const auto h = this->getHypothesis();
       // orthotropic behaviour
-      const bool bv1x = evm.find("FirstOrthotropicAxis_1")!=evm.end();
-      const bool bv1y = evm.find("FirstOrthotropicAxis_2")!=evm.end();
-      if((h==ModellingHypothesis::AXISYMMETRICAL)||
-	 (h==ModellingHypothesis::PLANESTRESS)||
-	 (h==ModellingHypothesis::PLANESTRAIN)){
-	throw_if(bv1x||bv1y,"The components of the orthotropic basis shall not be"
-		 "defined directly, use @RotationMatrix");
-	Behaviour::setOptionalMaterialPropertyDefaultValue(mp,evm,"FirstOrthotropicAxis_1",1.);
-	Behaviour::setOptionalMaterialPropertyDefaultValue(mp,evm,"FirstOrthotropicAxis_2",0.);
-      } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
-	const bool bv1z = evm.find("FirstOrthotropicAxis_3")!=evm.end();
-	const bool bv2x = evm.find("SecondOrthotropicAxis_1")!=evm.end();
-	const bool bv2y = evm.find("SecondOrthotropicAxis_2")!=evm.end();
-	const bool bv2z = evm.find("SecondOrthotropicAxis_3")!=evm.end();
-	const bool b = bv1x||bv1y||bv1z||bv2x||bv2y||bv2z;
-	throw_if(b,"The components of the orthotropic basis shall not be"
-		 "defined directly, use @RotationMatrix");
-	Behaviour::setOptionalMaterialPropertyDefaultValue(mp,evm,"FirstOrthotropicAxis_1",1.);
-	Behaviour::setOptionalMaterialPropertyDefaultValue(mp,evm,"FirstOrthotropicAxis_2",0.);
-	Behaviour::setOptionalMaterialPropertyDefaultValue(mp,evm,"FirstOrthotropicAxis_3",0.);
-	Behaviour::setOptionalMaterialPropertyDefaultValue(mp,evm,"SecondOrthotropicAxis_1",0.);
-	Behaviour::setOptionalMaterialPropertyDefaultValue(mp,evm,"SecondOrthotropicAxis_2",1.);
-	Behaviour::setOptionalMaterialPropertyDefaultValue(mp,evm,"SecondOrthotropicAxis_3",0.);
+      const bool bv1x = evm.find("FirstOrthotropicAxis_1") != evm.end();
+      const bool bv1y = evm.find("FirstOrthotropicAxis_2") != evm.end();
+      if ((h == ModellingHypothesis::AXISYMMETRICAL) ||
+          (h == ModellingHypothesis::PLANESTRESS) ||
+          (h == ModellingHypothesis::PLANESTRAIN)) {
+        throw_if(bv1x || bv1y,
+                 "The components of the orthotropic basis shall not be"
+                 "defined directly, use @RotationMatrix");
+        Behaviour::setOptionalMaterialPropertyDefaultValue(
+            mp, evm, "FirstOrthotropicAxis_1", 1.);
+        Behaviour::setOptionalMaterialPropertyDefaultValue(
+            mp, evm, "FirstOrthotropicAxis_2", 0.);
+      } else if (h == ModellingHypothesis::TRIDIMENSIONAL) {
+        const bool bv1z = evm.find("FirstOrthotropicAxis_3") != evm.end();
+        const bool bv2x = evm.find("SecondOrthotropicAxis_1") != evm.end();
+        const bool bv2y = evm.find("SecondOrthotropicAxis_2") != evm.end();
+        const bool bv2z = evm.find("SecondOrthotropicAxis_3") != evm.end();
+        const bool b = bv1x || bv1y || bv1z || bv2x || bv2y || bv2z;
+        throw_if(b,
+                 "The components of the orthotropic basis shall not be"
+                 "defined directly, use @RotationMatrix");
+        Behaviour::setOptionalMaterialPropertyDefaultValue(
+            mp, evm, "FirstOrthotropicAxis_1", 1.);
+        Behaviour::setOptionalMaterialPropertyDefaultValue(
+            mp, evm, "FirstOrthotropicAxis_2", 0.);
+        Behaviour::setOptionalMaterialPropertyDefaultValue(
+            mp, evm, "FirstOrthotropicAxis_3", 0.);
+        Behaviour::setOptionalMaterialPropertyDefaultValue(
+            mp, evm, "SecondOrthotropicAxis_1", 0.);
+        Behaviour::setOptionalMaterialPropertyDefaultValue(
+            mp, evm, "SecondOrthotropicAxis_2", 1.);
+        Behaviour::setOptionalMaterialPropertyDefaultValue(
+            mp, evm, "SecondOrthotropicAxis_3", 0.);
       } else {
-	throw_if(true,"unsupported hypothesis");
+        throw_if(true, "unsupported hypothesis");
       }
     }
-  } // end of AnsysStandardBehaviour::setOptionalMaterialPropertiesDefaultValues
-  
+  }  // end of
+     // AnsysStandardBehaviour::setOptionalMaterialPropertiesDefaultValues
+
   AnsysStandardBehaviour::~AnsysStandardBehaviour() = default;
   
 } // end of namespace mtest

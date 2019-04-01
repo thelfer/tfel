@@ -23,6 +23,9 @@
 #define NOMINMAX
 #endif
 #include<windows.h>
+#ifdef small
+#undef small
+#endif /* small */
 #endif
 
 #include"TFEL/Raise.hxx"
