@@ -20,7 +20,10 @@
 
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
 #include <windows.h>
-#endif /* LIB_EXTERNALLIBRARYMANAGER_H_ */
+#ifdef small
+#undef small
+#endif /* small */
+#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
 
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Material/OutOfBoundsPolicy.hxx"
