@@ -651,7 +651,10 @@ extern "C" {
                             const DianaFEARealType *const) {
     typedef void(TFEL_ADDCALL_PTR FctPtr)(
         DianaFEARealType * const, DianaFEARealType *const,
-        DianaFEARealType *const, const DianaFEAIntegerType *const,
+        DianaFEARealType *const,
+	const DianaFEAIntegerType *const,
+	const DianaFEAIntegerType *const,
+	const DianaFEAIntegerType *const,
         const DianaFEARealType *const, const DianaFEARealType *const,
         const DianaFEARealType *const, const DianaFEARealType *const,
         const DianaFEARealType *const, const DianaFEARealType *const);

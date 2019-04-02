@@ -21,9 +21,11 @@ mfront_behaviour_check_library(MFrontDianaFEABehaviours dianafea
   Norton
   ImplicitNorton
   Mazars
-)
+  ComputeThermalExpansion
+  )
 
 target_link_libraries(MFrontDianaFEABehaviours
+  DianaFEAInterface
   MFrontProfiling
   TFELMaterial
   TFELMath
@@ -95,3 +97,4 @@ test_dianafea(druckerprager druckerprager.ref)
 test_dianafea(druckerprager2 druckerprager2.ref)
 test_dianafea(norton)
 test_dianafea(implicitnorton)
+test_dianafea(computethermalexpansion)

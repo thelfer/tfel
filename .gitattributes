@@ -4906,6 +4906,7 @@ mfront/tests/behaviours/cyrano/cyranoparametertest2.mtest.in -text
 mfront/tests/behaviours/cyrano/cyranotemperatureupdateonsubsteppingcheck.mtest.in -text
 mfront/tests/behaviours/dianafea/CMakeLists.txt -text
 mfront/tests/behaviours/dianafea/Makefile.am -text
+mfront/tests/behaviours/dianafea/computethermalexpansion.mtest -text
 mfront/tests/behaviours/dianafea/druckerprager.mtest -text
 mfront/tests/behaviours/dianafea/druckerprager2.mtest -text
 mfront/tests/behaviours/dianafea/elasticity.mtest -text
