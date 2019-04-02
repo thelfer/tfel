@@ -297,6 +297,7 @@ if(HAVE_DIANAFEA)
   set(DianaFEAInterface_SOURCES
     DianaFEAInterfaceExceptions.cxx
     DianaFEAException.cxx
+    DianaFEAOutOfBoundsPolicy.cxx
     DianaFEAComputeStiffnessTensor.cxx
     DianaFEAStressFreeExpansionHandler.cxx
     DianaFEAComputeThermalExpansionCoefficientTensor.cxx)

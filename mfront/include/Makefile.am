@@ -313,6 +313,7 @@ nobase_include_HEADERS +=                                                       
 			  MFront/DianaFEA/DianaFEAException.hxx 		               \
 			  MFront/DianaFEA/DianaFEAInterface.hxx	                               \
 			  MFront/DianaFEA/DianaFEAInterfaceExceptions.hxx                      \
+			  MFront/DianaFEA/DianaFEAOutOfBoundsPolicy.hxx                        \
 			  MFront/DianaFEA/DianaFEABehaviourHandler.hxx                         \
 			  MFront/DianaFEA/DianaFEAComputeStiffnessTensor.hxx                   \
 			  MFront/DianaFEA/DianaFEAComputeThermalExpansionCoefficientTensor.hxx \

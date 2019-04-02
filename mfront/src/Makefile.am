@@ -411,7 +411,8 @@ if HAVE_DIANAFEA
 lib_LTLIBRARIES += libDianaFEAInterface.la
 libDianaFEAInterface_la_SOURCES = DianaFEAInterfaceExceptions.cxx                   \
 		               DianaFEAException.cxx                                \
-			       DianaFEAComputeStiffnessTensor.cxx                   \
+		               DianaFEAOutOfBoundsPolicy.cxx                        \
+		               DianaFEAComputeStiffnessTensor.cxx                   \
 			       DianaFEAStressFreeExpansionHandler.cxx               \
 			       DianaFEAComputeThermalExpansionCoefficientTensor.cxx
 

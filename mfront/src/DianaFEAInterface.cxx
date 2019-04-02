@@ -228,7 +228,8 @@ namespace mfront {
     }
     out << "#include\"MFront/DianaFEA/"
            "DianaFEAStressFreeExpansionHandler.hxx\"\n\n"
-        << "#include\"MFront/DianaFEA/DianaFEAInterface.hxx\"\n\n"
+	<< "#include\"MFront/DianaFEA/DianaFEAOutOfBoundsPolicy.hxx\"\n"
+	<< "#include\"MFront/DianaFEA/DianaFEAInterface.hxx\"\n\n"
         << "#include\"MFront/DianaFEA/DianaFEA" << name << ".hxx\"\n\n";
 
     this->writeGetOutOfBoundsPolicyFunctionImplementation(out, name);
@@ -597,6 +598,18 @@ namespace mfront {
     return true;
   }  // end of DianaFEAInterface::isTemperatureIncrementSupported()
 
+  void DianaFEAInterface::writeGetOutOfBoundsPolicyFunctionImplementation(
+      std::ostream& out, const std::string& name) const {
+    out << "static tfel::material::OutOfBoundsPolicy&\n"
+        << this->getFunctionNameBasis(name) << "_getOutOfBoundsPolicy(){\n"
+        << "using namespace dianafea;\n"
+        << "using namespace tfel::material;\n"
+        << "static OutOfBoundsPolicy policy = "
+           "DianaFEAOutOfBoundsPolicy::getDianaFEAOutOfBoundsPolicy().getOutOfBoundsPolicy();\n"
+        << "return policy;\n"
+        << "}\n\n";
+  }  // end of MFrontDianaFEAInterface::writeGetOutOfBoundsPolicyFunctionImplementation
+  
   void DianaFEAInterface::writeMTestFileGeneratorSetModellingHypothesis(
       std::ostream& out) const {
     out << "mg.setModellingHypothesis(ModellingHypothesis::TRIDIMENSIONAL);\n";

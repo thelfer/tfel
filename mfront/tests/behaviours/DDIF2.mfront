@@ -104,4 +104,9 @@ sigr.setEntryName("FractureStress");
   e2m=max(e2m,e2);
   // change to cartesian coordinates
   DDIF2Base::cyl2cart(sig,0.);
-}
+} // end of @UpdateAuxiliaryStateVars
+
+@TangentOperator{
+  static_cast<void>(smt);
+  Dt = lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
+} // end of @TangentOperator

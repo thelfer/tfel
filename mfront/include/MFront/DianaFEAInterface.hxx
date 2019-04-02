@@ -124,6 +124,10 @@ namespace mfront {
     std::set<Hypothesis> getModellingHypothesesToBeTreated(
         const BehaviourDescription &) const override;
     std::string getLibraryName(const BehaviourDescription &) const override;
+    void writeGetOutOfBoundsPolicyFunctionImplementation(
+        std::ostream&, const std::string&) const override;
+    bool areExternalStateVariablesSupported() const override;
+    bool isTemperatureIncrementSupported() const override;
     /*!
      * \return the input file example
      * \param[in] mb: behaviour description
@@ -142,10 +146,6 @@ namespace mfront {
      */
     virtual void writeBehaviourTraits(std::ostream &,
                                       const BehaviourDescription &) const;
-    //! \return true if the interface handles external state variables
-    bool areExternalStateVariablesSupported() const override;
-    //! \return true if the interface handles temperature increment
-    bool isTemperatureIncrementSupported() const override;
   };  // end of DianaFEAInterface
 
 }  // end of namespace mfront
