@@ -1,0 +1,26 @@
+@DSL DefaultDSL;
+@Behaviour OrthotropicElastic3;
+@Author    Helfer Thomas;
+@Date      23/02/16;
+@Description{
+  "This behaviour uses the notion of orthotropic axes "
+  "convention. In this case, this convention inverts  "
+  "the 2 and 3 thermal expansion coefficients in most "
+  "two dimensional modelling hypotheses, except the "
+  "axisymmetrical one."
+}
+
+@OrthotropicBehaviour<Pipe>;
+@RequireStiffnessTensor;
+
+@ComputeThermalExpansion {"ThermalExpansionCoefficientTest_1.mfront",
+                          "ThermalExpansionCoefficientTest_2.mfront",
+                          "ThermalExpansionCoefficientTest_3.mfront"};
+
+@ProvidesSymmetricTangentOperator;
+@Integrator{
+  sig = D*(eto+deto);
+  if(computeTangentOperator_){
+    Dt = D;
+  }
+}

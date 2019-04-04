@@ -1,0 +1,17 @@
+@Parser DefaultFiniteStrainParser;
+@Behaviour OrthotropicSaintVenantKirchhoffElasticity;
+
+@OrthotropicBehaviour;
+@RequireStiffnessTensor;
+
+@Integrator{
+  const StrainStensor e = computeGreenLagrangeTensor(F1);
+  // second Piola–Kirchhoff stress
+  const StressStensor s = D*e;
+  // conversion to Cauchy stress tensor
+  sig = convertSecondPiolaKirchhoffStressToCauchyStress(s,F1);
+}
+
+@TangentOperator<DS_DEGL>{
+  Dt = D;
+}

@@ -1,0 +1,20 @@
+@Parser   MaterialLaw;
+@Material UO2;
+@Law      PoissonRatio_Fink1981;
+@Author   T. Helfer;
+@Date     04/04/2014;
+
+@Description
+{
+  Thermodynamic properties of Uranium dioxide
+  Fink, J.K. and Chasanov, M.G. and Leibowitz, L.
+  Argonne National Laboratory - ANL-CEN-RSD-80-3
+  04/1981
+}
+
+@Output nu;
+
+@Function
+{
+  nu=0.316;
+}

@@ -1,0 +1,145 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%	Fichier	   : Champs
+%%	Auteur     : th202608@pleiades052.intra.cea.fr
+%%	Date       : 13 dc 2010
+%%	Rpertoire : /home/th202608/documents/notes/2011/LicosPresentation/
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\input{LSC}
+
+\auteurs{T.~Helfer, É~Castelier}
+\redacteur{T.~Helfer}
+\verificateur{V.~Marelle}
+\approbateur{R.~Masson}
+\emetteur{E.~Touron}
+
+\titre{Le générateur de code \mfront{}~: présentation générale et
+  application aux propriétés matériau et aux modèles}
+
+\date{Décembre 2013}
+\numero{13-019}
+\indice{0}
+\dateversion{12/2013}
+\numeroaffaire{A-SICOM-A1-01}
+\domaine{DEN/DISN/SIMU}
+\accords{tripartite}
+\clients{AREVA - EDF}
+\programmerecherche{SICOM}
+\classification{DO}
+\motsclefs{
+  \mfront{} - \pleiades{} - propriétés matériaux - modèles
+}
+
+% \codebarre{images/code_barre}
+\diffusionexterne{
+{EDF/R\&D}              & O. Marchand     & 1 & Diffusion par\\
+{EDF/R\&D}              & P. Vasseur      & 1 & courriel     \\
+{EDF/R\&D/AMA}          & É. Lorentz      & 1 & \\
+                        & C. Durand       & 1 & \\
+{EDF/R\&D/AMA/T64}      & T. de Soza      & 1 & \\
+                        & J. Delmas       & 1 & \\
+                        & J.M. Proix      & 1 & \\
+                        & F. Hammon       & 1 & \\
+                        & N. Sellenet     & 1 & \\
+{EDF/R\&D/MMC}          & P. Ollar        & 1 & \\
+{EDF/R\&D/MMC/MAESTRO}  & N. Rupin        & 1 & \\
+                        & F. Latourte     & 1 & \\
+{EDF/R\&D/MMC/CPM}      & N. Prompt       & 1 & \\
+                        & N. Barnel       & 1 & \\
+{EDF/R\&D/MMC/CPM}      & G. Thouvenin    & 1 & \\
+                        & F. Douchin      & 1 & \\
+                        & R. Largenton    & 1 & \\
+                        & C. Petry        & 1 & \\
+EDF/SEPTEN              & N. Waeckel      & 1 & \\
+                        & C. Chauliac     & 1 & \\
+                        & H. Billat       & 1 & \\
+                        & C. Bernaudat    & 1 & \\
+AREVA NP/LA DEFENSE     & L. Catalani     & 1 & \\
+                        & L. Brunel       & 1 & \\
+AREVA NP/LYON           & P. Melin        & 1 & \\
+                        & V. Bessiron     & 1 & \\
+                        & C. Garnier      & 1 & \\                           
+                        & V. Garat        & 1 & \\
+                        & F. Arnoux       & 1 &
+}
+\CoupeListeDiffusion{}
+\diffusioninterne{
+  DEN/DISN/SIMU       & J.P. Deffain       & 1 & Diffusion par\\ 
+                      & D. Caruge          & 1 & courriel     \\ 
+  DEN/DM2S/SEMT       & X. Averty          & 1 & \\
+  DEN/DM2S/SEMT/LM2S  & J.L. Fayard        & 1 & \\
+                      & P. Verpeaux        & 1 & \\
+                      & A. Millard         & 1 & \\
+                      & S. Pascal          & 1 & \\
+                      & O. Fandeur         & 1 & \\
+  DEN/DMN             & P. Yvon            & 1 & \\
+                      & J.L. Seran         & 1 & \\
+                      & F. Dalle           & 1 & \\
+  DEN/DMN/SRMA        & P. Chapelot        & 1 & \\
+                      & S. Carassou        & 1 & \\
+                      & B. Marini          & 1 & \\
+  DEN/DMN/SRMA/LC2M   & L. Nicolas         & 1 & \\
+                      & J. Garnier         & 1 & \\
+                      & S. Vincent         & 1 & \\
+                      & L. Vincent         & 1 & \\
+                      & L. Gelebart        & 1 & \\
+                      & M. Sauzay          & 1 & \\
+                      & L. Dupuy           & 1 & \\
+                      & P. Forget          & 1 & \\
+                      & A. Hellouin de Menibus  & 1 & \\
+                      & M. Le Saux         & 1 & \\
+                      & C. Robertson       & 1 & \\
+  DEN/DMN/SRMA/LA2M   & J.-L. Bechade      & 1 & \\
+  DEN/DMN/SRMA/LTMEX  & L. Chaffron        & 1 & \\
+                      & D. Sornin          & 1 & \\
+  DEN/DMN/SEMI        & C. Poussard        & 1 & \\
+                      & B. Tanguy          & 1 & \\
+  DEN/DMN/SEMI/LCMI   & V. Vandenberghe    & 1 & \\
+                      & A. Courcelle       & 1 & \\
+                      & F. Hure            & 1 & \\
+                      & D. Leboulch        & 1 & \\
+                      & Q. Auzoux          & 1 & \\
+                      & Y. Robert          & 1 & \\
+  DEN/DER/SESI/LE2S   & P. Lamagnère       & 1 & \\
+                      & D. Gentet          & 1 & \\
+                      & Y. Lejeail         & 1 & \\
+                      &                    &  & \\
+  DEN/DEC             & P. Brossard        &  & Document disponible\\
+  DEN/DEC/PROJETS     & P. Obry            &  & sur intradec\\
+  DEN/DEC/SESC        & E. Touron          &  & \\
+                      & M. Casella         &  & \\
+                      & M. Agard           &  & \\
+  DEN/DEC/SESC/LIPA   & C. Nonon-Solaro    &  & \\
+                      & C. Bassi           &  & \\
+                      & O. Bremond         &  & \\
+  DEN/DEC/SESC/LLCC   & V. Basini          &  & \\
+                      & J.-M. Escleine     &  & \\
+  DEN/DEC/SESC/LC2I   & D. Plancq          &  & \\
+                      & S. Bejaoui         &  & \\
+                      & V. Blanc           &  & \\
+                      & T. Beck            &  & \\
+                      & F. Biscarrat       &  & \\
+                      & D. Lorenzo         &  & \\
+                      & I. Guénot-Delahaie &  & \\
+                      & P. Masoni          &  & \\
+                      & B. Valentin        &  & \\
+                      & M. Zabiego         &  & \\
+  DEN/DEC/SESC/LSC    & R. Masson          &  & \\
+                      & B. Michel          &  & \\
+                      & M. Pelletier       &  & \\
+                      & M. Lainet          &  & \\
+                      & V. Bouineau        &  & \\
+                      & V. Marelle         &  & \\
+                      & T. Helfer          &  & \\
+
+}
+
+% \signatures{-0.}{-39.2}{0.12}{images/signatures.eps}
+
+\stylebib{@abs_top_srcdir@/docs/tex/texmf/bibtex/fr-insa}
+\fichierbib{@abs_top_srcdir@/docs/tex/texmf/bibtex/bibliographie}
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "utilisation."
+%%% End: 

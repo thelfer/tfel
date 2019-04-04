@@ -1,0 +1,32 @@
+@Author  Thomas Helfer;
+@Date 6/05/2016;
+@Description{
+  This file describes a shear test along XY.
+  Simulation Results are compared to the
+  analytical solution.
+};
+
+@XMLOutputFile @xml_output@;
+@MaximumNumberOfSubSteps 1;
+@Behaviour<umat> @library@ @behaviour@;
+@MaterialProperty<constant> 'YoungModulus1'   78.e9;
+@MaterialProperty<constant> 'YoungModulus2'   78.e9;
+@MaterialProperty<constant> 'YoungModulus3'   78.e9;
+@MaterialProperty<constant> 'PoissonRatio12'   0.3;
+@MaterialProperty<constant> 'PoissonRatio23'   0.3;
+@MaterialProperty<constant> 'PoissonRatio13'   0.3;
+@MaterialProperty<constant> 'ShearModulus12'  '78e9/(2*(1+0.3))';
+@MaterialProperty<constant> 'ShearModulus23'  '78e9/(2*(1+0.3))';
+@MaterialProperty<constant> 'ShearModulus13'  '78e9/(2*(1+0.3))';
+
+@ExternalStateVariable 'Temperature' 293.15;
+
+@Real 'e0' 1.e-3;
+@ImposedStrain<function> 'EXY' 'sqrt(2)*e0*sin(t/900.)';
+
+@Times {0.,3600 in 20};
+
+// stresses
+@Test<function> {'SXX':'0.','SYY':'0.','SZZ':'0.',
+                 'SXY':'YoungModulus1/(1+PoissonRatio12)*EXY',
+                 'SXZ':'0.','SXY':'0.'} 1.e-3;

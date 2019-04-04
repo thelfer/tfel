@@ -1,0 +1,30 @@
+\noindent
+\ttfamily
+\hlstd{}\hldir{\#ifdef \textunderscore \textunderscore cplusplus}\hspace*{\fill}\\
+\hlstd{}\hlkwc{extern }\hlstd{}\hlstr{"C"}\hlstd{}\hlsym{\{}\hspace*{\fill}\\
+\hlstd{}\hldir{\#endif }\hlcom{/{*} \textunderscore \textunderscore cplusplus {*}/}\hldir{}\hspace*{\fill}\\
+\hlstd{}\hspace*{\fill}\\
+\hlkwb{unsigned short}\hspace*{\fill}\\
+\hlstd{UPuC\textunderscore ThermalConductivity\textunderscore nargs }\hlsym{= }\hlstd{}\hlnum{3u}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hspace*{\fill}\\
+\hlkwb{double}\hspace*{\fill}\\
+\hlstd{}\hlkwd{UPuC\textunderscore ThermalConductivity}\hlstd{}\hlsym{(}\hlstd{}\hlkwb{const double }\hlstd{}\hlsym{{*} }\hlstd{}\hlkwb{const }\hlstd{castem\textunderscore params}\hlsym{)}\hspace*{\fill}\\
+\hlstd{}\hlsym{\{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwa{using namespace }\hlstd{std}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwb{const double }\hlstd{T }\hlsym{= }\hlstd{castem\textunderscore params[}\hlnum{0}\hlstd{]}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwb{const double }\hlstd{p }\hlsym{= }\hlstd{castem\textunderscore params[}\hlnum{1}\hlstd{]}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwb{const double }\hlstd{Bu }\hlsym{= }\hlstd{castem\textunderscore params[}\hlnum{2}\hlstd{]}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwb{double }\hlstd{k}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwa{if}\hlstd{}\hlsym{( }\hlstd{T }\hlsym{$<$= }\hlstd{}\hlnum{773.15}\hlstd{}\hlsym{)\{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{k }\hlsym{= ( }\hlstd{}\hlnum{8.14e{-}6 }\hlstd{}\hlsym{{*} }\hlstd{T }\hlsym{{-} }\hlstd{}\hlnum{0.010096882}\hlstd{}\hlsym{) {*} }\hlstd{T }\hlsym{+ }\hlstd{}\hlnum{19.65063040915}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlsym{\} }\hlstd{}\hlkwa{else}\hlstd{}\hlsym{\{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{k }\hlsym{= ( {-}}\hlstd{}\hlnum{1.88e{-}6 }\hlstd{}\hlsym{{*} }\hlstd{T }\hlsym{+ }\hlstd{}\hlnum{0.009737044}\hlstd{}\hlsym{) {*} }\hlstd{T }\hlsym{+ }\hlstd{}\hlnum{10.2405949657}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlsym{\}}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{k }\hlsym{{*}= ( }\hlstd{}\hlnum{1}\hlstd{}\hlsym{. {-} }\hlstd{p}\hlsym{) /( }\hlstd{}\hlnum{1}\hlstd{}\hlsym{. + }\hlstd{}\hlnum{2}\hlstd{}\hlsym{. {*} }\hlstd{p}\hlsym{);}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{k }\hlsym{{*}=}\hlstd{\ \ }\hlsym{}\hlstd{}\hlnum{1}\hlstd{}\hlsym{. {-}( }\hlstd{}\hlnum{0.02 }\hlstd{}\hlsym{{*} }\hlstd{Bu}\hlsym{);}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwa{return }\hlstd{k}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlsym{\} }\hlstd{}\hlslc{// end of UPuC\textunderscore ThermalConductivity}\hspace*{\fill}\\
+\hlstd{}\hspace*{\fill}\\
+\hldir{\#ifdef \textunderscore \textunderscore cplusplus}\hspace*{\fill}\\
+\hlstd{}\hlsym{\} }\hlstd{}\hlslc{// end of extern "C"}\hspace*{\fill}\\
+\hlstd{}\hldir{\#endif }\hlcom{/{*} \textunderscore \textunderscore cplusplus {*}/}

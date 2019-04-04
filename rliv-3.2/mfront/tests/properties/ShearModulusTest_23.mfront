@@ -1,0 +1,11 @@
+@DSL    MaterialLaw;
+@Law    ShearModulusTest_23;
+@Author Thomas Helfer;
+@Date   26/02/2016;
+
+@Output G;
+G.setGlossaryName("ShearModulus23");
+
+@Function{
+  G = 1.16418e+11;
+}

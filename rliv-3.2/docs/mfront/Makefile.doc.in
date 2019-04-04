@@ -1,0 +1,19 @@
+all:
+	make -C general      -f Makefile.doc mfront
+	make -C behaviours   -f Makefile.doc behaviours
+	make -C finitestrain -f Makefile.doc finitestrain
+	make -C planestress  -f Makefile.doc planestress
+	make -C castem       -f Makefile.doc castem
+	make -C aster        -f Makefile.doc aster
+	make -C zmat         -f Makefile.doc zmat
+	make -C abaqus       -f Makefile.doc abaqus
+
+clean:
+	make -C general      -f Makefile.doc clean
+	make -C behaviours   -f Makefile.doc clean
+	make -C finitestrain -f Makefile.doc clean
+	make -C planestress  -f Makefile.doc clean
+	make -C castem       -f Makefile.doc clean
+	make -C aster        -f Makefile.doc clean
+	make -C zmat         -f Makefile.doc clean
+	make -C abaqus       -f Makefile.doc clean

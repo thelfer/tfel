@@ -1,0 +1,16 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%	Fichier	   : Bibliographie
+%%	Auteur     : th202608@pleiades077.intra.cea.fr
+%%	Date       : 29 avril 2014
+%%	Répertoire : /home/th202608/Documents/notes/2014/TutorielMFront/
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Références}
+
+\bibliographystyle{@abs_top_srcdir@/docs/tex/texmf/bibtex/fr-insa}
+\bibliography{@abs_top_srcdir@/docs/tex/texmf/bibtex/bibliographie}
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "tutoriel"
+%%% End: 

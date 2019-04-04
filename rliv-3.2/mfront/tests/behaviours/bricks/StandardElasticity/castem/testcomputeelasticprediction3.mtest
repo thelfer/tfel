@@ -1,0 +1,30 @@
+@Author Helfer Thomas;
+@Date  09 avril 2013;
+@Description{
+  "This test checks that thermal expansion is correctly taken into "
+  "account for an orthotropic material."
+};
+
+@ModellingHypothesis 'PlaneStress';
+@XMLOutputFile @xml_output@;
+@Behaviour<umat> @library@ @behaviour@;
+@MaterialProperty<constant> 'YoungModulus1'  '7.8e+10';
+@MaterialProperty<constant> 'YoungModulus2'  '3.32e+11';
+@MaterialProperty<constant> 'YoungModulus3'  '2.64233e+11';
+@MaterialProperty<constant> 'PoissonRatio12' '0.18';
+@MaterialProperty<constant> 'PoissonRatio23' '0.24*YoungModulus2/YoungModulus3';
+@MaterialProperty<constant> 'PoissonRatio13' '0.13';
+@MaterialProperty<constant> 'ShearModulus12' '7.8e+10';
+
+@ExternalStateVariable 'Temperature' 293.15;
+
+@ImposedStress 'SXX' {0.:0.,1:50.e6};
+
+@Times {0.,1.};
+@RotationMatrix{{0,1,0},
+                {1,0,0},
+		{0,0,1}};
+
+@Test<function> {'EXX':'SXX/YoungModulus2',
+    'EYY':'-PoissonRatio12*SXX/YoungModulus1',
+    'EXY':'0.'} 1.e-12;

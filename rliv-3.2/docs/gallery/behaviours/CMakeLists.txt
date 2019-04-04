@@ -1,0 +1,7 @@
+add_subdirectory(damage)
+add_subdirectory(hyperelasticity)
+add_subdirectory(hyperviscoelasticity)
+add_subdirectory(plasticity)
+add_subdirectory(viscoelasticity)
+add_subdirectory(viscoplasticity)
+add_subdirectory(finitestrainsinglecrystal)

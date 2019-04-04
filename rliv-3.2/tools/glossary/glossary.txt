@@ -1,0 +1,636 @@
+"Emissivity"{
+ unit: "kg.m.T^{−3}";
+ type: "scalar";
+ short_description: "Emissivity of the surface of a material is its effectiveness in emitting energy as thermal radiation";
+};
+
+"HeatTransferCoefficient"{
+ unit: "W.m^{-2}.K^{-1}";
+ type: "scalar";
+ short_description:"The heat transfer coefficient is the proportionality constant between the heat flux and the temperature difference";
+};
+
+"MassDensity"{
+ unit : "kg.m^{-3}";
+ type : "scalar";
+ short_description : "The mass density";
+};
+
+"OrthotropicAxisX1"{
+ type : "scalar";
+ short_description : "la première coordonnée du premier axe d'orthotropie";
+ description : {"Cette quantité est automatiquement"
+  "calculée par Licos à partir de la définition du matériau"};
+};
+
+"OrthotropicAxisY1"{
+ type : "scalar";
+ short_description :"la deuxième coordonnée du premier axe d'orthotropie";
+ description : {"Cette quantité est automatiquement"
+  "calculée par Licos à partir de la définition du matériau"};
+};
+
+"OrthotropicAxisZ1"{
+ type : "scalar";
+ short_description : "la troisième coordonnée du premier axe d'orthotropie";
+ description : {"Cette quantité est automatiquement"
+  "calculée par Licos à partir de la définition du matériau"};
+};
+
+"OrthotropicAxisX2"{
+ type : "scalar";
+ short_description : "la première coordonnée du second axe d'orthotropie";
+ description : {"Cette quantité est automatiquement"
+  "calculée par Licos à partir de la définition du matériau"};
+};
+
+"OrthotropicAxisY2"{
+ type : "scalar";
+ short_description : "la deuxième coordonnée du second axe d'orthotropie";
+ description : {"Cette quantité est automatiquement"
+ " calculée par Licos à partir de la définition du matériau"};
+};
+
+"OrthotropicAxisZ2"{
+ type : "scalar";
+ short_description : "la troisième coordonnée du second axe d'orthotropie";
+ description : {"Cette quantité est automatiquement"
+  "calculée par Licos à partir de la définition du matériau"};
+};
+
+"ThermalConductivity"{
+ unit : "W.m^{-1}";
+ type : "scalar";
+ short_description : "la conductivité thermique d'un matériau isotrope";
+};
+
+"ThermalConductivity1"{
+ unit : "W.m^{-1}";
+ type : "scalar";
+ short_description : "la conductivité thermique d'un matériau orthotrope suivant la première direction d'orthotropie";
+};
+
+"ThermalConductivity2"{
+ unit : "W.m^{-1}";
+ type : "scalar";
+ short_description : "la conductivité thermique d'un matériau orthotrope suivant la deuxième direction d'orthotropie";
+};
+
+"ThermalConductivity3"{
+ unit : "W.m^{-1}";
+ type : "scalar";
+ short_description : "la conductivité thermique d'un matériau orthotrope suivant la troisième direction d'orthotropie";
+};
+
+"SpecificHeat"{
+ unit : "J.kg^{-1}.K^{-1}";
+ type : "scalar";
+ short_description : "la chaleur spécifique";
+};
+
+"Temperature"{
+ unit : "K";
+ type : "scalar";
+ short_description : "The temperature";
+};
+
+"KelvinTemperature"{
+ unit : "K";
+ type : "scalar";
+ short_description : "The temperature";
+ notes :{"Cette entrée a été rajoutée par compatibilité avec les choix d'implantation des "
+      "lois de comportements mécaniques utilisés par le code Germinal"};
+};
+
+"IrradiationTemperature"{
+ unit : "K";
+ type : "scalar";
+ short_description : "la température moyenne (dans le temps) au cours de l'irradiation";
+ description : {"Cette température est définie ainsi :",
+      "\[",
+      "\average{T}\paren{t,\vec{r}}  = \Frac{1}{t-t_{0}}\int_{t_{0}}^{t}T\paren{u,\vec{r}}\,\dtot\, u",
+      "\]",
+      "où","",
+      "* \(T\paren{t,\vec{r}}\) est la valeur à un instant \(t\) de la température au point \(\vec{r}\) ;",
+      "* \(t_{0}\) est la date du début de calcul ;",
+      "* \(t\) est la date courante.","",
+      "En pratique, l'intégrale temporelle est évaluée de manière incrémentale ainsi :",
+      "\[",
+      "\average{T}\paren{t+dt,\vec{r}} \approx \Frac{1}{t+dt-t_{0}}\left[\paren{t-t_{0}}\,\average{T}\paren{t,\vec{r}}+\Frac{dt}{2}\left[T\paren{t,\vec{r}}+T\paren{t+dt,\vec{r}}\right]\right]",
+      "\]"};
+ notes : {"Ce mode de calcul peut conduire à de légères erreurs numériques"};
+};
+
+"MeanTemperature"{
+ unit : "K";
+ type : "scalar";
+ short_description : "la température moyenne dans un domaine \(\Omega\) donné. ";
+ description : {"Cette température est définie ainsi :"
+  "\["
+  "\average{T}\paren{t}  = \Frac{1}{\int_{\Omega}\dtot\,V}\int_{\Omega}T\paren{t,\vec{r}}\,\dtot\, V"
+  "\]"
+  "où \(T\paren{t,\vec{r}}\) est la valeur à un instant \(t\) de la"
+  "température au point \(\vec{r}\)."};
+  notes : {"En pratique, l'intégrale spatiale "
+  "est calculée à l'aide de la discrétisation par éléments finis."};
+};
+
+"MeanIrradiationTemperature"{
+ unit : "K";
+ type : "scalar";
+ short_description : "la température moyenne dans le temps et dans un domaine \(\Omega\) donné";
+ description : {"Cette température est définie ainsi :"
+  "\["
+  "\average{T}\paren{t} ="
+  "\Frac{1}{t-t_{0}}\Frac{1}{\int_{\Omega}\dtot\,V}\int_{t_{0}}^{t}\paren{\int_{\Omega}T\paren{u,\vec{r}}\,\dtot\,"
+    "V}"
+  "\]"
+  "où \(T\paren{t,\vec{r}}\) est la valeur à un instant \(t\) de la "
+  "température au point \(\vec{r}\)."};
+ notes : {"En pratique, l'intégrale spatiale est calculée à l'aide de la "
+  "discrétisation par éléments finis et l'intégrale temporelle est "
+  "calculée de manière incrémentale."};
+};
+
+"TemperatureGradient"{
+ unit : "T.m^{-1}";
+ type : "vector";
+ short_description : "le gradient de température";
+};
+
+"HeatFlux"{
+ unit : "J.m^{-2}.s^{-1}";
+ type : "vector";
+ short_description : "le flux de chaleur.";
+};
+
+"PowerDensity"{
+ unit : "W.m^{-3}";
+ type : "scalar";
+ short_description : "la densité de puissance";
+};
+
+"ConvectiveHeatTransferCoefficient"{
+ unit : "W.m^{-2}.K^{-1}";
+ type : "scalar";
+ short_description :"le coefficient d'échange par convection";
+};
+
+"YoungModulus"{
+ unit : "Pa";
+ type : "scalar";
+ short_description : "The Young modulus of an isotropic material";
+};
+
+"ShearModulus"{
+ unit : "Pa";
+ type : "scalar";
+ short_description : "The shear modulus of an isotropic material";
+};
+
+"BulkModulus"{
+ unit : "Pa";
+ type : "scalar";
+ short_description : "The bulk modulus of an isotropic material";
+};
+
+"FirstLameCoefficient"{
+ unit : "Pa";
+ type : "scalar";
+ short_description : "First Lamé coefficient of an isotropic material";
+};
+
+"YoungModulus1"{
+ unit : "Pa";
+ type : "scalar";
+ short_description : "le module d'Young d'un matériau orthotrope suivant la première direction d'orthotropie";
+};
+
+"YoungModulus2"{
+ unit : "Pa";
+ type : "scalar";
+ short_description : "le module d'Young d'un matériau orthotrope suivant la deuxième direction d'orthotropie";
+};
+
+"YoungModulus3"{
+ unit : "Pa";
+ type : "scalar";
+ short_description : "le module d'Young d'un matériau orthotrope suivant la troisième direction d'orthotropie";
+};
+
+"PoissonRatio"{
+ type : "scalar";
+ short_description : "The Poisson ratio of an isotropic material";
+};
+
+"PoissonRatio12"{
+ type : "scalar";
+ short_description : "le coefficient de Poisson d'un matériau orthotrope relatif aux première et deuxième directions d'orthotropie";
+};
+
+"PoissonRatio23"{
+ type : "scalar";
+ short_description : "le coefficient de Poisson d'un matériau orthotrope relatif aux deuxième et troisième directions d'orthotropie";
+};
+
+"PoissonRatio13"{
+ type : "scalar";
+ short_description : "le coefficient de Poisson d'un matériau orthotrope relatif aux première et troisième directions d'orthotropie";
+};
+
+"ShearModulus12"{
+ unit : "Pa";
+ type : "scalar";
+ short_description : "le module de cisaillement d'un matériau orthotrope relatif aux première et deuxième directions d'orthotropie";
+};
+
+"ShearModulus23"{
+ unit : "Pa";
+ type : "scalar";
+ short_description : "le module de cisaillement d'un matériau orthotrope relatif aux deuxième et troisième directions d'orthotropie";
+};
+
+"ShearModulus13"{
+ unit : "Pa";
+ type : "scalar";
+ short_description : "le module de cisaillement d'un matériau orthotrope relatif aux première et troisième directions d'orthotropie";
+};
+
+"ThermalExpansion"{
+ unit : "K^{-1}";
+ type : "scalar";
+ short_description : "le coefficient de dilatation linéique d'un matériau isotrope";
+};
+
+"ThermalExpansion1"{
+ unit : "K^{-1}";
+ type : "scalar";
+ short_description : "le coefficient de dilatation linéique d'un matériau orthotrope suivant la première direction d'orthotropie";
+};
+
+"ThermalExpansion2"{
+ unit : "K^{-1}";
+ type : "scalar";
+ short_description : "le coefficient de dilatation linéique d'un matériau orthotrope suivant la deuxième direction d'orthotropie";
+};
+
+"ThermalExpansion3"{
+ unit : "K^{-1}";
+ type : "scalar";
+ short_description : "le coefficient de dilatation linéique d'un matériau orthotrope suivant la troisième direction d'orthotropie";
+};
+
+"Displacement"{
+ unit : "m";
+ type : "vector";
+ short_description : "le déplacement";
+};
+
+"Strain"{
+ type : "tensor";
+ short_description : "la déformation";
+};
+
+"DeformationGradient"{
+ type : "tensor";
+ short_description : "gradient of the transformation";
+};
+
+"OpeningDisplacement"{
+ unit: "m";
+ type: "vector";
+ short_description : "opening displacement in cohesive zone models";
+};
+
+"ElasticStrain"{
+ type : "tensor";
+ short_description : "The elastic strain";
+};
+
+"PlasticStrain"{
+ type : "tensor";
+ short_description : "The plastic strain";
+};
+
+"ViscoplasticStrain"{
+ type : "tensor";
+ short_description : "The viscoplatic strain";
+};
+
+"EquivalentStrain"{
+ type : "scalar";
+ short_description : "la somme des déformations plastiques ou "
+    "viscoplastiques équivalentes";
+ notes : {"Cette quantité n'a pas de sens physique directe."};
+};
+
+"EquivalentPlasticStrain"{
+ type : "scalar";
+ short_description : "The equivalent plastic strain";
+};
+
+"EquivalentViscoplasticStrain"{
+ type : "scalar";
+ short_description : "The equivalent viscoplastic strain";
+};
+
+"AxialStrain"{
+ type : "scalar";
+ short_description : "la déformation axiale (cette grandeur n'a de sens que pour les calculs en contraintes planes)";
+};
+
+"VolumetricStrain"{
+ type : "scalar";
+ short_description : "la dilatation volumique";
+};
+
+"Stress"{
+ unit : "Pa";
+ type : "tensor";
+ short_description : "les contraintes";
+};
+
+"CohesiveForce"{
+ unit : "Newton";
+ type : "vector";
+ short_description : "cohesive force for cohesize zone models";
+};
+
+"AxialStress"{
+ type : "scalar";
+ short_description : "la contrainte axiale";
+ notes : {"Cette grandeur est utilisée dans les calculs 1D"
+      "axisymétrique en contraintes planes généralisées"};
+};
+
+"HillStress"{
+ unit : "Pa";
+ type : "tensor";
+ short_description : "la contrainte équivalente au sens de Hill";
+};
+
+"CylindricalStress"{
+ unit : "Pa";
+ type : "tensor";
+ short_description : "les contraintes exprimées dans le repère cylindrique";
+};
+
+"SphericalStress"{
+ unit : "Pa";
+ type : "tensor";
+ short_description : "les contraintes exprimées dans le repère sphérique";
+};
+
+"HydrostaticPressure"{
+ unit : "Pa";
+ type : "tensor";
+ short_description : "la pression hydrostatique (égale au tiers de la trace du tenseur des contraintes)";
+};
+
+"VonMisesStress"{
+ unit : "Pa";
+ type : "scalar";
+ short_description : "la contrainte équivalente au sens de Von Mises";
+};
+
+"TrescaStress"{
+ unit : "Pa";
+ type : "scalar";
+ short_description : "la contrainte équivalente au sens de Tresca";
+};
+
+"PrincipalStress1"{
+ unit : "Pa";
+ type : "scalar";
+ short_description : "la première contrainte principale";
+ notes : {"Son sens est précisé dans la notice "
+      "de l'opérateur ['PRIN'](http://www-cast3m.cea.fr/index.php?page=notices&notice=PRIN) de [Cast3M](http://www-cast3m.cea.fr)"};
+};
+
+"PrincipalStress2"{
+ unit : "Pa";
+ type : "scalar";
+ short_description : "la deuxième contrainte principale";
+ notes : {"Son sens est précisé dans la notice "
+      "de l'opérateur ['PRIN'](http://www-cast3m.cea.fr/index.php?page=notices&notice=PRIN) de [Cast3M](http://www-cast3m.cea.fr)"};
+};
+
+"PrincipalStress3"{
+ unit : "Pa";
+ type : "scalar";
+ short_description : "la troisième contrainte principale";
+ notes : {"Son sens est précisé dans la notice "
+      "de l'opérateur ['PRIN'](http://www-cast3m.cea.fr/index.php?page=notices&notice=PRIN) de [Cast3M](http://www-cast3m.cea.fr)"};
+};
+
+"Pressure"{
+ unit : "Pa";
+ type : "scalar";
+ short_description : "la pression d'un gaz";
+};
+
+"Swelling"{
+ type : "scalar";
+ short_description : "un gonflement imposé";
+ notes : {"l'utilisation de ce nom pour imposer un gonflement n'est pas"
+  "obligatoire."};
+};
+
+"AxialGrowth"{
+ type : "scalar";
+ short_description : "axial growth under irradiation";
+};
+
+"SolidSwelling"{
+ type : "scalar";
+ short_description : "un gonflement imposé dû à des produits de fission solides";
+ notes : {"L'utilisation de ce nom pour imposer un gonflement n'est pas obligatoire"};
+};
+
+"GaseousSwelling"{
+ type : "scalar";
+ short_description : "un gonflement imposé dû à des produits de fission gazeux";
+ notes : {"L'utilisation de ce nom pour imposer un "
+  "gonflement n'est pas obligatoire"};
+};
+
+"Porosity"{
+ type: "scalar";
+ short_description : "la porosité du matériau";
+};
+
+"IrradiationInducedSwelling"{
+ type : "scalar";
+ short_description : "un gonflement imposé  dû à des dégâts d'irradiation";
+ notes : {"L'utilisation de ce nom pour imposer "
+  "un gonflement n'est pas obligatoire"};
+};
+
+"IrradiationSwelling"{
+ type : "scalar";
+ short_description : "un gonflement imposé  dû à des dégâts d'irradiation";
+ notes : {"L'utilisation de ce nom pour imposer "
+  "un gonflement n'est pas obligatoire"};
+};
+
+"NormalStiffness"{
+ unit : "Pa.m^{-1}";
+ type : "scalar";
+ short_description : "la raideur normale pour un modèle de zone cohésive";
+};
+
+"TangentialStiffness"{
+ unit : "Pa.m^{-1}";
+ type : "scalar";
+ short_description : "la raideur tangentielle pour un modèle de zone cohésive";
+};
+
+"YieldStrength"{
+ alias : "YieldStress";
+ unit  : "Pa";
+ type  : "scalar";
+ short_description : "la limite d'élasticité";
+};
+
+"UltimateTensileStrength"{
+ alias : "UltimateTensileStress";
+ unit  : "Pa";
+ type  : "scalar";
+ short_description : "la valeur maximale de la contrainte qu'un materiau peut supporter";
+};
+
+"Damage"{
+ type : "scalar";
+ short_description : "l'endommagement d'un matériau";
+};
+
+"GrainSize"{
+ unit : "m";
+ type : "scalar";
+ short_description : "la taille de grain";
+};
+
+"FissionDensity"{
+ unit : "m^{-3}";
+ type : "scalar";
+ short_description : "la densité de fission";
+};
+
+"IrradiationDamage"{
+ unit : "dpa";
+ type : "scalar";
+ short_description : "le dommage due à l'irradiation, "
+    "mesuré par le nombre de déplacement moyen de chaque atome (dpa)";
+};
+
+"NeutronFlux"{
+ unit : "n.m^{-2}.s^{-1}";
+ type : "scalar";
+ short_description : "le flux de neutron";
+};
+
+"NeutronFluence"{
+ unit : "n.m^{-2}";
+ type : "scalar";
+ short_description : "la fluence";
+};
+
+"FastNeutronFlux_01MeV"{
+ name : "FastNeutronFlux (>0.1 MeV)";
+ unit : "n.m^{-2}.s^{-1}";
+ type : "scalar";
+ short_description : "le flux de neutron rapide";
+};
+
+"FastNeutronFlux_1MeV"{
+ name : "FastNeutronFlux (>1 MeV)";
+ unit : "n.m^{-2}.s^{-1}";
+ type : "scalar";
+ short_description : "le flux de neutron rapide";
+};
+
+"FastNeutronFluence_01MeV"{
+ name : "FastNeutronFluence (>0.1 MeV)";
+ unit : "n.m^{-2}";
+ type : "scalar";
+ short_description : "la fluence rapide";
+};
+
+"FastNeutronFluence_1MeV"{
+ name : "FastNeutronFluence (>1 MeV)";
+ unit : "n.m^{-2}";
+ type : "scalar";
+ short_description : "la fluence rapide";
+};
+
+"BurnUp_AtPercent"{
+ name : "BurnUp (at.%)";
+ unit : "at./100";
+ type : "scalar";
+ short_description : "le taux de combustion en atome pour cent";
+};
+
+"MeanBurnUp_AtPercent"{
+ name : "MeanBurnUp (at.%)";
+ unit : "at./100";
+ type : "scalar";
+ short_description : "le taux de combustion en atome pour cent moyen (au sens spatial) pour un matériau donné";
+};
+
+"BurnUp_MWJperTm"{
+ name : "BurnUp (MWJ/tm)";
+ unit : "MWJ/tm";
+ type : "scalar";
+ short_description : "le taux de combustion en MegaWattJour par tonne (métal)";
+};
+
+"MeanBurnUp_MWJperTm"{
+ name : "MeanBurnUp (MWJ/tm)";
+ unit : "MWJ/tm";
+ type : "scalar";
+ short_description : "le taux de combustion en MegaWattJour par tonne (métal) moyen (au sens spatial) pour un matériau donné";
+};
+
+"B10BurnUp"{
+ unit : "m^{-3}";
+ type : "scalar";
+ short_description : "le taux d'usure en \(\mbox{}^{10}B\)";
+ description : {"Ce nombre décrit le nombre d'atomes de \(\mbox{}^{10}B\) "
+      "consommé par unité de volume au cours de l'irradiation."};
+};
+
+"PlateWidth"{
+ unit : "??";
+ type : "scalar";
+ short_description : "??";
+};
+
+"CrossSectionArea"{
+ unit : "??";
+ type : "scalar";
+ short_description : "??";
+};
+
+"FirstAxisSecondMomentArea"{
+ unit : "??";
+ type : "scalar";
+ short_description : "??";
+};
+
+"SecondAxisSecondMomentArea"{
+ unit : "??";
+ type : "scalar";
+ short_description : "??";
+};
+
+"TorsionConstant"{
+ unit : "??";
+ type : "scalar";
+ short_description : "??";
+};
+
+"NumberOfMoles"{
+ unit  : "mol";
+ type  : "scalar";
+ short_description : "le nombre de moles d'une substance";
+};

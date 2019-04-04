@@ -1,0 +1,21 @@
+@DSL Implicit;
+@Behaviour IsotropicStandardElasticity6;
+@Algorithm NewtonRaphson_NumericalJacobian;
+@Author Thomas Helfer;
+@Date   5/06/2016;
+@Description{
+  "This file is used to test the StandardElasticity brick for "
+  "an isotropic behaviour. Elastic properties are defined through "
+  "parameters."
+}
+
+@Epsilon 1e-14;
+@PerturbationValueForNumericalJacobianComputation 1.e-8;
+@ModellingHypotheses {".+"};
+@Brick "StandardElasticity";
+
+@Parameter young = 78e9;
+young.setGlossaryName("YoungModulus");
+@Parameter nu    = 0.3;
+nu.setGlossaryName("PoissonRatio");
+

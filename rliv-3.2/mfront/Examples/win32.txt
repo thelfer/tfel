@@ -1,0 +1,4 @@
+AR=i586-mingw32msvc-ar RANLIB=i586-mingw32msvc-ranlib
+DLLTOOL=i586-mingw32msvc-dlltool CXX=i586-mingw32msvc-g++
+../../src/mfront --win32 --obuild --interface=c
+SIC_YoungModulus_SNEAD.mfront

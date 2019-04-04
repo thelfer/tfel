@@ -1,0 +1,7 @@
+if(TFEL_APPEND_SUFFIX)
+  tfel_python_script_base(mfront_${TFEL_SUFFIX_FOR_PYTHON_MODULES}/umatxx __init__.py)
+  tfel_python_script_base(mfront_${TFEL_SUFFIX_FOR_PYTHON_MODULES}/umatxx Behaviour.py)
+else(TFEL_APPEND_SUFFIX)
+  tfel_python_script_base(mfront/umatxx __init__.py)
+  tfel_python_script_base(mfront/umatxx Behaviour.py)
+endif(TFEL_APPEND_SUFFIX)

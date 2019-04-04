@@ -1,0 +1,50 @@
+@Author Helfer Thomas;
+@Date   19/09/2016;
+@Description{
+  This test work on an orthotropic equivalent
+  of the Norton law integrated using an
+  implicit algorithm in plane stress.
+  Plane stress support is provided by the
+  build-in feature of the Cast3M interface
+  which integrates the behaviour in
+  generalised plane strain and apply
+  an additional convergence loop to find
+  the appropriate axial strain increment.
+};
+
+@MaximumNumberOfSubSteps 1;
+@ModellingHypothesis 'PlaneStress';
+@PredictionPolicy 'LinearPrediction';
+@AccelerationAlgorithm 'Cast3M';
+@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatimplicitorthotropiccreep2';
+@StressEpsilon 1.e-2;
+
+@Real 'young' 100e9;
+@Real 'nu'    0.3;
+@MaterialProperty<constant> 'YoungModulus1'     'young';
+@MaterialProperty<constant> 'YoungModulus2'     'young';
+@MaterialProperty<constant> 'YoungModulus3'     'young';
+@MaterialProperty<constant> 'PoissonRatio12'       'nu';
+@MaterialProperty<constant> 'PoissonRatio13'       'nu';
+@MaterialProperty<constant> 'PoissonRatio23'       'nu';
+@MaterialProperty<constant> 'ShearModulus12'    'young';
+
+@ExternalStateVariable 'Temperature' 293.15;
+
+@Real 'P' '15.e6';
+@Strain {'P/young','-nu*P/young',0.,0.};
+@InternalStateVariable 'ElasticStrain' {'P/young','-nu*P/young','-nu*P/young',0.};
+@InternalStateVariable 'AxialStrain' '-nu*P/young';
+
+@ImposedStress 'SXX' 'P';
+
+@Times {0.,100. in 20};
+
+@Real 'A'   8.e-67;
+@Real 'n'   8.2;
+@Real 'H_F' 0.371;
+@Real 'H_G' '1-H_F';
+@Real 'H_H' 4.052;
+@Real 'seq' 'sqrt(H_F+H_H)*P';
+@Test<function> 'HillStress' 'seq' 'P*1.e-6';
+@Test<function> 'EquivalentViscoplasticStrain' 'A*seq**n*t' 1.e-6;

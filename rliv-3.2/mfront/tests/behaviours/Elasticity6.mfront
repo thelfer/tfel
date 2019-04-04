@@ -1,0 +1,26 @@
+@DSL Implicit;
+@Behaviour Elasticity6;
+@Author Helfer Thomas;
+@Date 26/02/16;
+@Description{
+  "This behaviour is used to test the "
+  "@ComputeStiffnessTensor keyword."
+}
+
+@ModellingHypotheses {".+"};
+@ComputeStiffnessTensor<Altered>{
+  "Inconel600_YoungModulus.mfront",0.39991};
+
+@Integrator{
+  feel -= deto;
+}
+
+@ComputeFinalStress {
+  sig = D_tdt*eel;
+}
+
+@IsTangentOperatorSymmetric true;
+@TangentOperator{
+  static_cast<void>(smt);
+  Dt = D_tdt;
+}

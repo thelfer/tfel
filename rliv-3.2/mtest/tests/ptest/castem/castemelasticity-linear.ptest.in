@@ -1,0 +1,20 @@
+@InnerRadius 4.2e-3;
+@OuterRadius 4.7e-3;
+@NumberOfElements 10;
+@ElementType 'Linear';
+@AxialLoading 'None';
+@PerformSmallStrainAnalysis true;
+
+@Behaviour<castem> '@MFrontCastemBehavioursBuildPath@' 'umatelasticity';
+@MaterialProperty<constant> 'YoungModulus' 150e9;
+@MaterialProperty<constant> 'PoissonRatio'   0.3;
+@ExternalStateVariable 'Temperature' 293.15;
+
+@InnerPressureEvolution 1.5e6;
+@OuterPressureEvolution<evolution> {0:1.5e6,1:10e6};
+
+@Times {0,1};
+
+@OutputFilePrecision 14;
+@Profile 'elasticity-linear-profile.res' {'SRR','STT','SZZ'};
+@Test<file,profile> '@top_srcdir@/mtest/tests/ptest/references/elasticity-linear-profile.ref' {'SRR':2,'STT':3,'SZZ':4} 1e-4;

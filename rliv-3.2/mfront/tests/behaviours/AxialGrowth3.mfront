@@ -1,0 +1,42 @@
+@Behaviour AxialGrowth3;
+@Author Helfer Thomas;
+@Date   08/08/16;
+@Description{
+ A test for the `@AxialGrowth` keyword in case of substepping.
+}
+
+@AbaqusFiniteStrainStrategy[abaqusexplicit] MieheApelLambrechtLogarithmicStrain;
+@EPXFiniteStrainStrategy[epx] MieheApelLambrechtLogarithmicStrain;
+
+@UMATUseTimeSubStepping[umat] true;
+@UMATMaximumSubStepping[umat] 20;
+@CyranoUseTimeSubStepping[cyrano] true;
+@CyranoMaximumSubStepping[cyrano] 20;
+
+@OrthotropicBehaviour<Pipe>;
+@RequireStiffnessTensor<Altered>;
+
+@ExternalStateVariable real ag;
+ag.setGlossaryName("AxialGrowth");
+@AxialGrowth ag;
+
+/* Initialize Lame coefficients */
+@InitLocalVariables{
+  if(dt>100){
+    throw(DivergenceException());
+  }
+} // end of @InitLocalVars
+
+@PredictionOperator{
+  static_cast<void>(smt);
+  Dt = D;
+}
+
+@Integrator{
+  sig = D*(eto+deto);
+}
+
+@TangentOperator{
+  static_cast<void>(smt);
+  Dt = D;
+}

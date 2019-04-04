@@ -1,0 +1,26 @@
+@Parser   MaterialLaw ;
+@Material T91MartensiticSteel ;
+@Law      C1_ROUX2007 ;
+@Author   F. Milliard ;
+@Date     11/12/2013 ;
+@Description{
+  // Premier coeff d'écrouissage cinématique martensite T91
+  // [Roux 07]
+}
+
+// Input of law
+@Input T ;
+T.setGlossaryName("Temperature") ;
+
+// Output of law
+@Output C1 ;
+
+@PhysicalBounds T in [0.:*[;
+
+// Function
+@Function{
+
+  const real TC = T-273.15;
+  const real TC2 = TC  * TC  ;
+  C1 = 1.5*( ( 4.1801443925e+05 * TC2 -1.6296190274e+08 * TC +2.0273111784e+10 ) * ( 1.-tanh(0.019 * ( TC - 720.) ) )/2. );
+} // end of Function

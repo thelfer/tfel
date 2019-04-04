@@ -1,0 +1,63 @@
+@Behaviour LogarithmicStrainElasticity2;
+@Author Helfer Thomas;
+@Date   24/02/14;
+@Description{
+ "A very first test of the logarithmic finite strain"
+ "formulation proposed by Miehe et al."
+ "(the most simple one in fact)."
+ "We check that the stress at the beginning"
+ "of the time step (which is calculated using"
+ "the Cauchy stress) is equal to the stress "
+ "computed at the end of the previous time step "
+ "(before it was turned into the Cauchy stress "
+ "after the integration."
+}
+
+@UMATFiniteStrainStrategy[umat]                    MieheApelLambrechtLogarithmicStrain;
+@CalculiXFiniteStrainStrategy[calculix]            MieheApelLambrechtLogarithmicStrain;
+@AbaqusFiniteStrainStrategy[abaqus,abaqusexplicit] MieheApelLambrechtLogarithmicStrain;
+@EPXFiniteStrainStrategy[epx]                      MieheApelLambrechtLogarithmicStrain;
+@AnsysFiniteStrainStrategy[ansys]                  MieheApelLambrechtLogarithmicStrain;
+
+@ProvidesSymmetricTangentOperator;
+
+@MaterialProperty stress young;
+young.setGlossaryName("YoungModulus");
+@MaterialProperty real nu;
+nu.setGlossaryName("PoissonRatio");
+
+@LocalVariable stress lambda;
+@LocalVariable stress mu;
+
+@AuxiliaryStateVariable StressStensor ps;
+ps.setEntryName("PreviousStress");
+
+@Parameter rp = 5.e4;
+rp.setEntryName("RelativePrecision");
+
+@InitLocalVariables{
+  lambda = computeLambda(young,nu);
+  mu = computeMu(young,nu);
+  const stress ds  = sqrt((sig-ps)|(sig-ps));
+  const stress s   = sqrt(sig|sig);
+  const stress eps = rp*s*numeric_limits<stress>::epsilon();
+  if(ds>eps){
+    throw(runtime_error("invalid stress value at "
+			"the beginning of the time step "
+			"("+to_string(ds)+">"+to_string(eps)+")"));
+  }
+}
+
+@PredictionOperator{
+  static_cast<void>(smt);
+  Dt = lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
+}
+
+@Integrator{
+  sig = lambda*trace(eto+deto)*StrainStensor::Id()+2*mu*(eto+deto);
+  if(computeTangentOperator_){
+    Dt = lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
+  }
+  // saving the compute stress
+  ps=sig;
+}

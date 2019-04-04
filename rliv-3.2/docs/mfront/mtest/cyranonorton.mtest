@@ -1,0 +1,22 @@
+@ModellingHypothesis 'AxisymmetricalGeneralisedPlaneStress';
+@Behaviour<cyrano> 'libCyranoBehaviour.so' 'cyranoimplicitnorton';
+
+@MaterialProperty<constant> 'YoungModulus'     150.e9;
+@MaterialProperty<constant> 'PoissonRatio'       0.3;
+
+@Real 'srr' 20.e6;
+@ImposedStress 'SRR' 'srr';
+// Initial value of the elastic strain
+@Real 'EELRR0'  0.00013333333333333333;
+@Real 'EELZZ0' -0.00004;
+@InternalStateVariable 'ElasticStrain' {'EELRR0','EELZZ0','EELZZ0'};
+@InternalStateVariable 'AxialStrain'   'EELZZ0';
+// Initial value of the total strain
+@Strain {'EELRR0',0.,'EELZZ0'};
+// Initial value of the stresses
+@Stress {'srr',0.,0.};
+
+@ExternalStateVariable 'Temperature' 293.15;
+@ExternalStateVariable 'AxialStress' 0.;
+
+@Times {0.,3600 in 20};

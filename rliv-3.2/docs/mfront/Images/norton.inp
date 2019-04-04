@@ -1,0 +1,52 @@
+%
+%  norton.inp
+%
+****calcul
+***mesh **predefined cax8
+***resolution bfgs
+ **sequence 2
+  *time               1.0 2.0
+  *increment          1 10
+  *iteration          10 
+  *ratio absolu       0.01
+  *algorithm eeeeee 
+%% p1p2p3
+
+***bc
+ **impose_nodal_dof
+    bottom  U2 0.0
+    left    U1 0.0 
+    top     U2 0.001 tab
+
+***parameter temperature
+   0. uniform 293.15
+   2. uniform 803.15 
+
+***table
+  **name tab
+    *time  0.0  1.0 2.0
+    *value 0.0  0.5 2.0
+
+***output
+   **value_at_integration
+   **curve
+      *precision 3
+      *gauss_var 
+         1,1 sig22 eel22 p p21
+***material
+
+****return
+
+***behavior Norton
+ **material_properties
+   YoungModulus 150e9
+   PoissonRatio   0.33
+   A[0] 8.e-67
+   A[1] 1.
+   E 8.2
+ **out_of_bounds_policy Strict
+ **parameters
+   epsilon 1.e-12
+***return
+
+

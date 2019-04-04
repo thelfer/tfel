@@ -1,0 +1,62 @@
+/*! 
+ * \file   cyranoimplicitnorton3.mtest
+ * \brief
+ * \author Helfer Thomas
+ * \brief  02 avril 2014
+ */
+
+@Description{
+  "Test the axisymmetric generalised plane"
+  " stress modelling hypothesis"
+  "This test is meant to test the local "
+  "sub stepping of the behaviour"
+  "Note: du to substepping, the convergence is *not* "
+  "quadratic, even though the the consistent tangent operator "
+  "is used."
+ };
+
+@MaximumNumberOfSubSteps   1;
+
+@ModellingHypothesis 'AxisymmetricalGeneralisedPlaneStress';
+@Behaviour<cyrano> '@MFrontCyranoBehavioursBuildPath@' 'cyranoimplicitnorton3';
+
+@MaterialProperty<constant> 'YoungModulus'     150.e9;
+@MaterialProperty<constant> 'PoissonRatio'       0.3;
+
+@Real 'szz' 20.e6;
+// Initial value of the elastic strain
+@Real 'EELZZ0'  0.00013333333333333333;
+@Real 'EELRR0' -0.00004;
+@InternalStateVariable 'ElasticStrain' {'EELRR0','EELZZ0','EELRR0'};
+@InternalStateVariable 'AxialStrain'   'EELZZ0';
+// Initial value of the total strain
+@Strain {'EELRR0',0.,'EELRR0'};
+// Initial value of the stresses
+@Stress {0.,'szz',0.};
+
+@ExternalStateVariable 'Temperature' 293.15;
+@ExternalStateVariable 'AxialStress' 'szz';
+
+@Times {0.,3600 in 20};
+
+// tests on strains
+// note: p is known at 1.e-12 (defaut value
+// for @StrainEpsilon), thus we may expect the strain to be known at
+// '3.6*1.e-9'. If pratice, things are a bit better but not much
+// better.
+@Real 'A' 8.e-67;
+@Real 'E' 8.2;
+@Test<function> 'ETT' 'EELRR0-0.5*A*szz**E*t' 1.e-10;
+@Test<function> 'ERR' 'EELRR0-0.5*A*szz**E*t'     1.e-9;
+@Test<function> 'EZZ' '0.'                    1.e-10;
+@Test<function> 'AxialStrain' 'EELZZ0+A*szz**E*t' 1.e-10;
+// tests on internal state variables
+@Test<function> 'ElasticStrainRR' 'EELRR0'  1.e-12;
+@Test<function> 'ElasticStrainZZ' 'EELZZ0'  1.e-12;
+@Test<function> 'ElasticStrainTT' 'EELRR0'  1.e-12;
+@Test<function> 'EquivalentViscoplasticStrain' 'A*szz**E*t' 1.e-12;
+
+@Test<function> 'SZZ' 'szz'     1.e-3;
+// check that the mechanical equilibrium is satisfied
+@Test<function> 'SRR' '0.'      1.e-3;
+@Test<function> 'STT' '0.'      1.e-3;

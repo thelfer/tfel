@@ -1,0 +1,86 @@
+@DSL Implicit;
+@Behaviour JohnsonCook_ssr;
+@Author    Guillaume Michal;
+@Date      21/06/2017;
+
+@Description
+{
+  (Fake) Johnson-Cook law.	
+  Strain rate influence but no temperature effect for learning purposes. 
+  
+  This example implements the analytical jacobian using the Implicit DSL
+  with strain rate effects.
+  
+  This is a file part of a set of three:
+  - johnsoncook_s   : Strain influence,
+  - johnsoncook_ssr : Strain and Strain Rate influence,
+  - johnsoncook_ssrt: Strain and Strain Rate and Temperature influence (adiabatic heating).
+  
+  Author: G. Michal, University of Wollongong, NSW, Australia.
+  Last modified: 21st of May 2017.
+}
+
+@Algorithm NewtonRaphson;
+@Epsilon 1.e-12;
+@Theta 1. ;
+
+@ModellingHypotheses {".+"};
+@Brick StandardElasticity;
+@ElasticMaterialProperties {212000.,0.33};
+
+@Parameter A = 57.27;
+@Parameter B = 479.93;
+@Parameter n = 0.316;
+@Parameter C = 0.0362;
+@Parameter e0Dot = 1e-3;
+
+@StateVariable strain  p;
+@PhysicalBounds p in [0:*[;
+
+@LocalVariable strain e0Dot_dt;
+@LocalVariable stress Fel;
+
+@StaticVariable real p_eps   = 1.e-13;
+@StaticVariable real seq_eps = 1.e-13;
+
+/* Initialize Lame coefficients */
+@InitLocalVariables{
+  // Product of minimum strain rate by time increment
+  e0Dot_dt = e0Dot*dt;
+  // Elastic stress preediction and equivalent elastic stress
+  const auto seqel = sigmaeq(computeElasticPrediction());
+  // Hardening law elastic prediction.
+  // No further plastic strain -> strain rate null <-> dpdt <= eoDot
+  const auto rp = (A+B*pow(max(p_eps,p), n));
+  // Yield surface
+  Fel = seqel - rp;	
+}
+
+@Integrator{	
+  if(Fel <= 0){
+    return true;
+  }
+  // Flow direction
+  const auto seq  = sigmaeq(sig);
+  const auto iseq = 1/max(seq,stress(seq_eps*young));
+  const auto n_    = eval(3*deviator(sig)*(iseq/2));
+  // Plastic increment
+  const auto p_ = max(p_eps,p+theta*dp);
+  // Hardening law and partial derivatives
+  real drp_ddp;		
+  real ppow = B*pow(p_,n-1.);
+  real rp   = A+p_*ppow;
+  if (dp <= e0Dot_dt){
+    drp_ddp = theta*n*ppow + rp*C/(e0Dot_dt);
+  }  else{
+    drp_ddp = theta*n*ppow*(1.+C*log(dp/e0Dot_dt)) + rp*C/dp;
+    rp     *= (1.+C*log(dp/e0Dot_dt));
+  }
+  // Implicit system of equations to solve for dp and deel
+  fp        = (seq-rp)/young;
+  dfp_ddeel = 2*(mu/young)*theta*n_;
+  dfp_ddp   = -drp_ddp/young;
+  feel        += dp*n_;
+  dfeel_ddeel += 2*mu*theta*dp*(Stensor4::M()-(n_^n_))*iseq;
+  dfeel_ddp    = n_;
+}

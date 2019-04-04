@@ -1,0 +1,27 @@
+/*! 
+ * \file   elasticity.mtest
+ * \brief
+ * \author Helfer Thomas
+ * \brief  21 févr. 2014
+ */
+
+@ModellingHypothesis 'AxisymmetricalGeneralisedPlaneStrain';
+@Behaviour<cyrano> '@MFrontCyranoBehavioursBuildPath@' 'cyranoelasticity';
+@MaterialProperty<constant> 'YoungModulus'     150.e9;
+@MaterialProperty<constant> 'PoissonRatio'       0.3;
+
+@ExternalStateVariable 'Temperature' {0:293.15,3600.:800};
+
+@Real 'e0' 1.e-3;
+@ImposedStrain<function> 'ERR' 'e0*sin(t/900.)';
+
+@Times {0.,3600 in 20};
+
+// stresses
+@Test<function> 'SRR' 'YoungModulus*ERR'  1.e-3;
+@Test<function> 'STT' '0.'                1.e-3;
+@Test<function> 'SZZ' '0.'                1.e-3;
+
+// strains
+@Test<function> 'ETT' '-PoissonRatio*ERR' 1.e-8;
+@Test<function> 'EZZ' '-PoissonRatio*ERR' 1.e-8;

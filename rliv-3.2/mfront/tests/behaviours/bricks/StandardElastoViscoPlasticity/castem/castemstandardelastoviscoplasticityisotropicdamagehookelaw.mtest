@@ -1,0 +1,23 @@
+@Author Thomas Helfer;
+@Date   02/05/2018;
+@Description{
+
+};
+
+@XMLOutputFile @xml_output@;
+@MaximumNumberOfSubSteps 1;
+@Behaviour<castem> @library@ @behaviour@;
+
+// material properties
+@MaterialProperty<constant> 'YoungModulus' 1.5e+11;
+@MaterialProperty<constant> 'PoissonRatio' 0.3;
+
+@ExternalStateVariable 'Temperature' 293.15 ;
+@ExternalStateVariable 'ImposedDamage' {0:0,1:0,2:1};
+
+@ImposedStrain 'EXX' {0:0,1:1.e-3,2:1.e-3};
+
+@Times{0,1,2 in 10};
+
+@Test<function> 'SXX' '(1-ImposedDamage)*YoungModulus*EXX' 1.e-1;
+@Test<function> 'EYY' '-PoissonRatio*EXX' 1.e-12;

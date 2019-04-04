@@ -1,0 +1,35 @@
+
+\documentclass[12pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+
+\usepackage[top=2cm,bottom=2cm,left=2cm,right=2cm]{geometry} 
+\usepackage[frenchb]{babel}
+\usepackage{common} 
+
+\begin{document}
+
+\title{TP pour développer des lois de comportement avec MFront}
+\author{jmp}
+\date{2014}
+
+\tableofcontents
+
+\include{norton}
+
+\include{lemaitre}
+
+\include{Chaboche}
+
+\appendix
+
+\include{appendix}
+
+\end{document}
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: t
+%%% End: 

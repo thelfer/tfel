@@ -1,0 +1,9 @@
+@TestType Absolute;
+@Precision 1.e-6;
+
+@Test "UPuN_GaseousFissionProductsReleaseModel.ref"  "UPuN_GaseousFissionProductsReleaseModel.txt" 2;
+@Test "UPuN_GaseousFissionProductsReleaseModel.ref"  "UPuN_GaseousFissionProductsReleaseModel.txt" 3;
+@Test "UPuN_GaseousFissionProductsReleaseModel.ref"  "UPuN_GaseousFissionProductsReleaseModel.txt" 4;
+
+
+

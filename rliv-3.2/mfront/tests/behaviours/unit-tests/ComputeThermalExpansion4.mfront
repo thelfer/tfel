@@ -1,0 +1,11 @@
+@Author T. Helfer;
+@Date 24/02/2016;
+@Behaviour ComputeThermalExpansion4;
+@Description{
+  "This behaviour is invalid since one can'use "
+  "@RequireThermalExpansionCoefficientTensor and "
+  "@ComputeThermalExpansion at the same time."
+}
+
+@RequireThermalExpansionCoefficientTensor;
+@ComputeThermalExpansion {"ThermalExpansionCoefficientTest_1.mfront"};

@@ -1,0 +1,149 @@
+/*!
+ * \file   mazars.mfront
+ * \brief  
+ *   resolution analytique
+ * \author F.Hamon/jmp/th
+ * \date   25 06 2013
+ */
+
+@Behaviour Mazars;
+@ModellingHypotheses {"PlaneStress","PlaneStrain",
+                      "AxisymmetricalGeneralisedPlaneStrain",
+                      "GeneralisedPlaneStrain",
+                      "Axisymmetrical", "Tridimensional"};
+@Description{
+  "Modèle d'endommagement de Mazars"
+  "Implantation valide pour toutes les hypothèses standard et contraintes "
+  "planes. Ce dernier cas est traité à part"
+}
+
+@MaterialProperty stress young;
+young.setGlossaryName("YoungModulus");
+@MaterialProperty real nu;
+nu.setGlossaryName("PoissonRatio");
+
+@MaterialProperty real Ac;
+@MaterialProperty real At;
+@MaterialProperty real Bc;
+@MaterialProperty real Bt;
+@MaterialProperty real k;
+@MaterialProperty real ed0;
+
+@StateVariable real d;
+@StateVariable real Y;
+@StateVariable real eeqcor;
+
+@StateVariable<PlaneStress> real etozz;
+PlaneStress::etozz.setGlossaryName("AxialStrain");
+
+@LocalVariable stress lambda;
+@LocalVariable stress mu;
+
+/*!
+ * Nous initialisons les coefficients de Lamé.
+ */
+@InitLocalVariables{
+  lambda = computeLambda(young,nu);
+  mu = computeMu(young,nu);
+}
+
+/*!
+ * Initialisation pour toutes les hypothèses de modélisation, sauf la
+ * contrainte plane (voir ci-dessous).
+ */
+@Integrator{
+  const Stensor e  = eto+deto;
+  const real    tr = trace(e);
+  const Stensor s0 = lambda*tr*Stensor::Id()+2*mu*e;
+}
+
+/*!
+ * Nous commençons par décrire certaines grandeurs dépendant des
+ * déformations et des contraintes. Dans le cas des contraintes
+ * planes, nous ne connaissons pas la déformation axiale. Dans le cas
+ * de la loi de Mazars, celle-ci est déduite de la loi de Hooke.
+ * On "remplace" les initialisations faites précédemment.
+ */
+@ProvidesSymmetricTangentOperator;
+@Integrator<PlaneStress,Replace>{
+  const stress C1  = young/(1-nu*nu);
+  const stress C2  = nu*C1;
+  const stress C3  = (1-nu)*C1;
+  Stensor s0;
+  Stensor e  = eto+deto;
+  s0[0] = C1*e[0]+C2*e[1];
+  s0[1] = C1*e[1]+C2*e[0];
+  s0[2] = 0;
+  s0[3] = C3*e[3];
+  etozz = -nu/(1-nu)*(e[0]+e[1]);
+  e[2]  = etozz;
+  const real tr = trace(e);
+}
+
+// Ce bloc va s'ajouter à l'un des blocs précédant, suivant le cas
+// considéré.
+/*!
+ * Nous décrivons maintenant l'évolution de l'endommagement.
+ */
+@Integrator<Append,AtEnd>{
+  const real dmax=0.99999;
+  strain e1,e2,e3;
+  e.template computeEigenValues<Stensor::FSESJACOBIEIGENSOLVER>(e1,e2,e3);
+  // eigen values of s0
+  const stress s1 = 2*mu*e1+lambda*tr;
+  const stress s2 = 2*mu*e2+lambda*tr;
+  const stress s3 = 2*mu*e3+lambda*tr;
+  const real sn = max(abs(s1),max(abs(s2),abs(s3)));
+  const real ppe1=max(strain(0),e1);
+  const real ppe2=max(strain(0),e2);
+  const real ppe3=max(strain(0),e3);
+  const stress pps1=max(stress(0),s1);
+  const stress pps2=max(stress(0),s2);
+  const stress pps3=max(stress(0),s3);
+  real r=1.;
+  if (sn>1.e-6*young){
+     r=(pps1+pps2+pps3)/(abs(s1)+abs(s2)+abs(s3));
+  }
+  real gam=1. ;
+  if ((min(s1,min(s2,s3))<0.)&&(r==0.)){
+    const stress pns1=min(stress(0),s1);
+    const stress pns2=min(stress(0),s2);
+    const stress pns3=min(stress(0),s3);
+    gam=-sqrt(pns1*pns1+pns2*pns2+pns3*pns3)/(pns1+pns2+pns3);
+  }
+  const real eeqc= sqrt(ppe1*ppe1+ppe2*ppe2+ppe3*ppe3);
+  eeqcor=max(gam*eeqc,eeqcor);
+  const real A=At*(2*r*r*(1.-2*k)-r*(1-4*k))+Ac*(2*r*r-3*r+1);
+  const real B=r*r*Bt+(1-r*r)*Bc;    
+  const real Y1=max(ed0,eeqcor);
+  Y=max(Y1,Y);
+  d=max(d,1-(1-A)*ed0/Y-A*exp(-B*(Y-ed0)));
+  d=min(dmax,d);
+  sig = (1.-d)*s0;
+  if(computeTangentOperator_){
+    if(smt==ELASTIC){
+      computeAlteredElasticStiffness<hypothesis,Type>::exe(Dt,lambda,mu);
+    } else if(smt==SECANTOPERATOR){
+      StiffnessTensor Hooke;
+      computeAlteredElasticStiffness<hypothesis,Type>::exe(Hooke,lambda,mu);
+      Dt = (1.-d)*Hooke;
+    } else {
+      StiffnessTensor Hooke;
+      Stensor eplus;
+      const real RTEMP=B*(Y-ed0);
+      real COEF=0.;
+      computeAlteredElasticStiffness<hypothesis,Type>::exe(Hooke,lambda,mu);
+      if((d<dmax)&&(dd>0.)&&(Y>1.e-6)){
+	COEF=ed0*(1.-A)/(Y*Y);
+	if(RTEMP<200.0){
+	  COEF=COEF+A*B/exp(RTEMP);
+	}
+	COEF=gam*gam*COEF/Y;
+      }
+      for(unsigned short i=0;i!=e.size();++i){
+	eplus[i]=max(0.,e[i]);
+      }    
+      Dt = (1.-d)*Hooke-COEF*(s0^eplus);
+    }
+  }
+}

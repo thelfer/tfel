@@ -1,0 +1,44 @@
+\noindent
+\ttfamily
+\hlstd{@Parser MaterialLaw}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@Law}\hlstd{\ \ \ \ }\hlstd{SIC\textunderscore THERMALCONDUCTIVITY\textunderscore SNEAD}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@Author Éric Brunon}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@Date}\hlstd{\ \ \ }\hlstd{}\hlnum{2007}\hlstd{}\hlsym{{-}}\hlstd{}\hlnum{12}\hlstd{}\hlsym{{-}}\hlstd{}\hlnum{06}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@Description}\hlsym{\{}\hspace*{\fill}\\
+\hlstd{ Loi de la publication JNM ajustée sur les mesures du SPUA\hspace*{\fill}\\
+\hspace*{\fill}\\
+ Publication JNM }\hlsym{:}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+ Journal of Nuclear Materials }\hlkwd{371 }\hlstd{}\hlsym{( }\hlstd{}\hlnum{2007 }\hlstd{}\hlsym{) }\hlstd{}\hlnum{329}\hlstd{}\hlsym{{-}}\hlstd{}\hlnum{377}\hspace*{\fill}\\
+\hlstd{ Handbook of SiC properties }\hlkwa{for }\hlstd{fuel performance modeling\hspace*{\fill}\\
+ L}\hlsym{.}\hlstd{L}\hlsym{. }\hlstd{SNEAD et al}\hlsym{.}\hspace*{\fill}\\
+\hlstd{ Page }\hlnum{337 }\hlstd{}\hlsym{{-} }\hlstd{}\hlkwd{Equations }\hlstd{}\hlsym{(}\hlstd{}\hlnum{12}\hlstd{}\hlsym{) {-} }\hlstd{Figure }\hlnum{7}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+ Mesures SPUA }\hlsym{:}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+ Caractérisation des matériaux inertes pour FUTURIX}\hlsym{/}\hlstd{MI\hspace*{\fill}\\
+ DEC}\hlsym{/}\hlstd{SPUA}\hlsym{/}\hlstd{LTEC}\hlsym{/}\hlstd{NT }\hlnum{05}\hlstd{}\hlsym{{-}}\hlstd{}\hlnum{044 }\hlstd{ind }\hlnum{0 }\hlstd{de Aout }\hlnum{2005}\hspace*{\fill}\\
+\hlstd{ F}\hlsym{. }\hlstd{AUDUBERT\hspace*{\fill}\\
+ §}\hlnum{4.2 }\hlstd{page }\hlnum{22 }\hlstd{}\hlsym{{-} }\hlstd{Figure }\hlnum{18}\hspace*{\fill}\\
+\hlstd{}\hlsym{\}}\hspace*{\fill}\\
+\hlstd{}\hspace*{\fill}\\
+\hspace*{\fill}\\
+\hlslc{// changing the name of output}\hspace*{\fill}\\
+\hlstd{@Output k}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hspace*{\fill}\\
+\hlslc{// input of the law}\hspace*{\fill}\\
+\hlstd{@Input T}\hlsym{;}\hspace*{\fill}\\
+\hlstd{T}\hlsym{.}\hlstd{}\hlkwd{setGlossaryName}\hlstd{}\hlsym{(}\hlstd{}\hlstr{"Temperature"}\hlstd{}\hlsym{);}\hspace*{\fill}\\
+\hlstd{}\hspace*{\fill}\\
+\hlslc{// temperature bounds}\hspace*{\fill}\\
+\hlstd{@PhysicalBounds T in }\hlsym{{[}}\hlstd{}\hlnum{0}\hlstd{}\hlsym{:{*}{[};}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@Function}\hlsym{\{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwb{static const double }\hlstd{a }\hlsym{=}\hlstd{\ \ }\hlsym{}\hlstd{}\hlnum{0.781151102452916 }\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwb{static const double }\hlstd{b }\hlsym{=}\hlstd{\ \ }\hlsym{}\hlstd{}\hlnum{1.05E{-}5 }\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwb{static const double }\hlstd{c }\hlsym{= {-}}\hlstd{}\hlnum{3.00E{-}4 }\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{k }\hlsym{= }\hlstd{a}\hlsym{/(}\hlstd{b}\hlsym{{*}}\hlstd{T}\hlsym{+}\hlstd{c}\hlsym{);}\hspace*{\fill}\\
+\hlstd{}\hlsym{\} }\hlstd{}\hlslc{// end of function}\hlstd{}\hspace*{\fill}\\
+\mbox{}
+\normalfont

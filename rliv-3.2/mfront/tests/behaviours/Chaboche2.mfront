@@ -1,0 +1,86 @@
+/*!
+ * \file   Chaboche2.mfront
+ * \brief  
+ *   resolution implicite jabobienne numerique
+ * \author jmp
+ * \date   13 02 2013
+ */
+
+@DSL    Implicit;
+@Behaviour Chaboche2;
+@Algorithm NewtonRaphson_NumericalJacobian;
+
+@Theta 1.0 ;
+@Epsilon 1.e-12 ;
+@IterMax 200 ;
+
+@MaterialProperty stress young;
+young.setGlossaryName("YoungModulus");
+@MaterialProperty real nu;
+nu.setGlossaryName("PoissonRatio");
+
+@MaterialProperty real Rinf;
+@MaterialProperty real R0;
+@MaterialProperty real b;
+@MaterialProperty real k;
+@MaterialProperty real w;
+@MaterialProperty real C1inf;
+@MaterialProperty real g1;
+@MaterialProperty real C2inf;
+@MaterialProperty real g2;
+@MaterialProperty real E;
+@MaterialProperty real UNsurK;
+
+@StateVariable real    p;
+@StateVariable Stensor a1; 
+@StateVariable Stensor a2; 
+
+@LocalVariable real    lambda;
+@LocalVariable real    mu;
+
+/* Initialize Lame coefficients */
+@InitLocalVariables{
+  lambda = computeLambda(young,nu);
+  mu = computeMu(young,nu);
+} 
+
+@ComputeStress{
+  sig = lambda*trace(eel)*Stensor::Id()+2*mu*eel;
+} 
+
+@Integrator{
+  const Stensor a1_ = (a1+theta*da1) ; 
+  const Stensor a2_ = (a2+theta*da2) ; 
+  const Stensor X1_ = C1inf*(a1_)/1.5 ; 
+  const Stensor X2_ = C2inf*(a2_)/1.5 ; 
+  const real p_ = (p +theta*dp) ;
+  const Stensor scin = sig - X1_ - X2_ ;
+  const real seq = sigmaeq(scin);
+  const real Rp = Rinf + (R0-Rinf)*exp(-b*p_) ;
+  const real F = seq - Rp ;
+  real vp=0.;  
+  if(F > 0){  
+     vp  = pow(F*UNsurK,E) ;
+     const Stensor n = (seq>1.e-12*young) ? 1.5*deviator(scin)/seq : Stensor(real(0));     
+     feel += dp*n-deto;
+     fp   -= vp*dt;
+     fa1  = da1 -dp*n + g1*dp*a1_;
+     fa2  = da2 -dp*n + g2*dp*a2_;
+  } else {
+    feel -= deto;    
+  }
+} 
+
+@TangentOperator{
+  if((smt==ELASTIC)||(smt==SECANTOPERATOR)){
+    computeAlteredElasticStiffness<hypothesis,Type>::exe(Dt,lambda,mu);
+  } else if (smt==CONSISTENTTANGENTOPERATOR){
+    StiffnessTensor De;
+    Stensor4 Je;
+    computeElasticStiffness<N,Type>::exe(De,lambda,mu);
+    getPartialJacobianInvert(Je);
+    Dt = De*Je;
+  } else {
+    return false;
+  }
+}

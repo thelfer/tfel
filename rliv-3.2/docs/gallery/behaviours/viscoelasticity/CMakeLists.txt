@@ -1,0 +1,1 @@
+install_gallery(viscoelasticity GeneralizedMaxwell.mfront)

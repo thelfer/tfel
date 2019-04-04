@@ -1,0 +1,668 @@
+\documentclass[rectoverso,pleiades,pstricks,leqno,anti,projet]{note_technique_2010}
+
+% \usepackage{draftcopy}
+% \draftcopySetGrey{0.8}
+% \draftcopyName{Version provisoire}{80}
+
+\usepackage[dvips]{graphicx}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage[dvips,breaklinks]{hyperref}
+
+\usepackage{mathematiques}
+\usepackage{mecanique}
+\usepackage{couleurs}
+\usepackage{presentation}
+
+\usepackage{pst-plot}
+\usepackage{array}
+\usepackage{subfigure}
+\usepackage{relsize}
+\usepackage{multind}
+
+\usepackage[frenchb]{babel}
+
+\newcommand{\pleiades}{\texttt{pleiades}}
+\newcommand{\TFEL}{\texttt{tfel}}
+\newcommand{\mfront}{\texttt{mfront}}
+\newcommand{\mtest}{\texttt{mtest}}
+\newcommand{\licos}{\texttt{licos}}
+\newcommand{\cyrano}{\texttt{cyrano}}
+\newcommand{\galileo}{\texttt{galileo}}
+\newcommand{\castem}{\texttt{Cast3M}}
+\newcommand{\zebulon}{\texttt{ZeBuLoN}}
+\newcommand{\gibiane}{\texttt{gibiane}}
+\newcommand{\tmfft}{\texttt{TMFFT}}
+\newcommand{\aster}{\href{http://www.code-aster.org/}{\texttt{Aster}}}
+\newcommand{\pycastem}{\texttt{pyCast3M}}
+\newcommand{\umat}{\texttt{umat}}
+\newcommand{\zmat}{\texttt{zmat}}
+\newcommand{\sirius}{\texttt{sirius}}
+\newcommand{\fortran}{\texttt{fortran}}
+
+\newcommand{\cmake}{\href{http://www.cmake.org/}{\texttt{cmake}}}
+\newcommand{\autotools}{\href{http://fr.wikipedia.org/wiki/Autotools}{\texttt{autotools}}}
+\newcommand{\python}{\href{http://python.org}{\texttt{python}}}
+\newcommand{\gnuplot}{\href{http://www.gnuplot.info}{\texttt{gnuplot}}}
+\newcommand{\latex}{\href{http://www.latex-project.org}{\LaTeX2e{}}}
+\newcommand{\make}{\href{http://www.gnu.org/software/make/}{\texttt{make}}}
+\newcommand{\doxygen}{\href{http://www.stack.nl/~dimitri/doxygen/}{\texttt{doxygen}}}
+\newcommand{\valgrind}{\href{http://www.valgrind.org/}{\texttt{valgrind}}}
+
+\newcommand{\moption}[1]{\texttt{-{}-#1}}
+
+\newcommand{\bigO}[1]{\ensuremath{\mathop{}\mathopen{}O\mathopen{}\left(#1\right)}}
+
+%c from texinfo.tex
+\def\ifmonospace{\ifdim\fontdimen3\font=0pt }
+
+%c C plus plus
+\def\cpp{%
+\ifmonospace%
+    C++%
+\else%
+    C\kern-.1667em\raise.30ex\hbox{\smaller{++}}%
+\fi%
+\spacefactor1000 }
+
+\newcommand{\varcpp}[1]{\texttt{#1}}
+
+\newcommand{\sigmaH}{\ensuremath{\sigma_{H}}}
+
+\newcommand{\nbzrc}{$NbZrC$}
+\newcommand{\upuc}{$\paren{U,Pu}C$}
+\newcommand{\sic}{$SiC$}
+
+\newcommand{\cea}{CEA}
+\newcommand{\edf}{EDF}
+\newcommand{\windows}{\href{http://www.microsoft.com/france/windows/default.mspx}{\texttt{Windows}}}
+\newcommand{\unix}{\href{http://www.kernel.org/}{\texttt{unix}}}
+\newcommand{\msys}{\href{http://www.mingw.org/wiki/MSYS}{\texttt{msys}}}
+\newcommand{\cygwin}{\href{http://www.cygwin.com/}{\texttt{cygwin}}}
+\newcommand{\linux}{\href{http://www.kernel.org/}{\texttt{linux}}}
+\newcommand{\debian}{\href{http://www.debian.org/}{\texttt{Debian}}}
+\newcommand{\ubuntu}{\href{http://www.ubuntu.com}{\texttt{Ubuntu}}}
+\newcommand{\redhat}{\href{http://www.redhat.com}{\texttt{Red Hat}}}
+\newcommand{\mandriva}{\href{http://www.mandriva.com}{\texttt{Mandriva}}}
+\newcommand{\excel}{\href{http://www.microsoft.com/france/office/2007/programs/excel/overview.mspx}{\texttt{Microsoft Office Excel}}}
+
+\newcommand{\debutpas}[1]{\ensuremath{\left.#1\right|_{t}}}
+\newcommand{\milieupas}[1]{\ensuremath{\left.#1\right|_{t+\theta\, \Delta\, t}}}
+\newcommand{\finpas}[1]{\ensuremath{\left.#1\right|_{t+\Delta\, t}}}
+\newcommand{\demipas}[1]{\ensuremath{\left.#1\right|_{t+\frac{\Delta\, t}{2}}}}
+
+\newcommand{\code}[1]{
+  \psframebox[linecolor=ceaorange,shadow=true,blur=true]{
+    \begin{minipage}[htbp]{1.0\linewidth}
+      \ttfamily\small#1
+    \end{minipage}
+  }
+}
+
+\newcommand{\bash}[1]{
+  \begin{center}
+    \begin{minipage}{0.8\linewidth}
+      \footnotesize{}
+      \texttt{\$#1}
+    \end{minipage}
+  \end{center}
+}
+
+\lstset{ %
+  backgroundcolor=\color{white},   % choose the background color; you must add \usepackage{color} or \usepackage{xcolor}
+%  basicstyle=\tiny,       % the size of the fonts that are used for the code
+  breakatwhitespace=false,         % sets if automatic breaks should only happen at whitespace
+  breaklines=true,                 % sets automatic line breaking
+  captionpos=b,                    % sets the caption-position to bottom
+  commentstyle=\color{red},        % comment style
+  deletekeywords={...},            % if you want to delete keywords from the given language
+  frame=single,                    % adds a frame around the code
+  keepspaces=true,                 % keeps spaces in text, useful for keeping indentation of code (possibly needs columns=flexible)
+  keywordstyle=\color{blue},       % keyword style
+  language=C++,                    % the language of the code
+  morekeywords={Output Author Input Date},            % if you want to add more keywords to the set
+  numbers=left,                    % where to put the line-numbers; possible values are (none, left, right)
+  rulecolor=\color{orange},         % if not set, the frame-color may be changed on line-breaks within not-black text (e.g. comments (green here))
+  showspaces=false,                % show spaces everywhere adding particular underscores; it overrides 'showstringspaces'
+  showstringspaces=false,          % underline spaces within strings only
+  showtabs=false,                  % show tabs within strings adding particular underscores
+  stepnumber=1,                    % the step between two line-numbers. If it's 1, each line will be numbered
+  stringstyle=\color{green},       % string literal style
+  tabsize=2,                       % sets default tabsize to 2 spaces
+}
+
+\input{LSC}
+
+\auteurs{T.~Helfer}
+\redacteur{T.~Helfer}
+\verificateur{}
+\approbateur{R.~Masson}
+\emetteur{E.~Touron}
+
+\titre{L'interface \zmat{} aux lois de comportements
+  mécaniques de \mfront{}}
+
+\date{2014}
+% \numero{12-014}
+\indice{0}
+% \dateversion{09/2012}
+\numeroaffaire{A-SICOM-A1-01}
+\domaine{DEN/DISN/SIMU}
+% \accords{tripartite}
+% \clients{AREVA - EDF}
+\programmerecherche{SICOM}
+\classification{DO}
+\motsclefs{
+  \mfront{} - \pleiades{}
+}
+
+% \codebarre{images/code_barre}
+% \diffusionexterne{
+% {EDF/R\&D}              & O. Marchand     & 1 & Diffusion par\\
+% {EDF/R\&D}              & P. Vasseur      & 1 & courriel     \\
+% {EDF/R\&D/MMC}          & P. Ollar         & 1 & \\
+% {EDF/R\&D/MMC/CPM}      & N. Prompt       & 1 & \\
+%                         & N. Barnel       & 1 & \\
+% {EDF/R\&D/MMC/CPM}      & G. Thouvenin    & 1 & \\
+%                         & R. Largenton    & 1 & \\
+%                         & C. Petry        & 1 & \\
+% EDF/SEPTEN              & N. Waeckel      & 1 & \\
+%                         & P. Hemmerich    & 1 & \\
+%                         & H. Billat       & 1 & \\
+%                         & C. Bernaudat    & 1 & \\
+% AREVA NP/LA DEFENSE     & L. Catalani     & 1 & \\
+%                         & L. Brunel       & 1 & \\
+% AREVA NP/LYON           & P. Melin        & 1 & \\
+%                         & V. Bessiron     & 1 & \\
+%                         & C. Garnier      & 1 & \\                           
+%                         & V. Garat        & 1 & \\
+%                         & F. Arnoux       & 1 &
+% }
+
+\diffusioninterne{
+}
+
+% \signatures{-0.}{-39.2}{0.12}{images/signatures.eps}
+
+\stylebib{@abs_top_srcdir@/docs/tex/texmf/bibtex/fr-insa}
+\fichierbib{@abs_top_srcdir@/docs/tex/texmf/bibtex/bibliographie}
+
+\resumecea{
+  Le Centre des Matériaux et les Mines de Paris sont associés à de
+  nombreuses thèses avec le \cea{} et \edf{}.
+
+  Il est apparu d'un grand intérêt de permettre l'échange des lois de
+  comportement mécanique entre le \cea{}, \edf{} et le Centre des
+  Matériaux, chacun de ses organismes ayant développé son code aux
+  éléments finis~: \castem{} pour le \cea{}, \aster{} pour \edf{} et
+  \zebulon{} pour le Centre des Matériaux.
+
+  Une interface \mfront{}, nommée \zmat{}, pour le code \zebulon{}, a
+  donc été développée pour les lois de comportement en petites
+  déformations et en grandes transformations. Cette interface s'appuie
+  sur les classes du code \zebulon{} pour une intégration aussi
+  naturelle que possible~: une loi générée par \mfront{} ne doit pas
+  se distinguer d'une loi native.
+
+  Nous présentons les détails de cet interface et comment l'utiliser
+  dans le code \zebulon{}, ainsi que des tests d'intégration.
+
+  Une même loi de comportement \mfront{} peut aujourd'hui être
+  partagée entre les utilisateurs des codes \castem{} (\cea{}),
+  \aster{} (\edf{}) et \zebulon{} (Centre des Matériaux).
+}
+
+\begin{document}
+
+\clearpage
+\newpage
+\section{Introduction}
+
+Nous présentons dans cette note l'interface \zmat{} qui permet
+d'utiliser les lois mécaniques \mfront{} dans le code aux éléments
+finis \zebulon{}.
+
+La première partie décrit les spécificités du code aux éléments finis
+\zebulon{} par rapport~:
+\begin{enumerate}[-]
+\item aux conventions utilisées par \mfront{} (rangement des tenseurs)~;
+\item aux fonctionnalités disponibles dans \mfront{} et utilisées dans
+  d'autres codes aux éléments finis (gestion de la contrainte plane,
+  orthotropie, opérateur tangent)~;
+\end{enumerate}
+
+La seconde partie décrit la mise en donnée d'une loi
+\mfront{}. Nous y décrivons~:
+\begin{enumerate}[-]
+\item l'utilisation des noms de glossaire~;
+\item la gestion des propriétés matériaux, des variables internes et
+  des variables externes~;
+\item la déclaration des paramètres~;
+\end{enumerate}
+
+La troisième partie décrit deux tests unitaires. La dernière partie
+décrit les évolutions possibles de l'interface.
+
+\section{Spécificités du code aux éléments finis \zebulon{}}
+
+Nous décrivons ici quelques spécificités du codes aux éléments finis
+\zebulon{}.
+
+\subsection{Conventions de rangement des tenseurs}
+
+Les conventions de rangement des tenseurs adoptés dans \mfront{} et
+\zmat{} diffèrent. Les variables internes sont converties en entrée
+vers la convention utilisée dans \TFEL{} et en sortie vers la
+convention utilisée par \zebulon{}.
+
+\subsubsection{Tenseurs d'ordre $2$ symétriques} Dans \zmat{}, un
+tenseur symétrique \(\tenseur{a}\) est stocké ainsi~:
+\[
+\begin{pmatrix}
+  a_{xx} & a_{yy} & a_{zz} & \sqrt{2}\,a_{xy} & \sqrt{2}\,a_{yz} & \sqrt{2}\,a_{xz}
+\end{pmatrix}
+\]
+
+Dans \TFEL{}, ce même tenseur est représenté ainsi~:
+\[
+\begin{pmatrix}
+  a_{xx} & a_{yy} & a_{zz} & \sqrt{2}\,a_{xy} & \sqrt{2}\,a_{xz} & \sqrt{2}\,a_{yz}
+\end{pmatrix}
+\]
+
+On passe de l'une à l'autre des conventions en intervertissant les
+deux dernières composantes.
+
+\subsubsection{Tenseurs d'ordre $2$ (non symétriques)} Dans \zmat{}, un
+tenseur \(\tns{a}\) est stocké ainsi~:
+\[
+\begin{pmatrix}
+  a_{xx} & a_{yy} & a_{zz} & a_{xy} & a_{yz} &  a_{zx} & a_{yx} & a_{zy} & a_{xz}
+\end{pmatrix}
+\]
+
+Dans \TFEL{}, ce même tenseur est représenté ainsi~:
+\[
+\begin{pmatrix}
+  a_{xx} & a_{yy} & a_{zz} & a_{xy} & a_{yx} &  a_{xz} & a_{zx} & a_{yz} & a_{zy}
+\end{pmatrix}
+\]
+
+\subsection{Orthotropie} L'orthotropie éventuelle du matériau est géré
+par \zebulon{} en amont et en aval de l'appel à la loi de comportement.
+
+\subsection{Hypothèses de modélisation} L'idée que la loi de
+comportement doit pouvoir être écrite de manière indépendante de
+l'hypothèse de modélisation est très fortement ancrée dans le code aux
+éléments finis \zebulon{}.
+
+En particulier l'hypothèse de contraintes planes est gérée aux niveaux
+des éléments finis et non par la loi de
+comportement~\cite{besson_large_1997}.
+
+En pratique, la loi de comportement n'a accès qu'à la dimension
+d'espace. Nous avons du faire le choix d'associer à chaque dimension
+d'espace une hypothèse de modélisation, qui est potentiellement
+différente de l'hypothèse utilisée pour le calcul de structure~:
+\begin{enumerate}[-]
+\item en \(1D\), l'hypothèse d'axisymétrie et de déformations planes
+  généralisées est utilisée~;
+\item en \(2D\), l'hypothèse des déformations planes généralisées est
+  utilisée.
+\end{enumerate}
+
+Ces choix peuvent parfois être problématiques. En particulier, dans
+les lois de comportement orthotropes, nous retrouvons une difficulté
+que nous avons déjà soulevées (voir~\cite{helfer_generateur_2013})~:
+la définition de la matrice de \nom{Hill} peut être incohérente avec
+la définition des axes d'orthtropie et/ou la définition du tenseur
+d'élasticité.
+
+\subsection{Transformations finies}
+
+Le code aux éléments finis \zebulon{} propose trois formulations en
+grandes transformations~:
+\begin{enumerate}[-]
+\item {\tt Updated\_Lagrangian}, qui associe la contrainte de
+  \nom{Cauchy} \(\tsigma\) au taux de déformation
+  \(\tenseur{D}\).
+\item {\tt Lagrangian\_PK1} qui associe au premier tenseur de
+  \nom{Piola-Kirchhoff} le gradient de la transformation~;
+\item {\tt Total\_Lagrangian} qui associe au second tenseur de
+  \nom{Piola-Kirchhoff} le tenseur de \nom{Green-Lagrange}.
+\end{enumerate}
+
+Les lois grandes transformations générées par \mfront{} ne sont
+aujourd'hui compatibles qu'avec la formulation {\tt
+  Updated\_Lagrangian}.
+
+\subsection{Prédiction et matrice tangente cohérente}
+
+\subsubsection{Matrice de prédiction} La notion de matrice de prédiction
+n'est pas utilisée dans le code aux éléments finis \zebulon{}
+actuellement.
+
+\subsubsection{Matrice tangente cohérente}
+
+Le code aux éléments finis \zebulon{} utilise, pour la convergence
+globale de l'équilibre, tout opérateur fourni par la loi de
+comportement. À chaque intégration, le code précise si cette matrice
+doit être calculée. Par rapport au code aux éléments finis \aster{},
+\zebulon{} ne précise pas aujourd'hui si l'opérateur attendu est la
+matrice d'élasticité initiale, la matrice d'élasticité endommagée
+(opérateur sécant), l'opérateur tangent ou l'opérateur tangent
+cohérent.
+
+Nous avons fait le choix d'utiliser par défaut la matrice tangente
+cohérente~: ainsi, le paramètre {\tt smt} de la directive \mfront{}
+{\tt \symbol{64}{}TangentOperator} est toujours égal à {\tt
+  CONSISTENT\-TANGENT\-OPÉRATEUR}.
+
+À terme, il serait judicieux de pouvoir modifier ce choix du type
+d'opérateur depuis le jeu de données.
+
+\subsubsection{Cas des transformations finies}
+
+Pour les lois écrites en transformations finies, nous avons désigné
+par {\tt DSIG\_DD} la matrice tangente attendue par \zebulon{}.
+
+Si l'utilisateur fournit une autre matrice tangente, \mfront{}
+essaiera de la convertir.
+
+Par exemple, si l'utilisateur fournit pour matrice tangente la dérivée
+de la contrainte de \nom{Kirchhoff} \(\tenseur{\tau}\) par rapport à
+l'incrément spatial du gradient de la transformation
+\(\Delta\,\tns{F}=\tns{F}_{t+\Delta\,t}\,\tns{F}_{t}^{-1}\)\footnote{Il
+  s'agit de la matrice tangente attendue par le {\tt Code-Aster}.},
+les transformations suivantes seront réalisées~:
+\[
+\deriv{\tenseur{\tau}}{\Delta\,\tns{F}}\quad \Rightarrow \quad
+\deriv{\tenseur{\tau}}{\tns{F}_{t+\Delta\,t}}\quad \Rightarrow \quad
+\text{{\tt DSIG\_DD}}
+\]
+
+Par exemple, si l'utilisateur fournit pour matrice tangente la dérivée
+de la second contrainte de \nom{Piola-Kirchhoff} \(\tenseur{S}\) par
+rapport au tenseur de \nom{Green-Lagrange} les transformations
+suivantes seront réalisées~:
+\[
+\deriv{\tenseur{S}}{\tenseur{\varepsilon}^{GL}}\quad \Rightarrow \quad
+\deriv{\tenseur{S}}{\tenseur{C}}\quad \Rightarrow \quad
+\deriv{\tenseur{\tau}}{\tns{F}_{t+\Delta\,t}}\quad \Rightarrow \quad
+\text{{\tt DSIG\_DD}}
+\]
+
+\section{Définition d'une loi de comportement dans le jeu de données \zebulon{}}
+
+\begin{figure}[htbp]
+  \centering
+  \lstinputlisting[firstline=40,lastline=49]{@abs_top_srcdir@/docs/mfront/Images/norton.inp}
+  \caption{Mise en données d'une loi de \nom{Norton}.}
+  \label{fig:zmat:norton}
+\end{figure}
+
+La figure~\ref{fig:zmat:norton} illustre la plupart des points évoqués
+dans cette section.
+
+\subsection{Noms de glossaire}
+
+Les noms de glossaire sont utilisés pour la définition des différents
+éléments de la loi dans le jeu de données \zebulon{} (fichier
+d'extension {\tt inp}). La température (dont le nom de glossaire est
+{\tt Temperature}) constitue une exception~: celle-ci doit être
+désignée par {\tt temperature} par compatibilité avec les conventions
+\zebulon{}.
+
+\subsection{Propriétés matériau}
+
+Les propriétés matériau sont définies dans les fichiers \mfront{} par
+le mot clé {\tt @Material\-Property}).
+
+Elles sont renseignées dans la définition du matériau sous l'une des
+entrées {\tt **model\_coef} (syntaxe standard \zebulon) ou {\tt
+  **material\_properties} (compatibilité avec \mfront{}).
+
+Les propriétés matériaux sont alors définies comme pour les lois
+natives de \zebulon{}~: nous nous sommes basées pour cela sur la
+classe {\tt ZSET::COEFF}.
+
+Les propriétés matériau sont évaluées en fin de pas de temps par le
+code aux éléments finis \zebulon{} avant l'intégration puis transmises
+à \mfront{}.
+
+\subsubsection{Cas des tableaux de propriétés matériau} Nous n'avons
+pas trouver de solution native pour gérer les tableaux de propriétés
+matériau. Nous avons donc adopter la convention suivante~: si
+l'utilisateur défini dans le fichier \mfront{} un tableau de 10
+propriétés matériau de nom de glossaire {\tt MP}, il devra définir
+dans le jeu de données \zebulon{} les \(10\) propriétés~:
+\begin{center}
+  {\tt MP[0]}, {\tt MP[1]}, \ldots, {\tt MP[9]}
+\end{center}
+
+Cette convention est incohérente avec celle utilisée pour les tableaux
+de variable internes.
+
+\subsubsection{Limitations}
+
+L'utilisation des propriétés matériau souffre dans la version actuelle
+des limitations suivantes~:
+\begin{enumerate}[-]
+\item il ne faut pas définir de propriétés dépendant des variables internes~;
+\item il n'y a pas d'évolution au cours du pas de temps des propriétés.
+\end{enumerate}
+
+\subsection{Matrice d'élasticité}
+
+Sans le cas où l'utilisateur précise, via le mot clé {\tt
+  @RequireStiffnessTensor}, que le code \zebulon{} doit fournir la
+matrice d'élasticité à la loi de comportement, celle-ci doit être
+définie dans le jeu de données sous le mot clé {\tt **elasticity},
+comme dans le cas des lois natives.
+
+\subsection{Variables internes}
+
+Les variables internes sont gérées de la même manière que dans le cas
+d'une loi native.
+
+\subsection{Variables externes}
+
+Chacune des variables externes définies par le mot clé {\tt
+  @External\-State\-Variable} dans le fichier \mfront{} doit être
+définie dans le jeu de données \zebulon{} sous la section {\tt
+  **paramater}.
+
+\paragraph{Cas de la température} La température est désignée dans le
+jeu de données \zebulon{} sous le nom {\tt temperature} par
+compatibilité avec les conventions \zebulon{}. Sa définition est
+aujourd'hui obligatoire.
+
+\subsection{Paramètres de la loi}
+
+Il est possible de modifier les paramètres d'une loi de comportement
+sous le mot clé {\tt **parameters}. Les paramètres sont définies par
+des nombres réels.
+
+\paragraph{Note} La modification d'un paramètre affecte toutes les
+instances d'une même loi.
+
+\subsection{Gestion du dépassement d'une borne}
+
+La manière de gérer le dépassement d'une borne de validité de la loi
+peut-être paramétrée via l'entrée {\tt
+  **out\_of\_bounds\_policy}. Trois valeurs sont admises~:
+\begin{enumerate}[-]
+\item {\tt Strict} qui conduit à une erreur dans l'intégration de la
+  loi~;
+\item {\tt Warning} qui affiche une erreur sur la sortie standard~;
+\item {\tt None} qui ne fait rien (option par défaut).
+\end{enumerate}
+
+\section{Tests unitaires}
+
+Nous avons mené deux tests d'intégration~:
+\begin{itemize}
+\item l'une en petites déformations en utilisant une loi de
+  \nom{Norton}~;
+\item une en grandes transformations en utilisant une loi de
+  \nom{Saint-Venant-Kirchhoff} orthotrope~;
+\end{itemize}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.75\linewidth]{@abs_top_srcdir@/docs/mfront/Images/ZebulonNorton.eps}
+  \caption{Comparaison \zebulon{}/\mtest{} sur un essai de traction
+    uniaxiale d'un matériau obéissant à la loi de \nom{Norton}.}
+  \label{fig:ZebulonNorton}
+\end{figure}
+
+\subsection{La loi de \nom{Norton}}
+
+Le premier test consiste en une traction uniaxiale d'un matériau
+obéissant à la loi de \nom{Norton}. Ce test a été mené en contraintes
+planes.
+
+Ce test a permis de vérifier que pratiquement l'ensemble des points
+évoqués plus haut, et notamment la convergence quadratique de
+l'algorithme d'équilibre global.
+
+Nous avons utilisé une intégration semi-implicite pour faire
+apparaître des oscillations dans la réponse globale. Le résultat
+obtenu avec \zebulon{} est comparé au résultat obtenu avec \mtest{} en
+figure~\ref{fig:ZebulonNorton}.
+
+\subsection{La loi de \nom{Saint-Venant-Kirchhoff} orthotrope}
+
+\begin{figure}[htbp]
+  \centering
+  \lstinputlisting{@abs_top_srcdir@/docs/mfront/Images/OrthotropicSaintVenantKirchhoffElasticity.mfront}
+  \caption{Implantation d'une loi de \nom{Saint-Venant-Kirchhoff} orthotrope.}
+  \label{fig:zmat:saintvenant:mfront}
+\end{figure}
+
+\subsubsection{Implantation en \mfront{}}
+
+Nous considérons ici une loi d'élasticité simple~: la loi de
+\nom{Saint-Venant-Kirchhoff} étendue au cas orthotrope. L'implantation
+de cette loi est donnée en
+figure~\ref{fig:zmat:saintvenant:mfront}. Nous pouvons faire plusieurs
+remarques~:
+\begin{itemize}
+\item le mot-clé {\tt @OrthotropicBehaviour} est inutile pour une
+  adhérence au code \zebulon{}. Il a été retenu par compatibilité avec
+  les codes \castem{} et \aster{}~;
+\item nous déléguons au code \zebulon{} l'évaluation de la matrice
+  d'élasticité~;
+\item la contrainte de sortie est la contrainte de \nom{Cauchy}~;
+\item nous donnons l'opérateur tangent comme la dérivée du second
+  tenseur de \nom{Piola-Kirchhoff} (en fin de pas) par rapport à la
+  déformation de \nom{Green-Lagrange} (en fin de pas).
+\end{itemize}
+
+\begin{figure}[htbp]
+  \centering
+  \lstinputlisting{@abs_top_srcdir@/docs/mfront/Images/saint_venant_elas.inp}
+  \caption{Mise en données d'un essai de traction avec la loi de
+    \nom{Saint-Venant-Kirchhoff}.}
+  \label{fig:zmat:saintvenant:inp}
+\end{figure}
+
+\subsubsection{Mise en données}
+
+Nous considérons un essai de traction à \(70\%\) de déformation sur un
+cube de longueur unité. La mise en données du problème est reportée en
+figure~\ref{fig:zmat:saintvenant:inp}. Nous pouvons noter
+l'utilisation du mot clé {\tt ***elasticity} pour définir la matrice
+d'élasticité~: nous nous appuyons sur les classes standard de
+\zebulon{} pour l'évaluation de celle-ci.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.75\linewidth]{@abs_top_srcdir@/docs/mfront/Images/OrthotropicSaintVenantKirchhoffZebulon.eps}
+  \caption{Comparaison des résultats à la solution analytique.}
+  \label{fig:zmat:saintvenant:res}
+\end{figure}
+
+\subsubsection{Résultats}
+
+La figure~\ref{fig:zmat:saintvenant:res} compare les résultats obtenus
+à la solution analytique. Nous pouvons noter une bonne convergence de
+la résolution globale en une itération par pas de temps, ce qui est à
+nuancer par le grand nombre de pas de temps.
+
+\section{Améliorations possibles}
+
+Différentes améliorations sont possibles~:
+\begin{enumerate}[-]
+\item il serait intéressant d'avoir une interface \zmat{} pour les
+  propriétés matériaux~;
+\item la variation sur le pas de temps des propriétés matériau n'est
+  pas prise en compte~: celles-ci sont toujours évaluées en fin de
+  pas~;
+\item à notre connaissance, il n'est pas possible dans \zmat{} de
+  définir des tableaux de propriétés matériau ou des tableaux de
+  variables externes alors des tableaux de variables internes sont
+  supportés. Nous avons contourné ceci en déclarant autant de
+  propriétés matériau ou de variables externes que nécessaire. Par
+  exemple, si la loi de comportement nécessite un tableau {\tt A} de
+  \(10\) propriétés matériau, l'utilisateur devra déclarer dans le jeu
+  de données les propriétés matériau~:
+  \begin{center}
+    {\tt A[0]}, {\tt A[1]}, etc...    
+  \end{center}
+  Cette convention n'est pas homogène avec celle utilisée par
+  \zebulon{} pour désigner un élément d'un tableau de variables
+  internes dans le jeu de données.
+\item le code aux éléments finis \zebulon{} propose aujourd'hui trois
+  formulations en grandes transformations~: {\tt
+    Updated\_\-Lagrangian}, {\tt Lagrangian\_\-PK1}, {\tt
+    Total\_\-Lagrangian}. Seule la formulation {\tt
+    Updated\_\-Lagran\-gian} est aujourd'hui supportée dans
+  \mfront{}. Le support des deux autres formulations est
+  triviale. Ainsi, en utilisant les convertions automatiques entre les
+  différents opérateurs tangents possibles proposés par \mfront{}, une
+  même loi pourrait être utilisée quelque soit la formulation
+  utilisée.
+\item Pour l'instant, l'opérateur tangente demandé à la loi est
+  toujours la matrice tangente cohérente. À terme, deux évolutions
+  apparaissent intéressantes~:
+\begin{enumerate}[-]
+\item il serait judicieux de pouvoir modifier ce choix du type
+  d'opérateur depuis le jeu de données.~;
+\item il serait intéressant d'introduire, dans \mfront{}, un nouveau
+  type d'opérateur tangent. En effet, dans les cas adoucissant, une
+  technique possible consiste à modifier de manière intelligente la
+  matrice tangente cohérente (en \og~oubliant\fg{} certains termes par
+  exemple). Cette technique est par exemple utilisé dans
+  l'implantation \mfront{} de la loi de \nom{Mazars}.
+\end{enumerate}
+\item pour l'instant, les affichages dans les lois de comportements
+  utilisent les flux de sortie standard du C++ qui ne permettent qu'un
+  affichage à l'écran. Pour une meilleure intégration dans \zebulon{},
+  il serait intéressant que l'on puisse substituer à ces flux de
+  sortie ceux prévus par \zebulon{} qui permettent un plus de
+  l'affichage écran une trace dans un fichier associé au calcul.
+\end{enumerate}
+
+\section{Conclusions}
+
+Une interface \zmat{} pour le code aux éléments finis \zebulon{} est
+aujourd'hui disponible~: une même loi de comportement \mfront{} peut
+aujourd'hui être partagée entre les utilisateurs des codes \castem{}
+(\cea{}), \aster{} (\edf{}) et \zebulon{} (Centre des Matériaux).
+
+Pour conclure, soulignons que le travail nécessaire à la réalisation
+de cette interface a été très réduit (l'interface en elle-même est
+implantée dans un fichier d'environ 1300 lignes), essentiellement
+grâce aux facilités offertes par le code \zebulon{}~: gestion de
+l'orthotropie en amont et en aval de la loi de comportement, gestion
+des contraintes planes, etc...
+
+\clearpage
+\newpage
+\referencecea
+\listefigures
+
+\appendix
+
+\end{document}

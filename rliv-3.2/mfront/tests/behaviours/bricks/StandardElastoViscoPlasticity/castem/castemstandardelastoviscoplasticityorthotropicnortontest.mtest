@@ -1,0 +1,44 @@
+@Author Thmmas Helfer;
+@Date   31/03/2018;
+@Description{
+
+};
+
+@XMLOutputFile @xml_output@;
+@MaximumNumberOfSubSteps 1;
+@Behaviour<castem> @library@ @behaviour@;
+
+@MaterialProperty<constant> 'YoungModulus1' 150e9;
+@MaterialProperty<constant> 'YoungModulus2' 150e9;
+@MaterialProperty<constant> 'YoungModulus3' 150e9;
+@MaterialProperty<constant> 'PoissonRatio12' 0.3;
+@MaterialProperty<constant> 'PoissonRatio23' 0.3;
+@MaterialProperty<constant> 'PoissonRatio13' 0.3;
+@MaterialProperty<constant> 'ShearModulus12' '150e9/(2 * (1 + 0.3))';
+@MaterialProperty<constant> 'ShearModulus23' '150e9/(2 * (1 + 0.3))';
+@MaterialProperty<constant> 'ShearModulus13' '150e9/(2 * (1 + 0.3))';
+
+@Parameter 'A' 8.e-67;
+@Parameter 'K' 1;
+@Parameter 'E' 8.2;
+
+@ExternalStateVariable 'Temperature' 293.15 ;
+
+@Real 's' 12e6;
+@Real 'e0' 's/YoungModulus1';
+@Strain{'e0', '-e0*PoissonRatio12', '-e0*PoissonRatio12', 0, 0, 0};
+@Stress{'s', 0, 0, 0, 0, 0};
+@InternalStateVariable 'ElasticStrain' {
+  'e0', '-e0*PoissonRatio12', '-e0*PoissonRatio12', 0, 0, 0
+};
+
+@ImposedStress 'SXX' 's';
+@Times {0,3600 in 10};
+
+@Real 'A'   8.e-67;
+@Real 'n'   8.2;
+@Real 'H_F' 0.371;
+@Real 'H_G' '1-H_F';
+@Real 'H_H' 4.052;
+@Real 'seq' 'sqrt(H_F+H_H)*s';
+@Test<function> 'EquivalentViscoplasticStrain' 'A*seq**n*t' 1.e-6;

@@ -1,0 +1,34 @@
+\noindent
+\ttfamily
+\hlstd{@Parser MaterialLaw}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@Law}\hlstd{\ \ \ \ }\hlstd{SIC\textunderscore SPECIFICHEAT\textunderscore AUDUBERT}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@Author Thomas Helfer}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@Date}\hlstd{\ \ \ }\hlstd{}\hlnum{2007}\hlstd{}\hlsym{{-}}\hlstd{}\hlnum{12}\hlstd{}\hlsym{{-}}\hlstd{}\hlnum{06}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@Description}\hlsym{\{}\hspace*{\fill}\\
+\hlstd{ Caractérisation des matériaux inertes pour FUTURIX}\hlsym{/}\hlstd{MI\hspace*{\fill}\\
+ DEC}\hlsym{/}\hlstd{SPUA}\hlsym{/}\hlstd{LTEC}\hlsym{/}\hlstd{NT }\hlnum{05}\hlstd{}\hlsym{{-}}\hlstd{}\hlnum{044 }\hlstd{ind }\hlnum{0 }\hlstd{de Aout }\hlnum{2005}\hspace*{\fill}\\
+\hlstd{ F}\hlsym{. }\hlstd{AUDUBERT\hspace*{\fill}\\
+ §}\hlnum{4.2 }\hlstd{page }\hlnum{19 }\hlstd{}\hlsym{{-} }\hlstd{Figure }\hlnum{13 }\hlstd{c}\hspace*{\fill}\\
+\hlsym{\}}\hspace*{\fill}\\
+\hlstd{}\hspace*{\fill}\\
+\hlslc{// changing the name of output}\hspace*{\fill}\\
+\hlstd{@Output C}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hspace*{\fill}\\
+\hlslc{// input of the law}\hspace*{\fill}\\
+\hlstd{@Input T}\hlsym{;}\hspace*{\fill}\\
+\hlstd{T}\hlsym{.}\hlstd{}\hlkwd{setGlossaryName}\hlstd{}\hlsym{(}\hlstd{}\hlstr{"Temperature"}\hlstd{}\hlsym{);}\hspace*{\fill}\\
+\hlstd{}\hspace*{\fill}\\
+\hlslc{// temperature bounds}\hspace*{\fill}\\
+\hlstd{@PhysicalBounds T in }\hlsym{{[}}\hlstd{}\hlnum{0}\hlstd{}\hlsym{:{*}{[};}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@Function}\hlsym{\{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwb{static const double }\hlstd{a }\hlsym{=}\hlstd{\ \ }\hlsym{}\hlstd{}\hlnum{48.54704 }\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwb{static const double }\hlstd{b }\hlsym{=}\hlstd{\ \ \ }\hlsym{}\hlstd{}\hlnum{0.00292 }\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwb{static const double }\hlstd{c }\hlsym{= {-}}\hlstd{}\hlnum{21.09629 }\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwb{static const double }\hlstd{d }\hlsym{=}\hlstd{\ \ }\hlsym{{-}}\hlstd{}\hlnum{0.0034}\hlstd{\ \ }\hlnum{}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwb{static const double }\hlstd{e }\hlsym{=}\hlstd{\ \ \ }\hlsym{}\hlstd{}\hlnum{4.0E{-}2}\hlstd{\ \ }\hlnum{}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{C }\hlsym{=}\hlstd{\ \ }\hlsym{(}\hlstd{a}\hlsym{+}\hlstd{b}\hlsym{{*}}\hlstd{T}\hlsym{+}\hlstd{c}\hlsym{{*}}\hlstd{}\hlkwd{exp}\hlstd{}\hlsym{(}\hlstd{d}\hlsym{{*}}\hlstd{T}\hlsym{))/}\hlstd{e}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlsym{\} }\hlstd{}\hlslc{// end of function}\hlstd{}\hspace*{\fill}\\
+\mbox{}
+\normalfont

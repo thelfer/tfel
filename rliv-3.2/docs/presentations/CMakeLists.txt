@@ -1,0 +1,10 @@
+add_subdirectory(mfront-behaviours)
+add_subdirectory(mfront-finitestrain)
+add_subdirectory(mfront-formation)
+add_subdirectory(mfront-formation-tp)
+add_subdirectory(mfront-presentation)
+add_subdirectory(mtest-presentation)
+
+if(HAVE_PANDOC)
+  add_subdirectory(portable-behaviour)
+endif(HAVE_PANDOC)

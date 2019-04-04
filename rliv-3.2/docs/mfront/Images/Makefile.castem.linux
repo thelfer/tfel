@@ -1,0 +1,29 @@
+### Makefile.castem.linux --- 
+## Auteur: th202608@pleiades068.intra.cea.fr
+## Version: $Id: Makefile,v 0.0 2013/05/02 14:33:49 th202608 Exp $
+## Mots-cles: 
+## URL: 
+
+CASTEMDIR=/home/th202608/codes/castem/current/Castem2010-SEMT
+CASTEMINC=$(CASTEMDIR)/inc
+CASTEMLIB=$(CASTEMDIR)/lib
+
+MFRONT_SOURCES  = Lorentz.mfront    \
+	          Elasticity.mfront
+MFRONT_LDFLAGS  = -Lsrc -lUmatBehaviour
+
+CXXFLAGS=-D'F77_FUNC(X,Y)=X\#\#_' -D'F77_FUNC_(X,Y)=X\#\#_'
+
+all:cast
+
+cast:umat.o src/libUmatBehaviour.so
+	gfortran -O -o cast umat.o $(CASTEMLIB)/main.o $(CASTEMLIB)/depmac.o $(CASTEMLIB)/bdata.o $(CASTEMLIB)/castem.a $(CASTEMLIB)/esope.a $(CASTEMLIB)/libfreeglut.a $(CASTEMLIB)/libjpeg.so $(CASTEMLIB)/libGL.so $(CASTEMLIB)/libGLU.so.1 $(CASTEMLIB)/libfxdr.a $(CASTEMLIB)/libX11.so $(CASTEMLIB)/libXmu.so -L$(CASTEMLIB)/ -lgfortran -pthread -lrt -Wl,-R$(CASTEMLIB)/ $(MFRONT_LDFLAGS)
+
+src/libUmatBehaviour.so: $(MFRONTS_SOURCES)
+	mfront --interface=umat $(MFRONTS)
+	mfront --obuild
+
+umat.o:umat.cxx
+	g++ -I $(CASTEMINC) $(CXXFLAGS) -Iinclude `tfel-config --castem --oflags` umat.cxx -o umat.o -c
+
+### Makefile ends here

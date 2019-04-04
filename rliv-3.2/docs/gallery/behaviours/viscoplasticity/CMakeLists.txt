@@ -1,0 +1,4 @@
+install_gallery(viscoplasticity ImplicitNorton.mfront)
+install_gallery(viscoplasticity ChabocheViscoplasticity.mfront)
+install_gallery(viscoplasticity Hayhurst.mfront)
+install_gallery(viscoplasticity IsotropicViscoplasticityAmstrongFredericKinematicHardening.mfront)

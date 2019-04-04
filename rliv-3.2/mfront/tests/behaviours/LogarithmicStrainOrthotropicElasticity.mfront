@@ -1,0 +1,26 @@
+@DSL DefaultDSL;
+@Behaviour LogarithmicStrainOrthotropicElasticity;
+@Author    Helfer Thomas;
+@Date      08/03/18;
+
+@StrainMeasure Hencky;
+@ModellingHypothesis AxisymmetricalGeneralisedPlaneStrain;
+
+@OrthotropicBehaviour<Pipe>;
+@RequireStiffnessTensor<Altered>;
+
+@ComputeThermalExpansion {3.41e-5,2.23e-5,4.63e-5};
+
+@ProvidesSymmetricTangentOperator;
+@PredictionOperator{
+  static_cast<void>(smt);
+  Dt=D;
+}
+
+@Integrator{
+  static_cast<void>(smt);
+  sig = D*(eto+deto);
+  if(computeTangentOperator_){
+    Dt = D;
+  }
+}

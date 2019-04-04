@@ -1,0 +1,77 @@
+/*! 
+ * \file  mfront/include/MFront/Cyrano/CyranoOrthotropicBehaviourHandler.hxx
+ * \brief
+ * \author Thomas Helfer
+ * \date   21 fév 2014
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
+ * reserved. 
+ * This project is publicly released under either the GNU GPL Licence 
+ * or the CECILL-A licence. A copy of thoses licences are delivered 
+ * with the sources of TFEL. CEA or EDF may also distribute this 
+ * project under specific licensing conditions. 
+ */
+
+#ifndef LIB_MFRONT_CYRANO_CYRANOORTHOTROPICBEHAVIOURHANDLER_HXX
+#define LIB_MFRONT_CYRANO_CYRANOORTHOTROPICBEHAVIOURHANDLER_HXX 
+
+#ifndef LIB_MFRONT_CYRANO_CYRANOBEHAVIOURHANDLER_HXX
+#error "This header shall not be called directly"
+#endif /* LIB_MFRONT_CYRANO_CYRANOBEHAVIOURHANDLER_HXX */
+
+namespace cyrano
+{
+  
+  /*!
+   * The handler for orthotropic behaviours
+   */
+  template<tfel::material::ModellingHypothesis::Hypothesis H,
+	   template<tfel::material::ModellingHypothesis::Hypothesis,
+		    typename,bool> class Behaviour>
+  struct TFEL_VISIBILITY_LOCAL CyranoOrthotropicBehaviourHandler
+  {
+    TFEL_CYRANO_INLINE2 static void exe(const CyranoReal *const DTIME,
+                                        const CyranoReal *const,
+                                        CyranoReal *const DDSOE,
+                                        const CyranoReal *const STRAN,
+                                        const CyranoReal *const DSTRAN,
+                                        const CyranoReal *const TEMP,
+                                        const CyranoReal *const DTEMP,
+                                        const CyranoReal *const PROPS,
+                                        const CyranoInt *const NPROPS,
+                                        const CyranoReal *const PREDEF,
+                                        const CyranoReal *const DPRED,
+                                        CyranoReal *const STATEV,
+                                        const CyranoInt *const NSTATV,
+                                        CyranoReal *const STRESS,
+                                        const StressFreeExpansionHandler sfeh,
+                                        const tfel::material::OutOfBoundsPolicy op) {
+      using namespace tfel::meta;
+      using namespace tfel::material;
+      using namespace tfel::math;
+      typedef MechanicalBehaviourTraits<Behaviour<H,CyranoReal,false> > MTraits;
+      typedef CyranoTraits<Behaviour<H,CyranoReal,false> > Traits;
+      typedef CyranoBehaviourHandler<H,Behaviour> CyranoBehaviourHandler;
+      const bool is_defined_ = MTraits::is_defined;
+      const bool bs = Traits::requiresStiffnessTensor;
+      const bool ba = Traits::requiresThermalExpansionCoefficientTensor;
+      typedef typename std::conditional<
+	is_defined_,
+	typename std::conditional<
+	  Traits::useTimeSubStepping,
+	  typename CyranoBehaviourHandler::template IntegratorWithTimeStepping<bs,ba>,
+	  typename CyranoBehaviourHandler::template Integrator<bs,ba>
+	  >::type,
+	typename CyranoBehaviourHandler::Error>::type Handler;
+      CyranoBehaviourHandler::checkNPROPS(*NPROPS);
+      CyranoBehaviourHandler::checkNSTATV(*NSTATV);
+      Handler handler(DTIME, STRAN, DSTRAN, TEMP, DTEMP, PROPS, PREDEF, DPRED, STATEV, STRESS, sfeh,
+                      op);
+      handler.exe(DDSOE,STRESS,STATEV);
+    } // end of CyranoOrthotropicBehaviourHander<1u,Behaviour>::exe
+
+  }; // end of struct CyranoOrthotropicBehaviourHander<1u,Behaviour>
+
+} // end of namespace cyrano
+
+#endif /* LIB_MFRONT_CYRANO_CYRANOORTHOTROPICBEHAVIOURHANDLER_HXX */
+

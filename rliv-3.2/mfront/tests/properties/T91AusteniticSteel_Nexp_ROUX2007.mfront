@@ -1,0 +1,24 @@
+@Parser   MaterialLaw ;
+@Material T91AusteniticSteel ;
+@Law      Nexp_ROUX2007 ;
+@Author   F. Milliard ;
+@Date     11/12/2013 ;
+@Description{
+  // Exposant viscosité N austenite T91
+  // [Roux 07]
+}
+
+// Input of law
+@Input T ;
+T.setGlossaryName("Temperature") ;
+
+// Output of law
+@Output Nexp ;
+
+@PhysicalBounds T in [0.:*[;
+
+// Function
+@Function{
+  const real TC = T-273.15;
+  Nexp = 1.5400000000e-03 * TC -3.0200000000e-01 ;
+} // end of Function

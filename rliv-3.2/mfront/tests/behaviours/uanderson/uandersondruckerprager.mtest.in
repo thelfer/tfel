@@ -1,0 +1,23 @@
+@Author  Helfer Thomas;
+@Date 08 Aout 2013;
+@Description{
+  Uniaxial testing of a Drucker-Prager behaviour.
+};
+
+@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatdruckerprager';
+@AccelerationAlgorithm 'UAnderson';
+@MaximumNumberOfSubSteps 1;
+
+@MaterialProperty<constant> 'YoungModulus' 200.e9;
+@MaterialProperty<constant> 'PoissonRatio'   0.3;
+@MaterialProperty<constant> 'ThermalExpansion' 0.;
+
+@ExternalStateVariable 'Temperature' 0.;
+
+@MaterialProperty<constant> 'tau'    0.6;
+@MaterialProperty<constant> 'sigc'  150.e6;
+
+@ImposedStrain<function> 'EXX' '5e-3*t';
+@Times {0.,1. in 10};
+
+@Test<file> '@top_srcdir@/mfront/tests/behaviours/references/druckerprager.ref' {'SXX':8} 1.e-3 ; 

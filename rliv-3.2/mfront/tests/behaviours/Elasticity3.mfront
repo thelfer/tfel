@@ -1,0 +1,24 @@
+@Behaviour Elasticity3;
+@Author Helfer Thomas;
+@Date 23/11/06;
+@Description{
+ A very first test 
+ (the most simple one in fact).
+}
+
+@MaterialProperty stress young;
+young.setGlossaryName("YoungModulus");
+@MaterialProperty real nu;
+nu.setGlossaryName("PoissonRatio");
+
+@ComputeThermalExpansion "ThermalExpansionCoefficientTest2.mfront";
+
+@ProvidesSymmetricTangentOperator;
+@Integrator{
+  const stress lambda = computeLambda(young,nu);
+  const stress mu = computeMu(young,nu);
+  sig = lambda*trace(eto+deto)*StrainStensor::Id()+2*mu*(eto+deto);
+  if(computeTangentOperator_){
+    Dt = lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
+  }
+}

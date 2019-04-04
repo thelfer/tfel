@@ -1,0 +1,922 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% File      : mfront.tex
+% Author    : th202608@pleiades068.intra.cea.fr
+% Date      : 15 oct. 2012
+% Directory : /home/th202608/codes/tfel/tests/Broyden/
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% \documentclass[rectoverso,pleiades,pstricks,leqno,anti]{note_technique_2010}
+\documentclass[rectoverso,pleiades,leqno,anti,projet]{note_technique_2010}
+
+\usepackage{graphicx}
+\usepackage{multicol}
+
+\usepackage{mathematiques}
+\usepackage{mecanique}
+\usepackage{couleurs}
+\usepackage{presentation}
+
+\usepackage[frenchb]{babel}
+
+\newcommand{\pleiades}{\texttt{pleiades}}
+\newcommand{\alcyone}{\texttt{alcyone}}
+\newcommand{\TFEL}{\texttt{tfel}}
+\newcommand{\mfront}{\texttt{mfront}}
+\newcommand{\mtest}{\texttt{mtest}}
+\newcommand{\licos}{\texttt{licos}}
+\newcommand{\cyrano}{\texttt{cyrano}}
+\newcommand{\galileo}{\texttt{galileo}}
+\newcommand{\castem}{\texttt{Cast3M}}
+\newcommand{\adao}{\texttt{ADAO}}
+\newcommand{\salome}{\texttt{Salomé}}
+\newcommand{\gibiane}{\texttt{gibiane}}
+\newcommand{\tmfft}{\texttt{TMFFT}}
+\newcommand{\aster}{\href{http://www.code-aster.org/}{\texttt{Aster}}}
+\newcommand{\pycastem}{\texttt{pyCast3M}}
+\newcommand{\umat}{\texttt{umat}}
+\newcommand{\sirius}{\texttt{sirius}}
+\newcommand{\fortran}{\texttt{fortran}}
+\newcommand{\cmake}{\href{http://www.cmake.org/}{\texttt{cmake}}}
+\newcommand{\jenkins}{\href{http://jenkins-ci.org/}{\texttt{jenkins}}}
+
+\newcommand{\notepleiades}[1]{#1}
+
+\newcommand{\mkey}[1]{\index{mkeys}{#1@\symbol{64}#1}{\texttt{@#1}}}
+\newcommand{\mkeyb}[2]{\index{mkeys}{#1@\symbol{64}#1}{\texttt{@#2}}}
+
+\newcommand{\env}[1]{\index{env}{#1}{\texttt{#1}}}
+\newcommand{\envb}[2]{\index{env}{#1}{\texttt{#2}}}
+
+\newcommand{\moption}[1]{\texttt{-{}-#1}}
+
+\newcommand{\bigO}[1]{\ensuremath{\mathop{}\mathopen{}O\mathopen{}\left(#1\right)}}
+
+\newcommand{\varcpp}[1]{\texttt{#1}}
+
+\newcommand{\cea}{CEA}
+\newcommand{\areva}{AREVA}
+\newcommand{\edf}{ÉDF}
+
+\newcommand{\demipas}[1]{\ensuremath{\left.#1\right|_{t+\frac{\Delta\, t}{2}}}}
+
+\newcommand{\code}[1]{
+  \psframebox[linecolor=ceaorange]{
+    \begin{minipage}[htbp]{1.0\linewidth}
+      \ttfamily #1
+    \end{minipage}
+  }
+}
+
+\newcommand{\bash}[1]{
+  \begin{center}
+    \begin{minipage}{0.8\linewidth}
+      \footnotesize{}
+      \texttt{\$#1}
+    \end{minipage}
+  \end{center}
+}
+
+\input{LSC}
+
+\auteurs{T.~Helfer}
+\redacteur{T.~Helfer}
+% \verificateur{C. Petry (EDF R\&D MMC)}
+\approbateur{B.~Collard}
+\emetteur{M.~Bauer}
+
+\titre{Extension de \mtest{} aux simulation d'essais de tube sous
+  pression en grandes transformations}
+
+\date{Février 2016}
+% \numero{15-010}
+% \indice{0}
+% \dateversion{07/2015}
+\numeroaffaire{A-SICOM-A1-07}
+\jalon{MFront open-source : documentation MTest}
+\domaine{DEN/DISN/SIMU}
+\accords{tripartite}
+\clients{AREVA - EDF}
+\programmerecherche{SICOM}
+\classification{DO}
+\motsclefs{
+  Lois de comportement mécanique - simulation d'un
+  tube sous pression - tests unitaires - \mtest{} -
+  \mfront{} - \pleiades{}
+}
+
+% \signatures{11.}{-41.}{0.71625}{@abs_top_srcdir@/docs/mtest/images/signatures_mtest.eps}
+
+\stylebib{@abs_top_srcdir@/docs/tex/texmf/bibtex/fr-insa}
+\fichierbib{@abs_top_srcdir@/docs/tex/texmf/bibtex/bibliographie}
+
+\resumecea{}
+
+\begin{document}
+
+\section{Présentation}
+
+\subsection{Type d'essais}
+
+Par défaut, on modélise un tube fermé dont on impose la pression
+interne et externe au cours du temps.
+
+\subsubsection{Chargements dans la direction radiale}
+
+Concernant la face externe du tube, l'utilisateur peut imposer
+l'évolution d'une pression externe \(P_{e}\) au cours du temps.
+
+Concernant la face interne du tube, l'utilisateur a le choix entre
+plusieurs options (qui s'exclut mutuellement)~:
+\begin{itemize}
+\item il est possible d'imposer une pression interne \(P_{i}\)
+  évoluant dans le temps~;
+\item il est possible d'imposer l'évolution du rayon externe évoluant
+  dans le temps. Dans ce cas, la pression interne est ajustée pour
+  obtenir l'évolution souhaitée.
+\item il est possible de modéliser un tube étanche contenant une
+  quantité fixe de gaz donnée par une pression \(P_{0}\) et une
+  température \(T_{0}\) de remplissage. Dans ce cas, on suppose que~:
+  \begin{itemize}
+  \item le tube est fermé, c'est à dire que l'on modélise
+    nécessairement l'effet de fond (voir les options concernant le
+    chargement axial)~;
+  \item que le comportement du gaz suit la loi des gaz parfaits, ce
+    qui permet d'exprimer la pression interne à un instant donné via
+    l'équation d'état~:
+    \[
+    P_{i} = P_{0}\,\Frac{T}{T_{0}}\,\Frac{V_{0}}{V}
+    \]
+    où \(T\) est la température actuelle en paroi interne du tube,
+    \(V\) le volume actuel et \(V_{0}\) le volume initial (après
+    remplissage).
+  \end{itemize}
+\end{itemize}
+
+\subsubsection{Chargements axiaux}
+
+Dans la direction axiale, il est possible d'imposer~:
+\begin{itemize}
+\item l'effet de fond dans le cas d'un tube fermé (effets des
+  pressions internes et externes sur les extrémités du tube). Cette
+  modélisation est obligatoire si l'on choisit de modéliser un tube étanche~;
+\item l'évolution de la force axiale s'appliquant sur le tube~;
+\item l'évolution de la déformation axiale.
+\end{itemize}
+
+Il est également possible de ne rien imposer, ce qui est équivalent à
+imposer une force axiale nulle.
+
+\section{Éléments de théorie}
+
+\subsection{Cas général}
+
+Soit \(\Omega_{0}\) le volume occupé par la structure étudiée à
+l'instant initial. \(\Omega_{0}\) est également appelé la
+configuration initiale de la structure.
+
+Prendre en compte les grandes transformations revient à tenir compte
+du fait que la configuration actuelle, notée \(\Omega_{t}\), est
+différente de \(\Omega_{0}\) dans l'expression de l'équilibre
+mécanique et dans la définition des conditions aux limites.
+
+\paragraph{Gradient de la transformation} Soit
+\(\vec{\Phi}\paren{t,\vec{X}}\) la transformation associant à un point
+de coordonnées initiales \(\vec{X}\) sa position \(\vec{x}\) à
+l'instant \(t\)~:
+\[
+\begin{aligned}
+  \vec{\Phi} &:& \Omega_{0} & \Rightarrow & \Omega_{t} \\
+       & & \vec{X}   & \Rightarrow & \vec{x} \\
+\end{aligned}
+\]
+\(\vec{\Phi}\) est relié au champ de déplacement \(\vec{u}\) par~:
+\[
+\vec{\Phi}=\vec{X}+\vec{u}
+\]
+
+Le gradient de la transformation est un tenseur non symétrique noté
+\(\tns{F}\). Il est définit par~:
+\[
+\tns{F}=\deriv{\vec{\Phi}}{\vec{X}}=\deriv{\vec{x}}{\vec{X}}=\tenseur{I}+\deriv{\vec{u}}{\vec{X}}
+\]
+
+Les théories de premier gradient supposent que la connaissance de
+\(\tns{F}\) suffit à décrire la sollicitation locale du
+matériau. C'est l'hypothèse que nous ferons également.
+
+L'unique décomposition polaire de \(\tns{F}\) montre que cette
+sollicitation se décompose en deux termes~:
+\begin{equation}
+  \label{eq:decomposition_polaire}
+  \tns{F}=\tns{\omega}\,.\,\tenseur{U}  
+\end{equation}
+\(\tns{\omega}\) est une matrice de rotation et \(\tenseur{U}\) est le
+tenseur d'élongation décrivant le changement de volume du matériau.
+
+\paragraph{Équilibre mécanique} L'équilibre mécanique de la structure
+s'écrit généralement sur la configuration déformée
+\(\Omega_{t}\). Plus précisément, le tenseur des contraintes de
+Cauchy, noté \(\tsigma\) vérifie~:
+\[
+\mathrm{div} \tsigma = \vec{0}
+\]
+où \(\mathrm{div}\) est l'opérateur sur la configuration déformée, qui
+est une des inconnues du problème.
+
+Nous verrons que dans le cas des tubes, il est plus avantageux
+d'écrire l'équilibre mécanique sur \(\Omega_{0}\). Celui-ci s'écrit
+alors~:
+\begin{equation}
+  \label{eq:equilibrium}
+  \mathrm{Div} \tns{\Pi} = \vec{0}  
+\end{equation}
+où~:
+\begin{minipage}[t]{0.9\linewidth}
+  \begin{itemize}
+  \item \(\tns{\Pi}\) est le premier tenseur de Piola-Kirchhoff. Il
+    s'agit d'un tenseur non symétrique~;
+    \item \(\mathrm{Div}\) est l'opérateur divergence dans la
+      configuration initiale \(\Omega_{0}\).
+  \end{itemize}
+\end{minipage}
+
+Le prix à payer est que le lien entre les forces appliquées à la
+structure, qui se traduisent directement avec la contrainte de Cauchy,
+est assez complexe. En fait, la non-linéarité géométrique du problème
+est portée par les conditions aux limites que vérifie
+\(\tns{\Pi}\).
+
+Nous verrons que dans le cas particulier des tubes modélisés en
+\(1D\), ceci peut être pris en compte simplement, ce qui justifiera
+{\tt a posteriori} le choix de résoudre l'équilibre sur la
+configuration initiale.
+
+\paragraph{Conditions aux limites}
+
+Soit \(\dtot\,\vec{f}\) une force élémentaire appliquée à la
+structure sur un élément de surface \(\dtot\,\vec{s}\) de la
+configuration déformée orienté par la normale extérieure.
+
+Soit \(\dtot\,\vec{S}_{0}\) l'élément de surface correspondant à
+\(\dtot\,\vec{s}\) dans la configuration initiale.
+
+Le tenseur \(\tns{\Pi}\) a la propriété suivante~:
+\[
+\dtot\,\vec{f}=\tns{\Pi}\,\colon\,\dtot\,\vec{S}_{0}  
+\]
+
+Considérons le cas des forces de pression. Nous avons~:
+\[
+\dtot\,\vec{f}=-P\,\dtot\,\vec{s}
+\]
+
+La condition aux limites vérifiés par \(\tns{\Pi}\) est donc~:
+\begin{equation}
+  \label{eq:pi:bc}
+  \tns{\Pi}\,\colon\,\dtot\,\vec{S}_{0}=-P\,\dtot\,\vec{s}  
+\end{equation}
+
+Dans le cas général, on conçoit que cette relation soit difficile à
+manipuler.
+
+\subsection{Application aux tubes modélisés en 1D}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.5\linewidth]{@abs_top_srcdir@/docs/ptest/img/tubeaxi.pdf}
+  \caption{Schéma d'un tube axisymétrique et définition des axes du
+    repère cylindrique associé.}
+  \label{fig:tube}
+\end{figure}
+
+Dans la suite, on considère un tube (fermé ou non), soumis à une
+pression interne \(P^{i}\) et une pression externe \(P^{e}\).
+
+\subsubsection{Cinématique}
+
+Nous allons maintenant appliqué les éléments présentés dans la section
+précédente aux tubes sous pression.
+
+Nous faisons les hypothèses cinématiques suivantes~:
+\begin{itemize}
+\item le tube reste axisymétrique~; 
+\item axialement, le tube est autorisé à se déformer de manière
+  uniforme, sans rotation.
+\end{itemize}
+
+Il s'agit de l'hypothèse de déformations planes généralisées en
+axisymétrie (sans rotation du plan généralisé).
+
+Il découle de cette hypothèse que la rotation locale du matériau est
+nulle. Ainsi, d'après l'équation~\eqref{eq:decomposition_polaire},
+nous avons~:
+\[
+\tns{F}=\tenseur{U}=\tenseur{I}+\deriv{\vec{u}}{\vec{X}}
+\]
+
+Aucun cisaillement n'étant autorisé, il n'y a pas de différence entre
+les tenseurs symétriques et non symétriques. Le gradient de la
+transformation est alors directement relié à la déformation linéarisée
+\(\tepsilonto\) (c'est à dire la partie symétrique du gradient de
+déplacement) par la relation~:
+\[
+\tns{F}=\tenseur{I}+\tepsilonto
+\]
+
+Suivant ces hypothèses, le gradient de la transformation en tout point
+du tube prend la forme classique~:
+\[
+\tns{F}=
+\begin{pmatrix}
+  1+\derivtot{u_{r}}{R} & 0 & 0     \\
+  0 & 1+\Frac{u_{r}}{R} & 0      \\
+  0 & 0                 & F_{zz} \\
+\end{pmatrix}
+\]
+où \(R\) est le rayon initial.
+
+\subsubsection{Conditions aux limites radiales}
+
+Les hypothèses cinématiques précédentes permettent de simplifier
+l'expression des conditions aux limites du problème. En effet, les
+normales extérieures à la structure restent constantes dans le
+temps. Plus précisément, en tout point de la structure, les vecteurs
+\(\dtot\,\vec{S}_{0}\) et \(\dtot\,\vec{s}\) restent colinéaires et
+orientés suivant la direction \(\vec{e}_{r}\).
+
+Pour la peau interne du tube, la relation~\eqref{eq:pi:bc} s'écrit
+alors~:
+\[
+\Pi_{rr}^{i}=-P^{i}\,\Frac{S}{S_{0}}=-P^{i}\,\Frac{h}{H_{0}}\,\Frac{r^{i}}{R_{0}^{i}}=-P^{i}\,F_{zz}\,\paren{1+\Frac{u_{r}^{i}}{R_{0}^{i}}}
+\]
+
+Une équation similaire peut être établie pour la surface externe~:
+\[
+\Pi_{rr}^{e}=-P^{e}\,\Frac{S}{S_{0}}=-P^{e}\,\Frac{h}{H_{0}}\,\Frac{r^{e}}{R_{0}^{e}}=-P^{e}\,F_{zz}\,\paren{1+\Frac{u_{r}^{e}}{R_{0}^{e}}}
+\]
+
+\subsection{Équilibre axial pour un tube fermé}
+
+Dans la modélisation proposée, l'équation~\eqref{eq:equilibrium} ne
+suffit pas pour déterminer \(\Pi\) car nous devons ajouter l'équation
+permettant de déterminer \(F_{zz}\). Pour cela, nous caractérisons
+l'équilibre axial \(F_{z}^{a}\) par une résultante que doit équilibrer
+la structure.
+
+Pour un tube fermé, la force axiale est donnée par~:
+\[
+F_{z}^{a}=P^{i}\,S^{i}-P^{e}\,S^{e}
+\]
+où~:
+\begin{minipage}[t]{0.9\linewidth}
+  \begin{itemize}
+  \item \(S^{i}\) est la surface actuelle de la section considérée,
+    égale à \(2\,\pi\,\left.r^{i}\right.^{2}=2\,\pi\,\paren{R^{i}+u_{r}^{i}}^{2}\).
+  \item \(S^{e}\) est la surface externe actuelle de la section
+    considérée, égale à~: \(2\,\pi\,\paren{R^{e}+u_{r}^{e}}^{2}\).
+  \end{itemize}
+\end{minipage}
+
+Cette force axiale est répartie sur la coupe du tube~:
+\[
+F_{z}^{a}=\int_{R^{i}}^{R^{e}}\,\dtot\,f_{z}
+\]
+
+En vertu de l'équation~\eqref{eq:pi:bc}, nous pouvons écrire~:
+\[
+F_{z}^{a}=\int_{R^{i}}^{R^{e}}\,\Pi_{zz}\,2\,\pi\,R\,\dtot R
+\]
+
+\section{Vérification et qualification}
+
+\subsection{Tests élémentaires petites déformations}
+
+\subsubsection{Validation de l'implantation des éléments linéaires}
+
+\begin{table}[htbp]
+  \centering
+  \begin{tabular}{|c|c|}
+    \hline
+    \multicolumn{2}{|c|}{Caractéristiques géométriques} \\
+    \hline
+    \hline
+    Rayon interne & \(4,2\,mm\) \\
+    Rayon externe & \(4,7\,mm\) \\
+    \hline
+    \multicolumn{2}{|c|}{Discrétisation} \\
+    \hline
+    \hline
+    Nombre d'éléments finis & \(10\) \\
+    \hline
+    \hline
+    \multicolumn{2}{|c|}{Propriétés élastiques} \\
+    \hline
+    \hline
+    Module d'\nom{Young}         & \(150\,GPa\) \\
+    Coefficient de \nom{Poisson} & \(0,3\) \\
+    \hline
+    \hline
+    \multicolumn{2}{|c|}{Pressions imposées} \\
+    \hline
+    \hline
+    Pression interne & \(1.5\,MPa\)\\
+    \hline
+    Pression externe & \(10\,MPa\) \\
+    \hline
+  \end{tabular}
+  \caption{Caractéristiques utilisées.}
+  \label{tab:test1:carac}
+\end{table}
+
+Pour ce premier test, nous modélisons un tube élastique isotrope en
+petites déformations. Les caractéristiques géométriques et les
+propriétés élastiques, et les pressions imposées choisies sont
+résumées au tableau~\ref{tab:test1:carac}.
+
+Le tube est supposé ouvert~: aucune force axiale n'est considérée et
+l'équilibre est caractérisée par~:
+\[
+\int_{\Omega_{0}}\,\Pi_{zz}\,2\pi\,r\,\dtot r=0
+\]
+
+Pour ce test, la solution analytique est connue et s'écrit~:
+\[
+\left\{
+  \begin{aligned}
+    \Pi_{rr}        &=K_{1}+\Frac{K_{2}}{r^{2}}\\
+    \Pi_{\theta\theta}&=K_{1}-\Frac{K_{2}}{r^{2}}\\
+    \Pi_{zz}        &=0\\
+  \end{aligned}
+\right.
+\]
+où \(K_{1}\) et \(K_{2}\) sont des coefficients ne dépendant que des
+propriétés géométriques et des pressions imposées~:
+\[
+\left\{
+  \begin{aligned}
+    K_{1}&=-P_{i}-\Frac{\paren{R^{e}_{0}}^{2}}{\left(R^{e}_{0}\right)^{2}-\left(R^{i}_{0}\right)^{2}}\paren{P_{e}-P_{i}}\\  
+    K_{2}&=\Frac{\paren{R^{i}_{0}R^{e}_{0}}^{2}}{\left(R^{e}_{0}\right)^{2}-\left(R^{i}_{0}\right)^{2}}\paren{P_{e}-P_{i}} \\
+  \end{aligned}
+\right.
+\]
+
+Pour valider l'implantation des éléments finis linéaires, nous pouvons
+comparer les profils des contraintes aux points de \nom{Gauss}
+calculés par \mtest{} à la solution analytique ainsi qu'aux profils
+obtenus par \castem{}.
+
+Pour la solution de référence obtenue avec \castem{}, nous avons
+utilisé directement l'opérateur {\tt RESOUD} puis avons calculé les
+contraintes à partir des déplacements l'aide de l'opérateur {\tt
+  SIGMA}. Les positions des points de \nom{Gauss} sont obtenus par
+interpolation de la position des n\oe{}ds.
+
+Les résultats obtenus sont reportés sur les
+figures~\ref{fig:ptest-LinearElements-sigrr},
+\ref{fig:ptest-LinearElements-sigtt} et
+\ref{fig:ptest-LinearElements-sigzz} qui présentent successivement les
+profils de contrainte radiale, orthoradiale et axiale. Dans tous les
+cas, les valeurs aux points de \nom{Gauss} obtenus par \mtest{} et
+\castem{} sont strictement identiques. Nous avons relié les points de
+la solution \mtest{} pour visualiser plus nettement les oscillations
+des contraintes autour de la solution analytique~: de telles
+oscillations sont caractéristiques d'éléments linéaires.
+
+Le lecteur habitué des éléments finis aura remarqué que les
+contraintes ne sont pas constantes par éléments. En effet, si le
+gradient radial du déplacement est constant sur l'élément, les
+déformations ne le sont pas~: ceci est dû au terme
+\(\epsilon_{\theta\theta}\) qui fait intervenir la valeur du
+déplacement et de la position au point de Gauss.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.9\linewidth]{@abs_top_srcdir@/docs/ptest/img/ptest-LinearElements-sigrr.pdf}
+  \caption{Profil de la contrainte radiale aux points de Gauss obtenue
+    avec des éléments linéaires~: comparaison à la solution analytique
+    et à un calcul \castem{}}
+  \label{fig:ptest-LinearElements-sigrr}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.9\linewidth]{@abs_top_srcdir@/docs/ptest/img/ptest-LinearElements-sigtt.pdf}
+  \caption{Profil de la contrainte orthoradiale aux points de Gauss
+    obtenue avec des éléments linéaires~: comparaison à la solution
+    analytique et à un calcul \castem{}}
+  \label{fig:ptest-LinearElements-sigtt}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.9\linewidth]{@abs_top_srcdir@/docs/ptest/img/ptest-LinearElements-sigzz.pdf}
+  \caption{Profil de la contrainte axiale aux points de Gauss obtenue
+    avec des éléments linéaires~: comparaison à la solution analytique
+    et à un calcul \castem{}}
+  \label{fig:ptest-LinearElements-sigzz}
+\end{figure}
+
+Le calcul étant linéaire, seules deux itérations sont nécessaires pour
+obtenir un résidu nul à la précision machine~: la première trouve la
+solution tandis que la second confirme que la solution obtenue est la
+bonne\footnote{\mtest{} a été prévu pour les calculs non linéaires et
+  ne fait pas du cas élastique un cas particulier, ce qui explique la
+  nécessité de faire au moins deux itérations par résolution.}. Ceci
+confirme que la matrice de raideur est calculée exactement. Ceci a
+également été confirmé par comparaison à une évaluation numérique de
+la matrice de raideur par différences finies centrées.
+
+Ce test a été repris en prenant en compte l'effet de fond~: les
+conclusions sont identiques.
+
+\subsubsection{Validation de l'implantation des éléments quadratiques}
+
+Pour valider l'implantation des éléments quadratiques, nous avons
+réitérer le test précédent. Les résultats obtenus sont illustrés par
+les figures~\ref{fig:ptest-QuadraticElements-sigrr},
+\ref{fig:ptest-QuadraticElements-sigtt} et
+\ref{fig:ptest-QuadraticElements-sigzz}. Dans le cas considéré, les
+profils obtenus à l'aide de \castem{} et \mtest{} ne peuvent être
+distingués des solutions analytiques.
+
+Ce test a été repris en prenant en compte l'effet de fond~: les
+conclusions sont identiques.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.9\linewidth]{@abs_top_srcdir@/docs/ptest/img/ptest-QuadraticElements-sigrr.pdf}
+  \caption{Profil de la contrainte radiale aux points de Gauss obtenue
+    avec des éléments quadratiques~: comparaison à la solution analytique
+    et à un calcul \castem{}}
+  \label{fig:ptest-QuadraticElements-sigrr}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.9\linewidth]{@abs_top_srcdir@/docs/ptest/img/ptest-QuadraticElements-sigtt.pdf}
+  \caption{Profil de la contrainte orthoradiale aux points de Gauss
+    obtenue avec des éléments quadratiques~: comparaison à la solution
+    analytique et à un calcul \castem{}}
+  \label{fig:ptest-QuadraticElements-sigtt}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.9\linewidth]{@abs_top_srcdir@/docs/ptest/img/ptest-QuadraticElements-sigzz.pdf}
+  \caption{Profil de la contrainte axiale aux points de Gauss obtenue
+    avec des éléments quadratiques~: comparaison à la solution analytique
+    et à un calcul \castem{}}
+  \label{fig:ptest-QuadraticElements-sigzz}
+\end{figure}
+
+\paragraph{Notes} L'utilisation des éléments quadratiques offrent une
+qualité de discrétisation très supérieure aux éléments linéaires pour
+un coût qu'il convient d'analyser avec précaution. Si l'utilisation
+d'éléments quadratiques augmente le nombre d'inconnues nodales et le
+nombre de points d'intégrations, il est possible, dans le cas étudié,
+de restreindre fortement le nombre d'élément tout en gardant une
+qualité élevée~: ici deux éléments suffiraient, ce qui correspond à
+\(6\) points de \nom{Gauss} et \(5\) n\oe{}uds. En comparaison,
+l'utilisation des \(10\) éléments linéaires nécessite \(20\) points de
+\nom{Gauss} et \(11\) n\oe{}uds.
+
+Nous pouvons également considérer l'utilisation d'éléments d'ordre
+plus élevés.
+
+\notepleiades{Nous pensons qu'un développement intéressant pour
+  \alcyone{} serait de passer en éléments quadratique dans la
+  gaine.
+
+  Dans le cas \(1D\) ce n'est qu'un problème de maillage.
+
+  Pour les schémas multi-dimensionnels, il y a essentiellement deux
+  problèmes pour modéliser le combustible avec des éléments linéaires
+  et la gaine avec des éléments quadratiques~:
+  \begin{itemize}
+  \item gérer le transfert thermique, une relation n\oe{}ud à n\oe{}ud
+    ne peut plus être utilisée~;
+  \item 
+  \end{itemize}
+
+  Nous avons montré dans \licos{}, avec l'aide du {\tt SEMT}, qu'il
+  était possible de résoudre ces deux difficultés par une gestion
+  spécifique du transfert thermique et du contact. Cependant, cela
+  conduit à introduire plusieurs multiplicateurs de \nom{Lagrange}
+  supplémentaires ce qui peut augmenter notablement le coût du
+  calcul. Par ailleurs, nous avons noté que~:
+  \begin{itemize}
+  \item ces techniques peuvent rendre le calcul moins robuste~;
+  \item la gestion des multiplicateurs évolue d'une version de
+    \castem{} à une autre, ce qui peut conduire à des problèmes de
+    portabilité.
+  \end{itemize}
+
+  Pour le combustible, le caractère fragile de la loi de comportement
+  ne permet pas d'envisager de passer en éléments quadratiques tant
+  que l'on restera à une description locale de l'endommagement. Un
+  modèle d'endommagement non local permettrait de lever cette
+  restriction et permettrait d'avoir une description précise des
+  contraintes, ce qui éviterait les opérations de lissage des
+  contraintes (notamment pour la pression hydrostatique) aujourd'hui
+  utilisées.
+}
+
+\subsubsection{Tests de fluage en force axiale imposée}
+
+Pour tester l'imposition d'une force axiale, nous avons simulé un
+essai de fluage en petites déformations. Sur un cylindre de
+\(4,18\,mm\), nous imposons une force axiale correspondant à une
+pression \(\sigma\) de \(20\,MPa\). Le cylindre est supposé isotrope
+et obéir une loi de Norton de coefficient \(A\) et d'exposant \(E\).
+
+La solution analytique donnant l'évolution de la déformation axiale
+est donnée par~:
+\[
+\epsilon\paren{t}=\Frac{\sigma}{E}+A\,\sigma^{n}\,t
+\]
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.9\linewidth]{@abs_top_srcdir@/docs/ptest/img/Creep.pdf}
+  \caption{Évolution de la déformation axiale lors d'un test de
+    fluage~: comparaison de la solution \mtest{} à la solution
+    analytique.}
+  \label{fig:ptest-creep}
+\end{figure}
+
+La figure~\ref{fig:ptest-creep} compare la solution obtenue à la
+solution analytique~: les solutions sont confondues.
+
+\subsection{Description détaillée d'un test en pression interne}
+
+\begin{table}[htbp]
+  \centering
+  \begin{tabular}{|c|c|}
+    \hline
+    \multicolumn{2}{|c|}{Caractéristiques géométriques} \\
+    \hline
+    \hline
+    Rayon interne & \(4,18\,mm\) \\
+    Épaisseur     & \(0,57\,mm\) \\
+    \hline
+    \multicolumn{2}{|c|}{Discrétisation} \\
+    \hline
+    \hline
+    Nombre d'éléments finis & \(1\) \\
+    \hline
+    \hline
+    \multicolumn{2}{|c|}{Propriétés mécaniques} \\
+    \hline
+    \hline
+    Module d'\nom{Young}         & \(70\,GPa\) \\
+    Coefficient de \nom{Poisson} & \(0,3\) \\
+    Coefficient de \nom{Norton}  & \(5\,10^{-10}\) \\
+    Exposant de \nom{Norton}  & \(1\) \\
+    \hline
+    \hline
+    \multicolumn{2}{|c|}{Pressions imposées} \\
+    \hline
+    \hline
+    Pression interne & \(30\,MPa\)\\
+    \hline
+  \end{tabular}
+  \caption{Caractéristiques utilisées.}
+  \label{tab:test2:carac}
+\end{table}
+
+Nous considérons maintenant un test en pression interne avec effet de fond.
+
+Le tube est modélisé par une loi de comportement de type \nom{Norton}
+en déformation logarithmiques. Les caractéristiques du test sont
+résumés au tableau~\ref{tab:test2:carac}. Les caractéristiques de la
+loi de \nom{Norton} n'ont pas de réalité physique~: elles ont été
+choisies pour conduire à des déformations très importantes (de l'ordre
+de \(500\,\%\) en quelques secondes.
+
+\subsubsection{Premier cas~: modélisation sans pression suiveuse}
+
+Pour le premier cas test, nous ne tiendrons pas compte de
+l'actualisation des efforts avec la géométrie (pas de pression
+suiveuse).
+
+Nous comparons notre simulation à une simulation effectuée avec le
+code \castem{}~: les deux solutions sont identiques. En petites
+déformations, la loi de \nom{Norton} conduirait à une évolution
+linéaire du rayon en fonction du temps. L'utilisation des déformations
+logarithmiques conduit à l'accélération de la déformation au cours du
+temps.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.9\linewidth]{@abs_top_srcdir@/docs/ptest/img/Creep-NortonLogarithmicStrain.pdf}
+  \caption{Évolution de la déformation axiale lors d'un test en
+    pression interne~: comparaison de la solution \mtest{} à la
+    solution obtenue via \castem{}.}
+  \label{fig:ptest-creep}
+\end{figure}
+
+\subsubsection{Second cas~: modélisation avec pression suiveuse}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.9\linewidth]{@abs_top_srcdir@/docs/ptest/img/Creep-NortonLogarithmicStrain-ps.pdf}
+  \caption{Évolution de la déformation axiale lors d'un test en
+    pression interne~: comparaison de la solution \mtest{} à la
+    solution obtenue via \castem{}.}
+  \label{fig:ptest-creep-pression_suiveuse}
+\end{figure}
+
+\appendix
+
+\section{Résolution}
+
+\subsection{Formulation faible}
+
+Soit \(\vec{v}\) un champ de vitesses cinémaquement admissible,
+nous avons~:
+\[
+\int_{\Omega_{0}}\left(\mathrm{Div} \tns{\Pi}\right)\,.\,\vec{v}\,\,\dtot\,V = 0
+\]
+
+La formule de \nom{Green} permet de transformer l'intégrale ainsi~:
+\[
+\int_{\Omega_{0}}\left(\mathrm{Div} \tns{\Pi}\right)\,.\,\vec{v}\,\,\dtot\,V = 
+\int_{\Omega_{0}}\tns{\Pi}\,\colon\,\derivtot{\vec{v}}{\vec{X}}\,\,\dtot\,V-\int_{\Omega_{0}}\left(\tns{\Pi}\,\colon\,\vec{n}\right)\,.\,\vec{v}\,\dtot\,S
+\]
+
+Nous obtenons ainsi la formulation faible recherchée~:
+\begin{equation}
+  \label{eq:weak:formulation}
+  2\,pi\,\int_{R_{0}^{i}}^{R_{0}^{e}}\,\left[\Pi_{rr}\,\derivtot{v_{r}}{R}\,R+\Pi_{\theta\theta}\,v_{r}\right]\,\dtot\,R=
+  -2\,pi\,F_{zz}\left[P^{e}\,\paren{1+\Frac{u_{r}^{e}}{R_{0}^{e}}}\paren{R_{0}^{e}}^{2}\,v^{e}_{r}+
+    P^{i}\,\paren{1+\Frac{u_{r}^{i}}{R_{0}^{i}}}\paren{R_{0}^{i}}^{2}\,v^{i}_{r}\right]
+\end{equation}
+
+\subsection{Discrétisation à l'aide d'éléments finis linéaire}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.5\linewidth]{@abs_top_srcdir@/docs/ptest/img/mesh1D.pdf}
+  \caption{Exemple de maillage 1D}
+  \label{fig:tube}
+\end{figure}
+
+Par calculer le premier terme de l'intégrale, nous discrétisons
+maintenant le tube par des éléments linéaires~: celui-ci est découpé
+en \(N-1\) segments sur lesquels la variation du déplacement radial
+est supposé linéaire. Les sommets des segments forment les n\oe{}uds
+du maillage et ils sont numérotés de manière croissante de gauche à
+droite. Cette discrétisation est schématisée sur la
+figure~\ref{fig:tube}.
+
+Dans cette discrétisation, la position du \(i\)\ieme n\oe{}ud, dans la
+configuration initiale est notée \(R_{0}^{\paren{i}}\).
+
+Les fonctions de l'espace de discrétisation sont donc caractérisées
+par leurs valeurs aux n\oe{}uds. Une fonction \(v\) de cet espace est
+donc équivalente à un vecteur \(\vec{\mathbb{V}}\) dont la valeur au
+\(i\)\ieme n\oe{}ud est \(\mathbb{V}^{\paren{i}}\).
+
+Le problème est alors de déterminer les valeurs nodales du déplacement
+radial. Sa valeur au \(i\)\ieme n\oe{}ud est notée
+\(\mathbb{U}_{r}^{\paren{i}}\).
+
+\subsubsection{Forces externes}
+
+Le terme de droite de l'équation~\eqref{eq:weak:formulation} décrit
+les forces externes imposées au tube (à l'exception de l'effet de fond
+qui sera décrit plus loin).
+
+Ce terme peut s'écrire~:
+\[
+-2\,pi\,F_{zz}\left[P^{e}\,\paren{1+\Frac{u_{r}^{e}}{R_{0}^{e}}}\paren{R_{0}^{e}}^{2}\,v^{e}_{r}+
+  P^{i}\,\paren{1+\Frac{u_{r}^{i}}{R_{0}^{i}}}\paren{R_{0}^{i}}^{2}\,v^{i}_{r}\right]=\vec{\mathbb{F}}_{e}\,.\,\vec{\mathbb{V}}
+\]
+où le vecteur \(\vec{\mathbb{F}}_{e}\) n'a pour composantes non
+nulles que celles correspondant au premier et dernier n\oe{}uds de la
+structure.
+
+Nous avons~:
+\[
+\left\{
+  \begin{aligned}
+    \mathbb{F}_{e}^{0}   & =-2\,pi\,F_{zz}\,P^{i}\,\paren{R_{0}^{i}+u_{r}^{i}}\,R_{0}^{i} \\    
+    \mathbb{F}_{e}^{N-1} & =-2\,pi\,F_{zz}\,P^{e}\,\paren{R_{0}^{e}+u_{r}^{e}}\,R_{0}^{e}
+  \end{aligned}
+\right.
+\]
+
+\subsubsection{Forces internes}
+
+Par linéarité, l'intégrale à calculer est alors~:
+\[
+\int_{R_{0}^{i}}^{R_{0}^{e}}\,\left[\Pi_{rr}\,\derivtot{v_{r}}{R}\,R+\Pi_{\theta\theta}\,v_{r}\right]\,\dtot\,R=
+\sum_{i=1}^{N-1}\,\int_{R_{0}^{\paren{i}}}^{R_{0}^{\paren{i+1}}}\,\left[\Pi_{rr}\,\derivtot{v_{r}}{R}\,R+\Pi_{\theta\theta}\,v_{r}\right]\,\dtot\,R
+\]
+où \(R_{0}^{\paren{i}}\) est la coordonnée du \(i\)\ieme{} n\oe{}ud
+dans la configuration initiale.
+
+Pour simplifier, nous allons considérer un élément fini linéaire
+iso-paramétrique. L'intégrale sur le \(i\)\ieme{} élément est calculé
+par une formule à deux points d'intégration~:
+\[
+\int_{R_{0}^{\paren{i}}}^{R_{0}^{\paren{i+1}}}\,\left[\Pi_{rr}\,\derivtot{v_{r}}{R}\,R+\Pi_{\theta\theta}\,v_{r}\right]\,\dtot\,R
+\approx\sum_{g=1}^{2}\left[\Pi_{rr}\paren{R^{g}_{0}}\,\derivtot{v_{r}}{R}\paren{R^{g}_{0}}\,R^{g}_{0}+\Pi_{\theta\theta}\paren{R^{g}_{0}}\,v_{r}\paren{R^{g}_{0}}\right]\,w_{g}\,J_{g}
+\]
+où~:
+\begin{minipage}[t]{0.9\linewidth}
+  \begin{itemize}
+  \item \(R^{g}_{0}\) est le rayon du point du point de Gauss
+    considéré dans la configuration initiale~;
+  \item \(w_{g}\) est son poids~;
+  \item \(J_{g}\) est le déterminant du jacobien permettant de passer
+    de l'élément de réference (le segment \(\left[-1:1\right]\)) à
+    l'élément considéré (le segement
+    \(\left[R_{0}^{\paren{i}}:R_{0}^{\paren{i+1}}\right]\))~;
+  \end{itemize}
+\end{minipage}
+
+Les deux points de Gauss étant équivalent, les poids de chacun sont
+égaux à \(1\). \(J_{g}\) est quand à lui égal à~:
+\[
+J_{g}=\Frac{R_{0}^{\paren{i+1}}-R_{0}^{\paren{i}}}{2}
+\]
+
+La position des points de Gauss est donnée par~:
+\[
+R^{g}_{0}=\Frac{1}{2}\paren{\paren{1-p_{g}}\,R_{0}^{\paren{i}}+\paren{1+p_{g}}\,R_{0}^{\paren{i+1}}}=R_{0}^{\paren{i}}+\Frac{\paren{1+p_{g}}}{2}\paren{R_{0}^{\paren{i+1}}-R_{0}^{\paren{i}}}
+\]
+avec~:
+\begin{minipage}[t]{0.9\linewidth}
+  \begin{itemize}
+  \item \(p_{g}=-\Frac{1}{\sqrt{3}}\) pour le premier point de Gauss~;
+  \item \(p_{g}= \Frac{1}{\sqrt{3}}\) pour le second point de Gauss.
+  \end{itemize}
+\end{minipage}
+
+Sur chaque segment, délimité par deux noeuds situés en \(R^{\paren{i}}_{0}\) et
+\(R^{\paren{i+1}}_{0}\) nous avons~:
+\[
+\left\{
+\begin{aligned}
+  v\paren{R}   &= \mathbb{V}^{\paren{i}}+\paren{R-R^{\paren{i}}_{0}}\,\Frac{\mathbb{V}^{\paren{i+1}}-\mathbb{V}^{\paren{i}}}{R^{\paren{i+1}}_{0}-R^{\paren{i}}_{0}}\\
+  \deriv{v}{R} &= \Frac{\mathbb{V}^{\paren{i+1}}-\mathbb{V}^{\paren{i}}}{R^{\paren{i+1}}_{0}-R^{\paren{i}}_{0}}
+\end{aligned}
+\right.
+\]
+
+Évaluée en un des deux points de \nom{Gauss}, la formule précédente s'écrit~:
+\[
+\left\{
+\begin{aligned}
+  v\paren{R_{g}} &= \mathbb{V}^{\paren{i}}+\Frac{1+p_{g}}{2}\,\paren{\mathbb{V}^{\paren{i+1}}-\mathbb{V}^{\paren{i}}}\\
+  \deriv{v}{R}  &= \Frac{\mathbb{V}^{\paren{i+1}}-\mathbb{V}^{\paren{i}}}{R^{\paren{i+1}}_{0}-R^{\paren{i}}_{0}}
+\end{aligned}
+\right.
+\]
+
+Approximée ainsi, l'intégrale est linéaire en \(\mathbb{V}^{\paren{i}}\) et
+\(\mathbb{V}^{\paren{i+1}}\). On peut donc écrire cette intégrale sous la forme~:
+\[
+\int_{R_{0}^{\paren{i}}}^{R_{0}^{\paren{i+1}}}\,\left[\Pi_{rr}\,\derivtot{v_{r}}{R}\,R+\Pi_{\theta\theta}\,v_{r}\right]\,\dtot\,R
+\approx
+\mathbb{F}_{ie}^{\paren{i}}\,\mathbb{V}^{\paren{i}}+\mathbb{F}_{ie}^{\paren{i+1}}\,\mathbb{V}^{\paren{i+1}}
+\]
+Le terme \(\mathbb{F}_{ie}^{\paren{i}}\) est la contribution de
+l'élément considéré à la force nodale associée au n\oe{}ud
+\(\paren{i}\).
+
+\subsection{Système discrétisé}
+
+Finalement, la forme faible discrétisée s'écrit~:
+\[
+\vec{\mathbb{F}}_{i}\,.\,\vec{\mathbb{V}}=\vec{\mathbb{F}}_{e}\,.\,\vec{\mathbb{V}}
+\]
+
+Cette expression étant vraie pour toute valeur de
+\(\vec{\mathbb{V}}\), l'équilibre mécanique discrétisé est
+simplement~:
+\[
+\vec{\mathbb{F}}_{i}=\vec{\mathbb{F}}_{e}
+\]
+
+Dans ce qui précède, nous n'avions pas précisé la dépendance du
+\(\tns{\Pi}\) et le gradient de déformation. Explicité cette
+dépendance permet de montrer que le système à résoudre est~:
+
+\[
+\vec{\mathbb{R}}\paren{\Delta\,\vec{\mathbb{U}}}=\vec{\mathbb{F}}_{i}\paren{\Delta\,\vec{\mathbb{U}}}-\vec{\mathbb{F}}_{e}\paren{\Delta\,\vec{\mathbb{U}}}=\vec{0}
+\]
+où~:
+\begin{minipage}[t]{0.9\linewidth}
+  \begin{itemize}
+  \item \(\Delta\,\vec{\mathbb{U}}\) est l'incrément de déplacement~;
+  \item \(\vec{\mathbb{R}}\) est le vecteur des résidus.
+  \end{itemize}
+\end{minipage}
+
+Ce système non linéaire peut être résolu de multiples manières.
+
+L'une d'entre elle fait intervenir la matrice tangente cohérente.
+
+\end{document}

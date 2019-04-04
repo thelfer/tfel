@@ -1,0 +1,12 @@
+@DSL    MaterialLaw;
+@Law    YoungModulusTest_1;
+@Author Thomas Helfer;
+@Date   26/02/2016;
+
+// output of law
+@Output E;
+E.setGlossaryName("YoungModulus1");
+
+@Function{
+  E = 7.8e+10;
+}

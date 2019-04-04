@@ -1,0 +1,3 @@
+install_mfront_header(MFront MaterialPropertyQuery.hxx)
+install_mfront_header(MFront BehaviourQuery.hxx)
+install_mfront_header(MFront ModelQuery.hxx)

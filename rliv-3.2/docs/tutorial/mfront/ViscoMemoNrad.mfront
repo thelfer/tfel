@@ -1,0 +1,120 @@
+/*!
+ * \file   viscochab.mfront
+ * \brief  
+ *   resolution implicite jabobienne numerique
+ * \author jmp
+ * \date   13 02 2013
+ */
+
+@Parser Implicit;
+@Behaviour Viscmemo;
+@Algorithm NewtonRaphson_NumericalJacobian;
+
+@Theta 1.0 ;
+@Epsilon 1.e-8 ;
+@IterMax 200 ;
+
+@MaterialProperty real young; /* mandatory for castem */
+young.setGlossaryName("YoungModulus");
+@MaterialProperty real nu;    /* mandatory for castem */
+nu.setGlossaryName("PoissonRatio");
+@MaterialProperty real delta1;
+@MaterialProperty real delta2;
+@MaterialProperty real Rinf;
+@MaterialProperty real R0;
+@MaterialProperty real b;
+@MaterialProperty real k;
+@MaterialProperty real w;
+@MaterialProperty real C1inf;
+@MaterialProperty real g1;
+@MaterialProperty real C2inf;
+@MaterialProperty real g2;
+@MaterialProperty real m;
+@MaterialProperty real UNsurK;
+@MaterialProperty real ainf;
+@MaterialProperty real Eta;
+@MaterialProperty real Qm;
+@MaterialProperty real Q0;
+@MaterialProperty real Mu;
+
+@StateVariable real    p;
+@StateVariable Stensor a1; 
+@StateVariable Stensor a2; 
+// @StateVariable real    R;
+@StateVariable real    q;
+@StateVariable Stensor Ksi; 
+
+@AuxiliaryStateVariable real R;
+
+@LocalVariable real    lambda;
+@LocalVariable real    mu;
+
+/* Initialize Lame coefficients */
+@InitLocalVars{
+  lambda = computeLambda(young,nu);
+  mu = computeMu(young,nu);
+} 
+
+@ComputeStress{
+  sig = lambda*trace(eel)*Stensor::Id()+2*mu*eel;
+} 
+
+@Integrator{
+  Stensor n = Stensor(0.);
+  const Stensor epsp = eto-eel ; 
+  const Stensor a1_ = (a1+theta*da1) ; 
+  const Stensor a2_ = (a2+theta*da2) ; 
+  const Stensor X1_ = C1inf*(a1_)/1.5 ; 
+  const Stensor X2_ = C2inf*(a2_)/1.5 ; 
+  const real rac32  = sqrt(1.5) ;
+  const real p_     = (p +theta*dp) ;
+  const real exbp   = exp(-b*p_);
+  const real g1_    = g1*(ainf+(1.0-ainf)*exbp) ;
+  const real g2_    = g2*(ainf+(1.0-ainf)*exbp) ;
+  const Stensor scin= sig - X1_ - X2_ ;
+  const real seq    = sigmaeq(scin);
+  const real Q_     = Q0 + (Qm-Q0)*(1-exp(-2*Mu*(q+theta*dq)));
+  const real Rp     = R0 + R + b*(Q_-R)*dp ;
+  const real F      = seq - Rp ;
+  real vp=0.;  
+  if(F > 0){  
+     vp  = dt*pow(F*UNsurK,m) ;
+     const real inv_seq = 1/seq;
+     n       = rac32*deviator(scin)*inv_seq;
+     const real a1n = a1_ | n ;
+     const real a2n = a2_ | n ;
+     fa1  = da1 -vp*rac32*n + g1_*vp*(delta1*a1_+(1-delta1)*a1n*n);
+     fa2  = da2 -vp*rac32*n + g2_*vp*(delta1*a2_+(1-delta2)*a2n*n);
+     feel += vp*rac32*n-deto;
+     fp   -= vp;
+     // effet de memoire sur l'ecrouissage isotrope
+     Stensor eksi= epsp + vp*rac32*n -Ksi  ;
+     real eksieq= sigmaeq(eksi) ;
+     real Fqe = eksieq/1.5- q ;
+     if (Fqe > 0){
+         eksi= epsp + vp*rac32*n -Ksi - theta*dKsi ;
+         eksieq= sigmaeq(eksi) ;
+         fq=  eksieq/1.5-(q+theta*dq) ;
+         Stensor netoile =  1.5* eksi / eksieq ;
+         fKsi = dKsi - (1-Eta)/Eta*dq*netoile ;
+     }
+  } else {
+    feel -= deto;    
+  }
+} 
+
+@UpdateAuxiliaryStateVars{
+  // valeur de milieu de pas, q ayant
+  // deja ete mis a jour
+  const real q_ = q-(1-theta)*dq;
+  const real Q = Q0 + (Qm - Q0) * (1 - exp(-2 * Mu * q_) );
+  R+=b*(Q-R)*dp; 
+}
+
+@TangentOperator{
+  StiffnessTensor De;
+  Stensor4 Je;
+  computeElasticStiffness<N,Type>::exe(De,lambda,mu);
+  getPartialJacobianInvert(Je);
+  Dt = De*Je;
+}

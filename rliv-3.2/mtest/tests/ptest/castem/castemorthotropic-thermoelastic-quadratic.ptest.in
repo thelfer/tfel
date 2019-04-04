@@ -1,0 +1,36 @@
+@Author Thomas Helfer;
+@Date   7/01/2015;
+@Description{
+  
+};
+
+@InnerRadius 4.2e-3;
+@OuterRadius 4.7e-3;
+@NumberOfElements 5;
+@ElementType 'Quadratic';
+
+@AxialLoading 'None';
+@InnerPressureEvolution 0.;
+@OuterPressureEvolution 0.;
+@PerformSmallStrainAnalysis true;
+
+@Behaviour<castem> '@MFrontCastemBehavioursBuildPath@' 'umatorthotropicelastic';
+@MaterialProperty<constant> 'YoungModulus1' 170.e9;
+@MaterialProperty<constant> 'YoungModulus2' 100.e9;
+@MaterialProperty<constant> 'YoungModulus3' 130.e9;
+@MaterialProperty<constant> 'PoissonRatio12' 0.3;
+@MaterialProperty<constant> 'PoissonRatio13' 0.2;
+@MaterialProperty<constant> 'PoissonRatio23' 0.4;
+@MaterialProperty<constant> 'ThermalExpansion1' 1.0e-5;
+@MaterialProperty<constant> 'ThermalExpansion2' 1.3e-5;
+@MaterialProperty<constant> 'ThermalExpansion3' 1.1e-5;
+
+@Real 'Ti' 863.15;
+@Real 'Te' 433.15;
+@Real 'D' '(Te-Ti)/log(Re/Ri)';
+@ExternalStateVariable<function> 'Temperature' '(Ti+D*log(r/Ri)-293.15)*t+293.15';
+  
+@Times {0,1};
+
+@Profile 'orthotropic-thermoelastic-profile.res' {'SRR','SZZ','STT',
+                                                  'ERR','EZZ','ETT'};

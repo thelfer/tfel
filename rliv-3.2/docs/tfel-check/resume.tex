@@ -1,0 +1,31 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%	Fichier	   : resume.tex
+%%	Auteur     : helfer@tfel001.cad.cea.fr
+%%	Date       : 01 Feb 2008
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Les applications \tfel{} évoluent. Cette évolution est liée d'une part
+au développement des applications elles-mêmes mais également au développement
+de l'architecture \tfel{} et au renouvellement des différents pré-recquis
+qu'elle utilise (compilateurs,support du format MED,\castem{},
+{\tt py\castem{}}, etc.).
+
+Comme tout développement informatique, ces évolutions peuvent conduire à des
+modifications des résultats, même si les modèles physiques restent
+{\em inchangés}. Ces modifications peuvent avoir plusieurs origines, nous pensons
+notamment aux modifications des algorithmes numériques utilisés.
+
+Cette note présente un outil, nommé {\tt tfel-check}, permettant
+de contrôler de manière {\em automatisée} sur un ensemble de calculs de référence
+que les évolutions des applications sont {\em stables}, c'est à dire
+que les résultats ne sont que peu \og~perturbés~\fg, au sens d'une erreur
+définie par le développeur. Cet outil s'intègre et renforce
+la stratégie \og~qualité~\fg mise en place dans la plate-forme \tfel{}.
+
+Cet outil a initialement été développé pour les besoins de l'application
+\celaeno{}.
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: t
+%%% End: 

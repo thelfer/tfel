@@ -1,0 +1,26 @@
+@Parser   MaterialLaw ;
+@Material T91MartensiticSteel ;
+@Law      ThermalExpansion_ROUX2007 ;
+@Author   F. Milliard ;
+@Date     11/12/2013 ;
+@Description{
+  // Coefficient de dilatation thermique martensite T91
+  // [Roux 07]
+}
+
+// Input of law
+@Input T ;
+T.setGlossaryName("Temperature") ;
+
+// Output of law
+@Output alpha ;
+alpha.setGlossaryName("ThermalExpansion");
+
+@PhysicalBounds T in [0.:*[;
+
+// Function
+@Function{
+  const real TC = T-273.15;
+  const real TC2 = TC  * TC  ;
+  alpha = 1.11e-5 + 2.35e-9 * TC + 9.43e-14 * TC2 ;
+} // end of Function

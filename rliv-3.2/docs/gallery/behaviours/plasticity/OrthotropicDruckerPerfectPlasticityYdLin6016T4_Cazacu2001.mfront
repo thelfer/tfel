@@ -1,0 +1,106 @@
+@DSL Implicit;
+@Behaviour OrthotropicDruckerPerfectPlasticityYdLin6016T4_Cazacu2001;
+@Author Thomas Helfer;
+@Date 15/01/2018;
+@Description{
+  Implementation of a perfect plastic
+  behaviour based on the Drucker yield
+  criterion.
+}
+
+@ModellingHypotheses {Tridimensional,PlaneStress,
+    PlaneStrain,GeneralisedPlaneStrain};
+@OrthotropicBehaviour<Plate>;
+
+@Brick StandardElasticity;
+@Epsilon 1.e-16;
+@Theta 1;
+
+@StateVariable strain p;
+p.setGlossaryName("EquivalentPlasticStrain");
+
+@ElasticMaterialProperties {150e9,0.3};
+
+@Parameter c = 0.558;
+c.setEntryName("DruckerCoefficient");
+
+@Parameter s0 = 150e6;
+s0.setGlossaryName("YieldStrength");
+
+@Parameter lp[9] = {0.859333333333333,0.893,0.825666666666667,
+		    0.825666666666667,0.893,0.859333333333334,
+		    0.558,1,1};
+@LocalVariable tfel::math::st2tost2<N,real> l;
+  
+@LocalVariable bool bp;
+
+@InitializeLocalVariables{
+  constexpr const auto e = real(1)/6;
+  constexpr const auto sqrt3 = Cste<real>::sqrt3;
+  l = makeOrthotropicStressLinearTransformation<N,real>(lp);
+  const auto sigel = computeElasticPrediction();
+  const auto sel   = l*sigel;
+  const auto J2    = (sel|sel)/2;
+  const auto J3    = det(sel);
+  const auto seqel = sqrt3*pow(J2*J2*J2-c*J3*J3,e);
+  bp = seqel>s0;
+}
+
+@Integrator{
+  constexpr const auto e = real(1)/6;
+  constexpr const auto sqrt3 = Cste<real>::sqrt3;
+  const stress seps = 1.e-10*young;
+  if(!bp){
+    // elastic loading, nothing to be done
+    return true;
+  }
+  constexpr const auto id  = Stensor::Id();
+  constexpr const auto id4 = Stensor4::Id();
+  const auto  s    = l*sig;
+  const auto  J2   = (s|s)/2;
+  if(J2>seps*seps){
+    const auto  J2_2 = J2*J2;
+    const auto  J2_3 = J2_2*J2;
+    const auto  J2_4 = J2_2*J2_2;
+    const auto  J2_6 = J2_4*J2_2;
+    const auto  J3   = det(s);
+    const auto  J3_2 = J3*J3;
+    const auto  J3_4 = J3_2*J3_2;
+    const auto& dJ2  = s;
+    const auto  d2J2 = eval(id4-(id^id)/3);
+    const auto  dJ3  = computeJ3Derivative(sig);
+    const auto  d2J3 = computeJ3SecondDerivative(sig);
+    const auto  s6   = J2_3-c*J3_2;
+    const auto  seq  = sqrt3*pow(s6,e);
+    const auto  dseq_dJ2 = J2_2/(2*s6)*seq;
+    const auto  dseq_dJ3 = -c*J3/(3*s6)*seq;
+    const auto  n  = eval((dseq_dJ2*dJ2+dseq_dJ3*dJ3)*l);
+    const auto  d2seq_dJ2dJ2 =
+      seq*(-4*J2*J3_2*c-J2_4)/(4*J3_4*c*c-8*J2_3*J3_2+4*J2_6);
+    const auto  d2seq_dJ3dJ3 =
+      seq*(-2*J3_2*c*c-3*J2_3*c)/(9*J3_4*c*c-18*J2_3*J3_2+9*J2_6);
+    const auto  d2seq_dJ2dJ3 =
+      seq*(5*J2_2*J3*c)/(6*J3_4*c*c-12*J2_3*J3_2+6*J2_6);
+    // d2f=f*d(df/f)+df*df/f
+    const auto  dn = eval(transpose(l)*(d2seq_dJ2dJ2*(dJ2^dJ2)+
+					dseq_dJ2*d2J2+
+					d2seq_dJ2dJ3*((dJ2^dJ3)+(dJ3^dJ2))+
+					d2seq_dJ3dJ3*(dJ3^dJ3)+
+					dseq_dJ3*d2J3)*l);
+    feel        += dp*n;
+    dfeel_ddeel += 2*mu*theta*dp*dn;
+    dfeel_ddp    = n;
+    fp           = (seq-s0)/young;
+    dfp_ddeel    = 2*mu*theta*n/young;
+    dfp_ddp      = 0;
+
+  } else {
+    // This case can happen for example at the first time step if the
+    // elastic prediction directly leads to a plastic loading: at the
+    // first iteration the stress is still zero.
+    fp           = -s0/young;
+    // this is arbitrary, but this avoids
+    // a singularity in the  jacobian
+    dfp_ddp      = 1;
+  }
+}

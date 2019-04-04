@@ -1,0 +1,81 @@
+/*!
+ * \file   mfront/include/MFront/MultipleIsotropicMisesFlowsDSL.hxx
+ * \brief  
+ * 
+ * \author Thomas Helfer
+ * \date   31 jan 2008
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
+ * reserved. 
+ * This project is publicly released under either the GNU GPL Licence 
+ * or the CECILL-A licence. A copy of thoses licences are delivered 
+ * with the sources of TFEL. CEA or EDF may also distribute this 
+ * project under specific licensing conditions. 
+ */
+
+#ifndef LIB_MFRONTMULTIPLEISOTROPICMISESFLOWSPARSER_HXX
+#define LIB_MFRONTMULTIPLEISOTROPICMISESFLOWSPARSER_HXX 
+
+#include<vector>
+#include<string>
+
+#include"MFront/IsotropicBehaviourDSLBase.hxx"
+
+namespace mfront{
+
+  struct MultipleIsotropicMisesFlowsDSL
+    : public IsotropicBehaviourDSLBase
+  {
+
+    static std::string getName();
+
+    static std::string getDescription();
+
+    MultipleIsotropicMisesFlowsDSL();
+
+    ~MultipleIsotropicMisesFlowsDSL() override;
+
+  private:
+
+    void writeBehaviourParserSpecificInitializeMethodPart(std::ostream&,
+							  const Hypothesis) const override;
+
+    void writeBehaviourParserSpecificMembers(std::ostream&,
+					     const Hypothesis) const override;
+    
+    void writeBehaviourParserSpecificIncludes(std::ostream&) const override;
+
+    void writeBehaviourIntegrator(std::ostream&,
+				  const Hypothesis) const override;
+
+    void writeBehaviourComputeTangentOperator(std::ostream&,
+					      const Hypothesis) const override;
+    
+    void treatFlowRule() override;
+
+    struct FlowHandler
+    {
+      enum FlowType{
+	PlasticFlow,
+	CreepFlow,
+	StrainHardeningCreepFlow
+      }; // end of enum FlowType
+      FlowHandler() = default;
+      FlowHandler(FlowHandler&&) = default;
+      FlowHandler(const FlowHandler&) = default;
+      FlowHandler& operator=(FlowHandler&&) = default;
+      FlowHandler& operator=(const FlowHandler&) = default;
+      ~FlowHandler() noexcept;
+      std::string flowRule;
+      FlowType flow = PlasticFlow;
+      double theta  = 1.;
+      bool hasSpecificTheta = false;
+    }; // end of struct LawHandler
+    
+    std::vector<FlowHandler> flows;
+
+  }; // end of struct MultipleIsotropicMisesFlowsDSL
+
+} // end of namespace mfront  
+
+#endif /* LIB_MFRONTMULTIPLEISOTROPICMISESFLOWSPARSER_HXX */
+

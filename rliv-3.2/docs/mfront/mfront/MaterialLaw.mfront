@@ -1,0 +1,7 @@
+@MaterialLaw{"A316TiHyperTrempe_CreepExponent.mfront",
+	         "A316TiHyperTrempe_CreepFactor.mfront"};
+
+@InitLocalVariables{
+  nc = A316TiHyperTrempe_CreepExponent(T + theta*dT);
+  C  = A316TiHyperTrempe_CreepFactor(T + theta*dT);
+}

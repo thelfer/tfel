@@ -1,0 +1,22 @@
+@Parser Implicit;
+@Behaviour ViscoChaboche;
+
+@StateVariable strain    p;
+@StateVariable StrainStensor a[2];
+
+@MaterialProperty stress young; 
+young.setGlossaryName("YoungModulus");
+@MaterialProperty real nu;   
+nu.setGlossaryName("PoissonRatio");
+
+@MaterialProperty stress Rinf;
+@MaterialProperty stress R0;
+@MaterialProperty real b;
+@MaterialProperty stress C[2];
+@MaterialProperty real   g[2];
+@MaterialProperty real m;
+@MaterialProperty stress UNsurK;
+
+@LocalVariable stress lambda,mu;
+lambda.setGlossaryName("FirstLameCoefficient");
+mu.setGlossaryName("ShearModulus");

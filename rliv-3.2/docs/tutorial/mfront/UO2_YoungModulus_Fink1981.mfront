@@ -1,0 +1,29 @@
+@Parser   MaterialLaw;
+@Material UO2;
+@Law      YoungModulus_Fink1981;
+@Author   T. Helfer;
+@Date     04/04/2014;
+
+@Description
+{
+  Thermodynamic properties of Uranium dioxide
+  Fink, J.K. and Chasanov, M.G. and Leibowitz, L.
+  Argonne National Laboratory - ANL-CEN-RSD-80-3
+  04/1981
+}
+
+@Input T,p;
+T.setGlossaryName("Temperature");
+p.setGlossaryName("Porosity");
+
+@Output E;
+
+@PhysicalBounds T in [0:*[;
+@PhysicalBounds p in [0:1.];
+
+@Bounds T in [0.:1600.];
+
+@Function
+{
+  E=2.26e11*(1-2.62*p)*(1-1.31e-4*(T-273.15));
+}

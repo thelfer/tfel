@@ -1,0 +1,223 @@
+@DSL Implicit;
+@Behaviour RusinekKlepaczko_ssrt;
+@Author Guillaume Michal;
+@Date 29/06/2017;
+
+@Description
+{
+  Rusinek-Klepaczko law.
+  Full implementation, strain rate and temperature effects.
+  thermal strain e_th not implemented in this version.
+  	
+  This example provides implementation of analytical jacobian
+  with strain rate and adiabatic plastic strain heating generation.
+  	
+  Author: G. Michal, University of Wollongong, NSW, Australia.
+  Last modified: 29st of May 2017. 
+}
+
+@Algorithm NewtonRaphson;
+// Convergence controls
+@Epsilon 1.e-12; // Stop criterion
+@Theta 1.; 
+
+// Rusinek-Klepaczko coefficients
+// Properties from Table 3
+// Note: Rate strain sensitivity m in
+// paper seems to actually be m*=1/m
+
+@Parameter young  = 212000.0; 
+@Parameter nu  = 0.33;
+@Parameter B0  = 591.6;
+@Parameter D1  = 0.48;
+@Parameter D2  = 0.19;
+@Parameter e0  = 1.8e-2;
+@Parameter eDmin  = 1e-5;
+@Parameter eDmax  = 1.e7;
+@Parameter ms  = 2.8;
+@Parameter nu_rk  = 0.2;
+@Parameter n0  = 0.285;
+@Parameter s0s  = 406.3;
+@Parameter thetas  = 0.59;
+@Parameter Tm  = 1600.;
+@Parameter beta  = 0.9;
+@Parameter rho  = 7800;
+@Parameter cp  = 470;
+@Parameter T0  = 300.;
+@Parameter alpha  = 0.;
+
+@StateVariable strain  p;
+@PhysicalBounds p in [0:*[;
+
+@StateVariable real Temp;
+Temp.setEntryName("Adiabatic_heating_dT");
+
+@PhysicalBounds Temp in [0:*[;
+
+@AuxiliaryStateVariable real dpdt; // Local strain rate
+@PhysicalBounds dpdt in [0:*[;
+
+@LocalVariable temperature Tn; // Current temperature at beginning of step
+@LocalVariable strain      eDmin_dt;
+@LocalVariable strain      eDmax_dt;
+@LocalVariable real        brcp;
+@LocalVariable real        itm;
+@LocalVariable stress      lambda;
+@LocalVariable stress      mu;
+@LocalVariable stress      Fel;
+@LocalVariable real        rhoc;
+
+@StaticVariable real T_eps   = 1.e-12;
+@StaticVariable real seq_eps = 1.e-12;
+@StaticVariable real fb      = 1000.;
+
+@InitLocalVariables{
+  // Product of minimum and maximum strain rates by time increment
+  eDmin_dt = eDmin*dt;
+  eDmax_dt = eDmax*dt;
+  // Update density and related factors
+  rhoc = rho/(1.+trace(eel + deto));
+  brcp = 1.e6*beta/(rhoc*cp);
+  // Update temperature and related factors
+  Tn  = T0 + Temp;
+  itm = 1./Tm;
+  const stress rEE0 = (1.-Tn*itm*exp(thetas*(1.-Tm/Tn)));
+  lambda = computeLambda(young*rEE0,nu);
+  mu     = computeMu(young*rEE0,nu);
+  // Modulus of plasticity - no plastic increment -> dp/dt = eDmin
+  const real B = B0*pow(Tn*itm*log10(eDmax/eDmin),-nu_rk);
+  // Internal stress
+  const real smu = B*pow(e0+p,n0);
+  // Flow stress - ss is zero if no plastic strain increment.
+  const stress Rp = rEE0*smu;
+  // Elastic prediction
+  StressStensor sigel(lambda*trace(eel+deto)*Stensor::Id()+2.*mu*(eel+deto));
+  Fel = sigmaeq(sigel) - Rp;
+}
+
+@ComputeStress{
+  sig = lambda*trace(eel)*Stensor::Id()+2*mu*eel;
+}
+
+@Integrator{
+  feel -= deto;
+  if( Fel <= 0 ){
+    return true;
+  }
+  // Flow direction
+  const auto seq   = sigmaeq(sig);
+  const auto iseq  = 1/max(seq,stress(seq_eps*young));
+  const auto n_    = eval(3*deviator(sig)*(iseq/2));
+
+  // Plastic increment
+  const auto p_ = max(strain(0),p+theta*dp);
+
+  // Temperature increment
+  const real  T_ = max(T_eps, Tn + theta*dTemp);
+  const real rT_ = T_*itm;
+
+  // Elastic modulus
+  const real rEE0      = 1.-rT_*exp(thetas*(1.-1./rT_));
+  const real drEE0_ddT = -theta*exp(thetas*(1.-1./rT_))*(itm+thetas/T_);
+
+  // Modulus of plasticity
+  real B;
+  real dB_ddp;
+  real dB_ddT;
+  real dpb_min = eDmin_dt;		
+  real dpb_max = eDmax_dt*pow(10.,-pow(fb,-1/nu_rk));
+  if ( dp <= dpb_min){
+    // Strain rate below lower limit
+    const real powTerm = rT_*log10(eDmax/eDmin);
+    const real bpow    = B0*pow(powTerm, -nu_rk-1.);
+    B       = powTerm*bpow;
+    dB_ddp  = nu_rk*rT_/(dpb_min*log(10.))*bpow;
+    dB_ddT = -nu_rk*theta*itm*log10(eDmax/eDmin)*bpow;
+  } else if (dp >= dpb_max ){
+    // Strain rate above upper limit
+    const real bpow   = fb*B0*pow(rT_, -nu_rk-1.);
+    B      = rT_*bpow;
+    dB_ddp = 0.;
+    dB_ddT = -nu_rk*theta*itm*bpow; 
+  } else {
+    // Strain rate within limits
+    const real powTerm = rT_*log10(eDmax_dt/dp);
+    const real bpow    = B0*pow(powTerm, -nu_rk-1.);
+    B       = powTerm*bpow;
+    dB_ddp  = nu_rk*rT_/(dp*log(10.))*bpow;
+    dB_ddT = -nu_rk*theta*itm*log10(eDmax_dt/dp)*bpow;
+  }
+
+  // Strain hardening exponent
+  real n       = n0; // case dp <= eDmin*dt
+  real dn_ddp  = 0.; // case dp <= eDmin*dt
+  real dn_ddT  = 0.; // case dp <= eDmin*dt - /!\ Need to check derivative
+  if ( dp >= eDmin_dt*pow(10.,1./(D2*rT_)) ){
+    // Strain rate above upper limit
+    n      = 0.;
+    dn_ddp = 0.;
+    dn_ddT = 0.;
+  } else if ( dp > eDmin*dt ) {
+    // Strain rate within limits
+    const real logTerm = dp/eDmin_dt;
+    n      =  n0*(1-D2*rT_*log10(logTerm));
+    dn_ddp = -n0*D2*rT_/(dp*log(10.));
+    dn_ddT = -n0*D2*theta*itm*log10(logTerm);
+  }
+
+  // Internal stress
+  const real epow     = pow(e0+p_,n);
+  const real smu      = B*epow;
+  const real dsmu_ddp = epow*(dB_ddp + B*(log(e0+p_)*dn_ddp+n*theta/(e0+p_)));
+  const real dsmu_ddT = epow*(dB_ddT + B*log(e0+p_)*dn_ddT);
+
+  // Effective stress
+  real ss      = 0.;
+  real dss_ddp = 0.;
+  real dss_ddT = 0.;
+  if ( eDmax_dt*pow(10.,-Tm/(D1*T_)) < dp ){	
+    // Strain rate within limits
+    const auto logTerm = 1-D1*rT_*log10(eDmax_dt/dp);
+    const auto spow    = s0s*pow(logTerm, ms-1.);
+    ss      = logTerm*spow;
+    dss_ddp = ms*D1*rT_/(dp*log(10.))*spow;
+    dss_ddT = -ms*D1*theta*itm*log10(eDmax_dt/dp)*spow;
+  }
+
+  // Flow stress
+  const auto rp      = rEE0*(smu+ss);
+  const auto drp_ddp = rEE0*(dsmu_ddp+dss_ddp);
+  const auto drp_ddT = (smu+ss)*drEE0_ddT + rEE0*(dsmu_ddT+dss_ddT);
+
+  // System of equations and partial derivatives
+  fp         = (seq-rp)/young;
+  dfp_ddp    = -drp_ddp/young;  
+  dfp_ddTemp = -drp_ddT/young;
+  dfp_ddeel  = 2*mu*theta/young*n_;
+
+  fTemp         = (dTemp - brcp*rp*dp)*itm;
+  dfTemp_ddp    = -brcp*(rp+drp_ddp*dp)*itm; 
+  dfTemp_ddTemp = (1-brcp*drp_ddT*dp)*itm; 
+
+  feel         = deel - deto + dp*n_;		
+  dfeel_ddeel += (Stensor4::M()-(n_^n_))*2*mu*theta*dp*iseq;
+  dfeel_ddp    = n_ ;
+} 
+
+@UpdateAuxiliaryStateVariables{
+  dpdt = max(strainrate(0),dp/dt);
+}
+			     
+@TangentOperator{
+  if((smt==ELASTIC)||(smt==SECANTOPERATOR)){
+    computeElasticStiffness<N,Type>::exe(Dt,lambda,mu);
+  } else if (smt==CONSISTENTTANGENTOPERATOR){
+    StiffnessTensor De;
+    Stensor4 Je;
+    computeElasticStiffness<N,Type>::exe(De,lambda,mu);
+    getPartialJacobianInvert(Je);
+    Dt = De*Je;
+  } else {
+    return false;
+  }
+}

@@ -1,0 +1,1032 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%	Fichier	   : Chaboche
+%%	Auteur     : th202608@pleiades077.intra.cea.fr
+%%	Date       : 29 avril 2014
+%%	Répertoire : /home/th202608/Documents/notes/2014/TutorielMFront/
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Développement pas à pas d'une loi élasto-(visco)-plastique }
+\label{sec:chaboche}
+
+Nous allons suivre pas à pas le développement en \mfront{} d'une loi
+élasto-plastique, puis visco-plastique (modèle de
+J.L. \nom{Chaboche}).
+
+\subsection{Loi élasto-plastique de \nom{Chaboche}}
+
+Il s'agit d'une loi de comportement élasto-plastique à écrouissage
+isotrope et cinématique non linéaires. Les équations du modèle sont
+résumées brièvement~:
+\begin{itemize}
+\item relation contraintes déformations élastiques~: 
+\[
+\tsigma=\tDq\,\colon\,\paren{\tepsilonto-\tepsilonp}
+\]
+\item Critère de plasticité~:
+ \[
+ F\paren{\tsigma ,\tenseur{X}} =(\sigma -\tenseur{X})_{\mathrm{eq}}-R(p)\le 0
+\]
+avec, pour tout tenseur \(\tenseur{A}\)~:
+\[
+A_{\text{eq}}=\sqrt{\Frac{3}{2}\tenseur{\tilde{A}}:\tenseur{\tilde{A}}}
+\] où
+$\tenseur{\tilde {A}}$ est le déviateur de \(\tenseur{A}\).
+\item l'évolution de la déformation plastique est gouvernée par une
+  loi d'écoulement normale au critère de plasticité~:
+  \[
+  \tdepsilonp=\dot{p}\,\tenseur{n}\quad\text{avec}\quad
+  \tenseur{n}=\Frac{3}{2}\Frac{\tilde {\tsigma}-{\tenseur{X}}}{\left(\sigma-\tenseur{X}\right)_{\text{eq}}}
+  \]
+\item ${\tenseur{X}}$ représente l'écrouissage cinématique non
+  linéaire. Il peut résulter d'une combinaison de plusieurs
+  écrouissages cinématiques
+  ${\tenseur{X}=\tenseur{X}_{1}+\tenseur{X}_{2}+...}$~;
+\item L'évolution de chaque variable d'écrouissage $\tenseur{X}_{i}$
+  est donnée par~:
+\[
+\tenseur{X}_{i}=\Frac{2}{3}C_{i}\talpha_{i}
+\]
+\[
+\tdalpha_{i}=\tdepsilonp-\gamma _{i}\,\talpha_{i}\,\dot{p}
+\]
+\item La fonction d'écrouissage isotrope \(R\paren{p}\) est définie par~:
+\[
+\begin{aligned}
+  R\paren{p}&=R^{\infty}+\paren{R^{0}-R^{\infty}}\exp\paren{-b\,p} \\
+\end{aligned}
+\]
+\end{itemize}
+
+Les propriétés matériau de ce modèle sont donc $E$, $\nu$, $R^{0}$,
+$R^{\infty }$, $b$, $C_{1}$, $C_{2}$, $\gamma_{1}$, $\gamma_{2}$.
+
+La discrétisation implicite (par une \(\theta\)-méthode) de ces
+équations conduit à résoudre un système d'équations où les inconnues sont~:
+\begin{itemize}
+\item le tenseur   \(\Delta\,\tepsilonel\)~;
+\item le scalaire, \(\Delta\,p\)~;
+\item les tenseurs \(\Delta\,\talpha_{i}\) (pour \(i=1,n\) variables cinématiques)~;
+\end{itemize}
+et où chaque équation d'évolution temporelle de la forme
+\(\dot{y}=f\paren{y,z,...}\) est remplacée par~:
+\[
+\Delta y-\Delta\,t\,f\paren{y+\theta \Delta y,z+\theta \Delta z,,...}=0
+\]
+Dans le cas de la plasticité, on n'écrit pas d'équation d'évolution de
+la variable \(p\), mais directement le respect du critère de
+plasticité.
+
+Deux cas se présentent. L'évolution peut être élastique. Il est
+possible de tester cela en calculant un tenseur de test
+\(\tsigma^{\textit{tr}}\) tel que~:
+\[
+\tsigma^{\textit{tr}}=\tenseur{D}\,\colon\,\paren{\bts{\tepsilonel}+\Delta\,\tepsilonto}
+\]
+
+Si le critère plastique évalué avec cette contrainte de test est négatif, c'est à dire si~:
+\[
+F^{el}\paren{\tsigma ,\tenseur{X}}=\paren{\tsigma^{\textit{tr}}-\bts{\tenseur{X}}}_{\mathrm{eq}}-R\paren{\bts{p}}<0
+\]
+alors la solution cherchée est triviale et donnée par~:
+\[
+\Delta\,\tepsilonp=0 \quad \Delta\, p=0 \quad \Delta\,\talpha_{i}=\tenseur{0}
+\]
+
+Sinon, il faut résoudre le système suivant~:
+\[
+F({{\sigma ,X}})=0 \quad\Leftrightarrow\quad
+\left\{
+\begin{aligned}
+&(\ets{\tsigma}-\ets{\tenseur{X}})_{\mathrm{eq}}-R(p(t+\Delta\,t))&=0 \\
+&\Delta\,\talpha_{i}-\Delta\,\tepsilonp+\gamma_{i}(\talpha_{i}+\theta \Delta\talpha_{i})\Delta\,p&=\tenseur{0}\\
+&\Delta\,\tepsilonel-\Delta\,\tepsilonto+\Delta\,\tepsilonp&=\tenseur{0}
+\end{aligned}
+\right.
+\]
+où $\Delta\,\tepsilonp=\Delta\, p\,\ets{\tenseur{n}}$.
+
+Dans le cas de 2 variables cinématiques, (le système est alors de
+taille \(6+1+2\times{}6=19\)), la \og~traduction~\fg{} de ces
+équations en \mfront{} est décrite ici pas à pas~:
+\begin{enumerate}
+\item choix de l'algorithme avec matrice jacobienne numérique dans un
+  premier temps.
+  \begin{flushleft}
+    \lstinputlisting[firstline=1,lastline=4]{@top_srcdir@/docs/tutorial/mfront/Chaboche.mfront}
+  \end{flushleft}
+  En plasticité, on choisit en général \( \theta = 1\) pour que le
+  critère soit vérifié en fin de pas de temps (à l'instant \(t_{i} \))
+\item définition des propriétés matériau (modifiables depuis le jeu de
+  commandes \mtest{} ou \aster{})~:
+  \begin{flushleft}
+    \lstinputlisting[firstline=6,lastline=14,firstnumber=6]{@top_srcdir@/docs/tutorial/mfront/Chaboche.mfront}
+  \end{flushleft}
+  Les appels à {\tt setGlossaryName} sont importants pour \castem{}
+  car ils permettent à \mfront{} de faire le lien entre les propriétés
+  matériau nécessaires à la loi et ceux définis par \castem{} pour ses
+  propres besoins.
+\item définition des variables internes (l'écriture ci-dessus utilise
+  des tableaux, ce qui permet de gérer facilement un nombre quelconque
+  de variables cinématiques. Ici on en choisit \(2\))~:
+  \begin{flushleft}
+    \lstinputlisting[firstline=16,lastline=17,firstnumber=16]{@top_srcdir@/docs/tutorial/mfront/Chaboche.mfront}
+  \end{flushleft}
+  De plus, il faut compter en tant que variable interne (donc inconnue
+  du problème à résoudre) le tenseur des déformations élastiques (ou
+  plutôt son incrément {\tt deel}). L'utilisation de {\tt deel }
+  plutôt que {\tt dsig } (utilisée habituellement dans {\tt
+    Code-Aster} permet d'obtenir un système bien conditionné et permet
+  de traiter sans précaution particulière le cas de propriétés
+  élastiques variables dans le temps.
+
+\item définition et initialisation des variables locales à
+  l'algorithme (l'initialisation est faite une seule fois avant
+  l'appel de l'algorithme implicite ce qui permet de gagner du temps
+  de calcul)~:
+  \begin{flushleft}
+    \lstinputlisting[firstline=19,lastline=35,firstnumber=19]{@top_srcdir@/docs/tutorial/mfront/Chaboche.mfront}
+  \end{flushleft}
+  On calcule dans cette section le critère \( F^{el} \), qui permet
+  d'éviter de lancer l'algorithme de \nom{Newton} si la solution reste
+  élastique.
+\item calcul des contraintes. À chaque itération de l'algorithme
+  implicite et après convergence, on calcule~:
+  \begin{flushleft}
+    \lstinputlisting[firstline=37,lastline=39,firstnumber=39]{@top_srcdir@/docs/tutorial/mfront/Chaboche.mfront}
+  \end{flushleft}
+\item Calcul des différents termes du système d'équations~:
+  \begin{flushleft}
+    \lstinputlisting[firstline=41,lastline=65,firstnumber=41]{@top_srcdir@/docs/tutorial/mfront/Chaboche.mfront}
+  \end{flushleft}
+  \begin{itemize}
+  \item la valeur de \(p\) est actualisée en \(t_{i}+\theta\Delta\,t\)
+    à la ligne \(45\), ce qui permet d'actualiser l'écrouissage
+    isotrope \(R\paren{p}\)~;
+  \item de même, pour les variables d'écrouissage cinématique
+    \(\alpha_{i}\) en ligne \(51\).  Ceci permet de calculer le
+    tenseur \((\ets{\tsigma}-\ets{\tenseur{X}})\) à la ligne \(52\)~;
+  \item la direction d'écoulement \(
+    \tenseur{n}=\Frac{3}{2}\Frac{\tilde
+      {\tsigma}-{\tenseur{X}}}{\left(\sigma-\tenseur{X}\right)_{\text{eq}}}
+    \)~;
+  \item la ligne \(56\) décrit simplement la décomposition additive
+    des déformations~;
+  \item la ligne \(57\) traduit le critère de plasticité (normalisé
+    par le module d'Young pour conserver un système d'équations
+    portant sur des grandeurs de la même dimension que les
+    déformations~;
+  \item les lignes \(58\) à \(60\) décrivent les évolutions des
+    variables cinématiques~:
+    \[
+    \Delta\,\talpha_{i}-\Delta p \left
+      (\tenseur{n} - \gamma_{i} \talpha_{i} \right ) =\tenseur{0}
+    \]
+  \item enfin la ligne \(63\) correspond au cas où l'incrément est
+    élastique.
+  \end{itemize}
+\item calcul de l'opérateur tangent cohérent~: il utilise directement
+  l'inverse de la matrice jacobienne~\cite{helfer_generateur_2013}~:
+  \begin{flushleft}
+    \lstinputlisting[firstline=67,lastline=79,firstnumber=67]{@top_srcdir@/docs/tutorial/mfront/Chaboche.mfront}
+  \end{flushleft}
+  La variable {\tt smt} permet de connaître le type d'opérateur
+  tangent demandé par le code appelant.
+\end{enumerate}
+
+
+Cette écriture avec \mfront{} et l'algorithme implicite (et matrice
+jacobienne numérique) permettent d'obtenir une résolution efficace
+(plus efficace que son équivalent avec l'algorithme explicite de
+\nom{Runge-Kutta}, qui s'écrit de façon similaire, en remplaçant
+\og~\texttt{~feel~}~\fg{}, \og~\texttt{fp}~\fg{}, par
+\og~\texttt{deel}~\fg{}, \og~\texttt{dp}~\fg{}, {\em etc.}).
+
+Avec cet exemple, on, peut déjà tester le développement sur un point
+matériel à l'aide de \mtest{}, puis sur un maillage éléments finis
+(par exemple avec \aster{}).
+
+\begin{figure}[!h]
+  \centering
+  \includegraphics[width=11cm,height=11cm]{@top_srcdir@/docs/tutorial/images/tutorielch12-img9.png}
+  \caption{Vérification de l'implantation de la loi élasto-plastique.}
+  \label{fig:mfront:tutorial:chaboche:check}
+\end{figure}
+
+Pour une sollicitation uniaxiale de 10 cycles en traction - compression, on
+obtient très rapidement (0,024s) le résultat donné en
+figure~\ref{fig:mfront:tutorial:chaboche:check}.
+
+Le fichier \mtest{} pour cet exemple est le
+suivant~:
+\begin{flushleft}
+  \lstinputlisting{@top_srcdir@/docs/tutorial/mtest/chaboche.mtest}
+\end{flushleft}
+
+\subsection{Loi élasto-viscoplastique de \nom{Chaboche}}
+
+Le modèle diffère peu du précédent, car seul le critère de plasticité~:
+$F({{\sigma ,X}})=(\tsigma -\tenseur{X})_{\mathrm{eq}}-R(p)\le 0$ est remplacé
+par une loi d'écoulement en puissance~:
+\[
+\dot{{p}}=\langle \Frac{F}{K}\rangle ^{m}
+\]
+où $\left\langle F\right\rangle $ désigne la partie positive de $F$
+définie ci-dessus, soit~:
+\[
+\left\langle F\right\rangle =\text{max}(0,F)
+\]
+
+Dans le fichier mfront, seule l'équation donnant l'évolution de
+$\Delta\,p$ change~:
+
+\texttt{fp \ \ \ = (seq\_-Rp\_)/young;}
+
+devient~:
+
+{\tt vp \ = pow(F*UNsurK,m)~;}
+
+{\tt fp -= vp*dt;}
+
+\texttt{UNsurK} et \texttt{m} ont bien sûr été ajoutés dans la
+définition des propriétés matériau de la loi~:
+\begin{flushleft}
+{\tt
+  @MaterialProperty real m; \newline
+  @MaterialProperty real UNsurK;
+}
+\end{flushleft}
+
+Un nouveau test effectué à l'aide de \mtest{} permet de montrer la
+capacité du modèle dans le cas d'un chargement cyclique (cycles en
+température en déformation), issu du test hsnv125 de \aster{}. La
+durée du calcul~est de 0,58s. Le fichier \mtest{} est le suivant~:
+\begin{flushleft}
+  \lstinputlisting{@top_srcdir@/docs/tutorial/mtest/viscochab.mtest}
+\end{flushleft}
+
+\begin{figure}[!h]
+  \centering
+  \includegraphics[width=11cm,height=10cm]{@top_srcdir@/docs/tutorial/images/tutorielch12-img10.png}
+  \caption{Vérification de l'implantation de la loi élasto-visco-plastique.}
+  \label{fig:mfront:tutorial:viscochaboche:check}
+\end{figure}
+
+La figure~\ref{fig:mfront:tutorial:viscochaboche:check} donne
+l'évolution de différentes variables d'intérêt au cours du test.
+
+\begin{figure}[!h]
+  \centering
+  \includegraphics[width=11cm,height=10cm]{@top_srcdir@/docs/tutorial/images/tutorielch12-img12.png}
+  \caption{test hsnv125 pour comparer la loi élasto-visco-plastique à
+    celle de \aster.}
+  \label{fig:mfront:tutorial:hsnv125:check}
+\end{figure}
+
+
+La figure~\ref{fig:mfront:tutorial:hsnv125:check} montre que la
+comparaison de la loi développée en \mfront avec son équivalent dans
+\aster{} fournit des résultats identiques.
+
+\subsection{Traitement des erreurs, déverminage}
+
+Et si, au cours du développement, on rencontre des erreurs, que faire~?
+
+Lors de la compilation avec \mfront{}, les erreurs sont la
+plupart du temps explicites~:
+  \begin{itemize}
+  \item {\tt Viscochab.mfront:94: error: {\textquoteleft}F' was not
+    declared in this scope}
+\item {\tt Viscochab.mfront:74: warning: unused variable
+    {\textquoteleft}Rp\_'}
+\item {\tt Viscochab.mfront:91: error: expected {\textquoteleft},' or
+    {\textquoteleft};' before {\textquoteleft}if' \ (oubli d'un
+    \og~;~\fg{} en fin de ligne}
+\item etc...
+\end{itemize}
+
+Lors de l'exécution, il est possible de localiser les erreurs
+numériques ou autres via les options de compilation~:
+\begin{itemize}
+\item le plus simple est de compiler avec {\tt -{}-debug} (détails sur
+  l'intégration)~:\newline \texttt{mfront -{}-obuild -{}-interface=aster
+    -{}-debug chaboche.mfront}
+\item un \og~classique~\fg{} du développement, les impressions
+  locales~:
+  \begin{itemize}
+  \item pour imprimer une variable locale, il suffit d'écrire~:
+    \begin{flushleft}
+      {\tt cout {\textless}{\textless} {\textquotedbl} seq calculé
+      {\textquotedbl} {\textless}{\textless} seq {\textless}{\textless} endl;}
+    \end{flushleft}
+  \item pour afficher l'état courant de
+    l'intégration~:
+    \begin{flushleft}
+      {\tt cout {\textless}{\textless} *this {\textless}{\textless} endl~;}
+    \end{flushleft}
+  \end{itemize}
+\item pour trouver l'endroit où une erreur d'exécution se produit, on
+  peut compiler en mode debug~: \newline
+  \texttt{\textbf{CXXFLAGS='-g'}}\texttt{ mfront -{}-obuild
+    -{}-interface=aster chaboche.mfront}
+\item enfin, dans un calcul \aster, on peut générer des fichiers mtest
+  en cas d'échec d'intégration~:
+  \newline 
+  \texttt{mfront -{}-obuild
+    -{}-interface=aster -{}-@Aster\-Generate\-MTest\-File\-On\-Fail\-ure=\-true
+    cha\-boche\-.mfront}
+\end{itemize}
+
+\subsection{Zoom sur les performances}
+
+En peu de lignes, nous avons construit un modèle
+élasto-visco-plastique qui fournit de bons résultats. Ceci montre la
+souplesse de \mfront{}. Mais qu'en est-il des performances ? De
+nombreux benchmarks ont été effectués~\cite{proix_integration_2013},
+mais on peut examiner ce qu'il en est sur le comportement que nous
+venons de développer~:
+\begin{itemize}
+\item le test prend 0,578s avec \mtest{}~;
+\item dans \aster{}, la résolution sur un point matériel avec le
+  comportement \mfront{} est moins rapide qu'avec \mtest{}~: 2,03s
+  (car le temps cpu fixe relatif à l'environnnement d'exécution est de
+  l'ordre de 1s).
+\item toujours dans \aster{}, la résolution avec le comportement
+  VISC\_CIN2\_CHAB prend 1.41s, ce qui est logique puisque
+  l'intégration du comportement résout (par une méthode de type
+  \og~sécante~\fg{}) une seule équation au lieu de 19 pour
+  l'implantation proposée ici.
+\item si maintenant on utilise le comportement VISCOCHAB dans
+  \aster{}, pour lequel la résolution est similaire à celle de
+  \mfront{}, sur un système de 21 équations, la résolution échoue en
+  implicite. 
+En explicite (méthode de Runge-Kutta d'ordre 2), 
+le temps CPU pour ce test est d'environ
+  3mn.
+
+\end{itemize}
+
+La convergence avec mtest est très rapide, par exemple, au dernier pas
+de temps~:
+\begin{flushleft}
+  {\tt
+    iteration 1 : 0.00439197 94.3891\\
+    iteration 2 : 0.00196436 67.3256\\
+    iteration 3 : 0.000240731 3.14792\\
+    iteration 4 : 2.22909e-06 0.0282276\\
+    iteration 5 : 1.88601e-10 0.000232322\\
+    iteration 6 : 5.82316e-15 1.49916e-08\\
+    convergence, after 6 iterations, order 1.1075\\
+  }
+\end{flushleft}
+
+On peut constater que les résidus au cours des itérations montrent une
+très bonne convergence. La matrice tangente cohérente est donc
+précise.
+
+\paragraph{Remarque} Il est possible dans \mfront{} d'intégrer de
+façon encore plus efficace des comportements élasto-visco-plastiques à
+écoulement normal (comportements standard généralisés). Ici le
+comportement est non standard, et l'écriture est suffisamment simple
+pour permettre de réaliser facilement des modifications du modèle
+tout en restant efficace.
+  
+\subsection{Ajout de la matrice jacobienne}
+\hypertarget{RefHeading8039105070066}{}{
+
+  Les essais précédents montrent la souplesse de l'intégration d'une
+  loi de comportement à l'aide de \mfront{}~: il suffit de décrire les
+  équations du système à intégrer. La matrice jacobienne, nécessaire à
+  la résolution de ce système par la méthode de Newton, est estimée
+  par perturbation, ce qui s'avère en pratique de bonne qualité, mais
+  prend un temps machine plus important qu'une matrice directement
+  programmée.}
+
+Pour illustrer cela, nous allons introduire la matrice jacobienne dans
+le comportement précédent. Il faut donc supprimer (ou commenter //) la
+ligne~:
+
+{// @Algorithm NewtonRaphson\_NumericalJacobian;}
+
+La matrice jacobienne est composée des différentes dérivées croisées de
+chaque équation \(f_{x}\) par rapport à chaque inconnue \(dy\). Par
+convention, la dérivée correspondante se nommera {\tt dfx\_ddy}. De
+plus, la matrice jacobienne est initialisée à l'identité.
+
+Listons les différentes dérivées à calculer~:
+
+ $\text{dfeel\_deel}=\Frac{\partial }{\partial \Delta
+\tepsilonel}\left(\Delta
+\tepsilonel+\Delta\,{\varepsilon
+}^{p}-\Delta\,{\varepsilon
+}\right)={\tenseurq{I}}+\Delta\,p\Frac{\partial
+\tenseur{n}}{\partial \Delta\,\tepsilonel}~~$
+{avec} \ ~ ~${\tilde
+{I}}_{\mathit{ijkl}}=\Frac{1}{2}(\delta _{\mathit{ik}}\delta
+_{\mathit{jl}}+\delta _{\mathit{il}}\delta _{\mathit{jk}})$
+
+ $\text{dfeel\_ddp}=\tenseur{n}+\Delta\,p\Frac{\partial
+\tenseur{n}}{\partial \Delta\,p}$ \ \ 
+
+ $\text{dfeel\_dda1}=\Delta
+p\Frac{\partial \tenseur{n}}{\partial \Delta\,\alpha _{1}}$\ \ 
+
+$\text{dfeel\_dda2}=\Delta\,p\Frac{\partial \tenseur{n}}{\partial
+\Delta\,\alpha _{2}}$
+
+ $\text{dfp\_ddp}=1+\Delta\,t\Frac{m}{K}\left\langle
+\Frac{F}{K}\right\rangle ^{m-1}\Frac{\partial R}{\partial \Delta\,p}$ 
+\ \  
+
+$\text{dfp\_dda1}=-\Delta\,t\Frac{m}{K}\left\langle
+\Frac{F}{K}\right\rangle ^{m-1}\Frac{\partial (\sigma
+-X)_{\mathrm{eq}}}{\partial \Delta\,\alpha _{1}}$
+
+% \begin{equation*}
+$\text{dfp\_ddeel}=-\Delta\,t\Frac{m}{K}\left\langle
+\Frac{F}{K}\right\rangle ^{m-1}\Frac{\partial (\sigma
+-X)_{\mathrm{eq}}}{\partial \Delta\,\tepsilonel}$
+% \end{equation*}
+
+ $\text{dfa1\_dda1}={\tenseurq{I}}-\Delta\,p\Frac{\partial
+\tenseur{n}}{\partial \Delta\,\alpha _{1}}+\Delta\,p\gamma
+_{1}\theta {\tenseurq{I}}$ \ \  
+
+$\text{dfa1\_dda2}=-\Delta
+p\Frac{\partial \tenseur{n}}{\partial \Delta\,\alpha _{2}}$
+
+ $\text{dfa2\_dda2}={\tenseurq{I}}-\Delta\,p\Frac{\partial
+\tenseur{n}}{\partial \Delta\,\alpha _{2}}+\Delta\,p\gamma
+_{2}\theta {\tenseurq{I}}$ \ \  
+
+$\text{dfa2\_dda1}=-\Delta
+p\Frac{\partial \tenseur{n}}{\partial \Delta\,\alpha _{1}}$
+
+$\text{dfa1\_ddeel}=\text{dfa2\_ddeel}=-\Delta\,p\Frac{\partial
+  \tenseur{n}}{\partial \Delta\,\varepsilon ^{e}}$ \ \
+
+$\text{dfa1\_ddp}=-\tenseur{n}-\Delta\,p\Frac{\partial \tenseur{n}}{\partial
+  \Delta\,p}+\left(\gamma _{1}+\Delta p\Frac{\partial \gamma
+    _{1}}{\partial \Delta p}\right)\talpha_{1}$
+
+Les dérivées de la normale  $\tenseur{n}$ peuvent être
+calculées de la façon suivante~:
+\[
+\Frac{\partial \tenseur{n}}{\partial \Delta \tepsilonel}=
+\Frac{2\,\mu\,\theta}{(\tsigma -\tenseur{X})_{\mathrm{eq}}}
+\left(\tenseurq{M}-\tenseur{n}\otimes\tenseur{n}\right)
+\quad\quad
+\Frac{\partial \tenseur{n}}{\partial \Delta\,{\alpha }_{1}}
+=\Frac{-2\,C_{1}\,\theta }{3\,(\tsigma-\tenseur{X})_{\mathrm{eq}}}
+\left(\tenseurq{M}-\tenseur{n}\otimes\tenseur{n}\right)
+\]
+
+Le tenseur $\tenseurq{M}$ a été utilisé pour simplifier les
+expressions~:
+$\tenseurq{M}=\Frac{3}{2}{\tenseurq{I}}-\Frac{1}{2}\tenseur{I}\otimes
+\tenseur{I}$
+
+Ces expressions peuvent être écrites directement~dans le fichier
+\mfront{}~:
+\begin{flushleft}
+  \lstinputlisting{@top_srcdir@/docs/tutorial/mfront/viscochab2.mfront}
+\end{flushleft}
+
+On constate donc que la seule difficulté consiste à calculer les
+expressions analytiques de ces dérivées à la main ! Une fois écrite
+cette matrice jacobienne, on peut vérifier sa précision en la
+comparant à la matrice jacobiennne numérique~:
+\begin{flushleft}
+  \lstinputlisting[numbers=none]{@top_srcdir@/docs/tutorial/mfront/viscochab3.mfront}
+\end{flushleft}
+
+Ces instructions peuvent être ajoutées dans le fichier \mfront{} , ou
+mieux, sur la ligne de commande à la compilation (ce qui évite de
+\og~polluer~\fg{} le fichier mfront)~:
+\begin{flushleft}
+  {\tt
+    mfront -{}-obuild -{}-@CompareToNumericalJacobian=true -{}-@JacobianComparisonCriterium=1.e-6 chaboche.mfront
+  }
+\end{flushleft}
+
+On mesure ensuite son efficacité sur les tests. Le test précédent
+prend cette fois \(0,43s\) (au lieu de \(0,578\) avec matrice
+jacobienne numérique). Sur un point matériel, cela est sans conséquence, mais 
+le gain peut être imporant dans un calcul de structure.
+
+Une fois que le comportement développé à l'aide de \mfront{} est
+validé sur point matériel, avec \mtest{}, et que la matrice jacobienne
+est correcte, il peut ensuite être utilisé dans des calculs de
+structure, aux grandes déformations (par exemple en utilisant {\tt
+  GDEF\_LOG} dans \aster{} ou d'autres codes). Les benchmarks
+effectués montrent l'efficacité de ce type d'intégration (même pour
+des comportements complexes, par exemple en plasticité cristalline,
+cf.~\cite{proix_integration_2013}).
+
+\subsection{Ajout de la non radialité et de la mémoire d'écrouissage}
+\hypertarget{RefHeading23861511383590}{}
+
+Un des avantages de l'écriture très compacte des lois de comportement
+avec \mfront{} réside dans la facilité d'intervention (amélioration,
+développement, maintenance) dans le fichier \mfront{}. 
+
+Si, par exemple, on souhaite ajouter des effets de non-radialité au
+comportement précédent (ici, pour simplifier l'exposé, avec matrice
+jacobienne numérique), il faut modifier légèrement l'évolution de
+l'écrouissage cinématique~:
+\[
+{{\tdalpha}}_{i}={{\dot{\varepsilon }}}^{p}-\gamma _{i}{\alpha}_{i}\dot{p}
+\]
+devient~:
+\[
+\dot{\talpha}_{i}={\dot{\varepsilon
+  }}^{p}-\gamma _{i}\left[\delta _{i}\talpha_{i}+(1-\delta
+  _{i})(\talpha_{i}:{n}){n}\right]\dot{p}
+\]
+où $\delta _{i}$ sont des coefficients compris entre 0 et 1 (1 revient
+à annihiler l'effet de non-radialité).
+
+Qu'est-ce que l'effet de non-radialité~? Il se traduit par un
+écrouissage supplémentaire lors de chargements cycliques où les
+composantes du tenseur des contraintes en un point ne sont pas
+proportionnelles. Pour illustrer ce phénomène l'essai de
+traction-torsion permet de contrôler l'aspect non-radial et de mettre
+en évidence le sur-écrouissage dans le cas où la traction et la
+torsion sont déphasées~\cite{fatemi_2011}.
+
+La discrétisation implicite donne pour cette équation~:
+\begin{equation*}
+\text{fa}_{i}=\Delta\,\alpha _{i}-\Delta\,{\varepsilon
+}^{p}+\gamma _{i}(p+\theta \Delta\,p)\left[\delta
+_{i}(\talpha_{i}+\theta \Delta\,{\alpha
+}_{i})+(1-\delta _{i})\left((\talpha_{i}+\theta \Delta
+{\alpha}_{i}):{n}\right){n}\right]\Delta\,p=0
+\end{equation*}
+
+ce qui modifie peu de choses dans le fichier \mfront{}~:
+\begin{enumerate}
+\item au début du fichier, la déclaration des propriétés matériau
+  supplémentaires~:
+  \begin{flushleft}
+    \lstinputlisting[firstline=21,lastline=22,firstnumber=21]{@top_srcdir@/docs/tutorial/mfront/ViscoMemoNrad.mfront}
+  \end{flushleft}
+\item et dans l'intégration~:
+  \begin{flushleft}
+    \lstinputlisting[firstline=86,lastline=88,firstnumber=86]{@top_srcdir@/docs/tutorial/mfront/ViscoMemoNrad.mfront}
+  \end{flushleft}
+\end{enumerate}
+
+On peut voir l'effet de non-radialité par exemple sur un test de
+traction-torsion où les déformations axiales et celles de cisaillement
+suivent un trajet en étoile
+(cf. figure~\ref{fig:mfront:tutorial:etoile:check}). Chaque branche
+correspond à un aller -retour dans le diagramme gamma-epsilon.
+
+\begin{figure}[!h]
+  \centering
+  \includegraphics[width=11cm,height=10cm]{@top_srcdir@/docs/tutorial/images/tutorielch12-img13.png}
+  \caption{chargement en étoile en traction-torsion.}
+  \label{fig:mfront:tutorial:etoile:check}
+\end{figure}
+
+\begin{figure}[!h]
+  \centering
+  \includegraphics[width=11cm,height=10cm]{@top_srcdir@/docs/tutorial/images/tutorielch12-img14.png}
+  \caption{simulation du chargement en étoile - modèles avec et sans non-radialité}
+  \label{fig:mfront:tutorial:numetoile:check}
+\end{figure}
+
+La réponse obtenue avec un modèle sans effet de non-radialité (courbe
+verte sur la figure~~\ref{fig:mfront:tutorial:numetoile:check}) est
+très différente de celle obtenue avec le modèle qui tient compte de
+cet effet (courbes rouge et bleue, superposées).
+
+De même, l'ajout d'un effet de mémoire d'écrouissage ne pose pas de
+problème. Il est important de prendre en compte cet effet, lié à la
+plus grande amplitude de déformation plastique, pour des chargements
+cycliques. Cela revient à modifier la définition de l'écrouissage
+isotrope~: la fonction \(R\paren{p}\) n'est plus connue explicitement,
+mais par l'intermédiaire du système d'équations~:
+\[
+R(p)=R_{{0}}+\bts{R}+\Delta\,R \quad\text{ avec }\quad \Delta\, R=b\paren{Q-R}\,\Delta\,p
+\]
+et
+\[
+Q=Q_{0}{\text{}}{}+\paren{Q_{{m}}-Q_{{0}}}\paren{1-e^{{-2\mu
+    \paren{\bts{q}+{\Delta\,q}}}}}
+\]
+
+On introduit donc une variable interne supplémentaire \(q\),
+déterminée par le critère~:
+\[
+f\left(\tepsilonp,{\txi },q\right)=\Frac{2}{3}\paren{\tepsilonp-\txi}_{\mathrm{eq}}-q=\Frac{2}{3}\sqrt{\Frac{3}{2}\paren{\tepsilonp-\txi}\,\colon\,\paren{\tepsilonp-\txi}}-q\le 0
+\]
+ce qui correspond à un domaine convexe dans l'espace des déformations
+plastiques de centre $\txi$ et de rayon $q$. L'évolution de ce centre
+est donné par la loi de normalité~:
+\[
+\Delta\,{\txi}=\Frac{\left(1-\eta \right)}{\eta}\,\Delta\, q\,\tenseur{n}^{\star{}}\quad\text{avec}\quad
+\tenseur{n}^{\star{}}=\Frac{3}{2}\Frac{\tepsilonp-\txi}{\paren{\tepsilonp-\txi}_{\mathrm{eq}}}
+\]
+
+Introduisons ces équations dans notre comportement \mfront{}~:
+\begin{enumerate}
+\item il faut ajouter les variables internes $\txi $ et $q$~:
+  \begin{flushleft}
+    \lstinputlisting[firstline=44,lastline=45,firstnumber=44]{@top_srcdir@/docs/tutorial/mfront/ViscoMemoNrad.mfront}
+  \end{flushleft}
+\item nous aurons besoin de mémoriser la valeur de l'écrouissage
+  isotrope $R$. Mais il n'est pas nécessaire de définir $R$ en tant
+  que variable interne car ce n'est pas vraiment une inconnue du
+  système d'équations ($\Delta\,R$ peut être déterminé explicitement à
+  partir de $\Delta p$ et $\Delta\,q$).  On choisit donc de la définir
+  comme variable auxiliaire, actualisée après convergence de
+  l'algorithme d'intégration implicite~:
+  \begin{flushleft}
+    \lstinputlisting[firstline=47,lastline=47,firstnumber=47]{@top_srcdir@/docs/tutorial/mfront/ViscoMemoNrad.mfront}
+  \end{flushleft}
+  En fin d'intégration, on trouvera donc~:
+  \begin{flushleft}
+    \lstinputlisting[firstline=106,lastline=112,firstnumber=106]{@top_srcdir@/docs/tutorial/mfront/ViscoMemoNrad.mfront}
+  \end{flushleft}
+\item il reste à ajouter les équations (\texttt{fq} et \texttt{fksi})
+  relatives à l'effet de mémoire~:
+  \begin{flushleft}
+    \lstinputlisting[firstline=102,lastline=112,firstnumber=102]{@top_srcdir@/docs/tutorial/mfront/ViscoMemoNrad.mfront}
+  \end{flushleft}
+\item Et il reste une petite modification sur le calcul du critère de
+  plasticité, puisque $R(p)$ doit être maintenant déterminé à partir
+  de $\Delta\,p$ {et} $\Delta q$~:
+  \begin{flushleft}
+    \lstinputlisting[firstline=76,lastline=78,firstnumber=76]{@top_srcdir@/docs/tutorial/mfront/ViscoMemoNrad.mfront}
+  \end{flushleft}
+\end{enumerate}
+
+\begin{figure}[!h]
+  \centering
+  \includegraphics[width=11cm,height=10cm]{@top_srcdir@/docs/tutorial/images/tutorielch12-img16.png}
+  \caption{chargement en étoile - modèles avec et sans mémoire-sigma-xy --- sigma-xx}
+  \label{fig:mfront:tutorial:memo1:check}
+\end{figure}
+
+\begin{figure}[!h]
+  \centering
+  \includegraphics[width=11cm,height=10cm]{@top_srcdir@/docs/tutorial/images/tutorielch12-img17.png}
+  \caption{chargement en étoile - modèles avec et sans mémoire- sigma-xx -- temps}
+  \label{fig:mfront:tutorial:memo2:check}
+\end{figure}
+
+On obtient donc rapidement un modèle capable de représenter très
+correctement des essais de traction-torsion sur plusieurs cycles
+~\ref{fig:mfront:tutorial:memo1:check}
+et~\ref{fig:mfront:tutorial:memo2:check} (courbes rouge~: \aster{} et
+bleue~: \mfront{} confondues), alors que le modèle initial (sans
+mémoire ni effet de non radialité, courbe verte) est loin de la
+solution.
+
+Il est possible, après avoir vérifié que le modèle convient, et
+fournit la solution attendue, de chercher à l'optimiser pour diminuer
+le temps de résolution (~\cite{aster_chaboche}), en réduisant la taille du
+système et en introduisant la matrice jacobienne. Mais cet exemple
+d'un comportement déjà sophistiqué montre qu'il est possible très
+rapidement de tester des lois de comportement de façon
+opérationnelle.
+
+\begin{table}[htbp]
+  \centering
+  \begin{tabular}{|m{8cm}|m{8cm}|}
+    \hline
+    Loi  &
+    Algorithme \mfront{}
+    et test\\\hline
+    Chaboche &
+    Implicite\\\hline
+    HAYHURST (fluage et
+    endommagement des aciers) &
+    { Implicite, jacobienne ,
+      GDEF\_LOG, Theta=0.5 }
+    et Explicite,
+    Runge-Kutta\\\hline
+    MAZARS (béton,
+    endommagement) &
+    Avec séchage et
+    hydratation\\\hline
+    BETON\_BURGER\_FP &
+    Fluage propre du béton
+    avec retrait\\\hline
+    MONOCRISTAL (MC) &
+    Implicite, jacobienne,
+    petites déformations\\\hline
+    POLYCRISTAL (MC) &
+    Runge-kutta , 30
+    grains\\\hline
+    MONOCRISTAL (DD\_CFC)(+
+    irradiation) &
+    Implicite, jacobienne,
+    petites déformations\\\hline
+    POLYCRISTAL (DD\_CFC) &
+    Runge-Kutta , 30
+    grains\\\hline
+    MONOCRISTAL (DD\_CC)(+
+    irradiation) &
+    Implicite, jacobienne,
+    petites déformations\\\hline
+    META\_LEMA\_ANI &
+    Implicite, jacobienne
+    numérique, avec effet des phases métallurgiques\\\hline
+    MONOCRISTAL (MC) &
+    Implicite, jacobienne
+    numérique, grandes déformations\\\hline
+  \end{tabular}
+  \caption{Quelques exemples de lois de comportement dévelopées avec \mfront{}.}
+  \label{tab:mfront:aster:examples}
+\end{table}
+
+Plusieurs autres lois de comportement ont été développées et sont
+inclues dans les tests de \mfront{} et de \aster{}. Nous en donnons
+une liste partielle au tableau~\ref{tab:mfront:aster:examples}. Pour
+chacun, le temps de développement n'a pas dépassé une demi-journée.
+
+\subsection{Identification des propriétés matériau à l'aide d'\adao{}}
+
+Une fois le modèle validé, il est souvent nécessaire de procéder à
+l'identification de ses propriétés matériau, souvent à partir de
+données expérimentales ou provenant d'autres modèles.
+
+Nous avons vu que \mtest{} permet d'effectuer très efficacement la
+simulation de la réponse d'un point matériel à une sollicitation en
+contraintes ou en déformations.  Ce sera le \og~moteur~\fg{} de
+l'identification, en utilisant l'outil
+\adao{}~\cite{argaud_documentation_2014}, intégré à la plate-forme
+\salome{}~\cite{salome_open_2014}.
+
+\begin{figure}[!h]
+  \centering
+  \includegraphics[width=9cm,height=8cm]{@top_srcdir@/docs/tutorial/images/CourbeExpBurger.png}
+  \caption{courbe expérimentale et recalée}
+  \label{fig:mfront:tutorial:CourbeExpBurger:check}
+\end{figure}
+
+\adao{} permet de trouver, par des algorithmes d'optimisation, les
+valeurs optimales d'un ensemble de paramètres noté $X$, qui minimisent
+une fonctionnelle
+$F=\left|{\left|{Y^{\mathit{obs}}-H(X)}\right|}\right|$, représentant
+l'écart entre des valeurs observées $Y^{\mathit{obs}}$ et la
+simulation $H(X)$. 
+
+Le code de simulation (ici \mtest{}, mais cela peut-être \aster) calcule
+pour chaque ensemble de paramètres $X$ la réponse $H(X)$. 
+
+Les valeurs $Y^{\mathit{obs}}$ \og~observées~\fg{} peuvent être
+expérimentales ou issues d'autres modèles. Sur la
+figure~\ref{fig:mfront:tutorial:CourbeExpBurger:check}~:
+$Y^{\mathit{obs}}$ correspond aux ordonnées de la courbe rouge, qui
+est une courbe expérimentale.
+
+La courbe verte représente le résultat de la simulation pour un jeu de
+paramètres optimum $H(X^{\mathit{final}})$.
+
+\begin{figure}[!h]
+  \centering
+  \includegraphics[width=16cm,height=14cm]{@top_srcdir@/docs/tutorial/images/tutorielch12-img18.png}
+  \caption{recalage à l'aide de \adao{}}
+  \label{fig:mfront:tutorial:adao:check}
+\end{figure}
+
+Une copie d'écran de l'interface de \adao{} dans \salome{} est présentée
+sur la figure~\ref{fig:mfront:tutorial:adao:check}.
+
+On peut voir sur cette figure~:
+\begin{itemize}
+\item en haut à gauche la décroissance de la fonctionnelle $F$ au
+  cours du processus~;
+\item en haut à droite les courbes expérimentales et calculées~;
+\item en bas les valeurs des paramètres finaux.
+\end{itemize}
+
+\begin{figure}[!h]
+  \centering
+  \includegraphics[width=11cm,height=10cm]{@top_srcdir@/docs/tutorial/images/tutorielch12-img19.png}
+  \caption{courbes expérimentales contrainte (MPa)---déformation pour
+    quatre amplitudes de déformation}
+  \label{fig:mfront:tutorial:quatre-courbes:check}
+\end{figure}
+
+\paragraph{Recalage de la loi élasto-visco-plastique}
+Nous allons utiliser \mtest{} (associé au comportement
+élasto-visco-plastique précédent) comme moteur de simulation $H(X)$
+pour chercher les valeurs des propriétés matériau de cette loi
+permettant de simuler les 4 courbes contraintes-déformation
+représentées en figure~\ref{fig:mfront:tutorial:quatre-courbes:check},
+pour différentes amplitudes de déformation imposée~:
+
+Il faut définir, pour \adao{}, {\em a minima}~:
+\begin{itemize}
+\item les paramètres à identifier $X$~;
+\item leurs valeurs initiales $X^{\mathit{ini}}$~;
+\item la fonction $H(X)$. 
+\end{itemize}
+
+Ici, nous choisissons de recaler les \(5\) propriétés matériau~:
+$C_{1}$, $C_{2}$, $\gamma_{1}$, $\gamma_{2}$, $b$, dont les valeurs
+initiales sont~:
+\begin{center}
+{\tt [180000., 45000.,
+  4460., 340., 10.]}
+\end{center}
+
+La fonction $H(X)$ est définie par un appel direct à \mtest{}, via une
+fonction \python{}, à partir des valeurs de $X$ fournies par
+l'algorithme d'optimisation d'\adao{}.
+
+Cette fonction \python{} permet d'appeler \mtest{} directement sans
+passer par des fichiers intermédiaires (on retrouve les principales
+commandes de \mtest{} décrites précédemment)~:
+\begin{figure}[!htbp]
+ \centering
+ \lstinputlisting{@top_srcdir@/docs/tutorial/python/mfrontexec.comm}
+  \caption{fonction python d'appel à \mfront{}}
+  \label{fig:tutorial:mfrontexec}
+\end{figure}
+
+L'opérateur $H(X)$ est défini par la fonction python qui a pour nom
+$\text{DirectOperator}$ par convention dans \adao{}.
+
+La transcription des instructions de \mtest{} définissant les données
+dans la fonction~{\tt Courbe} est directe~:
+
+{\tt @MaterialProperty<constant> 'Para' valeur } devient~:
+
+{\tt m.setMaterialProperty('Para',valeur)}
+
+{\tt m} étant une instance de la classe {\tt Mtest}.
+
+Les arguments d'entrée de la fonction {\tt Courbe} sont ici~:
+\begin{itemize}
+\item les paramètres en cours d'identification {\tt xx}~;
+\item la liste d'instants {\tt linst}~;
+\item le dictionnaire python  {\tt dico} contenant la description du chargement.
+\end{itemize}
+
+Le chargement correspondant à chaque essai 
+est en effet décrit par un dictionnaire dont les clés 
+sont les instants 
+et les valeurs sont les valeurs des déformations imposées.
+
+Ces valeurs sont extraites ici d'un fichier annexe ( {\tt char.py} ).
+
+Les lignes 6 à 19 permettent de mettre ces données (déformations imposées en 
+fonction du temps pour les 4 essais) sous forme de 4 dictionnaires python.
+
+Dans la fonction~{\tt Courbe},~l'instruction  
+{\tt m.setImposedStrain(’EXX ’,dico) } permet d'imposer l'évolution de la 
+composante XX des déformations en fonction du temps.
+
+Quelques instructions supplémentaires permettent d'exécuter le calcul pas à pas,
+pour chaque instant, en gérant la reprise d'un instant à l'autre~:
+
+\begin{itemize}
+\item {\tt     s  = MTestCurrentState() } définit l'état courant~;
+\item {\tt     wk = MTestWorkSpace()   }    définit l'espace de travail~;
+\item {\tt     m.completeInitialisation() }  initialise le calcul~;
+\item {\tt     m.initializeCurrentState(s) } initialise l'état courant~;
+\item {\tt     m.initializeWorkSpace(wk)  } initialise l'espace de travail~;
+\item {\tt     m.execute(s,wk,linst[i],linst[i+1])  } calcule un pas de temps.
+\end{itemize}
+
+Le résultat de la fonction $\text{DirectOperator}$ est un vecteur 
+$\text{Y=H(X)}$ qui est transmis à l'algorithme d'optimisation pour évaluer
+la fonctionnelle, et ses gradients par différences finies.
+
+\begin{figure}[!h]
+  \centering
+  \includegraphics[width=15.998cm,height=9.998cm]{@top_srcdir@/docs/tutorial/images/tutorielch12-img20.png}
+  \caption{Copie d'écran \adao{} du recalage sur 4 courbes cycliques }
+  \label{fig:mfront:tutorial:adao-quatre-courbes:check}
+\end{figure}
+
+La figure~\ref{fig:mfront:tutorial:adao-quatre-courbes:check} présente
+une copie d'écran illustrant les résultats de l'optimisation. On peut
+y voir~:
+\begin{itemize}
+\item en haut à gauche la décroissance de la fonctionnelle $F$ au
+  cours du processus~;
+\item en haut à droite les courbes $\sigma =f(t)$ expérimentales et
+  calculées~;
+\item en bas à droite les valeurs des paramètres finaux~;
+\item en bas à gauche le résultat de l'optimisation (courbes
+  expérimentales et simulées quasi-confondues)
+\end{itemize}
+
+
+\subsection{Utilisation dans Code\_Aster}
+
+\subsubsection{Modification du fichier de commandes}
+
+Une fois le comportement défini dans \mfront, et compilé de façon habituelle :
+
+{\tt mfront -{}-obuild -{}-interface=aster Chaboche.mfront }
+
+une bibliothèqe dynamique est produite :
+
+{\tt libAsterBehabviour.so }
+
+Avant de l'utiliser dans un calcul de structures avec \aster, il est
+conseillé d'effectuer les premiers tests sur un point matériel à
+l'aide de \mtest.
+
+Ensuite, tout est prêt pour une étude avec \aster. 
+Pour une description complète, 
+on pourra consulter la notice d'utilisation \cite{code_notice_2014}.
+
+Pour cela, il suffit de fournir comme donnée de l'étude
+ le fichier {\tt libAsterBehabviour.so }
+(fichier de type "nom" dans {\tt astk }).
+
+Dans le fichier de commandes, il suffit de modifier deux points :
+
+Dans la commande {\tt  DEFI\_MATERIAU}, il faut ajouter :
+
+\begin{minipage}[t]{0.9\linewidth}
+
+{\tt .......=DEFI\_MATERIAU(
+UMAT=\_F( C1 = ... ,  C2 = ... ,   C3 = ... , ),
+}
+\end{minipage}
+
+On fournit les propriétés matériau {\tt Ci} dans l'ordre où elles sont 
+définies dans le fichier \mfront.
+
+Par exemple pour le comportement élastoplastique de Chaboche, on donnera~:
+
+\begin{flushleft}
+  \lstinputlisting{@top_srcdir@/docs/tutorial/python/defimateriau.py}
+\end{flushleft}
+
+
+Le mot clé {\tt NB\_VALE } permet d'optimiser le temps de lecture des propriétés.
+
+Le deuxième endroit à modifier est le mot-clé {\tt COMPORTEMENT } dans les 
+commandes globales de calcul ({\tt STAT\_NON\_LINE}, 
+{\tt DYNA\_NON\_LINE}, {\tt SIMU\_POINT\_MAT}, ...),
+
+Le comportement a pour nom « MFRONT ». On spécifie donc dans ces commandes :
+
+\begin{flushleft}
+  \lstinputlisting{@top_srcdir@/docs/tutorial/python/comportement.comm}
+\end{flushleft}
+
+Comme dans l'exemple ci-dessus, il est possible d'ajouter le mot-clé
+{\tt DEFORMATION} pour effectuer un calcul en grandes déformations
+logarithmiques ou le mot-clé {\tt ITER\_INTE\_PAS} par exemple pour
+permettre un redécoupage local du pas de temps.
+
+\subsubsection{Exemple de résultats}
+
+\begin{figure}[!h]
+  \begin{minipage}[b]{0.4\linewidth}
+  \centering
+  \includegraphics[width=8cm,height=9cm]{@top_srcdir@/docs/tutorial/images/hayhurst.png}
+  \caption{déformation maxi--- temps }
+  \label{fig:courbes-fluage}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[b]{0.5\linewidth}
+  \centering
+  \includegraphics[width=9cm,height=9cm]{@top_srcdir@/docs/tutorial/images/Hayhurstiso.png}
+  \caption{ \aster --- \mfront }
+  \label{fig:iso-fluage}
+  \end{minipage}
+\end{figure}
+
+\begin{table}
+  \label{temps-calcul}
+  \resizebox{\linewidth}{!}{
+    \begin{tabular}{| c | c | c | c | c | c | c | }
+      \hline
+      Éprouvette entaillée 2D axi& MFRONT impl& MFRONT impl  & MFRONT expl & Aster impl & Aster impl& Aster expl\\
+      & J prog     &  J num       & RK4/5       &  J prog    & J num     & RK2/1 \\
+      \hline
+      Nb de pas de temps       &   601               &   601                   & 4011             & 601             &  601             &       4011 \\
+      \hline
+      Nb itérations Newton     &   1818        &       1810                   &  17493            &  2479          &  1832             &      17495 \\
+      \hline
+      Temps CPU                &    3mn5s      &       3mn19s                 &    32mn21s        &   8mn40s       & 8mn53s           &   46mn37s  \\
+      \hline
+    \end{tabular}
+  }
+  \caption{comparaison des temps de calcul}
+\end{table}
+
+En guise d'illustration, les résultats d'un calcul de fluage sur une
+éprouvette entaillée (maillage axisymétrique, 3300 DDL) avec \aster{}
+sont donnés sur les figures \ref{fig:courbes-fluage}
+et~\ref{fig:iso-fluage}.
+
+La comparaison des temps CPU est nettement en faveur de \mfront{},
+détaillés au tableau~\ref{temps-calcul}. Notons que même l’intégration
+implicite avec jacobienne numérique est efficace.
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "tutoriel"
+%%% End: 

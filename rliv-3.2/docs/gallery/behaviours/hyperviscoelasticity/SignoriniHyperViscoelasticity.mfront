@@ -1,0 +1,111 @@
+@DSL DefaultFiniteStrain;
+@Author Thomas Helfer;
+@Behaviour SignoriniHyperviscoelasticity;
+@Date 9/12/2016;
+@Description{
+  Implementation of an hyperviscoelastic behaviour
+  based on the Signorini hyperelastic behaviour.
+}
+
+// Three terms in the Prony series
+@IntegerConstant Nv = 3;
+
+@MaterialProperty stress K;
+K.setGlossaryName("BulkModulus");
+@MaterialProperty stress C10;
+@MaterialProperty stress C20;
+@MaterialProperty stress C01;
+
+@MaterialProperty stress tau[Nv];
+@MaterialProperty stress g[Nv];
+
+@StateVariable StressStensor Si;
+Si.setEntryName("IsochoricElasticStress");
+@StateVariable StressStensor H[Nv];
+H.setEntryName("ViscoplasticStress");
+
+@LocalVariable StiffnessTensor dS_dC;
+
+@Integrator{
+  real e[Nv];
+  // saving the previous value of the isochoric elastic stress
+  const auto Si_1 = Si;
+  // updating the elastic stress
+  const auto id = Stensor::Id();
+  const auto J  = det(F1);
+  const auto C  = computeRightCauchyGreenTensor(F1);
+  const auto C2 = square(C);
+  /* invariants and derivatives */
+  const auto I1      = trace(C);
+  const auto I2      = (I1*I1-trace(C2))/2;
+  const auto dI2_dC  = I1*id-C;
+  const auto I3      = J*J;
+  const auto dI3_dC  = C2-I1*C+I2*id;
+  /* volumetric part */
+  // Pv = K*(J-1)*(J-1)/2
+  const auto dPv_dJ   = K*(J-1);
+  const StressStensor Sv = dPv_dJ/J*dI3_dC;
+  /* iscochoric part */
+  // I1b = J^{-2/3}*I1 = I1/(sqrt[3]{I3})     = I1*iJb
+  // I2b = J^{-4/9}*I2 = I2/(sqrt[3]{I3})^{2} = I2*iJb*iJb
+  const auto iJb        =  1/cbrt(I3);
+  const auto iJb2       =  power<2>(iJb);
+  const auto iJb4       =  iJb2*iJb2;
+  const auto diJb_dI3   = -iJb4/3;
+  const auto diJb_dC    = diJb_dI3*dI3_dC;
+  const auto I1b          =  I1*iJb;
+  const auto dI1b_dC      =  iJb*id+I1*diJb_dC;
+  const auto dI2b_dC      = 2*I2*iJb*diJb_dC+iJb2*dI2_dC;
+  const auto dPi_dI1b   = C10+2*C20*(I1b-3);
+  const auto dPi_dI2b   = C01;
+  Si = 2*(dPi_dI1b*dI1b_dC+dPi_dI2b*dI2b_dC);
+  // updating the viscoelastic stresses and computing the Second
+  // Piola-Kirchhoff stress
+  StressStensor S = Sv+Si;
+  if(dt>0){
+    for(unsigned short i=0;i!=Nv;++i){
+      const auto dtr = dt/tau[i];
+      e[i] = exp(-dtr);
+      H[i] = e[i]*H[i]+g[i]*(1-e[i])/(dtr)*(Si-Si_1);
+      S += H[i];
+    }
+  }
+  // Cauchy stress tensor
+  sig = convertSecondPiolaKirchhoffStressToCauchyStress(S,F1);
+  if(computeTangentOperator_){
+    /* volumetric part */
+    const auto d2Pv_dJ2 = K;
+    const auto d2I3_dC2 = computeDeterminantSecondDerivative(C);
+    const auto dSv_dC  =
+      (d2Pv_dJ2-dPv_dJ/J)/(2*I3)*(dI3_dC^dI3_dC)
+      +dPv_dJ/J*d2I3_dC2;
+    /* isochoric part */
+    const auto d2I2_dC2 = (id^id)-Stensor4::Id();
+    const auto iJb7       =  iJb4*power<3>(iJb);
+    const auto d2iJb_dI32 = 4*iJb7/9;
+    const auto d2iJb_dC2  =
+      d2iJb_dI32*(dI3_dC^dI3_dC)+ diJb_dI3*d2I3_dC2;
+    const auto d2I1b_dC2    =
+      (id^diJb_dC)+(diJb_dC^id)+I1*d2iJb_dC2;
+    const auto d2I2b_dC2    =
+      2*(iJb*(diJb_dC^dI2_dC)+I2*(diJb_dC^diJb_dC)+I2*iJb*d2iJb_dC2)+
+      2*iJb*(dI2_dC^diJb_dC)+iJb2*d2I2_dC2;
+    const auto d2Pi_dI1b2 = 2*C20;
+    const auto d2Pi_dI2b2 = 0;
+    const auto dSi_dC =
+      2*(d2Pi_dI1b2*(dI1b_dC^dI1b_dC)+dPi_dI1b*d2I1b_dC2+
+    	 d2Pi_dI2b2*(dI2b_dC^dI2b_dC)+dPi_dI2b*d2I2b_dC2);
+    auto c = real(1);
+    if(dt>0){
+      for(unsigned short i=0;i!=Nv;++i){
+	const auto dtr = dt/tau[i];
+	c += g[i]*(1-e[i])/(dtr);
+      }
+    }
+    dS_dC = dSv_dC+c*dSi_dC;
+  }
+}
+
+@TangentOperator<DS_DC>{
+  Dt = dS_dC;
+}

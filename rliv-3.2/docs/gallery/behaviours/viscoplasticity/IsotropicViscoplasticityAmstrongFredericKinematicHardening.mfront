@@ -1,0 +1,72 @@
+@DSL Implicit;
+@Behaviour IsotropicViscoplasticityAmstrongFredericKinematicHardening;
+@Brick StandardElasticity;
+
+@Theta 1.;
+@Epsilon 1.e-13;
+
+@StateVariable strain  p;
+p.setGlossaryName("EquivalentViscoplasticStrain");
+
+@StateVariable StrainStensor a[2];
+
+@MaterialProperty stress young; 
+young.setGlossaryName("YoungModulus");
+@MaterialProperty real nu;   
+nu.setGlossaryName("PoissonRatio");
+
+@MaterialProperty stress Rinf;
+@MaterialProperty stress R0;
+@MaterialProperty real b;
+@MaterialProperty stress C[2];
+@MaterialProperty real   g[2];
+@MaterialProperty real m;
+@MaterialProperty real K;
+
+@LocalVariable stress mu;
+
+/* Initialize Lame coefficients */
+@InitializeLocalVariables{
+  mu = computeMu(young,nu);
+} 
+
+@Integrator{
+  const real two_third     = 2/real(3);
+  constexpr const real eps = real(1.e-12);
+  const auto p_ = p +theta*dp ;
+  auto scin     = sig ;
+  StrainStensor a_[2];
+  for(unsigned short i=0;i!=2;++i){
+     a_[i]  = a[i]+theta*da[i];
+     scin  -= C[i]*a_[i]*two_third;
+  }
+  const auto seq = sigmaeq(scin);
+  const auto Rp  = Rinf + (R0-Rinf)*exp(-b*p_) ;  
+  const auto F   = seq - Rp ;
+  if(F > 0){
+    const auto Fexp = pow(F/K,m-1)/K ;
+    const auto iseq = 1/(max(seq,eps*young));
+    const auto n    = 3*iseq*deviator(scin)/2;
+    const auto vp   = Fexp*F;  
+    feel += dp*n;
+    fp   -= vp*dt;
+    for(unsigned short i=0;i!=2;++i){
+      fa[i] -= dp*(n-g[i]*a_[i]);
+    }
+    // computation of the jacobian matrix
+    const auto Jmn = eval(Stensor4::M()-(n^n));    
+    dfeel_ddeel += 2*mu*theta*dp*Jmn*iseq ;
+    dfeel_ddp    = n;
+    dfp_ddeel    = - Fexp*m*dt* 2*mu*theta*(n| Stensor4::M() )*two_third;
+    dfp_ddp     += theta* Fexp *m *dt*b*(Rinf-Rp);
+    for(unsigned short i=0;i!=2;++i){
+      dfeel_dda(i)   = -C[i]*dp*theta*iseq*two_third*Jmn ;
+      dfp_dda(i)     =  Fexp*m*dt*C[i]*theta*two_third*n;  
+      dfa_ddeel(i)   = -2*mu*theta*dp*Jmn *iseq;
+      dfa_ddp(i)     = -n + g[i]*a_[i];
+      dfa_dda(i,i)   =  (1+dp*g[i]*theta)*Stensor4::Id()+C[i]*dp*theta*iseq*two_third*Jmn;
+    }
+    dfa_dda(0,1)   =  C[1]*dp*theta*iseq*two_third*Jmn;
+    dfa_dda(1,0)   =  C[0]*dp*theta*iseq*two_third*Jmn;
+  }
+} 

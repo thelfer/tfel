@@ -1,0 +1,5 @@
+@Command "./test6";
+
+@TestType Area interpolation Spline using 'tps';
+@Precision 0.6;
+@Test 'test6.ref' 'test6.res' 'B';

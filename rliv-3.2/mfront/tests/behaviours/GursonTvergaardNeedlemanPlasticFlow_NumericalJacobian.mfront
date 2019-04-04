@@ -1,0 +1,103 @@
+@DSL    Implicit;
+@Behaviour GursonTvergaardNeedlemanPlasticFlow_NumericalJacobian;
+@Author    Jeremy Hure;
+@Date      10 Février 2014;
+
+@Algorithm NewtonRaphson_NumericalJacobian;
+@Theta 1;
+
+@Includes{
+#include"TFEL/Material/GursonTvergaardNeedleman.hxx"
+}
+
+/* Paramètres matériau */
+
+@MaterialProperty stress young;
+young.setGlossaryName("YoungModulus");
+@MaterialProperty real nu;
+nu.setGlossaryName("PoissonRatio");
+
+/* Variables d'état
+ * p      : déformation plastique cumulée
+ * f+f0   : porosité totale
+ * T+Temp : température due à l'échauffement adiabatique
+ */
+@StateVariable real p;
+p.setGlossaryName("EquivalentPlasticStrain");
+@StateVariable real f;
+f.setGlossaryName("Porosity");
+@StateVariable real Temp;
+Temp.setEntryName("MaterialTemperature");
+
+/* Variables utilisées lors de l'intégration */
+@LocalVariable real  Fel;
+@LocalVariable real  lambda;
+@LocalVariable real  mu;
+
+/* Paramètres matériau */
+@Parameter  R0    = 500;
+@Parameter  Q1    = 1000000000;
+@Parameter  b1    = 0.000001;
+@Parameter  Q2    = 0;
+@Parameter  b2    = 0;
+@Parameter  f0    = 1.e-3;
+@Parameter  fc    = 1.e-2;
+@Parameter  delta = 2;
+@Parameter  beta  = 0;
+@Parameter  Cp    = 1;
+@Parameter  alp   = 1.e-5;
+@Parameter  q1    = 1.5;
+@Parameter  q2    = 1.0;
+
+@InitLocalVariables{ 
+  /* Calcul des paramètres matériaux */
+  lambda = computeLambda(young,nu);
+  mu = computeMu(young,nu);
+  // elastic prediction
+  real fstel = max(f + f0,fc + delta*(f + f0 - fc));
+  Stensor s0 = lambda*trace(eel+deto)*Stensor::Id() + 2*mu*(eel + deto);
+  real sel   = computeFlowStressGTN(sigmaeq(s0),trace(s0),fstel,q1,q2);
+  real Rel   = R0 + Q1*(1-exp(-b1*p)) + Q2*(1-exp(-b2*p));
+  Fel = sel - Rel;
+}
+
+@ComputeStress{
+  sig =  lambda*trace(eel)*Stensor::Id() + 2*mu*(eel);
+}
+
+@Integrator{
+  using tfel::math::stdfunctions::power;
+  const Stensor dedt  = alp*dTemp*Stensor::Id();
+  if (Fel>0){
+    const real pt          = p+theta*dp;
+    const real ft          = f + f0 + theta*df;
+    const real Rpt         = R0 + Q1*(1-exp(-b1*pt)) + Q2*(1-exp(-b2*pt));
+    const real fst         = max(f + f0 + theta*df,fc + delta*(f + f0 + theta*df - fc));
+    const real sst         = computeFlowStressGTN(sigmaeq(sig),trace(sig),fst,q1,q2);
+    const real F           = sst - Rpt;
+    const real sh          = sinh((q2*trace(sig))/(2*sst));
+    const real dS_dsst     = (-2*power<2>(sigmaeq(sig)/sst)/sst) - (((q1*q2*fst*trace(sig))/(sst*sst))*sh);
+    const Stensor dS_dsig  = (3*deviator(sig)/(sst*sst)) + (((q1*q2*fst)/(sst))*sh)*Stensor::Id();
+    const Stensor n        = -dS_dsig/dS_dsst;
+    feel   = deel + (1 - ft)*dp*n - (deto - dedt);
+    fp     = F/young;
+    ff     = df - (1 - ft)*(1 - ft)*dp*(n|Stensor::Id());
+    fTemp  = dTemp - (beta/Cp)*dp*sst;
+  } else {
+    feel = deel - (deto - dedt);
+  }
+}
+
+@TangentOperator{
+  if((smt==ELASTIC)||(smt==SECANTOPERATOR)){
+    computeAlteredElasticStiffness<hypothesis,Type>::exe(Dt,lambda,mu);
+  } else if (smt==CONSISTENTTANGENTOPERATOR){
+    StiffnessTensor De;
+    Stensor4 Je;
+    computeUnalteredElasticStiffness<N,Type>::exe(De,lambda,mu);
+    getPartialJacobianInvert(Je);
+    Dt = De*Je;
+  } else {
+    return false;
+  }
+}

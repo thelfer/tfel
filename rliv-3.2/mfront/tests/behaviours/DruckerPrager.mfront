@@ -1,0 +1,89 @@
+/*!
+ * \file   DruckerPrager.mfront
+ * \brief  résolution implicite d'une loi de Drucker-Prager
+ * \author Helfer Thomas
+ * \date   18/11/2013
+ */
+
+@DSL    Implicit;
+@Behaviour DruckerPrager;
+
+@Theta 1.;
+@Epsilon 1.e-13;
+
+@MaterialProperty stress young;
+young.setGlossaryName("YoungModulus");
+@MaterialProperty real nu;
+nu.setGlossaryName("PoissonRatio");
+
+// ratio between the stress limit in traction and compression
+@MaterialProperty stress tau;
+// limit in compression
+@MaterialProperty stress sigc;
+
+@StateVariable real p;
+p.setGlossaryName("EquivalentPlasticStrain");
+
+@LocalVariable stress a;
+@LocalVariable stress k;
+
+@LocalVariable stress K;
+@LocalVariable stress lambda;
+@LocalVariable stress mu;
+@LocalVariable bool b;
+
+/* Initialize Lame coefficients */
+@InitLocalVariables{
+  lambda = computeLambda(young,nu);
+  mu     = computeMu(young,nu);
+  K      = lambda+(2*mu)/3;
+  a      = -3*(tau-1)/(tau+1); 
+  k      = 2*sigc*tau/(tau+1); 
+  const StrainStensor e  =  eel+deto;
+  const StressStensor se = lambda*trace(e)*StrainStensor::Id()+2*mu*e;
+  const stress seq_e = sigmaeq(se);
+  const stress pr_e  = trace(se)/3.;
+  b =  a*pr_e+seq_e-k > 0;
+} 
+
+@ComputeStress{
+  sig = lambda*trace(eel)*StrainStensor::Id()+2*mu*eel;
+}
+
+@Integrator{
+  if(b){
+    const stress seq_ = sigmaeq(sig);
+    const stress pr_  = trace(sig)/3.;
+    StrainStensor n_(real(0));
+    if(seq_>1.e-8*young){
+      n_ = 3/(2*seq_)*deviator(sig);
+    }
+    // elasticity
+    StrainStensor np_ = a*StrainStensor::Id()+n_;
+    feel = deel+dp*np_-deto;
+    if(seq_>1.e-8*young){
+      dfeel_ddeel += (2*mu*theta*dp/seq_)*(Stensor4::M()-(n_^n_));
+    }
+    dfeel_ddp = np_;
+    // plasticity
+    fp = (a*pr_+seq_-k)/young;
+    dfp_ddp   = 0;
+    dfp_ddeel = (a*K*StrainStensor::Id()+2*mu*n_)*theta/young;
+  } else {
+    feel -= deto;
+  }
+}
+
+@TangentOperator{
+  if((smt==ELASTIC)||(smt==SECANTOPERATOR)){
+    computeAlteredElasticStiffness<hypothesis,Type>::exe(Dt,lambda,mu);
+  } else if (smt==CONSISTENTTANGENTOPERATOR){
+    StiffnessTensor De;
+    Stensor4 Je;
+    computeElasticStiffness<N,Type>::exe(De,lambda,mu);
+    getPartialJacobianInvert(Je);
+    Dt = De*Je;
+  } else {
+    return false;
+  }
+}

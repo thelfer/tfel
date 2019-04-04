@@ -1,0 +1,10 @@
+@DSL    Implicit;
+@Author T. Helfer;
+@Date   26/02/2016;
+@Behaviour ComputeStiffnessTensor3;
+@Description{
+  "This behaviour is invalid since an invalid "
+  "number of elastic material properties is given."
+}
+
+@ComputeStiffnessTensor {"VanadiumAlloy_YoungModulus_SRMA.mfront"};

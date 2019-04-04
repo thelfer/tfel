@@ -1,0 +1,18 @@
+behaviours:
+	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  behaviours.tex
+	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  behaviours.tex
+	BSTINPUTS=@abs_top_srcdir@/docs/tex/texmf/bibtex bibtex behaviours
+#	-makeindex -s @srcdir@/style.ist benv.idx
+	-makeindex -s @srcdir@/style.ist bheaders.idx
+	-makeindex -s @srcdir@/style.ist btfel.idx
+	-makeindex -s @srcdir@/style.ist bmkeys.idx
+	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  behaviours.tex
+	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        latex  behaviours.tex
+	TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        dvips -R0 behaviours.dvi -o
+	ps2pdf behaviours.ps
+
+clean:
+	-$(RM) *.aux *.log
+	-$(RM) *.out *.toc
+	-$(RM) *.dvi *.ps
+	-$(RM) *.pdf

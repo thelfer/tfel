@@ -1,0 +1,12 @@
+@DSL Implicit;
+@Behaviour ElasticMaterialPropertiesBoundsCheckTest;
+@Author Thomas Helfer;
+@Date 13/01/2018;
+@Description {
+  "This behaviour is used to check that its "
+  "integration fails if the temperature is out of the bounds "
+  "of the material proprerty defining the Young Modulus."
+};
+
+@Brick StandardElasticity;
+@ElasticMaterialProperties {"YoungModulusBoundsCheckTest.mfront",0.32};

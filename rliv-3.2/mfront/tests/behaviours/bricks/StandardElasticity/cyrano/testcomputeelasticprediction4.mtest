@@ -1,0 +1,19 @@
+@Author Helfer Thomas;
+@Date  09 avril 2013;
+@Description{
+  "This test checks that thermal expansion is correctly taken into "
+  "account for an orthotropic material."
+};
+
+@ModellingHypothesis 'AxisymmetricalGeneralisedPlaneStress';
+@XMLOutputFile @xml_output@;
+@Behaviour<cyrano> @library@ @behaviour@;
+
+@ExternalStateVariable 'Temperature' 293.15;
+@ExternalStateVariable 'AxialStress' 150e6;
+@ImposedStress 'SZZ' 'AxialStress';
+
+@Times {0.,1.};
+
+@Real 'YoungModulus2'  '2.64233e+11';
+@Test<function> {'AxialStrain':'SZZ/YoungModulus2'} 1.e-12;

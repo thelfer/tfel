@@ -1,0 +1,165 @@
+include_directories(
+  "${CASTEMHOME}/include"
+  "${PROJECT_SOURCE_DIR}/include"
+  "${PROJECT_SOURCE_DIR}/mfront/include"
+  "${CMAKE_CURRENT_BINARY_DIR}/include")
+link_directories("${PROJECT_BINARY_DIR}/mfront/src"
+                 "${PROJECT_BINARY_DIR}/src/Material"
+                 "${PROJECT_BINARY_DIR}/src/Math"
+                 "${PROJECT_BINARY_DIR}/src/Utilities"
+                 "${PROJECT_BINARY_DIR}/src/Exception")
+
+configure_file("${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/references/PolyCrystalsAngles.txt"
+    PolyCrystalsAngles.txt @ONLY)
+
+macro(test_alternatedelta2 test_arg)
+  if(CMAKE_CONFIGURATION_TYPES)
+    foreach(conf ${CMAKE_CONFIGURATION_TYPES})
+      set(file "alternatedelta2${test_arg}-${conf}.mtest")
+      get_property(MFrontCastemBehavioursBuildPath TARGET MFrontCastemBehaviours PROPERTY LOCATION_${conf})
+      get_property(MFrontMaterialPropertiesCastemBuildPath TARGET MFrontMaterialProperties-castem PROPERTY LOCATION_${conf})
+      configure_file(alternatedelta2${test_arg}.mtest.in
+	${file} @ONLY)
+      add_test(NAME alternatedelta2${test_arg}_${conf}_mtest
+	CONFIGURATIONS ${conf}
+	COMMAND mtest --verbose=level0 --xml-output=true --result-file-output=false ${file})
+      if((CMAKE_HOST_WIN32) AND (NOT MSYS))
+        set_property(TEST alternatedelta2${test_arg}_${conf}_mtest
+          PROPERTY DEPENDS "MFrontCastemBehaviours MFrontMaterialProperties-castem mtest"
+	  PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:TFELMTest>\;$<TARGET_FILE_DIR:TFELMFront>\;$<TARGET_FILE_DIR:MFrontLogStream>\;$<TARGET_FILE_DIR:TFELMaterial>\;$<TARGET_FILE_DIR:TFELNUMODIS>\;$<TARGET_FILE_DIR:TFELMathParser>\;$<TARGET_FILE_DIR:TFELGlossary>\;$<TARGET_FILE_DIR:TFELSystem>\;$<TARGET_FILE_DIR:TFELUtilities>\;$<TARGET_FILE_DIR:TFELException>\;$<TARGET_FILE_DIR:TFELTests>\;$<TARGET_FILE_DIR:TFELConfig>\;$<TARGET_FILE_DIR:TFELPhysicalConstants>\;$ENV{PATH}")
+      elseif((CMAKE_HOST_WIN32) AND (NOT MSYS))
+        set_property(TEST alternatedelta2${test_arg}_${conf}_mtest
+          PROPERTY DEPENDS "MFrontCastemBehaviours MFrontMaterialProperties-castem mtest")
+      endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
+      if(TFEL_APPEND_SUFFIX)
+	install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}
+	  DESTINATION "share/doc/mfront-${TFEL_SUFFIX}/tests/behaviours/alternatedelta2"
+	  CONFIGURATIONS ${conf}
+	  COMPONENT mtest)
+      else(TFEL_APPEND_SUFFIX)
+	install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}
+	  DESTINATION "share/doc/mfront/tests/behaviours/alternatedelta2"
+	  CONFIGURATIONS ${conf}
+	  COMPONENT mtest)
+      endif(TFEL_APPEND_SUFFIX)
+    endforeach(conf ${CMAKE_CONFIGURATION_TYPES})
+  else(CMAKE_CONFIGURATION_TYPES)
+    get_property(MFrontCastemBehavioursBuildPath TARGET MFrontCastemBehaviours PROPERTY LOCATION_${conf})
+    configure_file(alternatedelta2${test_arg}.mtest.in
+      alternatedelta2${test_arg}.mtest @ONLY)
+    add_test(NAME alternatedelta2${test_arg}_mtest
+      COMMAND mtest --verbose=level0 --xml-output=true --result-file-output=false alternatedelta2${test_arg}.mtest)
+    set_tests_properties(alternatedelta2${test_arg}_mtest
+      PROPERTIES DEPENDS MFrontCastemBehaviours)
+    set_tests_properties(alternatedelta2${test_arg}_mtest
+      PROPERTIES DEPENDS MFrontMaterialProperties-castem)
+    set_tests_properties(alternatedelta2${test_arg}_mtest
+      PROPERTIES DEPENDS mtest)
+    if(TFEL_APPEND_SUFFIX)
+      install(FILES ${CMAKE_CURRENT_BINARY_DIR}/alternatedelta2${test_arg}.mtest
+	DESTINATION "share/doc/mfront-${TFEL_SUFFIX}/tests/behaviours/alternatedelta2"
+	COMPONENT mtest)
+    else(TFEL_APPEND_SUFFIX)
+      install(FILES ${CMAKE_CURRENT_BINARY_DIR}/alternatedelta2${test_arg}.mtest
+	DESTINATION "share/doc/mfront/tests/behaviours/alternatedelta2"
+	COMPONENT mtest)
+    endif(TFEL_APPEND_SUFFIX)
+  endif(CMAKE_CONFIGURATION_TYPES)
+endmacro(test_alternatedelta2)
+
+test_alternatedelta2(chaboche2)
+test_alternatedelta2(chaboche)
+test_alternatedelta2(compressibleneohookeanbehaviour)
+test_alternatedelta2(ddif2-2)
+test_alternatedelta2(ddif2-3)
+test_alternatedelta2(ddif2-4)
+test_alternatedelta2(ddif2)
+test_alternatedelta2(druckerprager2)
+test_alternatedelta2(druckerprager)
+test_alternatedelta2(elasticity_malls-uniaxialloading-1-1D)
+test_alternatedelta2(elasticity_malls-uniaxialloading-1-2D)
+test_alternatedelta2(elasticity_malls-uniaxialloading-1-3D)
+test_alternatedelta2(elasticity_malls-uniaxialloading-2-1D)
+test_alternatedelta2(elasticity_malls-uniaxialloading-2-2D)
+test_alternatedelta2(elasticity_malls-uniaxialloading-2-3D)
+test_alternatedelta2(elasticity_malls-uniaxialloading-3-1D)
+test_alternatedelta2(elasticity_malls-uniaxialloading-3-2D)
+test_alternatedelta2(elasticity_malls-uniaxialloading-3-3D)
+test_alternatedelta2(ellipticcreep)
+test_alternatedelta2(finitestrainsinglecrystal-001)
+test_alternatedelta2(finitestrainsinglecrystal-012-2)
+test_alternatedelta2(finitestrainsinglecrystal-012)
+test_alternatedelta2(finitestrainsinglecrystal-159)
+test_alternatedelta2(finitestrainsinglecrystal2-001)
+test_alternatedelta2(finitestrainsinglecrystal_numericaljacobian-001)
+test_alternatedelta2(finitestrainsinglecrystal_numericaljacobian-012-2)
+test_alternatedelta2(finitestrainsinglecrystal_numericaljacobian-012)
+test_alternatedelta2(finitestrainsinglecrystal_numericaljacobian-159)
+test_alternatedelta2(hayhurst)
+test_alternatedelta2(implicithayhurst)
+test_alternatedelta2(implicitmonocrystal)
+test_alternatedelta2(implicitnorton3)
+test_alternatedelta2(implicitnorton-planestress2)
+test_alternatedelta2(implicitnorton-planestress)
+test_alternatedelta2(implicitsimomieheelastoplasticity)
+test_alternatedelta2(incompressiblemooneyrivlinbehaviour)
+test_alternatedelta2(incompressibleplanestressgornetdesmoratbehaviourbiaxialtesting)
+test_alternatedelta2(incompressibleplanestressgornetdesmoratbehavioursheartesting)
+test_alternatedelta2(incompressibleplanestressgornetdesmoratbehaviouruniaxialtesting)
+test_alternatedelta2(incompressibleplanestressmooneyrivlinbehaviouruniaxialtesting)
+test_alternatedelta2(lorentz)
+test_alternatedelta2(mieheapellambrechtlogarithmicstrainelasticity2-uniaxialloading-1-1D)
+test_alternatedelta2(mieheapellambrechtlogarithmicstrainelasticity2-uniaxialloading-1-2D)
+test_alternatedelta2(mieheapellambrechtlogarithmicstrainelasticity2-uniaxialloading-1-3D)
+test_alternatedelta2(mieheapellambrechtlogarithmicstrainelasticity2-uniaxialloading-2-1D)
+test_alternatedelta2(mieheapellambrechtlogarithmicstrainelasticity2-uniaxialloading-2-2D)
+test_alternatedelta2(mieheapellambrechtlogarithmicstrainelasticity2-uniaxialloading-2-3D)
+test_alternatedelta2(mieheapellambrechtlogarithmicstrainelasticity2-uniaxialloading-3-1D)
+test_alternatedelta2(mieheapellambrechtlogarithmicstrainelasticity2-uniaxialloading-3-2D)
+test_alternatedelta2(mieheapellambrechtlogarithmicstrainelasticity2-uniaxialloading-3-3D)
+test_alternatedelta2(mieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-1-1D)
+test_alternatedelta2(mieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-1-2D)
+test_alternatedelta2(mieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-1-3D)
+test_alternatedelta2(mieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-1-planestress)
+test_alternatedelta2(mieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-2-1D)
+test_alternatedelta2(mieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-2-2D)
+test_alternatedelta2(mieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-2-3D)
+test_alternatedelta2(mieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-3-1D)
+test_alternatedelta2(mieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-3-2D)
+test_alternatedelta2(mieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-3-3D)
+test_alternatedelta2(mieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-3-planestress)
+test_alternatedelta2(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-1-1D)
+test_alternatedelta2(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-1-2D)
+test_alternatedelta2(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-1-3D)
+test_alternatedelta2(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-2-1D)
+test_alternatedelta2(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-2-2D)
+test_alternatedelta2(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-2-3D)
+test_alternatedelta2(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-3-1D)
+test_alternatedelta2(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-3-2D)
+test_alternatedelta2(monocrystal_dd_cc_irradiation)
+test_alternatedelta2(monocrystal_dd_cc_irradiation_numericaljacobian)
+test_alternatedelta2(monocrystal_dd_cfc_irradiation)
+test_alternatedelta2(monocrystal_dd_cfc)
+test_alternatedelta2(monocrystal_dd_cfc_numericaljacobian)
+test_alternatedelta2(monocrystal)
+test_alternatedelta2(norton2)
+test_alternatedelta2(norton-euler)
+test_alternatedelta2(norton)
+test_alternatedelta2(norton-rk2)
+test_alternatedelta2(nortonrk2)
+test_alternatedelta2(nortonrk3)
+test_alternatedelta2(norton-rk4)
+test_alternatedelta2(nortonrk4)
+test_alternatedelta2(plasisocin)
+test_alternatedelta2(plasticity)
+test_alternatedelta2(polycrystals_dd_cfc)
+test_alternatedelta2(strainhardeningcreep)
+test_alternatedelta2(stressrelaxation)
+test_alternatedelta2(T91-satohtest)
+test_alternatedelta2(T91-viscositytest)
+test_alternatedelta2(viscochaboche)
+test_alternatedelta2(viscoplasisocin)
+
+# test_alternatedelta2(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-3-3D)
+# test_alternatedelta2(monocrystal_dd_cc)
+# test_alternatedelta2(monocrystal_dd_cc_numericaljacobian)

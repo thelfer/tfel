@@ -1,0 +1,31 @@
+# first column : time
+# 2 column : 1th component of the driving variables
+# 3 column : 2th component of the driving variables
+# 4 column : 3th component of the driving variables
+# 5 column : 4th component of the driving variables
+# 6 column : 5th component of the driving variables
+# 7 column : 6th component of the driving variables
+# 8 column : 1th component of the thermodynamic forces
+# 9 column : 2th component of the thermodynamic forces
+# 10 column : 3th component of the thermodynamic forces
+# 11 column : 4th component of the thermodynamic forces
+# 12 column : 5th component of the thermodynamic forces
+# 13 column : 6th component of the thermodynamic forces
+# 14 column : first  component of internal variable 'ElasticStrain'
+# 15 column : second component of internal variable 'ElasticStrain'
+# 16 column : third  component of internal variable 'ElasticStrain'
+# 17 column : fourth  component of internal variable 'ElasticStrain'
+# 18 column : fifth   component of internal variable 'ElasticStrain'
+# 19 column : sixth   component of internal variable 'ElasticStrain'
+# 20 column : EquivalentPlasticStrain
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+0.1 -0.0005 0.00015 0.00015 0 0 0 -1e+08 -7.45058e-09 0 0 0 0 -0.0005 0.00015 0.00015 0 0 0 0 
+0.2 -0.001 0.001475 0.001475 0 0 0 -1.5e+08 1.39326e-06 1.39326e-06 0 0 0 -0.00075 0.000225 0.000225 0 0 0 0.001 
+0.3 -0.0015 0.003975 0.003975 0 0 0 -1.5e+08 -6.70552e-07 -6.63102e-07 0 0 0 -0.00075 0.000225 0.000225 0 0 0 0.003 
+0.4 -0.002 0.006475 0.006475 0 0 0 -1.5e+08 9.0152e-07 9.08971e-07 0 0 0 -0.00075 0.000225 0.000225 0 0 0 0.005 
+0.5 -0.0025 0.008975 0.008975 0 0 0 -1.5e+08 1.2666e-07 1.2666e-07 0 0 0 -0.00075 0.000225 0.000225 0 0 0 0.007 
+0.6 -0.003 0.011475 0.011475 0 0 0 -1.5e+08 -8.82894e-06 8.25524e-06 0 0 0 -0.00075 0.000225 0.000225 0 0 0 0.009 
+0.7 -0.0035 0.013975 0.013975 0 0 0 -1.5e+08 9.92417e-06 -8.48621e-06 0 0 0 -0.00075 0.000225 0.000225 0 0 0 0.011 
+0.8 -0.004 0.016475 0.016475 0 0 0 -1.5e+08 -1.11386e-05 8.67993e-06 0 0 0 -0.00075 0.000225 0.000225 0 0 0 0.013 
+0.9 -0.0045 0.018975 0.018975 0 0 0 -1.5e+08 1.00955e-05 7.29412e-06 0 0 0 -0.00075 0.000225 0.000225 0 0 0 0.015 
+1 -0.005 0.021475 0.021475 0 0 0 -1.5e+08 2.07871e-06 5.28246e-06 0 0 0 -0.00075 0.000225 0.000225 0 0 0 0.017 

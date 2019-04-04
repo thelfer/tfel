@@ -1,0 +1,53 @@
+@Author Thomas Helfer;
+@Date 28/07/2018;
+
+@XMLOutputFile @xml_output@;
+@MaximumNumberOfSubSteps 1;
+@Behaviour<generic> @library@ 'Chaboche2';
+
+@MaterialProperty<function> 'YoungModulus' '2.e5 - (1.e5*((TC - 100.)/960.)**2)';
+@MaterialProperty<constant> 'PoissonRatio'  0.3 ;    
+@MaterialProperty<function> 'ThermalExpansion' '1.e-5 + (1.e-5  * ((TC - 100.)/960.) ** 4)'; 
+@Real 'ThermalExpansionReferenceTemperature' 0.;
+
+@MaterialProperty<constant> 'Rinf' 100. ;
+@MaterialProperty<constant> 'R0' 200. ;
+@MaterialProperty<constant> 'b'  20. ;
+@MaterialProperty<constant> 'k'  1.0;
+@MaterialProperty<constant> 'w'  0. ;
+@MaterialProperty<function> 'C1inf' '(1.e6 - (98500. * (TC - 100.) / 96.))';
+@MaterialProperty<constant> 'C2inf' 0.;
+@MaterialProperty<function> 'g1'   '(5000. - 5. * (TC - 100.) )' ;
+@MaterialProperty<constant> 'g2'   0. ;
+@MaterialProperty<function> 'E'   '7. - (TC - 100.) / 160.' ;
+@MaterialProperty<function> 'UNsurK' '4900./(4200.*(TC+20.)-3.*(TC+20.0)**2)';
+
+@ExternalStateVariable 'Temperature' {0.  :0.,
+                                      1.  :1060.,
+                                      61. :100.,
+                                      121.:1060.,
+                                      181.:100.,
+                                      241.:1060.,
+                                      301.:100.,
+                                      361.:1060.,
+                                      421.:100.,
+                                      481.:1060.};
+
+@Evolution<function> 'TC' 'Temperature';
+
+@Real 'DY1' -0.0208 ;
+@Real 'DY2' -0.0008 ;
+
+@ImposedStrain 'EXX' { 0.: 0.0, 0.1 :'DY1', 1.0:'DY1', 
+                      61.:'DY2',121.:'DY1',181.:'DY2',241.:'DY1',
+                     301.:'DY2',361.:'DY1',421.:'DY2',481.:'DY1'};
+                     
+@ImposedStress 'SXY' {0.0: 0.0, 0.1 : 0.0 , 1.0: '100.0*sqrt(2.0)', 1000. : '100.0*sqrt(2.0)'};
+
+@Times { 0.0, 0.1 in 60, 
+          1.  in 60,   61.  in 60,  121.  in 60, 181.  in 60,
+        241.  in 60,  301.  in 60,  361.  in 60, 421.  in 60,
+       449.8  in 29, 465.4  in 15, 473.8  in 9,  481.  in 45 };
+
+@Test<file> @reference_file@ 'EYY' 3 1.e-5 ; 
+@Test<file> @reference_file@ {'SXX':8,'SXY':36} 3.; 

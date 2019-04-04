@@ -1,0 +1,17 @@
+\hlstd{
+@MaterialProperty\ real\ A}\hlsym{{[}}\hlstd{}\hlnum{2}\hlstd{}\hlsym{{]};}\hlstd{\ \ \ \ \ }\hlsym{}\hlstd{}\hlcom{/{*}\ Norton\ coefficient}\hlstd{\ \ \ }\hlcom{{*}/}\hlstd{\hspace*{\fill}\\
+@MaterialProperty\ real\ E}\hlsym{{[}}\hlstd{}\hlnum{2}\hlstd{}\hlsym{{]};}\hlstd{\ \ \ \ \ }\hlsym{}\hlstd{}\hlcom{/{*}\ Norton\ exponant}\hlstd{\ \ \ \ \ \ }\hlcom{{*}/}\hlstd{\hspace*{\fill}\\
+\ldots\\
+\hlstd{
+@StateVariable\ real\ p}\hlsym{{[}}\hlstd{}\hlnum{2}\hlstd{}\hlsym{{]};}\hlstd{\ \ \ \ \ \ }\hlsym{}\hlstd{}\hlcom{/{*}\ Equivalent\ viscoplastic\ strain\ {*}/}\hlstd{\hspace*{\fill}\\
+@StateVariable\ Stensor\ evp}\hlsym{{[}}\hlstd{}\hlnum{2}\hlstd{}\hlsym{{]};\ }\hlstd{}\hlcom{/{*}\ Viscoplastic\ strain}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlcom{{*}/}\hlstd{}\hspace*{\fill}\\
+\ldots\\
+\hlstd{
+@Derivative}\hlsym{\{}\hspace*{\fill}}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\ldots\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwa{for}\hlstd{}\hlsym{(}\hlstd{}\hlkwb{unsigned\ short\ }\hlstd{i}\hlsym{=}\hlstd{}\hlnum{0}\hlstd{}\hlsym{;}\hlstd{i}\hlsym{!=}\hlstd{}\hlnum{2}\hlstd{}\hlsym{;++}\hlstd{i}\hlsym{)\{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{dp}\hlsym{{[}}\hlstd{i}\hlsym{{]}}\hlstd{\ \ \ \ }\hlsym{=\ }\hlstd{A}\hlsym{{[}}\hlstd{i}\hlsym{{]}{*}}\hlstd{}\hlkwd{pow}\hlstd{}\hlsym{(}\hlstd{sigeq}\hlsym{,}\hlstd{E}\hlsym{{[}}\hlstd{i}\hlsym{{]});}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{devp}\hlsym{{[}}\hlstd{i}\hlsym{{]}}\hlstd{\ \ }\hlsym{=\ }\hlstd{dp}\hlsym{{[}}\hlstd{i}\hlsym{{]}{*}}\hlstd{n}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{deel}\hlstd{\ \ \ \ }\hlstd{}\hlsym{{-}=\ }\hlstd{devp}\hlsym{{[}}\hlstd{i}\hlsym{{]};}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlsym{\}}\hspace*{\fill}\\
+\hlstd{}\hlsym{\}\ }

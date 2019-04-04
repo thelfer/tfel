@@ -1,0 +1,3 @@
+// temperature bounds
+@PhysicalBounds T in [0:*[;
+@Bounds T in [733.15:873.15];

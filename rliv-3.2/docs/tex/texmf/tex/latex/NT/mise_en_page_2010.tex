@@ -1,0 +1,461 @@
+%%% placement des blocs dans la page
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% definition
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\Protype}{Note Technique}
+
+\ifthenelse{
+  \boolean{memo}
+}{
+  \renewcommand{\Protype}{\textsc{M\'emo}}
+}
+
+\ifthenelse{
+  \boolean{modeop}
+}{
+  \renewcommand{\Protype}{\textsc{Mode Op\'eratoire}}
+}
+
+
+\ifthenelse{\boolean{rapport}}{
+  \renewcommand{\Protype}{\textsc{Rapport Technique}}
+}{}
+
+\newcommand{\Prosigle}{\Proservice/\Prolaboratoire}
+\newcommand{\Prospecification}{CEA/\Prodirection/\Procentre/\Prodepartement/\Prosigle}
+
+%%% placement des blocs dans la page
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Cartouche DIFFUSION RESTREINTE
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\DiffusionRestreinte}{
+  \setlength{\fboxruleIni}{\the\fboxrule}
+  \setlength{\fboxrule}{1pt}
+  \setlength{\fboxsepIni}{\the\fboxsep}
+  \setlength{\fboxsep}{3mm}
+  \ifthenelse{\equal{\Proclassification}{DR}}{
+    \centering \color[rgb]{1,0,0}
+    \fbox{\Large\textbf{DIFFUSION RESTREINTE}}
+  }{}
+  \ifthenelse{\equal{\Proclassification}{CCEA}}{
+    \color[rgb]{1,0,0}\fbox{\Large\textbf{CONFIDENTIEL CEA}}
+  }{}
+  \ifthenelse{\equal{\Proclassification}{CD}}{\centering \color[rgb]{1,0,0}
+    \fbox{\Large\textbf{CONFIDENTIEL D\'EFENSE}}
+  }{}
+  \setlength{\fboxrule}{\the\fboxruleIni}
+  \setlength{\fboxsep}{\the\fboxsepIni}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Definition des hauts de pages
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\lhead{
+  \setlength{\unitlength}{1mm}
+  \begin{picture}(0,0)(0,0)
+    \linethickness{0.2mm}
+    \put(30,25){\parbox[c]{92mm}{\hspace*{\stretch{1}}\DiffusionRestreinte\hspace*{\stretch{1}}}}
+    \put(0,0){\framebox(170,32){}}
+    % \put(2,1){\includegraphics[width=26mm]{logoCEADEC}}
+    %\put(0.4,1.5){\includegraphics[width=29mm]{ceaeaDEC}}
+    \put(0.4,1.5){\includegraphics[width=29mm]{CEA_logo_quadri-sur-fond-rouge_DEC}}
+    \put(30,6){\framebox(92,26){}}
+    \ifthenelse{\equal{\thepage}{1}}{}{
+      \put(30,10){
+        \parbox[b]{90mm}{\centering\bf\large\scshape{\ifthenelse{\isundefined{\Protitrecourt}}{\Protitre}{\Protitrecourt}}}
+      }
+      \put(122.5,17){\parbox[c]{47mm}{\centering\Prosigle\\NT~\Pronumero~-~Ind. \Proindice \\\vspace*{2mm} \Prodate}}
+    }
+    \put(30,0){\framebox(92,5.8){\centering\bf\large\scshape{Document technique DEN}}}
+    \put(122.2,0){\framebox(47.8,5.8){\centering\scshape{Page \thepage/\pageref{LastPage}}}}
+  \end{picture}
+}
+
+\chead{
+}
+\rhead{
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Definition des bas de pages
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\cfoot{}
+\lfoot{
+%  \setlength{\unitlength}{1mm}
+%  \begin{picture}(0,0)(0,0)
+%    \put(0,0){\framebox(170,12){\centering
+%        \ifthenelse{\equal{---}{\Proaccords}}{\parbox{170mm}{\centering\bf
+%            \textit{Ce document est la propri\'et\'e du CEA. Il ne peut \^etre communiqu\'e, ni copi\'e sans autorisation de l'unit\'e \'emettrice du CEA.}}
+%        }{\parbox{170mm}{\centering\bf
+%            \textit{Ce document contient des r\'esultats issus de travaux r\'ealis\'es dans le cadre de l'accord \Proaccords{} CEA~- \Proclients. Sa diffusion est soumise aux r\`egles de cet accord.}}
+%        }
+%      }
+%    }
+%  \end{picture}
+  \rule[3mm]{170mm}{0.5pt}
+  \color[rgb]{1,0,0}
+  \centering\fontsize{8}{10}\selectfont%
+  \ifthenelse{\equal{---}{\Proaccords}}{%
+    \textit{Document propri\'et\'e du CEA -- Reproduction et diffusion externes au CEA soumises \`a l'autorisation de l'\'emetteur}
+  }{%
+    \textit{Document \'emis par le CEA dans le cadre de l'accord \Proaccords{} -- Reproduction et diffusion soumises aux termes de l'accord.} %  «\Proaccords{}» ou  «CEA~-~\Proclients{}» ?
+  }
+}
+\rfoot{}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%% cahier des charges
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\CahierDesCharges}{
+  \begin{minipage}[c]{100mm}
+    \fontsize{6}{7}\selectfont%\scriptsize
+    \textit{\underline{Protection des informations (applicationde l'arr\^et\'e du 18 avril 2005 et de l'IGI 1300)}}
+
+    \vspace{3mm}
+    Cocher la case
+
+    \vspace{3mm}
+    \begin{itemize}
+    \item[\ifthenelse{\equal{\Procdc}{a}}{\ding{112}\hspace{-0.7em}\ding{55}}{\ding{112}}] Le pr\'esent cahier des charges ne contient \underline{aucune information sensible}, permettant sa mise en ligne sur la plateforme d\'emat\'erialis\'ee du CEA de ce document.
+    \item[\ifthenelse{\equal{\Procdc}{b}}{\ding{112}\hspace{-0.7em}\ding{55}}{\ding{112}}] Le pr\'esent cahier des charges contient des \underline{informations sensibles ou classifi\'ee}~:de ce fait la mise en ligne sur la plateforme d\'emat\'erialis\'ee du CEA de ce document est {\bf interdite}.
+    \end{itemize}
+
+    \vspace{3mm}
+    En cas de doute ou de besoin, vous pouvez vous adresser \`a votre correspondant s\'ecurit\'e.
+  \end{minipage}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%% le titre
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\PageTitre}{
+
+  \setlength{\unitlength}{1mm}
+  \begin{picture}(0,0)(20,0)%on se met en bord de page
+    \put(0,-165){\includegraphics[height=111mm]{Energie2010}}
+%     \ifthenelse{\isundefined{\Procodebarre}}{}{\put(76,-50){\includegraphics[width=57mm]{\Procodebarre}}}
+    \ifthenelse{\isundefined{\Procodebarre}}{}{\put(142.5,20){\includegraphics[width=47mm]{\Procodebarre}}}
+    \put(23,-98) {
+      \parbox[c]{160mm}{
+        \begin{center}
+          \fontsize{16}{20}\selectfont\textbf{\textit{\scshape\Protitre}}
+        \end{center}
+      }
+    }
+    %%% Des affiliations ?
+    \ifthenelse{\isundefined{\Proaffiliation}}{}{\put(20,-163){\Proaffiliation}}
+    %%% Un cahier des charges ?
+    \ifthenelse{\isundefined{\Procdc}}{}{\put(98,-190){\CahierDesCharges}}
+  \end{picture}
+
+  \begin{center}
+    % \vspace{5mm}
+    \large
+    \ifthenelse{\isundefined{\Prodirectionnom}}{}{\Prodirectionnom\\}
+    \ifthenelse{\isundefined{\Procentrenom}}{}{Centre de \Procentrenom\\}
+    \ifthenelse{\isundefined{\Prodepartementnom}}{}{\Prodepartementnom\\}
+    \ifthenelse{\isundefined{\Proservicenom}}{}{\Proservicenom\\}
+    %\ifthenelse{\isundefined{\Prolaboratoirenom}}{}{\Prolaboratoirenom\\}
+
+    \vspace{38mm}
+
+    {\fontsize{16}{20}\selectfont\Protype}
+
+    \vspace{42mm}
+
+    {\large\Prospecification~NT~\Pronumero~--~Indice \Proindice}
+
+    \vspace{3mm}
+
+    {\large\bf\Prodate}
+
+    \vspace{10mm}
+
+    % parbox avec une hauteur fixe pour eviter les problemes de
+    % mise en page s'il y a beaucoup d'auteurs !
+    \parbox[c][1cm][c]{\linewidth}{\centering\fontsize{16}{20}\selectfont\scshape\Proauteurs}
+
+  \end{center}
+
+  \vspace{42mm}
+
+  \begin{flushleft}
+    \fontsize{6}{7}\selectfont%\scriptsize
+    Commissariat \`a l'\'Energie Atomique et aux \'Energies Alternatives\\
+    Centre : \Procentrenom\\
+    Adresse : \Prodepartement/\Proservice%\ifthenelse{\isundefined{\Prolaboratoirenom}}{}{/\Prolaboratoire}
+{} - B\^at. {\Probatimentservice} - 13108 Saint Paul Lez Durance\\
+    T\'el. : 04 42 25 {\Protelephoneservice} \hspace{2.5mm} Fax : 04 42 25 {\Profaxservice} \ifthenelse{\isundefined{\Promail}}{}{\hspace{2.5mm} Courriel : {\Promail}}\\
+    \'Etablissement public \`a caract\`ere industriel et commercial - RCS Paris B 775 685 019
+  \end{flushleft}
+
+  \newpage
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Page Information%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\PageInfo}
+{
+
+  \begin{center}
+
+    \setlength{\tabcolsepIni}{\the\tabcolsep}
+    \setlength{\tabcolsep}{1mm}
+    \setlength{\extrarowheightIni}{\the\extrarowheight}
+    %\setlength{\extrarowheight}{0.1\baselineskip}
+    \setlength{\extrarowheight}{1.2pt}
+
+    \footnotesize
+    \textbf{\textsc{Niveau de confidentialit\'e}}
+
+    \vspace{2mm}
+
+    \begin{tabular}{|M{31mm}|M{31mm}|M{31mm}|M{31mm}|}
+      \hline
+      DO & DR & CCEA & CD \tabularnewline
+      \hline
+      \ifthenelse{\equal{\Proclassification}{DO}}{X}{} & \ifthenelse{\equal{\Proclassification}{DR}}{X}{} & \ifthenelse{\equal{\Proclassification}{CCEA}}{X}{} & \ifthenelse{\equal{\Proclassification}{CD}}{X}{} \tabularnewline
+      \hline
+    \end{tabular}
+
+    \vspace{8mm}
+
+    \textbf{\textsc{Clients}}
+
+    \vspace{2mm}
+
+    \begin{tabular}{|M{50mm}|M{50mm}|M{64mm}|}
+      \hline
+      \textsc{Partenaires/Clients} & \textsc{Accord} & \textsc{Type d'action}\tabularnewline
+      \hline
+      \Proclients & \Proaccords & \Protypeaction \tabularnewline
+      \hline
+    \end{tabular}
+
+    \vspace{8mm}
+
+    \textbf{\textsc{R\'ef\'erences internes CEA}}
+
+    \vspace{2mm}
+
+    \begin{tabular}{|M{32mm}|M{32mm}|M{32mm}|M{66mm}|}
+      \hline
+      \textsc{Direction d'objectifs} &
+      \textsc{Domaine} &
+      \textsc{Projet} &
+      \textsc{EOTP} \tabularnewline
+      \hline
+      \Prodob & \Prodomaine & \Procadre & \Pronumeroaffaire \tabularnewline
+      \hline
+    \end{tabular}
+
+    \vspace{1mm}
+
+    \begin{tabular}{|M{19mm}|M{76mm}|M{38mm}|M{29mm}|}
+      \hline
+      \textsc{Jalon} &
+      \textsc{Intitul\'e du jalon} &
+      \textsc{D\'elai de confidentialit\'e contractuelle} &
+      \textsc{Cahier de laboratoire} \tabularnewline
+      \hline
+      \ifthenelse{\isundefined{\Projalon}}{}{\Projalon} & \ifthenelse{\isundefined{\Projalon}}{Sans objet}{\Projalonintitule} & \Prodelai & \Procahierlaboratoire \tabularnewline
+      \hline
+    \end{tabular}
+
+    \vspace{8mm}
+
+    \textbf{\textsc{Suivi des versions}}
+
+    \vspace{2mm}
+
+    \begin{tabular}{|M{11mm}|M{15mm}|M{108mm}|M{28mm}|}
+      \hline
+      \textsc{Indice} &
+      \textsc{Date} &
+      \textsc{Nature de l'\'evolution} &
+      \textsc{Pages,chapitres} \tabularnewline
+      \hline
+      \ifthenelse{\isundefined{\Proversion}}{
+        \rule[-4mm]{0mm}{10mm}\Proindice & \Prodateversion & \Proevolution & \pageref{LastPage} \tabularnewline
+        \hline
+        \rule{0mm}{10mm} & & & \tabularnewline
+        \hline
+        \rule{0mm}{10mm} & & & \tabularnewline
+        \hline
+        \rule{0mm}{10mm} & & & \tabularnewline
+      }{\Proversion}
+      \hline
+    \end{tabular}
+
+    \vspace*{\stretch{3}}
+
+    \setlength{\unitlength}{1mm}
+
+    % Pave de signatures
+    \begin{picture}(0,0)(-3,9)
+      \ifthenelse{\isundefined{\Prosignatures}}{}{\Prosignatures}
+      %\put(0,-39){\color[rgb]{0,1,0}\framebox(54,39){}}
+    \end{picture}
+    \begin{picture}(0,0)(-57.5,9)
+      \ifthenelse{\isundefined{\Prodates}}{}{\Prodates}
+      %\put(0,-39){\color[rgb]{0,1,0}\framebox(28,39){}}
+    \end{picture}
+
+    \normalsize
+    \begin{tabular}{|M{30mm}|M{53mm}|M{53mm}|M{26mm}|}
+      \hline
+      \rule[-2.5mm]{0mm}{6mm} &
+      \textsc{Nom}  &
+      \textsc{Visa} &
+      \textsc{Date} \tabularnewline
+      \hline
+      \rule[-4mm]{0mm}{10mm}\textsc{R\'edacteur} & \Proredacteur \ifthenelse{\isundefined{\Proredacteura}}{}{\\ \Proredacteura} \ifthenelse{\isundefined{\Proredacteurb}}{}{\\ \Proredacteurb} & \begin{picture}(0,0)(0,0)\put(-12,-5){\ifthenelse{\isundefined{\Prosignature}}{}{\includegraphics[height=11mm]{\Prosignature}}}\end{picture}
+      & \ifthenelse{\isundefined{\Prodateredac}}{}{\Prodateredac}\tabularnewline
+      \hline
+\noalign{%
+\ifthenelse{\boolean{memo}}{\gdef\hmm{}}{%
+     \gdef\hmm{\rule[-4mm]{0mm}{10mm}\textsc{V\'erificateur} & \Proverificateur \ifthenelse{\isundefined{\Proverificateura}}{}{\\\Proverificateura} & \begin{picture}(0,0)(0,0)\put(-7,-5){\ifthenelse{\isundefined{\Prosigverif}}{}{\includegraphics[height=11mm]{\Prosigverif}}}\end{picture} & \ifthenelse{\isundefined{\Prodateverif}}{}{\Prodateverif}\tabularnewline%
+      \hline}%
+}}\hmm
+      \rule[-4mm]{0mm}{10mm}\textsc{Approbateur} & \Proapprobateur & \begin{picture}(0,0)(0,0)\put(-10,-5){\ifthenelse{\isundefined{\Prosigappro}}{}{\includegraphics[height=11mm]{\Prosigappro}}}\end{picture} & \ifthenelse{\isundefined{\Prodateappro}}{}{\Prodateappro}\tabularnewline
+      \hline
+\noalign{%
+\ifthenelse{\boolean{memo}}{\gdef\hmm{}}{%
+      \gdef\hmm{\rule[-4mm]{0mm}{10mm}\textsc{\'Emetteur} & \Proemetteur & \begin{picture}(0,0)(0,0)\put(-12,-5){\ifthenelse{\isundefined{\Prosigemetteur}}{}{\includegraphics[height=11mm]{\Prosigemetteur}}}\end{picture} & \ifthenelse{\isundefined{\Prodateemett}}{}{\Prodateemett}\tabularnewline%
+      \hline}%
+}}\hmm
+    \end{tabular}
+
+    \vspace*{\stretch{1}}
+
+    \setlength{\tabcolsep}{\the\tabcolsepIni}
+    \setlength{\extrarowheight}{\the\extrarowheightIni}
+
+  \end{center}
+
+  \newpage
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Resume  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\PageResume}
+{
+
+  \setlength{\fboxsepIni}{\the\fboxsep}
+  \setlength{\fboxsep}{4mm}
+
+  \vspace*{0mm}
+
+  \hspace{8mm}\textsc{Mots Clefs}
+
+  \vspace{6mm}
+
+  \fbox{
+    \begin{minipage}[c]{160mm}
+      \ifthenelse{\isundefined{\Promotsclefs}}{
+        \vspace*{2mm}
+        \dots
+        \vspace*{2mm}
+      }{\Promotsclefs}
+    \end{minipage}
+  }
+
+  \vspace{13mm}
+
+  \hspace{8mm}\textsc{R\'esum\'e~/~Conclusions}
+
+  \vspace{6mm}
+
+  \fbox{
+    \rule[-100mm]{0mm}{0mm}%
+    \begin{minipage}[t]{160mm}
+      \ifthenelse{\isundefined{\Proresumecea}}{
+        \vspace*{2mm}
+        \dots
+      }{\Proresumecea
+      }
+    \end{minipage}
+  }
+
+  \setlength{\fboxsep}{\the\fboxsepIni}
+
+  \newpage
+
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%% diffusion
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\PageDiffusion}
+{
+  % \noindent
+
+  \begin{center}
+    {\Large\bf\scshape\so{Liste de diffusion}}
+  \end{center}
+
+  \vspace{10mm}
+
+  \arrayrulecolor{cea_grisclair}
+
+  \ifthenelse{\isundefined{\Prodiffusionexterne}}{}{
+    \begin{longtable}[htbp]{ m{41mm} m{41mm} >{\hfil}m{41mm}<{\hfil}  c}
+      \endfirsthead
+      \hline
+      \multicolumn{4}{|l|}{\em Suite de la page pr\'ec\'edente}\tabularnewline
+      \hline
+      \multicolumn{4}{ c }{\rule{0mm}{2mm}}
+      \endhead
+      \multicolumn{4}{ c }{\rule{0mm}{2mm}}\tabularnewline
+      \hline
+      \multicolumn{4}{|r|}{{\em Suite \`a la page suivante}}\tabularnewline
+      \hline
+      \endfoot
+      \endlastfoot
+      \multicolumn{4}{ c }{\rule[-5mm]{0mm}{10mm}\centering\bf Diffusion externe\ifthenelse{\isundefined{\Prodiffusionexternecomment}}{}{ \Prodiffusionexternecomment}} \tabularnewline
+      \hline
+      \parbox[c][14truemm]{33.4truemm}{\scshape Soci\'et\'e} & {\scshape Nom du destinataire} & \multicolumn{1}{l}{\scshape Nombre \mbox{d'exemplaires}} & {\scshape Observations} \tabularnewline
+      \hline
+      \rule{0mm}{2mm}&&&\tabularnewline
+      \Prodiffusionexterne
+    \end{longtable}
+
+    \vspace{10truemm}
+  }
+  \ifthenelse{\boolean{coupe}}{\newpage}{}
+  \ifthenelse{\isundefined{\Prodiffusioninterne}}{}{
+    \begin{longtable}[htbp]{ m{41mm} m{41mm} >{\hfil}m{41mm}<{\hfil} c}
+      \endfirsthead
+      \hline
+      \multicolumn{4}{|l|}{\em Suite de la page pr\'ec\'edente}\tabularnewline
+      \hline
+      \multicolumn{4}{ c }{\rule{0mm}{2mm}}\tabularnewline
+      \endhead
+      \multicolumn{4}{ c }{\rule{0mm}{2mm}}\tabularnewline
+      \hline
+      \multicolumn{4}{|r|}{{\em Suite \`a la page suivante}}\tabularnewline
+      \hline
+      \endfoot
+      \endlastfoot
+      \multicolumn{4}{ c }{\rule[-5mm]{0mm}{10mm}\centering\bf Diffusion interne} \tabularnewline
+      \hline
+      \parbox[c][14truemm]{33.4truemm}{\scshape Dpt/Service/Labo} & {\scshape Nom du destinataire} & \multicolumn{1}{c}{{\scshape Nombre \mbox{d'exemplaires}}} & {\scshape Observations} \tabularnewline
+      \hline
+      \rule{0mm}{2mm}&&&\tabularnewline
+      \Prodiffusioninterne
+    \end{longtable}
+  }
+
+  \newpage
+
+}

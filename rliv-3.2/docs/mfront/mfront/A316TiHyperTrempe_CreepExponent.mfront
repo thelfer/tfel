@@ -1,0 +1,29 @@
+@Parser   MaterialLaw;
+@Law      CreepExponent;
+@Material A316TiHyperTrempe;
+@Author   Thomas Helfer;
+@Date     21 Jan. 2010;
+
+@Description{
+  Dossier de caractérisation du
+  matériau de gainage des éléments
+  absorbant 1ère et 2ème charge SPX1
+  J.M. Escleine
+  DEC/SDC/  85-2077
+  DEC/SMPA/ 85-1449
+  Décembre 1985
+}
+
+// changing the name of output
+@Output n;
+
+@Input T;
+T.setGlossaryName("Temperature");
+
+// temperature bounds
+@PhysicalBounds T in [0:*[;
+@Bounds T in [733.15:873.15];
+
+@Function{
+  n =  18571/T-12.861;
+} // end of function

@@ -1,0 +1,6 @@
+@Command "./test5";
+
+@TestType Absolute;
+@Interpolation LocalSpline using 'tps' AllowLessResults;
+@Precision 10.;
+@Test 'test5.ref' 'test5.res' 'B';

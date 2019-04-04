@@ -1,0 +1,118 @@
+/*!
+ * \file   mfront/tests/behaviours/castem/LibraryInformationCastemTest.cxx.in
+ * \brief    
+ * \author Helfer Thomas
+ * \date   27/03/2017
+ * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
+ * reserved. 
+ * This project is publicly released under either the GNU GPL Licence 
+ * or the CECILL-A licence. A copy of thoses licences are delivered 
+ * with the sources of TFEL. CEA or EDF may also distribute this 
+ * project under specific licensing conditions. 
+ */
+
+#ifdef NDEBUG
+#undef NDEBUG
+#endif /* NDEBUG */
+
+// a small trick so that the compiler refers to the original file for
+// error reports
+#line 21 "@abs_top_srcdir@/mfront/tests/behaviours/castem/LibraryInformationCastemTest.cxx.in"
+
+#include<cstdlib>
+#include<iostream>
+#include<algorithm>
+#include<stdexcept>
+
+#include"TFEL/Tests/TestCase.hxx"
+#include"TFEL/Tests/TestProxy.hxx"
+#include"TFEL/Tests/TestManager.hxx"
+#include"TFEL/Utilities/StringAlgorithms.hxx"
+#include"TFEL/System/LibraryInformation.hxx"
+
+struct LibraryInformationCastemTest final
+  : public tfel::tests::TestCase
+{
+  LibraryInformationCastemTest()
+    : tfel::tests::TestCase("TFEL/System","LibraryInformationCastemTest")
+  {} // end of LibraryInformationCastemTest
+
+  tfel::tests::TestResult execute() override
+  {
+    const auto l = "@MFrontCastemBehavioursBuildPath@";
+    auto ld = tfel::system::LibraryInformation(l);
+    auto b = std::vector<std::string>{};
+    const auto ss = ld.symbols();
+    b.reserve(ss.size());
+    for(const auto&s : ss){
+      if(tfel::utilities::ends_with(s,"_Interface")){
+	b.push_back(s.substr(0,s.size()-10));
+      }
+    }
+    for(const auto& n : {"umatlorentz2","umatincompressiblemooneyrivlinbehaviour",
+	  "umatnorton2","umatfiniterotationsmallstrainelasticity_frst",
+	  "umatsaintvenantkirchhoffelasticity2","umatmonocrystal_dd_cc_irradiation",
+	  "umatnorton_rk4","umatgeneralizedmaxwell","umattvergaard",
+	  "umatisotropicvolumeswelling","umatlogarithmicstrainnortoncreep",
+	  "umatimplicitorthotropiccreep2","umatlogarithmicstrainelasticity2",
+	  "umatplasisocin","umatfiniterotationsmallstrainelasticity2",
+	  "umatmonocrystal_dd_cfc_numericaljacobian","umatgurson","umatnorton_rk42",
+	  "umatlogarithmicstrainelasticity","umatmazars",
+	  "umatcomputestressfreeexpansion","umatelasticity5","umatorthotropiccreep",
+	  "umatorthotropicelastic4","umatimplicitnorton_broyden2","umatpolycrystals",
+	  "umatnorton","umatfinitestrainsinglecrystal2",
+	  "umatfinitestrainsinglecrystal_numericaljacobian","umatlorentz",
+	  "umatfiniterotationsmallstrainelasticity","umatorthotropicelastic",
+	  "umatfiniterotationsmallstrainelasticity2_frst","umatelasticity_malls",
+	  "umatnortonrk2","umatorthotropicsaintvenantkirchhoffelasticity",
+	  "umatorthotropicelastic3","umatimplicitorthotropiccreep","umatddif2",
+	  "umatelasticity3","umatmonocrystal_dd_cfc_irradiation","umatelasticity",
+	  "umatorthotropiccreep_rkcastem","umatstatevariablesboundscheck",
+	  "umatincompressibleplanestressgornetdesmoratbehaviour","umatmonocrystal",
+	  "umatnorton_ss","umatnorton_euler","umatmonocrystal_dd_cfc",
+	  "umatlogarithmicstrainelasticity2_malls","umataxialgrowth2",
+	  "umatimplicitmonocrystal","umatimplicitnorton3","umatelasticity2",
+	  "umatorthotropicelastic2","umatelasticity_log1d","umatorthotropicswelling2",
+	  "umatgurson_malls","umatstrainhardeningcreep","umatgurson_ss",
+	  "umatimplicitnorton","umatisotropiclinearswelling2",
+	  "umatisotropiclinearswelling","umatviscoplasisocin","umatchaboche",
+	  "umatorthotropiccreep_rk42","umatincompressibleplanestressmooneyrivlinbehaviour",
+	  "umatsaintvenantkirchhoffelasticity","umataxialgrowth",
+	  "umatt91viscoplasticbehaviour","umatdruckerpragerecrolin",
+	  "umatorthotropicswelling","umatdruckerprager","umatlogarithmicstrainplasticity",
+	  "umatimplicitnorton4","umatnortonrk3","umatmonocrystal_dd_cc","umatchaboche2",
+	  "umatnorton_log1d","umatburger","umatageingburger",
+	  "umatexternalstatevariablesboundscheck",
+	  "umatmonocrystal_dd_cc_irradiation_numericaljacobian","umatellipticcreep",
+	  "umatdruckerpragerecrolindefault","umatviscochaboche",
+	  "umatimplicitsimomieheelastoplasticity",
+	  "umatanistropiclemaitreviscoplasticbehaviour","umatorthotropicelastic5",
+	  "umatgursontvergaardneedlemanviscoplasticflow_numericaljacobian",
+	  "umatimplicitfinitestrainnorton",
+	  "umatgursontvergaardneedlemanplasticflow_numericaljacobian",
+	  "umatnortonrk","umatimplicitnorton_broyden","umatisotropicvolumeswelling2",
+	  "umatfinitestrainsinglecrystal","umatlogarithmicstrainelasticity_malls",
+	  "umatimplicithayhurst","umatmaterialpropertiesboundscheck",
+	  "umatorthotropicelastic6","umatnorton_rkcastem",
+	  "umatlogarithmicstrainplasticity_malls","umatpolycrystals_dd_cc",
+	  "umatnorton_rk2","umatelasticity_frst","umatlogarithmicstrainnortoncreep_malls",
+	  "umathayhurst","umatelasticity4","umatnortonrk4",
+	  "umatmonocrystal_dd_cc_levenbergmarquardt","umatimplicitnorton2",
+	  "umatelasticity_ss","umatpolycrystals_dd_cfc",
+	  "umatmonocrystal_dd_cc_numericaljacobian","umatelasticity6","umatplasticity",
+	  "umatimplicitnorton_levenbergmarquardt","umatcompressibleneohookeanbehaviour"}){
+      TFEL_TESTS_ASSERT(std::find(b.begin(),b.end(),n)!=b.end());
+    };
+    return this->result;
+  } // end of execute
+};
+  
+TFEL_TESTS_GENERATE_PROXY(LibraryInformationCastemTest,
+			  "LibraryInformationCastemTest");
+
+int main(){
+  auto& m = tfel::tests::TestManager::getTestManager();
+  m.addTestOutput(std::cout);
+  m.addXMLTestOutput("LibraryInformationCastemTest.xml");
+  return m.execute().success() ? EXIT_SUCCESS : EXIT_FAILURE;
+}

@@ -1,0 +1,33 @@
+\noindent
+\ttfamily
+\hlstd{@Parser MaterialLaw}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@Law}\hlstd{\ \ \ \ }\hlstd{SIC\textunderscore YOUNGMODULUS\textunderscore SNEAD}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@Author Thomas Helfer}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@Date}\hlstd{\ \ \ }\hlstd{}\hlnum{2007}\hlstd{}\hlsym{{-}}\hlstd{}\hlnum{12}\hlstd{}\hlsym{{-}}\hlstd{}\hlnum{06}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@Description}\hlsym{\{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{Journal of Nuclear Materials }\hlkwd{371 }\hlstd{}\hlsym{( }\hlstd{}\hlnum{2007 }\hlstd{}\hlsym{) }\hlstd{}\hlnum{329}\hlstd{}\hlsym{{-}}\hlstd{}\hlnum{377}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{Handbook of SiC properties }\hlkwa{for }\hlstd{fuel performance modeling\hspace*{\fill}\\
+}\hlstd{\ \ }\hlstd{L}\hlsym{.}\hlstd{L}\hlsym{. }\hlstd{SNEAD et al}\hlsym{.}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{Pages }\hlnum{339 }\hlstd{et }\hlnum{340 }\hlstd{}\hlsym{{-} }\hlstd{é}\hlkwd{quations }\hlstd{}\hlsym{(}\hlstd{}\hlnum{17}\hlstd{}\hlsym{) }\hlstd{}\hlkwd{et }\hlstd{}\hlsym{(}\hlstd{}\hlnum{18}\hlstd{}\hlsym{)}\hspace*{\fill}\\
+\hlstd{}\hlsym{\}}\hspace*{\fill}\\
+\hlstd{}\hspace*{\fill}\\
+\hlslc{// changing the name of output}\hspace*{\fill}\\
+\hlstd{@Output E}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hspace*{\fill}\\
+\hlslc{// input of the law}\hspace*{\fill}\\
+\hlstd{@Input T}\hlsym{,}\hlstd{p}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hspace*{\fill}\\
+\hlslc{// variables bounds}\hspace*{\fill}\\
+\hlstd{@PhysicalBounds T in }\hlsym{{[}}\hlstd{}\hlnum{0}\hlstd{}\hlsym{:{*}{[};}\hspace*{\fill}\\
+\hlstd{@PhysicalBounds p in }\hlsym{{[}}\hlstd{}\hlnum{0}\hlstd{}\hlsym{:}\hlstd{}\hlnum{1}\hlstd{}\hlsym{{]};}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@Function}\hlsym{\{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwb{const real }\hlstd{E0 }\hlsym{=}\hlstd{\ \ }\hlsym{}\hlstd{}\hlnum{460.00}\hlstd{E9 }\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwb{const real }\hlstd{B}\hlstd{\ \ }\hlstd{}\hlsym{=}\hlstd{\ \ \ \ }\hlsym{}\hlstd{}\hlnum{0.04}\hlstd{E9 }\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwb{const real }\hlstd{T0 }\hlsym{=}\hlstd{\ \ }\hlsym{}\hlstd{}\hlnum{962.00}\hlstd{\ \ \ }\hlnum{}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwb{const real }\hlstd{C}\hlstd{\ \ }\hlstd{}\hlsym{=}\hlstd{\ \ \ \ }\hlsym{}\hlstd{}\hlnum{3.57}\hlstd{\ \ \ }\hlnum{}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{E }\hlsym{= (}\hlstd{E0}\hlsym{{-}(}\hlstd{B}\hlsym{{*}}\hlstd{T}\hlsym{{*}}\hlstd{}\hlkwd{exp}\hlstd{}\hlsym{({-}}\hlstd{T0}\hlsym{/}\hlstd{T}\hlsym{))){*}}\hlstd{}\hlkwd{exp}\hlstd{}\hlsym{({-}}\hlstd{C}\hlsym{{*}}\hlstd{p}\hlsym{);}\hspace*{\fill}\\
+\hlstd{}\hlsym{\} }\hlstd{}\hlslc{// end of function}\hlstd{}\hspace*{\fill}\\
+\mbox{}
+\normalfont

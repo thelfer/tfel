@@ -1,0 +1,11 @@
+/*!
+ * \file  mfront/include/MFront/Castem/castem.doxygen
+ * \brief This file documents the castem namespace.
+ */
+
+/*!
+ * \namespace castem
+ * \brief the namespace castem contains material related to the MFront
+ * interface to the [Cast3M](http://www-cast3m.cea.fr/) finite
+ * element solver.
+ */

@@ -1,0 +1,97 @@
+/*!
+ * \file   FiniteSingleCrystal.mfront
+ * \brief  
+ * \author Jean-Michel Proix - Helfer Thomas
+ * \date   20 mars 2014
+ */
+
+@DSL    ImplicitFiniteStrain;
+@Behaviour FiniteStrainSingleCrystal;
+@Author JMP;
+@Description{
+  "Test d'implantation d'une loi "
+  "singlecrystalline en grandes déformations"
+}
+
+@ModellingHypothesis Tridimensional;
+@OrthotropicBehaviour;
+@RequireStiffnessTensor;
+@Brick FiniteStrainSingleCrystal;
+
+@CrystalStructure FCC;
+@SlidingSystem <0,1,-1>{1,1,1};
+@InteractionMatrix{1,1,0.6,1.8,1.6,12.3,1.6};
+
+@AbaqusOrthotropyManagementPolicy[abaqus] MFront;
+
+@Algorithm NewtonRaphson;
+@Theta 1.;
+@Epsilon 1.e-11;
+
+@AuxiliaryStateVariable real p[Nss];
+@AuxiliaryStateVariable real a[Nss];
+
+@MaterialProperty real m;
+@MaterialProperty real K;
+@MaterialProperty real C;
+@MaterialProperty real R0;
+@MaterialProperty real Q;
+@MaterialProperty real b;
+@MaterialProperty real d1;
+
+@Integrator{
+  // increment de déformation plastique
+  real agi[Nss];
+  real pei[Nss];
+  real hsi[Nss] ;
+  real expi[Nss] ;
+  real sgn[Nss] ;
+  // boucle pour calculer une seule fois l'exponentielle
+  for(unsigned short i=0;i!=Nss;++i){
+    agi[i] = abs(dg[i]);
+    expi[i]=exp(-b*(p[i]+agi[i]));
+    pei[i] = Q*(1.-expi[i]) ;
+  }
+  for(unsigned short i=0;i!=Nss;++i){
+    real Rp = R0;
+    for(unsigned short j=0;j!=Nss;++j){
+      Rp += ss.him(i,j)*pei[j] ;
+    }
+    const real tau = ss.mu[i] | M ;
+    const real va  = (dg[i]-d1*a[i]*agi[i])/(1.+d1*agi[i]);
+    const real tma = tau-C*(a[i]+va) ;
+    const real tmR = abs(tma)-Rp;
+    if (tmR>0.){
+      sgn[i] =tma/abs(tma);
+      hsi[i] = dt*pow(tmR/K,m-1)/K;
+      // équation implicite
+      fg[i] -= hsi[i]*tmR*sgn[i];
+    } else {
+      sgn[i] = 1.;
+      hsi[i] = 0.;
+    }
+  }
+  for(unsigned short i=0;i!=Nss;++i){
+    if(hsi[i]>0){
+      const real Hsi= hsi[i]*m;
+      const real dgsdalfai = -C*Hsi ;
+      const real dalfaidgi = (1-d1*a[i]*sgn[i])/(1+d1*agi[i])/(1+d1*agi[i]) ;
+      const real dgsdRi    = -Hsi*sgn[i];
+      // terme du jacobien
+      dfg_ddeel(i)  = -Hsi*(ss.mu[i]|dM_ddeel);
+      dfg_ddg(i,i) -= dgsdalfai*dalfaidgi ;
+      for(unsigned short j=0;j!=Nss;++j){
+	const real dRsdpj = b*Q*ss.him(i,j)*expi[j] ;    
+	const real dgsdgj = dgsdRi*dRsdpj*sgn[j];
+	dfg_ddg(i,j) -=  dgsdgj ;
+      }
+    }
+  }
+} // end of @Integrator
+
+@UpdateAuxiliaryStateVars{
+  for(unsigned short i=0;i!=Nss;++i){
+    p[i]+=abs(dg[i]);
+    a[i]+=(dg[i]-d1*a[i]*abs(dg[i]))/(1.+d1*abs(dg[i]));
+  }
+}

@@ -1,0 +1,34 @@
+@DSL IsotropicMisesCreep;
+@Author Helfer Thomas;
+@Date 20/01/2016;
+@Behaviour Norton2;
+@Description{
+  This file implements the Norton law.
+  This behaviour uses the variation of the Von Mises
+  stress to compute an appropriate time step scaling factor.
+}
+
+@Epsilon 1.e-11;
+@MaximalTimeStepScalingFactor 1.2;
+@LocalVariable stress sigeq0;
+
+@InitLocalVariables{
+  sigeq0 = sigmaeq(sig);
+}
+
+@FlowRule{
+  constexpr const real A = 8.e-67;
+  constexpr const real E = 8.2;
+  const real tmp = A*pow(seq,E-1);
+  f       = tmp*seq;
+  df_dseq = E*tmp;
+}
+
+@APosterioriTimeStepScalingFactor {
+  constexpr const stress dsigeq_max = 2e6;
+  const stress sigeq = sigmaeq(sig);
+  if (max(sigeq, sigeq0)>stress(1e6)){
+    const stress dsigeq = max(abs(sigeq-sigeq0),stress(1e6));
+    return {dsigeq < 1.01*dsigeq_max, dsigeq_max / dsigeq};
+  }
+}

@@ -1,0 +1,2 @@
+import std_@TFEL_SUFFIX_FOR_PYTHON_MODULES@
+from ._tfel import *

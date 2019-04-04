@@ -1,0 +1,101 @@
+@Parser Implicit;
+@Behaviour Chaboche;
+@Algorithm NewtonRaphson_NumericalJacobian;
+
+@Theta 1. ;
+@Epsilon 1.e-12;
+
+@MaterialProperty real young; /* mandatory for castem */
+young.setGlossaryName("YoungModulus");
+@MaterialProperty real nu;    /* mandatory for castem */
+nu.setGlossaryName("PoissonRatio");
+
+@MaterialProperty stress R_inf;
+@MaterialProperty stress R_0;
+@MaterialProperty real b;
+@MaterialProperty real k;
+@MaterialProperty real w;
+@MaterialProperty stress C_inf[2];
+@MaterialProperty real   g_0[2];
+@MaterialProperty real   a_inf;
+
+@Includes{
+#include"TFEL/Material/Lame.hxx"
+}
+
+@StateVariable strain    p;
+@StateVariable StrainStensor a[2];
+
+@LocalVariable stress lambda;
+@LocalVariable stress mu;
+@LocalVariable stress Fel;
+
+/* Initialize Lame coefficients */
+@InitLocalVars{
+  using namespace tfel::material::lame;
+  lambda = computeLambda(young,nu);
+  mu     = computeMu(young,nu);
+  // elastic prediction
+  StressStensor sigel(lambda*trace(eel+deto)*Stensor::Id()+2*mu*(eel+deto));
+  const real tmpC0 = (1.+(k-1.)*exp(-w*p));
+  for(unsigned short i=0;i!=2;++i){
+    const stress Cel  = C_inf[i]*tmpC0;
+    sigel            -= 2*Cel*a[i]/3;
+  }
+  const real seqel = sigmaeq(sigel);
+  const real Rpel  = R_inf + (R_0-R_inf)*exp(-b*p) ;
+  Fel   = seqel - Rpel ;
+} 
+
+@ComputeStress{
+  sig = lambda*trace(eel)*Stensor::Id()+2*mu*eel;
+} 
+
+@Integrator{
+  if(Fel > 0){
+    const real eps           = 1.e-12;
+    // Les variables post-fixee par un _ sont exprimees les valeurs en
+    // t+theta*dt
+    const strain p_           = p +theta*dp ;
+    const stress Rp_          = R_inf + (R_0-R_inf)*exp(-b*p_) ;
+    // ces exponentielles sont communes aux deux ecrouissages
+    const real tmpC           = (1.+(k-1.)*exp(-w*p_));
+    const real tmpG           = (a_inf+(1-a_inf)*exp(-b*p_));
+    StressStensor sr_         = deviator(sig);
+    StrainStensor a_[2];
+    real g_[2];
+    for(unsigned short i=0;i!=2;++i){
+      const stress C_         = C_inf[i]*tmpC;
+      g_[i]                   = g_0[i]*tmpG;
+      a_[i]                   = a[i]+theta*da[i];
+      const StressStensor X_  = 2*C_*a_[i]/3;
+      sr_                    -= X_;
+    }
+    Stensor n_(real(0));
+    const stress        seq_ = sigmaeq(sr_);
+    if(seq_>eps*young){
+      n_ = 1.5*sr_/seq_;
+    }
+    feel += dp*n_;
+    fp    = (seq_-Rp_)/young;
+    for(unsigned short i=0;i!=2;++i){
+      fa[i]  -= dp*(n_-g_[i]*a_[i]);
+    }
+  }
+  feel -= deto;
+} 
+
+@TangentOperator{
+  using namespace tfel::material::lame;
+  if((smt==ELASTIC)||(smt==SECANTOPERATOR)){
+    computeElasticStiffness<N,Type>::exe(Dt,lambda,mu);
+  } else if (smt==CONSISTENTTANGENTOPERATOR){
+    StiffnessTensor De;
+    Stensor4 Je;
+    computeElasticStiffness<N,Type>::exe(De,lambda,mu);
+    getPartialJacobianInvert(Je);
+    Dt = De*Je;
+  } else {
+    return false;
+  }
+}

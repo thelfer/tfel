@@ -1,0 +1,78 @@
+@DSL Implicit;
+@Behaviour ImplicitNorton_Broyden2;
+@Algorithm Broyden2;
+@Author Helfer Thomas;
+@Date   21 sep 2008;
+@Description{
+  "The norton law integrated using "
+  "an implicit scheme."
+  "The non linear system is solved "
+  "using the second Broyden Algorithm"
+}
+
+@Epsilon 1.e-12;
+
+@MaterialProperty stress young;
+young.setGlossaryName("YoungModulus");
+@MaterialProperty real nu;
+nu.setGlossaryName("PoissonRatio");
+
+@LocalVariable real lambda;
+@LocalVariable real mu;
+// store for the Von Mises stress 
+// for the tangent operator
+@LocalVariable real seq;
+// store the derivative of the creep function
+// for the tangent operator
+@LocalVariable real df_dseq;
+// store the normal tensor
+// for the tangent operator
+@LocalVariable Stensor n;
+
+@StateVar real p;
+p.setGlossaryName("EquivalentViscoplasticStrain");
+
+/* Initialize Lame coefficients */
+@InitLocalVars{
+  lambda = computeLambda(young,nu);
+  mu = computeMu(young,nu);
+} // end of @InitLocalVars
+
+@IsTangentOperatorSymmetric true;
+@TangentOperator{
+  if((smt==ELASTIC)||(smt==SECANTOPERATOR)||
+     (smt==CONSISTENTTANGENTOPERATOR)){
+    Dt = lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
+    if(smt==CONSISTENTTANGENTOPERATOR){
+      const real seq_e = seq+3*mu*theta*dp;
+      if(seq_e>1.e-8*young){
+	const real tmp =  dp/seq_e;
+	const Stensor4& M = Stensor4::M();
+	Dt += -4*mu*mu*theta*(tmp*M-(tmp-df_dseq*dt/(1+3*mu*theta*dt*df_dseq))*(n^n));
+      }
+    }
+  } else {
+    return false;
+  }
+}
+
+@ComputeStress{
+  sig = lambda*trace(eel)*Stensor::Id()+2*mu*eel;
+} // end of @ComputeStresss
+
+@Integrator{
+  TFEL_CONSTEXPR const real cste = real{3}/real{2};
+  static Stensor4 M(Stensor4::Id()-1./3.*(Stensor::Id()^Stensor::Id()));
+  const real A = 8.e-67;
+  const real E = 8.2;
+  seq = sigmaeq(sig);
+  const real tmp = A*pow(seq,E-1);
+  df_dseq        = E*tmp;
+  real inv_seq(0);
+  if(seq > 1.){
+    inv_seq = 1/seq;
+  }
+  n     = cste*deviator(sig)*inv_seq;
+  feel  += dp*n-deto;
+  fp    -= tmp*seq*dt;
+} // end of @Integrator

@@ -1,0 +1,8 @@
+@DSL Implicit;
+@Author Thomas Helfer;
+@Date 25/10/2017;
+@Behaviour DDIF2_2;
+
+@Brick DDIF2 {
+ handle_pressure_on_crack_surface : true
+};

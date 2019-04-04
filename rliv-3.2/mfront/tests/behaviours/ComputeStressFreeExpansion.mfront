@@ -1,0 +1,32 @@
+@Behaviour ComputeStressFreeExpansion;
+@Author Helfer Thomas;
+@Date 23/11/06;
+@Description{
+ Test of the @ComputeStressFreeExpansion keyword
+}
+
+@MaterialProperty stress young;
+young.setGlossaryName("YoungModulus");
+@MaterialProperty real nu;
+nu.setGlossaryName("PoissonRatio");
+
+@ExternalStateVariable real tau;
+tau.setGlossaryName("BurnUp (at.%)");
+
+@Parameter Ctau = 0.6e-2;
+Ctau.setEntryName("SolidSwellingCoefficient");
+
+@ComputeStressFreeExpansion{
+  dl0_l0 += Ctau*tau*StrainStensor::Id();
+  dl1_l0 += Ctau*(tau+dtau)*StrainStensor::Id();
+}
+
+@ProvidesSymmetricTangentOperator;
+@Integrator{
+  const stress lambda = computeLambda(young,nu);
+  const stress mu = computeMu(young,nu);
+  sig = lambda*trace(eto+deto)*StrainStensor::Id()+2*mu*(eto+deto);
+  if(computeTangentOperator_){
+    Dt = lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
+  }
+}

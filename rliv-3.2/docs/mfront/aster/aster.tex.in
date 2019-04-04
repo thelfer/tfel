@@ -1,0 +1,429 @@
+\documentclass[rectoverso,pleiades,pstricks,leqno,anti,projet]{note_technique_2010}
+
+% \usepackage{draftcopy}
+% \draftcopySetGrey{0.8}
+% \draftcopyName{Version provisoire}{80}
+
+\usepackage[dvips]{graphicx}
+\usepackage[dvips,breaklinks]{hyperref}
+
+\usepackage{mathematiques}
+\usepackage{mecanique}
+\usepackage{couleurs}
+\usepackage{presentation}
+
+\usepackage{pst-plot}
+\usepackage{array}
+\usepackage{subfigure}
+\usepackage{relsize}
+\usepackage{multind}
+
+% one column index
+\makeatletter
+\def\printindex#1#2{\section*{#2}
+\addcontentsline{toc}{section}{#2}
+\@input{#1.ind}}
+\makeatother
+
+\usepackage[frenchb]{babel}
+
+\newcommand{\pleiades}{\texttt{pleiades}}
+\newcommand{\TFEL}{\texttt{tfel}}
+\newcommand{\mfront}{\texttt{mfront}}
+\newcommand{\licos}{\texttt{licos}}
+\newcommand{\cyrano}{\texttt{cyrano}}
+\newcommand{\galileo}{\texttt{galileo}}
+\newcommand{\castem}{\texttt{Cast3M}}
+\newcommand{\gibiane}{\texttt{gibiane}}
+\newcommand{\tmfft}{\texttt{TMFFT}}
+\newcommand{\aster}{\href{http://www.code-aster.org/}{\texttt{Aster}}}
+\newcommand{\pycastem}{\texttt{pyCast3M}}
+\newcommand{\umat}{\texttt{umat}}
+\newcommand{\sirius}{\texttt{sirius}}
+\newcommand{\fortran}{\texttt{fortran}}
+
+\newcommand{\cmake}{\href{http://www.cmake.org/}{\texttt{cmake}}}
+\newcommand{\autotools}{\href{http://fr.wikipedia.org/wiki/Autotools}{\texttt{autotools}}}
+\newcommand{\python}{\href{http://python.org}{\texttt{python}}}
+\newcommand{\gnuplot}{\href{http://www.gnuplot.info}{\texttt{gnuplot}}}
+\newcommand{\latex}{\href{http://www.latex-project.org}{\LaTeX2e{}}}
+\newcommand{\make}{\href{http://www.gnu.org/software/make/}{\texttt{make}}}
+\newcommand{\doxygen}{\href{http://www.stack.nl/~dimitri/doxygen/}{\texttt{doxygen}}}
+\newcommand{\valgrind}{\href{http://www.valgrind.org/}{\texttt{valgrind}}}
+
+\newcommand{\mkey}[1]{\index{amkeys}{#1@\symbol{64}#1}{\texttt{@#1}}}
+\newcommand{\mkeyb}[2]{\index{amkeys}{#1@\symbol{64}#1}{\texttt{@#2}}}
+
+\newcommand{\header}[1]{\index{aheaders}{#1}{\texttt{#1}}}
+\newcommand{\headerb}[2]{\index{aheaders}{#1}{\texttt{#2}}}
+
+\newcommand{\tfel}[1]{\index{atfel}{#1}{\texttt{#1}}}
+\newcommand{\tfelb}[2]{\index{atfel}{#1}{\texttt{#2}}}
+
+\newcommand{\env}[1]{\index{aenv}{#1}{\texttt{#1}}}
+\newcommand{\envb}[2]{\index{aenv}{#1}{\texttt{#2}}}
+
+\newcommand{\moption}[1]{\texttt{-{}-#1}}
+
+\newcommand{\bigO}[1]{\ensuremath{\mathop{}\mathopen{}O\mathopen{}\left(#1\right)}}
+
+%c from texinfo.tex
+\def\ifmonospace{\ifdim\fontdimen3\font=0pt }
+
+%c C plus plus
+\def\cpp{%
+\ifmonospace%
+    C++%
+\else%
+    C\kern-.1667em\raise.30ex\hbox{\smaller{++}}%
+\fi%
+\spacefactor1000 }
+
+\newcommand{\varcpp}[1]{\texttt{#1}}
+
+\newcommand{\sigmaH}{\ensuremath{\sigma_{H}}}
+
+\newcommand{\cea}{CEA}
+\newcommand{\windows}{\href{http://www.microsoft.com/france/windows/default.mspx}{\texttt{Windows}}}
+\newcommand{\unix}{\href{http://www.kernel.org/}{\texttt{unix}}}
+\newcommand{\msys}{\href{http://www.mingw.org/wiki/MSYS}{\texttt{msys}}}
+\newcommand{\cygwin}{\href{http://www.cygwin.com/}{\texttt{cygwin}}}
+\newcommand{\linux}{\href{http://www.kernel.org/}{\texttt{linux}}}
+\newcommand{\debian}{\href{http://www.debian.org/}{\texttt{Debian}}}
+\newcommand{\ubuntu}{\href{http://www.ubuntu.com}{\texttt{Ubuntu}}}
+\newcommand{\redhat}{\href{http://www.redhat.com}{\texttt{Red Hat}}}
+\newcommand{\mandriva}{\href{http://www.mandriva.com}{\texttt{Mandriva}}}
+\newcommand{\excel}{\href{http://www.microsoft.com/france/office/2007/programs/excel/overview.mspx}{\texttt{Microsoft Office Excel}}}
+
+\newcommand{\debutpas}[1]{\ensuremath{\left.#1\right|_{t}}}
+\newcommand{\milieupas}[1]{\ensuremath{\left.#1\right|_{t+\theta\, \Delta\, t}}}
+\newcommand{\finpas}[1]{\ensuremath{\left.#1\right|_{t+\Delta\, t}}}
+\newcommand{\demipas}[1]{\ensuremath{\left.#1\right|_{t+\frac{\Delta\, t}{2}}}}
+
+\newcommand{\code}[1]{
+  \psframebox[linecolor=ceaorange,shadow=true,blur=true]{
+    \begin{minipage}[htbp]{1.0\linewidth}
+      \ttfamily\small#1
+    \end{minipage}
+  }
+}
+
+\newcommand{\bash}[1]{
+  \begin{center}
+    \begin{minipage}{0.8\linewidth}
+      \footnotesize{}
+      \texttt{\$#1}
+    \end{minipage}
+  \end{center}
+}
+
+\input{LSC}
+
+\auteurs{T.~Helfer}
+\redacteur{T.~Helfer}
+\verificateur{}
+\approbateur{R.~Masson}
+\emetteur{E.~Touron}
+
+\titre{Interface \aster{} aux lois de comportements
+  mécaniques dans \mfront{}}
+
+\date{2013}
+% \numero{12-014}
+\indice{0}
+% \dateversion{09/2012}
+\numeroaffaire{A-SICOM-A1-01}
+\domaine{DEN/DISN/SIMU}
+% \accords{tripartite}
+% \clients{AREVA - EDF}
+\programmerecherche{SICOM}
+\classification{DO}
+\motsclefs{
+  \mfront{} - \pleiades{}
+}
+
+% \codebarre{images/code_barre}
+% \diffusionexterne{
+% {EDF/R\&D}              & O. Marchand     & 1 & Diffusion par\\
+% {EDF/R\&D}              & P. Vasseur      & 1 & courriel     \\
+% {EDF/R\&D/MMC}          & P. Ollar         & 1 & \\
+% {EDF/R\&D/MMC/CPM}      & N. Prompt       & 1 & \\
+%                         & N. Barnel       & 1 & \\
+% {EDF/R\&D/MMC/CPM}      & G. Thouvenin    & 1 & \\
+%                         & R. Largenton    & 1 & \\
+%                         & C. Petry        & 1 & \\
+% EDF/SEPTEN              & N. Waeckel      & 1 & \\
+%                         & P. Hemmerich    & 1 & \\
+%                         & H. Billat       & 1 & \\
+%                         & C. Bernaudat    & 1 & \\
+% AREVA NP/LA DEFENSE     & L. Catalani     & 1 & \\
+%                         & L. Brunel       & 1 & \\
+% AREVA NP/LYON           & P. Melin        & 1 & \\
+%                         & V. Bessiron     & 1 & \\
+%                         & C. Garnier      & 1 & \\
+%                         & V. Garat        & 1 & \\
+%                         & F. Arnoux       & 1 &
+% }
+
+\diffusioninterne{
+}
+
+% \signatures{-0.}{-39.2}{0.12}{images/signatures.eps}
+
+\stylebib{@abs_top_srcdir@/docs/tex/texmf/bibtex/fr-insa}
+\fichierbib{@abs_top_srcdir@/docs/tex/texmf/bibtex/bibliographie}
+
+\resumecea{}
+
+\makeindex{aenv}
+\makeindex{atfel}
+\makeindex{aheaders}
+\makeindex{amkeys}
+
+\begin{document}
+
+Cette annexe décrit l'interface \aster{}.
+
+\subsection{Prototype des fonctions générées par l'interface aster}
+
+\begin{figure}[htbp]
+  \centering
+  \begin{tabular}[htbp]{lll}
+    & {\tt {\color{purple} SUBROUTINE} {\color{green} aster} ( }&{\tt  STRESS, STATEV, DDSDDE}\\
+    {\color{ceabluecurve} \&} &                   & {\tt STRAN, DSTRAN, DTIME,}\\
+    {\color{ceabluecurve} \&} &                   & {\tt TEMP, DTEMP, PREDEF, DPRED,}\\
+    {\color{ceabluecurve} \&} &                   & {\tt NTENS, NSTATV,}\\
+    {\color{ceabluecurve} \&} &                   & {\tt PROPS, NPROPS,}\\
+    {\color{ceabluecurve} \&} &                   & {\tt DROT, PNEWDT, NUMMOD,}\\
+   \end{tabular}
+  \caption{Prototype de la fonction {\tt aster}.}
+  \label{fig:aster:prototype}
+\end{figure}
+
+\begin{longtable}[htpb]{|p{2.cm}|p{4.cm}|p{9cm}|}
+  \endfirsthead \hline \multicolumn{3}{|c|}{Suite de la page
+    précédente}\\ \hline \endhead \hline \multicolumn{3}{|r|}{{\em Suite
+      à la page suivante}}\\ \hline \endfoot \endlastfoot \hline {\tt
+    STRESS } & REAL*8(NTENS) & tenseur des contraintes. En entrée, ce
+  tableau donne le tenseur des contraintes à $t_{0}$. En sortie, ce
+  tableau doit contenir le tenseur des contraintes à $t_{0}+\Delta t$ \\
+  {\tt STATEV } & REAL*8(*) & variables internes. En entrée, ce tableau
+  contient les variables internes à $t_{0}$. En sortie, il doit contenir
+  les variables internes à $t_{0}+\Delta t$ \\
+  {\tt DDSDDE } & REAL*8(NTENS,NTENS) & matrice jacobienne du modèle
+  (matrice de Hooke tangente) à $t_{0}+\Delta t$. \\
+  {\tt STRAN } & REAL*8(NTENS) & tenseur des déformations totales à
+  $t_{0}$ \\
+  {\tt DSTRAN } & REAL*8(NTENS) & tenseur des incréments de déformation
+  totale par rapport a l'état de reference à $t_{0}$ \\
+  {\tt DTIME } & REAL*8 & DTIME = $\Delta t$ est l'incrément de temps \\
+  {\tt TEMP } & REAL*8 & température à $t_{0}$ \\
+  {\tt DTEMP } & REAL*8 & incrément de température à $t_{0}+\Delta t$ \\
+  {\tt PREDEF } & REAL*8(*) & vecteur des paramètres externes de la loi
+  de comportement, valeurs à $t_{0}$ \\
+  {\tt DPRED } & REAL*8(*) & incréments des paramètres externes à
+  $t_{0}+\Delta t$ \\
+  {\tt NTENS } & INTEGER & nombre de composantes du tenseur des
+  contraintes\\ {\tt NSTATV } & INTEGER & nombre de variables internes
+  \\
+  {\tt PROPS } & REAL*8(NPROPS) & vecteur des propriétés du matériau. \\
+  {\tt NPROPS } & INTEGER & nombre de propriétés du matériau \\
+  {\tt DROT } & REAL*8(3,3) & matrice d'incréments de rotation. Cette
+  matrice décrit la rotation sur le pas de temps de la base dans
+  laquelle sont exprimés les tenseurs de contraintes et de déformations.
+  \\
+  {\tt PNEWDT } & REAL*8 & rapport entre le nouveau pas de temps suggéré
+  et le pas de temps donné en entrée \\
+  {\tt NUMMOD } & INTEGER & hypothèse de modélisation : 3 pour le 3D,
+  4 pour l'axisymmétrique, 5 pour les contraintes planes et 6 pour
+  les déformation planes. \\
+  \hline
+  \caption{Arguments de la fonction {\texttt aster}}
+  \label{tab:aster:argument}
+\end{longtable}
+
+Le type entier {\tt INTEGER} dépend de la plateforme~: \aster{} utilise
+des directives de compilation spéficique pour que ce type soit de la
+taille d'un pointeur.
+
+En \cpp{}, nous noterons {\tt Aster\-Real} le type numérique utilisé
+par \aster{} et {\tt Aster\-Int} le type entier.
+
+\subsection{Conventions}
+
+\subsubsection{Choix du type de calcul}
+
+Le premier élément du tableau \varcpp{DDSOE} permet de préciser le
+type de calcul à effectuer et le type de matrice de raideur
+attendue.
+
+Une valeur strictement négative correspond à un calcul d'une matrice
+de prédiction. Dans ce cas, il n'y a pas d'intégration de la loi de
+comportement. Les valeurs supportées sont~:
+\begin{itemize}
+\item -1, qui correspond au calcul de la matrice d'élasticité initiale
+  (non endommagée)~;
+\item -2, qui correspond au calcul de la matrice sécante (matrice
+  d'élasticité endommagée)~;
+\item -3, qui correspond au calcul de la matrice tangente.
+\end{itemize}
+
+Une valeur positive ou nulle du premier élément du tableau
+\varcpp{DDSOE} conduit à l'intégration de la loi de comportement sur
+le pas de temps. Si cette intégration s'effectue avec succès, une
+matrice de raideur peut être calculée. Le type de matrice calculée
+dépend de la valeur du premier élément du tableau \varcpp{DDSOE}~:
+\begin{itemize}
+\item 1, correspond au calcul de la matrice d'élasticité initiale
+  (non endommagée)~;
+\item 2, correspond au calcul de la matrice sécante (matrice
+  d'élasticité endommagée)~;
+\item 3, correspond au calcul de la matrice tangente~;
+\item 4, correspond au calcul de la matrice tangente cohérente~;
+\end{itemize}
+
+\subsubsection{Valeur de retour}
+
+La loi de comportement a rencontré une erreur grave si la valeur de
+\varcpp{PNEWDT} est inférieure à \(0\). Différents cas peuvent se
+présenter~:
+\begin{itemize}
+  \item l'intégration n'a pas convergé~;
+  \item le nombre de valeurs transmises pour les variables
+  internes ou les propriétés matériau n'est pas celui attendu~;
+  \item un borne physique a été atteinte~;
+  \item etc...
+\end{itemize}
+
+Plus précisément, nous avons les correspondances suivantes~:
+\begin{itemize}
+\item \(-2\)~: exception de type {\tt AsterException}. Cette exception
+  est lancée par l'interface \aster{} à la loi de comportement. Elle
+  peut signifier de nombreuses choses~: par exemple, elle est lancée
+  quand le nombre de propriétés matériau n'est pas celui attendu,
+\item \(-3\)~: exception de type {\tt OutOfBoundsException}. Cette
+  exception est lancée quand~:
+  \begin{itemize}
+  \item une variable est hors des bornes physiques~;
+  \item une variable est hors des bornes de corrélation de la loi et
+    que la politique de dépassement des bornes est égale à {\tt
+      'ARRET} (voir paragraphe~\ref{sec:gestion-des-bornes}).
+  \end{itemize}
+\item \(-4\)~: exception de type {\tt DivergenceException}. Cette
+  exception est lancée quand l'algorithme d'intégration de la loi a
+  échoué.
+\item \(-5\)~: exception de type {\tt MaterialException}. Il s'agit
+  d'une exception issue d'une fonction de la librairie {\tt
+    TFEL/Material}.
+\item \(-6\)~: exception de type {\tt TFELException}. Il s'agit du
+  plus haut niveau dans la hiérarchie des exceptions de {\tt TFEL}.
+\item \(-7\)~: exception de type {\tt exception}. Il s'agit d'une
+  exception de la librairie standard.
+\item \(-8\)~: exception de type inconnu.
+\end{itemize}
+
+Par défaut, un message d'erreur est affiché quand une exception est
+captée. Ce comportement est modifiable à l'aide du mot clé
+\mkey{AsterErrorReport}, décrit au
+paragraphe~\ref{sec:affich-des-erre}.
+
+\subsection{Gestion des bornes}
+\label{sec:gestion-des-bornes}
+
+\aster{} permet à l'utilisateur de choisir le comportement à adopter
+en cas de dépassement des bornes de la corrélation à l'aide du mot-clé
+{\tt VERI\_BORNE}.
+
+Ce mot clé a trois options~:
+\begin{itemize}
+\item {\tt SANS} ignore les dépassements de borne~;
+\item {\tt MESSAGE} affiche un message d'avertissement~;
+\item {\tt ARRET} provoque une erreur lors de l'intégration.
+\end{itemize}
+
+\subsection{Mots clés spécifiques}
+
+\subsubsection{Vérification de la matrice tangente calculée par perturbation}
+
+L'interface \aster{} propose de vérifier la matrice tangente
+calculée par comparaison à une matrice tangente obtenue par
+perturbation.
+
+Le mot clé \mkey{AsterCompareToNumericalTangentOperator} qui doit être
+suivi d'une valeur booléenne \varcpp{true} ou \varcpp{false} demande à
+ce que cette comparaison soit effectuée (ou pas).
+
+La matrice tangente numérique est obtenue par différences finies
+centrées. Le valeur de la perturbation utilisée pour ce calcul peut être
+spécifié par le mot clé
+\mkeyb{AsterStrainPerturbationValue}{Aster\-Strain\-Perturbation\-Value}
+qui est suivi par la valeur à utiliser. Par défaut, cette
+perturbation est prise égale à \(10^{-6}\).
+
+La comparaison entre la matrice jacobienne
+\(\deriv{\Delta\,\tsigma}{\Delta\,\tepsilonto}\) et son approximation
+numérique
+\(\underset{\sim}{\deriv{\Delta\,\tsigma}{\Delta\,\tepsilonto}}\) est
+faite terme à terme et l'on retient comme erreur~:
+\[
+\varepsilon =
+\underset{i,j}{\mathrm{max}}\left|\deriv{\Delta\,\tsigma}{\Delta\,\tepsilonto}\paren{i,j}-\underset{\sim}{\deriv{\Delta\,\tsigma}{\Delta\,\tepsilonto}}\paren{i,j}\right|
+\]
+
+Cette erreur est comparée à un critère que l'utilisateur peut
+définir par le mot clé
+\mkeyb{AsterTangentOperatorComparisonCriterium}{Aster\-Tangent\-Operator\-Comparison\-Criterium}.
+La valeur par défaut de ce critère est de \(10^{7}\).
+
+Si l'erreur est supérieure au critère, la valeur de l'erreur, un
+pourcentage relatif de l'erreur\footnote{Ce pourcentage relatif de
+  l'erreur est calculé ainsi~:
+  \[
+  \Frac{100\,\varepsilon}{\Frac{1}{2}\mathrm{max}\paren{\underset{i,j}{\mathrm{max}}\left|\deriv{\Delta\,\tsigma}{\Delta\,\tepsilonto}\paren{i,j}\right|,\underset{i,j}{\mathrm{max}}\left|\underset{\sim}{\deriv{\Delta\,\tsigma}{\Delta\,\tepsilonto}}\paren{i,j}\right|}}
+  \]},
+la jacobienne calculée par l'utilisateur et son approximation
+numérique sont affichés.
+
+\subsubsection{Stockage de la matrice de raideur à la suite des variables internes}
+
+Le mot clé \mkey{AsterSaveTangentOperator} qui doit être suivi d'une
+valeur booléenne \varcpp{true} ou \varcpp{false} demande à ce que la
+matrice de raideur soit stockée à la suite des variables internes (ou
+pas).
+
+\subsubsection{Affichage des erreurs d'intégration}
+\label{sec:affich-des-erre}
+
+Par défaut, \mfront{} affiche sur la sortie standard des messages en
+cas d'erreur d'intégration.
+
+Le mot clé \mkey{AsterErrorReport}, qui doit être suivi d'une valeur
+booléenne \varcpp{true} ou \varcpp{false}, permet de modifier ce
+comportement.
+
+\subsubsection{Génération automatique d'un fichier {\tt mtest} en cas d'échec}
+
+Le mot clé
+\mkeyb{AsterGenerateMTestFileOnFailure}{Aster\-Generate\-MTest\-File\-On\-Failure}
+est suivi d'une valeur booléenne. Si cette valeur est vraie, un
+fichier {\tt mtest} sera généré automatiquement en cas d'échec de
+l'intégration.
+
+
+\subsubsection{Choix d'une formulation grandes transformations}
+
+Pour les lois en grandes transformations, le mot clé
+\mkey{AsterFiniteStrainFormulation} permet de sélection une des
+formulations grandes transformations disponibles dans \aster{}.
+
+Ce mot clé est suivi d'une des valeurs suivantes~:
+\begin{itemize}
+\item {\tt SIMO\_MIEHE} (le défaut).  Dans ce cas, la loi devra être
+  déclarée avec le mot clé {\tt DEFORMATION=SIMO\_MIEHE} dans les
+  opérateurs mécaniques.
+\item {\tt GROT\_GDEP} ou {\tt TotalLagrangian}. Dans ce cas, la loi
+  devra être déclarée avec le mot clé {\tt DEFORMATION=GROT\_GDEP}
+  dans les opérateurs mécaniques.
+\end{itemize}
+
+\end{document}

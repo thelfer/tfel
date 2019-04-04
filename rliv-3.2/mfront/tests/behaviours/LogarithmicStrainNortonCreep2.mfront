@@ -1,0 +1,54 @@
+@DSL Implicit;
+@Author Thomas Helfer;
+@Date   21/09/2008;
+@Behaviour LogarithmicStrainNortonCreep2;
+@Description{
+  This file implements the Norton law, described as:
+  "$$"
+  "\left\{"
+  "  \begin{aligned}"
+  "    \tepsilonto   &= \tepsilonel+\tepsilonvis \\"
+  "    \tsigma       &= \tenseurq{D}\,:\,\tepsilonel\\"
+  "    \tdepsilonvis &= \dot{p}\,\tenseur{n} \\"
+  "    \dot{p}       &= A\,\sigmaeq^{m}"
+  "  \end{aligned}"
+  "\right."
+  "$$"
+}
+
+@StrainMeasure Hencky;
+@Brick StandardElasticity;
+
+@ModellingHypotheses {".+"};
+@Epsilon 1.e-16;
+
+@MaterialProperty stress young;
+young.setGlossaryName("YoungModulus");
+@MaterialProperty real nu;
+nu.setGlossaryName("PoissonRatio");
+
+@LocalVariable stress mu;
+
+@StateVariable real    p;
+@PhysicalBounds p in [0:*[;
+
+/* Initialize Lame coefficients */
+@InitLocalVariables{
+  mu = computeMu(young,nu);
+} // end of @InitLocalVariables
+
+@Integrator{
+  const real A = 8.e-67;
+  const real E = 8.2;
+  const auto seq = sigmaeq(sig);
+  const auto tmp = A*pow(seq,E-1.);
+  const auto df_dseq = E*tmp;
+  const auto iseq = 1/(max(seq,real(1.e-12)*young));
+  const auto n = eval(3*deviator(sig)*(iseq/2));
+  feel += dp*n;
+  fp   -= tmp*seq*dt;
+  // jacobian
+  dfeel_ddeel += 2.*mu*theta*dp*iseq*(Stensor4::M()-(n^n));
+  dfeel_ddp    = n;
+  dfp_ddeel    = -2*mu*theta*df_dseq*dt*n;
+} // end of @Integrator

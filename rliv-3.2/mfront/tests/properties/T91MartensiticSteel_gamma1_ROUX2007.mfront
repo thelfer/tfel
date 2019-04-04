@@ -1,0 +1,25 @@
+@Parser   MaterialLaw ;
+@Material T91MartensiticSteel ;
+@Law      gamma1_ROUX2007 ;
+@Author   F. Milliard ;
+@Date     11/12/2013 ;
+@Description{
+  // gamma1 coeff d'écrouissage cinématique martensite T91
+  // [Roux 07]
+}
+
+// Input of law
+@Input T ;
+T.setGlossaryName("Temperature") ;
+
+// Output of law
+@Output gamma1 ;
+
+@PhysicalBounds T in [0.:*[;
+
+// Function
+@Function{
+  const real TC = T-273.15;
+  const real TC2 = TC  * TC  ;
+  gamma1 = ( 5.2240974189e-03 * TC2 -1.9711190861e+00 * TC +2.2969151367e+02 );
+} // end of Function

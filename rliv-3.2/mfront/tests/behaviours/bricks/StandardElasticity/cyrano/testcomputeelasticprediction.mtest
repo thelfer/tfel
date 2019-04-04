@@ -1,0 +1,24 @@
+@Author  Thomas Helfer;
+@Date 6/05/2016;
+@Description{
+  This file describes a tensile test along XX.
+};
+
+@ModellingHypothesis 'AxisymmetricalGeneralisedPlaneStress';
+@XMLOutputFile @xml_output@;
+@MaximumNumberOfSubSteps 1;
+@Behaviour<cyrano> @library@ @behaviour@;
+
+@ExternalStateVariable 'Temperature' {0:293.15,3600.:800};
+@ExternalStateVariable 'AxialStress' 0;
+
+@Real 'e0' 1.e-3;
+@ImposedStrain<function> 'ERR' 'e0*sin(t/900.)';
+
+@Times {0.,3600 in 20};
+
+@Real 'YoungModulus' 78.e9;
+@Real 'PoissonRatio'  0.3;
+@Test<function> 'SRR' 'YoungModulus*ERR'  1.e-3;
+@Test<function> 'ETT'         '-PoissonRatio*ERR' 1.e-8;
+@Test<function> 'AxialStrain' '-PoissonRatio*ERR' 1.e-8;

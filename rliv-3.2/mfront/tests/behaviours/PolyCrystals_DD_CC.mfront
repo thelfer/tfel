@@ -1,0 +1,220 @@
+@DSL RungeKutta;
+@Algorithm rk54;
+@Behaviour PolyCrystals_DD_CC;
+
+@Author Jean-Michel Proix;
+@Date   08/10/2014;
+@Description{
+  Polycristal BZ du modele DD_CC
+}
+@Epsilon 1.e-7 ;
+
+// Number of phases
+@IntegerConstant Np  = 30 ;
+// Number of sliding systems
+@IntegerConstant Nss = 12;
+
+@ModellingHypothesis Tridimensional;
+@OrthotropicBehaviour;
+@RequireStiffnessTensor;
+
+@MaterialProperty real b;
+@MaterialProperty real H ;
+@MaterialProperty real DeltaG_0 ;
+@MaterialProperty real tau_0;
+@MaterialProperty real tau_f;
+@MaterialProperty real gamma0;
+@MaterialProperty real pn;
+@MaterialProperty real omega_mob;
+@MaterialProperty real d;
+@MaterialProperty real d_lath;
+@MaterialProperty real y_at;
+@MaterialProperty real K_f;
+@MaterialProperty real K_self ;
+@MaterialProperty real k_b;
+@MaterialProperty real epsi_1;
+@MaterialProperty real Mu;
+
+// pour la matrice d'interaction
+@MaterialProperty real h0;
+@MaterialProperty real h1;
+@MaterialProperty real h2;
+@MaterialProperty real h3;
+@MaterialProperty real h4;
+@MaterialProperty real h5;
+
+@StateVariable real    pg;
+@StateVariable StrainStensor    epsg[Np];
+@StateVariable strain           omega[Nss*Np];
+@StateVariable StrainStensor    epsp;
+omega.setErrorNormalisationFactor(1.e-7);
+
+// pour utiliser les sytemes de glissement CC 
+// et aussi d'autres systemes de glissement (24)
+@Import "SlidingSystemsCC.mfront";
+@Import "MonoCrystal_DD_CC_InteractionMatrix.mfront";
+
+@Includes{
+#include"TFEL/Material/PolyCrystalsSlidingSystems.hxx"
+}
+
+@Members{
+  // Mono cristal  sliding system
+  typedef SlidingSystems<real> MCSlidingSystems;
+  // Poly cristals sliding system
+  typedef PolyCrystalsSlidingSystems<Np,MCSlidingSystems,real> PCSlidingSystems;
+}
+
+//! fraction volumique
+@LocalVariable real  fv[Np];
+@LocalVariable real Lc ;
+
+@InitLocalVariables<Append>{
+  // fractions volumiques
+  for(unsigned short i=0;i!=Np;++i){
+    fv[i]=1.0/static_cast<real>(Np) ; 
+  }
+  Lc = 500.*b*(T/300.)*(T/300.);
+}
+
+@ComputeStress{
+  sig = D*eel;
+}
+
+@Derivative{
+  const PCSlidingSystems& gs =
+    PCSlidingSystems::getPolyCrystalsSlidingSystems("PolyCrystalsAngles-30.txt");
+
+  StressStensor sigg(real(0)) ;
+  // constantes monocristal
+  const real deuxpi = 6.2831853071795862;
+  real omegap[Nss];  
+  real small = 1.e-20 ;
+  
+  depsp=Stensor(real(0)) ;
+
+  // boucle sur le nombre de phases (ou grains) 
+  for(unsigned short k=0;k!=Np;++k){  
+
+    // localisation BZ
+    real seq=sigmaeq(sig);
+    if (seq>0){
+      real alph=1./(1.0+1.5*Mu*pg/seq) ;
+      sigg = sig+ Mu*alph*(epsp-epsg[k]);        
+    }
+
+    depsg[k]=Stensor(real(0)) ;
+    
+    for(unsigned short s=0;s!=Nss;++s){
+      omegap[s]=omega[Nss*k+s];
+      if(omegap[s] < 0.) {
+           throw(runtime_error("omega négatif"));
+      }
+    }
+    for(unsigned short s=0;s!=Nss;++s){
+
+      // tenseurs mus de chaque grain / systeme dans le repere global
+      const StrainStensor& mu_ki = gs.mus[k][s];
+      const real tau = mu_ki | sigg ;
+
+      real omega_tot=0.;
+      for (unsigned short j=0;j!=Nss;++j){
+        if (j!=s){
+          omega_tot += omegap[j] ;
+        }
+      }
+      const real DG_app = k_b*T*log(omega_mob*H/sqrt(omega_tot)/epsi_1) ;
+
+      real t1 = 1.0-DG_app/DeltaG_0 ;
+      real Rs = 0. ;
+      if ( t1 <= small ) {
+        Rs = 1./small ;
+      } else {
+        Rs = Mu*b/(2.0*tau_0*t1*t1) ;
+      }
+
+      const real lambda = 1.0/ ( min ( sqrt(omega_tot)/b , omega_tot*(d+2.0*Rs)/b/b) ) -d ;
+      
+      real alphat2  = 0.;
+      for (unsigned short j=0;j!=Nss;++j){
+        if (j!=s){
+          alphat2  += mh(s,j)*omegap[j] ;
+        }
+      }
+
+      if(alphat2  < 0.) {
+        throw(runtime_error("alphat  négatif"));
+      }
+      const real alphat  = sqrt(alphat2/omega_tot) ;
+      
+      const real ls = max ( (lambda - 2.0 * alphat * Rs) , Lc );
+
+      const real tau_LT = max ( 0.0, alphat*Mu*b* (1.0/lambda - 1.0/(2.0 * alphat * Rs + Lc)) );
+      
+      const real Homegas = sqrt (mh(s,s) * omegap[s] );
+      
+      const real tau_LR = Mu * Homegas ;
+
+      const real tau_c = tau_f + sqrt ( tau_LT*tau_LT + tau_LR*tau_LR ) ;
+      
+      const real tau_eff = abs ( tau ) - tau_c  ;
+
+      real sgn_tau = 0.0 ;
+      if (abs(tau) > 0. ) {
+        sgn_tau =tau/abs(tau) ;
+      }
+
+      real DG_eff = DeltaG_0 ;
+
+      if ((tau_eff > 0.0) && ( tau_eff < tau_0)) {
+        DG_eff = DG_eff * (1.0 - sqrt ( tau_eff / tau_0 ) ) ;
+      }
+    
+      const real gamman = omega_mob / b* H * ls * exp ( - DG_eff / k_b / T ) * sgn_tau ;
+
+      if(abs(tau_c) < small ) {
+        ostringstream msg;
+        msg << "invalid value for tau_c (" << tau_c << ").";
+        throw(runtime_error(msg.str()));
+      }
+      
+      const real gammap = gamma0 * pow( ( abs(tau) / tau_c ), pn) * sgn_tau ;
+
+      real inv_gamman = 0. ;
+      if (abs(gamman) > 0. ) {
+        inv_gamman = 1.0 / gamman ;
+      }
+
+      real inv_gammap = 0. ;
+      if (abs(gammap) > 0. ) {
+        inv_gammap = 1.0 / gammap ;
+      }
+      real Dgamma =0. ;
+      if (abs( inv_gammap + inv_gamman) > 0. ) {
+        Dgamma = 1. / ( inv_gammap + inv_gamman ) ;
+      }
+
+      depsg[k] += Dgamma * mu_ki ;
+      
+      const real ys = 1.0 / (1.0 / y_at + deuxpi * tau_eff / Mu / b) ;
+
+      real c_eff = 1.0 ;
+      
+      if ((tau_eff > 0.0)&& (tau_0 > 0)){
+        c_eff = 1.0 - tau_eff / tau_0  ;
+      }
+
+      const real Hs = b/d_lath + c_eff*( Homegas/K_self + alphat*lambda*omega_tot/K_f/b ) - ys*omegap[s]/b;
+
+      domega[Nss*k+s]= abs( Dgamma ) *  Hs ;
+
+    }
+    depsp+=depsg[k]*fv[k] ;
+  }
+  dpg = sqrt(depsp|depsp)/sqrt(1.5);
+  deel = -depsp+deto;
+}
+
+
+
+

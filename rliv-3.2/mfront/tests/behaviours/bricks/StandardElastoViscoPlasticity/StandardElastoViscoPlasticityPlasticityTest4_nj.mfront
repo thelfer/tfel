@@ -1,0 +1,20 @@
+@DSL Implicit;
+@Behaviour StandardElastoViscoPlasticityPlasticityTest4_nj;
+@Author Thomas Helfer;
+@Date 06/04/2018;
+
+@ModellingHypotheses {".+"};
+
+@Algorithm NewtonRaphson_NumericalJacobian;
+@Epsilon 1.e-16;
+@PerturbationValueForNumericalJacobianComputation 1.e-8;
+@Theta 1;
+
+@Brick "StandardElastoViscoPlasticity" {
+  stress_potential : "Hooke" {young_modulus : 150e9, poisson_ratio : 0.3},
+  inelastic_flow : "Plastic" {
+    //
+    criterion : "Mises",
+    isotropic_hardening : "Voce" {R0 : 33e6, Rinf : 137e6, b : 88}
+  }
+};

@@ -1,0 +1,18 @@
+@DSL Implicit;
+@Behaviour IsotropicStandardElasticity12;
+@Author Thomas Helfer;
+@Date   5/06/2016;
+@Description{
+  "This file is used to test the StandardElasticity brick for "
+  "an isotropic elastic behaviour. "
+  "Elastic properties are defined through "
+  "elastic material properties. The Young modulus is defined by an "
+  "external property."
+}
+
+@OrthotropicBehaviour;
+@IsotropicElasticBehaviour;
+@Epsilon 1e-14;
+@ModellingHypotheses {".+"};
+@Brick "StandardElasticity";
+@ElasticMaterialProperties {"YoungModulusTest.mfront",0.3};

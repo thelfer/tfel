@@ -1,0 +1,27 @@
+/*! 
+ * \file   ddif2-3.mtest
+ * \brief
+ * \author Helfer Thomas
+ * \brief  09 avril 2013
+ */
+
+@MaximumNumberOfSubSteps 1;
+@AccelerationAlgorithm 'Steffensen';
+
+@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatddif2';
+@MaterialProperty<constant> 'YoungModulus'     150.e9;
+@MaterialProperty<constant> 'PoissonRatio'       0.3;
+@MaterialProperty<constant> 'ThermalExpansion'   0.;
+@MaterialProperty<constant> 'FractureStress' 150e6; /* rupture stress */  
+@MaterialProperty<constant> 'NortonCoefficient'  0.;
+@MaterialProperty<constant> 'NortonExponent'     1.;
+
+@ExternalStateVariable 'Temperature' {0:293.15,3600.:800};
+
+@ImposedStrain 'EXX' {0:0,1:1.5e-3,2:0,3:-1e-3,4:0,5:3.e-3};
+@ImposedStrain 'EYY' {0:0,1:1.5e-3,2:0,3:-1e-3,4:0,5:3.e-3};
+
+@Times {0.,5 in 50};
+
+@Test<file> '@top_srcdir@/mfront/tests/behaviours/references/ddif2-biaxialtesting.ref' {'SXX':8,'SYY':9} 1.e3 ; 
+@Test<function> {'SZZ':'0.','SXY':'0.','SXZ':'0.','SYZ':'0.'} 1.e-2;

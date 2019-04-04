@@ -1,0 +1,320 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%%	Fichier	   : ces
+%%	Auteur     : th202608@pleiades043.intra.cea.fr
+%%	Date       : 26 mai 2009
+%%	Répertoire : /home/th202608/documents/presentations/2009/CES/
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+
+\documentclass{beamer}
+
+\usepackage{beamerthemecea2012}
+\usepackage[utf8]{inputenc}
+\usepackage{pstricks}
+\usepackage{couleurs}
+
+\usepackage{mathematiques}
+\usepackage{mecanique}
+\usepackage{gnuplot}
+\usepackage{array}
+
+\usepackage[frenchb]{babel}
+
+\newcommand{\unix}{\texttt{Unix}}
+\newcommand{\linux}{\texttt{LiNuX}}
+\newcommand{\windows}{\texttt{Windows}}
+
+\newcommand{\tfel}{\texttt{tfel}}
+\newcommand{\mfront}{\texttt{mfront}}
+\newcommand{\umat}{\texttt{umat}}
+\newcommand{\castem}{\texttt{Cast3M}}
+\newcommand{\pycastem}{\texttt{pyCast3M}}
+\newcommand{\pleiades}{\texttt{pleiades}}
+\newcommand{\sirius}{\texttt{sirius}}
+\newcommand{\germinal}{\texttt{germinal}}
+\newcommand{\licos}{\texttt{licos}}
+\newcommand{\nom}[1]{\textsc{#1}}
+
+\newcommand{\code}[1]{
+  \psframebox[linecolor=ceaorange,fillcolor=ceabluecurve,fillstyle=solid]{
+    \begin{minipage}[t]{0.9\linewidth}
+      \scriptsize\tt #1
+    \end{minipage}
+  }
+}
+
+\Titre{Présentation de \mfront{} \\
+  \begin{center}
+    \includegraphics[height=4cm,angle=-90]{@abs_top_srcdir@/docs/presentations/images/mfront.eps}    
+  \end{center}}
+\Auteur{T. Helfer}
+%\Evenement{Formation Areva}
+%\Date{Avril 2014}
+
+\begin{document}
+
+\PageTitre{}
+
+\section{Sommaire}
+\titre{Sommaire}
+\frame{
+  \setcounter{tocdepth}{1}
+  \tableofcontents{}
+}
+
+\section{Contexte}
+
+\titre{\mfront{} dans \pleiades{}}
+\frame{
+
+  \begin{itemize}
+  \item \textbf{permettre} l'écriture de connaissances matériau~:
+    \begin{itemize}
+    \item les propriétés matériau (module d'\nom{Young}, etc...)~;
+    \item les lois de comportement mécanique (viscoplasticité,
+      plasticité, endommagement)~;
+    \item les modèles (gonflement, évolution physico-chimique)~;
+    \end{itemize}
+  \item<2-> \textbf{mutualiser} ces connaissances matériau~:
+    \begin{itemize}
+    \item entre les différentes études des applications de la
+      plate-forme \pleiades{}~:
+      \begin{itemize}
+      \item toutes les lois de comportement de la plate-forme vont
+        être ré-écrites en \mfront{} dès cette année~; 
+      \item la plate-forme \pleiades{} a crée une base de données
+        nommée \sirius{} qui a été adaptée pour utiliser des fichiers
+        \mfront{} en interne (+ de 100 matériaux différents)~;
+      \end{itemize}
+    \item avec d'autres codes~:
+      \begin{itemize}
+      \item quelque soit leur langage (fortran,C,C++,VBA, etc..)~;
+      \end{itemize}
+    \end{itemize}
+  \item<3-> \textcolor{red}{\textbf{simplifier} le travail des utilisateurs}~:
+    \begin{itemize}
+    \item \textcolor{red}{numérique}~;
+    \item \textcolor{red}{informatique}~;
+    \item \textcolor{red}{minimiser le risque d'erreur}
+    \end{itemize}
+  \end{itemize}
+}
+
+\titre{Nombre de lignes}
+\frame{
+  \begin{center}
+    \begin{tabular}[htbp]{|>{\centering}m{3.cm}|>{\centering}m{2.cm}|>{\centering}m{2.cm}|>{\centering}m{2.cm}|c}
+      \cline{2-4}
+      \multicolumn{1}{c|}{} &
+      Propriétés&
+      Loi de comportement &
+      Modèle &\\
+      \cline{1-4}
+      Fichier mfront & 33  &   {\bf 92} &  22&\\
+      Fichier généré & 130 & {\bf 1641} & 556&\\
+      \cline{1-4}
+    \end{tabular}
+  \end{center}
+  \begin{itemize}
+  \item le gain, pour l'utilisateur, peut être conséquent~;
+  \item on \og{}~automatise\fg{} au maximum pour réduire le risque
+    d'erreurs en ce qui concerne la partie purement informatique de
+    l'implantation~;
+  \item ces \og~détails\fg{} informatiques peuvent avoir de nombreuses
+    conséquences (portabilité, performances, etc..)~;
+  \item une partie du code est de la \og{}~glue\fg{} pour s'adapter au
+    code/langage cible.
+  \end{itemize}
+}
+
+\titre{Des contextes logiciels variés}
+\frame{
+  \begin{itemize}
+  \item pour les propriétés matériaux~:
+    \begin{itemize}
+    \item différents langages (C++,fortran,python)~;
+    \end{itemize}
+  \item pour les lois de comportement mécanique~:
+    \begin{itemize}
+    \item différents solveurs (Cast3M,Aster,TMFFT, mtests,...)~;
+    \end{itemize}
+  \item pour les modèles~:
+    \begin{itemize}
+    \item \germinal{}, \licos{}~;
+    \end{itemize}
+  \end{itemize}
+  \visible<2->{
+    \begin{center}
+      \mfront{} propose la notion d'{\bf interface}      
+    \end{center}
+  }
+  \visible<3->{
+    \begin{center}
+      Le code généré dépend de l'interface choisie ! (on veut être
+      performant !)
+    \end{center}
+  }
+}
+
+\intercalaire{Propriétés matériaux}
+
+\titre{{\small Conductivité thermique du combustible $UPuC$}}
+\frame{
+  \begin{itemize}
+  \item conductivité thermique du combustible \(UPuC\)~:
+    \[
+    k\paren{T,p,\tau}
+    \]
+    \begin{itemize}
+    \item \(T\)    est la température~;
+    \item \(p\)    est la porosité~;
+    \item \(\tau\) est le taux de combustion~;
+    \end{itemize}
+  \item<2-> introduction en \(3\) étapes~:
+    \begin{itemize}
+    \item écriture d'une fonction \texttt{UPuC\_ThermalConductivity}~;
+    \item création d'une librairie \texttt{libUPuCMaterialProperties.so}~;
+    \item appel depuis \castem{}~;
+    \end{itemize}
+  \end{itemize}
+}
+
+\titre{Exemple en \mfront{}}
+\frame{
+
+  \begin{center}
+    \resizebox{!}{2.5mm}{
+      \code{
+        \tiny
+        \alt<1>{
+          \input{@abs_top_srcdir@/docs/presentations/images/UPuC_ThermalConductivity-mfront.tex}
+        }{
+          \input{@abs_top_srcdir@/docs/presentations/images/UPuC_ThermalConductivity-mfront2.tex}
+        }
+      }
+    }
+  \end{center}
+  \begin{itemize}
+  \item<3-> \texttt{\tiny mfront --obuild --interface=castem UPuC\_ThermalConductivity.mfront}
+  \end{itemize}
+}
+
+\titre{Commentaires}
+\frame{
+  \begin{itemize}
+  \item un fichier clair (avis subjectif)~;
+  \item<2-> interfaces disponibles~:
+    \begin{itemize}
+    \item castem (!)~;
+    \item Excel (Visual Basic)~;
+    \item C/C++/fortran~;
+    \item python~;
+    \item octave~;
+    \item gnuplot~;
+    \item etc...
+    \end{itemize}
+  \item<3-> gestion facilitée des bornes des propriétés matériau~;
+  \item<4-> gestion facilitée des dépendances entre propriétés matériau~;
+  \item<5-> support de la procédure de compilation~:
+  \item<6-> interaction avec la base de données matériau \sirius{}~:
+    \begin{itemize}
+    \item en entrée~;
+    \item en sortie~;
+    \end{itemize}
+  \end{itemize}
+
+}
+
+\titre{Utilisation dans \castem{} (version pleiades)}
+\frame{
+
+  \begin{center}
+    \code{
+      \tiny
+      \textcolor{blue}{* Création d'un modèle thermique isotrope}\\    
+      ModT1 = '\textcolor{green}{MODELISER}' s1 '\textcolor{red}{THERMIQUE}' '\textcolor{red}{ISOTROPE}' ; \\
+      \\
+      \textcolor{blue}{* Création d'une table contenant les données relatives }\\
+      \textcolor{blue}{* à la propriété externe : }\\
+      \textcolor{blue}{* - 'MODELE' contient le nom de la fonction appelée }\\
+      \textcolor{blue}{* - 'LIBRAIRIE' contient le nom de la librairie externe }\\
+      \textcolor{blue}{*   dans laquelle cette fonction est définie }\\
+      \textcolor{blue}{* - 'VARIABLES' contient la liste des paramètres dont dépend }\\
+      \textcolor{blue}{*   la fonction appelée  }\\
+      Tmat = '\textcolor{green}{TABLE}'; \\
+      Tmat. '\textcolor{red}{MODELE}'    = '\textcolor{red}{UPuC\_ThermalConductivity}' ; \\
+      Tmat. '\textcolor{red}{LIBRAIRIE}' = '\textcolor{red}{libUPuCMaterialProperties.so}' ; \\
+      \fbox{Tmat. '\textcolor{red}{VARIABLES}' = '\textcolor{green}{MOTS}' '\textcolor{red}{T}' '\textcolor{red}{PORO}' '\textcolor{red}{FIMA}';} \\
+      \\
+      \textcolor{blue}{* Création du matériau. }\\
+      MatT1 = '\textcolor{green}{MATERIAU}' ModT1 '\textcolor{red}{K}' Tmat;
+    }
+  \end{center}
+  \begin{itemize}
+  \item<2-> utilisation transparente dans les procédures classiques (\texttt{PASAPAS})~;
+  \item<3-> utilisation simple de lois multi-variables~:
+    \begin{itemize}
+    \item les paramètres doivent être définies par des \og~chargements~\fg~;
+    \end{itemize}
+  \end{itemize}
+}
+
+\intercalaire{Modèles}
+
+\titre{Modèles}
+\frame{
+  \begin{center}
+    \code{
+      \tiny
+      \input{@abs_top_srcdir@/docs/presentations/images/UPuC_SolidSwellingModel.tex}
+    }
+  \end{center}
+  \begin{itemize}
+  \item aujourd'hui surtout utilisé dans les applications \pleiades{}~;
+  \end{itemize}
+}
+
+\intercalaire{Annexes}
+
+\titre{Portabilité}
+\frame{
+  \begin{itemize}
+  \item \tfel{} est développé sous \linux{}~:
+    \begin{itemize}
+    \item pas de problème de portabilité connu~;
+    \item seule plate-forme \og~officielle\fg{}.
+    \end{itemize}
+  \item \tfel{} a été porté sous \windows{} (mingw)~:
+    \begin{itemize}
+    \item \mfront{} fonctionne sans soucis~;
+    \item \mfront{} ne gère le processus de compilation sauf dans
+      l'environnement MSYS~;
+    \item ne fonctionne pas avec Visual Studio... pour l'instant !
+    \end{itemize}
+  \item \tfel{} a été porté sous différents \unix{}~:
+    \begin{itemize}
+    \item {\tt freebsd}, {\tt opensolaris}~;
+    \item pas de problèmes particuliers~;
+    \end{itemize}
+  \end{itemize}
+}
+
+\titre{Compilateurs}
+\frame{
+  \begin{itemize}
+  \item \tfel{} est développé et testé en utilisant les compilateurs
+    suivants~:
+    \begin{itemize}
+    \item g++, GNU, libre, versions 3.4 à 4.7)
+    \item clang++, LLVM, libre, versions 3.0 et 3.2)
+    \item ekopath, PathScale, libre (ou pas)
+    \item icpc, Intel  propriétaire
+    \end{itemize}
+  \end{itemize}
+}
+
+\end{document}
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: t
+%%% End: 

@@ -1,0 +1,69 @@
+/*!
+ * \file include/TFEL/Math/math.doxygen
+ * \brief this file contains the documentation of the `tfel::math`
+ * namespace.
+ */
+
+/*!
+ * \namespace tfel::math
+ * \brief This namespace contains various classes and functions
+ * défining mathematical objects and numerical algorithms.
+ *
+ * \section Tensorial Tensorial objects
+ *
+ * The `TFEL/Math` library provides two classes for second order
+ * tensors:
+ * - The `stensor` class which describes *symmetric* second order
+ *   tensors.
+ * - The `tensor` class which describes general second order
+ *   (symmetric and unsymmetric) tensors.
+ *
+ * Fourth order tensors are linear transformations of second order
+ * tensors.
+ */
+
+/*!
+ * \namespace tfel::math::internals
+
+ * \brief This namespace contains classes, functions, metafunctions
+ * and data structures that are used internally in the `tfel::math`
+ * namespace and that are meant to be used by the end user.
+ */
+
+/*!
+ * \namespace tfel::math::ieee754
+ *
+ * The `C99` standard defines the `fpclassify`, `isnan`, `isfinite`
+ * functions to query some information about double precision
+ * floatting-point numbers (`double`):
+ * 
+ * - Following the `IEEE754` standard, the `fpclassify` categorizes a
+ *   floating point number into one of the following categories: zero,
+ *   subnormal, normal, infinite, NaN (Not a Number). The return value
+ *   returned for each category is respectively `FP_ZERO`,
+ *   `FP_SUBNORMAL`, `FP_NORMAL`, `FP_INFINITE` and `FP_NaN`.
+ * - The `isnan` function returns a boolean stating if its argument has a
+ *   not-a-number (NaN) value.
+ * - The `isfinite` function returns true if its argument falls into one
+ *   of the following categories: zero, subnormal or normal.
+ * 
+ * The `C++11` provides a set of overload for single precision (`float`)
+ * and extended precision (`long double`) floatting-point numbers.
+ * 
+ * Those functions are very handy to check the validity of a
+ * computation. However, those functions are not compatible with the use
+ * of the `-ffast-math` option of the `GNU` compiler which also implies
+ * the `-ffinite-math-only` option. This latter option allows
+ * optimizations for floating-point arithmetic that assume that arguments
+ * and results are finite numbers. As a consequence, when this option is
+ * enabled, the previous functions does not behave as expected. For
+ * example, `isnan` always returns false, whatever the value of its
+ * argument.
+ * 
+ * To overcome this issue, we have introduced in `TFEL/Math` the
+ * implementation of these functions provided by the `musl`
+ * library. Those implementations are compatible with the `-ffast-math`
+ * option of the `GNU` compiler. Those implementations are defined in the
+ * `TFEL/Math/General/IEEE754.hxx` header file in the
+ * `tfel::math::ieee754` namespace.
+ */

@@ -1,0 +1,32 @@
+@Author Thomas Helfer;
+@Date   06/04/2018;
+@Description{
+
+};
+
+@XMLOutputFile @xml_output@;
+@MaximumNumberOfSubSteps 1;
+@Behaviour<castem> @library@ @behaviour@;
+
+@MaterialProperty<constant> 'YoungModulus' 160e9;
+@MaterialProperty<constant> 'PoissonRatio' 0.3;
+
+@ExternalStateVariable 'Temperature' 293.15 ;
+
+@ImposedStrain 'EXX' {0:0,1:0.2};
+@Times {0,1 in 10};
+
+@Test<file> @reference_file@ 
+  {'EYY' : 3, 'EZZ' : 4, 'EquivalentPlasticStrain' : 20} 1.e-12;
+
+@Test<function> {
+  'EXY' : '0'
+}
+1.e-12;
+
+@Test<file> @reference_file@ {'SXX' : 8} 1.e-2;
+
+@Test<function> {
+  'SYY' : '0', 'SZZ' : '0', 'SXY' : '0'
+}
+1.e-2;

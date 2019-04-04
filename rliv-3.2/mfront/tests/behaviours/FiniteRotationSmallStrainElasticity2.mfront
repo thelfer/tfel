@@ -1,0 +1,58 @@
+@Behaviour FiniteRotationSmallStrainElasticity2;
+@Author    Helfer Thomas;
+@Date      26/11/13;
+@Description{
+  "A test of the finite rotation small strain"
+  "of the umat interface"
+ "A very first test of the finite rotation small strain"
+ "formulation."
+ "We check that the stress at the beginning"
+ "of the time step (which is calculated using"
+ "the Cauchy stress) is equal to the stress "
+ "computed at the end of the previous time step "
+ "(before it was turned into the Cauchy stress "
+ "after the integration."
+}
+                           
+@CastemFiniteStrainStrategy[castem] FiniteRotationSmallStrain;
+@AbaqusFiniteStrainStrategy[abaqus] FiniteRotationSmallStrain;
+
+@MaterialProperty stress young;
+young.setGlossaryName("YoungModulus");
+@MaterialProperty real nu;
+nu.setGlossaryName("PoissonRatio");
+
+@LocalVariable stress lambda;
+@LocalVariable stress mu;
+
+@AuxiliaryStateVariable StressStensor ps;
+ps.setEntryName("PreviousStress");
+
+@InitLocalVariables{
+  lambda = computeLambda(young,nu);
+  mu = computeMu(young,nu);
+  if(sqrt((sig-ps)|(sig-ps))>10*young*numeric_limits<stress>::epsilon()){
+    cout << "ps  : " << ps << endl;
+    cout << "sig : " << sig << endl;
+    cout << "nr  : " << sqrt((sig-ps)|(sig-ps)) << endl;
+    throw(runtime_error("invalid stress value at the beginning "
+			"of the time step"));
+  }
+}
+
+@ProvidesSymmetricTangentOperator;
+
+@PredictionOperator{
+  static_cast<void>(smt);
+  Dt = lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
+}
+
+@Integrator{
+  static_cast<void>(smt);
+  sig = lambda*trace(eto+deto)*StrainStensor::Id()+2*mu*(eto+deto);
+  // saving the compute stress
+  ps=sig;
+  if(computeTangentOperator_){
+    Dt = lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
+  }
+}

@@ -1,0 +1,90 @@
+//! interaction matrix DD_CFC
+@LocalVariable tfel::math::tmatrix<12,12,real> mh;
+@LocalVariable tfel::math::tmatrix<12,12,real> hsb;
+
+@LocalVariable tfel::math::tmatrix<3,3,real> A1;
+@LocalVariable tfel::math::tmatrix<3,3,real> A2;
+@LocalVariable tfel::math::tmatrix<3,3,real> A3;
+
+@InitLocalVariables<Append>{
+  const unsigned short NN[12]={6,8,7,1,0,2,11,10,9,4,3,5};
+  const real AETOIL = 0.124 ;  
+  const real ACOLIN = 0.625 ;
+  const real AGLISS = 0.137 ;
+  const real ALOMER = 0.122 ;
+  const real AHIRTH = 0.07  ;
+  
+  for(unsigned short i=0;i!=3;++i){
+    for(unsigned short j=0;j!=3;++j){
+       hsb(  i,  j)=AETOIL;
+       hsb(3+i,3+j)=AETOIL;
+       hsb(6+i,6+j)=AETOIL;
+       hsb(9+i,9+j)=AETOIL;
+    }
+  }
+
+  A1(0,0)=ACOLIN;
+  A1(0,1)=AGLISS;
+  A1(0,2)=AGLISS;
+  A1(1,0)=AGLISS;
+  A1(1,1)=AHIRTH;
+  A1(1,2)=ALOMER;
+  A1(2,0)=AGLISS;
+  A1(2,1)=ALOMER;
+  A1(2,2)=AHIRTH;
+  
+  for(unsigned short i=0;i!=3;++i){
+     for(unsigned short j=0;j!=3;++j){
+       hsb(3+i,  j)=A1(i,j);
+       hsb(  i,3+j)=A1(i,j);
+       hsb(9+i,6+j)=A1(i,j);
+       hsb(6+i,9+j)=A1(i,j);
+     }
+  }
+  
+  A2(0,0)=AHIRTH;
+  A2(0,1)=AGLISS;
+  A2(0,2)=ALOMER;
+  A2(1,0)=AGLISS;
+  A2(1,1)=ACOLIN;
+  A2(1,2)=AGLISS;
+  A2(2,0)=ALOMER;
+  A2(2,1)=AGLISS;
+  A2(2,2)=AHIRTH;
+
+  for(unsigned short i=0;i!=3;++i){
+     for(unsigned short j=0;j!=3;++j){
+         hsb(6+i,  j)=A2(i,j);
+         hsb(  i,6+j)=A2(i,j);
+         hsb(9+i,3+j)=A2(i,j);
+         hsb(3+i,9+j)=A2(i,j);
+     }
+  }
+  
+  A3(0,0)=AHIRTH;
+  A3(0,1)=ALOMER;
+  A3(0,2)=AGLISS;
+  A3(1,0)=ALOMER;
+  A3(1,1)=AHIRTH;
+  A3(1,2)=AGLISS;
+  A3(2,0)=AGLISS;
+  A3(2,1)=AGLISS;
+  A3(2,2)=ACOLIN;
+  
+  for(unsigned short i=0;i!=3;++i){
+     for(unsigned short j=0;j!=3;++j){
+        hsb(6+i,3+j)=A3(i,j);
+        hsb(3+i,6+j)=A3(i,j);
+        hsb(9+i,  j)=A3(i,j);
+        hsb(  i,9+j)=A3(i,j);
+     }
+  }  
+  //cout << "H= "  << hsb << endl ;
+
+  for(unsigned short i=0;i!=12;++i){
+     for(unsigned short j=0;j!=12;++j){
+        mh(NN[i],NN[j])=hsb(i,j);
+     }
+  }  
+
+}

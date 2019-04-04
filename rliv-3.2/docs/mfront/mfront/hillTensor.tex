@@ -1,0 +1,12 @@
+\noindent
+\ttfamily
+\hlstd{st2tost2}\hlsym{$<$}\hlstd{N}\hlsym{,}\hlstd{real}\hlsym{$>$\ }\hlstd{H}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlkwa{if}\hlstd{}\hlsym{((}\hlstd{}\hlkwd{getModellingHypothesis}\hlstd{}\hlsym{()==}\hlstd{ModellingHypothesis}\hlsym{::}\hlstd{PLANESTRESS}\hlsym{)\textbar \textbar }\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ }\hlstd{}\hlsym{(}\hlstd{}\hlkwd{getModellingHypothesis}\hlstd{}\hlsym{()==}\hlstd{ModellingHypothesis}\hlsym{::}\hlstd{PLANESTRAIN}\hlsym{)\textbar \textbar }\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ }\hlstd{}\hlsym{(}\hlstd{}\hlkwd{getModellingHypothesis}\hlstd{}\hlsym{()==}\hlstd{ModellingHypothesis}\hlsym{::}\hlstd{GENERALISEDPLANESTRAIN}\hlsym{))\{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ }\hlstd{H\ }\hlsym{=\ }\hlstd{hillTensor}\hlsym{$<$}\hlstd{N}\hlsym{,}\hlstd{real}\hlsym{$>$(}\hlstd{Hzz}\hlsym{,}\hlstd{Hrr}\hlsym{,}\hlstd{Htt}\hlsym{,}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{Hrt}\hlsym{,}\hlstd{Hrz}\hlsym{,}\hlstd{Htz}\hlsym{);}\hspace*{\fill}\\
+\hlstd{}\hlsym{\}\ }\hlstd{}\hlkwa{else\ }\hlstd{}\hlsym{\{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ }\hlstd{H\ }\hlsym{=\ }\hlstd{hillTensor}\hlsym{$<$}\hlstd{N}\hlsym{,}\hlstd{real}\hlsym{$>$(}\hlstd{Htt}\hlsym{,}\hlstd{Hrr}\hlsym{,}\hlstd{Hzz}\hlsym{,}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{Hrz}\hlsym{,}\hlstd{Hrt}\hlsym{,}\hlstd{Htz}\hlsym{);}\hspace*{\fill}\\
+\hlstd{}\hlsym{\}}\hlstd{}

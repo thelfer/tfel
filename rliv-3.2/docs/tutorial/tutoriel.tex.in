@@ -1,0 +1,270 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%	Fichier	   : tutorial
+%%	Auteur     : th202608@pleiades077.intra.cea.fr
+%%	Date       : 04 avril 2014
+%%	Répertoire : /home/th202608/codes/pandoc/
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% \documentclass[rectoverso,pleiades,pstricks,leqno,anti]{note_technique_2010}
+\documentclass[rectoverso,pleiades,pstricks,leqno,anti,projet]{note_technique_2010}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{array}
+\usepackage[frenchb]{babel}
+
+\usepackage{common} 
+
+% \gdef\label#1{\TheRealLabel{\roman{chapter}:#1}}
+% \gdef\ref#1{\TheRealRef{\roman{chapter}:#1}}
+
+\input{LSC}
+
+\auteurs{T.~Helfer, J.M.~Proix\(\mbox{}^{(a)}\)}
+\affiliation{\(\mbox{}^{(a)}\) Électricité de France, R\&D - Département Analyses Mécaniques et Acoustique}
+\redacteur{T.~Helfer}
+\verificateur{F.~Hammon (EDF R\&D AMA)}
+\approbateur{R.~Masson}
+\emetteur{M.~Bauer}
+%\affiliation{$(\mbox{}^{\star})$ EDF R\&D MMC}
+
+\titre{Écriture de lois de comportement avec \mfront{}~: tutoriel}
+
+\date{Décembre 2014}
+\numero{14-023}
+\indice{0}
+\dateversion{12/2014}
+\numeroaffaire{A-SICOM-A1-07}
+\typeaction{BE}
+\jalon{Documentation MFront}
+\domaine{DEN/DISN/SIMU}
+\accords{tripartite}
+\clients{AREVA - EDF}
+\programmerecherche{SICOM}
+\classification{DO}
+\motsclefs{
+  \mfront{} - tutoriel - loi de comportement mécanique
+}
+
+\codebarre{@abs_top_srcdir@/docs/tutorial/images/code-barre.pdf}
+\signatures{3.}{-44.}{1.05}{@abs_top_srcdir@/docs/tutorial/images/signatures.pdf}
+\CoupeListeDiffusion{}
+
+\diffusionexterne{
+{EDF/R\&D/CHATOU}       & D. Banner       & 1 & Diffusion par\\
+                        & P. Barbrault    & 1 & courriel     \\
+{EDF/R\&D/AMA}          & T. de Soza      & 1 & \\
+{EDF/R\&D/MMC}          & P. Ollar        & 1 & \\
+                        & N. Rupin        & 1 & \\
+                        & H. Wong       & 1 & \\
+                        & C. Petry        & 1 & \\
+EDF/SEPTEN              & N. Waeckel      & 1 & \\
+                        & C. Chauliac     & 1 & \\
+                        & H. Billat       & 1 & \\
+                        & G. Thouvenin    & 1 & \\
+                        & C. Bernaudat    & 1 & \\
+AREVA NP/LA DEFENSE     & L. Catalani     & 1 & \\
+                        & L. Brunel       & 1 & \\
+AREVA NP/LYON           & P. Melin        & 1 & \\
+                        & V. Bessiron     & 1 & \\
+                        & C. Garnier      & 1 & \\                           
+                        & V. Garat        & 1 & \\
+                        & F. Arnoux       & 1 &
+}
+
+\diffusioninterne{
+  DEN/DISN/SIMU       & J.P. Deffain       & 1 & Diffusion par\\ 
+                      & D. Caruge          & 1 & courriel     \\ 
+  DEN/DM2S/SEMT       & X. Averty          & 1 & \\
+  DEN/DM2S/SEMT/LM2S  & S. Pascal          & 1 & \\
+                      & P. Verpeaux        & 1 & \\
+                      & A. Millard         & 1 & \\
+                      & O. Fandeur         & 1 & \\
+  DEN/DMN             & P. Yvon            & 1 & \\
+                      & M. Le Flem         & 1 & \\
+                      & F. Dalle           & 1 & \\
+  DEN/DMN/SRMA        & P. Chapelot        & 1 & \\
+                      & S. Carassou        & 1 & \\
+                      & B. Marini          & 1 & \\
+  DEN/DMN/SRMA/LC2M   & L. Nicolas         & 1 & \\
+                      & J. Garnier         & 1 & \\
+                      & S. Vincent         & 1 & \\
+                      & L. Vincent         & 1 & \\
+                      & L. Gelebart        & 1 & \\
+                      & M. Sauzay          & 1 & \\
+                      & L. Dupuy           & 1 & \\
+                      & P. Forget          & 1 & \\
+                      & A. Hellouin de Menibus  & 1 & \\
+                      & M. Le Saux         & 1 & \\
+                      & C. Robertson       & 1 & \\
+  DEN/DMN/SRMA/LA2M   & J.-L. Bechade      & 1 & \\
+  DEN/DMN/SRMA/LTMEX  & L. Chaffron        & 1 & \\
+                      & D. Sornin          & 1 & \\
+  DEN/DMN/SEMI        & C. Poussard        & 1 & \\
+                      & B. Tanguy          & 1 & \\
+  DEN/DMN/SEMI/LCMI   & V. Vandenberghe    & 1 & \\
+                      & A. Courcelle       & 1 & \\
+                      & F. Hure            & 1 & \\
+                      & D. Leboulch        & 1 & \\
+                      & Q. Auzoux          & 1 & \\
+                      & Y. Robert          & 1 & \\
+                      & C. Ling           & 1 & \\
+  DEN/DER/SESI/LE2S   & P. Lamagnère       & 1 & \\
+                      & D. Gentet          & 1 & \\
+                      & Y. Lejeail         & 1 & \\
+                      &                    &  & \\
+  DEN/DEC             & P. Brossard        &  & Document disponible\\
+  DEN/DEC/PROJETS     & P. Obry            &  & sur intradec\\
+  DEN/DEC/SESC        & M. Bauer           &  & \\
+                      & C. Valot           &  & \\
+                      & M. Agard           &  & \\
+  DEN/DEC/SESC/LIPA   & C. Nonon-Solaro    &  & \\
+  DEN/DEC/SESC/LLCC   & G. Jomard          &  & \\
+  DEN/DEC/SESC/LC2I   & D. Plancq          &  & \\
+  DEN/DEC/SESC/LSC    & Tous               &  &
+
+}
+
+\resumecea{
+  Ce document est un tutoriel sur l'écriture des lois de
+  comportement mécanique avec \mfront{}.
+  
+  Deux lois sont traitées~:
+  \begin{enumerate}[-]
+  \item une loi élasto-(visco)-plastique typique des métaux~;
+  \item une loi élasto-viscoplastique isotrope compressible typique du
+    combustible nucléaire.
+  \end{enumerate}
+
+  La rédaction de ce document fait partie de la démarche de mise en
+  open-source de \mfront{}.
+}
+
+\lstset{ %
+  backgroundcolor=\color{white},   % choose the background color; you must add \usepackage{color} or \usepackage{xcolor}
+  basicstyle=\tiny,       % the size of the fonts that are used for the code
+  breakatwhitespace=false,         % sets if automatic breaks should only happen at whitespace
+  breaklines=true,                 % sets automatic line breaking
+  captionpos=b,                    % sets the caption-position to bottom
+  commentstyle=\color{red},        % comment style
+  deletekeywords={...},            % if you want to delete keywords from the given language
+  frame=single,                    % adds a frame around the code
+  keepspaces=true,                 % keeps spaces in text, useful for keeping indentation of code (possibly needs columns=flexible)
+  keywordstyle=\color{blue},       % keyword style
+  language=C++,                    % the language of the code
+  morekeywords={Output Author Input Date},            % if you want to add more keywords to the set
+  numbers=left,                    % where to put the line-numbers; possible values are (none, left, right)
+  rulecolor=\color{orange},         % if not set, the frame-color may be changed on line-breaks within not-black text (e.g. comments (green here))
+  showspaces=false,                % show spaces everywhere adding particular underscores; it overrides 'showstringspaces'
+  showstringspaces=false,          % underline spaces within strings only
+  showtabs=false,                  % show tabs within strings adding particular underscores
+  stepnumber=1,                    % the step between two line-numbers. If it's 1, each line will be numbered
+  stringstyle=\color{green},       % string literal style
+  tabsize=2,                       % sets default tabsize to 2 spaces
+}
+
+\begin{document}
+
+\include{introduction}
+
+\include{rappels}
+
+\include{Chaboche}
+
+\include{ViscoCompressible}
+
+\include{Conclusions}
+
+\include{Bibliographie}
+
+\appendix
+
+\section{Rappels sur la dilatation thermique}
+\label{sec:rappels-sur-la}
+
+Expérimentalement, on mesure la variation de longueur d'un corps entre
+une température de référence \(T_{\alpha}\) et une température finale
+\(T\).
+
+Si l'on note \(l_{T^{\alpha}}\) et \(l_{T}\) les longueurs respectives
+du corps à ces deux températures, le coefficient de dilatation
+thermique linéique \(\alpha\paren{T}\) est défini par~:
+\begin{equation}
+  \label{eq:castem:alpha}
+  \Frac{l_{T}-l_{T^{\alpha}}}{l_{T^{\alpha}}}=\alpha\paren{T}\,\paren{T-T^{\alpha}}
+\end{equation}
+
+Dans le cas des petites déformations, l'équation~\eqref{eq:castem:alpha}
+définit une déformation associée à la dilatation thermique~:
+\[
+\epsilonth_{T^{\alpha}}\paren{T}=\alpha\paren{T}\,\paren{T-T^{\alpha}}
+\]
+
+Cette déformation prend comme état de référence la longueur du corps à
+la température \(l_{T^{\alpha}}\).
+
+Lors d'un calcul thermo-mécanique, on suppose généralement que la
+température initiale \(T_{i}\) est supposée être celle à laquelle la
+géométrie est fournie.
+
+Il est donc nécessaire de modifier la définition de la dilatation
+thermique pour que l'état de référence soit la géométrie initiale, de
+longueur \(l_{i}\).
+
+Pour cela, nous pouvons définir la déformation thermique
+\(\epsilonth_{T^{i}}\paren{T}\) du corps à la température \(T\) comme la
+déformation qu'il aurait si aucune contrainte ne s'exerçait sur lui
+par la relation~:
+\[
+\epsilonth_{T^{i}}\paren{T}=\Frac{l_{T}-l_{T^{i}}}{l_{T^{i}}}
+\]
+
+En introduisant la longueur de référence \(l_{T^{\alpha}}\), nous
+obtenons~:
+\[
+\begin{aligned}
+  \epsilonth_{T^{i}}\paren{T}&=\Frac{l_{T^{\alpha}}}{l_{T^{i}}}\,\Frac{l_{T}-l_{T^{i}}}{l_{T^{\alpha}}} = \Frac{1}{1+\Frac{l_{T^{i}}-l_{T^{\alpha}}}{l_{T^{\alpha}}}}\,\left[\Frac{l_{T}-l_{T^{\alpha}}+l_{T^{\alpha}}-l_{T^{i}}}{l_{T^{\alpha}}}\right] \\
+  &= \Frac{1}{1+\alpha\paren{T^{i}}\paren{T^{i}-T^{\alpha}}}\,\left[\Frac{l_{T}-l_{T^{\alpha}}}{l_{T^{\alpha}}}-\Frac{l_{T^{i}}-l_{T^{\alpha}}}{l_{T^{\alpha}}}\right] \\
+\end{aligned}
+\]
+
+Nous obtenons finalement la relation~:
+\begin{equation}
+  \label{eq:castem:epsilonth}
+  \begin{aligned}
+    \epsilonth_{T^{i}}\paren{T}&=
+    \Frac{1}{1+\alpha\paren{T^{i}}\paren{T^{i}-T^{\alpha}}}\,\left[\alpha\paren{T}\paren{T-T^{\alpha}}-\alpha\paren{T^{i}}\paren{T^{i}-T^{\alpha}}\right] \\
+    &=
+    \Frac{1}{1+\epsilonth_{T^{\alpha}}\paren{T^{i}}}\,\left[\epsilonth_{T^{\alpha}}\paren{T}-\epsilonth_{T^{\alpha}}\paren{T^{i}}\right] \\
+  \end{aligned}
+\end{equation}
+
+Dans la procédure {\tt STAT\_NON\_LINE}
+de \aster{}~\cite{pellet_calcul_2012} ou dans les différentes
+procédures de résolution de \castem{}, la relation précédente
+s'écrit de manière approchée, en négligeant le terme
+\(\epsilonth_{T^{\alpha}}\paren{T^{i}}\) par rapport à \(1\)~:
+\[
+\epsilonth_{T^{i}}\paren{T}=
+\epsilonth_{T^{\alpha}}\paren{T}-\epsilonth_{T^{\alpha}}\paren{T^{i}}
+\]
+
+Au final, pour pouvoir traiter la dilatation thermique, il est
+nécessaire d'avoir accès à~:
+\begin{itemize}
+\item l'évolution du coefficient de dilatation thermique
+  \(\alpha\paren{T}\) avec la température et la température de
+  référence \(T_{\alpha}\)~;
+\item la température initiale à laquelle la géométrie du corps a été
+  mesurée~;
+\end{itemize}
+
+\end{document}
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: t
+%%% End: 

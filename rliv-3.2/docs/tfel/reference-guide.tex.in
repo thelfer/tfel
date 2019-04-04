@@ -1,0 +1,1948 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% File      : mfront.tex
+% Author    : th202608@pleiades068.intra.cea.fr
+% Date      : 15 oct. 2012
+% Directory : /home/th202608/codes/tfel/tests/Broyden/
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% \documentclass[rectoverso,pleiades,pstricks,leqno,anti]{note_technique_2010}
+\documentclass[rectoverso,pleiades,pstricks,leqno,anti,projet]{note_technique_2010}
+
+% \usepackage{draftcopy}
+% \draftcopySetGrey{0.8}
+% \draftcopyName{Version provisoire}{80}
+
+\usepackage[dvips]{graphicx}
+\usepackage[dvips,breaklinks]{hyperref}
+
+\usepackage{mathematiques}
+\usepackage{mecanique}
+\usepackage{couleurs}
+\usepackage{presentation}
+
+\usepackage{pst-plot}
+\usepackage{array}
+\usepackage{subfigure}
+\usepackage{relsize}
+\usepackage{multind}
+
+% one column index
+\makeatletter
+\def\printindex#1#2{\section*{#2}
+\addcontentsline{toc}{section}{#2}
+\@input{#1.ind}}
+\makeatother
+
+\usepackage[frenchb]{babel}
+
+\newcommand{\pleiades}{\texttt{pleiades}}
+\newcommand{\TFEL}{\texttt{tfel}}
+\newcommand{\mfront}{\texttt{mfront}}
+\newcommand{\mtest}{\texttt{mtest}}
+\newcommand{\licos}{\texttt{licos}}
+\newcommand{\cyrano}{\texttt{cyrano}}
+\newcommand{\galileo}{\texttt{galileo}}
+\newcommand{\castem}{\texttt{Cast3M}}
+\newcommand{\gibiane}{\texttt{gibiane}}
+\newcommand{\tmfft}{\texttt{TMFFT}}
+\newcommand{\aster}{\href{http://www.code-aster.org/}{\texttt{Aster}}}
+\newcommand{\pycastem}{\texttt{pyCast3M}}
+\newcommand{\umat}{\texttt{umat}}
+\newcommand{\sirius}{\texttt{sirius}}
+\newcommand{\fortran}{\texttt{fortran}}
+
+\newcommand{\cmake}{\href{http://www.cmake.org/}{\texttt{cmake}}}
+\newcommand{\cppunit}{\texttt{CppUnit}}
+\newcommand{\autotools}{\href{http://fr.wikipedia.org/wiki/Autotools}{\texttt{autotools}}}
+\newcommand{\python}{\href{http://python.org}{\texttt{python}}}
+\newcommand{\gnuplot}{\href{http://www.gnuplot.info}{\texttt{gnuplot}}}
+\newcommand{\latex}{\href{http://www.latex-project.org}{\LaTeX2e{}}}
+\newcommand{\make}{\href{http://www.gnu.org/software/make/}{\texttt{make}}}
+\newcommand{\doxygen}{\href{http://www.stack.nl/~dimitri/doxygen/}{\texttt{doxygen}}}
+\newcommand{\valgrind}{\href{http://www.valgrind.org/}{\texttt{valgrind}}}
+
+\newcommand{\mkey}[1]{\index{mkeys}{#1@\symbol{64}#1}{\texttt{@#1}}}
+\newcommand{\mkeyb}[2]{\index{mkeys}{#1@\symbol{64}#1}{\texttt{@#2}}}
+
+\newcommand{\tclass}[1]{\index{tclass}{#1}{\texttt{#1}}}
+\newcommand{\tclassb}[2]{\index{tclass}{#1}{\texttt{#2}}}
+\newcommand{\tfunc}[1]{\index{tclass}{#1}{\texttt{#1}}}
+\newcommand{\tfuncb}[2]{\index{tclass}{#1}{\texttt{#2}}}
+\newcommand{\tmethod}[2]{\index{tclass}{#1!#2}{\texttt{#2}}}
+\newcommand{\tmethodb}[3]{\index{tclass}{#1!#2}{\texttt{#3}}}
+\newcommand{\toperator}[2]{\index{tclass}{#1!operator::#2}{\texttt{#2}}}
+\newcommand{\toperatorb}[3]{\index{tclass}{#1!operator::#2}{\texttt{#3}}}
+\newcommand{\ttypedef}[2]{\index{tclass}{#1!#2}{\texttt{#2}}}
+\newcommand{\ttypedefb}[3]{\index{tclass}{#1!#2}{\texttt{#3}}}
+
+\newcommand{\env}[1]{\index{env}{#1}{\texttt{#1}}}
+\newcommand{\envb}[2]{\index{env}{#1}{\texttt{#2}}}
+
+\newcommand{\moption}[1]{\texttt{-{}-#1}}
+
+\newcommand{\bigO}[1]{\ensuremath{\mathop{}\mathopen{}O\mathopen{}\left(#1\right)}}
+\def\Hat{\mkern-3mu\text{\textasciicircum}}
+
+%c from texinfo.tex
+\def\ifmonospace{\ifdim\fontdimen3\font=0pt }
+
+%c C plus plus
+\def\cpp{%
+\ifmonospace%
+    C++%
+\else%
+    C\kern.1em\raise.20ex\hbox{\smaller{++}}%
+\fi%
+\spacefactor1000 }
+
+\newcommand{\varcpp}[1]{\texttt{#1}}
+
+\newcommand{\sigmaH}{\ensuremath{\sigma_{H}}}
+
+\newcommand{\nbzrc}{$NbZrC$}
+\newcommand{\upuc}{$\paren{U,Pu}C$}
+\newcommand{\sic}{$SiC$}
+
+\newcommand{\cea}{CEA}
+\newcommand{\windows}{\href{http://www.microsoft.com/france/windows/default.mspx}{\texttt{Windows}}}
+\newcommand{\unix}{\href{http://www.kernel.org/}{\texttt{unix}}}
+\newcommand{\msys}{\href{http://www.mingw.org/wiki/MSYS}{\texttt{msys}}}
+\newcommand{\cygwin}{\href{http://www.cygwin.com/}{\texttt{cygwin}}}
+\newcommand{\linux}{\href{http://www.kernel.org/}{\texttt{linux}}}
+\newcommand{\debian}{\href{http://www.debian.org/}{\texttt{Debian}}}
+\newcommand{\ubuntu}{\href{http://www.ubuntu.com}{\texttt{Ubuntu}}}
+\newcommand{\redhat}{\href{http://www.redhat.com}{\texttt{Red Hat}}}
+\newcommand{\mandriva}{\href{http://www.mandriva.com}{\texttt{Mandriva}}}
+\newcommand{\excel}{\href{http://www.microsoft.com/france/office/2007/programs/excel/overview.mspx}{\texttt{Microsoft Office Excel}}}
+\newcommand{\nsis}{\href{http://nsis.sourceforge.net/Main_Page}{NSIS}}
+
+\newcommand{\debutpas}[1]{\ensuremath{\left.#1\right|_{t}}}
+\newcommand{\milieupas}[1]{\ensuremath{\left.#1\right|_{t+\theta\, \Delta\, t}}}
+\newcommand{\finpas}[1]{\ensuremath{\left.#1\right|_{t+\Delta\, t}}}
+\newcommand{\demipas}[1]{\ensuremath{\left.#1\right|_{t+\frac{\Delta\, t}{2}}}}
+
+\newcommand{\code}[1]{
+  \psframebox[linecolor=ceaorange]{
+    \begin{minipage}[htbp]{1.0\linewidth}
+      \ttfamily #1
+    \end{minipage}
+  }
+}
+
+\newcommand{\bash}[1]{
+  \begin{center}
+    \begin{minipage}{0.8\linewidth}
+      \footnotesize{}
+      \texttt{\$#1}
+    \end{minipage}
+  \end{center}
+}
+
+\include{Champs}
+
+\resumecea{
+  Cette note constitue la notice de référence de la librairie \TFEL{}.
+  
+  La librairie \TFEL{} vise à se doter d'outils, notamment
+  mathématiques, basés sur des paradigmes de programmation
+  avancés. Cette librairie a été découpée en modules, dont les
+  principaux sont {\tt Math}, {\tt Material}, {\tt System} et {\tt
+    Utilities}. Les principales fonctionnalités de ces différents
+  modules sont décrits.
+
+  Nous décrivons ensuite certaines techniques de programmation qui
+  sous-tendent la librairie et permettent d'atteindre des performances
+  élevées.
+
+  La liste des plate-formes et des compilateurs supportés permet de
+  juger de la qualité logicielle de la librairie et de sa portabilité.
+
+  La dernière partie décrit les procédures d'installation de \TFEL{}.
+}
+
+\makeindex{tclass}
+
+\begin{document}
+
+\section{Introduction}
+
+Ce note constitue le guide de référence de la bibliothèque \TFEL{}.
+
+La bibliothèque \TFEL{} vise à se doter d'outils, notamment
+mathématiques, basés sur des paradigmes de programmation avancés, dont
+nous présenterons certains en
+section~\ref{sec:tfel::quelq-techn-de}.
+
+Elle est aujourd'hui intégrée à l'architecture \pleiades{} même si il
+est possible de la distribuer indépendamment, en particulier pour des
+utilisations du générateur de code \mfront{} hors du cadre
+\pleiades{}~\cite{helfer_presentation_2011,darrigo_notice_2012,olagnon_analysis_2013,proix_integration_2013}.
+
+Le langage \cpp{} a été choisi pour sa grande disponibilité, son
+caractère libre et pérenne, son interaction avec les langages
+\texttt{C} et \texttt{fortran}, et son support de tels paradigmes.
+
+\newpage
+\clearpage
+\section{Vue d'ensemble}
+
+Nous décrivons dans cette section le contenu de la bibliothèque. Nous
+commençons par décrire les quelques exécutables fournis par \TFEL{},
+puis nous détaillons les différentes librairies produites.
+
+\subsection{Exécutables}
+
+Actuellement, quatre exécutables sont produits~:
+\begin{enumerate}
+  \item \texttt{tfel-config} qui permet de récupérer des
+  informations sur~:
+  \begin{enumerate}
+    \item le répertoire d'installation de \TFEL{}~;
+    \item les options de compilation (et d'optimisation) que nous
+      conseillons d'utiliser avec le compilateur qui a servi à
+      construire \TFEL{}~;
+    \item les drapeaux d'avertissement à utiliser que nous conseillons
+      d'utiliser avec le compilateur qui a servi à construire
+      \TFEL{}~;
+  \end{enumerate}
+\item \texttt{tfel-doc} est un utilitaire de description de cas test
+  et de génération d'un guide en \LaTeX{}. Il a notamment été utilisé
+  pour décrire les cas tests de la bibliothèque \TFEL{} et de
+  l'application \licos{}~\cite{helfer_cas_2012}~;
+\item le générateur de code \texttt{mfront} qui fait l'objet d'une
+  documentation
+  particulière~\cite{helfer_generateur_2013-1,helfer_generateur_2013}~;
+\item un outil de test élémentaire de lois de comportement mécanique
+  nommé \mtest{}~\cite{helfer_mtest_2014}.
+\end{enumerate}
+
+\subsection{Modules disponibles et librairies produites}
+
+\TFEL{} est un projet complexe séparé en différents modules (packages
+en anglais). Nous en dressons ici la liste accompagnée d'une
+description succincte. Les principaux modules seront chacun décrits
+dans une section spécifique.
+
+\begin{enumerate}
+\item le module {\tt TFEL/Math} est de loin le module le plus
+  important de la librairie. Il contient de nombreuses classes
+  représentant les objets mathématiques usuels et différents
+  algorithmes numériques. La plupart de ces classes et de ces
+  algorithmes sont implantés à l'aide de {\tt template}. Ce module
+  fournit plusieurs librairies~:
+  \begin{enumerate}
+  \item {\tt libTFELMath.so} contient quelques classes de base pour
+    les autres librairies du module~;
+  \item {\tt libTFELMathCubicSpline.so} contient la gestion des
+    erreurs des classes d'interpolation de données par des splines
+    cubiques~;
+  \item {\tt libTFELMathKriging.so} contient certaines spécialisations
+    des classes d'interpolation de données multi-dimensionnelles par
+    des méthodes de krigeage et la gestion d'erreur associée~;
+  \item {\tt libTFELMathParser.so} contient des classes dédiées à
+    l'interprétation de formules mathématiques complexes à partir de
+    chaînes de caractères~;
+  \end{enumerate}
+\item TFELMaterial contient certains classes utilitaires pour
+  l'écriture de propriétés matériau ou loi de comportement mécanique.
+\item le module {\tt TFEL/Exception} contient les bases des classes
+  d'exceptions utilisées dans \TFEL{}. Les sources de ce module sont
+  compilées dans la librairie {\tt libTFELException.so}~;
+\item le module {\tt TFEL/Tests} propose un framework de test
+  similaire à \cppunit{}. Les sources de ce module sont compilées dans
+  la librairie {\tt libTFELTests.so}~;
+\item le module {\tt TFEL/Utilities} contient différentes classes
+  utilitaires. Il fournit la librairie {\tt libTFELUtilities.so}~;
+\item le module {\tt TFEL/System} propose :
+  \begin{enumerate}
+  \item un enrobage \cpp{} de diverses fonctionnalités~:
+    \texttt{POSIX}~\cite{blaess_developpement_2011}~:
+    \begin{enumerate}
+    \item créations et interaction avec des processus~;
+    \item gestion des signaux~;
+    \item créations de répertoires, etc..~;
+    \item traduction des erreurs \texttt{POSIX} en exceptions~;
+    \end{enumerate}
+  \item des facilités d'appels de fonctions définies dans des
+    librairies externes~;
+  \end{enumerate}
+\end{enumerate}
+
+\paragraph{Modules internes} D'autres modules existent qui ont
+essentiellement vocation à être utilisés en interne~:
+\begin{enumerate}
+\item le module {\tt TFEL/Metaprogramming} contient des classes
+  utilitaires simplifiant la \og~méta-programmation à base de
+  template~\fg~\cite{alexandrescu_modern_2000,abrahams_c++_2004}.
+\item le module {\tt TFEL/Typetraits} contient un ensemble de classes
+  permettant de donner de manière non intrusive des informations sur
+  des classes d'objets.
+\item le module {\tt TFEL/FSAlgorithm} contient la réécriture de la
+  plupart des algorithmes de la librairie standard pour des objets
+  dont la taille est (raisonnablement) petite et connue à la
+  compilation. L'idée de ce module est tirée des travaux réalisés pour
+  bâtir la librairie {\tt MTL} (Matrix Template
+  Library)~\cite{siek_matrix_1998}. Son rôle est essentiel
+  pour les performances de la librairie.
+\end{enumerate}
+Ces modules sont constitués de fichiers d'entête uniquement.
+
+Les modules {\tt TFEL/Metaprogramming} et {\tt TFEL/Typetraits}
+permettent de faciliter l'emploi de certaines techniques de
+programmation avancées sur la base du standard C++ de 1998. Elles
+contiennent des parties très ardues et potentiellement les plus
+difficiles à maintenir. Leur documentation a été de ce fait été
+l'objet d'une attention particulière. Nous les avons également
+construites en surveillant les travaux du comité de
+standardisation. Ainsi, leur taille devrait largement diminuer avec le
+portage de \TFEL{} sur le standard de 2011 dont le support par la
+compilateur standard est maintenant quasi-complet.
+
+\newpage
+\clearpage
+\section{Description du module {\tt TFEL/Math}}
+
+Nous décrivons dans cette section les principales fonctionnalités
+proposées par le module {\tt TFEL/Math}.
+
+\subsection{Objets mathématiques}
+
+Dans ce paragraphe, nous détaillons les objets mathématiques qui ont
+été implantés dans le module {\tt TFEL/Math}.
+
+\subsubsection{Quantités physiques}
+
+\begin{table}[htbp]
+  \centering
+  \begin{tabular}{|c|c|c|c|c|c|c|c|}
+    \hline
+    Nom & Masse & Longueur & Temps & Ampère & Température & Candela & Mole \\
+    \hline
+    \hline
+    NoUnit      & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\  
+    \hline
+    Mass        & 1 & 0 & 0 & 0 & 0 & 0 & 0 \\  
+    \hline
+    Length      & 0 & 1 & 0 & 0 & 0 & 0 & 0 \\  
+    \hline
+    Time        & 0 & 0 & 1 & 0 & 0 & 0 & 0 \\  
+    \hline
+    Ampere      & 0 & 0 & 0 & 1 & 0 & 0 & 0 \\  
+    \hline
+    Temperature & 0 & 0 & 0 & 0 & 1 & 0 & 0 \\  
+    \hline
+    Kelvin      & 0 & 0 & 0 & 0 & 1 & 0 & 0 \\  
+    \hline
+    Candela     & 0 & 0 & 0 & 0 & 0 & 1 & 0 \\  
+    \hline
+    Mole        & 0 & 0 & 0 & 0 & 0 & 0 & 1 \\  
+    \hline
+    InvLength           & 0 & -1 & 0 & 0 & 0 & 0 & 0 \\
+     \hline
+    InvTemperature      & 0 & 0 & 0 & 0 & -1 & 0 & 0 \\
+     \hline
+    Frequency           & 0 & 0 & -1 & 0 & 0 & 0 & 0 \\
+     \hline
+    Velocity            & 0 & 1 & -1 & 0 & 0 & 0 & 0 \\
+     \hline
+    Acceleration        & 0 & 1 & -2 & 0 & 0 & 0 & 0 \\
+     \hline
+    Momentum            & 1 & 1 & -1 & 0 & 0 & 0 & 0 \\
+     \hline
+    Force               & 1 & 1 & -2 & 0 & 0 & 0 & 0 \\
+     \hline
+    Newton              & 1 & 1 & -2 & 0 & 0 & 0 & 0 \\
+     \hline
+    Stress              & 1 & -1 & -2 & 0 & 0 & 0 & 0 \\
+     \hline
+    StressRate          & 1 & -1 & -3 & 0 & 0 & 0 & 0 \\
+     \hline
+     Pressure            & 1 & -1 & -2 & 0 & 0 & 0 & 0 \\
+     \hline
+    Energy              & 1 & 2 & -2 & 0 & 0 & 0 & 0 \\
+     \hline
+    EnergyDensity       & 1 & -1 & -2 & 0 & 0 & 0 & 0 \\
+     \hline
+    Density             & 1 & -3 & 0 & 0 & 0 & 0 & 0 \\
+     \hline
+    ThermalConductivity & 1 & 1 & -3 & 0 & -1 & 0 & 0 \\
+     \hline
+     HeatFluxDensity     & 1 & 0 & -3 & 0 & 0 & 0 & 0 \\
+     \hline
+   \end{tabular}
+   \caption{Grandeurs prédéfinies et décomposition suivant les grandeurs
+     de base du système international.}
+  \label{tab:tfel:units}
+\end{table}
+
+La classe \tclass{qt} représente des nombres réels représentant des
+quantités physiques. L'idée d'une telle classe a été discutée à
+plusieurs reprises~\cite{abrahams_c++_2004}, mais nous sommes
+particulièrement inspirés du livre de \nom{Barton} et
+\nom{Nackman}~\cite{barton_engineering_1994}.
+
+Il s'agit d'une classe {\tt template} prenant deux arguments~: une
+classe représentant le type de grandeur représentée et le type
+numérique utilisé.
+
+Les grandeurs usuelles ont été prédéfinies et sont regroupées au
+tableau~\ref{tab:tfel:units} qui donne également leurs décompositions
+suivant les grandeurs de base du système international. Il est
+possible de définir d'autres grandeurs par des puissances rationnelles
+des unités de base à l'aide de la méta-fonction \tclass{GenerateUnit}.
+
+Toutes les opérations mathématiques usuelles ont été définies. Le
+compilateur autorisera toutes les opérations conservant le sens
+physique. Ainsi le produit d'une force par une distance à pour
+résultat une énergie. L'addition d'une masse et d'une température
+n'est pas autorisée.
+
+Ces vérifications sont faites à la compilation et l'utilisation des
+{\tt template} et de l'{\tt inlining} fait que les quantités ainsi
+définies n'ont aucun coût à l'exécution.
+
+Des résultats de type {\tt NoUnit} peuvent être convertis
+automatiquement dans le type numérique sous-jacent. Ils peuvent être
+ainsi utilisés dans toutes les fonctions usuelles (logarithmes,
+exponentielle, etc...).
+
+\paragraph{Note} Les quantités ainsi définies sont aujourd'hui de peu
+d'utilité pratique\footnote{En effet, la plupart des corrélations
+  expérimentales font apparaître des coefficients numériques dont il
+  est difficile de donner l'unité. Il s'agit d'une difficulté pratique
+  que nous allons rapidement illustrer et dont nous donnons une
+  solution acceptable. Cette solution présente certains avantages
+  numériques.
+
+  Par exemple, une loi de \nom{Norton} s'écrit~:
+  \[
+  \dot{p} = A\,\sigmaeq^{E}
+  \]
+  où apparaissent la déformation plastique cumulée \(p\) , la contrainte
+  équivalente \(\sigmaeq\), et deux coefficients \(A\) et \(E\). L'unité
+  du coefficient \(A\) est pour le moins exotique.
+  
+  En fait, la loi de \nom{Norton} devrait être écrite ainsi~:
+  \[
+  \dot{p} = \dot{\varepsilon}_{0}\,\paren{\Frac{\sigmaeq}{\sigma_{0}}}^{E}
+  \]
+  où apparaît une contrainte de normalisation \(\sigma_{0}\). Cette
+  forme est {\tt a priori} plus complexe, mais en pratique elle peut
+  s'avérer numériquement beaucoup plus précise et efficace. En effet,
+  dans la première version, on évalue une puissance d'un nombre de
+  l'ordre de \(10^{8}\) alors que dans la seconde, on évalue la
+  puissance d'un nombre proche de l'unité~: les risques de divergence
+  sont bien moindre.
+  
+  Cette remarque se généralise assez bien~: si l'utilisation de
+  quantité demande un travail supplémentaire aux développeurs de loi,
+  ce travail peut avoir des avantages numériques. 
+}, mais nous
+pouvons espérer que leur usage se répande à terme.
+
+L'introduction des quantités a cependant eu un grand rôle sur la
+conception des classes mathématiques de \TFEL{}. En particulier, nous
+vérifions que toutes les opérations mathématiques sont valides avec
+des conventions très strictes\footnote{Par exemple, il n'est pas
+  possible d'affecter un objet dont le type numérique est en double
+  précision à un objet dont le type numérique est en double
+  précision. De manière générale, il n'est pas possible d'affecter un
+  résultat basé sur un certain type numérique à un résultat sur un
+  type plus petit. La classification des types numériques standard est
+  assuré par une classe nommée \tclass{Promote}}. 
+
+\subsubsection{Tenseurs d'ordre $2$ symétriques}
+
+La  classe  \tclass{stensor}   représente  des  tenseurs  d'ordre  $2$
+symétriques.  Il  s'agit  de  la principale  implantation  du  concept
+\tclass{StensorConcept}\footnote{La notion de concept dans \TFEL{} est
+  décrite au paragraphe~\ref{sec:notion-de-concept}}. Ces classes sont
+particulièrement utilisée pour l'implantation des lois de comportement
+mécanique.
+
+Cette classe {\tt template} est paramétrée par~:
+\begin{enumerate}
+\item la dimension d'espace~;
+\item le type numérique utilisé~;
+\item une classe de stockage des valeurs.
+\end{enumerate}
+
+\paragraph{Stockage des valeurs} L'idée d'utiliser différentes classes
+de stockage s'est avérée avoir peu d'intérêt pratique~: seul le
+stockage par défaut, fourni par la classe \tclass{StensorStatic}, est
+utilisée. Cette classe stocke les valeurs du tenseur dans un tableau
+de taille fixe et permet d'y accéder directement.
+
+La classe \tclass{stensor} n'utilisant aucune méthode virtuelle,
+l'utilisation de la classe \tclass{StensorStatic} assure également que
+la taille d'un tenseur symétrique est exactement la taille de son
+tableau de valeur. Il est donc licite de convertir un pointeur de
+taille fixe vers un pointeur de tenseur symétrique, ce qui est très
+utilisé en pratique, par exemple dans la gestion de champs de
+l'architecture \pleiades{}.
+
+\paragraph{Premiers éléments d'optimisation} L'utilisation de la
+classe \tclass{StensorStatic} présente plusieurs
+avantages\footnote{Pour pouvoir bénéficier de ces avantages, les lois
+  de comportement générées par \mfront{} sont implantées par des
+  classes {\tt template} paramétrées par l'hypothèse de modélisation
+  qui fixe la dimension de l'espace. Elles sont instanciées un fois
+  par hypothèse de modélisation supportée.}~:
+\begin{enumerate}
+\item aucune allocation dynamique n'est faite si l'objet est défini
+  sur la pile (les allocations dynamiques sont coûteuses)~;
+\item les accès aux valeurs sur la pile permettent au compilateur
+  d'effectuer des optimisations très poussées du code~;
+\item le compilateur peut contrôler à la compilation si l'accès aux
+  valeurs est valide.
+\end{enumerate}
+
+\paragraph{Convention} La classe \tclass{stensor} utilise une
+convention particulière, adoptée par certains codes aux éléments
+finis~\cite{doghri_mechanics_2000,bornert_homogeneisation_2001,edf_site_2013}. Un
+tenseur d'ordre \(2\) symétrique est représenté par un vecteur. Les
+trois premières composantes du vecteur représentent les composantes
+diagonales du tenseur et les suivants les composantes extra-diagonales
+multipliées par un facteur \(\sqrt{2}\)~:
+\begin{center}
+  \begin{tabular}[h]{ccc}
+    \(
+    \begin{pmatrix}
+      s_{00} & s_{01} & s_{02} \\
+      s_{00} & s_{11} & s_{12} \\
+      s_{02} & s_{12} & s_{22} \\
+    \end{pmatrix}
+    \) &\(\Rightarrow\) &
+    \(
+    \begin{pmatrix}
+      s_{00} \\
+      s_{11} \\
+      s_{22} \\
+      \sqrt{2}\,s_{01}\\
+      \sqrt{2}\,s_{02}\\
+      \sqrt{2}\,s_{12}\\
+    \end{pmatrix}
+    \)\\
+    Représentation matricielle & &  Représentation vectorielle 
+  \end{tabular}
+\end{center}
+
+Cette représentation vectorielle est telle que le produit contracté de
+deux tenseurs d'ordre \(2\) symétriques est égal au produit scalaire
+de leurs représentations vectorielles. Dans la suite, nous ne ferons
+plus de distinction entre la représentation matricielle et la
+représentation tensorielle d'un vecteur\footnote{Notons que le code
+  aux éléments finis utilise une autre convention, celle de
+  \nom{Voigt}. Cette convention représente également les tenseurs
+  d'ordre \(2\) symétriques par des vecteurs mais différencie les
+  contraintes et les déformations~: les composantes extradiagonales
+  des contraintes ne sont affectées d'aucun facteur, et celles des
+  déformations sont affectées d'un facteur \(2\). Cette dissymétrie
+  rend pratiquement impossible une écriture systématique des
+  opérations tensorielles.}.
+
+\begin{table}[htbp]
+  \centering
+  \begin{tabular}{|c|c|}
+    \hline
+    Dimension & Nombre de composantes \\
+    \hline
+    \hline
+    1 & 3 \\
+    \hline
+    2 & 4 \\
+    \hline
+    3 & 6 \\
+    \hline
+  \end{tabular}
+  \caption{Nombre de composantes des tenseurs d'ordre $2$ symétriques en fonction de la dimension.}
+  \label{tab:tfel:stensor_size}
+\end{table}
+
+\paragraph{Nombre de composantes} En fonction de la dimension
+d'espace, certaines composantes extradiagonales peuvent être nulles et
+ne sont pas stockées. Le tableau~\ref{tab:tfel:stensor_size} donne le
+nombre de composantes des tenseurs d'ordre \(2\) symétriques en
+fonction de la dimension d'espace.
+
+\paragraph{Accès aux composantes du tenseur} L'accès à une composante
+d'un tenseur d'ordre \(2\) symétrique se fait par l'opérateur
+\toperator{stensor}{[]} ou par l'opérateur
+\toperator{stensor}{()}. Ces opérateurs prennent le numéro de la
+composante en argument.
+
+\paragraph{Opérations mathématiques} Les opérations suivantes sont
+permises sur les tenseurs d'ordre \(2\) symétriques~:
+\begin{enumerate}
+\item la négation~;
+\item multiplication à droite et à gauche par un scalaire~;
+\item division à droite par un scalaire~;
+\item addition et soustraction de deux tenseurs~;
+\item produit contracté de deux tenseurs. Pour cette opération,
+  l'opérateur {\tt |} est utilisé~;
+\item produit tensoriel de deux tenseurs. Pour cette opération,
+  l'opérateur \(\Hat\) est utilisé. Le résultat est une application
+  linéaire sur les tenseurs d'ordre \(2\) symétriques décrite au
+  paragraphe~\ref{sec:appl-line-sur}.
+\end{enumerate}
+Les règles de priorité du C++ ne permettent pas de reproduire les
+règles de priorité naturelle pour les produits contracté et tensoriel,
+l'emploi de parenthèse est parfois nécessaire.
+
+Ces opérations sont implantées par des techniques particulières,
+appelées {\tt expression
+  templates}~\cite{veldhuizen_expression_1995,vandevoorde_c++_2002},
+qui permettent au compilateur de générer un code optimisée. Ces
+techniques sont partiellement décrites au
+paragraphe~\ref{sec:tfel::quelq-techn-de}.
+
+\paragraph{Importation et exportation} Les codes aux éléments finis
+utilisent différentes représentations des tenseurs. En particulier, le
+code aux éléments finis \castem{} utilise la convention de
+\nom{Voigt}~\cite{cea_site_2013}. Deux méthodes assurent les
+conversions, si nécessaire~:
+\begin{enumerate}
+\item la méthode {\tt importVoigt} permet de convertir des valeurs
+  utilisant la convention de \nom{Voigt} pour les déformations~;
+\item la méthode {\tt importTab} permet de convertir des valeurs
+  utilisant la convention de \nom{Voigt} pour les contraintes.
+\end{enumerate}
+
+\paragraph{Calcul des valeurs propres} Les tenseurs d'ordre \(2\)
+symétriques sont toujours diagonalisables. La méthode
+\tmethodb{stensor}{computeEigenValues}{compute\-Eigen\-Values} permet
+de calculer les valeurs propres d'un tenseur d'ordre 2 symétrique. En
+\(1D\), aucun calcul n'est fait. En \(2D\), la troisième composante
+est nécessairement une valeur propre et les deux autres s'obtiennent
+en trouvant les racines d'un polynômes d'ordre \(2\). En \(3D\), le
+polynôme caractéristique a trois racines que l'on calcule par la
+méthode de \nom{Cardan}.
+
+\paragraph{Calcul des vecteurs propres} La méthode
+\tmethodb{stensor}{computeEigenVectors}{compute\-Eigen\-Vectors}
+permet de calculer les valeurs propres et les vecteurs propres d'un
+tenseur d'ordre \(2\) symétrique.
+
+\paragraph{Changement de base} La méthode
+\tmethodb{stensor}{changeBasis}{change\-Basis} de changer un tenseur
+de base. Elle prend en argument une matrice de rotation. En \(1D\),
+aucune opération n'est faite (seule matrice identité est valide). En
+\(2D\), on suppose que la troisième direction est invariante. Pour des
+raisons de performances, aucune vérification de ces hypothèses n'est
+faite.
+
+\paragraph{Tenseur identité} Le tenseur identité, noté
+\(\tenseur{I}\), est accessible via la méthode statique
+\tmethod{stensor}{Id}.
+
+\paragraph{Trace} La fonction \tfunc{trace} permet de calculer la
+trace du tenseur passé en argument, c'est à dire la somme de ses
+termes diagonaux~:
+\[
+\mathop{trace}\paren{a}=\sum_{i=0}^{3}a_{ii}=\tenseur{a}\colon\tenseur{I}
+\]
+
+\paragraph{Contrainte équivalente au sens de \nom{Von Mises}} La
+fonction \tfunc{sigmaeq} retourne la contrainte équivalente
+\(\sigmaeq\) au sens de \nom{Von Mises} du tenseur passé en argument~:
+\[
+\sigmaeq\paren{\tsigma} = \sqrt{\Frac{3}{2}\,\tenseur{s}\colon\tenseur{s}}\quad\text{avec}\quad\tenseur{s}=\tsigma-\Frac{1}{3}\mathop{trace}\paren{\tsigma}\,\tenseur{I}
+\]
+
+\paragraph{Contrainte équivalente au sens de \nom{Tresca}} La fonction
+\tfunc{tresca} retourne la contrainte équivalente \(\sigmaeq^{T}\) au
+sens de \nom{Tresca} du tenseur passé en argument~:
+\[
+\sigmaeq^{T}\paren{\tsigma} = \max_{i,j\\i!=j}\left|s^{p}_{i}-s^{p}_{j}\right|
+\]
+où \(s^{p}_{i}\) est la \(i\)\ieme valeur propre du tenseur
+\(\tsigma\).
+
+\paragraph{Compatibilité avec la librairie standard} La classe
+\tclass{stensor} présente toutes les caractéristiques d'un container
+de la librairie standard du C++~\cite{stroustrup_langage_2004}. Elle
+définit~:
+\begin{enumerate}
+\item les alias nécessaires, dont les principaux sont
+  \ttypedef{stensor}{iterator}, \ttypedef{stensor}{const\_iterator},
+  et \ttypedef{stensor}{value\_type}~;
+\item les méthodes \tmethod{stensor}{begin}, \tmethod{stensor}{end},
+  \tmethod{stensor}{rbegin}, \tmethod{stensor}{rend} et
+  \tmethod{stensor}{size}.
+\end{enumerate}
+
+\subsubsection{Applications linéaires sur les tenseurs d'ordre $2$
+  symétriques}
+\label{sec:appl-line-sur}
+
+L'écriture des lois de comportements mécaniques fait intervenir des
+tenseurs d'ordre \(4\), c'est à dire des applications linéaires qui
+s'appliquent sur des tenseurs d'ordre \(2\).
+
+Dans ce paragraphe, nous nous intéressons plus particulièrement aux
+tenseurs d'ordre \(4\) qui préservent la symétrie des tenseurs d'ordre
+\(2\) symétriques. Ils sont représentés par la classe
+\tclass{st2tost2}.
+
+La classe \tclass{st2tost2} est une classe {\tt template} paramétrée
+par~:
+\begin{enumerate}
+\item la dimension d'espace~;
+\item le type numérique utilisé.
+\end{enumerate}
+
+
+\paragraph{Représentation matricielle} Les tenseurs d'ordre \(4\) sont
+caractérisés par des composantes à quatre indices. En s'appuyant sur
+la représentation vectorielle des tenseurs d'ordre \(2\), une
+représentation matricielle est également possible~: le résultat de
+l'application d'un tenseur d'ordre \(4\) sur un tenseur d'ordre \(2\)
+est égal au produit de leur représentation matricielle et vectorielle
+respectivement.
+
+\paragraph{Stockage des valeurs} La classe \tclass{st2tost2} stocke
+ses valeurs dans un tableau de taille fixe. La classe
+\tclass{st2tost2} n'utilise aucune méthode virtuelle~: sa taille est
+exactement celle de son tableau de valeurs.
+
+Ces choix présentent les mêmes avantages que pour les tenseurs d'ordre
+\(2\) symétriques~:
+\begin{enumerate}
+\item aucune allocation dynamique n'est faite si l'objet est défini
+  sur la pile~;
+\item les accès aux valeurs sur la pile permettent au compilateur
+  d'effectuer des optimisations très poussées du code~;
+\item il est licite de convertir un pointeur vers un tableau de
+  valeurs vers un pointeur d'objet de type \tclass{st2tost2} et
+  inversement~;
+\item le compilateur peut contrôler à la compilation si l'accès aux
+  valeurs est valide.
+\end{enumerate}
+
+\subsubsection{Tenseurs d'ordre 2}
+
+La classe \tclass{tensor} implémente des tenseurs d'ordre \(2\) non
+symétriques.
+
+\paragraph{Fonctions utiles} Différentes fonctions sont les tenseurs
+d'ordre \(2\) ont été implantées~:
+\begin{enumerate}
+\item la fonction \tfunc{det} calcule le déterminant d'un tenseur~;
+\item la fonction \tfunc{computeRightCauchyGreenTensor} calcule le
+  tenseur de \nom{Cauchy}-\nom{Green} droit \(C\) d'un tenseur \(F\)~:
+  \[
+  C = \transpose{F}\,\dot\,F
+  \]
+  Le résultat est un tenseur d'ordre \(2\) symétrique de type
+  \tclass{stensor}.
+\item la fonction \tfunc{computeLeftCauchyGreenTensor} calcule le
+  tenseur de \nom{Cauchy}-\nom{Green} gauche \(B\) d'un tenseur
+  \(F\)~:
+  \[
+  B = F\,\dot\,\transpose{F}
+  \]
+  Le résultat est un tenseur d'ordre \(2\) symétrique de type
+  \tclass{stensor}.
+\item la fonction \tfunc{syme} symétrise un tenseur. Le résultat est
+  un tenseur d'ordre \(2\) symétrique.
+\end{enumerate}
+
+\subsubsection{Vecteurs}
+
+Deux types de vecteurs sont implantés~:
+\begin{enumerate}
+\item des vecteurs de petite taille connue à la compilation. Ils sont
+  implantés par la classe \tclass{tvector}~;
+\item des vecteurs de taille quelconque. Ils sont implantés dans la
+  classe \tclass{vector}
+\end{enumerate}
+
+Ces deux classes implémentent le concept
+\tclass{VectorConcept}\footnote{La notion de concept dans \TFEL{} est
+  décrite au paragraphe~\ref{sec:notion-de-concept}}.
+
+\paragraph{Vecteurs de petite taille connue}
+
+\paragraph{Vecteurs quelconques}
+
+\subsubsection{Matrices}
+
+Deux types de matrices sont implantés~:
+\begin{enumerate}
+\item des matrices de petite taille connue à la compilation. Ils sont
+  implantés par la classe \tclass{tmatrix}~;
+\item des matrices de taille quelconque. Ils sont implantés dans la
+  classe \tclass{matrix}
+\end{enumerate}
+
+Ces deux classes implémentent le concept
+\tclass{MatrixConcept}\footnote{La notion de concept dans \TFEL{} est
+  décrite au paragraphe~\ref{sec:notion-de-concept}}.
+
+\paragraph{Matrices de petite taille connue}
+
+\paragraph{Matrices quelconques}
+
+\subsubsection{Tableaux multi-dimensionnels}
+
+\subsubsection{Objets composites}
+
+\subsection{Algorithmes mathématiques}
+
+\subsubsection{Résolution de systèmes linéaires par un décomposition
+  {\tt LU}}
+
+\paragraph{Décomposition {\tt LU}}
+
+\paragraph{Résolution par descente/remontée}
+
+\paragraph{Calcul de l'inverse d'une matrice}
+
+\subsubsection{Résolution de systèmes linéaires par un décomposition
+  {\tt QR}}
+
+\paragraph{Décomposition {\tt QR}}
+
+Toute matrice \(A\) de format \(\paren{M,N}\) admet une décomposition
+de la forme~:
+\[
+A = Q\,R
+\]
+où~:
+\begin{minipage}[htbp]{0.9\linewidth}
+  \begin{enumerate}
+  \item \(Q\) est une matrice orthogonale de format \(\paren{M,M}\)~;
+  \item \(R\) est une matrice triangulaire supérieure de format
+    \(M,N\).
+  \end{enumerate}
+\end{minipage}
+
+Une telle décomposition peut être obtenue par une série de
+transformations de \nom{HouseHolder}. De telles transformations sont
+représentées par des matrices de la forme~:
+\begin{equation}
+  \label{eq:tfel:QR:Hi}
+  H_{i}=I+\Frac{1}{\beta_{i}}\transpose{v}_{i}\,v_{i}
+\end{equation}
+où \(\beta\) est un coefficient de normalisation.
+
+À la fin de la décomposition, la matrice \(Q\) est le produit ces
+matrices~:
+\begin{equation}
+  \label{eq:tfel:QR:Q}
+  Q = H_{1}\,\cdots\,H_{n}
+\end{equation}
+
+L'algorithme utilisé pour la décomposition de la matrice est extrait
+du livre de P. Lascaux et R. Théodor~\cite{lascaux_analyse_1994}.
+
+La classe \tclass{QRDecomp} réalise cette factorisation par la méthode
+de \nom{HouseHolder} et propose différentes méthodes pour travailler
+avec cette décomposition~:
+\begin{enumerate}
+\item la méthode \tmethod{QRDecomp}{exe} réalise la décomposition de
+  la matrice. Cette méthode s'appuie sur un vecteur auxiliaire qui
+  contient les éléments diagonaux de la matrice \(R\) (voir paragraphe
+  précédent). La décomposition est faite sur place, c'est à dire que
+  la matrice \(A\) est utilisée pour stocker les matrices \(Q\) et
+  \(R\). Deux vecteurs supplémentaires, correctement dimensionnés,
+  sont nécessaires pour stocker les termes diagonaux de \(R\) et les
+  coefficients de normalisation qui interviennent dans la
+  normalisation des vecteurs \(\beta\) définissant les transformations
+  de \nom{HouseHolder}~;
+\item la méthode \tmethod{QRDecomp}{tq\_product} réalise le produit de
+  la matrice \(\transpose{Q}\) (transposée de la matrice \(Q\)) et
+  d'un vecteur \(v\).
+\item la méthode \tmethod{QRDecomp}{back\_substitute} résout le
+  problème~:
+  \[
+  R\,x = b
+  \]
+\end{enumerate}
+
+\paragraph{Stockage de la décomposition} Les termes diagonaux de \(R\)
+sont stockés dans un vecteur annexe. Les termes non situés sur la
+diagonale de matrice \(R\) est stockés dans la partie triangulaire de
+la matrice \(A\).  La matrice \(Q\) n'est pas stockée explicitement,
+mais on stocke dans partie inférieure de \(A\) les vecteurs \(v_{i}\)
+qui apparaissent dans les transformations de
+\nom{HouseHolder}~\eqref{eq:tfel:QR:Hi}. Les coefficients de
+normalisation \(beta_{i}\) sont stockés dans un vecteur annexe.
+
+\paragraph{Application de la décomposition $QR$ à la résolution de
+  systèmes linéaires}. Si \(A\) est une matrice, \(b\) un
+vecteur. \(A\) se décompose en une matrice orthogonale \(Q\) et
+matrice triangulaire supérieure \(R\). 
+
+La matrice \(Q\) étant orthogonale, son inverse est sa égale à sa
+transposée. 
+
+Le problème linéaire \(A\,x=b\) est donc équivalent au problème~:
+\begin{equation}
+  \label{eq:tfel:QR:lin_solve}
+  R\,x=y \quad\text{ avec }\quad y=\transpose{Q}\,b
+\end{equation}
+
+La solution du problème~\eqref{eq:tfel:QR:lin_solve} peut être obtenue
+par les opérations suivantes~:
+\begin{enumerate}
+\item décomposition de la matrice \(A\) par la méthode
+  \tmethod{QRDecomp}{exe}~;
+\item calcul du vecteur \(y\) par la méthode
+  \tmethod{QRDecomp}{tq\_product}~;
+\item inversion du système triangulaire \(R\,x=y\) par la méthode
+  \tmethod{QRDecomp}{back\_substitute}.
+\end{enumerate}
+
+À la fin de ses opérations, le vecteur \(b\) contient la solution du
+problème~\eqref{eq:tfel:QR:lin_solve} et la matrice \(A\) contient les
+matrices \(Q\) et \(R\).
+
+% \paragraph{Résolution d'un problème de moindres carrés} Les problèmes de moindres carrés
+
+
+\subsubsection{Résolutions de systèmes d'équations non linéaires}
+
+\paragraph{Algorithmes de \nom{Newton}}
+
+\paragraph{Algorithmes de \nom{Broyden}}
+
+\subsubsection{Intégration des systèmes différentiels par des méthodes
+  de \nom{Runge-Kutta}}
+
+\subsubsection{Interpolation de données par splines cubiques}
+
+\subsubsection{Interpolation de données par krigeage}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.6\linewidth]{@abs_top_srcdir@/docs/tfel/images/EllipticFuelRodPowerDensity.eps}\\
+  \includegraphics[width=0.6\linewidth]{@abs_top_srcdir@/docs/tfel/images/EllipticFuelRodPowerDensityLegend.eps}
+  \caption{Interpolation des puissances calculées par le code
+    {\tt TRIPOLI} sur un maillage utilisé par un calcul
+    thermo-mécanique effectué avec le code \licos{}.}
+  \label{fig:PowerDensityInterpolation}
+\end{figure}
+
+\subsubsection{Identifications de paramètres par la méthode de
+  \nom{Levenberg-Marquardt}}
+
+\subsection{Évaluation d'expressions mathématiques}
+
+\newpage
+\clearpage
+\section{Description du module {\tt TFEL/Material}}
+
+\newpage
+\clearpage
+\section{Description du module {\tt TFEL/System}}
+
+\subsection{Gestion des librairies externes}
+
+\subsection{Gestion des processus}
+
+\subsection{Gestion des signaux}
+
+\newpage
+\clearpage
+\section{Description du module {\tt TFEL/Utilities}}
+
+\subsection{La classe {\tt GenType}}
+
+\subsection{Lecture de fichier texte}
+
+\subsection{Lecture d'un jeu de données}
+
+\newpage
+\clearpage
+\section{Quelques techniques de programmation sous-tendant la
+  librairie de calculs tensoriels de \TFEL{}}
+\label{sec:tfel::quelq-techn-de}
+
+Nous décrivons ici quelques techniques de programmation sous-tendant
+la bibliothèque de calculs tensoriels de \TFEL{}. Ces techniques, aux
+quels de nombreux travaux ont été consacrés, se différencient
+notamment de techniques plus traditionnelles et ont été développées
+pour combiner simplicité d'utilisation par la surcharge des opérateurs
+mathématiques usuels et performances optimales, au moins égales à
+celles obtenues en \fortran{}.
+
+\subsection{Utilisation de la mémoire}
+
+Le nombre de composantes d'un tenseur, et donc la taille mémoire qu'il
+utilise, dépend {\em a priori} de la dimension~: un tenseur a \(3\)
+composantes en \(1D\), \(4\) composantes en \(2D\) et \(6\)
+composantes en \(3D\).
+
+Étant de petite taille, la zone mémoire associée peut être initialisée
+sur la pile (nommée \texttt{stack} en anglais), ou sur le tas (nommé
+\texttt{heap}). L'allocation sur le tas est coûteuse et ne peut être
+utilisée pour des petits calculs, tels que ceux utilisés pour
+l'intégration des lois de comportement, sans réduire considérablement
+les performances. L'allocation sur la pile est en comparaison sans
+coût. Elle permet par ailleurs une meilleure localisation des données
+(et donc des optimisations par le compilateur) et est compatible sans
+précautions particulières avec une utilisation des exceptions.
+
+L'allocation sur la pile peut se faire en stockant de manière
+systématique un tableau de taille \(6\) qui est la taille maximale des
+tenseurs quelque soit la dimension. Il est alors nécessaire de stocker
+la dimension d'espace dans le tenseur. Toutes les opérations
+tensorielles doivent faire appel à des boucles sur allant de \(0\) à la
+taille du tenseur. Cette méthode présente plusieurs désavantages~:
+\begin{enumerate}
+  \item la définition d'un champ de tenseur, où l'on attribue un tenseur
+  à chaque point de discrétisation d'un domaine géométrique, conduit à
+  une gaspillage de mémoire~;
+  \item il n'est pas possible au compilateur de dérouler ces boucles et
+  d'optimiser les opérations tensorielles~;
+  \item le compilateur ne peut vérifier que l'accès aux données est
+  valide, c'est à dire qu'un indice trop grand n'est pas utilisé. Une
+  telle vérification peut être faite par des tests, mais cela alourdit
+  le code et ralentit l'exécution~;
+  \item il est nécessaire de passer la dimension d'espace au
+  constructeur des objets, ce qui alourdit l'écriture.
+\end{enumerate}
+
+Nous avons choisi une solution qui nous est apparue plus avantageuse et
+consistant à paramétrer les tenseurs par la dimension d'espace~: un
+tenseur \(1D\) est un objet différent d'un objet \(2D\). Ce choix permet
+d'utiliser un ensemble de techniques de programmation générique
+permettant par exemple de \og~dérouler les boucles\fg{} à la compilation
+et au compilateur de vérifier notre code\footnote{De manière générale,
+  nous avons privilégié dans \TFEL{} des techniques de programmation
+  permettant de détecter au plus tôt, c'est à dire dès la phase de
+  compilation, des erreurs qui ne sont détectables dans d'autres
+  langages qu'à l'exécution.}.
+
+Ce paramétrage par la dimension d'espace est masqué dans \mfront{}~:
+une loi de comportement est en fait paramétrée par la dimension
+d'espace et est spécialisée pour chaque dimension d'espace, produisant
+un code optimisé dans chaque cas (au détriment du temps de compilation
+et de la taille du code généré, mais ces aspects ne sont pas
+problématiques pour les lois de comportement).
+
+\subsection{Choix du type numérique}
+
+L'ensemble des objets mathématiques de \TFEL{} sont également
+paramétrés par le type numérique utilisé. 
+
+Ce paramétrage du type numérique est masqué dans \mfront{}. \mfront{}
+propose d'utiliser un type opaque \texttt{real} pour les opérations
+mathématiques. Dans le cas de l'interface \texttt{umat}, la loi de
+comportement est spécialisée en utilisant un nombre flottant en double
+précision. D'autres codes peuvent faire des choix différents~: le code
+de résolution par transformées rapides développé au sein du projet
+\pleiades{} permet de choisir le type numérique à utiliser à la
+compilation.
+
+\subsection{Élimination des objets temporaires}
+\label{sec:tfel:elim-des-objets}
+
+Il est classique de vanter, pour des applications scientifiques, la
+possibilité dans le langage \cpp{} de surcharger les opérateurs
+mathématiques afin de rapprocher l'écriture du code de l'écriture
+mathématique usuelle.
+
+Une implantation \og~naïve~\fg{} de la surcharge des opérateurs
+consiste à écrire, dans le cas particulier de l'addition, que la somme
+de deux tenseurs est un tenseur. Ainsi, la somme \texttt{d} de trois
+tenseurs \texttt{a}, \texttt{b} et \texttt{c} s'écrit~:
+\begin{center}
+  \texttt{d} =  \texttt{a} + \texttt{b} + \texttt{c}
+\end{center}
+Cette expression est interprétée par le compilateur en introduisant
+des objets temporaires, résultats des opérations prises deux à deux~:
+\begin{center}
+  \texttt{d} =  \texttt{a} + \texttt{b} + \texttt{c}
+  \(\quad\Rightarrow\quad
+  \left\{
+      \begin{array}[p]{rl}
+        \text{\texttt{tmp1}} &= \text{\texttt{a}}    + \text{\texttt{b}} \\ 
+        \text{\texttt{tmp2}} &= \text{\texttt{tmp1}} + \text{\texttt{c}} \\ 
+        \text{\texttt{d}}    &= \text{\texttt{tmp3}}
+      \end{array}
+    \right.
+    \)
+\end{center}
+
+L'évaluation et l'affectation des ces temporaires conduit à trois
+boucles (qui peuvent être éventuellement déroulées), là où une doit
+suffire.
+
+Une solution à cela est d'utiliser une évaluation paresseuse des
+opérations~: le résultat de la somme de deux tenseurs étant un objet
+particulier \og~résultat de la somme de deux tenseurs~\fg{} dont le
+rôle est de porter l'information des opérations à effectuer jusqu'au
+moment de leur évaluation effective, c'est à dire jusqu'au moment de
+l'affectation au tenseur \texttt{d}. Le résultat de la somme de trois
+tenseurs est un objet du type \og~résultat de la somme du résultat de
+la somme de deux tenseurs et d'un tenseur~\fg{}. 
+
+Nous utilisons le compilateur pour générer en arrière plan de tels
+objets (en nous appuyant sur la notion de concept développée au
+paragraphe suivant) et les éliminer au moment de l'évaluation
+effective du résultat. Cette technique, appelée \texttt{expression
+  template}, couplée aux techniques de déroulement de boucles, permet
+de transformer l'addition de trois tenseurs à du code équivalent à~:
+\begin{center}
+  \texttt{d} =  \texttt{a} + \texttt{b} + \texttt{c}
+  \(\quad\Rightarrow\quad
+  \left\{
+      \begin{array}[p]{rl}
+        d[0] &= \texttt{a}[0] + \texttt{b}[0] + \texttt{c}[0] \\
+        d[1] &= \texttt{a}[1] + \texttt{b}[1] + \texttt{c}[1] \\
+        d[2] &= \texttt{a}[2] + \texttt{b}[2] + \texttt{c}[2] \\
+      \end{array}
+    \right.
+    \)
+\end{center}
+si les tenseurs \texttt{a}, \texttt{b}, \texttt{c} et \texttt{d} sont
+des tenseurs \(1D\).
+
+Le moteur d'\texttt{expression template} de \TFEL{} se compare
+favorablement, en terme de fonctionnalités, à toutes les implantations
+publiées à notre connaissance, en particulier car nous avons développé
+une notion de concept qui est maintenant décrite.
+
+\subsection{Notion de concept}
+\label{sec:notion-de-concept}
+
+Nous avons décrit brièvement le moteur d'\texttt{expression template}
+qui sous-tend les opérations mathématiques dans \TFEL{}. Chaque
+opération conduit à des objets dont le type est généré automatiquement
+par le compilateur. D'un point de vue pratique, il est nécessaire que
+ses objets se comportent comme des tenseurs \og~normaux~\fg{} afin de
+pouvoir les utiliser dans des fonctions tensorielles usuelles (trace,
+contrainte équivalente, etc..).
+
+Il pourrait être tenté d'utiliser une classe mère abstraite et des
+méthodes virtuelles associées. Cette approche est incompatible avec
+les choix de conception précédent~:
+\begin{enumerate}
+\item il est nécessaire d'allouer les objets sur le tas et de
+  manipuler des pointeurs ce qui est à la fois inefficace et
+  incompatible avec une écriture proche de l'écriture mathématique
+  usuelle~;
+\item l'utilisation de méthodes virtuelles ruine toutes les
+  optimisations que nous avons cherchées à mettre en place dans les
+  paragraphes précédents.
+\end{enumerate}
+
+Une autre technique d'abstraction est donc nécessaire. De nombreuses
+recherches ont permis de dégager la notion de \og~concept~\fg{}. Cette
+notion aurait dû être un des piliers du futur standard du langage
+\cpp{} mais son introduction a été différée par manque de maturité.
+
+\TFEL{} propose une notion de \og~concept\fg{} beaucoup moins étendue et
+générale que celle proposée pour le futur standard mais qui est basée
+sur le standard actuel. La notion de concept dans \TFEL{} repose sur la
+combinaison de différentes techniques de programmation relativement
+pointues~:
+\begin{enumerate}
+  \item une classe \texttt{S} implante la notion de concept en dérivant
+  de la classe \texttt{StensorConcept<S>}~: \texttt{S} hérite d'une
+  classe dont elle est paramètre. Cette technique, appelée
+  \texttt{Curiously Recurring Template Pattern}, a été énormément
+  utilisée en programmation générique pour obtenir une flexibilité
+  équivalente aux méthodes virtuelles sans en payer le coût~;
+  \item une classe à deux paramètres \texttt{Implements} qui contient
+  une variable statique \varcpp{cond}. Si une \texttt{S} implante le
+  concept \texttt{StensorConcept}, la variable statique
+  \texttt{Implements<S,StensorConcept>::cond} vaut \texttt{true},
+  \texttt{false} dans le cas contraire. L'implantation effective de la
+  classe \texttt{Implements} repose sur les capacités d'introspection de
+  l'opérateur \texttt{sizeof}~;
+  \item le recours au principe \texttt{SFINAE}, \texttt{Substitution
+    Failure Is Not An Error} pour filtrer les paramètres valides d'une
+  fonction. Ce principe stipule que lorsque le compilateur examine la
+  définition d'une fonction paramétrée pour savoir si elle applicable
+  dans une contexte particulier, si la substitution du paramètre conduit
+  à un échec, alors cette fonction est simplement {\em éliminée} de la
+  liste des candidats {\em sans causer d'erreur}.
+
+  L'application de ce principe se fait dans \TFEL{} par la classe
+  \texttt{EnableIf} qui paramétrée par une variable booléenne et une
+  type \texttt{T}. La classe \texttt{EnableIf<true,T>} est implantée
+  et contient un alias nommé \texttt{type} égal à \texttt{T}. La
+  classe \texttt{EnableIf<false,T>} n'est jamais définie. Ainsi,
+  l'alias \texttt{EnableIf<cond,T>::type} n'est défini que si la
+  variable \texttt{cond} vaut \texttt{true}.
+
+  Ces préliminaires permettent de comprendre la déclaration de la
+  fonction \texttt{trace} dans \TFEL{}~:
+
+  \begin{center}
+    \begin{minipage}{0.8\textwidth}
+      \mbox{}\\
+      \hlkwc{template}\hlstd{}\hlsym{$<$}\hlstd{}\hlkwc{class }\hlstd{T}\hlsym{$>$}\hspace*{\fill}\\
+      \hlstd{TFEL\textunderscore MATH\textunderscore INLINE\hspace*{\fill}\\
+        typename tfel}\hlsym{::}\hlstd{meta}\hlsym{::}\hlstd{EnableIf}\hlsym{$<$}\hspace*{\fill}\\
+      \hlstd{}\hlstd{\ \ }\hlstd{tfel}\hlsym{::}\hlstd{meta}\hlsym{::}\hlstd{Implements}\hlsym{$<$}\hlstd{T}\hlsym{,}\hlstd{StensorConcept}\hlsym{$>$::}\hlstd{cond}\hlsym{,}\hspace*{\fill}\\
+      \hlstd{}\hlstd{\ \ }\hlstd{typename StensorTraits}\hlsym{$<$}\hlstd{T}\hlsym{$>$::}\hlstd{NumType}\hspace*{\fill}\\
+      \hlsym{$>$::}\hlstd{type}\hspace*{\fill}\\
+      \hlkwd{trace}\hlstd{}\hlsym{(}\hlstd{}\hlkwb{const }\hlstd{T}\hlsym{\&);}\\
+    \end{minipage}
+  \end{center}
+
+  L'utilisation de la classe \texttt{EnableIf} conduit à ce que cette
+  fonction ne puisse être appliquée que si la classe \texttt{T}
+  implante le concept \texttt{StensorConcept}. Ce filtre permet
+  d'éviter un conflit possible avec la déclaration de la fonction
+  \texttt{trace} d'une matrice~:
+
+  \begin{center}
+    \begin{minipage}{0.8\textwidth}
+      \mbox{}\\
+      \hlkwc{template}\hlstd{}\hlsym{$<$}\hlstd{}\hlkwc{class }\hlstd{T}\hlsym{$>$}\hspace*{\fill}\\
+      \hlstd{TFEL\textunderscore MATH\textunderscore INLINE\hspace*{\fill}\\
+        typename tfel}\hlsym{::}\hlstd{meta}\hlsym{::}\hlstd{EnableIf}\hlsym{$<$}\hspace*{\fill}\\
+      \hlstd{}\hlstd{\ \ }\hlstd{tfel}\hlsym{::}\hlstd{meta}\hlsym{::}\hlstd{Implements}\hlsym{$<$}\hlstd{T}\hlsym{,}\hlstd{MatrixConcept}\hlsym{$>$::}\hlstd{cond}\hlsym{,}\hspace*{\fill}\\
+      \hlstd{}\hlstd{\ \ }\hlstd{typename MatrixTraits}\hlsym{$<$}\hlstd{T}\hlsym{$>$::}\hlstd{NumType}\hspace*{\fill}\\
+      \hlsym{$>$::}\hlstd{type}\hspace*{\fill}\\
+      \hlkwd{trace}\hlstd{}\hlsym{(}\hlstd{}\hlkwb{const }\hlstd{T}\hlsym{\&);}\\
+    \end{minipage}
+  \end{center}
+
+\end{enumerate}
+
+L'application de toutes ces techniques permet au compilateur de
+traduire la trace de la somme de deux tenseurs \texttt{s1} et
+\texttt{s2} en un code équivalent à~:
+\begin{center}
+  \texttt{trace(s1+s2)}
+  \(\quad\Rightarrow\quad
+  \texttt{s1}[0] + \texttt{s2}[0] +
+  \texttt{s1}[1] + \texttt{s2}[1] +
+  \texttt{s1}[2] + \texttt{s2}[2]
+  \)
+\end{center}
+
+\newpage
+\clearpage
+\section{Documentation informatique}
+\label{sec:mfront:doc:info}
+
+\TFEL{} est développé en C++ sur la base du standard de \(1998\). Nous
+détaillons dans ce paragraphe quels sont les plate-formes et les
+compilateurs supportés.
+
+Ces différents points permettent d'apprécier la qualité logicielle de
+\TFEL{}.
+
+\subsection{Plate-formes supportées}
+
+\subsubsection{Systèmes \unix{}}
+
+Sous \unix{}, nous nous sommes appuyés sur la norme {\tt POSIX} pour
+réaliser les appels système~\cite{blaess_developpement_2011}. Le
+principal utilisé est \linux{} et des tests de portabilité ont été
+effectués sur les systèmes {\tt Solaris} et {\tt FreeBSD}.
+
+La compatibilité POSIX permet également de compiler \TFEL{} dans un
+environnement \cygwin{}\footnote{\cygwin{} fournit une surcouche POSIX
+  au-dessus des systèmes \windows{}}. Pour différentes raisons, un
+portage natif sous \windows{} est préférable et l'utilisation de \TFEL{}
+dans un environnement \cygwin{} est amené à tomber en désuétude.
+
+\subsubsection{Systèmes \windows{}}
+
+Il est possible de compiler \TFEL{} pour les systèmes \windows{} à
+l'aide de la suite \msys{}.
+
+\subsection{Compilateurs supportées}
+
+\paragraph{Compilateur GNU} Les compilateurs de la suite {\tt gcc } et
+développé dans le cadre du projet {\tt GNU} sont les compilateurs
+disponibles par défaut sur les distributions \linux{}.
+
+Toutes les versions du compilateur depuis la version \(3.4\) sont
+supportées. Les versions antérieures ne supportent pas de manière
+satisfaisantes la norme \(98\).
+
+\paragraph{Compilateur Clang} Le compilateur 
+
+\paragraph{Compilateur Intel}
+
+\paragraph{Compilateur Pathscale}
+
+\subsection{Compilateurs non supportées}
+
+Différents tests ont été menés avec des compilateurs 
+
+SunStudio dans la version 12.3. Visual C++
+
+\newpage
+\clearpage
+\section{Notice d'installation}
+
+\TFEL{} propose aujourd'hui deux méthodes de compilation et
+d'installation. La première est basée sur le \og~moteur de
+production~\fg \cmake{}. Cette méthode est aujourd'hui conseillée. La
+seconde est basée sur les traditionnels \autotools{}.
+
+\subsection{Compilation, installation et
+  génération de binaires à l'aide de \cmake{}}
+
+L'installation de \TFEL{} nécessite une version supérieure
+à \(2.8\) de \cmake{}.
+
+À partir du répertoire racine des sources, il est conseillé de créer un
+sous-répertoire pour la construction des binaires~:
+\bash{
+  mkdir build \\
+  \$ cd build
+}
+
+\paragraph{Préparation de la compilation}
+La commande \cmake{} est invoquée pour préparer la compilation~:
+\bash{
+  cmake ../ -DCMAKE\textunderscore{}\-INSTALL\textunderscore{}\-PREFIX=... -DCMAKE\textunderscore{}\-BUILD\textunderscore{}\-TYPE="Release" [options]
+}
+
+La variable
+\varcpp{CMAKE\textunderscore{}\-INSTALL\textunderscore{}\-PREFIX} permet
+de préciser le répertoire d'installation.
+
+La variable
+\varcpp{CMAKE\textunderscore{}\-BUILD\textunderscore{}\-TYPE} précise le
+type de compilation souhaitée. Deux valeurs sont possibles~:
+\texttt{Release} (version de production) et \texttt{Debug} (version de
+développement).
+
+Pour certains systèmes, il est également possible de préciser la
+variable \varcpp{LIB\textunderscore{}\-SUFFIX} pour modifier le nom du
+répertoire d'installation des librairies. Ainsi, pour être compatible
+avec les conventions des distributions \mandriva{} (entre autres), on
+utilisera l'option \varcpp{-DLIB\textunderscore{}\-SUFFIX=64}.
+
+Les options suivantes sont disponibles~:
+\begin{enumerate}
+  \item \varcpp{-DENABLE-STATIC=ON/OFF}, qui demande la
+  compilation de librairies statiques en plus de librairies dynamiques.
+  Par défaut, cette option est désactivée~;
+  \item \varcpp{-Denable-fortran=ON/OFF}, qui permet d'activer ou
+  de désactiver la compilation de l'interface \texttt{fortran}. Par
+  défaut, cette option est désactivée~;
+  \item \varcpp{-Denable-python=ON/OFF}, qui permet d'activer ou
+  de désactiver la compilation de l'interface \texttt{python}. Par
+  défaut, cette option est activée si un interpréteur \python{} adéquat
+  est trouvée~;
+  \item \varcpp{-Denable-aster=ON/OFF}, qui permet d'activer ou
+  de désactiver la compilation de l'interface \texttt{aster}. Par
+  défaut, cette option est désactivée~;
+  \item \varcpp{-Dlocal-castem-header=ON/OFF}, qui permet
+  d'activer ou de désactiver la compilation des interfaces
+  \texttt{castem} (propriétés matériau) et \texttt{umat} (loi de
+  comportement) sans utiliser une installation de \castem{}. \TFEL{}
+  fournira alors sa propre version du fichier d'entête
+  \texttt{castem.h}. Par défaut, cette option est désactivée~;
+\end{enumerate}
+
+Cette phase de préparation va automatiquement rechercher~:
+\begin{enumerate}
+  \item un installation valide de \castem{}, si l'option
+  \varcpp{-Dlocal-castem-header} n'a pas été spécifiée. Cette recherche
+  peut être facilitée en définissant la variable
+  \varcpp{CASTEM\textunderscore{}\-INSTALL\textunderscore{}\-PATH} par
+  l'option
+  \varcpp{-DCASTEM\textunderscore{}\-INSTALL\textunderscore{}\-PATH=...}
+  ou en définissant une variable d'environnement \env{CASTEMHOME}. Si la
+  recherche réussie, les interfaces \texttt{castem} (propriétés
+  matériau) et \texttt{umat} (loi de comportement) seront construites~;
+  \item une installation valide de \gnuplot{}. Si la recherche
+  réussie, l'interface \texttt{gnuplot} (propriétés matériau) est
+  construite~;
+  \item une installation valide de \doxygen{}~;
+  \item une installation valide de \latex{}~;
+\end{enumerate}
+
+Il est possible de préciser le compilateur à utiliser par les
+variables d'environnement \env{CC} (compilateur \texttt{c}), \env{CXX}
+(compilateur \cpp), \env{LD} (éditeur de liens).
+
+Enfin, cette phase de préparation va tenter de trouver les options
+de compilation optimales ainsi que des drapeaux de compilation assez
+contraignants. Ces mêmes options seront utilisées par \mfront{} pour la
+compilation des sources générées\footnote{Pour connaître les options retenues,
+  il est possible d'interroger la commande {\tt tfel-config}~:
+  \bash{
+    \#retourne les avertissements retenus             \\
+    \$ tfel-config --warning                          \\
+    \$ \#retourne les options d'optimisation retenues \\
+    \$ tfel-config --oflags
+  }
+}.
+
+\paragraph{Compilation} La compilation de \TFEL{}
+est lancée par la commande \make{}~:
+\bash{
+  make -j x
+}
+où \texttt{x} est le nombre de processeurs affectés à cette 
+
+\paragraph{Installation des binaires} Les
+binaires sont installés par la commande~:
+\bash{
+  make install
+}
+
+\paragraph{Exécution des tests} La base des cas test
+de \TFEL{} peut être lancée par la commande suivante~:
+\bash{
+  make check
+}
+
+\paragraph{Génération de la documentation} La
+documentation de \TFEL{} est générée par la commande~:
+\bash{
+  make doc
+}
+
+Cette documentation se décompose en deux parties~:
+\begin{enumerate}
+  \item une documentation informatique générée par \doxygen{} (si
+  cet outil est disponible). Cette documentation peut être générée
+  indépendamment par la commande~:
+  \bash{make doc-html}
+  \item la présente documentation, au format \texttt{pdf}, si
+  \latex{} est disponible. Cette documentation peut être générée
+  indépendamment par la commande~:
+  \bash{make doc-pdf}
+\end{enumerate}
+
+\paragraph{Installation de la documentation} La
+documentation de \TFEL{} est installée par la commande~:
+\bash{
+  make doc-install
+}
+
+La documentation informatique générée par \doxygen{} peut être
+installée par la commande~:
+\bash{
+  make doc-html-install
+}
+
+Les différentes documentations {\tt pdf} peuvent être
+installées par la commande~:
+\bash{
+  make doc-pdf-install
+}
+
+\paragraph{Installation des fichiers de tests} Il est possible
+d'installer les fichiers de tests par la commande suivante~:
+\bash{
+  make tests-install
+}
+
+\paragraph{Génération de paquets RPM} Des paquets
+RPM, utilisés par les distributions \linux{} \redhat{} et \mandriva{}
+(entre autres) peuvent être générés par la commande~:
+\bash{cpack -G RPM}
+
+\paragraph{Génération de paquets DEB} Des paquets
+DEB, utilisés par les distributions \linux{} \debian{} et \ubuntu{}
+(entre autres) peuvent être générés par la commande~:
+\bash{cpack -G DEB}
+
+\paragraph{Génération d'installateur \windows{}} Il est possible de
+créer un installateur pour \windows{} à l'aide de l'outil
+\nsis{}\footnote{\texttt{Nullsoft Scriptable Install System} est un
+  produit open-source disponible à l'adresse~:
+  \begin{center}
+    \url{http://nsis.sourceforge.net/}    
+  \end{center}
+}~:
+\bash{cpack -G NSIS}
+
+\subsection{Compilation, installation et
+  génération de binaires à l'aide des \autotools{}}
+
+Si les sources ont été récupérées à partir de la gestion de
+configuration, il est nécessaire d'initialiser l'environnement de
+construction des binaires. Pour cela, il faut taper, dans le répertoire
+racine des sources, la commande suivante~:
+\bash{
+  ./bootstrap.sh
+}
+
+Il est conseillé de créer un sous-répertoire pour la construction des
+binaires~:
+\bash{
+  mkdir build \\
+  \$ cd build
+ }
+
+\paragraph{Préparation de la compilation}
+La commande \cmake{} est invoquée pour préparer la compilation~:
+\bash{
+  ../configure -{}-prefix=... [options]
+}
+
+L'option \varcpp{-{}-prefix} permet de préciser le répertoire
+d'installation.
+
+Les options suivantes sont disponibles~:
+\begin{enumerate}
+  \item \varcpp{-{}-enable-production}, qui permet de produire
+  une version optimisée (choix par défaut)~;
+  \item \varcpp{-{}-enable-debug}, qui permet de produire une
+  version de développement~;
+  \item \varcpp{-{}-enable-tests}, qui permet d'activer la
+  compilation des cas test~;
+  \item \varcpp{-{}-enable-fortran}, qui permet d'activer ou de
+  désactiver la compilation de l'interface \texttt{fortran}. Par défaut,
+  cette option est désactivée~;
+  \item \varcpp{-{}-enable-python}, qui permet d'activer ou de
+  désactiver la compilation de l'interface \texttt{python}. Par défaut,
+  cette option est activée si un interpréteur \python{} adéquat est
+  trouvée~;
+  \item \varcpp{-{}-enable-aster}, qui permet d'activer ou de
+  désactiver la compilation de l'interface \texttt{aster}. Par défaut,
+  cette option est désactivée~;
+  \item \varcpp{-{}-local-castem-header}, qui permet d'activer ou
+  de désactiver la compilation des interfaces \texttt{castem}
+  (propriétés matériau) et \texttt{umat} (loi de comportement) sans
+  utiliser une installation de \castem{}. \TFEL{} fournira alors sa
+  propre version du fichier d'entête \texttt{castem.h}. Par défaut,
+  cette option est désactivée~;
+  \item \varcpp{-{}-with-castem=xxx} qui permet de préciser le
+  répertoire d'installation de \castem{}~;
+\end{enumerate}
+
+Cette phase de préparation va automatiquement rechercher~:
+\begin{enumerate}
+  \item un installation valide de \castem{}, si l'option
+  \varcpp{-{}-local-castem-header} n'a pas été spécifiée. Cette
+  recherche peut être facilitée en utilisant l'option
+  \varcpp{-{}-with-castem=xxx} ou ou en définissant une variable
+  d'environnement \env{CASTEMHOME}. Si la recherche réussie, les
+  interfaces \texttt{castem} (propriétés matériau) et \texttt{umat} (loi
+  de comportement) seront construites~;
+  \item une installation valide de \gnuplot{}. Si la recherche
+  réussie, l'interface \texttt{gnuplot} (propriétés matériau) est
+  construite~;
+  \item une installation valide de \doxygen{}~;
+  \item une installation valide de \latex{}~;
+\end{enumerate}
+
+Il est possible de préciser le compilateur à utiliser par les
+variables d'environnement \env{CC} (compilateur \texttt{c}), \env{CXX}
+(compilateur \cpp), \env{LD} (éditeur de liens).
+
+Enfin, cette phase de préparation va tenter de trouver les options
+de compilation optimales ainsi que des drapeaux de compilation assez
+contraignants. Ces mêmes options seront utilisées par \mfront{} pour la
+compilation des sources générées\footnote{Pour connaître les options retenues,
+  il est possible d'interroger la commande {\tt tfel-config}~:
+  \bash{
+    \#retourne les avertissements retenus             \\
+    \$ tfel-config --warning                          \\
+    \$ \#retourne les options d'optimisation retenues \\
+    \$ tfel-config --oflags
+  }
+}.
+
+\paragraph{Compilation} La compilation de \TFEL{}
+est lancé par la commande \make{}~:
+\bash{
+  make -j x
+}
+où \texttt{x} est le nombre de processeurs affectés à cette 
+
+\paragraph{Installation des binaires} Les
+binaires sont installés par la commande~:
+\bash{
+  make install
+}
+
+\paragraph{Exécution des tests} La base des cas test
+de \TFEL{} peut être lancée par la commande suivante~:
+\bash{
+  make check
+}
+
+\paragraph{Installation de la documentation} La
+documentation de \TFEL{} est installée par la commande~:
+\bash{
+  make doc-install
+}
+
+Cette documentation se décompose en deux parties~:
+\begin{enumerate}
+  \item une documentation informatique générée par \doxygen{} (si
+  cet outil est disponible). Cette documentation peut être générée
+  indépendamment par la commande~:
+  \bash{ make doc-html}
+  \item la présente documentation, au format \texttt{pdf}, si
+  \latex{} est disponible. Cette documentation peut être générée
+  indépendamment par la commande~:
+  \bash{ make doc-pdf}
+\end{enumerate}
+
+\subsection{Description du répertoire d'installation}
+
+Le répertoire d'installation contient quatre répertoires~:
+\begin{enumerate}
+  \item le répertoire \texttt{bin} contient les exécutables
+  produits~;
+  \item le répertoire \texttt{lib} contient les librairies
+  produites~;	
+  \item le répertoire \texttt{include} contient les fichiers
+  d'entête des différentes librairies de \TFEL{}~
+  \item le répertoire \texttt{share} contient des tests et des
+  fichiers d'exemple.
+\end{enumerate}
+
+Le répertoire \texttt{share/mfront/tests/behaviours} contient un
+ensemble de fichiers de tests \mfront{} qui peut servir d'exemple.
+
+\newpage
+\clearpage
+\section{Calculs des dérivées des valeurs et vecteurs propres d'un
+  tenseur symétrique}
+
+Un tenseur symétrique \(\tenseur{s}\) peut toujours être
+diagonalisé. Soient \(\lambda_{1},\lambda_{2},\lambda_{3}\) ses trois
+valeurs propres et \(\vec{e}_{1},\vec{e}_{2},\vec{e}_{3}\) les
+vecteurs propres associés. \(\tenseur{s}\) se décompose ainsi~:
+\[
+\tenseur{s}=\sum_{i=1}^{3}\lambda_{i}\,\vec{e}_{i}\otimes\vec{e}_{i}
+\]
+
+Définissons les tenseurs symétriques suivants~:
+\[
+\tenseur{n}_{ij} = 
+\left\{
+  \begin{aligned}
+    \vec{e}_{i}\otimes\vec{e}_{i} & \text{ si }  i=j \\
+    \Frac{1}{\sqrt{2}}\paren{\vec{e}_{i}\otimes\vec{e}_{j}+\vec{e}_{j}\otimes\vec{e}_{i}}    & \text{ si } i \neq j
+  \end{aligned}
+\right.
+\]
+Les tenseurs \(\tenseur{n}_{ij}\) forment une base orthonormée des
+tenseurs d'ordre \(2\) symétriques. Le tenseur \(\tenseur{s}\) se
+décompose ainsi~:
+\begin{equation}
+  \label{eq:reference-guide:s}
+  \tenseur{s} = \sum_{i=1}^{3}\lambda_{i}\,\tenseur{n}_{i}
+\end{equation}
+
+Les vecteurs propres de \(\tenseur{s}\) sont orthornomés~:
+\[
+\vec{t}_{i}\,.\,\vec{t}_{j}=\delta_{ij}
+\]
+
+Par différentiation~:
+\[
+\vec{\dtot\,t}_{i}\,.\,\vec{t}_{j}+\vec{\dtot\,t}_{i}\,.\,\vec{t}_{j}=0
+\]
+
+Cette propriété nous permet de montrer une propriété importante des
+différentielles des tenseurs \(\tenseur{n}_{ij}\)~:
+\begin{equation}
+  \label{eq:reference-guide:n_iin_ii}
+  n_{ii}\,\colon\,{\dtot n_{ii}}=0  
+\end{equation}
+
+D'après l'équation~\eqref{eq:reference-guide:s}, la différentielle du
+tenseur \(\tenseur{s}\) s'écrit~:
+\[
+\dtot\,\tenseur{s}=\sum_{i=1}^{3}\lambda_{i}\,\dtot\,\tenseur{n}_{ii}+\tenseur{n}_{ii}\,\dtot\,\lambda_{i}
+\]
+En utilisant la propriété~\eqref{eq:reference-guide:n_iin_ii}, la
+projection suivant \(\tenseur{n}_{ii}\) donne~:
+\[
+\dtot\,\lambda_{i}=\dtot\,\tenseur{s}\,\colon\,\tenseur{n}_{ii}
+\]
+
+En particulier~:
+\[
+\deriv{\lambda_{i}}{\tenseur{s}}=\deriv{\tenseur{s}}{\tenseur{s}}\,\colon\,\tenseur{n}_{ii}=\tenseur{n}_{ii}
+\]
+
+Nous nous intéressons maintenant aux termes \(\deriv{\tenseur{n}_{ii}}{\tenseur{s}}\).
+
+On montre que~:
+\begin{equation}
+  \label{eq:tfel:reference_guide:n_derivate}
+  \deriv{\tenseur{n}_{11}}{\tenseur{s}} = \Frac{1}{\lambda_{1}-\lambda_{2}}\tenseur{n}_{12}\,\otimes\,\tenseur{n}_{12}+\Frac{1}{\lambda_{1}-\lambda_{3}}\tenseur{n}_{13}\,\otimes\,\tenseur{n}_{13}
+\end{equation}
+
+\subsection{Régularisation}
+
+L'expression~\eqref{eq:tfel:reference_guide:n_derivate} de la dérivée
+présente une singularité lorsque deux valeurs propres sont égales.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.5\linewidth]{@abs_top_srcdir@/docs/tfel/images/r-epsilon.eps}
+  \caption{représentation des fonctions $r_{1}\paren{x}$,
+    $r_{\pfrac{1}{4}}\paren{x}$ et $r_{\pfrac{1}{2}}\paren{x}$.}
+  \label{fig:r-epsilon}
+\end{figure}
+
+Nous proposons d'utiliser la fonction de régularisation
+\(r_{\epsilon}\paren{x}\) suivante~:
+\[
+r_{\epsilon}\paren{x}=p_{1}\paren{\Frac{x}{\epsilon}}
+\]
+où \(r_{1}\paren{x}\) est définie par~:
+\[
+r_{1}\paren{x}=
+\left\{
+  \begin{aligned}
+    \Frac{x^{2}}{3}\paren{4-x^{2}} & \text{si} & \left|x\right| \leq 1 \\
+    1                             & \text{si} & \left|x\right| > 1\\
+  \end{aligned}
+\right.
+\]
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.5\linewidth]{@abs_top_srcdir@/docs/tfel/images/r-epsilon-2.eps}
+  \caption{représentation des fonctions $\pfrac{r_{1}\paren{x}}{x}$ et
+    $\pfrac{r_{\pfrac{1}{4}}\paren{x}}{x}$}
+  \label{fig:r-epsilon}
+\end{figure}
+
+Les fonctions sont telles que~:
+\begin{enumerate}
+\item \(r_{\epsilon}\paren{\epsilon}=1\)
+\item \(r_{\epsilon}\paren{-\epsilon}=1\)
+\item \(r_{\epsilon}\paren{0}=0\)
+\item \(\displaystyle\lim_{x\rightarrow 0} \Frac{r_{\epsilon}\paren{x}}{x}=0\)
+\item \(\displaystyle\max_{x\in\mathbb{R}}\Frac{r_{\epsilon}\paren{x}}{x}\,\approx\,1,1\,\epsilon\)
+\end{enumerate}
+
+\subsection{Application aux fonctions isotropes de tenseurs symétriques}
+
+Une fonction \(\tenseur{f}\) de tenseur d'ordre \(2\) symétrique est dite {\em
+  isotrope} si elle vérifie~:
+\[
+\tenseur{f}\paren{\tilde{\tenseur{s}}}=\widetilde{\tenseur{f}\paren{\tenseur{s}}}
+\]
+pour changement de base représenté par \(\tilde{\mbox{}}\).
+
+Toute fonction définie par une série entière est isotrope. Ainsi les
+fonctions logarithme \(\log\) et exponentielle \(\exp\) sont des
+fonctions isotropes. Dans ce cas, \(f\) désigne à la fois une fonction
+réelle et une fonction de tenseur d'ordre \(2\) symétrique.
+
+Une telle fonction peut être évaluée à l'aide des vecteurs propres et
+des tenseurs propres~:
+\[
+f\paren{\tenseur{s}}=\sum_{i=1}^{3}f\paren{\lambda_{i}}\tenseur{n}_{i}
+\]
+
+La dérivée de \(f\) par rapport à son argument est alors~:
+\[
+\begin{aligned}
+\deriv{f}{\tenseur{s}}&=\sum_{i=1}^{3}f\primeexp\paren{\lambda_{i}}\tenseur{n}_{i}\,\otimes\,\tenseur{n}_{i}+\sum_{i=1}^{3}f\paren{\lambda_{i}}\deriv{\tenseur{n}_{i}}{\tenseur{s}}\\
+&= \sum_{i=1}^{3}f\primeexp\paren{\lambda_{i}}\tenseur{n}_{i}\,\otimes\,\tenseur{n}_{i}
++ \Frac{f\paren{\lambda_{1}}-f\paren{\lambda_{2}}}{\lambda_{1}-\lambda_{2}}\tenseur{n}_{12}\,\otimes\,\tenseur{n}_{12}
++ \Frac{f\paren{\lambda_{1}}-f\paren{\lambda_{3}}}{\lambda_{1}-\lambda_{3}}\tenseur{n}_{13}\,\otimes\,\tenseur{n}_{13}
++ \Frac{f\paren{\lambda_{2}}-f\paren{\lambda_{3}}}{\lambda_{2}-\lambda_{3}}\tenseur{n}_{23}\,\otimes\,\tenseur{n}_{23}
+\end{aligned}
+\]
+
+\paragraph{Cas où deux valeurs propres sont égales}
+
+Supposons que les valeurs propres \(\lambda_{1}\) et \(\lambda_{2}\)
+sont égales. Nous avons alors~:
+\[
+\begin{aligned}
+\deriv{f}{\tenseur{s}}&= \sum_{i=1}^{3}f\primeexp\paren{\lambda_{i}}\tenseur{n}_{i}\,\otimes\,\tenseur{n}_{i}
++ f\primeexp\paren{\lambda_{1}}\tenseur{n}_{12}\,\otimes\,\tenseur{n}_{12}
++ \Frac{f\paren{\lambda_{1}}-f\paren{\lambda_{3}}}{\lambda_{1}-\lambda_{3}}
+\left[\tenseur{n}_{13}\,\otimes\,\tenseur{n}_{13}+\tenseur{n}_{23}\,\otimes\,\tenseur{n}_{23}\right]
+\end{aligned}
+\]
+
+\paragraph{Cas où trois valeurs propres sont égales}
+
+Supposons que les trois propres \(\lambda_{1}\), \(\lambda_{2}\) et
+\(\lambda_{3}\) sont égales. Nous avons alors~:
+\[
+\begin{aligned}
+\deriv{f}{\tenseur{s}}&= f\primeexp\paren{\lambda_{1}}\left[
+\sum_{i=1}^{3}\tenseur{n}_{i}\,\otimes\,\tenseur{n}_{i}
++\tenseur{n}_{12}\,\otimes\,\tenseur{n}_{12}
++\tenseur{n}_{13}\,\otimes\,\tenseur{n}_{13}+\tenseur{n}_{23}\,\otimes\,\tenseur{n}_{23}\right]
+\end{aligned}
+\]
+
+Finalement,
+\[
+\begin{aligned}
+\deriv{f}{\tenseur{s}}&= f\primeexp\paren{\lambda_{1}}\tenseurq{I}
+\end{aligned}
+\]
+
+\subsection{Cas particulier des parties positives et négatives des tenseurs}
+
+\subsubsection{Cas scalaire}
+
+La partie positive \(\ppos{x}\) d'un scalaire \(x\) est définie par~:
+\[
+\ppos{x}=
+\left\{
+    \begin{aligned}
+      0 & \quad\text{si}\quad & x <    0 \\
+      x & \quad\text{si}\quad & x \geq 0
+    \end{aligned}
+\right.
+\]
+
+De même, la partie négative \(\pneg{x}\) est définie par~:
+\[
+\pneg{x}=
+\left\{
+    \begin{aligned}
+      x & \quad\text{si}\quad & x \geq 0 \\
+      0 & \quad\text{si}\quad & x >    0
+    \end{aligned}
+\right.
+\]
+
+% ![Parties positive et négative d'un scalaire](img/ppos "Parties
+% positive et négative d'un scalaire")
+
+Les parties positive et négative sont différentiables partout, sauf à
+l'orgine qui constitue un point singulier. Nous proposons d'étendre la
+définition classique de la dérivée ainsi~:
+\[
+\deriv{\ppos{x}}{x}=
+\left\{
+    \begin{aligned}
+      0           & \quad\text{si}\quad & x < 0 \\
+      \frac{1}{2} & \quad\text{si}\quad & x = 0 \\
+      1           & \quad\text{si}\quad & x >    0
+    \end{aligned}
+\right.
+\quad
+\text{et}
+\quad
+\deriv{\pneg{x}}{x}=
+\left\{
+    \begin{aligned}
+      1           & \quad\text{si}\quad & x < 0 \\
+      \frac{1}{2} & \quad\text{si}\quad & x = 0 \\
+      0           & \quad\text{si}\quad & x >    0
+    \end{aligned}
+\right.
+\]
+
+\subsubsection{Définition dans le cas d'un tenseur}
+
+La décomposition spectrale d'un tenseur symétrique est défini ainsi~:
+\[
+\tepsilon=\sum_{i=1}^{3}\lambda_{i}\,\tenseur{n}_{i}
+\]
+où apparaissent les valeurs propres \(\lambda_{i}\) et les tenseurs
+propres \(\tenseur{n}_{i}\) (voir la documentation de référence de
+`TFEL` pour une définition). Ces tenseurs propres vérifient~:
+\[
+\tenseur{n}_{i}\,\colon\,\tenseur{n}_{j}=\delta_{ij}
+\]
+
+La partie positive d'un tenseur est alors définie ainsi~:
+\[
+\ppos{\tepsilon}=\sum_{i=1}^{3}\ppos{\lambda_{i}}\,\tenseur{n}_{i}
+\]
+
+Les parties positive et négative sont alors définies ainsi~:
+\[
+\begin{aligned}
+  \ppos{\tepsilon}&=\sum_{i=1}^{3}\ppos{\lambda_{i}}\,\tenseur{n}_{i}\\  
+  \pneg{\tepsilon}&=\sum_{i=1}^{3}\pneg{\lambda_{i}}\,\tenseur{n}_{i}\\  
+\end{aligned}
+\]
+
+\paragraph{Propriétés} Les parties positive et négative ont les
+propriétés suivantes~:
+\[
+\begin{aligned}
+  \tepsilon&=\ppos{\tepsilon}+\pneg{\tepsilon}  \\
+  \ppos{\tepsilon}\,\colon\,\pneg{\tepsilon}&=0 \\
+  \tepsilon\colon\,\tepsilon&=\ppos{\tepsilon}\,\colon\,\ppos{\tepsilon}+\pneg{\tepsilon}\,\colon\,\pneg{\tepsilon} \\
+\end{aligned}
+\]
+
+\paragraph{Calcul de la dérivée} Si toutes les valeurs propres sont
+différentes, la dérivée de la partie positive d'un tenseur s'écrit~:
+\[
+\deriv{\ppos{\tepsilon}}{\tepsilon}=\sum_{i=1}^{3}\tenseur{n}_{i}\,\otimes\,\deriv{\ppos{\lambda_{i}}}{\tepsilon}+\ppos{\lambda_{i}}\,\deriv{\tenseur{n}_{i}}{\tepsilon}
+\]
+
+Avec les résultats établis précédemment, nous avons~:
+\[
+\deriv{\ppos{\tepsilon}}{\tepsilon}=\sum_{i=1}^{3}\deriv{\ppos{\lambda_{i}}}{\lambda_{i}}\tenseur{n}_{i}\,\otimes\,\tenseur{n}_{i}
++\sum_{j\neg i}\Frac{\ppos{\lambda_{i}}}{\lambda_{i}-\lambda_{j}}\tenseur{n}_{ij}\,\otimes\,\tenseur{n}_{ij}
+\]
+
+Cette définition admet une limite bien définie quand deux valeurs
+propres sont égales. Supposons que \(\lambda_{1}\) et \(\lambda_{2}\)
+soient proches. En rapprochant les termes en
+\(\tenseur{n}_{12}\,\otimes\,\tenseur{n}_{12}\) (en utilisant la
+symétrie rappelée plus haut) et en faisant tendre \(\lambda_{1}\) vers
+\(\lambda_{2}\), nous obtenons~:
+\[
+\displaystyle\Frac{\ppos{\lambda_{2}}-\ppos{\lambda_{1}}}{\lambda_{2}-\lambda_{1}}\,\tenseur{n}_{12}\,\otimes\,\tenseur{n}_{12}
+\rightarrow_{\lambda_{1}\rightarrow\lambda_{2}}\left.\deriv{\ppos{\lambda}}{\lambda}\right|_{\lambda=\lambda_{2}}\tenseur{n}_{12}\,\otimes\,\tenseur{n}_{12}
+\]
+
+De même, si trois valeurs propres sont égales, nous avons le résultat
+suivant~:
+\[
+\deriv{\ppos{\tepsilon}}{\tepsilon}=\deriv{\ppos{\lambda}}{\lambda}\,\tenseurq{I}
+\]
+
+Pour conclure ce paragraphe, rappelons également quelques résultats
+classiques~:
+\[
+\begin{aligned}
+  \deriv{\trace{\ppos{\tepsilon}}^{2}}{\tepsilon}&=2\,\trace{\ppos{\tepsilon}} \\
+  \deriv{\ppos{\tepsilon}\,\colon\,\ppos{\tepsilon}}{\tepsilon}&=2\,\ppos{\tepsilon}
+\end{aligned}
+\]
+
+\subsection{Dérivées première et seconde de fonctions des valeurs
+  propres d'un tenseur symétrique}
+
+Considérons une fonction
+\(f\paren{\lambda_{1},\lambda_{2},\lambda_{3}}\) des trois valeurs
+propres \(\lambda_{1},\lambda_{2},\lambda_{3}\) d'un tenseur
+symétrique \(\tenseur{s}\).
+
+\subsubsection{Dérivée première}
+
+La dérivée première se calcule simplement~:
+\[
+  \deriv{f}{\tenseur{s}}=\sum_{i=1}^{3}\deriv{f}{\lambda_{i}}\,\tenseur{n}_{ii}
+\]
+
+\subsubsection{Dérivée seconde}
+
+La dérivée seconde se calcule ainsi~:
+\[
+  \Frac{\partial^{2}f}{\partial s\,\partial\tenseur{s}}=\sum_{i=1}^{3}\sum_{j=1}^{3}\Frac{\partial^{2}\,f}{\partial\lambda_{i}\,\partial\lambda_{j}}\,\tenseur{n}_{ii}\otimes\tenseur{n}_{jj}+\sum_{i=1}^{3}\deriv{f}{\lambda_{i}}\,\deriv{\tenseur{n}_{ii}}{\tenseur{s}}
+\]
+
+\paragraph{Cas \(\lambda_{1}=\lambda_{2}\)} Dans ce cas, apparaît dans
+l'expression précédente un terme singulier de la forme~:
+\[
+  \lim_{\lambda_{1}\rightarrow 0}\Frac{1}{\lambda_{1}-\lambda_{2}}\paren{\deriv{f}{\lambda_{1}}-\deriv{f}{\lambda_{2}}}
+\]
+
+
+\clearpage
+\newpage
+\referencecea
+\listetableaux
+\listefigures
+
+\newpage
+\printindex{tclass}{Index des classes et des fonctions}
+
+\end{document}

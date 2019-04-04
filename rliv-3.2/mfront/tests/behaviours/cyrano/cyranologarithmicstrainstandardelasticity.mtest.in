@@ -1,0 +1,19 @@
+@Author Thomas Helfer;
+@Date 15/06/2018;
+@Description{
+  "Test of the axisymmetric generalised plane "
+  "stress modelling hypothesis for "
+  "logarithmic strain"
+ };
+
+@MaximumNumberOfSubSteps   1;
+@ModellingHypothesis 'AxisymmetricalGeneralisedPlaneStress';
+@Behaviour<cyrano> '@MFrontCyranoBehavioursBuildPath@' 'cyranologarithmicstrainstandardelasticity';
+
+@ExternalStateVariable 'Temperature' 293.15;
+@ExternalStateVariable 'AxialStress' {0.:0,1:10e9};
+
+@Times {0.,1 in 20};
+
+//@Real 'E' '150e9';
+@Test<function> 'SZZ' 'AxialStress' 1.e-3;

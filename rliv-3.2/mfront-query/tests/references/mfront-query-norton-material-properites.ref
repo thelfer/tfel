@@ -1,0 +1,4 @@
+- NortonCoefficient (A): The Norton coefficient
+- NortonExponent (E): The Norton coefficient
+- YoungModulus (young): The Young modulus of an isotropic material
+- PoissonRatio (nu): The Poisson ratio of an isotropic material

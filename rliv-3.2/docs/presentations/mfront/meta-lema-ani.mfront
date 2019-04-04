@@ -1,0 +1,99 @@
+@Parser    Implicit;
+@Behaviour metalemani;
+@Includes{ #include<TFEL/Material/Hill.hxx>
+           #include<TFEL/Material/Lame.hxx>
+}
+@OrthotropicBehaviour;
+@Algorithm NewtonRaphson_NumericalJacobian;
+@Theta 1.; @Epsilon 1.e-10;
+@MaterialProperty real young;
+young.setGlossaryName("YoungModulus");
+@MaterialProperty real nu;
+nu.setGlossaryName("PoissonRatio");
+@MaterialProperty real a[3];
+@MaterialProperty real m[3];
+@MaterialProperty real pn[3];
+@MaterialProperty real Q[3];
+@MaterialProperty real M1[6];
+@MaterialProperty real M3[6];
+@StateVariable real p;   
+@AuxiliaryStateVariable real seq;
+@AuxiliaryStateVariable real svi[3];
+
+@LocalVariable stress lambda;
+@LocalVariable stress mu;
+@LocalVariable tfel::math::st2tost2<N,real> H;
+@LocalVariable real T_ ;
+@LocalVariable real invn[3], f[3], gamma[3], sv[3]  ;
+// variables de commande aster
+@ExternalStateVariable real SECH,HYDR,IRRA,NEUT1,NEUT2,CORR,ALPHPUR,ALPHBETA;
+@IsTangentOperatorSymmetric true;
+@TangentOperator{using namespace tfel::material::lame;
+    StiffnessTensor Hooke;     Stensor4 Je;
+    computeElasticStiffness<N,Type>::exe(Hooke,lambda,mu);
+    getPartialJacobianInvert(Je);
+    Dt = Hooke*Je;  } 
+@InitLocalVariables{
+  using namespace tfel::material::lame;
+  lambda = computeLambda(young,nu);
+  mu = computeMu(young,nu);
+  // proportion en phase alpha en milieu de pas de temps
+  const real Z = min(max(ALPHPUR  + theta*dALPHPUR+ ALPHBETA + theta*dALPHBETA,0.),1.);
+
+  // fonctions f
+  if        (Z >= 0.99) { f[0]=1. ;
+  } else if (Z >= 0.9)  { f[0] = (Z-0.9)/0.09 ;
+  } else                { f[0] = 0. ;  }
+
+  if        (Z >= 0.1)  { f[2]=0. ;
+  } else if (Z >= 0.01) { f[2] = (0.1-Z)/0.09 ;
+  } else                { f[2] = 1. ;  }
+
+  if        (Z >= 0.99) { f[1]=0. ;
+  } else if (Z >= 0.9)  { f[1] = 1.0-(Z-0.9)/0.09 ;
+  } else if (Z >= 0.1)  { f[1] = 1.0 ;
+  } else if (Z >= 0.01) { f[1] = 1.0-(0.1-Z)/0.09 ;
+  } else                { f[1] = 0. ;  }
+  // Temperature Aster en Celsius
+  T_ = 273.0 + T + theta * dT ;
+  for(unsigned short i=0;i!=3;++i){
+    invn[i] = 1.0 / pn[i] ;
+    gamma[i] = a[i]* exp(Q[i]/T_*invn[i]) ;  }
+
+// correspondance M aster (repere x,y,z) et H
+  real M[6];
+  if        (Z >= 0.99) {for(unsigned short i=0;i!=6;++i){M[i]=M1[i];}
+  } else if (Z >= 0.01) {for(unsigned short i=0;i!=6;++i){M[i]=Z*M1[i]+(1.-Z)*M3[i];}
+  } else                {for(unsigned short i=0;i!=6;++i){M[i]=M3[i];}}
+  const real H_F = 0.5*( M[0]+M[1]-M[2]);
+  const real H_G = 0.5*(-M[0]+M[1]+M[2]);
+  const real H_H = 0.5*( M[0]-M[1]+M[2]);
+  const real H_L = 2.0*M[3];
+  const real H_M = 2.0*M[4];
+  const real H_N = 2.0*M[5];
+  H = hillTensor<N,real>(H_F,H_G,H_H,H_L,H_M,H_N);
+}
+@ComputeStress{ 
+  sig = lambda*trace(eel)*Stensor::Id()+2*mu*eel;}
+@Integrator{
+  const real sigeq = sqrt(sig|H*sig);
+  real p_=p+theta*dp ;
+  real sigv =  0. ;  real pm[3];  real dpn[3] ;
+  
+  
+  for(unsigned short i=0;i!=3;++i){
+    pm[i]  = (p_ > 0.) ? pow(p_,m[i])         : 0.;
+    dpn[i] = (dp > 0.) ? pow((dp/dt),invn[i]) : 0. ;
+    sv[i]=gamma[i]*pm[i]*dpn[i] ;
+    sigv += f[i]*sv[i] ; }
+  Stensor  n(0.);
+  if(sigeq > 1.e-10*young){ n= (H*sig)/sigeq; }
+  feel += dp*n-deto;
+  fp    = (sigeq-sigv)/young;
+}
+@UpdateAuxiliaryStateVars{
+  for(unsigned short i=0;i!=3;++i){ svi[i]=sv[i] ; }
+}
+
+
+

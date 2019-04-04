@@ -1,0 +1,77 @@
+@Author Helfer Thomas;
+@Date  09 avril 2013;
+@Description{
+  "This test checks that thermal expansion are correctly taken into "
+  "account for an orthotropic material."
+};
+
+@StiffnessMatrixType 'ConsistentTangentOperator';
+@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatorthotropicelastic';
+
+@Real 'E1'   '7.8e+10';
+@Real 'E2'   '2.64233e+11';
+@Real 'E3'   '2.64233e+11';
+@Real 'nu12' '0.0039991';
+@Real 'nu13' '0.0039991';
+@Real 'nu23' '0.00736051';
+@Real 'G12'  '4.8e+10';
+@Real 'G13'  '4.8e+10';
+@Real 'G23'  '1.16418e+11';
+@Real 'a1'   '3.41e-5';
+@Real 'a2'   '2.23e-5';
+@Real 'a3'   '4.63e-5';
+
+@MaterialProperty<constant> 'YoungModulus1'     'E1';
+@MaterialProperty<constant> 'YoungModulus2'     'E2';
+@MaterialProperty<constant> 'YoungModulus3'     'E3';
+@MaterialProperty<constant> 'PoissonRatio12'    'nu12';
+@MaterialProperty<constant> 'PoissonRatio13'    'nu13';
+@MaterialProperty<constant> 'PoissonRatio23'    'nu23';
+@MaterialProperty<constant> 'ShearModulus12'    'G12';
+@MaterialProperty<constant> 'ShearModulus13'    'G13';
+@MaterialProperty<constant> 'ShearModulus23'    'G23';
+@MaterialProperty<constant> 'ThermalExpansion1' 'a1';
+@MaterialProperty<constant> 'ThermalExpansion2' 'a2';
+@MaterialProperty<constant> 'ThermalExpansion3' 'a3';
+@MaterialProperty<constant> 'MassDensity'       0.;
+@MaterialProperty<constant> 'V1X'   1.;
+@MaterialProperty<constant> 'V1Y'   0.;
+@MaterialProperty<constant> 'V1Z'   0.;
+@MaterialProperty<constant> 'V2X'   0.;
+@MaterialProperty<constant> 'V2Y'   1.;
+@MaterialProperty<constant> 'V2Z'   0.;
+
+@ExternalStateVariable 'Temperature' {0:293.15,3600.:800};
+@Real 'ThermalExpansionReferenceTemperature' 293.15;
+@Real 'Tref' 'ThermalExpansionReferenceTemperature';
+
+@ImposedStrain 'EXX' 0.;
+@ImposedStrain 'EYY' 0.;
+@ImposedStrain 'EZZ' 0.;
+
+@RotationMatrix {{0,0,1},
+                 {1,0,0},
+		 {0,1,0}};
+
+@Times {0.,3600 in 20};
+
+@Real 'S11' '1/E1';
+@Real 'S22' '1/E2';
+@Real 'S33' '1/E3';
+@Real 'S12' '-nu12/E1';
+@Real 'S13' '-nu13/E1';
+@Real 'S23' '-nu23/E2';
+@Real 'dS'  'S11*S22*S33+2*S23*S13*S12-S11*S23*S23-S22*S13*S13-S33*S12*S12';
+@Real 'C00' '(S22*S33-S23*S23)/dS';
+@Real 'C01' '(S13*S23-S12*S33)/dS';
+@Real 'C02' '(S12*S23-S13*S22)/dS';
+@Real 'C10' '(S13*S23-S12*S33)/dS';
+@Real 'C11' '(S11*S33-S13*S13)/dS';
+@Real 'C12' '(S12*S13-S11*S23)/dS';
+@Real 'C20' '(S12*S23-S13*S22)/dS';
+@Real 'C21' '(S12*S13-S11*S23)/dS';
+@Real 'C22' '(S11*S22-S12*S12)/dS';
+@Test<function> 'SYY' '-(C00*a1+C01*a2+C02*a3)*(Temperature-Tref)'  1.e-3;
+@Test<function> 'SZZ' '-(C10*a1+C11*a2+C12*a3)*(Temperature-Tref)'  1.e-3;
+@Test<function> 'SXX' '-(C20*a1+C21*a2+C22*a3)*(Temperature-Tref)'  1.e-3;
+@Test<function> {'EXY':'0.','EXZ':'0.','EYZ':'0.'} 1.e-12;

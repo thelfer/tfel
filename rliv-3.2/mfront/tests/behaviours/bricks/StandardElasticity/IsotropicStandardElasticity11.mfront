@@ -1,0 +1,14 @@
+@DSL Implicit;
+@Behaviour IsotropicStandardElasticity11;
+@Author Thomas Helfer;
+@Date   5/06/2016;
+@Description{
+  "This file is used to test the StandardElasticity brick for "
+  "an isotropic behaviour. Elastic properties are defined through "
+  "parameters."
+}
+
+@Epsilon 1e-14;
+@ModellingHypotheses {".+"};
+@Brick "StandardElasticity";
+@ElasticMaterialProperties {"Inconel600_YoungModulus.mfront",0.3};

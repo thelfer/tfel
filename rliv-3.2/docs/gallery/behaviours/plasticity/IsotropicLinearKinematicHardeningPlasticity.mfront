@@ -1,0 +1,72 @@
+@DSL       DefaultDSL;
+@Behaviour IsotropicLinearKinematicHardeningPlasticity;
+@Author    Thomas Helfer;
+@Date      14/10/2016;
+@Description{
+  An explicit implementation of a simple
+  isotropic plasticity behaviour.
+}
+
+@StateVariable StrainStensor eel;
+eel.setGlossaryName("ElasticStrain");
+@StateVariable StrainStensor a;
+
+@Parameter young =  70.e9;
+young.setGlossaryName("YoungModulus");
+@Parameter nu    =   0.34;
+nu.setGlossaryName("PoissonRatio");
+@Parameter s0    = 300.e6;
+s0.setGlossaryName("YieldStress");
+@Parameter C     =  10.e9;
+C.setEntryName("HardeningSlope");
+
+@LocalVariable StressStensor sig0; //<! Stress at the beginning of the time step
+@LocalVariable Stensor n;      //<! Von Mises normal
+@LocalVariable stress  lambda; //<! First  Lamé coefficient
+@LocalVariable stress  mu;     //<! Second Lamé coefficient
+@LocalVariable stress  seq;    //<! Von Mises equivalent stress
+@LocalVariable strain  dp;     //<! Equivalent plastic strain increment
+@LocalVariable bool    b;      //<! Plastic loading indicator
+
+@InitLocalVariables{
+  lambda = computeLambda(young,nu);
+  mu     = computeMu(young,nu);
+  sig0   = sig;
+}
+
+@PredictionOperator{
+  Dt = lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
+}
+
+@Integrator{
+  eel += deto;
+  const auto X  = 2*C*a/3;
+  const auto s  = 2*mu*deviator(eel)-X;
+  seq = sigmaeq(s);
+  b   = seq-s0>stress{0};
+  if(b){
+    n    = (3*s)/(2*seq);
+    dp   = (seq-s0)/(3*mu+C);
+    a   += dp*n;
+    eel -= dp*n;
+  }
+  sig = lambda*trace(eel)*Stensor::Id()+2*mu*eel;
+}
+
+@TangentOperator{
+  if((smt==CONSISTENTTANGENTOPERATOR)&&(b)){
+    Dt = (lambda*Stensor4::IxI()+2*mu*Stensor4::Id()
+	  -4*mu*mu*((dp/seq)*(Stensor4::M()-(n^n))+(n^n)/(3*mu+C)));
+  } else {
+    Dt = lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
+  }
+}
+
+@InternalEnergy{
+  const auto tr = trace(eel);
+  Psi_s = lambda/2*tr*tr+mu*(eel|eel);
+}
+
+@DissipatedEnergy{
+  Psi_d += ((sig+sig0)|n)*dp/2;
+}

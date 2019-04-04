@@ -1,0 +1,291 @@
+*******************************************************************************
+**	Fichier	  : pipe3D
+**	Auteur     : Thomas Helfer
+**	Date       : 3 sept. 2014
+*******************************************************************************
+
+'OPTION' 'DIMENSION' 3;
+'OPTION' 'ELEMENT'   'PR15';
+'OPTION' 'MODELISER' 'TRID';
+'OPTION' 'ERREUR'    'FATALE';
+'OPTION' 'ECHO' 0;
+
+'DEBPROC' @ORTBA3D d1 '*' 'MCHAML'
+                   d2 '*' 'MCHAML'
+                   c '*' 'MCHAML';
+* normalisation de la première direction
+   d1x  = 'EXCO' d1 'V1X' 'SCAL';
+   d1y  = 'EXCO' d1 'V1Y' 'SCAL';
+   d1z  = 'EXCO' d1 'V1Z' 'SCAL';
+   nrm = ((d1x'*'d1x)'+'(d1y'*'d1y)'+'(d1z'*'d1z))'**'(-0.5);
+   d1x  = d1x*nrm;
+   d1y  = d1y*nrm;
+   d1z  = d1z*nrm;
+* normalisation de la seconde direction
+   d2x  = 'EXCO' d2 'V2X' 'SCAL';
+   d2y  = 'EXCO' d2 'V2Y' 'SCAL';
+   d2z  = 'EXCO' d2 'V2Z' 'SCAL';
+   nrm = ((d2x'*'d2x)'+'(d2y'*'d2y)'+'(d2z'*'d2z))'**'(-0.5);
+   d2x  = d2x*nrm;
+   d2y  = d2y*nrm;
+   d2z  = d2z*nrm;
+** calcul de la matrice de passage
+   m1x = 'EXCO' c 'V1X' 'SCAL';
+   m1y = 'EXCO' c 'V1Y' 'SCAL';
+   m1z = 'EXCO' c 'V1Z' 'SCAL';
+   m2x = 'EXCO' c 'V2X' 'SCAL';
+   m2y = 'EXCO' c 'V2Y' 'SCAL';
+   m2z = 'EXCO' c 'V2Z' 'SCAL';
+* la troisième colonne est obtenue par un produit vectoriel
+   m3x = (m1y '*' m2z) '-' (m1z '*' m2y);
+   m3y = (m1z '*' m2x) '-' (m1x '*' m2z);
+   m3z = (m1x '*' m2y) '-' (m1y '*' m2x);
+* calcul des directions d'orthotropie dans le repère des éléments
+   v1x = (m1x'*'d1x)'+'(m2x'*'d1y)'+'(m3x'*'d1z);
+   v1y = (m1y'*'d1x)'+'(m2y'*'d1y)'+'(m3y'*'d1z);
+   v1z = (m1z'*'d1x)'+'(m2z'*'d1y)'+'(m3z'*'d1z);
+   v2x = (m1x'*'d2x)'+'(m2x'*'d2y)'+'(m3x'*'d2z);
+   v2y = (m1y'*'d2x)'+'(m2y'*'d2y)'+'(m3y'*'d2z);
+   v2z = (m1z'*'d2x)'+'(m2z'*'d2y)'+'(m3z'*'d2z);
+* le champ de matériau est finalement reconstruit
+   L_comp = 'EXTRAIRE' c 'COMP' ;
+   N_comp = 'DIME' L_comp ;
+   fVide  = 'VRAI';
+   'REPETER' i N_comp ;
+      co = 'EXTRAIRE' &i L_comp ;
+      'SI' (('NEG' co 'V1X') 'ET'
+            ('NEG' co 'V1Y') 'ET'
+            ('NEG' co 'V1Z') 'ET'
+            ('NEG' co 'V2X') 'ET'
+            ('NEG' co 'V2Y') 'ET'
+            ('NEG' co 'V2Z'));
+         'SI' ('EGA' fVide 'VRAI');
+            f = 'EXCO' c co;
+            fVide = 'FAUX';
+         'SINON';
+            f = f 'ET' ('EXCO' c co);
+         'FINSI';
+       'FINSI';
+   'FIN' i;
+   f = f 'ET' ('NOMC' ('CHANGER' v1x 'TYPE' 'CARACTERISTIQUES') 'V1X');
+   f = f 'ET' ('NOMC' ('CHANGER' v1y 'TYPE' 'CARACTERISTIQUES') 'V1Y');
+   f = f 'ET' ('NOMC' ('CHANGER' v1z 'TYPE' 'CARACTERISTIQUES') 'V1Z');
+   f = f 'ET' ('NOMC' ('CHANGER' v2x 'TYPE' 'CARACTERISTIQUES') 'V2X');
+   f = f 'ET' ('NOMC' ('CHANGER' v2y 'TYPE' 'CARACTERISTIQUES') 'V2Y');
+   f = f 'ET' ('NOMC' ('CHANGER' v2z 'TYPE' 'CARACTERISTIQUES') 'V2Z');
+'FINPROC' f;
+
+Ri=4.18e-3;
+Re=Ri+0.57e-3;
+
+h = 0.25 '*' Ri;
+
+nr=3;
+nt=3;
+* nr=15;
+* nt=15;
+
+ang=25.;
+tmax=1.;
+pmax=3.e7;
+NPAS=50;
+eps =1.e-12;
+
+'DENS' ((Ri '*' ((ang '/' 360.) '*' 3.14)) '/' nt);
+
+p0D = (0. 0. 0.);
+p0U = p0D 'PLUS' (0. 0. h);
+
+p1D = (Ri 0. 0.);
+p2D = p1D 'TOURNER' ang p0D p0U;
+
+p1U = p1D 'PLUS' (0. 0. h);
+p2U = p2D 'PLUS' (0. 0. h);
+
+c1D = 'CERCLE' p1D p0D p2D;
+Sint = c1D 'TRANSLATION' (0. 0. h);
+'ELIMINATION' (Sint 'ET' p1U 'ET' p2U);
+
+x y z = 'COORDONNEE' Sint;
+ux = 'NOMC' 'UX' (x '*' ((Re '/' Ri) '-' 1));
+uy = 'NOMC' 'UY' (y '*' ((Re '/' Ri) '-' 1));
+Sext = Sint 'PLUS' (ux 'ET' uy);
+
+clad = Sint 'VOLUME' nr Sext;
+
+* 'TRACER' clad 'FACE';
+
+evclad = 'ENVELOPPE' clad;
+
+x y z = 'COORDONNEE' evclad;
+SD = evclad 'ELEM' 'APPUYE' 'STRICTEMENT' ('POINT' z 'INFERIEUR' eps);
+SU = evclad 'ELEM' 'APPUYE' 'STRICTEMENT'
+            ('POINT' z 'SUPERIEUR' (h '-' eps));
+
+x y z = 'COORDONNEE' clad;
+
+d1 = ('NOMC' x 'V1X') 'ET' ('NOMC' y 'V1Y') 'ET'
+     ('MANU' 'CHPO' clad 1 'V1Z' 0. 'NATURE' 'DIFFUS');
+d2 = ('MANU' 'CHPO' clad 1 'V2X' 0. 'NATURE' 'DIFFUS') 'ET'
+     ('MANU' 'CHPO' clad 1 'V2Y' 0. 'NATURE' 'DIFFUS') 'ET'
+     ('MANU' 'CHPO' clad 1 'V2Z' 1. 'NATURE' 'DIFFUS');
+
+** modèle
+
+coel   = 'MOTS' 'YG1' 'YG2' 'YG3' 'NU12' 'NU23' 'NU13' 'G12' 'G23' 'G13'
+   'V1X' 'V1Y' 'V1Z' 'V2X' 'V2Y' 'V2Z' 'RHO' 'ALP1' 'ALP2' 'ALP3';
+params = 'MOTS' 'T';
+
+* 'EPSILON' 'UTILISATEUR'
+MO = 'MODELISER' clad 'MECANIQUE' 'ELASTIQUE' 'ORTHOTROPE'
+   'NON_LINEAIRE' 'UTILISATEUR' 'EPSILON' 'LINEAIRE'
+   'LIB_LOI' '../libMFrontCastemBehaviours.so'
+   'FCT_LOI' 'umatorthotropicelastic'
+   'C_MATERIAU' coel 'PARA_LOI' params 'CONS' M;
+
+xyg1=170.e9;
+xyg2=100.e9;
+xyg3=130.e9;
+xnu12=0.3;
+xnu13=0.2;
+xnu23=0.4;
+xg13=249.e9;
+xg12=153.e9;
+xg23=230.e9;
+
+MA1 = 'MATERIAU' MO 'YG1' xyg1 'YG2' xyg2 'YG3' xyg3 'NU12' xnu12
+'NU23' xnu23 'NU13' xnu13 'G12' xg12 'G23' xg23 'G13' xg13
+'RHO' 0. 'ALP1' 0. 'ALP2' 0. 'ALP3' 0.
+'DIRECTION' (1 0 0) (0 1 0) 'PARALLELE';
+
+MA = 'EXCO' MA1 ('MOTS' 'YG1'  'YG2'  'YG3'
+                        'NU12' 'NU23' 'NU13'
+                        'G12' 'G23' 'G13'
+                        'RHO' 'ALP1' 'ALP2' 'ALP3');
+MA = MA 'ET' (@ORTBA3D ('CHANGER' 'CHAM' d1 mo 'RIGIDITE')
+                       ('CHANGER' 'CHAM' d2 mo 'RIGIDITE') MA1);
+
+***
+LIT1 = PROG 0. TMAX;
+
+*** CONDITIONS AUX LIMITES
+************************************************
+* Conditions aux limites
+CL1  = 'SYMT' 'DEPLACER' P0D P0U P2D clad eps;
+CL2  = 'SYMT' 'DEPLACER' P0D P0U P1D clad eps;
+CL3  = 'BLOQUE' 'UZ' SD;
+CL4  = 'RELA' 'ENSE' 'UZ' SU;
+CLE1 = CL1 'ET' CL2 'ET' CL3 'ET' CL4;
+
+* Chargement mécanique et thermique
+LI1 = PROG 0. TMAX ;
+LI2 = PROG 1. 1. ;
+EV = EVOL MANU T LI1 F(T) LI2 ;
+PR   = 'PRES' 'MASS' mo pmax Sint;
+CHA1 = CHAR 'MECA' PR EV ;
+
+* Champ de température
+TEK = 293.15;
+THE1 = MANU 'CHPO' clad 1 'T' TEK ;
+EV2 = EVOL MANU (prog 0. TMAX) (prog 1. 1.) ;
+CHARTHER = CHAR 'T' THE1 EV2 ;
+
+** CALCUL
+* Définition des pas de calcul et de sauvegarde
+************************************************************
+* Définition de la table de la phase de charge
+TAB1 = TABLE ;
+TAB1.'MOVA' = 'MOT' 'RIEN' ;
+TAB1.'TEMPERATURES' = TABLE ;
+TAB1.'VARIABLES_INTERNES' = TABLE ;
+TAB1.'BLOCAGES_MECANIQUES' = CLE1 ;
+TAB1.'MODELE' = MO ;
+TAB1.'CHARGEMENT' = CHA1 'ET' CHARTHER ;
+TAB1.'TEMPERATURES' . 0 = THE1 ;
+TAB1.'CARACTERISTIQUES' = MA ;        
+TAB1.'TEMPS_CALCULES' = LIT1 ;
+TAB1.'TEMPS_SAUVES' = LIT1 ;
+TAB1.VARIABLES_INTERNES.0 = (ZERO MO 'VARINTER');
+TAB1.'GRANDS_DEPLACEMENTS' = FAUX;
+TAB1.'PRECISION' = 1.e-8;
+
+* Lancement du calcul de la phase de charge 
+PASAPAS TAB1 ;
+
+d_mfront = tab1.'DEPLACEMENTS'. 1;
+
+MO = 'MODELISER' clad 'MECANIQUE' 'ELASTIQUE' 'ORTHOTROPE';
+
+MA1 = 'MATERIAU' MO 'YG1' xyg1 'YG2' xyg2 'YG3' xyg3 'NU12' xnu12
+'NU23' xnu23 'NU13' xnu13 'G12' xg12 'G23' xg23 'G13' xg13
+'RHO' 0. 'ALP1' 0. 'ALP2' 0. 'ALP3' 0.
+'DIRECTION' (1 0 0) (0 1 0) 'PARALLELE';
+
+MA = 'EXCO' MA1 ('MOTS' 'YG1'  'YG2'  'YG3'
+                        'NU12' 'NU23' 'NU13'
+                        'G12' 'G23' 'G13'
+                        'RHO' 'ALP1' 'ALP2' 'ALP3');
+MA = MA 'ET' (@ORTBA3D ('CHANGER' 'CHAM' d1 mo 'RIGIDITE')
+                       ('CHANGER' 'CHAM' d2 mo 'RIGIDITE') MA1);
+
+* Définition de la table de la phase de charge
+* Définition de la table de la phase de charge
+TAB1 = TABLE ;
+TAB1.'MOVA' = 'MOT' 'RIEN' ;
+TAB1.'TEMPERATURES' = TABLE ;
+TAB1.'VARIABLES_INTERNES' = TABLE ;
+TAB1.'BLOCAGES_MECANIQUES' = CLE1 ;
+TAB1.'MODELE' = MO ;
+TAB1.'CHARGEMENT' = CHA1 'ET' CHARTHER ;
+TAB1.'TEMPERATURES' . 0 = THE1 ;
+TAB1.'CARACTERISTIQUES' = MA ;        
+TAB1.'TEMPS_CALCULES' = LIT1 ;
+TAB1.'TEMPS_SAUVES' = LIT1 ;
+TAB1.VARIABLES_INTERNES.0 = (ZERO MO 'VARINTER');
+TAB1.'GRANDS_DEPLACEMENTS' = FAUX;
+TAB1.'PRECISION' = 1.e-8;
+
+* Lancement du calcul de la phase de charge 
+PASAPAS TAB1 ;
+
+d_elas = tab1.'DEPLACEMENTS'. 1;
+
+dux =  (('EXCO' 'UX' d_elas 'SCAL') '-'
+        ('EXCO' 'UX' d_mfront 'SCAL'));
+duy =  (('EXCO' 'UY' d_elas 'SCAL') '-'
+        ('EXCO' 'UY' d_mfront 'SCAL'));
+duz =  (('EXCO' 'UZ' d_elas 'SCAL') '-'
+        ('EXCO' 'UZ' d_mfront 'SCAL'));
+
+* comparaison entre la loi mfront et la loi élastique native
+'SI' ('>' ('MAXIMUM' dux) 1.e-19);
+   'ERREUR' 'Erreur inadmissible sur la composante UX';
+'FINSI';
+'SI' ('>' ('MAXIMUM' duy) 1.e-19);
+   'ERREUR' 'Erreur inadmissible sur la composante UY';
+'FINSI';
+'SI' ('>' ('MAXIMUM' duz) 1.e-19);
+   'ERREUR' 'Erreur inadmissible sur la composante UZ';
+'FINSI';
+
+* comparaison entre les résultats obtenus et les résultats mtest
+* déplacement radial en peau interne
+ur_mtest  = 7.7239118269544e-06;
+ur        = ('EXTRAIRE' d_mfront 'UX' p1D);
+* déformation axiale
+ez_mtest  = -0.00085441645876287;
+ez        = ('MAXIMUM' ('REDU' ('EXCO' 'UZ' d_mfront) SU))/h;
+
+'SI' ('>' ('ABS' (ur_mtest-ur)) 1.e-11);
+   'ERREUR' 'Erreur inadmissible sur la composante UX';
+'FINSI';
+
+'SI' ('>' ('ABS' (ez_mtest-ez)) ('ABS' (1.e-7*ez_mtest)));
+   msg = 'CHAINE' 'Erreur inadmissible sur la composante EZZ'
+         '(' ez_mtest ' vs ' ez ')';
+   'ERREUR' msg;
+'FINSI';
+
+'MESSAGE' 'SUCCÈS DU TEST';
+
+'FIN';

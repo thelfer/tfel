@@ -1,0 +1,79 @@
+@DSL DefaultFiniteStrainDSL;
+@Behaviour SaintVenantKirchhoffElasticity2;
+@Author T. Helfer;
+@Date 19/10/2013;
+@Description{
+  "La loi de SaintVenantKirchhoffElasticity est une extension "
+  "de la loi de Hooke au cas des grandes rotations. "
+  "Elle ne peut être utilisée que pour des petites déformations. "
+  "Nous utilisons ici une déclaration explicite du calcul des différents "
+  "operateurs tangents possibles."
+  "Il est fortemment recommandé de s'inspirer du fichier "
+  "SaintVenantKirchhoffElasticity. Cette implantation n'est gardée que pour "
+  "tests."
+}
+
+@MaterialProperty stress young;
+young.setGlossaryName("YoungModulus");
+@MaterialProperty real nu;
+nu.setGlossaryName("PoissonRatio");
+
+@LocalVariable stress lambda;
+@LocalVariable stress mu;
+
+@InitLocalVariables{
+  lambda = computeLambda(young,nu);
+  mu     = computeMu(young,nu);
+}
+
+@ProvidesSymmetricTangentOperator;
+@PredictionOperator<DS_DEGL>{
+  static_cast<void>(smt); // suppression d'un warning : la matrice de
+			  // prédiction est toujours l'élastique
+  Dt = lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
+}
+
+@Integrator{
+  // Green-Lagrange tensor
+  const auto e = computeGreenLagrangeTensor(F1);
+  // second Piola–Kirchhoff stress
+  const auto s = lambda*trace(e)*StrainStensor::Id()+2*mu*e;
+  // convertion to Cauchy stress tensor
+  sig = convertSecondPiolaKirchhoffStressToCauchyStress(s,F1);
+  if(computeTangentOperator_){
+    const auto De = eval(lambda*Stensor4::IxI()+2*mu*Stensor4::Id());
+    if(smflag==DS_DEGL){
+      Dt = De;
+    } else if(smflag==DS_DC){
+      Dt = De/2;
+    } else if(smflag==DS_DF){
+      Dt = De*t2tost2<N,strain>::dCdF(F1)/2;
+    } else if (smflag==DS_DDF){
+      Dt = De*t2tost2<N,strain>::dCdF(F1)*t2tot2<N,real>::tpld(F0)/2;
+    } else if (smflag==DTAU_DF){
+      t2tost2<N,stress> dS = De*t2tost2<N,strain>::dCdF(F1)/2;
+      Dt = computePushForwardDerivative(dS,s,F1); 
+    } else if (smflag==DTAU_DDF){
+      const auto dS = eval(De*t2tost2<N,strain>::dCdF(F1)/2);
+      const auto dtau = computePushForwardDerivative(dS,s,F1);
+      Dt = dtau*t2tot2<N,real>::tpld(F0); 
+    } else if (smflag==DSIG_DF){
+      const auto dS = eval(De*t2tost2<N,strain>::dCdF(F1)/2);
+      const auto dtau = computePushForwardDerivative(dS,s,F1); 
+      Dt = computeCauchyStressDerivativeFromKirchhoffStressDerivative(dtau,sig,F1); 
+    } else if (smflag==DSIG_DDF){
+      const auto dS   = eval(De*t2tost2<N,strain>::dCdF(F1)/2);
+      const auto dtau = computePushForwardDerivative(dS,s,F1); 
+      const auto ds   = computeCauchyStressDerivativeFromKirchhoffStressDerivative(dtau,sig,F1); 
+      Dt = ds*t2tot2<N,real>::tpld(F0); 
+    } else if (smflag==ABAQUS){
+      const auto Cs = convert<FiniteStrainBehaviourTangentOperatorBase::SPATIAL_MODULI,
+			      FiniteStrainBehaviourTangentOperatorBase::DS_DEGL,N,stress>(De,F0,F1,sig);
+      Dt = convert<FiniteStrainBehaviourTangentOperatorBase::ABAQUS,
+		   FiniteStrainBehaviourTangentOperatorBase::SPATIAL_MODULI,N,stress>(Cs,F0,F1,sig);
+    } else {
+      throw(runtime_error("SaintVenantKirchhoffElasticity : "
+			  "unsupported tangent operator"));
+    }
+  }
+}

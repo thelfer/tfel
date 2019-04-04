@@ -1,0 +1,44 @@
+CASTEMDIR=c:\\Cast3M\\PCW_13
+VERSION=13
+ARCH=64
+ESOPE=bin_esope_Win_$(ARCH)_$(VERSION).exe
+LIBCASTEM=libcastem_$(ARCH).a
+CAST=cast_$(ARCH)_$(VERSION)
+
+FFLAGS = -Wall -m$(ARCH) -O5 -pthread -ftracer -finit-real=nan -finit-integer=-524287
+ifeq ($(ARCH),64)
+FFLAGS += -fdefault-integer-8 -fdefault-real-8 -fdefault-double-8
+endif
+
+MFRONT_SOURCES  = Lorentz.mfront    \
+	          Elasticity.mfront
+MFRONT_LDFLAGS  = -Lsrc -lUmatBehaviour
+
+FSOURCES = umat.f
+FOBJECTS = $(FSOURCES:.f=.o)
+
+.PHONY: all clean cast
+
+all: cast
+
+cast: $(FOBJECTS) src/libUmatBehaviour.dll
+	rm -fr $(LIBCASTEM)
+	cp $(CASTEMDIR)\\lib$(ARCH)\\$(LIBCASTEM) .
+	$(CASTEMDIR)\\mingw$(ARCH)\\bin\\ar.exe -ruv $(LIBCASTEM) *.o
+	$(CASTEMDIR)\\mingw$(ARCH)\\bin\\ranlib $(LIBCASTEM)
+	$(CASTEMDIR)\\mingw$(ARCH)\\bin\\gfortran.exe -v -m$(ARCH) -static-libgfortran -static-libgcc -O5 -o $(CAST) -u_MAIN__ -u___BLOCK_DATA__ $(LIBCASTEM) -L$(CASTEMDIR)\\lib$(ARCH) -lesope_$(ARCH) -lfxdr_$(ARCH) -ljpeg_$(ARCH) -lpthreadGC2 -lcastemdll$(ARCH) -lfreeglut$(ARCH) -lopengl32 -lgdi32 -lcomdlg32 -lmsvcrt $(MFRONT_LDFLAGS)
+
+%.f:%.eso
+	export ESOPE_INC="$(CASTEMDIR)\\includes\\eso"                         \
+	export ESOPE_PARAM="NORME=TRADUCTEUR,FORT=UNIX$(ARCH),ESOPE=10000000"  \
+	$(CASTEMDIR)\\bin\\$(ESOPE) $< > $@.out
+	mv esope.out $@
+
+%.o:%.f
+	$(CASTEMDIR)\mingw$(ARCH)\bin\gfortran.exe $(FFLAGS) $< -c
+
+src/libUmatBehaviour.dll: $(MFRONT_SOURCES)
+	mfront --obuild --interface=umat $(MFRONT_SOURCES)
+
+clean:
+	$(RM) -fr include src castem $(FOBJECTS) $(LIBCASTEM) $(CAST)

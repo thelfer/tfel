@@ -1,0 +1,137 @@
+* Maillage simplifie d'un 1/4  eprouvette AE10-6
+***********************************************
+
+'OPTION' 'ERREUR' 'FATALE' ;
+'OPTION' 'DIME' 2 'ELEM' QUA8;
+'OPTION' 'MODELISER' 'AXISYMETRIQUE';
+                                                                    
+* definition des points                                                 
+p0 = (0.     0.);
+p1 = (3.e-3  0.);
+p2 = (5.4e-3 4.8e-3);
+p4 = (0.     4.8e-3);
+
+c  = (9.e-3  0.);
+                                                                      
+* Definition des lignes                                                 
+
+CO   = 'CERCLE' 26 p1 c p2;
+R    = 'NOMC'   ('COORDONNEE' 1 CO) 'UR';
+lAI1 = CO 'MOINS' R;
+
+stot1 = 'REGLER' 26 CO LAI1;
+LRD   = 'FACE' 4 stot1;
+LRM   = 'FACE' 2 stot1;
+z    = 'NOMC'   ('COORDONNEE' 2 LRM) 'UZ';
+LRU  = (LRM 'MOIN' z) 'PLUS' (0. 30e-3);
+
+d = 5.4e-3 '/' 26;
+stot2 =  LRM 'REGLER' 'DINI' d 'DFIN'  ((30e-3/4.8e-3) '*' d)  LRU;
+
+stot = stot1 'ET' stot2;
+
+*
+* Matériau
+*
+
+coel2D = 'MOTS' 'YOUN' 'NU' 'RHO' 'ALPH' 'S_Y' 'ET';
+stav2D = 'MOTS'  'P' 'BERR' 'BEZZ' 'BETT' 'BERZ';
+para2D = 'MOTS' 'T';
+
+mod1 = 'MODELISER' stot 'MECANIQUE' 'ELASTIQUE' 'ISOTROPE'
+   'NON_LINEAIRE' 'UTILISATEUR' 'EPSILON' 'UTILISATEUR'
+   'LIB_LOI' '../libMFrontCastemBehaviours.so'
+   'FCT_LOI' 'umatlogarithmicstrainplasticity'
+   'C_MATERIAU' coel2D
+   'C_VARINTER' stav2D
+   'PARA_LOI'   para2D
+   'CONS' M;
+   
+MAT1 = 'MATERIAU' MOD1 'YOUN' 200e9 'NU' 0.3 'ALPH' 0. 'RHO' 0.
+   'S_Y' 200e6 'ET' 20e9;
+
+*** DISCRETISATION TEMPORELLE
+TMAX = 1.;
+NPAS = 50;
+
+LIT1 = PROG 0. PAS (TMAX/ NPAS)  TMAX;
+
+*** CONDITIONS AUX LIMITES
+************************************************
+CL1 = 'BLOQUE' 'UZ'  LRD ;
+CL2 = 'BLOQUE' 'UZ'  LRU ;
+CLE1 = CL1 ET CL2;
+
+* Chargement mécanique et thermique
+UMAX = 6.e-3;
+LI1 = PROG 0. TMAX ;
+LI2 = PROG 0. 1. ;
+EV = EVOL MANU T LI1 F(T) LI2 ;
+DEP1 = DEPI CL2 UMAX;
+CHA1 = CHAR 'DIMP' DEP1 EV ;
+
+* Champ de température
+TEK = 293.15;
+THE1 = MANU 'CHPO' stot 1 'T' TEK ;
+EV2 = EVOL MANU (prog 0. TMAX) (prog 1. 1.) ;
+CHARTHER = CHAR 'T' THE1 EV2 ;
+                             
+** CALCUL
+* Définition des pas de calcul et de sauvegarde
+************************************************************
+* Définition de la table de la phase de charge
+TAB1 = TABLE ;
+TAB1.'MOVA' = 'MOT' 'RIEN' ;
+TAB1.'TEMPERATURES' = TABLE ;
+TAB1.'VARIABLES_INTERNES' = TABLE ;
+TAB1.'BLOCAGES_MECANIQUES' = CLE1 ;
+TAB1.'MODELE' = MOD1 ;
+TAB1.'CHARGEMENT' = CHA1 'ET' CHARTHER ;
+TAB1.'TEMPERATURES' . 0 = THE1 ;
+TAB1.'CARACTERISTIQUES' = MAT1 ;        
+TAB1.'TEMPS_CALCULES' = LIT1 ;
+TAB1.'TEMPS_SAUVES' = LIT1 ;
+TAB1.VARIABLES_INTERNES.0 = (ZERO MOD1 'VARINTER');
+TAB1.'GRANDS_DEPLACEMENTS' = VRAI ;
+
+* Lancement du calcul de la phase de charge 
+PASAPAS TAB1 ;
+
+nb = ('DIME' tab1.'CONTRAINTES');
+d  = tab1. 'DEPLACEMENTS'. (nb '-' 1);
+ur = ('EXTRAIRE' d 'UR' p1);
+
+REA1 = 'REACTION' cl2 d;
+rcl2 = ('MAXIMUM' ('RESULT' REA1));
+
+'MESSAGE' ur;
+'MESSAGE' rcl2;
+
+** Comparaisons à des résultats de référence
+OK = VRAI;
+
+urref =-8.55947e-4;
+rclref= 2.08080E+05;
+
+'SI' ('>' ('ABS' (rcl2 '-' rclref)) 1.);
+   'MESSAGE' 'ERREUR SUR LA REACTION (' rcl2 ' vs ' rclref ')';
+   OK = FAUX;
+'FINSI';
+'SI' ('>' ('ABS' (ur '-' urref)) 1.e-8);
+   'MESSAGE' 'ERREUR SUR LE DEPLACEMENT (' ur ' vs ' urref ')';
+   OK = FAUX;
+'FINSI';
+
+'SI' ('NON' OK);
+  'MESS' ' ---------------------' ;
+  'MESS' '  ECHEC DU CAS-TEST !' ;
+  'MESS' ' ---------------------' ;
+  'ERREUR' 5 ;
+'SINON' ;
+  'MESS' ' ----------------------' ;
+  'MESS' '  SUCCES DU CAS-TEST !' ;
+  'MESS' ' ----------------------' ;
+'FINSI' ;
+'SAUTER' 1 'LIGNE' ;
+
+'FIN';

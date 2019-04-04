@@ -1,0 +1,19 @@
+@DSL DefaultFiniteStrainDSL;
+@Behaviour CompressibleNeoHookeanBehaviour;
+@Author T. Helfer;
+@Date 19/10/2013;
+
+@MaterialProperty stress C1;
+@MaterialProperty stress C2;
+
+@Integrator{
+  const Stensor b = computeLeftCauchyGreenTensor(F1);
+  const real J    = det(F1);
+  const stress pr = 2*(J-1)/C2;
+  const stress eg = 2*C1*pow(J,real(5)/real(3));
+  sig = eg*b+pr*Stensor::Id();
+  if(computeTangentOperator_){
+    string msg("tangent operator not yet available");
+    throw(runtime_error(msg));
+  }
+}

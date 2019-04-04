@@ -1,0 +1,104 @@
+@DSL Implicit;
+@Behaviour	PlasIsoCin;
+@Author 	Jeremy Hure;
+@Date 		05 Aout 2013;
+@Description{
+  "B. Tanguy"
+  "Modélisation de l'essai Charpy ..."
+  "Thèse ENSMP,2001"
+}
+
+@Algorithm NewtonRaphson;
+/*
+ * Using @RequireStiffnessTensor is not recommended for isotropic
+ * behaviours as it induces some extra work in the interfaces.
+ * We keep it for testing purposes.
+ */
+@RequireStiffnessTensor;
+/*
+ * Low precision is mandatory for the consistent tangent operator.
+ */
+@Epsilon 1.e-12;
+@Theta 1.;
+
+@MaterialProperty stress young;
+young.setGlossaryName("YoungModulus");
+@MaterialProperty real nu;
+nu.setGlossaryName("PoissonRatio");
+
+@MaterialProperty real R0;
+@MaterialProperty real Q1;
+@MaterialProperty real b1;
+@MaterialProperty real Q2;
+@MaterialProperty real b2;
+@MaterialProperty real C1;
+@MaterialProperty real D1;
+@MaterialProperty real C2;
+@MaterialProperty real D2;
+
+@StateVariable real    p;
+@StateVariable Stensor X1;
+@StateVariable Stensor X2;
+
+@LocalVariable Stensor s0;
+@LocalVariable real Rpel;
+@LocalVariable real sel;
+@LocalVariable real Fel;
+
+@InitLocalVars{
+  s0 = D*(eel+deto);
+}
+
+@ComputeStress{
+  sig  = D*eel;
+  Rpel = R0 + Q1*(1-exp(-b1*p)) +  Q2*(1-exp(-b2*p));
+  sel  = sigmaeq(s0-X1-X2);
+  Fel  = sel - Rpel;
+}
+
+@TangentOperator{
+  if((smt==ELASTIC)||(smt==SECANTOPERATOR)){
+    Dt=D;
+  } else if (smt==CONSISTENTTANGENTOPERATOR){
+    Stensor4 Je;
+    getPartialJacobianInvert(Je);
+    Dt = D*Je;
+  } else {
+    return false;
+  }
+}
+
+@Integrator{
+  if (Fel>0){
+    const Stensor X1t	= X1+theta*dX1;
+    const Stensor X2t 	= X2+theta*dX2;
+    const real pt 	= p+theta*dp;
+    const real Rpt 	= R0 + Q1*(1-exp(-b1*pt)) +  Q2*(1-exp(-b2*pt));
+    const real H 	= Q1*b1*exp(-b1*pt) + Q2*b2*exp(-b2*pt);
+    const real seq 	= sigmaeq(sig-X1t-X2t);
+    const real F 	= seq - Rpt;
+    const real inv_seq	= 1./seq;
+    const Stensor n 	= 1.5*deviator(sig-X1t-X2t)*inv_seq;
+    const Stensor4 J    = Stensor4::M() - (n^n);
+    feel	= deel + dp*n - deto;
+    fp 	= F/young;
+    fX1 	= (dX1 - C1*dp*n + D1*X1t*dp)/young;
+    fX2 	= (dX2 - C2*dp*n + D2*X2t*dp)/young; 
+    dfeel_ddeel    = Stensor4::Id() + theta*dp*inv_seq*J*D;
+    dfeel_ddp      = n;
+    dfeel_ddX1     = -theta*dp*inv_seq*J;
+    dfeel_ddX2     = -theta*dp*inv_seq*J;
+    dfp_ddeel      = (theta*(n|D))/young;
+    dfp_ddp        = -theta*H/young;
+    dfp_ddX1       = (-theta*n)/young;
+    dfp_ddX2       = (-theta*n)/young;
+    dfX1_ddeel     = (-theta*C1*dp*inv_seq*J*D)/young;
+    dfX1_ddp       = (-C1*n + D1*X1t)/young;
+    dfX1_ddX1      = (Stensor4::Id() + theta*dp*(C1*inv_seq*J + D1*Stensor4::Id()))/young;
+    dfX2_ddeel     = (-theta*C2*dp*inv_seq*J*D)/young;
+    dfX2_ddp       = (-C2*n + D2*X2t)/young;
+    dfX2_ddX2      = (Stensor4::Id() + theta*dp*(C2*inv_seq*J + D2*Stensor4::Id()))/young;
+  } else {
+    feel	= deel - deto;
+  }
+}

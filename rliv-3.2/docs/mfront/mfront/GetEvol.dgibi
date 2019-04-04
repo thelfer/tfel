@@ -1,0 +1,50 @@
+'DEBPROC' GETEVOL     X0*'FLOTTANT'
+                      X1*'FLOTTANT'
+                      nx*'ENTIER'
+                    TLoi*'TABLE'
+                    vvar*'MOT'
+                  values*'TABLE';
+'MESSAGE' '---------------------------------' ;
+'MESSAGE' ' Début              : ' X0;
+'MESSAGE' ' Fin                : ' X1;
+'MESSAGE' ' Nombre de valeurs  : ' nx;
+'MESSAGE' ' Loi : librairie    : ' TLoi.'LIBRAIRIE';
+'MESSAGE' ' Loi : Modèle       : ' TLoi.'MODELE';
+ nb  = 'DIME' (TLoi.'VARIABLES');
+'REPETER' bcl1 nb;
+   vvari = 'EXTRAIRE' (Tloi.'VARIABLES') &bcl1;
+   'MESSAGE' ' Loi : Nom Variable : ' vvari;
+   'SI' ( &bcl1 > 1  );
+     'MESSAGE' ' Valeur             : ' values.vvari;
+   'FINSI';
+'FIN' bcl1;
+'MESSAGE' ' Variable           : ' vvar;
+'MESSAGE' '---------------------------------' ;
+vdime=('VALEUR' 'DIME');
+velem=('VALEUR' 'ELEM');
+'OPTION' 'DIME' 1;
+'OPTION' 'ELEM' SEG2;
+lx = 'DROIT' ('POIN' X0) ('POIN' X1) nx;
+modv = 'MODELISER' lx 'THERMIQUE' 'ISOTROPE';
+xx = 'COORDONNEE' 1 lx ;
+vpo = 'CHANGER' xx 'COMP' vvar;
+vel = 'CHANGER' 'CHAM' vpo modv ;
+nb  = 'DIME' (TLoi.'VARIABLES');
+'REPETER' bcl nb;
+   vvari = 'EXTRAIRE' (Tloi.'VARIABLES') &bcl;
+   'SI'('NEG' vvari vvar);
+      vel = vel 'ET' ('MANUEL' 'CHML' modv vvari (values.vvari));
+   'FINSI';
+'FIN' bcl;
+matE = 'MANUEL' 'CHML' modv 'Y' TLoi;
+Kel = 'VARI' 'NUAG' modv matE vel;
+Kpo = 'CHANGER' 'CHPO' Kel modv ;
+evabs = 'EVOL' 'CHPO' vpo lx vvar;
+evordo = 'EVOL' 'CHPO' Kpo lx 'Y';
+labs = 'EXTRAIRE' evabs 'ORDO' ;
+lordo = 'EXTRAIRE' evordo 'ORDO' ;
+cou = 'EVOL' 'MANUEL' labs vvar lordo ;
+cou = cou  'COULEUR' 'JAUNE';
+'OPTION' 'DIME' vdime;
+'OPTION' 'ELEM' velem;
+'FINPROC' cou ;

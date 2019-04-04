@@ -1,0 +1,10 @@
+figureTitle: "Figure"
+tableTitle: "Table"
+lstPrefix: ""
+figPrefix: ""
+eqnPrefix: ""
+tblPrefix: ""
+secPrefix: ""
+loftitle: "# List of figures"
+lotTitle: "# List of tables"
+listings: True

@@ -1,0 +1,10 @@
+/*!
+ * \file  mfront/include/MFront/Ansys/ansys.doxygen
+ * \brief This file documents the ansys namespace.
+ */
+
+/*!
+ * \namespace ansys
+ * \brief the namespace ansys contains material related to the MFront
+ * interface to the ansys finite element solver.
+ */

@@ -1,0 +1,24 @@
+@Parser   MaterialLaw ;
+@Material T91MartensiticSteel ;
+@Law      Rinf_ROUX2007 ;
+@Author   F. Milliard ;
+@Date     11/12/2013 ;
+@Description{
+  // Limite d'écrouissage isotrope martensite T91
+  // [Roux 07]
+}
+
+// Input of law
+@Input T ;
+T.setGlossaryName("Temperature") ;
+
+// Output of law
+@Output Rinf ;
+
+@PhysicalBounds T in [0.:*[;
+
+// Function
+@Function{
+  const real TC = T-273.15;
+  Rinf = max(0.,-6.5686966825e+04 * TC +5.5481061611e+07) ;
+} // end of Function
