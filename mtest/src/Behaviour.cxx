@@ -81,10 +81,16 @@ namespace mtest {
     };
     auto& elm = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
     auto b = std::shared_ptr<Behaviour>{};
-    auto in = i.empty() ? elm.getInterface(l, f) : i;
+    const auto in = i.empty() ? elm.getInterface(l, f) : i;
     if ((in == "generic") || (in == "Generic")){
-      check_no_parameters();
-      b = std::make_shared<GenericBehaviour>(h, l, f);
+      if (d.empty()) {
+        b = std::make_shared<GenericBehaviour>(h, l, f);
+      } else {
+        throw_if(!d.is<std::map<std::string, Parameters>>(),
+                 "unsupported parameters type");
+        const auto& p = d.get<std::map<std::string, Parameters>>();
+        b = std::make_shared<GenericBehaviour>(h, l, f, p);
+      }
     } else {
       throw_if(!elm.contains(l, f),
 	       "behaviour '" + f + "' not defined in library '" + l + "'");

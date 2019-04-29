@@ -36,7 +36,7 @@ The interface creates a wrapper around the behaviour which is then
 integrated in generalised plane stress, the axial strain being an
 additional unknown.
 
-In TFEL-3.0`, we tried to mimic more closely the behaviour of standard
+In `TFEL-3.0`, we tried to mimic more closely the behaviour of standard
 behaviour by requiring the `PlateWidth` (`DIM3`) material property to be
 defined. This implies to reorder the material properties when calling
 the behaviour in generalised plane strain. This was done correctly for

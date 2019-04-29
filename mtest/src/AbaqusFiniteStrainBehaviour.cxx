@@ -184,7 +184,7 @@ namespace mtest {
     if (b) {
       // treating internal state variables
       if (!s.iv0.empty()) {
-        copy_n(wk.ivs.begin(), s.iv1.size(), s.iv1.begin());
+        std::copy_n(wk.ivs.begin(), s.iv1.size(), s.iv1.begin());
       }
       // treating stresses
       if (h == ModellingHypothesis::PLANESTRESS) {

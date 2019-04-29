@@ -211,21 +211,38 @@ function(test_generic test_arg)
   set(file "${CMAKE_CURRENT_SOURCE_DIR}/${test_arg}.mtest")
   foreach(rm ${IEEE754_ROUNDING_MODES})
     if(NOT _REFERENCE_FILE)
-      add_test(NAME generic-${test_arg}_${rm}_mtest
-  	COMMAND mtest --rounding-direction-mode=${rm}
-        --verbose=level0 --xml-output=${_XML_OUTPUT}
-        --result-file-output=false
-        --@library@="$<TARGET_FILE:MFrontGenericBehaviours>"
-	--@mplibrary@="$<TARGET_FILE:MFrontMaterialProperties-castem>"
-        --@xml_output@="${test_arg}-${rm}.xml" ${file})
+      if(HAVE_CASTEM)
+	add_test(NAME generic-${test_arg}_${rm}_mtest
+  	  COMMAND mtest --rounding-direction-mode=${rm}
+          --verbose=level0 --xml-output=${_XML_OUTPUT}
+          --result-file-output=false
+          --@library@="$<TARGET_FILE:MFrontGenericBehaviours>"
+	  --@mplibrary@="$<TARGET_FILE:MFrontMaterialProperties-castem>"
+          --@xml_output@="${test_arg}-${rm}.xml" ${file})
+      else(HAVE_CASTEM)
+	add_test(NAME generic-${test_arg}_${rm}_mtest
+  	  COMMAND mtest --rounding-direction-mode=${rm}
+          --verbose=level0 --xml-output=${_XML_OUTPUT}
+          --result-file-output=false
+          --@library@="$<TARGET_FILE:MFrontGenericBehaviours>"
+          --@xml_output@="${test_arg}-${rm}.xml" ${file})
+      endif(HAVE_CASTEM)
     else(NOT _REFERENCE_FILE)
       set(rfile "${top_srcdir}/mfront/tests/behaviours/references/${_REFERENCE_FILE}")
-      add_test(NAME generic-${test_arg}_${rm}_mtest
-        COMMAND mtest --rounding-direction-mode=${rm} --verbose=level0 --xml-output=${_XML_OUTPUT} --result-file-output=false
-        --@library@="$<TARGET_FILE:MFrontGenericBehaviours>"
-	--@mplibrary@="$<TARGET_FILE:MFrontMaterialProperties-castem>"
-        --@xml_output@="${test_arg}-${rm}.xml"
-        --@reference_file@="${rfile}" ${file})
+      if(HAVE_CASTEM)
+	add_test(NAME generic-${test_arg}_${rm}_mtest
+          COMMAND mtest --rounding-direction-mode=${rm} --verbose=level0 --xml-output=${_XML_OUTPUT} --result-file-output=false
+          --@library@="$<TARGET_FILE:MFrontGenericBehaviours>"
+	  --@mplibrary@="$<TARGET_FILE:MFrontMaterialProperties-castem>"
+          --@xml_output@="${test_arg}-${rm}.xml"
+          --@reference_file@="${rfile}" ${file})
+      else(HAVE_CASTEM)
+	add_test(NAME generic-${test_arg}_${rm}_mtest
+          COMMAND mtest --rounding-direction-mode=${rm} --verbose=level0 --xml-output=${_XML_OUTPUT} --result-file-output=false
+          --@library@="$<TARGET_FILE:MFrontGenericBehaviours>"
+          --@xml_output@="${test_arg}-${rm}.xml"
+          --@reference_file@="${rfile}" ${file})
+      endif(HAVE_CASTEM)
     endif(NOT _REFERENCE_FILE)
     if(_WILL_FAIL)
       set_tests_properties(generic-${test_arg}_${rm}_mtest

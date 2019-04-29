@@ -592,28 +592,25 @@ namespace mfront{
      * \param[in] n : parameter name
      * \param[in] v : parameter default value
      */
-    void setParameterDefaultValue(const std::string&,
-				  const double);
+    void setParameterDefaultValue(const std::string&, const double);
     /*!
      * \param[in] n : parameter name
      * \param[in] i : index
      * \param[in] v : parameter default value
      */
     void setParameterDefaultValue(const std::string&,
-				  const unsigned short i,
-				  const double);
+                                  const unsigned short i,
+                                  const double);
     /*!
      * \param[in] n : parameter name
      * \param[in] v : parameter default value
      */
-    void setParameterDefaultValue(const std::string&,
-				  const int);
+    void setParameterDefaultValue(const std::string&, const int);
     /*!
      * \param[in] n : parameter name
      * \param[in] v : parameter default value
      */
-    void setParameterDefaultValue(const std::string&,
-				  const unsigned short);
+    void setParameterDefaultValue(const std::string&, const unsigned short);
     /*!
      * \return the default value of a paramater
      * \param[in] v : parameter default value

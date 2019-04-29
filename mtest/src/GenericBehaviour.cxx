@@ -23,6 +23,7 @@
 #include "TFEL/Math/t2tost2.hxx"
 #include "TFEL/Math/st2tost2.hxx"
 #include "TFEL/Math/ST2toST2/ST2toST2View.hxx"
+#include"TFEL/Material/FiniteStrainBehaviourTangentOperator.hxx"
 #include "TFEL/System/ExternalLibraryManager.hxx"
 #include "MFront/MFrontLogStream.hxx"
 #include "MTest/Evolution.hxx"
@@ -122,6 +123,21 @@ namespace mtest {
     }
   }  // end of applyRotation
 
+  template <unsigned short N>
+  void convertFromDSDEGL(real* const K,
+                         const real* const F0,
+                         const real* const F1,
+                         const real* const s) {
+    using FSTOBase = tfel::material::FiniteStrainBehaviourTangentOperatorBase;
+    tfel::math::st2tost2<N, real> Cse;
+    std::copy(K, K + Cse.size(), Cse.begin());
+    const auto Kv =
+        tfel::material::convert<FSTOBase::DSIG_DF, FSTOBase::DS_DEGL>(
+            Cse, tfel::math::tensor<N, real>(F0),
+            tfel::math::tensor<N, real>(F1), tfel::math::stensor<N, real>(s));
+    std::copy(Kv.begin(), Kv.end(), K);
+  }  // end of convertFromDSDEGL
+
   GenericBehaviour::GenericBehaviour(const Hypothesis h,
                                      const std::string& l,
                                      const std::string& b)
@@ -182,12 +198,75 @@ namespace mtest {
     this->mpnames.insert(this->mpnames.begin(), mps.begin(), mps.end());
   }  // end of GenericBehaviour::GenericBehaviour
 
+  GenericBehaviour::GenericBehaviour(const Hypothesis h,
+                                     const std::string& l,
+                                     const std::string& b,
+                                     const std::map<std::string, Parameters>& params)
+      : GenericBehaviour(h, l, b) {
+    if (params.empty()) {
+      return;
+    }
+    tfel::raise_if(this->btype != 2u,
+                   "GenericBehaviour::GenericBehaviour: "
+                   "no parameter expected");
+    if (params.size() != 1u) {
+      auto pns = std::string{};
+      for (const auto& p : params) {
+        pns += " '" + p.first + "'";
+      }
+      tfel::raise(
+          "GenericBehaviour::GenericBehaviour: "
+          "only one parameter expected (got " +
+          pns + ")");
+    }
+    const auto& p = *(params.begin());
+    if (p.first != "tangent_operator") {
+      tfel::raise(
+          "GenericBehaviour::GenericBehaviour: "
+          "unexpected parameter '" +
+          p.first + "'");
+    }
+    tfel::raise_if(!p.second.is<std::string>(),
+                   "GenericBehaviour::GenericBehaviour: "
+                   "unexpected type for parameter '" +
+                       p.first + "'");
+    const auto& to = p.second.get<std::string>();
+    if (to == "DSIG_DF") {
+    } else if (to == "DS_DEGL") {
+      this->fsto = DS_DEGL;
+    } else if (to == "DPK1_DF") {
+      this->fsto = DPK1_DF;
+    } else {
+      tfel::raise(
+          "GenericBehaviour::GenericBehaviour: "
+          "unsupported tangent operator '" +
+          to + "'");
+    }
+  }  // end of GenericBehaviour::GenericBehaviour
+
   void GenericBehaviour::allocate(BehaviourWorkSpace& wk) const {
     const auto ndv = this->getGradientsSize();
     const auto nth = this->getThermodynamicForcesSize();
     const auto nstatev = this->getInternalStateVariablesSize();
     const auto nevs = this->getExternalStateVariablesSize();
-    wk.D.resize(nth, ndv);
+    if (this->btype == 2u) {
+      // allocating an array large enough to store
+      // the tangent operator and its conversion to
+      // DSIG_DF
+      if (this->fsto == DSIG_DF) {
+        wk.D.resize(nth, ndv);
+      } else if (this->fsto == DS_DEGL) {
+        wk.D.resize(nth, ndv);
+      } else if(this->fsto == DPK1_DF) {
+        wk.D.resize(ndv, ndv);
+      } else {
+        tfel::raise(
+            "GenericBehaviour::allocate: "
+            "unsupported tangent operator type");
+      }
+    } else {
+      wk.D.resize(nth, ndv);
+    }
     wk.k.resize(nth, ndv);
     wk.kt.resize(nth, ndv);
     wk.nk.resize(nth, ndv);
@@ -331,6 +410,19 @@ namespace mtest {
     // choosing the type of stiffness matrix
     StandardBehaviourBase::initializeTangentOperator(wk.D, ktype, b);
     d.K = &(wk.D(0, 0));
+    if ((this->btype == 2u) && (ktype != StiffnessMatrixType::NOSTIFFNESS)) {
+      if (this->fsto == DSIG_DF) {
+        d.K[1] = real(0);
+      } else if (this->fsto == DS_DEGL) {
+        d.K[1] = real(1);
+      } else if (this->fsto == DPK1_DF) {
+        d.K[1] = real(2);
+      } else {
+        tfel::raise(
+            "GenericBehaviour::call_behaviour: "
+            "internal error, unexpected tangent operator type");
+      }
+    }
     // calling the behaviour
     const auto r = (this->fct)(&d);
     if (r != 1) {
@@ -340,6 +432,36 @@ namespace mtest {
     if (ktype != StiffnessMatrixType::NOSTIFFNESS) {
       const auto ndv = this->getGradientsSize();
       const auto nth = this->getThermodynamicForcesSize();
+      if (this->btype == 2u) {
+        if (this->fsto == DSIG_DF) {
+          // nothing to be done
+        } else if (this->fsto == DS_DEGL) {
+          const auto n =
+              tfel::material::getSpaceDimension(this->getHypothesis());
+          if (n == 1u) {
+            convertFromDSDEGL<1u>(d.K, d.s0.gradients, d.s1.gradients,
+                                  d.s1.thermodynamic_forces);
+          } else if (n == 2u) {
+            convertFromDSDEGL<2u>(d.K, d.s0.gradients, d.s1.gradients,
+                                  d.s1.thermodynamic_forces);
+          } else if (n == 3u) {
+            convertFromDSDEGL<3u>(d.K, d.s0.gradients, d.s1.gradients,
+                                  d.s1.thermodynamic_forces);
+          } else {
+            tfel::raise(
+                "GenericBehaviour::call_behaviour: "
+                "invalid space dimensions");
+          }
+        } else if (this->fsto == DPK1_DF) {
+          tfel::raise(
+              "GenericBehaviour::call_behaviour: "
+              "unimplemented feature, conversion from DPK1_DF");
+        } else {
+          tfel::raise(
+              "GenericBehaviour::call_behaviour: "
+              "internal error, unexpected tangent operator type");
+        }
+      }
       if (this->stype == 1u) {
         if ((this->btype == 1u) || (this->btype == 2u)) {
           applyRotation(&(wk.D(0, 0)), this->dvtypes, this->thtypes,

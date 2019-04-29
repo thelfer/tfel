@@ -24,7 +24,7 @@ namespace tfel {
   namespace system {
 
     /*!
-     * A structure containing the information  a given behaviour 
+     * \brief a structure containing the information  a given behaviour.
      */
     struct TFELSYSTEM_VISIBILITY_EXPORT ExternalBehaviourData {
       ExternalBehaviourData();

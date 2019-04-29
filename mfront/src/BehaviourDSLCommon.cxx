@@ -852,19 +852,27 @@ namespace mfront {
     if (!this->mb.hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS, "minimal_time_step_scaling_factor")) {
       VariableDescription e("real", "minimal_time_step_scaling_factor", 1u, 0u);
       e.description = "minimal value for the time step scaling factor";
-      this->mb.addParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS, e, BehaviourData::ALREADYREGISTRED);
-      this->mb.setParameterDefaultValue(ModellingHypothesis::UNDEFINEDHYPOTHESIS, "minimal_time_step_scaling_factor",
-                                        0.1);
-      this->mb.setEntryName(ModellingHypothesis::UNDEFINEDHYPOTHESIS, "minimal_time_step_scaling_factor",
+      this->mb.addParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS, e,
+                            BehaviourData::ALREADYREGISTRED);
+      this->mb.setParameterDefaultValue(
+          ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+          "minimal_time_step_scaling_factor", 0.1);
+      this->mb.setEntryName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+                            "minimal_time_step_scaling_factor",
                             "minimal_time_step_scaling_factor");
     }
-    if (!this->mb.hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS, "maximal_time_step_scaling_factor")) {
+    if (!this->mb.hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+                               "maximal_time_step_scaling_factor")) {
       VariableDescription e("real", "maximal_time_step_scaling_factor", 1u, 0u);
       e.description = "maximal value for the time step scaling factor";
-      this->mb.addParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS, e, BehaviourData::ALREADYREGISTRED);
-      this->mb.setParameterDefaultValue(ModellingHypothesis::UNDEFINEDHYPOTHESIS, "maximal_time_step_scaling_factor",
-                                        std::numeric_limits<double>::max());
-      this->mb.setEntryName(ModellingHypothesis::UNDEFINEDHYPOTHESIS, "maximal_time_step_scaling_factor",
+      this->mb.addParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS, e,
+                            BehaviourData::ALREADYREGISTRED);
+      this->mb.setParameterDefaultValue(
+          ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+          "maximal_time_step_scaling_factor",
+          std::numeric_limits<double>::max());
+      this->mb.setEntryName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+                            "maximal_time_step_scaling_factor",
                             "maximal_time_step_scaling_factor");
     }
     // incompatible options
@@ -7064,7 +7072,8 @@ namespace mfront {
       this->checkNotEndOfFile("BehaviourDSLCommon::treatParameter");
       const auto arraySize = this->readArrayOfVariablesSize(n, true);
       this->checkNotEndOfFile("BehaviourDSLCommon::treatParameter");
-      if ((this->current->value == "=") || (this->current->value == "{") || (this->current->value == "(")) {
+      if ((this->current->value == "=") || (this->current->value == "{") ||
+          (this->current->value == "(")) {
         std::string ci;  // closing initializer
         if (this->current->value == "{") {
           ci = "}";
@@ -7085,10 +7094,12 @@ namespace mfront {
           }
           --(this->current);
           const auto r = this->readArrayOfDouble("BehaviourDSLCommon::treatParameter");
-          throw_if(r.size() != arraySize,
-                   "number of values given does not match the number of parameters "
-                   "(" +
-                       std::to_string(r.size()) + " vs +" + std::to_string(arraySize) + ").\n");
+          throw_if(
+              r.size() != arraySize,
+              "number of values given does not match the numberf of parameters "
+              "(" +
+                  std::to_string(r.size()) + " vs +" +
+                  std::to_string(arraySize) + ").\n");
           for (const auto& h : mh) {
             VariableDescription p("real", n, arraySize, lineNumber);
             p.description = this->currentComment;
@@ -7102,8 +7113,9 @@ namespace mfront {
           std::istringstream converter(this->current->value);
           converter >> value;
           if (!converter || (!converter.eof())) {
-            this->throwRuntimeError("BehaviourDSLCommon::treatParameter",
-                                    "could not read default value for parameter '" + n + "'");
+            this->throwRuntimeError(
+                "BehaviourDSLCommon::treatParameter",
+                "could not read default value for parameter '" + n + "'");
           }
           ++(this->current);
           this->checkNotEndOfFile("BehaviourDSLCommon::treatParameter");
@@ -7135,7 +7147,8 @@ namespace mfront {
         endOfTreatment = true;
         ++(this->current);
       } else {
-        throw_if(true, "',' or ';' expected after '" + n + "', read '" + this->current->value + "'");
+        throw_if(true, "',' or ';' expected after '" + n + "', read '" +
+                           this->current->value + "'");
       }
     }
     if (!endOfTreatment) {
@@ -7145,8 +7158,8 @@ namespace mfront {
   }  // end of BehaviourDSLCommon::treatParameter
 
   void BehaviourDSLCommon::treatInitLocalVariables() {
-    this->readCodeBlock(*this, BehaviourData::InitializeLocalVariables, &BehaviourDSLCommon::standardModifier, true,
-                        true);
+    this->readCodeBlock(*this, BehaviourData::InitializeLocalVariables,
+                        &BehaviourDSLCommon::standardModifier, true, true);
   }  // end of BehaviourDSLCommon:treatInitLocalVariables
 
   void BehaviourDSLCommon::treatMinimalTimeStepScalingFactor() {
