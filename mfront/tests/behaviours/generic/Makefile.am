@@ -155,4 +155,18 @@ EXTRA_DIST = CMakeLists.txt                                                     
              orthotropicswelling.mtest						       \
              orthotropicswelling2.mtest						       \
              orthotropicswelling3.mtest						       \
-             relocationtest.mtest
+             relocationtest.mtest                                                      \
+             materialpropertiesboundscheck.mtest				       \
+             materialpropertiesboundscheck2.mtest				       \
+             materialpropertiesboundscheck3.mtest				       \
+             materialpropertiesboundscheck4.mtest				       \
+             materialpropertiesboundscheck5.mtest				       \
+             statevariablesboundscheck.mtest					       \
+             statevariablesboundscheck2.mtest					       \
+             externalstatevariablesboundscheck.mtest				       \
+             externalstatevariablesboundscheck2.mtest				       \
+             externalstatevariablesboundscheck3.mtest				       \
+             externalstatevariablesboundscheck4.mtest				       \
+             externalstatevariablesboundscheck5.mtest				       \
+             externalstatevariablesboundscheck6.mtest
+
