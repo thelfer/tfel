@@ -26,15 +26,15 @@
 #include"TFEL/Math/ST2toST2/ST2toST2Concept.hxx"
 #include"TFEL/Math/Forward/t2tost2.hxx"
 #include"TFEL/Math/T2toST2/T2toST2Concept.hxx"
+#include"TFEL/Math/Forward/t2tot2.hxx"
+#include"TFEL/Math/T2toT2/T2toT2Concept.hxx"
 
 #include"TFEL/Utilities/GenTypeBase.hxx"
 #include"TFEL/Material/FiniteStrainBehaviourTangentOperatorBase.hxx"
 
-namespace tfel
-{
+namespace tfel{
 
-  namespace material
-  {
+  namespace material{
 
     /*!
      * \return a list of supported tangent operator
@@ -310,8 +310,18 @@ namespace tfel
     {
       //! the result of the meta function
       using type = tfel::math::st2tost2<N,StressType>;
-    }; // end of struct FiniteStrainBehaviourTangentOperatorType<FiniteStrainBehaviourTangentOperatorBase::DSIG_DF,N,StressType>
-    //! a simple alias
+    }; // end of struct FiniteStrainBehaviourTangentOperatorType<FiniteStrainBehaviourTangentOperatorBase::DT_DELOG,N,StressType> 
+    /*!
+     * \brief partial specialisation for the derivative of the first Piola-Kirchhoff
+     * stress with respect to the deformation gradient
+     */
+    template<unsigned short N,typename StressType>
+    struct FiniteStrainBehaviourTangentOperatorType<FiniteStrainBehaviourTangentOperatorBase::DPK1_DF,N,StressType>
+    {
+      //! the result of the meta function
+      using type = tfel::math::t2tot2<N,StressType>;
+    }; // end of struct FiniteStrainBehaviourTangentOperatorType<FiniteStrainBehaviourTangentOperatorBase::DPK1_DF,N,StressType> 
+   //! a simple alias
     template<FiniteStrainBehaviourTangentOperatorBase::Flag TangenOperatorType,
 	     unsigned short N,typename StressType>
     using tangent_operator = typename FiniteStrainBehaviourTangentOperatorType<TangenOperatorType,N,StressType>::type;

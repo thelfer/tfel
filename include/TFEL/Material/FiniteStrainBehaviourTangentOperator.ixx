@@ -11,18 +11,19 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_MATERIAL_FINITESTRAINBEHAVIOURTANGENTOPERATORIXX
-#define LIB_TFEL_MATERIAL_FINITESTRAINBEHAVIOURTANGENTOPERATORIXX
+#ifndef LIB_TFEL_MATERIAL_FINITESTRAINBEHAVIOURTANGENTOPERATOR_IXX
+#define LIB_TFEL_MATERIAL_FINITESTRAINBEHAVIOURTANGENTOPERATOR_IXX
 
-#include<stdexcept>
-#include"TFEL/Math/tvector.hxx"
-#include"TFEL/Math/tensor.hxx"
-#include"TFEL/Math/stensor.hxx"
-#include"TFEL/Math/t2tost2.hxx"
-#include"TFEL/Math/st2tost2.hxx"
-#include"TFEL/Math/General/MathConstants.hxx"
-#include"TFEL/Math/ST2toST2/ConvertSpatialModuliToKirchhoffJaumanRateModuli.hxx"
-#include"TFEL/Material/LogarithmicStrainHandler.hxx"
+#include <stdexcept>
+#include "TFEL/Math/tvector.hxx"
+#include "TFEL/Math/tensor.hxx"
+#include "TFEL/Math/stensor.hxx"
+#include "TFEL/Math/t2tost2.hxx"
+#include "TFEL/Math/st2tost2.hxx"
+#include "TFEL/Math/General/MathConstants.hxx"
+#include "TFEL/Math/ST2toST2/ConvertSpatialModuliToKirchhoffJaumanRateModuli.hxx"
+#include "TFEL/Math/T2toT2/ConvertToPK1Derivative.hxx"
+#include "TFEL/Material/LogarithmicStrainHandler.hxx"
 
 /*!
  * \brief a convenient macro for shorted declaration of partial
@@ -1120,6 +1121,58 @@ namespace tfel
       } // end of exe
     }; // end of struct FiniteStrainBehaviourTangentOperatorConverter
 
+    /*!
+     * \brief partial specialisation of FiniteStrainBehaviourTangentOperatorConverter structure
+     */
+    TFEL_MATERIAL_FINITESTRAINBEHAVIOURTANGENTOPERATORCONVERTER(DPK1_DF,
+                                                                DSIG_DF){
+        /*!
+         * \param[out] Kr: the result of the convertion
+         * \param[in]  Ks: the initial stiffness tensor
+         * \param[in]  F0:  the deformation gradient
+         * \param[in]  F1:  the deformation gradient
+         * \param[in]  s:  the Cauchy stress tensor
+         */
+        template <unsigned short N, typename stress>
+        static TFEL_MATERIAL_INLINE void exe(
+            Result<N, stress> & Kr,
+            const Source<N, stress>& Ks,
+            const DeformationGradientTensor<N, stress>&,
+            const DeformationGradientTensor<N, stress>& F1,
+            const StressStensor<N, stress>& s){
+    tfel::math::
+        convertCauchyStressDerivativeToFirstPiolaKirchoffStressDerivative(Kr,
+                                                                          Ks,
+                                                                          F1,
+                                                                          s);
+       }  // end of exe
+    };  // end of struct FiniteStrainBehaviourTangentOperatorConverter
+
+    /*!
+     * \brief partial specialisation of FiniteStrainBehaviourTangentOperatorConverter structure
+     */
+    TFEL_MATERIAL_FINITESTRAINBEHAVIOURTANGENTOPERATORCONVERTER(DPK1_DF,
+                                                                DS_DEGL){
+        /*!
+         * \param[out] Kr: the result of the convertion
+         * \param[in]  Ks: the initial stiffness tensor
+         * \param[in]  F0:  the deformation gradient
+         * \param[in]  F1:  the deformation gradient
+         * \param[in]  s:  the Cauchy stress tensor
+         */
+        template <unsigned short N, typename stress>
+        static TFEL_MATERIAL_INLINE void exe(
+            Result<N, stress> & Kr,
+            const Source<N, stress>& Ks,
+            const DeformationGradientTensor<N, stress>&,
+            const DeformationGradientTensor<N, stress>& F1,
+            const StressStensor<N, stress>& s){
+    tfel::math::
+        convertSecondPiolaKirchhoffStressDerivativeToFirstPiolaKirchoffStressDerivative(
+            Kr, Ks, F1, s);
+       }  // end of exe
+    };  // end of struct FiniteStrainBehaviourTangentOperatorConverter
+
     template <FiniteStrainBehaviourTangentOperatorBase::Flag ResultFlag,
               FiniteStrainBehaviourTangentOperatorBase::Flag SourceFlag,
               unsigned short N,
@@ -1153,6 +1206,7 @@ namespace tfel
     
   } // end of namespace material
 
-} // end of namespace tfel
+  }  // end of namespace tfel
+  
 
-#endif /* LIB_TFEL_MATERIAL_FINITESTRAINBEHAVIOURTANGENTOPERATORIXX */
+#endif /* LIB_TFEL_MATERIAL_FINITESTRAINBEHAVIOURTANGENTOPERATOR_IXX */

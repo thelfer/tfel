@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_TENSORIXX
-#define LIB_TFEL_TENSORIXX 
+#ifndef LIB_TFEL_MATH_TENSOR_IXX
+#define LIB_TFEL_MATH_TENSOR_IXX 
 
 #include <cmath>
 #include <iterator>
@@ -522,8 +522,94 @@ namespace tfel{
       return {s[0],s[1],s[2],s01,s01,s02,s02,s12,s12};
     }
 
+    template <typename StensorType, typename TensorType>
+    typename std::enable_if<
+        ((tfel::meta::Implements<StensorType, StensorConcept>::cond) &&
+         (StensorTraits<StensorType>::dime == 1u) &&
+         (tfel::meta::Implements<TensorType, TensorConcept>::cond) &&
+         (TensorTraits<TensorType>::dime == 1u)),
+        tensor<1u,
+               typename ResultType<StensorNumType<StensorType>,
+                                   TensorNumType<TensorType>,
+                                   OpMult>::type>>::type
+    convertCauchyStressToFirstPiolaKirchhoffStress(const StensorType& s, const TensorType& F) {
+      return {s[0] * F[1] * F[2], F[0] * s[1] * F[2], F[0] * s[2] * F[1]};
+    }  // end of convertCauchyStressToFirstPiolaKirchhoffStress
+
+    template <typename StensorType, typename TensorType>
+    typename std::enable_if<
+        ((tfel::meta::Implements<StensorType, StensorConcept>::cond) &&
+         (StensorTraits<StensorType>::dime == 2u) &&
+         (tfel::meta::Implements<TensorType, TensorConcept>::cond) &&
+         (TensorTraits<TensorType>::dime == 2u)),
+        tensor<2u,
+               typename ResultType<StensorNumType<StensorType>,
+                                   TensorNumType<TensorType>,
+                                   OpMult>::type>>::type
+    convertCauchyStressToFirstPiolaKirchhoffStress(const StensorType& s, const TensorType& F) {
+      using real = tfel::typetraits::base_type<StensorNumType<StensorType>>;
+      constexpr const auto cste = Cste<real>::sqrt2;
+      constexpr const auto icste = Cste<real>::isqrt2;
+      return {-(s[3] * F[2] * F[3] - cste * s[0] * F[1] * F[2]) * icste,
+              -(s[3] * F[2] * F[4] - cste * F[0] * s[1] * F[2]) * icste,
+              F[0] * s[2] * F[1] - s[2] * F[3] * F[4],
+              -(cste * s[0] * F[2] * F[4] - F[0] * s[3] * F[2]) * icste,
+              -(cste * s[1] * F[2] * F[3] - s[3] * F[1] * F[2]) * icste};
+    }  // end of convertCauchyStressToFirstPiolaKirchhoffStress
+
+    template <typename StensorType, typename TensorType>
+    typename std::enable_if<
+        ((tfel::meta::Implements<StensorType, StensorConcept>::cond) &&
+         (StensorTraits<StensorType>::dime == 3u) &&
+         (tfel::meta::Implements<TensorType, TensorConcept>::cond) &&
+         (TensorTraits<TensorType>::dime == 3u)),
+        tensor<3u,
+               typename ResultType<StensorNumType<StensorType>,
+                                   TensorNumType<TensorType>,
+                                   OpMult>::type>>::type
+    convertCauchyStressToFirstPiolaKirchhoffStress(const StensorType& s, const TensorType& F) {
+      using real = tfel::typetraits::base_type<StensorNumType<StensorType>>;
+      constexpr const auto cste = Cste<real>::sqrt2;
+      return {-((2 * s[0] * F[7] - cste * s[3] * F[5]) * F[8] -
+                cste * s[4] * F[3] * F[7] + cste * s[4] * F[1] * F[5] +
+                cste * s[3] * F[2] * F[3] - 2 * s[0] * F[1] * F[2]) /
+                  2,
+              ((cste * s[3] * F[6] - cste * F[0] * s[5]) * F[7] -
+               2 * s[1] * F[5] * F[6] + cste * s[5] * F[4] * F[5] -
+               cste * s[3] * F[2] * F[4] + 2 * F[0] * s[1] * F[2]) /
+                  2,
+              ((cste * s[4] * F[4] - cste * F[0] * s[5]) * F[8] +
+               (cste * s[5] * F[3] - cste * s[4] * F[1]) * F[6] -
+               2 * s[2] * F[3] * F[4] + 2 * F[0] * s[2] * F[1]) /
+                  2,
+              ((2 * s[0] * F[6] - cste * F[0] * s[4]) * F[7] -
+               cste * s[3] * F[5] * F[6] + cste * s[4] * F[4] * F[5] -
+               2 * s[0] * F[2] * F[4] + cste * F[0] * s[3] * F[2]) /
+                  2,
+              -((cste * s[3] * F[7] - 2 * s[1] * F[5]) * F[8] -
+                cste * s[5] * F[3] * F[7] + cste * s[5] * F[1] * F[5] +
+                2 * s[1] * F[2] * F[3] - cste * s[3] * F[1] * F[2]) /
+                  2,
+              ((2 * s[0] * F[4] - cste * F[0] * s[3]) * F[8] +
+               (cste * s[3] * F[3] - 2 * s[0] * F[1]) * F[6] -
+               cste * s[4] * F[3] * F[4] + cste * F[0] * s[4] * F[1]) /
+                  2,
+              -((cste * s[4] * F[7] - cste * s[5] * F[5]) * F[8] -
+                2 * s[2] * F[3] * F[7] + 2 * s[2] * F[1] * F[5] +
+                cste * s[5] * F[2] * F[3] - cste * s[4] * F[1] * F[2]) /
+                  2,
+              ((cste * s[3] * F[4] - 2 * F[0] * s[1]) * F[8] +
+               (2 * s[1] * F[3] - cste * s[3] * F[1]) * F[6] -
+               cste * s[5] * F[3] * F[4] + cste * F[0] * s[5] * F[1]) /
+                  2,
+              ((cste * s[4] * F[6] - 2 * F[0] * s[2]) * F[7] -
+               cste * s[5] * F[5] * F[6] + 2 * s[2] * F[4] * F[5] -
+               cste * s[4] * F[2] * F[4] + cste * F[0] * s[5] * F[2]) /
+                  2};
+    }  // end of convertCauchyStressToFirstPiolaKirchhoffStress
+
   } //end of namespace math
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_TENSORIXX */
+#endif /* LIB_TFEL_MATH_TENSOR_IXX */

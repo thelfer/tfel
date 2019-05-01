@@ -11,7 +11,8 @@ test_PROGRAMS =	t2tot2 t2tot2-specialvalues                    \
 		SpinRateDerivative                             \
 		VelocityGradientDerivative                     \
 		TransposeDerivative                            \
-		ComputeTensorDeterminantSecondDerivativeTest
+		ComputeTensorDeterminantSecondDerivativeTest   \
+		ComputePK1DerivativeTest
 
 LDADD = -lTFELMath -lTFELException -lTFELTests \
 	-L$(top_builddir)/src/Tests            \
@@ -26,6 +27,8 @@ TransposeDerivative_SOURCES                          = TransposeDerivative.cxx
 VelocityGradientDerivative_SOURCES                   = VelocityGradientDerivative.cxx
 SpinRateDerivative_SOURCES                           = SpinRateDerivative.cxx
 ComputeTensorDeterminantSecondDerivativeTest_SOURCES = ComputeTensorDeterminantSecondDerivativeTest.cxx
+ComputePK1DerivativeTest_SOURCES                     = ComputePK1DerivativeTest.cxx
+
 TESTS=$(test_PROGRAMS)
 
 clean-local:

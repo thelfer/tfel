@@ -400,41 +400,43 @@ namespace tfel{
       return Expr<t2tot2<N,T>,TensorProductLeftDerivativeExpr<N> >(B,C);
     }
 
-    template<unsigned short N, typename T>
-    template<typename TensorType>
+    template <unsigned short N, typename T>
+    template <typename TensorType>
     typename std::enable_if<
-      tfel::meta::Implements<TensorType,TensorConcept>::cond &&
-      TensorTraits<TensorType>::dime==N&&
-      tfel::typetraits::IsAssignableTo<typename TensorTraits<TensorType>::NumType,T>::cond,
-      Expr<t2tot2<N,T>,TensorProductRightDerivativeExpr<N> > >::type
-    t2tot2<N,T>::tprd(const TensorType& A)
-    {
+        tfel::meta::Implements<TensorType, TensorConcept>::cond &&
+            TensorTraits<TensorType>::dime == N &&
+            tfel::typetraits::IsAssignableTo<
+                typename TensorTraits<TensorType>::NumType,
+                T>::cond,
+        Expr<t2tot2<N, T>, TensorProductRightDerivativeExpr<N>>>::type
+    t2tot2<N, T>::tprd(const TensorType& A) {
       return Expr<t2tot2<N,T>,TensorProductRightDerivativeExpr<N> >(A);
     }
 
-    template<unsigned short N, typename T>
-    template<typename TensorType,
-	     typename T2toT2Type>
+    template <unsigned short N, typename T>
+    template <typename TensorType, typename T2toT2Type>
     typename std::enable_if<
-      tfel::meta::Implements<TensorType,TensorConcept>::cond &&
-      tfel::meta::Implements<T2toT2Type,T2toT2Concept>::cond &&
-      TensorTraits<TensorType>::dime==N&&
-      T2toT2Traits<T2toT2Type>::dime==N&&
-      tfel::typetraits::IsAssignableTo<typename ComputeBinaryResult<typename TensorTraits<TensorType>::NumType,
-								    typename T2toT2Traits<T2toT2Type>::NumType,
-								    OpMult>::Result,T>::cond,
-      Expr<t2tot2<N,T>,TensorProductRightDerivativeExpr<N> > >::type
-    t2tot2<N,T>::tprd(const TensorType& A,
-		      const T2toT2Type& C)
-    {
+        tfel::meta::Implements<TensorType, TensorConcept>::cond &&
+            tfel::meta::Implements<T2toT2Type, T2toT2Concept>::cond &&
+            TensorTraits<TensorType>::dime == N &&
+            T2toT2Traits<T2toT2Type>::dime == N &&
+            tfel::typetraits::IsAssignableTo<
+                typename ComputeBinaryResult<
+                    typename TensorTraits<TensorType>::NumType,
+                    typename T2toT2Traits<T2toT2Type>::NumType,
+                    OpMult>::Result,
+                T>::cond,
+        Expr<t2tot2<N, T>, TensorProductRightDerivativeExpr<N>>>::type
+    t2tot2<N, T>::tprd(const TensorType& A, const T2toT2Type& C) {
       return Expr<t2tot2<N,T>,TensorProductRightDerivativeExpr<N> >(A,C);
     }
 
-    template<unsigned short N, typename T>
-    typename tfel::math::t2tot2<N,typename tfel::typetraits::BaseType<T>::type>
-    TFEL_CONSTEXPR t2tot2<N,T>::transpose_derivative(){
+    template <unsigned short N, typename T>
+    typename tfel::math::t2tot2<N, typename tfel::typetraits::BaseType<T>::type>
+        TFEL_CONSTEXPR t2tot2<N, T>::transpose_derivative() {
       using base = typename tfel::typetraits::BaseType<T>::type;
-      return internals::ComputeSpecialT2toT2Values<N,base>::transpose_derivative();
+      return internals::ComputeSpecialT2toT2Values<
+          N, base>::transpose_derivative();
     }
 
     template<unsigned short N, typename T>
@@ -476,14 +478,27 @@ namespace tfel{
       : fsarray<TensorDimeToSize<N>::value*
 		TensorDimeToSize<N>::value,T>(values)
     {}
-    
-    template<unsigned short N,typename T>
-    template<typename T2,typename Op>
-    t2tot2<N,T>::t2tot2(const Expr<t2tot2<N,T2>,Op>& src){
+
+    template <unsigned short N, typename T>
+    template <typename T2, typename Op>
+    t2tot2<N, T>::t2tot2(const Expr<t2tot2<N, T2>, Op>& src) {
       matrix_utilities<TensorDimeToSize<N>::value,
 		       TensorDimeToSize<N>::value,
 		       TensorDimeToSize<N>::value>::copy(src,*this);
     }
+
+    template <unsigned short N, typename T>
+    template <typename T2toST2Type,
+              typename std::enable_if<
+                  ((tfel::meta::Implements<T2toST2Type,
+                                           tfel::math::T2toST2Concept>::cond) &&
+                   (tfel::typetraits::
+                        IsAssignableTo<T2toST2NumType<T2toST2Type>, T>::cond) &&
+                   (T2toST2Traits<T2toST2Type>::dime == N)),
+                  bool>::type>
+    t2tot2<N, T>::t2tot2(const T2toST2Type& s) {
+      convert(*this, s);
+    }  // end of t2tot2<N, T>::t2tot2
 
     template<unsigned short N,typename T>
     constexpr t2tot2<N,T>::t2tot2(const t2tot2<N,T>& src)
@@ -617,7 +632,111 @@ namespace tfel{
 	  -t[7],zero,zero,zero,t[5],t[4],zero,-t[0],zero,
 	  -t[8],zero,zero,t[6],zero,zero,t[3],zero,-t[0]};
     } // end of computeDeterminantSecondDerivative
-    
+
+    template <typename T, typename T2toST2Type>
+    typename std::enable_if<
+        ((tfel::meta::Implements<T2toST2Type, T2toST2Concept>::cond) &&
+         (tfel::typetraits::IsAssignableTo<T2toST2NumType<T2toST2Type>,
+                                           T>::cond) &&
+         T2toST2Traits<T2toST2Type>::dime == 1u),
+        void>::type convert(t2tot2<1u, T>& d, const T2toST2Type& s) {
+      tfel::fsalgo::copy<9u>::exe(s.begin(), d.begin());
+    }  // end of convert
+
+    template <typename T, typename T2toST2Type>
+    typename std::enable_if<
+        ((tfel::meta::Implements<T2toST2Type, T2toST2Concept>::cond) &&
+         (tfel::typetraits::IsAssignableTo<T2toST2NumType<T2toST2Type>,
+                                           T>::cond) &&
+         T2toST2Traits<T2toST2Type>::dime == 2u),
+        void>::type convert(t2tot2<2u, T>& d, const T2toST2Type& s) {
+      constexpr const auto icste = Cste<T>::isqrt2;
+      d(0, 0) = s(0, 0);
+      d(0, 1) = s(0, 1);
+      d(0, 2) = s(0, 2);
+      d(0, 3) = s(0, 3);
+      d(0, 4) = s(0, 4);
+      d(1, 0) = s(1, 0);
+      d(1, 1) = s(1, 1);
+      d(1, 2) = s(1, 2);
+      d(1, 3) = s(1, 3);
+      d(1, 4) = s(1, 4);
+      d(2, 0) = s(2, 0);
+      d(2, 1) = s(2, 1);
+      d(2, 2) = s(2, 2);
+      d(2, 3) = s(2, 3);
+      d(2, 4) = s(2, 4);
+      d(4, 0) = d(3, 0) = s(3, 0) * icste;
+      d(4, 1) = d(3, 1) = s(3, 1) * icste;
+      d(4, 2) = d(3, 2) = s(3, 2) * icste;
+      d(4, 3) = d(3, 3) = s(3, 3) * icste;
+      d(4, 4) = d(3, 4) = s(3, 4) * icste;
+    }  // end of convert
+
+    template <typename T, typename T2toST2Type>
+    typename std::enable_if<
+        ((tfel::meta::Implements<T2toST2Type, T2toST2Concept>::cond) &&
+         (tfel::typetraits::IsAssignableTo<T2toST2NumType<T2toST2Type>,
+                                           T>::cond) &&
+         T2toST2Traits<T2toST2Type>::dime == 3u),
+        void>::type convert(t2tot2<3u, T>& d, const T2toST2Type& s) {
+      constexpr const auto icste = Cste<T>::isqrt2;
+      d(0, 0) = s(0, 0);
+      d(0, 1) = s(0, 1);
+      d(0, 2) = s(0, 2);
+      d(0, 3) = s(0, 3);
+      d(0, 4) = s(0, 4);
+      d(0, 5) = s(0, 5);
+      d(0, 6) = s(0, 6);
+      d(0, 7) = s(0, 7);
+      d(0, 8) = s(0, 8);
+      d(1, 0) = s(1, 0);
+      d(1, 1) = s(1, 1);
+      d(1, 2) = s(1, 2);
+      d(1, 3) = s(1, 3);
+      d(1, 4) = s(1, 4);
+      d(1, 5) = s(1, 5);
+      d(1, 6) = s(1, 6);
+      d(1, 7) = s(1, 7);
+      d(1, 8) = s(1, 8);
+      d(2, 0) = s(2, 0);
+      d(2, 1) = s(2, 1);
+      d(2, 2) = s(2, 2);
+      d(2, 3) = s(2, 3);
+      d(2, 4) = s(2, 4);
+      d(2, 5) = s(2, 5);
+      d(2, 6) = s(2, 6);
+      d(2, 7) = s(2, 7);
+      d(2, 8) = s(2, 8);
+      d(4, 0) = d(3, 0) = s(3, 0) * icste;
+      d(4, 1) = d(3, 1) = s(3, 1) * icste;
+      d(4, 2) = d(3, 2) = s(3, 2) * icste;
+      d(4, 3) = d(3, 3) = s(3, 3) * icste;
+      d(4, 4) = d(3, 4) = s(3, 4) * icste;
+      d(4, 5) = d(3, 5) = s(3, 5) * icste;
+      d(4, 6) = d(3, 6) = s(3, 6) * icste;
+      d(4, 7) = d(3, 7) = s(3, 7) * icste;
+      d(4, 8) = d(3, 8) = s(3, 8) * icste;
+      d(6, 0) = d(5, 0) = s(4, 0) * icste;
+      d(6, 1) = d(5, 1) = s(4, 1) * icste;
+      d(6, 2) = d(5, 2) = s(4, 2) * icste;
+      d(6, 3) = d(5, 3) = s(4, 3) * icste;
+      d(6, 4) = d(5, 4) = s(4, 4) * icste;
+      d(6, 5) = d(5, 5) = s(4, 5) * icste;
+      d(6, 6) = d(5, 6) = s(4, 6) * icste;
+      d(6, 7) = d(5, 7) = s(4, 7) * icste;
+      d(6, 8) = d(5, 8) = s(4, 8) * icste;
+      d(8, 0) = d(7, 0) = s(5, 0) * icste;
+      d(8, 1) = d(7, 1) = s(5, 1) * icste;
+      d(8, 2) = d(7, 2) = s(5, 2) * icste;
+      d(8, 3) = d(7, 3) = s(5, 3) * icste;
+      d(8, 4) = d(7, 4) = s(5, 4) * icste;
+      d(8, 5) = d(7, 5) = s(5, 5) * icste;
+      d(8, 6) = d(7, 6) = s(5, 6) * icste;
+      d(8, 7) = d(7, 7) = s(5, 7) * icste;
+      d(8, 8) = d(7, 8) = s(5, 8) * icste;
+    }  // end of convert
+
   } //end of namespace math
 
 } // end of namespace tfel

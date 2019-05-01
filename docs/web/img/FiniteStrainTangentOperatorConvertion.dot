@@ -5,6 +5,7 @@ digraph tangent_operator_converter {
   DTAU_DDF    [label="DTAU_DDF\nCode_Aster",color=blue];
   ABAQUS      [label="ABAQUS\nAbaqus/Standard\nAnsys\nCalculix",color=yellow];
   DS_DEGL     [label="DS_DEGL\nCalculix\nCode_Aster\nZeBuLoN",color=pink];
+  DPK1_DF     [label="DPK1_DF\nZeBuLoN\nFEniCS\nXPer",color=orange];
   DT_DELOG -> DS_DEGL;
   DT_DELOG -> DS_DC;	
   DT_DELOG -> SPATIAL_MODULI;
@@ -37,4 +38,6 @@ digraph tangent_operator_converter {
   C_TAU_JAUMANN -> ABAQUS;
   C_TAU_JAUMANN -> DTAU_DF;
   C_TAU_JAUMANN -> SPATIAL_MODULI;
+  DS_DEGL -> DPK1_DF
+  DSIG_DF -> DPK1_DF
 }

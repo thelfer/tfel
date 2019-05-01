@@ -1,5 +1,5 @@
 /*! 
- * \file  tests/Material/FiniteStrainBehaviourTangentOperator11.cxx
+ * \file  tests/Material/FiniteStrainBehaviourTangentOperator14.cxx
  * \brief
  * \author Thomas Helfer
  * \brief 12 juin 2014
@@ -33,33 +33,33 @@
 #include"TFEL/Material/FiniteStrainBehaviourTangentOperator.hxx"
 
 template<unsigned short N,typename Behaviour,typename real>
-static tfel::math::t2tost2<N,real>
+static tfel::math::t2tot2<N,real>
 getNumericalApproximation(const Behaviour& b,
 			  const tfel::math::tensor<N,real>& F,
 			  const real e){
-  tfel::math::t2tost2<N,real> r;
+  tfel::math::t2tot2<N,real> r;
   for(unsigned short j=0;j!=tfel::math::TensorDimeToSize<N>::value;++j){
     tfel::math::tensor<N,real> Fp = F;
     tfel::math::tensor<N,real> Fm = F;
     Fp(j)+=e;
     Fm(j)-=e;
-    const auto sp = b(Fp);
-    const auto sm = b(Fm);
-    const auto ds = (sp-sm)/(2*e);
+    const auto Pp = convertCauchyStressToFirstPiolaKirchhoffStress(b(Fp),Fp);
+    const auto Pm = convertCauchyStressToFirstPiolaKirchhoffStress(b(Fm),Fm);
+    const auto dP = (Pp-Pm)/(2*e);
     for(unsigned short i=0;i!=tfel::math::StensorDimeToSize<N>::value;++i){
-      r(i,j)=ds(i);
+      r(i,j)=dP(i);
     }
   }
   return r;
 } // end of getNumericalApproximation
 
-struct FiniteStrainBehaviourTangentOperator11 final
+struct FiniteStrainBehaviourTangentOperator14 final
   : public tfel::tests::TestCase
 {
-  FiniteStrainBehaviourTangentOperator11()
+  FiniteStrainBehaviourTangentOperator14()
     : tfel::tests::TestCase("TFEL/Material",
-			    "FiniteStrainBehaviourTangentOperator11")
-  {} // end of FiniteStrainBehaviourTangentOperator11
+			    "FiniteStrainBehaviourTangentOperator14")
+  {} // end of FiniteStrainBehaviourTangentOperator14
   tfel::tests::TestResult execute() override {
     this->check<1u>();
     this->check<2u>();
@@ -73,7 +73,7 @@ private:
     using stensor  = tfel::math::stensor<N,real>;
     using tensor   = tfel::math::tensor<N,real>;
     using st2tost2 = tfel::math::st2tost2<N,real>;
-    using t2tost2   = tfel::math::t2tost2<N,real>;
+    using t2tot2   = tfel::math::t2tot2<N,real>;
     const real l0  = 1.09465e+11;
     const real m0  = 5.6391e+10;
     const real eps = 1.e-9*m0;
@@ -93,13 +93,14 @@ private:
     };
     // dsig_dF
     const auto D = [&Cs,&nhb](const tfel::math::tensor<N,real>& F)
-      -> t2tost2
+      -> t2tot2
     {
       using namespace tfel::material;
       using TangentOperator = FiniteStrainBehaviourTangentOperatorBase;
       const auto s  = nhb(F);
       const auto dtau = convert<TangentOperator::DTAU_DF,TangentOperator::SPATIAL_MODULI>(Cs(F),F,F,s);
-      return convert<TangentOperator::DSIG_DF,TangentOperator::DTAU_DF>(dtau,F,F,s);
+      const auto dsig = convert<TangentOperator::DSIG_DF,TangentOperator::DTAU_DF>(dtau,F,F,s);
+      return convert<TangentOperator::DPK1_DF,TangentOperator::DSIG_DF>(dsig,F,F,s);
     };
     const real v1[9u] = {1.03,0.98,1.09,0.03,-0.012,0.04,-0.028,-0.015,0.005};
     for(const tensor& F : {tensor::Id(),tensor{v1}}){
@@ -119,13 +120,13 @@ private:
 };
 
 
-TFEL_TESTS_GENERATE_PROXY(FiniteStrainBehaviourTangentOperator11,
-			  "FiniteStrainBehaviourTangentOperator11");
+TFEL_TESTS_GENERATE_PROXY(FiniteStrainBehaviourTangentOperator14,
+			  "FiniteStrainBehaviourTangentOperator14");
 
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main(){
   auto& m = tfel::tests::TestManager::getTestManager();
   m.addTestOutput(std::cout);
-  m.addXMLTestOutput("FiniteStrainBehaviourTangentOperator11.xml");
+  m.addXMLTestOutput("FiniteStrainBehaviourTangentOperator14.xml");
   return m.execute().success() ? EXIT_SUCCESS : EXIT_FAILURE;
 } // end of main

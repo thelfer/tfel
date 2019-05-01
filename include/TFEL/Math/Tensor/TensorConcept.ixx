@@ -475,18 +475,15 @@ namespace tfel{
       return {s[0]*F[1]*F[2]/(F[0]),s[1]*F[0]*F[2]/(F[1]),s[2]*F[0]*F[1]/(F[2])};
     } // end of convertCauchyStressToSecondPiolaKirchhoffStress
 
-    template<typename T,typename T2>
+    template <typename T, typename T2>
     typename std::enable_if<
-      ((tfel::meta::Implements<T,StensorConcept>::cond) &&
-       (StensorTraits<T>::dime==2u)&&
-       (tfel::meta::Implements<T2,TensorConcept>::cond) &&
-       (TensorTraits<T2>::dime==2u)&&
-       (tfel::typetraits::IsFundamentalNumericType<TensorNumType<T2>>::cond)),
-      stensor<2u,StensorNumType<T>>
-      >::type
-    convertCauchyStressToSecondPiolaKirchhoffStress(const T&  s,
-						    const T2& F)
-    {
+        ((tfel::meta::Implements<T, StensorConcept>::cond) &&
+         (StensorTraits<T>::dime == 2u) &&
+         (tfel::meta::Implements<T2, TensorConcept>::cond) &&
+         (TensorTraits<T2>::dime == 2u) &&
+         (tfel::typetraits::IsFundamentalNumericType<TensorNumType<T2>>::cond)),
+        stensor<2u, StensorNumType<T>>>::type
+    convertCauchyStressToSecondPiolaKirchhoffStress(const T& s, const T2& F) {
       typedef StensorNumType<T> stress;
       constexpr const auto cste = Cste<stress>::sqrt2;
       const auto iF = invert(F);

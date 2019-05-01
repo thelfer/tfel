@@ -24,4 +24,5 @@ tests_t2tot2(TransposeDerivative)
 tests_t2tot2(VelocityGradientDerivative)
 tests_t2tot2(SpinRateDerivative)
 tests_t2tot2(ComputeTensorDeterminantSecondDerivativeTest)
+tests_t2tot2(ComputePK1DerivativeTest)
 

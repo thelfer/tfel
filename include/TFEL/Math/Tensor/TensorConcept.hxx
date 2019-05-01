@@ -374,17 +374,15 @@ namespace tfel{
      * \param[in] F: a tensor
      * \note the same as pushForward
      */
-    template<typename T,typename T2>
+    template <typename T, typename T2>
     typename std::enable_if<
-      ((tfel::meta::Implements<T,StensorConcept>::cond) &&
-       (StensorTraits<T>::dime==3u)&&
-       (tfel::meta::Implements<T2,TensorConcept>::cond) &&
-       (TensorTraits<T2>::dime==3u)&&
-       (tfel::typetraits::IsFundamentalNumericType<TensorNumType<T2>>::cond)),
-      stensor<3u,StensorNumType<T>>
-      >::type
-    push_forward(const T&,
-		 const T2&);
+        ((tfel::meta::Implements<T, StensorConcept>::cond) &&
+         (StensorTraits<T>::dime == 3u) &&
+         (tfel::meta::Implements<T2, TensorConcept>::cond) &&
+         (TensorTraits<T2>::dime == 3u) &&
+         (tfel::typetraits::IsFundamentalNumericType<TensorNumType<T2>>::cond)),
+        stensor<3u, StensorNumType<T>>>::type
+    push_forward(const T&, const T2&);
 
     template <typename T, typename T2>
     typename std::enable_if<
@@ -396,53 +394,45 @@ namespace tfel{
         stensor<1u, StensorNumType<T>>>::type
     convertCauchyStressToSecondPiolaKirchhoffStress(const T&, const T2&);
 
-    template<typename T,typename T2>
+    template <typename T, typename T2>
     typename std::enable_if<
-      ((tfel::meta::Implements<T,StensorConcept>::cond) &&
-       (StensorTraits<T>::dime==2u)&&
-       (tfel::meta::Implements<T2,TensorConcept>::cond) &&
-       (TensorTraits<T2>::dime==2u)&&
-       (tfel::typetraits::IsFundamentalNumericType<TensorNumType<T2>>::cond)),
-      stensor<2u,StensorNumType<T>>
-      >::type
-    convertCauchyStressToSecondPiolaKirchhoffStress(const T&,
-						    const T2&);
+        ((tfel::meta::Implements<T, StensorConcept>::cond) &&
+         (StensorTraits<T>::dime == 2u) &&
+         (tfel::meta::Implements<T2, TensorConcept>::cond) &&
+         (TensorTraits<T2>::dime == 2u) &&
+         (tfel::typetraits::IsFundamentalNumericType<TensorNumType<T2>>::cond)),
+        stensor<2u, StensorNumType<T>>>::type
+    convertCauchyStressToSecondPiolaKirchhoffStress(const T&, const T2&);
 
-    template<typename T,typename T2>
+    template <typename T, typename T2>
     typename std::enable_if<
-      ((tfel::meta::Implements<T,StensorConcept>::cond) &&
-       (StensorTraits<T>::dime==3u)&&
-       (tfel::meta::Implements<T2,TensorConcept>::cond) &&
-       (TensorTraits<T2>::dime==3u)&&
-       (tfel::typetraits::IsFundamentalNumericType<TensorNumType<T2>>::cond)),
-      stensor<3u,StensorNumType<T>>
-      >::type
-    convertCauchyStressToSecondPiolaKirchhoffStress(const T&,
-						    const T2&);
+        ((tfel::meta::Implements<T, StensorConcept>::cond) &&
+         (StensorTraits<T>::dime == 3u) &&
+         (tfel::meta::Implements<T2, TensorConcept>::cond) &&
+         (TensorTraits<T2>::dime == 3u) &&
+         (tfel::typetraits::IsFundamentalNumericType<TensorNumType<T2>>::cond)),
+        stensor<3u, StensorNumType<T>>>::type
+    convertCauchyStressToSecondPiolaKirchhoffStress(const T&, const T2&);
 
-    template<typename T,typename T2>
+    template <typename T, typename T2>
     typename std::enable_if<
-      ((tfel::meta::Implements<T,StensorConcept>::cond) &&
-       (StensorTraits<T>::dime==1u)&&
-       (tfel::meta::Implements<T2,TensorConcept>::cond) &&
-       (TensorTraits<T2>::dime==1u)&&
-       (tfel::typetraits::IsFundamentalNumericType<TensorNumType<T2>>::cond)),
-      stensor<1u,StensorNumType<T>>
-      >::type
-    convertSecondPiolaKirchhoffStressToCauchyStress(const T&,
-						    const T2&);
+        ((tfel::meta::Implements<T, StensorConcept>::cond) &&
+         (StensorTraits<T>::dime == 1u) &&
+         (tfel::meta::Implements<T2, TensorConcept>::cond) &&
+         (TensorTraits<T2>::dime == 1u) &&
+         (tfel::typetraits::IsFundamentalNumericType<TensorNumType<T2>>::cond)),
+        stensor<1u, StensorNumType<T>>>::type
+    convertSecondPiolaKirchhoffStressToCauchyStress(const T&, const T2&);
 
-    template<typename T,typename T2>
+    template <typename T, typename T2>
     typename std::enable_if<
-      ((tfel::meta::Implements<T,StensorConcept>::cond) &&
-       (StensorTraits<T>::dime==2u)&&
-       (tfel::meta::Implements<T2,TensorConcept>::cond) &&
-       (TensorTraits<T2>::dime==2u)&&
-       (tfel::typetraits::IsFundamentalNumericType<TensorNumType<T2>>::cond)),
-      stensor<2u,StensorNumType<T>>
-      >::type
-    convertSecondPiolaKirchhoffStressToCauchyStress(const T&,
-						    const T2&);
+        ((tfel::meta::Implements<T, StensorConcept>::cond) &&
+         (StensorTraits<T>::dime == 2u) &&
+         (tfel::meta::Implements<T2, TensorConcept>::cond) &&
+         (TensorTraits<T2>::dime == 2u) &&
+         (tfel::typetraits::IsFundamentalNumericType<TensorNumType<T2>>::cond)),
+        stensor<2u, StensorNumType<T>>>::type
+    convertSecondPiolaKirchhoffStressToCauchyStress(const T&, const T2&);
 
     template<typename T,typename T2>
     typename std::enable_if<

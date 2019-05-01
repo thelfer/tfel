@@ -64,15 +64,16 @@ struct SpinRateDerivativeTest final
       const tensor<N,double> Lm = dFm*iF;
       const tensor<N,double> Wm = (Lm-transpose(Lm))/2;
       for(unsigned short j=0;j!=F.size();++j){
-	ndW(j,i) = (Wp(j)-Wm(j))/(2*eps);
+        ndW(j, i) = (Wp(j) - Wm(j)) / (2 * eps);
       }
     }
     for(unsigned short i=0;i!=F.size();++i){
       for(unsigned short j=0;j!=F.size();++j){
-	if(std::abs(ndW(i,j)-dW(i,j))>prec){
-	  std::cout << i << " " << j << " " << ndW(i,j) << " " << dW(i,j) << std::endl;
-	}
-	TFEL_TESTS_ASSERT(std::abs(ndW(i,j)-dW(i,j))<prec);
+        if (std::abs(ndW(i, j) - dW(i, j)) > prec) {
+          std::cout << i << " " << j << " " << ndW(i, j) << " " << dW(i, j)
+                    << std::endl;
+        }
+        TFEL_TESTS_ASSERT(std::abs(ndW(i, j) - dW(i, j)) < prec);
       }
     }
   }

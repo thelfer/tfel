@@ -30,6 +30,7 @@
 #include"TFEL/Math/Forward/t2tot2.hxx"
 #include"TFEL/Math/Tensor/TensorConcept.hxx"
 #include"TFEL/Math/Tensor/TensorSizeToDime.hxx"
+#include"TFEL/Math/T2toST2/T2toST2Concept.hxx"
 #include"TFEL/Math/T2toT2/T2toT2Concept.hxx"
 #include"TFEL/Math/T2toT2/T2toT2ConceptOperations.hxx"
 
@@ -242,16 +243,30 @@ namespace tfel{
 	       typename std::enable_if<tfel::typetraits::IsAssignableTo<T2,T>::cond,bool>::type = true>
       TFEL_MATH_INLINE constexpr
       t2tot2(const std::initializer_list<T2>&);
+      /*!
+       * \brief constructor from a t2tost2
+       * \param[in] v : values
+       */
+      template <
+          typename T2toST2Type,
+          typename std::enable_if<
+              ((tfel::meta::Implements<T2toST2Type, T2toST2Concept>::cond) &&
+               (tfel::typetraits::IsAssignableTo<T2toST2NumType<T2toST2Type>,
+                                                 T>::cond) &&
+               (T2toST2Traits<T2toST2Type>::dime == N)),
+              bool>::type = true>
+      TFEL_MATH_INLINE t2tot2(const T2toST2Type&);
       //! assignement operator
-      TFEL_MATH_INLINE t2tot2&
-      operator=(const t2tot2&);
+      TFEL_MATH_INLINE t2tot2& operator=(const t2tot2&);
       /*!
        * Import values
        */
-      template<typename T2>
+      template <typename T2>
       TFEL_MATH_INLINE2 typename std::enable_if<
-	tfel::typetraits::IsSafelyReinterpretCastableTo<T2,typename tfel::typetraits::BaseType<T>::type>::cond,
-	void>::type
+          tfel::typetraits::IsSafelyReinterpretCastableTo<
+              T2,
+              typename tfel::typetraits::BaseType<T>::type>::cond,
+          void>::type
       import(const T2* const);
 
       /*!
@@ -350,7 +365,31 @@ namespace tfel{
       tfel::typetraits::IsScalar<typename TensorTraits<TensorType>::NumType>::cond,
       t2tot2<3u,typename TensorTraits<TensorType>::NumType>>::type
     computeDeterminantSecondDerivative(const TensorType&);
-    
+
+    template <typename T, typename T2toST2Type>
+    typename std::enable_if<
+        ((tfel::meta::Implements<T2toST2Type, T2toST2Concept>::cond) &&
+         (tfel::typetraits::IsAssignableTo<T2toST2NumType<T2toST2Type>,
+                                           T>::cond) &&
+         T2toST2Traits<T2toST2Type>::dime == 1u),
+        void>::type convert(t2tot2<1u, T>&, const T2toST2Type&);
+
+    template <typename T, typename T2toST2Type>
+    typename std::enable_if<
+        ((tfel::meta::Implements<T2toST2Type, T2toST2Concept>::cond) &&
+         (tfel::typetraits::IsAssignableTo<T2toST2NumType<T2toST2Type>,
+                                           T>::cond) &&
+         T2toST2Traits<T2toST2Type>::dime == 2u),
+        void>::type convert(t2tot2<2u, T>&, const T2toST2Type&);
+
+    template <typename T, typename T2toST2Type>
+    typename std::enable_if<
+        ((tfel::meta::Implements<T2toST2Type, T2toST2Concept>::cond) &&
+         (tfel::typetraits::IsAssignableTo<T2toST2NumType<T2toST2Type>,
+                                           T>::cond) &&
+         T2toST2Traits<T2toST2Type>::dime == 3u),
+        void>::type convert(t2tot2<3u, T>&, const T2toST2Type&);
+
   } // end of namespace math
 
   namespace typetraits{

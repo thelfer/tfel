@@ -1904,6 +1904,8 @@ include/TFEL/Math/T2toST2/t2tost2.ixx -text
 include/TFEL/Math/T2toST2/t2tost2ResultType.hxx -text
 include/TFEL/Math/T2toT2/BuildFromRotationMatrix.hxx -text
 include/TFEL/Math/T2toT2/ChangeBasis.hxx -text
+include/TFEL/Math/T2toT2/ConvertToPK1Derivative.hxx -text
+include/TFEL/Math/T2toT2/ConvertToPK1Derivative.ixx -text
 include/TFEL/Math/T2toT2/T2toT2Concept.hxx -text
 include/TFEL/Math/T2toT2/T2toT2Concept.ixx -text
 include/TFEL/Math/T2toT2/T2toT2ConceptIO.hxx -text
@@ -6500,6 +6502,7 @@ tests/Material/FiniteStrainBehaviourTangentOperator10.cxx -text
 tests/Material/FiniteStrainBehaviourTangentOperator11.cxx -text
 tests/Material/FiniteStrainBehaviourTangentOperator12.cxx -text
 tests/Material/FiniteStrainBehaviourTangentOperator13.cxx -text
+tests/Material/FiniteStrainBehaviourTangentOperator14.cxx -text
 tests/Material/FiniteStrainBehaviourTangentOperator2.cxx -text
 tests/Material/FiniteStrainBehaviourTangentOperator3.cxx -text
 tests/Material/FiniteStrainBehaviourTangentOperator4.cxx -text
@@ -6660,6 +6663,7 @@ tests/Math/t2tost2/leftCauchyGreenTensorDerivative.cxx -text
 tests/Math/t2tost2/rightCauchyGreenTensorDerivative.cxx -text
 tests/Math/t2tost2/t2tost2.cxx -text
 tests/Math/t2tot2/CMakeLists.txt -text
+tests/Math/t2tot2/ComputePK1DerivativeTest.cxx -text
 tests/Math/t2tot2/ComputeTensorDeterminantSecondDerivativeTest.cxx -text
 tests/Math/t2tot2/Makefile.am -text
 tests/Math/t2tot2/SpinRateDerivative.cxx -text
