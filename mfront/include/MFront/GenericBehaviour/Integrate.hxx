@@ -98,7 +98,13 @@ namespace mfront {
         real* const v,
         const tfel::material::FiniteStrainBehaviourTangentOperator<N, real>&
             K) {
-      if (K.template is<tfel::math::t2tost2<N, real>>()) {
+      if (K.template is<tfel::math::t2tot2<N, real>>()) {
+        const auto& k = K.template get<tfel::math::t2tot2<N, real>>();
+        std::copy(k.begin(), k.end(), v);
+      } else if (K.template is<tfel::math::t2tot2<N, real>*>()) {
+        const auto& k = *(K.template get<tfel::math::t2tot2<N, real>*>());
+        std::copy(k.begin(), k.end(), v);
+      } else if (K.template is<tfel::math::t2tost2<N, real>>()) {
         const auto& k = K.template get<tfel::math::t2tost2<N, real>>();
         std::copy(k.begin(), k.end(), v);
       } else if (K.template is<tfel::math::t2tost2<N, real>*>()) {

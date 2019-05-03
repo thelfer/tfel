@@ -23,6 +23,7 @@
 #include "TFEL/Math/General/MathConstants.hxx"
 #include "TFEL/Math/ST2toST2/ConvertSpatialModuliToKirchhoffJaumanRateModuli.hxx"
 #include "TFEL/Math/T2toT2/ConvertToPK1Derivative.hxx"
+#include "TFEL/Math/T2toT2/ConvertFromPK1Derivative.hxx"
 #include "TFEL/Material/LogarithmicStrainHandler.hxx"
 
 /*!
@@ -1148,6 +1149,57 @@ namespace tfel
        }  // end of exe
     };  // end of struct FiniteStrainBehaviourTangentOperatorConverter
 
+    /*!
+     * \brief partial specialisation of FiniteStrainBehaviourTangentOperatorConverter structure
+     */
+    TFEL_MATERIAL_FINITESTRAINBEHAVIOURTANGENTOPERATORCONVERTER(DTAU_DF,DPK1_DF){
+        /*!
+         * \param[out] Kr: the result of the convertion
+         * \param[in]  Ks: the initial stiffness tensor
+         * \param[in]  F0:  the deformation gradient
+         * \param[in]  F1:  the deformation gradient
+         * \param[in]  s:  the Cauchy stress tensor
+         */
+        template <unsigned short N, typename stress>
+        static TFEL_MATERIAL_INLINE void exe(
+            Result<N, stress> & Kr,
+            const Source<N, stress>& Ks,
+            const DeformationGradientTensor<N, stress>&,
+            const DeformationGradientTensor<N, stress>& F1,
+            const StressStensor<N, stress>& s){
+	  tfel::math::
+	    convertFirstPiolaKirchoffStressDerivativeToKirchhoffStressDerivative(Kr,
+										 Ks,
+										 F1,
+										 s);
+       }  // end of exe
+    };  // end of struct FiniteStrainBehaviourTangentOperatorConverter
+
+    /*!
+     * \brief partial specialisation of FiniteStrainBehaviourTangentOperatorConverter structure
+     */
+    TFEL_MATERIAL_FINITESTRAINBEHAVIOURTANGENTOPERATORCONVERTER(DSIG_DF,DPK1_DF){
+        /*!
+         * \param[out] Kr: the result of the convertion
+         * \param[in]  Ks: the initial stiffness tensor
+         * \param[in]  F0:  the deformation gradient
+         * \param[in]  F1:  the deformation gradient
+         * \param[in]  s:  the Cauchy stress tensor
+         */
+        template <unsigned short N, typename stress>
+        static TFEL_MATERIAL_INLINE void exe(
+            Result<N, stress> & Kr,
+            const Source<N, stress>& Ks,
+            const DeformationGradientTensor<N, stress>& F0,
+            const DeformationGradientTensor<N, stress>& F1,
+            const StressStensor<N, stress>& s){
+	  using TangentOperator = FiniteStrainBehaviourTangentOperatorBase;
+	  const auto Dt =
+	    convert<TangentOperator::DTAU_DF, TangentOperator::DPK1_DF>(Ks, F0, F1, s);
+	  Kr = convert<TangentOperator::DSIG_DF, TangentOperator::DTAU_DF>(Dt, F0, F1, s);
+       }  // end of exe
+    };  // end of struct FiniteStrainBehaviourTangentOperatorConverter
+    
     /*!
      * \brief partial specialisation of FiniteStrainBehaviourTangentOperatorConverter structure
      */

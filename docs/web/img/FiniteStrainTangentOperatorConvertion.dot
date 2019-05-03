@@ -40,4 +40,6 @@ digraph tangent_operator_converter {
   C_TAU_JAUMANN -> SPATIAL_MODULI;
   DS_DEGL -> DPK1_DF
   DSIG_DF -> DPK1_DF
+  DPK1_DF -> DTAU_DF
+  DPK1_DF -> DSIG_DF
 }

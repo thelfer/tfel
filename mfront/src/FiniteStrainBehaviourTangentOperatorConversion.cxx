@@ -17,43 +17,43 @@
 namespace mfront
 {
 
-  FiniteStrainBehaviourTangentOperatorConversion::FiniteStrainBehaviourTangentOperatorConversion(const TangentOperatorFlag f,
-												 const TangentOperatorFlag t,
-												 const std::string& s,
-												 const std::string& s2)
-    : b(f),
-      e(t),
-      c(s),
-      cf(s2)
-  {} // end of FiniteStrainBehaviourTangentOperatorConversion::FiniteStrainBehaviourTangentOperatorConversion
+  FiniteStrainBehaviourTangentOperatorConversion::
+      FiniteStrainBehaviourTangentOperatorConversion(
+          const TangentOperatorFlag f,
+          const TangentOperatorFlag t,
+          const std::string& s,
+          const std::string& s2)
+      : b(f),
+        e(t),
+        c(s),
+        cf(s2) {
+  }  // end of
+     // FiniteStrainBehaviourTangentOperatorConversion::FiniteStrainBehaviourTangentOperatorConversion
 
   FiniteStrainBehaviourTangentOperatorConversion::TangentOperatorFlag
-  FiniteStrainBehaviourTangentOperatorConversion::from() const
-  {
+  FiniteStrainBehaviourTangentOperatorConversion::from() const {
     return this->b; 
   } // end of FiniteStrainBehaviourTangentOperatorConversion::from
 
   FiniteStrainBehaviourTangentOperatorConversion::TangentOperatorFlag
-  FiniteStrainBehaviourTangentOperatorConversion::to() const
-  {
+  FiniteStrainBehaviourTangentOperatorConversion::to() const {
     return this->e;
   } // end of FiniteStrainBehaviourTangentOperatorConversion::to
 
   const std::string&
-  FiniteStrainBehaviourTangentOperatorConversion::getIntermediateConversion() const
-  {
+  FiniteStrainBehaviourTangentOperatorConversion::getIntermediateConversion()
+      const {
     return this->c;
   }
 
   const std::string&
-  FiniteStrainBehaviourTangentOperatorConversion::getFinalConversion() const
-  {
+  FiniteStrainBehaviourTangentOperatorConversion::getFinalConversion() const {
     return this->cf;
   }
 
   std::vector<FiniteStrainBehaviourTangentOperatorConversion>
-  FiniteStrainBehaviourTangentOperatorConversion::getAvailableFiniteStrainBehaviourTangentOperatorConversions()
-  {
+  FiniteStrainBehaviourTangentOperatorConversion::
+      getAvailableFiniteStrainBehaviourTangentOperatorConversions() {
     using TangentOperator = tfel::material::FiniteStrainBehaviourTangentOperatorBase ;
     using Converter = FiniteStrainBehaviourTangentOperatorConversion ;
     auto converters = std::vector<Converter>{};
@@ -61,7 +61,7 @@ namespace mfront
       converters.push_back(converter);
     };
     auto std_add = [&add](const TangentOperator::Flag op1,
-			  const TangentOperator::Flag op2){
+                          const TangentOperator::Flag op2) {
       const auto s1 = convertFiniteStrainBehaviourTangentOperatorFlagToString(op1);
       const auto s2 = convertFiniteStrainBehaviourTangentOperatorFlagToString(op2);
       add({op1,op2,
@@ -103,6 +103,10 @@ namespace mfront
     std_add(TangentOperator::DT_DELOG,TangentOperator::DS_DC);
     std_add(TangentOperator::DT_DELOG,TangentOperator::SPATIAL_MODULI);
     std_add(TangentOperator::DT_DELOG,TangentOperator::C_TRUESDELL);
+    std_add(TangentOperator::DSIG_DF,TangentOperator::DPK1_DF);
+    std_add(TangentOperator::DS_DEGL,TangentOperator::DPK1_DF);
+    std_add(TangentOperator::DPK1_DF,TangentOperator::DTAU_DF);
+    std_add(TangentOperator::DPK1_DF,TangentOperator::DSIG_DF);
     return converters;
   } // end of FiniteStrainBehaviourTangentOperatorConversion::getAvailableFiniteStrainBehaviourTangentOperatorConversions
   

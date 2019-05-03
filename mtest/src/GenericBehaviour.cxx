@@ -138,6 +138,21 @@ namespace mtest {
     std::copy(Kv.begin(), Kv.end(), K);
   }  // end of convertFromDSDEGL
 
+  template <unsigned short N>
+  void convertFromDPK1DF(real* const K,
+                         const real* const F0,
+                         const real* const F1,
+                         const real* const s) {
+    using FSTOBase = tfel::material::FiniteStrainBehaviourTangentOperatorBase;
+    tfel::math::t2tot2<N, real> dP;
+    std::copy(K, K + dP.size(), dP.begin());
+    const auto Kv =
+        tfel::material::convert<FSTOBase::DSIG_DF, FSTOBase::DPK1_DF>(
+            dP, tfel::math::tensor<N, real>(F0),
+            tfel::math::tensor<N, real>(F1), tfel::math::stensor<N, real>(s));
+    std::copy(Kv.begin(), Kv.end(), K);
+  }  // end of convertFromDPK1DF
+  
   GenericBehaviour::GenericBehaviour(const Hypothesis h,
                                      const std::string& l,
                                      const std::string& b)
@@ -255,10 +270,16 @@ namespace mtest {
       // DSIG_DF
       if (this->fsto == DSIG_DF) {
         wk.D.resize(nth, ndv);
+        wk.k.resize(nth, ndv);
+        wk.kt.resize(nth, ndv);
       } else if (this->fsto == DS_DEGL) {
         wk.D.resize(nth, ndv);
+        wk.k.resize(nth, ndv);
+        wk.kt.resize(nth, ndv);
       } else if(this->fsto == DPK1_DF) {
         wk.D.resize(ndv, ndv);
+        wk.k.resize(ndv, ndv);
+        wk.kt.resize(ndv, ndv);
       } else {
         tfel::raise(
             "GenericBehaviour::allocate: "
@@ -266,9 +287,9 @@ namespace mtest {
       }
     } else {
       wk.D.resize(nth, ndv);
+      wk.k.resize(nth, ndv);
+      wk.kt.resize(nth, ndv);
     }
-    wk.k.resize(nth, ndv);
-    wk.kt.resize(nth, ndv);
     wk.nk.resize(nth, ndv);
     wk.ne.resize(ndv);
     wk.ns.resize(nth);
@@ -345,31 +366,53 @@ namespace mtest {
     throw_if(
         wk.evs.size() != s.esv0.size(),
         "temporary external state variable vector was not allocated properly");
-    throw_if((wk.D.getNbRows() != Kt.getNbRows()) ||
-                 (wk.D.getNbCols() != Kt.getNbCols()),
-             "the memory has not been allocated correctly");
-    std::fill(wk.D.begin(), wk.D.end(), 0.);
-    mfront::gb::BehaviourData d;
-    if (this->stype == 1u) {
-      // orthotropic behaviour
-      std::copy(s.e0.begin(), s.e0.end(), wk.e0.begin());
-      std::copy(s.e1.begin(), s.e1.end(), wk.e1.begin());
-      std::copy(s.s0.begin(), s.s0.end(), wk.s0.begin());
-      if (this->btype == 1u) {
-        // small strain behaviour
-        for (decltype(s.e1.size()) i = 0; i != s.e1.size(); ++i) {
-          wk.e0(i) -= s.e_th0(i);
-          wk.e1(i) -= s.e_th1(i);
+      if (this->btype == 2u) {
+        if (this->fsto == DSIG_DF) {
+          throw_if((wk.D.getNbRows() != Kt.getNbRows()) ||
+                       (wk.D.getNbCols() != Kt.getNbCols()),
+                   "the memory has not been allocated correctly");
+        } else if (this->fsto == DS_DEGL) {
+          const auto ndv = this->getGradientsSize();
+          const auto nth = this->getThermodynamicForcesSize();
+          throw_if((wk.D.getNbRows() != nth) || (wk.D.getNbCols() != ndv),
+                   "the memory has not been allocated correctly");
+        } else if (this->fsto == DPK1_DF) {
+          const auto ndv = this->getGradientsSize();
+          throw_if((wk.D.getNbRows() != ndv) || (wk.D.getNbCols() != ndv),
+                   "the memory has not been allocated correctly");
+        } else {
+          throw_if(true, "unsupported tangent operator");
         }
+      } else {
+        throw_if((wk.D.getNbRows() != Kt.getNbRows()) ||
+                     (wk.D.getNbCols() != Kt.getNbCols()),
+                 "the memory has not been allocated correctly");
       }
-      d.s0.gradients = &(wk.e0[0]);
-      d.s1.gradients = &(wk.e1[0]);
-      d.s0.thermodynamic_forces = &(wk.s0[0]);
-      d.s1.thermodynamic_forces = &s.s1[0];
-      applyRotation(d.s0.gradients, this->dvtypes, this->getHypothesis(), s.r);
-      applyRotation(d.s1.gradients, this->dvtypes, this->getHypothesis(), s.r);
-      applyRotation(d.s0.thermodynamic_forces, this->thtypes,
-                    this->getHypothesis(), s.r);
+
+      std::fill(wk.D.begin(), wk.D.end(), 0.);
+      mfront::gb::BehaviourData d;
+      if (this->stype == 1u) {
+        // orthotropic behaviour
+        std::copy(s.e0.begin(), s.e0.end(), wk.e0.begin());
+        std::copy(s.e1.begin(), s.e1.end(), wk.e1.begin());
+        std::copy(s.s0.begin(), s.s0.end(), wk.s0.begin());
+        if (this->btype == 1u) {
+          // small strain behaviour
+          for (decltype(s.e1.size()) i = 0; i != s.e1.size(); ++i) {
+            wk.e0(i) -= s.e_th0(i);
+            wk.e1(i) -= s.e_th1(i);
+          }
+        }
+        d.s0.gradients = &(wk.e0[0]);
+        d.s1.gradients = &(wk.e1[0]);
+        d.s0.thermodynamic_forces = &(wk.s0[0]);
+        d.s1.thermodynamic_forces = &s.s1[0];
+        applyRotation(d.s0.gradients, this->dvtypes, this->getHypothesis(),
+                      s.r);
+        applyRotation(d.s1.gradients, this->dvtypes, this->getHypothesis(),
+                      s.r);
+        applyRotation(d.s0.thermodynamic_forces, this->thtypes,
+                      this->getHypothesis(), s.r);
     } else {
       if (this->btype == 1u) {
         // small strain behaviour
@@ -439,11 +482,21 @@ namespace mtest {
           const auto n =
               tfel::material::getSpaceDimension(this->getHypothesis());
           if (n == 1u) {
-            convertFromDSDEGL<1u>(d.K, d.s0.gradients, d.s1.gradients,
-                                  d.s1.thermodynamic_forces);
+	    if(this->getHypothesis()== ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS){
+	      tfel::raise("GenericBehaviour::call_behaviour: "
+			  "using DS_DEGL in plane strain is not supported yet");
+	    } else {
+	      convertFromDSDEGL<1u>(d.K, d.s0.gradients, d.s1.gradients,
+				    d.s1.thermodynamic_forces);
+	    }
           } else if (n == 2u) {
-            convertFromDSDEGL<2u>(d.K, d.s0.gradients, d.s1.gradients,
-                                  d.s1.thermodynamic_forces);
+	    if(this->getHypothesis()== ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS){
+	      tfel::raise("GenericBehaviour::call_behaviour: "
+			  "using DS_DEGL in plane strain is not supported yet");
+	    } else {
+	      convertFromDSDEGL<2u>(d.K, d.s0.gradients, d.s1.gradients,
+				    d.s1.thermodynamic_forces);
+	    }
           } else if (n == 3u) {
             convertFromDSDEGL<3u>(d.K, d.s0.gradients, d.s1.gradients,
                                   d.s1.thermodynamic_forces);
@@ -453,10 +506,33 @@ namespace mtest {
                 "invalid space dimensions");
           }
         } else if (this->fsto == DPK1_DF) {
-          tfel::raise(
-              "GenericBehaviour::call_behaviour: "
-              "unimplemented feature, conversion from DPK1_DF");
-        } else {
+          const auto n =
+              tfel::material::getSpaceDimension(this->getHypothesis());
+          if (n == 1u) {
+	    if(this->getHypothesis()== ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS){
+	      tfel::raise("GenericBehaviour::call_behaviour: "
+			  "using DS_DEGL in plane strain is not supported yet");
+	    } else {
+	      convertFromDPK1DF<1u>(d.K, d.s0.gradients, d.s1.gradients,
+				    d.s1.thermodynamic_forces);
+	    }
+          } else if (n == 2u) {
+	    if(this->getHypothesis()== ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS){
+	      tfel::raise("GenericBehaviour::call_behaviour: "
+			  "using DS_DEGL in plane strain is not supported yet");
+	    } else {
+	      convertFromDPK1DF<2u>(d.K, d.s0.gradients, d.s1.gradients,
+				    d.s1.thermodynamic_forces);
+	    }
+          } else if (n == 3u) {
+            convertFromDPK1DF<3u>(d.K, d.s0.gradients, d.s1.gradients,
+                                  d.s1.thermodynamic_forces);
+          } else {
+            tfel::raise(
+                "GenericBehaviour::call_behaviour: "
+                "invalid space dimensions");
+          }
+	} else {
           tfel::raise(
               "GenericBehaviour::call_behaviour: "
               "internal error, unexpected tangent operator type");

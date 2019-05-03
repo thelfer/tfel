@@ -389,6 +389,8 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/T2toT2/ChangeBasis.hxx                                                             \
 			TFEL/Math/T2toT2/ConvertToPK1Derivative.hxx                                                  \
 			TFEL/Math/T2toT2/ConvertToPK1Derivative.ixx                                                  \
+			TFEL/Math/T2toT2/ConvertFromPK1Derivative.hxx                                                \
+			TFEL/Math/T2toT2/ConvertFromPK1Derivative.ixx                                                \
 			TFEL/Math/st2tost2.hxx                                                                       \
 			TFEL/Math/ST2toST2/st2tost2.ixx                                                              \
 			TFEL/Math/ST2toST2/ST2toST2Concept.hxx                                                       \

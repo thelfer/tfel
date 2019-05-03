@@ -1669,51 +1669,51 @@ On montre que~:
   \deriv{\tenseur{n}_{11}}{\tenseur{s}} = \Frac{1}{\lambda_{1}-\lambda_{2}}\tenseur{n}_{12}\,\otimes\,\tenseur{n}_{12}+\Frac{1}{\lambda_{1}-\lambda_{3}}\tenseur{n}_{13}\,\otimes\,\tenseur{n}_{13}
 \end{equation}
 
-\subsection{Régularisation}
+% \subsection{Régularisation}
 
-L'expression~\eqref{eq:tfel:reference_guide:n_derivate} de la dérivée
-présente une singularité lorsque deux valeurs propres sont égales.
+% L'expression~\eqref{eq:tfel:reference_guide:n_derivate} de la dérivée
+% présente une singularité lorsque deux valeurs propres sont égales.
 
-\begin{figure}[htbp]
-  \centering
-  \includegraphics[width=0.5\linewidth]{@abs_top_srcdir@/docs/tfel/images/r-epsilon.eps}
-  \caption{représentation des fonctions $r_{1}\paren{x}$,
-    $r_{\pfrac{1}{4}}\paren{x}$ et $r_{\pfrac{1}{2}}\paren{x}$.}
-  \label{fig:r-epsilon}
-\end{figure}
+% \begin{figure}[htbp]
+%   \centering
+%   \includegraphics[width=0.5\linewidth]{@abs_top_srcdir@/docs/tfel/images/r-epsilon.eps}
+%   \caption{représentation des fonctions $r_{1}\paren{x}$,
+%     $r_{\pfrac{1}{4}}\paren{x}$ et $r_{\pfrac{1}{2}}\paren{x}$.}
+%   \label{fig:r-epsilon}
+% \end{figure}
 
-Nous proposons d'utiliser la fonction de régularisation
-\(r_{\epsilon}\paren{x}\) suivante~:
-\[
-r_{\epsilon}\paren{x}=p_{1}\paren{\Frac{x}{\epsilon}}
-\]
-où \(r_{1}\paren{x}\) est définie par~:
-\[
-r_{1}\paren{x}=
-\left\{
-  \begin{aligned}
-    \Frac{x^{2}}{3}\paren{4-x^{2}} & \text{si} & \left|x\right| \leq 1 \\
-    1                             & \text{si} & \left|x\right| > 1\\
-  \end{aligned}
-\right.
-\]
+% Nous proposons d'utiliser la fonction de régularisation
+% \(r_{\epsilon}\paren{x}\) suivante~:
+% \[
+% r_{\epsilon}\paren{x}=p_{1}\paren{\Frac{x}{\epsilon}}
+% \]
+% où \(r_{1}\paren{x}\) est définie par~:
+% \[
+% r_{1}\paren{x}=
+% \left\{
+%   \begin{aligned}
+%     \Frac{x^{2}}{3}\paren{4-x^{2}} & \text{si} & \left|x\right| \leq 1 \\
+%     1                             & \text{si} & \left|x\right| > 1\\
+%   \end{aligned}
+% \right.
+% \]
 
-\begin{figure}[htbp]
-  \centering
-  \includegraphics[width=0.5\linewidth]{@abs_top_srcdir@/docs/tfel/images/r-epsilon-2.eps}
-  \caption{représentation des fonctions $\pfrac{r_{1}\paren{x}}{x}$ et
-    $\pfrac{r_{\pfrac{1}{4}}\paren{x}}{x}$}
-  \label{fig:r-epsilon}
-\end{figure}
+% \begin{figure}[htbp]
+%   \centering
+%   \includegraphics[width=0.5\linewidth]{@abs_top_srcdir@/docs/tfel/images/r-epsilon-2.eps}
+%   \caption{représentation des fonctions $\pfrac{r_{1}\paren{x}}{x}$ et
+%     $\pfrac{r_{\pfrac{1}{4}}\paren{x}}{x}$}
+%   \label{fig:r-epsilon}
+% \end{figure}
 
-Les fonctions sont telles que~:
-\begin{enumerate}
-\item \(r_{\epsilon}\paren{\epsilon}=1\)
-\item \(r_{\epsilon}\paren{-\epsilon}=1\)
-\item \(r_{\epsilon}\paren{0}=0\)
-\item \(\displaystyle\lim_{x\rightarrow 0} \Frac{r_{\epsilon}\paren{x}}{x}=0\)
-\item \(\displaystyle\max_{x\in\mathbb{R}}\Frac{r_{\epsilon}\paren{x}}{x}\,\approx\,1,1\,\epsilon\)
-\end{enumerate}
+% Les fonctions sont telles que~:
+% \begin{enumerate}
+% \item \(r_{\epsilon}\paren{\epsilon}=1\)
+% \item \(r_{\epsilon}\paren{-\epsilon}=1\)
+% \item \(r_{\epsilon}\paren{0}=0\)
+% \item \(\displaystyle\lim_{x\rightarrow 0} \Frac{r_{\epsilon}\paren{x}}{x}=0\)
+% \item \(\displaystyle\max_{x\in\mathbb{R}}\Frac{r_{\epsilon}\paren{x}}{x}\,\approx\,1,1\,\epsilon\)
+% \end{enumerate}
 
 \subsection{Application aux fonctions isotropes de tenseurs symétriques}
 

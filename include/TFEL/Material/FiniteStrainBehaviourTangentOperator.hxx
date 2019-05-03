@@ -65,46 +65,56 @@ namespace tfel{
      * \param N : space dimension
      * \param StressType : type of the stresses
      */
-    template<unsigned short N,
-	     typename StressType>
+    template <unsigned short N, typename StressType>
     struct TFEL_VISIBILITY_LOCAL FiniteStrainBehaviourTangentOperator
-      : public FiniteStrainBehaviourTangentOperatorBase,
-	public tfel::utilities::GenTypeBase<typename tfel::meta::GenerateTypeList<tfel::math::t2tost2<N,StressType>,
-										  tfel::math::st2tost2<N,StressType>,
-										  tfel::math::t2tost2<N,StressType> *,
-										  tfel::math::st2tost2<N,StressType> *>::type>
-    {
+        : public FiniteStrainBehaviourTangentOperatorBase,
+          public tfel::utilities::GenTypeBase<
+              typename tfel::meta::GenerateTypeList<
+                  tfel::math::t2tot2<N, StressType>,
+                  tfel::math::t2tost2<N, StressType>,
+                  tfel::math::st2tost2<N, StressType>,
+                  tfel::math::t2tot2<N, StressType> *,
+                  tfel::math::t2tost2<N, StressType> *,
+                  tfel::math::st2tost2<N, StressType> *>::type> {
       //! supported tangent operator types;
-      typedef typename tfel::meta::GenerateTypeList<tfel::math::t2tost2<N,StressType>,
-						    tfel::math::st2tost2<N,StressType>,
-						    tfel::math::t2tost2<N,StressType>*,
-						    tfel::math::st2tost2<N,StressType>* >::type TOTypes;
-      typedef tfel::utilities::GenTypeBase<TOTypes> GenType;
-      /*!
-       * default constructor
-       */
-      FiniteStrainBehaviourTangentOperator()
-      {}
-      FiniteStrainBehaviourTangentOperator(const FiniteStrainBehaviourTangentOperator& src)
-	: GenType(src)
-      {}
-      FiniteStrainBehaviourTangentOperator(const tfel::math::t2tost2<N,StressType>& D)
-	: GenType(D)
-      {}
-      FiniteStrainBehaviourTangentOperator(tfel::math::t2tost2<N,StressType>* const D)
-	: GenType(D)
-      {}
-      FiniteStrainBehaviourTangentOperator(const tfel::math::st2tost2<N,StressType>& D)
-	: GenType(D)
-      {}
-      FiniteStrainBehaviourTangentOperator(tfel::math::st2tost2<N,StressType>* const D)
-	: GenType(D)
-      {}
-      FiniteStrainBehaviourTangentOperator&
-      operator=(const FiniteStrainBehaviourTangentOperator& src){
-	GenType::operator=(src);
-	return *this;
-      }
+      using TOTypes = typename tfel::meta::GenerateTypeList<
+          tfel::math::t2tot2<N, StressType>,
+          tfel::math::t2tost2<N, StressType>,
+          tfel::math::st2tost2<N, StressType>,
+          tfel::math::t2tot2<N, StressType>*,
+          tfel::math::t2tost2<N, StressType>*,
+          tfel::math::st2tost2<N, StressType>*>::type;
+      //! a simple alias
+      using GenType = tfel::utilities::GenTypeBase<TOTypes> ;
+      //! default constructor
+      FiniteStrainBehaviourTangentOperator() {}
+      //! copy constructor
+      FiniteStrainBehaviourTangentOperator(
+          const FiniteStrainBehaviourTangentOperator& src)
+          : GenType(src) {} // end of FiniteStrainBehaviourTangentOperator
+      FiniteStrainBehaviourTangentOperator(
+          const tfel::math::t2tot2<N, StressType>& D)
+          : GenType(D) {}  // end of FiniteStrainBehaviourTangentOperator
+      FiniteStrainBehaviourTangentOperator(
+          tfel::math::t2tot2<N, StressType>* const D)
+          : GenType(D) {}  // end of FiniteStrainBehaviourTangentOperator
+      FiniteStrainBehaviourTangentOperator(
+          const tfel::math::t2tost2<N, StressType>& D)
+          : GenType(D) {}  // end of FiniteStrainBehaviourTangentOperator
+      FiniteStrainBehaviourTangentOperator(
+          tfel::math::t2tost2<N, StressType>* const D)
+          : GenType(D) {} // end of FiniteStrainBehaviourTangentOperator
+      FiniteStrainBehaviourTangentOperator(
+          const tfel::math::st2tost2<N, StressType>& D)
+          : GenType(D) {} // end of FiniteStrainBehaviourTangentOperator
+      FiniteStrainBehaviourTangentOperator(
+          tfel::math::st2tost2<N, StressType>* const D)
+          : GenType(D) {}  // end of FiniteStrainBehaviourTangentOperator
+      FiniteStrainBehaviourTangentOperator& operator=(
+          const FiniteStrainBehaviourTangentOperator& src) {
+        GenType::operator=(src);
+        return *this;
+      } // end of FiniteStrainBehaviourTangentOperator& operator=
       /*!
        * \param const T1&, the value affected to the GenType.
        * \pre   T1 must be a type that the GenType can hold.

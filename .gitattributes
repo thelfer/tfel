@@ -1904,6 +1904,8 @@ include/TFEL/Math/T2toST2/t2tost2.ixx -text
 include/TFEL/Math/T2toST2/t2tost2ResultType.hxx -text
 include/TFEL/Math/T2toT2/BuildFromRotationMatrix.hxx -text
 include/TFEL/Math/T2toT2/ChangeBasis.hxx -text
+include/TFEL/Math/T2toT2/ConvertFromPK1Derivative.hxx -text
+include/TFEL/Math/T2toT2/ConvertFromPK1Derivative.ixx -text
 include/TFEL/Math/T2toT2/ConvertToPK1Derivative.hxx -text
 include/TFEL/Math/T2toT2/ConvertToPK1Derivative.ixx -text
 include/TFEL/Math/T2toT2/T2toT2Concept.hxx -text
