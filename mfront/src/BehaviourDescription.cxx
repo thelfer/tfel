@@ -323,7 +323,7 @@ namespace mfront {
   }  // end of BehaviourDescription::throwUndefinedAttribute
 
   const BehaviourData& BehaviourDescription::getBehaviourData(
-      const Hypothesis& h) const {
+      const Hypothesis h) const {
     // check that the given hypothesis is supported
     if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
       return this->d;
@@ -340,8 +340,18 @@ namespace mfront {
     return this->d;
   }  // end of BehaviourDescription::getBehaviourData
 
-  BehaviourData& BehaviourDescription::getBehaviourData2(
-      const ModellingHypothesis::Hypothesis& h) {
+  void BehaviourDescription::specialize(const Hypothesis h) {
+    if (this->areModellingHypothesesDefined()) {
+      this->checkModellingHypothesis(h);
+    }
+    auto p = this->sd.find(h);
+    if (p == this->sd.end()) {
+      // copy of the default description
+      this->sd.insert({h, std::make_shared<BehaviourData>(this->d)}).first;
+    }
+  }  // end of BehaviourDescription::specialize
+
+  BehaviourData& BehaviourDescription::getBehaviourData2(const Hypothesis h) {
     // check that the given hypothesis is supported
     if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
       return this->d;
@@ -1607,7 +1617,7 @@ namespace mfront {
       return this->getBehaviourData(h).isStressFreeExansionAnisotropic();
     }  // end of BehaviourDescription::isStressFreeExansionAnisotropic
 
-    void BehaviourDescription::checkModellingHypothesis(const Hypothesis& h)
+    void BehaviourDescription::checkModellingHypothesis(const Hypothesis h)
         const {
       if (this->getModellingHypotheses().find(h) ==
           this->getModellingHypotheses().end()) {

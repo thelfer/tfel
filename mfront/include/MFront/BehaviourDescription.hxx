@@ -582,7 +582,7 @@ namespace mfront {
      * given modelling hypothesis
      * \param[in] h: modelling hypothesis
      */
-    const BehaviourData& getBehaviourData(const Hypothesis&) const;
+    const BehaviourData& getBehaviourData(const Hypothesis) const;
     //! \return true if modelling hypotheses are defined.
     bool areModellingHypothesesDefined() const;
     /*!
@@ -956,6 +956,11 @@ namespace mfront {
      * \param[in] h: modelling hypothesis considered
      */
     bool hasSpecialisedMechanicalData(const Hypothesis) const;
+    /*!
+     * \brief specialize the given hypothesis
+     * \param[in] h: modelling hypothesis considered
+     */
+    void specialize(const Hypothesis);
     //! \return true if a stress free expansion has been defined
     bool requiresStressFreeExpansionTreatment(const Hypothesis) const;
     //! \return true if thermal expansion coefficient were defined
@@ -1503,7 +1508,7 @@ namespace mfront {
      * given modelling hypothesis if necessary, and returns it.
      * \param[in] h: modelling hypothesis
      */
-    BehaviourData& getBehaviourData2(const ModellingHypothesis::Hypothesis&);
+    BehaviourData& getBehaviourData2(const Hypothesis);
     /*!
      * \call the behaviour data associated with the given hypothesis
      * \param[in] h: modelling hypothesis
@@ -1667,7 +1672,7 @@ namespace mfront {
      * \brief check that the given hypothesis is supported
      * \param[in] h: modelling hypothesis
      */
-    void checkModellingHypothesis(const Hypothesis&) const;
+    void checkModellingHypothesis(const Hypothesis) const;
     //! a simple alias
     typedef std::shared_ptr<BehaviourData> MBDPtr;
     //! behaviour attributes

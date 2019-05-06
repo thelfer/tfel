@@ -221,6 +221,8 @@ namespace mfront {
      */
     void appendToSources(const std::string&) override;
 
+    std::set<Hypothesis> getModellingHypothesesToBeTreated() const;
+
     virtual void analyse();
 
     virtual void treatDisabledCallBack();

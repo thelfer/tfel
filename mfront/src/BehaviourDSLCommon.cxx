@@ -958,7 +958,22 @@ namespace mfront {
       }
     }
     if (this->mb.areSlipSystemsDefined()) {
-      this->mb.appendToIncludes("#include \"TFEL/Material/" + this->mb.getClassName() + "SlipSystems.hxx\"");
+      this->mb.appendToIncludes("#include \"TFEL/Material/" +
+                                this->mb.getClassName() + "SlipSystems.hxx\"");
+    }
+    //
+    if (this->mb.getBehaviourType() ==
+        BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
+      const auto mhs = this->getModellingHypothesesToBeTreated();
+      for (const auto h :
+           {ModellingHypothesis::PLANESTRESS,
+            ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS}) {
+        if (mhs.find(h) != mhs.end()) {
+          if (!this->mb.hasSpecialisedMechanicalData(h)) {
+            this->mb.specialize(h);
+          }
+        }
+      }
     }
     // calling interfaces
     if (getPedanticMode()) {
@@ -1106,6 +1121,24 @@ namespace mfront {
     log << "\n# End of pedantic checks\n";
   }  // end of BehaviourDSLCommon::pedanticChecks
 
+  std::set<BehaviourDSLCommon::Hypothesis>
+  BehaviourDSLCommon::getModellingHypothesesToBeTreated() const {
+    // modelling hypotheses handled by the interfaces (if at least one
+    // interface is defined), or by the behaviour
+    std::set<Hypothesis> mhs;
+    if (this->interfaces.empty()) {
+      const auto& bh = this->mb.getModellingHypotheses();
+      mhs.insert(bh.begin(), bh.end());
+    } else {
+      // calling the interfaces
+      for (const auto& i : this->interfaces) {
+        const auto& ih = i.second->getModellingHypothesesToBeTreated(this->mb);
+        mhs.insert(ih.begin(), ih.end());
+      }
+    }
+    return mhs;
+  }  // end of BehaviourDSLCommon::getModellingHypothesesToBeTreated
+
   void BehaviourDSLCommon::generateOutputFiles() {
     tfel::system::systemCall::mkdir("src");
     tfel::system::systemCall::mkdir("include");
@@ -1113,35 +1146,73 @@ namespace mfront {
     tfel::system::systemCall::mkdir("include/TFEL/Material");
     //! generating sources du to external material properties and models
     std::ofstream behaviourFile("include/" + this->getBehaviourFileName());
-    std::ofstream behaviourDataFile("include/" + this->getBehaviourDataFileName());
-    std::ofstream integrationDataFile("include/" + this->getIntegrationDataFileName());
+    std::ofstream behaviourDataFile("include/" +
+                                    this->getBehaviourDataFileName());
+    std::ofstream integrationDataFile("include/" +
+                                      this->getIntegrationDataFileName());
     std::ofstream srcFile("src/" + this->getSrcFileName());
+    if (!behaviourFile) {
+      this->throwRuntimeError("BehaviourDSLCommon::generateOutputFiles",
+                              "unable to open '" +
+                                  this->getBehaviourFileName() +
+                                  "' "
+                                  "for writing output file");
+    }
+    if (!behaviourDataFile) {
+      this->throwRuntimeError("BehaviourDSLCommon::generateOutputFiles",
+                              "unable to open '" +
+                                  this->getBehaviourDataFileName() +
+                                  "' "
+                                  "for writing output file");
+    }
+    if (!integrationDataFile) {
+      this->throwRuntimeError("BehaviourDSLCommon::generateOutputFiles",
+                              "unable to open '" +
+                                  this->getIntegrationDataFileName() +
+                                  "' "
+                                  "for writing output file");
+    }
+    if (!srcFile) {
+      this->throwRuntimeError("BehaviourDSLCommon::generateOutputFiles",
+                              "unable to open '" + this->getSrcFileName() +
+                                  "' "
+                                  "for writing output file");
+    }
     for (const auto& em : this->externalMFrontFiles) {
       this->callMFront(em.second, {em.first});
     }
-    if (!behaviourFile) {
-      this->throwRuntimeError("BehaviourDSLCommon::generateOutputFiles", "unable to open '" +
-                                                                             this->getBehaviourFileName() +
-                                                                             "' "
-                                                                             "for writing output file");
-    }
-    if (!behaviourDataFile) {
-      this->throwRuntimeError("BehaviourDSLCommon::generateOutputFiles", "unable to open '" +
-                                                                             this->getBehaviourDataFileName() +
-                                                                             "' "
-                                                                             "for writing output file");
-    }
-    if (!integrationDataFile) {
-      this->throwRuntimeError("BehaviourDSLCommon::generateOutputFiles", "unable to open '" +
-                                                                             this->getIntegrationDataFileName() +
-                                                                             "' "
-                                                                             "for writing output file");
-    }
-    if (!srcFile) {
-      this->throwRuntimeError("BehaviourDSLCommon::generateOutputFiles", "unable to open '" + this->getSrcFileName() +
-                                                                             "' "
-                                                                             "for writing output file");
-    }
+    auto write_classes = [this, &behaviourFile, &behaviourDataFile,
+                          &integrationDataFile](const Hypothesis h) {
+      const auto n = h == ModellingHypothesis::UNDEFINEDHYPOTHESIS
+                         ? "default hypothesis"
+                         : "'" + ModellingHypothesis::toString(h) + "'";
+      if (getVerboseMode() >= VERBOSE_DEBUG) {
+        auto& log = getLogStream();
+        log << "BehaviourDSLCommon::generateOutputFiles: "
+            << "treating " + n + "\n";
+      }
+      // Generating BehaviourData's outputClass
+      if (getVerboseMode() >= VERBOSE_DEBUG) {
+        auto& log = getLogStream();
+        log << "BehaviourDSLCommon::generateOutputFiles: "
+            << "writing behaviour data for " + n + "\n";
+      }
+      this->writeBehaviourDataClass(behaviourDataFile, h);
+      // Generating IntegrationData's outputClass
+      if (getVerboseMode() >= VERBOSE_DEBUG) {
+        auto& log = getLogStream();
+        log << "BehaviourDSLCommon::generateOutputFiles: "
+            << "writing integration data for " + n + "\n";
+      }
+      this->writeIntegrationDataClass(integrationDataFile, h);
+      // Generating Behaviour's outputFile
+      if (getVerboseMode() >= VERBOSE_DEBUG) {
+        auto& log = getLogStream();
+        log << "BehaviourDSLCommon::generateOutputFiles: "
+            << "writing behaviour class for " + n + "\n";
+      }
+      this->writeBehaviourClass(behaviourFile, h);
+    };
     // generate outpout files
     this->writeBehaviourDataFileBegin(behaviourDataFile);
     this->writeIntegrationDataFileBegin(integrationDataFile);
@@ -1149,76 +1220,13 @@ namespace mfront {
     if (this->mb.areSlipSystemsDefined()) {
       this->generateSlipSystemsFiles();
     }
-    // modelling hypotheses handled by the interfaces (if at least one
-    // interface is defined), or by the behaviour
-    std::set<Hypothesis> hh;
-    if (this->interfaces.empty()) {
-      const auto& bh = this->mb.getModellingHypotheses();
-      hh.insert(bh.begin(), bh.end());
-    } else {
-      // calling the interfaces
-      for (const auto& i : this->interfaces) {
-        const auto& ih = i.second->getModellingHypothesesToBeTreated(this->mb);
-        hh.insert(ih.begin(), ih.end());
-      }
+    const auto mhs = this->getModellingHypothesesToBeTreated();
+    if (!this->mb.areAllMechanicalDataSpecialised(mhs)) {
+      write_classes(ModellingHypothesis::UNDEFINEDHYPOTHESIS);
     }
-    if (!this->mb.areAllMechanicalDataSpecialised(hh)) {
-      if (getVerboseMode() >= VERBOSE_DEBUG) {
-        auto& log = getLogStream();
-        log << "BehaviourDSLCommon::generateOutputFiles : "
-            << "treating default hypothesis\n";
-      }
-      const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-      // Generating BehaviourData's outputClass
-      if (getVerboseMode() >= VERBOSE_DEBUG) {
-        auto& log = getLogStream();
-        log << "BehaviourDSLCommon::generateOutputFiles : writing behaviour data "
-            << "for default hypothesis\n";
-      }
-      this->writeBehaviourDataClass(behaviourDataFile, h);
-      // Generating IntegrationData's outputClass
-      if (getVerboseMode() >= VERBOSE_DEBUG) {
-        auto& log = getLogStream();
-        log << "BehaviourDSLCommon::generateOutputFiles : writing integration data "
-            << "for default hypothesis\n";
-      }
-      this->writeIntegrationDataClass(integrationDataFile, h);
-      // Generating Behaviour's outputFile
-      if (getVerboseMode() >= VERBOSE_DEBUG) {
-        auto& log = getLogStream();
-        log << "BehaviourDSLCommon::generateOutputFiles : writing behaviour class "
-            << "for default hypothesis\n";
-      }
-      this->writeBehaviourClass(behaviourFile, h);
-    }
-    for (const auto& h : hh) {
+    for (const auto& h : mhs) {
       if (mb.hasSpecialisedMechanicalData(h)) {
-        if (getVerboseMode() >= VERBOSE_DEBUG) {
-          auto& log = getLogStream();
-          log << "BehaviourDSLCommon::generateOutputFiles : "
-              << "treating hypothesis '" << ModellingHypothesis::toString(h) << "'\n";
-        }
-        // Generating BehaviourData's outputClass
-        if (getVerboseMode() >= VERBOSE_DEBUG) {
-          auto& log = getLogStream();
-          log << "BehaviourDSLCommon::generateOutputFiles : writing behaviour data "
-              << "for hypothesis '" << ModellingHypothesis::toString(h) << "'\n";
-        }
-        this->writeBehaviourDataClass(behaviourDataFile, h);
-        // Generating IntegrationData's outputClass
-        if (getVerboseMode() >= VERBOSE_DEBUG) {
-          auto& log = getLogStream();
-          log << "BehaviourDSLCommon::generateOutputFiles : writing integration data "
-              << "for hypothesis '" << ModellingHypothesis::toString(h) << "'\n";
-        }
-        this->writeIntegrationDataClass(integrationDataFile, h);
-        // Generating behaviour's outputClass
-        if (getVerboseMode() >= VERBOSE_DEBUG) {
-          auto& log = getLogStream();
-          log << "BehaviourDSLCommon::generateOutputFiles : writing behaviour class "
-              << "for hypothesis '" << ModellingHypothesis::toString(h) << "'\n";
-        }
-        this->writeBehaviourClass(behaviourFile, h);
+        write_classes(h);
       }
     }
     this->writeBehaviourDataFileEnd(behaviourDataFile);
@@ -5826,7 +5834,7 @@ namespace mfront {
         }
         for (const auto& t : tos) {
           const auto ktype = convertFiniteStrainBehaviourTangentOperatorFlagToString(t);
-          if (find(ktos.begin(), ktos.end(), t) != ktos.end()) {
+          if (std::find(ktos.begin(), ktos.end(), t) != ktos.end()) {
             os << "IntegrationResult\ncomputePredictionOperator_" << ktype << "(const SMType smt){\n"
                << "using namespace std;\n"
                << "using namespace tfel::math;\n"
@@ -5836,33 +5844,60 @@ namespace mfront {
                << "return SUCCESS;\n"
                << "}\n\n";
           } else {
-            const auto path = FiniteStrainBehaviourTangentOperatorConversionPath::getShortestPath(paths, t);
-            if (path.empty()) {
+            if ((h ==
+                 ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS) ||
+                (h == ModellingHypothesis::PLANESTRESS)) {
               os << "IntegrationResult computePredictionOperator_" << ktype << "(const SMType){\n"
                  << "tfel::raise(\"" << this->mb.getClassName() << "::computePredictionOperator_" << ktype << ": \"\n"
                  << "\"computing the prediction operator '" << ktype << "' is not supported\");\n"
                  << "}\n\n";
             } else {
-              os << "IntegrationResult computePredictionOperator_" << ktype << "(const SMType smt){\n";
-              auto pc = path.begin();
-              os << "using namespace tfel::math;\n";
-              os << "// computing " << convertFiniteStrainBehaviourTangentOperatorFlagToString(pc->from()) << '\n';
-              const auto k = convertFiniteStrainBehaviourTangentOperatorFlagToString(pc->from());
-              os << "this->computePredictionOperator_" << k << "(smt);\n"
-                 << "const " << getFiniteStrainBehaviourTangentOperatorFlagType(pc->from()) << "<N,stress>"
-                 << " tangentOperator_" << convertFiniteStrainBehaviourTangentOperatorFlagToString(pc->from())
-                 << " = this->Dt.template get<" << getFiniteStrainBehaviourTangentOperatorFlagType(pc->from())
-                 << "<N,stress> >();\n";
-              for (; pc != path.end();) {
-                const auto converter = *pc;
-                if (++pc == path.end()) {
-                  os << converter.getFinalConversion() << '\n';
-                } else {
-                  os << converter.getIntermediateConversion() << '\n';
+              const auto path =
+                  FiniteStrainBehaviourTangentOperatorConversionPath::
+                      getShortestPath(paths, t);
+              if (path.empty()) {
+                os << "IntegrationResult computePredictionOperator_" << ktype
+                   << "(const SMType){\n"
+                   << "tfel::raise(\"" << this->mb.getClassName()
+                   << "::computePredictionOperator_" << ktype << ": \"\n"
+                   << "\"computing the prediction operator '" << ktype
+                   << "' is not supported\");\n"
+                   << "}\n\n";
+              } else {
+                os << "IntegrationResult computePredictionOperator_" << ktype
+                   << "(const SMType smt){\n";
+                auto pc = path.begin();
+                os << "using namespace tfel::math;\n";
+                os << "// computing "
+                   << convertFiniteStrainBehaviourTangentOperatorFlagToString(
+                          pc->from())
+                   << '\n';
+                const auto k =
+                    convertFiniteStrainBehaviourTangentOperatorFlagToString(
+                        pc->from());
+                os << "this->computePredictionOperator_" << k << "(smt);\n"
+                   << "const "
+                   << getFiniteStrainBehaviourTangentOperatorFlagType(
+                          pc->from())
+                   << "<N,stress>"
+                   << " tangentOperator_"
+                   << convertFiniteStrainBehaviourTangentOperatorFlagToString(
+                          pc->from())
+                   << " = this->Dt.template get<"
+                   << getFiniteStrainBehaviourTangentOperatorFlagType(
+                          pc->from())
+                   << "<N,stress> >();\n";
+                for (; pc != path.end();) {
+                  const auto converter = *pc;
+                  if (++pc == path.end()) {
+                    os << converter.getFinalConversion() << '\n';
+                  } else {
+                    os << converter.getIntermediateConversion() << '\n';
+                  }
                 }
+                os << "return SUCCESS;\n"
+                   << "}\n\n";
               }
-              os << "return SUCCESS;\n"
-                 << "}\n\n";
             }
           }
         }
@@ -5898,7 +5933,8 @@ namespace mfront {
              << "\"invalid prediction operator flag\");\n";
         }
       }
-      os << this->mb.getCode(h, BehaviourData::ComputePredictionOperator) << "return SUCCESS;\n"
+      os << this->mb.getCode(h, BehaviourData::ComputePredictionOperator)
+         << "return SUCCESS;\n"
          << "}\n\n";
     }
   }  // end of BehaviourDSLCommon::writeBehaviourComputePredictionOperator
@@ -5939,34 +5975,64 @@ namespace mfront {
                << "return true;\n"
                << "}\n\n";
           } else {
-            const auto path = FiniteStrainBehaviourTangentOperatorConversionPath::getShortestPath(paths, t);
-            if (path.empty()) {
-              os << "bool computeConsistentTangentOperator_" << ktype << "(const SMType){\n"
-                 << "tfel::raise(\"" << this->mb.getClassName() << "::computeConsistentTangentOperator_" << ktype
-                 << ": \"\n"
-                 << "\"computing the tangent operator '" << ktype << "' is not supported\");\n"
+            if ((h ==
+                 ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS) ||
+                (h == ModellingHypothesis::PLANESTRESS)) {
+              os << "bool computeConsistentTangentOperator_" << ktype
+                 << "(const SMType){\n"
+                 << "tfel::raise(\"" << this->mb.getClassName()
+                 << "::computeConsistentTangentOperator_" << ktype << ": \"\n"
+                 << "\"computing the tangent operator '" << ktype
+                 << "' is not supported\");\n"
                  << "}\n\n";
             } else {
-              os << "bool computeConsistentTangentOperator_" << ktype << "(const SMType smt){\n";
-              auto pc = path.begin();
-              os << "using namespace tfel::math;\n";
-              os << "// computing " << convertFiniteStrainBehaviourTangentOperatorFlagToString(pc->from()) << '\n';
-              const auto k = convertFiniteStrainBehaviourTangentOperatorFlagToString(pc->from());
-              os << "this->computeConsistentTangentOperator_" << k << "(smt);\n"
-                 << "const " << getFiniteStrainBehaviourTangentOperatorFlagType(pc->from()) << "<N,stress>"
-                 << " tangentOperator_" << convertFiniteStrainBehaviourTangentOperatorFlagToString(pc->from())
-                 << " = this->Dt.template get<" << getFiniteStrainBehaviourTangentOperatorFlagType(pc->from())
-                 << "<N,stress> >();\n";
-              for (; pc != path.end();) {
-                const auto converter = *pc;
-                if (++pc == path.end()) {
-                  os << converter.getFinalConversion() << '\n';
-                } else {
-                  os << converter.getIntermediateConversion() << '\n';
+              const auto path =
+                  FiniteStrainBehaviourTangentOperatorConversionPath::
+                      getShortestPath(paths, t);
+              if (path.empty()) {
+                os << "bool computeConsistentTangentOperator_" << ktype
+                   << "(const SMType){\n"
+                   << "tfel::raise(\"" << this->mb.getClassName()
+                   << "::computeConsistentTangentOperator_" << ktype << ": \"\n"
+                   << "\"computing the tangent operator '" << ktype
+                   << "' is not supported\");\n"
+                   << "}\n\n";
+              } else {
+                os << "bool computeConsistentTangentOperator_" << ktype
+                   << "(const SMType smt){\n";
+                auto pc = path.begin();
+                os << "using namespace tfel::math;\n";
+                os << "// computing "
+                   << convertFiniteStrainBehaviourTangentOperatorFlagToString(
+                          pc->from())
+                   << '\n';
+                const auto k =
+                    convertFiniteStrainBehaviourTangentOperatorFlagToString(
+                        pc->from());
+                os << "this->computeConsistentTangentOperator_" << k
+                   << "(smt);\n"
+                   << "const "
+                   << getFiniteStrainBehaviourTangentOperatorFlagType(
+                          pc->from())
+                   << "<N,stress>"
+                   << " tangentOperator_"
+                   << convertFiniteStrainBehaviourTangentOperatorFlagToString(
+                          pc->from())
+                   << " = this->Dt.template get<"
+                   << getFiniteStrainBehaviourTangentOperatorFlagType(
+                          pc->from())
+                   << "<N,stress> >();\n";
+                for (; pc != path.end();) {
+                  const auto converter = *pc;
+                  if (++pc == path.end()) {
+                    os << converter.getFinalConversion() << '\n';
+                  } else {
+                    os << converter.getIntermediateConversion() << '\n';
+                  }
                 }
+                os << "return true;\n"
+                   << "}\n\n";
               }
-              os << "return true;\n"
-                 << "}\n\n";
             }
           }
         }
