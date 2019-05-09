@@ -1460,6 +1460,7 @@ docs/web/release-notes.md -text
 docs/web/robots.txt -text
 docs/web/signorini.md -text
 docs/web/singlecrystal.md -text
+docs/web/sosv.md -text
 docs/web/svn.md -text
 docs/web/tensors.md -text
 docs/web/tex/lcmd_utf8.tex -text
@@ -1916,6 +1917,7 @@ include/TFEL/Math/T2toT2/T2toT2FromTinyMatrixView.hxx -text
 include/TFEL/Math/T2toT2/T2toT2FromTinyMatrixView2.hxx -text
 include/TFEL/Math/T2toT2/T2toT2T2toT2ProductExpr.hxx -text
 include/TFEL/Math/T2toT2/T2toT2TensorProductExpr.hxx -text
+include/TFEL/Math/T2toT2/T2toT2View.hxx -text
 include/TFEL/Math/T2toT2/TensorProductLeftDerivativeExpr.hxx -text
 include/TFEL/Math/T2toT2/TensorProductRightDerivativeExpr.hxx -text
 include/TFEL/Math/T2toT2/TensorT2toT2ProductExpr.hxx -text

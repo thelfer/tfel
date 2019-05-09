@@ -120,6 +120,11 @@ namespace mfront {
     const auto mhs = this->getModellingHypothesesToBeTreated(bd);
     const auto name = bd.getLibrary() + bd.getClassName();
     const auto header = name + "-generic.hxx";
+    const auto is_finite_strain_through_strain_measure =
+        (bd.getBehaviourType() ==
+         BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) &&
+        (bd.isStrainMeasureDefined()) &&
+        (bd.getStrainMeasure() != BehaviourDescription::LINEARISED);
     std::ofstream out("include/MFront/GenericBehaviour/" + header);
     if (!out) {
       raise("could not open file '" + header + "'");
@@ -180,11 +185,9 @@ namespace mfront {
     out << "#include<iostream>\n"
         << "#include<cstdlib>\n"
         << "#include\"TFEL/Material/OutOfBoundsPolicy.hxx\"\n";
-    if (((bd.getBehaviourType() ==
-          BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) ||
-         (bd.getBehaviourType() == BehaviourDescription::GENERALBEHAVIOUR)) &&
-        (bd.isStrainMeasureDefined())) {
+    if (is_finite_strain_through_strain_measure) {
       out << "#include\"TFEL/Math/Stensor/StensorView.hxx\"\n"
+          << "#include\"TFEL/Math/T2toT2/T2toT2View.hxx\"\n"
           << "#include\"TFEL/Math/T2toST2/T2toST2View.hxx\"\n"
           << "#include\"TFEL/Material/"
              "FiniteStrainBehaviourTangentOperator.hxx\"\n";
@@ -251,23 +254,12 @@ namespace mfront {
     // behaviour implementations
     const auto type = bd.getBehaviourType();
     for (const auto h : mhs) {
-      auto oC = SupportedTypes::TypeSize{};  // Cauchy stress offset
       const auto f = this->getFunctionNameForHypothesis(name, h);
-      auto get_ptr = [h](const char* ptr,
-                         const SupportedTypes::TypeSize o) -> std::string {
-        if (o.isNull()) {
-          return ptr;
-        }
-        return ptr +
-               ("+" + std::to_string(o.getValueForModellingHypothesis(h)));
-      };
       out << "MFRONT_SHAREDOBJ int " << f
           << "(MFront_GB_BehaviourData* const d){\n"
           << "using namespace tfel::material;\n";
-      if (((bd.getBehaviourType() ==
-            BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) ||
-           (bd.getBehaviourType() == BehaviourDescription::GENERALBEHAVIOUR)) &&
-          (bd.isStrainMeasureDefined())) {
+      if ((type == BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) ||
+          (is_finite_strain_through_strain_measure)) {
         out << "using TangentOperator = "
                "FiniteStrainBehaviourTangentOperatorBase;\n";
       }
@@ -285,114 +277,66 @@ namespace mfront {
       if (this->shallGenerateMTestFileOnFailure(bd)) {
         out << "using mfront::SupportedTypes;\n";
       }
+      // choice of the tangent operator
+      if ((type == BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) ||
+          (is_finite_strain_through_strain_measure)) {
+        out << "// stiffness type\n"
+            << "const auto smf = [&d]{\n"
+            << "  if((d->K[0]>-0.5)&&(d->K[0]<0.5)){\n"
+            << "    // no stiffness requested, \n"
+            << "    // returned value is meaningless\n"
+            << "    return TangentOperator::DSIG_DF;\n"
+            << "  }\n"
+            << "  if(d->K[1]<0.5){\n"
+            << "    return TangentOperator::DSIG_DF;\n"
+            << "  } else if (d->K[1]<1.5){\n"
+            << "    return TangentOperator::DS_DEGL;\n"
+            << "  } else if (d->K[1]<2.5){\n"
+            << "    return TangentOperator::DPK1_DF;\n"
+            << "  } else {\n"
+            << "  std::cerr << \"invalid choice for consistent tangent \"\n"
+               "               \"operator\\n\";\n"
+            << "  std::exit(-1);\n"
+            << "  }\n"
+            << "}();\n";
+      }
       // treating strain measures
-      if (((bd.getBehaviourType() ==
-            BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) ||
-           (bd.getBehaviourType() == BehaviourDescription::GENERALBEHAVIOUR)) &&
-          (bd.isStrainMeasureDefined())) {
-        auto oF = SupportedTypes::TypeSize{};  // deformation gradient offset
-        auto oe = SupportedTypes::TypeSize{};  // Hencky strain offset
-        auto ocig =
-            SupportedTypes::TypeSize{};  // current gradients offset on input
-        auto ocog =
-            SupportedTypes::TypeSize{};  // current gradients offset on output
-        auto octh =
-            SupportedTypes::TypeSize{};  // current thermodynamic forces offset
-        // determining the size of the new arrays of gradients and thermodynamic
-        // forces
-        for (const auto& mv : bd.getMainVariables()) {
-          ocig +=
-              SupportedTypes::getTypeSize(mv.first.type, mv.first.arraySize);
-          octh +=
-              SupportedTypes::getTypeSize(mv.second.type, mv.second.arraySize);
-        }
-        out << "mfront::gb::real gradients0["
-            << ocig.getValueForModellingHypothesis(h) << "];\n";
-        out << "mfront::gb::real gradients1["
-            << ocig.getValueForModellingHypothesis(h) << "];\n";
-        out << "mfront::gb::real thermodynamic_forces0["
-            << octh.getValueForModellingHypothesis(h) << "];\n";
-        out << "mfront::gb::real thermodynamic_forces1["
-            << octh.getValueForModellingHypothesis(h) << "];\n";
-        out << "mfront::gb::real K["
-            << octh.getValueForModellingHypothesis(h) *
-                   ocig.getValueForModellingHypothesis(h)
-            << "];\n";
-        // copying
-        ocig = SupportedTypes::TypeSize{};
-        octh = SupportedTypes::TypeSize{};
-        for (const auto& mv : bd.getMainVariables()) {
-          if (mv.first.name == "eto") {
-            oe = ocig;
-            oF = ocig;
-            oC = octh;
-            ocig +=
-                SupportedTypes::getTypeSize(mv.first.type, mv.first.arraySize);
-            ocog += SupportedTypes::getTypeSize("strain", 1);
-          } else {
-            const auto ng =
-                SupportedTypes::getTypeSize(mv.first.type, mv.first.arraySize)
-                    .getValueForModellingHypothesis(h);
-            const auto nth =
-                SupportedTypes::getTypeSize(mv.second.type, mv.second.arraySize)
-                    .getValueForModellingHypothesis(h);
-            out << "tfel::fsalgo::copy<" << ng << ">::exe("
-                << "d->s0.gradients[" << ocig << "],"
-                << "gradients0[" << ocog << "]);\n";
-            out << "tfel::fsalgo::copy<" << ng << ">::exe("
-                << "d->s1.gradients[" << ocig << "],"
-                << "gradients1[" << ocog << "]);\n";
-            out << "tfel::fsalgo::copy<" << nth << ">::exe("
-                << "d->s0.thermodynamic_forces[" << ocig << "],"
-                << "thermodynamic_forces0[" << ocog << "]);\n";
-            out << "tfel::fsalgo::copy<" << nth << ">::exe("
-                << "d->s1.thermodynamic_forces[" << ocig << "],"
-                << "thermodynamic_forces1[" << ocog << "]);\n";
-            ocig += SupportedTypes::getTypeSize("DeformationGradientTensor", 1);
-            ocog += SupportedTypes::getTypeSize("strain", 1);
-          }
-          octh +=
-              SupportedTypes::getTypeSize(mv.second.type, mv.second.arraySize);
-        }
+      if (is_finite_strain_through_strain_measure) {
+        // symmetric tensor size
+        const auto ss = SupportedTypes::getTypeSize("StrainStensor", 1)
+                            .getValueForModellingHypothesis(h);
+        // unsymmetric tensor size
+        const auto ts = SupportedTypes::getTypeSize("DeformationGradientTensor", 1)
+                            .getValueForModellingHypothesis(h);
+        out << "mfront::gb::real gradients0[" << ts << "];\n";
+        out << "mfront::gb::real gradients1[" << ts << "];\n";
+        out << "mfront::gb::real thermodynamic_forces0[" << ss << "];\n";
+        out << "mfront::gb::real thermodynamic_forces1[" << ss << "];\n";
+        out << "mfront::gb::real K[" << ts * ss << "];\n";
         // now converting the deformation gradient
         const auto ms = bd.getStrainMeasure();
         const auto N = tfel::material::getSpaceDimension(h);
         if ((ms == BehaviourDescription::GREENLAGRANGE) ||
             (ms == BehaviourDescription::HENCKY)) {
-          const auto fs =
-              SupportedTypes::getTypeSize("DeformationGradientTensor", 1)
-                  .getValueForModellingHypothesis(h);
-          const auto ss = SupportedTypes::getTypeSize("StressStensor", 1)
-                              .getValueForModellingHypothesis(h);
           out << "tfel::math::tensor<" << N << ",real> F0;\n";
           out << "tfel::math::tensor<" << N << ",real> F1;\n";
           out << "tfel::math::stensor<" << N << ",real> s0;\n";
-          if (oF.getValueForModellingHypothesis(h) == 0) {
-            out << "tfel::fsalgo::copy<" << fs << ">::exe(d->s0.gradients"
-                << ",F0.begin());\n";
-            out << "tfel::fsalgo::copy<" << fs << ">::exe(d->s1.gradients"
-                << ",F1.begin());\n";
-          } else {
-            out << "tfel::fsalgo::copy<" << fs << ">::exe(d->s0.gradients+"
-                << oF.getValueForModellingHypothesis(h) << ",F0.begin());\n";
-            out << "tfel::fsalgo::copy<" << fs << ">::exe(d->s1.gradients+"
-                << oF.getValueForModellingHypothesis(h) << ",F1.begin());\n";
-          }
-          if (oC.getValueForModellingHypothesis(h) == 0) {
-            out << "tfel::fsalgo::copy<" << ss
-                << ">::exe(d->s0.thermodynamic_forces"
-                << ",s0.begin());\n";
-          } else {
-            out << "tfel::fsalgo::copy<" << ss
-                << ">::exe(d->s0.thermodynamic_forces+"
-                << oC.getValueForModellingHypothesis(h) << ",s0.begin());\n";
-          }
+          out << "tfel::fsalgo::copy<" << ts << ">::exe(d->s0.gradients"
+              << ",F0.begin());\n";
+          out << "tfel::fsalgo::copy<" << ts << ">::exe(d->s1.gradients"
+              << ",F1.begin());\n";
+          out << "tfel::fsalgo::copy<" << ss
+              << ">::exe(d->s0.thermodynamic_forces"
+              << ",s0.begin());\n";
           if (ms == BehaviourDescription::GREENLAGRANGE) {
+            // here we are calling computeGreenLagrangeTensor *before*
+            // updating F0 and F1 in plane stress hypotheses.
+            // This ensures that eto_zz is zero.
             out << "tfel::math::StensorView<" << N << ",real> g0_view("
-                << get_ptr("gradients0", oe) << ");\n"
+                << "gradients0);\n"
                 << "g0_view = tfel::math::computeGreenLagrangeTensor(F0);\n"
                 << "tfel::math::StensorView<" << N << ",real> g1_view("
-                << get_ptr("gradients1", oe) << ");\n"
+                << "gradients1);\n"
                 << "g1_view = tfel::math::computeGreenLagrangeTensor(F1);\n";
             if ((h == ModellingHypothesis::PLANESTRESS) ||
                 (h ==
@@ -412,23 +356,22 @@ namespace mfront {
               }
             }
             out << "tfel::math::StensorView<" << N << ",real> s0_view("
-                << get_ptr("thermodynamic_forces0", oC) << ");\n"
+                << "thermodynamic_forces0);\n"
                 << "s0_view = "
                    "tfel::math::"
                    "convertCauchyStressToSecondPiolaKirchhoffStress("
                    "s0, F0);\n";
           } else {
-            out << "LogarithmicStrainHandler<" << N << ",real> lgh0("
-                << "LogarithmicStrainHandler<" << N
-                << ",real>::EULERIAN,F0);\n";
-            out << "LogarithmicStrainHandler<" << N << ",real> lgh1("
-                << "LogarithmicStrainHandler<" << N
-                << ",real>::EULERIAN,F1);\n";
-            out << "tfel::math::StensorView<" << N << ",real> g0_view("
-                << get_ptr("gradients0", oe) << ");\n"
+            out << "const auto setting = (smf==TangentOperator::DSIG_DF) ? \n"
+                << "LogarithmicStrainHandler<" << N << ",real>::EULERIAN :\n"
+                << "LogarithmicStrainHandler<" << N << ",real>::LAGRANGIAN;\n";
+            out << "LogarithmicStrainHandler<" << N << ",real> lgh0(setting,F0);\n";
+            out << "LogarithmicStrainHandler<" << N << ",real> lgh1(setting,F1);\n";
+            out << "tfel::math::StensorView<" << N << ",real> "
+                << "g0_view(gradients0);\n"
                 << "g0_view = lgh0.getHenckyLogarithmicStrain();\n";
-            out << "tfel::math::StensorView<" << N << ",real> g1_view("
-                << get_ptr("gradients1", oe) << ");\n"
+            out << "tfel::math::StensorView<" << N << ",real> "
+                << "g1_view(gradients1);\n"
                 << "g1_view = lgh1.getHenckyLogarithmicStrain();\n";
             if ((h == ModellingHypothesis::PLANESTRESS) ||
                 (h ==
@@ -443,7 +386,7 @@ namespace mfront {
                   << as.second.getValueForModellingHypothesis(h) << "]));\n";
             }
             out << "tfel::math::StensorView<" << N << ",real> s0_view("
-                << get_ptr("thermodynamic_forces0", oC) << ");\n"
+                << "thermodynamic_forces0);\n"
                 << "s0_view = lgh0.convertFromCauchyStress(s0);\n";
           }
           out << "auto *const gradients0_old = d->s0.gradients;\n"
@@ -466,26 +409,6 @@ namespace mfront {
         }
       }
       // behaviour integration
-      if (type == BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
-        out << "const auto smf = [&d]{\n"
-            << "  if((d->K[0]>-0.5)&&(d->K[0]<0.5)){\n"
-            << "    // no stiffness requested, \n"
-            << "    // returned value is meaningless\n"
-            << "    return Behaviour::DSIG_DF;\n"
-            << "  }\n"
-            << "  if(d->K[1]<0.5){\n"
-            << "    return Behaviour::DSIG_DF;\n"
-            << "  } else if (d->K[1]<1.5){\n"
-            << "    return Behaviour::DS_DEGL;\n"
-            << "  } else if (d->K[1]<2.5){\n"
-            << "    return Behaviour::DPK1_DF;\n"
-            << "  } else {\n"
-            << "  std::cerr << \"invalid choice for consistent tangent \"\n"
-               "               \"operator\\n\";\n"
-            << "  std::exit(-1);\n"
-            << "  }\n"
-            << "}();\n";
-      }
       out << "const auto r = mfront::gb::integrate<Behaviour>(*d,";
       if (type == BehaviourDescription::GENERALBEHAVIOUR) {
         out << "Behaviour::STANDARDTANGENTOPERATOR";
@@ -500,30 +423,43 @@ namespace mfront {
       }
       out << ", " << name << "_getOutOfBoundsPolicy());\n";
       // treating strain measures
-      if (((bd.getBehaviourType() ==
-            BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) ||
-           (bd.getBehaviourType() == BehaviourDescription::GENERALBEHAVIOUR)) &&
-          (bd.isStrainMeasureDefined())) {
+      if (is_finite_strain_through_strain_measure) {
+        // post-processing
+        const auto ms = bd.getStrainMeasure();
         out << "d->s0.gradients = gradients0_old;\n"
             << "d->s1.gradients = gradients1_old;\n"
             << "d->s0.thermodynamic_forces = thermodynamic_forces0_old;\n"
             << "d->s1.thermodynamic_forces = thermodynamic_forces1_old;\n"
             << "d->K = K_old;\n";
         out << "if(r){\n";
-        // post-processing
-        const auto ms = bd.getStrainMeasure();
         if (ms == BehaviourDescription::GREENLAGRANGE) {
           const auto N = tfel::material::getSpaceDimension(h);
           const auto s = tfel::material::getStensorSize(h);
           out << "if(bp){\n"
+              << "if(smf==TangentOperator::DSIG_DF){\n"
               << "const tfel::math::stensor<" << N << ",real> S0("
-              << get_ptr("thermodynamic_forces0", oC) << ");\n"
+              << "thermodynamic_forces0);\n"
               << "tfel::math::st2tost2<" << N << ",real> K0;\n"
               << "tfel::fsalgo::copy<" << s * s << ">::exe(K,K0.begin());\n"
               << "tfel::math::T2toST2View<" << N << ",real>(d->K) = "
               << "convert<TangentOperator::DSIG_DF,"
-              << "TangentOperator::DS_DEGL>(K0,F0,F0,S0);\n"
-              << "} else {\n";
+              << "TangentOperator::DS_DEGL>(K0,F0,F0,s0);\n"
+              << "} else if (smf==TangentOperator::DS_DEGL){\n"
+              << "tfel::fsalgo::copy<" << s * s << ">::exe(K,d->K);\n"
+              << "} else if (smf==TangentOperator::DPK1_DF){\n"
+              << "const tfel::math::stensor<" << N << ",real> S0("
+              << "thermodynamic_forces0);\n"
+              << "tfel::math::st2tost2<" << N << ",real> K0;\n"
+              << "tfel::fsalgo::copy<" << s * s << ">::exe(K,K0.begin());\n"
+              << "tfel::math::T2toT2View<" << N << ",real>(d->K) = "
+              << "convert<TangentOperator::DPK1_DF,"
+              << "TangentOperator::DS_DEGL>(K0,F0,F0,s0);\n"
+              << "} else {\n"
+              << "  std::cerr << \"invalid choice for consistent tangent \"\n"
+              << "               \"operator\\n\";\n"
+              << "  std::exit(-1);\n"
+              << "}\n"
+              << "} else { // if(bp)\n";
           if ((h == ModellingHypothesis::PLANESTRESS) ||
               (h ==
                ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)) {
@@ -536,33 +472,50 @@ namespace mfront {
                    "std::sqrt(1+2*(d->s1.internal_state_variables["
                 << as.second.getValueForModellingHypothesis(h) << "]));\n";
             if (h == ModellingHypothesis::PLANESTRESS) {
-              out << "F0[2] += F0zz;\n";
+              out << "F1[2] += F1zz;\n";
             } else {
-              out << "F0[1] += F0zz;\n";
+              out << "F1[1] += F1zz;\n";
             }
           }
           out << "const tfel::math::stensor<" << N << ",real> S1("
-              << get_ptr("thermodynamic_forces1", oC) << ");\n"
+              << "thermodynamic_forces1);\n"
               << "tfel::math::StensorView<" << N << ",real> s1_view("
-              << get_ptr("d->s1.thermodynamic_forces", oC) << ");\n"
+              << "d->s1.thermodynamic_forces);\n"
               << "s1_view = "
                  "tfel::math::"
                  "convertSecondPiolaKirchhoffStressToCauchyStress("
                  "S1,F1);\n"
               << "if(bk){\n"
+              << "if(smf==TangentOperator::DSIG_DF){\n"
               << "tfel::math::st2tost2<" << N << ",real> K1;\n"
               << "tfel::fsalgo::copy<" << s * s << ">::exe(K,K1.begin());\n"
               << "tfel::math::T2toST2View<" << N << ",real>(d->K) = "
               << "convert<TangentOperator::DSIG_DF,"
-              << "TangentOperator::DS_DEGL>(K1,F0,F1,S1);\n"
+              << "TangentOperator::DS_DEGL>(K1,F0,F1,\n"
+              << "tfel::math::stensor<" << N << ",real>(s1_view));\n"
+              << "} else if (smf == TangentOperator::DS_DEGL) {\n"
+              << "tfel::fsalgo::copy<" << s * s << ">::exe(K,d->K);\n"
+              << "} else if (smf==TangentOperator::DPK1_DF){\n"
+              << "tfel::math::st2tost2<" << N << ",real> K1;\n"
+              << "tfel::fsalgo::copy<" << s * s << ">::exe(K,K1.begin());\n"
+              << "tfel::math::T2toT2View<" << N << ",real>(d->K) = "
+              << "convert<TangentOperator::DPK1_DF,"
+              << "TangentOperator::DS_DEGL>(K1,F0,F1,\n"
+              << "tfel::math::stensor<" << N << ",real>(s1_view));\n"
+              << "} else {\n"
+              << "  std::cerr << \"invalid choice for consistent tangent \"\n"
+              << "               \"operator\\n\";\n"
+              << "  std::exit(-1);\n"
               << "}\n"
-              << "}\n";
+              << "} // end of if(bk)\n"
+              << "} // end of if(bp)\n";
         } else if (ms == BehaviourDescription::HENCKY) {
           const auto N = tfel::material::getSpaceDimension(h);
           const auto s = tfel::material::getStensorSize(h);
           out << "if(bp){\n"
+              << "if(smf==TangentOperator::DSIG_DF){\n"
               << "const tfel::math::stensor<" << N << ",real> T0("
-              << get_ptr("thermodynamic_forces0", oC) << ");\n"
+              << "thermodynamic_forces0);\n"
               << "tfel::math::st2tost2<" << N << ",real> K0;\n"
               << "tfel::fsalgo::copy<" << s * s << ">::exe(K,K0.begin());\n"
               << "const auto Cs = "
@@ -572,7 +525,30 @@ namespace mfront {
               << "tfel::math::T2toST2View<" << N << ",real>(d->K) = "
               << "convert<TangentOperator::DSIG_DF,"
               << "        TangentOperator::DTAU_DF>(Dt,F0,F0,s0);\n"
-              << "} else {\n";
+              << "} else if(smf==TangentOperator::DS_DEGL){\n"
+              << "const tfel::math::stensor<" << N << ",real> T0("
+              << "thermodynamic_forces0);\n"
+              << "tfel::math::st2tost2<" << N << ",real> K0;\n"
+              << "tfel::fsalgo::copy<" << s * s << ">::exe(K,K0.begin());\n"
+              << "tfel::math::ST2toST2View<" << N
+              << ",real>(d->K) = "
+                 "lgh0.convertToMaterialTangentModuli(K0,T0);\n"
+              << "} else if(smf==TangentOperator::DPK1_DF){\n"
+              << "const tfel::math::stensor<" << N << ",real> T0("
+              << "thermodynamic_forces0);\n"
+              << "tfel::math::st2tost2<" << N << ",real> K0;\n"
+              << "tfel::fsalgo::copy<" << s * s << ">::exe(K,K0.begin());\n"
+              << "const auto Cse = "
+                 "lgh0.convertToMaterialTangentModuli(K0,T0);\n"
+              << "tfel::math::T2toT2View<" << N << ",real>(d->K) = "
+              << "convert<TangentOperator::DPK1_DF,"
+              << "        TangentOperator::DS_DEGL>(Cse,F0,F0,s0);\n"
+              << "} else {\n"
+              << "  std::cerr << \"invalid choice for consistent tangent \"\n"
+              << "               \"operator\\n\";\n"
+              << "  std::exit(-1);\n"
+              << "}\n"
+              << "} else { // if(bp)\n";
           if ((h == ModellingHypothesis::PLANESTRESS) ||
               (h ==
                ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)) {
@@ -586,12 +562,13 @@ namespace mfront {
                 << as.second.getValueForModellingHypothesis(h) << "]));\n";
           }
           out << "const tfel::math::stensor<" << N << ",real> T1("
-              << get_ptr("thermodynamic_forces1", oC) << ");\n"
+              << "thermodynamic_forces1);\n"
               << "const auto s1 = lgh1.convertToCauchyStress(T1);\n"
               << "tfel::math::StensorView<" << N << ",real> s1_view("
-              << get_ptr("d->s1.thermodynamic_forces", oC) << ");\n"
+              << "d->s1.thermodynamic_forces);\n"
               << "s1_view = s1;\n"
               << "if(bk){\n"
+              << "if(smf==TangentOperator::DSIG_DF){\n"
               << "tfel::math::st2tost2<" << N << ",real> K1;\n"
               << "tfel::fsalgo::copy<" << s * s << ">::exe(K,K1.begin());\n"
               << "const auto Cs = "
@@ -602,8 +579,27 @@ namespace mfront {
               << "tfel::math::T2toST2View<" << N << ",real>(d->K) = "
               << "convert<TangentOperator::DSIG_DF,"
               << "        TangentOperator::DTAU_DF>(Dt,F0,F1,s1);\n"
+              << "} else if(smf==TangentOperator::DS_DEGL){\n"
+              << "tfel::math::st2tost2<" << N << ",real> D;\n"
+              << "tfel::fsalgo::copy<" << s * s << ">::exe(K,D.begin());\n"
+              << "tfel::math::ST2toST2View<" << N
+              << ",real>(d->K) = "
+                 "lgh1.convertToMaterialTangentModuli(D,T1);\n"
+              << "} else if(smf==TangentOperator::DPK1_DF){\n"
+              << "tfel::math::st2tost2<" << N << ",real> D;\n"
+              << "tfel::fsalgo::copy<" << s * s << ">::exe(K,D.begin());\n"
+              << "const auto Cse = "
+                 "lgh1.convertToMaterialTangentModuli(D,T1);\n"
+              << "tfel::math::T2toT2View<" << N << ",real>(d->K) = "
+              << "convert<TangentOperator::DPK1_DF,"
+              << "        TangentOperator::DS_DEGL>(Cse,F0,F1,s1);\n"
+              << "} else {\n"
+              << "  std::cerr << \"invalid choice for consistent tangent \"\n"
+              << "               \"operator\\n\";\n"
+              << "  std::exit(-1);\n"
               << "}\n"
-              << "}\n";
+              << "} // end of if(bk)\n"
+              << "} // end of if(bp)\n";
         } else {
           raise("unsupported strain measure");
         }

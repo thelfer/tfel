@@ -376,6 +376,7 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/T2toT2/T2toT2Concept.hxx                                                           \
 			TFEL/Math/T2toT2/T2toT2Concept.ixx                                                           \
 			TFEL/Math/T2toT2/T2toT2ConceptIO.hxx                                                         \
+			TFEL/Math/T2toT2/T2toT2View.hxx                                                         \
 			TFEL/Math/T2toT2/T2toT2ConceptOperations.hxx                                                 \
 			TFEL/Math/T2toT2/t2tot2ResultType.hxx                                                        \
 			TFEL/Math/T2toT2/T2toT2FromTinyMatrixView.hxx                                                \

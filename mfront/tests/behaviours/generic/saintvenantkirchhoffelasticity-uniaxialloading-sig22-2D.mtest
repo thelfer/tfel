@@ -13,7 +13,9 @@
 @ModellingHypothesis 'GeneralisedPlaneStrain';
 @XMLOutputFile @xml_output@;
 @MaximumNumberOfSubSteps 1;
-@Behaviour<generic> @library@ 'SaintVenantKirchhoffElasticity';
+@Behaviour<generic> @library@ 'SaintVenantKirchhoffElasticity'{
+  tangent_operator : @tangent_operator@
+};
 
 @MaterialProperty<constant> 'YoungModulus'     215.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;

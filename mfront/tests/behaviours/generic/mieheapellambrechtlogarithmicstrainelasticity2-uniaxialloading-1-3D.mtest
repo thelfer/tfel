@@ -7,7 +7,9 @@
 
 @XMLOutputFile @xml_output@;
 @MaximumNumberOfSubSteps 1;
-@Behaviour<generic> @library@ 'LogarithmicStrainElasticity2';
+@Behaviour<generic> @library@ 'LogarithmicStrainElasticity2' {
+ tangent_operator : @tangent_operator@
+};
 @MaterialProperty<constant> 'YoungModulus'     215.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 

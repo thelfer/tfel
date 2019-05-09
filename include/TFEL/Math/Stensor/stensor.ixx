@@ -696,19 +696,17 @@ namespace tfel{
       return s;
     }
 
-    template<unsigned short N,typename T>
-    template<typename VectorType,
-	     typename VectorType2>
+    template <unsigned short N, typename T>
+    template <typename VectorType, typename VectorType2>
     typename std::enable_if<
-      tfel::typetraits::IsAssignableTo<
-	typename ComputeBinaryResult<VectorNumType<VectorType>,
-				     VectorNumType<VectorType2>,
-				     OpMult>::Result,T
-				      >::cond,
-      stensor<N,T>>::type
-    stensor<N,T>::buildFromVectorsSymmetricDiadicProduct(const VectorType&  v1,
-							 const VectorType2& v2)
-    {
+        tfel::typetraits::IsAssignableTo<
+            typename ComputeBinaryResult<VectorNumType<VectorType>,
+                                         VectorNumType<VectorType2>,
+                                         OpMult>::Result,
+            T>::cond,
+        stensor<N, T>>::type
+    stensor<N, T>::buildFromVectorsSymmetricDiadicProduct(
+        const VectorType& v1, const VectorType2& v2) {
       stensor<N,T> s;
       tfel::math::internals::BuildStensorFromVectorsSymmetricDiadicProduct<N>::exe(s,v1,v2);
       return s;

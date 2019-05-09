@@ -6,7 +6,9 @@
  */
 
 @XMLOutputFile @xml_output@;
-@Behaviour<generic> @library@ 'LogarithmicStrainElasticity3';
+@Behaviour<generic> @library@ 'LogarithmicStrainElasticity3' {
+ tangent_operator : @tangent_operator@
+};
 @MaterialProperty<constant> 'YoungModulus'     215.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 

@@ -7,8 +7,10 @@
 
 @XMLOutputFile @xml_output@;
 @ModellingHypothesis 'AxisymmetricalGeneralisedPlaneStrain';
+@Behaviour<generic> @library@ 'LogarithmicStrainElasticity' {
+ tangent_operator : @tangent_operator@
+};
 
-@Behaviour<generic> @library@ 'LogarithmicStrainElasticity';
 @MaterialProperty<constant> 'YoungModulus'     215.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 

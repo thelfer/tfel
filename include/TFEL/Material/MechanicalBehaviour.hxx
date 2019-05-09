@@ -88,19 +88,17 @@ namespace tfel{
        * Most mechanical behaviour can only compute one tangent
        * operator. Finite strain beaviours are a noticeable exception.
        */
-      enum SMFlag{
-	STANDARDTANGENTOPERATOR
-      }; // end of enum Flag
+      enum SMFlag { STANDARDTANGENTOPERATOR };  // end of enum Flag
     }; // end of struct
 
     /*!
      * a trait class describing which tangent operators can be
      * computed by a mechanical behaviour.
      */
-    template<>
-    struct TangentOperatorTraits<MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR>
-      : public FiniteStrainBehaviourTangentOperatorBase
-    {
+    template <>
+    struct TangentOperatorTraits<
+        MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR>
+        : public FiniteStrainBehaviourTangentOperatorBase {
       /*!
        * Most mechanical behaviour can only compute one tangent
        * operator. Finite strain beaviours are a noticeable exception.

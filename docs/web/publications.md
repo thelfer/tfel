@@ -3,7 +3,8 @@
 % January 11, 2018
 
 ---
-nocite: |
+nocite:
+    @dorfler_numerical_2019
     @bernachy-barbe_effect_2019
     @bejaoui_description_2019
     @hure_coalescence_2018

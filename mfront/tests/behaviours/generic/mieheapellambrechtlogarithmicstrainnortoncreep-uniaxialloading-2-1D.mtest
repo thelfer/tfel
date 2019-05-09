@@ -9,7 +9,9 @@
 @MaximumNumberOfSubSteps 1;
 @ModellingHypothesis 'AxisymmetricalGeneralisedPlaneStrain';
 
-@Behaviour<generic> @library@ 'LogarithmicStrainNortonCreep';
+@Behaviour<generic> @library@ 'LogarithmicStrainNortonCreep' {
+ tangent_operator : @tangent_operator@
+};
 @DrivingVariableEpsilon 1.e-10;
 @StressEpsilon          2.e3;
 

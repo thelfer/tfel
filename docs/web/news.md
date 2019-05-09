@@ -18,6 +18,14 @@
 \newcommand{\deriv}[2]{{\displaystyle \frac{\displaystyle \partial #1}{\displaystyle \partial #2}}}
 \newcommand{\sigmaeq}{\sigma_{\mathrm{eq}}}
 
+<center>
+<a class="twitter-timeline" data-lang="en" data-width="600" data-height="600" data-theme="dark" data-link-color="#E95F28" href="https://twitter.com/TFEL_MFront?ref_src=twsrc%5Etfw">
+Tweets by TFEL_MFront
+</a>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8">
+</script>
+</center>
+
 # New FEniCS tour of elastoplasticity using the `MFront` code generator (24/01/2019)
 
 Du to Jeremy Bleyer a new tutorial on how to use `MFront` with `FEniCS`

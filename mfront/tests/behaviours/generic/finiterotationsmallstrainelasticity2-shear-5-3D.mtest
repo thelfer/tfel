@@ -5,7 +5,10 @@
  * \brief  26 nov. 2013
  */
 
-@Behaviour<generic> @library@ 'FiniteRotationSmallStrainElasticity2';
+@MaximumNumberOfSubSteps 1;
+@Behaviour<generic> @library@ 'FiniteRotationSmallStrainElasticity2' {
+  tangent_operator : @tangent_operator@
+};
 @MaterialProperty<constant> 'YoungModulus'     215.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 
