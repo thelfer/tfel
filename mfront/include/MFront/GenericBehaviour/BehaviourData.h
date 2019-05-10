@@ -58,7 +58,6 @@ extern "C" {
      * - if K[0] is greater than 3.5, the consistent tangent operator
      *   must be computed.
      *
-
      * Other values of K are meant to store behaviour's option. This
      * is currently only meaningful for finite strain behaviours.
      *
