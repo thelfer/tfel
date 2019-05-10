@@ -1,30 +1,28 @@
 /*!
  * \file   LogarithmicStrainHandler.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   25 juin 2017
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_TFEL_MATH_LOGARITHMICSTRAINHANDLER_HXX
 #define LIB_TFEL_MATH_LOGARITHMICSTRAINHANDLER_HXX
 
-#include"TFEL/Math/tensor.hxx"
-#include"TFEL/Math/tvector.hxx"
-#include"TFEL/Math/tmatrix.hxx"
-#include"TFEL/Math/stensor.hxx"
-#include"TFEL/Math/st2tost2.hxx"
+#include "TFEL/Math/tensor.hxx"
+#include "TFEL/Math/tvector.hxx"
+#include "TFEL/Math/tmatrix.hxx"
+#include "TFEL/Math/stensor.hxx"
+#include "TFEL/Math/st2tost2.hxx"
 
-namespace tfel
-{
+namespace tfel {
 
-  namespace material
-  {
+  namespace material {
 
     /*!
      * \brief A base class for all specialisations of the
@@ -50,14 +48,14 @@ namespace tfel
       void checkEulerianSetting() const;
       //! setting
       const Setting s;
-    }; // end of struct LogarithmicStrainHandlerBase
+    };  // end of struct LogarithmicStrainHandlerBase
 
     /*!
      * \brief This class gathers various methods used to
      * \tparam N: space dimension
      * \tparam StressType: type used to describe the stress.
      */
-    template<unsigned short N,typename StressType>
+    template <unsigned short N, typename StressType>
     struct LogarithmicStrainHandler;
 
     /*!
@@ -72,13 +70,13 @@ namespace tfel
       //! a simple alias
       using stress = StressType;
       //! a simple alias
-      using DeformationGradient = tfel::math::tensor<1u,real>;
+      using DeformationGradient = tfel::math::tensor<1u, real>;
       //! a simple alias
-      using StrainStensor = tfel::math::stensor<1u,real>;
+      using StrainStensor = tfel::math::stensor<1u, real>;
       //! a simple alias
-      using StressStensor = tfel::math::stensor<1u,stress>;
+      using StressStensor = tfel::math::stensor<1u, stress>;
       //! a simple alias
-      using TangentOperator = tfel::math::st2tost2<1u,stress>;
+      using TangentOperator = tfel::math::st2tost2<1u, stress>;
       //! a simple alias
       using size_type = unsigned short;
       //! numerical parameter used to distinguish egal eigenvalues.
@@ -92,7 +90,8 @@ namespace tfel
       //! \return the the logarithmic strain
       StrainStensor getHenckyLogarithmicStrain() const;
       /*!
-       * \param[out] elog: the logarithmic strain in `Abaqus/Standard` conventions
+       * \param[out] elog: the logarithmic strain in `Abaqus/Standard`
+       * conventions
        */
       void getHenckyLogarithmicStrain(real *const) const;
       /*!
@@ -181,8 +180,8 @@ namespace tfel
        * \brief half the logarithm of the eigenvalues of the right
        * Cauchy Green tensor
        */
-      tfel::math::tvector<3u,real> e;
-    }; // end of LogarithmicStrainHandler<1u,StressType>
+      tfel::math::tvector<3u, real> e;
+    };  // end of LogarithmicStrainHandler<1u,StressType>
 
     /*!
      * \brief partial specialisation of the `LogarithmicStrainHandler`
@@ -632,10 +631,10 @@ namespace tfel
       const tfel::math::tvector<3u, real> e;
     };
 
-  } // end of namespace material
+  }  // end of namespace material
 
-} // end of namespace material
+}  // end of namespace material
 
-#include"TFEL/Material/LogarithmicStrainHandler.ixx"
+#include "TFEL/Material/LogarithmicStrainHandler.ixx"
 
 #endif /* LIB_TFEL_MATH_LOGARITHMICSTRAINHANDLER_HXX */

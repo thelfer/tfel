@@ -1731,7 +1731,8 @@ namespace mfront {
                                                    const BehaviourDescription& mb,
                                                    const char c) const {
     if (mb.isModellingHypothesisSupported(ModellingHypothesis::PLANESTRESS)) {
-      const auto v = this->checkIfAxialStrainIsDefinedAndGetItsOffset(mb);
+      const auto v = this->checkIfAxialStrainIsDefinedAndGetItsOffset(
+          mb, ModellingHypothesis::PLANESTRESS);
       if (v.first) {
         out << "const CastemReal ezz" << c << " = STATEV[" << v.second.getValueForDimension(2)
             << "];\n";

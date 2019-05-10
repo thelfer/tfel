@@ -57,6 +57,26 @@ extern "C" {
      *   computed.
      * - if K[0] is greater than 3.5, the consistent tangent operator
      *   must be computed.
+     *
+
+     * Other values of K are meant to store behaviour's option. This
+     * is currently only meaningful for finite strain behaviours.
+     *
+     * For finite strain behaviours, K[1] holds the stress measure
+     * used:
+     * - if K[1] < 0.5, the Cauchy stress is used
+     * - if 0.5 < K[1] < 1.5, the second Piola-Kirchoff stress is used
+     * - if 1.5 < K[1] < 2.5, the first Piola-Kirchoff stress is used
+     *
+     * For finite strain behaviours, K[2] holds the consitent tangent
+     * operator returned by the behaviour:
+     * - if K[2]<0.5, the derivative of the Cauchy stress with respect
+     *   to the deformation gradient is returned
+     * - if 0.5<K[2]<1.5, the derivative of the second Piola-Kirchoff
+     *   stress with respect to the Green-Lagrange strain
+     *   is returned
+     * - if 1.5<K[2]<2.5, the derivative of the first Piola-Kirchoff
+     *   stress with respect to the deformation gradient is returned
      */
     double * K;
     /*!

@@ -556,7 +556,8 @@ namespace mfront {
         << "const bool b = std::abs(*DDSDDE)>0.5;\n"
         << "if(*HYPOTHESIS==2){\n";
     if (mb.isModellingHypothesisSupported(ModellingHypothesis::PLANESTRESS)) {
-      const auto v = this->checkIfAxialStrainIsDefinedAndGetItsOffset(mb);
+      const auto v = this->checkIfAxialStrainIsDefinedAndGetItsOffset(
+          mb, ModellingHypothesis::PLANESTRESS);
       if (v.first) {
         out << "const epx::EuroplexusReal ezz = "
             << "STATEV[" << v.second.getValueForDimension(2) << "];\n"
@@ -593,7 +594,8 @@ namespace mfront {
         << "if(*STATUS==0){\n"
         << "if(*HYPOTHESIS==2){\n";
     if (mb.isModellingHypothesisSupported(ModellingHypothesis::PLANESTRESS)) {
-      const auto v = this->checkIfAxialStrainIsDefinedAndGetItsOffset(mb);
+      const auto v = this->checkIfAxialStrainIsDefinedAndGetItsOffset(
+          mb, ModellingHypothesis::PLANESTRESS);
       if (v.first) {
         out << "const epx::EuroplexusReal ezz = "
             << "STATEV[" << v.second.getValueForDimension(2) << "];\n"
@@ -651,7 +653,8 @@ namespace mfront {
         << "const bool b = std::abs(*DDSDDE)>0.5;\n"
         << "if(*HYPOTHESIS==2){\n";
     if (mb.isModellingHypothesisSupported(ModellingHypothesis::PLANESTRESS)) {
-      const auto v = this->checkIfAxialStrainIsDefinedAndGetItsOffset(mb);
+      const auto v = this->checkIfAxialStrainIsDefinedAndGetItsOffset(
+          mb, ModellingHypothesis::PLANESTRESS);
       if (v.first) {
         out << "const epx::EuroplexusReal ezz = "
             << "STATEV[" << v.second.getValueForDimension(2) << "];\n"
@@ -687,7 +690,8 @@ namespace mfront {
         << "if(*STATUS==0){\n"
         << "if(*HYPOTHESIS==2){\n";
     if (mb.isModellingHypothesisSupported(ModellingHypothesis::PLANESTRESS)) {
-      const auto v = this->checkIfAxialStrainIsDefinedAndGetItsOffset(mb);
+      const auto v = this->checkIfAxialStrainIsDefinedAndGetItsOffset(
+          mb, ModellingHypothesis::PLANESTRESS);
       if (v.first) {
         out << "const epx::EuroplexusReal ezz = "
             << "STATEV[" << v.second.getValueForDimension(2) << "];\n"

@@ -1015,14 +1015,14 @@ namespace mfront{
     }
     if(h==ModellingHypothesis::PLANESTRESS){
       // axial strain !
-      const auto v = this->checkIfAxialStrainIsDefinedAndGetItsOffset(mb);
+      const auto v = this->checkIfAxialStrainIsDefinedAndGetItsOffset(mb, h);
       if(!v.first){
-	// no axial strain
-	out << "std::cerr << \"no state variable standing for "
+        // no axial strain
+        out << "std::cerr << \"no state variable standing for "
 	    << "the axial strain (variable with the "
 	    << "glossary name 'AxialStrain')\" << std::endl;\n";
-	out << "::exit(-1);\n";
-	return;
+        out << "::exit(-1);\n";
+        return;
       }
     }
     out << "auto integrate = [&](const int i){\n";
@@ -1030,7 +1030,7 @@ namespace mfront{
     out << "TFEL_CONSTEXPR const " << t << " zero = " << t <<  "(0);\n";
     if(h==ModellingHypothesis::PLANESTRESS){
       // axial strain !
-      const auto v = this->checkIfAxialStrainIsDefinedAndGetItsOffset(mb);
+      const auto v = this->checkIfAxialStrainIsDefinedAndGetItsOffset(mb, h);
       if(v.first){
 	out << "const " << t << " ezz_old = "
 	    << "stateOld[i+" << v.second.getValueForDimension(2) << "*(*nblock)];\n";
@@ -1099,7 +1099,7 @@ namespace mfront{
     }
     if(h==ModellingHypothesis::PLANESTRESS){
       // axial strain !
-      const auto v = this->checkIfAxialStrainIsDefinedAndGetItsOffset(mb);
+      const auto v = this->checkIfAxialStrainIsDefinedAndGetItsOffset(mb, h);
       if(v.first){
 	out << "const " << t << " ezz_new = "
 	    << "stateNew[i+" << v.second.getValueForDimension(2) << "*(*nblock)];\n"
@@ -1159,7 +1159,7 @@ namespace mfront{
     }
     if(h==ModellingHypothesis::PLANESTRESS){
       // axial strain !
-      const auto v = this->checkIfAxialStrainIsDefinedAndGetItsOffset(mb);
+      const auto v = this->checkIfAxialStrainIsDefinedAndGetItsOffset(mb, h);
       if(!v.first){
 	// no axial strain
 	out << "std::cerr << \"no state variable standing for "
@@ -1172,7 +1172,7 @@ namespace mfront{
     out << "auto integrate = [&](const int i){\n";
     writeAbaqusExplicitDataInitialisation(out,this->getFunctionNameBasis(name),ivoffset);
     if(h==ModellingHypothesis::PLANESTRESS){
-      const auto v = this->checkIfAxialStrainIsDefinedAndGetItsOffset(mb);
+      const auto v = this->checkIfAxialStrainIsDefinedAndGetItsOffset(mb, h);
       out << "TFEL_CONSTEXPR const " << t << " zero = " << t <<  "(0);\n"
 	  << "const " << t << " ezz_old = "
 	  << "stateOld[i+" << v.second.getValueForDimension(2) << "*(*nblock)];\n"
@@ -1248,7 +1248,7 @@ namespace mfront{
 	<< "}\n";
     if(h==ModellingHypothesis::PLANESTRESS){
       // axial strain !
-      const auto v = this->checkIfAxialStrainIsDefinedAndGetItsOffset(mb);
+      const auto v = this->checkIfAxialStrainIsDefinedAndGetItsOffset(mb, h);
       if(v.first){
 	out << "const " << t << " ezz_new = "
 	    << "stateNew[i+" << v.second.getValueForDimension(2) << "*(*nblock)];\n"
@@ -1331,7 +1331,7 @@ namespace mfront{
     }
     if(h==ModellingHypothesis::PLANESTRESS){
       // axial strain !
-      const auto v = this->checkIfAxialStrainIsDefinedAndGetItsOffset(mb);
+      const auto v = this->checkIfAxialStrainIsDefinedAndGetItsOffset(mb, h);
       if(!v.first){
 	// no axial strain
 	out << "std::cerr << \"no state variable standing for the axial strain (variable with the "
@@ -1394,7 +1394,7 @@ namespace mfront{
 	<< "deto -= eto;\n";
     if(h==ModellingHypothesis::PLANESTRESS){
       // on affecte ezz à U0, sa valeur pour U1 étant inconnue à ce moment (ne sert à rien pour le calcul de eto et deto
-      const auto v = this->checkIfAxialStrainIsDefinedAndGetItsOffset(mb);
+      const auto v = this->checkIfAxialStrainIsDefinedAndGetItsOffset(mb, h);
       out << "const " << t << " ezz_old = "
 	  << "stateOld[i+" << v.second.getValueForDimension(2) << "*(*nblock)];\n"
 	  << "U0[2]    = std::exp(ezz_old);\n"
@@ -1453,7 +1453,7 @@ namespace mfront{
 	<< "}\n";
     if(h==ModellingHypothesis::PLANESTRESS){
       // axial strain !
-      const auto v = this->checkIfAxialStrainIsDefinedAndGetItsOffset(mb);
+      const auto v = this->checkIfAxialStrainIsDefinedAndGetItsOffset(mb, h);
       if(v.first){
 	out << "const " << t << " ezz_new = "
 	    << "stateNew[i+" << v.second.getValueForDimension(2) << "*(*nblock)];\n"

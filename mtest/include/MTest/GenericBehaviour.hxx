@@ -15,7 +15,8 @@
 #define LIB_MTEST_GENERICBEHAVIOUR_HXX
 
 #include "TFEL/System/ExternalFunctionsPrototypes.hxx"
-#include "MTest/CastemStandardBehaviour.hxx"
+#include "MFront/GenericBehaviour/BehaviourData.hxx"
+#include "MTest/StandardBehaviourBase.hxx"
 
 namespace mtest {
 
@@ -81,27 +82,49 @@ namespace mtest {
      * \param[in]     b:     if true, integrate the behaviour over the time
      * step, if false compute a prediction of the stiffness matrix
      */
-    std::pair<bool, real> call_behaviour(tfel::math::matrix<real>&,
+    virtual std::pair<bool, real> call_behaviour(tfel::math::matrix<real>&,
                                          CurrentState&,
                                          BehaviourWorkSpace&,
                                          const real,
                                          const StiffnessMatrixType,
                                          const bool) const;
 
-    //! pointer to the function
+    virtual void executeFiniteStrainBehaviourStressPreProcessing(
+        BehaviourWorkSpace&, mfront::gb::BehaviourData&) const;
+
+    virtual void executeFiniteStrainBehaviourStressPostProcessing(
+        BehaviourWorkSpace&, mfront::gb::BehaviourData&) const;
+
+    virtual void executeFiniteStrainBehaviourTangentOperatorPreProcessing(
+        mfront::gb::BehaviourData&, const StiffnessMatrixType) const;
+
+    virtual void executeFiniteStrainBehaviourTangentOperatorPostProcessing(
+        mfront::gb::BehaviourData&) const;
+
+    //! \brief pointer to the function
     tfel::system::GenericBehaviourFctPtr fct;
-    //! type of finite strain tangent operator requested
+    //! \brief stress measure requested for finite strain behaviours
+    enum {
+      CAUCHY,  //!< Cauchy stress
+      PK2,     //!< Second Piola-Kirchoff stress
+      PK1      //!< First Piola-Kirchoff stress
+    } stress_measure = CAUCHY;
+    /*!
+     * \brief type of finite strain tangent operator requested for finite
+     * strain
+     * behaviours
+     */
     enum {
       DSIG_DF, /*!< derivative of the Cauchy stress with respect to the
                     deformation gradient */
       DS_DEGL, /*!< derivative of the second Piola-Kirchoff stress with
                     respect to the Green-Lagrange strain */
-      DPK1_DF, /*!< derivative of the first Piola-Kirchoff stress with
+      DPK1_DF  /*!< derivative of the first Piola-Kirchoff stress with
                     respect to the deformation gradient  */
     } fsto = DSIG_DF;
 
   };  // end of struct GenericBehaviour
- 
+
 }  // end of namespace mtest
- 
+
 #endif /* LIB_MTEST_GENERICBEHAVIOUR_HXX */

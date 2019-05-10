@@ -8,7 +8,7 @@
 @XMLOutputFile @xml_output@;
 @MaximumNumberOfSubSteps 1;
 @Behaviour<generic> @library@ 'LogarithmicStrainNortonCreep' {
- tangent_operator : @tangent_operator@
+ stress_measure : @stress_measure@, tangent_operator : @tangent_operator@
 };
 @DrivingVariableEpsilon 5.e-8;
 @StressEpsilon          2.e3;

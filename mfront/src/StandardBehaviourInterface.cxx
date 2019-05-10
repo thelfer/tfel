@@ -271,13 +271,29 @@ namespace mfront {
 
   std::pair<bool, SupportedTypes::TypeSize>
   StandardBehaviourInterface::checkIfAxialStrainIsDefinedAndGetItsOffset(
-      const BehaviourDescription& mb) const {
+      const BehaviourDescription& mb, const Hypothesis h) const {
     using tfel::glossary::Glossary;
-    const auto& d = mb.getBehaviourData(ModellingHypothesis::PLANESTRESS);
+    const auto& d = mb.getBehaviourData(h);
     const auto& sv = d.getPersistentVariables();
     SupportedTypes::TypeSize o;
     for (const auto& elem : sv) {
       if (d.getExternalName(elem.name) == Glossary::AxialStrain) {
+        return {true, o};
+      }
+      o += SupportedTypes::getTypeSize(elem.type, elem.arraySize);
+    }
+    return {false, o};
+  }
+
+  std::pair<bool, SupportedTypes::TypeSize> StandardBehaviourInterface::
+      checkIfAxialDeformationGradientIsDefinedAndGetItsOffset(
+          const BehaviourDescription& mb, const Hypothesis h) const {
+    using tfel::glossary::Glossary;
+    const auto& d = mb.getBehaviourData(h);
+    const auto& sv = d.getPersistentVariables();
+    SupportedTypes::TypeSize o;
+    for (const auto& elem : sv) {
+      if (d.getExternalName(elem.name) == Glossary::AxialDeformationGradient) {
         return {true, o};
       }
       o += SupportedTypes::getTypeSize(elem.type, elem.arraySize);

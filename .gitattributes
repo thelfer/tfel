@@ -1938,6 +1938,7 @@ include/TFEL/Math/Tensor/TensorFromTinyVectorView.hxx -text
 include/TFEL/Math/Tensor/TensorProduct.hxx -text
 include/TFEL/Math/Tensor/TensorSizeToDime.hxx -text
 include/TFEL/Math/Tensor/TensorTransposeExpr.hxx -text
+include/TFEL/Math/Tensor/TensorView.hxx -text
 include/TFEL/Math/Tensor/TensorViewFromStensor.hxx -text
 include/TFEL/Math/Tensor/tensor.ixx -text
 include/TFEL/Math/Tensor/tensorResultType.hxx -text

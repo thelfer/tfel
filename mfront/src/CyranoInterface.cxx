@@ -556,7 +556,8 @@ namespace mfront {
         }
         return {false, o};
       }();
-      const auto astrain = this->checkIfAxialStrainIsDefinedAndGetItsOffset(mb);
+      const auto astrain = this->checkIfAxialStrainIsDefinedAndGetItsOffset(
+          mb, ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS);
       tfel::raise_if(!astress.first, "no external state state variable standing for the axial stress");
       tfel::raise_if(!astrain.first, "no state variable standing for the axial strain");
       if (mb.getAttribute(BehaviourData::profiling, false)) {

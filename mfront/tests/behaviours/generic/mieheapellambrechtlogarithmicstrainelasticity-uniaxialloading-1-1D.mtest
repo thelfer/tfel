@@ -9,7 +9,7 @@
 @ModellingHypothesis 'AxisymmetricalGeneralisedPlaneStrain';
 
 @Behaviour<generic> @library@ 'LogarithmicStrainElasticity' {
- tangent_operator : @tangent_operator@
+ stress_measure : @stress_measure@, tangent_operator : @tangent_operator@
 };
 @MaterialProperty<constant> 'YoungModulus'     215.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;

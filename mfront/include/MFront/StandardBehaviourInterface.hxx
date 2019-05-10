@@ -121,11 +121,21 @@ namespace mfront {
     /*!
      * \return a pair. If the first entry is true, the "axial strain"
      * was found and the second contains its offset
-     * \param[in] mb : material description
+     * \param[in] mb: material description
+     * \param[in] h: modelling hypothesis
      */
     virtual std::pair<bool, SupportedTypes::TypeSize>
-    checkIfAxialStrainIsDefinedAndGetItsOffset(
-        const BehaviourDescription&) const;
+    checkIfAxialStrainIsDefinedAndGetItsOffset(const BehaviourDescription &,
+                                               const Hypothesis) const;
+    /*!
+     * \return a pair. If the first entry is true, the "deformation gradient"
+     * was found and the second contains its offset
+     * \param[in] mb: material description
+     * \param[in] h: modelling hypothesis
+     */
+    virtual std::pair<bool, SupportedTypes::TypeSize>
+    checkIfAxialDeformationGradientIsDefinedAndGetItsOffset(
+        const BehaviourDescription &, const Hypothesis) const;
     /*!
      * \brief extract a boolean value from the current token
      * \param[in] key: currently treated keyword

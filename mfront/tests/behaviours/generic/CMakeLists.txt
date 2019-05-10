@@ -11,6 +11,11 @@ link_directories("${PROJECT_BINARY_DIR}/mfront/src"
   "${PROJECT_BINARY_DIR}/src/Tests"
   "${PROJECT_BINARY_DIR}/src/Exception")
 
+set(MFRONT_GENERIC_INTERFACES_STRESS_MEASURES )
+list(APPEND MFRONT_GENERIC_INTERFACES_STRESS_MEASURES "CAUCHY")
+list(APPEND MFRONT_GENERIC_INTERFACES_STRESS_MEASURES "PK1")
+list(APPEND MFRONT_GENERIC_INTERFACES_STRESS_MEASURES "PK2")
+
 set(MFRONT_GENERIC_INTERFACES_TANGENT_OPERATORS )
 list(APPEND MFRONT_GENERIC_INTERFACES_TANGENT_OPERATORS "DPK1_DF")
 list(APPEND MFRONT_GENERIC_INTERFACES_TANGENT_OPERATORS "DSIG_DF")
@@ -296,55 +301,61 @@ function(test_generic_fs test_arg)
     endif()
   endforeach(_ARG ${ARGN})
   set(file "${CMAKE_CURRENT_SOURCE_DIR}/${test_arg}.mtest")
+  foreach(ss ${MFRONT_GENERIC_INTERFACES_STRESS_MEASURES})
   foreach(tgo ${MFRONT_GENERIC_INTERFACES_TANGENT_OPERATORS})
     foreach(rm ${IEEE754_ROUNDING_MODES})
       if(NOT _REFERENCE_FILE)
 	if(HAVE_CASTEM)
-	  add_test(NAME generic-${test_arg}_${tgo}_${rm}_mtest
+	  add_test(NAME generic-${test_arg}_${ss}_${tgo}_${rm}_mtest
   	    COMMAND mtest --rounding-direction-mode=${rm}
             --verbose=level0 --xml-output=${_XML_OUTPUT}
             --result-file-output=false
             --@library@="$<TARGET_FILE:MFrontGenericBehaviours>"
 	    --@mplibrary@="$<TARGET_FILE:MFrontMaterialProperties-castem>"
+	    --@stress_measure@=${ss}
 	    --@tangent_operator@=${tgo}
             --@xml_output@="${test_arg}-${rm}.xml" ${file})
 	else(HAVE_CASTEM)
-	  add_test(NAME generic-${test_arg}_${tgo}_${rm}_mtest
+	  add_test(NAME generic-${test_arg}_${ss}_${tgo}_${rm}_mtest
   	    COMMAND mtest --rounding-direction-mode=${rm}
             --verbose=level0 --xml-output=${_XML_OUTPUT}
             --result-file-output=false
             --@library@="$<TARGET_FILE:MFrontGenericBehaviours>"
+	    --@stress_measure@=${ss}
 	    --@tangent_operator@=${tgo}
             --@xml_output@="${test_arg}-${rm}.xml" ${file})
 	endif(HAVE_CASTEM)
       else(NOT _REFERENCE_FILE)
 	set(rfile "${top_srcdir}/mfront/tests/behaviours/references/${_REFERENCE_FILE}")
 	if(HAVE_CASTEM)
-	  add_test(NAME generic-${test_arg}_${tgo}_${rm}_mtest
+	  add_test(NAME generic-${test_arg}_${ss}_${tgo}_${rm}_mtest
             COMMAND mtest --rounding-direction-mode=${rm} --verbose=level0
 	    --xml-output=${_XML_OUTPUT} --result-file-output=false
             --@library@="$<TARGET_FILE:MFrontGenericBehaviours>"
 	    --@mplibrary@="$<TARGET_FILE:MFrontMaterialProperties-castem>"
+	    --@stress_measure@=${ss}
 	    --@tangent_operator@=${tgo}
             --@xml_output@="${test_arg}-${rm}.xml"
             --@reference_file@="${rfile}" ${file})
 	else(HAVE_CASTEM)
-	  add_test(NAME generic-${test_arg}_${tgo}_${rm}_mtest
+	  add_test(NAME generic-${test_arg}_${ss}_${tgo}_${rm}_mtest
             COMMAND mtest --rounding-direction-mode=${rm} --verbose=level0
 	    --xml-output=${_XML_OUTPUT} --result-file-output=false
             --@library@="$<TARGET_FILE:MFrontGenericBehaviours>"
+	    --@stress_measure@=${ss}
 	    --@tangent_operator@=${tgo}
             --@xml_output@="${test_arg}-${rm}.xml"
             --@reference_file@="${rfile}" ${file})
 	endif(HAVE_CASTEM)
       endif(NOT _REFERENCE_FILE)
       if(_WILL_FAIL)
-	set_tests_properties(generic-${test_arg}_${tgo}_${rm}_mtest
+	set_tests_properties(generic-${test_arg}_${ss}_${tgo}_${rm}_mtest
 	  PROPERTIES WILL_FAIL true)
       endif(_WILL_FAIL)
-      set_generic_test_properties("generic-${test_arg}_${tgo}_${rm}_mtest")
+      set_generic_test_properties("generic-${test_arg}_${ss}_${tgo}_${rm}_mtest")
     endforeach(rm ${IEEE754_ROUNDING_MODES})
   endforeach(tgo ${MFRONT_GENERIC_INTERFACES_TANGENT_OPERATORS})
+  endforeach(ss ${MFRONT_GENERIC_INTERFACES_STRESS_MEASURES})
   install_generic_test_file("${file}")
 endfunction(test_generic_fs)
 

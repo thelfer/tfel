@@ -15,10 +15,12 @@
 #define LIB_MFRONT_GENERICBEHAVIOUR_INTEGRATE_HXX
 
 #include <algorithm>
+#include "TFEL/Raise.hxx"
 #include "TFEL/Math/t2tot2.hxx"
 #include "TFEL/Math/t2tost2.hxx"
 #include "TFEL/Math/st2tost2.hxx"
 #include "TFEL/Material/OutOfBoundsPolicy.hxx"
+#include "TFEL/Material/MechanicalBehaviourTraits.hxx"
 #include "TFEL/Material/FiniteStrainBehaviourTangentOperator.hxx"
 #include "MFront/GenericBehaviour/BehaviourData.h"
 

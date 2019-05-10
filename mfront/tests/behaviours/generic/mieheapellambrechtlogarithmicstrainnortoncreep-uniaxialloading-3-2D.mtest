@@ -10,7 +10,7 @@
 @MaximumNumberOfSubSteps 1;
 
 @Behaviour<generic> @library@ 'LogarithmicStrainNortonCreep' {
- tangent_operator : @tangent_operator@
+ stress_measure : @stress_measure@, tangent_operator : @tangent_operator@
 };
 @DrivingVariableEpsilon 1.e-10;
 @StressEpsilon          2.e3;

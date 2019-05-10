@@ -22,7 +22,8 @@ namespace tfel
 namespace glossary
 {
 
-const char* Glossary::names[100] = {
+const char* Glossary::names[101] = {
+"AxialDeformationGradient",
 "AxialGrowth",
 "AxialStrain",
 "AxialStress",
@@ -123,6 +124,12 @@ const char* Glossary::names[100] = {
 "YoungModulus1",
 "YoungModulus2",
 "YoungModulus3"};
+const GlossaryEntry Glossary::AxialDeformationGradient("AxialDeformationGradient","AxialDeformationGradient",
+"","scalar",
+"la composante axiale du gradient de la transformation (cette grandeur n'a de sens que pour les calculs en contraintes planes)",
+"" /* no 'description' defined */,
+"" /* no 'notes' defined */);
+
 const GlossaryEntry Glossary::AxialGrowth("AxialGrowth","AxialGrowth",
 "","scalar",
 "axial growth under irradiation",
@@ -670,7 +677,7 @@ const GlossaryEntry Glossary::TrescaStress("TrescaStress","TrescaStress",
 "" /* no 'description' defined */,
 "" /* no 'notes' defined */);
 
-const GlossaryEntry Glossary::UltimateTensileStrength("UltimateTensileStrength",Glossary::names+89,Glossary::names+91,
+const GlossaryEntry Glossary::UltimateTensileStrength("UltimateTensileStrength",Glossary::names+90,Glossary::names+92,
 "Pa","scalar",
 "la valeur maximale de la contrainte qu'un materiau peut supporter",
 "" /* no 'description' defined */,
@@ -694,7 +701,7 @@ const GlossaryEntry Glossary::VonMisesStress("VonMisesStress","VonMisesStress",
 "" /* no 'description' defined */,
 "" /* no 'notes' defined */);
 
-const GlossaryEntry Glossary::YieldStrength("YieldStrength",Glossary::names+94,Glossary::names+96,
+const GlossaryEntry Glossary::YieldStrength("YieldStrength",Glossary::names+95,Glossary::names+97,
 "Pa","scalar",
 "la limite d'élasticité",
 "" /* no 'description' defined */,
@@ -732,7 +739,8 @@ return glossary;
 } // end of Glossary::getGlossary
 
 Glossary::Glossary(){
-this->keys.reserve(98);
+this->keys.reserve(99);
+this->insert(Glossary::AxialDeformationGradient);
 this->insert(Glossary::AxialGrowth);
 this->insert(Glossary::AxialStrain);
 this->insert(Glossary::AxialStress);

@@ -404,6 +404,45 @@ namespace tfel {
                                    OpMult>::type>>::type
     convertCauchyStressToFirstPiolaKirchhoffStress(const StensorType&, const TensorType&);
 
+    template <typename TensorType, typename TensorType2>
+    typename std::enable_if<
+        ((tfel::meta::Implements<TensorType, TensorConcept>::cond) &&
+         (TensorTraits<TensorType>::dime == 1u) &&
+         (tfel::meta::Implements<TensorType2, TensorConcept>::cond) &&
+         (TensorTraits<TensorType2>::dime == 1u)),
+        stensor<1u,
+                typename ResultType<TensorNumType<TensorType>,
+                                    TensorNumType<TensorType2>,
+                                    OpMult>::type>>::type
+    convertFirstPiolaKirchhoffStressToCauchyStress(const TensorType&,
+                                                   const TensorType2&);
+
+    template <typename TensorType, typename TensorType2>
+    typename std::enable_if<
+        ((tfel::meta::Implements<TensorType, TensorConcept>::cond) &&
+         (TensorTraits<TensorType>::dime == 2u) &&
+         (tfel::meta::Implements<TensorType2, TensorConcept>::cond) &&
+         (TensorTraits<TensorType2>::dime == 2u)),
+        stensor<2u,
+                typename ResultType<TensorNumType<TensorType>,
+                                    TensorNumType<TensorType2>,
+                                    OpMult>::type>>::type
+    convertFirstPiolaKirchhoffStressToCauchyStress(const TensorType&,
+                                                   const TensorType2&);
+
+    template <typename TensorType, typename TensorType2>
+    typename std::enable_if<
+        ((tfel::meta::Implements<TensorType, TensorConcept>::cond) &&
+         (TensorTraits<TensorType>::dime == 3u) &&
+         (tfel::meta::Implements<TensorType2, TensorConcept>::cond) &&
+         (TensorTraits<TensorType2>::dime == 3u)),
+        stensor<3u,
+                typename ResultType<TensorNumType<TensorType>,
+                                    TensorNumType<TensorType2>,
+                                    OpMult>::type>>::type
+    convertFirstPiolaKirchhoffStressToCauchyStress(const TensorType&,
+                                                   const TensorType2&);
+
   }  // end of namespace math
 
   namespace typetraits {

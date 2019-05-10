@@ -4,7 +4,7 @@
 @XMLOutputFile @xml_output@;
 @MaximumNumberOfSubSteps 1;
 @Behaviour<generic> @library@ 'SaintVenantKirchhoffElasticity' {
-  tangent_operator : @tangent_operator@
+  stress_measure : @stress_measure@, tangent_operator : @tangent_operator@
 };
 
 @MaterialProperty<constant> 'YoungModulus'     215.e9;

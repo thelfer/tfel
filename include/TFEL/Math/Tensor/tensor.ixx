@@ -608,6 +608,64 @@ namespace tfel{
                   2};
     }  // end of convertCauchyStressToFirstPiolaKirchhoffStress
 
+    template <typename TensorType, typename TensorType2>
+    typename std::enable_if<
+        ((tfel::meta::Implements<TensorType, TensorConcept>::cond) &&
+         (TensorTraits<TensorType>::dime == 1u) &&
+         (tfel::meta::Implements<TensorType2, TensorConcept>::cond) &&
+         (TensorTraits<TensorType2>::dime == 1u)),
+        stensor<1u,
+                typename ResultType<TensorNumType<TensorType>,
+                                    TensorNumType<TensorType2>,
+                                    OpMult>::type>>::type
+    convertFirstPiolaKirchhoffStressToCauchyStress(const TensorType& P,
+                                                   const TensorType2& F) {
+      return {P[0] / (F[1] * F[2]), P[1] / (F[0] * F[2]), P[2] / (F[0] * F[1])};
+    }  // end of convertFirstPiolaKirchhoffStressToCauchyStress
+
+    template <typename TensorType, typename TensorType2>
+    typename std::enable_if<
+        ((tfel::meta::Implements<TensorType, TensorConcept>::cond) &&
+         (TensorTraits<TensorType>::dime == 2u) &&
+         (tfel::meta::Implements<TensorType2, TensorConcept>::cond) &&
+         (TensorTraits<TensorType2>::dime == 2u)),
+        stensor<2u,
+                typename ResultType<TensorNumType<TensorType>,
+                                    TensorNumType<TensorType2>,
+                                    OpMult>::type>>::type
+    convertFirstPiolaKirchhoffStressToCauchyStress(const TensorType& P,
+                                                      const TensorType2& F) {
+      using real = tfel::typetraits::base_type<TensorNumType<TensorType2>>;
+      constexpr const auto cste = Cste<real>::sqrt2;
+      const auto iJ = 1 / det(F);
+      return {(P[3] * F[3] + F[0] * P[0]) * iJ,
+              (P[4] * F[4] + P[1] * F[1]) * iJ, P[2] * F[2] * iJ,
+              cste * (P[1] * F[3] + F[0] * P[4]) * iJ};
+    }  // end of convertFirstPiolaKirchhoffStressToCauchyStress
+
+    template <typename TensorType, typename TensorType2>
+    typename std::enable_if<
+        ((tfel::meta::Implements<TensorType, TensorConcept>::cond) &&
+         (TensorTraits<TensorType>::dime == 3u) &&
+         (tfel::meta::Implements<TensorType2, TensorConcept>::cond) &&
+         (TensorTraits<TensorType2>::dime == 3u)),
+        stensor<3u,
+                typename ResultType<TensorNumType<TensorType>,
+                                    TensorNumType<TensorType2>,
+                                    OpMult>::type>>::type
+    convertFirstPiolaKirchhoffStressToCauchyStress(const TensorType& P,
+                                                   const TensorType2& F) {
+      using real = tfel::typetraits::base_type<TensorNumType<TensorType2>>;
+      constexpr const auto cste = Cste<real>::sqrt2;
+      const auto iJ = 1 / det(F);
+      return {(P[5] * F[5] + P[3] * F[3] + F[0] * P[0]) * iJ,
+              (P[7] * F[7] + P[4] * F[4] + P[1] * F[1]) * iJ,
+              (P[8] * F[8] + P[6] * F[6] + P[2] * F[2]) * iJ,
+              cste * (P[7] * F[5] + P[1] * F[3] + F[0] * P[4]) * iJ,
+              cste * (P[2] * F[5] + P[8] * F[3] + F[0] * P[6]) * iJ,
+              cste * (P[2] * F[7] + P[6] * F[4] + P[8] * F[1]) * iJ};
+    }  // end of convertFirstPiolaKirchhoffStressToCauchyStress
+
   } //end of namespace math
 
 } // end of namespace tfel

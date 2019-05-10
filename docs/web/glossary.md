@@ -7,6 +7,14 @@
 \newcommand{\Frac}[2]{{\displaystyle \frac{\displaystyle #1}{\displaystyle #2}}}
 \newcommand{\deriv}[2]{{\displaystyle \frac{\displaystyle \partial #1}{\displaystyle \partial #2}}}
 
+# L'entrée AxialDeformationGradient
+
+Cette entrée décrit la composante axiale du gradient de la transformation (cette grandeur n'a de sens que pour les calculs en contraintes planes).
+
+* noms : AxialDeformationGradient
+* unité: sans unité
+* type: scalaire 
+
 # L'entrée AxialGrowth
 
 Cette entrée décrit axial growth under irradiation.
