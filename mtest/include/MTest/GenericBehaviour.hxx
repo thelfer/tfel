@@ -111,8 +111,7 @@ namespace mtest {
     } stress_measure = CAUCHY;
     /*!
      * \brief type of finite strain tangent operator requested for finite
-     * strain
-     * behaviours
+     * strain behaviours
      */
     enum {
       DSIG_DF, /*!< derivative of the Cauchy stress with respect to the
@@ -122,7 +121,6 @@ namespace mtest {
       DPK1_DF  /*!< derivative of the first Piola-Kirchoff stress with
                     respect to the deformation gradient  */
     } fsto = DSIG_DF;
-
   };  // end of struct GenericBehaviour
 
 }  // end of namespace mtest
