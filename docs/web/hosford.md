@@ -84,7 +84,7 @@ are introduced:
 - the equivalent plastic strain \(p\).
 
 The elastic strain is automatically defined by the
-`StandardElasticity` brick.
+`Implicit` domain specific language.
 
 The latter could be considered as an integration variable, but, for
 post-processing purposes, we choose to keep it as a state variable.

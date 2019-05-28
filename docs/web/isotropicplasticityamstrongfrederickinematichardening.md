@@ -138,21 +138,6 @@ where the following notations have been used:
 - \(\mts{\sigma^{e}_{\mathrm{eq}}}=\paren{\mts{\tsigma}}_{\mathrm{eq}}\)
 - \(\mts{F}=\mts{\sigma^{e}_{\mathrm{eq}}}-R\paren{\mts{p}}\)
 
-# Implicit system formulation and implementation
-
-The previous equations can be translated in an
-implicit system in a straightforward manner:
-
-\[
-\left\{
-\begin{aligned}
-f_{\tepsilonel}&=\Delta\,\tepsilonel+\Delta\,p\,\mts{\tenseur{n}}-\Delta\,\tepsilonto=\tenseur{0}\\
-f_{p}&=\Delta\,p-\left\langle\Frac{\mts{F}}{K}\right\rangle^{m}\,\Delta\,t=0\\
-f_{\tenseur{a}_{i}}&=\Delta\,\tenseur{a}_{i}-\Delta\,\tepsilonvis-g[i]\,\mts{\tenseur{a}_{i}}\,\Delta\,p=\tenseur{0}
-\end{aligned}
-\right.
-\]
-
 ## Computation of the jacobian
 
 ### Terms related to \(f_{\tepsilonel}\)
@@ -487,7 +472,7 @@ The last equation can be easily eliminated as
 \[
 \left\{
 \begin{aligned}
-\Delta\,\tenseur{a}_{i}=\Frac{\Delta\,p\,\mts{\tenseur{n}}}{1+g_{i}\,\bts{\tenseur{a}_{i}}\,\Delta\,p}
+\Delta\,\tenseur{a}_{i}=\Frac{\Delta\,p\,\mts{\tenseur{n}}-g_{i}\bts{\tenseur{a}_{i}}}{1+g_{i}\,\theta\,\Delta\,p}
 \end{aligned}
 \right.
 \]

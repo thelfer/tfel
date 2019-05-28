@@ -113,7 +113,7 @@ pandoc_html(theory  "--toc" "--toc-depth=2")
 pandoc_html(tensors "--toc" "--toc-depth=2" "--number-sections")
 pandoc_html(tfel-python "--toc" "--toc-depth=3")
 pandoc_html(generic-behaviours-interface "--toc" "--toc-depth=3")
-pandoc_html(sosv "--toc" "--toc-depth=2")
+pandoc_html(sovs "--toc" "--toc-depth=2")
 
 # mfront keywords
 

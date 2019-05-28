@@ -110,7 +110,7 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./RungeKutta-keywords.md				      \
 	   ./coverity-scan.md                                         \
 	   ./tensors.md                                               \
-	   ./sosv.md                                               \
+	   ./sovs.md                                               \
 	   ./theory.md                                                \
 	   ./robots.txt						      \
 	   ./crossdomain.xml					      \
