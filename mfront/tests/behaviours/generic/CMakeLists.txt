@@ -386,7 +386,9 @@ test_generic(externalstatevariablesboundscheck6
 
 test_generic(elasticity)
 test_generic(elasticity2)
-test_generic(elasticity3)
+if(HAVE_CASTEM)
+  test_generic(elasticity3)
+endif(HAVE_CASTEM)
 test_generic(elasticity4)
 test_generic(elasticity4-0)
 test_generic(elasticity4-1)

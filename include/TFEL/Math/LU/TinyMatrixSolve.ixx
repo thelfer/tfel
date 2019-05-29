@@ -30,52 +30,47 @@ namespace tfel {
                                                     const T eps) {
       using size_type = typename MatrixTraits<tmatrix<N, N, T>>::IndexType;
       auto x = b;
-      const auto* const mb = m.begin();
       if (p.isIdentity()) {
         for (size_type i = 0; i != N; ++i) {
-          const auto* const mv = mb + i * N;
           auto v = T(0);
           for (size_type j = 0; j != i; ++j) {
-            v += mv[j] * x(j);
+            v += m(i,j) * x(j);
           }
-          if (std::abs(mv[i]) < eps) {
+          if (std::abs(m(i,i)) < eps) {
             throw(LUNullPivot());
           }
           auto& xv = x(i);
           xv -= v;
-          xv /= mv[i];
+          xv /= m(i,i);
         }
-        b(N - 1) = x(N - 1);
-        for (size_type i = N - 1, pi = N - 2; i != 0; --i, --pi) {
-          const auto* const mv = mb + pi * N;
-          auto v = T(0);
+	b(N - 1) = x(N - 1);
+	for (size_type i = N - 1, pi = N - 2; i != 0; --i, --pi) {
+	  auto v = T(0);
           for (size_type j = i; j != N; ++j) {
-            v += mv[j] * b(j);
+            v += m(pi,j) * b(j);
           }
           b(pi) = x(pi) - v;
         }
       } else {
         for (size_type i = 0; i != N; ++i) {
           const size_type pi = p(i);
-          const auto* const mv = mb + pi * N;
           auto v = T(0);
           for (size_type j = 0; j != i; ++j) {
-            v += mv[j] * x(p(j));
+            v += m(pi,j) * x(p(j));
           }
-          if (std::abs(mv[i]) < eps) {
+          if (std::abs(m(pi,i)) < eps) {
             throw(LUNullPivot());
           }
           auto& xv = x(pi);
           xv -= v;
-          xv /= mv[i];
+          xv /= m(pi,i);
         }
         b(N - 1) = x(p(N - 1));
-        for (size_type i = N - 1, pi2 = N - 2; i != 0; --i, --pi2) {
+       for (size_type i = N - 1, pi2 = N - 2; i != 0; --i, --pi2) {
           const size_type pi = p(pi2);
-          const T* const mv = mb + pi * N;
-          T v = T(0);
+          auto v = T(0);
           for (size_type j = i; j != N; ++j) {
-            v += mv[j] * b(j);
+            v += m(pi,j) * b(j);
           }
           b(pi2) = x(pi) - v;
         }

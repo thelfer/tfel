@@ -737,8 +737,7 @@ namespace mtest {
                                   d.s1.thermodynamic_forces);
           }
         } else if (n == 2u) {
-          if (this->getHypothesis() ==
-              ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS) {
+          if (this->getHypothesis() == ModellingHypothesis::PLANESTRESS) {
             tfel::raise(
                 "GenericBehaviour::call_behaviour: "
                 "using DS_DEGL in plane strain is not supported yet");
@@ -768,7 +767,7 @@ namespace mtest {
           }
         } else if (n == 2u) {
           if (this->getHypothesis() ==
-              ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS) {
+              ModellingHypothesis::PLANESTRESS) {
             tfel::raise(
                 "GenericBehaviour::call_behaviour: "
                 "using DS_DEGL in plane strain is not supported yet");
