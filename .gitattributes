@@ -213,6 +213,7 @@ docs/gallery/behaviours/plasticity/OrthotropicLinearHardeningPlasticity.mfront -
 docs/gallery/behaviours/viscoelasticity/CMakeLists.txt -text
 docs/gallery/behaviours/viscoelasticity/GeneralizedMaxwell.mfront -text
 docs/gallery/behaviours/viscoelasticity/Makefile.am -text
+docs/gallery/behaviours/viscoelasticity/SkoroholdOlevskyViscousSinteringBehaviour.mfront -text
 docs/gallery/behaviours/viscoplasticity/CMakeLists.txt -text
 docs/gallery/behaviours/viscoplasticity/ChabocheViscoplasticity.mfront -text
 docs/gallery/behaviours/viscoplasticity/Hayhurst.mfront -text

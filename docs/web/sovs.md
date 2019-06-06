@@ -37,8 +37,10 @@ example illustrates:
 
 - the usage of `StandardElasticity` brick (see [this
   page](BehaviourBricks.html)).
-- how to use an auxiliary state variable to reduce the size of the
-  implicit system.
+- how to use an auxiliary state variable and an integration variable to
+  reduce the size of the implicit system.
+
+The full implementation is available [here](gallery/viscoelasticity/SkoroholdOlevskyViscousSinteringBehaviour.mfront)
 
 # About the Skorohold-Olevsky Viscous Sintering (SOVS) model
 
@@ -131,7 +133,7 @@ spaces, one gets:
 \[
 \begin{aligned}
 \trace{\tdepsilonin}&=\frac{\trace{\tsigma}-3\,\sigma_{s}(\rho)}{6\,\eta_{0}(T)\,\psi(\rho)}\\
-\trace{\tenseur{s}_{\tdepsilonin}}&=\frac{\tenseur{s}}{2\,\eta_{0}(T)\,\phi(\rho)}\\
+\tenseur{s}_{\tdepsilonin}&=\frac{\tenseur{s}}{2\,\eta_{0}(T)\,\phi(\rho)}\\
 \end{aligned}
 \]{#eq:viscosity2}
 
@@ -354,7 +356,7 @@ f_{\tepsilonel} &= \Delta\,\tepsilonel+
 \Delta\,t\,\frac{\mts{\tenseur{s}}}{2\,\eta_{0}(\mts{T})\,\phi\paren{\mts{\rho}\paren{\Delta\,e}}} +
 \Frac{1}{3}\,\Delta\,e\,\tenseur{I}  -\Delta\,\tepsilonto\\
 f_{e}&=\Delta\,e-
-\Delta\,t\,\frac{\mts{\trace{\mts{\tsigma}}}-3\,\sigma_{s}\paren{\mts{\rho}\paren{\Delta\,e}}}{18\,\eta_{0}(\mts{T})\,\psi\paren{\mts{\rho}\paren{\Delta\,e}}}
+3\,\Delta\,t\,\frac{\mts{\trace{\mts{\tsigma}}}-3\,\sigma_{s}\paren{\mts{\rho}\paren{\Delta\,e}}}{18\,\eta_{0}(\mts{T})\,\psi\paren{\mts{\rho}\paren{\Delta\,e}}}
 \end{aligned}
 \right.
 \]{#eq:implicit:system}

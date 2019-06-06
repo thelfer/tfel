@@ -19,6 +19,8 @@ behaviour. This framework is described
 ## Viscoelasticity
 
 - [GeneralizedMaxwell](./gallery/viscoelasticity/GeneralizedMaxwell.mfront)
+- [This page](sovs.html) describes how to implement the
+  Skorohold-Olevsky Viscous Sintering (SOVS) model.
 
 ## Damage
 

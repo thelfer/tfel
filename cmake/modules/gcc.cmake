@@ -103,11 +103,8 @@ if(enable-sanitize-options)
   tfel_enable_cxx_compiler_flag(COMPILER_FLAGS "fsanitize=bool")
   tfel_enable_cxx_compiler_flag(COMPILER_FLAGS "fsanitize=enum")
   tfel_enable_cxx_compiler_flag(COMPILER_FLAGS "fstack-check")
-  
-  
-#  tfel_enable_cxx_compiler_flag(COMPILER_FLAGS "fsanitize=leak")
-tfel_enable_cxx_compiler_flag(COMPILER_FLAGS "fno-omit-frame-pointer")
-
+  #  tfel_enable_cxx_compiler_flag(COMPILER_FLAGS "fsanitize=leak")
+  tfel_enable_cxx_compiler_flag(COMPILER_FLAGS "fno-omit-frame-pointer")
 endif(enable-sanitize-options)
 
 option(enable-cxx-17 "enable support of the C++17 standard")
