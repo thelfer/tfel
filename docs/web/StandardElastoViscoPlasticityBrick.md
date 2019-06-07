@@ -188,14 +188,19 @@ The plastic multiplier satifies the Kuhn-Tucker relation:
 \]
 
 The flow is associated is \(f\) is equal to \(g\). In practice \(f\) is
-defined by a stress criterion \(\phi\) and an isotropic hardening rule
-\(R\paren{p}\), as follows:
+defined by a stress criterion \(\phi\), a set of kinematic hardening
+rules, and an isotropic hardening rule, as follows:
 
 \[
-f\paren{\tsigma,p}= \phi\paren{\tsigma-\sum_{i}\tenseur{X}_{i}}-R\paren{p}
+f\paren{\tsigma,p}= \phi\paren{\tsigma-\sum_{i}\tenseur{X}_{i}}-\sum_{i}R_{i}\paren{p}
 \]
 
-where \(p\) is the equivalent plastic strain.
+where \(p\) is the equivalent plastic strain. Here we have decomposed
+the limit of the elastic domain as a sum, denoted
+\(\sum_{i}R_{i}\paren{p}\), to indicate that one may define it by
+combining various predefined forms of isotropic hardening rules (Voce,
+Linear, etc.) defined hereafter.
+
 
 ### The `Norton` inelastic flow
 
@@ -203,9 +208,11 @@ The plastic flow is defined by:
 
 - a function \(f\paren{\tsigma}\) giving the flow intensity
 - a viscoplastic potential \(g\)
+- one or more kinematic hardening rule (optional)
+- one isotropic hardening rule (optional)
 
 \[
-f\paren{\tsigma}=A\left<\Frac{\phi\paren{\tsigma-\sum_{i}\tenseur{X}_{i}}}{K}\right>^{n}
+f\paren{\tsigma}=A\left<\Frac{\phi\paren{\tsigma-\sum_{i}\tenseur{X}_{i}}-\sum_{i}R_{i}\paren{p}}{K}\right>^{n}
 \]
 
 ## List of available stress criterion

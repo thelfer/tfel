@@ -66,6 +66,6 @@ The following brick are available:
   potential](HookeStressPotential.html). In particular, all options passed to
   the `StandardElasticity` brick are indeed forwarded to the underlying
   Hooke stress potential.
-- the `DDIF2` brick
-- the `StandardElastoViscoplasticity` brick
-- `FiniteStrainSingleCrystal`
+- the [`DDIF2` brick](DDIF2Brick.html)
+- the [`StandardElastoViscoplasticity` brick](StandardElastoViscoPlasticityBrick.html)
+- [`FiniteStrainSingleCrystal`](finitestrainsinglecrystal.html)
