@@ -108,8 +108,8 @@ namespace mfront{
         const std::string& id) const {
       auto mts = getMiddleOfTimeStepModifier(bd);
       // computation of the material properties
-      if ((!this->R0.is<BehaviourDescription::ConstantMaterialProperty>()) &&
-          (!this->Rinf.is<BehaviourDescription::ConstantMaterialProperty>()) &&
+      if ((!this->R0.is<BehaviourDescription::ConstantMaterialProperty>()) ||
+          (!this->Rinf.is<BehaviourDescription::ConstantMaterialProperty>()) ||
           (!this->b.is<BehaviourDescription::ConstantMaterialProperty>())) {
         constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
         CodeBlock i;
@@ -121,7 +121,7 @@ namespace mfront{
           mps << ";\n";
         }
         if (!this->Rinf.is<BehaviourDescription::ConstantMaterialProperty>()) {
-          const auto Rin = IsotropicHardeningRule::getVariableId("Ring", fid, id);
+          const auto Rin = IsotropicHardeningRule::getVariableId("Rinf", fid, id);
           mps << "this->" + Rin + " = ";
           dsl.writeMaterialPropertyEvaluation(mps, this->Rinf, mts);
           mps << ";\n";

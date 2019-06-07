@@ -511,9 +511,9 @@ namespace mfront {
                    "std::sqrt(1+2*(d->s1.internal_state_variables["
                 << as.second.getValueForModellingHypothesis(h) << "]));\n";
             if (h == ModellingHypothesis::PLANESTRESS) {
-              out << "F0[2] += F0zz;\n";
+              out << "F1[2] += F1zz;\n";
             } else {
-              out << "F0[1] += F0zz;\n";
+              out << "F1[1] += F1zz;\n";
             }
           }
           out << "const tfel::math::stensor<" << N << ",real> S1("
