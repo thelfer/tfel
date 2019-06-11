@@ -1728,6 +1728,7 @@ include/TFEL/Math/Matrix/MatrixConcept.hxx -text
 include/TFEL/Math/Matrix/MatrixConcept.ixx -text
 include/TFEL/Math/Matrix/MatrixConceptOperations.hxx -text
 include/TFEL/Math/Matrix/MatrixUtilities.hxx -text
+include/TFEL/Math/Matrix/MatrixUtilities.ixx -text
 include/TFEL/Math/Matrix/TMatrixTVectorExpr.hxx -text
 include/TFEL/Math/Matrix/TMatrixView.hxx -text
 include/TFEL/Math/Matrix/TVectorTMatrixExpr.hxx -text

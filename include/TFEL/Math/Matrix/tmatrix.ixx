@@ -332,18 +332,16 @@ namespace tfel{
 	tfel::meta::Implements<Matrix,MatrixConcept>::cond,
 	typename ComputeUnaryResult<typename MatrixTraits<Matrix>::NumType,Power<3> >::Result
 	>::type
-      det3(const Matrix& m)
-      {
-	typedef typename MatrixTraits<Matrix>::NumType T;
-	const T a = m(0,0);
-	const T b = m(0,1);
-	const T c = m(0,2);
-	const T d = m(1,0);
-	const T e = m(1,1);
-	const T f = m(1,2);
-	const T g = m(2,0);
-	const T h = m(2,1);
-	const T i = m(2,2);
+      det3(const Matrix& m){
+	const auto a = m(0,0);
+	const auto b = m(0,1);
+	const auto c = m(0,2);
+	const auto d = m(1,0);
+	const auto e = m(1,1);
+	const auto f = m(1,2);
+	const auto g = m(2,0);
+	const auto h = m(2,1);
+	const auto i = m(2,2);
 	return a*(e*i-f*h)+b*(f*g-d*i)+c*(d*h-e*g);
       }
 

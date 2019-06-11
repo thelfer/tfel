@@ -24,6 +24,7 @@
 #include"TFEL/Math/General/BaseCast.hxx"
 #include"TFEL/Math/Vector/VectorUtilities.hxx"
 #include"TFEL/Math/Matrix/MatrixUtilities.hxx"
+#include"TFEL/Math/tmatrix.hxx"
 #include"TFEL/Math/TinyMatrixInvert.hxx"
 #include"TFEL/Math/ST2toST2/ConvertT2toST2ToST2toST2Expr.hxx"
 #include"TFEL/Math/ST2toST2/BuildFromRotationMatrix.hxx"

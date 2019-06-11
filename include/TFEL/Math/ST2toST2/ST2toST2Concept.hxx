@@ -18,6 +18,7 @@
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Metaprogramming/Implements.hxx"
 #include"TFEL/Metaprogramming/InvalidType.hxx"
+#include"TFEL/Math/power.hxx"
 #include"TFEL/Math/General/Abs.hxx"
 #include"TFEL/Math/General/ConceptRebind.hxx"
 #include"TFEL/Math/Forward/TensorConcept.hxx"
@@ -154,7 +155,6 @@ namespace tfel{
     push_forward(ST2toST2Type&,
 		 const ST2toST2Type2&,
 		 const TensorType&);
-
     /*!
      * \return a transposed view of  the tensor
      */
@@ -165,6 +165,33 @@ namespace tfel{
        tfel::meta::Implements<typename std::decay<T>::type,ST2toST2Concept>::cond,
        Expr<typename ST2toST2Type<typename std::decay<T>::type>::type,
             ST2toST2TransposeExpr<decltype(t)>>>::type;
+    /*!
+     * \return the determinant of a `st2tost2`
+     * \param[in] s: fourth order tensor
+     */
+    template<typename ST2toST2Type>
+    typename std::enable_if<
+      tfel::meta::Implements<ST2toST2Type,ST2toST2Concept>::cond&&
+      (ST2toST2Traits<ST2toST2Type>::dime==1u)&&
+      tfel::typetraits::IsScalar<ST2toST2NumType<ST2toST2Type>>::cond,
+      typename ComputeUnaryResult<ST2toST2NumType<ST2toST2Type>,
+				  Power<3>>::Result
+      >::type
+    det(const ST2toST2Type&);
+    /*!
+     * \return the determinant of a `st2tost2`
+     * \param[in] s: fourth order tensor
+     */
+    template<typename ST2toST2Type>
+    typename std::enable_if<
+      tfel::meta::Implements<ST2toST2Type,ST2toST2Concept>::cond&&
+      ((ST2toST2Traits<ST2toST2Type>::dime==2u)||
+       (ST2toST2Traits<ST2toST2Type>::dime==3u))&&
+      tfel::typetraits::IsScalar<ST2toST2NumType<ST2toST2Type>>::cond,
+      typename ComputeUnaryResult<ST2toST2NumType<ST2toST2Type>,
+				  Power<ST2toST2Traits<ST2toST2Type>::dime>>::Result
+      >::type
+    det(const ST2toST2Type&);
     
   } // end of namespace math
 

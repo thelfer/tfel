@@ -138,9 +138,22 @@ namespace tfel{
 
     };
 
+    /*!
+     * \brief an helper structure used to compute the
+     * products of the diagonal terms of a square matrix
+     * \tparam N: matrix  size
+     * \tparam NumType: numeric type
+     * \tparam I: current index
+     */
+    template<unsigned short N, typename NumType,
+	     unsigned short I = 0>
+    struct DiagonalTermProduct;
+    
   } // end of namespace math
 
 } // end of namespace tfel
+
+#include"TFEL/Math/Matrix/MatrixUtilities.ixx"
 
 #endif /* LIB_TFEL_MATRIX_UTILITIES_HXX */
 

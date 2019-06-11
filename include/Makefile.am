@@ -311,6 +311,7 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/Matrix/matrix.ixx			                                             \
 			TFEL/Math/Matrix/MatrixConcept.hxx		                                             \
 			TFEL/Math/Matrix/MatrixUtilities.hxx		                                             \
+			TFEL/Math/Matrix/MatrixUtilities.ixx		                                             \
 			TFEL/Math/Matrix/MatrixConcept.ixx		                                             \
 			TFEL/Math/Matrix/MatrixConceptOperations.hxx                                                 \
 			TFEL/Math/Matrix/TMatrixTVectorExpr.hxx                                                      \

@@ -20,6 +20,7 @@
 #include"TFEL/Metaprogramming/Implements.hxx"
 #include"TFEL/Metaprogramming/InvalidType.hxx"
 #include"TFEL/Math/General/Abs.hxx"
+#include"TFEL/Math/power.hxx"
 #include"TFEL/Math/General/ConceptRebind.hxx"
 #include"TFEL/Math/Forward/T2toT2Concept.hxx"
 
@@ -78,6 +79,33 @@ namespace tfel{
       typename tfel::typetraits::AbsType<typename T2toT2Traits<T2toT2Type>::NumType>::type
     >::type
     abs(const T2toT2Type&);
+    /*!
+     * \return the determinant of a `st2tost2`
+     * \param[in] s: fourth order tensor
+     */
+    template<typename T2toT2Type>
+    typename std::enable_if<
+      tfel::meta::Implements<T2toT2Type,T2toT2Concept>::cond&&
+      (T2toT2Traits<T2toT2Type>::dime==1u)&&
+      tfel::typetraits::IsScalar<T2toT2NumType<T2toT2Type>>::cond,
+      typename ComputeUnaryResult<T2toT2NumType<T2toT2Type>,
+				  Power<3>>::Result
+      >::type
+    det(const T2toT2Type&);
+    /*!
+     * \return the determinant of a `st2tost2`
+     * \param[in] s: fourth order tensor
+     */
+    template<typename T2toT2Type>
+    typename std::enable_if<
+      tfel::meta::Implements<T2toT2Type,T2toT2Concept>::cond&&
+      ((T2toT2Traits<T2toT2Type>::dime==2u)||
+       (T2toT2Traits<T2toT2Type>::dime==3u))&&
+      tfel::typetraits::IsScalar<T2toT2NumType<T2toT2Type>>::cond,
+      typename ComputeUnaryResult<T2toT2NumType<T2toT2Type>,
+				  Power<T2toT2Traits<T2toT2Type>::dime>>::Result
+      >::type
+    det(const T2toT2Type&);
 
   } // end of namespace math
 

@@ -205,17 +205,32 @@ if(WIN32)
 endif(WIN32)
 
 macro(test_castem test_arg)
+  set(_ADDITIONAL_ENVIRONMENT )
   set(_NO_XML_OUTPUT )
   set(_WILL_FAIL )
+  set(_EXPECT_ADDITIONAL_ENVIRONMENT )
   foreach(_ARG ${ARGN})
-    if ( ${_ARG} MATCHES NO_XML_OUTPUT )
-      set ( _NO_XML_OUTPUT ON)
-    elseif ( ${_ARG} MATCHES WILL_FAIL)
-      set ( _WILL_FAIL ON)
+    if(_EXPECT_ADDITIONAL_ENVIRONMENT)
+      if(_ADDITIONAL_ENVIRONMENT)
+	message(FATAL_ERROR "test_castem: environment already set")
+      endif(_ADDITIONAL_ENVIRONMENT)
+      set(_ADDITIONAL_ENVIRONMENT "${_ARG}")
+      set(_EXPECT_ADDITIONAL_ENVIRONMENT )
     else()
-      message(FATAL_ERROR "test_castem: unsupported option '${_ARG}'")
+      if ( ${_ARG} MATCHES NO_XML_OUTPUT )
+	set ( _NO_XML_OUTPUT ON)
+      elseif ( ${_ARG} MATCHES WILL_FAIL)
+	set ( _WILL_FAIL ON)
+      elseif ( ${_ARG} MATCHES ENVIRONMENT)
+	set(_EXPECT_ADDITIONAL_ENVIRONMENT ON)
+      else()
+	message(FATAL_ERROR "test_castem: unsupported option '${_ARG}'")
+      endif()
     endif()
   endforeach(_ARG ${ARGN})
+  if(_EXPECT_ADDITIONAL_ENVIRONMENT)
+    message(FATAL_ERROR "test_castem: expected environment variable")
+  endif()
   foreach(rm ${IEEE754_ROUNDING_MODES})
     if(CMAKE_CONFIGURATION_TYPES)
       foreach(conf ${CMAKE_CONFIGURATION_TYPES})
@@ -240,9 +255,15 @@ macro(test_castem test_arg)
 	endif(_WILL_FAIL)
 	if((CMAKE_HOST_WIN32) AND (NOT MSYS))
           set_property(TEST ${test}
-            PROPERTY DEPENDS "MFrontCastemBehaviours MFrontMaterialProperties-castem mtest"
-	    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:TFELMTest>\;$<TARGET_FILE_DIR:TFELMFront>\;$<TARGET_FILE_DIR:MFrontLogStream>\;$<TARGET_FILE_DIR:TFELMaterial>\;$<TARGET_FILE_DIR:TFELNUMODIS>\;$<TARGET_FILE_DIR:TFELMathParser>\;$<TARGET_FILE_DIR:TFELGlossary>\;$<TARGET_FILE_DIR:TFELSystem>\;$<TARGET_FILE_DIR:TFELUtilities>\;$<TARGET_FILE_DIR:TFELException>\;$<TARGET_FILE_DIR:TFELTests>\;$<TARGET_FILE_DIR:TFELConfig>\;$<TARGET_FILE_DIR:TFELPhysicalConstants>\;$ENV{PATH}")
+            PROPERTY DEPENDS "MFrontCastemBehaviours MFrontMaterialProperties-castem mtest")
+          set_property(TEST ${test}	    
+	    PROPERTY ENVIRONMENT
+	    ${_ADDITIONAL_ENVIRONMENT}
+	    "PATH=$<TARGET_FILE_DIR:TFELMTest>\;$<TARGET_FILE_DIR:TFELMFront>\;$<TARGET_FILE_DIR:MFrontLogStream>\;$<TARGET_FILE_DIR:TFELMaterial>\;$<TARGET_FILE_DIR:TFELNUMODIS>\;$<TARGET_FILE_DIR:TFELMathParser>\;$<TARGET_FILE_DIR:TFELGlossary>\;$<TARGET_FILE_DIR:TFELSystem>\;$<TARGET_FILE_DIR:TFELUtilities>\;$<TARGET_FILE_DIR:TFELException>\;$<TARGET_FILE_DIR:TFELTests>\;$<TARGET_FILE_DIR:TFELConfig>\;$<TARGET_FILE_DIR:TFELPhysicalConstants>\;$ENV{PATH}")
 	elseif((CMAKE_HOST_WIN32) AND (NOT MSYS))
+	  if(_ADDITIONAL_ENVIRONMENT)
+            set_property(TEST ${test} PROPERTY ENVIRONMENT ${_ADDITIONAL_ENVIRONMENT})
+	  endif(_ADDITIONAL_ENVIRONMENT)
           set_property(TEST ${test}
             PROPERTY DEPENDS "MFrontCastemBehaviours MFrontMaterialProperties-castem mtest")
 	endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
@@ -273,9 +294,11 @@ macro(test_castem test_arg)
 	  COMMAND mtest --rounding-direction-mode=${rm} --verbose=level0 --xml-output=true --result-file-output=false ${file})
       endif(_NO_XML_OUTPUT)
       if(_WILL_FAIL)
-	set_tests_properties(${test}
-	  PROPERTIES WILL_FAIL true)
+	set_tests_properties(${test} PROPERTIES WILL_FAIL true)
       endif(_WILL_FAIL)
+      if(_ADDITIONAL_ENVIRONMENT)
+        set_property(TEST ${test} PROPERTY ENVIRONMENT ${_ADDITIONAL_ENVIRONMENT})
+      endif(_ADDITIONAL_ENVIRONMENT)
       set_property(TEST ${test}
 	PROPERTY DEPENDS "MFrontCastemBehaviours MFrontMaterialProperties-castem mtest")
       if(TFEL_APPEND_SUFFIX)
@@ -299,56 +322,22 @@ test_castem(materialpropertiesboundscheck3)
 test_castem(materialpropertiesboundscheck4)
 test_castem(materialpropertiesboundscheck5 
   NO_XML_OUTPUT WILL_FAIL)
-test_castem(materialpropertiesboundscheck6)
-test_castem(materialpropertiesboundscheck7)
+test_castem(materialpropertiesboundscheck6
+  ENVIRONMENT "CASTEM_OUT_OF_BOUNDS_POLICY=NONE")
+test_castem(materialpropertiesboundscheck7
+  ENVIRONMENT "CASTEM_OUT_OF_BOUNDS_POLICY=WARNING")
 test_castem(materialpropertiesboundscheck8 
-  NO_XML_OUTPUT WILL_FAIL)
-
-foreach(rm ${IEEE754_ROUNDING_MODES})
-  if(CMAKE_CONFIGURATION_TYPES)
-    foreach(conf ${CMAKE_CONFIGURATION_TYPES})
-      set_property(TEST castemmaterialpropertiesboundscheck6_${rm}_${conf}_mtest
-      	 APPEND PROPERTY ENVIRONMENT "& CASTEM_OUT_OF_BOUNDS_POLICY=NONE")
-      set_property(TEST castemmaterialpropertiesboundscheck7_${rm}_${conf}_mtest
-      	 APPEND PROPERTY ENVIRONMENT "& CASTEM_OUT_OF_BOUNDS_POLICY=WARNING")
-      set_property(TEST castemmaterialpropertiesboundscheck8_${rm}_${conf}_mtest
-	 APPEND PROPERTY ENVIRONMENT "& CASTEM_OUT_OF_BOUNDS_POLICY=STRICT")
-      set_property(TEST castemmaterialpropertiesboundscheck_${rm}_${conf}_mtest
-	castemmaterialpropertiesboundscheck2_${rm}_${conf}_mtest
-	castemmaterialpropertiesboundscheck5_${rm}_${conf}_mtest
-	castemmaterialpropertiesboundscheck8_${rm}_${conf}_mtest
-	PROPERTY WILL_FAIL true)
-    endforeach(conf ${CMAKE_CONFIGURATION_TYPES})
-  else(CMAKE_CONFIGURATION_TYPES)
-    set_property(TEST castemmaterialpropertiesboundscheck6_${rm}_mtest
-      APPEND PROPERTY ENVIRONMENT "CASTEM_OUT_OF_BOUNDS_POLICY=NONE")
-    set_property(TEST castemmaterialpropertiesboundscheck7_${rm}_mtest
-      APPEND PROPERTY ENVIRONMENT "CASTEM_OUT_OF_BOUNDS_POLICY=WARNING")
-    set_property(TEST castemmaterialpropertiesboundscheck8_${rm}_mtest
-      APPEND PROPERTY ENVIRONMENT "CASTEM_OUT_OF_BOUNDS_POLICY=STRICT")
-    set_property(TEST castemmaterialpropertiesboundscheck_${rm}_mtest
-      castemmaterialpropertiesboundscheck2_${rm}_mtest
-      castemmaterialpropertiesboundscheck5_${rm}_mtest
-      castemmaterialpropertiesboundscheck8_${rm}_mtest
-      PROPERTY WILL_FAIL true)
-  endif(CMAKE_CONFIGURATION_TYPES)
-endforeach(rm ${IEEE754_ROUNDING_MODES})
+  NO_XML_OUTPUT WILL_FAIL ENVIRONMENT "CASTEM_OUT_OF_BOUNDS_POLICY=STRICT")
   
-test_castem(statevariablesboundscheck
-  NO_XML_OUTPUT WILL_FAIL)
-test_castem(statevariablesboundscheck2 
-  NO_XML_OUTPUT WILL_FAIL)
+test_castem(statevariablesboundscheck  NO_XML_OUTPUT WILL_FAIL)
+test_castem(statevariablesboundscheck2 NO_XML_OUTPUT WILL_FAIL)
 
-test_castem(externalstatevariablesboundscheck
-  NO_XML_OUTPUT WILL_FAIL)
-test_castem(externalstatevariablesboundscheck2 
-  NO_XML_OUTPUT WILL_FAIL)
+test_castem(externalstatevariablesboundscheck  NO_XML_OUTPUT WILL_FAIL)
+test_castem(externalstatevariablesboundscheck2 NO_XML_OUTPUT WILL_FAIL)
 test_castem(externalstatevariablesboundscheck3)
 test_castem(externalstatevariablesboundscheck4)
-test_castem(externalstatevariablesboundscheck5 
-  NO_XML_OUTPUT WILL_FAIL)
-test_castem(externalstatevariablesboundscheck6 
-  NO_XML_OUTPUT WILL_FAIL)
+test_castem(externalstatevariablesboundscheck5 NO_XML_OUTPUT WILL_FAIL)
+test_castem(externalstatevariablesboundscheck6 NO_XML_OUTPUT WILL_FAIL)
 
 test_castem(elasticity)
 test_castem(elasticity2)
