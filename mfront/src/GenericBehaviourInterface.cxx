@@ -582,7 +582,7 @@ namespace mfront {
         out << "}\n";
       }
       if (this->shallGenerateMTestFileOnFailure(bd)) {
-        out << "if(!r){\n";
+        out << "if(r!=1){\n";
         this->generateMTestFile(out, bd, h);
         out << "}\n";
       }
@@ -629,13 +629,14 @@ namespace mfront {
       out << "mfront::GenericBehaviourSmallStrainMTestFileGenerator mg(\""
           << this->getLibraryName(bd) << "\",\"" << name << "\");\n";
     }
-    out << "const auto TVectorSize = mg.getTVectorSize();\n"
+    out << "mg.setModellingHypothesis(tfel::material::ModellingHypothesis:"
+           ":"
+        << tfel::material::ModellingHypothesis::toUpperCaseString(h) << ");\n"
+	<< "// must be declared after setting the hypothesis\n"
+        << "const auto TVectorSize = mg.getTVectorSize();\n"
         << "const auto StensorSize = mg.getStensorSize();\n"
         << "const auto TensorSize  = mg.getTensorSize();\n"
         << "const auto dt = std::max(d->dt,1.e-50);\n"
-        << "mg.setModellingHypothesis(tfel::material::ModellingHypothesis:"
-           ":"
-        << tfel::material::ModellingHypothesis::toUpperCaseString(h) << ");\n"
         << "mg.setHandleThermalExpansion(false);\n"
         << "mg.addTime(0.);\n"
         << "mg.addTime(dt);\n";

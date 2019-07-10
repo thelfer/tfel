@@ -29,6 +29,9 @@
 #include <conio.h>
 #include <windows.h>
 #include <process.h>
+#ifdef small
+#undef small
+#endif /* small */
 #else
 #include <dlfcn.h>
 #include <sys/wait.h>
@@ -114,9 +117,12 @@ namespace mfront {
       << MFrontHeader::getHeader("# ") << "\n"
       << "\n"
       << "cmake_minimum_required(VERSION 2.4)\n"
-      << "project(\"mfront-sources\")\n"
-      << "set(CMAKE_SKIP_RPATH ON)\n"
-      << "function(spawn res cmd)\n"
+      << "project(\"mfront-sources\")\n";
+    if (o.sys != "apple") {
+      m << "set(MACOSX_RPATH ON)\n";
+      m << "set(CMAKE_INSTALL_RPATH_USE_LINK_PATH ON)\n";
+    }
+    m << "function(spawn res cmd)\n"
       << "  execute_process(COMMAND ${cmd} ${ARGN}\n"
       << "    OUTPUT_VARIABLE SPAWN_RESULT\n"
       << "    OUTPUT_STRIP_TRAILING_WHITESPACE)\n"
@@ -296,9 +302,6 @@ namespace mfront {
         m << "set_target_properties(" << l.name << '\n'
           << "PROPERTIES LINK_FLAGS \"${" << l.name << "_LINK_FLAGS}\")\n";
       }
-      getLogStream() << "l: " << l.name << '\n';
-      getLogStream() << "getInstallPath: " << getInstallPath() << '\n';
-      getLogStream() << "l.install_path: " << l.install_path << '\n';
       const auto ipath =
           l.install_path.empty() ? getInstallPath() : l.install_path;
       if (!ipath.empty()) {

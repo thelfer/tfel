@@ -29,6 +29,9 @@
 #include <conio.h>
 #include <windows.h>
 #include <process.h>
+#ifdef small
+#undef small
+#endif /* small */
 #else
 #include <dlfcn.h>
 #include <sys/wait.h>
@@ -444,7 +447,12 @@ namespace mfront {
       }
       m << "$^  -o $@ ";
       m << getLibraryLinkFlags(t, o, l.name);
-      m << "\n\n";
+      m << "\n";
+      if (o.sys == "apple") {
+        m << "\tinstall_name_tool -add_rpath  $(shell " << tfel_config
+          << " --library-path)  $@\n";
+      }
+      m << "\n";
     }
     // install target
     auto get_install_path = [](const LibraryDescription& l) {
