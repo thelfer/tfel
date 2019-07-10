@@ -101,7 +101,7 @@ namespace tfel{
       tfel::fsalgo::copy<ts*ts>::exe(s.begin(),m.begin());
       int r = 1;
       try{
-       	r = LUDecomp(m,p);
+       	r = LUDecomp::exe(m,p);
       } catch(...){
        	return {};
       }
