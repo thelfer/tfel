@@ -44,7 +44,10 @@ set(TFELMFront_SOURCES
     CodeBlock.cxx
     FileDescription.cxx
     TargetsDescription.cxx
+    CompiledTargetDescriptionBase.cxx
     LibraryDescription.cxx
+    ExecutableDescription.cxx
+    SpecificTargetDescription.cxx
     MFrontDebugMode.cxx
     PedanticMode.cxx
     MFrontLock.cxx

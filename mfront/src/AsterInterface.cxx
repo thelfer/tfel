@@ -711,33 +711,34 @@ namespace mfront {
     const auto lib = AsterInterface::getLibraryName(bd);
     const auto name = bd.getLibrary() + bd.getClassName();
     const auto tfel_config = tfel::getTFELConfigExecutableName();
-    insert_if(d[lib].cppflags, "$(shell " + tfel_config + " --cppflags --compiler-flags)");
+    auto& l = d.getLibrary(lib);
+    insert_if(l.cppflags, "$(shell " + tfel_config + " --cppflags --compiler-flags)");
 #if ASTER_ARCH == 64
-    insert_if(d[lib].cppflags, "-DASTER_ARCH=64");
+    insert_if(l.cppflags, "-DASTER_ARCH=64");
 #elif ASTER_ARCH == 32
-    insert_if(d[lib].cppflags, "-DASTER_ARCH=32");
+    insert_if(l.cppflags, "-DASTER_ARCH=32");
 #else
 #error "AsterInterface::getGlobalIncludes : unsuported architecture"
 #endif
-    insert_if(d[lib].include_directories, "$(shell " + tfel_config + " --include-path)");
-    insert_if(d[lib].sources, "aster" + name + ".cxx");
+    insert_if(l.include_directories, "$(shell " + tfel_config + " --include-path)");
+    insert_if(l.sources, "aster" + name + ".cxx");
     d.headers.push_back("MFront/Aster/aster" + name + ".hxx");
-    insert_if(d[lib].link_libraries, tfel::getLibraryInstallName("AsterInterface"));
+    insert_if(l.link_libraries, tfel::getLibraryInstallName("AsterInterface"));
     if (this->shallGenerateMTestFileOnFailure(bd)) {
-      insert_if(d[lib].link_libraries, tfel::getLibraryInstallName("MTestFileGenerator"));
+      insert_if(l.link_libraries, tfel::getLibraryInstallName("MTestFileGenerator"));
     }
-    insert_if(d[lib].link_directories, "$(shell " + tfel_config + " --library-path)");
+    insert_if(l.link_directories, "$(shell " + tfel_config + " --library-path)");
 #if __cplusplus >= 201703L
-    insert_if(d[lib].link_libraries, "$(shell " + tfel_config +
+    insert_if(l.link_libraries, "$(shell " + tfel_config +
                                          " --library-dependency "
                                          "--material --mfront-profiling)");
 #else  /* __cplusplus < 201703L */
-    insert_if(d[lib].link_libraries, "$(shell " + tfel_config +
+    insert_if(l.link_libraries, "$(shell " + tfel_config +
                                          " --library-dependency "
                                          "--material --mfront-profiling --physical-constants)");
 #endif /* __cplusplus < 201703L */
-    // insert_if(d[lib].epts,name);
-    insert_if(d[lib].epts, this->getFunctionNameBasis(name));
+    // insert_if(l.epts,name);
+    insert_if(l.epts, this->getFunctionNameBasis(name));
   }  // end of AsterInterface::getTargetsDescription
 
   void AsterInterface::writeAsterBehaviourTraits(std::ostream& out,

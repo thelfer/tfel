@@ -74,7 +74,7 @@ namespace mfront {
                    "getLibraryLinkFlags : no library "
                    "named '" +
                        name + "'.\nInternal Error.");
-    const auto& l = t[name];
+    const auto& l = t.getLibrary(name);
     auto res = std::string{};
     for (const auto& d : l.link_directories) {
       if ((tfel::utilities::starts_with(d, "$(shell ")) ||
@@ -104,7 +104,7 @@ namespace mfront {
                            "' (dependency of library "
                            "'" +
                            name + "').\nInternal Error.");
-        const auto& ld = t[ldn];
+        const auto& ld = t.getLibrary(ldn);
         for (const auto& d : ld.ldflags) {
           res += d + " ";
         }
@@ -120,7 +120,7 @@ namespace mfront {
   getLibrarySourcesAndDependencies(const TargetsDescription& t,
                                    const GeneratorOptions& o,
                                    const std::string& name) {
-    const auto& l = t[name];
+    const auto& l = t.getLibrary(name);
     auto res = std::pair<bool, std::pair<std::string, std::string>>{};
     res.first = false;
     for (const auto& s : l.sources) {
@@ -160,7 +160,7 @@ namespace mfront {
 
   static std::string getTargetName(const TargetsDescription& t,
                                    const std::string& n) {
-    for (const auto& l : t) {
+    for (const auto& l : t.libraries) {
       if (n == l.name) {
         return getLibraryFullName(l);
       }
@@ -199,7 +199,7 @@ namespace mfront {
     tfel::raise_if(!m, "generateMakeFile : can't open file '" + mfile + "'");
     auto cppSources = set<string>{};
     auto cSources = set<string>{};
-    for (const auto& l : t) {
+    for (const auto& l : t.libraries) {
       for (const auto& src : l.sources) {
         if (src.size() > 4) {
           if ((src.substr(src.size() - 4) == ".cpp") ||
@@ -235,7 +235,7 @@ namespace mfront {
     m << "-I../include";
     // cpp flags
     vector<string> cppflags;
-    for (const auto& l : t) {
+    for (const auto& l : t.libraries) {
       for (const auto& flags : l.cppflags) {
         insert_if(cppflags, flags);
       }
@@ -371,7 +371,7 @@ namespace mfront {
     m << "\n\n";
     m << ".PHONY = ";
     m << "all install clean";
-    for (const auto& l : t) {
+    for (const auto& l : t.libraries) {
       if (l.name != "MFrontMaterialLaw") {
         m << " " << getLibraryFullName(l);
       }
@@ -383,17 +383,17 @@ namespace mfront {
     }
     m << "\n\n";
     m << "all : ";
-    for (const auto& l : t) {
+    for (const auto& l : t.libraries) {
       if (l.name != "MFrontMaterialLaw") {
         m << getLibraryFullName(l) << " ";
       }
     }
     auto p5 = t.specific_targets.find("all");
     if (p5 != t.specific_targets.end()) {
-      copy(p5->second.first.begin(), p5->second.first.end(),
+      copy(p5->second.deps.begin(), p5->second.deps.end(),
            ostream_iterator<string>(m, " "));
       m << "\n";
-      for (const auto& cmd : p5->second.second) {
+      for (const auto& cmd : p5->second.cmds) {
         m << "\t" << cmd << "\n";
       }
     }
@@ -401,17 +401,17 @@ namespace mfront {
     for (const auto& target : t.specific_targets) {
       if ((target.first != "all") && (target.first != "clean")) {
         m << target.first << " :";
-        for (const auto& dependency : target.second.first) {
+        for (const auto& dependency : target.second.deps) {
           m << " " << getTargetName(t, dependency);
         }
         m << '\n';
-        for (const auto& cmd : target.second.second) {
+        for (const auto& cmd : target.second.cmds) {
           m << "\t" << cmd << '\n';
         }
         m << "\n";
       }
     }
-    for (const auto& l : t) {
+    for (const auto& l : t.libraries) {
       if (l.name == "MFrontMaterialLaw") {
         continue;
       }
@@ -447,7 +447,12 @@ namespace mfront {
       }
       m << "$^  -o $@ ";
       m << getLibraryLinkFlags(t, o, l.name);
-      m << "\n\n";
+      m << "\n";
+      if (o.sys == "apple") {
+        m << "\tinstall_name_tool -add_rpath  $(shell " << tfel_config
+          << " --library-path)  $@\n";
+      }
+      m << "\n";
     }
     // install target
     auto get_install_path = [](const LibraryDescription& l) {
@@ -460,7 +465,7 @@ namespace mfront {
       return ipath;
     };
     m << "install : ";
-    for (const auto& l : t) {
+    for (const auto& l : t.libraries) {
       const auto ipath = get_install_path(l);
       if (!ipath.empty()) {
         m << " " << getLibraryFullName(l);
@@ -468,7 +473,7 @@ namespace mfront {
     }
     // creating installation directories
     auto install_paths = std::set<std::string>{};
-    for (const auto& l : t) {
+    for (const auto& l : t.libraries) {
       const auto ipath = get_install_path(l);
       if ((!ipath.empty()) && (install_paths.count(ipath) == 0)) {
         m << "\n\t" << sb << "mkdir -p " << ipath;
@@ -476,7 +481,7 @@ namespace mfront {
       }
     }
     // copying links
-    for (const auto& l : t) {
+    for (const auto& l : t.libraries) {
       const auto ipath = get_install_path(l);
       if (!ipath.empty()) {
         m << "\n\t" << sb << "cp " << getLibraryFullName(l) << " " << ipath;
@@ -487,7 +492,7 @@ namespace mfront {
     m << "clean : ";
     p5 = t.specific_targets.find("clean");
     if (p5 != t.specific_targets.end()) {
-      std::copy(p5->second.first.begin(), p5->second.first.end(),
+      std::copy(p5->second.deps.begin(), p5->second.deps.end(),
                 std::ostream_iterator<string>(m, " "));
     }
     m << "\n";
@@ -499,8 +504,8 @@ namespace mfront {
       m << "\t" << sb << "rm -f *.o *.so *.d *.d.*\n";
     }
     if (p5 != t.specific_targets.end()) {
-      for (const auto& cmd : p5->second.second) {
-        m << "\t" << cmd << '\n';
+      for (const auto& cmd : p5->second.cmds) {
+        m << "\t" << sb << cmd << '\n';
       }
     }
     m << "\n";

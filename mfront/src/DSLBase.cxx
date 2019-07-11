@@ -1005,12 +1005,12 @@ namespace mfront {
   }  // end of DSLBase::readDouble
 
   void DSLBase::completeTargetsDescription() {
-    for (auto& l : this->td) {
+    for (auto& l : this->td.libraries) {
       l.ldflags.insert(l.ldflags.end(), this->ldflags.begin(), this->ldflags.end());
     }
     for (const auto& t : this->atds) {
-      for (const auto& al : t) {
-        for (auto& l : this->td) {
+      for (const auto& al : t.libraries) {
+        for (auto& l : this->td.libraries) {
           if (l.name != al.name) {
             insert_if(l.deps, al.name);
           }

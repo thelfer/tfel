@@ -352,31 +352,32 @@ namespace mfront {
     const auto lib = this->getLibraryName(bd);
     const auto name = bd.getLibrary() + bd.getClassName();
     const auto tfel_config = tfel::getTFELConfigExecutableName();
-    insert_if(d[lib].cppflags,
+    auto& l = d.getLibrary(lib);
+    insert_if(l.cppflags,
               "$(shell " + tfel_config + " --cppflags --compiler-flags)");
-    insert_if(d[lib].include_directories,
+    insert_if(l.include_directories,
               "$(shell " + tfel_config + " --include-path)");
-    insert_if(d[lib].sources, "DianaFEA" + name + ".cxx");
+    insert_if(l.sources, "DianaFEA" + name + ".cxx");
     d.headers.push_back("MFront/DianaFEA/DianaFEA" + name + ".hxx");
-    insert_if(d[lib].link_directories,
+    insert_if(l.link_directories,
               "$(shell " + tfel_config + " --library-path)");
-    insert_if(d[lib].link_libraries,
+    insert_if(l.link_libraries,
               tfel::getLibraryInstallName("DianaFEAInterface"));
     if (this->shallGenerateMTestFileOnFailure(bd)) {
-      insert_if(d[lib].link_libraries,
+      insert_if(l.link_libraries,
                 tfel::getLibraryInstallName("MTestFileGenerator"));
     }
 #if __cplusplus >= 201703L
-    insert_if(d[lib].link_libraries, "$(shell " + tfel_config +
+    insert_if(l.link_libraries, "$(shell " + tfel_config +
                                          " --library-dependency "
                                          "--material --mfront-profiling)");
 #else  /* __cplusplus < 201703L */
-    insert_if(d[lib].link_libraries,
+    insert_if(l.link_libraries,
               "$(shell " + tfel_config +
                   " --library-dependency "
                   "--material --mfront-profiling --physical-constants)");
 #endif /* __cplusplus < 201703L */
-    insert_if(d[lib].epts, this->getFunctionNameBasis(name));
+    insert_if(l.epts, this->getFunctionNameBasis(name));
   }  // end of DianaFEAInterface::getTargetsDescription
 
   std::string DianaFEAInterface::getLibraryName(

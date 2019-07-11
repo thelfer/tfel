@@ -227,37 +227,38 @@ namespace mfront{
     const auto lib  = this->getLibraryName(bd);
     const auto name = bd.getLibrary()+bd.getClassName();
     const auto tfel_config = tfel::getTFELConfigExecutableName();
-    insert_if(d[lib].cppflags,
+    auto& l = d.getLibrary(lib);
+    insert_if(l.cppflags,
 	      "$(shell "+tfel_config+" --cppflags --compiler-flags)");
-    insert_if(d[lib].include_directories,
+    insert_if(l.include_directories,
 	      "$(shell "+tfel_config+" --include-path)");
-    insert_if(d[lib].sources,"abaqusexplicit"+name+".cxx");
+    insert_if(l.sources,"abaqusexplicit"+name+".cxx");
     d.headers.push_back("MFront/Abaqus/abaqusexplicit"+name+".hxx");
-    insert_if(d[lib].link_directories,"$(shell "+tfel_config+" --library-path)");
-    insert_if(d[lib].link_libraries,tfel::getLibraryInstallName("AbaqusInterface"));
+    insert_if(l.link_directories,"$(shell "+tfel_config+" --library-path)");
+    insert_if(l.link_libraries,tfel::getLibraryInstallName("AbaqusInterface"));
 #if __cplusplus >= 201703L
     if(ppolicy=="ThreadPool"){
-      insert_if(d[lib].link_libraries,
+      insert_if(l.link_libraries,
 		"$(shell "+tfel_config+" --library-dependency "
 		"--material --system --mfront-profiling)");
     } else {
-      insert_if(d[lib].link_libraries,
+      insert_if(l.link_libraries,
 		"$(shell "+tfel_config+" --library-dependency "
 		"--material --mfront-profiling)");
     }
 #else /* __cplusplus < 201703L */
     if(ppolicy=="ThreadPool"){
-      insert_if(d[lib].link_libraries,
+      insert_if(l.link_libraries,
 		"$(shell "+tfel_config+" --library-dependency "
 		"--material --system --mfront-profiling --physical-constants)");
     } else {
-      insert_if(d[lib].link_libraries,
+      insert_if(l.link_libraries,
 		"$(shell "+tfel_config+" --library-dependency "
 		"--material --mfront-profiling --physical-constants)");
     }
 #endif /* __cplusplus < 201703L */
     for(const auto h : this->getModellingHypothesesToBeTreated(bd)){
-      insert_if(d[lib].epts,this->getFunctionNameForHypothesis(name,h));
+      insert_if(l.epts,this->getFunctionNameForHypothesis(name,h));
     }
   } // end of AbaqusExplicitInterface::getTargetsDescription
 

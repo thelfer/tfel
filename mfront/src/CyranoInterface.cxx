@@ -362,32 +362,38 @@ namespace mfront {
     const auto lib = CyranoInterface::getLibraryName(bd);
     const auto name = ((!bd.getLibrary().empty()) ? bd.getLibrary() : "") + bd.getClassName();
     const auto tfel_config = tfel::getTFELConfigExecutableName();
-    insert_if(d[lib].cppflags, "$(shell " + tfel_config + " --cppflags --compiler-flags)");
+    auto& l = d.getLibrary(lib);
+    insert_if(l.cppflags,
+              "$(shell " + tfel_config + " --cppflags --compiler-flags)");
 #if CYRANO_ARCH == 64
-    insert_if(d[lib].cppflags, "-DCYRANO_ARCH=64");
+    insert_if(l.cppflags, "-DCYRANO_ARCH=64");
 #elif CYRANO_ARCH == 32
-    insert_if(d[lib].cppflags, "-DCYRANO_ARCH=32");
+    insert_if(l.cppflags, "-DCYRANO_ARCH=32");
 #else
 #error "CyranoInterface::getGlobalIncludes : unsuported architecture"
 #endif
-    insert_if(d[lib].include_directories, "$(shell " + tfel_config + " --include-path)");
-    insert_if(d[lib].sources, "cyrano" + name + ".cxx");
-    insert_if(d[lib].epts, name);
-    insert_if(d[lib].epts, this->getFunctionNameBasis(name));
+    insert_if(l.include_directories,
+              "$(shell " + tfel_config + " --include-path)");
+    insert_if(l.sources, "cyrano" + name + ".cxx");
+    insert_if(l.epts, name);
+    insert_if(l.epts, this->getFunctionNameBasis(name));
     insert_if(d.headers, "MFront/Cyrano/cyrano" + name + ".hxx");
-    insert_if(d[lib].link_directories, "$(shell " + tfel_config + " --library-path)");
-    insert_if(d[lib].link_libraries, tfel::getLibraryInstallName("CyranoInterface"));
+    insert_if(l.link_directories,
+              "$(shell " + tfel_config + " --library-path)");
+    insert_if(l.link_libraries, tfel::getLibraryInstallName("CyranoInterface"));
     if (this->shallGenerateMTestFileOnFailure(bd)) {
-      insert_if(d[lib].link_libraries, tfel::getLibraryInstallName("MTestFileGenerator"));
+      insert_if(l.link_libraries,
+                tfel::getLibraryInstallName("MTestFileGenerator"));
     }
 #if __cplusplus >= 201703L
-    insert_if(d[lib].link_libraries, "$(shell " + tfel_config +
-                                         " --library-dependency "
-                                         "--material --mfront-profiling)");
+    insert_if(l.link_libraries, "$(shell " + tfel_config +
+                                    " --library-dependency "
+                                    "--material --mfront-profiling)");
 #else  /* __cplusplus < 201703L */
-    insert_if(d[lib].link_libraries, "$(shell " + tfel_config +
-                                         " --library-dependency "
-                                         "--material --mfront-profiling --physical-constants)");
+    insert_if(l.link_libraries,
+              "$(shell " + tfel_config +
+                  " --library-dependency "
+                  "--material --mfront-profiling --physical-constants)");
 #endif /* __cplusplus < 201703L */
   }    // end of CyranoInterface::getTargetsDescription(TargetsDescription&)
 

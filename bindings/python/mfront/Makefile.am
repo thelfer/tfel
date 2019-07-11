@@ -10,22 +10,23 @@ mfrontdir = @pythondir@/mfront
 mfront_PYTHON = __init__.py
 
 mfront_LTLIBRARIES = _mfront.la
-_mfront_la_SOURCES = mfront.cxx                    \
-		     AbstractDSL.cxx               \
-		     FileDescription.cxx           \
-		     LibraryDescription.cxx        \
-		     TargetsDescription.cxx        \
-		     DSLFactory.cxx                \
-		     VariableBoundsDescription.cxx \
-		     VariableDescription.cxx       \
-		     AbstractBehaviourDSL.cxx      \
-		     BehaviourAttribute.cxx        \
-		     BehaviourData.cxx             \
-		     BehaviourSymmetryType.cxx     \
-		     BehaviourDescription.cxx      \
-		     SearchPathsHandler.cxx        \
-		     GeneratorOptions.cxx          \
-		     MakefileGenerator.cxx         \
+_mfront_la_SOURCES = mfront.cxx                \
+		     AbstractDSL.cxx                   \
+		     FileDescription.cxx               \
+		     TargetsDescription.cxx            \
+		     CompiledTargetDescriptionBase.cxx \
+		     LibraryDescription.cxx            \
+		     DSLFactory.cxx                    \
+		     VariableBoundsDescription.cxx     \
+		     VariableDescription.cxx           \
+		     AbstractBehaviourDSL.cxx          \
+		     BehaviourAttribute.cxx            \
+		     BehaviourData.cxx                 \
+		     BehaviourSymmetryType.cxx         \
+		     BehaviourDescription.cxx          \
+		     SearchPathsHandler.cxx            \
+		     GeneratorOptions.cxx              \
+		     MakefileGenerator.cxx             \
 		     CMakeGenerator.cxx
 
 _mfront_la_LDFLAGS = -module

@@ -117,9 +117,12 @@ namespace mfront {
       << MFrontHeader::getHeader("# ") << "\n"
       << "\n"
       << "cmake_minimum_required(VERSION 2.4)\n"
-      << "project(\"mfront-sources\")\n"
-      << "set(CMAKE_SKIP_RPATH ON)\n"
-      << "function(spawn res cmd)\n"
+      << "project(\"mfront-sources\")\n";
+    if (o.sys != "apple") {
+      m << "set(MACOSX_RPATH ON)\n";
+      m << "set(CMAKE_INSTALL_RPATH_USE_LINK_PATH ON)\n";
+    }
+    m << "function(spawn res cmd)\n"
       << "  execute_process(COMMAND ${cmd} ${ARGN}\n"
       << "    OUTPUT_VARIABLE SPAWN_RESULT\n"
       << "    OUTPUT_STRIP_TRAILING_WHITESPACE)\n"
@@ -179,7 +182,7 @@ namespace mfront {
     const auto include_directories = [&t] {
       auto r = std::vector<std::string>{};
       r.push_back("../include");
-      for (const auto& l : t) {
+      for (const auto& l : t.libraries) {
         for (const auto& ld : l.include_directories) {
           if (std::find(r.begin(), r.end(), ld) == r.end()) {
             r.push_back(ld);
@@ -209,7 +212,7 @@ namespace mfront {
     // link_directories
     const auto link_directories = [&t] {
       auto r = std::vector<std::string>{};
-      for (const auto& l : t) {
+      for (const auto& l : t.libraries) {
         for (const auto& ld : l.link_directories) {
           if (std::find(r.begin(), r.end(), ld) == r.end()) {
             r.push_back(ld);
@@ -226,7 +229,7 @@ namespace mfront {
       m << "link_directories(${LINK_DIRECTORIES})\n";
     }
     m << "\n";
-    for (const auto& l : t) {
+    for (const auto& l : t.libraries) {
       if (l.name == "MFrontMaterialLaw") {
         continue;
       }
@@ -278,7 +281,7 @@ namespace mfront {
       }
       if (o.melt) {
         for (const auto& ld : l.deps) {
-          for (const auto& s : t[ld].sources) {
+          for (const auto& s : t.getLibrary(ld).sources) {
             m << s << " ";
           }
         }
@@ -299,9 +302,6 @@ namespace mfront {
         m << "set_target_properties(" << l.name << '\n'
           << "PROPERTIES LINK_FLAGS \"${" << l.name << "_LINK_FLAGS}\")\n";
       }
-      getLogStream() << "l: " << l.name << '\n';
-      getLogStream() << "getInstallPath: " << getInstallPath() << '\n';
-      getLogStream() << "l.install_path: " << l.install_path << '\n';
       const auto ipath =
           l.install_path.empty() ? getInstallPath() : l.install_path;
       if (!ipath.empty()) {

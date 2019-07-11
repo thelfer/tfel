@@ -162,7 +162,7 @@ namespace mfront {
     auto ldsl = this->dsl;
     auto q = [ldsl](const FileDescription&,
                     const MaterialPropertyDescription&) {
-      for (const auto& l : ldsl->getTargetsDescription()) {
+      for (const auto& l : ldsl->getTargetsDescription().libraries) {
         std::cout << l.name << " : ";  //< library
         std::copy(std::begin(l.sources), std::end(l.sources),
                   std::ostream_iterator<std::string>(std::cout, " "));
@@ -188,7 +188,7 @@ namespace mfront {
     auto ldsl = this->dsl;
     auto q = [ldsl](const FileDescription&,
                     const MaterialPropertyDescription&) {
-      for (const auto& l : ldsl->getTargetsDescription()) {
+      for (const auto& l : ldsl->getTargetsDescription().libraries) {
         std::cout << l.name << " : ";
         std::copy(std::begin(l.cppflags), std::end(l.cppflags),
                   std::ostream_iterator<std::string>(std::cout, " "));
@@ -202,7 +202,7 @@ namespace mfront {
     auto ldsl = this->dsl;
     auto q = [ldsl](const FileDescription&,
                     const MaterialPropertyDescription&) {
-      for (const auto& l : ldsl->getTargetsDescription()) {
+      for (const auto& l : ldsl->getTargetsDescription().libraries) {
         std::cout << l.name << ": ";
         std::copy(std::begin(l.ldflags), std::end(l.ldflags),
                   std::ostream_iterator<std::string>(std::cout, " "));
@@ -219,10 +219,10 @@ namespace mfront {
       const auto targets = ldsl->getTargetsDescription().specific_targets;
       for (const auto& t : targets) {
         std::cout << t.first << " : ";
-        std::copy(std::begin(t.second.first), std::end(t.second.first),
+        std::copy(std::begin(t.second.deps), std::end(t.second.deps),
                   std::ostream_iterator<std::string>(std::cout, " "));
         std::cout << std::endl << "> rule : ";
-        std::copy(std::begin(t.second.second), std::end(t.second.second),
+        std::copy(std::begin(t.second.cmds), std::end(t.second.cmds),
                   std::ostream_iterator<std::string>(std::cout, "\n> rule : "));
         std::cout << std::endl;
       }

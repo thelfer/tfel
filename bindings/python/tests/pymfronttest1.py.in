@@ -22,7 +22,7 @@ class PyMFrontTest1(unittest.TestCase):
 
         # targets information
         tg = dsl.getTargetsDescription()
-        self.assertEqual(len(tg),1)
+        self.assertEqual(len(tg.libraries),1)
         self.assertTrue(mfront.describes(tg,'AsterBehaviour'))
         self.assertEqual(len(tg.headers),4)
         self.assertTrue('MFront/Aster/asterChaboche.hxx' in tg.headers)
@@ -32,7 +32,7 @@ class PyMFrontTest1(unittest.TestCase):
         self.assertFalse('TFEL/Material/ChabocheIntegrationData2.hxx' in tg.headers)
         
         # library description
-        l = tg['AsterBehaviour']
+        l = tg.getLibrary('AsterBehaviour')
         self.assertEqual(l.name,'AsterBehaviour')
         self.assertTrue('asterchaboche' in l.epts)
         

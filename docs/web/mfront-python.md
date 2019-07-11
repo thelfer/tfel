@@ -173,15 +173,29 @@ has not been mapped to `python` yet.
 
 The main outputs of `MFront` are libraries. The `TargetsDescription`
 class can be seen as a container of objects of type
-`LibraryDescription`. Thus, one can iterate over the (to be) generated
+`LibraryDescription`. 
+
+
+Thus, one can iterate over the (to be) generated
 libraries like this:
 
 ~~~~ {.python}
 td = dsl.getTargetsDescription()
 # loop over (to be) generated libraries
-for l in td:
+for l in td.getLibraries():
     print(l)
 ~~~~
+
+> The `API` changed in version 3.3. In previous versions the
+> `TargetsDescription` was iterable and one could write:
+>
+> ~~~~ {.python}
+> td = dsl.getTargetsDescription()
+> # loop over (to be) generated libraries
+> for l in td:
+>     print(l)
+> ~~~~
+
 
 The `LibraryDescription` class has the following fields:
 

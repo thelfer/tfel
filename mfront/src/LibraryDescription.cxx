@@ -1,5 +1,5 @@
 /*!
- * \file  LibraryDescription.cxx
+ * \file   mfront/src/LibraryDescription.cxx
  * \brief
  * \author Thomas Helfer
  * \date   09 mai 2015
@@ -136,7 +136,8 @@ namespace mfront {
                                          const std::string& p,
                                          const std::string& s,
                                          const LibraryType t)
-      : name(n), prefix(p), suffix(s), type(t) {}  // end of LibraryDescription::LibraryDescription
+      : CompiledTargetDescriptionBase(n, p, s),
+        type(t) {}  // end of LibraryDescription::LibraryDescription
 
   LibraryDescription::LibraryDescription(const LibraryDescription&) = default;
   LibraryDescription::LibraryDescription(LibraryDescription&&) = default;

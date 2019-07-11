@@ -21,6 +21,7 @@ mfront_python_module(_mfront mfront.cxx
   AbstractDSL.cxx
   FileDescription.cxx
   TargetsDescription.cxx
+  CompiledTargetDescriptionBase.cxx
   LibraryDescription.cxx
   DSLFactory.cxx
   AbstractBehaviourDSL.cxx

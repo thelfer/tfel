@@ -11,6 +11,8 @@
  * project under specific licensing conditions. 
  */
 
+#include<iostream>
+
 #include<fstream>
 #include<iterator>
 #include<stdexcept>

@@ -20,28 +20,16 @@
 #include "TFEL/Utilities/CxxTokenizer.hxx"
 #include "MFront/MFrontConfig.hxx"
 #include "MFront/MFrontUtilities.hxx"
+#include "MFront/CompiledTargetDescriptionBase.hxx"
 
 namespace mfront {
 
   /*!
    * \brief This structure is used to build the compilation
-   * rules for the library.
-   * - the library name
-   * - the generated sources
-   * - the required preprocessor flags
-   * - the linker flags of the generated library
-   * - the generated entry points (function or class names)
+   * rules for a shared library or a module.
    */
-  struct MFRONT_VISIBILITY_EXPORT LibraryDescription {
-    /*!
-     * Supported target systems
-     */
-    enum TargetSystem {
-      WINDOWS,  //<! Microsoft windows system
-      CYGWIN,   //<! Cywgin environment
-      MACOSX,   //<! Apple Mac Os
-      UNIX      //<! General unix flavor (Linux, FreeBSD, Solaris, ...)
-    };
+  struct MFRONT_VISIBILITY_EXPORT LibraryDescription
+      : public CompiledTargetDescriptionBase {
     /*!
      * Types of library supported.
      * This difference is only relevant on Mac Os
@@ -77,40 +65,20 @@ namespace mfront {
                        const std::string&,
                        const std::string&,
                        const LibraryType);
+    //! \brief copy constructor
     LibraryDescription(const LibraryDescription&);
+    //! \brief move constructor
     LibraryDescription(LibraryDescription&&);
+    //! \brief standard assignement (deleted)
     LibraryDescription& operator=(const LibraryDescription&) = delete;
+    //! \brief move assignement (deleted)
     LibraryDescription& operator=(LibraryDescription&&) = delete;
     //! \brief destructor
     ~LibraryDescription();
-    //! \brief library name
-    const std::string name;
-    //! \brief libray suffix
-    const std::string prefix;
-    //! \brief libray suffix
-    const std::string suffix;
     //! \brief libray type
     const LibraryType type;
-    //! \brief list of mfront files used to generate the C++ sources
-    std::vector<std::string> mfront_sources;
-    //! \brief generated sources
-    std::vector<std::string> sources;
-    //! \brief additional preprocessor flags
-    std::vector<std::string> cppflags;
-    //! \brief path to the libraries to be linked
-    std::vector<std::string> include_directories;
-    //! \brief path to the libraries to be linked
-    std::vector<std::string> link_directories;
-    //! \brief libraries to be linked
-    std::vector<std::string> link_libraries;
-    //! \brief dependencies to other generated libraries
-    std::vector<std::string> deps;
-    //! \brief the linker flags
-    std::vector<std::string> ldflags;
     //! \brief generated entry points
     std::vector<std::string> epts;
-    //! \brief installation path
-    std::string install_path;
   };  // end of struct LibraryDescription
 
   /*!

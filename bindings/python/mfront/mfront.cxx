@@ -59,6 +59,7 @@ namespace boost
 void declareAbstractDSL();
 void declareDSLFactory();
 void declareFileDescription();
+void declareCompiledTargetDescriptionBase();
 void declareLibraryDescription();
 void declareTargetsDescription();
 void declareAbstractBehaviourDSL();
@@ -93,6 +94,7 @@ BOOST_PYTHON_MODULE(_mfront)
   declareDSLFactory();
   declareAbstractDSL();
   declareFileDescription();
+  declareCompiledTargetDescriptionBase();
   declareLibraryDescription();
   declareTargetsDescription();
   // behaviours

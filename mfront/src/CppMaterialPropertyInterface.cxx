@@ -66,14 +66,15 @@ namespace mfront
       const auto lib  = "Cpp"+getMaterialLawLibraryNameBase(mpd);
       const auto name = mpd.material.empty() ? mpd.className : mpd.material+"_"+mpd.className;
       const auto tfel_config = tfel::getTFELConfigExecutableName();
-      insert_if(d[lib].cppflags,
+      auto& l = d.getLibrary(lib);
+      insert_if(l.cppflags,
 		"$(shell "+tfel_config+" --cppflags --compiler-flags)");
-      insert_if(d[lib].include_directories,
+      insert_if(l.include_directories,
 	      "$(shell "+tfel_config+" --include-path)");
-      insert_if(d[lib].sources,name+"-cxx.cxx");
+      insert_if(l.sources,name+"-cxx.cxx");
       insert_if(d.headers,getHeaderFileName(name));
 #if  !((defined _WIN32) && (defined _MSC_VER))
-      insert_if(d[lib].link_libraries,"m");
+      insert_if(l.link_libraries,"m");
 #endif /* !((defined _WIN32) && (defined _MSC_VER)) */
       auto cn = std::string{};
 #pragma message("handle namespace")
@@ -81,7 +82,7 @@ namespace mfront
       //   cc += ns + "::"
       // }
       cn += name;    
-      insert_if(d[lib].epts,cn);
+      insert_if(l.epts,cn);
     } // end of CMaterialPropertyInterface::getTargetsDescription
 
   void CppMaterialPropertyInterface::writeOutputFiles(const MaterialPropertyDescription& mpd,

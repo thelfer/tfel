@@ -91,14 +91,11 @@ namespace mfront
     const auto lib = "Cpp"+getMaterialLawLibraryNameBase(mpd);
     const auto name = (mpd.material.empty()) ? mpd.className : mpd.material+"_"+mpd.className;
     const auto target = name+"CppTest";
-#if defined _WIN32 || defined _WIN64
-    d.specific_targets[target].first.push_back(lib+".dll");
-#else
-    d.specific_targets[target].first.push_back(lib+".so");
-#endif
-    d.specific_targets[target].first.push_back(name+"-CppTest.o");
-    d.specific_targets[target].second.push_back("@$(CXX) $(LDFLAGS) -L. -l"+lib+" $^ -o $@");
-    d.specific_targets["check"].first.push_back(target);
+    insert_if(d.specific_targets[target].deps,lib);
+    insert_if(d.specific_targets[target].sources,name+"-CppTest.o");
+    insert_if(d.specific_targets[target].cmds,
+	      "$(CXX) $(LDFLAGS) -L. -l"+lib+" $^ -o $@");
+    insert_if(d.specific_targets["check"].deps,target);
   } // end of CppMaterialPropertyInterface::getSpecificTargets
 
   void

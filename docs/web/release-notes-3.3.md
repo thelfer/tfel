@@ -38,6 +38,22 @@ stress with respect to the deformation gradient: the tangent operator
 returned by the behaviour is automatically converted to this
 derivative.
 
+# Known incompatibilities
+
+## API changes in the class `TargetsDescription`
+
+In previous versions, the class `TargetsDescription` was mainly designed
+to handle libraries. Version 3.3 provides a better support for
+executables.
+
+The following changes were made:
+
+- a `TargetsDescription` is not more iterable. One shall use the
+  `getLibraries()` methods to get an iterable object over libraries.
+- a `LibraryDescrition` can't be retrieved via the subscript operator
+  `[]`, one shall use the `getLibrary` method instead.
+
+
 # Tickets solved during the development of this version
 
 ## Ticket #172: Support for dynamic choice of the consistent tangent operator of finite strain behaviours using the `generic` interface

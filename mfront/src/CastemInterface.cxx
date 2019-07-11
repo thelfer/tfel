@@ -1406,38 +1406,39 @@ namespace mfront {
     const auto lib = CastemInterface::getLibraryName(bd);
     const auto name = this->getBehaviourName(bd);
     const auto tfel_config = tfel::getTFELConfigExecutableName();
-    insert_if(d[lib].cppflags, "$(shell " + tfel_config + " --cppflags --compiler-flags)");
+    auto& l = d.getLibrary(lib);
+    insert_if(l.cppflags, "$(shell " + tfel_config + " --cppflags --compiler-flags)");
 #ifdef CASTEM_CPPFLAGS
-    insert_if(d[lib].cppflags, CASTEM_CPPFLAGS);
+    insert_if(l.cppflags, CASTEM_CPPFLAGS);
 #endif /* CASTEM_CPPFLAGS */
 #ifndef LOCAL_CASTEM_HEADER
 #ifdef CASTEM_ROOT
     const auto* castem_root = ::getenv("CASTEM_ROOT");
     if (castem_root != nullptr) {
-      insert_if(d[lib].cppflags, "-I" + std::string(castem_root) + "/include");
+      insert_if(l.cppflags, "-I" + std::string(castem_root) + "/include");
     } else {
-      insert_if(d[lib].cppflags, "-I" + std::string(CASTEM_ROOT) + "/include");
+      insert_if(l.cppflags, "-I" + std::string(CASTEM_ROOT) + "/include");
     }
 #else  /* CASTEM_ROOT */
     if (castem_root != 0) {
-      insert_if(d[lib].cppflags, "-I" + std::string(castem_root) + "/include");
+      insert_if(l.cppflags, "-I" + std::string(castem_root) + "/include");
     }
 #endif /* CASTEM_ROOT */
 #endif /* LOCAL_CASTEM_HEADER_FILE */
-    insert_if(d[lib].include_directories, "$(shell " + tfel_config + " --include-path)");
-    insert_if(d[lib].sources, "umat" + name + ".cxx");
+    insert_if(l.include_directories, "$(shell " + tfel_config + " --include-path)");
+    insert_if(l.sources, "umat" + name + ".cxx");
     insert_if(d.headers, "MFront/Castem/umat" + name + ".hxx");
-    insert_if(d[lib].link_directories, "$(shell " + tfel_config + " --library-path)");
-    insert_if(d[lib].link_libraries, tfel::getLibraryInstallName("CastemInterface"));
+    insert_if(l.link_directories, "$(shell " + tfel_config + " --library-path)");
+    insert_if(l.link_libraries, tfel::getLibraryInstallName("CastemInterface"));
     if (this->shallGenerateMTestFileOnFailure(bd)) {
-      insert_if(d[lib].link_libraries, tfel::getLibraryInstallName("MTestFileGenerator"));
+      insert_if(l.link_libraries, tfel::getLibraryInstallName("MTestFileGenerator"));
     }
 #if __cplusplus >= 201703L
-    insert_if(d[lib].link_libraries, "$(shell " + tfel_config +
+    insert_if(l.link_libraries, "$(shell " + tfel_config +
                                          " --library-dependency "
                                          "--material --mfront-profiling)");
 #else  /* __cplusplus < 201703L */
-    insert_if(d[lib].link_libraries, "$(shell " + tfel_config +
+    insert_if(l.link_libraries, "$(shell " + tfel_config +
                                          " --library-dependency "
                                          "--material --mfront-profiling --physical-constants)");
 #endif /* __cplusplus < 201703L */
@@ -1482,7 +1483,7 @@ namespace mfront {
       b.push_back(base);
       //      b.push_back(name);
     }
-    insert_if(d[lib].epts, b);
+    insert_if(l.epts, b);
   }  // end of CastemInterface::getTargetsDescription
 
   std::pair<std::vector<BehaviourMaterialProperty>, SupportedTypes::TypeSize>

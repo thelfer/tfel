@@ -1611,11 +1611,12 @@ namespace mfront{
 					      const ModelDescription& md)
   {
     const auto lib = getLibraryName(md);
-    td[lib].sources.push_back(md.className+"-@application@.cxx");
+    auto& l = td.getLibrary(lib);
+    l.sources.push_back(md.className+"-@application@.cxx");
     td.headers.push_back("Pleiades/Model/"+md.className+"-@application@.hxx");
-    td[lib].cppflags.push_back("`@application@-config --includes`");
-    td[lib].ldflags.push_back("`@application@-config --libs` -lm");
-    td[lib].epts.push_back(md.className);
+    l.cppflags.push_back("`@application@-config --includes`");
+    l.ldflags.push_back("`@application@-config --libs` -lm");
+    l.epts.push_back(md.className);
   } // end of MFrontModelInterface::getTargetsDescription
 
   MFrontModelInterface::~MFrontModelInterface() = default;

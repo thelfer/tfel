@@ -1072,7 +1072,7 @@ namespace mfront {
   void BehaviourQuery::treatGeneratedSources() {
     auto ldsl = this->dsl;
     auto q = [ldsl](const FileDescription&, const BehaviourDescription&) {
-      for (const auto& l : ldsl->getTargetsDescription()) {
+      for (const auto& l : ldsl->getTargetsDescription().libraries) {
         std::cout << l.name << " : ";  //< library
         std::copy(l.sources.begin(), l.sources.end(),
                   std::ostream_iterator<std::string>(std::cout, " "));
@@ -1096,7 +1096,7 @@ namespace mfront {
   void BehaviourQuery::treatCppFlags() {
     auto ldsl = this->dsl;
     auto q = [ldsl](const FileDescription&, const BehaviourDescription&) {
-      for (const auto& l : ldsl->getTargetsDescription()) {
+      for (const auto& l : ldsl->getTargetsDescription().libraries) {
         std::cout << l.name << " : ";
         std::copy(l.cppflags.begin(), l.cppflags.end(),
                   std::ostream_iterator<std::string>(std::cout, " "));
@@ -1109,7 +1109,7 @@ namespace mfront {
   void BehaviourQuery::treatLibrariesDependencies() {
     auto ldsl = this->dsl;
     auto q = [ldsl](const FileDescription&, const BehaviourDescription&) {
-      for (const auto& l : ldsl->getTargetsDescription()) {
+      for (const auto& l : ldsl->getTargetsDescription().libraries) {
         std::cout << l.name << " : ";
         std::copy(l.ldflags.begin(), l.ldflags.end(),
                   std::ostream_iterator<std::string>(std::cout, " "));
@@ -1125,10 +1125,10 @@ namespace mfront {
       const auto targets = ldsl->getTargetsDescription().specific_targets;
       for (const auto& t : targets) {
         std::cout << t.first << " : ";
-        std::copy(t.second.first.begin(), t.second.first.end(),
+        std::copy(t.second.deps.begin(), t.second.deps.end(),
                   std::ostream_iterator<std::string>(std::cout, " "));
         std::cout << '\n' << "> rule : ";
-        std::copy(t.second.second.begin(), t.second.second.end(),
+        std::copy(t.second.cmds.begin(), t.second.cmds.end(),
                   std::ostream_iterator<std::string>(std::cout, "\n> rule : "));
         std::cout << '\n';
       }

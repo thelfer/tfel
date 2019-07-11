@@ -130,19 +130,20 @@ namespace mfront
     const auto name = (mpd.material.empty()) ? mpd.className : mpd.material+"_"+mpd.className;
     const auto tfel_config = tfel::getTFELConfigExecutableName();
 #if  !((defined _WIN32) && (defined _MSC_VER))
-    insert_if(d[lib].link_libraries,"m");    
+    auto& l = d.getLibrary(lib);
+    insert_if(l.link_libraries,"m");    
 #endif /* !((defined _WIN32) && (defined _MSC_VER)) */
     // the jni part
-    insert_if(d[lib].cppflags,TFEL_JAVA_INCLUDES);
-    insert_if(d[lib].cppflags,
+    insert_if(l.cppflags,TFEL_JAVA_INCLUDES);
+    insert_if(l.cppflags,
 	      "$(shell "+tfel_config+" --cppflags --compiler-flags)");
-    insert_if(d[lib].include_directories,
+    insert_if(l.include_directories,
 	      "$(shell "+tfel_config+" --include-path)");
-    insert_if(d[lib].sources,name+"-java.cxx");
+    insert_if(l.sources,name+"-java.cxx");
     if(this->package.empty()){
-      insert_if(d[lib].epts,getJavaClassName(mpd)+"."+mpd.law);
+      insert_if(l.epts,getJavaClassName(mpd)+"."+mpd.law);
     } else {
-      insert_if(d[lib].epts,this->package+"."+getJavaClassName(mpd)+"."+mpd.law);
+      insert_if(l.epts,this->package+"."+getJavaClassName(mpd)+"."+mpd.law);
     }
     // the java class
     const auto jfname = getJavaClassFileName(mpd,this->package);
@@ -156,11 +157,9 @@ namespace mfront
       cmd += java;
     }
     cmd += " "+src;
-    d.specific_targets[target].first.clear();
-    d.specific_targets[target].first.push_back(src);
-    d.specific_targets[target].second.clear();
-    d.specific_targets[target].second.push_back(cmd);
-    insert_if(d.specific_targets["all"].first,target);
+    insert_if(d.specific_targets[target].sources,src);
+    insert_if(d.specific_targets[target].cmds,cmd);
+    insert_if(d.specific_targets["all"].deps,target);
   } // end of JavaMaterialPropertyInterface::getTargetsDescription
 
   static void writePhysicalBounds(std::ostream& out,
@@ -335,7 +334,7 @@ namespace mfront
 	    << "  }\n"
 	    << "  java_env->ThrowNew(jexcept,msg.c_str());\n"
 	    << "  java_env->DeleteLocalRef(jexcept);\n"
-	    << "  return jdouble{};\n"
+	    << "  return real{};\n"
 	    << "};\n";
     // material laws
     writeMaterialLaws(srcFile,mpd.materialLaws);
@@ -364,10 +363,10 @@ namespace mfront
       }
       srcFile << "#endif /* JAVA_NO_BOUNDS_CHECK */\n";
     } //  if((hasPhysicalBounds(mpd))||(hasBounds(mpd))){
-    srcFile << "jdouble " << mpd.output.name << ";\n"
+    srcFile << "real " << mpd.output.name << ";\n"
 	    << "try{\n"
 	    << mpd.f.body
-	    << "} catch(exception& cpp_except){\n"
+	    << "} catch(std::exception& cpp_except){\n"
 	    << "  return throwJavaRuntimeException(cpp_except.what());\n"
 	    << "} catch(...){\n"
       	    << "  return throwJavaRuntimeException(\"unknown C++ exception\");\n"

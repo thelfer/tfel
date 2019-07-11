@@ -2402,6 +2402,7 @@ mfront/include/MFront/EuroplexusInterface.hxx -text
 mfront/include/MFront/EuroplexusSymbolsGenerator.hxx -text
 mfront/include/MFront/ExcelMaterialPropertyInterface.hxx -text
 mfront/include/MFront/ExcelMaterialPropertyInternalInterface.hxx -text
+mfront/include/MFront/ExecutableDescription.hxx -text
 mfront/include/MFront/FileDescription.hxx -text
 mfront/include/MFront/FiniteStrainBehaviourTangentOperatorConversion.hxx -text
 mfront/include/MFront/FiniteStrainBehaviourTangentOperatorConversionPath.hxx -text
@@ -2509,6 +2510,7 @@ mfront/include/MFront/RungeKuttaDSLBase.hxx -text
 mfront/include/MFront/RungeKuttaFiniteStrainDSL.hxx -text
 mfront/include/MFront/SearchPathsHandler.hxx -text
 mfront/include/MFront/SecondBroydenSolver.hxx -text
+mfront/include/MFront/SpecificTargetDescription.hxx -text
 mfront/include/MFront/StandardBehaviourInterface.hxx -text
 mfront/include/MFront/StandardElasticityBrick.hxx -text
 mfront/include/MFront/StandardElastoViscoPlasticityBrick.hxx -text
@@ -2660,6 +2662,7 @@ mfront/src/EuroplexusStressFreeExpansionHandler.cxx -text
 mfront/src/EuroplexusSymbolsGenerator.cxx -text
 mfront/src/ExcelMaterialPropertyInterface.cxx -text
 mfront/src/ExcelMaterialPropertyInternalInterface.cxx -text
+mfront/src/ExecutableDescription.cxx -text
 mfront/src/FileDescription.cxx -text
 mfront/src/FiniteStrainBehaviourTangentOperatorConversion.cxx -text
 mfront/src/FiniteStrainBehaviourTangentOperatorConversionPath.cxx -text
@@ -2755,6 +2758,7 @@ mfront/src/RungeKuttaDSLBase.cxx -text
 mfront/src/RungeKuttaFiniteStrainDSL.cxx -text
 mfront/src/SearchPathsHandler.cxx -text
 mfront/src/SecondBroydenSolver.cxx -text
+mfront/src/SpecificTargetDescription.cxx -text
 mfront/src/StandardBehaviourInterface.cxx -text
 mfront/src/StandardElasticityBrick.cxx -text
 mfront/src/StandardElastoViscoPlasticityBrick.cxx -text

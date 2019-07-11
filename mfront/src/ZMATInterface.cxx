@@ -1703,26 +1703,27 @@ namespace mfront {
     const auto lib = getLibraryName(bd);
     const auto name = bd.getLibrary() + bd.getClassName();
     const auto tfel_config = tfel::getTFELConfigExecutableName();
-    insert_if(d[lib].cppflags,
+    auto& l = d.getLibrary(lib);
+    insert_if(l.cppflags,
               "$(shell " + tfel_config + " --cppflags --compiler-flags)");
-    insert_if(d[lib].cppflags, "$(shell " + tfel_config + " --zmat)");
+    insert_if(l.cppflags, "$(shell " + tfel_config + " --zmat)");
 #pragma message("Linux specific")
-    insert_if(d[lib].cppflags, "-DLinux");
-    insert_if(d[lib].cppflags, "-DLinux_64");
-    insert_if(d[lib].cppflags, "-D_REENTRANT");
-    insert_if(d[lib].include_directories,
+    insert_if(l.cppflags, "-DLinux");
+    insert_if(l.cppflags, "-DLinux_64");
+    insert_if(l.cppflags, "-D_REENTRANT");
+    insert_if(l.include_directories,
               "$(shell " + tfel_config + " --include-path)");
     insert_if(d.headers, "MFront/ZMAT/ZMAT" + name + ".hxx");
-    insert_if(d[lib].sources, "ZMAT" + name + ".cxx");
-    insert_if(d[lib].epts, bd.getClassName());
-    insert_if(d[lib].link_directories,
+    insert_if(l.sources, "ZMAT" + name + ".cxx");
+    insert_if(l.epts, bd.getClassName());
+    insert_if(l.link_directories,
               "$(shell " + tfel_config + " --library-path)");
 #if __cplusplus >= 201703L
-    insert_if(d[lib].link_libraries, "$(shell " + tfel_config +
-                                         " --library-dependency "
-                                         "--material --mfront-profiling)");
+    insert_if(l.link_libraries, "$(shell " + tfel_config +
+                                    " --library-dependency "
+                                    "--material --mfront-profiling)");
 #else  /* __cplusplus < 201703L */
-    insert_if(d[lib].link_libraries,
+    insert_if(l.link_libraries,
               "$(shell " + tfel_config +
                   " --library-dependency "
                   "--material --mfront-profiling --physical-constants)");
@@ -1734,7 +1735,7 @@ namespace mfront {
     // the command line, if any.
     // If the installation path has not been explicitely given by the user,
     // the `ZEBU_PATH` environment variable is used, if defined.
-    auto& ip = d[lib].install_path;
+    auto& ip = l.install_path;
     const auto ipath = getInstallPath();
     if (!ipath.empty()) {
       ip = ipath;

@@ -25,12 +25,13 @@ namespace mfront {
   TargetsDescription::TargetsDescription(TargetsDescription&&) = default;
   TargetsDescription::~TargetsDescription() = default;
 
-  LibraryDescription& TargetsDescription::operator()(const std::string& n,
-                                                     const std::string& pr,
-                                                     const std::string& s,
-                                                     const LibraryDescription::LibraryType t) {
+  LibraryDescription& TargetsDescription::getLibrary(
+      const std::string& n,
+      const std::string& pr,
+      const std::string& s,
+      const LibraryDescription::LibraryType t) {
     auto throw_if = [](const bool b, const std::string& msg) {
-      tfel::raise_if(b, "TargetsDescription::operator(): " + msg);
+      tfel::raise_if(b, "TargetsDescription::getLibrary: " + msg);
     };
     auto c = [&n](const LibraryDescription& l) { return l.name == n; };
     const auto b = this->libraries.begin();
@@ -56,32 +57,37 @@ namespace mfront {
     return l;
   }
 
-  LibraryDescription& TargetsDescription::operator()(const std::string& n, const std::string& p) {
-    const auto s = LibraryDescription::getDefaultLibrarySuffix(this->system, this->libraryType);
-    return this->operator()(n, p, s, this->libraryType);
-  }  // end of TargetsDescription::operator()
+  LibraryDescription& TargetsDescription::getLibrary(const std::string& n,
+                                                     const std::string& p) {
+    const auto s = LibraryDescription::getDefaultLibrarySuffix(
+        this->system, this->libraryType);
+    return this->getLibrary(n, p, s, this->libraryType);
+  }  // end of TargetsDescription::getLibrary
 
-  LibraryDescription& TargetsDescription::operator()(const std::string& n,
+  LibraryDescription& TargetsDescription::getLibrary(const std::string& n,
                                                      const std::string& pr,
                                                      const std::string& s) {
-    return this->operator()(n, pr, s, this->libraryType);
-  }  // end of TargetsDescription::operator()
+    return this->getLibrary(n, pr, s, this->libraryType);
+  }  // end of TargetsDescription::getLibrary
 
-  LibraryDescription& TargetsDescription::operator[](const std::string& n) {
+  LibraryDescription& TargetsDescription::getLibrary(const std::string& n) {
     auto c = [&n](const LibraryDescription& l) { return l.name == n; };
     const auto b = this->libraries.begin();
     const auto e = this->libraries.end();
     const auto p = std::find_if(b, e, c);
     if (p == e) {
-      const auto pr = LibraryDescription::getDefaultLibraryPrefix(this->system, this->libraryType);
-      const auto s = LibraryDescription::getDefaultLibrarySuffix(this->system, this->libraryType);
+      const auto pr = LibraryDescription::getDefaultLibraryPrefix(
+          this->system, this->libraryType);
+      const auto s = LibraryDescription::getDefaultLibrarySuffix(
+          this->system, this->libraryType);
       this->libraries.emplace_back(n, pr, s, this->libraryType);
       return this->libraries.back();
     }
     return *p;
   }  // end of TargetsDescription::operator[]
 
-  const LibraryDescription& TargetsDescription::operator[](const std::string& n) const {
+  const LibraryDescription& TargetsDescription::getLibrary(
+      const std::string& n) const {
     auto c = [&n](const LibraryDescription& l) { return l.name == n; };
     const auto b = this->libraries.begin();
     const auto e = this->libraries.end();
@@ -93,31 +99,11 @@ namespace mfront {
     return *p;
   }  // end of TargetsDescription::operator[]
 
-  TargetsDescription::iterator TargetsDescription::begin() { return this->libraries.begin(); }
-
-  TargetsDescription::iterator TargetsDescription::end() { return this->libraries.end(); }
-
-  TargetsDescription::const_iterator TargetsDescription::begin() const {
-    return this->libraries.cbegin();
-  }
-
-  TargetsDescription::const_iterator TargetsDescription::cbegin() const {
-    return this->libraries.cbegin();
-  }
-
-  TargetsDescription::const_iterator TargetsDescription::end() const {
-    return this->libraries.cend();
-  }
-
-  TargetsDescription::const_iterator TargetsDescription::cend() const {
-    return this->libraries.cend();
-  }
-
   void mergeTargetsDescription(TargetsDescription& d,
                                const TargetsDescription& s,
                                const bool b) {
-    for (const auto& ls : s) {
-      auto& ld = d(ls.name, ls.prefix, ls.suffix, ls.type);
+    for (const auto& ls : s.libraries) {
+      auto& ld = d.getLibrary(ls.name, ls.prefix, ls.suffix, ls.type);
       mergeLibraryDescription(ld, ls);
     }
     for (const auto& h : s.headers) {
@@ -140,12 +126,12 @@ namespace mfront {
 
   bool describes(const TargetsDescription& t, const std::string& n) {
     auto comp = [&n](const LibraryDescription& ld) { return ld.name == n; };
-    return std::find_if(t.begin(), t.end(), comp) != t.end();
+    return std::find_if(t.libraries.begin(), t.libraries.end(), comp) != t.libraries.end();
   }  // end of describes
 
   std::ostream& operator<<(std::ostream& os, const TargetsDescription& t) {
     os << "{\n";
-    for (const auto& l : t) {
+    for (const auto& l : t.libraries) {
       os << "library : " << l;
     }
     if (!t.headers.empty()) {
@@ -154,10 +140,9 @@ namespace mfront {
     for (const auto& target : t.specific_targets) {
       os << "target : {\n";
       os << "name : \"" << target.first << "\";\n";
-      const auto& deps = target.second.first;
-      const auto& cmds = target.second.second;
-      write(os, deps, "dependencies");
-      write(os, cmds, "commands");
+      write(os, target.second.deps, "dependencies");
+      write(os, target.second.cmds, "commands");
+      write(os, target.second.sources, "sources");
       os << "};\n";
     }
     os << "};\n";
@@ -170,11 +155,16 @@ namespace mfront {
       const tfel::utilities::CxxTokenizer::const_iterator pe) {
     using tfel::utilities::CxxTokenizer;
     const auto f = "read<TargetsDescription>";
-    auto error = [&f](const std::string& m) { tfel::raise(std::string{f} + ": " + m); };
+    auto error = [&f](const std::string& m) {
+      tfel::raise(std::string{f} + ": " + m);
+    };
     auto get_vector = [&f](
-        std::vector<std::string>& v, tfel::utilities::CxxTokenizer::const_iterator& pc,
-        const tfel::utilities::CxxTokenizer::const_iterator e, const std::string& n) {
-      tfel::raise_if(!v.empty(), std::string{f} + ": library member '" + n + "' multiply defined");
+        std::vector<std::string>& v,
+        tfel::utilities::CxxTokenizer::const_iterator& pc,
+        const tfel::utilities::CxxTokenizer::const_iterator e,
+        const std::string& n) {
+      tfel::raise_if(!v.empty(), std::string{f} + ": library member '" + n +
+                                     "' multiply defined");
       auto c = pc;
       CxxTokenizer::readSpecifiedToken(f, ":", c, e);
       v = read<std::vector<std::string>>(c, e);
@@ -195,7 +185,7 @@ namespace mfront {
         if (describes(t, l.name)) {
           error("library '" + l.name + "' multiply defined");
         }
-        mergeLibraryDescription(t(l.name, l.prefix, l.suffix, l.type), l);
+        mergeLibraryDescription(t.getLibrary(l.name, l.prefix, l.suffix, l.type), l);
       } else if (c->value == "headers") {
         ++c;
         get_vector(t.headers, c, pe, "headers");
@@ -203,6 +193,7 @@ namespace mfront {
         auto name = std::string{};
         auto deps = std::vector<std::string>{};
         auto cmds = std::vector<std::string>{};
+        auto sources = std::vector<std::string>{};
         ++c;
         CxxTokenizer::readSpecifiedToken(f, ":", c, pe);
         CxxTokenizer::readSpecifiedToken(f, "{", c, pe);
@@ -221,6 +212,9 @@ namespace mfront {
           } else if (c->value == "commands") {
             ++c;
             get_vector(cmds, c, pe, "commands");
+          } else if (c->value == "sources") {
+            ++c;
+            get_vector(sources, c, pe, "sources");
           } else {
             error("unsupported tag '" + c->value +
                   "' "
@@ -236,8 +230,9 @@ namespace mfront {
           error("specific target '" + name + "' multiply defined");
         }
         auto& st = t.specific_targets[name];
-        std::swap(st.first, deps);
-        std::swap(st.second, cmds);
+        std::swap(st.deps, deps);
+        std::swap(st.cmds, cmds);
+        std::swap(st.sources, sources);
       } else {
         error("unsupported tag '" + c->value + "'");
       }

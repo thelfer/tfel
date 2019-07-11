@@ -744,8 +744,8 @@ namespace mfront {
     for (const auto& i : this->interfaces) {
       i.second->getTargetsDescription(this->td, this->mb);
     }
-    for (auto& l : this->td) {
-      insert_if(this->td[l.name].sources, this->getSrcFileName());
+    for (auto& l : this->td.libraries) {
+      insert_if(this->td.getLibrary(l.name).sources, this->getSrcFileName());
     }
     insert_if(this->td.headers, this->getBehaviourFileName());
     insert_if(this->td.headers, this->getBehaviourDataFileName());

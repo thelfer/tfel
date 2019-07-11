@@ -48,10 +48,11 @@ void PleiadesMaterialPropertyInterface::getTargetsDescription(
   const auto lib = "libPleiades" + getMaterialLawLibraryNameBase(mpd);
   const auto name = mpd.material.empty() ? mpd.className : mpd.material + "_" + mpd.className;
   const auto hn = "include/Pleiades/Metier/MaterialProperty/" + name + "-pleiades.hh";
-  d[lib].ldflags.push_back("-lm");
-  d[lib].cppflags.push_back("`pleiades-config --includes`");
-  d[lib].sources.push_back(name + "-pleiades.cpp");
-  d[lib].epts.push_back(name);
+  auto& l = d.getLibrary(lib);
+  l.ldflags.push_back("-lm");
+  l.cppflags.push_back("`pleiades-config --includes`");
+  l.sources.push_back(name + "-pleiades.cpp");
+  l.epts.push_back(name);
   d.headers.push_back(hn.substr(8));
 }  // end of PleiadesMaterialPropertyInterface::getTargetsDescription
 

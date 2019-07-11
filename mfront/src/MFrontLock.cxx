@@ -76,11 +76,7 @@ namespace mfront{
   } // end of MFrontLock::unlock()
 
   MFrontLock::~MFrontLock() {
-#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-    ::CloseHandle(this->ghMutex);
-#else
-    ::sem_close(this->l);
-#endif
+    this->unlock();
   } // end of MFrontLock::~MFrontLock()
 
   MFrontLockGuard::MFrontLockGuard() {

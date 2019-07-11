@@ -18,7 +18,10 @@ nobase_include_HEADERS= MFront/MFront.hxx                                      \
 			MFront/GenericData.hxx                                            \
 			MFront/FileDescription.hxx                                        \
 			MFront/TargetsDescription.hxx                                     \
+			MFront/CompiledTargetDescriptionBase.hxx                          \
+			MFront/ExecutableDescription.hxx                                  \
 			MFront/LibraryDescription.hxx                                     \
+			MFront/SpecificTargetDescription.hxx                              \
 			MFront/MFrontLock.hxx                                             \
 			MFront/InitDSLs.hxx                                               \
 			MFront/InitInterfaces.hxx                                         \

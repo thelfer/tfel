@@ -476,7 +476,7 @@ available (natively or via `MFront`) in `Cast3M`, `Code_Aster`,
 
 ### Isotropic case
 
-The "Abaqus User Subroutines Reference Guide" gives indicates that the
+The "Abaqus User Subroutines Reference Guide" indicates that the
 tangent moduli required by `Abaqus/Standard` \(\CMJ\) is
 closely related to \(\tenseurq{C}^{\tau\,J}\), the moduli associated
 to the Jauman rate of the Kirchhoff stress :
@@ -485,7 +485,7 @@ to the Jauman rate of the Kirchhoff stress :
 J\,\CMJ=\CtJ
 \]
 
-where \(J\) is the derterminant of the deformation gradient
+where \(J\) is the determinant of the deformation gradient
 \(\tns{F}\).
 
 By definition, \(\CtJ\) satisfies:

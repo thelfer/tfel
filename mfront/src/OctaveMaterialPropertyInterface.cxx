@@ -94,9 +94,9 @@ namespace mfront
     cmd += " $(INCLUDES) -L../src/";
     cmd += " "+name+".cpp";
     auto& res = td.specific_targets;
-    res[target].first.push_back("../octave/"+name+".cpp");
-    res[target].second.push_back(cmd);
-    res["all"].first.push_back("../octave/"+name+".oct");
+    insert_if(res[target].sources,"../octave/"+name+".cpp");
+    insert_if(res[target].cmds,cmd);
+    insert_if(res["all"].deps,"../octave/"+name+".oct");
   } // end of OctaveMaterialPropertyInterface::getSpecificTargets
 
   void OctaveMaterialPropertyInterface::writeOutputFiles(const MaterialPropertyDescription& mpd,

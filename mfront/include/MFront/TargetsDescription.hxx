@@ -22,6 +22,8 @@
 #include"MFront/MFrontConfig.hxx"
 #include"MFront/MFrontUtilities.hxx"
 #include"MFront/LibraryDescription.hxx"
+#include"MFront/ExecutableDescription.hxx"
+#include"MFront/SpecificTargetDescription.hxx"
 
 namespace mfront{
 
@@ -50,7 +52,7 @@ namespace mfront{
      * \note If the the library already exists and the suffix and/or
      * the type does not match, an exception is thrown
      */
-    LibraryDescription& operator()(const std::string&,
+    LibraryDescription& getLibrary(const std::string&,
                                    const std::string&,
                                    const std::string&,
                                    const LibraryDescription::LibraryType);
@@ -61,7 +63,7 @@ namespace mfront{
      * \param[in] p : library prefix
      * \param[in] s : library suffix
      */
-    LibraryDescription& operator()(const std::string&,
+    LibraryDescription& getLibrary(const std::string&,
                                    const std::string&,
                                    const std::string&);
     /*!
@@ -70,31 +72,19 @@ namespace mfront{
      * \param[in] n : name of the library searched
      * \param[in] p : library prefix
      */
-    LibraryDescription& operator()(const std::string&, const std::string&);
+    LibraryDescription& getLibrary(const std::string&, const std::string&);
     /*!
      * \return the library description associated with the given
-     * library name or a newly created one if non existed
+     * library name or a newly created one if non existed.
      * \param[in] n : name of the library searched
      */
-    LibraryDescription& operator[](const std::string&);
+    LibraryDescription& getLibrary(const std::string&);
     /*!
      * \return the library description associated with the given
-     * library name or a newly created one if non existed
+     * library name.
      * \param[in] n : name of the library searched
      */
-    const LibraryDescription& operator[](const std::string&) const;
-    //! \return an iterator to the first library description
-    iterator begin();
-    //! \return an iterator past the last library description
-    iterator end();
-    //! \return an iterator to the first library description
-    const_iterator begin() const;
-    //! \return an iterator past the last library description
-    const_iterator end() const;
-    //! \return an iterator to the first library description
-    const_iterator cbegin() const;
-    //! \return an iterator past the last library description
-    const_iterator cend() const;
+    const LibraryDescription& getLibrary(const std::string&) const;
     //! generated headers
     std::vector<std::string> headers;
     //! target system
@@ -108,7 +98,10 @@ namespace mfront{
     LibraryDescription::TargetSystem system = LibraryDescription::UNIX;
 #endif
     //! default library type
-    LibraryDescription::LibraryType libraryType = LibraryDescription::SHARED_LIBRARY;
+    LibraryDescription::LibraryType libraryType =
+        LibraryDescription::SHARED_LIBRARY;
+    //! list of libraries to be generated
+    std::vector<LibraryDescription> libraries;
     /*!
      * Specific targets and associated dependencies to other targets
      * (for example, mfront generated library) and commands required
@@ -116,19 +109,13 @@ namespace mfront{
      *
      * A specific target will define the following Makefile rule:
      * \code{.txt}
-     * target : dep1 dep2 ...
+     * target : dep1 dep2 src1 src1...
      *    cmd1
      *    cmd2
      *    ....
      * \endcode
      */
-    std::map<std::string,                           //< target name
-	     std::pair<std::vector<std::string>,    //< dependencies to other targets
-		       std::vector<std::string>     //< commands
-		       >> specific_targets; 
-  private:
-    //! list of libraries to be generated
-    std::vector<LibraryDescription> libraries;
+    std::map<std::string, SpecificTargetDescription> specific_targets;
   }; // end of struct TargetsDescription
 
   /*!

@@ -11,38 +11,20 @@
  * project under specific licensing conditions. 
  */
 
-#include<boost/python.hpp>
-#include"MFront/LibraryDescription.hxx"
+#include <boost/python.hpp>
+#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
+#include "TFEL/Python/VectorConverter.hxx"
+#include "MFront/LibraryDescription.hxx"
 
-#define LIBRARYDESCRIPTION_ADDPROPERTY_HELPERFUNCTIONS( X )   				  \
-  static std::vector<std::string>							  \
-  LibraryDescription_get##X(const mfront::LibraryDescription& t)			  \
-  {											  \
-    return t. X;									  \
-  }											  \
-  static void										  \
-  LibraryDescription_set##X(mfront::LibraryDescription& t,				  \
-			    const std::vector<std::string>& h)				  \
-  {											  \
-    t. X = h;										  \
-  }											  \
-  static void										  \
-  LibraryDescription_addProperty##X(boost::python::class_<mfront::LibraryDescription>& w) \
-  {											  \
-    w.add_property(#X,LibraryDescription_get##X,LibraryDescription_set##X);		  \
-  }
-  
-#define LIBRARYDESCRIPTION_ADDPROPERTY( X , Y)	\
-  LibraryDescription_addProperty##Y ( X )
+static std::vector<std::string> LibraryDescription_get_epts(
+    const mfront::LibraryDescription& t) {
+  return t.epts;
+}
 
-LIBRARYDESCRIPTION_ADDPROPERTY_HELPERFUNCTIONS(sources)
-LIBRARYDESCRIPTION_ADDPROPERTY_HELPERFUNCTIONS(cppflags)
-LIBRARYDESCRIPTION_ADDPROPERTY_HELPERFUNCTIONS(include_directories)
-LIBRARYDESCRIPTION_ADDPROPERTY_HELPERFUNCTIONS(link_directories)
-LIBRARYDESCRIPTION_ADDPROPERTY_HELPERFUNCTIONS(link_libraries)
-LIBRARYDESCRIPTION_ADDPROPERTY_HELPERFUNCTIONS(deps)
-LIBRARYDESCRIPTION_ADDPROPERTY_HELPERFUNCTIONS(ldflags)
-LIBRARYDESCRIPTION_ADDPROPERTY_HELPERFUNCTIONS(epts)
+static void LibraryDescription_set_epts(mfront::LibraryDescription& t,
+                                        const std::vector<std::string>& h) {
+  t.epts = h;
+}
 
 void declareLibraryDescription(){
   using namespace boost::python;
@@ -53,26 +35,21 @@ void declareLibraryDescription(){
     .value("MODULE",LibraryDescription::MODULE)
     ;
 
-  class_<LibraryDescription> w ("LibraryDescription",no_init);
+  class_<LibraryDescription, bases<CompiledTargetDescriptionBase>> w(
+      "LibraryDescription", no_init);
   w.def(init<std::string,std::string,std::string,
 	LibraryDescription::LibraryType>())
-    .def_readonly("name",&LibraryDescription::name)
-    .def_readonly("prefix",&LibraryDescription::prefix)
-    .def_readonly("suffix",&LibraryDescription::suffix)
     .def_readonly("type",&LibraryDescription::type)
     .def(self_ns::str(self_ns::self))
     ;
 
-  LIBRARYDESCRIPTION_ADDPROPERTY(w,sources);
-  LIBRARYDESCRIPTION_ADDPROPERTY(w,cppflags);
-  LIBRARYDESCRIPTION_ADDPROPERTY(w,include_directories);
-  LIBRARYDESCRIPTION_ADDPROPERTY(w,link_directories);
-  LIBRARYDESCRIPTION_ADDPROPERTY(w,link_libraries);
-  LIBRARYDESCRIPTION_ADDPROPERTY(w,deps);
-  LIBRARYDESCRIPTION_ADDPROPERTY(w,ldflags);
-  LIBRARYDESCRIPTION_ADDPROPERTY(w,epts);
-  
+  w.add_property("epts", LibraryDescription_get_epts,
+                 LibraryDescription_set_epts);
+
   def("convert",convert);
   def("mergeLibraryDescription",mergeLibraryDescription);
-  
+
+  class_<std::vector<LibraryDescription>>("LibraryDescriptionVector")
+      .def("__iter__", iterator<std::vector<LibraryDescription>>())
+      .def("__len__", &std::vector<LibraryDescription>::size);
 }

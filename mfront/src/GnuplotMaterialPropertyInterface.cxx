@@ -175,11 +175,12 @@ namespace mfront
     using std::string;
     const auto name = (mpd.material.empty()) ? mpd.className : mpd.material+"_"+mpd.className;
     const auto target = name+"GnuplotGraph";
-    d.specific_targets[target].first.push_back(name+"CppTest");
-    d.specific_targets[target].second.push_back("@./"+name+"CppTest");
-    d.specific_targets[target].second.push_back(string("@")+string(GNUPLOT_PATH)+" "+name+".gp");
-    d.specific_targets["graph"].first.push_back(target);
-    d.specific_targets["check"].first.push_back(target);
+    insert_if(d.specific_targets[target].deps,name+"CppTest");
+    insert_if(d.specific_targets[target].sources,"./"+name+"CppTest");
+    insert_if(d.specific_targets[target].sources,
+	      string(GNUPLOT_PATH)+" "+name+".gp");
+    insert_if(d.specific_targets["graph"].deps,target);
+    insert_if(d.specific_targets["check"].deps,target);
   }
 
   void

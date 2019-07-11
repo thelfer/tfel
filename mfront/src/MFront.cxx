@@ -650,7 +650,7 @@ namespace mfront {
     dsl->analyseFile(f, this->ecmds, this->substitutions);
     dsl->generateOutputFiles();
     auto td = dsl->getTargetsDescription();
-    for (auto& l : td) {
+    for (auto& l : td.libraries) {
       for (const auto& d : this->defines) {
 #ifndef _MSC_VER
         insert_if(l.cppflags, "-D " + d);
@@ -766,21 +766,21 @@ namespace mfront {
       }
       for (auto& t : this->targets.specific_targets) {
         auto tmp = std::vector<std::string>{};
-        for (auto p2 = t.second.first.cbegin(); p2 != t.second.first.cend(); ++p2) {
+        for (auto p2 = t.second.deps.cbegin(); p2 != t.second.deps.cend(); ++p2) {
           const auto p4 = p2 + 1;
-          if (find(p4, t.second.first.cend(), *p2) == t.second.first.cend()) {
+          if (find(p4, t.second.deps.cend(), *p2) == t.second.deps.cend()) {
             tmp.push_back(*p2);
           }
         }
-        t.second.first.swap(tmp);
+        t.second.deps.swap(tmp);
         tmp.clear();
-        for (auto p2 = t.second.second.cbegin(); p2 != t.second.second.cend(); ++p2) {
+        for (auto p2 = t.second.cmds.cbegin(); p2 != t.second.cmds.cend(); ++p2) {
           const auto p4 = p2 + 1;
-          if (find(p4, t.second.second.cend(), *p2) == t.second.second.cend()) {
+          if (find(p4, t.second.cmds.cend(), *p2) == t.second.cmds.cend()) {
             tmp.push_back(*p2);
           }
         }
-        t.second.second.swap(tmp);
+        t.second.cmds.swap(tmp);
       }
       // save all
       this->writeTargetsDescription();
@@ -800,7 +800,8 @@ namespace mfront {
 #if (defined _WIN32 || defined _WIN64 || defined __CYGWIN__)
     this->generateDefsFiles();
 #endif /* (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__) */
-    const auto has_libs = this->targets.begin() != this->targets.end();
+    const auto has_libs =
+        this->targets.libraries.begin() != this->targets.libraries.end();
     if ((this->genMake) && ((has_libs) || (!this->targets.specific_targets.empty()))) {
       if (this->generator == CMAKE) {
         generateCMakeListsFile(this->targets, this->opts);
@@ -821,12 +822,13 @@ namespace mfront {
       }
       if (getVerboseMode() >= VERBOSE_LEVEL0) {
         if (has_libs) {
-          if (this->targets.end() - this->targets.begin() == 1) {
+          if (this->targets.libraries.end() - this->targets.libraries.begin() ==
+              1) {
             log << "The following library has been built :\n";
           } else {
             log << "The following libraries have been built :\n";
           }
-          for (const auto& l : this->targets) {
+          for (const auto& l : this->targets.libraries) {
             if (l.name == "MFrontMaterialLaw") {
               continue;
             }
@@ -840,12 +842,12 @@ namespace mfront {
         if (!this->targets.specific_targets.empty()) {
           auto pt2 = this->targets.specific_targets.find("all");
           if (pt2 != this->targets.specific_targets.end()) {
-            if (pt2->second.first.size() == 1) {
+            if (pt2->second.deps.size() == 1) {
               log << "The following main target has been build :\n";
             } else {
               log << "The following main targets have been build :\n";
             }
-            for (const auto& t : pt2->second.first) {
+            for (const auto& t : pt2->second.deps) {
               log << "- " << t << std::endl;
             }
           }

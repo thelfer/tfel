@@ -321,10 +321,11 @@ void PleiadesModelInterface::getTargetsDescription(TargetsDescription& td,
     }
     return md.library;
   }();
-  td[lib].sources.push_back(md.className + "-" + getName() + ".cxx");
-  td[lib].cppflags.push_back("`pleiades-config --includes`");
-  td[lib].ldflags.push_back("`pleiades-config --libs` -lm");
-  td[lib].epts.push_back(md.className);
+  auto& l = td.getLibrary(lib);
+  l.sources.push_back(md.className + "-" + getName() + ".cxx");
+  l.cppflags.push_back("`pleiades-config --includes`");
+  l.ldflags.push_back("`pleiades-config --libs` -lm");
+  l.epts.push_back(md.className);
 }  // end of MFrontModelInterface::getTargetsDescription
 
 PleiadesModelInterface::~PleiadesModelInterface() = default;

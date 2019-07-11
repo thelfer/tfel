@@ -91,15 +91,16 @@ namespace mfront
     const auto lib  = "Fortran03"+getMaterialLawLibraryNameBase(mpd);
     const auto name = this->getSrcFileName(mpd.material,mpd.className);
     const auto tfel_config = tfel::getTFELConfigExecutableName();
-    insert_if(d[lib].cppflags,
+    auto& l = d.getLibrary(lib);
+    insert_if(l.cppflags,
 	      "$(shell "+tfel_config+" --cppflags --compiler-flags)");
-    insert_if(d[lib].include_directories,
+    insert_if(l.include_directories,
 	      "$(shell "+tfel_config+" --include-path)");
-    insert_if(d[lib].sources,name+".cxx");
+    insert_if(l.sources,name+".cxx");
 #if  !((defined _WIN32) && (defined _MSC_VER))
-    insert_if(d[lib].link_libraries,"m");
+    insert_if(l.link_libraries,"m");
 #endif /* !((defined _WIN32) && (defined _MSC_VER)) */
-    insert_if(d[lib].epts,{fmname+"::"+mpd.law,fmname+"::"+mpd.law+"_checkBounds"});
+    insert_if(l.epts,{fmname+"::"+mpd.law,fmname+"::"+mpd.law+"_checkBounds"});
   } // end of Fortran03MaterialPropertyInterface::getTargetsDescription
 
   std::string

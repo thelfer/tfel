@@ -728,11 +728,12 @@ namespace mfront{
     } else {
       lib = md.library;
     }
-    td[lib].sources.push_back(this->srcFileName);
-    td[lib].epts.push_back(md.className);
+    auto& l = td.getLibrary(lib);
+    l.sources.push_back(this->srcFileName);
+    l.epts.push_back(md.className);
     td.headers.push_back(this->headerFileName);
-    td[lib].cppflags.push_back("`pleiades-config --includes`\n");
-    td[lib].ldflags.push_back("`pleiades-config --libs` -lm");
+    l.cppflags.push_back("`pleiades-config --includes`\n");
+    l.ldflags.push_back("`pleiades-config --libs` -lm");
   } // end of MFrontPleiadesModelInterfaceBase::getTargetsDescription
   
   void
