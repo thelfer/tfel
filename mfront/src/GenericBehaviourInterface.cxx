@@ -83,31 +83,30 @@ namespace mfront {
     const auto lib = this->getLibraryName(bd);
     const auto name = bd.getLibrary() + bd.getClassName();
     const auto tfel_config = tfel::getTFELConfigExecutableName();
-    auto& l = d.getLibrary(lib);
-    insert_if(l.cppflags,
+    insert_if(d[lib].cppflags,
               "$(shell " + tfel_config + " --cppflags --compiler-flags)");
-    insert_if(l.include_directories,
+    insert_if(d[lib].include_directories,
               "$(shell " + tfel_config + " --include-path)");
-    insert_if(l.sources, name + "-generic.cxx");
+    insert_if(d[lib].sources, name + "-generic.cxx");
     d.headers.push_back("MFront/GenericBehaviour/" + name + "-generic.hxx");
-    insert_if(l.link_directories,
+    insert_if(d[lib].link_directories,
               "$(shell " + tfel_config + " --library-path)");
     if (this->shallGenerateMTestFileOnFailure(bd)) {
-      insert_if(l.link_libraries,
+      insert_if(d[lib].link_libraries,
                 tfel::getLibraryInstallName("MTestFileGenerator"));
     }
 #if __cplusplus >= 201703L
-    insert_if(l.link_libraries, "$(shell " + tfel_config +
+    insert_if(d[lib].link_libraries, "$(shell " + tfel_config +
                                          " --library-dependency "
                                          "--material --mfront-profiling)");
 #else  /* __cplusplus < 201703L */
-    insert_if(l.link_libraries,
+    insert_if(d[lib].link_libraries,
               "$(shell " + tfel_config +
                   " --library-dependency "
                   "--material --mfront-profiling --physical-constants)");
 #endif /* __cplusplus < 201703L */
     for (const auto h : this->getModellingHypothesesToBeTreated(bd)) {
-      insert_if(l.epts, this->getFunctionNameForHypothesis(name, h));
+      insert_if(d[lib].epts, this->getFunctionNameForHypothesis(name, h));
     }
   }  // end of GenericBehaviourInterface::getTargetsDescription
 
