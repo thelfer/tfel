@@ -752,6 +752,7 @@ namespace mtest
 	log << "Numerical evalution of tangent operator failed.\n\n";
       }
     }
+    std::fill(k.begin(),k.end(),real(0));
     updateStiffnessAndResidual(k,r,*(this->b),bwk.k,s.s1);
     if(!state.containsParameter("LagrangeMultipliersNormalisationFactor")){
       state.setParameter("LagrangeMultipliersNormalisationFactor",

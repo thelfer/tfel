@@ -778,11 +778,20 @@ namespace mfront{
     
   void RungeKuttaDSLBase::writeBehaviourEulerIntegrator(const Hypothesis h)
   {
+    const auto btype = this->mb.getBehaviourTypeFlag();
     const auto& d = this->mb.getBehaviourData(h);
     if(this->mb.hasCode(h,BehaviourData::ComputeStress)){
       this->behaviourFile << "this->computeStress();\n";
     }
-    this->behaviourFile << "this->computeDerivative();\n";
+    this->behaviourFile << "if(!this->computeDerivative()){\n\n";
+    if(this->mb.useQt()){
+      this->behaviourFile << "return MechanicalBehaviour<"
+			  << btype << ",hypothesis,Type,use_qt>::FAILURE;\n";
+    } else {
+      this->behaviourFile << "return MechanicalBehaviour<"
+			  << btype << ",hypothesis,Type,false>::FAILURE;\n";
+    }
+    this->behaviourFile << "}\n";
     for(const auto& v : d.getStateVariables()){
       this->behaviourFile << "this->" << v.name << " += "
 			  << "this->dt*(this->d" << v.name << ");\n";
@@ -802,6 +811,7 @@ namespace mfront{
 
   void RungeKuttaDSLBase::writeBehaviourRK2Integrator(const Hypothesis h)
   {
+    const auto btype = this->mb.getBehaviourTypeFlag();
     const auto& d = this->mb.getBehaviourData(h);
     auto uvs = d.getCodeBlock(BehaviourData::ComputeDerivative).members;
     if(d.hasCode(BehaviourData::ComputeStress)){
@@ -813,7 +823,15 @@ namespace mfront{
     if(this->mb.hasCode(h,BehaviourData::ComputeStress)){
       this->behaviourFile << "this->computeStress();\n";
     }
-    this->behaviourFile << "this->computeDerivative();\n";
+    this->behaviourFile << "if(!this->computeDerivative()){\n\n";
+    if(this->mb.useQt()){
+      this->behaviourFile << "return MechanicalBehaviour<"
+			  << btype << ",hypothesis,Type,use_qt>::FAILURE;\n";
+    } else {
+      this->behaviourFile << "return MechanicalBehaviour<"
+			  << btype << ",hypothesis,Type,false>::FAILURE;\n";
+    }
+    this->behaviourFile << "}\n";
     for(const auto& v : d.getStateVariables()){
       this->behaviourFile << "this->d" << v.name
 			  << "_K1 = (this->dt)*(this->d" << v.name << ");\n";
@@ -833,7 +851,15 @@ namespace mfront{
     if(this->mb.hasCode(h,BehaviourData::ComputeStress)){
       this->behaviourFile << "this->computeStress();\n";
     }
-    this->behaviourFile << "this->computeDerivative();\n";
+    this->behaviourFile << "if(!this->computeDerivative()){\n\n";
+    if(this->mb.useQt()){
+      this->behaviourFile << "return MechanicalBehaviour<"
+			  << btype << ",hypothesis,Type,use_qt>::FAILURE;\n";
+    } else {
+      this->behaviourFile << "return MechanicalBehaviour<"
+			  << btype << ",hypothesis,Type,false>::FAILURE;\n";
+    }
+    this->behaviourFile << "}\n";
     this->behaviourFile << "// Final Step\n";
     for(const auto& v : d.getStateVariables()){
       this->behaviourFile << "this->" << v.name << " += "
@@ -2174,6 +2200,7 @@ namespace mfront{
 
   void RungeKuttaDSLBase::writeBehaviourRK4Integrator(const Hypothesis h)
   {
+    const auto btype = this->mb.getBehaviourTypeFlag();
     const auto& d = this->mb.getBehaviourData(h);
     auto uvs = d.getCodeBlock(BehaviourData::ComputeDerivative).members;
     if(d.hasCode(BehaviourData::ComputeStress)){
@@ -2185,7 +2212,15 @@ namespace mfront{
     if(this->mb.hasCode(h,BehaviourData::ComputeStress)){
       this->behaviourFile << "this->computeStress();\n";
     }
-    this->behaviourFile << "this->computeDerivative();\n";
+    this->behaviourFile << "if(!this->computeDerivative()){\n\n";
+    if(this->mb.useQt()){
+      this->behaviourFile << "return MechanicalBehaviour<"
+			  << btype << ",hypothesis,Type,use_qt>::FAILURE;\n";
+    } else {
+      this->behaviourFile << "return MechanicalBehaviour<"
+			  << btype << ",hypothesis,Type,false>::FAILURE;\n";
+    }
+    this->behaviourFile << "}\n";
     for(const auto& v : d.getStateVariables()){
       this->behaviourFile << "this->d" << v.name
 			  << "_K1 = (this->dt)*(this->d" << v.name << ");\n";
@@ -2207,7 +2242,15 @@ namespace mfront{
 			  << "this->computeStress();\n\n";
     }
     this->behaviourFile << "// Compute K2's values\n"
-			<< "this->computeDerivative();\n";
+			<< "if(!this->computeDerivative()){\n\n";
+    if(this->mb.useQt()){
+      this->behaviourFile << "return MechanicalBehaviour<"
+	 << btype << ",hypothesis,Type,use_qt>::FAILURE;\n";
+    } else {
+      this->behaviourFile << "return MechanicalBehaviour<"
+	 << btype << ",hypothesis,Type,false>::FAILURE;\n";
+    }
+    this->behaviourFile << "}\n";
     for(const auto& v : d.getStateVariables()){
       this->behaviourFile << "this->d" << v.name
 			  << "_K2 = (this->dt)*(this->d" << v.name << ");\n";
@@ -2223,7 +2266,15 @@ namespace mfront{
 			  << "this->computeStress();\n\n";
     }
     this->behaviourFile << "// Compute K3's values\n"
-			<< "this->computeDerivative();\n";
+			<< "if(!this->computeDerivative()){\n\n";
+    if(this->mb.useQt()){
+      this->behaviourFile << "return MechanicalBehaviour<"
+			  << btype << ",hypothesis,Type,use_qt>::FAILURE;\n";
+    } else {
+      this->behaviourFile << "return MechanicalBehaviour<"
+			  << btype << ",hypothesis,Type,false>::FAILURE;\n";
+    }
+    this->behaviourFile << "}\n";
     for(const auto& v : d.getStateVariables()){
       this->behaviourFile << "this->d" << v.name
 			  << "_K3 = (this->dt)*(this->d" << v.name << ");\n";
@@ -2239,7 +2290,15 @@ namespace mfront{
 			  << "this->computeStress();\n\n";
     }
     this->behaviourFile << "// Compute K4's values\n"
-			<< "this->computeDerivative();\n";
+                        << "if(!this->computeDerivative()){\n\n";
+    if(this->mb.useQt()){
+      this->behaviourFile << "return MechanicalBehaviour<"
+			  << btype << ",hypothesis,Type,use_qt>::FAILURE;\n";
+    } else {
+      this->behaviourFile << "return MechanicalBehaviour<"
+			  << btype << ",hypothesis,Type,false>::FAILURE;\n";
+    }
+    this->behaviourFile << "}\n";
     for(const auto& v : d.getStateVariables()){
       this->behaviourFile << "this->d" << v.name
 			  << "_K4 = (this->dt)*(this->d" << v.name << ");\n";

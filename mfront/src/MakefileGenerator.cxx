@@ -386,8 +386,13 @@ namespace mfront{
 	m << "-shared ";
       }
       m << "$^  -o $@ ";
-      m << getLibraryLinkFlags(t,o,l.name);
-      m << "\n\n";
+      m << getLibraryLinkFlags(t, o, l.name);
+      m << "\n";
+      if (o.sys == "apple") {
+        m << "\tinstall_name_tool -add_rpath  $(shell " << tfel_config
+          << " --library-path)  $@\n";
+      }
+      m << "\n";
     }
     m << "clean : ";
     p5=t.specific_targets.find("clean");
