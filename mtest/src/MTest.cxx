@@ -695,6 +695,7 @@ namespace mtest {
       }
     }
     //! update the stiffness matrix and the residual
+    std::fill(k.begin(),k.end(),real(0));
     updateStiffnessAndResidual(k, r, *(this->b), bwk.k, s.s1);
     if (!state.containsParameter("LagrangeMultipliersNormalisationFactor")) {
       state.setParameter("LagrangeMultipliersNormalisationFactor",
