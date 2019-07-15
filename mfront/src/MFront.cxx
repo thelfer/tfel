@@ -718,7 +718,8 @@ namespace mfront {
                          f + "'");
       def << "LIBRARY " << d << "\n"
           << "EXPORTS\n";
-      std::copy(this->targets[d].epts.begin(), this->targets[d].epts.end(),
+      const auto& l = this->targets.getLibrary(d);
+      std::copy(l.epts.begin(), l.epts.end(),
                 std::ostream_iterator<std::string>(def, "\n"));
     }
   }    // end of MFront::generateDefsFile
