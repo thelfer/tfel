@@ -1295,6 +1295,7 @@ namespace mfront{
     } else if(eev==MAXIMUMVALUEERROREVALUATION){
       this->behaviourFile << "error  = Type(0);\n";
       for(const auto& v : d.getStateVariables()){
+	this->behaviourFile << "if(!std::isnan(error)){\n";
 	if(v.arraySize==1u){
 	  this->behaviourFile << "error = std::max(error,";
 	  if(enf.find(v.name)!=enf.end()){
@@ -1347,6 +1348,7 @@ namespace mfront{
 	    }
 	  }
 	}
+	this->behaviourFile << "} // end of if (!std::isnan(error))\n";
       }
     } else {
       this->throwRuntimeError("RungeKuttaDSLBase::writeBehaviourRK54Integrator",
@@ -2074,6 +2076,7 @@ namespace mfront{
     } else if(eev==MAXIMUMVALUEERROREVALUATION){
       this->behaviourFile << "error  = Type(0);\n";
       for(const auto& v : d.getStateVariables()){
+        this->behaviourFile << "if(!std::isnan(error)){\n";
 	if(v.arraySize==1u){
 	  this->behaviourFile << "error = std::max(error,tfel::math::abs(";
 	  if(enf.find(v.name)!=enf.end()){
@@ -2120,6 +2123,7 @@ namespace mfront{
 	    }
 	  }
 	}
+	this->behaviourFile << "} // end of if (!std::isnan(error))\n";
       }
     } else {
       this->throwRuntimeError("RungeKuttaDSLBase::writeBehaviourRK42Integrator",
