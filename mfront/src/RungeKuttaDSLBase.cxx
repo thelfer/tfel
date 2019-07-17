@@ -231,6 +231,8 @@ namespace mfront{
     this->reserveName("cste128_4275");
     this->reserveName("cste2197_75240");
     this->reserveName("cste1_50");
+    this->reserveName("rk_update_error");
+    this->reserveName("rk_error");
     this->reserveName("t");
     this->mb.addLocalVariable(h,VariableDescription("temperature","T_",1u,0u));
     // CallBacks
@@ -259,8 +261,7 @@ namespace mfront{
     this->mb.setIntegrationScheme(BehaviourDescription::EXPLICITSCHEME);
   }
 
-  void RungeKuttaDSLBase::writeBehaviourParserSpecificIncludes()
-  {
+  void RungeKuttaDSLBase::writeBehaviourParserSpecificIncludes() {
     auto b1 = false;
     auto b2 = false;
     this->checkBehaviourFile();
@@ -274,25 +275,19 @@ namespace mfront{
     }
   }
 
-  void
-  RungeKuttaDSLBase::treatUpdateAuxiliaryStateVariables()
-  {
+  void RungeKuttaDSLBase::treatUpdateAuxiliaryStateVariables() {
     this->readCodeBlock(*this,BehaviourData::UpdateAuxiliaryStateVariables,
 			&RungeKuttaDSLBase::standardModifier,true,true);
   } // end of RungeKuttaDSLBase::treatUpdateAuxiliaryStateVarBase
 
-  void
-  RungeKuttaDSLBase::treatComputeFinalStress()
-  {
+  void RungeKuttaDSLBase::treatComputeFinalStress() {
     this->readCodeBlock(*this,BehaviourData::ComputeFinalStress,
 			&RungeKuttaDSLBase::standardModifier,true,true);
   } // end of RungeKuttaDSLBase::treatUpdateAuxiliaryStateVarBase
-  
-  std::string
-  RungeKuttaDSLBase::computeStressVariableModifier1(const Hypothesis h,
-						    const std::string& var,
-						    const bool addThisPtr)
-  {
+
+  std::string RungeKuttaDSLBase::computeStressVariableModifier1(const Hypothesis h,
+                                                                const std::string& var,
+                                                                const bool addThisPtr) {
     const auto& d = this->mb.getBehaviourData(h);
     if((this->mb.isDrivingVariableName(var)) ||(var=="T") ||
        (this->mb.isDrivingVariableIncrementName(var))||
@@ -335,11 +330,9 @@ namespace mfront{
     return var;
   } // end of RungeKuttaDSLBase::computeStressVariableModifier1
 
-  std::string
-  RungeKuttaDSLBase::computeStressVariableModifier2(const Hypothesis h,
-						    const std::string& var,
-						    const bool addThisPtr)
-  {
+  std::string RungeKuttaDSLBase::computeStressVariableModifier2(const Hypothesis h,
+                                                                const std::string& var,
+                                                                const bool addThisPtr) {
     const auto& d = this->mb.getBehaviourData(h);
     if((this->mb.isDrivingVariableName(var))||(var=="T")||
        (d.isExternalStateVariableName(var))){
@@ -1293,62 +1286,68 @@ namespace mfront{
       }
       this->behaviourFile << "error/=" << svsize << ";\n";
     } else if(eev==MAXIMUMVALUEERROREVALUATION){
-      this->behaviourFile << "error  = Type(0);\n";
-      for(const auto& v : d.getStateVariables()){
-	this->behaviourFile << "if(!std::isnan(error)){\n";
-	if(v.arraySize==1u){
-	  this->behaviourFile << "error = std::max(error,";
-	  if(enf.find(v.name)!=enf.end()){
-	    this->behaviourFile << "(";
-	  }
-	  this->behaviourFile << "tfel::math::abs("
-			      << "cste1_360*(this->d" << v.name << "_K1)"
-			      << "-cste128_4275*(this->d" << v.name << "_K3)"
-			      << "-cste2197_75240*(this->d" << v.name << "_K4)"
-			      << "+cste1_50*(this->d" << v.name << "_K5)"
-			      << "+cste2_55*(this->d" << v.name << "_K6))";
-	  if(enf.find(v.name)!=enf.end()){
-	    this->behaviourFile << ")/(" << enf.find(v.name)->second << ")";
-	  }
-	  this->behaviourFile << ");\n";
-	} else {
-	  if(this->useDynamicallyAllocatedVector(v.arraySize)){
-	    this->behaviourFile << "for(unsigned short idx=0;idx!=" << v.arraySize << ";++idx){\n";
-	    this->behaviourFile << "error = std::max(error,";
-	    if(enf.find(v.name)!=enf.end()){
-	      this->behaviourFile << "(";
-	    }
-	    this->behaviourFile << "tfel::math::abs("
-				<< "cste1_360*(this->d" << v.name       << "_K1[idx])"
-				<< "-cste128_4275*(this->d" << v.name   << "_K3[idx])"
-				<< "-cste2197_75240*(this->d" << v.name << "_K4[idx])"
-				<< "+cste1_50*(this->d" << v.name       << "_K5[idx])"
-				<< "+cste2_55*(this->d" << v.name       << "_K6[idx]))";
-	    if(enf.find(v.name)!=enf.end()){
-	      this->behaviourFile << ")/(" << enf.find(v.name)->second << ")";
-	    }
-	    this->behaviourFile << ");\n";
-	    this->behaviourFile << "}\n";
-	  } else {
-	    for(unsigned short i=0;i!=v.arraySize;++i){
-	      this->behaviourFile << "error  = std::max(error,";
-	      if(enf.find(v.name)!=enf.end()){
-		this->behaviourFile << "(";
-	      }
-	      this->behaviourFile << "tfel::math::abs("
-				  << "cste1_360*(this->d" << v.name       << "_K1[" << i << "])"
-				  << "-cste128_4275*(this->d" << v.name   << "_K3[" << i << "])"
-				  << "-cste2197_75240*(this->d" << v.name << "_K4[" << i << "])"
-				  << "+cste1_50*(this->d" << v.name       << "_K5[" << i << "])"
-				  << "+cste2_55*(this->d" << v.name       << "_K6[" << i << "]))";
-	      if(enf.find(v.name)!=enf.end()){
-		this->behaviourFile << ")/(" << enf.find(v.name)->second << ")";
-	      }
-	      this->behaviourFile << ");\n";
-	    }
-	  }
-	}
-	this->behaviourFile << "} // end of if (!std::isnan(error))\n";
+      this->behaviourFile << "error  = Type(0);\n"
+                          << "auto rk_update_error = [&error](const real rk_error){\n"
+                          << "if(!std::isfinite(error)){return;}\n"
+                          << "if(!std::isfinite(rk_error)){\n"
+                          << "error = rk_error;\n"
+                          << "return;\n"
+                          << "}\n"
+                          << "error = std::max(error, rk_error);\n"
+                          << "};\n";
+      for (const auto& v : d.getStateVariables()) {
+        if (v.arraySize == 1u) {
+          this->behaviourFile << "rk_update_error(";
+          if (enf.find(v.name) != enf.end()) {
+            this->behaviourFile << "(";
+          }
+          this->behaviourFile << "tfel::math::abs("
+                              << "cste1_360*(this->d" << v.name << "_K1)"
+                              << "-cste128_4275*(this->d" << v.name << "_K3)"
+                              << "-cste2197_75240*(this->d" << v.name << "_K4)"
+                              << "+cste1_50*(this->d" << v.name << "_K5)"
+                              << "+cste2_55*(this->d" << v.name << "_K6))";
+          if (enf.find(v.name) != enf.end()) {
+            this->behaviourFile << ")/(" << enf.find(v.name)->second << ")";
+          }
+          this->behaviourFile << ");\n";
+        } else {
+          if (this->useDynamicallyAllocatedVector(v.arraySize)) {
+            this->behaviourFile << "for(unsigned short idx=0;idx!=" << v.arraySize << ";++idx){\n";
+            this->behaviourFile << "rk_update_error(";
+            if (enf.find(v.name) != enf.end()) {
+              this->behaviourFile << "(";
+            }
+            this->behaviourFile << "tfel::math::abs("
+                                << "cste1_360*(this->d" << v.name << "_K1[idx])"
+                                << "-cste128_4275*(this->d" << v.name << "_K3[idx])"
+                                << "-cste2197_75240*(this->d" << v.name << "_K4[idx])"
+                                << "+cste1_50*(this->d" << v.name << "_K5[idx])"
+                                << "+cste2_55*(this->d" << v.name << "_K6[idx]))";
+            if (enf.find(v.name) != enf.end()) {
+              this->behaviourFile << ")/(" << enf.find(v.name)->second << ")";
+            }
+            this->behaviourFile << ");\n";
+            this->behaviourFile << "}\n";
+          } else {
+            for (unsigned short i = 0; i != v.arraySize; ++i) {
+              this->behaviourFile << "error  = std::max(error,";
+              if (enf.find(v.name) != enf.end()) {
+                this->behaviourFile << "(";
+              }
+              this->behaviourFile << "tfel::math::abs("
+                                  << "cste1_360*(this->d" << v.name << "_K1[" << i << "])"
+                                  << "-cste128_4275*(this->d" << v.name << "_K3[" << i << "])"
+                                  << "-cste2197_75240*(this->d" << v.name << "_K4[" << i << "])"
+                                  << "+cste1_50*(this->d" << v.name << "_K5[" << i << "])"
+                                  << "+cste2_55*(this->d" << v.name << "_K6[" << i << "]))";
+              if (enf.find(v.name) != enf.end()) {
+                this->behaviourFile << ")/(" << enf.find(v.name)->second << ")";
+              }
+              this->behaviourFile << ");\n";
+            }
+          }
+        }
       }
     } else {
       this->throwRuntimeError("RungeKuttaDSLBase::writeBehaviourRK54Integrator",
@@ -2074,56 +2073,62 @@ namespace mfront{
       }
       this->behaviourFile << "error/=" << stateVarsSize << ";\n";
     } else if(eev==MAXIMUMVALUEERROREVALUATION){
-      this->behaviourFile << "error  = Type(0);\n";
+      this->behaviourFile << "error  = Type(0);\n"
+                          << "auto rk_update_error = [&error](const real rk_error){\n"
+                          << "if(!std::isfinite(error)){return;}\n"
+                          << "if(!std::isfinite(rk_error)){\n"
+                          << "error = rk_error;\n"
+                          << "return;\n"
+                          << "}\n"
+                          << "error = std::max(error, rk_error);\n"
+                          << "};\n";
       for(const auto& v : d.getStateVariables()){
-        this->behaviourFile << "if(!std::isnan(error)){\n";
-	if(v.arraySize==1u){
-	  this->behaviourFile << "error = std::max(error,tfel::math::abs(";
-	  if(enf.find(v.name)!=enf.end()){
-	    this->behaviourFile << "(";
-	  }
-	  this->behaviourFile << "cste1_6*(this->d" << v.name << "_K1+"
-			      << "this->d" << v.name << "_K4-"
-			      << "this->d" << v.name << "_K2-"
-			      << "this->d" << v.name << "_K3))";
-	  if(enf.find(v.name)!=enf.end()){
-	    this->behaviourFile << ")/(" << enf.find(v.name)->second << ")";
-	  }
-	  this->behaviourFile << ");\n";
-	} else {
-	  if(this->useDynamicallyAllocatedVector(v.arraySize)){
-	    this->behaviourFile << "for(unsigned short idx=0;idx!=" <<v.arraySize << ";++idx){\n";
-	    this->behaviourFile << "error = std::max(error,tfel::math::abs(";
-	    if(enf.find(v.name)!=enf.end()){
-	      this->behaviourFile << "(";
-	    }
-	    this->behaviourFile << "cste1_6*(this->d" << v.name << "_K1[idx]+"
-				<< "this->d" << v.name          << "_K4[idx]-"
-				<< "this->d" << v.name          << "_K2[idx]-"
-				<< "this->d" << v.name          << "_K3[idx]))";
-	    if(enf.find(v.name)!=enf.end()){
-	      this->behaviourFile << ")/(" << enf.find(v.name)->second << ")";
-	    }
-	    this->behaviourFile << ");\n";
-	    this->behaviourFile << "}\n";
-	  } else {
-	    for(unsigned short i=0;i!=v.arraySize;++i){
-	      this->behaviourFile << "error = std::max(error,tfel::math::abs(";
-	      if(enf.find(v.name)!=enf.end()){
-		this->behaviourFile << "(";
-	      }
-	      this->behaviourFile << "cste1_6*(this->d" << v.name << "_K1[" << i << "]+"
-				  << "this->d" << v.name          << "_K4[" << i << "]-"
-				  << "this->d" << v.name          << "_K2[" << i << "]-"
-				  << "this->d" << v.name          << "_K3[" << i << "]))";
-	      if(enf.find(v.name)!=enf.end()){
-		this->behaviourFile << ")/(" << enf.find(v.name)->second << ")";
-	      }
-	      this->behaviourFile << ");\n";
-	    }
-	  }
-	}
-	this->behaviourFile << "} // end of if (!std::isnan(error))\n";
+        if(v.arraySize==1u){
+          this->behaviourFile << "rk_update_error(tfel::math::abs(";
+          if (enf.find(v.name) != enf.end()) {
+            this->behaviourFile << "(";
+          }
+          this->behaviourFile << "cste1_6*(this->d" << v.name << "_K1+"
+                              << "this->d" << v.name << "_K4-"
+                              << "this->d" << v.name << "_K2-"
+                              << "this->d" << v.name << "_K3))";
+          if (enf.find(v.name) != enf.end()) {
+            this->behaviourFile << ")/(" << enf.find(v.name)->second << ")";
+          }
+          this->behaviourFile << ");\n";
+        } else {
+          if (this->useDynamicallyAllocatedVector(v.arraySize)) {
+            this->behaviourFile << "for(unsigned short idx=0;idx!=" << v.arraySize << ";++idx){\n";
+            this->behaviourFile << "rk_update_error(tfel::math::abs(";
+            if (enf.find(v.name) != enf.end()) {
+              this->behaviourFile << "(";
+            }
+            this->behaviourFile << "cste1_6*(this->d" << v.name << "_K1[idx]+"
+                                << "this->d" << v.name << "_K4[idx]-"
+                                << "this->d" << v.name << "_K2[idx]-"
+                                << "this->d" << v.name << "_K3[idx]))";
+            if (enf.find(v.name) != enf.end()) {
+              this->behaviourFile << ")/(" << enf.find(v.name)->second << ")";
+            }
+            this->behaviourFile << ");\n";
+            this->behaviourFile << "}\n";
+          } else {
+            for (unsigned short i = 0; i != v.arraySize; ++i) {
+              this->behaviourFile << "rk_update_error(tfel::math::abs(";
+              if (enf.find(v.name) != enf.end()) {
+                this->behaviourFile << "(";
+              }
+              this->behaviourFile << "cste1_6*(this->d" << v.name << "_K1[" << i << "]+"
+                                  << "this->d" << v.name << "_K4[" << i << "]-"
+                                  << "this->d" << v.name << "_K2[" << i << "]-"
+                                  << "this->d" << v.name << "_K3[" << i << "]))";
+              if (enf.find(v.name) != enf.end()) {
+                this->behaviourFile << ")/(" << enf.find(v.name)->second << ")";
+              }
+              this->behaviourFile << ");\n";
+            }
+          }
+        }
       }
     } else {
       this->throwRuntimeError("RungeKuttaDSLBase::writeBehaviourRK42Integrator",
