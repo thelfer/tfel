@@ -234,6 +234,8 @@ namespace mfront{
     this->reserveName("cste128_4275");
     this->reserveName("cste2197_75240");
     this->reserveName("cste1_50");
+    this->reserveName("rk_update_error");
+    this->reserveName("rk_error");
     this->reserveName("t");
     // CallBacks
     this->registerNewCallBack("@UsableInPurelyImplicitResolution",
@@ -811,7 +813,7 @@ namespace mfront{
     if(this->mb.hasCode(h,BehaviourData::ComputeStress)){
       os << "this->computeStress();\n";
     }
-    os << "if(!this->computeDerivative()){\n\n";
+    os << "if(!this->computeDerivative()){\n";
     if(this->mb.useQt()){
       os << "return MechanicalBehaviour<"
 	 << btype << ",hypothesis,Type,use_qt>::FAILURE;\n";
@@ -852,7 +854,7 @@ namespace mfront{
     if(this->mb.hasCode(h,BehaviourData::ComputeStress)){
       os << "this->computeStress();\n";
     }
-    os << "if(!this->computeDerivative()){\n\n";
+    os << "if(!this->computeDerivative()){\n";
     if(this->mb.useQt()){
       os << "return MechanicalBehaviour<"
 	 << btype << ",hypothesis,Type,use_qt>::FAILURE;\n";
@@ -880,7 +882,7 @@ namespace mfront{
     if(this->mb.hasCode(h,BehaviourData::ComputeStress)){
       os << "this->computeStress();\n";
     }
-    os << "if(!this->computeDerivative()){\n\n";
+    os << "if(!this->computeDerivative()){\n";
     if(this->mb.useQt()){
       os << "return MechanicalBehaviour<"
 	 << btype << ",hypothesis,Type,use_qt>::FAILURE;\n";
@@ -1323,11 +1325,18 @@ namespace mfront{
       }
       os << "error/=" << svsize << ";\n";
     } else if(eev==MAXIMUMVALUEERROREVALUATION){
-      os << "error  = Type(0);\n";
+      os << "error  = Type(0);\n"
+         << "auto rk_update_error = [&error](const real rk_error){\n"
+         << "if(!ieee754::isfinite(error)){return;}\n"
+         << "if(!ieee754::isfinite(rk_error)){\n"
+         << "error = rk_error;\n"
+         << "return;\n"
+         << "}\n"
+         << "error = std::max(error, rk_error);\n"
+         << "};\n";
       for (const auto& v : d.getStateVariables()) {
-        os << "if(ieee754::isfinite(error)){\n";
         if (v.arraySize == 1u) {
-          os << "error = std::max(error,";
+          os << "rk_update_error(";
           if (v.hasAttribute(VariableDescription::errorNormalisationFactor)) {
             os << "(";
           }
@@ -1345,7 +1354,7 @@ namespace mfront{
           if (this->mb.useDynamicallyAllocatedVector(v.arraySize)) {
             os << "for(unsigned short idx=0;idx!=" << v.arraySize
                << ";++idx){\n";
-            os << "error = std::max(error,";
+            os << "rk_update_error(";
             if (v.hasAttribute(VariableDescription::errorNormalisationFactor)) {
               os << "(";
             }
@@ -1362,7 +1371,7 @@ namespace mfront{
             os << "}\n";
           } else {
             for (unsigned short i = 0; i != v.arraySize; ++i) {
-              os << "error  = std::max(error,";
+              os << "rk_update_error(";
               if (v.hasAttribute(
                       VariableDescription::errorNormalisationFactor)) {
                 os << "(";
@@ -1380,8 +1389,7 @@ namespace mfront{
               os << ");\n";
             }
           }
-	}
-	os << "} // end of if (ieee754::isfinite(error))\n";
+        }
       }
     } else {
       this->throwRuntimeError("RungeKuttaDSLBase::writeBehaviourRK54Integrator",
@@ -2112,56 +2120,65 @@ namespace mfront{
       }
       os << "error/=" << stateVarsSize << ";\n";
     } else if(eev==MAXIMUMVALUEERROREVALUATION){
-      os << "error  = Type(0);\n";
-      for(const auto& v : d.getStateVariables()){
-	os << "if(ieee754::isfinite(error)){\n";
-	if(v.arraySize==1u){
-	  os << "error = std::max(error,tfel::math::abs(";
-	  if(v.hasAttribute(VariableDescription::errorNormalisationFactor)){
-	    os << "(";
-	  }
-	  os << "cste1_6*(this->d" << v.name << "_K1+"
-	     << "this->d" << v.name << "_K4-"
-	     << "this->d" << v.name << "_K2-"
-	     << "this->d" << v.name << "_K3))";
-	  if(v.hasAttribute(VariableDescription::errorNormalisationFactor)){
-	    os << ")/(" << get_enf(v) << ")";
-	  }
-	  os << ");\n";
-	} else {
-	  if(this->mb.useDynamicallyAllocatedVector(v.arraySize)){
-	    os << "for(unsigned short idx=0;idx!=" <<v.arraySize << ";++idx){\n";
-	    os << "error = std::max(error,tfel::math::abs(";
-	    if(v.hasAttribute(VariableDescription::errorNormalisationFactor)){
-	      os << "(";
-	    }
-	    os << "cste1_6*(this->d" << v.name << "_K1[idx]+"
-	       << "this->d" << v.name          << "_K4[idx]-"
-	       << "this->d" << v.name          << "_K2[idx]-"
-	       << "this->d" << v.name          << "_K3[idx]))";
-	    if(v.hasAttribute(VariableDescription::errorNormalisationFactor)){
-	      os << ")/(" << get_enf(v) << ")";
-	    }
-	    os << ");\n";
-	    os << "}\n";
-	  } else {
-	    for(unsigned short i=0;i!=v.arraySize;++i){
-	      os << "error = std::max(error,tfel::math::abs(";
-	      if(v.hasAttribute(VariableDescription::errorNormalisationFactor)){
-		os << "(";
-	      }
-	      os << "cste1_6*(this->d" << v.name << "_K1[" << i << "]+"
-		 << "this->d" << v.name          << "_K4[" << i << "]-"
-		 << "this->d" << v.name          << "_K2[" << i << "]-"
-		 << "this->d" << v.name          << "_K3[" << i << "]))";
-	      if(v.hasAttribute(VariableDescription::errorNormalisationFactor)){
-		os << ")/(" << get_enf(v) << ")";
-	      }
-	      os << ");\n";
-	    }
-	  }
-	}
-	os << "} // end of if (ieee754::isfinite(error))\n";
+      os << "error  = Type(0);\n"
+         << "auto rk_update_error = [&error](const real rk_error){\n"
+         << "if(!ieee754::isfinite(error)){return;}\n"
+         << "if(!ieee754::isfinite(rk_error)){\n"
+         << "error = rk_error;\n"
+         << "return;\n"
+         << "}\n"
+         << "error = std::max(error, rk_error);\n"
+         << "};\n";
+      for (const auto& v : d.getStateVariables()) {
+        if (v.arraySize == 1u) {
+          os << "rk_update_error(tfel::math::abs(";
+          if (v.hasAttribute(VariableDescription::errorNormalisationFactor)) {
+            os << "(";
+          }
+          os << "cste1_6*(this->d" << v.name << "_K1+"
+             << "this->d" << v.name << "_K4-"
+             << "this->d" << v.name << "_K2-"
+             << "this->d" << v.name << "_K3))";
+          if (v.hasAttribute(VariableDescription::errorNormalisationFactor)) {
+            os << ")/(" << get_enf(v) << ")";
+          }
+          os << ");\n";
+        } else {
+          if (this->mb.useDynamicallyAllocatedVector(v.arraySize)) {
+            os << "for(unsigned short idx=0;idx!=" << v.arraySize
+               << ";++idx){\n";
+            os << "rk_update_error(tfel::math::abs(";
+            if (v.hasAttribute(VariableDescription::errorNormalisationFactor)) {
+              os << "(";
+            }
+            os << "cste1_6*(this->d" << v.name << "_K1[idx]+"
+               << "this->d" << v.name << "_K4[idx]-"
+               << "this->d" << v.name << "_K2[idx]-"
+               << "this->d" << v.name << "_K3[idx]))";
+            if (v.hasAttribute(VariableDescription::errorNormalisationFactor)) {
+              os << ")/(" << get_enf(v) << ")";
+            }
+            os << ");\n";
+            os << "}\n";
+          } else {
+            for (unsigned short i = 0; i != v.arraySize; ++i) {
+              os << "rk_update_error(tfel::math::abs(";
+              if (v.hasAttribute(
+                      VariableDescription::errorNormalisationFactor)) {
+                os << "(";
+              }
+              os << "cste1_6*(this->d" << v.name << "_K1[" << i << "]+"
+                 << "this->d" << v.name << "_K4[" << i << "]-"
+                 << "this->d" << v.name << "_K2[" << i << "]-"
+                 << "this->d" << v.name << "_K3[" << i << "]))";
+              if (v.hasAttribute(
+                      VariableDescription::errorNormalisationFactor)) {
+                os << ")/(" << get_enf(v) << ")";
+              }
+              os << ");\n";
+            }
+          }
+        }
       }
     } else {
       this->throwRuntimeError("RungeKuttaDSLBase::writeBehaviourRK42Integrator",
@@ -2255,7 +2272,7 @@ namespace mfront{
     if(this->mb.hasCode(h,BehaviourData::ComputeStress)){
       os << "this->computeStress();\n";
     }
-    os << "if(!this->computeDerivative()){\n\n";
+    os << "if(!this->computeDerivative()){\n";
     if(this->mb.useQt()){
       os << "return MechanicalBehaviour<"
 	 << btype << ",hypothesis,Type,use_qt>::FAILURE;\n";
@@ -2285,7 +2302,7 @@ namespace mfront{
 	 << "this->computeStress();\n\n";
     }
     os << "// Compute K2's values\n"
-       << "if(!this->computeDerivative()){\n\n";
+       << "if(!this->computeDerivative()){\n";
     if(this->mb.useQt()){
       os << "return MechanicalBehaviour<"
 	 << btype << ",hypothesis,Type,use_qt>::FAILURE;\n";
@@ -2309,7 +2326,7 @@ namespace mfront{
 	 << "this->computeStress();\n\n";
     }
     os << "// Compute K3's values\n"
-       << "if(!this->computeDerivative()){\n\n";
+       << "if(!this->computeDerivative()){\n";
     if(this->mb.useQt()){
       os << "return MechanicalBehaviour<"
 	 << btype << ",hypothesis,Type,use_qt>::FAILURE;\n";
@@ -2333,7 +2350,7 @@ namespace mfront{
 	 << "this->computeStress();\n\n";
     }
     os << "// Compute K4's values\n"
-       << "if(!this->computeDerivative()){\n\n";
+       << "if(!this->computeDerivative()){\n";
     if(this->mb.useQt()){
       os << "return MechanicalBehaviour<"
 	 << btype << ",hypothesis,Type,use_qt>::FAILURE;\n";
