@@ -234,6 +234,8 @@ namespace mfront{
     this->reserveName("cste128_4275");
     this->reserveName("cste2197_75240");
     this->reserveName("cste1_50");
+    this->reserveName("rk_update_error");
+    this->reserveName("rk_error");
     this->reserveName("t");
     // CallBacks
     this->registerNewCallBack("@UsableInPurelyImplicitResolution",
@@ -259,107 +261,100 @@ namespace mfront{
     this->mb.setIntegrationScheme(BehaviourDescription::EXPLICITSCHEME);
   }
 
-  void RungeKuttaDSLBase::treatUpdateAuxiliaryStateVariables()
-  {
-    this->readCodeBlock(*this,BehaviourData::UpdateAuxiliaryStateVariables,
-			&RungeKuttaDSLBase::standardModifier,true,true);
+  void RungeKuttaDSLBase::treatUpdateAuxiliaryStateVariables() {
+    this->readCodeBlock(*this, BehaviourData::UpdateAuxiliaryStateVariables,
+                        &RungeKuttaDSLBase::standardModifier, true, true);
   } // end of RungeKuttaDSLBase::treatUpdateAuxiliaryStateVarBase
 
-  void RungeKuttaDSLBase::treatComputeFinalStress()
-  {
+  void RungeKuttaDSLBase::treatComputeFinalStress() {
     this->readCodeBlock(*this,BehaviourData::ComputeFinalStress,
 			&RungeKuttaDSLBase::standardModifier,true,true);
   } // end of RungeKuttaDSLBase::treatUpdateAuxiliaryStateVarBase
-  
-  std::string
-  RungeKuttaDSLBase::computeStressVariableModifier1(const Hypothesis h,
-						    const std::string& var,
-						    const bool addThisPtr)
-  {
+
+  std::string RungeKuttaDSLBase::computeStressVariableModifier1(
+      const Hypothesis h, const std::string& var, const bool addThisPtr) {
     const auto& d = this->mb.getBehaviourData(h);
-    if((this->mb.isGradientName(var))||
-       (this->mb.isGradientIncrementName(var))||
-       (d.isIntegrationVariableName(var))||
-       (d.isExternalStateVariableName(var))){
+    if ((this->mb.isGradientName(var)) ||
+        (this->mb.isGradientIncrementName(var)) ||
+        (d.isIntegrationVariableName(var)) ||
+        (d.isExternalStateVariableName(var))) {
       if(addThisPtr){
-	return "this->"+var+"_";
+        return "this->" + var + "_";
       } else {
-	return var+"_";
+        return var + "_";
       }
     }
-    if(var=="dT"){
-      this->declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution(h,var.substr(1));
+    if (var == "dT") {
+      this->declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution(
+          h, var.substr(1));
       if(addThisPtr){
-	return "(this->"+var+")/(this->dt)";
+        return "(this->" + var + ")/(this->dt)";
       } else {
-	return "("+var+")/(this->dt)";
+        return "(" + var + ")/(this->dt)";
       }
     }
-    if(this->mb.isExternalStateVariableIncrementName(h,var)){
-      this->declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution(h,var.substr(1));
+    if (this->mb.isExternalStateVariableIncrementName(h, var)) {
+      this->declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution(
+          h, var.substr(1));
       const auto& v = d.getExternalStateVariables().getVariable(var.substr(1));
-      if(v.arraySize>1){
-	if(addThisPtr){
-	  return "(real(1)/(this->dt)) * (this->"+var+")";
-	} else {
-	  return "(real(1)/(this->dt)) * "+var;
-	}
+      if (v.arraySize > 1) {
+        if(addThisPtr){
+          return "(real(1)/(this->dt)) * (this->" + var + ")";
+        } else {
+          return "(real(1)/(this->dt)) * " + var;
+        }
       } else {
-	if(addThisPtr){
-	  return "(this->"+var+")/(this->dt)";
-	} else {
-	  return "("+var+")/(this->dt)";
-	}
+        if (addThisPtr) {
+          return "(this->" + var + ")/(this->dt)";
+        } else {
+          return "(" + var + ")/(this->dt)";
+        }
       }
     }
-    if(addThisPtr){
-      return "this->"+var;
+    if (addThisPtr) {
+      return "this->" + var;
     }
     return var;
-  } // end of RungeKuttaDSLBase::computeStressVariableModifier1
+  }  // end of RungeKuttaDSLBase::computeStressVariableModifier1
 
-  std::string
-  RungeKuttaDSLBase::computeStressVariableModifier2(const Hypothesis h,
-						    const std::string& var,
-						    const bool addThisPtr)
-  {
+  std::string RungeKuttaDSLBase::computeStressVariableModifier2(
+      const Hypothesis h, const std::string& var, const bool addThisPtr) {
     const auto& d = this->mb.getBehaviourData(h);
-    if((this->mb.isGradientName(var))||
-       (d.isExternalStateVariableName(var))){
-      if(addThisPtr){
-	return "this->"+var+"+this->d"+var;
+    if ((this->mb.isGradientName(var)) ||
+        (d.isExternalStateVariableName(var))) {
+      if (addThisPtr) {
+        return "this->" + var + "+this->d" + var;
       } else {
-	return var+"+d"+var;
+        return var + "+d" + var;
       }
     }
-    if((d.isExternalStateVariableIncrementName(var))||
-       (var=="dT")||(this->mb.isGradientIncrementName(var))){
-      if((d.isExternalStateVariableIncrementName(var))||(var=="dT")){
-	this->declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution(h,var.substr(1));
+    if ((d.isExternalStateVariableIncrementName(var)) || (var == "dT") ||
+        (this->mb.isGradientIncrementName(var))) {
+      if ((d.isExternalStateVariableIncrementName(var)) || (var == "dT")) {
+        this->declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution(
+            h, var.substr(1));
       }
-      if(addThisPtr){
-	return "(this->"+var+")/(this->dt)";
+      if (addThisPtr) {
+        return "(this->" + var + ")/(this->dt)";
       } else {
-	return "("+var+")/(this->dt)";
+        return "(" + var + ")/(this->dt)";
       }
     }
-    if(addThisPtr){
-      return "this->"+var;
+    if (addThisPtr) {
+      return "this->" + var;
     }
     return var;
-  } // end of RungeKuttaDSLBase::computeStressVariableModifier2
+  }  // end of RungeKuttaDSLBase::computeStressVariableModifier2
 
-  void RungeKuttaDSLBase::treatComputeStress()
-  {
-    this->readCodeBlock(*this,BehaviourData::ComputeStress,
-			BehaviourData::ComputeFinalStress,
-			&RungeKuttaDSLBase::computeStressVariableModifier1,
-			&RungeKuttaDSLBase::computeStressVariableModifier2,true,true);
-  } // end of RungeKuttaDSLBase::treatComputeStress
+  void RungeKuttaDSLBase::treatComputeStress() {
+    this->readCodeBlock(
+        *this, BehaviourData::ComputeStress, BehaviourData::ComputeFinalStress,
+        &RungeKuttaDSLBase::computeStressVariableModifier1,
+        &RungeKuttaDSLBase::computeStressVariableModifier2, true, true);
+  }  // end of RungeKuttaDSLBase::treatComputeStress
 
   void RungeKuttaDSLBase::treatUnknownVariableMethod(const Hypothesis h,
-						     const std::string& n)
-  {
+                                                     const std::string& n) {
     auto throw_if = [this](const bool b,const std::string& m){
       if(b){this->throwRuntimeError("RungeKuttaDSLBase::treatUnknowVariableMethod",m);}
     };
@@ -818,7 +813,7 @@ namespace mfront{
     if(this->mb.hasCode(h,BehaviourData::ComputeStress)){
       os << "this->computeStress();\n";
     }
-    os << "if(!this->computeDerivative()){;\n";
+    os << "if(!this->computeDerivative()){\n";
     if(this->mb.useQt()){
       os << "return MechanicalBehaviour<"
 	 << btype << ",hypothesis,Type,use_qt>::FAILURE;\n";
@@ -826,7 +821,7 @@ namespace mfront{
       os << "return MechanicalBehaviour<"
 	 << btype << ",hypothesis,Type,false>::FAILURE;\n";
     }
-    os << "};";
+    os << "}\n";
     for(const auto& v : d.getStateVariables()){
       os << "this->" << v.name << " += "
 	 << "this->dt*(this->d" << v.name << ");\n";
@@ -859,7 +854,7 @@ namespace mfront{
     if(this->mb.hasCode(h,BehaviourData::ComputeStress)){
       os << "this->computeStress();\n";
     }
-    os << "if(!this->computeDerivative()){;\n";
+    os << "if(!this->computeDerivative()){\n";
     if(this->mb.useQt()){
       os << "return MechanicalBehaviour<"
 	 << btype << ",hypothesis,Type,use_qt>::FAILURE;\n";
@@ -867,7 +862,7 @@ namespace mfront{
       os << "return MechanicalBehaviour<"
 	 << btype << ",hypothesis,Type,false>::FAILURE;\n";
     }
-    os << "};";
+    os << "}\n";
     for(const auto& v : d.getStateVariables()){
       os << "this->d" << v.name
 	 << "_K1 = (this->dt)*(this->d" << v.name << ");\n";
@@ -887,7 +882,7 @@ namespace mfront{
     if(this->mb.hasCode(h,BehaviourData::ComputeStress)){
       os << "this->computeStress();\n";
     }
-    os << "if(!this->computeDerivative()){;\n";
+    os << "if(!this->computeDerivative()){\n";
     if(this->mb.useQt()){
       os << "return MechanicalBehaviour<"
 	 << btype << ",hypothesis,Type,use_qt>::FAILURE;\n";
@@ -895,7 +890,7 @@ namespace mfront{
       os << "return MechanicalBehaviour<"
 	 << btype << ",hypothesis,Type,false>::FAILURE;\n";
     }
-    os << "};";
+    os << "}\n";
     os << "// Final Step\n";
     for(const auto& v : d.getStateVariables()){
       os << "this->" << v.name << " += "
@@ -914,9 +909,8 @@ namespace mfront{
     }
   } // end of writeBehaviourRK2Integrator
 
-  void RungeKuttaDSLBase::writeBehaviourRK54Integrator(std::ostream& os,
-						       const Hypothesis h) const
-  {
+  void RungeKuttaDSLBase::writeBehaviourRK54Integrator(
+      std::ostream& os, const Hypothesis h) const {
     auto get_enf = [](const VariableDescription& v){
       return v.getAttribute<std::string>(VariableDescription::errorNormalisationFactor);      
     };
@@ -961,8 +955,8 @@ namespace mfront{
     }
     if(shallUpdateExternalStateValues){
       os << "TFEL_CONSTEXPR const auto cste1_2         = real{1}/real{2};\n"
-	 << "TFEL_CONSTEXPR const auto cste3_8         = real{3}/real{8};\n"
-	 << "TFEL_CONSTEXPR const auto cste12_13       = Type(12)/Type(13);\n";
+         << "TFEL_CONSTEXPR const auto cste3_8         = real{3}/real{8};\n"
+         << "TFEL_CONSTEXPR const auto cste12_13       = Type(12)/Type(13);\n";
     }    
     if(shallUpdateInternalStateValues){
       os << "TFEL_CONSTEXPR const auto cste3544_2565   = Type(3544)/Type(2565);\n"
@@ -1043,7 +1037,8 @@ namespace mfront{
     os << "// Compute K2's values\n";
     for(const auto& v: d.getStateVariables()){
       if(uvs.find(v.name)!=uvs.end()){
-	os << "this->" << v.name << "_ += cste1_4*(this->d" << v.name << "_K1);\n";
+        os << "this->" << v.name << "_ += cste1_4*(this->d" << v.name
+           << "_K1);\n";
       }
     }
     writeExternalVariablesCurrentValues(os,this->mb,h,"cste1_4");
@@ -1260,46 +1255,47 @@ namespace mfront{
        << "}\n\n"
        << "if(!failed){\n"
        << "// Computing the error\n";
-    if(eev==ERRORSUMMATIONEVALUATION){
-      for(auto p = std::begin(d.getStateVariables());
-	  p!=std::end(d.getStateVariables());++p){
-	const auto& v = *p;
-	if(v.arraySize==1u){
-	  if(p==d.getStateVariables().begin()){
-	    os << "error  = ";
-	  } else {
-	    os << "error += ";
-	  }
-	  if(v.hasAttribute(VariableDescription::errorNormalisationFactor)){
-	    os << "(";
-	  }
-	  os << "tfel::math::abs(";
-	  os << "cste1_360*(this->d" << v.name << "_K1)"
-	     << "-cste128_4275*(this->d" << v.name << "_K3)"
-	     << "-cste2197_75240*(this->d" << v.name << "_K4)"
-	     << "+cste1_50*(this->d" << v.name << "_K5)"
-	     << "+cste2_55*(this->d" << v.name << "_K6))";
-	  if(v.hasAttribute(VariableDescription::errorNormalisationFactor)){
-	    os << ")/(" << get_enf(v) << ")";
-	  }
-	  os << ";\n";
-	} else {
-	  if(this->mb.useDynamicallyAllocatedVector(v.arraySize)){
-	    if(p==d.getStateVariables().begin()){
-	      os << "error  = Type(0);\n";
-	    }
-	    os << "for(unsigned short idx=0;idx!=" << v.arraySize << ";++idx){\n";
-	    os << "error += ";
+    if (eev == ERRORSUMMATIONEVALUATION) {
+      for (auto p = std::begin(d.getStateVariables());
+           p != std::end(d.getStateVariables()); ++p) {
+        const auto& v = *p;
+        if (v.arraySize == 1u) {
+          if (p == d.getStateVariables().begin()) {
+            os << "error  = ";
+          } else {
+            os << "error += ";
+          }
+          if (v.hasAttribute(VariableDescription::errorNormalisationFactor)) {
+            os << "(";
+          }
+          os << "tfel::math::abs(";
+          os << "cste1_360*(this->d" << v.name << "_K1)"
+             << "-cste128_4275*(this->d" << v.name << "_K3)"
+             << "-cste2197_75240*(this->d" << v.name << "_K4)"
+             << "+cste1_50*(this->d" << v.name << "_K5)"
+             << "+cste2_55*(this->d" << v.name << "_K6))";
+          if (v.hasAttribute(VariableDescription::errorNormalisationFactor)) {
+            os << ")/(" << get_enf(v) << ")";
+          }
+          os << ";\n";
+        } else {
+          if (this->mb.useDynamicallyAllocatedVector(v.arraySize)) {
+            if (p == d.getStateVariables().begin()) {
+              os << "error  = Type(0);\n";
+            }
+            os << "for(unsigned short idx=0;idx!=" << v.arraySize
+               << ";++idx){\n";
+            os << "error += ";
 	    if(v.hasAttribute(VariableDescription::errorNormalisationFactor)){
 	      os << "(";
 	    }
 	    os << "tfel::math::abs(";
-	    os << "cste1_360*(this->d" << v.name       << "_K1[idx])"
-	       << "-cste128_4275*(this->d" << v.name   << "_K3[idx])"
-	       << "-cste2197_75240*(this->d" << v.name << "_K4[idx])"
-	       << "+cste1_50*(this->d" << v.name       << "_K5[idx])"
-	       << "+cste2_55*(this->d" << v.name       << "_K6[idx]))";
-	    if(v.hasAttribute(VariableDescription::errorNormalisationFactor)){
+            os << "cste1_360*(this->d" << v.name << "_K1[idx])"
+               << "-cste128_4275*(this->d" << v.name << "_K3[idx])"
+               << "-cste2197_75240*(this->d" << v.name << "_K4[idx])"
+               << "+cste1_50*(this->d" << v.name << "_K5[idx])"
+               << "+cste2_55*(this->d" << v.name << "_K6[idx]))";
+            if(v.hasAttribute(VariableDescription::errorNormalisationFactor)){
 	      os << ")/(" << get_enf(v) << ")";
 	    }
 	    os << ";\n";
@@ -1312,15 +1308,15 @@ namespace mfront{
 		os << "error += ";
 	      }
 	      if(v.hasAttribute(VariableDescription::errorNormalisationFactor)){
-		os << "(";
-	      }
-	      os << "tfel::math::abs("
-		 << "cste1_360*(this->d" << v.name       << "_K1[" << i << "])"
-		 << "-cste128_4275*(this->d" << v.name   << "_K3[" << i << "])"
-		 << "-cste2197_75240*(this->d" << v.name << "_K4[" << i << "])"
-		 << "+cste1_50*(this->d" << v.name       << "_K5[" << i << "])"
-		 << "+cste2_55*(this->d" << v.name       << "_K6[" << i << "]))";
-	      if(v.hasAttribute(VariableDescription::errorNormalisationFactor)){
+                os << "(";
+              }
+              os << "tfel::math::abs("
+                 << "cste1_360*(this->d" << v.name << "_K1[" << i << "])"
+                 << "-cste128_4275*(this->d" << v.name << "_K3[" << i << "])"
+                 << "-cste2197_75240*(this->d" << v.name << "_K4[" << i << "])"
+                 << "+cste1_50*(this->d" << v.name << "_K5[" << i << "])"
+                 << "+cste2_55*(this->d" << v.name << "_K6[" << i << "]))";
+              if(v.hasAttribute(VariableDescription::errorNormalisationFactor)){
 		os << ")/(" << get_enf(v) << ")";
 	      }
 	      os << ";\n";
@@ -1330,60 +1326,71 @@ namespace mfront{
       }
       os << "error/=" << svsize << ";\n";
     } else if(eev==MAXIMUMVALUEERROREVALUATION){
-      os << "error  = Type(0);\n";
-      for(const auto& v : d.getStateVariables()){
-	if(v.arraySize==1u){
-	  os << "error = std::max(error,";
-	  if(v.hasAttribute(VariableDescription::errorNormalisationFactor)){
-	    os << "(";
-	  }
-	  os << "tfel::math::abs("
-	     << "cste1_360*(this->d" << v.name << "_K1)"
-	     << "-cste128_4275*(this->d" << v.name << "_K3)"
-	     << "-cste2197_75240*(this->d" << v.name << "_K4)"
-	     << "+cste1_50*(this->d" << v.name << "_K5)"
-	     << "+cste2_55*(this->d" << v.name << "_K6))";
-	  if(v.hasAttribute(VariableDescription::errorNormalisationFactor)){
-	    os << ")/(" << get_enf(v) << ")";
-	  }
-	  os << ");\n";
-	} else {
-	  if(this->mb.useDynamicallyAllocatedVector(v.arraySize)){
-	    os << "for(unsigned short idx=0;idx!=" << v.arraySize << ";++idx){\n";
-	    os << "error = std::max(error,";
-	    if(v.hasAttribute(VariableDescription::errorNormalisationFactor)){
-	      os << "(";
-	    }
-	    os << "tfel::math::abs("
-	       << "cste1_360*(this->d" << v.name       << "_K1[idx])"
-	       << "-cste128_4275*(this->d" << v.name   << "_K3[idx])"
-	       << "-cste2197_75240*(this->d" << v.name << "_K4[idx])"
-	       << "+cste1_50*(this->d" << v.name       << "_K5[idx])"
-	       << "+cste2_55*(this->d" << v.name       << "_K6[idx]))";
-	    if(v.hasAttribute(VariableDescription::errorNormalisationFactor)){
-	      os << ")/(" << get_enf(v) << ")";
-	    }
-	    os << ");\n";
-	    os << "}\n";
-	  } else {
-	    for(unsigned short i=0;i!=v.arraySize;++i){
-	      os << "error  = std::max(error,";
-	      if(v.hasAttribute(VariableDescription::errorNormalisationFactor)){
-		os << "(";
-	      }
-	      os << "tfel::math::abs("
-		 << "cste1_360*(this->d" << v.name       << "_K1[" << i << "])"
-		 << "-cste128_4275*(this->d" << v.name   << "_K3[" << i << "])"
-		 << "-cste2197_75240*(this->d" << v.name << "_K4[" << i << "])"
-		 << "+cste1_50*(this->d" << v.name       << "_K5[" << i << "])"
-		 << "+cste2_55*(this->d" << v.name       << "_K6[" << i << "]))";
-	      if(v.hasAttribute(VariableDescription::errorNormalisationFactor)){
-		os << ")/(" << get_enf(v) << ")";
-	      }
-	      os << ");\n";
-	    }
-	  }
-	}
+      os << "error  = Type(0);\n"
+         << "auto rk_update_error = [&error](const real rk_error){\n"
+         << "if(!ieee754::isfinite(error)){return;}\n"
+         << "if(!ieee754::isfinite(rk_error)){\n"
+         << "error = rk_error;\n"
+         << "return;\n"
+         << "}\n"
+         << "error = std::max(error, rk_error);\n"
+         << "};\n";
+      for (const auto& v : d.getStateVariables()) {
+        if (v.arraySize == 1u) {
+          os << "rk_update_error(";
+          if (v.hasAttribute(VariableDescription::errorNormalisationFactor)) {
+            os << "(";
+          }
+          os << "tfel::math::abs("
+             << "cste1_360*(this->d" << v.name << "_K1)"
+             << "-cste128_4275*(this->d" << v.name << "_K3)"
+             << "-cste2197_75240*(this->d" << v.name << "_K4)"
+             << "+cste1_50*(this->d" << v.name << "_K5)"
+             << "+cste2_55*(this->d" << v.name << "_K6))";
+          if (v.hasAttribute(VariableDescription::errorNormalisationFactor)) {
+            os << ")/(" << get_enf(v) << ")";
+          }
+          os << ");\n";
+        } else {
+          if (this->mb.useDynamicallyAllocatedVector(v.arraySize)) {
+            os << "for(unsigned short idx=0;idx!=" << v.arraySize
+               << ";++idx){\n";
+            os << "rk_update_error(";
+            if (v.hasAttribute(VariableDescription::errorNormalisationFactor)) {
+              os << "(";
+            }
+            os << "tfel::math::abs("
+               << "cste1_360*(this->d" << v.name << "_K1[idx])"
+               << "-cste128_4275*(this->d" << v.name << "_K3[idx])"
+               << "-cste2197_75240*(this->d" << v.name << "_K4[idx])"
+               << "+cste1_50*(this->d" << v.name << "_K5[idx])"
+               << "+cste2_55*(this->d" << v.name << "_K6[idx]))";
+            if (v.hasAttribute(VariableDescription::errorNormalisationFactor)) {
+              os << ")/(" << get_enf(v) << ")";
+            }
+            os << ");\n";
+            os << "}\n";
+          } else {
+            for (unsigned short i = 0; i != v.arraySize; ++i) {
+              os << "rk_update_error(";
+              if (v.hasAttribute(
+                      VariableDescription::errorNormalisationFactor)) {
+                os << "(";
+              }
+              os << "tfel::math::abs("
+                 << "cste1_360*(this->d" << v.name << "_K1[" << i << "])"
+                 << "-cste128_4275*(this->d" << v.name << "_K3[" << i << "])"
+                 << "-cste2197_75240*(this->d" << v.name << "_K4[" << i << "])"
+                 << "+cste1_50*(this->d" << v.name << "_K5[" << i << "])"
+                 << "+cste2_55*(this->d" << v.name << "_K6[" << i << "]))";
+              if (v.hasAttribute(
+                      VariableDescription::errorNormalisationFactor)) {
+                os << ")/(" << get_enf(v) << ")";
+              }
+              os << ");\n";
+            }
+          }
+        }
       }
     } else {
       this->throwRuntimeError("RungeKuttaDSLBase::writeBehaviourRK54Integrator",
@@ -2114,54 +2121,65 @@ namespace mfront{
       }
       os << "error/=" << stateVarsSize << ";\n";
     } else if(eev==MAXIMUMVALUEERROREVALUATION){
-      os << "error  = Type(0);\n";
-      for(const auto& v : d.getStateVariables()){
-	if(v.arraySize==1u){
-	  os << "error = std::max(error,tfel::math::abs(";
-	  if(v.hasAttribute(VariableDescription::errorNormalisationFactor)){
-	    os << "(";
-	  }
-	  os << "cste1_6*(this->d" << v.name << "_K1+"
-	     << "this->d" << v.name << "_K4-"
-	     << "this->d" << v.name << "_K2-"
-	     << "this->d" << v.name << "_K3))";
-	  if(v.hasAttribute(VariableDescription::errorNormalisationFactor)){
-	    os << ")/(" << get_enf(v) << ")";
-	  }
-	  os << ");\n";
-	} else {
-	  if(this->mb.useDynamicallyAllocatedVector(v.arraySize)){
-	    os << "for(unsigned short idx=0;idx!=" <<v.arraySize << ";++idx){\n";
-	    os << "error = std::max(error,tfel::math::abs(";
-	    if(v.hasAttribute(VariableDescription::errorNormalisationFactor)){
-	      os << "(";
-	    }
-	    os << "cste1_6*(this->d" << v.name << "_K1[idx]+"
-	       << "this->d" << v.name          << "_K4[idx]-"
-	       << "this->d" << v.name          << "_K2[idx]-"
-	       << "this->d" << v.name          << "_K3[idx]))";
-	    if(v.hasAttribute(VariableDescription::errorNormalisationFactor)){
-	      os << ")/(" << get_enf(v) << ")";
-	    }
-	    os << ");\n";
-	    os << "}\n";
-	  } else {
-	    for(unsigned short i=0;i!=v.arraySize;++i){
-	      os << "error = std::max(error,tfel::math::abs(";
-	      if(v.hasAttribute(VariableDescription::errorNormalisationFactor)){
-		os << "(";
-	      }
-	      os << "cste1_6*(this->d" << v.name << "_K1[" << i << "]+"
-		 << "this->d" << v.name          << "_K4[" << i << "]-"
-		 << "this->d" << v.name          << "_K2[" << i << "]-"
-		 << "this->d" << v.name          << "_K3[" << i << "]))";
-	      if(v.hasAttribute(VariableDescription::errorNormalisationFactor)){
-		os << ")/(" << get_enf(v) << ")";
-	      }
-	      os << ");\n";
-	    }
-	  }
-	}
+      os << "error  = Type(0);\n"
+         << "auto rk_update_error = [&error](const real rk_error){\n"
+         << "if(!ieee754::isfinite(error)){return;}\n"
+         << "if(!ieee754::isfinite(rk_error)){\n"
+         << "error = rk_error;\n"
+         << "return;\n"
+         << "}\n"
+         << "error = std::max(error, rk_error);\n"
+         << "};\n";
+      for (const auto& v : d.getStateVariables()) {
+        if (v.arraySize == 1u) {
+          os << "rk_update_error(tfel::math::abs(";
+          if (v.hasAttribute(VariableDescription::errorNormalisationFactor)) {
+            os << "(";
+          }
+          os << "cste1_6*(this->d" << v.name << "_K1+"
+             << "this->d" << v.name << "_K4-"
+             << "this->d" << v.name << "_K2-"
+             << "this->d" << v.name << "_K3))";
+          if (v.hasAttribute(VariableDescription::errorNormalisationFactor)) {
+            os << ")/(" << get_enf(v) << ")";
+          }
+          os << ");\n";
+        } else {
+          if (this->mb.useDynamicallyAllocatedVector(v.arraySize)) {
+            os << "for(unsigned short idx=0;idx!=" << v.arraySize
+               << ";++idx){\n";
+            os << "rk_update_error(tfel::math::abs(";
+            if (v.hasAttribute(VariableDescription::errorNormalisationFactor)) {
+              os << "(";
+            }
+            os << "cste1_6*(this->d" << v.name << "_K1[idx]+"
+               << "this->d" << v.name << "_K4[idx]-"
+               << "this->d" << v.name << "_K2[idx]-"
+               << "this->d" << v.name << "_K3[idx]))";
+            if (v.hasAttribute(VariableDescription::errorNormalisationFactor)) {
+              os << ")/(" << get_enf(v) << ")";
+            }
+            os << ");\n";
+            os << "}\n";
+          } else {
+            for (unsigned short i = 0; i != v.arraySize; ++i) {
+              os << "rk_update_error(tfel::math::abs(";
+              if (v.hasAttribute(
+                      VariableDescription::errorNormalisationFactor)) {
+                os << "(";
+              }
+              os << "cste1_6*(this->d" << v.name << "_K1[" << i << "]+"
+                 << "this->d" << v.name << "_K4[" << i << "]-"
+                 << "this->d" << v.name << "_K2[" << i << "]-"
+                 << "this->d" << v.name << "_K3[" << i << "]))";
+              if (v.hasAttribute(
+                      VariableDescription::errorNormalisationFactor)) {
+                os << ")/(" << get_enf(v) << ")";
+              }
+              os << ");\n";
+            }
+          }
+        }
       }
     } else {
       this->throwRuntimeError("RungeKuttaDSLBase::writeBehaviourRK42Integrator",
@@ -2255,7 +2273,7 @@ namespace mfront{
     if(this->mb.hasCode(h,BehaviourData::ComputeStress)){
       os << "this->computeStress();\n";
     }
-    os << "if(!this->computeDerivative()){;\n";
+    os << "if(!this->computeDerivative()){\n";
     if(this->mb.useQt()){
       os << "return MechanicalBehaviour<"
 	 << btype << ",hypothesis,Type,use_qt>::FAILURE;\n";
@@ -2263,7 +2281,7 @@ namespace mfront{
       os << "return MechanicalBehaviour<"
 	 << btype << ",hypothesis,Type,false>::FAILURE;\n";
     }
-    os << "};";
+    os << "}\n";
     for(const auto& v : d.getStateVariables()){
       os << "this->d" << v.name
 	 << "_K1 = (this->dt)*(this->d" << v.name << ");\n";
@@ -2285,7 +2303,7 @@ namespace mfront{
 	 << "this->computeStress();\n\n";
     }
     os << "// Compute K2's values\n"
-       << "if(!this->computeDerivative()){;\n";
+       << "if(!this->computeDerivative()){\n";
     if(this->mb.useQt()){
       os << "return MechanicalBehaviour<"
 	 << btype << ",hypothesis,Type,use_qt>::FAILURE;\n";
@@ -2293,7 +2311,7 @@ namespace mfront{
       os << "return MechanicalBehaviour<"
 	 << btype << ",hypothesis,Type,false>::FAILURE;\n";
     }
-    os << "};";
+    os << "}\n";
     for(const auto& v : d.getStateVariables()){
       os << "this->d" << v.name
 	 << "_K2 = (this->dt)*(this->d" << v.name << ");\n";
@@ -2309,7 +2327,7 @@ namespace mfront{
 	 << "this->computeStress();\n\n";
     }
     os << "// Compute K3's values\n"
-       << "if(!this->computeDerivative()){;\n";
+       << "if(!this->computeDerivative()){\n";
     if(this->mb.useQt()){
       os << "return MechanicalBehaviour<"
 	 << btype << ",hypothesis,Type,use_qt>::FAILURE;\n";
@@ -2317,7 +2335,7 @@ namespace mfront{
       os << "return MechanicalBehaviour<"
 	 << btype << ",hypothesis,Type,false>::FAILURE;\n";
     }
-    os << "};";
+    os << "}\n";
     for(const auto& v : d.getStateVariables()){
       os << "this->d" << v.name
 	 << "_K3 = (this->dt)*(this->d" << v.name << ");\n";
@@ -2333,7 +2351,7 @@ namespace mfront{
 	 << "this->computeStress();\n\n";
     }
     os << "// Compute K4's values\n"
-       << "if(!this->computeDerivative()){;\n";
+       << "if(!this->computeDerivative()){\n";
     if(this->mb.useQt()){
       os << "return MechanicalBehaviour<"
 	 << btype << ",hypothesis,Type,use_qt>::FAILURE;\n";
@@ -2341,7 +2359,7 @@ namespace mfront{
       os << "return MechanicalBehaviour<"
 	 << btype << ",hypothesis,Type,false>::FAILURE;\n";
     }
-    os << "};";
+    os << "}\n";
     for(const auto& v : d.getStateVariables()){
       os << "this->d" << v.name
 	 << "_K4 = (this->dt)*(this->d" << v.name << ");\n";
