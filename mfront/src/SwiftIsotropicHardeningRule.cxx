@@ -109,8 +109,8 @@ namespace mfront {
            p0n + ")/(this->" + p0n + "),this->" + nn + ") : this->" + R0n +
            ";\n";
       c += "const auto " + dR + " = ";
-      c += "(this->theta)*(this->" + nn + ")*" + R + "*((this->" + p0n +
-           ")/(this->" + pn + "+(this->theta)*(this->d" + pn + ")+this->" + p0n +
+      c += "(this->theta)*(this->" + nn + ")*" + R + "/(std::max(this->" + pn +
+           "+(this->theta)*(this->d" + pn + ")+this->" + p0n + ",this->" + p0n +
            "));\n";
       return c;
     }  // end of SwiftIsotropicHardeningRule::computeElasticLimitAndDerivative
