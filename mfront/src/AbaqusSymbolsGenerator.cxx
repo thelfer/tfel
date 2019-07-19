@@ -1,7 +1,7 @@
 /*!
  * \file   AbaqusSymbolsGenerator.cxx
  * \brief
- * \author th202608
+ * \author Thomas Helfer
  * \date   19/07/2018
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
@@ -104,9 +104,9 @@ namespace mfront {
     if (mb.getBehaviourType() ==
         BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
       if (AbaqusInterfaceBase::hasFiniteStrainStrategy(mb)) {
-        out << "1u;\n\n";
-      } else {
         out << "3u;\n\n";
+      } else {
+        out << "1u;\n\n";
       }
     } else if (mb.getBehaviourType() ==
                BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
