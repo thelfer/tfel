@@ -7,10 +7,6 @@ solved are described below.
 
 # Tickets fixed
 
-## Ticket #183: The behaviour kinematic defined by the `abaqus` interface is wrong when using a strain measure**
-
-For more details, see: <https://sourceforge.net/p/tfel/tickets/183/>
-
 ## Ticket #155: Installation path with space characters for WIndows environment
 
 The installation process of `MFront` in `C:\Program Files (x86)`

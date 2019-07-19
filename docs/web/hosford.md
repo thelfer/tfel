@@ -584,7 +584,7 @@ varies more rapidly.
 ![Robustness of Algorithm 1 for \(a=8\)](img/Scherzinger/Hosford8/Newton.png
  "Robustness of Algorithm 1 for \(a=8\)"){#fig:hosford8:alg1 width=70%}
 
-As already stated by Scherzinger, Figure #fig:hosford8:alg1 shows that
+As already stated by Scherzinger, Figure @fig:hosford8:alg1 shows that
 the performance in terms of robustness of the standard Newton
 algorithm is getting worse as the Hosford exponent increases.
 
@@ -608,7 +608,7 @@ performs very poorly.
  "Robustness of Algorithm 2 for \(a=100\)"){#fig:hosford100:alg2 width=70%}
 
 In this case, the second algorithm does not improve the robustness as
-shown on Figure @#fig:hosford100:alg2. This algorithm performs almost
+shown on Figure @fig:hosford100:alg2. This algorithm performs almost
 as poorly than the standard Newton algorithm.
 
 ![Robustness of Algorithm 3 for \(a=100\)](img/Scherzinger/Hosford100/MaximumIncrementValuePerIteration.png

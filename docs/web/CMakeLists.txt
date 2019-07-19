@@ -31,6 +31,7 @@ add_custom_target(website)
 add_dependencies(doc website)
 
 pandoc_html(index "-c css/slideshow.css")
+pandoc_html(search)
 pandoc_html(faq "--toc")
 pandoc_html(getting-started)
 pandoc_html(interfaces)
@@ -106,6 +107,7 @@ pandoc_html(release-notes-3.1.1 "--toc" "--toc-depth=2")
 pandoc_html(release-notes-3.1.2 "--toc" "--toc-depth=2")
 pandoc_html(release-notes-3.1.3 "--toc" "--toc-depth=2")
 pandoc_html(release-notes-3.1.4 "--toc" "--toc-depth=2")
+pandoc_html(release-notes-3.1.5 "--toc" "--toc-depth=2")
 pandoc_html(release-notes-3.2   "--toc" "--toc-depth=2" "--number-sections" "-c css/slideshow.css")
 pandoc_html(release-notes-3.2.1 "--toc" "--toc-depth=2")
 pandoc_html(release-notes-3.2.2 "--toc" "--toc-depth=2")
@@ -115,6 +117,7 @@ pandoc_html(tensors "--toc" "--toc-depth=2" "--number-sections")
 pandoc_html(tfel-python "--toc" "--toc-depth=3")
 pandoc_html(generic-behaviours-interface "--toc" "--toc-depth=3")
 pandoc_html(sovs "--toc" "--toc-depth=2")
+pandoc_html(unicode "--toc" "--toc-depth=2")
 
 # mfront keywords
 
