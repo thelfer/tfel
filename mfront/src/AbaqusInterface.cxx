@@ -1097,9 +1097,9 @@ namespace mfront{
 	<< "_BehaviourKinematic = " ;
     if(mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
       if(AbaqusInterfaceBase::hasFiniteStrainStrategy(mb)){
-	out << "1u;\n\n";
-      } else {
 	out << "3u;\n\n";
+      } else {
+	out << "1u;\n\n";
       }
     } else if(mb.getBehaviourType()==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR){
       out << "3u;\n\n";
