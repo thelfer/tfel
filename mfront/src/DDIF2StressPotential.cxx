@@ -242,8 +242,9 @@ namespace mfront {
       }
       for (const auto h : bd.getModellingHypotheses()) {
         if (h != ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) {
-          addMaterialPropertyIfNotDefined(bd, "real", "angl",
-                                          "AngularCoordinate");
+          auto a = VariableDescription("real", "angl", 1u, 0u);
+          a.setEntryName("AngularCoordinate");
+          bd.addMaterialProperty(h, a);
         }
       }
       if (getVerboseMode() >= VERBOSE_DEBUG) {
@@ -337,9 +338,6 @@ namespace mfront {
         init_code += sgc.str();
       }
       if (!this->gc[0].empty()) {
-        const std::string young = bd.areElasticMaterialPropertiesDefined()
-                                      ? "this->young_tdt"
-                                      : "this->young";
         init_code +=
             "this->Rp[0]=-((this->Lc[0])*(this->sigr[0])*(this->sigr[0]))/"
             "(2*(this->Gc[0]));\n";
