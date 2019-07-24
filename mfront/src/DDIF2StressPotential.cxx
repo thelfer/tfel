@@ -242,8 +242,9 @@ namespace mfront {
       }
       for (const auto h : bd.getModellingHypotheses()) {
         if (h != ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) {
-          addMaterialPropertyIfNotDefined(bd, "real", "angl",
-                                          "AngularCoordinate");
+          auto a = VariableDescription("real", "angl", 1u, 0u);
+          a.setEntryName("AngularCoordinate");
+          bd.addMaterialProperty(h, a);
         }
       }
       if (getVerboseMode() >= VERBOSE_DEBUG) {
