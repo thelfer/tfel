@@ -324,7 +324,9 @@ namespace mfront{
       CodeBlock init;
       init.code = init_code;
       if(h!=ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN){
-	this->addMaterialPropertyIfNotDefined("real","angl","AngularCoordinate");
+	auto a = VariableDescription("real", "angl", 1u, 0u);
+	a.setEntryName("AngularCoordinate");
+	bd.addMaterialProperty(h, a);
 	init.code +=
 	  "// change to cylindrical coordinates\n"
 	  "DDIF2Base::cart2cyl(this->deto,this->angl);\n";
