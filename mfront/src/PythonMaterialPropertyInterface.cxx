@@ -15,6 +15,7 @@
 #include<stdexcept>
 #include<iterator>
 #include<sstream>
+#include<cstdlib>
 #include<string>
 #include<set>
 
@@ -88,7 +89,17 @@ namespace mfront
     } else {
       src = mpd.library+"wrapper.cxx";
     }
-    auto& l = d(lib,"");
+    auto& l = [&d, &lib]() -> LibraryDescription& {
+      if (d.system == LibraryDescription::WINDOWS) {
+        return d(lib, "", "pyd", LibraryDescription::MODULE);
+      } else if (d.system == LibraryDescription::MACOSX) {
+        return d(lib, "", "so", LibraryDescription::MODULE);
+      } else {
+        const auto ls = LibraryDescription::getDefaultLibrarySuffix(
+            d.system, d.libraryType);
+        return d(lib, "", ls, LibraryDescription::MODULE);
+      }
+    }();
 #if  !((defined _WIN32) && (defined _MSC_VER))
     insert_if(l.ldflags,"-lm");    
 #endif /* !((defined _WIN32) && (defined _MSC_VER)) */
