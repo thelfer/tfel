@@ -56,12 +56,12 @@ namespace mfront
 
   PythonMaterialPropertyInterface::PythonMaterialPropertyInterface() = default;
 
-  std::pair<bool,PythonMaterialPropertyInterface::tokens_iterator>
-  PythonMaterialPropertyInterface::treatKeyword(const std::string& k,
-						const std::vector<std::string>& i,
-						tokens_iterator current,
-						const tokens_iterator)
-  {
+  std::pair<bool, PythonMaterialPropertyInterface::tokens_iterator>
+  PythonMaterialPropertyInterface::treatKeyword(
+      const std::string& k,
+      const std::vector<std::string>& i,
+      tokens_iterator current,
+      const tokens_iterator) {
     tfel::raise_if((std::find(i.begin(),i.end(),"python")!=i.end())||
 		   (std::find(i.begin(),i.end(),"Python")!=i.end()),
 		   "PythonMaterialPropertyInterface::treatKeyword: "
@@ -88,13 +88,17 @@ namespace mfront
       }
       return mpd.library+"wrapper.cxx";
     }();
-#if  (defined _WIN32)
-    auto& l = d(lib,"","pyd", LibraryDescription::MODULE);
-#else    /* (defined _WIN32) */
-    auto& l = d(lib, "",
-		LibraryDescription::getDefaultLibrarySuffix(d.system, d.libraryType),
-		LibraryDescription::MODULE);
-#endif  /* (defined _WIN32) */
+    auto& l = [&d, &lib]() -> LibraryDescription& {
+      if (d.system == LibraryDescription::WINDOWS) {
+        return d(lib, "", "pyd", LibraryDescription::MODULE);
+      } else if (d.system == LibraryDescription::MACOSX) {
+        return d(lib, "", "so", LibraryDescription::MODULE);
+      } else {
+        const auto ls = LibraryDescription::getDefaultLibrarySuffix(
+            d.system, d.libraryType);
+        return d(lib, "", ls, LibraryDescription::MODULE);
+      }
+    }();
     if(python_include_path != nullptr){
       insert_if(l.include_directories,python_include_path);
     } else {
@@ -102,7 +106,7 @@ namespace mfront
     }
     insert_if(l.cppflags,
 	      "$(shell "+tfel_config+" --cppflags --compiler-flags)");
-    insert_if(d[lib].include_directories,
+    insert_if(l.include_directories,
 	      "$(shell "+tfel_config+" --include-path)");
 #if  !((defined _WIN32) && (defined _MSC_VER))
     insert_if(l.link_libraries,"m");    
