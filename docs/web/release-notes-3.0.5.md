@@ -43,3 +43,8 @@ For more details, see: <https://sourceforge.net/p/tfel/tickets/180/>
 ## Ticket #178: Name of the python module is wrong under `Mac OS`
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/178/>
+
+## Ticket #175: Add `rpath`to the `TFEL` libraries when generating the library on `Mac Os`
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/175/>
+
