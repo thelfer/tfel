@@ -15,6 +15,7 @@
 #include<stdexcept>
 #include<iterator>
 #include<sstream>
+#include<cstdlib>
 #include<string>
 #include<set>
 
@@ -51,20 +52,16 @@
 namespace mfront
 {
 
-  std::string
-  PythonMaterialPropertyInterface::getName()
-  {
-    return "python";
-  }
+  std::string PythonMaterialPropertyInterface::getName() { return "python"; }
 
   PythonMaterialPropertyInterface::PythonMaterialPropertyInterface() = default;
 
-  std::pair<bool,PythonMaterialPropertyInterface::tokens_iterator>
-  PythonMaterialPropertyInterface::treatKeyword(const std::string& k,
-						const std::vector<std::string>& i,
-						tokens_iterator current,
-						const tokens_iterator)
-  {
+  std::pair<bool, PythonMaterialPropertyInterface::tokens_iterator>
+  PythonMaterialPropertyInterface::treatKeyword(
+      const std::string& k,
+      const std::vector<std::string>& i,
+      tokens_iterator current,
+      const tokens_iterator) {
     tfel::raise_if((std::find(i.begin(),i.end(),"python")!=i.end())||
 		   (std::find(i.begin(),i.end(),"Python")!=i.end()),
 		   "PythonMaterialPropertyInterface::treatKeyword: "
@@ -72,10 +69,8 @@ namespace mfront
     return {false,current};
   } // end of treatKeyword
 
-  void
-  PythonMaterialPropertyInterface::getTargetsDescription(TargetsDescription& d,
-							 const MaterialPropertyDescription& mpd) const
-  {
+  void PythonMaterialPropertyInterface::getTargetsDescription(
+      TargetsDescription& d, const MaterialPropertyDescription& mpd) const {
     const auto lib = makeLowerCase(getMaterialLawLibraryNameBase(mpd));
     const auto name = (mpd.material.empty()) ? mpd.className : mpd.material+"_"+mpd.className;
     const auto headerFileName  = "include/"+name+"-python.hxx";
@@ -90,7 +85,17 @@ namespace mfront
     } else {
       src = mpd.library+"wrapper.cxx";
     }
-    auto& l = d(lib,"");
+    auto& l = [&d, &lib]() -> LibraryDescription& {
+      if (d.system == LibraryDescription::WINDOWS) {
+        return d(lib, "", "pyd", LibraryDescription::MODULE);
+      } else if (d.system == LibraryDescription::MACOSX) {
+        return d(lib, "", "so", LibraryDescription::MODULE);
+      } else {
+        const auto ls = LibraryDescription::getDefaultLibrarySuffix(
+            d.system, d.libraryType);
+        return d(lib, "", ls, LibraryDescription::MODULE);
+      }
+    }();
     insert_if(l.cppflags,TFEL_PYTHON_INCLUDES);
     insert_if(l.cppflags,
 	      "$(shell "+tfel_config+" --cppflags --compiler-flags)");
