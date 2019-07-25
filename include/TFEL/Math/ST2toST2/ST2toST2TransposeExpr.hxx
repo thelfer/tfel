@@ -1,7 +1,7 @@
 /*!
  * \file   TFEL/Math/ST2toST2/ST2toST2TransposeExpr.hxx
- * \brief
- * \author Thomas Helfer
+ * \brief    
+ * \author THOMAS HELFER
  * \date   30 août 2016
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
@@ -43,7 +43,7 @@ namespace tfel {
       //! a simple alias
       using IndexType = unsigned short;
       //! a simple alias
-      using NumType = ST2toST2NumType<typename std::decay<A>::type>;
+      using NumType = typename ST2toST2Traits<typename std::decay<A>::type>::NumType;
 
       TFEL_MATH_INLINE RunTimeProperties getRunTimeProperties() const {
         return EmptyRunTimeProperties();
