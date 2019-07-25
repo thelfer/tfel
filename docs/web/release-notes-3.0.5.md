@@ -7,6 +7,20 @@ solved are described below.
 
 # Tickets fixed
 
+## Ticket #185: Problem on transposition of fourth order tensor
+
+The `ST2toST2TransposeExpr<A>` class expected that class `A` defines the
+`IndexType` `typedef`, but this is not a requirement of the
+`ST2toST2Concept` concept. Thus the `transpose` operation did not work
+for all classes matching this concept. In particular, the following code
+used to fail:
+
+~~~~
+const auto tM2 = transpose(Stensor4::Id() * Stensor4::Id());
+~~~~
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/184/>
+
 ## Ticket #181: Runge-Kutta DSL does not handle `NaN` values
 
 For most algorithms with correction-prediction, the Runge-Kutta DSL has
@@ -25,3 +39,7 @@ The issue concerns all the rk algorithms without local time-step
 control (`euler`, `rk2`, `rk4`) which are not used in practice.
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/180/>
+
+## Ticket #178: Name of the python module is wrong under `Mac OS`
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/178/>

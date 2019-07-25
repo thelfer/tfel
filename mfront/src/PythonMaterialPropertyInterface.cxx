@@ -56,12 +56,12 @@ namespace mfront
 
   PythonMaterialPropertyInterface::PythonMaterialPropertyInterface() = default;
 
-  std::pair<bool,PythonMaterialPropertyInterface::tokens_iterator>
-  PythonMaterialPropertyInterface::treatKeyword(const std::string& k,
-						const std::vector<std::string>& i,
-						tokens_iterator current,
-						const tokens_iterator)
-  {
+  std::pair<bool, PythonMaterialPropertyInterface::tokens_iterator>
+  PythonMaterialPropertyInterface::treatKeyword(
+      const std::string& k,
+      const std::vector<std::string>& i,
+      tokens_iterator current,
+      const tokens_iterator) {
     tfel::raise_if((std::find(i.begin(),i.end(),"python")!=i.end())||
 		   (std::find(i.begin(),i.end(),"Python")!=i.end()),
 		   "PythonMaterialPropertyInterface::treatKeyword: "
@@ -88,13 +88,17 @@ namespace mfront
       }
       return mpd.library+"wrapper.cxx";
     }();
-#if  (defined _WIN32)
-    auto& l = d.getLibrary(lib, "", "pyd", LibraryDescription::MODULE);
-#else    /* (defined _WIN32) */
-    const auto ls = LibraryDescription::getDefaultLibrarySuffix(d.system,
-                                                              d.libraryType);
-    auto& l = d.getLibrary(lib, "", ls, LibraryDescription::MODULE);
-#endif  /* (defined _WIN32) */
+    auto& l = [&d, &lib]() -> LibraryDescription& {
+      if (d.system == LibraryDescription::WINDOWS) {
+        return d.getLibrary(lib, "", "pyd", LibraryDescription::MODULE);
+      } else if (d.system == LibraryDescription::MACOSX) {
+        return d.getLibrary(lib, "", "so", LibraryDescription::MODULE);
+      } else {
+        const auto ls = LibraryDescription::getDefaultLibrarySuffix(
+            d.system, d.libraryType);
+        return d.getLibrary(lib, "", ls, LibraryDescription::MODULE);
+      }
+    }();
     if(python_include_path != nullptr){
       insert_if(l.include_directories,python_include_path);
     } else {
