@@ -13,6 +13,7 @@ link_directories("${PROJECT_BINARY_DIR}/mfront/src"
                  "${PROJECT_BINARY_DIR}/src/System"
                  "${PROJECT_BINARY_DIR}/src/Glossary"
                  "${PROJECT_BINARY_DIR}/src/Utilities"
+                 "${PROJECT_BINARY_DIR}/src/UnicodeSupport"
                  "${PROJECT_BINARY_DIR}/src/Exception"
 		 "${PROJECT_BINARY_DIR}/src/Config")
 
@@ -401,36 +402,36 @@ if(UNIX)
     if(CMAKE_CXX_COMPILER_ID STREQUAL "PGI")
       target_link_libraries(TFELMFront
 	MFrontLogStream
-	TFELMaterial TFELMathParser
-	TFELSystem   TFELUtilities
-	TFELGlossary TFELException
-	TFELConfig
+	TFELMaterial       TFELMathParser
+	TFELSystem         TFELUtilities
+	TFELUnicodeSupport TFELGlossary 
+        TFELException      TFELConfig
 	${TFEL_DL_LIBRARY})
     else(CMAKE_CXX_COMPILER_ID STREQUAL "PGI")
       target_link_libraries(TFELMFront
 	MFrontLogStream
-	TFELMaterial TFELMathParser
-	TFELSystem   TFELUtilities
-	TFELGlossary TFELException
-	TFELConfig
+	TFELMaterial       TFELMathParser
+	TFELSystem         TFELUtilities
+	TFELUnicodeSupport TFELGlossary
+	TFELException      TFELConfig
 	-pthread ${TFEL_DL_LIBRARY})
     endif(CMAKE_CXX_COMPILER_ID STREQUAL "PGI")
   else(NOT HAIKU)
     target_link_libraries(TFELMFront
       MFrontLogStream
-      TFELMaterial TFELMathParser
-      TFELSystem   TFELUtilities
-      TFELGlossary TFELException
-      TFELConfig
+      TFELMaterial  TFELMathParser
+      TFELSystem    TFELUtilities
+      TFELGlossary  TFELUnicodeSupport
+      TFELException TFELConfig
       ${TFEL_DL_LIBRARY})
   endif(NOT HAIKU)
 else(UNIX)
   target_link_libraries(TFELMFront
     MFrontLogStream
-    TFELMaterial TFELMathParser
-    TFELSystem   TFELUtilities
-    TFELGlossary TFELException
-    TFELConfig)
+    TFELMaterial  TFELMathParser
+    TFELSystem    TFELUtilities
+    TFELGlossary  TFELUnicodeSupport
+    TFELException TFELConfig)
 endif(UNIX)
 
 # MTestFileGenerator

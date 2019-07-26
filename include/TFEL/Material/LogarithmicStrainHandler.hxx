@@ -87,6 +87,15 @@ namespace tfel {
        * \param[in] F1: deformation gradient
        */
       LogarithmicStrainHandler(const Setting, const DeformationGradient &);
+      /*!
+       * \brief update the axial deformation gradient
+       * \param[in] Fzz: axial deformation gradient
+       * \note This only updates the deformation gradient, not the
+       * Hencky strain, nor the eigen values and so on.  This is
+       * because the whole deformation gradient is only needed for
+       * stress and tangent moduli conversion.
+       */
+      void updateAxialDeformationGradient(const real);
       //! \return the the logarithmic strain
       StrainStensor getHenckyLogarithmicStrain() const;
       /*!

@@ -36,22 +36,24 @@ namespace mfront{
 
   static void checkCompareToNumericalTangentOperatorConsistency(
       const BehaviourDescription& bd) {
-    auto throw_if = [](const bool b,const std::string& m){
-      tfel::raise_if(b,"checkCompareToNumericalTangentOperatorConsistency "
-		     "(AbaqusInterface): "+m);
+    auto throw_if = [](const bool b, const std::string& m) {
+      tfel::raise_if(b,
+                     "checkCompareToNumericalTangentOperatorConsistency "
+                     "(AbaqusInterface): " +
+                         m);
     };
     throw_if(bd.getBehaviourType()!=BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR,
 	     "unsupported feature @AbaqusSaveTangentOperator "
 	     "and @AbaqusCompareToNumericalTangentOperator : "
 	     "those are only valid for small strain beahviours");
-    if(AbaqusInterfaceBase::hasFiniteStrainStrategy(bd)){
+    if (AbaqusInterfaceBase::hasFiniteStrainStrategy(bd)) {
       const auto fs = AbaqusInterfaceBase::getFiniteStrainStrategy(bd);
-      throw_if(fs!="Native",
-	       "unsupported feature "
-	       "@AbaqusCompareToNumericalTangentOperator: "
-	       "those are only valid for small strain beahviours or "
-	       "finite strain behaviours based on the `Native` "
-	       "finite strain strategy");
+      throw_if(fs != "Native",
+               "unsupported feature "
+               "@AbaqusCompareToNumericalTangentOperator: "
+               "those are only valid for small strain beahviours or "
+               "finite strain behaviours based on the `Native` "
+               "finite strain strategy");
     }
   }
 
@@ -61,88 +63,88 @@ namespace mfront{
     }
     return false;
   } // end of usesMFrontOrthotropyManagementPolicy
-  
+
   static void writeArguments(std::ostream& out,
-			     const BehaviourDescription& bd,
-			     const bool f)
-  {    
-    if(f){
-      const auto requires_stran = [&bd]{
-	if(bd.getBehaviourType()==
-	   BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
-	  if(AbaqusInterfaceBase::hasFiniteStrainStrategy(bd)){
-	    const auto fs = AbaqusInterfaceBase::getFiniteStrainStrategy(bd);
-	    return fs=="Native";
-	  }
-	}
-	return true;
+                             const BehaviourDescription& bd,
+                             const bool f) {
+    if (f) {
+      const auto requires_stran = [&bd] {
+        if (bd.getBehaviourType() ==
+            BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
+          if (AbaqusInterfaceBase::hasFiniteStrainStrategy(bd)) {
+            const auto fs = AbaqusInterfaceBase::getFiniteStrainStrategy(bd);
+            return fs == "Native";
+          }
+        }
+        return true;
       }();
       out << "(abaqus::AbaqusReal *const STRESS,\n"
-	  << " abaqus::AbaqusReal *const STATEV,\n"
-	  << " abaqus::AbaqusReal *const DDSDDE,\n"
-	  << " abaqus::AbaqusReal *const SSE,\n"
-	  << " abaqus::AbaqusReal *const SPD,\n"
-	  << " abaqus::AbaqusReal *const SCD,\n"
-	  << " abaqus::AbaqusReal *const RPL,\n"
-	  << " abaqus::AbaqusReal *const DDSDDT,\n"
-	  << " abaqus::AbaqusReal *const DRPLDE,\n"
-	  << " abaqus::AbaqusReal *const DRPLDT,\n";
-      if(requires_stran){
- 	out << " const abaqus::AbaqusReal *const STRAN,\n"
-	    << " const abaqus::AbaqusReal *const DSTRAN,\n";
+          << " abaqus::AbaqusReal *const STATEV,\n"
+          << " abaqus::AbaqusReal *const DDSDDE,\n"
+          << " abaqus::AbaqusReal *const SSE,\n"
+          << " abaqus::AbaqusReal *const SPD,\n"
+          << " abaqus::AbaqusReal *const SCD,\n"
+          << " abaqus::AbaqusReal *const RPL,\n"
+          << " abaqus::AbaqusReal *const DDSDDT,\n"
+          << " abaqus::AbaqusReal *const DRPLDE,\n"
+          << " abaqus::AbaqusReal *const DRPLDT,\n";
+      if (requires_stran) {
+        out << " const abaqus::AbaqusReal *const STRAN,\n"
+            << " const abaqus::AbaqusReal *const DSTRAN,\n";
       } else {
-	out << " const abaqus::AbaqusReal *const,\n"
-	    << " const abaqus::AbaqusReal *const,\n";
-       }
+        out << " const abaqus::AbaqusReal *const,\n"
+            << " const abaqus::AbaqusReal *const,\n";
+      }
       out << " const abaqus::AbaqusReal *const TIME,\n"
-	  << " const abaqus::AbaqusReal *const DTIME,\n"
-	  << " const abaqus::AbaqusReal *const TEMP,\n"
-	  << " const abaqus::AbaqusReal *const DTEMP,\n"
-	  << " const abaqus::AbaqusReal *const PREDEF,\n"
-	  << " const abaqus::AbaqusReal *const DPRED,\n"
-	  << " const char           *const CMNAME,\n"
-	  << " const abaqus::AbaqusInt  *const NDI,\n"
-	  << " const abaqus::AbaqusInt  *const NSHR,\n"
-	  << " const abaqus::AbaqusInt  *const NTENS,\n"
-	  << " const abaqus::AbaqusInt  *const NSTATV,\n"
-	  << " const abaqus::AbaqusReal *const PROPS,\n"
-	  << " const abaqus::AbaqusInt  *const NPROPS,\n"
-	  << " const abaqus::AbaqusReal *const COORDS,\n"
-	  << " const abaqus::AbaqusReal *const DROT,\n"
-	  << "       abaqus::AbaqusReal *const PNEWDT,\n"
-	  << " const abaqus::AbaqusReal *const CELENT,\n"
-	  << " const abaqus::AbaqusReal *const DFGRD0,\n"
-	  << " const abaqus::AbaqusReal *const DFGRD1,\n"
-	  << " const abaqus::AbaqusInt  *const NOEL,\n"
-	  << " const abaqus::AbaqusInt  *const NPT,\n"
-	  << " const abaqus::AbaqusInt  *const LAYER,\n"
-	  << " const abaqus::AbaqusInt  *const KSPT,\n"
-	  << " const abaqus::AbaqusInt  *const KSTEP,\n"
-	  << "       abaqus::AbaqusInt  *const KINC,\n"
-	  << "const int size)";
+          << " const abaqus::AbaqusReal *const DTIME,\n"
+          << " const abaqus::AbaqusReal *const TEMP,\n"
+          << " const abaqus::AbaqusReal *const DTEMP,\n"
+          << " const abaqus::AbaqusReal *const PREDEF,\n"
+          << " const abaqus::AbaqusReal *const DPRED,\n"
+          << " const char           *const CMNAME,\n"
+          << " const abaqus::AbaqusInt  *const NDI,\n"
+          << " const abaqus::AbaqusInt  *const NSHR,\n"
+          << " const abaqus::AbaqusInt  *const NTENS,\n"
+          << " const abaqus::AbaqusInt  *const NSTATV,\n"
+          << " const abaqus::AbaqusReal *const PROPS,\n"
+          << " const abaqus::AbaqusInt  *const NPROPS,\n"
+          << " const abaqus::AbaqusReal *const COORDS,\n"
+          << " const abaqus::AbaqusReal *const DROT,\n"
+          << "       abaqus::AbaqusReal *const PNEWDT,\n"
+          << " const abaqus::AbaqusReal *const CELENT,\n"
+          << " const abaqus::AbaqusReal *const DFGRD0,\n"
+          << " const abaqus::AbaqusReal *const DFGRD1,\n"
+          << " const abaqus::AbaqusInt  *const NOEL,\n"
+          << " const abaqus::AbaqusInt  *const NPT,\n"
+          << " const abaqus::AbaqusInt  *const LAYER,\n"
+          << " const abaqus::AbaqusInt  *const KSPT,\n"
+          << " const abaqus::AbaqusInt  *const KSTEP,\n"
+          << "       abaqus::AbaqusInt  *const KINC,\n"
+          << "const int size)";
     } else {
       const auto btype = bd.getBehaviourType();
-      const auto sb = (btype==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR);
-      const auto requires_kstep = [&bd,&btype]{
-	if(btype==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
-	  if(AbaqusInterfaceBase::hasFiniteStrainStrategy(bd)){
-	    return AbaqusInterfaceBase::getFiniteStrainStrategy(bd)!="Native";
-	  }
-	  return false;
-	}
-	return true;
+      const auto sb =
+          (btype == BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR);
+      const auto requires_kstep = [&bd, &btype] {
+        if (btype == BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
+          if (AbaqusInterfaceBase::hasFiniteStrainStrategy(bd)) {
+            return AbaqusInterfaceBase::getFiniteStrainStrategy(bd) != "Native";
+          }
+          return false;
+        }
+        return true;
       }();
       out << "(abaqus::AbaqusReal *const STRESS,\n"
-	  << " abaqus::AbaqusReal *const STATEV,\n"
-	  << " abaqus::AbaqusReal *const DDSDDE,\n"
-	  << " abaqus::AbaqusReal *const SSE,\n"
-	  << " abaqus::AbaqusReal *const SPD,\n"
-	  << " abaqus::AbaqusReal *const SCD,\n"
-	  << " abaqus::AbaqusReal *const,\n"
-	  << " abaqus::AbaqusReal *const,\n"
-	  << " abaqus::AbaqusReal *const,\n"
-	  << " abaqus::AbaqusReal *const,\n";
-      if(sb){
+          << " abaqus::AbaqusReal *const STATEV,\n"
+          << " abaqus::AbaqusReal *const DDSDDE,\n"
+          << " abaqus::AbaqusReal *const SSE,\n"
+          << " abaqus::AbaqusReal *const SPD,\n"
+          << " abaqus::AbaqusReal *const SCD,\n"
+          << " abaqus::AbaqusReal *const,\n"
+          << " abaqus::AbaqusReal *const,\n"
+          << " abaqus::AbaqusReal *const,\n"
+          << " abaqus::AbaqusReal *const,\n";
+      if (sb) {
         out << " const abaqus::AbaqusReal *const STRAN,\n"
             << " const abaqus::AbaqusReal *const DSTRAN,\n";
       } else {
@@ -150,103 +152,96 @@ namespace mfront{
             << " const abaqus::AbaqusReal *const,\n";
       }
       out << " const abaqus::AbaqusReal *const,\n"
-	  << " const abaqus::AbaqusReal *const DTIME,\n"
-	  << " const abaqus::AbaqusReal *const TEMP,\n"
-	  << " const abaqus::AbaqusReal *const DTEMP,\n"
-	  << " const abaqus::AbaqusReal *const PREDEF,\n"
-	  << " const abaqus::AbaqusReal *const DPRED,\n"
-	  << " const char           *const,\n"
-	  << " const abaqus::AbaqusInt  *const,\n"
-	  << " const abaqus::AbaqusInt  *const,\n"
-	  << " const abaqus::AbaqusInt  *const NTENS,\n"
-	  << " const abaqus::AbaqusInt  *const NSTATV,\n"
-	  << " const abaqus::AbaqusReal *const PROPS,\n"
-	  << " const abaqus::AbaqusInt  *const NPROPS,\n"
-	  << " const abaqus::AbaqusReal *const,\n"
-	  << " const abaqus::AbaqusReal *const DROT,\n"
-	  << "       abaqus::AbaqusReal *const PNEWDT,\n"
-	  << " const abaqus::AbaqusReal *const,\n";
-      if(!sb){
-	out << " const abaqus::AbaqusReal *const F0,\n"
-	    << " const abaqus::AbaqusReal *const F1,\n";
+          << " const abaqus::AbaqusReal *const DTIME,\n"
+          << " const abaqus::AbaqusReal *const TEMP,\n"
+          << " const abaqus::AbaqusReal *const DTEMP,\n"
+          << " const abaqus::AbaqusReal *const PREDEF,\n"
+          << " const abaqus::AbaqusReal *const DPRED,\n"
+          << " const char           *const,\n"
+          << " const abaqus::AbaqusInt  *const,\n"
+          << " const abaqus::AbaqusInt  *const,\n"
+          << " const abaqus::AbaqusInt  *const NTENS,\n"
+          << " const abaqus::AbaqusInt  *const NSTATV,\n"
+          << " const abaqus::AbaqusReal *const PROPS,\n"
+          << " const abaqus::AbaqusInt  *const NPROPS,\n"
+          << " const abaqus::AbaqusReal *const,\n"
+          << " const abaqus::AbaqusReal *const DROT,\n"
+          << "       abaqus::AbaqusReal *const PNEWDT,\n"
+          << " const abaqus::AbaqusReal *const,\n";
+      if (!sb) {
+        out << " const abaqus::AbaqusReal *const F0,\n"
+            << " const abaqus::AbaqusReal *const F1,\n";
       } else {
-	out << " const abaqus::AbaqusReal *const,\n"
-	    << " const abaqus::AbaqusReal *const,\n";
+        out << " const abaqus::AbaqusReal *const,\n"
+            << " const abaqus::AbaqusReal *const,\n";
       }
       out << " const abaqus::AbaqusInt  *const,\n"
-	  << " const abaqus::AbaqusInt  *const,\n"
-	  << " const abaqus::AbaqusInt  *const,\n"
-	  << " const abaqus::AbaqusInt  *const,\n";
-      if(requires_kstep){
-	out << " const abaqus::AbaqusInt  *const KSTEP,\n";
+          << " const abaqus::AbaqusInt  *const,\n"
+          << " const abaqus::AbaqusInt  *const,\n"
+          << " const abaqus::AbaqusInt  *const,\n";
+      if (requires_kstep) {
+        out << " const abaqus::AbaqusInt  *const KSTEP,\n";
       } else {
-	out << " const abaqus::AbaqusInt  *const,\n";
+        out << " const abaqus::AbaqusInt  *const,\n";
       }
       out << "       abaqus::AbaqusInt  *const,\n"
-	  << "const int)";
+          << "const int)";
     }
-  } // end of writeArguments
+  }  // end of writeArguments
 
-  static void writeArguments(std::ostream& out)
-  {
+  static void writeArguments(std::ostream& out) {
     out << "(abaqus::AbaqusReal *const,\n"
-	<< " abaqus::AbaqusReal *const,\n"
-	<< " abaqus::AbaqusReal *const,\n"
-	<< " abaqus::AbaqusReal *const,\n"
-	<< " abaqus::AbaqusReal *const,\n"
-	<< " abaqus::AbaqusReal *const,\n"
-	<< " abaqus::AbaqusReal *const,\n"
-	<< " abaqus::AbaqusReal *const,\n"
-	<< " abaqus::AbaqusReal *const,\n"
-	<< " abaqus::AbaqusReal *const,\n"
-	<< " const abaqus::AbaqusReal *const,\n"
-	<< " const abaqus::AbaqusReal *const,\n"
-	<< " const abaqus::AbaqusReal *const,\n"
-	<< " const abaqus::AbaqusReal *const,\n"
-	<< " const abaqus::AbaqusReal *const,\n"
-	<< " const abaqus::AbaqusReal *const,\n"
-	<< " const abaqus::AbaqusReal *const,\n"
-	<< " const abaqus::AbaqusReal *const,\n"
-	<< " const char           *const,\n"
-	<< " const abaqus::AbaqusInt  *const,\n"
-	<< " const abaqus::AbaqusInt  *const,\n"
-	<< " const abaqus::AbaqusInt  *const,\n"
-	<< " const abaqus::AbaqusInt  *const,\n"
-	<< " const abaqus::AbaqusReal *const,\n"
-	<< " const abaqus::AbaqusInt  *const,\n"
-	<< " const abaqus::AbaqusReal *const,\n"
-	<< " const abaqus::AbaqusReal *const,\n"
-	<< "       abaqus::AbaqusReal *const,\n"
+        << " abaqus::AbaqusReal *const,\n"
+        << " abaqus::AbaqusReal *const,\n"
+        << " abaqus::AbaqusReal *const,\n"
+        << " abaqus::AbaqusReal *const,\n"
+        << " abaqus::AbaqusReal *const,\n"
+        << " abaqus::AbaqusReal *const,\n"
+        << " abaqus::AbaqusReal *const,\n"
+        << " abaqus::AbaqusReal *const,\n"
+        << " abaqus::AbaqusReal *const,\n"
         << " const abaqus::AbaqusReal *const,\n"
-	<< " const abaqus::AbaqusReal *const,\n"
-	<< " const abaqus::AbaqusReal *const,\n"
-	<< " const abaqus::AbaqusInt  *const,\n"
-	<< " const abaqus::AbaqusInt  *const,\n"
-	<< " const abaqus::AbaqusInt  *const,\n"
-	<< " const abaqus::AbaqusInt  *const,\n"
-	<< " const abaqus::AbaqusInt  *const,\n"
-	<< "       abaqus::AbaqusInt  *const,\n"
-	<< "const int)";
-  } // end of writeArguments
+        << " const abaqus::AbaqusReal *const,\n"
+        << " const abaqus::AbaqusReal *const,\n"
+        << " const abaqus::AbaqusReal *const,\n"
+        << " const abaqus::AbaqusReal *const,\n"
+        << " const abaqus::AbaqusReal *const,\n"
+        << " const abaqus::AbaqusReal *const,\n"
+        << " const abaqus::AbaqusReal *const,\n"
+        << " const char           *const,\n"
+        << " const abaqus::AbaqusInt  *const,\n"
+        << " const abaqus::AbaqusInt  *const,\n"
+        << " const abaqus::AbaqusInt  *const,\n"
+        << " const abaqus::AbaqusInt  *const,\n"
+        << " const abaqus::AbaqusReal *const,\n"
+        << " const abaqus::AbaqusInt  *const,\n"
+        << " const abaqus::AbaqusReal *const,\n"
+        << " const abaqus::AbaqusReal *const,\n"
+        << "       abaqus::AbaqusReal *const,\n"
+        << " const abaqus::AbaqusReal *const,\n"
+        << " const abaqus::AbaqusReal *const,\n"
+        << " const abaqus::AbaqusReal *const,\n"
+        << " const abaqus::AbaqusInt  *const,\n"
+        << " const abaqus::AbaqusInt  *const,\n"
+        << " const abaqus::AbaqusInt  *const,\n"
+        << " const abaqus::AbaqusInt  *const,\n"
+        << " const abaqus::AbaqusInt  *const,\n"
+        << "       abaqus::AbaqusInt  *const,\n"
+        << "const int)";
+  }  // end of writeArguments
 
-  std::string AbaqusInterface::getName()
-  {
-    return "abaqus";
-  }
-  
-  std::string AbaqusInterface::getInterfaceName() const
-  {
+  std::string AbaqusInterface::getName() { return "abaqus"; }
+
+  std::string AbaqusInterface::getInterfaceName() const {
     return "Abaqus";
-  } // end of AbaqusInterface::getInterfaceName
+  }  // end of AbaqusInterface::getInterfaceName
 
-
-  std::pair<bool,AbaqusInterface::tokens_iterator>
+  std::pair<bool, AbaqusInterface::tokens_iterator>
   AbaqusInterface::treatKeyword(BehaviourDescription& bd,
-				const std::string& k,
-				const std::vector<std::string>& i,
-				tokens_iterator current,
-				const tokens_iterator end)
-  {
+                                const std::string& k,
+                                const std::vector<std::string>& i,
+                                tokens_iterator current,
+                                const tokens_iterator end) {
     using tfel::utilities::CxxTokenizer;
     auto throw_if = [](const bool b,const std::string& m){
       tfel::raise_if(b,"AbaqusInterface::treatKeyword: "+m);
@@ -309,8 +304,7 @@ namespace mfront{
   } // end of treatKeyword
 
   void AbaqusInterface::endTreatment(const BehaviourDescription& mb,
-				     const FileDescription& fd) const
-  {
+                                     const FileDescription& fd) const {
     using namespace tfel::system;
     auto throw_if = [](const bool b,const std::string& m){
       tfel::raise_if(b,"AbaqusInterface::endTreatment: "+m);
@@ -326,16 +320,17 @@ namespace mfront{
     AbaqusInterfaceBase::checkOrthotropyManagementPolicyConsistency(mb);
     if(mb.getSymmetryType()==mfront::ORTHOTROPIC){
       // this is required for gcc 4.7.2
-      const auto requires_mfront_omp = [&mb,this]{
-	if(mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
-	  if(AbaqusInterfaceBase::hasFiniteStrainStrategy(mb)){
-	    const auto fs = AbaqusInterfaceBase::getFiniteStrainStrategy(mb);
-	    return fs!="Native";
-	  } else {
-	    return false;
-	  }
-	}
-	return true;
+      const auto requires_mfront_omp = [&mb, this] {
+        if (mb.getBehaviourType() ==
+            BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
+          if (AbaqusInterfaceBase::hasFiniteStrainStrategy(mb)) {
+            const auto fs = AbaqusInterfaceBase::getFiniteStrainStrategy(mb);
+            return fs!="Native";
+          } else {
+            return false;
+          }
+        }
+        return true;
       }();
       const auto mfront_omp = usesMFrontOrthotropyManagementPolicy(mb);
       throw_if(((requires_mfront_omp)&&!(mfront_omp)),
@@ -406,9 +401,9 @@ namespace mfront{
     if(AbaqusInterfaceBase::hasFiniteStrainStrategy(mb)){
       const auto fs = AbaqusInterfaceBase::getFiniteStrainStrategy(mb);
       if(fs=="FiniteRotationSmallStrain"){
-	out << "#include\"MFront/Abaqus/AbaqusFiniteStrain.hxx\"\n\n";
+        out << "#include\"MFront/Abaqus/AbaqusFiniteStrain.hxx\"\n\n";
       } else if(fs=="MieheApelLambrechtLogarithmicStrain"){
-	out << "#include\"TFEL/Material/LogarithmicStrainHandler.hxx\"\n\n";
+        out << "#include\"TFEL/Material/LogarithmicStrainHandler.hxx\"\n\n";
       }
     }
     out << "#include\"TFEL/Material/" << mb.getClassName() << ".hxx\"\n"
@@ -570,33 +565,37 @@ namespace mfront{
     	// turning the deformation and the deformation gradient
     	// increment to the material frame
     	if(h==ModellingHypothesis::PLANESTRESS){
-	  out << "#ifndef MFRONT_ABAQUS_NORUNTIMECHECKS\n"
-	      << "if(*NSTATV<2){\n"
-	      << "std::cerr << \"" << name << this->getFunctionNameForHypothesis("",h) << ": \"\n"
-	      << "          << \"invalid number of state variables\\n\";\n"
-	      << "*PNEWDT = -1.;\n"
-	      << "return;\n"
-	      << "}\n"
-	      << "#endif /* MFRONT_ABAQUS_NORUNTIMECHECKS */\n"
-	      << "abaqus::AbaqusRotation2D<abaqus::AbaqusReal> R(STATEV);\n"
-    	      << "const abaqus::AbaqusReal eto[4u]  = {*STRAN ,*(STRAN+1) ,0,*(STRAN+2)};\n"
-    	      << "const abaqus::AbaqusReal deto[4u] = {*DSTRAN,*(DSTRAN+1),0,*(DSTRAN+2)};\n"
-    	      << "abaqus::AbaqusReal sg[4u] = {*STRESS ,*(STRESS+1) ,0,*(STRESS+2)};\n"
-    	      << "abaqus::AbaqusReal e[4u];\n"
-    	      << "abaqus::AbaqusReal de[4u];\n"
-    	      << "abaqus::AbaqusReal sm[4u];\n"
-    	      << "R.rotateStrainsForward(eto,e);\n"
-    	      << "R.rotateStrainsForward(deto,de);\n"
-    	      << "R.rotateStressesForward(sg,sm);\n"
-    	      << "e[2]=e[3];\n"
-    	      << "e[3]=e[0];\n"
-    	      << "de[2]=de[3];\n"
-    	      << "de[3]=de[0];\n"
-    	      << "sm[2]=sm[3];\n"
-    	      << "sm[3]=0;\n"
-	      << "const abaqus::AbaqusInt nstatev = *NSTATV-2;\n";
-	  statev="STATEV+2";
-    	} else if ((h==ModellingHypothesis::AXISYMMETRICAL)||
+          out << "#ifndef MFRONT_ABAQUS_NORUNTIMECHECKS\n"
+              << "if(*NSTATV<2){\n"
+              << "std::cerr << \"" << name
+              << this->getFunctionNameForHypothesis("", h) << ": \"\n"
+              << "          << \"invalid number of state variables\\n\";\n"
+              << "*PNEWDT = -1.;\n"
+              << "return;\n"
+              << "}\n"
+              << "#endif /* MFRONT_ABAQUS_NORUNTIMECHECKS */\n"
+              << "abaqus::AbaqusRotation2D<abaqus::AbaqusReal> R(STATEV);\n"
+              << "const abaqus::AbaqusReal eto[4u]  = {*STRAN ,*(STRAN+1) "
+                 ",0,*(STRAN+2)};\n"
+              << "const abaqus::AbaqusReal deto[4u] = "
+                 "{*DSTRAN,*(DSTRAN+1),0,*(DSTRAN+2)};\n"
+              << "abaqus::AbaqusReal sg[4u] = {*STRESS ,*(STRESS+1) "
+                 ",0,*(STRESS+2)};\n"
+              << "abaqus::AbaqusReal e[4u];\n"
+              << "abaqus::AbaqusReal de[4u];\n"
+              << "abaqus::AbaqusReal sm[4u];\n"
+              << "R.rotateStrainsForward(eto,e);\n"
+              << "R.rotateStrainsForward(deto,de);\n"
+              << "R.rotateStressesForward(sg,sm);\n"
+              << "e[2]=e[3];\n"
+              << "e[3]=e[0];\n"
+              << "de[2]=de[3];\n"
+              << "de[3]=de[0];\n"
+              << "sm[2]=sm[3];\n"
+              << "sm[3]=0;\n"
+              << "const abaqus::AbaqusInt nstatev = *NSTATV-2;\n";
+          statev = "STATEV+2";
+        } else if ((h==ModellingHypothesis::AXISYMMETRICAL)||
     		   (h==ModellingHypothesis::PLANESTRAIN)){
     	  out << "#ifndef MFRONT_ABAQUS_NORUNTIMECHECKS\n"
 	      << "if(*NSTATV<2){\n"
@@ -1002,11 +1001,11 @@ namespace mfront{
 	<< "}\n\n";
   }
 
-  void AbaqusInterface::writeMieheApelLambrechtLogarithmicStrainFunction(std::ostream& out,
-									 const BehaviourDescription& mb,
-									 const std::string& name,
-									 const Hypothesis h) const
-  {
+  void AbaqusInterface::writeMieheApelLambrechtLogarithmicStrainFunction(
+      std::ostream& out,
+      const BehaviourDescription& mb,
+      const std::string& name,
+      const Hypothesis h) const {
     auto throw_if = [](const bool b,const std::string& m){
       tfel::raise_if(b,"AbaqusInterface::writeMieheApelLambrechtLogarithmicStrainFunction: "+m);
     };
@@ -1014,26 +1013,26 @@ namespace mfront{
 	     "plane stress is not supported yet");
     const std::string sfeh = "abaqus::AbaqusLogarithmicStrainStressFreeExpansionHandler";
     this->writeFunctionBase(out,mb,name,sfeh,h);
-    const auto d = [&h,&throw_if]{
-      if(h==ModellingHypothesis::TRIDIMENSIONAL){
-	return 3u;
+    const auto d = [&h, &throw_if] {
+      if (h == ModellingHypothesis::TRIDIMENSIONAL) {
+        return 3u;
       }
-      throw_if(!((h==ModellingHypothesis::AXISYMMETRICAL)||
-		 (h==ModellingHypothesis::PLANESTRAIN)),
-	       "unsupported modelling hypothesis");
+      throw_if(!((h == ModellingHypothesis::AXISYMMETRICAL) ||
+                 (h == ModellingHypothesis::PLANESTRAIN)),
+               "unsupported modelling hypothesis");
       return 2u;
     }();
-    const auto n = [&h,&throw_if]{
-      if(h==ModellingHypothesis::TRIDIMENSIONAL){
-	return 6u;
+    const auto n = [&h, &throw_if] {
+      if (h == ModellingHypothesis::TRIDIMENSIONAL) {
+        return 6u;
       }
-      throw_if(!((h==ModellingHypothesis::AXISYMMETRICAL)||
-		 (h==ModellingHypothesis::PLANESTRAIN)),
-	       "unsupported modelling hypothesis");
+      throw_if(!((h == ModellingHypothesis::AXISYMMETRICAL) ||
+                 (h == ModellingHypothesis::PLANESTRAIN)),
+               "unsupported modelling hypothesis");
       return 4u;
     }();
     out << "MFRONT_SHAREDOBJ void\n"
-	<< this->getFunctionNameForHypothesis(name,h);
+        << this->getFunctionNameForHypothesis(name, h);
     writeArguments(out,mb,true);
     out << "{\n";
     if(mb.getAttribute(BehaviourData::profiling,false)){
@@ -1083,24 +1082,19 @@ namespace mfront{
 	<< "}\n\n";
   }
 
-  
-  void 
-  AbaqusInterface::writeInterfaceSpecificIncludes(std::ostream& out,
-						  const BehaviourDescription&) const
-  {
+  void AbaqusInterface::writeInterfaceSpecificIncludes(
+      std::ostream& out, const BehaviourDescription&) const {
     out << "#include\"MFront/Abaqus/Abaqus.hxx\"\n"
 	<< "#include\"MFront/Abaqus/AbaqusConvert.hxx\"\n\n";
   } // end of AbaqusInterface::writeInterfaceSpecificIncludes
 
-  std::vector<std::pair<std::string,std::string>>
-  AbaqusInterface::getBehaviourDataConstructorAdditionalVariables() const{
+  std::vector<std::pair<std::string, std::string>>
+  AbaqusInterface::getBehaviourDataConstructorAdditionalVariables() const {
     return {{"DR","increment of rigid body rotation"}};
   } // end of AbaqusInterface::getBehaviourDataConstructorAdditionalVariables
 
-  void 
-  AbaqusInterface::writeBehaviourDataMainVariablesSetters(std::ostream& os,
-							  const BehaviourDescription& mb) const
-  {
+  void AbaqusInterface::writeBehaviourDataMainVariablesSetters(
+      std::ostream& os, const BehaviourDescription& mb) const {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
     SupportedTypes::TypeSize ov,of;
     os << "void set"
@@ -1122,11 +1116,10 @@ namespace mfront{
     os << "}\n\n";
   } // end of AbaqusInterface::writeBehaviourDataMainVariablesSetters
 
-  void 
-  AbaqusInterface::writeBehaviourDataGradientSetter(std::ostream& os,
-							   const Gradient& v,
-							   const SupportedTypes::TypeSize o) const
-  {
+  void AbaqusInterface::writeBehaviourDataGradientSetter(
+      std::ostream& os,
+      const Gradient& v,
+      const SupportedTypes::TypeSize o) const {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
     tfel::raise_if(!o.isNull(),"AbaqusInterface::writeBehaviourDataMainVariablesSetter : "
 		   "only one driving variable supported");
@@ -1139,11 +1132,10 @@ namespace mfront{
     }
   } // end of AbaqusInterface::writeBehaviourDataGradientSetter
 
-  void 
-  AbaqusInterface::writeIntegrationDataGradientSetter(std::ostream& os,
-							   const Gradient& v,
-							   const SupportedTypes::TypeSize o) const
-  {
+  void AbaqusInterface::writeIntegrationDataGradientSetter(
+      std::ostream& os,
+      const Gradient& v,
+      const SupportedTypes::TypeSize o) const {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
     tfel::raise_if(!o.isNull(),"AbaqusInterface::writeIntegrationDataMainVariablesSetter : "
 		   "only one driving variable supported");
@@ -1155,34 +1147,30 @@ namespace mfront{
 	 << iprefix << "dstran);\n";
     }
   } // end of AbaqusInterface::writeIntegrationDataGradientSetter
-  
-  void 
-  AbaqusInterface::writeBehaviourDataThermodynamicForceSetter(std::ostream& os,
-							      const ThermodynamicForce& f,
-							      const SupportedTypes::TypeSize o) const
-  {
+
+  void AbaqusInterface::writeBehaviourDataThermodynamicForceSetter(
+      std::ostream& os,
+      const ThermodynamicForce& f,
+      const SupportedTypes::TypeSize o) const {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
     if(SupportedTypes::getTypeFlag(f.type)==SupportedTypes::STENSOR){
       os << "abaqus::UMATImportThermodynamicForces<hypothesis>::exe(this->" << f.name << ",";
       if(!o.isNull()){
-	os << iprefix << "stress_+" << o << ");\n";
+        os << iprefix << "stress_+" << o << ");\n";
       } else {
-	os << iprefix << "stress_);\n";
+        os << iprefix << "stress_);\n";
       }
     } else {
       tfel::raise("AbaqusInterface::writeBehaviourDataMainVariablesSetters : "
 		  "unsupported forces type");
     }
   } // end of AbaqusInterface::writeBehaviourDataThermodynamicForceSetter
-  
-  void 
-  AbaqusInterface::completeBehaviourDataConstructor(std::ostream& out,
-						    const Hypothesis h,
-						    const BehaviourDescription& mb) const
-  {
-    auto do_nothing = [&out]{
-      out << "static_cast<void>(ABAQUSDR);\n";
-    };
+
+  void AbaqusInterface::completeBehaviourDataConstructor(
+      std::ostream& out,
+      const Hypothesis h,
+      const BehaviourDescription& mb) const {
+    auto do_nothing = [&out] { out << "static_cast<void>(ABAQUSDR);\n"; };
     /* 
      * We apply the rotation associated to the Jauman corotationnal frame only if:
      * - the behaviour symmetry is isotropic
@@ -1190,14 +1178,15 @@ namespace mfront{
      * - the finite strain strategy is either undefined or `Native`
      */
     // this is required for gcc 4.7.2
-    const auto c = [&mb,this] {
-      if(mb.getSymmetryType()==mfront::ISOTROPIC){
-	if(mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
-	  if(AbaqusInterfaceBase::hasFiniteStrainStrategy(mb)){
-	    return AbaqusInterfaceBase::getFiniteStrainStrategy(mb)=="Native";
-	  }
-	  return true;
-	}
+    const auto c = [&mb, this] {
+      if (mb.getSymmetryType() == mfront::ISOTROPIC) {
+        if (mb.getBehaviourType() ==
+            BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
+          if (AbaqusInterfaceBase::hasFiniteStrainStrategy(mb)) {
+            return AbaqusInterfaceBase::getFiniteStrainStrategy(mb) == "Native";
+          }
+          return true;
+        }
       }
       return false;
     }();
@@ -1207,34 +1196,36 @@ namespace mfront{
     }
     // checking if there are variables that need to be rotated
     const auto& d = mb.getBehaviourData(h);
-    bool b = false; // have persistent variables that have to be updated
-    for(const auto& v:d.getPersistentVariables()){
+    bool b = false;  // have persistent variables that have to be updated
+    for (const auto& v : d.getPersistentVariables()) {
       const auto flag = SupportedTypes::getTypeFlag(v.type);
-      if((flag==SupportedTypes::STENSOR)||
-	 (flag==SupportedTypes::TENSOR)){
-	b = true;
-	break;
+      if ((flag == SupportedTypes::STENSOR) ||
+          (flag == SupportedTypes::TENSOR)) {
+        b = true;
+        break;
       }
     }
-    if(!b){
+    if (!b) {
       do_nothing();
       return;
     }
     // rotate variables
-    out << "const tfel::math::tmatrix<3u,3u,real> abaqus_dr = {ABAQUSDR[0],ABAQUSDR[1],ABAQUSDR[2],\n"
-      "                                                        ABAQUSDR[3],ABAQUSDR[4],ABAQUSDR[5],\n"
-      "                                                        ABAQUSDR[6],ABAQUSDR[7],ABAQUSDR[8]};\n";
-    for(const auto& v:d.getPersistentVariables()){
+    out << "const tfel::math::tmatrix<3u,3u,real> abaqus_dr = "
+        << "{ABAQUSDR[0],ABAQUSDR[1],ABAQUSDR[2],\n"
+           "ABAQUSDR[3],ABAQUSDR[4],ABAQUSDR[5],\n"
+           "ABAQUSDR[6],ABAQUSDR[7],ABAQUSDR[8]};\n";
+    for (const auto& v : d.getPersistentVariables()) {
       const auto flag = SupportedTypes::getTypeFlag(v.type);
-      if((flag==SupportedTypes::STENSOR)||
-	 (flag==SupportedTypes::TENSOR)){
-	if(v.arraySize==1u){
-	  out << "this->" << v.name << ".changeBasis(abaqus_dr);\n";
-	} else {
-	  for(unsigned short i=0;i!=v.arraySize;++i){
-	    out << "this->" << v.name << "[" << i << "].changeBasis(abaqus_dr);\n";
-	  }
-	}
+      if ((flag == SupportedTypes::STENSOR) ||
+          (flag == SupportedTypes::TENSOR)) {
+        if (v.arraySize == 1u) {
+          out << "this->" << v.name << ".changeBasis(abaqus_dr);\n";
+        } else {
+          for (unsigned short i = 0; i != v.arraySize; ++i) {
+            out << "this->" << v.name << "[" << i
+                << "].changeBasis(abaqus_dr);\n";
+          }
+        }
       }
     }
   } // end of UMATInterfaceBase::completeBehaviourDataConstructor

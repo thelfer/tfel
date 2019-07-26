@@ -27,6 +27,84 @@ namespace mfront {
 
   namespace bbrick {
 
+    static std::string findIfParameterOrMaterialPropertyIsUniformelyDefined(
+        const BehaviourDescription& bd,
+        const std::string& g,
+        const std::string& t) {
+      const auto r = [&bd, &g]()
+          -> std::pair<VariableDescription, bool> {
+            for (const auto h : bd.getDistinctModellingHypotheses()) {
+              const auto& d = bd.getBehaviourData(h);
+              if (d.isGlossaryNameUsed(g)) {
+                const auto& v = d.getVariableDescriptionByExternalName(g);
+                if (d.isMaterialPropertyName(v.name)) {
+                  return {v, true};
+                }
+                if (!d.isParameterName(v.name)) {
+                  tfel::raise(
+                      "findIfParameterOrMaterialPropertyIsUniformelyDefined: "
+                      "Variable '" +
+                      displayName(v) + "' with the glossary name '" + g +
+                      "' is neither a material property nor a parameter.");
+                }
+                return {v, false};
+              }
+            }
+            return {VariableDescription{}, false};
+          }();
+      if (r.first.name.empty()) {
+        return "";
+      }
+      // uniformity check
+      for (const auto h : bd.getDistinctModellingHypotheses()) {
+        const auto& d = bd.getBehaviourData(h);
+        if (r.second) {
+          if (!d.isMaterialPropertyName(r.first.name)) {
+            tfel::raise(
+                "findIfParameterOrMaterialPropertyIsUniformelyDefined: "
+                "Variable '" +
+                displayName(r.first) +
+                "' is not defined as a material property for all " +
+                "modelling hypothesis.");
+          }
+        } else {
+          if (!d.isParameterName(r.first.name)) {
+            tfel::raise(
+                "findIfParameterOrMaterialPropertyIsUniformelyDefined: "
+                "Variable '" +
+                displayName(r.first) +
+                "' is not defined as a parameter for all " +
+                "modelling hypothesis.");
+          }
+        }
+        const auto& v = d.getVariableDescriptionByExternalName(g);
+        if ((!v.hasGlossaryName()) || (v.getExternalName() != g)) {
+          tfel::raise(
+              "findIfParameterOrMaterialPropertyIsUniformelyDefined: "
+              "Variable '" +
+              displayName(v) +
+              "' is not associated with the glossary name '" + g +
+              "' for all modelling hypotheses.");
+        }
+        if (v.type != t) {
+          if (SupportedTypes::getTypeFlag(v.type) !=
+              SupportedTypes::getTypeFlag(t)) {
+            tfel::raise(
+                "findIfParameterOrMaterialPropertyIsUniformelyDefined: "
+                "Variable '" +
+                displayName(v) + "' is not of type '" + t +
+                "' as expected (is a '" + v.type + "').");
+          } else {
+            auto& log = getLogStream();
+            log << "findIfParameterOrMaterialPropertyIsUniformelyDefined: "
+                << "inconsistent type for variable '" << displayName(v)
+                << "' ('" << v.type << "' vs '" << t << "')\n";
+          }
+        }
+      }
+      return r.first.name;
+    }  // end of findIfParameterOrMaterialPropertyIsUniformelyDefined
+
     HookeStressPotentialBase::HookeStressPotentialBase() = default;
 
     std::vector<OptionDescription>
@@ -399,6 +477,7 @@ namespace mfront {
         bd.addStateVariable(uh, eel);
         bd.setGlossaryName(uh, "eel", Glossary::ElasticStrain);
       }
+
       // treating material properties and stress computation
       if ((bd.getAttribute(BehaviourDescription::requiresStiffnessTensor,
                            false)) ||
@@ -407,6 +486,44 @@ namespace mfront {
         this->declareComputeStressWhenStiffnessTensorIsDefined(bd);
       } else {
         if (bd.getElasticSymmetryType() == mfront::ISOTROPIC) {
+          if (!bd.areElasticMaterialPropertiesDefined()) {
+            bd.setAttribute("HookeStressPotentialBase::UseLocalLameCoeficients",
+                            true, false);
+            auto yg = findIfParameterOrMaterialPropertyIsUniformelyDefined(
+                bd, Glossary::YoungModulus, "stress");
+            auto nu = findIfParameterOrMaterialPropertyIsUniformelyDefined(
+                bd, Glossary::PoissonRatio, "real");
+            if (yg.empty()) {
+              addMaterialPropertyIfNotDefined(bd, "stress", "young",
+                                              Glossary::YoungModulus);
+              yg = "young";
+            }
+            if (nu.empty()) {
+              addMaterialPropertyIfNotDefined(bd, "real", "nu",
+                                              Glossary::PoissonRatio);
+              nu = "nu";
+            }
+            bd.setAttribute("HookeStressPotentialBase::YoungModulus", yg,
+                            false);
+            bd.setAttribute("HookeStressPotentialBase::PoissonRatio", nu,
+                            false);
+            d.addVariable(uh, {"stress", "lambda"});
+            d.addVariable(uh, {"stress", "mu"});
+            // local variable initialisation
+            CodeBlock init;
+            const auto args = "this->" + yg + ",this->" + nu;
+            init.code =
+                "// initialisation Lame's coefficients\n"
+                "this->sebdata.lambda = "
+                "tfel::material::computeLambda(" +
+                args +
+                ");\n"  //
+                "this->sebdata.mu = " +
+                "tfel::material::computeMu(" + args + ");\n";
+            bd.setCode(uh, BehaviourData::BeforeInitializeLocalVariables, init,
+                       BehaviourData::CREATEORAPPEND,
+                       BehaviourData::AT_BEGINNING, true);
+          }
           this->declareComputeStressForIsotropicBehaviour(bd, d);
         } else if (bd.getElasticSymmetryType() == mfront::ORTHOTROPIC) {
           this->declareComputeStressForOrthotropicBehaviour(bd);
@@ -639,6 +756,17 @@ namespace mfront {
           const std::string lambda =
               b ? "this->sebdata.lambda" : "this->lambda";
           const std::string mu = b ? "this->sebdata.mu" : "this->mu";
+          const auto young = [&bd]() -> std::string {
+            if (bd.areElasticMaterialPropertiesDefined()) {
+              return "this->young_tdt";
+            }
+            if (bd.hasAttribute("HookeStressPotentialBase::YoungModulus")) {
+              return "this->" +
+                     bd.getAttribute<std::string>(
+                         "HookeStressPotentialBase::YoungModulus");
+            }
+            return "this->young";
+          }();
           c += "// the generalised plane stress equation \n";
           c += "// is satisfied at the end of the time step\n";
           c += "this->sebdata.szz = ";
@@ -650,12 +778,12 @@ namespace mfront {
               (bd.getStrainMeasure() == BehaviourDescription::HENCKY)) {
             c += "fetozz = ";
             c += "(this->sebdata.szz-";
-            c += "this->sebdata.exp_etozz * (this->sigzz+this->dsigzz))/";
-            c += "this->young;\n";
+            c += "this->sebdata.exp_etozz * (this->sigzz+this->dsigzz)) / ";
+            c += young + ";\n";
           } else {
             c += "fetozz = ";
-            c += "(this->sebdata.szz-this->sigzz-this->dsigzz)/";
-            c += "this->young;\n";
+            c += "(this->sebdata.szz-this->sigzz-this->dsigzz) / ";
+            c += young + ";\n";
           }
           c += "// modification of the partition of strain\n";
           c += "feel(1) -= this->detozz;\n";
@@ -665,15 +793,15 @@ namespace mfront {
             c += "dfeel_ddetozz(1) = -1;\n";
             c += "dfetozz_ddetozz  = real(0);\n";
             c += "dfetozz_ddeel(1) = ";
-            c += "(" + lambda + "+2*(" + mu + "))/this->young;\n";
-            c += "dfetozz_ddeel(0) = " + lambda + "/this->young;\n";
-            c += "dfetozz_ddeel(2) = " + lambda + "/this->young;\n";
+            c += "(" + lambda + "+2*(" + mu + "))/" + young + ";\n";
+            c += "dfetozz_ddeel(0) = " + lambda + "/" + young + ";\n";
+            c += "dfetozz_ddeel(2) = " + lambda + "/" + young + ";\n";
           }
           if ((bd.isStrainMeasureDefined()) &&
               (bd.getStrainMeasure() == BehaviourDescription::HENCKY)) {
             c += "dfetozz_ddetozz = ";
             c += "-this->sebdata.exp_etozz * (this->sigzz+this->dsigzz)/";
-            c += "this->young;\n";
+            c += young + ";\n";
           }
         }
       }
@@ -757,6 +885,17 @@ namespace mfront {
           const std::string lambda =
               b ? "this->sebdata.lambda" : "this->lambda";
           const std::string mu = b ? "this->sebdata.mu" : "this->mu";
+          const auto young = [&bd]() -> std::string {
+            if (bd.areElasticMaterialPropertiesDefined()) {
+              return "this->young_tdt";
+            }
+            if (bd.hasAttribute("HookeStressPotentialBase::YoungModulus")) {
+              return "this->" +
+                     bd.getAttribute<std::string>(
+                         "HookeStressPotentialBase::YoungModulus");
+            }
+            return "this->young";
+          }();
           integrator.code +=
               "// the plane stress equation is satisfied at the end of the "
               "time "
@@ -767,7 +906,7 @@ namespace mfront {
               "                   (" +
               lambda +
               ")*(this->eel(0)+this->deel(0)+this->eel(1)+this->deel(1));\n"
-              "fetozz   = this->sebdata.szz/(this->young);\n"
+              "fetozz   = this->sebdata.szz/(" + young + ");\n"
               "// modification of the partition of strain\n"
               "feel(2) -= detozz;\n";
           if ((idsl.getSolver().usesJacobian()) &&
@@ -778,12 +917,12 @@ namespace mfront {
                 "dfetozz_ddetozz  = real(0);\n"
                 "dfetozz_ddeel(2) = (" +
                 lambda + "+2*(" + mu +
-                "))/this->young;\n"
+                "))/" + young + ";\n"
                 "dfetozz_ddeel(0) = " +
                 lambda +
-                "/this->young;\n"
+                "/" + young + ";\n"
                 "dfetozz_ddeel(1) = " +
-                lambda + "/this->young;\n";
+                lambda + "/" + young + ";\n";
           }
         }
       }
@@ -831,6 +970,12 @@ namespace mfront {
                                  false))) {
         return "this->D(0,0)";
       }
+      if (bd.getAttribute("HookeStressPotentialBase::UseLocalLameCoeficients",
+                          false)) {
+        const auto yg = bd.getAttribute<std::string>(
+            "HookeStressPotentialBase::YoungModulus");
+        return "this->" + yg;
+      }
       return "this->young";
     }  // end of HookeStressPotentialBase::getStressNormalisationFactor
 
@@ -844,8 +989,8 @@ namespace mfront {
                "bound)*"
                "(this->D(0,0))";
       }
-      return "(this->relative_value_for_the_equivalent_stress_lower_bound)*"
-             "(this->young)";
+      return "(this->relative_value_for_the_equivalent_stress_lower_bound)"
+             " * " + this->getStressNormalisationFactor(bd);
     }  // end of getEquivalentStressLowerBound
 
     HookeStressPotentialBase::~HookeStressPotentialBase() = default;

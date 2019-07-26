@@ -36,6 +36,13 @@ namespace tfel {
        // LogarithmicStrainHandler<1u,StressTupe>::LogarithmicStrainHandler
 
     template <typename StressType>
+    void
+    LogarithmicStrainHandler<1u, StressType>::updateAxialDeformationGradient(
+        const real Fzz) {
+      this->F[1] = Fzz;
+    }  // end of
+       // LogarithmicStrainHandler<1u,StressType>::updateAxialDeformationGradien    
+    template <typename StressType>
     typename LogarithmicStrainHandler<1u, StressType>::StrainStensor
     LogarithmicStrainHandler<1u, StressType>::getHenckyLogarithmicStrain()
         const {

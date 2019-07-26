@@ -1214,6 +1214,7 @@ docs/web/img/AbaqusFLD.png -text
 docs/web/img/AbaqusFLD.xcf -text
 docs/web/img/AbaqusRotSigTest.png -text
 docs/web/img/AbaqusRotSigTest.xcf -text
+docs/web/img/AbdominalMusclesModelling2019.png -text
 docs/web/img/AccesDigiteo.png -text
 docs/web/img/AsterTotalLagrangian.png -text
 docs/web/img/Barrioz2018.png -text
@@ -1341,6 +1342,7 @@ docs/web/img/mfront-flyer-en.png -text
 docs/web/img/mfront-flyer-en.svg -text
 docs/web/img/mfront-flyer-fr-2017.png -text
 docs/web/img/mfront-flyer-fr-2017.svg -text
+docs/web/img/mfront-unicode.png -text
 docs/web/img/mingw-get1.png -text
 docs/web/img/mingw-get1.xcf -text
 docs/web/img/mingw-get2.png -text
@@ -2073,6 +2075,7 @@ include/TFEL/TypeTraits/IsUnaryOperator.hxx -text
 include/TFEL/TypeTraits/Promote.hxx -text
 include/TFEL/TypeTraits/Promote/Promote.ixx -text
 include/TFEL/TypeTraits/RealPartType.hxx -text
+include/TFEL/UnicodeSupport/UnicodeSupport.hxx -text
 include/TFEL/Utilities/Argument.hxx -text
 include/TFEL/Utilities/ArgumentParser.hxx -text
 include/TFEL/Utilities/ArgumentParserBase.hxx -text
@@ -6485,6 +6488,9 @@ src/Tests/TestOutput.cxx -text
 src/Tests/TestResult.cxx -text
 src/Tests/TestSuite.cxx -text
 src/Tests/XMLTestOutput.cxx -text
+src/UnicodeSupport/CMakeLists.txt -text
+src/UnicodeSupport/Makefile.am -text
+src/UnicodeSupport/UnicodeSupport.cxx -text
 src/Utilities/Argument.cxx -text
 src/Utilities/ArgumentParser.cxx -text
 src/Utilities/ArgumentParserBase.cxx -text
@@ -6742,6 +6748,9 @@ tests/Tests/testmanager.cxx -text
 tests/Tests/testproxy.cxx -text
 tests/Tests/testproxy2.cxx -text
 tests/Tests/testsuite.cxx -text
+tests/UnicodeSupport/CMakeLists.txt -text
+tests/UnicodeSupport/Makefile.am -text
+tests/UnicodeSupport/UnicodeSupportTest.cxx -text
 tests/Utilities/CMakeLists.txt -text
 tests/Utilities/CxxTokenizerKeepCommentBoundariesTest.cxx -text
 tests/Utilities/CxxTokenizerOffsetTest.cxx -text

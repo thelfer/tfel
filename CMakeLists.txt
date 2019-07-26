@@ -646,5 +646,7 @@ set(CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "
 #     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
 # endif(UNIX)
 
+set(CPACK_BUNDLE_NAME "TFEL/MFront")
+
 # packaging
 include(CPack)

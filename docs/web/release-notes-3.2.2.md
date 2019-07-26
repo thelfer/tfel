@@ -4,6 +4,10 @@
 
 Version `3.2.2` is mainly a bug fix version of the `3.2` series.
 
+This version was released along with Version `3.1.5` and inherits from
+all the fixes of this version.
+
+
 # Issues solved
 
 # Ticket #182: Jacobian error in the SwiftIsotropicHardeningRule

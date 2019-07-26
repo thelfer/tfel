@@ -20,6 +20,7 @@
 
 #include "TFEL/Raise.hxx"
 #include "TFEL/Math/IntegerEvaluator.hxx"
+#include "TFEL/UnicodeSupport/UnicodeSupport.hxx"
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 
 #include "MFront/MFront.hxx"
@@ -84,7 +85,10 @@ namespace mfront {
 
   DSLBase::CodeBlockParserOptions::~CodeBlockParserOptions() noexcept = default;
 
-  DSLBase::DSLBase() = default;
+  DSLBase::DSLBase() {
+    this->addSeparator("\u2297");
+    this->addSeparator("\u22C5");
+  }  // end of DSLBase::DSLBase
 
   std::vector<std::string> DSLBase::getDefaultReservedNames() {
     auto names = std::vector<std::string>{};
@@ -104,7 +108,8 @@ namespace mfront {
     return names;
   }
 
-  std::string DSLBase::getTemporaryVariableName(std::vector<std::string>& tmpnames, const std::string& p) const {
+  std::string DSLBase::getTemporaryVariableName(
+      std::vector<std::string>& tmpnames, const std::string& p) const {
     if (!this->isValidIdentifier(p)) {
       this->throwRuntimeError("DSLBase::getTemporaryVariableName", "invalid variable prefix '" + p + "'");
     }
@@ -168,8 +173,9 @@ namespace mfront {
 
   CodeBlock DSLBase::readNextBlock(const CodeBlockParserOptions& options) {
     using tfel::utilities::Token;
-    auto addSpaceBetweenToken = [this](std::string& r, const TokensContainer::const_iterator c,
-                                       const TokensContainer::const_iterator n) {
+    auto addSpaceBetweenToken = [this](
+        std::string& r, const TokensContainer::const_iterator c,
+        const TokensContainer::const_iterator n) {
       if ((n == this->tokens.end()) || (n->line != c->line)) {
         return;
       }
@@ -192,6 +198,13 @@ namespace mfront {
     const auto addClassName = options.qualifyStaticVariables;
     const auto allowSemiColon = options.allowSemiColon;
     const auto registerLine = options.registerLine;
+    auto demangle = [&options](const std::string& t) {
+      const auto p = options.symbols.find(t);
+      if (p != options.symbols.end()) {
+        return p->second;
+      }
+      return tfel::unicode::getMangledString(t);
+    };
     auto modifier = options.modifier;
     auto analyser = options.analyser;
     CodeBlock b;
@@ -229,48 +242,52 @@ namespace mfront {
       }
       b.description += this->current->comment;
     }
+    auto currentValue = demangle(this->current->value);
     if (analyser != nullptr) {
-      analyser->exe(this->current->value);
+      analyser->exe(currentValue);
     }
-    if (smn.find(this->current->value) != smn.end()) {
-      b.staticMembers.insert(this->current->value);
+    if (smn.find(currentValue) != smn.end()) {
+      b.staticMembers.insert(currentValue);
       const auto previous = std::prev(this->current);
-      if ((previous->value != "->") && (previous->value != ".") && (previous->value != "::")) {
+      if ((previous->value != "->") && (previous->value != ".") &&
+          (previous->value != "::")) {
         if (addClassName) {
           res += this->getClassName();
           res += "::";
         }
       }
-      res += this->current->value;
-    } else if (mn.find(this->current->value) != mn.end()) {
-      b.members.insert(this->current->value);
-      auto currentValue = std::string{};
+      res += currentValue;
+    } else if (mn.find(currentValue) != mn.end()) {
+      b.members.insert(currentValue);
+      auto cv = std::string{};
       auto previous = std::prev(this->current);
-      if ((previous->value == "->") || (previous->value == ".") || (previous->value == "::")) {
-        currentValue = this->current->value;
+      if ((previous->value == "->") || (previous->value == ".") ||
+          (previous->value == "::")) {
+        cv = currentValue;
       } else {
         if (modifier != nullptr) {
-          currentValue = modifier->exe(this->current->value, addThisPtr);
+          cv = modifier->exe(currentValue, addThisPtr);
         } else {
           if (addThisPtr) {
-            currentValue = "this->" + this->current->value;
+            cv = "this->" + currentValue;
           } else {
-            currentValue = this->current->value;
+            cv = currentValue;
           }
         }
       }
       previous = std::prev(this->current);
       if (previous->value == "*") {
-        res += "(" + currentValue + ")";
+        res += "(" + cv+ ")";
       } else {
-        res += currentValue;
+        res += cv;
       }
     } else {
-      res += this->current->value;
+      res += currentValue;
     }
     addSpaceBetweenToken(res, this->current, std::next(this->current));
     ++(this->current);
     while ((this->current != this->tokens.end()) && (!((this->current->value == delim2) && (openedBlock == 0)))) {
+      currentValue = demangle(this->current->value);
       if (currentLine != this->current->line) {
         currentLine = this->current->line;
         if ((registerLine) && (!getDebugMode())) {
@@ -284,7 +301,7 @@ namespace mfront {
           res += "\n";
         }
       }
-      if ((this->current->value == ";") && (!allowSemiColon)) {
+      if ((currentValue == ";") && (!allowSemiColon)) {
         this->throwRuntimeError("DSLBase::readNextBlock",
                                 "read ';' before the end of block.\n"
                                 "Number of block opened : " +
@@ -297,10 +314,10 @@ namespace mfront {
         b.description += this->current->comment;
       }
       if (analyser != nullptr) {
-        analyser->exe(this->current->value);
+        analyser->exe(currentValue);
       }
-      if (smn.find(this->current->value) != smn.end()) {
-        b.staticMembers.insert(this->current->value);
+      if (smn.find(currentValue) != smn.end()) {
+        b.staticMembers.insert(currentValue);
         const auto previous = std::prev(this->current);
         if ((previous->value != "->") && (previous->value != ".") && (previous->value != "::")) {
           if (addClassName) {
@@ -308,37 +325,37 @@ namespace mfront {
             res += "::";
           }
         }
-        res += this->current->value;
-      } else if (mn.find(this->current->value) != mn.end()) {
-        b.members.insert(this->current->value);
-        auto currentValue = std::string{};
+        res += currentValue;
+      } else if (mn.find(currentValue) != mn.end()) {
+        b.members.insert(currentValue);
+        auto cv = std::string{};
         const auto previous = std::prev(this->current);
         if ((previous->value == "->") || (previous->value == ".") || (previous->value == "::")) {
-          currentValue = this->current->value;
+          cv = currentValue;
         } else {
           if (modifier != nullptr) {
-            currentValue = modifier->exe(this->current->value, addThisPtr);
+            cv = modifier->exe(currentValue, addThisPtr);
           } else {
             if (addThisPtr) {
               if (previous->value == "*") {
-                currentValue = "(this->" + this->current->value + ')';
+                cv = "(this->" + currentValue + ')';
               } else {
-                currentValue = "this->" + this->current->value;
+                cv = "this->" + currentValue;
               }
             } else {
-              currentValue = this->current->value;
+              cv = currentValue;
             }
           }
         }
-        res += currentValue;
+        res += cv;
       } else {
-        res += this->current->value;
+        res += currentValue;
       }
       addSpaceBetweenToken(res, this->current, std::next(this->current));
-      if (this->current->value == delim1) {
+      if (currentValue == delim1) {
         ++openedBlock;
       }
-      if (this->current->value == delim2) {
+      if (currentValue == delim2) {
         --openedBlock;
       }
       ++(this->current);
@@ -354,7 +371,8 @@ namespace mfront {
     return b;
   }  // end of DSLBase::readNextBlock
 
-  void DSLBase::throwRuntimeError(const std::string& m, const std::string& e) const {
+  void DSLBase::throwRuntimeError(const std::string& m,
+                                  const std::string& e) const {
     auto msg = m;
     if (!e.empty()) {
       msg += ": " + e;
@@ -493,7 +511,7 @@ namespace mfront {
       throw_if(!b, "variable '" + n + "' can't be declared an array");
       auto array_size = std::string{};
       ++(this->current);
-      this->checkNotEndOfFile("DSLBase::readVarList");
+      this->checkNotEndOfFile("DSLBase::readArrayOfVariablesSize");
       while (this->current->value != "]") {
         throw_if(((this->current->flag != tfel::utilities::Token::Standard) &&
                   (this->current->flag != tfel::utilities::Token::Number)) ||
@@ -501,7 +519,7 @@ namespace mfront {
                  "invalid array size for '" + n + "'");
         array_size += this->current->value;
         ++(this->current);
-        this->checkNotEndOfFile("DSLBase::readVarList");
+        this->checkNotEndOfFile("DSLBase::readArrayOfVariablesSize");
       }
       throw_if(array_size.empty(), "empty array size for '" + n + "'");
       tfel::math::IntegerEvaluator ev(array_size);
@@ -512,13 +530,15 @@ namespace mfront {
       const auto iv = ev.getValue();
       throw_if(iv <= 0, "invalid array size for '" + n + "'");
       asize = static_cast<unsigned int>(iv);
-      this->readSpecifiedToken("DSLBase::readVarList", "]");
-      this->checkNotEndOfFile("DSLBase::readVarList");
+      this->readSpecifiedToken("DSLBase::readArrayOfVariablesSize", "]");
+      this->checkNotEndOfFile("DSLBase::readArrayOfVariablesSize");
     }
     return asize;
   }  // end of DSLBase::readArrayOfVariablesSize
 
-  void DSLBase::readVarList(VariableDescriptionContainer& cont, const std::string& type, const bool allowArray) {
+  void DSLBase::readVarList(VariableDescriptionContainer& cont,
+                            const std::string& type,
+                            const bool allowArray) {
     auto throw_if = [this](const bool b, const std::string& m) {
       if (b) {
         this->throwRuntimeError("DSLBase::readVarList", m);
@@ -527,13 +547,14 @@ namespace mfront {
     auto endComment = std::string{};
     auto endOfTreatment = false;
     while ((this->current != this->tokens.end()) && (!endOfTreatment)) {
-      const auto& varName = this->current->value;
-      throw_if(!this->isValidIdentifier(this->current->value),
-               "variable given is not valid (read '" + this->current->value + "').");
+      const auto sname = this->current->value;
+      const auto vname = tfel::unicode::getMangledString(sname);
+      throw_if(!this->isValidIdentifier(vname),
+               "variable given is not valid (read '" + sname + "').");
       auto lineNumber = this->current->line;
       ++(this->current);
       this->checkNotEndOfFile("DSLBase::readVarList");
-      const auto asize = this->readArrayOfVariablesSize(varName, allowArray);
+      const auto asize = this->readArrayOfVariablesSize(sname, allowArray);
       if (this->current->value == ",") {
         ++(this->current);
       } else if (this->current->value == ";") {
@@ -541,9 +562,14 @@ namespace mfront {
         endComment = this->current->comment;
         ++(this->current);
       } else {
-        throw_if(true, "',' or ';' expected after '" + varName + "'");
+        throw_if(true, "',' or ';' expected after '" + sname + "'");
       }
-      cont.push_back(VariableDescription(type, varName, asize, lineNumber));
+      if (vname == sname) {
+        cont.push_back(VariableDescription(type, vname, asize, lineNumber));
+      } else {
+        cont.push_back(
+            VariableDescription(type, sname, vname, asize, lineNumber));
+      }
       if (!this->currentComment.empty()) {
         cont.back().description = this->currentComment;
       }

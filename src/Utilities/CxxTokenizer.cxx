@@ -42,6 +42,23 @@ namespace tfel {
 
   namespace utilities {
 
+    static std::pair<std::string::const_iterator, std::string>
+    findSeparator(const std::string::const_iterator p,
+                            const std::string::const_iterator pe,
+                            const std::vector<std::string> &separators) {
+      const auto w = std::string{p, pe};
+      std::pair<std::string::const_iterator, std::string> r = {pe, ""};
+      for (const auto &s : separators) {
+        const auto pos = w.find(s);
+        if (pos!=std::string::npos){
+          if (p+pos < r.first) {
+            r = {p+pos, s};
+          }
+        }
+      }
+      return r;
+    } // end of findSeparator
+
     CxxTokenizer::CxxTokenizer() = default;
 
     CxxTokenizer::CxxTokenizer(const CxxTokenizerOptions &o)
@@ -92,6 +109,14 @@ namespace tfel {
       this->parseStream(file, n, " of file '" + f + "'");
     }
 
+    void CxxTokenizer::addSeparator(const std::string &s) {
+      if (std::find(this->additional_separators.begin(),
+                    this->additional_separators.end(),
+                    s) == this->additional_separators.end()) {
+        this->additional_separators.push_back(s);
+      }
+    }  // end of CxxTokenizer::addSeparator
+
     void CxxTokenizer::parseString(const std::string &s) {
       std::istringstream iss(s);
       auto n = Token::size_type{};
@@ -124,14 +149,12 @@ namespace tfel {
       }
     }
 
-    struct is_cxx_separator {
+    struct is_separator {
       //! constructor
-      explicit is_cxx_separator(const bool bd,
-                                const bool bm,
-                                const bool ba)
+      explicit is_separator(const bool bd, const bool bm, const bool ba)
           : dot_as_separator(bd),
             minus_as_separator(bm),
-            grave_accent_as_separator(ba) {}  // end of is_cxx_separator
+            grave_accent_as_separator(ba) {}  // end of is_separator
       bool operator()(const std::string::value_type &c) const {
         using ctype = std::string::value_type;
         constexpr const std::array<ctype, 24> s = {
@@ -154,13 +177,13 @@ namespace tfel {
       bool grave_accent_as_separator = true;
     };
 
-    struct is_cxx_separator_or_space : public is_cxx_separator {
-      explicit is_cxx_separator_or_space(const bool bd, const bool bm,const bool ba)
-          : is_cxx_separator(bd, bm,ba) {}
+    struct is_separator_or_space : public is_separator {
+      explicit is_separator_or_space(const bool bd, const bool bm,const bool ba)
+          : is_separator(bd, bm,ba) {}
       bool operator()(const std::string::value_type &c) const {
-        return ((std::isspace(c)) || (is_cxx_separator::operator()(c)));
+        return ((std::isspace(c)) || (is_separator::operator()(c)));
       }
-    };  // end of struct is_cxx_separator_or_space
+    };  // end of struct is_separator_or_space
 
     static void advance(Token::size_type &o,
                         std::string::const_iterator &p,
@@ -333,12 +356,12 @@ namespace tfel {
         // reading decimal part
         throw_if(++p == pe, "invalid number");
       }
-      throw_if((!(isdigit(*p))) && (*p != '.'),
+      throw_if((!(std::isdigit(*p))) && (*p != '.'),
                std::string("expected digit, read '") + *p + '\'');
       if (*p == '.') {
         is_float = true;
         throw_if(++p == pe, "invalid number");
-        throw_if(!isdigit(*p),
+        throw_if(!std::isdigit(*p),
                  std::string("expected digit, read '") + *p + '\'');
       } else if (*p == '0') {
         starts_with_zero = true;
@@ -348,7 +371,7 @@ namespace tfel {
             is_binary_integer = true;
             throw_if(++p == pe, "invalid binary integer");
             throw_if(!is_binary(*p), "invalid binary integer");
-            while ((p != pe) && (isdigit(*p))) {
+            while ((p != pe) && (std::isdigit(*p))) {
               throw_if(!is_binary(*p), "invalid binary integer");
               ++p;
             }
@@ -357,7 +380,7 @@ namespace tfel {
             is_hex_integer = true;
             throw_if(++p == pe, "invalid hexadecimal integer");
             throw_if(!is_hex(*p), "invalid hexadecimal integer");
-            while ((p != pe) && (isdigit(*p))) {
+            while ((p != pe) && (std::isdigit(*p))) {
               throw_if(!is_hex(*p), "invalid hexadecimal integer");
               ++p;
             }
@@ -366,10 +389,10 @@ namespace tfel {
           }
         }
       }
-      while ((p != pe) && ((isdigit(*p)) || (*p == '\''))) {
+      while ((p != pe) && ((std::isdigit(*p)) || (*p == '\''))) {
         if (*p == '\'') {
           throw_if(++p == pe, "invalid number");
-          throw_if(!isdigit(*p),
+          throw_if(!std::isdigit(*p),
                    std::string("expected digit, read '") + *p + '\'');
         }
         ++p;
@@ -381,11 +404,11 @@ namespace tfel {
         is_float = true;
         // the decimal part
         ++p;
-        while ((p != pe) && ((isdigit(*p)) || (*p == '\''))) {
+        while ((p != pe) && ((std::isdigit(*p)) || (*p == '\''))) {
           if (*p == '\'') {
             // C++14 digit separator
             throw_if(++p == pe, "invalid number");
-            throw_if(!isdigit(*p),
+            throw_if(!std::isdigit(*p),
                      std::string("expected digit, read '") + *p + '\'');
           }
           ++p;
@@ -404,13 +427,13 @@ namespace tfel {
             }
             throw_if(++p == pe, "invalid number");
           }
-          throw_if(!(isdigit(*p)), "invalid number");
+          throw_if(!(std::isdigit(*p)), "invalid number");
           ++p;
-          while ((p != pe) && ((isdigit(*p)) || (*p == '\''))) {
+          while ((p != pe) && ((std::isdigit(*p)) || (*p == '\''))) {
             if (*p == '\'') {
               throw_if(++p == pe, "invalid number");
               throw_if(
-                  !isdigit(*p),
+                  !std::isdigit(*p),
                   std::string("expected digit, read '") + *p + '\'');
             }
             ++p;
@@ -486,7 +509,7 @@ namespace tfel {
       if ((p != pe) && (*p == '_')) {
         throw_if(++p == pe, "invalid user litteral");
         while (p != pe) {
-          if (!((isalpha(*p)) || isdigit(*p) || (*p == '_'))) {
+          if (!((isalpha(*p)) || std::isdigit(*p) || (*p == '_'))) {
             break;
           }
           ++p;
@@ -641,7 +664,7 @@ namespace tfel {
       ignore_space(o, p, pe);
       throw_if(p == pe, "lonely ‘#’");
       auto pn = std::find_if(
-          p, pe, is_cxx_separator_or_space(
+          p, pe, is_separator_or_space(
                      this->dotAsSeparator, this->minusAsSeparator,
                      this->graveAccentAsSeparator));
       throw_if(p == pn,
@@ -740,7 +763,7 @@ namespace tfel {
               advance(o, p, 2u);
             }
           } else if (((p == b) ||
-                      (is_cxx_separator_or_space(
+                      (is_separator_or_space(
                           this->dotAsSeparator, this->minusAsSeparator,
                           this->graveAccentAsSeparator)(
                           *(std::prev(p))))) &&
@@ -784,18 +807,31 @@ namespace tfel {
         } else if (*p == '|') {
           this->try_join(o, p, pe, n, '|', '=');
         } else {
-          auto pw = std::find_if(
-              p, pe, is_cxx_separator_or_space(
-                         this->dotAsSeparator, this->minusAsSeparator,
-                         this->graveAccentAsSeparator));
-          if (p == pw) {
-            this->tokens.emplace_back(std::string(1u, *p), n, o,
-                                      Token::Standard);
-            advance(o, p, 1u);
+          const auto as = findSeparator(p, pe, this->additional_separators);
+          const auto pw = std::find_if(
+              p, pe, is_separator_or_space(this->dotAsSeparator,
+                                           this->minusAsSeparator,
+                                           this->graveAccentAsSeparator));
+          if (as.first < pw) {
+            if (as.first == p) {
+              this->tokens.emplace_back(as.second, n, o,
+                                        Token::Standard);
+              advance(o, p, as.second.size());
+            } else {
+              this->tokens.emplace_back(std::string{p, as.first}, n, o,
+                                        Token::Standard);
+              advance(o, p, as.first);
+            }
           } else {
-            this->tokens.emplace_back(std::string{p, pw}, n, o,
-                                      Token::Standard);
-            advance(o, p, pw);
+            if (p == pw) {
+              this->tokens.emplace_back(std::string(1u, *p), n, o,
+                                        Token::Standard);
+              advance(o, p, 1u);
+            } else {
+              this->tokens.emplace_back(std::string{p, pw}, n, o,
+                                        Token::Standard);
+              advance(o, p, pw);
+            }
           }
         }
         ignore_space(o, p, pe);
@@ -907,11 +943,11 @@ namespace tfel {
         return false;
       }
       auto p = s.begin();
-      if (isdigit(*p)) {
+      if (std::isdigit(*p)) {
         return false;
       }
       for (; p != s.end(); ++p) {
-        if ((!isalpha(*p)) && (!(isdigit(*p))) && (*p != '_')) {
+        if ((!isalpha(*p)) && (!(std::isdigit(*p))) && (*p != '_')) {
           return false;
         }
         if (isspace(*p)) {
@@ -932,11 +968,11 @@ namespace tfel {
         return false;
       }
       auto p = s.begin();
-      if (isdigit(*p)) {
+      if (std::isdigit(*p)) {
         return false;
       }
       for (; p != s.end(); ++p) {
-        if ((!isalpha(*p)) && (!(isdigit(*p))) && (*p != '_') &&
+        if ((!isalpha(*p)) && (!(std::isdigit(*p))) && (*p != '_') &&
             (*p != ':')) {
           return false;
         }
@@ -953,7 +989,7 @@ namespace tfel {
           if (++p == s.end()) {
             return false;
           }
-          if ((!isalpha(*p)) && (!(isdigit(*p))) && (*p != '_')) {
+          if ((!isalpha(*p)) && (!(std::isdigit(*p))) && (*p != '_')) {
             return false;
           }
         }

@@ -4,6 +4,7 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Raise.hxx                                                                               \
 			TFEL/Raise.ixx                                                                               \
 			TFEL/PhysicalConstants.hxx                                                                   \
+			TFEL/UnicodeSupport/UnicodeSupport.hxx                                                                   \
 			TFEL/FSAlgorithm/loop.hxx		                                             \
 			TFEL/FSAlgorithm/swap_ranges.hxx		                                             \
 			TFEL/FSAlgorithm/copy.hxx			                                             \

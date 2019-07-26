@@ -625,6 +625,7 @@ AC_OUTPUT([debug.sh Makefile Doxyfile docs/Makefile docs/tfel/Makefile
 	   src/Exception/Makefile src/Utilities/Makefile
 	   src/Glossary/Makefile src/Math/Makefile
 	   src/NUMODIS/Makefile src/Material/Makefile
+	   src/UnicodeSupport/Makefile
 	   src/System/Makefile mfront/Makefile mfront/include/Makefile
 	   mfront/src/Makefile mfront/src/MFrontHeader.cxx
 	   mfront/tests/unit-tests/Makefile
@@ -3239,4 +3240,5 @@ AC_OUTPUT([debug.sh Makefile Doxyfile docs/Makefile docs/tfel/Makefile
 	   tests/Math/t2tost2/Makefile tests/Math/st2tot2/Makefile
 	   tests/Math/cadna/Makefile tests/FSAlgorithms/Makefile
 	   tests/Utilities/Makefile tests/MetaProgramming/Makefile
-	   tests/Material/Makefile tests/System/Makefile ])
+	   tests/Material/Makefile tests/System/Makefile
+        tests/UnicodeSupport/Makefile ])

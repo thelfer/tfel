@@ -26,8 +26,7 @@ namespace mtest{
   /*!
    * \brief possible type of stiffness matrix
    */
-  enum struct StiffnessMatrixType
-  {
+  enum struct StiffnessMatrixType {
     //! list of possible matrix type
     NOSTIFFNESS,
     ELASTIC,
@@ -38,12 +37,12 @@ namespace mtest{
     ELASTICSTIFNESSFROMMATERIALPROPERTIES,
     UNSPECIFIEDSTIFFNESSMATRIXTYPE
   };
-  
+
   /*!
    * \brief possible algorithms used for global convergence to
    * update the stiffness matrix
    */
-  enum struct StiffnessUpdatingPolicy{
+  enum struct StiffnessUpdatingPolicy {
     /*!
      * the initial prediction matrix or the initial tangent coherent
      * matrix or the initial secant matrix (normally equal to the
@@ -63,10 +62,10 @@ namespace mtest{
     UPDATEDSTIFFNESSMATRIX,
     //! default value
     UNSPECIFIEDSTIFFNESSUPDATINGPOLICY
-  }; // end of enum struct StiffnessUpdatingPolicy
-  /*!
-   * \brief possible prediction policies
-   */
+  };  // end of enum struct StiffnessUpdatingPolicy
+      /*!
+       * \brief possible prediction policies
+       */
   enum struct PredictionPolicy{
     NOPREDICTION,
     LINEARPREDICTION,
@@ -80,8 +79,7 @@ namespace mtest{
   /*!
    * work space used by the solver
    */
-  struct SolverOptions
-  {
+  struct SolverOptions {
     SolverOptions();
     SolverOptions(SolverOptions&&);
     SolverOptions(const SolverOptions&);

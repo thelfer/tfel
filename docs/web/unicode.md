@@ -1,8 +1,16 @@
-% UTF8 support in `MFront`
+% `UTF-8` support in `MFront`
 % Thomas Helfer
 % 16/07/2019
 
-This page describes the subset of UTF8 characters supported in MFront
+Some recent scientific programming languages like
+[`Julia`](https://julialang.org/) or \(\nabla\) allow the usage of (a
+subset of) unicode characters
+[@camier_improving_2015;@bezanson_julia:_2017]. This allows a much more
+readable code, very close to the mathematical expressions.
+
+![Implementation of the Norton behaviour with and without unicode support](img/mfront-unicode.png ""){width=100%}
+
+This page describes the subset of `UTF-8` characters supported in MFront
 files. This subset includes:
 
 - Greek small letters and greek capital letters.

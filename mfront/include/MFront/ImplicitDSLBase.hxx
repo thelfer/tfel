@@ -26,8 +26,7 @@ namespace mfront{
 
   //! \brief Base class for all parser based on an implicit scheme
   struct MFRONT_VISIBILITY_EXPORT ImplicitDSLBase
-    : public BehaviourDSLBase<ImplicitDSLBase>
-  {
+      : public BehaviourDSLBase<ImplicitDSLBase> {
     //! \brief constructor
     ImplicitDSLBase();
     /*!
@@ -40,6 +39,10 @@ namespace mfront{
      * endTreatment method of the behaviour bricks in particular.
      */
     const NonLinearSystemSolver& getSolver() const;
+
+    void getSymbols(std::map<std::string, std::string>&,
+                    const Hypothesis,
+                    const std::string&) override;
     //!\brief destructor
     ~ImplicitDSLBase() override;
 
@@ -47,8 +50,6 @@ namespace mfront{
     
     //! a simple alias
     using Solver = std::shared_ptr<NonLinearSystemSolver>;
-
-    virtual bool isJacobianPart(const Hypothesis, const std::string&);
 
     virtual void predictorAnalyser(const Hypothesis, const std::string&);
 

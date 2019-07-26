@@ -14,31 +14,24 @@
 #include"MFront/ModelDSL.hxx"
 #include"MFront/ModelInterfaceFactory.hxx"
 
-namespace mfront
-{
+namespace mfront {
 
-  std::string
-  ModelDSL::getName()
-  {
+  std::string ModelDSL::getName() {
     return "Model";
   } // end of MaterialPropertyDSL::getName()
 
-  std::string
-  ModelDSL::getDescription()
-  {
+  std::string ModelDSL::getDescription() {
     return "this parser is used to define simple material models";
   } // end of ModelDSL::getDescription
 
-  void ModelDSL::setInterfaces(const std::set<std::string>& f)
-  {
+  void ModelDSL::setInterfaces(const std::set<std::string>& f) {
     ModelDSLCommon::setInterfaces(f);
     for(const auto& i : this->interfaces){
       i.second->declareReservedNames(this->md.getReservedNames());
     }
   } // end of ModelDSL::setInterfaces
 
-  ModelDescription
-  ModelDSL::getModelDescription() const{
+  ModelDescription ModelDSL::getModelDescription() const {
     return this->md;
   } // end of ModelDSL::getModelDescription
   

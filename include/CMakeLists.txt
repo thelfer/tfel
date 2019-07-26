@@ -21,6 +21,8 @@ install_header(TFEL/Glossary/Forward Glossary.hxx)
 install_header(TFEL/Glossary Glossary.hxx)
 install_header(TFEL/Glossary GlossaryEntry.hxx)
 
+install_header(TFEL/UnicodeSupport UnicodeSupport.hxx)
+
 install_header(TFEL/Metaprogramming/Forward TypeList.hxx)
 
 install_header(TFEL/Metaprogramming StaticAssert.hxx)

@@ -1,6 +1,7 @@
 add_subdirectory(Tests)
 add_subdirectory(MetaProgramming)
 add_subdirectory(FSAlgorithms)
+add_subdirectory(UnicodeSupport)
 add_subdirectory(Utilities)
 add_subdirectory(Material)
 add_subdirectory(System)

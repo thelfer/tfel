@@ -354,25 +354,6 @@ namespace mfront {
                     "*(this->lambda_tdt*trace(this->eel)*Stensor::Id()+"  //
                     "2*(this->mu_tdt)*this->eel);\n";
       } else {
-        bd.setAttribute("HookeStressPotentialBase::UseLocalLameCoeficients",
-                        true, false);
-        addMaterialPropertyIfNotDefined(bd, "stress", "young",
-                                        Glossary::YoungModulus);
-        addMaterialPropertyIfNotDefined(bd, "real", "nu",
-                                        Glossary::PoissonRatio);
-        d.addVariable(uh, {"stress", "lambda"});
-        d.addVariable(uh, {"stress", "mu"});
-        // local variable initialisation
-        CodeBlock init;
-        init.code =
-            "// initialisation Lame's coefficient\n"
-            "this->sebdata.lambda = "  //
-            "tfel::material::computeLambda(this->young,this->nu);\n"
-            "this->sebdata.mu = "  //
-            "tfel::material::computeMu(this->young,this->nu);\n";
-        bd.setCode(uh, BehaviourData::BeforeInitializeLocalVariables, init,
-                   BehaviourData::CREATEORAPPEND, BehaviourData::AT_BEGINNING,
-                   true);
         // IsotropicDamageHooke law
         // damage effect
         const std::string d_mts = "(1-this->d-(this->theta)*(this->dd))";

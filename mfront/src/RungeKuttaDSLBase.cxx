@@ -69,13 +69,12 @@ namespace mfront{
     }
     return uvs;
   }
-  
-  static void
-  writeExternalVariablesCurrentValues(std::ostream& f,
-				      const BehaviourDescription& mb,
-				      const RungeKuttaDSLBase::Hypothesis h,
-				      const std::string& p)
-  {
+
+  static void writeExternalVariablesCurrentValues(
+      std::ostream& f,
+      const BehaviourDescription& mb,
+      const RungeKuttaDSLBase::Hypothesis h,
+      const std::string& p) {
     const auto t = ((p=="0") ? "(t/this->dt)" :
 		    ((p=="1") ? "((t+dt_)/this->dt)" : "((t+"+p+"*dt_)/this->dt)"));
     const auto& d = mb.getBehaviourData(h);
@@ -98,12 +97,10 @@ namespace mfront{
     }
   }
 
-  static void
-  writeExternalVariableCurrentValue2(std::ostream& f,
-				     const std::string& n,
-				     const std::string& p,
-				     const bool b)
-  {
+  static void writeExternalVariableCurrentValue2(std::ostream& f,
+                                                 const std::string& n,
+                                                 const std::string& p,
+                                                 const bool b) {
     if(p=="0"){
       f << "this->"  << n  << "_ = this->"  << n  << ";\n";
     } else if(p=="1"){
@@ -2479,6 +2476,33 @@ namespace mfront{
     }
     os << "} // end of " << this->mb.getClassName() << "::integrate\n\n";
   } // end of void RungeKuttaDSLBase::writeBehaviourIntegrator()
+
+  void RungeKuttaDSLBase::getSymbols(std::map<std::string, std::string>& symbols,
+                                   const Hypothesis h,
+                                   const std::string& n) {
+    BehaviourDSLCommon::getSymbols(symbols, h, n);
+    const auto& d = this->mb.getBehaviourData(h);
+    if (n == BehaviourData::ComputeDerivative) {
+      for (const auto& mv : this->mb.getMainVariables()) {
+        getTimeDerivativeSymbol(symbols, mv.first);
+      }
+      getTimeDerivativeSymbols(symbols, d.getIntegrationVariables());
+      getTimeDerivativeSymbols(symbols, d.getExternalStateVariables());
+    } else {
+      for (const auto& mv : this->mb.getMainVariables()) {
+        if (Gradient::isIncrementKnown(mv.first)) {
+          getIncrementSymbol(symbols, mv.first);
+        } else {
+          mfront::addSymbol(symbols, displayName(mv.first) + "\u2080",
+                            mv.first.name + "0");
+          mfront::addSymbol(symbols, displayName(mv.first) + "\u2081",
+                            mv.first.name + "1");
+        }
+      }
+      mfront::getIncrementSymbols(symbols, d.getExternalStateVariables());
+      mfront::addSymbol(symbols, "\u0394t", "dt");
+    }
+  }  // end of RungeKuttaDSLBase::getSymbols
 
   RungeKuttaDSLBase::~RungeKuttaDSLBase() = default;
 

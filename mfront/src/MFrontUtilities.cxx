@@ -18,6 +18,7 @@
 #include<stdexcept>
 #include<algorithm>
 #include"TFEL/Raise.hxx"
+#include "TFEL/UnicodeSupport/UnicodeSupport.hxx"
 #include"TFEL/Utilities/StringAlgorithms.hxx"
 #include"MFront/VariableBoundsDescription.hxx"
 #include"MFront/MFrontUtilities.hxx"
@@ -104,85 +105,88 @@ namespace mfront{
     return r;
   } // end of read
 
-  std::pair<std::string,VariableBoundsDescription>
-  readVariableBounds(tfel::utilities::CxxTokenizer::const_iterator& p,
-		     const tfel::utilities::CxxTokenizer::const_iterator pe){
+  std::pair<std::string, VariableBoundsDescription> readVariableBounds(
+      tfel::utilities::CxxTokenizer::const_iterator& p,
+      const tfel::utilities::CxxTokenizer::const_iterator pe) {
     using tfel::utilities::CxxTokenizer;
     const std::string m = "mfront::readVariableBounds";
-    auto throw_if = [&m](const bool b,const std::string& msg){
-      tfel::raise_if(b,m+": "+msg);
+    auto throw_if = [&m](const bool b, const std::string& msg) {
+      tfel::raise_if(b, m + ": " + msg);
     };
     VariableBoundsDescription b;
-    CxxTokenizer::checkNotEndOfLine(m,p,pe);
-    auto n = p->value;
+    CxxTokenizer::checkNotEndOfLine(m, p, pe);
+    auto n = tfel::unicode::getMangledString(p->value);
     ++p;
-    CxxTokenizer::checkNotEndOfLine(m,"Expected '[' or '(' or 'in'.",p,pe);
-    if(p->value=="["){
-      CxxTokenizer::readSpecifiedToken(m,"[",p,pe);
-      CxxTokenizer::checkNotEndOfLine(m,p,pe);
+    CxxTokenizer::checkNotEndOfLine(m, "Expected '[' or '(' or 'in'.", p, pe);
+    if (p->value == "[") {
+      CxxTokenizer::readSpecifiedToken(m, "[", p, pe);
+      CxxTokenizer::checkNotEndOfLine(m, p, pe);
       std::string position(p->value);
       std::istringstream converter(position);
       unsigned int pos;
       converter >> pos;
-      throw_if(!converter||(!converter.eof()),
-	       "could not read position number for variable '"+n+"'");
+      throw_if(!converter || (!converter.eof()),
+               "could not read position number for variable '" + n + "'");
       ++p;
-      CxxTokenizer::checkNotEndOfLine(m,p,pe);
-      CxxTokenizer::readSpecifiedToken(m,"]",p,pe);
-      n += '['+position+']';
+      CxxTokenizer::checkNotEndOfLine(m, p, pe);
+      CxxTokenizer::readSpecifiedToken(m, "]", p, pe);
+      n += '[' + position + ']';
     }
-    CxxTokenizer::checkNotEndOfLine(m,"Expected '(' or 'in'.",p,pe);
-    if(p->value=="("){
-      CxxTokenizer::readSpecifiedToken(m,"(",p,pe);
-      CxxTokenizer::checkNotEndOfLine(m,p,pe);
-      if(p->value!="*"){
-	unsigned int component;
-	std::istringstream converter(p->value);
-	converter >> component;
-	throw_if(!converter||(!converter.eof()),
-		 "could not read component number for variable '"+n+"'");
-	b.component=component;
+    CxxTokenizer::checkNotEndOfLine(m, "Expected '(' or 'in'.", p, pe);
+    if (p->value == "(") {
+      CxxTokenizer::readSpecifiedToken(m, "(", p, pe);
+      CxxTokenizer::checkNotEndOfLine(m, p, pe);
+      if (p->value != "*") {
+        unsigned int component;
+        std::istringstream converter(p->value);
+        converter >> component;
+        throw_if(!converter || (!converter.eof()),
+                 "could not read component number for variable '" + n + "'");
+        b.component = component;
       }
       ++(p);
-      CxxTokenizer::checkNotEndOfLine(m,p,pe);
-      CxxTokenizer::readSpecifiedToken(m,")",p,pe);
+      CxxTokenizer::checkNotEndOfLine(m, p, pe);
+      CxxTokenizer::readSpecifiedToken(m, ")", p, pe);
     }
-    CxxTokenizer::readSpecifiedToken(m,"in",p,pe);
-    CxxTokenizer::checkNotEndOfLine(m,"Expected ']' or '['.",p,pe);
-    if(p->value=="]"){
+    CxxTokenizer::readSpecifiedToken(m, "in", p, pe);
+    CxxTokenizer::checkNotEndOfLine(m, "Expected ']' or '['.", p, pe);
+    if (p->value == "]") {
       ++p;
-      CxxTokenizer::checkNotEndOfLine(m,"Expected '*'.",p,pe);
-      throw_if(p->value!="*","Expected '*' (read '"+p->value+"')");
+      CxxTokenizer::checkNotEndOfLine(m, "Expected '*'.", p, pe);
+      throw_if(p->value != "*", "Expected '*' (read '" + p->value + "')");
       b.boundsType = VariableBoundsDescription::UPPER;
       ++p;
-    } else if(p->value=="["){
+    } else if (p->value == "[") {
       ++p;
-      CxxTokenizer::checkNotEndOfLine(m,"Expected lower bound value for variable '"+n+"'",p,pe);
-      b.lowerBound = mfront::read<double>(p,pe);
+      CxxTokenizer::checkNotEndOfLine(
+          m, "Expected lower bound value for variable '" + n + "'", p, pe);
+      b.lowerBound = mfront::read<double>(p, pe);
       b.boundsType = VariableBoundsDescription::LOWERANDUPPER;
     } else {
-      throw_if(true,"Expected ']' or '[' (read '"+p->value+"')");
+      throw_if(true, "Expected ']' or '[' (read '" + p->value + "')");
     }
-    CxxTokenizer::readSpecifiedToken(m,":",p,pe);
-    CxxTokenizer::checkNotEndOfLine(m,"expected upper bound value for variable '"+n+"'",p,pe);
-    if(p->value=="*"){
-      throw_if(b.boundsType==VariableBoundsDescription::UPPER,
-	       "Upper and lower values bounds are both infinity. "
-	       "This is inconsistent.");
-      b.boundsType=VariableBoundsDescription::LOWER;
+    CxxTokenizer::readSpecifiedToken(m, ":", p, pe);
+    CxxTokenizer::checkNotEndOfLine(
+        m, "expected upper bound value for variable '" + n + "'", p, pe);
+    if (p->value == "*") {
+      throw_if(b.boundsType == VariableBoundsDescription::UPPER,
+               "Upper and lower values bounds are both infinity. "
+               "This is inconsistent.");
+      b.boundsType = VariableBoundsDescription::LOWER;
       ++p;
-      CxxTokenizer::readSpecifiedToken(m,"[",p,pe);
+      CxxTokenizer::readSpecifiedToken(m, "[", p, pe);
     } else {
-      b.upperBound = mfront::read<double>(p,pe);
-      if(b.boundsType==VariableBoundsDescription::LOWERANDUPPER){
-	throw_if(b.lowerBound>b.upperBound,
-		 "Lower bound value is greater than upper "
-		 "bound value for variable '"+n+"'");
+      b.upperBound = mfront::read<double>(p, pe);
+      if (b.boundsType == VariableBoundsDescription::LOWERANDUPPER) {
+        throw_if(b.lowerBound > b.upperBound,
+                 "Lower bound value is greater than upper "
+                 "bound value for variable '" +
+                     n + "'");
       }
-      CxxTokenizer::readSpecifiedToken(m,"]",p,pe);
+      CxxTokenizer::readSpecifiedToken(m, "]", p, pe);
     }
-    return std::make_pair(n,b);
-  } // end of readVariableBounds
+    return std::make_pair(n, b);
+  }  // end of readVariableBounds
 
   std::tuple<std::string,bool,unsigned short>
   extractVariableNameAndArrayPosition(const std::string& n)

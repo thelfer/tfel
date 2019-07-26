@@ -19,95 +19,95 @@
 
 namespace mfront{
 
-  struct RungeKuttaDSLBase
-    : public BehaviourDSLBase<RungeKuttaDSLBase>
-  {
+  struct RungeKuttaDSLBase : public BehaviourDSLBase<RungeKuttaDSLBase> {
     //! return a generic description of DSL based on this class
     static std::string getDescription();
     //! constructor
     RungeKuttaDSLBase();
+
     //! destructor
     ~RungeKuttaDSLBase() override;
 
   protected:
+   enum ErrorEvaluation {
+     DEFAULTERROREVALUATION,
+     ERRORSUMMATIONEVALUATION,
+     MAXIMUMVALUEERROREVALUATION
+   };  // end of ErrorEvaluation
 
-    enum ErrorEvaluation{
-      DEFAULTERROREVALUATION,
-      ERRORSUMMATIONEVALUATION,
-      MAXIMUMVALUEERROREVALUATION
-    }; // end of ErrorEvaluation
+   std::string computeStressVariableModifier1(const Hypothesis,
+                                              const std::string&,
+                                              const bool);
 
-    std::string
-    computeStressVariableModifier1(const Hypothesis,
-				   const std::string&,
-				   const bool);
+   std::string computeStressVariableModifier2(const Hypothesis,
+                                              const std::string&,
+                                              const bool);
 
-    std::string
-    computeStressVariableModifier2(const Hypothesis,
-				   const std::string&,
-				   const bool);
+   void getSymbols(std::map<std::string, std::string>&,
+                   const Hypothesis,
+                   const std::string&) override;
 
-    void treatUnknownVariableMethod(const Hypothesis,
-				    const std::string&) override;
-    //! treat the `@Epsilon` keywork
-    virtual void treatEpsilon();
-    //! treat the `@MinimalTimeStep` keywork
-    virtual void treatMinimalTimeStep();
-    //! treat the `@Algorithm` keywork
-    virtual void treatAlgorithm();
-    //! treat the `@ComputeStress` keywork
-    virtual void treatComputeStress();
-    //! treat the `@ComputeFinalStress` keywork
-    virtual void treatComputeFinalStress();
-    //! treat the `@UpdateAuxiliaryStateVariables` keywork
-    void treatUpdateAuxiliaryStateVariables() override;
-    //! treat the `@Derivative` keywork
-    virtual void treatDerivative();
+   void treatUnknownVariableMethod(const Hypothesis,
+                                   const std::string&) override;
+   //! treat the `@Epsilon` keywork
+   virtual void treatEpsilon();
+   //! treat the `@MinimalTimeStep` keywork
+   virtual void treatMinimalTimeStep();
+   //! treat the `@Algorithm` keywork
+   virtual void treatAlgorithm();
+   //! treat the `@ComputeStress` keywork
+   virtual void treatComputeStress();
+   //! treat the `@ComputeFinalStress` keywork
+   virtual void treatComputeFinalStress();
+   //! treat the `@UpdateAuxiliaryStateVariables` keywork
+   void treatUpdateAuxiliaryStateVariables() override;
+   //! treat the `@Derivative` keywork
+   virtual void treatDerivative();
 
-    virtual void setDefaultAlgorithm();
-    
-    void completeVariableDeclaration() override;
+   virtual void setDefaultAlgorithm();
 
-    void endsInputFileProcessing() override;
-    
-    void writeBehaviourParserSpecificIncludes(std::ostream&) const override;
+   void completeVariableDeclaration() override;
 
-    void writeBehaviourParserSpecificTypedefs(std::ostream&) const override;
+   void endsInputFileProcessing() override;
 
-    void writeBehaviourParserSpecificMembers(std::ostream&,
-					     const Hypothesis) const override;
+   void writeBehaviourParserSpecificIncludes(std::ostream&) const override;
 
-    void writeBehaviourLocalVariablesInitialisation(std::ostream&,
-						    const Hypothesis) const override;
-    
-    virtual void writeBehaviourEulerIntegrator(std::ostream&,
-					       const Hypothesis) const;
+   void writeBehaviourParserSpecificTypedefs(std::ostream&) const override;
 
-    virtual void writeBehaviourRK2Integrator(std::ostream&,
-					     const Hypothesis) const;
+   void writeBehaviourParserSpecificMembers(std::ostream&,
+                                            const Hypothesis) const override;
 
-    virtual void writeBehaviourRK4Integrator(std::ostream&,
-					     const Hypothesis) const;
+   void writeBehaviourLocalVariablesInitialisation(
+       std::ostream&, const Hypothesis) const override;
 
-    virtual void writeBehaviourRK42Integrator(std::ostream&,
-					      const Hypothesis) const;
+   virtual void writeBehaviourEulerIntegrator(std::ostream&,
+                                              const Hypothesis) const;
 
-    virtual void writeBehaviourRK54Integrator(std::ostream&,
-					      const Hypothesis) const;
+   virtual void writeBehaviourRK2Integrator(std::ostream&,
+                                            const Hypothesis) const;
 
-    virtual void writeBehaviourRKCastemIntegrator(std::ostream&,
-						  const Hypothesis) const;
+   virtual void writeBehaviourRK4Integrator(std::ostream&,
+                                            const Hypothesis) const;
 
-    void writeBehaviourUpdateStateVariables(std::ostream&,
-					    const Hypothesis) const override;
+   virtual void writeBehaviourRK42Integrator(std::ostream&,
+                                             const Hypothesis) const;
 
-    void writeBehaviourUpdateAuxiliaryStateVariables(std::ostream&,
-						     const Hypothesis) const override;
+   virtual void writeBehaviourRK54Integrator(std::ostream&,
+                                             const Hypothesis) const;
 
-    void writeBehaviourIntegrator(std::ostream&,
-				  const Hypothesis) const override;
+   virtual void writeBehaviourRKCastemIntegrator(std::ostream&,
+                                                 const Hypothesis) const;
 
-    friend struct BehaviourDSLBase<RungeKuttaDSLBase>;
+   void writeBehaviourUpdateStateVariables(std::ostream&,
+                                           const Hypothesis) const override;
+
+   void writeBehaviourUpdateAuxiliaryStateVariables(
+       std::ostream&, const Hypothesis) const override;
+
+   void writeBehaviourIntegrator(std::ostream&,
+                                 const Hypothesis) const override;
+
+   friend struct BehaviourDSLBase<RungeKuttaDSLBase>;
 
   };
 

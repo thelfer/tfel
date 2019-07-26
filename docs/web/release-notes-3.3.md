@@ -5,6 +5,9 @@
 The page declares the new functionalities of the 3.3 version of the
 `TFEL` project.
 
+This version was released along with Version `3.2.2` and inherits from
+all the fixes of this version.
+
 # Improvements to `MTest`
 
 ## Ability to choose  the stress measure used in input/output and the consistent tangent operator returned for finite strain behaviours through the `generic` interface

@@ -19,12 +19,12 @@
 #include"TFEL/Raise.hxx"
 #include"MFront/AbstractBehaviourInterface.hxx"
 #include"MFront/BehaviourInterfaceFactory.hxx"
+#include "MFront/DSLUtilities.hxx"
 #include"MFront/DefaultDSLBase.hxx"
 
 namespace mfront{
 
-  DefaultDSLBase::DefaultDSLBase()
-  {
+  DefaultDSLBase::DefaultDSLBase() {
     this->registerNewCallBack("@ProvidesTangentOperator",
 			      &DefaultDSLBase::treatProvidesTangentOperator);
     this->registerNewCallBack("@ProvidesSymmetricTangentOperator",
@@ -38,9 +38,8 @@ namespace mfront{
     this->registerNewCallBack("@ComputeStiffnessTensor",
 			      &DefaultDSLBase::treatComputeStiffnessTensor);
   }
-  
-  void DefaultDSLBase::treatProvidesTangentOperator()
-  {
+
+  void DefaultDSLBase::treatProvidesTangentOperator() {
     std::set<Hypothesis> h;
     this->readHypothesesList(h);
     this->readSpecifiedToken("BehaviourDSLBaseCommon::"
@@ -92,9 +91,8 @@ namespace mfront{
     BehaviourDSLCommon::writeBehaviourParserSpecificIncludes(os);
   } // end of DefaultDSLBase::writeBehaviourParserSpecificIncludes
 
-  void DefaultDSLBase::writeBehaviourLocalVariablesInitialisation(std::ostream& os,
-								  const Hypothesis) const
-  {
+  void DefaultDSLBase::writeBehaviourLocalVariablesInitialisation(
+      std::ostream& os, const Hypothesis) const {
     using Modifier = std::function<std::string(const MaterialPropertyInput&)>;
     Modifier ets = [this](const MaterialPropertyInput& i) -> std::string {
       if((i.category==MaterialPropertyInput::TEMPERATURE)||
@@ -116,6 +114,26 @@ namespace mfront{
       this->writeStiffnessTensorComputation(os,"this->D",ets);
     }
   }
+
+  void DefaultDSLBase::getSymbols(std::map<std::string, std::string>& symbols,
+                                   const Hypothesis h,
+                                   const std::string& n) {
+    BehaviourDSLCommon::getSymbols(symbols, h, n);
+    const auto& d = this->mb.getBehaviourData(h);
+    getIncrementSymbols(symbols, d.getIntegrationVariables());
+    for (const auto& mv : this->mb.getMainVariables()) {
+      if (Gradient::isIncrementKnown(mv.first)) {
+        getIncrementSymbol(symbols, mv.first);
+      } else {
+        mfront::addSymbol(symbols, displayName(mv.first) + "\u2080",
+                          mv.first.name + "0");
+        mfront::addSymbol(symbols, displayName(mv.first) + "\u2081",
+                          mv.first.name + "1");
+      }
+    }
+    mfront::getIncrementSymbols(symbols, d.getExternalStateVariables());
+    mfront::addSymbol(symbols, "\u0394t", "dt");
+  }  // end of DefaultDSLBase::getSymbols
 
   DefaultDSLBase::~DefaultDSLBase() = default;
 

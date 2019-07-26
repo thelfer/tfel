@@ -479,10 +479,22 @@ const auto ds2_dc = st2tost2<N,real>::dsquare(s2)*ds_dc;
 The Positive and negative parts of a symmetric tensor can be computed
 respectively by the `positive_part` and `negative_part` function.
 
-## Transposition of a second order tensor {#sec:transpose}
+## Transposition {#sec:transpose}
+
+### Transposition of a second order tensor
 
 A non symmetric second order tensor can be transpose using the
 `transpose` function:
+
+~~~~{.cpp}
+const auto B = transpose(A);
+~~~~
+
+### Transposition of a fourth order tensor
+
+A fourth order tensor matching the `ST2toST2Concept` (i.e. a linear form
+mapping a symmetric second order tensor to a symmetric second order
+tensor) can be transposed using the `transpose` function:
 
 ~~~~{.cpp}
 const auto B = transpose(A);

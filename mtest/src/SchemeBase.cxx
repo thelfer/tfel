@@ -62,22 +62,18 @@ namespace mtest{
     pev->second->setValue(t,v);
   } // end of SchemeBase::setEvolutionValue
 
-  const EvolutionManager& SchemeBase::getEvolutions() const
-  {
+  const EvolutionManager& SchemeBase::getEvolutions() const {
     return *(this->evm);
   } // end of SchemeBase::getEvolutions() const
 
-  
-  void SchemeBase::setTimes(const std::vector<real>& t)
-  {
+  void SchemeBase::setTimes(const std::vector<real>& t) {
     tfel::raise_if(!this->times.empty(),
 		   "SchemeBase::setTimes: "
 		   "times already defined");
     this->times=t;
   } // end of SchemeBase::setTimes
 
-  void SchemeBase::setMaximumNumberOfIterations(const unsigned int i)
-  {
+  void SchemeBase::setMaximumNumberOfIterations(const unsigned int i) {
     tfel::raise_if(this->options.iterMax!=-1,
 		   "SchemeBase::setMaximumNumberOfIterations: "
 		   "the maximum number of iterations "

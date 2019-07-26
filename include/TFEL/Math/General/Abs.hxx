@@ -26,25 +26,19 @@ namespace tfel{
 
   namespace math{
 
-    template<typename Scal>
-    TFEL_MATH_INLINE
-    typename std::enable_if<
-      tfel::typetraits::IsFundamentalNumericType<Scal>::cond,
-      Scal
-      >::type
-    abs(const Scal& s)
-    {
+    template <typename Scal>
+    TFEL_MATH_INLINE typename std::enable_if<
+        tfel::typetraits::IsFundamentalNumericType<Scal>::cond,
+        Scal>::type
+    abs(const Scal& s) {
       return std::abs(s);
     }
 
-    template<typename Scal>
-    TFEL_MATH_INLINE
-    typename std::enable_if<
-      tfel::typetraits::IsFundamentalNumericType<Scal>::cond,
-      Scal
-      >::type
-    abs(const Complex<Scal>& s)
-    {
+    template <typename Scal>
+    TFEL_MATH_INLINE typename std::enable_if<
+        tfel::typetraits::IsFundamentalNumericType<Scal>::cond,
+        Scal>::type
+    abs(const Complex<Scal>& s) {
       return s.norm();
     }
 

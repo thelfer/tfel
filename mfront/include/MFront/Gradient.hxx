@@ -31,8 +31,7 @@ namespace mfront {
      * gradient increment is known.
      * \param[in] v: variable
      */
-    static void setIsIncrementKnownAttribute(VariableDescription&,
-					     const bool);
+    static void setIsIncrementKnownAttribute(VariableDescription&, const bool);
     //! \return if the increment of a variable is known
     static bool isIncrementKnown(const VariableDescription&);
     /*!
@@ -41,6 +40,13 @@ namespace mfront {
      * \param[in] n : variable name
      */
     Gradient(const std::string&, const std::string&);
+    /*!
+     * \brief Constructor
+     * \param[in] t: variable type
+     * \param[in] s: symbol name
+     * \param[in] n: variable name
+     */
+    Gradient(const std::string&, const std::string&, const std::string&);
     /*!
      * \brief constructor from a variable description
      * \param[in] v: variable description

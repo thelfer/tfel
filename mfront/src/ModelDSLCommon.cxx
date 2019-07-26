@@ -18,6 +18,7 @@
 #include "TFEL/Glossary/Glossary.hxx"
 #include "TFEL/Glossary/GlossaryEntry.hxx"
 #include "TFEL/Utilities/StringAlgorithms.hxx"
+#include "TFEL/UnicodeSupport/UnicodeSupport.hxx"
 #include "MFront/DSLUtilities.hxx"
 #include "MFront/MFrontLogStream.hxx"
 #include "MFront/MFrontDebugMode.hxx"
@@ -60,6 +61,8 @@ namespace mfront {
   }  // end of ModelDSLCommon::is()
 
   ModelDSLCommon::ModelDSLCommon() {
+    this->reserveName("dt");
+    this->reserveName("\u0394t");
     for (const auto& v : DSLBase::getDefaultReservedNames()) {
       this->reserveName(v);
     }
@@ -379,13 +382,13 @@ namespace mfront {
         if (!newLine) {
           f.body += " ";
         }
-        if (isStaticMemberName(this->md, this->current->value)) {
+        const auto c = tfel::unicode::getMangledString(this->current->value);
+        if (isStaticMemberName(this->md, c)) {
           f.body +=
-              "(" + this->md.className + ":: " + this->current->value + ")";
-        } else if (isMemberName(this->md, this->current->value)) {
+              "(" + this->md.className + ":: " + c + ")";
+        } else if (isMemberName(this->md, c)) {
           bool treated = false;
           if (newInstruction) {
-            const auto var = this->current->value;
             auto op = std::string{};
             ++(this->current);
             throw_if(this->current == tokens.end(),
@@ -413,20 +416,20 @@ namespace mfront {
               bool found = false;
               for (auto p = this->md.outputs.begin();
                    (p != this->md.outputs.end()) && (!found);) {
-                if (p->name == var) {
+                if (p->name == c) {
                   found = true;
                 } else {
                   ++p;
                 }
               }
-              throw_if(!found, "trying to modify variable '" + var +
+              throw_if(!found, "trying to modify variable '" + c +
                                    "' in the body of function '" + f.name +
                                    "'");
-              f.body += var + " " + op + " ";
-              f.modifiedVariables.insert(var);
-              auto p6 = f.depths.find(var);
+              f.body += c + " " + op + " ";
+              f.modifiedVariables.insert(c);
+              auto p6 = f.depths.find(c);
               if (p6 == f.depths.end()) {
-                f.depths[var] = 0;
+                f.depths[c] = 0;
               }
               treated = true;
             } else {
@@ -437,26 +440,26 @@ namespace mfront {
             // treating the case of local parameters
             for (auto p = this->md.parameters.begin();
                  (p != this->md.parameters.end()) && (!treated); ++p) {
-              if (p->name == this->current->value) {
+              if (p->name == c) {
                 treated = true;
-                f.parameters.insert(this->current->value);
-                f.body += "(this->" + this->current->value + ")";
+                f.parameters.insert(c);
+                f.body += "(this->" + c + ")";
               }
             }
             // treating the case of local parameters
             for (auto p = this->md.constantMaterialProperties.begin();
                  (p != this->md.constantMaterialProperties.end()) && (!treated);
                  ++p) {
-              if (p->name == this->current->value) {
+              if (p->name == c) {
                 treated = true;
-                f.constantMaterialProperties.insert(this->current->value);
-                f.body += "(this->" + this->current->value + ")";
+                f.constantMaterialProperties.insert(c);
+                f.body += "(this->" + c + ")";
               }
             }
             if (!treated) {
-              if (this->isInputVariable(this->current->value)) {
-                f.usedVariables.insert(this->current->value);
-                auto dv = this->md.decomposeVariableName(this->current->value);
+              if (this->isInputVariable(c)) {
+                f.usedVariables.insert(c);
+                auto dv = this->md.decomposeVariableName(c);
                 auto p6 = f.depths.find(dv.first);
                 if (p6 != f.depths.end()) {
                   if (dv.second > p6->second) {
@@ -465,9 +468,9 @@ namespace mfront {
                 } else {
                   f.depths[dv.first] = dv.second;
                 }
-              } else if (this->isOutputVariable(this->current->value)) {
-                f.usedVariables.insert(this->current->value);
-                auto dv = this->md.decomposeVariableName(this->current->value);
+              } else if (this->isOutputVariable(c)) {
+                f.usedVariables.insert(c);
+                auto dv = this->md.decomposeVariableName(c);
                 auto p6 = f.depths.find(dv.first);
                 if (p6 != f.depths.end()) {
                   if (dv.second > p6->second) {
@@ -477,15 +480,15 @@ namespace mfront {
                   f.depths[dv.first] = dv.second;
                 }
               }
-              f.body += this->current->value;
+              f.body += c;
             }
           }
         } else {
-          if (this->current->value == "dt") {
+          if ((c == "dt")||(c=="\u0394t")) {
             f.useTimeIncrement = true;
             f.body += "dt";
           } else {
-            f.body += this->current->value;
+            f.body += c;
           }
         }
         newInstruction = false;
@@ -522,6 +525,9 @@ namespace mfront {
     VariableDescriptionContainer noutputs;
     this->readVarList(noutputs, "real", false);
     for (const auto& v : noutputs) {
+      if (!v.symbolic_form.empty()) {
+        this->reserveName(v.symbolic_form);
+      }
       this->md.registerMemberName(v.name);
       this->md.outputs.push_back(v);
     }
@@ -536,6 +542,9 @@ namespace mfront {
     VariableDescriptionContainer ninputs;
     this->readVarList(ninputs, "real", false);
     for (const auto& v : ninputs) {
+      if (!v.symbolic_form.empty()) {
+        this->reserveName(v.symbolic_form);
+      }
       this->md.registerMemberName(v.name);
       this->md.inputs.push_back(v);
     }

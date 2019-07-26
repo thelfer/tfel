@@ -24,6 +24,7 @@
 
 #include "TFEL/Raise.hxx"
 #include "TFEL/System/System.hxx"
+#include "TFEL/UnicodeSupport/UnicodeSupport.hxx"
 #include "TFEL/Glossary/Glossary.hxx"
 #include "TFEL/Glossary/GlossaryEntry.hxx"
 #include "TFEL/Math/General/IEEE754.hxx"
@@ -208,47 +209,47 @@ namespace mfront {
         ++(this->current);
         this->checkNotEndOfFile("BehaviourDSLCommon::analyse");
         this->readSpecifiedToken("BehaviourDSLCommon::analyse", "::");
-        if (!this->isCallableVariable(h, this->current->value)) {
-          throw(
-              std::runtime_error("BehaviourDSLCommon::analyse : "
-                                 "no variable named '" +
-                                 this->current->value + "' "
-                                                        "for hypothesis '" +
-                                 ModellingHypothesis::toString(h) + "'"));
+        const auto v = tfel::unicode::getMangledString(this->current->value);
+        if (!this->isCallableVariable(h, v)) {
+          this->throwRuntimeError("BehaviourDSLCommon::analyse",
+                                  "no variable named '" + v +
+                                      "' for hypothesis '" +
+                                      ModellingHypothesis::toString(h) + "'");
         }
-        if (this->mb.isParameterName(h, this->current->value)) {
+        if (this->mb.isParameterName(h, v)) {
           this->treatParameterMethod(h);
         } else {
           this->treatVariableMethod(h);
         }
       } else {
         const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-        if (this->isCallableVariable(h, this->current->value)) {
-          const auto isGradient = [this] {
+        const auto v = tfel::unicode::getMangledString(this->current->value);
+        if (this->isCallableVariable(h, v)) {
+          const auto isGradient = [this, &v] {
             for (const auto& g : this->gradients) {
-              if (g.name == this->current->value) {
+              if (g.name == v) {
                 return true;
               }
             }
-            return this->mb.isGradientName(this->current->value);
+            return this->mb.isGradientName(v);
           }();
-          const auto isThermodynamicForce = [this] {
+          const auto isThermodynamicForce = [this, &v] {
             for (const auto& f : this->thermodynamic_forces) {
-              if (f.name == this->current->value) {
+              if (f.name == v) {
                 return true;
               }
             }
-            return this->mb.isThermodynamicForceName(this->current->value);
+            return this->mb.isThermodynamicForceName(v);
           }();
           if (isGradient) {
             this->treatGradientMethod();
           } else if (isThermodynamicForce) {
             this->treatThermodynamicForceMethod();
-          } else if (this->mb.isParameterName(h, this->current->value)) {
-              this->treatParameterMethod(h);
-            } else {
-              this->treatVariableMethod(h);
-            }
+          } else if (this->mb.isParameterName(h, v)) {
+            this->treatParameterMethod(h);
+          } else {
+            this->treatVariableMethod(h);
+          }
         } else {
           const auto k = this->current->value;
           const auto l = this->current->line;
@@ -474,6 +475,17 @@ namespace mfront {
       }
     }
   }  // end of BehaviourDSLCommon::appendToHypothesesList
+
+  void BehaviourDSLCommon::getSymbols(
+      std::map<std::string, std::string>& symbols,
+      const Hypothesis h,
+      const std::string&) {
+    addSymbol(symbols, "I\u2082", "Stensor::Id()");
+    addSymbol(symbols, "I\u2084", "Stensor4::Id()");
+    addSymbol(symbols, "\u2297", "^");
+    addSymbol(symbols, "\u22C5", "*");
+    this->mb.getSymbols(symbols, h);
+  }  // end of BehaviourDSLCommon::getSymbols
 
   void BehaviourDSLCommon::readCodeBlockOptions(CodeBlockOptions& o, const bool s) {
     using namespace tfel::utilities;
@@ -2139,7 +2151,7 @@ namespace mfront {
   void BehaviourDSLCommon::treatParameterMethod(const Hypothesis h) {
     using namespace std;
     using namespace tfel::utilities;
-    const auto& n = this->current->value;
+    const auto n = tfel::unicode::getMangledString(this->current->value);
     ++(this->current);
     this->checkNotEndOfFile("BehaviourDSLCommon::treatParameterMethod");
     this->readSpecifiedToken("BehaviourDSLCommon::treatParameterMethod", ".");
@@ -2240,7 +2252,7 @@ namespace mfront {
   }  // end of treatSetEntryNameMethod
 
   void BehaviourDSLCommon::treatGradientMethod() {
-    const auto& n = this->current->value;
+    const auto n = tfel::unicode::getMangledString(this->current->value);
     ++(this->current);
     this->checkNotEndOfFile("BehaviourDSLCommon::treatGradientMethod");
     this->readSpecifiedToken("BehaviourDSLCommon::treatGradientMethod", ".");
@@ -2293,7 +2305,7 @@ namespace mfront {
   }  // end of BehaviourDSLCommon::treatGradientMethod
 
   void BehaviourDSLCommon::treatThermodynamicForceMethod() {
-    const auto& n = this->current->value;
+    const auto n = tfel::unicode::getMangledString(this->current->value);
     ++(this->current);
     this->checkNotEndOfFile(
         "BehaviourDSLCommon::treatThermodynamicForceMethod");
@@ -2350,7 +2362,7 @@ namespace mfront {
   }  // end of BehaviourDSLCommon::treatThermodynamicForceMethod
 
   void BehaviourDSLCommon::treatVariableMethod(const Hypothesis h) {
-    const auto& n = this->current->value;
+    const auto n = tfel::unicode::getMangledString(this->current->value);
     ++(this->current);
     this->checkNotEndOfFile("BehaviourDSLCommon::treatVariableMethod");
     this->readSpecifiedToken("BehaviourDSLCommon::treatVariableMethod", ".");

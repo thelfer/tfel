@@ -101,6 +101,7 @@ static bool mathCubicSpline   = false;
 static bool mathKriging       = false;
 static bool mathParser        = false;
 static bool utilities         = false;
+static bool unicodeSupport    = false;
 static bool glossary          = false;
 static bool numodis           = false;
 static bool material          = false;
@@ -285,6 +286,7 @@ static void listLibraries(const char* p)
   display_if(math,"TFELMath");
   display_if(lsystem,"TFELSystem");
   display_if(utilities,"TFELUtilities");
+  display_if(unicodeSupport,"TFELUnicodeSupport");
   display_if(glossary,"TFELGlossary");
   display_if(exceptions,"TFELException");
   display_if(numodis,"TFELNUMODIS");
@@ -336,51 +338,55 @@ int main(const int argc,const char *const *const argv)
   registerCallBack("--zmat",[]{zmat=true;},"request flags for zmat.");
 #endif /* HAVE_ZMAT */
   registerCallBack("--exceptions",[]{exceptions=true;},
-		   "request flags for libTFELException.");
+		   "request flags for TFELException.");
   registerCallBack("--math",[]{
       math =exceptions = true;
-    },"request flags for libTFELMath.");
+    },"request flags for TFELMath.");
   registerCallBack("--math-kriging",[]{
       mathKriging = math = exceptions  = true;
-    },"request flags for libTFELMathKriging.");
+    },"request flags for TFELMathKriging.");
   registerCallBack("--math-cubic-spline",[]{
 	mathCubicSpline = math = exceptions = true;
-    },"request flags for libTFELMathCubicSpline.");
+    },"request flags for TFELMathCubicSpline.");
   registerCallBack("--math-parser",[]{
 #if __cplusplus < 201703L
       physicalConstants = true;
 #endif  /* __cplusplus > 201703L */
       math = exceptions  = true;
       mathParser = mathKriging = true; 
-    },"request flags for libTFELMathParser.");
+    },"request flags for TFELMathParser.");
   registerCallBack("--tests",[]{
       tests  = true;
-    },"request flags for libTFELTests.");
+    },"request flags for TFELTests.");
   registerCallBack("--physical-constants",[]{
       physicalConstants  = true;
-    },"request flags for libTFELPhysicalConstants.");
+    },"request flags for TFELPhysicalConstants.");
   registerCallBack("--system",[]{
       lsystem = exceptions = true;
-    },"request flags for libTFELSystem.");
+    },"request flags for TFELSystem.");
   registerCallBack("--utilities",[]{
       utilities = true;
-    },"request flags for libTFELUtilities.");
+    },"request flags for TFELUtilities.");
+  registerCallBack("--unicode-support",[]{
+      unicodeSupport = true;
+    },"request flags for TFELUnicodeSupport.");
   registerCallBack("--glossary",[]{
       glossary = true;
-    },"request flags for libTFELGlossary.");
+    },"request flags for TFELGlossary.");
   registerCallBack("--material",[]{
       exceptions = numodis = true;
       material = utilities = math = true;
-    },"request flags for libTFELMaterial.");
+    },"request flags for TFELMaterial.");
   registerCallBack("--numodis",[]{
       numodis  = true;      
-    },"request flags for libTFELNUMODIS.");
+    },"request flags for TFELNUMODIS.");
   registerCallBack("--mfront-profiling",[]{
       mfront_profiling  = true;      
     },"request flags for libMFrontProfiling.");
   registerCallBack("--all",[]{
       exceptions = math     = numodis = material = true;
       utilities  = glossary = lsystem = tests = true;
+      unicodeSupport = true;
       mfront_profiling = true;
     },"request flags for all librairies.");
   registerCallBack("--version",&treatVersion,

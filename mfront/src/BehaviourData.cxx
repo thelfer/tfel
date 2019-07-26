@@ -276,6 +276,7 @@ namespace mfront {
 
   BehaviourData::BehaviourData() {
     this->registerMemberName("dt");
+    this->reserveName("\u0394t"); // symbolic value
     // treating the temperature
     auto T = VariableDescription{"temperature", "T", 1u, 0u};
     T.setGlossaryName("Temperature");
@@ -951,10 +952,21 @@ namespace mfront {
     }
     if (s == ALREADYREGISTRED) {
       checkAlreadyRegistred(this->reservedNames, v.name);
+      if (!v.symbolic_form.empty()) {
+        checkAlreadyRegistred(this->reservedNames, v.symbolic_form);
+      }
     } else {
       this->registerMemberName(v.name);
+      if (!v.symbolic_form.empty()) {
+        this->reserveName(v.symbolic_form);
+      }
       if (bi) {
         this->registerMemberName("d" + v.name);
+        if (!v.symbolic_form.empty()) {
+          this->reserveName("\u0394" + v.symbolic_form);
+        } else {
+          this->reserveName("\u0394" + v.name);
+        }
       }
     }
     if (v.hasGlossaryName()) {
@@ -1658,6 +1670,17 @@ namespace mfront {
     }
     return false;
   }  // end of BehaviourData::isStressFreeExansionAnisotropic
+
+  void BehaviourData::getSymbols(std::map<std::string, std::string>& symbols) const {
+    mfront::getSymbols(symbols, this->materialProperties);
+    mfront::getSymbols(symbols, this->persistentVariables);
+    mfront::getSymbols(symbols, this->integrationVariables);
+    mfront::getSymbols(symbols, this->stateVariables);
+    mfront::getSymbols(symbols, this->auxiliaryStateVariables);
+    mfront::getSymbols(symbols, this->externalStateVariables);
+    mfront::getSymbols(symbols, this->localVariables);
+    mfront::getSymbols(symbols, this->parameters);
+  }  // end of BehaviourData::getSymbols
 
   BehaviourData::~BehaviourData() = default;
 

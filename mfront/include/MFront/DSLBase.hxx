@@ -97,21 +97,27 @@ namespace mfront {
        */
       virtual ~WordAnalyser();
     };  // end of struct WordAnalyser
-        /*!
-         * options passed to the readNextBlock member
-         */
+    //! \brief options passed to the readNextBlock member
     struct CodeBlockParserOptions {
-      /*!
-       * default constructor
-       */
+      //! default constructor
       CodeBlockParserOptions();
+      //! move constructor
       CodeBlockParserOptions(CodeBlockParserOptions&&) = default;
+      //! copy constructor
       CodeBlockParserOptions(const CodeBlockParserOptions&) = default;
+      //! move assignement
       CodeBlockParserOptions& operator=(CodeBlockParserOptions&&) = default;
+      //! standard assignement
       CodeBlockParserOptions& operator=(const CodeBlockParserOptions&) =
           default;
       //! destructor
       ~CodeBlockParserOptions() noexcept;
+      /*!
+       * \brief list of known symbols.
+       * The key is the symbolic version of the variable.
+       * The value is the mangled of the variable.
+       */
+      std::map<std::string, std::string> symbols;
       //! member names
       std::set<std::string> mn;
       //! static member names

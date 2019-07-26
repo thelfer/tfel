@@ -962,10 +962,10 @@ namespace mfront {
         !this->mvariables.empty(),
         "BehaviourDescription::declareAsASmallStrainStandardBehaviour: "
         "some driving variables are already declared");
-    Gradient eto("StrainStensor", "eto");
+    Gradient eto("StrainStensor", "\u03B5\u1D57\u1D52", "eto");
     Gradient::setIsIncrementKnownAttribute(eto,true);
     eto.setGlossaryName("Strain");
-    ThermodynamicForce sig("StressStensor", "sig");
+    ThermodynamicForce sig("StressStensor", "\u03C3", "sig");
     sig.setGlossaryName("Stress");
     this->mvariables.push_back({eto, sig});
     this->type = BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR;
@@ -990,7 +990,7 @@ namespace mfront {
     Gradient F("DeformationGradientTensor", "F");
     F.setGlossaryName("DeformationGradient");
     Gradient::setIsIncrementKnownAttribute(F,false);
-    ThermodynamicForce sig("StressStensor", "sig");
+    ThermodynamicForce sig("StressStensor", "\u03C3", "sig");
     sig.setGlossaryName("Stress");
     this->mvariables.push_back({F, sig});
     this->type = BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR;
@@ -2812,6 +2812,15 @@ namespace mfront {
     bool BehaviourDescription::isStrainMeasureDefined() const {
       return this->strainMeasure.is<StrainMeasure>();
     }  // end of BehaviourDescription::isStrainMeasureDefined()
+
+    void BehaviourDescription::getSymbols(
+        std::map<std::string, std::string>& symbols, const Hypothesis h) const {
+      for (const auto& mv : this->mvariables) {
+        getSymbol(symbols, mv.first);
+        getSymbol(symbols, mv.second);
+      }
+      this->getBehaviourData(h).getSymbols(symbols);
+    }  // end of BehaviourDescription::getSymbols
 
     BehaviourDescription::~BehaviourDescription() = default;
 

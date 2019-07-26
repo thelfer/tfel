@@ -67,11 +67,11 @@ namespace tfel{
      * \return a copy of s where all occurences of substring s1 have
      * been replaced by s2
      */
-    TFELUTILITIES_VISIBILITY_EXPORT std::string
-    replace_all(const std::string&,
-		const std::string&,
-		const std::string&,
-		const std::string::size_type = 0u);
+    TFELUTILITIES_VISIBILITY_EXPORT std::string replace_all(
+        const std::string&,
+        const std::string&,
+        const std::string&,
+        const std::string::size_type = 0u);
 
     /*!
      * \brief replace all occurences of substring s1 by s2
@@ -81,12 +81,12 @@ namespace tfel{
      * \param s2 : replacement string
      * \param ps : beginning of the search
      */
-    TFELUTILITIES_VISIBILITY_EXPORT void
-    replace_all(std::string&,
-		const std::string&,
-		const std::string&,
-		const std::string&,
-		const std::string::size_type = 0u);
+    TFELUTILITIES_VISIBILITY_EXPORT void replace_all(
+        std::string&,
+        const std::string&,
+        const std::string&,
+        const std::string&,
+        const std::string::size_type = 0u);
 
     /*!
      * \brief replace all occurences of character c1 by c2

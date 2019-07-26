@@ -1,3 +1,90 @@
+@article{bezanson_julia:_2017,
+	title = {Julia: A fresh approach to numerical computing},
+	volume = {59},
+	url = {https://doi.org/10.1137/141000671},
+	pages = {65--98},
+	number = {1},
+	journaltitle = {{SIAM} review},
+	author = {Bezanson, Jeff and Edelman, Alan and Karpinski, Stefan and Shah, Viral B},
+	date = {2017}
+}
+
+@inproceedings{camier_improving_2015,
+	location = {Edinburgh, Scotland, {UK}},
+	title = {Improving Performance Portability and Exascale Software Productivity with the ∇ Numerical Programming Language},
+	isbn = {978-0-9926615-1-9},
+	url = {http://dl.acm.org/citation.cfm?id=2820083.2820107},
+	series = {{EASC} '15},
+	abstract = {Addressing the major challenges of software productivity and performance portability becomes necessary to take advantage of emerging extreme-scale computing architectures. As software development costs will continuously increase to deal with exascale hardware issues, higher-level programming abstractions will facilitate the path to go. There is a growing demand for new programming environments in order to improve scientific productivity, to ease design and implementation, and to optimize large production codes. We introduce the numerical analysis specific language Nabla (∇) which improves applied mathematicians productivity, and enables new algorithmic developments for the construction of hierarchical composable high-performance scientific applications. One of the key concept is the introduction of the hierarchical logical time within the high-performance computing scientific community. It represents an innovation that addresses major exascale challenges. This new dimension to parallelism is explicitly expressed to go beyond the classical single-program multiple-data or bulk-synchronous parallel programming models. Control and data concurrencies are combined consistently to achieve statically analyzable transformations and efficient code generation. Shifting the complexity to the compiler offers an ease of programming and a more intuitive approach, while reaching the ability to target new hardware and leading to performance portability. In this paper, we present the three main parts of the ∇ toolchain: the frontend raises the level of abstraction with its grammar; the backends hold the effective generation stages, and the middle-end provides agile software engineering practices transparently to the application developer, such as: instrumentation (performance analysis, V\&V, debugging at scale), data or resource optimization techniques (layout, locality, prefetching, caches awareness, vectorization, loop fusion) and the management of the hierarchical logical time, which produces the graphs of all parallel tasks. The refactoring of existing legacy scientific applications is also possible by the incremental compositional approach of the method.},
+	pages = {126--131},
+	booktitle = {Proceedings of the 3rd International Conference on Exascale Applications and Software},
+	publisher = {University of Edinburgh},
+	author = {Camier, Jean-Sylvain},
+	urldate = {2019-07-23},
+	date = {2015},
+	note = {event-place: Edinburgh, {UK}}
+}
+
+@article{tuset_implementation_2019,
+	title = {Implementation of a new constitutive model for abdominal muscles},
+	volume = {179},
+	issn = {0169-2607},
+	url = {http://www.sciencedirect.com/science/article/pii/S0169260719308880},
+	doi = {10.1016/j.cmpb.2019.104988},
+	abstract = {Background and objective
+Abdominal hernia repair is one of the most often performed surgical procedures worldwide. Numerical simulations of the abdominal wall mechanics can be a valuable tool to devise actions aimed at preventing hernia formation. A first step towards this goal is the development of consistent constitutive models for the tissues that form the human abdominal wall. In this study we propose, for each of the tissues involved, a new formulation of the so–called transversely isotropic hyperelastic model ({TIHM}).
+Methods
+We propose a new {TIHM} for the human abdominal wall tissues and we present a systemic view of the methodology that we have implemented in the present study. First we consider the mathematical background of the {TIHM}. The novelty of our formulation is that both the isotropic and the fiber contributions to the strain energy function are characterized exclusively by polynomial convex functions of certain invariant quantities. Then, we provide a detailed description on how the constitutive model is implemented into an open source finite element ({FE}) software. In our approach we use the specific interface provided by the {MFront} software to incorporate our {TIHM} formulation into the Code Aster {FE} solver. For each of the tissues considered, the values of the {TIHM} constants are adjusted by means of a numerical simulation of previous experimental data from tensile tests.
+Results
+We studied the following abdominal wall tissues: linea alba, rectus sheath, external oblique muscle, internal oblique muscle, transversus abdominis muscle and rectus abdominis muscle. Our formulation closely reproduces tensile test data for each tissue in the corresponding {FE} numerical simulation.
+Conclusions
+The new {TIHM} formulation is suitable for a future numerical investigation of the abdominal wall, which will in turn help us to assess the best zone to practice a colostomy. The methodology implemented in the present study can be easily extended in the future to develop and implement a {TIHM} for active muscles and/or a different type of constitutive model which might be suitable to characterize other tissues of biomedical interest.},
+	pages = {104988},
+	journaltitle = {Computer Methods and Programs in Biomedicine},
+	shortjournal = {Computer Methods and Programs in Biomedicine},
+	author = {Tuset, Lluís and Fortuny, Gerard and Herrero, Joan and Puigjaner, Dolors and López, Josep M.},
+	urldate = {2019-07-22},
+	date = {2019-10-01},
+	keywords = {Abdominal wall, Finite element method, Hyperelasticity, Open-source software, Strain energy functions},
+	file = {ScienceDirect Snapshot:/home/th202608/.zotero/zotero/vzpzva46.default/zotero/storage/FUINN7HS/S0169260719308880.html:text/html;Tuset et al. - 2019 - Implementation of a new constitutive model for abd.pdf:/home/th202608/.zotero/zotero/vzpzva46.default/zotero/storage/93QTUYF9/Tuset et al. - 2019 - Implementation of a new constitutive model for abd.pdf:application/pdf}
+}
+
+@article{marano_intragranular_2019,
+	title = {Intragranular localization induced by softening crystal plasticity: Analysis of slip and kink bands localization modes from high resolution {FFT}-simulations results},
+	volume = {175},
+	issn = {1359-6454},
+	url = {http://www.sciencedirect.com/science/article/pii/S1359645419303696},
+	doi = {10.1016/j.actamat.2019.06.010},
+	shorttitle = {Intragranular localization induced by softening crystal plasticity},
+	abstract = {We investigate the ability of local continuum crystal plasticity theory to simulate intense slip localization at incipient plasticity observed experimentally in metals exhibiting softening mechanisms. A generic strain softening model is implemented within a massively parallel {FFT} solver framework to study intragranular strain localization throughout high resolution polycrystalline simulations. It is coupled to a systematic analysis strain localization modes: Equivalent plastic strain and lattice rotation fields are processed to create binary maps of slip and kink bands populations, estimate their volume fraction and mean strain level. High resolution simulations show the formation of an intragranular localization band network. The associated localization maps are used to identify accurately slip and kink bands populations and highlight the distinct evolution of kink bands, influenced by lattice rotation. Results highlight that the analysis of the nature of localization bands in numerical studies is fundamental to asses the validity of polycrystalline simulations. Indeed, it is evidenced that selection between slip or kink localization modes is only due to grain to grain incompatibilities as these two localization modes are equivalent in classical crystal plasticity models. As a result they predict the formation of a large amount of kink bands in contradiction with experimental observations of softening metals. We show that this holds for complex physics based models too. Hence, the use of classical crystal plasticity for strain localization simulation should be reconsidered in order to predict realistic localization modes.},
+	pages = {262--275},
+	journaltitle = {Acta Materialia},
+	shortjournal = {Acta Materialia},
+	author = {Marano, Aldo and Gélébart, Lionel and Forest, Samuel},
+	urldate = {2019-07-22},
+	date = {2019-08-15},
+	keywords = {Crystal plasticity, {FFT} simulations, Intragranular localization, Kink bands, Slip bands},
+	file = {Marano et al. - 2019 - Intragranular localization induced by softening cr.pdf:/home/th202608/.zotero/zotero/vzpzva46.default/zotero/storage/DS8XP79M/Marano et al. - 2019 - Intragranular localization induced by softening cr.pdf:application/pdf;ScienceDirect Snapshot:/home/th202608/.zotero/zotero/vzpzva46.default/zotero/storage/DIGMCHVM/S1359645419303696.html:text/html;ScienceDirect Snapshot:/home/th202608/.zotero/zotero/vzpzva46.default/zotero/storage/JFXPBF3Q/S1359645419303696.html:text/html}
+}
+
+@article{szmytka_recent_2019,
+	title = {Some Recent Advances on Thermal–mechanical Fatigue Design and Upcoming Challenges for the Automotive Industry},
+	volume = {9},
+	rights = {http://creativecommons.org/licenses/by/3.0/},
+	url = {https://www.mdpi.com/2075-4701/9/7/794},
+	doi = {10.3390/met9070794},
+	abstract = {Automotive industry faces numerous evolutions regarding environment regulations and parts reliability. Through the specific case of a cylinder head, actual and forthcoming challenges for low-cycle and thermal\&ndash;mechanical fatigue design in an industrial context are presented. With a description of current design approaches and highlighting limitations, this work focuses on variable loadings, constitutive models and their interaction with the environment, fatigue criteria, and structure validations, the four major steps to meet a reliable design. The need to carry out extended experimental databases for different complexity levels is emphasized to provide a better understanding of loadings and their impact on the strength of materials and structures, as well as the production of more physically-based models that are easier to identify and lead to higher levels of reliability in the thermal\&ndash;mechanical design process.},
+	pages = {794},
+	number = {7},
+	journaltitle = {Metals},
+	author = {Szmytka, Fabien and Osmond, Pierre and Rémy, Luc and Masson, Pierre-Damien and Forré, Agathe and Hoche, François-Xavier},
+	urldate = {2019-07-22},
+	date = {2019-07},
+	langid = {english},
+	keywords = {constitutive models, experimental set-ups, fatigue criterion, probabilistic design, thermal–mechanical fatigue},
+	file = {Snapshot:/home/th202608/.zotero/zotero/vzpzva46.default/zotero/storage/Q976RCVF/794.html:text/html;Szmytka et al. - 2019 - Some Recent Advances on Thermal–mechanical Fatigue.pdf:/home/th202608/.zotero/zotero/vzpzva46.default/zotero/storage/3VLNLT44/Szmytka et al. - 2019 - Some Recent Advances on Thermal–mechanical Fatigue.pdf:application/pdf}
+}
+
 @online{derouiche_integration_2018,
 	title = {Intégration simplifiée de modèles de comportement non-linéaire},
     year = {2018},

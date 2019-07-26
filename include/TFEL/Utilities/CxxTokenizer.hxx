@@ -47,105 +47,6 @@ namespace tfel {
        */
       static bool isValidIdentifier(const std::string&,
                                     const bool = true);
-      //! \brief default constructor
-      CxxTokenizer();
-      /*!
-       * \brief constructor with options
-       * \param[in] o: options
-       */
-      CxxTokenizer(const CxxTokenizerOptions &);
-      /*!
-       * \brief constructor from a file
-       * \param[in] f : file name
-       */
-      CxxTokenizer(const std::string&);
-      /*!
-       * \brief constructor from a file
-       * \param[in] f : file name
-       * \param[in] o: options
-       */
-      CxxTokenizer(const std::string&, const CxxTokenizerOptions&);
-      /*!
-       * \brief import the specified tokens
-       * \param[in] p : iterator to the first token
-       * \param[in] pe : iterator past the last token
-       */
-      template <typename InputIterator>
-      void import(const InputIterator, const InputIterator);
-      /*!
-       * \brief analyse the string given
-       * all previous tokens are erased
-       * \param[in] s : string to be parsed
-       */
-      void parseString(const std::string&);
-      /*!
-       * \brief import the specified file
-       * \param[in] f : file name
-       */
-      void openFile(const std::string&);
-      /*!
-       * \brief print the stored tokens to the specified stream
-       * \param[out] out : output stream
-       */
-      void printFileTokens(std::ostream&) const;
-      /*!
-       * \brief assume that a C-style comment was opened at the
-       * beginning of the processing.
-       * This is usefull when parsing a file line by line
-       * \param[in] b: boolean
-       */
-      void setCStyleCommentOpened(const bool);
-      /*!
-       * \return is a C-style comment is opened at the
-       * opened at the end of the processing.
-       * This is usefull when parsing a file line by line
-       * \param[in] b: boolean
-       */
-      bool isCStyleCommentOpened() const;
-      /*!
-       * \brief remove all comment tokens
-       */
-      void stripComments();
-      /*!
-       * \brief clear the object
-       */
-      void clear();
-      /*!
-       * \brief set if char tokens shall be treated as string tokens
-       * \param[in] b : boolean telling if char tokens shall be
-       * treated as string tokens
-       */
-      void treatCharAsString(const bool);
-      /*!
-       * \brief set if the comment boundaries must be left in the
-       * resulting tokens.
-       * \param[in] b : boolean telling if char tokens shall be
-       * treated as string tokens
-       */
-      void keepCommentBoundaries(const bool);
-      /*!
-       * \brief set if '.' shall be treated as as sperator
-       * \param[in] b : boolean telling if '.' shall be treated as as
-       * sperator
-       */
-      void treatDotAsSeparator(const bool);
-      /*!
-       * \brief set if '-' shall be treated as as sperator
-       * \param[in] b : boolean telling if '-' shall be treated as as
-       * sperator
-       */
-      void treatMinusAsSeparator(const bool);
-      /*!
-       * \brief set if successive strings shall be merged
-       * \param[in] b : boolean
-       */
-      void mergeStrings(const bool);
-      /*!
-       * \brief set if tokens shall be split to extract numbers
-       * \param[in] b : boolean telling numbers shall be extracted
-       * from tokens
-       */
-      void extractNumbers(const bool);
       /*!
        * \brief an helper method throwing an exception if the given
        * iterator is egal to the third argument (which shall point
@@ -309,6 +210,110 @@ namespace tfel {
        * the second argument
        */
       static int readInt(const_iterator&, const const_iterator);
+      //! \brief default constructor
+      CxxTokenizer();
+      /*!
+       * \brief constructor with options
+       * \param[in] o: options
+       */
+      CxxTokenizer(const CxxTokenizerOptions &);
+      /*!
+       * \brief constructor from a file
+       * \param[in] f : file name
+       */
+      CxxTokenizer(const std::string&);
+      /*!
+       * \brief constructor from a file
+       * \param[in] f : file name
+       * \param[in] o: options
+       */
+      CxxTokenizer(const std::string&, const CxxTokenizerOptions&);
+      /*!
+       * \brief import the specified tokens
+       * \param[in] p : iterator to the first token
+       * \param[in] pe : iterator past the last token
+       */
+      template <typename InputIterator>
+      void import(const InputIterator, const InputIterator);
+      /*!
+       * \brief analyse the string given
+       * all previous tokens are erased
+       * \param[in] s : string to be parsed
+       */
+      void parseString(const std::string&);
+      /*!
+       * \brief import the specified file
+       * \param[in] f : file name
+       */
+      void openFile(const std::string&);
+      /*!
+       * \brief print the stored tokens to the specified stream
+       * \param[out] out : output stream
+       */
+      void printFileTokens(std::ostream&) const;
+      /*!
+       * \brief assume that a C-style comment was opened at the
+       * beginning of the processing.
+       * This is usefull when parsing a file line by line
+       * \param[in] b: boolean
+       */
+      void setCStyleCommentOpened(const bool);
+      /*!
+       * \return is a C-style comment is opened at the
+       * opened at the end of the processing.
+       * This is usefull when parsing a file line by line
+       * \param[in] b: boolean
+       */
+      bool isCStyleCommentOpened() const;
+      /*!
+       * \brief remove all comment tokens
+       */
+      void stripComments();
+      /*!
+       * \brief clear the object
+       */
+      void clear();
+      /*!
+       * \brief set if char tokens shall be treated as string tokens
+       * \param[in] b : boolean telling if char tokens shall be
+       * treated as string tokens
+       */
+      void treatCharAsString(const bool);
+      /*!
+       * \brief set if the comment boundaries must be left in the
+       * resulting tokens.
+       * \param[in] b : boolean telling if char tokens shall be
+       * treated as string tokens
+       */
+      void keepCommentBoundaries(const bool);
+      /*!
+       * \brief set if '.' shall be treated as as sperator
+       * \param[in] b : boolean telling if '.' shall be treated as as
+       * sperator
+       */
+      void treatDotAsSeparator(const bool);
+      /*!
+       * \brief set if '-' shall be treated as as sperator
+       * \param[in] b : boolean telling if '-' shall be treated as as
+       * sperator
+       */
+      void treatMinusAsSeparator(const bool);
+      /*!
+       * \brief set if successive strings shall be merged
+       * \param[in] b : boolean
+       */
+      void mergeStrings(const bool);
+      /*!
+       * \brief set if tokens shall be split to extract numbers
+       * \param[in] b : boolean telling numbers shall be extracted
+       * from tokens
+       */
+      void extractNumbers(const bool);
+      /*!
+       * \brief add a new separator
+       * \param[in] s: separator
+       */
+      void addSeparator(const std::string&);
       //! \return true if the token list is empty
       bool empty() const;
       //! \return an iterator to the first token
@@ -388,6 +393,8 @@ namespace tfel {
                                      const std::string::const_iterator,
                                      const std::string::const_iterator,
                                      const Token::size_type);
+      //! list of user defined separators
+      std::vector<std::string> additional_separators;
       //! list of tokens read
       TokensContainer tokens;
       //! store all the comments of a line

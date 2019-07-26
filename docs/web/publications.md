@@ -1,9 +1,12 @@
 % Publications
 % Helfer Thomas
-% January 11, 2018
+% June 22, 2019
 
 ---
-nocite:
+nocite: |
+    @tuset_implementation_2019
+    @szmytka_recent_2019
+    @marano_intragranular_2019
     @dorfler_numerical_2019
     @bernachy-barbe_effect_2019
     @bejaoui_description_2019

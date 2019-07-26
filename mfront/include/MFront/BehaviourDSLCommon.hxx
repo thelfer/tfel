@@ -230,12 +230,20 @@ namespace mfront {
     virtual void disableCallBack(const std::string&);
 
     virtual void addCallBack(const std::string&, const CallBack);
-
+    /*!
+     * \brief get all symbols required to interpret the given code block.
+     * \param[out] symbols: symbols
+     * \param[in] h: modelling hypothesis
+     * \param[in] n: name of the code block
+     */
+    virtual void getSymbols(std::map<std::string, std::string>&,
+                            const Hypothesis,
+                            const std::string&);
     /*!
      * \param[out] o : options to be read
      * \param[in]  s : allow specialisation
      */
-    void readCodeBlockOptions(CodeBlockOptions&, const bool);
+    virtual void readCodeBlockOptions(CodeBlockOptions&, const bool);
     /*!
      * \brief read the next code block and adds it tho the mechanical
      * behaviour

@@ -24,12 +24,15 @@ namespace mfront{
     DefaultDSLBase();
     ~DefaultDSLBase() override;
   protected:
-    void completeVariableDeclaration() override;
-    void writeBehaviourParserSpecificIncludes(std::ostream&) const override;
-    void writeBehaviourLocalVariablesInitialisation(std::ostream&,
-						    const Hypothesis) const override;
-    virtual void treatProvidesTangentOperator();
-    virtual void treatProvidesSymmetricTangentOperator();
+   void getSymbols(std::map<std::string, std::string>&,
+                   const Hypothesis,
+                   const std::string&) override;
+   void completeVariableDeclaration() override;
+   void writeBehaviourParserSpecificIncludes(std::ostream&) const override;
+   void writeBehaviourLocalVariablesInitialisation(
+       std::ostream&, const Hypothesis) const override;
+   virtual void treatProvidesTangentOperator();
+   virtual void treatProvidesSymmetricTangentOperator();
   }; // end of struct DefaultDSLBase
 
 } // end of namespace mfront  

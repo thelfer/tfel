@@ -57,13 +57,27 @@ namespace mfront {
     TFEL_NORETURN static void throwUndefinedAttribute(const std::string&);
     /*!
      * Constructor
-     * \param[in] t : variable type
-     * \param[in] n : variable name
-     * \param[in] s : if greater than 1, this variable will
+     * \param[in] t: variable type
+     * \param[in] n: variable name
+     * \param[in] as: if greater than 1, this variable will
      * be considered as an array
-     * \param[in] l : line number
+     * \param[in] l: line number
      */
     VariableDescription(const std::string&,
+                        const std::string&,
+                        const unsigned short,
+                        const size_t);
+    /*!
+    * Constructor
+    * \param[in] t: variable type
+    * \param[in] s: symbolic name
+    * \param[in] n: variable name
+    * \param[in] as: if greater than 1, this variable will
+    * be considered as an array
+    * \param[in] l: line number
+    */
+    VariableDescription(const std::string&,
+                        const std::string&,
                         const std::string&,
                         const unsigned short,
                         const size_t);
@@ -239,6 +253,30 @@ namespace mfront {
   MFRONT_VISIBILITY_EXPORT bool hasPhysicalBounds(const VariableDescription&,
                                                   const unsigned short);
 
+  /*!
+   * \brief retrieve the symbol of the given variable description.
+   * \param[out] symbols: map between symbols and replacement strings.
+   * \param[in] v: variable description
+   */
+  MFRONT_VISIBILITY_EXPORT void getSymbol(std::map<std::string, std::string>&,
+                                          const VariableDescription&);
+  /*!
+   * \brief retrieve the symbols associated with the increment of the given
+   * variable.
+   * \param[out] symbols: map between symbols and replacement strings.
+   * \param[in] v: variable description
+   */
+  MFRONT_VISIBILITY_EXPORT void getIncrementSymbol(
+      std::map<std::string, std::string>&, const VariableDescription&);
+  /*!
+   * \brief retrieve the symbols associated with the time derivative of the
+   * given variable.
+   * \param[out] symbols: map between symbols and replacement strings.
+   * \param[in] v: variable description
+   */
+  MFRONT_VISIBILITY_EXPORT void getTimeDerivativeSymbol(
+      std::map<std::string, std::string>&, const VariableDescription&);
+
   //! a simple alias for backward compatibility
   typedef VariableDescription VarHandler;
 
@@ -333,6 +371,29 @@ namespace mfront {
    */
   MFRONT_VISIBILITY_EXPORT bool hasPhysicalBounds(
       const VariableDescriptionContainer&);
+  /*!
+   * \brief retrieve all symbols in the given variables.
+   * \param[out] symbols: map between symbols and replacement strings.
+   * \param[in] c: variable description container
+   */
+  MFRONT_VISIBILITY_EXPORT void getSymbols(std::map<std::string, std::string>&,
+                                           const VariableDescriptionContainer&);
+  /*!
+   * \brief retrieve all symbols associated with the increment of the given
+   * variables.
+   * \param[out] symbols: map between symbols and replacement strings.
+   * \param[in] c: variable description container
+   */
+  MFRONT_VISIBILITY_EXPORT void getIncrementSymbols(
+      std::map<std::string, std::string>&, const VariableDescriptionContainer&);
+  /*!
+   * \brief retrieve all symbols associated with the time derivative of the
+   * given variables.
+   * \param[out] symbols: map between symbols and replacement strings.
+   * \param[in] c: variable description container
+   */
+  MFRONT_VISIBILITY_EXPORT void getTimeDerivativeSymbols(
+      std::map<std::string, std::string>&, const VariableDescriptionContainer&);
 
   //! a simple alias for backward compatibility
   typedef VariableDescriptionContainer VarContainer;

@@ -1479,6 +1479,13 @@ namespace mfront {
     void checkVariablePosition(const std::string&,
                                const std::string&,
                                const size_t);
+    /*!
+     * \brief retrieve all the symbols associated with the declared variables.
+     * \param[out] symbols: map between symbols and replacement strings
+     * \param[in] h: modelling hypothesis
+     */
+    void getSymbols(std::map<std::string, std::string>&,
+                    const Hypothesis) const;
     //! destructor
     ~BehaviourDescription();
 

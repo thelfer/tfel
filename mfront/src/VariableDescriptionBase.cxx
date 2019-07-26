@@ -24,18 +24,25 @@ namespace mfront{
   VariableDescriptionBase::VariableDescriptionBase() = default;
 
   VariableDescriptionBase::VariableDescriptionBase(const std::string& t,
-					   const std::string& n,
-					   const unsigned short s,
-					   const size_t l)
-    : type(t),
-      name(n),
-      arraySize(s),
-      lineNumber(l)
-  {
+                                                   const std::string& n,
+                                                   const unsigned short as,
+                                                   const size_t l)
+      : type(t), name(n), arraySize(as), lineNumber(l) {
     tfel::raise_if(this->arraySize==0,
 		   "VariableDescriptionBase::VariableDescriptionBase: "
 		   "invalid array size");
-  } // end of VariableDescriptionBase::VariableDescriptionBase
+  }  // end of VariableDescriptionBase::VariableDescriptionBase
+
+  VariableDescriptionBase::VariableDescriptionBase(const std::string& t,
+                                                   const std::string& s,
+                                                   const std::string& n,
+                                                   const unsigned short as,
+                                                   const size_t l)
+      : type(t), symbolic_form(s), name(n), arraySize(as), lineNumber(l) {
+    tfel::raise_if(this->arraySize==0,
+		   "VariableDescriptionBase::VariableDescriptionBase: "
+		   "invalid array size");
+  }  // end of VariableDescriptionBase::VariableDescriptionBase
 
   VariableDescriptionBase::VariableDescriptionBase(const VariableDescriptionBase&) = default;
   VariableDescriptionBase::VariableDescriptionBase(VariableDescriptionBase&&) = default;
@@ -45,5 +52,12 @@ namespace mfront{
   VariableDescriptionBase::operator=(const VariableDescriptionBase&) = default;
   
   VariableDescriptionBase::~VariableDescriptionBase() = default;
+
+  const std::string& displayName(const VariableDescriptionBase& v){
+    if (!v.symbolic_form.empty()) {
+      return v.symbolic_form;
+    }
+    return v.name;
+  } // end of displayName
 
 } // end of namespace mfront

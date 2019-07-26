@@ -38,7 +38,9 @@ namespace mfront {
     this->mb.areDynamicallyAllocatedVectorsAllowed(false);
     // parameters
     this->reserveName("epsilon");
+    this->reserveName("\u03B5");
     this->reserveName("theta");
+    this->reserveName("\u03B8");
     this->reserveName("iterMax");
     this->reserveName("numerical_jacobian_epsilon");
     this->reserveName("maximum_increment_value_per_iteration");
@@ -63,38 +65,67 @@ namespace mfront {
     this->mb.registerMemberName(uh, "additionalConvergenceChecks");
     this->reserveName("TinyMatrixSolve");
     // CallBacks
-    this->registerNewCallBack("@UsableInPurelyImplicitResolution",
-                              &ImplicitDSLBase::treatUsableInPurelyImplicitResolution);
-    this->registerNewCallBack("@MaterialLaw", &ImplicitDSLBase::treatMaterialLaw);
-    this->registerNewCallBack("@ComputeStress", &ImplicitDSLBase::treatComputeStress);
-    this->registerNewCallBack("@ComputeFinalStress", &ImplicitDSLBase::treatComputeFinalStress);
+    this->registerNewCallBack(
+        "@UsableInPurelyImplicitResolution",
+        &ImplicitDSLBase::treatUsableInPurelyImplicitResolution);
+    this->registerNewCallBack("@MaterialLaw",
+                              &ImplicitDSLBase::treatMaterialLaw);
+    this->registerNewCallBack("@ComputeStress",
+                              &ImplicitDSLBase::treatComputeStress);
+    this->registerNewCallBack("@ComputeFinalStress",
+                              &ImplicitDSLBase::treatComputeFinalStress);
     this->registerNewCallBack("@Predictor", &ImplicitDSLBase::treatPredictor);
     this->registerNewCallBack("@Theta", &ImplicitDSLBase::treatTheta);
     this->registerNewCallBack("@Epsilon", &ImplicitDSLBase::treatEpsilon);
-    this->registerNewCallBack("@AdditionalConvergenceChecks", &ImplicitDSLBase::treatAdditionalConvergenceChecks);
-    this->registerNewCallBack("@PerturbationValueForNumericalJacobianComputation",
-                              &ImplicitDSLBase::treatPerturbationValueForNumericalJacobianComputation);
+    this->registerNewCallBack(
+        "@AdditionalConvergenceChecks",
+        &ImplicitDSLBase::treatAdditionalConvergenceChecks);
+    this->registerNewCallBack(
+        "@PerturbationValueForNumericalJacobianComputation",
+        &ImplicitDSLBase::
+            treatPerturbationValueForNumericalJacobianComputation);
     this->registerNewCallBack("@IterMax", &ImplicitDSLBase::treatIterMax);
-    this->registerNewCallBack("@MaximumNumberOfIterations", &ImplicitDSLBase::treatIterMax);
+    this->registerNewCallBack("@MaximumNumberOfIterations",
+                              &ImplicitDSLBase::treatIterMax);
     this->registerNewCallBack("@Algorithm", &ImplicitDSLBase::treatAlgorithm);
-    this->registerNewCallBack("@TangentOperator", &ImplicitDSLBase::treatTangentOperator);
-    this->registerNewCallBack("@IsTangentOperatorSymmetric", &ImplicitDSLBase::treatIsTangentOperatorSymmetric);
-    this->registerNewCallBack("@InitJacobian", &ImplicitDSLBase::treatInitJacobian);
-    this->registerNewCallBack("@InitializeJacobian", &ImplicitDSLBase::treatInitJacobian);
-    this->registerNewCallBack("@InitJacobianInvert", &ImplicitDSLBase::treatInitJacobianInvert);
-    this->registerNewCallBack("@InitializeJacobianInvert", &ImplicitDSLBase::treatInitJacobianInvert);
-    this->registerNewCallBack("@CompareToNumericalJacobian", &ImplicitDSLBase::treatCompareToNumericalJacobian);
-    this->registerNewCallBack("@JacobianComparisonCriterion", &ImplicitDSLBase::treatJacobianComparisonCriterion);
-    this->registerNewCallBack("@JacobianComparisonCriterium", &ImplicitDSLBase::treatJacobianComparisonCriterion);
-    this->registerNewCallBack("@RequireStiffnessTensor", &ImplicitDSLBase::treatRequireStiffnessOperator);
-    this->registerNewCallBack("@MaximumIncrementValuePerIteration",
-                              &ImplicitDSLBase::treatMaximumIncrementValuePerIteration);
-    this->registerNewCallBack("@IntegrationVariable", &ImplicitDSLBase::treatIntegrationVariable);
-    this->registerNewCallBack("@ComputeStiffnessTensor", &ImplicitDSLBase::treatComputeStiffnessTensor);
-    this->registerNewCallBack("@ComputeStiffnessTensor", &ImplicitDSLBase::treatComputeStiffnessTensor);
-    this->registerNewCallBack("@ElasticMaterialProperties", &ImplicitDSLBase::treatElasticMaterialProperties);
-    this->registerNewCallBack("@NumericallyComputedJacobianBlocks",
-                              &ImplicitDSLBase::treatNumericallyComputedJacobianBlocks);
+    this->registerNewCallBack("@TangentOperator",
+                              &ImplicitDSLBase::treatTangentOperator);
+    this->registerNewCallBack(
+        "@IsTangentOperatorSymmetric",
+        &ImplicitDSLBase::treatIsTangentOperatorSymmetric);
+    this->registerNewCallBack("@InitJacobian",
+                              &ImplicitDSLBase::treatInitJacobian);
+    this->registerNewCallBack("@InitializeJacobian",
+                              &ImplicitDSLBase::treatInitJacobian);
+    this->registerNewCallBack("@InitJacobianInvert",
+                              &ImplicitDSLBase::treatInitJacobianInvert);
+    this->registerNewCallBack("@InitializeJacobianInvert",
+                              &ImplicitDSLBase::treatInitJacobianInvert);
+    this->registerNewCallBack(
+        "@CompareToNumericalJacobian",
+        &ImplicitDSLBase::treatCompareToNumericalJacobian);
+    this->registerNewCallBack(
+        "@JacobianComparisonCriterion",
+        &ImplicitDSLBase::treatJacobianComparisonCriterion);
+    this->registerNewCallBack(
+        "@JacobianComparisonCriterium",
+        &ImplicitDSLBase::treatJacobianComparisonCriterion);
+    this->registerNewCallBack("@RequireStiffnessTensor",
+                              &ImplicitDSLBase::treatRequireStiffnessOperator);
+    this->registerNewCallBack(
+        "@MaximumIncrementValuePerIteration",
+        &ImplicitDSLBase::treatMaximumIncrementValuePerIteration);
+    this->registerNewCallBack("@IntegrationVariable",
+                              &ImplicitDSLBase::treatIntegrationVariable);
+    this->registerNewCallBack("@ComputeStiffnessTensor",
+                              &ImplicitDSLBase::treatComputeStiffnessTensor);
+    this->registerNewCallBack("@ComputeStiffnessTensor",
+                              &ImplicitDSLBase::treatComputeStiffnessTensor);
+    this->registerNewCallBack("@ElasticMaterialProperties",
+                              &ImplicitDSLBase::treatElasticMaterialProperties);
+    this->registerNewCallBack(
+        "@NumericallyComputedJacobianBlocks",
+        &ImplicitDSLBase::treatNumericallyComputedJacobianBlocks);
     this->registerNewCallBack("@HillTensor", &ImplicitDSLBase::treatHillTensor);
     this->disableCallBack("@ComputedVar");
     this->disableCallBack("@UseQt");
@@ -113,7 +144,8 @@ namespace mfront {
     const auto& key = this->current->value;
     ++(this->current);
     if (this->solver != nullptr) {
-      const auto r = this->solver->treatSpecificKeywords(this->mb, key, this->current, this->tokens.end());
+      const auto r = this->solver->treatSpecificKeywords(
+          this->mb, key, this->current, this->tokens.end());
       if (r.first) {
         this->current = r.second;
         return;
@@ -125,7 +157,8 @@ namespace mfront {
   void ImplicitDSLBase::treatStateVariable() {
     VariableDescriptionContainer v;
     auto hs = std::set<Hypothesis>{};
-    this->readVariableList(v, hs, &BehaviourDescription::addStateVariables, true);
+    this->readVariableList(v, hs, &BehaviourDescription::addStateVariables,
+                           true);
     for (const auto h : hs) {
       for (const auto& iv : v) {
         this->mb.reserveName(h, "f" + iv.name);
@@ -136,7 +169,8 @@ namespace mfront {
   void ImplicitDSLBase::treatIntegrationVariable() {
     VariableDescriptionContainer v;
     auto hs = std::set<Hypothesis>{};
-    this->readVariableList(v, hs, &BehaviourDescription::addIntegrationVariables, true);
+    this->readVariableList(
+        v, hs, &BehaviourDescription::addIntegrationVariables, true);
     for (const auto h : hs) {
       for (const auto& iv : v) {
         this->mb.reserveName(h, "f" + iv.name);
@@ -146,43 +180,51 @@ namespace mfront {
 
   void ImplicitDSLBase::treatInitJacobian() {
     if (this->solver == nullptr) {
-      this->throwRuntimeError("ImplicitDSLBase::treatInitJacobian",
-                              "undefined algorithm. Please use the '@Algorithm' "
-                              "keyword to define one.");
+      this->throwRuntimeError(
+          "ImplicitDSLBase::treatInitJacobian",
+          "undefined algorithm. Please use the '@Algorithm' "
+          "keyword to define one.");
     }
     if (!this->solver->allowsJacobianInitialisation()) {
       this->throwRuntimeError("ImplicitDSLBase::treatInitJacobian",
                               "@InitJacobian can not be used with "
                               "the current algorithm.");
     }
-    this->readCodeBlock(*this, BehaviourData::InitializeJacobian, &ImplicitDSLBase::standardModifier, true, true);
+    this->readCodeBlock(*this, BehaviourData::InitializeJacobian,
+                        &ImplicitDSLBase::standardModifier, true, true);
   }  // end of ImplicitDSLBase::treatInitJacobian
 
   void ImplicitDSLBase::treatInitJacobianInvert() {
     if (this->solver == nullptr) {
-      this->throwRuntimeError("ImplicitDSLBase::treatInitJacobianInvert",
-                              "undefined algorithm. Please use the '@Algorithm' "
-                              "keyword to define one.");
+      this->throwRuntimeError(
+          "ImplicitDSLBase::treatInitJacobianInvert",
+          "undefined algorithm. Please use the '@Algorithm' "
+          "keyword to define one.");
     }
     if (!this->solver->allowsJacobianInvertInitialisation()) {
       this->throwRuntimeError("ImplicitDSLBase::treatInitJacobianInvert",
                               "@InitJacobianInvert can not be used with "
                               "the current algorithm.");
     }
-    this->readCodeBlock(*this, BehaviourData::InitializeJacobianInvert, &ImplicitDSLBase::standardModifier, true, true);
+    this->readCodeBlock(*this, BehaviourData::InitializeJacobianInvert,
+                        &ImplicitDSLBase::standardModifier, true, true);
   }  // end of ImplicitDSLBase::treatInitJacobianInvert
 
-  void ImplicitDSLBase::treatUnknownVariableMethod(const Hypothesis h, const std::string& n) {
+  void ImplicitDSLBase::treatUnknownVariableMethod(const Hypothesis h,
+                                                   const std::string& n) {
     if ((this->mb.isIntegrationVariableName(h, n)) ||
-        ((n[0] == 'f') && (this->mb.isIntegrationVariableName(h, n.substr(1))))) {
+        ((n[0] == 'f') &&
+         (this->mb.isIntegrationVariableName(h, n.substr(1))))) {
       if (this->current->value == "setNormalisationFactor") {
         auto var = std::string{};
         ++(this->current);
         this->checkNotEndOfFile("ImplicitDSLBase::treatUnknowVariableMethod");
-        this->readSpecifiedToken("ImplicitDSLBase::treatUnknowVariableMethod", "(");
+        this->readSpecifiedToken("ImplicitDSLBase::treatUnknowVariableMethod",
+                                 "(");
         this->checkNotEndOfFile("ImplicitDSLBase::treatUnknowVariableMethod");
         var = this->current->value;
-        if ((this->mb.isMaterialPropertyName(h, var)) || (this->mb.isLocalVariableName(h, var))) {
+        if ((this->mb.isMaterialPropertyName(h, var)) ||
+            (this->mb.isLocalVariableName(h, var))) {
           var = "this->" + var;
         } else {
           // var shall be a number
@@ -190,8 +232,9 @@ namespace mfront {
           std::istringstream flux(var);
           flux >> value;
           if (flux.fail()) {
-            this->throwRuntimeError("ImplicitDSLBase::treatUnknowVariableMethod",
-                                    "Failed to read normalisation factor.");
+            this->throwRuntimeError(
+                "ImplicitDSLBase::treatUnknowVariableMethod",
+                "Failed to read normalisation factor.");
           }
           if (value <= 0.) {
             this->throwRuntimeError(
@@ -200,13 +243,16 @@ namespace mfront {
           }
         }
         ++(this->current);
-        this->readSpecifiedToken("ImplicitDSLBase::treatUnknowVariableMethod", ")");
+        this->readSpecifiedToken("ImplicitDSLBase::treatUnknowVariableMethod",
+                                 ")");
         this->mb.setAttribute(h, n + "_normalisation_factor", var);
         return;
-      } else if (this->current->value == "setMaximumIncrementValuePerIteration") {
+      } else if (this->current->value ==
+                 "setMaximumIncrementValuePerIteration") {
         ++(this->current);
         this->checkNotEndOfFile("ImplicitDSLBase::treatUnknowVariableMethod");
-        this->readSpecifiedToken("ImplicitDSLBase::treatUnknowVariableMethod", "(");
+        this->readSpecifiedToken("ImplicitDSLBase::treatUnknowVariableMethod",
+                                 "(");
         this->checkNotEndOfFile("ImplicitDSLBase::treatUnknowVariableMethod");
         const auto var = this->current->value;
         double value;
@@ -219,12 +265,14 @@ namespace mfront {
                   var + "'.");
         }
         if (value <= 0.) {
-          this->throwRuntimeError("ImplicitDSLBase::treatUnknowVariableMethod",
-                                  "invalid maximum increment value per iteration.");
+          this->throwRuntimeError(
+              "ImplicitDSLBase::treatUnknowVariableMethod",
+              "invalid maximum increment value per iteration.");
         }
         ++(this->current);
         this->checkNotEndOfFile("ImplicitDSLBase::treatUnknowVariableMethod");
-        this->readSpecifiedToken("ImplicitDSLBase::treatUnknowVariableMethod", ")");
+        this->readSpecifiedToken("ImplicitDSLBase::treatUnknowVariableMethod",
+                                 ")");
         VariableDescription miv(
             "real", n + "_maximum_increment_value_per_iteration", 1u, 0u);
         miv.description =
@@ -238,11 +286,11 @@ namespace mfront {
     BehaviourDSLCommon::treatUnknownVariableMethod(h, n);
   }  // end of ImplicitDSLBase::treatUnknowVariableMethod
 
-  bool ImplicitDSLBase::isCallableVariable(const Hypothesis h, const std::string& n) const
-
-  {
+  bool ImplicitDSLBase::isCallableVariable(const Hypothesis h,
+                                           const std::string& n) const {
     if (n.empty()) {
-      this->throwRuntimeError("ImplicitDSLBase::isCallableVariable", "empty variable name '" + n + "'");
+      this->throwRuntimeError("ImplicitDSLBase::isCallableVariable",
+                              "empty variable name '" + n + "'");
     }
     if ((n[0] == 'f') && (this->mb.isIntegrationVariableName(h, n.substr(1)))) {
       return true;
@@ -252,44 +300,59 @@ namespace mfront {
 
   void ImplicitDSLBase::treatCompareToNumericalJacobian() {
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-    this->checkNotEndOfFile("ImplicitDSLBase::treatCompareToNumericalJacobian : ", "Expected 'true' or 'false'.");
+    this->checkNotEndOfFile(
+        "ImplicitDSLBase::treatCompareToNumericalJacobian : ",
+        "Expected 'true' or 'false'.");
     if (this->current->value == "true") {
       this->mb.setAttribute(h, BehaviourData::compareToNumericalJacobian, true);
     } else if (this->current->value == "false") {
-      this->mb.setAttribute(h, BehaviourData::compareToNumericalJacobian, false);
+      this->mb.setAttribute(h, BehaviourData::compareToNumericalJacobian,
+                            false);
     } else {
-      this->throwRuntimeError("ImplicitDSLBase::treatCompareToNumericalJacobian",
-                              "Expected to read 'true' or 'false' instead of '" + this->current->value + ".");
+      this->throwRuntimeError(
+          "ImplicitDSLBase::treatCompareToNumericalJacobian",
+          "Expected to read 'true' or 'false' instead of '" +
+              this->current->value + ".");
     }
     ++(this->current);
-    this->readSpecifiedToken("ImplicitDSLBase::treatCompareToNumericalJacobian", ";");
+    this->readSpecifiedToken("ImplicitDSLBase::treatCompareToNumericalJacobian",
+                             ";");
   }  // end of ImplicitDSLBase::treatCompareToNumericalJacobian
 
   void ImplicitDSLBase::treatJacobianComparisonCriterion() {
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-    if (!this->mb.getAttribute(h, BehaviourData::compareToNumericalJacobian, false)) {
-      this->throwRuntimeError("ImplicitDSLBase::treatJacobianComparisonCriterion",
-                              "must call '@CompareToNumericalJacobian' first");
+    if (!this->mb.getAttribute(h, BehaviourData::compareToNumericalJacobian,
+                               false)) {
+      this->throwRuntimeError(
+          "ImplicitDSLBase::treatJacobianComparisonCriterion",
+          "must call '@CompareToNumericalJacobian' first");
     }
     this->checkNotEndOfFile("ImplicitDSLBase::treatJacobianComparisonCriterion",
                             "Cannot read jacobianComparisonCriterion value.");
     double jacobianComparisonCriterion = this->readDouble();
     if (jacobianComparisonCriterion < 0) {
-      this->throwRuntimeError("ImplicitDSLBase::treatJacobianComparisonCriterion",
-                              "JacobianComparisonCriterion value must be positive.");
+      this->throwRuntimeError(
+          "ImplicitDSLBase::treatJacobianComparisonCriterion",
+          "JacobianComparisonCriterion value must be positive.");
     }
-    this->readSpecifiedToken("ImplicitDSLBase::treatJacobianComparisonCriterion", ";");
-    this->mb.addParameter(h, VariableDescription("real", "jacobianComparisonCriterion", 1u, 0u),
-                          BehaviourData::ALREADYREGISTRED);
-    this->mb.setParameterDefaultValue(h, "jacobianComparisonCriterion", jacobianComparisonCriterion);
+    this->readSpecifiedToken(
+        "ImplicitDSLBase::treatJacobianComparisonCriterion", ";");
+    this->mb.addParameter(
+        h, VariableDescription("real", "jacobianComparisonCriterion", 1u, 0u),
+        BehaviourData::ALREADYREGISTRED);
+    this->mb.setParameterDefaultValue(h, "jacobianComparisonCriterion",
+                                      jacobianComparisonCriterion);
   }  // ImplicitDSLBase::treatJacobianComparisonCriterion
 
   void ImplicitDSLBase::treatAlgorithm() {
-    const auto& f = NonLinearSystemSolverFactory::getNonLinearSystemSolverFactory();
+    const auto& f =
+        NonLinearSystemSolverFactory::getNonLinearSystemSolverFactory();
     if (this->solver != nullptr) {
-      this->throwRuntimeError("ImplicitDSLBase::treatAlgorithm", "an algorithm has already been defined.");
+      this->throwRuntimeError("ImplicitDSLBase::treatAlgorithm",
+                              "an algorithm has already been defined.");
     }
-    this->checkNotEndOfFile("ImplicitDSLBase::treatAlgorithm", "Cannot read algorithm name.");
+    this->checkNotEndOfFile("ImplicitDSLBase::treatAlgorithm",
+                            "Cannot read algorithm name.");
     const auto& s = this->current->value;
     ++this->current;
     this->readSpecifiedToken("ImplicitDSLBase::treatAlgorithm", ";");
@@ -302,13 +365,16 @@ namespace mfront {
 
   void ImplicitDSLBase::treatTheta() {
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-    this->checkNotEndOfFile("ImplicitDSLBase::treatTheta", "Cannot read theta value.");
+    this->checkNotEndOfFile("ImplicitDSLBase::treatTheta",
+                            "Cannot read theta value.");
     const auto theta = this->readDouble();
     if ((theta < 0.) || (theta > 1.)) {
-      this->throwRuntimeError("ImplicitDSLBase::treatTheta", "Theta value must be positive and smaller than 1.");
+      this->throwRuntimeError(
+          "ImplicitDSLBase::treatTheta",
+          "Theta value must be positive and smaller than 1.");
     }
     this->readSpecifiedToken("ImplicitDSLBase::treatTheta", ";");
-    VariableDescription tv("real", "theta", 1u, 0u);
+    VariableDescription tv("real", "\u03B8", "theta", 1u, 0u);
     tv.description = "theta value used by the implicit scheme";
     this->mb.addParameter(h, tv, BehaviourData::ALREADYREGISTRED);
     this->mb.setParameterDefaultValue(h, "theta", theta);
@@ -317,60 +383,76 @@ namespace mfront {
 
   void ImplicitDSLBase::treatEpsilon() {
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-    this->checkNotEndOfFile("ImplicitDSLBase::treatEpsilon", "Cannot read epsilon value.");
+    this->checkNotEndOfFile("ImplicitDSLBase::treatEpsilon",
+                            "Cannot read epsilon value.");
     const auto epsilon = this->readDouble();
     if (epsilon < 0) {
-      this->throwRuntimeError("ImplicitDSLBase::treatEpsilon", "Epsilon value must be positive.");
+      this->throwRuntimeError("ImplicitDSLBase::treatEpsilon",
+                              "Epsilon value must be positive.");
     }
     this->readSpecifiedToken("ImplicitDSLBase::treatEpsilon", ";");
-    VariableDescription e("real", "epsilon", 1u, 0u);
-    e.description = "value used to stop the iteration of the implicit algorithm";
+    VariableDescription e("real", "\u03B5", "epsilon", 1u, 0u);
+    e.description =
+        "value used to stop the iteration of the implicit algorithm";
     this->mb.addParameter(h, e, BehaviourData::ALREADYREGISTRED);
     this->mb.setParameterDefaultValue(h, "epsilon", epsilon);
     this->mb.setEntryName(h, "epsilon", "epsilon");
   }  // ImplicitDSLBase::treatEpsilon
 
   void ImplicitDSLBase::treatAdditionalConvergenceChecks() {
-    this->readCodeBlock(*this, BehaviourData::AdditionalConvergenceChecks, &ImplicitDSLBase::standardModifier, true,
-                        true);
+    this->readCodeBlock(*this, BehaviourData::AdditionalConvergenceChecks,
+                        &ImplicitDSLBase::standardModifier, true, true);
   }  // end of ImplicitDSLBase::treatAdditionalConvergenceChecks()
 
-  void ImplicitDSLBase::treatPerturbationValueForNumericalJacobianComputation() {
+  void
+  ImplicitDSLBase::treatPerturbationValueForNumericalJacobianComputation() {
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-    this->checkNotEndOfFile("ImplicitDSLBase::treatPerturbationValueForNumericalJacobianComputation",
-                            "Cannot read epsilon value.");
+    this->checkNotEndOfFile(
+        "ImplicitDSLBase::"
+        "treatPerturbationValueForNumericalJacobianComputation",
+        "Cannot read epsilon value.");
     const auto epsilon = this->readDouble();
     if (epsilon < 0) {
-      this->throwRuntimeError("ImplicitDSLBase::treatPerturbationValueForNumericalJacobianComputation",
-                              "Epsilon value must be positive.");
+      this->throwRuntimeError(
+          "ImplicitDSLBase::"
+          "treatPerturbationValueForNumericalJacobianComputation",
+          "Epsilon value must be positive.");
     }
-    this->readSpecifiedToken("ImplicitDSLBase::treatPerturbationValueForNumericalJacobianComputation", ";");
+    this->readSpecifiedToken(
+        "ImplicitDSLBase::"
+        "treatPerturbationValueForNumericalJacobianComputation",
+        ";");
     VariableDescription e("real", "numerical_jacobian_epsilon", 1u, 0u);
-    e.description = "perturbation value used to compute a finite difference approximation of the jacobian";
+    e.description =
+        "perturbation value used to compute a finite difference approximation "
+        "of the jacobian";
     this->mb.addParameter(h, e, BehaviourData::ALREADYREGISTRED);
     this->mb.setParameterDefaultValue(h, "numerical_jacobian_epsilon", epsilon);
   }  // ImplicitDSLBase::treatEpsilon
 
   void ImplicitDSLBase::treatIterMax() {
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-    const auto iterMax = this->readUnsignedShort("ImplicitDSLBase::treatIterMax");
+    const auto iterMax =
+        this->readUnsignedShort("ImplicitDSLBase::treatIterMax");
     if (iterMax == 0) {
-      this->throwRuntimeError("ImplicitDSLBase::treatIterMax", "invalid value for parameter 'iterMax'");
+      this->throwRuntimeError("ImplicitDSLBase::treatIterMax",
+                              "invalid value for parameter 'iterMax'");
     }
     this->readSpecifiedToken("ImplicitDSLBase::treatIterMax", ";");
-    this->mb.addParameter(h, VariableDescription("ushort", "iterMax", 1u, 0u), BehaviourData::ALREADYREGISTRED);
+    this->mb.addParameter(h, VariableDescription("ushort", "iterMax", 1u, 0u),
+                          BehaviourData::ALREADYREGISTRED);
     this->mb.setParameterDefaultValue(h, "iterMax", iterMax);
   }  // end of ImplicitDSLBase::treatIterMax
 
-  std::string ImplicitDSLBase::tangentOperatorVariableModifier(const Hypothesis h,
-                                                               const std::string& var,
-                                                               const bool addThisPtr) {
+  std::string ImplicitDSLBase::tangentOperatorVariableModifier(
+      const Hypothesis h, const std::string& var, const bool addThisPtr) {
     const auto& d = this->mb.getBehaviourData(h);
     if (d.isIntegrationVariableIncrementName(var)) {
       const auto v = var.substr(1);
       if (this->mb.hasAttribute(h, v + "_normalisation_factor")) {
         const auto& s = d.getStateVariableDescription(v);
-        const auto& nf = this->mb.getAttribute<std::string>(h, v + "_normalisation_factor");
+        const auto& nf =
+            this->mb.getAttribute<std::string>(h, v + "_normalisation_factor");
         if (s.arraySize == 1u) {
           if (addThisPtr) {
             return "((" + nf + ")*(this->" + var + "))";
@@ -393,14 +475,14 @@ namespace mfront {
     }
   }  // end of ImplicitDSLBase::tangentOperatorVariableModifier
 
-  std::string ImplicitDSLBase::integratorVariableModifier(const Hypothesis h,
-                                                          const std::string& var,
-                                                          const bool addThisPtr) {
+  std::string ImplicitDSLBase::integratorVariableModifier(
+      const Hypothesis h, const std::string& var, const bool addThisPtr) {
     const auto& d = this->mb.getBehaviourData(h);
     if (d.isIntegrationVariableIncrementName(var)) {
       if (this->mb.hasAttribute(h, var.substr(1) + "_normalisation_factor")) {
         const auto& s = d.getStateVariableDescription(var.substr(1));
-        const auto& nf = this->mb.getAttribute<std::string>(h, var.substr(1) + "_normalisation_factor");
+        const auto& nf = this->mb.getAttribute<std::string>(
+            h, var.substr(1) + "_normalisation_factor");
         if (s.arraySize == 1u) {
           if (addThisPtr) {
             return "((" + nf + ")*(this->" + var + "))";
@@ -423,9 +505,8 @@ namespace mfront {
     }
   }  // end of ImplicitDSLBase::integratorVariableModifier
 
-  std::string ImplicitDSLBase::computeStressVariableModifier1(const Hypothesis h,
-                                                              const std::string& var,
-                                                              const bool addThisPtr) {
+  std::string ImplicitDSLBase::computeStressVariableModifier1(
+      const Hypothesis h, const std::string& var, const bool addThisPtr) {
     const auto& d = this->mb.getBehaviourData(h);
     if (this->mb.isGradientName(var) || (d.isExternalStateVariableName(var))) {
       if (addThisPtr) {
@@ -436,9 +517,11 @@ namespace mfront {
     }
     if (d.isIntegrationVariableName(var)) {
       if (this->mb.hasAttribute(h, var + "_normalisation_factor")) {
-        const auto& nf = this->mb.getAttribute<std::string>(h, var + "_normalisation_factor");
+        const auto& nf = this->mb.getAttribute<std::string>(
+            h, var + "_normalisation_factor");
         if (addThisPtr) {
-          return "(this->" + var + "+(this->theta)*((" + nf + ")*(this->d" + var + ")))";
+          return "(this->" + var + "+(this->theta)*((" + nf + ")*(this->d" +
+                 var + ")))";
         } else {
           return "(" + var + "+(" + nf + ")*(this->theta)*d" + var + ")";
         }
@@ -451,7 +534,9 @@ namespace mfront {
       }
     }
     if ((d.isExternalStateVariableIncrementName(var)) || (var == "dT")) {
-      this->mb.declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution(h, var.substr(1));
+      this->mb
+          .declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution(
+              h, var.substr(1));
     }
     if (addThisPtr) {
       return "this->" + var;
@@ -459,11 +544,11 @@ namespace mfront {
     return var;
   }  // end of ImplicitDSLBase::computeStressVariableModifier1
 
-  std::string ImplicitDSLBase::computeStressVariableModifier2(const Hypothesis h,
-                                                              const std::string& var,
-                                                              const bool addThisPtr) {
+  std::string ImplicitDSLBase::computeStressVariableModifier2(
+      const Hypothesis h, const std::string& var, const bool addThisPtr) {
     const auto& d = this->mb.getBehaviourData(h);
-    if ((this->mb.isGradientName(var)) || (d.isExternalStateVariableName(var))) {
+    if ((this->mb.isGradientName(var)) ||
+        (d.isExternalStateVariableName(var))) {
       if (addThisPtr) {
         return "(this->" + var + "+this->d" + var + ")";
       } else {
@@ -471,7 +556,9 @@ namespace mfront {
       }
     }
     if ((d.isExternalStateVariableIncrementName(var)) || (var == "dT")) {
-      this->mb.declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution(h, var.substr(1));
+      this->mb
+          .declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution(
+              h, var.substr(1));
     }
     if (addThisPtr) {
       return "this->" + var;
@@ -479,48 +566,48 @@ namespace mfront {
     return var;
   }  // end of ImplicitDSLBase::computeStressVariableModifier2
 
-  bool ImplicitDSLBase::isJacobianPart(const Hypothesis h, const std::string& w) {
-    const auto& d = this->mb.getBehaviourData(h);
-    TokensContainer::const_iterator previous;
-    VariableDescriptionContainer::const_iterator p;
-    VariableDescriptionContainer::const_iterator p2;
-    for (p = d.getIntegrationVariables().begin(); p != d.getIntegrationVariables().end(); ++p) {
-      for (p2 = d.getIntegrationVariables().begin(); p2 != d.getIntegrationVariables().end(); ++p2) {
-        if (w == "df" + p->name + "_dd" + p2->name) {
-          previous = this->current;
-          if (previous == this->begin()) {
+  void ImplicitDSLBase::integratorAnalyser(const Hypothesis h,
+                                           const std::string& w) {
+    const auto is_jacobian_part = [this, h, &w] {
+      const auto& d = this->mb.getBehaviourData(h);
+      for (const auto& v1 : d.getIntegrationVariables()) {
+        for (const auto& v2 : d.getIntegrationVariables()) {
+          // symbolic names are not treated here, because they were already
+          // treated previously
+          if (w == "df" + v1.name + "_dd" + v2.name) {
+            auto previous = this->current;
+            if (previous == this->begin()) {
+              return true;
+            }
+            --previous;
+            if (previous->value == ".") {
+              return false;
+            } else if (previous->value == "->") {
+              if (previous == this->begin()) {
+                return false;
+              }
+              --previous;
+              return previous->value == "this";
+            } else if (previous->value == "::") {
+              if (previous == this->begin()) {
+                return false;
+              }
+              --previous;
+              return previous->value == this->mb.getClassName();
+            }
             return true;
           }
-          --previous;
-          if (previous->value == ".") {
-            return false;
-          } else if (previous->value == "->") {
-            if (previous == this->begin()) {
-              return false;
-            }
-            --previous;
-            return previous->value == "this";
-          } else if (previous->value == "::") {
-            if (previous == this->begin()) {
-              return false;
-            }
-            --previous;
-            return previous->value == this->mb.getClassName();
-          }
-          return true;
         }
       }
-    }
-    return false;
-  }  // end of ImplicitDSLBase::isJacobianPart
-
-  void ImplicitDSLBase::integratorAnalyser(const Hypothesis h, const std::string& w) {
-    if (this->isJacobianPart(h, w)) {
+      return false;
+    }();
+    if (is_jacobian_part) {
       this->jacobianPartsUsedInIntegrator.insert(w);
     }
   }  // end of ImplicitDSLBase::integratorAnalyser
 
-  void ImplicitDSLBase::predictorAnalyser(const Hypothesis h, const std::string& w) {
+  void ImplicitDSLBase::predictorAnalyser(const Hypothesis h,
+                                          const std::string& w) {
     const auto& d = this->mb.getBehaviourData(h);
     if (d.isIntegrationVariableIncrementName(w)) {
       this->integrationVariablesIncrementsUsedInPredictor.insert(w);
@@ -528,12 +615,14 @@ namespace mfront {
   }  // end of ImplicitDSLBase::predictorAnalyser
 
   void ImplicitDSLBase::treatIntegrator() {
-    this->readCodeBlock(*this, BehaviourData::Integrator, &ImplicitDSLBase::integratorVariableModifier,
+    this->readCodeBlock(*this, BehaviourData::Integrator,
+                        &ImplicitDSLBase::integratorVariableModifier,
                         &ImplicitDSLBase::integratorAnalyser, true);
   }  // end of ImplicitDSLBase::treatIntegrator
 
   void ImplicitDSLBase::treatPredictor() {
-    this->readCodeBlock(*this, BehaviourData::ComputePredictor, &ImplicitDSLBase::standardModifier,
+    this->readCodeBlock(*this, BehaviourData::ComputePredictor,
+                        &ImplicitDSLBase::standardModifier,
                         &ImplicitDSLBase::predictorAnalyser, true);
   }  // end of ImplicitDSLBase::treatPredictor
 
@@ -548,32 +637,44 @@ namespace mfront {
      * the user does not provide an alternative through the
      * @ComputeFinalStress
      */
-    this->readCodeBlock(*this, BehaviourData::ComputeStress, BehaviourData::ComputeFinalStressCandidate,
+    this->readCodeBlock(*this, BehaviourData::ComputeStress,
+                        BehaviourData::ComputeFinalStressCandidate,
                         &ImplicitDSLBase::computeStressVariableModifier1,
-                        &ImplicitDSLBase::computeStressVariableModifier2, true, true);
+                        &ImplicitDSLBase::computeStressVariableModifier2, true,
+                        true);
   }  // end of ImplicitDSLBase::treatComputeStress
 
   void ImplicitDSLBase::treatComputeFinalStress() {
-    this->readCodeBlock(*this, BehaviourData::ComputeFinalStress, &ImplicitDSLBase::computeStressVariableModifier2,
-                        true, true);
+    this->readCodeBlock(*this, BehaviourData::ComputeFinalStress,
+                        &ImplicitDSLBase::computeStressVariableModifier2, true,
+                        true);
   }  // end of ImplicitDSLBase::treatComputeFinalStress
 
   void ImplicitDSLBase::treatMaximumIncrementValuePerIteration() {
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-    this->checkNotEndOfFile("ImplicitDSLBase::treatMaximumIncrementValuePerIteration", "Cannot read value value.");
+    this->checkNotEndOfFile(
+        "ImplicitDSLBase::treatMaximumIncrementValuePerIteration",
+        "Cannot read value value.");
     const auto value = tfel::utilities::convert<double>(current->value);
     ++(this->current);
     if (value <= 0) {
-      this->throwRuntimeError("ImplicitDSLBase::treatMaximumIncrementValuePerIteration", "Value must be positive.");
+      this->throwRuntimeError(
+          "ImplicitDSLBase::treatMaximumIncrementValuePerIteration",
+          "Value must be positive.");
     }
-    this->readSpecifiedToken("ImplicitDSLBase::MaximumIncrementValuePerIteration", ";");
-    this->mb.addParameter(h, VariableDescription("real", "maximum_increment_value_per_iteration", 1u, 0u),
-                          BehaviourData::ALREADYREGISTRED);
-    this->mb.setParameterDefaultValue(h, "maximum_increment_value_per_iteration", value);
+    this->readSpecifiedToken(
+        "ImplicitDSLBase::MaximumIncrementValuePerIteration", ";");
+    this->mb.addParameter(
+        h, VariableDescription("real", "maximum_increment_value_per_iteration",
+                               1u, 0u),
+        BehaviourData::ALREADYREGISTRED);
+    this->mb.setParameterDefaultValue(
+        h, "maximum_increment_value_per_iteration", value);
   }  // end of ImplicitDSLBase::treatMaximumIncrementValuePerIteration
 
   void ImplicitDSLBase::treatNumericallyComputedJacobianBlocks() {
-    const std::string m = "ImplicitDSLBase::treatNumericallyComputedJacobianBlocks";
+    const std::string m =
+        "ImplicitDSLBase::treatNumericallyComputedJacobianBlocks";
     auto throw_if = [this, m](const bool b, const std::string& msg) {
       if (b) {
         this->throwRuntimeError(m, msg);
@@ -585,7 +686,8 @@ namespace mfront {
       throw_if(as.empty(), "no block defined");
       const auto jbs = [&as] {
         auto r = std::vector<std::string>(as.size());
-        std::transform(as.begin(), as.end(), r.begin(), [](const tfel::utilities::Token& t) { return t.value; });
+        std::transform(as.begin(), as.end(), r.begin(),
+                       [](const tfel::utilities::Token& t) { return t.value; });
         return r;
       }();
       std::for_each(jbs.begin(), jbs.end(), [throw_if](const std::string& jb) {
@@ -604,135 +706,189 @@ namespace mfront {
         throw_if(d.empty(), "invalid jacobian block '" + jb + "'");
       });
       for (const auto& jb : jbs) {
-        throw_if(std::count(jbs.begin(), jbs.end(), jb) > 1, "jacobian block '" + jb + "' multiply delcared");
+        throw_if(std::count(jbs.begin(), jbs.end(), jb) > 1,
+                 "jacobian block '" + jb + "' multiply delcared");
       }
-      if (this->mb.hasAttribute(h, BehaviourData::numericallyComputedJacobianBlocks)) {
-        auto cjbs =
-            this->mb.getAttribute<std::vector<std::string>>(h, BehaviourData::numericallyComputedJacobianBlocks);
+      if (this->mb.hasAttribute(
+              h, BehaviourData::numericallyComputedJacobianBlocks)) {
+        auto cjbs = this->mb.getAttribute<std::vector<std::string>>(
+            h, BehaviourData::numericallyComputedJacobianBlocks);
         for (const auto& jb : jbs) {
           throw_if(std::find(cjbs.begin(), cjbs.end(), jb) != cjbs.end(),
                    "jacobian block '" + jb + "' multiply delcared");
           cjbs.push_back(jb);
         }
-        this->mb.updateAttribute(h, BehaviourData::numericallyComputedJacobianBlocks, cjbs);
+        this->mb.updateAttribute(
+            h, BehaviourData::numericallyComputedJacobianBlocks, cjbs);
       } else {
-        this->mb.setAttribute(h, BehaviourData::numericallyComputedJacobianBlocks, jbs);
+        this->mb.setAttribute(
+            h, BehaviourData::numericallyComputedJacobianBlocks, jbs);
       }
     }
   }  // end of treatNumericallyComputedJacobianBlocks
 
   void ImplicitDSLBase::completeVariableDeclaration() {
     using namespace tfel::glossary;
-    const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     if (this->solver == nullptr) {
-      const auto& f = NonLinearSystemSolverFactory::getNonLinearSystemSolverFactory();
+      const auto& f =
+          NonLinearSystemSolverFactory::getNonLinearSystemSolverFactory();
       this->solver = f.getSolver("NewtonRaphson");
     }
     BehaviourDSLCommon::completeVariableDeclaration();
-    if (this->mb.getAttribute<bool>(BehaviourDescription::computesStiffnessTensor, false)) {
+    if (this->mb.getAttribute<bool>(
+            BehaviourDescription::computesStiffnessTensor, false)) {
       auto D = VariableDescription("StiffnessTensor", "D", 1u, 0u);
       D.description =
           "stiffness tensor computed from elastic "
           "material properties";
-      this->mb.addLocalVariable(h, D, BehaviourData::ALREADYREGISTRED);
-      auto D_tdt = this->mb.areElasticMaterialPropertiesConstantDuringTheTimeStep()
-                       ? VariableDescription("StiffnessTensor&", "D_tdt", 1u, 0u)
-                       : VariableDescription("StiffnessTensor", "D_tdt", 1u, 0u);
+      this->mb.addLocalVariable(uh, D, BehaviourData::ALREADYREGISTRED);
+      auto D_tdt =
+          this->mb.areElasticMaterialPropertiesConstantDuringTheTimeStep()
+              ? VariableDescription("StiffnessTensor&", "D_tdt", 1u, 0u)
+              : VariableDescription("StiffnessTensor", "D_tdt", 1u, 0u);
       D_tdt.description =
           "stiffness tensor computed from elastic "
           "material properties";
-      this->mb.addLocalVariable(h, D_tdt, BehaviourData::ALREADYREGISTRED);
+      this->mb.addLocalVariable(uh, D_tdt, BehaviourData::ALREADYREGISTRED);
     }
-    if ((!this->mb.getAttribute(BehaviourDescription::computesStiffnessTensor, false)) &&
-        (this->mb.getElasticSymmetryType() == ISOTROPIC) && (this->mb.areElasticMaterialPropertiesDefined())) {
-      auto add_lv = [this, h](BehaviourDescription& bd, const std::string& t, const std::string& n,
-                              const std::string& g, const std::string d) {
+    if ((!this->mb.getAttribute(BehaviourDescription::computesStiffnessTensor,
+                                false)) &&
+        (this->mb.getElasticSymmetryType() == ISOTROPIC) &&
+        (this->mb.areElasticMaterialPropertiesDefined())) {
+      auto add_lv = [this, uh](BehaviourDescription& bd, const std::string& t,
+                               const std::string& n, const std::string& g,
+                               const std::string d) {
         auto r = bd.checkVariableExistence(n, "Parameter", false);
         if (!r.first) {
           VariableDescription v(t, n, 1u, 0u);
           v.description = d;
-          bd.addLocalVariable(h, v, BehaviourData::UNREGISTRED);
+          bd.addLocalVariable(uh, v, BehaviourData::UNREGISTRED);
         } else {
           if (!r.second) {
-            this->throwRuntimeError("ImplicitDSLBase::completeVariableDeclaration",
-                                    "Parameter '" + n + "' is not defined for all hypotheses");
+            this->throwRuntimeError(
+                "ImplicitDSLBase::completeVariableDeclaration",
+                "Parameter '" + n + "' is not defined for all hypotheses");
           }
           if (!g.empty()) {
             bd.checkVariableGlossaryName(n, g);
           }
         }
       };
-      add_lv(this->mb, "stress", "young", Glossary::YoungModulus, "Young modulus at t+theta*dt");
-      add_lv(this->mb, "real", "nu", Glossary::PoissonRatio, "Poisson ratio at t+theta*dt");
-      add_lv(this->mb, "stress", "lambda", Glossary::FirstLameCoefficient, "first Lamé coefficient at t+theta*dt");
-      add_lv(this->mb, "stress", "mu", Glossary::ShearModulus, "shear modulus at t+theta*dt");
+      add_lv(this->mb, "stress", "young", Glossary::YoungModulus,
+             "Young modulus at t+theta*dt");
+      add_lv(this->mb, "real", "nu", Glossary::PoissonRatio,
+             "Poisson ratio at t+theta*dt");
+      add_lv(this->mb, "stress", "lambda", Glossary::FirstLameCoefficient,
+             "first Lamé coefficient at t+theta*dt");
+      add_lv(this->mb, "stress", "mu", Glossary::ShearModulus,
+             "shear modulus at t+theta*dt");
       add_lv(this->mb, "stress", "young_tdt", "", "Young modulus at t+dt");
       add_lv(this->mb, "real", "nu_tdt", "", "Poisson ratio at t+dt");
-      add_lv(this->mb, "stress", "lambda_tdt", "", "first Lamé coefficient at t+dt");
+      add_lv(this->mb, "stress", "lambda_tdt", "",
+             "first Lamé coefficient at t+dt");
       add_lv(this->mb, "stress", "mu_tdt", "", "shear modulus at t+dt");
     }
     for (const auto& ht : this->mb.getHillTensors()) {
-      if ((this->mb.getBehaviourType() != BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) &&
-          (this->mb.getBehaviourType() != BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR)) {
-        this->throwRuntimeError("ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation",
-                                "Hill tensors shall only be defined for finite strain "
-                                "or small strain behaviours");
+      if ((this->mb.getBehaviourType() !=
+           BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) &&
+          (this->mb.getBehaviourType() !=
+           BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR)) {
+        this->throwRuntimeError(
+            "ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation",
+            "Hill tensors shall only be defined for finite strain "
+            "or small strain behaviours");
       }
       const auto hn = ht.name + "_tdt";
       auto H_tdt = this->mb.areMaterialPropertiesConstantDuringTheTimeStep(ht.c)
-                       ? VariableDescription("tfel::math::st2tost2<N,stress>&", hn, 1u, 0u)
-                       : VariableDescription("tfel::math::st2tost2<N,stress>", hn, 1u, 0u);
-      H_tdt.description = "Hill tensor '" + ht.name + "' at the end of the time step";
-      this->mb.addLocalVariable(h, H_tdt);
+                       ? VariableDescription("tfel::math::st2tost2<N,stress>&",
+                                             hn, 1u, 0u)
+                       : VariableDescription("tfel::math::st2tost2<N,stress>",
+                                             hn, 1u, 0u);
+      H_tdt.description =
+          "Hill tensor '" + ht.name + "' at the end of the time step";
+      this->mb.addLocalVariable(uh, H_tdt);
     }
     // creating default parameters if not explicitely specified by the user
-    if (!this->mb.hasParameter(h, "epsilon")) {
-      VariableDescription e("real", "epsilon", 1u, 0u);
-      e.description = "value used to stop the iteration of the implicit algorithm";
-      this->mb.addParameter(h, e, BehaviourData::ALREADYREGISTRED);
-      this->mb.setEntryName(h, "epsilon", "epsilon");
-      this->mb.setParameterDefaultValue(h, "epsilon", 1.e-8);
+    if (!this->mb.hasParameter(uh, "epsilon")) {
+      VariableDescription e("real", "\u03B5", "epsilon", 1u, 0u);
+      e.description =
+          "value used to stop the iteration of the implicit algorithm";
+      this->mb.addParameter(uh, e, BehaviourData::ALREADYREGISTRED);
+      this->mb.setEntryName(uh, "epsilon", "epsilon");
+      this->mb.setParameterDefaultValue(uh, "epsilon", 1.e-8);
     }
-    if (!this->mb.hasParameter(h, "theta")) {
-      VariableDescription tv("real", "theta", 1u, 0u);
+    if (!this->mb.hasParameter(uh, "theta")) {
+      VariableDescription tv("real", "\u03B8", "theta", 1u, 0u);
       tv.description = "theta value used by the implicit scheme";
-      this->mb.addParameter(h, tv, BehaviourData::ALREADYREGISTRED);
-      this->mb.setEntryName(h, "theta", "theta");
-      this->mb.setParameterDefaultValue(h, "theta", 0.5);
+      this->mb.addParameter(uh, tv, BehaviourData::ALREADYREGISTRED);
+      this->mb.setEntryName(uh, "theta", "theta");
+      this->mb.setParameterDefaultValue(uh, "theta", 0.5);
     }
     this->solver->completeVariableDeclaration(this->mb);
-    if ((this->mb.getAttribute(h, BehaviourData::compareToNumericalJacobian, false)) ||
+    if ((this->mb.getAttribute(uh, BehaviourData::compareToNumericalJacobian,
+                               false)) ||
         (this->solver->usesJacobian())) {
       const std::string nje = "numerical_jacobian_epsilon";
-      if (!this->mb.hasParameter(h, nje)) {
-        const auto eps = 0.1 * this->mb.getFloattingPointParameterDefaultValue(h, "epsilon");
+      if (!this->mb.hasParameter(uh, nje)) {
+        const auto eps =
+            0.1 *
+            this->mb.getFloattingPointParameterDefaultValue(uh, "epsilon");
         VariableDescription v("real", nje, 1u, 0u);
         v.description =
             "perturbation value used to compute a numerical "
             "approximation of the jacobian";
-        this->mb.addParameter(h, v, BehaviourData::ALREADYREGISTRED);
-        this->mb.setParameterDefaultValue(h, nje, eps);
+        this->mb.addParameter(uh, v, BehaviourData::ALREADYREGISTRED);
+        this->mb.setParameterDefaultValue(uh, nje, eps);
       }
     }
-    if (!this->mb.hasParameter(h, "iterMax")) {
+    if (!this->mb.hasParameter(uh, "iterMax")) {
       unsigned short iterMax = 100u;
       VariableDescription v("ushort", "iterMax", 1u, 0u);
       v.description = "maximum number of iterations allowed";
-      this->mb.addParameter(h, v, BehaviourData::ALREADYREGISTRED);
-      this->mb.setParameterDefaultValue(h, "iterMax", iterMax);
+      this->mb.addParameter(uh, v, BehaviourData::ALREADYREGISTRED);
+      this->mb.setParameterDefaultValue(uh, "iterMax", iterMax);
     }
-    if (this->mb.getAttribute(h, BehaviourData::compareToNumericalJacobian, false)) {
-      if (!this->mb.hasParameter(h, "jacobianComparisonCriterion")) {
+    if (this->mb.getAttribute(uh, BehaviourData::compareToNumericalJacobian,
+                              false)) {
+      if (!this->mb.hasParameter(uh, "jacobianComparisonCriterion")) {
         VariableDescription v("real", "jacobianComparisonCriterion", 1u, 0u);
         v.description =
             "criterion value used to compare the jacobian "
             "provided by the user to its numerical approximation";
-        this->mb.addParameter(h, v, BehaviourData::ALREADYREGISTRED);
-        this->mb.setParameterDefaultValue(h, "jacobianComparisonCriterion",
-                                          this->mb.getFloattingPointParameterDefaultValue(h, "epsilon"));
+        this->mb.addParameter(uh, v, BehaviourData::ALREADYREGISTRED);
+        this->mb.setParameterDefaultValue(
+            uh, "jacobianComparisonCriterion",
+            this->mb.getFloattingPointParameterDefaultValue(uh, "epsilon"));
       }
     }
-  }  // end of ImplicitDSLBase::completeVariableDeclaration
+    // reserve names for jacobian blocks
+    const auto mh = this->mb.getDistinctModellingHypotheses();
+    for (const auto& h : mh) {
+      const auto& d = this->mb.getBehaviourData(h);
+      for (const auto& v1 : d.getIntegrationVariables()) {
+        for (const auto& v2 : d.getIntegrationVariables()) {
+          // Things are a bit tricky here because of the undefined hypothesis
+          // case which forwards everything to specialised hypothesis.
+          if ((h != uh) && (mh.find(uh) != mh.end()) &&  //
+              ((this->mb.getBehaviourData(uh)
+                    .getIntegrationVariables()
+                    .contains(v1.name)) &&
+               (this->mb.getBehaviourData(uh)
+                    .getIntegrationVariables()
+                    .contains(v2.name)))) {
+            continue;
+          }
+          const auto& s1 =
+              !v1.symbolic_form.empty() ? v1.symbolic_form : v1.name;
+          const auto& s2 =
+              !v2.symbolic_form.empty() ? v2.symbolic_form : v2.name;
+          this->mb.reserveName(h, "\u2202f" + s1 + "\u2215\u2202\u0394" + s2);
+          this->mb.reserveName(h, "df" + s1 + "_dd" + s2);
+        }  // end of ImplicitDSLBase::completeVariableDeclaration
+      }
+    }
+  }  // end of ImplicitDSLBase::completeVariableDeclaration()
 
   void ImplicitDSLBase::endsInputFileProcessing() {
     using namespace tfel::glossary;
@@ -743,8 +899,10 @@ namespace mfront {
     };
     const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     BehaviourDSLCommon::endsInputFileProcessing();
-    if (this->mb.getAttribute(uh, BehaviourData::compareToNumericalJacobian, false)) {
-      throw_if((!this->solver->usesJacobian()) || (this->solver->requiresNumericalJacobian()),
+    if (this->mb.getAttribute(uh, BehaviourData::compareToNumericalJacobian,
+                              false)) {
+      throw_if((!this->solver->usesJacobian()) ||
+                   (this->solver->requiresNumericalJacobian()),
                "@CompareToNumericalJacobian can only be used with solver using "
                "an analytical jacobian (or an approximation of it");
     }
@@ -753,18 +911,22 @@ namespace mfront {
     // correct prediction to take into account normalisation factors
     const auto mh = this->mb.getDistinctModellingHypotheses();
     for (const auto& h : mh) {
-      if (this->mb.hasAttribute(h, BehaviourData::numericallyComputedJacobianBlocks)) {
-        throw_if((!this->solver->usesJacobian()) || (this->solver->requiresNumericalJacobian()),
+      if (this->mb.hasAttribute(
+              h, BehaviourData::numericallyComputedJacobianBlocks)) {
+        throw_if((!this->solver->usesJacobian()) ||
+                     (this->solver->requiresNumericalJacobian()),
                  "numerically computed jacobian blocks can only be "
                  "used with solver using an analytical jacobian "
                  "(or an approximation of it");
-        auto decompose = [throw_if](const std::string& jb) -> std::pair<std::string, std::string> {
+        auto decompose = [throw_if](
+            const std::string& jb) -> std::pair<std::string, std::string> {
           throw_if(jb.empty(), "empty jacobian block");
           throw_if(jb.size() < 6, "invalid jacobian block '" + jb + "'");
           throw_if(jb[0] != 'd', "invalid jacobian block '" + jb + "'");
           throw_if(jb[1] != 'f', "invalid jacobian block '" + jb + "'");
           const auto p = jb.find('_');
-          throw_if(p == std::string::npos, "invalid jacobian block '" + jb + "'");
+          throw_if(p == std::string::npos,
+                   "invalid jacobian block '" + jb + "'");
           throw_if(p + 2 >= jb.size(), "invalid jacobian block '" + jb + "'");
           throw_if(jb[p + 1] != 'd', "invalid jacobian block '" + jb + "'");
           throw_if(jb[p + 2] != 'd', "invalid jacobian block '" + jb + "'");
@@ -774,35 +936,38 @@ namespace mfront {
           throw_if(d.empty(), "invalid jacobian block '" + jb + "'");
           return {n, d};
         };
-        const auto& jbs =
-            this->mb.getAttribute<std::vector<std::string>>(h, BehaviourData::numericallyComputedJacobianBlocks);
+        const auto& jbs = this->mb.getAttribute<std::vector<std::string>>(
+            h, BehaviourData::numericallyComputedJacobianBlocks);
         for (const auto& jb : jbs) {
           const auto nd = decompose(jb);
-          throw_if(!this->mb.isIntegrationVariableName(h, nd.first), "invalid jacobian block '" + jb +
-                                                                         "', "
-                                                                         "'" +
-                                                                         nd.first + "' is not an integration variable");
-          throw_if(!this->mb.isIntegrationVariableName(h, nd.second), "invalid jacobian block '" + jb +
-                                                                          "', "
-                                                                          "'" +
-                                                                          nd.second +
-                                                                          "' is not an integration variable");
+          throw_if(!this->mb.isIntegrationVariableName(h, nd.first),
+                   "invalid jacobian block '" + jb +
+                       "', "
+                       "'" +
+                       nd.first + "' is not an integration variable");
+          throw_if(!this->mb.isIntegrationVariableName(h, nd.second),
+                   "invalid jacobian block '" + jb +
+                       "', "
+                       "'" +
+                       nd.second + "' is not an integration variable");
         }
       }
       if (this->mb.hasCode(h, BehaviourData::ComputePredictor)) {
         CodeBlock predictor;
         const auto& d = this->mb.getBehaviourData(h);
         for (const auto& v : d.getIntegrationVariables()) {
-          if (this->integrationVariablesIncrementsUsedInPredictor.find('d' + v.name) !=
+          if (this->integrationVariablesIncrementsUsedInPredictor.find(
+                  'd' + v.name) !=
               this->integrationVariablesIncrementsUsedInPredictor.end()) {
             if (this->mb.hasAttribute(h, v.name + "_normalisation_factor")) {
-              const auto& nf = this->mb.getAttribute<std::string>(h, v.name + "_normalisation_factor");
+              const auto& nf = this->mb.getAttribute<std::string>(
+                  h, v.name + "_normalisation_factor");
               predictor.code += "this->d" + v.name + " /= " + nf + ";\n";
             }
           }
         }
-        this->mb.setCode(h, BehaviourData::ComputePredictor, predictor, BehaviourData::CREATEORAPPEND,
-                         BehaviourData::AT_END);
+        this->mb.setCode(h, BehaviourData::ComputePredictor, predictor,
+                         BehaviourData::CREATEORAPPEND, BehaviourData::AT_END);
       }
     }
     if (!this->mb.areAllMechanicalDataSpecialised()) {
@@ -810,27 +975,31 @@ namespace mfront {
         CodeBlock predictor;
         const auto& d = this->mb.getBehaviourData(uh);
         for (const auto& v : d.getIntegrationVariables()) {
-          if (this->integrationVariablesIncrementsUsedInPredictor.find('d' + v.name) !=
+          if (this->integrationVariablesIncrementsUsedInPredictor.find(
+                  'd' + v.name) !=
               this->integrationVariablesIncrementsUsedInPredictor.end()) {
             if (this->mb.hasAttribute(uh, v.name + "_normalisation_factor")) {
-              const auto& nf = this->mb.getAttribute<std::string>(uh, v.name + "_normalisation_factor");
+              const auto& nf = this->mb.getAttribute<std::string>(
+                  uh, v.name + "_normalisation_factor");
               predictor.code += "this->d" + v.name + " /= " + nf + ";\n";
             }
           }
         }
-        this->mb.setCode(uh, BehaviourData::ComputePredictor, predictor, BehaviourData::CREATEORAPPEND,
-                         BehaviourData::AT_END);
+        this->mb.setCode(uh, BehaviourData::ComputePredictor, predictor,
+                         BehaviourData::CREATEORAPPEND, BehaviourData::AT_END);
       }
     }
     // minimal tangent operator
     this->setMinimalTangentOperator();
   }  // end of ImplicitDSLBase::endsInputFileProcessing()
 
-  void ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation(std::ostream& os, const Hypothesis h) const {
+  void ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation(
+      std::ostream& os, const Hypothesis h) const {
     using Modifier = std::function<std::string(const MaterialPropertyInput&)>;
     Modifier mts = [this](const MaterialPropertyInput& i) -> std::string {
       if ((i.category == MaterialPropertyInput::TEMPERATURE) ||
-          (i.category == MaterialPropertyInput::AUXILIARYSTATEVARIABLEFROMEXTERNALMODEL) ||
+          (i.category ==
+           MaterialPropertyInput::AUXILIARYSTATEVARIABLEFROMEXTERNALMODEL) ||
           (i.category == MaterialPropertyInput::EXTERNALSTATEVARIABLE)) {
         return "this->" + i.name + "+(this->theta)*(this->d" + i.name + ')';
       } else if ((i.category == MaterialPropertyInput::MATERIALPROPERTY) ||
@@ -840,13 +1009,15 @@ namespace mfront {
       } else if (i.category == MaterialPropertyInput::STATICVARIABLE) {
         return this->mb.getClassName() + "::" + i.name;
       } else {
-        this->throwRuntimeError("ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation",
-                                "unsupported input type for variable '" + i.name + "'");
+        this->throwRuntimeError(
+            "ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation",
+            "unsupported input type for variable '" + i.name + "'");
       }
     };
     Modifier ets = [this](const MaterialPropertyInput& i) -> std::string {
       if ((i.category == MaterialPropertyInput::TEMPERATURE) ||
-          (i.category == MaterialPropertyInput::AUXILIARYSTATEVARIABLEFROMEXTERNALMODEL) ||
+          (i.category ==
+           MaterialPropertyInput::AUXILIARYSTATEVARIABLEFROMEXTERNALMODEL) ||
           (i.category == MaterialPropertyInput::EXTERNALSTATEVARIABLE)) {
         return "this->" + i.name + "+this->d" + i.name;
       } else if ((i.category == MaterialPropertyInput::MATERIALPROPERTY) ||
@@ -856,12 +1027,15 @@ namespace mfront {
       } else if (i.category == MaterialPropertyInput::STATICVARIABLE) {
         return this->mb.getClassName() + "::" + i.name;
       } else {
-        this->throwRuntimeError("ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation",
-                                "unsupported input type for variable '" + i.name + "'");
+        this->throwRuntimeError(
+            "ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation",
+            "unsupported input type for variable '" + i.name + "'");
       }
     };
-    if (this->mb.getAttribute(BehaviourDescription::computesStiffnessTensor, false)) {
-      os << "// updating the stiffness tensor at the middle of the time step\n";
+    if (this->mb.getAttribute(BehaviourDescription::computesStiffnessTensor,
+                              false)) {
+      os << "// updating the stiffness tensor at the middle of the time "
+            "step\n";
       this->writeStiffnessTensorComputation(os, "this->D", mts);
       if (!this->mb.areElasticMaterialPropertiesConstantDuringTheTimeStep()) {
         os << "// stiffness tensor at the end of the time step\n";
@@ -869,23 +1043,30 @@ namespace mfront {
       }
     }
     for (const auto& ht : this->mb.getHillTensors()) {
-      if ((this->mb.getBehaviourType() != BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) &&
-          (this->mb.getBehaviourType() != BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR)) {
-        this->throwRuntimeError("ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation",
-                                "Hill tensors shall only be defined for finite strain "
-                                "or small strain behaviours");
+      if ((this->mb.getBehaviourType() !=
+           BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) &&
+          (this->mb.getBehaviourType() !=
+           BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR)) {
+        this->throwRuntimeError(
+            "ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation",
+            "Hill tensors shall only be defined for finite strain "
+            "or small strain behaviours");
       }
       this->writeHillTensorComputation(os, "this->" + ht.name, ht, mts);
       if (!this->mb.areMaterialPropertiesConstantDuringTheTimeStep(ht.c)) {
-        this->writeHillTensorComputation(os, "this->" + ht.name + "_tdt", ht, ets);
+        this->writeHillTensorComputation(os, "this->" + ht.name + "_tdt", ht,
+                                         ets);
       }
     }
-    if ((!this->mb.getAttribute(BehaviourDescription::computesStiffnessTensor, false)) &&
-        (this->mb.getElasticSymmetryType() == ISOTROPIC) && (this->mb.areElasticMaterialPropertiesDefined())) {
+    if ((!this->mb.getAttribute(BehaviourDescription::computesStiffnessTensor,
+                                false)) &&
+        (this->mb.getElasticSymmetryType() == ISOTROPIC) &&
+        (this->mb.areElasticMaterialPropertiesDefined())) {
       const auto& emps = this->mb.getElasticMaterialProperties();
       if (emps.size() != 2u) {
-        this->throwRuntimeError("ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation",
-                                "invalid number of material properties");
+        this->throwRuntimeError(
+            "ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation",
+            "invalid number of material properties");
       }
       if (!emps[0].is<BehaviourDescription::ConstantMaterialProperty>()) {
         this->writeMaterialPropertyCheckBoundsEvaluation(os, emps[0], mts);
@@ -932,7 +1113,8 @@ namespace mfront {
     BehaviourDSLCommon::writeBehaviourLocalVariablesInitialisation(os, h);
   }  // end of writeBehaviourLocalVariablesInitialisation
 
-  void ImplicitDSLBase::writeBehaviourParserSpecificIncludes(std::ostream& os) const {
+  void ImplicitDSLBase::writeBehaviourParserSpecificIncludes(
+      std::ostream& os) const {
     bool has_scalar = false;
     bool has_scalar_array = false;
     bool has_tvector = false;
@@ -974,8 +1156,10 @@ namespace mfront {
        << "#include\"TFEL/Math/Vector/tvectorIO.hxx\"\n"
        << "#include\"TFEL/Math/ST2toST2/ST2toST2ConceptIO.hxx\"\n";
     if (has_scalar_array) {
-      os << "#include\"TFEL/Math/Vector/TinyVectorFromTinyVectorView.hxx\"\n"
-         << "#include\"TFEL/Math/Vector/TinyVectorFromTinyVectorViewIO.hxx\"\n";
+      os << "#include\"TFEL/Math/Vector/"
+            "TinyVectorFromTinyVectorView.hxx\"\n"
+         << "#include\"TFEL/Math/Vector/"
+            "TinyVectorFromTinyVectorViewIO.hxx\"\n";
     }
     // tiny vectors
     if (has_tvector) {
@@ -983,44 +1167,61 @@ namespace mfront {
          << "#include\"TFEL/Math/Matrix/tmatrix_submatrix_view.hxx\"\n\n";
     }
     if ((has_scalar) && (has_tvector)) {
-      os << "#include\"TFEL/Math/Vector/TVectorFromTinyMatrixColumnView.hxx\"\n"
-         << "#include\"TFEL/Math/Vector/TVectorFromTinyMatrixRowView.hxx\"\n"
-         << "#include\"TFEL/Math/Vector/TVectorFromTinyMatrixColumnView2.hxx\"\n"
-         << "#include\"TFEL/Math/Vector/TVectorFromTinyMatrixRowView2.hxx\"\n"
+      os << "#include\"TFEL/Math/Vector/"
+            "TVectorFromTinyMatrixColumnView.hxx\"\n"
+         << "#include\"TFEL/Math/Vector/"
+            "TVectorFromTinyMatrixRowView.hxx\"\n"
+         << "#include\"TFEL/Math/Vector/"
+            "TVectorFromTinyMatrixColumnView2.hxx\"\n"
+         << "#include\"TFEL/Math/Vector/"
+            "TVectorFromTinyMatrixRowView2.hxx\"\n"
          << "#include\"TFEL/Math/Vector/TVectorFromTinyVectorView.hxx\"\n";
     }
     if (has_tvector_array) {
-      os << "#include\"TFEL/Math/Vector/TinyVectorOfTinyVectorFromTinyVectorView.hxx\"\n"
-         << "#include\"TFEL/Math/Vector/TinyVectorOfTinyVectorFromTinyVectorViewIO.hxx\"\n";
+      os << "#include\"TFEL/Math/Vector/"
+            "TinyVectorOfTinyVectorFromTinyVectorView.hxx\"\n"
+         << "#include\"TFEL/Math/Vector/"
+            "TinyVectorOfTinyVectorFromTinyVectorViewIO.hxx\"\n";
     }
     // symmetric tensors
     if (has_stensor) {
       os << "#include\"TFEL/Math/Stensor/StensorFromTinyVectorView.hxx\"\n"
-         << "#include\"TFEL/Math/ST2toST2/ST2toST2FromTinyMatrixView.hxx\"\n\n"
-         << "#include\"TFEL/Math/ST2toST2/ST2toST2FromTinyMatrixView2.hxx\"\n\n";
+         << "#include\"TFEL/Math/ST2toST2/"
+            "ST2toST2FromTinyMatrixView.hxx\"\n\n"
+         << "#include\"TFEL/Math/ST2toST2/"
+            "ST2toST2FromTinyMatrixView2.hxx\"\n\n";
     }
     if ((has_scalar) && (has_stensor)) {
-      os << "#include\"TFEL/Math/Stensor/StensorFromTinyMatrixColumnView.hxx\"\n"
-         << "#include\"TFEL/Math/Stensor/StensorFromTinyMatrixRowView.hxx\"\n"
-         << "#include\"TFEL/Math/Stensor/StensorFromTinyMatrixColumnView2.hxx\"\n"
-         << "#include\"TFEL/Math/Stensor/StensorFromTinyMatrixRowView2.hxx\"\n";
+      os << "#include\"TFEL/Math/Stensor/"
+            "StensorFromTinyMatrixColumnView.hxx\"\n"
+         << "#include\"TFEL/Math/Stensor/"
+            "StensorFromTinyMatrixRowView.hxx\"\n"
+         << "#include\"TFEL/Math/Stensor/"
+            "StensorFromTinyMatrixColumnView2.hxx\"\n"
+         << "#include\"TFEL/Math/Stensor/"
+            "StensorFromTinyMatrixRowView2.hxx\"\n";
     }
     if (has_stensor_array) {
-      os << "#include\"TFEL/Math/Vector/TinyVectorOfStensorFromTinyVectorView.hxx\"\n"
-         << "#include\"TFEL/Math/Vector/TinyVectorOfStensorFromTinyVectorViewIO.hxx\"\n";
+      os << "#include\"TFEL/Math/Vector/"
+            "TinyVectorOfStensorFromTinyVectorView.hxx\"\n"
+         << "#include\"TFEL/Math/Vector/"
+            "TinyVectorOfStensorFromTinyVectorViewIO.hxx\"\n";
     }
   }  // end of ImplicitDSLBase::writeBehaviourParserSpecificIncludes()
 
-  void ImplicitDSLBase::writeBehaviourParserSpecificTypedefs(std::ostream& os) const {
+  void ImplicitDSLBase::writeBehaviourParserSpecificTypedefs(
+      std::ostream& os) const {
     this->checkBehaviourFile(os);
     BehaviourDSLCommon::writeBehaviourParserSpecificTypedefs(os);
   }  // end of ImplicitDSLBase::writeBehaviourParserSpecificTypedefs()
 
-  void ImplicitDSLBase::writeBehaviourParserSpecificMembers(std::ostream& os, const Hypothesis h) const {
+  void ImplicitDSLBase::writeBehaviourParserSpecificMembers(
+      std::ostream& os, const Hypothesis h) const {
     using Modifier = std::function<std::string(const MaterialPropertyInput&)>;
     Modifier mts = [this](const MaterialPropertyInput& i) -> std::string {
       if ((i.category == MaterialPropertyInput::TEMPERATURE) ||
-          (i.category == MaterialPropertyInput::AUXILIARYSTATEVARIABLEFROMEXTERNALMODEL) ||
+          (i.category ==
+           MaterialPropertyInput::AUXILIARYSTATEVARIABLEFROMEXTERNALMODEL) ||
           (i.category == MaterialPropertyInput::STATEVARIABLE) ||
           (i.category == MaterialPropertyInput::EXTERNALSTATEVARIABLE)) {
         return "this->" + i.name + "+(this->theta)*(this->d" + i.name + ')';
@@ -1030,13 +1231,15 @@ namespace mfront {
       } else if (i.category == MaterialPropertyInput::STATICVARIABLE) {
         return this->mb.getClassName() + "::" + i.name;
       } else {
-        this->throwRuntimeError("ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation",
-                                "unsupported input type for variable '" + i.name + "'");
+        this->throwRuntimeError(
+            "ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation",
+            "unsupported input type for variable '" + i.name + "'");
       }
     };
     Modifier ets = [this](const MaterialPropertyInput& i) -> std::string {
       if ((i.category == MaterialPropertyInput::TEMPERATURE) ||
-          (i.category == MaterialPropertyInput::AUXILIARYSTATEVARIABLEFROMEXTERNALMODEL) ||
+          (i.category ==
+           MaterialPropertyInput::AUXILIARYSTATEVARIABLEFROMEXTERNALMODEL) ||
           (i.category == MaterialPropertyInput::STATEVARIABLE) ||
           (i.category == MaterialPropertyInput::EXTERNALSTATEVARIABLE)) {
         return "this->" + i.name + "+this->d" + i.name;
@@ -1046,8 +1249,9 @@ namespace mfront {
       } else if (i.category == MaterialPropertyInput::STATICVARIABLE) {
         return this->mb.getClassName() + "::" + i.name;
       } else {
-        this->throwRuntimeError("ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation",
-                                "unsupported input type for variable '" + i.name + "'");
+        this->throwRuntimeError(
+            "ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation",
+            "unsupported input type for variable '" + i.name + "'");
       }
     };
     //
@@ -1059,32 +1263,41 @@ namespace mfront {
        << "using namespace tfel::math;\n"
        << "using std::vector;\n";
     writeMaterialLaws(os, this->mb.getMaterialLaws());
-    if (this->mb.getAttribute(BehaviourDescription::computesStiffnessTensor, false)) {
+    if (this->mb.getAttribute(BehaviourDescription::computesStiffnessTensor,
+                              false)) {
       if (this->mb.areElasticMaterialPropertiesDependantOnStateVariables()) {
-        os << "// updating the stiffness tensor at the middle of the time step\n";
+        os << "// updating the stiffness tensor at the middle of the time "
+              "step\n";
         this->writeStiffnessTensorComputation(os, "this->D", mts);
         os << "// stiffness tensor at the end of the time step\n";
         this->writeStiffnessTensorComputation(os, "this->D_tdt", ets);
       }
     }
     for (const auto& ht : this->mb.getHillTensors()) {
-      if ((this->mb.getBehaviourType() != BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) &&
-          (this->mb.getBehaviourType() != BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR)) {
-        this->throwRuntimeError("ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation",
-                                "Hill tensors shall only be defined for finite strain "
-                                "or small strain behaviours");
+      if ((this->mb.getBehaviourType() !=
+           BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) &&
+          (this->mb.getBehaviourType() !=
+           BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR)) {
+        this->throwRuntimeError(
+            "ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation",
+            "Hill tensors shall only be defined for finite strain "
+            "or small strain behaviours");
       }
       if (this->mb.areMaterialPropertiesDependantOnStateVariables(ht.c)) {
         this->writeHillTensorComputation(os, "this->" + ht.name, ht, mts);
-        this->writeHillTensorComputation(os, "this->" + ht.name + "_tdt", ht, ets);
+        this->writeHillTensorComputation(os, "this->" + ht.name + "_tdt", ht,
+                                         ets);
       }
     }
-    if ((!this->mb.getAttribute(BehaviourDescription::computesStiffnessTensor, false)) &&
-        (this->mb.getElasticSymmetryType() == ISOTROPIC) && (this->mb.areElasticMaterialPropertiesDefined())) {
+    if ((!this->mb.getAttribute(BehaviourDescription::computesStiffnessTensor,
+                                false)) &&
+        (this->mb.getElasticSymmetryType() == ISOTROPIC) &&
+        (this->mb.areElasticMaterialPropertiesDefined())) {
       const auto& emps = this->mb.getElasticMaterialProperties();
       if (emps.size() != 2u) {
-        this->throwRuntimeError("ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation",
-                                "invalid number of material properties");
+        this->throwRuntimeError(
+            "ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation",
+            "invalid number of material properties");
       }
       if (this->mb.isMaterialPropertyDependantOnStateVariables(emps[0])) {
         this->writeMaterialPropertyCheckBoundsEvaluation(os, emps[0], mts);
@@ -1151,7 +1364,8 @@ namespace mfront {
               } else if (flag2 == SupportedTypes::TVECTOR) {
                 // Le résultat est un tenseur, une ligne dans la matrice
                 // jacobienne
-                os << "typename tfel::math::TVectorFromTinyMatrixRowView2<N,"
+                os << "typename "
+                      "tfel::math::TVectorFromTinyMatrixRowView2<N,"
                    << n3 << "," << n3 << "," << n << "," << n2
                    << ",real>::type\n"
                    << "df" << v.name << "_dd" << v2.name
@@ -1163,7 +1377,8 @@ namespace mfront {
                    << "," << n3 << "," << n << "," << n2
                    << ",real>::type(tjacobian,idx,0);\n"
                    << "}\n\n";
-                os << "typename tfel::math::TVectorFromTinyMatrixRowView2<N,"
+                os << "typename "
+                      "tfel::math::TVectorFromTinyMatrixRowView2<N,"
                    << n3 << "," << n3 << "," << n << "," << n2
                    << ",real>::type\n"
                    << "df" << v.name << "_dd" << v2.name
@@ -1176,7 +1391,8 @@ namespace mfront {
               } else {
                 // Le résultat est un tenseur, une ligne dans la matrice
                 // jacobienne
-                os << "typename tfel::math::StensorFromTinyMatrixRowView2<N,"
+                os << "typename "
+                      "tfel::math::StensorFromTinyMatrixRowView2<N,"
                    << n3 << "," << n3 << "," << n << "," << n2
                    << ",real>::type\n"
                    << "df" << v.name << "_dd" << v2.name
@@ -1188,7 +1404,8 @@ namespace mfront {
                    << "," << n3 << "," << n << "," << n2
                    << ",real>::type(tjacobian,idx,0);\n"
                    << "}\n\n";
-                os << "typename tfel::math::StensorFromTinyMatrixRowView2<N,"
+                os << "typename "
+                      "tfel::math::StensorFromTinyMatrixRowView2<N,"
                    << n3 << "," << n3 << "," << n << "," << n2
                    << ",real>::type\n"
                    << "df" << v.name << "_dd" << v2.name
@@ -1203,7 +1420,8 @@ namespace mfront {
               if (flag2 == SupportedTypes::SCALAR) {
                 // Le résultat est un tenseur, une colonne dans la matrice
                 // jacobienne
-                os << "typename tfel::math::StensorFromTinyMatrixColumnView2<N,"
+                os << "typename "
+                      "tfel::math::StensorFromTinyMatrixColumnView2<N,"
                    << n3 << "," << n3 << "," << n << "," << n2
                    << ",real>::type\n"
                    << "df" << v.name << "_dd" << v2.name
@@ -1215,7 +1433,8 @@ namespace mfront {
                    << n3 << "," << n3 << "," << n << "," << n2
                    << ",real>::type(tjacobian,idx,0);\n"
                    << "}\n\n";
-                os << "typename tfel::math::StensorFromTinyMatrixColumnView2<N,"
+                os << "typename "
+                      "tfel::math::StensorFromTinyMatrixColumnView2<N,"
                    << n3 << "," << n3 << "," << n << "," << n2
                    << ",real>::type\n"
                    << "df" << v.name << "_dd" << v2.name
@@ -1256,7 +1475,8 @@ namespace mfront {
               if (flag2 == SupportedTypes::SCALAR) {
                 // Le résultat est un tenseur, une colonne dans la matrice
                 // jacobienne
-                os << "typename tfel::math::StensorFromTinyMatrixColumnView2<N,"
+                os << "typename "
+                      "tfel::math::StensorFromTinyMatrixColumnView2<N,"
                    << n3 << "," << n3 << "," << n << "," << n2
                    << ",real>::type\n"
                    << "df" << v.name << "_dd" << v2.name
@@ -1268,7 +1488,8 @@ namespace mfront {
                    << n3 << "," << n3 << "," << n << "," << n2
                    << ",real>::type(tjacobian,idx,0);\n"
                    << "}\n\n";
-                os << "typename tfel::math::StensorFromTinyMatrixColumnView2<N,"
+                os << "typename "
+                      "tfel::math::StensorFromTinyMatrixColumnView2<N,"
                    << n3 << "," << n3 << "," << n << "," << n2
                    << ",real>::type\n"
                    << "df" << v.name << "_dd" << v2.name
@@ -1326,7 +1547,8 @@ namespace mfront {
               } else {
                 // Le résultat est un tenseur, une ligne dans la matrice
                 // jacobienne
-                os << "typename tfel::math::StensorFromTinyMatrixRowView2<N,"
+                os << "typename "
+                      "tfel::math::StensorFromTinyMatrixRowView2<N,"
                    << n3 << "," << n3 << "," << n << "," << n2
                    << ",real>::type\n"
                    << "df" << v.name << "_dd" << v2.name
@@ -1338,7 +1560,8 @@ namespace mfront {
                    << "," << n3 << "," << n << "," << n2
                    << ",real>::type(tjacobian,0,idx);\n"
                    << "}\n\n";
-                os << "typename tfel::math::StensorFromTinyMatrixRowView2<N,"
+                os << "typename "
+                      "tfel::math::StensorFromTinyMatrixRowView2<N,"
                    << n3 << "," << n3 << "," << n << "," << n2
                    << ",real>::type\n"
                    << "df" << v.name << "_dd" << v2.name
@@ -1353,7 +1576,8 @@ namespace mfront {
               if (flag2 == SupportedTypes::SCALAR) {
                 // Le résultat est un tenseur, une colonne dans la matrice
                 // jacobienne
-                os << "typename tfel::math::StensorFromTinyMatrixColumnView2<N,"
+                os << "typename "
+                      "tfel::math::StensorFromTinyMatrixColumnView2<N,"
                    << n3 << "," << n3 << "," << n << "," << n2
                    << ",real>::type\n"
                    << "df" << v.name << "_dd" << v2.name
@@ -1365,7 +1589,8 @@ namespace mfront {
                    << n3 << "," << n3 << "," << n << "," << n2
                    << ",real>::type(tjacobian,0,idx);\n"
                    << "}\n\n";
-                os << "typename tfel::math::StensorFromTinyMatrixColumnView2<N,"
+                os << "typename "
+                      "tfel::math::StensorFromTinyMatrixColumnView2<N,"
                    << n3 << "," << n3 << "," << n << "," << n2
                    << ",real>::type\n"
                    << "df" << v.name << "_dd" << v2.name
@@ -1421,7 +1646,8 @@ namespace mfront {
               } else {
                 // Le résultat est un tenseur, une ligne dans la matrice
                 // jacobienne
-                os << "typename tfel::math::StensorFromTinyMatrixRowView2<N,"
+                os << "typename "
+                      "tfel::math::StensorFromTinyMatrixRowView2<N,"
                    << n3 << "," << n3 << "," << n << "," << n2
                    << ",real>::type\n"
                    << "df" << v.name << "_dd" << v2.name
@@ -1434,7 +1660,8 @@ namespace mfront {
                    << "," << n3 << "," << n << "," << n2
                    << ",real>::type(tjacobian,idx,idx2);\n"
                    << "}\n\n";
-                os << "typename tfel::math::StensorFromTinyMatrixRowView2<N,"
+                os << "typename "
+                      "tfel::math::StensorFromTinyMatrixRowView2<N,"
                    << n3 << "," << n3 << "," << n << "," << n2
                    << ",real>::type\n"
                    << "df" << v.name << "_dd" << v2.name
@@ -1450,7 +1677,8 @@ namespace mfront {
               if (flag2 == SupportedTypes::SCALAR) {
                 // Le résultat est un tenseur, une colonne dans la matrice
                 // jacobienne
-                os << "typename tfel::math::StensorFromTinyMatrixColumnView2<N,"
+                os << "typename "
+                      "tfel::math::StensorFromTinyMatrixColumnView2<N,"
                    << n3 << "," << n3 << "," << n << "," << n2
                    << ",real>::type\n"
                    << "df" << v.name << "_dd" << v2.name
@@ -1463,7 +1691,8 @@ namespace mfront {
                    << n3 << "," << n3 << "," << n << "," << n2
                    << ",real>::type(tjacobian,idx,idx2);\n"
                    << "}\n\n";
-                os << "typename tfel::math::StensorFromTinyMatrixColumnView2<N,"
+                os << "typename "
+                      "tfel::math::StensorFromTinyMatrixColumnView2<N,"
                    << n3 << "," << n3 << "," << n << "," << n2
                    << ",real>::type\n"
                    << "df" << v.name << "_dd" << v2.name
@@ -1543,7 +1772,8 @@ namespace mfront {
     }
     // additional convergence checks
     if (this->mb.hasCode(h, BehaviourData::AdditionalConvergenceChecks)) {
-      os << "void additionalConvergenceChecks(bool& converged,real& error){\n"
+      os << "void additionalConvergenceChecks(bool& converged,real& "
+            "error){\n"
          << "using namespace std;\n"
          << "using namespace tfel::math;\n"
          << "using std::vector;\n";
@@ -1564,7 +1794,8 @@ namespace mfront {
          << "using namespace tfel::math;\n"
          << "using std::vector;\n";
       writeMaterialLaws(os, this->mb.getMaterialLaws());
-      os << this->mb.getCode(h, BehaviourData::ComputeStress) << "\n} // end of " << this->mb.getClassName()
+      os << this->mb.getCode(h, BehaviourData::ComputeStress)
+         << "\n} // end of " << this->mb.getClassName()
          << "::computeStress\n\n";
     }
     if (this->mb.hasCode(h, BehaviourData::ComputeFinalStress)) {
@@ -1573,12 +1804,14 @@ namespace mfront {
          << "using namespace tfel::math;\n"
          << "using std::vector;\n";
       writeMaterialLaws(os, this->mb.getMaterialLaws());
-      os << this->mb.getCode(h, BehaviourData::ComputeFinalStress) << "\n} // end of " << this->mb.getClassName()
+      os << this->mb.getCode(h, BehaviourData::ComputeFinalStress)
+         << "\n} // end of " << this->mb.getClassName()
          << "::computeStress\n\n";
     }
   }  // end of ImplicitDSLBase::writeBehaviourParserSpecificMembers
 
-  void ImplicitDSLBase::writeGetPartialJacobianInvert(std::ostream& os, const Hypothesis h) const {
+  void ImplicitDSLBase::writeGetPartialJacobianInvert(
+      std::ostream& os, const Hypothesis h) const {
     const auto& d = this->mb.getBehaviourData(h);
     this->checkBehaviourFile(os);
     SupportedTypes::TypeSize n;
@@ -1601,8 +1834,9 @@ namespace mfront {
             case SupportedTypes::TVECTOR:
             case SupportedTypes::TENSOR:
             default:
-              this->throwRuntimeError("ImplicitDSLBase::writeGetPartialJacobianInvert",
-                                      "internal error, tag unsupported");
+              this->throwRuntimeError(
+                  "ImplicitDSLBase::writeGetPartialJacobianInvert",
+                  "internal error, tag unsupported");
           }
         } else {
           switch (flag) {
@@ -1615,8 +1849,9 @@ namespace mfront {
             case SupportedTypes::TVECTOR:
             case SupportedTypes::TENSOR:
             default:
-              this->throwRuntimeError("ImplicitDSLBase::writeGetPartialJacobianInvert",
-                                      "internal error, tag unsupported");
+              this->throwRuntimeError(
+                  "ImplicitDSLBase::writeGetPartialJacobianInvert",
+                  "internal error, tag unsupported");
           }
         }
         os << "partial_jacobian_" << v.name;
@@ -1628,21 +1863,26 @@ namespace mfront {
          << "{\n"
          << "using namespace tfel::math;\n"
          << "TinyPermutation<" << n << "> permuation;\n"
-         << "TinyMatrixSolve<" << n << ",real>::decomp(this->jacobian,permuation);\n"
+         << "TinyMatrixSolve<" << n
+         << ",real>::decomp(this->jacobian,permuation);\n"
          << "for(unsigned short idx=0;idx!=StensorSize;++idx){\n"
          << "tvector<" << n << ",real> vect_e(real(0));\n"
          << "vect_e(idx) = real(1);\n"
-         << "TinyMatrixSolve<" << n << ",real>::back_substitute(this->jacobian,permuation,vect_e);\n";
+         << "TinyMatrixSolve<" << n
+         << ",real>::back_substitute(this->jacobian,permuation,vect_e);\n";
       SupportedTypes::TypeSize n2;
       for (size_type i2 = 0; i2 <= i; ++i2) {
         const auto& v = d.getIntegrationVariables()[i2];
         const auto flag = SupportedTypes::getTypeFlag(v.type);
         if (flag == SupportedTypes::SCALAR) {
           if (v.arraySize == 1u) {
-            os << "partial_jacobian_" << v.name << "(idx)=vect_e(" << n2 << ");\n";
+            os << "partial_jacobian_" << v.name << "(idx)=vect_e(" << n2
+               << ");\n";
           } else {
-            os << "for(unsigned short idx2=0;idx2!=" << v.arraySize << ";++idx2){\n"
-               << "partial_jacobian_" << v.name << "(idx2)(idx)=vect_e(" << n2 << "+idx2);\n"
+            os << "for(unsigned short idx2=0;idx2!=" << v.arraySize
+               << ";++idx2){\n"
+               << "partial_jacobian_" << v.name << "(idx2)(idx)=vect_e(" << n2
+               << "+idx2);\n"
                << "}\n";
           }
           n2 += this->getTypeSize(v.type, v.arraySize);
@@ -1655,10 +1895,12 @@ namespace mfront {
             os << "partial_jacobian_" << v.name << "(idx2,idx)=vect_e(idx2);\n";
             os << "}\n";
           } else {
-            os << "for(unsigned short idx2=0;idx2!=" << v.arraySize << ";++idx2){\n";
+            os << "for(unsigned short idx2=0;idx2!=" << v.arraySize
+               << ";++idx2){\n";
             os << "for(unsigned short idx3=" << n2;
             os << ";idx3!=TVectorSize;++idx3){\n";
-            os << "partial_jacobian_" << v.name << "(idx2)(idx3,idx)=vect_e(" << n2 << "+idx3+idx2*TVectorSize);\n";
+            os << "partial_jacobian_" << v.name << "(idx2)(idx3,idx)=vect_e("
+               << n2 << "+idx3+idx2*TVectorSize);\n";
             os << "}\n";
             os << "}\n";
             n2 += this->getTypeSize(v.type, v.arraySize);
@@ -1672,23 +1914,28 @@ namespace mfront {
             os << "partial_jacobian_" << v.name << "(idx2,idx)=vect_e(idx2);\n";
             os << "}\n";
           } else {
-            os << "for(unsigned short idx2=0;idx2!=" << v.arraySize << ";++idx2){\n";
+            os << "for(unsigned short idx2=0;idx2!=" << v.arraySize
+               << ";++idx2){\n";
             os << "for(unsigned short idx3=" << n2;
             os << ";idx3!=StensorSize;++idx3){\n";
-            os << "partial_jacobian_" << v.name << "(idx2)(idx3,idx)=vect_e(" << n2 << "+idx3+idx2*StensorSize);\n";
+            os << "partial_jacobian_" << v.name << "(idx2)(idx3,idx)=vect_e("
+               << n2 << "+idx3+idx2*StensorSize);\n";
             os << "}\n";
             os << "}\n";
             n2 += this->getTypeSize(v.type, v.arraySize);
           }
         } else {
-          this->throwRuntimeError("ImplicitDSLBase::writeGetPartialJacobianInvert", "internal error, tag unsupported");
+          this->throwRuntimeError(
+              "ImplicitDSLBase::writeGetPartialJacobianInvert",
+              "internal error, tag unsupported");
         }
       }
       os << "}\n";
       for (size_type i2 = 0; i2 <= i; ++i2) {
         const auto& v = d.getIntegrationVariables()[i2];
         if (this->mb.hasAttribute(h, v.name + "_normalisation_factor")) {
-          const auto& nf = this->mb.getAttribute<std::string>(h, v.name + "_normalisation_factor");
+          const auto& nf = this->mb.getAttribute<std::string>(
+              h, v.name + "_normalisation_factor");
           os << "partial_jacobian_" << v.name << " /= " << nf << ";\n";
         }
       }
@@ -1696,11 +1943,13 @@ namespace mfront {
     }
   }  // end of ImplicitDSLBase::writeGetPartialJacobianInvert
 
-  void ImplicitDSLBase::writeComputeNumericalJacobian(std::ostream& os, const Hypothesis h) const {
+  void ImplicitDSLBase::writeComputeNumericalJacobian(
+      std::ostream& os, const Hypothesis h) const {
     const auto& d = this->mb.getBehaviourData(h);
     const auto n = d.getIntegrationVariables().getTypeSize();
     this->checkBehaviourFile(os);
-    os << "void computeNumericalJacobian(tfel::math::tmatrix<" << n << "," << n << ",real>& njacobian)\n"
+    os << "void computeNumericalJacobian(tfel::math::tmatrix<" << n << "," << n
+       << ",real>& njacobian)\n"
        << "{\n"
        << "using namespace std;\n"
        << "using namespace tfel::math;\n"
@@ -1720,7 +1969,9 @@ namespace mfront {
       os << "this->computeStress();\n";
     }
     os << "this->computeFdF(true);\n"
-       << "this->fzeros = (this->fzeros-tfzeros2)/(2*(this->numerical_jacobian_epsilon));\n"
+       << "this->fzeros = "
+          "(this->fzeros-tfzeros2)/"
+          "(2*(this->numerical_jacobian_epsilon));\n"
        << "for(unsigned short idx2 = 0; idx2!= " << n << ";++idx2){\n"
        << "njacobian(idx2,idx) = this->fzeros(idx2);\n"
        << "}\n"
@@ -1733,7 +1984,8 @@ namespace mfront {
        << "}\n\n";
   }
 
-  std::string ImplicitDSLBase::getVectorMappingClass(const VariableDescription& v) const {
+  std::string ImplicitDSLBase::getVectorMappingClass(
+      const VariableDescription& v) const {
     const auto f = SupportedTypes::getTypeFlag(v.type);
     if (f == SupportedTypes::STENSOR) {
       if (v.arraySize == 1u) {
@@ -1742,10 +1994,12 @@ namespace mfront {
         return "TinyVectorOfStensorFromTinyVectorView";
       }
     }
-    this->throwRuntimeError("ImplicitDSLBase::getVectorMappingClass", "unsupported type for variable '" + v.name + "'");
+    this->throwRuntimeError("ImplicitDSLBase::getVectorMappingClass",
+                            "unsupported type for variable '" + v.name + "'");
   }  // end of ImplicitDSLBase::getVectorMappingClass
 
-  void ImplicitDSLBase::writeBehaviourIntegrator(std::ostream& os, const Hypothesis h) const {
+  void ImplicitDSLBase::writeBehaviourIntegrator(std::ostream& os,
+                                                 const Hypothesis h) const {
     const auto btype = this->mb.getBehaviourTypeFlag();
     const auto& d = this->mb.getBehaviourData(h);
     SupportedTypes::TypeSize n;
@@ -1762,8 +2016,10 @@ namespace mfront {
     if (this->mb.hasAttribute(h, BehaviourData::hasConsistentTangentOperator)) {
       os << "integrate(const SMFlag smflag,const SMType smt) override{\n";
     } else {
-      if ((this->mb.getBehaviourType() == BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) ||
-          (this->mb.getBehaviourType() == BehaviourDescription::COHESIVEZONEMODEL)) {
+      if ((this->mb.getBehaviourType() ==
+           BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) ||
+          (this->mb.getBehaviourType() ==
+           BehaviourDescription::COHESIVEZONEMODEL)) {
         os << "integrate(const SMFlag smflag,const SMType smt) override{\n";
       } else {
         os << "integrate(const SMFlag,const SMType smt) override{\n";
@@ -1772,8 +2028,10 @@ namespace mfront {
     os << "using namespace std;\n";
     os << "using namespace tfel::math;\n";
     writeMaterialLaws(os, this->mb.getMaterialLaws());
-    if ((this->mb.getBehaviourType() == BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) ||
-        (this->mb.getBehaviourType() == BehaviourDescription::COHESIVEZONEMODEL)) {
+    if ((this->mb.getBehaviourType() ==
+         BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) ||
+        (this->mb.getBehaviourType() ==
+         BehaviourDescription::COHESIVEZONEMODEL)) {
       if (this->mb.useQt()) {
         os << "tfel::raise_if(smflag!=MechanicalBehaviour<" << btype
            << ",hypothesis,Type,use_qt>::STANDARDTANGENTOPERATOR,\n"
@@ -1788,23 +2046,28 @@ namespace mfront {
       os << this->mb.getCode(h, BehaviourData::ComputePredictor) << '\n';
     }
     if (this->mb.getAttribute(BehaviourData::profiling, false)) {
-      writeStandardPerformanceProfilingBegin(os, mb.getClassName(), BehaviourData::Integrator);
+      writeStandardPerformanceProfilingBegin(os, mb.getClassName(),
+                                             BehaviourData::Integrator);
     }
     this->solver->writeResolutionAlgorithm(os, this->mb, h);
     os << "if(this->iter==this->iterMax){\n";
     if (getDebugMode()) {
-      os << "cout << \"" << this->mb.getClassName() << "::integrate() : no convergence after \" "
+      os << "cout << \"" << this->mb.getClassName()
+         << "::integrate() : no convergence after \" "
          << "<< this->iter << \" iterations\"<< endl << endl;\n";
       os << "cout << *this << endl;\n";
     }
     if (this->mb.useQt()) {
-      os << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,use_qt>::FAILURE;\n";
+      os << "return MechanicalBehaviour<" << btype
+         << ",hypothesis,Type,use_qt>::FAILURE;\n";
     } else {
-      os << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,false>::FAILURE;\n";
+      os << "return MechanicalBehaviour<" << btype
+         << ",hypothesis,Type,false>::FAILURE;\n";
     }
     os << "}\n";
     if (getDebugMode()) {
-      os << "cout << \"" << this->mb.getClassName() << "::integrate() : convergence after \" "
+      os << "cout << \"" << this->mb.getClassName()
+         << "::integrate() : convergence after \" "
          << "<< this->iter << \" iterations\"<< endl << endl;\n";
     }
     if (this->mb.getAttribute(BehaviourData::profiling, false)) {
@@ -1812,7 +2075,8 @@ namespace mfront {
     }
     for (const auto& v : d.getIntegrationVariables()) {
       if (this->mb.hasAttribute(h, v.name + "_normalisation_factor")) {
-        const auto& nf = this->mb.getAttribute<std::string>(h, v.name + "_normalisation_factor");
+        const auto& nf = this->mb.getAttribute<std::string>(
+            h, v.name + "_normalisation_factor");
         os << "this->d" << v.name << " *= " << nf << ";\n";
       }
     }
@@ -1830,33 +2094,40 @@ namespace mfront {
     }
     os << "if(smt!=NOSTIFFNESSREQUESTED){\n";
     if (this->mb.hasAttribute(h, BehaviourData::hasConsistentTangentOperator)) {
-      if (this->mb.getBehaviourType() == BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
+      if (this->mb.getBehaviourType() ==
+          BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
         os << "if(!this->computeConsistentTangentOperator(smflag,smt)){\n";
       } else {
         os << "if(!this->computeConsistentTangentOperator(smt)){\n";
       }
       if (this->mb.useQt()) {
-        os << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,use_qt>::FAILURE;\n";
+        os << "return MechanicalBehaviour<" << btype
+           << ",hypothesis,Type,use_qt>::FAILURE;\n";
       } else {
-        os << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,false>::FAILURE;\n";
+        os << "return MechanicalBehaviour<" << btype
+           << ",hypothesis,Type,false>::FAILURE;\n";
       }
       os << "}\n";
     } else {
-      os << "string msg(\"" << this->mb.getClassName() << "::integrate : \");\n";
+      os << "string msg(\"" << this->mb.getClassName()
+         << "::integrate : \");\n";
       os << "msg +=\"unimplemented feature\";\n";
       os << "throw(runtime_error(msg));\n";
     }
     os << "}\n";
     if (this->mb.useQt()) {
-      os << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,use_qt>::SUCCESS;\n";
+      os << "return MechanicalBehaviour<" << btype
+         << ",hypothesis,Type,use_qt>::SUCCESS;\n";
     } else {
-      os << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,false>::SUCCESS;\n";
+      os << "return MechanicalBehaviour<" << btype
+         << ",hypothesis,Type,false>::SUCCESS;\n";
     }
     os << "} // end of " << this->mb.getClassName() << "::integrate\n\n";
     this->writeComputeFdF(os, h);
   }
 
-  void ImplicitDSLBase::writeComputeFdF(std::ostream& os, const Hypothesis h) const {
+  void ImplicitDSLBase::writeComputeFdF(std::ostream& os,
+                                        const Hypothesis h) const {
     const auto& d = this->mb.getBehaviourData(h);
     SupportedTypes::TypeSize n;
     SupportedTypes::TypeSize n2;
@@ -1865,7 +2136,8 @@ namespace mfront {
       n2 += this->getTypeSize(v.type, v.arraySize);
     }
     auto jp(this->jacobianPartsUsedInIntegrator);
-    if (this->solver->requiresJacobianToBeReinitialisedToIdentityAtEachIterations()) {
+    if (this->solver
+            ->requiresJacobianToBeReinitialisedToIdentityAtEachIterations()) {
       for (const auto& v : d.getIntegrationVariables()) {
         jp.insert("df" + v.name + "_dd" + v.name);
       }
@@ -1889,39 +2161,45 @@ namespace mfront {
         if (v.arraySize == 1u) {
           os << "real& f" << v.name << "(this->fzeros(" << n << "));\n";
         } else {
-          os << "typename tfel::math::TinyVectorFromTinyVectorView<" << v.arraySize << "," << n2 << "," << n
-             << ",real,false>::type"
+          os << "typename tfel::math::TinyVectorFromTinyVectorView<"
+             << v.arraySize << "," << n2 << "," << n << ",real,false>::type"
              << " f" << v.name << "(this->fzeros);\n";
         }
       } else {
         if (v.arraySize == 1u) {
-          os << "typename tfel::math::" << this->getVectorMappingClass(v) << "<N," << n2 << "," << n << ",real>::type"
+          os << "typename tfel::math::" << this->getVectorMappingClass(v)
+             << "<N," << n2 << "," << n << ",real>::type"
              << " f" << v.name << "(this->fzeros);\n";
         } else {
-          os << "typename tfel::math::" << this->getVectorMappingClass(v) << "<N," << n2 << "," << n << ","
-             << v.arraySize << ",real>::type"
+          os << "typename tfel::math::" << this->getVectorMappingClass(v)
+             << "<N," << n2 << "," << n << "," << v.arraySize << ",real>::type"
              << " f" << v.name << "(this->fzeros);\n";
         }
       }
       n += this->getTypeSize(v.type, v.arraySize);
     }
-    if ((this->solver->usesJacobian()) && (!(this->solver->requiresNumericalJacobian()))) {
+    if ((this->solver->usesJacobian()) &&
+        (!(this->solver->requiresNumericalJacobian()))) {
       n = SupportedTypes::TypeSize();
       for (const auto& v : d.getIntegrationVariables()) {
         n3 = SupportedTypes::TypeSize();
         for (const auto& v2 : d.getIntegrationVariables()) {
           if ((v.arraySize == 1u) && (v2.arraySize == 1u)) {
-            os << "// derivative of variable f" << v.name << " by variable " << v2.name << "\n"
-               << NonLinearSystemSolverBase::getJacobianPart(this->mb, v, v2, n, n2, n3);
+            os << "// derivative of variable f" << v.name << " by variable "
+               << v2.name << "\n"
+               << NonLinearSystemSolverBase::getJacobianPart(this->mb, v, v2, n,
+                                                             n2, n3);
           }
           n3 += this->getTypeSize(v2.type, v2.arraySize);
         }
         n += this->getTypeSize(v.type, v.arraySize);
       }
     }
-    if (this->solver->requiresJacobianToBeReinitialisedToIdentityAtEachIterations()) {
+    if (this->solver
+            ->requiresJacobianToBeReinitialisedToIdentityAtEachIterations()) {
       os << "// setting jacobian to identity\n"
-         << "std::fill(this->jacobian.begin(),this->jacobian.end(),real(0));\n"
+         << "std::fill(this->jacobian.begin(),this->jacobian.end(),real(0))"
+            ";\n"
          << "for(unsigned short idx = 0; idx!=" << n << ";++idx){\n"
          << "this->jacobian(idx,idx)= real(1);\n"
          << "}\n";
@@ -1930,62 +2208,82 @@ namespace mfront {
        << "this->fzeros = this->zeros;\n";
     for (const auto& v : d.getIntegrationVariables()) {
       if (this->mb.hasAttribute(h, v.name + "_normalisation_factor")) {
-        const auto& nf = this->mb.getAttribute<std::string>(h, v.name + "_normalisation_factor");
+        const auto& nf = this->mb.getAttribute<std::string>(
+            h, v.name + "_normalisation_factor");
         os << "f" << v.name << " *= " << nf << ";\n";
       }
     }
     os << this->mb.getCodeBlock(h, BehaviourData::Integrator).code << "\n";
     for (const auto& v : d.getIntegrationVariables()) {
       if (this->mb.hasAttribute(h, 'f' + v.name + "_normalisation_factor")) {
-        const auto& nf = this->mb.getAttribute<std::string>(h, 'f' + v.name + "_normalisation_factor");
+        const auto& nf = this->mb.getAttribute<std::string>(
+            h, 'f' + v.name + "_normalisation_factor");
         os << "f" << v.name << "*= real(1)/(" << nf << ");\n";
       }
     }
-    if ((this->solver->usesJacobian()) && (!(this->solver->requiresNumericalJacobian()))) {
+    if ((this->solver->usesJacobian()) &&
+        (!(this->solver->requiresNumericalJacobian()))) {
       for (const auto& v : d.getIntegrationVariables()) {
         for (const auto& v2 : d.getIntegrationVariables()) {
           if ((v.arraySize == 1u) && (v2.arraySize == 1u)) {
-            os << "static_cast<void>(df" << v.name << "_dd" << v2.name << "); /* suppress potential warnings */\n";
+            os << "static_cast<void>(df" << v.name << "_dd" << v2.name
+               << "); /* suppress potential warnings */\n";
           }
           if (jp.find("df" + v.name + "_dd" + v2.name) != jp.end()) {
-            const bool bfnf = this->mb.hasAttribute(h, 'f' + v.name + "_normalisation_factor");
-            const bool bvnf = this->mb.hasAttribute(h, v2.name + "_normalisation_factor");
+            const bool bfnf = this->mb.hasAttribute(
+                h, 'f' + v.name + "_normalisation_factor");
+            const bool bvnf =
+                this->mb.hasAttribute(h, v2.name + "_normalisation_factor");
             if (bfnf) {
-              const auto& fnf = this->mb.getAttribute<std::string>(h, 'f' + v.name + "_normalisation_factor");
+              const auto& fnf = this->mb.getAttribute<std::string>(
+                  h, 'f' + v.name + "_normalisation_factor");
               if (bvnf) {
-                const auto& vnf = this->mb.getAttribute<std::string>(h, v2.name + "_normalisation_factor");
+                const auto& vnf = this->mb.getAttribute<std::string>(
+                    h, v2.name + "_normalisation_factor");
                 if ((v.arraySize != 1u) && (v2.arraySize != 1u)) {
-                  os << "for(unsigned short idx=0;idx!=" << v.arraySize << ";++idx){\n";
-                  os << "for(unsigned short idx2=0;idx2!=" << v2.arraySize << ";++idx2){\n";
-                  os << "df" << v.name << "_dd" << v2.name << "(idx,idx2) *= " << vnf << "/(" << fnf << ");\n";
+                  os << "for(unsigned short idx=0;idx!=" << v.arraySize
+                     << ";++idx){\n";
+                  os << "for(unsigned short idx2=0;idx2!=" << v2.arraySize
+                     << ";++idx2){\n";
+                  os << "df" << v.name << "_dd" << v2.name
+                     << "(idx,idx2) *= " << vnf << "/(" << fnf << ");\n";
                   os << "}\n";
                   os << "}\n";
                 } else if ((v.arraySize != 1u) && (v2.arraySize == 1u)) {
-                  os << "for(unsigned short idx=0;idx!=" << v.arraySize << ";++idx){\n";
-                  os << "df" << v.name << "_dd" << v2.name << "(idx) *= " << vnf << "/(" << fnf << ");\n";
+                  os << "for(unsigned short idx=0;idx!=" << v.arraySize
+                     << ";++idx){\n";
+                  os << "df" << v.name << "_dd" << v2.name << "(idx) *= " << vnf
+                     << "/(" << fnf << ");\n";
                   os << "}\n";
                 } else if ((v.arraySize == 1u) && (v2.arraySize != 1u)) {
-                  os << "for(unsigned short idx=0;idx!=" << v2.arraySize << ";++idx){\n";
-                  os << "df" << v.name << "_dd" << v2.name << "(idx) *= " << vnf << "/(" << fnf << ");\n";
+                  os << "for(unsigned short idx=0;idx!=" << v2.arraySize
+                     << ";++idx){\n";
+                  os << "df" << v.name << "_dd" << v2.name << "(idx) *= " << vnf
+                     << "/(" << fnf << ");\n";
                   os << "}\n";
                 } else if ((v.arraySize == 1u) && (v2.arraySize == 1u)) {
-                  os << "df" << v.name << "_dd" << v2.name << " *= " << vnf << "/(" << fnf << ");\n";
+                  os << "df" << v.name << "_dd" << v2.name << " *= " << vnf
+                     << "/(" << fnf << ");\n";
                 }
               } else {
                 if ((v.arraySize != 1u) && (v2.arraySize != 1u)) {
-                  os << "for(unsigned short idx=0;idx!=" << v.arraySize << ";++idx){\n";
-                  os << "for(unsigned short idx2=0;idx2!=" << v2.arraySize << ";++idx2){\n";
+                  os << "for(unsigned short idx=0;idx!=" << v.arraySize
+                     << ";++idx){\n";
+                  os << "for(unsigned short idx2=0;idx2!=" << v2.arraySize
+                     << ";++idx2){\n";
                   os << "df" << v.name << "_dd" << v2.name << "(idx,idx2) *= "
                      << "real(1)/(" << fnf << ");\n";
                   os << "}\n";
                   os << "}\n";
                 } else if ((v.arraySize != 1u) && (v2.arraySize == 1u)) {
-                  os << "for(unsigned short idx=0;idx!=" << v.arraySize << ";++idx){\n";
+                  os << "for(unsigned short idx=0;idx!=" << v.arraySize
+                     << ";++idx){\n";
                   os << "df" << v.name << "_dd" << v2.name << "(idx) *= "
                      << "real(1)/(" << fnf << ");\n";
                   os << "}\n";
                 } else if ((v.arraySize == 1u) && (v2.arraySize != 1u)) {
-                  os << "for(unsigned short idx=0;idx!=" << v2.arraySize << ";++idx){\n";
+                  os << "for(unsigned short idx=0;idx!=" << v2.arraySize
+                     << ";++idx){\n";
                   os << "df" << v.name << "_dd" << v2.name << "(idx) *= "
                      << "real(1)/(" << fnf << ");\n";
                   os << "}\n";
@@ -1996,23 +2294,32 @@ namespace mfront {
               }
             } else {
               if (bvnf) {
-                const auto& vnf = this->mb.getAttribute<std::string>(h, v2.name + "_normalisation_factor");
+                const auto& vnf = this->mb.getAttribute<std::string>(
+                    h, v2.name + "_normalisation_factor");
                 if ((v.arraySize != 1u) && (v2.arraySize != 1u)) {
-                  os << "for(unsigned short idx=0;idx!=" << v.arraySize << ";++idx){\n";
-                  os << "for(unsigned short idx2=0;idx2!=" << v2.arraySize << ";++idx2){\n";
-                  os << "df" << v.name << "_dd" << v2.name << "(idx,idx2) *= " << vnf << ";\n";
+                  os << "for(unsigned short idx=0;idx!=" << v.arraySize
+                     << ";++idx){\n";
+                  os << "for(unsigned short idx2=0;idx2!=" << v2.arraySize
+                     << ";++idx2){\n";
+                  os << "df" << v.name << "_dd" << v2.name
+                     << "(idx,idx2) *= " << vnf << ";\n";
                   os << "}\n";
                   os << "}\n";
                 } else if ((v.arraySize != 1u) && (v2.arraySize == 1u)) {
-                  os << "for(unsigned short idx=0;idx!=" << v.arraySize << ";++idx){\n";
-                  os << "df" << v.name << "_dd" << v2.name << "(idx) *= " << vnf << ";\n";
+                  os << "for(unsigned short idx=0;idx!=" << v.arraySize
+                     << ";++idx){\n";
+                  os << "df" << v.name << "_dd" << v2.name << "(idx) *= " << vnf
+                     << ";\n";
                   os << "}\n";
                 } else if ((v.arraySize == 1u) && (v2.arraySize != 1u)) {
-                  os << "for(unsigned short idx=0;idx!=" << v2.arraySize << ";++idx){\n";
-                  os << "df" << v.name << "_dd" << v2.name << "(idx) *= " << vnf << ";\n";
+                  os << "for(unsigned short idx=0;idx!=" << v2.arraySize
+                     << ";++idx){\n";
+                  os << "df" << v.name << "_dd" << v2.name << "(idx) *= " << vnf
+                     << ";\n";
                   os << "}\n";
                 } else if ((v.arraySize == 1u) && (v2.arraySize == 1u)) {
-                  os << "df" << v.name << "_dd" << v2.name << " *= " << vnf << ";\n";
+                  os << "df" << v.name << "_dd" << v2.name << " *= " << vnf
+                     << ";\n";
                 }
               }
             }
@@ -2024,18 +2331,21 @@ namespace mfront {
        << "}\n\n";
   }  // end of ImplicitDSLBase::writeBehaviourIntegrator
 
-  std::string ImplicitDSLBase::getIntegrationVariablesIncrementsInitializers(const Hypothesis h) const {
+  std::string ImplicitDSLBase::getIntegrationVariablesIncrementsInitializers(
+      const Hypothesis h) const {
     SupportedTypes::TypeSize n;
     std::ostringstream init;
     bool first = true;
-    for (const auto& v : this->mb.getBehaviourData(h).getIntegrationVariables()) {
+    for (const auto& v :
+         this->mb.getBehaviourData(h).getIntegrationVariables()) {
       const auto flag = getTypeFlag(v.type);
       if (!first) {
         init << ",\n";
       }
-      if ((flag != SupportedTypes::SCALAR) && (flag != SupportedTypes::STENSOR)) {
+      if ((flag != SupportedTypes::SCALAR) &&
+          (flag != SupportedTypes::STENSOR)) {
         this->throwRuntimeError("getIntegrationVariablesIncrementsInitializers",
-				"internal error, tag unsupported");
+                                "internal error, tag unsupported");
       }
       if ((flag == SupportedTypes::SCALAR) && (v.arraySize == 1u)) {
         init << "d" << v.name << "(this->zeros(" << n << "))";
@@ -2048,7 +2358,8 @@ namespace mfront {
     return init.str();
   }  // end of ImplicitDSLBase::getIntegrationVariableIncrementsInitializers
 
-  std::string ImplicitDSLBase::getLocalVariablesInitializers(const Hypothesis) const{
+  std::string ImplicitDSLBase::getLocalVariablesInitializers(
+      const Hypothesis) const {
     auto init = std::string{};
     auto append = [&init](const std::string& s) {
       if (s.empty()) {
@@ -2059,37 +2370,44 @@ namespace mfront {
       }
       init += s;
     };
-    if (this->mb.getAttribute(BehaviourDescription::computesStiffnessTensor, false)) {
+    if (this->mb.getAttribute(BehaviourDescription::computesStiffnessTensor,
+                              false)) {
       if (this->mb.areElasticMaterialPropertiesConstantDuringTheTimeStep()) {
         append("D_tdt(D)");
       }
     }
     for (const auto& ht : this->mb.getHillTensors()) {
-      if ((this->mb.getBehaviourType() != BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) &&
-          (this->mb.getBehaviourType() != BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR)) {
-        this->throwRuntimeError("ImplicitDSLBase::getLocalVariablesInitializers",
-                                "Hill tensors shall only be defined for finite strain "
-                                "or small strain behaviours");
+      if ((this->mb.getBehaviourType() !=
+           BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) &&
+          (this->mb.getBehaviourType() !=
+           BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR)) {
+        this->throwRuntimeError(
+            "ImplicitDSLBase::getLocalVariablesInitializers",
+            "Hill tensors shall only be defined for finite strain "
+            "or small strain behaviours");
       }
       if (this->mb.areMaterialPropertiesConstantDuringTheTimeStep(ht.c)) {
         append(ht.name + "_tdt(" + ht.name + ")");
       }
     }
     return init;
-  } // end of ImplicitDSLBase::getLocalVariablesInitializers
-  
-  std::string ImplicitDSLBase::getBehaviourConstructorsInitializers(const Hypothesis h) const {
+  }  // end of ImplicitDSLBase::getLocalVariablesInitializers
+
+  std::string ImplicitDSLBase::getBehaviourConstructorsInitializers(
+      const Hypothesis h) const {
     auto init = BehaviourDSLCommon::getBehaviourConstructorsInitializers(h);
     init += (!init.empty()) ? ",\n" : "";
     init += "zeros(real(0)),\nfzeros(real(0))";
     return init;
   }
 
-  void ImplicitDSLBase::writeBehaviourParserSpecificInitializeMethodPart(std::ostream& os, const Hypothesis h) const {
+  void ImplicitDSLBase::writeBehaviourParserSpecificInitializeMethodPart(
+      std::ostream& os, const Hypothesis h) const {
     this->solver->writeSpecificInitializeMethodPart(os, mb, h);
   }
 
-  void ImplicitDSLBase::writeBehaviourIntegrationVariablesIncrements(std::ostream& os, const Hypothesis h) const {
+  void ImplicitDSLBase::writeBehaviourIntegrationVariablesIncrements(
+      std::ostream& os, const Hypothesis h) const {
     const auto& d = this->mb.getBehaviourData(h);
     this->checkBehaviourFile(os);
     SupportedTypes::TypeSize n;
@@ -2105,17 +2423,18 @@ namespace mfront {
         if (v.arraySize == 1u) {
           os << "real& d" << v.name << ";\n";
         } else {
-          os << "typename tfel::math::TinyVectorFromTinyVectorView<" << v.arraySize << "," << n2 << "," << n
-             << ",real,false>::type"
+          os << "typename tfel::math::TinyVectorFromTinyVectorView<"
+             << v.arraySize << "," << n2 << "," << n << ",real,false>::type"
              << " d" << v.name << ";\n";
         }
       } else {
         if (v.arraySize == 1u) {
-          os << "typename tfel::math::" << this->getVectorMappingClass(v) << "<N," << n2 << "," << n << ",real>::type"
+          os << "typename tfel::math::" << this->getVectorMappingClass(v)
+             << "<N," << n2 << "," << n << ",real>::type"
              << " d" << v.name << ";\n";
         } else {
-          os << "typename tfel::math::" << this->getVectorMappingClass(v) << "<N," << n2 << "," << n << ","
-             << v.arraySize << ",real>::type"
+          os << "typename tfel::math::" << this->getVectorMappingClass(v)
+             << "<N," << n2 << "," << n << "," << v.arraySize << ",real>::type"
              << " d" << v.name << ";\n";
         }
       }
@@ -2123,6 +2442,46 @@ namespace mfront {
     }
     os << '\n';
   }
+
+  void ImplicitDSLBase::getSymbols(std::map<std::string, std::string>& symbols,
+                                   const Hypothesis h,
+                                   const std::string& n) {
+    BehaviourDSLCommon::getSymbols(symbols, h, n);
+    const auto& d = this->mb.getBehaviourData(h);
+    for (const auto& v : d.getIntegrationVariables()) {
+      getIncrementSymbol(symbols, v);
+    }
+    for (const auto& mv : this->mb.getMainVariables()) {
+      if (Gradient::isIncrementKnown(mv.first)) {
+        getIncrementSymbol(symbols, mv.first);
+      } else {
+         mfront::addSymbol(symbols, displayName(mv.first) + "\u2080",
+                          mv.first.name + "0");
+        mfront::addSymbol(symbols, displayName(mv.first) + "\u2081",
+                          mv.first.name + "1");
+      }
+    }
+    mfront::getIncrementSymbols(symbols, d.getExternalStateVariables());
+    mfront::addSymbol(symbols, "\u0394t", "dt");
+    if (n == BehaviourData::Integrator) {
+      for (const auto& v1 : d.getIntegrationVariables()) {
+        if (!v1.symbolic_form.empty()) {
+          addSymbol(symbols, "f" + v1.symbolic_form, "f" + v1.name);
+        }
+        for (const auto& v2 : d.getIntegrationVariables()) {
+          if ((v1.symbolic_form.empty()) && (v2.symbolic_form.empty())) {
+            continue;
+          }
+          const auto& s1 =
+              !v1.symbolic_form.empty() ? v1.symbolic_form : v1.name;
+          const auto& s2 =
+              !v2.symbolic_form.empty() ? v2.symbolic_form : v2.name;
+          addSymbol(symbols, "\u2202f" + s1 + "\u2215\u2202\u0394" + s2,
+                    "df" + v1.name + "_dd" + v2.name);
+        }
+      }
+    }
+  }  // end of ImplicitDSLBase::getSymbols
 
   ImplicitDSLBase::~ImplicitDSLBase() = default;
 

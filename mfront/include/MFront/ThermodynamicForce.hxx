@@ -35,6 +35,15 @@ namespace mfront
      */
     ThermodynamicForce(const std::string&, const std::string&);
     /*!
+     * Constructor
+     * \param[in] t : variable type
+     * \param[in] s: symbol name
+     * \param[in] n : variable name
+     */
+    ThermodynamicForce(const std::string&,
+                       const std::string&,
+                       const std::string&);
+    /*!
      * \brief constructor from a variable description
      * \param[in] v: variable description
      */

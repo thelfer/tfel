@@ -15,26 +15,23 @@
 
 namespace mfront{
 
-  ImplicitDSL::ImplicitDSL()
-  {
+  ImplicitDSL::ImplicitDSL() {
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     this->mb.setDSLName("Implicit");
     // input variables
     this->mb.declareAsASmallStrainStandardBehaviour();
     // Default state variable
-    VariableDescription eel("StrainStensor","eel",1u,0u);
+    VariableDescription eel("StrainStensor", "εᵉˡ", "eel", 1u, 0u);
     eel.description = "elastic strain";
-    this->mb.addStateVariable(h,eel);
-    this->mb.setGlossaryName(h,"eel","ElasticStrain");
+    this->mb.addStateVariable(h, eel);
+    this->mb.setGlossaryName(h, "eel", "ElasticStrain");
   } // end of ImplicitDSL::ImplicitDSL
 
-  std::string ImplicitDSL::getName()
-  {
+  std::string ImplicitDSL::getName() {
     return "Implicit";
   } // end of ImplicitDSL::getName
 
-  std::string ImplicitDSL::getDescription()
-  {
+  std::string ImplicitDSL::getDescription() {
     return "this parser provides a generic integrator based on a theta method.";
   } // end of ImplicitDSL::getDescription
 

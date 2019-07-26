@@ -21,15 +21,17 @@
 
 namespace mfront{
 
-  /*!
-   * Raw code block
-   */
-  struct MFRONT_VISIBILITY_EXPORT CodeBlock
-  {
+  //! \brief structure describing a raw code block
+  struct MFRONT_VISIBILITY_EXPORT CodeBlock {
+    //! \brief default contructor
     CodeBlock();
+    //! \brief move contructor
     CodeBlock(CodeBlock&&);
+    //! \brief copy contructor
     CodeBlock(const CodeBlock&);
+    //! \brief move assignement
     CodeBlock& operator=(CodeBlock&&);
+    //! \brief standard assignement
     CodeBlock& operator=(const CodeBlock&);
     //! destructor
     ~CodeBlock();

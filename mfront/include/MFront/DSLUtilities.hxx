@@ -1,28 +1,31 @@
 /*!
  * \file   mfront/include/MFront/DSLUtilities.hxx
- * \brief  
- * 
+ * \brief
+ *
  * \author Thomas Helfer
  * \date   23 oct 2008
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MFRONT_DSLUTILITIES_HXX
-#define LIB_MFRONT_DSLUTILITIES_HXX 
+#define LIB_MFRONT_DSLUTILITIES_HXX
 
-#include<iosfwd>
+#include <map>
+#include <iosfwd>
+#include <vector>
+#include <string>
 
-#include"MFront/MFrontConfig.hxx"
-#include"TFEL/Glossary/Forward/Glossary.hxx"
-#include"MFront/MaterialKnowledgeType.hxx"
-#include"MFront/StaticVariableDescription.hxx"
+#include "MFront/MFrontConfig.hxx"
+#include "TFEL/Glossary/Forward/Glossary.hxx"
+#include "MFront/MaterialKnowledgeType.hxx"
+#include "MFront/StaticVariableDescription.hxx"
 
-namespace mfront{
+namespace mfront {
 
   // forward declaration
   struct StaticVariableDescription;
@@ -39,9 +42,8 @@ namespace mfront{
    * \param[in]  n:  entry point
    * name
    */
-  MFRONT_VISIBILITY_EXPORT void
-  writeEntryPointSymbol(std::ostream&,
-			const std::string&);
+  MFRONT_VISIBILITY_EXPORT void writeEntryPointSymbol(std::ostream&,
+                                                      const std::string&);
   /*!
    * \brief write a specific symbol giving the version of `MFront`
    * used to generate the given entry point.
@@ -49,9 +51,8 @@ namespace mfront{
    * \param[in]  n:  entry point
    * name
    */
-  MFRONT_VISIBILITY_EXPORT void
-  writeTFELVersionSymbol(std::ostream&,
-			 const std::string&);
+  MFRONT_VISIBILITY_EXPORT void writeTFELVersionSymbol(std::ostream&,
+                                                       const std::string&);
   /*!
    * \brief write a specific symbol stating that a given name entry
    * point (`C`-like function for example) has been created using
@@ -60,10 +61,9 @@ namespace mfront{
    * \param[out] n:  entry point alias
    * \param[out] n2: entry point name
    */
-  MFRONT_VISIBILITY_EXPORT void
-  writeEntryPointSymbol(std::ostream&,
-			const std::string&,
-			const std::string&);
+  MFRONT_VISIBILITY_EXPORT void writeEntryPointSymbol(std::ostream&,
+                                                      const std::string&,
+                                                      const std::string&);
   /*!
    * \brief write a specific symbol for the interface of an entry
    * point.
@@ -71,10 +71,9 @@ namespace mfront{
    * \param[out] n:  entry point alias
    * \param[out] i: entry point name
    */
-  MFRONT_VISIBILITY_EXPORT void
-  writeInterfaceSymbol(std::ostream&,
-		       const std::string&,
-		       const std::string&);
+  MFRONT_VISIBILITY_EXPORT void writeInterfaceSymbol(std::ostream&,
+                                                     const std::string&,
+                                                     const std::string&);
   /*!
    * \brief write a symbol stating that a given entry point is
    * associated to a material.
@@ -83,36 +82,32 @@ namespace mfront{
    * \param[in]  m:  material name
    * name
    */
-  MFRONT_VISIBILITY_EXPORT void
-  writeMaterialSymbol(std::ostream&,
-		      const std::string&,
-		      const std::string&);
+  MFRONT_VISIBILITY_EXPORT void writeMaterialSymbol(std::ostream&,
+                                                    const std::string&,
+                                                    const std::string&);
   /*!
    * \brief write the symbol giving the material knowledge type.
    * \param[out] os: output stream
    * \param[in]  n:  entry point
    * \param[in]  t:  material knowledge type
    */
-  MFRONT_VISIBILITY_EXPORT void
-  writeMaterialKnowledgeTypeSymbol(std::ostream&,
-				   const std::string&,
-				   const MaterialKnowledgeType&);
-  
-  MFRONT_VISIBILITY_EXPORT void
-  writeMaterialLaws(std::ostream&,
-		    const std::vector<std::string>&);
+  MFRONT_VISIBILITY_EXPORT void writeMaterialKnowledgeTypeSymbol(
+      std::ostream&, const std::string&, const MaterialKnowledgeType&);
 
-  MFRONT_VISIBILITY_EXPORT void
-  writeStaticVariables(std::ostream&,
-		       const StaticVariableDescriptionContainer&,
-		       const std::string&);
+  MFRONT_VISIBILITY_EXPORT void writeMaterialLaws(
+      std::ostream&, const std::vector<std::string>&);
+
+  MFRONT_VISIBILITY_EXPORT void writeStaticVariables(
+      std::ostream&,
+      const StaticVariableDescriptionContainer&,
+      const std::string&);
   /*!
    * \return the base name (without interface specification) of the
    * library to be generated by `MFront`.
    * \param[in] mpd: material property description
    */
-  MFRONT_VISIBILITY_EXPORT std::string
-  getMaterialLawLibraryNameBase(const MaterialPropertyDescription&);
+  MFRONT_VISIBILITY_EXPORT std::string getMaterialLawLibraryNameBase(
+      const MaterialPropertyDescription&);
   /*!
    * \brief define the F77_FUNC and F77_FUNC_ macros. We support the
    * GNU (gfortran) and the intel compilers. By default, the GNU
@@ -128,38 +123,40 @@ namespace mfront{
    * all identifiers to lower case plus an underscore ("foo_" and
    * "foo_bar_"). On Microsoft Windows, the Intel Fortran compiler
    * defaults to uppercase without an underscore.[2]
-   * 
+   *
    * [2] User and Reference Guide for the Intel Fortran Compiler
    * 15.0, Intel Corporation (2014), Summary of Mixed-Language
    * Issues. Accessed 17 Nov. 2014.
    */
-  MFRONT_VISIBILITY_EXPORT void
-  writeF77FUNCMacros(std::ostream&);
+  MFRONT_VISIBILITY_EXPORT void writeF77FUNCMacros(std::ostream&);
   /*!
    * \brief define export directives (visibility attributes) and
    * calling conventions through the MFRONT_SHAREDOBJ and the
    * MFRONT_CALLING_CONVENTION macros
    * \param[out] f   : output file
    */
-  MFRONT_VISIBILITY_EXPORT void
-  writeExportDirectives(std::ostream&);
+  MFRONT_VISIBILITY_EXPORT void writeExportDirectives(std::ostream&);
 
-  MFRONT_VISIBILITY_EXPORT std::string
-  makeUpperCase(const std::string&);
+  MFRONT_VISIBILITY_EXPORT std::string makeUpperCase(const std::string&);
 
-  MFRONT_VISIBILITY_EXPORT std::string 
-  makeLowerCase(const std::string&);
-
+  MFRONT_VISIBILITY_EXPORT std::string makeLowerCase(const std::string&);
+  /*!
+   * \brief add the given symbol.
+   * \param[in,out] symbols: mapping between a symbol and a replacement string
+   * \param[in] s: symbol
+   * \param[in] r: replacement string
+   */
+  MFRONT_VISIBILITY_EXPORT void addSymbol(std::map<std::string, std::string>&,
+                                          const std::string&,
+                                          const std::string&);
   /*!
    * \brief display the complete description of a glossary entry
    * \param[out] os : output stream
    * \param[in]  e  : glossary entry
    */
-  MFRONT_VISIBILITY_EXPORT void
-  displayGlossaryEntryCompleteDescription(std::ostream&,
-					  const tfel::glossary::GlossaryEntry&);
+  MFRONT_VISIBILITY_EXPORT void displayGlossaryEntryCompleteDescription(
+      std::ostream&, const tfel::glossary::GlossaryEntry&);
 
-} // end of namespace mfront  
+}  // end of namespace mfront
 
 #endif /* LIB_MFRONT_DSLUTILITIES_HXX */
-

@@ -127,6 +127,7 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./js/plugins.js					      \
 	   ./humans.txt						      \
 	   ./apple-touch-icon-precomposed.png			      \
+	   ./img/AbdominalMusclesModelling2019.png		      \
 	   ./img/background.svg  				      \
 	   ./img/CauchyStressComponents.png                           \
 	   ./img/tutorielch12-img1.png				      \
@@ -286,6 +287,7 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./img/StressPotentials.svg                                 \
 	   ./img/CyranoPrinciple.png                                  \
 	   ./img/DruckerPragerCap.svg                                 \
+	   ./img/mfront-unicode.png                                   \
 	   ./img/PSACylinderHeadDesign.png			      \
 	   ./img/PSACylinderHeadDesign.svg			      \
 	   ./img/PSACylinderHeadDesign.xcf			      \

@@ -17,6 +17,7 @@
 #include"TFEL/Raise.hxx"
 #include"TFEL/Glossary/Glossary.hxx"
 #include"TFEL/Glossary/GlossaryEntry.hxx"
+#include"MFront/DSLUtilities.hxx"
 #include"MFront/SupportedTypes.hxx"
 #include"MFront/MFrontLogStream.hxx"
 #include"MFront/VariableDescription.hxx"
@@ -32,11 +33,19 @@ namespace mfront{
   VariableDescription::VariableDescription() = default;
 
   VariableDescription::VariableDescription(const std::string& t,
-					   const std::string& n,
-					   const unsigned short s,
-					   const size_t l)
-    : VariableDescriptionBase(t,n,s,l)
-  {} // end of VariableDescription::VariableDescription
+                                           const std::string& n,
+                                           const unsigned short as,
+                                           const size_t l)
+      : VariableDescriptionBase(t, n, as, l) {
+  }  // end of VariableDescription::VariableDescription
+
+  VariableDescription::VariableDescription(const std::string& t,
+                                           const std::string& s,
+                                           const std::string& n,
+                                           const unsigned short as,
+                                           const size_t l)
+      : VariableDescriptionBase(t, s, n, as, l) {
+  }  // end of VariableDescription::VariableDescription
 
   VariableDescription::VariableDescription(const VariableDescription&) = default;
   VariableDescription::VariableDescription(VariableDescription&&) = default;
@@ -380,25 +389,39 @@ namespace mfront{
   
   VariableDescription::~VariableDescription() = default;
 
-  bool hasBounds(const VariableDescription& v){
+  bool hasBounds(const VariableDescription& v) {
     return v.hasBounds();
   } // end of hasBounds
 
-  bool hasBounds(const VariableDescription& v,
-		 const unsigned short i)
-  {
+  bool hasBounds(const VariableDescription& v, const unsigned short i) {
     return v.hasBounds(i);
   } // end of hasBounds
-  
-  bool hasPhysicalBounds(const VariableDescription& v){
+
+  bool hasPhysicalBounds(const VariableDescription& v) {
     return v.hasPhysicalBounds();
   } // end of hasPhysicalBounds
 
-  bool hasPhysicalBounds(const VariableDescription& v,
-			 const unsigned short i){
+  bool hasPhysicalBounds(const VariableDescription& v, const unsigned short i) {
     return v.hasPhysicalBounds(i);
   } // end of hasPhysicalBounds
   
+  void getSymbol(std::map<std::string, std::string>& symbols,
+                 const VariableDescription& v) {
+    if (!v.symbolic_form.empty()) {
+      addSymbol(symbols, v.symbolic_form, v.name);
+    }
+  }  // end of getSymbol
+
+  void getIncrementSymbol(std::map<std::string, std::string>& symbols,
+                          const VariableDescription& v) {
+    addSymbol(symbols, "\u0394" + displayName(v), "d" + v.name);
+  }  // end of getIncrementSymbol
+
+  void getTimeDerivativeSymbol(std::map<std::string, std::string>& symbols,
+                               const VariableDescription& v) {
+    addSymbol(symbols, "\u2202\u209C" + displayName(v), "d" + v.name);
+  }  // end of getIncrementSymbol
+
   VariableDescriptionContainer::VariableDescriptionContainer() = default;
   
   VariableDescriptionContainer::VariableDescriptionContainer(const std::initializer_list<VariableDescription>& l)
@@ -412,8 +435,7 @@ namespace mfront{
   VariableDescriptionContainer&
   VariableDescriptionContainer::operator=(const VariableDescriptionContainer&) = default;
 
-  bool VariableDescriptionContainer::contains(const std::string& n) const
-  {
+  bool VariableDescriptionContainer::contains(const std::string& n) const {
     for(const auto& v : *this){
       if(v.name==n){
 	return true;
@@ -422,21 +444,21 @@ namespace mfront{
     return false;
   } // end of VariableDescriptionContainer::contains
 
-  std::vector<std::string> VariableDescriptionContainer::getExternalNames() const
-  {
+  std::vector<std::string> VariableDescriptionContainer::getExternalNames()
+      const {
     std::vector<std::string> n;
     this->appendExternalNames(n);
     return n;
   }
 
-  void VariableDescriptionContainer::getExternalNames(std::vector<std::string>& n) const
-  {
+  void VariableDescriptionContainer::getExternalNames(
+      std::vector<std::string>& n) const {
     n.clear();
     this->appendExternalNames(n);
   }
 
-  void VariableDescriptionContainer::appendExternalNames(std::vector<std::string>& n) const
-  {
+  void VariableDescriptionContainer::appendExternalNames(
+      std::vector<std::string>& n) const {
     for(const auto& v : *this){
       const auto name = v.getExternalName();
       if(v.arraySize==1u){
@@ -451,9 +473,8 @@ namespace mfront{
     }
   } // end of VariableDescriptionContainer::appendExternalNames
 
-  VariableDescription&
-  VariableDescriptionContainer::getVariable(const std::string& n)
-  {
+  VariableDescription& VariableDescriptionContainer::getVariable(
+      const std::string& n) {
     for(auto& v : *this){
       if(v.name==n){
 	return v;
@@ -506,41 +527,60 @@ namespace mfront{
   } // end of SupportedTypes::getNumberOfVariables
   
   VariableDescriptionContainer::~VariableDescriptionContainer() = default;
-  
-  bool hasBounds(const VariableDescriptionContainer& c)
-  {
-    for(const auto& v:c){
-      if(v.arraySize==1u){
-	if(v.hasBounds()){
-	  return true;
-	}
-      } else {
-	for(unsigned short i=0;i!=v.arraySize;++i){
-	  if(v.hasBounds(i)){
-	    return true;
-	  }
-	}
-      }
-    }
-    return false;
-  } // end of hasBounds
 
-  bool hasPhysicalBounds(const VariableDescriptionContainer& c)
-  {
-    for(const auto& v:c){
-      if(v.arraySize==1u){
-	if(v.hasPhysicalBounds()){
-	  return true;
-	}
+  bool hasBounds(const VariableDescriptionContainer& c) {
+    for (const auto& v : c) {
+      if (v.arraySize == 1u) {
+        if (v.hasBounds()) {
+          return true;
+        }
       } else {
-	for(unsigned short i=0;i!=v.arraySize;++i){
-	  if(v.hasPhysicalBounds(i)){
-	    return true;
-	  }
-	}
+        for (unsigned short i = 0; i != v.arraySize; ++i) {
+          if (v.hasBounds(i)) {
+            return true;
+          }
+        }
       }
     }
     return false;
-  } // end of hasPhysicalBounds
+  }  // end of hasBounds
+
+  bool hasPhysicalBounds(const VariableDescriptionContainer& c) {
+    for (const auto& v : c) {
+      if (v.arraySize == 1u) {
+        if (v.hasPhysicalBounds()) {
+          return true;
+        }
+      } else {
+        for (unsigned short i = 0; i != v.arraySize; ++i) {
+          if (v.hasPhysicalBounds(i)) {
+            return true;
+          }
+        }
+      }
+    }
+    return false;
+  }  // end of hasPhysicalBounds
+
+  void getSymbols(std::map<std::string, std::string>& symbols,
+                  const VariableDescriptionContainer& c) {
+    for (const auto& v : c) {
+      getSymbol(symbols, v);
+    }
+  }  // end of getSymbols
+
+  void getIncrementSymbols(std::map<std::string, std::string>& symbols,
+                           const VariableDescriptionContainer& c) {
+    for (const auto& v : c) {
+      getIncrementSymbol(symbols, v);
+    }
+  }  // end of getIncrementSymbols
+
+  void getTimeDerivativeSymbols(std::map<std::string, std::string>& symbols,
+                           const VariableDescriptionContainer& c) {
+    for (const auto& v : c) {
+      getTimeDerivativeSymbol(symbols, v);
+    }
+  }  // end of getTimeDerivativeSymbols
 
 } // end of namespace mfront

@@ -17,6 +17,7 @@
 
 #include <sstream>
 #include <stdexcept>
+#include "TFEL/UnicodeSupport/UnicodeSupport.hxx"
 #include "MFront/MFrontLogStream.hxx"
 #include "MFront/AbstractModelInterface.hxx"
 
@@ -90,25 +91,30 @@ namespace mfront {
     // begin treatement
     this->current = this->tokens.begin();
     while (this->current != this->tokens.end()) {
-      auto p = this->callBacks.find(this->current->value);
+      const auto c = tfel::unicode::getMangledString(this->current->value);
+      const auto p = this->callBacks.find(c);
       if (p == this->callBacks.end()) {
-        if (this->md.outputs.contains(this->current->value)) {
-          this->currentVar = this->current->value;
+        if (this->md.outputs.contains(c)) {
+          this->currentVar = c;
           handler = &Child::treatOutputMethod;
-        } else if (this->md.inputs.contains(this->current->value)) {
-          this->currentVar = this->current->value;
+        } else if (this->md.inputs.contains(c)) {
+          this->currentVar = c;
           handler = &Child::treatInputMethod;
-        } else if (this->md.parameters.contains(this->current->value)) {
-          this->currentVar = this->current->value;
+        } else if (this->md.parameters.contains(c)) {
+          this->currentVar = c;
           handler = &Child::treatParameterMethod;
         } else if (this->md.constantMaterialProperties.contains(
-                       this->current->value)) {
-          this->currentVar = this->current->value;
+                       c)) {
+          this->currentVar = c;
           handler = &Child::treatConstantMaterialPropertyMethod;
         } else {
           handler = &Child::treatUnknownKeyword;
         }
       } else {
+        if (getVerboseMode() >= VERBOSE_LEVEL2) {
+          getLogStream() << "ModelDSLBase<Child>::analyse: "
+                         << "treating keywork '" << c << "'\n";
+        }
         handler = p->second;
       }
       this->currentComment = this->current->comment;
