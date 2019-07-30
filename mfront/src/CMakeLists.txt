@@ -112,7 +112,7 @@ set(TFELMFront_SOURCES
     SecondBroydenSolver.cxx
     LevenbergMarquardtSolvers.cxx
     AbstractBehaviourBrick.cxx
-    AbstractBehaviourBrickFactory.cxx
+    BehaviourBrickFactory.cxx
     BehaviourBrickProviderIdentifier.cxx
     BehaviourBrickProvider.cxx
     BehaviourBrickRequirement.cxx

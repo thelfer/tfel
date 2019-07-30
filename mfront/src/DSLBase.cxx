@@ -77,6 +77,14 @@ namespace mfront {
     return true;
   }
 
+  bool isValidMaterialName(const std::string& n) {
+    return tfel::utilities::CxxTokenizer::isValidIdentifier(n, true);
+  }
+
+  bool isValidLibraryName(const std::string& n) {
+    return tfel::utilities::CxxTokenizer::isValidIdentifier(n, true);
+  }
+
   DSLBase::VariableModifier::~VariableModifier() = default;
 
   DSLBase::WordAnalyser::~WordAnalyser() = default;
@@ -111,7 +119,8 @@ namespace mfront {
   std::string DSLBase::getTemporaryVariableName(
       std::vector<std::string>& tmpnames, const std::string& p) const {
     if (!this->isValidIdentifier(p)) {
-      this->throwRuntimeError("DSLBase::getTemporaryVariableName", "invalid variable prefix '" + p + "'");
+      this->throwRuntimeError("DSLBase::getTemporaryVariableName",
+                              "invalid variable prefix '" + p + "'");
     }
     for (size_type i = 0; i != std::numeric_limits<size_type>::max(); ++i) {
       const auto c = p + std::to_string(i);
@@ -122,7 +131,8 @@ namespace mfront {
         }
       }
     }
-    this->throwRuntimeError("DSLBase::getTemporaryVariableName", "unable to find a temporary variable");
+    this->throwRuntimeError("DSLBase::getTemporaryVariableName",
+                            "unable to find a temporary variable");
   }
 
   void DSLBase::openFile(const std::string& f,
@@ -153,7 +163,9 @@ namespace mfront {
     }
   }  // end of DSLBase::openFile
 
-  const FileDescription& DSLBase::getFileDescription() const { return this->fd; }  // end of DSLBase::getFileDescription
+  const FileDescription& DSLBase::getFileDescription() const {
+    return this->fd;
+  }  // end of DSLBase::getFileDescription
 
   const TargetsDescription& DSLBase::getTargetsDescription() const {
     return this->td;

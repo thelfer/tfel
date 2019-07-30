@@ -15,8 +15,7 @@
 
 namespace mfront{
 
-  RungeKuttaDSL::RungeKuttaDSL()
-  {
+  RungeKuttaDSL::RungeKuttaDSL() {
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     this->mb.setDSLName("RungeKutta");
     // input variables
@@ -35,13 +34,9 @@ namespace mfront{
     }
   } // end of RungeKuttaDSL::RungeKuttaDSL
 
-  std::string RungeKuttaDSL::getName()
-  {
-    return "RungeKutta";
-  }
+  std::string RungeKuttaDSL::getName() { return "RungeKutta"; }
 
-  std::string RungeKuttaDSL::getDescription()
-  {
+  std::string RungeKuttaDSL::getDescription() {
     return "this dsl provides a generic integrator based on one of the many "
            "Runge-Kutta algorithm. Avalailable algorithms are 'euler', 'rk2', 'rk4' "
            "'r42', 'rk54' and 'rkCastem'";

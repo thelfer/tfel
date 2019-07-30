@@ -21,8 +21,7 @@
 #include "TFEL/Material/ModellingHypothesis.hxx"
 #include "MFront/MFrontConfig.hxx"
 
-namespace mfront
-{
+namespace mfront {
 
   // forward declaration
   struct BehaviourDescription;

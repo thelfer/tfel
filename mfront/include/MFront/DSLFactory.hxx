@@ -24,40 +24,46 @@
 
 namespace mfront{
 
-  struct MFRONT_VISIBILITY_EXPORT DSLFactory
-  {
-    typedef std::shared_ptr<AbstractDSL> (*ParserCreator)();
-    typedef std::string (*DescriptionPtr)();
-
+  struct MFRONT_VISIBILITY_EXPORT DSLFactory {
+    //! \brief a simple alias
+    using DSLCreator = std::shared_ptr<AbstractDSL> (*)();
+    //! \brief a simple alias
+    using ParserCreator = DSLCreator;
+    //! \brief a simple alias
+    using DescriptionPtr = std::string (*)();
+    //!\brief return the uniq instance of the `DSLFactory` class.
     static DSLFactory& getDSLFactory();
+    /*!
+     * \return the list of all registred DSLs.
+     * \param[in] b: add the alias
+     */
+    std::vector<std::string> getRegistredDSLs(const bool = true) const;
 
-    std::vector<std::string> getRegistredParsers();
+    void registerDSLCreator(const std::string&, DSLCreator, DescriptionPtr);
+
+    void registerDSLAlias(const std::string&, const std::string&);
+
+    std::string getDSLDescription(const std::string&) const;
+
+    std::shared_ptr<AbstractDSL> createNewDSL(const std::string&) const;
+
+    std::vector<std::string> getRegistredParsers(const bool = true) const;
 
     void registerParserCreator(const std::string&, ParserCreator, DescriptionPtr);
 
-    std::shared_ptr<AbstractDSL> createNewParser(const std::string&);
+    std::string getParserDescription(const std::string&) const;
 
-    std::shared_ptr<AbstractDSL> createNewDSL(const std::string&);
-
-    std::string getParserDescription(const std::string&);
-
+    std::shared_ptr<AbstractDSL> createNewParser(const std::string&) const;
+    //! destructor
     ~DSLFactory();
 
   private:
+   std::map<std::string, std::vector<std::string>> aliases;
+   std::map<std::string, DSLCreator> creators;
+   std::map<std::string, DescriptionPtr> descriptions;
 
-    typedef std::map<std::string,ParserCreator>  ParserCreatorsContainer;
-    typedef std::map<std::string,DescriptionPtr> DescriptionPtrContainer;
-
-    TFEL_VISIBILITY_LOCAL
-    DSLFactory();
-
-    TFEL_VISIBILITY_LOCAL
-    DescriptionPtrContainer&
-    getDescriptionMap();
-
-    TFEL_VISIBILITY_LOCAL
-    ParserCreatorsContainer&
-    getMap();
+   TFEL_VISIBILITY_LOCAL
+   DSLFactory();
 
   }; // end of struct DSLFactory
 

@@ -38,7 +38,7 @@
 #include "MFront/DSLFactory.hxx"
 #include "MFront/MaterialPropertyInterfaceFactory.hxx"
 #include "MFront/BehaviourInterfaceFactory.hxx"
-#include "MFront/AbstractBehaviourBrickFactory.hxx"
+#include "MFront/BehaviourBrickFactory.hxx"
 #include "MFront/BehaviourBrick/StressPotentialFactory.hxx"
 #include "MFront/BehaviourBrick/InelasticFlowFactory.hxx"
 #include "MFront/BehaviourBrick/StressCriterionFactory.hxx"
@@ -505,7 +505,7 @@ namespace mfront {
         "--list-behaviour-bricks",
         CallBack("list available behaviour bricks",
                  [] {
-                   auto& bbf = AbstractBehaviourBrickFactory::getFactory();
+                   auto& bbf = BehaviourBrickFactory::getFactory();
                    displayList("bricks",bbf.getRegistredBricks());
                  },
                  false));

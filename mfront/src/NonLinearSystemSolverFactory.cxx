@@ -23,32 +23,28 @@
 namespace mfront
 {
 
-  template<typename T>
-  static std::shared_ptr<NonLinearSystemSolver>
-  buildSolverConstructor()
-  {
+  template <typename T>
+  static std::shared_ptr<NonLinearSystemSolver> buildSolverConstructor() {
     return std::shared_ptr<NonLinearSystemSolver>(new T());
   } // end of buildAlgoritmConstructor
 
   NonLinearSystemSolverFactory&
-  NonLinearSystemSolverFactory::getNonLinearSystemSolverFactory()
-  {
+  NonLinearSystemSolverFactory::getNonLinearSystemSolverFactory() {
     static NonLinearSystemSolverFactory factory;
     return factory;
   }
-  
+
   std::shared_ptr<NonLinearSystemSolver>
-  NonLinearSystemSolverFactory::getSolver(const std::string& a) const
-  {
+  NonLinearSystemSolverFactory::getSolver(const std::string& a) const {
     const auto p = this->constructors.find(a);
-    tfel::raise_if(p==this->constructors.end(),
-		   "NonLinearSystemSolverFactory::getSolver : "
-		   "no solver '"+a+"' registred");
+    tfel::raise_if(p == this->constructors.end(),
+                   "NonLinearSystemSolverFactory::getSolver : "
+                   "no solver '" +
+                       a + "' registred");
     return (*(p->second))();
   }
 
-  NonLinearSystemSolverFactory::NonLinearSystemSolverFactory()
-  {
+  NonLinearSystemSolverFactory::NonLinearSystemSolverFactory() {
     this->registerSolver("NewtonRaphson",
 			 buildSolverConstructor<MFrontNewtonRaphsonSolver>);
     this->registerSolver("NewtonRaphson_NumericalJacobian",
@@ -69,13 +65,20 @@ namespace mfront
 			 buildSolverConstructor<LevenbergMarquardtNumericalJacobianSolver>);
   } // end of NonLinearSystemSolverFactory::NonLinearSystemSolverFactory
 
-  void
-  NonLinearSystemSolverFactory::registerSolver(const std::string& a,
-						       const constructor c)
-  {
+  void NonLinearSystemSolverFactory::registerSolver(const std::string& a,
+                                                    const constructor c) {
     tfel::raise_if(!this->constructors.insert({a,c}).second,
 		   "NonLinearSystemSolverFactory::registerSolver : "
 		   "solver '"+a+"' already declared");
   } // end of NonLinearSystemSolverFactory::registerSolver
+
+  std::vector<std::string> NonLinearSystemSolverFactory::getRegistredSolvers()
+      const {
+    std::vector<std::string> solvers;
+    for (const auto& s : this->constructors) {
+      solvers.push_back(s.first);
+    }
+    return solvers;
+  }  // end of NonLinearSystemSolverFactory::getRegistredSolvers
 
 } // end of namespace mfront

@@ -52,13 +52,17 @@ namespace std{
 
 namespace mfront{
 
+  bool isValidMaterialPropertyName(const std::string& n) {
+    return tfel::utilities::CxxTokenizer::isValidIdentifier(n, false);
+  }
+
   MaterialPropertyDSL::MaterialPropertyDSL() {
     // Call Back
     this->registerNewCallBack(";",&MaterialPropertyDSL::treatLonelySeparator);
     this->registerNewCallBack("@Link",
 			      &MaterialPropertyDSL::treatLink);
     this->registerNewCallBack("@MaterialLaw",
-			      &MaterialPropertyDSL::treatMaterialLaw);
+                              &MaterialPropertyDSL::treatMaterialLaw);
     this->registerNewCallBack("@MFront",&MaterialPropertyDSL::treatMFront);
     this->registerNewCallBack("@Material",&MaterialPropertyDSL::treatMaterial);
     this->registerNewCallBack("@Library",&MaterialPropertyDSL::treatLibrary);
@@ -122,11 +126,11 @@ namespace mfront{
   int MaterialPropertyDSL::getIntegerConstant(const std::string& n) const{
     for(const auto& v:this->md.staticVars){
       if(v.name==n){
-	if(v.type!="int"){
-	  this->throwRuntimeError("MaterialPropertyDSL::getIntegerConstant",
-				  "invalid type for variable '"+n+"'");
-	}
-	return v.value;
+        if (v.type != "int") {
+          this->throwRuntimeError("MaterialPropertyDSL::getIntegerConstant",
+                                  "invalid type for variable '" + n + "'");
+        }
+        return v.value;
       }
     }
     this->throwRuntimeError("MaterialPropertyDSL::getIntegerConstant",
@@ -161,21 +165,21 @@ namespace mfront{
       this->throwRuntimeError("MaterialPropertyDSL::treatMaterial",
 			      "material name alreay defined");
     }
-    this->md.material = this->readOnlyOneToken();
-    if(!CxxTokenizer::isValidIdentifier(this->md.material,true)){
+    const auto& m = this->readOnlyOneToken();
+    if (!isValidMaterialName(m)) {
       this->throwRuntimeError("MaterialPropertyDSL::treatMaterial",
-			      "invalid material name "
-			      "'"+this->md.material+"'");
+                              "invalid material name '" + m + "'");
     }
+    this->md.material = m;
   } // end of MaterialPropertyDSL::treatMaterial
 
   void MaterialPropertyDSL::treatLibrary() {
     if(!this->md.library.empty()){
       this->throwRuntimeError("MaterialPropertyDSL::treatLibrary",
-			      "material name alreay defined");
+                              "material name alreay defined");
     }
     const auto& l = this->readOnlyOneToken();
-    if(!CxxTokenizer::isValidIdentifier(l,true)){
+    if (!isValidLibraryName(l)) {
       this->throwRuntimeError("MaterialPropertyDSL::treatLibrary",
 			      "invalid library name '"+l+"'");
     }
@@ -221,10 +225,11 @@ namespace mfront{
     };
     throw_if(!this->md.className.empty(),"law name has already been declared");
     throw_if(!this->md.law.empty(),"law name has already been declared");
-    this->md.law       = this->readOnlyOneToken();
-    this->md.className = this->md.law;
-    throw_if(!isValidIdentifier(this->md.className),
-	     this->md.className+"is not a valid law name");
+    const auto& l = this->readOnlyOneToken();
+    throw_if(!isValidMaterialPropertyName(l),
+             "'" + l + "' is not a valid law name");
+    this->md.law       = l;
+    this->md.className = l;
   } // end of MaterialPropertyDSL::treatLaw
 
   void MaterialPropertyDSL::addInterface(const std::string& i) {
@@ -247,8 +252,7 @@ namespace mfront{
     }
   } // end of MaterialPropertyDSL::setInterface
 
-  void MaterialPropertyDSL::treatInterface() 
-  {
+  void MaterialPropertyDSL::treatInterface() {
     this->checkNotEndOfFile("MaterialPropertyDSL::treatInterface",
 			    "Expected interface name.");
     if(this->current->flag==tfel::utilities::Token::String){

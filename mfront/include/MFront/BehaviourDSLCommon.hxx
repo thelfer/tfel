@@ -37,9 +37,14 @@ namespace mfront {
   struct AbstractBehaviourBrick;
 
   /*!
-   * This class provides most functionnalities used by mechanical
+   * \return if the given name is valid
+   * \param[in] n: behaviour name
+   */
+  MFRONT_VISIBILITY_EXPORT  bool isValidBehaviourName(const std::string&);
+
+  /*!
+   * \brief this class provides most functionnalities used by mechanical
    * behaviour parsers.
-   *
    */
   struct MFRONT_VISIBILITY_EXPORT BehaviourDSLCommon
       : public virtual AbstractBehaviourDSL,

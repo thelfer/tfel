@@ -90,10 +90,10 @@ namespace mfront {
       GREENLAGRANGE,
       HENCKY
     };  // end of enum StrainMeasure
-        /*!
-         * \brief this structure holds the value of a constant material
-         * property
-         */
+    /*!
+     * \brief this structure holds the value of a constant material
+     * property
+     */
     struct ConstantMaterialProperty {
       //! parameter name associated with the material property
       std::string name;
@@ -141,11 +141,11 @@ namespace mfront {
       //! Hill coeffients
       std::vector<MaterialProperty> c;
     };  // end of struct HillTensor
-        /*!
-         * \brief Available integration schemes.
-         * One of the first thing a dsl shall do is to set the
-         * integration scheme it uses.
-         */
+    /*!
+     * \brief Available integration schemes.
+     * One of the first thing a dsl shall do is to set the
+     * integration scheme it uses.
+     */
     enum IntegrationScheme {
       IMPLICITSCHEME,  //!< value set by the `Implicit` Dsl family
       EXPLICITSCHEME,  //!< value set by the `Runge-Kutta` Dsl
@@ -153,7 +153,8 @@ namespace mfront {
                         * `IsotropicMisesPlasticFlowDSL`,
                         * `IsotropicStrainHardeningMisesCreepDSL`
                         * `MultipleIsotropicMisesFlowsDSL` dsls. */
-      UNDEFINEDINTEGRATIONSCHEME  //! default value.
+      USERDEFINEDSCHEME, //!< default value.
+      UNDEFINEDINTEGRATIONSCHEME  //!< default value.
     };
     /*!
      * a simple structure used to compte the value of a material

@@ -37,7 +37,18 @@ namespace mfront {
   struct MaterialPropertyDescription;
 
   /*!
-   * base structure for domain specific languages
+   * \return if the given name is valid
+   * \param[in] n: material name
+   */
+  MFRONT_VISIBILITY_EXPORT  bool isValidMaterialName(const std::string&);
+  /*!
+   * \return if the given name is valid
+   * \param[in] n: library name
+   */
+  MFRONT_VISIBILITY_EXPORT  bool isValidLibraryName(const std::string&);
+
+  /*!
+   * \brief base structure for domain specific languages
    */
   struct MFRONT_VISIBILITY_EXPORT DSLBase
       : public virtual AbstractDSL,

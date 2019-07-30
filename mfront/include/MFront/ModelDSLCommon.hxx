@@ -30,9 +30,13 @@ namespace mfront{
   // forward declaration
   struct AbstractModelInterface;
 
-  struct MFRONT_VISIBILITY_EXPORT ModelDSLCommon
-    : public DSLBase
-  {
+  /*!
+   * \return if the given name is valid
+   * \param[in] n: model name
+   */
+  MFRONT_VISIBILITY_EXPORT  bool isValidModelName(const std::string&);
+
+  struct MFRONT_VISIBILITY_EXPORT ModelDSLCommon : public DSLBase {
     //! constructor
     ModelDSLCommon();
     DSLTarget getTargetType() const override final;

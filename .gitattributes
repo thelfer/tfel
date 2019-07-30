@@ -2188,7 +2188,6 @@ mfront/include/MFront/AbaqusInterface.hxx -text
 mfront/include/MFront/AbaqusInterfaceBase.hxx -text
 mfront/include/MFront/AbaqusSymbolsGenerator.hxx -text
 mfront/include/MFront/AbstractBehaviourBrick.hxx -text
-mfront/include/MFront/AbstractBehaviourBrickFactory.hxx -text
 mfront/include/MFront/AbstractBehaviourDSL.hxx -text
 mfront/include/MFront/AbstractBehaviourInterface.hxx -text
 mfront/include/MFront/AbstractDSL.hxx -text
@@ -2281,6 +2280,7 @@ mfront/include/MFront/BehaviourBrick/SwiftIsotropicHardeningRule.hxx -text
 mfront/include/MFront/BehaviourBrick/ViscoplasticFlowBase.hxx -text
 mfront/include/MFront/BehaviourBrick/VoceIsotropicHardeningRule.hxx -text
 mfront/include/MFront/BehaviourBrickBase.hxx -text
+mfront/include/MFront/BehaviourBrickFactory.hxx -text
 mfront/include/MFront/BehaviourDSLBase.hxx -text
 mfront/include/MFront/BehaviourDSLBase.ixx -text
 mfront/include/MFront/BehaviourDSLCommon.hxx -text
@@ -2561,7 +2561,6 @@ mfront/src/AbaqusInterfaceExceptions.cxx -text
 mfront/src/AbaqusStressFreeExpansionHandler.cxx -text
 mfront/src/AbaqusSymbolsGenerator.cxx -text
 mfront/src/AbstractBehaviourBrick.cxx -text
-mfront/src/AbstractBehaviourBrickFactory.cxx -text
 mfront/src/AbstractBehaviourDSL.cxx -text
 mfront/src/AbstractBehaviourInterface.cxx -text
 mfront/src/AbstractDSL.cxx -text
@@ -2588,6 +2587,7 @@ mfront/src/AsterSymbolsGenerator.cxx -text
 mfront/src/AsterTangentOperator.cxx -text
 mfront/src/Barlat2004StressCriterion.cxx -text
 mfront/src/BehaviourBrickBase.cxx -text
+mfront/src/BehaviourBrickFactory.cxx -text
 mfront/src/BehaviourBrickProvider.cxx -text
 mfront/src/BehaviourBrickProviderIdentifier.cxx -text
 mfront/src/BehaviourBrickRequirement.cxx -text

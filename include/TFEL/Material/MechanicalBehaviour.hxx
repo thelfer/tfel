@@ -28,8 +28,7 @@ namespace tfel{
      * \author Thomas Helfer
      * \date   30 Juillet 2013
      */
-    struct MechanicalBehaviourBase
-    {
+    struct MechanicalBehaviourBase {
       /*!
        * An indication of the type of the behaviour treated
        * If the behaviour is a small strain standard behaviour, then:
@@ -40,50 +39,49 @@ namespace tfel{
        * - the only thermodynamic force is the traction (tvector)
        */
       enum BehaviourType {
-	GENERALBEHAVIOUR              =  0,
-	STANDARDSTRAINBASEDBEHAVIOUR  =  1,
-	STANDARDFINITESTRAINBEHAVIOUR =  2,
-	COHESIVEZONEMODEL             =  3
-      }; // end of enum MFrontBehaviourType
+        GENERALBEHAVIOUR = 0,
+        STANDARDSTRAINBASEDBEHAVIOUR = 1,
+        STANDARDFINITESTRAINBEHAVIOUR = 2,
+        COHESIVEZONEMODEL = 3
+      };  // end of enum MFrontBehaviourType
       /*!
        * An indication of the kinematic of the behaviour treated
        */
       enum Kinematic {
-	UNDEFINEDKINEMATIC             =  0,
-	SMALLSTRAINKINEMATIC           =  1,
-	COHESIVEZONEKINEMATIC          =  2,
-	FINITESTRAINKINEMATIC_F_CAUCHY =  3,
-	FINITESTRAINKINEMATIC_ETO_PK1  =  4
-      }; // end of enum MFrontBehaviourType
+        UNDEFINEDKINEMATIC = 0,
+        SMALLSTRAINKINEMATIC = 1,
+        COHESIVEZONEKINEMATIC = 2,
+        FINITESTRAINKINEMATIC_F_CAUCHY = 3,
+        FINITESTRAINKINEMATIC_ETO_PK1 = 4
+      };  // end of enum MFrontBehaviourType
       /*!
        * \brief return values of the integrate method
        */
-      enum IntegrationResult{
-	SUCCESS,            //<! Integration is a success
-	FAILURE,            //<! Integration failed
-	UNRELIABLE_RESULTS  //<! Integration succeed, but one or more
-			    //   internal criteria show that the
-			    //   results may be inaccurate
-      }; // end of enum IntegrationResult
+      enum IntegrationResult {
+        SUCCESS,            //<! Integration is a success
+        FAILURE,            //<! Integration failed
+        UNRELIABLE_RESULTS  //<! Integration succeed, but one or more
+                            //   internal criteria show that the
+                            //   results may be inaccurate
+      };                    // end of enum IntegrationResult
       /*!
        * list of possible tangent operator type
        */
-      enum SMType{
-	ELASTIC,
-	SECANTOPERATOR,
-	TANGENTOPERATOR,
-	CONSISTENTTANGENTOPERATOR,
-	NOSTIFFNESSREQUESTED
-      }; // end of enum SMType
+      enum SMType {
+        ELASTIC,
+        SECANTOPERATOR,
+        TANGENTOPERATOR,
+        CONSISTENTTANGENTOPERATOR,
+        NOSTIFFNESSREQUESTED
+      };  // end of enum SMType
     }; // end of struct MechanicalBehaviourBase
 
     /*!
      * a trait class describing which tangent operators can be
      * computed by a mechanical behaviour.
      */
-    template<MechanicalBehaviourBase::BehaviourType btype>
-    struct TangentOperatorTraits
-    {
+    template <MechanicalBehaviourBase::BehaviourType btype>
+    struct TangentOperatorTraits {
       /*!
        * Most mechanical behaviour can only compute one tangent
        * operator. Finite strain beaviours are a noticeable exception.

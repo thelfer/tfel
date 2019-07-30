@@ -12,43 +12,41 @@
  */
 
 #ifndef LIB_MFRONT_MFRONTNONLINEARSYSTEMSOLVERFACTORY_HXX
-#define LIB_MFRONT_MFRONTNONLINEARSYSTEMSOLVERFACTORY_HXX 
+#define LIB_MFRONT_MFRONTNONLINEARSYSTEMSOLVERFACTORY_HXX
 
-#include<map>
-#include<string>
+#include <map>
+#include <string>
+#include <memory>
+#include "MFront/MFrontConfig.hxx"
+#include "MFront/NonLinearSystemSolver.hxx"
 
-#include<memory>
-#include"MFront/NonLinearSystemSolver.hxx"
+namespace mfront {
 
-namespace mfront
-{
-  
   /*!
    * register the non linear solvers used by the implicit parser
    */
-  struct NonLinearSystemSolverFactory
-  {
+  struct MFRONT_VISIBILITY_EXPORT NonLinearSystemSolverFactory {
     //! a simple alias
     typedef std::shared_ptr<NonLinearSystemSolver> (* constructor)();
     /*!
      * \return the uniq instance of the solver factory
      */
-    static NonLinearSystemSolverFactory&
-    getNonLinearSystemSolverFactory();
+    static NonLinearSystemSolverFactory& getNonLinearSystemSolverFactory();
     /*!
      * \return the requested solver
      * \param[in] a : solver name
      */
-    std::shared_ptr<NonLinearSystemSolver>
-    getSolver(const std::string&) const;
+    std::shared_ptr<NonLinearSystemSolver> getSolver(const std::string&) const;
     /*!
      * \param[in] a : solver name 
      * \param[in] c : solver constructor 
      */
-    void
-    registerSolver(const std::string&,
-		   const constructor);
-  private:
+    void registerSolver(const std::string&, const constructor);
+    /*!
+     */
+    std::vector<std::string> getRegistredSolvers() const;
+
+   private:
     /*!
      * default constructor
      */

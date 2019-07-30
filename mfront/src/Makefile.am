@@ -119,7 +119,7 @@ libTFELMFront_la_SOURCES = MFront.cxx                                           
 		           DDIF2Brick.cxx                                         \
 			   FiniteStrainSingleCrystalBrick.cxx                        \
 		           LocalDataStructure.cxx                                 \
-		           AbstractBehaviourBrickFactory.cxx                      \
+		           BehaviourBrickFactory.cxx                              \
 		           BehaviourMaterialProperty.cxx                               \
 		           StandardBehaviourInterface.cxx                         \
                            UMATInterfaceBase.cxx                                  \

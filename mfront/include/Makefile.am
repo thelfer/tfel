@@ -55,6 +55,9 @@ nobase_include_HEADERS= MFront/MFront.hxx                                      \
 			MFront/ModelDSLBase.hxx                                           \
 			MFront/ModelDSLBase.ixx                                           \
 			MFront/MaterialPropertyDescription.hxx                            \
+			MFront/NonLinearSystemSolver.hxx                                  \
+			MFront/NonLinearSystemSolverBase.hxx                              \
+			MFront/NonLinearSystemSolverFactory.hxx                           \
 			MFront/BehaviourAttribute.hxx                                     \
 			MFront/BehaviourData.hxx                                          \
 			MFront/BehaviourData.ixx                                          \
@@ -95,7 +98,7 @@ nobase_include_HEADERS= MFront/MFront.hxx                                      \
 			MFront/GenericBehaviourFiniteStrainMTestFileGenerator.hxx         \
 			MFront/AbstractBehaviourBrick.hxx                                 \
 			MFront/BehaviourBrickBase.hxx                                     \
-			MFront/AbstractBehaviourBrickFactory.hxx                          \
+			MFront/BehaviourBrickFactory.hxx                                  \
 			MFront/BehaviourBrick/OptionDescription.hxx                       \
 			MFront/BehaviourBrick/BrickUtilities.hxx                          \
 			MFront/BehaviourBrick/BrickUtilities.ixx                          \
@@ -165,9 +168,6 @@ nobase_noinst_HEADERS = MFront/IsotropicBehaviourDSLBase.hxx                    
 			MFront/StandardElastoViscoPlasticityBrick.hxx                 \
 			MFront/DDIF2Brick.hxx                                         \
 			MFront/FiniteStrainSingleCrystalBrick.hxx                     \
-			MFront/NonLinearSystemSolver.hxx                              \
-			MFront/NonLinearSystemSolverBase.hxx                          \
-			MFront/NonLinearSystemSolverFactory.hxx                       \
 			MFront/NewtonRaphsonSolvers.hxx			              \
 			MFront/BroydenSolvers.hxx				      \
 			MFront/SecondBroydenSolver.hxx			              \

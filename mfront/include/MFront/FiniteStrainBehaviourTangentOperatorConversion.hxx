@@ -12,20 +12,18 @@
  */
 
 #ifndef LIB_MFRONT_FINITESTRAINBEHAVIOURTANGENTOPERATORCONVERSION_HXX
-#define LIB_MFRONT_FINITESTRAINBEHAVIOURTANGENTOPERATORCONVERSION_HXX 
+#define LIB_MFRONT_FINITESTRAINBEHAVIOURTANGENTOPERATORCONVERSION_HXX
 
-#include<vector>
-#include<string>
-#include"TFEL/Material/FiniteStrainBehaviourTangentOperator.hxx"
+#include <vector>
+#include <string>
+#include "TFEL/Material/FiniteStrainBehaviourTangentOperator.hxx"
 
-namespace mfront
-{
+namespace mfront {
 
   /*!
-   * structure describing a conversion between two tangent operator
+   * \brief structure describing a conversion between two tangent operator
    */
-  struct FiniteStrainBehaviourTangentOperatorConversion
-  {
+  struct FiniteStrainBehaviourTangentOperatorConversion {
     //! a simple alias
     typedef tfel::material::FiniteStrainBehaviourTangentOperatorBase::Flag TangentOperatorFlag;
     //! \return : the list of all available conversions
@@ -43,11 +41,9 @@ namespace mfront
     //! \return the conversion result point
     TangentOperatorFlag to() const;
     //! \return ther intermediate conversion code
-    const std::string&
-    getIntermediateConversion() const;
+    const std::string& getIntermediateConversion() const;
     //! \return ther intermediate conversion code
-    const std::string&
-    getFinalConversion() const;
+    const std::string& getFinalConversion() const;
     //! destrutor
     ~FiniteStrainBehaviourTangentOperatorConversion() noexcept;
   protected:
@@ -57,18 +53,18 @@ namespace mfront
      * \param[in] s  : intermediate conversion code
      * \param[in] s2 : final conversion code
      */
-    FiniteStrainBehaviourTangentOperatorConversion(const TangentOperatorFlag,
-						   const TangentOperatorFlag,
-						   const std::string&,
-						   const std::string&);
-    //! starting point
-    TangentOperatorFlag b;
-    //! result
-    TangentOperatorFlag e;
-    //! code associated with the intermediate conversion
-    std::string c;
-    //! code associated with the final conversion
-    std::string cf;
+   FiniteStrainBehaviourTangentOperatorConversion(const TangentOperatorFlag,
+                                                  const TangentOperatorFlag,
+                                                  const std::string&,
+                                                  const std::string&);
+   //! starting point
+   TangentOperatorFlag b;
+   //! result
+   TangentOperatorFlag e;
+   //! code associated with the intermediate conversion
+   std::string c;
+   //! code associated with the final conversion
+   std::string cf;
   };
 
 } // end of namespace mfront

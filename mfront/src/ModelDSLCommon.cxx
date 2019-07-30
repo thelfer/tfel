@@ -60,6 +60,10 @@ namespace mfront {
     return false;
   }  // end of ModelDSLCommon::is()
 
+  bool isValidModelName(const std::string& n) {
+    return tfel::utilities::CxxTokenizer::isValidIdentifier(n, false);
+  }
+
   ModelDSLCommon::ModelDSLCommon() {
     this->reserveName("dt");
     this->reserveName("\u0394t");
@@ -111,12 +115,12 @@ namespace mfront {
       this->throwRuntimeError("ModelDSLCommon::treatMaterial",
                               "material name alreay defined");
     }
-    this->md.material = this->readOnlyOneToken();
-    if (!CxxTokenizer::isValidIdentifier(this->md.material, true)) {
-      this->throwRuntimeError(
-          "ModelDSLCommon::treatMaterial",
-          "invalid material name ('" + this->md.material + "')");
+    const auto& m = this->readOnlyOneToken();
+    if (!isValidMaterialName(m)) {
+      this->throwRuntimeError("ModelDSLCommon::treatMaterial",
+                              "invalid material name ('" + m + "')");
     }
+    this->md.material = m;
     if (!this->md.className.empty()) {
       this->md.className = this->md.material + "_" + this->md.className;
     }
@@ -124,7 +128,7 @@ namespace mfront {
 
   void ModelDSLCommon::treatLibrary() {
     const auto& l = this->readOnlyOneToken();
-    if (!CxxTokenizer::isValidIdentifier(l, true)) {
+    if (!isValidLibraryName(l)) {
       this->throwRuntimeError("ModelDSLCommon::treatMaterial",
                               "invalid library name");
     }
@@ -140,11 +144,12 @@ namespace mfront {
       this->throwRuntimeError("ModelDSLCommon::treatModel",
                               "model name already defined");
     }
-    this->md.className = this->readOnlyOneToken();
-    if (!isValidIdentifier(this->md.className)) {
+    const auto& m  = this->readOnlyOneToken();
+    if (!isValidModelName(m)) {
       this->throwRuntimeError("ModelDSLCommon::treatModel",
                               "invalid model name");
     }
+    this->md.className = m;
     if (!this->md.material.empty()) {
       this->md.className = this->md.material + "_" + this->md.className;
     }

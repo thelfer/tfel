@@ -11,12 +11,11 @@
  * project under specific licensing conditions. 
  */
 
-#include<iostream>
-
 #include<string>
 #include<fstream>
 #include<stdexcept>
 #include"TFEL/Raise.hxx"
+#include"MFront/MFrontLogStream.hxx"
 #include"MFront/AbstractBehaviourInterface.hxx"
 #include"MFront/BehaviourInterfaceFactory.hxx"
 #include "MFront/DSLUtilities.hxx"
@@ -25,6 +24,8 @@
 namespace mfront{
 
   DefaultDSLBase::DefaultDSLBase() {
+    this->mb.setIntegrationScheme(
+        BehaviourDescription::USERDEFINEDSCHEME);
     this->registerNewCallBack("@ProvidesTangentOperator",
 			      &DefaultDSLBase::treatProvidesTangentOperator);
     this->registerNewCallBack("@ProvidesSymmetricTangentOperator",
@@ -55,8 +56,7 @@ namespace mfront{
     }
   } // end of DefaultDSLBase::treatProvidesTangentOperator
 
-  void DefaultDSLBase::treatProvidesSymmetricTangentOperator()
-  {
+  void DefaultDSLBase::treatProvidesSymmetricTangentOperator() {
     std::set<Hypothesis> h;
     this->readHypothesesList(h);
     this->checkNotEndOfFile("BehaviourDSLBaseCommon::"

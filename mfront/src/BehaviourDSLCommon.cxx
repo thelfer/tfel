@@ -47,7 +47,7 @@
 #include "MFront/BehaviourInterfaceFactory.hxx"
 #include "MFront/FiniteStrainBehaviourTangentOperatorConversionPath.hxx"
 #include "MFront/AbstractBehaviourBrick.hxx"
-#include "MFront/AbstractBehaviourBrickFactory.hxx"
+#include "MFront/BehaviourBrickFactory.hxx"
 #include "MFront/TargetsDescription.hxx"
 #include "MFront/MaterialPropertyDescription.hxx"
 #include "MFront/ModelDSL.hxx"
@@ -76,6 +76,10 @@ static const char* const constexpr_c = "const";
 #endif
 
 namespace mfront {
+
+  bool isValidBehaviourName(const std::string& n) {
+    return tfel::utilities::CxxTokenizer::isValidIdentifier(n, false);
+  }
 
   BehaviourDSLCommon::BehaviourDSLCommon()
       : useStateVarTimeDerivative(false), explicitlyDeclaredUsableInPurelyImplicitResolution(false) {
@@ -1768,7 +1772,7 @@ namespace mfront {
 
   void BehaviourDSLCommon::treatBrick() {
     using Parameters = AbstractBehaviourBrick::Parameters;
-    auto& f = AbstractBehaviourBrickFactory::getFactory();
+    auto& f = BehaviourBrickFactory::getFactory();
     auto parameters = Parameters{};
     this->checkNotEndOfFile("BehaviourDSLCommon::treatBehaviourBrick",
                             "Expected brick name or '<'.");
@@ -1779,7 +1783,8 @@ namespace mfront {
         const auto pos = o.value.find('=');
         if (pos != std::string::npos) {
           if (pos == 0) {
-            this->throwRuntimeError("BehaviourDSLCommon::treatBehaviourBrick", "no parameter name given");
+            this->throwRuntimeError("BehaviourDSLCommon::treatBehaviourBrick",
+				    "no parameter name given");
           }
           // extracting the name
           const auto& n = o.value.substr(0, pos);
@@ -1878,8 +1883,9 @@ namespace mfront {
 
   void BehaviourDSLCommon::treatMaterial() {
     const auto& m = this->readOnlyOneToken();
-    if (!CxxTokenizer::isValidIdentifier(m, true)) {
-      this->throwRuntimeError("BehaviourDSLCommon::treatMaterial", "invalid material name '" + m + "'");
+    if (!isValidMaterialName(m)) {
+      this->throwRuntimeError("BehaviourDSLCommon::treatMaterial",
+			      "invalid material name '" + m + "'");
     }
     this->mb.setMaterialName(m);
     if (!isValidIdentifier(this->mb.getClassName())) {
@@ -1889,11 +1895,12 @@ namespace mfront {
   }  // end of BehaviourDSLCommon::treatMaterial
 
   void BehaviourDSLCommon::treatLibrary() {
-    const auto& m = this->readOnlyOneToken();
-    if (!CxxTokenizer::isValidIdentifier(m, true)) {
-      this->throwRuntimeError("BehaviourDSLCommon::treatLibrary", "invalid library name '" + m + "'");
+    const auto& l = this->readOnlyOneToken();
+    if (!isValidLibraryName(l)) {
+      this->throwRuntimeError("BehaviourDSLCommon::treatLibrary",
+                              "invalid library name '" + l + "'");
     }
-    this->mb.setLibrary(m);
+    this->mb.setLibrary(l);
   }  // end of BehaviourDSLCommon::treatLibrary
 
   void BehaviourDSLCommon::treatComputeThermalExpansion() {
@@ -2583,10 +2590,15 @@ namespace mfront {
 
   void BehaviourDSLCommon::treatBehaviour() {
     const auto& b = this->readOnlyOneToken();
+    if (!isValidBehaviourName(b)) {
+      this->throwRuntimeError("BehaviourDSLCommon::treatBehaviour",
+                              "invalid behaviour name '" + b + "'");
+    }
     this->mb.setBehaviourName(b);
     if (!isValidIdentifier(this->mb.getClassName())) {
       this->throwRuntimeError("BehaviourDSLCommon::treatBehaviour",
-                              "resulting class name is not valid (read '" + this->mb.getClassName() + "')");
+                              "resulting class name is not valid (read '" +
+                                  this->mb.getClassName() + "')");
     }
   }  // end of BehaviourDSLCommon::treatMaterial
 

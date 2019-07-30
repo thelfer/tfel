@@ -29,6 +29,12 @@ namespace mfront{
   struct AbstractMaterialPropertyInterface;
 
   /*!
+   * \return if the given name is valid
+   * \param[in] n: behaviour name
+   */
+  MFRONT_VISIBILITY_EXPORT  bool isValidMaterialPropertyName(const std::string&);
+
+  /*!
    * Parser handling material properties
    */
   struct MFRONT_VISIBILITY_EXPORT MaterialPropertyDSL
