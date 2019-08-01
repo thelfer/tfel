@@ -2343,6 +2343,7 @@ mfront/include/MFront/CastemMaterialPropertyInterface.hxx -text
 mfront/include/MFront/CastemSymbolsGenerator.hxx -text
 mfront/include/MFront/CodeBlock.hxx -text
 mfront/include/MFront/CompiledTargetDescriptionBase.hxx -text
+mfront/include/MFront/ComsolInterface.hxx -text
 mfront/include/MFront/CppMaterialPropertyInterface.hxx -text
 mfront/include/MFront/CppTestMaterialPropertyInterface.hxx -text
 mfront/include/MFront/Cyrano/Cyrano.hxx -text
@@ -2632,6 +2633,7 @@ mfront/src/Cazacu2004OrthotropicStressCriterion.cxx -text
 mfront/src/Chaboche2012KinematicHardeningRule.cxx -text
 mfront/src/CodeBlock.cxx -text
 mfront/src/CompiledTargetDescriptionBase.cxx -text
+mfront/src/ComsolInterface.cxx -text
 mfront/src/CppMaterialPropertyInterface.cxx -text
 mfront/src/CppTestMaterialPropertyInterface.cxx -text
 mfront/src/CyranoComputeStiffnessTensor.cxx -text

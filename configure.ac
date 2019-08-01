@@ -532,6 +532,18 @@ then
     CHECK_CYRANO_MACHINE_TYPE
 fi
 
+# comsol
+AC_ARG_ENABLE([comsol],
+               AC_HELP_STRING([--enable-comsol],
+		   [build Comsol interface for behaviours]),
+	       [enable_comsol=true],
+	       [enable_comsol=false])
+AM_CONDITIONAL(HAVE_COMSOL,[test x"$enable_comsol" = "xtrue"])
+if(test "x$enable_comsol" = "xtrue")
+then
+    AC_DEFINE(HAVE_COMSOL)
+fi
+
 AC_ARG_ENABLE([tests],
                AC_HELP_STRING([--enable-tests], [compile tests file]),
 [case "${enableval}" in

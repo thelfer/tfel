@@ -331,6 +331,25 @@ if(HAVE_CALCULIX)
     TFELException)
 endif(HAVE_CALCULIX)
 
+if(HAVE_COMSOL)
+  set(TFELMFront_SOURCES
+    ComsolInterface.cxx
+#    ComsolSymbolsGenerator.cxx
+    ${TFELMFront_SOURCES})
+#  set(ComsolInterface_SOURCES
+#    ComsolInterfaceExceptions.cxx
+#    ComsolException.cxx
+#    ComsolRotationMatrix.cxx
+#    ComsolComputeStiffnessTensor.cxx
+#    ComsolStressFreeExpansionHandler.cxx
+#    ComsolComputeThermalExpansionCoefficientTensor.cxx)
+#  mfront_library(ComsolInterface ${ComsolInterface_SOURCES})
+#  target_link_libraries(ComsolInterface
+#    MTestFileGenerator
+#    TFELUtilities
+#    TFELException)
+endif(HAVE_COMSOL)
+
 if(HAVE_ANSYS)
   set(TFELMFront_SOURCES
     AnsysInterface.cxx

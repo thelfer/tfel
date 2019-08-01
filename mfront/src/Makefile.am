@@ -218,6 +218,11 @@ libTFELMFront_la_SOURCES += CalculiXInterface.cxx \
                             CalculiXSymbolsGenerator.cxx
 endif
 
+if HAVE_COMSOL
+libTFELMFront_la_SOURCES += ComsolInterface.cxx
+#                            ComsolSymbolsGenerator.cxx
+endif
+
 if HAVE_ANSYS
 libTFELMFront_la_SOURCES += AnsysInterface.cxx \
                             AnsysSymbolsGenerator.cxx

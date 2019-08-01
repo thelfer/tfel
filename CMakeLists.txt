@@ -242,6 +242,14 @@ else(local-castem-header)
   include(cmake/modules/castem.cmake)
 endif(local-castem-header)
 
+# comsol
+option(enable-comsol "build Comsol interface for mechanical behaviours" OFF)
+if(enable-comsol)
+  message(STATUS "Comsol support enabled")
+  set(HAVE_COMSOL ON)
+  add_definitions("-DHAVE_COMSOL=1")
+endif(enable-comsol)
+
 #gnuplot
 include(FindGnuplot)
 if(GNUPLOT_FOUND)

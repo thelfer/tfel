@@ -73,6 +73,10 @@
 #include"MFront/CalculiXInterface.hxx"
 #endif
 
+#ifdef HAVE_COMSOL
+#include"MFront/ComsolInterface.hxx"
+#endif
+
 #ifdef HAVE_DIANAFEA
 #include"MFront/DianaFEAInterface.hxx"
 #endif
@@ -165,6 +169,10 @@ namespace mfront {
 #ifdef HAVE_CALCULIX
     BehaviourInterfaceProxy<CalculiXInterface> ccxProxy;
 #endif /* HAVE_CALCULIX */
+
+#ifdef HAVE_COMSOL
+    BehaviourInterfaceProxy<ComsolInterface> comsolProxy;
+#endif /* HAVE_COMSOL */
     
 #ifdef HAVE_ZMAT
     BehaviourInterfaceProxy<ZMATInterface> zmatProxy;

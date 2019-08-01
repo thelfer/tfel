@@ -327,6 +327,11 @@ nobase_include_HEADERS +=                                                       
 endif
 
 
+if HAVE_COMSOL
+nobase_include_HEADERS += MFront/ComsolInterface.hxx
+endif
+
+
 if HAVE_CALCULIX
 nobase_include_HEADERS += MFront/CalculiX/CalculiX.hxx                              \
 			  MFront/CalculiX/CalculiXData.hxx                                     \
