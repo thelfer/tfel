@@ -353,6 +353,7 @@ int main(const int argc,const char *const *const argv)
       physicalConstants = true;
 #endif  /* __cplusplus > 201703L */
       math = exceptions  = true;
+      unicodeSupport = true;
       mathParser = mathKriging = true; 
     },"request flags for TFELMathParser.");
   registerCallBack("--tests",[]{

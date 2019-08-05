@@ -113,8 +113,9 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./RungeKutta-keywords.md				      \
 	   ./coverity-scan.md                                         \
 	   ./tensors.md                                               \
-	   ./sovs.md                                               \
+	   ./sovs.md                                                  \
 	   ./unicode.md                                               \
+	   ./MohrCoulomb.md                                           \
 	   ./theory.md                                                \
 	   ./robots.txt						      \
 	   ./crossdomain.xml					      \
@@ -291,6 +292,9 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./img/PSACylinderHeadDesign.png			      \
 	   ./img/PSACylinderHeadDesign.svg			      \
 	   ./img/PSACylinderHeadDesign.xcf			      \
+	   ./img/MohrCoulombAnalitical.svg                            \
+	   ./img/MohrCoulombPiPlane.svg                               \
+	   ./img/MohrCoulombSmoothing.svg                             \
 	   ./img/XperMFront.xcf			                      \
 	   ./img/XperMFront.png			                      \
 	   ./media/epx1.mp4                                           \

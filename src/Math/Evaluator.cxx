@@ -22,6 +22,7 @@
 
 #include "TFEL/Raise.hxx"
 #include "TFEL/PhysicalConstants.hxx"
+#include "TFEL/UnicodeSupport/UnicodeSupport.hxx"
 #include "TFEL/Math/power.hxx"
 #include "TFEL/Math/Evaluator.hxx"
 #include "TFEL/Math/Parser/Function.hxx"
@@ -521,7 +522,7 @@ namespace tfel {
       checkNotEndOfExpression("Evaluator::analyseParameters", p, pe);
       while (*p != ">") {
         // check parameter validity
-        for (const auto c : *p) {
+        for (const auto c : tfel::unicode::getMangledString(*p)) {
           raise_if(!(isalpha(c) || isdigit(c)) || (c == '_') || (c == '-'),
                    "Evaluator::analyseParameters: "
                    "invalid parameter '" +
@@ -859,16 +860,17 @@ namespace tfel {
         std::vector<std::string>::const_iterator pe,
         const bool b,
         const std::string& s) {
-      auto checkIdentifier = [](const std::string& v) {
-        auto throw_if = [&v](const bool c) {
+      auto checkIdentifier = [](const std::string& variable) {
+        auto throw_if = [&variable](const bool c) {
           if(c){
             tfel::raise(
                 "Evaluator::treatGroup2: "
                 "invalid variable name '" +
-                v + "'");
+                variable + "'");
           }
         };
-        throw_if(v.empty());
+        throw_if(variable.empty());
+        const auto v = tfel::unicode::getMangledString(variable);
         auto ps = v.begin();
         const auto pse = v.end();
         throw_if(isdigit(*ps));
@@ -1045,19 +1047,21 @@ namespace tfel {
     }  // end of Evaluator::treatGroup2
 
     std::vector<double>::size_type Evaluator::registerVariable(const std::string& vname) {
-      const auto p = this->positions.find(vname);
+      const auto v = tfel::unicode::getMangledString(vname);
+      const auto p = this->positions.find(v);
       const auto pe = this->positions.end();
       if (p != pe) {
         return p->second;
       }
       const auto pos = this->variables.size();
-      this->positions.insert({vname, pos});
+      this->positions.insert({v, pos});
       this->variables.resize(pos + 1u);
       return pos;
     }  // end of Evaluator::registerVariable
 
     void Evaluator::setVariableValue(const std::string& vname, const double value) {
-      auto p = this->positions.find(vname);
+      const auto v = tfel::unicode::getMangledString(vname);
+      auto p = this->positions.find(v);
       raise_if(p == this->positions.end(),
                "Evaluator::setVariableValue: "
                "variable '" +
@@ -1066,7 +1070,8 @@ namespace tfel {
     }  // end of Evaluator::setVariableValue
 
     void Evaluator::setVariableValue(const char* const vname, const double value) {
-      auto p = this->positions.find(vname);
+      const auto v = tfel::unicode::getMangledString(vname);
+      auto p = this->positions.find(v);
       raise_if(p == this->positions.end(),
                "Evaluator::setVariableValue: "
                "variable '" +
@@ -1242,7 +1247,8 @@ namespace tfel {
       this->clear();
       this->variables.resize(vars.size());
       auto pos = std::vector<double>::size_type{0u};
-      for (const auto& v : vars) {
+      for (const auto& variable : vars) {
+	const auto v = tfel::unicode::getMangledString(variable);
         raise_if(this->positions.find(v) != this->positions.end(),
                  "Evaluator::setFunction: "
                  "variable '" +
@@ -1274,7 +1280,8 @@ namespace tfel {
       this->manager = m;
       this->variables.resize(vars.size());
       auto pos = std::vector<double>::size_type{};
-      for (const auto& v : vars) {
+      for (const auto& variable : vars) {
+	const auto v = tfel::unicode::getMangledString(variable);
         throw_if(this->positions.find(v) != this->positions.end(),
                  "variable '" + v + "' multiply defined");
         throw_if(!Evaluator::isValidIdentifier(v), "variable '" + v + "' is not valid.");

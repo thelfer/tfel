@@ -1145,6 +1145,7 @@ docs/web/MTest-keywords.md -text
 docs/web/Makefile.am -text
 docs/web/MaterialLaw-keywords.md -text
 docs/web/Model-keywords.md -text
+docs/web/MohrCoulomb.md -text
 docs/web/MultipleIsotropicMisesFlows-keywords.md -text
 docs/web/Norton-full.md -text
 docs/web/Norton-mfront.md -text
@@ -1272,6 +1273,9 @@ docs/web/img/JUSM18_RDEGEILH_Fissuration_culasses.svg -text
 docs/web/img/LoadInducedLoadInducedThermalStrain_Torelli2018.xcf -text
 docs/web/img/LoadInducedThermalStrain_Torelli2018.png -text
 docs/web/img/LogarithmicStrainPlasticity-ssna303.svg -text
+docs/web/img/MohrCoulombAnalitical.svg -text
+docs/web/img/MohrCoulombPiPlane.svg -text
+docs/web/img/MohrCoulombSmoothing.svg -text
 docs/web/img/Norton-full.docx -text
 docs/web/img/Norton-full.odt -text
 docs/web/img/Norton-full.pdf -text

@@ -1,6 +1,7 @@
 include_directories("${PROJECT_SOURCE_DIR}/include")
 link_directories("${PROJECT_BINARY_DIR}/src/Math"
   "${PROJECT_BINARY_DIR}/src/PhysicalConstants"
+  "${PROJECT_BINARY_DIR}/src/UnicodeSupport"
   "${PROJECT_BINARY_DIR}/src/Exception")
 
 set(TFELMath_SOURCES
@@ -75,4 +76,5 @@ target_link_libraries(TFELMathParser
 		      TFELMathKriging
                       TFELMath
 		      TFELException
+		      TFELUnicodeSupport
 		      TFELPhysicalConstants)

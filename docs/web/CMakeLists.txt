@@ -139,6 +139,7 @@ pandoc_html(DDIF2Brick "--toc" "--toc-depth=2")
 pandoc_html(StandardElastoViscoPlasticityBrick "--toc" "--toc-depth=2")
 pandoc_html(HookeStressPotential "--toc" "--toc-depth=2")
 pandoc_html(DDIF2StressPotential "--toc" "--toc-depth=2")
+pandoc_html(MohrCoulomb "--toc" "--toc-depth=2")
 
 # mtest keywords
 
