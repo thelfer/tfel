@@ -178,10 +178,10 @@ namespace mfront {
   }  // end of MFrontBase::treatUnknownArgument
 
   void MFrontBase::treatVerbose() {
-    if (getCurrentCommandLineArgument().getOption().empty()) {
+    const auto& o = this->getCurrentCommandLineArgument().getOption();
+    if (o.empty()) {
       setVerboseMode(VERBOSE_LEVEL1);
     } else {
-      const auto& o = this->getCurrentCommandLineArgument().getOption();
       if (o == "quiet") {
         setVerboseMode(VERBOSE_QUIET);
       } else if (o == "level0") {
@@ -204,6 +204,24 @@ namespace mfront {
       }
     }
   }
+
+  void MFrontBase::treatUnicodeOutput() {
+    const auto& o = this->getCurrentCommandLineArgument().getOption();
+    if (o.empty()) {
+      setUnicodeOutputOption(true);
+    } else {
+      if (o == "true") {
+        setUnicodeOutputOption(true);
+      } else if (o == "false") {
+        setUnicodeOutputOption(false);
+      } else {
+        tfel::raise(
+            "MFrontBase::treatUnicodeOutput: "
+            "unknown option '" +
+            o + "'");
+      }
+    }
+  } // end of MFrontBase::treatUnicodeOutput
 
   void MFrontBase::treatInstallPath() {
     setInstallPath(this->getCurrentCommandLineArgument().getOption());

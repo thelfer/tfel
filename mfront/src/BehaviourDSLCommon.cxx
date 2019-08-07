@@ -2893,7 +2893,7 @@ namespace mfront {
 
   void BehaviourDSLCommon::writeIncludes(std::ostream& file) const {
     if ((!file) || (!file.good())) {
-      this->throwRuntimeError("BehaviourDSLCommon::writeIncludes", "ouput file is not valid");
+      this->throwRuntimeError("BehaviourDSLCommon::writeIncludes", "output file is not valid");
     }
     const auto& h = this->mb.getIncludes();
     if (!h.empty()) {
@@ -2903,7 +2903,7 @@ namespace mfront {
 
   void BehaviourDSLCommon::writeNamespaceBegin(std::ostream& file) const {
     if ((!file) || (!file.good())) {
-      this->throwRuntimeError("BehaviourDSLCommon::writeNamespaceBegin", "ouput file is not valid");
+      this->throwRuntimeError("BehaviourDSLCommon::writeNamespaceBegin", "output file is not valid");
     }
     file << "namespace tfel{\n\n"
          << "namespace material{\n\n";
@@ -2911,7 +2911,7 @@ namespace mfront {
 
   void BehaviourDSLCommon::writeNamespaceEnd(std::ostream& file) const {
     if ((!file) || (!file.good())) {
-      this->throwRuntimeError("BehaviourDSLCommon::writeNamespaceEnd", "ouput file is not valid");
+      this->throwRuntimeError("BehaviourDSLCommon::writeNamespaceEnd", "output file is not valid");
     }
     file << "} // end of namespace material\n\n"
          << "} // end of namespace tfel\n\n";
@@ -2919,7 +2919,7 @@ namespace mfront {
 
   void BehaviourDSLCommon::writeStandardTFELTypedefs(std::ostream& file) const {
     if ((!file) || (!file.good())) {
-      this->throwRuntimeError("BehaviourDSLCommon::writeStandardTFELTypedefs", "ouput file is not valid");
+      this->throwRuntimeError("BehaviourDSLCommon::writeStandardTFELTypedefs", "output file is not valid");
     }
     file << "using ushort =  unsigned short;\n";
     if (this->mb.useQt()) {
@@ -3017,7 +3017,7 @@ namespace mfront {
 
   void BehaviourDSLCommon::checkBehaviourDataFile(std::ostream& os) const {
     if ((!os) || (!os.good())) {
-      this->throwRuntimeError("BehaviourDSLCommon::checkBehaviourDataOutputFile", "ouput file is not valid");
+      this->throwRuntimeError("BehaviourDSLCommon::checkBehaviourDataOutputFile", "output file is not valid");
     }
   }
 
@@ -3400,28 +3400,35 @@ namespace mfront {
            << ",Type,false>& b)\n";
       }
     }
-    os << "{\n"
-       << "using namespace std;\n";
+    os << "{\n";
     for (const auto& v : this->mb.getMainVariables()) {
       if (Gradient::isIncrementKnown(v.first)) {
-        os << "os << \"" << v.first.name << " : \" << b." << v.first.name << " << '\\n';\n";
+        os << "os << \"" << displayName(v.first) << " : \" << b."
+           << v.first.name << " << '\\n';\n";
       } else {
-        os << "os << \"" << v.first.name << "0 : \" << b." << v.first.name << "0 << endl;\n";
+        if (getUnicodeOutputOption()) {
+          os << "os << \"" << displayName(v.first) << "\u2080 : \" << b."
+             << v.first.name << "0 << '\\n';\n";
+        } else {
+          os << "os << \"" << displayName(v.first) << "0 : \" << b."
+             << v.first.name << "0 << '\\n';\n";
+        }
       }
-      os << "os << \"" << v.second.name << " : \" << b." << v.second.name << " << '\\n';\n";
+      os << "os << \"" << displayName(v.second) << " : \" << b."
+         << v.second.name << " << '\\n';\n";
     }
-    os << "os << \"T : \" << b.T << endl;\n";
+    os << "os << \"T : \" << b.T << '\\n';\n";
     for (const auto& v : d.getMaterialProperties()) {
-      os << "os << \"" << v.name << " : \" << b." << v.name << " << '\\n';\n";
+      os << "os << \"" << displayName(v) << " : \" << b." << v.name << " << '\\n';\n";
     }
     for (const auto& v : d.getStateVariables()) {
-      os << "os << \"" << v.name << " : \" << b." << v.name << " << '\\n';\n";
+      os << "os << \"" << displayName(v) << " : \" << b." << v.name << " << '\\n';\n";
     }
     for (const auto& v : d.getAuxiliaryStateVariables()) {
-      os << "os << \"" << v.name << " : \" << b." << v.name << " << '\\n';\n";
+      os << "os << \"" << displayName(v) << " : \" << b." << v.name << " << '\\n';\n";
     }
     for (const auto& v : d.getExternalStateVariables()) {
-      os << "os << \"" << v.name << " : \" << b." << v.name << " << '\\n';\n";
+      os << "os << \"" << displayName(v) << " : \" << b." << v.name << " << '\\n';\n";
     }
     os << "return os;\n"
        << "}\n\n";
@@ -3467,7 +3474,7 @@ namespace mfront {
 
   void BehaviourDSLCommon::checkBehaviourFile(std::ostream& os) const {
     if ((!os) || (!os.good())) {
-      this->throwRuntimeError("BehaviourDSLCommon::checkBehaviourDataOutputFile", "ouput file is not valid");
+      this->throwRuntimeError("BehaviourDSLCommon::checkBehaviourDataOutputFile", "output file is not valid");
     }
   }
 
@@ -5198,43 +5205,77 @@ namespace mfront {
            << "<ModellingHypothesis::" << ModellingHypothesis::toUpperCaseString(h) << ",Type,false>& b)\n";
       }
     }
-    os << "{\n"
-       << "using namespace std;\n";
+    os << "{\n";
     for (const auto& v : this->mb.getMainVariables()) {
       if (Gradient::isIncrementKnown(v.first)) {
-        os << "os << \"" << v.first.name << " : \" << b." << v.first.name << " << '\\n';\n"
-           << "os << \"d" << v.first.name << " : \" << b.d" << v.first.name << " << '\\n';\n";
+        os << "os << \"" << displayName(v.first) << " : \" << b."
+           << v.first.name << " << '\\n';\n";
+        if (getUnicodeOutputOption()) {
+          os << "os << \"\u0394" << displayName(v.first) << " : \" << b.d"
+             << v.first.name << " << '\\n';\n";
+        } else {
+          os << "os << \"d" << displayName(v.first) << " : \" << b.d"
+             << v.first.name << " << '\\n';\n";
+        }
       } else {
-        os << "os << \"" << v.first.name << "0 : \" << b." << v.first.name << "0 << endl;\n"
-           << "os << \"" << v.first.name << "1 : \" << b." << v.first.name << "1 << endl;\n";
+        if (getUnicodeOutputOption()) {
+          os << "os << \"" << displayName(v.first) << "\u2080 : \" << b."
+             << v.first.name << "0 << '\\n';\n"
+             << "os << \"" << displayName(v.first) << "\u2081 : \" << b."
+             << v.first.name << "1 << '\\n';\n";
+        } else {
+          os << "os << \"" << displayName(v.first) << "0 : \" << b."
+             << v.first.name << "0 << '\\n';\n"
+             << "os << \"" << displayName(v.first) << "1 : \" << b."
+             << v.first.name << "1 << '\\n';\n";
+        }
       }
-      os << "os << \"" << v.second.name << " : \" << b." << v.second.name << " << '\\n';\n";
+      os << "os << \"" << displayName(v.second) << " : \" << b."
+         << v.second.name << " << '\\n';\n";
     }
-    os << "os << \"dt : \" << b.dt << endl;\n"
-       << "os << \"T : \" << b.T << endl;\n"
-       << "os << \"dT : \" << b.dT << endl;\n";
+    if (getUnicodeOutputOption()) {
+      os << "os << \"\u0394t : \" << b.dt << '\\n';\n";
+    } else {
+      os << "os << \"dt : \" << b.dt << '\\n';\n";
+    }
     for (const auto& v : md.getMaterialProperties()) {
-      os << "os << \"" << v.name << " : \" << b." << v.name << " << '\\n';\n";
-    }
-    for (const auto& v : md.getStateVariables()) {
-      os << "os << \"" << v.name << " : \" << b." << v.name << " << '\\n';\n";
-      os << "os << \"d" << v.name << " : \" << b.d" << v.name << " << '\\n';\n";
-    }
-    for (const auto& v : md.getAuxiliaryStateVariables()) {
-      os << "os << \"" << v.name << " : \" << b." << v.name << " << '\\n';\n";
-    }
-    for (const auto& v : md.getExternalStateVariables()) {
-      os << "os << \"" << v.name << " : \" << b." << v.name << " << '\\n';\n";
-      os << "os << \"d" << v.name << " : \" << b.d" << v.name << " << '\\n';\n";
-    }
-    for (const auto& v : md.getLocalVariables()) {
+      os << "os << \"" << displayName(v) << " : \" << b." << v.name
+         << " << '\\n';\n";
+      }
+      for (const auto& v : md.getStateVariables()) {
+        os << "os << \"" << displayName(v) << " : \" << b." << v.name
+           << " << '\\n';\n";
+        if (getUnicodeOutputOption()) {
+          os << "os << \"\u0394" << displayName(v) << " : \" << b.d" << v.name
+             << " << '\\n';\n";
+        } else {
+          os << "os << \"d" << displayName(v) << " : \" << b.d" << v.name
+             << " << '\\n';\n";
+        }
+      }
+      for (const auto& v : md.getAuxiliaryStateVariables()) {
+        os << "os << \"" << displayName(v) << " : \" << b." << v.name
+           << " << '\\n';\n";
+      }
+      for (const auto& v : md.getExternalStateVariables()) {
+        os << "os << \"\u0394" << displayName(v) << " : \" << b." << v.name
+           << " << '\\n';\n";
+        if (getUnicodeOutputOption()) {
+          os << "os << \"" << displayName(v) << " : \" << b.d" << v.name
+             << " << '\\n';\n";
+        } else {
+        }
+      }
+      for (const auto& v : md.getLocalVariables()) {
 #pragma message("BehaviourDSLCommon: handle LocalDataStructure properly")
       if ((v.type.size() >= 7) && (v.type.substr(0, 7) != "struct{")) {
-        os << "os << \"" << v.name << " : \" << b." << v.name << " << '\\n';\n";
+        os << "os << \"" << displayName(v) << " : \" << b." << v.name
+           << " << '\\n';\n";
       }
     }
     for (const auto& v : md.getParameters()) {
-      os << "os << \"" << v.name << " : \" << b." << v.name << " << '\\n';\n";
+      os << "os << \"" << displayName(v) << " : \" << b." << v.name
+         << " << '\\n';\n";
     }
     os << "return os;\n"
        << "}\n\n";
@@ -6218,7 +6259,7 @@ namespace mfront {
     if ((!os) || (!os.good())) {
       this->throwRuntimeError(
           "BehaviourDSLCommon::checkIntegrationDataOutputFile",
-          "ouput file is not valid");
+          "output file is not valid");
     }
   }
 
@@ -6578,18 +6619,40 @@ namespace mfront {
       }
     }
     os << "{\n";
-    os << "using namespace std;\n";
-    for (const auto& dv : this->mb.getMainVariables()) {
-      if (Gradient::isIncrementKnown(dv.first)) {
-        os << "os << \"d" << dv.first.name << " : \" << b.d" << dv.first.name << " << '\\n';\n";
+    for (const auto& v : this->mb.getMainVariables()) {
+      if (Gradient::isIncrementKnown(v.first)) {
+        if (getUnicodeOutputOption()) {
+          os << "os << \"\u0394" << displayName(v.first) << " : \" << b.d"
+             << v.first.name << " << '\\n';\n";
+        } else {
+          os << "os << \"d" << displayName(v.first) << " : \" << b.d"
+             << v.first.name << " << '\\n';\n";
+        }
       } else {
-        os << "os << \"" << dv.first.name << "1 : \" << b." << dv.first.name << "1 << endl;\n";
+        if (getUnicodeOutputOption()) {
+          os << "os << \"" << displayName(v.first) << "\u2081 : \" << b."
+             << v.first.name << "1 << '\\n';\n";
+        } else {
+          os << "os << \"" << displayName(v.first) << "1 : \" << b."
+             << v.first.name << "1 << '\\n';\n";
+        }
       }
+      os << "os << \"" << displayName(v.second) << " : \" << b."
+         << v.second.name << " << '\\n';\n";
     }
-    os << "os << \"dt : \" << b.dt << endl;\n";
-    os << "os << \"dT : \" << b.dT << endl;\n";
+    if (getUnicodeOutputOption()) {
+      os << "os << \"\u0394t : \" << b.dt << '\\n';\n";
+    } else {
+      os << "os << \"dt : \" << b.dt << '\\n';\n";
+    }
     for (const auto& ev : md.getExternalStateVariables()) {
-      os << "os << \"d" << ev.name << " : \" << b.d" << ev.name << " << '\\n';\n";
+      if (getUnicodeOutputOption()) {
+        os << "os << \"\u0394" << displayName(ev) << " : \" << b.d" << ev.name
+           << " << '\\n';\n";
+      } else {
+        os << "os << \"d" << displayName(ev) << " : \" << b.d" << ev.name
+           << " << '\\n';\n";
+      }
     }
     os << "return os;\n";
     os << "}\n\n";
@@ -6645,7 +6708,7 @@ namespace mfront {
 
   void BehaviourDSLCommon::checkSrcFile(std::ostream& os) const {
     if ((!os) || (!os.good())) {
-      this->throwRuntimeError("BehaviourDSLCommon::checkSrcFile", "ouput file is not valid");
+      this->throwRuntimeError("BehaviourDSLCommon::checkSrcFile", "output file is not valid");
     }
   }
 
@@ -7152,15 +7215,16 @@ namespace mfront {
     this->readHypothesesList(mh);
     auto endOfTreatment = false;
     while ((this->current != this->tokens.end()) && (!endOfTreatment)) {
-      throw_if(!isValidIdentifier(this->current->value),
+      const auto sname = this->current->value;
+      const auto vname = tfel::unicode::getMangledString(sname);
+      throw_if(!isValidIdentifier(vname),
                "variable given is not valid (read "
                "'" +
-                   this->current->value + "').");
-      const auto n = this->current->value;
+                   sname + "').");
       const auto lineNumber = this->current->line;
       ++(this->current);
       this->checkNotEndOfFile("BehaviourDSLCommon::treatParameter");
-      const auto arraySize = this->readArrayOfVariablesSize(n, true);
+      const auto arraySize = this->readArrayOfVariablesSize(sname, true);
       this->checkNotEndOfFile("BehaviourDSLCommon::treatParameter");
       if ((this->current->value == "=") || (this->current->value == "{") ||
           (this->current->value == "(")) {
@@ -7191,11 +7255,17 @@ namespace mfront {
                   std::to_string(r.size()) + " vs +" +
                   std::to_string(arraySize) + ").\n");
           for (const auto& h : mh) {
-            VariableDescription p("real", n, arraySize, lineNumber);
+            VariableDescription p;
+            if (vname == sname) {
+              p = VariableDescription("real", vname, arraySize, lineNumber);
+            } else {
+              p = VariableDescription("real", sname, vname, arraySize,
+                                      lineNumber);
+            }
             p.description = this->currentComment;
             this->mb.addParameter(h, p);
             for (decltype(r.size()) i = 0; i != r.size(); ++i) {
-              this->mb.setParameterDefaultValue(h, n, i, r[i]);
+              this->mb.setParameterDefaultValue(h, vname, i, r[i]);
             }
           }
         } else {
@@ -7205,7 +7275,7 @@ namespace mfront {
           if (!converter || (!converter.eof())) {
             this->throwRuntimeError(
                 "BehaviourDSLCommon::treatParameter",
-                "could not read default value for parameter '" + n + "'");
+                "could not read default value for parameter '" + sname + "'");
           }
           ++(this->current);
           this->checkNotEndOfFile("BehaviourDSLCommon::treatParameter");
@@ -7213,10 +7283,15 @@ namespace mfront {
             this->readSpecifiedToken("BehaviourDSLCommon::treatParameter", ci);
           }
           for (const auto& h : mh) {
-            VariableDescription p("real", n, 1u, lineNumber);
+            VariableDescription p;
+            if (vname == sname) {
+              p = VariableDescription("real", vname, 1u, lineNumber);
+            } else {
+              p = VariableDescription("real", sname, vname, 1u, lineNumber);
+            }
             p.description = this->currentComment;
             this->mb.addParameter(h, p);
-            this->mb.setParameterDefaultValue(h, n, value);
+            this->mb.setParameterDefaultValue(h, vname, value);
           }
         }
       } else {
@@ -7226,7 +7301,12 @@ namespace mfront {
                  "Unexpected token '" +
                      current->value + "'");
         for (const auto& h : mh) {
-          VariableDescription p("real", n, 1u, lineNumber);
+          VariableDescription p;
+          if (vname == sname) {
+            p = VariableDescription("real", vname, 1u, lineNumber);
+          } else {
+            p = VariableDescription("real", sname, vname, 1u, lineNumber);
+          }
           p.description = this->currentComment;
           this->mb.addParameter(h, p);
         }
@@ -7237,7 +7317,7 @@ namespace mfront {
         endOfTreatment = true;
         ++(this->current);
       } else {
-        throw_if(true, "',' or ';' expected after '" + n + "', read '" +
+        throw_if(true, "',' or ';' expected after '" + sname + "', read '" +
                            this->current->value + "'");
       }
     }

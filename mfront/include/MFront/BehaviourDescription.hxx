@@ -138,6 +138,8 @@ namespace mfront {
     struct HillTensor {
       //! name of the Hill tensor
       std::string name;
+      //! symbolic name of the Hill tensor
+      std::string symbolic_form;
       //! Hill coeffients
       std::vector<MaterialProperty> c;
     };  // end of struct HillTensor

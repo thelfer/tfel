@@ -935,6 +935,7 @@ namespace mfront {
     this->addLocalVariable(ModellingHypothesis::UNDEFINEDHYPOTHESIS, v);
     HillTensor h;
     h.name = v.name;
+    h.symbolic_form = v.symbolic_form;
     std::copy(hcs.begin(), hcs.end(), std::back_inserter(h.c));
     this->hillTensors.push_back(std::move(h));
   }  // end of BehaviourDescription::addHillTensor

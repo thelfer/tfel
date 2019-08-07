@@ -757,11 +757,12 @@ namespace mfront {
         (this->mb.getElasticSymmetryType() == ISOTROPIC) &&
         (this->mb.areElasticMaterialPropertiesDefined())) {
       auto add_lv = [this, uh](BehaviourDescription& bd, const std::string& t,
-                               const std::string& n, const std::string& g,
-                               const std::string d) {
+                               const std::string& sn, const std::string& n,
+                               const std::string& g, const std::string d) {
         auto r = bd.checkVariableExistence(n, "Parameter", false);
         if (!r.first) {
-          VariableDescription v(t, n, 1u, 0u);
+          auto v = (!sn.empty()) ? VariableDescription(t, sn, n, 1u, 0u)
+                                 : VariableDescription(t, n, 1u, 0u);
           v.description = d;
           bd.addLocalVariable(uh, v, BehaviourData::UNREGISTRED);
         } else {
@@ -775,19 +776,22 @@ namespace mfront {
           }
         }
       };
-      add_lv(this->mb, "stress", "young", Glossary::YoungModulus,
+      add_lv(this->mb, "stress", "", "young", Glossary::YoungModulus,
              "Young modulus at t+theta*dt");
-      add_lv(this->mb, "real", "nu", Glossary::PoissonRatio,
+      add_lv(this->mb, "real", "\u03BD", "nu", Glossary::PoissonRatio,
              "Poisson ratio at t+theta*dt");
-      add_lv(this->mb, "stress", "lambda", Glossary::FirstLameCoefficient,
+      add_lv(this->mb, "stress", "\u03BB", "lambda",
+             Glossary::FirstLameCoefficient,
              "first Lamé coefficient at t+theta*dt");
-      add_lv(this->mb, "stress", "mu", Glossary::ShearModulus,
+      add_lv(this->mb, "stress", "\u03BC", "mu", Glossary::ShearModulus,
              "shear modulus at t+theta*dt");
-      add_lv(this->mb, "stress", "young_tdt", "", "Young modulus at t+dt");
-      add_lv(this->mb, "real", "nu_tdt", "", "Poisson ratio at t+dt");
-      add_lv(this->mb, "stress", "lambda_tdt", "",
+      add_lv(this->mb, "stress", "", "young_tdt", "", "Young modulus at t+dt");
+      add_lv(this->mb, "real", "\u03BD\u2091\u209C\u209B", "nu_tdt", "",
+             "Poisson ratio at t+dt");
+      add_lv(this->mb, "stress", "\u03BB\u2091\u209C\u209B", "lambda_tdt", "",
              "first Lamé coefficient at t+dt");
-      add_lv(this->mb, "stress", "mu_tdt", "", "shear modulus at t+dt");
+      add_lv(this->mb, "stress", "\u03BC\u2091\u209C\u209B", "mu_tdt", "",
+             "shear modulus at t+dt");
     }
     for (const auto& ht : this->mb.getHillTensors()) {
       if ((this->mb.getBehaviourType() !=
@@ -799,15 +803,30 @@ namespace mfront {
             "Hill tensors shall only be defined for finite strain "
             "or small strain behaviours");
       }
-      const auto hn = ht.name + "_tdt";
-      auto H_tdt = this->mb.areMaterialPropertiesConstantDuringTheTimeStep(ht.c)
-                       ? VariableDescription("tfel::math::st2tost2<N,stress>&",
-                                             hn, 1u, 0u)
-                       : VariableDescription("tfel::math::st2tost2<N,stress>",
-                                             hn, 1u, 0u);
-      H_tdt.description =
-          "Hill tensor '" + ht.name + "' at the end of the time step";
-      this->mb.addLocalVariable(uh, H_tdt);
+      if (ht.symbolic_form.empty()) {
+        const auto hn = ht.name + "_tdt";
+        auto H_tdt =
+            this->mb.areMaterialPropertiesConstantDuringTheTimeStep(ht.c)
+                ? VariableDescription("tfel::math::st2tost2<N,stress>&", hn, 1u,
+                                      0u)
+                : VariableDescription("tfel::math::st2tost2<N,stress>", hn, 1u,
+                                      0u);
+        H_tdt.description =
+            "Hill tensor '" + ht.name + "' at the end of the time step";
+        this->mb.addLocalVariable(uh, H_tdt);
+      } else {
+        const auto hsn = ht.symbolic_form + "\u2091\u209C\u209B";
+        const auto hn = ht.name + "_tdt";
+        auto H_tdt =
+            this->mb.areMaterialPropertiesConstantDuringTheTimeStep(ht.c)
+                ? VariableDescription("tfel::math::st2tost2<N,stress>&", hsn,
+                                      hn, 1u, 0u)
+                : VariableDescription("tfel::math::st2tost2<N,stress>", hsn, hn,
+                                      1u, 0u);
+        H_tdt.description =
+            "Hill tensor '" + hsn + "' at the end of the time step";
+        this->mb.addLocalVariable(uh, H_tdt);
+      }
     }
     // creating default parameters if not explicitely specified by the user
     if (!this->mb.hasParameter(uh, "epsilon")) {

@@ -43,6 +43,9 @@ namespace mfront {
     Parser::registerNewCallBack("--verbose",
                                 &MaterialPropertyQuery::treatVerbose,
                                 "set verbose output", true);
+    Parser::registerNewCallBack("--unicode-output",
+                                &MaterialPropertyQuery::treatUnicodeOutput,
+                                "allow/disallow unicode output", true);
     Parser::registerNewCallBack(
         "--include", "-I", &MaterialPropertyQuery::treatSearchPath,
         "add a new path at the beginning of the search paths", true);

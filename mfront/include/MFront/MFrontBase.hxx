@@ -51,6 +51,8 @@ namespace mfront {
     virtual bool treatUnknownArgumentBase();
     //! \brief treat the `--verbose` command line option
     virtual void treatVerbose();
+    //! \brief treat the `--unicode-output` command line option
+    virtual void treatUnicodeOutput();
     //! \brief treat the `--search-path` command line option
     virtual void treatSearchPath();
     /*!

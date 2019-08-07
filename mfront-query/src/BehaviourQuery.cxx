@@ -40,12 +40,16 @@ namespace mfront {
 
   static void display_variable(const mfront::VariableDescription& v) {
     const auto& n = v.getExternalName();
-    std::cout << "- " << n;
+    if (n == v.name) {
+      std::cout << "- " << displayName(v);
+    } else {
+      std::cout << "- " << n;
+    }
     if (v.arraySize != 1u) {
       std::cout << '[' << v.arraySize << ']';
     }
     if (n != v.name) {
-      std::cout << " (" << v.name << ")";
+      std::cout << " (" << mfront::displayName(v) << ")";
     }
     if (!v.description.empty()) {
       std::cout << ": " << v.description;
@@ -166,10 +170,14 @@ namespace mfront {
   }  // end of BehaviourQuery::BehaviourQuery
 
   void BehaviourQuery::registerCommandLineCallBacks() {
-    using namespace std;
     using Parser = tfel::utilities::ArgumentParserBase<BehaviourQuery>;
     Parser::registerNewCallBack("--verbose", &BehaviourQuery::treatVerbose,
                                 "set verbose output", true);
+    Parser::registerNewCallBack("--verbose", &BehaviourQuery::treatVerbose,
+                                "set verbose output", true);
+    Parser::registerNewCallBack("--unicode-output",
+                                &BehaviourQuery::treatUnicodeOutput,
+                                "allow/disallow unicode output", true);
     Parser::registerNewCallBack(
         "--include", "-I", &BehaviourQuery::treatSearchPath,
         "add a new path at the beginning of the search paths", true);
@@ -198,7 +206,7 @@ namespace mfront {
     Parser::registerCallBack("--no-gui",CallBack("do not display errors using "
 						 "a message box (windows only)",[]{},false));
     // standard queries
-    const vector<pair<const char*, const char*>> sq = {
+    const std::vector<std::pair<const char*, const char*>> sq = {
         {"--author", "show the author name"},
         {"--description", "show the file description"},
         {"--date", "show the file implementation date"},
@@ -287,7 +295,7 @@ namespace mfront {
       Parser::registerNewCallBack(q.first, &BehaviourQuery::treatStandardQuery,
                                   q.second);
     }
-    const vector<pair<const char*, const char*>> sq2 = {
+    const std::vector<std::pair<const char*, const char*>> sq2 = {
         {"--attribute-type", "display an attribute type"},
         {"--attribute-value", "display an attribute value"},
         {"--parameter-type", "display a parameter type"},
@@ -721,7 +729,7 @@ namespace mfront {
             cout << '[' << v.arraySize << ']';
           }
           if (n != v.name) {
-            cout << " (" << v.name << ")";
+            cout << " (" << mfront::displayName(v) << ")";
           }
           if (!v.description.empty()) {
             cout << ": " << v.description;

@@ -60,16 +60,18 @@ namespace mfront {
    * \param[in] pn : parser name
    * \param[in] k  : keyword
    */
-  static std::string getDocumentationFilePath(const std::string& pn, const std::string& k) {
+  static std::string getDocumentationFilePath(const std::string& pn,
+                                              const std::string& k) {
     const auto root = tfel::getInstallPath();
     if (k.empty()) {
       return "";
     }
     const auto key = (k[0] == '@') ? k.substr(1) : k;
 #ifdef TFEL_APPEND_SUFFIX
-    auto fn = root + "/share/doc/mfront-" TFEL_SUFFIX "/" + pn + "/" + key + ".md";
+    auto fn =
+        root + "/share/doc/mfront-" TFEL_SUFFIX "/" + pn + "/" + key + ".md";
 #else  /* TFEL_APPEND_SUFFIX */
-      auto fn = root + "/share/doc/mfront/" + pn + "/" + key + ".md";
+    auto fn = root + "/share/doc/mfront/" + pn + "/" + key + ".md";
 #endif /* TFEL_APPEND_SUFFIX */
     std::ifstream desc{fn};
     if (desc) {
@@ -77,7 +79,7 @@ namespace mfront {
     }
 #ifdef TFEL_APPEND_SUFFIX
     fn = root + "/share/doc/mfront-" TFEL_SUFFIX "/" + key + ".md";
-#else  /* TFEL_APPEND_SUFFIX */
+#else /* TFEL_APPEND_SUFFIX */
     fn = root + "/share/doc/mfront/" + key + ".md";
 #endif /* TFEL_APPEND_SUFFIX */
     desc.open(fn);
@@ -117,7 +119,7 @@ namespace mfront {
       std::cout << "- " << n << "\n";
     }
     std::exit(EXIT_SUCCESS);
-  } // end of displayList
+  }  // end of displayList
 
   static void displayHelpFile(const std::string& f,
                               const std::string& t,
@@ -136,13 +138,16 @@ namespace mfront {
     exit(EXIT_SUCCESS);
   }  // end of displayHelp
 
-  std::string MFront::getVersionDescription() const { return MFrontHeader::getHeader(); }
+  std::string MFront::getVersionDescription() const {
+    return MFrontHeader::getHeader();
+  }
 
   std::string MFront::getUsageDescription() const {
     return "Usage: " + this->programName + " [options] [files]";
   }
 
-  const tfel::utilities::Argument& MFront::getCurrentCommandLineArgument() const {
+  const tfel::utilities::Argument& MFront::getCurrentCommandLineArgument()
+      const {
     return *(this->currentArgument);
   }
 
@@ -153,7 +158,8 @@ namespace mfront {
 #if !(defined _WIN32 || defined _WIN64 || defined __CYGWIN__)
       ArgumentParserBase<MFront>::treatUnknownArgument();
 #else
-      auto a = static_cast<const std::string&>(this->getCurrentCommandLineArgument());
+      auto a = static_cast<const std::string&>(
+          this->getCurrentCommandLineArgument());
       std::cerr << "mfront: unsupported option '" << a << '\'' << std::endl;
       exit(EXIT_FAILURE);
 #endif /* __CYGWIN__ */
@@ -174,7 +180,9 @@ namespace mfront {
     }
   }  // end of MFront::treatGenerator
 
-  void MFront::treatMake() { this->genMake = true; }  // end of MFront::treatMake
+  void MFront::treatMake() {
+    this->genMake = true;
+  }  // end of MFront::treatMake
 
   void MFront::treatBuild() {
     this->genMake = true;
@@ -239,7 +247,8 @@ namespace mfront {
       if (tmp.size() <= 32) {
         tmp.insert(tmp.size(), 32 - tmp.size(), ' ');
       }
-      std::cout << tmp << ": " << parserFactory.getParserDescription(*p) << ".\n";
+      std::cout << tmp << ": " << parserFactory.getParserDescription(*p)
+                << ".\n";
       ++p;
     }
     exit(EXIT_SUCCESS);
@@ -285,48 +294,61 @@ namespace mfront {
   }  // end of MFront::treatTarget
 
 #if !(defined _WIN32 || defined _WIN64 || defined __CYGWIN__)
-  void MFront::treatWin32() { this->opts.sys = "win32"; }  // end of MFront::treatWin32
-#endif                                                     /* __CYGWIN__ */
+  void MFront::treatWin32() {
+    this->opts.sys = "win32";
+  }    // end of MFront::treatWin32
+#endif /* __CYGWIN__ */
 
   void MFront::registerArgumentCallBacks() {
     this->registerNewCallBack("--no-terminate-handler", &MFront::doNothing,
                               "don't set a terminate handler");
     this->registerNewCallBack("--no-gui", &MFront::doNothing,
                               "does not report errors by a message box");
-    this->registerNewCallBack("--verbose", &MFront::treatVerbose, "set verbose output", true);
+    this->registerNewCallBack("--verbose", &MFront::treatVerbose,
+                              "set verbose output", true);
+    this->registerNewCallBack("--unicode-output", &MFront::treatUnicodeOutput,
+                              "allow/disallow unicode output", true);
     this->registerNewCallBack("--list-parsers", &MFront::treatListParsers,
-                              "list all available domain specific languages (deprecated, use --list-dsl)");
+                              "list all available domain specific languages "
+                              "(deprecated, use --list-dsl)");
     this->registerNewCallBack("--list-dsl", &MFront::treatListParsers,
                               "list all available domain specific languages");
-    this->registerNewCallBack("--help-commands", &MFront::treatHelpCommands,
-                              "display the help associated with all the keywords for the given "
-                              "domain specific language and exits",
-                              true);
-    this->registerNewCallBack("--help-keywords", &MFront::treatHelpCommands,
-                              "display the help associated with all the keywords for the given "
-                              "domain specific language and exits",
-                              true);
-    this->registerNewCallBack("--help-commands-list", &MFront::treatHelpCommandsList,
-                              "list all keywords for the given domain specific language and exits",
-                              true);
-    this->registerNewCallBack("--help-keywords-list", &MFront::treatHelpCommandsList,
-                              "list all keywords for the given domain specific language and exits",
-                              true);
+    this->registerNewCallBack(
+        "--help-commands", &MFront::treatHelpCommands,
+        "display the help associated with all the keywords for the given "
+        "domain specific language and exits",
+        true);
+    this->registerNewCallBack(
+        "--help-keywords", &MFront::treatHelpCommands,
+        "display the help associated with all the keywords for the given "
+        "domain specific language and exits",
+        true);
+    this->registerNewCallBack(
+        "--help-commands-list", &MFront::treatHelpCommandsList,
+        "list all keywords for the given domain specific language and exits",
+        true);
+    this->registerNewCallBack(
+        "--help-keywords-list", &MFront::treatHelpCommandsList,
+        "list all keywords for the given domain specific language and exits",
+        true);
     this->registerNewCallBack("--define", "-D", &MFront::treatDefine,
                               "define a macro from the command line", true);
-    this->registerNewCallBack("--include", "-I", &MFront::treatSearchPath,
-                              "add a new path at the beginning of the search paths", true);
-    this->registerNewCallBack("--search-path", &MFront::treatSearchPath,
-                              "add a new path at the beginning of the search paths", true);
+    this->registerNewCallBack(
+        "--include", "-I", &MFront::treatSearchPath,
+        "add a new path at the beginning of the search paths", true);
+    this->registerNewCallBack(
+        "--search-path", &MFront::treatSearchPath,
+        "add a new path at the beginning of the search paths", true);
     this->registerNewCallBack("--install-path", &MFront::treatInstallPath,
                               "set the installation directory", true);
     this->registerNewCallBack("--install-prefix", &MFront::treatInstallPath,
                               "set the installation directory "
                               "(same as --install-path)",
                               true);
-    this->registerNewCallBack(
-        "--help-keyword", &MFront::treatHelpCommand,
-        "display the help associated for the given domain specific language and exits", true);
+    this->registerNewCallBack("--help-keyword", &MFront::treatHelpCommand,
+                              "display the help associated for the given "
+                              "domain specific language and exits",
+                              true);
     this->registerNewCallBack(
         "--help-behaviour-brick", &MFront::treatHelpBehaviourBrick,
         "display the help associated with the given behaviour brick", true);
@@ -344,57 +366,66 @@ namespace mfront {
     this->registerNewCallBack("--interface", "-i", &MFront::treatInterface,
                               "specify which interface to use", true);
 #if (defined _WIN32 || defined _WIN64 || defined __CYGWIN__)
-    this->registerNewCallBack(
-        "--def-file", &MFront::treatDefFile,
-        "outputs def file associated with the libraries given in arguments (separated by commas)",
-        true);
+    this->registerNewCallBack("--def-file", &MFront::treatDefFile,
+                              "outputs def file associated with the libraries "
+                              "given in arguments (separated by commas)",
+                              true);
 #endif
     this->registerNewCallBack("--silent-build", &MFront::treatSilentBuild,
                               "active or desactivate silent build", true);
-    this->registerNewCallBack("--make", &MFront::treatMake, "generate MakeFile (see also --build)");
+    this->registerNewCallBack("--make", &MFront::treatMake,
+                              "generate MakeFile (see also --build)");
     this->registerNewCallBack("--build", &MFront::treatBuild,
                               "generate MakeFile and build libraries");
-    this->registerNewCallBack(
-        "--omake", "-m", &MFront::treatOMake,
-        "generate build file with optimized compilations flags (see also --obuild)", true);
-    this->registerNewCallBack(
-        "--obuild", "-b", &MFront::treatOBuild,
-        "generate build file with optimized compilations flags and build libraries", true);
-    this->registerNewCallBack("--target", "-t", &MFront::treatTarget,
-                              "generate build file and build the specified target", true);
-    this->registerNewCallBack("--otarget", &MFront::treatOTarget,
-                              "generate build file with optimized compilations flags "
-                              "and build the specified target",
+    this->registerNewCallBack("--omake", "-m", &MFront::treatOMake,
+                              "generate build file with optimized compilations "
+                              "flags (see also --obuild)",
                               true);
+    this->registerNewCallBack("--obuild", "-b", &MFront::treatOBuild,
+                              "generate build file with optimized compilations "
+                              "flags and build libraries",
+                              true);
+    this->registerNewCallBack(
+        "--target", "-t", &MFront::treatTarget,
+        "generate build file and build the specified target", true);
+    this->registerNewCallBack(
+        "--otarget", &MFront::treatOTarget,
+        "generate build file with optimized compilations flags "
+        "and build the specified target",
+        true);
     this->registerNewCallBack("--clean", &MFront::treatClean,
                               "generate build file and clean libraries");
-    this->registerNewCallBack("--generator", "-G", &MFront::treatGenerator, "choose build system",
-                              true);
+    this->registerNewCallBack("--generator", "-G", &MFront::treatGenerator,
+                              "choose build system", true);
 
     this->registerCallBack(
         "--list-material-property-interfaces",
         CallBack("list available material property interfaces",
                  [] {
-                   auto& mpif =
-                       MaterialPropertyInterfaceFactory::getMaterialPropertyInterfaceFactory();
+                   auto& mpif = MaterialPropertyInterfaceFactory::
+                       getMaterialPropertyInterfaceFactory();
                    displayList(mpif.getRegistredInterfaces());
                  },
                  false));
-    this->registerCallBack("--list-behaviour-interfaces",
-                           CallBack("list available behaviour interfaces",
-                                    [] {
-                                      auto& bif =
-                                          BehaviourInterfaceFactory::getBehaviourInterfaceFactory();
-                                      displayList(bif.getRegistredInterfaces());
-                                    },
-                                    false));
-    this->registerCallBack("--list-model-interfaces",
-                           CallBack("list available model interfaces",
-                                    [] {
-                                      auto& mif = ModelInterfaceFactory::getModelInterfaceFactory();
-                                      displayList(mif.getRegistredInterfaces());
-                                    },
-                                    false));
+    this->registerCallBack(
+        "--list-behaviour-interfaces",
+        CallBack(
+            "list available behaviour interfaces",
+            [] {
+              auto& bif =
+                  BehaviourInterfaceFactory::getBehaviourInterfaceFactory();
+              displayList(bif.getRegistredInterfaces());
+            },
+            false));
+    this->registerCallBack(
+        "--list-model-interfaces",
+        CallBack("list available model interfaces",
+                 [] {
+                   auto& mif =
+                       ModelInterfaceFactory::getModelInterfaceFactory();
+                   displayList(mif.getRegistredInterfaces());
+                 },
+                 false));
     // stress potentials
     this->registerCallBack(
         "--list-stress-potentials",
@@ -419,14 +450,13 @@ namespace mfront {
     // inelastic flows
     this->registerCallBack(
         "--list-inelastic-flows",
-        CallBack("list available inelastic flows",
-                 [] {
-                   auto& spf =
-                       mfront::bbrick::InelasticFlowFactory::getFactory();
-                   displayList("inelastic-flows",
-                               spf.getRegistredInelasticFlows());
-                 },
-                 false));
+        CallBack(
+            "list available inelastic flows",
+            [] {
+              auto& spf = mfront::bbrick::InelasticFlowFactory::getFactory();
+              displayList("inelastic-flows", spf.getRegistredInelasticFlows());
+            },
+            false));
     this->registerCallBack(
         "--help-inelastic-flow",
         CallBack("display the help associated with the given inelastic flow",
@@ -440,14 +470,13 @@ namespace mfront {
     // stress criteria
     this->registerCallBack(
         "--list-stress-criteria",
-        CallBack("list available stress criteria",
-                 [] {
-                   auto& spf =
-                       mfront::bbrick::StressCriterionFactory::getFactory();
-                   displayList("stress-criteria",
-                               spf.getRegistredStressCriteria());
-                 },
-                 false));
+        CallBack(
+            "list available stress criteria",
+            [] {
+              auto& spf = mfront::bbrick::StressCriterionFactory::getFactory();
+              displayList("stress-criteria", spf.getRegistredStressCriteria());
+            },
+            false));
     this->registerCallBack(
         "--help-stress-criterion",
         CallBack("display the help associated with the given stress criterion",
@@ -461,42 +490,46 @@ namespace mfront {
     // isotropic hardening rule
     this->registerCallBack(
         "--list-isotropic-hardening-rules",
-        CallBack("list available isotropic hardening rules",
-                 [] {
-                   auto& spf =
-                       mfront::bbrick::IsotropicHardeningRuleFactory::getFactory();
-                   displayList("isotropic-hardening-rules",
-                               spf.getRegistredIsotropicHardeningRules());
-                 },
-                 false));
+        CallBack(
+            "list available isotropic hardening rules",
+            [] {
+              auto& spf =
+                  mfront::bbrick::IsotropicHardeningRuleFactory::getFactory();
+              displayList("isotropic-hardening-rules",
+                          spf.getRegistredIsotropicHardeningRules());
+            },
+            false));
     this->registerCallBack(
         "--help-isotropic-hardening-rule",
-        CallBack("display the help associated with the given isotropic hardening rule",
+        CallBack("display the help associated with the given isotropic "
+                 "hardening rule",
                  [this] {
                    const auto& sp = this->currentArgument->getOption();
-                   const auto fp =
-                       getDocumentationFilePath("isotropic-hardening-rules", sp);
+                   const auto fp = getDocumentationFilePath(
+                       "isotropic-hardening-rules", sp);
                    displayHelpFile(fp, "isotropic hardening rule", sp);
                  },
                  true));
     // kinematic hardening rule
     this->registerCallBack(
         "--list-kinematic-hardening-rules",
-        CallBack("list available kinematic hardening rules",
-                 [] {
-                   auto& spf =
-                       mfront::bbrick::KinematicHardeningRuleFactory::getFactory();
-                   displayList("kinematic-hardening-rules",
-                               spf.getRegistredKinematicHardeningRules());
-                 },
-                 false));
+        CallBack(
+            "list available kinematic hardening rules",
+            [] {
+              auto& spf =
+                  mfront::bbrick::KinematicHardeningRuleFactory::getFactory();
+              displayList("kinematic-hardening-rules",
+                          spf.getRegistredKinematicHardeningRules());
+            },
+            false));
     this->registerCallBack(
         "--help-kinematic-hardening-rule",
-        CallBack("display the help associated with the given kinematic hardening rule",
+        CallBack("display the help associated with the given kinematic "
+                 "hardening rule",
                  [this] {
                    const auto& sp = this->currentArgument->getOption();
-                   const auto fp =
-                       getDocumentationFilePath("kinematic-hardening-rules", sp);
+                   const auto fp = getDocumentationFilePath(
+                       "kinematic-hardening-rules", sp);
                    displayHelpFile(fp, "kinematic hardening rule", sp);
                  },
                  true));
@@ -506,14 +539,15 @@ namespace mfront {
         CallBack("list available behaviour bricks",
                  [] {
                    auto& bbf = BehaviourBrickFactory::getFactory();
-                   displayList("bricks",bbf.getRegistredBricks());
+                   displayList("bricks", bbf.getRegistredBricks());
                  },
                  false));
 #if (defined _WIN32 || defined _WIN64 || defined __CYGWIN__)
     this->registerNewCallBack("--nodeps", &MFront::treatNoDeps,
                               "don't generate compilation dependencies");
 #endif /* __CYGWIN__ */
-    this->registerNewCallBack("--nomelt", &MFront::treatNoMelt, "don't melt librairies sources");
+    this->registerNewCallBack("--nomelt", &MFront::treatNoMelt,
+                              "don't melt librairies sources");
 #if !(defined _WIN32 || defined _WIN64 || defined __CYGWIN__)
     this->registerNewCallBack("--win32", &MFront::treatWin32,
                               "specify that the target system is win32");
@@ -570,7 +604,9 @@ namespace mfront {
         std::ifstream desc{fp};
         if (!desc) {
           // note, this shall never append...
-          std::cout << "Internal error: can't access to the description of keyword '" << k << '\n';
+          std::cout
+              << "Internal error: can't access to the description of keyword '"
+              << k << '\n';
         } else {
           std::cout << desc.rdbuf();
         }
@@ -613,15 +649,19 @@ namespace mfront {
     displayHelpFile(fp, "keyword", k);
   }  // end of MFront::treatHelpCommand
 
-  void  MFront::treatHelpBehaviourBrick() {
+  void MFront::treatHelpBehaviourBrick() {
     const auto& b = this->currentArgument->getOption();
     const auto fp = getDocumentationFilePath("bricks", b);
     displayHelpFile(fp, "behaviour brick", b);
   }  // end of MFront::treatHelpBehaviourBrick
 
-  void MFront::treatNoDeps() { this->opts.nodeps = true; }  // end of MFront::treatNoDeps
+  void MFront::treatNoDeps() {
+    this->opts.nodeps = true;
+  }  // end of MFront::treatNoDeps
 
-  void MFront::treatNoMelt() { this->opts.melt = false; }  // end of MFront::treatNoMelt
+  void MFront::treatNoMelt() {
+    this->opts.melt = false;
+  }  // end of MFront::treatNoMelt
 
 #if (defined _WIN32 || defined _WIN64 || defined __CYGWIN__)
   void MFront::treatDefFile() {
@@ -679,7 +719,8 @@ namespace mfront {
       }
       mergeTargetsDescription(this->targets, t, false);
     } catch (std::exception& e) {
-      getLogStream() << "can't read file '" << file << "': " << e.what() << '\n';
+      getLogStream() << "can't read file '" << file << "': " << e.what()
+                     << '\n';
     } catch (...) {
       getLogStream() << "can't read file '" << file << "'\n";
     }
@@ -767,7 +808,8 @@ namespace mfront {
       }
       for (auto& t : this->targets.specific_targets) {
         auto tmp = std::vector<std::string>{};
-        for (auto p2 = t.second.deps.cbegin(); p2 != t.second.deps.cend(); ++p2) {
+        for (auto p2 = t.second.deps.cbegin(); p2 != t.second.deps.cend();
+             ++p2) {
           const auto p4 = p2 + 1;
           if (find(p4, t.second.deps.cend(), *p2) == t.second.deps.cend()) {
             tmp.push_back(*p2);
@@ -775,7 +817,8 @@ namespace mfront {
         }
         t.second.deps.swap(tmp);
         tmp.clear();
-        for (auto p2 = t.second.cmds.cbegin(); p2 != t.second.cmds.cend(); ++p2) {
+        for (auto p2 = t.second.cmds.cbegin(); p2 != t.second.cmds.cend();
+             ++p2) {
           const auto p4 = p2 + 1;
           if (find(p4, t.second.cmds.cend(), *p2) == t.second.cmds.cend()) {
             tmp.push_back(*p2);
@@ -803,7 +846,8 @@ namespace mfront {
 #endif /* (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__) */
     const auto has_libs =
         this->targets.libraries.begin() != this->targets.libraries.end();
-    if ((this->genMake) && ((has_libs) || (!this->targets.specific_targets.empty()))) {
+    if ((this->genMake) &&
+        ((has_libs) || (!this->targets.specific_targets.empty()))) {
       if (this->generator == CMAKE) {
         generateCMakeListsFile(this->targets, this->opts);
       } else {
@@ -813,7 +857,8 @@ namespace mfront {
     if (this->cleanLibs) {
       this->cleanLibraries();
     }
-    if ((this->buildLibs) && ((has_libs) || (!this->targets.specific_targets.empty()))) {
+    if ((this->buildLibs) &&
+        ((has_libs) || (!this->targets.specific_targets.empty()))) {
       auto& log = getLogStream();
       for (const auto& t : this->specifiedTargets) {
         if (getVerboseMode() >= VERBOSE_LEVEL0) {

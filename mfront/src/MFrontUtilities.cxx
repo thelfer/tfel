@@ -149,74 +149,82 @@ namespace mfront{
       CxxTokenizer::readSpecifiedToken(m, ")", p, pe);
     }
     CxxTokenizer::readSpecifiedToken(m, "in", p, pe);
-    CxxTokenizer::checkNotEndOfLine(m, "Expected ']' or '['.", p, pe);
-    if (p->value == "]") {
-      ++p;
-      CxxTokenizer::checkNotEndOfLine(m, "Expected '*'.", p, pe);
-      throw_if(p->value != "*", "Expected '*' (read '" + p->value + "')");
-      b.boundsType = VariableBoundsDescription::UPPER;
-      ++p;
-    } else if (p->value == "[") {
-      ++p;
-      CxxTokenizer::checkNotEndOfLine(
-          m, "Expected lower bound value for variable '" + n + "'", p, pe);
-      b.lowerBound = mfront::read<double>(p, pe);
-      b.boundsType = VariableBoundsDescription::LOWERANDUPPER;
-    } else {
-      throw_if(true, "Expected ']' or '[' (read '" + p->value + "')");
-    }
-    CxxTokenizer::readSpecifiedToken(m, ":", p, pe);
     CxxTokenizer::checkNotEndOfLine(
-        m, "expected upper bound value for variable '" + n + "'", p, pe);
-    if (p->value == "*") {
-      throw_if(b.boundsType == VariableBoundsDescription::UPPER,
-               "Upper and lower values bounds are both infinity. "
-               "This is inconsistent.");
+        m, "Expected '\u211D\u208A', '\u211D\u208B', ']' or '['.", p, pe);
+    if (p->value == "\u211D\u208A") {
+      b.lowerBound = 0.;
       b.boundsType = VariableBoundsDescription::LOWER;
-      ++p;
-      CxxTokenizer::readSpecifiedToken(m, "[", p, pe);
+    } else if (p->value == "\u211D\u208B") {
+      b.upperBound = 0.;
+      b.boundsType = VariableBoundsDescription::UPPER;
     } else {
-      b.upperBound = mfront::read<double>(p, pe);
-      if (b.boundsType == VariableBoundsDescription::LOWERANDUPPER) {
-        throw_if(b.lowerBound > b.upperBound,
-                 "Lower bound value is greater than upper "
-                 "bound value for variable '" +
-                     n + "'");
+      if (p->value == "]") {
+        ++p;
+        CxxTokenizer::checkNotEndOfLine(m, "Expected '*'.", p, pe);
+        throw_if(p->value != "*", "Expected '*' (read '" + p->value + "')");
+        b.boundsType = VariableBoundsDescription::UPPER;
+        ++p;
+      } else if (p->value == "[") {
+        ++p;
+        CxxTokenizer::checkNotEndOfLine(
+            m, "Expected lower bound value for variable '" + n + "'", p, pe);
+        b.lowerBound = mfront::read<double>(p, pe);
+        b.boundsType = VariableBoundsDescription::LOWERANDUPPER;
+      } else {
+        throw_if(true, "Expected ']' or '[' (read '" + p->value + "')");
       }
-      CxxTokenizer::readSpecifiedToken(m, "]", p, pe);
+      CxxTokenizer::readSpecifiedToken(m, ":", p, pe);
+      CxxTokenizer::checkNotEndOfLine(
+          m, "expected upper bound value for variable '" + n + "'", p, pe);
+      if (p->value == "*") {
+        throw_if(b.boundsType == VariableBoundsDescription::UPPER,
+                 "Upper and lower values bounds are both infinity. "
+                 "This is inconsistent.");
+        b.boundsType = VariableBoundsDescription::LOWER;
+        ++p;
+        CxxTokenizer::readSpecifiedToken(m, "[", p, pe);
+      } else {
+        b.upperBound = mfront::read<double>(p, pe);
+        if (b.boundsType == VariableBoundsDescription::LOWERANDUPPER) {
+          throw_if(b.lowerBound > b.upperBound,
+                   "Lower bound value is greater than upper "
+                   "bound value for variable '" +
+                       n + "'");
+        }
+        CxxTokenizer::readSpecifiedToken(m, "]", p, pe);
+      }
     }
     return std::make_pair(n, b);
   }  // end of readVariableBounds
 
-  std::tuple<std::string,bool,unsigned short>
-  extractVariableNameAndArrayPosition(const std::string& n)
-  {
-    auto throw_if = [](const bool c,const std::string& m){
-      tfel::raise_if(c,"mfront::extractVariableNameAndArrayPosition: "+m);
+  std::tuple<std::string, bool, unsigned short>
+  extractVariableNameAndArrayPosition(const std::string& n) {
+    auto throw_if = [](const bool c, const std::string& m) {
+      tfel::raise_if(c, "mfront::extractVariableNameAndArrayPosition: " + m);
     };
     unsigned short i = 0;
-    auto p  = n.cbegin();
+    auto p = n.cbegin();
     auto pe = n.cend();
-    while((p!=pe)&&(*p!='[')){
+    while ((p != pe) && (*p != '[')) {
       ++p;
     }
-    if(p==pe){
-      return std::make_tuple(n,false,i);
+    if (p == pe) {
+      return std::make_tuple(n, false, i);
     }
-    auto r = std::string{n.cbegin(),p};
+    auto r = std::string{n.cbegin(), p};
     ++p;
-    throw_if(p==pe,"unexpected end of string 'n'");
-    throw_if(!std::isdigit(*p),"unexpected a digit 'n'");
-    while((p!=pe)&&(std::isdigit(*p))){
-      i*=10;
-      i+=*p-'0';
+    throw_if(p == pe, "unexpected end of string 'n'");
+    throw_if(!std::isdigit(*p), "unexpected a digit 'n'");
+    while ((p != pe) && (std::isdigit(*p))) {
+      i *= 10;
+      i += *p - '0';
       ++p;
     }
-    throw_if(p==pe,"unexpected end of string '"+n+"'");
-    throw_if(*p!=']',"invalid variable name '"+n+"'");
+    throw_if(p == pe, "unexpected end of string '" + n + "'");
+    throw_if(*p != ']', "invalid variable name '" + n + "'");
     ++p;
-    throw_if(p!=pe,"invalid variable name '"+n+"'");
-    return std::make_tuple(r,true,i);
+    throw_if(p != pe, "invalid variable name '" + n + "'");
+    return std::make_tuple(r, true, i);
   } // end of extractVariableNameAndArrayPosition
   
 } // end of namespace mfront

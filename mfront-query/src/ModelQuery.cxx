@@ -43,6 +43,9 @@ namespace mfront {
     using Parser = tfel::utilities::ArgumentParserBase<ModelQuery>;
     Parser::registerNewCallBack("--verbose", &ModelQuery::treatVerbose,
                                 "set verbose output", true);
+    Parser::registerNewCallBack("--unicode-output",
+                                &ModelQuery::treatUnicodeOutput,
+                                "allow/disallow unicode output", true);
     Parser::registerNewCallBack(
         "--include", "-I", &ModelQuery::treatSearchPath,
         "add a new path at the beginning of the search paths", true);
@@ -149,7 +152,7 @@ namespace mfront {
                  std::cout << '[' << v.arraySize << ']';
                }
                if (n != v.name) {
-                 std::cout << " (" << v.name << ")";
+                 std::cout << " (" << displayName(v) << ")";
                }
                if (!v.description.empty()) {
                  std::cout << ": " << v.description;

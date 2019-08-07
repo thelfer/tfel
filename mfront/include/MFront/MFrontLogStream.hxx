@@ -19,8 +19,7 @@
 
 #include"MFront/MFrontConfig.hxx"
 
-namespace mfront
-{
+namespace mfront {
 
   /*!
    * \brief list the possible values for the logging facilities
@@ -39,28 +38,25 @@ namespace mfront
   /*!
    * \return the current verbose level
    */
-  MFRONTLOGSTREAM_VISIBILITY_EXPORT VerboseLevel&
-  getVerboseMode();
+  MFRONTLOGSTREAM_VISIBILITY_EXPORT VerboseLevel& getVerboseMode();
 
   /*!
    * change the verbose level 
    * \param the new verbose level
    */
-  MFRONTLOGSTREAM_VISIBILITY_EXPORT void
-  setVerboseMode(const VerboseLevel = VERBOSE_LEVEL0);
+  MFRONTLOGSTREAM_VISIBILITY_EXPORT void setVerboseMode(
+      const VerboseLevel = VERBOSE_LEVEL0);
 
   /*!
    * \return the current logging stream
    */
-  MFRONTLOGSTREAM_VISIBILITY_EXPORT std::ostream&
-  getLogStream();
+  MFRONTLOGSTREAM_VISIBILITY_EXPORT std::ostream& getLogStream();
 
   /*!
    * set the current logging stream
    * \param f : file name
    */
-  MFRONTLOGSTREAM_VISIBILITY_EXPORT void
-  setLogStream(const std::string& f);
+  MFRONTLOGSTREAM_VISIBILITY_EXPORT void setLogStream(const std::string& f);
 
   /*!
    * set the current logging stream
@@ -68,8 +64,17 @@ namespace mfront
    * \warning the stream is not handled by this function.
    * The user has to take care of it
    */
-  MFRONTLOGSTREAM_VISIBILITY_EXPORT void
-  setLogStream(std::ostream&);
+  MFRONTLOGSTREAM_VISIBILITY_EXPORT void setLogStream(std::ostream&);
+
+  /*!
+   * \brief set if MFront shall use unicode characters on output.
+   * In particular:
+   * - if true, the variable names will be displayed using their symbolic name.
+   * - if false, the variable names will be displayed using their mangled name.
+   */
+  MFRONTLOGSTREAM_VISIBILITY_EXPORT void setUnicodeOutputOption(const bool);
+  //! \return if MFront shall use unicode characters on output.
+  MFRONTLOGSTREAM_VISIBILITY_EXPORT bool getUnicodeOutputOption();
 
 } // end of namespace mfront
 

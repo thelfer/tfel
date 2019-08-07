@@ -17,14 +17,20 @@ files. This subset includes:
 - Mathematical symbols
 - Latin letter superscripts and subscripts.
 - Number superscripts and subscripts.
-- Combining diacritical marks corresponding to time derivative, vectors,
-  symmetric tensors, unsymmetric tensors, fourth order tensors.
 
 # Common symbols
 
-- εᵗᵒ:
-- εᵉˡ:
+- F₀: deformation gradient at the beginning of the time step
+- F₁: deformation gradient at the end of the time step
+- ∂ₜF: rate of the deformation gradient
+- εᵗᵒ: total strain
+- Δεᵗᵒ: total strain increment
+- ∂ₜεᵗᵒ: rate of the total strain
+- Δεᵗᵒ: total strain increment
+- εᵉˡ: elastic strain
 - σ: stress tensor
+- ℝ₊: ranges of positive numbers
+- ℝ₋: ranges of negative numbers
 
 # List of all supported symbols
 
@@ -46,11 +52,19 @@ files. This subset includes:
 
 : Small greek letters
 
+## Mathematical operators
+
++:-:+:-:+
+| ⋅ | ⊗ |
++---+---+
+
+: Mathematical operators
+
 ## Mathematical symbols
 
-+:-:+:-:+:-:+:-:+
-| ∕ | ∂ | ∇ | ⊗ |
-+---+---+---+---+
++:-:+:-:+:-:+
+| ∕ | ∂ | ∇ |
++---+---+---+
 
 : Mathematical symbols
 
@@ -99,3 +113,9 @@ files. This subset includes:
 +---+---+---+---+---+---+---+---+---+---+
 
 : Arabic numbers subscripts
+
++:-:+:-:+
+| ₊ | ₋ |
++---+---+
+
+: Mathematic symbols subscripts

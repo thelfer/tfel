@@ -28,6 +28,7 @@ namespace tfel {
      */
     enum struct UnicodeCharacterCategory {
       MATHEMATICAL_SYMBOL,
+      MATHEMATICAL_OPERATOR,
       GREEK_LETTER_CAPITAL,
       GREEK_LETTER_SMALL,
       GREEK_LETTER_SUBSCRIPT_SMALL,

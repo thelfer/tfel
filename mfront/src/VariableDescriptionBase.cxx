@@ -54,7 +54,7 @@ namespace mfront{
   VariableDescriptionBase::~VariableDescriptionBase() = default;
 
   const std::string& displayName(const VariableDescriptionBase& v){
-    if (!v.symbolic_form.empty()) {
+    if ((getUnicodeOutputOption()) && (!v.symbolic_form.empty())) {
       return v.symbolic_form;
     }
     return v.name;
