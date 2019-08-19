@@ -739,8 +739,10 @@ docs/mtest/ptest/AxialForceEvolution.md -text
 docs/mtest/ptest/AxialGrowthEvolution.md -text
 docs/mtest/ptest/AxialLoading.md -text
 docs/mtest/ptest/CMakeLists.txt -text
+docs/mtest/ptest/DisplacementEpsilon.md -text
 docs/mtest/ptest/Makefile.am -text
 docs/mtest/ptest/RadialLoading.md -text
+docs/mtest/ptest/ResidualEpsilon.md -text
 docs/mtest/style.ist -text
 docs/presentations/CMakeLists.txt -text
 docs/presentations/Makefile.am -text

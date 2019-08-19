@@ -732,7 +732,7 @@ temps.
 
 \subsection{Formulation faible}
 
-Soit \(\vec{v}\) un champ de vitesses cinémaquement admissible,
+Soit \(\vec{v}\) un champ de vitesses cinématiquement admissible,
 nous avons~:
 \[
 \int_{\Omega_{0}}\left(\mathrm{Div} \tns{\Pi}\right)\,.\,\vec{v}\,\,\dtot\,V = 0
@@ -915,8 +915,38 @@ où~:
   \end{itemize}
 \end{minipage}
 
-Ce système non linéaire peut être résolu de multiples manières.
+Ce système non linéaire est résolu de manière itérative. Différents
+algorithmes sont disponibles, notamment:
 
-L'une d'entre elle fait intervenir la matrice tangente cohérente.
+\begin{itemize}
+  \item la méthode de Newton-Raphson standard qui fait intervenir
+  la matrice tangente cohérente. Des variantes basées sur d'autres
+  opérateurs tangents sont possibles.
+  \item la méthode de point-fixe éventuellement accélérée qui se
+  base sur la matrice d'élasticité initiale.
+\end{itemize}
+
+\subsection{Critères de convergence}
+
+Deux critères de convergence sont utilisés:
+
+\begin{itemize}
+  \item un critère sur le résidu \(\vec{\mathbb{R}}\), normalisé
+  pour être de l'ordre de grandeur d'une contrainte:
+  \[
+  \norm{\vec{\mathbb{R}}}_{\infty}<\sigma_{\varepsilon}\,2\,\pi\,R^{e}_{0}
+  \]
+  La valeur par défaut de \(\sigma_{\varepsilon}\) est égale à
+  \(10^{-3}\)\footnote{L'unité de \(\sigma_{\varepsilon}\) dépend du
+    système choisi par l'utilisateur pour exprimer les pression, les
+    rayons, etc...}.
+  \item un critère de stationnarité des déplacements:
+  \[
+  \norm{\delta\Delta\,\vec{\mathbb{U}}}_{\infty}<\varepsilon_{\varepsilon}\,R^{e}_{0}
+  \]
+  où \(\delta\Delta\,\vec{\mathbb{U}}\) est la dernière correction
+  faite au champ de déplacement. La valeur par défaut de
+  \(\varepsilon_{\varepsilon}\) est de \(10^{-11}\).
+\end{itemize}
 
 \end{document}
