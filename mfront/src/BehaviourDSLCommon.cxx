@@ -3785,6 +3785,8 @@ namespace mfront{
       return;
     }
     const auto& bounds = v.getBounds();
+    const auto prec = os.precision();
+    os.precision(14);
     if(bounds.boundsType==VariableBoundsDescription::LOWER){
       os << "BoundsCheck<N>::lowerBoundCheck(\""
 	 << n << "\",this->" << n << ","
@@ -3821,6 +3823,7 @@ namespace mfront{
       tfel::raise("BehaviourDSLCommon::writeBoundsChecks: "
 		  "internal error (unsupported bounds type)");
     }
+    os.precision(prec);
   } // end of writeBoundsChecks 
   
   void BehaviourDSLCommon::writeBoundsChecks(std::ostream& os,
@@ -3845,6 +3848,8 @@ namespace mfront{
       return;
     }
     const auto& bounds = v.getPhysicalBounds();
+    const auto prec = os.precision();
+    os.precision(14);
     if(bounds.boundsType==VariableBoundsDescription::LOWER){
       os << "BoundsCheck<N>::lowerBoundCheck(\""
 	 << n << "\",this->" << n << ","
@@ -3881,6 +3886,7 @@ namespace mfront{
       tfel::raise("BehaviourDSLCommon::writePhysicalBoundsChecks: "
 		  "internal error (unsupported bounds type)");
     }
+    os.precision(prec);
   } // end of writePhysicalBoundsChecks 
   
   void BehaviourDSLCommon::writePhysicalBoundsChecks(std::ostream& os ,
@@ -6483,6 +6489,8 @@ namespace mfront{
 	   ((h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS)&&
 	    (!this->mb.hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,p.name)))){
 	  rp2=true;
+	  const auto prec = os.precision();
+	  os.precision(14);
 	  if(p.arraySize==1u){
 	    os << "this->" << p.name << " = "
 	       << this->mb.getFloattingPointParameterDefaultValue(h,p.name) << ";\n"; 
@@ -6492,6 +6500,7 @@ namespace mfront{
 		 << this->mb.getFloattingPointParameterDefaultValue(h,p.name,i) << ";\n";
 	    }
 	  }
+	  os.precision(prec);
 	}
       }
     }
