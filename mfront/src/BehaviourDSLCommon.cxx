@@ -3504,7 +3504,6 @@ namespace mfront {
       os << "os << \"" << displayName(v.second) << " : \" << b."
          << v.second.name << " << '\\n';\n";
     }
-    os << "os << \"T : \" << b.T << '\\n';\n";
     for (const auto& v : d.getMaterialProperties()) {
       os << "os << \"" << displayName(v) << " : \" << b." << v.name << " << '\\n';\n";
     }
