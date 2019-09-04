@@ -231,12 +231,13 @@ namespace tfel
     struct Evaluator::TNumber final
       : public Evaluator::TExpr
     {
-      TNumber(const double v);
+      TNumber(const std::string&, const double);
       virtual bool isOperator() const override;
       virtual parser::ExprPtr analyse() override;
       virtual void reduce() override;
     private:
-      const double value;
+     const std::string str;
+     const double value;
     }; // end of struct Evaluator::TNumber
 
     struct Evaluator::TExternalFunctionExpr final
