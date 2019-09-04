@@ -483,6 +483,8 @@ namespace mfront {
         const auto f = SupportedTypes::getTypeFlag(p.type);
         throw_if(f != SupportedTypes::Scalar,
                  "unsupported paramaeter type '" + p.type + "'");
+	const auto prec = out.precision();
+	out.precision(14);
         if (p.arraySize == 1u) {
           out << "MFRONT_SHAREDOBJ double " << this->getSymbolName(i, name, h)
               << "_" << p.getExternalName() << "_ParameterDefaultValue"
@@ -497,6 +499,7 @@ namespace mfront {
                 << ";\n\n";
           }
         }
+	out.precision(prec);
       }
     }
   }  // end of SymbolsGenerator::writeParameterDefaultValueSymbols
@@ -525,6 +528,8 @@ namespace mfront {
                                             const Hypothesis h) const {
     auto write = [this, &out, &name, &i,
                   h](const VariableDescriptionContainer& vc) {
+      const auto prec = out.precision();
+      out.precision(14);
       for (const auto& v : vc) {
         if (v.arraySize == 1u) {
           if (!v.hasBounds()) {
@@ -544,6 +549,7 @@ namespace mfront {
           }
         }
       }
+      out.precision(prec);
     };
     const auto& d = mb.getBehaviourData(h);
     write(d.getMaterialProperties());
@@ -560,6 +566,8 @@ namespace mfront {
       const Hypothesis h) const {
     auto write = [this, &out, &i, &name,
                   h](const VariableDescriptionContainer& vc) {
+      const auto prec = out.precision();
+      out.precision(14);
       for (const auto& v : vc) {
         if (v.arraySize == 1u) {
           if (!v.hasPhysicalBounds()) {
@@ -580,6 +588,7 @@ namespace mfront {
           }
         }
       }
+      out.precision(prec);
     };
     const auto& d = mb.getBehaviourData(h);
     write(d.getMaterialProperties());
