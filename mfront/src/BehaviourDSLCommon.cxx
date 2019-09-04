@@ -5913,6 +5913,8 @@ namespace mfront{
 	   ((h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS)&&
 	    (!this->mb.hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,p->name)))){
 	  rp2=true;
+	  const auto prec = this->srcFile.precision();
+	  this->srcFile.precision(14);
 	  if(p->arraySize==1u){
 	    this->srcFile << "this->" << p->name << " = "
 			  << this->mb.getFloattingPointParameterDefaultValue(h,p->name) << ";\n"; 
@@ -5922,6 +5924,7 @@ namespace mfront{
 			    << this->mb.getFloattingPointParameterDefaultValue(h,p->name,i) << ";\n";
 	    }
 	  }
+	  this->srcFile.precision(prec);
 	}
       } else if(p->type=="int"){
 	ip = true;

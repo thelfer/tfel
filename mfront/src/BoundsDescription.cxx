@@ -49,6 +49,8 @@ namespace mfront{
   BoundsDescription::writeBoundsChecks(std::ostream& file,
 				       const std::string& n) const
   {
+    const auto prec = file.precision();
+    file.precision(14);
     if(this->category==Standard){
       if(this->boundsType==Lower){
 	if(this->varCategory==ExternalStateVariableII){
@@ -178,6 +180,7 @@ namespace mfront{
     } else {
       throw(std::runtime_error("BoundsDescription::writeBoundsChecks : internal error"));
     }
+    file.precision(prec);
   } // end of BoundsDescription::writeBoundsChecks
   
 } // end of namespace mfront
