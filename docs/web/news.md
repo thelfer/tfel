@@ -26,6 +26,53 @@ Tweets by TFEL_MFront
 </script>
 </center>
 
+# Next MFront User Day on October 17, 2019 (4/09/2019)
+
+We are pleased to announce that the next MFront User Meeting will be
+organized by IMSIA (Institute of Mechanical Sciences and Industrial
+Applications, UMR 9219 CNRS-EDF-CEA-ENSTA).
+
+The User Meeting will be held on October 17 2019 near Paris on the «
+Plateau of Saclay ». Do not miss this event, which is a great
+opportunity to communicate with MFront users.
+
+The program of the day is mostly defined (new contributions are still
+welcomed). Following feedbacks from previous meetings:
+
+- The morning will be dedicated to a general introduction to MFront
+  meant for new users or people willing to have an overview of MFront
+  (beginning at 10h00).
+- The afternoon could be dedicated to various technical talks. The
+  following talks are already scheduled (end scheduled at 16h30):
+    - New functionalities of TFEL 3.3 (T. Helfer)
+    - Modelling non-linear constitutive material laws in FEniCS with
+      MFront (J. Bleyer, Laboratoire Navier)
+    - Xper : une plateforme pour la simulation numérique distribuée
+      d'interactions multiphysiques entre corps. (F. Péralès, IRSN)
+    - Utilisation de MFront via MGIS dans le code implicite/explicite
+      Mefisto: (O. Jamond, CEA)
+    - MFront and OpenGeoSys -- connecting two open-source initiatives
+      for simulations in environmental geosciences and energy
+      geotechnics (T. Nagel, Geotechnical Institute)
+    - Applications de MFront aux bétons et aux polymères PRFC (Jean-Luc
+      Adia, François Soleilhet EDF R&D)
+    - Mfront in biomechanics: Abdominal muscle simulation. (Gerard
+      Fortuny Anguera, Universtitat Rovira i Virgili)
+
+We will made a short introduction to MFront on computers on the morning
+of October 18 (places will be limited, only a few left) before the
+"Meeting on Computational Mechanics" at EDF Lab Saclay organized for the
+30 years of code_aster.
+
+Access to the user meeting is free but, to facilitate the organization
+of this event, registration is required. Please register at
+tfel-contact@cea.fr.
+
+While registering, let us know if you would like to present your work
+and/or if you would like attend to the first part of the meeting and/or
+to the second part and/or if you would be interested by the introduction
+on October 18.
+
 # New FEniCS tour of elastoplasticity using the `MFront` code generator (24/01/2019)
 
 Du to Jeremy Bleyer a new tutorial on how to use `MFront` with `FEniCS`
