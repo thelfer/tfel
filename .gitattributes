@@ -2291,6 +2291,7 @@ mfront/include/MFront/BehaviourDSLBase.hxx -text
 mfront/include/MFront/BehaviourDSLBase.ixx -text
 mfront/include/MFront/BehaviourDSLCommon.hxx -text
 mfront/include/MFront/BehaviourDSLCommon.ixx -text
+mfront/include/MFront/BehaviourDSLDescription.hxx -text
 mfront/include/MFront/BehaviourData.hxx -text
 mfront/include/MFront/BehaviourData.ixx -text
 mfront/include/MFront/BehaviourDescription.hxx -text
@@ -2450,6 +2451,7 @@ mfront/include/MFront/ImplicitGenericBehaviourDSL.hxx -text
 mfront/include/MFront/InitDSLs.hxx -text
 mfront/include/MFront/InitInterfaces.hxx -text
 mfront/include/MFront/InstallPath.hxx -text
+mfront/include/MFront/IntegrationScheme.hxx -text
 mfront/include/MFront/InterfaceBase.hxx -text
 mfront/include/MFront/IsotropicBehaviourDSLBase.hxx -text
 mfront/include/MFront/IsotropicMisesCreepDSL.hxx -text
@@ -2600,6 +2602,7 @@ mfront/src/BehaviourBrickProviderIdentifier.cxx -text
 mfront/src/BehaviourBrickRequirement.cxx -text
 mfront/src/BehaviourBrickRequirementManager.cxx -text
 mfront/src/BehaviourDSLCommon.cxx -text
+mfront/src/BehaviourDSLDescription.cxx -text
 mfront/src/BehaviourData.cxx -text
 mfront/src/BehaviourDescription.cxx -text
 mfront/src/BehaviourInterfaceFactory.cxx -text

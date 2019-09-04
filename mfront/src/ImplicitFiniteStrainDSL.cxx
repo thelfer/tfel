@@ -15,23 +15,30 @@
 
 namespace mfront{
 
-  ImplicitFiniteStrainDSL::ImplicitFiniteStrainDSL()
-  {
+  ImplicitFiniteStrainDSL::ImplicitFiniteStrainDSL() {
     this->mb.setDSLName("ImplicitFiniteStrain");
     this->mb.declareAsAFiniteStrainStandardBehaviour(false);
   } // end of ImplicitFiniteStrainDSL::ImplicitFiniteStrainDSL
 
-  std::string
-  ImplicitFiniteStrainDSL::getName()
-  {
+  std::string ImplicitFiniteStrainDSL::getName() {
     return "ImplicitFiniteStrain";
   } // end of ImplicitFiniteStrainDSL::getName
 
-  std::string
-  ImplicitFiniteStrainDSL::getDescription()
-  {
+  std::string ImplicitFiniteStrainDSL::getDescription() {
     return "this parser provides a generic integrator based on a theta method.";
   } // end of ImplicitFiniteStrainDSL::getDescription
+
+  BehaviourDSLDescription ImplicitFiniteStrainDSL::getBehaviourDSLDescription() const {
+    auto d = mfront::getDefaultFiniteStrainBehaviourDSLDescription();
+    d.integrationScheme = IntegrationScheme::IMPLICITSCHEME;
+    d.typicalCodeBlocks = {BehaviourData::ComputePredictionOperator,
+                           BehaviourData::ComputePredictor,
+                           BehaviourData::ComputeStress,
+                           BehaviourData::Integrator,
+                           BehaviourData::ComputeTangentOperator};
+    d.minimalMFrontFileBody = "@Integrator{}\n\n";
+    return d;
+  }  // end of ImplicitFiniteStrainDSL::getBehaviourDSLDescription
 
   ImplicitFiniteStrainDSL::~ImplicitFiniteStrainDSL() noexcept = default;
 

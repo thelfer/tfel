@@ -19,18 +19,19 @@
 
 namespace mfront{
 
-  struct IsotropicMisesCreepDSL
-    : public IsotropicBehaviourDSLBase
-  {
-
+  struct IsotropicMisesCreepDSL : public IsotropicBehaviourDSLBase {
+    //! \brief return the name of the DSL
     static std::string getName();
-
+    //! \brief return a short description of the DSL
     static std::string getDescription();
-
+    //! \brief default constructor
     IsotropicMisesCreepDSL();
-    
-    void endsInputFileProcessing() override;
 
+    std::string getCodeBlockTemplate(const std::string&,
+                                     const bool) const override;
+
+    void endsInputFileProcessing() override;
+    //! \brief destructor
     ~IsotropicMisesCreepDSL() override;
 
   protected:

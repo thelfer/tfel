@@ -23,16 +23,13 @@
 
 namespace mfront{
 
-  template<typename Child>
-  struct ModelDSLBase
-    : public ModelDSLCommon
-  {
+  template <typename Child>
+  struct ModelDSLBase : public ModelDSLCommon {
     /*!
      * \brief return the list of keywords usable with this parser
      * \param[out] k : the list of keywords registred for this parser
      */
-    virtual void
-    getKeywordsList(std::vector<std::string>&) const override;
+    void getKeywordsList(std::vector<std::string>&) const override;
     /*!
      * \brief analyse a file. This method is called only once, for the
      * main mfront file. The imported files are treated by the import
@@ -45,26 +42,25 @@ namespace mfront{
      * substitutions are given through command-line options such as
      * `--@YYY@=XXX`)
      */
-    virtual void
-    analyseFile(const std::string&,
-		const std::vector<std::string>&,
-		const std::map<std::string,std::string>&) override;
+    void analyseFile(const std::string&,
+                     const std::vector<std::string>&,
+                     const std::map<std::string, std::string>&) override;
     /*!
      * \brief analyse the specified string.
      * \param[in] s : analyse a string
      */
-    virtual void
-    analyseString(const std::string&) override;
+    void analyseString(const std::string&) override;
     /*!
      * \brief import a file
      * \param[in] f     : file name
      * \param[in] ecmds : additionnal commands inserted treated before
      * the input file commands
      */
-    virtual void importFile(const std::string&,
-			    const std::vector<std::string>&,
-			    const std::map<std::string,std::string>&) override;
-  protected:
+    void importFile(const std::string&,
+                    const std::vector<std::string>&,
+                    const std::map<std::string, std::string>&) override;
+
+   protected:
 
     typedef void (Child::* MemberFuncPtr)();
     typedef std::map<std::string,MemberFuncPtr> CallBackContainer;

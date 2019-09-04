@@ -21,16 +21,18 @@ namespace mfront{
     // input variables
     this->mb.declareAsASmallStrainStandardBehaviour();
     // Default state variable
-    VariableDescription eel("StrainStensor","eel",1u,0u);
+    VariableDescription eel("StrainStensor","εᵉˡ","eel",1u,0u);
     eel.description = "elastic strain";
     this->mb.addStateVariable(h,eel);
     this->mb.setGlossaryName(h,"eel","ElasticStrain");
     // driving variables
     for(const auto& v: this->mb.getMainVariables()){
       const auto& dv = v.first;
-      this->mb.addLocalVariable(h,VariableDescription(dv.type,dv.name+"_",1u,0u));
-      this->mb.addLocalVariable(h,VariableDescription(SupportedTypes::getTimeDerivativeType(dv.type),
-						 "d"+dv.name+"_",1u,0u));
+      this->mb.addLocalVariable(
+          h, VariableDescription(dv.type, dv.name + "_", 1u, 0u));
+      this->mb.addLocalVariable(
+          h, VariableDescription(SupportedTypes::getTimeDerivativeType(dv.type),
+                                 "d" + dv.name + "_", 1u, 0u));
     }
   } // end of RungeKuttaDSL::RungeKuttaDSL
 
@@ -41,6 +43,17 @@ namespace mfront{
            "Runge-Kutta algorithm. Avalailable algorithms are 'euler', 'rk2', 'rk4' "
            "'r42', 'rk54' and 'rkCastem'";
   } // end of RungeKuttaDSL::getDescription
+
+  BehaviourDSLDescription RungeKuttaDSL::getBehaviourDSLDescription() const {
+    auto d = mfront::getDefaultStrainBasedBehaviourDSLDescription();
+    d.integrationScheme = IntegrationScheme::EXPLICITSCHEME;
+    d.typicalCodeBlocks = {BehaviourData::ComputePredictionOperator,
+                           BehaviourData::ComputeStress,
+                           BehaviourData::ComputeDerivative,
+                           BehaviourData::ComputeTangentOperator};
+    d.minimalMFrontFileBody = "@Derivative{}\n\n@ComputeFinalStress{};\n\n";
+    return d;
+  }  // end of RungeKuttaDSL::getBehaviourDSLDescription
 
   RungeKuttaDSL::~RungeKuttaDSL() = default;
 

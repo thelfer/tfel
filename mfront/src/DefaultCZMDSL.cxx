@@ -46,6 +46,19 @@ namespace mfront{
     return "DefaultCZMDSL";
   }
 
+  BehaviourDSLDescription DefaultCZMDSL::getBehaviourDSLDescription() const {
+    auto d = BehaviourDSLDescription{};
+    d.behaviourType =
+        tfel::material::MechanicalBehaviourBase::COHESIVEZONEMODEL;
+    d.integrationScheme = IntegrationScheme::USERDEFINEDSCHEME;
+    d.typicalCodeBlocks = {BehaviourData::ComputePredictionOperator,
+                           BehaviourData::Integrator,
+                           BehaviourData::ComputeTangentOperator};
+    d.allowCrystalStructureDefinition = false;
+    d.minimalMFrontFileBody = "@Integrator{}\n\n";
+    return d;
+  }  // end of DefaultCZMDSL::getBehaviourDSLDescription
+
   void DefaultCZMDSL::writeBehaviourParserSpecificIncludes(std::ostream& os) const{
     DefaultDSLBase::writeBehaviourParserSpecificIncludes(os);
     os << "#include\"TFEL/Math/tmatrix.hxx\"\n"

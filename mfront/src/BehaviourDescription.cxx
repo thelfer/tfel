@@ -1780,6 +1780,16 @@ namespace mfront {
       this->addVariables(h, v, s, f);
     }  // end of BehaviourDescription::addMaterialProperties
 
+    void BehaviourDescription::addParameters(
+        const Hypothesis h, const VariableDescriptionContainer& v,
+        const BehaviourData::RegistrationStatus s) {
+      using mptr = void (mfront::BehaviourData::*)(
+          const mfront::VariableDescription&,
+          const BehaviourData::RegistrationStatus);
+      mptr f = &BehaviourData::addParameter;
+      this->addVariables(h, v, s, f);
+    }  // end of BehaviourDescription::addParameters
+
     void BehaviourDescription::addMaterialProperty(
         const Hypothesis h, const VariableDescription& v,
         const BehaviourData::RegistrationStatus s) {

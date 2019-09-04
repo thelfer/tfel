@@ -31,13 +31,16 @@
 namespace mfront {
 
   StandardElasticityBrick::StandardElasticityBrick(AbstractBehaviourDSL& dsl_,
-                                                   BehaviourDescription& mb_,
-                                                   const Parameters& p,
-                                                   const DataMap& d)
+                                                   BehaviourDescription& mb_)
       : BehaviourBrickBase(dsl_, mb_) {
+  }  // end of StandardElasticityBrick::StandardElasticityBrick
+
+  std::string StandardElasticityBrick::getName() const { return "Elasticity"; }
+
+  void StandardElasticityBrick::initialize(const Parameters& p,
+                                           const DataMap& d) {
     auto throw_if = [](const bool b, const std::string& m) {
-      tfel::raise_if(b,
-                     "StandardElasticityBrick::StandardElasticityBrick: " + m);
+      tfel::raise_if(b, "StandardElasticityBrick::initialize: " + m);
     };
     auto& spf = mfront::bbrick::StressPotentialFactory::getFactory();
     this->hooke = spf.generate("Hooke");
@@ -59,9 +62,7 @@ namespace mfront {
         throw_if(true, "unsupported parameter '" + pp.first + "'");
       }
     }
-  }  // end of StandardElasticityBrick::StandardElasticityBrick
-
-  std::string StandardElasticityBrick::getName() const { return "Elasticity"; }
+  }  // end of StandardElasticityBrick::initialize
 
   void StandardElasticityBrick::completeVariableDeclaration() const {
     this->hooke->completeVariableDeclaration(this->bd, this->dsl);

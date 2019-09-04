@@ -25,6 +25,9 @@ namespace mfront{
     //! constructor
     RungeKuttaDSLBase();
 
+    std::string getCodeBlockTemplate(const std::string&,
+                                     const bool) const override;
+
     //! destructor
     ~RungeKuttaDSLBase() override;
 

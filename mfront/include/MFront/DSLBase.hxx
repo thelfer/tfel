@@ -215,18 +215,6 @@ namespace mfront {
      */
     virtual void appendToSources(const std::string&) = 0;
     /*!
-     * \brief import a file
-     * \param[in] f     : file name
-     * \param[in] ecmds : additionnal commands inserted treated before
-     * the input file commands
-     * \param[in] s : substitutions patterns inserted (those
-     * substitutions are given through command-line options such as
-     * `--@YYY@=XXX`)
-     */
-    virtual void importFile(const std::string&,
-                            const std::vector<std::string>&,
-                            const std::map<std::string, std::string>&) = 0;
-    /*!
      * \brief check that the end of file in not reached yet
      * \param[in] m: calling method name
      * \param[in] e: error message

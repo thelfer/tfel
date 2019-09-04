@@ -48,6 +48,18 @@ namespace mfront{
     return "DefaultGenericBehaviourDSL";
   } // end of DefaultGenericBehaviourDSL::getName()
 
+  BehaviourDSLDescription DefaultGenericBehaviourDSL::getBehaviourDSLDescription() const {
+    auto d = BehaviourDSLDescription{};
+    d.behaviourType =
+        tfel::material::MechanicalBehaviourBase::COHESIVEZONEMODEL;
+    d.integrationScheme = IntegrationScheme::USERDEFINEDSCHEME;
+    d.typicalCodeBlocks = {BehaviourData::ComputePredictionOperator,
+                           BehaviourData::Integrator,
+                           BehaviourData::ComputeTangentOperator};
+    d.minimalMFrontFileBody = "@Integrator{}\n\n";
+    return d;
+  }  // end of DefaultGenericBehaviourDSL::getBehaviourDSLDescription
+
   DefaultGenericBehaviourDSL::~DefaultGenericBehaviourDSL() = default;
 
 } // end of namespace mfront  

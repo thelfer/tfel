@@ -21,10 +21,9 @@
 namespace mfront {
 
   namespace bbrick {
-
     // forward declaration
     struct StressPotential;
-  }
+  } // end of namespace bbrick
 
   /*!
    * This brick provides the DDIF2 damage behaviour as a basis to build complex
@@ -35,22 +34,13 @@ namespace mfront {
      * \brief constructor
      * \param[in] dsl_ : calling domain specific language
      * \param[in] bd_  : mechanical behaviour description
-     * \param[in] p    : parameters
-     * \param[in] d    : data
      */
     DDIF2Brick(AbstractBehaviourDSL&,
-               BehaviourDescription&,
-               const Parameters&,
-               const DataMap&);
-    //! \return the name of the brick
+               BehaviourDescription&);
     std::string getName() const override;
-    /*!
-     * \return the list of supported modelling hypotheses.
-     */
+    void initialize(const Parameters&, const DataMap&) override;
     std::vector<Hypothesis> getSupportedModellingHypotheses() const override;
-    //! complete the variable description
     void completeVariableDeclaration() const override;
-    //! method called at the end of the input file processing
     void endTreatment() const override;
     //! destructor
     ~DDIF2Brick() override;

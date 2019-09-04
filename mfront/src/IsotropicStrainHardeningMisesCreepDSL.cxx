@@ -21,22 +21,39 @@
 
 namespace mfront{
 
-  IsotropicStrainHardeningMisesCreepDSL::IsotropicStrainHardeningMisesCreepDSL()
-  {
+  std::string IsotropicStrainHardeningMisesCreepDSL::getName() {
+    return "IsotropicStrainHardeningMisesCreep";
+  }
+
+  std::string IsotropicStrainHardeningMisesCreepDSL::getDescription() {
+    return "this parser is used for standard strain hardening creep behaviours "
+      "of the form dp/dt=f(s,p) where p is the equivalent creep strain "
+      "and s the equivalent mises stress";
+  } // end of IsotropicStrainHardeningMisesCreepDSL::getDescription
+
+  IsotropicStrainHardeningMisesCreepDSL::
+      IsotropicStrainHardeningMisesCreepDSL() {
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     this->mb.setDSLName("IsotropicStrainHardeningMisesCreep");
     // Default state vars
-    this->mb.addStateVariable(h,VariableDescription("StrainStensor","eel",1u,0u));
+    this->mb.addStateVariable(
+        h, VariableDescription("StrainStensor", "εᵉˡ", "eel", 1u, 0u));
     this->mb.addStateVariable(h,VariableDescription("strain","p",1u,0u));
     this->mb.setGlossaryName(h,"eel","ElasticStrain");
     this->mb.setGlossaryName(h,"p","EquivalentViscoplasticStrain");
     // default local vars
     this->reserveName("mu_3");
     this->mb.addLocalVariable(h,VariableDescription("DstrainDt","f",1u,0u));
-    this->mb.addLocalVariable(h,VariableDescription("DF_DSEQ_TYPE","df_dseq",1u,0u));
-    this->mb.addLocalVariable(h,VariableDescription("DstrainDt","df_dp",1u,0u));
+    this->mb.addLocalVariable(
+        h,
+        VariableDescription("DF_DSEQ_TYPE", "\u2202f\u2215\u2202\u03C3\u2091",
+                            "df_dseq", 1u, 0u));
+    this->mb.addLocalVariable(
+        h, VariableDescription("DstrainDt", "\u2202f\u2215\u2202p", "df_dp", 1u,
+                               0u));
     this->mb.addLocalVariable(h,VariableDescription("StressStensor","se",1u,0u));
-    this->mb.addLocalVariable(h,VariableDescription("stress","seq",1u,0u));
+    this->mb.addLocalVariable(
+        h, VariableDescription("stress", "\u03C3\u2091", "seq", 1u, 0u));
     this->mb.addLocalVariable(h,VariableDescription("stress","seq_e",1u,0u));
     this->mb.addLocalVariable(h,VariableDescription("StrainStensor","n",1u,0u));
     this->mb.addLocalVariable(h,VariableDescription("strain","p_",1u,0u));
@@ -44,20 +61,31 @@ namespace mfront{
     this->mb.setAttribute(h,BehaviourData::isConsistentTangentOperatorSymmetric,true);
   }
 
-  std::string IsotropicStrainHardeningMisesCreepDSL::getName()
-  {
-    return "IsotropicStrainHardeningMisesCreep";
-  }
+  std::string IsotropicStrainHardeningMisesCreepDSL::getCodeBlockTemplate(
+      const std::string& c, const bool b) const {
+    if (c == BehaviourData::FlowRule) {
+      if (b) {
+        return "@FlowRule{\n"
+               "// \u03C3\u2091 is the current estimate of the von Mises stress at "
+               "t+\u03B8\u22C5\u0394t\n"
+               "f       = ;\n"
+               "\u2202f\u2215\u2202\u03C3\u2091 = ;\n"
+               "\u2202f\u2215\u2202p            = ;\n"
+               "}";
+      } else {
+        return "@FlowRule{\n"
+               "// seq is the current estimate of the von Mises stress at "
+               "t+theta*dt\n"
+               "f       = ;\n"
+               "df_dseq = ;\n"
+               "df_dp   = ;\n"
+               "}";
+      }
+    }
+    return "";
+  }  // end of IsotropicStrainHardeningMisesCreepDSL::getCodeBlockTemplate
 
-  std::string IsotropicStrainHardeningMisesCreepDSL::getDescription()
-  {
-    return "this parser is used for standard strain hardening creep behaviours "
-      "of the form dp/dt=f(s,p) where p is the equivalent creep strain "
-      "and s the equivalent mises stress";
-  } // end of IsotropicStrainHardeningMisesCreepDSL::getDescription
-
-  void IsotropicStrainHardeningMisesCreepDSL::endsInputFileProcessing()
-  {
+  void IsotropicStrainHardeningMisesCreepDSL::endsInputFileProcessing() {
     IsotropicBehaviourDSLBase::endsInputFileProcessing();
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     tfel::raise_if(!this->mb.hasCode(h,BehaviourData::FlowRule),

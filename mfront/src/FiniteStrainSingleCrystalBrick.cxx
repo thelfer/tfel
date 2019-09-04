@@ -39,11 +39,16 @@ namespace mfront{
     "FiniteStrainSingleCrystalBrick::shifted_elastic_deformation_gradient";
 
   FiniteStrainSingleCrystalBrick::FiniteStrainSingleCrystalBrick(AbstractBehaviourDSL& dsl_,
-								 BehaviourDescription& mb_,
-								 const Parameters& p,
-								 const DataMap& d)
+								 BehaviourDescription& mb_)
     : BehaviourBrickBase(dsl_,mb_)
-  {
+  {} // end of FiniteStrainSingleCrystalBrick::FiniteStrainSingleCrystalBrick
+
+  std::string FiniteStrainSingleCrystalBrick::getName() const{
+    return "FiniteStrainSingleCrystal";
+  }
+  
+  void FiniteStrainSingleCrystalBrick::initialize(const Parameters& p,
+                                                  const DataMap& d) {
     auto throw_if = [](const bool b,const std::string& m){
       tfel::raise_if(b,"FiniteStrainSingleCrystalBrick::FiniteStrainSingleCrystalBrick: "+m);
     };
@@ -88,7 +93,7 @@ namespace mfront{
       this->bd.setAttribute(an,b.get<bool>(),false);
     }
     // elastic strain
-    VariableDescription eel("StrainStensor","eel",1u,0u);
+    VariableDescription eel("StrainStensor", "εᵉˡ", "eel", 1u, 0u);
     eel.description = "elastic strain";
     this->bd.addIntegrationVariable(h,eel,BehaviourData::UNREGISTRED);
     this->bd.setGlossaryName(h,"eel",tfel::glossary::Glossary::ElasticStrain);
@@ -125,7 +130,7 @@ namespace mfront{
     this->bd.reserveName(h,"fsscb_Jg");
     this->bd.reserveName(h,"fsscb_dinv_Fp_dDF");
     this->bd.reserveName(h,"fsscb_dFe_dDF");
-  } // end of FiniteStrainSingleCrystalBrick::FiniteStrainSingleCrystalBrick
+  } // end of FiniteStrainSingleCrystalBrick::initialize
   
   void FiniteStrainSingleCrystalBrick::completeVariableDeclaration() const
   {
@@ -282,10 +287,6 @@ namespace mfront{
     this->bd.setCode(h,ton,to,BehaviourData::CREATE,
     		     BehaviourData::AT_BEGINNING);
   } // end of FiniteStrainSingleCrystalBrick::endTreatment
-  
-  std::string FiniteStrainSingleCrystalBrick::getName() const{
-    return "FiniteStrainSingleCrystal";
-  }
   
   std::vector<tfel::material::ModellingHypothesis::Hypothesis> 
   FiniteStrainSingleCrystalBrick::getSupportedModellingHypotheses() const

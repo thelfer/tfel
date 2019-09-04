@@ -472,7 +472,7 @@ namespace mfront {
         bd.checkVariableExistence("eel", "IntegrationVariable");
         bd.checkVariableGlossaryName("eel", Glossary::ElasticStrain);
       } else {
-        VariableDescription eel("StrainStensor", "eel", 1u, 0u);
+        VariableDescription eel("StrainStensor", "εᵉˡ", "eel", 1u, 0u);
         eel.description = "elastic strain";
         bd.addStateVariable(uh, eel);
         bd.setGlossaryName(uh, "eel", Glossary::ElasticStrain);

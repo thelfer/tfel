@@ -337,6 +337,76 @@ namespace mfront {
     p->second = c;
   }  // end of disableCallBack
 
+  void BehaviourDSLCommon::addMaterialProperties(
+      const VariableDescriptionContainer& mps) {
+    constexpr const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    const auto d = this->getBehaviourDSLDescription();
+    tfel::raise_if(!d.allowUserDefinedMaterialProperties,
+                   "BehaviourDSLCommon::addMaterialProperties: "
+                   "adding material properties is not allowed");
+    this->mb.addMaterialProperties(h, mps);
+  }  // end of BehaviourDSLCommon::addMaterialProperties
+
+  void BehaviourDSLCommon::addParameters(
+      const VariableDescriptionContainer& params) {
+    constexpr const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    const auto d = this->getBehaviourDSLDescription();
+    tfel::raise_if(!d.allowUserDefinedParameters,
+                   "BehaviourDSLCommon::addParameters: "
+                   "adding parameters is not allowed");
+    this->mb.addParameters(h, params);
+  }  // end of BehaviourDSLCommon::addParameters
+
+  void BehaviourDSLCommon::addStateVariables(
+      const VariableDescriptionContainer& isvs) {
+    constexpr const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    const auto d = this->getBehaviourDSLDescription();
+    tfel::raise_if(!d.allowUserDefinedStateVariables,
+                   "BehaviourDSLCommon::addStateVariables: "
+                   "adding state variables is not allowed");
+    this->mb.addStateVariables(h, isvs);
+  }  // end of BehaviourDSLCommon::addStateVariables
+
+  void BehaviourDSLCommon::addAuxiliaryStateVariables(
+      const VariableDescriptionContainer& isvs) {
+    constexpr const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    const auto d = this->getBehaviourDSLDescription();
+    tfel::raise_if(!d.allowUserDefinedAuxiliaryStateVariables,
+                   "BehaviourDSLCommon::addAuxiliaryStateVariables: "
+                   "adding auxiliary state variables is not allowed");
+    this->mb.addAuxiliaryStateVariables(h, isvs);
+  }  // end of BehaviourDSLCommon::addAuxiliaryStateVariables
+
+  void BehaviourDSLCommon::addExternalStateVariables(
+      const VariableDescriptionContainer& esvs) {
+    constexpr const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    const auto d = this->getBehaviourDSLDescription();
+    tfel::raise_if(!d.allowUserDefinedExternalStateVariables,
+                   "BehaviourDSLCommon::addExternalStateVariables: "
+                   "adding external state variables is not allowed");
+    this->mb.addExternalStateVariables(h, esvs);
+  }  // end of BehaviourDSLCommon::addExternalStateVariables
+
+  void BehaviourDSLCommon::addLocalVariables(
+      const VariableDescriptionContainer& lvs) {
+    constexpr const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    const auto d = this->getBehaviourDSLDescription();
+    tfel::raise_if(!d.allowUserDefinedLocalVariables,
+                   "BehaviourDSLCommon::addLocalVariables: "
+                   "adding local variables is not allowed");
+    this->mb.addLocalVariables(h, lvs);
+  }  // end of BehaviourDSLCommon::addLocalVariables
+
+  void BehaviourDSLCommon::addIntegrationVariables(
+      const VariableDescriptionContainer& ivs) {
+    constexpr const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    const auto d = this->getBehaviourDSLDescription();
+    tfel::raise_if(!d.allowUserDefinedIntegrationVariables,
+                   "BehaviourDSLCommon::addIntegrationVariables: "
+                   "adding integration variables is not allowed");
+    this->mb.addIntegrationVariables(h, ivs);
+  }  // end of BehaviourDSLCommon::addIntegrationVariables
+
   void BehaviourDSLCommon::writeModelCall(std::ostream& out,
                                           std::vector<std::string>& tmpnames,
                                           const Hypothesis h,
@@ -724,13 +794,17 @@ namespace mfront {
   }  // end of BehaviourDSLCommon::getIntegerConstant
 
   std::set<BehaviourDSLCommon::Hypothesis> BehaviourDSLCommon::getDefaultModellingHypotheses() const {
-    return {ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN, ModellingHypothesis::AXISYMMETRICAL,
-            ModellingHypothesis::PLANESTRAIN, ModellingHypothesis::GENERALISEDPLANESTRAIN,
+    // see the method documentation
+    return {ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,
+            ModellingHypothesis::AXISYMMETRICAL,
+            ModellingHypothesis::PLANESTRAIN,
+            ModellingHypothesis::GENERALISEDPLANESTRAIN,
             ModellingHypothesis::TRIDIMENSIONAL};
   }  // end of BehaviourDSLCommon::getDefaultModellingHypotheses
 
-  bool BehaviourDSLCommon::isModellingHypothesisSupported(const Hypothesis) const {
-    return true;
+  bool BehaviourDSLCommon::isModellingHypothesisSupported(const Hypothesis h) const {
+    const auto mhs = this->getBehaviourDSLDescription().supportedModellingHypotheses;
+    return std::find(mhs.cbegin(), mhs.cend(), h) != mhs.end();
   }  // end of BehaviourDSLCommon::isModellingHypothesesSupported
 
   std::string BehaviourDSLCommon::getBehaviourFileName() const {
@@ -1811,7 +1885,19 @@ namespace mfront {
       ++(this->current);
       return r;
     }();
-    const auto br = f.get(b, *this, this->mb, parameters, this->current, this->tokens.end());
+    const auto d = [this] {
+      using namespace tfel::utilities;
+      using DataMap = std::map<std::string, Data>;
+      if ((this->current != this->tokens.end()) &&
+          (this->current->value == "{")) {
+        DataParsingOptions o;
+        o.allowMultipleKeysInMap = true;
+        return Data::read(this->current, this->tokens.end(), o).get<DataMap>();
+      }
+      return DataMap();
+    }();
+    const auto br = f.get(b, *this, this->mb);
+    br->initialize(parameters, d);
     this->readSpecifiedToken("BehaviourDSLCommon::treatBehaviourBrick", ";");
     this->bricks.push_back(std::move(br));
   }  // end of BehaviourDSLCommon::treatBrick
@@ -2939,6 +3025,7 @@ namespace mfront {
          << "using thermalexpansion    = typename Types::thermalexpansion;\n"
          << "using thermalconductivity = typename Types::thermalconductivity;\n"
          << "using massdensity         = typename Types::massdensity;\n"
+         << "using energydensity         = typename Types::energydensity;\n"
          << "using TVector             = typename Types::TVector;\n"
          << "using Stensor             = typename Types::Stensor;\n"
          << "using Stensor4            = typename Types::Stensor4;\n"
@@ -5258,12 +5345,14 @@ namespace mfront {
            << " << '\\n';\n";
       }
       for (const auto& v : md.getExternalStateVariables()) {
-        os << "os << \"\u0394" << displayName(v) << " : \" << b." << v.name
+        os << "os << \"" << displayName(v) << " : \" << b." << v.name
            << " << '\\n';\n";
         if (getUnicodeOutputOption()) {
-          os << "os << \"" << displayName(v) << " : \" << b.d" << v.name
+          os << "os << \"\u0394" << displayName(v) << " : \" << b.d" << v.name
              << " << '\\n';\n";
         } else {
+          os << "os << \"d" << displayName(v) << " : \" << b.d" << v.name
+             << " << '\\n';\n";
         }
       }
       for (const auto& v : md.getLocalVariables()) {
@@ -7215,6 +7304,17 @@ namespace mfront {
     this->readHypothesesList(mh);
     auto endOfTreatment = false;
     while ((this->current != this->tokens.end()) && (!endOfTreatment)) {
+      const auto vtype = [this, throw_if]() -> std::string {
+        const auto v = this->current->value;
+        if (SupportedTypes::isSupportedType(v)) {
+          throw_if(SupportedTypes::getTypeFlag(v) != SupportedTypes::SCALAR,
+                   "invalid parameter type");
+          ++(this->current);
+          return v;
+        }
+        return "real";
+      }();
+      this->checkNotEndOfFile("BehaviourDSLCommon::treatParameter");
       const auto sname = this->current->value;
       const auto vname = tfel::unicode::getMangledString(sname);
       throw_if(!isValidIdentifier(vname),
@@ -7257,9 +7357,9 @@ namespace mfront {
           for (const auto& h : mh) {
             VariableDescription p;
             if (vname == sname) {
-              p = VariableDescription("real", vname, arraySize, lineNumber);
+              p = VariableDescription(vtype, vname, arraySize, lineNumber);
             } else {
-              p = VariableDescription("real", sname, vname, arraySize,
+              p = VariableDescription(vtype, sname, vname, arraySize,
                                       lineNumber);
             }
             p.description = this->currentComment;
@@ -7285,9 +7385,9 @@ namespace mfront {
           for (const auto& h : mh) {
             VariableDescription p;
             if (vname == sname) {
-              p = VariableDescription("real", vname, 1u, lineNumber);
+              p = VariableDescription(vtype, vname, 1u, lineNumber);
             } else {
-              p = VariableDescription("real", sname, vname, 1u, lineNumber);
+              p = VariableDescription(vtype, sname, vname, 1u, lineNumber);
             }
             p.description = this->currentComment;
             this->mb.addParameter(h, p);
@@ -7303,9 +7403,9 @@ namespace mfront {
         for (const auto& h : mh) {
           VariableDescription p;
           if (vname == sname) {
-            p = VariableDescription("real", vname, 1u, lineNumber);
+            p = VariableDescription(vtype, vname, 1u, lineNumber);
           } else {
-            p = VariableDescription("real", sname, vname, 1u, lineNumber);
+            p = VariableDescription(vtype, sname, vname, 1u, lineNumber);
           }
           p.description = this->currentComment;
           this->mb.addParameter(h, p);

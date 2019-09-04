@@ -29,11 +29,12 @@ namespace mfront{
     static std::string getName();
     //! \return a description of the dsl
     static std::string getDescription();
-    //! constructor
+    //! \brief default constructor
     IsotropicMisesPlasticFlowDSL();
-
+    std::string getCodeBlockTemplate(const std::string&,
+                                     const bool) const override;
     void endsInputFileProcessing() override;
-    //! desctructor
+    //! \brief destructor
     ~IsotropicMisesPlasticFlowDSL() override;
 
   protected:

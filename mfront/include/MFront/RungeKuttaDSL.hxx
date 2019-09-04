@@ -16,20 +16,19 @@
 
 #include"MFront/RungeKuttaDSLBase.hxx"
 
-namespace mfront
-{
+namespace mfront {
 
   /*!
    * \brief DSL for integrating a mechanical behaviour using
    * Runge-Kutta algorithms.
    */
-  struct RungeKuttaDSL
-    : public RungeKuttaDSLBase
-  {
+  struct RungeKuttaDSL : public RungeKuttaDSLBase {
     //! \return the name of the DSL
     static std::string getName();
-    //! \return the description of the DSL
+    //! \return the short description of the DSL
     static std::string getDescription();
+    //! \return a description of the DSL
+    BehaviourDSLDescription getBehaviourDSLDescription() const override;
     //! constructor
     RungeKuttaDSL();
     //! destructor

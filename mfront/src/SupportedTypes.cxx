@@ -40,7 +40,7 @@ namespace mfront {
         {"strain", SupportedTypes::SCALAR},
         {"strainrate", SupportedTypes::SCALAR},
         {"temperature", SupportedTypes::SCALAR},
-        {"energy_density", SupportedTypes::SCALAR},
+        {"energydensity", SupportedTypes::SCALAR},
         {"thermalexpansion", SupportedTypes::SCALAR},
         {"thermalconductivity", SupportedTypes::SCALAR},
         {"massdensity", SupportedTypes::SCALAR},

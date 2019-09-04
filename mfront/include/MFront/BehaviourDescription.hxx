@@ -33,6 +33,7 @@
 #include "MFront/BehaviourAttribute.hxx"
 #include "MFront/BehaviourData.hxx"
 #include "MFront/BehaviourSymmetryType.hxx"
+#include "MFront/IntegrationScheme.hxx"
 
 namespace mfront {
 
@@ -40,6 +41,7 @@ namespace mfront {
   struct LocalDataStructure;
   // forward declaration
   struct MaterialPropertyDescription;
+
 
   /*!
    * This structure describes a mechanical behaviour
@@ -90,10 +92,10 @@ namespace mfront {
       GREENLAGRANGE,
       HENCKY
     };  // end of enum StrainMeasure
-    /*!
-     * \brief this structure holds the value of a constant material
-     * property
-     */
+        /*!
+         * \brief this structure holds the value of a constant material
+         * property
+         */
     struct ConstantMaterialProperty {
       //! parameter name associated with the material property
       std::string name;
@@ -133,7 +135,7 @@ namespace mfront {
     using MaterialProperty =
         tfel::utilities::GenTypeBase<MaterialPropertyTypes>;
     /*!
-     * structure used to defined a Hill tensor
+     * \brief structure used to defined a Hill tensor
      */
     struct HillTensor {
       //! name of the Hill tensor
@@ -143,23 +145,25 @@ namespace mfront {
       //! Hill coeffients
       std::vector<MaterialProperty> c;
     };  // end of struct HillTensor
+    //! a simple alias
+    using IntegrationScheme = mfront::IntegrationScheme;
+    //! a simple alias for backward compatibility
+    static constexpr const IntegrationScheme IMPLICITSCHEME =
+        IntegrationScheme::IMPLICITSCHEME;
+    //! a simple alias for backward compatibility
+    static constexpr const IntegrationScheme EXPLICITSCHEME =
+        IntegrationScheme::EXPLICITSCHEME;
+    //! a simple alias for backward compatibility
+    static constexpr const IntegrationScheme SPECIFICSCHEME =
+        IntegrationScheme::SPECIFICSCHEME;
+    //! a simple alias for backward compatibility
+    static constexpr const IntegrationScheme USERDEFINEDSCHEME =
+        IntegrationScheme::USERDEFINEDSCHEME;
+    //! a simple alias for backward compatibility
+    static constexpr const IntegrationScheme UNDEFINEDINTEGRATIONSCHEME =
+        IntegrationScheme::UNDEFINEDINTEGRATIONSCHEME;
     /*!
-     * \brief Available integration schemes.
-     * One of the first thing a dsl shall do is to set the
-     * integration scheme it uses.
-     */
-    enum IntegrationScheme {
-      IMPLICITSCHEME,  //!< value set by the `Implicit` Dsl family
-      EXPLICITSCHEME,  //!< value set by the `Runge-Kutta` Dsl
-      SPECIFICSCHEME,  /*!< value set by the `	IsotropicMisesCreepDSL`,
-                        * `IsotropicMisesPlasticFlowDSL`,
-                        * `IsotropicStrainHardeningMisesCreepDSL`
-                        * `MultipleIsotropicMisesFlowsDSL` dsls. */
-      USERDEFINEDSCHEME, //!< default value.
-      UNDEFINEDINTEGRATIONSCHEME  //!< default value.
-    };
-    /*!
-     * a simple structure used to compte the value of a material
+     * \brief a simple structure used to compte the value of a material
      * property
      */
     struct MaterialPropertyInput {
@@ -634,6 +638,19 @@ namespace mfront {
      * to the default data and to all the specialisations
      */
     void addMaterialProperties(
+        const Hypothesis,
+        const VariableDescriptionContainer&,
+        const BehaviourData::RegistrationStatus = BehaviourData::UNREGISTRED);
+    /*!
+     * \brief add parameters
+     * \param[in] h: modelling hypothesis
+     * \param[in] v: material properties added
+     * \param[in] s: registration status
+     *
+     * \note if h is UNDEFINEDHYPOTHESIS, add the parameters
+     * to the default data and to all the specialisations
+     */
+    void addParameters(
         const Hypothesis,
         const VariableDescriptionContainer&,
         const BehaviourData::RegistrationStatus = BehaviourData::UNREGISTRED);

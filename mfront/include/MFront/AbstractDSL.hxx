@@ -36,7 +36,11 @@ namespace mfront {
    */
   struct MFRONT_VISIBILITY_EXPORT AbstractDSL {
     //! list of dsl targets
-    enum DSLTarget { MATERIALPROPERTYDSL, BEHAVIOURDSL, MODELDSL };  // end of
+    enum DSLTarget {
+      MATERIALPROPERTYDSL,
+      BEHAVIOURDSL,
+      MODELDSL
+    };  // end of DSLTarget
     //! \return the target of the dsl
     virtual DSLTarget getTargetType() const = 0;
     //! \return the file description associated with the treated file
@@ -59,6 +63,18 @@ namespace mfront {
      * \param[in] s : analysed a string
      */
     virtual void analyseString(const std::string&) = 0;
+    /*!
+     * \brief import a file
+     * \param[in] f     : file name
+     * \param[in] ecmds : additionnal commands inserted treated before
+     * the input file commands
+     * \param[in] s : substitutions patterns inserted (those
+     * substitutions are given through command-line options such as
+     * `--@YYY@=XXX`)
+     */
+    virtual void importFile(const std::string&,
+                            const std::vector<std::string>&,
+                            const std::map<std::string, std::string>&) = 0;
     /*!
      * \brief method called at the end of the input file processing.
      * \note This method shall be called *after* the `analyseFile` or

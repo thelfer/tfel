@@ -26,11 +26,17 @@ namespace mfront {
   }  // end of getId
 
   StandardElastoViscoPlasticityBrick::StandardElastoViscoPlasticityBrick(
-      AbstractBehaviourDSL& dsl_,
-      BehaviourDescription& mb_,
-      const Parameters&,
-      const DataMap& d)
+      AbstractBehaviourDSL& dsl_, BehaviourDescription& mb_)
       : BehaviourBrickBase(dsl_, mb_) {
+  }  // end of
+     // StandardElastoViscoPlasticityBrick::StandardElastoViscoPlasticityBrick
+
+  std::string StandardElastoViscoPlasticityBrick::getName() const {
+    return "ElastoViscoPlasticity";
+  } // end of StandardElastoViscoPlasticityBrick::getName
+
+  void StandardElastoViscoPlasticityBrick::initialize(const Parameters&,
+                                                      const DataMap& d) {
     auto raise = [](const std::string& m) {
       tfel::raise(
           "StandardElastoViscoPlasticityBrick::"
@@ -90,11 +96,7 @@ namespace mfront {
         raise("unsupported entry '" + e.first + "'");
       }
     }
-  }  // end of StandardElastoViscoPlasticityBrick
-
-  std::string StandardElastoViscoPlasticityBrick::getName() const {
-    return "ElastoViscoPlasticity";
-  }
+  }  // end of StandardElastoViscoPlasticityBrick::initialize
 
   std::vector<StandardElastoViscoPlasticityBrick::Hypothesis>
   StandardElastoViscoPlasticityBrick::getSupportedModellingHypotheses() const {

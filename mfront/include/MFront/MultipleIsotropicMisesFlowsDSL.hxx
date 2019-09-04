@@ -22,16 +22,24 @@
 
 namespace mfront{
 
-  struct MultipleIsotropicMisesFlowsDSL
-    : public IsotropicBehaviourDSLBase
-  {
-
+  struct MultipleIsotropicMisesFlowsDSL : public IsotropicBehaviourDSLBase {
+    //! \brief return the name of the DSL
     static std::string getName();
-
+    //! \brief return a short description of the DSL
     static std::string getDescription();
-
+    //! \brief default constructor
     MultipleIsotropicMisesFlowsDSL();
 
+    BehaviourDSLDescription getBehaviourDSLDescription() const override;
+
+    void getSymbols(std::map<std::string, std::string>&,
+                    const Hypothesis,
+                    const std::string&) override;
+
+    std::string getCodeBlockTemplate(const std::string&,
+                                     const bool) const override;
+    
+    //! \brief destructor
     ~MultipleIsotropicMisesFlowsDSL() override;
 
   private:
@@ -52,13 +60,12 @@ namespace mfront{
     
     void treatFlowRule() override;
 
-    struct FlowHandler
-    {
-      enum FlowType{
-	PlasticFlow,
-	CreepFlow,
-	StrainHardeningCreepFlow
-      }; // end of enum FlowType
+    struct FlowHandler {
+      enum FlowType {
+        PlasticFlow,
+        CreepFlow,
+        StrainHardeningCreepFlow
+      };  // end of enum FlowType
       FlowHandler() = default;
       FlowHandler(FlowHandler&&) = default;
       FlowHandler(const FlowHandler&) = default;

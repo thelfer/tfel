@@ -16,21 +16,20 @@
 
 #include"MFront/RungeKuttaDSLBase.hxx"
 
-namespace mfront
-{
+namespace mfront {
 
   /*!
    * \brief a structure describing a dsl dedicated to the
    * implementation of finite strain behaviours using explicit
    * algorithms.
    */
-  struct RungeKuttaFiniteStrainDSL
-    : public RungeKuttaDSLBase
-  {
+  struct RungeKuttaFiniteStrainDSL : public RungeKuttaDSLBase {
     //! \return the name of the dsl
     static std::string getName();
     //! \return the description of the dsl
     static std::string getDescription();
+    //! \return a description of the DSL
+    BehaviourDSLDescription getBehaviourDSLDescription() const override;
     //! constructor
     RungeKuttaFiniteStrainDSL();
     //! destructor

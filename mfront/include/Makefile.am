@@ -29,6 +29,8 @@ nobase_include_HEADERS= MFront/MFront.hxx                                      \
 			MFront/AbstractDSL.hxx                                            \
 			MFront/DSLBase.hxx                                                \
 			MFront/DSLBase.ixx                                                \
+			MFront/IntegrationScheme.hxx                                      \
+			MFront/BehaviourDSLDescription.hxx                                \
 			MFront/AbstractBehaviourDSL.hxx                                   \
 			MFront/BehaviourDSLCommon.hxx                                     \
 			MFront/BehaviourDSLCommon.ixx                                     \

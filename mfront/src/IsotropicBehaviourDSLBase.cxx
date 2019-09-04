@@ -12,13 +12,14 @@
  * project under specific licensing conditions. 
  */
 
-#include<sstream>
-#include"TFEL/Raise.hxx"
+#include <sstream>
+#include "TFEL/Raise.hxx"
 #include"TFEL/Glossary/Glossary.hxx"
-#include"TFEL/Glossary/GlossaryEntry.hxx"
-#include"TFEL/Utilities/StringAlgorithms.hxx"
-#include"MFront/MFrontLogStream.hxx"
-#include"MFront/IsotropicBehaviourDSLBase.hxx"
+#include "TFEL/Glossary/GlossaryEntry.hxx"
+#include "TFEL/Utilities/StringAlgorithms.hxx"
+#include "MFront/MFrontLogStream.hxx"
+#include "MFront/DSLUtilities.hxx"
+#include "MFront/IsotropicBehaviourDSLBase.hxx"
 
 namespace mfront{
 
@@ -70,14 +71,46 @@ namespace mfront{
     this->mb.setIntegrationScheme(BehaviourDescription::SPECIFICSCHEME);
   } // end of IsotropicBehaviourDSLBase::IsotropicBehaviourDSLBase
 
-  bool IsotropicBehaviourDSLBase::isModellingHypothesisSupported(
-      const Hypothesis h) const {
-    return ((h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)||
-	    (h==ModellingHypothesis::AXISYMMETRICAL)||
-	    (h==ModellingHypothesis::PLANESTRAIN)||
-	    (h==ModellingHypothesis::GENERALISEDPLANESTRAIN)||
-	    (h==ModellingHypothesis::TRIDIMENSIONAL));
-  } // end of IsotropicBehaviourDSLBase::isModellingHypothesisSupported
+  BehaviourDSLDescription
+  IsotropicBehaviourDSLBase::getBehaviourDSLDescription() const {
+    auto d = BehaviourDSLDescription{};
+    d.behaviourType =
+        tfel::material::MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR;
+    d.integrationScheme = IntegrationScheme::SPECIFICSCHEME;
+    d.typicalCodeBlocks = {BehaviourData::FlowRule};
+    d.supportedModellingHypotheses = {
+        ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,
+        ModellingHypothesis::AXISYMMETRICAL, ModellingHypothesis::PLANESTRAIN,
+        ModellingHypothesis::GENERALISEDPLANESTRAIN,
+        ModellingHypothesis::TRIDIMENSIONAL};
+    d.supportedBehaviourSymmetries = {mfront::ISOTROPIC};
+    d.allowUserDefinedStateVariables = false;
+    d.allowUserDefinedIntegrationVariables = false;
+    d.allowCrystalStructureDefinition = false;
+    d.allowStiffnessTensorDefinition = false;
+    d.minimalMFrontFileBody = "@FlowRule{}\n\n";
+    return d;
+  }  // end of IsotropicBehaviourDSLBase::getBehaviourDSLDescription
+
+  void IsotropicBehaviourDSLBase::getSymbols(
+      std::map<std::string, std::string>& symbols,
+      const Hypothesis h,
+      const std::string& n) {
+    BehaviourDSLCommon::getSymbols(symbols, h, n);
+    const auto& d = this->mb.getBehaviourData(h);
+    for (const auto& v : d.getIntegrationVariables()) {
+      getIncrementSymbol(symbols, v);
+    }
+    for (const auto& mv : this->mb.getMainVariables()) {
+      if (Gradient::isIncrementKnown(mv.first)) {
+        getIncrementSymbol(symbols, mv.first);
+      }
+    }
+    if (n != BehaviourData::FlowRule) {
+      mfront::getIncrementSymbols(symbols, d.getExternalStateVariables());
+      mfront::addSymbol(symbols, "\u0394t", "dt");
+    }
+  }  // end of IsotropicBehaviourDSLBase::getSymbols
 
   double IsotropicBehaviourDSLBase::getDefaultThetaValue() const { return 0.5; }
 

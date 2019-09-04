@@ -72,6 +72,7 @@ set(TFELMFront_SOURCES
     ModelDescription.cxx
     ModelDSLCommon.cxx
     ModelDSL.cxx
+    BehaviourDSLDescription.cxx
     AbstractDSL.cxx
     AbstractBehaviourDSL.cxx
     AbstractBehaviourInterface.cxx

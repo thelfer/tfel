@@ -23,12 +23,14 @@ namespace mfront{
    * \brief Implementation of a generic behaviour
    */
   struct DefaultGenericBehaviourDSL : public DefaultDSLBase {
-    //! constructor
-    DefaultGenericBehaviourDSL();
     //! \return the name of the DSL
     static std::string getName();
     //! \return a description of the DSL
     static std::string getDescription();
+    //! \brief default constructor
+    DefaultGenericBehaviourDSL();
+    //! \return a description of the DSL
+    BehaviourDSLDescription getBehaviourDSLDescription() const override;
     //! \brief destructor
     ~DefaultGenericBehaviourDSL() noexcept override ;
   };  // end of struct DefaultGenericBehaviourDSL

@@ -28,9 +28,7 @@ namespace mfront {
   // forward declaration
   struct AbstractBehaviourDSL;
 
-  /*!
-   * \brief abstract factor for behaviour bricks
-   */
+  //! \brief abstract factor for behaviour bricks
   struct MFRONT_VISIBILITY_EXPORT BehaviourBrickFactory {
     //! a simple alias
     using CxxTokenizer = tfel::utilities::CxxTokenizer;
@@ -38,11 +36,7 @@ namespace mfront {
     using tokens_iterator = CxxTokenizer::const_iterator;
     //! a simple alias
     using constructor = std::shared_ptr<AbstractBehaviourBrick> (*)(
-        AbstractBehaviourDSL&,
-        BehaviourDescription&,
-        const AbstractBehaviourBrick::Parameters&,
-        tokens_iterator& p,
-        const tokens_iterator pe);
+        AbstractBehaviourDSL&, BehaviourDescription&);
     //! a simple alias
     using BehaviourType = BehaviourDescription::BehaviourType;
     //! a simple alias
@@ -57,18 +51,10 @@ namespace mfront {
      * \param[in,out] dsl: calling domain specific language
      * \param[in,out] mb:  mechanical behaviour description to be
      * treated
-     * \param[in]     bp:  brick parameters
-     * \param[in,out] p:   iterator to the current position in the input
-     * file
-     * \param[in]     pe:  iterator to past-the-last token
      */
-    std::shared_ptr<AbstractBehaviourBrick> get(
-        const std::string&,
-        AbstractBehaviourDSL&,
-        BehaviourDescription&,
-        const AbstractBehaviourBrick::Parameters&,
-        tokens_iterator& p,
-        const tokens_iterator pe) const;
+    std::shared_ptr<AbstractBehaviourBrick> get(const std::string&,
+                                                AbstractBehaviourDSL&,
+                                                BehaviourDescription&) const;
     /*!
      * \param[in] a: name of the behaviour brick
      * \param[in] t: behaviour type for which the brick is valid

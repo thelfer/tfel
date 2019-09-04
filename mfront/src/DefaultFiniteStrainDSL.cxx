@@ -21,28 +21,35 @@
 
 namespace mfront{
 
-  DefaultFiniteStrainDSL::DefaultFiniteStrainDSL()
-  {
+  DefaultFiniteStrainDSL::DefaultFiniteStrainDSL() {
     this->mb.setDSLName("DefaultFiniteStrain");
     this->mb.declareAsAFiniteStrainStandardBehaviour(false);
   }
 
-  std::string DefaultFiniteStrainDSL::getDescription()
-  {
+  std::string DefaultFiniteStrainDSL::getDescription() {
     return "this parser is the most generic one as it does not make any restriction "
            "on the behaviour or the integration method that may be used";
   } // end of DefaultFiniteStrainDSL::getDescription
-  
-  std::string DefaultFiniteStrainDSL::getName()
-  {
+
+  std::string DefaultFiniteStrainDSL::getName() {
     return "DefaultFiniteStrainDSL";
   }
 
-  void DefaultFiniteStrainDSL::writeBehaviourParserSpecificIncludes(std::ostream& os) const
-  {
+  void DefaultFiniteStrainDSL::writeBehaviourParserSpecificIncludes(
+      std::ostream& os) const {
     DefaultDSLBase::writeBehaviourParserSpecificIncludes(os);
     os << "#include\"TFEL/Math/tensor.hxx\"\n";
   } // end of DefaultFiniteStrainDSL::writeBehaviourParserSpecificIncludes
+
+  BehaviourDSLDescription DefaultFiniteStrainDSL::getBehaviourDSLDescription() const {
+    auto d = mfront::getDefaultFiniteStrainBehaviourDSLDescription();
+    d.integrationScheme = IntegrationScheme::USERDEFINEDSCHEME;
+    d.typicalCodeBlocks = {BehaviourData::ComputePredictionOperator,
+                           BehaviourData::Integrator,
+                           BehaviourData::ComputeTangentOperator};
+    d.minimalMFrontFileBody = "@Integrator{}\n\n";
+    return d;
+  }  // end of DefaultFiniteStrainDSL::getBehaviourDSLDescription
 
   DefaultFiniteStrainDSL::~DefaultFiniteStrainDSL() = default;
 

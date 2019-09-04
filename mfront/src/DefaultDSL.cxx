@@ -21,25 +21,29 @@
 
 namespace mfront{
 
-  DefaultDSL::DefaultDSL()
-  {
+  DefaultDSL::DefaultDSL() {
     this->mb.setDSLName("Default");
     this->registerNewCallBack("@RequireStiffnessTensor",
 			      &DefaultDSL::treatRequireStiffnessOperator);
     this->mb.declareAsASmallStrainStandardBehaviour();
   }
 
-  std::string
-  DefaultDSL::getDescription()
-  {
+  std::string DefaultDSL::getDescription() {
     return "this parser is the most generic one as it does not make any restriction "
            "on the behaviour or the integration method that may be used";
   } // end of DefaultDSL::getDescription
-  
-  std::string DefaultDSL::getName()
-  {
-    return "DefaultDSL";
-  }
+
+  std::string DefaultDSL::getName() { return "DefaultDSL"; }
+
+  BehaviourDSLDescription DefaultDSL::getBehaviourDSLDescription() const {
+    auto d = mfront::getDefaultStrainBasedBehaviourDSLDescription();
+    d.integrationScheme = IntegrationScheme::USERDEFINEDSCHEME;
+    d.typicalCodeBlocks = {BehaviourData::ComputePredictionOperator,
+                           BehaviourData::Integrator,
+                           BehaviourData::ComputeTangentOperator};
+    d.minimalMFrontFileBody = "@Integrator{}\n\n";
+    return d;
+  }  // end of DefaultDSL::getBehaviourDSLDescription
 
   DefaultDSL::~DefaultDSL() = default;
 

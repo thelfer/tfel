@@ -34,7 +34,7 @@ struct ParserTest11 final
   {} // end of ParserTest11
   tfel::tests::TestResult execute() override
   {
-    this->check("12",std::to_string(12.));
+    this->check("12","12");
     for(const std::string f : {"H","exp",
 	  "log","log10","ln",
 	  "cos","sin","tan",
@@ -45,7 +45,7 @@ struct ParserTest11 final
     for(const std::string f : {"min","max"}){
       this->check(f+"(x,y)",f+"(x,y)");
     }
-    this->check("power<0>(x)",std::to_string(1.));
+    this->check("power<0>(x)","1");
 #if !(defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
     for(int i=1;i!=16;++i){
       const auto p = "power<"+std::to_string(i)+">";
@@ -58,8 +58,7 @@ struct ParserTest11 final
     this->check("a**b","std::pow(a,b)");
     this->check("-a","-(a)");
     this->check("x>y?2*y:x-1","((x)>(y)) ? "
-		"(("+std::to_string(2.)+")*(y)) : "
-		"((x)-("+std::to_string(1.)+"))");
+		"((2)*(y)) : ((x)-(1))");
     return this->result;
   } // end of execute
  private:

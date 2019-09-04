@@ -19,16 +19,16 @@
 
 namespace mfront{
 
-  struct DefaultFiniteStrainDSL
-    : public DefaultDSLBase
-  {
-
+  struct DefaultFiniteStrainDSL : public DefaultDSLBase {
+    //! \return the name of the DSL
     static std::string getName();
-
+    //! \return a short description of the DSL
     static std::string getDescription();
-
+    //! \return a description of the DSL
+    BehaviourDSLDescription getBehaviourDSLDescription() const override;
+    //! constructor
     DefaultFiniteStrainDSL();
-
+    //! \brief destructor
     ~DefaultFiniteStrainDSL() override;
 
   protected:

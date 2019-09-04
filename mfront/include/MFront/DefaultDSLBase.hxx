@@ -18,10 +18,12 @@
 
 namespace mfront{
 
-  struct DefaultDSLBase
-    : public BehaviourDSLBase<DefaultDSLBase>
-  {
+  struct DefaultDSLBase : public BehaviourDSLBase<DefaultDSLBase> {
+    //! \brief default constructor
     DefaultDSLBase();
+    std::string getCodeBlockTemplate(const std::string&,
+                                     const bool) const override;
+    //! \brief default destructor
     ~DefaultDSLBase() override;
   protected:
    void getSymbols(std::map<std::string, std::string>&,

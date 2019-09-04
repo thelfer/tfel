@@ -22,17 +22,17 @@ namespace mfront{
   /*!
    * \brief DSL associated with Cohesive Zone Models
    */
-  struct DefaultCZMDSL
-    : public DefaultDSLBase
-  {
+  struct DefaultCZMDSL : public DefaultDSLBase {
+    //! \brief return the name of the DSL
     static std::string getName();
-
+    //! \brief return a short description of the DSL
     static std::string getDescription();
-
+    //! \return a description of the DSL
+    BehaviourDSLDescription getBehaviourDSLDescription() const override;
+    //! \brief  constructor
     DefaultCZMDSL();
-
-    ~DefaultCZMDSL() override;
-
+    //! \brief  destructor
+    ~DefaultCZMDSL();
   protected:
    std::string getLocalVariablesInitializers(const Hypothesis) const override;
 

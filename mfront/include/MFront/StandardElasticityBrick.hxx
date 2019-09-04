@@ -27,30 +27,19 @@ namespace mfront {
   struct LocalDataStructure;
 
   namespace bbrick {
-
     struct StressPotential;
-  }
+  }  // end of namespace bbrick
 
   /*!
-   * BehaviourBrick describing standard elasticity for small strain behaviours
-   * and handles various enhancements to behaviours based on standard
-   * elasticity:
-   * - Generic support to plane stress.
-   * - Generic way to compute the tangent operator (implicit parser
+   * a behaviour brick describing standard elasticity for small strain
+   * behaviours and handles various enhancements to behaviours based
+   * on standard elasticity:
+   * - generic support to plane stress.
+   * - generic way to compute the tangent operator (implicit parser
    *   only)
    * This extra features can be disabled using dedicated parameters.
    *
-   * This BehaviourBricks allows the followig parameters:
-   * - `Isotropic`. This parameter can be used to declare that the
-   *   elastic stiffness is isotropic even though the behaviour is
-   *   orthotropic. This parameter can not be used if the
-   *   `@RequiresStiffnessTensor` has been used.
-   * - `Orthotropic`. This requires the behaviour to de declared
-   *   orthotropic (through `@OrthotropicBehaviour` keyword).  This
-   *   parameter can not be used if the `@RequiresStiffnessTensor` has
-   *   been used.
-   *
-   * This behaviour brick relies on the Hooke stress potential. The options
+   * This brick relies on the Hooke stress potential. The options
    * passed to this brick are forwarded to the Hooke stress potential.
    */
   struct StandardElasticityBrick : public BehaviourBrickBase {
@@ -58,22 +47,28 @@ namespace mfront {
      * \brief constructor
      * \param[in] dsl_ : calling domain specific language
      * \param[in] bd_  : mechanical behaviour description
-     * \param[in] p    : parameters
-     * \param[in] d    : options
      */
     StandardElasticityBrick(AbstractBehaviourDSL&,
-                            BehaviourDescription&,
-                            const Parameters&,
-                            const DataMap&);
-    //! \return the name of the brick
+                            BehaviourDescription&);
     std::string getName() const override;
     /*!
-     * \return the list of supported modelling hypotheses.
+     * \brief intialize the brick
+     * \param[in] p: parameters
+     * \param[in] d: data
+     *
+     * \note this brick allows the followig parameters:
+     * - `Isotropic`. This parameter can be used to declare that the
+     *   elastic stiffness is isotropic even though the behaviour is
+     *   orthotropic. This parameter can not be used if the
+     *   `@RequiresStiffnessTensor` has been used.
+     * - `Orthotropic`. This requires the behaviour to de declared
+     *   orthotropic (through `@OrthotropicBehaviour` keyword).  This
+     *   parameter can not be used if the `@RequiresStiffnessTensor` has
+     *   been used.
      */
+    void initialize(const Parameters&, const DataMap&) override;
     std::vector<Hypothesis> getSupportedModellingHypotheses() const override;
-    //! complete the variable description
     void completeVariableDeclaration() const override;
-    //! method called at the end of the input file processing
     void endTreatment() const override;
     //! \brief destructor
     ~StandardElasticityBrick() override;

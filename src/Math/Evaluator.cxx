@@ -182,7 +182,7 @@ namespace tfel {
       nbr = Evaluator::convertToUnsignedShort("EvaluatorTreatPower", params[0]);
       switch (nbr) {
         case 0:
-          return std::make_shared<Number>(1.);
+          return std::make_shared<Number>("1",1.);
 #if !(defined _WIN32 || defined _WIN64 || defined __CYGWIN__)
         case 1:
           return EvaluatorPowerFunctionGenerator<1>("tfel::math::power<1>", args[0]);
@@ -928,9 +928,10 @@ namespace tfel {
         } else if (isNumber(*p)) {
           // number
           std::istringstream converter(*p);
+          converter.precision(16);
           double value;
           converter >> value;
-          g->add(std::make_shared<TNumber>(value));
+          g->add(std::make_shared<TNumber>(*p, value));
           ++p;
         } else if (*p == "(") {
           ++p;
@@ -986,7 +987,10 @@ namespace tfel {
             g->add(std::make_shared<TFunction>(p2->second, this->treatGroup(p, pe, b)));
             ++p;
           } else if (pc != fgm.constants.end()) {
-            g->add(std::make_shared<TNumber>(pc->second));
+            std::ostringstream converter;
+            converter.precision(15);
+            converter << pc->second;
+            g->add(std::make_shared<TNumber>(converter.str(), pc->second));
           } else {
             if ((p != pe) && (*p == "(")) {
               if (this->manager != nullptr) {
@@ -1228,7 +1232,10 @@ namespace tfel {
     }  // end of Evaluator::Evaluator
 
     Evaluator::Evaluator(const double v) {
-      this->expr = std::make_shared<parser::Number>(v);
+      std::ostringstream str;
+      str.precision(15);
+      str << v;
+      this->expr = std::make_shared<parser::Number>(str.str(), v);
     }  // end of Evaluator::Evaluator
 
     void Evaluator::clear() {
@@ -1301,7 +1308,7 @@ namespace tfel {
       pev->positions = this->positions;
       if (this->variables.empty()) {
         // no variable
-        pev->expr = std::make_shared<parser::Number>(0.);
+        pev->expr = std::make_shared<parser::Number>("0", 0.);
       } else {
         if (pos >= this->variables.size()) {
           std::ostringstream msg;

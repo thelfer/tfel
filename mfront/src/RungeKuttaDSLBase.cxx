@@ -194,8 +194,7 @@ namespace mfront{
     }
   } // end of writeExternalVariablesCurrentValues2
 
-  RungeKuttaDSLBase::RungeKuttaDSLBase()
-  {
+  RungeKuttaDSLBase::RungeKuttaDSLBase() {
     this->useStateVarTimeDerivative=true;
     // parameters
     this->reserveName("dtmin");
@@ -257,6 +256,35 @@ namespace mfront{
 			      &RungeKuttaDSLBase::treatComputeStiffnessTensor);
     this->mb.setIntegrationScheme(BehaviourDescription::EXPLICITSCHEME);
   }
+
+  std::string RungeKuttaDSLBase::getCodeBlockTemplate(const std::string& c,
+                                                      const bool b) const {
+    constexpr const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    if (c == BehaviourData::ComputePredictionOperator) {
+      return "@PredictionOperator{}\n";
+    } else if (c == BehaviourData::ComputeStress) {
+      return "@ComputeStress{}\n";
+    } else if (c == BehaviourData::ComputeDerivative) {
+      const auto ivs = this->mb.getBehaviourData(h).getIntegrationVariables();
+      if (ivs.empty()) {
+      return "@Derivative{}\n";
+      } else {
+        auto i = std::string("@Derivative{\n");
+        for (const auto& v : ivs) {
+          if (b) {
+            i += "\u2202\u209C" + displayName(v) + " = ;\n";
+          } else {
+            i += "d" + v.name + " = ;\n";
+          }
+        }
+        i += "}\n";
+        return i;
+      }
+    } else if (c == BehaviourData::ComputeTangentOperator) {
+      return "@TangentOperator{}\n";
+    }
+    return "";
+  }  // end of RungeKuttaDSLBase::getCodeBlockTemplate
 
   void RungeKuttaDSLBase::treatUpdateAuxiliaryStateVariables() {
     this->readCodeBlock(*this, BehaviourData::UpdateAuxiliaryStateVariables,

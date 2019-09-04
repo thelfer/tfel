@@ -25,6 +25,7 @@
 
 #include"TFEL/Raise.hxx"
 #include"TFEL/System/System.hxx"
+#include"MFront/MFrontLogStream.hxx"
 #include"MFront/MFrontLock.hxx"
 
 namespace mfront{
@@ -53,6 +54,10 @@ namespace mfront{
   } // end of MFrontLock::MFrontLock()
 
   void MFrontLock::lock() {
+    if (getVerboseMode() >= VERBOSE_LEVEL2) {
+      getLogStream() << "MFrontLock::lock: "
+                     << "trying to lock semaphore\n";
+    }
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
     DWORD dwWaitResult;
     dwWaitResult = ::WaitForSingleObject(this->ghMutex,  // handle to mutex
@@ -68,6 +73,10 @@ namespace mfront{
   } // end of MFrontLock::lock()
 
   void MFrontLock::unlock() {
+    if (getVerboseMode() >= VERBOSE_LEVEL2) {
+      getLogStream() << "MFrontLock::unlock: "
+                     << "unlocking semaphore\n";
+    }
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
     ::ReleaseMutex(this->ghMutex);
 #else

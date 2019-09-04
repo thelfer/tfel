@@ -31,21 +31,14 @@ namespace mfront {
     /*!
      * \brief constructor
      * \param[in] dsl_ : calling domain specific language
-     * \param[in] bd_  : mechanical behaviour description
-     * \param[in] p    : parameters
-     * \param[in] d    : data
+     * \param[in] bd_  : behaviour description
      */
     StandardElastoViscoPlasticityBrick(AbstractBehaviourDSL&,
-                                       BehaviourDescription&,
-                                       const Parameters&,
-                                       const DataMap&);
-    //! \return the name of the brick
+                                       BehaviourDescription&);
     std::string getName() const override;
-    //! \return the list of supported modelling hypotheses.
+    void initialize(const Parameters&, const DataMap&) override;
     std::vector<Hypothesis> getSupportedModellingHypotheses() const override;
-    //! complete the variable description
     void completeVariableDeclaration() const override;
-    //! method called at the end of the input file processing
     void endTreatment() const override;
     //! destructor
     ~StandardElastoViscoPlasticityBrick() override;

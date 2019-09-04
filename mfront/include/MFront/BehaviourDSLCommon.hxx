@@ -40,7 +40,7 @@ namespace mfront {
    * \return if the given name is valid
    * \param[in] n: behaviour name
    */
-  MFRONT_VISIBILITY_EXPORT  bool isValidBehaviourName(const std::string&);
+  MFRONT_VISIBILITY_EXPORT bool isValidBehaviourName(const std::string&);
 
   /*!
    * \brief this class provides most functionnalities used by mechanical
@@ -106,6 +106,16 @@ namespace mfront {
      * \param[out] k : the list of keywords registred for this parser
      */
     void getKeywordsList(std::vector<std::string>&) const override;
+
+    void addMaterialProperties(const VariableDescriptionContainer&) override;
+    void addParameters(const VariableDescriptionContainer&) override;
+    void addStateVariables(const VariableDescriptionContainer&) override;
+    void addAuxiliaryStateVariables(
+        const VariableDescriptionContainer&) override;
+    void addExternalStateVariables(
+        const VariableDescriptionContainer&) override;
+    void addLocalVariables(const VariableDescriptionContainer&) override;
+    void addIntegrationVariables(const VariableDescriptionContainer&) override;
 
    protected:
     //! a simple alias
@@ -383,8 +393,11 @@ namespace mfront {
     //! \brief write the header files declaring the slip systems
     virtual void generateSlipSystemsFiles();
     /*!
-     * \return the list of hypothesis a priori supported by
-     * the parser.
+     * \return the list of hypothesis supported by
+     * default by the DSL, i.e. without requiring specific treatment.
+     * This means that additional modelling hypotheses may or may not be
+     * supported (typically plane stress) by that the user must add the
+     * appropriate treatments.
      *
      * To enable other hypothesis or restrict the hypotheses
      * supported, the user must use the `@ModellingHypothesis` or

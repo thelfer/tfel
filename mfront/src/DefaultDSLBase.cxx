@@ -40,6 +40,18 @@ namespace mfront{
 			      &DefaultDSLBase::treatComputeStiffnessTensor);
   }
 
+  std::string DefaultDSLBase::getCodeBlockTemplate(const std::string& c,
+                                                   const bool) const {
+    if (c == BehaviourData::ComputePredictionOperator) {
+      return "@PredictionOperator{}\n";
+    } else if (c == BehaviourData::Integrator) {
+      return "@Integrator{}\n";
+    } else if (c == BehaviourData::ComputeTangentOperator) {
+      return "@TangentOperator{}\n";
+    }
+    return "";
+  }  // end of DefaultDSLBase::getCodeBlockTemplate
+
   void DefaultDSLBase::treatProvidesTangentOperator() {
     std::set<Hypothesis> h;
     this->readHypothesesList(h);

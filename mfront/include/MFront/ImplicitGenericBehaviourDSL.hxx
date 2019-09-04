@@ -28,6 +28,8 @@ namespace mfront {
     static std::string getName();
     //! \return a description of the DSL
     static std::string getDescription();
+    //! \return a description of the DSL
+    BehaviourDSLDescription getBehaviourDSLDescription() const override;
     //! \brief destructor
     ~ImplicitGenericBehaviourDSL() noexcept override ;
   };  // end of struct ImplicitGenericBehaviourDSL

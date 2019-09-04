@@ -28,20 +28,8 @@ namespace mfront {
   template <typename T>
   static std::shared_ptr<AbstractBehaviourBrick> buildBehaviourBrickConstructor(
       AbstractBehaviourDSL& dsl,
-      BehaviourDescription& mb,
-      const AbstractBehaviourBrick::Parameters& bp,
-      AbstractBehaviourBrick::tokens_iterator& p,
-      const AbstractBehaviourBrick::tokens_iterator pe) {
-    const auto d = [&p, pe] {
-      using DataMap = std::map<std::string, tfel::utilities::Data>;
-      if ((p != pe) && (p->value == "{")) {
-        tfel::utilities::DataParsingOptions o;
-        o.allowMultipleKeysInMap = true;
-        return tfel::utilities::Data::read(p, pe, o).get<DataMap>();
-      }
-      return DataMap();
-    }();
-    return std::make_shared<T>(dsl, mb, bp, d);
+      BehaviourDescription& mb) {
+    return std::make_shared<T>(dsl, mb);
   }  // end of buildAlgoritmConstructor
 
   BehaviourBrickFactory& BehaviourBrickFactory::getFactory() {
@@ -52,10 +40,7 @@ namespace mfront {
   std::shared_ptr<AbstractBehaviourBrick> BehaviourBrickFactory::get(
       const std::string& a,
       AbstractBehaviourDSL& dsl,
-      BehaviourDescription& mb,
-      const AbstractBehaviourBrick::Parameters& bp,
-      tokens_iterator& p,
-      const tokens_iterator pe) const {
+      BehaviourDescription& mb) const {
     const auto pc = this->constructors.find(a);
     if (pc == this->constructors.end()) {
       auto msg = std::string{};
@@ -67,7 +52,7 @@ namespace mfront {
       }
       tfel::raise(msg);
     }
-    return (*(pc->second))(dsl, mb, bp, p, pe);
+    return (*(pc->second))(dsl, mb);
   }
 
   BehaviourBrickFactory::BehaviourBrickFactory() {

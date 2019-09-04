@@ -40,6 +40,9 @@ namespace mfront{
      */
     const NonLinearSystemSolver& getSolver() const;
 
+    std::string getCodeBlockTemplate(const std::string&,
+                                     const bool) const override;
+
     void getSymbols(std::map<std::string, std::string>&,
                     const Hypothesis,
                     const std::string&) override;

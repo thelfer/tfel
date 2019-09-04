@@ -19,6 +19,7 @@ namespace mfront {
      * standard Hooke law.
      */
     struct HookeStressPotential : HookeStressPotentialBase{
+      //! \brief default constructor
       HookeStressPotential();
       std::string computeDerivatives(const BehaviourDescription&,
                                      const std::string&,

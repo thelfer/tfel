@@ -15,8 +15,7 @@
 
 namespace mfront{
 
-  RungeKuttaFiniteStrainDSL::RungeKuttaFiniteStrainDSL()
-  {
+  RungeKuttaFiniteStrainDSL::RungeKuttaFiniteStrainDSL() {
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     this->mb.setDSLName("RungeKuttaFiniteStrain");
     this->mb.declareAsAFiniteStrainStandardBehaviour(true);
@@ -29,15 +28,24 @@ namespace mfront{
     }
   } // end of RungeKuttaFiniteStrainDSL::RungeKuttaFiniteStrainDSL
 
-  std::string RungeKuttaFiniteStrainDSL::getName()
-  {
+  std::string RungeKuttaFiniteStrainDSL::getName() {
     return "RungeKuttaFiniteStrain";
   } // end of RungeKuttaFiniteStrainDSL::getName
 
-  std::string RungeKuttaFiniteStrainDSL::getDescription()
-  {
+  std::string RungeKuttaFiniteStrainDSL::getDescription() {
     return "this parser provides a generic integrator based on a theta method.";
   } // end of RungeKuttaFiniteStrainDSL::getDescription
+
+  BehaviourDSLDescription RungeKuttaFiniteStrainDSL::getBehaviourDSLDescription() const {
+    auto d = mfront::getDefaultFiniteStrainBehaviourDSLDescription();
+    d.integrationScheme = IntegrationScheme::EXPLICITSCHEME;
+    d.typicalCodeBlocks = {BehaviourData::ComputePredictionOperator,
+                           BehaviourData::ComputeStress,
+                           BehaviourData::ComputeDerivative,
+                           BehaviourData::ComputeTangentOperator};
+    d.minimalMFrontFileBody = "@Derivative{}\n\n@ComputeFinalStress{};\n\n";
+    return d;
+  }  // end of RungeKuttaFiniteStrainDSL::getBehaviourDSLDescription
 
   RungeKuttaFiniteStrainDSL::~RungeKuttaFiniteStrainDSL() noexcept = default;
 

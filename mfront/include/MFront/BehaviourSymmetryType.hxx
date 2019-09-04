@@ -12,14 +12,12 @@
  */
 
 #ifndef LIB_MFRONT_BEHAVIOURSYMMETRYTYPE_HXX
-#define LIB_MFRONT_BEHAVIOURSYMMETRYTYPE_HXX 
+#define LIB_MFRONT_BEHAVIOURSYMMETRYTYPE_HXX
 
-namespace mfront
-{
+namespace mfront {
 
   /*!
-   * For the castem finite element code, its is mandatory to
-   * distinguish isotropic and orthotropic behaviours
+   * \brief symmetry of a behaviour
    */
   enum BehaviourSymmetryType{
     ISOTROPIC,

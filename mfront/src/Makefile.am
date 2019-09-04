@@ -55,6 +55,7 @@ libTFELMFront_la_SOURCES = MFront.cxx                                           
 		           BehaviourDSLCommon.cxx                                 \
 		           ModelDescription.cxx                                   \
 		           ModelDSLCommon.cxx                                     \
+                   BehaviourDSLDescription.cxx                            \
 		           AbstractDSL.cxx                                        \
 		           AbstractBehaviourDSL.cxx                               \
 		           AbstractBehaviourInterface.cxx                         \

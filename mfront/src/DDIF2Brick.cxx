@@ -17,19 +17,18 @@
 
 namespace mfront {
 
-  DDIF2Brick::DDIF2Brick(AbstractBehaviourDSL& dsl_,
-                         BehaviourDescription& mb_,
-                         const Parameters&,
-                         const DataMap& d)
-      : BehaviourBrickBase(dsl_, mb_) {
-    auto& spf = mfront::bbrick::StressPotentialFactory::getFactory();
-    this->ddif2= spf.generate("DDIF2");
-    this->ddif2->initialize(this->bd, this->dsl, d);
-  }  // end of DDIF2Brick::DDIF2Brick
+  DDIF2Brick::DDIF2Brick(AbstractBehaviourDSL& dsl_, BehaviourDescription& mb_)
+      : BehaviourBrickBase(dsl_, mb_) {}  // end of DDIF2Brick::DDIF2Brick
 
   std::string DDIF2Brick::getName() const {
     return "DDIF2";
   }  // end of DDIF2Brick::getName()
+
+  void DDIF2Brick::initialize(const Parameters&, const DataMap& d) {
+    auto& spf = mfront::bbrick::StressPotentialFactory::getFactory();
+    this->ddif2= spf.generate("DDIF2");
+    this->ddif2->initialize(this->bd, this->dsl, d);
+  }  // end of DDIF2Brick::initialize
 
   void DDIF2Brick::completeVariableDeclaration() const {
     this->ddif2->completeVariableDeclaration(this->bd, this->dsl);

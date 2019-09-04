@@ -41,6 +41,18 @@ namespace mfront{
     return "this dsl provides a generic integrator based on a theta method.";
   } // end of ImplicitGenericBehaviourDSL::getDescription
 
+  BehaviourDSLDescription ImplicitGenericBehaviourDSL::getBehaviourDSLDescription() const {
+    auto d = BehaviourDSLDescription();
+    d.integrationScheme = IntegrationScheme::IMPLICITSCHEME;
+    d.typicalCodeBlocks = {BehaviourData::ComputePredictionOperator,
+                           BehaviourData::ComputePredictor,
+                           BehaviourData::ComputeStress,
+                           BehaviourData::Integrator,
+                           BehaviourData::ComputeTangentOperator};
+    d.minimalMFrontFileBody = "@Integrator{}\n\n";
+    return d;
+  }  // end of ImplicitGenericBehaviourDSL::getBehaviourDSLDescription
+
   ImplicitGenericBehaviourDSL::~ImplicitGenericBehaviourDSL() noexcept =
           default;
 

@@ -21,54 +21,76 @@
 
 namespace mfront{
 
-  IsotropicMisesCreepDSL::IsotropicMisesCreepDSL()
-  {
+  std::string IsotropicMisesCreepDSL::getDescription() {
+    return "this parser is used for standard creep behaviours of the form  "
+      " dp/dt=f(s) where p is the equivalent creep strain and s the "
+      "equivalent mises stress";
+  } // end of IsotropicMisesCreepDSL::getDescription
+
+  std::string IsotropicMisesCreepDSL::getName() {
+    return "IsotropicMisesCreep";
+  }
+
+  IsotropicMisesCreepDSL::IsotropicMisesCreepDSL() {
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     this->mb.setDSLName("IsotropicMisesCreepDSL");
     // Default state vars
     this->reserveName("ccto_tmp_1");
     this->reserveName("inv_sqrt2");
     this->reserveName("mu_3_theta");
-    this->mb.addStateVariable(h,VariableDescription("StrainStensor","eel",1u,0u));
+    this->mb.addStateVariable(
+        h, VariableDescription("StrainStensor", "εᵉˡ", "eel", 1u, 0u));
     this->mb.addStateVariable(h,VariableDescription("strain","p",1u,0u));
     this->mb.setGlossaryName(h,"eel","ElasticStrain");
     this->mb.setGlossaryName(h,"p","EquivalentViscoplasticStrain");
     // default local vars
     this->mb.addLocalVariable(h,VariableDescription("DstrainDt","f",1u,0u));
-    this->mb.addLocalVariable(h,VariableDescription("DF_DSEQ_TYPE","df_dseq",1u,0u));
+    this->mb.addLocalVariable(
+        h, VariableDescription("DF_DSEQ_TYPE",
+                               "\u2202f\u2215\u2202\u03C3\u2091",
+                               "df_dseq", 1u, 0u));
     this->mb.addLocalVariable(h,VariableDescription("StressStensor","se",1u,0u));
-    this->mb.addLocalVariable(h,VariableDescription("stress","seq",1u,0u));
+    this->mb.addLocalVariable(
+        h, VariableDescription("stress", "\u03C3\u2091", "seq", 1u, 0u));
     this->mb.addLocalVariable(h,VariableDescription("stress","seq_e",1u,0u));
     this->mb.addLocalVariable(h,VariableDescription("StrainStensor","n",1u,0u));
     this->mb.setAttribute(h,BehaviourData::hasConsistentTangentOperator,true);
     this->mb.setAttribute(h,BehaviourData::isConsistentTangentOperatorSymmetric,true);
   }
 
-  std::string IsotropicMisesCreepDSL::getDescription()
-  {
-    return "this parser is used for standard creep behaviours of the form  "
-      " dp/dt=f(s) where p is the equivalent creep strain and s the "
-      "equivalent mises stress";
-  } // end of IsotropicMisesCreepDSL::getDescription
+  std::string IsotropicMisesCreepDSL::getCodeBlockTemplate(const std::string& c,
+                                                           const bool b) const {
+    if (c == BehaviourData::FlowRule) {
+      if (b) {
+        return "@FlowRule{\n"
+               "// \u03C3\u2091 is the current estimate of the von Mises stress at "
+               "t+\u03B8\u22C5\u0394t\n"
+               "f       = ;\n"
+               "\u2202f\u2215\u2202\u03C3\u2091 = ;\n"
+               "}";
+      } else {
+        return "@FlowRule{\n"
+               "// seq is the current estimate of the von Mises stress at "
+               "t+theta*dt\n"
+               "f       = ;\n"
+               "df_dseq = ;\n"
+               "}";
+      }
+    }
+    return "";
+  }  // end of IsotropicMisesCreepDSL::getCodeBlockTemplate
 
-  std::string IsotropicMisesCreepDSL::getName()
-  {
-    return "IsotropicMisesCreep";
-  }
-
-  void IsotropicMisesCreepDSL::endsInputFileProcessing()
-  {
+  void IsotropicMisesCreepDSL::endsInputFileProcessing() {
     IsotropicBehaviourDSLBase::endsInputFileProcessing();
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     if(!this->mb.hasCode(h,BehaviourData::FlowRule)){
       this->throwRuntimeError("IsotropicMisesCreepDSL::endsInputFileProcessing",
-			      "no flow rule defined");
+                              "no flow rule defined");
     }
   } // end of IsotropicMisesCreepDSL::endsInputFileProcessing
 
-  void IsotropicMisesCreepDSL::writeBehaviourParserSpecificMembers(std::ostream& os,
-								   const Hypothesis h) const
-  {
+  void IsotropicMisesCreepDSL::writeBehaviourParserSpecificMembers(
+      std::ostream& os, const Hypothesis h) const {
     this->checkBehaviourFile(os);
     if(!this->mb.hasCode(h,BehaviourData::FlowRule)){
       this->throwRuntimeError("IsotropicMisesCreepDSL::writeBehaviourParserSpecificMembers",

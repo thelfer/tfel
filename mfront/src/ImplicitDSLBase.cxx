@@ -139,6 +139,75 @@ namespace mfront {
     return *(this->solver);
   }
 
+  std::string ImplicitDSLBase::getCodeBlockTemplate(const std::string& c,
+                                                   const bool b) const {
+    constexpr const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    if (c == BehaviourData::ComputePredictionOperator) {
+      return "@PredictionOperator{}\n";
+    } else if (c == BehaviourData::ComputeStress) {
+      return "@ComputeStress{}\n";
+    } else if (c == BehaviourData::Integrator) {
+      const auto ivs = this->mb.getBehaviourData(h).getIntegrationVariables();
+      if (ivs.empty()) {
+        return "@Integrator{}\n";
+      } else {
+        auto i = std::string("@Integrator{\n");
+        // implicit system
+        for (const auto& v : ivs) {
+          const auto vn = b ? displayName(v) : v.name;
+          i += "// implicit equation associated with variable " + vn + "\n";
+          if (v.arraySize == 1u) {
+            i += "f" + vn + " += ;\n";
+          } else {
+            i += "for(unsigned short i = 0; i != " +
+                 std::to_string(v.arraySize) + ";++i)\n";
+            i += "f" + vn + " += ;\n";
+            i += "}\n";
+          }
+        }
+        // jacobian terms of the implicit system
+        if ((this->solver != nullptr) && (this->solver->usesJacobian())) {
+          i += "// jacobian blocks\n";
+          for (const auto& v1 : ivs) {
+            const auto v1n = b ? displayName(v1) : v1.name;
+            for (const auto& v2 : ivs) {
+              const auto v2n = b ? displayName(v2) : v2.name;
+              const auto j = b ? "\u2202" + v1n + "\u2215\u2202\u0394" + v2n
+                               : "d" + v1n + "_d" + v2n;
+              const auto o = v1.name == v2.name ? "+=" : "=";
+              if ((v1.arraySize == 1u) && (v2.arraySize == 1u)) {
+                i += j + " " + o + " ;\n";
+              } else if ((v1.arraySize != 1u) && (v2.arraySize == 1u)) {
+                i += "for(unsigned short i = 0; i != " +
+                     std::to_string(v1.arraySize) + ";++i)\n";
+                i += j + "(i) " + o + " ;\n";
+                i += "}\n";
+              } else if ((v1.arraySize == 1u) && (v2.arraySize != 1u)) {
+                i += "for(unsigned short i = 0; i != " +
+                     std::to_string(v2.arraySize) + ";++i)\n";
+                i += j + "(i) " + o + " ;\n";
+                i += "}\n";
+              } else {
+                i += "for(unsigned short i = 0; i != " +
+                     std::to_string(v1.arraySize) + ";++i)\n";
+                i += "for(unsigned short j = 0; j != " +
+                     std::to_string(v2.arraySize) + ";++j)\n";
+                i += j + "(i,j) " + o + " ;\n";
+                i += "}\n";
+                i += "}\n";
+              }
+            }
+          }
+        }
+        i += "}\n";
+        return i;
+      }
+    } else if (c == BehaviourData::ComputeTangentOperator) {
+      return "@TangentOperator{}\n";
+    }
+    return "";
+  }  // end of ImplicitDSLBase::getCodeBlockTemplate
+
   void ImplicitDSLBase::treatUnknownKeyword() {
     --(this->current);
     const auto& key = this->current->value;

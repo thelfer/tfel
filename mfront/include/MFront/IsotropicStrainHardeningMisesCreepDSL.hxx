@@ -20,16 +20,19 @@
 namespace mfront{
 
   struct IsotropicStrainHardeningMisesCreepDSL
-    : public IsotropicBehaviourDSLBase
-  {
+      : public IsotropicBehaviourDSLBase {
+    //! \return the name of the dsl
+    static std::string getName();
+    //! \brief default constructor
+    static std::string getDescription();
+    //! \brief copy constructor
     IsotropicStrainHardeningMisesCreepDSL();
 
-    static std::string getName();
-
-    static std::string getDescription();
+    std::string getCodeBlockTemplate(const std::string&,
+                                     const bool) const override;
     
     void endsInputFileProcessing() override;
-
+    //! \brief destructor
     ~IsotropicStrainHardeningMisesCreepDSL() override;
 
   protected:
@@ -45,8 +48,7 @@ namespace mfront{
 
     void writeBehaviourComputeTangentOperator(std::ostream&,
 					      const Hypothesis) const override;
-
-  };
+  }; // end of struct IsotropicStrainHardeningMisesCreepDSL
 
 } // end of namespace mfront  
 
