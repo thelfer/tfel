@@ -1264,7 +1264,9 @@ namespace mfront {
               const auto f = SupportedTypes::getTypeFlag(p.type);
               throw_if(f != SupportedTypes::SCALAR,
                        "unsupported parameter type '" + p.type + "'");
-              if (p.arraySize == 1) {
+	      const auto prec = out.precision();
+	      out.precision(14);
+	      if (p.arraySize == 1) {
                 out << d.getFloattingPointParameterDefaultValue(p.name) << '\n';
               } else {
                 for (unsigned short i = 0; i != p.arraySize;) {
@@ -1275,6 +1277,7 @@ namespace mfront {
                 }
                 out << '\n';
               }
+	      out.precision(prec);
             }
           }
         }

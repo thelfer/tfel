@@ -8,6 +8,18 @@ The page declares the new functionalities of the 3.3 version of the
 This version was released along with Version `3.2.2` and inherits from
 all the fixes of this version.
 
+# Improvements to `MFront`
+
+## Parameters can now be declared with a type
+
+In previous versions, parameters had the implicit type `real`. The user
+can now specify any scalar type. This makes the declaration of
+parameters consistent with the declaration of the other variables.
+
+~~~~
+@Parameter strainrate de0 = 1e-4;
+~~~~
+
 # Improvements to `MTest`
 
 ## Ability to choose  the stress measure used in input/output and the consistent tangent operator returned for finite strain behaviours through the `generic` interface

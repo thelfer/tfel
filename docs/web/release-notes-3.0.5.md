@@ -48,3 +48,10 @@ For more details, see: <https://sourceforge.net/p/tfel/tickets/178/>
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/175/>
 
+## Ticket #170: Default parameters' values precision
+
+The default parameters' values were truncated to 6 significant digits
+(default number of digits of the `std::ostream` class).
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/170/>
+
