@@ -11,19 +11,32 @@
  * project under specific licensing conditions. 
  */
 
-#include"TFEL/Material/DDIF2Base.hxx"
+#include <ostream>
+#include "TFEL/Material/DDIF2Base.hxx"
 
-namespace tfel
-{
+namespace tfel {
 
-  namespace material
-  {
-    
+  namespace material {
+
+    std::ostream& operator<<(std::ostream& os, const DDIF2State& s) {
+      if (s == DDIF2State::COMPRESSION) {
+        os << "Compression";
+      } else if (s == DDIF2State::UNDAMAGED_TENSION) {
+        os << "UndamagedTension";
+      } else if (s == DDIF2State::GROWING_DAMAGE) {
+        os << "GrowingDamage";
+      } else {
+        os << "ElasticUnloading";
+      }
+      return os;
+    }  // end of operator<<
+
 #ifdef _MSC_VER
     const double DDIF2Base::emin1    = 1.e-7;
     const double DDIF2Base::emin_rk1 = 1.e-5;
     const double DDIF2Base::eps      = 1.e-10;
 #endif 
+
   } // end of namespace material
 
 } // end of namespace tfel

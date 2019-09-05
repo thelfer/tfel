@@ -111,30 +111,42 @@ namespace mfront {
 
     std::vector<OptionDescription> DDIF2StressPotential::getOptions() const {
       auto opts = HookeStressPotential::getOptions();
-      opts.emplace_back("fracture_stress",
-                        "fracture stress, assumed egal in all directions",
-                        OptionDescription::MATERIALPROPERTY, std::vector<std::string>{},
-                        std::vector<std::string>{"fracture_stresses"});
       opts.emplace_back(
-          "fracture_stresses", "fracture stresses in all directions",
-          OptionDescription::ARRAYOFMATERIALPROPERTIES, std::vector<std::string>{},
-          std::vector<std::string>{"fracture_stress"});
-      opts.emplace_back("softening_slope",
-                        "softening slope, assumed egal in all directions",
-                        OptionDescription::MATERIALPROPERTY, std::vector<std::string>{},
-                        std::vector<std::string>{"softening_slopes"});
+          "fracture_stress", "fracture stress, assumed egal in all directions",
+          OptionDescription::MATERIALPROPERTY, std::vector<std::string>{},
+          std::vector<std::string>{"fracture_stresses"});
+      opts.emplace_back("fracture_stresses",
+                        "fracture stresses in all directions",
+                        OptionDescription::ARRAYOFMATERIALPROPERTIES,
+                        std::vector<std::string>{},
+                        std::vector<std::string>{"fracture_stress"});
       opts.emplace_back(
-          "softening_slopes", "softening slopes in all directions",
-          OptionDescription::ARRAYOFMATERIALPROPERTIES, std::vector<std::string>{},
-          std::vector<std::string>{"softening_slope"});
-      opts.emplace_back("fracture_energy",
-                        "fracture energy, assumed egal in all directions",
-                        OptionDescription::MATERIALPROPERTY, std::vector<std::string>{},
-                        std::vector<std::string>{"fracture_energies"});
+          "softening_slope", "softening slope, assumed egal in all directions",
+          OptionDescription::MATERIALPROPERTY, std::vector<std::string>{},
+          std::vector<std::string>{"softening_slopes"});
+      opts.emplace_back("softening_slopes",
+                        "softening slopes in all directions",
+                        OptionDescription::ARRAYOFMATERIALPROPERTIES,
+                        std::vector<std::string>{},
+                        std::vector<std::string>{"softening_slope"});
       opts.emplace_back(
-          "fracture_energies", "fracture energies in all directions",
-          OptionDescription::ARRAYOFMATERIALPROPERTIES, std::vector<std::string>{},
-          std::vector<std::string>{"fracture_energy"});
+          "fracture_energy", "fracture energy, assumed egal in all directions",
+          OptionDescription::MATERIALPROPERTY, std::vector<std::string>{},
+          std::vector<std::string>{"fracture_energies"});
+      opts.emplace_back("fracture_energies",
+                        "fracture energies in all directions",
+                        OptionDescription::ARRAYOFMATERIALPROPERTIES,
+                        std::vector<std::string>{},
+                        std::vector<std::string>{"fracture_energy"});
+      opts.emplace_back(
+          "use_status_algorithm",
+          "if true (default value), we use an algorithm based on statuses. "
+          "Otherwise the algorithm used up to versions 3.2.1 is selected.",
+          OptionDescription::BOOLEAN);
+      opts.emplace_back(
+          "first_converge_on_damage",
+          "if true, the time step is set to zero to converge on the damage state first.",
+          OptionDescription::BOOLEAN);
       opts.emplace_back("handle_pressure_on_crack_surface",
                         "if true, a pressure is applied on the crack surface",
                         OptionDescription::BOOLEAN);
@@ -150,13 +162,15 @@ namespace mfront {
       // checking options
       check(d, this->getOptions());
       //
-      HookeStressPotential::initialize(bd,dsl, d);
+      HookeStressPotential::initialize(bd, dsl, d);
       // undefined hypothesis
       constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       throw_if(bd.getElasticSymmetryType() != mfront::ISOTROPIC,
                "the DDIF2 brick is only usable for isotropic behaviours");
       // reserve some specific variables
       bd.reserveName(ModellingHypothesis::UNDEFINEDHYPOTHESIS, "ddif2bdata");
+      bd.reserveName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+                     "dfef_ddeel_tmp");
       // reserve some specific variables
       bd.appendToIncludes("#include\"TFEL/Material/DDIF2Base.hxx\"");
       VariableDescription ef("strain", "ef", 3u, 0u);
@@ -168,6 +182,22 @@ namespace mfront {
       bd.addAuxiliaryStateVariable(uh, efm);
       bd.setEntryName(uh, "efm", "MaximumFractureStrain");
       addLocalVariable(bd, "StrainStensor", "nf", 3u);
+      // algorithm
+      if (d.count("use_status_algorithm")) {
+        const auto& b = d.at("use_status_algorithm");
+        throw_if(!b.is<bool>(), "invalid type for data 'use_status_algorithm'");
+        if (b.get<bool>()) {
+          this->algorithm = STATUS;
+        } else {
+          this->algorithm = UPDATE_IMPLICIT_EQUATIONS_DURING_ITERATIONS;
+        }
+      }
+      if (d.count("first_converge_on_damage")) {
+        const auto& b = d.at("first_converge_on_damage");
+        throw_if(!b.is<bool>(),
+                 "invalid type for data 'first_converge_on_damage'");
+        this->firstConvergeOnDamage = b.get<bool>();
+      }
       // data
       throw_if((d.count("fracture_stress")) && (d.count("fracture_stresses")),
                "can't specify 'fracture_stress' and 'fracture_stresses");
@@ -188,7 +218,6 @@ namespace mfront {
       if (d.count("fracture_energy") || d.count("fracture_energies")) {
         addLocalVariable(bd, "stress", "Rp", 3);
       }
-
       if (d.count("handle_pressure_on_crack_surface")) {
         const auto& b = d.at("handle_pressure_on_crack_surface");
         throw_if(!b.is<bool>(),
@@ -211,16 +240,34 @@ namespace mfront {
             << "DDIF2StressPotential::completeVariableDeclaration: begin\n";
       }
       HookeStressPotential::completeVariableDeclaration(bd, dsl);
+      const auto& idsl = dynamic_cast<const ImplicitDSLBase&>(dsl);
       LocalDataStructure d;
       d.name = "ddif2bdata";
       d.addVariable(uh, {"StressStensor", "sig"});
+      if (this->algorithm == STATUS) {
+        auto state = LocalDataStructure::Variable{};
+        state.type = "DDIF2State";
+        state.name = "state";
+        state.asize = 3u;
+        d.addVariable(uh, state);
+        d.addVariable(uh, {"unsigned short", "nchanges"});
+      }
+      if ((idsl.getSolver().usesJacobian()) &&
+          (idsl.getSolver().requiresNumericalJacobian())) {
+        d.addVariable(uh, {"real", "dfe_dde"});
+      }
+      d.addVariable(uh, {"Stensor", "dfe_ddeel"});
+      if (this->firstConvergeOnDamage) {
+        d.addVariable(uh, {"time", "dt"});
+        d.addVariable(uh, {"bool", "bvp"});
+      }
       bd.addLocalDataStructure(d, BehaviourData::ALREADYREGISTRED);
       // modelling hypotheses supported by the brick
       const auto smh = this->getSupportedModellingHypotheses(bd, dsl);
       // modelling hypotheses supported by the behaviour
       const auto bmh = bd.getModellingHypotheses();
       for (const auto& h : bmh) {
-        if(std::find(smh.begin(), smh.end(), h) == smh.end()){
+        if (std::find(smh.begin(), smh.end(), h) == smh.end()) {
           tfel::raise(
               "DDIF2StressPotential::completeVariableDeclaration: "
               "unsupported hypothesis '" +
@@ -263,8 +310,7 @@ namespace mfront {
       }
       HookeStressPotential::endTreatment(bd, dsl);
       auto throw_if = [](const bool b, const std::string& m) {
-        tfel::raise_if(
-            b, "DDIF2StressPotential::endTreatment: " + m);
+        tfel::raise_if(b, "DDIF2StressPotential::endTreatment: " + m);
       };
       std::function<std::string(const MaterialPropertyInput&)> ets =
           [bd, throw_if](const MaterialPropertyInput& i) -> std::string {
@@ -276,11 +322,28 @@ namespace mfront {
         } else if ((i.category == MaterialPropertyInput::MATERIALPROPERTY) ||
                    (i.category == MaterialPropertyInput::PARAMETER)) {
           return "this->" + i.name;
-        } else if (i.category == MaterialPropertyInput::STATICVARIABLE) {
-          return bd.getClassName() + "::" + i.name;
         }
-        throw_if(true, "unsupported input type for variable '" + i.name + "'");
+        throw_if(i.category != MaterialPropertyInput::STATICVARIABLE,
+                 "unsupported input type for variable '" + i.name + "'");
+        return bd.getClassName() + "::" + i.name;
       };
+      const auto young = [&bd]() -> std::string {
+        if (bd.areElasticMaterialPropertiesDefined()) {
+          return "this->young_tdt";
+        }
+        if (bd.hasAttribute("HookeStressPotentialBase::YoungModulus")) {
+          return "this->" +
+                 bd.getAttribute<std::string>(
+                     "HookeStressPotentialBase::YoungModulus");
+        }
+        return "this->young";
+      }();
+      const std::string lambda = bd.areElasticMaterialPropertiesDefined()
+                                     ? "this->lambda_tdt"
+                                     : "this->sebdata.lambda";
+      const std::string mu = bd.areElasticMaterialPropertiesDefined()
+                                 ? "this->mu_tdt"
+                                 : "this->sebdata.mu";
       std::string init_code;
       // fracture stresses
       if (!this->sr[0].empty()) {
@@ -360,14 +423,36 @@ namespace mfront {
         if (h != ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) {
           init.code +=
               "// change to cylindrical coordinates\n"
-              "DDIF2Base::cart2cyl(this->deto,this->angl);\n";
+              "DDIF2Base::cart2cyl(this->deto,this->angl);\n"
+              "DDIF2Base::cart2cyl(this->sig,this->angl);\n";
         }
         bd.setCode(h, BehaviourData::BeforeInitializeLocalVariables, init,
                    BehaviourData::CREATEORAPPEND, BehaviourData::AT_END);
       }
-      // implicit equation associated with the crack strains
-      const auto& idsl = dynamic_cast<const ImplicitDSLBase&>(dsl);
+      CodeBlock init;
+      if (this->firstConvergeOnDamage) {
+        init.code += "this->ddif2bdata.dt = this->dt;\n";
+        init.code += "this->ddif2bdata.bvp = false;\n";
+        init.code += "this->dt = 0;\n";
+      }
+      if (this->algorithm == STATUS) {
+        init.code += "this->ddif2bdata.nchanges = 0;\n";
+        init.code += "this->ddif2bdata.sig=(" + lambda +
+                     "*trace(this->eel))*StrainStensor::Id()+\n"
+                     "                     2*" +
+                     mu + "*(this->eel);\n";
+        init.code +=
+            "for(unsigned short idx=0;idx!=3;++idx){\n"
+            "this->ddif2bdata.state[idx] = "
+            "DDIF2Base::determineState(this->ddif2bdata.sig,this->nf[idx],"
+            "this->efm[idx],this->sigr[idx],this->Rp[idx]);\n"
+            "}\n";
+      }
+      bd.setCode(uh, BehaviourData::AfterInitializeLocalVariables, init,
+                 BehaviourData::CREATEORAPPEND, BehaviourData::AT_END);
       CodeBlock integrator;
+      // updating the implicit equations associated with the elastic strain
+      const auto& idsl = dynamic_cast<const ImplicitDSLBase&>(dsl);
       integrator.code =
           "feel += "
           "((this->def)[0])*(this->nf[0])+\n"
@@ -375,53 +460,110 @@ namespace mfront {
           "((this->def)[2])*(this->nf[2]);\n";
       if ((idsl.getSolver().usesJacobian()) &&
           (!idsl.getSolver().requiresNumericalJacobian())) {
-        const std::string young = bd.areElasticMaterialPropertiesDefined()
-                                      ? "this->young_tdt"
-                                      : "this->young";
-        const std::string lambda = bd.areElasticMaterialPropertiesDefined()
-                                       ? "this->lambda_tdt"
-                                       : "this->sebdata.lambda";
-        const std::string mu = bd.areElasticMaterialPropertiesDefined()
-                                   ? "this->mu_tdt"
-                                   : "this->sebdata.mu";
-        integrator.code += "this->ddif2bdata.sig=(" + lambda +
-                           "*trace(this->eel+deel))*StrainStensor::Id()+\n"
-                           "                     2*" +
-                           mu +
-                           "*(this->eel+this->deel);\n"
-                           "this->dfeel_ddef(0)(0) = real(1);\n"
-                           "this->dfeel_ddef(1)(1) = real(1);\n"
-                           "this->dfeel_ddef(2)(2) = real(1);\n"
-                           "for(unsigned short idx=0;idx!=3;++idx){\n"
-                           "auto dfe_ddeel = dfef_ddeel(idx);\n";
+        integrator.code +=
+            "this->dfeel_ddef(0)(0) = real(1);\n"
+            "this->dfeel_ddef(1)(1) = real(1);\n"
+            "this->dfeel_ddef(2)(2) = real(1);\n";
+      }
+      // stress at the end of the time step
+      integrator.code += "this->ddif2bdata.sig=(" + lambda +
+                         "*trace(this->eel+deel))*StrainStensor::Id()+\n"
+                         "                     2*" +
+                         mu + "*(this->eel+this->deel);\n";
+      auto dfe_dde = std::string{};
+      auto dfe_ddeel = std::string{};
+      if ((idsl.getSolver().usesJacobian()) &&
+          (!idsl.getSolver().requiresNumericalJacobian())) {
+        dfe_dde = "dfef_ddef(idx,idx)";
+        dfe_ddeel = "dfef_ddeel_tmp";
+      } else {
+        dfe_dde = "ddif2bdata.dfe_dde";
+        dfe_ddeel = "ddif2bdata.dfe_ddeel";
+      }
+      integrator.code += "for(unsigned short idx=0;idx!=3;++idx){\n";
+      if ((idsl.getSolver().usesJacobian()) &&
+          (!idsl.getSolver().requiresNumericalJacobian())) {
+        integrator.code += "auto dfef_ddeel_tmp = dfef_ddeel(idx);\n";
+      }
+      if (this->algorithm == STATUS) {
+        integrator.code +=
+            "DDIF2Base::buildImplicitEquation(fef(idx), " + dfe_dde + ", " +
+            dfe_ddeel +
+            ", this->ddif2bdata.state[idx], this->ddif2bdata.sig,"
+            "this->nf[idx], this->efm[idx], this->ef[idx], def[idx], " +
+            young + ", " + lambda + "," + mu + ", " +
+            "this->sigr[idx], this->Rp[idx]);";
+      } else {
+        // implicit equation associated with the crack strains
         if (this->pr) {
           integrator.code +=
-              "DDIF2Base::treatFracture(dfe_ddeel,dfef_ddef(idx,idx),fef(idx),"
-              "\n"
-              "		            "
+              "DDIF2Base::treatFracture(" + dfe_ddeel + "," + dfe_dde +
+              ",fef(idx),\n"
               "this->efm(idx),this->ef(idx),(this->def)(idx),\n"
-              "                         this->ddif2bdata.sig,this->nf(idx),\n"
-              "		            this->sigr[idx],this->Rp[idx],\n"
-              "		            " +
-              young + "," + lambda + ',' + mu +
-              ",\n"
-              "                         this->pr+this->dpr);\n";
+              "this->ddif2bdata.sig,this->nf(idx),\n"
+              "this->sigr[idx],this->Rp[idx],\n" +
+              young + ", " + lambda + ", " + mu + ",this->pr+this->dpr);\n";
         } else {
-          integrator.code +=
-              "DDIF2Base::treatFracture(dfe_ddeel,dfef_ddef(idx,idx),fef(idx),"
-              "\n"
-              "		            "
-              "this->efm(idx),this->ef(idx),(this->def)(idx),\n"
-              "                         this->ddif2bdata.sig,this->nf(idx),\n"
-              "		            this->sigr[idx],this->Rp[idx],\n"
-              "		            " +
-              young + "," + lambda + ',' + mu + ");\n";
+          integrator.code += "DDIF2Base::treatFracture(" + dfe_ddeel + "," +
+                             dfe_dde +
+                             ",fef(idx),\n"
+                             "this->efm(idx),this->ef(idx),(this->def)(idx),\n"
+                             "this->ddif2bdata.sig,this->nf(idx),\n"
+                             "this->sigr[idx],this->Rp[idx],\n" +
+                             young + "," + lambda + ',' + mu + ");\n";
         }
-        integrator.code += "}\n";
       }
-      /* fracture */
+      integrator.code += "}\n";
       bd.setCode(uh, BehaviourData::Integrator, integrator,
                  BehaviourData::CREATEORAPPEND, BehaviourData::AT_END);
+      /* post-processing checks */
+      CodeBlock acc;
+      acc.code =
+          "if (converged) {\n"
+          "this->ddif2bdata.sig=(" +
+          lambda +
+          "*trace(this->eel+deel))*StrainStensor::Id()+\n"
+          "2*" +
+          mu +
+          "*(this->eel+this->deel);\n"
+          "for (unsigned short idx = 0; idx != 3; ++idx) {\n"
+          "converged = DDIF2Base::checkStateConsistency("
+          "this->ddif2bdata.state[idx],this->ddif2bdata.sig, "
+          "this->nf[idx], this->efm[idx], this->ef[idx] + this->def[idx], "
+          "this->sigr[idx], this->Rp[idx],"
+          "2 * " +
+          young +
+          "* this->epsilon, 2 * (this->epsilon));\n"
+          "if (!converged) {\n"
+          "if (this->ddif2bdata.nchanges < 10) {\n"
+          "this->iter = 1;\n"
+          "++(this->ddif2bdata.nchanges);\n"
+          "} // end of if (this->ddif2bdata.nchanges < 10)\n"
+          "return;\n"
+          "} // end of if (!converged)\n"
+          "} // end of for (unsigned short idx = 0; idx != 3; ++idx)\n";
+      if (this->firstConvergeOnDamage) {
+        acc.code +=
+            "if (!this->ddif2bdata.bvp) {\n"
+            "this->ddif2bdata.bvp = true;\n"
+            "this->dt = this->ddif2bdata.dt;\n"
+            "converged = false;\n"
+            "} // end of (!this->ddif2bdata.bvp)\n";
+      }
+      acc.code += "} // end of if (converged)\n";
+      bd.setCode(uh, BehaviourData::AdditionalConvergenceChecks, acc,
+                 BehaviourData::CREATEORAPPEND, BehaviourData::AT_BEGINNING);
+      if (this->firstConvergeOnDamage) {
+        // reset the time step in cas of divergence
+        acc.code =
+            "if (!converged) {\n"
+            "if (!this->ddif2bdata.bvp) {\n"
+            "this->dt = this->ddif2bdata.dt;\n"
+            "} // end of (!this->ddif2bdata.bvp)\n"
+            "} // end of if (!converged)\n";
+        bd.setCode(uh, BehaviourData::AdditionalConvergenceChecks, acc,
+                   BehaviourData::CREATEORAPPEND, BehaviourData::AT_END);
+      }
       /* update auxiliary state variables */
       for (const auto h : bd.getModellingHypotheses()) {
         CodeBlock uasv;
