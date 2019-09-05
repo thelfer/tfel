@@ -13,6 +13,7 @@
 #include <vector>
 #include <memory>
 #include <functional>
+#include "MFront/MFrontConfig.hxx"
 
 namespace mfront {
 
@@ -21,10 +22,8 @@ namespace mfront {
     // forward declaration
     struct StressPotential;
 
-    /*!
-     * \brief abstract factory for Stress potentials.
-     */
-    struct StressPotentialFactory {
+    //! \brief abstract factory for Stress potentials.
+    struct MFRONT_VISIBILITY_EXPORT StressPotentialFactory {
       //! a simple alias
       using Generator = std::function<std::shared_ptr<StressPotential>()>;
       //! \return the uniq instance of the class

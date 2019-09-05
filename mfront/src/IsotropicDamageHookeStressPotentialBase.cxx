@@ -333,7 +333,7 @@ namespace mfront {
 
     void IsotropicDamageHookeStressPotentialBase::
         declareComputeStressForIsotropicBehaviour(BehaviourDescription& bd,
-                                                  LocalDataStructure& d) const {
+                                                  LocalDataStructure&) const {
       using tfel::glossary::Glossary;
       const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       if (getVerboseMode() >= VERBOSE_DEBUG) {

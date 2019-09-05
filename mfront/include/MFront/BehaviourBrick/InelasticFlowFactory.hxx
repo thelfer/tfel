@@ -12,6 +12,7 @@
 #include <string>
 #include <memory>
 #include <functional>
+#include "MFront/MFrontConfig.hxx"
 
 namespace mfront {
 
@@ -20,10 +21,8 @@ namespace mfront {
     // forward declaration
     struct InelasticFlow;
 
-    /*!
-     * \brief abstract factory for inelastic Flows.
-     */
-    struct InelasticFlowFactory {
+    //! \brief abstract factory for inelastic Flows.
+    struct MFRONT_VISIBILITY_EXPORT InelasticFlowFactory {
       //! a simple alias
       using Generator = std::function<std::shared_ptr<InelasticFlow>()>;
       //! \return the uniq instance of the class

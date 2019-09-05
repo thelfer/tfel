@@ -12,6 +12,7 @@
 #include <string>
 #include <memory>
 #include <functional>
+#include "MFront/MFrontConfig.hxx"
 
 namespace mfront {
 
@@ -23,7 +24,7 @@ namespace mfront {
     /*!
      * \brief abstract factory for stress criteria.
      */
-    struct StressCriterionFactory {
+    struct MFRONT_VISIBILITY_EXPORT StressCriterionFactory {
       //! a simple alias
       using Generator = std::function<std::shared_ptr<StressCriterion>()>;
       //! \return the uniq instance of the class
