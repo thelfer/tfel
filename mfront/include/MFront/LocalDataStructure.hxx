@@ -16,7 +16,6 @@
 
 #include <map>
 #include <string>
-#include <tuple>
 #include "TFEL/Material/ModellingHypothesis.hxx"
 #include "MFront/MFrontConfig.hxx"
 
@@ -32,6 +31,13 @@ namespace mfront {
     using Hypothesis = ModellingHypothesis::Hypothesis;
     //! description of a variable
     struct Variable {
+      Variable();
+      Variable(const std::string&, const std::string&);
+      Variable(const std::string&, const std::string&, unsigned short);
+      Variable(Variable&&);
+      Variable(const Variable&);
+      Variable& operator=(Variable&&);
+      Variable& operator=(const Variable&);
       //! type of the variable
       std::string type;
       //! name of the variable
@@ -41,13 +47,6 @@ namespace mfront {
     };
     //! name of the variable using the local data structure
     std::string name;
-    /*!
-     * add a new scalar variable
-     * \param[in] h: modelling hypothesis
-     * \param[in] v: tuple containing the type and the name of the new variable
-     */
-    LocalDataStructure& addVariable(
-        const Hypothesis, const std::tuple<std::string, std::string>&);
     /*!
      * add a new variable
      * \param[in] h: modelling hypothesis
