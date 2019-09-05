@@ -344,7 +344,7 @@ namespace mfront {
       const std::string mu = bd.areElasticMaterialPropertiesDefined()
                                  ? "this->mu_tdt"
                                  : "this->sebdata.mu";
-      std::string init_code;
+      CodeBlock init;
       // fracture stresses
       if (!this->sr[0].empty()) {
         if (!this->sr[0].is<BehaviourDescription::ConstantMaterialProperty>()) {
@@ -361,7 +361,7 @@ namespace mfront {
             ssigr << ";\n";
             ssigr << "this->sigr[2] = this->sigr[1] = this->sigr[0];\n";
           }
-          init_code += ssigr.str();
+          init.code += ssigr.str();
         }
       }
       // softening slopes
@@ -380,7 +380,7 @@ namespace mfront {
           srp << ";\n";
           srp << "this->Rp[2] = this->Rp[1] = this->Rp[0];\n";
         }
-        init_code += srp.str();
+        init.code += srp.str();
       }
       //  fracture energies
       if ((!this->gc[0].empty()) &&
@@ -398,43 +398,25 @@ namespace mfront {
           sgc << ";\n";
           sgc << "this->Gc[2] = this->Gc[1] = this->Gc[0];\n";
         }
-        init_code += sgc.str();
+        init.code += sgc.str();
       }
       if (!this->gc[0].empty()) {
-        init_code +=
+        init.code +=
             "this->Rp[0]=-((this->Lc[0])*(this->sigr[0])*(this->sigr[0]))/"
             "(2*(this->Gc[0]));\n";
-        init_code +=
+        init.code +=
             "this->Rp[1]=-((this->Lc[1])*(this->sigr[1])*(this->sigr[1]))/"
             "(2*(this->Gc[1]));\n";
-        init_code +=
+        init.code +=
             "this->Rp[2]=-((this->Lc[2])*(this->sigr[2])*(this->sigr[2]))/"
             "(2*(this->Gc[2]));\n";
       }
       // init local variables
-      init_code +=
+      init.code +=
           "for(unsigned short idx=0;idx!=3;++idx){\n"
           "this->nf[idx]      = Stensor(real(0));\n"
           "this->nf[idx][idx] = real(1);\n"
           "}\n";
-      for (const auto h : bd.getModellingHypotheses()) {
-        CodeBlock init;
-        init.code = init_code;
-        if (h != ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) {
-          init.code +=
-              "// change to cylindrical coordinates\n"
-              "DDIF2Base::cart2cyl(this->deto,this->angl);\n"
-              "DDIF2Base::cart2cyl(this->sig,this->angl);\n";
-        }
-        bd.setCode(h, BehaviourData::BeforeInitializeLocalVariables, init,
-                   BehaviourData::CREATEORAPPEND, BehaviourData::AT_END);
-      }
-      CodeBlock init;
-      if (this->firstConvergeOnDamage) {
-        init.code += "this->ddif2bdata.dt = this->dt;\n";
-        init.code += "this->ddif2bdata.bvp = false;\n";
-        init.code += "this->dt = 0;\n";
-      }
       if (this->algorithm == STATUS) {
         init.code += "this->ddif2bdata.nchanges = 0;\n";
         init.code += "this->ddif2bdata.sig=(" + lambda +
@@ -448,8 +430,24 @@ namespace mfront {
             "this->efm[idx],this->sigr[idx],this->Rp[idx]);\n"
             "}\n";
       }
-      bd.setCode(uh, BehaviourData::AfterInitializeLocalVariables, init,
-                 BehaviourData::CREATEORAPPEND, BehaviourData::AT_END);
+      for (const auto h : bd.getModellingHypotheses()) {
+        if (h != ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) {
+          init.code +=
+              "// change to cylindrical coordinates\n"
+              "DDIF2Base::cart2cyl(this->deto,this->angl);\n"
+              "DDIF2Base::cart2cyl(this->sig,this->angl);\n";
+        }
+        bd.setCode(h, BehaviourData::BeforeInitializeLocalVariables, init,
+                   BehaviourData::CREATEORAPPEND, BehaviourData::AT_END);
+      }
+      CodeBlock prediction;
+      if (this->firstConvergeOnDamage) {
+        prediction.code += "this->ddif2bdata.dt = this->dt;\n";
+        prediction.code += "this->ddif2bdata.bvp = false;\n";
+        prediction.code += "this->dt = 0;\n";
+      }
+      bd.setCode(uh, BehaviourData::ComputePredictor, prediction,
+                 BehaviourData::CREATEORAPPEND, BehaviourData::AT_BEGINNING);
       CodeBlock integrator;
       // updating the implicit equations associated with the elastic strain
       const auto& idsl = dynamic_cast<const ImplicitDSLBase&>(dsl);
