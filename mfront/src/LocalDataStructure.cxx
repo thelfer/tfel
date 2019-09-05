@@ -19,6 +19,14 @@
 
 namespace mfront{
 
+  LocalDataStructure& LocalDataStructure::addVariable(
+      const Hypothesis h, const std::tuple<std::string, std::string>& v) {
+    auto variable = Variable{};
+    variable.type = std::get<0>(v);
+    variable.name = std::get<1>(v);
+    return this->addVariable(h, variable);
+  }  // end of LocalDataStructure::addVariable
+
   LocalDataStructure&
   LocalDataStructure::addVariable(const Hypothesis h,
 				  const Variable& v)

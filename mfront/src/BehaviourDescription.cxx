@@ -920,7 +920,11 @@ namespace mfront {
     auto structify = [](const std::vector<LocalDataStructure::Variable>& vars) {
       auto r = std::string("struct{\n");
       for (const auto& v : vars) {
-        r += v.type + ' ' + v.name + ";\n";
+        if (v.asize == 1u) {
+          r += v.type + ' ' + v.name + ";\n";
+        } else {
+          r += v.type + ' ' + v.name + "[" + std::to_string(v.asize) + "];\n";
+        }
       }
       r += "}";
       return r;
