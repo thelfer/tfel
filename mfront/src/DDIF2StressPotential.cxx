@@ -551,17 +551,6 @@ namespace mfront {
       acc.code += "} // end of if (converged)\n";
       bd.setCode(uh, BehaviourData::AdditionalConvergenceChecks, acc,
                  BehaviourData::CREATEORAPPEND, BehaviourData::AT_BEGINNING);
-      if (this->firstConvergeOnDamage) {
-        // reset the time step in cas of divergence
-        acc.code =
-            "if (!converged) {\n"
-            "if (!this->ddif2bdata.bvp) {\n"
-            "this->dt = this->ddif2bdata.dt;\n"
-            "} // end of (!this->ddif2bdata.bvp)\n"
-            "} // end of if (!converged)\n";
-        bd.setCode(uh, BehaviourData::AdditionalConvergenceChecks, acc,
-                   BehaviourData::CREATEORAPPEND, BehaviourData::AT_END);
-      }
       /* update auxiliary state variables */
       for (const auto h : bd.getModellingHypotheses()) {
         CodeBlock uasv;
