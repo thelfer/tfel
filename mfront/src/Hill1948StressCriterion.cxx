@@ -39,6 +39,11 @@ namespace mfront{
       return opts;
     }  // end of Hill1948StressCriterion::getOptions
 
+    std::vector<mfront::BehaviourSymmetryType>
+    Hill1948StressCriterion::getSupportedBehaviourSymmetries() const {
+      return {mfront::ORTHOTROPIC};
+    }  // end of Hill1948StressCriterion::getSupportedBehaviourSymmetries()
+
     void Hill1948StressCriterion::initialize(BehaviourDescription& bd,
                                              AbstractBehaviourDSL& dsl,
                                              const std::string& id,

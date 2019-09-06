@@ -16,7 +16,9 @@
 
 #include <string>
 #include <vector>
+#include "MFront/MFrontConfig.hxx"
 #include "TFEL/Material/ModellingHypothesis.hxx"
+#include "MFront/BehaviourSymmetryType.hxx"
 #include "MFront/BehaviourDescription.hxx"
 
 namespace tfel {
@@ -38,10 +40,8 @@ namespace mfront {
     // forward declaration
     struct StressPotential;
 
-    /*!
-     * \brief class describing a stress criterion
-     */
-    struct StressCriterion {
+    //! \brief class describing a stress criterion
+    struct MFRONT_VISIBILITY_EXPORT StressCriterion {
       /*!
        * \brief describe the purpose of the criterion
        */
@@ -61,6 +61,8 @@ namespace mfront {
       using ModellingHypothesis = tfel::material::ModellingHypothesis;
       //! a simple alias
       using Hypothesis = ModellingHypothesis::Hypothesis;
+      //! \brief a simple alias
+      using BehaviourSymmetry = mfront::BehaviourSymmetryType;
       //! a simple alias
       using MaterialProperty = BehaviourDescription::MaterialProperty;
       /*!
@@ -72,6 +74,11 @@ namespace mfront {
       static std::string getVariableId(const std::string&,
                                        const std::string&,
                                        const Role);
+      //! \return the flow options
+      virtual std::vector<OptionDescription> getOptions() const = 0;
+      //! \return the list of supported behaviour symmetries
+      virtual std::vector<BehaviourSymmetry> getSupportedBehaviourSymmetries()
+          const = 0;
       /*!
        * \param[in,out] bd: behaviour description
        * \param[in,out] dsl: abstract behaviour dsl
@@ -84,8 +91,6 @@ namespace mfront {
                               const std::string&,
                               const DataMap&,
                               const Role) = 0;
-      //! \return the flow options
-      virtual std::vector<OptionDescription> getOptions() const = 0;
       /*!
        * \param[in,out] bd: behaviour description
        * \param[in,out] dsl: abstract behaviour dsl
@@ -181,7 +186,7 @@ namespace mfront {
                                                   const StressPotential&,
                                                   const Role) const = 0;
       //! \return if the normal is deviatoric
-      virtual bool isNormalDeviatoric() const= 0;
+      virtual bool isNormalDeviatoric() const = 0;
       //! destructor
       virtual ~StressCriterion();
     };  // end of struct StressCriterion

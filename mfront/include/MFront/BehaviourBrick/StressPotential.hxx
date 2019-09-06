@@ -19,6 +19,7 @@
 #include <string>
 #include <vector>
 #include "TFEL/Material/ModellingHypothesis.hxx"
+#include "MFront/MFrontConfig.hxx"
 #include "MFront/VariableDescription.hxx"
 #include "MFront/BehaviourDescription.hxx"
 
@@ -42,14 +43,16 @@ namespace mfront {
     /*!
      * \brief class describing the computation of the stress.
      */
-    struct StressPotential {
-      //! a simple alias
+    struct MFRONT_VISIBILITY_EXPORT StressPotential {
+      //! \brief a simple alias
       using DataMap = std::map<std::string, tfel::utilities::Data>;
-      //! a simple alias
+      //! \brief a simple alias
       using ModellingHypothesis = tfel::material::ModellingHypothesis;
-      //! a simple alias
+      //! \brief a simple alias
       using Hypothesis = ModellingHypothesis::Hypothesis;
-      //! a simple alias
+      //! \brief a simple alias
+      using BehaviourSymmetry = mfront::BehaviourSymmetryType;
+      //! \brief a simple alias
       using MaterialProperty = BehaviourDescription::MaterialProperty;
       //! \return the name of the stress potential
       virtual std::string getName() const = 0;

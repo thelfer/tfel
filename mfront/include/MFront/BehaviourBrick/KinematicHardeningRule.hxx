@@ -17,6 +17,7 @@
 #include <string>
 #include <memory>
 #include <vector>
+#include "MFront/MFrontConfig.hxx"
 #include "MFront/BehaviourDescription.hxx"
 
 namespace tfel {
@@ -40,10 +41,8 @@ namespace mfront {
     // forward declaration
     struct StressCriterion;
 
-    /*!
-     * \brief class describing an kinematic hardening rule
-     */
-    struct KinematicHardeningRule {
+    //! \brief class describing an kinematic hardening rule
+    struct MFRONT_VISIBILITY_EXPORT KinematicHardeningRule {
       //! a simple alias
       using Data = tfel::utilities::Data;
       //! a simple alias

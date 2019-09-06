@@ -20,6 +20,11 @@ namespace mfront{
 
   namespace bbrick {
 
+    std::vector<mfront::BehaviourSymmetryType>
+    MisesStressCriterion::getSupportedBehaviourSymmetries() const {
+      return {mfront::ISOTROPIC, mfront::ORTHOTROPIC};
+    }  // end of MisesStressCriterion::getSupportedBehaviourSymmetries()
+
     void MisesStressCriterion::initialize(BehaviourDescription& bd,
                                           AbstractBehaviourDSL& dsl,
                                           const std::string& id,

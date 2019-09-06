@@ -42,6 +42,8 @@ namespace mfront {
      */
     struct Cazacu2004OrthotropicStressCriterion final : StressCriterionBase {
       std::vector<OptionDescription> getOptions() const override;
+      std::vector<BehaviourSymmetry> getSupportedBehaviourSymmetries()
+          const override;
       void initialize(BehaviourDescription&,
                       AbstractBehaviourDSL&,
                       const std::string&,

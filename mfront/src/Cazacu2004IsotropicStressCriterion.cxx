@@ -29,6 +29,13 @@ namespace mfront {
       return opts;
     }  // end of Cazacu2004IsotropicStressCriterion::getOptions()
 
+    std::vector<mfront::BehaviourSymmetryType>
+    Cazacu2004IsotropicStressCriterion::getSupportedBehaviourSymmetries()
+        const {
+      return {mfront::ISOTROPIC, mfront::ORTHOTROPIC};
+    }  // end of
+       // Cazacu2004IsotropicStressCriterion::getSupportedBehaviourSymmetries()
+
     void Cazacu2004IsotropicStressCriterion::initialize(BehaviourDescription& bd,
                                                 AbstractBehaviourDSL& dsl,
                                                 const std::string& id,

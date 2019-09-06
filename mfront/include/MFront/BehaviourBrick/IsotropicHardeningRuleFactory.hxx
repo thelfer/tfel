@@ -12,6 +12,7 @@
 #include <string>
 #include <memory>
 #include <functional>
+#include "MFront/MFrontConfig.hxx"
 
 namespace mfront {
 
@@ -20,10 +21,8 @@ namespace mfront {
     // forward declaration
     struct IsotropicHardeningRule;
 
-    /*!
-     * \brief abstract factory for isotropic hardening rules.
-     */
-    struct IsotropicHardeningRuleFactory {
+    //! \brief abstract factory for isotropic hardening rules.
+    struct MFRONT_VISIBILITY_EXPORT IsotropicHardeningRuleFactory {
       //! a simple alias
       using Generator =
           std::function<std::shared_ptr<IsotropicHardeningRule>()>;

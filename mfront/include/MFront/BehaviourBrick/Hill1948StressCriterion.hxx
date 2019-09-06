@@ -55,6 +55,8 @@ namespace mfront {
      * \f]
      */
     struct Hill1948StressCriterion final : StressCriterionBase {
+      std::vector<BehaviourSymmetry> getSupportedBehaviourSymmetries()
+          const override;
       void initialize(BehaviourDescription&,
                       AbstractBehaviourDSL&,
                       const std::string&,

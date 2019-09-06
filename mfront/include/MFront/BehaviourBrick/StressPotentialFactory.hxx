@@ -39,8 +39,6 @@ namespace mfront {
       /*!
        * \brief generate a new stress potential
        * \param[in] n: name of the stress potential
-       * \param[in] bd: behaviour description
-       * \param[in] p: parameters of the stress potential
        */
       std::shared_ptr<StressPotential> generate(const std::string&) const;
 

@@ -37,9 +37,7 @@ namespace mfront {
     // forward declaration
     struct OptionDescription;
 
-    /*!
-     * \brief class describing an isotropic hardening rule
-     */
+    //! \brief class describing an isotropic hardening rule
     struct MFRONT_VISIBILITY_EXPORT IsotropicHardeningRule {
       //! a simple alias
       using Data = tfel::utilities::Data;

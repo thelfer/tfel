@@ -12,6 +12,7 @@
 #include <string>
 #include <memory>
 #include <functional>
+#include "MFront/MFrontConfig.hxx"
 
 namespace mfront {
 
@@ -23,7 +24,7 @@ namespace mfront {
     /*!
      * \brief abstract factory for Kinematic hardening rules.
      */
-    struct KinematicHardeningRuleFactory {
+    struct MFRONT_VISIBILITY_EXPORT KinematicHardeningRuleFactory {
       //! a simple alias
       using Generator = std::function<std::shared_ptr<KinematicHardeningRule>()>;
       //! \return the uniq instance of the class

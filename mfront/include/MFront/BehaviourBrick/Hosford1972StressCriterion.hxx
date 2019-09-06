@@ -33,6 +33,7 @@ namespace mfront {
      * \f$\underline{\sigma}\f$.
      */
     struct Hosford1972StressCriterion final : StressCriterionBase {
+      std::vector<BehaviourSymmetry> getSupportedBehaviourSymmetries() const override;
       std::vector<OptionDescription> getOptions() const override;
       void initialize(BehaviourDescription&,
                       AbstractBehaviourDSL&,

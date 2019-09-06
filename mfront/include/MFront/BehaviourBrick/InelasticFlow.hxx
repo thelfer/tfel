@@ -16,6 +16,7 @@
 
 #include <memory>
 #include "TFEL/Material/ModellingHypothesis.hxx"
+#include "MFront/MFrontConfig.hxx"
 #include "MFront/BehaviourDescription.hxx"
 
 namespace tfel {
@@ -45,10 +46,8 @@ namespace mfront {
     // forward declaration
     struct OptionDescription;
 
-    /*!
-     * \brief class describing an inelastic flow.
-     */
-    struct InelasticFlow {
+    //! \brief class describing an inelastic flow.
+    struct MFRONT_VISIBILITY_EXPORT InelasticFlow {
       //! a simple alias
       using Data = tfel::utilities::Data;
       //! a simple alias

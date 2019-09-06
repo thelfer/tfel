@@ -21,6 +21,11 @@ namespace mfront {
 
   namespace bbrick {
 
+    std::vector<mfront::BehaviourSymmetryType>
+    Hosford1972StressCriterion::getSupportedBehaviourSymmetries() const {
+      return {mfront::ISOTROPIC, mfront::ORTHOTROPIC};
+    }  // end of Hosford1972StressCriterion::getSupportedBehaviourSymmetries()
+
     std::vector<OptionDescription> Hosford1972StressCriterion::getOptions()
         const {
       auto opts = StressCriterionBase::getOptions();

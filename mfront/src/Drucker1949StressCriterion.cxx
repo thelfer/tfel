@@ -29,6 +29,11 @@ namespace mfront {
       return opts;
     }  // end of Drucker1949StressCriterion::getOptions()
 
+    std::vector<mfront::BehaviourSymmetryType>
+    Drucker1949StressCriterion::getSupportedBehaviourSymmetries() const {
+      return {mfront::ISOTROPIC, mfront::ORTHOTROPIC};
+    }  // end of Drucker1949StressCriterion::getSupportedBehaviourSymmetries()
+
     void Drucker1949StressCriterion::initialize(BehaviourDescription& bd,
                                                 AbstractBehaviourDSL& dsl,
                                                 const std::string& id,

@@ -33,6 +33,11 @@ namespace mfront {
       return opts;
     }  // end of Barlat2004StressCriterion::getOptions
 
+    std::vector<mfront::BehaviourSymmetryType>
+    Barlat2004StressCriterion::getSupportedBehaviourSymmetries() const {
+      return {mfront::ORTHOTROPIC};
+    }  // end of Barlat2004StressCriterion::getSupportedBehaviourSymmetries
+
     void Barlat2004StressCriterion::initialize(BehaviourDescription& bd,
                                                AbstractBehaviourDSL& dsl,
                                                const std::string& id,

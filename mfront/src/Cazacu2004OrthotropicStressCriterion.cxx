@@ -32,6 +32,13 @@ namespace mfront {
       return opts;
     }  // end of Cazacu2004OrthotropicStressCriterion::getOptions()
 
+    std::vector<mfront::BehaviourSymmetryType>
+    Cazacu2004OrthotropicStressCriterion::getSupportedBehaviourSymmetries()
+        const {
+      return {mfront::ORTHOTROPIC};
+    }  // end of
+       // Cazacu2004OrthotropicStressCriterion::getSupportedBehaviourSymmetries()
+
     void Cazacu2004OrthotropicStressCriterion::initialize(
         BehaviourDescription& bd,
         AbstractBehaviourDSL& dsl,
