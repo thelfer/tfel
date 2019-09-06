@@ -172,8 +172,8 @@ namespace mfront {
             const auto v1n = b ? displayName(v1) : v1.name;
             for (const auto& v2 : ivs) {
               const auto v2n = b ? displayName(v2) : v2.name;
-              const auto j = b ? "\u2202" + v1n + "\u2215\u2202\u0394" + v2n
-                               : "d" + v1n + "_d" + v2n;
+              const auto j = b ? "\u2202f" + v1n + "\u2215\u2202\u0394" + v2n
+                               : "df" + v1n + "_d" + v2n;
               const auto o = v1.name == v2.name ? "+=" : "=";
               if ((v1.arraySize == 1u) && (v2.arraySize == 1u)) {
                 i += j + " " + o + " ;\n";

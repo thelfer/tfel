@@ -516,30 +516,33 @@ namespace mfront {
                  BehaviourData::CREATEORAPPEND, BehaviourData::AT_END);
       /* post-processing checks */
       CodeBlock acc;
-      acc.code =
-          "if (converged) {\n"
-          "this->ddif2bdata.sig=(" +
-          lambda +
-          "*trace(this->eel+deel))*StrainStensor::Id()+\n"
-          "2*" +
-          mu +
-          "*(this->eel+this->deel);\n"
-          "for (unsigned short idx = 0; idx != 3; ++idx) {\n"
-          "converged = DDIF2Base::checkStateConsistency("
-          "this->ddif2bdata.state[idx],this->ddif2bdata.sig, "
-          "this->nf[idx], this->efm[idx], this->ef[idx] + this->def[idx], "
-          "this->sigr[idx], this->Rp[idx],"
-          "2 * " +
-          young +
-          "* this->epsilon, 2 * (this->epsilon));\n"
-          "if (!converged) {\n"
-          "if (this->ddif2bdata.nchanges < 10) {\n"
-          "this->iter = 1;\n"
-          "++(this->ddif2bdata.nchanges);\n"
-          "} // end of if (this->ddif2bdata.nchanges < 10)\n"
-          "return;\n"
-          "} // end of if (!converged)\n"
-          "} // end of for (unsigned short idx = 0; idx != 3; ++idx)\n";
+        acc.code =
+            "if (converged) {\n";
+      if (this->algorithm == STATUS) {
+        acc.code +=
+            "this->ddif2bdata.sig=(" +
+            lambda +
+            "*trace(this->eel+deel))*StrainStensor::Id()+\n"
+            "2*" +
+            mu +
+            "*(this->eel+this->deel);\n"
+            "for (unsigned short idx = 0; idx != 3; ++idx) {\n"
+            "converged = DDIF2Base::checkStateConsistency("
+            "this->ddif2bdata.state[idx],this->ddif2bdata.sig, "
+            "this->nf[idx], this->efm[idx], this->ef[idx] + this->def[idx], "
+            "this->sigr[idx], this->Rp[idx],"
+            "2 * " +
+            young +
+            "* this->epsilon, 2 * (this->epsilon));\n"
+            "if (!converged) {\n"
+            "if (this->ddif2bdata.nchanges < 10) {\n"
+            "this->iter = 1;\n"
+            "++(this->ddif2bdata.nchanges);\n"
+            "} // end of if (this->ddif2bdata.nchanges < 10)\n"
+            "return;\n"
+            "} // end of if (!converged)\n"
+            "} // end of for (unsigned short idx = 0; idx != 3; ++idx)\n";
+      }
       if (this->firstConvergeOnDamage) {
         acc.code +=
             "if (!this->ddif2bdata.bvp) {\n"
