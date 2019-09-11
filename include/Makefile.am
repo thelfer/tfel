@@ -53,6 +53,8 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Material/Cazacu2004OrthotropicYieldCriterion.ixx                                          \
 			TFEL/Material/Barlat2004YieldCriterion.hxx			                             \
 			TFEL/Material/Barlat2004YieldCriterion.ixx			                             \
+			TFEL/Material/MohrCoulombYieldCriterion.hxx			                             \
+			TFEL/Material/MohrCoulombYieldCriterion.ixx			                             \
 			TFEL/Material/PiPlane.hxx                                                                    \
 			TFEL/Material/PiPlane.ixx                                                                    \
 			TFEL/Material/StiffnessTensor.hxx			                                     \

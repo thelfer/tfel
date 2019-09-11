@@ -36,6 +36,7 @@ namespace mfront {
     StandardElastoViscoPlasticityBrick(AbstractBehaviourDSL&,
                                        BehaviourDescription&);
     std::string getName() const override;
+    BehaviourBrickDescription getDescription() const override;
     void initialize(const Parameters&, const DataMap&) override;
     std::vector<Hypothesis> getSupportedModellingHypotheses() const override;
     void completeVariableDeclaration() const override;

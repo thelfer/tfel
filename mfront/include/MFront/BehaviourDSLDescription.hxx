@@ -83,8 +83,14 @@ namespace mfront {
     bool allowUserDefinedLocalVariables = true;
     //! \brief allow the definition of the crystal structure
     bool allowCrystalStructureDefinition = true;
-    //! \brief allow the definition of the crystal structure
+    //! \brief require the definition of the crystal structure
+    bool requireCrystalStructureDefinition = false;
+    //! \brief allow the definition of the elastic properties
+    bool allowElasticPropertiesDefinition = true;
+    //! \brief allow the definition stiffness tensor
     bool allowStiffnessTensorDefinition = true;
+    //! \brief require the definition stiffness tensor
+    bool requireStiffnessTensorDefinition = false;
 
   };  // end of struct BehaviourDSLDescription
 

@@ -15,7 +15,6 @@ test_PROGRAMS = hill                                     \
 		qt2                                      \
 		qt3                                      \
 		CubicRoots                               \
-		complex_operations                       \
 		conj                                     \
 		lu                                       \
 		lu2                                      \
@@ -86,7 +85,6 @@ qt2_SOURCES                   = qt2.cxx
 qt3_SOURCES                   = qt3.cxx
 hill_SOURCES                  = hill.cxx
 CubicRoots_SOURCES            = CubicRoots.cxx
-complex_operations_SOURCES    = complex_operations.cxx   
 conj_SOURCES                  = conj.cxx                 
 invert_SOURCES                = invert.cxx
 invert2_SOURCES               = invert2.cxx

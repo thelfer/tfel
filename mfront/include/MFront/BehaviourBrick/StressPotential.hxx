@@ -40,9 +40,7 @@ namespace mfront {
     // forward declaration
     struct OptionDescription;
 
-    /*!
-     * \brief class describing the computation of the stress.
-     */
+    //! \brief class describing the computation of the stress.
     struct MFRONT_VISIBILITY_EXPORT StressPotential {
       //! \brief a simple alias
       using DataMap = std::map<std::string, tfel::utilities::Data>;

@@ -21,6 +21,7 @@
 #include "MFront/BehaviourBrick/Cazacu2001StressCriterion.hxx"
 #include "MFront/BehaviourBrick/Cazacu2004IsotropicStressCriterion.hxx"
 #include "MFront/BehaviourBrick/Cazacu2004OrthotropicStressCriterion.hxx"
+#include "MFront/BehaviourBrick/MohrCoulombStressCriterion.hxx"
 #include "MFront/BehaviourBrick/StressCriterionFactory.hxx"
 
 namespace mfront {
@@ -113,6 +114,9 @@ namespace mfront {
       });
       this->addGenerator("Barlat 2004", []() {
         return std::make_shared<bbrick::Barlat2004StressCriterion>();
+      });
+      this->addGenerator("MohrCoulomb", []() {
+        return std::make_shared<bbrick::MohrCoulombStressCriterion>();
       });
     } // end of StressCriterionFactory::StressCriterionFactory
 

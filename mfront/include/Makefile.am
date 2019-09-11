@@ -98,6 +98,8 @@ nobase_include_HEADERS= MFront/MFront.hxx                                      \
 			MFront/UmatFiniteStrainMTestFileGenerator.hxx                     \
 			MFront/GenericBehaviourSmallStrainMTestFileGenerator.hxx          \
 			MFront/GenericBehaviourFiniteStrainMTestFileGenerator.hxx         \
+			MFront/MFrontTemplateGenerationOptions.hxx                        \
+			MFront/BehaviourBrickDescription.hxx                              \
 			MFront/AbstractBehaviourBrick.hxx                                 \
 			MFront/BehaviourBrickBase.hxx                                     \
 			MFront/BehaviourBrickFactory.hxx                                  \
@@ -132,6 +134,7 @@ nobase_include_HEADERS= MFront/MFront.hxx                                      \
 			MFront/BehaviourBrick/Cazacu2001StressCriterion.hxx               \
 			MFront/BehaviourBrick/Cazacu2004IsotropicStressCriterion.hxx      \
 			MFront/BehaviourBrick/Cazacu2004OrthotropicStressCriterion.hxx    \
+			MFront/BehaviourBrick/MohrCoulombStressCriterion.hxx              \
 			MFront/BehaviourBrick/StressCriterionFactory.hxx                  \
 			MFront/BehaviourBrick/IsotropicHardeningRule.hxx                  \
 			MFront/BehaviourBrick/LinearIsotropicHardeningRule.hxx            \

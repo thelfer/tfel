@@ -1607,6 +1607,8 @@ include/TFEL/Material/MetallicCFCGenericSlidingSystemsInteractionMatrix.ixx -tex
 include/TFEL/Material/MetallicCFCSlidingSystems.hxx -text
 include/TFEL/Material/MetallicCFCSlidingSystems.ixx -text
 include/TFEL/Material/ModellingHypothesis.hxx -text
+include/TFEL/Material/MohrCoulombYieldCriterion.hxx -text
+include/TFEL/Material/MohrCoulombYieldCriterion.ixx -text
 include/TFEL/Material/OrthotropicAxesConvention.hxx -text
 include/TFEL/Material/OrthotropicAxesConvention.ixx -text
 include/TFEL/Material/OrthotropicPlasticity.hxx -text
@@ -2269,6 +2271,7 @@ mfront/include/MFront/BehaviourBrick/KinematicHardeningRuleBase.hxx -text
 mfront/include/MFront/BehaviourBrick/KinematicHardeningRuleFactory.hxx -text
 mfront/include/MFront/BehaviourBrick/LinearIsotropicHardeningRule.hxx -text
 mfront/include/MFront/BehaviourBrick/MisesStressCriterion.hxx -text
+mfront/include/MFront/BehaviourBrick/MohrCoulombStressCriterion.hxx -text
 mfront/include/MFront/BehaviourBrick/NortonHoffViscoplasticFlow.hxx -text
 mfront/include/MFront/BehaviourBrick/OptionDescription.hxx -text
 mfront/include/MFront/BehaviourBrick/PlasticInelasticFlow.hxx -text
@@ -2286,6 +2289,7 @@ mfront/include/MFront/BehaviourBrick/SwiftIsotropicHardeningRule.hxx -text
 mfront/include/MFront/BehaviourBrick/ViscoplasticFlowBase.hxx -text
 mfront/include/MFront/BehaviourBrick/VoceIsotropicHardeningRule.hxx -text
 mfront/include/MFront/BehaviourBrickBase.hxx -text
+mfront/include/MFront/BehaviourBrickDescription.hxx -text
 mfront/include/MFront/BehaviourBrickFactory.hxx -text
 mfront/include/MFront/BehaviourDSLBase.hxx -text
 mfront/include/MFront/BehaviourDSLBase.ixx -text
@@ -2494,6 +2498,7 @@ mfront/include/MFront/MFrontLock.hxx -text
 mfront/include/MFront/MFrontLogStream.hxx -text
 mfront/include/MFront/MFrontMaterialPropertyInterface.hxx -text
 mfront/include/MFront/MFrontModelInterface.hxx -text
+mfront/include/MFront/MFrontTemplateGenerationOptions.hxx -text
 mfront/include/MFront/MFrontUtilities.hxx -text
 mfront/include/MFront/MFrontUtilities.ixx -text
 mfront/include/MFront/MTestFileGeneratorBase.hxx -text
@@ -2596,6 +2601,7 @@ mfront/src/AsterSymbolsGenerator.cxx -text
 mfront/src/AsterTangentOperator.cxx -text
 mfront/src/Barlat2004StressCriterion.cxx -text
 mfront/src/BehaviourBrickBase.cxx -text
+mfront/src/BehaviourBrickDescription.cxx -text
 mfront/src/BehaviourBrickFactory.cxx -text
 mfront/src/BehaviourBrickProvider.cxx -text
 mfront/src/BehaviourBrickProviderIdentifier.cxx -text
@@ -2760,6 +2766,7 @@ mfront/src/ModelDSL.cxx -text
 mfront/src/ModelDSLCommon.cxx -text
 mfront/src/ModelDescription.cxx -text
 mfront/src/ModelInterfaceFactory.cxx -text
+mfront/src/MohrCoulombStressCriterion.cxx -text
 mfront/src/MultipleIsotropicMisesFlowsDSL.cxx -text
 mfront/src/NewtonRaphsonSolvers.cxx -text
 mfront/src/NonLinearSystemSolver.cxx -text
@@ -6604,7 +6611,6 @@ tests/Math/cadna/CMakeLists.txt -text
 tests/Math/cadna/Makefile.am -text
 tests/Math/cadna/cadna.cxx -text
 tests/Math/cadna/stensor_eigenvalues.cxx -text
-tests/Math/complex_operations.cxx -text
 tests/Math/conj.cxx -text
 tests/Math/discretization1D.cxx -text
 tests/Math/fsarray.cxx -text

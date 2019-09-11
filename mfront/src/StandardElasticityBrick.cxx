@@ -35,6 +35,15 @@ namespace mfront {
       : BehaviourBrickBase(dsl_, mb_) {
   }  // end of StandardElasticityBrick::StandardElasticityBrick
 
+  BehaviourBrickDescription StandardElasticityBrick::getDescription() const {
+    auto d = BehaviourBrickDescription{};
+    d.behaviourType = tfel::material::MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR;
+    d.integrationScheme = IntegrationScheme::IMPLICITSCHEME;
+    d.supportedModellingHypotheses = ModellingHypothesis::getModellingHypotheses();
+    d.supportedBehaviourSymmetries = {mfront::ISOTROPIC,mfront::ORTHOTROPIC};
+    return d;
+  } // end of StandardElasticityBrick::getDescription
+
   std::string StandardElasticityBrick::getName() const { return "Elasticity"; }
 
   void StandardElasticityBrick::initialize(const Parameters& p,

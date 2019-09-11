@@ -24,6 +24,19 @@ namespace mfront {
     return "DDIF2";
   }  // end of DDIF2Brick::getName()
 
+  BehaviourBrickDescription DDIF2Brick::getDescription() const {
+    auto d = BehaviourBrickDescription{};
+    d.behaviourType = tfel::material::MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR;
+    d.integrationScheme = IntegrationScheme::IMPLICITSCHEME;
+    d.supportedModellingHypotheses = {
+        ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,
+        ModellingHypothesis::AXISYMMETRICAL, ModellingHypothesis::PLANESTRAIN,
+        ModellingHypothesis::GENERALISEDPLANESTRAIN,
+        ModellingHypothesis::TRIDIMENSIONAL};
+    d.supportedBehaviourSymmetries = {mfront::ISOTROPIC};
+    return d;
+  } // end of DDIF2Brick::getDescription
+
   void DDIF2Brick::initialize(const Parameters&, const DataMap& d) {
     auto& spf = mfront::bbrick::StressPotentialFactory::getFactory();
     this->ddif2= spf.generate("DDIF2");

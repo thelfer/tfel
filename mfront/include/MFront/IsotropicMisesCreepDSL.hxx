@@ -27,8 +27,9 @@ namespace mfront{
     //! \brief default constructor
     IsotropicMisesCreepDSL();
 
-    std::string getCodeBlockTemplate(const std::string&,
-                                     const bool) const override;
+    std::string getCodeBlockTemplate(
+        const std::string&,
+        const MFrontTemplateGenerationOptions&) const override;
 
     void endsInputFileProcessing() override;
     //! \brief destructor

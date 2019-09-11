@@ -257,8 +257,8 @@ namespace mfront{
     this->mb.setIntegrationScheme(BehaviourDescription::EXPLICITSCHEME);
   }
 
-  std::string RungeKuttaDSLBase::getCodeBlockTemplate(const std::string& c,
-                                                      const bool b) const {
+  std::string RungeKuttaDSLBase::getCodeBlockTemplate(
+      const std::string& c, const MFrontTemplateGenerationOptions& o) const {
     constexpr const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     if (c == BehaviourData::ComputePredictionOperator) {
       return "@PredictionOperator{}\n";
@@ -271,8 +271,8 @@ namespace mfront{
       } else {
         auto i = std::string("@Derivative{\n");
         for (const auto& v : ivs) {
-          if (b) {
-            i += "\u2202\u209C" + displayName(v) + " = ;\n";
+          if (o.useUnicodeSymbols) {
+            i += "d\u209C" + displayName(v) + " = ;\n";
           } else {
             i += "d" + v.name + " = ;\n";
           }

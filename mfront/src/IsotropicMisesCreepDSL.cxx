@@ -58,10 +58,10 @@ namespace mfront{
     this->mb.setAttribute(h,BehaviourData::isConsistentTangentOperatorSymmetric,true);
   }
 
-  std::string IsotropicMisesCreepDSL::getCodeBlockTemplate(const std::string& c,
-                                                           const bool b) const {
+  std::string IsotropicMisesCreepDSL::getCodeBlockTemplate(
+      const std::string& c, const MFrontTemplateGenerationOptions& o) const {
     if (c == BehaviourData::FlowRule) {
-      if (b) {
+      if (o.useUnicodeSymbols) {
         return "@FlowRule{\n"
                "// \u03C3\u2091 is the current estimate of the von Mises stress at "
                "t+\u03B8\u22C5\u0394t\n"

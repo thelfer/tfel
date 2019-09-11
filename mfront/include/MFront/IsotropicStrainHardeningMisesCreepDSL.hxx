@@ -28,9 +28,10 @@ namespace mfront{
     //! \brief copy constructor
     IsotropicStrainHardeningMisesCreepDSL();
 
-    std::string getCodeBlockTemplate(const std::string&,
-                                     const bool) const override;
-    
+    std::string getCodeBlockTemplate(
+        const std::string&,
+        const MFrontTemplateGenerationOptions&) const override;
+
     void endsInputFileProcessing() override;
     //! \brief destructor
     ~IsotropicStrainHardeningMisesCreepDSL() override;

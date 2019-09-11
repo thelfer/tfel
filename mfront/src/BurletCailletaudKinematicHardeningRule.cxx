@@ -29,7 +29,7 @@ namespace mfront {
       opts.emplace_back("D", "back-strain callback coefficient",
                         OptionDescription::MATERIALPROPERTY);
       opts.emplace_back("eta",
-                        "weigth between the Amstrong-Frederic contribuation "
+                        "weigth between the Amstrong-Frederic contribution "
                         "and the pure radial contribution",
                         OptionDescription::MATERIALPROPERTY);
       return opts;

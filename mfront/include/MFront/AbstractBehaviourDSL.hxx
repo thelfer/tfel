@@ -24,6 +24,7 @@
 #include "MFront/VariableDescription.hxx"
 #include "MFront/BehaviourDescription.hxx"
 #include "MFront/BehaviourDSLDescription.hxx"
+#include "MFront/MFrontTemplateGenerationOptions.hxx"
 
 namespace mfront {
 
@@ -90,10 +91,10 @@ namespace mfront {
     /*!
      * \return a template for the given code block
      * \param[in] c: code block name
-     * \param[in] b: boolean stating if the utf8 encoding shall be used
+     * \param[in] o: generation options
      */
-    virtual std::string getCodeBlockTemplate(const std::string&,
-                                             const bool) const = 0;
+    virtual std::string getCodeBlockTemplate(
+        const std::string&, const MFrontTemplateGenerationOptions&) const = 0;
     /*!
      * \return the list of hypothesis a priori supported by
      * the parser.

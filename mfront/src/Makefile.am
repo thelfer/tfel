@@ -109,6 +109,7 @@ libTFELMFront_la_SOURCES = MFront.cxx                                           
 		           ExcelMaterialPropertyInternalInterface.cxx             \
 			   OctaveMaterialPropertyInterface.cxx                    \
 		           MFrontModelInterface.cxx                               \
+		           BehaviourBrickDescription.cxx                             \
 		           AbstractBehaviourBrick.cxx                             \
 		           BehaviourBrickBase.cxx                                 \
 			   BehaviourBrickProviderIdentifier.cxx                      \
@@ -153,6 +154,7 @@ libTFELMFront_la_SOURCES = MFront.cxx                                           
 		           Cazacu2001StressCriterion.cxx                          \
 		           Cazacu2004IsotropicStressCriterion.cxx                 \
 		           Cazacu2004OrthotropicStressCriterion.cxx               \
+                   MohrCoulombStressCriterion.cxx                         \
 		           StressCriterionFactory.cxx                             \
 		           IsotropicHardeningRule.cxx                             \
 		           LinearIsotropicHardeningRule.cxx                       \

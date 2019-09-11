@@ -31,6 +31,15 @@ namespace mfront {
   }  // end of
      // StandardElastoViscoPlasticityBrick::StandardElastoViscoPlasticityBrick
 
+  BehaviourBrickDescription StandardElastoViscoPlasticityBrick::getDescription() const {
+    auto d = BehaviourBrickDescription{};
+    d.behaviourType = tfel::material::MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR;
+    d.integrationScheme = IntegrationScheme::IMPLICITSCHEME;
+    d.supportedModellingHypotheses = ModellingHypothesis::getModellingHypotheses();
+    d.supportedBehaviourSymmetries = {mfront::ISOTROPIC,mfront::ORTHOTROPIC};
+    return d;
+  } // end of StandardElastoViscoPlasticityBrick::getDescription
+
   std::string StandardElastoViscoPlasticityBrick::getName() const {
     return "ElastoViscoPlasticity";
   } // end of StandardElastoViscoPlasticityBrick::getName

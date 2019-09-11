@@ -440,7 +440,8 @@ namespace mfront {
 
   void getTimeDerivativeSymbol(std::map<std::string, std::string>& symbols,
                                const VariableDescription& v) {
-    addSymbol(symbols, "\u2202\u209C" + displayName(v), "d" + v.name);
+    addSymbol(symbols, "d\u209C" + displayName(v), "d" + v.name);
+    addSymbol(symbols, "d" + displayName(v) + "\u2215dt", "d" + v.name);
   }  // end of getIncrementSymbol
 
   VariableDescriptionContainer::VariableDescriptionContainer() = default;

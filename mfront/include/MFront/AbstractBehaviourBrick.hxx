@@ -21,6 +21,7 @@
 #include <utility>
 #include "TFEL/Utilities/CxxTokenizer.hxx"
 #include "TFEL/Material/ModellingHypothesis.hxx"
+#include "MFront/BehaviourBrickDescription.hxx"
 
 namespace tfel {
   namespace utilities {
@@ -68,6 +69,8 @@ namespace mfront {
     using DataMap = std::map<std::string, Data>;
     //! \brief return the name of the brick
     virtual std::string getName() const = 0;
+    //! \return a description of the brick
+    virtual BehaviourBrickDescription getDescription() const = 0;
     /*!
      * \brief intialize the brick
      * \param[in] p: parameters

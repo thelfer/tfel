@@ -30,10 +30,10 @@ int main(){
   using fvector = tvector<5,force>;
   constexpr mass m = mass(2);
   const avector a2 = {acceleration(2),
-		      acceleration(1),
-		      acceleration(4),
-		      acceleration(2),
-		      acceleration(3)};
+  		      acceleration(1),
+  		      acceleration(4),
+  		      acceleration(2),
+  		      acceleration(3)};
   avector a1;
   fvector f;
   a1=2*(a2+a2);

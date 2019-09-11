@@ -139,8 +139,8 @@ namespace mfront {
     return *(this->solver);
   }
 
-  std::string ImplicitDSLBase::getCodeBlockTemplate(const std::string& c,
-                                                   const bool b) const {
+  std::string ImplicitDSLBase::getCodeBlockTemplate(
+      const std::string& c, const MFrontTemplateGenerationOptions& o) const {
     constexpr const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     if (c == BehaviourData::ComputePredictionOperator) {
       return "@PredictionOperator{}\n";
@@ -154,7 +154,7 @@ namespace mfront {
         auto i = std::string("@Integrator{\n");
         // implicit system
         for (const auto& v : ivs) {
-          const auto vn = b ? displayName(v) : v.name;
+          const auto vn = o.useUnicodeSymbols ? displayName(v) : v.name;
           i += "// implicit equation associated with variable " + vn + "\n";
           if (v.arraySize == 1u) {
             i += "f" + vn + " += ;\n";
@@ -169,11 +169,12 @@ namespace mfront {
         if ((this->solver != nullptr) && (this->solver->usesJacobian())) {
           i += "// jacobian blocks\n";
           for (const auto& v1 : ivs) {
-            const auto v1n = b ? displayName(v1) : v1.name;
+            const auto v1n = o.useUnicodeSymbols ? displayName(v1) : v1.name;
             for (const auto& v2 : ivs) {
-              const auto v2n = b ? displayName(v2) : v2.name;
-              const auto j = b ? "\u2202f" + v1n + "\u2215\u2202\u0394" + v2n
-                               : "df" + v1n + "_d" + v2n;
+              const auto v2n = o.useUnicodeSymbols ? displayName(v2) : v2.name;
+              const auto j = o.useUnicodeSymbols
+                                 ? "\u2202f" + v1n + "\u2215\u2202\u0394" + v2n
+                                 : "df" + v1n + "_d" + v2n;
               const auto o = v1.name == v2.name ? "+=" : "=";
               if ((v1.arraySize == 1u) && (v2.arraySize == 1u)) {
                 i += j + " " + o + " ;\n";

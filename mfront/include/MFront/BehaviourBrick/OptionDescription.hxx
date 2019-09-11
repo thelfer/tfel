@@ -108,7 +108,7 @@ namespace mfront {
       ~OptionDescription();
       //! name of the option
       std::string name;
-      //! name of the option
+      //! description of the option
       std::string description;
       //! type of the option
       Type type;

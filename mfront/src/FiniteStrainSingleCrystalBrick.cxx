@@ -43,6 +43,17 @@ namespace mfront{
     : BehaviourBrickBase(dsl_,mb_)
   {} // end of FiniteStrainSingleCrystalBrick::FiniteStrainSingleCrystalBrick
 
+  BehaviourBrickDescription FiniteStrainSingleCrystalBrick::getDescription() const {
+    auto d = BehaviourBrickDescription{};
+    d.behaviourType = tfel::material::MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR;
+    d.integrationScheme = IntegrationScheme::IMPLICITSCHEME;
+    d.supportedModellingHypotheses = {ModellingHypothesis::TRIDIMENSIONAL};
+    d.supportedBehaviourSymmetries = {mfront::ORTHOTROPIC};
+    d.requireCrystalStructureDefinition = true;
+    d.requireStiffnessTensorDefinition = true;
+    return d;
+  } // end of FiniteStrainSingleCrystalBrick::getDescription
+
   std::string FiniteStrainSingleCrystalBrick::getName() const{
     return "FiniteStrainSingleCrystal";
   }

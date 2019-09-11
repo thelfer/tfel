@@ -7,6 +7,10 @@ solved are described below.
 
 # Tickets fixed
 
+## Ticket #188: Default constructor of the qt class is ill formed: noexcept specifier is not correcty defined
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/188/>
+
 ## Ticket #185: Problem on transposition of fourth order tensor
 
 The `ST2toST2TransposeExpr<A>` class expected that class `A` defines the

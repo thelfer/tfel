@@ -40,8 +40,8 @@ namespace mfront{
 			      &DefaultDSLBase::treatComputeStiffnessTensor);
   }
 
-  std::string DefaultDSLBase::getCodeBlockTemplate(const std::string& c,
-                                                   const bool) const {
+  std::string DefaultDSLBase::getCodeBlockTemplate(
+      const std::string& c, const MFrontTemplateGenerationOptions&) const {
     if (c == BehaviourData::ComputePredictionOperator) {
       return "@PredictionOperator{}\n";
     } else if (c == BehaviourData::Integrator) {

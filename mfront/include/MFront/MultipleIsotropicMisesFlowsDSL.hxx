@@ -36,9 +36,10 @@ namespace mfront{
                     const Hypothesis,
                     const std::string&) override;
 
-    std::string getCodeBlockTemplate(const std::string&,
-                                     const bool) const override;
-    
+    std::string getCodeBlockTemplate(
+        const std::string&,
+        const MFrontTemplateGenerationOptions&) const override;
+
     //! \brief destructor
     ~MultipleIsotropicMisesFlowsDSL() override;
 

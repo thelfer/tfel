@@ -112,6 +112,7 @@ set(TFELMFront_SOURCES
     BroydenSolvers.cxx
     SecondBroydenSolver.cxx
     LevenbergMarquardtSolvers.cxx
+    BehaviourBrickDescription.cxx
     AbstractBehaviourBrick.cxx
     BehaviourBrickFactory.cxx
     BehaviourBrickProviderIdentifier.cxx
@@ -168,6 +169,7 @@ set(TFELMFront_SOURCES
     Cazacu2001StressCriterion.cxx
     Cazacu2004IsotropicStressCriterion.cxx
     Cazacu2004OrthotropicStressCriterion.cxx
+    MohrCoulombStressCriterion.cxx
     StressCriterionFactory.cxx
     IsotropicHardeningRule.cxx
     LinearIsotropicHardeningRule.cxx

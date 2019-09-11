@@ -51,21 +51,7 @@ namespace mfront {
     StandardElasticityBrick(AbstractBehaviourDSL&,
                             BehaviourDescription&);
     std::string getName() const override;
-    /*!
-     * \brief intialize the brick
-     * \param[in] p: parameters
-     * \param[in] d: data
-     *
-     * \note this brick allows the followig parameters:
-     * - `Isotropic`. This parameter can be used to declare that the
-     *   elastic stiffness is isotropic even though the behaviour is
-     *   orthotropic. This parameter can not be used if the
-     *   `@RequiresStiffnessTensor` has been used.
-     * - `Orthotropic`. This requires the behaviour to de declared
-     *   orthotropic (through `@OrthotropicBehaviour` keyword).  This
-     *   parameter can not be used if the `@RequiresStiffnessTensor` has
-     *   been used.
-     */
+    BehaviourBrickDescription getDescription() const override;
     void initialize(const Parameters&, const DataMap&) override;
     std::vector<Hypothesis> getSupportedModellingHypotheses() const override;
     void completeVariableDeclaration() const override;

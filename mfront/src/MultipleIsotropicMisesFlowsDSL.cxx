@@ -78,9 +78,9 @@ namespace mfront {
   }  // end of MultipleIsotropicMisesFlowsDSL::getSymbols
 
   std::string MultipleIsotropicMisesFlowsDSL::getCodeBlockTemplate(
-      const std::string& c, const bool b) const {
+      const std::string& c, const MFrontTemplateGenerationOptions& o) const {
     if (c == BehaviourData::FlowRule) {
-      if (b) {
+      if (o.useUnicodeSymbols) {
         return "@FlowRule Plasticity {\n"
                "// \u03C3\u2091 is the current estimate of the von Mises "
                "stress at "
