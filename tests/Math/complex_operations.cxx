@@ -27,7 +27,7 @@ int main()
   using namespace tfel::math;
 
   Complex<double> a(12.);
-  Complex<int>    b(2,3);
+  Complex<double>    b(2,3);
   Complex<double> c(0.);
   Complex<double> d(0.);
   

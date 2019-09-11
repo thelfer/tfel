@@ -15,7 +15,8 @@
 #define LIB_TFEL_MATH_QT_HXX
 
 #include<cmath>
-
+#include<type_traits>
+ 
 #include"TFEL/Config/TFELConfig.hxx"
 
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
@@ -82,15 +83,15 @@ namespace tfel{
       /*!
        * A simple typedef to indicate the numerical type used
        */
-      typedef T value_type;
+      using value_type = T;
 
       /*!
        * \brief Default constructor
        * value is left uninitialised.
        */
       TFEL_MATH_INLINE constexpr
-      qt() noexcept(T())
-		  : value(T())
+      qt() noexcept(std::is_nothrow_constructible<T>::value)
+	: value(T())
       {}
 
       /*!
