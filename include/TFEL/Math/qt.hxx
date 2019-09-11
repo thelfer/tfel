@@ -1,7 +1,7 @@
 /*!
  * \file   include/TFEL/Math/qt.hxx
  * \brief  This file declares the qt class.
- * \author Helfer Thomas
+ * \author Thomas Helfer
  * \date   06 Jun 2006
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
@@ -11,11 +11,12 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_TFEL_MATH_QT_H_
-#define LIB_TFEL_MATH_QT_H_
+#ifndef LIB_TFEL_MATH_QT_HXX
+#define LIB_TFEL_MATH_QT_HXX
 
 #include<cmath>
-
+#include<type_traits>
+ 
 #include"TFEL/Config/TFELConfig.hxx"
 
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
@@ -58,7 +59,7 @@ namespace tfel{
      * \param T, the underlying numerical type.
      * \pre T must be a fundamental numerical type.
      * \see unit_samples.hxx, IsFundamentalNumericType
-     * \author Helfer Thomas
+     * \author Thomas Helfer
      * \date   06 Jun 2006
      */
     template<typename unit,typename T=double>
@@ -82,15 +83,15 @@ namespace tfel{
       /*!
        * A simple typedef to indicate the numerical type used
        */
-      typedef T value_type;
+      using value_type = T;
 
       /*!
        * \brief Default constructor
        * value is left uninitialised.
        */
       TFEL_MATH_INLINE constexpr
-      qt() noexcept(T())
-		  : value(T())
+      qt() noexcept(std::is_nothrow_constructible<T>::value)
+	: value(T())
       {}
 
       /*!
@@ -115,13 +116,13 @@ namespace tfel{
       /*!
        * Return the value of the qt.
        */
-      TFEL_MATH_INLINE T& getValue(void) noexcept;
+      TFEL_MATH_INLINE T& getValue() noexcept;
 
       /*!
        * Return the value of the qt, const version
        */
       TFEL_MATH_INLINE constexpr const T&
-      getValue(void) const noexcept;
+      getValue() const noexcept;
       //! assignement operator
       TFEL_MATH_INLINE qt<unit,T>&
       operator = (const qt<unit,T>&);
@@ -256,13 +257,13 @@ namespace tfel{
       /*!
        * Return the value of the qt
        */
-      TFEL_MATH_INLINE T& getValue(void) noexcept;
+      TFEL_MATH_INLINE T& getValue() noexcept;
 
       /*!
        * Return the value of the qt, const version
        */
       TFEL_MATH_INLINE constexpr
-      const T& getValue(void) const noexcept;
+      const T& getValue() const noexcept;
       /*!
        * Operator =
        */
@@ -417,5 +418,5 @@ namespace tfel{
 #include"TFEL/Math/Quantity/qt.ixx"
 #include"TFEL/Math/Quantity/qtOperations.hxx"
 
-#endif /* LIB_TFEL_MATH_QT_H_ */
+#endif /* LIB_TFEL_MATH_QT_HXX */
 

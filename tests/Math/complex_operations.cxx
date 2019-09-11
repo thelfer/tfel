@@ -1,7 +1,7 @@
 /*!
  * \file   tests/Math/complex_operations.cxx
  * \brief  
- * \author Helfer Thomas
+ * \author Thomas Helfer
  * \date   05 jui 2006
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
  * reserved. 
@@ -27,7 +27,7 @@ int main()
   using namespace tfel::math;
 
   Complex<double> a(12.);
-  Complex<int>    b(2,3);
+  Complex<double>    b(2,3);
   Complex<double> c(0.);
   Complex<double> d(0.);
   
