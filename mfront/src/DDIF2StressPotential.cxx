@@ -228,6 +228,7 @@ namespace mfront {
                                    "PressureOnCrackSurface");
         }
       }
+      addParameter(bd, "efm_min", "MinimalFractureStrainValue", 1.e-12);
     }  // end of DDIF2StressPotential::DDIF2StressPotential
 
     std::string DDIF2StressPotential::getName() const { return "DDIF2"; }
@@ -416,6 +417,10 @@ namespace mfront {
           "for(unsigned short idx=0;idx!=3;++idx){\n"
           "this->nf[idx]      = Stensor(real(0));\n"
           "this->nf[idx][idx] = real(1);\n"
+          "if(tfel::math::ieee754::fpclassify(this->efm[idx])!=FP_ZERO){\n"
+          "this->efm[idx]=std::max(this->efm[idx],"
+          "strain(this->efm_min));\n"
+          "}\n"
           "}\n";
       if (this->algorithm == STATUS) {
         init.code += "this->ddif2bdata.nchanges = 0;\n";

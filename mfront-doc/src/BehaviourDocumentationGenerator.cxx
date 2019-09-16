@@ -469,6 +469,10 @@ namespace mfront {
     Parser::registerNewCallBack("--web",
                                 &BehaviourDocumentationGenerator::treatWeb,
                                 "output a web version of the file");
+    Parser::registerCallBack(
+        "--std-output", "--",
+        CallBack("print the output ont the standard output stream",
+                 [this] { this->std_output = true; }, false));
   }  // end of BehaviourDocumentationGenerator::registerCommandLineCallBacks
 
   void BehaviourDocumentationGenerator::treatUnknownArgument() {
@@ -520,15 +524,22 @@ namespace mfront {
       auto& log = getLogStream();
       log << "BehaviourDocumentationGenerator::exe : begin\n";
     }
-    const auto name = (!mb.getLibrary().empty())
-                          ? mb.getLibrary() + mb.getClassName()
-                          : mb.getClassName();
-    std::ofstream out(name + ".md");
-    out.exceptions(std::ios::badbit | std::ios::failbit);
-    tfel::raise_if(!out,
-                   "BehaviourDocumentationGenerator::exe: "
-                   "could not open file 'src/" +
-                       name + ".txt'");
+    std::ofstream output_file;
+    std::ostream& out = [&output_file, &mb, this]() -> std::ostream& {
+      if (this->std_output) {
+        return std::cout;
+      }
+      const auto name = (!mb.getLibrary().empty())
+                            ? mb.getLibrary() + mb.getClassName()
+                            : mb.getClassName();
+      output_file.open(name + ".md");
+      output_file.exceptions(std::ios::badbit | std::ios::failbit);
+      tfel::raise_if(!output_file,
+                     "BehaviourDocumentationGenerator::exe: "
+                     "could not open file 'src/" +
+                         name + ".txt'");
+      return output_file;
+    }();
     writeStandardLatexMacros(out);
     if (this->otype == FULL) {
       this->writeFullOutput(out, mb, fd);
@@ -539,7 +550,9 @@ namespace mfront {
           "BehaviourDocumentationGenerator::exe: "
           "unsupported output type");
     }
-    out.close();
+    if (!this->std_output) {
+      output_file.close();
+    }
     if (getVerboseMode() >= VERBOSE_DEBUG) {
       getLogStream() << "BehaviourDocumentationGenerator::exe : end\n";
     }
