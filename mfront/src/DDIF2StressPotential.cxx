@@ -525,8 +525,7 @@ namespace mfront {
             "if (converged) {\n";
       if (this->algorithm == STATUS) {
         acc.code +=
-            "this->ddif2bdata.sig=(" +
-            lambda +
+            "this->ddif2bdata.sig=(" + lambda +
             "*trace(this->eel+deel))*StrainStensor::Id()+\n"
             "2*" +
             mu +
@@ -535,8 +534,7 @@ namespace mfront {
             "converged = DDIF2Base::checkStateConsistency("
             "this->ddif2bdata.state[idx],this->ddif2bdata.sig, "
             "this->nf[idx], this->efm[idx], this->ef[idx] + this->def[idx], "
-            "this->sigr[idx], this->Rp[idx],"
-            "2 * " +
+            "this->sigr[idx],2 * " +
             young +
             "* this->epsilon, 2 * (this->epsilon));\n"
             "if (!converged) {\n"

@@ -45,6 +45,7 @@ endif
 
 libTFELMathParser_la_SOURCES = ExternalCFunction.cxx                         \
 			       ExternalCastemFunction.cxx                    \
+			       ExternalCyranoFunction.cxx                    \
 			       ExternalFunctionExpr.cxx                      \
 			       ExternalFunctionExpr2.cxx                     \
 			       KrigedFunction.cxx                            \

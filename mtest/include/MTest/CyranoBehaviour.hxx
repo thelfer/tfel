@@ -115,7 +115,7 @@ namespace mtest
 		   const bool) const;
   protected:
     //! the umat fonction
-    tfel::system::CyranoFctPtr fct;
+    CyranoBehaviourPtr fct;
   }; // end of struct Behaviour
   
 } // end of namespace mtest

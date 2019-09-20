@@ -34,8 +34,7 @@ pySetVerboseMode(const std::string& m){
   } else if (m=="Full"){
     mfront::setVerboseMode(mfront::VERBOSE_FULL);
   } else {
-    tfel::raise("mfront::setVerboseMode: "
-		"unknown mode '"+m+"'");
+    mfront::setVerboseMode(m);
   }
 }
 
@@ -47,6 +46,8 @@ void declareMFrontLogStream()
   using namespace boost::python;
   using namespace mfront;
 
+  void (*ptr)(const VerboseLevel) = setVerboseMode;
+  
   enum_<VerboseLevel>("VerboseLevel")
     .value("VERBOSE_QUIET",VERBOSE_QUIET)
     .value("VERBOSE_LEVEL0",VERBOSE_LEVEL0)
@@ -57,7 +58,7 @@ void declareMFrontLogStream()
     .value("VERBOSE_FULL",VERBOSE_FULL)
     ;
 
-  def("setVerboseMode",setVerboseMode);
+  def("setVerboseMode",ptr);
   def("setVerboseMode",pySetVerboseMode);
 
 }

@@ -39,14 +39,17 @@ namespace mfront {
    * \return the current verbose level
    */
   MFRONTLOGSTREAM_VISIBILITY_EXPORT VerboseLevel& getVerboseMode();
-
   /*!
    * change the verbose level 
    * \param the new verbose level
    */
   MFRONTLOGSTREAM_VISIBILITY_EXPORT void setVerboseMode(
       const VerboseLevel = VERBOSE_LEVEL0);
-
+  /*!
+   * \brief change the verbose level 
+   * \param[in] l: the new verbose level
+   */
+  MFRONTLOGSTREAM_VISIBILITY_EXPORT void setVerboseMode(const std::string&);
   /*!
    * \return the current logging stream
    */

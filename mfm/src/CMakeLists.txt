@@ -11,5 +11,4 @@ if(TFEL_APPEND_SUFFIX)
   set_target_properties(mfm
     PROPERTIES OUTPUT_NAME "mfm-${TFEL_SUFFIX}")
 endif(TFEL_APPEND_SUFFIX)
-install(TARGETS mfm DESTINATION bin
-    COMPONENT mfront)
+install(TARGETS mfm DESTINATION bin COMPONENT mfm)

@@ -4,8 +4,8 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Raise.hxx                                                                               \
 			TFEL/Raise.ixx                                                                               \
 			TFEL/PhysicalConstants.hxx                                                                   \
-			TFEL/UnicodeSupport/UnicodeSupport.hxx                                                                   \
-			TFEL/FSAlgorithm/loop.hxx		                                             \
+			TFEL/UnicodeSupport/UnicodeSupport.hxx                                                       \
+			TFEL/FSAlgorithm/loop.hxx		                                                     \
 			TFEL/FSAlgorithm/swap_ranges.hxx		                                             \
 			TFEL/FSAlgorithm/copy.hxx			                                             \
 			TFEL/FSAlgorithm/generate.hxx		                                                     \
@@ -40,17 +40,17 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Material/Hill.ixx			                                                     \
 			TFEL/Material/Hosford1972YieldCriterion.hxx	                                             \
 			TFEL/Material/Hosford1972YieldCriterion.ixx	                                             \
-			TFEL/Material/Drucker1949YieldCriterion.hxx                                          \
-			TFEL/Material/Drucker1949YieldCriterion.ixx                                          \
+			TFEL/Material/Drucker1949YieldCriterion.hxx                                                  \
+			TFEL/Material/Drucker1949YieldCriterion.ixx                                                  \
 			TFEL/Material/OrthotropicStressLinearTransformation.hxx                                      \
 			TFEL/Material/OrthotropicStressLinearTransformation.ixx                                      \
-			TFEL/Material/Cazacu2001YieldCriterion.hxx                                          \
-			TFEL/Material/Cazacu2001YieldCriterion.ixx                                          \
-			TFEL/Material/Cazacu2004YieldCriterionTypes.hxx                                          \
+			TFEL/Material/Cazacu2001YieldCriterion.hxx                                                   \
+			TFEL/Material/Cazacu2001YieldCriterion.ixx                                                   \
+			TFEL/Material/Cazacu2004YieldCriterionTypes.hxx                                              \
 			TFEL/Material/Cazacu2004IsotropicYieldCriterion.hxx                                          \
 			TFEL/Material/Cazacu2004IsotropicYieldCriterion.ixx                                          \
-			TFEL/Material/Cazacu2004OrthotropicYieldCriterion.hxx                                          \
-			TFEL/Material/Cazacu2004OrthotropicYieldCriterion.ixx                                          \
+			TFEL/Material/Cazacu2004OrthotropicYieldCriterion.hxx                                        \
+			TFEL/Material/Cazacu2004OrthotropicYieldCriterion.ixx                                        \
 			TFEL/Material/Barlat2004YieldCriterion.hxx			                             \
 			TFEL/Material/Barlat2004YieldCriterion.ixx			                             \
 			TFEL/Material/MohrCoulombYieldCriterion.hxx			                             \
@@ -83,10 +83,10 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Material/CrystalStructure.hxx                                                           \
 			TFEL/Material/SlipSystemsDescription.hxx                                                     \
 			TFEL/Config/Internals/TFELTypesInternals.hxx	                                             \
-			TFEL/Config/Internals/SpatialGradType.hxx	                                                 \
-			TFEL/Config/Internals/TemperatureGradientType.hxx	                                         \
+			TFEL/Config/Internals/SpatialGradType.hxx	                                             \
+			TFEL/Config/Internals/TemperatureGradientType.hxx	                                     \
 			TFEL/Config/Internals/HeatFluxVectorType.hxx	                                             \
-			TFEL/Config/Internals/InvJacobianType.hxx	                                                 \
+			TFEL/Config/Internals/InvJacobianType.hxx	                                             \
 			TFEL/Config/Internals/PositionType.hxx	                                                     \
 			TFEL/Config/Internals/JacobianType.hxx	                                                     \
 			TFEL/Config/Internals/ThermalConductivityMatrixType.hxx                                      \
@@ -151,6 +151,7 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/Parser/Variable.hxx				        	                     \
 			TFEL/Math/Parser/ExternalCFunction.hxx                                                       \
 			TFEL/Math/Parser/ExternalCastemFunction.hxx                                                  \
+			TFEL/Math/Parser/ExternalCyranoFunction.hxx                                                  \
 			TFEL/Math/Parser/ExternalFunction.hxx                                                        \
 			TFEL/Math/Parser/ConstantExternalFunction.hxx                                                \
 			TFEL/Math/Parser/ExternalFunctionManager.hxx                                                 \
@@ -608,6 +609,11 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			NUMODIS/IsotropicLineTensionModel.hxx						             \
 			NUMODIS/TripleNode.hxx
 
+nobase_include_HEADERS += Cyrano/OutOfBoundsPolicy.hxx \
+			  Cyrano/MaterialProperty.hxx  \
+			  Cyrano/Behaviour.hxx  \
+			  Cyrano/Types.hxx	       \
+			  Cyrano/OutputStatus.hxx
 
 EXTRA_DIST = CMakeLists.txt                 \
 	     TFEL/Math/math.doxygen         \

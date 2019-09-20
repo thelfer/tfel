@@ -26,22 +26,22 @@
 #define TFEL_ADDCALL_PTR *
 #endif /* LIB_TFEL_SYSTEM_EXTERNALFUNCTIONSPROTOTYPES_HXX */
 
+#include "Cyrano/MaterialProperty.hxx"
+#include "Cyrano/Behaviour.hxx"
+
 #ifdef	__cplusplus
 extern "C" {
 #endif /* LIB_TFEL_SYSTEM_EXTERNALFUNCTIONSPROTOTYPES_HXX */
 
 #ifdef TFEL_ARCH32
-  typedef int    CyranoIntegerType;
   typedef int    CastemIntegerType;
   typedef int    AsterIntegerType;
 #endif /* LIB_TFEL_SYSTEM_EXTERNALFUNCTIONSPROTOTYPES_HXX */
 #ifdef TFEL_ARCH64
 #ifdef _WIN64
-  typedef long long   CyranoIntegerType;
   typedef long long   CastemIntegerType;
   typedef long long   AsterIntegerType;
 #else
-  typedef long   CyranoIntegerType;
   typedef long   CastemIntegerType;
   typedef long   AsterIntegerType;
 #endif /* LIB_TFEL_SYSTEM_EXTERNALFUNCTIONSPROTOTYPES_HXX */
@@ -55,7 +55,6 @@ extern "C" {
   
   typedef double AbaqusRealType;
   typedef double AnsysRealType;
-  typedef double CyranoRealType;
   typedef double CastemRealType;
   typedef double AsterRealType;
   typedef double EuroplexusRealType;
@@ -259,29 +258,6 @@ namespace tfel {
 							     const double *);
       //! \brief a simple alias.
       typedef int (TFEL_ADDCALL_PTR GenericBehaviourFctPtr)(::MFront_GB_BehaviourData* const);
-
-      /*!
-       * a simple alias. This is the prototype of the external
-       * functions used by the `Cyrano` fuel performance code.
-       */
-      typedef void (TFEL_ADDCALL_PTR CyranoFctPtr)(const CyranoIntegerType  *const, /* nombre de composantes des contraintes  */
-						   const CyranoRealType *const, /* incrément de temps                     */
-						   const CyranoRealType *const, /* matrice de passage du repère élement
-										   au repère global                       */
-						   CyranoRealType *const,       /* matrice tangente                       */
-						   const CyranoRealType *const, /* tenseur des déformations               */
-						   const CyranoRealType *const, /* tenseur des incréments de déformations */
-						   const CyranoRealType *const, /* température au début du pas            */
-						   const CyranoRealType *const, /* incrément de température               */
-						   const CyranoRealType *const, /* propriétés matériau                    */
-						   const CyranoIntegerType  *const, /* nombre de propriétés matériau          */
-						   const CyranoRealType *const, /* variables externes */
-						   const CyranoRealType *const, /* incréments des variables externes */
-						   CyranoRealType *const,       /* variables internes   */
-						   const CyranoIntegerType  *const, /* nombre de variables internes */
-						   CyranoRealType *const,       /* tenseur des contraintes */
-						   const CyranoIntegerType  *const, /* entier définissant le type de calcul  */
-						   CyranoIntegerType  *const);      /* code sortie */
 
       /*!
        * a simple alias.

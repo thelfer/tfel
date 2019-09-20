@@ -49,6 +49,7 @@
 #endif
 
 #ifdef HAVE_CYRANO
+#include"MFront/CyranoMaterialPropertyInterface.hxx"
 #include"MFront/CyranoInterface.hxx"
 #endif
 
@@ -135,13 +136,18 @@ namespace mfront {
 #endif /* HAVE_JAVA */
 
 #ifdef HAVE_CASTEM
-    constexpr const char * castemINames[3] = {"castem","Castem","Cast3M"};
-    MaterialPropertyInterfaceProxy<CastemMaterialPropertyInterface> castemLawProxy(castemINames,castemINames+3);
-    constexpr const char * castemBNames[3] = {"umat","Castem","Cast3M"};
-    BehaviourInterfaceProxy<CastemInterface> umatProxy(castemBNames,castemBNames+3);
+    constexpr const char* castemINames[3] = {"castem", "Castem", "Cast3M"};
+    MaterialPropertyInterfaceProxy<CastemMaterialPropertyInterface>
+        castemLawProxy(castemINames, castemINames + 3);
+    constexpr const char* castemBNames[3] = {"umat", "Castem", "Cast3M"};
+    BehaviourInterfaceProxy<CastemInterface> umatProxy(castemBNames,
+                                                       castemBNames + 3);
 #endif /* HAVE_CASTEM */
 
 #ifdef HAVE_CYRANO
+    constexpr const char * cyranoINames[3] = {"cyrano","Cyrano"};
+    MaterialPropertyInterfaceProxy<CyranoMaterialPropertyInterface>
+        cyranoLawProxy(cyranoINames, cyranoINames + 2);
     BehaviourInterfaceProxy<CyranoInterface> cyranoProxy;
 #endif /* HAVE_CYRANO */
 

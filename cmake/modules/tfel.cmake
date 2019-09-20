@@ -42,7 +42,7 @@ macro(tfel_project tfel_version_major tfel_version_minor tfel_version_patch)
   endif(LIB_SUFFIX)
 endmacro(tfel_project)
 
-set(CPACK_COMPONENTS_ALL core mfront mtest)
+set(CPACK_COMPONENTS_ALL core mfront mtest mfm)
 
 set(CPACK_COMPONENT_CORE_DESCRIPTION 
   "Contains all the core libraries developped within TFEL")
@@ -89,6 +89,18 @@ macro(install_mtest_header dir file)
       COMPONENT mtest)
   endif(TFEL_APPEND_SUFFIX)
 endmacro(install_mtest_header)
+
+macro(install_mfm_header dir file)
+  if(TFEL_APPEND_SUFFIX)
+    install(FILES ${dir}/${file}
+      DESTINATION "include/TFEL-${TFEL_SUFFIX}/${dir}"
+      COMPONENT mfm)
+  else(TFEL_APPEND_SUFFIX)
+    install(FILES ${dir}/${file}
+      DESTINATION "include/${dir}"
+      COMPONENT mfm)
+  endif(TFEL_APPEND_SUFFIX)
+endmacro(install_mfm_header)
 
 macro(install_data dir file)
   if(TFEL_APPEND_SUFFIX)

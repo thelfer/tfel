@@ -107,7 +107,12 @@ namespace mfront {
     const auto libs = ::getenv("MFRONT_ADDITIONAL_LIBRARIES");
     if (libs != nullptr) {
       auto& lm = ExternalLibraryManager::getExternalLibraryManager();
-      for (const auto& l : tfel::utilities::tokenize(libs, ':')) {
+#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
+      const auto sep = ';';
+#else
+      const auto sep = ':';
+#endif
+      for (const auto& l : tfel::utilities::tokenize(libs, sep)) {
         lm.loadLibrary(l);
       }
     }
@@ -182,28 +187,9 @@ namespace mfront {
     if (o.empty()) {
       setVerboseMode(VERBOSE_LEVEL1);
     } else {
-      if (o == "quiet") {
-        setVerboseMode(VERBOSE_QUIET);
-      } else if (o == "level0") {
-        setVerboseMode(VERBOSE_LEVEL0);
-      } else if (o == "level1") {
-        setVerboseMode(VERBOSE_LEVEL1);
-      } else if (o == "level2") {
-        setVerboseMode(VERBOSE_LEVEL2);
-      } else if (o == "level3") {
-        setVerboseMode(VERBOSE_LEVEL3);
-      } else if (o == "debug") {
-        setVerboseMode(VERBOSE_DEBUG);
-      } else if (o == "full") {
-        setVerboseMode(VERBOSE_FULL);
-      } else {
-        tfel::raise(
-            "MFrontBase::treatVerbose: "
-            "unknown option '" +
-            o + "'");
-      }
+      setVerboseMode(o);
     }
-  }
+  } // end of MFrontBase::treatVerbose
 
   void MFrontBase::treatUnicodeOutput() {
     const auto& o = this->getCurrentCommandLineArgument().getOption();

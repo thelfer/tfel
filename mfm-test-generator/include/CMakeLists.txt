@@ -1,0 +1,5 @@
+install_mfm_header(MFMTestGenerator Config.hxx)
+install_mfm_header(MFMTestGenerator AbstractTestCase.hxx)
+install_mfm_header(MFMTestGenerator AbstractTestCaseFactory.hxx)
+install_mfm_header(MFMTestGenerator TestCaseParameters.hxx)
+install_mfm_header(MFMTestGenerator UniaxialTensileTest.hxx)

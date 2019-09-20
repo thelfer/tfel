@@ -22,21 +22,12 @@
 #define TFEL_CYRANO_INLINE2 inline
 #endif /* LIB_TFEL_CYRANO_MFRONT_CYRANO_HXX */
 
+#include "Cyrano/Types.hxx"
+
 namespace cyrano{
 
-#if CYRANO_ARCH == 64
-#ifdef _WIN64
-  using CyranoInt = long long;
-#else
-  using CyranoInt = long;
-#endif /* LIB_TFEL_CYRANO_MFRONT_CYRANO_HXX */
-#elif CYRANO_ARCH == 32
-  using CyranoInt = int;
-#else
-  #error "cyrano : unsupported machine type"
-#endif /* LIB_TFEL_CYRANO_MFRONT_CYRANO_HXX */
-
-  using CyranoReal = double;
+  using CyranoInt = ::CyranoIntegerType;
+  using CyranoReal = ::CyranoRealType;
 
   /*!
    * prototype of a function handling stress-free expansion at the

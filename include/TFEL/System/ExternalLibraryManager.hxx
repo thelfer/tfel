@@ -357,9 +357,34 @@ namespace tfel {
                                                          const std::string&);
       /*!
        * \param[in] l : name of the library
+       * \param[in] f : function name
+       */
+      unsigned short getCyranoMaterialPropertyNumberOfVariables(
+          const std::string&, const std::string&);
+      /*!
+       * \param[in] l : name of the library
+       * \param[in] f : function name
+       */
+      std::vector<std::string> getCyranoMaterialPropertyVariables(
+          const std::string&, const std::string&);
+      /*!
+       * \param[out] n: names of  the variables
+       * \param[in] l : name of the library
+       * \param[in] f : function name
+       */
+      void getCyranoMaterialPropertyVariables(std::vector<std::string>&,
+                                              const std::string&,
+                                              const std::string&);
+      /*!
+       * \param[in] l : name of the library
        * \param[in] f : law name
        */
-      CyranoFctPtr getCyranoFunction(const std::string&, const std::string&);
+      CyranoMaterialPropertyPtr getCyranoMaterialProperty(const std::string&, const std::string&);
+      /*!
+       * \param[in] l : name of the library
+       * \param[in] f : law name
+       */
+      CyranoBehaviourPtr getCyranoFunction(const std::string&, const std::string&);
       /*!
        * \param[in] l : name of the library
        * \param[in] f : law name
@@ -634,14 +659,12 @@ namespace tfel {
        */
       unsigned short getCastemFunctionNumberOfVariables(const std::string&,
                                                         const std::string&);
-
       /*!
        * \param[in] l : name of the library
        * \param[in] f : function name
        */
       std::vector<std::string> getCastemFunctionVariables(const std::string&,
                                                           const std::string&);
-
       /*!
        * \param[in] l : name of the library
        * \param[in] f : function name
@@ -649,7 +672,6 @@ namespace tfel {
       void getCastemFunctionVariables(std::vector<std::string>&,
                                       const std::string&,
                                       const std::string&);
-
       /*!
        * load a function from a library
        * \param l : library  name

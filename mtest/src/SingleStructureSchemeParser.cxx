@@ -19,6 +19,7 @@
 #include "MTest/Behaviour.hxx"
 #include "MTest/Evolution.hxx"
 #include "MTest/CastemEvolution.hxx"
+#include "MTest/CyranoEvolution.hxx"
 #include "MTest/FunctionEvolution.hxx"
 #include "MTest/SingleStructureSchemeParser.hxx"
 
@@ -206,7 +207,8 @@ namespace mtest {
                              this->tokens.end());
     this->checkNotEndOfLine("SingleStructureSchemeParser::handleMaterialProperty", p,
                             this->tokens.end());
-    if ((p->value == "constant") || (p->value == "castem") || (p->value == "function")) {
+    if ((p->value == "constant") || (p->value == "castem") ||
+        (p->value == "cyrano") || (p->value == "function")) {
       i = p->value;
     } else {
       tfel::raise(
@@ -235,6 +237,13 @@ namespace mtest {
       const string l = this->readString(p, this->tokens.end());
       const string f = this->readString(p, this->tokens.end());
       mpev = shared_ptr<Evolution>(new CastemEvolution(l, f, t.getEvolutions()));
+      t.setMaterialProperty(n, mpev, true);
+    } else if (i == "cyrano") {
+      shared_ptr<Evolution> mpev;
+      const string l = this->readString(p, this->tokens.end());
+      const string f = this->readString(p, this->tokens.end());
+      mpev =
+          shared_ptr<Evolution>(new CyranoEvolution(l, f, t.getEvolutions()));
       t.setMaterialProperty(n, mpev, true);
     } else {
       tfel::raise(

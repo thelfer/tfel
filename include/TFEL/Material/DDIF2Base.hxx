@@ -133,7 +133,6 @@ namespace tfel {
        * \param[in] em:  maximum crack strain at the beginning of the time step
        * \param[in] e: current estimate of the crack strain
        * \param[in] smax: elastic limit
-       * \param[in] H: softening modulus (expect a negative value)
        * \param[in] seps: tolerance on the stress state
        * \param[in] eeps: tolerance on the strain state
        * \return a boolean stating if the state of the material is constitent
@@ -148,7 +147,6 @@ namespace tfel {
                                         const Stensor&,
                                         const strain&,
                                         const strain&,
-                                        const stress&,
                                         const stress&,
                                         const stress&,
                                         const strain&);

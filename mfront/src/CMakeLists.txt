@@ -399,6 +399,7 @@ endif(HAVE_ZMAT)
 
 if(HAVE_CYRANO)
   set(TFELMFront_SOURCES
+    CyranoMaterialPropertyInterface.cxx
     CyranoInterface.cxx
     CyranoSymbolsGenerator.cxx
     ${TFELMFront_SOURCES})

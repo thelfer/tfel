@@ -520,6 +520,7 @@ then
 fi
 
 #cyrano
+CHECK_CYRANO_MACHINE_TYPE
 AC_ARG_ENABLE([cyrano],
                AC_HELP_STRING([--enable-cyrano],
 		   [build cyrano interface for mechanical behaviours]),
@@ -529,7 +530,6 @@ AM_CONDITIONAL(HAVE_CYRANO,[test x"$enable_cyrano" = "xtrue"])
 if(test "x$enable_cyrano" = "xtrue")
 then
     AC_DEFINE(HAVE_CYRANO)
-    CHECK_CYRANO_MACHINE_TYPE
 fi
 
 # comsol
@@ -3154,8 +3154,14 @@ AC_OUTPUT([debug.sh Makefile Doxyfile docs/Makefile docs/tfel/Makefile
 	   mfront/tests/models/interfaces/src/Makefile
 	   mfront/Examples/Makefile mfront-query/Makefile
 	   mfront-query/src/Makefile mfront-query/include/Makefile
-	   mfront-query/tests/Makefile mfm/Makefile mfm/src/Makefile
-	   mfm/tests/Makefile mfront-doc/Makefile
+	   mfront-query/tests/Makefile
+	   mfm/Makefile
+	   mfm/src/Makefile
+	   mfm/tests/Makefile
+	   mfm-test-generator/Makefile
+	   mfm-test-generator/include/Makefile
+	   mfm-test-generator/src/Makefile
+	   mfront-doc/Makefile
 	   mfront-doc/src/Makefile mfront-doc/include/Makefile
 	   mtest/Makefile mtest/src/Makefile mtest/include/Makefile
 	   mtest/tests/Makefile mtest/tests/unit-tests/Makefile

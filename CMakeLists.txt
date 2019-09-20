@@ -221,12 +221,12 @@ if(enable-zmat)
 endif(enable-zmat)
 
 #cyrano
+include(cmake/modules/cyrano.cmake)
 option(enable-cyrano "build cyrano interface for mechanical behaviours" OFF)
 if(enable-cyrano)
   message(STATUS "cyrano support enabled")
   set(HAVE_CYRANO ON)
   add_definitions("-DHAVE_CYRANO=1")
-  include(cmake/modules/cyrano.cmake)
 endif(enable-cyrano)
 
 #castem
@@ -439,6 +439,7 @@ endif(UNIX AND (NOT CYGWIN) AND (NOT MSYS))
 add_subdirectory(mfront)
 add_subdirectory(mfront-query)
 add_subdirectory(mfm)
+add_subdirectory(mfm-test-generator)
 add_subdirectory(mfront-doc)
 add_subdirectory(mtest)
 add_subdirectory(tests)

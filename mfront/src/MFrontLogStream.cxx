@@ -77,6 +77,26 @@ namespace mfront {
     getVerboseMode() = l;
   }  // end of setVerboseMode
 
+  void setVerboseMode(const std::string& l) {
+    if (l == "quiet") {
+      setVerboseMode(VERBOSE_QUIET);
+    } else if (l == "level0") {
+      setVerboseMode(VERBOSE_LEVEL0);
+    } else if (l == "level1") {
+      setVerboseMode(VERBOSE_LEVEL1);
+    } else if (l == "level2") {
+      setVerboseMode(VERBOSE_LEVEL2);
+    } else if (l == "level3") {
+      setVerboseMode(VERBOSE_LEVEL3);
+    } else if (l == "debug") {
+      setVerboseMode(VERBOSE_DEBUG);
+    } else if (l == "full") {
+      setVerboseMode(VERBOSE_FULL);
+    } else {
+      tfel::raise("setVerboseMode: insupported verbose level '" + l + "'");
+    }
+  } // end of setVerboseMode
+
   std::ostream& getLogStream() {
     auto& log = LogStream::getLogStream();
     return log.getStream();
@@ -97,15 +117,15 @@ namespace mfront {
     static bool& getUnicodeOutputOption() {
       static bool b = true;
       return b;
-    } // end of getUnicodeOutputOption()
-  } // end of namespace internals
+    }  // end of getUnicodeOutputOption()
+  }    // end of namespace internals
 
   void setUnicodeOutputOption(const bool b) {
     mfront::internals::getUnicodeOutputOption() = b;
-  } // end of setUnicodeOutputOption
+  }  // end of setUnicodeOutputOption
 
   bool getUnicodeOutputOption() {
     return mfront::internals::getUnicodeOutputOption();
-  } // end of getUnicodeOutputOption
+  }  // end of getUnicodeOutputOption
 
 }  // end of namespace mfront

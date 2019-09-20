@@ -945,7 +945,54 @@ namespace tfel {
       return fct;
     }
 
-    CyranoFctPtr ExternalLibraryManager::getCyranoFunction(
+    unsigned short ExternalLibraryManager::getCyranoMaterialPropertyNumberOfVariables(
+        const std::string& l, const std::string& f) {
+      const auto lib = this->loadLibrary(l);
+      const auto res =
+          ::tfel_getCyranoMaterialPropertyNumberOfVariables(lib, f.c_str());
+      raise_if(res < 0,
+               "ExternalLibraryManager::getCyranoMaterialPropertyNumberOfVariables: "
+               "number of variables could not be read (" +
+                   getErrorMessage() + ")");
+      return static_cast<unsigned short>(res);
+    }
+
+    std::vector<std::string> ExternalLibraryManager::getCyranoMaterialPropertyVariables(
+        const std::string& l, const std::string& f) {
+      std::vector<std::string> vars;
+      this->getCyranoMaterialPropertyVariables(vars, l, f);
+      return vars;
+    }  // end of ExternalLibraryManager::getCyranoMaterialPropertyVariables
+
+    void ExternalLibraryManager::getCyranoMaterialPropertyVariables(
+        std::vector<std::string>& vars,
+        const std::string& l,
+        const std::string& f) {
+      const auto lib = this->loadLibrary(l);
+      unsigned short nb = this->getCyranoMaterialPropertyNumberOfVariables(l, f);
+      char** res = ::tfel_getCyranoMaterialPropertyVariables(lib, f.c_str());
+      char** p;
+      raise_if(res == nullptr,
+               "ExternalLibraryManager::getCyranoMaterialPropertyNumberOfVariables: "
+               " variables names could not be read (" +
+                   getErrorMessage() + ")");
+      for (p = res; p != res + nb; ++p) {
+        vars.emplace_back(*p);
+      }
+    }  // end of ExternalLibraryManager::getCyranoMaterialPropertyVariables
+
+    CyranoMaterialPropertyPtr ExternalLibraryManager::getCyranoMaterialProperty(
+        const std::string& l, const std::string& f) {
+      const auto lib = this->loadLibrary(l);
+      const auto fct = ::tfel_getCyranoMaterialProperty(lib, f.c_str());
+      raise_if(fct == nullptr,
+               "ExternalLibraryManager::getCyranoMaterialProperty: "
+               "could not load Cyrano function '" +
+	       f +"' (" +getErrorMessage() + ")");
+      return fct;
+    }
+    
+    CyranoBehaviourPtr ExternalLibraryManager::getCyranoFunction(
         const std::string& l, const std::string& f) {
       const auto lib = this->loadLibrary(l);
       const auto fct = ::tfel_getCyranoFunction(lib, f.c_str());

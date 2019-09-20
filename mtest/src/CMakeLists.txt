@@ -27,6 +27,7 @@ set(TFELMTest_SOURCES
   ReferenceFileComparisonTest.cxx
   Evolution.cxx
   CastemEvolution.cxx
+  CyranoEvolution.cxx
   FunctionEvolution.cxx
   Behaviour.cxx
   BehaviourWorkSpace.cxx

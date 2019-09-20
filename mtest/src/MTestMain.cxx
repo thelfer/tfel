@@ -170,8 +170,7 @@ namespace mtest
 #endif
   }
 
-  void MTestMain::treatScheme()
-  {
+  void MTestMain::treatScheme() {
     tfel::raise_if(this->currentArgument->getOption().empty(),
 		   "MTestMain::treatScheme: "
 		   "no option given");
@@ -225,46 +224,29 @@ namespace mtest
   } // end of MTestMain::treatBacktrace()
 #endif
 
-  void MTestMain::treatVerbose()
-  {
+  void MTestMain::treatVerbose() {
     if(this->currentArgument->getOption().empty()){
       mfront::setVerboseMode(mfront::VERBOSE_LEVEL1);
     } else {
-      const auto& option = this->currentArgument->getOption();
-      if(option=="quiet"){
-	mfront::setVerboseMode(mfront::VERBOSE_QUIET);
-      } else if(option=="level0"){
-	mfront::setVerboseMode(mfront::VERBOSE_LEVEL0);
-      } else if(option=="level1"){
-	mfront::setVerboseMode(mfront::VERBOSE_LEVEL1);
-      } else if (option=="level2"){
-	mfront::setVerboseMode(mfront::VERBOSE_LEVEL2);
-      } else if (option=="level3"){
-	mfront::setVerboseMode(mfront::VERBOSE_LEVEL3);
-      } else if (option=="debug"){
-	mfront::setVerboseMode(mfront::VERBOSE_DEBUG);
-      } else if (option=="full"){
-	mfront::setVerboseMode(mfront::VERBOSE_FULL);
-      } else {
-	tfel::raise("MTestMain::treatVerbose : "
-		    "unknown option '"+option+"'");
-      }
+      const auto& l = this->currentArgument->getOption();
+      mfront::setVerboseMode(l);
     }
   } // end of MTestMain::treatVerbose
 
-  void MTestMain::treatXMLOutput()
-  {
-    if(this->currentArgument->getOption().empty()){
+  void MTestMain::treatXMLOutput() {
+    if (this->currentArgument->getOption().empty()) {
       this->xml_output = true;
     } else {
       const auto& option = this->currentArgument->getOption();
-      if(option=="true"){
-	this->xml_output = true;
+      if (option == "true") {
+        this->xml_output = true;
       } else if(option=="false"){
-	this->xml_output = false;
+        this->xml_output = false;
       } else {
-	tfel::raise("MTestMain::treatXMLOutput: "
-		    "unknown option '"+option+"'");
+        tfel::raise(
+            "MTestMain::treatXMLOutput: "
+            "unknown option '" +
+            option + "'");
       }
     }
   } // end of MTestMain::treatXMLOutput

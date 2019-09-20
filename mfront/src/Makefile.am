@@ -241,10 +241,11 @@ libTFELMFront_la_SOURCES += ZMATInterface.cxx
 endif
 
 if HAVE_CYRANO
-libTFELMFront_la_SOURCES += CyranoInterface.cxx        \
+libTFELMFront_la_SOURCES += CyranoMaterialPropertyInterface.cxx \
+                            CyranoInterface.cxx                 \
                             CyranoSymbolsGenerator.cxx
 endif
-libTFELMFront_la_CPPFLAGS = $(AM_CPPFLAGS) -DTFELMTest_EXPORTS
+libTFELMFront_la_CPPFLAGS = $(AM_CPPFLAGS) -DTFELMFront_EXPORTS
 
 libTFELMFront_la_LIBADD  = -L$(top_builddir)/mfront/src -lMFrontLogStream      \
 	   	           -L$(top_builddir)/src/Material  -lTFELMaterial            \

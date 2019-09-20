@@ -19,6 +19,7 @@ libTFELMTest_la_SOURCES = RoundingMode.cxx              \
 			  ReferenceFileComparisonTest.cxx           \
 			  Evolution.cxx                             \
 			  CastemEvolution.cxx                       \
+			  CyranoEvolution.cxx                       \
 			  FunctionEvolution.cxx                     \
 			  Behaviour.cxx                             \
 			  BehaviourWorkSpace.cxx                    \
