@@ -46,6 +46,9 @@ namespace mfront{
      */
     void getKeywordsList(std::vector<std::string>&) const override;
 
+    
+    virtual void addHook(const std::string&, const Hook);
+
   protected:
     
     typedef void (Child::* MemberFuncPtr)();

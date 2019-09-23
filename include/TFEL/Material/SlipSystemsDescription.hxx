@@ -1,96 +1,95 @@
 /*!
  * \file   SlipSystemsDescription.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   09 juin 2017
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_TFEL_MATERIAL_SLIPSYSTEMSDESCRIPTION_HXX
 #define LIB_TFEL_MATERIAL_SLIPSYSTEMSDESCRIPTION_HXX
 
-#include<array>
-#include"TFEL/Config/TFELConfig.hxx"
-#include"TFEL/Utilities/GenTypeBase.hxx"
-#include"TFEL/Material/CrystalStructure.hxx"
+#include <array>
+#include "TFEL/Config/TFELConfig.hxx"
+#include "TFEL/Utilities/GenTypeBase.hxx"
+#include "TFEL/Material/CrystalStructure.hxx"
 
-namespace tfel{
+namespace tfel {
 
-  namespace material{
+  namespace material {
 
     /*!
      * \brief a class handling the description of a slip system
      * This is a small wrapper around the TFELNUMODIS library.
      */
-    struct TFELMATERIAL_VISIBILITY_EXPORT SlipSystemsDescription
-    {
+    struct TFELMATERIAL_VISIBILITY_EXPORT SlipSystemsDescription {
       //! a simple alias
-      using vec3d  = std::array<int,3u>;
+      using vec3d = std::array<int, 3u>;
       //! a simple alias
-      using vec4d  = std::array<int,4u>;
+      using vec4d = std::array<int, 4u>;
       //! a simple alias
-      using vector = std::array<long double,3u>;
+      using vector = std::array<long double, 3u>;
       //! a simple alias
-      using tensor = std::array<long double,9u>;
-      //! 
-      struct system3d{
-	vec3d burgers;
-	vec3d plane;
+      using tensor = std::array<long double, 9u>;
+      //!
+      struct system3d {
+        vec3d burgers;
+        vec3d plane;
       };
-      //! 
-      struct system4d{
-	vec4d burgers;
-	vec4d plane;
+      //!
+      struct system4d {
+        vec4d burgers;
+        vec4d plane;
       };
       //! a simple alias
-      using vec = tfel::utilities::GenType<vec3d,vec4d>;
+      using vec = tfel::utilities::GenType<vec3d, vec4d>;
       //! a simple alias
-      using system = tfel::utilities::GenType<system3d,system4d>;
+      using system = tfel::utilities::GenType<system3d, system4d>;
       //! a simple alias
       using size_type = std::vector<system3d>::size_type;
       //! list of all supported interaction matrix model
-      enum InteractionMatrixModel{
-	NONE,
-	DUPUY2017
-      }; // end of InteractionMatrixModel
-      /*!
-       * \brief structure describing the structure of the interaction
-       * matrix.
-       */
-      struct TFELMATERIAL_VISIBILITY_EXPORT InteractionMatrixStructure
-      {
-	/*!
-	 * \brief structure descrbing the interaction of two sliding
-	 * systems.
-	 */
-	struct SlidingSystemsInteraction{
-	  system g1;
-	  system g2;
-	};
-	using SSIContainer = std::vector<std::vector<SlidingSystemsInteraction>>;
-	//! constructor
-	InteractionMatrixStructure(const SSIContainer&);
-	//! move constructor
-	InteractionMatrixStructure(InteractionMatrixStructure&&);
-	//! copy constructor
-	InteractionMatrixStructure(const InteractionMatrixStructure&);
-	//! \return the number of independant coefficients 
-	size_type rank() const;
-	//! \return get the rank of a pair of systems
-	size_type getRank(const system&,
-			  const system&) const;
-	//! \return the sliding system interaction, sorted by rank
-	const SSIContainer& getSlidingSystemsInteraction() const;
-	//! destructor
-	~InteractionMatrixStructure();
-      private:
-	//! \brief sliding system sorted by rank
-	const SSIContainer ranks;
+      enum InteractionMatrixModel {
+        NONE,
+        DUPUY2017
+      };  // end of InteractionMatrixModel
+          /*!
+           * \brief structure describing the structure of the interaction
+           * matrix.
+           */
+      struct TFELMATERIAL_VISIBILITY_EXPORT InteractionMatrixStructure {
+        /*!
+         * \brief structure descrbing the interaction of two sliding
+         * systems.
+         */
+        struct SlidingSystemsInteraction {
+          system g1;
+          system g2;
+        };
+        using SSIContainer =
+            std::vector<std::vector<SlidingSystemsInteraction>>;
+        //! constructor
+        InteractionMatrixStructure(const SSIContainer&);
+        //! move constructor
+        InteractionMatrixStructure(InteractionMatrixStructure&&);
+        //! copy constructor
+        InteractionMatrixStructure(const InteractionMatrixStructure&);
+        //! \return the number of independant coefficients
+        size_type rank() const;
+        //! \return get the rank of a pair of systems
+        size_type getRank(const system&, const system&) const;
+        //! \return the sliding system interaction, sorted by rank
+        const SSIContainer& getSlidingSystemsInteraction() const;
+        //! destructor
+        ~InteractionMatrixStructure();
+
+       private:
+        //! \brief sliding system sorted by rank
+        const SSIContainer ranks;
       };
       /*!
        * \param[in] s:  crystal structure
@@ -112,12 +111,12 @@ namespace tfel{
        * \param[in] b: Burgers' vector
        * \param[in] p: plane
        */
-      void addSlipSystemsFamily(const vec3d&,const vec3d&);
+      void addSlipSystemsFamily(const vec3d&, const vec3d&);
       /*!
        * \param[in] b: Burgers' vector
        * \param[in] p: plane normal
        */
-      void addSlipSystemsFamily(const vec4d&,const vec4d&);
+      void addSlipSystemsFamily(const vec4d&, const vec4d&);
       //! \return the number of slip systems families
       size_type getNumberOfSlipSystemsFamilies() const;
       /*!
@@ -140,21 +139,21 @@ namespace tfel{
       //! \return all the slip systems, sorted by family
       std::vector<std::vector<system>> getSlipSystems() const;
       //! \return the normals to the slip planes, sorted by family
-      std::vector<std::vector<vector>> getSlipPlaneNormals() const;      
+      std::vector<std::vector<vector>> getSlipPlaneNormals() const;
       /*!
        * \return the normals to the slip plane associated with the ith family
        * \param[in] i: index
        */
       std::vector<vector> getSlipPlaneNormals(const size_type) const;
       //! \return the unit vectors giving the slip direction, sorted by family
-      std::vector<std::vector<vector>> getSlipDirections() const;      
+      std::vector<std::vector<vector>> getSlipDirections() const;
       /*!
        * \return the  unit vectors giving the slip direction the ith family
        * \param[in] i: index
        */
       std::vector<vector> getSlipDirections(const size_type) const;
       //! \return the orientation tensors, sorted by family
-      std::vector<std::vector<tensor>> getOrientationTensors() const;      
+      std::vector<std::vector<tensor>> getOrientationTensors() const;
       /*!
        * \return the orientation tensors associated with the ith family
        * \param[in] i: index
@@ -164,15 +163,14 @@ namespace tfel{
        * \return the Schmid factor, sorted by family
        * \param[in] d: direction
        */
-      std::vector<std::vector<long double>>
-      getSchmidFactors(const vec) const;      
+      std::vector<std::vector<long double>> getSchmidFactors(const vec) const;
       /*!
        * \return the Schmid factors associated with the ith family
        * \param[in] d: direction
        * \param[in] i: index
        */
       std::vector<long double> getSchmidFactors(const vec,
-						const size_type) const;
+                                                const size_type) const;
       /*!
        * \return a structure defining the structure of the
        * interaction matrix
@@ -197,24 +195,29 @@ namespace tfel{
        * \brief set the interaction matrix
        * \param[in] v: values
        */
-      void setDislocationsMeanFreePathInteractionMatrix(const std::vector<long double>&);
+      void setDislocationsMeanFreePathInteractionMatrix(
+          const std::vector<long double>&);
       //! \return the interaction matrix
       const std::vector<long double>&
       getDislocationsMeanFreePathInteractionMatrix() const;
       //! destructor
       ~SlipSystemsDescription();
-    private:
+
+     private:
       //! gliding systems
-      tfel::utilities::GenType<std::vector<system3d>,
-			       std::vector<system4d>> gs;
+      tfel::utilities::GenType<std::vector<system3d>, std::vector<system4d>> gs;
       //! the crystal structure
       const CrystalStructure cs;
       //! \brief the interaction matrix
       std::vector<long double> m;
-    }; // end of SlipSystemsDescription
-    
-  } // end of namespace material
+      /*! \brief matrix standing for the effects of the dislocations on the mean
+       * free path of a dislocation.
+       */
+      std::vector<long double> mfpm;
+    };  // end of SlipSystemsDescription
 
-} // end of namespace tfel
+  }  // end of namespace material
+
+}  // end of namespace tfel
 
 #endif /* LIB_TFEL_MATERIAL_SLIPSYSTEMSDESCRIPTION_HXX */

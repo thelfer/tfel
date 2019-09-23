@@ -92,6 +92,31 @@ namespace mfront{
     eel.description = "elastic strain";
     this->bd.addIntegrationVariable(h,eel,BehaviourData::UNREGISTRED);
     this->bd.setGlossaryName(h,"eel",tfel::glossary::Glossary::ElasticStrain);
+    // declaring the plastic slip
+    auto add_plastic_slips = [this, throw_if, h] {
+      throw_if(
+          this->bd.getBehaviourData(h).getIntegrationVariables().size() != 1u,
+          "no integration variable shall be declared before declaring the "
+          "'FiniteStrainSingleCrystal' brick");
+      const auto& ss = this->bd.getSlipSystems();
+      VariableDescription g("strain", "g", ss.getNumberOfSlipSystems(), 0u);
+      g.description = "plastic slip";
+      this->bd.addStateVariable(h, g, BehaviourData::UNREGISTRED);
+      this->bd.setEntryName(h, "g", "PlasticSlip");
+    };
+    if ((!this->bd.hasCrystalStructure()) ||
+        (!this->bd.areSlipSystemsDefined())) {
+      // no slip systems defined, yet
+      auto& idsl = dynamic_cast<ImplicitDSLBase&>(this->dsl);
+      idsl.addHook("@SlipSystem", add_plastic_slips);
+      idsl.addHook("@GlidingSystem", add_plastic_slips);
+      idsl.addHook("@SlidingSystem", add_plastic_slips);
+      idsl.addHook("@SlipSystems", add_plastic_slips);
+      idsl.addHook("@GlidingSystems", add_plastic_slips);
+      idsl.addHook("@SlidingSystems", add_plastic_slips);
+    } else {
+      add_plastic_slips();
+    }
     // declaring the elastic part of the deformation gradient
     VariableDescription Fe("DeformationGradientTensor","Fe",1u,0u);
     if(this->bd.getAttribute<bool>(FiniteStrainSingleCrystalBrick::shiftedDeformationGradientAttribute,false)){
@@ -111,8 +136,6 @@ namespace mfront{
     this->bd.setAttribute(h,BehaviourData::hasConsistentTangentOperator,true);
     // reserve some specific variables
     this->bd.reserveName(h,"ss");
-    this->bd.registerMemberName(h,"g");
-    this->bd.reserveName(h,"fg");
     this->bd.reserveName(h,"fsscb_data");
     this->bd.reserveName(h,"fsscb_tprd");
     this->bd.reserveName(h,"fsscb_dfeel_dinv_dFp");
@@ -130,15 +153,20 @@ namespace mfront{
   void FiniteStrainSingleCrystalBrick::completeVariableDeclaration() const
   {
     using tfel::glossary::Glossary; 
-    auto throw_if = [](const bool b,const std::string& m){
-      tfel::raise_if(b,"FiniteStrainSingleCrystalBrick:"
-		     ":completeVariableDeclaration: "+m);
-    };
     const auto h = ModellingHypothesis::TRIDIMENSIONAL;
+        auto throw_if = [](const bool b, const std::string& m) {
+      tfel::raise_if(b,
+                     "FiniteStrainSingleCrystalBrick:"
+                     ":completeVariableDeclaration: " +
+                         m);
+    };
     if(getVerboseMode()>=VERBOSE_DEBUG){
       getLogStream() << "FiniteStrainSingleCrystalBrick::completeVariableDeclaration: begin\n";
     }
-    // defining the stiffness tensor, if necessary
+    // various checks
+    throw_if(!this->bd.hasCrystalStructure(), "no crystal structure defined");
+    throw_if(!this->bd.areSlipSystemsDefined(),"no slip systems defined");
+   // defining the stiffness tensor, if necessary
     if((!this->bd.getAttribute(BehaviourDescription::requiresStiffnessTensor,false))&&
        (!this->bd.getAttribute(BehaviourDescription::computesStiffnessTensor,false))){
       this->bd.setAttribute(BehaviourDescription::requiresStiffnessTensor,true,false);
@@ -154,15 +182,6 @@ namespace mfront{
     d.addVariable(h,{"real","J_inv_dFp"});
     d.addVariable(h,{"StrainStensor","tmp"});
     this->bd.addLocalDataStructure(d,BehaviourData::ALREADYREGISTRED);
-    // various checks
-    throw_if(!this->bd.hasCrystalStructure(),"no crystal structure defined");
-    throw_if(!this->bd.areSlipSystemsDefined(),"no slip systems defined");
-    const auto& ss = this->bd.getSlipSystems();
-    // declaring the plastic slip
-    VariableDescription g("strain","g",ss.getNumberOfSlipSystems(),0u);
-    g.description = "plastic slip";
-    this->bd.addStateVariable(h,g,BehaviourData::ALREADYREGISTRED);
-    this->bd.setEntryName(h,"g","PlasticSlip");
     if(getVerboseMode()>=VERBOSE_DEBUG){
       getLogStream() << "FiniteStrainSingleCrystalBrick::completeVariableDeclaration: end\n";
     }

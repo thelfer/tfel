@@ -216,6 +216,12 @@ namespace mfront{
 	  ++(this->current);
 	  try{
 	    ((static_cast<Child *>(this))->*handler)();
+            const auto ph = this->hooks.find(k);
+            if (ph != this->hooks.end()) {
+              for (auto& hook : ph->second) {
+                hook();
+              }
+            }
 	  }
 	  catch (std::exception& e){
 	    std::ostringstream msg;
@@ -250,6 +256,15 @@ namespace mfront{
     this->parseString(s);
     this->analyse();
   } // end of BehaviourDSLCommon::analyseString
+
+  template <typename Child>
+  void BehaviourDSLBase<Child>::addHook(const std::string& k, const Hook h) {
+    if (this->callBacks.find(k) == this->callBacks.end()) {
+      this->throwRuntimeError("BehaviourDSLBase::addHook",
+                              "no callback called '" + k + "'");
+    }
+    this->hooks[k].push_back(h);
+  }  // end of BehaviourDSLBase<Child>::addHook
   
   template<typename Child>
   BehaviourDSLBase<Child>::~BehaviourDSLBase() = default;
