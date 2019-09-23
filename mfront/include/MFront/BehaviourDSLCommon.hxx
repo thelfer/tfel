@@ -47,8 +47,9 @@ namespace mfront{
       public SupportedTypes
   {
     //! a simple alias
-    using OrthotropicAxesConvention =
-      tfel::material::OrthotropicAxesConvention;
+    using OrthotropicAxesConvention = tfel::material::OrthotropicAxesConvention;
+    //! a simple alias
+    using Hook = std::function<void()>;
     //! \return the behaviour description
     virtual const BehaviourDescription&
     getBehaviourDescription() const override final;
@@ -1296,8 +1297,10 @@ namespace mfront{
     //! the list of registred keywords
     std::set<std::string> registredKeyWords;
     //! list of registred interfaces, indexed by their name
-    std::map<std::string,
-	     std::shared_ptr<AbstractBehaviourInterface>> interfaces;
+    std::map<std::string, std::shared_ptr<AbstractBehaviourInterface>>
+        interfaces;
+    //! \brief hooks assigned to callbacks
+    std::map<std::string, std::vector<Hook>> hooks;
     /*!
      * local variables initalizers. This variable to initialize local
      * variables defined by domains specific languages and shall not

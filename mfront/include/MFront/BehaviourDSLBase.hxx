@@ -32,22 +32,22 @@ namespace mfront{
      * substitutions are given through command-line options such as
      * `--@YYY@=XXX`)
      */
-    virtual void
-    importFile(const std::string&,
-	       const std::vector<std::string>&,
-	       const std::map<std::string,std::string>&) override;
+    void importFile(const std::string&,
+		    const std::vector<std::string>&,
+		    const std::map<std::string,std::string>&) override;
     /*!
      * \brief analyse the specified string.
      * \param[in] s : analyse a string
      */
-    virtual void
-    analyseString(const std::string&) override;
+    void analyseString(const std::string&) override;
     /*!
      * \brief return the list of keywords usable with this parser
      * \param[out] k : the list of keywords registred for this parser
      */
-    virtual void
-    getKeywordsList(std::vector<std::string>&) const override;
+    void getKeywordsList(std::vector<std::string>&) const override;
+
+    
+    virtual void addHook(const std::string&, const Hook);
 
   protected:
     
