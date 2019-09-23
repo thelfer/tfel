@@ -287,11 +287,11 @@ namespace mfront {
               std::string(n) + "' shall not be defined");
         }
       };
-      auto get_mp = [&dsl, &bd, &d, check](const char* const n) {
+      auto get_mp = [&dsl, &d, check](const char* const n) {
         check(n);
         return getBehaviourDescriptionMaterialProperty(dsl, n, d.at(n));
       };
-      auto addTi = [&bd, &d, &uh]() {
+      auto addTi = [&bd, &d]() {
         const auto n = "initial_geometry_reference_temperature";
         const auto v = [&d, &n] {
           if (d.count(n) != 0) {
@@ -307,7 +307,7 @@ namespace mfront {
         bd.setParameterDefaultValue(uh, n, v);
         bd.setEntryName(uh, n, "ReferenceTemperatureForInitialGeometry");
       };  // end of addTi
-      auto addTref = [&bd, &d, &uh]() {
+      auto addTref = [&bd, &d]() {
         const auto n = "thermal_expansion_reference_temperature";
         const auto v = [&d, &n] {
           if (d.count(n) != 0) {

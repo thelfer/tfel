@@ -51,6 +51,8 @@ namespace mfront {
         public DSLBase,
         public SupportedTypes {
     //! a simple alias
+    using Hook = std::function<void()>;
+    //! a simple alias
     using OrthotropicAxesConvention = tfel::material::OrthotropicAxesConvention;
     //! \return the behaviour description
     const BehaviourDescription& getBehaviourDescription() const override final;
@@ -101,6 +103,8 @@ namespace mfront {
     virtual void declareMainVariables();
 
     void endsInputFileProcessing() override;
+
+    virtual void addHook(const std::string&, const Hook);
     /*!
      * \brief return the list of keywords usable with this parser
      * \param[out] k : the list of keywords registred for this parser
@@ -245,6 +249,7 @@ namespace mfront {
     virtual void disableCallBack(const std::string&);
 
     virtual void addCallBack(const std::string&, const CallBack);
+
     /*!
      * \brief get all symbols required to interpret the given code block.
      * \param[out] symbols: symbols
@@ -1257,6 +1262,8 @@ namespace mfront {
         interfaces;
     //! \brief list of call backs
     std::map<std::string, CallBack> callBacks;
+    //! \brief hooks assigned to callbacks
+    std::map<std::string, std::vector<Hook>> hooks;
     //! \brief list of declared gradients
     std::vector<Gradient> gradients;
     //! \brief list of declared thermodynamic forces

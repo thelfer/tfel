@@ -99,7 +99,7 @@ namespace mfront{
     auto c = p;
     auto r = tfel::utilities::CxxTokenizer::readStringArray(c,pe);
     for(auto&s : r){
-      s = tfel::utilities::replace_all(s,"\\\"","\"");;
+      s = tfel::utilities::replace_all(s,"\\\"","\"");
     }
     p=c;
     return r;

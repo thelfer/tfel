@@ -122,7 +122,7 @@ namespace tfel{
       dTdF(0,1)=F[0]*((F[3]*dSdF(3,1))*icste+F[0]*dSdF(0,1))+F[3]*((F[0]*dSdF(3,1))*icste+F[3]*dSdF(1,1));
       dTdF(1,1)=F[1]*((F[4]*dSdF(3,1))*icste+F[1]*dSdF(1,1)+S[1])+F[4]*((F[1]*dSdF(3,1))*icste+(S[3])*icste+F[4]*dSdF(0,1))+(F[4]*S[3])*icste+F[1]*S[1];
       dTdF(2,1)=F[2]*F[2]*dSdF(2,1);
-      dTdF(3,1)=(F[3]*F[4]+F[0]*F[1])*dSdF(3,1)+F[0]*S[3]+cste*F[1]*F[3]*dSdF(1,1)+cste*F[3]*S[1]+cste*F[0]*F[4]*dSdF(0,1);;
+      dTdF(3,1)=(F[3]*F[4]+F[0]*F[1])*dSdF(3,1)+F[0]*S[3]+cste*F[1]*F[3]*dSdF(1,1)+cste*F[3]*S[1]+cste*F[0]*F[4]*dSdF(0,1);
       // derivative with respect to F2
       dTdF(0,2)=F[0]*((F[3]*dSdF(3,2))*icste+F[0]*dSdF(0,2))+F[3]*((F[0]*dSdF(3,2))*icste+F[3]*dSdF(1,2));
       dTdF(1,2)=F[1]*((F[4]*dSdF(3,2))*icste+F[1]*dSdF(1,2))+F[4]*((F[1]*dSdF(3,2))*icste+F[4]*dSdF(0,2));

@@ -135,7 +135,7 @@ namespace tfel
 	    ++p3;
 	    for(;p3!=k.second.end();++p3){
 	      key2 = getKeyValue(*p3,l);
-	      out << getIndexCommand(key1,key2,"general") << endl;;
+	      out << getIndexCommand(key1,key2,"general") << endl;
 	      out << " & " << capitalize(key2) << "\\\\\n";
 	    }
 	  }
@@ -197,16 +197,16 @@ namespace tfel
     static void
     writeLaTeXHeader(std::ostream& out,
 		     const std::string& l){
-      out << "\\documentclass[a4paper,12pt]{article}\n\n";;
+      out << "\\documentclass[a4paper,12pt]{article}\n\n";
       out << "\\usepackage[utf8]{inputenc}\n";
       out << "\\usepackage{multind}\n";
       out << "\\usepackage{amsmath}\n";
-      out << "\\usepackage{color}\n\n";;
+      out << "\\usepackage{color}\n\n";
       out << "\\newcommand{\\Frac}[2]{\\displaystyle\\frac{\\displaystyle #1}{\\displaystyle #2}}\n";
       out << "\\newcommand{\\paren}[1]{\\ensuremath\\left(#1\\right)}\n";
       out << "\\newcommand{\\tenseur}[1]{\\ensuremath\\underline{#1}}\n";
       out << "\\newcommand{\\tenseurq}[1]{\\ensuremath\\underline{\\underline{#1}}}\n";
-      out << "\\newcommand{\\nom}[1]{\\textsc{#1}}\n\n";;
+      out << "\\newcommand{\\nom}[1]{\\textsc{#1}}\n\n";
       out << "% one column index\n";
       out << "\\makeatletter\n";
       out << "\\def\\printindex#1#2{\\section*{#2}\n";
@@ -217,7 +217,7 @@ namespace tfel
 	out << getBabelPackage(l) << '\n';
       }
       out << "\\makeindex{general}\n";
-      out << "\\makeindex{models}\n\n";;
+      out << "\\makeindex{models}\n\n";
       out << "\\begin{document}\n\n";
     }
 

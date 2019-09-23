@@ -497,7 +497,7 @@ namespace tfel {
               if ((p != pe) && ((*p == 'l') || (*p == 'L'))) {
                 // long long usigned integer
                 ++p;
-              };
+              }
             }
           } else {
             ++p;

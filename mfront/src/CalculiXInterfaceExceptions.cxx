@@ -120,7 +120,6 @@ namespace calculix{
   void
   CalculiXInterfaceExceptions::throwUnsupportedStressFreeExpansionException(const std::string& b)
   {
-    ;
     tfel::raise("CalculiXInterfaceExceptions::throwUnsupportedStressFreeExpansionException: "
 		"behaviour '"+b+"' can handle stress-free expansion but "
 		"the CalculiX interface can't");

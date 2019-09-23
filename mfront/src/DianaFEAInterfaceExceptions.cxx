@@ -120,7 +120,6 @@ namespace dianafea{
   void
   DianaFEAInterfaceExceptions::throwUnsupportedStressFreeExpansionException(const std::string& b)
   {
-    ;
     tfel::raise("DianaFEAInterfaceExceptions::throwUnsupportedStressFreeExpansionException: "
 		"behaviour '"+b+"' can handle stress-free expansion but the DianaFEA interface can't");
   } // end of DianaFEAInterfaceExceptions::throwUnsupportedStressFreeExpansionException

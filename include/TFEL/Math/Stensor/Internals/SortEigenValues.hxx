@@ -62,9 +62,9 @@ namespace tfel{
 			const EigenValuesOrdering o)
 	{
 	  if(o==EigenValuesOrdering::ASCENDING){
-	    if(vp0>vp1){std::swap(vp0,vp1);};
+	    if(vp0>vp1){std::swap(vp0,vp1);}
 	  } else if(o==EigenValuesOrdering::DESCENDING){
-	    if(vp0<vp1){std::swap(vp0,vp1);};	
+	    if(vp0<vp1){std::swap(vp0,vp1);}	
 	  }
 	} // end of exe
       }; // end of struct SortEigenValues<2u>
@@ -86,10 +86,10 @@ namespace tfel{
 			const EigenValuesOrdering o)
 	{
 	  auto swap_if_greater = [](T& x, T&y){
-	    if(x>y){std::swap(x,y);};
+	    if(x>y){std::swap(x,y);}
 	  };      
 	  auto swap_if_lesser = [](T& x, T&y){
-	    if(x<y){std::swap(x,y);};	
+	    if(x<y){std::swap(x,y);}
 	  };      
 	  if(o==EigenValuesOrdering::ASCENDING){
 	    swap_if_greater(vp0,vp1);

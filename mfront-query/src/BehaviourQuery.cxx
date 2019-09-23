@@ -137,7 +137,6 @@ namespace mfront {
     auto dc = tfel::material::SlipSystemsDescription::vec{};
     if (ds.size() == 3u) {
       tfel::material::SlipSystemsDescription::vec3d d3d;
-      ;
       d3d[0] = std::stoi(ds[0]);
       d3d[1] = std::stoi(ds[1]);
       d3d[2] = std::stoi(ds[2]);

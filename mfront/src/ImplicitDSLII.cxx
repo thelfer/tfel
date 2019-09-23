@@ -39,6 +39,6 @@ namespace mfront{
     return d;
   }  // end of ImplicitDSLII::getBehaviourDSLDescription
 
-  ImplicitDSLII::~ImplicitDSLII() noexcept = default;
+  ImplicitDSLII::~ImplicitDSLII() = default;
 
 } // end of namespace mfront  

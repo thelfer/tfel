@@ -120,7 +120,6 @@ namespace ansys{
   void
   AnsysInterfaceExceptions::throwUnsupportedStressFreeExpansionException(const std::string& b)
   {
-    ;
     tfel::raise("AnsysInterfaceExceptions::throwUnsupportedStressFreeExpansionException: "
 		"behaviour '"+b+"' can handle stress-free expansion but the Ansys interface can't");
   } // end of AnsysInterfaceExceptions::throwUnsupportedStressFreeExpansionException

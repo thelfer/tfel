@@ -130,7 +130,7 @@ namespace numodis
 	throw -2;
       }
       // compute junction direction
-      IDirection ijunction(this->getNindices());;
+      IDirection ijunction(this->getNindices());
       this->CrossProduct(gsystem1.getIPlane(),gsystem2.getIPlane(),ijunction);
 
       // add Burgers vectors

@@ -128,7 +128,7 @@ namespace tfel{
 	: current(c),
 	  stride(s)
       {
-	if(this->stride==0){throwNullStrideException();};
+	if(this->stride==0){throwNullStrideException();}
       } // end of StridedRandomAccessIterator
       //! default constructor
       explicit StridedRandomAccessIterator()
@@ -147,31 +147,31 @@ namespace tfel{
       operator=(const StridedRandomAccessIterator&) = default;
       //! dereference operator
       proxy operator*() const {
-	if(this->stride==0){throwNullStrideException();};
+	if(this->stride==0){throwNullStrideException();}
 	return {*this};
       }
       //! access operator
       proxy operator[](const difference_type n) const
       {
-	if(this->stride==0){throwNullStrideException();};
+	if(this->stride==0){throwNullStrideException();}
 	return {*this+n};
       }
       
       StridedRandomAccessIterator operator++(){
-	if(this->stride==0){throwNullStrideException();};
+	if(this->stride==0){throwNullStrideException();}
 	std::advance(this->current,this->stride);
 	return *this;
       }
       
       StridedRandomAccessIterator operator++(int){
-	if(this->stride==0){throwNullStrideException();};
+	if(this->stride==0){throwNullStrideException();}
 	auto c = *this;
 	std::advance(this->current,this->stride);
 	return c;
       }
 
       StridedRandomAccessIterator operator+(const difference_type n) const{
-	if(this->stride==0){throwNullStrideException();};
+	if(this->stride==0){throwNullStrideException();}
 	auto c = *this;
 	std::advance(c.current,n*(c.stride));
 	return c;
@@ -182,19 +182,19 @@ namespace tfel{
       }
 
       StridedRandomAccessIterator operator--(){
-	if(this->stride==0){throwNullStrideException();};
+	if(this->stride==0){throwNullStrideException();}
 	std::advance(this->current,-(this->stride));
 	return *this;
       }
       
       StridedRandomAccessIterator operator+=(const difference_type n){
-	if(this->stride==0){throwNullStrideException();};
+	if(this->stride==0){throwNullStrideException();}
 	std::advance(this->current,n*(this->stride));
 	return *this;
       }
       
       bool operator==(const StridedRandomAccessIterator& o) const{
-	if(this->stride==0){throwNullStrideException();};
+	if(this->stride==0){throwNullStrideException();}
 	return this->current==o.current;
       } // end of operator==
 
@@ -203,8 +203,8 @@ namespace tfel{
       } // end of operator==
 
       difference_type operator-(const StridedRandomAccessIterator& s) const{
-	if(this->stride==0){throwNullStrideException();};
-	if(this->stride!=s.stride){throwUmatchedStrideException();};
+	if(this->stride==0){throwNullStrideException();}
+	if(this->stride!=s.stride){throwUmatchedStrideException();}
 	return (this->current-s.current)/(this->stride);
       } // end of operator==
     private:

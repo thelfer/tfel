@@ -575,7 +575,7 @@ namespace tfel{
       using value_type = typename TensorTraits<TensorType>::NumType;
       using base    = typename tfel::typetraits::BaseType<value_type>::type;
       using res     = t2tot2<TensorTraits<TensorType>::dime,value_type>;
-      using resbase = t2tot2<TensorTraits<TensorType>::dime,base>;;
+      using resbase = t2tot2<TensorTraits<TensorType>::dime,base>;
       const auto iF  = invert(F);
       const auto itF = invert(transpose(F));
       const auto dt  = resbase::transpose_derivative();

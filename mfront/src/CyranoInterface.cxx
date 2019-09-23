@@ -30,6 +30,8 @@
 #include "MFront/MFrontLogStream.hxx"
 #include "MFront/FileDescription.hxx"
 #include "MFront/TargetsDescription.hxx"
+#include "MFront/MaterialPropertyDescription.hxx"
+#include "MFront/CyranoMaterialPropertyInterface.hxx"
 #include "MFront/CyranoSymbolsGenerator.hxx"
 #include "MFront/CyranoInterface.hxx"
 
@@ -227,6 +229,14 @@ namespace mfront {
     systemCall::mkdir("include/MFront");
     systemCall::mkdir("include/MFront/Cyrano");
 
+    // write the material properties
+    if (mb.areElasticMaterialPropertiesDefined()) {
+      for (const auto& emp : mb.getElasticMaterialPropertiesDescriptions()) {
+        CyranoMaterialPropertyInterface i;
+        i.writeOutputFiles(emp, fd);
+      }
+    }
+
     // opening header file
     auto fileName = "cyrano"+name+".hxx";
     std::ofstream out("include/MFront/Cyrano/" + fileName);
@@ -395,6 +405,12 @@ namespace mfront {
                   " --library-dependency "
                   "--material --mfront-profiling --physical-constants)");
 #endif /* __cplusplus < 201703L */
+    if (bd.areElasticMaterialPropertiesDefined()) {
+      for (const auto& emp : bd.getElasticMaterialPropertiesDescriptions()) {
+        CyranoMaterialPropertyInterface i;
+        i.getLibraryDescription(d, l, emp);
+      }
+    }
   }    // end of CyranoInterface::getTargetsDescription(TargetsDescription&)
 
   void CyranoInterface::writeInterfaceSpecificIncludes(std::ostream& out,

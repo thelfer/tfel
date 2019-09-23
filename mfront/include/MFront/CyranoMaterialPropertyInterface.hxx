@@ -16,6 +16,7 @@
 
 #include <string>
 #include "TFEL/Utilities/CxxTokenizer.hxx"
+#include "MFront/LibraryDescription.hxx"
 #include "MFront/AbstractMaterialPropertyInterface.hxx"
 
 namespace mfront {
@@ -30,6 +31,20 @@ namespace mfront {
     static std::string getName();
     //! \brief default constructor
     CyranoMaterialPropertyInterface();
+
+    /*!
+     * \brief append the generated material property to the given library
+     * description. This method allows to choose to which library is attached
+     * the material property (which is not the case of the
+     * `getTargetsDescription`).
+     * \param[in] d: targets description
+     * \param[in] l: library description
+     * \param[in] mpd: material property description
+     */
+    virtual void getLibraryDescription(
+        TargetsDescription& d,
+        LibraryDescription&,
+        const MaterialPropertyDescription&) const;
 
     void getTargetsDescription(
         TargetsDescription&, const MaterialPropertyDescription&) const override;

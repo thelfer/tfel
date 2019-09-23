@@ -29,6 +29,61 @@
 
 namespace mfront {
 
+  static MaterialPropertyDescription buildMaterialPropertyDescription(
+      const BehaviourDescription::ConstantMaterialProperty& mp,
+      const BehaviourDescription& bd,
+      const std::string& n) {
+    auto mpd = MaterialPropertyDescription{};
+    mpd.output = VariableDescription{"real", "res", 1u, 0u};
+    std::ostringstream body;
+    body << "res = " << mp.value << ";\n";
+    mpd.law = bd.getClassName() + "_" + n;
+    mpd.className = bd.getClassName() + "_" + n;
+    mpd.material = bd.getMaterialName();
+    mpd.f.modified = true;
+    mpd.f.body = body.str();
+    return mpd;
+  }  // end of buildMaterialPropertyDescription
+
+  static MaterialPropertyDescription buildMaterialPropertyDescription(
+      const BehaviourDescription::ExternalMFrontMaterialProperty& mp,
+      const BehaviourDescription& bd,
+      const std::string& n) {
+    auto mpd = *(mp.mpd);
+    mpd.law = bd.getClassName() + "_" + n;
+    mpd.className = bd.getClassName() + "_" + n;
+    mpd.material = bd.getMaterialName();
+    return mpd;
+  }  // end of buildMaterialPropertyDescription
+
+  static MaterialPropertyDescription buildMaterialPropertyDescription(
+      const BehaviourDescription::AnalyticMaterialProperty& mp,
+      const BehaviourDescription& bd,
+      const std::string& n) {
+    auto mpd = MaterialPropertyDescription{};
+    return mpd;
+  }  // end of buildMaterialPropertyDescription
+
+  static MaterialPropertyDescription buildMaterialPropertyDescription(
+      const BehaviourDescription::MaterialProperty& mp,
+      const BehaviourDescription& bd,
+      const std::string& n) {
+    if (mp.is<BehaviourDescription::ConstantMaterialProperty>()) {
+      return buildMaterialPropertyDescription(
+          mp.get<BehaviourDescription::ConstantMaterialProperty>(), bd, n);
+    } else if (mp.is<BehaviourDescription::ExternalMFrontMaterialProperty>()) {
+      return buildMaterialPropertyDescription(
+          mp.get<BehaviourDescription::ExternalMFrontMaterialProperty>(), bd, n);
+    } else if (mp.is<BehaviourDescription::AnalyticMaterialProperty>()) {
+      return buildMaterialPropertyDescription(
+          mp.get<BehaviourDescription::AnalyticMaterialProperty>(), bd, n);
+    } else {
+      tfel::raise(
+          "buildMaterialPropertyDescription: unsupported material property "
+          "type");
+    }
+  }  // end of buildMaterialPropertyDescription
+
   std::vector<std::string>
   BehaviourDescription::AnalyticMaterialProperty::getVariablesNames() const {
     return tfel::math::Evaluator(this->f).getVariablesNames();
@@ -2833,6 +2888,31 @@ namespace mfront {
       }
       this->getBehaviourData(h).getSymbols(symbols);
     }  // end of BehaviourDescription::getSymbols
+
+    std::vector<MaterialPropertyDescription>
+    BehaviourDescription::getElasticMaterialPropertiesDescriptions() const {
+      const auto& emps = this->getElasticMaterialProperties();
+      auto empds = std::vector<MaterialPropertyDescription>{emps.size()};
+      if (emps.size() == 2u) {
+        empds[0] = buildMaterialPropertyDescription(emps[0], *this, "YoungModulus");
+        empds[1] = buildMaterialPropertyDescription(emps[1], *this, "PoissonRatio");
+      } else if (emps.size() == 9u) {
+        empds[0] = buildMaterialPropertyDescription(emps[0], *this, "YoungModulus1");
+        empds[1] = buildMaterialPropertyDescription(emps[1], *this, "YoungModulus2");
+        empds[2] = buildMaterialPropertyDescription(emps[2], *this, "YoungModulus3");
+        empds[3] = buildMaterialPropertyDescription(emps[3], *this, "PoissonRatio12");
+        empds[4] = buildMaterialPropertyDescription(emps[4], *this, "PoissonRatio23");
+        empds[5] = buildMaterialPropertyDescription(emps[5], *this, "PoissonRatio13");
+        empds[6] = buildMaterialPropertyDescription(emps[6], *this, "ShearModulus12");
+        empds[7] = buildMaterialPropertyDescription(emps[7], *this, "ShearModulus23");
+        empds[8] = buildMaterialPropertyDescription(emps[8], *this, "ShearModulus13");
+      } else {
+        tfel::raise(
+            "BehaviourDescription::getElasticMaterialPropertiesDescriptions: "
+            "invalid number of material properties");
+      }
+      return empds;
+    }  // end of BehaviourDescription::getElasticMaterialPropertiesDescriptions
 
     BehaviourDescription::~BehaviourDescription() = default;
 

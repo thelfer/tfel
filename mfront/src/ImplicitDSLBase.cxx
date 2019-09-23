@@ -175,25 +175,25 @@ namespace mfront {
               const auto j = o.useUnicodeSymbols
                                  ? "\u2202f" + v1n + "\u2215\u2202\u0394" + v2n
                                  : "df" + v1n + "_d" + v2n;
-              const auto o = v1.name == v2.name ? "+=" : "=";
+              const auto op = v1.name == v2.name ? "+=" : "=";
               if ((v1.arraySize == 1u) && (v2.arraySize == 1u)) {
-                i += j + " " + o + " ;\n";
+                i += j + " " + op + " ;\n";
               } else if ((v1.arraySize != 1u) && (v2.arraySize == 1u)) {
                 i += "for(unsigned short i = 0; i != " +
                      std::to_string(v1.arraySize) + ";++i)\n";
-                i += j + "(i) " + o + " ;\n";
+                i += j + "(i) " + op + " ;\n";
                 i += "}\n";
               } else if ((v1.arraySize == 1u) && (v2.arraySize != 1u)) {
                 i += "for(unsigned short i = 0; i != " +
                      std::to_string(v2.arraySize) + ";++i)\n";
-                i += j + "(i) " + o + " ;\n";
+                i += j + "(i) " + op + " ;\n";
                 i += "}\n";
               } else {
                 i += "for(unsigned short i = 0; i != " +
                      std::to_string(v1.arraySize) + ";++i)\n";
                 i += "for(unsigned short j = 0; j != " +
                      std::to_string(v2.arraySize) + ";++j)\n";
-                i += j + "(i,j) " + o + " ;\n";
+                i += j + "(i,j) " + op + " ;\n";
                 i += "}\n";
                 i += "}\n";
               }
@@ -748,7 +748,7 @@ namespace mfront {
     auto throw_if = [this, m](const bool b, const std::string& msg) {
       if (b) {
         this->throwRuntimeError(m, msg);
-      };
+      }
     };
     for (const auto& h : this->readHypothesesList()) {
       const auto as = this->readList(m, "{", "}", false);

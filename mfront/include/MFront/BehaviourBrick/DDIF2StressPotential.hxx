@@ -57,12 +57,12 @@ namespace mfront {
                  * assumptions are check after convergence. If not satisfied,
                  * the assumtions are modified and the implicit resolution is
                  * restarted. */
-        UPDATE_IMPLICIT_EQUATIONS_DURING_ITERATIONS, /*!< algorithm used in
-                                                      * version prior to 3.3.
-                                                      * A priori less robust
-                                                      * than the algorithm
-                                                      * based on status
-                                                      */
+        UPDATE_IMPLICIT_EQUATIONS_DURING_ITERATIONS /*!< algorithm used in
+						     * version prior to 3.3.
+						     * A priori less robust
+						     * than the algorithm
+						     * based on status
+						     */
       } algorithm = STATUS;
       //! fracture stress
       std::array<MaterialProperty, 3u> sr;

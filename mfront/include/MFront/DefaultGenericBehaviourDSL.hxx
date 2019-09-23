@@ -32,7 +32,7 @@ namespace mfront{
     //! \return a description of the DSL
     BehaviourDSLDescription getBehaviourDSLDescription() const override;
     //! \brief destructor
-    ~DefaultGenericBehaviourDSL() noexcept override ;
+    ~DefaultGenericBehaviourDSL() override ;
   };  // end of struct DefaultGenericBehaviourDSL
 
 } // end of namespace mfront  

@@ -61,12 +61,12 @@ namespace mfront {
     return {false, current};
   }  // end of treatKeyword
 
-  void CyranoMaterialPropertyInterface::getTargetsDescription(
-      TargetsDescription& d, const MaterialPropertyDescription& mpd) const {
-    const auto lib = "Cyrano" + getMaterialLawLibraryNameBase(mpd);
+  void CyranoMaterialPropertyInterface::getLibraryDescription(
+      TargetsDescription& d,
+      LibraryDescription& l,
+      const MaterialPropertyDescription& mpd) const {
     const auto name = this->getCyranoFunctionName(mpd);
     const auto tfel_config = tfel::getTFELConfigExecutableName();
-    auto& l = d.getLibrary(lib);
     insert_if(l.cppflags,
               "$(shell " + tfel_config + " --cppflags --compiler-flags)");
     insert_if(l.include_directories,
@@ -75,8 +75,14 @@ namespace mfront {
 #if !((defined _WIN32) && (defined _MSC_VER))
     insert_if(l.link_libraries, "m");
 #endif /* !((defined _WIN32) && (defined _MSC_VER)) */
-    d.headers.push_back("include/" + this->getHeaderFileName(name));
     insert_if(l.epts, name);
+    d.headers.push_back("include/" + this->getHeaderFileName(name));
+  }  // end of CyranoMaterialPropertyInterface::getLibraryDescription
+
+  void CyranoMaterialPropertyInterface::getTargetsDescription(
+      TargetsDescription& d, const MaterialPropertyDescription& mpd) const {
+    const auto lib = "Cyrano" + getMaterialLawLibraryNameBase(mpd);
+    this->getLibraryDescription(d, d.getLibrary(lib), mpd);
   }  // end of CyranoMaterialPropertyInterface::getTargetsDescription
 
   std::string CyranoMaterialPropertyInterface::getCyranoFunctionName(
@@ -415,14 +421,14 @@ namespace mfront {
         << "cyrano_output_status->c_error_number = 0;\n"
         << "errno = 0;\n";
     // check number of arguments
-    out << "if(cyrano_nargs!= " << mpd.inputs.size() << "){"
+    out << "if(cyrano_nargs!= " << mpd.inputs.size() << "){\n"
         << "cyrano_output_status->status = -5;\n"
         << "cyrano_report(\"invalid number of arguments "
         << "(\"+std::to_string(cyrano_nargs)+\" given, " << mpd.inputs.size()
         << " expected)\");\n"
         << "errno = cyrano_errno_old;\n"
         << "return std::nan(\"invalid number of arguments\");\n"
-        << "}";
+        << "}\n";
     // parameters
     if (!params.empty()) {
       const auto hn = getMaterialPropertyParametersHandlerClassName(name);

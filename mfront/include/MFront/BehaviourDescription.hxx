@@ -42,7 +42,6 @@ namespace mfront {
   // forward declaration
   struct MaterialPropertyDescription;
 
-
   /*!
    * This structure describes a mechanical behaviour
    *
@@ -540,6 +539,13 @@ namespace mfront {
      * \return the elastic material properties
      */
     const std::vector<MaterialProperty>& getElasticMaterialProperties() const;
+    /*!
+     * \return the elastic material properties description
+     * \brief this method is meant to generate callable material properties when
+     * needed.
+     */
+    std::vector<MaterialPropertyDescription>
+    getElasticMaterialPropertiesDescriptions() const;
     /*!
      * \return true if the elastic material properties have been defined
      */

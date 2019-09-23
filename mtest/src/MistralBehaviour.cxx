@@ -42,7 +42,7 @@ namespace mtest
 		  const MistralBehaviour::Parameters& parameters,
 		  const tfel::material::ModellingHypothesis::Hypothesis h){
     auto throw_if = [](const bool b,const std::string& msg){
-      tfel::raise_if(b,"readMistralParameters: "+msg);;
+      tfel::raise_if(b,"readMistralParameters: "+msg);
     };
     using CxxTokenizer = tfel::utilities::CxxTokenizer;
     using ModellingHypothesis = tfel::material::ModellingHypothesis;

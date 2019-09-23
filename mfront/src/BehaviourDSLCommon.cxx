@@ -276,6 +276,12 @@ namespace mfront {
           ++(this->current);
           try {
             handler();
+            const auto ph = this->hooks.find(k);
+            if (ph != this->hooks.end()) {
+              for (auto& hook : ph->second) {
+                hook();
+              }
+            }
           } catch (std::exception& e) {
             std::ostringstream msg;
             msg << "BehaviourDSLCommon::analyse: "
@@ -319,6 +325,14 @@ namespace mfront {
     this->callBacks.insert({k, c});
     this->registredKeyWords.insert(k);
   }  // end of BehaviourDSLCommon::addCallBack
+
+  void BehaviourDSLCommon::addHook(const std::string& k, const Hook h) {
+    if (this->callBacks.find(k) == this->callBacks.end()) {
+      this->throwRuntimeError("BehaviourDSLCommon::addHook",
+                              "no callback called '" + k + "'");
+    }
+    this->hooks[k].push_back(h);
+  }  // end of BehaviourDSLCommon::addHook
 
   void BehaviourDSLCommon::treatDisabledCallBack() {
     --(this->current);
@@ -1465,7 +1479,7 @@ namespace mfront {
         out << "Nss" << idx;
         if (++idx != nb) {
           out << "+";
-        };
+        }
       }
       out << ";\n";
     }
@@ -4410,7 +4424,6 @@ namespace mfront {
     this->checkBehaviourFile(os);
     // initializers
     const auto& init = this->getBehaviourConstructorsInitializers(h);
-    ;
     // writing constructors
     os << "/*!\n"
        << "* \\brief Constructor\n"
@@ -7297,7 +7310,7 @@ namespace mfront {
     auto throw_if = [this](const bool b, const std::string& m) {
       if (b) {
         this->throwRuntimeError("BehaviourDSLCommon::treatParameter", m);
-      };
+      }
     };
     std::set<Hypothesis> mh;
     this->readHypothesesList(mh);
@@ -7600,7 +7613,7 @@ namespace mfront {
     auto throw_if = [this](const bool b, const std::string& m) {
       if (b) {
         this->throwRuntimeError("BehaviourDSLCommon::treatInteractionMatrix", m);
-      };
+      }
     };
     throw_if(!this->mb.areSlipSystemsDefined(), "slip systems have not been defined");
     const auto& im = this->mb.getInteractionMatrixStructure();
@@ -7627,7 +7640,7 @@ namespace mfront {
             "BehaviourDSLCommon::"
             "treatDislocationsMeanFreePathInteractionMatrix",
             m);
-      };
+      }
     };
     throw_if(!this->mb.areSlipSystemsDefined(), "slip systems have not been defined");
     const auto& im = this->mb.getInteractionMatrixStructure();

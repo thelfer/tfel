@@ -62,7 +62,6 @@ namespace mfront {
       DSLProxy<RungeKuttaDSL> proxy7(
           std::vector<std::string>{"RungeKuttaParser"});
       DSLProxy<RungeKuttaFiniteStrainDSL> proxy8;
-      ;
       DSLProxy<ImplicitDSL> proxy9("ImplicitParser");
       DSLProxy<ImplicitDSLII> proxy10("ImplicitParserII");
       DSLProxy<ModelDSL> proxy11("ModelParser");

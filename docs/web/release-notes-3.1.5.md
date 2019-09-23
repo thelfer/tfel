@@ -17,6 +17,14 @@ properties of behaviours based on the `DDIF2Brick` has changed for the
 
 # Tickets fixed
 
+## Ticket #191: The interaction matrix aimed at describing the effets of hardening of the mean free path of dislocation is not correctly handled by the `SlipSystemsDescription` class
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/191/>
+
+## Ticket #190: The `FiniteStrainSingleCrystal` brick does not enforce that the plastic slips must be the second integraiton variables
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/190/>
+
 ## Ticket #185: The `AngularCoordinate` material property shall not be defined in 1D by the DDIF2 brick
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/185/>

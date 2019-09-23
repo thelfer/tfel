@@ -972,7 +972,7 @@ namespace tfel
 	  }
 	  for(unsigned short i=0;i!=tfel::math::StensorDimeToSize<N>::value-3;++i){
 	    for(unsigned short j=0;j!=tfel::math::TensorDimeToSize<N>::value;++j){
-	      r(3+i,j)=(src(3+2*i,j)+src(3+2*i+1,j))*tfel::math::Cste<stress>::isqrt2;;
+	      r(3+i,j)=(src(3+2*i,j)+src(3+2*i+1,j))*tfel::math::Cste<stress>::isqrt2;
 	    }
 	  }
 	  return r;

@@ -16,12 +16,11 @@
 
 namespace mfront{
 
-  template<typename T>
+  template <typename T>
   typename std::enable_if<
-    tfel::meta::TLCountNbrOfT<T,BehaviourAttributeTypes>::value==1, 
-    T&>::type
-  BehaviourData::getAttribute(const std::string& n)
-  {
+      tfel::meta::TLCountNbrOfT<T, BehaviourAttributeTypes>::value == 1,
+      T&>::type
+  BehaviourData::getAttribute(const std::string& n) {
     auto p = this->attributes.find(n);
     if(p==this->attributes.end()){
       p = this->attributes.insert({n,BehaviourAttribute(T())}).first;
@@ -29,12 +28,11 @@ namespace mfront{
     return p->second.template get<T>();
   } // end of BehaviourData::getAttribute
 
-  template<typename T>
+  template <typename T>
   typename std::enable_if<
-    tfel::meta::TLCountNbrOfT<T,BehaviourAttributeTypes>::value==1, 
-    const T&>::type
-  BehaviourData::getAttribute(const std::string& n) const
-  {
+      tfel::meta::TLCountNbrOfT<T, BehaviourAttributeTypes>::value == 1,
+      const T&>::type
+  BehaviourData::getAttribute(const std::string& n) const {
     auto p = this->attributes.find(n);
     if(p==this->attributes.end()){
       BehaviourData::throwUndefinedAttribute(n);
