@@ -43,6 +43,53 @@ PLEIADES platform jointly developed by EDF and CEA, and validated on an
 extensive data base including more than 900 irradiated fuel rods
 examination and validation results.
 
+# Material properties
+
+The `cyrano` interface for material properties generates function having
+the following prototype:
+
+~~~~{.c++}
+CyranoRealType (*)(CyranoOutputStatus* const,
+				   const CyranoRealType* const,
+				   const CyranoIntegerType,
+				   const CyranoOutOfBoundsPolicy);
+~~~~
+
+The first argument contains the output status (see Section
+@sec:error_handling for details).
+
+The second argument contains the arguments of the material property.
+
+The third argument gives the number of arguments.
+
+The fourth argument specify the policy used when an argument or the
+output is out of this bounds.
+
+## Error handling {#sec:error_handling}
+
+On error, the returned value is `Not A Number` (`Nan`).
+
+Full diagnostic is available in the `CyranoOutputStatus` structure. See
+the [doxygen documentation](html/struct_cyrano_output_status.html)).
+
+## Out of bounds policy
+
+The `CyranoOutOfBoundsPolicy` is an enumeration of the available
+policies. Three policies are declared:
+
+- `CYRANO_NONE_POLICY`: with this policy, nothing is done if the
+  arguments are out of their bounds (checks are not even performed).
+- `CYRANO_WARNING_POLICY`: with this policy, checks on the arguments are
+  performed. If one argument if out of its bounds, this will be reported
+  in the output status and an appropriate error message will be
+  reported. The computations are however performed.
+- `CYRANO_STRICT_POLICY`: With this policy, checks on the arguments are
+  performed. If one argument if out of its bounds, this will be reported
+  in the output status and an appropriate error message will be
+  reported.
+
+# Mechanical behaviours
+
 ![](img/topfuel2015-poster.png "")
 
 The interface with MFront has been presented during the LWR Fuel
@@ -52,7 +99,7 @@ Performance Meeting in 2015 (Zurich, Switzerland), see
 - [abstract](https://github.com/thelfer/tfel-doc/blob/master/Papers/TopFuel2015/topfuel2015.pdf)
 - [poster](https://github.com/thelfer/tfel-doc/blob/master/Papers/TopFuel2015/topfuel2015-poster.pdf)
 
-# Supported modelling hypotheses
+## Supported modelling hypotheses
 
 The `Cyrano3` code is based on a 1D description of the fuel rods using a
 finite element kernel to solve the thermal and mechanical radial
@@ -74,13 +121,13 @@ concerning the axial direction are supported:
 - generalised plane stress (uniform axial stress)
 - generalised plane strain (uniform axial strain)
 
-# Finite strain modelling
+## Finite strain modelling
 
 `Cyrano3` finite strain modelling is based on the approach described by
 T. Helfer (See @helfer_extension_2015) which allows to easily extend
 small strain mono-dimensional code to support finite strain modelling.
 
-## Kinematic and mechanical equilibrium
+### Kinematic and mechanical equilibrium
 
 This approach relies on the the fact that the direct link between the
 deformation gradient \(\tns{F}\) and the linearized strain
@@ -202,13 +249,13 @@ This is exactly the same relation as in same strain analysis, except for
 the dependency of \(S^{c}_{i}\) and \(S^{c}_{e}\) with the actual inner
 and outer radius which adds additional terms to the stiffness matrix
 
-## Finite strain mechanical behaviours
+### Finite strain mechanical behaviours
 
 Currently, the `MFront` interface only supports strain-based behaviour
 based on the Hencky strain measure, as described by Miehe et al. (See
 @miehe_anisotropic_2002).
 
-### Support of the Hencky strain measure
+#### Support of the Hencky strain measure
 
 The Hencky strain measure is defined by:
 
@@ -231,7 +278,7 @@ and \(\tenseur{T}\) is fairly complex in \(3D\), but quite simple in
   \Pi_{i} = \Frac{T_{i}}{1+\left(\tepsilonto\right)_{i}}
 \]
 
-#### Generalised plane stress
+##### Generalised plane stress
 
 The generalised plane stress hypothesis is treated by introducing, at
 each integration point, an additional unknown: the axial logarithmic

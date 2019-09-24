@@ -24,9 +24,8 @@ namespace mfront{
 
   //! \brief class representing a static variable
   struct MFRONT_VISIBILITY_EXPORT StaticVariableDescription
-    : public VariableDescriptionBase
-  {
-#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+      : public VariableDescriptionBase {
+#if defined _WIN32 || defined _WIN64 || defined __CYGWIN__
     typedef double StaticVariableValueType;
 #else 
     typedef long double StaticVariableValueType;
@@ -39,9 +38,9 @@ namespace mfront{
      * \param[in] value_      : value
      */
     StaticVariableDescription(const std::string&,
-			      const std::string&,
-			      const unsigned int,
-			      const StaticVariableValueType);
+                              const std::string&,
+                              const unsigned int,
+                              const StaticVariableValueType);
     StaticVariableDescription(StaticVariableDescription&&);    
     StaticVariableDescription(const StaticVariableDescription&);
     StaticVariableDescription& operator=(StaticVariableDescription&&);    
@@ -56,8 +55,7 @@ namespace mfront{
 
   //! a simple wrapper around the std::vector class
   struct StaticVariableDescriptionContainer
-    : private std::vector<StaticVariableDescription>
-  {
+      : private std::vector<StaticVariableDescription> {
     using std::vector<StaticVariableDescription>::value_type;
     using std::vector<StaticVariableDescription>::reference;
     using std::vector<StaticVariableDescription>::const_reference;

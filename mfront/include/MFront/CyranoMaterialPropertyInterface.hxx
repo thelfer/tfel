@@ -16,11 +16,13 @@
 
 #include <string>
 #include "TFEL/Utilities/CxxTokenizer.hxx"
-#include "MFront/LibraryDescription.hxx"
 #include "MFront/AbstractMaterialPropertyInterface.hxx"
 
 namespace mfront {
 
+  // forward declaration
+  struct LibraryDescription;
+  
   /*!
    * \brief material properties' interface for EDF' `Cyrano` fuel
    * performance code.
@@ -31,12 +33,11 @@ namespace mfront {
     static std::string getName();
     //! \brief default constructor
     CyranoMaterialPropertyInterface();
-
     /*!
      * \brief append the generated material property to the given library
      * description. This method allows to choose to which library is attached
      * the material property (which is not the case of the
-     * `getTargetsDescription`).
+     * `getTargetsDescription` method).
      * \param[in] d: targets description
      * \param[in] l: library description
      * \param[in] mpd: material property description
@@ -55,15 +56,16 @@ namespace mfront {
         const tokens_iterator) override;
     void writeOutputFiles(const MaterialPropertyDescription&,
                           const FileDescription&) const override;
-    //! destructor
-    ~CyranoMaterialPropertyInterface() override;
-
-   protected:
     /*!
+     * \return the name of the generated function
      * \param[in] mpd : material property description
      */
     virtual std::string getCyranoFunctionName(
         const MaterialPropertyDescription&) const;
+    //! destructor
+    ~CyranoMaterialPropertyInterface() override;
+
+   protected:
     /*!
      * \brief return the name of the header file
      */

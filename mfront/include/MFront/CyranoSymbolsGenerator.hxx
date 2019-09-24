@@ -26,13 +26,17 @@ namespace mfront {
       : public SymbolsGenerator {
     //! constructor
     CyranoSymbolsGenerator();
-
+    void writeSpecificSymbols(std::ostream &,
+                              const StandardBehaviourInterface &,
+                              const BehaviourDescription &,
+                              const FileDescription &,
+                              const std::string &) const override;
     void writeAdditionalSymbols(std::ostream&,
-				      const StandardBehaviourInterface&,
-                                      const BehaviourDescription&,
-                                      const FileDescription&,
-                                      const std::string&,
-                                      const Hypothesis) const override;
+                                const StandardBehaviourInterface&,
+                                const BehaviourDescription&,
+                                const FileDescription&,
+                                const std::string&,
+                                const Hypothesis) const override;
     void writeBehaviourTypeSymbols(std::ostream&,
                                          const StandardBehaviourInterface&,
                                          const BehaviourDescription&,

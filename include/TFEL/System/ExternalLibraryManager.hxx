@@ -40,16 +40,16 @@ namespace tfel {
     struct TFELSYSTEM_VISIBILITY_EXPORT ExternalLibraryManager {
       //! \return the uniq instance of this class
       static ExternalLibraryManager& getExternalLibraryManager();
-      /*!
-       * \brief a wrapper around the ::dlopen system call
-       * \param[in] name : name of the library
-       * \param[in] b : boolean allowing ::dlopen to fail. If ::dlopen
-       * fails, a null pointer is returned. This library is *not*
-       * registred.
-       * \return a pointer to the library
-       * \note on success, the pointer is registred in a map using its
-       * name as a key. This name is used in the methods of this call
-       */
+/*!
+ * \brief a wrapper around the ::dlopen system call
+ * \param[in] name : name of the library
+ * \param[in] b : boolean allowing ::dlopen to fail. If ::dlopen
+ * fails, a null pointer is returned. This library is *not*
+ * registred.
+ * \return a pointer to the library
+ * \note on success, the pointer is registred in a map using its
+ * name as a key. This name is used in the methods of this call
+ */
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
       HINSTANCE__* loadLibrary(const std::string&, const bool = false);
 #else
@@ -350,6 +350,26 @@ namespace tfel {
        */
       bool contains(const std::string&, const std::string&);
       /*!
+       * \param[in] l : name of the library
+       * \param[in] f : function name
+       */
+      unsigned short getMaterialPropertyNumberOfVariables(const std::string&,
+                                                          const std::string&);
+      /*!
+       * \param[in] l : name of the library
+       * \param[in] f : function name
+       */
+      std::vector<std::string> getMaterialPropertyVariables(const std::string&,
+                                                            const std::string&);
+      /*!
+       * \param[out] n: names of  the variables
+       * \param[in] l : name of the library
+       * \param[in] f : function name
+       */
+      void getMaterialPropertyVariables(std::vector<std::string>&,
+                                        const std::string&,
+                                        const std::string&);
+      /*!
        * \param[in] l: name of the library
        * \param[in] f: function name
        */
@@ -379,12 +399,14 @@ namespace tfel {
        * \param[in] l : name of the library
        * \param[in] f : law name
        */
-      CyranoMaterialPropertyPtr getCyranoMaterialProperty(const std::string&, const std::string&);
+      CyranoMaterialPropertyPtr getCyranoMaterialProperty(const std::string&,
+                                                          const std::string&);
       /*!
        * \param[in] l : name of the library
        * \param[in] f : law name
        */
-      CyranoBehaviourPtr getCyranoFunction(const std::string&, const std::string&);
+      CyranoBehaviourPtr getCyranoFunction(const std::string&,
+                                           const std::string&);
       /*!
        * \param[in] l : name of the library
        * \param[in] f : law name
@@ -539,6 +561,22 @@ namespace tfel {
        */
       std::vector<std::pair<std::string, std::string>>
       getUMATTangentOperatorBlocksNames(const std::string&, const std::string&);
+      /*!
+       * \brief return the name of entry points for the elastic properties
+       * associated with a behaviour, if any. The kind of entry point (function,
+       * class, etc.) depends on the interface used.
+       *
+       * The size of the returned vector is currently either:
+       * - 0: which means that the behaviour does not export its elastic
+       *      properties.
+       * - 2, which means that the elastic behaviour is isotropic.
+       * - 9, which means that the elastic behaviour is orthotropic.
+       *
+       * \param[in] l : name of the library
+       * \param[in] f : law name
+       */
+      std::vector<std::string> getUMATElasticMaterialPropertiesEntryPoints(
+          const std::string&, const std::string&);
       /*!
        * \param[in] l : name of the library
        * \param[in] f : law name

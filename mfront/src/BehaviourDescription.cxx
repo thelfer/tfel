@@ -61,6 +61,24 @@ namespace mfront {
       const BehaviourDescription& bd,
       const std::string& n) {
     auto mpd = MaterialPropertyDescription{};
+    mpd.output = VariableDescription{"real", "res", 1u, 0u};
+    mpd.law = bd.getClassName() + "_" + n;
+    mpd.className = bd.getClassName() + "_" + n;
+    mpd.material = bd.getMaterialName();
+    const auto h  = *(bd.getDistinctModellingHypotheses().begin());
+    const auto& d = bd.getBehaviourData(h);
+    for (const auto& i : bd.getMaterialPropertyInputs(mp.getVariablesNames())) {
+      if (i.category ==
+          BehaviourDescription::MaterialPropertyInput::STATICVARIABLE) {
+        mpd.staticVars.push_back(d.getStaticVariables().get(i.name));
+      } else {
+        const auto& v = d.getVariableDescriptionByExternalName(i.ename);
+        mpd.inputs.push_back(v);
+      }
+    }
+    mpd.f.modified = true;
+    tfel::math::Evaluator e(mp.f);
+    mpd.f.body = "res = " + e.getCxxFormula() + ";\n";
     return mpd;
   }  // end of buildMaterialPropertyDescription
 

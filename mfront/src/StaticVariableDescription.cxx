@@ -34,10 +34,9 @@ namespace mfront{
   StaticVariableDescription&
   StaticVariableDescription::operator=(const StaticVariableDescription&) = default;
   StaticVariableDescription::~StaticVariableDescription() = default;
-  
-  bool
-  StaticVariableDescriptionContainer::contains(const std::string& n) const
-  {
+
+  bool StaticVariableDescriptionContainer::contains(
+      const std::string& n) const {
     for(const auto& v : *this){
       if(v.name==n){
 	return true;
@@ -46,9 +45,8 @@ namespace mfront{
     return false;
   } // end of StaticVariableDescriptionContainer::contains
 
-  const StaticVariableDescription&
-  StaticVariableDescriptionContainer::get(const std::string& n) const
-  {
+  const StaticVariableDescription& StaticVariableDescriptionContainer::get(
+      const std::string& n) const {
     for(const auto& v : *this){
       if(v.name==n){
 	return v;

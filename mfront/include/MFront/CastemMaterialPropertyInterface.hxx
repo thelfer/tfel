@@ -25,48 +25,46 @@
 
 namespace mfront {
 
+  // forward declaration
+  struct LibraryDescription;
+  
   struct MFRONT_VISIBILITY_EXPORT CastemMaterialPropertyInterface
       : public AbstractMaterialPropertyInterface {
     static std::string getName();
 
     CastemMaterialPropertyInterface();
     /*!
-     * \brief : fill the target descripton
-     * \param[out] d   : target description
-     * \param[in]  mpd : material property description
+     * \brief append the generated material property to the given library
+     * description. This method allows to choose to which library is attached
+     * the material property (which is not the case of the
+     * `getTargetsDescription` method).
+     * \param[in] d: targets description
+     * \param[in] l: library description
+     * \param[in] mpd: material property description
      */
+    virtual void getLibraryDescription(
+        TargetsDescription& d,
+        LibraryDescription&,
+        const MaterialPropertyDescription&) const;
     void getTargetsDescription(
         TargetsDescription&, const MaterialPropertyDescription&) const override;
-    /*!
-     * \param[in] k  : keyword treated
-     * \param[in] i:   list of interfaces to which the keyword is restricted
-     * \param[in] p  : iterator to the current token
-     * \param[in] pe : iterator past the end of the file
-     * \return a pair. The first entry is true if the keyword was
-     * treated by the interface. The second entry is an iterator after
-     * the last token treated.
-     */
     std::pair<bool, tokens_iterator> treatKeyword(
         const std::string&,
         const std::vector<std::string>&,
         tokens_iterator,
         const tokens_iterator) override;
-    /*!
-     * \brief generate the output files
-     * \param[in] mpd : material property description
-     * \param[in] fd  : mfront file description
-     */
     void writeOutputFiles(const MaterialPropertyDescription&,
                           const FileDescription&) const override;
-    //! destructor
-    ~CastemMaterialPropertyInterface() override;
-
-   protected:
     /*!
+     * \return the name of the generated function
      * \param[in] mpd : material property description
      */
     virtual std::string getCastemFunctionName(
         const MaterialPropertyDescription&) const;
+    //! destructor
+    ~CastemMaterialPropertyInterface() override;
+
+   protected:
 
     virtual std::string getHeaderFileName(const std::string&) const;
 

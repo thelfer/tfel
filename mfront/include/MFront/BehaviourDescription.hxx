@@ -181,7 +181,7 @@ namespace mfront {
         STATICVARIABLE
       };
       Category category;
-    };  // end of
+    };  // end of struct MaterialPropertyInput
     //! attribute name
     static const char* const requiresStiffnessTensor;
     //! attribute name

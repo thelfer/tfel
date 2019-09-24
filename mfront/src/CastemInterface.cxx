@@ -29,6 +29,8 @@
 #include "MFront/MFrontLogStream.hxx"
 #include "MFront/FileDescription.hxx"
 #include "MFront/TargetsDescription.hxx"
+#include "MFront/MaterialPropertyDescription.hxx"
+#include "MFront/CastemMaterialPropertyInterface.hxx"
 #include "MFront/CastemSymbolsGenerator.hxx"
 #include "MFront/CastemInterface.hxx"
 
@@ -638,6 +640,14 @@ namespace mfront {
 
     systemCall::mkdir("include/MFront");
     systemCall::mkdir("include/MFront/Castem");
+
+    // write the material properties
+    if (mb.areElasticMaterialPropertiesDefined()) {
+      for (const auto& emp : mb.getElasticMaterialPropertiesDescriptions()) {
+        CastemMaterialPropertyInterface i;
+        i.writeOutputFiles(emp, fd);
+      }
+    }
 
     const auto name = this->getBehaviourName(mb);
 
@@ -1484,6 +1494,13 @@ namespace mfront {
       //      b.push_back(name);
     }
     insert_if(l.epts, b);
+    // elastic material properties
+    if (bd.areElasticMaterialPropertiesDefined()) {
+      for (const auto& emp : bd.getElasticMaterialPropertiesDescriptions()) {
+        CastemMaterialPropertyInterface i;
+        i.getLibraryDescription(d, l, emp);
+      }
+    }
   }  // end of CastemInterface::getTargetsDescription
 
   std::pair<std::vector<BehaviourMaterialProperty>, SupportedTypes::TypeSize>

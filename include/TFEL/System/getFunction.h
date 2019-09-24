@@ -29,24 +29,6 @@ extern "C" {
 #endif /* __cplusplus */
 
 /*!
- * \brief this function get if the number of argument of the
- * specified function
- *
- * This function search a symbol called name+'_nargs' and interpret
- * it as and unsigned short. The value of that unsigned short
- * compared to the number given in argument.
- *
- * The name 'castem' comes from an extension we wrote for that
- * finite element code that uses function with the following
- * prototype double (*)(const double* const);
- *
- * \param LibraryHandlerPtr, link to library opened through dlopen
- * \param const char * const, name of the function to be checked
- * \return int, the number of variables (-1 if on error).
- */
-int tfel_getCastemFunctionNumberOfVariables(LibraryHandlerPtr,
-                                            const char* const);
-/*!
  * \brief this function returns true if the given behaviour requires
  * an offset for the elastic properties.
  * \param l: link to library opened through dlopen
@@ -88,8 +70,6 @@ char** tfel_getArrayOfStrings(LibraryHandlerPtr, const char* const);
 
 int* tfel_getArrayOfInts(LibraryHandlerPtr, const char* const);
 
-char** tfel_getCastemFunctionVariables(LibraryHandlerPtr, const char* const);
-
 int(TFEL_ADDCALL_PTR tfel_getSetOutOfBoundsPolicyFunction(
     LibraryHandlerPtr lib, const char* const name))(const int);
 
@@ -116,7 +96,7 @@ int(TFEL_ADDCALL_PTR tfel_getGenericBehaviourFunction(LibraryHandlerPtr,
     struct MFront_GB_BehaviourData* const);
 /*!
  * \brief this function gets the number of arguments of the
- * specified function
+ * specified material property
  *
  * This function search a symbol called name+'_nargs' and interpret
  * it as and unsigned short. The value of that unsigned short
@@ -126,15 +106,16 @@ int(TFEL_ADDCALL_PTR tfel_getGenericBehaviourFunction(LibraryHandlerPtr,
  * \param const char * const, name of the function to be checked
  * \return int, the number of variables (-1 if on error).
  */
-int tfel_getCyranoMaterialPropertyNumberOfVariables(LibraryHandlerPtr,
+int tfel_getMaterialPropertyNumberOfVariables(LibraryHandlerPtr,
                                                     const char* const);
 /*!
- * \brief this function gets the name of the arguments of the specified function
+ * \brief this function gets the name of the arguments of the specified
+ * material property
  * \param l: library opened through dlopen
  * \param n: name of the function
  * \return a pointer to the array of the arguments'names
  */
-char** tfel_getCyranoMaterialPropertyVariables(LibraryHandlerPtr, const char* const);
+char** tfel_getMaterialPropertyVariables(LibraryHandlerPtr, const char* const);
 /*!
  * \brief this function returns a function of type `CyranoMaterialPropertyPtr`
  *

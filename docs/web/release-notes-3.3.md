@@ -8,6 +8,10 @@ The page declares the new functionalities of the 3.3 version of the
 This version was released along with Version `3.2.2` and inherits from
 all the fixes of this version.
 
+# Improvements to `TFEL`' core libraries
+
+## Improvements to `TFEL/System`
+
 # Improvements to `MFront`
 
 ## Parameters can now be declared with a type
@@ -19,6 +23,27 @@ parameters consistent with the declaration of the other variables.
 ~~~~
 @Parameter strainrate de0 = 1e-4;
 ~~~~
+
+## New material property interface for the `Cyrano` fuel performance code
+
+For the `Cyrano` fuel performance code to call external material
+properties, a dedicated interface has been built.
+
+The prototype of the generated functions are as follows:
+
+~~~~{.c++}
+CyranoRealType (*)(CyranoOutputStatus* const,
+				   const CyranoRealType* const,
+				   const CyranoIntegerType,
+				   const CyranoOutOfBoundsPolicy);
+~~~~
+
+This new interface is fully documented [here](cyrano.html).
+
+## Improvements to the `Cast3M`' behaviour interface
+
+
+## Improvements to the `Cyrano`' behaviour interface
 
 # Improvements to `MTest`
 

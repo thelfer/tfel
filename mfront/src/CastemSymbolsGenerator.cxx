@@ -13,8 +13,10 @@
 
 #include <ostream>
 #include "TFEL/Raise.hxx"
+#include "MFront/MaterialPropertyDescription.hxx"
 #include "MFront/BehaviourDescription.hxx"
 #include "MFront/StandardBehaviourInterface.hxx"
+#include "MFront/CastemMaterialPropertyInterface.hxx"
 #include "MFront/CastemInterface.hxx"
 #include "MFront/CastemSymbolsGenerator.hxx"
 
@@ -53,19 +55,34 @@ namespace mfront {
   }  // end of CastemSymbolsGenerator::writeAdditionalSymbols
 
   void CastemSymbolsGenerator::writeSpecificSymbols(
-      std::ostream& out,
+      std::ostream& os,
       const StandardBehaviourInterface& i,
-      const BehaviourDescription& mb,
+      const BehaviourDescription& bd,
       const FileDescription&,
       const std::string& name) const {
-    if (CastemInterface::usesGenericPlaneStressAlgorithm(mb)) {
-      out << "MFRONT_SHAREDOBJ unsigned short " << i.getFunctionNameBasis(name)
-          << "_UsesGenericPlaneStressAlgorithm = 1u;\n\n";
+    if (CastemInterface::usesGenericPlaneStressAlgorithm(bd)) {
+      os << "MFRONT_SHAREDOBJ unsigned short " << i.getFunctionNameBasis(name)
+         << "_UsesGenericPlaneStressAlgorithm = 1u;\n\n";
     } else {
-      out << "MFRONT_SHAREDOBJ unsigned short " << i.getFunctionNameBasis(name)
-          << "_UsesGenericPlaneStressAlgorithm = 0u;\n\n";
+      os << "MFRONT_SHAREDOBJ unsigned short " << i.getFunctionNameBasis(name)
+         << "_UsesGenericPlaneStressAlgorithm = 0u;\n\n";
     }
-  }
+    // elastic material properties
+    auto emps = [&bd, &i, &name] {
+      auto names = std::vector<std::string>{};
+      if (bd.areElasticMaterialPropertiesDefined()) {
+        for (const auto& e : bd.getElasticMaterialPropertiesDescriptions()) {
+          CastemMaterialPropertyInterface imp;
+          names.push_back(imp.getCastemFunctionName(e));
+        }
+      }
+      return names;
+    }();
+    const auto fn = i.getFunctionNameBasis(name);
+    os << "MFRONT_SHAREDOBJ unsigned short " << fn
+       << "_nElasticMaterialPropertiesEntryPoints = " << emps.size() << "u;\n";
+    this->writeArrayOfStringsSymbol(os, fn + "_ElasticMaterialPropertiesEntryPoints", emps);
+  }  // end of CastemSymbolsGenerator::writeSpecificSymbols
 
   bool CastemSymbolsGenerator::handleStrainMeasure() const{
     return true;

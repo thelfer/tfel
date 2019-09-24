@@ -788,15 +788,8 @@ namespace tfel {
 
     unsigned short ExternalLibraryManager::getCastemFunctionNumberOfVariables(
         const std::string& l, const std::string& f) {
-      const auto lib = this->loadLibrary(l);
-      const auto res =
-          ::tfel_getCastemFunctionNumberOfVariables(lib, f.c_str());
-      raise_if(res < 0,
-               "ExternalLibraryManager::getCastemFunctionNumberOfVariables: "
-               "number of variables could not be read (" +
-                   getErrorMessage() + ")");
-      return static_cast<unsigned short>(res);
-    }
+      return this->getMaterialPropertyNumberOfVariables(l, f);
+    } // end of ExternalLibraryManager::getCastemFunctionNumberOfVariables
 
     bool ExternalLibraryManager::getUMATRequiresStiffnessTensor(
         const std::string& l, const std::string& f, const std::string& h) {
@@ -912,26 +905,14 @@ namespace tfel {
 
     std::vector<std::string> ExternalLibraryManager::getCastemFunctionVariables(
         const std::string& l, const std::string& f) {
-      std::vector<std::string> vars;
-      this->getCastemFunctionVariables(vars, l, f);
-      return vars;
+      return this->getMaterialPropertyVariables(l, f);
     }  // end of ExternalLibraryManager::getCastemFunctionVariables
 
     void ExternalLibraryManager::getCastemFunctionVariables(
         std::vector<std::string>& vars,
         const std::string& l,
         const std::string& f) {
-      const auto lib = this->loadLibrary(l);
-      unsigned short nb = this->getCastemFunctionNumberOfVariables(l, f);
-      char** res = ::tfel_getCastemFunctionVariables(lib, f.c_str());
-      char** p;
-      raise_if(res == nullptr,
-               "ExternalLibraryManager::getCastemFunctionNumberOfVariables: "
-               " variables names could not be read (" +
-                   getErrorMessage() + ")");
-      for (p = res; p != res + nb; ++p) {
-        vars.emplace_back(*p);
-      }
+      this->getMaterialPropertyVariables(vars, l, f);
     }  // end of ExternalLibraryManager::getCastemFunctionVariables
 
     GenericBehaviourFctPtr ExternalLibraryManager::getGenericBehaviourFunction(
@@ -945,40 +926,57 @@ namespace tfel {
       return fct;
     }
 
-    unsigned short ExternalLibraryManager::getCyranoMaterialPropertyNumberOfVariables(
+    unsigned short ExternalLibraryManager::getMaterialPropertyNumberOfVariables(
         const std::string& l, const std::string& f) {
       const auto lib = this->loadLibrary(l);
       const auto res =
-          ::tfel_getCyranoMaterialPropertyNumberOfVariables(lib, f.c_str());
+          ::tfel_getMaterialPropertyNumberOfVariables(lib, f.c_str());
       raise_if(res < 0,
-               "ExternalLibraryManager::getCyranoMaterialPropertyNumberOfVariables: "
+               "ExternalLibraryManager::getMaterialPropertyNumberOfVariables: "
                "number of variables could not be read (" +
                    getErrorMessage() + ")");
       return static_cast<unsigned short>(res);
     }
 
-    std::vector<std::string> ExternalLibraryManager::getCyranoMaterialPropertyVariables(
+    std::vector<std::string> ExternalLibraryManager::getMaterialPropertyVariables(
         const std::string& l, const std::string& f) {
       std::vector<std::string> vars;
-      this->getCyranoMaterialPropertyVariables(vars, l, f);
+      this->getMaterialPropertyVariables(vars, l, f);
       return vars;
+    }  // end of ExternalLibraryManager::getMaterialPropertyVariables
+
+    void ExternalLibraryManager::getMaterialPropertyVariables(
+        std::vector<std::string>& vars,
+        const std::string& l,
+        const std::string& f) {
+      const auto lib = this->loadLibrary(l);
+      unsigned short nb = this->getMaterialPropertyNumberOfVariables(l, f);
+      char** res = ::tfel_getMaterialPropertyVariables(lib, f.c_str());
+      char** p;
+      raise_if(res == nullptr,
+               "ExternalLibraryManager::getMaterialPropertyNumberOfVariables: "
+               " variables names could not be read (" +
+                   getErrorMessage() + ")");
+      for (p = res; p != res + nb; ++p) {
+        vars.emplace_back(*p);
+      }
+    }  // end of ExternalLibraryManager::getMaterialPropertyVariables
+
+    unsigned short ExternalLibraryManager::getCyranoMaterialPropertyNumberOfVariables(
+        const std::string& l, const std::string& f) {
+      return this->getMaterialPropertyNumberOfVariables(l, f);
+    }
+
+    std::vector<std::string> ExternalLibraryManager::getCyranoMaterialPropertyVariables(
+        const std::string& l, const std::string& f) {
+      return this->getMaterialPropertyVariables(l, f);
     }  // end of ExternalLibraryManager::getCyranoMaterialPropertyVariables
 
     void ExternalLibraryManager::getCyranoMaterialPropertyVariables(
         std::vector<std::string>& vars,
         const std::string& l,
         const std::string& f) {
-      const auto lib = this->loadLibrary(l);
-      unsigned short nb = this->getCyranoMaterialPropertyNumberOfVariables(l, f);
-      char** res = ::tfel_getCyranoMaterialPropertyVariables(lib, f.c_str());
-      char** p;
-      raise_if(res == nullptr,
-               "ExternalLibraryManager::getCyranoMaterialPropertyNumberOfVariables: "
-               " variables names could not be read (" +
-                   getErrorMessage() + ")");
-      for (p = res; p != res + nb; ++p) {
-        vars.emplace_back(*p);
-      }
+      this->getMaterialPropertyVariables(vars, l, f);
     }  // end of ExternalLibraryManager::getCyranoMaterialPropertyVariables
 
     CyranoMaterialPropertyPtr ExternalLibraryManager::getCyranoMaterialProperty(
@@ -1276,6 +1274,18 @@ namespace tfel {
                    getErrorMessage() + ")");
       return static_cast<unsigned short>(u);
     }  // end of ExternalLibraryManager::getUMATElasticSymmetryType
+
+    std::vector<std::string>
+    ExternalLibraryManager::getUMATElasticMaterialPropertiesEntryPoints(
+        const std::string& l, const std::string& f) {
+      if (!this->contains(l, f + "_ElasticMaterialPropertiesEntryPoints")) {
+        return {};
+      }
+      std::vector<std::string> names;
+      this->getUMATNames(names, l, f, "", "ElasticMaterialPropertiesEntryPoints");
+      return names;
+    }  // end of
+       // ExternalLibraryManager::getUMATElasticMaterialPropertiesEntryPoints
 
     std::vector<std::string>
     ExternalLibraryManager::getUMATMaterialPropertiesNames(

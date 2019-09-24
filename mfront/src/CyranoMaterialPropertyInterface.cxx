@@ -29,6 +29,7 @@
 #include "MFront/DSLUtilities.hxx"
 #include "MFront/MFrontUtilities.hxx"
 #include "MFront/FileDescription.hxx"
+#include "MFront/LibraryDescription.hxx"
 #include "MFront/TargetsDescription.hxx"
 #include "MFront/MaterialPropertyDescription.hxx"
 #include "MFront/MaterialPropertyParametersHandler.hxx"

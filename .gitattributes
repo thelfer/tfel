@@ -102,6 +102,7 @@ bindings/python/tfel/Data.cxx -text
 bindings/python/tfel/Evaluator.cxx -text
 bindings/python/tfel/ExternalBehaviourDescription.cxx -text
 bindings/python/tfel/ExternalLibraryManager.cxx -text
+bindings/python/tfel/ExternalMaterialPropertyDescription.cxx -text
 bindings/python/tfel/Glossary.cxx -text
 bindings/python/tfel/GlossaryEntry.cxx -text
 bindings/python/tfel/Hosford.cxx -text
@@ -2034,6 +2035,7 @@ include/TFEL/System/ChildProcess.hxx -text
 include/TFEL/System/ExternalBehaviourDescription.hxx -text
 include/TFEL/System/ExternalFunctionsPrototypes.hxx -text
 include/TFEL/System/ExternalLibraryManager.hxx -text
+include/TFEL/System/ExternalMaterialPropertyDescription.hxx -text
 include/TFEL/System/LibraryInformation.hxx -text
 include/TFEL/System/ProcessManager.h -text
 include/TFEL/System/ProcessManager.hxx -text
@@ -6500,6 +6502,7 @@ src/System/CMakeLists.txt -text
 src/System/ChildProcess.cxx -text
 src/System/ExternalBehaviourDescription.cxx -text
 src/System/ExternalLibraryManager.cxx -text
+src/System/ExternalMaterialPropertyDescription.cxx -text
 src/System/LibraryInformation-elf_info.cxx -text
 src/System/LibraryInformation-macho_info.cxx -text
 src/System/LibraryInformation-pe_info.cxx -text

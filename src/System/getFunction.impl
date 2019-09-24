@@ -24,30 +24,6 @@
 extern "C" {
 #endif /* __cplusplus */
 
-  int tfel_getCastemFunctionNumberOfVariables(LibraryHandlerPtr lib,
-					      const char * const name){
-    unsigned short * n;
-    size_t len = strlen(name);
-    char *myname = (char *) malloc((len+7u)*sizeof(char));
-    if(myname==nullptr){
-      return -1;
-    }
-    strncpy(myname,name,len);
-    myname[len]='_';
-    myname[len+1u]='n';
-    myname[len+2u]='a';
-    myname[len+3u]='r';
-    myname[len+4u]='g';
-    myname[len+5u]='s';
-    myname[len+6u]='\0';
-    n= (unsigned short *) dlsym(lib,myname);
-    free(myname);
-    if(n==nullptr){
-      return -1;
-    }  
-    return *n;
-  } 
-
   int tfel_getUMATRequiresStiffnessTensor(LibraryHandlerPtr l,
 					  const char * const f)
   {
@@ -191,26 +167,6 @@ extern "C" {
     return v;
   }
 
-  char **tfel_getCastemFunctionVariables(LibraryHandlerPtr lib,
-                                         const char *const name) {
-    char ** v;
-    size_t len = strlen(name);
-    char *myname = (char *) malloc((len+6u)*sizeof(char));
-    if(myname==nullptr){
-      return nullptr;
-    }
-    strncpy(myname,name,len);
-    myname[len]='_';
-    myname[len+1u]='a';
-    myname[len+2u]='r';
-    myname[len+3u]='g';
-    myname[len+4u]='s';
-    myname[len+5u]='\0';
-    v = (char **) dlsym(lib,myname);
-    free(myname);
-    return v;
-  }
-
   int (TFEL_ADDCALL_PTR tfel_getSetOutOfBoundsPolicyFunction(LibraryHandlerPtr lib,
 							     const char * const name))(const int){
     return (int (TFEL_ADDCALL_PTR)(const int)) dlsym(lib,name);
@@ -243,8 +199,8 @@ extern "C" {
     return (int (TFEL_ADDCALL_PTR)(struct MFront_GB_BehaviourData* const)) dlsym(l,f);
   }  // end of tfel_getGenericBehaviourFunction
 
-  int tfel_getCyranoMaterialPropertyNumberOfVariables(LibraryHandlerPtr lib,
-                                                      const char *const name) {
+  int tfel_getMaterialPropertyNumberOfVariables(LibraryHandlerPtr lib,
+                                                const char *const name) {
     unsigned short * n;
     size_t len = strlen(name);
     char *myname = (char *) malloc((len+7u)*sizeof(char));
@@ -267,8 +223,8 @@ extern "C" {
     return *n;
   }
 
-  char **tfel_getCyranoMaterialPropertyVariables(LibraryHandlerPtr lib,
-                                                 const char *const name) {
+  char **tfel_getMaterialPropertyVariables(LibraryHandlerPtr lib,
+                                           const char *const name) {
     char **v;
     size_t len = strlen(name);
     char *myname = (char *)malloc((len + 6u) * sizeof(char));

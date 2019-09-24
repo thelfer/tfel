@@ -13,13 +13,37 @@
 
 #include <ostream>
 #include "TFEL/Raise.hxx"
+#include "MFront/MaterialPropertyDescription.hxx"
 #include "MFront/BehaviourDescription.hxx"
 #include "MFront/StandardBehaviourInterface.hxx"
+#include "MFront/CyranoMaterialPropertyInterface.hxx"
 #include "MFront/CyranoSymbolsGenerator.hxx"
 
 namespace mfront {
 
   CyranoSymbolsGenerator::CyranoSymbolsGenerator() = default;
+
+  void CyranoSymbolsGenerator::writeSpecificSymbols(
+      std::ostream& os,
+      const StandardBehaviourInterface& i,
+      const BehaviourDescription& bd,
+      const FileDescription&,
+      const std::string& name) const {
+    auto emps = [&bd, &i, &name] {
+      auto names = std::vector<std::string>{};
+      if (bd.areElasticMaterialPropertiesDefined()) {
+        for (const auto& e : bd.getElasticMaterialPropertiesDescriptions()) {
+          CyranoMaterialPropertyInterface imp;
+          names.push_back(imp.getCyranoFunctionName(e));
+        }
+      }
+      return names;
+    }();
+    const auto fn = i.getFunctionNameBasis(name);
+    os << "MFRONT_SHAREDOBJ unsigned short " << fn
+       << "_nElasticMaterialPropertiesEntryPoints = " << emps.size() << "u;\n";
+    this->writeArrayOfStringsSymbol(os, fn + "_ElasticMaterialPropertiesEntryPoints", emps);
+  }  // end of CyranoSymbolsGenerator::writeSpecificSymbols
 
   void CyranoSymbolsGenerator::writeAdditionalSymbols(
       std::ostream&,
@@ -36,11 +60,11 @@ namespace mfront {
       const BehaviourDescription& mb,
       const std::string& name) const {
     auto throw_if = [](const bool b, const std::string& m) {
-      tfel::raise_if(
-          b, "CyranoSymbolsGenerator::writeBehaviourTypeSymbols: " + m);
+      tfel::raise_if(b,
+                     "CyranoSymbolsGenerator::writeBehaviourTypeSymbols: " + m);
     };
-    out << "MFRONT_SHAREDOBJ unsigned short "
-        << i.getFunctionNameBasis(name) << "_BehaviourType = ";
+    out << "MFRONT_SHAREDOBJ unsigned short " << i.getFunctionNameBasis(name)
+        << "_BehaviourType = ";
     if (mb.getBehaviourType() ==
         BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
       if (mb.isStrainMeasureDefined()) {
@@ -49,12 +73,12 @@ namespace mfront {
         } else if (mb.getStrainMeasure() == BehaviourDescription::HENCKY) {
           out << "2u;\n\n";
         } else {
-          throw_if(
-              true,
-              "the cyrano interface only supports:\n"
-              "- small strain behaviours: the only strain measure "
-              "supported is the HPP one (linearised)\n"
-              "- finite strain behaviours based on the Hencky strain measure");
+          throw_if(true,
+                   "the cyrano interface only supports:\n"
+                   "- small strain behaviours: the only strain measure "
+                   "supported is the HPP one (linearised)\n"
+                   "- finite strain behaviours based on the Hencky strain "
+                   "measure");
         }
       } else {
         out << "1u;\n\n";

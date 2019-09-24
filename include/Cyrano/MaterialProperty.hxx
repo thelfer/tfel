@@ -23,10 +23,11 @@ extern "C" {
 #endif /* __cplusplus */
 
 //! a simple alias
-typedef CyranoRealType (CYRANO_ADDCALL_PTR CyranoMaterialPropertyPtr)(CyranoOutputStatus* const,       // output status
-								      const CyranoRealType* const,     // arguments
-								      const CyranoIntegerType,         // number of arguments
-								      const CyranoOutOfBoundsPolicy);  // out of bounds policy
+typedef CyranoRealType(CYRANO_ADDCALL_PTR CyranoMaterialPropertyPtr)(
+    CyranoOutputStatus* const,       // output status
+    const CyranoRealType* const,     // arguments
+    const CyranoIntegerType,         // number of arguments
+    const CyranoOutOfBoundsPolicy);  // out of bounds policy
 
 #ifdef __cplusplus
 }  // end of extern "C"
