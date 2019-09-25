@@ -12,6 +12,7 @@
  * project under specific licensing conditions.
  */
 
+#include <cstdlib>
 #include <fstream>
 #include <sstream>
 #include <stdexcept>
@@ -39,6 +40,13 @@ namespace mfront {
   void writeEntryPointSymbol(std::ostream& out,
                              const std::string& n,
                              const std::string& n2) {
+    const auto* const build_id = std::getenv("TFEL_BUILD_ID");
+    if (build_id != nullptr) {
+      out << "MFRONT_SHAREDOBJ const char* \n"
+          << n << "_build_id = \"" << build_id << "\";\n\n";
+    } else {
+      out << "MFRONT_SHAREDOBJ const char* \n" << n << "_build_id = \"\";\n\n";
+    }
     out << "MFRONT_SHAREDOBJ const char* \n"
         << n << "_mfront_ept = \"" << n2 << "\";\n\n";
   }  // end of writeEntryPointSymbols

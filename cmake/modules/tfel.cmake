@@ -40,6 +40,7 @@ macro(tfel_project tfel_version_major tfel_version_minor tfel_version_patch)
   if(LIB_SUFFIX)
     add_definitions("-DLIB_SUFFIX=\\\"\"${LIB_SUFFIX}\"\\\"")
   endif(LIB_SUFFIX)
+
 endmacro(tfel_project)
 
 set(CPACK_COMPONENTS_ALL core mfront mtest mfm)

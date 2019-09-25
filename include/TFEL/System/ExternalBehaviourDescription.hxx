@@ -27,26 +27,35 @@ namespace tfel {
      * \brief a structure containing the information  a given behaviour.
      */
     struct TFELSYSTEM_VISIBILITY_EXPORT ExternalBehaviourData {
+      //! \brief default constructor
       ExternalBehaviourData();
+      //! \brief move constructor
       ExternalBehaviourData(ExternalBehaviourData&&);
+      //! \brief copy constructor
       ExternalBehaviourData(const ExternalBehaviourData&);
+      //! \brief move assignement
       ExternalBehaviourData& operator=(ExternalBehaviourData&&);
+      //! \brief standard assignement
       ExternalBehaviourData& operator=(const ExternalBehaviourData&);
-      //! version of TFEL used to generate the behaviour
+      //! \brief version of TFEL used to generate the behaviour
       std::string tfel_version;
-      //! name of the library
+      //! \brief build identifier
+      std::string build_id;
+      //! \brief name of the library
       std::string library;
-      //! name of the behavior
+      //! \brief name of the interface used to generate the behaviour
+      std::string interface;
+      //! \brief name of the behavior
       std::string behaviour;
-      //! name of the hypothesis
+      //! \brief name of the hypothesis
       std::string hypothesis;
-      //! names of the gradients (driving variables)
+      //! \brief names of the gradients (driving variables)
       std::vector<std::string> dvnames;
-      //! types of the gradients (driving variables)
+      //! \brief types of the gradients (driving variables)
       std::vector<int> dvtypes;
-      //! names of the thermodynamic forces
+      //! \brief names of the thermodynamic forces
       std::vector<std::string> thnames;
-      //! types of the thermodynamic forces
+      //! \brief types of the thermodynamic forces
       std::vector<int> thtypes;
       /*!
        * \brief names of entry points associated with elastic material
@@ -65,19 +74,19 @@ namespace tfel {
        * behaviour by the calling solver
        */
       std::vector<std::string> mpnames;
-      //! names of the internal state variables
+      //! \brief names of the internal state variables
       std::vector<std::string> ivnames;
-      //! types of the internal state variables
+      //! \brief types of the internal state variables
       std::vector<int> ivtypes;
-      //! names of the external state variables
+      //! \brief names of the external state variables
       std::vector<std::string> evnames;
-      //! names of the parameters
+      //! \brief names of the parameters
       std::vector<std::string> pnames;
-      //! names of the integer parameters
+      //! \brief names of the integer parameters
       std::vector<std::string> ipnames;
-      //! names of the unsigned short parameters
+      //! \brief names of the unsigned short parameters
       std::vector<std::string> upnames;
-      //! source file
+      //! \brief source file
       std::string source;
       /*!
        * \brief behaviour type
@@ -97,26 +106,30 @@ namespace tfel {
        */
       unsigned short kinematic = 0;
       /*!
-       * symmetry type:
+       * \brief symmetry type:
        * - If stype is equal to 0, the behaviour is isotropic.
        * - If stype is equal to 1, the behaviour is orthotropic.
        */
       unsigned short stype = 0;
       /*!
-       * elastic symmetry type:
+       * \brief elastic symmetry type:
        * - If etype is equal to 0, the behaviour elastic behaviour is isotropic.
        * - If etype is equal to 1, the behaviour elastic behaviour is
        * orthotropic.
        */
       unsigned short etype = 0;
-      //! If isUPUIR is true, the behaviour is usable in purely implicit
-      //! resolution
+      /*!
+       * \brief If isUPUIR is true, the behaviour is usable in purely implicit
+       * resolution.
+       */
       bool isUPUIR = false;
-      //! If requiresStiffnessTensor is true, the caller must provide the
-      //! stiffness tensor
+      /*!
+       * \brief If requiresStiffnessTensor is true, the caller must provide the
+       * stiffness tensor.
+       */
       bool requiresStiffnessTensor = false;
       /*!
-       * If requiresThermalExpansionCoefficientTensor is true, the
+       * \brief If requiresThermalExpansionCoefficientTensor is true, the
        * caller must provide the thermal expansion coefficients tensor
        */
       bool requiresThermalExpansionCoefficientTensor = false;

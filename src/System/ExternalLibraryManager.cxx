@@ -332,6 +332,25 @@ namespace tfel {
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
     }  // end of ExternalLibraryManager::contains
 
+    std::string ExternalLibraryManager::getBuildId(const std::string& l,
+                                                   const std::string& s) {
+      const auto lib = this->loadLibrary(l);
+#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
+      const auto p =
+          (const char* const*)::GetProcAddress(lib, (s + "_build_id").c_str());
+#else
+      const auto p = ::dlsym(lib, (s + "_build_id").c_str());
+#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
+      if (p == nullptr) {
+        return "";
+      }
+#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
+      return *p;
+#else
+      return *(static_cast<const char* const*>(p));
+#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
+    }  // end of ExternalLibraryManager::getBuildId
+
     std::string ExternalLibraryManager::getSource(const std::string& l,
                                                   const std::string& f) {
       auto s = std::string{};

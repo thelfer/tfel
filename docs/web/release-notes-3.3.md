@@ -10,9 +10,65 @@ all the fixes of this version.
 
 # Improvements to `TFEL`' core libraries
 
-## Improvements to `TFEL/System`
+## Improvements and new features of `TFEL/System` library
+
+### Improvements to `ExternalLibraryManager`
+
+`ExternalLibraryManager`' new features includes:
+
+- retrieving the build identifier of a material knowledge (see Section
+  @sec:build_identifiers).
+- retrieving a material property implemented using the `Cyrano`
+  interface (see Section @sec:cyrano:material_properties).
+
+### Improvements to the `ExternalBehaviourData` structure
+
+The `ExternalBehaviourData` class now contains three new fields
+associated respectively with the build identifier see Section
+@sec:build_identifiers), the interface used to generate the behaviour,
+and the exported elastic material properties.
+
+The later is empty if the behaviour does not export elastic material
+properties.
+
+See the [doxygen
+documentation](html/structtfel_1_1system_1_1_external_behaviour_data.html)
+for details.
+
+### The `ExternalMaterialPropertyData` and `ExternalMaterialPropertyDescription` structures
+
+The `ExternalMaterialPropertyData` and
+`ExternalMaterialPropertyDescription` structures provides metadata about
+a material property. See the [doxygen
+documentation](html/structtfel_1_1system_1_1_external_material_property_data.html)
+for details.
 
 # Improvements to `MFront`
+
+## Specifying a build identifier{#sec:build_identifiers}
+
+A defined by Wikipedia, Quality assurance (QA) is a way of preventing
+mistakes and defects in manufactured products and avoiding problems when
+delivering products.
+
+Fuel performance codes are developed under stringent Quality Assurance
+requirements that make their developers reluctant to rely on shared
+libraries to deliver material knowledge they are responsible for. For
+example, a user may replace such a shared library by its own version,
+intentionally or by accident (conflict with a previous version for
+example).
+
+Specifying a build identifier proposes a solution for this issue. During
+building the shared libraries, developers may known specify a build
+identifier using the `TFEL_BUILD_ID` environment variable. This
+identifier is meant to be only known by the developers of the code and
+is hidden to end users. At runtime, when calling a shared library, the
+code can retrieve its build identifier, if any, and can check if it
+matches the identifier defined by the developers. If not, it may
+indicate a conflict exists with a previous versions of the shared
+library or that the end user wants to test a new material property or a
+new mechanical behaviour. In both cases, the code will report that
+results are out of its specifications.
 
 ## Parameters can now be declared with a type
 
@@ -24,7 +80,7 @@ parameters consistent with the declaration of the other variables.
 @Parameter strainrate de0 = 1e-4;
 ~~~~
 
-## New material property interface for the `Cyrano` fuel performance code
+## New material property interface for the `Cyrano` fuel performance code{#sec:cyrano:material_properties}
 
 For the `Cyrano` fuel performance code to call external material
 properties, a dedicated interface has been built.
@@ -42,8 +98,102 @@ This new interface is fully documented [here](cyrano.html).
 
 ## Improvements to the `Cast3M`' behaviour interface
 
+`Cast3M` users have to deal with two *a priori* incompatible
+requirements:
+
+- On one hand, `Cast3M`' default algorithm relies on the definition of
+  the elastic stiffness.
+- On the other hand, Quality Assurance requirements urges `MFront`
+  implementations to define the elastic properties internally[^1].
+
+[^1]: Elastic properties may be defined in various ways. One way is to
+  use either the `@ElasticMaterialProperties` keyword or the
+  `@ComputeStiffnessTensor` keyword. Another way is to define them
+  inside the options of bricks.
+
+Possible workarounds so far include:
+
+- Giving approximate values to `Cast3M` as its elastic stiffness is just
+  a numerical parameter.
+- Implementing the material properties in their own `MFront` files and
+  compiling both the behaviour and the elastic properties.
+
+Both workarounds have their drawbacks:
+
+- In the first case, one may degrade the performances if the elastic
+  stiffness is not close enough to the real one. Another drawback of
+  this approach is that it may sometimes be convenient to have the real
+  values of the elastic properties for post-processings.
+- The second solution is error-prone as it requires the user to take
+  care that the definition of the elastic properties is consistent with
+  the ones used in the behaviour.
+
+This release introduces a better solution. When elastic properties are
+defined internally, the `Cast3M` interface for behaviours now
+automatically generates the elastic material properties using the
+`Cast3M` interface for material properties.
+
+The generated functions: have a name built with the name of the
+behaviour, followed by the underscore, and the name of the material
+property and are built in the same shared library than the behaviour.
+
+At this stage, one gets something very similar with the second solution
+we just discussed. However, we now have the following advantages:
+
+- The generation of those properties is automatic.
+- The existence of those properties can be check as part of the metadata
+  associated with the behaviour. Though not useful for raw `Cast3M`
+  usage, this is very useful for more advanced solvers built on top of
+  `Cast3M`, such as the ones available in the `PLEIADES` platform.
+- The generated example of usage shows how the material properties must
+  be declared (see the example below).
+
+### Example
+
+Consider the following minimal example:
+
+~~~~{.cxx}
+@DSL Implicit;
+@Behaviour Test;
+@ElasticMaterialProperties{"127.8e9*(1-7.825e-5*(T-293.15))", 0.3};
+@Integrator {
+  fεᵉˡ += Δεᵗᵒ;
+}
+~~~~
+
+Compiling this behaviour with the `Cast3M` interface generates the
+following output:
+
+~~~~{.bash}
+Treating target : all
+The following library has been built :
+- libUmatBehaviour.so :  umattest Test_YoungModulus Test_PoissonRatio
+~~~~
+
+In addition of the behaviour, this output highlights that two functions
+associated respectively with the `YoungModulus` and the `PoissonRatio`
+were generated.
+
+In the generated example of usage, the material properties are declared
+as follows:
+
+~~~~{.python}
+xyoun = 'TABLE';
+xyoun . 'MODELE' = 'Test_YoungModulus';
+xyoun . 'LIBRAIRIE' = '';
+xyoun . 'VARIABLES' = 'MOTS'  'T';
+
+xnu = 0.3;
+~~~~
 
 ## Improvements to the `Cyrano`' behaviour interface
+
+### Generation of elastic material properties from the behaviour
+
+For post-processing reasons, the `Cyrano` fuel performance code must
+access the elastic material properties used by the behaviour. To ensure
+consistency, the behaviour now automatically exports the elastic
+material properties when they are defined internally.
 
 # Improvements to `MTest`
 

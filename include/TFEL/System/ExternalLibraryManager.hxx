@@ -346,9 +346,15 @@ namespace tfel {
           const std::string&, const std::string&);
       /*!
        * \param[in] l : name of the library
-       * \param[in] f : law name
+       * \param[in] s : symbol name
        */
       bool contains(const std::string&, const std::string&);
+      /*!
+       * \return the build id associated with the current symbol, if any.
+       * \param[in] l : name of the library
+       * \param[in] s : symbol name
+       */
+      std::string getBuildId(const std::string&, const std::string&);
       /*!
        * \param[in] l : name of the library
        * \param[in] f : function name

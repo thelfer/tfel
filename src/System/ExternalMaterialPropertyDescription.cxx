@@ -38,8 +38,12 @@ namespace tfel {
       auto& elm = ExternalLibraryManager::getExternalLibraryManager();
       this->library = l;
       this->material_property = f;
+      this->tfel_version = elm.getTFELVersion(l, f);
+      this->build_id = elm.getBuildId(l, f);
+      this->source = elm.getSource(l, f);
+      this->interface = elm.getInterface(l, f);
       this->arguments = elm.getMaterialPropertyVariables(l, f);
-    }
+    } // end of ExternalMaterialPropertyDescription::ExternalMaterialPropertyDescription
 
     ExternalMaterialPropertyDescription::ExternalMaterialPropertyDescription() = default;
     ExternalMaterialPropertyDescription::ExternalMaterialPropertyDescription(

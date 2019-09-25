@@ -28,6 +28,10 @@ void declareExternalMaterialPropertyDescription() {
   class_<ExternalMaterialPropertyDescription>(
       "ExternalMaterialPropertyDescription", init<>())
       .def(init<std::string, std::string>())
+      .def_readonly("tfel_version", &ExternalMaterialPropertyDescription::tfel_version)
+      .def_readonly("build_id", &ExternalMaterialPropertyDescription::build_id)
+      .def_readonly("source", &ExternalMaterialPropertyDescription::source)
+      .def_readonly("interface", &ExternalMaterialPropertyDescription::interface)
       .add_property("arguments", &get_args);
 
 } // end of declareExternalMaterialPropertyDescription

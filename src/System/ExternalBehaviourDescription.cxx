@@ -55,11 +55,13 @@ namespace tfel {
       this->behaviour = f;
       this->hypothesis = h;
       this->tfel_version = elm.getTFELVersion(l, f);
+      this->build_id = elm.getBuildId(l, f);
       if (elm.contains(l, f + "_ElasticMaterialPropertiesEntryPoints")) {
         this->elastic_material_properties_epts =
             elm.getUMATElasticMaterialPropertiesEntryPoints(l, f);
       }
       this->source = elm.getSource(l, f);
+      this->interface = elm.getInterface(l, f);
       this->btype = elm.getUMATBehaviourType(l, f);
       this->kinematic = elm.getUMATBehaviourKinematic(l, f);
       this->stype = elm.getUMATSymmetryType(l, f);

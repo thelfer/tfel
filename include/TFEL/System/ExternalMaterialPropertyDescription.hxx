@@ -27,11 +27,24 @@ namespace tfel {
      * \brief a structure containing the information  a given behaviour.
      */
     struct TFELSYSTEM_VISIBILITY_EXPORT ExternalMaterialPropertyData {
+      //! \brief default constructor
       ExternalMaterialPropertyData();
+      //! \brief move constructor
       ExternalMaterialPropertyData(ExternalMaterialPropertyData&&);
+      //! \brief move constructor
       ExternalMaterialPropertyData(const ExternalMaterialPropertyData&);
+      //! \brief move assignement
       ExternalMaterialPropertyData& operator=(ExternalMaterialPropertyData&&);
+      //! \brief standard assignement
       ExternalMaterialPropertyData& operator=(const ExternalMaterialPropertyData&);
+      //! \brief version of TFEL used to generate the behaviour
+      std::string tfel_version;
+      //! \brief build identifier
+      std::string build_id;
+      //! \brief MFront source file
+      std::string source;
+      //! \brief name of the interface used to generate the material property
+      std::string interface;
       //! name of the library
       std::string library;
       //! name of the material property
@@ -52,18 +65,18 @@ namespace tfel {
        */
       ExternalMaterialPropertyDescription(const std::string&,
                                           const std::string&);
-      //! default constructor
+      //! \brief default constructor
       ExternalMaterialPropertyDescription();
-      //! copy constructor
+      //! \brief copy constructor
       ExternalMaterialPropertyDescription(const ExternalMaterialPropertyDescription&);
-      //! move constructor
+      //! \brief move constructor
       ExternalMaterialPropertyDescription(ExternalMaterialPropertyDescription&&);
-      //! assignement
+      //! \brief assignement
       ExternalMaterialPropertyDescription& operator=(
           const ExternalMaterialPropertyDescription&);
-      //! move assignement
+      //! \brief move assignement
       ExternalMaterialPropertyDescription& operator=(ExternalMaterialPropertyDescription&&);
-      //! destructor
+      //! \brief destructor
       ~ExternalMaterialPropertyDescription();
     }; // end of ExternalMaterialPropertyDescription
 

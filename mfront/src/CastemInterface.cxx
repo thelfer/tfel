@@ -2432,6 +2432,52 @@ namespace mfront {
         << "* \\author " << fd.authorName << '\n'
         << "* \\date   " << fd.date << '\n'
         << "*\n\n";
+    // elastic properties, if any
+    if (bd.areElasticMaterialPropertiesDefined()) {
+      const auto& emps = bd.getElasticMaterialProperties();
+      const auto& empds = bd.getElasticMaterialPropertiesDescriptions();
+      auto gen_emp = [this, &bd, &out](
+          const BehaviourDescription::MaterialProperty& emp,
+          const MaterialPropertyDescription& empd, const char* const n) {
+        constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+        if (emp.is<BehaviourDescription::ConstantMaterialProperty>()) {
+          auto& cmp = emp.get<BehaviourDescription::ConstantMaterialProperty>();
+          out << n << " = " << cmp.value << ";\n";
+        } else {
+          CastemMaterialPropertyInterface i;
+          const auto f = i.getCastemFunctionName(empd);
+          out << n << " = 'TABLE';\n"
+              << n << " . 'MODELE' = '" << f << "';\n"
+              << n << " . 'LIBRAIRIE' = '" << this->getLibraryName(bd) << "';\n";
+          if (!empd.inputs.empty()) {
+            out << n << " . 'VARIABLES' = 'MOTS' ";
+            this->writeVariableDescriptionsToGibiane(
+                out, uh, empd.inputs.begin(), empd.inputs.end());
+            out << ";\n";
+          }
+        }
+        out << '\n';
+      };
+      if (empds.size() == 2u) {
+        gen_emp(emps[0], empds[0], "xyoun");
+        gen_emp(emps[1], empds[1], "xnu");
+      } else if (emps.size() == 9u) {
+        gen_emp(emps[0], empds[0], "yg1");
+        gen_emp(emps[1], empds[1], "yg2");
+        gen_emp(emps[2], empds[2], "yg3");
+        gen_emp(emps[3], empds[3], "nu12");
+        gen_emp(emps[4], empds[4], "nu23");
+        gen_emp(emps[5], empds[5], "nu13");
+        gen_emp(emps[6], empds[6], "g12");
+        gen_emp(emps[7], empds[7], "g23");
+        gen_emp(emps[8], empds[8], "g13");
+      } else {
+        tfel::raise(
+            "CastemInterface::generateGibianeDeclaration: "
+            "invalid number of elastic material properties");
+      }
+    }
+
     // loop over hypothesis
     for (const auto& h : this->getModellingHypothesesToBeTreated(bd)) {
       this->generateGibianeDeclarationForHypothesis(out, bd, h);
