@@ -435,15 +435,19 @@ namespace mfront {
             "this->efm[idx],this->sigr[idx],this->Rp[idx]);\n"
             "}\n";
       }
+      bd.setCode(uh, BehaviourData::BeforeInitializeLocalVariables, init,
+                 BehaviourData::CREATEORAPPEND, BehaviourData::AT_END);
       for (const auto h : bd.getModellingHypotheses()) {
-        if (h != ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) {
-          init.code +=
-              "// change to cylindrical coordinates\n"
-              "DDIF2Base::cart2cyl(this->deto,this->angl);\n"
-              "DDIF2Base::cart2cyl(this->sig,this->angl);\n";
-        }
-        bd.setCode(h, BehaviourData::BeforeInitializeLocalVariables, init,
-                   BehaviourData::CREATEORAPPEND, BehaviourData::AT_END);
+        if (h == ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) {
+	  continue;
+	}
+	CodeBlock init2;
+	init2.code +=
+	  "// change to cylindrical coordinates\n"
+	  "DDIF2Base::cart2cyl(this->deto,this->angl);\n"
+	  "DDIF2Base::cart2cyl(this->sig,this->angl);\n";
+	bd.setCode(h, BehaviourData::BeforeInitializeLocalVariables, init2,
+		   BehaviourData::CREATEORAPPEND, BehaviourData::AT_END);
       }
       CodeBlock prediction;
       if (this->firstConvergeOnDamage) {
