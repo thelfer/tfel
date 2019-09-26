@@ -16,24 +16,23 @@
 
 #include <vector>
 #include <string>
+#include <functional>
 #include "MFMTestGenerator/Config.hxx"
+#include "MFMTestGenerator/TestCaseParameters.hxx"
 
 namespace mfmtg {
 
-  // forward declaration
-  struct TestCaseParameters;
-
-  /*!
-   * \brief a base class to describe a test case.
-   */
+  //! \brief an abstract interface to describe a test case.
   struct MFMTG_VISIBILITY_EXPORT AbstractTestCase {
+    //! a simple alias
+    using generator = std::function<void(const AbstractTestCase&)>;
+    //! \brief add a generator
+    virtual void addInputFileGenerator(const generator&) = 0;
     /*!
      * \brief generate the test case for the given interfaces
      * \param[in] p: parameters
-     * \param[in] i: list of interfaces
      */
-    virtual void generate(const TestCaseParameters&,
-                          const std::vector<std::string>&) const = 0;
+    virtual void generate() const = 0;
     //! destructor
     virtual ~AbstractTestCase();
   }; // end of struct AbstractTestCase 

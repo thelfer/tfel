@@ -29,10 +29,16 @@ namespace tfel{
       //! a simple alias
       using size_type = size_t;
       //! possible type of the token
-      enum TokenFlag{Standard,Comment,Number,
-		     DoxygenComment,
-		     DoxygenBackwardComment,
-		     String,Char,Preprocessor};
+      enum TokenFlag {
+        Standard,
+        Comment,
+        Number,
+        DoxygenComment,
+        DoxygenBackwardComment,
+        String,
+        Char,
+        Preprocessor
+      };
       //! default constructor
       Token();
       /*!
@@ -43,9 +49,9 @@ namespace tfel{
        * \param[in] f: token flag
        */
       Token(const std::string&,
-	    const size_type,
-	    const size_type,
-	    const TokenFlag = Standard);
+            const size_type,
+            const size_type,
+            const TokenFlag = Standard);
       //! copy constructor
       Token(const Token&);
       //! move constructor

@@ -32,7 +32,7 @@ The later is empty if the behaviour does not export elastic material
 properties.
 
 See the [doxygen
-documentation](html/structtfel_1_1system_1_1_external_behaviour_data.html)
+documentation](doxygen/structtfel_1_1system_1_1_external_behaviour_data.html)
 for details.
 
 ### The `ExternalMaterialPropertyData` and `ExternalMaterialPropertyDescription` structures
@@ -40,35 +40,36 @@ for details.
 The `ExternalMaterialPropertyData` and
 `ExternalMaterialPropertyDescription` structures provides metadata about
 a material property. See the [doxygen
-documentation](html/structtfel_1_1system_1_1_external_material_property_data.html)
+documentation](doxygen/structtfel_1_1system_1_1_external_material_property_data.html)
 for details.
 
 # Improvements to `MFront`
 
 ## Specifying a build identifier{#sec:build_identifiers}
 
-A defined by Wikipedia, Quality assurance (QA) is a way of preventing
+As defined by Wikipedia, Quality assurance (QA) is a way of preventing
 mistakes and defects in manufactured products and avoiding problems when
 delivering products.
 
 Fuel performance codes are developed under stringent Quality Assurance
 requirements that make their developers reluctant to rely on shared
-libraries to deliver material knowledge they are responsible for. For
-example, a user may replace such a shared library by its own version,
-intentionally or by accident (conflict with a previous version for
+libraries to deliver material knowledge they are responsible for. A risk
+that must be mitigated as much as possible is the replacement of a
+shared library by another one, either intentionally to modify the
+results of the code or by accident (conflict with a previous version for
 example).
 
 Specifying a build identifier proposes a solution for this issue. During
-building the shared libraries, developers may known specify a build
-identifier using the `TFEL_BUILD_ID` environment variable. This
-identifier is meant to be only known by the developers of the code and
-is hidden to end users. At runtime, when calling a shared library, the
-code can retrieve its build identifier, if any, and can check if it
-matches the identifier defined by the developers. If not, it may
-indicate a conflict exists with a previous versions of the shared
-library or that the end user wants to test a new material property or a
-new mechanical behaviour. In both cases, the code will report that
-results are out of its specifications.
+building the shared libraries, developers may now specify a build
+identifier using the TFEL_BUILD_ID environment variable. This identifier
+is meant to be only known by the developers of the code and is hidden to
+end users. At runtime, when calling a shared library, the code can
+retrieve its build identifier, if any, and can check if it matches the
+identifier defined by the developers. If not, it may indicate a conflict
+exists with a previous versions of the shared library or that the end
+user wants to test a new material property or a new mechanical
+behaviour. In both cases, the code will report that results are
+unreliable and not coverered by the code specifications.
 
 ## Parameters can now be declared with a type
 

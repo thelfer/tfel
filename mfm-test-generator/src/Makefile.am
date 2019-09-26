@@ -7,9 +7,12 @@ lib_LTLIBRARIES = libMFMTestGenerator.la
 
 libMFMTestGenerator_la_SOURCES  = \
    AbstractTestCase.cxx           \
-   TestCaseParameters.cxx         \
+   TestCaseBase.cxx               \
    AbstractTestCaseFactory.cxx    \
-   UniaxialTensileTest.cxx
+   InputFileGeneratorFactory.cxx  \
+   TestCaseParameters.cxx         \
+   UniaxialTensileTest.cxx        \
+   MTestInputFileGenerators.cxx
 
 libMFMTestGenerator_la_CPPFLAGS = $(AM_CPPFLAGS) -DMFMTestGenerator_EXPORTS
 if TFEL_WIN

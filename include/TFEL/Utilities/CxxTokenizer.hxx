@@ -320,6 +320,10 @@ namespace tfel {
       const_iterator begin() const;
       //! \return an iterator past the last token
       const_iterator end() const;
+      //! \return an iterator to the first token
+      const_iterator cbegin() const;
+      //! \return an iterator past the last token
+      const_iterator cend() const;
       /*!
        * \return the ith token
        * \param[in] i : index

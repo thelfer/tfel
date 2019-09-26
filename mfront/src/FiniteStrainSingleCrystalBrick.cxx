@@ -63,6 +63,7 @@ namespace mfront{
     auto throw_if = [](const bool b,const std::string& m){
       tfel::raise_if(b,"FiniteStrainSingleCrystalBrick::FiniteStrainSingleCrystalBrick: "+m);
     };
+    const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     const auto h = ModellingHypothesis::TRIDIMENSIONAL;
     // basic checks
     if(this->bd.areModellingHypothesesDefined()){
@@ -106,10 +107,10 @@ namespace mfront{
     // elastic strain
     VariableDescription eel("StrainStensor", "εᵉˡ", "eel", 1u, 0u);
     eel.description = "elastic strain";
-    this->bd.addIntegrationVariable(h,eel,BehaviourData::UNREGISTRED);
+    this->bd.addIntegrationVariable(uh,eel,BehaviourData::UNREGISTRED);
     this->bd.setGlossaryName(h,"eel",tfel::glossary::Glossary::ElasticStrain);
     // declaring the plastic slip
-    auto add_plastic_slips = [this, throw_if, h] {
+    auto add_plastic_slips = [this, throw_if, uh] {
       throw_if(
           this->bd.getBehaviourData(h).getIntegrationVariables().size() != 1u,
           "no integration variable shall be declared before declaring the "
@@ -117,7 +118,7 @@ namespace mfront{
       const auto& ss = this->bd.getSlipSystems();
       VariableDescription g("strain", "g", ss.getNumberOfSlipSystems(), 0u);
       g.description = "plastic slip";
-      this->bd.addStateVariable(h, g, BehaviourData::UNREGISTRED);
+      this->bd.addStateVariable(uh, g, BehaviourData::UNREGISTRED);
       this->bd.setEntryName(h, "g", "PlasticSlip");
     };
     if ((!this->bd.hasCrystalStructure()) ||

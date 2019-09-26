@@ -25,18 +25,16 @@ namespace tfel{
     Token& Token::operator=(const Token&) = default;
 
     Token::Token(const std::string& v,
-		 const size_type l,
-		 const size_type o,
-		 const TokenFlag f)
-      : value(v),line(l),offset(o),flag(f)
-    {}
-    
+                 const size_type l,
+                 const size_type o,
+                 const TokenFlag f)
+        : value(v), line(l), offset(o), flag(f) {}
+
     Token::~Token() noexcept = default;
 
-    bool isComment(const Token& t){
-      return ((t.flag==Token::Comment)||
-	      (t.flag==Token::DoxygenComment)||
-	      (t.flag==Token::DoxygenBackwardComment));
+    bool isComment(const Token& t) {
+      return ((t.flag == Token::Comment) || (t.flag == Token::DoxygenComment) ||
+              (t.flag == Token::DoxygenBackwardComment));
     } // end of isComment
     
   } // end of namespace utilities

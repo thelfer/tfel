@@ -15,30 +15,43 @@
 #define LIB_MFM_TEST_GENERATOR_TESTCASEPARAMETERS_HXX
 
 #include <string>
+#include "TFEL/Utilities/Data.hxx"
 #include "MFMTestGenerator/Config.hxx"
 
 namespace mfmtg {
 
+  //! \brief a simple alias
+  using TestCaseParameter = tfel::utilities::Data;
+
+  //! \brief a structure holding all the parameters of a test case.
+  using TestCaseParameters = std::map<std::string, TestCaseParameter>;
+
   /*!
-   * \brief a structure holding all the parameters of a test case.
+   * \return the parameter with the given name
+   * \param[in] p: parameters
+   * \param[in] n: name of the parameter to be retrieved.
    */
-  struct MFMTG_VISIBILITY_EXPORT TestCaseParameters {
-    //! \brief default constructor
-    TestCaseParameters();
-    //! \brief copy constructor
-    TestCaseParameters(const TestCaseParameters&);
-    //! \brief move constructor
-    TestCaseParameters(TestCaseParameters&&);
-    //! \brief standard assignement
-    TestCaseParameters& operator=(const TestCaseParameters&);
-    //! \brief move assignement
-    TestCaseParameters& operator=(TestCaseParameters&&);
-    //! \brief destructor
-    ~TestCaseParameters();
-    //! name of the test case
-    std::string name;
-  };  // end of TestCaseParameters
+  template <typename T>
+  const T& get(const TestCaseParameters&, const std::string&);
+
+  /*!
+   * \return the parameter with the given name
+   * \param[in] p: parameters
+   * \param[in] n: name of the parameter to be retrieved.
+   */
+  MFMTG_VISIBILITY_EXPORT const TestCaseParameter& getParameter(
+      const TestCaseParameters&, const std::string&);
+
+  /*!
+   * \throw an exception reporting that the type of the parameter with the given
+   * name is not the one that what was requested.
+   * \param[in] n: name of the missing parameter
+   */
+  TFEL_NORETURN MFMTG_VISIBILITY_EXPORT void
+  throwInvalidParameterTypeException(const std::string&);
 
 }  // end of namespace mfmtg
+
+#include "MFMTestGenerator/TestCaseParameters.ixx"
 
 #endif /* LIB_MFM_TEST_GENERATOR_TESTCASEPARAMETERS_HXX */

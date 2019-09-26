@@ -14,9 +14,12 @@ endmacro(mfmtg_library)
 
 mfmtg_library(MFMTestGenerator
   AbstractTestCase.cxx
+  TestCaseBase.cxx
   AbstractTestCaseFactory.cxx
+  InputFileGeneratorFactory.cxx
   TestCaseParameters.cxx
-  UniaxialTensileTest.cxx)
+  UniaxialTensileTest.cxx
+  MTestInputFileGenerators.cxx)
 target_link_libraries(MFMTestGenerator
   TFELMTest MFrontLogStream TFELSystem TFELUtilities)
 

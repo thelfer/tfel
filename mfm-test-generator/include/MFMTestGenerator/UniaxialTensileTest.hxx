@@ -15,16 +15,15 @@
 #define LIB_MFM_TEST_GENERATOR_UNIAXIALTENSILETEST_HXX
 
 #include "MFMTestGenerator/Config.hxx"
-#include "MFMTestGenerator/AbstractTestCase.hxx"
+#include "MFMTestGenerator/TestCaseBase.hxx"
 
 namespace mfmtg {
 
   //! \brief a test on a unit cube
-  struct MFMTG_VISIBILITY_EXPORT UniaxialTensileTest : AbstractTestCase {
+  struct MFMTG_VISIBILITY_EXPORT UniaxialTensileTest : TestCaseBase {
     //! \brief default constructor
-    UniaxialTensileTest();
-    void generate(const TestCaseParameters&,
-                  const std::vector<std::string>&) const override;
+    UniaxialTensileTest(const TestCaseParameters&);
+    void generate() const override;
     //! \brief destructor
     ~UniaxialTensileTest() override;
   };  // end of struct UniaxialTensileTest

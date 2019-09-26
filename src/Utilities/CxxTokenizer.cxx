@@ -147,7 +147,16 @@ namespace tfel {
         this->clear();
         throw;
       }
-    }
+      if (this->addCurlyBraces) {
+        this->tokens.insert(this->tokens.begin(), Token("{", 0, 0));
+        if (!this->tokens.empty()) {
+          const auto &b = this->tokens.back();
+          this->tokens.insert(this->tokens.end(), Token("}", b.line + 1u, 0u));
+        } else {
+          this->tokens.insert(this->tokens.end(), Token("}", 0u, 0u));
+        }
+      }
+    }  // end of parseString
 
     struct is_separator {
       //! constructor
@@ -1007,13 +1016,21 @@ namespace tfel {
                                   "CxxTokenizer::operator[]");
       const auto p = std::next(this->begin(), i);
       return *p;
-    }  // end of CxxTokenizer::begin
+    }  // end of CxxTokenizer::operator[]
 
     CxxTokenizer::const_iterator CxxTokenizer::begin() const {
       return this->tokens.begin();
     }  // end of CxxTokenizer::begin
 
     CxxTokenizer::const_iterator CxxTokenizer::end() const {
+      return this->tokens.end();
+    }  // end of CxxTokenizer::end
+
+    CxxTokenizer::const_iterator CxxTokenizer::cbegin() const {
+      return this->tokens.begin();
+    }  // end of CxxTokenizer::begin
+
+    CxxTokenizer::const_iterator CxxTokenizer::cend() const {
       return this->tokens.end();
     }  // end of CxxTokenizer::end
 

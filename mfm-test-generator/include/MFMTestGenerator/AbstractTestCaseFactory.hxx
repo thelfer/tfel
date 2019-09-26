@@ -11,14 +11,15 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_MFM_TEST_GENERATOR_ABSTRACTTESTCASE_HXX
-#define LIB_MFM_TEST_GENERATOR_ABSTRACTTESTCASE_HXX
+#ifndef LIB_MFM_TEST_GENERATOR_ABSTRACTTESTCASEFACTORY_HXX
+#define LIB_MFM_TEST_GENERATOR_ABSTRACTTESTCASEFACTORY_HXX
 
 #include <map>
 #include <string>
 #include <memory>
 #include <functional>
 #include "MFMTestGenerator/Config.hxx"
+#include "MFMTestGenerator/TestCaseParameters.hxx"
 
 namespace mfmtg {
 
@@ -28,20 +29,23 @@ namespace mfmtg {
   //! \brief an abstract factory for test cases.
   struct MFMTG_VISIBILITY_EXPORT AbstractTestCaseFactory {
     //! \brief a simple alias
-    using generator = std::function<std::shared_ptr<AbstractTestCase>()>;
+    using generator = std::function<std::shared_ptr<AbstractTestCase>(
+        const TestCaseParameters&)>;
     //! \return the uniq instance of this class
     static AbstractTestCaseFactory& get();
     /*!
-     * \brief register a new generator
-     * \param[in] p: parameters
-     * \param[in] i: list of interfaces
+     * \brief register a new test case
+     * \param[in] n: test case
+     * \param[in] g: test case generator
      */
     void add(const std::string&, const generator);
     /*!
      * \brief generate a test case
      * \param[in] n: name of the test case
+     * \param[in] p: parameters
      */
-    std::shared_ptr<AbstractTestCase> generate(const std::string&) const;
+    std::shared_ptr<AbstractTestCase> generate(const std::string&,
+                                               const TestCaseParameters&) const;
 
    private:
     //! \brief default constructor
@@ -63,4 +67,4 @@ namespace mfmtg {
 
 }  // end of namespace mfmtg
 
-#endif /* LIB_MFM_TEST_GENERATOR_ABSTRACTTESTCASE_HXX */
+#endif /* LIB_MFM_TEST_GENERATOR_ABSTRACTTESTCASEFACTORY_HXX */

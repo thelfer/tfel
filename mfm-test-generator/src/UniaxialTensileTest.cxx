@@ -18,19 +18,24 @@
 
 namespace mfmtg {
 
-  UniaxialTensileTest::UniaxialTensileTest() = default;
+  UniaxialTensileTest::UniaxialTensileTest(const TestCaseParameters& p)
+      : TestCaseBase(p) {
+    //     if (mfront::getVerboseMode() >= mfront::VERBOSE_LEVEL2) {
+    //       mfront::getLogStream() << "UniaxialTensileTest::generate: "
+    //                              << "treatment of test '"
+    //                              << get<std::string>(p, "name") << "'
+    //                              begins\n";
+    //     }
+    //
+    //     if (mfront::getVerboseMode() >= mfront::VERBOSE_LEVEL2) {
+    //       mfront::getLogStream() << "UniaxialTensileTest::generate: "
+    //                              << "treatment of test '"
+    //                              << get<std::string>(p, "name") << "'
+    //                              ends\n";
+    //     }
+  }  // end of UniaxialTensileTest::UniaxialTensileTest
 
-  void UniaxialTensileTest::generate(const TestCaseParameters& p,
-                                     const std::vector<std::string>&) const {
-    if (mfront::getVerboseMode() >= mfront::VERBOSE_LEVEL2) {
-      mfront::getLogStream() << "UniaxialTensileTest::generate: "
-                             << "treatment of test '" << p.name << "' begins\n";
-    }
-
-    if (mfront::getVerboseMode() >= mfront::VERBOSE_LEVEL2) {
-      mfront::getLogStream() << "UniaxialTensileTest::generate: "
-                             << "treatment of test '" << p.name << "' ends\n";
-    }
+  void UniaxialTensileTest::generate() const {
   }  // end of UniaxialTensileTest::generate
 
   UniaxialTensileTest::~UniaxialTensileTest() = default;

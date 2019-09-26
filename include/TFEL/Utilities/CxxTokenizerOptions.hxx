@@ -76,14 +76,16 @@ namespace tfel {
        * \note this only has effect if `treatStrings` is true
        */
       bool charAsString = false;
-      //! treat `.` as a separator
+      //! \brief treat `.` as a separator
       bool dotAsSeparator = true;
-      //! treat `-` as a separator
+      //! \brief treat `-` as a separator
       bool minusAsSeparator = true;
-    }; // end of struct CxxTokenizerOptions
+      //! \brief add curly braces at the beginning and at the end of the file
+      bool addCurlyBraces = false;
+    };  // end of struct CxxTokenizerOptions
 
-  } // end of namespace utilities
+  }  // end of namespace utilities
 
-} // end of namespace tfel
+}  // end of namespace tfel
 
 #endif /* LIB_TFEL_UTILITIES_CXXTOKENIZEROPTIONS_HXX */

@@ -12,6 +12,7 @@
  */
 
 #include "TFEL/Raise.hxx"
+#include "MFMTestGenerator/UniaxialTensileTest.hxx"
 #include "MFMTestGenerator/AbstractTestCaseFactory.hxx"
 
 namespace mfmtg {
@@ -21,7 +22,11 @@ namespace mfmtg {
     return f;
   }  // end of AbstractTestCaseFactory::get
 
-  AbstractTestCaseFactory::AbstractTestCaseFactory() = default;
+  AbstractTestCaseFactory::AbstractTestCaseFactory() {
+    this->add("UniaxialTensileTest", [](const TestCaseParameters& p) {
+      return std::make_shared<UniaxialTensileTest>(p);
+    });
+  } // end of AbstractTestCaseFactory::AbstractTestCaseFactory
 
   void AbstractTestCaseFactory::add(const std::string& n, const generator g) {
     if (!this->generators.insert({n, g}).second) {
@@ -33,16 +38,16 @@ namespace mfmtg {
   }  // end of AbstractTestCaseFactory::register
 
   std::shared_ptr<AbstractTestCase> AbstractTestCaseFactory::generate(
-      const std::string& n) const {
-    const auto p = this->generators.find(n);
-    if (p == this->generators.end()) {
+      const std::string& n, const TestCaseParameters& p) const {
+    const auto pg = this->generators.find(n);
+    if (pg == this->generators.end()) {
       tfel::raise(
           "AbstractTestCaseFactory::generate: "
           "no test case named '" +
           n + "' registred");
     }
-    const auto& g = p->second;
-    return g();
+    const auto& g = pg->second;
+    return g(p);
   }  // end of AbstractTestCaseFactory::generate
 
   AbstractTestCaseFactory::~AbstractTestCaseFactory() = default;
