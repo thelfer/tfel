@@ -228,6 +228,7 @@ namespace mfront {
                                    "PressureOnCrackSurface");
         }
       }
+      addParameter(bd, "efm_min", "MinimalFractureStrainValue", 1.e-12);
     }  // end of DDIF2StressPotential::DDIF2StressPotential
 
     std::string DDIF2StressPotential::getName() const { return "DDIF2"; }
@@ -416,6 +417,10 @@ namespace mfront {
           "for(unsigned short idx=0;idx!=3;++idx){\n"
           "this->nf[idx]      = Stensor(real(0));\n"
           "this->nf[idx][idx] = real(1);\n"
+          "if(tfel::math::ieee754::fpclassify(this->efm[idx])!=FP_ZERO){\n"
+          "this->efm[idx]=std::max(this->efm[idx],"
+          "strain(this->efm_min));\n"
+          "}\n"
           "}\n";
       if (this->algorithm == STATUS) {
         init.code += "this->ddif2bdata.nchanges = 0;\n";
@@ -430,15 +435,19 @@ namespace mfront {
             "this->efm[idx],this->sigr[idx],this->Rp[idx]);\n"
             "}\n";
       }
+      bd.setCode(uh, BehaviourData::BeforeInitializeLocalVariables, init,
+                 BehaviourData::CREATEORAPPEND, BehaviourData::AT_END);
       for (const auto h : bd.getModellingHypotheses()) {
-        if (h != ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) {
-          init.code +=
-              "// change to cylindrical coordinates\n"
-              "DDIF2Base::cart2cyl(this->deto,this->angl);\n"
-              "DDIF2Base::cart2cyl(this->sig,this->angl);\n";
-        }
-        bd.setCode(h, BehaviourData::BeforeInitializeLocalVariables, init,
-                   BehaviourData::CREATEORAPPEND, BehaviourData::AT_END);
+        if (h == ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) {
+	  continue;
+	}
+	CodeBlock init2;
+	init2.code +=
+	  "// change to cylindrical coordinates\n"
+	  "DDIF2Base::cart2cyl(this->deto,this->angl);\n"
+	  "DDIF2Base::cart2cyl(this->sig,this->angl);\n";
+	bd.setCode(h, BehaviourData::BeforeInitializeLocalVariables, init2,
+		   BehaviourData::CREATEORAPPEND, BehaviourData::AT_END);
       }
       CodeBlock prediction;
       if (this->firstConvergeOnDamage) {
@@ -520,8 +529,7 @@ namespace mfront {
             "if (converged) {\n";
       if (this->algorithm == STATUS) {
         acc.code +=
-            "this->ddif2bdata.sig=(" +
-            lambda +
+            "this->ddif2bdata.sig=(" + lambda +
             "*trace(this->eel+deel))*StrainStensor::Id()+\n"
             "2*" +
             mu +
@@ -530,8 +538,7 @@ namespace mfront {
             "converged = DDIF2Base::checkStateConsistency("
             "this->ddif2bdata.state[idx],this->ddif2bdata.sig, "
             "this->nf[idx], this->efm[idx], this->ef[idx] + this->def[idx], "
-            "this->sigr[idx], this->Rp[idx],"
-            "2 * " +
+            "this->sigr[idx],2 * " +
             young +
             "* this->epsilon, 2 * (this->epsilon));\n"
             "if (!converged) {\n"
