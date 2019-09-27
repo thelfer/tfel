@@ -151,10 +151,10 @@ namespace tfel {
                                         const stress&,
                                         const strain&);
 
-    /*!
-     * \brief class used to update the implicit equation and the jacobian
-     * matrix.
-     */
+      /*!
+       * \brief class used to update the implicit equation and the jacobian
+       * matrix.
+       */
       template <typename Stensor2Type1, typename Stensor, typename real>
       static TFEL_VISIBILITY_LOCAL void treatFracture(
           Stensor2Type1&,
