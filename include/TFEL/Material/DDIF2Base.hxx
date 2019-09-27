@@ -133,7 +133,6 @@ namespace tfel {
        * \param[in] em:  maximum crack strain at the beginning of the time step
        * \param[in] e: current estimate of the crack strain
        * \param[in] smax: elastic limit
-       * \param[in] H: softening modulus (expect a negative value)
        * \param[in] seps: tolerance on the stress state
        * \param[in] eeps: tolerance on the strain state
        * \return a boolean stating if the state of the material is constitent
@@ -150,7 +149,6 @@ namespace tfel {
                                         const strain&,
                                         const stress&,
                                         const stress&,
-                                        const stress&,
                                         const strain&);
 
       /*!
@@ -158,20 +156,21 @@ namespace tfel {
        * matrix.
        */
       template <typename Stensor2Type1, typename Stensor, typename real>
-      static TFEL_VISIBILITY_LOCAL void treatFracture(Stensor2Type1&,
-                                                      real&,
-                                                      real&,
-                                                      const real,
-                                                      const real,
-                                                      const real,
-                                                      const Stensor&,
-                                                      const Stensor&,
-                                                      const real,
-                                                      const real,
-                                                      const real,
-                                                      const real,
-                                                      const real,
-                                                      const real = real(0));
+      static TFEL_VISIBILITY_LOCAL void treatFracture(
+          Stensor2Type1&,
+          real&,
+          real&,
+          const real,
+          const real,
+          const real,
+          const Stensor&,
+          const Stensor&,
+          const real,
+          const real,
+          const real,
+          const real,
+          const real,
+          const real = real(0));
       /*!
        * \brief function used to define the equations associated with fracture
        * in explicit integration.

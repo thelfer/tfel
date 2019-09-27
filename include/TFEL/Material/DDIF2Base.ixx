@@ -104,7 +104,6 @@ namespace tfel {
                                           const strain& em,
                                           const strain& e,
                                           const stress& smax,
-                                          const stress& H,
                                           const stress& seps,
                                           const strain& eeps) {
       const auto sn = (n | sig);
