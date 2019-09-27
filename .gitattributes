@@ -2137,6 +2137,7 @@ mfm-test-generator/include/MFMTestGenerator/AbstractTestCase.hxx -text
 mfm-test-generator/include/MFMTestGenerator/AbstractTestCaseFactory.hxx -text
 mfm-test-generator/include/MFMTestGenerator/Config.hxx -text
 mfm-test-generator/include/MFMTestGenerator/InputFileGeneratorFactory.hxx -text
+mfm-test-generator/include/MFMTestGenerator/Log.hxx -text
 mfm-test-generator/include/MFMTestGenerator/MTestInputFileGenerators.hxx -text
 mfm-test-generator/include/MFMTestGenerator/TestCaseBase.hxx -text
 mfm-test-generator/include/MFMTestGenerator/TestCaseParameters.hxx -text
@@ -2147,9 +2148,11 @@ mfm-test-generator/src/AbstractTestCase.cxx -text
 mfm-test-generator/src/AbstractTestCaseFactory.cxx -text
 mfm-test-generator/src/CMakeLists.txt -text
 mfm-test-generator/src/InputFileGeneratorFactory.cxx -text
+mfm-test-generator/src/Log.cxx -text
 mfm-test-generator/src/MTestInputFileGenerators.cxx -text
 mfm-test-generator/src/Makefile.am -text
 mfm-test-generator/src/TestCaseBase.cxx -text
+mfm-test-generator/src/TestCaseParameters.cxx -text
 mfm-test-generator/src/UniaxialTensileTest.cxx -text
 mfm-test-generator/src/mfm-test-generator.cxx -text
 mfm/CMakeLists.txt -text
