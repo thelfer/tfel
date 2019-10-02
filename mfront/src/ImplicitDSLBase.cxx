@@ -27,6 +27,7 @@
 #include "MFront/NonLinearSystemSolverBase.hxx"
 #include "MFront/NonLinearSystemSolverFactory.hxx"
 #include "MFront/PerformanceProfiling.hxx"
+#include "MFront/AbstractBehaviourBrick.hxx"
 #include "MFront/ImplicitDSLBase.hxx"
 
 namespace mfront {
@@ -147,62 +148,84 @@ namespace mfront {
     } else if (c == BehaviourData::ComputeStress) {
       return "@ComputeStress{}\n";
     } else if (c == BehaviourData::Integrator) {
-      const auto ivs = this->mb.getBehaviourData(h).getIntegrationVariables();
+      // implicit system
+      auto ivs = this->mb.getBehaviourData(h).getIntegrationVariables();
+      const auto mivs = [this] {
+        auto livs = this->mb.getBehaviourData(h).getIntegrationVariables();
+        // remove managed integration variables
+        const auto mivs_names = [this] {
+          auto lmivs = std::vector<std::string>{};
+          for (const auto& pb : this->bricks) {
+            //! \return a description of the brick
+            const auto d = pb->getDescription();
+            lmivs.insert(lmivs.end(), d.managedIntegrationVariables.begin(),
+                         d.managedIntegrationVariables.end());
+          }
+          return lmivs;
+        }();
+        livs.erase(std::remove_if(
+                       livs.begin(), livs.end(),
+                       [&mivs_names](const VariableDescription& v) {
+                         return std::find(mivs_names.begin(), mivs_names.end(),
+                                          v.name) != mivs_names.end();
+                       }),
+                   livs.end());
+        return livs;
+      }();
       if (ivs.empty()) {
         return "@Integrator{}\n";
-      } else {
-        auto i = std::string("@Integrator{\n");
-        // implicit system
-        for (const auto& v : ivs) {
-          const auto vn = o.useUnicodeSymbols ? displayName(v) : v.name;
-          i += "// implicit equation associated with variable " + vn + "\n";
-          if (v.arraySize == 1u) {
-            i += "f" + vn + " += ;\n";
-          } else {
-            i += "for(unsigned short i = 0; i != " +
-                 std::to_string(v.arraySize) + ";++i)\n";
-            i += "f" + vn + " += ;\n";
-            i += "}\n";
-          }
-        }
-        // jacobian terms of the implicit system
-        if ((this->solver != nullptr) && (this->solver->usesJacobian())) {
+      }
+      auto i = std::string("@Integrator{\n");
+      for (const auto& v1 : mivs) {
+        const auto v1n = o.useUnicodeSymbols ? displayName(v1) : v1.name;
+        i += "// implicit equation associated with variable " + v1n + "\n";
+        if (v1.arraySize == 1u) {
+          i += "f" + v1n + " += ;\n";
           i += "// jacobian blocks\n";
-          for (const auto& v1 : ivs) {
-            const auto v1n = o.useUnicodeSymbols ? displayName(v1) : v1.name;
+          if ((this->solver != nullptr) && (this->solver->usesJacobian())) {
             for (const auto& v2 : ivs) {
               const auto v2n = o.useUnicodeSymbols ? displayName(v2) : v2.name;
               const auto j = o.useUnicodeSymbols
                                  ? "\u2202f" + v1n + "\u2215\u2202\u0394" + v2n
                                  : "df" + v1n + "_d" + v2n;
               const auto op = v1.name == v2.name ? "+=" : "=";
-              if ((v1.arraySize == 1u) && (v2.arraySize == 1u)) {
+              if (v2.arraySize == 1u) {
                 i += j + " " + op + " ;\n";
-              } else if ((v1.arraySize != 1u) && (v2.arraySize == 1u)) {
-                i += "for(unsigned short i = 0; i != " +
-                     std::to_string(v1.arraySize) + ";++i)\n";
-                i += j + "(i) " + op + " ;\n";
-                i += "}\n";
-              } else if ((v1.arraySize == 1u) && (v2.arraySize != 1u)) {
-                i += "for(unsigned short i = 0; i != " +
-                     std::to_string(v2.arraySize) + ";++i)\n";
-                i += j + "(i) " + op + " ;\n";
-                i += "}\n";
               } else {
                 i += "for(unsigned short i = 0; i != " +
-                     std::to_string(v1.arraySize) + ";++i)\n";
-                i += "for(unsigned short j = 0; j != " +
-                     std::to_string(v2.arraySize) + ";++j)\n";
-                i += j + "(i,j) " + op + " ;\n";
-                i += "}\n";
+                     std::to_string(v2.arraySize) + ";++i){\n";
+                i += j + "(i) " + op + " ;\n";
                 i += "}\n";
               }
             }
           }
+        } else {
+          i += "for(unsigned short i = 0; i != " + std::to_string(v1.arraySize) +
+               ";++i){\n";
+          i += "f" + v1n + "(i) += ;\n";
+          i += "// jacobian blocks\n";
+          if ((this->solver != nullptr) && (this->solver->usesJacobian())) {
+            for (const auto& v2 : ivs) {
+              const auto v2n = o.useUnicodeSymbols ? displayName(v2) : v2.name;
+              const auto j = o.useUnicodeSymbols
+                                 ? "\u2202f" + v1n + "\u2215\u2202\u0394" + v2n
+                                 : "df" + v1n + "_d" + v2n;
+              const auto op = v1.name == v2.name ? "+=" : "=";
+              if (v2.arraySize == 1u) {
+                i += j + "(i) " + op + " ;\n";
+              } else {
+                i += "for(unsigned short j = 0; j != " +
+                     std::to_string(v2.arraySize) + ";++j){\n";
+                i += j + "(i,j) " + op + " ;\n";
+                i += "}\n";
+              }
+            }
+          }
+          i += "}\n";
         }
-        i += "}\n";
-        return i;
       }
+      i += "}\n";
+      return i;
     } else if (c == BehaviourData::ComputeTangentOperator) {
       return "@TangentOperator{}\n";
     }

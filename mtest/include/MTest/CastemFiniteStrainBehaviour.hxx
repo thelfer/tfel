@@ -16,8 +16,7 @@
 
 #include"MTest/CastemStandardBehaviour.hxx"
 
-namespace mtest
-{
+namespace mtest {
 
   /*!
    * A class to handle mechanical beheaviours written using the umat
@@ -38,51 +37,17 @@ namespace mtest
      * \param[in] umb: behaviour description
      */
     CastemFiniteStrainBehaviour(const StandardBehaviourDescription&);
-    /*!
-     * \param[out] v : initial values of the driving variables
-     */
-    void  getGradientsDefaultInitialValues(tfel::math::vector<real>&) const override;
-    /*!
-     * \brief integrate the mechanical behaviour over the time step
-     * \return a pair. The first member is true if the integration was
-     * successfull, false otherwise. The second member contains a time
-     * step scaling factor.
-     * \param[out] wk    : workspace
-     * \param[in]  s     : current state
-     * \param[in]  dt    : time increment
-     * \param[in]  ktype : type of the stiffness matrix
-     */
-    std::pair<bool,real>
-    computePredictionOperator(BehaviourWorkSpace&,
-			      const CurrentState&,
-			      const StiffnessMatrixType) const override;
-    /*!
-     * \brief integrate the mechanical behaviour over the time step
-     * \return a pair. The first member is true if the integration was
-     * successfull, false otherwise. The second member contains a time
-     * step scaling factor.
-     * \param[out/in] s     : current state
-     * \param[out]    wk    : workspace
-     * \param[in]     dt    : time increment
-     * \param[in]     ktype : type of the stiffness matrix
-     */
-    std::pair<bool,real>
-    integrate(CurrentState&,
-	      BehaviourWorkSpace&,
-	      const real,
-	      const StiffnessMatrixType) const override;
-    /*!
-     * \brief some interfaces requires dummy material properties to be
-     * declared. For example, the Cast3M finite element solver
-     * requires the mass density and some extra material properties
-     * describing orthotropic axes to be declared.  This method is
-     * meant to automatically declare those if they are not defined by
-     * the user.
-     * \param[out] mp  : evolution manager where 
-     * \param[in]  evm : evolution manager
-     */
-    void setOptionalMaterialPropertiesDefaultValues(EvolutionManager&,
-						    const EvolutionManager&) const override;
+
+    void getGradientsDefaultInitialValues(
+        tfel::math::vector<real>&) const override;
+    std::pair<bool, real> computePredictionOperator(
+        BehaviourWorkSpace&,
+        const CurrentState&,
+        const StiffnessMatrixType) const override;
+    std::pair<bool, real> integrate(CurrentState&,
+                                    BehaviourWorkSpace&,
+                                    const real,
+                                    const StiffnessMatrixType) const override;
     /*!
      * \return the string passed to the UMAT function through the
      * CMNAME parameter.
@@ -97,10 +62,10 @@ namespace mtest
      * \param[in]  mp   : material properties
      * \param[in]  drot : rotation matrix (Fortran convention)
      */
-    virtual void
-    computeElasticStiffness(tfel::math::matrix<real>&,
-			    const tfel::math::vector<real>&,
-			    const tfel::math::tmatrix<3u,3u,real>&) const;
+   virtual void computeElasticStiffness(
+       tfel::math::matrix<real>&,
+       const tfel::math::vector<real>&,
+       const tfel::math::tmatrix<3u, 3u, real>&) const;
   }; // end of struct Behaviour
   
 } // end of namespace mtest

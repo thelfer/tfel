@@ -444,24 +444,6 @@ namespace mtest
     }
   }
 
-  void
-  CastemFiniteStrainBehaviour::setOptionalMaterialPropertiesDefaultValues(EvolutionManager& mp,
-									  const EvolutionManager& evm) const
-  {
-    CastemStandardBehaviour::setOptionalMaterialPropertiesDefaultValues(mp,evm);
-    if(this->stype==0){
-      Behaviour::setOptionalMaterialPropertyDefaultValue(mp,evm,"ThermalExpansion",0.);
-    } else if(this->stype==1){
-      Behaviour::setOptionalMaterialPropertyDefaultValue(mp,evm,"ThermalExpansion1",0.);
-      Behaviour::setOptionalMaterialPropertyDefaultValue(mp,evm,"ThermalExpansion2",0.);
-      Behaviour::setOptionalMaterialPropertyDefaultValue(mp,evm,"ThermalExpansion3",0.);
-    } else {
-      tfel::raise("CastemSmallStrainBehaviour::"
-		  "setOptionalMaterialPropertiesDefaultValues : "
-		  "unsupported symmetry type");
-    }
-  } // end of MTestCastemFiniteStrainStrainBehaviour::setOptionalMaterialPropertiesDefaultValues
-
   const char*
   CastemFiniteStrainBehaviour::getBehaviourNameForUMATFunctionCall() const{
     return nullptr;

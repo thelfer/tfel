@@ -11,6 +11,7 @@
  * project under specific licensing conditions.
  */
 
+#include "MFront/BehaviourBrick/OptionDescription.hxx"
 #include "MFront/BehaviourBrick/StressPotential.hxx"
 #include "MFront/BehaviourBrick/StressPotentialFactory.hxx"
 #include "MFront/DDIF2Brick.hxx"
@@ -18,7 +19,10 @@
 namespace mfront {
 
   DDIF2Brick::DDIF2Brick(AbstractBehaviourDSL& dsl_, BehaviourDescription& mb_)
-      : BehaviourBrickBase(dsl_, mb_) {}  // end of DDIF2Brick::DDIF2Brick
+      : BehaviourBrickBase(dsl_, mb_) {
+    auto& spf = mfront::bbrick::StressPotentialFactory::getFactory();
+    this->ddif2 = spf.generate("DDIF2");
+  }  // end of DDIF2Brick::DDIF2Brick
 
   std::string DDIF2Brick::getName() const {
     return "DDIF2";
@@ -37,9 +41,12 @@ namespace mfront {
     return d;
   } // end of DDIF2Brick::getDescription
 
+  std::vector<bbrick::OptionDescription> DDIF2Brick::getOptions(
+      const bool b) const {
+    return this->ddif2->getOptions(this->bd, b);
+  }  // end of DDIF2Brick::getOptions
+
   void DDIF2Brick::initialize(const Parameters&, const DataMap& d) {
-    auto& spf = mfront::bbrick::StressPotentialFactory::getFactory();
-    this->ddif2= spf.generate("DDIF2");
     this->ddif2->initialize(this->bd, this->dsl, d);
   }  // end of DDIF2Brick::initialize
 

@@ -6,6 +6,7 @@ bin_PROGRAMS = mfm-test-generator
 lib_LTLIBRARIES = libMFMTestGenerator.la
 
 libMFMTestGenerator_la_SOURCES  = \
+   Log.cxx                        \
    AbstractTestCase.cxx           \
    TestCaseBase.cxx               \
    AbstractTestCaseFactory.cxx    \

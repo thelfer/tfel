@@ -71,12 +71,8 @@ namespace mfront {
      * \brief check that the options names are in a given set
      * of keys.
      * \param[in] d: options
-     * \param[in] k: supported keys
-     * \param[in] b: calling brick name
      */
-    static void checkOptionsNames(const DataMap&,
-                                  const std::vector<std::string>&,
-                                  const std::string&);
+    virtual void checkOptionsNames(const DataMap&);
     /*!
      * \brief throw an exception if the given parameter has a value
      * \param[in] p : parameter

@@ -16,6 +16,22 @@
 
 namespace mfmtg {
 
+  template <typename... String>
+  bool contains(const TestCaseParameters& parameters,
+                const std::string& n,
+                const String&... args) {
+    const auto& p = getTestCaseParameters(parameters, n);
+    return contains(p, args...);
+  }  // end of get
+
+  template <typename T, typename... String>
+  const T& get(const TestCaseParameters& parameters,
+               const std::string& n,
+               const String&... args) {
+    const auto& p = getTestCaseParameters(parameters, n);
+    return get<T>(p, args...);
+  }  // end of get
+
   template <typename T>
   const T& get(const TestCaseParameters& parameters, const std::string& n) {
     const auto& p = getParameter(parameters, n);
@@ -24,6 +40,50 @@ namespace mfmtg {
     }
     return p.get<T>();
   }  // end of get
+
+  template <typename T, typename T2, typename... String>
+  T get_if(const TestCaseParameters& parameters,
+           const std::string& n,
+           const String&... args,
+           const T2& v) {
+    const auto& p = getTestCaseParameters(parameters, n);
+    return get_if<T>(p, args..., v);
+  }  // end of get_if
+
+  template <typename T, typename T2>
+  T get_if(const TestCaseParameters& parameters,
+           const std::string& n,
+           const T2& v) {
+    if (!contains(parameters, n)) {
+      return T(v);
+    }
+    return get<T>(parameters, n);
+  }  // end of get_if
+
+  template <typename... String>
+  const TestCaseParameter& getParameter(const TestCaseParameters& parameters,
+                                        const std::string& n,
+                                        const String&... args) {
+    const auto& p = getTestCaseParameters(parameters, n);
+    return getParameter(p, args...);
+  }  // end of getParameter
+
+  template <typename... String>
+  Evolution getEvolution(const TestCaseParameters& parameters,
+                         const std::string& n,
+                         const String&... args) {
+    const auto& p = getTestCaseParameters(parameters, n);
+    return getEvolution(p, args...);
+  }  // end of getEvolution
+
+  template <typename... String>
+  std::map<std::string, Evolution> getEvolutions(
+      const TestCaseParameters& parameters,
+      const std::string& n,
+      const String&... args) {
+    const auto& p = getTestCaseParameters(parameters, n);
+    return getEvolutions(p, args...);
+  }  // end of getEvolution
 
 }  // end of namespace mfmtg
 

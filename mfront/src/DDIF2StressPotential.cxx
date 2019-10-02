@@ -109,8 +109,9 @@ namespace mfront {
 
     DDIF2StressPotential::DDIF2StressPotential() = default;
 
-    std::vector<OptionDescription> DDIF2StressPotential::getOptions() const {
-      auto opts = HookeStressPotential::getOptions();
+    std::vector<OptionDescription> DDIF2StressPotential::getOptions(
+        const BehaviourDescription& bd, const bool b) const {
+      auto opts = HookeStressPotential::getOptions(bd, b);
       opts.emplace_back(
           "fracture_stress", "fracture stress, assumed egal in all directions",
           OptionDescription::MATERIALPROPERTY, std::vector<std::string>{},
@@ -160,7 +161,7 @@ namespace mfront {
         tfel::raise_if(b, "DDIF2StressPotential::DDIF2StressPotential: " + m);
       };
       // checking options
-      check(d, this->getOptions());
+      check(d, this->getOptions(bd, true));
       //
       HookeStressPotential::initialize(bd, dsl, d);
       // undefined hypothesis

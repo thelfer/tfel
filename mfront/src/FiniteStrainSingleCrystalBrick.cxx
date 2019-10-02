@@ -28,6 +28,9 @@
 #include "MFront/BehaviourDescription.hxx"
 #include "MFront/ImplicitDSLBase.hxx"
 #include "MFront/NonLinearSystemSolver.hxx"
+#include "MFront/BehaviourBrick/BrickUtilities.hxx"
+#include "MFront/BehaviourBrick/OptionDescription.hxx"
+#include "MFront/BehaviourBrick/HookeStressPotentialBase.hxx"
 #include "MFront/FiniteStrainSingleCrystalBrick.hxx"
 
 namespace mfront{
@@ -43,6 +46,10 @@ namespace mfront{
       : BehaviourBrickBase(dsl_, mb_) {
   }  // end of FiniteStrainSingleCrystalBrick::FiniteStrainSingleCrystalBrick
 
+  std::string FiniteStrainSingleCrystalBrick::getName() const{
+    return "FiniteStrainSingleCrystal";
+  }
+
   BehaviourBrickDescription FiniteStrainSingleCrystalBrick::getDescription() const {
     auto d = BehaviourBrickDescription{};
     d.behaviourType = tfel::material::MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR;
@@ -51,13 +58,23 @@ namespace mfront{
     d.supportedBehaviourSymmetries = {mfront::ORTHOTROPIC};
     d.requireCrystalStructureDefinition = true;
     d.requireStiffnessTensorDefinition = true;
+    d.managedIntegrationVariables.push_back("eel");
+    d.managedCodeBlocks = {BehaviourData::ComputePredictionOperator,
+                           BehaviourData::ComputeStress,
+                           BehaviourData::ComputeTangentOperator};
     return d;
   } // end of FiniteStrainSingleCrystalBrick::getDescription
 
-  std::string FiniteStrainSingleCrystalBrick::getName() const{
-    return "FiniteStrainSingleCrystal";
-  }
-  
+  std::vector<bbrick::OptionDescription>
+  FiniteStrainSingleCrystalBrick::getOptions(const bool) const {
+    auto opts = mfront::bbrick::HookeStressPotentialBase::
+        getOrthotropicBehaviourElasticMaterialPropertiesOptions();
+    opts.emplace_back(
+        FiniteStrainSingleCrystalBrick::shiftedDeformationGradientOption, "",
+        bbrick::OptionDescription::BOOLEAN);
+    return opts;
+  }  // end of FiniteStrainSingleCrystalBrick::getOptions
+
   void FiniteStrainSingleCrystalBrick::initialize(const Parameters& p,
                                                   const DataMap& d) {
     auto throw_if = [](const bool b,const std::string& m){
@@ -93,22 +110,55 @@ namespace mfront{
 	     "no integration variable shall be declared before declaring the "
 	     "'FiniteStrainSingleCrystal' brick");
     // options
-    this->checkOptionsNames(d,{FiniteStrainSingleCrystalBrick::shiftedDeformationGradientOption},
-			    this->getName());
-    if(d.count(FiniteStrainSingleCrystalBrick::shiftedDeformationGradientOption)){
-      const auto on = std::string(FiniteStrainSingleCrystalBrick::shiftedDeformationGradientOption);
-      const auto an = std::string(FiniteStrainSingleCrystalBrick::shiftedDeformationGradientAttribute);
+    this->checkOptionsNames(d);
+    // elastic properties
+    auto get_mp = [this, &d](const char* const n) {
+      if (d.count(n) == 0) {
+        tfel::raise(
+            "FiniteStrainSingleCrystalBrick::FiniteStrainSingleCrystalBrick: "
+            "option '" +
+            std::string(n) + "' is not defined");
+      }
+      return mfront::bbrick::getBehaviourDescriptionMaterialProperty(
+          this->dsl, n, d.at(n));
+    };
+    if ((d.count("young_modulus1") != 0) || (d.count("young_modulus2") != 0) ||
+        (d.count("young_modulus3") != 0) || (d.count("poisson_ratio12") != 0) ||
+        (d.count("poisson_ratio23") != 0) ||
+        (d.count("poisson_ratio13") != 0) ||
+        (d.count("shear_modulus12") != 0) ||
+        (d.count("shear_modulus23") != 0) ||
+        (d.count("shear_modulus13") != 0)) {
+      std::vector<BehaviourDescription::MaterialProperty> emps = {
+          get_mp("young_modulus1"),  get_mp("young_modulus2"),
+          get_mp("young_modulus3"),  get_mp("poisson_ratio12"),
+          get_mp("poisson_ratio23"), get_mp("poisson_ratio13"),
+          get_mp("shear_modulus12"), get_mp("shear_modulus23"),
+          get_mp("shear_modulus13")};
+      bd.setElasticMaterialProperties(emps);
+      bd.setAttribute(BehaviourDescription::computesStiffnessTensor, true,
+                      false);
+      bd.setAttribute(BehaviourDescription::requiresUnAlteredStiffnessTensor,
+                      true, false);
+    }
+    // shifted deformation gradient
+    if (d.count(
+            FiniteStrainSingleCrystalBrick::shiftedDeformationGradientOption)) {
+      const auto on = std::string(
+          FiniteStrainSingleCrystalBrick::shiftedDeformationGradientOption);
+      const auto an = std::string(
+          FiniteStrainSingleCrystalBrick::shiftedDeformationGradientAttribute);
       const auto& b = d.at(on);
-      throw_if(!b.is<bool>(),"invalid type for option '"+on+"'");
+      throw_if(!b.is<bool>(), "invalid type for option '" + on + "'");
       throw_if(this->bd.hasAttribute(an),
-	       "attribute '"+an+"' already used");
-      this->bd.setAttribute(an,b.get<bool>(),false);
+               "attribute '" + an + "' already used");
+      this->bd.setAttribute(an, b.get<bool>(), false);
     }
     // elastic strain
     VariableDescription eel("StrainStensor", "εᵉˡ", "eel", 1u, 0u);
     eel.description = "elastic strain";
-    this->bd.addIntegrationVariable(uh,eel,BehaviourData::UNREGISTRED);
-    this->bd.setGlossaryName(h,"eel",tfel::glossary::Glossary::ElasticStrain);
+    this->bd.addIntegrationVariable(uh, eel, BehaviourData::UNREGISTRED);
+    this->bd.setGlossaryName(h, "eel", tfel::glossary::Glossary::ElasticStrain);
     // declaring the plastic slip
     auto add_plastic_slips = [this, throw_if, uh] {
       throw_if(
@@ -131,44 +181,46 @@ namespace mfront{
       idsl.addHook("@SlipSystems", add_plastic_slips);
       idsl.addHook("@GlidingSystems", add_plastic_slips);
       idsl.addHook("@SlidingSystems", add_plastic_slips);
-    } else {
-      add_plastic_slips();
-    }
-    // declaring the elastic part of the deformation gradient
-    VariableDescription Fe("DeformationGradientTensor","Fe",1u,0u);
-    if (this->bd.getAttribute<bool>(
-            FiniteStrainSingleCrystalBrick::shiftedDeformationGradientAttribute,
-            false)) {
-      Fe.description = "shifted elastic part of the deformation gradient";
-    } else {
-      Fe.description = "elastic part of the deformation gradient";
-    }
-    this->bd.addAuxiliaryStateVariable(h,Fe,BehaviourData::UNREGISTRED);
-    if (this->bd.getAttribute<bool>(
-            FiniteStrainSingleCrystalBrick::shiftedDeformationGradientAttribute,
-            false)) {
-      this->bd.setEntryName(h,"Fe","ShiftedElasticPartOfTheDeformationGradient");
-    } else {
-      this->bd.setEntryName(h,"Fe","ElasticPartOfTheDeformationGradient");
-    }
-    // additional includes
-    this->bd.appendToIncludes("#include\"TFEL/Math/General/CubicRoots.hxx\"");
-    // set that the tangent operator is computed
-    this->bd.setAttribute(h,BehaviourData::hasConsistentTangentOperator,true);
-    // reserve some specific variables
-    this->bd.reserveName(h,"ss");
-    this->bd.reserveName(h,"fsscb_data");
-    this->bd.reserveName(h,"fsscb_tprd");
-    this->bd.reserveName(h,"fsscb_dfeel_dinv_dFp");
-    this->bd.reserveName(h,"fsscb_dC_dFe");
-    this->bd.reserveName(h,"fsscb_dS_dFe");
-    this->bd.reserveName(h,"fsscb_dtau_dFe");
-    this->bd.reserveName(h,"fsscb_dFe_dDF_tot");
-    this->bd.reserveName(h,"fsscb_dfeel_dDF");
-    this->bd.reserveName(h,"fsscb_Je");
-    this->bd.reserveName(h,"fsscb_Jg");
-    this->bd.reserveName(h,"fsscb_dinv_Fp_dDF");
-    this->bd.reserveName(h,"fsscb_dFe_dDF");
+      } else {
+        add_plastic_slips();
+      }
+      // declaring the elastic part of the deformation gradient
+      VariableDescription Fe("DeformationGradientTensor", "Fe", 1u, 0u);
+      if (this->bd.getAttribute<bool>(FiniteStrainSingleCrystalBrick::
+                                          shiftedDeformationGradientAttribute,
+                                      false)) {
+        Fe.description = "shifted elastic part of the deformation gradient";
+      } else {
+        Fe.description = "elastic part of the deformation gradient";
+      }
+      this->bd.addAuxiliaryStateVariable(h, Fe, BehaviourData::UNREGISTRED);
+      if (this->bd.getAttribute<bool>(FiniteStrainSingleCrystalBrick::
+                                          shiftedDeformationGradientAttribute,
+                                      false)) {
+        this->bd.setEntryName(h, "Fe",
+                              "ShiftedElasticPartOfTheDeformationGradient");
+      } else {
+        this->bd.setEntryName(h, "Fe", "ElasticPartOfTheDeformationGradient");
+      }
+      // additional includes
+      this->bd.appendToIncludes("#include\"TFEL/Math/General/CubicRoots.hxx\"");
+      // set that the tangent operator is computed
+      this->bd.setAttribute(h, BehaviourData::hasConsistentTangentOperator,
+                            true);
+      // reserve some specific variables
+      this->bd.reserveName(h, "ss");
+      this->bd.reserveName(h, "fsscb_data");
+      this->bd.reserveName(h, "fsscb_tprd");
+      this->bd.reserveName(h, "fsscb_dfeel_dinv_dFp");
+      this->bd.reserveName(h, "fsscb_dC_dFe");
+      this->bd.reserveName(h, "fsscb_dS_dFe");
+      this->bd.reserveName(h, "fsscb_dtau_dFe");
+      this->bd.reserveName(h, "fsscb_dFe_dDF_tot");
+      this->bd.reserveName(h, "fsscb_dfeel_dDF");
+      this->bd.reserveName(h, "fsscb_Je");
+      this->bd.reserveName(h, "fsscb_Jg");
+      this->bd.reserveName(h, "fsscb_dinv_Fp_dDF");
+      this->bd.reserveName(h, "fsscb_dFe_dDF");
   } // end of FiniteStrainSingleCrystalBrick::initialize
 
   void FiniteStrainSingleCrystalBrick::completeVariableDeclaration() const {

@@ -32,8 +32,9 @@ namespace mfront {
         IsotropicDamageHookeStressPotentialBase() = default;
 
     std::vector<OptionDescription>
-    IsotropicDamageHookeStressPotentialBase::getOptions() const {
-      auto opts = HookeStressPotentialBase::getOptions();
+    IsotropicDamageHookeStressPotentialBase::getOptions(
+        const BehaviourDescription& bd, const bool b) const {
+      auto opts = HookeStressPotentialBase::getOptions(bd, b);
       opts.emplace_back(
           "damage_thresold",
           "Maximum value of the damage used in the computation of the secant "

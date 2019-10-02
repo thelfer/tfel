@@ -1,5 +1,6 @@
 nobase_include_HEADERS =                         \
   MFMTestGenerator/Config.hxx		             \
+  MFMTestGenerator/Log.hxx	                     \
   MFMTestGenerator/AbstractTestCase.hxx	         \
   MFMTestGenerator/TestCaseBase.hxx	             \
   MFMTestGenerator/AbstractTestCaseFactory.hxx   \
@@ -10,4 +11,3 @@ nobase_include_HEADERS =                         \
   MFMTestGenerator/MTestInputFileGenerators.hxx
 
 EXTRA_DIST=CMakeLists.txt
-

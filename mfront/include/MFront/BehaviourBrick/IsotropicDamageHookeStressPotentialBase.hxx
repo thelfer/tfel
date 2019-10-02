@@ -32,7 +32,8 @@ namespace mfront {
     struct IsotropicDamageHookeStressPotentialBase : HookeStressPotentialBase {
       //! \brief constructor
       IsotropicDamageHookeStressPotentialBase();
-      std::vector<OptionDescription> getOptions() const override;
+      std::vector<OptionDescription> getOptions(const BehaviourDescription&,
+                                                const bool) const override;
       void initialize(BehaviourDescription&,
                       AbstractBehaviourDSL&,
                       const DataMap&) override;

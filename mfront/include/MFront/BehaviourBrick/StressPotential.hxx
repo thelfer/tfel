@@ -54,8 +54,14 @@ namespace mfront {
       using MaterialProperty = BehaviourDescription::MaterialProperty;
       //! \return the name of the stress potential
       virtual std::string getName() const = 0;
-      //! \return the stress potential option description
-      virtual std::vector<OptionDescription> getOptions() const = 0;
+      /*!
+       * \param[in] bd: behavour description
+       * \param[in] b: if true, all options are returned. Otherwise, only the
+       * most adapted options for the behaviour are returned.
+       * \return the stress potential option description
+       */
+      virtual std::vector<OptionDescription> getOptions(
+          const BehaviourDescription&, const bool) const = 0;
       /*!
        * \param[in,out] bd: behaviour description
        * \param[in,out] dsl: abstract behaviour dsl

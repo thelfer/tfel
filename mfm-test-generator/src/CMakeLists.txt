@@ -13,6 +13,7 @@ macro(mfmtg_library name)
 endmacro(mfmtg_library)
 
 mfmtg_library(MFMTestGenerator
+  Log.cxx
   AbstractTestCase.cxx
   TestCaseBase.cxx
   AbstractTestCaseFactory.cxx

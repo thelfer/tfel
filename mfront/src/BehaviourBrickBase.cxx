@@ -20,6 +20,7 @@
 #include "TFEL/Material/ModellingHypothesis.hxx"
 #include "MFront/AbstractBehaviourDSL.hxx"
 #include "MFront/BehaviourDescription.hxx"
+#include "MFront/BehaviourBrick/OptionDescription.hxx"
 #include "MFront/BehaviourBrickBase.hxx"
 
 namespace mfront {
@@ -152,14 +153,18 @@ namespace mfront {
     this->bd.setEntryName(h, n, e);
   }  // end of BehaviourBrickBase::addExternalStateVariable
 
-  void BehaviourBrickBase::checkOptionsNames(const DataMap& d,
-                                             const std::vector<std::string>& k,
-                                             const std::string& n) {
+  void BehaviourBrickBase::checkOptionsNames(const DataMap& d) {
+    const auto opts = this->getOptions(true);
     for (const auto& de : d) {
-      tfel::raise_if(std::find(k.begin(), k.end(), de.first) == k.end(),
-                     "BehaviourBrickBase::checkOptionsNames: "
-                     "brick '" +
-                         n + "' does not expect option '" + de.first + "'");
+      auto cmp = [&de](const bbrick::OptionDescription& o) {
+        return o.name == de.first;
+      };
+      if (std::find_if(opts.begin(), opts.end(), cmp) == opts.end()) {
+        tfel::raise(
+            "BehaviourBrickBase::checkOptionsNames: "
+            "brick '" +
+            this->getName() + "' does not expect option '" + de.first + "'");
+      }
     }
   }  // end of BehaviourBrickBase::checkOptionsNames
 

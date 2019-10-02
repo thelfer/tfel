@@ -11,10 +11,23 @@
  * project under specific licensing conditions.
  */
 
+#include <algorithm>
 #include "TFEL/Raise.hxx"
 #include "MFMTestGenerator/TestCaseParameters.hxx"
 
 namespace mfmtg{
+
+  void check(const TestCaseParameters& m, const std::vector<std::string>& k) {
+    for (const auto& p : m) {
+      if (std::find(k.begin(), k.end(), p.first) == k.end()) {
+        tfel::raise("check: invalid key '" + p.first + "'");
+      }
+    }
+  }  // end of check
+
+  bool contains(const TestCaseParameters& parameters, const std::string& n) {
+    return parameters.count(n)!=0;
+  }  // end of contains
 
   const TestCaseParameter& getParameter(const TestCaseParameters& parameters,
                                         const std::string& n) {
@@ -34,6 +47,38 @@ namespace mfmtg{
     }
     return p.get<TestCaseParameters>();
   }  // end of getTestCaseParameters
+
+  Evolution getEvolution(const TestCaseParameters& p, const std::string& n) {
+    const auto& e = getParameter(p, n);
+    if (e.is<double>()) {
+      return e.get<double>();
+    } else if (!e.is<TestCaseParameters>()) {
+      tfel::raise("getEvolution: invalid type for evolution '" + n + "'");
+    }
+    auto ev = std::map<double, double>{};
+    check(e, {"times", "values"});
+    const auto& evd = e.get<TestCaseParameters>();
+    const auto times = tfel::utilities::convert<std::vector<double>>(
+        getParameter(evd, "times"));
+    const auto values = tfel::utilities::convert<std::vector<double>>(
+        getParameter(evd, "values"));
+    if (times.size() != values.size()) {
+      tfel::raise("getEvolution: times and values don't have the same sizes");
+    }
+    for (decltype(times.size()) i = 0; i != times.size(); ++i) {
+      ev.insert({times[i], values[i]});
+    }
+    return ev;
+  }  // end of getEvolution
+
+  std::map<std::string, Evolution> getEvolutions(const TestCaseParameters& p,
+                                                 const std::string& n) {
+    auto evs = std::map<std::string, Evolution>{};
+    for (const auto& ev : getTestCaseParameters(p, n)) {
+      evs.insert({ev.first, getEvolution(p, ev.first)});
+    }
+    return evs;
+  }  // end of getEvolution
 
   void throwInvalidParameterTypeException(const std::string& n) {
     tfel::raise("get_parameter: unexpected type for parameter '" + n + "'");

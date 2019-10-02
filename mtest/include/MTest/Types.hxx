@@ -18,9 +18,8 @@
 #include<string>
 #include<memory>
 
-namespace mtest
-{
-  
+namespace mtest {
+
   //! a simple alias
   typedef double real;
   //! a simple alias

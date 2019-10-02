@@ -68,7 +68,9 @@ namespace mfront {
                               AbstractBehaviourDSL&,
                               const std::string&,
                               const DataMap&) = 0;
-      //! \return the flow options
+      /*!
+       * \return the flow options
+       */
       virtual std::vector<OptionDescription> getOptions() const = 0;
       /*!
        * \brief complete the variable description

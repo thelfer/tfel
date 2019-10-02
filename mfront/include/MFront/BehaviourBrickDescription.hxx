@@ -67,13 +67,22 @@ namespace mfront {
     //! \brief supported behaviour symmetry
     std::vector<BehaviourSymmetryType> supportedBehaviourSymmetries = {
         mfront::ISOTROPIC, mfront::ORTHOTROPIC};
+    /*!
+     * \brief integration variables whose associated equation are defined by the
+     * brick.
+     */
+    std::vector<std::string> managedIntegrationVariables = {};
+    //! \brief list of code blocks handled by the brick
+    std::vector<std::string> managedCodeBlocks = {};
     //! \brief allow the definition of the crystal structure
     bool allowCrystalStructureDefinition = true;
     //! \brief require the definition of the crystal structure
     bool requireCrystalStructureDefinition = false;
-    //! \brief allow the definition of the elastic properties
+    //! \brief allow elastic properties definition as brick options
+    bool allowElasticPropertiesDefinitionAsBrickOptions = true;
+    //! \brief allow the definition of the elastic properties (outside brick options)
     bool allowElasticPropertiesDefinition = true;
-    //! \brief allow the definition stiffness tensor
+    //! \brief allow the definition stiffness tensor (outside brick options)
     bool allowStiffnessTensorDefinition = true;
     //! \brief require the definition stiffness tensor
     bool requireStiffnessTensorDefinition = false;

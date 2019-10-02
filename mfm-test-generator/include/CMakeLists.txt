@@ -1,4 +1,5 @@
 install_mfm_header(MFMTestGenerator Config.hxx)
+install_mfm_header(MFMTestGenerator Log.hxx)
 install_mfm_header(MFMTestGenerator AbstractTestCase.hxx)
 install_mfm_header(MFMTestGenerator TestCaseBase.hxx)
 install_mfm_header(MFMTestGenerator AbstractTestCaseFactory.hxx)

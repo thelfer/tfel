@@ -37,8 +37,8 @@ namespace mfront {
     mpd.output = VariableDescription{"real", "res", 1u, 0u};
     std::ostringstream body;
     body << "res = " << mp.value << ";\n";
-    mpd.law = bd.getClassName() + "_" + n;
-    mpd.className = bd.getClassName() + "_" + n;
+    mpd.law = bd.getBehaviourName() + "_" + n;
+    mpd.className = bd.getBehaviourName() + "_" + n;
     mpd.material = bd.getMaterialName();
     mpd.f.modified = true;
     mpd.f.body = body.str();
@@ -50,8 +50,8 @@ namespace mfront {
       const BehaviourDescription& bd,
       const std::string& n) {
     auto mpd = *(mp.mpd);
-    mpd.law = bd.getClassName() + "_" + n;
-    mpd.className = bd.getClassName() + "_" + n;
+    mpd.law = bd.getBehaviourName() + "_" + n;
+    mpd.className = bd.getBehaviourName() + "_" + n;
     mpd.material = bd.getMaterialName();
     return mpd;
   }  // end of buildMaterialPropertyDescription
@@ -62,8 +62,8 @@ namespace mfront {
       const std::string& n) {
     auto mpd = MaterialPropertyDescription{};
     mpd.output = VariableDescription{"real", "res", 1u, 0u};
-    mpd.law = bd.getClassName() + "_" + n;
-    mpd.className = bd.getClassName() + "_" + n;
+    mpd.law = bd.getBehaviourName() + "_" + n;
+    mpd.className = bd.getBehaviourName() + "_" + n;
     mpd.material = bd.getMaterialName();
     const auto h  = *(bd.getDistinctModellingHypotheses().begin());
     const auto& d = bd.getBehaviourData(h);

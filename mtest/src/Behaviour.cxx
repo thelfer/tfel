@@ -240,10 +240,11 @@ namespace mtest {
     return b;
   }
 
-  void Behaviour::setOptionalMaterialPropertyDefaultValue(EvolutionManager& mp,
-                                                          const EvolutionManager& evm,
-                                                          const std::string& n,
-                                                          const real v) {
+  void Behaviour::setOptionalMaterialPropertyDefaultValue(
+      EvolutionManager& mp,
+      const EvolutionManager& evm,
+      const std::string& n,
+      const real v) {
     if (evm.find(n) == evm.end()) {
       if (mfront::getVerboseMode() >= mfront::VERBOSE_LEVEL2) {
         auto& log = mfront::getLogStream();

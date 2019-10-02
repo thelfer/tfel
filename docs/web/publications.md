@@ -4,9 +4,17 @@
 
 ---
 nocite: |
+    @manso_settlement_2019
+    @singh_brittle_2019
     @tuset_implementation_2019
     @szmytka_recent_2019
+    @forre_comparison_2019
+    @helfer_pdf_2019
+    @helfer_mgis_2019
+    @bleyer_elasto-plastic_2019
     @marano_intragranular_2019
+    @perales_xper_2019    
+    @helfer_new_2019
     @dorfler_numerical_2019
     @bernachy-barbe_effect_2019
     @bejaoui_description_2019

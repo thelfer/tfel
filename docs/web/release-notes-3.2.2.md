@@ -38,7 +38,7 @@ options:
 
 # Issues solved
 
-#Ticket #187: Conversions in `Number::getCxxFormula` is biased by rounding errors
+## Ticket #187: Conversions in `Number::getCxxFormula` is biased by rounding errors
 
 `Number::getCxxFormula` did rely on `std::to_string` which only has 6
 significant digits. As an example, the output of `std::to_string(1e-14)`
@@ -49,7 +49,7 @@ string representation of the number, as given by the user.
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/187/>
 
-#Ticket #186: "Less than" conditional is not correctly translated to `C++` by `tfel::math::Evaluator`
+## Ticket #186: "Less than" conditional is not correctly translated to `C++` by `tfel::math::Evaluator`
 
 The `tfel::math::Evaluator` class allows to translate a formula in `C++` since Version 3.2.
 
@@ -58,7 +58,7 @@ formula `a<b ? 0 : 1` was translated `a>b ? 0: 1` in `C++`.
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/186/>
 
-# Ticket #182: Jacobian error in the SwiftIsotropicHardeningRule
+## Ticket #182: Jacobian error in the SwiftIsotropicHardeningRule
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/182/>
 

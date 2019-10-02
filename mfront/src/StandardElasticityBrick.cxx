@@ -24,6 +24,7 @@
 #include "MFront/BehaviourDescription.hxx"
 #include "MFront/ImplicitDSLBase.hxx"
 #include "MFront/NonLinearSystemSolver.hxx"
+#include "MFront/BehaviourBrick/OptionDescription.hxx"
 #include "MFront/BehaviourBrick/StressPotential.hxx"
 #include "MFront/BehaviourBrick/StressPotentialFactory.hxx"
 #include "MFront/StandardElasticityBrick.hxx"
@@ -33,6 +34,8 @@ namespace mfront {
   StandardElasticityBrick::StandardElasticityBrick(AbstractBehaviourDSL& dsl_,
                                                    BehaviourDescription& mb_)
       : BehaviourBrickBase(dsl_, mb_) {
+    auto& spf = mfront::bbrick::StressPotentialFactory::getFactory();
+    this->hooke = spf.generate("Hooke");
   }  // end of StandardElasticityBrick::StandardElasticityBrick
 
   BehaviourBrickDescription StandardElasticityBrick::getDescription() const {
@@ -46,13 +49,16 @@ namespace mfront {
 
   std::string StandardElasticityBrick::getName() const { return "Elasticity"; }
 
+  std::vector<bbrick::OptionDescription> StandardElasticityBrick::getOptions(
+      const bool b) const {
+    return this->hooke->getOptions(this->bd, b);
+  }  // end of StandardElasticityBrick::getOptions
+
   void StandardElasticityBrick::initialize(const Parameters& p,
                                            const DataMap& d) {
     auto throw_if = [](const bool b, const std::string& m) {
       tfel::raise_if(b, "StandardElasticityBrick::initialize: " + m);
     };
-    auto& spf = mfront::bbrick::StressPotentialFactory::getFactory();
-    this->hooke = spf.generate("Hooke");
     this->hooke->initialize(this->bd, this->dsl, d);
     // parameters
     for (const auto& pp : p) {

@@ -147,8 +147,8 @@ namespace mfront {
       return opts;
     }  // end of HookeStressPotentialBase::getIsotropicBehaviourOptions()
 
-    std::vector<OptionDescription>
-    HookeStressPotentialBase::getOrthotropicBehaviourOptions() {
+    std::vector<OptionDescription> HookeStressPotentialBase::
+        getOrthotropicBehaviourElasticMaterialPropertiesOptions() {
       using tfel::glossary::Glossary;
       std::vector<OptionDescription> opts;
       opts.emplace_back(
@@ -223,6 +223,15 @@ namespace mfront {
                                    "poisson_ratio23", "poisson_ratio13",
                                    "shear_modulus12", "shear_modulus23"},
           std::vector<std::string>{"young_modulus", "poisson_ratio"});
+      return opts;
+    }  // end of
+       // HookeStressPotentialBase::getOrthotropicBehaviourElasticMaterialPropertiesOptions
+
+    std::vector<OptionDescription>
+    HookeStressPotentialBase::getOrthotropicBehaviourOptions() {
+      using tfel::glossary::Glossary;
+      auto opts = HookeStressPotentialBase::
+          getOrthotropicBehaviourElasticMaterialPropertiesOptions();
       opts.emplace_back(
           "thermal_expansion1", Glossary::ThermalExpansion1,
           OptionDescription::MATERIALPROPERTY,
@@ -253,14 +262,23 @@ namespace mfront {
       return opts;
     }  // end of HookeStressPotentialBase::getGeneralOptions()
 
-    std::vector<OptionDescription> HookeStressPotentialBase::getOptions()
-        const {
-      auto opts = HookeStressPotentialBase::getIsotropicBehaviourOptions();
-      const auto oopts =
-          HookeStressPotentialBase::getOrthotropicBehaviourOptions();
-      const auto gopts = HookeStressPotentialBase::getGeneralOptions();
+    std::vector<OptionDescription> HookeStressPotentialBase::getOptions(
+        const BehaviourDescription& bd, const bool b) const {
+      auto opts = std::vector<OptionDescription>{};
+      if (b || ((!b) && (bd.getSymmetryType() == mfront::ISOTROPIC))) {
+        const auto oopts =
+            HookeStressPotentialBase::getIsotropicBehaviourOptions();
+        opts.insert(opts.end(), oopts.begin(), oopts.end());
+      }
+      if (b || ((!b) && (bd.getSymmetryType() == mfront::ORTHOTROPIC))) {
+        const auto oopts =
+            HookeStressPotentialBase::getOrthotropicBehaviourOptions();
       opts.insert(opts.end(), oopts.begin(), oopts.end());
-      opts.insert(opts.end(), gopts.begin(), gopts.end());
+      }
+      if (b) {
+        const auto gopts = HookeStressPotentialBase::getGeneralOptions();
+        opts.insert(opts.end(), gopts.begin(), gopts.end());
+      }
       return opts;
     }  // end of HookeStressPotentialBase::getOptions()
 
@@ -337,7 +355,7 @@ namespace mfront {
         }
       };
       // checking options
-      mfront::bbrick::check(d, this->getOptions());
+      mfront::bbrick::check(d, this->getOptions(bd, true));
       // reserve some specific variables
       bd.reserveName(ModellingHypothesis::UNDEFINEDHYPOTHESIS, "sebdata");
       update(this->pss, "plane_stress_support");

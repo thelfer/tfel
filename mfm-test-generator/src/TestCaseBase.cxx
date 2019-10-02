@@ -23,6 +23,12 @@ namespace mfmtg {
     this->generators.push_back(g);
   }  // end of TestCaseBase::addGenerator
 
+  void TestCaseBase::generate() const {
+    for (const auto& g : this->generators) {
+      g(*this);
+    }
+  }  // end of TestCaseBase::addGenerator
+
   TestCaseBase::~TestCaseBase() = default;
 
 }  // end of namespace mfmtg

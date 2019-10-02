@@ -37,7 +37,8 @@ namespace mfront {
       //! \brief constructor
       DDIF2StressPotential();
       std::string getName() const override;
-      std::vector<OptionDescription> getOptions() const override;
+      std::vector<OptionDescription> getOptions(const BehaviourDescription&,
+                                                const bool) const override;
       void initialize(BehaviourDescription&,
                       AbstractBehaviourDSL&,
                       const DataMap&) override;

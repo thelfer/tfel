@@ -31,6 +31,9 @@ files. This subset includes:
 - σ: stress tensor
 - ℝ₊: ranges of positive numbers
 - ℝ₋: ranges of negative numbers
+- I₂: second order symmetric identity tensor (object of type `stensor`)
+- I₄: fourth order identity tensor on symmetric tensors (object of type
+  `st2tost2`)
 
 # List of all supported symbols
 

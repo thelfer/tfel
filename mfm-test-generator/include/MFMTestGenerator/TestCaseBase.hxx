@@ -30,6 +30,7 @@ namespace mfmtg {
      */
     TestCaseBase(const TestCaseParameters&);
     void addInputFileGenerator(const generator&) override;
+    void generate() const override;
     //! \brief destructor
     ~TestCaseBase() override;
     //! name of the test case

@@ -84,17 +84,26 @@ namespace mfront {
                    "complete: the behaviour DSL description does not allow the "
                    "definition of a stiffness tensor, by the definition of a "
                    "stiffness tensor is required by the behaviour brick");
+    auto cbs = d.typicalCodeBlocks;
+    const auto& mcbs = bbd.managedCodeBlocks;
+    cbs.erase(std::remove_if(cbs.begin(), cbs.end(),
+                             [&mcbs](const std::string& v) {
+                               return std::find(mcbs.begin(), mcbs.end(), v) !=
+                                      mcbs.end();
+                             }),
+              cbs.end());
     // everything is ok
     if (b) {
       if (bbd.requireCrystalStructureDefinition) {
         d.requireCrystalStructureDefinition = true;
       }
       if (bbd.requireStiffnessTensorDefinition) {
-        d.allowElasticPropertiesDefinition= false;
+        d.allowElasticPropertiesDefinition = false;
         d.requireStiffnessTensorDefinition = true;
       }
       std::swap(d.supportedModellingHypotheses, mhs);
       std::swap(d.supportedBehaviourSymmetries, bss);
+      std::swap(d.typicalCodeBlocks, cbs);
     }
   }  // end of checkCompatibilityAndComplete
 

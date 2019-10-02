@@ -20,6 +20,7 @@
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "TFEL/System/ExternalLibraryManager.hxx"
 #include "MFront/MFrontLogStream.hxx"
+#include "MFMTestGenerator/Log.hxx"
 #include "MFMTestGenerator/AbstractTestCase.hxx"
 #include "MFMTestGenerator/TestCaseParameters.hxx"
 #include "MFMTestGenerator/AbstractTestCaseFactory.hxx"
@@ -27,23 +28,8 @@
 
 namespace mfmtg {
 
-  static void debug(const std::string& msg) {
-    if (mfront::getVerboseMode() >= mfront::VERBOSE_DEBUG) {
-      mfront::getLogStream() << msg;
-    }
-  }
-
-  static void message(const std::string& msg) {
-    if (mfront::getVerboseMode() >= mfront::VERBOSE_LEVEL2) {
-      mfront::getLogStream() << msg;
-    }
-  }
-
   struct MFMTestGenerator
       : public tfel::utilities::ArgumentParserBase<MFMTestGenerator> {
-    // simple alias
-    static constexpr const mfront::VerboseLevel VERBOSE_LEVEL2 =
-        mfront::VERBOSE_LEVEL2;
 
     MFMTestGenerator(const int argc, const char* const* const argv)
         : tfel::utilities::ArgumentParserBase<MFMTestGenerator>(argc, argv) {
@@ -88,18 +74,50 @@ namespace mfmtg {
      */
     void execute(const std::string& i) {
       message("Begin treatment of file '" + i + "'\n");
-      const auto o = [] {
-        auto opts = tfel::utilities::CxxTokenizerOptions{};
-        opts.shallMergeStrings = true;
-        opts.treatPreprocessorDirectives = false;
-        opts.charAsString = true;
-        opts.dotAsSeparator = false;
-        opts.addCurlyBraces = true;
-        return opts;
+      const auto opts = [] {
+        auto lopts = tfel::utilities::CxxTokenizerOptions{};
+        lopts.shallMergeStrings = true;
+        lopts.treatPreprocessorDirectives = false;
+        lopts.charAsString = true;
+        lopts.dotAsSeparator = false;
+        lopts.addCurlyBraces = true;
+        return lopts;
       }();
-      const tfel::utilities::CxxTokenizer tokenizer(i, o);
-      auto p = tokenizer.begin();
-      const auto pe = tokenizer.end();
+      const auto tokens = [this, &i, &opts] {
+        tfel::utilities::CxxTokenizer tokenizer(i, opts);
+        tokenizer.stripComments();
+        auto ltokens = std::vector<tfel::utilities::Token>{tokenizer.begin(),
+                                                           tokenizer.end()};
+        // substitutions
+        const auto pe = this->substitutions.end();
+        for (auto& token : ltokens) {
+          auto p = this->substitutions.find(token.value);
+          if (p != pe) {
+            token.value = p->second;
+            if (((p->second.front() == '\'') && (p->second.back() == '\'')) ||
+                ((p->second.front() == '"') && (p->second.back() == '"'))) {
+              token.flag = tfel::utilities::Token::String;
+            }
+          }
+        }
+        // treating external commands
+        for (const auto& c : this->ecmds) {
+          tfel::utilities::CxxTokenizer etokenizer(opts);
+          try {
+            etokenizer.parseString(c);
+          } catch (std::exception& e) {
+            tfel::raise(
+                "MFMTestGenerator::execute : "
+                "error while parsing external command "
+                "'" +
+                c + "'\n" + std::string(e.what()));
+          }
+          ltokens.insert(ltokens.begin(), etokenizer.begin(), etokenizer.end());
+        }
+        return ltokens;
+      }();
+      auto p = tokens.begin();
+      const auto pe = tokens.end();
       const auto d = TestCaseParameter::read(p, pe);
       if (!d.is<TestCaseParameters>()) {
         tfel::raise(
@@ -164,9 +182,57 @@ namespace mfmtg {
     }
 
     void treatUnknownArgument() override {
+      using tfel::utilities::starts_with;
       const auto& a = this->currentArgument->as_string();
       if (a.empty()) {
         return;
+      }
+#ifdef _WIN32
+      if (starts_with(a, "--@") || starts_with(a, "/@")) {
+#else  /* _WIN32 */
+      if (starts_with(a, "--@")) {
+#endif /* _WIN32 */
+        if (a.back() == '@') {
+#ifdef _WIN32
+          const auto s1 = starts_with(a, "/@") ? a.substr(1) : a.substr(2);
+#else  /* _WIN32 */
+          const auto s1 = a.substr(2);
+#endif /* _WIN32 */
+          tfel::raise_if(std::count(s1.begin(), s1.end(), '@') != 2,
+                         "MTestMain::treatUnknownArgument: "
+                         "bas substitution pattern '" +
+                             s1 + "'");
+          const auto s2 = this->currentArgument->getOption();
+          tfel::raise_if(s2.empty(),
+                         "MTestMain::treatUnknownArgument: "
+                         "no substitution given for pattern '" +
+                             s1 + "'");
+          //           if (mfront::getVerboseMode() >= mfront::VERBOSE_LEVEL2) {
+          //             mfront::getLogStream() << "substituting '" << s1 << "'
+          //             by '" << s2
+          //                                    << "'\n";
+          //           }
+          tfel::raise_if(!this->substitutions.insert({s1, s2}).second,
+                         "MTestMain::treatUnknownArgument: "
+                         "a substitution for '" +
+                             s1 +
+                             "' has "
+                             "already been defined");
+          return;
+        } else {
+          const auto o = this->currentArgument->getOption();
+#ifdef _WIN32
+          auto cmd = starts_with(a, "/@") ? a.substr(1) : a.substr(2);
+#else  /* _WIN32 */
+          auto cmd = a.substr(2);
+#endif /* _WIN32 */
+          if (!o.empty()) {
+            cmd += ' ' + o;
+          }
+          cmd += ';';
+          this->ecmds.push_back(cmd);
+          return;
+        }
       }
       if ((a[0] == '-') || (a[0] == '/')) {
         tfel::utilities::ArgumentParserBase<
@@ -189,6 +255,10 @@ namespace mfmtg {
     std::vector<std::string> input_files;
     //! list of targeted code
     std::vector<std::string> targets;
+    //! external commands
+    std::vector<std::string> ecmds;
+    //! substitutions
+    std::map<std::string,std::string> substitutions;
   };  // end of MFMTestGenerator
 
 }  // end of namespace mfmtg

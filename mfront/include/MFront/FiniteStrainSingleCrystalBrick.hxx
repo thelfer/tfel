@@ -38,6 +38,8 @@ namespace mfront{
     FiniteStrainSingleCrystalBrick(AbstractBehaviourDSL&,
                                    BehaviourDescription&);
     BehaviourBrickDescription getDescription() const override;
+    std::vector<bbrick::OptionDescription> getOptions(
+        const bool) const override;
     std::string getName() const override;
     void initialize(const Parameters&, const DataMap&) override;
     std::vector<Hypothesis> getSupportedModellingHypotheses() const override;

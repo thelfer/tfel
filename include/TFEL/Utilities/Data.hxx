@@ -163,7 +163,7 @@ namespace tfel {
       /*!
        * \brief read a map
        * \return the values read
-       * \param[in,out] p:  current position in the tokens stream
+       * \param[in,out] p: current position in the tokens stream
        * \param[in]     pe: past-the-end iterator
        * \param[in]     o: parsing options
        */

@@ -41,6 +41,19 @@ namespace mfront {
        * - `poisson_ratio12`
        * - `poisson_ratio23`
        * - `poisson_ratio13`
+       */
+      static std::vector<OptionDescription>
+      getOrthotropicBehaviourElasticMaterialPropertiesOptions();
+      /*!
+       * \return the options associated with material properties which are only
+       * valid for an orthotropic behaviour.
+       * The following options are defined:
+       * - `young_modulus1`
+       * - `young_modulus2`
+       * - `young_modulus3`
+       * - `poisson_ratio12`
+       * - `poisson_ratio23`
+       * - `poisson_ratio13`
        * - `thermal_expansion1`
        * - `thermal_expansion2`
        * - `thermal_expansion3`
@@ -51,7 +64,8 @@ namespace mfront {
       //! constructor
       HookeStressPotentialBase();
       std::string getName() const override;
-      std::vector<OptionDescription> getOptions() const override;
+      std::vector<OptionDescription> getOptions(const BehaviourDescription&,
+                                                const bool) const override;
       void initialize(BehaviourDescription&,
                       AbstractBehaviourDSL&,
                       const DataMap&) override;

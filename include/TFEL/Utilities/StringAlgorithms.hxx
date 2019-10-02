@@ -35,7 +35,7 @@ namespace tfel{
      * \param[in] s2: second string
      * \return true if the first string ends with the second
      */
-    TFELUTILITIES_VISIBILITY_EXPORT 
+    TFELUTILITIES_VISIBILITY_EXPORT
     bool ends_with(const std::string&,const std::string&);
     /*!
      * split a string into tokens using the specified delimiter
@@ -43,9 +43,8 @@ namespace tfel{
      * \param c : delimiter
      * \return the tokens
      */
-    TFELUTILITIES_VISIBILITY_EXPORT 
-    std::vector<std::string>
-    tokenize(const std::string&,const char);
+    TFELUTILITIES_VISIBILITY_EXPORT
+    std::vector<std::string> tokenize(const std::string&, const char);
 
     /*!
      * split a string into tokens using the specified delimiter
@@ -53,10 +52,8 @@ namespace tfel{
      * \param delim : delimiter
      * \return the tokens
      */
-    TFELUTILITIES_VISIBILITY_EXPORT 
-    std::vector<std::string>
-    tokenize(const std::string&,
-	     const std::string&);
+    TFELUTILITIES_VISIBILITY_EXPORT
+    std::vector<std::string> tokenize(const std::string&, const std::string&);
 
     /*!
      * \brief replace all occurences of substring s1 by s2

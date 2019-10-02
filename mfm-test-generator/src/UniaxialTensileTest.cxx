@@ -1,6 +1,6 @@
 /*!
  * \file   UniaxialTensileTest.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   17/09/2019
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
@@ -12,33 +12,36 @@
  */
 
 #include <ostream>
-#include "MFront/MFrontLogStream.hxx"
+#include "MFMTestGenerator/Log.hxx"
 #include "MFMTestGenerator/TestCaseParameters.hxx"
 #include "MFMTestGenerator/UniaxialTensileTest.hxx"
 
 namespace mfmtg {
 
   UniaxialTensileTest::UniaxialTensileTest(const TestCaseParameters& p)
-      : TestCaseBase(p) {
-    //     if (mfront::getVerboseMode() >= mfront::VERBOSE_LEVEL2) {
-    //       mfront::getLogStream() << "UniaxialTensileTest::generate: "
-    //                              << "treatment of test '"
-    //                              << get<std::string>(p, "name") << "'
-    //                              begins\n";
-    //     }
-    //
-    //     if (mfront::getVerboseMode() >= mfront::VERBOSE_LEVEL2) {
-    //       mfront::getLogStream() << "UniaxialTensileTest::generate: "
-    //                              << "treatment of test '"
-    //                              << get<std::string>(p, "name") << "'
-    //                              ends\n";
-    //     }
-  }  // end of UniaxialTensileTest::UniaxialTensileTest
+      : TestCaseBase(p),
+        library(get(p, "behaviour", "library")),
+        function(get(p, "behaviour", "function")),
+        hypothesis("Tridimensional"),
+        author(get_if(p, "author")),
+        date(get_if(p, "date")),
+        description(get_if(p, "description")),
+        times(tfel::utilities::convert<std::vector<double>>(
+            getParameter(p, "times"))),
+        imposed_strain(getEvolution(p, "imposed_strain")),
+        material_properties(getEvolutions(p, "material_properties")),
+        external_state_variables(getEvolutions(p, "external_state_variables")) {
+    message(
+        "UniaxialTensileTest::UniaxialTensileTest: "
+        "pre-processing of test '" +
+        this->name + "' begins\n");
 
-  void UniaxialTensileTest::generate() const {
-  }  // end of UniaxialTensileTest::generate
+    message(
+        "UniaxialTensileTest::UniaxialTensileTest: "
+        "pre-processing of test '" +
+        this->name + "' is finished\n");
+  } // end of UniaxialTensileTest::UniaxialTensileTest
 
   UniaxialTensileTest::~UniaxialTensileTest() = default;
 
 }  // end of namespace mfmtg
-

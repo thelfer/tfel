@@ -40,6 +40,8 @@ namespace mfront {
   namespace bbrick {
     // forward declaration
     struct RequirementManager;
+    // forward declaration
+    struct OptionDescription;
   }  // end of namespace bbrick
 
   /*!
@@ -71,6 +73,13 @@ namespace mfront {
     virtual std::string getName() const = 0;
     //! \return a description of the brick
     virtual BehaviourBrickDescription getDescription() const = 0;
+    /*!
+     * \param[in] b: if true, all options are returned. Otherwise, only the most
+     * adapted options for the behaviour are returned.
+     * \return the description of the brick options
+     */
+    virtual std::vector<bbrick::OptionDescription> getOptions(
+        const bool) const = 0;
     /*!
      * \brief intialize the brick
      * \param[in] p: parameters
