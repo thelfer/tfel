@@ -13,6 +13,7 @@
 
 #include <algorithm>
 #include "TFEL/Raise.hxx"
+#include "MFMTestGenerator/Evolution.hxx"
 #include "MFMTestGenerator/TestCaseParameters.hxx"
 
 namespace mfmtg{
@@ -29,11 +30,24 @@ namespace mfmtg{
     return parameters.count(n)!=0;
   }  // end of contains
 
+  bool contains(const TestCaseParameters& parameters, const char* const n) {
+    return parameters.count(n)!=0;
+  }  // end of contains
+
   const TestCaseParameter& getParameter(const TestCaseParameters& parameters,
                                         const std::string& n) {
     const auto p = parameters.find(n);
     if (p == parameters.end()) {
       tfel::raise("getParameter: no parameter named '" + n + "'");
+    }
+    return p->second;
+  }  // end of getParameter
+
+  const TestCaseParameter& getParameter(const TestCaseParameters& parameters,
+                                        const char* const n) {
+    const auto p = parameters.find(n);
+    if (p == parameters.end()) {
+      tfel::raise("getParameter: no parameter named '" + std::string(n) + "'");
     }
     return p->second;
   }  // end of getParameter
@@ -48,12 +62,27 @@ namespace mfmtg{
     return p.get<TestCaseParameters>();
   }  // end of getTestCaseParameters
 
+  const TestCaseParameters& getTestCaseParameters(
+      const TestCaseParameters& parameters, const char* const n) {
+    const auto& p = getParameter(parameters, n);
+    if (!p.is<TestCaseParameters>()) {
+      tfel::raise("getTestCaseParameters: parameter '" + std::string(n) +
+                  "' has not the expected type");
+    }
+    return p.get<TestCaseParameters>();
+  }  // end of getTestCaseParameters
+
   Evolution getEvolution(const TestCaseParameters& p, const std::string& n) {
+    return getEvolution(p, n.c_str());
+  }  // end of getEvolution
+
+  Evolution getEvolution(const TestCaseParameters& p, const char* const n) {
     const auto& e = getParameter(p, n);
     if (e.is<double>()) {
       return e.get<double>();
     } else if (!e.is<TestCaseParameters>()) {
-      tfel::raise("getEvolution: invalid type for evolution '" + n + "'");
+      tfel::raise("getEvolution: invalid type for evolution '" +
+                  std::string(n) + "'");
     }
     auto ev = std::map<double, double>{};
     check(e, {"times", "values"});
@@ -73,12 +102,18 @@ namespace mfmtg{
 
   std::map<std::string, Evolution> getEvolutions(const TestCaseParameters& p,
                                                  const std::string& n) {
+    return getEvolutions(p, n.c_str());
+  }  // end of getEvolution
+
+  std::map<std::string, Evolution> getEvolutions(const TestCaseParameters& p,
+                                                 const char* const n) {
     auto evs = std::map<std::string, Evolution>{};
-    for (const auto& ev : getTestCaseParameters(p, n)) {
-      evs.insert({ev.first, getEvolution(p, ev.first)});
+    const auto m = getTestCaseParameters(p, n);
+    for (const auto& ev : m) {
+      evs.insert({ev.first, getEvolution(m, ev.first)});
     }
     return evs;
-  }  // end of getEvolution
+  } // end of getEvolutions
 
   void throwInvalidParameterTypeException(const std::string& n) {
     tfel::raise("get_parameter: unexpected type for parameter '" + n + "'");

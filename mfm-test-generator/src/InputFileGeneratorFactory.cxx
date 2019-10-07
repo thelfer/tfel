@@ -13,6 +13,7 @@
 
 #include "TFEL/Raise.hxx"
 #include "MFMTestGenerator/MTestInputFileGenerators.hxx"
+#include "MFMTestGenerator/LicosInputFileGenerators.hxx"
 #include "MFMTestGenerator/InputFileGeneratorFactory.hxx"
 
 namespace mfmtg {
@@ -26,7 +27,11 @@ namespace mfmtg {
     auto add_mtest = [this](const char* n, const generator& g) {
       this->add(n, "mtest", g);
     };
+    auto add_licos = [this](const char* n, const generator& g) {
+      this->add(n, "licos", g);
+    };
     add_mtest("UniaxialTensileTest", mfmtg::mtest::generateUniaxialTensileTest);
+    add_licos("UniaxialTensileTest", mfmtg::licos::generateUniaxialTensileTest);
   }  // end of InputFileGeneratorFactory::InputFileGeneratorFactory
 
   void InputFileGeneratorFactory::add(const std::string& n,

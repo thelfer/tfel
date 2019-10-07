@@ -20,17 +20,8 @@ namespace mfmtg {
 
   UniaxialTensileTest::UniaxialTensileTest(const TestCaseParameters& p)
       : TestCaseBase(p),
-        library(get(p, "behaviour", "library")),
-        function(get(p, "behaviour", "function")),
-        hypothesis("Tridimensional"),
-        author(get_if(p, "author")),
-        date(get_if(p, "date")),
-        description(get_if(p, "description")),
-        times(tfel::utilities::convert<std::vector<double>>(
-            getParameter(p, "times"))),
-        imposed_strain(getEvolution(p, "imposed_strain")),
-        material_properties(getEvolutions(p, "material_properties")),
-        external_state_variables(getEvolutions(p, "external_state_variables")) {
+        BehaviourData(p, "Tridimensional"),
+        imposed_strain(getEvolution(p, "imposed_strain")) {
     message(
         "UniaxialTensileTest::UniaxialTensileTest: "
         "pre-processing of test '" +

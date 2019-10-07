@@ -14,13 +14,23 @@
 #ifndef LIB_MFM_TEST_GENERATOR_EVOLUTION_HXX
 #define LIB_MFM_TEST_GENERATOR_EVOLUTION_HXX
 
+#include <map>
 #include "TFEL/Utilities/GenTypeBase.hxx"
+
 
 namespace mfmtg {
 
   //! \brief a simple alias
-  using Evolution = tfel::utilities::GenTypeBase<
-      tfel::meta::GenerateTypeList<double, std::map<double, double>>::type>;
+  struct Evolution
+      : tfel::utilities::GenTypeBase<
+            tfel::meta::GenerateTypeList<double,
+                                         std::map<double, double>>::type> {
+    //! a simple alias
+    using GenTypBase = tfel::utilities::GenTypeBase<
+        tfel::meta::GenerateTypeList<double, std::map<double, double>>::type>;
+    //! inheriting constructors
+    using GenTypBase::GenTypBase;
+  };  // end of struct Evolution
 
 }  // end of namespace mfmtg
 

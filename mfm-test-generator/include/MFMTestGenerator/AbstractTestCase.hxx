@@ -18,7 +18,6 @@
 #include <string>
 #include <functional>
 #include "MFMTestGenerator/Config.hxx"
-#include "MFMTestGenerator/TestCaseParameters.hxx"
 
 namespace mfmtg {
 

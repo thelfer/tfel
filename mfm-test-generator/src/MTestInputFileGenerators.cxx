@@ -14,16 +14,18 @@
 #include <fstream>
 #include "TFEL/Raise.hxx"
 #include "TFEL/Utilities/StringAlgorithms.hxx"
+#include "MTest/Behaviour.hxx"
 #include "MFMTestGenerator/Log.hxx"
-#include "MFMTestGenerator/MTestInputFileGenerators.hxx"
+#include "MFMTestGenerator/Evolution.hxx"
+#include "MFMTestGenerator/BehaviourData.hxx"
 #include "MFMTestGenerator/UniaxialTensileTest.hxx"
+#include "MFMTestGenerator/MTestInputFileGenerators.hxx"
 
 namespace mfmtg {
 
   namespace mtest {
 
-    template <typename TestCase>
-    static void writeBehaviour(std::ostream& os, const TestCase& c) {
+    static void writeBehaviour(std::ostream& os, const BehaviourData& c) {
       os << "@Behaviour '" << c.library << "' '" << c.function << "' ;\n";
     }  // end of writeBehaviour
 
@@ -38,41 +40,70 @@ namespace mfmtg {
       os << "};\n";
     }  // end of writeTimes
 
-    static void writeEvolution(std::ostream& os, const Evolution& e) {
-      if (e.is<double>()) {
-        os << e.get<double>();
-      } else if (!e.is<std::map<double, double>>()) {
-        tfel::raise("getEvolutionType: unsupported evolution type");
-      }
+    static void writeEvolution(std::ostream& os,
+                               const std::map<double, double>& e) {
       os << "{";
-      const auto& ev = e.get<std::map<double, double>>();
-      auto p = ev.begin();
-      const auto pe = ev.end();
+      auto p = e.begin();
+      const auto pe = e.end();
       while (p != pe) {
         os << p->first << " : " << p->second;
         if (++p != pe) {
           os << ", ";
         }
       }
-      os << "}\n";
+      os << "}";
+    }  // end of writeEvolution
+
+    static void writeMaterialProperty(std::ostream& os, const Evolution& e) {
+      if (!e.is<double>()) {
+        tfel::raise("getMaterialPropertyType: unsupported evolution type");
+      }
+      os << e.get<double>();
+    }  // end of writeMaterialProperty
+
+    static std::string getMaterialPropertyType(const Evolution& e) {
+      if (!e.is<double>()) {
+        tfel::raise("getMaterialPropertyType: unsupported evolution type");
+      }
+      return "constant";
+    }  // end of getMaterialPropertyType
+
+    static void writeEvolution(std::ostream& os, const Evolution& e) {
+      if (e.is<double>()) {
+        os << e.get<double>();
+        return;
+      } else if (!e.is<std::map<double, double>>()) {
+        tfel::raise("getEvolutionType: unsupported evolution type");
+      }
+      writeEvolution(os, e.get<std::map<double, double>>());
     }  // end of writeEvolution
 
     static std::string getEvolutionType(const Evolution& e) {
-      if (e.is<double>()) {
-        return "constant";
-      } else if (!e.is<std::map<double, double>>()) {
+      if ((!e.is<double>()) && (!e.is<std::map<double, double>>())) {
         tfel::raise("getEvolutionType: unsupported evolution type");
       }
       return "evolution";
     }  // end of getEvolutionType
 
     void generateUniaxialTensileTest(const AbstractTestCase& at){
+      using ::tfel::material::MechanicalBehaviourBase;
+      using ::tfel::material::ModellingHypothesis;
+      using ::mtest::Behaviour;
       auto raise = [](const std::string& msg) {
         tfel::raise("mfmtg::mtest::generateUniaxialTensileTest: " + msg);
       };  // end of raise
       debug("mfmtg::mtest::generateUniaxialTensileTest: begin\n");
       const auto& t = dynamic_cast<const UniaxialTensileTest&>(at);
       const auto& f = t.name + ".mtest";
+      // loading the behaviour
+      const auto b = Behaviour::getBehaviour(
+          "", t.library, t.function, Behaviour::Parameters{},
+          ModellingHypothesis::fromString(t.hypothesis));
+      const auto bt = b->getBehaviourType();
+      if ((bt != MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR) &&
+          (bt != MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR)) {
+        raise("Invalid behaviour type");
+      } 
       std::ofstream os(t.name + ".mtest");
       if (!os) {
         raise("can't open file '" + f + "'");
@@ -94,9 +125,9 @@ namespace mfmtg {
       writeBehaviour(os, t);
       writeTimes(os, t.times);
       for (const auto& mp : t.material_properties) {
-        os << "@MaterialProperty<" << getEvolutionType(mp.second) << "> '"
+        os << "@MaterialProperty<" << getMaterialPropertyType(mp.second) << "> '"
            << mp.first << "' ";
-        writeEvolution(os, mp.second);
+        writeMaterialProperty(os, mp.second);
         os << ";\n";
       }
       for (const auto& ev : t.external_state_variables) {
@@ -105,16 +136,22 @@ namespace mfmtg {
         writeEvolution(os, ev.second);
         os << ";\n";
       }
-      os << "@ImposedStrain 'EXX' {";
-      auto p = t.imposed_strain.begin();
-      const auto pe = t.imposed_strain.end();
-      while (p != pe) {
-        os << p->first << " : " << p->second;
-        if (++p != pe) {
-          os << ", ";
-        }
-      }
-      os << "};\n";
+      os << "\n"
+         << "@Evolution 'MFMTGImposedStrain' ";
+      writeEvolution(os, t.imposed_strain);
+      os << ";\n\n";
+      if (bt == MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR){
+        os << "@ImposedStrain<function> 'EXX' 'MFMTGImposedStrain';\n";
+      } else {
+        os << "@ImposedDeformationGradient<function> "
+           << "'FXX' '1+MFMTGImposedStrain';\n"
+           << "@ImposedDeformationGradient 'FXY' 0;\n"
+           << "@ImposedDeformationGradient 'FYX' 0;\n"
+           << "@ImposedDeformationGradient 'FXZ' 0;\n"
+           << "@ImposedDeformationGradient 'FZX' 0;\n"
+           << "@ImposedDeformationGradient 'FYZ' 0;\n"
+           << "@ImposedDeformationGradient 'FZY' 0;\n";
+      } 
       os.close();
       debug("mfmtg::mtest::generateUniaxialTensileTest: end\n");
     }  // end of generateUniaxialTensileTest

@@ -16,43 +16,43 @@
 
 namespace mfmtg {
 
-  template <typename... String>
+  template <typename StringType, typename... StringTypes>
   bool contains(const TestCaseParameters& parameters,
-                const std::string& n,
-                const String&... args) {
+                const StringType& n,
+                const StringTypes&... args) {
     const auto& p = getTestCaseParameters(parameters, n);
     return contains(p, args...);
   }  // end of get
 
-  template <typename T, typename... String>
+  template <typename T, typename StringType, typename... StringTypes>
   const T& get(const TestCaseParameters& parameters,
-               const std::string& n,
-               const String&... args) {
+               const StringType& n,
+               const StringTypes&... args) {
     const auto& p = getTestCaseParameters(parameters, n);
     return get<T>(p, args...);
   }  // end of get
 
-  template <typename T>
-  const T& get(const TestCaseParameters& parameters, const std::string& n) {
+  template <typename T, typename StringType>
+  const T& get(const TestCaseParameters& parameters, const StringType& n) {
     const auto& p = getParameter(parameters, n);
-    if (!p.is<T>()) {
+    if (!p.template is<T>()) {
       throwInvalidParameterTypeException(n);
     }
-    return p.get<T>();
+    return p.template get<T>();
   }  // end of get
 
-  template <typename T, typename T2, typename... String>
+  template <typename T, typename T2, typename StringType, typename... StringTypes>
   T get_if(const TestCaseParameters& parameters,
-           const std::string& n,
-           const String&... args,
+           const StringType& n,
+           const StringTypes&... args,
            const T2& v) {
     const auto& p = getTestCaseParameters(parameters, n);
     return get_if<T>(p, args..., v);
   }  // end of get_if
 
-  template <typename T, typename T2>
+  template <typename T, typename T2, typename StringType>
   T get_if(const TestCaseParameters& parameters,
-           const std::string& n,
+           const StringType& n,
            const T2& v) {
     if (!contains(parameters, n)) {
       return T(v);
@@ -60,27 +60,27 @@ namespace mfmtg {
     return get<T>(parameters, n);
   }  // end of get_if
 
-  template <typename... String>
+  template <typename StringType, typename... StringTypes>
   const TestCaseParameter& getParameter(const TestCaseParameters& parameters,
-                                        const std::string& n,
-                                        const String&... args) {
+                                        const StringType& n,
+                                        const StringTypes&... args) {
     const auto& p = getTestCaseParameters(parameters, n);
     return getParameter(p, args...);
   }  // end of getParameter
 
-  template <typename... String>
+  template <typename StringType, typename... StringTypes>
   Evolution getEvolution(const TestCaseParameters& parameters,
-                         const std::string& n,
-                         const String&... args) {
+                         const StringType& n,
+                         const StringTypes&... args) {
     const auto& p = getTestCaseParameters(parameters, n);
     return getEvolution(p, args...);
   }  // end of getEvolution
 
-  template <typename... String>
+  template <typename StringType, typename... StringTypes>
   std::map<std::string, Evolution> getEvolutions(
       const TestCaseParameters& parameters,
-      const std::string& n,
-      const String&... args) {
+      const StringType& n,
+      const StringTypes&... args) {
     const auto& p = getTestCaseParameters(parameters, n);
     return getEvolutions(p, args...);
   }  // end of getEvolution

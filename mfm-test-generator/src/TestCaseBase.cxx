@@ -11,13 +11,18 @@
  * project under specific licensing conditions.
  */
 
+#include "MFMTestGenerator/TestCaseParameters.hxx"
 #include "MFMTestGenerator/TestCaseBase.hxx"
 
 namespace mfmtg {
 
   TestCaseBase::TestCaseBase(const TestCaseParameters& p)
-      : name(get<std::string>(p, "name")) {
-  }  // end of TestCaseBase::TestCaseBase
+      : name(get<std::string>(p, "name")),
+        author(get_if(p, "author", "")),
+        date(get_if(p, "date", "")),
+        description(get_if(p, "description", "")),
+        times(tfel::utilities::convert<std::vector<double>>(
+            getParameter(p, "times"))) {}  // end of TestCaseBase::TestCaseBase
 
   void TestCaseBase::addInputFileGenerator(const generator& g) {
     this->generators.push_back(g);

@@ -1,5 +1,6 @@
 include_directories("${PROJECT_SOURCE_DIR}/include"
                     "${PROJECT_SOURCE_DIR}/mfront/include"
+                    "${PROJECT_SOURCE_DIR}/mtest/include"
                     "${PROJECT_SOURCE_DIR}/mfm-test-generator/include")
 link_directories("${PROJECT_BINARY_DIR}/src/mtest/src"
                  "${PROJECT_BINARY_DIR}/src/mfront/src"
@@ -14,15 +15,19 @@ endmacro(mfmtg_library)
 
 mfmtg_library(MFMTestGenerator
   Log.cxx
+  BehaviourData.cxx
   AbstractTestCase.cxx
   TestCaseBase.cxx
   AbstractTestCaseFactory.cxx
   InputFileGeneratorFactory.cxx
   TestCaseParameters.cxx
   UniaxialTensileTest.cxx
-  MTestInputFileGenerators.cxx)
+  ClosedPipeTest.cxx
+  MTestInputFileGenerators.cxx
+  LicosInputFileGenerators.cxx)
 target_link_libraries(MFMTestGenerator
-  TFELMTest MFrontLogStream TFELSystem TFELUtilities)
+  TFELMTest MFrontLogStream TFELMaterial
+  TFELSystem TFELUtilities)
 
 add_executable(mfm-test-generator mfm-test-generator.cxx)
 target_link_libraries(mfm-test-generator MFMTestGenerator)

@@ -16,8 +16,8 @@
 
 #include <vector>
 #include <string>
-#include <functional>
 #include "MFMTestGenerator/Config.hxx"
+#include "MFMTestGenerator/Forward.hxx"
 #include "MFMTestGenerator/AbstractTestCase.hxx"
 
 namespace mfmtg {
@@ -35,6 +35,14 @@ namespace mfmtg {
     ~TestCaseBase() override;
     //! name of the test case
     const std::string name;
+    //! \brief author (may be empty)
+    const std::string author;
+    //! \brief date (may be empty)
+    const std::string date;
+    //! \brief description (may be empty)
+    const std::string description;
+    //! \brief times
+    const std::vector<double> times;
 
    private:
     //! list of all registred generators
