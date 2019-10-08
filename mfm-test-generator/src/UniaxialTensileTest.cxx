@@ -20,7 +20,7 @@ namespace mfmtg {
 
   UniaxialTensileTest::UniaxialTensileTest(const TestCaseParameters& p)
       : TestCaseBase(p),
-        BehaviourData(p, "Tridimensional"),
+        BehaviourData(getTestCaseParameters(p, "behaviour"), "Tridimensional"),
         imposed_strain(getEvolution(p, "imposed_strain")) {
     message(
         "UniaxialTensileTest::UniaxialTensileTest: "

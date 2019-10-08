@@ -19,6 +19,7 @@
 #include <string>
 #include "MFMTestGenerator/Config.hxx"
 #include "MFMTestGenerator/Forward.hxx"
+#include "MFMTestGenerator/Evolution.hxx"
 #include "MFMTestGenerator/TestCaseBase.hxx"
 #include "MFMTestGenerator/BehaviourData.hxx"
 
@@ -30,7 +31,7 @@ namespace mfmtg {
     //! \brief default constructor
     UniaxialTensileTest(const TestCaseParameters&);
     //! \brief imposed strain
-    const std::map<double, double> imposed_strain;
+    const Evolution imposed_strain;
     //! \brief destructor
     ~UniaxialTensileTest() override;
   };  // end of struct UniaxialTensileTest

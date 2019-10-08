@@ -201,6 +201,9 @@ docs/gallery/behaviours/hyperviscoelasticity/CMakeLists.txt -text
 docs/gallery/behaviours/hyperviscoelasticity/Makefile.am -text
 docs/gallery/behaviours/hyperviscoelasticity/SignoriniHyperViscoelasticity-tfel-2.0.3.mfront -text
 docs/gallery/behaviours/hyperviscoelasticity/SignoriniHyperViscoelasticity.mfront -text
+docs/gallery/behaviours/nonlinearelasticity/CMakeLists.txt -text
+docs/gallery/behaviours/nonlinearelasticity/Makefile.am -text
+docs/gallery/behaviours/nonlinearelasticity/RambergOsgoodNonLinearElasticity.mfront -text
 docs/gallery/behaviours/plasticity/CMakeLists.txt -text
 docs/gallery/behaviours/plasticity/DruckerPerfectPlasticity_Cazacu2001.mfront -text
 docs/gallery/behaviours/plasticity/GreenPerfectPlasticity.mfront -text
@@ -1154,6 +1157,7 @@ docs/web/Norton-full.md -text
 docs/web/Norton-mfront.md -text
 docs/web/Norton-web.md -text
 docs/web/README.md -text
+docs/web/RambergOsgoodNonLinearElasticity.md -text
 docs/web/RungeKutta-keywords.md -text
 docs/web/StandardElastoViscoPlasticityBrick.md -text
 docs/web/TODO.md -text
@@ -1291,6 +1295,7 @@ docs/web/img/PSACylinderHeadDesign.png -text
 docs/web/img/PSACylinderHeadDesign.svg -text
 docs/web/img/PSACylinderHeadDesign.xcf -text
 docs/web/img/Polar_decomposition_of_F.png -text
+docs/web/img/RambergOsgoodNonLinearElasticity-UniaxialTensileTest.png -text
 docs/web/img/SalomeMeca2015.png -text
 docs/web/img/Scherzinger/Hosford100/LevenbergMarquardt.png -text
 docs/web/img/Scherzinger/Hosford100/LevenbergMarquardtJacobi.png -text
@@ -1438,6 +1443,7 @@ docs/web/media/SignoriniStrip.mp4 -text
 docs/web/media/abaqus-explicit.mp4 -text
 docs/web/media/epx1.mp4 -text
 docs/web/media/epx2.mp4 -text
+docs/web/mfm-test-generator.md -text
 docs/web/mfm.md -text
 docs/web/mfront-doc.md -text
 docs/web/mfront-python.md -text

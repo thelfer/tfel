@@ -13,6 +13,7 @@
 
 #include "TFEL/Raise.hxx"
 #include "MFMTestGenerator/UniaxialTensileTest.hxx"
+#include "MFMTestGenerator/ClosedPipeTest.hxx"
 #include "MFMTestGenerator/AbstractTestCaseFactory.hxx"
 
 namespace mfmtg {
@@ -25,6 +26,9 @@ namespace mfmtg {
   AbstractTestCaseFactory::AbstractTestCaseFactory() {
     this->add("UniaxialTensileTest", [](const TestCaseParameters& p) {
       return std::make_shared<UniaxialTensileTest>(p);
+    });
+    this->add("ClosedPipeTest", [](const TestCaseParameters& p) {
+      return std::make_shared<ClosedPipeTest>(p);
     });
   } // end of AbstractTestCaseFactory::AbstractTestCaseFactory
 

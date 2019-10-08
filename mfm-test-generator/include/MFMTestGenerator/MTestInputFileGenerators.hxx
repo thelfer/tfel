@@ -23,6 +23,8 @@ namespace mfmtg {
 
     void generateUniaxialTensileTest(const AbstractTestCase&);
 
+    void generateClosedPipeTest(const AbstractTestCase&);
+
   }  // end of namespace mtest
 
 }  // end of namespace mfmtg

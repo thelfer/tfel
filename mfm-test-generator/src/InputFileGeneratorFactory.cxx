@@ -31,6 +31,7 @@ namespace mfmtg {
       this->add(n, "licos", g);
     };
     add_mtest("UniaxialTensileTest", mfmtg::mtest::generateUniaxialTensileTest);
+    add_mtest("ClosedPipeTest", mfmtg::mtest::generateClosedPipeTest);
     add_licos("UniaxialTensileTest", mfmtg::licos::generateUniaxialTensileTest);
   }  // end of InputFileGeneratorFactory::InputFileGeneratorFactory
 

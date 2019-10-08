@@ -1,5 +1,6 @@
 nobase_include_HEADERS =                         \
   MFMTestGenerator/Config.hxx		             \
+  MFMTestGenerator/Forward.hxx		             \
   MFMTestGenerator/Log.hxx	                     \
   MFMTestGenerator/BehaviourData.hxx	         \
   MFMTestGenerator/AbstractTestCase.hxx	         \

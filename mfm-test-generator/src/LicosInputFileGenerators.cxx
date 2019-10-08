@@ -166,7 +166,12 @@ namespace mfmtg {
       writeTimes(os, t.times);
       os << "LoadingEvolution<Table>\n"
          << "Time Uz\n";
-      for (const auto& s : t.imposed_strain) {
+      if (!t.imposed_strain.is<std::map<double, double>>()) {
+        tfel::raise(
+            "mfmtg::licos::generateUniaxialTensileTest: "
+            "unsupported description of the imposed strain");
+      }
+      for (const auto& s : t.imposed_strain.get<std::map<double, double>>()) {
         os << s.first << " " << s.second << "\n";
       }
       os << "EndOfLoadingEvolution\n";

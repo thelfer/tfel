@@ -18,8 +18,8 @@ namespace mfmtg {
 
   BehaviourData::BehaviourData(const TestCaseParameters& p,
                                const std::string& h)
-      : library(get(p, "behaviour", "library")),
-        function(get(p, "behaviour", "function")),
+      : library(get(p, "library")),
+        function(get(p, "function")),
         hypothesis(h),
         material_properties(getEvolutions(p, "material_properties")),
         external_state_variables(getEvolutions(p, "external_state_variables")) {

@@ -19,6 +19,7 @@
 #include <string>
 #include "MFMTestGenerator/Config.hxx"
 #include "MFMTestGenerator/Forward.hxx"
+#include "MFMTestGenerator/Evolution.hxx"
 #include "MFMTestGenerator/TestCaseBase.hxx"
 #include "MFMTestGenerator/BehaviourData.hxx"
 
@@ -27,6 +28,8 @@ namespace mfmtg {
   //! \brief a test on a unit cube
   struct MFMTG_VISIBILITY_EXPORT ClosedPipeTest : TestCaseBase,
                                                        BehaviourData {
+    //! type of elements
+    enum ElementType { LINEAR, QUADRATIC };
     //! \brief default constructor
     ClosedPipeTest(const TestCaseParameters&);
     //! \brief inner radius
@@ -35,8 +38,12 @@ namespace mfmtg {
     const double outer_radius;
     //! \brief number of elements
     const int number_of_elements;
+    //! \brief number of elements
+    const ElementType element_type;
     //! \brief imposed pressure
-    const std::map<double, double> imposed_pressure;
+    const Evolution outer_pressure;
+    //! \brief imposed pressure
+    const Evolution inner_pressure;
     //! \brief destructor
     ~ClosedPipeTest() override;
   };  // end of struct ClosedPipeTest
