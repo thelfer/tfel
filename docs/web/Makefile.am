@@ -106,6 +106,7 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./Model-keywords.md					      \
 	   ./MultipleIsotropicMisesFlows-keywords.md		      \
 	   ./mfm.md				                      \
+	   ./mfm-test-generator.md				            \
 	   ./mfront-doc.md				              \
 	   ./Norton-web.md				              \
 	   ./Norton-full.md				              \
@@ -115,6 +116,7 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./tensors.md                                               \
 	   ./sovs.md                                                  \
 	   ./unicode.md                                               \
+	   ./RambergOsgoodNonLinearElasticity.md                      \
 	   ./MohrCoulomb.md                                           \
 	   ./theory.md                                                \
 	   ./robots.txt						      \
@@ -296,8 +298,9 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./img/MohrCoulombPiPlane.svg                               \
 	   ./img/MohrCoulombSmoothing.svg                             \
 	   ./img/XperMFront.xcf			                      \
-	   ./img/XperMFront.png			                      \
-	   ./media/epx1.mp4                                           \
+	   ./img/XperMFront.png			                          \
+	   ./img/RambergOsgoodNonLinearElasticity-UniaxialTensileTest.png \
+	   ./media/epx1.mp4                                               \
 	   ./media/epx2.mp4                                           \
 	   ./media/abaqus-explicit.mp4                                \
 	   ./media/SignoriniCompression.mp4                           \

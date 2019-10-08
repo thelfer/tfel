@@ -624,6 +624,7 @@ AC_OUTPUT([debug.sh Makefile Doxyfile docs/Makefile docs/tfel/Makefile
 	   docs/gallery/behaviours/Makefile
 	   docs/gallery/behaviours/hyperelasticity/Makefile
 	   docs/gallery/behaviours/hyperviscoelasticity/Makefile
+	   docs/gallery/behaviours/nonlinearelasticity/Makefile
 	   docs/gallery/behaviours/damage/Makefile
 	   docs/gallery/behaviours/plasticity/Makefile
 	   docs/gallery/behaviours/viscoelasticity/Makefile

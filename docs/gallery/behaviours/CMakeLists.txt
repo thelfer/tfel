@@ -1,5 +1,6 @@
 add_subdirectory(damage)
 add_subdirectory(hyperelasticity)
+add_subdirectory(nonlinearelasticity)
 add_subdirectory(hyperviscoelasticity)
 add_subdirectory(plasticity)
 add_subdirectory(viscoelasticity)

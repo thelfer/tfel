@@ -628,20 +628,19 @@ namespace tfel{
        * \param[in]  vp:  eigen values
        * \param[in]  m:   eigenvectors
        */
-      template<typename Function>
-      static stensor<N,typename std::result_of<Function(T)>::type>
+      template <typename Function>
+      static stensor<N, typename std::result_of<Function(T)>::type>
       computeIsotropicFunction(const Function&,
-			       const tvector<3u,T>&,
-			       const rotation_matrix<T>&);
+                               const tvector<3u, T>&,
+                               const rotation_matrix<T>&);
       /*!
        * compute an isotropic function
        * \param[in]  f: function values for each eigen values
        * \param[in]  m: eigenvectors
        */
-      template<typename T2>
-      static stensor<N,T2>
-      computeIsotropicFunction(const tvector<3u,T2>&,
-			       const rotation_matrix<T>&);
+      template <typename T2>
+      static stensor<N, T2> computeIsotropicFunction(const tvector<3u, T2>&,
+                                                     const rotation_matrix<T>&);
       /*!
        * \return the derivative of an isotropic function
        * \param[in]  f:   function values
@@ -650,13 +649,13 @@ namespace tfel{
        * \param[in]  m:   eigenvectors
        * \param[in]  eps: criterion value used to judge if two eigenvalues are equals
        */
-      template<typename T1,typename T2>
-      static st2tost2<N,T2>
-      computeIsotropicFunctionDerivative(const tvector<3u,T1>&,
-					 const tvector<3u,T2>&,
-					 const tvector<3u,T>&,
-					 const rotation_matrix<T>&,
-					 const T);
+      template <typename T1, typename T2>
+      static st2tost2<N, T2> computeIsotropicFunctionDerivative(
+          const tvector<3u, T1>&,
+          const tvector<3u, T2>&,
+          const tvector<3u, T>&,
+          const rotation_matrix<T>&,
+          const T);
       /*!
        * compute the derivative of an isotropic function
        * \param[out] d:   result

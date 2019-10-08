@@ -2135,8 +2135,11 @@ mfm-test-generator/Makefile.am -text
 mfm-test-generator/include/CMakeLists.txt -text
 mfm-test-generator/include/MFMTestGenerator/AbstractTestCase.hxx -text
 mfm-test-generator/include/MFMTestGenerator/AbstractTestCaseFactory.hxx -text
+mfm-test-generator/include/MFMTestGenerator/BehaviourData.hxx -text
+mfm-test-generator/include/MFMTestGenerator/ClosedPipeTest.hxx -text
 mfm-test-generator/include/MFMTestGenerator/Config.hxx -text
 mfm-test-generator/include/MFMTestGenerator/Evolution.hxx -text
+mfm-test-generator/include/MFMTestGenerator/Forward.hxx -text
 mfm-test-generator/include/MFMTestGenerator/InputFileGeneratorFactory.hxx -text
 mfm-test-generator/include/MFMTestGenerator/LicosInputFileGenerators.hxx -text
 mfm-test-generator/include/MFMTestGenerator/Log.hxx -text
@@ -2148,7 +2151,9 @@ mfm-test-generator/include/MFMTestGenerator/UniaxialTensileTest.hxx -text
 mfm-test-generator/include/Makefile.am -text
 mfm-test-generator/src/AbstractTestCase.cxx -text
 mfm-test-generator/src/AbstractTestCaseFactory.cxx -text
+mfm-test-generator/src/BehaviourData.cxx -text
 mfm-test-generator/src/CMakeLists.txt -text
+mfm-test-generator/src/ClosedPipeTest.cxx -text
 mfm-test-generator/src/InputFileGeneratorFactory.cxx -text
 mfm-test-generator/src/LicosInputFileGenerators.cxx -text
 mfm-test-generator/src/Log.cxx -text

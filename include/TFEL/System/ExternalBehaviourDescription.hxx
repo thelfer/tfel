@@ -76,7 +76,13 @@ namespace tfel {
       std::vector<std::string> mpnames;
       //! \brief names of the internal state variables
       std::vector<std::string> ivnames;
-      //! \brief types of the internal state variables
+      /*!
+       * \brief types of the internal state variables
+       * - 0 means that the variable is a scalar
+       * - 1 means that the variable is a symmetric tensor
+       * - 2 means that the variable is a vector
+       * - 3 means that the variable is an unsymmetric tensor
+       */
       std::vector<int> ivtypes;
       //! \brief names of the external state variables
       std::vector<std::string> evnames;

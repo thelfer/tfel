@@ -41,8 +41,7 @@ namespace tfel {
         UNDEFINEDHYPOTHESIS
       };  // end of enum ModellingHypothesis
 
-      static const std::vector<Hypothesis>&
-      getModellingHypotheses();
+      static const std::vector<Hypothesis>& getModellingHypotheses();
 
       /*!
        * convert a string to a modelling hypothesis

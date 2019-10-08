@@ -431,7 +431,7 @@ domain specific language to be used. For an integration by a
 
 ## Name of the behaviour
 
-The `@Behaviour` keywords is used to give the name of the behaviour.
+The `@Behaviour` keyword is used to give the name of the behaviour.
 
 ~~~~{.cxx}
 @Behaviour sovs;

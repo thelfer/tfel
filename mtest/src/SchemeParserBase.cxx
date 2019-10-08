@@ -667,13 +667,13 @@ namespace mtest {
     if (p->value != "<") {
       return "";
     }
-    this->readSpecifiedToken("SchemeParserBase::parseEvolution", "<", p,
+    this->readSpecifiedToken("SchemeParserBase::readEvolutionType", "<", p,
                              this->tokens.end());
     this->checkNotEndOfLine("SchemeParserBase::readEvolutionType", p,
                             this->tokens.end());
     const auto evt = p->value;
     ++p;
-    this->readSpecifiedToken("SchemeParserBase::parseEvolution", ">", p,
+    this->readSpecifiedToken("SchemeParserBase::readEvolutionType", ">", p,
                              this->tokens.end());
     return evt;
   }  // end of SchemeParserBase::readEvolutionType

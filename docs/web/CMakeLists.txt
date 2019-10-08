@@ -72,6 +72,7 @@ pandoc_html(release-notes "--toc" "--toc-depth=1")
 pandoc_html(math "--toc" "--toc-depth=2" "--number-sections")
 pandoc_html(material "--toc" "--toc-depth=2")
 pandoc_html(mfm)
+pandoc_html(mfm-test-generator)
 pandoc_html(mfront-doc)
 pandoc_html(mfront-python "--toc" "--toc-depth=3")
 pandoc_html(Norton-web)
@@ -118,6 +119,7 @@ pandoc_html(tfel-python "--toc" "--toc-depth=3")
 pandoc_html(generic-behaviours-interface "--toc" "--toc-depth=3")
 pandoc_html(sovs "--toc" "--toc-depth=2")
 pandoc_html(unicode "--toc" "--toc-depth=2")
+pandoc_html(RambergOsgoodNonLinearElasticity "--toc" "--toc-depth=2")
 
 # mfront keywords
 
