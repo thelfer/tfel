@@ -177,9 +177,10 @@ namespace mtest {
     const auto h = this->getHypothesis();
     auto append_if = [this, &omps](const char* const n) {
       const auto& emps = this->elastic_material_properties_epts;
-      if (evm.find(n) != evm.end()) {
-        omps.push_back(n);
+      if ((emps.empty()) || ((this->stype == 1) && (emps.size() != 9u))) {
+        return;
       }
+      omps.push_back(n);
     };
     // mass density
     omps.push_back("MassDensity");
@@ -232,7 +233,7 @@ namespace mtest {
     auto set_emp = [this, &mp, &evm](
         const char* const n, const std::vector<std::string>::size_type pos) {
       const auto& emps = this->elastic_material_properties_epts;
-      if (emps.empty()) {
+      if ((emps.empty()) || ((this->stype == 1) && (emps.size() != 9u))) {
         return;
       }
       if (evm.find(n) != evm.end()) {

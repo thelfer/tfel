@@ -17,8 +17,7 @@
 #include"TFEL/System/ExternalFunctionsPrototypes.hxx"
 #include"MTest/StandardBehaviourBase.hxx"
 
-namespace mtest
-{
+namespace mtest {
 
   /*!
    * A class to handle mechanical beheaviours written using the umat
