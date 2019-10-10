@@ -793,6 +793,11 @@ namespace mtest {
     elm.setParameter(this->library, this->behaviour, this->hypothesis, n, v);
   }  // end of StandardBehaviourBase::setUnsignedIntegerParameter
 
+  std::vector<std::string>
+  StandardBehaviourBase::getOptionalMaterialProperties() const {
+    return {};
+  }  // end of StandardBehaviourBase::getOptionalMaterialProperties
+
   void StandardBehaviourBase::setOptionalMaterialPropertiesDefaultValues(
       EvolutionManager&, const EvolutionManager&) const {
   }  // end of StandardBehaviourBase::setOptionalMaterialPropertiesDefaultValues

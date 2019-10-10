@@ -25,12 +25,12 @@ namespace mfmtg {
     message(
         "UniaxialTensileTest::UniaxialTensileTest: "
         "pre-processing of test '" +
-        this->name + "' begins\n");
+        this->name + "' begins");
 
     message(
         "UniaxialTensileTest::UniaxialTensileTest: "
         "pre-processing of test '" +
-        this->name + "' is finished\n");
+        this->name + "' is finished");
   } // end of UniaxialTensileTest::UniaxialTensileTest
 
   UniaxialTensileTest::~UniaxialTensileTest() = default;

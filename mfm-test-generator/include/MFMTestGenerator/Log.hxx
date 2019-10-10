@@ -24,12 +24,14 @@ namespace mfmtg {
    * \brief print a message if the level of verbosity is greater or equal to
    * `VERBOSE_DEBUG`.
    * \param[in] msg: message
+   * \note an end of line character is automatically appended to the message
    */
   MFMTG_VISIBILITY_EXPORT void debug(const std::string&);
   /*!
    * \brief print a message if the level of verbosity is greater or equal to
    * `VERBOSE_LEVEL2`.
    * \param[in] msg: message
+   * \note an end of line character is automatically appended to the message
    */
   MFMTG_VISIBILITY_EXPORT void message(const std::string&);
 

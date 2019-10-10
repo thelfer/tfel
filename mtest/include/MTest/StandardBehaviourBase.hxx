@@ -19,49 +19,40 @@
 #include"TFEL/System/ExternalBehaviourDescription.hxx"
 #include"MTest/Behaviour.hxx"
 
-namespace mtest
-{
+namespace mtest {
 
   /*!
-   * a class gathering all the relevant information about an Umat
+   * \brief a class gathering all the relevant information about an Umat
    * behaviour.
    */
-  struct StandardBehaviourDescription
-    : tfel::system::ExternalBehaviourData
-  {
+  struct StandardBehaviourDescription : tfel::system::ExternalBehaviourData {
     /*!
      * \param[in] l: library name
      * \param[in] b: behaviour name
      * \param[in] h: modelling hypothesis
      */
     StandardBehaviourDescription(const std::string&,
-			     const std::string&,
-			     const std::string&);
+                                 const std::string&,
+                                 const std::string&);
     StandardBehaviourDescription();
     StandardBehaviourDescription(StandardBehaviourDescription&&);
     StandardBehaviourDescription(const StandardBehaviourDescription&);
-    StandardBehaviourDescription&
-    operator=(StandardBehaviourDescription&&);
-    StandardBehaviourDescription&
-    operator=(const StandardBehaviourDescription&);
+    StandardBehaviourDescription& operator=(StandardBehaviourDescription&&);
+    StandardBehaviourDescription& operator=(
+        const StandardBehaviourDescription&);
   };
   
-  /*!
-   * A class to handle mechanical beheaviours written using the umat
-   * interface
-   */
-  struct StandardBehaviourBase
-    : public Behaviour,
-      public StandardBehaviourDescription
-  {
+  //! \brief A class to handle standard mechanical behaviours
+  struct StandardBehaviourBase : public Behaviour,
+                                 public StandardBehaviourDescription {
     /*!
      * \param[in] h : modelling hypothesis
      * \param[in] l : library name
      * \param[in] b : behaviour name
      */
     StandardBehaviourBase(const Hypothesis,
-		      const std::string&,
-		      const std::string&);
+                          const std::string&,
+                          const std::string&);
     //! \param[in] umb: behaviour description
     StandardBehaviourBase(const StandardBehaviourDescription&);
     Hypothesis getHypothesis() const override;
@@ -107,55 +98,16 @@ namespace mtest
     bool hasLowerPhysicalBound(const std::string&) const override;
     bool hasUpperPhysicalBound(const std::string&) const override;
     long double getLowerPhysicalBound(const std::string&) const override;
-    /*!
-     * \return the upper bound of the given variable
-     * \param[in] v: variable name
-     */
-    virtual long double getUpperPhysicalBound(const std::string&) const override;
-    /*!
-     * \brief set the value of a parameter
-     * \param[in] n : name of the parameter
-     * \param[in] v : value
-     */
-    void setParameter(const std::string&,
-		      const real) const override;
-    /*!
-     * \brief set the value of a parameter
-     * \param[in] n : name of the parameter
-     * \param[in] v : value
-     */
+    long double getUpperPhysicalBound(const std::string&) const override;
+    void setParameter(const std::string&, const real) const override;
     void setIntegerParameter(const std::string&,
 			     const int) const override;
-    /*!
-     * \brief set the value of a parameter
-     * \param[in] n : name of the parameter
-     * \param[in] v : value
-     */
-    void
-    setUnsignedIntegerParameter(const std::string&,
-				const unsigned short) const override;
-    /*!
-     * \brief some interfaces requires dummy material properties to be
-     * declared. For example, the Cast3M finite element solver
-     * requires the mass density and some extra material properties
-     * describing orthotropic axes to be declared.  This method is
-     * meant to automatically declare those if they are not defined by
-     * the user.
-     * \param[out] mp  : evolution manager where 
-     * \param[in]  evm : evolution manager
-     */
-    void
-    setOptionalMaterialPropertiesDefaultValues(EvolutionManager&,
-					       const EvolutionManager&) const override;
-    /*!
-     * \brief execute the packaging step. This victious step is done
-     * at the beginning of the computation.
-     * \return a boolean
-     * \param[out] wk : behaviour workspace
-     * \param[in] s   : current state
-     */
-    bool doPackagingStep(CurrentState&,
-			 BehaviourWorkSpace&) const override;
+    void setUnsignedIntegerParameter(const std::string&,
+                                     const unsigned short) const override;
+    std::vector<std::string> getOptionalMaterialProperties() const override;
+    void setOptionalMaterialPropertiesDefaultValues(
+        EvolutionManager&, const EvolutionManager&) const override;
+    bool doPackagingStep(CurrentState&, BehaviourWorkSpace&) const override;
     //! destructor
     ~StandardBehaviourBase() override;
   protected:
@@ -165,10 +117,9 @@ namespace mtest
      * \param[in]  ktype : requested tangent operator type
      * \param[in]  b     : if false, a prediction operator is requested
      */
-    void
-    initializeTangentOperator(tfel::math::matrix<real>&,
-			      const StiffnessMatrixType,
-			      const bool) const;
+   void initializeTangentOperator(tfel::math::matrix<real>&,
+                                  const StiffnessMatrixType,
+                                  const bool) const;
   }; // end of struct Behaviour
   
 } // end of namespace mtest

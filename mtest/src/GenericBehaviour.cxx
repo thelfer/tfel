@@ -797,6 +797,11 @@ namespace mtest {
       return r;
     }  // end of GenericBehaviour::getRotationMatrix
 
+    std::vector<std::string> GenericBehaviour::getOptionalMaterialProperties()
+        const {
+      return {};
+    }  // end of GenericBehaviour::getOptionalMaterialProperties
+
     void GenericBehaviour::setOptionalMaterialPropertiesDefaultValues(
         EvolutionManager&, const EvolutionManager&) const {
     }  // end of GenericBehaviour::setOptionalMaterialPropertiesDefaultValues

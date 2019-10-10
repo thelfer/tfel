@@ -99,7 +99,9 @@ namespace tfel {
                           const CxxTokenizer::const_iterator pe,
                           const DataParsingOptions& o) {
       auto throw_if = [](const bool b, const std::string& msg) {
-        raise_if(b, "Data::read: " + msg);
+        if (b) {
+          tfel::raise("Data::read: " + msg);
+        }
       };
       auto is_integer = [&throw_if](const std::string& s) {
         auto ps = s.cbegin();
@@ -178,9 +180,37 @@ namespace tfel {
 
     Data Data::read_map(CxxTokenizer::const_iterator& p,
                         const CxxTokenizer::const_iterator pe,
-                        const DataParsingOptions& o) {
+                        const DataParsingOptions& opts) {
+      auto c = p;
+      CxxTokenizer::checkNotEndOfLine("Data::read", c, pe);
+      CxxTokenizer::readSpecifiedToken("Data::read_map", "{", c, pe);
+      if (c->flag == Token::Number) {
+        p = c;
+        std::map<double,double> values;
+        while (p->value != "}") {
+          const auto a = convert<double>(p->value);
+          ++p;
+          CxxTokenizer::readSpecifiedToken("Data::read_map", ":", p, pe);
+          const auto o = convert<double>(p->value);
+          ++p;
+          values.insert({a, o});
+          CxxTokenizer::checkNotEndOfLine("Data::read", p, pe);
+          if ((p->value != ",") && (p->value != "}")) {
+            tfel::raise("Data::read_map: unexpected token '" + p->value + "'");
+          }
+          if (p->value == ",") {
+            ++p;
+            CxxTokenizer::checkNotEndOfLine("Data::read", p, pe);
+            if (p->value == "}") {
+              tfel::raise("Data::read_map: unexpected token '}'");
+            }
+          }
+        }
+        CxxTokenizer::readSpecifiedToken("Data::read_map", "}", p, pe);
+        return values;
+      }
       std::map<std::string, Data> r;
-      tfel::utilities::read_map(r, p, pe,o);
+      tfel::utilities::read_map(r, p, pe,opts);
       return std::move(r);
     }
 

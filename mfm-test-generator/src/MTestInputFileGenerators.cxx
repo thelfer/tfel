@@ -80,6 +80,21 @@ namespace mfmtg {
       if (e.is<double>()) {
         os << e.get<double>();
         return;
+      } else if (e.is<EvolutionFromFile>()) {
+        auto write_values = [&os](const EvolutionFromFile::Values& v) {
+          if (v.is<unsigned int>()) {
+            os << v.get<unsigned int>();
+          } else {
+            os << "'" << v.get<std::string>() << "'";
+          }
+        };
+
+        const auto& d = e.get<EvolutionFromFile>();
+        os << "'" << d.file << "' using ";
+        write_values(d.times);
+        os << ":";
+        write_values(d.values);
+        return;
       } else if (!e.is<std::map<double, double>>()) {
         tfel::raise("getEvolutionType: unsupported evolution type");
       }
@@ -87,7 +102,9 @@ namespace mfmtg {
     }  // end of writeEvolution
 
     static std::string getEvolutionType(const Evolution& e) {
-      if ((!e.is<double>()) && (!e.is<std::map<double, double>>())) {
+      if (e.is<EvolutionFromFile>()) {
+        return "data";
+      } else if ((!e.is<double>()) && (!e.is<std::map<double, double>>())) {
         tfel::raise("getEvolutionType: unsupported evolution type");
       }
       return "evolution";
@@ -134,7 +151,7 @@ namespace mfmtg {
       auto raise = [](const std::string& msg) {
         tfel::raise("mfmtg::mtest::generateUniaxialTensileTest: " + msg);
       };  // end of raise
-      debug("mfmtg::mtest::generateUniaxialTensileTest: begin\n");
+      debug("mfmtg::mtest::generateUniaxialTensileTest: begin");
       const auto& t = dynamic_cast<const UniaxialTensileTest&>(at);
       const auto& f = t.name + ".mtest";
       // loading the behaviour
@@ -159,7 +176,8 @@ namespace mfmtg {
       writeMaterialProperties(os, t);
       writeExternalStateVariables(os, t);
       os << "\n"
-         << "@Evolution 'MFMTGImposedStrain' ";
+         << "@Evolution<" << getEvolutionType(t.imposed_strain)
+         << "> 'MFMTGImposedStrain' ";
       writeEvolution(os, t.imposed_strain);
       os << ";\n\n";
       if (bt == MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR){
@@ -175,7 +193,7 @@ namespace mfmtg {
            << "@ImposedDeformationGradient 'FZY' 0;\n";
       } 
       os.close();
-      debug("mfmtg::mtest::generateUniaxialTensileTest: end\n");
+      debug("mfmtg::mtest::generateUniaxialTensileTest: end");
     }  // end of generateUniaxialTensileTest
 
     void generateClosedPipeTest(const AbstractTestCase& at){
@@ -185,7 +203,7 @@ namespace mfmtg {
       auto raise = [](const std::string& msg) {
         tfel::raise("mfmtg::mtest::generateClosedPipeTest: " + msg);
       };  // end of raise
-      debug("mfmtg::mtest::generateClosedPipeTest: begin\n");
+      debug("mfmtg::mtest::generateClosedPipeTest: begin");
       const auto& t = dynamic_cast<const ClosedPipeTest&>(at);
       const auto& f = t.name + ".mtest";
       // loading the behaviour
@@ -197,18 +215,18 @@ namespace mfmtg {
           (bt != MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR)) {
         raise("Invalid behaviour type");
       } 
-      std::ofstream os(t.name + ".mtest");
+      std::ofstream os(t.name + ".ptest");
       if (!os) {
         raise("can't open file '" + f + "'");
       }
       os.exceptions(std::ios::badbit | std::ios::failbit);
       os.precision(14);
       writeMetaData(os, t);
-      os << "@InnerRadius " << t.inner_radius << '\n'
-         << "@OuterRadius " << t.outer_radius << '\n'
-         << "@NumberOfElements " << t.number_of_elements << '\n';
+      os << "@InnerRadius " << t.inner_radius << ";\n"
+         << "@OuterRadius " << t.outer_radius << ";\n"
+         << "@NumberOfElements " << t.number_of_elements << ";\n";
       if (t.element_type == ClosedPipeTest::LINEAR) {
-        os << "@ElementType 'Linear'\n";
+        os << "@ElementType 'Linear';\n";
       } else if (t.element_type == ClosedPipeTest::QUADRATIC) {
         os << "@ElementType 'Quadratic'\n";
       } else {
@@ -223,15 +241,17 @@ namespace mfmtg {
       writeMaterialProperties(os, t);
       writeExternalStateVariables(os, t);
       os << "\n"
-         << "@InnerPressure ";
+         << "@InnerPressureEvolution<" << getEvolutionType(t.inner_pressure)
+         << "> ";
       writeEvolution(os, t.inner_pressure);
       os << ";\n"
-         << "@OuterPressure ";
+         << "@OuterPressureEvolution<" << getEvolutionType(t.outer_pressure)
+         << "> ";
       writeEvolution(os, t.outer_pressure);
       os << ";\n\n";
       writeTimes(os, t.times);
       os.close();
-      debug("mfmtg::mtest::generateClosedPipeTest: end\n");
+      debug("mfmtg::mtest::generateClosedPipeTest: end");
     }  // end of generateClosedPipeTest
 
   }  // end of namespace mtest

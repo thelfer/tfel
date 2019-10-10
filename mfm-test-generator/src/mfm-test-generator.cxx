@@ -47,13 +47,13 @@ namespace mfmtg {
 #else
       const auto sep = ':';
 #endif
-      debug("Loading user defined test cases\n");
+      debug("Loading user defined test cases");
       // calling mfm plugins
       const auto libs = ::getenv("MFM_TEST_GENERATOR_ADDITIONAL_LIBRARIES");
       if (libs != nullptr) {
         auto& lm = ExternalLibraryManager::getExternalLibraryManager();
         for (const auto& l : tfel::utilities::tokenize(libs, sep)) {
-          debug("Loading library '" + l + "'\n");
+          debug("Loading library '" + l + "'");
           lm.loadLibrary(l);
         }
       }
@@ -62,9 +62,9 @@ namespace mfmtg {
           this->execute(i);
         } catch (std::exception& e) {
           message("Treatment of file '" + i + "' failed (" +
-                  std::string(e.what()) + ")\n");
+                  std::string(e.what()) + ")");
         } catch (...) {
-          message("Treatment of file '" + i + "' failed (unknown exception)\n");
+          message("Treatment of file '" + i + "' failed (unknown exception)");
         }
       }
     }  // end of execute
@@ -73,7 +73,7 @@ namespace mfmtg {
      * \param[in] i: input file
      */
     void execute(const std::string& i) {
-      message("Begin treatment of file '" + i + "'\n");
+      message("Begin treatment of file '" + i + "'");
       const auto opts = [] {
         auto lopts = tfel::utilities::CxxTokenizerOptions{};
         lopts.shallMergeStrings = true;
@@ -133,7 +133,7 @@ namespace mfmtg {
         test->addInputFileGenerator(ifgf.get(n, t));
       }
       test->generate();
-      message("End treatment of file '" + i + "'\n");
+      message("End treatment of file '" + i + "'");
     }  // end of execute
 
    private:

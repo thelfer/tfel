@@ -78,15 +78,43 @@ namespace mfmtg{
 
   Evolution getEvolution(const TestCaseParameters& p, const char* const n) {
     const auto& e = getParameter(p, n);
-    if (e.is<double>()) {
+    if (e.is<int>()) {
+      return static_cast<double>(e.get<int>());
+    } else if (e.is<double>()) {
       return e.get<double>();
+    } else if (e.is<std::map<double,double>>()) {
+      return e.get<std::map<double,double>>();
     } else if (!e.is<TestCaseParameters>()) {
       tfel::raise("getEvolution: invalid type for evolution '" +
                   std::string(n) + "'");
+    } else if (e.is<std::map<double, double>>()) {
+      return e.get<std::map<double, double>>();
     }
+    const auto& evd = e.get<TestCaseParameters>();
+    if (contains(evd, "file")) {
+      auto get_column =
+          [&evd](const char* const nvalues) -> EvolutionFromFile::Values {
+        const auto pvalues = getParameter(evd, nvalues);
+        if (pvalues.is<int>()) {
+          const auto c = pvalues.get<int>();
+          if (c <= 0) {
+            tfel::raise(
+                "mfmtg::getEvolution: "
+                "invalid column value");
+          }
+          return static_cast<unsigned int>(c);
+        }
+        return pvalues.get<std::string>();
+      };
+      auto ev = EvolutionFromFile{};
+      ev.file = get(evd, "file");
+      ev.times = get_column("times");
+      ev.values = get_column("values");
+      return ev;
+    }
+    // the evolution is defined explicitly
     auto ev = std::map<double, double>{};
     check(e, {"times", "values"});
-    const auto& evd = e.get<TestCaseParameters>();
     const auto times = tfel::utilities::convert<std::vector<double>>(
         getParameter(evd, "times"));
     const auto values = tfel::utilities::convert<std::vector<double>>(
@@ -101,12 +129,17 @@ namespace mfmtg{
   }  // end of getEvolution
 
   std::map<std::string, Evolution> getEvolutions(const TestCaseParameters& p,
-                                                 const std::string& n) {
-    return getEvolutions(p, n.c_str());
+                                                 const std::string& n,
+                                                 const bool b) {
+    return getEvolutions(p, n.c_str(), b);
   }  // end of getEvolution
 
   std::map<std::string, Evolution> getEvolutions(const TestCaseParameters& p,
-                                                 const char* const n) {
+                                                 const char* const n,
+                                                 const bool b) {
+    if (b && (!contains(p, n))) {
+      return {};
+    }
     auto evs = std::map<std::string, Evolution>{};
     const auto m = getTestCaseParameters(p, n);
     for (const auto& ev : m) {

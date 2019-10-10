@@ -80,9 +80,10 @@ namespace mfmtg {
   std::map<std::string, Evolution> getEvolutions(
       const TestCaseParameters& parameters,
       const StringType& n,
-      const StringTypes&... args) {
+      const StringTypes&... args,
+      const bool b) {
     const auto& p = getTestCaseParameters(parameters, n);
-    return getEvolutions(p, args...);
+    return getEvolutions(p, args..., b);
   }  // end of getEvolution
 
 }  // end of namespace mfmtg

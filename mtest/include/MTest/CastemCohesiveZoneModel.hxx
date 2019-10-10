@@ -87,16 +87,7 @@ namespace mtest
 	      BehaviourWorkSpace&,
 	      const real,
 	      const StiffnessMatrixType) const override;
-    /*!
-     * \brief some interfaces requires dummy material properties to be
-     * declared. For example, the Cast3M finite element solver
-     * requires the mass density and some extra material properties
-     * describing orthotropic axes to be declared.  This method is
-     * meant to automatically declare those if they are not defined by
-     * the user.
-     * \param[out] mp  : evolution manager where 
-     * \param[in]  evm : evolution manager
-     */
+    std::vector<std::string> getOptionalMaterialProperties() const override;
     void setOptionalMaterialPropertiesDefaultValues(EvolutionManager&,
 						    const EvolutionManager&) const override;
     //! destructor

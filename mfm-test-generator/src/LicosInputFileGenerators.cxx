@@ -144,7 +144,7 @@ namespace mfmtg {
       auto raise = [](const std::string& msg) {
         tfel::raise("mfmtg::licos::generateUniaxialTensileTest: " + msg);
       };  // end of raise
-      debug("mfmtg::licos::generateUniaxialTensileTest: begin\n");
+      debug("mfmtg::licos::generateUniaxialTensileTest: begin");
       const auto& t = dynamic_cast<const UniaxialTensileTest&>(at);
       const auto b = tfel::system::ExternalBehaviourDescription(
           t.library, t.function, t.hypothesis);
@@ -176,7 +176,7 @@ namespace mfmtg {
       }
       os << "EndOfLoadingEvolution\n";
       os.close();
-      debug("mfmtg::licos::generateUniaxialTensileTest: end\n");
+      debug("mfmtg::licos::generateUniaxialTensileTest: end");
     }  // end of generateUniaxialTensileTest
 
   }  // end of namespace licos

@@ -57,16 +57,9 @@ namespace mtest {
     tfel::math::tmatrix<3u,3u,real>
     getRotationMatrix(const tfel::math::vector<real>&,
 		      const tfel::math::tmatrix<3u,3u,real>&) const override;
-    /*!
-     * \brief some interfaces requires dummy material properties to be
-     * declared. For Ansys, those are used to define the orthotropic
-     * basis. The user shall not declare them directly, but use the
-     * `@RotationMatrix` keyword.
-     * \param[out] mp  : evolution manager where 
-     * \param[in]  evm : evolution manager
-     */
-    void setOptionalMaterialPropertiesDefaultValues(EvolutionManager&,
-						    const EvolutionManager&) const override;
+    std::vector<std::string> getOptionalMaterialProperties() const override;
+    void setOptionalMaterialPropertiesDefaultValues(
+        EvolutionManager&, const EvolutionManager&) const override;
     /*!
      * \return the default type of stiffness matrix used by the behaviour
      */

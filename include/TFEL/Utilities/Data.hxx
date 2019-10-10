@@ -75,6 +75,7 @@ namespace tfel {
                                                    double,
                                                    std::string,
                                                    std::vector<Data>,
+                                                   std::map<double, double>,
                                                    std::map<std::string, Data>,
                                                    DataStructure>::type;
 

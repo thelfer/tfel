@@ -168,6 +168,17 @@ namespace mtest {
     return {true, std::numeric_limits<DianaFEAReal>::max()};
   }  // end of DianaFEASmallStrainBehaviour::integrate
 
+  std::vector<std::string>
+  DianaFEASmallStrainBehaviour::getOptionalMaterialProperties() const {
+    if (this->stype != 0) {
+      tfel::raise(
+          "DianaFEASmallStrainBehaviour::"
+          "setOptionalMaterialProperties: "
+          "unsupported symmetry type");
+    }
+    return std::vector<std::string>(1u, "ThermalExpansion");
+  }  // end of DianaFEASmallStrainBehaviour::getOptionalMaterialProperties
+
   void DianaFEASmallStrainBehaviour::setOptionalMaterialPropertiesDefaultValues(
       EvolutionManager& mp, const EvolutionManager& evm) const {
     if (this->stype == 0) {
@@ -180,7 +191,7 @@ namespace mtest {
           "unsupported symmetry type");
     }
   }  // end of
-     // DianaFEASmallStrainBehaviour::setOptionalMaterialPropertiesDefaultValues
+  // DianaFEASmallStrainBehaviour::setOptionalMaterialPropertiesDefaultValues
 
   DianaFEASmallStrainBehaviour::~DianaFEASmallStrainBehaviour() = default;
 

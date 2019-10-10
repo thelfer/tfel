@@ -51,28 +51,9 @@ namespace mtest
      */
     CastemUmatFiniteStrainBehaviour(const StandardBehaviourDescription&,
 				    const std::string&);
-    /*!
-     * \brief This method solves two issues:
-     * 
-     * - Some interface requires dummy material properties to be
-     *   declared. For example, the Cast3M finite element solver
-     *   requires the mass density and some extra material properties
-     *   describing orthotropic axes to be declared.  This method is
-     *   meant to automatically declare those if they are not defined
-     *   by the user.
-     * - Some interface (CastemUmatFiniteStrain) uses an external files which gives
-     *   the values of some material properties. This method is used
-     *   to pass thoses values to MTest.
-     *
-     * \param[out] mp  : evolution manager 
-     * \param[in]  evm : evolution manager
-     */
-    void setOptionalMaterialPropertiesDefaultValues(EvolutionManager&,
-						    const EvolutionManager&) const override;
-    /*!
-     * \return the string passed to the UMAT function through the
-     * CMNAME parameter.
-     */
+    std::vector<std::string> getOptionalMaterialProperties() const override;
+    void setOptionalMaterialPropertiesDefaultValues(
+        EvolutionManager&, const EvolutionManager&) const override;
     const char* getBehaviourNameForUMATFunctionCall() const override;
     //! destructor
     ~CastemUmatFiniteStrainBehaviour() override;

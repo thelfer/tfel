@@ -39,45 +39,19 @@ namespace mtest
      * \param[in] umb: behaviour description
      */
     CastemStandardBehaviour(const StandardBehaviourDescription&);
-    /*!
-     * \return the default type of stiffness matrix used by the behaviour
-     */
-    virtual StiffnessMatrixType
-    getDefaultStiffnessMatrixType() const override;
-    /*!
-     * \brief allocate internal workspace
-     * \param[out] wk : workspace
-     */
-    virtual void allocate(BehaviourWorkSpace&) const override;
-    /*!
-     * \brief compute the *real* rotation matrix
-     * \param[in] mp : material properties
-     * \param[in] r  : rotation matrix defined by the user
-     * \note this method is only meaningfull for the umat (Cast3M)
-     * interface
-     */
-    virtual tfel::math::tmatrix<3u,3u,real>
-    getRotationMatrix(const tfel::math::vector<real>&,
-		      const tfel::math::tmatrix<3u,3u,real>&) const override;
-    /*!
-     * \brief some interfaces requires dummy material properties to be
-     * declared. For example, the Cast3M finite element solver
-     * requires the mass density and some extra material properties
-     * describing orthotropic axes to be declared.  This method is
-     * meant to automatically declare those if they are not defined by
-     * the user.
-     * \param[out] mp  : evolution manager where 
-     * \param[in]  evm : evolution manager
-     */
-    virtual void
-    setOptionalMaterialPropertiesDefaultValues(EvolutionManager&,
-					       const EvolutionManager&) const override;
+    StiffnessMatrixType getDefaultStiffnessMatrixType() const override;
+    void allocate(BehaviourWorkSpace&) const override;
+    tfel::math::tmatrix<3u, 3u, real> getRotationMatrix(
+        const tfel::math::vector<real>&,
+        const tfel::math::tmatrix<3u, 3u, real>&) const override;
+    std::vector<std::string> getOptionalMaterialProperties() const override;
+    void setOptionalMaterialPropertiesDefaultValues(
+        EvolutionManager&, const EvolutionManager&) const override;
     /*!
      * \return the string passed to the UMAT function through the
      * CMNAME parameter.
      */
-    virtual const char*
-    getBehaviourNameForUMATFunctionCall() const = 0;
+    virtual const char* getBehaviourNameForUMATFunctionCall() const = 0;
     //! destructor
     ~CastemStandardBehaviour() override;
   protected:
@@ -92,20 +66,20 @@ namespace mtest
      * \param[out] wk: workspace
      * \param[in] s: current state
      */
-    virtual void buildMaterialProperties(BehaviourWorkSpace&,
-					 const CurrentState&) const;
-    /*!
-     * The umat interface can handle plane stress by calling the
-     * generalised plane strain version of the behaviour.  In this
-     * case, the hypothesis used by the behaviour is different than
-     * the hypothesis used to perform the computation. This flag
-     * distinguishes this case.
-     *
-     * This flag must be set but the derived classes.
-     */
-    bool usesGenericPlaneStressAlgorithm = false;
-    //! the umat fonction
-    tfel::system::CastemFctPtr fct;
+   virtual void buildMaterialProperties(BehaviourWorkSpace&,
+                                        const CurrentState&) const;
+   /*!
+    * The umat interface can handle plane stress by calling the
+    * generalised plane strain version of the behaviour.  In this
+    * case, the hypothesis used by the behaviour is different than
+    * the hypothesis used to perform the computation. This flag
+    * distinguishes this case.
+    *
+    * This flag must be set but the derived classes.
+    */
+   bool usesGenericPlaneStressAlgorithm = false;
+   //! the umat fonction
+   tfel::system::CastemFctPtr fct;
   }; // end of struct Behaviour
   
 } // end of namespace mtest

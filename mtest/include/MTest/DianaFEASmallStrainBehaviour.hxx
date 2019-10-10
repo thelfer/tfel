@@ -49,6 +49,7 @@ namespace mtest {
                                     BehaviourWorkSpace&,
                                     const real,
                                     const StiffnessMatrixType) const override;
+    std::vector<std::string> getOptionalMaterialProperties() const override;
     void setOptionalMaterialPropertiesDefaultValues(
         EvolutionManager&, const EvolutionManager&) const override;
     //! destructor

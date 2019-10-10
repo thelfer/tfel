@@ -28,9 +28,8 @@ namespace mtest
    * interface
    */
   struct TFEL_VISIBILITY_LOCAL CastemUmatSmallStrainBehaviour
-    : public CastemSmallStrainBehaviour,
-      public CastemUmatStandardBehaviour
-  {
+      : public CastemSmallStrainBehaviour,
+        public CastemUmatStandardBehaviour {
     //! a simple alias
     using Hypothesis = CastemSmallStrainBehaviour::Hypothesis;
     //! a simple alias
@@ -41,33 +40,19 @@ namespace mtest
      * \param[in] p: parameters
      * \param[in] h: modelling hypothesis
      */
-    static std::shared_ptr<Behaviour>
-    buildCastemUmatSmallStrainBehaviour(const std::string&,
-					const std::string&,
-					const Parameters&,
-					const Hypothesis);
+    static std::shared_ptr<Behaviour> buildCastemUmatSmallStrainBehaviour(
+        const std::string&,
+        const std::string&,
+        const Parameters&,
+        const Hypothesis);
     /*!
      * \param[in] bd: umat behaviour description
      * \param[in] cn: material name
      */
     CastemUmatSmallStrainBehaviour(const StandardBehaviourDescription&,
-				   const std::string&);
-    /*!
-     * \brief This method solves two issues:
-     * 
-     * - Some interface requires dummy material properties to be
-     *   declared. For example, the Cast3M finite element solver
-     *   requires the mass density and some extra material properties
-     *   describing orthotropic axes to be declared.  This method is
-     *   meant to automatically declare those if they are not defined
-     *   by the user.
-     * - Some interface (CastemUmatSmallStrain) uses an external files which gives
-     *   the values of some material properties. This method is used
-     *   to pass thoses values to MTest.
-     *
-     * \param[out] mp  : evolution manager 
-     * \param[in]  evm : evolution manager
-     */
+                                   const std::string&);
+
+    std::vector<std::string> getOptionalMaterialProperties() const override;
     void setOptionalMaterialPropertiesDefaultValues(EvolutionManager&,
 						    const EvolutionManager&) const override;
     /*!

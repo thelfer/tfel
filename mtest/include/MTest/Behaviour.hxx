@@ -130,6 +130,10 @@ namespace mtest {
     //! \return the number of the material properties
     virtual size_t getMaterialPropertiesSize() const = 0;
     /*!
+     * \return the list of optional material properties
+     */
+    virtual std::vector<std::string> getOptionalMaterialProperties() const = 0;
+    /*!
      * \brief This method solves two issues:
      *
      * - Some interface requires dummy material properties to be

@@ -171,6 +171,60 @@ namespace mtest {
     return StiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES;
   }  // end of CastemStandardBehaviour::getDefaultStiffnessMatrixType
 
+  std::vector<std::string>
+  CastemStandardBehaviour::getOptionalMaterialProperties() const {
+    auto omps = std::vector<std::string>{};
+    const auto h = this->getHypothesis();
+    auto append_if = [this, &omps](const char* const n) {
+      const auto& emps = this->elastic_material_properties_epts;
+      if (evm.find(n) != evm.end()) {
+        omps.push_back(n);
+      }
+    };
+    // mass density
+    omps.push_back("MassDensity");
+    if(this->stype==0){
+      append_if("YoungModulus");
+      append_if("PoissonRatio");
+      append_if("ThermalExpansion");
+    } else if (this->stype == 1) {
+      append_if("YoungModulus1");
+      append_if("YoungModulus2");
+      append_if("YoungModulus3");
+      append_if("PoissonRatio12");
+      append_if("PoissonRatio23");
+      append_if("PoissonRatio13");
+      if ((h == ModellingHypothesis::PLANESTRAIN) ||
+          (h == ModellingHypothesis::AXISYMMETRICAL) ||
+          (h == ModellingHypothesis::GENERALISEDPLANESTRAIN) ||
+          (h == ModellingHypothesis::TRIDIMENSIONAL)) {
+        append_if("ShearModulus12");
+        omps.push_back("V1X");
+        omps.push_back("V1Y");
+      }
+      if (h == ModellingHypothesis::TRIDIMENSIONAL) {
+        append_if("ShearModulus23");
+        append_if("ShearModulus13");
+        omps.push_back("V1Z");
+        omps.push_back("V2X");
+        omps.push_back("V2Y");
+        omps.push_back("V2Z");
+      }
+      omps.push_back("ThermalExpansion1");
+      omps.push_back("ThermalExpansion2");
+      omps.push_back("ThermalExpansion3");
+    } else {
+      tfel::raise(
+          "CastemFiniteStrainBehaviour::"
+          "getOptionalMaterialProperties: "
+          "unsupported symmetry type");
+    }
+    if(h == ModellingHypothesis::PLANESTRESS){
+      omps.push_back("PlateWidth");
+    }
+    return omps;
+  }  // end of CastemStandardBehaviour::getOptionalMaterialProperties
+
   void CastemStandardBehaviour::setOptionalMaterialPropertiesDefaultValues(
       EvolutionManager& mp, const EvolutionManager& evm) const {
     const auto h = this->getHypothesis();

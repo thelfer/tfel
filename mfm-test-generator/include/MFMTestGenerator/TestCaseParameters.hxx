@@ -91,7 +91,9 @@ namespace mfmtg {
    * \param[in] n: first level identitifer.
    * \param[in] args: higher level identifiers.
    */
-  template <typename T = std::string, typename StringType, typename... StringTypes>
+  template <typename T = std::string,
+            typename StringType,
+            typename... StringTypes>
   const T& get(const TestCaseParameters& parameters,
                const StringType& n,
                const StringTypes&... args);
@@ -125,9 +127,7 @@ namespace mfmtg {
    * \param[in] n: name of the parameter to be retrieved.
    * \param[in] v: default value.
    */
-  template <typename T = std::string,
-            typename T2,
-            typename StringType>
+  template <typename T = std::string, typename T2, typename StringType>
   T get_if(const TestCaseParameters&, const StringType&, const T2&);
   /*!
    * \return the evolution stored at the given address
@@ -158,32 +158,39 @@ namespace mfmtg {
    * \param[in] p: parameters
    * \param[in] n: first level identitifer.
    * \param[in] args: higher level identifiers.
+   * \param[in] b: boolean value. If true and that if the last identifier does
+   * not exist, an empty evolution is returned.
    */
   template <typename StringType, typename... StringTypes>
   std::map<std::string, Evolution> getEvolutions(const TestCaseParameters&,
                                                  const StringType&,
-                                                 const StringTypes&...);
+                                                 const StringTypes&...,
+                                                 const bool = true);
   /*!
    * \return the evolutions stored at the given address
    * \param[in] p: parameters
    * \param[in] n: address of the to be retrieved.
+   * \param[in] b: boolean value. If true and that if the last identifier does
+   * not exist, an empty evolution is returned.
    */
   MFMTG_VISIBILITY_EXPORT std::map<std::string, Evolution> getEvolutions(
-      const TestCaseParameters&, const std::string&);
+      const TestCaseParameters&, const std::string&, const bool = true);
   /*!
    * \return the evolutions stored at the given address
    * \param[in] p: parameters
    * \param[in] n: address of the to be retrieved.
+   * \param[in] b: boolean value. If true and that if the last identifier does
+   * not exist, an empty evolution is returned.
    */
   MFMTG_VISIBILITY_EXPORT std::map<std::string, Evolution> getEvolutions(
-      const TestCaseParameters&, const char* const);
+      const TestCaseParameters&, const char* const, const bool = true);
   /*!
    * \brief check that the parameters' names are part of the one given list.
    * \param m: parameters.
    * \param k: allowed names.
    */
-  MFMTG_VISIBILITY_EXPORT void check(
-      const TestCaseParameters&, const std::vector<std::string>&);
+  MFMTG_VISIBILITY_EXPORT void check(const TestCaseParameters&,
+                                     const std::vector<std::string>&);
   /*!
    * \throw an exception reporting that the type of the parameter with the
    * given
@@ -193,7 +200,7 @@ namespace mfmtg {
   TFEL_NORETURN MFMTG_VISIBILITY_EXPORT void throwInvalidParameterTypeException(
       const std::string&);
 
-  }  // end of namespace mfmtg
+}  // end of namespace mfmtg
 
 #include "MFMTestGenerator/TestCaseParameters.ixx"
 

@@ -51,14 +51,14 @@ namespace mfmtg {
     message(
         "ClosedPipeTest::ClosedPipeTest: "
         "pre-processing of test '" +
-        this->name + "' begins\n");
+        this->name + "' begins");
     debug("inner_radius: " + convert(this->inner_radius));
     debug("outer_radius: " + convert(this->outer_radius));
     debug("number of elements: " + convert(this->number_of_elements));
     message(
         "ClosedPipeTest::ClosedPipeTest: "
         "pre-processing of test '" +
-        this->name + "' is finished\n");
+        this->name + "' is finished");
     }  // end of ClosedPipeTest::ClosedPipeTest
 
     ClosedPipeTest::~ClosedPipeTest() = default;

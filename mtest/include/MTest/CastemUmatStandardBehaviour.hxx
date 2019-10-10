@@ -20,16 +20,14 @@
 #include"TFEL/Material/ModellingHypothesis.hxx"
 #include"MTest/Behaviour.hxx"
 
-namespace mtest
-{
+namespace mtest {
 
   /*!
    * an helper class used by to gather common code between the
    * `CastemUmatSmallStrainBehaviour` and
    * `CastemUmatFiniteStrainBehaviour` classes.
    */
-  struct CastemUmatStandardBehaviour
-  {
+  struct CastemUmatStandardBehaviour {
     //! a simple alias
     using ModellingHypothesis = tfel::material::ModellingHypothesis;
     //! a simple alias
@@ -42,24 +40,28 @@ namespace mtest
      * \param[in] t: type of behaviour
      * \param[in] h: modelling hypothesis
      */
-    static std::shared_ptr<Behaviour>
-    buildCastemUmatStandardBehaviour(const std::string&,
-				     const std::string&,
-				     const tfel::utilities::Data&,
-				     const int,
-				     const Hypothesis);
-    /*!
-     * \param[in] mp: material properties
-     * \param[in] evm: currently defined evolution
-     * \param[in] stype: symmetry of behaviour
-     * \param[in] h: modelling hypothesis
-     */
-    static void
-    setOptionalMaterialPropertiesDefaultValues(EvolutionManager&,
-					       const EvolutionManager&,
-					       const int,
-					       const Hypothesis);
-    
+   static std::shared_ptr<Behaviour> buildCastemUmatStandardBehaviour(
+       const std::string&,
+       const std::string&,
+       const tfel::utilities::Data&,
+       const int,
+       const Hypothesis);
+   /*!
+    * \return the list of optional material properties
+    * \param[in] stype: symmetry of behaviour
+    * \param[in] h: modelling hypothesis
+    */
+   static std::vector<std::string> getOptionalMaterialProperties(
+       const int, const Hypothesis);
+   /*!
+    * \param[in] mp: material properties
+    * \param[in] evm: currently defined evolution
+    * \param[in] stype: symmetry of behaviour
+    * \param[in] h: modelling hypothesis
+    */
+   static void setOptionalMaterialPropertiesDefaultValues(
+       EvolutionManager&, const EvolutionManager&, const int, const Hypothesis);
+
   }; // end of struct CastemUmatStandardBehaviour
 
 } // end of namespace mtest

@@ -1,6 +1,6 @@
 /*!
  * \file   Evolution.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   30/09/2019
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
@@ -17,19 +17,36 @@
 #include <map>
 #include "TFEL/Utilities/GenTypeBase.hxx"
 
-
 namespace mfmtg {
 
-  //! \brief a simple alias
-  struct Evolution
-      : tfel::utilities::GenTypeBase<
-            tfel::meta::GenerateTypeList<double,
-                                         std::map<double, double>>::type> {
+  /*!
+   * \brief a simple structure used to describe an evolution defined in an
+   * external file.
+   */
+  struct EvolutionFromFile {
+    //! \brief a simple alias
+    using Values = tfel::utilities::GenType<unsigned int, std::string>;
+    //! \brief name of the file
+    std::string file;
+    //! \brief description of times
+    Values times;
+    //! \brief description of the values
+    Values values;
+  }; // end of EvolutionFromFile
+
+  //! \brief types used to describe an evolution
+  using EvolutionTypes = tfel::meta::GenerateTypeList<double,
+                                                      std::map<double, double>,
+                                                      EvolutionFromFile>::type;
+
+  //! \brief various ways of storing an evolution
+  struct Evolution : tfel::utilities::GenTypeBase<EvolutionTypes> {
     //! a simple alias
-    using GenTypBase = tfel::utilities::GenTypeBase<
-        tfel::meta::GenerateTypeList<double, std::map<double, double>>::type>;
+    using GenTypBase = tfel::utilities::GenTypeBase<EvolutionTypes>;
     //! inheriting constructors
     using GenTypBase::GenTypBase;
+    //! inheriting assignement operator
+    using GenTypBase::operator=;
   };  // end of struct Evolution
 
 }  // end of namespace mfmtg

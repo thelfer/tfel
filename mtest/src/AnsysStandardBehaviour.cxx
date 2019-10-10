@@ -177,11 +177,33 @@ namespace mtest {
     return static_cast<std::vector<std::string>::size_type>(p-b);
   } // end of AnsysStandardBehaviour::getOrthototropicAxesOffset
 
+  std::vector<std::string>
+  AnsysStandardBehaviour::getOptionalMaterialProperties() const {
+    auto omps = std::vector<std::string>{};
+    if (this->stype == 1) {
+      const auto h = this->getHypothesis();
+      if ((h == ModellingHypothesis::AXISYMMETRICAL) ||
+          (h == ModellingHypothesis::PLANESTRESS) ||
+          (h == ModellingHypothesis::PLANESTRAIN)) {
+        omps.insert(omps.end(),
+                    {"FirstOrthotropicAxis_1", "FirstOrthotropicAxis_2"});
+      } else if (h == ModellingHypothesis::TRIDIMENSIONAL) {
+        omps.insert(omps.end(),
+                    {"FirstOrthotropicAxis_1", "FirstOrthotropicAxis_2",
+                     "FirstOrthotropicAxis_3", "SecondOrthotropicAxis_1",
+                     "SecondOrthotropicAxis_2", "SecondOrthotropicAxis_3"});
+      }
+    }
+    return omps;
+  }  // end of AnsysStandardBehaviour::getOptionalMaterialProperties
+
   void AnsysStandardBehaviour::setOptionalMaterialPropertiesDefaultValues(
       EvolutionManager& mp, const EvolutionManager& evm) const {
-    auto throw_if = [](const bool c, const std::string& m){
-      tfel::raise_if(c,"AnsysStandardBehaviour::"
-		     "setOptionalMaterialPropertiesDefaultValues: "+m);
+    auto throw_if = [](const bool c, const std::string& m) {
+      tfel::raise_if(c,
+                     "AnsysStandardBehaviour::"
+                     "setOptionalMaterialPropertiesDefaultValues: " +
+                         m);
     };
     if (this->stype == 1) {
       const auto h = this->getHypothesis();
@@ -223,9 +245,9 @@ namespace mtest {
         throw_if(true, "unsupported hypothesis");
       }
     }
-  }  // end of
-     // AnsysStandardBehaviour::setOptionalMaterialPropertiesDefaultValues
+    }  // end of
+       // AnsysStandardBehaviour::setOptionalMaterialPropertiesDefaultValues
 
-  AnsysStandardBehaviour::~AnsysStandardBehaviour() = default;
+    AnsysStandardBehaviour::~AnsysStandardBehaviour() = default;
   
 } // end of namespace mtest

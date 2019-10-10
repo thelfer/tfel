@@ -11,6 +11,7 @@
  * project under specific licensing conditions.
  */
 
+#include <ostream>
 #include "MFront/MFrontLogStream.hxx"
 #include "MFMTestGenerator/Log.hxx"
 
@@ -18,13 +19,13 @@ namespace mfmtg {
 
   void debug(const std::string& msg) {
     if (mfront::getVerboseMode() >= mfront::VERBOSE_DEBUG) {
-      mfront::getLogStream() << msg;
+      mfront::getLogStream() << msg << std::endl;
     }
   }  // end of debug
 
   void message(const std::string& msg) {
     if (mfront::getVerboseMode() >= mfront::VERBOSE_LEVEL2) {
-      mfront::getLogStream() << msg;
+      mfront::getLogStream() << msg << '\n';
     }
   }  // end of message
 

@@ -57,8 +57,9 @@ namespace mtest
     unsigned short getSymmetryType() const override;
     std::vector<std::string> getMaterialPropertiesNames() const override;
     size_t getMaterialPropertiesSize() const override;
-    void setOptionalMaterialPropertiesDefaultValues(EvolutionManager&,
-						    const EvolutionManager&) const override;
+    std::vector<std::string> getOptionalMaterialProperties() const override;
+    void setOptionalMaterialPropertiesDefaultValues(
+        EvolutionManager&, const EvolutionManager&) const override;
     std::vector<std::string> getInternalStateVariablesNames() const  override;
     std::vector<std::string>  expandInternalStateVariablesNames() const override;
     size_t getInternalStateVariablesSize() const override;

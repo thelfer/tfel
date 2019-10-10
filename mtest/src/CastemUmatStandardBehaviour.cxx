@@ -166,6 +166,35 @@ namespace mtest {
     return ptr;
   }
 
+  std::vector<std::string>
+  CastemUmatStandardBehaviour::getOptionalMaterialProperties(
+      const int stype, const Hypothesis h) {
+    auto omps = std::vector<std::string>{};
+    omps.push_back("RHO");
+    if (stype == 0) {
+      omps.push_back("ALPH");
+    } else if (stype == 1) {
+      // orthotropic behaviour
+      if ((h == ModellingHypothesis::GENERALISEDPLANESTRAIN) ||
+          (h == ModellingHypothesis::AXISYMMETRICAL) ||
+          (h == ModellingHypothesis::PLANESTRESS) ||
+          (h == ModellingHypothesis::PLANESTRAIN)) {
+        omps.insert(omps.end(), {"V1X", "V1Y"});
+      } else if (h == ModellingHypothesis::TRIDIMENSIONAL) {
+        omps.insert(omps.end(), {"V1X", "V1Y", "V1Z", "V2X", "V2Y", "V2Z"});
+      }
+      omps.insert(omps.end(), {"ALP1", "ALP2", "ALP3"});
+   } else {
+     tfel::raise(
+         "CastemUmatStandardBehaviour::getOptionalMaterialProperties: "
+         "unsupported symmetry type");
+   }
+   if (h == ModellingHypothesis::PLANESTRESS) {
+     omps.push_back("DIM3");
+   }
+   return omps;
+  }  // end of CastemUmatStandardBehaviour::getOptionalMaterialProperties
+
   void CastemUmatStandardBehaviour::setOptionalMaterialPropertiesDefaultValues(
       EvolutionManager& mp,
       const EvolutionManager& evm,
