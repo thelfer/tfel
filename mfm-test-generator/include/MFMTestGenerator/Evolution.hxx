@@ -15,6 +15,7 @@
 #define LIB_MFM_TEST_GENERATOR_EVOLUTION_HXX
 
 #include <map>
+#include <string>
 #include "TFEL/Utilities/GenTypeBase.hxx"
 
 namespace mfmtg {
