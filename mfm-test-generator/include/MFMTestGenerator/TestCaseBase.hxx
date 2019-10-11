@@ -14,10 +14,10 @@
 #ifndef LIB_MFM_TEST_GENERATOR_TESTCASEBASE_HXX
 #define LIB_MFM_TEST_GENERATOR_TESTCASEBASE_HXX
 
-#include <vector>
 #include <string>
 #include "MFMTestGenerator/Config.hxx"
 #include "MFMTestGenerator/Forward.hxx"
+#include "MFMTestGenerator/Times.hxx"
 #include "MFMTestGenerator/AbstractTestCase.hxx"
 
 namespace mfmtg {
@@ -42,7 +42,7 @@ namespace mfmtg {
     //! \brief description (may be empty)
     const std::string description;
     //! \brief times
-    const std::vector<double> times;
+    const Times times;
 
    private:
     //! list of all registred generators

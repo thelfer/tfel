@@ -16,13 +16,34 @@
 
 namespace mfmtg {
 
+  static Times readTimes(const TestCaseParameter& p) {
+    if (p.is<TestCaseParameters>()) {
+      auto times = TimesFromFile {};
+      const auto& d = p.get<TestCaseParameters>();
+      times.file = get(d, "file");
+      const auto& c = getParameter(d, "values");
+      if (c.is<int>()) {
+        const auto cn = c.get<int>();
+        if (cn <= 0) {
+          tfel::raise("readTimes: invalid column number '" +
+                      std::to_string(cn) + "'");
+        }
+        times.times = static_cast<unsigned int>(cn);
+      } else {
+        times.times = c.get<std::string>();
+      }
+      return times;
+    }
+    return tfel::utilities::convert<std::vector<double>>(p);
+  } // end of readTimes
+
   TestCaseBase::TestCaseBase(const TestCaseParameters& p)
       : name(get<std::string>(p, "name")),
         author(get_if(p, "author", "")),
         date(get_if(p, "date", "")),
         description(get_if(p, "description", "")),
-        times(tfel::utilities::convert<std::vector<double>>(
-            getParameter(p, "times"))) {}  // end of TestCaseBase::TestCaseBase
+        times(readTimes(getParameter(p, "times"))) {
+  }  // end of TestCaseBase::TestCaseBase
 
   void TestCaseBase::addInputFileGenerator(const generator& g) {
     this->generators.push_back(g);

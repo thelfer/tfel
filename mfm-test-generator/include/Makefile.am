@@ -9,6 +9,7 @@ nobase_include_HEADERS =                         \
   MFMTestGenerator/InputFileGeneratorFactory.hxx \
   MFMTestGenerator/TestCaseParameters.hxx        \
   MFMTestGenerator/TestCaseParameters.ixx        \
+  MFMTestGenerator/Times.hxx                     \
   MFMTestGenerator/Evolution.hxx                 \
   MFMTestGenerator/UniaxialTensileTest.hxx       \
   MFMTestGenerator/ClosedPipeTest.hxx            \

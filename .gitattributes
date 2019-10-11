@@ -2153,6 +2153,7 @@ mfm-test-generator/include/MFMTestGenerator/MTestInputFileGenerators.hxx -text
 mfm-test-generator/include/MFMTestGenerator/TestCaseBase.hxx -text
 mfm-test-generator/include/MFMTestGenerator/TestCaseParameters.hxx -text
 mfm-test-generator/include/MFMTestGenerator/TestCaseParameters.ixx -text
+mfm-test-generator/include/MFMTestGenerator/Times.hxx -text
 mfm-test-generator/include/MFMTestGenerator/UniaxialTensileTest.hxx -text
 mfm-test-generator/include/Makefile.am -text
 mfm-test-generator/src/AbstractTestCase.cxx -text

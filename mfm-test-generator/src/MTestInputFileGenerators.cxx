@@ -51,15 +51,34 @@ namespace mfmtg {
       os << "@Behaviour '" << c.library << "' '" << c.function << "' ;\n";
     }  // end of writeBehaviour
 
-    static void writeTimes(std::ostream& os, const std::vector<double>& times) {
-      os << "@Times {";
-      for (decltype(times.size()) i = 0; i != times.size();) {
-        os << times[i];
-        if (++i != times.size()) {
-          os << ", ";
+    static void writeTimes(std::ostream& os, const Times& t) {
+      if (t.is<std::vector<double>>()) {
+        const auto& times = t.get<std::vector<double>>();
+        os << "@Times {";
+        for (decltype(times.size()) i = 0; i != times.size();) {
+          os << times[i];
+          if (++i != times.size()) {
+            os << ", ";
+          }
         }
+        os << "};\n";
+      } else if(!t.is<TimesFromFile>()){
+        tfel::raise(
+            "mfmtg::mtest::writeTimes: "
+            "unsupported type for times");
       }
-      os << "};\n";
+      const auto times = t.get<TimesFromFile>();
+      os << "@Times<data> '" << times.file << "' using ";
+      if (times.times.is<unsigned int>()) {
+        os << times.times.get<unsigned int>();
+      } else if (times.times.is<std::string>()) {
+        os << times.times.get<std::string>();
+      } else {
+        tfel::raise(
+            "mfmtg::mtest::writeTimes: "
+            "unsupported times description");
+      }
+      os << ";\n";
     }  // end of writeTimes
 
     static void writeEvolution(std::ostream& os,

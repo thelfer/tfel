@@ -129,7 +129,8 @@ namespace mfmtg {
      * \param[in] os: output stream
      * \param[in] times: list of times
      */
-    static void writeTimes(std::ostream& os, const std::vector<double>& times) {
+    static void writeTimes(std::ostream& os, const Times& t) {
+      const auto& times = t.get<std::vector<double>>();
       os << "Times {";
       for (decltype(times.size()) i = 0; i != times.size();) {
         os << times[i];
