@@ -99,6 +99,7 @@ set(TFELMFront_SOURCES
     RungeKuttaDSLBase.cxx
     RungeKuttaDSL.cxx
     RungeKuttaFiniteStrainDSL.cxx
+    RungeKuttaGenericBehaviourDSL.cxx
     ImplicitDSLBase.cxx
     ImplicitDSL.cxx
     ImplicitDSLII.cxx

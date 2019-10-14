@@ -28,6 +28,7 @@
 #include"MFront/MultipleIsotropicMisesFlowsDSL.hxx"
 #include"MFront/RungeKuttaDSL.hxx"
 #include"MFront/RungeKuttaFiniteStrainDSL.hxx"
+#include"MFront/RungeKuttaGenericBehaviourDSL.hxx"
 #include"MFront/ImplicitDSL.hxx"
 #include"MFront/ImplicitDSLII.hxx"
 #include"MFront/ImplicitFiniteStrainDSL.hxx"
@@ -77,6 +78,8 @@ namespace mfront {
           "DefaultGenericBehaviour", "DefaultGenericBehaviourParser"});
       DSLProxy<ImplicitGenericBehaviourDSL> proxy301(std::vector<std::string>{
           "ImplicitGenericBehaviour", "ImplicitGenericBehaviourParser"});
+      DSLProxy<RungeKuttaGenericBehaviourDSL> proxy302(std::vector<std::string>{
+          "RungeKuttaGenericBehaviour", "RungeKuttaGenericBehaviourParser"});
       init = true;
     }
   } // end of initDSLs 

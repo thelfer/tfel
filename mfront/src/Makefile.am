@@ -84,6 +84,7 @@ libTFELMFront_la_SOURCES = MFront.cxx                                           
 		           RungeKuttaDSLBase.cxx                                  \
 		           RungeKuttaDSL.cxx                                      \
 		           RungeKuttaFiniteStrainDSL.cxx                          \
+		           RungeKuttaGenericBehaviourDSL.cxx                      \
 		           ImplicitDSLBase.cxx                                    \
 		           ImplicitDSL.cxx                                        \
 		           ImplicitDSLII.cxx                                      \

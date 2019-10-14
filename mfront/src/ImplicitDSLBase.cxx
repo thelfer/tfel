@@ -71,10 +71,6 @@ namespace mfront {
         &ImplicitDSLBase::treatUsableInPurelyImplicitResolution);
     this->registerNewCallBack("@MaterialLaw",
                               &ImplicitDSLBase::treatMaterialLaw);
-    this->registerNewCallBack("@ComputeStress",
-                              &ImplicitDSLBase::treatComputeStress);
-    this->registerNewCallBack("@ComputeFinalStress",
-                              &ImplicitDSLBase::treatComputeFinalStress);
     this->registerNewCallBack("@Predictor", &ImplicitDSLBase::treatPredictor);
     this->registerNewCallBack("@Theta", &ImplicitDSLBase::treatTheta);
     this->registerNewCallBack("@Epsilon", &ImplicitDSLBase::treatEpsilon);
@@ -145,7 +141,7 @@ namespace mfront {
     constexpr const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     if (c == BehaviourData::ComputePredictionOperator) {
       return "@PredictionOperator{}\n";
-    } else if (c == BehaviourData::ComputeStress) {
+    } else if (c == BehaviourData::ComputeThermodynamicForces) {
       return "@ComputeStress{}\n";
     } else if (c == BehaviourData::Integrator) {
       // implicit system
@@ -598,7 +594,7 @@ namespace mfront {
     }
   }  // end of ImplicitDSLBase::integratorVariableModifier
 
-  std::string ImplicitDSLBase::computeStressVariableModifier1(
+  std::string ImplicitDSLBase::computeThermodynamicForcesVariableModifier1(
       const Hypothesis h, const std::string& var, const bool addThisPtr) {
     const auto& d = this->mb.getBehaviourData(h);
     if (this->mb.isGradientName(var) || (d.isExternalStateVariableName(var))) {
@@ -635,9 +631,9 @@ namespace mfront {
       return "this->" + var;
     }
     return var;
-  }  // end of ImplicitDSLBase::computeStressVariableModifier1
+  }  // end of ImplicitDSLBase::computeThermodynamicForcesVariableModifier1
 
-  std::string ImplicitDSLBase::computeStressVariableModifier2(
+  std::string ImplicitDSLBase::computeThermodynamicForcesVariableModifier2(
       const Hypothesis h, const std::string& var, const bool addThisPtr) {
     const auto& d = this->mb.getBehaviourData(h);
     if ((this->mb.isGradientName(var)) ||
@@ -657,7 +653,7 @@ namespace mfront {
       return "this->" + var;
     }
     return var;
-  }  // end of ImplicitDSLBase::computeStressVariableModifier2
+  }  // end of ImplicitDSLBase::computeThermodynamicForcesVariableModifier2
 
   void ImplicitDSLBase::integratorAnalyser(const Hypothesis h,
                                            const std::string& w) {
@@ -719,7 +715,7 @@ namespace mfront {
                         &ImplicitDSLBase::predictorAnalyser, true);
   }  // end of ImplicitDSLBase::treatPredictor
 
-  void ImplicitDSLBase::treatComputeStress() {
+  void ImplicitDSLBase::treatComputeThermodynamicForces() {
     /*
      * Most behaviours will only rely the @ComputeStress keyword to
      * estimate stresses at the middle of the time step and at the
@@ -730,18 +726,18 @@ namespace mfront {
      * the user does not provide an alternative through the
      * @ComputeFinalStress
      */
-    this->readCodeBlock(*this, BehaviourData::ComputeStress,
-                        BehaviourData::ComputeFinalStressCandidate,
-                        &ImplicitDSLBase::computeStressVariableModifier1,
-                        &ImplicitDSLBase::computeStressVariableModifier2, true,
+    this->readCodeBlock(*this, BehaviourData::ComputeThermodynamicForces,
+                        BehaviourData::ComputeFinalThermodynamicForcesCandidate,
+                        &ImplicitDSLBase::computeThermodynamicForcesVariableModifier1,
+                        &ImplicitDSLBase::computeThermodynamicForcesVariableModifier2, true,
                         true);
-  }  // end of ImplicitDSLBase::treatComputeStress
+  }  // end of ImplicitDSLBase::treatComputeThermodynamicForces
 
-  void ImplicitDSLBase::treatComputeFinalStress() {
-    this->readCodeBlock(*this, BehaviourData::ComputeFinalStress,
-                        &ImplicitDSLBase::computeStressVariableModifier2, true,
+  void ImplicitDSLBase::treatComputeFinalThermodynamicForces() {
+    this->readCodeBlock(*this, BehaviourData::ComputeFinalThermodynamicForces,
+                        &ImplicitDSLBase::computeThermodynamicForcesVariableModifier2, true,
                         true);
-  }  // end of ImplicitDSLBase::treatComputeFinalStress
+  }  // end of ImplicitDSLBase::treatComputeFinalThermodynamicForces
 
   void ImplicitDSLBase::treatMaximumIncrementValuePerIteration() {
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
@@ -1019,7 +1015,7 @@ namespace mfront {
                "an analytical jacobian (or an approximation of it");
     }
     // create the compute final stress code is necessary
-    this->setComputeFinalStressFromComputeFinalStressCandidateIfNecessary();
+    this->setComputeFinalThermodynamicForcesFromComputeFinalThermodynamicForcesCandidateIfNecessary();
     // correct prediction to take into account normalisation factors
     const auto mh = this->mb.getDistinctModellingHypotheses();
     for (const auto& h : mh) {
@@ -1900,25 +1896,25 @@ namespace mfront {
          << "} // end of additionalConvergenceChecks\n\n";
     }
     // compute stress
-    if (this->mb.hasCode(h, BehaviourData::ComputeStress)) {
-      os << "void computeStress(){\n"
+    if (this->mb.hasCode(h, BehaviourData::ComputeThermodynamicForces)) {
+      os << "void computeThermodynamicForces(){\n"
          << "using namespace std;\n"
          << "using namespace tfel::math;\n"
          << "using std::vector;\n";
       writeMaterialLaws(os, this->mb.getMaterialLaws());
-      os << this->mb.getCode(h, BehaviourData::ComputeStress)
+      os << this->mb.getCode(h, BehaviourData::ComputeThermodynamicForces)
          << "\n} // end of " << this->mb.getClassName()
-         << "::computeStress\n\n";
+         << "::computeThermodynamicForces\n\n";
     }
-    if (this->mb.hasCode(h, BehaviourData::ComputeFinalStress)) {
-      os << "void computeFinalStress(){\n"
+    if (this->mb.hasCode(h, BehaviourData::ComputeFinalThermodynamicForces)) {
+      os << "void computeFinalThermodynamicForces(){\n"
          << "using namespace std;\n"
          << "using namespace tfel::math;\n"
          << "using std::vector;\n";
       writeMaterialLaws(os, this->mb.getMaterialLaws());
-      os << this->mb.getCode(h, BehaviourData::ComputeFinalStress)
+      os << this->mb.getCode(h, BehaviourData::ComputeFinalThermodynamicForces)
          << "\n} // end of " << this->mb.getClassName()
-         << "::computeStress\n\n";
+         << "::computeFinalThermodynamicForces\n\n";
     }
   }  // end of ImplicitDSLBase::writeBehaviourParserSpecificMembers
 
@@ -2070,15 +2066,15 @@ namespace mfront {
        << "tmatrix<" << n << "," << n << ",real> tjacobian(this->jacobian);\n"
        << "for(unsigned short idx = 0; idx!= " << n << ";++idx){\n"
        << "this->zeros(idx) -= this->numerical_jacobian_epsilon;\n";
-    if (this->mb.hasCode(h, BehaviourData::ComputeStress)) {
-      os << "this->computeStress();\n";
+    if (this->mb.hasCode(h, BehaviourData::ComputeThermodynamicForces)) {
+      os << "this->computeThermodynamicForces();\n";
     }
     os << "this->computeFdF(true);\n"
        << "this->zeros = tzeros;\n"
        << "tvector<" << n << ",real> tfzeros2(this->fzeros);\n"
        << "this->zeros(idx) += this->numerical_jacobian_epsilon;\n";
-    if (this->mb.hasCode(h, BehaviourData::ComputeStress)) {
-      os << "this->computeStress();\n";
+    if (this->mb.hasCode(h, BehaviourData::ComputeThermodynamicForces)) {
+      os << "this->computeThermodynamicForces();\n";
     }
     os << "this->computeFdF(true);\n"
        << "this->fzeros = "
@@ -2194,8 +2190,8 @@ namespace mfront {
     }
     os << "this->updateIntegrationVariables();\n";
     os << "this->updateStateVariables();\n";
-    if (this->mb.hasCode(h, BehaviourData::ComputeFinalStress)) {
-      os << "this->computeFinalStress();\n";
+    if (this->mb.hasCode(h, BehaviourData::ComputeFinalThermodynamicForces)) {
+      os << "this->computeFinalThermodynamicForces();\n";
     }
     os << "this->updateAuxiliaryStateVariables();\n";
     for (const auto& v : d.getPersistentVariables()) {

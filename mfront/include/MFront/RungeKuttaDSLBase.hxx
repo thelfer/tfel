@@ -39,13 +39,13 @@ namespace mfront{
      MAXIMUMVALUEERROREVALUATION
    };  // end of ErrorEvaluation
 
-   std::string computeStressVariableModifier1(const Hypothesis,
-                                              const std::string&,
-                                              const bool);
+   std::string computeThermodynamicForcesVariableModifier1(const Hypothesis,
+                                                           const std::string&,
+                                                           const bool);
 
-   std::string computeStressVariableModifier2(const Hypothesis,
-                                              const std::string&,
-                                              const bool);
+   std::string computeThermodynamicForcesVariableModifier2(const Hypothesis,
+                                                           const std::string&,
+                                                           const bool);
 
    void getSymbols(std::map<std::string, std::string>&,
                    const Hypothesis,
@@ -59,10 +59,10 @@ namespace mfront{
    virtual void treatMinimalTimeStep();
    //! treat the `@Algorithm` keywork
    virtual void treatAlgorithm();
-   //! treat the `@ComputeStress` keywork
-   virtual void treatComputeStress();
-   //! treat the `@ComputeFinalStress` keywork
-   virtual void treatComputeFinalStress();
+   //! treat the `@ComputeThermodynamicForces` keywork
+   virtual void treatComputeThermodynamicForces();
+   //! treat the `@ComputeFinalThermodynamicForces` keywork
+   virtual void treatComputeFinalThermodynamicForces();
    //! treat the `@UpdateAuxiliaryStateVariables` keywork
    void treatUpdateAuxiliaryStateVariables() override;
    //! treat the `@Derivative` keywork

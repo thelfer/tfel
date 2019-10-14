@@ -34,6 +34,9 @@ namespace mfront {
     BehaviourDSLDescription getBehaviourDSLDescription() const override;
     //! \brief  constructor
     ImplicitDSL();
+    std::string getCodeBlockTemplate(
+        const std::string&,
+        const MFrontTemplateGenerationOptions&) const override;
     //! \brief  destructor
     ~ImplicitDSL();
   };  // end of struct ImplicitDSL

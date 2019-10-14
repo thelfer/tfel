@@ -17,6 +17,11 @@ namespace mfront{
 
   ImplicitDSLII::ImplicitDSLII() {
     this->mb.declareAsASmallStrainStandardBehaviour();
+    this->registerNewCallBack("@ComputeStress",
+                              &ImplicitDSLII::treatComputeThermodynamicForces);
+    this->registerNewCallBack(
+        "@ComputeFinalStress",
+        &ImplicitDSLII::treatComputeFinalThermodynamicForces);
   } // end of ImplicitDSLII::ImplicitDSLII
 
   std::string ImplicitDSLII::getName() {
@@ -27,12 +32,20 @@ namespace mfront{
     return "this parser provides a generic integrator based on a theta method.";
   } // end of ImplicitDSLII::getDescription
 
+  std::string ImplicitDSLII::getCodeBlockTemplate(
+      const std::string& c, const MFrontTemplateGenerationOptions& o) const {
+    if (c == BehaviourData::ComputeThermodynamicForces) {
+      return "@ComputeStress{}\n";
+    }
+    return ImplicitDSLBase::getCodeBlockTemplate(c, o);
+  }  // end of ImplicitDSLII::getCodeBlockTemplate
+
   BehaviourDSLDescription ImplicitDSLII::getBehaviourDSLDescription() const {
     auto d = mfront::getDefaultStrainBasedBehaviourDSLDescription();
     d.integrationScheme = IntegrationScheme::IMPLICITSCHEME;
     d.typicalCodeBlocks = {BehaviourData::ComputePredictionOperator,
                            BehaviourData::ComputePredictor,
-                           BehaviourData::ComputeStress,
+                           BehaviourData::ComputeThermodynamicForces,
                            BehaviourData::Integrator,
                            BehaviourData::ComputeTangentOperator};
     d.minimalMFrontFileBody = "@Integrator{}\n\n";

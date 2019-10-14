@@ -120,8 +120,8 @@ namespace mfront{
 	<< "(this->iter<" << mb.getClassName() << "::iterMax)){\n"
 	<< "++(this->iter);\n"
 	<< "fzeros2 = this->fzeros;\n";
-    if(mb.hasCode(h,BehaviourData::ComputeStress)){
-      out << "this->computeStress();\n";
+    if(mb.hasCode(h,BehaviourData::ComputeThermodynamicForces)){
+      out << "this->computeThermodynamicForces();\n";
     }
     out << "const auto computeFdF_ok = this->computeFdF(false);\n"
 	<< "if(computeFdF_ok){\n"

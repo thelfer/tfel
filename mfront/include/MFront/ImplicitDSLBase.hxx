@@ -3,23 +3,23 @@
  * \brief  This file declares the ImplicitDSLBase class
  * \author Thomas Helfer
  * \date   10 Nov 2006
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MFRONTIMPLICITPARSERBASE_HXX
-#define LIB_MFRONTIMPLICITPARSERBASE_HXX 
+#define LIB_MFRONTIMPLICITPARSERBASE_HXX
 
-#include<string>
-#include<memory>
-#include"MFront/MFrontConfig.hxx"
-#include"MFront/BehaviourDSLBase.hxx"
+#include <string>
+#include <memory>
+#include "MFront/MFrontConfig.hxx"
+#include "MFront/BehaviourDSLBase.hxx"
 
-namespace mfront{
+namespace mfront {
 
   // forward declaratin
   struct NonLinearSystemSolver;
@@ -50,8 +50,7 @@ namespace mfront{
     //!\brief destructor
     ~ImplicitDSLBase() override;
 
-  protected:
-    
+   protected:
     //! a simple alias
     using Solver = std::shared_ptr<NonLinearSystemSolver>;
 
@@ -67,13 +66,11 @@ namespace mfront{
                                                    const std::string&,
                                                    const bool);
 
-    virtual std::string computeStressVariableModifier1(const Hypothesis,
-                                                       const std::string&,
-                                                       const bool);
+    virtual std::string computeThermodynamicForcesVariableModifier1(
+        const Hypothesis, const std::string&, const bool);
 
-    virtual std::string computeStressVariableModifier2(const Hypothesis,
-                                                       const std::string&,
-                                                       const bool);
+    virtual std::string computeThermodynamicForcesVariableModifier2(
+        const Hypothesis, const std::string&, const bool);
     /*!
      * treat an unknown keyword. This method is overriden so the
      * solver may have specific keywords
@@ -84,53 +81,54 @@ namespace mfront{
      * \param[in] n : variable name
      */
     void treatUnknownVariableMethod(const Hypothesis,
-				    const std::string&) override;
+                                    const std::string&) override;
     //! \brief treat the `@StateVariable` keyword
     void treatStateVariable() override;
     //! \brief treat the `@IntegrationVariable` keyword
     void treatIntegrationVariable();
     //! \brief treat the `@Integrator` keyword
-    void  treatIntegrator() override;
-    //! \brief treat the `@ComputeFinalStress` keyword
-    virtual void treatComputeFinalStress();
+    void treatIntegrator() override;
+    //! \brief treat the `@ComputeFinalThermodynamicForces` keyword
+    virtual void treatComputeFinalThermodynamicForces();
 
     void completeVariableDeclaration() override;
 
     void endsInputFileProcessing() override;
 
-    void writeBehaviourLocalVariablesInitialisation(std::ostream&,
-						    const Hypothesis) const override;
-    
-    void writeBehaviourIntegrator(std::ostream&,
-				  const Hypothesis) const override;
+    void writeBehaviourLocalVariablesInitialisation(
+        std::ostream&, const Hypothesis) const override;
 
-    virtual void writeComputeFdF(std::ostream&,
-				 const Hypothesis) const;
+    void writeBehaviourIntegrator(std::ostream&,
+                                  const Hypothesis) const override;
+
+    virtual void writeComputeFdF(std::ostream&, const Hypothesis) const;
 
     void writeBehaviourParserSpecificIncludes(std::ostream&) const override;
 
     void writeBehaviourParserSpecificTypedefs(std::ostream&) const override;
 
     void writeBehaviourParserSpecificMembers(std::ostream&,
-					     const Hypothesis) const override;
+                                             const Hypothesis) const override;
 
-    void writeBehaviourIntegrationVariablesIncrements(std::ostream&,
-						      const Hypothesis) const override;
+    void writeBehaviourIntegrationVariablesIncrements(
+        std::ostream&, const Hypothesis) const override;
 
     std::string getLocalVariablesInitializers(const Hypothesis) const override;
 
-    std::string getBehaviourConstructorsInitializers(const Hypothesis) const override;
+    std::string getBehaviourConstructorsInitializers(
+        const Hypothesis) const override;
 
-    std::string getIntegrationVariablesIncrementsInitializers(const Hypothesis) const override;
+    std::string getIntegrationVariablesIncrementsInitializers(
+        const Hypothesis) const override;
 
-    void writeBehaviourParserSpecificInitializeMethodPart(std::ostream&,
-							  const Hypothesis) const override;
+    void writeBehaviourParserSpecificInitializeMethodPart(
+        std::ostream&, const Hypothesis) const override;
 
     virtual void writeComputeNumericalJacobian(std::ostream&,
-					       const Hypothesis) const;
+                                               const Hypothesis) const;
 
     virtual void writeGetPartialJacobianInvert(std::ostream&,
-					       const Hypothesis) const;
+                                               const Hypothesis) const;
     //! \brief treat the `@Theta` keyword
     virtual void treatTheta();
     //! \brief treat the `@IterMax` keyword
@@ -139,14 +137,15 @@ namespace mfront{
     virtual void treatEpsilon();
     //! \brief treat the `@AdditionalConvergenceChecks` keyword
     virtual void treatAdditionalConvergenceChecks();
-    //! \brief treat the `@PerturbationValueForNumericalJacobianComputation` keyword
+    //! \brief treat the `@PerturbationValueForNumericalJacobianComputation`
+    //! keyword
     virtual void treatPerturbationValueForNumericalJacobianComputation();
     //! \brief treat the `@Algorithm` keyword
     virtual void treatAlgorithm();
     //! \brief treat the `@Predictor` keyword
     virtual void treatPredictor();
-    //! \brief treat the `@ComputeStress` keyword
-    virtual void treatComputeStress();
+    //! \brief treat the `@ComputeThermodynamicForces` keyword
+    virtual void treatComputeThermodynamicForces();
     //! \brief treat the `@CompareToNumericalJacobian` keyword
     virtual void treatCompareToNumericalJacobian();
     //! \brief treat the `@JacobianComparisonCriterion` keyword
@@ -182,8 +181,8 @@ namespace mfront{
 
     Solver solver;
 
-  }; // end of struct ImplicitDSLBase
+  };  // end of struct ImplicitDSLBase
 
-} // end of namespace mfront  
+}  // end of namespace mfront
 
 #endif /* LIB_MFRONTIMPLICITPARSERBASE_HXX */

@@ -44,8 +44,8 @@ namespace mfront{
     const auto& d = mb.getBehaviourData(h);
     //! all registred members used in this block
     auto uvs = d.getCodeBlock(BehaviourData::ComputeDerivative).members;
-    if(d.hasCode(BehaviourData::ComputeStress)){
-      const auto& uvs2 = d.getCodeBlock(BehaviourData::ComputeStress).members;
+    if(d.hasCode(BehaviourData::ComputeThermodynamicForces)){
+      const auto& uvs2 = d.getCodeBlock(BehaviourData::ComputeThermodynamicForces).members;
       uvs.insert(uvs2.begin(),uvs2.end());
     }
     // variables used to compute the stiffness tensor
@@ -243,8 +243,6 @@ namespace mfront{
     this->registerNewCallBack("@IsTangentOperatorSymmetric",
     			      &RungeKuttaDSLBase::treatIsTangentOperatorSymmetric);
     this->registerNewCallBack("@Derivative",&RungeKuttaDSLBase::treatDerivative);
-    this->registerNewCallBack("@ComputeStress",&RungeKuttaDSLBase::treatComputeStress);
-    this->registerNewCallBack("@ComputeFinalStress",&RungeKuttaDSLBase::treatComputeFinalStress);
     this->registerNewCallBack("@Epsilon",&RungeKuttaDSLBase::treatEpsilon);
     this->registerNewCallBack("@MinimalTimeStep",
 			      &RungeKuttaDSLBase::treatMinimalTimeStep);
@@ -262,7 +260,7 @@ namespace mfront{
     constexpr const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     if (c == BehaviourData::ComputePredictionOperator) {
       return "@PredictionOperator{}\n";
-    } else if (c == BehaviourData::ComputeStress) {
+    } else if (c == BehaviourData::ComputeThermodynamicForces) {
       return "@ComputeStress{}\n";
     } else if (c == BehaviourData::ComputeDerivative) {
       const auto ivs = this->mb.getBehaviourData(h).getIntegrationVariables();
@@ -291,12 +289,12 @@ namespace mfront{
                         &RungeKuttaDSLBase::standardModifier, true, true);
   } // end of RungeKuttaDSLBase::treatUpdateAuxiliaryStateVarBase
 
-  void RungeKuttaDSLBase::treatComputeFinalStress() {
-    this->readCodeBlock(*this,BehaviourData::ComputeFinalStress,
+  void RungeKuttaDSLBase::treatComputeFinalThermodynamicForces() {
+    this->readCodeBlock(*this,BehaviourData::ComputeFinalThermodynamicForces,
 			&RungeKuttaDSLBase::standardModifier,true,true);
   } // end of RungeKuttaDSLBase::treatUpdateAuxiliaryStateVarBase
 
-  std::string RungeKuttaDSLBase::computeStressVariableModifier1(
+  std::string RungeKuttaDSLBase::computeThermodynamicForcesVariableModifier1(
       const Hypothesis h, const std::string& var, const bool addThisPtr) {
     const auto& d = this->mb.getBehaviourData(h);
     if ((this->mb.isGradientName(var)) ||
@@ -340,9 +338,9 @@ namespace mfront{
       return "this->" + var;
     }
     return var;
-  }  // end of RungeKuttaDSLBase::computeStressVariableModifier1
+  }  // end of RungeKuttaDSLBase::computeThermodynamicForcesVariableModifier1
 
-  std::string RungeKuttaDSLBase::computeStressVariableModifier2(
+  std::string RungeKuttaDSLBase::computeThermodynamicForcesVariableModifier2(
       const Hypothesis h, const std::string& var, const bool addThisPtr) {
     const auto& d = this->mb.getBehaviourData(h);
     if ((this->mb.isGradientName(var)) ||
@@ -369,14 +367,14 @@ namespace mfront{
       return "this->" + var;
     }
     return var;
-  }  // end of RungeKuttaDSLBase::computeStressVariableModifier2
+  }  // end of RungeKuttaDSLBase::computeThermodynamicForcesVariableModifier2
 
-  void RungeKuttaDSLBase::treatComputeStress() {
+  void RungeKuttaDSLBase::treatComputeThermodynamicForces() {
     this->readCodeBlock(
-        *this, BehaviourData::ComputeStress, BehaviourData::ComputeFinalStress,
-        &RungeKuttaDSLBase::computeStressVariableModifier1,
-        &RungeKuttaDSLBase::computeStressVariableModifier2, true, true);
-  }  // end of RungeKuttaDSLBase::treatComputeStress
+        *this, BehaviourData::ComputeThermodynamicForces, BehaviourData::ComputeFinalThermodynamicForces,
+        &RungeKuttaDSLBase::computeThermodynamicForcesVariableModifier1,
+        &RungeKuttaDSLBase::computeThermodynamicForcesVariableModifier2, true, true);
+  }  // end of RungeKuttaDSLBase::treatComputeThermodynamicForces
 
   void RungeKuttaDSLBase::treatUnknownVariableMethod(const Hypothesis h,
                                                      const std::string& n) {
@@ -428,7 +426,7 @@ namespace mfront{
   void RungeKuttaDSLBase::treatDerivative()
   {
     this->readCodeBlock(*this,BehaviourData::ComputeDerivative,
-			&RungeKuttaDSLBase::computeStressVariableModifier1,true,true);
+			&RungeKuttaDSLBase::computeThermodynamicForcesVariableModifier1,true,true);
   } // end of RungeKuttaDSLBase::treatDerivative
 
   void RungeKuttaDSLBase::treatEpsilon()
@@ -642,17 +640,17 @@ namespace mfront{
     // some checks
     for(const auto & h : this->mb.getDistinctModellingHypotheses()){
       const auto& d = this->mb.getBehaviourData(h);
-      if(!d.hasCode(BehaviourData::ComputeFinalStress)){
+      if(!d.hasCode(BehaviourData::ComputeFinalThermodynamicForces)){
 	this->throwRuntimeError("RungeKuttaDSLBase::endsInputFileProcessing",
-				"@ComputeFinalStress was not defined.");
+				"@ComputeFinalThermodynamicForces was not defined.");
       }
       if(!d.hasCode(BehaviourData::ComputeDerivative)){
 	this->throwRuntimeError("RungeKuttaDSLBase::endsInputFileProcessing",
 				"@Derivative was not defined.");
       }
       auto uvs = d.getCodeBlock(BehaviourData::ComputeDerivative).members;
-      if(d.hasCode(BehaviourData::ComputeStress)){
-	const auto& uvs2 = d.getCodeBlock(BehaviourData::ComputeStress).members;
+      if(d.hasCode(BehaviourData::ComputeThermodynamicForces)){
+	const auto& uvs2 = d.getCodeBlock(BehaviourData::ComputeThermodynamicForces).members;
 	uvs.insert(uvs2.begin(),uvs2.end());
       }
       CodeBlock icb; // code inserted at the beginning of the local variable initialisation
@@ -695,7 +693,7 @@ namespace mfront{
 		       BehaviourData::AT_END);
     }
     // create the compute final stress code is necessary
-    this->setComputeFinalStressFromComputeFinalStressCandidateIfNecessary();
+    this->setComputeFinalThermodynamicForcesFromComputeFinalThermodynamicForcesCandidateIfNecessary();
     // minimal time step
     if(this->mb.hasParameter(uh,"dtmin")){
       ib.code += "if(this->dt<" + this->mb.getClassName() + "::dtmin){\n";
@@ -780,22 +778,22 @@ namespace mfront{
 							      const Hypothesis h) const
   {
     this->checkBehaviourFile(os);
-    if(this->mb.hasCode(h,BehaviourData::ComputeStress)){
-      os << "bool\ncomputeStress(){\n"
+    if(this->mb.hasCode(h,BehaviourData::ComputeThermodynamicForces)){
+      os << "bool\ncomputeThermodynamicForces(){\n"
 	 << "using namespace std;\n"
 	 << "using namespace tfel::math;\n";
       writeMaterialLaws(os,this->mb.getMaterialLaws());
-      os << this->mb.getCode(h,BehaviourData::ComputeStress) << '\n'
+      os << this->mb.getCode(h,BehaviourData::ComputeThermodynamicForces) << '\n'
 	 << "return true;\n"
-	 << "} // end of " << this->mb.getClassName() << "::computeStress\n\n";
+	 << "} // end of " << this->mb.getClassName() << "::computeThermodynamicForces\n\n";
     }
-    os  << "bool\ncomputeFinalStress(){\n"
+    os  << "bool\ncomputeFinalThermodynamicForces(){\n"
 	<< "using namespace std;\n"
 	<< "using namespace tfel::math;\n";
     writeMaterialLaws(os,this->mb.getMaterialLaws());
-    os << this->mb.getCode(h,BehaviourData::ComputeFinalStress) << '\n'
+    os << this->mb.getCode(h,BehaviourData::ComputeFinalThermodynamicForces) << '\n'
        << "return true;\n"
-       << "} // end of " << this->mb.getClassName() << "::computeFinalStress\n\n"
+       << "} // end of " << this->mb.getClassName() << "::computeFinalThermodynamicForces\n\n"
        << "bool\ncomputeDerivative(){\n"
        << "using namespace std;\n"
        << "using namespace tfel::math;\n";
@@ -835,8 +833,8 @@ namespace mfront{
   {
     const auto btype = this->mb.getBehaviourTypeFlag();
     const auto& d = this->mb.getBehaviourData(h);
-    if(this->mb.hasCode(h,BehaviourData::ComputeStress)){
-      os << "this->computeStress();\n";
+    if(this->mb.hasCode(h,BehaviourData::ComputeThermodynamicForces)){
+      os << "this->computeThermodynamicForces();\n";
     }
     os << "if(!this->computeDerivative()){\n";
     if(this->mb.useQt()){
@@ -857,8 +855,8 @@ namespace mfront{
       auto md = modifyVariableForStiffnessTensorComputation2(this->mb.getClassName());
       this->writeStiffnessTensorComputation(os,"this->D",md);					    
     }
-    os << "// Update stress field\n"
-       << "this->computeFinalStress();\n";
+    os << "// update the thermodynamic forces\n"
+       << "this->computeFinalThermodynamicForces();\n";
     if(d.hasCode(BehaviourData::UpdateAuxiliaryStateVariables)){
       os << "this->updateAuxiliaryStateVariables(this->dt);\n";
     }
@@ -870,14 +868,14 @@ namespace mfront{
     const auto btype = this->mb.getBehaviourTypeFlag();
     const auto& d = this->mb.getBehaviourData(h);
     auto uvs = d.getCodeBlock(BehaviourData::ComputeDerivative).members;
-    if(d.hasCode(BehaviourData::ComputeStress)){
-      const auto& uvs2 = d.getCodeBlock(BehaviourData::ComputeStress).members;
+    if(d.hasCode(BehaviourData::ComputeThermodynamicForces)){
+      const auto& uvs2 = d.getCodeBlock(BehaviourData::ComputeThermodynamicForces).members;
       uvs.insert(uvs2.begin(),uvs2.end());
     }
     os << "TFEL_CONSTEXPR const auto cste1_2 = real{1}/real{2};\n"
        << "// Compute K1's values\n";
-    if(this->mb.hasCode(h,BehaviourData::ComputeStress)){
-      os << "this->computeStress();\n";
+    if(this->mb.hasCode(h,BehaviourData::ComputeThermodynamicForces)){
+      os << "this->computeThermodynamicForces();\n";
     }
     os << "if(!this->computeDerivative()){\n";
     if(this->mb.useQt()){
@@ -904,8 +902,8 @@ namespace mfront{
       auto m = modifyVariableForStiffnessTensorComputation(this->mb.getClassName());
       this->writeStiffnessTensorComputation(os,"this->D",m);					    
     }
-    if(this->mb.hasCode(h,BehaviourData::ComputeStress)){
-      os << "this->computeStress();\n";
+    if(this->mb.hasCode(h,BehaviourData::ComputeThermodynamicForces)){
+      os << "this->computeThermodynamicForces();\n";
     }
     os << "if(!this->computeDerivative()){\n";
     if(this->mb.useQt()){
@@ -927,8 +925,8 @@ namespace mfront{
       auto m = modifyVariableForStiffnessTensorComputation2(this->mb.getClassName());
       this->writeStiffnessTensorComputation(os,"this->D",m);					    
     }
-    os << "// Update stress field\n"
-       << "this->computeFinalStress();\n";
+    os << "// update the thermodynamic forces\n"
+       << "this->computeFinalThermodynamicForces();\n";
     if(d.hasCode(BehaviourData::UpdateAuxiliaryStateVariables)){
       os << "this->updateAuxiliaryStateVariables(this->dt);\n";
     }
@@ -964,10 +962,10 @@ namespace mfront{
       }
       return false;
     }();
-    //! all registred variables used in ComputeDerivatives and ComputeStress blocks
+    //! all registred variables used in ComputeDerivatives and ComputeThermodynamicForces blocks
     auto uvs = d.getCodeBlock(BehaviourData::ComputeDerivative).members;
-    if(d.hasCode(BehaviourData::ComputeStress)){
-      const auto& uvs2 = d.getCodeBlock(BehaviourData::ComputeStress).members;
+    if(d.hasCode(BehaviourData::ComputeThermodynamicForces)){
+      const auto& uvs2 = d.getCodeBlock(BehaviourData::ComputeThermodynamicForces).members;
       uvs.insert(uvs2.begin(),uvs2.end());
     }
     ErrorEvaluation eev;
@@ -1034,8 +1032,8 @@ namespace mfront{
 	os << "this->" << v.name << "_ = this->" << v.name << ";\n";
       }
     }
-    if(this->mb.hasCode(h,BehaviourData::ComputeStress)){
-      os << "failed = !this->computeStress();\n";
+    if(this->mb.hasCode(h,BehaviourData::ComputeThermodynamicForces)){
+      os << "failed = !this->computeThermodynamicForces();\n";
     }
     if(getDebugMode()){
       os << "if(failed){\n";
@@ -1073,9 +1071,9 @@ namespace mfront{
       os << "// updating the stiffness tensor\n";
       this->writeStiffnessTensorComputation(os,"this->D",m);
     }
-    os << "// Update stress field\n";
-    if(this->mb.hasCode(h,BehaviourData::ComputeStress)){
-      os << "failed = !this->computeStress();\n";
+    os << "// update the thermodynamic forces\n";
+    if(this->mb.hasCode(h,BehaviourData::ComputeThermodynamicForces)){
+      os << "failed = !this->computeThermodynamicForces();\n";
     }
     if(getDebugMode()){
       os << "if(failed){\n";
@@ -1116,9 +1114,9 @@ namespace mfront{
       os << "// updating the stiffness tensor\n";
       this->writeStiffnessTensorComputation(os,"this->D",m);
     }
-    if(this->mb.hasCode(h,BehaviourData::ComputeStress)){
-      os << "// Update stress field\n"
-	 << "failed = !this->computeStress();\n";
+    if(this->mb.hasCode(h,BehaviourData::ComputeThermodynamicForces)){
+      os << "// update the thermodynamic forces\n"
+	 << "failed = !this->computeThermodynamicForces();\n";
     }
     if(getDebugMode()){
       os << "if(failed){\n";
@@ -1161,9 +1159,9 @@ namespace mfront{
       os << "// updating the stiffness tensor\n";
       this->writeStiffnessTensorComputation(os,"this->D",m);
     }
-    os << "// Update stress field\n";
-    if(this->mb.hasCode(h,BehaviourData::ComputeStress)){
-      os << "failed = !this->computeStress();\n";
+    os << "// update the thermodynamic forces\n";
+    if(this->mb.hasCode(h,BehaviourData::ComputeThermodynamicForces)){
+      os << "failed = !this->computeThermodynamicForces();\n";
     }
     if(getDebugMode()){
       os << "if(failed){\n";
@@ -1206,9 +1204,9 @@ namespace mfront{
       os << "// updating the stiffness tensor\n";
       this->writeStiffnessTensorComputation(os,"this->D",m);
     }
-    os << "// Update stress field\n";
-    if(this->mb.hasCode(h,BehaviourData::ComputeStress)){
-      os << "failed = !this->computeStress();\n";
+    os << "// update the thermodynamic forces\n";
+    if(this->mb.hasCode(h,BehaviourData::ComputeThermodynamicForces)){
+      os << "failed = !this->computeThermodynamicForces();\n";
     }
     if(getDebugMode()){
       os << "if(failed){\n";
@@ -1252,9 +1250,9 @@ namespace mfront{
       os << "// updating the stiffness tensor\n";
       this->writeStiffnessTensorComputation(os,"this->D",m);
     }
-    if(this->mb.hasCode(h,BehaviourData::ComputeStress)){
-      os << "// Update stress field\n"
-	 << "failed = !this->computeStress();\n";
+    if(this->mb.hasCode(h,BehaviourData::ComputeThermodynamicForces)){
+      os << "// update the thermodynamic forces\n"
+	 << "failed = !this->computeThermodynamicForces();\n";
     }
     if(getDebugMode()){
       os << "if(failed){\n"
@@ -1445,8 +1443,8 @@ namespace mfront{
       os << "// updating stiffness tensor at the end of the time step\n";
       this->writeStiffnessTensorComputation(os,"this->D",m);
     }
-    os << "// Update stress field\n"
-       << "this->computeFinalStress();\n";
+    os << "// update the thermodynamic forces\n"
+       << "this->computeFinalThermodynamicForces();\n";
     if(d.hasCode(BehaviourData::UpdateAuxiliaryStateVariables)){
       os << "this->updateAuxiliaryStateVariables(dt_);\n";
     }
@@ -1508,15 +1506,14 @@ namespace mfront{
        << "}\n";
   } // end of RungeKuttaDSLBase::writeBehaviourRK54Integrator
 
-  void RungeKuttaDSLBase::writeBehaviourRKCastemIntegrator(std::ostream& os,
-							   const Hypothesis h) const
-  {
+  void RungeKuttaDSLBase::writeBehaviourRKCastemIntegrator(
+      std::ostream& os, const Hypothesis h) const {
     using namespace std;
     const auto& d = this->mb.getBehaviourData(h);
-    //! all registred variables used in ComputeDerivatives and ComputeStress blocks
+    //! all registred variables used in ComputeDerivatives and ComputeThermodynamicForces blocks
     auto uvs = d.getCodeBlock(BehaviourData::ComputeDerivative).members;
-    if(d.hasCode(BehaviourData::ComputeStress)){
-      const auto& uvs2 = d.getCodeBlock(BehaviourData::ComputeStress).members;
+    if(d.hasCode(BehaviourData::ComputeThermodynamicForces)){
+      const auto& uvs2 = d.getCodeBlock(BehaviourData::ComputeThermodynamicForces).members;
       uvs.insert(uvs2.begin(),uvs2.end());
     }
     SupportedTypes::TypeSize stateVarsSize;
@@ -1532,8 +1529,8 @@ namespace mfront{
        << "real errabs;\n"
        << "real asig;\n"
        << "bool failed = false\n;";
-    if(this->mb.hasCode(h,BehaviourData::ComputeStress)){
-      os << "failed=!this->computeStress();\n";
+    if(this->mb.hasCode(h,BehaviourData::ComputeThermodynamicForces)){
+      os << "failed=!this->computeThermodynamicForces();\n";
     }
     if(getDebugMode()){
       os << "if(failed){\n"
@@ -1579,8 +1576,8 @@ namespace mfront{
       os << "// updating the stiffness tensor\n";
       this->writeStiffnessTensorComputation(os,"this->D",m);
     }
-    if(this->mb.hasCode(h,BehaviourData::ComputeStress)){
-      os << "failed = !this->computeStress();\n";
+    if(this->mb.hasCode(h,BehaviourData::ComputeThermodynamicForces)){
+      os << "failed = !this->computeThermodynamicForces();\n";
     }
     if(getDebugMode()){
       os << "if(failed){\n"
@@ -1618,9 +1615,9 @@ namespace mfront{
       os << "// updating the stiffness tensor\n";
       this->writeStiffnessTensorComputation(os,"this->D",m);
     }
-    if(this->mb.hasCode(h,BehaviourData::ComputeStress)){
-      os << "// Update stress field\n"
-	 << "failed = !this->computeStress();\n";
+    if(this->mb.hasCode(h,BehaviourData::ComputeThermodynamicForces)){
+      os << "// update the thermodynamic forces\n"
+	 << "failed = !this->computeThermodynamicForces();\n";
     }
     if(getDebugMode()){
       os << "if(failed){\n"
@@ -1660,9 +1657,9 @@ namespace mfront{
       os << "// updating the stiffness tensor\n";
       this->writeStiffnessTensorComputation(os,"this->D",m);
     }
-    if(this->mb.hasCode(h,BehaviourData::ComputeStress)){
-      os << "// Update stress field\n"
-	 << "failed = !this->computeStress();\n";
+    if(this->mb.hasCode(h,BehaviourData::ComputeThermodynamicForces)){
+      os << "// update the thermodynamic forces\n"
+	 << "failed = !this->computeThermodynamicForces();\n";
     }
     if(getDebugMode()){
       os << "if(failed){\n"
@@ -1702,9 +1699,9 @@ namespace mfront{
       os << "// updating the stiffness tensor\n";
       this->writeStiffnessTensorComputation(os,"this->D",m);
     }
-    if(this->mb.hasCode(h,BehaviourData::ComputeStress)){
-      os << "// Update stress field\n"
-	 << "failed = !this->computeStress();\n";
+    if(this->mb.hasCode(h,BehaviourData::ComputeThermodynamicForces)){
+      os << "// update the thermodynamic forces\n"
+	 << "failed = !this->computeThermodynamicForces();\n";
     }
     if(getDebugMode()){
       os << "if(failed){\n"
@@ -1746,9 +1743,9 @@ namespace mfront{
       os << "// updating the stiffness tensor\n";
       this->writeStiffnessTensorComputation(os,"this->D",m);
     }
-    if(this->mb.hasCode(h,BehaviourData::ComputeStress)){
-      os << "// Update stress field\n"
-	 << "failed = !this->computeStress();\n";
+    if(this->mb.hasCode(h,BehaviourData::ComputeThermodynamicForces)){
+      os << "// update the thermodynamic forces\n"
+	 << "failed = !this->computeThermodynamicForces();\n";
     }
     if(getDebugMode()){
       os << "if(failed){\n"
@@ -1791,9 +1788,9 @@ namespace mfront{
       os << "// updating the stiffness tensor\n";
       this->writeStiffnessTensorComputation(os,"this->D",m);
     }
-    if(this->mb.hasCode(h,BehaviourData::ComputeStress)){
-      os << "// Update stress field\n"
-	 << "failed = !this->computeStress();\n";
+    if(this->mb.hasCode(h,BehaviourData::ComputeThermodynamicForces)){
+      os << "// update the thermodynamic forces\n"
+	 << "failed = !this->computeThermodynamicForces();\n";
     }
     if(getDebugMode()){
       os << "if(failed){\n"
@@ -1835,7 +1832,7 @@ namespace mfront{
       os << "// updating stiffness tensor at the end of the time step\n";
       this->writeStiffnessTensorComputation(os,"this->D",m);
     }
-    os << "this->computeFinalStress();\n";
+    os << "this->computeFinalThermodynamicForces();\n";
     if(this->mb.hasCode(h,BehaviourData::UpdateAuxiliaryStateVariables)){
       os << "this->updateAuxiliaryStateVariables(dt_);\n";
     }
@@ -1888,8 +1885,8 @@ namespace mfront{
     };
     const auto& d = this->mb.getBehaviourData(h);
     auto uvs = d.getCodeBlock(BehaviourData::ComputeDerivative).members;
-    if(d.hasCode(BehaviourData::ComputeStress)){
-      const auto& uvs2 = d.getCodeBlock(BehaviourData::ComputeStress).members;
+    if(d.hasCode(BehaviourData::ComputeThermodynamicForces)){
+      const auto& uvs2 = d.getCodeBlock(BehaviourData::ComputeThermodynamicForces).members;
       uvs.insert(uvs2.begin(),uvs2.end());
     }
     ErrorEvaluation eev;
@@ -1935,8 +1932,8 @@ namespace mfront{
       os << "// updating the stiffness tensor\n";
       this->writeStiffnessTensorComputation(os,"this->D",m);
     }
-    if(this->mb.hasCode(h,BehaviourData::ComputeStress)){
-      os << "failed = !this->computeStress();\n";
+    if(this->mb.hasCode(h,BehaviourData::ComputeThermodynamicForces)){
+      os << "failed = !this->computeThermodynamicForces();\n";
     }
     if(getDebugMode()){
       os << "if(failed){\n"
@@ -1973,9 +1970,9 @@ namespace mfront{
       os << "// updating the stiffness tensor\n";
       this->writeStiffnessTensorComputation(os,"this->D",m);
     }
-    if(this->mb.hasCode(h,BehaviourData::ComputeStress)){
-      os << "// Update stress field\n"
-	 << "failed = !this->computeStress();\n";
+    if(this->mb.hasCode(h,BehaviourData::ComputeThermodynamicForces)){
+      os << "// update the thermodynamic forces\n"
+	 << "failed = !this->computeThermodynamicForces();\n";
     }
     if(getDebugMode()){
       os << "if(failed){\n"
@@ -2008,9 +2005,9 @@ namespace mfront{
 	   << "+cste1_2*(this->d" << v.name << "_K2);\n";
       }
     }
-    if(this->mb.hasCode(h,BehaviourData::ComputeStress)){
-      os << "// Update stress field\n"
-	 << "failed = !this->computeStress();\n";
+    if(this->mb.hasCode(h,BehaviourData::ComputeThermodynamicForces)){
+      os << "// update the thermodynamic forces\n"
+	 << "failed = !this->computeThermodynamicForces();\n";
     }
     if(getDebugMode()){
       os << "if(failed){\n"
@@ -2050,9 +2047,9 @@ namespace mfront{
       os << "// updating the stiffness tensor\n";
       this->writeStiffnessTensorComputation(os,"this->D",m);
     }
-    if(this->mb.hasCode(h,BehaviourData::ComputeStress)){
-      os << "// Update stress field\n"
-	 << "failed = !this->computeStress();\n";
+    if(this->mb.hasCode(h,BehaviourData::ComputeThermodynamicForces)){
+      os << "// update the thermodynamic forces\n"
+	 << "failed = !this->computeThermodynamicForces();\n";
     }
     if(getDebugMode()){
       os << "if(failed){\n"
@@ -2225,7 +2222,7 @@ namespace mfront{
 	 << " += cste1_6*(this->d" << v.name << "_K1 + this->d" << v.name << "_K4)+"
 	 << "    cste1_3*(this->d" << v.name << "_K3 + this->d" << v.name << "_K2);\n";
     }
-    os << "this->computeFinalStress();\n";
+    os << "this->computeFinalThermodynamicForces();\n";
     if(this->mb.hasCode(h,BehaviourData::UpdateAuxiliaryStateVariables)){
       os << "this->updateAuxiliaryStateVariables(dt_);\n";
     }
@@ -2289,14 +2286,14 @@ namespace mfront{
     const auto btype = this->mb.getBehaviourTypeFlag();
     const auto& d = this->mb.getBehaviourData(h);
     auto uvs = d.getCodeBlock(BehaviourData::ComputeDerivative).members;
-    if(d.hasCode(BehaviourData::ComputeStress)){
-      const auto& uvs2 = d.getCodeBlock(BehaviourData::ComputeStress).members;
+    if(d.hasCode(BehaviourData::ComputeThermodynamicForces)){
+      const auto& uvs2 = d.getCodeBlock(BehaviourData::ComputeThermodynamicForces).members;
       uvs.insert(uvs2.begin(),uvs2.end());
     }
     os << "TFEL_CONSTEXPR const auto cste1_2 = real{1}/real{2};\n"
        << "// Compute K1's values\n";
-    if(this->mb.hasCode(h,BehaviourData::ComputeStress)){
-      os << "this->computeStress();\n";
+    if(this->mb.hasCode(h,BehaviourData::ComputeThermodynamicForces)){
+      os << "this->computeThermodynamicForces();\n";
     }
     os << "if(!this->computeDerivative()){\n";
     if(this->mb.useQt()){
@@ -2323,9 +2320,9 @@ namespace mfront{
       os << "// updating the stiffness tensor\n";
       this->writeStiffnessTensorComputation(os,"this->D",m);
     }
-    if(this->mb.hasCode(h,BehaviourData::ComputeStress)){
-      os << "// Update stress field\n"
-	 << "this->computeStress();\n\n";
+    if(this->mb.hasCode(h,BehaviourData::ComputeThermodynamicForces)){
+      os << "// update the thermodynamic forces\n"
+	 << "this->computeThermodynamicForces();\n\n";
     }
     os << "// Compute K2's values\n"
        << "if(!this->computeDerivative()){\n";
@@ -2347,9 +2344,9 @@ namespace mfront{
 	   << "+ cste1_2*(this->d" << iv.name << "_K2);\n";
       }
     }
-    if(this->mb.hasCode(h,BehaviourData::ComputeStress)){
-      os << "// Update stress field\n"
-	 << "this->computeStress();\n\n";
+    if(this->mb.hasCode(h,BehaviourData::ComputeThermodynamicForces)){
+      os << "// update the thermodynamic forces\n"
+	 << "this->computeThermodynamicForces();\n\n";
     }
     os << "// Compute K3's values\n"
        << "if(!this->computeDerivative()){\n";
@@ -2371,9 +2368,9 @@ namespace mfront{
 	   << "+ (this->d" << v.name << "_K3);\n";
       }
     }
-    if(this->mb.hasCode(h,BehaviourData::ComputeStress)){
-      os << "// Update stress field\n"
-	 << "this->computeStress();\n\n";
+    if(this->mb.hasCode(h,BehaviourData::ComputeThermodynamicForces)){
+      os << "// update the thermodynamic forces\n"
+	 << "this->computeThermodynamicForces();\n\n";
     }
     os << "// Compute K4's values\n"
        << "if(!this->computeDerivative()){\n";
@@ -2397,8 +2394,8 @@ namespace mfront{
       os << "(this->d" << v.name
 	 << "_K2+this->d" << v.name << "_K3)/3;\n";
     }
-    os << "// Update stress field\n"
-       << "this->computeFinalStress();\n";
+    os << "// update the thermodynamic forces\n"
+       << "this->computeFinalThermodynamicForces();\n";
     if(this->mb.hasCode(h,BehaviourData::UpdateAuxiliaryStateVariables)){
       os << "this->updateAuxiliaryStateVariables(this->dt);\n";
     }

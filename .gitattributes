@@ -2580,6 +2580,7 @@ mfront/include/MFront/PythonMaterialPropertyInterface.hxx -text
 mfront/include/MFront/RungeKuttaDSL.hxx -text
 mfront/include/MFront/RungeKuttaDSLBase.hxx -text
 mfront/include/MFront/RungeKuttaFiniteStrainDSL.hxx -text
+mfront/include/MFront/RungeKuttaGenericBehaviourDSL.hxx -text
 mfront/include/MFront/SearchPathsHandler.hxx -text
 mfront/include/MFront/SecondBroydenSolver.hxx -text
 mfront/include/MFront/SpecificTargetDescription.hxx -text
@@ -2834,6 +2835,7 @@ mfront/src/PythonMaterialPropertyInterface.cxx -text
 mfront/src/RungeKuttaDSL.cxx -text
 mfront/src/RungeKuttaDSLBase.cxx -text
 mfront/src/RungeKuttaFiniteStrainDSL.cxx -text
+mfront/src/RungeKuttaGenericBehaviourDSL.cxx -text
 mfront/src/SearchPathsHandler.cxx -text
 mfront/src/SecondBroydenSolver.cxx -text
 mfront/src/SpecificTargetDescription.cxx -text

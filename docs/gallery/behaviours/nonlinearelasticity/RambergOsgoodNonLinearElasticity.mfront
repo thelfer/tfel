@@ -55,6 +55,7 @@ e_ε.setEntryName("NumericalThreshold");
 }
 
 @PredictionOperator{
+  static_cast<void>(smt);
   const auto P = I₄ - (I₂ ⊗ I₂) / 3;
   Dt = K ⋅ (I₂ ⊗ I₂) + 2 ⋅ μ ⋅ P;
 }

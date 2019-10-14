@@ -31,6 +31,9 @@ namespace mfront {
     BehaviourDSLDescription getBehaviourDSLDescription() const override;
     //! constructor
     RungeKuttaDSL();
+    std::string getCodeBlockTemplate(
+        const std::string&,
+        const MFrontTemplateGenerationOptions&) const override;
     //! destructor
     ~RungeKuttaDSL();
   }; // end of struct RungeKuttaDSL

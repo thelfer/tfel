@@ -30,6 +30,9 @@ namespace mfront {
     static std::string getDescription();
     //! \return a description of the DSL
     BehaviourDSLDescription getBehaviourDSLDescription() const override;
+    std::string getCodeBlockTemplate(
+        const std::string&,
+        const MFrontTemplateGenerationOptions&) const override;
     //! \brief destructor
     ~ImplicitGenericBehaviourDSL() noexcept override ;
   };  // end of struct ImplicitGenericBehaviourDSL

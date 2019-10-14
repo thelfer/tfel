@@ -168,6 +168,7 @@ nobase_noinst_HEADERS = MFront/IsotropicBehaviourDSLBase.hxx                    
 			MFront/RungeKuttaDSLBase.hxx                                  \
 			MFront/RungeKuttaDSL.hxx                                      \
 			MFront/RungeKuttaFiniteStrainDSL.hxx                          \
+			MFront/RungeKuttaGenericBehaviourDSL.hxx                      \
 			MFront/PerformanceProfiling.hxx			              \
 			MFront/StandardElasticityBrick.hxx                            \
 			MFront/StandardElastoViscoPlasticityBrick.hxx                 \

@@ -39,10 +39,12 @@ namespace mfront {
   const char* const BehaviourData::ComputePredictor = "ComputePredictor";
   const char* const BehaviourData::ComputeStressFreeExpansion =
       "ComputeStressFreeExpansion";
-  const char* const BehaviourData::ComputeStress = "ComputeStress";
-  const char* const BehaviourData::ComputeFinalStress = "ComputeFinalStress";
-  const char* const BehaviourData::ComputeFinalStressCandidate =
-      "ComputeFinalStressCandidate";
+  const char* const BehaviourData::ComputeThermodynamicForces =
+      "ComputeThermodynamicForces";
+  const char* const BehaviourData::ComputeFinalThermodynamicForces =
+      "ComputeFinalThermodynamicForces";
+  const char* const BehaviourData::ComputeFinalThermodynamicForcesCandidate =
+      "ComputeFinalThermodynamicForcesCandidate";
   const char* const BehaviourData::ComputeInternalEnergy =
       "ComputeInternalEnergy";
   const char* const BehaviourData::ComputeDissipatedEnergy =

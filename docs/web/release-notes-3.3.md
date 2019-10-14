@@ -8,6 +8,8 @@ The page declares the new functionalities of the 3.3 version of the
 This version was released along with Version `3.2.2` and inherits from
 all the fixes of this version.
 
+
+
 # Improvements to `MFront`
 
 ## Unicode Support
@@ -40,9 +42,35 @@ Here is an example of the implementation of a Norton behaviour:
 The supported subset of unicode characters is fully detailed
 [here](unicode.html).
 
-## A new inelastic flow in the `StandardElastoViscoPlasticity` brick
+## Initial support for generalised behaviours
 
-Thanks to Thomas Nagel, 
+~~~~{.cxx}
+@DSL DefaultGenericBehaviour;
+@Behaviour StationaryHeatTransfer;
+@Author Thomas Helfer;
+@Date 15/02/2019;
+
+@Gradient TemperatureGradient gT;
+gT.setGlossaryName("TemperatureGradient");
+
+@Flux HeatFlux j;
+j.setGlossaryName("HeatFlux");
+
+@MaterialProperty thermalconductivity k;
+k.setGlossaryName("ThermalConductivity");
+
+@Integrator{
+  j = -k * (gT + dgT);
+} // end of @Integrator
+
+@TangentOperator {
+  Dt = -k * tmatrix<N, N, real>::Id();
+}
+~~~~
+
+## A new stress potential in the `StandardElastoViscoPlasticity` brick
+
+A regularised Mohr-Coulumb stress potential is now available.
 
 ## Specifying a build identifier{#sec:build_identifiers}
 
@@ -204,6 +232,20 @@ material properties when they are defined internally.
 The `MFront` API was greatly improved to allow the implementation of the
 `tfel-editor`' behaviour wizard.
 
+## New experimental interfaces for `COMSOL Multiphysics` and `DIANA FEA`
+
+This release introduces two new experimental interfaces for the `COMSOL
+Multiphysics` and `DIANA FEA` solvers.
+
+Experimental means that those interfaces have been build using the
+solvers specifications but have not been tested in those solvers.
+
+There are `125` unit tests associated with the `DIANA FEA` solver
+through `MTest`.
+
+Users of those solvers willing to test those new interfaces are
+welcomed.
+
 # Improvements to `MTest`
 
 ## Ability to choose  the stress measure used in input/output and the consistent tangent operator returned for finite strain behaviours through the `generic` interface
@@ -250,13 +292,36 @@ properties. If so, those elastic properties are automatically loaded by
 solvers for specific cases. See the [dedicated
 page](mfm-test-generator.html) for details.
 
+# New entries in the gallery
+
+<center>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/IGocYZKyvgQ" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
+</iframe>
+</center>
+
+Two new entries are available in the gallery:
+
+- The first one describes the implementation of the Skorohold-Olevsky
+  Viscous Sintering (SOVS) model. This model predicts sintering
+  shrinkage and densification of ceramics and composites. It serves to
+  enhance our ability to understand, predict, and control sintering. See
+  [this page](http://tfel.sourceforge.net/sovs.html) for details.
+- The second one describes the implementation of a non linear elastic
+  behaviour which allows reproduction the material response of a plastic
+  behaviour of the Ramberg-Osgood type. See [this
+  page](RambergOsgoodNonLinearElasticity) for details.
+
 # `TFEL`' core libraries
 
 ## Improvements and new features of `TFEL/Material` library
 
+### Support for \(\deriv{\tns{\Pi}}{\tns{F}}\)
+
+The derivative of the first Piola-Kirchhoff stress with respect to the
+deformation gradient is now available as a tangent operator for finite
+strain behaviour.
+
 ### The Mohr-Coulomb yield criterion
-
-
 
 ## New library: `TFELUnicodeSupport`
 

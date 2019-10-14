@@ -1231,8 +1231,8 @@ namespace mfront {
      */
     virtual void setMinimalTangentOperator();
     /*!
-     * \brief if the compte final stress code is not available, create
-     * it from the ComputeFinalStressCandidate code if it is
+     * \brief if the compte final thermodynamic forces code is not available,
+     * create it from the ComputeFinalThermodynamicForcesCandidate code if it is
      * available.
      * \note This method is not trivial because one has to take care
      * not to create artifical mechanical data specialisation
@@ -1240,7 +1240,7 @@ namespace mfront {
      * endsInputFileProcessing method.
      */
     virtual void
-    setComputeFinalStressFromComputeFinalStressCandidateIfNecessary();
+    setComputeFinalThermodynamicForcesFromComputeFinalThermodynamicForcesCandidateIfNecessary();
     /*!
      * \brief perform pedantic checks
      */

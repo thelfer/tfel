@@ -32,6 +32,9 @@ namespace mfront {
     BehaviourDSLDescription getBehaviourDSLDescription() const override;
     //! constructor
     RungeKuttaFiniteStrainDSL();
+    std::string getCodeBlockTemplate(
+        const std::string&,
+        const MFrontTemplateGenerationOptions&) const override;
     //! destructor
     virtual ~RungeKuttaFiniteStrainDSL() noexcept;
   }; // end of struct RungeKuttaFiniteStrainDSL

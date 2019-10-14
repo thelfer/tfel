@@ -60,7 +60,7 @@ namespace mfront{
     d.requireStiffnessTensorDefinition = true;
     d.managedIntegrationVariables.push_back("eel");
     d.managedCodeBlocks = {BehaviourData::ComputePredictionOperator,
-                           BehaviourData::ComputeStress,
+                           BehaviourData::ComputeThermodynamicForces,
                            BehaviourData::ComputeTangentOperator};
     return d;
   } // end of FiniteStrainSingleCrystalBrick::getDescription
@@ -330,7 +330,7 @@ namespace mfront{
 	"this->Fe -= DeformationGradientTensor::Id();\n";
     }
     fs.members  = {"sig","Fe","D"};
-    this->bd.setCode(h,BehaviourData::ComputeFinalStress,
+    this->bd.setCode(h,BehaviourData::ComputeFinalThermodynamicForces,
     		     fs,BehaviourData::CREATE,
     		     BehaviourData::AT_BEGINNING);
     // tangent operator

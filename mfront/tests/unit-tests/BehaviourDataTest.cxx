@@ -207,7 +207,7 @@ private:
     TFEL_TESTS_ASSERT(bd.getMaterialProperties().getVariable("young").type=="stress");
     TFEL_TESTS_ASSERT(bd.getMaterialProperties().getVariable("nu").name=="nu");
     TFEL_TESTS_ASSERT(bd.getMaterialProperties().getVariable("nu").type=="real");
-    TFEL_TESTS_ASSERT(!bd.hasCode(BehaviourData::ComputeStress));
+    TFEL_TESTS_ASSERT(!bd.hasCode(BehaviourData::ComputeThermodynamicForces));
     TFEL_TESTS_ASSERT(bd.isMaterialPropertyName("young"));
     TFEL_TESTS_ASSERT(bd.isMaterialPropertyName("nu"));
     TFEL_TESTS_ASSERT(!bd.isLocalVariableName("young"));

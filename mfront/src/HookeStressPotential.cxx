@@ -265,9 +265,9 @@ namespace mfront {
             "this->sig = (this->D)*(this->eel+(this->theta)*(this->deel))"
             ";\n";
         sets.code = "this->sig = (" + D_tdt + ")*(this->eel);\n";
-        bd.setCode(h, BehaviourData::ComputeStress, smts, BehaviourData::CREATE,
+        bd.setCode(h, BehaviourData::ComputeThermodynamicForces, smts, BehaviourData::CREATE,
                    BehaviourData::AT_BEGINNING, false);
-        bd.setCode(h, BehaviourData::ComputeFinalStress, sets,
+        bd.setCode(h, BehaviourData::ComputeFinalThermodynamicForces, sets,
                    BehaviourData::CREATE, BehaviourData::AT_BEGINNING, false);
       }  // end of
       // HookeStressPotential::declareComputeStressWhenStiffnessTensorIsDefined
@@ -308,9 +308,9 @@ namespace mfront {
               "(this->sebdata.lambda)*trace(this->eel)*Stensor::Id()+"  //
               "2*(this->sebdata.mu)*this->eel;\n";
         }
-        bd.setCode(uh, BehaviourData::ComputeStress, smts,
+        bd.setCode(uh, BehaviourData::ComputeThermodynamicForces, smts,
                    BehaviourData::CREATE, BehaviourData::AT_BEGINNING, false);
-        bd.setCode(uh, BehaviourData::ComputeFinalStress, sets,
+        bd.setCode(uh, BehaviourData::ComputeFinalThermodynamicForces, sets,
                    BehaviourData::CREATE, BehaviourData::AT_BEGINNING, false);
         if (getVerboseMode() >= VERBOSE_DEBUG) {
           getLogStream() << "HookeStressPotential::"

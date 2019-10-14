@@ -165,16 +165,16 @@ namespace mfront {
                                    &n](const std::string& j) {
         out << "this->zeros(" << j
             << ") -= this->numerical_jacobian_epsilon;\n";
-        if (d.hasCode(BehaviourData::ComputeStress)) {
-          out << "this->computeStress();\n";
+        if (d.hasCode(BehaviourData::ComputeThermodynamicForces)) {
+          out << "this->computeThermodynamicForces();\n";
         }
         out << "this->computeFdF(true);\n"
             << "this->zeros = this->zeros_1;\n"
             << "tvector<" << n << ",real> tfzeros2(this->fzeros);\n"
             << "this->zeros(" << j
             << ") += this->numerical_jacobian_epsilon;\n";
-        if (d.hasCode(BehaviourData::ComputeStress)) {
-          out << "this->computeStress();\n";
+        if (d.hasCode(BehaviourData::ComputeThermodynamicForces)) {
+          out << "this->computeThermodynamicForces();\n";
         }
         out << "this->computeFdF(true);\n"
             << "this->zeros  = this->zeros_1;\n"

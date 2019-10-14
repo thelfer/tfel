@@ -26,6 +26,11 @@ namespace mfront{
       this->mb.addLocalVariable(h,VariableDescription(SupportedTypes::getTimeDerivativeType(dv.type),
 						      "d"+dv.name+"_",1u,0u));
     }
+    this->registerNewCallBack(
+        "@ComputeStress", &RungeKuttaFiniteStrainDSL::treatComputeThermodynamicForces);
+    this->registerNewCallBack(
+        "@ComputeFinalStress",
+        &RungeKuttaFiniteStrainDSL::treatComputeFinalThermodynamicForces);
   } // end of RungeKuttaFiniteStrainDSL::RungeKuttaFiniteStrainDSL
 
   std::string RungeKuttaFiniteStrainDSL::getName() {
@@ -36,11 +41,19 @@ namespace mfront{
     return "this parser provides a generic integrator based on a theta method.";
   } // end of RungeKuttaFiniteStrainDSL::getDescription
 
+  std::string RungeKuttaFiniteStrainDSL::getCodeBlockTemplate(
+      const std::string& c, const MFrontTemplateGenerationOptions& o) const {
+    if (c == BehaviourData::ComputeThermodynamicForces) {
+      return "@ComputeStress{}\n";
+    }
+    return RungeKuttaDSLBase::getCodeBlockTemplate(c, o);
+  }  // end of RungeKuttaFiniteStrainDSL::getCodeBlockTemplate
+
   BehaviourDSLDescription RungeKuttaFiniteStrainDSL::getBehaviourDSLDescription() const {
     auto d = mfront::getDefaultFiniteStrainBehaviourDSLDescription();
     d.integrationScheme = IntegrationScheme::EXPLICITSCHEME;
     d.typicalCodeBlocks = {BehaviourData::ComputePredictionOperator,
-                           BehaviourData::ComputeStress,
+                           BehaviourData::ComputeThermodynamicForces,
                            BehaviourData::ComputeDerivative,
                            BehaviourData::ComputeTangentOperator};
     d.minimalMFrontFileBody = "@Derivative{}\n\n@ComputeFinalStress{};\n\n";

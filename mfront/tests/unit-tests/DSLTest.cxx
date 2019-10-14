@@ -26,16 +26,10 @@
 #include"MFront/InitDSLs.hxx"
 #include"MFront/DSLFactory.hxx"
 
-struct DSLTest final
-  : public tfel::tests::TestCase
-{
-  DSLTest()
-    : tfel::tests::TestCase("MFront","DSLTest")
-  {} // end of DSLTest
+struct DSLTest final : public tfel::tests::TestCase {
+  DSLTest() : tfel::tests::TestCase("MFront", "DSLTest") {}  // end of DSLTest
 
-  tfel::tests::TestResult
-  execute() override
-  {
+  tfel::tests::TestResult execute() override {
     // test of @Author keyword handling
     this->check("DefaultDSL","@Author te @st1;");
     // test of @Date keyword handling
@@ -74,7 +68,7 @@ struct DSLTest final
     this->check("DefaultDSL","@MaterialProperty real v;"
 		"@Parameter v = 12;");
     for(const auto& r : {"eto","sig","deto","T","dT","dt",
-	  "computeStress","computeFinalStress",
+	  "computeThermodynamicForces","computeFinalThermodynamicForces",
 	  "temperature","stress","strain"}){
       for(const auto& t : {"MaterialProperty","StateVariable",
 	    "AuxiliaryStateVariable","ExternalStateVariable",

@@ -129,8 +129,8 @@ namespace mfront{
       out << "cout << endl << \"" << mb.getClassName()
 	  << "::integrate() : beginning of resolution\\n\";\n";
     }
-    if(mb.hasCode(h,BehaviourData::ComputeStress)){
-      out << "this->computeStress();\n";
+    if(mb.hasCode(h,BehaviourData::ComputeThermodynamicForces)){
+      out << "this->computeThermodynamicForces();\n";
     }
     out << "if(!this->computeFdF(false)){\n";
     if(getDebugMode()){
@@ -203,16 +203,16 @@ namespace mfront{
     out << "this->zeros -= levmar_sm;\n"; 
     out << "tvector<" << n2 <<  ",real> levmar_fzeros_1 = this->fzeros;\n"; 
     out << "tmatrix<" << n2 << "," << n2 <<  ",real> levmar_jacobian_1 = this->jacobian;\n"; 
-    if(mb.hasCode(h,BehaviourData::ComputeStress)){
-      out << "this->computeStress();\n";
+    if(mb.hasCode(h,BehaviourData::ComputeThermodynamicForces)){
+      out << "this->computeThermodynamicForces();\n";
     }
     out << "if(!this->computeFdF(false)){\n"
 	<< "// rejecting the step\n"
 	<< "this->zeros     = this->zeros_1;\n"; 
     out << "this->fzeros    = levmar_fzeros_1;\n"; 
     out << "this->jacobian  = levmar_jacobian_1;\n"; 
-    if(mb.hasCode(h,BehaviourData::ComputeStress)){
-      out << "this->computeStress();\n";
+    if(mb.hasCode(h,BehaviourData::ComputeThermodynamicForces)){
+      out << "this->computeThermodynamicForces();\n";
     }
     out << "// updating mu\n"
 	<< "levmar_mu *= 4;\n"
@@ -232,8 +232,8 @@ namespace mfront{
 	<< "this->fzeros    = levmar_fzeros_1;\n"
 	<< "this->jacobian  = levmar_jacobian_1;\n"
 	<< "levmar_error = levmar_error_1;\n";
-    if(mb.hasCode(h,BehaviourData::ComputeStress)){
-      out << "this->computeStress();\n";
+    if(mb.hasCode(h,BehaviourData::ComputeThermodynamicForces)){
+      out << "this->computeThermodynamicForces();\n";
     }
     out << "levmar_mu *= 4;\n"
 	<< "} else {\n"

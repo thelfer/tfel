@@ -54,22 +54,22 @@ namespace mfront {
     //! standard code name
     static const char* const ComputePredictor;
     //! standard code name
-    static const char* const ComputeStress;
+    static const char* const ComputeThermodynamicForces;
     //! standard code name
-    /* Most behaviours will only rely the @ComputeStress keyword to
-     * estimate stresses at the middle of the time step and at the
+    /* Most behaviours will only rely the @ComputeThermodynamicForces keyword to
+     * estimate thermodynamic forces at the middle of the time step and at the
      * end.  However, some finite strains behaviours must compute a
      * stress measure during the iterations which is not the Cauchy
-     * stress. Thus, `@ComputeStress` also defines an
-     * ComputeFinalStressCandidate code block which will be used if
+     * stress. Thus, `@ComputeThermodynamicForces` also defines an
+     * ComputeFinalThermodynamicForceCandidate code block which will be used if
      * the user does not provide an alternative through the
-     * `@ComputeFinalStress`
+     * `@ComputeFinalThermodynamicForces`
      */
-    static const char* const ComputeFinalStressCandidate;
+    static const char* const ComputeFinalThermodynamicForcesCandidate;
     //! standard code name
-    static const char* const ComputeFinalStress;
+    static const char* const ComputeFinalThermodynamicForces;
     //! standard code name
-    static const char* const DefaultComputeFinalStress;
+    static const char* const DefaultComputeFinalThermodynamicForce;
     //! standard code name
     static const char* const APrioriTimeStepScalingFactor;
     //! standard code name

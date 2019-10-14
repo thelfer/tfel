@@ -34,6 +34,11 @@ namespace mfront{
           h, VariableDescription(SupportedTypes::getTimeDerivativeType(dv.type),
                                  "d" + dv.name + "_", 1u, 0u));
     }
+    this->registerNewCallBack(
+        "@ComputeStress", &RungeKuttaDSL::treatComputeThermodynamicForces);
+    this->registerNewCallBack(
+        "@ComputeFinalStress",
+        &RungeKuttaDSL::treatComputeFinalThermodynamicForces);
   } // end of RungeKuttaDSL::RungeKuttaDSL
 
   std::string RungeKuttaDSL::getName() { return "RungeKutta"; }
@@ -44,13 +49,22 @@ namespace mfront{
            "'r42', 'rk54' and 'rkCastem'";
   } // end of RungeKuttaDSL::getDescription
 
+  std::string RungeKuttaDSL::getCodeBlockTemplate(
+      const std::string& c, const MFrontTemplateGenerationOptions& o) const {
+    if (c == BehaviourData::ComputeThermodynamicForces) {
+      return "@ComputeStress{}\n";
+    }
+    return RungeKuttaDSLBase::getCodeBlockTemplate(c, o);
+  }  // end of RungeKuttaDSL::getCodeBlockTemplate
+
   BehaviourDSLDescription RungeKuttaDSL::getBehaviourDSLDescription() const {
     auto d = mfront::getDefaultStrainBasedBehaviourDSLDescription();
     d.integrationScheme = IntegrationScheme::EXPLICITSCHEME;
     d.typicalCodeBlocks = {BehaviourData::ComputePredictionOperator,
-                           BehaviourData::ComputeStress,
+                           BehaviourData::ComputeThermodynamicForces,
                            BehaviourData::ComputeDerivative,
                            BehaviourData::ComputeTangentOperator};
+
     d.minimalMFrontFileBody = "@Derivative{}\n\n@ComputeFinalStress{};\n\n";
     return d;
   }  // end of RungeKuttaDSL::getBehaviourDSLDescription

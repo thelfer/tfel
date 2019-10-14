@@ -31,6 +31,12 @@ namespace mfront{
     this->registerNewCallBack(
         "@AdditionalTangentOperatorBlocks",
         &ImplicitGenericBehaviourDSL::treatAdditionalTangentOperatorBlocks);
+    this->registerNewCallBack(
+        "@ComputeThermodynamicForces",
+        &ImplicitGenericBehaviourDSL::treatComputeThermodynamicForces);
+    this->registerNewCallBack(
+        "@ComputeFinalThermodynamicForces",
+        &ImplicitGenericBehaviourDSL::treatComputeFinalThermodynamicForces);
   }  // end of ImplicitGenericBehaviourDSL::ImplicitGenericBehaviourDSL
 
   std::string ImplicitGenericBehaviourDSL::getName() {
@@ -41,12 +47,20 @@ namespace mfront{
     return "this dsl provides a generic integrator based on a theta method.";
   } // end of ImplicitGenericBehaviourDSL::getDescription
 
+  std::string ImplicitGenericBehaviourDSL::getCodeBlockTemplate(
+      const std::string& c, const MFrontTemplateGenerationOptions& o) const {
+    if (c == BehaviourData::ComputeThermodynamicForces) {
+      return "@ComputeThermodynamicForces{}\n";
+    }
+    return ImplicitDSLBase::getCodeBlockTemplate(c, o);
+  }  // end of ImplicitGenericBehaviourDSL::getCodeBlockTemplate
+
   BehaviourDSLDescription ImplicitGenericBehaviourDSL::getBehaviourDSLDescription() const {
     auto d = BehaviourDSLDescription();
     d.integrationScheme = IntegrationScheme::IMPLICITSCHEME;
     d.typicalCodeBlocks = {BehaviourData::ComputePredictionOperator,
                            BehaviourData::ComputePredictor,
-                           BehaviourData::ComputeStress,
+                           BehaviourData::ComputeThermodynamicForces,
                            BehaviourData::Integrator,
                            BehaviourData::ComputeTangentOperator};
     d.minimalMFrontFileBody = "@Integrator{}\n\n";

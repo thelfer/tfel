@@ -2899,8 +2899,8 @@ namespace mfront {
     this->reserveName("Psi_d");
     this->reserveName("thermal_expansion_reference_temperature");
     this->reserveName("initial_geometry_reference_temperature");
-    this->mb.registerMemberName(h, "computeStress");
-    this->mb.registerMemberName(h, "computeFinalStress");
+    this->mb.registerMemberName(h, "computeThermodynamicForces");
+    this->mb.registerMemberName(h, "computeFinalThermodynamicForces");
     this->mb.registerMemberName(h, "computeStressFreeExpansion");
     this->mb.registerMemberName(h, "computeInternalEnergy");
     this->mb.registerMemberName(h, "computeDissipatedEnergy");
@@ -4082,7 +4082,8 @@ namespace mfront {
        << "using namespace tfel::math;\n";
     writeMaterialLaws(os, this->mb.getMaterialLaws());
     if ((this->mb.getBehaviourType() == BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) ||
-        (this->mb.getBehaviourType() == BehaviourDescription::COHESIVEZONEMODEL)) {
+        (this->mb.getBehaviourType() == BehaviourDescription::COHESIVEZONEMODEL)||
+	(this->mb.getBehaviourType() == BehaviourDescription::GENERALBEHAVIOUR)) {
       if (this->mb.useQt()) {
         os << "raise_if(smflag!=MechanicalBehaviour<" << btype << ",hypothesis,Type,use_qt>::STANDARDTANGENTOPERATOR,\n"
            << "\"invalid tangent operator flag\");\n";
@@ -6088,7 +6089,8 @@ namespace mfront {
          << "using std::vector;\n";
       writeMaterialLaws(os, this->mb.getMaterialLaws());
       if ((this->mb.getBehaviourType() == BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) ||
-          (this->mb.getBehaviourType() == BehaviourDescription::COHESIVEZONEMODEL)) {
+          (this->mb.getBehaviourType() == BehaviourDescription::COHESIVEZONEMODEL)||
+	  (this->mb.getBehaviourType() == BehaviourDescription::GENERALBEHAVIOUR)) {
         if (mb.useQt()) {
           os << "tfel::raise_if(smflag!=MechanicalBehaviour<" << btype
              << ",hypothesis,Type,use_qt>::STANDARDTANGENTOPERATOR,\n"
@@ -7665,14 +7667,15 @@ namespace mfront {
     this->mb.setDislocationsMeanFreePathInteractionMatrix(imv);
   }  // end of BehaviourDSLCommon::treatDislocationsMeanFreePathInteractionMatrix
 
-  void BehaviourDSLCommon::setComputeFinalStressFromComputeFinalStressCandidateIfNecessary() {
+  void BehaviourDSLCommon::
+      setComputeFinalThermodynamicForcesFromComputeFinalThermodynamicForcesCandidateIfNecessary() {
     // first treating specialised mechanical data
     for (const auto& h : this->mb.getDistinctModellingHypotheses()) {
       if (h != ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
-        if (!this->mb.hasCode(h, BehaviourData::ComputeFinalStress)) {
-          if (this->mb.hasCode(h, BehaviourData::ComputeFinalStressCandidate)) {
-            this->mb.setCode(h, BehaviourData::ComputeFinalStress,
-                             this->mb.getCodeBlock(h, BehaviourData::ComputeFinalStressCandidate),
+        if (!this->mb.hasCode(h, BehaviourData::ComputeFinalThermodynamicForces)) {
+          if (this->mb.hasCode(h, BehaviourData::ComputeFinalThermodynamicForcesCandidate)) {
+            this->mb.setCode(h, BehaviourData::ComputeFinalThermodynamicForces,
+                             this->mb.getCodeBlock(h, BehaviourData::ComputeFinalThermodynamicForcesCandidate),
                              BehaviourData::CREATE, BehaviourData::BODY);
           }
         }
@@ -7681,15 +7684,16 @@ namespace mfront {
     // now treating the default hypothesis case
     if (!this->mb.areAllMechanicalDataSpecialised()) {
       const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-      if (!this->mb.hasCode(h, BehaviourData::ComputeFinalStress)) {
-        if (this->mb.hasCode(h, BehaviourData::ComputeFinalStressCandidate)) {
-          this->mb.setCode(h, BehaviourData::ComputeFinalStress,
-                           this->mb.getCodeBlock(h, BehaviourData::ComputeFinalStressCandidate),
+      if (!this->mb.hasCode(h, BehaviourData::ComputeFinalThermodynamicForces)) {
+        if (this->mb.hasCode(h, BehaviourData::ComputeFinalThermodynamicForcesCandidate)) {
+          this->mb.setCode(h, BehaviourData::ComputeFinalThermodynamicForces,
+                           this->mb.getCodeBlock(h, BehaviourData::ComputeFinalThermodynamicForcesCandidate),
                            BehaviourData::CREATEBUTDONTREPLACE, BehaviourData::BODY);
         }
       }
     }
-  }  // end of BehaviourDSLCommon::setComputeFinalStressFromComputeFinalStressCandidateIfNecessary
+  }  // end of
+     // BehaviourDSLCommon::setComputeFinalThermodynamicForcesFromComputeFinalThermodynamicForcesCandidateIfNecessary
 
   BehaviourDSLCommon::~BehaviourDSLCommon() = default;
 
