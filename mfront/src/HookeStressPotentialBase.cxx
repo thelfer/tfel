@@ -135,15 +135,6 @@ namespace mfront {
       opts.emplace_back("thermal_expansion_reference_temperature",
                         "reference temperature for the thermal expansion",
                         OptionDescription::REAL);
-      opts.emplace_back(
-          "relative_value_for_the_equivalent_stress_lower_bound",
-          "Relative value used to define a lower bound "
-          "for the equilavent stress. For isotropic parameters, "
-          "this lower bound will be equal to this value multiplied "
-          "by the Young modulus. For orthotropic materials, this lower "
-          "bound will be this value multiplied by the first component "
-          "of the stiffness tensor.",
-          OptionDescription::REAL);
       return opts;
     }  // end of HookeStressPotentialBase::getIsotropicBehaviourOptions()
 
@@ -259,6 +250,15 @@ namespace mfront {
                         OptionDescription::BOOLEAN);
       opts.emplace_back("generic_prediction_operator", "",
                         OptionDescription::BOOLEAN);
+      opts.emplace_back(
+          "relative_value_for_the_equivalent_stress_lower_bound",
+          "Relative value used to define a lower bound "
+          "for the equilavent stress. For isotropic parameters, "
+          "this lower bound will be equal to this value multiplied "
+          "by the Young modulus. For orthotropic materials, this lower "
+          "bound will be this value multiplied by the first component "
+          "of the stiffness tensor.",
+          OptionDescription::REAL);
       return opts;
     }  // end of HookeStressPotentialBase::getGeneralOptions()
 
