@@ -134,6 +134,11 @@ namespace mtest{
     return this->b->getThermodynamicForceComponentPosition(c);
   } // end of LogarithmicStrain1DBehaviourWrapper::getThermodynamicForceComponentPosition
 
+  size_t LogarithmicStrain1DBehaviourWrapper::getTangentOperatorArraySize()
+      const {
+    return this->b->getTangentOperatorArraySize();
+  }  // end of LogarithmicStrain1DBehaviourWrapper::getTangentOperatorArraySize
+
   unsigned short LogarithmicStrain1DBehaviourWrapper::getSymmetryType() const {
     return this->b->getSymmetryType();
   } // end of LogarithmicStrain1DBehaviourWrapper::getSymmetryType

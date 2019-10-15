@@ -54,7 +54,7 @@ namespace mfmtg {
       };
       const auto b = tfel::system::ExternalBehaviourDescription(
           c.library, c.function, c.hypothesis);
-      if (b.interface != "Castem") {
+      if (b.mfront_interface != "Castem") {
         tfel::raise(
             "mfmtg::licos::writeMaterial: "
             "unsupported interface for behaviour '" +

@@ -44,18 +44,43 @@ namespace tfel {
       //! \brief name of the library
       std::string library;
       //! \brief name of the interface used to generate the behaviour
-      std::string interface;
+      std::string mfront_interface;
       //! \brief name of the behavior
       std::string behaviour;
       //! \brief name of the hypothesis
       std::string hypothesis;
-      //! \brief names of the gradients (driving variables)
+      //! \brief list of tangent operator blocks
+      std::vector<std::pair<std::string, std::string>> tangent_operator_blocks;
+      //! \brief names of the gradients
+      std::vector<std::string> gnames;
+      /*!
+       * \brief names of the gradients (provided for backward
+       * compatibility, gradients were initially called driving variables)
+       */
       std::vector<std::string> dvnames;
-      //! \brief types of the gradients (driving variables)
+      /*!
+       * \brief types of the gradients (reference provided for backward
+       * compatibility, gradients were initially called driving variables)
+       *
+       * \note A type is associated to an integer as follows:
+       * - 0: scalar
+       * - 1: symmetric tensor
+       * - 2: vector (size of the space dimension)
+       * - 3: unsymmetric tensor
+       */
+      std::vector<int> gtypes;
+      //! \brief types of the gradients (copy of dvtypes)
       std::vector<int> dvtypes;
       //! \brief names of the thermodynamic forces
       std::vector<std::string> thnames;
-      //! \brief types of the thermodynamic forces
+      /*!
+       * \brief types of the thermodynamic forces
+       * \note A type is associated to an integer as follows:
+       * - 0: scalar
+       * - 1: symmetric tensor
+       * - 2: vector (size of the space dimension)
+       * - 3: unsymmetric tensor
+       */
       std::vector<int> thtypes;
       /*!
        * \brief names of entry points associated with elastic material

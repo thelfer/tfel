@@ -61,13 +61,17 @@ namespace tfel {
             elm.getUMATElasticMaterialPropertiesEntryPoints(l, f);
       }
       this->source = elm.getSource(l, f);
-      this->interface = elm.getInterface(l, f);
+      this->mfront_interface = elm.getInterface(l, f);
       this->btype = elm.getUMATBehaviourType(l, f);
       this->kinematic = elm.getUMATBehaviourKinematic(l, f);
       this->stype = elm.getUMATSymmetryType(l, f);
       this->etype = elm.getUMATElasticSymmetryType(l, f);
-      this->dvnames = elm.getUMATGradientsNames(l, f);
-      this->dvtypes = elm.getUMATGradientsTypes(l, f);
+      this->tangent_operator_blocks =
+          elm.getUMATTangentOperatorBlocksNames(l, f);
+      this->gnames = elm.getUMATGradientsNames(l, f);
+      this->dvnames = this->gnames;
+      this->gtypes = elm.getUMATGradientsTypes(l, f);
+      this->dvtypes = this->gtypes;
       this->thnames = elm.getUMATThermodynamicForcesNames(l, f);
       this->thtypes = elm.getUMATThermodynamicForcesTypes(l, f);
       this->isUPUIR =

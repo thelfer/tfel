@@ -120,6 +120,10 @@ namespace mtest {
      */
     virtual unsigned short getThermodynamicForceComponentPosition(const std::string&) const = 0;
     /*!
+     * \return the size of the tangent operator
+     */
+    virtual size_t getTangentOperatorArraySize() const = 0;
+    /*!
      * \return the type of the behaviour
      * 0 means that the behaviour is isotropic.
      * 1 means that the behaviour is orthotropic.

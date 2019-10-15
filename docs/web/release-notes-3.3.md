@@ -68,6 +68,37 @@ k.setGlossaryName("ThermalConductivity");
 }
 ~~~~
 
+~~~~{.cxx}
+@DSL DefaultGenericBehaviour;
+@Behaviour StationaryNonLinearHeatTransfer;
+@Author Thomas Helfer;
+@Date 15/02/2019;
+
+@Gradient TemperatureGradient gT;
+gT.setGlossaryName("TemperatureGradient");
+
+@Flux HeatFlux j;
+j.setGlossaryName("HeatFlux");
+
+@AdditionalTangentOperatorBlock dj_ddT;
+
+@Parameter real A = 0.0375;
+@Parameter real B = 2.165e-4;
+
+@LocalVariable thermalconductivity k;
+
+@Integrator{
+  const auto T_ = T + dT;
+  k = 1 / (A + B * T_);
+  j = -k * (gT + dgT);
+} // end of @Integrator
+
+@TangentOperator {
+  dj_ddgT = -k * tmatrix<N, N, real>::Id();
+  dj_ddT  =  B * k * k * (gT + dgT);
+} // end of @TangentOperator 
+~~~~
+
 ## A new stress potential in the `StandardElastoViscoPlasticity` brick
 
 A regularised Mohr-Coulumb stress potential is now available.

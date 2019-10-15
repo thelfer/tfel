@@ -22,6 +22,63 @@
 
 namespace mtest {
 
+  static size_t getVariableSize(const int t,
+                                 const Behaviour::Hypothesis h) {
+    if (t == 0) {
+      return 1;
+    } else if (t == 1) {
+      return tfel::material::getStensorSize(h);
+    } else if (t == 2) {
+      return tfel::material::getSpaceDimension(h);
+    } else if (t != 3) {
+      tfel::raise("getVariablesSize: unsupported variable type");
+    }
+    return tfel::material::getTensorSize(h);
+  }  // end of getVariableSize
+
+  static size_t getVariablesSize(const std::vector<int>& types,
+                                 const Behaviour::Hypothesis h) {
+    size_t s = 0;
+    for (const auto& t : types) {
+      s += getVariableSize(t, h);
+    }
+    return s;
+  }  // end of getVariablesSize
+
+  static void updateComponentsList(std::vector<std::string>& c,
+                                   const StandardBehaviourBase& b,
+                                   const std::string& v,
+                                   const int t) {
+    auto push_back = [&c](const std::string& n) {
+      if (std::find(c.cbegin(), c.cend(), n) != c.cend()) {
+        tfel::raise(
+            "StandardBehaviourBase::getGradientsComponents: "
+            "components multiply declared");
+      }
+      c.push_back(n);
+    };
+    if (t == 0) {
+      push_back(v);
+    } else if (t == 1) {
+      for (const auto& e : b.getStensorComponentsSuffixes()) {
+        push_back(v + e);
+      }
+    } else if (t == 2) {
+      for (const auto& e : b.getVectorComponentsSuffixes()) {
+        push_back(v + e);
+      }
+    } else if (t == 3) {
+      for (const auto& e : b.getTensorComponentsSuffixes()) {
+        push_back(v + e);
+      }
+    } else {
+      tfel::raise(
+          "StandardBehaviourBase::getGradientsComponents: "
+          "unsupported type for variable '" +
+          v + "'");
+    }
+  }  // end of updateComponentsList
+
   StandardBehaviourDescription::StandardBehaviourDescription() = default;
   StandardBehaviourDescription::StandardBehaviourDescription(
       StandardBehaviourDescription&&) = default;
@@ -183,8 +240,10 @@ namespace mtest {
 
   unsigned short StandardBehaviourBase::getGradientsSize() const {
     const auto h = this->getHypothesis();
-    if ((this->btype == 1) ||
-        ((this->btype == 2u) && (this->kinematic == 4u))) {
+    if (this->btype == 0) {
+      return getVariablesSize(this->gtypes, this->getHypothesis());
+    } else if ((this->btype == 1) ||
+               ((this->btype == 2u) && (this->kinematic == 4u))) {
       // small strain behaviours
       if ((h == ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) ||
           (h == ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)) {
@@ -240,8 +299,10 @@ namespace mtest {
 
   unsigned short StandardBehaviourBase::getThermodynamicForcesSize() const {
     const auto h = this->getHypothesis();
-    if ((this->btype == 1) ||
-        ((this->btype == 2u) && (this->kinematic == 4u))) {
+    if (this->btype == 0) {
+      return getVariablesSize(this->thtypes, this->getHypothesis());
+    } else if ((this->btype == 1) ||
+               ((this->btype == 2u) && (this->kinematic == 4u))) {
       // small strain behaviours
       if ((h == ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) ||
           (h == ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)) {
@@ -379,17 +440,15 @@ namespace mtest {
       const {
     const auto h = this->getHypothesis();
     auto c = std::vector<std::string>{};
-    if ((this->btype == 1) ||
-        ((this->btype == 2u) && (this->kinematic == 4u))) {
-      const auto exts = this->getStensorComponentsSuffixes();
-      for (const auto& e : exts) {
-        c.push_back("E" + e);
+    if (this->btype == 0) {
+      for (decltype(this->gnames.size()) i = 0; i != this->gnames.size(); ++i) {
+        updateComponentsList(c, *this, this->gnames[i], this->gtypes[i]);
       }
+    } else if ((this->btype == 1) ||
+               ((this->btype == 2u) && (this->kinematic == 4u))) {
+      updateComponentsList(c, *this, "E", 1);
     } else if (this->btype == 2) {
-      const auto exts = this->getTensorComponentsSuffixes();
-      for (const auto& e : exts) {
-        c.push_back("F" + e);
-      }
+      updateComponentsList(c, *this, "F", 3);
     } else if (this->btype == 3) {
       if ((h == ModellingHypothesis::TRIDIMENSIONAL) ||
           (h == ModellingHypothesis::PLANESTRAIN) ||
@@ -416,14 +475,15 @@ namespace mtest {
 
   std::vector<std::string>
   StandardBehaviourBase::getThermodynamicForcesComponents() const {
-    using namespace std;
     const auto h = this->getHypothesis();
-    vector<string> c;
-    if ((this->btype == 1) || (this->btype == 2)) {
-      const auto exts = this->getStensorComponentsSuffixes();
-      for (const auto& e : exts) {
-        c.push_back("S" + e);
+    auto c = std::vector<std::string>{};
+    if (this->btype == 0) {
+      for (decltype(this->thnames.size()) i = 0; i != this->thnames.size();
+           ++i) {
+        updateComponentsList(c, *this, this->thnames[i], this->thtypes[i]);
       }
+    } else if ((this->btype == 1) || (this->btype == 2)) {
+      updateComponentsList(c, *this, "S", 1);
     } else if (this->btype == 3) {
       if ((h == ModellingHypothesis::TRIDIMENSIONAL) ||
           (h == ModellingHypothesis::PLANESTRAIN) ||
@@ -480,6 +540,14 @@ namespace mtest {
     }
     return static_cast<unsigned short>(p - c.begin());
   }  // end of StandardBehaviourBase::getThermodynamicForceComponentPosition
+
+  size_t StandardBehaviourBase::getTangentOperatorArraySize() const {
+    auto r = size_t{};
+    for (const auto& b : this->tangent_operator_blocks) {
+
+    }
+    return r;
+  }  // end of StandardBehaviourBase::getTangentOperatorSize
 
   unsigned short StandardBehaviourBase::getSymmetryType() const {
     if (this->stype == 0) {
@@ -582,20 +650,7 @@ namespace mtest {
   }
 
   size_t StandardBehaviourBase::getInternalStateVariablesSize() const {
-    const auto h = this->getHypothesis();
-    size_t s = 0;
-    for (const auto& t : this->ivtypes) {
-      if (t == 0) {
-        s += 1;
-      } else if (t == 1) {
-        s += tfel::material::getStensorSize(h);
-      } else if (t == 2) {
-        s += tfel::material::getSpaceDimension(h);
-      } else if (t == 3) {
-        s += tfel::material::getTensorSize(h);
-      }
-    }
-    return s;
+    return getVariablesSize(this->ivtypes, this->getHypothesis());
   }  // end of StandardBehaviourBase::getInternalStateVariablesSize
 
   size_t StandardBehaviourBase::getExternalStateVariablesSize() const {

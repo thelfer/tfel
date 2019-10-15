@@ -531,6 +531,12 @@ namespace tfel {
       std::vector<std::string> getUMATGradientsNames(const std::string&,
                                                      const std::string&);
       /*!
+       * A type is associated to an integer as follows:
+       * - 0: scalar
+       * - 1: symmetric tensor
+       * - 2: vector (size of the space dimension)
+       * - 3: unsymmetric tensor
+       *
        * \param[in] l : name of the library
        * \param[in] f : law name
        */
@@ -543,6 +549,12 @@ namespace tfel {
       std::vector<std::string> getUMATDrivingVariablesNames(const std::string&,
                                                             const std::string&);
       /*!
+       * A type is associated to an integer as follows:
+       * - 0: scalar
+       * - 1: symmetric tensor
+       * - 2: vector (size of the space dimension)
+       * - 3: unsymmetric tensor
+       *
        * \param[in] l : name of the library
        * \param[in] f : law name
        */
@@ -555,6 +567,12 @@ namespace tfel {
       std::vector<std::string> getUMATThermodynamicForcesNames(
           const std::string&, const std::string&);
       /*!
+       * A type is associated to an integer as follows:
+       * - 0: scalar
+       * - 1: symmetric tensor
+       * - 2: vector (size of the space dimension)
+       * - 3: unsymmetric tensor
+       *
        * \param[in] l : name of the library
        * \param[in] f : law name
        */
@@ -598,6 +616,12 @@ namespace tfel {
       std::vector<std::string> getUMATInternalStateVariablesNames(
           const std::string&, const std::string&, const std::string&);
       /*!
+       * A type is associated to an integer as follows:
+       * - 0: scalar
+       * - 1: symmetric tensor
+       * - 2: vector (size of the space dimension)
+       * - 3: unsymmetric tensor
+       *
        * \param[in] l : name of the library
        * \param[in] f : law name
        * \param[in] h : modelling hypothesis

@@ -44,7 +44,7 @@ namespace tfel {
       //! \brief MFront source file
       std::string source;
       //! \brief name of the interface used to generate the material property
-      std::string interface;
+      std::string mfront_interface;
       //! name of the library
       std::string library;
       //! name of the material property

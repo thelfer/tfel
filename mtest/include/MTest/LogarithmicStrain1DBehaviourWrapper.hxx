@@ -17,13 +17,10 @@
 #include<memory>
 #include"MTest/Behaviour.hxx"
 
-namespace mtest
-{
-  
+namespace mtest {
+
   //! A simple wrapper around mechanical behaviours
-  struct LogarithmicStrain1DBehaviourWrapper
-    : public Behaviour
-  {
+  struct LogarithmicStrain1DBehaviourWrapper : public Behaviour {
     /*!
      * \brief This function set a material property to its default value if it not already declared
      * \param[out] mp  : evolution manager where 
@@ -31,11 +28,10 @@ namespace mtest
      * \param[in]  n   : material property name
      * \param[in]  v   : default value
      */
-    static void
-    setOptionalMaterialPropertyDefaultValue(EvolutionManager&,
-					    const EvolutionManager&,
-					    const std::string&,
-					    const real);
+    static void setOptionalMaterialPropertyDefaultValue(EvolutionManager&,
+                                                        const EvolutionManager&,
+                                                        const std::string&,
+                                                        const real);
     /*!
      * constructor
      * \param[in] wb : wrapped behaviour
@@ -55,6 +51,7 @@ namespace mtest
     unsigned short getGradientComponentPosition(const std::string&) const override;
     unsigned short getThermodynamicForceComponentPosition(const std::string&) const override;
     unsigned short getSymmetryType() const override;
+    size_t getTangentOperatorArraySize() const override;
     std::vector<std::string> getMaterialPropertiesNames() const override;
     size_t getMaterialPropertiesSize() const override;
     std::vector<std::string> getOptionalMaterialProperties() const override;

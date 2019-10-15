@@ -609,8 +609,12 @@ namespace mtest {
       }
     }
     if (!state.containsParameter("LagrangeMultipliersNormalisationFactor")) {
-      state.setParameter("LagrangeMultipliersNormalisationFactor",
-                         *(std::max_element(k.begin(), k.end())));
+      state.setParameter(
+          "LagrangeMultipliersNormalisationFactor",
+          std::abs(*(std::max_element(k.begin(), k.end(),
+                                      [](const real v1, const real v2) {
+                                        return std::abs(v1) < std::abs(v2);
+                                      }))));
     }
     const auto a =
         state.getParameter<real>("LagrangeMultipliersNormalisationFactor");
@@ -750,8 +754,12 @@ namespace mtest {
     std::fill(k.begin(),k.end(),real(0));
     updateStiffnessAndResidual(k, r, *(this->b), bwk.k, s.s1);
     if (!state.containsParameter("LagrangeMultipliersNormalisationFactor")) {
-      state.setParameter("LagrangeMultipliersNormalisationFactor",
-                         *(std::max_element(k.begin(), k.end())));
+      state.setParameter(
+          "LagrangeMultipliersNormalisationFactor",
+          std::abs(*(std::max_element(k.begin(), k.end(),
+                                      [](const real v1, const real v2) {
+                                        return std::abs(v1) < std::abs(v2);
+                                      }))));
     }
     const auto a =
         state.getParameter<real>("LagrangeMultipliersNormalisationFactor");

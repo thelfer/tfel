@@ -12,11 +12,12 @@
  */
 
 #ifndef LIB_MTEST_MTESTTYPES_HXX
-#define LIB_MTEST_MTESTTYPES_HXX 
+#define LIB_MTEST_MTESTTYPES_HXX
 
-#include<map>
-#include<string>
-#include<memory>
+#include <map>
+#include <string>
+#include <memory>
+#include <cstddef>
 
 namespace mtest {
 
