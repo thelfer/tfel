@@ -11,6 +11,8 @@
  * project under specific licensing conditions.
  */
 
+#include <iostream>
+
 #include <sstream>
 #include "TFEL/Raise.hxx"
 #include "TFEL/Config/GetTFELVersion.h"
@@ -233,18 +235,25 @@ namespace mfront {
       }
       write_impl(bns);
     };
+    auto empty_impl = [this, &i, &name, &out] {
+      // strain measure is handled by the interface
+      // we don't write any tangent operator here
+      // as the consistent tangent operator
+      // in finite strain is very dependant of the
+      // interface is generally not related
+      // the derivative of a flux with respect to
+      // a gradient
+      const auto fn = i.getFunctionNameBasis(name);
+      out << "MFRONT_SHAREDOBJ unsigned short " << fn
+          << "_nTangentOperatorBlocks = 0;\n\n";
+      this->writeArrayOfStringsSymbol(out, fn + "_TangentOperatorBlocks", {});
+    };
     if (bd.getBehaviourType() ==
         BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
       if ((bd.isStrainMeasureDefined()) &&
           (bd.getStrainMeasure() != BehaviourDescription::LINEARISED)) {
         if (this->handleStrainMeasure()) {
-          // strain measure is handled by the interface
-          // we don't write any tangent operator here
-          // as the consistent tangent operator
-          // in finite strain is very dependant of the
-          // interface is generally not related
-          // the derivative of a flux with respect to
-          // a gradient
+          empty_impl();
         } else {
           default_impl();
         }
@@ -253,12 +262,7 @@ namespace mfront {
       }
     } else if (bd.getBehaviourType() ==
                BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
-      // we don't write any tangent operator here
-      // as the consistent tangent operator
-      // in finite strain is very dependant of the
-      // interface is generally not related
-      // the derivative of a flux with respect to
-      // a gradient
+      empty_impl();
     } else {
       default_impl();
     }

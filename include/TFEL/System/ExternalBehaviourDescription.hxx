@@ -49,7 +49,14 @@ namespace tfel {
       std::string behaviour;
       //! \brief name of the hypothesis
       std::string hypothesis;
-      //! \brief list of tangent operator blocks
+      /*!
+       * \brief list of tangent operator blocks
+       *
+       * \note this entry is most of the time empty for finite strain
+       * behaviours, because the tangent operators used by most interfaces
+       * are not directly the derivative of the stress with respect to
+       * the deformation gradient.
+       */
       std::vector<std::pair<std::string, std::string>> tangent_operator_blocks;
       //! \brief names of the gradients
       std::vector<std::string> gnames;

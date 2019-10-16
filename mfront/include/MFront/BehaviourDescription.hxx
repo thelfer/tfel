@@ -209,6 +209,8 @@ namespace mfront {
     bool areDynamicallyAllocatedVectorsAllowed() const;
     //! \return true of the parser shall declare a dynamically
     bool useDynamicallyAllocatedVector(const unsigned short) const;
+    //! \return if the behaviour name is defined
+    bool isBehaviourNameDefined() const;
     /*!
      * \brief set the behaviour name
      * \param[in] b: behaviour name

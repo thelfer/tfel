@@ -944,7 +944,7 @@ namespace tfel {
         } else if (*p == "-") {
           g->add(std::make_shared<TOperator>("-"));
           ++p;
-        } else if (*p == "*") {
+        } else if ((*p == "*") || (*p == "\u22C5")) {
           g->add(std::make_shared<TOperator>("*"));
           ++p;
         } else if (*p == "/") {

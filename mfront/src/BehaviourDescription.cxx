@@ -33,12 +33,14 @@ namespace mfront {
       const BehaviourDescription::ConstantMaterialProperty& mp,
       const BehaviourDescription& bd,
       const std::string& n) {
+    const auto prefix =
+        bd.isBehaviourNameDefined() ? bd.getBehaviourName() + "_" : "";
     auto mpd = MaterialPropertyDescription{};
     mpd.output = VariableDescription{"real", "res", 1u, 0u};
     std::ostringstream body;
     body << "res = " << mp.value << ";\n";
-    mpd.law = bd.getBehaviourName() + "_" + n;
-    mpd.className = bd.getBehaviourName() + "_" + n;
+    mpd.law = prefix + n;
+    mpd.className = prefix + n;
     mpd.material = bd.getMaterialName();
     mpd.f.modified = true;
     mpd.f.body = body.str();
@@ -49,9 +51,11 @@ namespace mfront {
       const BehaviourDescription::ExternalMFrontMaterialProperty& mp,
       const BehaviourDescription& bd,
       const std::string& n) {
+    const auto prefix =
+        bd.isBehaviourNameDefined() ? bd.getBehaviourName() + "_" : "";
     auto mpd = *(mp.mpd);
-    mpd.law = bd.getBehaviourName() + "_" + n;
-    mpd.className = bd.getBehaviourName() + "_" + n;
+    mpd.law = prefix + n;
+    mpd.className = prefix + n;
     mpd.material = bd.getMaterialName();
     return mpd;
   }  // end of buildMaterialPropertyDescription
@@ -60,10 +64,12 @@ namespace mfront {
       const BehaviourDescription::AnalyticMaterialProperty& mp,
       const BehaviourDescription& bd,
       const std::string& n) {
+    const auto prefix =
+        bd.isBehaviourNameDefined() ? bd.getBehaviourName() + "_" : "";
     auto mpd = MaterialPropertyDescription{};
     mpd.output = VariableDescription{"real", "res", 1u, 0u};
-    mpd.law = bd.getBehaviourName() + "_" + n;
-    mpd.className = bd.getBehaviourName() + "_" + n;
+    mpd.law = prefix + n;
+    mpd.className = prefix + n;
     mpd.material = bd.getMaterialName();
     const auto h  = *(bd.getDistinctModellingHypotheses().begin());
     const auto& d = bd.getBehaviourData(h);
@@ -441,6 +447,10 @@ namespace mfront {
     return *(p->second);
   }  // end of BehaviourDescription::getBehaviourData2
 
+  bool BehaviourDescription::isBehaviourNameDefined() const {
+    return !this->behaviour.empty();
+  }  // end of BehaviourDescription::isBehaviourNameDefined
+ 
   void BehaviourDescription::setBehaviourName(const std::string& m) {
     tfel::raise_if(!this->behaviour.empty(),
                    "BehaviourDescription::setBehaviourName: "

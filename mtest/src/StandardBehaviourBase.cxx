@@ -543,8 +543,26 @@ namespace mtest {
 
   size_t StandardBehaviourBase::getTangentOperatorArraySize() const {
     auto r = size_t{};
-    for (const auto& b : this->tangent_operator_blocks) {
+    auto getVariableSize = [this](const std::string& n) {
+      auto find = [&n](const std::vector<std::string>& variables) {
+        return std::find(variables.cbegin(), variables.cend(), n);
+      };
+      const auto h = this->getHypothesis();
+      auto pg = find(this->gnames);
+      if (pg != this->gnames.cend()) {
+        return mtest::getVariableSize(this->gtypes[pg - this->gnames.cbegin()],
+                                      h);
+      }
+      auto pth = find(this->thnames);
+      if (pth != this->thnames.cend()) {
+        return mtest::getVariableSize(
+            this->thtypes[pth - this->thnames.cbegin()], h);
+      }
+      
 
+    };
+    for (const auto& b : this->tangent_operator_blocks) {
+    
     }
     return r;
   }  // end of StandardBehaviourBase::getTangentOperatorSize
