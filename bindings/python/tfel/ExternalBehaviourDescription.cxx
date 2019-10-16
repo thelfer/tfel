@@ -52,7 +52,8 @@ void declareExternalBehaviourDescription() {
       .def_readonly("tfel_version", &ExternalBehaviourDescription::tfel_version)
       .def_readonly("build_id", &ExternalBehaviourDescription::build_id)
       .def_readonly("source", &ExternalBehaviourDescription::source)
-      .def_readonly("interface", &ExternalBehaviourDescription::interface)
+      .def_readonly("mfront_interface",
+                    &ExternalBehaviourDescription::mfront_interface)
       .def_readonly("btype", &ExternalBehaviourDescription::btype)
       .def_readonly("stype", &ExternalBehaviourDescription::stype)
       .def_readonly("etype", &ExternalBehaviourDescription::etype)
