@@ -6,7 +6,7 @@ algorithms are available:
 
 - `euler`, `rk2`, `rk4`, `rk42` , `rk54` and `rkCastem` for the
   `Runge-Kutta` dsl.
-- `NewtonRaphson`, `NewtonRaphson_NumericalJacobian,`
+- `NewtonRaphson`, `NewtonRaphson_NumericalJacobian`,
   `PowellDogLeg_NewtonRaphson`,
   `PowellDogLeg_NewtonRaphson_NumericalJacobian`, `Broyden`,
   `PowellDogLeg_Broyden`, `Broyden2`, `LevenbergMarquardt`,

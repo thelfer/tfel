@@ -38,6 +38,13 @@ options:
 
 # Issues solved
 
+## Ticket #192: DSL 'Implicit' definition
+
+The documentation of the `Implicit` `DSL` was wrong about the automatic
+definition of the elastic strain.
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/192/>
+
 ## Ticket #187: Conversions in `Number::getCxxFormula` is biased by rounding errors
 
 `Number::getCxxFormula` did rely on `std::to_string` which only has 6

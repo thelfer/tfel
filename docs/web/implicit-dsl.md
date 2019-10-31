@@ -47,6 +47,18 @@ linear system of equations whose unknowns are is increment
 
 # Available algorithms
 
+The following algorithms are available:
+
+- `NewtonRaphson`
+- `NewtonRaphson_NumericalJacobian`
+- `PowellDogLeg_NewtonRaphson`
+- `PowellDogLeg_NewtonRaphson_NumericalJacobian`
+- `Broyden`
+- `PowellDogLeg_Broyden`
+- `Broyden2`
+- `LevenbergMarquardt`
+- `LevenbergMarquardt_NumericalJacobian`
+
 ## Notes about updating auxiliary state variable or local variables in the `Integrator` code blocks when the numerical evaluation of the jacobian is requested
 
 In some cases, it is convenient to update auxiliary state variables
