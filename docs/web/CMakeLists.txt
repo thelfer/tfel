@@ -5,7 +5,7 @@ macro(pandoc_html file)
     DEPENDS   ${CMAKE_CURRENT_SOURCE_DIR}/mfront-template.html
     DEPENDS   ${CMAKE_CURRENT_SOURCE_DIR}/css/main.css
     COMMAND   ${PANDOC}
-    ARGS      -f markdown-markdown_in_html_blocks+tex_math_single_backslash
+    ARGS      -f markdown-markdown_in_html_blocks+tex_math_single_backslash+grid_tables
     ARGS      --filter pandoc-crossref -M crossrefYaml=${CMAKE_CURRENT_SOURCE_DIR}/pandoc-crossref.yaml
     ARGS      --bibliography=${CMAKE_CURRENT_SOURCE_DIR}/bibliography.bib --filter pandoc-citeproc
     ARGS      --template=${CMAKE_CURRENT_SOURCE_DIR}/mfront-template.html
@@ -120,6 +120,7 @@ pandoc_html(generic-behaviours-interface "--toc" "--toc-depth=3")
 pandoc_html(sovs "--toc" "--toc-depth=2")
 pandoc_html(unicode "--toc" "--toc-depth=2")
 pandoc_html(RambergOsgoodNonLinearElasticity "--toc" "--toc-depth=2")
+pandoc_html(MericCailletaudSingleCrystalPlasticity  "--toc" "--toc-depth=2")
 
 # mfront keywords
 

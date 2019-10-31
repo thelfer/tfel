@@ -22,6 +22,13 @@ behaviour. This framework is described
 - [This page](sovs.html) describes how to implement the
   Skorohold-Olevsky Viscous Sintering (SOVS) model.
 
+## Non linear elasticity
+
+- [A non linear elastic behaviour that mimics the Ramberg-Osgood plastic
+  behaviour on monotonic
+  loadings](RambergOsgoodNonLinearElasticity.html) (usefull in fracture
+  analysis
+
 ## Damage
 
 - [Marigo](gallery/damage/Marigo.mfront)

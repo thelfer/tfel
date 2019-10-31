@@ -24,7 +24,7 @@
 namespace mfront
 {
 
-#if !(defined _WIN32 || defined _WIN64 ||defined __APPLE__)
+#if !(defined _WIN32 || defined _WIN64)
   /*!
    * add a new measure
    * t     : measure to which the new measure is added
@@ -44,7 +44,7 @@ namespace mfront
       temp.tv_nsec = end.tv_nsec-start.tv_nsec;
     }
     t += 1000000000*temp.tv_sec+temp.tv_nsec;
-  } // end of add_measure
+  }  // end of add_measure
 #endif
 
   /*!
@@ -118,8 +118,8 @@ namespace mfront
     case BehaviourProfiler::INTEGRATOR:
       n = "Integrator";
       break;
-    case BehaviourProfiler::COMPUTESTRESS:
-      n = "Integrator::ComputeStress";
+    case BehaviourProfiler::COMPUTETHERMODYNAMICFORCES:
+      n = "Integrator::ComputeThermodynamicForces";
       break;
     case BehaviourProfiler::ADDITIONALCONVERGENCECHECKS:
       n = "Integrator::AdditionalConvergenceChecks";
@@ -133,8 +133,8 @@ namespace mfront
     case BehaviourProfiler::TINYMATRIXSOLVE:
       n = "Integrator::TinyMatrixSolve";
       break;
-    case BehaviourProfiler::COMPUTEFINALSTRESS:
-      n = "ComputeFinalStress";
+    case BehaviourProfiler::COMPUTEFINALTHERMODYNAMICFORCES:
+      n = "ComputeFinalThermodynamicForces";
       break;
     case BehaviourProfiler::COMPUTETANGENTOPERATOR:
       n = "ComputeTangentOperator";
@@ -169,33 +169,26 @@ namespace mfront
     }
     return n;
   }
-  
-  BehaviourProfiler::Timer::Timer(BehaviourProfiler& t,
-				  const unsigned short cn)
-    : gtimer(t),
-      c(cn)
-  {
-#if !(defined _WIN32 || defined _WIN64 || defined __APPLE__)
+
+  BehaviourProfiler::Timer::Timer(BehaviourProfiler& t, const unsigned short cn)
+      : gtimer(t), c(cn) {
+#if !(defined _WIN32 || defined _WIN64)
     ::clock_gettime(CLOCK_THREAD_CPUTIME_ID,&(this->start));
 #endif
-  } // end of BehaviourProfiler::Timer
+  }  // end of BehaviourProfiler::Timer
 
-  BehaviourProfiler::Timer::~Timer()
-  {
-#if !(defined _WIN32 || defined _WIN64 || defined __APPLE__)
+  BehaviourProfiler::Timer::~Timer() {
+#if !(defined _WIN32 || defined _WIN64)
     ::clock_gettime(CLOCK_THREAD_CPUTIME_ID,&(this->end));
     add_measure(this->gtimer.measures[this->c],this->start,this->end);
-#endif    
-  } // end of BehaviourProfiler::~Timer
+#endif
+  }  // end of BehaviourProfiler::~Timer
 
-  BehaviourProfiler::BehaviourProfiler(const std::string& n)
-    : name(n)
-  {
+  BehaviourProfiler::BehaviourProfiler(const std::string& n) : name(n) {
     std::fill(begin(measures),end(measures),0);
-  } // end of BehaviourProfiler::BehaviourProfiler
+  }  // end of BehaviourProfiler::BehaviourProfiler
 
-  BehaviourProfiler::~BehaviourProfiler()
-  {
+  BehaviourProfiler::~BehaviourProfiler() {
     using size_type = std::array<std::atomic<std::intmax_t>, 23>::size_type;
     std::cout << "\nResults of " << this->name << " profiling : ";
     print_time(std::cout,measures.back());
@@ -215,6 +208,6 @@ namespace mfront
       }
     }
     std::cout << std::endl;
-  } // end of BehaviourProfiler::~BehaviourProfiler
-  
+  }  // end of BehaviourProfiler::~BehaviourProfiler
+
 } // end of namespace mfront

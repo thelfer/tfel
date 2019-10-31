@@ -19,8 +19,8 @@ As the time of writting this notice, the following dsl's are available:
   does not make any restriction on the behaviour or the integration
   method that may be used.
 - `Implicit`: this parser provides a generic integrator based on an
-  implicit scheme. The elastic strain is not automatically defined as
-  a state variable
+  implicit scheme. The elastic strain is automatically defined as a
+  state variable
 - `ImplicitII`: this parser provides a generic integrator based on a
   theta method. Unlike `Implicit`, the elastic strain is not
   automatically defined as a state variable.

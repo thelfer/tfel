@@ -190,6 +190,7 @@ docs/gallery/behaviours/damage/Mazars.mfront -text
 docs/gallery/behaviours/finitestrainsinglecrystal/CMakeLists.txt -text
 docs/gallery/behaviours/finitestrainsinglecrystal/FiniteStrainSingleCrystalHuang.mfront -text
 docs/gallery/behaviours/finitestrainsinglecrystal/Makefile.am -text
+docs/gallery/behaviours/finitestrainsinglecrystal/MericCailletaudFiniteStrainSingleCrystalViscoPlasticity.mfront -text
 docs/gallery/behaviours/hyperelasticity/CMakeLists.txt -text
 docs/gallery/behaviours/hyperelasticity/Makefile.am -text
 docs/gallery/behaviours/hyperelasticity/Ogden-tfel-3.0.0.mfront -text
@@ -225,6 +226,8 @@ docs/gallery/behaviours/viscoplasticity/Hayhurst.mfront -text
 docs/gallery/behaviours/viscoplasticity/ImplicitNorton.mfront -text
 docs/gallery/behaviours/viscoplasticity/IsotropicViscoplasticityAmstrongFredericKinematicHardening.mfront -text
 docs/gallery/behaviours/viscoplasticity/Makefile.am -text
+docs/gallery/behaviours/viscoplasticity/MericCailletaudSingleCrystalViscoPlasticity.mfront -text
+docs/gallery/behaviours/viscoplasticity/MericCailletaudSingleCrystalViscoPlasticityNumericalJacobian.mfront -text
 docs/html/Makefile.am -text
 docs/html/reveal.js/.travis.yml -text
 docs/html/reveal.js/CONTRIBUTING.md -text
@@ -1150,6 +1153,7 @@ docs/web/LICENSE.md -text
 docs/web/MTest-keywords.md -text
 docs/web/Makefile.am -text
 docs/web/MaterialLaw-keywords.md -text
+docs/web/MericCailletaudSingleCrystalPlasticity.md -text
 docs/web/Model-keywords.md -text
 docs/web/MohrCoulomb.md -text
 docs/web/MultipleIsotropicMisesFlows-keywords.md -text

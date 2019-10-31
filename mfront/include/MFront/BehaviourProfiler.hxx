@@ -60,7 +60,7 @@ namespace mfront{
       BehaviourProfiler& gtimer;
       //! code block associated with the timer
       const index_type c;
-#if !(defined _WIN32 || defined _WIN64 || defined __APPLE__)
+#if !(defined _WIN32 || defined _WIN64)
       //! start
       timespec start;
       //! end
@@ -98,7 +98,7 @@ namespace mfront{
     index_type INTEGRATOR = 6;
     //! code block index in the measures array
     static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER
-    index_type COMPUTESTRESS = 7;
+    index_type COMPUTETHERMODYNAMICFORCES = 7;
     //! code block index in the measures array
     static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER
     index_type COMPUTEDERIVATIVE = 8;
@@ -113,7 +113,7 @@ namespace mfront{
     index_type TINYMATRIXSOLVE = 11;
     //! code block index in the measures array
     static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER
-    index_type COMPUTEFINALSTRESS = 12;
+    index_type COMPUTEFINALTHERMODYNAMICFORCES = 12;
     //! code block index in the measures array
     static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER
     index_type COMPUTETANGENTOPERATOR = 13;

@@ -117,6 +117,7 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./sovs.md                                                  \
 	   ./unicode.md                                               \
 	   ./RambergOsgoodNonLinearElasticity.md                      \
+	   ./MericCailletaudSingleCrystalPlasticity.md                \
 	   ./MohrCoulomb.md                                           \
 	   ./theory.md                                                \
 	   ./robots.txt						      \
