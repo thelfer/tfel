@@ -146,7 +146,7 @@ namespace mfront {
     } else if (c == BehaviourData::Integrator) {
       // implicit system
       auto ivs = this->mb.getBehaviourData(h).getIntegrationVariables();
-      const auto mivs = [this] {
+      const auto mivs = [this,h] {
         auto livs = this->mb.getBehaviourData(h).getIntegrationVariables();
         // remove managed integration variables
         const auto mivs_names = [this] {

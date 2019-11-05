@@ -30,7 +30,7 @@ namespace mfront {
     //! a simple alias
     using Hypothesis = ModellingHypothesis::Hypothesis;
     //! description of a variable
-    struct Variable {
+    struct MFRONT_VISIBILITY_EXPORT Variable {
       Variable();
       Variable(const std::string&, const std::string&);
       Variable(const std::string&, const std::string&, unsigned short);

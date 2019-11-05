@@ -309,7 +309,7 @@ namespace mfront {
         check(n);
         return getBehaviourDescriptionMaterialProperty(dsl, n, d.at(n));
       };
-      auto addTi = [&bd, &d]() {
+      auto addTi = [&bd, &d, uh]() {
         const auto n = "initial_geometry_reference_temperature";
         const auto v = [&d, &n] {
           if (d.count(n) != 0) {
@@ -325,7 +325,7 @@ namespace mfront {
         bd.setParameterDefaultValue(uh, n, v);
         bd.setEntryName(uh, n, "ReferenceTemperatureForInitialGeometry");
       };  // end of addTi
-      auto addTref = [&bd, &d]() {
+      auto addTref = [&bd, &d, uh]() {
         const auto n = "thermal_expansion_reference_temperature";
         const auto v = [&d, &n] {
           if (d.count(n) != 0) {

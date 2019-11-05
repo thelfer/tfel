@@ -160,7 +160,7 @@ namespace mfront{
     this->bd.addIntegrationVariable(uh, eel, BehaviourData::UNREGISTRED);
     this->bd.setGlossaryName(h, "eel", tfel::glossary::Glossary::ElasticStrain);
     // declaring the plastic slip
-    auto add_plastic_slips = [this, throw_if, uh] {
+    auto add_plastic_slips = [this, throw_if, uh, h] {
       throw_if(
           this->bd.getBehaviourData(h).getIntegrationVariables().size() != 1u,
           "no integration variable shall be declared before declaring the "
