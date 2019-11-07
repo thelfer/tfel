@@ -23,8 +23,7 @@ namespace mtest{
 
   // a simple alias
   using StudyParameter =
-    tfel::utilities::GenTypeBase<
-    typename tfel::meta::GenerateTypeList<bool,real,std::string>::type>;
+    tfel::utilities::GenType<bool,real,std::string>;
 
 } // end of namespace mtest
 

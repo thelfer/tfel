@@ -138,7 +138,7 @@ namespace mtest{
      * is found
      */
     template<typename T>
-    T& setParameter(const std::string&,T&&);
+    T& setParameter(const std::string&,const T&);
     /*!
      * \param[in] n : name of the evolution
      */

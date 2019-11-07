@@ -7,7 +7,11 @@ solved are described below.
 
 # Tickets fixed
 
-## Ticket #188: Default constructor of the qt class is ill formed: noexcept specifier is not correcty defined
+## Ticket #193: Error in the computation of the consistent tangent operator in the `OrthotropicElastic5.mfront` and `OrthotropicElastic6.mfront` example
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/193/>
+
+## Ticket #188: Default constructor of the `qt` class is ill formed: noexcept specifier is not correcty defined
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/188/>
 

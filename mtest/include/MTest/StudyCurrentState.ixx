@@ -49,7 +49,7 @@ namespace mtest{
   } // end of StudyCurrentState::getParameter
 
   template<typename T>
-  T& StudyCurrentState::setParameter(const std::string& n,T&& v)
+  T& StudyCurrentState::setParameter(const std::string& n,const T& v)
   {
     const auto p = this->parameters.find(n);
     if(p!=this->parameters.end()){
