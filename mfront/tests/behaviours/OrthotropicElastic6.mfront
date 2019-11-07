@@ -50,7 +50,7 @@ AxisymmetricalGeneralisedPlaneStress::sigzz.setGlossaryName("AxialStress");
     Dt(2,0)=D_tdt(2,0)-D_tdt(1,2)*D_tdt(1,0)/D_tdt(1,1);
     Dt(0,2)=D_tdt(0,2)-D_tdt(0,1)*D_tdt(2,1)/D_tdt(1,1);
     Dt(2,2)=D_tdt(2,2)-D_tdt(1,2)*D_tdt(2,1)/D_tdt(1,1);
-    Dt(0,1)=Dt(1,0)=D_tdt(1,2)=Dt(2,1)=Dt(1,1)=stress(0);
+    Dt(0,1)=Dt(1,0)=Dt(1,2)=Dt(2,1)=Dt(1,1)=stress(0);
   } else {
     Dt = D_tdt;
   }
