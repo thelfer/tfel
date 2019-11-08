@@ -62,7 +62,7 @@ R_aust.setNormalisationFactor(1.e11);
 
 // Martensite properties
 @LocalVariable stress   young_mart; // Young modulus  (Pa)
-@LocalVariable real   alpha_mart; // Thermal expansion (°C-1)
+@LocalVariable real   alpha_mart; // Thermal expansion (Â°C-1)
 @LocalVariable stress   R0_mart; // Yield stress (Pa)
 @LocalVariable real   F_mart ; // Viscoplastic coefficient (s-1)
 @LocalVariable stress   Rinf_mart ; // Isotropic hardening (Pa)
@@ -82,7 +82,7 @@ R_aust.setNormalisationFactor(1.e11);
 
 // Austenite properties
 @LocalVariable stress   young_aust; // Young modulus  (Pa)
-@LocalVariable real   alpha_aust; // Thermal expansion (°C-1)
+@LocalVariable real   alpha_aust; // Thermal expansion (Â°C-1)
 @LocalVariable stress   R0_aust ; // Yield stress
 @LocalVariable real   F_aust ; // Viscoplastic coefficient (s-1)
 @LocalVariable stress   Rinf_aust ; // Isotropic hardening (Pa)

@@ -70,6 +70,29 @@ The implementations described in this document are available here:
 
 # Description of the behaviour
 
+The theoretical frame which allow the monocrystalline model was
+introduced in the 70. Monocrystalline behaviour describes the slip of
+the crystallographic structure throught the slip systems of the
+considerated crystal. Slips systems are defined using two vectors: the normal of the slip plan and the slip direction. 
+
+<--!
+From each slip systems the symmetric part of the Schmid tensor
+tenseur{m}_{i} is defined. Due to this tensor which describes the slips
+systems in 3 dimensions, the monocrystalline behaviour law can only be
+express in 3 dimensions models. The Schmid tensor allows the orientation
+of the constraint tensor on each slip system, which is the resolved
+shear stress \tau_{i}. The inelastic flow is defined by dot{\gamma}_{i}
+and depends on the chosen potential. The cumulated viscoplastic strain
+is defined by dot{p}_{i} which is the absolute value of the inelastic
+flow. The hardening R_{i} is calculated for each slip systems,and it can
+be described by the sum of all the interactions each slip system has
+experienced with all the others slips systems. Interactions are
+describes using the interaction matrix which represents the geometrical
+relation between the two slip systems which are interacting. Finally,
+the defined viscoplastic strain rate \tepsilonvis is a sum of all the
+hardenings o
+-->
+
 The behaviour is described by a standard decomposition of the strain
 \(\tepsilonto\) in an elastic and a viscoplastic component, respectively
 denoted \(\tepsilonel\) and \(\tepsilonvis\):

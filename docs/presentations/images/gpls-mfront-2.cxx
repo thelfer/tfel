@@ -21,8 +21,8 @@
   if(sigeq > 10.e-7){
     n    = H*sig/sigeq;
   }
-  /* Système différentiel */
-  dp   = 0.;
+  /* ODE */
+  dp   = ...;
   devp = dp*n;
   deel = deto - devp;
 }

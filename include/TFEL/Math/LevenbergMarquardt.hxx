@@ -69,7 +69,7 @@ namespace tfel
     private:
 
       F f;
-      std::vector<std::pair<Variable,double> > data;
+      std::vector<std::pair<Variable,double>> data;
       Parameter p;
       T lambda0 = T(1.e-3);
       T factor = T(2);

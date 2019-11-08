@@ -2,7 +2,7 @@
  * \file  include/TFEL/Math/Kriging/KrigingUtilities.hxx
  * \brief
  * \author Thomas Helfer
- * \brief 14 aoû 2010
+ * \date 14/08/2010
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
  * reserved. 
  * This project is publicly released under either the GNU GPL Licence 

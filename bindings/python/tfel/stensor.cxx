@@ -2,7 +2,7 @@
  * \file  bindings/python/tfel/stensor.cxx
  * \brief
  * \author Thomas Helfer
- * \brief 30 août 2010
+ * \date 30/08/2010
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
  * reserved. 
  * This project is publicly released under either the GNU GPL Licence 

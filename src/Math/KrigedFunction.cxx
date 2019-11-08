@@ -2,7 +2,7 @@
  * \file  src/Math/KrigedFunction.cxx
  * \brief
  * \author Thomas Helfer
- * \brief 02 fév 2010
+ * \date 02/02/2010
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
  * reserved. 
  * This project is publicly released under either the GNU GPL Licence 

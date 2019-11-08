@@ -1,8 +1,8 @@
 /*!
  * \file   mfront/include/MFront/Abaqus/AbaqusRotation.hxx
  * \brief  This file declares the AbaqusRotationMatrix class
- * \author É. Castelier
- * \date   17 mar 2008
+ * \author E. Castelier
+ * \date   17/03/2008
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
  * reserved. 
  * This project is publicly released under either the GNU GPL Licence 

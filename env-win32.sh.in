@@ -10,3 +10,4 @@ export PATH=@TFEL_BINARY_DIR@/src/Glossary@TFEL_CONF_DIR@:$PATH
 export PATH=@TFEL_BINARY_DIR@/src/System@TFEL_CONF_DIR@:$PATH
 export PATH=@TFEL_BINARY_DIR@/src/Config@TFEL_CONF_DIR@:$PATH
 export PATH=@TFEL_BINARY_DIR@/src/PhysicalConstants@TFEL_CONF_DIR@:$PATH
+export PATH=@TFEL_BINARY_DIR@/src/UnicodeSupport@TFEL_CONF_DIR@:$PATH

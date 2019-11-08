@@ -113,7 +113,7 @@ namespace tfel{
       }
     };
 
-  } // end of namespace math$*µ
+  } // end of namespace math
 
 } // end of namespace tfel
 

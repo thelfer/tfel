@@ -50,7 +50,7 @@ n.setDepth(1);
   }
   incr  = swellingSaturation/Phi0;
   incr *= exp(-Phi/Phi0);
-  // terme supplémentaire à plus haute température
+  // terme supplÃ©mentaire Ã  plus haute tempÃ©rature
   if((1000.<theta)&&(theta<=1250.)){
     incr+=1.297e-28*((theta-1000.)/250.);
   } else if (theta>=1250.){

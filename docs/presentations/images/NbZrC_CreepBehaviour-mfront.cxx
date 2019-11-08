@@ -1,7 +1,7 @@
 @Parser    MultipleIsotropicMisesFlows;
 @Material  NbZrC;
 @Behaviour Creep;
-@Author    É. Brunon;
+@Author    E. Brunon;
 @Date      05/05/09;
 
 @LocalVar real A;
