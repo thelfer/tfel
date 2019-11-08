@@ -51,6 +51,8 @@ macro(mfront_model)
 	ARGS "PATH=$<TARGET_FILE_DIR:TFELConfig>;%PATH%"
 	COMMAND "set"
 	ARGS "PATH=$<TARGET_FILE_DIR:TFELPhysicalConstants>;%PATH%"
+	COMMAND "set"
+	ARGS "PATH=$<TARGET_FILE_DIR:TFELUnicodeSupport>;%PATH%"
 	COMMAND "${mfront_executable}"
 	ARGS    "${mfront_flags}" "--interface=mfront" "${mfront_source}"
 	DEPENDS "${PROJECT_BINARY_DIR}/mfront/src/mfront"
