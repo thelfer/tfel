@@ -25,8 +25,8 @@ namespace tfel {
         const J3OCoefficients<StressStensor>& b,
         const Cazacu2001BaseType<StressStensor> c) {
       using real = Cazacu2001BaseType<StressStensor>;
-      constexpr const auto e = real(1) / 6;
-      constexpr const auto sqrt3 = tfel::math::Cste<real>::sqrt3;
+      TFEL_CONSTEXPR const auto e = real(1) / 6;
+      TFEL_CONSTEXPR const auto sqrt3 = tfel::math::Cste<real>::sqrt3;
       const auto J2O = computeJ2O(sig, a);
       const auto J3O = computeJ3O(sig, b);
       return sqrt3 * pow(J2O * J2O * J2O - c * J3O * J3O, e);
@@ -43,8 +43,8 @@ namespace tfel {
         const Cazacu2001StressType<StressStensor> seps) {
       using stress = Cazacu2001StressType<StressStensor>;
       using real = Cazacu2001BaseType<StressStensor>;
-      constexpr const auto e = real(1) / 6;
-      constexpr const auto sqrt3 = tfel::math::Cste<real>::sqrt3;
+      TFEL_CONSTEXPR const auto e = real(1) / 6;
+      TFEL_CONSTEXPR const auto sqrt3 = tfel::math::Cste<real>::sqrt3;
       const auto J2O = computeJ2O(sig, a);
       if (J2O > seps * seps) {
         const auto J2O_2 = J2O * J2O;
@@ -77,8 +77,8 @@ namespace tfel {
       using stress = Cazacu2001StressType<StressStensor>;
       using real = Cazacu2001BaseType<StressStensor>;
       using istress = Cazacu2001InvertStressType<StressStensor>;
-      constexpr const auto e = real(1) / 6;
-      constexpr const auto sqrt3 = tfel::math::Cste<real>::sqrt3;
+      TFEL_CONSTEXPR const auto e = real(1) / 6;
+      TFEL_CONSTEXPR const auto sqrt3 = tfel::math::Cste<real>::sqrt3;
       const auto J2O = computeJ2O(sig, a);
       if (J2O > seps * seps) {
         const auto J2O_2 = J2O * J2O;

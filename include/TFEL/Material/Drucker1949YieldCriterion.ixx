@@ -25,8 +25,8 @@ namespace tfel {
     computeDrucker1949StressCriterion(
         const StressStensor& sig, const Drucker1949BaseType<StressStensor> c) {
       using real = Drucker1949BaseType<StressStensor>;
-      constexpr const auto e = real(1) / 6;
-      constexpr const auto sqrt3 = tfel::math::Cste<real>::sqrt3;
+      TFEL_CONSTEXPR const auto e = real(1) / 6;
+      TFEL_CONSTEXPR const auto sqrt3 = tfel::math::Cste<real>::sqrt3;
       const auto s = deviator(sig);
       const auto J2 = (s | s) / 2;
       const auto J3 = det(s);
@@ -42,8 +42,8 @@ namespace tfel {
         const Drucker1949StressType<StressStensor> seps) {
       using stress = Drucker1949StressType<StressStensor>;
       using real = Drucker1949BaseType<StressStensor>;
-      constexpr const auto e = real(1) / 6;
-      constexpr const auto sqrt3 = tfel::math::Cste<real>::sqrt3;
+      TFEL_CONSTEXPR const auto e = real(1) / 6;
+      TFEL_CONSTEXPR const auto sqrt3 = tfel::math::Cste<real>::sqrt3;
       const auto s = deviator(sig);
       const auto J2 = (s | s) / 2;
       if (J2 > seps * seps) {
@@ -76,8 +76,8 @@ namespace tfel {
       using real = Drucker1949BaseType<StressStensor>;
       using istress = Drucker1949InvertStressType<StressStensor>;
       constexpr const auto N = tfel::math::StensorTraits<StressStensor>::dime;
-      constexpr const auto e = real(1) / 6;
-      constexpr const auto sqrt3 = tfel::math::Cste<real>::sqrt3;
+      TFEL_CONSTEXPR const auto e = real(1) / 6;
+      TFEL_CONSTEXPR const auto sqrt3 = tfel::math::Cste<real>::sqrt3;
       const auto s = deviator(sig);
       const auto J2 = (s | s) / 2;
       if (J2 > seps * seps) {
