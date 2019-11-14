@@ -251,7 +251,7 @@ xnu = 0.3;
 
 ## Improvements to the `Cyrano`' behaviour interface
 
-### Generation of elastic material properties from the behaviour
+### Generation of elastic material properties from the behaviour {#sec:cyrano:elastic_material_properties}
 
 For post-processing reasons, the `Cyrano` fuel performance code must
 access the elastic material properties used by the behaviour. To ensure
@@ -412,6 +412,14 @@ The following changes were made:
 
 # Tickets solved during the development of this version
 
+## Ticket #183: Calling an MFront function (material properties) with the 'cyrano' interface
+
+This feature is detailled in Section
+@sec:cyrano:elastic_material_properties. See also Section
+@sec:cyrano:material_properties.
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/183/>
+
 ## Ticket #172: Support for dynamic choice of the consistent tangent operator of finite strain behaviours using the `generic` interface
 
 The `generic` interface now allows to specify, for finite strain
@@ -445,5 +453,9 @@ For more details, see: <https://sourceforge.net/p/tfel/tickets/172/>
 ## Ticket #171: Add the derivative of the first Piola-Kirchoff stress as a possible consistent tangentor for finite strain behaviours
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/171/>
+
+## Ticket #169: Determinant of a fourth-order tensor
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/169/>
 
 # References
