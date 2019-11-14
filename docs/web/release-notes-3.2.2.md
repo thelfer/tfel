@@ -77,5 +77,9 @@ For more details, see: <https://sourceforge.net/p/tfel/tickets/174/>
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/173/>
 
+## Ticket #157: Remove access members to the jacobian blocks associate with array of integration variables when a numerical jacobian is used
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/157/>
+
 # References
 

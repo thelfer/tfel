@@ -63,3 +63,6 @@ The default parameters' values were truncated to 6 significant digits
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/170/>
 
+# Ticket #133: Equation giving dn_ddai page 20  in the tutorial is wrong
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/133/>

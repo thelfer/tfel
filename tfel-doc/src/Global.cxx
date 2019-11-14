@@ -1,172 +1,140 @@
-/*! 
+/*!
  * \file  tfel-doc/src/Global.cxx
  * \brief
  * \author Thomas Helfer
  * \brief 03 mai 2011
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
-#include<iostream>
+#include <cstring>
+#include <iostream>
 
-#include"TFEL/Utilities/Global.hxx"
-#include"TFEL/Utilities/TerminalColors.hxx"
+#include "TFEL/Utilities/Global.hxx"
+#include "TFEL/Utilities/TerminalColors.hxx"
+#include "TFEL/Utilities/StringAlgorithms.hxx"
 
-namespace tfel{
+namespace tfel {
 
-  namespace utilities{
-    
-    std::map<std::string,std::map<std::string,std::string> >&
-    getTypeMap()
-    {
-      using namespace std;
-      static map<string,map<string,string> > t;
+  namespace utilities {
+
+    std::map<std::string, std::map<std::string, std::string>>& getTypeMap() {
+      static std::map<std::string, std::map<std::string, std::string>> t;
       return t;
     }
 
-    std::map<std::string,std::string>&
-    getTypeMap(const std::string& l)
-    {
-      using namespace std;
-      static map<string,map<string,string> > t;
+    std::map<std::string, std::string>& getTypeMap(const std::string& l) {
+      static std::map<std::string, std::map<std::string, std::string>> t;
       return t[l];
     }
 
-    std::map<std::string,std::map<std::string,std::string> >&
-    getCategoriesMap()
-    {
-      using namespace std;
-      static map<string,map<string,string> > c;
+    std::map<std::string, std::map<std::string, std::string>>&
+    getCategoriesMap() {
+      static std::map<std::string, std::map<std::string, std::string>> c;
       return c;
     }
 
-    std::map<std::string,std::string>&
-    getCategoriesMap(const std::string& l)
-    {
-      using namespace std;
+    std::map<std::string, std::string>& getCategoriesMap(const std::string& l) {
       return getCategoriesMap()[l];
     }
 
-    std::map<std::string,std::map<std::string,std::string> >&
-    getKeysMap()
-    {
-      using namespace std;
-      static map<string,map<string,string> > k;
+    std::map<std::string, std::map<std::string, std::string>>& getKeysMap() {
+      static std::map<std::string, std::map<std::string, std::string>> k;
       return k;
     }
 
-    std::map<std::string,std::string>&
-    getKeysMap(const std::string& l)
-    {
-      using namespace std;
+    std::map<std::string, std::string>& getKeysMap(const std::string& l) {
       return getKeysMap()[l];
     }
 
-    std::map<std::string,std::map<std::string,std::string> >&
-    getTranslationsMap()
-    {
-      using namespace std;
-      static map<string,map<string,string> > k;
+    std::map<std::string, std::map<std::string, std::string>>&
+    getTranslationsMap() {
+      static std::map<std::string, std::map<std::string, std::string>> k;
       return k;
     }
 
-    std::map<std::string,std::string>&
-    getTranslationsMap(const std::string& l)
-    {
-      using namespace std;
+    std::map<std::string, std::string>& getTranslationsMap(
+        const std::string& l) {
       return getTranslationsMap()[l];
     }
 
-    std::string
-    getTranslation(const std::string& s,
-		   const std::string& l)
-    {
-      using namespace std;
+    std::string getTranslation(const std::string& s, const std::string& l) {
       using namespace tfel::utilities;
       const auto& translations = getTranslationsMap(l);
-      map<string,string>::const_iterator pk;
-      if(l=="english"){
-	return s;
+      if (l == "english") {
+        return s;
       }
-      pk = translations.find(s);
-      if(pk!=translations.end()){
-	return pk->second;
+      const auto pk = translations.find(s);
+      if (pk != translations.end()) {
+        return pk->second;
       }
-      cerr << TerminalColors::Red;
-      cerr << "getTranslation : no translation found for '" << s
-	   << "' in language '"+l+"', using default" << endl;
-      cerr << TerminalColors::Reset;
+      std::cerr << TerminalColors::Red;
+      std::cerr << "getTranslation : no translation found for '" << s
+                << "' in language '" + l + "', using default" << std::endl;
+      std::cerr << TerminalColors::Reset;
       return s;
     }
 
-    std::string
-    getCategory(const std::string& s,
-		const std::string& l)
-    {
-      using namespace std;
+    std::string getCategory(const std::string& s, const std::string& l) {
       using namespace tfel::utilities;
       const auto& categories = getCategoriesMap(l);
-      map<string,string>::const_iterator pk;
-      pk = categories.find(s);
-      if(pk!=categories.end()){
-	return pk->second;
+      const auto pk = categories.find(s);
+      if (pk != categories.end()) {
+        return pk->second;
       }
-      cerr << TerminalColors::Red;
-      cerr << "getCategory : no category found for '" << s
-	   << "' in language '"+l+"', using default" << endl;
-      cerr << TerminalColors::Reset;
+      std::cerr << TerminalColors::Red;
+      std::cerr << "getCategory : no category found for '" << s
+                << "' in language '" + l + "', using default" << std::endl;
+      std::cerr << TerminalColors::Reset;
       return s;
     }
 
-    std::string
-    getKeyValue(const std::string& s,
-		const std::string& l)
-    {
-      using namespace std;
+    std::string getKeyValue(const std::string& s, const std::string& l) {
       using namespace tfel::utilities;
       const auto& keys = getKeysMap(l);
-      map<string,string>::const_iterator pk;
-      if(s.empty()){
-	return s;
+      if (s.empty()) {
+        return s;
       }
-      if(s[0]=='!'){
-	return s.substr(1);
+      if (s[0] == '!') {
+        return s.substr(1);
       }
-      pk = keys.find(s);
-      if(pk!=keys.end()){
-	return pk->second;
+      const auto pk = keys.find(s);
+      if (pk != keys.end()) {
+        return pk->second;
       }
-      cerr << TerminalColors::Red;
-      cerr << "getKeyValue : no translation found for key '" << s
-	   << "' in language '"+l+"', using default" << endl;
-      cerr << TerminalColors::Reset;
+      std::cerr << TerminalColors::Red;
+      std::cerr << "getKeyValue : no translation found for key '" << s
+                << "' in language '" + l + "', using default" << std::endl;
+      std::cerr << TerminalColors::Reset;
       return s;
     }
 
-    std::string
-    capitalize(const std::string& s)
-    {
+    std::string capitalize(const std::string& s) {
       std::string r{s};
-      if(r[0]=='é'){
-	r[0]='É';
-      } else if(r[0]=='è'){
-	r[0]='È';
-      } else if(r[0]=='ê'){
-	r[0]='Ê';
-      } else if(r[0]=='à'){
-	r[0]='À';
-      } else if(r[0]=='ç'){
-	r[0]='Ç';
+      auto replace = [&r](const char* const s1, const char* const s2) {
+        r.erase(0, std::strlen(s1));
+        r.insert(0, s2);
+      };
+      if (tfel::utilities::starts_with(r, "Ã©")) {
+        replace("Ã©", "Ã‰");
+      } else if (tfel::utilities::starts_with(r, "Ã¨")) {
+        replace("Ã¨", "Ãˆ");
+      } else if (tfel::utilities::starts_with(r, "Ãª")) {
+        replace("Ãª", "ÃŠ");
+      } else if (tfel::utilities::starts_with(r, "Ã ")) {
+        replace("Ã ", "Ã€");
+      } else if (tfel::utilities::starts_with(r, "Ã§")) {
+        replace("Ã§", "Ã‡");
       } else {
-	r[0] = static_cast<char>(toupper(r[0]));
+        r[0] = static_cast<char>(toupper(r[0]));
       }
       return r;
-    } // end of capitalize
-    
-  } // end of namespace utilities
+    }  // end of capitalize
 
-} // end of namespace tfel
+  }  // end of namespace utilities
+
+}  // end of namespace tfel
