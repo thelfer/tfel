@@ -225,7 +225,7 @@ suivant~:
 \subsection{Loi élasto-viscoplastique de \nom{Chaboche}}
 
 Le modèle diffère peu du précédent, car seul le critère de plasticité~:
-$F({{\sigma ,X}})=(\sigma -X)_{\mathrm{eq}}-R(p)\le 0$ est remplacé
+$F({{\sigma ,X}})=(\tsigma -\tenseur{X})_{\mathrm{eq}}-R(p)\le 0$ est remplacé
 par une loi d'écoulement en puissance~:
 \[
 \dot{{p}}=\langle \Frac{F}{K}\rangle ^{m}
@@ -418,7 +418,7 @@ Listons les différentes dérivées à calculer~:
 \tepsilonel}\left(\Delta
 \tepsilonel+\Delta\,{\varepsilon
 }^{p}-\Delta\,{\varepsilon
-}\right)={\tilde {I}}+\Delta\,p\Frac{\partial
+}\right)={\tenseurq{I}}+\Delta\,p\Frac{\partial
 \tenseur{n}}{\partial \Delta\,\tepsilonel}~~$
 {avec} \ ~ ~${\tilde
 {I}}_{\mathit{ijkl}}=\Frac{1}{2}(\delta _{\mathit{ik}}\delta
@@ -447,16 +447,16 @@ $\text{dfp\_ddeel}=-\Delta\,t\Frac{m}{K}\left\langle
 -X)_{\mathrm{eq}}}{\partial \Delta\,\tepsilonel}$
 % \end{equation*}
 
- $\text{dfa1\_dda1}={\tilde {I}}-\Delta\,p\Frac{\partial
+ $\text{dfa1\_dda1}={\tenseurq{I}}-\Delta\,p\Frac{\partial
 \tenseur{n}}{\partial \Delta\,\alpha _{1}}+\Delta\,p\gamma
-_{1}\theta {\tilde {I}}$ \ \  
+_{1}\theta {\tenseurq{I}}$ \ \  
 
 $\text{dfa1\_dda2}=-\Delta
 p\Frac{\partial \tenseur{n}}{\partial \Delta\,\alpha _{2}}$
 
- $\text{dfa2\_dda2}={\tilde {I}}-\Delta\,p\Frac{\partial
+ $\text{dfa2\_dda2}={\tenseurq{I}}-\Delta\,p\Frac{\partial
 \tenseur{n}}{\partial \Delta\,\alpha _{2}}+\Delta\,p\gamma
-_{2}\theta {\tilde {I}}$ \ \  
+_{2}\theta {\tenseurq{I}}$ \ \  
 
 $\text{dfa2\_dda1}=-\Delta
 p\Frac{\partial \tenseur{n}}{\partial \Delta\,\alpha _{1}}$
