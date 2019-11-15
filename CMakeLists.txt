@@ -306,6 +306,12 @@ if(enable-python-bindings)
     message(FATAL_ERROR "python not found. python is mandatory for python bindings.")
   endif(NOT HAVE_PYTHON)
   message(STATUS "Trying to find libboost_python-py${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR}")
+  # Fix a bug in FindBoost 1.70
+  # https://github.com/boostorg/boost_install/issues/5
+  if(NOT DEFINED BUILD_SHARED_LIBS)
+    set(TFEL_TMP_BUILD_SHARED_LIBS ON)
+    set(BUILD_SHARED_LIBS ON)
+  endif(NOT DEFINED BUILD_SHARED_LIBS)
   find_package(Boost 1.36.0 COMPONENTS
                "python-py${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR}"
                "numpy-py${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR}")
@@ -382,6 +388,11 @@ if(enable-python-bindings)
     message(FATAL_ERROR "Boost python libraries not found.\n"
       "Required packages are :" ${BOOST_MANDATORY_COMPONENTS})
   endif(Boost_PYTHON_FOUND)
+  if(DEFINED TFEL_TMP_BUILD_SHARED_LIBS)
+    unset(TFEL_TMP_BUILD_SHARED_LIBS)
+    unset(BUILD_SHARED_LIBS)
+  endif(DEFINED TFEL_TMP_BUILD_SHARED_LIBS)
+  set(TFEL_TMP_BUILD_SHARED_LIBS "${BUILD_SHARED_LIBS}")
   list(APPEND CPACK_COMPONENTS_ALL python_bindings)
   set(CPACK_COMPONENT_PYTHON_BINDINGS_DESCRIPTION 
     "Contains the python bindings for TFEL, MFront and MTest")
