@@ -392,7 +392,6 @@ if(enable-python-bindings)
     unset(TFEL_TMP_BUILD_SHARED_LIBS)
     unset(BUILD_SHARED_LIBS)
   endif(DEFINED TFEL_TMP_BUILD_SHARED_LIBS)
-  set(TFEL_TMP_BUILD_SHARED_LIBS "${BUILD_SHARED_LIBS}")
   list(APPEND CPACK_COMPONENTS_ALL python_bindings)
   set(CPACK_COMPONENT_PYTHON_BINDINGS_DESCRIPTION 
     "Contains the python bindings for TFEL, MFront and MTest")
