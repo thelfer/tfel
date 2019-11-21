@@ -312,6 +312,9 @@ namespace tfel {
           return;
         }
         p = v.find(s1, pos);
+        if (p == std::string::npos) {
+          return;
+        }
         while (p != std::string::npos) {
           rs = r.size();
           r.resize(rs + p - pos + ss2);

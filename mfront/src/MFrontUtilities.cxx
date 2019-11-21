@@ -26,8 +26,7 @@
 
 namespace mfront{
 
-  void insert_if(std::vector<std::string>& d,
-		 const std::string& v){
+  void insert_if(std::vector<std::string>& d, const std::string& v) {
     if(v.empty()){
       return;
     }
@@ -35,9 +34,8 @@ namespace mfront{
       d.push_back(v);
     }
   }
-  
-  void insert_if(std::vector<std::string>& d,
-		 const char* const v){
+
+  void insert_if(std::vector<std::string>& d, const char* const v) {
     if(v==nullptr){
       return;
     }

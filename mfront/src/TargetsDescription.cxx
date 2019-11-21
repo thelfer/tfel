@@ -111,15 +111,23 @@ namespace mfront {
         d.headers.push_back(h);
       }
     }
-    if (b) {
-      for (const auto& t : s.specific_targets) {
-        d.specific_targets[t.first] = t.second;
+    for (const auto& t : s.specific_targets) {
+      if (t.first == "all") {
+        continue;
       }
-    } else {
-      for (const auto& t : s.specific_targets) {
+      if (b) {
+        d.specific_targets[t.first] = t.second;
+      } else {
         if (d.specific_targets.find(t.first) == d.specific_targets.end()) {
           d.specific_targets[t.first] = t.second;
         }
+      }
+    }
+    if (s.specific_targets.count("all") != 0) {
+      auto& a = d.specific_targets["all"];
+      const auto& as = s.specific_targets.at("all");
+      for (const auto& dep: as.deps) {
+        insert_if(a.deps, dep);
       }
     }
   }  // end of mergeTargetsDescription
