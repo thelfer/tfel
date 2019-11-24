@@ -33,6 +33,20 @@ $ mfm-test-generator --target=mtest pipe.mfmtg \
                      --@behaviour@="'umatnorton'"
 ~~~~
 
+## Command line options
+
+The main command line options are:
+
+- `--target` which allows specifying one target
+- `--targets` which allows specifying a list of target, separated by
+  commas.
+- `--targets` which allows specifying a list of shared libraries
+  containing user defined " "test cases or generators, separated by a
+  commas.
+- `--verbose` which allows specifying the verbosity level. Possible
+  choices are: `quiet`, `level0`, `level1`, `level2`, `level3`, `debug`
+  and `full`.
+
 ## Syntax of the input file
 
 The input file has a `JSON`-like interface.
@@ -109,11 +123,8 @@ follwing variables to be defined:
 ## Extensions
 
 The `MFM_TEST_GENERATOR_ADDITIONAL_LIBRARIES` environment variable
-allows specifying a list of directories (separated by a colon `:` on
-most systems, separated by a semi-colon `;` on `Windows`) containing
-extensions for `mfm-test-generator`.
-
-Those shared libraries may contain new test cases and new generators.
+allows specifying a list of shared libraries separated by commas. Those
+shared libraries may contain new test cases and/or new generators.
 
 # Description of the "UniaxialTensileTest" test case
 

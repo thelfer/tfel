@@ -325,6 +325,36 @@ namespace mtest{
     this->options.ks = p;
   } // end of SchemeBase::setStiffnessUpdatingPolicy
 
+  void SchemeBase::resetOutputFile(){
+    // output file
+    if(!this->output.empty()){
+      this->out.close();
+      this->out.open(this->output.c_str());
+      tfel::raise_if(!this->out,"SchemeBase::completeInitialisation : "
+		     "can't open file '"+this->output+"'");
+      this->out.exceptions(std::ofstream::failbit|std::ofstream::badbit);
+      if(this->oprec!=-1){
+	this->out.precision(static_cast<std::streamsize>(this->oprec));
+      }
+    }
+    // residual file
+    if(!this->residualFileName.empty()){
+      this->residual.close();
+      this->residual.open(this->residualFileName.c_str());
+      tfel::raise_if(!this->residual,
+		     "MTest::completeInitialisation : "
+		     "unable to open file '"+this->residualFileName+"'");
+      this->residual.exceptions(std::ofstream::failbit|std::ofstream::badbit);
+      if(this->rprec!=-1){
+	this->residual.precision(static_cast<std::streamsize>(this->rprec));
+      } else {
+	if(this->oprec!=-1){
+	  this->residual.precision(static_cast<std::streamsize>(this->oprec));
+	}
+      }
+    }
+  } // end of resetOutputFile
+  
   void SchemeBase::completeInitialisation()
   {
     tfel::raise_if(this->initialisationFinished,
@@ -377,31 +407,7 @@ namespace mtest{
 	  log << "** no prediction\n";
 	}
       }
-      // output file
-      if(!this->output.empty()){
-	this->out.open(this->output.c_str());
-	tfel::raise_if(!this->out,"SchemeBase::completeInitialisation : "
-		       "can't open file '"+this->output+"'");
-	this->out.exceptions(std::ofstream::failbit|std::ofstream::badbit);
-	if(this->oprec!=-1){
-	  this->out.precision(static_cast<std::streamsize>(this->oprec));
-	}
-      }
-      // residual file
-      if(!this->residualFileName.empty()){
-	this->residual.open(this->residualFileName.c_str());
-	tfel::raise_if(!this->residual,
-		       "MTest::completeInitialisation : "
-		       "unable to open file '"+this->residualFileName+"'");
-	this->residual.exceptions(std::ofstream::failbit|std::ofstream::badbit);
-	if(this->rprec!=-1){
-	  this->residual.precision(static_cast<std::streamsize>(this->rprec));
-	} else {
-	  if(this->oprec!=-1){
-	    this->residual.precision(static_cast<std::streamsize>(this->oprec));
-	  }
-	}
-      }
+      this->resetOutputFile();
     } catch(...){
       this->initialisationFinished = false;
       throw;

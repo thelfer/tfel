@@ -260,6 +260,9 @@ void declarePipeTest()
     .def("getMesh",&PipeTest::getMesh,
 	 boost::python::return_value_policy<boost::python::copy_const_reference>(),
 	 "This method returns the underlying mesh")
+    .def("completeInitialisation", &PipeTest::completeInitialisation,
+         "complete the initialisation. This method must be called once. This "
+         "method may be called automatically by the execute method.")
     ;
 
 }

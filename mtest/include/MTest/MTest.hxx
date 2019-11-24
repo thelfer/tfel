@@ -91,10 +91,6 @@ namespace mtest {
     virtual void readInputFile(const std::string&,
                                const std::vector<std::string>&,
                                const std::map<std::string, std::string>&);
-    /*!
-     * complete the initialisation. This method must be called once.
-     * \note this method is called automatically by the execute method.
-     */
     void completeInitialisation() override;
     /*!
      * \brief initialize the current state
@@ -107,8 +103,13 @@ namespace mtest {
      */
     void initializeWorkSpace(SolverWorkSpace&) const override;
     /*!
-     * integrate the behaviour
-     * along the loading path
+     * \brief integrate the behaviour along the loading path
+     * \param[in] bInit: if true, call the completeInitialisationMethod
+     */
+    virtual tfel::tests::TestResult execute(const bool);
+    /*!
+     * \brief integrate the behaviour along the loading path
+     * \note this is equivalent to `execute(true)`
      */
     tfel::tests::TestResult execute() override;
     /*!

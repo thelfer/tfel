@@ -311,7 +311,7 @@ namespace mtest {
   template <typename T>
   static void checkValue(const T& v, const char* const n) {
     tfel::raise_if(v < T(0),
-                   "PipeTest::completeInitialisation: "
+                   "PipeTest::getMesh: "
                    "uninitialized value for '" +
                        std::string(n) + "'");
   }  // end of checkValue
@@ -601,7 +601,11 @@ namespace mtest {
 
   std::string PipeTest::classname() const { return "MTest"; }
 
-  tfel::tests::TestResult PipeTest::execute() {
+  tfel::tests::TestResult PipeTest::execute(void) {
+    return this->execute(true);
+  } // end of PipeTest::execute
+  
+  tfel::tests::TestResult PipeTest::execute(const bool bInit) {
     auto report = [](const StudyCurrentState& s, const bool bs) {
       if (mfront::getVerboseMode() >= mfront::VERBOSE_LEVEL1) {
         auto& log = mfront::getLogStream();
@@ -618,7 +622,9 @@ namespace mtest {
       tfel::raise_if(this->times.empty(), "PipeTest::execute: no times defined");
       tfel::raise_if(this->times.size() < 2, "PipeTest::execute: invalid number of times defined");
       // finish initialization
-      this->completeInitialisation();
+      if(bInit){
+	this->completeInitialisation();
+      }
       // initialize current state and work space
       this->initializeCurrentState(state);
       this->initializeWorkSpace(wk);

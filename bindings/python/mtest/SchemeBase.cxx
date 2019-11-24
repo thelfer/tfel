@@ -303,5 +303,7 @@ void declareSchemeBase()
      "- 'EveryIteration': the outputs are written after each "
      "successful iteration.\n"
      "Note : These options only differs in case of substepping.")
+    .def("resetOutputFile",&SchemeBase::resetOutputFile,
+	 "close and reopen the output files")
     ;
 }

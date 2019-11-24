@@ -921,13 +921,15 @@ void declareMTest() {
            "- 1 means that we request the  value at the end of the current "
            "time step");
 
-  TestResult (MTest::*pm)() = &MTest::execute;
-  void (MTest::*pm2)(StudyCurrentState&, SolverWorkSpace&, const real,
+  TestResult (MTest::*pm)(const bool) = &MTest::execute;
+  TestResult (MTest::*pm2)() = &MTest::execute;
+  void (MTest::*pm3)(StudyCurrentState&, SolverWorkSpace&, const real,
                      const real) = &MTest::execute;
 
   class_<MTest, noncopyable, bases<SingleStructureScheme>>("MTest")
       .def("execute", pm)
       .def("execute", pm2)
+      .def("execute", pm3)
       .def("completeInitialisation", &MTest::completeInitialisation)
       .def("initializeCurrentState", &MTest::initializeCurrentState)
       .def("initializeWorkSpace", &MTest::initializeWorkSpace)
@@ -1242,6 +1244,9 @@ void declareMTest() {
            "- test criterion\n")
       .def("addEvent", &MTest::addEvent, "Add a new event")
       .def("addEvent", MTest_addEvent, "Add a new event")
+      .def("completeInitialisation", &MTest::completeInitialisation,
+           "complete the initialisation. This method must be called once. This "
+           "method may be called automatically by the execute method.")
       .def("addUserDefinedPostProcessing", &MTest::addUserDefinedPostProcessing,
            "add a new user defined post-processing.\n"
            "- the first argument is the name of the output file\n"

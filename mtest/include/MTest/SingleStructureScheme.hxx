@@ -161,6 +161,7 @@ namespace mtest{
      * \param[in] a : out of bounds policy
      */
     virtual void setOutOfBoundsPolicy(const tfel::material::OutOfBoundsPolicy);
+    void completeInitialisation() override;
     //! destructor
     ~SingleStructureScheme() override;
   protected:
@@ -175,11 +176,6 @@ namespace mtest{
      * \param[in] bp : pointer to the behaviour
      */
     virtual void setBehaviour(const std::shared_ptr<Behaviour>&);
-    /*!
-     * complete the initialisation. This method must be called once.
-     * \note this method must be called by the derived class.
-     */ 
-    void completeInitialisation() override;
     //! \return the default stiffness matrix type
     StiffnessMatrixType getDefaultStiffnessMatrixType() const override;
     //! list of internal variable names, including their suffixes

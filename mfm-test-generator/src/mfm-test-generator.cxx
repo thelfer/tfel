@@ -29,6 +29,16 @@
 
 namespace mfmtg {
 
+  static void load_plugins(const std::string& libs) {
+    using namespace tfel::system;
+    debug("Loading user defined test cases");
+    auto& lm = ExternalLibraryManager::getExternalLibraryManager();
+    for (const auto& l : tfel::utilities::tokenize(libs, ',')) {
+      debug("Loading library '" + l + "'");
+      lm.loadLibrary(l);
+    }
+  } // load plugins
+
   struct MFMTestGenerator
       : public tfel::utilities::ArgumentParserBase<MFMTestGenerator> {
 
@@ -39,25 +49,14 @@ namespace mfmtg {
       if (this->targets.empty()) {
         tfel::raise("MFMTestGenerator::MFMTestGenerator: no targets specified");
       }
-    }  // end of MFMTestGenerator
-
-    void execute() {
-      using namespace tfel::system;
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
-      const auto sep = ';';
-#else
-      const auto sep = ':';
-#endif
-      debug("Loading user defined test cases");
       // calling mfm plugins
       const auto libs = ::getenv("MFM_TEST_GENERATOR_ADDITIONAL_LIBRARIES");
       if (libs != nullptr) {
-        auto& lm = ExternalLibraryManager::getExternalLibraryManager();
-        for (const auto& l : tfel::utilities::tokenize(libs, sep)) {
-          debug("Loading library '" + l + "'");
-          lm.loadLibrary(l);
-        }
+        load_plugins(libs);
       }
+    }  // end of MFMTestGenerator
+
+    void execute() {
       for (const auto& i : this->input_files) {
         try {
           this->execute(i);
@@ -161,6 +160,12 @@ namespace mfmtg {
                        this->targets.push_back(t);
                      }
                    },
+                   true));
+      this->registerCallBack(
+          "--plugins",
+          CallBack("specify a list of shared libraries containing user defined "
+                   "test cases or generators, separated by a comma ','",
+                   [this] { load_plugins(this->currentArgument->getOption()); },
                    true));
       this->registerCallBack(
           "--targets",

@@ -237,14 +237,18 @@ namespace mtest{
      * \param[in] p : period
      */
     virtual void setCastemAccelerationPeriod(const int);
-    //! destructor
-    ~SchemeBase() override;
-  protected:
+    /*!
+     * \brief close and reopen the output files
+     */
+    virtual void resetOutputFile();
     /*!
      * complete the initialisation. This method must be called once.
      * \note this method must be called by the derived class.
      */ 
     virtual void completeInitialisation();
+    //! destructor
+    ~SchemeBase() override;
+  protected:
     //! \return the default stiffness matrix type
     virtual StiffnessMatrixType
     getDefaultStiffnessMatrixType() const = 0;

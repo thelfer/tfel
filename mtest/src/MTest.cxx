@@ -349,7 +349,6 @@ namespace mtest {
       this->out << "# " << cnbr << " column: stored energy\n";
       this->out << "# " << cnbr+1 << " column: disspated energy\n";
       ++cnbr;
-
     }
     // convergence criterion value for driving variables
     if (this->options.eeps < 0) {
@@ -477,6 +476,10 @@ namespace mtest {
   }  // end of MTest::getNumberOfUnknowns
 
   tfel::tests::TestResult MTest::execute() {
+    return this->execute(true);
+  } // end of MTest::execute()
+  
+  tfel::tests::TestResult MTest::execute(const bool bInit) {
     auto report = [](const char* msg, const StudyCurrentState& s,
                      const bool bs) {
       if (mfront::getVerboseMode() >= mfront::VERBOSE_LEVEL1) {
@@ -501,7 +504,9 @@ namespace mtest {
       tfel::raise_if(times.empty(), "MTest::execute: no times defined");
       tfel::raise_if(times.size() < 2, "MTest::execute: invalid number of times defined");
       // finish initialization
-      this->completeInitialisation();
+      if(bInit){
+	this->completeInitialisation();
+      }
       this->initializeCurrentState(state);
       this->initializeWorkSpace(wk);
       // integrating over the loading path
@@ -517,12 +522,15 @@ namespace mtest {
         ++pt2;
       }
     } catch (std::exception& e) {
+      this->out.flush();
       report(e.what(),state, false);
       throw;
     } catch (...) {
+      this->out.flush();
       report(nullptr,state, false);
       throw;
     }
+    this->out.flush();
     report(nullptr,state, true);
     tfel::tests::TestResult tr;
     for (const auto& t : this->tests) {

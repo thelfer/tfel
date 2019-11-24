@@ -100,9 +100,14 @@ namespace mtest{
     //! return the mesh
     const PipeMesh& getMesh() const;
     /*!
-     * integrate the behaviour
-     * along the loading path
-     */ 
+     * \brief integrate the behaviour along the loading path
+     * \param[in] bInit: if true, call the completeInitialisationMethod
+     */
+    virtual tfel::tests::TestResult execute(const bool);
+    /*!
+     * \brief integrate the behaviour along the loading path
+     * \note this is equivalent to `execute(true)`
+     */
     tfel::tests::TestResult execute() override;
     /*!
      * integrate the behaviour over one step
@@ -197,11 +202,6 @@ namespace mtest{
      * \param[in] e : criterion value
      */
     virtual void setResidualEpsilon(const real);
-    /*!
-     * complete the initialisation. This method must be called once.
-     * \note this method is called automatically by the execute method.
-     */ 
-    void completeInitialisation() override;
     /*!
      * \return the total number of unknowns
      */
@@ -428,6 +428,7 @@ namespace mtest{
      */
     virtual void addOutput(const std::string&,
 			   const std::string&);
+    void completeInitialisation() override;
     //! destructor
     ~PipeTest() override;
   protected:
