@@ -275,6 +275,12 @@ if(enable-python-bindings)
     message(FATAL_ERROR "python not found. python is mandatory for python bindings.")
   endif(NOT HAVE_PYTHON)
   message(STATUS "Trying to find libboost_python-py${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR}")
+  # Fix a bug in FindBoost 1.70
+  # https://github.com/boostorg/boost_install/issues/5
+  if(NOT DEFINED BUILD_SHARED_LIBS)
+    set(TFEL_TMP_BUILD_SHARED_LIBS ON)
+    set(BUILD_SHARED_LIBS ON)
+  endif(NOT DEFINED BUILD_SHARED_LIBS)
   find_package(Boost 1.36.0 COMPONENTS "python-py${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR}" numpy)
   if(Boost_PYTHON-PY${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR}_FOUND)
     set(Boost_PYTHON_FOUND ON)
