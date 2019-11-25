@@ -193,7 +193,7 @@ namespace tfel {
       nbr = Evaluator::convertToUnsignedShort("EvaluatorTreatPower", params[0]);
       switch (nbr) {
         case 0:
-          return std::make_shared<Number>("1",1.);
+          return std::make_shared<Number>("1", 1.);
 #if !(defined _WIN32 || defined _WIN64 || defined __CYGWIN__)
         case 1:
           return EvaluatorPowerFunctionGenerator<1>("tfel::math::power<1>",
