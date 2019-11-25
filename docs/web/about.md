@@ -43,6 +43,7 @@
 - Jordi Alberich
 - Pedro Giffuni
 - Jamel Tirari
+- Gentien Marois
 
 # Tools
 
