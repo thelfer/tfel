@@ -601,7 +601,7 @@ namespace mtest {
 
   std::string PipeTest::classname() const { return "MTest"; }
 
-  tfel::tests::TestResult PipeTest::execute(void) {
+  tfel::tests::TestResult PipeTest::execute() {
     return this->execute(true);
   } // end of PipeTest::execute
   
@@ -615,6 +615,10 @@ namespace mtest {
             << "-number of sub-steps:  " << s.subSteps << '\n';
       }
     };
+    if (!bInit) {
+      tfel::raise_if(!this->initialisationFinished,
+                     "the completeInitialisation has not been called");
+    }
     StudyCurrentState state;
     SolverWorkSpace wk;
     try {
@@ -622,8 +626,8 @@ namespace mtest {
       tfel::raise_if(this->times.empty(), "PipeTest::execute: no times defined");
       tfel::raise_if(this->times.size() < 2, "PipeTest::execute: invalid number of times defined");
       // finish initialization
-      if(bInit){
-	this->completeInitialisation();
+      if (bInit) {
+        this->completeInitialisation();
       }
       // initialize current state and work space
       this->initializeCurrentState(state);
@@ -653,6 +657,7 @@ namespace mtest {
         ++pt2;
       }
     } catch (...) {
+      this->out.flush();
       report(state, false);
       throw;
     }

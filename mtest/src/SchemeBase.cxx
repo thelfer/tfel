@@ -325,12 +325,12 @@ namespace mtest{
     this->options.ks = p;
   } // end of SchemeBase::setStiffnessUpdatingPolicy
 
-  void SchemeBase::resetOutputFile(){
+  void SchemeBase::resetOutputFile() {
     // output file
     if(!this->output.empty()){
       this->out.close();
       this->out.open(this->output.c_str());
-      tfel::raise_if(!this->out,"SchemeBase::completeInitialisation : "
+      tfel::raise_if(!this->out,"SchemeBase::resetOutputFile: "
 		     "can't open file '"+this->output+"'");
       this->out.exceptions(std::ofstream::failbit|std::ofstream::badbit);
       if(this->oprec!=-1){
@@ -342,81 +342,85 @@ namespace mtest{
       this->residual.close();
       this->residual.open(this->residualFileName.c_str());
       tfel::raise_if(!this->residual,
-		     "MTest::completeInitialisation : "
+		     "SchemeBase::resetOutputFile: "
 		     "unable to open file '"+this->residualFileName+"'");
-      this->residual.exceptions(std::ofstream::failbit|std::ofstream::badbit);
-      if(this->rprec!=-1){
-	this->residual.precision(static_cast<std::streamsize>(this->rprec));
+      this->residual.exceptions(std::ofstream::failbit | std::ofstream::badbit);
+      if (this->rprec != -1) {
+        this->residual.precision(static_cast<std::streamsize>(this->rprec));
       } else {
-	if(this->oprec!=-1){
-	  this->residual.precision(static_cast<std::streamsize>(this->oprec));
-	}
+        if (this->oprec != -1) {
+          this->residual.precision(static_cast<std::streamsize>(this->oprec));
+        }
       }
     }
   } // end of resetOutputFile
-  
-  void SchemeBase::completeInitialisation()
-  {
+
+  void SchemeBase::completeInitialisation() {
     tfel::raise_if(this->initialisationFinished,
-		   "SchemeBase::completeInitialisation : "
-		   "object already initialised");
+                   "SchemeBase::completeInitialisation : "
+                   "object already initialised");
     // initialisation is complete
     this->initialisationFinished = true;
-    try{
-      if(this->hypothesis==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
-	this->setDefaultModellingHypothesis();
+    try {
+      if (this->hypothesis == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
+        this->setDefaultModellingHypothesis();
       }
       // numerical parameters
-      if(this->options.mSubSteps==-1){
-	this->options.mSubSteps=10;
+      if (this->options.mSubSteps == -1) {
+        this->options.mSubSteps = 10;
       }
-      if(this->options.iterMax==-1){
-	this->options.iterMax=100;
+      if (this->options.iterMax == -1) {
+        this->options.iterMax = 100;
       }
-      if(this->options.aa!=nullptr){
-	this->options.aa->initialize(this->getNumberOfUnknowns());
+      if (this->options.aa != nullptr) {
+        this->options.aa->initialize(this->getNumberOfUnknowns());
       }
       // prediction policy
-      if(this->options.ppolicy==PredictionPolicy::UNSPECIFIEDPREDICTIONPOLICY){
-	this->options.ppolicy=PredictionPolicy::NOPREDICTION;
+      if (this->options.ppolicy ==
+          PredictionPolicy::UNSPECIFIEDPREDICTIONPOLICY) {
+        this->options.ppolicy = PredictionPolicy::NOPREDICTION;
       }
       // stiffness matrix type
-      if(this->options.ktype==StiffnessMatrixType::UNSPECIFIEDSTIFFNESSMATRIXTYPE){
-	this->options.ktype = this->getDefaultStiffnessMatrixType();
+      if (this->options.ktype ==
+          StiffnessMatrixType::UNSPECIFIEDSTIFFNESSMATRIXTYPE) {
+        this->options.ktype = this->getDefaultStiffnessMatrixType();
       }
       // options selected
-      if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL1){
-	auto& log = mfront::getLogStream();
-	if(this->options.aa!=nullptr){
-	  log << "** " << this->options.aa->getName()
-	      << " acceleration algorithm selected\n";
-	}
-	if(this->options.ppolicy==PredictionPolicy::LINEARPREDICTION){
-	  log << "** using linear prediction\n";
-	} else if(this->options.ppolicy==PredictionPolicy::ELASTICPREDICTION){
-	  log << "** prediction using elastic stiffness\n";
-	} else if(this->options.ppolicy==PredictionPolicy::ELASTICPREDICTIONFROMMATERIALPROPERTIES){
-	  log << "** prediction using elastic stiffness computed from material properties\n";
-	} else if(this->options.ppolicy==PredictionPolicy::TANGENTOPERATORPREDICTION){
-	  log << "** prediction using tangent operator\n";
-	} else {
-	  tfel::raise_if(this->options.ppolicy!=PredictionPolicy::NOPREDICTION,
-			 "MTest::completeInitialisation : "
-			 "internal error, unsupported "
-			 "prediction policy");
-	  log << "** no prediction\n";
-	}
+      if (mfront::getVerboseMode() >= mfront::VERBOSE_LEVEL1) {
+        auto& log = mfront::getLogStream();
+        if (this->options.aa != nullptr) {
+          log << "** " << this->options.aa->getName()
+              << " acceleration algorithm selected\n";
+        }
+        if (this->options.ppolicy == PredictionPolicy::LINEARPREDICTION) {
+          log << "** using linear prediction\n";
+        } else if (this->options.ppolicy ==
+                   PredictionPolicy::ELASTICPREDICTION) {
+          log << "** prediction using elastic stiffness\n";
+        } else if (this->options.ppolicy ==
+                   PredictionPolicy::ELASTICPREDICTIONFROMMATERIALPROPERTIES) {
+          log << "** prediction using elastic stiffness computed from material "
+                 "properties\n";
+        } else if (this->options.ppolicy ==
+                   PredictionPolicy::TANGENTOPERATORPREDICTION) {
+          log << "** prediction using tangent operator\n";
+        } else {
+          tfel::raise_if(
+              this->options.ppolicy != PredictionPolicy::NOPREDICTION,
+              "MTest::completeInitialisation : "
+              "internal error, unsupported "
+              "prediction policy");
+          log << "** no prediction\n";
+        }
       }
       this->resetOutputFile();
-    } catch(...){
+    } catch (...) {
       this->initialisationFinished = false;
       throw;
-    }    
-  } // end of SchemeBase::completeInitialisation
-  
-  void SchemeBase::declareVariable(const std::string& v,
-				   const bool check)
-  {
+    }
+  }  // end of SchemeBase::completeInitialisation
+
+  void SchemeBase::declareVariable(const std::string& v, const bool check) {
     if(std::find(this->vnames.begin(),this->vnames.end(),v)!=
        this->vnames.end()){
       tfel::raise_if(check,"SchemeBase::declareVariable: "

@@ -496,6 +496,10 @@ namespace mtest {
             << "-number of sub-steps:  " << s.subSteps << '\n';
       }
     };
+    if (!bInit) {
+      tfel::raise_if(!this->initialisationFinished,
+                     "the completeInitialisation has not been called");
+    }
     // initialize current state and work space
     StudyCurrentState state;
     SolverWorkSpace wk;
@@ -505,7 +509,7 @@ namespace mtest {
       tfel::raise_if(times.size() < 2, "MTest::execute: invalid number of times defined");
       // finish initialization
       if(bInit){
-	this->completeInitialisation();
+        this->completeInitialisation();
       }
       this->initializeCurrentState(state);
       this->initializeWorkSpace(wk);
