@@ -147,6 +147,7 @@ namespace mfront {
     }
     out << "const real integrate_one_half = real(1)/real(2);\n"
         << "this->zeros -= (this->zeros-this->zeros_1)*integrate_one_half;\n"
+        << "this->updateMaterialPropertiesDependantOnStateVariables();\n"
         << "}\n"
         << "} else {\n"
         << "this->zeros_1  = this->zeros;\n"

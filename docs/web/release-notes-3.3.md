@@ -8,6 +8,22 @@ The page declares the new functionalities of the 3.3 version of the
 This version was released along with Version `3.2.2` and inherits from
 all the fixes of this version.
 
+# Documentation
+
+New entries were added to [the gallery](gallery.html):
+
+- [This page](sovs.html) describes how to implement the
+  Skorohold-Olevsky Viscous Sintering (SOVS) model.
+- [This page](LoadInducedThermalStrainBehaviourTorelli2018.html)
+  describes how to implement Torelli' behaviour describing the load
+  induced thermal strain in concrete.
+- [This page](RambergOsgoodNonLinearElasticity.html) describes how to
+  implement a non linear elastic behaviour that mimics the
+  Ramberg-Osgood plastic behaviour on monotonic loadings (usefull in
+  fracture analysis)
+- The implementation of the Fichant-La Borderie damage behaviour is
+  described [here](FichantLaBorderieDamageBehaviour.html)
+
 # Improvements to `MFront`
 
 ## Unicode Support

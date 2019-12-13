@@ -21,6 +21,9 @@ behaviour. This framework is described
 - [GeneralizedMaxwell](./gallery/viscoelasticity/GeneralizedMaxwell.mfront)
 - [This page](sovs.html) describes how to implement the
   Skorohold-Olevsky Viscous Sintering (SOVS) model.
+- [This page](LoadInducedThermalStrainBehaviourTorelli2018.html)
+  describes how to implement Torelli' behaviour describing the load
+  induced thermal strain in concrete.
 
 ## Non linear elasticity
 
@@ -33,6 +36,8 @@ behaviour. This framework is described
 
 - [Marigo](gallery/damage/Marigo.mfront)
 - [Mazars](gallery/damage/Mazars.mfront)
+- The implementation of the Fichant-La Borderie damage behaviour is
+  described [here](FichantLaBorderieDamageBehaviour.html)
 
 ## Plasticity
 

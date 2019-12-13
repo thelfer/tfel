@@ -2577,9 +2577,6 @@ namespace mfront {
           addSymbol(symbols, "f" + v1.symbolic_form, "f" + v1.name);
         }
         for (const auto& v2 : d.getIntegrationVariables()) {
-          if ((v1.symbolic_form.empty()) && (v2.symbolic_form.empty())) {
-            continue;
-          }
           const auto& s1 =
               !v1.symbolic_form.empty() ? v1.symbolic_form : v1.name;
           const auto& s2 =

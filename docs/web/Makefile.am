@@ -119,6 +119,8 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./RambergOsgoodNonLinearElasticity.md                      \
 	   ./MericCailletaudSingleCrystalPlasticity.md                \
 	   ./MohrCoulomb.md                                           \
+	   ./FichantLaBorderieDamageBehaviour.md                      \
+       ./LoadInducedThermalStrainBehaviourTorelli2018.md          \
 	   ./theory.md                                                \
 	   ./robots.txt						      \
 	   ./crossdomain.xml					      \
@@ -301,6 +303,7 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./img/XperMFront.xcf			                      \
 	   ./img/XperMFront.png			                          \
 	   ./img/RambergOsgoodNonLinearElasticity-UniaxialTensileTest.png \
+       ./img/FichantLaBorderieDamageBehaviourUniaxialTensileTest.png  \
 	   ./media/epx1.mp4                                               \
 	   ./media/epx2.mp4                                           \
 	   ./media/abaqus-explicit.mp4                                \

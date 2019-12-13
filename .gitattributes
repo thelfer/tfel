@@ -184,6 +184,7 @@ docs/gallery/Makefile.am -text
 docs/gallery/behaviours/CMakeLists.txt -text
 docs/gallery/behaviours/Makefile.am -text
 docs/gallery/behaviours/damage/CMakeLists.txt -text
+docs/gallery/behaviours/damage/FichantLaBorderieDamageBehaviour.mfront -text
 docs/gallery/behaviours/damage/Makefile.am -text
 docs/gallery/behaviours/damage/Marigo.mfront -text
 docs/gallery/behaviours/damage/Mazars.mfront -text
@@ -1141,6 +1142,7 @@ docs/web/DDIF2StressPotential.md -text
 docs/web/DefaultCZMDSL-keywords.md -text
 docs/web/DefaultDSL-keywords.md -text
 docs/web/DefaultFiniteStrainDSL-keywords.md -text
+docs/web/FichantLaBorderieDamageBehaviour.md -text
 docs/web/HookeStressPotential.md -text
 docs/web/Implicit-keywords.md -text
 docs/web/ImplicitFiniteStrain-keywords.md -text
@@ -1150,6 +1152,7 @@ docs/web/IsotropicMisesCreep-keywords.md -text
 docs/web/IsotropicPlasticMisesFlow-keywords.md -text
 docs/web/IsotropicStrainHardeningMisesCreep-keywords.md -text
 docs/web/LICENSE.md -text
+docs/web/LoadInducedThermalStrainBehaviourTorelli2018.md -text
 docs/web/MTest-keywords.md -text
 docs/web/Makefile.am -text
 docs/web/MaterialLaw-keywords.md -text
@@ -1259,6 +1262,7 @@ docs/web/img/Configuration.pdf -text
 docs/web/img/Configuration.png -text
 docs/web/img/CyranoPrinciple.png -text
 docs/web/img/DruckerPragerCap.svg -text
+docs/web/img/FichantLaBorderieDamageBehaviourUniaxialTensileTest.png -text
 docs/web/img/FiniteStrainTangentOperatorConvertion.dot -text
 docs/web/img/FiniteStrainTangentOperatorConvertion.svg -text
 docs/web/img/FissurationPastille.png -text

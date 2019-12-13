@@ -15,6 +15,7 @@
 #define LIB_TFEL_MATERIAL_MOHRCOULOMBYIELDCRITERION_HXX
 
 #include <tuple>
+#include <ostream>
 #include "TFEL/Math/stensor.hxx"
 #include "TFEL/Math/st2tost2.hxx"
 
@@ -150,6 +151,16 @@ namespace tfel {
                MohrCoulombStressSecondDerivativeType<StressStensor>>
     computeMohrCoulombStressCriterionSecondDerivative(
         const MohrCoulombParameters<StressStensor>&, const StressStensor&);
+
+    /*!
+     * \brief output stream operator
+     * \param[in,out] os: output stream
+     * \param[in]     p: parameters
+     * \note this is required to build `MFront` behaviours in `debug` mode
+     */
+    template <typename StressStensor>
+    std::ostream& operator<<(std::ostream&,
+                             const MohrCoulombParameters<StressStensor>&);
 
   }  // end of namespace material
 

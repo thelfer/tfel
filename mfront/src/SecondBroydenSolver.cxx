@@ -144,13 +144,14 @@ namespace mfront{
 	  << "::integrate() : computFdF returned false, dividing increment by two...\" << endl;\n";
     }
     out << "const real integrate_one_half = real(1)/real(2);\n"
-	<< "this->zeros -= (this->zeros-this->zeros_1)*integrate_one_half;\n"
-	<< "}\n"
-	<< "} else {\n"
-	<< "this->zeros_1  = this->zeros;\n"
-	<< "error=norm(this->fzeros)/(real(" << n2 << "));\n"
-	<< "converged = error<this->epsilon;\n"
-	<< "this->additionalConvergenceChecks(converged,error);\n";
+        << "this->zeros -= (this->zeros-this->zeros_1)*integrate_one_half;\n"
+        << "this->updateMaterialPropertiesDependantOnStateVariables();\n"
+        << "}\n"
+        << "} else {\n"
+        << "this->zeros_1  = this->zeros;\n"
+        << "error=norm(this->fzeros)/(real(" << n2 << "));\n"
+        << "converged = error<this->epsilon;\n"
+        << "this->additionalConvergenceChecks(converged,error);\n";
     if(getDebugMode()){
       out << "cout << \"" << mb.getClassName()
 	  << "::integrate() : iteration \" "

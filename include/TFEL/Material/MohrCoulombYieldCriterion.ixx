@@ -278,6 +278,16 @@ namespace tfel {
       return std::make_tuple(Fy1 - p.c * p.cos_angle, n, dn);
     }  // end of computeMohrCoulombStressCriterionSecondDerivative
 
+    template <typename StressStensor>
+    std::ostream& operator<<(std::ostream& os,
+                             const MohrCoulombParameters<StressStensor>& p) {
+      os << "c (cohesion): " << p.c << '\n';
+      os << "angle (friction angle or dilatancy angle): " << p.angle << '\n';
+      os << "lodeT (transition angle as defined by Abbo and Sloan): " << p.lodeT<< '\n';
+      os << "a (tension cuff-off parameter): " << p.a << '\n';
+      return os;
+    }  // end of operator <<
+
   }  // end of namespace material
 
 }  // end of namespace tfel

@@ -665,20 +665,22 @@ namespace tfel{
        * \param[in]  m:   eigenvectors
        * \param[in]  eps: criterion value used to judge if two eigenvalues are equals
        */
-      template<typename ST2toST2Type,typename T1,typename T2>
+      template <typename ST2toST2Type, typename T1, typename T2>
       static typename std::enable_if<
-	(tfel::meta::Implements<ST2toST2Type,ST2toST2Concept>::cond)&&
-	(ST2toST2Traits<ST2toST2Type>::dime==N)&&
-	(tfel::typetraits::IsAssignableTo<typename ComputeBinaryResult<tfel::typetraits::base_type<T>,
-								       T,OpDiv>::Result,
-					  ST2toST2NumType<ST2toST2Type>>::cond),
-	void>::type
+          (tfel::meta::Implements<ST2toST2Type, ST2toST2Concept>::cond) &&
+              (ST2toST2Traits<ST2toST2Type>::dime == N) &&
+              (tfel::typetraits::IsAssignableTo<
+                  typename ComputeBinaryResult<tfel::typetraits::base_type<T>,
+                                               T,
+                                               OpDiv>::Result,
+                  ST2toST2NumType<ST2toST2Type>>::cond),
+          void>::type
       computeIsotropicFunctionDerivative(ST2toST2Type&,
-					 const tvector<3u,T1>&,
-					 const tvector<3u,T2>&,
-					 const tvector<3u,T>&,
-					 const rotation_matrix<T>&,
-					 const T);
+                                         const tvector<3u, T1>&,
+                                         const tvector<3u, T2>&,
+                                         const tvector<3u, T>&,
+                                         const rotation_matrix<T>&,
+                                         const T);
       /*!
        * compute the derivative of an isotropic function
        * \param[out] d:   result
@@ -688,13 +690,13 @@ namespace tfel{
        * \param[in]  m:   eigenvectors
        * \param[in]  eps: criterion value used to judge if two eigenvalues are equals
        */
-      template<typename Function,typename FunctionDerivative>
-      static st2tost2<N,typename std::result_of<FunctionDerivative(T)>::type>
+      template <typename Function, typename FunctionDerivative>
+      static st2tost2<N, typename std::result_of<FunctionDerivative(T)>::type>
       computeIsotropicFunctionDerivative(const Function&,
-					 const FunctionDerivative&,
-					 const tvector<3u,T>&,
-					 const rotation_matrix<T>&,
-					 const T);
+                                         const FunctionDerivative&,
+                                         const tvector<3u, T>&,
+                                         const rotation_matrix<T>&,
+                                         const T);
       /*!
        * compute the derivative of an isotropic function
        * \param[out] d:   result

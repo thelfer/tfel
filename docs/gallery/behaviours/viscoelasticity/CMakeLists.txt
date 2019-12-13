@@ -1,2 +1,3 @@
 install_gallery(viscoelasticity GeneralizedMaxwell.mfront)
 install_gallery(viscoelasticity SkoroholdOlevskyViscousSinteringBehaviour.mfront)
+install_gallery(viscoelasticity LoadInducedThermalStrain_Torelli2018.mfront)
