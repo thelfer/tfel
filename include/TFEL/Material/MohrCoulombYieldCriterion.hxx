@@ -61,7 +61,7 @@ namespace tfel {
       /*!
        * \brief constructor
        * \param[in] c_c: cohesion
-       * \param[in] phi_c: friction angle or dilatancy angle
+       * \param[in] angle_c: friction angle or dilatancy angle
        * \param[in] lodeT_c: transition angle as defined by Abbo and Sloan
        * \param[in] a_c: tension cuff-off parameter
        * \note angles are in radians, see `makeMohrCoulombParameters`
@@ -80,16 +80,16 @@ namespace tfel {
       //! \brief cohesion
       stress c;
       //! \brief friction angle or dilatancy angle
-      real phi;
+      real angle;
       //! \brief transition angle as defined by Abbo and Sloan
       real lodeT;
       //! \brief tension cuff-off parameter
       stress a;
       /* cached variables */
-      //! \brief cosine of phi
-      real cos_phi;
-      //! \brief sine of phi
-      real sin_phi;
+      //! \brief cosine of angle
+      real cos_angle;
+      //! \brief sine of angle
+      real sin_angle;
       //! \brief cosine of lodeT
       real cos_lodeT;
       //! \brief sine of lodeT
@@ -106,7 +106,7 @@ namespace tfel {
 
     /*!
      * \param[in] c: cohesion
-     * \param[in] phi: friction angle or dilatancy angle
+     * \param[in] angle: friction angle or dilatancy angle
      * \param[in] lodeT: transition angle as defined by Abbo and Sloan
      * \param[in] a: tension cuff-off parameter
      */
