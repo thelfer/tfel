@@ -219,6 +219,7 @@ docs/gallery/behaviours/plasticity/OrthotropicDruckerPerfectPlasticityYdLin6016T
 docs/gallery/behaviours/plasticity/OrthotropicLinearHardeningPlasticity.mfront -text
 docs/gallery/behaviours/viscoelasticity/CMakeLists.txt -text
 docs/gallery/behaviours/viscoelasticity/GeneralizedMaxwell.mfront -text
+docs/gallery/behaviours/viscoelasticity/LoadInducedThermalStrain_Torelli2018.mfront -text
 docs/gallery/behaviours/viscoelasticity/Makefile.am -text
 docs/gallery/behaviours/viscoelasticity/SkoroholdOlevskyViscousSinteringBehaviour.mfront -text
 docs/gallery/behaviours/viscoplasticity/CMakeLists.txt -text
