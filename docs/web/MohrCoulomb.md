@@ -34,6 +34,10 @@ pandoc --filter pandoc-crossref --filter pandoc-citeproc --bibliography=bibliogr
 The following proposal is based on @Nagel2016 but extended by an apex
 smoothing from @Abbo1995 (hyperbolic approximation).
 
+<center>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/juWMIkJ64iE" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
+</iframe>
+</center>
 
 # Description of the behaviour
 
@@ -686,7 +690,7 @@ as well as the location of the plastified zone. It has been used in
 partial extension towards non-associated flow).
 
 
-# Simplification of the MFront file
+# Simplification of the MFront file : use of `TFEL/Material/MohrCoulombYieldCriterion.hxx` file
 
 Because F et G have an analogous structure, it's possible to simplify the MFront file
 and to do the calculation in the hxx `TFEL/Material/MohrCoulombYieldCriterion.hxx`
@@ -782,6 +786,53 @@ a.setEntryName("TensionCutOffParameter");
     ngp = ng;
   }
 }
+~~~~
+
+# Simplification of the MFront file : use of the `StandardElastoViscoPlasticity` brick
+
+The Mohr-Coulomb model has been introduced in the `StandardElastoViscoPlasticity` brick. 
+The MFront file is very simplify : the whole model is contained in the brick and can be called
+by the keyword `MohrCoulomb`
+
+The MFront file is now:
+
+
+~~~~{.cxx}
+@DSL Implicit;
+
+@Behaviour MohrCoulomAbboSloan3;
+@Author HELFER Thomas 202608;
+@Date 10 / 12 / 2019;
+@Description {
+}
+
+@Algorithm NewtonRaphson;
+@Epsilon 1.e-14;
+
+@Brick StandardElastoViscoPlasticity{
+  stress_potential : "Hooke" {
+    young_modulus :1,      // The Young modulus of an isotropic material
+    poisson_ratio :1,      // The Poisson ratio of an isotropic material
+    thermal_expansion :1,  // le coefficient de dilatation linéique d'un matériau isotrope
+    thermal_expansion_reference_temperature : 1 // reference temperature for the thermal expansion
+  },
+  inelastic_flow : "Plastic" {
+    criterion : "MohrCoulomb" {
+      c :1,      // cohesion
+      phi :1,    // friction angle or dilatancy angle
+      lodeT :1,  // transition angle as defined by Abbo and Sloan
+      a : 1       // tension cuff-off parameter
+    },
+    flow_criterion : "MohrCoulomb" {
+      c :1,      // cohesion
+      phi :1,    // friction angle or dilatancy angle
+      lodeT :1,  // transition angle as defined by Abbo and Sloan
+      a :1       // tension cuff-off parameter
+    },
+    isotropic_hardening : "Linear" { R0: 0}
+  }
+};
+
 ~~~~
 
 # References
