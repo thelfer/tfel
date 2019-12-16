@@ -20,20 +20,48 @@ pandoc --filter pandoc-crossref --filter pandoc-citeproc --bibliography=bibliogr
 \newcommand{\tdepsilonp}{\tenseur{\dot{\varepsilon}}^{\mathrm{p}}}
 \newcommand{\cancelto}[2]{\underbrace{#2}_{#1}}
 \newcommand{\nn}{\nonumber}
-
+\newcommand{\sigmaH}{\sigma_{H}}
+\newcommand{\Frac}[2]{{{\displaystyle \frac{\displaystyle #1}{\displaystyle #2}}}}
+\newcommand{\deriv}[2]{{\displaystyle \frac{\displaystyle \partial #1}{\displaystyle \partial #2}}}
+\newcommand{\sderiv}[2]{{\displaystyle \frac{\displaystyle \partial^{2} #1}{\displaystyle \partial #2^{2}}}}
+\newcommand{\dtot}{{{\mathrm{d}}}}
+\newcommand{\bts}[1]{{\left.#1\right|_{t}}}
+\newcommand{\mts}[1]{{\left.#1\right|_{t+\theta\,\Delta\,t}}}
+\newcommand{\ets}[1]{{\left.#1\right|_{t+\Delta\,t}}}
+\newcommand{\tns}[1]{{\underset{\tilde{}}{\mathbf{#1}}}}
+\newcommand{\transpose}[1]{{#1^{\mathop{T}}}}
 
 The following proposal is based on @Nagel2016 but extended by an apex
 smoothing from @Abbo1995 (hyperbolic approximation).
 
-# Yield function and plastic potential
 
-Tensile stresses are taken as positive.
+# Description of the behaviour
+
+The behaviour is described by a standard decomposition of the strain
+\(\tepsilonto\) in an elastic and a plastic component, respectively
+denoted \(\tepsilonel\) and \(\tepsilonp\):
 
 \[
-	I_1 = \trace{\tsigma} \qquad J_2 = \frac{1}{2} \tsigma^\mathrm{D} \dcdot \tsigma^\mathrm{D} \qquad J_3 = \det \tsigma^\mathrm{D} \qquad \theta = \frac{1}{3} \arcsin \left( -\frac{3\sqrt{3} J_3}{2 \sqrt{J_2^3}} \right)
+\tepsilonto=\tepsilonel+\tepsilonp
 \]
 
-The yield function reads
+## Elastic behaviour
+
+The stress \(\tsigma\) is related to the the elastic strain
+\(\tepsilonel\) by a the orthotropic elastic stiffness
+\(\tenseurq{D}\):
+
+\[
+\tsigma = \tenseurq{D}\,\colon\,\tepsilonel
+\]
+
+## Yield surface
+
+The plastic part of the behaviour is described by the following yield
+surface:
+\[ F = 0 \]
+
+F is defined as follow:
 
 \[
 	F = \frac{I_1}{3} \sin \phi + \sqrt{J_2 K(\theta)^2 + a^2 \sin^2 \phi} - c \cos \phi
@@ -47,7 +75,6 @@ K(\theta) = \begin{cases}
 \end{cases}
 \]{#eq:K_abbo}
 
-where \(c\) and \(\phi\) are the cohesion and friction angle, respectively, and
 \[
 \begin{aligned}
 	A &= \frac{1}{3} \cos \theta_\mathrm{T} \left[ 3 + \tan \theta_\mathrm{T} \tan 3\theta_\mathrm{T} + \frac{1}{\sqrt{3}} \mathrm{sign \theta} \, (\tan 3\theta_\mathrm{T} - 3\tan \theta_\mathrm{T}) \sin \phi \right] \\
@@ -55,6 +82,28 @@ where \(c\) and \(\phi\) are the cohesion and friction angle, respectively, and
 	B &= \frac{1}{3} \frac{1}{\cos 3\theta_\mathrm{T}} \left[ \mathrm{sign \theta} \, \sin \theta_\mathrm{T} + \frac{1}{\sqrt{3}} \sin \phi \cos \theta_\mathrm{T} \right]
 \end{aligned}
 \]{#eq:Sloan}
+
+and 
+
+\[
+	I_1 = \trace{\tsigma} \qquad J_2 = \frac{1}{2} \tsigma^\mathrm{D} \dcdot \tsigma^\mathrm{D} \qquad J_3 = \det \tsigma^\mathrm{D} \qquad \theta = \frac{1}{3} \arcsin \left( -\frac{3\sqrt{3} J_3}{2 \sqrt{J_2^3}} \right)
+\]
+
+
+\(\tsigma^\mathrm{D}\), \(c\) and \(\phi\) are respectively the deviatoric part of the tensor \(\tsigma\), the cohesion and friction angle. 
+
+
+--- 
+
+The contribution of the smoothing is visualized in Figure @fig:mc_vis.
+
+![Effect of the smoothing of the yield surface](img/MohrCoulombSmoothing.svg "Effect of the smoothing of the yield surface"){#fig:mc_vis width=115%}
+
+---
+
+
+## Plastic potential
+
 
 The plastic potential differs from the yield surface in order to more
 accurately estimate dilatancy, but has an analogous structure:
@@ -83,248 +132,98 @@ K_G(\theta) = \begin{cases}
 \end{aligned}
 \]
 
---- 
-
-The contribution of the smoothing is visualized in Figure @fig:mc_vis.
-
-![Effect of the smoothing of the yield surface](img/MohrCoulombSmoothing.svg "Effect of the smoothing of the yield surface"){#fig:mc_vis width=115%}
 
 
 
-# Flow rule
+## Plastic flow rule
 
-Plastic flow follows in a general manner for 
-\(I_1,\,J_2,\,\theta\)-type yield surface:
+Plastic flow follows in a general manner for a $I_1,\,J_2,\,\theta$-type yield surface as
 
 \[
-	\tdepsilonp = \dot{\lambda} \frac{\partial G_\mathrm{F}}{\partial \tsigma} = \dot{\lambda} \left[ \frac{\partial G_\mathrm{F}}{\partial I_1} \tenseur{I} + \left( \frac{\partial G_\mathrm{F}}{\partial J_2} + \frac{\partial G_\mathrm{F}}{\partial \theta} \frac{\partial \theta}{\partial J_2} \right) \tsigma^\mathrm{D} +  \frac{\partial G_\mathrm{F}}{\partial \theta}  \frac{\partial \theta}{\partial J_3} J_3 {(\tsigma^{\mathrm{D}})}^{-1} \dcdot \tenseurq{P}^\mathrm{D} \right] 
-\]{#eq:MC_flow}
-
-Alternative formulation using the Caley-Hamilton theorem:
-\[
-	\tenseur{A}^3 - I_1 \tenseur{A}^2 + I_2 \tenseur{A} - I_3 \tenseur{I} = \tenseur{0}
+	\tenseur{n} = \frac{\partial G_{F}}{\partial I_1} \tenseur{I} + \left( \frac{\partial G_{F}}{\partial J_2} + \frac{\partial G_{F}}{\partial \theta} \frac{\partial \theta}{\partial J_2} \right) \tenseur{\sigma}^{D} +  \frac{\partial G_{F}}{\partial \theta}  \frac{\partial \theta}{\partial J_3} J_3 {(\tenseur{\sigma}^{D})}^{-1} \dcdot \tenseurq{P}^{D}
 \]
 
-Taking the trace and subsequently the derivative w.r.t. \(\tenseur{A}\)
-yields:
-\[
-	I_{3,\tenseur{A}} = \tenseur{A}^2 + I_2 \tenseur{I} - I_1 \tenseur{A}
-\]
-
-For the deviator we have \(I_2(\tsigma^\mathrm{D}) = -J_2\) and
-\(I_1(\tsigma^\mathrm{D})=0\) and thus write:
-\[
-	\frac{\partial J_3}{\partial \tsigma^\mathrm{D}} = J_3 (\tsigma^\mathrm{D})^{-1} = (\tsigma^\mathrm{D})^{2} - J_2 \tenseur{I}
-\]
-
-Furthermore,
-\[
-\frac{\partial J_3}{\partial \tsigma} = \left[(\tsigma^\mathrm{D})^{2} - J_2 \tenseur{I} \right] \dcdot \tenseurq{P}^\mathrm{D} = (\tsigma^\mathrm{D})^{2} \dcdot \tenseurq{P}^\mathrm{D}
-\]
-
-Therefore, 
-\[
-	\tenseur{n} = \frac{\partial G_\mathrm{F}}{\partial I_1} \tenseur{I} + \left( \frac{\partial G_\mathrm{F}}{\partial J_2} + \frac{\partial G_\mathrm{F}}{\partial \theta} \frac{\partial \theta}{\partial J_2} \right) \tsigma^\mathrm{D} +  \frac{\partial G_\mathrm{F}}{\partial \theta}  \frac{\partial \theta}{\partial J_3} J_3 {(\tsigma^{\mathrm{D}})}^{-1} \dcdot \tenseurq{P}^\mathrm{D}
-\]
-or
-\[
-	\tenseur{n} = \frac{\partial G_\mathrm{F}}{\partial I_1} \tenseur{I} + \left( \frac{\partial G_\mathrm{F}}{\partial J_2} + \frac{\partial G_\mathrm{F}}{\partial \theta} \frac{\partial \theta}{\partial J_2} \right) \tsigma^\mathrm{D} +  \frac{\partial G_\mathrm{F}}{\partial \theta}  \frac{\partial \theta}{\partial J_3} (\tsigma^\mathrm{D})^{2}\dcdot \tenseurq{P}^\mathrm{D}
-\]
-
-with the material-independent derivatives:
+or by use of the Caley-Hamilton theorem as
 
 \[
+	\tenseur{n} = \frac{\partial G_{F}}{\partial I_1} \tenseur{I} + \left( \frac{\partial G_{F}}{\partial J_2} + \frac{\partial G_{F}}{\partial \theta} \frac{\partial \theta}{\partial J_2} \right) \tenseur{\sigma}^{D} +  \frac{\partial G_{F}}{\partial \theta}  \frac{\partial \theta}{\partial J_3} (\tenseur{\sigma}^{D})^{2}\dcdot \tenseurq{P}^{D}
+\]
+
+
+
+# Integration algorithm
+
+The previous constitutive equations will be integrated using a
+standard implicit scheme.
+
+## Plastic loading case
+
+### Implicit system
+
+Assuming a plastic loading, the system of equations to be solved is:
+\[
+\left\{
 \begin{aligned}
-	\left. \frac{\partial \theta}{\partial J_2} \right|_{J_3} &= -\frac{\tan 3\theta}{2J_2}
-	\\
-	\left. \frac{\partial \theta}{\partial J_3} \right|_{J_2} &= \frac{\tan 3\theta}{3J_3}
+	\Delta\,\tepsilonel-\Delta\,\tepsilonto+\Delta\,p\,\mts{\tenseur{n}} &= 0 \\
+	 F &= 0 \\
 \end{aligned}
+\right.
 \]
 
-and the material-dependent derivatives
-\[
-\begin{aligned}
-	\left. \frac{\partial G_\mathrm{F}}{\partial I_1} \right|_{J_2,J_3} &= \frac{1}{3} \sin \psi
-	\\
-	\left. \frac{\partial G_\mathrm{F}}{\partial J_2} \right|_{I_1,\theta} &= 
-	\frac{K'^2}{2\sqrt{J_2 K_G^2 + a^2 \sin^2 \psi}}
-	\\
-	\left. \frac{\partial G_\mathrm{F}}{\partial \theta} \right|_{I_1,J_2} &= 
-	\frac{J_2 K_G}{\sqrt{J_2 K_G^2 + a^2 \sin^2 \psi}} \frac{\partial K_G}{\partial \theta}
-	\\
-	\frac{\partial K}{\partial \theta} &= \begin{cases}
-	-\sin \theta - \frac{1}{\sqrt{3}}\sin \phi \cos\theta & |\theta| < \theta_\mathrm{T}
-	\\ 
-	-3B\cos3\theta
-\end{cases}
-\end{aligned}
-\]
+where \(\mts{X}\) is the value of \(X\) at \(t+\theta\,\Delta\,t\),
+\(\theta\) being a numerical parameter. 
 
-The following combined entries are useful:
-\[
-\begin{aligned}
-	\frac{\partial G_\mathrm{F}}{\partial \theta}\frac{\partial \theta}{\partial J_2} &= -\frac{K_G\tan 3\theta}{2\sqrt{J_2 K_G^2 + a^2 \sin^2 \psi}} \frac{\partial K_G}{\partial \theta} 
-\end{aligned}
-\]
+In the following, the first
+(tensorial) equation is noted \(f_{\tepsilonel}\) and the second
+(scalar) equation is noted \(f_{p}\).
 
-Thus,
-\[
-\begin{aligned}
-	\left. \frac{\partial G_\mathrm{F}}{\partial I_1} \right|_{J_2,J_3} &= \frac{1}{3} \sin \psi
-	\\
-	\left.\frac{\partial G_\mathrm{F}}{\partial J_2}\right|_{I_1,J_3} &= 
-	\frac{K_G}{2\sqrt{J_2 K_G^2 + a^2 \sin^2 \psi}} \left(K_G - \tan 3\theta \frac{\partial K_G}{\partial \theta} \right)
-	\\
-	\left.\frac{\partial G_\mathrm{F}}{\partial J_3}\right|_{I_1,J_2} &= \frac{J_2K_G\tan 3\theta}{3J_3\sqrt{J_2 K_G^2 + a^2 \sin^2 \psi}} \frac{\partial K_G}{\partial \theta}
-\end{aligned}
-\]
+In practice, it is physically sound to make satisfy exactly the yield
+condition at the end of the time step (otherwise, stress extrapolation
+can lead to stress state outside the yield surface and spurious
+oscillations can also be observed). This leads to the choice
+\(\theta=1\).
 
-so that:
-\[
-	\tenseur{n} = \frac{\partial G_\mathrm{F}}{\partial I_1} \tenseur{I} + \left.\frac{\partial G_\mathrm{F}}{\partial J_2}\right|_{I_1,J_3} \tsigma^\mathrm{D} +  \left.\frac{\partial G_\mathrm{F}}{\partial J_3}\right|_{I_1,J_2} (\tsigma^{\mathrm{D}})^{2} \dcdot \tenseurq{P}^\mathrm{D}
-\]
+### Computation of the jacobian
 
-# Linearization of flow rule
-
+The jacobian \(J\) of the implicit system can be decomposed by blocks:
 \[
-\begin{split}
-	\frac{\partial \tenseur{n}}{\partial \tsigma} &= \left.\frac{\partial G_\mathrm{F}}{\partial J_2}\right|_{I_1,J_3} \tenseurq{P}^\mathrm{D} + \left.\frac{\partial G_\mathrm{F}}{\partial J_3}\right|_{I_1,J_2} \tenseurq{P}^\mathrm{D} \dcdot \left[ \left( \tenseur{I} \otimes \tsigma^\mathrm{D} \right)^{\overset{23}{\mathrm{T}}} + \left(  \tsigma^\mathrm{D} \otimes \tenseur{I}\right)^{\overset{23}{\mathrm{T}}}\right] \dcdot \tenseurq{P}^\mathrm{D} \\
-	&+ \left.\frac{\partial^2 G_\mathrm{F}}{\partial J_2^2} \right|_{J_3} \tsigma^\mathrm{D} \otimes \tsigma^\mathrm{D} + \left. \frac{\partial^2 G_\mathrm{F}}{\partial J_3^2} \right|_{J_2} \left[{(\tsigma^{\mathrm{D}})}^{2} \dcdot \tenseurq{P}^\mathrm{D} \otimes  {(\tsigma^{\mathrm{D}})}^{2} \dcdot \tenseurq{P}^\mathrm{D} \right] \\
-	&+ \frac{\partial}{\partial J_2}\left[ \left. \frac{\partial G_\mathrm{F}}{\partial J_3} \right|_{J_2} \right]_{J_3}  \left[ \tsigma^\mathrm{D} \otimes {(\tsigma^{\mathrm{D}})}^{2} \dcdot \tenseurq{P}^\mathrm{D} + {(\tsigma^{\mathrm{D}})}^{2} \dcdot \tenseurq{P}^\mathrm{D} \otimes \tsigma^{\mathrm{D}} \right]
-\end{split}
-\]
-
-We further require the derivatives:
-\[
-\begin{aligned}
-	\left.\frac{\partial^2 G_\mathrm{F}}{\partial J_2^2} \right|_{J_3} &= \left. \frac{\partial}{\partial J_2}\right|_\theta \left.\frac{\partial G_\mathrm{F}}{\partial J_2}\right|_{I_1,J_3} + \left. \frac{\partial}{\partial \theta} \right|_{J_2} \left.\frac{\partial G_\mathrm{F}}{\partial J_2}\right|_{I_1,J_3} \frac{\partial \theta}{\partial J_2}
-	\\
-	&= \frac{\partial^2 G_\mathrm{F}}{\partial^2 J_2^2} + \frac{\partial^2 G_\mathrm{F}}{\partial J_2 \partial \theta} \frac{\partial \theta}{\partial J_2} + \frac{\partial G_\mathrm{F}}{\partial \theta} \frac{\partial^2 \theta}{\partial J_2^2} \\
-	&+\frac{\partial \theta}{\partial J_2} \left(\frac{\partial^2 G_\mathrm{F}}{\partial J_2 \partial \theta} + \frac{\partial^2 G_\mathrm{F}}{\partial \theta^2} \frac{\partial \theta}{\partial J_2} + \frac{\partial G_\mathrm{F}}{\partial \theta} \frac{\partial^2 \theta}{\partial J_2 \partial \theta}\right)
-	\\
-	&= \frac{\partial^2 G_\mathrm{F}}{\partial^2 J_2^2} +  \frac{\partial G_\mathrm{F}}{\partial \theta} \frac{\partial^2 \theta}{\partial J_2^2}
-	\\
-	&+\frac{\partial \theta}{\partial J_2} \left(2\frac{\partial^2 G_\mathrm{F}}{\partial J_2 \partial \theta} + \frac{\partial^2 G_\mathrm{F}}{\partial \theta^2} \frac{\partial \theta}{\partial J_2} + \frac{\partial G_\mathrm{F}}{\partial \theta} \frac{\partial^2 \theta}{\partial J_2 \partial \theta}\right)
-	\\
-	\\
-	\left. \frac{\partial^2 G_\mathrm{F}}{\partial J_3^2} \right|_{J_2} &= \left. \frac{\partial}{\partial J_3} \right|_\theta \left.\frac{\partial G_\mathrm{F}}{\partial J_3}\right|_{I_1,J_2} + \left. \frac{\partial}{\partial \theta} \right|_{J_3} \left.\frac{\partial G_\mathrm{F}}{\partial J_3}\right|_{I_1,J_2} \frac{\partial \theta}{\partial J_3}
-	\\
-	&= \cancelto{0}{\frac{\partial^2 G_\mathrm{F}}{\partial \theta \partial J_3}}\frac{\partial \theta}{\partial J_3} + \frac{\partial G_\mathrm{F}}{\partial \theta} \frac{\partial^2 \theta}{\partial J_3^2} 
-	\\
-	&+\frac{\partial \theta}{\partial J_3} \left(\frac{\partial^2 G_\mathrm{F}}{\partial \theta^2}\frac{\partial \theta}{\partial J_3} + \frac{\partial G_\mathrm{F}}{\partial \theta}\frac{\partial^2 \theta}{\partial J_3 \partial \theta} \right)
-	\\
-	&= \frac{\partial G_\mathrm{F}}{\partial \theta} \frac{\partial^2 \theta}{\partial J_3^2} +\frac{\partial \theta}{\partial J_3} \left(\frac{\partial^2 G_\mathrm{F}}{\partial \theta^2}\frac{\partial \theta}{\partial J_3} + \frac{\partial G_\mathrm{F}}{\partial \theta}\frac{\partial^2 \theta}{\partial J_3 \partial \theta} \right)
-	\\
-	\\
-	\frac{\partial}{\partial J_2}\left[ \left. \frac{\partial G_\mathrm{F}}{\partial J_3} \right|_{J_2} \right]_{J_3}  &= \left. \frac{\partial}{\partial J_2} \right|_\theta \left.\frac{\partial G_\mathrm{F}}{\partial J_3}\right|_{I_1,J_2} + \left. \frac{\partial}{\partial \theta} \right|_{J_2} \left.\frac{\partial G_\mathrm{F}}{\partial J_3}\right|_{I_1,J_2} \frac{\partial \theta}{\partial J_2}
-	\\
-	&= \frac{\partial^2 G_\mathrm{F}}{\partial J_2 \partial \theta}\frac{\partial \theta}{\partial J_3} + \frac{\partial G_\mathrm{F}}{\partial \theta}\cancelto{0}{\frac{\partial^2 \theta}{\partial J_3 \partial J_2}} 
-	\\
-	&+ \frac{\partial \theta}{\partial J_2} \left( \frac{\partial^2 G_\mathrm{F}}{\partial \theta^2} \frac{\partial \theta}{\partial J_3} + \frac{\partial G_\mathrm{F}}{\partial \theta} \frac{\partial^2 \theta}{\partial J_3 \partial \theta} \right)
-	\\
-	&=\frac{\partial^2 G_\mathrm{F}}{\partial J_2 \partial \theta}\frac{\partial \theta}{\partial J_3} + \frac{\partial \theta}{\partial J_2} \left( \frac{\partial^2 G_\mathrm{F}}{\partial \theta^2} \frac{\partial \theta}{\partial J_3} + \frac{\partial G_\mathrm{F}}{\partial \theta} \frac{\partial^2 \theta}{\partial J_3 \partial \theta} \right)
-\end{aligned}
-\]
-
-Material-independent derivatives:
-\[
-\begin{aligned}
-	\left. \frac{\partial^2 \theta}{\partial J_2^2} \right|_\theta &= \frac{\tan 3\theta}{2J_2^2}
-	\\
-	\left. \frac{\partial^2 \theta}{\partial J_3^2} \right|_\theta &= -\frac{\tan 3\theta}{3J_3^2}
-	\\
-	\frac{\partial^2 \theta}{\partial J_2 \partial \theta} &= - \frac{3}{2J_2 \cos^2 3\theta}
-	\\
-	\frac{\partial^2 \theta}{\partial J_3 \partial \theta} &= \frac{1}{J_3 \cos^2 3\theta}
-\end{aligned}
-\]
-
-Material-dependent derivatives:
-\[
-\begin{aligned}
-	\frac{\partial^2 G_\mathrm{F}}{\partial J_2^2} &= 
-	-\frac{K_G^4}{4\sqrt{(J_2 K_G^2 + a^2 \sin^2 \psi)^3}}
-	\\
-	\frac{\partial^2 G_\mathrm{F}}{\partial \theta^2} &= 
-	\left( \frac{J_2}{\sqrt{J_2 K_G^2 + a^2 \sin^2 \psi}} - \frac{J_2^2 K_G^2}{\sqrt{(J_2 K_G^2 + a^2 \sin^2 \psi)^3}} \right)\left(\frac{\partial K_G}{\partial \theta}\right)^2 \\
-	&+  \frac{J_2K_G}{\sqrt{J_2 K_G^2 + a^2 \sin^2 \psi}} \frac{\partial^2 K_G}{\partial \theta^2}  
-\\
-	&=  \frac{J_2}{\sqrt{J_2 K_G^2 + a^2 \sin^2 \psi}} \left[\left(\frac{\partial K_G}{\partial \theta}\right)^2 \left(1 - \frac{J_2K_G^2}{J_2 K_G^2 + a^2 \sin^2 \psi} \right) + K_G \frac{\partial^2 K_G}{\partial \theta^2}  \right]
-	\\
-	\frac{\partial^2 G_\mathrm{F}}{\partial J_2 \partial \theta} &= 
-	\left( \frac{K_G}{\sqrt{J_2 K_G^2 + a^2 \sin^2 \psi}} - \frac{J_2 K_G^3}{2\sqrt{(J_2 K_G^2 + a^2 \sin^2 \psi)^3}} \right)\frac{\partial K_G}{\partial \theta}
-	\\
-	&=\frac{K_G}{\sqrt{J_2 K_G^2 + a^2 \sin^2 \psi}}\frac{\partial K_G}{\partial \theta}\left( 1 - \frac{J_2 K_G^2}{2(J_2 K_G^2 + a^2 \sin^2 \psi)} \right)
-	\\
-	\frac{\partial^2 K}{\partial \theta^2} &= \begin{cases}
-	-\cos \theta + \frac{1}{\sqrt{3}}\sin \phi \sin\theta & |\theta| < \theta_\mathrm{T}
-	\\ 
-	9B\sin3\theta
-\end{cases}
-\end{aligned}
-\]
-
-Jacobian is here (non-associated!)
-\[
-\tenseur{J} = 
+J=
 \begin{pmatrix}
-    \tenseurq{I} + \Delta \lambda \dfrac{\partial \tenseur{n}}{\partial \Delta \tepsilonel} & \tenseur{n} \\
-    E^{-1}\tenseur{n}_F \dcdot \tenseurq{C} & 0
+\deriv{f_{\tepsilonel}}{\Delta\,\tepsilonel} & \deriv{f_{\tepsilonel}}{\Delta\,p} & \\\\
+\deriv{f_{p}}{\Delta\,\tepsilonel} & \deriv{f_{p}}{\Delta\,p} \\
 \end{pmatrix}
 \]{#eq:Jacobian}
 
-<!--
-% ## Return false
-%
-%Principal stresses:
-%\begin{align*}
-%	\sigma_1 &= \frac{2}{\sqrt{3}} \sqrt{J_2} \sin \left( \theta + \frac{2\pi}{3} \right) + \frac{I_1}{3}
-%	\\
-%	\sigma_2 &= \frac{2}{\sqrt{3}} \sqrt{J_2} \sin \theta + \frac{I_1}{3}
-%	\\
-%	\sigma_3 &= \frac{2}{\sqrt{3}} \sqrt{J_2} \sin \left( \theta - \frac{2\pi}{3} \right) + \frac{I_1}{3}
-%\end{align*}
-%
-%Maximum shear stress:
-%\[
-%	\tau_\mathrm{max} = \frac{\sigma_1 - \sigma_3}{2} = \sqrt{J_2} \cos \theta
-%\]
-%
-%MC can be expressed as (include graphics)
-%\[
-%	\tau_\mathrm{max} = -\sigma_n \sin \phi + c \cos \phi
-%\]
-%
-%Where the normal stress is:
-%\[
-%	\sigma_\mathrm{n} = \frac{\sigma_1 + \sigma_3}{2} = - \frac{\sqrt{J_2}}{\sqrt{3}} \sin \theta + \frac{I_1}{3}
-%\]
-%
-%Thus,
-%
-%\[
-%	\tau_\mathrm{Y} =  \frac{\sqrt{J_2}}{\sqrt{3}} \sin \theta \sin \phi + c \cos \phi - \frac{I_1}{3} \sin\phi
-%\]
--->
+
+The expression of the previous terms is given by:
+
+\[
+\left\{
+\begin{aligned}
+\deriv{f_{\tepsilonel}}{\Delta\,\tepsilonel} &= \tenseurq{I} + \Delta \lambda \frac{\partial \tenseur{n}}{\partial \Delta \tenseur{\epsilon}_{el}} \\
+\deriv{f_{\tepsilonel}}{\Delta\,p} &= \tenseur{n} \\
+\deriv{f_{p}}{\Delta\,\tepsilonel} &=  E^{-1} \tenseur{n}_F \dcdot \tenseurq{C}  \\
+\deriv{f_{p}}{\Delta\,p}           &= 0 
+\end{aligned}
+\right.
+\]
 
 
-# Verification
+## Elastic loading case
 
-![Trace of the yield surface (green) when approached on different stress paths (purple)](img/MohrCoulombPiPlane.svg "Trace of the yield surface (green) when approached on different stress paths (purple)"){#fig:MC_stress_paths width=90%}
+Assuming an elastic loading, the system of equations to be solved is
+trivially:
+\[
+\left\{
+\begin{aligned}
+	\Delta\,\tepsilonel-\Delta\,\tepsilonto &= 0 \\
+	\Delta\,p &= 0 \\
+\end{aligned}
+\right.
+\]
 
-The yield function was approached along different stress paths, shown in
-Figure @fig:MC_stress_paths within the \(\pi\)-plane. This shows that
-a) yield is correctly detected, and b) the stress-state is correctly
-pulled back onto the yield surface.
+The jacobian associated with this system is the identity matrix.
 
-![Verification against analytical example. Description in @Nagel2016.](img/MohrCoulombAnalitical.svg "Verification against analytical example. Description in @Nagel2016"){#fig:MC_vis width=125%}
-
-The second test (included as a benchmark) follows an analytical solution
-for a stress-free cavity in an infinite medium under a variable
-far-field stress. The solution computes stress- and displacement fields
-as well as the location of the plastified zone. It has been used in
-@Nagel2016 where the test is described in more detail (with a
-partial extension towards non-associated flow).
 
 
 # Implementation
@@ -767,4 +666,305 @@ And to finish \(f^{\lambda}\), \(\dfrac{\partial f^{\lambda}}{\partial \Delta\,\
 
 The Jacobian can now be computed (see @Eq:Jacobian) 
 
+
+# Verification
+
+![Trace of the yield surface (green) when approached on different stress paths (purple)](img/MohrCoulombPiPlane.svg "Trace of the yield surface (green) when approached on different stress paths (purple)"){#fig:MC_stress_paths width=90%}
+
+The yield function was approached along different stress paths, shown in
+Figure @fig:MC_stress_paths within the \(\pi\)-plane. This shows that
+a) yield is correctly detected, and b) the stress-state is correctly
+pulled back onto the yield surface.
+
+![Verification against analytical example. Description in @Nagel2016.](img/MohrCoulombAnalitical.svg "Verification against analytical example. Description in @Nagel2016"){#fig:MC_vis width=125%}
+
+The second test (included as a benchmark) follows an analytical solution
+for a stress-free cavity in an infinite medium under a variable
+far-field stress. The solution computes stress- and displacement fields
+as well as the location of the plastified zone. It has been used in
+@Nagel2016 where the test is described in more detail (with a
+partial extension towards non-associated flow).
+
+
+# Simplification of the MFront file
+
+Because F et G have an analogous structure, it's possible to simplify the MFront file
+and to do the calculation in the hxx `TFEL/Material/MohrCoulombYieldCriterion.hxx`
+instead of the MFront file.
+
+Severals simplifications are done:
+
+- parameters and local variables such as `sin_phi`, `sin_psi`, ... are now defined in the hxx file
+- the calculation of \(F^{el}\) is done by `computeMohrCoulombStressCriterion` function
+- the calculation of \(F\) and this normal \(\tenseur{n}_{F}\) are done by 
+`computeMohrCoulombStressCriterionNormal` function 
+- the calculation of  \(G\), \(\tenseur{n}_{G}\) and \( \dfrac{\partial \tenseur{n}_{G}}{\partial \tenseur{\sigma}} \) 
+are done by `computeMohrCoulombStressCriterionSecondDerivative` function
+
+Except for some name changes (for example p instead lam for the EquivalentPlasticStrain) 
+and the functions previously introduced 
+(`computeMohrCoulombStressCriterion`,`computeMohrCoulombStressCriterionNormal` and `computeMohrCoulombStressCriterionSecondDerivative`)
+the rest of the MFront file is identical to that described above in the section `Implementation`).
+
+The new MFront file is now much shorter:
+
+~~~~{.cxx}
+@DSL Implicit;
+@Behaviour MohrCoulombAbboSloan;
+@Author Thomas Nagel;
+@Date 05 / 02 / 2019;
+
+@Algorithm NewtonRaphson;
+
+@Brick StandardElasticity;
+
+@Includes{
+#include "TFEL/Material/MohrCoulombYieldCriterion.hxx"
+}
+
+@Theta 1.0;     // time integration scheme
+@Epsilon 1e-14; // tolerance of local stress integration algorithm
+@ModellingHypotheses{".+"};
+
+@RequireStiffnessTensor<UnAltered>;
+
+@StateVariable real p;
+p.setGlossaryName("EquivalentPlasticStrain");
+
+@MaterialProperty stress c;
+c.setEntryName("Cohesion");
+@MaterialProperty real phi;
+phi.setEntryName("FrictionAngle");
+@MaterialProperty real psi;
+psi.setEntryName("DilatancyAngle");
+@MaterialProperty real lodeT;
+lodeT.setEntryName("TransitionAngle");
+@MaterialProperty stress a;
+a.setEntryName("TensionCutOffParameter");
+
+@LocalVariable Stensor ngp;
+
+@LocalVariable bool F; // if true, plastic loading
+@LocalVariable MohrCoulombParameters<StressStensor> pf;
+@LocalVariable MohrCoulombParameters<StressStensor> pg;
+
+@InitLocalVariables {
+  constexpr const auto u = MohrCoulombParameters<StressStensor>::DEGREE;
+  pf = makeMohrCoulombParameters<StressStensor, u>(c, phi, lodeT, a);
+  pg = makeMohrCoulombParameters<StressStensor, u>(c, psi, lodeT, a);
+  const auto sel = computeElasticPrediction();
+  const auto smc = computeMohrCoulombStressCriterion(pf, sel);
+  F = smc > stress(0);
+  ngp = Stensor(real(0));
+}
+
+@Integrator {
+  if (F) {
+    const auto Fym = real(1.e-4) * D(0, 0);
+
+    // in C++11:
+    auto Fy = stress{};
+    auto nf = Stensor{};
+    auto Fg = stress{};
+    auto ng = Stensor{};
+    auto dng = Stensor4{};
+    std::tie(Fy, nf) = computeMohrCoulombStressCriterionNormal(pf, sig);
+    std::tie(Fg, ng, dng) = computeMohrCoulombStressCriterionSecondDerivative(pg, sig);
+
+    // elasticity
+    feel += dp * ng;
+    dfeel_ddeel += theta * dp * dng * D;
+    dfeel_ddp = ng;
+    // plasticity
+    fp = Fy / D(0, 0);
+    dfp_ddp = strain(0);
+    dfp_ddeel = theta * (nf | D) / D(0, 0);
+    ngp = ng;
+  }
+}
+~~~~
+
 # References
+
+
+
+
+
+<!--
+# Appendix 1
+
+Alternative formulation using the Caley-Hamilton theorem:
+\[
+	\tenseur{A}^3 - I_1 \tenseur{A}^2 + I_2 \tenseur{A} - I_3 \tenseur{I} = \tenseur{0}
+\]
+
+Taking the trace and subsequently the derivative w.r.t. \(\tenseur{A}\)
+yields:
+\[
+	I_{3,\tenseur{A}} = \tenseur{A}^2 + I_2 \tenseur{I} - I_1 \tenseur{A}
+\]
+
+For the deviator we have \(I_2(\tsigma^\mathrm{D}) = -J_2\) and
+\(I_1(\tsigma^\mathrm{D})=0\) and thus write:
+\[
+	\frac{\partial J_3}{\partial \tsigma^\mathrm{D}} = J_3 (\tsigma^\mathrm{D})^{-1} = (\tsigma^\mathrm{D})^{2} - J_2 \tenseur{I}
+\]
+
+Furthermore,
+\[
+\frac{\partial J_3}{\partial \tsigma} = \left[(\tsigma^\mathrm{D})^{2} - J_2 \tenseur{I} \right] \dcdot \tenseurq{P}^\mathrm{D} = (\tsigma^\mathrm{D})^{2} \dcdot \tenseurq{P}^\mathrm{D}
+\]
+
+Therefore, 
+\[
+	\tenseur{n} = \frac{\partial G_\mathrm{F}}{\partial I_1} \tenseur{I} + \left( \frac{\partial G_\mathrm{F}}{\partial J_2} + \frac{\partial G_\mathrm{F}}{\partial \theta} \frac{\partial \theta}{\partial J_2} \right) \tsigma^\mathrm{D} +  \frac{\partial G_\mathrm{F}}{\partial \theta}  \frac{\partial \theta}{\partial J_3} J_3 {(\tsigma^{\mathrm{D}})}^{-1} \dcdot \tenseurq{P}^\mathrm{D}
+\]
+or
+\[
+	\tenseur{n} = \frac{\partial G_\mathrm{F}}{\partial I_1} \tenseur{I} + \left( \frac{\partial G_\mathrm{F}}{\partial J_2} + \frac{\partial G_\mathrm{F}}{\partial \theta} \frac{\partial \theta}{\partial J_2} \right) \tsigma^\mathrm{D} +  \frac{\partial G_\mathrm{F}}{\partial \theta}  \frac{\partial \theta}{\partial J_3} (\tsigma^\mathrm{D})^{2}\dcdot \tenseurq{P}^\mathrm{D}
+\]
+
+with the material-independent derivatives:
+
+\[
+\begin{aligned}
+	\left. \frac{\partial \theta}{\partial J_2} \right|_{J_3} &= -\frac{\tan 3\theta}{2J_2}
+	\\
+	\left. \frac{\partial \theta}{\partial J_3} \right|_{J_2} &= \frac{\tan 3\theta}{3J_3}
+\end{aligned}
+\]
+
+and the material-dependent derivatives
+\[
+\begin{aligned}
+	\left. \frac{\partial G_\mathrm{F}}{\partial I_1} \right|_{J_2,J_3} &= \frac{1}{3} \sin \psi
+	\\
+	\left. \frac{\partial G_\mathrm{F}}{\partial J_2} \right|_{I_1,\theta} &= 
+	\frac{K'^2}{2\sqrt{J_2 K_G^2 + a^2 \sin^2 \psi}}
+	\\
+	\left. \frac{\partial G_\mathrm{F}}{\partial \theta} \right|_{I_1,J_2} &= 
+	\frac{J_2 K_G}{\sqrt{J_2 K_G^2 + a^2 \sin^2 \psi}} \frac{\partial K_G}{\partial \theta}
+	\\
+	\frac{\partial K}{\partial \theta} &= \begin{cases}
+	-\sin \theta - \frac{1}{\sqrt{3}}\sin \phi \cos\theta & |\theta| < \theta_\mathrm{T}
+	\\ 
+	-3B\cos3\theta
+\end{cases}
+\end{aligned}
+\]
+
+The following combined entries are useful:
+\[
+\begin{aligned}
+	\frac{\partial G_\mathrm{F}}{\partial \theta}\frac{\partial \theta}{\partial J_2} &= -\frac{K_G\tan 3\theta}{2\sqrt{J_2 K_G^2 + a^2 \sin^2 \psi}} \frac{\partial K_G}{\partial \theta} 
+\end{aligned}
+\]
+
+Thus,
+\[
+\begin{aligned}
+	\left. \frac{\partial G_\mathrm{F}}{\partial I_1} \right|_{J_2,J_3} &= \frac{1}{3} \sin \psi
+	\\
+	\left.\frac{\partial G_\mathrm{F}}{\partial J_2}\right|_{I_1,J_3} &= 
+	\frac{K_G}{2\sqrt{J_2 K_G^2 + a^2 \sin^2 \psi}} \left(K_G - \tan 3\theta \frac{\partial K_G}{\partial \theta} \right)
+	\\
+	\left.\frac{\partial G_\mathrm{F}}{\partial J_3}\right|_{I_1,J_2} &= \frac{J_2K_G\tan 3\theta}{3J_3\sqrt{J_2 K_G^2 + a^2 \sin^2 \psi}} \frac{\partial K_G}{\partial \theta}
+\end{aligned}
+\]
+
+so that:
+\[
+	\tenseur{n} = \frac{\partial G_\mathrm{F}}{\partial I_1} \tenseur{I} + \left.\frac{\partial G_\mathrm{F}}{\partial J_2}\right|_{I_1,J_3} \tsigma^\mathrm{D} +  \left.\frac{\partial G_\mathrm{F}}{\partial J_3}\right|_{I_1,J_2} (\tsigma^{\mathrm{D}})^{2} \dcdot \tenseurq{P}^\mathrm{D}
+\]
+
+
+
+# Linearization of flow rule
+
+\[
+\begin{split}
+	\frac{\partial \tenseur{n}}{\partial \tsigma} &= \left.\frac{\partial G_\mathrm{F}}{\partial J_2}\right|_{I_1,J_3} \tenseurq{P}^\mathrm{D} + \left.\frac{\partial G_\mathrm{F}}{\partial J_3}\right|_{I_1,J_2} \tenseurq{P}^\mathrm{D} \dcdot \left[ \left( \tenseur{I} \otimes \tsigma^\mathrm{D} \right)^{\overset{23}{\mathrm{T}}} + \left(  \tsigma^\mathrm{D} \otimes \tenseur{I}\right)^{\overset{23}{\mathrm{T}}}\right] \dcdot \tenseurq{P}^\mathrm{D} \\
+	&+ \left.\frac{\partial^2 G_\mathrm{F}}{\partial J_2^2} \right|_{J_3} \tsigma^\mathrm{D} \otimes \tsigma^\mathrm{D} + \left. \frac{\partial^2 G_\mathrm{F}}{\partial J_3^2} \right|_{J_2} \left[{(\tsigma^{\mathrm{D}})}^{2} \dcdot \tenseurq{P}^\mathrm{D} \otimes  {(\tsigma^{\mathrm{D}})}^{2} \dcdot \tenseurq{P}^\mathrm{D} \right] \\
+	&+ \frac{\partial}{\partial J_2}\left[ \left. \frac{\partial G_\mathrm{F}}{\partial J_3} \right|_{J_2} \right]_{J_3}  \left[ \tsigma^\mathrm{D} \otimes {(\tsigma^{\mathrm{D}})}^{2} \dcdot \tenseurq{P}^\mathrm{D} + {(\tsigma^{\mathrm{D}})}^{2} \dcdot \tenseurq{P}^\mathrm{D} \otimes \tsigma^{\mathrm{D}} \right]
+\end{split}
+\]
+
+We further require the derivatives:
+\[
+\begin{aligned}
+	\left.\frac{\partial^2 G_\mathrm{F}}{\partial J_2^2} \right|_{J_3} &= \left. \frac{\partial}{\partial J_2}\right|_\theta \left.\frac{\partial G_\mathrm{F}}{\partial J_2}\right|_{I_1,J_3} + \left. \frac{\partial}{\partial \theta} \right|_{J_2} \left.\frac{\partial G_\mathrm{F}}{\partial J_2}\right|_{I_1,J_3} \frac{\partial \theta}{\partial J_2}
+	\\
+	&= \frac{\partial^2 G_\mathrm{F}}{\partial^2 J_2^2} + \frac{\partial^2 G_\mathrm{F}}{\partial J_2 \partial \theta} \frac{\partial \theta}{\partial J_2} + \frac{\partial G_\mathrm{F}}{\partial \theta} \frac{\partial^2 \theta}{\partial J_2^2} \\
+	&+\frac{\partial \theta}{\partial J_2} \left(\frac{\partial^2 G_\mathrm{F}}{\partial J_2 \partial \theta} + \frac{\partial^2 G_\mathrm{F}}{\partial \theta^2} \frac{\partial \theta}{\partial J_2} + \frac{\partial G_\mathrm{F}}{\partial \theta} \frac{\partial^2 \theta}{\partial J_2 \partial \theta}\right)
+	\\
+	&= \frac{\partial^2 G_\mathrm{F}}{\partial^2 J_2^2} +  \frac{\partial G_\mathrm{F}}{\partial \theta} \frac{\partial^2 \theta}{\partial J_2^2}
+	\\
+	&+\frac{\partial \theta}{\partial J_2} \left(2\frac{\partial^2 G_\mathrm{F}}{\partial J_2 \partial \theta} + \frac{\partial^2 G_\mathrm{F}}{\partial \theta^2} \frac{\partial \theta}{\partial J_2} + \frac{\partial G_\mathrm{F}}{\partial \theta} \frac{\partial^2 \theta}{\partial J_2 \partial \theta}\right)
+	\\
+	\\
+	\left. \frac{\partial^2 G_\mathrm{F}}{\partial J_3^2} \right|_{J_2} &= \left. \frac{\partial}{\partial J_3} \right|_\theta \left.\frac{\partial G_\mathrm{F}}{\partial J_3}\right|_{I_1,J_2} + \left. \frac{\partial}{\partial \theta} \right|_{J_3} \left.\frac{\partial G_\mathrm{F}}{\partial J_3}\right|_{I_1,J_2} \frac{\partial \theta}{\partial J_3}
+	\\
+	&= \cancelto{0}{\frac{\partial^2 G_\mathrm{F}}{\partial \theta \partial J_3}}\frac{\partial \theta}{\partial J_3} + \frac{\partial G_\mathrm{F}}{\partial \theta} \frac{\partial^2 \theta}{\partial J_3^2} 
+	\\
+	&+\frac{\partial \theta}{\partial J_3} \left(\frac{\partial^2 G_\mathrm{F}}{\partial \theta^2}\frac{\partial \theta}{\partial J_3} + \frac{\partial G_\mathrm{F}}{\partial \theta}\frac{\partial^2 \theta}{\partial J_3 \partial \theta} \right)
+	\\
+	&= \frac{\partial G_\mathrm{F}}{\partial \theta} \frac{\partial^2 \theta}{\partial J_3^2} +\frac{\partial \theta}{\partial J_3} \left(\frac{\partial^2 G_\mathrm{F}}{\partial \theta^2}\frac{\partial \theta}{\partial J_3} + \frac{\partial G_\mathrm{F}}{\partial \theta}\frac{\partial^2 \theta}{\partial J_3 \partial \theta} \right)
+	\\
+	\\
+	\frac{\partial}{\partial J_2}\left[ \left. \frac{\partial G_\mathrm{F}}{\partial J_3} \right|_{J_2} \right]_{J_3}  &= \left. \frac{\partial}{\partial J_2} \right|_\theta \left.\frac{\partial G_\mathrm{F}}{\partial J_3}\right|_{I_1,J_2} + \left. \frac{\partial}{\partial \theta} \right|_{J_2} \left.\frac{\partial G_\mathrm{F}}{\partial J_3}\right|_{I_1,J_2} \frac{\partial \theta}{\partial J_2}
+	\\
+	&= \frac{\partial^2 G_\mathrm{F}}{\partial J_2 \partial \theta}\frac{\partial \theta}{\partial J_3} + \frac{\partial G_\mathrm{F}}{\partial \theta}\cancelto{0}{\frac{\partial^2 \theta}{\partial J_3 \partial J_2}} 
+	\\
+	&+ \frac{\partial \theta}{\partial J_2} \left( \frac{\partial^2 G_\mathrm{F}}{\partial \theta^2} \frac{\partial \theta}{\partial J_3} + \frac{\partial G_\mathrm{F}}{\partial \theta} \frac{\partial^2 \theta}{\partial J_3 \partial \theta} \right)
+	\\
+	&=\frac{\partial^2 G_\mathrm{F}}{\partial J_2 \partial \theta}\frac{\partial \theta}{\partial J_3} + \frac{\partial \theta}{\partial J_2} \left( \frac{\partial^2 G_\mathrm{F}}{\partial \theta^2} \frac{\partial \theta}{\partial J_3} + \frac{\partial G_\mathrm{F}}{\partial \theta} \frac{\partial^2 \theta}{\partial J_3 \partial \theta} \right)
+\end{aligned}
+\]
+
+Material-independent derivatives:
+\[
+\begin{aligned}
+	\left. \frac{\partial^2 \theta}{\partial J_2^2} \right|_\theta &= \frac{\tan 3\theta}{2J_2^2}
+	\\
+	\left. \frac{\partial^2 \theta}{\partial J_3^2} \right|_\theta &= -\frac{\tan 3\theta}{3J_3^2}
+	\\
+	\frac{\partial^2 \theta}{\partial J_2 \partial \theta} &= - \frac{3}{2J_2 \cos^2 3\theta}
+	\\
+	\frac{\partial^2 \theta}{\partial J_3 \partial \theta} &= \frac{1}{J_3 \cos^2 3\theta}
+\end{aligned}
+\]
+
+Material-dependent derivatives:
+\[
+\begin{aligned}
+	\frac{\partial^2 G_\mathrm{F}}{\partial J_2^2} &= 
+	-\frac{K_G^4}{4\sqrt{(J_2 K_G^2 + a^2 \sin^2 \psi)^3}}
+	\\
+	\frac{\partial^2 G_\mathrm{F}}{\partial \theta^2} &= 
+	\left( \frac{J_2}{\sqrt{J_2 K_G^2 + a^2 \sin^2 \psi}} - \frac{J_2^2 K_G^2}{\sqrt{(J_2 K_G^2 + a^2 \sin^2 \psi)^3}} \right)\left(\frac{\partial K_G}{\partial \theta}\right)^2 \\
+	&+  \frac{J_2K_G}{\sqrt{J_2 K_G^2 + a^2 \sin^2 \psi}} \frac{\partial^2 K_G}{\partial \theta^2}  
+\\
+	&=  \frac{J_2}{\sqrt{J_2 K_G^2 + a^2 \sin^2 \psi}} \left[\left(\frac{\partial K_G}{\partial \theta}\right)^2 \left(1 - \frac{J_2K_G^2}{J_2 K_G^2 + a^2 \sin^2 \psi} \right) + K_G \frac{\partial^2 K_G}{\partial \theta^2}  \right]
+	\\
+	\frac{\partial^2 G_\mathrm{F}}{\partial J_2 \partial \theta} &= 
+	\left( \frac{K_G}{\sqrt{J_2 K_G^2 + a^2 \sin^2 \psi}} - \frac{J_2 K_G^3}{2\sqrt{(J_2 K_G^2 + a^2 \sin^2 \psi)^3}} \right)\frac{\partial K_G}{\partial \theta}
+	\\
+	&=\frac{K_G}{\sqrt{J_2 K_G^2 + a^2 \sin^2 \psi}}\frac{\partial K_G}{\partial \theta}\left( 1 - \frac{J_2 K_G^2}{2(J_2 K_G^2 + a^2 \sin^2 \psi)} \right)
+	\\
+	\frac{\partial^2 K}{\partial \theta^2} &= \begin{cases}
+	-\cos \theta + \frac{1}{\sqrt{3}}\sin \phi \sin\theta & |\theta| < \theta_\mathrm{T}
+	\\ 
+	9B\sin3\theta
+\end{cases}
+\end{aligned}
+\]
+
+Jacobian is here (non-associated!)
+\[
+\tenseur{J} = 
+\begin{pmatrix}
+    \tenseurq{I} + \Delta \lambda \dfrac{\partial \tenseur{n}}{\partial \Delta \tepsilonel} & \tenseur{n} \\
+    E^{-1}\tenseur{n}_F \dcdot \tenseurq{C} & 0
+\end{pmatrix}
+\]{#eq:Jacobian}
+-->
