@@ -105,7 +105,6 @@ The contribution of the smoothing is visualized in Figure @fig:mc_vis.
 
 ---
 
-
 ## Plastic potential
 
 
@@ -227,8 +226,6 @@ trivially:
 \]
 
 The jacobian associated with this system is the identity matrix.
-
-
 
 # Implementation
 
@@ -445,12 +442,9 @@ K is initiliazed as \(K^{el}\) value:
 
 ~~~~{.cxx} 
   auto K = 0.0;
-  if (fabs(lode_el) < lodeT) 
-  {
+  if (abs(lode_el) < lodeT) {
     K = cos(lode_el) - isqrt3 * sin_phi * sin(lode_el);
-  } 
-  else 
-  {
+  } else {
     const auto sign =
         min(max(lode_el / max(abs(lode_el), local_zero_tolerance), -1.), 1.);
     const auto A = 1. / 3. * cos_lodeT *
@@ -495,14 +489,13 @@ calculation because the various variables have already been initialized
 with elastic hypothesis. If there is plastic strain the rest is necessary.
 
 ~~~~{.cxx}
-if (F) 
-  {
+if (F) {
 ~~~~
 
 \(K\) and \(\dfrac{\partial K}{\partial \theta}\) are computed:
 
 ~~~~{.cxx}
-const auto s = deviator(sig);
+    const auto s = deviator(sig);
     const auto I1 = trace(sig);
     const auto J2 = max((s | s) / 2., local_zero_tolerance);
     const auto J3 = real(det(s) < 0. ? min(det(s), -local_zero_tolerance)
@@ -518,13 +511,10 @@ const auto s = deviator(sig);
     const auto tan_3_lode = tan(3. * lode);
     auto K = 0.;
     auto dK_dlode = 1.;
-    if (fabs(lode) < lodeT) 
-    {
+    if (abs(lode) < lodeT) {
       K = cos_lode - isqrt3 * sin_phi * sin_lode;
       dK_dlode = -sin_lode - isqrt3 * sin_phi * cos_lode;
-    } 
-    else 
-    {
+    } else {
       const auto sign =
           min(max(lode / max(abs(lode), local_zero_tolerance), -1.), 1.);
       const auto A = 1. / 3. * cos_lodeT *
@@ -541,10 +531,10 @@ const auto s = deviator(sig);
  \(\dfrac{\partial^2 K_G}{\partial^2 \theta}\) are computed :
 
 ~~~~{.cxx}
-auto KG = 0.0; // move into a function to avoid code duplication
+    auto KG = 0.0; // move into a function to avoid code duplication
     auto dKG_dlode = 1.;
     auto dKG_ddlode = 1.;
-    if (fabs(lode) < lodeT) 
+    if (abs(lode) < lodeT) 
     {
       KG = cos_lode - isqrt3 * sin_psi * sin_lode;
       dKG_dlode = -sin_lode - isqrt3 * sin_psi * cos_lode;
@@ -553,7 +543,7 @@ auto KG = 0.0; // move into a function to avoid code duplication
     else 
     {
       const auto sign =
-          min(max(lode / max(fabs(lode), local_zero_tolerance), -1.), 1.);
+          min(max(lode / max(abs(lode), local_zero_tolerance), -1.), 1.);
       const auto A = 1. / 3. * cos_lodeT *
                      (3. + tan_lodeT * tan_3_lodeT +
                       isqrt3 * sign * (tan_3_lodeT - 3. * tan_lodeT) * sin_psi);
@@ -568,7 +558,7 @@ auto KG = 0.0; // move into a function to avoid code duplication
 The flow direction is computed :
 
 ~~~~{.cxx}
-// flow direction
+    // flow direction
     const auto dev_s_squared = computeJ3Derivative(
         sig); // replaces dev_s_squared = deviator(square(s));
     const auto dG_dI1 = sin_psi / 3.;
@@ -579,10 +569,10 @@ The flow direction is computed :
     const auto n = eval(dG_dI1 * id + dG_dJ2 * s + dG_dJ3 * dev_s_squared);
 ~~~~
 
-The yield function F is computed:
+The yield function `F` is computed:
 
 ~~~~{.cxx}
-// yield function
+    // yield function
     const auto rootF = max(sqrt(J2 * K * K + a * a * sin_phi * sin_phi), local_zero_tolerance);
 
     const auto Fy1 = I1 * sin_phi / 3 + rootF;
@@ -599,7 +589,7 @@ Derivatives are calculated before computing the Jacobian matrix:
 \(\dfrac{\partial ^2G}{\partial J_2 \partial J_3}\)
 
 ~~~~{.cxx}
-// yield function derivative for Jacobian
+    // yield function derivative for Jacobian
     const auto dF_dI1 = sin_phi / 3.;
     const auto dF_dJ2 = K / (2. * rootF) * (K - tan_3_lode * dK_dlode);
     const auto dF_dJ3 = J2 * K * tan_3_lode / (3. * J3 * rootF) * dK_dlode;
@@ -628,7 +618,7 @@ Derivatives are calculated before computing the Jacobian matrix:
 \(\dfrac{\partial f^{el}}{\partial \Delta\,\lambda}\) are computed:
 
 ~~~~{.cxx}
-  // elasticity
+    // elasticity
     feel += dlam * n;
     dfeel_ddeel += theta * dlam * (dG_dJ2 * Pdev + dG_dJ3 * computeJ3SecondDerivative(sig) +
                                    dG_ddJ2 * (s ^ s) + dG_ddJ3 * (dev_s_squared ^ dev_s_squared) +
@@ -661,7 +651,7 @@ And to finish \(f^{\lambda}\), \(\dfrac{\partial f^{\lambda}}{\partial \Delta\,\
 \(\dfrac{\partial f^{\lambda}}{\partial \Delta\,\tepsilonel}\) are computed:
 
 ~~~~{.cxx}
- // plasticity
+    // plasticity
     flam = Fy / D(0, 0);
     dflam_ddlam = strain(0);
     dflam_ddeel = theta * (nF | D) / D(0, 0);
@@ -705,12 +695,14 @@ Severals simplifications are done:
 - the calculation of  \(G\), \(\tenseur{n}_{G}\) and \( \dfrac{\partial \tenseur{n}_{G}}{\partial \tenseur{\sigma}} \) 
 are done by `computeMohrCoulombStressCriterionSecondDerivative` function
 
-Except for some name changes (for example p instead lam for the EquivalentPlasticStrain) 
-and the functions previously introduced 
-(`computeMohrCoulombStressCriterion`,`computeMohrCoulombStressCriterionNormal` and `computeMohrCoulombStressCriterionSecondDerivative`)
-the rest of the MFront file is identical to that described above in the section `Implementation`).
+Except for some name changes (for example p instead lam for the
+EquivalentPlasticStrain) and the functions previously introduced
+(`computeMohrCoulombStressCriterion`,`computeMohrCoulombStressCriterionNormal`
+and `computeMohrCoulombStressCriterionSecondDerivative`) the rest of the
+MFront file is identical to that described above in the section
+`Implementation`).
 
-The new MFront file is now much shorter:
+The new MFront file is however much shorter and clearer:
 
 ~~~~{.cxx}
 @DSL Implicit;
@@ -764,8 +756,6 @@ a.setEntryName("TensionCutOffParameter");
 
 @Integrator {
   if (F) {
-    const auto Fym = real(1.e-4) * D(0, 0);
-
     // in C++11:
     auto Fy = stress{};
     auto nf = Stensor{};
@@ -774,7 +764,6 @@ a.setEntryName("TensionCutOffParameter");
     auto dng = Stensor4{};
     std::tie(Fy, nf) = computeMohrCoulombStressCriterionNormal(pf, sig);
     std::tie(Fg, ng, dng) = computeMohrCoulombStressCriterionSecondDerivative(pg, sig);
-
     // elasticity
     feel += dp * ng;
     dfeel_ddeel += theta * dp * dng * D;
@@ -791,11 +780,11 @@ a.setEntryName("TensionCutOffParameter");
 # Simplification of the MFront file : use of the `StandardElastoViscoPlasticity` brick
 
 The Mohr-Coulomb model has been introduced in the `StandardElastoViscoPlasticity` brick. 
-The MFront file is very simplify : the whole model is contained in the brick and can be called
-by the keyword `MohrCoulomb`
+
+The `MFront` file is then very short: the whole model is contained in
+the brick and can be called by the keyword `MohrCoulomb`
 
 The MFront file is now:
-
 
 ~~~~{.cxx}
 @DSL Implicit;
@@ -808,31 +797,29 @@ The MFront file is now:
 
 @Algorithm NewtonRaphson;
 @Epsilon 1.e-14;
+@Theta 1;
 
 @Brick StandardElastoViscoPlasticity{
   stress_potential : "Hooke" {
-    young_modulus :1,      // The Young modulus of an isotropic material
-    poisson_ratio :1,      // The Poisson ratio of an isotropic material
-    thermal_expansion :1,  // le coefficient de dilatation linéique d'un matériau isotrope
-    thermal_expansion_reference_temperature : 1 // reference temperature for the thermal expansion
+    young_modulus : 150.e3,
+    poisson_ratio : 0.3
   },
   inelastic_flow : "Plastic" {
     criterion : "MohrCoulomb" {
-      c :1,      // cohesion
-      phi :1,    // friction angle or dilatancy angle
-      lodeT :1,  // transition angle as defined by Abbo and Sloan
-      a : 1       // tension cuff-off parameter
+      c : 3.e1,      // cohesion
+      phi : 0.523598775598299,    // friction angle or dilatancy angle
+      lodeT : 0.506145483078356,  // transition angle as defined by Abbo and Sloan
+      a : 1e1       // tension cuff-off parameter
     },
     flow_criterion : "MohrCoulomb" {
-      c :1,      // cohesion
-      phi :1,    // friction angle or dilatancy angle
-      lodeT :1,  // transition angle as defined by Abbo and Sloan
-      a :1       // tension cuff-off parameter
+      c : 3.e1,      // cohesion
+      phi : 0.174532925199433,    // friction angle or dilatancy angle
+      lodeT : 0.506145483078356,  // transition angle as defined by Abbo and Sloan
+      a : 1e1       // tension cuff-off parameter
     },
-    isotropic_hardening : "Linear" { R0: 0}
+    isotropic_hardening : "Linear" {R0 : "0"}
   }
 };
-
 ~~~~
 
 # References

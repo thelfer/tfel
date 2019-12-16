@@ -32,7 +32,7 @@ This page shows how to implement a behaviour describing the load induced
 thermal strain (LITS) phenomena in concrete following the work of
 @torelli_confinement-dependent_2018.
 
-This implementation is available [here](gallery/viscoelasticity/LoadInducedThermalStrain_Torelli2018.mfront).
+This implementation is available [here](gallery/viscoplasticity/LoadInducedThermalStrain_Torelli2018.mfront).
 
 # Description
 
@@ -79,7 +79,7 @@ where:
   describes the effect of the stress triaxiality.
 - \(C_{m}\paren{\tsigma}=\Frac{-\trace{\pneg{\tsigma}}}{\sqrt{\pneg{\tsigma}\,\colon\,\pneg{\tsigma}}}\).
   \(C_{m}\) is the triaxiality index linked to the principal stresses.
-- \(\sigma_{u0}\), \(nu_{\lits}\) and \(\gamma\) are material
+- \(\sigma_{u0}\), \(\nu_{\lits}\) and \(\gamma\) are material
   parameters. More precisely \(\sigma_{u0}\) is the compressive strength
   of the material and \(\gamma\) is a material parameter calibrated to
   experimental data for the appropriate temperature range.

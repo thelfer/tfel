@@ -630,6 +630,7 @@ AC_OUTPUT([debug.sh Makefile Doxyfile docs/Makefile docs/tfel/Makefile
 	   docs/gallery/behaviours/viscoelasticity/Makefile
 	   docs/gallery/behaviours/viscoplasticity/Makefile
 	   docs/gallery/behaviours/finitestrainsinglecrystal/Makefile
+	   docs/gallery/behaviours/damage_viscoplasticity/Makefile
 	   docs/doxygen/Makefile cmake/Makefile cmake/modules/Makefile
 	   include/Makefile
 	   include/TFEL/Config/GetInstallPath-defines.hxx src/Makefile

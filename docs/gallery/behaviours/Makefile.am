@@ -5,5 +5,7 @@ SUBDIRS=hyperelasticity           \
 	plasticity                \
 	viscoelasticity           \
 	viscoplasticity           \
-	finitestrainsinglecrystal
+	finitestrainsinglecrystal \
+	damage_viscoplasticity
+
 EXTRA_DIST=CMakeLists.txt

@@ -1,0 +1,148 @@
+@DSL Implicit;
+@Behaviour FichantLaBorderieDamageAndTorelliLoadInducedThermalStrain;
+@Author Giacomo Torelli;
+@Date 25 / 03 / 2018;
+@Description {
+  "Implementation of a behaviour combining Fichant-La Borderie' "
+  "description of damage and Torelli'LITS"
+}
+
+@Theta 1;
+@IterMax 100;
+@Epsilon 1.e-16;
+
+@ElasticMaterialProperties{47000, 0.25};
+@ComputeThermalExpansion 10e-6;
+
+// parameters of the Fichant-La Borderie part
+
+@Parameter Bt = 3690.070983;
+@Parameter e0 = 1.03e-04;
+@Parameter a = 3;
+
+// parameters of the LITS part
+
+@Parameter gamma = 1.5;
+@Parameter sigmultimate = 50.;
+@Parameter nulits = 0.50;
+@Parameter tcrit = 0.;
+@Parameter b[5] = {2.7031065533E-05, -1.0209170592E-06, 6.1200423753E-9,  //
+                   -1.2632648735E-11, 6.9158539621E-15};
+
+@AuxiliaryStateVariable real d;
+d.setGlossaryName("Damage");
+@AuxiliaryStateVariable StrainStensor elits;
+elits.setEntryName("LoadInducedThermaStrain");
+@AuxiliaryStateVariable temperature Tmax;
+Tmax.setEntryName("MaximalValueOfTheTemperature");
+
+//! LITS increment
+@LocalVariable StrainStensor delits;
+//! Creep coefficient
+@LocalVariable real C;
+
+@LocalVariable StiffnessTensor dsig_ddeel;
+@LocalVariable real d_p;
+@LocalVariable StiffnessTensor De;
+
+@InitLocalVariables {
+  Tmax = max(max(tcrit, Tmax), T);
+  const auto T_ = T + theta * dT;
+  const auto beta = b[0] + T_ * (b[1] + T_ * (b[2] + T_ * (b[3] + T_ * b[4])));
+  const auto dTe = max(T + dT - max(tcrit, Tmax), temperature(0));
+  C = (beta / (-sigmultimate)) * dTe;
+  De = lambda_tdt * Stensor4::IxI() + 2 * mu_tdt * Stensor4::Id();
+} // end of @InitLocalVariables
+
+@Integrator {
+  constexpr const auto id = Stensor::Id();
+  constexpr const auto esolver = StressStensor::FSESJACOBIEIGENSOLVER;
+  constexpr const stress eeps = 1.e-12;
+  const stress seps = 1.e-12 * young;
+  // positive part
+  const auto pp = [](const real x) { return x > 0 ? x : 0; };
+  // derivative of the positive part
+  const auto dpp = [&eeps](const real x) { return std::abs(x) < eeps ? 0.5 : ((x < 0) ? 0 : 1); };
+  // square of the posititve part
+  auto square_ppos = [](const strain& v) { return v > 0 ? v * v : 0; };
+  // elastic strain at the midle of the time step
+  const auto e = eval(eel + theta * deel);
+  // eigen values and eigen tensors of the elastic strain
+  auto e_vp = tvector<3u, strain>{};
+  auto m = tmatrix<3u, 3u, strain>{};
+  e.template computeEigenVectors<esolver>(e_vp, m);
+  // update the damage
+  const auto e_eq = sqrt(square_ppos(e_vp[0]) + square_ppos(e_vp[1]) + square_ppos(e_vp[2]));
+  // effective stress at t+theta*dt
+  const auto Cd = (e0 / e_eq) * exp(Bt * (e0 - e_eq));
+  d_p = (e_eq > e0) ? 1 - Cd : 0;
+  const auto bp = d_p > d;
+  const auto de = bp ? d_p : d;
+  // derivative with respect to the damage
+  const auto dde_ddeel = [&]() -> Stensor {
+    if (!bp) {
+      return Stensor(real(0));
+    }
+    // positive part of the total strain
+    const auto ep = StrainStensor::computeIsotropicFunction(pp, e_vp, m);
+    // derivative of the damage
+    const auto dde_deq = Cd * (Bt + 1 / e_eq);
+    const auto dep_ddeel =
+        theta * StrainStensor::computeIsotropicFunctionDerivative(pp, dpp, e_vp, m, eeps * 0.1);
+    const auto deq_dep = ep / e_eq;
+    return dde_deq * deq_dep * dep_ddeel;
+  }();
+  // function of the damage to simplify expressions
+  const auto de_a = pow(de, a);
+  const auto fpd = (1 - de);
+  const auto fpn = (1 - de_a);
+  // effective stress at the end of the time step
+  const auto l_tr_e = lambda_tdt * trace(e);
+  const auto s = eval(l_tr_e * id + 2 * mu_tdt * e);
+  const auto s_vp = tvector<3u>{l_tr_e + 2 * mu_tdt * e_vp[0],  //
+                                l_tr_e + 2 * mu_tdt * e_vp[1],  //
+                                l_tr_e + 2 * mu_tdt * e_vp[2]};
+  const auto sp = StressStensor::computeIsotropicFunction(pp, s_vp, m);
+  const auto dsp = StressStensor::computeIsotropicFunctionDerivative(pp, dpp, s_vp, m, seps * 0.1);
+  const auto sn = eval(s - sp);
+  const auto dsn = eval(Stensor4::Id() - dsp);
+  // final stress
+  sig = fpd * sp + fpn * sn;
+  // derivative of the stress
+  dsig_ddeel = theta * ((fpd - fpn) * dsp + fpn * Stensor4::Id()) * De;
+  if (bp) {
+    const auto ide = 1 / max(eeps, de);
+    const auto dfpd_dd = -1;
+    const auto dfpn_dd = -a * de_a * ide;
+    dsig_ddeel += dfpd_dd * (sp ^ dde_ddeel) + dfpn_dd * (sn ^ dde_ddeel);
+  }
+  // LITS part
+  const auto sn_eq = sqrt(sn | sn);
+  const auto isn_eq = 1 / max(seps, sn_eq);
+  const auto cm = -trace(sn) * isn_eq;
+  const auto dcm_dsig = eval((-isn_eq * id + trace(sn) * power<3>(isn_eq) * sn) | dsn);
+  const auto eta = 1 + (cm - 1) * gamma;
+  const auto se = eval((1 + nulits) * sn - nulits * trace(sn) * id);
+  delits = C * eta * se;
+  const auto deta_dsig = gamma * dcm_dsig;
+  const auto dse_dsig = (1 + nulits) * dsn - nulits * ((id ^ id) * dsn);
+  const auto ddelits_dsig = C * (se ^ deta_dsig) + C * eta * dse_dsig;
+  // elasticity
+  feel += delits;
+  dfeel_ddeel += theta * ddelits_dsig * dsig_ddeel;
+} // end of @Integrator
+
+@UpdateAuxiliaryStateVariables {
+  d = max(d, d_p);
+  elits += delits;
+}
+
+@TangentOperator {
+  if (smt == ELASTIC) {
+    Dt = D;
+  } else if (smt==CONSISTENTTANGENTOPERATOR){
+    Stensor4 ddeel_ddeto;
+    getPartialJacobianInvert(ddeel_ddeto);
+    Dt = dsig_ddeel * ddeel_ddeto;
+  }
+}

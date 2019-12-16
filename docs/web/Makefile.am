@@ -119,10 +119,11 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./RambergOsgoodNonLinearElasticity.md                      \
 	   ./MericCailletaudSingleCrystalPlasticity.md                \
 	   ./MohrCoulomb.md                                           \
-	   ./FichantLaBorderieDamageBehaviour.md                      \
-       ./LoadInducedThermalStrainBehaviourTorelli2018.md          \
-	   ./theory.md                                                \
-	   ./robots.txt						      \
+	   ./FichantLaBorderieDamageBehaviour.md                            \
+       ./LoadInducedThermalStrainBehaviourTorelli2018.md                \
+       ./FichantLaBorderieDamageAndTorelliLoadInducedStrainBehaviour.md \
+	   ./theory.md                                                      \
+	   ./robots.txt						                                \
 	   ./crossdomain.xml					      \
 	   ./js/vendor						      \
 	   ./js/vendor/modernizr-2.6.2.min.js			      \

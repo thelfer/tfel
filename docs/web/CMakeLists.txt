@@ -121,6 +121,10 @@ pandoc_html(sovs "--toc" "--toc-depth=2")
 pandoc_html(unicode "--toc" "--toc-depth=2")
 pandoc_html(RambergOsgoodNonLinearElasticity "--toc" "--toc-depth=2")
 pandoc_html(MericCailletaudSingleCrystalPlasticity  "--toc" "--toc-depth=2")
+pandoc_html(MohrCoulomb "--toc" "--toc-depth=2")
+pandoc_html(FichantLaBorderieDamageBehaviour "--toc" "--toc-depth=2")
+pandoc_html(LoadInducedThermalStrainBehaviourTorelli2018  "--toc" "--toc-depth=2")
+pandoc_html(FichantLaBorderieDamageAndTorelliLoadInducedStrainBehaviour   "--toc" "--toc-depth=2")
 
 # mfront keywords
 
@@ -142,9 +146,6 @@ pandoc_html(DDIF2Brick "--toc" "--toc-depth=2")
 pandoc_html(StandardElastoViscoPlasticityBrick "--toc" "--toc-depth=2")
 pandoc_html(HookeStressPotential "--toc" "--toc-depth=2")
 pandoc_html(DDIF2StressPotential "--toc" "--toc-depth=2")
-pandoc_html(MohrCoulomb "--toc" "--toc-depth=2")
-pandoc_html(FichantLaBorderieDamageBehaviour "--toc" "--toc-depth=2")
-pandoc_html(LoadInducedThermalStrainBehaviourTorelli2018  "--toc" "--toc-depth=2")
 
 # mtest keywords
 

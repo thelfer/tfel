@@ -188,6 +188,9 @@ docs/gallery/behaviours/damage/FichantLaBorderieDamageBehaviour.mfront -text
 docs/gallery/behaviours/damage/Makefile.am -text
 docs/gallery/behaviours/damage/Marigo.mfront -text
 docs/gallery/behaviours/damage/Mazars.mfront -text
+docs/gallery/behaviours/damage_viscoplasticity/CMakeLists.txt -text
+docs/gallery/behaviours/damage_viscoplasticity/FichantLaBorderieDamageAndTorelliLoadInducedThermalStrainBehaviour.mfront -text
+docs/gallery/behaviours/damage_viscoplasticity/Makefile.am -text
 docs/gallery/behaviours/finitestrainsinglecrystal/CMakeLists.txt -text
 docs/gallery/behaviours/finitestrainsinglecrystal/FiniteStrainSingleCrystalHuang.mfront -text
 docs/gallery/behaviours/finitestrainsinglecrystal/Makefile.am -text
@@ -219,7 +222,6 @@ docs/gallery/behaviours/plasticity/OrthotropicDruckerPerfectPlasticityYdLin6016T
 docs/gallery/behaviours/plasticity/OrthotropicLinearHardeningPlasticity.mfront -text
 docs/gallery/behaviours/viscoelasticity/CMakeLists.txt -text
 docs/gallery/behaviours/viscoelasticity/GeneralizedMaxwell.mfront -text
-docs/gallery/behaviours/viscoelasticity/LoadInducedThermalStrain_Torelli2018.mfront -text
 docs/gallery/behaviours/viscoelasticity/Makefile.am -text
 docs/gallery/behaviours/viscoelasticity/SkoroholdOlevskyViscousSinteringBehaviour.mfront -text
 docs/gallery/behaviours/viscoplasticity/CMakeLists.txt -text
@@ -227,6 +229,7 @@ docs/gallery/behaviours/viscoplasticity/ChabocheViscoplasticity.mfront -text
 docs/gallery/behaviours/viscoplasticity/Hayhurst.mfront -text
 docs/gallery/behaviours/viscoplasticity/ImplicitNorton.mfront -text
 docs/gallery/behaviours/viscoplasticity/IsotropicViscoplasticityAmstrongFredericKinematicHardening.mfront -text
+docs/gallery/behaviours/viscoplasticity/LoadInducedThermalStrain_Torelli2018.mfront -text
 docs/gallery/behaviours/viscoplasticity/Makefile.am -text
 docs/gallery/behaviours/viscoplasticity/MericCailletaudSingleCrystalViscoPlasticity.mfront -text
 docs/gallery/behaviours/viscoplasticity/MericCailletaudSingleCrystalViscoPlasticityNumericalJacobian.mfront -text
@@ -1143,6 +1146,7 @@ docs/web/DDIF2StressPotential.md -text
 docs/web/DefaultCZMDSL-keywords.md -text
 docs/web/DefaultDSL-keywords.md -text
 docs/web/DefaultFiniteStrainDSL-keywords.md -text
+docs/web/FichantLaBorderieDamageAndTorelliLoadInducedStrainBehaviour.md -text
 docs/web/FichantLaBorderieDamageBehaviour.md -text
 docs/web/HookeStressPotential.md -text
 docs/web/Implicit-keywords.md -text
