@@ -87,8 +87,8 @@ at the end of the time step, \(\ets{d}\) is determined as follows:
 \ets{d}=\max\paren{\bts{d},1-\Frac{\epsilon_{0}}{\ets{\eeq}}\,\exp\paren{B_{t}\,\paren{\epsilon_{0}-\ets{\eeq}}}}
 \]
 
-where \(\ets{\eeq}\) is the value of the equivalent elastic strain at
-the end of the time step.
+where \(\ets{\eeq}\) is the value of the equivalent strain at the end of
+the time step.
 
 > **Derivatives of the damage**
 >
