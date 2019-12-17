@@ -5,24 +5,34 @@
 The page declares the new functionalities of the 3.3 version of the
 `TFEL` project.
 
-This version was released along with Version `3.2.2` and inherits from
-all the fixes of this version.
+This version was released along with the following bug-fix releases:
+
+- [Version `3.2.2`](release-notes-3.2.2.html)
+- [Version `3.1.5`](release-notes-3.1.5.html)
+- [Version `3.0.5`](release-notes-3.0.5.html)
+
+Version 3.3 inherits the fixes of all those versions.
 
 # Documentation
 
 New entries were added to [the gallery](gallery.html):
 
+- [This page](RambergOsgoodNonLinearElasticity.html) describes how to
+  implement a non linear elastic behaviour that mimics the
+  Ramberg-Osgood plastic behaviour on monotonic loadings (usefull in
+  fracture analysis)
 - [This page](sovs.html) describes how to implement the
   Skorohold-Olevsky Viscous Sintering (SOVS) model.
 - [This page](LoadInducedThermalStrainBehaviourTorelli2018.html)
   describes how to implement Torelli' behaviour describing the load
   induced thermal strain in concrete.
-- [This page](RambergOsgoodNonLinearElasticity.html) describes how to
-  implement a non linear elastic behaviour that mimics the
-  Ramberg-Osgood plastic behaviour on monotonic loadings (usefull in
-  fracture analysis)
 - The implementation of the Fichant-La Borderie damage behaviour is
   described [here](FichantLaBorderieDamageBehaviour.html)
+- The implementation of a behaviour coupling Fichant-La Borderie damage
+  and Torelli' load induced thermal strain is described
+  [here](FichantLaBorderieDamageAndTorelliLoadInducedStrainBehaviour.html).
+- The implementation of the non associated Mohr-Coulomb plastic
+  behaviour is described [here](MohrCoulomb.html).
 
 # Improvements to `MFront`
 
@@ -58,6 +68,12 @@ The supported subset of unicode characters is fully detailed
 
 ## Initial support for generalised behaviours
 
+Generalised behaviours relates a set of gradients to their conjugated
+fluxes. 
+
+The following example shows how a the linear Fourier law can be
+implemented:
+
 ~~~~{.cxx}
 @DSL DefaultGenericBehaviour;
 @Behaviour StationaryHeatTransfer;
@@ -81,6 +97,15 @@ k.setGlossaryName("ThermalConductivity");
   Dt = -k * tmatrix<N, N, real>::Id();
 }
 ~~~~
+
+The non linear case is much more interesting as the consistent tangent
+operator can be split in two blocks:
+
+- the derivative of the flux with respect to the gradient.
+- the derivative of the flux with respect to the temperature.
+
+The latter is introduced by the `@AdditionalTangentOperatorBlock` code
+block.
 
 ~~~~{.cxx}
 @DSL DefaultGenericBehaviour;
@@ -113,9 +138,80 @@ j.setGlossaryName("HeatFlux");
 } // end of @TangentOperator 
 ~~~~
 
+The last example deals with solid-liquid phase change in transient
+heat-transfer. The enthalpy is treated in as a state variable. Its
+derivative with respect to temperature is yet another block in the
+tangent operator:
+
+~~~~{.cxx}
+@DSL DefaultGenericBehaviour;
+@Behaviour HeatTransfer;
+@Author Thomas Helfer;
+@Date 15 / 02 / 2019;
+
+@Gradient TemperatureGradient gT;
+gT.setGlossaryName("TemperatureGradient");
+
+@Flux HeatFlux j;
+j.setGlossaryName("HeatFlux");
+
+@StateVariable real H;
+H.setEntryName("Enthalpy");
+
+@AdditionalTangentOperatorBlock dj_ddT;
+@AdditionalTangentOperatorBlock dH_ddT;
+
+@Parameter Tm = 933.15;  
+@Parameter ks = 210;
+@Parameter Cs = 3.e6;
+@Parameter kl = 95;
+@Parameter Cl = 2.58e6;
+@Parameter dHsl = 1.08048e9;
+
+@LocalVariable thermalconductivity k;
+// @LocalVariable real H0;
+@LocalVariable real Ce;
+
+@Integrator {
+  const auto T_ = T + dT;
+  // const auto Te = temperature(0.01);
+  // const auto Ts = Tm-Te;
+  // const auto Tl = Tm+Te;
+  // heat flux
+  k = (T_<Tm) ? ks : kl;
+  j = -k*(gT+dgT);
+  // enthalpy
+  if(T_<Tm){
+    Ce = Cs;
+    H = Cs*T_;
+  } else {
+    Ce = Cl;
+    H = Cl*(T_-Tm)+dHsl+Cs*Tm;
+  }
+}  // end of @Integrator
+
+@TangentOperator {
+  dj_ddgT = -k * tmatrix<N, N, real>::Id();
+  dj_ddT = tvector<N, real>(real(0));
+  dH_ddT = Ce;
+}  // end of @TangentOperator
+~~~~
+
+All those examples have been tested in the `FEniCS` platform and
+validated against analytical results or test cases extracted from the
+`Cast3M` or `Code_Aster` codes.
+
+### Limitations
+
+Generalised behaviours are currently limited by the tensorial
+objects provided by the `TFEL/Math` library.
+
+Only the `generic` interface handles generalised behaviours.
+
 ## A new stress potential in the `StandardElastoViscoPlasticity` brick
 
-A regularised Mohr-Coulumb stress potential is now available.
+A regularised Mohr-Coulumb stress potential is now available. This
+stress potential is fully described [here](MohrCoulomb.html).
 
 ## Specifying a build identifier{#sec:build_identifiers}
 
