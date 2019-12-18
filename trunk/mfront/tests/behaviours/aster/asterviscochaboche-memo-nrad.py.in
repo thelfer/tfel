@@ -1,0 +1,113 @@
+# -*- coding: utf-8 -*-
+
+import math
+try:
+    import unittest2 as unittest
+except ImportError:
+    import unittest
+
+import std
+import tfel.math
+import tfel.tests
+from mtest import *
+
+class ViscoChabochMemoNRad(unittest.TestCase):
+
+    def test_pass(self):
+
+        #########################################################
+        # definition du trajet de chargement  en traction torsion
+        #########################################################
+        
+        # increment d'angle de gamma 
+        deltagamma=15.
+        # deformations maximum 
+        eps0=0.0034
+        gamma0=0.0058/math.sqrt(2.0)
+        # nombre de cycles elementaires sur un tour de gamma-epsilon
+        nbcycle1=360./deltagamma
+        # nombre de repetitions des nbcycle1
+        nbcycle2=4
+        # periode2 = temps pour faire un cycle triangulaire en gamma ou en epsilon
+        freq=0.1
+        periode2=1.0/freq
+        # npas0 : nombre de pas de discretisation du cycle triangulaire
+        npas0=4
+        pas=periode2/npas0
+        # temps total
+        tmax=periode2*nbcycle1*nbcycle2
+        # nombre de pas total
+        npas=int(npas0*nbcycle1*nbcycle2)
+        lepsxx=[0.]
+        lgamma=[0.]
+        ltimex=[0.]
+        lt=[pas*i for i in range(1,npas0+1)]
+        for j in range(nbcycle2):
+            for i in range(int(nbcycle1)):
+                angle=i*deltagamma*math.pi/180.
+                epsmax=eps0*math.cos(angle)
+                gammax=gamma0*math.sin(angle)
+                leps=[epsmax,0.,-epsmax,0.]
+                lgam=[gammax,0.,-gammax,0.]
+                lepsxx=lepsxx+leps
+                lgamma=lgamma+lgam
+                t0=ltimex[-1]
+                lt1=[t0+t for t in lt]
+                ltimex=ltimex+lt1
+        
+        exx=dict(zip(ltimex,lepsxx))
+        exy=dict(zip(ltimex,lgamma))
+        
+        npas_par_cycle1=48
+        npas=int(npas_par_cycle1*nbcycle1*nbcycle2)
+        
+        ltime=[(tmax/(npas-1))*i for i in range(npas)]
+        
+        # Exécution de MTest
+        
+        m = MTest()
+        setVerboseMode(VerboseLevel.VERBOSE_QUIET)
+        m.setPredictionPolicy(PredictionPolicy.LINEARPREDICTION)
+        m.setBehaviour('aster','@MFrontAsterBehavioursBuildPath@','asterviscomemonrad');
+        m.setMaterialProperty('PoissonRatio',0.3)
+        m.setMaterialProperty('YoungModulus',205000.0)
+        m.setMaterialProperty('C1inf', 182400.)
+        m.setMaterialProperty('C2inf', 16700.)
+        m.setMaterialProperty('g1' ,   3080.)
+        m.setMaterialProperty('g2',    179.)
+        m.setMaterialProperty('R0',    98.)
+        m.setMaterialProperty('Rinf',  105.)
+        m.setMaterialProperty('b',     51.3)
+        m.setMaterialProperty('w' ,0.)
+        m.setMaterialProperty('k', 1.)
+        m.setMaterialProperty('m',6.84)
+        m.setMaterialProperty('UNsurK','1./157.')
+        m.setMaterialProperty('ainf',0.582)   
+        m.setMaterialProperty('delta1',0.00306)   
+        m.setMaterialProperty('delta2',0.0155)   
+        m.setMaterialProperty('Eta',   0.135)   
+        m.setMaterialProperty('Qm',    270.5)   
+        m.setMaterialProperty('Q0',    -86.2)   
+        m.setMaterialProperty('Mu',    10.)   
+        m.setExternalStateVariable("Temperature",0.)
+        m.setImposedStrain('EXX',exx)          
+        m.setImposedStrain('EXY',exy)          
+        s  = MTestCurrentState()
+        wk = MTestWorkSpace()    
+        m.completeInitialisation()    
+        m.initializeCurrentState(s)
+        m.initializeWorkSpace(wk)
+        SXX = [0]
+        SXY = [0]
+        n=len(ltime)-1
+        for i in range(n):
+            m.execute(s,wk,ltime[i],ltime[i+1])
+            SXX.append(s.s1[0])
+            SXY.append(s.s1[3])
+        
+        f = open('output.txt', 'w')
+        for i in range(len(ltime)):
+            f.write('{0} {1} {2}\n'.format(ltime[i],SXX[i],SXY[i]))
+
+if __name__ == '__main__':
+    unittest.main()

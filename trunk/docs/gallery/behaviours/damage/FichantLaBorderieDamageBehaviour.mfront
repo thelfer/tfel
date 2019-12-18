@@ -1,0 +1,109 @@
+@DSL Default;
+@Behaviour FichantLaborderieDamageBehaviour;
+@Date 7/12/2019;
+@Author A. Gangnant, T. Helfer;
+@Description{
+  "Implementation of the Fichant-Laborderie damage behaviour"
+}
+
+@MaterialProperty stress young;
+young.setGlossaryName("YoungModulus");
+@MaterialProperty real nu;
+nu.setGlossaryName("PoissonRatio");
+
+@MaterialProperty real Bt;
+@MaterialProperty strain e0;
+@MaterialProperty real a;
+
+@StateVariable real d;
+d.setGlossaryName("Damage");
+
+@LocalVariable stress lambda, mu;
+
+@InitLocalVariables {
+  lambda = computeLambda(young, nu);
+  mu = computeMu(young, nu);
+}
+
+@PredictionOperator {
+  static_cast<void>(smt);
+  Dt = lambda * Stensor4::IxI() + 2 * mu * Stensor4::Id();
+}
+
+@ProvidesTangentOperator;
+@Integrator{
+  // a simple alias for the identity
+  constexpr const auto id = Stensor::Id();
+  constexpr const strain eeps = 1.e-12;
+  const auto seps = eeps * young;
+  // positive part
+  const auto pp = [](const real x) { return x > 0 ? x : 0; };
+  // square of the posititve part
+  auto square_pp = [](const strain v) { return v > 0 ? v * v : 0; };
+  // total strain
+  const auto e = eval(eto + deto);
+  // eigen values and eigen tensors of the total strain
+  auto e_vp = tvector<3u, strain>{};
+  auto m = tmatrix<3u, 3u, strain>{};
+  e.template computeEigenVectors<Stensor::FSESJACOBIEIGENSOLVER>(e_vp, m);
+  const auto e_eq = sqrt(square_pp(e_vp[0]) + //
+                         square_pp(e_vp[1]) + //
+                         square_pp(e_vp[2]));
+  // update the damage, taking irreversibility into account
+  const auto Cd = (e0 / e_eq) * exp(Bt * (e0 - e_eq));
+  const auto d_p = (e_eq > e0) ? 1 - Cd : 0;
+  const auto bp = d_p > d;
+  if (bp) {
+    d = d_p;
+  }
+  // effective stress at the end of the time step
+  const auto l_tr_e = lambda * trace(e);
+  const auto s = eval(l_tr_e * id + 2 * mu * e);
+  // positive part of the effective stress
+  const auto s_vp = tvector<3u, real>{l_tr_e + 2 * mu * e_vp[0],  //
+                                      l_tr_e + 2 * mu * e_vp[1],  //
+                                      l_tr_e + 2 * mu * e_vp[2]};
+  const auto sp = StressStensor::computeIsotropicFunction(pp, s_vp, m);
+  // function of the damage to simplify expressions
+  const auto d_a = pow(d, a);
+  const auto fpd = (1 - d);
+  const auto fpn = (1 - d_a);
+  // final stress
+  sig = (fpd - fpn) * sp + fpn * s;
+  if (computeTangentOperator_) {
+    // derivative of the positive part
+    const auto dpp = [&seps](const stress x) {
+      return std::abs(x) < seps ? 0.5 : ((x < 0) ? 0 : 1);
+    };
+    if (smt == ELASTIC) {
+      Dt = lambda * Stensor4::IxI() + 2 * mu * Stensor4::Id();
+    } else if ((smt == SECANTOPERATOR) || (!bp)) {
+      // elastic stiffness
+      const auto De = lambda * Stensor4::IxI() + 2 * mu * Stensor4::Id();
+      // derivative of the positive part of the stress
+      const auto dsp =
+          StressStensor::computeIsotropicFunctionDerivative(pp, dpp, s_vp, m, seps * 0.1);
+      Dt = ((fpd * dsp + fpn * (Stensor4::Id() - dsp)) + eeps * Stensor4::Id()) * De;
+    } else {
+      // elastic stiffness
+      const auto De = lambda * Stensor4::IxI() + 2 * mu * Stensor4::Id();
+      // derivative of the positive part of the stress
+      const auto dsp =
+          StressStensor::computeIsotropicFunctionDerivative(pp, dpp, s_vp, m, seps * 0.1);
+      // derivative with respect to the damage
+      const auto dfpd_dd = -1;
+      const auto id = 1 / max(eeps, d);
+      const auto dfpn_dd = -a * d_a * id;
+      // positive part of the total strain
+      const auto ep = StrainStensor::computeIsotropicFunction(pp, e_vp, m);
+      // derivative of the damage
+      const auto dd_deq = Cd * (Bt + 1 / e_eq);
+      const auto dep_de =
+          StrainStensor::computeIsotropicFunctionDerivative(pp, dpp, e_vp, m, eeps * 0.1);
+      const auto deq_dep = ep / e_eq;
+      const auto dd_de = dd_deq * deq_dep * dep_de;
+      Dt = ((fpd * dsp + fpn * (Stensor4::Id() - dsp)) + eeps * Stensor4::Id()) * De  //
+           + (((dfpd_dd - dfpn_dd) * sp + dfpn_dd * s) ^ dd_de);
+    }
+  }
+}

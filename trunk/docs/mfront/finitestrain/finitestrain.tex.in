@@ -1,0 +1,2187 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% File      : finitestrain.tex
+% Author    : th202608@pleiades068.intra.cea.fr
+% Date      : 15 oct. 2012
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% \documentclass[rectoverso,pleiades,pstricks,leqno,anti]{note_technique_2010}
+\documentclass[rectoverso,pleiades,pstricks,leqno,anti,projet]{note_technique_2010}
+
+\usepackage[dvips]{graphicx}
+\usepackage[dvips,breaklinks]{hyperref}
+
+\usepackage{mathematiques}
+\usepackage{mecanique}
+\usepackage{couleurs}
+\usepackage{presentation}
+
+\usepackage{multicol}
+
+\usepackage{pst-plot}
+\usepackage{array}
+\usepackage{subfigure}
+\usepackage{relsize}
+\usepackage{multind}
+
+\usepackage[frenchb]{babel}
+
+\newcommand{\pleiades}{\texttt{pleiades}}
+\newcommand{\TFEL}{\texttt{tfel}}
+\newcommand{\mfront}{\texttt{mfront}}
+\newcommand{\mtest}{\texttt{mtest}}
+\newcommand{\alcyone}{\texttt{alcyone}}
+\newcommand{\germinal}{\texttt{germinal}}
+\newcommand{\licos}{\texttt{licos}}
+\newcommand{\celaeno}{\texttt{celaeno}}
+\newcommand{\mfm}{\texttt{MFront\-Materials}}
+\newcommand{\cyrano}{\texttt{cyrano}}
+\newcommand{\galileo}{\texttt{galileo}}
+\newcommand{\castem}{\texttt{Cast3M}}
+\newcommand{\gibiane}{\texttt{gibiane}}
+\newcommand{\tmfft}{\texttt{TMFFT}}
+\newcommand{\aster}{\href{http://www.code-aster.org/}{\texttt{Aster}}}
+\newcommand{\zebulon}{\href{http://www.nwnumerics.com}{\texttt{ZeBuLoN}}}
+\newcommand{\pycastem}{\texttt{pyCast3M}}
+\newcommand{\umat}{\texttt{umat}}
+\newcommand{\sirius}{\texttt{sirius}}
+\newcommand{\fortran}{\texttt{fortran}}
+
+\newcommand{\cmake}{\href{http://www.cmake.org/}{\texttt{cmake}}}
+\newcommand{\autotools}{\href{http://fr.wikipedia.org/wiki/Autotools}{\texttt{autotools}}}
+\newcommand{\python}{\href{http://python.org}{\texttt{python}}}
+\newcommand{\gnuplot}{\href{http://www.gnuplot.info}{\texttt{gnuplot}}}
+\newcommand{\latex}{\href{http://www.latex-project.org}{\LaTeX2e{}}}
+\newcommand{\make}{\href{http://www.gnu.org/software/make/}{\texttt{make}}}
+\newcommand{\doxygen}{\href{http://www.stack.nl/~dimitri/doxygen/}{\texttt{doxygen}}}
+\newcommand{\valgrind}{\href{http://www.valgrind.org/}{\texttt{valgrind}}}
+
+\newcommand{\egl}[0]{\ensuremath{\tepsilonto_{GL}}}
+\newcommand{\degl}[0]{\ensuremath{\tdepsilonto_{GL}}}
+\newcommand{\egle}[0]{\ensuremath{\tepsilon^{e}_{GL}}}
+\newcommand{\degle}[0]{\ensuremath{\tdepsilon^{e}_{GL}}}
+\newcommand{\inv}[1]{\ensuremath{#1^{-1}}}
+\newcommand{\invT}[1]{\ensuremath{#1^{-T}}}
+
+\newcommand{\bigO}[1]{\ensuremath{\mathop{}\mathopen{}O\mathopen{}\left(#1\right)}}
+
+%c from texinfo.tex
+\def\ifmonospace{\ifdim\fontdimen3\font=0pt }
+
+%c C plus plus
+\def\cpp{%
+\ifmonospace%
+    C++%
+\else%
+    C\kern-.1667em\raise.30ex\hbox{\smaller{++}}%
+\fi%
+\spacefactor1000 }
+
+\newcommand{\varcpp}[1]{\texttt{#1}}
+
+\newcommand{\sigmaH}{\ensuremath{\sigma_{H}}}
+
+\newcommand{\nbzrc}{$NbZrC$}
+\newcommand{\upuc}{$\paren{U,Pu}C$}
+\newcommand{\sic}{$SiC$}
+
+\newcommand{\cea}{CEA}
+\newcommand{\windows}{\href{http://www.microsoft.com/france/windows/default.mspx}{\texttt{Windows}}}
+\newcommand{\unix}{\href{http://www.kernel.org/}{\texttt{unix}}}
+\newcommand{\msys}{\href{http://www.mingw.org/wiki/MSYS}{\texttt{msys}}}
+\newcommand{\cygwin}{\href{http://www.cygwin.com/}{\texttt{cygwin}}}
+\newcommand{\linux}{\href{http://www.kernel.org/}{\texttt{linux}}}
+\newcommand{\debian}{\href{http://www.debian.org/}{\texttt{Debian}}}
+\newcommand{\ubuntu}{\href{http://www.ubuntu.com}{\texttt{Ubuntu}}}
+\newcommand{\redhat}{\href{http://www.redhat.com}{\texttt{Red Hat}}}
+\newcommand{\mandriva}{\href{http://www.mandriva.com}{\texttt{Mandriva}}}
+\newcommand{\excel}{\href{http://www.microsoft.com/france/office/2007/programs/excel/overview.mspx}{\texttt{Microsoft Office Excel}}}
+
+\newcommand{\debutpas}[1]{\ensuremath{\left.#1\right|_{t}}}
+\newcommand{\milieupas}[1]{\ensuremath{\left.#1\right|_{t+\theta\, \Delta\, t}}}
+\newcommand{\finpas}[1]{\ensuremath{\left.#1\right|_{t+\Delta\, t}}}
+\newcommand{\demipas}[1]{\ensuremath{\left.#1\right|_{t+\frac{\Delta\, t}{2}}}}
+
+\newcommand{\uod}{\ensuremath{UO_{2}}}
+
+\newcommand{\code}[1]{
+  \psframebox[linecolor=ceaorange,shadow=true,blur=true]{
+    \begin{minipage}[htbp]{1.0\linewidth}
+      \ttfamily\small#1
+    \end{minipage}
+  }
+}
+
+\newcommand{\bash}[1]{
+  \begin{center}
+    \begin{minipage}{0.8\linewidth}
+      \footnotesize{}
+      \texttt{\$#1}
+    \end{minipage}
+  \end{center}
+}
+
+\input{LSC}
+
+\auteurs{T.~Helfer, C.~Ling}
+\redacteur{T.~Helfer}
+\verificateur{B.~Michel}
+\approbateur{B.~Collard}
+\emetteur{M.~Baueur}
+
+\titre{Écriture de lois de comportement mécanique en grandes
+  transformations avec le générateur de code \mfront{}}
+
+\date{2014}
+\numero{}
+\indice{0}
+\dateversion{}
+\numeroaffaire{A-SICOM-A1-01}
+\domaine{DEN/DISN/SIMU}
+\accords{tripartite}
+\clients{AREVA - EDF}
+\programmerecherche{SICOM}
+\classification{DO}
+\motsclefs{
+  \mfront{} - \pleiades{}
+}
+
+% \codebarre{images/code_barre}
+\diffusionexterne{
+{EDF/R\&D}              & O. Marchand     & 1 & Diffusion par\\
+{EDF/R\&D}              & P. Vasseur      & 1 & courriel     \\
+{EDF/R\&D/AMA}          & É. Lorentz      & 1 & \\
+                        & C. Durand       & 1 & \\
+{EDF/R\&D/AMA/T64}      & T. de Soza      & 1 & \\
+                        & J. Delmas       & 1 & \\
+                        & J.M. Proix      & 1 & \\
+                        & F. Hammon       & 1 & \\
+                        & N. Sellenet     & 1 & \\
+{EDF/R\&D/MMC}          & P. Ollar        & 1 & \\
+{EDF/R\&D/MMC/MAESTRO}  & N. Rupin        & 1 & \\
+                        & F. Latourte     & 1 & \\
+{EDF/R\&D/MMC/CPM}      & N. Prompt       & 1 & \\
+                        & N. Barnel       & 1 & \\
+{EDF/R\&D/MMC/CPM}      & G. Thouvenin    & 1 & \\
+                        & F. Douchin      & 1 & \\
+                        & R. Largenton    & 1 & \\
+                        & C. Petry        & 1 & \\
+EDF/SEPTEN              & N. Waeckel      & 1 & \\
+                        & C. Chauliac     & 1 & \\
+                        & H. Billat       & 1 & \\
+                        & C. Bernaudat    & 1 & \\
+AREVA NP/LA DEFENSE     & L. Catalani     & 1 & \\
+                        & L. Brunel       & 1 & \\
+AREVA NP/LYON           & P. Melin        & 1 & \\
+                        & V. Bessiron     & 1 & \\
+                        & C. Garnier      & 1 & \\                           
+                        & V. Garat        & 1 & \\
+                        & F. Arnoux       & 1 &
+}
+\CoupeListeDiffusion{}
+\diffusioninterne{
+  DEN/DISN/SIMU       & J.P. Deffain       & 1 & Diffusion par\\ 
+                      & D. Caruge          & 1 & courriel     \\ 
+  DEN/DM2S/SEMT       & X. Averty          & 1 & \\
+  DEN/DM2S/SEMT/LM2S  & J.L. Fayard        & 1 & \\
+                      & P. Verpeaux        & 1 & \\
+                      & A. Millard         & 1 & \\
+                      & S. Pascal          & 1 & \\
+                      & O. Fandeur         & 1 & \\
+  DEN/DMN             & P. Yvon            & 1 & \\
+                      & J.L. Seran         & 1 & \\
+                      & F. Dalle           & 1 & \\
+  DEN/DMN/SRMA        & P. Chapelot        & 1 & \\
+                      & S. Carassou        & 1 & \\
+                      & B. Marini          & 1 & \\
+  DEN/DMN/SRMA/LC2M   & L. Nicolas         & 1 & \\
+                      & J. Garnier         & 1 & \\
+                      & S. Vincent         & 1 & \\
+                      & L. Vincent         & 1 & \\
+                      & L. Gelebart        & 1 & \\
+                      & M. Sauzay          & 1 & \\
+                      & L. Dupuy           & 1 & \\
+                      & P. Forget          & 1 & \\
+                      & A. Hellouin de Menibus  & 1 & \\
+                      & M. Le Saux         & 1 & \\
+                      & C. Robertson       & 1 & \\
+  DEN/DMN/SRMA/LA2M   & J.-L. Bechade      & 1 & \\
+  DEN/DMN/SRMA/LTMEX  & L. Chaffron        & 1 & \\
+                      & D. Sornin          & 1 & \\
+  DEN/DMN/SEMI        & C. Poussard        & 1 & \\
+                      & B. Tanguy          & 1 & \\
+  DEN/DMN/SEMI/LCMI   & V. Vandenberghe    & 1 & \\
+                      & A. Courcelle       & 1 & \\
+                      & F. Hure            & 1 & \\
+                      & D. Leboulch        & 1 & \\
+                      & Q. Auzoux          & 1 & \\
+                      & Y. Robert          & 1 & \\
+  DEN/DER/SESI/LE2S   & P. Lamagnère       & 1 & \\
+                      & D. Gentet          & 1 & \\
+                      & Y. Lejeail         & 1 & \\
+                      &                    &  & \\
+  DEN/DEC             & P. Brossard        &  & Document disponible\\
+  DEN/DEC/PROJETS     & P. Obry            &  & sur intradec\\
+  DEN/DEC/SESC        & E. Touron          &  & \\
+                      & M. Casella         &  & \\
+                      & M. Agard           &  & \\
+  DEN/DEC/SESC/LIPA   & C. Nonon-Solaro    &  & \\
+                      & C. Bassi           &  & \\
+                      & O. Bremond         &  & \\
+  DEN/DEC/SESC/LLCC   & V. Basini          &  & \\
+                      & J.-M. Escleine     &  & \\
+  DEN/DEC/SESC/LC2I   & D. Plancq          &  & \\
+                      & S. Bejaoui         &  & \\
+                      & V. Blanc           &  & \\
+                      & T. Beck            &  & \\
+                      & F. Biscarrat       &  & \\
+                      & D. Lorenzo         &  & \\
+                      & I. Guénot-Delahaie &  & \\
+                      & P. Masoni          &  & \\
+                      & B. Valentin        &  & \\
+                      & M. Zabiego         &  & \\
+  DEN/DEC/SESC/LSC    & R. Masson          &  & \\
+                      & B. Michel          &  & \\
+                      & M. Pelletier       &  & \\
+                      & M. Lainet          &  & \\
+                      & V. Bouineau        &  & \\
+                      & V. Marelle         &  & \\
+                      & T. Helfer          &  & \\
+
+}
+
+% \signatures{-0.}{-39.2}{0.12}{images/signatures.eps}
+
+\stylebib{@abs_top_srcdir@/docs/tex/texmf/bibtex/fr-insa}
+\fichierbib{@abs_top_srcdir@/docs/tex/texmf/bibtex/bibliographie}
+
+\resumecea{
+  Nous décrivons dans cette note l'utilisation de \mfront{} pour
+  écrire des lois de comportement en grandes transformations.
+
+  Nous commençons par introduire les principaux concepts cinématiques
+  et sthéniques nécessaires à l'exposé.
+}
+
+\newboolean{pleiades}
+\setboolean{pleiades}{false}
+
+\begin{document}
+
+\clearpage
+\newpage
+\section{Introduction}
+
+\ifthenelse{\boolean{pleiades}}{
+  Les applications combustible couvrent un nombre croissant de situations
+  mécaniques. Dans un certain nombre de cas, il devient nécessaire de
+  quitter le cadre habituel des transformations infinitésimales pour traiter la
+  mécanique de manière plus rigoureuse. Citons quelques exemples, parmi
+  de nombreux autres~:
+  \begin{itemize}
+  \item description du ballonnement et de larupture ductile de la
+    gaine en APRP~;
+  \item analyse de la rupture ductile de la gaine en RIA, par exemple
+    dans le cas REP-NA8~;
+  \item analyse des résultats d'essais de compression des pastilles
+    \(UO_{2}\)~: les déformations rationnelles macroscopiques sont de
+    l'ordre de \(20\,\%\), voir \(30\,\%\) localement dans la plupart
+    des essais. Au niveau du grain, une approche micro-mécanique de ces
+    essais conduirait probablement à des effets typiques des
+    transformations finies~: rotation du réseau cristallin, déformations
+    locales aux joints très élevées. 
+  \end{itemize}
+  Notons dès à présent que les grandes transformations ne se limitent
+  pas aux grandes déformations~: l'effet des rotations, trop souvent
+  négligé, peut être crucial.
+  
+  Au delà de l'aspect physique, notons que le code \castem{} oblige
+  l'emploi des transformations finies dès qu'il est nécessaire de
+  gérer le contact entre différents objets (situation assez
+  \og{}~commune~\fg{} dans nos calculs)~: la compréhension {\tt a
+    minima} des algorithmes de résolutions mécaniques à la base de nos
+  applications combustible demande une certaine familiarité avec les
+  transformations finies. Nous verrons dans cette note que le
+  traitement par défaut fait dans \castem{} est critiquable et
+  incompatible en théorie avec la plupart des lois de comportement
+  utilisées dans la plateforme (qu'elles soient écrites en \mfront{}
+  ou pas). Relativisons tout de suite~: en pratique, tant que l'on
+  reste dans des conditions proches des transformations
+  infinitésimales, les approximations commises avaient sans doute un
+  impact assez faible. Par contre, dès que les effets de
+  transformations finies deviennent importants, en termes de
+  déformation ou de rotation, il ne nous semble plus possible de se
+  reposer sur \castem{} pour faire \og{}~magiquement~\fg{} le travail.
+}{}
+
+Les transformations finies sont considérées comme difficiles d'accès,
+en particulier par les étudiants et les ingénieurs en mécanique. Pour
+comprendre une partie leur malaise, nous pouvons reprendre la
+métaphore de François Sidoroff, dont l'influence sur le sujet a été
+énorme~\cite{sidoroff_cours_1982}~:
+\begin{quotation}
+  Comme dans une bonne recette de cuisine, il y a dans toute théorie
+  en grandes transformations deux composantes~: des ingrédients de
+  base, [c'est à dire] les hypothèses physiques ou mécaniques qui sont
+  le plus souvent voisines de celles faites en petites déformations,
+  et une sauce, [c'est à dire] le formalisme traduisant ces hypothèses
+  de manière convenable. Ce formalisme, très technique et géométrique,
+  constitue pour le profane un obstacle majeur à la compréhension...
+\end{quotation}
+Cette \og{}~sauce~\fg{} est précisément ce que nous avons qualifié de
+\og{}~magique~\fg{} au paragraphe précédent. Nous voyons là toute la
+difficulté des grandes transformations~: l'ingénieur - le profane de
+la métaphore - se retrouve à manipuler des concepts presque familiers
+mais dont la définition précise lui échappe ou lui est cachée.
+
+Notons que les hypothèses physiques vraiment importantes, les
+ingrédients de base, sont en fait en nombre réduit~:
+\begin{itemize}
+\item on veut garantir que les écoulements plastiques et
+  viscoplastiques se font de manière isochore~;
+\item on veut garantir que les lois sont indépendantes de
+  l'observateur et qu'une rotation d'ensemble n'induit pas de
+  contraintes~: c'est la notion d'objectivité~;
+\item on veut être cohérent d'un point de vue thermodynamique~;
+\end{itemize}
+
+Dans l'idéal, on souhaiterait également~:
+\begin{itemize}
+\item pouvoir garantir que lorsque le comportement du matériau est
+  réversible, il n'y a pas de dissipation d'énergie~: on parle
+  d'hyperélasticité~;
+\item pouvoir écrire nos lois de comportement comme en transformations
+  infinitésimales, cela signifie pouvoir décomposer de manière
+  additive la déformation (reste à préciser laquelle) en une partie
+  élastique et une partie plastique~;
+\item pouvoir traiter des matériaux anisotropes~;
+\item pouvoir décrire des dilatations libres, comme la dilatation
+  thermique, des gonflements dus à l'irradiation, ou des changements
+  de phases~;
+\item pouvoir traiter des comportements complexes, par exemple
+  incluant des écrouissages cinématiques~;
+\end{itemize}
+Nous verrons différentes sauces, plus ou moins élaborées que nous
+pourrons juger à l'aune de ces critères.
+
+Au lecteur pressé, donnons déjà une des conclusions~: l'approche la
+plus adaptée pour décrire des comportements macroscopiques est
+aujourd'hui celle des déformations logarithmiques, introduites par
+Miehe en 2002~\cite{miehe_anisotropic_2002}\footnote{Nous avons appris
+  l'existence lors de notre travail avec l'équipe \aster{} qui nous
+  l'a chaudement recommandé~: nous les en
+  remercions~\cite{bargellini_modeles_2013}.}. Les déformations
+logarithmiques ont des caractéristiques qui en font, pour reprendre la
+métaphore de F. Sidoroff, la meilleure sauce que l'on connaisse
+actuellement~:
+\begin{itemize}
+\item les lois s'écrivent comme en \og{}~petites pertubations~\fg{},
+  c'est à dire que l'on peut, sans état d'âme, décomposer les
+  déformations de manière additive. Cette décomposition sera
+  \og{}~cohérente~\fg{} au sens où une déformation de trace nulle
+  décrit un écoulement (plastique ou viscoplastique) isochore~: cette
+  propriété est la base de la formulation de la plupart des lois de
+  comportement plastique ou viscoplastique. Une autre façon de voir
+  les choses est dire que le formalisme des déformations
+  logarithmiques permet de construire une loi grandes transformations
+  en partant d'une loi écrite dans le cadre des transformations
+  infinitésimales.
+\item les lois ainsi obtenues sont parfaitement valides en grandes
+  transformations~: elles sont en particulier objectives, ce qui est
+  une des grandes difficultés des grandes transformations. Nous
+  reviendrons sur la notion d'objectivité dans le texte~;
+\item pour peu que l'on se base sur une loi \og{}~petites
+  pertubations~\fg{} cohérente du point de vue thermodynamique, on
+  obtiendra via le formalisme des déformations logarithmiques, une loi
+  grandes transformations cohérente du point de vue
+  thermodynamique. Ceci est dû à la construction énergétique du
+  formalisme.
+\item à la limite des petites perturbations, on retrouvera les mêmes
+  résultats que la loi \og{}~petites déformations~\fg{} de départ.
+\item le formalisme se base sur une mesure logarithmique des
+  déformations, le tenseur de \nom{Hencky}. Ce choix est très naturel
+  aux expérimentateurs, dans les cas des métaux notamment, qui parlent
+  parfois de \og{}~déformation vraie~\fg{}.
+\item il s'agit d'un formalisme portable entre les différents codes
+  aux éléments finis (le seul ?)~: il est disponible dans \aster{} et
+  \zebulon{} notamment. Dans les autres cas, \castem{} notamment, il
+  peut être gérer par \mfront{}.
+\end{itemize}
+
+Ce formalisme se décrit en un petit paragraphe, à condition d'avoir
+introduit quelques notions préalables. Celles-ci sont nécessaires pour
+ne pas substituer à une \og{}~magie~\fg{} (la stratégie par défaut de
+\castem{}) une autre magie (les déformations logarithmiques).
+
+La présentation des seules déformations logarithmiques n'est cependant
+pas suffisante pour notre propos~:
+\begin{itemize}
+\item il nous faut comprendre les diverses stratégies proposées par
+  \castem{}.
+\item il nous semble dommage d'exclure la multitude des lois écrites
+  en grandes transformations~: de nombreuses lois intéressantes sont
+  écrites sans tenter de rentrer dans le formalisme HPP.
+\item le formalisme des déformations logarithmiques ne permet pas de
+  décrire tous les cas. Notamment, les lois de plasticité cristalline
+  ne peuvent être écrites dans ce cadre pour traiter convenablement
+  les effets dus à la rotation du réseau.
+\end{itemize}
+
+% \subsection{}
+
+% VLes grandes transformations sont cependant encore peu utilisés 
+
+% Plusieurs mythes entourent les grandes transformations~:
+% \begin{itemize}
+% \item elles sont réputées inutiles, au moins pour les applications
+%   combustible.
+% \item elles sont réputées difficiles d'approche~;
+% \end{itemize}
+
+% Nous pensons ces deux affirmations fausses. Avant d'introduire cette
+% note, il nous paraît intéressant de démystifier les grandes
+% transformations pour partir sur des bases saines.
+
+% Pour traiter les grandes transformations, les approches de la
+% littérature se classent grossièrement en deux catégories~:
+% \begin{enumerate}[-]
+% \item l'adoption explicite d'un des nombreux formalismes \og~grandes
+%   transformations~\fg{}.
+% \item une réutilisation {\em ad hoc} des lois écrites dans le
+%   formalisme des petites déformations. Nous proposerons plusieurs
+%   stratégies pour cela. Insistons sur le fait que nous cherchons
+%   uniquement à réutiliser le formalisme des lois petites déformations
+%   et que dans la plupart des cas nous ne pourrons pas étendre le
+%   domaine de validité d'une loi particulière~: on ne pourra pas se
+%   passer d'une étape d'identification des paramètres de la loi une
+%   fois une \og~stratégie grandes transformations~\fg{} choisie.
+% \end{enumerate}
+
+% \subsection{Écritures de lois en grandes transformations}
+
+% La principale difficulté de la première approche est que ces
+% formalismes introduisent de nombreuses notions spécifiques aux grandes
+% déformations, ce qui peut rebuter les ingénieurs non spécialistes de
+% ce sujet. Dans ce document, nous étudierons les lois suivantes~:
+% \begin{enumerate}[-]
+% \item la loi de \nom{Saint-Venant Kirchhoff} au
+%   paragraphe~\ref{sec:loi-hyper-de-1}~;
+% \item les lois de comportement hyperélastiques néo-hookéen au
+%   paragraphe~\ref{sec:loi-hyperl-neo}~;
+% \item la loi plastique et/ou plastique de \nom{Simo-Miehe} au
+%   paragraphe~\ref{sec:loi-plastique-de}.
+% \end{enumerate}
+% L'étude de ces modèles vise à démontrer les capacités de \mfront{} à
+% implanter des modèles écrits en grandes transformations et nous
+% insisterons plus sur l'implantation de la loi et les cas tests de
+% qualification, renvoyant aux éléments bibliographiques pour une
+% présentation de la physique.
+
+% \subsection{Stratégies de réutilisations des lois en petites
+%   transformations}
+
+% Pour la plupart des applications pratiques, il nous semble plus
+% judicieux de chercher à étendre les lois écrites en petites
+% déformations. L'utilisateur final pourra ainsi piocher dans les
+% nombreuses lois déjà écrites et dont le sens physique est souvent bien
+% connu.
+
+% Après une rapide bibliographie au
+% paragraphe~\ref{sec:bibl-meth-class}, nous retiendrons deux types
+% d'approches~:
+% \begin{itemize}
+% \item les approches lagrangiennes. Parmi celle-ci, nous présenterons
+%   en détails l'approche \og~grandes rotations, petites
+%   déformations\fg{} et l'approches par les déformations logarithmiques
+%   qui nous paraissent particulièrement adaptées aux applications
+%   combustibles~;
+% \item les approches eulériennes et en particulier l'écriture des lois
+%   de comportements dans un référentiel local objectif.
+% \end{itemize}
+% verrons dans cette catégorie les approches incrémentales
+% de la plasticité basées sur la décomposition additive du taux
+% déformation eulérien et sur l'utilisation d'une dérivée objective des
+% contraintes. Malgré de nombreux défauts théoriques, ces approches ont
+% été et sont encore très utilisées.
+
+
+\clearpage
+\newpage
+\section{Notions générales}
+
+\subsection{Transformation, gradient de la transformation, tenseurs de
+  déformations, taux de déformation}
+
+L'évolution de la géométrie d'un corps se traduit par l'existence
+d'une transformation \(\vec{\phi}\) qui associe à chaque position
+initiale \(\vec{X}\) sa nouvelle position \(\vec{x}\) à l'instant
+\(t\)~:
+\begin{equation}
+  \label{eq:x}
+  \vec{x} = \vec{\phi}\paren{\vec{X},t}
+\end{equation}
+
+Le champ de déplacement \(\vec{u}\) est défini par la différence entre
+la position actuelle du point et sa position initiale~:
+\[
+\vec{u}=\vec{x}-\vec{X}=\vec{\phi}\paren{\vec{X}}-\vec{X}
+\]
+
+Le déplacement ne peut servir à caractériser la sollicitation locale
+du matériau~: il suffit pour s'en convaincre de considérer que la
+sollicitation du matériau doit être la même pour deux observateurs
+animés d'un mouvement relatif rectiligne à vitesse uniforme. Par
+contre, le gradient du déplacement, qui est identique pour ces deux
+observateurs, est une mesure possible (de la sollicitation).
+
+Les théories de premier gradient, les plus usuelles en mécanique,
+supposent que seul le gradient de la transformation \(F\) caractérise la
+sollicitation locale d'un point matériel~:
+\begin{equation}
+  \label{eq:F}
+  \tenseur{F}=\derivtot{\vec{x}}{\vec{X}}=\tenseur{I}+\vec{\nabla}\,\vec{u}  
+\end{equation}
+Seules ces théories seront considérés dans le cadre de cette note.
+
+Le changement de volume est caractérisé par le déterminant \(J\) de \(F\)~:
+\begin{equation}
+  \label{eq:J}
+  J=\det\paren{F}
+\end{equation}
+L'incompressibilité se traduit par la relation~:
+\begin{equation}
+  \label{eq:incompressibilite}
+  J=1  
+\end{equation}
+
+{\em La condition d'incompressibilité~\eqref{eq:incompressibilite} est
+  centrale dans nos discussions, car les écoulements plastiques et
+  viscoplastiques sont supposés isochores.}
+
+\paragraph{Transports géométriques} Nous renvoyons aux ouvrages de
+référence qui démontrent comment un segment, une surface et un volume
+se transforment par le gradient de la
+transformation~\cite{forest_mecanique_2013}. Nous avons les relations
+suivantes~:
+\begin{enumerate}[-]
+\item pour le transport d'un segment \(\dtot\vec{X}\) joignant deux
+  points infiniment proches dans la configuration initiale~:
+  \begin{equation}
+    \label{eq:finitestrain:dl}
+    \dtot\vec{x} = \tns{F}\,.\,\dtot\vec{X}
+  \end{equation}
+  Cette relation est évidente d'après la définition~\eqref{eq:F} de
+  \(\tns{F}\).
+\item pour le transport d'un élément de surface~:
+  \begin{equation}
+    \label{eq:finitestrain:dS}
+    \dtot\vec{s} = J\,\invtranspose{\tns{F}}\,.\,\dtot\vec{S}
+  \end{equation}
+\item pour le transport d'un élément de volume~:
+  \begin{equation}
+    \label{eq:finitestrain:dV}
+    \dtot\, v = J\, \dtot\, V
+  \end{equation}
+\end{enumerate}
+
+\subsubsection{Configurations intermédiaires}
+
+Supposons qu'une transformation, notée \(\vec{\phi}_{0\rightarrow 2}\),
+puisse se faire en deux étapes~:
+\begin{enumerate}[-]
+\item la première transformation, notée \(\vec{\phi}_{0\rightarrow 1}\), permet de passer
+  de la géométrie initiale à une géométrie intermédiaire~;
+\item la seconde transformation, notée \(\vec{\phi}_{1\rightarrow 2}\),
+  permet de passer de cette géométrie intermédaire à la géométrie
+  finale.
+\end{enumerate}
+La transformation \(\vec{\phi}_{0\rightarrow 2}\) est la composition de ces
+deux transformations~:
+\[
+\vec{\phi}_{0\rightarrow 2}\paren{\vec{X}} = \vec{\phi}_{1\rightarrow 2}\paren{\vec{\phi}_{0\rightarrow 1}\paren{\vec{X}}}
+\]
+
+Par dérivation en chaîne, cette relation permet de relier les
+gradients de la transformation mesurée sur chacune des géométries~:
+\begin{equation}
+  \label{eq:F02}
+  \tns{F}_{0\rightarrow 2}=\tns{F}_{1\rightarrow 2}\,.\,\tns{F}_{0\rightarrow 1}  
+\end{equation}
+
+En pratique, le mouvement est décrit de manière incrémentale,
+l'équation~\eqref{eq:F02} permet alors de décomposer le passage de la
+configuration à l'instant initial \(t_{0}\) à la configuration en fin
+de pas de temps, à l'instant \(t+\Delta\,t\), en passant par la
+configuration en début de pas, à l'instant \(t\)~:
+\begin{equation}
+  \label{eq:F02}
+  \tns{F}_{t_{0}\rightarrow t+\Delta\,t}=\tns{F}_{t\rightarrow t+\Delta\,t}\,.\,\tns{F}_{t_{0}\rightarrow t}  
+\end{equation}
+
+\subsubsection{Décompositions polaires de la transformation}
+\label{sec:decomp-pola-de}
+
+La première décomposition polaire du gradient de la transformation
+\(F\) s'écrit~:
+\begin{equation}
+  \label{eq:finitestrain:decomposition_polaire}
+  \tns{F}=\tns{R}\,.\tenseur{U}
+\end{equation}
+où~:
+\begin{minipage}[t]{0.9\linewidth}
+  \begin{itemize}
+  \item \(\tns{R}\) est une rotation~;
+  \item \(\tenseur{U}\) est un tenseur symétrique défini positif
+    décrivant l'élongation du milieu.
+  \end{itemize}
+\end{minipage}
+
+On montre que cette décomposition est
+unique~\cite{forest_mecanique_2013}.
+
+En comparant les expressions~\eqref{eq:F02}
+et~\eqref{eq:finitestrain:decomposition_polaire}, nous pouvons
+décomposer localement le mouvement en deux~:
+\begin{enumerate}[-]
+\item la transformation de la géométrie initiale en une géométrie
+  intermédiaire dilatée~;
+\item la rotation de cette géométrie intermédiaire.
+\end{enumerate}
+Le tenseur \(\tenseur{U}\) étant mesuré à partir de la configuration
+initiale, il est dit {\em lagrangien}.
+
+Une seconde décomposition polaire de la transformation existe~:
+\begin{equation}
+  \label{eq:finitestrain:decomposition_polaire2}
+  \tns{F}=\tenseur{V}\,.\tns{R}
+\end{equation}
+où~:
+\begin{minipage}[t]{0.9\linewidth}
+  \begin{itemize}
+  \item \(\tns{R}\) est une rotation~;
+  \item \(\tenseur{V}\) est un tenseur symétrique défini positif
+    décrivant l'élongation du milieu~;
+  \end{itemize}
+\end{minipage}
+
+On montre que cette décomposition est là aussi unique et que la
+rotation \(\tns{R}\) est la même que celle définie par la première
+décomposition~\eqref{eq:finitestrain:decomposition_polaire}.
+
+Le tenseur \(\tenseur{V}\) étant mesuré à partir d'un référentiel
+donné par rotation \(\tns{R}\), il est dit {\em eulérien}.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.55\linewidth]{@top_srcdir@/docs/mfront/Images/Polar_decomposition_of_F.eps}
+  \caption{Décompositions de la transformation en une dilatation et
+    une rotation. Illustration de la signification physique des
+    décompositions polaires du gradient de la transformation. Figure
+    tirée de \nom{Wikipédia}~\cite{wikipedia_finite_2014}.}
+  \label{fig:finitestrain:polar_decomposition}
+\end{figure}
+
+Ces deux décompositions sont illustrées en
+figure~\ref{fig:finitestrain:polar_decomposition}.
+
+\paragraph{Changement de volume} Une rotation étant une transformation
+isochore, le changement de volume est lié à \(\tenseur{U}\) ou à
+\(\tenseur{V}\)~:
+\[
+J=\det\paren{\tns{F}}=\det\paren{\tenseur{U}}=\det\paren{\tenseur{V}}
+\]
+
+\paragraph{Remarque sur les lois de comportement et l'objectivité} Une
+rotation d'ensemble d'une structure ne doit pas générer de
+contraintes. Ceci signifie que la rotation \(\tns{R}\) ne doit pas
+intervenir dans la loi de comportement.
+
+Ceci exprime, sous une forme quelque peu simplifiée, ce que l'on
+appelle le principe d'objectivité.
+
+Il semble très simple d'écrire une loi objective. C'est le cas si l'on
+exprime les lois de comportement qu'en fonction de \(\tenseur{U}\) ou
+de \(\tenseur{V}\). D'autres solutions existent, mais elles sont en
+général plus complexes.
+
+\paragraph{Sur l'évolution des tenseurs eulériens} Le fait que les
+tenseurs eulériens soient définis sur une configuration variable dans
+le temps est la principale difficulté à leur utilisation.
+
+En effet, dès que l'on travaillera sur des lois de comportement, il
+faudra prendre garde à porter les quantités d'intérêt
+(contraintes, déformations, variables internes, etc...) d'un
+référentiel à l'autre. De notre point de vue, il nous semble que plus
+de \(30\) ans de littérature sur le sujet montre qu'il s'agit en fait
+d'une boîte de Pandore qui repose de manière insidieuse la question de
+l'objectivité des lois~: il est souvent très technique de proposer des
+formules de transport ad hoc.
+
+Comment donc expliquer le recours systématique aux approches
+eulériennes en élasto-plasticité ? Le fait est que les approches
+eulériennes se prêtent bien à la description des fluides et que
+l'image, le dogme pourrait-on dire, qui a prévalu est que l'écoulement
+plastique est l'écoulement d'un fluide.
+
+Cette vision de la plasticité a favorisé l'expression de lois écrites
+en vitesse qui amènent aux pires difficultés~: formalismes
+hypoélastiques, formalisme de langrangien réactualisé, dérivées
+objectives, référentiels corotationnels, etc...
+
+Ces notions, leurs complexités intrinsèques, ont fait fuir de nombreux
+ingénieurs. On comprendra alors pourquoi nous privilégierons les
+approches lagrangiennes. Cependant, les approches eulériennes
+imprègnent encore la plupart des codes de calcul, dont \castem{}, et
+c'est pour cette raison que nous en parlerons dans cette note.
+
+\subsubsection{Tenseurs de déformation}
+
+Dans le cadre des petites perturbations, il est classique de définir
+la déformation linéarisée \(\tepsilonto_{\text{HPP}}\) qui est égale
+à~:
+\[
+\tepsilonto_{\text{HPP}}=\Frac{1}{2}\,\paren{\vec{\nabla}\,\vec{u}+\transpose{\vec{\nabla}\,\vec{u}}}
+\]
+Ce tenseur n'est pas une bonne mesure des déformations puisqu'il ne
+filtre pas la rotation \(\tns{R}\). Il faut donc adopter une autre
+définition valide en grandes rotations. Nous verrons qu'il en existe
+une infinité.
+
+Rappelons tout d'abord que les \(\tenseur{U}\) et \(\tenseur{V}\) sont
+diagonalisables. Pour simplifier, considérons \(\tenseur{U}\)
+uniquement. Soient \(\lambda_{i}\) ses valeurs propres et
+\(\tenseur{n}_{i}\) les tenseurs propres associés~:
+\[
+\tenseur{U}=\sum_{i=1}^{3}\lambda_{i}\,\tns{n}_{i}
+\]
+
+Pour toute fonction scalaire \(f\), il est possible de définir un
+tenseur \(f\paren{\tenseur{U}}\) par la relation~:
+\[
+f\paren{\tenseur{U}}=\sum_{i=1}^{3}f\paren{\lambda_{i}}\,\tns{n}_{i}
+\]
+
+On définira un tenseur de déformation lagrangien à partir de
+l'application d'une fonction scalaire \(f\) possédant les
+caractéristiques suivantes~:
+\begin{itemize}
+\item \(f\) est strictement croissante~;
+\item \(f\) est nulle en \(0\)~;
+\item \(f\) est dérivable en \(0\) et de dérivée \(1\)~;
+\end{itemize}
+au tenseur \(\tenseur{U}\). Les deux dernières propriétés visent à imposer
+qu'à la limite des petites perturbations, le tenseur ainsi défini
+tende vers \(\tepsilonto_{\text{HPP}}\).
+
+Citons deux exemples classiques~:
+\begin{itemize}
+\item le tenseur de \nom{Green-Lagrange} \(\egl\)~:
+  \begin{equation}
+    \label{eq:EGL}
+    \egl=\Frac{1}{2}\paren{\tenseur{U}^{2}-\tenseur{I}}=\Frac{1}{2}\paren{\tenseur{C}-\tenseur{I}}    
+  \end{equation}
+\item le tenseur de \nom{Hencky} \(\tepsilonto_{\log}\)~:
+  \begin{equation}
+    \label{eq:ELOG}
+    \tepsilonto_{\log}=\log\paren{\tenseur{U}}=\Frac{1}{2}\log\paren{\tenseur{C}}
+  \end{equation}
+\end{itemize}
+où nous avons fait apparaître le tenseur de \nom{Cauchy} droit~:
+\begin{equation}
+  \label{eq:CauchyRightTensor}
+  \tenseur{C}=\transpose{\tns{F}}\,.\,\tns{F}
+\end{equation}
+Ce tenseur est intéressant en pratique car il évite de devoir faire la
+décomposition polaire de \(\tns{F}\).
+
+On peut définir de la même manière une infinité de tenseurs de
+déformation eulériens. Le plus utilisé est le tenseur
+d'\nom{Almansi-Euleur} défini par~:
+\[
+\Frac{1}{2}\paren{\tenseur{I}-\tenseur{V}^{-2}}
+\]
+
+\paragraph{Du choix d'un tenseur de déformation} Soulignons encore
+qu'aucun tenseur de déformation n'est plus physique qu'un autre~: ils
+contiennent tous la même information physique. Le choix d'un tenseur
+de déformation pour exprimer la loi de comportement est
+essentiellement un choix d'habitude et de convenance.
+
+Certains seront cependant plus pratiques que d'autres, pour
+l'expression des lois de comportement. Par exemple, le tenseur de
+\nom{Hencky} vérifie\footnote{Afin d'obtenir le
+  résultat~\eqref{eq:J_Hencky}, considérons les trois valeurs propres
+  \(\lambda_{i}\) de \(\tenseur{U}\). \(J\) est égal au produit des
+  \(\lambda_{i}\). Nous avons alors~:
+\[
+\trace{\tepsilonto_{\log}}=\sum_{i=1}^{3}\log\paren{\lambda_{i}}=\log\paren{\prod_{i=1}^{3}\lambda_{i}}=\log\paren{J}
+\]
+}~:
+\begin{equation}
+  \label{eq:J_Hencky}
+  J=\exp\paren{\trace{\tepsilonto_{\log}}}
+\end{equation}
+C'est à dire qu'un écoulement de trace nulle est isochore. Cette
+propriété est essentielle puisqu'elle nous permettra de décrire les
+comportements élasto-plastiques avec le même formalisme qu'en petites
+déformations~: on pourra décomposer additivement la déformation
+logarithmique totale en une partie élastique et une partie plastique
+de trace nulle. Ce tenseur a de plus l'autre avantage d'être familier
+des expérimentateurs qui l'appellent parfois la déformation
+\og{}~vraie~\fg{} (expression qui n'a pas de sens en réalité).
+
+
+\subsubsection{Vitesses, taux de déformation et de rotation}
+
+La vitesse d'un point décrit la variation de sa position entre deux
+instants infiniment proches. Dans une description eulérienne, la
+vitesse sera fonction de la position \(\vec{x}\) du point dans la
+configuration déformée, alors que dans une description lagrangienne,
+on considérera la vitesse comme une fonction de la position
+\(\vec{X}\) du point dans la configuration initiale.
+
+La vitesse ne peut pas intervenir pour décrire les variations de
+sollicitation d'un matériau, pour les mêmes raisons que le déplacement
+ne peut intervenir pour décrire la sollicitation~: seul le gradient de
+ces quantités doit intervenir. Désignons par \(\tns{L}\) le gradient
+de la vitesse par rapport à \(\vec{x}\)~:
+\begin{equation}
+  \label{eq:L}
+  \tns{L} = \deriv{\vec{\dot{x}}}{\vec{x}}  
+\end{equation}
+
+Le gradient de la vitesse \(\tns{L}\) peut être relié à la dérivée
+temporelle du gradient de la transformation \(\dot{\tns{F}}\). Pour
+cela, considérons l'évolution d'un segment \(\dtot\vec{\dot{x}}\)
+joignant deux points infiniment proches dans la configuration
+actuelle. D'après l'équation~\eqref{eq:L}, nous avons~:
+\[
+\dtot\vec{\dot{x}}=\tns{L}\,.\,\dtot\vec{x}
+\]
+
+Par dérivation par rapport au temps de
+l'équation~\eqref{eq:finitestrain:dl}, nous avons par ailleurs~:
+\[
+\dtot\vec{\dot{x}}=\tns{\dot{F}}\,.\,\dtot\vec{X}=\tns{\dot{F}}\,.\,\tns{F}^{-1}\,.\,\dtot\vec{x}
+\]
+
+Nous déduisons des deux équations précédentes l'égalité suivante~:
+\begin{equation}
+  \label{eq:L2}
+  \tns{L} = \tns{\dot{F}}\,.\,\tns{F}^{-1}
+\end{equation}
+
+Le tenseur \(\tns{L}\) est classiquement décomposé en partie
+symétrique \(\tenseur{D}\) et anti-symétrique \(\tns{w}\)~:
+\begin{equation}
+  \label{eq:D}
+  \left\{
+    \begin{aligned}
+      \tenseur{D} &= \Frac{1}{2}\paren{\tns{L}+\transpose{\tns{L}}} \\
+      \tns{w}     &= \Frac{1}{2}\paren{\tns{L}-\transpose{\tns{L}}} \\
+    \end{aligned}
+  \right.
+\end{equation}
+
+Le tenseur \(\tenseur{D}\) est appelé {\em taux de déformation} du
+matériau, tandis que \(\tns{w}\) est le {\em taux de rotation}.
+
+Pour justifier la définition de \(\tenseur{D}\), regardons comment
+évolue la longueur d'un segment infinitésimal \(\dtot\vec{x}\)~:
+\[
+\derivtot{}{t}\paren{\dtot\vec{x}\,.\,\dtot\vec{x}}=\dtot\vec{\dot{x}}\,.\,\dtot\vec{x}+\dtot\vec{x}\,.\,\dtot\vec{\dot{x}}=\dtot\vec{x}\,.\,\transpose{\tns{L}}\,.\,\dtot\vec{x}+\dtot\vec{x}\,.\,\tns{L}\,.\,\dtot\vec{x}=2\,\dtot\vec{x}\,.\,\tenseur{D}\,.\,\dtot\vec{x}
+\]
+
+\paragraph{Changement de volume} La formule de dérivation du
+déterminant s'écrit~\cite{petersen_matrix_2008}~:
+\[
+\derivtot{J}{t}=\derivtot{}{t}\det\paren{F}=\det\paren{F}\,\trace\paren{\tns{\dot{F}\,.\,\tns{F}^{-1}}}=J\,\trace{\tenseur{D}}
+\]
+Ainsi, un écoulement dont le taux de déformation est de trace nulle
+est isochore.
+
+\paragraph{Lien entre \(\tenseur{D}\) et \(\tenseur{\dot{C}}\)} Nous
+avons la relation suivante~:
+\begin{equation}
+  \label{eq:D_C}
+  \tenseur{D}=\tns{F}^{-T}\,.\,\tdepsilonto_{\text{GL}}\,.\,\tns{F}^{-1}=\Frac{1}{2}\tns{F}^{-T}\,.\,\tenseur{\Dot{C}}\,.\,\tns{F}^{-1}
+\end{equation}
+Cette relation s'obtient par dérivation de la
+définition~\eqref{eq:CauchyRightTensor} de \(\tenseur{C}\)~:
+\[
+\tns{F}^{-T}\,.\,\tenseur{\dot{C}}\,.\,\tns{F}^{-1}=
+\tns{F}^{-T}\,.\,\paren{\transpose{\tns{\dot{F}}}\,.\,\tns{F}+\transpose{\tns{F}}\,.\,\tns{\dot{F}}}\,.\,\tns{F}^{-1}=
+\tns{F}^{-T}\transpose{\tns{\dot{F}}}+\tns{\dot{F}}\,.\,\tns{F}^{-1}=2\,\tenseur{D}
+\]
+
+
+\subsection{Équilibre mécanique, contrainte de Cauchy, puissance
+  mécanique et contraintes définies par dualité}
+
+\subsubsection{Équilibre mécanique, contrainte de \nom{Cauchy}}
+
+La contrainte de \nom{Cauchy} \(\tsigma\) est la contrainte associant
+à une surface unitaire \(\dtot\, \vec{s}\) de la configuration
+déformée la force \(\dtot\, \vec{f}\) agissant sur cette surface~:
+\[
+\dtot\, \vec{f} = \tsigma\,.\,\dtot\, \vec{s}
+\]
+De ce fait, la contrainte de \nom{Cauchy} est souvent appelée
+contrainte \og{}~vraie~\og{} et se calcule, dans un essai de traction,
+en rapportant la force mesurée à la section actuelle de
+l'échantillon. Il s'agit d'un tenseur symétrique en l'absence de
+moments magnétiques.
+
+En l'absence de forces volumiques, l'équilibre mécanique de la
+structure s'écrit, en chaque point de la géométrie déformée~:
+\[
+\mathop{div}\tsigma=0
+\]
+où l'opérateur divergence se calcule sur la géométrie actuelle.
+
+\subsubsection{Puissance mécanique}
+
+On montre que la puissance mécanique \(\mathcal{P}\) est égale à~:
+\[
+\mathcal{P}=\int_{\Omega_{t}}\tsigma\,\colon\,\tenseur{D}\,\dtot\,v
+\]
+
+Dans la suite, nous nous intéresserons principalement aux approches
+lagrangiennes. La dissipation s'écrit, dans la configuration
+initiale~:
+\[
+\mathcal{P}=\int_{\Omega_{0}}J\,\tsigma\,\colon\,\tenseur{D}\,\dtot\,V
+\]
+
+\paragraph{Contrainte de \nom{Kirchhoff}} La quantité
+\(\tenseur{\tau}=J\,\tsigma\) définit un nouveau tenseur des
+contraintes, la contrainte de \nom{Kirchhoff}.
+
+\subsubsection{Contraintes définies par dualité}
+
+Une idée extrêmement puissante est de relier à un taux de déformation
+une contrainte par dualité énergétique. Plus précisément, soit
+\(\tenseur{\varepsilon}\) un tenseur de déformation, sa contrainte
+duale \(\tenseur{S}_{\varepsilon}\) sera telle que~:
+\begin{equation}
+  \label{eq:dualite}
+  p_{v_{0}}=\tau\,\colon\,\tenseur{D}=\tenseur{S}_{\varepsilon}\,\colon\,\tenseur{\dot{\varepsilon}}
+\end{equation}
+où \(p_{v_{0}}\) est la densité de puissance mécanique dans la
+configuration de référence.
+
+Puisqu'il existe infinité de tenseur de déformation, il existe une
+infinité de tenseur de contrainte. Par dualité, puisque tous les
+tenseurs de déformation tendent vers la même limite pour des
+transformations infinitésimales, tous ces tenseurs de déformations
+tendront vers la même limite.
+
+Nous verrons différentes applications de ce principe. Pour l'instant,
+nous nous contentons de définir deux tenseurs de contrainte
+classique~: les première et seconde contraintes de
+\nom{Piola-Kirchhoff}.
+
+\paragraph{Seconde contrainte de \nom{Piola-Kirchhoff}}
+Si nous considérons le tenseur de \nom{Green}-\nom{Lagrange}, on
+démontre à partir de la relation~\eqref{eq:D_C}, que son tenseur des
+contraintes dual, appelé second tenseur de Piola-Kirchhoff et noté
+\(\tenseur{S}\), est défini par~:
+\begin{equation}
+  \label{eq:S_Cauchy}
+  \tenseur{S}=J\,\tns{F}^{-1}\,\sigma\,\tns{F}^{-T}
+\end{equation}
+Cette relation s'inverse en~:
+\begin{equation}
+  \label{eq:Cauchy_S}
+  \tsigma=\Frac{1}{J}\,\tns{F}\,\tenseur{S}\,\transpose{\tns{F}}
+\end{equation}
+
+\paragraph{Première contrainte de \nom{Piola-Kirchhoff}} Même si
+\(\tns{F}\) n'est pas un tenseur de déformation, il est possible de
+définir par dualité un tenseur \(\tns{\Pi}\) {\em non symétrique},
+nommé première contrainte de \nom{Piola-Kirchhoff}~:
+\begin{equation}
+  \label{eq:PK1}
+  J\,\tsigma=\tns{\Pi}\,.\,\transpose{\tns{F}}
+\end{equation}
+
+Par définition, ce tenseur vérifie~:
+\[
+p_{v_{0}}=\tns{\Pi}\,\colon\,\tns{\dot{F}}
+\]
+
+La première contrainte de \nom{Piola-Kirchhoff} a deux propriétés intéressantes~:
+\begin{itemize}
+\item l'équation d'équilibre dans la configuration initiale s'écrit~:
+  \begin{equation}
+    \label{eq:PK1:equilibrium}
+    \mathop{Div}\,\tns{\Pi}=0    
+  \end{equation}
+où \(\mathop{Div}\) est la divergence dans la configuration initiale.
+\item la première contrainte de \nom{Piola-Kirchhoff} permet d'obtenir
+  les forces \(\dtot\,\vec{f}\) dans la configuration déformée pour un
+  élément de surface \(\dtot\,\vec{S}\) dans la configuration
+  initiale~:
+  \begin{equation}
+    \label{eq:PK1:BC}
+    \dtot\,\vec{f}=\tns{\Pi}\,.\,\dtot\,\vec{S}
+  \end{equation}
+\end{itemize}
+
+Si la relation~\eqref{eq:PK1:equilibrium} est assez sympathique (on
+travaille sur une configuration initiale, qui est fixe et connue), la
+relation~\eqref{eq:PK1:BC} montre que les conditions aux limites
+vérifiées par \(\tns{\Pi}\) sont assez complexes puisque l'on doit
+calculer les forces sur la déformation déformée~: la non linéarité
+géométrique du problème est concentrée dans la détermination des
+conditions aux limites.
+
+L'utilisation de la première contrainte de \nom{Piola-Kirchhoff} (à la
+place de la contrainte de \nom{Cauchy}) est en réalité
+particulièrement intéressante pour les applications combustible \(1D\)
+telles qu'\alcyone{} ou \germinal{} car les forces, dues aux pressions
+appliquées sur le combustible et la gaine, restent de direction
+constante. Les variations d'intensité dues aux variations de géométrie
+peuvent être traitées de manière explicite, ce qui permet de supprimer
+la non linéarité géométrique du problème.
+
+\section{Lois en grandes transformations}
+
+Une manière simplifiée de décrire une loi de comportement en grandes
+transformations est de dire qu'il s'agit d'une boîte noire qui, en
+chaque point d'intégration de la structure discrétisée et pour un
+intervalle de temps \(\left[t:t+\Delta\,t\right]\) donné, prend en
+entrée~:
+\begin{enumerate}[-]
+\item \(\bts{\tns{F}}\), le gradient de la transformation vers la
+  configuration en début de pas~;
+\item \(\ets{\tns{F}}\), le gradient de la transformation vers la
+  configuration en fin de pas~;
+\item la valeur des variables internes \(\bts{Y}\) en début de pas~;
+\end{enumerate}
+et qui fournit~:
+\begin{enumerate}[-]
+\item la valeur de la contrainte de \nom{Cauchy} \(\ets{\tsigma}\)
+  définie en fin de pas sur la configuration en fin de pas~;
+\item la valeur des variables internes \(\ets{Y}\) en fin de pas~;
+\item une matrice tangente cohérente. Le problème est ici que la
+  définition de l'opérateur tangent dépend du code considéré, et,
+  parfois au sein d'un même code, du choix du formalisme utilisé pour
+  traiter les grandes transformations\footnote{À titre d'exemple,
+    \zebulon{} propose trois formalismes
+    différents~\cite{han_implantation_2010}.}. Dans \mfront{},
+  l'utilisateur peut donner, parmi un nombre fini de possibilité, un
+  ou plusieurs opérateurs tangents. En général, il choisira
+  l'opérateur \og{}~le plus naturel~\fg{} pour la loi considérée (voir
+  ci-dessous). Nous effectuons alors un ensemble de conversions pour
+  calculer l'opérateur tangent effectivement attendu par le code.
+\end{enumerate}
+
+Certaines formulations hypoélastiques, définies plus loin, des grandes
+transformations se basent sur la donnée en entrée de la contrainte de
+\nom{Cauchy} \(\bts{\tsigma}\) en début de pas sur la configuration de
+début de pas. Cette information est fournie par \mfront{}, mais nous
+déconseillons son emploi.
+
+\paragraph{Hyperélasticité} La notion d'hyperélasticité généralise la
+notion classique d'élasticité. Plus précisément, une loi
+hyperélastique est une loi reliant une mesure de déformation à son
+tenseur dual par la définition d'une densité d'énergie \(\Psi\)~:
+\[
+\tenseur{S}_{\varepsilon}=\deriv{\Psi}{\tenseur{\varepsilon}}
+\]
+
+Une propriété essentielle des lois hyperélastiques est la dissipation
+mécanique est nulle pour tout trajet fermé dans l'espace des
+déformations.
+
+Une autre propriété intéressante en pratique est qu'on peut montrer
+que l'opérateur tangent cohérent est symétrique.
+
+\subsection{Approches lagrangiennes}
+
+Au vu de ce qui précède, les approches lagrangiennes sont les plus
+simples d'emploi~:
+\begin{itemize}
+\item on se donne une mesure des déformations~: soit \(\tenseur{U}\),
+  soit \(\tenseur{C}\), soit un des tenseurs de déformation construits
+  sur \(\tenseur{U}\). Ce choix définit un tenseur des contraintes par
+  dualité, par l'équation~\eqref{eq:dualite}. Un point important est
+  que ces différents tenseurs sont tous définis dans la configuration
+  initiale.
+\item on construit alors la loi de comportement en reliant la mesure
+  des déformations à sa contrainte duale. On utilisera de préférence
+  une approche basée sur la thermodynamique, ce qui est possible par
+  la définition énergétique de la contrainte duale.
+\end{itemize}
+
+\paragraph{Calcul de la contrainte de \nom{Cauchy}} La dernière étape
+de la loi de comportement consiste à calculer la contrainte de
+\nom{Cauchy}. Supposons avoir choisi un tenseur des déformations
+\(\tenseur{\varepsilon}\) fonction explicite de \(\tenseur{C}\) et
+soit \(\tenseur{S}_{\varepsilon}\) sa contrainte duale, nous avons~:
+\[
+  \Frac{1}{2}\tenseur{S}\,\colon\,\tenseur{\dot{C}}=\tenseur{S}_{\varepsilon}\,\colon\,\tenseur{\dot{\varepsilon}}=\tenseur{S}_{\varepsilon}\,\colon\,\deriv{\tenseur{\varepsilon}}{\tenseur{C}}\,\colon\,\tenseur{\dot{C}}
+\]
+Cette relation étant valide pour tous les valeurs de
+\(\tenseur{\dot{C}}\), on en déduit~:
+\[
+\tenseur{S}=2\,\tenseur{S}_{\varepsilon}\,\colon\,\deriv{\tenseur{\varepsilon}}{\tenseur{C}}
+\]
+
+La relation~\eqref{eq:Cauchy_S} permet alors de calculer la contrainte
+de \nom{Cauchy}.
+
+\paragraph{Opérateur tangent} L'opérateur tangent naturel est la
+dérivée de la contrainte duale en fin de pas par rapport à l'incrément
+du tenseur de déformation choisi.
+
+\subsubsection{Lois lagrangiennes hyperélastiques}
+\label{sec:loi-hyper-de-1}
+
+Toute généralisation de la loi de \nom{Hooke} de la forme~:
+\[
+\tenseur{S}_{\varepsilon}=\tenseurq{D}\,\colon\,\tenseur{\varepsilon}
+\]
+où \(\tenseur{\varepsilon}\) est un tenseur de déformation lagrangien,
+\(\tenseur{S}_{\varepsilon}\) son tenseur dual et \(\tenseurq{D}\) un tenseur
+d'élasticité possédant les bonnes propriétés\footnote{On se rappellera
+  par exemple que, dans le cas isotrope, le coefficient de
+  \nom{Poisson} ne peut pas prendre n'importe quelle valeur.},
+conduira à une loi hyperélastique.
+
+Dans ce l'opérateur tangent naturel est évidemment \(\tenseurq{D}\).
+
+\paragraph{Loi hyperélastique de \nom{Saint-Venant Kirchhoff}}
+
+\begin{figure}[htbp]
+  \centering
+  \scalebox{0.9}{
+    \begin{minipage}[htbp]{1.0\linewidth}
+      \setlength{\columnseprule}{0.4pt}
+      \begin{multicols}{2}
+        {\footnotesize \input{@top_srcdir@/docs/mfront/mfront/SaintVenantKirchhoffElasticity.tex}}  
+      \end{multicols}
+    \end{minipage}
+  }
+  \caption{Implantation de la loi hyperélastique de \nom{Saint-Venant
+      Kirchhoff}.}
+  \label{fig:finitestrain:saintvenantkirchhoff}
+\end{figure}
+
+La loi de \nom{Saint-Venant Kirchhoff} est la loi hyperélastique la
+plus classique. Elle généralise la loi de \nom{Hooke} isotrope en
+reliant le tenseur de \nom{Green-Lagrange} au second tenseur de
+\nom{Piola-Kirchhoff} \(\tenseur{S}\)~:
+\[
+\tenseur{S}=\lambda\,\trace{\egl}\,\tenseur{I}+2\,\mu\egl
+\]
+où \(\lambda\) et \(\mu\) sont les premier et second coefficients de
+\nom{Lame}.
+
+L'implantation de cette loi en \mfront{} est donnée en
+figure~\ref{fig:finitestrain:saintvenantkirchhoff}. Nous avons montré
+comment il était possible de définir l'opérateur tangent de deux
+manières différentes. La première, la plus simple, est donnée par la
+dérivée de la seconde contrainte de \nom{Piola-Kirchhoff} par rapport
+à l'incrément du tenseur de \nom{Green-Lagrange}. La seconde est
+directement l'opérateur tangent attendu par \aster{}.
+
+\subsubsection{Grandes rotations, petites déformations}
+\label{sec:grand-rotat-petit}
+
+Ce paragraphe s'inspire de la formulation éponyme
+d'\aster{}~\cite{proix_loi_2013}. L'interprétation physique du
+formalisme est également décrit par
+Doghri~\cite{doghri_mechanics_2000}.
+
+Il s'agit d'un moyen de réutiliser, sans ré-identification, des lois
+de comportement écrites pour décrire des transformations
+infinitésimales dans le cas où les rotations du matériau peuvent être
+extrêmement importantes.
+
+Les déformations de \nom{Green-Lagrange} en début et fin de pas de temps
+sont calculées ainsi~:
+\[
+\begin{aligned}
+  \bts{\egl} &= \Frac{1}{2}\left(\bts{\tenseur{C}}-\tenseur{I}\right)\\
+  \ets{\egl} &= \Frac{1}{2}\left(\ets{\tenseur{C}}-\tenseur{I}\right)\\
+\end{aligned}
+\]
+
+\(\bts{\egl}\) et \(\ets{\egl}\) sont deux tenseurs lagrangiens (tous
+deux relatifs à la configuration initiale) que l'on peut légitiment
+soustraire pour calculer l'incrément de déformation totale
+\(\Delta\,\egl\)~:
+\[
+\Delta\,\egl=\ets{\egl}-\bts{\egl}
+\]
+
+Cet incrément est envoyé à la loi de comportement qui retourne une
+contrainte qui est interprétée, conformément à la relation de
+dualité~\eqref{eq:dualite}, comme le second tenseur de
+\nom{Piola-Kirchhoff}. Le tenseur de \nom{Cauchy} \(\tsigma\), utilisé
+par \castem{} pour le calcul de l'équilibre, s'en déduit alors par la
+relation~\eqref{eq:Cauchy_S}.
+
+\paragraph{Interprétation physique} Dans le cas des petites
+déformations, la décomposition polaire de \(\tns{F}\) montre que~:
+\[
+\tns{F}=\tns{R}\,.\tenseur{U}\approx\tns{R}
+\]
+\(J\), égal au déterminant de \(\tenseur{U}\) est également proche de
+\(1\).
+
+La relation~\eqref{eq:Cauchy_S} s'écrit alors~:
+\begin{equation}
+  \label{eq:finitestrain:sk2tochauchy:2}
+  \tsigma = \Frac{1}{J}\tns{F}\,.\,\tsigma\,.\,\transpose{\tns{F}} \approx\tns{R}\,.\,\tsigma\,.\,\transpose{\tns{R}}
+\end{equation}
+Cette dernière relation montre qu'au premier ordre, les contraintes de
+\nom{Cauchy} se déduisent du second tenseur de \nom{Piola-Kirchhoff}
+par la rotation qu'a subit localement le matériau.
+
+\paragraph{Changement de volume} Si les déformations sont petites, le
+changement de volume est, au premier ordre, égal à la trace de
+\(\egl\).
+
+\paragraph{Cas de l'élasticité isotrope} Si la loi HPP est la loi de
+\nom{Hooke} iostrope, l'utilisation de la stratégie \og~grandes
+rotations, petites déformations\fg{}, permet de retrouver la loi de
+\nom{Saint-Venant Kirchhoff} décrite au
+paragraphe~\ref{sec:loi-hyper-de-1}.
+
+\paragraph{Du choix particulier du tenseur de \nom{Green-Lagrange}} On
+peut se poser la question du choix du tenseur de \nom{Green-Lagrange}
+pour traiter le problème des grandes rotations~: tout autre tenseur
+aurait pu faire l'affaire puisque tous les tenseurs lagrangiens
+tendent vers la même limite aux petites déformations. En particulier,
+nous pourrions utiliser directement les déformations logarithmiques
+que nous avons présenté comme la meilleure approche disponible dans
+l'introduction.
+
+Il s'agit essentiellement d'une question d'efficacité numérique~: le
+tenseur de \nom{Green-Lagrange} se calcule très facilement à partir de
+\(\tns{F}\) et la relation entre le second tenseur
+\nom{Piola-Kirchhoff} et le tenseur de \nom{Cauchy} est directe. Ce
+n'est pas le cas des déformations logarithmiques qui nécessitent des
+calculs importants en amont et en aval de la loi de comportement.
+
+\paragraph{Utilisation via l'interface \umat{} de \mfront{}}
+L'interface \umat{} de \mfront{} a été étendue. La directive {\tt
+  @UMAT\-Finite\-Strain\-Strategy} permet de préciser une stratégie
+d'adaptation d'une loi HPP en grandes transformations. La stratégie
+{\tt Finite\-Rotation\-Small\-Strain} permet de sélectionner celle
+présentée dans cette section.
+
+\subsubsection{Les déformations logarithmiques}
+\label{sec:deform-lagr-et}
+
+Le formalisme des déformations logarithmiques, introduit par
+Miehe~\cite{miehe_anisotropic_2002}, se base sur la déformation de
+\nom{Hencky} et son tenseur dual, noté \(\tenseur{T}\).
+
+L'idée de cette approche est qu'il est possible d'utiliser les
+ingrédients classiques des lois écrites pour des transformations
+infinitésimales~:
+\begin{itemize}
+\item décomposition additive la déformation totale en différentes
+  contributions (élastique, plastique, thermique, gonflement,
+  etc...)~;
+\item décomposition des tenseurs en une partie sphérique, associée au
+  changement de volume, et une partie déviatorique. Cette
+  décomposition est possible par la propriété
+  essentielle~\eqref{eq:J_Hencky} qui relie la trace des déformations
+  logarithmiques au changement de volume~;
+\item dérivation possible des modèles par une approche thermodynamique
+  cohérente (mais ce point est commun à tous les formalismes
+  lagrangiens grâce à l'utilisation de la notion de tenseur dual).
+\end{itemize}
+
+Dit d'une autre manière, il suffit d'appeler n'importe quelle loi
+écrite dans le formalisme des petites transformations avec un
+pré-traitement (le calcul de la déformation logarithmique de
+\nom{Hencky}) et un post-traitement (le calcul de la contrainte de
+\nom{Cauchy} à partir de \tenseur{T}) appropriés, pour obtenir une loi
+valides en grandes transformations.
+
+Bien entendu, il s'agit d'une réutilisation {\em formelle}~: une loi
+particulière identifiée dans le contexte des petites transformations
+ne devient pas miraculeusement capables de décrire de très grandes
+déformations.
+
+Il s'agit néanmoins d'un avantage considérable~: l'écriture de lois de
+comportement capables de décrire de très grandes déformations dans un
+cadre théorique solide devient accessible aux ingénieurs puisque
+ceux-ci n'ont pas à apprendre de formalisme nouveau. Tous les concepts
+qui leurs sont devenus classiques (écrouissages, endommagement,
+etc...)  sont utilisables tels quels.
+
+\paragraph{Autres avantages} Ce formalisme a d'autres avantages, en
+particulier si on le compare à d'autres approches qui visent les mêmes
+objectifs~:
+\begin{itemize}
+\item il n'y a aucune restriction sur la loi de comportement. On peut
+  traiter les dilatations libres (gonflement et/ou dilatation
+  thermique), l'orthotropie initiale ou induite du matériau
+\end{itemize}
+
+
+\paragraph{Utilisation via l'interface \umat{} de \mfront{}}
+
+Dans la directive {\tt @UMAT\-Finite\-Strain\-Strategy}, le mot clé
+{\tt Miehe\-Apel\-Lambrecht\-Logarithmic\-Strain} permet de
+sélectionner la stratégie présentée dans cette section.
+
+\paragraph{Traitement des dilatations thermiques} À faire.
+
+
+% \subsection{Loi plastique de
+%   \nom{Simo-Miehe}~\cite{simo_associative_1992}}
+% \label{sec:loi-plastique-de}
+
+% \begin{figure}[htbp]
+%   \centering
+%   \scalebox{0.9}{
+%     \begin{minipage}[htbp]{1.0\linewidth}
+%       \setlength{\columnseprule}{0.4pt}
+%       \begin{multicols}{2}
+%         {\footnotesize \input{@top_srcdir@/docs/mfront/mfront/ImplicitSimoMieheElastoPlasticity.tex}}  
+%       \end{multicols}
+%     \end{minipage}
+%   }
+%   \caption{Implantation de la loi de plasticité de \nom{Simo-Miehe}.}
+%   \label{fig:finitestrain:simo-miehe}
+% \end{figure}
+
+% \subsubsection{Cas tests}
+
+% Trois cas tests ont été introduits dans \TFEL{}. Il reprennent tous
+% une loi plastique avec écrouissage isotrope linéaire et sont issus de
+% la base des cas tests
+% \aster{}~\cite{bargellini_hsnv121_2009,proix_ssna303_2011}.
+
+% Un cas test de traction uniaxiale, décrit dans la
+% référence~\cite{bargellini_hsnv121_2009}, est réalisé à l'aide de
+% l'outil \mtest{}. Le fichier associé se trouve dans~:
+% \begin{center}
+%   {\tt mfront/tests/behaviours/castem/castemimplicitsimomieheelastoplasticity.mtest}
+% \end{center}
+% Les résultats sont comparés à ceux d'\aster{} et à une résolution
+% semi-analytique.
+
+% Ce cas test est reproduit à l'identique dans \castem{}. Le fichier
+% associé est~:
+% \begin{center}
+%   {\tt\small mfront/tests/behaviours/castem/ImplicitSimoMieheElastoPlasticityUniaxialTesting.dgibi}
+% \end{center}
+
+% \begin{figure}[htbp]
+%   \centering
+%   \includegraphics[height=0.9\linewidth,angle=-90]{@top_srcdir@/docs/mfront/Images/ImplicitSimoMieheElastoPlasticity-ssna303.eps}
+%   \caption{Essai de traction sur une éprouvette entaillée
+%     élastoplastique en grandes déformations avec la loi plastique de
+%     \nom{Simo} et \nom{Miehe}~: représentation des géométries initiale
+%     et déformée (en rouge).}
+%   \label{fig:finitestrain:ssna303}
+% \end{figure}
+
+% Le dernier cas test, lui aussi repris de la base de cas tests
+% d'\aster{}, décrit une éprouvette entaillée en \(2D\paren{r,z}\) en
+% traction~\cite{proix_ssna303_2011}. La longueur de l'éprouvette varie
+% de \(20\,\%\)~: on impose un déplacement de \(6\,mm\) pour une
+% longueur initiale de \(30\,mm\). Localement, l'entaille conduit à des
+% niveaux de déformation beaucoup plus élevé, de l'ordre de
+% \(70\,\%\). La figure~\ref{fig:finitestrain:ssna303} représente les
+% géométries initiales et déformée de l'éprouvette. À la fin du
+% chargement, la variation de volume est très faible, de l'ordre de
+% \(0,6\,\%\), et est imputable aux déformations élastiques du
+% matériau~: l'hypothèse d'incompréhensibilité de l'écoulement plastique
+% est donc bien vérifiée. On compare la réduction de la section de
+% l'éprouvette au niveau de l'entaille et la force imposée en fin de
+% chargement à la solution \aster{}, prise comme référence~: l'écart est
+% de l'ordre du pourcent.
+
+\section{La décomposition FeFp}
+
+Une grande partie de la littérature sur l'élastoplasticité en grandes
+transformations a été consacrée à ce que l'on appelle la décomposition
+\(\tns{F}_{e}\,.\,\tns{F}_{p}\)~\cite{lee69:_elast_defor_finit_strain,mandel73:_equat_const_direc_milieux_plast_viscop}.
+
+La décomposition \(\tns{F}_{e}\,.\,\tns{F}_{p}\) est essentiellement
+une hypothèse cinématique. Nous commencerons par décrire cette
+cinématique, puis nous introduirons un nouveau tenseur, le tenseur de
+\nom{Mandel}, par dualité énergétique, ce qui nous permettra de
+d'introduire des premières notions de thermodynamique. Enfin, nous
+décrirons le cadre, actuellement standard, permettant de décrire les
+lois de plasticité en grandes transformations.
+
+\subsection{Aspects cinématiques}
+
+Il s'agit de postuler l'existence d'une configuration intermédiaire
+\(\tns{F}_{p}\), résultant de l'écoulement plastique. Cette
+configuration définie une configuration du matériau \og{}~au
+repos~\fg{} après déformation, c'est à dire à contrainte nulle. Cette
+configuration permet de définir la transformation élastique
+\(\tns{F}_{e}\) qui permet au matériau d'accommoder le gradient de
+déformation total~:
+\begin{equation}
+  \label{eq:FeFp}
+  \tns{F} = \tns{F}_{e}\,.\,\tns{F}_{p}
+\end{equation}
+
+Notons que 
+
+Compte tenu de la décomposition multiplicative~\eqref{eq:FeFp} du
+gradient de transformation, le gradient du vecteur vitesse \(\tns{L}\)
+s'exprime, défini par l'équation~\eqref{eq:L}, s'écrit~:
+\begin{equation}
+  \label{eq:LeLp}
+  \tns{L} = \tns{\dot{F}}\,.\,\inv{\tns{F}} =
+  \tns{\dot{F}}_{e}\,.\,\inv{\tns{F}_{e}} +  \tns{F}_{e}\,.\,\tns{\dot{F}}_{p}\,.\,\inv{\tns{F}_{p}}\,.\,\inv{\tns{F}_{e}} =
+  \tns{L}_e + \tns{F}_{e}\,.\,\tns{L}_{p}\,.\,\inv{\tns{F}_{e}}
+\end{equation}
+avec \(\tns{L}_e=\tns{\dot{F}}_{e}\,.\,\inv{\tns{F}_{e}}\) et \(\tns{L}^p=\tns{\dot{F}}_{p}\,.\,\inv{\tns{F}_{p}}\).
+
+\subsection{Le tenseur de \nom{Mandel}}
+
+Nous avons déjà rencontré différents tenseurs des contraintes dont
+l'utilisation va s'avérer utile~:
+\begin{enumerate}
+\item le tenseur des contraintes de \nom{Cauchy} \(\tsigma\), défini dans la
+  configuration actuelle, symétrique ;
+\item le second tenseur de Piola-Kirchhoff \(\tns{S}_e\), défini dans
+  la configuration intermédiaire, symétrique~:
+\begin{equation}
+\tns{S}_e=J_E \inv{\tns{F}_{e}}\,.\,\tsigma\,.\,\invT{\tns{F}_{e}} \rm{, avec} \ J_E = \det{\tns{F}_{e}}=\Frac{\rho_i}{\rho}
+\end{equation}
+où \(\rho\) la masse volumique du matériau dans la configuration
+actuelle et \(\rho_i\) la masse volumique dans la configuration
+intermédiaire.
+\end{enumerate}
+
+Nous allons utiliser la décomposition~\eqref{eq:LeLp} pour introduire
+un nouveau tenseur de contraintes, par dualité.
+
+La puissance des efforts intérieurs est~:
+\begin{eqnarray}
+\Frac{1}{\rho} \tsigma\,\colon\, \tns{D} &=&
+\Frac 1 \rho \tsigma\,\colon\, \tns{L} = \Frac 1 \rho \tsigma\,\colon\, \tns{\dot{F}} \inv{\tns{F}} \label{eq:power_internal_forces_0} \\
+&=& \Frac 1 \rho \tsigma\,\colon\, (\tns{\dot{F}}_{e} \inv{\tns{F}_{e}}+\tns{F}_{e} \tns{\dot{F}}_{p} \inv{\tns{F}_{p}} \inv{\tns{F}_{e}}) \\ 
+&=& \Frac 1 \rho \tsigma\,\colon\, (\tns{\dot{F}}_{e} \inv{\tns{F}_{e}}) + \Frac 1 \rho \tsigma\,\colon\, (\tns{F}_{e} \tns{\dot{F}}_{p} \inv{\tns{F}_{p}} \inv{\tns{F}_{e}}) \label{eq:power_internal_forces_1}
+\end{eqnarray}
+Dans l'équation~\eqref{eq:power_internal_forces_0}, comme \(\tsigma\) est
+un tenseur symétrique, on peut donc remplacer \(\tns{D}\) par \(\tns{L}\).
+Dans l'équation~\eqref{eq:power_internal_forces_1}, tenant compte de la
+relation entre le second tenseur de Piola-Kirchhoff \(\tns{S}_e\) et le
+tenseur de \nom{Cauchy} \(\tsigma\), on a~:
+\begin{eqnarray*}
+\Frac{1}{\rho} \tsigma\,\colon\, \tns{D} &=& \Frac{1}{\rho_i} (\tns{F}_{e} \tns{S}_e \transpose{\tns{F}_{e}})\,\colon\, (\tns{\dot{F}}_{e} \inv{\tns{F}_{e}}) + \Frac {1}{\rho_i} (\tns{F}_{e} \tns{S}_e \transpose{\tns{F}_{e}})\,\colon\, (\tns{F}_{e} \tns{\dot{F}}_{p} \inv{\tns{F}_{p}} \inv{\tns{F}_{e}}) \\
+                                    &=& \frac{1}{\rho_i} \paren{F_{e}}_{ik} \paren{S_{e}}_{kl} \paren{\transpose{F}_{e}}_{lj} \paren{\dot{F}_{e}}_{im} \paren{\inv{F}_{e}}_{mj}+ \\
+                                    && \frac{1}{\rho_i} \paren{F_{e}}_{ik} \paren{S_{e}}_{kl} \paren{\transpose{F}_{e}}_{lj} \paren{F_{e}}_{im} \paren{\dot{F}_{p}}_{mn} \paren{\inv{F}_{p}}_{np} \paren{\inv{F}_{e}}_{pj} \\
+                                    &=& \frac{1}{\rho_i} \paren{S_{e}}_{kl} \paren{\transpose{F}_{e}}_{ki} \paren{\dot{F}_{e}}_{im} \paren{\inv{F}_{e}}_{mj} \paren{F_{e}}_{jl} +\\
+                                    && \frac{1}{\rho_i} \paren{\transpose{F}_{e}}_{mi} \paren{F_{e}}_{ik} \paren{S_{e}}_{kl} \paren{\transpose{F}_{e}}_{lj} \paren{F_{e}}_{jp}^{-T} \paren{\dot{F}_{p}}_{mn} \paren{\inv{F}_{p}}_{np} \\
+                                    &=& \frac{1}{\rho_i} \paren{S_{e}}_{kl} \paren{\transpose{F}_{e}}_{ki} \paren{\dot{F}_{e}}_{il} + \frac{1}{\rho_i} \paren{\transpose{F}_{e}}_{mi} \paren{F_{e}}_{ik} \paren{S_{e}}_{kp} \paren{\dot{F}_{p}}_{mn} \paren{\inv{F}_{p}}_{np} \\
+&=& \Frac{1}{\rho_i} \tns{S}_e\,\colon\, (\transpose{\tns{F}_{e}} \tns{\dot{F}}_{e}) + \Frac{1}{\rho_i} (\transpose{\tns{F}_{e}} \tns{F}_{e} \tns{S}_e)\,\colon\, (\tns{\dot{F}}_{p} \inv{\tns{F}_{p}})
+\end{eqnarray*}
+
+Comme le second tenseur de Piola-Kirchhoff est symétrique, on a~:
+\begin{eqnarray}
+  \Frac{1}{\rho} \tsigma\,\colon\, \tns{D} &=& \Frac{1}{\rho_i} \tns{S}_e\,\colon\, \Frac 1 2 \left( \transpose{\tns{F}_{e}} \tns{\dot{F}}_{e} + \transpose{\tns{\dot{F}}_{e}} \tns{F}_{e}\right)+ \Frac{1}{\rho_i} (\transpose{\tns{F}_{e}} \tns{F}_{e} \tns{S}_e)\,\colon\, (\tns{\dot{F}}_{p} \inv{\tns{F}_{p}}) \\
+  &=& \Frac{1}{\rho_i} \tns{S}_e\,\colon\, \degle{}+ \Frac{1}{\rho_i} \tns{M}\,\colon\, (\tns{\dot{F}}_{p} \inv{\tns{F}_{p}})
+  =  \Frac{1}{\rho_i} \tns{S}_e\,\colon\, \degle{}+ \Frac{1}{\rho_i} \tns{M}\,\colon\, \tns{L}_{p} \label{eq:power_internal_forces}
+ \label{eq:power_internal_forces}
+\end{eqnarray}
+où nous avons introduit le tenseur des contraintes de \nom{Mandel},
+noté \(\tns{M}\), non symétrique, et définit par~:
+\begin{equation}
+  \label{eq:M}
+  \tns{M} = J_E \transpose{\tns{F}_{e}}\,.\,\tsigma\,.\,\invT{\tns{F}_{e}} = \transpose{\tns{F}_{e}}\,.\,\tns{F}_{e}\,.\,\tenseur{S}^{e}= \tenseur{C}_e\,.\,\tenseur{S}^{e}
+\end{equation}
+avec \(\tenseur{C}_e\) le tenseur des dilatations élastiques
+\nom{Cauchy-Green} droit.
+
+\subsection{Thermodynamique}
+
+Le deuxième principe de la thermodynamique dans sa forme locale, connu
+sous le nom d'inégalité de \nom{Clausius-Duhem} s'écrit~:
+\begin{equation}
+  \label{eq:Clausius-Duhem}
+-\rho (\dot e - T \dot s) + \tsigma\,\colon\, \tns{D} - \Frac{\vec{q}}{T} \cdot \grad T \geqslant 0
+\end{equation}
+avec \(\rho\) la masse volumique dans la configuration actuelle, \(e\) la
+densité d'énergie interne, \(T\) la température, \(s\) la densité
+d'entropie, et \(\vec{q}\) le flux de chaleur.
+
+Pour un matériau sans écrouissage, la densité d'énergie interne \(e\)
+est une fonction de la déformation élastique de Green-Lagrange
+\(\egle{}\) et de la densité d'entropie \(s\)~:
+\begin{equation}
+e=e \left( \egle{},s \right)
+\end{equation}
+la densité d'énergie libre \(\psi\) est une fonction de \(\egle\) et de la température \(T\)~:
+\begin{equation}
+\psi=\psi \left( \egle{},T \right)
+\end{equation}
+On sait que la relation entre la densité d'énergie libre \(\psi\) et
+la densité d'énergie interne \(e\) s'écrit~:
+\begin{equation} \label{eq:internal_and_free_E}
+\psi=e-Ts
+\end{equation}
+
+Compte tenu des équations~\eqref{eq:power_internal_forces} et
+\eqref{eq:internal_and_free_E}, l'inégalité de Clausisu-Duhem devient~:
+\begin{equation}
+  \label{eq:Clausius-Duhem_crystal}
+  \rho \left(  \Frac{\tns{S}_e}{\rho_i} - \Frac{\partial \psi}{\partial \egle{}} \right)\,\colon\, \dot\egle - \rho \left( s + \Frac{\partial \psi}{\partial T}\right) \dot T +\Frac{\rho}{\rho_i} \tns{M}\,\colon\, \tns{L}_{p} - \Frac{\vec{q}}{T} \cdot \grad T \geqslant 0
+\end{equation}
+où on a la dissipation thermique \(D^{t\!h}\)~:
+\begin{equation}
+D^{t\!h} = - \Frac{\vec{q}}{T} \cdot \grad T
+\end{equation}
+et la dissipation intrinsèque \(D^i\):
+\begin{equation}
+D^i = \rho \left(  \Frac{\tns{S}_e}{\rho_i} - \Frac{\partial \psi}{\partial \egle{}} \right)\,\colon\, \dot\egle - \rho \left( s + \Frac{\partial \psi}{\partial T}\right) \dot T +\Frac{\rho}{\rho_i} \tns{M}\,\colon\, \tns{L}_{p}
+\end{equation}
+
+Considérons un processus réversible tel que \(\dot T = 0\),
+\(\tns{\dot{F}}_{p} \inv{\tns{F}_{p}}=0\) et \(\grad T = 0\). Pour le
+processus réversible, l'inégalité~\eqref{eq:Clausius-Duhem_crystal}
+réduit à l'égalité, puisqu'il n'y a pas de dissipation. Par
+conséquent, on obtient
+\begin{equation}
+\tns{S}_e = \rho_i \Frac{\partial \psi}{\partial \egle{}}
+\end{equation}
+De même, considérons un autre processus réversible tel que \(\dot\egle=0\),  \(\tns{\dot{F}}_{p} \inv{\tns{F}_{p}}=0\) et \(\grad T = 0\), on a
+\begin{equation}
+s=-\Frac{\partial \psi}{\partial T}
+\end{equation}
+Enfin, la dissipation intrinsèque se réduit à 
+\begin{equation} \label{eq:intrinsic_dissipation}
+D^i = \Frac{\rho}{\rho_i} \tns{M}\,\colon\, \tns{L}_{p}
+\end{equation}
+
+\subsection{Application à la plasticité cristalline}
+
+Pour la plasticité cristalline, \(\tns{L}_{p}\) peut être déterminé sur
+les \(N_{g}\) systèmes de glissement par~:
+\begin{equation}
+  \label{eq:PP}
+  \tns{L}_{p} = \sum \limits_{s=1}^{N_{g}} \dot{\gamma}^s \tns{N}^s
+\end{equation}
+avec le tenseur d'orientation \(\tns{N}^s\) pour le système de
+glissement \(s\) et le taux de glissement \(\dot{\gamma}^s\) pour le
+système de glissement \(s\).
+
+Selon les équations~\eqref{eq:power_internal_forces} et
+\eqref{eq:intrinsic_dissipation}, le second tenseur de Piola-Kirchhoff
+\(\tns{S}_e\) est utilisé pour la loi d'élasticité et le tenseur de
+\nom{Mandel} \(\tns{M}\) pour la loi d'écoulement. Vu que la dissipation
+décrite par \(\tns{M}\,\colon\,\tns{L}_{p}\) est liée au glissement des
+dislocations dans le monocristal, on a~:
+\begin{equation}
+  \label{eq:plastic_power_1}
+  \tns{M}\,\colon\,\tns{L}_{p} = \sum_{s=1}^{N_{g}} \dot \gamma^s \tau^s
+\end{equation}
+où \(\tau^s\) est la cission résolue du système de glissement
+\(s\). Compte tenu l'équation~\eqref{eq:PP}, on a~:
+\begin{equation}
+  \label{eq:plastic_power_2}
+  \tns{M}\,\colon\,\tns{L}_{p} = \tns{M} : \left(\sum_{s=1}^{N_{g}} \dot \gamma^s \tns{N}^s \right) = \sum_{s=1}^{N_{g}} \dot \gamma^s \tns{M} : \tns{N}^s
+\end{equation}
+Si on compare l'équation~\eqref{eq:plastic_power_1} et
+l'équation~\eqref{eq:plastic_power_2}, la cission résolue \(\tau^s\)
+du système de glissement \(s\) s'écrit donc :
+\begin{equation}
+\tau^s = \tns{M} : \tns{N}^s
+\end{equation}
+
+Les différentes lois de plasticité cristalline se différencient par la
+relation entre la cission résolue \(\tau^s\) et la vitesse de
+glissement \(\gamma^s\).
+
+
+\clearpage
+\newpage
+\referencecea
+\listetableaux
+\listefigures
+
+\appendix
+\section{Description de la dilatation thermique des corps}
+\label{sec:description-de-la}
+
+Expérimentalement, on mesure la variation de longueur d'un corps entre
+une température de référence \(T_{\alpha}\) et une température finale
+\(T\).
+
+Si l'on note \(l_{T^{\alpha}}\) et \(l_{T}\) les longueurs respectives
+du corps à ces deux températures, le coefficient de dilatation
+thermique linéique \(\alpha\paren{T}\) est défini par~:
+\begin{equation}
+  \label{eq:umat:alpha}
+  \Frac{l_{T}-l_{T^{\alpha}}}{l_{T^{\alpha}}}=\alpha\paren{T}\,\paren{T-T^{\alpha}}
+\end{equation}
+
+\subsection{Cas des petites déformations}
+
+Dans le cas des petites déformations, l'équation~\eqref{eq:umat:alpha}
+définit une déformation associée à la dilatation thermique~:
+\[
+\epsilonth_{T^{\alpha}}\paren{T}=\alpha\paren{T}\,\paren{T-T^{\alpha}}
+\]
+
+Cette déformation prend comme état de référence la longueur du corps à
+la température \(l_{T^{\alpha}}\).
+
+Lors d'un calcul thermo-mécanique, on suppose généralement que la
+température initiale \(T_{i}\) est supposée être celle à laquelle la
+géométrie est fournie.
+
+Il est donc nécessaire de modifier la définition de la dilatation
+thermique pour que l'état de référence soit la géométrie initiale, de
+longueur \(l_{i}\).
+
+Pour cela, nous pouvons définir la déformation thermique
+\(\epsilonth_{T^{i}}\paren{T}\) du corps à la température \(T\) comme sa
+déformation qu'il aurait si aucune contrainte ne s'exerçait sur lui
+par la relation~:
+\[
+\epsilonth_{T^{i}}\paren{T}=\Frac{l_{T}-l_{T^{i}}}{l_{T^{i}}}
+\]
+
+En introduisant la longueur de référence \(l_{T^{\alpha}}\), nous
+obtenons~:
+\[
+\begin{aligned}
+  \epsilonth_{T^{i}}\paren{T}&=\Frac{l_{T^{\alpha}}}{l_{T^{i}}}\,\Frac{l_{T}-l_{T^{i}}}{l_{T^{\alpha}}} = \Frac{1}{1+\Frac{l_{T^{i}}-l_{T^{\alpha}}}{l_{T^{\alpha}}}}\,\left[\Frac{l_{T}-l_{T^{\alpha}}+l_{T^{\alpha}}-l_{T^{i}}}{l_{T^{\alpha}}}\right] \\
+  &= \Frac{1}{1+\alpha\paren{T^{i}}\paren{T^{i}-T^{\alpha}}}\,\left[\Frac{l_{T}-l_{T^{\alpha}}}{l_{T^{\alpha}}}-\Frac{l_{T^{i}}-l_{T^{\alpha}}}{l_{T^{\alpha}}}\right] \\
+\end{aligned}
+\]
+
+Nous obtenons finalement la relation~:
+\begin{equation}
+  \label{eq:umat:epsilonth}
+  \begin{aligned}
+    \epsilonth_{T^{i}}\paren{T}&=
+    \Frac{1}{1+\alpha\paren{T^{i}}\paren{T^{i}-T^{\alpha}}}\,\left[\alpha\paren{T}\paren{T-T^{\alpha}}-\alpha\paren{T^{i}}\paren{T^{i}-T^{\alpha}}\right] \\
+    &=
+    \Frac{1}{1+\epsilonth_{T^{\alpha}}\paren{T^{i}}}\,\left[\epsilonth_{T^{\alpha}}\paren{T}-\epsilonth_{T^{\alpha}}\paren{T^{i}}\right] \\
+  \end{aligned}
+\end{equation}
+
+Dans les codes aux éléments finis \texttt{Code-Aster} et dans la
+procédure {\tt PASAPAS} de \texttt{Cast3M}, la relation précédente
+s'écrit de manière approchée, en négligeant le terme
+\(\epsilonth_{T^{\alpha}}\paren{T^{i}}\) par rapport à \(1\)~:
+\[
+\epsilonth_{T^{i}}\paren{T}=
+\epsilonth_{T^{\alpha}}\paren{T}-\epsilonth_{T^{\alpha}}\paren{T^{i}}
+\]
+
+\paragraph{Dilatation pure}
+
+Dans le cas d'une dilatation pure, le gradient de la transformation
+est uniforme et proportionnel à l'identité. Si l'on se restreint au
+cas \(1D\), une dilatation pure s'écrit~:
+\[
+F=1+\eta
+\]
+
+La dilatation pure d'un barreau le fait passer d'une longueur
+initiale \(l_{i}\) à une longueur finale \(l\) telle que~:
+\[
+l=\int_{0}^{l_{i}}F\paren{X}\,\dtot\,X=\paren{1+\eta}\,l_{i}
+\]
+ce qui permet d'identifier \(\eta\) à la variation relative du corps
+entre son état initial et son état final~:
+\[
+\eta=\Frac{\Delta l}{l_{i}}
+\]
+
+Ainsi, la description de la dilatation thermique pure est très simple
+en grandes transformations, tant que d'autres effets ne sont pas pris
+en compte.
+
+\paragraph{Traduction de la dilatation thermique en terme de gradient de la transformation}
+
+Dans le cas des transformations finies, nous pouvons traduire la
+dilatation thermique par un gradient de la transformation
+\(F_{T^{\alpha}}^{\theta}\) ainsi~:
+\begin{equation}
+  \label{eq:umat:Fth:Ta}
+  F_{T^{\alpha}}^{\theta}=1+\Frac{l_{T}-l_{T^{\alpha}}}{l_{T^{\alpha}}}=1+\alpha\paren{T}\,\paren{T-T^{\alpha}}
+\end{equation}
+
+Dans le cas où la géométrie du corps est définie à la température
+initiale \(T^{i}\), la formule~\eqref{eq:umat:epsilonth} peut
+s'adapter en~:
+\begin{equation}
+  \label{eq:umat:Fth:Ti}
+  F_{T^{i}}^{\theta}=1+\Frac{1}{1+\alpha\paren{T^{i}}\paren{T^{i}-T^{\alpha}}}\,\left[\alpha\paren{T}\paren{T-T^{\alpha}}-\alpha\paren{T^{i}}\paren{T^{i}-T^{\alpha}}\right]
+\end{equation}
+
+\paragraph{Dilatation thermique orthotrope} Le cas orthotrope fait
+apparaître trois directions particulières de l'espace \(\vec{n}_{0}\),
+\(\vec{n}_{1}\), \(\vec{n}_{2}\). Notons \(\eta_{0}\), \(\eta_{1}\) et
+\(\eta_{2}\) les dilatations thermiques dans chacune de ces trois
+directions et données par~:
+\[
+\begin{aligned}
+  \eta_{0}&=\Frac{1}{1+\alpha_{0}\paren{T^{i}}\paren{T^{i}-T^{\alpha}}}\,\left[\alpha_{0}\paren{T}\paren{T-T^{\alpha}}-\alpha_{0}\paren{T^{i}}\paren{T^{i}-T^{\alpha}}\right]\\
+  \eta_{1}&=\Frac{1}{1+\alpha_{1}\paren{T^{i}}\paren{T^{i}-T^{\alpha}}}\,\left[\alpha_{1}\paren{T}\paren{T-T^{\alpha}}-\alpha_{1}\paren{T^{i}}\paren{T^{i}-T^{\alpha}}\right]\\
+  \eta_{2}&=\Frac{1}{1+\alpha_{2}\paren{T^{i}}\paren{T^{i}-T^{\alpha}}}\,\left[\alpha_{2}\paren{T}\paren{T-T^{\alpha}}-\alpha_{2}\paren{T^{i}}\paren{T^{i}-T^{\alpha}}\right]\\
+\end{aligned}
+\]
+
+Nous pouvons donner une valeur intrinsèque au tenseur du gradient de
+la transformation~:
+\[
+\tns{F}=\paren{1+\eta_{0}}\tenseur{I}+\paren{\eta_{1}-\eta_{0}}\,\vec{n}_{1}\otimes\vec{n}_{1}+\paren{\eta_{2}-\eta_{0}}\,\vec{n}_{2}\otimes\vec{n}_{2}
+\]
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.6\linewidth]{@top_srcdir@/docs/mfront/Images/FeFth.eps}
+  \caption{Décomposition multiplicative du grandient de la
+    transformation en une partie élastique et une partie thermique
+    (d'après \nom{Lubarda}~\cite{lubarda_constitutive_2004}).}
+  \label{fig:FeFth}
+\end{figure}
+
+\subsubsection{Décomposition multiplicative de la transformation dans
+  le cas élastique}
+\label{sec:decomp-mult-de}
+
+Adoptons une décomposition multiplicative du gradient de la
+transformation en une partie élastique et une partie
+thermique~\cite{lubarda_constitutive_2004}~:
+\begin{equation}
+  \label{eq:umat:F:split}
+  \tns{F}=\tns{F}^{e}\,\tns{F}_{T^{i}}^{\theta}  
+\end{equation}
+
+Le tenseur de \nom{Cauchy} droit \(C\) s'écrit alors~:
+\[
+\tenseur{C} = \tns{F}^{T}\,\tns{F} = \left. \tns{F}_{T^{i}}^{\theta} \right.^{T}\,  \left. \tns{F}^{e} \right.^{T} \,\tns{F}^{e}\,\tns{F}_{T^{i}}^{\theta}  
+\]
+
+\paragraph{Cas d'une dilatation thermique isotrope}
+Dans le cas d'une dilatation thermique isotrope, \(\tns{F}^{e}\) et
+\(\tns{F}_{T^{i}}^{\theta}\) commutent et l'on peut écrire~:
+\begin{equation}
+  \label{eq:umat:C:split}
+  \tenseur{C} = \left. \tns{F}^{e} \right.^{T} \,\tns{F}^{e}\,\left. \tns{F}_{T^{i}}^{\theta} \right.^{T}\,\tns{F}_{T^{i}}^{\theta} =  \tenseur{C}^{m}\,\tenseur{C}_{T^{i}}^{\theta}=\paren{1+\eta}^{2}\,\tenseur{C}^{m}
+\end{equation}
+
+\subsubsection{Cas des déformations de \nom{Green-Lagrange} dans le
+  cas isotrope} Dans le cas isotrope, suivant
+Lubarda~\cite{lubarda_constitutive_2004}, il est possible de définir
+trois déformations de \nom{Green-Lagrange}~:
+\begin{enumerate}[-]
+\item le tenseur des déformations totales
+  \(\egl=\Frac{1}{2}\paren{\left. \tns{F} \right.^{T}
+    \,\tns{F}-\tenseur{I}}\), mesure relative au référence
+  initial~;
+\item le tenseur des déformations élastiques
+  \(\tepsilonel_{GL}=\Frac{1}{2}\paren{\left. \tns{F}^{e}
+    \right.^{T} \,\tns{F}^{e}-\tenseur{I}}\), mesure relative au
+  référence intermédiaire après dilatation thermique~;
+\item le tenseur des déformations thermiques
+  \(\tepsilonth_{GL}=\Frac{1}{2}\paren{\left. \tns{F}_{T^{i}}^{\theta}
+    \right.^{T}\,\tns{F}_{T^{i}}^{\theta}-\tenseur{I}}\), mesure
+  relative au référentiel initial.
+\end{enumerate}
+
+Le tenseur des déformations thermiques a l'expression suivante~:
+\[
+\tepsilonth_{GL}=\paren{\paren{1+\eta}^{2}-1}\tenseur{I}\
+\]
+
+L'équation~\eqref{eq:umat:C:split} permet de relier ces différents tenseurs~:
+\[
+\tepsilonel_{GL}=\Frac{1}{\paren{1+\eta}^{2}}\left[\egl-\tepsilonth_{GL}\right]
+\]
+Cette relation est l'équivalent de la partition des déformations des
+petites déformations\footnote{La relation hyperélatique de
+  \nom{Saint-Venant-Kirchhoff} peut être étendue en thermoélasticité
+  ainsi~\cite{lubarda_constitutive_2004}~:
+  \[
+  \tenseur{S}=\Frac{1}{1+\eta}\left[\lambda\paren{T}\,\trace\paren{\egl}\tenseur{I}+2\,\mu\paren{T}\,\egl\right]-\Frac{1}{2}\paren{1+\eta-\Frac{3}{1+\eta}}\,K\paren{T}\,\tenseur{I}
+    \]
+    où \(\tenseur{S}\) est le second tenseur de \nom{Piola-Kirchhoff}
+    dans la configuration initiale, \(\lambda\paren{T}\),
+    \(\mu\paren{T}\) les premier et second coefficients de \nom{Lame},
+    \(K\paren{T}\) le module de compressibilité.}.
+
+\subsubsection{Application aux déformations logarithmiques dans le cas isotrope}
+
+En prenant le logarithme de l'expression~\eqref{eq:umat:F:split} pour
+définir la déformation de \nom{Henky} \(\tepsilonto_{\ln{}}\), nous
+obtenons~:
+\[
+\tepsilonto_{\ln{}}=\Frac{1}{2}\ln{}\paren{\tenseur{C}}=\Frac{1}{2}\ln{}\paren{\tenseur{C}^{m}}+\Frac{1}{2}\ln{}\paren{\tenseur{C}_{T^{i}}^{\theta}}
+\]
+ce qui permet de retrouver la partition classique de la déformation~:
+\[
+\tepsilonto_{\ln{}}=\tenseur{\varepsilon}_{\ln{}}^{m}+\tenseur{\varepsilon}_{\ln{}}^{th}
+\]
+en définissant la déformation thermique par la relation~:
+\[
+\tenseur{\varepsilon}_{\ln{}}^{th}=\Frac{1}{2}\ln{}\paren{\tenseur{C}_{T^{i}}^{\theta}}
+\]
+\(\tns{F}_{T^{i}}^{\theta}\) étant proportionnel à l'identité, nous pouvons
+également écrire que~:
+\[
+\tenseur{\varepsilon}_{\ln{}}^{th}=\ln{}\paren{\tns{F}_{T^{i}}^{\theta}}
+\]
+où \(\tns{F}_{T^{i}}^{\theta}\) se calcule par la formule~\eqref{eq:umat:F:split}. 
+
+Ainsi, les composantes diagonales (qui sont égales) du tenseur des
+dilatation thermiques s'écrivent~:
+\begin{equation}
+  \label{eq:umat:eps_log_th}
+  \varepsilon_{\ln{}}^{th}=\ln{}\paren{1+\Frac{\alpha\paren{T}\paren{T-T^{\alpha}}-\alpha\paren{T^{i}}\paren{T^{i}-T^{\alpha}}}{1+\alpha\paren{T^{i}}\paren{T^{i}-T^{\alpha}}}}
+\end{equation}
+
+Si la dilatation thermique est petite, un développement limité au
+premier ordre permet de retrouver
+l'expression~\eqref{eq:umat:epsilonth} de la dilatation thermique en
+transformations infinitésimales.
+
+\subsubsection{Application aux déformations logarithmiques dans le cas
+  isotrope, en l'absence d'autres phénomènes}
+
+Dans le cas anisotrope, \(F^{e}\) et \(F_{T^{i}}^{\theta}\) ne
+commutent {\em a priori} plus.
+
+Si aucun autre phénomène ne contribue à la déformation du corps, ou
+que le corps est élastique et au repos, la
+formule~\eqref{eq:umat:eps_log_th} s'étendre au cas anisotrope. Dans
+le repère du matériau, le tenseur des déformations thermiques
+logarithmiques s'écrit, en notation vectorielle~:
+\[
+\tenseur{\varepsilon}_{\ln{}}^{th}=
+\begin{pmatrix}
+  \ln{}\paren{1+\Frac{\alpha_{0}\paren{T}\paren{T-T^{\alpha}}-\alpha_{0}\paren{T^{i}}\paren{T^{i}-T^{\alpha}}}{1+\alpha_{0}\paren{T^{i}}\paren{T^{i}-T^{\alpha}}}} \\
+  \ln{}\paren{1+\Frac{\alpha_{1}\paren{T}\paren{T-T^{\alpha}}-\alpha_{1}\paren{T^{i}}\paren{T^{i}-T^{\alpha}}}{1+\alpha_{1}\paren{T^{i}}\paren{T^{i}-T^{\alpha}}}} \\
+  \ln{}\paren{1+\Frac{\alpha_{2}\paren{T}\paren{T-T^{\alpha}}-\alpha_{2}\paren{T^{i}}\paren{T^{i}-T^{\alpha}}}{1+\alpha_{2}\paren{T^{i}}\paren{T^{i}-T^{\alpha}}}} \\
+  0 \\
+  0 \\
+  0 \\
+\end{pmatrix}
+\]
+
+\newpage
+\clearpage
+\section{Autres représentations de la dilatation thermique}
+
+\subsection{Coefficient de dilatation volumique}
+\label{sec:coeff-de-dilat-vol}
+
+La définition thermodynamique de la dilatation volumique est~:
+\begin{equation}
+  \label{eq:eq:umat:alphav}
+  \alpha_{V}=\Frac{1}{V}\left(\deriv{V}{T}\right)_{p}=\left(\deriv{\ln{} V}{T}\right)_{p}  
+\end{equation}
+
+Partant d'une température de référence \(T^{\alpha}\), le volume de la
+structure sera à la température \(T\)~:
+\[
+\Frac{V_{T}}{V_{T^{\alpha}}}=\exp\paren{\int_{T^{\alpha}}^{T}\alpha_{V}\paren{u}\,\dtot\,u}
+\]
+et l'expression de la variation de volume
+\(\pfrac{\Delta\,V}{V_{T^{\alpha}}}\)~:
+\[
+\Frac{\Delta\,V}{V_{T^{\alpha}}}=\exp\paren{\int_{T^{\alpha}}^{T}\alpha_{v}\paren{u}\,\dtot\,u}-1
+\]
+
+Le lien avec le coefficient de dilatation thermique linéique s'en
+déduit~:
+\[
+\begin{aligned}
+  \Frac{\Delta\,V}{V_{T^{\alpha}}}=\Frac{V_{T}}{V_{T^{\alpha}}}-1=\left(\Frac{l_{T}}{l_{T^{\alpha}}}\right)^{3}-1=\left(\Frac{l_{T}-l_{T^{\alpha}}}{l_{T^{\alpha}}}+1\right)^{3}-1=\left(\Frac{\Delta\,l}{l_{T^{\alpha}}}+1\right)^{3}-1
+\end{aligned}
+\]
+
+Ceci nous permet de retrouver la définition~\eqref{eq:umat:alpha} du
+coefficient de dilatation thermique \(\alpha\)~:
+\[
+\alpha\paren{T} = \Frac{1}{T-T^{\alpha}}\left[\exp\paren{\Frac{1}{3}\int_{T^{\alpha}}^{T}\alpha_{v}\paren{u}\,\dtot\,u}-1\right]
+\]
+
+\subsection{Coefficient de dilatation linéique \og~instantané\fg{}}
+
+On rencontre souvent un coefficient de dilatation thermique linéique
+dite instantané \(\alpha_{l}\)~:
+\begin{equation}
+  \label{eq:eq:umat:alphal}
+  \alpha_{l}=\Frac{1}{l}\derivtot{l}{T}=\derivtot{\ln l}{T}
+\end{equation}
+Cette définition est proche de la définition du coefficient de
+dilatation volumique~\eqref{eq:eq:umat:alphav}.
+
+Le lien avec la définition~\eqref{eq:umat:alpha} du coefficient de
+dilatation thermique moyen \(\alpha\) s'obtient de la même manière
+qu'au paragraphe~\ref{sec:coeff-de-dilat-vol}~:
+\[
+\alpha\paren{T} = \Frac{1}{T-T^{\alpha}}\left[\exp\paren{\int_{T^{\alpha}}^{T}\alpha_{l}\paren{u}\,\dtot\,u}-1\right]
+\]
+
+% \newpage
+% \clearpage
+% \section{La décomposition multiplicative $F_{e}F_{p}$}
+
+% \begin{equation}
+%   \label{eq:finitestrain:FeFp}
+%   \tns{F}=\tns{F}_{e}\tns{F}_{p}
+% \end{equation}
+
+
+% \paragraph{Critique}
+
+% he most serious shortcoming of this scheme lies in the fact that the stress
+% at a point in an elastic-plastic material can be reduced to zero without
+% changing plastic strain only if the origin in stress space remains in the region
+% enclosed by the yield surface. This implies a definite limitation on the
+% usefulness of the above-mentioned definition: Indeed, except for special
+% hardening rules (such as isotropic hardening), the yield surface may move
+% about in stress space in a general manner as a consequence of deformation
+% of the material.
+
+
+% \cite{naghdi_critical_1990}
+% \begin{quotation}
+%   Before ending this subsection, it may be observed once more that the
+%   notion of deformation gradient in the context of classical continuum
+%   mechanics is a purely kinematical concept. It then seems that there
+%   is no reason for expecting the same (or similar) structure as (2.2)
+%   for plastic deformation (plastic strain), which is not entirely a
+%   kinematical quantity; and, its identification, involves the notion
+%   of unloading from an existing elastic-plastic state.  Indeed,
+%   instead of introducing F, through~\eqref{eq:finitestrain:FeFp}, for
+%   the present it appears to be preferable to introduce the notion of
+%   plastic strain as a primitive variable represented by a symmetric
+%   second order tensor such as \(\tenseur{\varepsilon}_{p}\). This will
+%   avoid the restriction regarding~\eqref{eq:finitestrain:FeFp} noted
+%   in the preceding paragraph and (at least for the present) allows a
+%   more flexible setting for the identification of
+%   \(\tenseur{\varepsilon}_{p}\), albeit a posteriori. In light of
+%   these remarks and until further progress on the nature of its
+%   identification, [...], we regard plastic strain as a primitive
+%   variable represented by a second order tensor
+%   \(\tenseur{\varepsilon}_{p}\) and defined by its rate through an
+%   appropriate constitutive equation.
+% \end{quotation}
+
+% \newpage
+% \clearpage
+% \clearpage
+% \newpage
+% \section{Formulations hypoélastiques~: lagrangien réactualisé,
+%   dérivées objectives et descriptions corotationnelles}
+
+% Recent and current literature representing efforts of the majority of the
+% various schools of plasticity are directed toward an Eulerian formulation of
+% the theory constructed in a stress-space setting. The preference for the
+% Eulerian formulation is evidently based on one or both of the following
+% presuppositions: (i) the belief, founded perhaps in analogy with viscous fluid
+% flow, that such formulations are more relevant to large elastic-plastic
+% deformations; and (ii) the view that the construction of the theory in terms
+% of the Cauchy stress and its rate is more fundamental. Most workers who
+% share the preference for the Eulerian version of the theory, begin by
+% considering the decomposition of the velocity gradient L or rate of the
+% deformation tensor D into additive "elastic" and "'plastic" parts L, and L.
+% or D, and D., respectively, so that 7
+% L = L, + LP,
+% D = D, + Dp.
+% (4.23)
+% Subsequently, they prescribe a constitutive equation for D. in terms of a rate
+% of Cauchy stress; the rate operator here is not the usual material derivative
+% but an objective rate such as the corotational (or Jaumann) rate' which
+% renders the stress rate properly invariant under s.r.b.m. Thus, the constitutive
+% equation for D. will have the form
+% Dp x an objective rate of T,
+
+
+% ....
+
+
+% At best it seems that the decompositions (4.23)1,2 are a generaliza-
+% tion of corresponding expressions in infinitesimal plasticity, since (to the
+% order of approximation) in the linear theory the expression (4.23)2 would be
+% identical to the rate of strain = rate of (elastic part + plastic part).
+
+\section{Représentation vectorielle des tenseurs d'ordre $2$ non
+  symétriques}
+\label{sec:repr-vect-des}
+
+Les tenseurs d'ordre \(2\) non symétriques, généralement décrit par
+des matrices, sont représentés dans \TFEL{} par un vecteur dont les
+composantes sont, en \(3D\)~:
+\[
+\tns{F}=
+\begin{pmatrix}
+  F_{00} \\ F_{11} \\ F_{22} \\ F_{01} \\ F_{10} \\ F_{02} \\ F_{20} \\ F_{12} \\ F_{21}
+\end{pmatrix}
+\]
+
+Il est possible de vérifier que le produit scalaire des
+représentations vectorielles de deux tenseurs est égal au produit
+scalaire usuel sur les matrices~:
+\[
+\tns{F}.\tns{G}=\trace\paren{\transpose{\tns{F}}.\tns{G}}
+\]
+
+\section{Dérivation de la multiplication matricielle}
+
+Les lois en grandes transformations introduisent une nouvelle
+opération entre tenseurs~: la multiplication matricielle. Pour
+simplifier, nous la noterons \(\star\) dans le cadre de cette annexe.
+
+Soient deux tenseurs \(\tns{A}\paren{\tns{X}}\) et
+\(\tns{B}\paren{\tns{X}}\) dépendant d'un troisième tenseur
+\(\tns{X}\). L'objet de cet annexe est de calculer la dérivée
+suivante~:
+\begin{equation}
+  \label{eq:mfront:finitestrain:dAB}
+  \deriv{}{\tns{X}}\paren{\tns{A}\paren{\tns{X}}\,\star\,\tns{B}\paren{\tns{X}}}  
+\end{equation}
+
+La multiplication matricielle étant bilinéaire, il existe deux
+tenseurs d'ordre \(4\) linéaires tels que~:
+\[
+\begin{aligned}
+  \deriv{}{\tns{A}}\paren{\tns{A}\,\star\,\tns{B}}&=\partial^{l}_{\star}\paren{\tns{B}}\\
+  \deriv{}{\tns{B}}\paren{\tns{A}\,\star\,\tns{B}}&=\partial^{r}_{\star}\paren{\tns{A}}\\
+\end{aligned}
+\]
+
+Ces tenseurs d'ordre $4$ permettent de développer la
+dérivée~\eqref{eq:mfront:finitestrain:dAB} ainsi~:
+\begin{equation}
+  \label{eq:mfront:finitestrain:dAB-b}
+  \deriv{}{\tns{X}}\paren{\tns{A}\paren{\tns{X}}\,\star\,\tns{B}\paren{\tns{X}}}=
+  \partial^{l}_{\star}\paren{\tns{B}}\,\deriv{\tns{A}}{\tns{X}}+
+  \partial^{r}_{\star}\paren{\tns{A}}\,\deriv{\tns{B}}{\tns{X}}
+\end{equation}
+
+Cette expression est extrêmement utile en pratique, car elle simplifie
+les expressions de toutes les opérations de dérivation. 
+
+L'expression des tenseurs d'ordre \(4\) \(\partial^{l}_{\star}\paren{\tns{B}}\) et
+\(\partial^{l}_{\star}\paren{\tns{A}}\) est assez complexe, d'autant plus que l'on
+utilise dans \mfront{} la représentation vectorielle des tenseurs
+décrite en annexe~\ref{sec:repr-vect-des}.
+
+En utilisant cette représentation vectorielle, il est possible de
+donner une représentation matricielle des tenseurs d'ordre $4$
+\(\partial^{l}_{\star}\paren{\tns{B}}\) et  \(\partial^{l}_{\star}\paren{\tns{A}}\).
+
+En \(3D\), \(\partial^{l}_{\star}\paren{\tns{B}}\)
+s'exprime ainsi~:
+\[
+\begin{pmatrix}
+  B_{ 0} & 0 & 0 & B_{ 4} & 0 & B_{ 6} & 0 & 0 & 0\\
+  0 & B_{ 1} & 0 & 0 & B_{ 3} & 0 & 0 & B_{ 8} & 0\\
+  0 & 0 & B_{ 2} & 0 & 0 & 0 & B_{ 5} & 0 & B_{ 7}\\
+  B_{ 3} & 0 & 0 & B_{ 1} & 0 & B_{ 8} & 0 & 0 & 0\\
+  0 & B_{ 4} & 0 & 0 & B_{ 0} & 0 & 0 & B_{ 6} & 0\\
+  B_{ 5} & 0 & 0 & B_{ 7} & 0 & B_{ 2} & 0 & 0 & 0\\
+  0 & 0 & B_{ 6} & 0 & 0 & 0 & B_{ 0} & 0 & B_{ 4}\\
+  0 & B_{ 7} & 0 & 0 & B_{ 5} & 0 & 0 & B_{ 2} & 0\\
+  0 & 0 & B_{ 8} & 0 & 0 & 0 & B_{ 3} & 0 & B_{ 1}
+\end{pmatrix}
+\]
+
+On constate que cette expression est~:
+\begin{enumerate}[-]
+\item non triviale. Un opérateur, noté \(\underline{\otimes}\) permet
+  d'en donner une écriture plus compacte~:
+  \[
+  \partial^{l}_{\star}\paren{\tns{B}}=\tns{I}\,\underline{\otimes}\,\transpose{\tenseur{B}}
+  \]
+  De manière similaire, l'opérateur
+  \(\partial^{l}_{\star}\paren{\tns{A}}\) s'écrit~:
+  \[
+  \partial^{l}_{\star}\paren{\tns{A}}=\tns{A}\,\underline{\otimes}\,\tns{I}
+  \]
+  De manière générale, cette opérateur transforme deux tenseurs
+  d'ordre \(2\) \(\tns{A}\) et \(\tns{B}\) en un tenseur d'ordre \(4\)
+  \(\tnsq{C}\) tel que~:
+  \[
+  \tnsq{C}_{ijkl}=\tns{A}_{ik}\,\tns{B}_{jl}
+  \]
+  L'introduction de cet opérateur ne nous a pas semblé opportun.
+\item creuse. Cette particularité sera utilisée pour optimiser le
+  calcul de la dérivée par la
+  formule~\eqref{eq:mfront:finitestrain:dAB-b} au
+  paragraphe~\ref{sec:optimisation}.
+\end{enumerate}
+
+\paragraph{Calcul de la dérivée d'un produit matriciel}
+
+La classe {\tt t2tot2}, qui représente les opérations linéaires entre
+tenseurs d'ordre \(2\) non symétriques (elle représente donc des
+tenseurs d'ordre \(4\)), fournit deux méthodes statiques nommées
+respectivement {\tt tpld} (tensor product left derivative) et {\tt
+  tprd} (tensor product right derivative) pour calculer les tenseurs
+d'ordre \(4\) $\partial^{l}_{\star}(\tns{B})$ et
+$\partial^{l}_{\star}(\tns{A})$.
+
+\paragraph{Optimisation}
+La formule~\eqref{eq:mfront:finitestrain:dAB-b} montre que les
+tenseurs $\partial^{l}_{\star}(\tns{B})$ et
+$\partial^{l}_{\star}(\tns{A})$ sont souvent amenés à être composés
+avec d'autres tenseurs d'ordre \(4\). En \(3D\), cette composition est
+équivalente au produit de deux matrices de taille \(9\,\times\,9\). Il
+est intéressant de l'optimiser en tenant compte de la nature creuse de
+$\partial^{l}_{\star}(\tns{B})$ et $\partial^{l}_{\star}(\tns{A})$.
+
+La classe {\tt t2tot2} fournit donc également deux méthodes statiques,
+également nomées {\tt tpld} et {\tt tprd}. La première prend en
+argument le tenseur \(\tns{B}\) et le tenseur d'ordre \(4\)
+\(\deriv{\tns{A}}{\tns{X}}\) et retourne un tenseur d'ordre \(4\) égal
+à \(\partial^{l}_{\star}(\tns{B})\,\deriv{\tns{A}}{\tns{X}}\). La
+seconde méthode réalise un travail symétrique.
+
+La classe {\tt st2tot2}, qui représente les opérations linéaires
+entre tenseurs d'ordre \(2\) symétriques (qui représente donc aussi
+des tenseurs d'ordre \(4\)), fournit également quatre méthodes
+statiques nommées respectivement {\tt tpld} (tensor product left
+derivative) et {\tt tprd} (tensor product right derivative) dont le
+rôle est similaire à celui des leurs homologues du cas non symétrique.
+
+\end{document}
+
+% \subsubsection{Cas tests}
+
+% \(17\) tests unitaires, basés sur l'utilitaire
+% \mtest{}~\cite{helfer_mtest_2014}, permettent de valider
+% l'implantation de la loi de \nom{Saint-Venant Kirchhoff} par
+% comparaison à des solutions analytiques. Il s'agit d'essais de
+% traction uniaxiale suivant les différentes axes et d'essai de
+% cisaillement relatifs aux différents directions possibles qui sont
+% réalisés en \(1D\) (déformations planes généralisées axisymétriques),
+% \(2D\) (déformations planes généralisées) ou \(3D\).
+
+% Les fichiers associés se retrouvent dans les sources de \TFEL{} dans
+% le répertoire~:
+% \begin{center}
+%   {\tt mfront/tests/behaviours/castem}
+% \end{center}
+
+% Il ont un nom de la forme~:
+% \begin{center}
+%   {\tt castemsaintvenantkirchhoffelasticity-X-Y-Z.mtest.in}
+% \end{center}
+% où~:
+% \begin{minipage}[t]{0.9\linewidth}
+%   \begin{itemize}
+%   \item {\tt X} est le type de chargement (traction uniaxiale ou cisaillement)~;
+%   \item {\tt Y} désigne l'axe de chargement~;
+%   \item {\tt Z} la dimension de l'espace.
+%   \end{itemize}
+% \end{minipage}
+
+% \subsection{Lois hyperléastiques néo-hookéene}
+% \label{sec:loi-hyperl-neo}

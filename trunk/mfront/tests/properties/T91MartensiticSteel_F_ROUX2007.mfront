@@ -1,0 +1,24 @@
+@Parser   MaterialLaw ;
+@Material T91MartensiticSteel ;
+@Law      F_ROUX2007 ;
+@Author   F. Milliard ;
+@Date     11/12/2013 ;
+@Description{
+  // Coeff viscosité F martensite T91
+  // [Roux 07]
+}
+
+// Input of law
+@Input T ;
+T.setGlossaryName("Temperature") ;
+
+// Output of law
+@Output F ;
+
+@PhysicalBounds T in [0.:*[;
+
+// Function
+@Function{
+  const real TC = T-273.15;
+  F = 5.1e-8+3.9e-10*min(TC,482.)+4.2e-9*(max(TC,482.)-482.) ;
+} // end of Function

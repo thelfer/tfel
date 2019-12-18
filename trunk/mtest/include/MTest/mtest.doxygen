@@ -1,0 +1,18 @@
+/*!
+ * \file mtest/include/MTest/mtest.doxygen
+ * \brief this file contains the documentation of the mtest namespace.
+ */
+
+/*!
+ * \namespace mtest
+ * \brief This namespace contains material used to build the MTest
+ * tool.
+ */
+
+/*!
+ * \page mtest The MTest solver
+ *
+ * `MTest` is a simple simulation tool which is able to:
+ * - simulate a single point.
+ * - simulate a pipe.	
+ */

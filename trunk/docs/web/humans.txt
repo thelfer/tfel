@@ -1,0 +1,18 @@
+# humanstxt.org/
+# The humans responsible & technology colophon
+
+# TEAM
+
+    Thomas Helfer -- Creator of MFront 
+
+# THANKS
+
+    <name>
+
+# TECHNOLOGY COLOPHON
+
+    HTML5, CSS3
+    Normalize.css, jQuery, Modernizr
+    HTML5 Boilerplate (http://html5boilerplate.com)
+    Pandoc (http://johnmacfarlane.net/pandoc/index.html)
+    Tutorialzine (http://tutorialzine.com)

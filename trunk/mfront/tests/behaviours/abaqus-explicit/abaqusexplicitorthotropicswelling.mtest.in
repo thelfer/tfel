@@ -1,0 +1,75 @@
+@Author Helfer Thomas;
+@Date   09 août 2016;
+@Description{
+  "This test checks that @Swelling keyword is correctly taken into "
+  "account for an orthotropic material."
+};
+
+@AccelerationAlgorithm 'Cast3M';
+@Behaviour<abaqus_explicit> '@MFrontAbaqusExplicitBehavioursBuildPath@' 'ORTHOTROPICSWELLING_3D';
+
+@Real 'E1'   '7.8e+10';
+@Real 'E2'   '2.64233e+11';
+@Real 'E3'   '2.64233e+11';
+@Real 'nu12' '0.0039991';
+@Real 'nu13' '0.0039991';
+@Real 'nu23' '0.00736051';
+@Real 'G12'  '4.8e+10';
+@Real 'G13'  '4.8e+10';
+@Real 'G23'  '1.16418e+11';
+
+@MaterialProperty<constant> 'MassDensity'          100;
+@MaterialProperty<constant> 'YoungModulus1'     'E1';
+@MaterialProperty<constant> 'YoungModulus2'     'E2';
+@MaterialProperty<constant> 'YoungModulus3'     'E3';
+@MaterialProperty<constant> 'PoissonRatio12'    'nu12';
+@MaterialProperty<constant> 'PoissonRatio13'    'nu13';
+@MaterialProperty<constant> 'PoissonRatio23'    'nu23';
+@MaterialProperty<constant> 'ShearModulus12'    'G12';
+@MaterialProperty<constant> 'ShearModulus13'    'G13';
+@MaterialProperty<constant> 'ShearModulus23'    'G23';
+
+@ExternalStateVariable 'Temperature' 0;
+@ExternalStateVariable 'OrthotropicSwelling[0]' {0:0,3600:1.45e-3};
+@ExternalStateVariable 'OrthotropicSwelling[1]' {0:0,3600:2.32e-3};
+@ExternalStateVariable 'OrthotropicSwelling[2]' {0:0,3600:0.981e-3};
+@Evolution 's0' {0:0,3600:1.45e-3};
+@Evolution 's1' {0:0,3600:2.32e-3};
+@Evolution 's2' {0:0,3600:0.981e-3};
+
+@ImposedDeformationGradient 'FXX' 1.;
+@ImposedDeformationGradient 'FYY' 1.;
+@ImposedDeformationGradient 'FZZ' 1.;
+@ImposedDeformationGradient 'FXY' 0.;
+@ImposedDeformationGradient 'FYX' 0.;
+@ImposedDeformationGradient 'FXZ' 0.;
+@ImposedDeformationGradient 'FZX' 0.;
+@ImposedDeformationGradient 'FYZ' 0.;
+@ImposedDeformationGradient 'FZY' 0.;
+
+@RotationMatrix {{0,1,0},
+                 {1,0,0},
+		 {0,0,1}};
+
+@Times {0.,3600 in 20};
+
+@Real 'S11' '1/E1';
+@Real 'S22' '1/E2';
+@Real 'S33' '1/E3';
+@Real 'S12' '-nu12/E1';
+@Real 'S13' '-nu13/E1';
+@Real 'S23' '-nu23/E2';
+@Real 'dS'  'S11*S22*S33+2*S23*S13*S12-S11*S23*S23-S22*S13*S13-S33*S12*S12';
+@Real 'C00' '(S22*S33-S23*S23)/dS';
+@Real 'C01' '(S13*S23-S12*S33)/dS';
+@Real 'C02' '(S12*S23-S13*S22)/dS';
+@Real 'C10' '(S13*S23-S12*S33)/dS';
+@Real 'C11' '(S11*S33-S13*S13)/dS';
+@Real 'C12' '(S12*S13-S11*S23)/dS';
+@Real 'C20' '(S12*S23-S13*S22)/dS';
+@Real 'C21' '(S12*S13-S11*S23)/dS';
+@Real 'C22' '(S11*S22-S12*S12)/dS';
+@Test<function> 'SYY' '-(C00*log(1+s0)+C01*log(1+s1)+C02*log(1+s2))'    1.e-3;
+@Test<function> 'SXX' '-(C10*log(1+s0)+C11*log(1+s1)+C12*log(1+s2))'    1.e-3;
+@Test<function> 'SZZ' '-(C20*log(1+s0)+C21*log(1+s1)+C22*log(1+s2))'    1.e-3;
+@Test<function> {'SXY':'0.','SXZ':'0.','SYZ':'0.'} 1.e-3;

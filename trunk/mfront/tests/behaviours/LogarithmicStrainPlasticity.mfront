@@ -1,0 +1,22 @@
+@DSL IsotropicPlasticMisesFlow;
+@Behaviour LogarithmicStrainPlasticity;
+@Author    Helfer Thomas;
+@Date      5/12/13;
+
+@UMATFiniteStrainStrategy[umat] MieheApelLambrechtLogarithmicStrain;
+
+@MaterialProperty stress s0;
+@MaterialProperty stress Et;
+
+@LocalVariable stress R;
+
+@InitLocalVariables{
+  // hardening slope
+  R  = young*Et/(young-Et);
+}
+
+@FlowRule{
+  f       = seq-R*p-s0;
+  df_dseq = 1;
+  df_dp   = -R;
+}

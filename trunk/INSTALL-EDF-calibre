@@ -1,0 +1,54 @@
+% Pour installer la version de developpement mfront dans aster:
+% Élodie Bosso
+% Janvier 2015
+
+I) Télécharger les sources mfront 
+    - 1) allez sur le site http://sourceforge.net/projects/tfel/
+    - 2) cliquez sur l'onglet "Files"
+    - 4) téléchargez la version d'intérêt; copiez-la dans un dossier de votre ordi ou vous désirez réaliser l'installation. Décompressez la dans le dossier choisi
+
+II) Installer un version récente de GCC et de python
+    - 1) Comme pas de droits admin sur calibre, utilisez l'environnement "conda". Pour ça :
+    - 2) Téléchargez miniconda ou anaconda
+    - 3) Installez miniconda 
+    - 4) Dans /local00/home/NNI/ créez un fichier .condarc si il n'existe pas (ouvrez le si il existe) et remplissez ce fichier. Un exemple de ce qu'il faut écrire ci-dessous :
+ 
+channels:
+  - https://conda.binstar.org/openturns
+  - defaults
+  
+# Proxy settings: http://[username]:[password]@[server]:[port]
+proxy_servers:
+    http: http:// A remplir
+    https: https:// A remplir
+
+    - 5) Créez un alias dans votre .bashrc : alias conda='Chemin_dossier_d'installation_de_miniconda/bin/conda'
+    - 6) Dans un terminal installez un python récent avec conda : conda install python 
+    - 7) Dans un terminal installez gcc avec conda : conda install gcc cmake
+    - 8) Créez un environnement avec gcc et python dans conda. Pour cela dans un terminal tapez : conda create --name gccenv gcc python=3
+    - 6) Créez un alias dans votre .bashrc : alias gccenv='source Chemin_dossier_d'installation_de_miniconda/bin/activate gccenv' 
+
+II) DInstaller mfront
+    - 1) Ouvrez un terminal dans le dossier mfront décompressé dans l'étape I)4)
+    - 2) Mettez-vous dans l'environnement gcc créé en tapant dans le terminal : gccenv
+    - 3) taper : cmake . -DTFEL_SVN_REVISION=21082014 -Denable-fortran=ON -Denable-aster=ON -Dlocal-castem-header=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../install -Denable-python=ON -Denable-python-bindings=ON -Denable-cyrano=ON
+    - 4) taper : make
+    - 5) taper : make install (un dossier install est créé dans le dossier parent)
+    - 6) Dans le dossier contenant install [cf. II)5)] créez un fichier vierge : profile_mfront.sh et remplissez-le à l'instar de l'exemple suivant :
+
+#
+#  environnement MFRONT
+#
+# si le repertoire est deplace / recopie apres compilation
+# export TFELHOME=/....
+
+export TFELHOME=/chemin_vers_le_dossier_install_de_mfront_cree_lors_du_make_install_etape_II5/install
+
+export PATH=$TFELHOME/bin:$PATH
+export LD_LIBRARY_PATH=$TFELHOME/lib:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=/chemin_vers_le_dossier_de_miniconda/envs/gccenv/lib:$LD_LIBRARY_PATH
+export PYTHONPATH=$TFELHOME/lib/python2.6/site-packages:$PYTHONPATH
+
+    - 8) Créez un alias dans votre .bashrc : alias mfrontenv='. /chemin_vers_le_fichier_profile_mfront_sh_cree_etape_II6/profile_mfront.sh' 
+    - 7) Pour compiler une loi avec mfront de developpement mettez vous dans l'environnement gccenv en tappant dans un terminal : gccenv. Puis dans ce même terminal tappez : mfrontenv. Cette action permet de ce trouver également dans l'environnement mfront. Vous n'avez plus qu'à compiler la loi.
+    - 9) Pour compiler un mtest sortez de l'environnement gccenv et lancez votre mtest.

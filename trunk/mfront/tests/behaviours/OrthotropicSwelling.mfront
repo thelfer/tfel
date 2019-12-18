@@ -1,0 +1,30 @@
+@Behaviour OrthotropicSwelling;
+@Author Helfer Thomas;
+@Date   06/08/16;
+@Description{
+ A test for the `@Swelling` keyword
+}
+
+@AbaqusFiniteStrainStrategy[abaqusexplicit] MieheApelLambrechtLogarithmicStrain;
+@EPXFiniteStrainStrategy[epx] MieheApelLambrechtLogarithmicStrain;
+
+@OrthotropicBehaviour<Pipe>;
+@RequireStiffnessTensor<Altered>;
+
+@ExternalStateVariable real s[3];
+s.setEntryName("OrthotropicSwelling");
+@Swelling<Orthotropic> s;
+
+@PredictionOperator{
+  static_cast<void>(smt);
+  Dt = D;
+}
+
+@Integrator{
+  sig = D*(eto+deto);
+}
+
+@TangentOperator{
+  static_cast<void>(smt);
+  Dt = D;
+}

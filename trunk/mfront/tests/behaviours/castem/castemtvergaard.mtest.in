@@ -1,0 +1,26 @@
+/*! 
+ * \file   tvergaard.mtest
+ * \brief
+ * \author Helfer Thomas
+ * \brief  09 avril 2013
+ */
+
+@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umattvergaard';
+@MaterialProperty<constant> 'NormalStiffness'              2.e16;
+@MaterialProperty<constant> 'TangentialStiffness'          2.e16;
+@MaterialProperty<constant> 'UltimateTensileStrength'     200.e6;
+@MaterialProperty<constant> 'MaximumOpeningDisplacement'   3.e-6;
+
+@ExternalStateVariable 'Temperature' 293.15;
+
+@ImposedOpeningDisplacement 'Un' {0.:0.,1800.:1.5e-6,
+    2400.:0.,2600:-1.e-8,3000:0.,3600.:3.e-6};
+
+@Times {0.,1800 in 10, 2400,
+    2600 in 5, 3000 in 1,3600 in 20};
+
+@Test<file> '@top_srcdir@/mfront/tests/behaviours/references/tvergaard.ref' {'Ut1':6} 1.e-10; 
+@Test<file> '@top_srcdir@/mfront/tests/behaviours/references/tvergaard.ref' {'Ut2':6} 1.e-10; 
+@Test<file> '@top_srcdir@/mfront/tests/behaviours/references/tvergaard.ref' {'Tn':5} 1.e3; 
+@Test<file> '@top_srcdir@/mfront/tests/behaviours/references/tvergaard.ref' {'Tt1':6} 1.e3; 
+@Test<file> '@top_srcdir@/mfront/tests/behaviours/references/tvergaard.ref' {'Tt2':7} 1.e3; 

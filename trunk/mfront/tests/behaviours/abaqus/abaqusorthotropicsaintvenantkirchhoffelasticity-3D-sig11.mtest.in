@@ -1,0 +1,36 @@
+@Author Thomas Helfer;
+@Date   15 sept. 2016;
+@Description{
+  A tensile test on an orthotropic version of
+  the Saint-Venant Kirchhoff behaviour.
+};
+
+@MaximumNumberOfSubSteps 1;
+@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'ORTHOTROPICSAINTVENANTKIRCHHOFFELASTICITY_3D';
+
+@ImposedDeformationGradient 'FXX' {0.:1.,1.:1.7};
+@ImposedDeformationGradient 'FXY' 0;
+@ImposedDeformationGradient 'FYX' 0;
+@ImposedDeformationGradient 'FXZ' 0;
+@ImposedDeformationGradient 'FZX' 0;
+@ImposedDeformationGradient 'FYZ' 0;
+@ImposedDeformationGradient 'FZY' 0;
+
+@ExternalStateVariable 'Temperature' 293.15;
+
+@Times {0,1 in 10};
+
+@Real 'YoungModulus1'  '7.8e+10';
+@Real 'PoissonRatio12' '0.13';
+@Real 'PoissonRatio13' '0.18';
+
+@Evolution<function> 'Fxx' 'FXX';
+@Evolution<function> 'Exx' '(Fxx**2-1)/2';
+@Evolution<function> 'Eyy' '-PoissonRatio12*Exx';
+@Evolution<function> 'Fyy' 'sqrt(1+2*Eyy)';
+@Evolution<function> 'Ezz' '-PoissonRatio13*Exx';
+@Evolution<function> 'Fzz' 'sqrt(1+2*Ezz)';
+
+@Test<function> 'SXX' 'YoungModulus1*Exx*Fxx/(Fzz*Fyy)' 1.e-2;
+@Test<function> 'FYY' 'Fyy' 1.e-11;
+@Test<function> 'FZZ' 'Fzz' 1.e-11;

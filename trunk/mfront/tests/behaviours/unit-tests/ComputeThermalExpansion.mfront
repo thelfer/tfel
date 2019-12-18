@@ -1,0 +1,11 @@
+@Author T. Helfer;
+@Date 24/02/2016;
+@Behaviour ComputeThermalExpansion;
+@Description{
+  "This behaviour is invalid since an isotropic "
+  "behaviour must have an isotropic thermal expansion."
+}
+
+@ComputeThermalExpansion {"ThermalExpansionCoefficientTest_1.mfront",
+    "ThermalExpansionCoefficientTest_1.mfront",
+    "ThermalExpansionCoefficientTest_1.mfront"};

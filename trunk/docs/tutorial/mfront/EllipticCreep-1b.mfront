@@ -1,0 +1,105 @@
+@Parser    Implicit;
+@Behaviour EllipticCreep;
+@Author    Maxime Salvo / Thomas Helfer;
+@Date      9 Octobre 2013;
+
+@Includes{
+#include"TFEL/Material/Lame.hxx"
+}
+
+@Algorithm NewtonRaphson_NumericalJacobian;
+
+// equivalent hydrostatic viscoplastic strain
+@StateVariable real pv;
+pv.setEntryName("HydrostaticEquivalentViscoplasticStrain");
+// equivalent deviatoric viscoplastic strain
+@StateVariable real pd;
+pd.setEntryName("DeviatoricEquivalentViscoplasticStrain");
+// porosity
+@AuxiliaryStateVariable real f;
+f.setGlossaryName("Porosity");
+
+@Parameter A = 8.e-67;
+A.setEntryName("CreepCoefficient");
+@Parameter E = 8.2;
+E.setEntryName("CreepExponent");
+@Parameter CAf = 1;
+CAf.setEntryName("CAf");
+
+// Coefficient de Poisson
+@LocalVariable real nu;
+// Premier coefficient de Lame
+@LocalVariable stress lambda;
+// Second coefficient de Lame
+@LocalVariable stress mu;
+// Porosity at the beginning of the time step
+@LocalVariable real f_t;
+
+@MaterialLaw "UO2_YoungModulus_Fink1981.mfront";
+@MaterialLaw "UO2_PoissonRatio_Fink1981.mfront";
+
+@ComputeThermalExpansion "UO2_ThermalExpansion_MATPRO.mfront";
+
+@InitLocalVariables{
+  /* Initialize Poisson coefficient */
+  nu  = UO2_PoissonRatio_Fink1981();
+  /* Porosity at the beginning of the time step */
+  f_t = f;
+} // end of @InitLocalVars
+
+@ComputeStress{
+  using namespace tfel::material::lame;
+  // porosity at the intermediate time
+  f = f_t + theta*(1-f_t)/(1+theta*dpv)*dpv;
+  // evaluate young modulus to take porosity variation into account
+  const stress young = UO2_YoungModulus_Fink1981(T,min(max(f,real(0)),real(1)));
+  lambda = computeLambda(young,nu);
+  mu = computeMu(young,nu);
+  // Hooke law
+  sig = lamdba*trace(eel)*Stensor::Id()+2*mu*eel;
+} // end of @ComputeStresss
+
+@ComputeFinalStress{
+  using namespace tfel::material::lame;
+  // porosity at the end of the time step
+  f = f_t + (1-f_t)/(1+theta*dpv)*dpv;
+  // evaluate young modulus to take porosity variation into account
+  const stress young = UO2_YoungModulus_Fink1981(T,min(max(f,real(0)),real(1)));
+  lambda = computeLambda(young,nu);
+  mu     = computeMu(young,nu);
+  // Hooke law
+  sig    = lambda*trace(eel)*Stensor::Id()+2*mu*eel;
+}
+
+@Integrator{
+  // hydrostatic pressure
+  const stress pr  = trace(sig)/real(3);
+  // Von Mises stress
+  const stress seq = sigmaeq(sig);
+  // equivalent stress
+  const real Af = 2.25*CAf*pow(E*(pow(f,-E)-1),-2*E/(E+1));
+  const real Bf = (1+2*f/real(3))*pow(1-f,-2*E/(E+1));
+  const stress s  = sqrt(Af*pr*pr+Bf*seq*seq);
+  if(s>1.e-8*mu){
+    // normalx
+    real inv_seq(0);
+    Stensor n(real(0.));
+    if(seq > 1.e-8*mu){
+      inv_seq = 1/seq;
+      n       = 1.5*deviator(sig)*inv_seq;
+    }
+    const real ds_dpr        =  Af*pr/s;
+    const real ds_dseq       =  Bf*seq/s;
+    const real dphi_ds       =  A*pow(s,E);
+    const real dphi_dp       =  dphi_ds*ds_dpr;
+    const real dphi_dseq     =  dphi_ds*ds_dseq;
+    // hydrostatic part
+    const real K = lambda+(2*mu)/3;
+    fpv        -= dphi_dp*dt;
+    // deviatoric part
+    fpd        -= dphi_dseq*dt; 
+    // elasticity
+    feel        += (dpv/3)*Stensor::Id()+dpd*n;
+  }
+  feel -= deto;
+} // end of @Integrator

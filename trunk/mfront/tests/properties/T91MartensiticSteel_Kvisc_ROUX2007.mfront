@@ -1,0 +1,25 @@
+@Parser   MaterialLaw ;
+@Material T91MartensiticSteel;
+@Law      Kvisc_ROUX2007 ;
+@Author   F. Milliard ;
+@Date     11/12/2013 ;
+@Description{
+  // coefficient viscosité martensite T91
+  // [Roux 07]
+}
+
+// Input of law
+@Input T ;
+T.setGlossaryName("Temperature") ;
+
+// Output of law
+@Output Kvisc ;
+
+@PhysicalBounds T in [0.:*[;
+
+// Function
+@Function{
+  const real TC = T-273.15;
+  const real TC2 = TC  * TC  ;
+  Kvisc = 2.2463010312e+01 * TC2 +2.4304731306e+03 * TC +1.7952518563e+06 ;
+} // end of Function

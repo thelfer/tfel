@@ -1,0 +1,32 @@
+\noindent
+\textcolor{red}{*}\\
+\textcolor{red}{* $\backslash$file   SiCCreep.dgibi}\\
+\textcolor{red}{* $\backslash$brief  example of how to use the SiCCreep behaviour law}\\
+\textcolor{red}{* in the Cast3M finite element solver}\\
+\textcolor{red}{* $\backslash$author Helfer Thomas}\\
+\textcolor{red}{* $\backslash$date   06 / 12 / 07}\\
+\textcolor{red}{*}\\
+\newline
+\textcolor{red}{** 3D Example}\\
+\newline
+tab\hspace*{1em}=\hspace*{1em}\textcolor{blue}{'TABLE'};\\
+tab\textcolor{green}{.}\textcolor{blue}{'MODELE'}\hspace*{1em}\hspace*{1em}\hspace*{1em}=\hspace*{1em}\textcolor{blue}{'umatSiCCreep'};\\
+tab\textcolor{green}{.}\textcolor{blue}{'LIBRAIRIE'}\hspace*{1em}=\hspace*{1em}\textcolor{blue}{'libExternalUmat.so'};\\
+\newline
+coel3D\hspace*{1em}=\hspace*{1em}\textcolor{blue}{'MOTS'}\hspace*{1em}\textcolor{blue}{'YOUN'}\hspace*{1em}\textcolor{blue}{'NU'}\hspace*{1em}\textcolor{blue}{'ALPH'};\\
+stav3D\hspace*{1em}=\hspace*{1em}\textcolor{blue}{'MOTS'}\hspace*{1em}\textcolor{blue}{'EEXX'}\hspace*{1em}\textcolor{blue}{'EEYY'}\hspace*{1em}\textcolor{blue}{'EEZZ'}\hspace*{1em}\textcolor{blue}{'EEXY'}\hspace*{1em}\textcolor{blue}{'EEXZ'}\hspace*{1em}\textcolor{blue}{'EEYZ'}\hspace*{1em}\hspace*{1em}\textcolor{blue}{'P'};\\
+para3D\hspace*{1em}=\hspace*{1em}\textcolor{blue}{'MOTS'}\hspace*{1em}\textcolor{blue}{'T'}\hspace*{1em}\textcolor{blue}{'FLUX'};\\
+\newline
+MODL3D\hspace*{1em}=\hspace*{1em}\textcolor{blue}{'MODELISER'}\hspace*{1em}v3D\hspace*{1em}\textcolor{blue}{'MECANIQUE'}\hspace*{1em}\textcolor{blue}{'ELASTIQUE'}\\
+\textcolor{blue}{'NON\_LINEAIRE'}\hspace*{1em}\textcolor{blue}{'UTILISATEUR'}\hspace*{1em}\textcolor{blue}{'DESC\_LOI'}\hspace*{1em}tab\\
+\textcolor{blue}{'C\_MATERIAU'}\hspace*{1em}coel3D\\
+\textcolor{blue}{'C\_VARINTER'}\hspace*{1em}stav3D\\
+\textcolor{blue}{'PARA\_LOI'}\hspace*{1em}\hspace*{1em}\hspace*{1em}para3D\\
+\textcolor{blue}{'CONS'}\hspace*{1em}M;\\
+\newline
+MATR3D\hspace*{1em}=\hspace*{1em}\textcolor{blue}{'MATERIAU'}\hspace*{1em}MODL3D\\
+\textcolor{blue}{'YOUN'}\hspace*{1em}xyoun\hspace*{1em}\textcolor{blue}{'NU'}\hspace*{1em}xnu\hspace*{1em}\textcolor{blue}{'ALPH'}\hspace*{1em}xalph;\\
+\newline
+VAR3D\hspace*{1em}=\hspace*{1em}\textcolor{blue}{'MANUEL'}\hspace*{1em}\textcolor{blue}{'CHML'}\hspace*{1em}MODL3D\\
+\textcolor{blue}{'EEXX'}\hspace*{1em}\textcolor{green}{0.}\hspace*{1em}\textcolor{blue}{'EEYY'}\hspace*{1em}\textcolor{green}{0.}\hspace*{1em}\textcolor{blue}{'EEZZ'}\hspace*{1em}\textcolor{green}{0.}\hspace*{1em}\textcolor{blue}{'EEXY'}\hspace*{1em}\textcolor{green}{0.}\hspace*{1em}\textcolor{blue}{'EEXZ'}\hspace*{1em}\textcolor{green}{0.}\hspace*{1em}\textcolor{blue}{'EEYZ'}\hspace*{1em}\textcolor{green}{0.}\hspace*{1em}\textcolor{blue}{'P'}\hspace*{1em}\textcolor{green}{0.}\\
+TYPE\hspace*{1em}\textcolor{blue}{'VARIABLES\_INTERNES'};

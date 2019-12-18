@@ -1,0 +1,23 @@
+@DSL       Implicit;
+@Behaviour StandardElastoViscoPlasticityPlasticityTest12_nanj;
+@Author    Thomas Helfer;
+@Description{
+  A simple implementation of a perfect
+  plasticity behaviour using the
+  isotropic Cazacu 2004 yield criterion.
+};
+
+@Algorithm NewtonRaphson_NumericalJacobian;
+@ModellingHypotheses {".+"};
+@Epsilon 1.e-16;
+@PerturbationValueForNumericalJacobianComputation 1.e-8;
+@Theta 1;
+
+@Brick "StandardElastoViscoPlasticity" {
+  stress_potential : "Hooke" {young_modulus : 150e9, poisson_ratio : 0.3},  //
+  inelastic_flow : "Plastic" {
+    criterion : "Isotropic Cazacu 2004" {c : -1.056},
+    flow_criterion : "Isotropic Cazacu 2004" {c : -1.056},
+    isotropic_hardening : "Linear" {R0 : 150e6}
+  }
+};

@@ -1,0 +1,9 @@
+[requires]
+Boost.Python/1.65.1@bincrafters/stable
+
+[options]
+Boost.Python:shared=True # false
+# Take a look for all available options in conanfile.py
+
+[generators]
+cmake

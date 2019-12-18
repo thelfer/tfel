@@ -1,0 +1,31 @@
+<style type="text/css">
+  .reveal h1 { font-size: 2.5em; }
+  .reveal section img {
+      border: none;
+      box-shadow: none;
+  }
+  body {
+      background: url("img/background.svg") no-repeat fixed top left;
+  }
+  table {
+      width: 100%;
+      border-collapse: collapse;
+      border-spacing: 0; /* IE 6 */
+      border-bottom: 2pt solid #000;
+      border-top: 2pt solid #000; /* The caption on top will not have a bottom-border */
+      background: lightgrey;
+      display: block;
+      text-align:center; 
+      margin:auto; 
+      table-layout: auto;
+  }
+  /* table td{ */
+  /*     width:40%; */
+  /* } */
+  table thead{
+      background: grey;
+  }
+  /* table tbody tr { border-bottom: 10px solid #000; } */
+/* <table> */
+/* <thead> */
+</style>

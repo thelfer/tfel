@@ -1,0 +1,13 @@
+digraph G {
+  "IsotropicDamage\n(IsotropicDamageStressPotential)" [color=red,shape=box];
+  "Hooke\n(HookeStressPotential)" [color=red,shape=box];
+  "DDIF2\n(DDIF2StressPotential)" [color=red,shape=box];
+  StressPotential [color=blue,shape=box];
+  HookeStressPotentialBase [color=blue,shape=box];
+  IsotropicDamageHookeStressPotentialBase [color=blue,shape=box];
+  StressPotential -> HookeStressPotentialBase;
+  HookeStressPotentialBase -> "Hooke\n(HookeStressPotential)";
+  "Hooke\n(HookeStressPotential)" -> "DDIF2\n(DDIF2StressPotential)";
+  HookeStressPotentialBase -> IsotropicDamageHookeStressPotentialBase;
+  IsotropicDamageHookeStressPotentialBase -> "IsotropicDamage\n(IsotropicDamageStressPotential)";
+}

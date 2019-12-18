@@ -1,0 +1,23 @@
+@DSL       IsotropicMisesCreep;
+@Behaviour LogarithmicStrainNortonCreep;
+@Author    Helfer Thomas;
+@Date      4/12/13;
+
+@StrainMeasure Hencky;
+// The following keywords are redundant. They are kept for backward compatibility.
+@UMATFiniteStrainStrategy[umat]                    MieheApelLambrechtLogarithmicStrain;
+@CalculiXFiniteStrainStrategy[calculix]            MieheApelLambrechtLogarithmicStrain;
+@AbaqusFiniteStrainStrategy[abaqus,abaqusexplicit] MieheApelLambrechtLogarithmicStrain;
+@EPXFiniteStrainStrategy[epx]                      MieheApelLambrechtLogarithmicStrain;
+@AnsysFiniteStrainStrategy[ansys]                  MieheApelLambrechtLogarithmicStrain;
+
+@Theta 1.;
+
+@MaterialProperty real A;
+@MaterialProperty real E;
+
+@FlowRule{
+  const auto tmp = A*pow(seq,E-1);
+  f       = tmp*seq;
+  df_dseq = E*tmp;
+}

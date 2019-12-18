@@ -1,0 +1,23 @@
+@Author Jeremy Hure;
+@Date 08 Aout 2013;
+
+@XMLOutputFile @xml_output@;
+@MaximumNumberOfSubSteps 1;
+@Behaviour<castem> @library@ @behaviour@;
+
+@MaterialProperty<constant> 'YoungModulus' 200e9;
+@MaterialProperty<constant> 'PoissonRatio' 0.3;
+
+@ExternalStateVariable 'Temperature' 0.;
+
+@ImposedStrain<function> 'EXX' 'min(t*0.0005,0.2-t*0.0005)';
+@Times {0.,400. in 1000};
+
+@Test<function> 'SYY'  '0' 1.e-3;
+@Test<function> 'SZZ'  '0' 1.e-3;
+@Test<function> 'SXY'  '0' 1.e-3;
+@Test<function> 'EXY'  '0' 1.e-3;
+
+@Test<file> @reference_file@ {
+  'SXX' : '$8*1.e6'
+} 1.e3;

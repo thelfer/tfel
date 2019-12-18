@@ -1,0 +1,95 @@
+@DSL Implicit;
+@Behaviour SkoroholdOlevskyViscousSinteringBehaviour;
+@Author Joan Balaguer Osuna;
+@Date 04/2019;
+@Description{
+  "Verification of the Skorohod - Olevsky Viscous Sintering(SOVS) Model."
+  "Brian Lester"
+  "Sandia National Laboritories"
+  "November 16, 2017"
+}
+
+@Brick StandardElasticity;
+@ModellingHypotheses {".+"};
+@ElasticMaterialProperties {123.7e9,0.356};
+@Epsilon 1.e-16;
+
+@Parameter a1 = 1;
+@Parameter b1 = 2;
+
+@Parameter a2 = 0.666666666666666;
+@Parameter b2 = 3;
+@Parameter c2 = 1;
+
+@Parameter a3 = 1;
+@Parameter b3 = 2;
+@Parameter sig_s0 = 3.81e6;
+
+@Parameter eta0_A = 0.0000166;
+@Parameter eta0_B = 48259.583;
+
+@AuxiliaryStateVariable StrainStensor evp;
+evp.setGlossaryName("ViscoplasticStrain");
+@AuxiliaryStateVariable real r;
+r.setEntryName("RelativeDensity");
+
+//! trace of the viscoplastic strain
+@IntegrationVariable strain e;
+
+// eta0 is computed once and stored in a local variable
+@LocalVariable stress eta0;
+
+@InitLocalVariables {
+  const auto rT = T + theta * dT; //<------- Aexp(B/T)
+  eta0 = eta0_A * exp(eta0_B / (rT + 273));
+}
+
+@Integrator{  // <--- @IntegrationVariable{
+  constexpr const auto id = StrainStensor::Id();
+  const auto is_zero = [=](const real v) {
+    constexpr const real eps0 = 1.e-8;
+    return (abs(v) - eps0 < 0) ? true : false;
+  };
+  // current relative density.
+  // By integration of Equation (5), from t to t+theta*dt, one have
+  // ln(r_)-ln(r)=-theta*de
+  // Thus we use the following approximation for the value at t+theta*dt
+  const auto r_ = r*exp(-theta * de);
+  const auto phi = a1 * pow(r_, b1);
+  const auto psi = a2 * pow(r_, b2) / pow(1 - r_, c2);
+  const auto sig_s = sig_s0 * a3 * pow(r_, b3);
+  const auto A = 1 / (2 * eta0 * phi);
+  const auto B = 1 / (18 * eta0 * psi);
+  const auto C = 3 * sig_s * B;
+  const auto s = deviator(sig);
+  feel += de / 3 * id + dt * A * s;
+  // viscoplastic strain
+  fe -= 3 * dt * (B * trace(sig) - C);
+  // jacobian
+  const auto dr__dde = -theta * r_;
+  const auto dphi_dr_ = is_zero(r_) ? real(0) : b1 * phi / r_;
+  const auto dpsi_dr_ =
+      is_zero(r_) ? real(0) : psi * ((c2 - b2) * r_ + b2) / (r_ * (1 - r_));
+  const auto dpsi_dde = dpsi_dr_ * dr__dde;
+  const auto dphi_dde = dphi_dr_ * dr__dde;
+  const auto dA_dphi = -1 / (2 * eta0 * phi * phi);
+  const auto dB_dpsi = -1 / (18 * eta0 * psi * psi);
+  const auto dA_dde = dA_dphi * dphi_dde;
+  const auto dB_dde = dB_dpsi * dpsi_dde;
+  const auto dsig_s_dr_ = is_zero(r_) ? real(0) : b3 * sig_s / r_;
+  const auto dsig_s_dde = dsig_s_dr_ * dr__dde;
+  const auto dC_dde = 3 * sig_s * dB_dde + 3 * B * dsig_s_dde;
+  //
+  dfeel_ddeel += 2 * mu * theta * dt * A * Stensor4::K();
+  dfeel_dde = id / 3 + dt * dA_dde * s;
+  //
+  dfe_dde -= 3 * dt * (dB_dde * trace(sig) - dC_dde);
+  dfe_ddeel =  -3 * (3 * lambda + 2 * mu) * theta * B * dt * id;
+}
+
+@UpdateAuxiliaryStateVariables {
+  // udpate the viscoplastic strain
+  evp += deto - deel;
+  // update the relative density
+  r *= exp(-de);
+}

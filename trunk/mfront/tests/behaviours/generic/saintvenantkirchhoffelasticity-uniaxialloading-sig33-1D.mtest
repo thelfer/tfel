@@ -1,0 +1,30 @@
+@Author Thomas Helfer;
+@Date   27/07/2018;
+@Description{
+  "This test describes an uniaxial loading "
+  "by imposing the deformation gradient in "
+  "one direction. "
+  "The perpendicular directions are "
+  "stress-free. "
+  "The results are compared to analytical solutions."
+};
+
+@ModellingHypothesis 'AxisymmetricalGeneralisedPlaneStrain';
+@XMLOutputFile @xml_output@;
+@MaximumNumberOfSubSteps 1;
+@Behaviour<generic> @library@ 'SaintVenantKirchhoffElasticity' {
+  stress_measure : @stress_measure@, tangent_operator : @tangent_operator@
+};
+
+@MaterialProperty<constant> 'YoungModulus'     215.e9;
+@MaterialProperty<constant> 'PoissonRatio'       0.3;
+
+@ImposedDrivingVariable 'FZZ' {0:1.,1.:1.2};
+
+@ExternalStateVariable 'Temperature' 293.15;
+
+@Times {0.,1 in 10};
+
+@Test<function> {'SZZ':'YoungModulus*(FZZ**2-1)*FZZ/(2*(1-PoissonRatio*(FZZ**2-1)))'} 1.e-2;
+@Test<function> {'FRR':'sqrt(1-PoissonRatio*(FZZ**2-1))'} 1.e-8;
+@Test<function> {'FTT':'sqrt(1-PoissonRatio*(FZZ**2-1))'} 1.e-8;

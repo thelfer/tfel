@@ -1,0 +1,12 @@
+/*!
+ * \file  mfront/include/MFront/ZMAT/zmat.doxygen
+ * \brief This file documents the zmat namespace.
+ */
+
+/*!
+ * \namespace zmat
+ * \brief the namespace zmat contains material related to the MFront
+ * interface to the
+ * [ZeBuLoN](http://www.zset-software.com/products/zebulon) finite
+ * element solver.
+ */

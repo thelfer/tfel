@@ -1,0 +1,33 @@
+@Author Thomas Helfer;
+@Date   7/01/2015;
+@Description{
+  
+};
+
+@InnerRadius 4.2e-3;
+@OuterRadius 4.7e-3;
+@NumberOfElements 5;
+@ElementType 'Linear';
+@PerformSmallStrainAnalysis true;
+@AxialLoading 'ImposedAxialForce';
+
+@Behaviour<cyrano> '@MFrontCyranoBehavioursBuildPath@' 'cyranoorthotropicelastic';
+@MaterialProperty<constant> 'YoungModulus1' 170.e9;
+@MaterialProperty<constant> 'YoungModulus2' 100.e9;
+@MaterialProperty<constant> 'YoungModulus3' 130.e9;
+@MaterialProperty<constant> 'PoissonRatio12' 0.3;
+@MaterialProperty<constant> 'PoissonRatio13' 0.2;
+@MaterialProperty<constant> 'PoissonRatio23' 0.4;
+
+@InnerPressureEvolution {0:0.,1.:30.e6};
+@OuterPressureEvolution {0:0.,1.:15.e6};
+@Real 'pz' 24.3e6;
+@Real 'pi' 3.14159265359;
+@AxialForceEvolution {0:0,1:'pz*pi*(Re*Re-Ri*Ri)'};
+@ExternalStateVariable 'Temperature' 293.15;
+
+@Times {0,1};
+
+@OutputFilePrecision 14;
+@Profile 'orthotropic-elastic2-profile.res' {'SRR','SZZ','STT',
+                                             'ERR','EZZ','ETT'};

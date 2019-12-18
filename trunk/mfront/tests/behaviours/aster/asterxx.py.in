@@ -1,0 +1,52 @@
+try:
+    import unittest2 as unittest
+except ImportError:
+    import unittest
+
+from mfront.umatxx import Behaviour
+
+class Asterxx(unittest.TestCase):
+
+    def test_pass(self):
+        Np=30
+        Nss=12
+
+        b = Behaviour("Tridimensional","@MFrontAsterBehavioursBuildPath@",
+		      "asterpolycrystals")
+        mpnames=b.getMaterialPropertiesNames()
+        ivnames=b.getInternalStateVariablesNames()
+        ivtypes=b.getInternalStateVariablesTypes()
+        evnames=b.getExternalStateVariablesNames()
+
+        self.assertEqual(mpnames,
+                         ['m', 'K', 'C', 'R0',
+                          'Q', 'b', 'H', 'd1', 'Mu'])
+        self.assertEqual(len(ivnames),3+Np+3*Nss*Np)
+        self.assertEqual(ivnames[0],'ElasticStrain')
+        self.assertEqual(ivtypes[0],'Stensor')
+        self.assertEqual(ivnames[1],'epsp')
+        self.assertEqual(ivtypes[1],'Stensor')
+        for i in range(0,Np):
+            self.assertEqual(ivnames[2+i],'epsg[{0}]'.format(i))
+            self.assertEqual(ivtypes[2+i],'Stensor')
+        for i in range(0,Nss*Np):
+            self.assertEqual(ivnames[2+Np+i],'g[{0}]'.format(i))
+            self.assertEqual(ivtypes[2+Np+i],'Scalar')
+        for i in range(0,Nss*Np):
+            self.assertEqual(ivnames[2+Np+i+Nss*Np],'a[{0}]'.format(i))
+            self.assertEqual(ivtypes[2+Np+i],'Scalar')
+        for i in range(0,Nss*Np):
+            self.assertEqual(ivnames[2+Np+i+2*Nss*Np],'p[{0}]'.format(i))
+            self.assertEqual(ivtypes[2+Np+i+2*Nss*Np],'Scalar')
+        self.assertEqual(ivnames[2+Np+3*Nss*Np],'pg')
+        self.assertEqual(ivtypes[2+Np+3*Nss*Np],'Scalar')
+        self.assertEqual(len(evnames),0)
+        self.assertFalse(b.isIsotropic())
+        self.assertTrue(b.isOrthotropic())
+        
+        b.setParameter("epsilon",1.e-12)
+        
+        self.assertEqual(10, 7 + 3)
+
+if __name__ == '__main__':
+    unittest.main()

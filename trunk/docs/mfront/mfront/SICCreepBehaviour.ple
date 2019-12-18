@@ -1,0 +1,17 @@
+/*
+ * \file   pleiades/SiCCreep/SiCCreep.ple
+ * \brief  example of how to use the SiCCreep behaviour law
+ * in the celaeno fuel performanece code
+ * \author Helfer Thomas
+ * \date   06 / 12 / 07
+ */
+
+MechanicalBehaviour IsotropicUMATBehaviour umatSiCCreep libExternalUmat.so SOLID0
+MaterialProperty uniform YOUN 150.e9
+MaterialProperty uniform NU   0.3
+MaterialProperty uniform ALPH 0.
+SIntVar eel
+IntVar p
+ExtVar flux
+Cons M
+EndBehaviour

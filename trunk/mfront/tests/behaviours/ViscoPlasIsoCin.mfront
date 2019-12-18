@@ -1,0 +1,99 @@
+@DSL Implicit;
+@Behaviour	ViscoPlasIsoCin;
+@Author 	Jeremy Hure;
+@Date 		08 Aout 2013;
+@Brick StandardElasticity;
+@Description{
+  "B. Tanguy"
+  "Modélisation de l'essai Charpy ..."
+  "Thèse ENSMP,2001"
+}
+
+@Algorithm NewtonRaphson;
+@Epsilon 1.e-14;
+// @Theta 1;
+
+@MaterialProperty stress young;
+young.setGlossaryName("YoungModulus");
+@MaterialProperty real nu;
+nu.setGlossaryName("PoissonRatio");
+
+@MaterialProperty real R0;
+@MaterialProperty real Q1;
+@MaterialProperty real b1;
+@MaterialProperty real Q2;
+@MaterialProperty real b2;
+@MaterialProperty real C1;
+@MaterialProperty real D1;
+@MaterialProperty real C2;
+@MaterialProperty real D2;
+@MaterialProperty real k1;
+@MaterialProperty real n1;
+@MaterialProperty real k2;
+@MaterialProperty real n2;
+
+@StateVariable strain p;
+p.setGlossaryName("EquivalentViscoplasticStrain");
+@PhysicalBounds p in [0:*[;
+
+@StateVariable StrainStensor a1;
+@StateVariable StrainStensor a2;
+
+@LocalVariable stress lambda,mu;
+@LocalVariable bool b;
+
+@InitLocalVariables{
+  // Lamé coefficient
+  lambda = computeLambda(young,nu);
+  mu = computeMu(young,nu);
+  // elastic prediction
+  const auto s0   = computeElasticPrediction();
+  const auto Rpel = R0 + Q1*(1-exp(-b1*p)) +  Q2*(1-exp(-b2*p));
+  const auto sel  = sigmaeq(s0-C1*a1-C2*a2);
+  b  = sel - Rpel > 0;
+}
+
+@Integrator{
+  if (b){
+    const auto pt   = p+theta*std::max(dp,strain(0));
+    const auto e1   = exp(-b1*pt);
+    const auto e2   = exp(-b2*pt);
+    const auto a1t  = eval(a1+theta*da1);
+    const auto a2t  = eval(a2+theta*da2);
+    const auto Rpt  = R0 + Q1*(1-e1) +  Q2*(1-e2);
+    const auto seff = eval(sig-C1*a1t-C2*a2t);
+    const auto seq = sigmaeq(seff);
+    const auto F   = std::max(seq - Rpt,stress(1e-12*young));
+    const auto small = real(1.e-20);
+    const auto iseq  = 1/max(seq,1e-12*young);
+    const auto n     = eval(3*deviator(seff)*iseq/2);
+    const auto P1    = pow(max(F/k1,real(0)),n1+1);
+    const auto P2    = pow(max(F/k2,real(0)),n2+1);
+    const auto iP1   = 1/max(small,P1);
+    const auto iP2   = 1/max(small,P2);
+    const auto FP    = 1/(iP1*F/k1 + iP2*F/k2);
+    // implicit system
+    feel	+= dp*n;
+    fp        -= FP*dt;
+    fa1 	-= dp*n - D1*a1t*dp;
+    fa2 	-= dp*n - D2*a2t*dp;
+    // jacobian
+    const auto H   = Q1*b1*e1  + Q2*b2*e2;
+    const auto FPP = theta*dt*((FP*FP)*((n1/k1)*(iP1) + (n2/k2)*(iP2)));
+    const auto J   = theta*dp*iseq*eval(Stensor4::M() - (n^n));
+    dfeel_ddeel   += 2*mu*J;
+    dfeel_ddp      = n;
+    dfeel_dda1     = -C1*J;
+    dfeel_dda2     = -C2*J;
+    dfp_ddeel      = -2*mu*FPP*n;
+    dfp_ddp       += FPP*H;
+    dfp_dda1       = FPP*n;
+    dfp_dda2       = FPP*n;
+    dfa1_ddeel     = -2*mu*J;
+    dfa1_ddp       = -n + D1*a1t;
+    dfa1_dda1     += -C1*J + D1*theta*dp*Stensor4::Id();
+    dfa2_ddeel     = -2*mu*J;
+    dfa2_ddp       = -n + D1*a2t;
+    dfa2_dda2     += -C2*J + D2*theta*dp*Stensor4::Id();
+  }
+}

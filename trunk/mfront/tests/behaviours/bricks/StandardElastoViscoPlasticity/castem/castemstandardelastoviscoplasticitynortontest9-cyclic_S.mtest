@@ -1,0 +1,22 @@
+@Author Jamel Tirari;
+@Date   13/03/2018;
+@Description{implicit
+
+};
+
+@XMLOutputFile @xml_output@;
+@MaximumNumberOfSubSteps 1;
+@Behaviour<castem> @library@ @behaviour@;
+
+@MaterialProperty<constant> 'YoungModulus' 160e9;
+@MaterialProperty<constant> 'PoissonRatio' 0.3;
+
+@ExternalStateVariable 'Temperature' 293.15;
+
+@ImposedStress 'SXX' {0:0,10:1.47e8,20:-1.47e8,30:1.5e8};
+
+@Test<file> @reference_file@ 'EXX' 2 4.e-12;
+@Test<file> @reference_file@ 'SXX' 8 1.e-3;
+@Test<file> @reference_file@ 'EquivalentViscoplasticStrain' 20 4.e-12;
+
+@Times {0,30 in 200};

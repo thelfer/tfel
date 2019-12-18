@@ -1,0 +1,27 @@
+\noindent
+\ttfamily
+\hlstd{@Parser}\hlstd{\ \ \ \ }\hlstd{MultipleIsotropicMisesFlows}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@Material}\hlstd{\ \ }\hlstd{NbZrC}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@Behaviour Creep}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@Author}\hlstd{\ \ \ \ }\hlstd{É}\hlsym{. }\hlstd{Brunon}\hlsym{;}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@LocalVar real A}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@ExternalStateVar real dpa}\hlsym{;}\hspace*{\fill}\\
+\hlstd{dpa}\hlsym{.}\hlstd{}\hlkwd{setGlossaryName}\hlstd{}\hlsym{(}\hlstd{}\hlstr{"IrradiationDamage"}\hlstd{}\hlsym{);}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@InitLocalVars}\hlsym{\{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{A }\hlsym{= }\hlstd{}\hlnum{7.1687e{-}31}\hlstd{}\hlsym{{*}}\hlstd{}\hlkwd{exp}\hlstd{}\hlsym{({-}}\hlstd{}\hlnum{4.1722e+04}\hlstd{}\hlsym{/(}\hlstd{T}\hlsym{+}\hlstd{theta}\hlsym{{*}}\hlstd{dT}\hlsym{));}\hspace*{\fill}\\
+\hlstd{}\hlsym{\}}\hspace*{\fill}\\
+\hlstd{}\hspace*{\fill}\\
+\hlslc{// Fluage Thermique}\hspace*{\fill}\\
+\hlstd{@FlowRule Creep}\hlsym{\{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{real tmp }\hlsym{= }\hlstd{A}\hlsym{{*}}\hlstd{}\hlkwd{pow}\hlstd{}\hlsym{(}\hlstd{seq}\hlsym{,}\hlstd{}\hlnum{3.9}\hlstd{}\hlsym{);}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{df\textunderscore dseq}\hlstd{\ \ }\hlstd{}\hlsym{= }\hlstd{}\hlnum{4.9}\hlstd{}\hlsym{{*}}\hlstd{tmp}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{f}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlsym{= }\hlstd{seq}\hlsym{{*}}\hlstd{tmp}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlsym{\}}\hspace*{\fill}\\
+\hlstd{}\hspace*{\fill}\\
+\hlslc{// Fluage d'irradiation}\hspace*{\fill}\\
+\hlstd{@FlowRule Creep}\hlsym{\{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{df\textunderscore dseq }\hlsym{= }\hlstd{}\hlnum{0.5e{-}12}\hlstd{}\hlsym{{*}}\hlstd{ddpa}\hlsym{/}\hlstd{dt}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{f}\hlstd{\ \ \ \ \ \ \ }\hlstd{}\hlsym{= }\hlstd{df\textunderscore dseq}\hlsym{{*}}\hlstd{seq}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlsym{\}}

@@ -1,0 +1,10 @@
+/*!
+ * \file  mfront/include/MFront/DianaFEA/dianafea.doxygen
+ * \brief This file documents the dianafea namespace.
+ */
+
+/*!
+ * \namespace dianafea
+ * \brief the namespace dianafea contains material related to the MFront
+ * interface to the DianaFEA finite element solver.
+ */

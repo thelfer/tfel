@@ -1,0 +1,24 @@
+@Parser   MaterialLaw ;
+@Material T91MartensiticSteel ;
+@Law      b_ROUX2007 ;
+@Author   F. Milliard ;
+@Date     11/12/2013 ;
+@Description{
+  // Coeff d'écrouissage b martensite T91
+  // [Roux 07]
+}
+
+// Input of law
+@Input T ;
+T.setGlossaryName("Temperature") ;
+
+// Output of law
+@Output b ;
+
+@PhysicalBounds T in [0.:*[;
+
+// Function
+@Function{
+  const real TC = T-273.15;
+  b = min(4.5590402844e-01 * TC +1.1463909953e+01, 400.);
+} // end of Function

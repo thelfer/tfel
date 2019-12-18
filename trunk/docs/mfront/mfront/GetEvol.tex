@@ -1,0 +1,41 @@
+\noindent
+\textcolor{blue}{'DEBPROC'}\hspace*{1em}GETEVOL\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}X0\textcolor{magenta}{*}\textcolor{blue}{'FLOTTANT'}\\
+\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}X1\textcolor{magenta}{*}\textcolor{blue}{'FLOTTANT'}\\
+\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}nx\textcolor{magenta}{*}\textcolor{blue}{'ENTIER'}\\
+\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}TLoi\textcolor{magenta}{*}\textcolor{blue}{'TABLE'}\\
+\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}vvar\textcolor{magenta}{*}\textcolor{blue}{'MOT'}\\
+\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}values\textcolor{magenta}{*}\textcolor{blue}{'TABLE'};\\
+\textcolor{blue}{'MESSAGE'}\hspace*{1em}\textcolor{blue}{'---------------------------------'}\hspace*{1em};\\
+\textcolor{blue}{'MESSAGE'}\hspace*{1em}\textcolor{blue}{' Début              : '}\hspace*{1em}X0;\\
+\textcolor{blue}{'MESSAGE'}\hspace*{1em}\textcolor{blue}{' Fin                : '}\hspace*{1em}X1;\\
+\textcolor{blue}{'MESSAGE'}\hspace*{1em}\textcolor{blue}{' Nombre de valeurs  : '}\hspace*{1em}nx;\\
+\textcolor{blue}{'MESSAGE'}\hspace*{1em}\textcolor{blue}{' Loi : librairie    : '}\hspace*{1em}TLoi\textcolor{green}{.}\textcolor{blue}{'LIBRAIRIE'};\\
+\textcolor{blue}{'MESSAGE'}\hspace*{1em}\textcolor{blue}{' Loi : Modèle       : '}\hspace*{1em}TLoi\textcolor{green}{.}\textcolor{blue}{'MODELE'};\\
+vdime=(\textcolor{blue}{'VALEUR'}\hspace*{1em}\textcolor{blue}{'DIME'});\\
+velem=(\textcolor{blue}{'VALEUR'}\hspace*{1em}\textcolor{blue}{'ELEM'});\\
+\textcolor{blue}{'OPTION'}\hspace*{1em}\textcolor{blue}{'DIME'}\hspace*{1em}\textcolor{green}{1};\\
+\textcolor{blue}{'OPTION'}\hspace*{1em}\textcolor{blue}{'ELEM'}\hspace*{1em}SEG2;\\
+lx\hspace*{1em}=\hspace*{1em}\textcolor{blue}{'DROIT'}\hspace*{1em}(\textcolor{blue}{'POIN'}\hspace*{1em}X0)\hspace*{1em}(\textcolor{blue}{'POIN'}\hspace*{1em}X1)\hspace*{1em}nx;\\
+modv\hspace*{1em}=\hspace*{1em}\textcolor{blue}{'MODELISER'}\hspace*{1em}lx\hspace*{1em}\textcolor{blue}{'THERMIQUE'}\hspace*{1em}\textcolor{blue}{'ISOTROPE'};\\
+xx\hspace*{1em}=\hspace*{1em}\textcolor{blue}{'COORDONNEE'}\hspace*{1em}\textcolor{green}{1}\hspace*{1em}lx\hspace*{1em};\\
+vpo\hspace*{1em}=\hspace*{1em}\textcolor{blue}{'CHANGER'}\hspace*{1em}xx\hspace*{1em}\textcolor{blue}{'COMP'}\hspace*{1em}vvar;\\
+vel\hspace*{1em}=\hspace*{1em}\textcolor{blue}{'CHANGER'}\hspace*{1em}\textcolor{blue}{'CHAM'}\hspace*{1em}vpo\hspace*{1em}modv\hspace*{1em};\\
+nb\hspace*{1em}\hspace*{1em}=\hspace*{1em}\textcolor{blue}{'DIME'}\hspace*{1em}(TLoi\textcolor{green}{.}\textcolor{blue}{'VARIABLES'});\\
+\textcolor{blue}{'REPETER'}\hspace*{1em}bcl\hspace*{1em}nb;\\
+\hspace*{1em}\hspace*{1em}\hspace*{1em}vvari\hspace*{1em}=\hspace*{1em}\textcolor{blue}{'EXTRAIRE'}\hspace*{1em}(Tloi\textcolor{green}{.}\textcolor{blue}{'VARIABLES'})\hspace*{1em}\&bcl;\\
+\hspace*{1em}\hspace*{1em}\hspace*{1em}\textcolor{blue}{'SI'}(\textcolor{blue}{'NEG'}\hspace*{1em}vvari\hspace*{1em}vvar);\\
+\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}\hspace*{1em}vel\hspace*{1em}=\hspace*{1em}vel\hspace*{1em}\textcolor{blue}{'ET'}\hspace*{1em}(\textcolor{blue}{'MANUEL'}\hspace*{1em}\textcolor{blue}{'CHML'}\hspace*{1em}modv\hspace*{1em}vvari\hspace*{1em}(values\textcolor{green}{.}vvari));\\
+\hspace*{1em}\hspace*{1em}\hspace*{1em}\textcolor{blue}{'FINSI'};\\
+\textcolor{blue}{'FIN'}\hspace*{1em}bcl;\\
+matE\hspace*{1em}=\hspace*{1em}\textcolor{blue}{'MANUEL'}\hspace*{1em}\textcolor{blue}{'CHML'}\hspace*{1em}modv\hspace*{1em}\textcolor{blue}{'Y'}\hspace*{1em}TLoi;\\
+Kel\hspace*{1em}=\hspace*{1em}\textcolor{blue}{'VARI'}\hspace*{1em}\textcolor{blue}{'NUAG'}\hspace*{1em}modv\hspace*{1em}matE\hspace*{1em}vel;\\
+Kpo\hspace*{1em}=\hspace*{1em}\textcolor{blue}{'CHANGER'}\hspace*{1em}\textcolor{blue}{'CHPO'}\hspace*{1em}Kel\hspace*{1em}modv\hspace*{1em};\\
+evabs\hspace*{1em}=\hspace*{1em}\textcolor{blue}{'EVOL'}\hspace*{1em}\textcolor{blue}{'CHPO'}\hspace*{1em}vpo\hspace*{1em}lx\hspace*{1em}vvar;\\
+evordo\hspace*{1em}=\hspace*{1em}\textcolor{blue}{'EVOL'}\hspace*{1em}\textcolor{blue}{'CHPO'}\hspace*{1em}Kpo\hspace*{1em}lx\hspace*{1em}\textcolor{blue}{'Y'};\\
+labs\hspace*{1em}=\hspace*{1em}\textcolor{blue}{'EXTRAIRE'}\hspace*{1em}evabs\hspace*{1em}\textcolor{blue}{'ORDO'}\hspace*{1em};\\
+lordo\hspace*{1em}=\hspace*{1em}\textcolor{blue}{'EXTRAIRE'}\hspace*{1em}evordo\hspace*{1em}\textcolor{blue}{'ORDO'}\hspace*{1em};\\
+cou\hspace*{1em}=\hspace*{1em}\textcolor{blue}{'EVOL'}\hspace*{1em}\textcolor{blue}{'MANUEL'}\hspace*{1em}labs\hspace*{1em}vvar\hspace*{1em}lordo\hspace*{1em};\\
+cou\hspace*{1em}=\hspace*{1em}cou\hspace*{1em}\hspace*{1em}\textcolor{blue}{'COULEUR'}\hspace*{1em}\textcolor{blue}{'JAUNE'};\\
+\textcolor{blue}{'OPTION'}\hspace*{1em}\textcolor{blue}{'DIME'}\hspace*{1em}vdime;\\
+\textcolor{blue}{'OPTION'}\hspace*{1em}\textcolor{blue}{'ELEM'}\hspace*{1em}velem;\\
+\textcolor{blue}{'FINPROC'}\hspace*{1em}cou\hspace*{1em};

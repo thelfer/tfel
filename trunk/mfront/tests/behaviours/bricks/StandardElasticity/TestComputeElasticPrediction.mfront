@@ -1,0 +1,27 @@
+@DSL Implicit;
+@Behaviour TestComputeElasticPrediction;
+@Date   5/06/2016;
+@Description{
+  "This file is used to test the StandardElasticity brick for "
+  "an isotropic behaviour. Elastic properties are defined through "
+  "elastic material properties."
+}
+
+@Epsilon 1e-14;
+@Theta 1;
+@ModellingHypotheses {".+"};
+@Brick "StandardElasticity";
+@ElasticMaterialProperties {78e9,0.3};
+
+@LocalVariable StressStensor sigel;
+
+@InitLocalVariables{
+  sigel = computeElasticPrediction();
+}
+
+@UpdateAuxiliaryStateVariables{
+  if(abs(sigel-sig)>10*std::numeric_limits<real>::epsilon()*young){
+    throw(runtime_error("TestComputeElasticPrediction: "
+			"computeElasticPrediction failed"));
+  }
+}

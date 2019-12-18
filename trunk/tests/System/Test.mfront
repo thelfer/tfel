@@ -1,0 +1,25 @@
+@Parser   MaterialLaw;
+@Law      Test;
+@Author   Thomas Helfer;
+@Date     5 Jan. 2010;
+
+@Description{
+  "L aiguille absorbante des coeurs rapides français : "
+  "un point sur la conception, la modélisation et "
+  "les moyens de calcul, perspectives"
+  J.M. Escleine
+  DEC/SESC/LSC 08-008
+  Décembre 2008
+
+  notes :
+  - the original law used neutron capture density in cap/cm3
+}
+
+// changing the name of output
+@Output k;
+
+@Parameter kmin = 3.;
+
+@Function{
+  k = kmin;
+} // end of function

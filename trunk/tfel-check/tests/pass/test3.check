@@ -1,0 +1,2 @@
+@Command './test3 &> test3-Exec-1.out';
+@Test 'test3-Exec-1.out' 'test3.ref' 1;

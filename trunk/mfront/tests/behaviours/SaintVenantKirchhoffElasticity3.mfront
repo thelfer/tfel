@@ -1,0 +1,56 @@
+@DSL DefaultFiniteStrainDSL;
+@Behaviour SaintVenantKirchhoffElasticity3;
+@Author T. Helfer;
+@Date   20/06/2014;
+@Description{
+  "La loi de SaintVenantKirchhoffElasticity est une extension "
+  "de la loi de Hooke au cas des grandes rotations. "
+  "Elle ne peut être utilisée que pour des petites déformations. "
+  "Nous utilisons ici une déclaration implicite du calcul des différents "
+  "operateurs tangents possibles. Dans le cas de l'interface Aster, nous avons "
+  "les transformations suivantes : "
+  "\["
+  "DS_DEGL -> DS_DC -> DS_DF -> DTAU_DF -> DTAU_DDF"
+  "\]"
+  "Il est fortemment recommandé de s'inspirer du fichier "
+  "SaintVenantKirchhoffElasticity. Cette implantation n'est gardée que pour "
+  "tests."
+}
+
+@MaterialProperty stress young;
+young.setGlossaryName("YoungModulus");
+@MaterialProperty real nu;
+nu.setGlossaryName("PoissonRatio");
+
+@LocalVariable stress lambda;
+@LocalVariable stress mu;
+
+@InitLocalVariables{
+  lambda = computeLambda(young,nu);
+  mu     = computeMu(young,nu);
+}
+
+@PredictionOperator<DS_DEGL>{
+  static_cast<void>(smt); // suppression d'un warning : la matrice de
+			  // prédiction est toujours l'élastique
+  Dt = Stensor4(lambda*Stensor4::IxI()+2*mu*Stensor4::Id());
+}
+
+@Integrator{
+  // Green-Lagrange tensor
+  const StrainStensor e = computeGreenLagrangeTensor(F1);
+  // second Piola–Kirchhoff stress
+  const StressStensor s = lambda*trace(e)*StrainStensor::Id()+2*mu*e;
+  // convertion to Cauchy stress tensor
+  sig = convertSecondPiolaKirchhoffStressToCauchyStress(s,F1);
+}
+
+/*!
+ * Nous fournissons l'opérateur tangent le plus naturel pour cette
+ * loi.
+ */
+@TangentOperator<DS_DEGL>{
+  static_cast<void>(smt); // suppression d'un warning : la matrice
+			  // tangente est toujours l'élastique
+  Dt = lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
+}

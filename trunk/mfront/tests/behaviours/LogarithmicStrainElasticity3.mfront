@@ -1,0 +1,38 @@
+@DSL DefaultFiniteStrain;
+@Behaviour LogarithmicStrainElasticity3;
+@Author Thomas Helfer;
+@Date   30/06/2017;
+@Description{
+ "A very unefficient implementation "
+ "of an hyperelastic behaviour based "
+ "on the Hencky strain."
+ "Using a finite strain strategy would "
+ "be much more efficient".
+}
+
+@MaterialProperty stress young;
+young.setGlossaryName("YoungModulus");
+@MaterialProperty real nu;
+nu.setGlossaryName("PoissonRatio");
+
+@LocalVariable stress lambda;
+@LocalVariable stress mu;
+
+@InitLocalVariables{
+  lambda = computeLambda(young,nu);
+  mu = computeMu(young,nu);
+}
+
+@Integrator{
+  using LSHandler = LogarithmicStrainHandler<N,stress>;
+  LSHandler hs(LSHandler::EULERIAN,F1);
+  const auto e  = hs.getHenckyLogarithmicStrain();
+  const auto Ts = lambda*trace(e)*Stensor::Id()+2*mu*(e);
+  sig = hs.convertToCauchyStress(Ts);
+}
+
+@TangentOperator<DT_DELOG>
+{
+  static_cast<void>(smt);
+  Dt = lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
+}

@@ -1,0 +1,272 @@
+/*!
+ * \file   T91ViscoplastcicBehaviour.mfront
+ * \brief  resolution implicite sinh
+ * \author Franck Milliard
+ * \date   08 11 2013
+ */
+ 
+@DSL Implicit;
+@Behaviour T91ViscoplasticBehaviour;
+@Algorithm NewtonRaphson_NumericalJacobian;
+@Author    Franck Milliard;
+@Date      27/11/13;
+
+@Theta 0.5;
+@Epsilon 1.E-10;
+@PerturbationValueForNumericalJacobianComputation 1e-8;
+
+@MaterialProperty stress young;
+young.setGlossaryName("YoungModulus");
+@MaterialProperty real nu;
+nu.setGlossaryName("PoissonRatio");
+
+@StateVariable real      ksi              ;  // Phase proportion
+@PhysicalBounds ksi in [-0.00001:1.00001] ;
+ksi.setNormalisationFactor(1.e-2)         ;
+
+@MaterialLaw{"T91MartensiticSteel_YoungModulus_ROUX2007.mfront",
+    "T91MartensiticSteel_ThermalExpansion_ROUX2007.mfront",
+    "T91MartensiticSteel_YieldStress_ROUX2007.mfront",
+    "T91MartensiticSteel_F_ROUX2007.mfront",
+    "T91MartensiticSteel_Rinf_ROUX2007.mfront",
+    "T91MartensiticSteel_Nexp_ROUX2007.mfront",
+    "T91MartensiticSteel_Kvisc_ROUX2007.mfront",
+    "T91MartensiticSteel_b_ROUX2007.mfront",
+    "T91MartensiticSteel_C1_ROUX2007.mfront",
+    "T91MartensiticSteel_C2_ROUX2007.mfront",
+    "T91MartensiticSteel_gamma1_ROUX2007.mfront",
+    "T91AusteniticSteel_YoungModulus_ROUX2007.mfront",
+    "T91AusteniticSteel_ThermalExpansion_ROUX2007.mfront",
+    "T91AusteniticSteel_YieldStress_ROUX2007.mfront",
+    "T91AusteniticSteel_F_ROUX2007.mfront",
+    "T91AusteniticSteel_Rinf_ROUX2007.mfront",
+    "T91AusteniticSteel_Nexp_ROUX2007.mfront",
+    "T91AusteniticSteel_Kvisc_ROUX2007.mfront",
+    "T91AusteniticSteel_b_ROUX2007.mfront",
+    "T91MartensiticSteel_growth_ROUX2007.mfront"};
+
+@StateVariable stress        R_mart; // Isotropic hardening (Pa)
+R_mart.setNormalisationFactor(1.e11);
+@StateVariable strain        p_mart; // Equivalent plastic strain (no unit)
+@StateVariable StrainStensor     beta_mart; // Variable for the beta model (no unit)
+
+@StateVariable StrainStensor     a1_mart; // kinematic hardening parameter (no unit)
+a1_mart.setNormalisationFactor(1.e-3);
+@StateVariable StrainStensor     a2_mart; // kinematic hardening parameter (no unit)
+a2_mart.setNormalisationFactor(1.e-3);
+
+@StateVariable stress        R_aust; // Isotropic hardening (Pa)
+R_aust.setNormalisationFactor(1.e11);
+@StateVariable strain        p_aust; // Equivalent plastic strain (no unit)
+@StateVariable Stensor     beta_aust; // Variable for the beta model (no unit)
+
+// Martensite properties
+@LocalVariable stress   young_mart; // Young modulus  (Pa)
+@LocalVariable real   alpha_mart; // Thermal expansion (°C-1)
+@LocalVariable stress   R0_mart; // Yield stress (Pa)
+@LocalVariable real   F_mart ; // Viscoplastic coefficient (s-1)
+@LocalVariable stress   Rinf_mart ; // Isotropic hardening (Pa)
+@LocalVariable real   Q_mart ; // Arrhenius energy (J)
+@LocalVariable real   Nexp_mart ; // Viscosity exponent (no unit)
+@LocalVariable stress   Kvisc_mart ; // Viscosity coef (Pa)
+@LocalVariable real   b_mart ; // Isotropic hardening  parameter (no unit)
+@LocalVariable stress   C1_mart ; // Kinematic hardening parameter (Pa)
+@LocalVariable stress   C2_mart ; // Kinematic hardening parameter (Pa)
+@LocalVariable real   gamma1_mart ; // Kinematic hardening parameter (no unit)
+@LocalVariable real   D_mart ; // Coefficient for beta model (no unit)
+
+@LocalVariable stress        lambda_mart; // 1st lame coefficient (Pa)
+@LocalVariable stress        K_mart; // Bulk modulus (Pa)
+@LocalVariable stress        mu_mart; // Shear modulus (Pa) // 2nd Lame coefficient (Pa)
+@LocalVariable real        expmq_mart_o_rt; // Arrhenius coefficient for viscoplasticity model  (no unit)
+
+// Austenite properties
+@LocalVariable stress   young_aust; // Young modulus  (Pa)
+@LocalVariable real   alpha_aust; // Thermal expansion (°C-1)
+@LocalVariable stress   R0_aust ; // Yield stress
+@LocalVariable real   F_aust ; // Viscoplastic coefficient (s-1)
+@LocalVariable stress   Rinf_aust ; // Isotropic hardening (Pa)
+@LocalVariable real   Q_aust ; // Arrhenius energy (J)
+@LocalVariable real   Nexp_aust ; // Viscosity exponent
+@LocalVariable stress   Kvisc_aust ; // Viscosity coef (Pa)
+@LocalVariable real   b_aust ; // Isotropic hardening  parameter (no unit)
+@LocalVariable real   D_aust ; // Coefficient for beta model (no unit)
+
+@LocalVariable stress   lambda_aust; // 1st lame coefficient (Pa)
+@LocalVariable stress   K_aust; // Bulk modulus (Pa)
+@LocalVariable stress   mu_aust; // Shear modulus (Pa) // 2nd Lame coefficient (Pa)
+@LocalVariable real   expmq_aust_o_rt; // Arrhenius coefficient for viscoplasticity model  (no unit)
+
+@LocalVariable stress   C; // Mean 2nd Lame coefficient (Pa)
+
+@StateVariable real   I	; // Incubation progress (real from 0 to 1)
+
+@LocalVariable real   growth         ; // constant for the growth between martensite and austenite
+@LocalVariable real   A          ; // Parameter for Brachet model
+@LocalVariable real   Asat       ; // Parameter for Brachet model
+@LocalVariable real   Aeq        ; // Parameter for Brachet model
+@LocalVariable real   Kb         ; // Parameter for Brachet model
+@LocalVariable real   km         ; // Parameter for Brachet model
+@LocalVariable real   mb         ; // Parameter for Brachet model
+@LocalVariable real   nb         ; // Parameter for Brachet model
+@LocalVariable real   Wb         ; // Parameter for Brachet model
+@LocalVariable real   Cb         ; // Parameter for Brachet model
+@LocalVariable real   expmwb_o_rt; // Parameter for Brachet model
+@LocalVariable real   Tau_       ; // Parameter for Brachet model
+
+@LocalVariable real   T_       ; //Temperature
+
+/* Initialize Lame coefficients */
+@InitLocalVars{
+  const real R = 8.3144621;
+  const real KELVIN= 273.15;
+
+  T_ = T + theta * dT ;
+  
+  young_mart = T91MartensiticSteel_YoungModulus_ROUX2007(T_);
+
+  nu = 0.3 ;
+  young_aust = T91AusteniticSteel_YoungModulus_ROUX2007(T_);
+  
+  lambda_mart = computeLambda(young_mart,nu);
+  lambda_aust = computeLambda(young_aust,nu);
+  mu_mart     = computeMu(young_mart,nu);
+  mu_aust     = computeMu(young_aust,nu);
+  C = 1. / ( ( max(1. - ksi, epsilon) / mu_aust ) + ( max(ksi, epsilon) / mu_mart ) ) ;
+  K_mart = lambda_mart + 2.* mu_mart/3. ;
+  K_aust = lambda_aust + 2.* mu_aust/3. ;
+  expmq_mart_o_rt = exp( - Q_mart / ( R * (T_) ) ) ;
+  expmq_aust_o_rt = exp( - Q_aust / ( R * (T_) ) ) ;
+  expmwb_o_rt = exp( - Wb / ( R * (T_) ) ) ;
+
+  alpha_mart =  T91MartensiticSteel_ThermalExpansion_ROUX2007(T_);
+  
+  R0_mart = T91MartensiticSteel_YieldStress_ROUX2007(T_);
+  Rinf_mart = T91MartensiticSteel_Rinf_ROUX2007(T_);
+  b_mart = T91MartensiticSteel_b_ROUX2007(T_);
+  Kvisc_mart = T91MartensiticSteel_Kvisc_ROUX2007(T_);
+  Nexp_mart = T91MartensiticSteel_Nexp_ROUX2007(T_);
+  F_mart = T91MartensiticSteel_F_ROUX2007(T_);
+  Q_mart =  0.;
+  C1_mart = T91MartensiticSteel_C1_ROUX2007(T_);
+  C2_mart =  T91MartensiticSteel_C2_ROUX2007(T_);
+  gamma1_mart = T91MartensiticSteel_gamma1_ROUX2007(T_);
+  
+  alpha_aust = T91AusteniticSteel_ThermalExpansion_ROUX2007(T_);
+  R0_aust = T91AusteniticSteel_YieldStress_ROUX2007(T_);
+  Rinf_aust = T91AusteniticSteel_Rinf_ROUX2007(T_);
+  b_aust = T91AusteniticSteel_b_ROUX2007(T_);
+  Kvisc_aust = T91AusteniticSteel_Kvisc_ROUX2007(T_);
+  Nexp_aust = T91AusteniticSteel_Nexp_ROUX2007(T_);
+  F_aust = T91AusteniticSteel_F_ROUX2007(T_);
+  Q_aust = 0.;
+
+  // Beta model parameter
+  D_mart = 217.;
+  D_aust = 204.;
+  
+  // Brachet parameter
+  A =  0.04;
+  Asat =  970.  + KELVIN;
+  Aeq =  840.  + KELVIN;
+  Cb =  15.;
+  Kb =  6.7876e15;
+  km =  0.056;
+  mb =  1.151;
+  nb =  2.52;
+  Wb =  485.e3;
+  growth = T91MartensiticSteel_growth_ROUX2007(T_);
+  
+  // Incubation time for phase transition according to Roux' empirical law
+  Tau_ = A * ( Asat - T_ ) * exp( Cb / ( T_ - Aeq ) ) ;
+} // end of InitLocalVars
+
+
+@ComputeStress{
+  sig = ( 1./ ( ( max((1. - ksi ), epsilon) / lambda_aust ) +  ( max(ksi, epsilon) / lambda_mart ) ) ) * trace( eel ) * Stensor::Id() 
+    + 2. * (  1. / ( ( max((1. - ksi ), epsilon) / mu_aust )  + ( max(ksi, epsilon) / mu_mart ) ) ) * eel ;
+}
+
+
+@Integrator{
+  // The variables at the time t+theta*dt are written with _
+  // at the end
+  const StrainStensor beta_mart_ = beta_mart + theta * dbeta_mart ;
+  const StrainStensor beta_aust_ = beta_aust + theta * dbeta_aust ;
+  const stress R_mart_ = R_mart + theta * dR_mart ;
+  const stress R_aust_ = R_aust + theta * dR_aust ;
+  const StrainStensor a1_mart_ = a1_mart + theta * da1_mart ;
+  const StrainStensor a2_mart_ = a2_mart + theta * da2_mart ;
+  const real ksi_ = ksi + theta * dksi ;
+  
+  const StressStensor X1_mart_ = C1_mart * a1_mart_ / 1.5 ;
+  const StressStensor X2_mart_ = C2_mart * a2_mart_ / 1.5 ;
+
+  Stensor n_mart_ = Stensor(0.);
+  Stensor n_aust_ = Stensor(0.);
+  
+  // Stresses according to the beta scale rule
+  const StressStensor sig_mart_ = sig - ( 1. - ksi_ ) * C * ( beta_mart_ - beta_aust_ ) ;
+  const StressStensor sig_aust_ = sig + ksi_ * C * ( beta_mart_ - beta_aust_ )  ;
+  
+  // Equivalent stresses
+  const stress seq_mart_ = sigmaeq( sig_mart_ - X1_mart_ - X2_mart_  ) ;
+  const stress seq_aust_ = sigmaeq(  sig_aust_  ) ;
+  
+  // Yield criterion
+  const stress Fyield_mart_ = seq_mart_ - max(R0_mart, young_mart * epsilon) - R_mart_ ;
+  const stress Fyield_aust_ = seq_aust_ - max(R0_aust, young_aust * epsilon) - R_aust_ ;
+  
+  StrainStensor dp_mart_x_n_mart_ = Stensor(0.);
+  if (( Fyield_mart_ > 0. ) & (ksi_ > epsilon ) ) {
+    // Normal tensor
+    n_mart_ = ( 3./2. ) * ( deviator( sig_mart_ - X1_mart_ - X2_mart_ )  ) / seq_mart_ ;
+    // Behaviour of the viscoplastic law, K must be dependant from T
+    const strain pdot_mart = F_mart * expmq_mart_o_rt * pow(sinh( Fyield_mart_ / Kvisc_mart ) , Nexp_mart);
+    // Equivalent plastic strain
+    fp_mart -= pdot_mart * dt;
+    // Isotropic hardening
+    fR_mart -= b_mart * ( Rinf_mart - R_mart_ ) * dp_mart ;
+    // Kinematic hardening
+    dp_mart_x_n_mart_ = dp_mart  * n_mart_ ;
+    fa1_mart -= dp_mart_x_n_mart_ - gamma1_mart * dp_mart * a1_mart_ ;
+    fa2_mart -= dp_mart_x_n_mart_ ;
+  }
+  if ( (Fyield_aust_ > 0.) & (ksi_ < 1. - epsilon ) ) {
+    // Normal tensor
+    n_aust_ = (3./2.) * ( deviator( sig_aust_ )  ) / seq_aust_ ;
+    // Behaviour of the viscoplastic law, K must be dependant from T
+    const strain pdot_aust = F_aust * expmq_aust_o_rt * pow(sinh( Fyield_aust_ / Kvisc_aust ) , Nexp_aust);
+    // Equivalent plastic strain
+    fp_aust -= pdot_aust * dt;
+    // Isotropic hardening
+    fR_aust -= b_aust * ( Rinf_aust - R_aust_ ) * dp_aust ;
+  }
+  const StrainStensor dp_aust_x_n_aust_ = dp_aust * n_aust_ ;
+  // The expansion parameter is modified in this part of the code to take into account the austenite thermal expansion.
+  feel += ( 1. - ksi_ ) * ( dp_aust_x_n_aust_ ) + ksi_ * ( dp_mart_x_n_mart_ ) - deto -  (growth * dksi - ((alpha_aust)  * ( 1. - ksi_ ) + (alpha_mart)  *   ksi_ ) * dT )  * Stensor::Id() ;
+  // beta scale rule
+  fbeta_mart -= ( dp_mart_x_n_mart_ ) - D_mart * sqrt( ( dp_mart_x_n_mart_ ) | ( dp_mart_x_n_mart_ ) ) * beta_mart_ ;
+  fbeta_aust -= ( dp_aust_x_n_aust_ ) - D_aust * sqrt( ( dp_aust_x_n_aust_ ) | ( dp_aust_x_n_aust_ ) ) * beta_aust_ ;
+  // Kinetics of transformation -- Brachet
+  // Material parameters : A, Asat, Aeq, Cb, Kb, km, mb, nb, Wb
+  if ( T_ > Aeq ) {
+    if ( ( Asat < T_ ) || ( Tau_ < dt ) ) {
+      // the transformation should already be starting (no incubation)
+      fI -=1.;
+    }
+    else {
+      // Growth condition according to Scheil's additive rule ( I == 1 when transformation begins)
+      fI -= dt / Tau_;
+    }
+  }
+ 
+  const real Teq = pow( log( 1. /  min( ksi_ , 1. ) ) , 1. / mb )  / km + Aeq ;
+  const real I_ = I + theta * dI ;
+  
+  if ( ( I_ >= 1. ) & ( T_ - Teq > 0. ) ) {
+    // Integration of the differential equation from Brachet & Holt
+    //        exp( - Wb / ( R * T ) )
+    fksi += dt * Kb *    expmwb_o_rt          * pow( T_ - Teq , nb ) * ksi_ ;
+  }
+} // end of integrator

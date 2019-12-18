@@ -1,0 +1,28 @@
+@Author T. Helfer;
+@Date 29/06/2017;
+@Description{
+  "Test a behaviour handling free expansion using "
+  "the ComputeFreeStressExpansion keyword"
+};
+
+@ModellingHypothesis 'AxisymmetricalGeneralisedPlaneStrain';
+@Behaviour<cyrano> '@MFrontCyranoBehavioursBuildPath@' 'cyranocomputestressfreeexpansion';
+
+@Real 'E'  150.e9;
+@Real 'nu'   0.3333;
+@MaterialProperty<constant> 'YoungModulus'     'E';
+@MaterialProperty<constant> 'PoissonRatio'     'nu';
+
+@ExternalStateVariable 'Temperature' 293.15;
+@ExternalStateVariable 'BurnUp_AtPercent' {0:0,228960000:10};
+
+@ImposedStrain 'ERR' 0.;
+@ImposedStrain 'EZZ' 0.;
+@ImposedStrain 'ETT' 0.;
+
+@Times {0.,228960000 in 20};
+
+@Real 'C' 0.6e-2;
+@Test<function> 'SRR' '-E/(1-2*nu)*C*BurnUp_AtPercent'  1.e-3;
+@Test<function> 'SZZ' '-E/(1-2*nu)*C*BurnUp_AtPercent'  1.e-3;
+@Test<function> 'STT' '-E/(1-2*nu)*C*BurnUp_AtPercent'  1.e-3;

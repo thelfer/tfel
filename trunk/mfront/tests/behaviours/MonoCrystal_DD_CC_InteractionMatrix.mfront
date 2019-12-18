@@ -1,0 +1,130 @@
+//! interaction matrix DD_CC
+@LocalVariable tfel::math::tmatrix<12,12,real> mh;
+
+@LocalVariable tfel::math::tmatrix<3,3,real> A0;
+@LocalVariable tfel::math::tmatrix<3,3,real> A1;
+@LocalVariable tfel::math::tmatrix<3,3,real> A2;
+@LocalVariable tfel::math::tmatrix<3,3,real> A3;
+@LocalVariable tfel::math::tmatrix<3,3,real> A4;
+@LocalVariable tfel::math::tmatrix<3,3,real> A5;
+      
+@InitLocalVariables<Append>{
+  
+  //const real h0 = 0.1024 ;  
+  //const real h1 = 0.7 ;
+  //const real h2 = 0.1 ;
+  //const real h3 = 0.1 ;
+  //const real h4 = 0.1  ;  
+  //const real h5 = 0.1  ;  
+  
+  A0(0,0)=h0;
+  A0(0,1)=h1;
+  A0(0,2)=h1;
+  A0(1,0)=h1;
+  A0(1,1)=h0;
+  A0(1,2)=h1;
+  A0(2,0)=h1;
+  A0(2,1)=h1;
+  A0(2,2)=h0;
+  
+  for(unsigned short i=0;i!=3;++i){
+    for(unsigned short j=0;j!=3;++j){
+       mh(  i,  j)=A0(i,j) ;
+       mh(3+i,3+j)=A0(i,j);
+       mh(6+i,6+j)=A0(i,j);
+       mh(9+i,9+j)=A0(i,j);
+    }
+  }
+
+  A1(0,0)=h4;
+  A1(0,1)=h3;
+  A1(0,2)=h2;
+  A1(1,0)=h3;
+  A1(1,1)=h5;
+  A1(1,2)=h3;
+  A1(2,0)=h2;
+  A1(2,1)=h3;
+  A1(2,2)=h4;
+  
+  for(unsigned short i=0;i!=3;++i){
+     for(unsigned short j=0;j!=3;++j){
+       mh(9+i,6+j)=A1(i,j);
+       mh(6+i,9+j)=A1(i,j);
+     }
+  }
+  
+  A2(0,0)=h4;
+  A2(0,1)=h2;
+  A2(0,2)=h3;
+  A2(1,0)=h2;
+  A2(1,1)=h4;
+  A2(1,2)=h3;
+  A2(2,0)=h3;
+  A2(2,1)=h3;
+  A2(2,2)=h5;
+
+  for(unsigned short i=0;i!=3;++i){
+     for(unsigned short j=0;j!=3;++j){
+         mh(9+i,  j)=A2(i,j);
+         mh(  i,9+j)=A2(i,j);
+     }
+  }
+  
+  A3(0,0)=h5;
+  A3(0,1)=h3;
+  A3(0,2)=h3;
+  A3(1,0)=h3;
+  A3(1,1)=h4;
+  A3(1,2)=h2;
+  A3(2,0)=h3;
+  A3(2,1)=h2;
+  A3(2,2)=h4;
+  
+  for(unsigned short i=0;i!=3;++i){
+     for(unsigned short j=0;j!=3;++j){
+        mh(6+i,j)=A3(i,j);
+        mh(i,6+j)=A3(i,j);
+     }
+  }  
+  
+  A4(0,0)=h2;
+  A4(0,1)=h3;
+  A4(0,2)=h4;
+  A4(1,0)=h3;
+  A4(1,1)=h5;
+  A4(1,2)=h3;
+  A4(2,0)=h4;
+  A4(2,1)=h3;
+  A4(2,2)=h2;
+  
+  for(unsigned short i=0;i!=3;++i){
+     for(unsigned short j=0;j!=3;++j){
+        mh(3+i,j)=A3(i,j);
+        mh(i,3+j)=A3(i,j);
+     }
+  }  
+  
+  
+  A5(0,0)=h3;
+  A5(0,1)=h3;
+  A5(0,2)=h5;
+  A5(1,0)=h2;
+  A5(1,1)=h4;
+  A5(1,2)=h3;
+  A5(2,0)=h4;
+  A5(2,1)=h2;
+  A5(2,2)=h3;
+  
+  for(unsigned short i=0;i!=3;++i){
+     for(unsigned short j=0;j!=3;++j){
+        mh(3+i,9+j)=A3(i,j);
+        mh(9+i,3+j)=A3(j,i);
+        mh(3+i,6+j)=A3(i,j);
+        mh(6+i,3+j)=A3(j,i);
+     }
+  }  
+  
+  //cout << "H= "  << mh << endl ;
+
+
+}

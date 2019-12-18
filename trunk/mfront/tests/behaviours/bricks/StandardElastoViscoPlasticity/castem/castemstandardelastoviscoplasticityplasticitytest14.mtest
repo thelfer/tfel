@@ -1,0 +1,25 @@
+@Author HELFER Thomas 202608;
+@Date   12/05/2018;
+@Description{
+
+};
+
+@XMLOutputFile @xml_output@;
+@MaximumNumberOfSubSteps 1;
+@Behaviour<castem> @library@ @behaviour@;
+
+@MaterialProperty<constant> 'YoungModulus1' 1.5e+11;
+@MaterialProperty<constant> 'YoungModulus2' 1.5e+11;
+@MaterialProperty<constant> 'YoungModulus3' 1.5e+11;
+@MaterialProperty<constant> 'PoissonRatio12' 0.3;
+@MaterialProperty<constant> 'PoissonRatio23' 0.3;
+@MaterialProperty<constant> 'PoissonRatio13' 0.3;
+@MaterialProperty<constant> 'ShearModulus12' 150e9;
+@MaterialProperty<constant> 'ShearModulus23' 150e9;
+@MaterialProperty<constant> 'ShearModulus13' 150e9;
+
+@ExternalStateVariable 'Temperature' 293.15 ;
+
+@ImposedStrain 'EXX' {0:0,1:1.e-2};
+
+@Times {0,1 in 10};

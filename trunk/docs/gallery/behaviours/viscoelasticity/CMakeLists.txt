@@ -1,0 +1,2 @@
+install_gallery(viscoelasticity GeneralizedMaxwell.mfront)
+install_gallery(viscoelasticity SkoroholdOlevskyViscousSinteringBehaviour.mfront)

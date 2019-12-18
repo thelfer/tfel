@@ -1,0 +1,35 @@
+@Behaviour IsotropicLinearSwelling2;
+@Author Helfer Thomas;
+@Date   06/08/16;
+@Description{
+ A test for the `@Swelling` keyword with the `Linear` option.
+}
+
+// Material properties
+@MaterialProperty stress young;
+young.setGlossaryName("YoungModulus");
+@MaterialProperty real   nu;
+nu.setGlossaryName("PoissonRatio");
+
+@Swelling<Linear> "NickelAlloyPK33_ThermalExpansion_MechAlloy33.mfront";
+
+@LocalVariable stress lambda,mu;
+
+@InitLocalVariables{
+  lambda = computeLambda(young,nu);
+  mu = computeMu(young,nu);
+}
+
+@PredictionOperator{
+  static_cast<void>(smt);
+  Dt = lambda*Stensor4::IxI()+2*mu*Stensor4::Id();  
+}
+
+@Integrator{
+  sig = lambda*trace(eto+deto)*StrainStensor::Id()+2*mu*(eto+deto);
+}
+
+@TangentOperator{
+  static_cast<void>(smt);
+  Dt = lambda*Stensor4::IxI()+2*mu*Stensor4::Id();  
+}

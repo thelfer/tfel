@@ -1,0 +1,21 @@
+@DSL Implicit;
+@Behaviour StandardElastoViscoPlasticityOrthotropicNortonTest_na;
+@Author Thomas Helfer;
+@Date 07/04/2018;
+
+@ModellingHypotheses {".+"};
+
+@Epsilon 1.e-16;
+@Theta 1;
+
+@OrthotropicBehaviour<Pipe>;
+
+@Brick "StandardElastoViscoPlasticity" {
+  stress_potential : "Hooke" {young_modulus : 150e9, poisson_ratio : 0.3},
+  inelastic_flow : "Norton" {
+    criterion : "Hill" {F : 0.371, G : 0.629, H : 4.052, L : 1.5, M : 1.5, N : 1.5},
+    flow_criterion : "Hill" {F : 0.371, G : 0.629, H : 4.052, L : 1.5, M : 1.5, N : 1.5},
+    K : 250e6,
+    n : 3.2
+  }
+};

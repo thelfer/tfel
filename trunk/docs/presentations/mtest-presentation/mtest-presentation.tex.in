@@ -1,0 +1,166 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%%	Fichier	   : ces
+%%	Auteur     : th202608@pleiades043.intra.cea.fr
+%%	Date       : 26 mai 2009
+%%	Répertoire : /home/th202608/documents/presentations/2009/CES/
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+
+\documentclass{beamer}
+
+\usepackage{beamerthemecea2012}
+\usepackage[utf8]{inputenc}
+\usepackage{pstricks}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{couleurs}
+
+\usepackage{mathematiques}
+\usepackage{mecanique}
+\usepackage{gnuplot}
+
+\usepackage[frenchb]{babel}
+
+\newcommand{\aster}{\texttt{Aster}}
+\newcommand{\unix}{\texttt{Unix}}
+\newcommand{\linux}{\texttt{LiNuX}}
+\newcommand{\windows}{\texttt{Windows}}
+
+\newcommand{\tfel}{\texttt{tfel}}
+\newcommand{\mfront}{\texttt{mfront}}
+\newcommand{\mtest}{\texttt{mtest}}
+\newcommand{\umat}{\texttt{umat}}
+\newcommand{\castem}{\texttt{Cast3M}}
+\newcommand{\pycastem}{\texttt{pyCast3M}}
+\newcommand{\pleiades}{\texttt{pleiades}}
+\newcommand{\sirius}{\texttt{sirius}}
+\newcommand{\nom}[1]{\textsc{#1}}
+
+\newcommand{\code}[1]{
+  \psframebox[linecolor=ceaorange,fillcolor=ceabluecurve,fillstyle=solid]{
+    \begin{minipage}[t]{0.95\linewidth}
+      \scriptsize\tt #1
+    \end{minipage}
+  }
+}
+
+\Titre{Présentation de {\tt MTest}}
+\Auteur{T. Helfer}
+%\Evenement{Formation Areva}
+%\Date{Avril 2014}
+
+\begin{document}
+
+\section{Présentation de {\tt MTest}}
+\PageTitre{}
+
+\titre{Sommaire}
+\frame{
+  \setcounter{tocdepth}{2}
+  \tableofcontents{}
+}
+
+\titre{Présentation}
+\frame{
+  \begin{itemize}
+  \item test unitaire de lois de comportement~;
+  \item un utilitaire nommé {\tt mtest}~;
+  \item une librairie {\tt C++} {\tt libTFELMtest.so}~;
+  \item un module {\tt python} nommé {\tt mtest} (dans le package
+    mfront)~;
+  \end{itemize}
+}
+
+\titre{Exemple}
+\frame{
+  \begin{center}
+    \resizebox{!}{0.017\paperheight}{
+      \code{
+        \input{@abs_top_srcdir@/docs/presentations/images/castemtvergaard.tex}
+      }
+    }
+  \end{center}
+  \begin{itemize}
+  \item un fichier simple (!)
+  \item {\tt mtest tvergaard.mtest}
+  \end{itemize}
+}
+
+\titre{Fonctionnalités}
+\frame{
+  \begin{itemize}
+  \item possibilité de piloter en contraintes ou/en déformations ou de
+    manière mixte~;
+  \item l'algorithme de résolution peut largement être paramétré~:
+    \begin{itemize}
+    \item algorithme d'accélération de \castem{} (indispensable ? pour
+      l'interface \umat{})~;
+    \item matrice de prédiction, matrice tangente cohérente (interface
+      \aster{})~;
+    \item sous-découpage du pas de temps~;
+    \item etc...
+    \end{itemize}
+  \item possibilité de comparer les résultats à une solution
+    analytique ou des fichiers de références (non régression)~;
+  \item les lois \mfront{} peuvent générer des fichiers {\tt mtest} en
+    cas de non convergence (mais ça a un coût !)
+  \end{itemize}
+}
+
+\intercalaire{Python}
+
+\titre{Exemple de code python}
+\frame{
+  \rput[l](0,-0.8){
+    \resizebox{!}{0.017\paperheight}{
+      \code{
+        \small
+        \input{@abs_top_srcdir@/docs/presentations/images/castemtvergaard-py.tex}
+      }
+    }
+  }
+  \rput[l](5.5,0){
+    \begin{minipage}{0.55\linewidth}
+      \begin{itemize}
+      \item Possibilité de piloter \og{}~finement\fg{} le chargement~:
+        \begin{itemize}
+        \item tube en pression interne asservie pour avoir une vitesse
+          de déformation diamétrale constante.
+        \end{itemize}
+      \item Peut servir à intégrer \mtest{} dans un code de
+        recalage des paramètres d'une loi~:
+        \begin{itemize}
+        \item voir les perspectives~;
+        \end{itemize}
+      \end{itemize}
+    \end{minipage}
+  }
+}
+
+\intercalaire{Perspectives}
+
+\titre{Conclusions}
+\frame{
+  \begin{itemize}
+  \item \mtest{} a été initialement développé pour introduire des
+    tests de non régression des lois de comportement mécanique
+    générées par \mfront{}~:
+    \begin{itemize}
+    \item plus de \(80\) tests en gestion de configuration
+    \end{itemize}
+  \item un outil bien utile~;
+  \end{itemize}
+}
+
+\titre{Perspectives}
+\frame{
+  \begin{itemize}
+  \item recalage de paramètres~:
+  \end{itemize}
+}
+
+\end{document}
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: t
+%%% End: 

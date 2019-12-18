@@ -1,0 +1,31 @@
+/*! 
+ * \file   castemmieheapellambrechtlogarithmicstrainnorton-uniaxialloading-3-1D.mtest
+ * \brief
+ * \author Helfer Thomas
+ * \brief  4 dec. 2013
+ */
+
+@XMLOutputFile @xml_output@;
+@ModellingHypothesis 'AxisymmetricalGeneralisedPlaneStrain';
+@MaximumNumberOfSubSteps 1;
+@Behaviour<generic> @library@ 'LogarithmicStrainNortonCreep' {
+ stress_measure : @stress_measure@, tangent_operator : @tangent_operator@
+};
+@DrivingVariableEpsilon 1.e-10;
+@StressEpsilon          2.e3;
+
+@MaterialProperty<constant> 'YoungModulus'      80.e9;
+@MaterialProperty<constant> 'PoissonRatio'       0.35;
+@MaterialProperty<constant> 'A'   '0.003944e-6**4.39';
+@MaterialProperty<constant> 'E'   4.39;
+
+@ImposedDrivingVariable 'FZZ' {0:1.,1.:4.5};
+
+@ExternalStateVariable 'Temperature' 293.15;
+
+@Times {0.,1 in 500};
+
+@Test<file> @reference_file@ {'FZZ':2,'FRR':3,'FTT':3} 1e-5;
+@Test<file> @reference_file@ {'SZZ':4} 1.3e3;
+@Test<file> @reference_file@ {'EquivalentViscoplasticStrain':5} 1e-4;
+@Test<function> {'SRR':'0','STT':'0'}           1.e3;

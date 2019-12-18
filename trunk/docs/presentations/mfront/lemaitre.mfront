@@ -1,0 +1,27 @@
+@Parser Implicit;
+@Behaviour Lemaitre;
+@Algorithm NewtonRaphson_NumericalJacobian;
+@RequireStiffnessTensor;
+@MaterialProperty real E;
+@MaterialProperty real UNsurK;
+@MaterialProperty real UNsurM;
+@StateVariable real    p;
+@ComputeStress{  sig = D*eel;} 
+@Integrator{
+  real seq = sigmaeq(sig);
+  Stensor n = Stensor(0.);
+  real p_    = max((p+theta*dp),1.e-8) ;
+  if(seq > 1.e-15){
+     n   = 1.5*deviator(sig)/seq;
+     real slem  = seq*UNsurK/pow(p_,UNsurM);
+     feel += dp*n-deto;
+     fp   -= dt*pow(slem,E);
+  } else {
+    feel -= deto;    
+  }  
+}
+@TangentOperator{
+  Stensor4 Je;
+  getPartialJacobianInvert(Je);
+  Dt = D*Je;
+}

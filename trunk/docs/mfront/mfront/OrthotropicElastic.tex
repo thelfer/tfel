@@ -1,0 +1,17 @@
+\noindent
+\ttfamily
+\hlstd{@Parser}\hlstd{\ \ \ \ }\hlstd{DefaultParser}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@Behaviour\ OrthotropicElastic}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@Author}\hlstd{\ \ \ \ }\hlstd{Helfer\ Thomas}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@Date}\hlstd{\ \ \ \ \ \ }\hlstd{}\hlnum{10}\hlstd{}\hlsym{/}\hlstd{}\hlnum{03}\hlstd{}\hlsym{/}\hlstd{}\hlnum{11}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@OrthotropicBehaviour}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@RequireStiffnessTensor}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@ProvidesSymmetricTangentOperator}\hlsym{;}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@Integrator}\hlsym{\{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{sig\ }\hlsym{=\ }\hlstd{D}\hlsym{{*}(}\hlstd{eto}\hlsym{+}\hlstd{deto}\hlsym{);}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwa{if}\hlstd{}\hlsym{(}\hlstd{computeTangentOperator\textunderscore }\hlsym{)\{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{Dt\ }\hlsym{=\ }\hlstd{D}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlsym{\}}\hspace*{\fill}\\
+\hlstd{}\hlsym{\}}

@@ -1,0 +1,12 @@
+@DSL    MaterialLaw;
+@Law    PoissonRatioTest_13;
+@Author Thomas Helfer;
+@Date   26/02/2016;
+
+// output of law
+@Output nu;
+nu.setGlossaryName("PoissonRatio13");
+
+@Function{
+  nu = 0.18;
+}

@@ -1,0 +1,26 @@
+@Author T. Helfer;
+@Date 15/09/2015;
+@Description{
+  "This test describes an uniaxial loading "
+  "by imposing the deformation gradient in "
+  "one direction. "
+  "The perpendicular directions are "
+  "stress-free. "
+  "The results are compared to analytical solutions."
+};
+
+@UseCastemAccelerationAlgorithm true;
+@ModellingHypothesis 'AxisymmetricalGeneralisedPlaneStrain';
+@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatsaintvenantkirchhoffelasticity';
+@MaterialProperty<constant> 'YoungModulus'     215.e9;
+@MaterialProperty<constant> 'PoissonRatio'       0.3;
+
+@ImposedDrivingVariable 'FTT' {0:1.,1.:1.2};
+
+@ExternalStateVariable 'Temperature' 293.15;
+
+@Times {0.,1 in 10};
+
+@Test<function> {'STT':'YoungModulus*(FTT**2-1)*FTT/(2*(1-PoissonRatio*(FTT**2-1)))'} 1.e-2;
+@Test<function> {'FRR':'sqrt(1-PoissonRatio*(FTT**2-1))'} 1.e-8;
+@Test<function> {'FZZ':'sqrt(1-PoissonRatio*(FTT**2-1))'} 1.e-8;

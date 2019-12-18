@@ -1,0 +1,34 @@
+/*! 
+ * \file   elasticity.mtest
+ * \brief
+ * \author Helfer Thomas
+ * \brief  09 avril 2013
+ */
+
+@UseCastemAccelerationAlgorithm true;
+@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatcompressibleneohookeanbehaviour';
+
+@Real 'C_C' '1.e6';
+@Real 'C_D' '1.e-10';
+@Real 'E'   '2.*(2.*C_C)*(1.+0.5)';
+
+@MaterialProperty<constant> 'YoungModulus'    '100*E';
+@MaterialProperty<constant> 'PoissonRatio'     0.49999;
+@MaterialProperty<constant> 'ThermalExpansion'   0.;
+@MaterialProperty<constant> 'C1' 'C_C';
+@MaterialProperty<constant> 'C2' 'C_D';
+
+@ExternalStateVariable 'Temperature' {0:293.15,3600.:800};
+
+@ImposedDeformationGradient 'FZZ' {0:1,1:3};
+@ImposedDeformationGradient 'FXY' 0;
+@ImposedDeformationGradient 'FYX' 0;
+@ImposedDeformationGradient 'FXZ' 0;
+@ImposedDeformationGradient 'FZX' 0;
+@ImposedDeformationGradient 'FYZ' 0;
+@ImposedDeformationGradient 'FZY' 0;
+
+@Times {0.,1 in 10};
+
+@Test<function> {'SZZ':'(FZZ**2-1/FZZ)*2*C_C'} 1.e3;
+@Test<function> {'SXX':'0.','SYY':'0.','SXY':'0.','SXZ':'0.','SYZ':'0.'} 1.e-2;

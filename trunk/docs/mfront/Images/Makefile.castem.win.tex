@@ -1,0 +1,48 @@
+\noindent
+\ttfamily
+\hlstd{CASTEMDIR}\hlsym{=}\hlstd{c}\hlsym{:}\hlstd{$\backslash$$\backslash$Cast3M$\backslash$$\backslash$PCW\textunderscore 13\hspace*{\fill}\\
+VERSION}\hlsym{=}\hlstd{}\hlnum{13}\hspace*{\fill}\\
+\hlstd{ARCH}\hlsym{=}\hlstd{}\hlnum{64}\hspace*{\fill}\\
+\hlstd{ESOPE}\hlsym{=}\hlstd{bin\textunderscore esope\textunderscore Win\textunderscore }\hlsym{\$(}\hlstd{ARCH}\hlsym{)}\hlstd{\textunderscore }\hlsym{\$(}\hlstd{VERSION}\hlsym{)}\hlstd{.exe\hspace*{\fill}\\
+LIBCASTEM}\hlsym{=}\hlstd{libcastem\textunderscore }\hlsym{\$(}\hlstd{ARCH}\hlsym{)}\hlstd{.a\hspace*{\fill}\\
+CAST}\hlsym{=}\hlstd{cast\textunderscore }\hlsym{\$(}\hlstd{ARCH}\hlsym{)}\hlstd{\textunderscore }\hlsym{\$(}\hlstd{VERSION}\hlsym{)}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+FFLAGS\ }\hlsym{=\ {-}}\hlstd{Wall\ }\hlsym{{-}}\hlstd{m}\hlsym{\$(}\hlstd{ARCH}\hlsym{)\ {-}}\hlstd{O5\ }\hlsym{{-}}\hlstd{pthread\ }\hlsym{{-}}\hlstd{ftracer\ }\hlsym{{-}}\hlstd{finit{-}real}\hlsym{=}\hlstd{nan\ }\hlsym{{-}}\hlstd{finit{-}integer}\hlsym{={-}}\hlstd{}\hlnum{524287}\hspace*{\fill}\\
+\hlstd{}\hlkwb{ifeq\ }\hlstd{}\hlsym{(\$(}\hlstd{ARCH}\hlsym{),}\hlstd{}\hlnum{64}\hlstd{}\hlsym{)}\hspace*{\fill}\\
+\hlstd{FFLAGS\ }\hlsym{+=\ {-}}\hlstd{fdefault{-}integer{-}8\ }\hlsym{{-}}\hlstd{fdefault{-}real{-}8\ }\hlsym{{-}}\hlstd{fdefault{-}double{-}8}\hspace*{\fill}\\
+\hlkwb{endif}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+MFRONT\textunderscore SOURCES}\hlstd{\ \ }\hlstd{}\hlsym{=\ }\hlstd{Lorentz.mfront}\hlstd{\ \ \ \ }\hlstd{$\backslash$\hspace*{\fill}\\
+}\hlstd{\ \ \ \ \ \ \ \ \ \ \ }\hlstd{Elasticity.mfront\hspace*{\fill}\\
+MFRONT\textunderscore LDFLAGS}\hlstd{\ \ }\hlstd{}\hlsym{=\ {-}}\hlstd{Lsrc\ }\hlsym{{-}}\hlstd{lUmatBehaviour\hspace*{\fill}\\
+\hspace*{\fill}\\
+FSOURCES\ }\hlsym{=\ }\hlstd{umat.f\hspace*{\fill}\\
+FOBJECTS\ }\hlsym{=\ \$(}\hlstd{FSOURCES}\hlsym{:}\hlstd{.f}\hlsym{=}\hlstd{.o}\hlsym{)}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+.PHONY}\hlsym{:\ }\hlstd{}\hlkwa{all\ clean\ }\hlstd{cast}\hspace*{\fill}\\
+\hspace*{\fill}\\
+\hlkwa{all}\hlstd{}\hlsym{:\ }\hlstd{cast\hspace*{\fill}\\
+\hspace*{\fill}\\
+cast}\hlsym{:\ \$(}\hlstd{FOBJECTS}\hlsym{)\ }\hlstd{src}\hlsym{/}\hlstd{libUmatBehaviour.dll\hspace*{\fill}\\
+\ \ \ \ \ }\hlkwa{rm\ }\hlstd{}\hlsym{{-}}\hlstd{fr\ }\hlsym{\$(}\hlstd{LIBCASTEM}\hlsym{)}\hspace*{\fill}\\
+\hlstd{\ cp\ }\hlsym{\$(}\hlstd{CASTEMDIR}\hlsym{)}\hlstd{$\backslash$$\backslash$lib}\hlsym{\$(}\hlstd{ARCH}\hlsym{)}\hlstd{$\backslash$$\backslash$}\hlsym{\$(}\hlstd{LIBCASTEM}\hlsym{)\ }\hlstd{.\hspace*{\fill}\\
+\ \ \ \ \ }\hlsym{\$(}\hlstd{CASTEMDIR}\hlsym{)}\hlstd{$\backslash$$\backslash$mingw}\hlsym{\$(}\hlstd{ARCH}\hlsym{)}\hlstd{$\backslash$$\backslash$bin$\backslash$$\backslash$}\hlkwa{ar}\hlstd{.exe\ }\hlsym{{-}}\hlstd{ruv\ }\hlsym{\$(}\hlstd{LIBCASTEM}\hlsym{)\ {*}}\hlstd{.o\hspace*{\fill}\\
+\ \ \ \ \ }\hlsym{\$(}\hlstd{CASTEMDIR}\hlsym{)}\hlstd{$\backslash$$\backslash$mingw}\hlsym{\$(}\hlstd{ARCH}\hlsym{)}\hlstd{$\backslash$$\backslash$bin$\backslash$$\backslash$ranlib\ }\hlsym{\$(}\hlstd{LIBCASTEM}\hlsym{)}\hspace*{\fill}\\
+\hlstd{\ }\hlsym{\$(}\hlstd{CASTEMDIR}\hlsym{)}\hlstd{$\backslash$$\backslash$mingw}\hlsym{\$(}\hlstd{ARCH}\hlsym{)}\hlstd{$\backslash$$\backslash$bin$\backslash$$\backslash$gfortran.exe\ }\hlsym{{-}}\hlstd{v\ }\hlsym{{-}}\hlstd{m}\hlsym{\$(}\hlstd{ARCH}\hlsym{)\ {-}}\hlstd{static{-}libgfortran\ }\hlsym{{-}}\hlstd{static{-}libgcc\ }\hlsym{{-}}\hlstd{O5\ }\hlsym{{-}}\hlstd{o\ }\hlsym{\$(}\hlstd{CAST}\hlsym{)\ {-}}\hlstd{u\textunderscore MAIN\textunderscore \textunderscore \ }\hlsym{{-}}\hlstd{u\textunderscore \textunderscore \textunderscore BLOCK\textunderscore DATA\textunderscore \textunderscore \ }\hlsym{\$(}\hlstd{LIBCASTEM}\hlsym{)\ {-}}\hlstd{L}\hlsym{\$(}\hlstd{CASTEMDIR}\hlsym{)}\hlstd{$\backslash$$\backslash$lib}\hlsym{\$(}\hlstd{ARCH}\hlsym{)\ {-}}\hlstd{lesope\textunderscore }\hlsym{\$(}\hlstd{ARCH}\hlsym{)\ {-}}\hlstd{lfxdr\textunderscore }\hlsym{\$(}\hlstd{ARCH}\hlsym{)\ {-}}\hlstd{ljpeg\textunderscore }\hlsym{\$(}\hlstd{ARCH}\hlsym{)\ {-}}\hlstd{lpthreadGC2\ }\hlsym{{-}}\hlstd{lcastemdll}\hlsym{\$(}\hlstd{ARCH}\hlsym{)\ {-}}\hlstd{lfreeglut}\hlsym{\$(}\hlstd{ARCH}\hlsym{)\ {-}}\hlstd{lopengl32\ }\hlsym{{-}}\hlstd{lgdi32\ }\hlsym{{-}}\hlstd{lcomdlg32\ }\hlsym{{-}}\hlstd{lmsvcrt\ }\hlsym{\$(}\hlstd{MFRONT\textunderscore LDFLAGS}\hlsym{)}\hspace*{\fill}\\
+\hlstd{}\hspace*{\fill}\\
+\hlsym{\%}\hlstd{.f}\hlsym{:\%}\hlstd{.eso\hspace*{\fill}\\
+\ \ \ \ \ }\hlkwb{export\ }\hlstd{ESOPE\textunderscore INC}\hlsym{=}\hlstd{}\hlstr{"\$(CASTEMDIR)$\backslash$$\backslash$includes$\backslash$$\backslash$eso"}\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{$\backslash$\hspace*{\fill}\\
+\ \ \ \ \ }\hlkwb{export\ }\hlstd{ESOPE\textunderscore PARAM}\hlsym{=}\hlstd{}\hlstr{"NORME=TRADUCTEUR,FORT=UNIX\$(ARCH),ESOPE=10000000"}\hlstd{}\hlstd{\ \ }\hlstd{$\backslash$\hspace*{\fill}\\
+\ \ \ \ \ }\hlsym{\$(}\hlstd{CASTEMDIR}\hlsym{)}\hlstd{$\backslash$$\backslash$bin$\backslash$$\backslash$}\hlsym{\$(}\hlstd{ESOPE}\hlsym{)\ \$$<$\ $>$\ \$}\hlstd{@.out\hspace*{\fill}\\
+\ mv\ esope.out\ }\hlsym{\$}\hlstd{@}\hspace*{\fill}\\
+\hspace*{\fill}\\
+\hlsym{\%}\hlstd{.o}\hlsym{:\%}\hlstd{.f\hspace*{\fill}\\
+\ \ \ \ \ }\hlsym{\$(}\hlstd{CASTEMDIR}\hlsym{)}\hlstd{$\backslash$mingw}\hlsym{\$(}\hlstd{ARCH}\hlsym{)}\hlstd{$\backslash$bin$\backslash$gfortran.exe\ }\hlsym{\$(}\hlstd{FFLAGS}\hlsym{)\ \$$<$\ {-}}\hlstd{c\hspace*{\fill}\\
+\hspace*{\fill}\\
+src}\hlsym{/}\hlstd{libUmatBehaviour.dll}\hlsym{:\ \$(}\hlstd{MFRONT\textunderscore SOURCES}\hlsym{)}\hspace*{\fill}\\
+\hlstd{\ mfront\ }\hlsym{{-}{-}}\hlstd{obuild\ }\hlsym{{-}{-}}\hlstd{interface}\hlsym{=}\hlstd{umat\ }\hlsym{\$(}\hlstd{MFRONT\textunderscore SOURCES}\hlsym{)}\hspace*{\fill}\\
+\hlstd{}\hspace*{\fill}\\
+\hlkwa{clean}\hlstd{}\hlsym{:}\hspace*{\fill}\\
+\hlstd{\ }\hlsym{\$(}\hlstd{RM}\hlsym{)\ {-}}\hlstd{fr\ }\hlkwb{include\ }\hlstd{src\ castem\ }\hlsym{\$(}\hlstd{FOBJECTS}\hlsym{)\ \$(}\hlstd{LIBCASTEM}\hlsym{)\ \$(}\hlstd{CAST}\hlsym{)}\hlstd{}\hspace*{\fill}\\
+\mbox{}
+\normalfont

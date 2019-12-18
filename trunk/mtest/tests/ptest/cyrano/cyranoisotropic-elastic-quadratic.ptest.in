@@ -1,0 +1,17 @@
+@InnerRadius 4.2e-3;
+@OuterRadius 4.7e-3;
+@NumberOfElements 10;
+@ElementType 'Quadratic';
+@AxialLoading 'None';
+@PerformSmallStrainAnalysis true;
+
+@Behaviour<cyrano> '@MFrontCyranoBehavioursBuildPath@' 'cyranoelasticity';
+@MaterialProperty<constant> 'YoungModulus' 150e9;
+@MaterialProperty<constant> 'PoissonRatio' 0.3;
+
+@Times {0,1};
+@InnerPressureEvolution 1.5e6;
+@OuterPressureEvolution {0:1.5e6,1:10e6};
+@ExternalStateVariable 'Temperature' 293.15;
+
+@Test<file,profile> '@top_srcdir@/mtest/tests/ptest/references/isotropic-elastic-quadratic.ref' {'SRR':2,'SZZ':3,'STT':4} 1e-3;

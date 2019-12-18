@@ -1,0 +1,116 @@
+@DSL       Implicit;
+@Behaviour Iwan; 
+@Author    Vinicius Alves Fernandes (EDF R&D AMA-T64);
+@Description{
+  Iwan model for cyclic behaviour of soils.
+  Here we implement the first algorithm
+  proposed by Simo and Hughes
+  
+  Simo, Juan C and Hughes, Thomas J. R
+  Computational inelasticity
+  1998, Springer
+  isbn: 0-387-97520-9 978-0-387-97520-7
+}
+
+@Brick StandardElasticity;
+
+@Epsilon 1.e-16;
+@Theta   1.;
+@IterMax 50;
+
+// Number of hardening surfaces
+@IntegerConstant Ns = 12 ;
+@ElasticMaterialProperties {186859130.96802622,0.3000335795836132};
+@Parameter GammaRef = 2.e-4;
+@Parameter E        = 0.78;;
+
+@StateVariable real p[Ns];
+p.setGlossaryName("EquivalentPlasticStrain");
+// Auxiliary state variable
+@AuxiliaryStateVariable Stensor X[Ns];
+X.setEntryName("BackStress");
+
+// Size of kinematical surfaces
+@LocalVariable stress  Y[Ns];
+// Kinematical hardening coefficients
+@LocalVariable stress  C[Ns];
+// Plastic flow tensor
+@LocalVariable Stensor n[Ns];
+
+@LocalVariable bool status[Ns];
+
+/* Initialize Lame coefficients */
+@InitLocalVariables{
+  const auto cste = sqrt(real(3)/2);
+  // Stress and strain values from hyperbolic model
+  const real leps[Ns+1] = {0,1.00000000e-05,2.15443469e-05,
+		 	   4.64158883e-05,1.00000000e-04,
+			   2.15443469e-04,4.64158883e-04,
+			   1.00000000e-03,2.15443469e-03,
+			   4.64158883e-03,1.00000000e-02,
+			   2.00000000e-02,2.00000000e-01};
+  real ltau[Ns+1]; // tau
+  // Tau values obtained from hyperbolic model
+  ltau[0]=0;
+  for (unsigned short i=1;i!=Ns+1;++i){
+    ltau[i]=leps[i]*mu/(1+pow(leps[i]/GammaRef,E));
+  }
+  // C and Y values
+  auto aux=1/(2*mu);
+  for(unsigned short i=0;i!=Ns;++i){
+    C[i]  = 2/((leps[i+1]-leps[i])/(ltau[i+1]-ltau[i])-2*aux);
+    Y[i]  = ltau[i+1]*cste;
+    aux  += 1/C[i];
+  }
+} 
+
+@Predictor{
+  const auto sigel = computeElasticPrediction();
+  for(unsigned short i=0;i!=Ns;++i){
+    status[i] = sigmaeq(sigel-X[i])>Y[i];
+  }
+  deel = (trace(deto)/3)*StrainStensor::Id();
+}
+
+@Integrator{
+  const real eps = 1e-12;
+  for(unsigned short i=0;i!=Ns;++i){
+    if(!status[i]){continue;};
+    const auto seq  = sigmaeq(sig-X[i]);
+    const auto iseq = 1/max(seq,eps*young);
+    n[i] = 3*deviator(sig-X[i])*(iseq/2);
+    fp[i]           = (seq-3*(theta/2)*C[i]*dp[i]-Y[i])/young;
+    dfp_ddp(i,i)    = -3*theta*C[i]/(2*young);
+    dfp_ddeel(i)    = 2*(mu/young)*theta*n[i];
+    feel           += dp[i]*n[i];
+    dfeel_ddp(i)    = n[i];
+    dfeel_ddeel    += 2*mu*dp[i]*theta*iseq*(Stensor4::M()-(n[i]^n[i]));
+  }
+}
+
+@AdditionalConvergenceChecks{
+  if(converged){
+    // checking status consistency
+    for (unsigned short i=0;i!=Ns;++i){
+      if(status[i]){
+	if(dp[i]<0){
+	  // desactivating this system
+	  converged=status[i]=false;
+	}
+      } else {
+	if(sigmaeq(sig-X[i])>Y[i]){
+	  converged=false;
+	  status[i]=true;
+	}
+      }
+    }
+  }
+}
+
+@UpdateAuxiliaryStateVariables{
+  for (unsigned short i=0;i!=Ns;++i){
+    if(status[i]){
+      X[i]+=C[i]*dp[i]*n[i];
+    }
+  }
+}

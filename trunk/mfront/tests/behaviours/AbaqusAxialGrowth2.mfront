@@ -1,0 +1,29 @@
+@Behaviour AbaqusAxialGrowth2;
+@Author Helfer Thomas;
+@Date   08/08/16;
+@Description{
+ A test for the `@AxialGrowth` keyword and the `MFront`
+ orthotropy managment policy.
+}
+
+@OrthotropicBehaviour<Pipe>;
+@RequireStiffnessTensor<Altered>;
+
+@AbaqusFiniteStrainStrategy[abaqusexplicit] MieheApelLambrechtLogarithmicStrain;
+@AbaqusOrthotropyManagementPolicy[abaqus,abaqusexplicit] MFront;
+
+@AxialGrowth "Zircaloy4_AxialGrowth_BISON2014.mfront";
+
+@PredictionOperator{
+  static_cast<void>(smt);
+  Dt = D;
+}
+
+@Integrator{
+  sig = D*(eto+deto);
+}
+
+@TangentOperator{
+  static_cast<void>(smt);
+  Dt = D;
+}

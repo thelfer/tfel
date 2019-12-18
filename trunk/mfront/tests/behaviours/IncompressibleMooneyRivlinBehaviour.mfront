@@ -1,0 +1,63 @@
+@DSL DefaultFiniteStrainDSL;
+@Behaviour IncompressibleMooneyRivlinBehaviour;
+
+@MaterialProperty stress D1;
+@MaterialProperty stress C1;
+@MaterialProperty stress C2;
+
+@Integrator{
+  // volume change
+  const real J  = det(F1);
+  const real J2 = J*J;
+  const real J3 = J2*J;
+  const real J5 = J3*J2;
+  const real J7 = J5*J2;
+  // Right Cauchy Green Tensor
+  Stensor c = computeRightCauchyGreenTensor(F1);
+  // invariant of the left Cauchy-Green deformation tensor
+  // I1 = J^{-2/3}*trace(c)
+  const real i1 = (1/cbrt(J2))*trace(c);
+  // square of the Cauchy Green Tensor
+  Stensor c2 = square(c);
+  const stress g1 = C1+C2*i1;
+  const stress g2 = C2;
+  const stress pr   = 2*(J-1)/D1;
+  const stress eg1  = 2*g1/cbrt(J5);
+  const stress eg2  = 2*g2/cbrt(J7);
+  // cauchy stress
+  sig = eg1*c-eg2*c2+pr*Stensor::Id();
+  // no tangent operator yet
+  if(computeTangentOperator_){
+    string msg("tangent operator not yet available");
+    throw(runtime_error(msg));
+  }
+}
+
+// @TangentOperator<DSIG_DF>{
+//   const real J  = det(F1);
+//   const real J2 = J*J;
+//   const real J4 = J2*J2;
+//   const real J6 = J4*J2;
+//   // Right Cauchy Green Tensor
+//   Stensor c = computeRightCauchyGreenTensor(F1);
+//   // invariant of the left Cauchy-Green deformation tensor
+//   // I1 = J^{-2/3}*trace(c)
+//   const real i1 = (1/cbrt(J2))*trace(c);
+// di1_dC = (1/cbrt(J2))*Stensor::I();
+// di1_dJ = -(2/(3*cbrt(J4)));
+//   // square of the Cauchy Green Tensor
+//   Stensor c2 = square(c);
+// dc2_dc = Stensor4::dsqare(c);
+//   const stress g1 = C1+C2*i1;
+//   const stress g2 = C2;
+//   const stress pr   = 2*(J-1)/D1;
+//   const stress eg1  = 2*g1/cbrt(J5);
+//   const stress eg2  = 2*g2/cbrt(J7);
+//   // cauchy stress
+//   sig = eg1*c-eg2*c2+pr*Stensor::Id();
+//   const stress deg1_DJ = 
+//   Stensor4 ds_dC = eg1*Stensor4::I()+c^deg1_dC-
+//     eg2*dc2_dc+c2^deg2_dC;
+//   StensorStensor ds_dJ = deg1_dJ*c-deg2_dJ*c2+
+//     dpr_dJ*Stensor::Id();
+// }

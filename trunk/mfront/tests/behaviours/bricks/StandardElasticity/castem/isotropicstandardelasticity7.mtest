@@ -1,0 +1,48 @@
+@Author  Thomas Helfer;
+@Date 6/05/2016;
+@Description{
+  This file describes a compressive test along XX with
+  a constant loading.
+  The Young modulus varies with the temperature
+  during the test.
+  Simulation Results are compared to the
+  analytical solution.
+};
+
+@XMLOutputFile @xml_output@;
+@MaximumNumberOfSubSteps 1;
+@Behaviour<umat> @library@ @behaviour@;
+@MaterialProperty<constant> 'YoungModulus1'   78.e9;
+@MaterialProperty<constant> 'YoungModulus2'   78.e9;
+@MaterialProperty<constant> 'YoungModulus3'   78.e9;
+@MaterialProperty<constant> 'PoissonRatio12'   0.3;
+@MaterialProperty<constant> 'PoissonRatio23'   0.3;
+@MaterialProperty<constant> 'PoissonRatio13'   0.3;
+@MaterialProperty<constant> 'ShearModulus12'  '78e9/(2*(1+0.3))';
+@MaterialProperty<constant> 'ShearModulus23'  '78e9/(2*(1+0.3))';
+@MaterialProperty<constant> 'ShearModulus13'  '78e9/(2*(1+0.3))';
+
+@Real 'T0' 400.;
+@Real 'T1' 523.;
+@ExternalStateVariable<function> 'Temperature' '(T1-T0)*sin(t/900.)+T0';
+
+@Real 'sxx' 50.e6;
+@ImposedStress 'SXX' 'sxx';
+// Initial value of the total strains
+@Strain {0.000239466253465591,
+         -7.18398760396772e-05,
+         -7.18398760396772e-05,
+         0.,0.,0.};
+@InternalStateVariable 'ElasticStrain' { 0.000239466253465591,
+                                        -7.18398760396772e-05,
+                                        -7.18398760396772e-05,
+                                         0.,0.,0.};
+// Initial value of the stresses
+@Stress {'sxx',0.,0.,0.,0.,0.};
+
+@Times {0.,3600 in 20};
+
+@Test<function> {'EXX':'SXX/YoungModulus1',
+                 'EYY':'-PoissonRatio12*SXX/YoungModulus1',
+                 'EZZ':'-PoissonRatio13*SXX/YoungModulus1',
+                 'EXY':'0.','EXZ':'0.','EYZ':'0.'} 1.e-12;

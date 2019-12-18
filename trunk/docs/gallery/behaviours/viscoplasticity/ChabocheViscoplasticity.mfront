@@ -1,0 +1,76 @@
+@DSL       Implicit;
+@Author    Jean-Michel Proix;
+@Date      15/04/2014;
+@Behaviour ChabocheViscoplasticity;
+@Brick     StandardElasticity;
+
+@Theta 1.;
+@Epsilon 1.e-13;
+
+@MaterialProperty stress young;
+young.setGlossaryName("YoungModulus");
+@MaterialProperty real nu;
+nu.setGlossaryName("PoissonRatio");
+
+@StateVariable strain p;
+p.setGlossaryName("EquivalentViscoplasticStrain");
+@StateVariable StrainStensor a[2];
+
+@MaterialProperty stress Rinf,R0;
+@MaterialProperty real b;
+@MaterialProperty stress C[2];
+@MaterialProperty real   g[2];
+@MaterialProperty real m;
+@MaterialProperty real K;
+
+@LocalVariable bool bloading;
+
+@InitLocalVariables{
+  StressStensor scin = computeElasticPrediction();
+  for(unsigned short i=0;i!=2;++i){
+     scin  -= 2*C[i]*a[i]/3;
+  }
+  const stress seq = sigmaeq(scin);
+  const stress Rp  = Rinf + (R0-Rinf)*exp(-b*p);  
+  bloading = seq - Rp > 0;
+}
+
+@Integrator{
+  constexpr const real eps = 1.e-12;
+  if(bloading){
+    const auto mu      = computeMu(young,nu);
+    const strain p_    = p +theta*dp ;
+    StressStensor scin = sig;
+    StrainStensor a_[2];
+    for(unsigned short i=0;i!=2;++i){
+      a_[i]  = a[i]+theta*da[i];
+      scin  -= 2*C[i]*a_[i]/3;
+    }
+    const stress seq = sigmaeq(scin);
+    const stress Rp  = Rinf + (R0-Rinf)*exp(-b*p_) ;  
+    const stress F = max(seq - Rp,stress(0));
+    const real Fexp   = pow(F/K,m-1)/K;
+    const auto iseq = 1/max(seq,eps*young);
+    const Stensor n = 3*deviator(scin)*iseq/2;
+    const auto vp  = Fexp*F;
+    feel += dp*n;
+    fp   -= vp*dt;
+    for(unsigned short i=0;i!=2;++i){
+      fa[i] = da[i] - dp*(n-g[i]*a_[i]);
+    }
+    const Stensor4 Jmn  = Stensor4::M() - (n^n);    
+    dfeel_ddeel += 2*mu*theta*dp*Jmn*iseq ;
+    dfeel_ddp    = n;
+    dfp_ddeel    = - 2*Fexp*m*dt* 2.*mu*theta*(n|Stensor4::M())/3;
+    dfp_ddp      = 1 + theta* Fexp *m *dt*b*(Rinf-Rp);
+    for(unsigned short i=0;i!=2;++i){
+      dfeel_dda(i)   = -2*C[i]*dp*theta* iseq/3*Jmn ;
+      dfp_dda(i)     =  2*Fexp*m*dt*C[i]*theta/3*n;  
+      dfa_ddeel(i)   = -2*mu*theta*dp*Jmn *iseq;
+      dfa_ddp(i)     = -n + g[i]*a_[i];
+      dfa_dda(i,i)   =  (1+dp*g[i]*theta)*Stensor4::Id()+C[i]*dp*theta*iseq/1.5*Jmn;
+    }
+    dfa_dda(0,1)   =  2*C[1]*dp*theta*iseq/3*Jmn;
+    dfa_dda(1,0)   =  2*C[0]*dp*theta*iseq/3*Jmn;
+  }
+}

@@ -1,0 +1,27 @@
+@DSL Implicit;
+@Behaviour StandardElastoViscoPlasticityTest5;
+@Author Thomas Helfer;
+@Date 26 / 03 / 2018;
+@Description {
+  "This behaviour defines an isotropic elastic material behaviour."
+  "\note The elastic material properties will be given by user defined "
+  "material properties."
+}
+
+@ModellingHypotheses {".+"};
+@OrthotropicBehaviour<Pipe>;
+
+@Brick StandardElastoViscoPlasticity{
+  stress_potential : Hooke{
+    young_modulus1 : 150e9,
+    young_modulus2 : 175e9,
+    young_modulus3 : 50e9,
+    poisson_ratio12 : 0.3,
+    poisson_ratio23 : 0.3,
+    poisson_ratio13 : 0.3,
+    shear_modulus12 : 68e9,
+    shear_modulus23 : 72e9,
+    shear_modulus13 : 52e9,
+    thermal_expansion : 5e-5
+  }
+};

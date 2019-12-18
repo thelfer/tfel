@@ -1,0 +1,28 @@
+\noindent
+\ttfamily
+\hlstd{@Parser}\hlstd{\ \ \ }\hlstd{MaterialLaw}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@Law}\hlstd{\ \ \ \ \ \ }\hlstd{ThermalConductivity}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@Material UPuC}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@Author}\hlstd{\ \ \ }\hlstd{Thomas Helfer}\hlsym{;}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@Output k}\hlsym{;}\hlstd{\ \ }\hlsym{}\hlstd{}\hlslc{//$<$ changing the name of output}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@Input T}\hlsym{,}\hlstd{p}\hlsym{,}\hlstd{Bu}\hlsym{;}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlsym{}\hlstd{}\hlslc{//$<$ inputs of the law}\hspace*{\fill}\\
+\hlstd{T}\hlsym{.}\hlstd{}\hlkwd{setGlossaryName}\hlstd{}\hlsym{(}\hlstd{}\hlstr{"Temperature"}\hlstd{}\hlsym{);}\hlstd{\ \ }\hlsym{}\hlstd{}\hlslc{//$<$ pleiades name}\hspace*{\fill}\\
+\hlstd{p}\hlsym{.}\hlstd{}\hlkwd{setGlossaryName}\hlstd{}\hlsym{(}\hlstd{}\hlstr{"Porosity"}\hlstd{}\hlsym{);}\hlstd{\ \ \ \ \ }\hlsym{}\hlstd{}\hlslc{//$<$ pleiades name}\hspace*{\fill}\\
+\hlstd{Bu}\hlsym{.}\hlstd{}\hlkwd{setGlossaryName}\hlstd{}\hlsym{(}\hlstd{}\hlstr{"BurnUp"}\hlstd{}\hlsym{);}\hlstd{\ \ \ \ \ \ }\hlsym{}\hlstd{}\hlslc{//$<$ pleiades name}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@PhysicalBounds T in }\hlsym{{[}}\hlstd{}\hlnum{0}\hlstd{}\hlsym{:{*}{[};}\hlstd{\ \ }\hlsym{}\hlstd{}\hlslc{//$<$ temperature physical bounds}\hspace*{\fill}\\
+\hlstd{@Bounds T in }\hlsym{{[}}\hlstd{}\hlnum{0}\hlstd{}\hlsym{:}\hlstd{}\hlnum{2573.15}\hlstd{}\hlsym{{]};}\hlstd{\ \ \ \ }\hlsym{}\hlstd{}\hlslc{//$<$ temperature bounds}\hspace*{\fill}\\
+\hlstd{@PhysicalBounds p in }\hlsym{{[}}\hlstd{}\hlnum{0}\hlstd{}\hlsym{:}\hlstd{}\hlnum{1}\hlstd{}\hlsym{{]};}\hlstd{\ \ }\hlsym{}\hlstd{}\hlslc{//$<$ porosity physical bounds}\hspace*{\fill}\\
+\hlstd{@PhysicalBounds Bu in }\hlsym{{[}}\hlstd{}\hlnum{0}\hlstd{}\hlsym{:{*}{[}; }\hlstd{}\hlslc{//$<$ burn{-}up}\hlstd{\ \ }\hlslc{physicalbounds}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@Function}\hlsym{\{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwa{if }\hlstd{}\hlsym{(}\hlstd{T}\hlsym{$<$=}\hlstd{}\hlnum{773.15}\hlstd{}\hlsym{)\{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{k }\hlsym{= (}\hlstd{}\hlnum{8.14e{-}6}\hlstd{}\hlsym{{*}}\hlstd{T}\hlsym{{-}}\hlstd{}\hlnum{0.010096882}\hlstd{}\hlsym{){*}}\hlstd{T}\hlsym{+}\hlstd{}\hlnum{19.65063040915}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlsym{\} }\hlstd{}\hlkwa{else }\hlstd{}\hlsym{\{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{k }\hlsym{= ({-}}\hlstd{}\hlnum{1.88e{-}6}\hlstd{}\hlsym{{*}}\hlstd{T}\hlsym{+}\hlstd{}\hlnum{0.009737044}\hlstd{}\hlsym{){*}}\hlstd{T}\hlsym{+}\hlstd{}\hlnum{10.2405949657}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlsym{\}}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{k }\hlsym{{*}= (}\hlstd{}\hlnum{1}\hlstd{}\hlsym{.{-}}\hlstd{p}\hlsym{)/(}\hlstd{}\hlnum{1}\hlstd{}\hlsym{.+}\hlstd{}\hlnum{2}\hlstd{}\hlsym{.{*}}\hlstd{p}\hlsym{);}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{k }\hlsym{{*}= }\hlstd{}\hlnum{1}\hlstd{}\hlsym{.{-}(}\hlstd{}\hlnum{0.02}\hlstd{}\hlsym{{*}}\hlstd{Bu}\hlsym{);}\hspace*{\fill}\\
+\hlstd{}\hlsym{\} }\hlstd{}\hlslc{// end of function}

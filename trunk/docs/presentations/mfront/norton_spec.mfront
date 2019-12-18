@@ -1,0 +1,12 @@
+@Parser IsotropicMisesCreep ;
+@Behaviour Norton;
+
+@MaterialProperty stress A;
+@MaterialProperty stress m;
+
+@FlowRule{
+  real tmp=A*pow(seq,m-1.);
+  df_dseq = m*tmp ;
+  f       = seq*tmp;
+}
+

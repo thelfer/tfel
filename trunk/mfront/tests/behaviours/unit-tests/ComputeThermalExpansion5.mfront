@@ -1,0 +1,22 @@
+@DSL       DefaultDSL;
+@Behaviour ComputeThermalExpansion5;
+@Author    Helfer Thomas;
+@Date      25/02/16;
+@Description{
+  "A simple behaviour used to check that one can use "
+  "the @ComputeThermalExpansion keyword with specifying "
+  "an orthotropic convention if the behaviour is "
+  "restricted to 3D."
+}
+
+@ModellingHypothesis Tridimensional;
+@OrthotropicBehaviour;
+@RequireStiffnessTensor;
+@ProvidesSymmetricTangentOperator;
+@ComputeThermalExpansion {"ThermalExpansionCoefficientTest_1.mfront",
+                          "ThermalExpansionCoefficientTest_2.mfront",
+                          "ThermalExpansionCoefficientTest_3.mfront"};
+
+@Integrator{
+  sig = D*(eto+deto);
+}

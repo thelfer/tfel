@@ -1,0 +1,25 @@
+@Parser   MaterialLaw ;
+@Material T91MartensiticSteel ;
+@Law      growth_ROUX2007 ;
+@Author   F. Milliard ;
+@Date     11/12/2013 ;
+@Description{
+  // Croissance martensite / austenite T91
+  // [Roux 07]
+}
+
+// Input of law
+@Input T ;
+T.setGlossaryName("Temperature") ;
+
+// Output of law
+@Output growth ;
+
+@PhysicalBounds T in [0.:*[;
+
+// Function
+@Function{
+  const real TC = T-273.15;
+  const real TC2 = TC  * TC  ;
+  growth = - 1.31450E-09 * TC2 + 9.54433E-06 * TC - 9.59985E-03;
+} // end of Function

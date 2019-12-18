@@ -1,0 +1,55 @@
+@DSL RungeKutta;
+@Behaviour OrthotropicCreep_rkCastem;
+@Author    Helfer Thomas;
+@Algorithm rkCastem;
+@Date      8/03/11;
+
+@OrthotropicBehaviour;
+@RequireStiffnessTensor;
+
+@StateVariable Stensor evp; /* Viscoplastic strain            */
+evp.setGlossaryName("ViscoplasticStrain");
+@StateVariable real p;      /* Equivalent viscoplastic strain */
+p.setGlossaryName("EquivalentViscoplasticStrain");
+
+@AuxiliaryStateVariable real seq;
+seq.setGlossaryName("HillStress");
+
+// For the castem algorithm, it is mandatory that a local variable
+// named young is defined.
+@LocalVariable real young;
+@LocalVariable tfel::math::st2tost2<N,real> H;
+
+@InitLocalVariables{
+  const real H_F = 0.371;
+  const real H_G = 1-H_F;
+  const real H_H = 4.052;
+  const real H_L = 1.5;
+  const real H_M = 1.5;
+  const real H_N = 1.5;
+  H = hillTensor<N,real>(H_F,H_G,H_H,
+			 H_L,H_M,H_N);
+  young = D(0,0);
+}
+
+@ComputeStress{
+  sig = D*eel;
+}
+
+@Derivative{
+  real sigeq = sqrt(sig|H*sig);
+  if(sigeq>1e9){
+    return false;
+  }
+  Stensor  n(real(0));
+  if(sigeq > 10.e-7){
+    n    = H*sig/sigeq;
+  }
+  dp   = 8.e-67*pow(sigeq,8.2);
+  devp = dp*n;
+  deel = deto - devp;
+}
+
+@UpdateAuxiliaryStateVars{
+  seq = sqrt(sig|H*sig);
+}

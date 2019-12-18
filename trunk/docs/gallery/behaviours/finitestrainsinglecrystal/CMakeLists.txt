@@ -1,0 +1,3 @@
+install_gallery(finitestrainsinglecrystal FiniteStrainSingleCrystalHuang.mfront)
+install_gallery(finitestrainsinglecrystal MericCailletaudFiniteStrainSingleCrystalViscoPlasticity.mfront)
+

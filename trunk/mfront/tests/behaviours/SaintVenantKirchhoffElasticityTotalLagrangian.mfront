@@ -1,0 +1,91 @@
+@DSL DefaultFiniteStrainDSL;
+@Behaviour SaintVenantKirchhoffElasticityTotalLagrangian;
+@Author T. Helfer;
+@Date 06/02/2017;
+@Description{
+  "La loi de SaintVenantKirchhoffElasticity est une extension "
+  "de la loi de Hooke au cas des grandes rotations. "
+  "Elle ne peut être utilisée que pour des petites déformations."
+}
+
+@AsterFiniteStrainFormulation[aster] TotalLagrangian;
+
+@MaterialProperty stress young;
+young.setGlossaryName("YoungModulus");
+@MaterialProperty real nu;
+nu.setGlossaryName("PoissonRatio");
+
+@LocalVariable stress lambda;   //<! Premier coefficient de Lamé
+@LocalVariable stress mu;       //<! Second  coefficient de Lamé
+@LocalVariable StrainStensor e; //<! Déformation de Green-Lagrange
+
+// Nous déclarons le second tenseur de Piola-Kirchhoff en tant que
+// variable locale pour le réutiliser dans le calcul de l'opérateur
+// tangent
+@LocalVariable StressStensor s; //<! Second tenseur des contraintes de Piola-Kirchhoff
+
+@InitLocalVariables{
+  /*! 
+   * Nous commençons par calculer les coefficients de Lame \(\lambda\)
+   * et \(\mu\)~:
+   * \begin{aligned}
+   *   \lambda  &= \\
+   *   \mu      &= \\
+   * \end{aligned}
+   */
+  lambda = computeLambda(young,nu);
+  mu     = computeMu(young,nu);
+}
+
+@PredictionOperator<DS_DEGL>{
+  static_cast<void>(smt); // suppression d'un warning : la matrice de
+			  // prédiction est toujours l'élastique
+  Dt = lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
+}
+
+/*!
+ * Nous décrivons ici l'intégration de la loi. 
+ */
+@Integrator{
+  /*!
+   * Nous calculons ensuite le tenseur de Green-Lagrange
+   */
+  e = computeGreenLagrangeTensor(F1);
+  // second Piola–Kirchhoff stress
+  s = lambda*trace(e)*StrainStensor::Id()+2*mu*e;
+  // conversion to Cauchy stress tensor
+  sig = convertSecondPiolaKirchhoffStressToCauchyStress(s,F1);
+}
+
+/*!
+ * Nous fournissons l'opérateur tangent le plus naturel pour cette
+ * loi.
+ */
+@TangentOperator<DS_DEGL>{
+  static_cast<void>(smt); // suppression d'un warning : la matrice
+			  // tangente est toujours l'élastique
+  Dt = lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
+}
+
+/*!
+ * Nous fournissons un autre l'opérateur tangent, proche de celui
+ * utilisé par le Code-Aster. Cet opérateur aurait pu être calculé
+ * automatiquement par MFront, mais cela impliquait de recalculer le
+ * second tenseur des contraintes de Piola-Kirchhoff à partir des
+ * contraintes de Cauchy. Nous utilisons ici le fait que le second
+ * tenseur de Piola-Kirchhoff est connu à la fin de l'intégration.
+ */
+@TangentOperator<DTAU_DF>{
+  static_cast<void>(smt); // suppression d'un warning : la matrice
+			  // tangente est toujours l'élastique
+  StiffnessTensor De = lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
+  t2tost2<N,stress> dS = 0.5*De*t2tost2<N,strain>::dCdF(F1);
+  t2tost2<N,stress> dtau;
+  computePushForwardDerivative(dtau,dS,s,F1); 
+  Dt = dtau;
+}
+
+@InternalEnergy{
+  const auto tr = trace(e);
+  Psi_s = lambda*tr*tr/2+mu*(e|e);
+}

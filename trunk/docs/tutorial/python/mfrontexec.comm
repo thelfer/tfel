@@ -1,0 +1,58 @@
+# -*- coding: utf-8 -*-
+def Courbe(xx, linst, diceps):
+    m = MTest()
+    setVerboseMode(VerboseLevel.VERBOSE_QUIET)
+    m.setPredictionPolicy(PredictionPolicy.LINEARPREDICTION)
+    m.setBehaviour('aster','src/libAsterBehaviour.so','asterviscochab');
+    m.setImposedStrain('EXX',diceps)          
+    m.setMaterialProperty('nu',0.33)
+    m.setMaterialProperty('young',184000.0)
+    m.setMaterialProperty('rho',0.)
+    m.setMaterialProperty('ThermalExpansion',0.)        
+    m.setMaterialProperty('C1',xx[0])
+    m.setMaterialProperty('C2', xx[1])
+    m.setMaterialProperty('g1' ,xx[2])
+    m.setMaterialProperty('g2',xx[3])
+    m.setMaterialProperty('R_0',30.)
+    m.setMaterialProperty('R_inf',50.)
+    m.setMaterialProperty('b',xx[4])
+    m.setMaterialProperty('m',18.96)
+    m.setMaterialProperty('UNsurK','1./120.')
+    m.setExternalStateVariable('Temperature',0.)
+    s  = MTestCurrentState()
+    wk = MTestWorkSpace()    
+    m.completeInitialisation()    
+    m.initializeCurrentState(s)
+    m.initializeWorkSpace(wk)
+    YY1 = [0]
+    n=len(linst)-1
+    for i in range(n):
+        m.execute(s,wk,linst[i],linst[i+1])
+        YY1.append(s.s1[0])
+    return YY1
+
+def DirectOperator( XX ):
+    xx = numpy.ravel(XX)
+    import char
+    exp=char.chargements
+    colonne=0
+    t1=exp[0].take([colonne],axis=1).ravel().tolist()
+    t2=exp[1].take([colonne],axis=1).ravel().tolist()
+    t3=exp[2].take([colonne],axis=1).ravel().tolist()
+    t4=exp[3].take([colonne],axis=1).ravel().tolist()
+    colonne=1
+    e1=exp[0].take([colonne],axis=1).ravel().tolist()
+    e2=exp[1].take([colonne],axis=1).ravel().tolist()
+    e3=exp[2].take([colonne],axis=1).ravel().tolist()
+    e4=exp[3].take([colonne],axis=1).ravel().tolist()
+    diceps1=dict(zip(t1,e1))
+    diceps2=dict(zip(t2,e2))
+    diceps3=dict(zip(t3,e3))
+    diceps4=dict(zip(t4,e4))
+    YY1 = Courbe(xx, t1, diceps1)
+    YY2 = Courbe(xx, t2, diceps2)
+    YY3 = Courbe(xx, t3, diceps3)
+    YY4 = Courbe(xx, t4, diceps4)
+     # on ne conserve que le dernier cycle
+    YY=YY1[410-82:410]+YY2[410-82:410]+YY3[410-82:410]+YY4[410-82:410]
+    return numpy.array(YY)

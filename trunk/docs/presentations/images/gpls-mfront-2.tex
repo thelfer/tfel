@@ -1,0 +1,30 @@
+\noindent
+\ttfamily
+\hlstd{@ComputeStress}\hlsym{\{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{sig }\hlsym{= }\hlstd{D}\hlsym{{*}}\hlstd{eel}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlsym{\}}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@Derivative}\hlsym{\{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlcom{/{*} coefficients d'orthotropie {*}/}\hlstd{\hspace*{\fill}\\
+}\hlstd{\ \ }\hlstd{real Hrr }\hlsym{= ...;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{real Htt }\hlsym{= ...;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{real Hzz }\hlsym{= ...;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{real Hrt }\hlsym{= ...;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{real Hrz }\hlsym{= ...;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{real Htz }\hlsym{= ...;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlcom{/{*} tenseur de Hill {*}/}\hlstd{\hspace*{\fill}\\
+}\hlstd{\ \ }\hlstd{st2tost2}\hlsym{$<$}\hlstd{N}\hlsym{,}\hlstd{real}\hlsym{$>$ }\hlstd{H }\hlsym{= }\hlstd{hillTensor}\hlsym{$<$}\hlstd{N}\hlsym{,}\hlstd{real}\hlsym{$>$(}\hlstd{Hzz}\hlsym{,}\hlstd{Hrr}\hlsym{,}\hlstd{Htt}\hlsym{,}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{Hrz}\hlsym{,}\hlstd{Hrt}\hlsym{,}\hlstd{Htz}\hlsym{);}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{real sigeq }\hlsym{= }\hlstd{}\hlkwd{sqrt}\hlstd{}\hlsym{(}\hlstd{sig}\hlsym{\textbar }\hlstd{H}\hlsym{{*}}\hlstd{sig}\hlsym{);}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwa{if}\hlstd{}\hlsym{(}\hlstd{sigeq}\hlsym{$>$}\hlstd{}\hlnum{1}\hlstd{}\hlsym{.}\hlstd{e9}\hlsym{)\{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwa{return false}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlsym{\}}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{Stensor}\hlstd{\ \ }\hlstd{}\hlkwd{n}\hlstd{}\hlsym{(}\hlstd{}\hlnum{0}\hlstd{}\hlsym{.);}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwa{if}\hlstd{}\hlsym{(}\hlstd{sigeq }\hlsym{$>$ }\hlstd{}\hlnum{10}\hlstd{}\hlsym{.}\hlstd{e}\hlsym{{-}}\hlstd{}\hlnum{7}\hlstd{}\hlsym{)\{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{n}\hlstd{\ \ \ \ }\hlstd{}\hlsym{= }\hlstd{H}\hlsym{{*}}\hlstd{sig}\hlsym{/}\hlstd{sigeq}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlsym{\}}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlcom{/{*} Système différentiel {*}/}\hlstd{\hspace*{\fill}\\
+}\hlstd{\ \ }\hlstd{dp}\hlstd{\ \ \ }\hlstd{}\hlsym{= }\hlstd{}\hlsym{...;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{devp }\hlsym{= }\hlstd{dp}\hlsym{{*}}\hlstd{n}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{deel }\hlsym{= }\hlstd{deto }\hlsym{{-} }\hlstd{devp}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlsym{\}}

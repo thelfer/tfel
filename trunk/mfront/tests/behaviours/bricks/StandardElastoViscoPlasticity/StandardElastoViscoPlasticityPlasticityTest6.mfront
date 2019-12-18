@@ -1,0 +1,19 @@
+@DSL Implicit;
+@Behaviour StandardElastoViscoPlasticityPlasticityTest6;
+@Author Thomas Helfer;
+@Date 12 / 04 / 2018;
+
+@ModellingHypotheses {".+"};
+
+@Epsilon 1.e-16;
+@Theta 1;
+
+@Brick "StandardElastoViscoPlasticity" {
+  stress_potential : "Hooke" {young_modulus : 200e9, poisson_ratio : 0.3},
+  inelastic_flow : "Plastic" {
+    criterion : "Mises",
+    isotropic_hardening : "Voce" {R0 : 600e6, Rinf : 900e6, b : 1},
+    isotropic_hardening : "Voce" {R0 : 0, Rinf : 300e6, b : 10},
+    kinematic_hardening : "Armstrong-Frederick" {C : 1.5e9, D : 5}
+  }
+};

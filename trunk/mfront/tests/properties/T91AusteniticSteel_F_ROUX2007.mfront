@@ -1,0 +1,25 @@
+@Parser   MaterialLaw ;
+@Material T91AusteniticSteel ;
+@Law      F_ROUX2007 ;
+@Author   F. Milliard ;
+@Date     11/12/2013 ;
+@Description{
+  // Coefficient viscosité F austenite T91
+  // [Roux 07]
+}
+
+// Input of law
+@Input T ;
+T.setGlossaryName("Temperature") ;
+
+// Output of law
+@Output F ;
+
+@PhysicalBounds T in [0.:*[;
+
+// Function
+@Function{
+  const real TC = T-273.15;
+  const real TC2 = TC  * TC  ;
+  F = 1.6214285714e-11 * TC2 -1.7920000000e-08 * TC +4.9797142857e-06 + 2.7e-5 * exp( 0.014* ( TC - 1200. ) );
+} // end of Function

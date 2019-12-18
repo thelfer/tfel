@@ -1,0 +1,168 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{beamertheme}[011104]
+
+\RequirePackage{ifthen}
+\RequirePackage{couleurs}
+% Barre de navigation
+\setbeamertemplate{navigation symbols}{} 
+% Dimensions
+
+\newlength{\taillebarregauche}
+\setlength{\taillebarregauche}{0.cm}
+\newlength{\margegauche}
+\setlength{\margegauche}{0.3cm}
+\newlength{\margedroite}
+\setlength{\margedroite}{0.3cm}
+
+\setbeamersize{sidebar width left=\taillebarregauche}
+\setbeamersize{text margin left=\margegauche}
+\setbeamersize{text margin right=\margedroite}
+
+% Paramtre de la prsentation
+
+\newcommand{\Titre}[1]{\def\Protitre{#1}}
+\newcommand{\Auteur}[1]{\def\Proauteur{#1}}
+\newcommand{\Evenement}[1]{\def\Proevenement{#1}}
+\newcommand{\Labo}[1]{\def\Prolabo{#1}}
+\newcommand{\Date}[1]{\def\Prodate{#1}}
+\newcommand{\Complement}[1]{\def\Procomplement{#1}}
+\newcommand{\Piedpage}[1]{\def\Propiedpage{#1}}
+\newcommand{\ImagePageTitre}[1]{\def\ProFirstPageBanner{#1}}
+
+% Masque
+
+\setbeamertemplate{background canvas}{
+}%[vertical shading][bottom=red!10,top=blue!10]
+
+
+\defbeamertemplate{headline}{cea}{% 
+    \vbox to 1.2cm{}
+}
+\defbeamertemplate{footline}{cea}{%  
+    \hfill\color{ceagris}
+    \ifthenelse{\isundefined{\Propiedpage}}{}{\Propiedpage~|~}
+    PAGE \insertframenumber/\inserttotalframenumber\hspace*{2ex}%
+    \vskip8pt
+}
+
+\setbeamertemplate{headline}[cea]
+\setbeamertemplate{footline}[cea]
+
+% Apparence
+
+\setbeamercolor{frametitle}{fg=white}
+\setbeamerfont{frametitle}{series=\bfseries}
+\setbeamertemplate{frametitle}{
+  \begin{center}
+    \insertframetitle
+  \end{center}
+}
+
+\setbeamertemplate{blocks}[rounded][shadow=true]
+\setbeamercolor{block title}{fg=black,bg=ceavert}
+
+\setbeamertemplate{itemize item}{{\includegraphics[bb=15 15 22 22,scale=0.8]{CEA_puce1.eps}}}
+\setbeamertemplate{itemize subitem}{{\includegraphics{CEA_puce2.eps}}}
+\setbeamerfont{section in toc}{series=\bfseries}
+\setbeamercolor{section in toc}{fg=black}
+\setbeamercolor{subsection in toc}{fg=ceagrisclair}
+
+\newcommand{\PageTitre}{
+  \setbeamertemplate{footline}{}
+  \frame{
+    \ifthenelse{\isundefined{\ProFirstPageBanner}}{
+      \rput[l](-0.34,0.2){\includegraphics[width=0.3622\paperwidth]{CEATitleBanner2012.eps}}
+      \rput[l](1.5,-2.7){\tiny\white{www.cea.fr}}
+    }{
+      \ProFirstPageBanner
+    }
+    \hspace{0.38\linewidth}
+    \begin{minipage}[h]{0.6\linewidth}
+      \baselineskip=18pt
+      \vskip 3mm
+      \ifthenelse{\isundefined{\Protitre}}{}{{\Large\color{ceagrisfonce}
+          \bf{\Protitre}}}
+      \vskip 10mm
+      \ifthenelse{\isundefined{\Proevenement}}{}{{\small \color{ceagrisfonce}
+          {\Proevenement}}}
+      \color{ceavert}{\small\bf |}
+      \ifthenelse{\isundefined{\Proauteur}}{}{{\small
+          \color{ceagrisfonce} \textsc{\Proauteur}}} 
+      \vskip 1mm
+      \ifthenelse{\isundefined{\Prodate}}{}{{\small \color{ceagrisfonce} \textsc{\Prodate}}}
+      \vskip 5mm
+      \baselineskip=5pt
+      \ifthenelse{\isundefined{\Procomplement}}{}{{\scriptsize \color{ceagrisfonce} {\Procomplement}}}
+    \end{minipage}
+  }
+  \addtocounter{framenumber}{-1}
+  \setbeamertemplate{footline}[cea]
+}
+
+\newcommand{\intercalaire}[1]{
+  \transsplitverticalout
+  \section{#1}
+  \setbeamertemplate{footline}[default]
+  \setbeamertemplate{headline}[default]
+  \hspace*{-\margegauche}
+  \frame{
+    \rput[l](4.3,0.8){\includegraphics[width=0.7\paperwidth]{CEAIntercalaire.eps}}
+    \rput[l](4.5,1.3){
+      \begin{minipage}{0.6\paperwidth}
+      \baselineskip=25pt
+      {\huge \bf \textcolor{white}{#1}}
+     \end{minipage}
+    }
+  }
+  \addtocounter{framenumber}{-1}
+  \setbeamertemplate{footline}[cea]
+}
+
+\newcommand{\dernierepage}{
+  \setbeamertemplate{footline}[default]
+  \setbeamertemplate{headline}[default]
+  \hspace*{-\margegauche}
+  \frame{
+    \rput[l](4.3,0.8){\includegraphics[width=0.7\paperwidth]{CEAIntercalaire.eps}}
+    \rput[l](4.5,-3.2){\includegraphics[width=0.5cm,height=0.05cm]{CEA_puce2.eps}}
+    \rput[tl](4.5,-3.4){\tiny \textcolor{white}{Commissariat  l'nergie atomique et aux nergies
+  alternatives}}
+   \rput[tl](10.99,-3.4){\tiny \textcolor{ceavert}{DEN}}
+    \rput[tl](4.5,-3.7){\tiny\textcolor{white}{Centre de Cadarache} \textcolor{ceavert}{~|~}\textcolor{white}{13108
+     Saint-Paul-Lez-Durance}}
+   \rput[tl](11.,-3.7){\tiny \textcolor{ceavert}{DEC}}
+   \rput[tl](4.5,-4.){\tiny \textcolor{white}{T. +33 (0) 4 25 70 00}}
+   \rput[tl](11.,-4.){\tiny \textcolor{ceavert}{SESC}}
+%% chgt de font
+\fontsize{4pt}{1}
+\selectfont
+   \rput[tl](4.4,-4.7){\textcolor{white}{Etablissement public 
+       caractre industriel et commercial}
+     \textcolor{ceavert}{~|~}\textcolor{white}{RCS Paris B 775 685 019}}
+
+}
+  \addtocounter{framenumber}{-1}
+}
+
+
+\newcommand{\titre}[1]{
+  \subsection{#1}
+  \setbeamertemplate{headline}
+  {
+    \rput[l](0.,0.7){\includegraphics[height=1.2\linewidth,angle=-90]{CEABanner2012.eps}}
+    \rput[tl](2.1,0.9){\large \bf \textcolor{white}{#1}} 
+  }
+}
+
+\newcommand{\sanstitre}{
+\setbeamertemplate{headline}
+{
+    \rput[l](0.,1.2){\includegraphics[height=1.2\linewidth,width=0.05\linewidth,angle=-90]{CEABannerLight2012.eps}}
+}
+}
+\newcommand{\alternatif}[2]{\alt<#1>{\textcolor{black}{#2}}{\textcolor{ceagrisfonce}{#2}}}
+
+\endinput
+
+%%
+%% Fin de beamerthemecea.sty

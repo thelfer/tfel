@@ -1,0 +1,28 @@
+/*! 
+ * \file    finiterotationsmallstrainelasticity2-uniaxialloading-3-1D.mtest
+ * \brief
+ * \author Helfer Thomas
+ * \brief  26 nov. 2013
+ */
+
+@MaximumNumberOfSubSteps 1;
+@ModellingHypothesis 'AxisymmetricalGeneralisedPlaneStrain';
+@Behaviour<generic> @library@ 'FiniteRotationSmallStrainElasticity2' {
+  stress_measure : @stress_measure@, tangent_operator : @tangent_operator@
+};
+@MaterialProperty<constant> 'YoungModulus'     215.e9;
+@MaterialProperty<constant> 'PoissonRatio'       0.3;
+
+@ImposedDrivingVariable 'FRR' 1.;
+@ImposedDrivingVariable 'FZZ' 1.;
+@ImposedDrivingVariable 'FTT' {0:1.,1.:1.2};
+
+@ExternalStateVariable 'Temperature' 293.15;
+
+@Times {0.,1 in 10};
+
+@Real 'lambda' 'PoissonRatio*YoungModulus/((1+PoissonRatio)*(1-2*PoissonRatio))';
+@Real 'mu'     'YoungModulus/(2*(1+PoissonRatio))';
+@Test<function> {'SRR':'lambda*(FTT**2-1)/(2*FTT)'}      1.e-2;
+@Test<function> {'SZZ':'lambda*(FTT**2-1)/(2*FTT)'}      1.e-2;
+@Test<function> {'STT':'FTT*(lambda+2*mu)*(FTT**2-1)/2'} 1.e-2;

@@ -1,0 +1,10 @@
+/*!
+ * \file  mfront/include/MFront/Cyrano/cyrano.doxygen
+ * \brief This file documents the cyrano namespace.
+ */
+
+/*!
+ * \namespace cyrano
+ * \brief the namespace cyrano contains material related to the MFront
+ * interface to the Cyrano fuel performance code.
+ */

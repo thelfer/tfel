@@ -1,0 +1,29 @@
+set grid
+set term png
+
+import<castem> UO2_YoungModulus_Fink1981(T,p) 'src/libCastemUO2.so'
+
+print UO2_YoungModulus_Fink1981(293.15,0.05)
+
+set output "UO2_YoungModulus_Fink1981.png"
+set key right top
+set xlabel "Temperature (K)"
+set ylabel "Module d'Young (GPa)"
+
+plot [293.15:1600] 1e-9*UO2_YoungModulus_Fink1981(x,0.05) t "Module d'Young, 5% de porosite" linewidth 6, \
+     1e-9*UO2_YoungModulus_Fink1981(x,0.025) t "Module d'Young, 2,5% de porosite" linewidth 6, \
+     2.26e2*(1-2.62*0.05)*(1-1.31e-4*(x-273.15)) with dots t "Expression analytique, 5% de porosite", \
+     2.26e2*(1-2.62*0.025)*(1-1.31e-4*(x-273.15)) with dots t "Expression analytique, 2,5% de porosite"
+
+k1 = 1.e-5
+k2 = 3.e-3
+k3 = 4.e-2
+E  = 6.9e-20
+k  = 1.38e-23
+dl_l1(T)=k1*T-k2+k3*exp(-E/(k*T))
+dl_l2(T)=k1*(T-k2/k1)
+
+plot [300:1573.15] dl_l1(x)  lw 4, dl_l2(x) w l
+
+print dl_l1(300)
+print k2/k1

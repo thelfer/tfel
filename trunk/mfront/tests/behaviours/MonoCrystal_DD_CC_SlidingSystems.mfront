@@ -1,0 +1,54 @@
+// tensor of directional sense : CUBIQUE1 : BCC LATTICE, {110} SLIP
+@LocalVariable tfel::math::tvector<12,StrainStensor> mus;
+
+@InitLocalVariables<Append>{
+  const real coefm=1.0/sqrt(3.);
+  const real coefn=1.0/sqrt(2.);
+  
+  const real nx[12]={ 1.0, -1.0,  0.0,  0.0,  1.0, -1.0, -1.0,  1.0,  0.0,  1.0, -1.0,  0.0 };
+  const real ny[12]={ 1.0,  0.0, -1.0, -1.0,  0.0,  1.0, -1.0,  0.0,  1.0, -1.0,  0.0,  1.0 };
+  const real nz[12]={ 0.0,  1.0, -1.0,  1.0, -1.0,  0.0,  0.0,  1.0, -1.0,  0.0, -1.0,  1.0 };
+  
+  const real mx[12]={ 1.0,  1.0,  1.0,  1.0,  1.0,  1.0, -1.0, -1.0, -1.0,  1.0,  1.0,  1.0 };
+  const real my[12]={-1.0, -1.0, -1.0,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0 };
+  const real mz[12]={ 1.0,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0, -1.0, -1.0, -1.0 };  
+  
+  for(unsigned short i=0;i!=12;++i){
+    tvector<3,real> ns(real(0)); 
+    tvector<3,real> ms(real(0)); 
+    stensor<3,real> mu;
+    ns[0]=nx[i]*coefn;
+    ns[1]=ny[i]*coefn;
+    ns[2]=nz[i]*coefn;
+    ms[0]=mx[i]*coefm;
+    ms[1]=my[i]*coefm;
+    ms[2]=mz[i]*coefm;
+    mu[0]=ns[0]*ms[0];
+    mu[1]=ns[1]*ms[1];
+    mu[2]=ns[2]*ms[2];
+    mu[3]=(ns[0]*ms[1]+ns[1]*ms[0])*0.5*sqrt(2);
+    mu[4]=(ns[0]*ms[2]+ns[2]*ms[0])*0.5*sqrt(2);
+    mu[5]=(ns[1]*ms[2]+ns[2]*ms[1])*0.5*sqrt(2);
+    tfel::fsalgo::copy<StensorSize>::exe(mu.begin(),
+					 mus[i].begin());
+  }
+}
+
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,25 @@
+@Parser   MaterialLaw ;
+@Material T91AusteniticSteel ;
+@Law      Kvisc_ROUX2007 ;
+@Author   F. Milliard ;
+@Date     11/12/2013 ;
+@Description{
+  // coefficient viscosité K austenite T91
+  // [Roux 07]
+}
+
+// Input of law
+@Input T ;
+T.setGlossaryName("Temperature") ;
+
+// Output of law
+@Output Kvisc ;
+
+@PhysicalBounds T in [0.:*[;
+
+// Function
+@Function{
+  const real TC = T-273.15;
+  const real TC2 = TC  * TC  ;
+  Kvisc = (1.e6*(4.7285714286e-05 * min(TC2,pow(900.,2.)) -4.1820000000e-02 * min(TC,900.) +1.0560285714e+01)) - 2.e4*(max(TC,900.)-900.);
+} // end of Function

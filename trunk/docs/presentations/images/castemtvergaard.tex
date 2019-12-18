@@ -1,0 +1,24 @@
+\noindent
+\ttfamily
+\hlstd{}\hlcom{/{*}!\ }\hspace*{\fill}\\
+\hlcom{\ {*}\ $\backslash$file}\hlstd{\ \ \ }\hlcom{tvergaard.mtest}\hspace*{\fill}\\
+\hlcom{\ {*}\ $\backslash$brief}\hspace*{\fill}\\
+\hlcom{\ {*}\ $\backslash$author\ Helfer\ Thomas}\hspace*{\fill}\\
+\hlcom{\ {*}\ $\backslash$brief}\hlstd{\ \ }\hlcom{09\ avril\ 2013}\hspace*{\fill}\\
+\hlcom{\ {*}/}\hlstd{\hspace*{\fill}\\
+\hspace*{\fill}\\
+@Behaviour}\hlopt{$<$}\hlstd{umat}\hlopt{$>$\ }\hlstd{}\hlstr{'src/libUmatBehaviour.so'}\hlstd{\ }\hlstr{'umattvergaard'}\hlstd{}\hlopt{;}\hspace*{\fill}\\
+\hlstd{@MaterialProperty}\hlopt{$<$}\hlstd{constant}\hlopt{$>$\ }\hlstd{}\hlstr{'NormalStiffness'}\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlnum{2}\hlstd{}\hlopt{.}\hlstd{e16}\hlopt{;}\hspace*{\fill}\\
+\hlstd{@MaterialProperty}\hlopt{$<$}\hlstd{constant}\hlopt{$>$\ }\hlstd{}\hlstr{'TangentialStiffness'}\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlnum{2}\hlstd{}\hlopt{.}\hlstd{e16}\hlopt{;}\hspace*{\fill}\\
+\hlstd{@MaterialProperty}\hlopt{$<$}\hlstd{constant}\hlopt{$>$\ }\hlstd{}\hlstr{'MassDensity'}\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlnum{0}\hlstd{}\hlopt{.;}\hspace*{\fill}\\
+\hlstd{@MaterialProperty}\hlopt{$<$}\hlstd{constant}\hlopt{$>$\ }\hlstd{}\hlstr{'NormalThermalExpansion'}\hlstd{}\hlstd{\ \ \ \ \ \ \ }\hlstd{}\hlnum{0}\hlstd{}\hlopt{.;}\hspace*{\fill}\\
+\hlstd{@MaterialProperty}\hlopt{$<$}\hlstd{constant}\hlopt{$>$\ }\hlstd{}\hlstr{'MaximumStress'}\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlnum{200}\hlstd{}\hlopt{.}\hlstd{e6}\hlopt{;}\hspace*{\fill}\\
+\hlstd{@MaterialProperty}\hlopt{$<$}\hlstd{constant}\hlopt{$>$\ }\hlstd{}\hlstr{'MaximumOpeningDisplacement'}\hlstd{}\hlstd{\ \ \ }\hlstd{}\hlnum{3}\hlstd{}\hlopt{.}\hlstd{e}\hlopt{{-}}\hlstd{}\hlnum{6}\hlstd{}\hlopt{;}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@ExternalStateVariable\ }\hlstr{'Temperature'}\hlstd{\ }\hlnum{293.15}\hlstd{}\hlopt{;}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@ImposedOpeningDisplacement\ }\hlstr{'Un'}\hlstd{\ }\hlopt{\{}\hlstd{}\hlnum{0}\hlstd{}\hlopt{.:}\hlstd{}\hlnum{0}\hlstd{}\hlopt{.,}\hlstd{}\hlnum{1800}\hlstd{}\hlopt{.:}\hlstd{}\hlnum{1.5e{-}6}\hlstd{}\hlopt{,}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlnum{2400}\hlstd{}\hlopt{.:}\hlstd{}\hlnum{0}\hlstd{}\hlopt{.,}\hlstd{}\hlnum{2600}\hlstd{}\hlopt{:{-}}\hlstd{}\hlnum{1}\hlstd{}\hlopt{.}\hlstd{e}\hlopt{{-}}\hlstd{}\hlnum{8}\hlstd{}\hlopt{,}\hlstd{}\hlnum{3000}\hlstd{}\hlopt{:}\hlstd{}\hlnum{0}\hlstd{}\hlopt{.,}\hlstd{}\hlnum{3600}\hlstd{}\hlopt{.:}\hlstd{}\hlnum{3}\hlstd{}\hlopt{.}\hlstd{e}\hlopt{{-}}\hlstd{}\hlnum{6}\hlstd{}\hlopt{\};}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@Times\ }\hlopt{\{}\hlstd{}\hlnum{0}\hlstd{}\hlopt{.,}\hlstd{}\hlnum{1800\ }\hlstd{in\ }\hlnum{10}\hlstd{}\hlopt{,\ }\hlstd{}\hlnum{2400}\hlstd{}\hlopt{,}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlnum{2600\ }\hlstd{in\ }\hlnum{5}\hlstd{}\hlopt{,\ }\hlstd{}\hlnum{3000\ }\hlstd{in\ }\hlnum{1}\hlstd{}\hlopt{,}\hlstd{}\hlnum{3600\ }\hlstd{in\ }\hlnum{20}\hlstd{}\hlopt{\};}

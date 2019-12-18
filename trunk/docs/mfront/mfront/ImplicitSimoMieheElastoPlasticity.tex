@@ -1,0 +1,116 @@
+\noindent
+\ttfamily
+\hlstd{@Parser}\hlstd{\ \ \ \ }\hlstd{ImplicitFiniteStrain}\hlopt{;}\hspace*{\fill}\\
+\hlstd{@Behaviour\ ImplicitSimoMieheElastoPlasticity}\hlopt{;}\hspace*{\fill}\\
+\hlstd{@Author\ T}\hlopt{.\ }\hlstd{Helfer}\hlopt{;}\hspace*{\fill}\\
+\hspace*{\fill}\\
+\hlstd{@Theta\ }\hlnum{1}\hlstd{}\hlopt{.;}\hspace*{\fill}\\
+\hlstd{@Epsilon\ }\hlnum{1}\hlstd{}\hlopt{.}\hlstd{e}\hlopt{{-}}\hlstd{}\hlnum{11}\hlstd{}\hlopt{;}\hspace*{\fill}\\
+\hlstd{@Includes}\hlopt{\{}\hspace*{\fill}\\
+\hlstd{}\hlppc{\#include}\hlpps{"TFEL/Math/General/CubicRoots.hxx"}\hlppc{}\hspace*{\fill}\\
+\hlstd{}\hlopt{\}}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@MaterialProperty\ stress\ young}\hlopt{;\ }\hlstd{}\hlstd{\hspace*{\fill}\\
+young}\hlopt{.}\hlstd{}\hlkwd{setGlossaryName}\hlstd{}\hlopt{(}\hlstd{}\hlstr{"YoungModulus"}\hlstd{}\hlopt{);}\hspace*{\fill}\\
+\hlstd{@MaterialProperty\ real\ nu}\hlopt{;}\hlstd{\ \ \ \ }\hlopt{}\hlstd{}\hlstd{\hspace*{\fill}\\
+nu}\hlopt{.}\hlstd{}\hlkwd{setGlossaryName}\hlstd{}\hlopt{(}\hlstd{}\hlstr{"PoissonRatio"}\hlstd{}\hlopt{);}\hspace*{\fill}\\
+\hlstd{@MaterialProperty\ density\ rho}\hlopt{;}\hlstd{\ \ \ }\hlopt{}\hlstd{}\hlstd{\hspace*{\fill}\\
+rho}\hlopt{.}\hlstd{}\hlkwd{setGlossaryName}\hlstd{}\hlopt{(}\hlstd{}\hlstr{"MassDensity"}\hlstd{}\hlopt{);}\hspace*{\fill}\\
+\hlstd{@MaterialProperty\ thermalexpansion\ alpha}\hlopt{;\ }\hlstd{}\hlstd{\hspace*{\fill}\\
+alpha}\hlopt{.}\hlstd{}\hlkwd{setGlossaryName}\hlstd{}\hlopt{(}\hlstd{}\hlstr{"ThermalExpansion"}\hlstd{}\hlopt{);}\hspace*{\fill}\\
+\hlstd{@MaterialProperty\ stress\ s\textunderscore y}\hlopt{;}\hspace*{\fill}\\
+\hlstd{@MaterialProperty\ stress\ ET}\hlopt{;}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@StateVariable\ strain\ p}\hlopt{;}\hspace*{\fill}\\
+\hlstd{p}\hlopt{.}\hlstd{}\hlkwd{setGlossaryName}\hlstd{}\hlopt{(}\hlstd{}\hlstr{"EquivalentPlasticStrain"}\hlstd{}\hlopt{);}\hspace*{\fill}\\
+\hlstd{}\hlslc{//\ be\ =\ J\textasciicircum \{{-}2/3\}\ Fe.Fe\textasciicircum \{T\}}\hspace*{\fill}\\
+\hlstd{@AuxiliaryStateVariable\ StrainStensor\ be}\hlopt{;}\hspace*{\fill}\\
+\hlstd{}\hspace*{\fill}\\
+\hlslc{//\ Bulk\ modulus,\ Shear\ modulus,\ hardening\ slope}\hspace*{\fill}\\
+\hlstd{@LocalVariable\ stress\ K,mu,R}\hlopt{;}\hspace*{\fill}\\
+\hlstd{}\hlslc{//\ Trial\ elastic\ tensor}\hspace*{\fill}\\
+\hlstd{@LocalVariable\ StrainStensor\ be\textunderscore tr}\hlopt{;}\hspace*{\fill}\\
+\hlstd{}\hlslc{//\ Von\ Mises\ norm\ of\ the\ trial\ stress\ tensor}\hspace*{\fill}\\
+\hlstd{@LocalVariable\ stress\ tKeq\textunderscore tr}\hlopt{;}\hspace*{\fill}\\
+\hlstd{}\hlslc{//\ true\ if\ plastic\ loading}\hspace*{\fill}\\
+\hlstd{@LocalVariable\ }\hlkwb{bool\ }\hlstd{b}\hlopt{;}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@Parameter\ Tref}\hlopt{;}\hspace*{\fill}\\
+\hlstd{Tref}\hlopt{.}\hlstd{}\hlkwd{setDefaultValue}\hlstd{}\hlopt{(}\hlstd{}\hlnum{293.15}\hlstd{}\hlopt{);}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@InitLocalVariables}\hlopt{\{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlslc{//\ elasticity\ coefficients}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{K}\hlstd{\ \ }\hlstd{}\hlopt{=\ }\hlstd{young}\hlopt{/(}\hlstd{}\hlnum{3}\hlstd{}\hlopt{{*}(}\hlstd{}\hlnum{1}\hlstd{}\hlopt{{-}}\hlstd{}\hlnum{2}\hlstd{}\hlopt{{*}}\hlstd{nu}\hlopt{));}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{mu\ }\hlopt{=\ }\hlstd{young}\hlopt{/(}\hlstd{}\hlnum{2}\hlstd{}\hlopt{{*}(}\hlstd{}\hlnum{1}\hlstd{}\hlopt{+}\hlstd{nu}\hlopt{));}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlslc{//\ hardening\ slope}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{R}\hlstd{\ \ }\hlstd{}\hlopt{=\ }\hlstd{young}\hlopt{{*}}\hlstd{ET}\hlopt{/(}\hlstd{young}\hlopt{{-}}\hlstd{ET}\hlopt{);}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlslc{//\ gradient\ deformation\ increment}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwb{const\ }\hlstd{Tensor\ dF\ }\hlopt{=\ }\hlstd{F1}\hlopt{{*}}\hlstd{}\hlkwd{invert}\hlstd{}\hlopt{(}\hlstd{F0}\hlopt{);}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwb{const\ }\hlstd{real}\hlstd{\ \ \ }\hlstd{J}\hlstd{\ \ }\hlstd{}\hlopt{=\ }\hlstd{}\hlkwd{det}\hlstd{}\hlopt{(}\hlstd{dF}\hlopt{);}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwb{const\ }\hlstd{real}\hlstd{\ \ \ }\hlstd{dJ\textunderscore m1o3\ }\hlopt{=\ }\hlstd{CubicRoots}\hlopt{::}\hlstd{}\hlkwd{cbrt}\hlstd{}\hlopt{(}\hlstd{}\hlnum{1}\hlstd{}\hlopt{/}\hlstd{J}\hlopt{);}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlslc{//\ trial\ elastic\ tensor}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{be\textunderscore tr\ }\hlopt{=\ }\hlstd{}\hlkwd{push\textunderscore forward}\hlstd{}\hlopt{(}\hlstd{be}\hlopt{,}\hlstd{dJ\textunderscore m1o3}\hlopt{{*}}\hlstd{dF}\hlopt{);}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{StressStensor\ dev\textunderscore tK\textunderscore tr}\hlstd{\ \ }\hlstd{}\hlopt{=\ }\hlstd{mu}\hlopt{{*}}\hlstd{}\hlkwd{deviator}\hlstd{}\hlopt{(}\hlstd{be\textunderscore tr}\hlopt{);}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{tKeq\textunderscore tr\ }\hlopt{=\ }\hlstd{}\hlkwd{sigmaeq}\hlstd{}\hlopt{(}\hlstd{dev\textunderscore tK\textunderscore tr}\hlopt{);}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlslc{//\ check\ }\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{b\ }\hlopt{=\ (}\hlstd{tKeq\textunderscore tr}\hlopt{$>$}\hlstd{s\textunderscore y}\hlopt{+}\hlstd{R}\hlopt{{*}}\hlstd{p}\hlopt{);}\hspace*{\fill}\\
+\hlstd{}\hlopt{\}\ }\hlstd{}\hlslc{//\ end\ of\ @InitLocalVars}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@Integrator}\hlopt{\{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwa{if}\hlstd{}\hlopt{(}\hlstd{b}\hlopt{)\{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlslc{//\ plastic\ loading}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{const\ }\hlstd{strain\ p\textunderscore \ }\hlopt{=\ }\hlstd{p}\hlopt{+}\hlstd{theta}\hlopt{{*}}\hlstd{dp}\hlopt{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{const\ }\hlstd{strain\ tr\ }\hlopt{=\ }\hlstd{}\hlkwd{trace}\hlstd{}\hlopt{(}\hlstd{be\textunderscore tr}\hlopt{);}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{fp}\hlstd{\ \ \ \ \ \ }\hlstd{}\hlopt{=\ (}\hlstd{tKeq\textunderscore tr}\hlopt{{-}}\hlstd{mu}\hlopt{{*}}\hlstd{theta}\hlopt{{*}}\hlstd{tr}\hlopt{{*}}\hlstd{dp}\hlopt{{-}}\hlstd{s\textunderscore y}\hlopt{{-}}\hlstd{R}\hlopt{{*}}\hlstd{p\textunderscore }\hlopt{)/}\hlstd{young}\hlopt{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{dfp\textunderscore ddp\ }\hlopt{=\ }\hlstd{theta}\hlopt{{*}(}\hlstd{R}\hlopt{{-}}\hlstd{mu}\hlopt{{*}}\hlstd{tr}\hlopt{)/}\hlstd{young}\hlopt{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlopt{\}}\hspace*{\fill}\\
+\hlstd{}\hlopt{\}\ }\hlstd{}\hlslc{//\ end\ of\ @Integrator}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@UpdateAuxiliaryStateVariables}\hlopt{\{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwb{const\ }\hlstd{real\ J\ }\hlopt{=\ }\hlstd{}\hlkwd{det}\hlstd{}\hlopt{(}\hlstd{F1}\hlopt{);}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlslc{//\ Von\ Mises\ equivalent\ stress\ of\ the\ Kirchhoff\ stress}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwb{const\ }\hlstd{stress\ tKeq\ }\hlopt{=\ }\hlstd{tKeq\textunderscore tr}\hlopt{{-}}\hlstd{mu}\hlopt{{*}}\hlstd{}\hlkwd{trace}\hlstd{}\hlopt{(}\hlstd{be\textunderscore tr}\hlopt{){*}}\hlstd{dp}\hlopt{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlslc{//\ deviator\ of\ the\ Kirchhoff\ stress}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{StressStensor\ dev\textunderscore tK}\hlopt{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwa{if}\hlstd{}\hlopt{(}\hlstd{tKeq\textunderscore tr}\hlopt{$>$}\hlstd{}\hlnum{1}\hlstd{}\hlopt{.}\hlstd{e}\hlopt{{-}}\hlstd{}\hlnum{8}\hlstd{}\hlopt{{*}}\hlstd{mu}\hlopt{)\{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{dev\textunderscore tK\ }\hlopt{=\ (}\hlstd{tKeq}\hlopt{/}\hlstd{tKeq\textunderscore tr}\hlopt{){*}}\hlstd{mu}\hlopt{{*}}\hlstd{}\hlkwd{deviator}\hlstd{}\hlopt{(}\hlstd{be\textunderscore tr}\hlopt{);}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlopt{\}\ }\hlstd{}\hlkwa{else\ }\hlstd{}\hlopt{\{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{dev\textunderscore tK\ }\hlopt{=\ }\hlstd{}\hlkwd{StressStensor}\hlstd{}\hlopt{(}\hlstd{}\hlkwd{stress}\hlstd{}\hlopt{(}\hlstd{}\hlnum{0}\hlstd{}\hlopt{));}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlopt{\}}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlslc{//\ Kirchhoff\ stress}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwb{const\ }\hlstd{StressStensor\ tK\ }\hlopt{=\ }\hlstd{dev\textunderscore tK}\hlopt{+(}\hlstd{K}\hlopt{/}\hlstd{}\hlnum{2}\hlstd{}\hlopt{){*}((}\hlstd{J}\hlopt{{*}}\hlstd{J}\hlopt{{-}}\hlstd{}\hlnum{1}\hlstd{}\hlopt{)}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlopt{{-}}\hlstd{}\hlnum{3}\hlstd{}\hlopt{{*}}\hlstd{alpha}\hlopt{{*}(}\hlstd{T}\hlopt{+}\hlstd{dT}\hlopt{{-}}\hlstd{Tref}\hlopt{){*}(}\hlstd{J}\hlopt{+}\hlstd{}\hlnum{1}\hlstd{}\hlopt{/}\hlstd{J}\hlopt{)){*}}\hlstd{StrainStensor}\hlopt{::}\hlstd{}\hlkwd{Id}\hlstd{}\hlopt{();}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlslc{//\ correction\ of\ the\ trace\ to\ satisfy\ plastic\ incompressibility}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{real\ x0}\hlopt{,}\hlstd{x1}\hlopt{,}\hlstd{x2}\hlopt{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwb{const\ }\hlstd{real\ Je\textunderscore 2\ }\hlopt{=\ }\hlstd{tKeq}\hlopt{{*}}\hlstd{tKeq}\hlopt{/(}\hlstd{}\hlnum{2}\hlstd{}\hlopt{{*}}\hlstd{mu}\hlopt{{*}}\hlstd{mu}\hlopt{);}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwb{const\ }\hlstd{real\ Je\textunderscore 3\ }\hlopt{=\ }\hlstd{}\hlkwd{det}\hlstd{}\hlopt{(}\hlstd{dev\textunderscore tK}\hlopt{/}\hlstd{mu}\hlopt{);}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwb{const\ ushort\ }\hlstd{nb\ }\hlopt{=\ }\hlstd{CubicRoots}\hlopt{::}\hlstd{}\hlkwd{exe}\hlstd{}\hlopt{(}\hlstd{x0}\hlopt{,}\hlstd{x1}\hlopt{,}\hlstd{x2}\hlopt{,}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{real}\hlstd{}\hlopt{(}\hlstd{}\hlnum{1}\hlstd{}\hlopt{),}\hlstd{}\hlkwd{real}\hlstd{}\hlopt{(}\hlstd{}\hlnum{0}\hlstd{}\hlopt{),}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlopt{{-}}\hlstd{Je\textunderscore 2}\hlopt{,{-}(}\hlstd{}\hlnum{1}\hlstd{}\hlopt{{-}}\hlstd{Je\textunderscore 3}\hlopt{));}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{real\ x}\hlopt{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwa{if}\hlstd{}\hlopt{(}\hlstd{nb}\hlopt{==}\hlstd{}\hlnum{1u}\hlstd{}\hlopt{)\{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{x\ }\hlopt{=\ }\hlstd{x0}\hlopt{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlopt{\}\ }\hlstd{}\hlkwa{else\ if}\hlstd{}\hlopt{(}\hlstd{nb}\hlopt{==}\hlstd{}\hlnum{3u}\hlstd{}\hlopt{)\{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{const\ }\hlstd{real\ tr}\hlstd{\ \ \ }\hlstd{}\hlopt{=\ }\hlstd{}\hlkwd{trace}\hlstd{}\hlopt{(}\hlstd{be}\hlopt{);}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{const\ }\hlstd{real\ tmp0\ }\hlopt{=\ }\hlstd{}\hlkwd{abs}\hlstd{}\hlopt{(}\hlstd{tr}\hlopt{{-}}\hlstd{}\hlnum{3}\hlstd{}\hlopt{{*}}\hlstd{x0}\hlopt{);}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{const\ }\hlstd{real\ tmp1\ }\hlopt{=\ }\hlstd{}\hlkwd{abs}\hlstd{}\hlopt{(}\hlstd{tr}\hlopt{{-}}\hlstd{}\hlnum{3}\hlstd{}\hlopt{{*}}\hlstd{x1}\hlopt{);}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{const\ }\hlstd{real\ tmp2\ }\hlopt{=\ }\hlstd{}\hlkwd{abs}\hlstd{}\hlopt{(}\hlstd{tr}\hlopt{{-}}\hlstd{}\hlnum{3}\hlstd{}\hlopt{{*}}\hlstd{x2}\hlopt{);}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwa{if}\hlstd{}\hlopt{((}\hlstd{tmp0}\hlopt{$<$}\hlstd{tmp1}\hlopt{)\&\&(}\hlstd{tmp0}\hlopt{$<$}\hlstd{tmp2}\hlopt{))\{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ \ \ }\hlstd{x\ }\hlopt{=\ }\hlstd{x0}\hlopt{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}\ }\hlstd{}\hlkwa{else\ if}\hlstd{}\hlopt{((}\hlstd{tmp1}\hlopt{$<$}\hlstd{tmp0}\hlopt{)\&\&(}\hlstd{tmp1}\hlopt{$<$}\hlstd{tmp2}\hlopt{))\{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ \ \ }\hlstd{x\ }\hlopt{=\ }\hlstd{x1}\hlopt{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}\ }\hlstd{}\hlkwa{else\ }\hlstd{}\hlopt{\{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ \ \ }\hlstd{x\ }\hlopt{=\ }\hlstd{x2}\hlopt{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlopt{\}\ }\hlstd{}\hlkwa{else\ }\hlstd{}\hlopt{\{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{string\ }\hlkwd{msg}\hlstd{}\hlopt{(}\hlstd{}\hlstr{"CubicRoots::exe\ :\ failed"}\hlstd{}\hlopt{);}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwa{throw}\hlstd{}\hlopt{(}\hlstd{}\hlkwd{MaterialException}\hlstd{}\hlopt{(}\hlstd{msg}\hlopt{));}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlopt{\}}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlslc{//\ elastic\ strain}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{be\ }\hlopt{=\ }\hlstd{x}\hlopt{{*}}\hlstd{StrainStensor}\hlopt{::}\hlstd{}\hlkwd{Id}\hlstd{}\hlopt{()+}\hlstd{dev\textunderscore tK}\hlopt{/}\hlstd{mu}\hlopt{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlslc{//\ Cauchy\ Stress}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{sig\ }\hlopt{=\ }\hlstd{tK}\hlopt{/}\hlstd{J}\hlopt{;}\hspace*{\fill}\\
+\hlstd{}\hlopt{\}}\hlstd{}\hspace*{\fill}\\
+\mbox{}
+\normalfont
+\normalsize

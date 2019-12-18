@@ -1,0 +1,141 @@
+/*!
+ * \file   ImplicitFiniteSimoMieheElastoPlasticity.mfront
+ * \brief  
+ * 
+ * \author Helfer Thomas
+ * \date   23 oct 2013
+ */
+
+@DSL ImplicitFiniteStrain;
+@Behaviour ImplicitSimoMieheElastoPlasticity;
+@Author T. Helfer;
+@Description{
+  J.C. Simo and C. Miehe
+  Associative coupled thermoplasticity
+  at finite strain : Formulation, numerical
+  analysis and implementation
+  Computer Methods in Applied Mechanics and Engineering 98
+  pages 41-104, 1992
+
+  Modélisation élasto(visco)plastique avec
+  écrouissage isotrope en grandes déformations
+    Référence du Code-Aster : "R5.03.21"
+  Date : 25/09/2013  Révision : 11537
+}
+
+@Theta 1.;
+@Epsilon 1.e-11;
+
+@Includes{
+#include"TFEL/Math/General/CubicRoots.hxx"
+}
+
+@MaterialProperty stress young;
+young.setGlossaryName("YoungModulus");
+@MaterialProperty real nu;
+nu.setGlossaryName("PoissonRatio");
+@MaterialProperty thermalexpansion alpha;
+alpha.setGlossaryName("ThermalExpansion");
+
+@MaterialProperty stress s_y;
+@MaterialProperty stress ET;
+
+@StateVariable strain p;
+p.setGlossaryName("EquivalentPlasticStrain");
+// Normalised Elastic Strain tensor
+// be = J^{-2/3} Fe.Fe^{T}
+@AuxiliaryStateVariable StrainStensor be;
+
+// Bulk modulus
+@LocalVariable stress K;
+// Shear modulus
+@LocalVariable stress mu;
+// Trial elastic tensor
+@LocalVariable StrainStensor be_tr;
+// Von Mises norm of the trial stress tensor
+@LocalVariable stress tKeq_tr;
+// hardening slope
+@LocalVariable stress R;
+// true if plastic loading
+@LocalVariable bool b;
+
+@Parameter Tref;
+Tref.setDefaultValue(293.15);
+
+@InitLocalVariables{
+  // elasticity coefficients
+  K  = young/(3*(1-2*nu));
+  mu = young/(2*(1+nu));
+  // hardening slope
+  R  = young*ET/(young-ET);
+  // gradient deformation increment
+  const Tensor dF = F1*invert(F0);
+  const real   J  = det(dF);
+  const real   dJ_m1o3 = CubicRoots::cbrt(1/J);
+  // trial elastic tensor
+  be_tr = push_forward(be,dJ_m1o3*dF);
+  StressStensor dev_tK_tr  = mu*deviator(be_tr);
+  tKeq_tr = sigmaeq(dev_tK_tr);
+  // check 
+  b = (tKeq_tr>s_y+R*p);
+} // end of @InitLocalVars
+
+@PredictionOperator<DS_DEGL>{
+  static_cast<void>(smt);
+  const auto lambda = computeLambda(young,nu);
+  Dt = 2*mu*Stensor4::Id()+lambda*Stensor4::IxI();
+}
+
+@Integrator{
+  if(b){
+    // plastic loading
+    const strain p_ = p+theta*dp;
+    const strain tr = trace(be_tr);
+    fp      = (tKeq_tr-mu*theta*tr*dp-s_y-R*p_)/young;
+    dfp_ddp = theta*(R-mu*tr)/young;
+  }
+} // end of @Integrator
+
+@UpdateAuxiliaryStateVariables{
+  const real J = det(F1);
+  // Von Mises equivalent stress of the Kirchhoff stress
+  const stress tKeq = tKeq_tr-mu*trace(be_tr)*dp;
+  // deviator of the Kirchhoff stress
+  StressStensor dev_tK;
+  if(tKeq_tr>stress(1.e-8*mu)){
+    dev_tK = (tKeq/tKeq_tr)*mu*deviator(be_tr);
+  } else {
+    dev_tK = StressStensor(stress(0));
+  }
+  // Kirchhoff stress
+  const StressStensor tK = dev_tK+(K/2)*((J*J-1)-3*alpha*(T+dT-Tref)*(J+1/J))*StrainStensor::Id();
+  // correction of the trace to satisfy plastic incompressibility
+  real x0,x1,x2;
+  const real Je_2 = tKeq*tKeq/(2*mu*mu);
+  const real Je_3 = det(dev_tK/mu);
+  const unsigned short nb = CubicRoots::exe(x0,x1,x2,
+                                            real(1),real(0),
+                                            -Je_2,-(1-Je_3));
+  real x;
+  if(nb==1u){
+    x = x0;
+  } else if(nb==3u){
+    const real tr   = trace(be);
+    const real tmp0 = abs(tr-3*x0);
+    const real tmp1 = abs(tr-3*x1);
+    const real tmp2 = abs(tr-3*x2);
+    if((tmp0<tmp1)&&(tmp0<tmp2)){
+      x = x0;
+    } else if((tmp1<tmp0)&&(tmp1<tmp2)){
+      x = x1;
+    } else {
+      x = x2;
+    }
+  } else {
+    throw(runtime_error("CubicRoots::exe : failed"));
+  }
+  // elastic strain
+  be = x*StrainStensor::Id()+dev_tK/mu;
+  // Cauchy Stress
+  sig = tK/J;
+}

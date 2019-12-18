@@ -1,0 +1,597 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% File      : mfront.tex
+% Author    : th202608@pleiades068.intra.cea.fr
+% Date      : 15 oct. 2012
+% Directory : /home/th202608/codes/tfel/tests/Broyden/
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% \documentclass[rectoverso,pleiades,pstricks,leqno,anti]{note_technique_2010}
+\documentclass[rectoverso,pleiades,pstricks,leqno,anti,projet]{note_technique_2010}
+
+\usepackage[dvips]{graphicx}
+\usepackage[dvips,breaklinks]{hyperref}
+\usepackage{multicol}
+
+\usepackage{mathematiques}
+\usepackage{mecanique}
+\usepackage{couleurs}
+\usepackage{presentation}
+
+\usepackage[frenchb]{babel}
+
+\newcommand{\pleiades}{\texttt{pleiades}}
+\newcommand{\tfel}{\texttt{TFEL}}
+\newcommand{\python}{\texttt{python}}
+\newcommand{\mfront}{\texttt{mfront}}
+\newcommand{\mtest}{\texttt{mtest}}
+\newcommand{\licos}{\texttt{licos}}
+\newcommand{\germinal}{\texttt{germinal}}
+\newcommand{\cyrano}{\texttt{cyrano}}
+\newcommand{\galileo}{\texttt{galileo}}
+\newcommand{\castem}{\texttt{Cast3M}}
+\newcommand{\gibiane}{\texttt{gibiane}}
+\newcommand{\tmfft}{\texttt{TMFFT}}
+\newcommand{\aster}{\href{http://www.code-aster.org/}{\texttt{Aster}}}
+\newcommand{\pycastem}{\texttt{pyCast3M}}
+\newcommand{\umat}{\texttt{umat}}
+\newcommand{\sirius}{\texttt{sirius}}
+\newcommand{\fortran}{\texttt{fortran}}
+\newcommand{\cmake}{\href{http://www.cmake.org/}{\texttt{cmake}}}
+\newcommand{\jenkins}{\href{http://jenkins-ci.org/}{\texttt{jenkins}}}
+
+\newcommand{\bigO}[1]{\ensuremath{\mathop{}\mathopen{}O\mathopen{}\left(#1\right)}}
+
+\newcommand{\varcpp}[1]{\texttt{#1}}
+
+
+\newcommand{\cea}{CEA}
+\newcommand{\areva}{AREVA}
+\newcommand{\edf}{eDF}
+
+\newcommand{\windows}{\href{http://www.microsoft.com/france/windows/default.mspx}{\texttt{Windows}}}
+\newcommand{\unix}{\href{http://www.kernel.org/}{\texttt{unix}}}
+\newcommand{\msys}{\href{http://www.mingw.org/wiki/MSYS}{\texttt{msys}}}
+\newcommand{\cygwin}{\href{http://www.cygwin.com/}{\texttt{cygwin}}}
+\newcommand{\linux}{\href{http://www.kernel.org/}{\texttt{linux}}}
+\newcommand{\debian}{\href{http://www.debian.org/}{\texttt{Debian}}}
+\newcommand{\ubuntu}{\href{http://www.ubuntu.com}{\texttt{Ubuntu}}}
+\newcommand{\redhat}{\href{http://www.redhat.com}{\texttt{Red Hat}}}
+\newcommand{\mandriva}{\href{http://www.mandriva.com}{\texttt{Mandriva}}}
+\newcommand{\excel}{\href{http://www.microsoft.com/france/office/2007/programs/excel/overview.mspx}{\texttt{Microsoft Office Excel}}}
+
+\newcommand{\debutpas}[1]{\ensuremath{\left.#1\right|_{t}}}
+\newcommand{\milieupas}[1]{\ensuremath{\left.#1\right|_{t+\theta\, \Delta\, t}}}
+\newcommand{\finpas}[1]{\ensuremath{\left.#1\right|_{t+\Delta\, t}}}
+\newcommand{\demipas}[1]{\ensuremath{\left.#1\right|_{t+\frac{\Delta\, t}{2}}}}
+
+\newcommand{\code}[1]{
+  \psframebox[linecolor=ceaorange]{
+    \begin{minipage}[htbp]{1.0\linewidth}
+      \ttfamily #1
+    \end{minipage}
+  }
+}
+
+\newcommand{\bash}[1]{
+  \begin{center}
+    \begin{minipage}{0.8\linewidth}
+      \footnotesize{}
+      \texttt{\$#1}
+    \end{minipage}
+  \end{center}
+}
+
+\include{Champs}
+
+\resumecea{ Ce document décrit les principales nouveautés de la
+  version \(3.0\) de \tfel{}, et plus particulièrement sur \mfront{}.
+}
+
+\begin{document}
+
+\section{Nouveautés \mfront{}}
+
+\subsection{Support des déformations logarithmiques pour les codes
+  combustibles $1D$ écrits en petites déformations}
+
+\subsection{Possibilité de gérer un pas de temps adaptatif depuis la
+  loi de comportement}
+
+\subsection{Calcul des dilatations libres, du tenseur d'élasticité, du
+  tenseur de Hill et de propriétés matériaux par les lois de
+  comportement}
+
+Nous traitons dans ce paragraphe les fonctionnalités relatives au
+calcul des dilatations libres, du tenseur d'élasticité, du tenseur de
+Hill et, de manière générale, de propriétés matériau, par la loi de
+comportement.
+
+Il s'agit d'un sujet d'apparence anodine, mais qui s'est avéré
+étonnamment complexe pour trois raisons~:
+\begin{itemize}
+\item la prise en compte des contraintes planes pour le calcul du
+  tenseur d'élasticité. Ce point est discuté au paragraphe~\ref{}~;
+\item la prise en compte des évolutions des propriétés au cours du
+  calcul, notamment avec la température dont l'évolution sur le pas de
+  temps est connu par la loi de comportement. Nous reportons la
+  discussion de ce point au paragraphe~\ref{sec:eval-des-propr}.
+\item le cas des matériaux orthotropes.
+\end{itemize}
+
+Pour les matériaux orthotropes, la difficulté provient essentiellement
+du problème de la cohérence de la définition des axes matériau entre
+les différentes hypothèses de modélisation.
+
+Pour illustrer cette difficulté, rappelons que tous les codes imposent
+que~:
+\begin{itemize}
+\item la direction axiale soit la troisième direction matériau en
+  \(2D\) déformation plane ou en \(2D\) contrainte plane.
+\item la direction orthoradiale soit la la troisième direction
+  matériau en axisymétrie.
+\end{itemize}
+
+Dans les versions précédentes de \mfront{}, ses difficultés étaient
+gérées ainsi~:
+\begin{itemize}
+\item pour le calcul des dilatations libres, on laissait le code
+  appelant faire leur évaluation~: le code fournissait alors à la loi
+  un incrément de déformation dit \og{}~mécanique\fg{}\footnote{Il
+    s'agit de l'incrément de déformation totale auquel on a soustrait
+    l'incrément des dilatations libres.}.
+\item pour le calcul du tenseur d'élasticité, l'utilisateur pouvait
+  utiliser le mot clé {\tt @RequireStiffnessTensor} pour que \mfront{}
+  rajoute à la liste des propriétés matériau les propriétés
+  élastiques. Celles-ci devaient alors être fournies par le code dans
+  \og{}~le bon ordre~\fg{}. Charge à l'utilisateur de ne pas se
+  tromper~: il fallait en particulier être prudent si l'on changeait
+  d'hypothèse de modélisation et penser à inverser l'ordre des axes.
+\item pour le calcul du tenseur de \nom{Hill}, on testait
+  explicitement l'hypothèse de modélisation et l'on devait intervertir
+  l'ordre des coefficients de \nom{Hill}.
+\end{itemize}
+
+Ces trois solutions sont insatisfaisantes pour les raisons suivantes~:
+\begin{itemize}
+\item pour les deux premiers points (dilatations libres et tenseur
+  d'élasticité), une partie de l'information physique se trouve en
+  dehors de la loi.
+\item pour gérer correctement les grandes transformations, le calcul
+  des dilatations libres, ou du moins leur traitement, doit être
+  réalisé par la loi de comportement.
+\item dans tous les cas, on multiplie les causes d'erreurs
+  potentielles.
+\end{itemize}
+
+La meilleure solution serait de permettre l'évaluation dans la loi de
+comportement des dilatations libres, du tenseur d'élasticité et du tenseur
+de Hill.
+
+Une première étape pour résoudre ces difficultés est de permettre à
+l'utilisateur de spécifier une convention de rangement des axes
+d'orthotropie.
+
+\subsubsection{Convention de rangement des axes en orthotropie}
+
+\subsubsection{Calcul des déformations libres}
+
+\paragraph{Le mot clé {\tt @ComputeThermalExpansion}}
+
+\paragraph{Le mot clé {\tt @Swelling}}
+
+\paragraph{Le mot clé {\tt @AxialGrowth}}
+
+\paragraph{Le mot clé {\tt @ComputeStressFreeExpansion}} Le mot clé
+{\tt @ComputeStressFreeExpansion} permet à l'utilisateur d'implanter
+le calcul de dilatations libres quelconques. L'utilisateur doit mettre
+à jour des tenseurs d'ordre deux symétriques nommés respectivement
+{\tt dl0\_l0} et {\tt dl1\_l0}. {\tt dl0\_l0} représente la variation
+de longueur du corps par rapport à la longueur initial en début de pas
+de temps, et {\tt dl1\_l0} cette variation en fin de pas. En pratique,
+ces deux tenseurs sont généralement diagonaux.
+
+\subsubsection{Calcul du tenseur d'élasticité}
+
+\paragraph{Cas des contraintes planes}
+
+\paragraph{Le mot clé {\tt @ComputeStiffnessTensor}}
+
+\subsubsection{Propriétés matériaux externes}
+
+\subsubsection{Évaluation des propriétés matériaux externes}
+\label{sec:eval-des-propr}
+
+\subsection{Briques élémentaires de lois de comportement}
+
+\subsection{Nouvelles interfaces}
+
+\subsubsection{L'interface {\tt Europlexus}}
+
+\subsubsection{L'interface {\tt Abaqus}}
+
+\subsubsection{L'interface {\tt AbaqusExplicit}}
+
+\subsection{Utilitaires}
+
+\subsubsection{L'utilitaire {\tt mfront-doc}}
+
+L'utilitaire {\tt mfront-doc} permet de générer un fichier au format
+{\tt Markdown} à partir des commentaires écrits dans un fichier
+\mfront{}. Ce fichier peut ensuite être converti en différents formats
+(pdf, docx, tex, html) par l'utilitaire {\tt pandoc}.
+
+\subsubsection{L'utilitaire {\tt mfront-query}}
+
+L'utilitaire {\tt mfront-query} permet d'obtenir en ligne commande des
+informations sur un fichier \mfront{}.
+
+\subsection{Création du module {\tt mfront}}
+
+Les fichiers de \mfront{} peuvent désormais être analysés en \python{}
+depuis le module éponyme.
+\begin{center}
+  \url{http://tfel.sourceforge.net/mfront-python.html}
+\end{center}
+
+\subsection{Développements divers}
+
+\subsubsection{Refactorisation du code}
+
+\paragraph{Les classes {\tt TargetsDescription} et {\tt LibraryDescription}}
+
+\subsubsection{Options en ligne de commandes}
+
+\paragraph{L'option {\tt -D}} L'option {\tt -D} permet de définir des
+macros pour le préprocesseur {\tt C/C++} en ligne de commande.
+
+\paragraph{Substitutions} \mfront{} permet désormais de substituer
+certaines parties des fichiers d'entrée par d'autres depuis la ligne
+de commande. La syntaxe retenue est relativement classique et
+s'inspire du logiciel {\tt autoconf}.
+
+Plus précisément, les options passées à \mfront{} en ligne de commande
+de la forme {\tt --\symbol{64}XXX\symbol{64}=YYY}, où {\tt XXX} est
+une chaine de caractères quelconque de ne contenant pas le caractère
+{\tt \symbol{64}}, substituent chaque occurrence de {\tt
+  --\symbol{64}XXX\symbol{64}} par {\tt YYY} dans les fichiers
+traités.
+
+Par exemple, considérons l'appel suivant~:
+\bash{mfront --\symbol{64}p1\_value\symbol{64}=12.9 test.mfront}
+
+Toutes les occurrences de {\tt \symbol{64}p1\_value\symbol{64}} seront
+remplacées par {\tt 12.9}.
+
+\section{Nouveautés \mtest{}}
+
+\subsection{Modélisation des tubes sous pression}
+
+\subsection{Lecture des données dans un fichier}
+
+\subsection{Création du module {\tt mtest}}
+
+Les fonctionnalités de \mtest{} sont désormais accessibles en
+\python{} depuis le module éponyme.
+
+Ce module permet à la fois de traiter le point matériel et les tubes
+sous pressions.
+
+Une description de ce module est donnée à la page suivante~:
+\begin{center}
+  \url{http://tfel.sourceforge.net/mtest-python.html}
+\end{center}
+
+\paragraph{Note} Dans les versions précédentes, un module {\tt
+  mfront.mtest} avait ce rôle. Celui existe toujours pour assurer la
+compatibilité avec les versions précédentes. Son utilisation conduit
+cependant à un message d'avertissement conseillant d'utiliser le
+nouveau module.
+
+\subsection{Nouvelles méthodes d'accélération de convergence}
+
+\subsection{Pas de temps adaptatif}
+
+\section{Nouveautés \tfel{}}
+
+\subsection{Passage au standard C++-11}
+
+\subsection{Nouveautés de la librairie mathématique}
+
+\subsubsection{Nouvelles méthodes dans la classes {\tt t2tot2}}
+
+La classe {\tt t2tot2} représente une transformation linéaire des
+l'espace des tenseurs non symétriques vers l'espace des tenseurs non
+symmétriques.
+
+De nouvelles méthodes retournant des valeurs remarquables de ces
+transformations ont été ajoutées~:
+\begin{itemize}
+\item {\tt Id}  renvoie l'identité~;
+\item {\tt IxI} renvoie le produit tensoriel du tenseur identité non
+  symétrique par lui-même~;
+\item {\tt K} renvoie le dérivée du déviateur d'un tenseur non
+  symétrique par rapport à ce tenseur~:
+  \[
+  \tenseurq{K}=\tenseurq{I}-\Frac{1}{3}\,\tns{I}\otimes\tns{I}
+  \]
+\end{itemize}
+
+\subsubsection{Fonctions isotropes de tenseurs et dérivées}
+
+Un tenseur symétrique \(\tenseur{s}\) peut toujours être
+diagonalisé. Soit \(\lambda_{1},\lambda_{2},\lambda_{3}\) ses trois
+valeurs propres.
+
+Le tenseur \(\tenseur{s}\) se décompose ainsi~:
+\begin{equation}
+  \label{eq:tfel-3.0:s}
+  \tenseur{s} = \sum_{i=1}^{3}\lambda_{i}\,\tenseur{n}_{i}
+\end{equation}
+où les tenseurs \(\tenseur{n}_{i}\) sont appelés tenseurs propres de
+\(\tenseur{s}\).
+
+Une fonction \(\tenseur{f}\) de tenseur d'ordre \(2\) symétrique est dite {\em
+  isotrope} si elle vérifie~:
+\[
+\tenseur{f}\paren{\tilde{\tenseur{s}}}=\widetilde{\tenseur{f}\paren{\tenseur{s}}}
+\]
+pour changement de base représenté par \(\tilde{\mbox{}}\).
+
+Toute fonction définie par une série entière est isotrope. Ainsi les
+fonctions logarithme \(\log\) et exponentielle \(\exp\) sont des
+fonctions isotropes. Dans ce cas, \(f\) désigne à la fois une fonction
+réelle et une fonction de tenseur d'ordre \(2\) symétrique.
+
+Une telle fonction peut être évaluée à l'aide des vecteurs propres et
+des tenseurs propres~:
+\begin{equation}
+  \label{eq:tfel-3.0:fs}
+  f\paren{\tenseur{s}}=\sum_{i=1}^{3}f\paren{\lambda_{i}}\tenseur{n}_{i}
+\end{equation}
+
+L'équation~\eqref{eq:tfel-3.0:fs} peut être dérivée si \(f\) est
+dérivable.
+
+La classe {\tt stensor} comporte désormais les méthodes {\tt
+  compute\-Isotropic\-Function}, {\tt
+  compute\-Isotropic\-Function\-Derivative} et {\tt
+  compute\-Isotropic\-Function\-And\-Derivative} qui permettent
+respectivement de calculer la valeur d'une fonction isotrope, la
+valeur de sa dérivée ou les deux en même temps.
+
+Trois fonctions du même nom sont également disponibles.
+
+\subsubsection{Implémentation de l'opération de {\tt push\_forward} et
+  de {\tt pull\_back} pour les tenseurs d'ordre $4$}
+
+\subsubsection{Convertion du second tenseur de Piola-Kirchhoff en
+  contraintes de Cauchy exprimées dans le repère corotationnel}
+
+Le code {\tt Abaqus-Explicit} fournit le tenseur de dilatation
+\(\tenseur{U}\) et demande à ce que soit renvoyé le tenseur des
+contraintes de \nom{Cauchy} \(\tenseur{\tilde{\sigma}}\) dans le
+repère corotationnel. Ce dernier est relié au second tenseur de
+Piola-Kirchhoff \(\tenseur{S}\) par la formule~:
+\[
+\tenseur{\tilde{\sigma}}=\Frac{1}{\det\paren{U}}\,\tenseur{U}\,.\,\tenseur{S}\,.\,\tenseur{U}
+\]
+
+Cette opération est effectuée de manière optimisée par la fonction~:
+\begin{center}
+  {\tt convertSecondPiolaKirchhoffStressToCorotationnalCauchyStress}
+\end{center}
+
+L'opération inverse est réalisée par la fonction~:
+\begin{center}
+  {\tt convertCorotationnalCauchyStressToSecondPiolaKirchhoffStress}
+\end{center}
+
+\subsection{Changement et nouveautés de TFEL/Utitilties}
+
+\subsubsection{La classe {\tt CxxTokenizer}}
+
+La classe {\tt CxxTokenizer}, à la base de la lecture des fichiers
+\mfront{} et \mtest{}, a été réécrite pour de meilleures performances
+et une plus grande conformité au standard C++.
+
+\subsection{Nouvelles options de compilation}
+
+\subsubsection{Options \cmake{}}
+
+\paragraph{L'option {\tt enable-fast-math}} L'option {\tt
+  enable-fast-math} permet de sélectionner des options de compilations
+permettant une optimisation plus agressive du code en autorisant le
+compilateur à ne pas respecter la norme {\tt IEEE 754}.
+
+Pour les compilateurs {\tt clang} et {\tt gcc}, cette option ajoute le
+drapeau {\tt -ffast-math}.
+
+Pour le compilateur {\tt Visual Studio}, cette option supprime le
+drapeau {\tt /fp:strict}.
+
+Pour le compilateur {\tt intel}, cette option n'a pas d'effet.
+
+\section{Publication}
+
+\section{Éléments d'assurance qualité}
+
+\subsection{Indicateurs de la qualité du code}
+
+\subsubsection{Analyse statique du code}
+
+\paragraph{L'outil {\tt scan-build}}
+
+\paragraph{L'outil {\tt Coverity}}
+
+\subsubsection{Sanitizers}
+
+\subsubsection{Cas tests de vérification et taux de couverture}
+
+{\tt gcov}
+
+\subsection{Documentation}
+
+\subsubsection{Formation}
+
+\subsubsection{Documentation en ligne de commande}
+
+\paragraph{Documentation des mots-clés \mfront{}}
+
+\paragraph{Documentation des mots-clés \mtest{}}
+
+\subsubsection{Documentation des modules python de \mtest{}}
+
+\subsubsection{Page wiki pleiades}
+
+\subsection{Portabilité}
+
+\subsubsection{Portage sur Microsoft Visual Studio 2015}
+
+\subsubsection{Liste des compilateurs supportés}
+
+\subsection{Listes des changements conduisant à des incompatibilités
+  de version}
+
+Différents codes se basent sur la librairie \tfel{}~: l'architecture
+\pleiades{}, les applications basées sur cette architecture, et en
+particulier \licos{}.
+
+Dans la mesure du possible, les changements pouvant conduire à des
+incompatibilités sont évités. Elles ne sont introduites que si leurs
+conséquences sont minimales. Voici les principaux exemples connus à ce
+jour et une évaluation de leurs conséquences~:
+\begin{itemize}
+\item modification majeur des classes d'interface de \mfront{}. Les
+  interfaces \pleiades{}, \germinal{} et \licos{} pour les propriétés
+  matériaux et les modèles sont impactées. Les conséquences de ces
+  changements sont faibles car des copies locales de ces interfaces
+  est présente dans les tests de \mfront{}. Ces copies ayant été mise
+  à jour, le travail de portage est direct (recopie de ces nouvelles
+  versions dans les applications cible, recompilation et test).
+\item changement du nom d'une données membre dans la classe {\tt
+    CxxTokenizer}~: {\tt fileTokens} devient {\tt tokens}. Cette
+  donnée membre est utilisée par les classes de lecture des jeux de
+  données de l'architecture \pleiades{} et de \licos{}. Seules une
+  dizaine de lignes de codes sont concernées. Cette donnée membre y
+  est utilisée pour avoir l'adresse de la fin de fichier~: il est
+  conseillé d'utiliser la méthode {\tt end} prévue à cet effet plutôt
+  que d'accéder directement à cette donnée membre.
+\item retrait de la classe {\tt tfel:{}:\-utilities:{}:\-Name}~: cette
+  classe est utilisée pour la sauvegarde/reprise dans \licos{}. Cette
+  classe reposait sur la définition d'une méthode statique {\tt
+    getName} dans la plupart des classes de \tfel{} ce qui posait des
+  problèmes de maintenance. Nous conseillons de reprendre cette classe
+  dans \licos{} et d'en adapter le code quand cela est nécessaire. Il
+  s'agit d'une action ciblée d'une ou deux journées qu'il est possible
+  de déléguer à la tierce maintenance applicative du projet
+  \pleiades{}.
+\end{itemize}
+
+\subsection{Corrections d'anomalies}
+
+\subsubsection{Ticket {\# 25}}
+
+Les valeurs initiales de la déformation ou du gradient de la
+transformation n'étaient pas renseignées dans les fichiers \mtest{}
+généré en cas de non-convergence d'une loi.
+
+Plus de détails peuvent être trouvés à la page~:
+\begin{center}
+  \url{https://sourceforge.net/p/tfel/tickets/25/}
+\end{center}
+
+\subsubsection{Ticket {\# 26}}
+
+La méthode {\tt setMaximumIncrementValuePerIteration} n'était pas
+disponible pour les variables d'integration (déclarées par {\tt
+  @IntegrationVariable}), mais uniquement pour les variables d'états
+(déclarées par {\tt @StateveVariable}).
+
+Plus de détails peuvent être trouvés à la page~:
+\begin{center}
+  \url{https://sourceforge.net/p/tfel/tickets/26/}
+\end{center}
+
+\subsubsection{Ticket {\# 27}}
+
+La dépendance de la librairie {\tt TFELMaterial} envers la librairie
+{\tt TFELUtilities} n'était pas prise en compte par l'utilitaire {\tt
+tfel-config}.
+
+Plus de détails peuvent être trouvés à la page~:
+\begin{center}
+  \url{https://sourceforge.net/p/tfel/tickets/27/}
+\end{center}
+
+\subsubsection{Ticket {\# 28}}
+
+La documentation de reference sur les lois de comportement contenait
+une erreur dans l'expression de la matrice jacobienne de l'exemple
+décrivant l'implantation implicite d'une loi de comportement
+viscoplastique orthotrope.
+
+Plus de détails peuvent être trouvés à la page~:
+\begin{center}
+  \url{https://sourceforge.net/p/tfel/tickets/28/}
+\end{center}
+
+\subsubsection{Ticket {\# 29}}
+
+L'exemple d'utilisation générée par l'interface \castem{} pour des
+lois de comportement orthotrope était invalide~: les coefficients
+décrivant le repère d'orthotropie était initialisé explicitement.
+
+Plus de détails peuvent être trouvés à la page~:
+\begin{center}
+  \url{https://sourceforge.net/p/tfel/tickets/29/}
+\end{center}
+
+\subsubsection{Ticket {\# 31}}
+
+Par cohérence avec le jeu de données \mtest{}, les méthodes suivantes
+ont été ajoutées à la classe \python{} éponyme:
+\begin{itemize}
+\item {\tt setStrainEpsilon}
+\item {\tt setDeformationGradientEpsilon}
+\item {\tt setOpeningDisplacementEpsilon}
+\item {\tt setStressEpsilon}
+\item {\tt setCohesiveForceEpsilon}
+\end{itemize}
+
+Plus de détails peuvent être trouvés à la page~:
+\begin{center}
+  \url{https://sourceforge.net/p/tfel/tickets/31/}
+\end{center}
+
+\subsubsection{Ticket {\# 32}}
+
+L'interface \python{} de \mtest{} ne permettait pas de fixer les
+valeurs initiales des inconnues (déformation, gradient de la
+déformation ou saut de déplacement suivant les cas) et des des forces
+(contrainte de Cauchy, force cohésive). Les méthodes sont {\tt
+setDrivingVariablesInitialValues} et {\tt
+setThermodynamicForcesInitialValues} ont été ajoutées pour corriger ce
+point.
+
+Par cohérence avec le jeu de données \mtest{}, les méthodes suivantes
+ont également été ajoutées à la classe \python{} éponyme:
+\begin{itemize}
+\item {\tt setStrain}
+\item {\tt setDeformationGradient}
+\item {\tt setOpeningDisplacement}
+\item {\tt setStress}
+\item {\tt setCohesiveForce}
+\end{itemize}
+
+Plus de détails peuvent être trouvés à la page~:
+\begin{center}
+  \url{https://sourceforge.net/p/tfel/tickets/32/}
+\end{center}
+
+\section{Perspectives}
+
+\subsubsection{Lois de comportement à gradient de variables internes}
+
+% \subsubsection{Lois de comportement à gradient de variables internes}
+
+\end{document}

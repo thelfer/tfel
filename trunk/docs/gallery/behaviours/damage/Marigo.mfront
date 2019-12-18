@@ -1,0 +1,62 @@
+@Behaviour Marigo;
+@Author Thomas Helfer;
+@Date   1/12/2016;
+@Description{
+  "Formulation d'une loi d'endommagement d'un matériau élastique."
+  "Compte-rendu de l'Académie des Sciences,"
+  "Paris 1981; série II, 292(19): 1309-1313"
+
+  "Loi d'endommagement d'un matériau élastique fragile."
+  "Référence R5.03.18 du Code_Aster (révision 10413). 2016"
+}
+
+@StateVariable real d;
+d.setGlossaryName("Damage");
+
+@Parameter young = 150e9;
+young.setGlossaryName("YoungModulus");
+@Parameter nu    = 0.3;
+nu.setGlossaryName("PoissonRatio");
+@Parameter Yw = 75e3;
+@Parameter g  = 0.2;
+
+@LocalVariable stress lambda;
+@LocalVariable stress mu;
+
+@InitLocalVariables{
+  lambda = computeLambda(young,nu);
+  mu     = computeMu(young,nu);
+}
+
+@PredictionOperator{
+  if(smt==ELASTIC){
+    Dt = lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
+  } else if(smt==SECANTOPERATOR){
+    Dt = (1-d)*(lambda*Stensor4::IxI()+2*mu*Stensor4::Id());
+  } else {
+    return FAILURE;
+  }
+}
+
+@Integrator{
+  const auto e  = eval(eto+deto);
+  const auto tr = trace(e);
+  const auto Y  = tr*tr*lambda/2+mu*(e|e);
+  const auto k  = Yw*power<2>((1+g)/(1+g-d));
+  if(Y>k){
+    d = min((1+g)*(1-sqrt(Yw/Y)),real(1));
+  }
+  sig = (1-d)*(lambda*tr*Stensor::Id()+2*mu*e);
+}
+
+@TangentOperator{
+  if(smt==ELASTIC){
+    Dt = lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
+  } else if(smt==SECANTOPERATOR){
+    Dt = (1-d)*(lambda*Stensor4::IxI()+2*mu*Stensor4::Id());
+  } else if(smt==CONSISTENTTANGENTOPERATOR){
+    Dt = (1-d)*(lambda*Stensor4::IxI()+2*mu*Stensor4::Id());
+  } else {
+    return FAILURE;
+  }
+}

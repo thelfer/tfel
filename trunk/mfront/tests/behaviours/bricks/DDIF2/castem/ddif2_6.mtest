@@ -1,0 +1,26 @@
+@Author  Thomas Helfer;
+@Date 25/10/2017;
+@Description{
+  This file describes a tensile test along XX.
+  Simulation Results are compared to the
+  analytical solution.
+};
+
+@XMLOutputFile @xml_output@;
+@MaximumNumberOfSubSteps 1;
+@Behaviour<umat> @library@ @behaviour@;
+@MaterialProperty<constant> 'YoungModulus'     150.e9;
+@MaterialProperty<constant> 'PoissonRatio'       0.3;
+@MaterialProperty<constant> 'ElementSize[0]' '20e-06';
+@MaterialProperty<constant> 'ElementSize[1]' '20e-06';
+@MaterialProperty<constant> 'ElementSize[2]' '20e-06';
+@MaterialProperty<constant> 'AngularCoordinate' 0;
+
+@ExternalStateVariable 'Temperature' {0:293.15,3600.:800};
+
+@ImposedStrain 'EXX' {0:0,1:1.5e-3,2:0,3:-1e-3,4:0,5:3.e-3};
+
+@Times {0.,5 in 50};
+
+@Test<file> @reference_file@ {'SXX':9} 1.e-3 ; 
+@Test<function> {'SYY':'0.','SZZ':'0.','SXY':'0.','SXZ':'0.','SYZ':'0.'} 1.e-2;

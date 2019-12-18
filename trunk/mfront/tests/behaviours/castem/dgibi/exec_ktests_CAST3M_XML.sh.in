@@ -1,0 +1,85 @@
+#! /usr/bin/env bash
+# Lancement d'un cas test du repertoire dgibi.
+# cette version est destinee a etre utilisee par Hudson et make check
+# sortie des resultats au format xml.
+
+
+function printUsage()
+{
+cat <<EOF
+Usage :
+$0 <ktest>.dgibi
+La sortie standard est redirigée vers <ktest>.mess
+Le fichier resultat est cree dans TEST-<ktest>-castem.xml
+
+EOF
+}
+
+
+function control_c()
+{
+  echo -en "\n*** Exiting ***\n"
+  exit $?
+}
+
+# trap keyboard interrupt (control-c)
+trap control_c SIGINT
+
+function exec_castem() {
+    @castem_exe@ @CMAKE_CURRENT_SOURCE_DIR@/$1.dgibi &> ${1}.mess
+    if [ -f fort.3  ]; then \rm -f fort.3; fi
+    if [ -f fort.98 ]; then \rm -f fort.98; fi
+    if [ -f fort.25 ]; then mv fort.25 ${1}.lgi; fi
+    if [ -f fort.24 ]; then mv fort.24 ${1}.ps;  fi
+    if [ -f fort.97 ]; then mv fort.97 ${1}.mif; fi
+}
+
+## Vérification du nb de parametres d'appel au script
+if [ $# -ne 1 ]; then
+    printUsage
+    exit 1
+fi
+
+ktest=$1
+
+if [ ! -f @CMAKE_CURRENT_SOURCE_DIR@/${ktest}.dgibi ] ; then
+    echo "@CMAKE_CURRENT_SOURCE_DIR@/${ktest}.dgibi not found. Bailing out..."
+    exit 1
+fi
+
+export CASTEM=@CASTEMHOME@
+export PATH=@CASTEMHOME@/bin:$PATH
+export LD_LIBRARY_PATH=@CASTEMHOME@/lib:$LD_LIBRARY_PATH
+
+exec_castem $ktest;
+
+# Fichier de sortie
+XML_FILE="TEST-${ktest}-castem.xml"
+
+#echo "saving to $XML_FILE"
+
+# Entete du fichier XML
+echo '<?xml version="1.0" encoding="ascii"?>' > $XML_FILE
+echo '<testsuite name="CastemTest">' >> $XML_FILE
+
+# Le dgibi est copié puis modifié pour que les erreurs soient fatales
+# (la copie evite de faire apparaitre un statut svn modifié).
+
+# get time and error status
+TIME=`grep -a user ${ktest}.mess | grep system | grep elapsed | sed 's/user.*//'`
+ERROR=`grep -a 'ARRET DU PROGRAMME GIBI NIVEAU' ${ktest}.mess | sed 's/.*ERREUR:\s*//' | sed 's/\s.*//'`
+ERROR_MSG=`tail -20 ${ktest}.mess | recode -f ascii | sed s'/&/&amp;/'`
+
+if [ -z "$ERROR" ] ; then ERROR=1 ; fi
+if [ "$ERROR" -eq 0 ] ; then
+    echo "<testcase classname=\"CastemTestCase\" name=\"$ktest\" time=\"$TIME\"/>" >> $XML_FILE
+    echo '</testsuite>' >> $XML_FILE
+    exit 0
+else
+    echo "<testcase classname=\"CastemTestCase\" name=\"$ktest\" time=\"$TIME\">" >>  $XML_FILE
+    echo '<failure type="error">' >> $XML_FILE
+    echo "$ERROR_MSG" >> $XML_FILE
+    echo '</failure></testcase>' >> $XML_FILE
+    echo '</testsuite>' >> $XML_FILE
+    exit 1
+fi

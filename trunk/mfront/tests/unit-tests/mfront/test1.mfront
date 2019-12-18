@@ -1,0 +1,11 @@
+@Behaviour Test;
+
+@MaterialProperty stress young;
+young.setGlossaryName("YoungModulus");
+@MaterialProperty real nu;
+nu.setGlossaryName("PoissonRatio");
+
+@MaterialProperty stress h[2];
+h.setEntryName("HardeningCoefficient");
+
+@StaticVariable real Cste = 12.;

@@ -1,0 +1,21 @@
+@DSL IsotropicStrainHardeningMisesCreep;
+@Behaviour StrainHardeningCreep3;
+@Author    Helfer Thomas;
+@Date      23/11/06;
+
+@ElasticMaterialProperties {"Inconel600_YoungModulus.mfront",0.3};
+@AuxiliaryStateVariable stress l,m;
+@AuxiliaryStateVariable stress l_tdt,m_tdt;
+
+@FlowRule{
+  f       =  0;
+  df_dseq =  0;
+  df_dp   =  0;
+}
+
+@UpdateAuxiliaryStateVariables{
+  l     = lambda;
+  m     = mu;
+  l_tdt = lambda_tdt;
+  m_tdt = mu_tdt;
+}

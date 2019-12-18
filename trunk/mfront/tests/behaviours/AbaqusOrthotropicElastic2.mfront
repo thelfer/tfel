@@ -1,0 +1,27 @@
+@DSL DefaultDSL;
+@Behaviour AbaqusOrthotropicElastic2;
+@Author    Helfer Thomas;
+@Date      02/09/16;
+
+@OrthotropicBehaviour<Pipe>;
+@RequireStiffnessTensor;
+@ProvidesSymmetricTangentOperator;
+@AbaqusOrthotropyManagementPolicy[abaqus] MFront;
+
+@ComputeThermalExpansion {"ThermalExpansionCoefficientTest_1.mfront",
+                          "ThermalExpansionCoefficientTest_2.mfront",
+                          "ThermalExpansionCoefficientTest_3.mfront"};
+
+@PredictionOperator{
+  if(!((smt==ELASTIC)||(smt==SECANTOPERATOR)||(smt==TANGENTOPERATOR))){
+    return FAILURE;
+  }
+  Dt=D;
+}
+
+@Integrator{
+  sig = D*(eto+deto);
+  if(computeTangentOperator_){
+    Dt = D;
+  }
+}

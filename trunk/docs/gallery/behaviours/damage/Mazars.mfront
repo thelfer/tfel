@@ -1,0 +1,115 @@
+@Behaviour Mazars;
+@Author F. Hamon and Jean-Michel Proix and Thomas Helfer;
+@Date   25/06/2013;
+@Description{
+  "Mazars damage behaviour"
+}
+
+@MaterialProperty stress young;
+young.setGlossaryName("YoungModulus");
+@MaterialProperty real nu;
+nu.setGlossaryName("PoissonRatio");
+
+@MaterialProperty real Ac;
+@MaterialProperty real At;
+@MaterialProperty real Bc;
+@MaterialProperty real Bt;
+@MaterialProperty real k;
+@MaterialProperty real ed0;
+
+@StateVariable real d;
+d.setGlossaryName("Damage");
+@StateVariable real Y;
+Y.setEntryName("DamageDrivingForce");
+@StateVariable real eeqcor;
+
+@LocalVariable stress lambda;
+@LocalVariable stress mu;
+@LocalVariable real d0;
+@LocalVariable real A,B,g;
+@LocalVariable StrainStensor e;
+@LocalVariable StressStensor s0;
+
+@Parameter dmax = 0.99999;
+
+@InitLocalVariables{
+  lambda = computeLambda(young,nu);
+  mu     = computeMu(young,nu);
+  d0     = d;
+}
+
+@PredictionOperator{
+  if(smt==ELASTIC){
+    Dt = lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
+  } else if(smt==SECANTOPERATOR){
+    Dt = (1-d)*(lambda*Stensor4::IxI()+2*mu*Stensor4::Id());
+  } else {
+    return FAILURE;
+  }
+}
+
+@Integrator{
+  e  = eto+deto;
+  const strain tr = trace(e);
+  s0 = lambda*tr*Stensor::Id()+2*mu*e;
+  strain e1,e2,e3;
+  e.computeEigenValues(e1,e2,e3);
+  // eigen values of s0
+  const stress s1   = 2*mu*e1+lambda*tr;
+  const stress s2   = 2*mu*e2+lambda*tr;
+  const stress s3   = 2*mu*e3+lambda*tr;
+  const stress sn   = max(abs(s1),max(abs(s2),abs(s3)));
+  const strain ppe1 = max(strain(0),e1);
+  const strain ppe2 = max(strain(0),e2);
+  const strain ppe3 = max(strain(0),e3);
+  const stress pps1 = max(stress(0),s1);
+  const stress pps2 = max(stress(0),s2);
+  const stress pps3 = max(stress(0),s3);
+  real r=1;
+  if (sn>1.e-6*young){
+    r=(pps1+pps2+pps3)/(abs(s1)+abs(s2)+abs(s3));
+  }
+  g=1;
+  if ((min(s1,min(s2,s3))<0)&&(r==0)){
+    const stress pns1 = min(stress(0),s1);
+    const stress pns2 = min(stress(0),s2);
+    const stress pns3 = min(stress(0),s3);
+    g=-sqrt(pns1*pns1+pns2*pns2+pns3*pns3)/(pns1+pns2+pns3);
+  }
+  const real eeqc = sqrt(ppe1*ppe1+ppe2*ppe2+ppe3*ppe3);
+  eeqcor = max(g*eeqc,eeqcor);
+  A  = At*(2*r*r*(1-2*k)-r*(1-4*k))+Ac*(2*r*r-3*r+1);
+  B  = r*r*Bt+(1-r*r)*Bc;    
+  const real Y1 = max(ed0,eeqcor);
+  Y=max(Y1,Y);
+  d=max(d,1-(1-A)*ed0/Y-A*exp(-B*(Y-ed0)));
+  d=min(dmax,d);
+  // final stress
+  sig = (1-d)*s0;
+}
+
+@TangentOperator{
+  if(smt==ELASTIC){
+    Dt = lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
+  } else if(smt==SECANTOPERATOR){
+    Dt = (1-d)*(lambda*Stensor4::IxI()+2*mu*Stensor4::Id());
+  } else {
+    // an approximation of the consistent tangent-operator used in
+    // the `Code_Aster` finite element solver
+    const StiffnessTensor De = lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
+    Stensor eplus;
+    const real r=B*(Y-ed0);
+    real c=0;
+    if((d<dmax)&&(d-d0>0)&&(Y>1.e-6)){
+      c=ed0*(1-A)/(Y*Y);
+      if(r<200){
+	c=c+A*B/exp(r);
+      }
+      c=g*g*c/Y;
+    }
+    for(unsigned short i=0;i!=e.size();++i){
+      eplus[i]=max(strain(0),e[i]);
+    }    
+    Dt = (1-d)*De-c*(s0^eplus);
+  }
+}

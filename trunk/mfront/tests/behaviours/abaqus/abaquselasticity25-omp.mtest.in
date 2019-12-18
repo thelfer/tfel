@@ -1,0 +1,29 @@
+@Author Helfer Thomas;
+@Date   09 avril 2013;
+@Description{
+  This test verify the @RotationMatrix
+  keyword.
+ };
+
+@ModellingHypothesis 'PlaneStress';
+@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'ABAQUSORTHOTROPICELASTIC_PSTRESS';
+@MaterialProperty<constant> 'YoungModulus1'     100.e9;
+@MaterialProperty<constant> 'YoungModulus2'     300.e9;
+@MaterialProperty<constant> 'YoungModulus3'     100.e9;
+@MaterialProperty<constant> 'PoissonRatio12'      0.3;
+@MaterialProperty<constant> 'PoissonRatio13'      0.3;
+@MaterialProperty<constant> 'PoissonRatio23'      0.25;
+@MaterialProperty<constant> 'ShearModulus12'    100.e9;
+
+@ExternalStateVariable 'Temperature' 293.15;
+
+@ImposedStress 'SXX' {0.:0.,1:50.e6};
+
+@Times {0.,1.};
+@RotationMatrix{{0,1,0},
+                {1,0,0},
+		{0,0,1}};
+
+@Test<function> {'EXX':'SXX/YoungModulus2',
+    'EYY':'-PoissonRatio12*SXX/YoungModulus1',
+    'EXY':'0.'} 1.e-12;

@@ -1,0 +1,43 @@
+@Behaviour LogarithmicStrainElasticity;
+@Author Helfer Thomas;
+@Date   4/12/13;
+@Description{
+ A very first test 
+ (the most simple one in fact).
+}
+
+@StrainMeasure Hencky;
+// The following keywords are redundant. They are kept for backward compatibility.
+@UMATFiniteStrainStrategy[umat]                    MieheApelLambrechtLogarithmicStrain;
+@CalculiXFiniteStrainStrategy[calculix]            MieheApelLambrechtLogarithmicStrain;
+@AbaqusFiniteStrainStrategy[abaqus,abaqusexplicit] MieheApelLambrechtLogarithmicStrain;
+@EPXFiniteStrainStrategy[epx]                      MieheApelLambrechtLogarithmicStrain;
+@AnsysFiniteStrainStrategy[ansys]                  MieheApelLambrechtLogarithmicStrain;
+
+@UseQt true;
+@ProvidesSymmetricTangentOperator;
+
+@MaterialProperty stress young;
+young.setGlossaryName("YoungModulus");
+@MaterialProperty real nu;
+nu.setGlossaryName("PoissonRatio");
+
+@LocalVariable stress lambda;
+@LocalVariable stress mu;
+
+@InitLocalVars{
+  lambda = computeLambda(young,nu);
+  mu = computeMu(young,nu);
+}
+
+@PredictionOperator{
+  static_cast<void>(smt);
+  Dt = lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
+}
+
+@Integrator{
+  sig = lambda*trace(eto+deto)*StrainStensor::Id()+2*mu*(eto+deto);
+  if(computeTangentOperator_){
+    Dt = lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
+  }
+}

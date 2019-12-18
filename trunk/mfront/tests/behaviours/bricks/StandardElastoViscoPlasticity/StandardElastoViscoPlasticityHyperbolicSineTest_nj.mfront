@@ -1,0 +1,16 @@
+@DSL Implicit;
+@Behaviour StandardElastoViscoPlasticityHyperbolicSineTest_nj;
+@Author Thomas Helfer;
+@Date 7/04/2018;
+
+@ModellingHypotheses {".+"};
+
+@Algorithm NewtonRaphson_NumericalJacobian;
+@Epsilon 1.e-14;
+@PerturbationValueForNumericalJacobianComputation 1.e-8;
+@Theta 1;
+
+@Brick "StandardElastoViscoPlasticity" {
+  stress_potential : "Hooke" {young_modulus : 150e9, poisson_ratio : 0.3},
+  inelastic_flow : "HyperbolicSine" {criterion : "Mises", K : 2e10}
+};

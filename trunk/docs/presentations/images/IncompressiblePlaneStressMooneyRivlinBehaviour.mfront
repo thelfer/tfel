@@ -1,0 +1,41 @@
+@Parser DefaultFiniteStrainParser;
+@Behaviour IncompressiblePlaneStressMooneyRivlinBehaviour;
+@Author T. Helfer;
+@Date 19/10/2013;
+
+@ModellingHypothesis PlaneStress;
+
+@MaterialProperty stress C1;
+@MaterialProperty stress C2;
+
+@Integrator{
+  static const real cste = sqrt(real(2));
+  // right Cauch Green Tensor
+  Stensor c = computeRightCauchyGreenTensor(F1);
+  // specific treatment du to plane stress and incompressibility
+  c(2) = 1.; // PlaneStress
+  // ("in plane") inverse of b
+  const Stensor ci = invert(c);
+  // volume change in the plane
+  const real Jp = det(c);
+  // incompressibility
+  c(2) = 1/Jp;
+  // checks
+  // first invariant of the left Cauchy-Green deformation tensor
+  const real i1 = trace(c);
+  // second Piola-Kirchhoff stress
+  const stress zz = C1 + C2*i1;
+  const stress pr = 2*(zz-C2*c(2))*c(2);
+  StressStensor s = 2*(zz*Stensor::Id()-C2*c)-pr*ci;
+  s(2) = 0.; // Plane stress
+  // Cauchy stress
+  sig(0) = s(0)*F1(0)*F1(0) + F1(3)*F1(3)*s(1) + cste*F1(0)*F1(3)*s(3);
+  sig(1) = s(0)*F1(4)*F1(4) + F1(1)*F1(1)*s(1) + cste*F1(4)*F1(1)*s(3);
+  sig(3) = (F1(4)*F1(3)+F1(1)*F1(0))*s(3)+ (F1(4)*F1(0)*s(0) + F1(1)*F1(3)*s(1)) *cste;
+  sig(2) = 0.;
+  // no tangent operator yet
+  if(computeTangentOperator_){
+    string msg("tangent operator not yet available");
+    throw(runtime_error(msg));
+  }
+}

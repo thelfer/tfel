@@ -1,0 +1,62 @@
+@DSL RungeKutta;
+@Behaviour NortonRK2;
+@Author    Helfer Thomas;
+@Algorithm rk54;
+@Date 23/11/06;
+
+@Epsilon 1.e-8;
+
+@MaterialProperty stress young;
+young.setGlossaryName("YoungModulus");
+@MaterialProperty real nu;
+nu.setGlossaryName("PoissonRatio");
+
+@MaterialProperty real A;     /* Norton coefficient   */
+@MaterialProperty real E;     /* Norton exponant      */
+
+@LocalVariable real lambda; /* first  Lame coefficient  */
+@LocalVariable real mu;     /* second Lame coefficient */
+
+@StateVariable real    p[100];   /* Equivalent viscoplastic strain */
+@StateVariable Stensor evp[100]; /* Viscoplastic strain            */
+
+/* Initialize Lame coefficients */
+@InitLocalVariables{
+  lambda = computeLambda(young,nu);
+  mu = computeMu(young,nu);
+}
+
+@PredictionOperator{
+  if(!((smt==ELASTIC)||(smt==SECANTOPERATOR)||(smt==TANGENTOPERATOR))){
+    return FAILURE;
+  }
+  Dt=lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
+}
+
+@IsTangentOperatorSymmetric true;
+@TangentOperator{
+  if(!((smt==ELASTIC)||(smt==SECANTOPERATOR)||(smt==TANGENTOPERATOR))){
+    return FAILURE;
+  }
+  Dt=lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
+}
+
+@ComputeStress{
+  sig = lambda*trace(eel)*StrainStensor::Id()+2*mu*eel;
+}
+
+@Derivative{
+  TFEL_CONSTEXPR const auto cste = real{3}/real{2};
+  const real sigeq = sigmaeq(sig);
+  if(sigeq>1.e9){
+    return false;
+  }
+  const Stensor n = (sigeq > 10.e-7) ? cste*deviator(sig)/sigeq : Stensor(0);
+  deel = deto;
+  const real vp = (A/evp.size())*pow(sigeq,E); 
+  for(unsigned short i=0;i!=evp.size();++i){
+    dp[i]    = vp;
+    devp[i]  = dp[i]*n;
+    deel    -= devp[i];
+  }
+}

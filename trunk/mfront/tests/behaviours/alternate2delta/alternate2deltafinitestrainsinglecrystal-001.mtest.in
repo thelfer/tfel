@@ -1,0 +1,54 @@
+/*! 
+ * \file   castemsinglecrystal.mtest
+ * \brief
+ * \author jmp
+ * \brief 20 mai 2013
+ */
+
+@AccelerationAlgorithm 'Alternate2Delta';
+@MaximumNumberOfSubSteps 1;
+@PredictionPolicy 'LinearPrediction';
+
+@Real 'young' 208000.;
+@Real 'nu'    0.3;
+@Real 'G'     'young/2.6';
+
+@Behaviour<umat>    '@MFrontCastemBehavioursBuildPath@'  'umatfinitestrainsinglecrystal';
+
+@MaterialProperty<constant> 'YoungModulus1'     'young';
+@MaterialProperty<constant> 'YoungModulus2'     'young';
+@MaterialProperty<constant> 'YoungModulus3'     'young';
+@MaterialProperty<constant> 'PoissonRatio12'       'nu';
+@MaterialProperty<constant> 'PoissonRatio13'       'nu';
+@MaterialProperty<constant> 'PoissonRatio23'       'nu';
+@MaterialProperty<constant> 'ShearModulus12'    'young';
+@MaterialProperty<constant> 'ShearModulus13'    'young';
+@MaterialProperty<constant> 'ShearModulus23'    'young';
+@MaterialProperty<constant> 'm'      10.0;
+@MaterialProperty<constant> 'K'      25.0;
+@MaterialProperty<constant> 'C'      14363.;
+@MaterialProperty<constant> 'R0'     66.62;
+@MaterialProperty<constant> 'Q'      11.43;
+@MaterialProperty<constant> 'b'      2.1;
+@MaterialProperty<constant> 'd1'     494.0;
+
+@ExternalStateVariable 'Temperature' 293.15;
+
+@InternalStateVariable 'Fe' {1.,1.,1.,
+                             0.,0.,0.,
+                             0.,0.,0.};
+
+@ImposedDeformationGradient 'FZZ' {0.: 1., 2.0E-1 : 1.2 };
+@ImposedDeformationGradient 'FXX' 1;
+@ImposedDeformationGradient 'FYY' 1;
+@ImposedDeformationGradient 'FXY' 0;
+@ImposedDeformationGradient 'FYX' 0;
+@ImposedDeformationGradient 'FXZ' 0;
+@ImposedDeformationGradient 'FZX' 0;
+@ImposedDeformationGradient 'FYZ' 0;
+@ImposedDeformationGradient 'FZY' 0;
+
+@Times {0., 2.e-1 in 100};
+
+// @Test<file> '@top_srcdir@/mfront/tests/behaviours/references/finitestrainsinglecrystal-001.ref' {'SXX':11,'SYY':12,'SZZ':13,'SXY':14,'SXZ':15,'SYZ':16} 1.; 
+// @Test<file> '@top_srcdir@/mfront/tests/behaviours/references/finitestrainsinglecrystal-001.ref' {'g[0]':23,'g[1]':24,'g[2]':25,'g[3]':26,'g[4]':27,'g[5]':28,'g[5]':29,'g[7]':30,'g[8]':31,'g[9]':32,'g[10]':33,'g[11]':34} 1.e-7; 

@@ -1,0 +1,26 @@
+@Parser   Model;
+@Model    SolidSwellingModel;
+@Material UPuC;
+@Author   Helfer Thomas;
+@Date     06 Déc. 2007;
+
+@Output s;
+s.setGlossaryName("SolidSwelling");
+s.setDefaultInitialValue(0.);
+s.setDepth(1);
+
+@Input Bu;
+Bu.setGlossaryName("BurnUp");
+Bu.setDepth(1);
+
+@Input p;
+p.setGlossaryName("Porosity");
+p.setDepth(1);
+
+@Function compute
+{
+  const real coef1 = 8.e-3;
+  const real coef2 = 4.e-2;
+  const real p_    = 0.5*(p+p_1);
+  s = s_1 + coef1*exp(coef2-p_)*(Bu-Bu_1);
+} // end of function compute

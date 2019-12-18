@@ -1,0 +1,46 @@
+@DSL       Implicit;
+@Behaviour ImplicitNorton;
+@Author    Thomas Helfer;
+@Date      24/11/2016;
+@Description{
+  This file implements the Norton law, described as:
+  "$$"
+  "\left\{"
+  "  \begin{aligned}"
+  "    \tepsilonto   &= \tepsilonel+\tepsilonvis \\"
+  "    \tsigma       &= \tenseurq{D}\,:\,\tepsilonel\\"
+  "    \tdepsilonvis &= \dot{p}\,\tenseur{n} \\"
+  "    \dot{p}       &= A\,\sigmaeq^{m}"
+  "  \end{aligned}"
+  "\right."
+  "$$"
+}
+
+@ModellingHypotheses {".+"};
+@Epsilon 1.e-16;
+@Brick StandardElasticity;
+
+@ElasticMaterialProperties {150e9,0.3};
+@StateVariable strain p;
+p.setGlossaryName("EquivalentViscoplasticStrain");
+
+@Parameter A = 8.e-67;
+A.setEntryName("NortonCoefficient");
+@Parameter E = 8.2;
+E.setEntryName("NortonExponent");
+
+@Integrator{
+  const real eps = 1.e-12;
+  const auto seq = sigmaeq(sig);
+  const auto tmp = A*pow(seq,E-1.);
+  const auto df_dseq = E*tmp;
+  const auto iseq = 1/max(seq,eps*young);
+  const Stensor n = 3*deviator(sig)*iseq/2;
+  // implicit system
+  feel += dp*n;
+  fp   -= tmp*seq*dt;
+  // jacobian
+  dfeel_ddeel += 2.*mu*theta*dp*iseq*(Stensor4::M()-(n^n));
+  dfeel_ddp    = n;
+  dfp_ddeel    = -2*mu*theta*df_dseq*dt*n;
+} // end of @Integrator

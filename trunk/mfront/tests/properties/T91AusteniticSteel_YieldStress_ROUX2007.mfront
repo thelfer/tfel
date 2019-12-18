@@ -1,0 +1,25 @@
+@Parser   MaterialLaw ;
+@Material T91AusteniticSteel ;
+@Law      YieldStress_ROUX2007 ;
+@Author   F. Milliard ;
+@Date     11/12/2013 ;
+@Description{
+  // Coefficient de dilatation thermique austenite T91
+  // [Roux 07]
+}
+
+// Input of law
+@Input T ;
+T.setGlossaryName("Temperature") ;
+
+// Output of law
+@Output R0 ;
+R0.setGlossaryName("YieldStress");
+
+@PhysicalBounds T in [0.:*[;
+
+// Function
+@Function{
+  const real TC = T-273.15;
+  R0 = -2.97e+05 * TC +2.498e+08 ;
+} // end of Function

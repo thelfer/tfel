@@ -1,0 +1,99 @@
+/*!
+ * \file   hayhurst.mfront
+ * \brief  essai de resolution explicite
+ * pour comparer a HAYHURST
+ * \author jmp
+ * \date   04/02/2013
+ */
+
+@DSL RungeKutta;
+@Behaviour Hayhurst;
+@Algorithm rk54;
+
+@MaterialProperty stress young; 
+young.setGlossaryName("YoungModulus");
+@MaterialProperty real nu;
+nu.setGlossaryName("PoissonRatio");
+
+@MaterialProperty real K;
+@MaterialProperty real epsi0;
+@MaterialProperty real sigma0;
+@MaterialProperty real h1;
+@MaterialProperty real h2;
+@MaterialProperty real H1star;
+@MaterialProperty real H2star;
+@MaterialProperty real A0;
+@MaterialProperty real alphaD;
+@MaterialProperty real delta1;
+@MaterialProperty real delta2;
+@MaterialProperty real sequid;
+
+@StateVariable Stensor evp; 
+@StateVariable real    p;
+@StateVariable real    H1;
+@StateVariable real    H2;
+@StateVariable real    endo;
+@AuxiliaryStateVariable real sigeq;
+@LocalVariable real    lambda;
+@LocalVariable real    mu;
+@LocalVariable real    seq;
+@LocalVariable Stensor n;
+@LocalVariable real    H;
+@LocalVariable real    trsig;
+@LocalVariable real    trsigplus;
+
+/* Initialize Lame coefficients */
+@InitLocalVariables{
+  lambda = computeLambda(young,nu);
+  mu = computeMu(young,nu);
+} 
+
+@ComputeStress{
+  sig = (1.-endo)*(lambda*trace(eel)*Stensor::Id()+2*mu*eel);
+} 
+
+@Derivative{
+  seq = sigmaeq(sig);
+  // de maniere equivalente real seq = sqrt(sig|sig);    
+  Stensor  sig0 = (lambda*trace(eel)*Stensor::Id()+2*mu*eel);
+  const real seq0 = sigmaeq(sig0);  
+  if(seq > 0.01*young){
+    return false;
+  }
+  if(endo > 1.-1.e-8){
+     sig= Stensor(0.);
+     dp=0.;
+     dendo=0.;
+     dH1=0.;
+     dH2=0.;     
+  }  
+  real inv_seq(0);
+  n = Stensor(0.);  
+  if(seq > 1.e-8*young){  
+     H=H1+H2 ;
+     dp  = epsi0*sinh(seq0*(1-H)/K);
+     dH1=h1/seq * (H1star - delta1*H1) *dp;
+     dH2=h2/seq * (H2star - delta2*H2) *dp;
+     trsigplus=0;
+     if (sequid<0.5){
+      tvector<3u,stress> vp;
+      sig.computeEigenValues(vp);
+      trsigplus=max(0.,*(max_element(vp.begin(),vp.end())));
+     } else {
+       trsig=trace(sig);
+       trsigplus=0.;
+       if(trsig>0){
+	 trsigplus=trsig;
+       }
+     }
+     dendo=A0 * sinh( (alphaD*trsigplus + (1-alphaD)*seq )/sigma0 ) ; 
+     inv_seq = 1/seq;
+     n       = 1.5*deviator(sig)*inv_seq;     
+  }  
+  devp = dp*n ;
+  deel = deto - devp;  
+} 
+
+@UpdateAuxiliaryStateVars{
+  sigeq = sqrt(sig|sig);
+}

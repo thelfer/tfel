@@ -1,0 +1,15 @@
+@DSL MaterialLaw;
+@Law ErrnoHandlingCheck;
+@Author Thomas Helfer;
+@Date 12/03/2016;
+@Description{
+  "This material property is used to check "
+  "that an error is detected when errno is "
+  "set to a non zero value."
+}
+
+@Input x;
+
+@Function{
+  res = acos(x);
+}

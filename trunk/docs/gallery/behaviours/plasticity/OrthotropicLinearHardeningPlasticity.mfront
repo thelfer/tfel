@@ -1,0 +1,57 @@
+@DSL       Implicit;
+@Behaviour OrthotropicLinearHardeningPlasticity;
+@Author    T. Helfer;
+@Date 13/12/2016;
+@Description{
+  A simple orthotropic behaviour
+}
+
+@OrthotropicBehaviour<Pipe>;
+@Epsilon 1e-14;
+@Theta 1;
+
+@ModellingHypotheses {".+"};
+@Brick StandardElasticity;
+
+@ComputeStiffnessTensor<UnAltered> {
+  // YoungModulus1 YoungModulus2 YoungModulus3
+  7.8e+10,2.64233e+11,3.32e+11,
+  // PoissonRatio12 PoissonRatio23 PoissonRatio13
+  0.13,0.24,0.18,
+  // ShearModulus12 ShearModulus23 ShearModulus13
+  4.8e+10,1.16418e+11,7.8e+10
+};
+
+@HillTensor H {0.371,0.629,4.052,1.5,1.5,1.5};
+
+@StateVariable real p;
+p.setGlossaryName("EquivalentPlasticStrain");
+
+@Parameter s0 = 150e6;
+s0.setGlossaryName("YieldStress");
+@Parameter R  = 150e9;
+R.setEntryName("HardeningSlope");
+
+@LocalVariable bool b; // if true, plastic loading
+
+@InitLocalVariables{
+  const auto s = computeElasticPrediction();
+  const auto seq = sqrt(s|H*s);
+  b = seq-s0-R*p > 0;
+}
+
+@Integrator{
+  if(b){
+    const auto seq = sqrt(sig|H*sig);
+    const auto iseq = 1/(max(seq,real(1.e-10*D(0,0))));
+    const auto n = iseq*H*sig;
+    // elasticity
+    feel        += dp*n;
+    dfeel_ddeel += theta*dp*iseq*(H-(n^n))*D;
+    dfeel_ddp    = n;
+    // plasticity
+    fp           = (seq-s0-R*(p+theta*dp))/D(0,0);
+    dfp_ddp      = -theta*(R/D(0,0));
+    dfp_ddeel    =  theta*(n|D)/D(0,0);
+  }
+}

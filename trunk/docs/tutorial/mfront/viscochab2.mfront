@@ -1,0 +1,15 @@
+    const real Fexp   = UNsurK*pow(F*UNsurK,m-1) ;
+    const Stensor4 Jmn  = Stensor4::M() - (n_^n_);    
+    dfeel_ddeel += 2.*mu*theta*dp*Jmn*inv_seq ;
+    dfeel_ddp    = n_;    // ajouter termes dn/dp si C fonction de p
+    dfp_ddeel    = - Fexp*m*dt* 2.*mu*theta*(n_| Stensor4::M() )/1.5;
+    dfp_ddp      = 1 + theta* Fexp *m *dt*b*(Rinf-Rp);
+    for(unsigned short i=0;i!=2;++i){
+       dfeel_dda(i)   = -C[i]*dp*theta* inv_seq/1.5*Jmn ;
+       dfp_dda(i)     =  Fexp*m*dt*C[i]*theta/1.5*n;  
+       dfa_ddeel(i)   = -2.*mu*theta*dp*Jmn *inv_seq;
+       dfa_ddp(i)     = -n_ + g[i]*a_[i];
+       dfa_dda(i,i)   =  (1+dp*g[i]*theta)*Stensor4::Id()+C[i]*dp*theta*inv_seq/1.5*Jmn;
+    }
+    dfa_dda(0,1)   =  C[1]*dp*theta*inv_seq/1.5*Jmn;
+    dfa_dda(1,0)   =  C[0]*dp*theta*inv_seq/1.5*Jmn;

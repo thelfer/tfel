@@ -1,0 +1,86 @@
+@DSL Implicit;
+@Behaviour LoadInducedThermalStrain_Torelli2018;
+@Author Giacomo Torelli;
+@Date 25 / 03 / 2018;
+@Description {
+  "A confinement-dependent load-induced thermal strain "
+  "constitutive model for concrete subjected "
+  "to temperatures up to 500 °C"
+
+  "Torelli, Giacomo and Mandal, Parthasarathi and Gillie, "
+  "Martin and Tran, Van-Xuan"
+
+  "International Journal of Mechanical Sciences"
+
+  "http://www.sciencedirect.com/science/article/pii/S0020740317337372"
+}
+
+@Brick StandardElasticity;
+@ModellingHypotheses{".+"};
+
+@Theta 0.5;
+@IterMax 100;
+@Epsilon 1.e-16;
+
+@ComputeStiffnessTensor<UnAltered>{47000, 0.25};
+@ComputeThermalExpansion 10e-6;
+
+@Parameter gamma = 1.5;
+@Parameter sigmultimate = 50.;
+@Parameter nulits = 0.50;
+@Parameter tcrit = 0.;
+@Parameter b[5] = {2.7031065533E-05, -1.0209170592E-06, 6.1200423753E-9,  //
+                   -1.2632648735E-11, 6.9158539621E-15};
+
+@AuxiliaryStateVariable StrainStensor elits;
+elits.setEntryName("LoadInducedThermaStrain");
+@AuxiliaryStateVariable temperature Tmax;
+Tmax.setEntryName("MaximalValueOfTheTemperature");
+
+//! LITS increment
+@LocalVariable StrainStensor delits;
+//! Creep coefficient
+@LocalVariable real C;
+
+@InitLocalVariables {
+  Tmax = max(max(tcrit, Tmax), T);
+  const auto T_ = T + theta * dT;
+  const auto beta = b[0] + T_ * (b[1] + T_ * (b[2] + T_ * (b[3] + T_ * b[4])));
+  const auto dTe = max(T + dT - max(tcrit, Tmax), temperature(0));
+  C = (beta / (-sigmultimate)) * dTe;
+} // end of @InitLocalVariables
+
+@Integrator {
+  constexpr const stress eeps = 1.e-12;
+  const stress seps = eeps * young;
+  constexpr const auto id = Stensor::Id();
+  constexpr const auto esolver = StressStensor::FSESJACOBIEIGENSOLVER;
+  // negative part
+  const auto np = [](const stress x) -> stress { return x <= 0 ? x : 0; };
+  const auto dnp = [&seps](const stress x) -> real {
+    return std::abs(x) < seps ? 0.5 : ((x < 0) ? 1 : 0);
+  };
+  auto sn = StressStensor{};
+  auto dsn = Stensor4{};
+  std::tie(sn, dsn) =
+      sig.template computeIsotropicFunctionAndDerivative<esolver>(np, dnp,
+                                                                  seps * 0.1);
+  //----- Multiaxial correction coefficient
+  const auto sn_eq = sqrt(sn | sn);
+  const auto isn_eq = 1 / max(seps, sn_eq);
+  const auto cm = -trace(sn) * isn_eq;
+  const auto dcm_dsig = eval((-isn_eq * id + trace(sn) * power<3>(isn_eq) * sn) | dsn);
+  const auto eta = 1 + (cm - 1) * gamma;
+  const auto se = eval((1 + nulits) * sn - nulits * trace(sn) * id);
+  delits = C * eta * se;
+  const auto deta_dsig = gamma * dcm_dsig;
+  const auto dse_dsig = (1 + nulits) * dsn - nulits * ((id ^ id) * dsn);
+  const auto ddelits_dsig = C * (se ^ deta_dsig) + C * eta * dse_dsig;
+  // elasticity
+  feel += delits;
+  dfeel_ddeel += theta * ddelits_dsig * D;
+} // end of @Integrator
+
+@UpdateAuxiliaryStateVariables {
+  elits += delits;
+}

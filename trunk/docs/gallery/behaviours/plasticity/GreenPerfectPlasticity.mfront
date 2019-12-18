@@ -1,0 +1,55 @@
+@DSL Implicit;
+@Behaviour GreenPerfectPlasticity;
+@Author Thomas Helfer;
+@Date 30/11/2017;
+
+@Brick StandardElasticity;
+
+@Theta 1;
+@Epsilon 1e-14;
+@ModellingHypotheses {".+"};
+
+@ComputeStiffnessTensor<UnAltered> {150e9,0.3};
+
+@StateVariable real p;
+p.setGlossaryName("EquivalentPlasticStrain");
+
+@Parameter C = 0.8;
+C.setEntryName("GreenYieldCriterion_C");
+@Parameter F = 0.2;
+F.setEntryName("GreenYieldCriterion_F");
+
+@Parameter s0 = 150e6;
+s0.setGlossaryName("YieldStress");
+
+@LocalVariable bool b; // if true, plastic loading
+
+@InitLocalVariables{
+  const auto sig_el  = computeElasticPrediction();
+  const auto s_el    = deviator(sig_el);
+  const auto tr_el   = trace(sig_el);
+  const auto seq     = sqrt(3*C*(s_el|s_el)/2+F*tr_el*tr_el);
+  b = seq-s0 > 0;
+}
+
+
+@Integrator{
+  constexpr const auto id  = Stensor::Id();
+  constexpr const auto id4 = Stensor4::Id();
+  if(b){
+    const auto hC   = C/2;
+    const auto s    = deviator(sig);
+    const auto tr   = trace(sig);
+    const auto seq  = sqrt(3*hC*(s|s)+F*tr*tr);
+    const auto iseq = 1/(max(seq,real(1.e-10*young)));
+    const auto n    = eval(iseq*(3*hC*s+F*tr*id));
+    // elasticity
+    feel        += dp*n;
+    dfeel_ddeel += theta*dp*iseq*(3*hC*id4+(F-hC)*(id^id)-(n^n))*D;
+    dfeel_ddp    = n;
+    // plasticity
+    fp           = (seq-s0)/young;
+    dfp_ddp      = strain(0);
+    dfp_ddeel    = theta*(n|D)/young;
+  }
+}

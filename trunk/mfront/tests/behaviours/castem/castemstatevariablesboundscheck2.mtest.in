@@ -1,0 +1,18 @@
+@Author Helfer Thomas;
+@Date   2/09/2015;
+@Description{
+  This test checks that an exception is throw
+  when a state variable is out its physical
+  bounds at the end of the time step.
+};
+
+@MaximumNumberOfSubSteps 1;
+@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatstatevariablesboundscheck';
+@MaterialProperty<constant> 'YoungModulus'  150.e9;
+@MaterialProperty<constant> 'PoissonRatio'    0.3;
+
+@InternalStateVariable 'StateVariable' 0.5;
+
+@ExternalStateVariable 'Temperature' 293.15;
+
+@Times {0.,1};

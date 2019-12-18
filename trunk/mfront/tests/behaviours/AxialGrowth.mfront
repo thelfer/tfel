@@ -1,0 +1,30 @@
+@Behaviour AxialGrowth;
+@Author Helfer Thomas;
+@Date   08/08/16;
+@Description{
+ A test for the `@AxialGrowth` keyword
+}
+
+@AbaqusFiniteStrainStrategy[abaqusexplicit] MieheApelLambrechtLogarithmicStrain;
+@EPXFiniteStrainStrategy[epx] MieheApelLambrechtLogarithmicStrain;
+
+@OrthotropicBehaviour<Pipe>;
+@RequireStiffnessTensor<Altered>;
+
+@ExternalStateVariable real ag;
+ag.setGlossaryName("AxialGrowth");
+@AxialGrowth ag;
+
+@PredictionOperator{
+  static_cast<void>(smt);
+  Dt = D;
+}
+
+@Integrator{
+  sig = D*(eto+deto);
+}
+
+@TangentOperator{
+  static_cast<void>(smt);
+  Dt = D;
+}

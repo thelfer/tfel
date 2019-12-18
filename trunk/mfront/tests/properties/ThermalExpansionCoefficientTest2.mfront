@@ -1,0 +1,17 @@
+@Parser   MaterialLaw;
+@Law      ThermalExpansionCoefficientTest2;
+@Author   Thomas Helfer;
+@Date     06/03/2014;
+
+// output of law
+@Output a ;
+
+@Input T;
+T.setGlossaryName("Temperature");
+
+@Constant ReferenceTemperature = 273.15;
+
+@Function{
+  a = 2.e-5*(1+(T-273.15)/500);
+} // end of Function
+

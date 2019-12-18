@@ -1,0 +1,28 @@
+@Author Thomas Helfer;
+@Date   31/03/2018;
+@Description{
+
+};
+
+@XMLOutputFile @xml_output@;
+@MaximumNumberOfSubSteps 1;
+@Behaviour<castem> @library@ @behaviour@;
+
+@MaterialProperty<constant> 'YoungModulus' 150e9;
+@MaterialProperty<constant> 'PoissonRatio' 0.3;
+
+@ExternalStateVariable 'Temperature' 293.15 ;
+
+@Real 's' 12e6;
+@Real 'e0' 's/YoungModulus';
+@Strain{'e0', '-e0*PoissonRatio', '-e0*PoissonRatio', 0, 0, 0};
+@Stress{'s', 0, 0, 0, 0, 0};
+@InternalStateVariable 'ElasticStrain' {
+  'e0', '-e0*PoissonRatio', '-e0*PoissonRatio', 0, 0, 0
+};
+
+@ImposedStress 'SXX' 's';
+@Times {0,3600 in 10};
+
+@Real 'K' 2e10;
+@Test<function> 'EXX' 'e0+sinh(s/K)*t' 1.e-9;

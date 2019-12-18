@@ -1,0 +1,55 @@
+@Parser    Implicit;
+@Behaviour ImplicitOrthotropicCreep;
+@Author    Helfer Thomas;
+@Date      15/03/11;
+
+@OrthotropicBehaviour;
+@RequireStiffnessTensor;
+
+@Theta 1.;
+
+@StateVariable real p;      /* Equivalent viscoplastic strain */
+p.setGlossaryName("EquivalentViscoplasticStrain");
+
+@Includes{
+#include<TFEL/Material/Lame.hxx>
+#include<TFEL/Material/Hill.hxx>
+}
+
+@ComputeStress{
+  sig = D*eel;
+}
+
+@Integrator{
+  const real H_rr = 0.371;
+  const real H_tt = 1-H_F;
+  const real H_zz = 4.052;
+  const real H_rt = 1.5;
+  const real H_rz = 1.5;
+  const real H_tz = 1.5;
+  const real A = 8.e-67;
+  const real E = 8.2;
+  st2tost2<N,real> H;
+  if((getModellingHypothesis()==ModellingHypothesis::PLANESTRESS)||
+     (getModellingHypothesis()==ModellingHypothesis::PLANESTRAIN)||
+     (getModellingHypothesis()==ModellingHypothesis::GENERALISEDPLANESTRAIN)){
+    H = hillTensor<N,real>(Hzz,Hrr,Htt,
+			   Hrt,Hrz,Htz);
+  } else {
+    H = hillTensor<N,real>(Htt,Hrr,Hzz,
+			   Hrz,Hrt,Htz);
+  }
+  const real sigeq = sqrt(sig|H*sig);
+  const real tmp = A*pow(sigeq,E-1.);
+  real inv_sigeq(0);
+  Stensor  n(0.);
+  if(sigeq > 1.){
+    inv_sigeq = 1/sigeq;
+  }
+  n  = (H*sig)*inv_sigeq;
+  feel += dp*n-deto;
+  fp   -= tmp*sigeq*dt;
+  dfeel_ddeel += theta*dp*(H-(n^n))*D*inv_sigeq;
+  dfeel_ddp    = n;
+  dfp_ddeel    = -theta*tmp*E*dt*(n|D);
+}

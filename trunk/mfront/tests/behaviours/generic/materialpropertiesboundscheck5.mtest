@@ -1,0 +1,17 @@
+@Author Helfer Thomas;
+@Date   2/09/2015;
+@Description{
+  This test checks that the "Strict" out of
+  bounds policy does lead to throwing an exception
+  when a material property is out its bounds.
+};
+
+@MaximumNumberOfSubSteps 1;
+@Behaviour<generic> @library@ 'MaterialPropertiesBoundsCheck';
+@OutOfBoundsPolicy 'Strict';
+@MaterialProperty<constant> 'YoungModulus'   50.e9;
+@MaterialProperty<constant> 'PoissonRatio'    0.3;
+
+@ExternalStateVariable 'Temperature' 293.15;
+
+@Times {0.,1};

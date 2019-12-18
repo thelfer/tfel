@@ -1,0 +1,116 @@
+@DSL Implicit;
+@Behaviour Hayhurst;
+@Author Jean-Michel Proix;
+@Date   07/02/2013;
+@Description{
+  resolution implicite NEWTON classique
+}
+
+@Epsilon 1.e-15;
+@Theta 1;
+
+@MaterialProperty stress young; 
+young.setGlossaryName("YoungModulus");
+@MaterialProperty real nu;
+nu.setGlossaryName("PoissonRatio");
+
+@MaterialProperty real K;
+@MaterialProperty real epsi0;
+@MaterialProperty real sigma0;
+@MaterialProperty real h1;
+@MaterialProperty real h2;
+@MaterialProperty real H1star;
+@MaterialProperty real H2star;
+@MaterialProperty real A0;
+@MaterialProperty real alphaD;
+@MaterialProperty real delta1;
+@MaterialProperty real delta2;
+
+@StateVariable real    d;
+@StateVariable real    p;
+@StateVariable real    H1;
+@StateVariable real    H2;
+
+@LocalVariable stress lambda;
+@LocalVariable stress mu;
+
+@Parameter dmax = 0.999999999999999;
+
+/* Initialize Lame coefficients */
+@InitLocalVariables{
+  lambda = computeLambda(young,nu);
+  mu = computeMu(young,nu);
+}
+
+@ComputeStress{
+  if(d > dmax){
+    sig = StressStensor(stress(0));
+  } else {
+    sig = (1-d)*(lambda*trace(eel)*Stensor::Id()+2*mu*eel);
+  }
+} 
+
+@Integrator{
+  const real seq = sigmaeq(sig);
+  if(seq > 1e-8*young){
+    const real d_   = min(d+theta*dd,dmax);
+    const real seq0 = seq/(1-d_);  
+    const real H1_  = H1+theta*dH1; 
+    const real H2_  = H2+theta*dH2;
+    const real H_   = H1_+H2_;
+    const real shp  = sinh(seq*(1-H_)/K/(1-(d_)));
+    const real chp  = sqrt(1+shp*shp) ;
+    const real trsig  = max(trace(sig),stress(0));
+    const real trsig0 = trsig/(1-d);
+    const real shd  = sinh( (alphaD*trsig + (1-alphaD)*seq )/sigma0 ) ; 
+    const real chd  = sqrt(1+shd*shd) ;
+    const real iseq = 1/seq;
+    const real dtrsde=(3*lambda+2*mu)*theta*(1-d_)*trsig/trace(sig);
+    const Stensor n = 3*deviator(sig)*iseq/2;
+    Stensor dsvmde=2*mu*theta*(1-d_)*n;
+    Stensor dsvm0de=2*mu*theta*n;
+    // systeme a résoudre        
+    feel += dp*n-deto;
+    fp   = dp-epsi0*dt*shp;
+    fH1  = dH1-h1*dp*(H1star-delta1*H1_)*iseq ;
+    fH2  = dH2-h2*dp*(H2star-delta2*H2_)*iseq ;
+    fd   = dd - A0 * shd*dt;
+    // jacobienne    
+    dfeel_ddeel += 2*mu*theta*dp*iseq*(1-d_)*(Stensor4::M()-(n^n));
+    dfeel_ddp = n ;    
+    dfp_ddeel    = - (dt*epsi0*chp*(1-H_)/K)*dsvm0de ;
+    dfp_ddH1 = dt*epsi0*chp*theta*seq0/K ;
+    dfp_ddH2 = dfp_ddH1 ;
+    dfH1_ddeel = h1*dp*(H1star - delta1*H1_)*iseq*iseq*dsvmde; 
+    dfH2_ddeel = h2*dp*(H2star - delta2*H2_)*iseq*iseq*dsvmde; 
+    dfH1_ddp = - h1*iseq*(H1star - delta1*H1_) ;
+    dfH2_ddp = - h2*iseq*(H2star - delta2*H2_) ;
+    dfH1_ddH1+=  h1*delta1*dp*theta*iseq ;
+    dfH2_ddH2+=  h2*delta2*dp*theta*iseq ;
+    dfH1_ddd= h1*dp*(H1star - delta1*H1_)*theta*seq0*iseq*iseq;
+    dfH2_ddd= h2*dp*(H2star - delta2*H2_)*theta*seq0*iseq*iseq;    
+    dfd_ddd  += A0*dt*chd/sigma0 *(1-alphaD)*theta*seq0 ;
+    if (trsig > 1e-8*young) {
+      dfd_ddeel = -A0*dt*chd/sigma0 *(alphaD*dtrsde*Stensor::Id()+ (1-alphaD)*dsvmde);
+      dfd_ddd  += A0*dt*chd/sigma0 *alphaD*theta*trsig0 ;
+    } else {
+      dfd_ddeel = -A0*dt*chd/sigma0 *(1-alphaD)*dsvmde;
+    }
+  } else {
+    feel -= deto;
+  }
+}
+
+@TangentOperator{
+  if((smt==ELASTIC)||(smt==SECANTOPERATOR)){
+    Dt = lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
+  } else if(smt==CONSISTENTTANGENTOPERATOR){
+    const StiffnessTensor De = lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
+    Stensor4 Je;
+    Stensor Jd;
+    getPartialJacobianInvert(Je,Jd);
+    Dt = (1-d)*De*Je-((Jd)^(De*eel));
+  } else {
+    return false;
+  }
+}

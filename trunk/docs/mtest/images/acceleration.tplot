@@ -1,0 +1,12 @@
+set grid
+set term eps
+set output "acceleration.eps"
+set logscale y
+set xlabel "Itération"
+set ylabel "Erreur"
+set key bottom right
+set xrange [0:100]
+plot "norton-tc.txt" t "Matrice tangente cohérente", \
+     "norton-elas.txt" t "Matrice élastique, sans accélération de convergence", \
+     "norton-acc.txt"  t "Matrice élastique, avec accélération de convergence", \
+     1.e-12 w dashline t "Valeur du critère d'arrêt"

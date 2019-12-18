@@ -1,0 +1,30 @@
+@Author Thomas Helfer;
+@Date 26/07/2018;
+@Description{
+  "Test of the Elasticity6 behaviour which describes "
+  "a simple isotropic elastic behaviour whose stiffness "
+  "tensor is defined using the `@ComputeStiffnessTensor` "
+  "keyword. The young modulus depends on the temperature."
+};
+
+@ModellingHypothesis 'PlaneStress';
+@XMLOutputFile @xml_output@;
+@MaximumNumberOfSubSteps 1;
+@Behaviour<generic> @library@ 'Elasticity6';
+
+@ExternalStateVariable 'Temperature' {0:293.15,3600:800};
+@ImposedStrain<function> 'EXX' '1.e-3*sin(t/900.)';
+
+@Times {0.,3600 in 20};
+
+// stresses
+@Evolution<function> 'TC' 'Temperature-273.15';
+@Evolution<function> 'E'  '(-3.1636e-3*TC*TC-3.8654*TC+2.1421e+4)*1e7';
+@Real 'nu' 0.39991;
+
+@Test<function> 'SXX' 'E*EXX' 1.e-3;
+@Test<function> 'SYY' '0.'    1.e-3;
+@Test<function> 'SZZ' '0.'    1.e-3;
+// strains
+@Test<function> 'EYY' '-nu*EXX' 1.e-8;
+@Test<function> 'EZZ' '0' 1.e-8;

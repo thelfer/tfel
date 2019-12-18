@@ -1,0 +1,52 @@
+@DSL DefaultDSL;
+@Behaviour GeneralizedMaxwell;
+@Author    Benoît Bary;
+@Date      8/10/2014; 
+
+@Description{
+  "Generalised Maxwell law"
+}
+
+// Number of viscoplastic flows
+@IntegerConstant Nv = 3;
+
+@MaterialProperty real k0;
+k0.setGlossaryName("BulkModulus");
+@MaterialProperty real mu0;
+mu0.setGlossaryName("ShearModulus");
+
+@MaterialProperty real ki[Nv];
+ki.setEntryName("ViscoelasticBulkModulus");
+@MaterialProperty real mui[Nv];
+mui.setEntryName("ViscoelasticShearModulus");
+@MaterialProperty real taui[Nv];
+taui.setEntryName("TimeScale");
+
+@StateVariable StressStensor sej[Nv];
+sej.setEntryName("ViscoelasticStress");
+
+@Integrator{
+  const StrainStensor eto_ = eto+deto;
+  // standard elasticity
+  sig = k0*trace(eto_)*StrainStensor::Id()+2*mu0*deviator(eto_);
+  // Inside the forced convergence procedure of Cast3M, time step is
+  // null.
+  if(dt>0){
+    const real    ksi=trace(deto)/dt;
+    const Stensor epsev=deviator(deto)/dt;
+    for(unsigned short i=0;i!=Nv;++i){
+      const real edt = exp(-dt/taui[i]);
+      real pr_j      = trace(sej[i])/3;  // pressure
+      Stensor devsej = deviator(sej[i]); // deviatoric part
+      pr_j   = pr_j  *edt +    ki[i]*taui[i]*(1-edt)*ksi; 
+      devsej = devsej*edt + 2*mui[i]*taui[i]*(1-edt)*epsev;
+      // updating stresses
+      sej[i]  = devsej+pr_j*StrainStensor::Id();
+      sig    += sej[i];
+    }
+  }
+  if(computeTangentOperator_){
+    string msg("GenMaxwell : no tangent operator available");
+    throw(runtime_error(msg));
+  }
+}

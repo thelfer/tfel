@@ -1,0 +1,70 @@
+/*!
+ * \file   ImplicitFiniteStrain.mfront
+ * \brief  
+ * \author Helfer Thomas
+ * \date   23 otc. 2013
+ */
+
+@DSL ImplicitFiniteStrain;
+@Behaviour ImplicitFiniteStrainNorton;
+@Description{
+  A finite rotation small strain version
+  of the Norton law.
+  
+  Loi de comportement en grandes rotations
+  et petites déformations.
+  Jean Michel Proix
+  Documentation "R5.03.22" du Code-Aster
+  25/09/2013
+}
+
+@MaterialProperty stress young;
+young.setGlossaryName("YoungModulus");
+@MaterialProperty real nu;
+nu.setGlossaryName("PoissonRatio");
+
+@StateVariable StrainStensor eel;
+@StateVariable real          p;
+
+@LocalVariable stress        lambda;
+@LocalVariable stress        mu;
+@LocalVariable StrainStensor deto;
+@LocalVariable StressStensor pk2;
+
+@InitLocalVariables{
+  /* strain increment */
+  StrainStensor eto  = computeGreenLagrangeTensor(F0);
+  deto = computeGreenLagrangeTensor(F1)-eto;
+  /* Lame coefficients */
+  lambda = computeLambda(young,nu);
+  mu = computeMu(young,nu);
+} // end of @InitLocalVariables
+
+@ComputeStress{
+  pk2 = lambda*trace(eel)*Stensor::Id()+2*mu*eel;
+} // end of @ComputeStresss
+
+@ComputeFinalStress{
+  pk2 = lambda*trace(eel)*Stensor::Id()+2*mu*eel;
+  sig = convertSecondPiolaKirchhoffStressToCauchyStress(pk2,F1);
+}
+
+@Integrator{
+  const real A = 8.e-67;
+  const real E = 8.2;
+  const real seq = sigmaeq(pk2);
+  const real tmp = A*pow(seq,E-1.);
+  const real df_dseq = E*tmp;
+  real inv_seq(0);
+  Stensor n = Stensor(0.);
+  if(seq > 1.e-8*young){
+    inv_seq = 1/seq;
+    n       = 1.5*deviator(pk2)*inv_seq;
+  }
+  feel += dp*n-deto;
+  fp   -= tmp*seq*dt;
+  // jacobian
+  dfeel_ddeel += 2.*mu*theta*dp*inv_seq*(Stensor4::M()-(n^n));
+  dfeel_ddp    = n;
+  dfp_ddeel    = -2*mu*theta*df_dseq*dt*n;
+} // end of @Integrator

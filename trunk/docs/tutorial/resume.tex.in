@@ -1,0 +1,72 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%	Fichier	   : resume
+%%	Auteur     : th202608@pleiades077.intra.cea.fr
+%%	Date       : 29 avril 2014
+%%	Répertoire : /home/th202608/Documents/notes/2014/Tutoriel\mfront~ /
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+Cette note est un tutoriel d’utilisation pour apprendre à développer
+des lois de comportement à l'aide de \mfront{}.  Rappelons que
+\mfront{} est un générateur de code permettant en particulier
+l'intégration de lois de comportement, qui a été développé par le CEA
+pour les besoins de la plate-forme combustible PLEIADES. \mfront{}
+permet en particulier de définir des lois de comportement de façon
+simple, proche des équations physiques, sans avoir à se soucier des
+méthodes de résolution : plusieurs algorithmes de résolution sont
+offerts à l'utilisateur et sont utilisables facilement.
+
+L'année 2013 a permis une évaluation relativement exhaustive des
+possibilités de \mfront{},~\cite{proix_integration_2013} qui s'est
+conclue par une demande de mise à disposition de l'outil sous licence
+open-source, afin de permettre son utilisation avec \aster{}.
+
+Le présent travail, réalisé dans le cadre du livrable MN11 du projet
+SimuMeca2015, est une contribution à la mise à disposition de
+\mfront{} pour les utilisateurs de \aster{}, et servira également à
+faciliter la prise en main du logiciel par les autres utilisateurs.
+
+Les avantages d’utiliser \mfront{} pour intégrer des lois de
+comportement sont~:
+\begin{itemize}
+\item la facilité de développement, qui rendra plus simple la
+  maintenance pour les personnes responsables de lois de comportement
+  dans \aster{}, quand les comportements feront partie de la
+  version officielle du code. Il sera donc plus facile d’en acquérir
+  ou d'en conserver la maîtrise~;
+\item la possibilité offerte aux les chercheurs et aux ingénieurs
+  d'effectuer simplement le prototypage de lois de comportement et
+  leur identification~;
+\item la robustesse et les performances de l’intégration, mise en
+  évidence sur des benchmarks, particulièrement intéressante pour les
+  lois complexes.
+\end{itemize}
+
+De plus, \mfront{} a un intérêt pour d'autres projets EDF (projet
+LOCO, assimilation de données avec ADAO dans Salomé, via l'outil de
+simulation \mtest{}, code de dynamique rapide EUROPLEXUS, échange
+standardisés avec des partenaires universitaires dans le cadre de
+thèse, etc.).  La mise en open-source, pour une utilisation libre avec
+\aster{}, est en cours d'instruction pendant l'année 2014. Pour
+préparer cette échéance, plusieurs documents sont rédigés.
+
+Le corps du présent document, rédigé en commun avec T.Helfer (CEA) est
+un tutoriel destiné à guider un utilisateur désireux de développer une
+loi de comportement à l’aide de \mfront{}.  Il vient compléter le
+corpus documentaire de
+\mfront{}~\cite{helfer_notice_2011},~\cite{helfer_generateur_2013},~\cite{helfer_generateur_2013-1}.
+
+Après un rappel sommaire de la place de l’intégration des lois de
+comportement dans une simulation, ce tutoriel guide pas-à-pas
+l’utilisateur sur des exemples simples, pour lui permettre de définir
+rapidement une loi de comportement, et pouvoir la tester sur un point
+matériel à l'aide de \mtest, puis identifier les propriétés matériau
+dans ADAO.  L'utilisation de cette loi dans un code de calcul de
+structures par éléments finis (\aster{}, \castem{}, \cyrano{}, ..) est
+alors directe.
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "tutoriel"
+%%% End: 

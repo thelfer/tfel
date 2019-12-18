@@ -1,0 +1,24 @@
+@DSL DefaultDSL;
+@Behaviour AbaqusOrthotropicElastic;
+@Author    Helfer Thomas;
+@Date      02/09/16;
+
+@ModellingHypotheses {".+"};
+
+@OrthotropicBehaviour;
+@RequireStiffnessTensor<Altered>;
+@ProvidesSymmetricTangentOperator;
+@AbaqusOrthotropyManagementPolicy[abaqus] MFront;
+
+@PredictionOperator{
+  static_cast<void>(smt);
+  Dt=D;
+}
+
+@Integrator{
+  static_cast<void>(smt);
+  sig = D*(eto+deto);
+  if(computeTangentOperator_){
+    Dt = D;
+  }
+}

@@ -1,0 +1,291 @@
+/*!
+ * \file   mfront/tests/unit-tests/MTestParserTest.cxx
+ * \brief    
+ * \author THOMAS HELFER
+ * \date   16 sept. 2015
+ * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
+ * reserved. 
+ * This project is publicly released under either the GNU GPL Licence 
+ * or the CECILL-A licence. A copy of thoses licences are delivered 
+ * with the sources of TFEL. CEA or EDF may also distribute this 
+ * project under specific licensing conditions. 
+ */
+
+#ifdef NDEBUG
+#undef NDEBUG
+#endif /* NDEBUG */
+
+// a small trick so that the compiler refers to the original file for
+// error reports
+#line 21 "@abs_top_srcdir@/mtest/tests/unit-tests/MTestParserTest.cxx.in"
+
+#include<cstdlib>
+#include<iostream>
+#include<stdexcept>
+
+#include"TFEL/Tests/TestCase.hxx"
+#include"TFEL/Tests/TestProxy.hxx"
+#include"TFEL/Tests/TestManager.hxx"
+
+#include"MFront/MFrontLogStream.hxx"
+#include"MTest/MTest.hxx"
+#include"MTest/MTestParser.hxx"
+
+struct MTestParserTest final
+  : public tfel::tests::TestCase
+{
+  MTestParserTest()
+    : tfel::tests::TestCase("Test","MTestParserTest")
+  {} // end of MTestParserTest
+
+  tfel::tests::TestResult
+  execute() override
+  {
+    mfront::setVerboseMode(mfront::VERBOSE_QUIET);
+    // unknown keyword
+    this->check("Unknown keyword");
+    // invalid variable name (one expects a string)
+    this->check("@Real a 12.;");
+    // invalid variable name
+    this->check("@Real '12a' 12.;");
+    // invalid variable name
+    this->check("@Real '@a' 12.;");
+    // one expects a value
+    this->check("@Real 'a';");
+    // invalid value
+    this->check("@Real 'a' b12;");
+    // undeclared variable
+    this->check("@Real 'a' 'b*12';");
+    // invalid stiffness matrix type
+    this->check("@StiffnessMatrixType 'unknown';");
+    // invalid prediction policy
+    this->check("@PredictionPolicy 'unknown';");
+    // unknown algorithm
+    this->check("@AccelerationAlgorithm 'unknown algorithm';");
+    for(const auto& a : {"Cast3M","Secant","AlternateSecant",
+	  "AlternateDelta2","Alternate2Delta","CrossedSecant",
+	  "CrossedDelta2","Crossed2Delta","Crossed2Deltabis",
+	  "Steffensen","IronsTuck"}){
+      this->checkAlgorithm(a);
+    }
+    // one excepts true or false
+    this->check("@UseCastemAccelerationAlgorithm 'a';");
+    // @CastemAccelerationPeriod requires @UseCastemAccelerationAlgorithm
+    this->check("@CastemAccelerationPeriod 3;");
+    // @CastemAccelerationTrigger requires @UseCastemAccelerationAlgorithm
+    this->check("@CastemAccelerationTrigger 3;");
+    this->check("@UseCastemAccelerationAlgorithm true;"
+		"@CastemAccelerationPeriod 0;");
+    this->check("@UseCastemAccelerationAlgorithm true;"
+		"@CastemAccelerationTrigger 0;");
+    // invalid out of bounds policy
+    this->check("@OutOfBoundsPolicy 'Invalid';");
+      // one expects a string
+    this->check("@ModellingHypothesis unknown;");
+    // invalid modelling hypothesis
+    this->check("@ModellingHypothesis 'unknown hypothesis';");
+    // test of @Author keyword handling
+    this->check("@Author te @st1;");
+    this->check("@Author Helfer Thomas;"
+		"@Author Helfer Thomas;");
+    // test of @Date keyword handling
+    this->check("@Date 2/@1/2015;");
+    this->check("@Date 2/01/2015;"
+		"@Date 2/01/2015;");
+    // invalid behaviour interface
+    this->check("@Behaviour<unknown> 'lib' 'behaviour';");
+    this->check("@Parameter 'espilon' 1.e-8;");
+    this->check("@IntegerParameter 'espilon' 1.e-8;");
+    this->check("@UnsignedIntegerParameter 'espilon' 1.e-8;");
+    this->check("@Parameter 'espilon' 1.e-8;");
+    this->check("@IntegerParameter 'espilon' 1.e-8;");
+    this->check("@UnsignedIntegerParameter 'espilon' 1.e-8;");
+    // tests requiring the definition of a behaviour
+#ifdef HAVE_CASTEM
+    this->check("@MFrontCastemBehavioursBuildPath@","umat");
+    this->check2("@MFrontCastemBehavioursBuildPath@","umat");
+#endif
+#ifdef HAVE_ASTER
+    this->check("@MFrontAsterBehavioursBuildPath@","aster");
+    this->check2("@MFrontCastemBehavioursBuildPath@","umat");
+#endif
+#ifdef HAVE_CYRANO
+    this->check("@MFrontCyranoBehavioursBuildPath@","cyrano",
+		"@ModellingHypothesis 'AxisymmetricalGeneralisedPlaneStrain';");
+#endif
+    return this->result;
+  } // end of execute()
+ private:
+  void check(const std::string& s){
+    mtest::MTest m;
+    mtest::MTestParser p;
+    try{
+      p.parseString(m,s);
+    }
+    catch(std::runtime_error& e){
+      TestCase::registerResult("analysing '"+s+"' has thrown as expected "
+			       "("+std::string(e.what())+")",true);
+      return;
+    }
+    TestCase::registerResult("analysing '"+s+"' did *not* throw as expected",
+			     false);
+  }
+  void check(const std::string& b,
+	     const std::string& i,
+	     const std::string& h = ""){
+    this->check(h+"@Behaviour<"+i+"> 'Unknown Library' '"+i+"Elasticity';");
+    this->check(h+"@Behaviour<"+i+"> '"+b+"' 'unknown behaviour';");
+    // invalid material property
+    this->check(h+"@Behaviour<"+i+"> '"+b+"' '"+i+"elasticity';"
+		"@MaterialProperty<constant> 'GrainSize' 8.9e-6;");
+    this->check(h+"@Behaviour<"+i+"> '"+b+"' '"+i+"elasticity';"
+		"@MaterialProperty<constant> 'YoungModulus' '13*v';");
+    this->check(h+"@Behaviour<"+i+"> '"+b+"' '"+i+"elasticity';"
+		"@MaterialProperty<constant> 'YoungModulus' 'a13';");
+    this->check(h+"@Behaviour<"+i+"> '"+b+"' '"+i+"elasticity';"
+		"@MaterialProperty<constant> 'YoungModulus' '13a';");
+    // invalid strain name
+    this->check(h+"@Behaviour<"+i+"> '"+b+"' '"+i+"elasticity';"
+		"@ImposedStrain<function> 'EUU' 'cos(t)';");
+    // @ImposedOpeningDisplacement is not valid for small strain behaviours
+    this->check(h+"@Behaviour<"+i+"> '"+b+"' '"+i+"elasticity';"
+		"@ImposedOpeningDisplacement<function> 'UX' 'cos(t)';");
+    // @ImposedCohesiveForce is not valid for small strain behaviours
+    this->check(h+"@Behaviour<"+i+"> '"+b+"' '"+i+"elasticity';"
+		"@ImposedCohesiveForce<function> 'UX' 'cos(t)';");
+    // @ImposedDeformationGradient is not valid for small strain behaviours
+    this->check(h+"@Behaviour<"+i+"> '"+b+"' '"+i+"elasticity';"
+		"@ImposedDeformationGradient<function> 'FXX' 'cos(t)';");
+    // @ImposedStress with invalid component
+    this->check(h+"@Behaviour<"+i+"> '"+b+"' '"+i+"elasticity';"
+		"@ImposedStress<function> 'FXX' 'cos(t)';");
+    // unknown state variable
+    this->check(h+"@Behaviour<"+i+"> '"+b+"' '"+i+"elasticity';"
+		"@InternalStateVariable 'p' '0.'");
+    // invalid state variable type (expected a symmetric tensor)
+    this->check(h+"@Behaviour<"+i+"> '"+b+"' '"+i+"norton';"
+		"@InternalStateVariable 'ElasticStrain' '0.'");
+    // invalid initial strain value declaration
+    this->check(h+"@Behaviour<"+i+"> '"+b+"' '"+i+"norton';"
+		"@Strain {}");
+    this->check(h+"@Behaviour<"+i+"> '"+b+"' '"+i+"norton';"
+		"@Strain {1.}");
+    this->check(h+"@Behaviour<"+i+"> '"+b+"' '"+i+"norton';"
+		"@Strain {1.,}");
+    this->check(h+"@Behaviour<"+i+"> '"+b+"' '"+i+"norton';"
+		"@Strain {1.,2.}");
+    // invalid initial strain value declaration
+    this->check(h+"@Behaviour<"+i+"> '"+b+"' '"+i+"norton';"
+		"@Stress {}");
+    this->check(h+"@Behaviour<"+i+"> '"+b+"' '"+i+"norton';"
+		"@Stress {1.}");
+    this->check(h+"@Behaviour<"+i+"> '"+b+"' '"+i+"norton';"
+		"@Stress {1.,}");
+    this->check(h+"@Behaviour<"+i+"> '"+b+"' '"+i+"norton';"
+		"@Stress {1.,2.}");
+    // @ImposedCohesiveForce is not valid for small strain behaviours
+    this->check(h+"@Behaviour<"+i+"> '"+b+"' '"+i+"elasticity';"
+		"@CohesiveForce {0.,0.,0.};");
+    // invalid state variable declaration
+    this->check(h+"@Behaviour<"+i+"> '"+b+"' '"+i+"norton';"
+		"@InternalStateVariable 'ElasticStrain' {}");
+    this->check(h+"@Behaviour<"+i+"> '"+b+"' '"+i+"norton';"
+		"@InternalStateVariable 'ElasticStrain' {1.}");
+    this->check(h+"@Behaviour<"+i+"> '"+b+"' '"+i+"norton';"
+		"@InternalStateVariable 'ElasticStrain' {1.,}");
+    this->check(h+"@Behaviour<"+i+"> '"+b+"' '"+i+"norton';"
+		"@InternalStateVariable 'ElasticStrain' {1.,2.}");
+    // elasticity has no parameters
+    this->check(h+"@Behaviour<"+i+"> '"+b+"' '"+i+"elasticity';"
+		"@Parameter 'espilon' 1.e-8;");
+    // parameter is mispelled
+    this->check(h+"@Behaviour<"+i+"> '"+b+"' '"+i+"norton';"
+		"@Parameter 'espilon' 1.e-8;");
+    // invalid times declaration
+    this->check(h+"@Behaviour<"+i+"> '"+b+"' '"+i+"elasticity';"
+		"@Times 2.;");
+    this->check(h+"@Behaviour<"+i+"> '"+b+"' '"+i+"elasticity';"
+		"@Times {2.,4. in ta};");
+    this->check(h+"@Behaviour<"+i+"> '"+b+"' '"+i+"elasticity';"
+		"@Times {2.,4. in};");
+    this->check(h+"@Behaviour<"+i+"> '"+b+"' '"+i+"elasticity';"
+		"@Times {2.,};");
+    // invalid criteria
+    this->check(h+"@Behaviour<"+i+"> '"+b+"' '"+i+"norton';"
+		"@StrainEpsilon -1;");
+    this->check(h+"@Behaviour<"+i+"> '"+b+"' '"+i+"norton';"
+		"@StressEpsilon -1;");
+    this->check(h+"@Behaviour<"+i+"> '"+b+"' '"+i+"norton';"
+		"@DrivingVariableEpsilon -1;");
+    this->check(h+"@Behaviour<"+i+"> '"+b+"' '"+i+"norton';"
+		"@ThermodynamicForceEpsilon -1;");
+    this->check(h+"@Behaviour<"+i+"> '"+b+"' '"+i+"norton';"
+		"@OpenDisplacementEpsilon -1;");
+    this->check(h+"@Behaviour<"+i+"> '"+b+"' '"+i+"norton';"
+		"@CohesiveForceEpsilon -1;");
+    // @RotationMatrix is invalid for an isotropic behaviour
+    this->check(h+"@Behaviour<"+i+"> '"+b+"' '"+i+"norton';"
+		"@RotationMatrix {{1.,1.,1.},"
+		"                 {1.,1.,1.},"
+		"                 {1.,1.,1.}};");
+  }
+  void check2(const std::string& b,
+	      const std::string& i){
+    this->check("@Behaviour<"+i+"> '"+b+"' '"+i+"tvergaard';"
+		"@DeformationGradient {1.,2.,3.};");
+    this->check("@Behaviour<"+i+"> '"+b+"' '"+i+"tvergaard';"
+		"@Strain {1.,2.,3.};");
+    this->check("@Behaviour<"+i+"> '"+b+"' '"+i+"tvergaard';"
+		"@Stress {1.,2.,3.};");
+    this->check("@Behaviour<"+i+"> '"+b+"' '"+i+"tvergaard';"
+		"@StrainEpsilon 1.e-3;");
+    this->check("@Behaviour<"+i+"> '"+b+"' '"+i+"tvergaard';"
+		"@StressEpsilon 1.e-3;");
+    this->check("@Behaviour<"+i+"> '"+b+"' '"+i+"tvergaard';"
+		"@CohesiveForceEpsilon -1;");
+    // Rotation matrix
+    this->check("@Behaviour<"+i+"> '"+b+"' '"+i+"orthotropicelastic';"
+		"@RotationMatrix;");
+    this->check("@Behaviour<"+i+"> '"+b+"' '"+i+"orthotropicelastic';"
+		"@RotationMatrix 1;");
+    this->check("@Behaviour<"+i+"> '"+b+"' '"+i+"orthotropicelastic';"
+		"@RotationMatrix 'a';");
+    this->check("@Behaviour<"+i+"> '"+b+"' '"+i+"orthotropicelastic';"
+		"@RotationMatrix {1,2};");
+    this->check("@Behaviour<"+i+"> '"+b+"' '"+i+"orthotropicelastic';"
+		"@RotationMatrix {{1.,1.,1.},"
+		"                 {1.,2.,1.},"
+		"                 {1.,1.,1.}};");
+    this->check("@Behaviour<"+i+"> '"+b+"' '"+i+"orthotropicelastic';"
+		"@RotationMatrix {{1.,0.,0.},"
+		"                 {0.,1.,0.},"
+		"                 {0.,0.,1.}};"
+		"@RotationMatrix {{1.,0.,0.},"
+		"                 {0.,1.,0.},"
+		"                 {0.,0.,1.}};");
+  }
+  void checkAlgorithm(const std::string& a){
+    // invalid parameter name
+    this->check("@AccelerationAlgorithm '"+a+"';"
+		"@AccelerationAlgorithmParameter 'AccelerationTriger' 0;");
+    // invalid parameter value
+    this->check("@AccelerationAlgorithm '"+a+"';"
+		"@AccelerationAlgorithmParameter 'AccelerationTrigger' '4';");
+    // invalid parameter value
+    this->check("@AccelerationAlgorithm '"+a+"';"
+		"@AccelerationAlgorithmParameter 'AccelerationTrigger' 0;");
+  } // end of checkAlgorithm
+};
+
+TFEL_TESTS_GENERATE_PROXY(MTestParserTest,"MTestParserTest");
+
+/* coverity [UNCAUGHT_EXCEPT]*/
+int main()
+{
+  using namespace tfel::tests;
+  auto& m = TestManager::getTestManager();
+  m.addTestOutput(std::cout);
+  m.addXMLTestOutput("MTestParser.xml");
+  const auto r = m.execute();
+  return r.success() ? EXIT_SUCCESS : EXIT_FAILURE;
+} // end of main

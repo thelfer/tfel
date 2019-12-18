@@ -1,0 +1,15 @@
+@Behaviour<aster> 'src/libAsterBehaviour.so' 'asterchaboche';
+@MaterialProperty<constant> 'young' 200000. ; 
+@MaterialProperty<constant> 'nu'  0.33 ;    
+@MaterialProperty<constant> 'R_inf' 50. ;
+@MaterialProperty<constant> 'R_0' 30. ;
+@MaterialProperty<constant> 'b'  20. ;
+@MaterialProperty<constant> 'C[0]' 187000.;
+@MaterialProperty<constant> 'C[1]' 45000.;
+@MaterialProperty<constant> 'g[0]' 4460.;
+@MaterialProperty<constant> 'g[1]' 340. ;
+@ExternalStateVariable 'Temperature' 0.;
+@Times {0.,5. in 1000};
+@ImposedStrain 'EYY' {0.:0.,1.:0.007,2.:-0.007,3.:0.007,4.:-0.007,5.:0.007};
+
+

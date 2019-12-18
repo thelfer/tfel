@@ -1,0 +1,54 @@
+\noindent
+\ttfamily
+\hlstd{@Parser}\hlstd{\ \ \ \ }\hlstd{RungeKutta}\hlsym{;}\hlstd{\hspace*{\fill}\\
+@Behaviour\ OrthotropicCreep}\hlsym{;}\hlstd{\hspace*{\fill}\\
+@Author}\hlstd{\ \ \ \ }\hlstd{Helfer\ Thomas}\hlsym{;}\hlstd{\hspace*{\fill}\\
+@Algorithm\ rk54}\hlsym{;}\hlstd{\hspace*{\fill}\\
+@Date}\hlstd{\ \ \ \ \ \ }\hlstd{}\hlnum{8}\hlstd{}\hlsym{/}\hlstd{}\hlnum{03}\hlstd{}\hlsym{/}\hlstd{}\hlnum{11}\hlstd{}\hlsym{;}\hlstd{\hspace*{\fill}\\
+\hspace*{\fill}\\
+@OrthotropicBehaviour}\hlsym{;}\hlstd{\hspace*{\fill}\\
+@RequireStiffnessTensor}\hlsym{;}\hlstd{\hspace*{\fill}\\
+\hspace*{\fill}\\
+@StateVariable\ Stensor\ evp}\hlsym{;\ }\hlstd{}\hlcom{/{*}\ Viscoplastic\ strain}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlcom{{*}/}\hlstd{\hspace*{\fill}\\
+evp}\hlsym{.}\hlstd{}\hlkwd{setGlossaryName}\hlstd{}\hlsym{(}\hlstd{}\hlstr{"ViscoplasticStrain"}\hlstd{}\hlsym{);}\hlstd{\hspace*{\fill}\\
+@StateVariable\ real\ p}\hlsym{;}\hlstd{\ \ \ \ \ \ }\hlsym{}\hlstd{}\hlcom{/{*}\ Equivalent\ viscoplastic\ strain\ {*}/}\hlstd{\hspace*{\fill}\\
+p}\hlsym{.}\hlstd{}\hlkwd{setGlossaryName}\hlstd{}\hlsym{(}\hlstd{}\hlstr{"EquivalentViscoplasticStrain"}\hlstd{}\hlsym{);}\hlstd{\hspace*{\fill}\\
+\hspace*{\fill}\\
+@Includes}\hlsym{\{}\hlstd{}\hspace*{\fill}\\
+\hldir{\#include$<$TFEL/Material/Lame.hxx$>$}\hspace*{\fill}\\
+\hlstd{}\hldir{\#include$<$TFEL/Material/Hill.hxx$>$}\hspace*{\fill}\\
+\hlstd{}\hlsym{\}}\hlstd{\hspace*{\fill}\\
+\hspace*{\fill}\\
+@ComputeStress}\hlsym{\{}\hlstd{\hspace*{\fill}\\
+}\hlstd{\ \ }\hlstd{sig\ }\hlsym{=\ }\hlstd{D}\hlsym{{*}}\hlstd{eel}\hlsym{;}\hlstd{}\hspace*{\fill}\\
+\hlsym{\}}\hlstd{\hspace*{\fill}\\
+\hspace*{\fill}\\
+@Derivative}\hlsym{\{}\hlstd{\hspace*{\fill}\\
+}\hlstd{\ \ }\hlstd{}\hlkwb{const\ }\hlstd{real\ H\textunderscore rr\ }\hlsym{=\ }\hlstd{}\hlnum{0.371}\hlstd{}\hlsym{;}\hlstd{\hspace*{\fill}\\
+}\hlstd{\ \ }\hlstd{}\hlkwb{const\ }\hlstd{real\ H\textunderscore tt\ }\hlsym{=\ }\hlstd{}\hlnum{1}\hlstd{}\hlsym{{-}}\hlstd{H\textunderscore rr}\hlsym{;}\hlstd{\hspace*{\fill}\\
+}\hlstd{\ \ }\hlstd{}\hlkwb{const\ }\hlstd{real\ H\textunderscore zz\ }\hlsym{=\ }\hlstd{}\hlnum{4.052}\hlstd{}\hlsym{;}\hlstd{\hspace*{\fill}\\
+}\hlstd{\ \ }\hlstd{}\hlkwb{const\ }\hlstd{real\ H\textunderscore rt\ }\hlsym{=\ }\hlstd{}\hlnum{1.5}\hlstd{}\hlsym{;}\hlstd{\hspace*{\fill}\\
+}\hlstd{\ \ }\hlstd{}\hlkwb{const\ }\hlstd{real\ H\textunderscore rz\ }\hlsym{=\ }\hlstd{}\hlnum{1.5}\hlstd{}\hlsym{;}\hlstd{\hspace*{\fill}\\
+}\hlstd{\ \ }\hlstd{}\hlkwb{const\ }\hlstd{real\ H\textunderscore tz\ }\hlsym{=\ }\hlstd{}\hlnum{1.5}\hlstd{}\hlsym{;}\hlstd{\hspace*{\fill}\\
+}\hlstd{\ \ }\hlstd{st2tost2}\hlsym{$<$}\hlstd{N}\hlsym{,}\hlstd{real}\hlsym{$>$\ }\hlstd{H}\hlsym{;}\hlstd{\hspace*{\fill}\\
+}\hlstd{\ \ }\hlstd{}\hlkwa{if}\hlstd{}\hlsym{((}\hlstd{}\hlkwd{getModellingHypothesis}\hlstd{}\hlsym{()==}\hlstd{ModellingHypothesis}\hlsym{::}\hlstd{PLANESTRESS}\hlsym{)\textbar \textbar }\hlstd{\hspace*{\fill}\\
+}\hlstd{\ \ \ \ \ }\hlstd{}\hlsym{(}\hlstd{}\hlkwd{getModellingHypothesis}\hlstd{}\hlsym{()==}\hlstd{ModellingHypothesis}\hlsym{::}\hlstd{PLANESTRAIN}\hlsym{)\textbar \textbar }\hlstd{\hspace*{\fill}\\
+}\hlstd{\ \ \ \ \ }\hlstd{}\hlsym{(}\hlstd{}\hlkwd{getModellingHypothesis}\hlstd{}\hlsym{()==}\hlstd{ModellingHypothesis}\hlsym{::}\hlstd{GENERALISEDPLANESTRAIN}\hlsym{))\{}\hlstd{\hspace*{\fill}\\
+}\hlstd{\ \ \ \ }\hlstd{H\ }\hlsym{=\ }\hlstd{hillTensor}\hlsym{$<$}\hlstd{N}\hlsym{,}\hlstd{real}\hlsym{$>$(}\hlstd{Hzz}\hlsym{,}\hlstd{Hrr}\hlsym{,}\hlstd{Htt}\hlsym{,}\hlstd{\hspace*{\fill}\\
+}\hlstd{\ \ \ \ \ \ }\hlstd{Hrt}\hlsym{,}\hlstd{Hrz}\hlsym{,}\hlstd{Htz}\hlsym{);}\hlstd{\hspace*{\fill}\\
+}\hlstd{\ \ }\hlstd{}\hlsym{\}\ }\hlstd{}\hlkwa{else\ }\hlstd{}\hlsym{\{}\hlstd{\hspace*{\fill}\\
+}\hlstd{\ \ \ \ }\hlstd{H\ }\hlsym{=\ }\hlstd{hillTensor}\hlsym{$<$}\hlstd{N}\hlsym{,}\hlstd{real}\hlsym{$>$(}\hlstd{Htt}\hlsym{,}\hlstd{Hrr}\hlsym{,}\hlstd{Hzz}\hlsym{,}\hlstd{\hspace*{\fill}\\
+}\hlstd{\ \ \ \ \ \ }\hlstd{Hrz}\hlsym{,}\hlstd{Hrt}\hlsym{,}\hlstd{Htz}\hlsym{);}\hlstd{\hspace*{\fill}\\
+}\hlstd{\ \ }\hlstd{}\hlsym{\}}\hlstd{\hspace*{\fill}\\
+}\hlstd{\ \ }\hlstd{}\hlkwb{const\ }\hlstd{real\ sigeq\ }\hlsym{=\ }\hlstd{}\hlkwd{sqrt}\hlstd{}\hlsym{(}\hlstd{sig}\hlsym{\textbar }\hlstd{H}\hlsym{{*}}\hlstd{sig}\hlsym{);}\hlstd{\hspace*{\fill}\\
+}\hlstd{\ \ }\hlstd{}\hlkwa{if}\hlstd{}\hlsym{(}\hlstd{sigeq}\hlsym{$>$}\hlstd{}\hlnum{1}\hlstd{e9}\hlsym{)\{}\hlstd{\hspace*{\fill}\\
+}\hlstd{\ \ \ \ }\hlstd{}\hlkwa{return\ false}\hlstd{}\hlsym{;}\hlstd{\hspace*{\fill}\\
+}\hlstd{\ \ }\hlstd{}\hlsym{\}}\hlstd{\hspace*{\fill}\\
+}\hlstd{\ \ }\hlstd{Stensor}\hlstd{\ \ }\hlstd{}\hlkwd{n}\hlstd{}\hlsym{(}\hlstd{}\hlnum{0}\hlstd{}\hlsym{.);}\hlstd{\hspace*{\fill}\\
+}\hlstd{\ \ }\hlstd{}\hlkwa{if}\hlstd{}\hlsym{(}\hlstd{sigeq\ }\hlsym{$>$\ }\hlstd{}\hlnum{10}\hlstd{}\hlsym{.}\hlstd{e}\hlsym{{-}}\hlstd{}\hlnum{7}\hlstd{}\hlsym{)\{}\hlstd{\hspace*{\fill}\\
+}\hlstd{\ \ \ \ }\hlstd{n}\hlstd{\ \ \ \ }\hlstd{}\hlsym{=\ }\hlstd{H}\hlsym{{*}}\hlstd{sig}\hlsym{/}\hlstd{sigeq}\hlsym{;}\hlstd{\hspace*{\fill}\\
+}\hlstd{\ \ }\hlstd{}\hlsym{\}}\hlstd{\hspace*{\fill}\\
+}\hlstd{\ \ }\hlstd{dp}\hlstd{\ \ \ }\hlstd{}\hlsym{=\ }\hlstd{}\hlnum{8}\hlstd{}\hlsym{.}\hlstd{e}\hlsym{{-}}\hlstd{}\hlnum{67}\hlstd{}\hlsym{{*}}\hlstd{}\hlkwd{pow}\hlstd{}\hlsym{(}\hlstd{sigeq}\hlsym{,}\hlstd{}\hlnum{8.2}\hlstd{}\hlsym{);}\hlstd{\hspace*{\fill}\\
+}\hlstd{\ \ }\hlstd{devp\ }\hlsym{=\ }\hlstd{dp}\hlsym{{*}}\hlstd{n}\hlsym{;}\hlstd{\hspace*{\fill}\\
+}\hlstd{\ \ }\hlstd{deel\ }\hlsym{=\ }\hlstd{deto\ }\hlsym{{-}\ }\hlstd{devp}\hlsym{;}\hlstd{}\hspace*{\fill}\\
+\hlsym{\}}\hlstd{}\hspace*{\fill}

@@ -1,0 +1,26 @@
+@Parser   MaterialLaw;
+@Material UO2;
+@Law      ThermalExpansion;
+@Author   T. Helfer;
+@Date     04/04/2014;
+
+@Description
+{
+  Material Property Correlations: Comparisons between 
+  FRAPCON-3.4, FRAPTRAN 1.4, and MATPRO
+  W.G. Luscher and K.J. Geelhood 
+  Aout 2010
+  Division of System Analysis 
+  Office of Nuclear Regulatory Research 
+  U.S. Nuclear Regulatory Commission
+  NUREG/CR-7024 PNNL-19417
+}
+
+@Constant ReferenceTemperature = 300.;
+
+@Output a;
+
+@Function
+{
+  a=1.e-5;
+}

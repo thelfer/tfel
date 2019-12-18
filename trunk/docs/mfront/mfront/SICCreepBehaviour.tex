@@ -1,0 +1,33 @@
+\noindent
+\ttfamily
+\hlstd{@Parser IsotropicMisesCreep}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@Behaviour SiCCreep}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@Author}\hlstd{\ \ \ \ }\hlstd{É}\hlsym{. }\hlstd{Brunon}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@Date}\hlstd{\ \ \ \ \ \ }\hlstd{}\hlnum{06}\hlstd{}\hlsym{/}\hlstd{}\hlnum{12}\hlstd{}\hlsym{/}\hlstd{}\hlnum{07}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@Description}\hlsym{\{}\hspace*{\fill}\\
+\hlstd{ Matériaux RCG}\hlsym{{-}}\hlstd{T et RCG}\hlsym{{-}}\hlstd{R\hspace*{\fill}\\
+ Un point sur le carbure de Silicium\hspace*{\fill}\\
+ NT SESC}\hlsym{/}\hlstd{LIAC }\hlnum{02}\hlstd{}\hlsym{{-}}\hlstd{}\hlnum{024 }\hlstd{ind }\hlnum{0 }\hlstd{de décembre }\hlnum{2002}\hspace*{\fill}\\
+\hlstd{ J}\hlsym{.}\hlstd{M}\hlsym{. }\hlstd{ESCLEINE\hspace*{\fill}\\
+ §}\hlnum{8.4.2 }\hlstd{Page }\hlnum{34}\hspace*{\fill}\\
+\hlstd{}\hlsym{\}}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@ExternalStateVariable real flux}\hlsym{;}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@StaticVariable real A }\hlsym{=}\hlstd{\ \ }\hlsym{}\hlstd{}\hlnum{4.4}\hlstd{e3}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@StaticVariable real B }\hlsym{= }\hlstd{}\hlnum{76.0}\hlstd{e3}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@StaticVariable real a }\hlsym{=}\hlstd{\ \ }\hlsym{}\hlstd{}\hlnum{1.0e{-}37}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@LocalVariable real AF1}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@LocalVariable real AF3}\hlsym{;}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@InitLocalVariables}\hlsym{\{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{AF1}\hlstd{\ \ \ }\hlstd{}\hlsym{= }\hlstd{A}\hlsym{{*}}\hlstd{}\hlkwd{exp}\hlstd{}\hlsym{({-}}\hlstd{B}\hlsym{/(}\hlstd{T}\hlsym{+}\hlstd{theta}\hlsym{{*}}\hlstd{dT}\hlsym{));}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{AF3}\hlstd{\ \ \ }\hlstd{}\hlsym{= }\hlstd{a}\hlsym{{*}(}\hlstd{flux}\hlsym{+}\hlstd{theta}\hlsym{{*}}\hlstd{dflux}\hlsym{);}\hspace*{\fill}\\
+\hlstd{}\hlsym{\}}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@FlowRule}\hlsym{\{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{df\textunderscore dseq}\hlstd{\ \ }\hlstd{}\hlsym{= }\hlstd{AF1}\hlsym{+}\hlstd{AF3}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{f}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlsym{= }\hlstd{seq}\hlsym{{*}}\hlstd{df\textunderscore dseq}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlsym{\}}\hlstd{}

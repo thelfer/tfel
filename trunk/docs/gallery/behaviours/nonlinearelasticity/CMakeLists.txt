@@ -1,0 +1,1 @@
+install_gallery(nonlinearelasticity RambergOsgoodNonLinearElasticity.mfront)

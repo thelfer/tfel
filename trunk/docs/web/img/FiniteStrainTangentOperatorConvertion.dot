@@ -1,0 +1,45 @@
+digraph tangent_operator_converter {
+  graph [size="800"]
+  DSIG_DF     [label="DSIG_DF\nMTest",color=red];
+  C_TRUESDELL [label="C_TRUESDELL\nCast3M\nZeBuLoN",color=green];
+  DTAU_DDF    [label="DTAU_DDF\nCode_Aster",color=blue];
+  ABAQUS      [label="ABAQUS\nAbaqus/Standard\nAnsys\nCalculix",color=yellow];
+  DS_DEGL     [label="DS_DEGL\nCalculix\nCode_Aster\nZeBuLoN",color=pink];
+  DPK1_DF     [label="DPK1_DF\nZeBuLoN\nFEniCS\nXPer",color=orange];
+  DT_DELOG -> DS_DEGL;
+  DT_DELOG -> DS_DC;	
+  DT_DELOG -> SPATIAL_MODULI;
+  DT_DELOG -> C_TRUESDELL;
+  DS_DF -> DTAU_DF;
+  DTAU_DF -> C_TAU_JAUMANN;
+  DTAU_DF -> SPATIAL_MODULI;
+  DTAU_DF -> ABAQUS;
+  DTAU_DF -> DSIG_DF;
+  DTAU_DF -> DTAU_DDF;
+  DTAU_DDF -> DTAU_DF;
+  SPATIAL_MODULI -> C_TRUESDELL;
+  SPATIAL_MODULI -> ABAQUS;
+  SPATIAL_MODULI -> DS_DEGL;
+  SPATIAL_MODULI -> DTAU_DF;
+  SPATIAL_MODULI -> C_TAU_JAUMANN;
+  DSIG_DF -> DSIG_DDF;
+  DSIG_DDF -> DSIG_DF;
+  DS_DEGL -> DS_DC;
+  DS_DEGL -> SPATIAL_MODULI;
+  DS_DEGL -> ABAQUS;
+  DS_DEGL -> DS_DF;
+  DS_DC -> DS_DF;
+  DS_DC -> DS_DEGL;
+  C_TRUESDELL -> SPATIAL_MODULI;
+  ABAQUS -> SPATIAL_MODULI;
+  ABAQUS -> C_TAU_JAUMANN;
+  ABAQUS -> DSIG_DF;
+  ABAQUS -> DTAU_DF;
+  C_TAU_JAUMANN -> ABAQUS;
+  C_TAU_JAUMANN -> DTAU_DF;
+  C_TAU_JAUMANN -> SPATIAL_MODULI;
+  DS_DEGL -> DPK1_DF
+  DSIG_DF -> DPK1_DF
+  DPK1_DF -> DTAU_DF
+  DPK1_DF -> DSIG_DF
+}

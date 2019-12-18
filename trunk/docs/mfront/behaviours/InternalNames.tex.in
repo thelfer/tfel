@@ -1,0 +1,175 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% File      : InternalNames
+% Author    : th202608@pleiades068.intra.cea.fr
+% Date      : 28 févr. 2013
+% Directory : /home/th202608/codes/tfel/trunk/src/trunk/docs/mfront/
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Noms des variables et des méthodes \cpp{} utilisés en
+  interne par les analyseurs de lois de comportement}
+\label{sec:noms-des-variables}
+
+\subsection{Noms communs à tous les analyseurs de lois de
+  comportement}
+\label{sec:noms-communs-tous}
+
+Certain variables sont utilisées en interne et ne peuvent être
+utilisées par l'utilisateur.
+
+Certaines des variables ont des sens physiques~:
+\begin{itemize}
+\item \varcpp{D} désigne le tenseur d'élasticité. Ce tenseur est
+  calculé à la demande, voir à ce sujet la documentation de la
+  directive
+  \mkeyb{RequireStiffnessTensor}{Require\-Stiff\-ness\-Tensor}.
+\item \varcpp{Dt} désigne la matrice tangente, éventuellement
+  cohérente~;
+\item \varcpp{sig} désigne les contraintes~;
+\item \varcpp{F0} désigne le gradient de la transformation en début de
+  pas~;
+\item \varcpp{F1} désigne le gradient de la transformation en fin de
+  pas~;
+\item \varcpp{eto} désigne les déformations totales~;
+\item \varcpp{deto} désigne l'incrément des déformations totales ou
+  leurs vitesses ou sa vitesse (voir les conventions spécifiques de
+  chaque analyseur)~;
+\item \varcpp{T} est la température, généralement en début de pas
+  (voir les conventions spécifiques de chaque analyseur)~;
+\item \varcpp{dT} est l'incrément de la température ou sa vitesse de
+  variation (voir les conventions spécifiques de chaque analyseur)~;
+\item \varcpp{dt} est l'incrément de temps~;
+\item \varcpp{N} est la dimension spatiale associée à l'hypothèse de
+  modélisation considérée (\(1\), \(2\) ou \(3\))~;
+\end{itemize}
+
+Certaines noms sont utilisés en interne~:
+\begin{itemize}
+\item \varcpp{Type} est le nom du type numérique utilisé pour les
+  calculs~;
+\item \varcpp{use\textunderscore{}qt} est un booléen. Si il est vrai, les variables
+  utilisées sont affectées d'unités et la cohérence des calculs, au
+  sens du respect des unités, est assurée par le compilateur~;
+\item \varcpp{std}, \varcpp{tfel}, \varcpp{math}, \varcpp{material} et
+  \varcpp{utilities} qui désignent des espaces de noms des librairies
+  \cpp{} utilisées pour l'intégration des lois~;
+\item \varcpp{real} qui est un alias du type réel utilisé par la
+  routine d'intégration~;
+\item \varcpp{policy} et \varcpp{policy\textunderscore{}value} qui
+  déterminent la politique à suivre en cas de dépassement des bornes~;
+\item \varcpp{src1}, \varcpp{src2} sont des noms de variables utilisés
+  par les constructeurs des classes générés~;
+\item \varcpp{integrate} est le principal point d'entrée méthode
+  d'intégration~;
+ \item \varcpp{computeStress} qui recalcule la valeur du tenseur des
+   contraintes au cours de l'intégration~;
+ \item \varcpp{computeFinalStress} qui calcule la valeur du tenseur
+   des contraintes en fin de pas~;
+ \item \varcpp{computeFdF} qui calcule la valeur de la fonction à
+   annuler et de sa dérivée pour les méthodes implicites~;
+ \item \varcpp{updateStateVars} qui met à jour les valeurs des
+   variables d'état, après un pas d'intégration réussi~;
+ \item \varcpp{updateAuxiliaryStateVars} qui met à jour les valeurs
+   des variables d'état auxiliaires, après un pas d'intégration
+   réussi~;
+ \item \varcpp{getModellingHypothesis} qui permet de récupérer
+   l'actuelle hypothèse de modélisation~;
+ \item \varcpp{getTimeStepScalingFactor} qui retourne un estimation du
+   pas de temps à utiliser (pour le pas de temps courant ou pour le
+   pas de temps suivant~;
+ \item \varcpp{getTangentOperator} qui retourne la matrice tangente,
+   éventuellement cohérente, si celle-ci est disponible~;
+ \item \varcpp{hypothesis}, qui est une variable contenant l'hypothèse
+   de modélisation~;
+ \item \varcpp{hypothesis\textunderscore{}}, qui est utilisé dans les
+   constructeurs pour initialiser la valeur de la variable
+   \varcpp{hypothesis}.
+\end{itemize}
+
+\subsection{Noms de variables réservés par les analyseurs spécifiques}
+\label{sec:noms-de-variables}
+
+Les variables suivantes sont utilisées en interne par les analyseurs
+spécifiques et leurs noms ne peuvent être réutilisés par
+l'utilisateur~:
+\begin{itemize}
+\item \varcpp{NewtonIntegration} est le nom de la méthode réalisant
+  les itérations de la méthode de \nom{Newton}~;
+\item \varcpp{theta} est le nom du paramètre de la méthode implicite~;
+\item \varcpp{epsilon} est le nom de la valeur du critère utilisé pour
+  arrêter les itérations de la méthode de \nom{Newton}~;
+\item \varcpp{iterMax} est le nom du nombre d'itérations autorisées
+  pour la méthode de \nom{Newton}~;
+\item \varcpp{p} est la déformation inélastique cumulée est le nom de
+  la déformation plastique cumulée~;
+\item \varcpp{n} est le nom de la direction d'écoulement, donnée par
+  la normale aux isovaleurs de contrainte équivalente.
+\end{itemize}
+
+\subsection{Noms de variables réservés par l'analyseur \nom{Runge-Kutta}}
+
+\begin{itemize}
+\item \varcpp{epsilon}
+\item \varcpp{dtmin}
+\item \varcpp{eel}
+\item \varcpp{deel}
+\item \varcpp{t}
+\item \varcpp{T\textunderscore{}}
+\item \varcpp{eto\textunderscore{}}
+\item \varcpp{deto\textunderscore{}}
+\item \varcpp{dt\textunderscore{}}
+\item \varcpp{corrector}
+\item \varcpp{dtprec}
+\item \varcpp{converged}
+\item \varcpp{error}
+\item \varcpp{failed}
+\end{itemize}
+
+\subsection{Noms de variables réservés par l'analyseur implicite}
+
+\begin{itemize}
+  \item \varcpp{theta}
+  \item \varcpp{epsilon}
+  \item \varcpp{iterMax}
+  \item \varcpp{jacobianComparisonCriterium}
+  \item \varcpp{relaxationTrigger}
+  \item \varcpp{accelerationTrigger}
+  \item \varcpp{accelerationPeriod}
+  \item \varcpp{relaxationCoefficient}
+  \item \varcpp{eel}
+  \item \varcpp{deel}
+  \item \varcpp{previous\textunderscore{}zeros}
+  \item \varcpp{zeros}
+  \item \varcpp{tzeros}
+  \item \varcpp{zeros\textunderscore{}1}
+  \item \varcpp{fzeros}
+  \item \varcpp{tfzeros}
+  \item \varcpp{zeros2}
+  \item \varcpp{fzeros2}
+  \item \varcpp{Dzeros}
+  \item \varcpp{Dfzeros}
+  \item \varcpp{jacobian}
+  \item \varcpp{tjacobian}
+  \item \varcpp{njacobian}
+  \item \varcpp{jacobian2}
+  \item \varcpp{t}
+  \item \varcpp{dt\textunderscore{}}
+  \item \varcpp{error}
+  \item \varcpp{idx}
+  \item \varcpp{idx2}
+  \item \varcpp{schmidt}
+  \item \varcpp{computeNumericalJacobian}
+  \item \varcpp{accelerate}
+  \item \varcpp{accelerate\textunderscore{}k0}
+  \item \varcpp{accelerate\textunderscore{}k1}
+  \item \varcpp{accelerate\textunderscore{}k2}
+  \item \varcpp{accelerate\textunderscore{}c0}
+  \item \varcpp{accelerate\textunderscore{}c1}
+  \item \varcpp{accelerate\textunderscore{}re0}
+  \item \varcpp{accelerate\textunderscore{}re1}
+  \item \varcpp{accelerate\textunderscore{}r0}
+  \item \varcpp{accelerate\textunderscore{}r1}
+  \item \varcpp{accelerate\textunderscore{}r2}
+  \item \varcpp{iter}
+  \item \varcpp{converge}
+  \item \varcpp{broyden\textunderscore{}inv}
+\end{itemize}

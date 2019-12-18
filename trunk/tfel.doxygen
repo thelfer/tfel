@@ -1,0 +1,66 @@
+/*!
+ * \file tfel.doxygen 
+ * \brief This file contains the main page of the doxygen
+ * documentation and the documentation of the tfel namespace.
+ */
+
+/*!
+ * \mainpage An introduction to the TFEL project
+ * \author   Thomas Helfer
+ * \date     2/01/2018
+ *
+ * `TFEL` is a collaborative development of
+ * [CEA](http://www.cea.fr/english-portal "Commissariat à l'énergie
+ * atomique") and [EDF](http://www.edf.com/ "Électricité de France").
+ *
+ * The official website of the `TFEL` project is the following:
+ * <http://tfel.sourceforge.net>.
+ *
+ * # Overview
+ * 
+ * The `TFEL` project provides:
+ * - `mfront`: a code generator for material properties, mechanical
+ *   behaviours and simple models.
+ * - `mtest`: a simple mechanical solver able to simulate:
+ *     - the behaviour of a single point
+ *     - the behaviour of a pipe
+ * - `TFEL/Math`: a set of classes used in mechanical
+ *   implementations of mechanical behaviours and various algorithms.
+ *   Mechanical operations are handled using expression templates.
+ * - `TFEL/Material`: classes used by mechanical behaviours
+ * - `TFEL/Utilities`: various classes, including the `CxxTokenizer`
+ *   class.
+ * - `TFEL/Metaprogramming`: a set of classes to ease metaprogramming.
+ * - `TFEL/Typetraits`: a set of classes providing information on types
+ * - `TFEL/System`: intefaces to system specific operations on file and
+ *    threads and processes
+ *  
+ * # History
+ * 
+ * - Versions prior to 0.1 were developed by T. Helfer as an
+ *   independent project.
+ * - Starting with version 1.0, TFEL was developed as a sub-project of
+ *   the PLEIADES platform.
+ * - Versions higher than 2.0 are open-source.
+ *
+ * # TFEL/MFront licence 
+ *
+ * `TFEL` version prior to 0.1 were released under both the LGPL and
+ * the CECILL-B licences. A copy of those licences are included in the
+ * distributions of `TFEL`.
+ * 
+ * `TFEL` versions 1.x were developped by CEA within the PLEIADES
+ * project. Since svn revision 584, TFEL was part of the `PLEIADES`
+ * projet.
+ * 
+ * Starting from versions 2.x, `TFEL` has been publicly released under
+ * either the GPL or the CECILL-A licence. A copy of thoses licences
+ * are delivered with the sources of `TFEL`. CEA or EDF may also
+ * distribute this project under specific licensing conditions.
+ */
+
+/*!
+ * \namespace tfel
+ * \brief the namespace tfel encloses all the TFEL project. This
+ * namespace is empty.
+ */

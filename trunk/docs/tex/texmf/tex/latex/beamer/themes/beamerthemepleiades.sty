@@ -1,0 +1,149 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{beamertheme}[011104]
+
+\RequirePackage{ifthen}
+\RequirePackage{couleurs}
+
+% Dimensions
+
+\newlength{\taillebarregauche}
+\setlength{\taillebarregauche}{1.02811244979919678714cm}
+\newlength{\margegauche}
+\setlength{\margegauche}{0.28273092369477911646cm}
+\newlength{\margedroite}
+\setlength{\margedroite}{0.79678714859437751003cm}
+\newlength{\hauteurlogo}
+\setlength{\hauteurlogo}{1.55865921787709497206cm}
+
+\setbeamersize{sidebar width left=\taillebarregauche}
+\setbeamersize{text margin left=\margegauche}
+\setbeamersize{text margin right=\margedroite}
+
+\newlength{\tailleligneseparation}
+\setlength{\tailleligneseparation}{\linewidth}
+\addtolength{\tailleligneseparation}{\margedroite}
+
+% Paramètre de la présentation
+
+\newcommand{\Titre}[1]{\def\Protitre{#1}}
+\newcommand{\Auteur}[1]{\def\Proauteur{#1}}
+\newcommand{\Labo}[1]{\def\Prolabo{#1}}
+\newcommand{\Date}[1]{\def\Prodatepresentation{#1}}
+\newcommand{\Organisme}[1]{\def\Proorganisme{#1}}
+\newcommand{\Responsables}[1]{\def\Proresponsables{#1}}
+\newcommand{\DirecteurThese}[1]{\def\ProDirecteurThese{#1}}
+\newcommand{\Nbretransparents}[1]{\def\Pronbretransparents{#1}}
+
+% Masque
+
+\setbeamertemplate{background canvas}{\ifthenelse{\equal{\thepage}{1}}{\includegraphics[width=\paperwidth]{Pleiades.eps}}{}}%[vertical shading][bottom=red!10,top=blue!10]
+%\setbeamertemplate{background canvas}{}%[vertical shading][bottom=red!10,top=blue!10]
+
+
+\newcommand{\titre}[1]{
+  \subsection{#1}
+  \setbeamertemplate{headline}[text line]
+  {
+    \noindent\begin{minipage}[htbp]{\linewidth}
+      \begin{tabular}[h]{lc}
+        \Large \bf #1 & \vbox to 0.5cm{}\\
+      \end{tabular}
+      
+      {\color{ceaorange} \rule{\tailleligneseparation}{0.5pt}}\newline
+      % \vbox to 0.1cm{}
+    \end{minipage}
+  }
+}
+
+\newcommand{\sanstitre}{
+  \setbeamertemplate{headline}[text line]
+  {
+    \noindent\begin{minipage}[htbp]{\linewidth}
+      \begin{tabular}[h]{lc}
+         & \vbox to 0.5cm{}\\
+      \end{tabular}
+      
+      {\color{ceaorange} \rule{\tailleligneseparation}{0.5pt}}\newline
+      % \vbox to 0.1cm{}
+    \end{minipage}
+  }
+}
+
+
+\setbeamertemplate{headline}[text line]
+{
+  \noindent\begin{minipage}[htbp]{\linewidth}
+    \begin{tabular}[h]{lc}
+     & \vbox to 0.5cm{}\\
+    \end{tabular}
+
+    {\color{ceaorange} \rule{\tailleligneseparation}{0.5pt}}\newline
+                                %    \vbox to 0.1cm{}
+  \end{minipage}
+}
+
+\setbeamertemplate{footline}[text line]
+{
+  \begin{minipage}[htbp]{\linewidth}
+    {\color{ceavert} \rule{\tailleligneseparation}{0.5pt}}\newline      
+    {\color{ceagrisclair}\hspace{1cm}\small\ifthenelse{\isundefined{\Prolabo}}{}{\Prolabo}\hfill\ifthenelse{\isundefined{\Prodatepresentation}}{}{\Prodatepresentation}\hfill\insertframenumber/\ifthenelse{\isundefined{\Pronbretransparents}}{\inserttotalframenumber}{\Pronbretransparents}}
+  \end{minipage}
+}
+
+
+\setbeamertemplate{sidebar left}
+{
+  \vskip 1.55865921787709497206cm
+  \begin{minipage}[htbp]{\taillebarregauche}
+    \begin{center}
+      \includegraphics[width=0.95\textwidth]{logo_cea}\\
+      \includegraphics[width=0.95\textwidth]{logoEDF}       
+    \end{center}
+    \raisebox{-6.12cm}{\includegraphics[width=2.\textwidth]{logoCad}}
+  \end{minipage}
+
+}
+
+% Apparence
+
+\setbeamercolor{frametitle}{fg=black}
+\setbeamerfont{frametitle}{series=\bfseries}
+\setbeamertemplate{frametitle}{
+  \begin{center}
+    \insertframetitle
+  \end{center}
+}
+
+\setbeamertemplate{blocks}[rounded][shadow=true]
+\setbeamercolor{block title}{fg=white,bg=ceavert}
+\setbeamertemplate{itemize item}[circle]
+\setbeamertemplate{itemize subitem}[circle]
+\setbeamercolor{itemize item}{fg=ceaorange}
+\setbeamercolor{itemize subitem}{fg=ceaorange}
+\setbeamerfont{section in toc}{series=\bfseries}
+\setbeamercolor{section in toc}{fg=black}
+\setbeamercolor{subsection in toc}{fg=ceagrisclair}
+
+\newcommand{\PageTitre}{
+  
+  \frame{
+    \begin{center}
+      \ifthenelse{\isundefined{\Protitre}}{}{{\Large\bf\color{blue} \textsc{\Protitre}}}\\
+      \vskip 4mm
+      \ifthenelse{\isundefined{\Proauteur}}{}{{\large\bf \textsc{\Proauteur}}}
+      \vskip 4mm
+      \ifthenelse{\isundefined{\Proorganisme}}{}{\textsc \textsc{\Proorganisme}}
+    \end{center}
+    \vskip 4mm
+    \ifthenelse{\isundefined{\Proresponsables}}{}{Responsables CEA~: \textsc{\Proresponsables}\\}
+    \ifthenelse{\isundefined{\ProDirecteurThese}}{}{Directeur de thèse~: \textsc{\ProDirecteurThese}\\}
+  }
+
+}
+
+\newcommand{\alternatif}[2]{\alt<#1>{\textcolor{black}{#2}}{\textcolor{ceagrisfonce}{#2}}}
+
+\endinput
+
+%%
+%% Fin de beamerthemecea.sty

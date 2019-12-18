@@ -1,0 +1,43 @@
+@Author Helfer Thomas;
+@Date 08/04/2014;
+@Description{
+  Hydrostatic compression test
+  for the elliptic creep behaviour.
+};
+
+@Behaviour<umat> 'src/libUmatBehaviour.so' 'umatellipticcreep';
+@MaximumNumberOfSubSteps 1;
+@UseCastemAccelerationAlgorithm true;
+
+@Parameter 'epsilon' 1.e-13;
+@Parameter 'numerical_jacobian_epsilon' 1.e-9;
+
+
+@MaterialProperty<constant> 'YoungModulus' 195879447720;
+@MaterialProperty<castem> 'PoissonRatio' 'src/libCastemUO2.so' 'UO2_PoissonRatio_Fink1981';
+
+// initial value of the YoungModulus
+@Real 'E0' 195879447720;
+// Poisson Ratio
+@Real 'nu' 0.316;
+// bulk modulus
+@Real 'K' 'E0/(1-2*nu)';
+
+@Real 'p' -70.e6;
+@ImposedStress 'SXX' 'p';
+@ImposedStress 'SYY' 'p';
+@ImposedStress 'SZZ' 'p';
+// Initial value of the elastic strain
+@Real 'EELXX0' 'p/K';
+@InternalStateVariable 'ElasticStrain' {'EELXX0','EELXX0','EELXX0',0.,0.,0.};
+// Initial value of the total strain
+@Strain {'EELXX0','EELXX0','EELXX0',0.,0.,0.};
+// Initial value of the stresses
+@Stress {'p','p','p',0.,0.,0.};
+
+@InternalStateVariable 'Porosity' 0.05;
+
+@ExternalStateVariable 'Temperature' 293.15;
+
+@Times {0.,3600 in 10};
+

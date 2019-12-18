@@ -1,0 +1,28 @@
+\noindent
+\ttfamily
+\hlstd{@Parser}\hlstd{\ \ \ }\hlstd{Model}\hlopt{;}\hspace*{\fill}\\
+\hlstd{@Model}\hlstd{\ \ \ \ }\hlstd{SolidSwellingModel}\hlopt{;}\hspace*{\fill}\\
+\hlstd{@Material\ UPuC}\hlopt{;}\hspace*{\fill}\\
+\hlstd{@Author}\hlstd{\ \ \ }\hlstd{Helfer\ Thomas}\hlopt{;}\hspace*{\fill}\\
+\hlstd{@Date}\hlstd{\ \ \ \ \ }\hlstd{}\hlnum{06\ }\hlstd{Déc}\hlopt{.\ }\hlstd{}\hlnum{2007}\hlstd{}\hlopt{;}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@Output\ s}\hlopt{;}\hspace*{\fill}\\
+\hlstd{s}\hlopt{.}\hlstd{}\hlkwd{setGlossaryName}\hlstd{}\hlopt{(}\hlstd{}\hlstr{"SolidSwelling"}\hlstd{}\hlopt{);}\hspace*{\fill}\\
+\hlstd{s}\hlopt{.}\hlstd{}\hlkwd{setDefaultInitialValue}\hlstd{}\hlopt{(}\hlstd{}\hlnum{0}\hlstd{}\hlopt{.);}\hspace*{\fill}\\
+\hlstd{s}\hlopt{.}\hlstd{}\hlkwd{setDepth}\hlstd{}\hlopt{(}\hlstd{}\hlnum{1}\hlstd{}\hlopt{);}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@Input\ Bu}\hlopt{;}\hspace*{\fill}\\
+\hlstd{Bu}\hlopt{.}\hlstd{}\hlkwd{setGlossaryName}\hlstd{}\hlopt{(}\hlstd{}\hlstr{"BurnUp"}\hlstd{}\hlopt{);}\hspace*{\fill}\\
+\hlstd{Bu}\hlopt{.}\hlstd{}\hlkwd{setDepth}\hlstd{}\hlopt{(}\hlstd{}\hlnum{1}\hlstd{}\hlopt{);}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@Input\ p}\hlopt{;}\hspace*{\fill}\\
+\hlstd{p}\hlopt{.}\hlstd{}\hlkwd{setGlossaryName}\hlstd{}\hlopt{(}\hlstd{}\hlstr{"Porosity"}\hlstd{}\hlopt{);}\hspace*{\fill}\\
+\hlstd{p}\hlopt{.}\hlstd{}\hlkwd{setDepth}\hlstd{}\hlopt{(}\hlstd{}\hlnum{1}\hlstd{}\hlopt{);}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@Function\ compute}\hspace*{\fill}\\
+\hlopt{\{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwb{const\ }\hlstd{real\ coef1\ }\hlopt{=\ ...;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwb{const\ }\hlstd{real\ coef2\ }\hlopt{=\ ...;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwb{const\ }\hlstd{real\ p\textunderscore }\hlstd{\ \ \ \ }\hlstd{}\hlopt{=\ }\hlstd{}\hlnum{0.5}\hlstd{}\hlopt{{*}(}\hlstd{p}\hlopt{+}\hlstd{p\textunderscore 1}\hlopt{);}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{s\ }\hlopt{=\ }\hlstd{s\textunderscore 1\ }\hlopt{+\ }\hlstd{coef1}\hlopt{{*}}\hlstd{}\hlkwd{exp}\hlstd{}\hlopt{(}\hlstd{coef2}\hlopt{{-}}\hlstd{p\textunderscore }\hlopt{){*}(}\hlstd{Bu}\hlopt{{-}}\hlstd{Bu\textunderscore 1}\hlopt{);}\hspace*{\fill}\\
+\hlstd{}\hlopt{\}\ }\hlstd{}\hlslc{//\ end\ of\ function\ compute}\hlstd{}

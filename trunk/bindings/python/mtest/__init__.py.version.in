@@ -1,0 +1,7 @@
+import std_@TFEL_SUFFIX_FOR_PYTHON_MODULES@
+import tfel_@TFEL_SUFFIX_FOR_PYTHON_MODULES@.tests
+import tfel_@TFEL_SUFFIX_FOR_PYTHON_MODULES@.math
+from ._mtest import *
+
+MTestStiffnessMatrixType=StiffnessMatrixType
+MTestWorkSpace=SolverWorkSpace

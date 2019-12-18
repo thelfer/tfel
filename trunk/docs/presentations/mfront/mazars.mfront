@@ -1,0 +1,90 @@
+@Parser DefaultParser;
+@Behaviour mazars;
+@MaterialProperty stress young; 
+@MaterialProperty real nu;    
+@MaterialProperty real Ac;
+@MaterialProperty real At;
+@MaterialProperty real Bc;
+@MaterialProperty real Bt;
+@MaterialProperty real k;
+@MaterialProperty real ed0;
+@ProvidesSymmetricTangentOperator;
+@Includes{#include"TFEL/Material/Lame.hxx"}
+@StateVariable real d;
+@StateVariable real Y;
+@StateVariable real eeqcor;
+@LocalVariable real    lambda;
+@LocalVariable real    mu;
+@InitLocalVars{using namespace tfel::material::lame;
+  lambda = computeLambda(young,nu);
+  mu = computeMu(young,nu);} 
+  
+
+@Integrator{ using namespace tfel::material::lame;
+  real e1,e2,e3;
+  real s1,s2,s3;
+  real ppe1,ppe2,ppe3;
+  real pns1,pns2,pns3;
+  real pps1,pps2,pps3;
+  const Stensor e  = eto+deto;
+  const real    tr = trace(e);
+  const Stensor s0 = lambda*tr*Stensor::Id()+2*mu*e;
+  const real dmax=0.99999;
+  e.computeEigenValues(e1,e2,e3);
+  // eigen values of s0
+  s1 = 2*mu*e1+lambda*tr;
+  s2 = 2*mu*e2+lambda*tr;
+  s3 = 2*mu*e3+lambda*tr;
+  const real sn = max(abs(s1),max(abs(s2),abs(s3)));
+  ppe1=max(0.,e1);
+  ppe2=max(0.,e2);
+  ppe3=max(0.,e3);
+  pps1=max(0.,s1);
+  pps2=max(0.,s2);
+  pps3=max(0.,s3);
+
+  
+  
+  
+  
+  real r=1.;
+  if (sn>1.e-6*young){
+     r=(pps1+pps2+pps3)/(abs(s1)+abs(s2)+abs(s3));
+  }
+  real gam=1. ;
+  if ((min(s1,min(s2,s3))<0.)&&(r==0.)){
+     pns1=min(0.,s1);
+     pns2=min(0.,s2);
+     pns3=min(0.,s3);
+     gam=-sqrt(pns1*pns1+pns2*pns2+pns3*pns3)/(pns1+pns2+pns3);
+  }
+  real eeqc= sqrt(ppe1*ppe1+ppe2*ppe2+ppe3*ppe3);
+  eeqcor=max(gam*eeqc,eeqcor);
+  real A=At*(2*r*r*(1.-2*k)-r*(1-4*k))+Ac*(2*r*r-3*r+1);
+  real B=r*r*Bt+(1-r*r)*Bc;    
+  real Y1=max(ed0,eeqcor);
+  Y=max(Y1,Y);
+  d=max(d,1-(1-A)*ed0/Y-A*exp(-B*(Y-ed0)));
+  d=min(dmax,d);
+  sig = (1.-d)*s0;
+  
+  
+  if(computeTangentOperator_){
+     StiffnessTensor Hooke;
+     Stensor eplus;
+     real RTEMP=B*(Y-ed0);
+     real COEF=0.;
+     computeElasticStiffness<N,Type>::exe(Hooke,lambda,mu);
+     if((d<dmax)&&(dd>0.)&&(Y>1.e-6)){
+           COEF=ed0*(1.-A)/(Y*Y);
+     	   if(RTEMP<200.0){
+              COEF=COEF+A*B/exp(RTEMP);
+       	    }
+           COEF=gam*gam*COEF/Y;
+     }
+     for(unsigned short i=0;i!=6;++i){
+	eplus[i]=max(0.,e[i]);
+       }    
+     Dt = (1.-d)*Hooke-COEF*(s0^eplus);
+  }
+}

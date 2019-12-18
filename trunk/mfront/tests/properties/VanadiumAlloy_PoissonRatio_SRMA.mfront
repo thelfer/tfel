@@ -1,0 +1,33 @@
+@Parser   MaterialLaw;
+@Material VanadiumAlloy;
+@Law      PoissonRatio_SRMA;
+@Author   T. Helfer;
+@Date     2008-11-17;
+
+@Description
+{
+  Corrélation établie sur la nuance V-4Cr-4Ti.
+
+  Propriétés extraites du document :
+
+  Propriétés et comportement mécanique d alliages
+   de Vanadium avant, après et sous irradiation
+
+  Marion Le Flem, Jean-Luc Bechade, Annick Bougault,
+  Aurore Michaux, Lionel Gosmain, Jean-Louis Seran
+  DMN/SRMA/LA2M/NT/2008-2967/A
+}
+
+@Output nu;
+
+@Input TK;
+TK.setGlossaryName("Temperature");
+
+@PhysicalBounds TK in [0:*[;
+@Bounds TK in [293.15:973.15];
+
+@Function
+{
+  const real TC = TK - 273.15 ;
+  nu = 0.3272*(1-3.056e-5*(TC-20));
+}

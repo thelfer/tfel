@@ -1,0 +1,22 @@
+image:
+  - Visual Studio 2017
+clone_folder: c:\projects\tfel-master
+build_script:
+- cmd: >-
+    mkdir build
+
+    cd build
+    
+    cmake c:\projects\tfel-master -G "Visual Studio 15" -Dlocal-castem-header=ON
+    
+    cmake --build . --config "Release" --target ALL_BUILD
+
+test_script:
+- cmd: >-
+    cmake --build . --config "Release" --target check
+
+artifacts:
+  - path: Testing
+    name: Testing
+    type: zip
+

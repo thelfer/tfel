@@ -1,0 +1,37 @@
+@Behaviour LogarithmicStrainElasticity4;
+@Author Thomas Helfer;
+@Date   8/03/2018;
+@Description{
+ A very first test 
+ (the most simple one in fact).
+}
+
+@StrainMeasure Hencky;
+
+@MaterialProperty stress young;
+young.setGlossaryName("YoungModulus");
+@MaterialProperty real nu;
+nu.setGlossaryName("PoissonRatio");
+
+@LocalVariable stress lambda,mu;
+
+@ComputeThermalExpansion 2e-5;
+
+@InitLocalVariables{
+  lambda = computeLambda(young,nu);
+  mu = computeMu(young,nu);
+}
+
+@ProvidesSymmetricTangentOperator;
+
+@PredictionOperator{
+  static_cast<void>(smt);
+  Dt = lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
+}
+
+@Integrator{
+  sig = lambda*trace(eto+deto)*StrainStensor::Id()+2*mu*(eto+deto);
+  if(computeTangentOperator_){
+    Dt = lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
+  }
+}

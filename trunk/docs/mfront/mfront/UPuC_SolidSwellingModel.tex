@@ -1,0 +1,30 @@
+\noindent
+\ttfamily
+\hlstd{@Parser}\hlstd{\ \ \ }\hlstd{Model}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@Model}\hlstd{\ \ \ \ }\hlstd{SolidSwellingModel}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@Material UPuC}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@Author}\hlstd{\ \ \ }\hlstd{Helfer Thomas}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@Date}\hlstd{\ \ \ \ \ }\hlstd{}\hlnum{06 }\hlstd{Déc}\hlsym{. }\hlstd{}\hlnum{2007}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@Output s}\hlsym{;}\hspace*{\fill}\\
+\hlstd{s}\hlsym{.}\hlstd{}\hlkwd{setGlossaryName}\hlstd{}\hlsym{(}\hlstd{}\hlstr{"SolidSwelling"}\hlstd{}\hlsym{);}\hspace*{\fill}\\
+\hlstd{s}\hlsym{.}\hlstd{}\hlkwd{setDefaultInitialValue}\hlstd{}\hlsym{(}\hlstd{}\hlnum{0}\hlstd{}\hlsym{.);}\hspace*{\fill}\\
+\hlstd{s}\hlsym{.}\hlstd{}\hlkwd{setDepth}\hlstd{}\hlsym{(}\hlstd{}\hlnum{1}\hlstd{}\hlsym{);}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@Input Bu}\hlsym{;}\hspace*{\fill}\\
+\hlstd{Bu}\hlsym{.}\hlstd{}\hlkwd{setGlossaryName}\hlstd{}\hlsym{(}\hlstd{}\hlstr{"BurnUp"}\hlstd{}\hlsym{);}\hspace*{\fill}\\
+\hlstd{Bu}\hlsym{.}\hlstd{}\hlkwd{setDepth}\hlstd{}\hlsym{(}\hlstd{}\hlnum{1}\hlstd{}\hlsym{);}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@Input p}\hlsym{;}\hspace*{\fill}\\
+\hlstd{p}\hlsym{.}\hlstd{}\hlkwd{setGlossaryName}\hlstd{}\hlsym{(}\hlstd{}\hlstr{"Porosity"}\hlstd{}\hlsym{);}\hspace*{\fill}\\
+\hlstd{p}\hlsym{.}\hlstd{}\hlkwd{setDepth}\hlstd{}\hlsym{(}\hlstd{}\hlnum{1}\hlstd{}\hlsym{);}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@Function compute}\hspace*{\fill}\\
+\hlsym{\{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwb{const }\hlstd{real coef1 }\hlsym{= }\hlstd{}\hlnum{8}\hlstd{}\hlsym{.}\hlstd{e}\hlsym{{-}}\hlstd{}\hlnum{3}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwb{const }\hlstd{real coef2 }\hlsym{= }\hlstd{}\hlnum{4}\hlstd{}\hlsym{.}\hlstd{e}\hlsym{{-}}\hlstd{}\hlnum{2}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlkwb{const }\hlstd{real p\textunderscore }\hlstd{\ \ \ \ }\hlstd{}\hlsym{= }\hlstd{}\hlnum{0.5}\hlstd{}\hlsym{{*}(}\hlstd{p}\hlsym{+}\hlstd{p\textunderscore 1}\hlsym{);}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{s }\hlsym{= }\hlstd{s\textunderscore 1 }\hlsym{+ }\hlstd{coef1}\hlsym{{*}}\hlstd{}\hlkwd{exp}\hlstd{}\hlsym{(}\hlstd{coef2}\hlsym{{-}}\hlstd{p\textunderscore }\hlsym{){*}(}\hlstd{Bu}\hlsym{{-}}\hlstd{Bu\textunderscore 1}\hlsym{);}\hspace*{\fill}\\
+\hlstd{}\hlsym{\} }\hlstd{}\hlslc{// end of function compute}\hlstd{}\hspace*{\fill}\\
+\mbox{}
+\normalfont

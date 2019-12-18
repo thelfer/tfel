@@ -1,0 +1,45 @@
+@Author Thomas Helfer;
+@Date 31 / 03 / 2018;
+@Description{
+
+};
+
+@XMLOutputFile @xml_output@;
+@MaximumNumberOfSubSteps 1;
+@Behaviour<castem> @library@ @behaviour@;
+
+@Parameter 'theta' 0.5;
+
+@MaterialProperty<constant> 'YoungModulus' 150e9;
+@MaterialProperty<constant> 'PoissonRatio' 0.3;
+
+@ExternalStateVariable 'Temperature' 293.15;
+
+@Real 's' 41e6;
+@Real 'e0' 's/YoungModulus';
+@Strain{'e0', '-e0*PoissonRatio', '-e0*PoissonRatio', 0, 0, 0};
+@Stress{'s', 0, 0, 0, 0, 0};
+@InternalStateVariable 'ElasticStrain' {'e0', '-e0*PoissonRatio', '-e0*PoissonRatio', 0, 0, 0};
+
+@Real 'p0' 1.e-6;
+
+@ImposedStress 'SXX' 's';
+@Times{0, 3600 in 100};
+
+@Real 'Hc' 33e6;
+@Real 'K' 250e6;
+@Real 'n' 3.2;
+
+// analytical solution giving the evolution of the
+// equivalent plastic strain as a function of time
+@Evolution<function> 'p' '(1/Hc)*(s-((s**(1-n)+(Hc*(n-1)/K**n)*t))**(1/(1-n)))';
+
+@Test<function> 'EquivalentViscoplasticStrain' 'p' 5.e-4;
+@Test<function> 'EXX' 's/YoungModulus+p' 5.e-4;
+@Test<function> 'EYY' '-PoissonRatio*s/YoungModulus-0.5*p' 5.e-4;
+@Test<function> 'EZZ' '-PoissonRatio*s/YoungModulus-0.5*p' 5.e-4;
+@Test<function> 'ElasticStrainXX' 's/YoungModulus' 1.e-10;
+@Test<function> {
+  'SYY' : '0', 'SZZ' : '0'
+}
+1.e-2;

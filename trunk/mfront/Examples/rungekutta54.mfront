@@ -1,0 +1,43 @@
+@Parser    RungeKutta;
+@Behaviour NortonRK;
+@Author    Helfer Thomas;
+@Algorithm rk54;
+@Date 23/11/06;
+
+@Epsilon 1.e-8;
+
+@MaterialProperty stress young;
+young.setGlossaryName("YoungModulus");
+@MaterialProperty real nu;
+nu.setGlossaryName("PoissonRatio");
+
+@MaterialProperty real A;     /* Norton coefficient   */
+@MaterialProperty real E;     /* Norton exponant      */
+
+@LocalVar stress lambda; /* first  Lame coefficient  */
+@LocalVar stress mu;     /* second Lame coefficient */
+
+@StateVar strain p;      /* Equivalent viscoplastic strain */
+@StateVar Stensor evp; /* Viscoplastic strain            */
+
+/* Initialize Lame coefficients */
+@InitLocalVars{
+  lambda = computeLambda(young,nu);
+  mu = computeMu(young,nu);
+}
+
+@ComputeStress{
+  sig = lambda * trace(eel) * StrainStensor::Id() + 2 * mu * eel;
+}
+
+@Derivative{
+  const auto seq = sigmaeq(sig);
+  if (seq > 1.e9) {
+    return false;
+  }
+  const auto iseq = 1 / max(seq, real(1e-7) * young);
+  const atuo n = 3 * deviator(sig) * (iseq / 2);
+  dp   = A*pow(seq,E);
+  devp = dp * n;
+  deel = deto - devp;
+}	

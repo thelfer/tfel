@@ -1,0 +1,27 @@
+@Parser   MaterialLaw ;
+@Material T91MartensiticSteel ;
+@Law      Nexp_ROUX2007 ;
+@Author   F. Milliard ;
+@Date     11/12/2013 ;
+@Description{
+  // Exposant viscosité martensite T91
+  // [Roux 07]
+}
+
+// Input of law
+@Input T ;
+T.setGlossaryName("Temperature") ;
+
+// Output of law
+@Output Nexp ;
+
+@PhysicalBounds T in [0.:*[;
+
+// Function
+@Function{
+  const real TC = T-273.15;
+  const real TC2 = TC  * TC  ;
+  const real TC3 = TC2 * TC  ;
+  const real TC4 = TC2 * TC2 ;
+  Nexp = 1.2741504989e-12 * TC4 +7.1953453905e-10 * TC3 -5.5038683320e-07 * TC2 +3.2271767280e-04 * TC +5.9432803391e-01;
+} // end of Function

@@ -1,0 +1,156 @@
+
+\section{Travaux pratiques~: comment écrire une loi de comportement}
+
+\subsection{un premier exemple très simple~:~la loi de Norton}
+
+\subsubsection{expression de la loi de \nom{Norton}}
+
+En guise de préliminaire, prenons par exemple la loi de \nom{Norton}. Elle
+est définie par~:
+\[ 
+\left\{
+  \begin{aligned}
+    \tepsilonto   &= \tepsilonel+\tepsilonvis \\
+    \tsigma       &= \tenseurq{D}\,:\,\tepsilonel\\
+    \tdepsilonvis &= \dot{p}\,\tenseur{n} \\
+    \dot{p}       &= A\,\paren{\sigmaeq}^{m}
+  \end{aligned}
+\right.
+\]
+où~:
+\begin{minipage}[t]{0.9\linewidth}
+  \begin{itemize}
+  \item \(\tepsilonto\), \(\tepsilonel\), \(\tepsilonvis\)
+    représentent respectivement les déformations totale, élastique et
+    visqueuse~;
+  \item \(\tenseur{n}=\Frac{3}{2}\,\Frac{\tenseur{s}}{\sigmaeq}\) est
+    la direction d'écoulement~;
+  \item \(\tenseur{s}\) est le déviateur des contraintes~;
+  \item \(\sigmaeq=\sqrt{\Frac{3}{2}\,\tenseur{s}\,\colon\,\tenseur{s}}\) est la norme de \nom{Von Mises}.
+  \end{itemize}
+\end{minipage}
+
+
+L'opérateur d'élasticité \(\tenseurq{D}\) est classiquement calculé à partir du
+module d'\nom{Young} \(E\) et du coefficient de \nom{Poisson} \(\nu\).
+
+\subsubsection{Discrétisation implicite de loi de \nom{Norton}}
+
+La discrétisation en temps implique de définir une suite
+d'instants de calcul \(\left\{t_{i}\right\}_{1\le i\le I}\).
+
+Pour utiliser un algorithme implicite, il suffit d'écrire toutes les
+quantités à l'instant \(t_{i}\) et de remplacer les dérivées en temps
+par leurs incréments sur l'intervalle \( \Delta t= t_{i} - t_{i-1} \)
+~:
+\[ 
+\left\{
+  \begin{aligned}
+    \Delta\,\tepsilonel - \Delta\,\tepsilonto   + \Delta\,p\,\tenseur{n} = 0 \\
+    \Delta\,p  - \Delta\,t\, A\,\sigmaeq^{m} = 0 
+  \end{aligned}
+\right.
+\]
+
+avec~:
+\begin{minipage}[t]{0.9\linewidth}
+  \begin{itemize}
+  \item \(\tsigma  = \tenseurq{D}\,:\,\tepsilonel \) ;
+  \item \(\tenseur{n}=\Frac{3}{2}\,\Frac{ \tenseur{s} \paren{t_{i}}} { \sigmaeq \paren{ t_{i}}}\ \) .
+  \end{itemize}
+\end{minipage}
+
+On obtient ainsi un système de 7 équations (6 équations --- en 3D ---
+relatives à la décomposition additive du tenseur des déformations, et
+une équation relative à l'écoulement visco-plastique).  Les 7
+inconnues sont les 6 composantes de \( \Delta \tepsilonel \) et \(
+\Delta p \).
+
+\subsubsection{Première implantation}
+
+\texttt{
+on pourra vérifier que l'intégration implicite de ce modèle avec mfront est opérationnelle, avec le fichier suivant~:
+}
+
+\begin{center}
+  \begin{minipage}[h]{0.7\linewidth}
+    \lstinputlisting{@abs_top_srcdir@/docs/presentations/mfront/norton.mfront}
+  \end{minipage}
+\end{center}
+
+\mfront{} gère la compilation de la loi.
+Après avoir positionné l'environnement, par exemple sur la machines Calibre7, en tapant dans un terminal~:
+
+\begin{flushleft}
+  {\tt
+     \$  .  /home/aster/etc/codeaster/profile\_mfront.sh
+  }
+\end{flushleft}
+
+il suffit ensuite de lancer la commande~:
+\begin{flushleft}
+  {\tt
+    \$ mfront -{}-obuild -interface=aster norton.mfront
+  }
+\end{flushleft}
+                 
+Ceci génère deuxrépertoires :{ \tt src} et {\tt include}.
+Le répertoire src contient en particulier une bibliothèque dynamique~:
+\begin{flushleft}
+  {\tt
+    src/libAsterBehaviour.so
+  }
+\end{flushleft}
+
+\subsubsection{Premier test}
+
+L'outil \mtest{} permet d'effectuer des
+simulations sur point matériel, permettant de calculer la réponse à
+des sollicitations en contraintes ou en déformations. 
+
+Le fichier de
+données  {\tt norton.mtest} se présente de la
+façon suivante~:
+\begin{flushleft}
+  \lstinputlisting{@abs_top_srcdir@/docs/presentations/mtest/norton.mtest}
+\end{flushleft}
+\begin{itemize}
+\item la ligne \(1\) définit la bibliothèque à utiliser et le nom du
+  comportement ~;
+\item les lignes \(2\) à \(5\) définissent les valeurs des propriétés
+  matériau de la loi ~;
+\item la ligne \(6\) déclare la valeur de la température (inutile dans
+  le cas présent)~;
+\item les lignes \(7\) à \(8\) spécifient le chargement, sous la forme
+  de composantes de contraintes ou de déformations en fonction du
+  temps ;
+\item la ligne \(9\) définit la discrétisation en temps, donc les
+  instants calculés.
+\end{itemize}
+
+
+\begin{figure}[!h]
+  \centering
+  \includegraphics[width=9cm]{@abs_top_srcdir@/docs/presentations/images/tutorielch12-img1.png}  
+  \caption{Réponse d'une loi de \nom{Norton} à un essai de fluage en
+    traction-cisaillement}
+  \label{fig:Norton:traction-cisaillement}
+\end{figure}
+
+Il suffit alors de lancer le calcul par :
+\begin{flushleft}
+  {\tt
+    mtest norton.mtest
+  }
+\end{flushleft}
+Ceci produit un fichier résultat { \tt norton.res } contenant les
+composantes des tenseurs de déformation, de contrainte, et les
+variables internes en fonction du temps. 
+
+La réponse en déformation pour cet essai de traction est
+représentée en figure~\ref{fig:Norton:traction-cisaillement}.
+Elle peut être tracée par exemple à l'aide de xmgrace.
+
+On pourra également vérifier sur un essai de fluage (modifier le fichier mtest) que celui ci est de nature secondaire.
+
+

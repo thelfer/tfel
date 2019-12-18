@@ -1,0 +1,10 @@
+\noindent
+\ttfamily
+\hlstd{}\hlkwa{Declare Function }\hlstd{SIC\textunderscore YOUNGMODULUS\textunderscore SNEAD }\hlkwa{Lib }\hlstd{}\hlstr{"libCastemMaterialLaw"}\hlstd{ }\hlsym{(}\hlstd{temp }\hlkwa{As }\hlstd{}\hlkwb{Double}\hlstd{}\hlsym{) }\hlstd{}\hlkwa{As }\hlstd{}\hlkwb{Double}\hspace*{\fill}\\
+\hlstd{}\hspace*{\fill}\\
+\hlkwa{Public Function }\hlstd{}\hlkwd{LoiMat}\hlstd{}\hlsym{(}\hlstd{ParamArray }\hlkwd{VarTableau}\hlstd{}\hlsym{())}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwa{Dim }\hlstd{}\hlkwd{v}\hlstd{}\hlsym{(}\hlstd{}\hlnum{2}\hlstd{}\hlsym{) }\hlstd{}\hlkwa{As }\hlstd{}\hlkwb{Double}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwd{v}\hlstd{}\hlsym{(}\hlstd{}\hlnum{0}\hlstd{}\hlsym{) = }\hlstd{}\hlkwd{VarTableau}\hlstd{}\hlsym{(}\hlstd{}\hlnum{0}\hlstd{}\hlsym{)}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwd{v}\hlstd{}\hlsym{(}\hlstd{}\hlnum{1}\hlstd{}\hlsym{) = }\hlstd{}\hlkwd{VarTableau}\hlstd{}\hlsym{(}\hlstd{}\hlnum{1}\hlstd{}\hlsym{)}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ \ \ }\hlstd{LoiMat }\hlsym{= }\hlstd{}\hlkwd{SIC\textunderscore YOUNGMODULUS\textunderscore SNEAD}\hlstd{}\hlsym{(}\hlstd{}\hlkwd{v}\hlstd{}\hlsym{(}\hlstd{}\hlnum{0}\hlstd{}\hlsym{))}\hspace*{\fill}\\
+\hlstd{}\hlkwa{End Function}

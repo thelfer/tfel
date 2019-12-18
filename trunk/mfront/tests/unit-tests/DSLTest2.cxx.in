@@ -1,0 +1,162 @@
+/*!
+ * \file   DSLTest2.cxx
+ * \brief    
+ * \author THOMAS HELFER
+ * \date   30 juin 2015
+ * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
+ * reserved. 
+ * This project is publicly released under either the GNU GPL Licence 
+ * or the CECILL-A licence. A copy of thoses licences are delivered 
+ * with the sources of TFEL. CEA or EDF may also distribute this 
+ * project under specific licensing conditions. 
+ */
+
+#ifdef NDEBUG
+#undef NDEBUG
+#endif /* NDEBUG */
+
+// a small trick so that the compiler refers to the original file for
+// error reports
+#line 21 "@abs_top_srcdir@/mfront/tests/unit-tests/DSLTest2.cxx.in"
+
+#include<memory>
+#include<cstdlib>
+#include<iostream>
+#include<stdexcept>
+
+#include"TFEL/Tests/TestCase.hxx"
+#include"TFEL/Tests/TestProxy.hxx"
+#include"TFEL/Tests/TestManager.hxx"
+
+#include"TFEL/Glossary/Glossary.hxx"
+#include"TFEL/Glossary/GlossaryEntry.hxx"
+
+#include"MFront/InitDSLs.hxx"
+#include"MFront/MFrontBase.hxx"
+#include"MFront/AbstractDSL.hxx"
+#include"MFront/AbstractBehaviourDSL.hxx"
+#include"MFront/BehaviourDescription.hxx"
+
+static std::shared_ptr<mfront::AbstractBehaviourDSL>
+getBehaviourDSL(const std::string& f){
+  using namespace std;
+  using namespace mfront;
+  auto dsl = MFrontBase::getDSL(f);
+  auto bdsl = shared_ptr<AbstractBehaviourDSL>{};
+  if(dsl->getTargetType()==AbstractDSL::BEHAVIOURDSL){
+    bdsl = dynamic_pointer_cast<AbstractBehaviourDSL>(dsl);
+    if(!bdsl){
+      throw(runtime_error("getBehaviourDSL : invalid dsl implementation"));
+    }
+  } else {
+    throw(runtime_error("getBehaviourDSL : unsupported dsl type"));
+  }
+  return bdsl;
+} // end of getBehaviourDSL
+
+struct DSLTest2 final
+  : public tfel::tests::TestCase
+{
+  DSLTest2()
+    : tfel::tests::TestCase("MFront","DSLTest2")
+  {} // end of DSLTest2
+
+  tfel::tests::TestResult
+  execute() override
+  {
+    this->test();
+    this->test2();
+    return this->result;
+  } // end of execute
+ private:
+  /*!
+   * Various checks on the BehaviourDescription object resulting from
+   * the analysis of the 'test1.mfront' file
+   */
+  void test(){
+    using namespace tfel::glossary;
+    const auto mh = tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    const auto f  = std::string{"@top_srcdir@/mfront/tests/unit-tests/mfront/test1.mfront"};
+    auto dsl = getBehaviourDSL(f);
+    dsl->analyseFile(f,{},{});
+    const auto& bd = dsl->getBehaviourDescription();
+    TFEL_TESTS_ASSERT(bd.isMaterialPropertyName(mh,"young"));
+    TFEL_TESTS_ASSERT(bd.hasGlossaryName(mh,"young"));
+    TFEL_TESTS_ASSERT(!bd.hasEntryName(mh,"young"));
+    TFEL_TESTS_ASSERT((bd.isGlossaryNameUsed(mh,Glossary::YoungModulus)));
+    TFEL_TESTS_ASSERT((bd.getExternalName(mh,"young")==Glossary::YoungModulus));
+    TFEL_TESTS_ASSERT((bd.getVariableNameFromGlossaryNameOrEntryName(mh,Glossary::YoungModulus)==
+		       "young"));
+    TFEL_TESTS_ASSERT(bd.isMaterialPropertyName(mh,"nu"));
+    TFEL_TESTS_ASSERT(bd.hasGlossaryName(mh,"nu"));
+    TFEL_TESTS_ASSERT(!bd.hasEntryName(mh,"nu"));
+    TFEL_TESTS_ASSERT(bd.isGlossaryNameUsed(mh,Glossary::PoissonRatio));
+    TFEL_TESTS_ASSERT((bd.getExternalName(mh,"nu")==Glossary::PoissonRatio));
+    TFEL_TESTS_ASSERT((bd.getVariableNameFromGlossaryNameOrEntryName(mh,Glossary::PoissonRatio)==
+		       "nu"));
+    TFEL_TESTS_ASSERT(bd.isMaterialPropertyName(mh,"h"));
+    TFEL_TESTS_ASSERT(!bd.hasGlossaryName(mh,"h"));
+    TFEL_TESTS_ASSERT(bd.hasEntryName(mh,"h"));
+    TFEL_TESTS_ASSERT((bd.getExternalName(mh,"h")=="HardeningCoefficient"));
+    TFEL_TESTS_ASSERT((bd.getVariableNameFromGlossaryNameOrEntryName(mh,"HardeningCoefficient")=="h"));
+    TFEL_TESTS_ASSERT(bd.isStaticVariableName(mh,"Cste"));
+  }
+  /*!
+   * Various checks on the BehaviourData object resulting from the
+   * analysis of the 'test1.mfront' file
+   */
+  void test2(){
+    using namespace tfel::glossary;
+    const auto mh = tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    const auto f  = std::string{"@top_srcdir@/mfront/tests/unit-tests/mfront/test1.mfront"};
+    auto dsl = getBehaviourDSL(f);
+    dsl->analyseFile(f,{},{});
+    const auto& bd = dsl->getBehaviourDescription().getBehaviourData(mh);
+    TFEL_TESTS_ASSERT(bd.isMaterialPropertyName("young"));
+    TFEL_TESTS_ASSERT((bd.isGlossaryNameUsed(Glossary::YoungModulus)));
+    TFEL_TESTS_ASSERT(bd.hasGlossaryName("young"));
+    TFEL_TESTS_ASSERT(!bd.hasEntryName("young"));
+    TFEL_TESTS_ASSERT((bd.getExternalName("young")==Glossary::YoungModulus));
+    TFEL_TESTS_ASSERT((bd.getVariableNameFromGlossaryNameOrEntryName(Glossary::YoungModulus)==
+		       "young"));
+    TFEL_TESTS_ASSERT(bd.isMaterialPropertyName("nu"));
+    TFEL_TESTS_ASSERT(bd.hasGlossaryName("nu"));
+    TFEL_TESTS_ASSERT(!bd.hasEntryName("nu"));
+    TFEL_TESTS_ASSERT(bd.isGlossaryNameUsed(Glossary::PoissonRatio));
+    TFEL_TESTS_ASSERT((bd.getExternalName("nu")==Glossary::PoissonRatio));
+    TFEL_TESTS_ASSERT((bd.getVariableNameFromGlossaryNameOrEntryName(Glossary::PoissonRatio)==
+		       "nu"));
+    TFEL_TESTS_ASSERT(bd.isMaterialPropertyName("h"));
+    TFEL_TESTS_ASSERT(!bd.hasGlossaryName("h"));
+    TFEL_TESTS_ASSERT(bd.hasEntryName("h"));
+    TFEL_TESTS_ASSERT((bd.getExternalName("h")=="HardeningCoefficient"));
+    TFEL_TESTS_ASSERT((bd.getVariableNameFromGlossaryNameOrEntryName("HardeningCoefficient")==
+		       "h"));
+    TFEL_TESTS_ASSERT(bd.isStaticVariableName("Cste"));
+    const auto& mps   = bd.getMaterialProperties();
+    TFEL_TESTS_ASSERT(mps.size()==3);
+    const auto& young = mps.getVariable("young");
+    const auto& nu    = mps.getVariable("nu");
+    const auto& h     = mps.getVariable("h");
+    TFEL_TESTS_ASSERT(young.name=="young");
+    TFEL_TESTS_ASSERT(young.type=="stress");
+    TFEL_TESTS_ASSERT(young.arraySize==1u);
+    TFEL_TESTS_ASSERT(nu.name=="nu");
+    TFEL_TESTS_ASSERT(nu.type=="real");
+    TFEL_TESTS_ASSERT(nu.arraySize==1u);
+    TFEL_TESTS_ASSERT(h.name=="h");
+    TFEL_TESTS_ASSERT(h.type=="stress");
+    TFEL_TESTS_ASSERT(h.arraySize==2u);
+  }
+};
+
+TFEL_TESTS_GENERATE_PROXY(DSLTest2,"DSLTest2");
+
+int main()
+{
+  mfront::initDSLs();
+  auto& m = tfel::tests::TestManager::getTestManager();
+  m.addTestOutput(std::cout);
+  m.addXMLTestOutput("DSLTest2.xml");
+  return m.execute().success() ? EXIT_SUCCESS : EXIT_FAILURE;
+} // end of main

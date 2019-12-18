@@ -1,0 +1,1071 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%	Fichier	   : ViscoCompressible
+%%	Auteur     : th202608@pleiades077.intra.cea.fr
+%%	Date       : 29 avril 2014
+%%	Répertoire : /home/th202608/Documents/notes/2014/TutorielMFront/
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Implantation d'une loi viscoplastique isotrope compressible}
+\label{sec:impl-dune-loi}
+
+Cette section décrit les étapes de l'implantation d'une loi de
+comportement élasto-viscoplastique typique du combustible nucléaire~:
+\begin{itemize}
+\item nous commençons par décrire la loi de comportement en la
+  décomposant en parties élémentaires (élasticité, viscoplasticité)~;
+\item nous détaillons ensuite comment implanter les propriétés
+  élastiques de la loi (module d'\nom{Young}, coefficient de
+  \nom{Poisson}, coefficient de dilatation thermique)~;
+\item une première implantation est alors proposée. Elle se base sur
+  une méthode de résolution par perturbation qui ne nécessite pas de
+  fournir le jacobien du système. L'implantation obtenue n'est pas
+  optimale mais permet de réaliser rapidement des tests~;
+\item nous montrons ensuite comment réaliser des premiers tests de
+  vérifications~;
+\item nous reprenons ensuite le travail d'implantation de la loi pour
+  obtenir une implantation optimisée de la loi~:
+  \begin{itemize}
+  \item par le calcul des termes du jacobien du système implicite~;
+  \item par le calcul de la matrice tangente cohérente.
+  \end{itemize}
+% \item nous montrons ensuite comment supporter les hypothèses de
+%   contraintes planes.
+% \item nous concluons en montrant quelques résultats sur un calcul de
+%   structure en grandes transformations~;
+\end{itemize}
+
+\subsection{Description de la loi de comportement}
+
+Nous considérons ici l'implantation d'une loi de comportement
+viscoplastique isotrope et compressible. Cette loi couple l'écoulement
+viscoplastique à l'évolution de la porosité du matériau.
+
+\subsubsection{Partition des déformations}
+
+On fait l'hypothèse classique en petites transformations que la
+déformation totale \(\tepsilonto\) se répartit additivement en une
+déformation élastique \(\tepsilonel\), une déformation viscoplastique
+\(\tepsilonvis\) et une déformation thermique \(\tepsilonth\)~:
+\begin{equation}
+  \label{eq:1}
+  \tepsilonto=\tepsilonel+\tepsilonvis+\tepsilonth  
+\end{equation}
+
+Soulignons dès à présent que cette relation, d'apparence anodine, sera
+en réalité centrale dans l'implantation que nous allons proposer~:
+\begin{itemize}
+\item elle permet une grande modularité. Nous décrivons ailleurs qu'il
+  \og~suffit~\fg{} d'ajouter un nouveau terme de déformation pour
+  représenter un nouveau phénomène (écoulement viscoplastique sous
+  irradiation, plasticité dilatante représentant la décohésion des
+  joints de grains, fissuration macroscopique) sans que cela impacte
+  l'implantation de la partie viscoplastique
+  (voir~\cite{helfer14:_prise_mfron}).
+\item elle permet un calcul quasi-automatique de la matrice tangente
+  cohérente. Si la matrice tangente cohérente n'est pas utilisée par
+  le code éléments finis \castem{}, c'est un élément important pour
+  les performances de la loi dans l'application combustible
+  Cyrano~\cite{thouvenin_edf_2010}~;
+\item elle permet un support simple et non intrusif des hypothèses en
+  contraintes planes, notamment l'hypothèse d'axisymétrie en
+  contrainte plane généralisée utilisée par l'application combustible
+  Cyrano~\cite{thouvenin_edf_2010}.
+\end{itemize}
+
+Ces différents points justifient largement de conserver cette équation
+dans le système implicite que nous allons étudier dans la
+suite. L'implantation proposée pourra apparaître comme moins optimisée
+que ce que nous avons proposé par
+ailleurs~\cite{helfer_implantation_2005}.
+
+\subsubsection{Élasticité}
+
+Le comportement élastique relie les déformations élastiques
+\(\tepsilonel\) aux contraintes \(\tsigma\) par la loi de \nom{Hooke}
+isotrope~:
+\[
+\tsigma=\tDq\,\tepsilonel{}=\lambda\,\trace{\tepsilonel}\,\tenseur{I}+2\,\mu\,\tepsilonel
+\]
+où nous avons utilisé les notations suivantes~:
+\begin{itemize}
+\item
+  \(\tDq\paren{T,p}=\lambda\,\tenseur{I}\,\otimes\,\tenseur{I}+2\,\mu\,\tenseurq{I}\)
+  est la matrice de raideur, supposée dépendre de la température \(T\)
+  et de la porosité~;
+\item \(\lambda\paren{T,p}\) et \(\mu\paren{T,p}\) sont respectivement les
+premier et second coefficients de \nom{Lamé} du matériau~;
+\item \(\trace{\tepsilonel}\) désigne la trace du tenseur \(\tepsilonel\), c'est
+  à dire la somme de ses termes diagonaux~;
+\item \(\tenseur{I}\) est le tenseur identité d'ordre \(2\)~;
+\item \(\tenseurq{I}\) est le tenseur identité d'ordre \(4\)~;
+\item \(\tenseur{I}\otimes\tenseur{I}\) est le tenseur d'ordre \(4\)
+  tel que pour tout tenseur \(\tenseur{s}\)~:
+\[
+\tenseur{I}\otimes\tenseur{I}\,\tenseur{s} = \trace{s}\,\tenseur{I}
+\]
+\end{itemize}
+
+\paragraph{Propriétés élastiques} En pratique, les coefficients de
+\nom{Lamé} se déduisent du module d'\nom{Young} \(E\paren{T,p}\),
+fonction de la température et de la porosité \(p\) du matériau, et du
+coefficient de \nom{Poisson} \(\nu\), supposé constant~:
+\[
+\lambda\paren{T,p}=\Frac{\nu\,E\paren{T,p}}{\paren{1+\nu}\paren{1-2\,\nu}} \quad\quad \mu\paren{T,p}=\Frac{E\paren{T,p}}{2\,\paren{1+\nu}}
+\]
+
+Pour illustrer notre propos, nous utiliserons une loi qui n'est pas
+celle des applications combustible \cea{}, mais une loi librement
+accessible~\cite{fink_thermodynamic_1981}~:
+\[
+E\paren{T,p}=2,26\,10^{11}\,\paren{1-2,62\,p}\,\paren{1-1,31\,10^{-4}\,\paren{T-273,15}}
+\]
+Cette même référence préconise un coefficient de \nom{Poisson}
+constant d'une valeur de \(0,316\). 
+
+\subsubsection{Dilatation thermique}
+
+Dans le cas des petites transformations, la dilatation thermique d'un
+corps est généralement traitée par le code appelant, en amont de la
+loi de comportement qui reçoit en entrée une déformation totale
+parfois appelée \og~mécanique~\fg. Nous avons choisi de traiter
+explicitement la dilatation thermique pour pouvoir~:
+\begin{itemize}
+\item traiter de manière exacte la dilatation thermique, la plupart
+  des codes réalisant une approximation que nous décrirons plus
+  loin~;
+\item utiliser notre loi en grandes déformations.
+\end{itemize}
+
+L'annexe~\ref{sec:rappels-sur-la} donne des précisions sur le
+traitement de la dilatation thermique. Dans la suite, le coefficient
+de dilatation thermique \(\alpha\) sera supposé constant et égal à
+\(10^{-5}\,K^{-1}\).
+
+\subsubsection{Écoulement viscoplastique}
+
+Nous supposons qu'il existe un potentiel de dissipation \(\Phi\)
+fonction des contraintes dont dérive l'écoulement
+viscoplastique~\cite{moreau_sur_1970,besson_mecanique_2001,chaboche_mecanique_2009}.
+
+La vitesse de déformation viscoplastique \(\tdepsilonvis\) s'exprime
+alors~:
+\[
+\tepsilonvis = \deriv{\Phi}{\tsigma}
+\]
+
+\paragraph{Contrainte équivalente} Dans la suite, nous faisons
+l'hypothèse que le potentiel de dissipation \(\Phi\) est en fait une
+fonction d'une contrainte équivalente (scalaire) \(s_{eq}\) telle
+que~:
+\[
+s_{eq}=\sqrt{A\paren{f}\,p^{2}+B\paren{f}\,\sigmaeq^{2}}
+\]
+où \(p\) est la pression hydrostatique et \(\sigmaeq\) est la
+contrainte équivalente au sens de \textsc{Von Mises}~:
+\[
+\begin{aligned}
+  p = \Frac{1}{3}\trace{\sigma}\\
+  \sigmaeq = \sqrt{\Frac{3}{2}\mathop{dev}\paren{\tenseur{s}}\,\colon\,\mathop{dev}\paren{\tenseur{s}}}
+\end{aligned}
+\]
+où \(\mathop{dev}\paren{\tenseur{s}}\) est la partie déviatorique des contraintes~:
+\[
+\mathop{dev}\paren{\tenseur{s}}=\sigma-\Frac{1}{3}\,\trace{\sigma}\tenseur{I}
+\]
+Par définition, \(\mathop{dev}\paren{\tenseur{s}}\) est de trace nulle.
+
+Les fonctions \(A\paren{f}\) et \(B\paren{f}\) dépendent de la porosité. Un
+choix possible pour ces fonctions est~:
+\[
+  \begin{aligned}
+    A\paren{f} &= \Frac{9}{4}\paren{E\,\paren{f^{-1/E}-1}}^{-\frac{2\,E}{E+1}}\\ 
+    B\paren{f} &= \paren{1+\frac{2}{3}\,f}\,\paren{1-f}^{-\frac{2\,E}{E+1}} 
+  \end{aligned}
+\]
+où \(E\) est une constante. Nous verrons dans la suite qu'il est
+intéressant d'introduire un coefficient \(C_{A}\) tel que~:
+\[
+A\paren{f} = \Frac{9\,C_{A}}{4}\paren{E\,\paren{f^{1/E}-1}}^{-\frac{2\,E}{E+1}}
+\]
+Si \(C_{A}\) est nul, on retrouve une loi viscoplastique isotrope
+incompressible (sans effet de la porosité), ce qui est utile lors de
+l'étape de vérification de la loi.
+
+Cette forme de potentiel de dissipation provient de l'homogénisation
+du problème d'une matrice poreuse incompressible isotrope supposée
+obéir à une loi viscoplastique de
+\nom{Norton}~\cite{Michel1992783}. Elle a été utilisée à plusieurs
+reprises pour décrire le combustible
+nucléaire~\cite{monerie_overall_2006}. La constante \(E\) apparaissant
+dans la définition des fonctions \(A\paren{f}\) et \(B\paren{f}\) est
+l'exposant de la loi de de \nom{Norton} de la matrice.
+
+\paragraph{Potentiel elliptique} Les mêmes résultats d'homogénéisation
+conduisent à proposer comme potentiel de dissipation un potentiel dit
+\og~elliptique~\fg{} qui généralise l'expression d'une loi de
+\nom{Norton}~:
+\[
+\Phi\paren{s_{eq}}=\Frac{A_{\Phi}}{E+1}\,s_{eq}^{E+1}
+\]
+
+\paragraph{Expression usuelle de l'écoulement plastique} Développons
+maintenant l'expression de la vitesse d'écoulement viscoplastique~:
+\[
+\tepsilonvis = \deriv{\phi}{\tsigma} = \deriv{\phi}{s_{eq}}\deriv{s_{eq}}{\tsigma}
+= \deriv{\phi}{s_{eq}}\left[\deriv{s_{eq}}{p}\deriv{p}{\tsigma}+\deriv{s_{eq}}{\sigmaeq}\deriv{\sigmaeq}{\tsigma}\right]
+= \deriv{\phi}{s_{eq}}\left[\Frac{1}{3}\deriv{s_{eq}}{p}\tenseur{I}+\deriv{s_{eq}}{\sigmaeq}\tenseur{n}\right]
+\]
+où nous avons introduit le classique tenseur normal \(\tenseur{n}\)
+égal à la dérivée de la contrainte équivalente de \nom{Von Mises} par
+rapport au tenseur des contraintes~:
+\[
+\tenseur{n}=\deriv{\sigmaeq}{\tsigma}=\Frac{3}{2\,\sigmaeq}\mathop{dev}\paren{\tenseur{s}}
+\]
+où \(s\) est le déviateur des contraintes introduit plus haut. Le
+tenseur \(n\) est donc également déviatorique (de trace nulle).
+
+Nous pouvons alors donner les expressions des différentes dérivées
+apparaissant dans cette expression~:
+\[
+\deriv{\phi}{s_{eq}}     = s_{eq}^{E}\quad\quad
+\deriv{s_{eq}}{p}        = \Frac{1}{s}\,A\paren{f}\,p \quad\quad
+\deriv{s_{eq}}{\sigmaeq} = \Frac{1}{s}\,B\paren{f}\,\sigmaeq
+\]
+
+\subsubsection{Évolution de la porosité}
+
+L'évolution de la porosité est donnée par~:
+\[
+\dot{f}=\paren{1-f}\,\trace{\tdepsilonvis}
+\]
+
+\subsection{Propriétés matériau}
+
+Telle que nous l'avons présentée, notre loi de comportement s'appuie
+sur différentes propriétés du matériau~:
+\begin{itemize}
+\item le module d'\nom{Young}~;
+\item le coefficient de \nom{Poisson}~;
+\item le coefficient de dilatation thermique.
+\end{itemize}
+
+Afin de traiter la question de leur implantation en \mfront{}, prenons
+le temps d'examiner deux questions~:
+\begin{itemize}
+\item ces propriétés doivent-elles être évaluées par la loi de
+  comportement ou par le code appelant ?
+\item vaut-il mieux utiliser des coefficients matériaux ou des
+  paramètres ?
+\end{itemize}
+
+\subsubsection{Évaluation par la loi ou par le code appelant ?}
+
+Ces propriétés doivent-elles être implantées dans la loi de
+comportement ou implantées à part, par exemple pour être accessibles
+dans d'autres lois de comportement ou, dans le cas du code aux
+éléments finis \castem{}, pour permettre la construction d'une matrice
+de raideur ?
+
+La première solution nous apparaît comme la plus satisfaisante sur le
+principe~: l'identification de la loi se fait pour des propriétés
+élastiques données qui font donc partie intégrante de la loi. En
+pratique, la seconde solution a pour l'instant toujours été retenue
+car elle minimisait le travail d'implantation d'une propriété.
+
+Dans le cas du code \castem{}, cette propriété était souvent écrite en
+langage \gibiane{} dans le jeu de données de la simulation, ce qui
+n'était pas sans poser de nombreux problèmes~:
+\begin{itemize}
+\item l'écriture du code était fastidieuse pour les propriétés
+  complexes et d'une mise en \oe{}uvre délicate dès lors qu'une
+  propriété dépendait de plusieurs paramètres~;
+\item le code était \og~copier/coller~\fg{} d'un jeu de données à un
+  autre. Des tentatives de mutualisation ont bien été menées en se
+  basant sur un fichier \og~UTILPROC~\fg{} commun, mais force est de
+  constater que malgré les efforts déployés, ces tentatives ne se sont
+  pas révélées pérennes~:
+\item l'implantation ne peut être réutilisée dans d'autres
+  solveurs. Or, nous verrons dans la suite qu'il est intéressant et
+  pratique de réaliser des tests unitaires sur la base du logiciel
+  \mtest{} puis de réaliser les calculs de structure à l'aide de
+  \castem{}.
+\end{itemize}
+
+\mfront{} apporte une solution quelque peu différente qui concilie les
+deux solutions évoquées plus haut~: un même fichier source peut servir
+à générer une bibliothèque appelée depuis \castem{} (ou \aster{}) ou
+directement être intégrée à l'implantation de la loi.
+
+\begin{figure}[htbp]
+  \centering
+  \lstinputlisting{@top_srcdir@/docs/tutorial/mfront/UO2_PoissonRatio_Fink1981.mfront}
+  \caption{Implantation du coefficient de \nom{Poisson} du dioxide d'uranium.}
+  \label{fig:tutorial:uo2:Poisson}
+\end{figure}
+
+\subsubsection{Implantation du coefficient de \nom{Poisson}} La
+figure~\ref{fig:tutorial:uo2:Poisson} présente l'implantation du
+coefficient de Poisson de la loi. Nous renvoyons à la documentation
+générale de \mfront{} pour les détails liés à l'implantation d'une
+propriété matériau~\cite{helfer_generateur_2013-1}.
+
+Il peut sembler lourd d'écrire un fichier source pour une propriété
+constante, à la fois en terme d'implantation, mais aussi en terme
+d'efficacité numérique (les codes de calcul savent gérer des valeurs
+constantes !). Cela présente cependant plusieurs avantages~:
+\begin{enumerate}
+\item il est possible de stocker ce fichier dans une base de données,
+  la base de données \sirius{} de la plate-forme \pleiades{}
+  notamment~;
+\item cette valeur n'est pas dans les jeux de données des codes
+  appelant, mais conservée à un endroit unique~: on ne duplique pas
+  d'information physique à chaque nouveau calcul~;
+\item certains codes permettent d'optimiser l'évaluation d'une
+  fonction sans argument (le code \licos{}
+  notamment~\cite{helfer_licos_2011}) et l'appel ne se fait qu'une
+  fois.
+\end{enumerate}
+
+\paragraph{Choix du nom du fichier \mfront{}} Le nom de la fonction
+générée sera \texttt{UO2\_\-Poisson\-Ratio\_\-Fink\-1981} (combinaison
+du nom du matériau donné en ligne \(2\) et du nom de la loi donnée en
+ligne \(3\)). Les noms des sources \cxx{} générées commenceront par ce
+nom de fonction. Pour simplifier l'intégration de ce fichier \mfront{}
+dans un environnement de compilation, il est recommandé de nommer le
+fichier source \mfront{}
+\og~\texttt{UO2\_\-Poisson\-Ratio\_\-Fink\-1981\-.mfront}~\fg{} car
+cela permet d'utiliser des règles de compilation génériques.
+
+\begin{figure}[htbp]
+  \centering
+  \lstinputlisting{@top_srcdir@/docs/tutorial/mfront/UO2_YoungModulus_Fink1981.mfront}  
+  \caption{Implantation du module d'\nom{Young} du dioxide d'uranium.}
+  \label{fig:tutorial:uo2:YoungModulus}
+\end{figure}
+
+\subsubsection{Implantation du module d'\nom{Young}}  La
+figure~\ref{fig:tutorial:uo2:YoungModulus} montre comment est implanté
+le module d'\nom{Young} du dioxide d'uranium. Notons quelques
+nouveautés~:
+\begin{itemize}
+\item la définition de bornes physiques de la loi en lignes \(21\) et
+  \(22\) (mot clé {\tt @Physical\-Bounds}). En dehors de ces bornes,
+  les arguments ont des valeurs non physiques~;
+\item la définition de bornes de la loi en ligne \(24\). Cette borne
+  indique la limite de validité de la corrélation (mot clé {\tt
+    @Bounds})~;
+\item la définition de noms de glossaire pour les variables d'entrée
+  en lignes \(16\) et \(17\). Ces noms de glossaire permettent à des
+  codes comme \mtest{} et \licos{} d'évaluer la propriété. 
+\end{itemize}
+
+\begin{figure}[htbp]
+  \centering
+  \lstinputlisting{@top_srcdir@/docs/tutorial/mfront/UO2_ThermalExpansion_MATPRO.mfront}
+  \caption{Implantation du coefficient de dilatation thermique du
+    dioxide d'uranium.}
+  \label{fig:tutorial:uo2:thermalexpansion}
+\end{figure}
+
+\paragraph{Implantation du coefficient de dilatation thermique}
+L'implantation du coefficient de dilatation thermique est similaire à
+celle du coefficient de Poisson. Elle est indiquée en
+figure~\ref{fig:tutorial:uo2:thermalexpansion}. Notons que nous avons
+explicitement indiqué la température de référence \(T_{\alpha}\) dans
+une constante nommée {\tt Reference\-Temperature}. Cette constante
+sera utilisée par la loi de comportement pour le calcul de la
+dilatation thermique.
+
+\paragraph{Compilation}
+Pour pouvoir être utilisé avec \mtest{}, l'outil de test unitaire
+livré avec \mfront{}, les propriétés matériau précédentes doivent être
+compilées avec l'interface \castem{}~:
+
+\begin{flushleft}
+  {\tt
+    \$ \small mfront -{}-obuild -{}-interface=castem UO2\_PoissonRatio\_Fink1981.mfront UO2\_YoungModulus\_Fink1981.mfront UO2\_ThermalExpansion\_MATPRO.mfront\\
+    Treating target : all\\
+    The following library has been build :\\
+    - libCastemUO2.so
+  }
+\end{flushleft}
+
+Cette commande crée une librairie nommée {\tt libUO2Castem.so} dans un
+sous-répertoire nommé {\tt src}.
+
+Dans une phase de vérification, d'autres interfaces peuvent être
+intéressantes. Par l'exemple, l'interface \python{} crée un module qui
+peut être utilisé pour la vérification.
+
+\begin{figure}[htbp]
+  \centering
+  \lstinputlisting[language=gnuplot]{@top_srcdir@/docs/tutorial/mfront/UO2.tplot}  
+  \caption{Script \tplot{} permettant de tracer l'évolution du module
+    d'\nom{Young} de l'uranium au travers de son implantation
+    \mfront{} et de la comparer à une expression analytique.}
+  \label{fig:tutorial:uo2:youngmodulus:tplot}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=10cm]{@top_srcdir@/docs/tutorial/images/UO2_YoungModulus_Fink1981.png}
+  \caption{Évolution du module d'\nom{Young} de l'$UO_{2}$. Données
+    libres~\cite{fink_thermodynamic_1981}}
+  \label{fig:tutorial:uo2:youngmodulus:check}
+\end{figure}
+
+\paragraph{Vérification} Il existe différentes façons de vérifier
+l'implantation d'une loi \mfront{}. \licos{} propose un utilitaire
+graphique nommée \tplot{} qui propose un langage de script proche de
+celui du classique \gnuplot{} et qui permet de comparer les valeurs
+retournées par la fonction générée avec \mfront{} à l'expression
+analytique. La figure~\ref{fig:tutorial:uo2:youngmodulus:tplot}
+présente le script utilisé pour tracer la
+figure~\ref{fig:tutorial:uo2:youngmodulus:check}~: la seule
+spécificité par rapport à \gnuplot{} est la ligne \(4\) (mot clé {\tt
+  import}) qui permet d'utiliser la fonction générée par \mfront{}.
+
+Pour une vérification systématique, les applications de la plate-forme
+\pleiades{} peuvent utiliser l'utilitaire \mpplot{} qui permet de
+sortir des fichiers colonnes qui peuvent être comparés à des fichiers
+de référence à l'aide de l'utilitaire \pcheck{}.
+
+\subsubsection{Les coefficients de la loi~: propriété matériau ou paramètre ?}
+
+En plus des propriétés thermoélastiques, la loi de comportement qui
+nous intéresse dans cette section présente de nombreux coefficients~:
+\begin{itemize}
+\item exposant \(E\) de la loi de \nom{Norton}~;
+\item intensité \(A_{\phi}\) de l'écoulement~;
+\item le coefficient \(C_{A}\) de la loi de comportement.
+\end{itemize}
+Par rapport aux propriétés thermoélastiques traitées au paragraphes
+précédents, ces coefficients sont propres à la loi et ont peu de
+chances d'être réutilisés dans d'autres lois.
+
+Ces coefficients peuvent être déclarés soit comme des propriétés
+matériau {\em que le code appelant doit fournir} soit comme des {\em
+  paramètres}. Chacune de ces modalités présente des avantages et des
+inconvénients que nous allons maintenant détailler~: le fait de
+déclarer un coefficient comme étant un paramètre ou une propriété
+matériau est une affaire de compromis et d'habitude de travail.
+
+\paragraph{Propriétés matériau}
+Afin de pouvoir modifier les valeurs des coefficients d'une loi depuis
+un jeu de données \castem{} ou \aster{}, l'interface {\tt castem}
+\og~standard~\fg{} impose de déclarer ces coefficients comme des
+propriétés matériau (mot clé {\tt @Material\-Property}) que doit
+fournir le code appelant.
+
+Le principal avantage de cette méthode est de permettre l'écriture de
+lois de comportement génériques. En effet, l'écriture d'une loi de
+comportement avec un langage de bas niveau ({\tt fortran} ou {\tt C}
+par exemple) est une tâche longue, difficile et fastidieuse. L'usage
+de \mfront{} limite considérablement la portée de cet argument.
+
+Le second avantage de cette méthode est que l'utilisateur a une grande
+liberté et peut faire des tests en dehors de la loi de comportement,
+par exemple faire varier \(A_{\phi}\) avec le taux de combustion.
+
+Or, cet avantage est à notre avis le principal défaut de cette méthode
+puisqu'une partie de l'information physique est dissociée de
+l'implantation de la loi~: nous considérons préférable de rassembler
+toutes les informations physiques dans un unique fichier \mfront{} (ou
+éventuellement dans des fichiers dédiés comme pour le module
+d'\nom{Young}) et cela d'autant plus que l'on souhaite capitaliser les
+lois dans des bases de données (la base \sirius{} de la plate-forme
+\pleiades{} par exemple).
+
+L'autre défaut de cette méthode est que la gestion des propriétés
+matériau par le code appelant peut être coûteuse~: une implantation
+d'une loi utilisant de nombreuses propriétés matériau est
+significativement plus lente à l'exécution que l'implantation de la
+même loi utilisant des propriétés matériau \og~en dur~\fg{}.
+
+\paragraph{La notion de paramètres} Le besoin de modifier à
+l'exécution des coefficients de la loi demeure cependant, par exemple
+dans le cadre d'études de sensibilité. Dans ce cas, \mfront{} propose
+une alternative efficace aux propriétés matériau~: la notion de
+paramètre (mot clé {\tt @Parameter}). Un paramètre se comporte comme
+une variable globale dont la valeur par défaut est spécifiée dans le
+fichier \mfront{} (ce qui est impossible avec une propriété
+matériau). La valeur d'un paramètre peut être modifiée à l'exécution
+sans passer par l'appel standard à la loi de comportement et donc sans
+induire de coût supplémentaire, si le code appelant le permet. Seul le
+code \castem{} ne le permet pas, mais les applications de la
+plate-forme \pleiades{}, le code \aster{} ou \mtest{}, peuvent
+modifier les paramètres de la loi depuis le langage \python{} ou le
+\cxx{}.
+
+Insistons sur le fait qu'un paramètre est alors une caractéristique
+propre à une loi et non à un matériau~: si deux matériaux distincts
+utilisent la même loi, la modification d'un paramètre affecte le
+comportement des deux matériaux.
+
+Dans la suite, nous déclarerons les coefficients \(E\), \(A_{\phi}\)
+et \(C_{A}\) comme des paramètres.
+
+\subsection{Discrétisation et implantation par une $\theta$ méthode}
+
+Nous avons choisi d'intégrer notre loi de comportement par une
+$\theta$-méthode pour différentes raisons~:
+\begin{itemize}
+\item c'est la méthode la plus performante~;
+\item on a accès à la matrice tangente cohérente~;
+\item les autres lois du combustible (modèle de fissuration DDIF2
+  notamment) sont déjà implantées dans ce formalisme.
+\end{itemize}
+
+\subsubsection{Gestion de la dilatation thermique}
+
+Nous utilisons le mot clé {\tt @Compute\-Thermal\-Expansion} pour que
+\mfront{} gère la dilatation thermique. Celle-ci sera gérée
+différemment selon que la loi est utilisée en petites déformations ou
+en grandes déformations. Les variables {\tt eto} et {\tt deto} qui
+apparaîtront dans l'implantation sont respectivement la déformation
+totale mécanique (déformation totale moins la dilatation
+thermique) en début de pas et son incrément.
+
+\subsubsection{Réduction du nombre de variables internes}
+
+Telle que présentée au paragraphe précédent, notre loi possède \(3\)
+variables internes~:
+\begin{itemize}
+\item la déformation élastique \(\tepsilonel\)~;
+\item la déformation viscoplastique \(\tepsilonvis\)~;
+\item la porosité~;
+\end{itemize}
+
+\paragraph{Cas de l'écoulement viscoplastique}
+Commençons par traiter le cas de la déformation viscoplastique
+\(\tepsilonvis\). Il serait assez simple de retirer complètement cette
+variable du système et économiser ainsi \(6\) variables internes dans
+le système. Pour simplifier l'écriture du système implicite et pour
+simplifier les post-traitements, nous avons choisi dans ce tutoriel un
+choix moins optimal qui introduit deux variables internes
+supplémentaires. L'origine de ces variables provient du fait qu'il est
+possible de décomposer la vitesse d'écoulement viscoplastique suivant
+deux directions orthogonales dans l'espace des contraintes: notons
+respectivement \(\dot{p}_{v}\) et \(\dot{p}_{d}\) la trace de
+\(\tepsilonvis\) et la projection de \(\tepsilonvis\) suivant
+\(\tenseur{n}\). Nous avons~:
+\[
+\begin{aligned}
+  \dot{p}_{v} &= \deriv{\phi}{s_{eq}}\deriv{s_{eq}}{p}\\
+  \dot{p}_{d} &= \deriv{\phi}{s_{eq}}\deriv{s_{eq}}{\sigmaeq}\\
+\end{aligned}
+\]
+
+Ces équations introduisent les deux variables internes recherchées~:
+\begin{itemize}
+\item la variable \(p_{v}\) qui représente le changement de volume dû
+  à l'écoulement viscoplastique (liés à la croissance ou la diminution
+  de la porosité)~;
+\item la variables \(p_{d}\) qui représente la déformation
+  viscoplastique déviatorique cumulée.
+\end{itemize}
+
+\paragraph{Traitement de la porosité} En utilisant la variable
+\(p_{v}\), l'équation d'évolution de la porosité est donnée par~:
+\[
+\dot{f}=\paren{1-f}\dot{p}_{v}
+\]
+Cette relation explicite entre \(p_{v}\) et \(f\) va nous permettre
+d'exclure la porosité du système implicite. Dans \mfront{}, ce type de
+variable interne est qualifiée d'auxiliaire.
+
+\subsubsection{Écriture du système implicite}
+
+Connaissant les valeurs des variables internes à l'instant \(t\), nous
+cherchons à connaître leurs valeurs en fin de pas de temps, à
+l'instant \(t+\Delta\,t\).
+
+\paragraph{Quelques notations}
+Dans la suite, pour chacune des variables internes \(x\), nous
+noterons~:
+\begin{enumerate}
+\item \(\Delta x\) son incrément sur le pas de temps~;
+\item \(\bts{x}\) sa valeur en début de pas de temps~;
+\item \(\mts{x}=\bts{x}+\theta\,\Delta\,x\) l'estimation de sa valeur
+  au temps intermédiaire \(t+\theta\,\Delta\,t\). Nous parlerons
+  souvent, de manière abusive, de la valeur en milieu de pas de temps
+  de la variable \(x\) (en pratique, \(\theta\) est souvent pris égal
+  à \(0,5\), sauf pour le traitement des lois plastiques)~;
+\item \(\ets{x}=\bts{x}+\Delta\,x\) sa valeur en fin de pas de temps~;
+\end{enumerate}
+
+\paragraph{Équation relative à la déformation élastique} La partition
+des déformations s'écrit, sous forme incrémentale~:
+\[
+\Delta\tepsilonel+\Delta\tepsilonvis-\Delta\tepsilonto=0
+\]
+En introduisant les incréments des variables \(p_{v}\) et \(p_{d}\),
+nous obtenons l'équation \(f_{\tepsilonel}\) associée à la déformation
+élastique~:
+\[
+f_{\tepsilonel}=\Delta\tepsilonel+\Frac{1}{3}\,\Delta\,p_{v}\,\tenseur{I}+\Delta\,p_{d}\mts{\tenseur{n}}-\Delta\tepsilonto
+\]
+où \(\mts{\tenseur{n}}\) est l'évaluation du tenseur normal à
+l'instant \(t+\theta\Delta\,t\).
+
+\paragraph{Équation relative au changement de volume viscoplastique}
+L'équation \(f_{p_{v}}\) associée à la variable \(p_{v}\) est~:
+\[
+f_{p_{v}}=\Delta\,p_{V}-\Delta\,t\,\mts{\deriv{\phi}{s}}\,\mts{\deriv{s}{p}}
+\]
+
+\paragraph{Équation relative à la déformation viscoplastique cumulée}
+L'équation \(f_{p_{d}}\) associée à la variable \(p_{d}\) est~:
+\[
+f_{p_{d}}=\Delta\,p_{d}-\Delta\,t\,\mts{\deriv{\phi}{s}}\,\mts{\deriv{s}{\sigmaeq}}
+\]
+
+\paragraph{Mise à jour de la porosité} La porosité est mise en jour au
+cours des itérations de \nom{Newton} par la relation~:
+\[
+\mts{f}=\bts{f}+\Frac{\paren{1-f}\,\theta\,\Delta\,p_{v}}{1+\theta\,\Delta\,p_{v}}
+\]
+
+\subsubsection{Implantation}
+
+Les équations définissant \(f_{\tepsilonel}\) \(f_{p_{v}}\) et
+\(f_{p_{d}}\) forment un système de trois équations pour trois
+inconnues~: elles sont donc suffisantes pour déterminer les incréments
+des variables internes sur un pas de temps. Reste donc à réaliser
+l'implantation de la loi. Nous commençons par utiliser un algorithme
+de \nom{Newton-Raphson} dont la jacobienne est calculée numériquement.
+
+\begin{figure}[htbp]
+  \centering
+  \lstinputlisting[firstline=1,lastline=41]{@top_srcdir@/docs/tutorial/mfront/EllipticCreep-1.mfront}  
+  \caption{Première implantation de la loi d'écoulement viscoplastique
+    isotrope incompressible, première partie~: déclaration des
+    variables.}
+  \label{fig:tutorial:uo2:EllipticCreep1-1}
+\end{figure}
+
+\paragraph{La partie déclarative} Un fichier \mfront{} commence
+généralement par une partie déclarative reprise en
+figure~\ref{fig:tutorial:uo2:EllipticCreep1-1}~:
+\begin{itemize}
+\item la ligne \(1\) précise que nous allons utiliser une méthode
+  d'intégration implicite~;
+\item la ligne \(2\) donne le nom de la loi~;
+\item les lignes \(3\) et \(4\) renseignent les noms des auteurs et
+  la date~;
+\item les lignes \(6\) à \(7\) demandent l'inclusion d'un fichier
+  d'entête de la bibliothèque \TFEL{} permettant de calculer les
+  coefficients de \nom{Lamé} et la matrice d'élasticité à partir de
+  ces coefficients~;
+\item la ligne \(10\) précise que l'on utilise un algorithme de
+  \nom{Newton} avec jacobienne numérique~;
+\item les lignes \(12\) à \(20\) déclarent les variables internes et
+  leur associent des noms pour l'extérieur. Ces noms de glossaire sont
+  importants pour une adhérence aux applications de la plate-forme
+  \pleiades{} et pour \mtest{}~;
+\item les lignes \(22\) à \(27\) définissent les paramètres de la loi
+  et les noms à utiliser pour les modifier depuis \mtest{}, \aster{}
+  ou les applications de la plate-forme \pleiades{}~;
+\item les lignes \(26\) à \(36\) définissent quelques variables
+  locales qui seront utilisables dans l'ensemble des blocs de
+  code. Notons que pour traiter l'évolution de la porosité, nous
+  introduisons une variable interne représentant sa valeur au cours du
+  pas~: \mfront{} ne définit pas d'incrément pour les variables
+  auxiliaires~;
+\item les lignes \(38\) et \(39\) indiquent dans quels fichiers sont
+  implantés le module d'\nom{Young} et le coefficient de
+  \nom{Poisson}~;
+\item la ligne \(41\) demande le calcul de la dilatation thermique.
+\end{itemize}
+
+\paragraph{Remarque sur le type des variables} Certaines variables
+sont déclarées de type {\tt stress} et d'autres de type {\tt real}. Il
+s'agit dans les deux cas d'un alias vers un type de nombre réel
+(double précision dans toutes les interfaces considérées jusqu'à
+présent). Le choix d'utiliser le type {\tt stress} est uniquement
+informatif et vise à rendre le code plus explicite.
+
+\begin{figure}[htbp]
+  \centering
+  \lstinputlisting[firstline=43,lastline=48,firstnumber=43]{@top_srcdir@/docs/tutorial/mfront/EllipticCreep-1.mfront}  
+  \caption{Première implantation de la loi d'écoulement viscoplastique
+    isotrope incompressible, seconde partie~: initialisation des
+    variables locales.}
+  \label{fig:tutorial:uo2:EllipticCreep1-2}
+\end{figure}
+
+\paragraph{Initialisation des variables locales} La
+figure~\ref{fig:tutorial:uo2:EllipticCreep1-2} montre comment
+initialiser les variables locales de la loi. Le coefficient de
+\nom{Poisson} étant constant, nous l'évaluons un fois pour l'ensemble
+de l'intégration. Nous y sauvegardons également la valeur de la
+porosité en début de pas.
+
+\begin{figure}[htbp]
+  \centering
+  \lstinputlisting[firstline=50,lastline=71,firstnumber=50]{@top_srcdir@/docs/tutorial/mfront/EllipticCreep-1.mfront}  
+  \caption{Première implantation de la loi d'écoulement viscoplastique
+    isotrope incompressible, troisième partie~: calcul des contraintes
+    en milieu de pas et en fin de pas.}
+  \label{fig:tutorial:uo2:EllipticCreep1-3}
+\end{figure}
+
+\paragraph{Évaluation des contraintes en milieu et fin de pas de
+  temps} La figure~\ref{fig:tutorial:uo2:EllipticCreep1-3} montre
+comment sont évaluées les contraintes en milieu de pas et en fin de
+pas. Nous tombons ici sur une spécificité de l'implantation proposée.
+
+En effet, la plupart des lois peuvent se contenter de ne définir que
+le bloc {\tt @Compute\-Stress}~: \mfront{} évalue dans ce cas les
+différentes variables à l'instant considéré (milieu de pas ou fin de
+pas).
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics{@top_srcdir@/docs/tutorial/images/ImplicitDSL.pdf}
+  \caption{Ordre d'évaluation des différents blocs de code fournis par
+    l'utilisateur dans le cas d'une intégration implicite.}
+  \label{fig:ImplicitOrder}
+\end{figure}
+
+Ce n'est pas possible ici du fait de l'utilisation de la porosité
+comme variable auxiliaire~: celle-ci doit être mise à jour
+explicitement avant l'évaluation des propriétés élastiques. Pour bien
+comprendre ce point, on peut se référer à la
+figure~\ref{fig:ImplicitOrder} qui montre l'ordre d'appel des
+différents blocs de code définis par l'utilisateur.
+
+
+Le bloc de code {\tt @Compute\-Stress} sera utilisé pour évaluer les
+contraintes en milieu de pas et le bloc de code {\tt
+  @Compute\-Final\-Stress} en fin de pas de temps.
+
+\begin{figure}[!htbp]
+  \centering
+  \lstinputlisting[firstline=304,lastline=352,firstnumber=304]{@top_srcdir@/docs/tutorial/mfront/EllipticCreep.hxx}  
+  \caption{Première implantation de la loi d'écoulement viscoplastique
+    isotrope incompressible, code généré par \mfront{} pour
+    l'évaluation des contraintes en milieu et en fin de pas.}
+  \label{fig:tutorial:uo2:EllipticCreep1-3b}
+\end{figure}
+
+Pour se convaincre que les contraintes sont évaluées correctement, il
+peut être intéressant de regarder quel est le code généré par
+\mfront{} pour ces deux blocs
+(figure~\ref{fig:tutorial:uo2:EllipticCreep1-3b}).
+
+\begin{figure}[!htbp]
+  \centering
+  \lstinputlisting[firstline=74,firstnumber=74]{@top_srcdir@/docs/tutorial/mfront/EllipticCreep-1.mfront}  
+  \caption{Première implantation de la loi d'écoulement viscoplastique
+    isotrope incompressible, quatrième partie~: système implicite.}
+  \label{fig:tutorial:uo2:EllipticCreep1-4}
+\end{figure}
+
+La figure~\ref{fig:tutorial:uo2:EllipticCreep1-4} constitue le
+c\oe{}ur de la résolution.
+
+Le code contenu dans le bloc \texttt{@Integrator} est appelé après
+l'évaluation des contraintes en milieu de pas. La variable \(f\)
+contient l'estimation de la porosité en milieu de pas de temps et la
+variable \(sig\) l'estimation du tenseur des contraintes.
+
+Nous commençons donc par évaluer la pression \(p\), la contrainte
+équivalente au sens de \nom{Von Mises} \(\sigmaeq\) et la contrainte
+équivalente \(s\) en milieu de pas à l'aide de la contrainte en milieu
+de pas.
+
+Dans le cas où les contraintes ne sont pas trop faibles, nous
+définissons les équations associées aux variables viscoplastiques
+\(p_{v}\) et \(p_{d}\). Nous utilisons ici les conventions implicites
+de \mfront{}~: les variables \(f_{x}\) sont initialisées avant chaque
+appel à \(\Delta\,x\). Ainsi, si les contraintes sont trop faibles,
+les équations associées aux variables \(p_{v}\) et \(p_{d}\) seront~:
+\[
+\begin{aligned}
+  f_{p_{v}}&=\Delta\,p_{v}&=0 \\
+  f_{p_{d}}&=\Delta\,p_{d}&=0 \\
+\end{aligned}
+\]
+qui se résolvent trivialement en~:
+\[
+\Delta\,p_{v}=\Delta\,p_{d}=0
+\]
+
+\subsection{Premiers tests}
+
+\subsubsection{Compilation}
+
+La première étape des tests est la compilation de la loi. Nous
+utilisons l'interface {\tt castem} utilisée par le code \castem{}~:
+\begin{flushleft}
+  {\tt
+    \$ \small mfront -{}-obuild -{}-interface=castem EllipticCreep.mfront \\
+    Treating target : all \\
+    UO2\_ThermalExpansion-mfront.cxx: In function ‘double mfront::UO2\_ThermalExpansion()’: \\
+    UO2\_ThermalExpansion-mfront.cxx:21:22: warning: unused variable ‘ReferenceTemperature’ [-Wunused-variable] \\
+    The following libraries have been build : \\
+    - libCastemUO2.so \\
+    - libMFrontMaterialLaw.so \\
+    - libCastemBehaviour.so
+  }
+\end{flushleft}
+Le message d'avertissement relatif à la variable {\tt
+  Reference\-Temperature} est sans importance.
+
+\paragraph{Analyse des messages d'erreurs} La phase de compilation
+peut montrer des problèmes de syntaxe. Par exemple, remplaçons la
+ligne \(59\) de la figure~\ref{fig:tutorial:uo2:EllipticCreep1-3} par
+celle-ci, contenant une faute de frappe ({\tt lamdba} au lieu de {\tt
+  lambda})~:
+\begin{center}
+  \lstinputlisting[firstline=59,lastline=59,firstnumber=59]{@top_srcdir@/docs/tutorial/mfront/EllipticCreep-1.mfront}    
+\end{center}
+Dans ce cas, le compilateur GNU
+g++~\cite{fsf_gnu_2014} affichera le message
+d'erreur suivant~:
+\begin{flushleft}
+  {\tt
+    In file included from EllipticCreep.cxx:13:0:
+    EllipticCreep-1.mfront: In member function ‘void tfel::material::EllipticCreep<hypothesis, Type, false>::computeStress()’:
+    EllipticCreep-1.mfront:59:13: error: ‘lamdba’ was not declared in this scope
+    compilation terminated due to -Wfatal-errors.
+    make: *** [EllipticCreep.o] Erreur 1
+    terminate called after throwing an instance of 'std::runtime\_error'
+    what():  MFront::buildLibraries : libraries building went wrong
+    Abandon
+  }
+\end{flushleft}
+
+La ligne importante ici est la troisième~:
+\begin{flushleft}
+  {\tt
+    EllipticCreep-1.mfront:59:13: error: ‘lamdba’ was not declared in this scope
+  }
+\end{flushleft}
+qui indique qu'en ligne \(59\) à la colonne \(13\) la variable {\tt
+  lamdba} n'est pas connue. Un effort particulier a été fait pour que
+le compilateur affiche l'erreur dans le fichier source \mfront{} et
+non dans le fichier généré. Le code étant transformé par \mfront{}, le
+numéro de colonne n'est pas fiable.
+
+\subsubsection{Essai de compression hydrostatique}
+
+\paragraph{Description} Une des spécificités de la loi est d'être
+compressible. Pour vérifier cet aspect de la loi, nous considérons un
+essai de compression hydrostatique à pression imposée constante de
+\(70\,MPa\) durant \(1\) heure. La porosité initiale est de
+\(5\,\%\). La température est de \(293,15\,K\).
+
+\begin{figure}[htbp]
+  \centering
+  \lstinputlisting{@top_srcdir@/docs/tutorial/mtest/castemellipticcreep.mtest}  
+  \caption{Modélisation d'un essai de compression hydrostatique avec
+    \mtest{}.}
+  \label{fig:tutorial:uo2:castemellipticcreep}
+\end{figure}
+
+\paragraph{Mise en données} La
+figure~\ref{fig:tutorial:uo2:castemellipticcreep} présente la mise en
+donnée utilisée. La principale difficulté est ici la définition de
+l'état initial (en contraintes, déformations totales et variables
+internes).
+
+\paragraph{Solution approchée}
+Afin de vérifier la solution obtenue, il est intéressant de disposer
+d'une solution analytique. Il s'avère que même dans ce cas très
+simple, les calculs deviennent rapidement rédhibitoires. Nous
+considérons donc une solution approchée considérant le coefficient
+\(A\paren{f}\) constant. La contrainte équivalente \(s\) est alors
+également constante et la variable \(p_{v}\) est linéaire en temps~:
+\[
+p_{v}\paren{t}=\left.\deriv{\phi}{s}\right|_{t=0}\,\left.\deriv{s}{p}\right|_{t=0}\,\,t
+\]
+
+\begin{figure}
+  \centering
+  \includegraphics[width=12cm]{@top_srcdir@/docs/tutorial/mtest/castemellipticcreep-porosity.png}
+  \caption{Évolution de la porosité au cours de l'essai de compression hydrostatique.}
+  \label{fig:tutorial:uo2:mtest1:porosity}
+\end{figure}
+
+\paragraph{Comparaison} La
+figure~\ref{fig:tutorial:uo2:mtest1:porosity} compare la solution
+\mtest{} à la solution approchée. Les deux solutions coïncident bien
+au début de l'essai. Les deux solutions s'écartent en fin d'essai car
+l'approximation faite dans la solution approchée cesse d'être
+satisfaisante.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=12cm]{@top_srcdir@/docs/tutorial/mtest/castemellipticcreep-convergence.png}
+  \caption{Convergence vers l'équilibre mécanique.}
+  \label{fig:tutorial:uo2:mtest1:convergence}
+\end{figure}
+
+\paragraph{Convergence} Il est intéressant d'étudier la convergence de
+l'algorithme d'équilibre de \mtest{}. Celui-ci est représenté en
+figure~\ref{fig:tutorial:uo2:mtest1:convergence} pour le dernier pas
+de temps. Il faut environ \(50\) itérations pour que la norme du
+résidu soit inférieure à la valeur du critère utilisé par \mtest{}. La
+vitesse de convergence est visiblement linéaire. Cela est dû au fait
+que \mtest{} utilise un opérateur tangent élastique (c'est le choix
+par défaut pour les lois compilées avec l'interface {\tt castem}).
+
+\begin{figure}
+  \centering
+  \includegraphics[width=12cm]{@top_srcdir@/docs/tutorial/mtest/castemellipticcreep-convergence-2.png}
+  \caption{Convergence vers l'équilibre mécanique avec l'algorithme
+    d'accélération de \castem{}.}
+  \label{fig:tutorial:uo2:mtest1:convergence2}
+\end{figure}
+
+\paragraph{Accélération de convergence} Il est possible d'activer dans
+\mtest{} l'algorithme d'accélération utilisée par les procédures de
+résolution de \castem{}~\cite{verpeaux_algorithmes_2014}. Il s'agit
+d'une généralisation de la méthode des sécantes, la plus simple à
+mettre en \oe{}uvre et la moins coûteuse (à notre connaissance). Pour
+cela, il suffit de rajouter la ligne suivante dans le fichier de
+donnée précédent~:
+\begin{center}
+  \lstinputlisting[firstline=10,lastline=10,numbers=none]{@top_srcdir@/docs/tutorial/mtest/castemellipticcreep-2.mtest}    
+\end{center}
+
+La figure~\ref{fig:tutorial:uo2:mtest1:convergence2} compare les
+vitesses de convergence avec et sans l'utilisation de l'accélération
+de convergence. L'effet est net~: avec l'accélération de convergence,
+il ne faut que \(11\) itérations pour atteindre la précision requise
+(en fait, dans cet exemple, le résidu est indiqué nul à la précision
+machine absolue près (\(\approx{} 2,3\,10^{-308}\)).
+
+\paragraph{Le mode {\tt debug}} Il est
+également intéressant de regarder comment converge localement
+l'intégration de la loi. Pour cela, \mfront{} dispose d'une option
+{\tt -{}-{}debug}. Recompilons la loi~:
+\begin{flushleft}
+  {\tt
+    \$ \small mfront -{}-obuild -{}-debug -{}-interface=castem EllipticCreep.mfront
+  }
+\end{flushleft}
+
+Lors de l'exécution du cas test, la loi affiche certains détails sur
+sa convergence locale~:
+\begin{flushleft}
+  {\tt
+    EllipticCreep::integrate() : beginning of resolution\\
+    EllipticCreep::integrate() : iteration 1 : 2.14848e-05\\
+    EllipticCreep::integrate() : iteration 2 : 1.48821e-10\\
+    EllipticCreep::integrate() : convergence after 2 iterations
+  }
+\end{flushleft}
+
+Cet exemple montre que l'algorithme de \nom{Newton} local converge en
+\(2\) itérations (la précision par défaut est de \(10^{-8}\)).
+
+\paragraph{Choix des paramètres numériques} Nous allons maintenant
+nous intéresser à deux paramètres numériques~:
+\begin{itemize}
+\item la valeur du critère de convergence \(\varepsilon\)~;
+\item la valeur de la perturbation \(\varepsilon_{p}\) pour le calcul
+  de la jacobienne numérique.
+\end{itemize}
+Pour comprendre ce que représente ce dernier paramètre, il faut
+rappeler comment la valeur de la jacobienne est approchée~:
+\[
+J\paren{i,j}=\deriv{f_{i}}{\Delta\,x_{j}}\approx\Frac{f_{i}\paren{x_{j}+\varepsilon_{p}}-f_{i}\paren{x_{j}-\varepsilon_{p}}}{2\,\varepsilon_{p}}
+\]
+
+Par défaut, la valeur du critère de convergence \(\varepsilon\) est de
+\(10^{-8}\). Il est intéressant de remarquer qu'elle est plus lâche
+que la précision utilisée pour l'équilibre global.
+
+Dans la suite, nous verrons qu'il est nécessaire de baisser ce seuil
+pour obtenir une matrice tangente cohérente de bonne qualité,
+typiquement vers \(10^{-11}\).
+
+La valeur par défaut du second seuil, \(\varepsilon_{p}\), est dix
+fois inférieure à celle du critère de convergence. Dans notre exemple,
+nous avons donc une valeur de \(10^{-9}\), ce qui est une valeur
+acceptable dans la plupart des cas. Précisons que cette valeur est
+fixée à la compilation et n'est pas affectée par une modification de
+la valeur de \(\varepsilon\) à l'exécution.
+
+Ces deux valeurs peuvent être modifiées par les paramètres {\tt
+  epsilon} et {\tt numerical\_\-jaco\-bian\_\-epsilon}. Il est possible
+de modifier ces valeurs depuis \mtest{} à l'aide du mot clé {\tt
+  @Para\-meter}~:
+\begin{center}
+  \lstinputlisting[firstline=12,lastline=13,numbers=none]{@top_srcdir@/docs/tutorial/mtest/castemellipticcreep-2.mtest}    
+\end{center}
+
+Avec un seuil à \(10^{-13}\) et une perturbation de \(10^{-9}\), nous
+obtenons la sortie suivante~:
+\begin{flushleft}
+  {\tt
+    EllipticCreep::integrate() : beginning of resolution\\
+    EllipticCreep::integrate() : iteration 1 : 2.14849e-05\\
+    EllipticCreep::integrate() : iteration 2 : 1.48417e-10\\
+    EllipticCreep::integrate() : iteration 3 : 9.80423e-16\\
+    EllipticCreep::integrate() : convergence after 3 iterations
+  }
+\end{flushleft}
+
+Avec un seuil à \(10^{-13}\) et une perturbation de \(10^{-18}\), nous
+pouvons voir deux effets. En premier lieu, la qualité de la jacobienne
+numérique est moindre, ce qui augmente le nombre d'itération dans
+l'algorithme local.
+\begin{flushleft}
+  {\tt
+    EllipticCreep::integrate() : beginning of resolution\\
+    EllipticCreep::integrate() : iteration 1 : 2.14849e-05\\
+    EllipticCreep::integrate() : iteration 2 : 4.17309e-08\\
+    EllipticCreep::integrate() : iteration 3 : 8.06865e-10\\
+    EllipticCreep::integrate() : iteration 4 : 6.27906e-11\\
+    EllipticCreep::integrate() : iteration 5 : 1.30492e-12\\
+    EllipticCreep::integrate() : iteration 6 : 1.78654e-14\\
+    EllipticCreep::integrate() : convergence after 6 iterations
+  }
+\end{flushleft}
+Dans ce cas, on note que la valeur finale du résidu est moins bonne
+que dans le cas précédent. Cela a un effet très fort sur la
+convergence globale, qui nécessite dans ce cas \(53\) itérations (avec
+une précision de \(10^{-12}\) le calcul ne converge même pas). Ceci
+est dû au critère très serré utilisé par \mtest{} sur la valeur de
+contraintes. Qualitativement, nous pouvons dire que la réponse de la
+loi de comportement est moins \og~stable~\fg{} que précédemment,
+malgré une valeur plus basse du critère de convergence.
+
+La diminution de la qualité de l'approximation de la dérivée avec la
+valeur de la perturbation est un phénomène numérique
+connu~\cite{fortin_analyse_2001}.
+
+Nous avons présenté ici un cas favorable où il faut donner une valeur
+très basse à \(\varepsilon_{p}\) pour voir un effet notable. Pour
+d'autres lois, des effets de ce type peuvent se faire sentir dès
+\(10^{-12}\). Nous recommandons donc de toujours explicitement
+préciser une valeur de l'ordre de \(10^{-9}\) à l'aide du mot clé {\tt
+  @Pertubation\-Value\-For\-Numerical\-Jacobian\-Computation}~:
+\begin{center}
+  \lstinputlisting[firstline=10,lastline=11,firstnumber=10]{@top_srcdir@/docs/tutorial/mfront/EllipticCreep-2.mfront}  
+\end{center}
+
+% \subsubsection{Essai de traction uniaxiale}
+% 
+% \subsection{Les hypothèses de contraintes planes}
+% 
+% \subsubsection{L'hypothèse de contraintes planes}
+% 
+% \subsubsection{L'hypothèse d'axisymétrie et de contraintes planes}
+% 
+% \subsection{Optimisations numériques}
+% 
+% \subsubsection{Matrice tangente cohérente}
+% 
+% \subsubsection{Jacobienne analytique}
+% 
+% \subsection{Essai de structure avec \castem{}}
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "tutoriel"
+%%% End: 

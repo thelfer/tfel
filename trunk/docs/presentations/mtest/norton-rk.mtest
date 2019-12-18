@@ -1,0 +1,12 @@
+@Behaviour<aster> './src/libAsterBehaviour.so' 'asternorton';
+@MaterialProperty<constant> 'YoungModulus'    2.E11 ;
+@MaterialProperty<constant> 'PoissonRatio'     0.3 ;
+@MaterialProperty<constant> 'A'   8.e-67;
+@MaterialProperty<constant> 'm'   8.2;
+@ExternalStateVariable 'Temperature' 293.15;
+@StiffnessMatrixType 'Elastic' ;
+@ImposedStress 'SXX' {0.:0.,30.:40.e6};
+@ImposedStress 'SXY' {0.:0.,30.:40.e6};
+@Times {0.,  30. in 300};
+
+

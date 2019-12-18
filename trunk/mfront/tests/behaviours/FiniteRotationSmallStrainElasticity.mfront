@@ -1,0 +1,40 @@
+@Behaviour FiniteRotationSmallStrainElasticity;
+@Author    Helfer Thomas;
+@Date      26/11/13;
+@Description{
+  A test of the finite rotation small strain
+  of the umat interface
+}
+
+@StrainMeasure GreenLagrange;
+@UMATFiniteStrainStrategy[umat]                    FiniteRotationSmallStrain;
+@AbaqusFiniteStrainStrategy[abaqus,abaqusexplicit] FiniteRotationSmallStrain;
+@EPXFiniteStrainStrategy[epx]                      FiniteRotationSmallStrain;
+
+@MaterialProperty stress young;
+young.setGlossaryName("YoungModulus");
+@MaterialProperty real nu;
+nu.setGlossaryName("PoissonRatio");
+
+@LocalVariable stress lambda;
+@LocalVariable stress mu;
+
+@InitLocalVariables{
+  lambda = computeLambda(young,nu);
+  mu = computeMu(young,nu);
+}
+
+@ProvidesSymmetricTangentOperator;
+
+@PredictionOperator{
+  static_cast<void>(smt);
+  Dt = lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
+}
+
+@Integrator{
+  static_cast<void>(smt);
+  sig = lambda*trace(eto+deto)*StrainStensor::Id()+2*mu*(eto+deto);
+  if(computeTangentOperator_){
+    Dt = lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
+  }
+}

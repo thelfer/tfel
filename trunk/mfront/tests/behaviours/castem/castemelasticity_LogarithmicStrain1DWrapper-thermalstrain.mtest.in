@@ -1,0 +1,30 @@
+/*! 
+ * \file   elasticity7_LogarithmicStrain1DWrapper-thermalstrain.mtest
+ * \brief
+ * \author Helfer Thomas
+ * \brief  09 avril 2013
+ */
+
+@ModellingHypothesis 'AxisymmetricalGeneralisedPlaneStrain';
+@Behaviour<castem,LogarithmicStrain1D> '@MFrontCastemBehavioursBuildPath@' 'umatelasticity';
+
+@Real 'E'  150.e9;
+@Real 'nu'   0.3333;
+@Real 'a'    2.e-5;
+@MaterialProperty<constant> 'YoungModulus'     'E';
+@MaterialProperty<constant> 'PoissonRatio'     'nu';
+@MaterialProperty<constant> 'ThermalExpansion'  'a';
+
+@ExternalStateVariable 'Temperature' {0:293.15,3600.:800};
+@Real 'ThermalExpansionReferenceTemperature' 293.15;
+@Real 'Tref' 'ThermalExpansionReferenceTemperature';
+
+@ImposedStrain 'ERR' 0.;
+@ImposedStrain 'ETT' 0.;
+@ImposedStrain 'EZZ' 0.;
+
+@Times {0.,3600 in 20};
+
+@Test<function> 'SRR' '-E/(1-2*nu)*ln(1+a*(Temperature-Tref))'  1.e-3;
+@Test<function> 'SZZ' '-E/(1-2*nu)*ln(1+a*(Temperature-Tref))'  1.e-3;
+@Test<function> 'STT' '-E/(1-2*nu)*ln(1+a*(Temperature-Tref))'  1.e-3;

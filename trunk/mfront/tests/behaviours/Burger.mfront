@@ -1,0 +1,83 @@
+/*!
+ * \file   burger.mfront
+ * \brief  
+ *   resolution explicite Runge Kütter
+ * \author FH
+ * \date   13 05 2013
+ */
+
+@DSL Implicit;
+@Behaviour Burger;
+@Algorithm NewtonRaphson_NumericalJacobian;
+@Theta 1. ;
+
+@MaterialProperty stress young;
+young.setGlossaryName("YoungModulus");
+@MaterialProperty real nu;
+nu.setGlossaryName("PoissonRatio");
+
+@MaterialProperty real KRS;
+@MaterialProperty real NRS;
+@MaterialProperty real KAPPA;
+@MaterialProperty real NIS;
+@MaterialProperty real KRD;
+@MaterialProperty real NRD;
+@MaterialProperty real NID;
+@MaterialProperty real NFD;
+@MaterialProperty real Cini;
+
+@StateVariable real       ESPHR;
+@StateVariable real       ESPHI;
+@StateVariable real       ELIM;
+@StateVariable Stensor    EDEVR;
+@StateVariable Stensor    EDEVI;
+@StateVariable Stensor    Edess;
+
+@ExternalStateVariable real C;
+
+@LocalVariable real    lambda;
+@LocalVariable real    mu;
+
+
+/* Initialize Lame coefficients */
+@InitLocalVariables{
+  lambda = computeLambda(young,nu);
+  mu = computeMu(young,nu);
+} 
+
+@TangentOperator{
+  if((smt==ELASTIC)||(smt==SECANTOPERATOR)){
+    computeAlteredElasticStiffness<hypothesis,Type>::exe(Dt,lambda,mu);
+  } else if(smt==CONSISTENTTANGENTOPERATOR){
+    StiffnessTensor Hooke;
+    Stensor4 Je;
+    computeElasticStiffness<N,Type>::exe(Hooke,lambda,mu);
+    getPartialJacobianInvert(Je);
+    Dt = Hooke*Je;
+  } else {
+    return false;
+  }
+}
+
+@ComputeStress{
+    sig = lambda*trace(eel)*Stensor::Id()+2*mu*eel;
+} 
+
+@Integrator{
+  real stresP=trace(sig)/3.;
+  Stensor stresD=sig-stresP*Stensor::Id();
+  real emax=sqrt(((ESPHI+dESPHI)*Stensor::Id()+(EDEVI+dEDEVI))|((ESPHI+dESPHI)*Stensor::Id()+(EDEVI+dEDEVI)));
+  fELIM=ELIM+dELIM-max(ELIM,emax);
+  real eexp=exp((ELIM+dELIM)/KAPPA);
+  fESPHR=dESPHR-((C/Cini*stresP-KRS*(ESPHR+dESPHR))/NRS)*dt;
+  fEDEVR=dEDEVR-(C/Cini*stresD-KRD*(EDEVR+dEDEVR))/NRD*dt;
+  fESPHI=dESPHI-(C/Cini*stresP/(NIS*eexp))*dt;
+  fEDEVI=dEDEVI-(C/Cini*stresD/(NID*eexp))*dt;
+  fEdess=dEdess-NFD*dC/Cini*Stensor::Id();
+  feel=deel-(deto-dEDEVR-dEDEVI-dEdess-(dESPHR+dESPHI)*Stensor::Id());
+}
+
+
+  
+  
+

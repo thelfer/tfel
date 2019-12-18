@@ -1,0 +1,7 @@
+get_filename_component (Fortran_COMPILER_NAME ${CMAKE_Fortran_COMPILER} NAME)
+if("${CMAKE_Fortran_COMPILER_ID}" STREQUAL "GNU")
+  set(GNU_FORTRAN_COMPILER ON)
+elseif("${CMAKE_Fortran_COMPILER_ID}" STREQUAL "")
+else("${CMAKE_Fortran_COMPILER_ID}" STREQUAL "GNU")  
+  message(FATAL_ERROR "unsupported fortran compiler ${Fortran_COMPILER_NAME}")
+endif("${CMAKE_Fortran_COMPILER_ID}" STREQUAL "GNU")

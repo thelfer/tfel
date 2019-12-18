@@ -1,0 +1,29 @@
+@Behaviour LogarithmicStrainAxialGrowth;
+@Author Helfer Thomas;
+@Date   24/09/2017;
+@Description{
+ A test for the `@AxialGrowth` keyword
+}
+
+@StrainMeasure Hencky;
+
+@OrthotropicBehaviour<Pipe>;
+@RequireStiffnessTensor<Altered>;
+
+@ExternalStateVariable real ag;
+ag.setGlossaryName("AxialGrowth");
+@AxialGrowth ag;
+
+@PredictionOperator{
+  static_cast<void>(smt);
+  Dt = D;
+}
+
+@Integrator{
+  sig = D*(eto+deto);
+}
+
+@TangentOperator{
+  static_cast<void>(smt);
+  Dt = D;
+}

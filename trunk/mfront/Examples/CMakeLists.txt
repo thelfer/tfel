@@ -1,0 +1,6 @@
+install_mfront_data(Example elasticity.mfront)
+install_mfront_data(Example plasticity.mfront)
+install_mfront_data(Example implicit.mfront)
+install_mfront_data(Example rungekutta54.mfront)
+install_mfront_data(Example norton.mfront)
+install_mfront_data(Example win32.txt)

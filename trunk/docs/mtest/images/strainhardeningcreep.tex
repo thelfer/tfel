@@ -1,0 +1,46 @@
+\noindent
+\ttfamily
+\hlstd{@Author\ Helfer\ Thomas}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@Date}\hlstd{\ \ \ }\hlstd{}\hlnum{09\ }\hlstd{avril\ }\hlnum{2013}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@Description}\hlsym{\{}\hspace*{\fill}\\
+\hlstd{}\hlstd{\ \ }\hlstd{}\hlstr{"Essai\ de\ fluage\ sur\ un\ matériau\ modélisé"}\hlstd{\hspace*{\fill}\\
+}\hlstd{\ \ }\hlstd{}\hlstr{"par\ une\ loi\ de\ type\ Lemaître\ (loi\ viscoplastique\ "}\hlstd{\hspace*{\fill}\\
+}\hlstd{\ \ }\hlstd{}\hlstr{"avec\ écroussage)."}\hlstd{\hspace*{\fill}\\
+}\hlstd{\ \ }\hlstd{}\hlstr{"Vérification\ de\ la\ réponse\ fournie\ par\ "}\hlstd{\hspace*{\fill}\\
+}\hlstd{\ \ }\hlstd{}\hlstr{"une\ loi\ générée\ par\ l'analyseur\ "}\hlstd{\hspace*{\fill}\\
+}\hlstd{\ \ }\hlstd{}\hlstr{"IsotropicStrainHardeningMisesCreep\ de\ mfront."}\hlstd{\hspace*{\fill}\\
+}\hlstd{\ \ }\hlstd{}\hlstr{"Comparaison\ à\ la\ solution\ analytique."}\hlstd{}\hspace*{\fill}\\
+\hlsym{\};}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@ModellingHypothesis\ }\hlstr{'Axisymmetrical'}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@UseCastemAccelerationAlgorithm\ }\hlkwa{true}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@Behaviour}\hlsym{$<$}\hlstd{umat}\hlsym{$>$\ }\hlstd{}\hlstr{'libMFrontCastemBehaviours.so'}\hlstd{\ }\hlstr{'umatstrainhardeningcreep'}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@MaterialProperty}\hlsym{$<$}\hlstd{constant}\hlsym{$>$\ }\hlstd{}\hlstr{'YoungModulus'}\hlstd{}\hlstd{\ \ \ \ \ }\hlstd{}\hlnum{150}\hlstd{}\hlsym{.}\hlstd{e9}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@MaterialProperty}\hlsym{$<$}\hlstd{constant}\hlsym{$>$\ }\hlstd{}\hlstr{'PoissonRatio'}\hlstd{}\hlstd{\ \ \ \ \ \ \ }\hlstd{}\hlnum{0.3}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@MaterialProperty}\hlsym{$<$}\hlstd{constant}\hlsym{$>$\ }\hlstd{}\hlstr{'MassDensity'}\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlnum{0}\hlstd{}\hlsym{.;}\hspace*{\fill}\\
+\hlstd{@MaterialProperty}\hlsym{$<$}\hlstd{constant}\hlsym{$>$\ }\hlstd{}\hlstr{'ThermalExpansion'}\hlstd{}\hlstd{\ \ \ }\hlstd{}\hlnum{0}\hlstd{}\hlsym{.;}\hspace*{\fill}\\
+\hlstd{@MaterialProperty}\hlsym{$<$}\hlstd{constant}\hlsym{$>$\ }\hlstd{}\hlstr{'A'}\hlstd{}\hlstd{\ \ }\hlstd{}\hlnum{8}\hlstd{}\hlsym{.}\hlstd{e}\hlsym{{-}}\hlstd{}\hlnum{40}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@MaterialProperty}\hlsym{$<$}\hlstd{constant}\hlsym{$>$\ }\hlstd{}\hlstr{'Ns'}\hlstd{\ }\hlnum{4.2}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@MaterialProperty}\hlsym{$<$}\hlstd{constant}\hlsym{$>$\ }\hlstd{}\hlstr{'Np'}\hlstd{\ }\hlnum{1.37}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@Real\ }\hlstr{'srr'}\hlstd{\ }\hlsym{{-}}\hlstd{}\hlnum{20}\hlstd{e6}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@ImposedStress\ }\hlstr{'SRR'}\hlstd{\ }\hlstr{'srr'}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{}\hlslc{//\ Initial\ value\ of\ the\ elastic\ strain}\hspace*{\fill}\\
+\hlstd{@Real\ }\hlstr{'EELRR0'}\hlstd{\ }\hlnum{0.00013333333333333333}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@Real\ }\hlstr{'EELZZ0'}\hlstd{\ }\hlsym{{-}}\hlstd{}\hlnum{0.00004}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@InternalStateVariable\ }\hlstr{'ElasticStrain'}\hlstd{\ }\hlsym{\{}\hlstd{}\hlstr{'EELRR0'}\hlstd{}\hlsym{,}\hlstd{}\hlstr{'EELZZ0'}\hlstd{}\hlsym{,}\hlstd{}\hlstr{'EELZZ0'}\hlstd{}\hlsym{,}\hlstd{}\hlnum{0}\hlstd{}\hlsym{.\};}\hspace*{\fill}\\
+\hlstd{}\hlslc{//\ Initial\ value\ of\ the\ total\ strain}\hspace*{\fill}\\
+\hlstd{@Strain\ }\hlsym{\{}\hlstd{}\hlstr{'EELRR0'}\hlstd{}\hlsym{,}\hlstd{}\hlstr{'EELZZ0'}\hlstd{}\hlsym{,}\hlstd{}\hlstr{'EELZZ0'}\hlstd{}\hlsym{,}\hlstd{}\hlnum{0}\hlstd{}\hlsym{.\};}\hspace*{\fill}\\
+\hlstd{}\hlslc{//\ Initial\ value\ of\ the\ total\ stresses}\hspace*{\fill}\\
+\hlstd{@Stress\ }\hlsym{\{}\hlstd{}\hlstr{'srr'}\hlstd{}\hlsym{,}\hlstd{}\hlnum{0}\hlstd{}\hlsym{.,}\hlstd{}\hlnum{0}\hlstd{}\hlsym{.,}\hlstd{}\hlnum{0}\hlstd{}\hlsym{.\};}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@ExternalStateVariable\ }\hlstr{'Temperature'}\hlstd{\ }\hlnum{293.15}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@Times\ }\hlsym{\{}\hlstd{}\hlnum{0}\hlstd{}\hlsym{.,}\hlstd{}\hlnum{10}\hlstd{}\hlsym{.\ }\hlstd{in\ }\hlnum{200}\hlstd{}\hlsym{,\ }\hlstd{}\hlnum{100}\hlstd{}\hlsym{.\ }\hlstd{in\ }\hlnum{30}\hlstd{}\hlsym{,}\hlstd{}\hlnum{3600\ }\hlstd{in\ }\hlnum{20}\hlstd{}\hlsym{\};}\hspace*{\fill}\\
+\hlstd{\hspace*{\fill}\\
+@Real\ }\hlstr{'p0'}\hlstd{\ }\hlnum{1}\hlstd{}\hlsym{.}\hlstd{e}\hlsym{{-}}\hlstd{}\hlnum{6}\hlstd{}\hlsym{;}\hspace*{\fill}\\
+\hlstd{@Test}\hlsym{$<$}\hlstd{function}\hlsym{$>$\ }\hlstd{}\hlstr{'EquivalentViscoplasticStrain'}\hlstd{\hspace*{\fill}\\
+}\hlstd{\ \ \ \ \ }\hlstd{}\hlstr{'(p0{*}{*}(Np+1){-}(Np+1){*}A{*}srr{*}{*}Ns{*}t){*}{*}(1/(Np+1)){-}p0'}\hlstd{\ }\hlnum{1}\hlstd{}\hlsym{.}\hlstd{e}\hlsym{{-}}\hlstd{}\hlnum{5}\hlstd{}\hlsym{;}\hlstd{}\hspace*{\fill}\\
+\mbox{}
+\normalfont

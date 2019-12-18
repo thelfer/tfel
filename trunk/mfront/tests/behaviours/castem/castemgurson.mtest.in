@@ -1,0 +1,14 @@
+@MaximumNumberOfSubSteps 1;
+@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatgurson';
+@UseCastemAccelerationAlgorithm true;
+
+// Material properties
+@MaterialProperty<constant> 'YoungModulus' 209999.e6;
+@MaterialProperty<constant> 'PoissonRatio' 0.3;
+
+// External state variables
+@ExternalStateVariable 'Temperature' 293.15;
+@ImposedStrain<evolution> 'EXX' {0:0,1:0.38095};
+
+@Times {0,0.05 in 10, 1 in 25};
+

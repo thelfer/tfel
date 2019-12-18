@@ -1,0 +1,31 @@
+@Parser   MaterialLaw ;
+@Material T91MartensiticSteel ;
+@Law      YoungModulus_ROUX2007 ;
+@Author   F. Milliard ;
+@Date     11/12/2013 ;
+@Description{
+  // Module d'Young martensite T91
+  // [Roux 07]
+}
+
+// Input of law
+@Input T ;
+T.setGlossaryName("Temperature") ;
+
+// Output of law
+@Output E ;
+E.setGlossaryName("YoungModulus");
+
+@PhysicalBounds T in [0.:*[;
+
+// Function
+@Function{
+  const real TC = T-273.15;
+  const real xm1 = 20.;
+  const real xm2 = 500.;
+  const real xm3 = 900.;
+  const real ym1 = 206000.;
+  const real ym2 = 175000.;
+  const real ym3 = 127000.;
+  E = 1.e6* ( max(ym1+((ym2-ym1)/(xm2-xm1))*(max(TC,xm1)-xm1), ym2) + max( ((ym3-ym2)/(xm3-xm2))*(max(TC,xm2)-xm2) , ym3-ym2 )) ;
+} // end of Function

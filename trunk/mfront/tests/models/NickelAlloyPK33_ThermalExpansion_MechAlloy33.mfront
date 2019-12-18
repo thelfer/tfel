@@ -1,0 +1,28 @@
+@DSL      Model;
+@Model    ThermalExpansion_MechAlloy33;
+@Material NickelAlloyPK33;
+@Author   Thomas Helfer;
+@Date     11/08/2014;
+
+@Description
+{
+  "Nicrofer 3033 - alloy 33,"
+  "Material Data Sheet No. 4041."
+  "ThyssenKrupp VDM, 2000"
+}
+
+@Output dl_l;
+dl_l.setEntryName("LinearThermalExpansion");
+dl_l.setDefaultInitialValue(0.);
+dl_l.setDepth(1);
+
+@Input T;
+T.setGlossaryName("Temperature");
+
+@Parameter c1 = 1.699e-5;
+@Parameter c2 = 5.177e-3;
+
+@Function compute
+{
+  dl_l = c1*T-c2;
+}
