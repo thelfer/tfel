@@ -36,9 +36,7 @@
 
 #include"TFEL/Raise.hxx"
 #include"TFEL/Config/GetInstallPath.hxx"
-#include "TFEL/Utilities/StringAlgorithms.hxx"
 #include"TFEL/System/System.hxx"
-
 #include"MFront/DSLUtilities.hxx"
 #include"MFront/MFrontUtilities.hxx"
 #include"MFront/MFrontHeader.hxx"
@@ -327,41 +325,9 @@ namespace mfront
 	    << "extern \"C\"{\n"
 	    << "#endif /* __cplusplus */\n\n";
     
-    srcFile << "MFRONT_SHAREDOBJ const char *\n"
-        << name << "_src = \""
-        << tfel::utilities::tokenize(file, tfel::system::dirSeparator()).back()
-        << "\";\n\n";
-    if (!mpd.inputs.empty()) {
-      srcFile << "MFRONT_SHAREDOBJ const char *\n"
-          << name << "_args[" << mpd.inputs.size() << "] = {";
-      for (auto p3 = mpd.inputs.begin(); p3 != mpd.inputs.end();) {
-        const auto iname = '\"' + p3->getExternalName() + '\"';
-        srcFile << iname;
-        if (++p3 != mpd.inputs.end()) {
-          srcFile << ",";
-        }
-      }
-      srcFile << "};\n\n";
-    }
-
-    srcFile << "MFRONT_SHAREDOBJ unsigned short\n"
-        << name << "_nargs = " << mpd.inputs.size() << "u;\n\n";
-    if (!params.empty()) {
-      const auto hn = getMaterialPropertyParametersHandlerClassName(name);
-      srcFile << "MFRONT_SHAREDOBJ int\n"
-          << name << "_setParameter(const char *const p,"
-          << "const double v"
-          << "){\n";
-      for (const auto& p : params) {
-        srcFile << "if(strcmp(\"" << p.name << "\",p)==0){\n"
-            << "castem::" << hn << "::get" << hn << "()." << p.name << " = v;\n"
-            << "return 1;\n"
-            << "}\n";
-      }
-      srcFile << "return 0;\n"
-          << "}\n\n";
-    }  
     
+
+    writeVariableNames(srcFile,name,file,mpd);
     // mfront metadata
     writeEntryPointSymbol(srcFile,name);
     writeTFELVersionSymbol(srcFile,name);  

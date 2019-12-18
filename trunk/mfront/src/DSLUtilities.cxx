@@ -12,6 +12,7 @@
  * project under specific licensing conditions.
  */
 
+#include <iostream>
 #include <cstdlib>
 #include <fstream>
 #include <sstream>
@@ -20,10 +21,13 @@
 #include "TFEL/Config/TFELConfig.hxx"
 #include "TFEL/Config/GetTFELVersion.h"
 #include "TFEL/Glossary/GlossaryEntry.hxx"
+#include "TFEL/Utilities/StringAlgorithms.hxx"
+#include "TFEL/System/System.hxx"
 #include "MFront/MFrontDebugMode.hxx"
 #include "MFront/DSLUtilities.hxx"
 #include "MFront/StaticVariableDescription.hxx"
 #include "MFront/MaterialPropertyDescription.hxx"
+#include "MFront/MaterialPropertyParametersHandler.hxx"
 
 #ifndef _MSC_VER
 static const char* const constexpr_c = "constexpr";
@@ -32,6 +36,34 @@ static const char* const constexpr_c = "const";
 #endif
 
 namespace mfront {
+
+  void writeVariableNames(std::ostream& out, 
+                          const std::string& name,
+                          const std::string& file,
+                          const mfront::MaterialPropertyDescription& mpd) {
+    out << "MFRONT_SHAREDOBJ const char *\n"
+        << name << "_src = \""
+        << tfel::utilities::tokenize(file, tfel::system::dirSeparator()).back()
+        << "\";\n\n";
+    if (!mpd.inputs.empty()) {
+      out << "MFRONT_SHAREDOBJ const char *\n"
+          << name << "_args[" << mpd.inputs.size() << "] = {";
+      for (auto p3 = mpd.inputs.begin(); p3 != mpd.inputs.end();) {
+        const auto iname = '\"' + p3->getExternalName() + '\"';
+        std::cout << p3->getBounds() << endl;
+        out << iname;
+        if (++p3 != mpd.inputs.end()) {
+          out << ",";
+        }
+      }
+      out << "};\n\n";
+    }
+
+    out << "MFRONT_SHAREDOBJ unsigned short\n"
+        << name << "_nargs = " << mpd.inputs.size() << "u;\n\n";
+
+  } // end of writeVariableNames
+
 
   void writeEntryPointSymbol(std::ostream& out, const std::string& n) {
     writeEntryPointSymbol(out, n, n);

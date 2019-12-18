@@ -247,6 +247,8 @@ namespace mfront
     // opening the source file
     const auto src = this->getSrcFileName(mpd.material,mpd.className);
     const auto fn  = "src/" + src +".cxx";
+    const auto name  = (!mpd.material.empty()) ? mpd.material+"_"+mpd.law : mpd.law;
+    const auto& file=fd.fileName;
     std::ofstream os(fn);
     tfel::raise_if(!os,"CMaterialPropertyInterfaceBase::writeOutputFiles : "
 		   "unable to open '"+fn+"' for writing output file.");
@@ -278,6 +280,7 @@ namespace mfront
       os << "#include\""+header+".hxx\"\n\n";
     }
     this->writeSrcPreprocessorDirectives(os,mpd);
+    writeVariableNames(os,name,file,mpd);
     this->writeEntryPointSymbol(os,mpd);
     this->writeTFELVersionSymbol(os,mpd);
     this->writeInterfaceSymbol(os,mpd);

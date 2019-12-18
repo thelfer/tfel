@@ -34,6 +34,15 @@ namespace mfront {
   // forward declaration
   struct BehaviourDescription;
 
+  /*! 
+   return the names of the variables
+  */
+  MFRONT_VISIBILITY_EXPORT void writeVariableNames(std::ostream&, 
+                                                   const std::string&,
+                                                   const std::string&,
+                                                   const mfront::MaterialPropertyDescription&);
+                         
+
   /*!
    * \brief write a specific symbol stating that a given name entry
    * point (`C`-like function for example) has been created using
