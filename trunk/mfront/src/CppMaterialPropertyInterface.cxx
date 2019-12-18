@@ -18,6 +18,7 @@
 
 #include"TFEL/Raise.hxx"
 #include"TFEL/Config/GetInstallPath.hxx"
+#include "TFEL/Utilities/StringAlgorithms.hxx"
 #include"TFEL/System/System.hxx"
 
 #include"MFront/DSLUtilities.hxx"
@@ -27,6 +28,7 @@
 #include"MFront/TargetsDescription.hxx"
 #include"MFront/MaterialPropertyDescription.hxx"
 #include"MFront/CppMaterialPropertyInterface.hxx"
+#include"MFront/MaterialPropertyParametersHandler.hxx"
 
 namespace mfront
 {
@@ -204,6 +206,8 @@ namespace mfront
     const auto name = mpd.material.empty() ?
       mpd.className : mpd.material+"_"+mpd.className;
     const auto src_name  = "src/" +name+"-cxx.cxx";
+	const auto& params = mpd.parameters;
+	const auto& file=fd.fileName;
     std::ofstream src(src_name);
     throw_if(!src,"unable to open '"+src_name+"'");
     src.exceptions(std::ios::badbit|std::ios::failbit);
@@ -236,7 +240,43 @@ namespace mfront
     src << "#ifdef __cplusplus\n"
 	    << "extern \"C\"{\n"
 	    << "#endif /* __cplusplus */\n\n";
-    // mfront metadata
+    
+    src << "MFRONT_SHAREDOBJ const char *\n"
+        << name << "_src = \""
+        << tfel::utilities::tokenize(file, tfel::system::dirSeparator()).back()
+        << "\";\n\n";
+    if (!mpd.inputs.empty()) {
+      src << "MFRONT_SHAREDOBJ const char *\n"
+          << name << "_args[" << mpd.inputs.size() << "] = {";
+      for (auto p3 = mpd.inputs.begin(); p3 != mpd.inputs.end();) {
+        const auto iname = '\"' + p3->getExternalName() + '\"';
+        src << iname;
+        if (++p3 != mpd.inputs.end()) {
+          src << ",";
+        }
+      }
+      src << "};\n\n";
+    }
+
+    src << "MFRONT_SHAREDOBJ unsigned short\n"
+        << name << "_nargs = " << mpd.inputs.size() << "u;\n\n";
+    if (!params.empty()) {
+      const auto hn = getMaterialPropertyParametersHandlerClassName(name);
+      src << "MFRONT_SHAREDOBJ int\n"
+          << name << "_setParameter(const char *const p,"
+          << "const double v"
+          << "){\n";
+      for (const auto& p : params) {
+        src << "if(strcmp(\"" << p.name << "\",p)==0){\n"
+            << "castem::" << hn << "::get" << hn << "()." << p.name << " = v;\n"
+            << "return 1;\n"
+            << "}\n";
+      }
+      src << "return 0;\n"
+          << "}\n\n";
+    }  	
+	
+	// mfront metadata
     writeEntryPointSymbol(src,name);
     writeTFELVersionSymbol(src,name);
     writeInterfaceSymbol(src,name,"C++");

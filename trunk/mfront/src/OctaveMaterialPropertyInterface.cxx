@@ -21,6 +21,7 @@
 
 #include"TFEL/Raise.hxx"
 #include"TFEL/System/System.hxx"
+#include "TFEL/Utilities/StringAlgorithms.hxx"
 #include"MFront/MFrontHeader.hxx"
 #include"MFront/DSLUtilities.hxx"
 #include"MFront/FileDescription.hxx"
@@ -29,6 +30,7 @@
 #include"MFront/MaterialPropertyParametersHandler.hxx"
 #include"MFront/CMaterialPropertyInterfaceBase.hxx"
 #include"MFront/OctaveMaterialPropertyInterface.hxx"
+
 
 namespace mfront
 {
@@ -106,6 +108,8 @@ namespace mfront
     tfel::system::systemCall::mkdir("octave");
     const auto name = (mpd.material.empty()) ? mpd.className : mpd.material+"_"+mpd.className;
     const auto fn   = "octave/"+ name+".cpp";
+	const auto& params = mpd.parameters;
+	const auto& file=fd.fileName;
     std::ofstream out{fn};
     tfel::raise_if(!out,"OctaveMaterialPropertyInterface::writeOutputFiles: "
 		   "unable to open file '"+fn+"'");
@@ -147,6 +151,42 @@ namespace mfront
     out << "#ifdef __cplusplus\n"
 	<< "extern \"C\"{\n"
 	<< "#endif /* __cplusplus */\n\n";
+
+	out << "MFRONT_SHAREDOBJ const char *\n"
+        << name << "_src = \""
+        << tfel::utilities::tokenize(file, tfel::system::dirSeparator()).back()
+        << "\";\n\n";
+    if (!mpd.inputs.empty()) {
+      out << "MFRONT_SHAREDOBJ const char *\n"
+          << name << "_args[" << mpd.inputs.size() << "] = {";
+      for (auto p3 = mpd.inputs.begin(); p3 != mpd.inputs.end();) {
+        const auto iname = '\"' + p3->getExternalName() + '\"';
+        out << iname;
+        if (++p3 != mpd.inputs.end()) {
+          out << ",";
+        }
+      }
+      out << "};\n\n";
+    }
+
+    out << "MFRONT_SHAREDOBJ unsigned short\n"
+        << name << "_nargs = " << mpd.inputs.size() << "u;\n\n";
+    if (!params.empty()) {
+      const auto hn = getMaterialPropertyParametersHandlerClassName(name);
+      out << "MFRONT_SHAREDOBJ int\n"
+          << name << "_setParameter(const char *const p,"
+          << "const double v"
+          << "){\n";
+      for (const auto& p : params) {
+        out << "if(strcmp(\"" << p.name << "\",p)==0){\n"
+            << "castem::" << hn << "::get" << hn << "()." << p.name << " = v;\n"
+            << "return 1;\n"
+            << "}\n";
+      }
+      out << "return 0;\n"
+          << "}\n\n";
+    }  
+
     // mfront metadata
     writeEntryPointSymbol(out,name);
     writeTFELVersionSymbol(out,name);

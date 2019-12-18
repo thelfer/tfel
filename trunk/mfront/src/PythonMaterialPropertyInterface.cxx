@@ -327,7 +327,6 @@ namespace mfront
 	    << "extern \"C\"{\n"
 	    << "#endif /* __cplusplus */\n\n";
     
-
     srcFile << "MFRONT_SHAREDOBJ const char *\n"
         << name << "_src = \""
         << tfel::utilities::tokenize(file, tfel::system::dirSeparator()).back()
