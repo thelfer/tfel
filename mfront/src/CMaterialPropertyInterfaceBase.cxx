@@ -29,8 +29,7 @@ static const char * const constexpr_c = "const";
 namespace mfront
 {
 
-  static std::string transformHeaderName(const std::string& h)
-  {
+  static std::string transformHeaderName(const std::string& h) {
     auto replace = [](std::string& s,
 		      const std::string::value_type a,
 		      const std::string::value_type b){
@@ -47,36 +46,28 @@ namespace mfront
   } // end of transformHeaderName
   
   CMaterialPropertyInterfaceBase::CMaterialPropertyInterfaceBase() = default;
-  
-  void
-  CMaterialPropertyInterfaceBase::writeHeaderPreprocessorDirectives(std::ostream& os,
-								    const MaterialPropertyDescription&) const
-  {
+
+  void CMaterialPropertyInterfaceBase::writeHeaderPreprocessorDirectives(
+      std::ostream& os, const MaterialPropertyDescription&) const {
     writeExportDirectives(os);
   } // end of CMaterialPropertyInterfaceBase::writeSrcPreprocessorDirectives
 
-  void
-  CMaterialPropertyInterfaceBase::writeSrcPreprocessorDirectives(std::ostream&,
-								 const MaterialPropertyDescription&) const
-  {} // end of CMaterialPropertyInterfaceBase::writeSrcPreprocessorDirectives
-  
-  void
-  CMaterialPropertyInterfaceBase::writeOutputFiles(const MaterialPropertyDescription& mpd,
-						   const FileDescription& fd) const
-  {
+  void CMaterialPropertyInterfaceBase::writeSrcPreprocessorDirectives(
+      std::ostream&, const MaterialPropertyDescription&) const {
+  }  // end of CMaterialPropertyInterfaceBase::writeSrcPreprocessorDirectives
+
+  void CMaterialPropertyInterfaceBase::writeOutputFiles(
+      const MaterialPropertyDescription& mpd, const FileDescription& fd) const {
     this->writeHeaderFile(mpd,fd);
     this->writeSrcFile(mpd,fd);
   } // end of CMaterialPropertyInterfaceBase::writeOutputFiles
 
-  std::string
-  CMaterialPropertyInterfaceBase::getCallingConvention() const{
+  std::string CMaterialPropertyInterfaceBase::getCallingConvention() const {
     return "";
   }
-  
-  void
-  CMaterialPropertyInterfaceBase::writeHeaderFile(const MaterialPropertyDescription& mpd,
-						  const FileDescription& fd) const
-  {
+
+  void CMaterialPropertyInterfaceBase::writeHeaderFile(
+      const MaterialPropertyDescription& mpd, const FileDescription& fd) const {
     // the fortran interface does not need any header...
     const auto header = this->getHeaderFileName(mpd.material,mpd.className);
     if(header.empty()){
@@ -131,14 +122,12 @@ namespace mfront
     os.close();
   } // end of CMaterialPropertyInterfaceBase::writeHeaderFile()
 
-  void
-  CMaterialPropertyInterfaceBase::writeInterfaceSpecificVariables(std::ostream&,
-								  const VariableDescriptionContainer&) const
-  {} // end of CMaterialPropertyInterfaceBase::writeInterfaceSpecificVariables
+  void CMaterialPropertyInterfaceBase::writeInterfaceSpecificVariables(
+      std::ostream&, const VariableDescriptionContainer&) const {
+  }  // end of CMaterialPropertyInterfaceBase::writeInterfaceSpecificVariables
 
-  void
-  CMaterialPropertyInterfaceBase::writeParameterList(std::ostream& os,
-						     const VariableDescriptionContainer& inputs) const{
+  void CMaterialPropertyInterfaceBase::writeParameterList(
+      std::ostream& os, const VariableDescriptionContainer& inputs) const {
     if(!inputs.empty()){
       for(auto p=inputs.begin();p!=inputs.end();){
 	os << "const double " << p->name;
@@ -152,8 +141,8 @@ namespace mfront
   } // end of CMaterialPropertyInterfaceBase::writeParameterList
 
   VariableDescriptionContainer::size_type
-  CMaterialPropertyInterfaceBase::getVariableNumber(const MaterialPropertyDescription& mpd,
-						    const std::string& n){
+  CMaterialPropertyInterfaceBase::getVariableNumber(
+      const MaterialPropertyDescription& mpd, const std::string& n) {
     VariableDescriptionContainer::size_type nbr = 1u;
     for(const auto& i:mpd.inputs){
       if(i.name==n){
@@ -164,9 +153,9 @@ namespace mfront
     tfel::raise("CMaterialPropertyInterfaceBase::getVariableNumber: "
 		"no inputs named '"+n+"'");
   } // end of CMaterialPropertyInterfaceBase::getVariableNumber
-  
+
   static void writePhysicalBounds(std::ostream& out,
-				  const MaterialPropertyDescription& mpd) {
+                                  const MaterialPropertyDescription& mpd) {
     for(const auto& i : mpd.inputs){
       if(!i.hasPhysicalBounds()){
 	continue;
@@ -191,7 +180,7 @@ namespace mfront
   }
 
   static void writeBounds(std::ostream& out,
-			  const MaterialPropertyDescription& mpd) {
+                          const MaterialPropertyDescription& mpd) {
     for(const auto& i : mpd.inputs){
       if(!i.hasBounds()){
 	continue;
@@ -215,35 +204,29 @@ namespace mfront
     }
   }
 
-  void CMaterialPropertyInterfaceBase::writeEntryPointSymbol(std::ostream& os,
-							     const MaterialPropertyDescription& mpd) const
-  {
+  void CMaterialPropertyInterfaceBase::writeEntryPointSymbol(
+      std::ostream& os, const MaterialPropertyDescription& mpd) const {
     mfront::writeEntryPointSymbol(os,this->getFunctionName(mpd));
   } // end of CMaterialPropertyInterfaceBase::writeEntryPointSymbol
 
-  void CMaterialPropertyInterfaceBase::writeTFELVersionSymbol(std::ostream& os,
-							     const MaterialPropertyDescription& mpd) const
-  {
+  void CMaterialPropertyInterfaceBase::writeTFELVersionSymbol(
+      std::ostream& os, const MaterialPropertyDescription& mpd) const {
     mfront::writeTFELVersionSymbol(os,this->getFunctionName(mpd));
   } // end of CMaterialPropertyInterfaceBase::writeTFELVersionSymbol
-  
-  void CMaterialPropertyInterfaceBase::writeMaterialSymbol(std::ostream& os,
-							   const MaterialPropertyDescription& mpd) const
-  {
+
+  void CMaterialPropertyInterfaceBase::writeMaterialSymbol(
+      std::ostream& os, const MaterialPropertyDescription& mpd) const {
     mfront::writeMaterialSymbol(os,this->getFunctionName(mpd),mpd.material);
   } // end of CMaterialPropertyInterfaceBase::writeMaterialSymbol
-  
-  void CMaterialPropertyInterfaceBase::writeMaterialKnowledgeTypeSymbol(std::ostream& os,
-									const MaterialPropertyDescription& mpd) const
-  {
+
+  void CMaterialPropertyInterfaceBase::writeMaterialKnowledgeTypeSymbol(
+      std::ostream& os, const MaterialPropertyDescription& mpd) const {
     mfront::writeMaterialKnowledgeTypeSymbol(os,this->getFunctionName(mpd),
 					     MATERIALPROPERTY);
   } // end of CMaterialPropertyInterfaceBase::writeMaterialKnowledgeTypeSymbol
 
-  
-  void CMaterialPropertyInterfaceBase::writeSrcFile(const MaterialPropertyDescription& mpd,
-						    const FileDescription& fd) const
-  {
+  void CMaterialPropertyInterfaceBase::writeSrcFile(
+      const MaterialPropertyDescription& mpd, const FileDescription& fd) const {
     // opening the source file
     const auto src = this->getSrcFileName(mpd.material,mpd.className);
     const auto fn  = "src/" + src +".cxx";
@@ -334,11 +317,11 @@ namespace mfront
       os << ")\n{\n";
       this->writeInterfaceSpecificVariables(os,mpd.inputs);
       for(const auto& i : mpd.inputs){
-	os << "static_cast<void>(" << i.name << ");\n";
+        os << "static_cast<void>(" << i.name << ");\n";
       }
       if(hasPhysicalBounds(mpd.inputs)){
-	os << "/* treating mpd.physical bounds */\n";
-	writePhysicalBounds(os,mpd);
+        os << "/* treating mpd.physical bounds */\n";
+        writePhysicalBounds(os,mpd);
       }
       if(hasBounds(mpd.inputs)){
 	os << "/* treating standard bounds */\n";

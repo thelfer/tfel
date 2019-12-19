@@ -168,35 +168,28 @@ namespace tfel{
       
     } // end of namespace internals
 
-    template<typename StensorType>
+    template <typename StensorType>
     typename std::enable_if<
-      tfel::meta::Implements<StensorType,StensorConcept>::cond,
-      typename tfel::typetraits::AbsType<StensorNumType<StensorType>>::type
-    >::type
-    abs(const StensorType& s)
-    {
+        tfel::meta::Implements<StensorType, StensorConcept>::cond,
+        typename tfel::typetraits::AbsType<StensorNumType<StensorType>>::type>::
+        type
+        abs(const StensorType& s) {
       return tfel::math::internals::StensorAbs<StensorTraits<StensorType>::dime>::exe(s);
     }
 
-    template<typename T>
-    typename std::enable_if<
-      tfel::meta::Implements<T,StensorConcept>::cond,
-      StensorNumType<T>
-    >::type
-    sigmaeq(const T& s)
-    {
+    template <typename T>
+    typename std::enable_if<tfel::meta::Implements<T, StensorConcept>::cond,
+                            StensorNumType<T>>::type
+    sigmaeq(const T& s) {
       typedef tfel::math::internals::SigmaEqImpl<StensorTraits<T>::dime> Impl;
       return Impl::exe(s);
-    }    
+    }
 
-    template<typename T>
-    typename std::enable_if<
-      tfel::meta::Implements<T,StensorConcept>::cond&&
-      StensorTraits<T>::dime==1u,
-      typename StensorType<T>::type
-      >::type
-    deviator(const T& s)
-    {
+    template <typename T>
+    typename std::enable_if<tfel::meta::Implements<T, StensorConcept>::cond &&
+                                StensorTraits<T>::dime == 1u,
+                            typename StensorType<T>::type>::type
+    deviator(const T& s) {
       using Result  = typename StensorType<T>::type;
       using NumType = StensorNumType<T>;
       using real    = tfel::typetraits::base_type<NumType>;
@@ -205,14 +198,11 @@ namespace tfel{
       return Result{s(0)-tr,s(1)-tr,s(2)-tr};
     }
 
-    template<typename T>
-    typename std::enable_if<
-      tfel::meta::Implements<T,StensorConcept>::cond&&
-      StensorTraits<T>::dime==2u,
-      typename StensorType<T>::type
-      >::type
-    deviator(const T& s)
-    {
+    template <typename T>
+    typename std::enable_if<tfel::meta::Implements<T, StensorConcept>::cond &&
+                                StensorTraits<T>::dime == 2u,
+                            typename StensorType<T>::type>::type
+    deviator(const T& s) {
       using Result  = typename StensorType<T>::type;
       using NumType = StensorNumType<T>;
       using real    = tfel::typetraits::base_type<NumType>;
@@ -221,14 +211,11 @@ namespace tfel{
       return Result{s(0)-tr,s(1)-tr,s(2)-tr,s(3)};
     }
 
-    template<typename T>
-    typename std::enable_if<
-      tfel::meta::Implements<T,StensorConcept>::cond&&
-      StensorTraits<T>::dime==3u,
-      typename StensorType<T>::type
-      >::type
-    deviator(const T& s)
-    {
+    template <typename T>
+    typename std::enable_if<tfel::meta::Implements<T, StensorConcept>::cond &&
+                                StensorTraits<T>::dime == 3u,
+                            typename StensorType<T>::type>::type
+    deviator(const T& s) {
       using Result  = typename StensorType<T>::type;
       using NumType = StensorNumType<T>;
       using real    = tfel::typetraits::base_type<NumType>;
@@ -237,39 +224,35 @@ namespace tfel{
       return Result{s(0)-tr,s(1)-tr,s(2)-tr,s(3),s(4),s(5)};
     }
 
-    template<typename StensorResultType,
-	     typename StensorType>
+    template <typename StensorResultType, typename StensorType>
     typename std::enable_if<
-      tfel::meta::Implements<StensorResultType,StensorConcept>::cond &&
-      tfel::meta::Implements<StensorType,StensorConcept>::cond &&
-      StensorTraits<StensorType>::dime == 1u&&
-      StensorTraits<StensorResultType>::dime == 1u&&
-      tfel::typetraits::IsAssignableTo<typename ComputeUnaryResult<StensorNumType<StensorType>,
-								   Power<2> >::Result,
-				       StensorNumType<StensorResultType>>::cond,
-      void>::type
-    computeDeterminantDerivative(StensorResultType& dJ,
-				 const StensorType& s)
-    {
+        tfel::meta::Implements<StensorResultType, StensorConcept>::cond &&
+            tfel::meta::Implements<StensorType, StensorConcept>::cond &&
+            StensorTraits<StensorType>::dime == 1u &&
+            StensorTraits<StensorResultType>::dime == 1u &&
+            tfel::typetraits::IsAssignableTo<
+                typename ComputeUnaryResult<StensorNumType<StensorType>,
+                                            Power<2>>::Result,
+                StensorNumType<StensorResultType>>::cond,
+        void>::type
+    computeDeterminantDerivative(StensorResultType& dJ, const StensorType& s) {
       dJ[0] = s[1]*s[2];
       dJ[1] = s[0]*s[2];
       dJ[2] = s[0]*s[1];
     } // end of ComputeDeterminantDerivative
 
-    template<typename StensorResultType,
-	     typename StensorType>
+    template <typename StensorResultType, typename StensorType>
     typename std::enable_if<
-      tfel::meta::Implements<StensorResultType,StensorConcept>::cond &&
-      tfel::meta::Implements<StensorType,StensorConcept>::cond &&
-      StensorTraits<StensorType>::dime == 2u&&
-      StensorTraits<StensorResultType>::dime == 2u&&
-      tfel::typetraits::IsAssignableTo<typename ComputeUnaryResult<StensorNumType<StensorType>,
-								   Power<2> >::Result,
-				       StensorNumType<StensorResultType>>::cond,
-      void>::type
-    computeDeterminantDerivative(StensorResultType& dJ,
-				 const StensorType& s)
-    {
+        tfel::meta::Implements<StensorResultType, StensorConcept>::cond &&
+            tfel::meta::Implements<StensorType, StensorConcept>::cond &&
+            StensorTraits<StensorType>::dime == 2u &&
+            StensorTraits<StensorResultType>::dime == 2u &&
+            tfel::typetraits::IsAssignableTo<
+                typename ComputeUnaryResult<StensorNumType<StensorType>,
+                                            Power<2>>::Result,
+                StensorNumType<StensorResultType>>::cond,
+        void>::type
+    computeDeterminantDerivative(StensorResultType& dJ, const StensorType& s) {
       dJ[0] = s[1]*s[2];
       dJ[1] = s[0]*s[2];
       dJ[2] = s[0]*s[1]-s[3]*s[3]/2;
@@ -302,20 +285,19 @@ namespace tfel{
       dJ[5]=icste*s[3]*s[4]-s[0]*s[5]; 
     } // end of ComputeDeterminantDerivative
 
-    template<typename StensorResultType,
-	     typename StensorType>
+    template <typename StensorResultType, typename StensorType>
     typename std::enable_if<
-      tfel::meta::Implements<StensorResultType,StensorConcept>::cond &&
-      tfel::meta::Implements<StensorType,StensorConcept>::cond &&
-      StensorTraits<StensorType>::dime == 1u&&
-      StensorTraits<StensorResultType>::dime == 1u&&
-      tfel::typetraits::IsAssignableTo<typename ComputeUnaryResult<StensorNumType<StensorType>,
-								   Power<2> >::Result,
-				       StensorNumType<StensorResultType>>::cond,
-      void>::type
+        tfel::meta::Implements<StensorResultType, StensorConcept>::cond &&
+            tfel::meta::Implements<StensorType, StensorConcept>::cond &&
+            StensorTraits<StensorType>::dime == 1u &&
+            StensorTraits<StensorResultType>::dime == 1u &&
+            tfel::typetraits::IsAssignableTo<
+                typename ComputeUnaryResult<StensorNumType<StensorType>,
+                                            Power<2>>::Result,
+                StensorNumType<StensorResultType>>::cond,
+        void>::type
     computeDeviatorDeterminantDerivative(StensorResultType& dJ,
-					 const StensorType& s)
-    {
+                                         const StensorType& s) {
       dJ[0] = -(s[2]*s[2]+(2*s[0]-4*s[1])*s[2]+s[1]*s[1]+2*s[0]*s[1]-2*s[0]*s[0])/9.;
       dJ[1] = -(s[2]*s[2]+(2*s[1]-4*s[0])*s[2]-2*s[1]*s[1]+2*s[0]*s[1]+s[0]*s[0])/9.;
       dJ[2] = (2*s[2]*s[2]+((-2*s[1])-2*s[0])*s[2]-s[1]*s[1]+4*s[0]*s[1]-s[0]*s[0])/9.;

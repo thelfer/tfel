@@ -11,7 +11,7 @@ viscoplasticity of those ceramics (See for example
 
 Internally the `DDIF2` stress potential is derived from the `Hooke`
 stress potential, so the definition of the elastic properties follows
-the same rules.
+the same rules. See [this page](HookeStressPotential.html) for details.
 
 # Local coordinate
 
@@ -60,5 +60,29 @@ The effect of external pressure on the crack surface can be taken into
 account using the option `handle_pressure_on_crack_surface`. If this
 option is true, an external state variable called `pr`, which external
 name is `PressureOnCrackSurface`, is automatically declared.
+
+# Resolution algorithm
+
+By default, the `DDIF2` damage behaviour is treated using an algorithm
+based on statuses. In each damage directions, the damage state is kept
+constant during the Newton iterations. Once converged, the consistency
+of the damage state with the solution found is tested. If the state is
+inconsistent, the iterations are restarted with a new state.
+
+The implicit scheme is divided in two steps by default. In the first
+step, the time step is set to zero before the prediction stage. This is
+meant to filter all viscoplastic flows and the convergence is thus
+performed only on the damage state (unless another rate-independent
+mechanism is considered). Once converged on the damage state, the time
+step is reset to its original value and the implicit resolution is
+restarted.
+
+The `DDIF2` stress potential (and thus the DDIF2 brick) has two options
+to change this behaviour:
+
+- `use_status_algorithm` (boolean value, true by default). If false, the
+  damage state is updated at each iterations.
+- `first_converge_on_damage` (boolean value, true by default). If false,
+  the time step is not set to zero at the prediction stage.
 
 # References

@@ -2,6 +2,9 @@
 % Thomas Helfer
 % 2019
 
+\newcommand{\deriv}[2]{{\displaystyle \frac{\displaystyle \partial #1}{\displaystyle \partial #2}}}
+\newcommand{\tns}[1]{{\underset{\tilde{}}{\mathbf{#1}}}}
+
 The page declares the new functionalities of the 3.3 version of the
 `TFEL` project.
 
@@ -13,13 +16,37 @@ This version was released along with the following bug-fix releases:
 
 Version 3.3 inherits the fixes of all those versions.
 
-# Documentation
+Version 3.3 includes \(15\,427\) unit tests and has been successfully
+tested on:
+
+- Various distributions of `LiNuX` with various versions of the `gcc`
+  and `clang` compilers. The `Intel 2019` compilers were tested on
+  `Debian Stretch`.
+- `Mac Os Catalina` with the `clang` and `gcc` compilers.
+- Various distributions based on `FreeBSD`.
+- `Windows` with `Visual Studio 15`, `Visual Studio 17`, various
+  versions of the `MinGW` compilers (mostly the ones delivered with
+  `Cast3M` `2017`, `2018` and `2019`), `Cygwin` and `Windows`
+  `Subsystem` `for` `LiNuX` (WSL)
+- Various POSIX systems, such as `OpenSolaris`, `Haiku`, etc.
+
+More tests are available in the [`MFrontGallery`
+project](https://github.com/thelfer/MFrontGallery).
+
+# Documentation and talks
+
+## New entries of the `MFront`' gallery
+
+<center>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/IGocYZKyvgQ" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
+</iframe>
+</center>
 
 New entries were added to [the gallery](gallery.html):
 
 - [This page](RambergOsgoodNonLinearElasticity.html) describes how to
   implement a non linear elastic behaviour that mimics the
-  Ramberg-Osgood plastic behaviour on monotonic loadings (usefull in
+  Ramberg-Osgood plastic behaviour on monotonic loadings (useful in
   fracture analysis)
 - [This page](sovs.html) describes how to implement the
   Skorohold-Olevsky Viscous Sintering (SOVS) model.
@@ -33,6 +60,45 @@ New entries were added to [the gallery](gallery.html):
   [here](FichantLaBorderieDamageAndTorelliLoadInducedStrainBehaviour.html).
 - The implementation of the non associated Mohr-Coulomb plastic
   behaviour is described [here](MohrCoulomb.html).
+
+## Talks of the fifth `MFront` User Day
+
+Some of the talks of the fifth `MFront` User Day are available online:
+
+- [Version 3.3 of the TFEL
+  project](https://github.com/thelfer/tfel-doc/tree/master/MFrontUserDays/FifthUserDays/TFEL-3.3-Helfer-MFrontUserDays-2019.pdf),
+  by T. Helfer (CEA).
+- [MFront in Biomechanics: Abdominal muscle
+  simulation](https://github.com/thelfer/tfel-doc/tree/master/MFrontUserDays/FifthUserDays/AbdominalMuscleSimulation-Lopez-MFrontUserDays-2019.pdf),
+  by Lluı́s Tuset, Dolors Puigjaner, Josep M. López, Gerard Fortuny and
+  Joan Herrero (Universitat Rovira i Virgil, Catalunya)
+- [Microstructurally-based anisotropic hyperelastic FE model of the
+  human abdominal
+  wall](https://github.com/thelfer/tfel-doc/tree/master/MFrontUserDays/FifthUserDays/AbdominalWall-Astruc-MFrontUserDays-2019.pdf),
+  by L. Astruc, A. Morch, G. Dufaye, J.-F. Witz, P. Lecomte, M. Brieu
+  (LaMcube/SATT Nord/California State University)
+- [Validation d’une loi de plasticité cristalline à base physique d’un
+  acier austénitique inoxydable
+  316L](https://github.com/thelfer/tfel-doc/tree/master/MFrontUserDays/FifthUserDays/SingleCrystalPlasticity-Hersant-MFrontUserDays-2019.pptx),
+  by H. Nagi, A. Guéry, C. Mai and D. Hersant (EDF R&D)
+- [Strain gradient plasticity: a Code_Aster
+  trick](https://github.com/thelfer/tfel-doc/tree/master/MFrontUserDays/FifthUserDays/StrainGradientPlasticity-Sanahuja-MFrontUserDays-2019.pdf),
+  by J. Sanahuja and F. Latourte (EDF R&D).
+- [Modelling non-linear constitutive material laws in FEniCS with
+  MFront](https://github.com/thelfer/tfel-doc/tree/master/MFrontUserDays/FifthUserDays/FEniCS-Bleyer-MFrontUserDays-2019.pdf),
+  by J. Bleyer (Laboratoire Navier, UMR 8205, École des Ponts
+  ParisTech-IFSTTAR-CNRS)
+- [MFront and OpenGeoSys Connecting two open-source initiatives for
+  simulations in environmental geosciences and energy
+  geotechnics](https://github.com/thelfer/tfel-doc/tree/master/MFrontUserDays/FifthUserDays/OpenGeoSys-Nagel-MFrontUserDays-2019.pdf),
+  by T. Nagel, F. Parisio, D. Naumov, C. Lehmann, and O. Kolditz
+  (Technische Universität Bergakademie Freiberg/Helmholtz Zentrum für
+  Umweltforschung GmbH/Technische Universität Dresden/Competence Centre
+  for Environmental Geosciences)
+- [Xper: a software dedicated to the fracture of nonlinear heterogeneous
+  materials. Coupling with MFront using
+  MGIS](https://github.com/thelfer/tfel-doc/tree/master/MFrontUserDays/FifthUserDays/Xper-Perales-MFrontUserDays-2019.pdf),
+  by F. Péralès (IRNS).
 
 # Improvements to `MFront`
 
@@ -68,10 +134,10 @@ The supported subset of unicode characters is fully detailed
 
 ## Initial support for generalised behaviours
 
-Generalised behaviours relates a set of gradients to their conjugated
+Generalised behaviours relate a set of gradients to their conjugated
 fluxes. 
 
-The following example shows how a the linear Fourier law can be
+The following example shows how the linear Fourier law can be
 implemented:
 
 ~~~~{.cxx}
@@ -210,7 +276,7 @@ Only the `generic` interface handles generalised behaviours.
 
 ## A new stress potential in the `StandardElastoViscoPlasticity` brick
 
-A regularised Mohr-Coulumb stress potential is now available. This
+A regularised Mohr-Coulomb stress potential is now available. This
 stress potential is fully described [here](MohrCoulomb.html).
 
 ## Specifying a build identifier{#sec:build_identifiers}
@@ -254,7 +320,7 @@ parameters consistent with the declaration of the other variables.
 For the `Cyrano` fuel performance code to call external material
 properties, a dedicated interface has been built.
 
-The prototype of the generated functions are as follows:
+The prototype of the generated functions is as follows:
 
 ~~~~{.c++}
 CyranoRealType (*)(CyranoOutputStatus* const,
@@ -272,7 +338,7 @@ requirements:
 
 - On one hand, `Cast3M`' default algorithm relies on the definition of
   the elastic stiffness.
-- On the other hand, Quality Assurance requirements urges `MFront`
+- On the other hand, Quality Assurance requirements urge `MFront`
   implementations to define the elastic properties internally[^1].
 
 [^1]: Elastic properties may be defined in various ways. One way is to
@@ -292,7 +358,7 @@ Both workarounds have their drawbacks:
 - In the first case, one may degrade the performances if the elastic
   stiffness is not close enough to the real one. Another drawback of
   this approach is that it may sometimes be convenient to have the real
-  values of the elastic properties for post-processings.
+  values of the elastic properties for post-processing.
 - The second solution is error-prone as it requires the user to take
   care that the definition of the elastic properties is consistent with
   the ones used in the behaviour.
@@ -415,10 +481,9 @@ The output of the behaviour is still the Cauchy stress. The stress
 measure on input and input are converted from or to the Cauchy
 stress.
 
-The non linear algorithm still relies the derivative of the Cauchy
+The non linear algorithm still relies on the derivative of the Cauchy
 stress with respect to the deformation gradient: the tangent operator
-returned by the behaviour is automatically converted to this
-derivative.
+returned by the behaviour is automatically converted to this derivative.
 
 ## Automatically load exported elastic properties for `Cast3M` behaviours {#sec:mtest:castem:exported_elastic_properties}
 
@@ -447,25 +512,6 @@ Various methods have been added to the `MTest` and `PipeTest` class in
 solvers for specific cases. See the [dedicated
 page](mfm-test-generator.html) for details.
 
-# New entries in the gallery
-
-<center>
-<iframe width="560" height="315" src="https://www.youtube.com/embed/IGocYZKyvgQ" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
-</iframe>
-</center>
-
-Two new entries are available in the gallery:
-
-- The first one describes the implementation of the Skorohold-Olevsky
-  Viscous Sintering (SOVS) model. This model predicts sintering
-  shrinkage and densification of ceramics and composites. It serves to
-  enhance our ability to understand, predict, and control sintering. See
-  [this page](http://tfel.sourceforge.net/sovs.html) for details.
-- The second one describes the implementation of a non linear elastic
-  behaviour which allows reproduction the material response of a plastic
-  behaviour of the Ramberg-Osgood type. See [this
-  page](RambergOsgoodNonLinearElasticity) for details.
-
 # `TFEL`' core libraries
 
 ## Improvements and new features of `TFEL/Material` library
@@ -477,6 +523,10 @@ deformation gradient is now available as a tangent operator for finite
 strain behaviour.
 
 ### The Mohr-Coulomb yield criterion
+
+Various functions allowing the computation of the Mohr-Coulomb yield
+criterion, its first and second derivatives are now available. See [this
+page](MohrCoulomb.html) for details.
 
 ## New library: `TFELUnicodeSupport`
 

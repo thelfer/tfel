@@ -217,7 +217,7 @@ domain specific language to be used:
 The `@Behaviour` allows giving a name the behaviour:
 
 ~~~~{.cxx}
-@Behaviour FichantLaBorderieDamageAndTorelliLoadInducedThermalStrain;
+@Behaviour FichantLaBorderieDamageAndTorelliLoadInducedThermalStrainBehaviour;
 ~~~~
 
 Defining the name of behaviour is required.
@@ -427,7 +427,7 @@ Tmax.setEntryName("MaximalValueOfTheTemperature");
 ~~~~{.cxx}
 @TangentOperator {
   if (smt == ELASTIC) {
-    Dt = D;
+    Dt = De;
   } else if (smt==CONSISTENTTANGENTOPERATOR){
     Stensor4 ddeel_ddeto;
     getPartialJacobianInvert(ddeel_ddeto);

@@ -1,5 +1,5 @@
 @DSL Implicit;
-@Behaviour FichantLaBorderieDamageAndTorelliLoadInducedThermalStrain;
+@Behaviour FichantLaBorderieDamageAndTorelliLoadInducedThermalStrainBehaviour;
 @Author Giacomo Torelli;
 @Date 25 / 03 / 2018;
 @Description {
@@ -139,7 +139,7 @@ Tmax.setEntryName("MaximalValueOfTheTemperature");
 
 @TangentOperator {
   if (smt == ELASTIC) {
-    Dt = D;
+    Dt = De;
   } else if (smt==CONSISTENTTANGENTOPERATOR){
     Stensor4 ddeel_ddeto;
     getPartialJacobianInvert(ddeel_ddeto);
