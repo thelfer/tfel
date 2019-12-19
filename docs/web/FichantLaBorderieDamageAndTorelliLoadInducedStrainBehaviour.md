@@ -31,16 +31,17 @@
 
 This document describes how to build a behaviour of concrete describing
 the damage evolution following Fichant-La Borderie and the load induced
-thermal strain (`LITS`) following Torelli et al
-(@torelli_confinement-dependent_2018).
+thermal strain (`LITS`) following Torelli et al (See
+[@fichant_endommagement_1996;@gangnant_etude_2016;@torelli_confinement-dependent_2018;@draup_development_2019]
+for details).
 
 We strongly advice readers to refer to the following documents before
 continuing:
 
 - The implementation of the Fichant-La Borderie damage behaviour is
   detailled [here](FichantLaBorderieDamageBehaviour.html).
-- The implementation of the Fichant-LaBorderie damage behaviour is
-  detailled [here](LoadInducedThermalStrainBehaviourTorelli2018.html).
+- The implementation of the the load induced thermal strain is detailled
+  [here](LoadInducedThermalStrainBehaviourTorelli2018.html).
 
 # Description of the coupled behaviour
 
@@ -437,3 +438,4 @@ Tmax.setEntryName("MaximalValueOfTheTemperature");
 ~~~~
 
 # References
+

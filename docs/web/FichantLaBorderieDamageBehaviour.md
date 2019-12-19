@@ -29,13 +29,15 @@ pandoc -f markdown-markdown_in_html_blocks+tex_math_single_backslash+grid_tables
 -->
 
 This document describes how to implement the Fichant-La Borderie damage
-behaviour.
+behaviour. See [@fichant_endommagement_1996;@gangnant_etude_2016] for a
+detailed description.
 
 The Fichant-La Borderie (FLB) model is an extension of the Mazars model,
 which:
 
 - simplifies the number of input parameters defining the tensile and
   compressive asymmetry.
+- handles unilateral effects (i.e., crack closure).
 - features an energy based regularisation method, thus allowing a
   fracture finite energy in a finite element implementation
 
@@ -89,6 +91,33 @@ at the end of the time step, \(\ets{d}\) is determined as follows:
 
 where \(\ets{\eeq}\) is the value of the equivalent strain at the end of
 the time step.
+
+> **Hillerborg regularisation (see @hillerborg_analysis_1976)**
+> 
+> Local damage models suffers from spurious mesh dependency. In particular, the 
+> dissipated energy tends to \(0\) as the mesh size decreases.
+> 
+> The Hillerborg regularisation consists in introducing the mesh size in the 
+> material parameter to get a constant dissipated energy.
+> 
+> In the FLB case, \(B_{t}\) can be deduced from the fracture energy \(G_{f}\)
+> and the mesh size \(h\) as follows:
+> 
+> \[
+> B_{t} =\Frac{h\,E\,\epsilon_{0}}{G_{f} −\Frac{1}{2}\,E\,\epsilon_{0}^{2}\,h}
+> \]
+>
+> where \(E\) is the Young modulus
+>
+> Note that \(B_{t}\) must be positive, which, for a given fracture
+> energy \(G_{f}\), imposes a maximal value for the mesh size \(h\).
+>
+> \[
+> h < \Frac{2\,G_{f}}{E\,\epsilon_{0}^{2}}
+> \]
+> 
+> A condition which states that the elastic energy stored inside an element
+> at the onset of damage must be less than dissipated energy by damage.
 
 > **Derivatives of the damage**
 >
@@ -573,3 +602,6 @@ case of damage increase
   // final stress
   sig = fpd * sp + fpn * sn;
 -->
+
+# References
+
