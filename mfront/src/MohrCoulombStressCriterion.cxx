@@ -159,7 +159,7 @@ namespace mfront {
       if (r == FLOWCRITERION) {
 #if __cplusplus >= 201703L
         code += "const auto [seqf" + id + ",dseq" + id + "_ds" + id + "] = ";
-        code += "computeMohrCoulombStressCriterionNormal(this->" + cn + ", s" +
+        code += "computeMohrCoulombStressCriterionNormal(this->" + pn + ", s" +
                 id + ");\n";
 #else  /* __cplusplus >= 201703L */
         code += "stress seqf" + id + ";\n";
