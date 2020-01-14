@@ -405,6 +405,13 @@ macro(python_module_base fullname name)
   endif(WIN32)
   set_target_properties(py_${fullname} PROPERTIES PREFIX "")
   set_target_properties(py_${fullname} PROPERTIES OUTPUT_NAME ${name})
+  target_include_directories(py_${fullname}
+    PRIVATE "${PROJECT_SOURCE_DIR}/bindings/python/include"
+    PRIVATE "${PROJECT_SOURCE_DIR}/include")
+  target_include_directories(py_${fullname}
+    SYSTEM
+    PRIVATE "${Boost_INCLUDE_DIRS}"
+    PRIVATE "${PYTHON_INCLUDE_DIRS}")
   if(TFEL_USES_CONAN)
     target_link_libraries(py_${fullname}
       ${CONAN_LIBS} ${PYTHON_LIBRARIES})
@@ -413,19 +420,6 @@ macro(python_module_base fullname name)
       ${Boost_PYTHON_LIBRARY} ${PYTHON_LIBRARIES})
   endif(TFEL_USES_CONAN)
 endmacro(python_module_base)
-
-# macro(python_module name)
-#   python_module_base(${name} ${name} ${ARGN})
-#     if(TFEL_APPEND_SUFFIX)
-#       install(TARGETS py_${name}
-# 	DESTINATION lib${LIB_SUFFIX}/tfel-${TFEL_SUFFIX}/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}/site-packages/
-# 	COMPONENT python_bindings)
-#     else(TFEL_APPEND_SUFFIX)
-#       install(TARGETS py_${name}
-# 	DESTINATION lib${LIB_SUFFIX}/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}/site-packages/
-# 	COMPONENT python_bindings)
-#     endif(TFEL_APPEND_SUFFIX)
-# endmacro(python_module)
 
 macro(python_lib_module name package)
   python_module_base(${package}_${name} ${name} ${ARGN})
@@ -462,10 +456,17 @@ endmacro(tfel_python_module)
 
 macro(mfront_python_module name)
   python_lib_module(${name} mfront ${ARGN})
+  set(fullname "mfront_${name}")
+  target_include_directories(py_${fullname}
+    PRIVATE "${PROJECT_SOURCE_DIR}/mfront/include")
 endmacro(mfront_python_module)
 
 macro(mtest_python_module name)
   python_lib_module(${name} mtest ${ARGN})
+  set(fullname "mtest_${name}")
+  target_include_directories(py_${fullname}
+    PRIVATE "${PROJECT_SOURCE_DIR}/mtest/include"
+    PRIVATE "${PROJECT_SOURCE_DIR}/mfront/include")
 endmacro(mtest_python_module)
 
 macro(tfel_python_script_base dir)
