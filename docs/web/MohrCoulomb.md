@@ -1,5 +1,5 @@
 % Invariant-based implementation of the Mohr-Coulomb elasto-plastic model in OpenGeoSys using MFront
-% Thomas Nagel, Dmitri Naumov, Thomas Helfer
+% Gentien Marois, Thomas Nagel, Dmitri Naumov, Thomas Helfer
 % 1/08/2019
 
 <!--
@@ -31,13 +31,28 @@ pandoc --filter pandoc-crossref --filter pandoc-citeproc --bibliography=bibliogr
 \newcommand{\tns}[1]{{\underset{\tilde{}}{\mathbf{#1}}}}
 \newcommand{\transpose}[1]{{#1^{\mathop{T}}}}
 
-The following proposal is based on @Nagel2016 but extended by an apex
-smoothing from @Abbo1995 (hyperbolic approximation).
+This page describes how to implement a non-associated plastic behaviour
+based on the Mohr-Coulomb criterion. The algorithm mostly follows the
+work of @Nagel2016 and relies on an apex smoothing introduced by @Abbo1995.
+
+This implementation has been introduced in
+[OpenGeoSys](https://www.opengeosys.org/), as illustrated below:
 
 <center>
 <iframe width="560" height="315" src="https://www.youtube.com/embed/juWMIkJ64iE" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
 </iframe>
 </center>
+
+This page shows:
+
+- how to implement a plastic behaviour based on the third invariants of
+  the stress tensor.
+- how to simply the implementation by moving the evoluation of the
+  stress criteria (and its first and second derivatives) in a seperate
+  header file.
+- how the implementation finally looks like once introduced in the
+  [`StandardElastoViscoplasticity`
+  brick](http://tfel.sourceforge.net/StandardElastoViscoPlasticityBrick.html)
 
 # Description of the behaviour
 
