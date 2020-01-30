@@ -65,6 +65,7 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./release-notes-3.2.md				      \
 	   ./release-notes-3.2.1.md				      \
 	   ./release-notes-3.2.2.md				      \
+	   ./release-notes-3.2.3.md				      \
 	   ./release-notes-3.3.md				      \
 	   ./hyperelasticity.md				              \
 	   ./search.md				              \
@@ -120,10 +121,11 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./MericCailletaudSingleCrystalPlasticity.md                \
 	   ./MohrCoulomb.md                                           \
 	   ./FichantLaBorderieDamageBehaviour.md                            \
-       ./LoadInducedThermalStrainBehaviourTorelli2018.md                \
-       ./FichantLaBorderieDamageAndTorelliLoadInducedStrainBehaviour.md \
-	   ./theory.md                                                      \
-	   ./robots.txt						                                \
+           ./LoadInducedThermalStrainBehaviourTorelli2018.md                \
+           ./FichantLaBorderieDamageAndTorelliLoadInducedStrainBehaviour.md \
+           ./FischerBurmeister.md                                     \
+	   ./theory.md                                                \
+	   ./robots.txt						      \
 	   ./crossdomain.xml					      \
 	   ./js/vendor						      \
 	   ./js/vendor/modernizr-2.6.2.min.js			      \
@@ -304,7 +306,7 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./img/XperMFront.xcf			                      \
 	   ./img/XperMFront.png			                          \
 	   ./img/RambergOsgoodNonLinearElasticity-UniaxialTensileTest.png \
-       ./img/FichantLaBorderieDamageBehaviourUniaxialTensileTest.png  \
+           ./img/FichantLaBorderieDamageBehaviourUniaxialTensileTest.png  \
 	   ./media/epx1.mp4                                               \
 	   ./media/epx2.mp4                                           \
 	   ./media/abaqus-explicit.mp4                                \

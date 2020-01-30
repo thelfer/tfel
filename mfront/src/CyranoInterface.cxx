@@ -566,15 +566,18 @@ namespace mfront {
       // this must be added for gcc 4.7.2
       const auto astress = [this,&d, throw_if]() -> std::pair<bool, SupportedTypes::TypeSize> {
         SupportedTypes::TypeSize o;
-	// skipping the temperature
-	auto pev = std::next(d.getExternalStateVariables().begin());
-        while (pev!=d.getExternalStateVariables().end()) {
+        // skipping the temperature
+        auto pev = std::next(d.getExternalStateVariables().begin());
+        while (pev != d.getExternalStateVariables().end()) {
           if (d.getExternalName(pev->name) == tfel::glossary::Glossary::AxialStress) {
-            throw_if(SupportedTypes::getTypeFlag(pev->type) != SupportedTypes::SCALAR,
-                     "invalid type for the `AxialStress` external state variable");
+            throw_if(
+                SupportedTypes::getTypeFlag(pev->type) !=
+                    SupportedTypes::SCALAR,
+                "invalid type for the `AxialStress` external state variable");
             return {true, o};
           }
           o += SupportedTypes::getTypeSize(pev->type, pev->arraySize);
+          ++pev;
         }
         return {false, o};
       }();

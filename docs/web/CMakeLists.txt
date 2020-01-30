@@ -112,6 +112,7 @@ pandoc_html(release-notes-3.1.5 "--toc" "--toc-depth=2")
 pandoc_html(release-notes-3.2   "--toc" "--toc-depth=2" "--number-sections" "-c css/slideshow.css")
 pandoc_html(release-notes-3.2.1 "--toc" "--toc-depth=2")
 pandoc_html(release-notes-3.2.2 "--toc" "--toc-depth=2")
+pandoc_html(release-notes-3.2.3 "--toc" "--toc-depth=2")
 pandoc_html(release-notes-3.3   "--toc" "--toc-depth=2" "--number-sections" "-c css/slideshow.css")
 pandoc_html(theory  "--toc" "--toc-depth=2")
 pandoc_html(tensors "--toc" "--toc-depth=2" "--number-sections")
@@ -125,6 +126,7 @@ pandoc_html(MohrCoulomb "--toc" "--toc-depth=2")
 pandoc_html(FichantLaBorderieDamageBehaviour "--toc" "--toc-depth=2")
 pandoc_html(LoadInducedThermalStrainBehaviourTorelli2018  "--toc" "--toc-depth=2")
 pandoc_html(FichantLaBorderieDamageAndTorelliLoadInducedStrainBehaviour   "--toc" "--toc-depth=2")
+pandoc_html(FischerBurmeister "--toc" "--toc-depth=2")
 
 # mfront keywords
 
