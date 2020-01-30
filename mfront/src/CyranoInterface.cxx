@@ -575,6 +575,7 @@ namespace mfront {
             return {true, o};
           }
           o += SupportedTypes::getTypeSize(pev->type, pev->arraySize);
+          ++pev;
         }
         return {false, o};
       }();
