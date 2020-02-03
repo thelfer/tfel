@@ -403,6 +403,7 @@ if true, plastic loading
 @LocalVariable real cos_3_lodeT;
 @LocalVariable real sin_3_lodeT;
 @LocalVariable real tan_3_lodeT;
+@LocalVariable real a_G;
 ~~~~
 
 
@@ -434,6 +435,7 @@ First, we define some variables :
   cos_3_lodeT = cos(3. * lodeT);
   sin_3_lodeT = sin(3. * lodeT);
   tan_3_lodeT = tan(3. * lodeT);
+  a_G = (a * tan(phi)) / tan(psi)
 ~~~~
 
 Then the  `computeElasticPrediction` method (introducted with the 
@@ -589,7 +591,7 @@ The flow direction is computed :
     const auto dev_s_squared = computeJ3Derivative(
         sig); // replaces dev_s_squared = deviator(square(s));
     const auto dG_dI1 = sin_psi / 3.;
-    const auto root = max(sqrt(J2 * KG * KG + a * a * sin_psi * sin_psi),
+    const auto root = max(sqrt(J2 * KG * KG + a_G * a_G * sin_psi * sin_psi),
                           local_zero_tolerance);
     const auto dG_dJ2 = KG / (2. * root) * (KG - tan_3_lode * dKG_dlode);
     const auto dG_dJ3 = J2 * KG * tan_3_lode / (3. * J3 * root) * dKG_dlode;
@@ -750,6 +752,7 @@ The new MFront file is however much shorter and clearer:
 @ModellingHypotheses{".+"};
 
 @RequireStiffnessTensor<UnAltered>;
+@Parameter pi = 3.14159265359;
 
 @StateVariable real p;
 p.setGlossaryName("EquivalentPlasticStrain");
@@ -770,11 +773,13 @@ a.setEntryName("TensionCutOffParameter");
 @LocalVariable bool F; // if true, plastic loading
 @LocalVariable MohrCoulombParameters<StressStensor> pf;
 @LocalVariable MohrCoulombParameters<StressStensor> pg;
+@LocalVariable real a_G;
 
 @InitLocalVariables {
+  a_G = (a * tan((phi*pi)/180)) / tan((psi*pi)/180);
   constexpr const auto u = MohrCoulombParameters<StressStensor>::DEGREE;
   pf = makeMohrCoulombParameters<StressStensor, u>(c, phi, lodeT, a);
-  pg = makeMohrCoulombParameters<StressStensor, u>(c, psi, lodeT, a);
+  pg = makeMohrCoulombParameters<StressStensor, u>(c, psi, lodeT, a_G);
   const auto sel = computeElasticPrediction();
   const auto smc = computeMohrCoulombStressCriterion(pf, sel);
   F = smc > stress(0);
@@ -842,7 +847,7 @@ The MFront file is now:
       c : 3.e1,      // cohesion
       phi : 0.174532925199433,    // friction angle or dilatancy angle
       lodeT : 0.506145483078356,  // transition angle as defined by Abbo and Sloan
-      a_G : 1e1       // tension cuff-off parameter
+      a : 3e1       // tension cuff-off parameter
     },
     isotropic_hardening : "Linear" {R0 : "0"}
   }
@@ -905,10 +910,10 @@ and the material-dependent derivatives
 	\left. \frac{\partial G_\mathrm{F}}{\partial I_1} \right|_{J_2,J_3} &= \frac{1}{3} \sin \psi
 	\\
 	\left. \frac{\partial G_\mathrm{F}}{\partial J_2} \right|_{I_1,\theta} &= 
-	\frac{K'^2}{2\sqrt{J_2 K_G^2 + a^2 \sin^2 \psi}}
+	\frac{K'^2}{2\sqrt{J_2 K_G^2 + a_G^2 \sin^2 \psi}}
 	\\
 	\left. \frac{\partial G_\mathrm{F}}{\partial \theta} \right|_{I_1,J_2} &= 
-	\frac{J_2 K_G}{\sqrt{J_2 K_G^2 + a^2 \sin^2 \psi}} \frac{\partial K_G}{\partial \theta}
+	\frac{J_2 K_G}{\sqrt{J_2 K_G^2 + a_G^2 \sin^2 \psi}} \frac{\partial K_G}{\partial \theta}
 	\\
 	\frac{\partial K}{\partial \theta} &= \begin{cases}
 	-\sin \theta - \frac{1}{\sqrt{3}}\sin \phi \cos\theta & |\theta| < \theta_\mathrm{T}
@@ -921,7 +926,7 @@ and the material-dependent derivatives
 The following combined entries are useful:
 \[
 \begin{aligned}
-	\frac{\partial G_\mathrm{F}}{\partial \theta}\frac{\partial \theta}{\partial J_2} &= -\frac{K_G\tan 3\theta}{2\sqrt{J_2 K_G^2 + a^2 \sin^2 \psi}} \frac{\partial K_G}{\partial \theta} 
+	\frac{\partial G_\mathrm{F}}{\partial \theta}\frac{\partial \theta}{\partial J_2} &= -\frac{K_G\tan 3\theta}{2\sqrt{J_2 K_G^2 + a_G^2 \sin^2 \psi}} \frac{\partial K_G}{\partial \theta} 
 \end{aligned}
 \]
 
@@ -931,9 +936,9 @@ Thus,
 	\left. \frac{\partial G_\mathrm{F}}{\partial I_1} \right|_{J_2,J_3} &= \frac{1}{3} \sin \psi
 	\\
 	\left.\frac{\partial G_\mathrm{F}}{\partial J_2}\right|_{I_1,J_3} &= 
-	\frac{K_G}{2\sqrt{J_2 K_G^2 + a^2 \sin^2 \psi}} \left(K_G - \tan 3\theta \frac{\partial K_G}{\partial \theta} \right)
+	\frac{K_G}{2\sqrt{J_2 K_G^2 + a_G^2 \sin^2 \psi}} \left(K_G - \tan 3\theta \frac{\partial K_G}{\partial \theta} \right)
 	\\
-	\left.\frac{\partial G_\mathrm{F}}{\partial J_3}\right|_{I_1,J_2} &= \frac{J_2K_G\tan 3\theta}{3J_3\sqrt{J_2 K_G^2 + a^2 \sin^2 \psi}} \frac{\partial K_G}{\partial \theta}
+	\left.\frac{\partial G_\mathrm{F}}{\partial J_3}\right|_{I_1,J_2} &= \frac{J_2K_G\tan 3\theta}{3J_3\sqrt{J_2 K_G^2 + a_G^2 \sin^2 \psi}} \frac{\partial K_G}{\partial \theta}
 \end{aligned}
 \]
 
@@ -1003,18 +1008,18 @@ Material-dependent derivatives:
 \[
 \begin{aligned}
 	\frac{\partial^2 G_\mathrm{F}}{\partial J_2^2} &= 
-	-\frac{K_G^4}{4\sqrt{(J_2 K_G^2 + a^2 \sin^2 \psi)^3}}
+	-\frac{K_G^4}{4\sqrt{(J_2 K_G^2 + a_G^2 \sin^2 \psi)^3}}
 	\\
 	\frac{\partial^2 G_\mathrm{F}}{\partial \theta^2} &= 
-	\left( \frac{J_2}{\sqrt{J_2 K_G^2 + a^2 \sin^2 \psi}} - \frac{J_2^2 K_G^2}{\sqrt{(J_2 K_G^2 + a^2 \sin^2 \psi)^3}} \right)\left(\frac{\partial K_G}{\partial \theta}\right)^2 \\
-	&+  \frac{J_2K_G}{\sqrt{J_2 K_G^2 + a^2 \sin^2 \psi}} \frac{\partial^2 K_G}{\partial \theta^2}  
+	\left( \frac{J_2}{\sqrt{J_2 K_G^2 + a_G^2 \sin^2 \psi}} - \frac{J_2^2 K_G^2}{\sqrt{(J_2 K_G^2 + a_G^2 \sin^2 \psi)^3}} \right)\left(\frac{\partial K_G}{\partial \theta}\right)^2 \\
+	&+  \frac{J_2K_G}{\sqrt{J_2 K_G^2 + a_G^2 \sin^2 \psi}} \frac{\partial^2 K_G}{\partial \theta^2}  
 \\
-	&=  \frac{J_2}{\sqrt{J_2 K_G^2 + a^2 \sin^2 \psi}} \left[\left(\frac{\partial K_G}{\partial \theta}\right)^2 \left(1 - \frac{J_2K_G^2}{J_2 K_G^2 + a^2 \sin^2 \psi} \right) + K_G \frac{\partial^2 K_G}{\partial \theta^2}  \right]
+	&=  \frac{J_2}{\sqrt{J_2 K_G^2 + a_G^2 \sin^2 \psi}} \left[\left(\frac{\partial K_G}{\partial \theta}\right)^2 \left(1 - \frac{J_2K_G^2}{J_2 K_G^2 + a_G^2 \sin^2 \psi} \right) + K_G \frac{\partial^2 K_G}{\partial \theta^2}  \right]
 	\\
 	\frac{\partial^2 G_\mathrm{F}}{\partial J_2 \partial \theta} &= 
-	\left( \frac{K_G}{\sqrt{J_2 K_G^2 + a^2 \sin^2 \psi}} - \frac{J_2 K_G^3}{2\sqrt{(J_2 K_G^2 + a^2 \sin^2 \psi)^3}} \right)\frac{\partial K_G}{\partial \theta}
+	\left( \frac{K_G}{\sqrt{J_2 K_G^2 + a_G^2 \sin^2 \psi}} - \frac{J_2 K_G^3}{2\sqrt{(J_2 K_G^2 + a_G^2 \sin^2 \psi)^3}} \right)\frac{\partial K_G}{\partial \theta}
 	\\
-	&=\frac{K_G}{\sqrt{J_2 K_G^2 + a^2 \sin^2 \psi}}\frac{\partial K_G}{\partial \theta}\left( 1 - \frac{J_2 K_G^2}{2(J_2 K_G^2 + a^2 \sin^2 \psi)} \right)
+	&=\frac{K_G}{\sqrt{J_2 K_G^2 + a_G^2 \sin^2 \psi}}\frac{\partial K_G}{\partial \theta}\left( 1 - \frac{J_2 K_G^2}{2(J_2 K_G^2 + a_G^2 \sin^2 \psi)} \right)
 	\\
 	\frac{\partial^2 K}{\partial \theta^2} &= \begin{cases}
 	-\cos \theta + \frac{1}{\sqrt{3}}\sin \phi \sin\theta & |\theta| < \theta_\mathrm{T}
