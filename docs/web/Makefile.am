@@ -124,6 +124,7 @@ EXTRA_DIST=CMakeLists.txt					      \
            ./LoadInducedThermalStrainBehaviourTorelli2018.md                \
            ./FichantLaBorderieDamageAndTorelliLoadInducedStrainBehaviour.md \
            ./FischerBurmeister.md                                     \
+           ./TFELSystem.md                                            \
 	   ./theory.md                                                \
 	   ./robots.txt						      \
 	   ./crossdomain.xml					      \
