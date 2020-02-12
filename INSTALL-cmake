@@ -58,11 +58,14 @@ Options
 cmake usefull variables
 =======================
 
-  CASTEM_INSTALL_PATH  : specify where the castem has been installed
-  ZSET_INSTALL_PATH    : specify where the ZSET sofware has been installed
-  CMAKE_TOOLCHAIN_FILE : specify a tool chain file
-  CMAKE_BUILD_TYPE     : two values are supported 'Release' and 'Debug'
-  TFEL_SVN_REVISION    : tfel-svn revision
+- CASTEM_INSTALL_PATH  : specify where the castem has been installed
+- ZSET_INSTALL_PATH    : specify where the ZSET sofware has been installed
+- CMAKE_TOOLCHAIN_FILE : specify a tool chain file
+- CMAKE_BUILD_TYPE     : two values are supported 'Release' and 'Debug'
+- TFEL_SVN_REVISION    : tfel-svn revision
+- `USE_EXTERNAL_COMPILER_FLAGS`: set to `ON` to use the `CFLAGS` and
+                                 `CXXFLAGS` environment variables
+				 to build `TFEL`
 
 cmake typical usage
 ===================
