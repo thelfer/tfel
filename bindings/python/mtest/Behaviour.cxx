@@ -192,6 +192,13 @@ void declareBehaviour() {
       .def("getUnsignedShortParameterDefaultValue",
            &Behaviour::getUnsignedShortParameterDefaultValue,
            "return the default value of an unsigned short parameter")
+      .def("setParameter", &Behaviour::setParameter,
+           "set the given parameter' value")
+      .def("setIntegerParameter", &Behaviour::setIntegerParameter,
+           "set the given parameter' value")
+      .def("setUnsignedIntegerParameter",
+           &Behaviour::setUnsignedIntegerParameter,
+           "set the given parameter' value")
       .def("hasBounds", &Behaviour::hasBounds, "return true if the given variable has bounds")
       .def("hasLowerBound", &Behaviour::hasLowerBound,
            "return true if the given variable has a lower bound")
