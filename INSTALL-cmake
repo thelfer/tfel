@@ -88,6 +88,9 @@ cmake usefull variables
 - `TFEL_DL_LIBRARY`            : set the path the `dl` library. This library
   			       	 can sometimes not be found when using non
 				 default compilers (eg. the PGI compiler).
+- `USE_EXTERNAL_COMPILER_FLAGS`: set to `ON` to use the `CFLAGS` and
+                                 `CXXFLAGS` environment variables
+				 to build `TFEL`
 
 cmake typical usage
 ===================
