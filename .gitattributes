@@ -1679,6 +1679,8 @@ include/TFEL/Math/FactorizedKriging.hxx -text
 include/TFEL/Math/FactorizedKriging1D1D.hxx -text
 include/TFEL/Math/FactorizedKriging1D2D.hxx -text
 include/TFEL/Math/FactorizedKriging1D3D.hxx -text
+include/TFEL/Math/FischerBurmeister.hxx -text
+include/TFEL/Math/FischerBurmeister.ixx -text
 include/TFEL/Math/Forward/Complex.hxx -text
 include/TFEL/Math/Forward/MatrixConcept.hxx -text
 include/TFEL/Math/Forward/ST2toST2Concept.hxx -text

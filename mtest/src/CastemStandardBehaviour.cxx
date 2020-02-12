@@ -242,7 +242,7 @@ namespace mtest {
             << "setOptionalMaterialPropertiesDefaultValues: "
             << " elastic material property '" << n
             << "' is already defined. This definition can be inconstent with "
-            << "the material property used internally by the behvaviour. "
+            << "the material property used internally by the behaviour. "
             << "Remove its definition to use the property exported by the "
             << "behaviour and remove this warning.\n";
         return;

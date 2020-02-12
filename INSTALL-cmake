@@ -82,14 +82,17 @@ cmake usefull variables
   			         version of python shall be passed, not
   			         the revision version or the detection
   			         fails.
-- `TFEL_BROKEN_LIBMATH`        : set to `true` to disable tests based on
+- `TFEL_BROKEN_LIBMATH`        : set to `ON` to disable tests based on
                                  changing the rounding mode. This is not
 				 well supported by old version of the GNU
 				 library for example (such as the one
 				 delivered with debian wheezy).
 - `TFEL_DL_LIBRARY`            : set the path the `dl` library. This library
   			       	 can sometimes not be found when using non
-				 default compilers (eg. the PGI compiler).
+			       	 default compilers (eg. the PGI compiler).
+- `USE_EXTERNAL_COMPILER_FLAGS`: set to `ON` to use the `CFLAGS` and
+                                 `CXXFLAGS` environment variables
+				 to build `TFEL`
 
 cmake typical usage
 ===================

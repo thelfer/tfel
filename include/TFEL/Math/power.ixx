@@ -54,9 +54,9 @@ namespace tfel{
       static TFEL_MATH_INLINE
       T exe(const T& x)
       {
-	T tmp  = PowerPos<N>::exe(x);
-	T tmp2 = PowerPos<M>::exe(x); 
-	return tmp*tmp*tmp*tmp*tmp2;
+        const auto  tmp = PowerPos<N>::exe(x);
+        const auto tmp2 = PowerPos<M>::exe(x);
+        return tmp * tmp * tmp * tmp * tmp2;
       }
     };
 
@@ -67,30 +67,26 @@ namespace tfel{
       static TFEL_MATH_INLINE
       T exe(const T& x)
       {
-	const T tmp  = PowerPos<N>::exe(x);
-	return tmp*tmp*tmp*tmp;
+        const auto tmp = PowerPos<N>::exe(x);
+        return tmp*tmp*tmp*tmp;
       }
     };
 
     template<unsigned int M>
     struct TFEL_VISIBILITY_LOCAL PowerPosImpl<0u,M>
-    {  
-      template<typename T>
-      static TFEL_MATH_INLINE
-      T exe(const T& x)
-      {
-	return PowerPos<M>::exe(x);
+    {
+      template <typename T>
+      static TFEL_MATH_INLINE T exe(const T& x) {
+        return PowerPos<M>::exe(x);
       }
     };
 
     template<>
     struct TFEL_VISIBILITY_LOCAL PowerPosImpl<0u,0u>
-    {  
-      template<typename T>
-      static TFEL_MATH_INLINE
-      T exe(const T&)
-      {
-	return {1};
+    {
+      template <typename T>
+      static TFEL_MATH_INLINE T exe(const T&) {
+        return {1};
       }
     };
 

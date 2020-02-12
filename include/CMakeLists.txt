@@ -509,6 +509,8 @@ install_header(TFEL/Math/AccelerationAlgorithms FAnderson.ixx)
 install_header(TFEL/Math/AccelerationAlgorithms AndersonBase.hxx)
 install_header(TFEL/Math/AccelerationAlgorithms AndersonBase.ixx)
 install_header(TFEL/Math cadna.hxx)
+install_header(TFEL/Math FischerBurmeister.hxx)
+install_header(TFEL/Math FischerBurmeister.ixx)
 
 install_header(TFEL/Material ModellingHypothesis.hxx)
 install_header(TFEL/Material OutOfBoundsPolicy.hxx)

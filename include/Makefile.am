@@ -484,6 +484,8 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/AccelerationAlgorithms/FAnderson.ixx						     \
 			TFEL/Math/AccelerationAlgorithms/AndersonBase.hxx					     \
 			TFEL/Math/AccelerationAlgorithms/AndersonBase.ixx					     \
+			TFEL/Math/FischerBurmeister.hxx					                             \
+			TFEL/Math/FischerBurmeister.ixx					                             \
 			TFEL/Math/cadna.hxx					                                     \
 			TFEL/Metaprogramming/Forward/TypeList.hxx                                                    \
 			TFEL/Metaprogramming/IsConstCallable.hxx                                                     \
