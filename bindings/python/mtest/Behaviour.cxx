@@ -137,17 +137,22 @@ void declareBehaviour() {
       .def("getThermodynamicForcesSize", &Behaviour::getThermodynamicForcesSize,
            "Return the size of a vector able to contain "
            "all the components of the thermodynamic forces")
-      .def("getStensorComponentsSuffixes", &Behaviour::getStensorComponentsSuffixes,
+      .def("getStensorComponentsSuffixes",
+           &Behaviour::getStensorComponentsSuffixes,
            "Return the components suffixes of a symmetric tensor")
-      .def("getVectorComponentsSuffixes", &Behaviour::getVectorComponentsSuffixes,
+      .def("getVectorComponentsSuffixes",
+           &Behaviour::getVectorComponentsSuffixes,
            "Return the components suffixes of a vector")
-      .def("getTensorComponentsSuffixes", &Behaviour::getTensorComponentsSuffixes,
+      .def("getTensorComponentsSuffixes",
+           &Behaviour::getTensorComponentsSuffixes,
            "Return the components suffixes of a tensor")
       .def("getGradientsComponents", &Behaviour::getGradientsComponents,
            "Return the components of the driving variables")
-      .def("getThermodynamicForcesComponents", &Behaviour::getThermodynamicForcesComponents,
+      .def("getThermodynamicForcesComponents",
+           &Behaviour::getThermodynamicForcesComponents,
            "Return the components of the thermodynamic forces")
-      .def("getGradientComponentPosition", &Behaviour::getGradientComponentPosition,
+      .def("getGradientComponentPosition",
+           &Behaviour::getGradientComponentPosition,
            "Return the position of the component of a driving variable")
       .def("getThermodynamicForceComponentPosition",
            &Behaviour::getThermodynamicForceComponentPosition,
@@ -159,40 +164,57 @@ void declareBehaviour() {
            "- 1 means that the behaviour is orthotropic.\n")
       .def("getMaterialPropertiesNames", &Behaviour::getMaterialPropertiesNames,
            "Return the names of the material properties")
-      .def("getInternalStateVariablesNames", &Behaviour::getInternalStateVariablesNames,
+      .def("getInternalStateVariablesNames",
+           &Behaviour::getInternalStateVariablesNames,
            "Return the names of the internal state variables")
-      .def("expandInternalStateVariablesNames", &Behaviour::expandInternalStateVariablesNames,
+      .def("expandInternalStateVariablesNames",
+           &Behaviour::expandInternalStateVariablesNames,
            "Return the names of the internal state variables, taking "
            "into account the suffixes for vectors, symmetric "
            "tensors and tensors")
-      .def("getInternalStateVariablesSize", &Behaviour::getInternalStateVariablesSize,
+      .def("getInternalStateVariablesSize",
+           &Behaviour::getInternalStateVariablesSize,
            "Return the size of the array of internal variables")
       .def("getInternalStateVariablesDescriptions",
            &Behaviour::getInternalStateVariablesDescriptions,
            "Return the descriptions the internal variables")
-      .def("getInternalStateVariableType", &Behaviour::getInternalStateVariableType,
+      .def("getInternalStateVariableType",
+           &Behaviour::getInternalStateVariableType,
            "Return the type of an internal variable:\n"
            "- 0 means that the internal state variable is a scalar\n"
            "- 1 means that the internal state variable is a symmetric tensor\n"
            "- 3 means that the internal state variable is a tensor\n")
-      .def("getInternalStateVariablePosition", &Behaviour::getInternalStateVariablePosition,
+      .def("getInternalStateVariablePosition",
+           &Behaviour::getInternalStateVariablePosition,
            "Return the internal state variable position")
-      .def("getExternalStateVariablesNames", &Behaviour::getExternalStateVariablesNames,
+      .def("getExternalStateVariablesNames",
+           &Behaviour::getExternalStateVariablesNames,
            "Return the names of the external state variables")
       .def("getParametersNames", &Behaviour::getParametersNames,
            "Return the names of the floating point parameters")
       .def("getIntegerParametersNames", &Behaviour::getIntegerParametersNames,
            "Return the names of the integer parameters")
-      .def("getUnsignedShortParametersNames", &Behaviour::getUnsignedShortParametersNames,
+      .def("getUnsignedShortParametersNames",
+           &Behaviour::getUnsignedShortParametersNames,
            "Return the names of the unsigned short parameters")
-      .def("getRealParameterDefaultValue", &Behaviour::getRealParameterDefaultValue,
+      .def("getRealParameterDefaultValue",
+           &Behaviour::getRealParameterDefaultValue,
            "return the default value of a parameter")
-      .def("getIntegerParameterDefaultValue", &Behaviour::getIntegerParameterDefaultValue,
+      .def("getIntegerParameterDefaultValue",
+           &Behaviour::getIntegerParameterDefaultValue,
            "return the default value of an integer parameter")
       .def("getUnsignedShortParameterDefaultValue",
            &Behaviour::getUnsignedShortParameterDefaultValue,
            "return the default value of an unsigned short parameter")
-      .def("hasBounds", &Behaviour::hasBounds, "return true if the given variable has bounds")
+      .def("setParameter", &Behaviour::setParameter,
+           "set the given parameter' value")
+      .def("setIntegerParameter", &Behaviour::setIntegerParameter,
+           "set the given parameter' value")
+      .def("setUnsignedIntegerParameter",
+           &Behaviour::setUnsignedIntegerParameter,
+           "set the given parameter' value")
+      .def("hasBounds", &Behaviour::hasBounds,
+           "return true if the given variable has bounds")
       .def("hasLowerBound", &Behaviour::hasLowerBound,
            "return true if the given variable has a lower bound")
       .def("hasUpperBound", &Behaviour::hasUpperBound,
