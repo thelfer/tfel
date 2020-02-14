@@ -31,6 +31,8 @@ Options
 =======
 
   enable-static     : compiles static libraries
+  enable-eigen      : allows support for eigen linear solvers
+  enable-mkl        : allows support for linear solvers provided by the Math Kernel Library
   enable-fortran    : enables fortran support
   enable-python     : enables python support
   enable-java       : enables java support

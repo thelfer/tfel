@@ -78,6 +78,10 @@ MFRONTS=StandardElastoViscoPlasticityTest1.mfront                         \
 	StandardElastoViscoPlasticityPlasticityTest15_nj.mfront               \
 	StandardElastoViscoPlasticityPlasticityTest15_na.mfront               \
 	StandardElastoViscoPlasticityPlasticityTest15_nanj.mfront             \
+	StandardElastoViscoPlasticityPlasticityTest16.mfront                  \
+	StandardElastoViscoPlasticityPlasticityTest16_nj.mfront               \
+	StandardElastoViscoPlasticityPlasticityTest17.mfront                  \
+	StandardElastoViscoPlasticityPlasticityTest17_nj.mfront               \
 	StandardElastoViscoPlasticityIsotropicDamageHookeLaw.mfront           \
 	StandardElastoViscoPlasticityIsotropicDamageHookeLaw_nj.mfront        \
 	StandardElastoViscoPlasticityIsotropicDamageHookeLaw2.mfront          \
@@ -102,7 +106,9 @@ MFRONTS=StandardElastoViscoPlasticityTest1.mfront                         \
 	references/standardelastoviscoplasticityplasticitytest11_E.ref        \
 	references/standardelastoviscoplasticityplasticitytest11_S.ref        \
 	references/standardelastoviscoplasticityplasticitytest11-cyclic_E.ref \
-	references/standardelastoviscoplasticityplasticitytest11-cyclic_S.ref
+	references/standardelastoviscoplasticityplasticitytest11-cyclic_S.ref \
+	references/standardelastoviscoplasticityplasticitytest16.ref          \
+	references/standardelastoviscoplasticityplasticitytest17.ref
 
 testsdir = $(pkgdatadir)/mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity
 tests_DATA = $(MFRONTS)

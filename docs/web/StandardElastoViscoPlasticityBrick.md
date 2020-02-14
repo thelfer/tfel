@@ -631,7 +631,7 @@ R\paren{p}=R_{0}+H\,p
 
 #### Options
 
-The `Swift` isotropic hardening rule expects one of the two following
+The `Linear` isotropic hardening rule expects one of the two following
 material properties:
 
 - `R0`: the yield strength
@@ -673,6 +673,34 @@ The following code can be added in a block defining an inelastic flow:
 
 ~~~~{.cpp}
     isotropic_hardening : "Swift" {R0 : 120e6, p0 : 1e-8, n : 5.e-2}
+~~~~
+
+### The `Power` isotropic hardening rule (since TFEL 3.4)
+
+The `Power` isotropic hardening rule is defined by:
+\[
+R\paren{p}=R_{0}\,\paren{p+p_{0}}^{n}
+\]
+
+#### Options
+
+The `Power` isotropic hardening rule expects at least the following
+material properties:
+
+- `R0`: the coefficient of the power law
+- `n`: the exponent of the power law
+
+The `p0` material property is *optional* and generally is considered a
+numerical parameter to avoir an initial infinite derivative of the power
+law when the exponent is lower than \(1\).
+
+#### Example
+
+The following code can be added in a block defining an inelastic flow:
+
+~~~~{.cpp}
+    isotropic_hardening : "Linear" {R0 : 50e6},
+    isotropic_hardening : "Power" {R0 : 120e6, p0 : 1e-8, n : 5.e-2}
 ~~~~
 
 ### The `Voce` isotropic hardening rule

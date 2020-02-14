@@ -141,6 +141,7 @@ cmake/modules/CodeCoverage.cmake -text
 cmake/modules/CppCheckTargets.cmake -text
 cmake/modules/FindCppCheck.cmake -text
 cmake/modules/FindCppCheck.cpp -text
+cmake/modules/FindMKL.cmake -text
 cmake/modules/Makefile.am -text
 cmake/modules/OptimizeForArchitecture.cmake -text
 cmake/modules/aster.cmake -text
@@ -1494,7 +1495,9 @@ docs/web/release-notes-3.2.1.md -text
 docs/web/release-notes-3.2.2.md -text
 docs/web/release-notes-3.2.3.md -text
 docs/web/release-notes-3.2.md -text
+docs/web/release-notes-3.3.1.md -text
 docs/web/release-notes-3.3.md -text
+docs/web/release-notes-3.4.md -text
 docs/web/release-notes.md -text
 docs/web/robots.txt -text
 docs/web/search.md -text
@@ -2343,6 +2346,7 @@ mfront/include/MFront/BehaviourBrick/MohrCoulombStressCriterion.hxx -text
 mfront/include/MFront/BehaviourBrick/NortonHoffViscoplasticFlow.hxx -text
 mfront/include/MFront/BehaviourBrick/OptionDescription.hxx -text
 mfront/include/MFront/BehaviourBrick/PlasticInelasticFlow.hxx -text
+mfront/include/MFront/BehaviourBrick/PowerIsotropicHardeningRule.hxx -text
 mfront/include/MFront/BehaviourBrick/PragerKinematicHardeningRule.hxx -text
 mfront/include/MFront/BehaviourBrick/Provider.hxx -text
 mfront/include/MFront/BehaviourBrick/ProviderIdentifier.hxx -text
@@ -2850,6 +2854,7 @@ mfront/src/PedanticMode.cxx -text
 mfront/src/PerformanceProfiling.cxx -text
 mfront/src/PlasticInelasticFlow.cxx -text
 mfront/src/PowellDogLegAlgorithmBase.cxx -text
+mfront/src/PowerIsotropicHardeningRule.cxx -text
 mfront/src/PragerKinematicHardeningRule.cxx -text
 mfront/src/PythonMaterialPropertyInterface.cxx -text
 mfront/src/RungeKuttaDSL.cxx -text
@@ -4047,6 +4052,10 @@ mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/StandardElastoVisco
 mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/StandardElastoViscoPlasticityPlasticityTest15_na.mfront -text
 mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/StandardElastoViscoPlasticityPlasticityTest15_nanj.mfront -text
 mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/StandardElastoViscoPlasticityPlasticityTest15_nj.mfront -text
+mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/StandardElastoViscoPlasticityPlasticityTest16.mfront -text
+mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/StandardElastoViscoPlasticityPlasticityTest16_nj.mfront -text
+mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/StandardElastoViscoPlasticityPlasticityTest17.mfront -text
+mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/StandardElastoViscoPlasticityPlasticityTest17_nj.mfront -text
 mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/StandardElastoViscoPlasticityPlasticityTest2.mfront -text
 mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/StandardElastoViscoPlasticityPlasticityTest2_nj.mfront -text
 mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/StandardElastoViscoPlasticityPlasticityTest3.mfront -text
@@ -4105,6 +4114,8 @@ mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/castem/castemstanda
 mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/castem/castemstandardelastoviscoplasticityplasticitytest12.mtest -text
 mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/castem/castemstandardelastoviscoplasticityplasticitytest13.mtest -text
 mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/castem/castemstandardelastoviscoplasticityplasticitytest14.mtest -text
+mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/castem/castemstandardelastoviscoplasticityplasticitytest16.mtest -text
+mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/castem/castemstandardelastoviscoplasticityplasticitytest17.mtest -text
 mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/castem/castemstandardelastoviscoplasticityplasticitytest2.mtest -text
 mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/castem/castemstandardelastoviscoplasticityplasticitytest2_nj.mtest -text
 mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/castem/castemstandardelastoviscoplasticityplasticitytest3.mtest -text
@@ -4133,6 +4144,8 @@ mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/references/standard
 mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/references/standardelastoviscoplasticityplasticitytest11-cyclic_S.ref -text
 mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/references/standardelastoviscoplasticityplasticitytest11_E.ref -text
 mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/references/standardelastoviscoplasticityplasticitytest11_S.ref -text
+mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/references/standardelastoviscoplasticityplasticitytest16.ref -text
+mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/references/standardelastoviscoplasticityplasticitytest17.ref -text
 mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/references/standardelastoviscoplasticityplasticitytest4.ref -text
 mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/references/standardelastoviscoplasticityplasticitytest6.ref -text
 mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/references/standardelastoviscoplasticityplasticitytest7-cyclic_E.ref -text

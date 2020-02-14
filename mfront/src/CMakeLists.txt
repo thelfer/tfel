@@ -174,6 +174,7 @@ set(TFELMFront_SOURCES
     StressCriterionFactory.cxx
     IsotropicHardeningRule.cxx
     LinearIsotropicHardeningRule.cxx
+    PowerIsotropicHardeningRule.cxx
     SwiftIsotropicHardeningRule.cxx
     VoceIsotropicHardeningRule.cxx
     IsotropicHardeningRuleFactory.cxx
