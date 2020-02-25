@@ -107,6 +107,15 @@ namespace mfront{
      */
     void writeMaterialKnowledgeTypeSymbol(std::ostream&,
 					  const MaterialPropertyDescription&) const override;  
+
+    void writeVariablesNamesSymbol(std::ostream&,
+				   const std::string&,
+				   const MaterialPropertyDescription&) const override;
+    
+    void writeVariablesBoundsSymbols(std::ostream&,
+				     const std::string&,
+				     const MaterialPropertyDescription&) const override;
+    
     bool requiresCheckBoundsFunction() const override;
 
   }; // end of MFrontMaterialPropertyInterface

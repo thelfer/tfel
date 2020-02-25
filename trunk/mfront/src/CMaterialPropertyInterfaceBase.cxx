@@ -240,6 +240,21 @@ namespace mfront
 					     MATERIALPROPERTY);
   } // end of CMaterialPropertyInterfaceBase::writeMaterialKnowledgeTypeSymbol
 
+  void CMaterialPropertyInterfaceBase::writeVariablesNamesSymbol(std::ostream& os,
+								 const std::string& name,
+								 const MaterialPropertyDescription& mpd) const
+  {
+    mfront::writeVariablesNamesSymbol(os,name,mpd);    
+  } // end of CMaterialPropertyInterfaceBase::writeVariablesNamesSymbol
+
+  void CMaterialPropertyInterfaceBase::writeVariablesBoundsSymbols(std::ostream& os,
+								   const std::string& name,
+								   const MaterialPropertyDescription& mpd) const
+  {
+    mfront::writeVariablesBoundsSymbols(os,name,mpd);
+  } // end of CMaterialPropertyInterfaceBase::writeVariablesBoundsSymbols
+
+
   
   void CMaterialPropertyInterfaceBase::writeSrcFile(const MaterialPropertyDescription& mpd,
 						    const FileDescription& fd) const
@@ -280,8 +295,8 @@ namespace mfront
       os << "#include\""+header+".hxx\"\n\n";
     }
     this->writeSrcPreprocessorDirectives(os,mpd);
-    writeVariablesNamesSymbol(os,name,mpd);
-    writeVariablesBoundsSymbols(os,name,mpd);
+    this->writeVariablesNamesSymbol(os,name,mpd);
+    this->writeVariablesBoundsSymbols(os,name,mpd);
     this->writeEntryPointSymbol(os,mpd);
     this->writeTFELVersionSymbol(os,mpd);
     this->writeInterfaceSymbol(os,mpd);
