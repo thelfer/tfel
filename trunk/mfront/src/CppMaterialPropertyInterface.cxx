@@ -239,7 +239,8 @@ namespace mfront
 	    << "extern \"C\"{\n"
 	    << "#endif /* __cplusplus */\n\n";
     
-    writeVariableNames(src,name,file,mpd);
+    writeVariablesNamesSymbol(src,name,mpd);
+	writeVariablesBoundsSymbols(src,name,mpd);
 	// mfront metadata
     writeEntryPointSymbol(src,name);
     writeTFELVersionSymbol(src,name);

@@ -280,7 +280,8 @@ namespace mfront
       os << "#include\""+header+".hxx\"\n\n";
     }
     this->writeSrcPreprocessorDirectives(os,mpd);
-    writeVariableNames(os,name,file,mpd);
+    writeVariablesNamesSymbol(os,name,mpd);
+    writeVariablesBoundsSymbols(os,name,mpd);
     this->writeEntryPointSymbol(os,mpd);
     this->writeTFELVersionSymbol(os,mpd);
     this->writeInterfaceSymbol(os,mpd);

@@ -805,6 +805,110 @@ namespace tfel {
       return tfel_getLongDouble(lib, n2.c_str());
     }  // end of ExternalLibraryManager::getUpperPhysicalBound
 
+    bool ExternalLibraryManager::hasBounds(const std::string& l,
+                                           const std::string& f,
+                                           const std::string& n) {
+      const auto vn = decomposeVariableName(n);
+      const auto n1 = f + "_" + vn + "_LowerBound";
+      const auto n2 = f + "_" + vn + "_UpperBound";
+      return ((this->contains(l, n1)) || (this->contains(l, n2)));
+    }  // end of ExternalLibraryManager::hasBounds
+
+    bool ExternalLibraryManager::hasLowerBound(const std::string& l,
+                                               const std::string& f,
+                                               const std::string& n) {
+      const auto vn = decomposeVariableName(n);
+      const auto n1 = f + "_" + vn + "_LowerBound";
+      return ((this->contains(l, n1)));
+    }  // end of ExternalLibraryManager::hasLowerBound
+
+    bool ExternalLibraryManager::hasUpperBound(const std::string& l,
+                                               const std::string& f,
+                                               const std::string& n) {
+      const auto vn = decomposeVariableName(n);
+      const auto n1 = f + "_" + vn + "_UpperBound";
+      return ((this->contains(l, n1))); 
+    }  // end of ExternalLibraryManager::hasUpperBound
+
+    long double ExternalLibraryManager::getLowerBound(const std::string& l,
+                                                      const std::string& f,
+                                                      const std::string& n) {
+      const auto lib = this->loadLibrary(l);
+      const auto vn = decomposeVariableName(n);
+      const auto n1 = f + "_" + vn + "_LowerBound";
+      raise_if(!this->contains(l, n1),
+               "ExternalLibraryManager::getLowerBound: "
+               "no lower bound associated to variable '" +
+                   vn + "'");
+      return tfel_getLongDouble(lib, n1.c_str());
+    }  // end of ExternalLibraryManager::getLowerBound
+
+    long double ExternalLibraryManager::getUpperBound(const std::string& l,
+                                                      const std::string& f,
+                                                      const std::string& n) {
+      const auto lib = this->loadLibrary(l);
+      const auto vn = decomposeVariableName(n);
+      const auto n1 = f + "_" + vn + "_UpperBound";
+      raise_if(!this->contains(l, n1),
+               "ExternalLibraryManager::getUpperBound: "
+               "no upper bound associated to variable '" +
+                   vn + "'");
+      return tfel_getLongDouble(lib, n1.c_str());
+    }  // end of ExternalLibraryManager::getUpperBound
+
+    bool ExternalLibraryManager::hasPhysicalBounds(const std::string& l,
+                                                   const std::string& f,
+                                                   const std::string& n) {
+      const auto vn = decomposeVariableName(n);
+      const auto n1 = f + "_" + vn + "_LowerPhysicalBound";
+      const auto n2 = f + "_" + vn + "_UpperPhysicalBound";
+      return ((this->contains(l, n1)) || (this->contains(l, n2)));
+    }  // end of ExternalLibraryManager::hasPhysicalBounds
+
+    bool ExternalLibraryManager::hasLowerPhysicalBound(const std::string& l,
+                                                       const std::string& f,
+                                                       const std::string& n) {
+      const auto vn = decomposeVariableName(n);
+      const auto n1 = f + "_" + vn + "_LowerPhysicalBound";
+      return ((this->contains(l, n1))); 
+    }  // end of ExternalLibraryManager::hasLowerPhysicalBound
+
+    bool ExternalLibraryManager::hasUpperPhysicalBound(const std::string& l,
+                                                       const std::string& f,
+                                                       const std::string& n) {
+      const auto vn = decomposeVariableName(n);
+      const auto n1 = f + "_" + vn + "_UpperPhysicalBound";
+      return ((this->contains(l, n1))); 
+    }  // end of ExternalLibraryManager::hasUpperPhysicalBound
+
+    long double ExternalLibraryManager::getLowerPhysicalBound(
+        const std::string& l,
+        const std::string& f,
+        const std::string& n) {
+      const auto lib = this->loadLibrary(l);
+      const auto vn = decomposeVariableName(n);
+      const auto n1 = f + "_" + vn + "_LowerPhysicalBound";
+      raise_if(!this->contains(l, n1),
+               "ExternalLibraryManager::getLowerPhysicalBound: "
+               "no physical lower bound associated to variable '" +
+                   vn + "'");
+      return tfel_getLongDouble(lib, n1.c_str());
+    }  // end of ExternalLibraryManager::getLowerPhysicalBound
+
+    long double ExternalLibraryManager::getUpperPhysicalBound(
+        const std::string& l,
+        const std::string& f,
+        const std::string& n) {
+      const auto lib = this->loadLibrary(l);
+      const auto vn = decomposeVariableName(n);
+      const auto n1 = f + "_" + vn + "_UpperPhysicalBound";
+      raise_if(!this->contains(l, n1),
+               "ExternalLibraryManager::getUpperPhysicalBound: "
+               "no physical upper bound associated to variable '" +
+                   vn + "'");
+      return tfel_getLongDouble(lib, n1.c_str());
+    }  // end of ExternalLibraryManager::getUpperPhysicalBound
+
     unsigned short ExternalLibraryManager::getCastemFunctionNumberOfVariables(
         const std::string& l, const std::string& f) {
       return this->getMaterialPropertyNumberOfVariables(l, f);

@@ -327,7 +327,9 @@ namespace mfront
     
     
 
-    writeVariableNames(srcFile,name,file,mpd);
+    writeVariablesNamesSymbol(srcFile,name,mpd);
+    writeVariablesBoundsSymbols(srcFile,name,mpd);
+    
     // mfront metadata
     writeEntryPointSymbol(srcFile,name);
     writeTFELVersionSymbol(srcFile,name);  
