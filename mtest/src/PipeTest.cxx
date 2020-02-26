@@ -446,7 +446,7 @@ namespace mtest {
         ++c;
       }
     }
-    if (this->rl != TIGHTPIPE) {
+    if (this->rl == TIGHTPIPE) {
       if (this->gseq != nullptr) {
         constexpr const real pi = 3.14159265358979323846;
         const auto Ri = this->mesh.inner_radius;
@@ -844,27 +844,26 @@ namespace mtest {
             }
           }
         } else {
-          const size_type ln = n - 1;
           const auto V = pi * Ri_ * Ri_ * (1 + ezz);
           const auto dV_du = 2 * pi * Ri_ * (1 + ezz);
-          const auto dV_dezz = pi * Ri_ * Ri_ * (1 + ezz);
+          const auto dV_dezz = pi * Ri_ * Ri_;
           const auto Pi = this->gseq->computePressure(V, this->n0, T);
-          const auto K = this->gseq->computeIsothermalBulkModulus(V, this->n0, T);
+          const auto K =
+              this->gseq->computeIsothermalBulkModulus(V, this->n0, T);
           const auto dP_dV = -K / V;
-          r(ln) += 2 * pi * Pi * (1 + ezz) * Ri_;
+          // for post-processing
+          state.getEvolution("InnerPressure").setValue(t + dt, Pi);
+          r(0) -= 2 * pi * Pi * Ri_ * (1 + ezz);
           if (mt != StiffnessMatrixType::NOSTIFFNESS) {
-            k(ln, ln) += 2 * pi * (1 + ezz) * (Pi + dP_dV * dV_du);
-            k(ln, n) += 2 * pi * Ri_ * (Pi + dP_dV * dV_dezz);
+            k(0, 0) -= 2 * pi * (1 + ezz) * (Pi + Ri_ * dP_dV * dV_du);
+            k(0, n) -= 2 * pi * Ri_ * (Pi + (1 + ezz) * dP_dV * dV_dezz);
           }
           if (this->al == ENDCAPEFFECT) {
-            r(n) += pi * Ri_ * Ri_ * Pi;
+            r(n) -= pi * Ri_ * Ri_ * Pi;
             if (mt != StiffnessMatrixType::NOSTIFFNESS) {
-              k(n, ln) += pi * Ri_ * (2 * Pi + Ri_ * dP_dV * dV_du);
+              k(n, n) -= pi * Ri_ * (2 * Pi + Ri_ * dP_dV * dV_du);
             }
           }
-          tfel::raise(
-              "PipeTest::computeStiffnessMatrixAndResidual: "
-              "unsupported case");
         }
       }
     }
