@@ -446,7 +446,7 @@ namespace mtest {
         ++c;
       }
     }
-    if (this->rl != TIGHTPIPE) {
+    if (this->rl == TIGHTPIPE) {
       if (this->gseq != nullptr) {
         constexpr const real pi = 3.14159265358979323846;
         const auto Ri = this->mesh.inner_radius;
@@ -606,10 +606,17 @@ namespace mtest {
   } // end of PipeTest::execute
   
   tfel::tests::TestResult PipeTest::execute(const bool bInit) {
-    auto report = [](const StudyCurrentState& s, const bool bs) {
+    auto report = [](const char* msg, const StudyCurrentState& s,
+                     const bool bs) {
       if (mfront::getVerboseMode() >= mfront::VERBOSE_LEVEL1) {
         auto& log = mfront::getLogStream();
-        log << "Execution " << (bs ? "succeeded" : "failed") << '\n'
+        log << "Execution " << (bs ? "succeeded" : "failed");
+        if (msg) {
+          log << " (" << msg << ")";
+        } else if (!bs) {
+          log << " (unknown reason)";
+        }
+        log << '\n'
             << "-number of period:     " << (s.period - 1) << '\n'
             << "-number of iterations: " << s.iterations << '\n'
             << "-number of sub-steps:  " << s.subSteps << '\n';
@@ -656,12 +663,16 @@ namespace mtest {
         ++pt;
         ++pt2;
       }
+    } catch (std::exception& e) {
+      this->out.flush();
+      report(e.what(),state, false);
+      throw;
     } catch (...) {
       this->out.flush();
-      report(state, false);
+      report(nullptr, state, false);
       throw;
     }
-    report(state, true);
+    report(nullptr, state, true);
     tfel::tests::TestResult tr;
     for (const auto& t : this->tests) {
       tr.append(t->getResults());
@@ -840,11 +851,12 @@ namespace mtest {
         }
       } else {
         if (this->gseq == nullptr) {
+          const auto Pi_ = (this->P0) * (T / this->T0) * Ri * Ri / ((Ri_ * Ri_) * (1 + ezz));
           const auto tmp = pi * (this->P0) * (T / this->T0) * Ri * Ri;
           // for post-processing
-          const auto Pi_ = (this->P0) * (T / this->T0) * Ri * Ri / (Ri_ * Ri_) / (1 + ezz);
           state.getEvolution("InnerPressure").setValue(t + dt, Pi_);
           r(0) -= 2 * tmp / Ri_;
+          //          r(0) -= 2 * pi * Pi_ * Ri_ * (1 + ezz);
           if (mt != StiffnessMatrixType::NOSTIFFNESS) {
             k(0, 0) += 2 * tmp / (Ri_ * Ri_);
           }
@@ -855,27 +867,25 @@ namespace mtest {
             }
           }
         } else {
-          const size_type ln = n - 1;
           const auto V = pi * Ri_ * Ri_ * (1 + ezz);
           const auto dV_du = 2 * pi * Ri_ * (1 + ezz);
-          const auto dV_dezz = pi * Ri_ * Ri_ * (1 + ezz);
+          const auto dV_dezz = pi * Ri_ * Ri_;
           const auto Pi = this->gseq->computePressure(V, this->n0, T);
           const auto K = this->gseq->computeIsothermalBulkModulus(V, this->n0, T);
           const auto dP_dV = -K / V;
-          r(ln) += 2 * pi * Pi * (1 + ezz) * Ri_;
+          // for post-processing
+          state.getEvolution("InnerPressure").setValue(t + dt, Pi);
+          r(0) -= 2 * pi * Pi * Ri_ * (1 + ezz);
           if (mt != StiffnessMatrixType::NOSTIFFNESS) {
-            k(ln, ln) += 2 * pi * (1 + ezz) * (Pi + dP_dV * dV_du);
-            k(ln, n) += 2 * pi * Ri_ * (Pi + dP_dV * dV_dezz);
+            k(0, 0) -= 2 * pi * (1 + ezz) * (Pi + Ri_ * dP_dV * dV_du);
+            k(0, n) -= 2 * pi * Ri_ * (Pi + (1 + ezz) * dP_dV * dV_dezz);
           }
           if (this->al == ENDCAPEFFECT) {
-            r(n) += pi * Ri_ * Ri_ * Pi;
+            r(n) -= pi * Ri_ * Ri_ * Pi;
             if (mt != StiffnessMatrixType::NOSTIFFNESS) {
-              k(n, ln) += pi * Ri_ * (2 * Pi + Ri_ * dP_dV * dV_du);
+              k(n, n) -= pi * Ri_ * (2 * Pi + Ri_ * dP_dV * dV_du);
             }
           }
-          tfel::raise(
-              "PipeTest::computeStiffnessMatrixAndResidual: "
-              "unsupported case");
         }
       }
     }

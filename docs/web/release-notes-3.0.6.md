@@ -4,6 +4,20 @@
 
 # Tickets fixed
 
+## Ticket #208: Support of the `@GasEquationOfState` keyword is broken in `MTest`
+
+`MTest` is able to model a tight pipe. This hypothesis assumes that the
+amount of substance of the gas inside the pipe is constant. The
+evolution of the inner pressure is linked to the temperature and radius
+evolution through the gas equation of state. By default, the equation of
+state of a perfect gas is used.
+
+The `@GasEquationOfState` keyword was introduced to specify the equation
+of state of the gas. This feature has never been tested and was not
+functional in previous versions.
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/208/>
+
 ## Ticket #207: Circumvent a possible bug in `FindBoost` for `cmake-3.16`
 
 Two boost components are searched when enabling `python` bindings:
