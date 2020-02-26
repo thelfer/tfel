@@ -48,4 +48,19 @@ This feature is described in Section
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/205/>
 
+## Ticket #195 : Export variables bounds for material properties
+
+Variables bounds (both @Bounds and @PhysicalBounds) are now available for material properties. 
+They are available directly in the .so file via getExternalLibraryManager().
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/195/>
+
+## Ticket #196 : Export variable names for all interface of material property
+
+The variable name of material property was available only for castem interface. 
+Now it is available for all interface (c++, python, …). 
+The name can be found in the .so file via getExternalLibraryManager().
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/196/>
+
 # References
