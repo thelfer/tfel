@@ -187,6 +187,7 @@ namespace tfel {
                                                            const std::string&,
                                                            const std::string&,
                                                            const std::string&);
+      
       /*!
        * \return true if the given variable has bounds
        * \param[in] l: name of the library
@@ -297,6 +298,100 @@ namespace tfel {
                                         const std::string&,
                                         const std::string&,
                                         const std::string&);
+
+
+      /*!
+       * \return true if the given variable (material property) has bounds
+       * \param[in] l: name of the library
+       * \param[in] f: name of function or mechanical behaviour
+       * \param[in] v: variable name
+       */
+      bool hasBounds(const std::string&,
+                     const std::string&,
+                     const std::string&);
+      /*!
+       * \return true if the given variable (material property) has lower bound
+       * \param[in] l: name of the library
+       * \param[in] f: name of function or mechanical behaviour
+       * \param[in] v: variable name
+       */
+      bool hasLowerBound(const std::string&,
+                         const std::string&,
+                         const std::string&);
+      /*!
+       * \return true if the given variable (material property) has a upper bound
+       * \param[in] l: name of the library
+       * \param[in] f: name of function or mechanical behaviour
+       * \param[in] v: variable name
+       */
+      bool hasUpperBound(const std::string&,
+                         const std::string&,
+                         const std::string&);
+      /*!
+       * \return the lower bound of the given variable (material property)
+       * \param[in] l: name of the library
+       * \param[in] f: name of function or mechanical behaviour
+       * \param[in] v: variable name
+       */
+      long double getLowerBound(const std::string&,
+                                const std::string&,
+                                const std::string&);
+      /*!
+       * \return the upper bound of the given variable (material property)
+       * \param[in] l: name of the library
+       * \param[in] f: name of function or mechanical behaviour
+       * \param[in] v: variable name
+       */
+      long double getUpperBound(const std::string&,
+                                const std::string&,
+                                const std::string&);
+      /*!
+       * \return true if the given variable (material property) has physical bounds
+       * \param[in] l: name of the library
+       * \param[in] f: name of function or mechanical behaviour
+       * \param[in] v: variable name
+       */
+      bool hasPhysicalBounds(const std::string&,
+                             const std::string&,
+                             const std::string&);
+      /*!
+       * \return true if the given variable (material property) has a lower physical bound
+       * \param[in] l: name of the library
+       * \param[in] f: name of function or mechanical behaviour
+       * \param[in] v: variable name
+       */
+      bool hasLowerPhysicalBound(const std::string&,
+                                 const std::string&,
+                                 const std::string&);
+      /*!
+       * \return true if the given variable (material property) has a upper physical bound
+       * \param[in] l: name of the library
+       * \param[in] f: name of function or mechanical behaviour
+       * \param[in] v: variable name
+       */
+      bool hasUpperPhysicalBound(const std::string&,
+                                 const std::string&,
+                                 const std::string&);
+      /*!
+       * \return the lower bound of the given variable (material property)
+       * \param[in] l: name of the library
+       * \param[in] f: name of function or mechanical behaviour
+       * \param[in] v: variable name
+       */
+      long double getLowerPhysicalBound(const std::string&,
+                                        const std::string&,
+                                        const std::string&);
+      /*!
+       * \return the upper bound of the given variable (material property)
+       * \param[in] l: name of the library
+       * \param[in] f: name of function or mechanical behaviour
+       * \param[in] v: variable name
+       */
+      long double getUpperPhysicalBound(const std::string&,
+                                        const std::string&,
+                                        const std::string&);
+
+
       /*!
        * \return the TFEL version used to generate the given entry
        * point.

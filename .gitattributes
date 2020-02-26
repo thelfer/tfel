@@ -92,6 +92,7 @@ bindings/python/std/tuple.cxx -text
 bindings/python/std/vector.cxx -text
 bindings/python/tests/CMakeLists.txt -text
 bindings/python/tests/Makefile.am -text
+bindings/python/tests/material-properties.py -text
 bindings/python/tests/pymfronttest1.py.in -text
 bindings/python/tests/pymfronttest2.py.in -text
 bindings/python/tests/pymfronttest3.py.in -text

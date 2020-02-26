@@ -101,6 +101,22 @@ namespace mfront{
 						  const MaterialPropertyDescription&) const;
     /*!
      * \param[out] os:  output file stream
+     * \param[in]  name: name of the generated material property
+     * \param[in]  mpd: material property description
+     */
+    virtual void writeVariablesNamesSymbol(std::ostream&,
+					   const std::string&,
+					   const MaterialPropertyDescription&) const;
+    /*!
+     * \param[out] os:  output file stream
+     * \param[in]  name: name of the generated material property
+     * \param[in]  mpd: material property description
+     */
+    virtual void writeVariablesBoundsSymbols(std::ostream&,
+					     const std::string&,
+					     const MaterialPropertyDescription&) const;
+    /*!
+     * \param[out] os:  output file stream
      */
     virtual void writeBeginSrcNamespace(std::ostream&) const = 0;
     /*!

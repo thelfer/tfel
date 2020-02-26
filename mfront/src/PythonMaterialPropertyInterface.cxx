@@ -37,7 +37,6 @@
 #include"TFEL/Raise.hxx"
 #include"TFEL/Config/GetInstallPath.hxx"
 #include"TFEL/System/System.hxx"
-
 #include"MFront/DSLUtilities.hxx"
 #include"MFront/MFrontUtilities.hxx"
 #include"MFront/MFrontHeader.hxx"
@@ -239,6 +238,7 @@ namespace mfront
     const auto& inputs=mpd.inputs;
     const auto& materialLaws=mpd.materialLaws;
     const auto& staticVars=mpd.staticVars;
+    const auto& params = mpd.parameters;
     const auto& function=mpd.f;
     const auto name = (!material.empty()) ? material+"_"+law : law;
     const auto outName  = "include/"+name+"-python.hxx";
@@ -320,14 +320,19 @@ namespace mfront
     }
     srcFile << "#include\"" << name << "-python.hxx\"\n\n";
     writeExportDirectives(srcFile);
-    writeMaterialPropertyParametersHandler(srcFile,mpd,
-					   name,"double","python");
+    writeMaterialPropertyParametersHandler(srcFile,mpd, name,"double","python");
     srcFile << "#ifdef __cplusplus\n"
 	    << "extern \"C\"{\n"
 	    << "#endif /* __cplusplus */\n\n";
+    
+    
+
+    writeVariablesNamesSymbol(srcFile,name,mpd);
+    writeVariablesBoundsSymbols(srcFile,name,mpd);
+    
     // mfront metadata
     writeEntryPointSymbol(srcFile,name);
-    writeTFELVersionSymbol(srcFile,name);
+    writeTFELVersionSymbol(srcFile,name);  
     writeInterfaceSymbol(srcFile,name,"Python");
     writeMaterialSymbol(srcFile,name,mpd.material);
     writeMaterialKnowledgeTypeSymbol(srcFile,name,MATERIALPROPERTY);
@@ -339,7 +344,9 @@ namespace mfront
 	      << "PyObject *,PyObject*)\n{\n";
     }
     srcFile << "using namespace std;\n"
-	    << "using real = double;\n";
+	    << "using real = double;\n";  
+
+
     // material laws
     writeMaterialLaws(srcFile,materialLaws);
     // static variables

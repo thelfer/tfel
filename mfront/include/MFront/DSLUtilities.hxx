@@ -24,6 +24,7 @@
 #include "TFEL/Glossary/Forward/Glossary.hxx"
 #include "MFront/MaterialKnowledgeType.hxx"
 #include "MFront/StaticVariableDescription.hxx"
+#include "MFront/VariableDescription.hxx"
 
 namespace mfront {
 
@@ -33,6 +34,39 @@ namespace mfront {
   struct MaterialPropertyDescription;
   // forward declaration
   struct BehaviourDescription;
+
+  /*!
+   * \brief write the name of the variable
+   * \param[out] os: output stream
+   * \param[in]  n:  name of the law
+   * \param[in]  mpd:  material property description
+   */ MFRONT_VISIBILITY_EXPORT void writeVariablesNamesSymbol(std::ostream&, 
+                                                   const std::string&,
+                                                   const mfront::MaterialPropertyDescription&);
+
+   
+   /*!
+   * \brief write the bounds
+   * \param[out] os: output stream
+   * \param[in]  n:  name of the law
+   * \param[in]  vn:  name of the variable
+   * \param[in]  bt:  type of bounds (physical or not)
+   * \param[in]  b:  bound description 
+   */  MFRONT_VISIBILITY_EXPORT void writeBoundsSymbol(std::ostream&,
+                                                  const std::string&,
+                                                  const std::string&,
+                                                  const std::string&,
+                                                  const mfront::VariableBoundsDescription&);
+
+   /*!
+   * \brief write the name of the variable
+   * \param[out] os: output stream
+   * \param[in]  n:  name of the law
+   * \param[in]  mpd:  material property description
+   */   MFRONT_VISIBILITY_EXPORT void writeVariablesBoundsSymbols(std::ostream&, 
+                                                     const std::string&,
+                                                     const mfront::MaterialPropertyDescription&);
+                         
 
   /*!
    * \brief write a specific symbol stating that a given name entry

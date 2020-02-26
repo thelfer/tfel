@@ -225,11 +225,30 @@ namespace mfront
 					     MATERIALPROPERTY);
   } // end of CMaterialPropertyInterfaceBase::writeMaterialKnowledgeTypeSymbol
 
-  void CMaterialPropertyInterfaceBase::writeSrcFile(
-      const MaterialPropertyDescription& mpd, const FileDescription& fd) const {
+  void CMaterialPropertyInterfaceBase::writeVariablesNamesSymbol(std::ostream& os,
+								 const std::string& name,
+								 const MaterialPropertyDescription& mpd) const
+  {
+    mfront::writeVariablesNamesSymbol(os,name,mpd);    
+  } // end of CMaterialPropertyInterfaceBase::writeVariablesNamesSymbol
+
+  void CMaterialPropertyInterfaceBase::writeVariablesBoundsSymbols(std::ostream& os,
+								   const std::string& name,
+								   const MaterialPropertyDescription& mpd) const
+  {
+    mfront::writeVariablesBoundsSymbols(os,name,mpd);
+  } // end of CMaterialPropertyInterfaceBase::writeVariablesBoundsSymbols
+
+
+  
+  void CMaterialPropertyInterfaceBase::writeSrcFile(const MaterialPropertyDescription& mpd,
+						    const FileDescription& fd) const
+  {
     // opening the source file
     const auto src = this->getSrcFileName(mpd.material,mpd.className);
     const auto fn  = "src/" + src +".cxx";
+    const auto name  = (!mpd.material.empty()) ? mpd.material+"_"+mpd.law : mpd.law;
+    const auto& file=fd.fileName;
     std::ofstream os(fn);
     tfel::raise_if(!os,"CMaterialPropertyInterfaceBase::writeOutputFiles : "
 		   "unable to open '"+fn+"' for writing output file.");
@@ -261,6 +280,8 @@ namespace mfront
       os << "#include\""+header+".hxx\"\n\n";
     }
     this->writeSrcPreprocessorDirectives(os,mpd);
+    this->writeVariablesNamesSymbol(os,name,mpd);
+    this->writeVariablesBoundsSymbols(os,name,mpd);
     this->writeEntryPointSymbol(os,mpd);
     this->writeTFELVersionSymbol(os,mpd);
     this->writeInterfaceSymbol(os,mpd);

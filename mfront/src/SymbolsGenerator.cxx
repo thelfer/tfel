@@ -560,22 +560,6 @@ namespace mfront {
     }
   }  // end of SymbolsGenerator::writeParameterDefaultValueSymbols
 
-  static void writeBoundsSymbol(std::ostream& out,
-                                const std::string& bn,
-                                const std::string& vn,
-                                const std::string& bt,
-                                const VariableBoundsDescription& b) {
-    if ((b.boundsType == VariableBoundsDescription::LOWER) ||
-        (b.boundsType == VariableBoundsDescription::LOWERANDUPPER)) {
-      out << "MFRONT_SHAREDOBJ long double " << bn << "_" << vn << "_"
-          << "Lower" << bt << "Bound = " << b.lowerBound << ";\n\n";
-    }
-    if ((b.boundsType == VariableBoundsDescription::UPPER) ||
-        (b.boundsType == VariableBoundsDescription::LOWERANDUPPER)) {
-      out << "MFRONT_SHAREDOBJ long double " << bn << "_" << vn << "_"
-          << "Upper" << bt << "Bound = " << b.upperBound << ";\n\n";
-    }
-  }  // end of writeBoundsSymbol
 
   void SymbolsGenerator::writeBoundsSymbols(std::ostream& out,
                                             const StandardBehaviourInterface& i,

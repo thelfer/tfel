@@ -30,6 +30,7 @@
 #include"MFront/CMaterialPropertyInterfaceBase.hxx"
 #include"MFront/OctaveMaterialPropertyInterface.hxx"
 
+
 namespace mfront
 {
 
@@ -106,6 +107,8 @@ namespace mfront
     tfel::system::systemCall::mkdir("octave");
     const auto name = (mpd.material.empty()) ? mpd.className : mpd.material+"_"+mpd.className;
     const auto fn   = "octave/"+ name+".cpp";
+	const auto& params = mpd.parameters;
+	const auto& file=fd.fileName;
     std::ofstream out{fn};
     tfel::raise_if(!out,"OctaveMaterialPropertyInterface::writeOutputFiles: "
 		   "unable to open file '"+fn+"'");
@@ -147,6 +150,9 @@ namespace mfront
     out << "#ifdef __cplusplus\n"
 	<< "extern \"C\"{\n"
 	<< "#endif /* __cplusplus */\n\n";
+
+	writeVariablesNamesSymbol(out,name,mpd);
+	writeVariablesBoundsSymbols(out,name,mpd);
     // mfront metadata
     writeEntryPointSymbol(out,name);
     writeTFELVersionSymbol(out,name);
