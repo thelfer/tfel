@@ -2,6 +2,9 @@
 % Helfer Thomas; Jean-Michel Proix
 % August 19, 2014
 
+\newcommand{\paren}[1]{{\left(#1\right)}}
+\newcommand{\ets}[1]{{\left.#1\right|_{t+\Delta\,t}}}
+
 # Overview
 
 `MFront` comes with an handy easy-to-use tool called `MTest`. This
@@ -117,7 +120,75 @@ after several hours of computations.
 
 # Simulation of a pipe
 
-`MTest` 
+`MTest` can also be used to model a pipe subjected to various loadings.
+
+## Radial loadings
+
+### Tight pipe
+
+#### Specifying the gas equation of state
+
+The equation of state of the gas can be specified using the
+`@GasEquationOfState` keyword.
+
+This keywords expects a function \(f\paren{P,V,T}\) such that the
+equation of state is:
+
+\[
+f\paren{P,V,T, n}=0
+\]{#eq:GasEquationOfState}
+
+where:
+
+- \(P\) is the inner pressure in the pipe.
+- \(V\) is the volume of gas in a pipe of unit height. For small strain
+  analyses, \(V\) is equal to the initial volume of the pipe. For finite
+  strain analysis, \(V\) is computed by:
+  \[
+  V = \pi \, \ets{R}^{2} \, \paren{1 + \ets{\varepsilon_{zz}}}
+  \]
+  where \(\ets{R}\) and \(\ets{\varepsilon_{zz}}\) are respectively the
+  current estimation of the radius and the current estimation of the
+  linear axial strain at the end of the time.
+- \(T\) is the current value of temperature at the inner surface of the
+  pipe (the temperature is assumed homogeneous inside the pipe).
+- \(n\) is the amount of substance of the gas. This quantity is assumed
+  constant during the experiment. Its value is deduced from Equation
+  @eq:GasEquationOfState by using:
+  - The filling pressure (see the `@FillingPressure` keyword).
+  - The filling temperature (see the `@FillingTemperature` keyword).
+  - The initial inner radius of the pipe[^1].
+
+[^1]: Using the initial inner radius of the pipe generally endows an
+  approximation as the initial radius is usually known before the gas is
+  introduced in the pipe.
+
+##### A first example
+
+In this example, the equation of state of a perfect gas is specified:
+
+~~~~{.cxx}
+@FillingPressure      1.e5;
+@FillingTemperature 293.15;
+@Real 'R' 8.314;
+@GasEquationOfState 'P*V-n*R*T';
+~~~~
+
+##### A second example
+
+In this example, the equation of state of a perfect gas is specified,
+but one imagine that the gas can only occupy a fraction \(\alpha\,V\) of
+the volume inside the pipe:
+
+~~~~{.cxx}
+@FillingPressure      1.e5;
+@FillingTemperature 293.15;
+@Real 'R' 8.314;
+@Real 'a' '0.8';
+@GasEquationOfState 'P*a*V-n*R*T';
+~~~~
+
+## Axial loadings
 
 # References
 

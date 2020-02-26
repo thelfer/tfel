@@ -41,6 +41,12 @@ The following code can be added in a block defining an inelastic flow:
 
 # Tickets solved during the development of this version
 
+## Ticket #209: lack of documentation of the `@GasEquationOfState` keyword
+
+This feature is now described in the (`MTest` page)[mtest.html]
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/209/>
+
 ## Ticket #205: Add power isotropic hardening rule
 
 This feature is described in Section
