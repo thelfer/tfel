@@ -1,17 +1,18 @@
 /*!
- * \file   mfront/src/DSLUtilities.cxx
- * \brief
- *
- * \author Thomas Helfer
- * \date   23 oct 2008
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
- * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
- * project under specific licensing conditions.
- */
+  * \file   mfront/src/DSLUtilities.cxx
+  * \brief
+  *
+  * \author Thomas Helfer
+  * \date   23 oct 2008
+  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+  * reserved.
+  * This project is publicly released under either the GNU GPL Licence
+  * or the CECILL-A licence. A copy of thoses licences are delivered
+  * with the sources of TFEL. CEA or EDF may also distribute this
+  * project under specific licensing conditions.
+  */
 
+#include <iostream>
 #include <cstdlib>
 #include <fstream>
 #include <sstream>
@@ -20,18 +21,97 @@
 #include "TFEL/Config/TFELConfig.hxx"
 #include "TFEL/Config/GetTFELVersion.h"
 #include "TFEL/Glossary/GlossaryEntry.hxx"
+#include "TFEL/Utilities/StringAlgorithms.hxx"
+#include "TFEL/System/System.hxx"
 #include "MFront/MFrontDebugMode.hxx"
 #include "MFront/DSLUtilities.hxx"
 #include "MFront/StaticVariableDescription.hxx"
 #include "MFront/MaterialPropertyDescription.hxx"
+#include "MFront/MaterialPropertyParametersHandler.hxx"
+#include "MFront/SymbolsGenerator.hxx"
+
 
 #ifndef _MSC_VER
-static const char* const constexpr_c = "constexpr";
+    static const char *const constexpr_c = "constexpr";
 #else
-static const char* const constexpr_c = "const";
+    static const char *const constexpr_c = "const";
 #endif
 
 namespace mfront {
+
+void writeVariablesNamesSymbol(std::ostream &out, const std::string &name,
+                               const mfront::MaterialPropertyDescription &mpd) {
+  if (!mpd.inputs.empty()) {
+    out << "MFRONT_SHAREDOBJ const char *\n"
+        << name << "_args[" << mpd.inputs.size() << "] = {";
+    for (auto p3 = mpd.inputs.begin(); p3 != mpd.inputs.end();) {
+      const auto iname = '\"' + p3->getExternalName() + '\"';
+      out << iname;
+      if (++p3 != mpd.inputs.end()) {
+        out << ",";
+      }
+    }
+    out << "};\n\n";
+  }
+  out << "MFRONT_SHAREDOBJ unsigned short\n"
+      << name << "_nargs = " << mpd.inputs.size() << "u;\n\n";
+  } // end of writeVariableNamesSymbol
+
+
+  void writeBoundsSymbol(std::ostream& out,
+                         const std::string& n,
+                         const std::string& vn,
+                         const std::string& bt,
+                         const VariableBoundsDescription& b) {
+    if ((b.boundsType == VariableBoundsDescription::LOWER) ||
+        (b.boundsType == VariableBoundsDescription::LOWERANDUPPER)) {
+      out << "MFRONT_SHAREDOBJ long double " << n << "_" << vn << "_"
+          << "Lower" << bt << "Bound = " << b.lowerBound << ";\n\n";
+    }
+    if ((b.boundsType == VariableBoundsDescription::UPPER) ||
+        (b.boundsType == VariableBoundsDescription::LOWERANDUPPER)) {
+      out << "MFRONT_SHAREDOBJ long double " << n << "_" << vn << "_"
+          << "Upper" << bt << "Bound = " << b.upperBound << ";\n\n";
+    }
+  }  // end of writeBoundsSymbol
+
+  void  writeVariablesBoundsSymbols(std::ostream &out, const std::string &name,
+                              const mfront::MaterialPropertyDescription &mpd) {
+
+    const auto prec = out.precision();
+    out.precision(14);
+    for (const auto& v: mpd.inputs){
+      if (v.arraySize == 1u) {
+        if (!v.hasBounds()) {
+          continue;
+        }
+          writeBoundsSymbol(out, name, v.getExternalName(), "",
+                          v.getBounds());
+        if (!v.hasPhysicalBounds()) {
+          continue;
+        }
+          writeBoundsSymbol(out, name, v.getExternalName(), "Physical",
+                          v.getPhysicalBounds());        
+      } else {
+          for (auto idx = 0; idx != v.arraySize; ++idx) {
+            if (!v.hasBounds(idx)) {
+              continue;
+            }
+            writeBoundsSymbol(out, name, 
+                v.getExternalName() + "__" + std::to_string(idx) + "__", "",
+                v.getBounds(idx));
+            if (!v.hasPhysicalBounds(idx)) {
+              continue;
+            }
+            writeBoundsSymbol(out, name, 
+                v.getExternalName() + "__" + std::to_string(idx) + "__", "Physical",
+                v.getPhysicalBounds(idx));
+          }
+        }
+    }
+    out.precision(prec); 
+  } // end of writeVariablesBoundsSymbols
+
 
   void writeEntryPointSymbol(std::ostream& out, const std::string& n) {
     writeEntryPointSymbol(out, n, n);
