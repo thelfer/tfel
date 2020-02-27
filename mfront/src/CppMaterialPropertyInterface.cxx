@@ -238,10 +238,10 @@ namespace mfront
     src << "#ifdef __cplusplus\n"
 	    << "extern \"C\"{\n"
 	    << "#endif /* __cplusplus */\n\n";
-    
+    // mfront metadata 
     writeVariablesNamesSymbol(src,name,mpd);
-	writeVariablesBoundsSymbols(src,name,mpd);
-	// mfront metadata
+    writeVariablesBoundsSymbols(src,name,mpd);
+
     writeEntryPointSymbol(src,name);
     writeTFELVersionSymbol(src,name);
     writeInterfaceSymbol(src,name,"C++");
