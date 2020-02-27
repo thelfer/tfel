@@ -340,6 +340,28 @@ namespace mfront {
     writeInterfaceSymbol(out, name, "Castem");
     writeMaterialSymbol(out, name, mpd.material);
     writeMaterialKnowledgeTypeSymbol(out, name, MATERIALPROPERTY);
+
+    out << "MFRONT_SHAREDOBJ const char *\n"
+        << name << "_src = \""
+        << tfel::utilities::tokenize(file, tfel::system::dirSeparator()).back()
+        << "\";\n\n";
+
+    if (!params.empty()) {
+      const auto hn = getMaterialPropertyParametersHandlerClassName(name);
+      out << "MFRONT_SHAREDOBJ int\n"
+          << name << "_setParameter(const char *const p,"
+          << "const double v"
+          << "){\n";
+      for (const auto& p : params) {
+        out << "if(strcmp(\"" << p.name << "\",p)==0){\n"
+            << "castem::" << hn << "::get" << hn << "()." << p.name << " = v;\n"
+            << "return 1;\n"
+            << "}\n";
+      }
+      out << "return 0;\n"
+          << "}\n\n";
+    }
+
     out << "MFRONT_SHAREDOBJ double\n" << name << "(";
     if (!mpd.inputs.empty()) {
       out << "const double * const castem_params";
