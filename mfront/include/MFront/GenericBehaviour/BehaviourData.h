@@ -14,6 +14,7 @@
 #ifndef LIB_MFRONT_GENERICBEHAVIOUR_BEHAVIOURDATA_H
 #define LIB_MFRONT_GENERICBEHAVIOUR_BEHAVIOURDATA_H
 
+#include "MFront/GenericBehaviour/Types.h"
 #include "MFront/GenericBehaviour/State.h"
 
 #ifdef __cplusplus
@@ -24,17 +25,17 @@ extern "C" {
  * \brief structure passed to the behaviour integration
  */
 #ifndef MFRONT_GB_BEHAVIOURDATA_FORWARD_DECLARATION
-  typedef struct MFront_GB_BehaviourData MFront_GB_BehaviourData;
+  typedef struct mfront_gb_BehaviourData mfront_gb_BehaviourData;
 #endif
 
   /*!
    * \brief structure 
    */
-  struct MFront_GB_BehaviourData {
+  struct mfront_gb_BehaviourData {
     /*!
      * \brief time increment
      */
-    double dt;
+    mfront_gb_real dt;
     /*!
      * \brief the stiffness matrix.
      * On input, the first element of K must contain the type of type
@@ -77,19 +78,19 @@ extern "C" {
      * - if 1.5<K[2]<2.5, the derivative of the first Piola-Kirchoff
      *   stress with respect to the deformation gradient is returned
      */
-    double * K;
+    mfront_gb_real * K;
     /*!
      * \brief proposed time step increment increase factor
      */
-    double rdt;
+    mfront_gb_real rdt;
     /*!
      * \brief state at the beginning of the time step
      */
-    MFront_GB_State s0;
+    mfront_gb_InitialState s0;
     /*!
      * \brief state at the end of the time step
      */
-    MFront_GB_State s1;
+    mfront_gb_State s1;
   };
 
 #ifdef __cplusplus
@@ -99,7 +100,7 @@ extern "C" {
     namespace gb{
 
       //! a simple alias
-      using BehaviourData = ::MFront_GB_BehaviourData;
+      using BehaviourData = ::mfront_gb_BehaviourData;
 
     } // end of namespace gb
     

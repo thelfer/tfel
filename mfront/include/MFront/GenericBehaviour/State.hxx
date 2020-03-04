@@ -22,7 +22,10 @@ namespace mfront{
   namespace gb{
     
     //! a simple alias
-    using State = ::MFront_GB_State;
+    using InitialState = ::mfront_gb_InitialState;
+
+    //! a simple alias
+    using State = ::mfront_gb_State;
     
   } // end of namespace gb
   

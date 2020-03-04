@@ -195,8 +195,8 @@ extern "C" {
   } 
 
   int (TFEL_ADDCALL_PTR tfel_getGenericBehaviourFunction(LibraryHandlerPtr l,
-						         const char * const f))(struct MFront_GB_BehaviourData* const){
-    return (int (TFEL_ADDCALL_PTR)(struct MFront_GB_BehaviourData* const)) dlsym(l,f);
+						         const char * const f))(struct mfront_gb_BehaviourData* const){
+    return (int (TFEL_ADDCALL_PTR)(struct mfront_gb_BehaviourData* const)) dlsym(l,f);
   }  // end of tfel_getGenericBehaviourFunction
 
   int tfel_getMaterialPropertyNumberOfVariables(LibraryHandlerPtr lib,

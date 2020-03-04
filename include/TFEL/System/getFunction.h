@@ -93,7 +93,7 @@ int(TFEL_ADDCALL_PTR tfel_getSetUnsignedShortParameterFunction(
  */
 int(TFEL_ADDCALL_PTR tfel_getGenericBehaviourFunction(LibraryHandlerPtr,
                                                       const char* const))(
-    struct MFront_GB_BehaviourData* const);
+    struct mfront_gb_BehaviourData* const);
 /*!
  * \brief this function gets the number of arguments of the
  * specified material property

@@ -23,7 +23,7 @@ namespace mfront{
   namespace gb{
     
     //! a simple alias
-    using BehaviourData = ::MFront_GB_BehaviourData;
+    using BehaviourData = ::mfront_gb_BehaviourData;
 
     /*!
      * \brief structure returning the number of elastic properties

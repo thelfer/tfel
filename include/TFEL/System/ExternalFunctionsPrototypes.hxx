@@ -64,7 +64,7 @@ extern "C" {
 #ifndef LIB_MFRONT_GENERICBEHAVIOUR_BEHAVIOURDATA_H
 #define MFRONT_GB_BEHAVIOURDATA_FORWARD_DECLARATION
   // forward declaration
-  typedef struct MFront_GB_BehaviourData MFront_GB_BehaviourData;
+  typedef struct mfront_gb_BehaviourData mfront_gb_BehaviourData;
 #endif /* LIB_MFRONT_GENERICBEHAVIOUR_BEHAVIOURDATA_H */
   
 #ifdef	__cplusplus
@@ -257,7 +257,7 @@ namespace tfel {
 							     const double *,const double *,
 							     const double *);
       //! \brief a simple alias.
-      typedef int (TFEL_ADDCALL_PTR GenericBehaviourFctPtr)(::MFront_GB_BehaviourData* const);
+      typedef int (TFEL_ADDCALL_PTR GenericBehaviourFctPtr)(::mfront_gb_BehaviourData* const);
 
       /*!
        * a simple alias.

@@ -17,6 +17,6 @@
 /*!
  * \brief numerical type used by the interface
  */
-typedef double MFront_GB_real;
+typedef double mfront_gb_real;
 
 #endif /* LIB_MFRONT_GENERICBEHAVIOUR_TYPES_H */

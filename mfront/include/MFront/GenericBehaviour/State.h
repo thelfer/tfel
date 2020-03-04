@@ -21,30 +21,56 @@ extern "C" {
 #endif /* __cplusplus */
 
 /*!
- * \brief state of the material
+ * \brief state of the material at the end of the time step
  */
 typedef struct {
   //! \brief value of the gradients
-  double* gradients;
+  const mfront_gb_real* gradients;
   //! \brief values of the thermodynamic_forces
-  double* thermodynamic_forces;
+  mfront_gb_real* thermodynamic_forces;
   //! \brief values of the material properties
-  double* material_properties;
+  const mfront_gb_real* material_properties;
   //! \brief values of the internal state variables
-  double* internal_state_variables;
+  mfront_gb_real* internal_state_variables;
   /*!
    * \brief stored energy (computed by `@InternalEnergy` in `MFront` files).
    * This output is optional.
    */
-  double* stored_energy;
+  mfront_gb_real* stored_energy;
   /*!
    * \brief dissipated energy (computed by `@DissipatedEnergy` in `MFront`
    * files). This output is optional.
    */
-  double* dissipated_energy;
+  mfront_gb_real* dissipated_energy;
   //! \brief values of the external state variables
-  double* external_state_variables;
-} MFront_GB_State;
+  const mfront_gb_real* external_state_variables;
+} mfront_gb_State;
+
+/*!
+ * \brief state of the material at the beginning of the time step
+ */
+typedef struct {
+  //! \brief value of the gradients
+  const mfront_gb_real* gradients;
+  //! \brief values of the thermodynamic_forces
+  mfront_gb_real* thermodynamic_forces;
+  //! \brief values of the material properties
+  const mfront_gb_real* material_properties;
+  //! \brief values of the internal state variables
+  const mfront_gb_real* internal_state_variables;
+  /*!
+   * \brief stored energy (computed by `@InternalEnergy` in `MFront` files).
+   * This output is optional.
+   */
+  const mfront_gb_real* stored_energy;
+  /*!
+   * \brief dissipated energy (computed by `@DissipatedEnergy` in `MFront`
+   * files). This output is optional.
+   */
+  const mfront_gb_real* dissipated_energy;
+  //! \brief values of the external state variables
+  const mfront_gb_real* external_state_variables;
+} mfront_gb_InitialState;
 
 #ifdef __cplusplus
 }

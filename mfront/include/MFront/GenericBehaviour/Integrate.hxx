@@ -147,7 +147,7 @@ namespace mfront {
      */
     template <typename Behaviour>
     int computePredictionOperator(Behaviour& b,
-                                  MFront_GB_BehaviourData& d,
+                                  mfront_gb_BehaviourData& d,
                                   const typename Behaviour::SMFlag f) {
       const auto smt = [&d] {
         if (-1.5 < d.K[0]) {
@@ -170,7 +170,7 @@ namespace mfront {
        * \param[in] b: behaviour
        */
       template <typename Behaviour>
-      static void exe(MFront_GB_BehaviourData& d, const Behaviour& b) {
+      static void exe(mfront_gb_BehaviourData& d, const Behaviour& b) {
         *(d.s1.stored_energy) = *(d.s0.stored_energy);
         b.computeInternalEnergy(*(d.s1.stored_energy));
       }
@@ -183,7 +183,7 @@ namespace mfront {
        * \param[in] b: behaviour
        */
       template <typename Behaviour>
-      static void exe(MFront_GB_BehaviourData& d, const Behaviour& b) {
+      static void exe(mfront_gb_BehaviourData& d, const Behaviour& b) {
         *(d.s1.dissipated_energy) = *(d.s0.dissipated_energy);
         b.computeDissipatedEnergy(*(d.s1.dissipated_energy));
       }  // end of exe
@@ -192,7 +192,7 @@ namespace mfront {
     struct DoNothingEnergyComputer {
       //! \brief empty function
       template <typename Behaviour>
-      static void exe(MFront_GB_BehaviourData&, const Behaviour&) {}
+      static void exe(mfront_gb_BehaviourData&, const Behaviour&) {}
     };  // end of struct DoNothingEnergyComputer
 
     /*!
@@ -203,7 +203,7 @@ namespace mfront {
      * \param[in] p: out of bounds policy
      */
     template <typename Behaviour>
-    int integrate(MFront_GB_BehaviourData& d,
+    int integrate(mfront_gb_BehaviourData& d,
                   const typename Behaviour::SMFlag f,
                   const tfel::material::OutOfBoundsPolicy p) {
       //! a simple alias

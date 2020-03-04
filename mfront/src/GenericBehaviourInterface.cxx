@@ -158,7 +158,7 @@ namespace mfront {
           << " * \\param[in,out] d: material data\n"
           << " */\n"
           << "MFRONT_SHAREDOBJ int " << f
-          << "(MFront_GB_BehaviourData* const);\n\n";
+          << "(mfront_gb_BehaviourData* const);\n\n";
     }
 
     out << "#ifdef __cplusplus\n"
@@ -263,7 +263,7 @@ namespace mfront {
     for (const auto h : mhs) {
       const auto f = this->getFunctionNameForHypothesis(name, h);
       out << "MFRONT_SHAREDOBJ int " << f
-          << "(MFront_GB_BehaviourData* const d){\n"
+          << "(mfront_gb_BehaviourData* const d){\n"
           << "using namespace tfel::material;\n";
       if ((type == BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) ||
           (is_finite_strain_through_strain_measure)) {

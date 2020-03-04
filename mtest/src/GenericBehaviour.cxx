@@ -468,14 +468,13 @@ namespace mtest {
           wk.e1(i) -= s.e_th1(i);
         }
       }
+      applyRotation(&(wk.e0[0]), this->dvtypes, this->getHypothesis(), s.r);
+      applyRotation(&(wk.e1[0]), this->dvtypes, this->getHypothesis(), s.r);
+      applyRotation(&(wk.s0[0]), this->thtypes, this->getHypothesis(), s.r);
       d.s0.gradients = &(wk.e0[0]);
       d.s1.gradients = &(wk.e1[0]);
       d.s0.thermodynamic_forces = &(wk.s0[0]);
       d.s1.thermodynamic_forces = &s.s1[0];
-      applyRotation(d.s0.gradients, this->dvtypes, this->getHypothesis(), s.r);
-      applyRotation(d.s1.gradients, this->dvtypes, this->getHypothesis(), s.r);
-      applyRotation(d.s0.thermodynamic_forces, this->thtypes,
-                    this->getHypothesis(), s.r);
     } else {
       if (this->btype == 1u) {
         // small strain behaviour

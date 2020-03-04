@@ -22,7 +22,7 @@ namespace mfront{
   namespace gb{
 
     //! a simple alias
-    using real = ::MFront_GB_real;
+    using real = ::mfront_gb_real;
 
   } // end of namspace gb
 
