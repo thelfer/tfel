@@ -301,6 +301,9 @@ macro(test_castem test_arg)
       endif(_ADDITIONAL_ENVIRONMENT)
       set_property(TEST ${test}
 	PROPERTY DEPENDS "MFrontCastemBehaviours MFrontMaterialProperties-castem mtest")
+      if(_ADDITIONAL_ENVIRONMENT_VARIABLES)
+         set_property(TEST ${test} PROPERTY ENVIRONMENT "${_ADDITIONAL_ENVIRONMENT_VARIABLES}")
+      endif(_ADDITIONAL_ENVIRONMENT_VARIABLES)
       if(TFEL_APPEND_SUFFIX)
 	install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}
 	  DESTINATION "share/doc/mfront-${TFEL_SUFFIX}/tests/behaviours/castem"
@@ -674,7 +677,6 @@ test_castem(parametertest2)
 test_castem(elasticmaterialpropertiesboundschecktest
   NO_XML_OUTPUT WILL_FAIL)
 test_castem(temperatureupdateonsubsteppingcheck)
-
 
 macro(test_castem_cxx test_arg)
   if(CMAKE_CONFIGURATION_TYPES)

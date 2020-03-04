@@ -145,21 +145,6 @@ test_dianafea(materialpropertiesboundscheck8
   NO_XML_OUTPUT WILL_FAIL)
 
 foreach(rm ${IEEE754_ROUNDING_MODES})
-  if(CMAKE_CONFIGURATION_TYPES)
-    foreach(conf ${CMAKE_CONFIGURATION_TYPES})
-      set_property(TEST dianafea-materialpropertiesboundscheck6_${rm}_${conf}_mtest
-      	 APPEND PROPERTY ENVIRONMENT "& DIANAFEA_OUT_OF_BOUNDS_POLICY=NONE")
-      set_property(TEST dianafea-materialpropertiesboundscheck7_${rm}_${conf}_mtest
-      	 APPEND PROPERTY ENVIRONMENT "& DIANAFEA_OUT_OF_BOUNDS_POLICY=WARNING")
-      set_property(TEST dianafea-materialpropertiesboundscheck8_${rm}_${conf}_mtest
-	 APPEND PROPERTY ENVIRONMENT "& DIANAFEA_OUT_OF_BOUNDS_POLICY=STRICT")
-      set_property(TEST dianafea-materialpropertiesboundscheck_${rm}_${conf}_mtest
-	dianafea-materialpropertiesboundscheck2_${rm}_${conf}_mtest
-	dianafea-materialpropertiesboundscheck5_${rm}_${conf}_mtest
-	dianafea-materialpropertiesboundscheck8_${rm}_${conf}_mtest
-	PROPERTY WILL_FAIL true)
-    endforeach(conf ${CMAKE_CONFIGURATION_TYPES})
-  else(CMAKE_CONFIGURATION_TYPES)
     set_property(TEST dianafea-materialpropertiesboundscheck6_${rm}_mtest
       APPEND PROPERTY ENVIRONMENT "DIANAFEA_OUT_OF_BOUNDS_POLICY=NONE")
     set_property(TEST dianafea-materialpropertiesboundscheck7_${rm}_mtest
@@ -171,7 +156,6 @@ foreach(rm ${IEEE754_ROUNDING_MODES})
       dianafea-materialpropertiesboundscheck5_${rm}_mtest
       dianafea-materialpropertiesboundscheck8_${rm}_mtest
       PROPERTY WILL_FAIL true)
-  endif(CMAKE_CONFIGURATION_TYPES)
 endforeach(rm ${IEEE754_ROUNDING_MODES})
   
 test_dianafea(statevariablesboundscheck
