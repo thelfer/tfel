@@ -41,6 +41,20 @@ The following code can be added in a block defining an inelastic flow:
 
 # Tickets solved during the development of this version
 
+## Ticket #212: Better `const` correctness in the `generic` behaviour
+
+The state at the beginning of the time step is now described in a
+structure called `mfront::gb::InitialState`, the fields of which are all
+`const`.
+
+The following fields of the `mfront::gb::State` are now `const`:
+
+- `gradients`
+- `material_properties`
+- `external_state_variables`
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/212/>
+
 ## Ticket #209: lack of documentation of the `@GasEquationOfState` keyword
 
 This feature is now described in the (`MTest` page)[mtest.html]
