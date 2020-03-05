@@ -408,6 +408,7 @@ namespace mtest {
     using namespace std;
     using namespace tfel::math;
     using tfel::math::vector;
+    using size_type = tfel::math::matrix<real>::size_type;
     auto throw_if = [](const bool c, const std::string& m) {
       tfel::raise_if(c, "GenericBehaviour::call_behaviour: " + m);
     };
@@ -468,14 +469,13 @@ namespace mtest {
           wk.e1(i) -= s.e_th1(i);
         }
       }
+      applyRotation(&(wk.e0[0]), this->dvtypes, this->getHypothesis(), s.r);
+      applyRotation(&(wk.e1[0]), this->dvtypes, this->getHypothesis(), s.r);
+      applyRotation(&(wk.s0[0]), this->thtypes, this->getHypothesis(), s.r);
       d.s0.gradients = &(wk.e0[0]);
       d.s1.gradients = &(wk.e1[0]);
       d.s0.thermodynamic_forces = &(wk.s0[0]);
       d.s1.thermodynamic_forces = &s.s1[0];
-      applyRotation(d.s0.gradients, this->dvtypes, this->getHypothesis(), s.r);
-      applyRotation(d.s1.gradients, this->dvtypes, this->getHypothesis(), s.r);
-      applyRotation(d.s0.thermodynamic_forces, this->thtypes,
-                    this->getHypothesis(), s.r);
     } else {
       if (this->btype == 1u) {
         // small strain behaviour
@@ -553,9 +553,32 @@ namespace mtest {
               "supported for small or finite strain behaviours");
         }
       }
-      for (unsigned short i = 0; i != nth; ++i) {
-        for (unsigned short j = 0; j != ndv; ++j) {
-          Kt(i, j) = wk.D(i, j);
+      if ((this->gtypes.size() == 1u) && (this->thtypes.size() == 1u)) {
+        for (unsigned short i = 0; i != nth; ++i) {
+          for (unsigned short j = 0; j != ndv; ++j) {
+            Kt(i, j) = wk.D(i, j);
+          }
+        }
+      } else {
+        const auto h = this->getHypothesis();
+        const auto p = wk.D.begin();
+        auto o = size_type{};
+        auto og = size_type{};
+        auto oth = size_type{};
+        for (size_type gi = 0; gi != this->gtypes.size(); ++gi) {
+          const auto g_size = mtest::getVariableSize(this->gtypes[gi], h);
+          for (size_type thj = 0; thj != this->thtypes.size(); ++thj) {
+            const auto th_size = mtest::getVariableSize(this->thtypes[thj], h);
+            for (size_type i = 0; i != g_size; ++i) {
+              for (size_type j = 0; j != th_size; ++j) {
+                Kt(og + i, oth + j) = p[o + i * th_size + j];
+              }
+            }
+            o += g_size * th_size;
+            oth += th_size;
+          }
+          oth = size_type{};
+          og += g_size;
         }
       }
     }

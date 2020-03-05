@@ -313,4 +313,26 @@ namespace mtest {
     tfel::raise("buildValueExtractor: no variable name '" + n + "'");
   }  // end of buildValueExtractor
 
+  size_t getVariableSize(const int t, const Behaviour::Hypothesis h) {
+    if (t == 0) {
+      return 1;
+    } else if (t == 1) {
+      return tfel::material::getStensorSize(h);
+    } else if (t == 2) {
+      return tfel::material::getSpaceDimension(h);
+    } else if (t != 3) {
+      tfel::raise("getVariablesSize: unsupported variable type");
+    }
+    return tfel::material::getTensorSize(h);
+  }  // end of getVariableSize
+
+  size_t getVariablesSize(const std::vector<int>& types,
+                          const Behaviour::Hypothesis h) {
+    size_t s = 0;
+    for (const auto& t : types) {
+      s += getVariableSize(t, h);
+    }
+    return s;
+  }  // end of getVariablesSize
+
 }  // end of namespace mtest

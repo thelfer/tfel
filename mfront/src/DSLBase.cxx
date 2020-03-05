@@ -210,12 +210,15 @@ namespace mfront {
     const auto addClassName = options.qualifyStaticVariables;
     const auto allowSemiColon = options.allowSemiColon;
     const auto registerLine = options.registerLine;
-    auto demangle = [&options](const std::string& t) {
-      const auto p = options.symbols.find(t);
+    auto demangle = [&options](const Token& t) {
+      if (t.flag != Token::Standard) {
+        return t.value;
+      }
+      const auto p = options.symbols.find(t.value);
       if (p != options.symbols.end()) {
         return p->second;
       }
-      return tfel::unicode::getMangledString(t);
+      return tfel::unicode::getMangledString(t.value);
     };
     auto modifier = options.modifier;
     auto analyser = options.analyser;
@@ -254,7 +257,7 @@ namespace mfront {
       }
       b.description += this->current->comment;
     }
-    auto currentValue = demangle(this->current->value);
+    auto currentValue = demangle(*(this->current));
     if (analyser != nullptr) {
       analyser->exe(currentValue);
     }
@@ -299,7 +302,7 @@ namespace mfront {
     addSpaceBetweenToken(res, this->current, std::next(this->current));
     ++(this->current);
     while ((this->current != this->tokens.end()) && (!((this->current->value == delim2) && (openedBlock == 0)))) {
-      currentValue = demangle(this->current->value);
+      currentValue = demangle(*(this->current));
       if (currentLine != this->current->line) {
         currentLine = this->current->line;
         if ((registerLine) && (!getDebugMode())) {

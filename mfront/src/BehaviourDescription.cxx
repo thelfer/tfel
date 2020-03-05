@@ -1338,7 +1338,7 @@ namespace mfront {
     }
   }  // end of BehaviourDescription::addTangentOperatorBlocks
 
-  const std::vector<std::pair<VariableDescription,VariableDescription>>
+  std::vector<std::pair<VariableDescription, VariableDescription>>
   BehaviourDescription::getTangentOperatorBlocks() const {
     std::vector<std::pair<VariableDescription, VariableDescription>> blocks;
     for (const auto& f : this->getMainVariables()) {
@@ -2913,6 +2913,17 @@ namespace mfront {
       for (const auto& mv : this->mvariables) {
         getSymbol(symbols, mv.first);
         getSymbol(symbols, mv.second);
+      }
+      for (const auto& b : this->getTangentOperatorBlocks()) {
+        if (Gradient::isIncrementKnown(b.second)) {
+          symbols.insert({"\u2202" + displayName(b.first) +
+                              "\u2215\u2202\u0394" + displayName(b.second),
+                          "d" + b.first.name + "_dd" + b.second.name});
+        } else {
+          symbols.insert({"\u2202" + displayName(b.first) + "\u2215\u2202" +
+                              displayName(b.second) + "\u2081",
+                          "d" + b.first.name + "_d" + b.second.name + "1"});
+        }
       }
       this->getBehaviourData(h).getSymbols(symbols);
     }  // end of BehaviourDescription::getSymbols

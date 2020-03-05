@@ -3185,8 +3185,10 @@ namespace mfront {
        << "#include\"TFEL/Math/tmatrix.hxx\"\n"
        << "#include\"TFEL/Math/Matrix/tmatrixIO.hxx\"\n"
        << "#include\"TFEL/Math/st2tost2.hxx\"\n"
-       << "#include\"TFEL/Math/ST2toST2/ST2toST2ConceptIO.hxx\"\n";
-    if (this->mb.getBehaviourType() == BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
+       << "#include\"TFEL/Math/ST2toST2/ST2toST2ConceptIO.hxx\"\n"
+       << "#include\"TFEL/Math/ST2toST2/ST2toST2View.hxx\"\n";
+    if (this->mb.getBehaviourType() ==
+        BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
       os << "#include\"TFEL/Math/tensor.hxx\"\n"
          << "#include\"TFEL/Math/Tensor/TensorConceptIO.hxx\"\n"
          << "#include\"TFEL/Math/t2tot2.hxx\"\n"
@@ -3247,23 +3249,33 @@ namespace mfront {
        << this->mb.getClassName() << "BehaviourData()\n"
        << "{}\n\n"
        << "/*!\n"
-       << "* \\brief Copy constructor\n"
+       << "* \\brief copy constructor\n"
        << "*/\n"
        << this->mb.getClassName() << "BehaviourData(const " << this->mb.getClassName() << "BehaviourData& src)\n"
        << ": ";
+    auto first = true;
     if (this->mb.getAttribute(BehaviourDescription::requiresStiffnessTensor, false)) {
-      os << "D(src.D),\n";
+      os << "D(src.D)";
+      first = false;
     }
     if (this->mb.getAttribute(BehaviourDescription::requiresThermalExpansionCoefficientTensor, false)) {
-      os << "A(src.A),\n";
+      if (!first) {
+        os << ",\n";
+      }
+      os << "A(src.A)";
+      first = false;
     }
     for (const auto& mv : this->mb.getMainVariables()) {
+      if (!first) {
+        os << ",\n";
+      }
       if (Gradient::isIncrementKnown(mv.first)) {
         os << mv.first.name << "(src." << mv.first.name << "),\n";
       } else {
         os << mv.first.name << "0(src." << mv.first.name << "0),\n";
       }
-      os << mv.second.name << "(src." << mv.second.name << ")\n";
+      os << mv.second.name << "(src." << mv.second.name << ")";
+      first = false;
     }
     for (const auto& v : md.getMaterialProperties()) {
       os << ",\n";
@@ -4296,7 +4308,7 @@ namespace mfront {
       tfel::raise_if(
           ((blocks.size() != 1u) || (blocks.front().first.arraySize != 1u) ||
            (blocks.front().second.arraySize != 1u)),
-          "BehaviourDSLCommon::writeBehaviourTangentOperator: internal error");
+          "BehaviourDSLCommon::getBehaviourConstructorsInitializers: internal error");
       if (this->mb.getBehaviourType() !=
           BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
         append(this->mb.getTangentOperatorBlockName(blocks.front()) + "(Dt)");
@@ -4363,11 +4375,11 @@ namespace mfront {
         }
         auto throw_unsupported_block = [&v1, &v2] {
           tfel::raise(
-              "BehaviourDSLCommon::writeBehaviourTangentOperator:"
+              "BehaviourDSLCommon::getBehaviourConstructorsInitializers:"
               "tangent operator blocks associated with "
               "the derivative of '" +
-              v1.name + "' (of type '" + v1.type + "') with respect to '" +
-              v2.name + "' (of type '" + v2.type + "') is not supported");
+              displayName(v1) + "' (of type '" + v1.type + "') with respect to '" +
+              displayName(v2) + "' (of type '" + v2.type + "') is not supported");
         };
         const auto bn = this->mb.getTangentOperatorBlockName(b);
         if (v1.getTypeFlag() == SupportedTypes::SCALAR) {
@@ -4379,6 +4391,17 @@ namespace mfront {
         } else if (v1.getTypeFlag() == SupportedTypes::TVECTOR) {
           if ((v2.getTypeFlag() == SupportedTypes::SCALAR) ||
               (v2.getTypeFlag() == SupportedTypes::TVECTOR)) {
+            const auto o = get_offset();
+            if (o != "0") {
+              append(bn + "(Dt.begin()+" + o + ")");
+            } else {
+              append(bn + "(Dt.begin())");
+            }
+          } else {
+            throw_unsupported_block();
+          }
+        } else if (v1.getTypeFlag() == SupportedTypes::STENSOR) {
+          if (v2.getTypeFlag() == SupportedTypes::STENSOR) {
             const auto o = get_offset();
             if (o != "0") {
               append(bn + "(Dt.begin()+" + o + ")");
@@ -6333,9 +6356,9 @@ namespace mfront {
         tfel::raise(
             "BehaviourDSLCommon::writeBehaviourTangentOperator:"
             "tangent operator blocks associated with "
-            "the derivative of '" +
-            v1.name + "' (of type '" + v1.type + "') with respect to '" +
-            v2.name + "' (of type '" + v2.type + "') is not supported");
+            "the derivative of '" +  //
+            displayName(v1) + "' (of type '" + v1.type + "') with respect to '" +  //
+            displayName(v2) + "' (of type '" + v2.type + "') is not supported");
       };
       const auto bn = this->mb.getTangentOperatorBlockName(b);
       if (v1.getTypeFlag() == SupportedTypes::SCALAR) {
@@ -6349,6 +6372,12 @@ namespace mfront {
           os << "tfel::math::TVectorView<N,real> " << bn << ";\n";
         } else if (v2.getTypeFlag() == SupportedTypes::TVECTOR) {
           os << "tfel::math::TMatrixView<N,N,real> " << bn << ";\n";
+        } else {
+          throw_unsupported_block();
+        }
+      } else if (v1.getTypeFlag() == SupportedTypes::STENSOR) {
+        if (v2.getTypeFlag() == SupportedTypes::STENSOR) {
+          os << "tfel::math::ST2toST2View<N,real> " << bn << ";\n";
         } else {
           throw_unsupported_block();
         }
