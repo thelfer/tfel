@@ -63,7 +63,7 @@ The derivative of the invariants are classically given by:
 \begin{aligned}
 \deriv{I_{1}}{\C} &= \tenseur{I}\\
 \deriv{I_{2}}{\C} &= I_{1}\,\tenseur{I}-\C\\
-\deriv{I_{3}}{\C} &= \C^{2}-I_{1}\,C-I_{2} \\
+\deriv{I_{3}}{\C} &= \C^{2}-I_{1}\,C+I_{2}\,\tenseur{I} \\
 \end{aligned}
 \right.
 \]
