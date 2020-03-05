@@ -371,7 +371,7 @@ namespace mfront {
      */
     const ThermodynamicForce& getThermodynamicForce(const std::string&) const;
     //! \return the list of tangent operator blocks
-    const std::vector<std::pair<VariableDescription, VariableDescription>>
+    std::vector<std::pair<VariableDescription, VariableDescription>>
     getTangentOperatorBlocks() const;
     /*!
      * \return the name of variable associated with a tangent operator block

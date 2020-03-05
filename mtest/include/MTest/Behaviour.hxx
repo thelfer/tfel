@@ -346,6 +346,22 @@ namespace mtest {
   MTEST_VISIBILITY_EXPORT std::function<real(const CurrentState&)> buildValueExtractor(
       const Behaviour&, const std::string&);
 
+  /*!
+   * \return the size of a variable
+   * \param[in] t: variable type
+   * \param[in] h: hypothesis
+   */
+  MTEST_VISIBILITY_EXPORT size_t
+  getVariableSize(const int, const Behaviour::Hypothesis);
+
+  /*!
+   * \return the size of an array of variables
+   * \param[in] types: variable types
+   * \param[in] h: hypothesis
+   */
+  MTEST_VISIBILITY_EXPORT size_t getVariablesSize(const std::vector<int>&,
+                                                  const Behaviour::Hypothesis);
+
 }  // end of namespace mtest
 
 #endif /* LIB_MTEST_MTESTBEHAVIOUR_HXX */

@@ -22,29 +22,6 @@
 
 namespace mtest {
 
-  static size_t getVariableSize(const int t,
-                                 const Behaviour::Hypothesis h) {
-    if (t == 0) {
-      return 1;
-    } else if (t == 1) {
-      return tfel::material::getStensorSize(h);
-    } else if (t == 2) {
-      return tfel::material::getSpaceDimension(h);
-    } else if (t != 3) {
-      tfel::raise("getVariablesSize: unsupported variable type");
-    }
-    return tfel::material::getTensorSize(h);
-  }  // end of getVariableSize
-
-  static size_t getVariablesSize(const std::vector<int>& types,
-                                 const Behaviour::Hypothesis h) {
-    size_t s = 0;
-    for (const auto& t : types) {
-      s += getVariableSize(t, h);
-    }
-    return s;
-  }  // end of getVariablesSize
-
   static void updateComponentsList(std::vector<std::string>& c,
                                    const StandardBehaviourBase& b,
                                    const std::string& v,
@@ -558,11 +535,8 @@ namespace mtest {
         return mtest::getVariableSize(
             this->thtypes[pth - this->thnames.cbegin()], h);
       }
-      
-
     };
     for (const auto& b : this->tangent_operator_blocks) {
-    
     }
     return r;
   }  // end of StandardBehaviourBase::getTangentOperatorSize
