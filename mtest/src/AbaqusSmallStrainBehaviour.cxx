@@ -140,6 +140,8 @@ namespace mtest {
     AbaqusReal ndt = std::numeric_limits<AbaqusReal>::max();
     const AbaqusInt KSTEP[3u] = {0, 0, 0};
     auto scd = AbaqusReal{};
+    s.se1 = s.se0;
+    s.de1 = s.de0;
     (this->fct)(&us(0), wk.ivs.size() == 0 ? nullptr : &wk.ivs(0),
                 &(wk.D(0, 0)), &s.se1, &s.de1, &scd, nullptr, nullptr, nullptr,
                 nullptr, &ue0(0), &ude(0), nullptr, &dt, &(s.esv0(0)),
