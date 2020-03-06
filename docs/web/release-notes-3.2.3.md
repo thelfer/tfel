@@ -9,13 +9,21 @@ all the fixes of this version.
 
 # Issues solved
 
+## Ticket #222: Handling stored and dissated energies is broken in `MTest` for `Abaqus/Standard` behaviours
+
+There were a bug in `MTest` in the `Abaqus/Standard` behaviours which
+didn't reinitialize the values of the stored and dissipated energies at
+the end of the time step to their values at the beginning of the time
+step before the behaviour integration.
+
+Thus, the dissipated and stored energies, when computed incrementally,
+are the sums of their increments at each iterations.
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/222/>
+
 ## Ticket #203: Cyrano` interface: compilation process hangs when treating behaviours based on the Hencky strain measure in `AxisymmetricalGeneralizedPlaneStress`
 
 The trouble came from an infinite loop when looking for the external
 state variable holding the axial stress.
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/203/>
-
-
-
-
