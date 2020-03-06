@@ -6,6 +6,14 @@ Version `3.3.1` is mainly a bug fix version of the `3.3` series.
 
 # Tickets fixed
 
+## Ticket #221: `mfront-query --tangent-operator-blocks` shall return the symbolic name of the tangent operator blocks
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/221/>
+
+## Ticket #220: Declaring additional tangent operator blocks using symbolic names is broken
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/220/>
+
 ## Ticket #218: The generation of the copy constructor of the `BehaviourData` class is broken when several gradients are defined
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/218/>

@@ -9,6 +9,22 @@ The page declares the new functionalities of the 3.4 version of the
 
 # New features of `MFront`
 
+## Generic behaviours
+
+### Add the possibility of definining the tangent operator blocks: the `@TangentOperatorBlock` and `@TangentOperatorBlocks` keywords
+
+In version `3.3.x`, some tangent operator blocks are automatically
+declared, namely, the derivatives of all the fluxes with respect to all
+the gradients. The `@AdditionalTangentOperatorBlock` and
+`@AdditionalTangentOperatorBlocks` keywords allowed to add tangent
+operator blocks to this default set.
+
+The `@TangentOperatorBlock` and `@TangentOperatorBlocks` allow a more fine
+grained control of the tangent operator blocks available and disable the
+use of the default tangent operation blocks. Hence, tangent operator
+blocks that are structurally zero (for example due to symmetry
+conditions) don't have to be compute any more.
+
 ## Improvement of the `StandardElastoViscoplasticity` brick
 
 ### The `Power` isotropic hardening rule{#sec:power_isotropic_hardening_rule}
@@ -40,6 +56,10 @@ The following code can be added in a block defining an inelastic flow:
 ~~~~
 
 # Tickets solved during the development of this version
+
+## Ticket #219: Add the possibility to define the tangent operator blocks
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/219/>
 
 ## Ticket #212: Better `const` correctness in the `generic` behaviour
 

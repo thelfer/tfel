@@ -25,22 +25,15 @@
 \newcommand{\tprd}[1]{\partial^{\star}_{r}\left(#1\right)}
 <!-- \newcommand{\paren}[1]{\left(#1\right)} -->
 
-<!-- <div id="slideshow"> -->
-<!--   <ul class="slides"> -->
-<!--   <li> -->
-<!--     <video style="display:block; margin: 0 auto;" width="640" height="320" controls> -->
-<!--       <source src="media/ansys-explicit.mp4" type="video/mp4"> -->
-<!-- 	Your browser does not support the video tag. -->
-<!--     </video> -->
-<!--   </li> -->
-<!--   <li><img src="img/ANSYSFLD.png" width="620" height="320" alt="Simulation of a Punching test" /></li> -->
-<!--   <li><img src="img/ansys-isotropichardening1.png" width="620" height="320" alt="Notched beam under a cyclic loading with an isotropic hardening plastic beahviour" /></li> -->
-<!--   </ul> -->
-<!--   <span class="arrow previous"></span> -->
-<!--   <span class="arrow next"></span> -->
-<!-- </div> -->
-<!-- <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script> -->
-<!-- <script src="js/slideshow.js"></script> -->
+<div id="slideshow">
+   <ul class="slides">
+   <li><img src="img/AnsysTwistOfABar.svg" width="620" height="320" alt="Torsional twist of a notched bar using an Hosford plastic behaviour with a bilinear hardening law. Alex Grishin. Ansys MAPDL. 2020." /></li>
+  </ul>
+  <span class="arrow previous"></span>
+  <span class="arrow next"></span>
+</div>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+<script src="js/slideshow.js"></script>
 
 # Introduction
 

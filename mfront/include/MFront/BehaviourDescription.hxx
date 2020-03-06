@@ -343,6 +343,15 @@ namespace mfront {
     const std::vector<std::pair<Gradient, ThermodynamicForce>>&
     getMainVariables() const;
     /*!
+     * \brief set the tangent operator blocks and disable the use of the default
+     * blocks.
+     * \param[in] bns: list of blocks names
+     * \note This method is only valid for general behaviours
+     * \note This method must be called before the `addTangentOperatorBlock` and
+     * `addTangentOperatorBlocks` methods.
+     */
+    void setTangentOperatorBlocks(const std::vector<std::string>&);
+    /*!
      * \brief add new block to the tangent operator
      * \param[in] b: block name
      * \note a valid block defines either:
@@ -375,9 +384,15 @@ namespace mfront {
     getTangentOperatorBlocks() const;
     /*!
      * \return the name of variable associated with a tangent operator block
-     * \param[in] block: block name
+     * \param[in] block: tangent operator block
      */
     std::string getTangentOperatorBlockName(
+        const std::pair<VariableDescription, VariableDescription>&) const;
+    /*!
+     * \return the symbolic name of the given tangent operator block
+     * \param[in] block: tangent operator block
+     */
+    std::string getTangentOperatorBlockSymbolicName(
         const std::pair<VariableDescription, VariableDescription>&) const;
     /*!
      * \brief set the behaviour to be a generic behaviour
@@ -1794,6 +1809,13 @@ namespace mfront {
     mutable BehaviourSymmetryType estype = mfront::ISOTROPIC;
     //! flag telling the elastic symmetry has been defined
     mutable bool estypeIsDefined = false;
+    /*!
+     * \brief flag stating if the default blocks of the tangent operator must
+     * be used.
+     */
+    bool useDefaultTangentOperatorBlocks = true;
+    //! flag stating if the tangent operator blocks
+    mutable bool haveTangentOperatorBlocksAlreadyBeenRequested = false;
     //! integration schemes
     IntegrationScheme ischeme = UNDEFINEDINTEGRATIONSCHEME;
     //! list of material laws used

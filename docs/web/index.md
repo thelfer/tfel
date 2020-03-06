@@ -4,6 +4,7 @@
 
 <div id="slideshow">
   <ul class="slides">
+	<li><img src="img/AnsysTwistOfABar.svg" width="620" height="320" alt="Torsional twist of a notched bar using an Hosford plastic behaviour with a bilinear hardening law. Alex Grishin. Ansys MAPDL. 2020." /></li>
 	<li><img src="img/AbdominalMusclesModelling2019.png" width="620" height="320" alt="Abdominal muscles modelling by Lluís Tuset, Gerard Fortuny, Joan Herrero, Dolors Puigjaner, Josep M. López." /></li>
 	<li><img src="img/PSACylinderHeadDesign.png" width="620" height="320" alt="This PSA study by Agathe Forré et al. deals with the Thermal-Mechanical Fatigue design of automotive cylinder heads." /></li>
 	<li>

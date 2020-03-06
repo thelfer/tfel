@@ -539,6 +539,10 @@ namespace mfront {
      * keyword.
      */
     virtual void treatThermodynamicForce();
+    //!\brief treat the `@TangentOperatorBlock` keyword.
+    virtual void treatTangentOperatorBlock();
+    //!\brief treat the `@TangentOperatorBlocks` keyword.
+    virtual void treatTangentOperatorBlocks();
     //!\brief treat the `@AdditionalTangentOperatorBlock` keyword.
     virtual void treatAdditionalTangentOperatorBlock();
     //!\brief treat the `@AdditionalTangentOperatorBlocks` keyword.

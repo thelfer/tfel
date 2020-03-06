@@ -312,6 +312,7 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./img/XperMFront.png			                          \
 	   ./img/RambergOsgoodNonLinearElasticity-UniaxialTensileTest.png \
            ./img/FichantLaBorderieDamageBehaviourUniaxialTensileTest.png  \
+           ./img/docs/web/img/AnsysTwistOfABar.svg                        \
 	   ./media/epx1.mp4                                               \
 	   ./media/epx2.mp4                                           \
 	   ./media/abaqus-explicit.mp4                                \

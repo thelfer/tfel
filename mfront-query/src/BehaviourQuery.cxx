@@ -699,7 +699,7 @@ namespace mfront {
           {"tangent-operator-blocks",
            [](const FileDescription&, const BehaviourDescription& d) {
              for (const auto& b : d.getTangentOperatorBlocks()) {
-               std::cout << "-" << d.getTangentOperatorBlockName(b)
+               std::cout << "-" << d.getTangentOperatorBlockSymbolicName(b)
                          << ": derivative of '" << b.first.getExternalName()
                          << "' with respect to '" << b.second.getExternalName()
                          << "'\n";

@@ -26,6 +26,12 @@ namespace mfront{
     this->registerNewCallBack(
         "@Flux", &ImplicitGenericBehaviourDSL::treatThermodynamicForce);
     this->registerNewCallBack(
+        "@TangentOperatorBlock",
+        &ImplicitGenericBehaviourDSL::treatTangentOperatorBlock);
+    this->registerNewCallBack(
+        "@TangentOperatorBlocks",
+        &ImplicitGenericBehaviourDSL::treatTangentOperatorBlocks);
+    this->registerNewCallBack(
         "@AdditionalTangentOperatorBlock",
         &ImplicitGenericBehaviourDSL::treatAdditionalTangentOperatorBlock);
     this->registerNewCallBack(

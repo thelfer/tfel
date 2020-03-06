@@ -1,6 +1,8 @@
 SUBDIRS=abaqus ansys lsdyna
 
 MFRONT_DOCS = AdditionalConvergenceChecks.md                            \
+	      AdditionalTangentOperatorBlock.md		                        \
+	      AdditionalTangentOperatorBlocks.md		                        \
 	      Algorithm.md				                \
 	      Author.md				                        \
 	      AuxiliaryStateVar.md				        \
@@ -79,6 +81,8 @@ MFRONT_DOCS = AdditionalConvergenceChecks.md                            \
 	      StrainMeasure.md		                                \
 	      Swelling.md		                                \
 	      TangentOperator.md		                        \
+	      TangentOperatorBlock.md		                        \
+	      TangentOperatorBlocks.md		                        \
 	      Theta.md		                                        \
 	      UpdateAuxiliaryStateVars.md                               \
 	      UpdateAuxiliaryStateVariables.md                          \

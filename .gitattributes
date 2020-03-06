@@ -366,6 +366,8 @@ docs/mfront-fr.svg -text
 docs/mfront.bmp -text
 docs/mfront.ico -text
 docs/mfront/AdditionalConvergenceChecks.md -text
+docs/mfront/AdditionalTangentOperatorBlock.md -text
+docs/mfront/AdditionalTangentOperatorBlocks.md -text
 docs/mfront/Algorithm.md -text
 docs/mfront/Author.md -text
 docs/mfront/AuxiliaryStateVar.md -text
@@ -510,6 +512,8 @@ docs/mfront/StaticVariable.md -text
 docs/mfront/StrainMeasure.md -text
 docs/mfront/Swelling.md -text
 docs/mfront/TangentOperator.md -text
+docs/mfront/TangentOperatorBlock.md -text
+docs/mfront/TangentOperatorBlocks.md -text
 docs/mfront/Theta.md -text
 docs/mfront/UpdateAuxiliaryStateVariables.md -text
 docs/mfront/UpdateAuxiliaryStateVars.md -text
@@ -1240,6 +1244,8 @@ docs/web/img/AbaqusRotSigTest.png -text
 docs/web/img/AbaqusRotSigTest.xcf -text
 docs/web/img/AbdominalMusclesModelling2019.png -text
 docs/web/img/AccesDigiteo.png -text
+docs/web/img/AnsysTwistOfABar.png -text
+docs/web/img/AnsysTwistOfABar.svg -text
 docs/web/img/AsterTotalLagrangian.png -text
 docs/web/img/Barrioz2018.png -text
 docs/web/img/Barrioz2018.xcf -text

@@ -744,14 +744,43 @@ namespace mfront {
     this->declareMainVariables();
   }  // end of BehaviourDSLCommon::treatThermodynamicForce
 
+  void BehaviourDSLCommon::treatTangentOperatorBlock() {
+    const char* const m =
+        "BehaviourDSLCommon::treatTangentOperatorBlock";
+    this->checkNotEndOfFile(m);
+    const auto b = this->current->value;
+    ++(this->current);
+    this->checkNotEndOfFile(m);
+    this->readSpecifiedToken(m, ";");
+    this->mb.setTangentOperatorBlocks(std::vector<std::string>(1u, b));
+  }  // end of BehaviourDSLCommon::treatTangentOperatorBlock
+
+  void BehaviourDSLCommon::treatTangentOperatorBlocks() {
+    const char* const m =
+        "BehaviourDSLCommon::treatTangentOperatorBlocks";
+    this->checkNotEndOfFile(m);
+    auto values = std::vector<tfel::utilities::Token>{};
+    this->checkNotEndOfFile(m);
+    this->readList(values, m, "{", "}", false);
+    this->checkNotEndOfFile(m);
+    this->readSpecifiedToken(m, ";");
+    auto blocks = std::vector<std::string>{};
+    blocks.resize(values.size());
+    for (const auto& v : values) {
+      blocks.push_back(v.value);
+    }
+    this->mb.setTangentOperatorBlocks(blocks);
+  }  // end of BehaviourDSLCommon::treatTangentOperatorBlocks
+
   void BehaviourDSLCommon::treatAdditionalTangentOperatorBlock() {
     const char* const m =
         "BehaviourDSLCommon::treatAdditionalTangentOperatorBlock";
     this->checkNotEndOfFile(m);
-    this->mb.addTangentOperatorBlock(this->current->value);
+    const auto b = this->current->value;
     ++(this->current);
     this->checkNotEndOfFile(m);
     this->readSpecifiedToken(m, ";");
+    this->mb.addTangentOperatorBlock(b);
   }  // end of BehaviourDSLCommon::treatAdditionalTangentOperatorBlock
 
   void BehaviourDSLCommon::treatAdditionalTangentOperatorBlocks() {
