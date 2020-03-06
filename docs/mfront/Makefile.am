@@ -1,6 +1,8 @@
 SUBDIRS=abaqus ansys lsdyna
 
 MFRONT_DOCS = AdditionalConvergenceChecks.md                            \
+	      AdditionalTangentOperatorBlock.md		                        \
+	      AdditionalTangentOperatorBlocks.md		                        \
 	      Algorithm.md				                \
 	      Author.md				                        \
 	      AuxiliaryStateVar.md				        \

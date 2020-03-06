@@ -54,6 +54,8 @@ macro(install_mfront_desc2 directory file)
 endmacro(install_mfront_desc2 directory file)
 
 install_mfront_desc(AdditionalConvergenceChecks)
+install_mfront_desc(AdditionalTangentOperatorBlock)
+install_mfront_desc(AdditionalTangentOperatorBlocks)
 install_mfront_desc(Algorithm)
 install_mfront_desc(Author)
 install_mfront_desc(AuxiliaryStateVar)

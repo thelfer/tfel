@@ -364,6 +364,8 @@ docs/mfront-fr.svg -text
 docs/mfront.bmp -text
 docs/mfront.ico -text
 docs/mfront/AdditionalConvergenceChecks.md -text
+docs/mfront/AdditionalTangentOperatorBlock.md -text
+docs/mfront/AdditionalTangentOperatorBlocks.md -text
 docs/mfront/Algorithm.md -text
 docs/mfront/Author.md -text
 docs/mfront/AuxiliaryStateVar.md -text
