@@ -375,9 +375,15 @@ namespace mfront {
     getTangentOperatorBlocks() const;
     /*!
      * \return the name of variable associated with a tangent operator block
-     * \param[in] block: block name
+     * \param[in] block: tangent operator block
      */
     std::string getTangentOperatorBlockName(
+        const std::pair<VariableDescription, VariableDescription>&) const;
+    /*!
+     * \return the symbolic name of the given tangent operator block
+     * \param[in] block: tangent operator block
+     */
+    std::string getTangentOperatorBlockSymbolicName(
         const std::pair<VariableDescription, VariableDescription>&) const;
     /*!
      * \brief set the behaviour to be a generic behaviour
