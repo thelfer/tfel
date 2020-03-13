@@ -4,6 +4,10 @@
 
 # Tickets fixed
 
+## Ticket #224: Fix compilation of the `gentype3.cxx` test in `C++-17` with `gcc-9.2`
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/208/>
+
 ## Ticket #208: Support of the `@GasEquationOfState` keyword is broken in `MTest`
 
 `MTest` is able to model a tight pipe. This hypothesis assumes that the
