@@ -27,6 +27,8 @@ MFRONTS= DDIF2.mfront                                                      \
          FiniteRotationSmallStrainElasticity.mfront                        \
          FiniteRotationSmallStrainElasticity2.mfront                       \
 	 Plasticity.mfront                                                 \
+	 Plasticity2.mfront                                                 \
+	 Plasticity3.mfront                                                 \
 	 DruckerPrager.mfront                                              \
          Norton.mfront                                                     \
          Norton2.mfront                                                    \

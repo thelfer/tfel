@@ -40,15 +40,17 @@ namespace mfront{
     // intermediate temperature
     this->mb.addLocalVariable(h,VariableDescription("temperature","T_",1u,0u));
     // Call Back
-    this->registerNewCallBack("@UsableInPurelyImplicitResolution",
-			      &IsotropicBehaviourDSLBase::treatUsableInPurelyImplicitResolution);
+    this->registerNewCallBack(
+        "@UsableInPurelyImplicitResolution",
+        &IsotropicBehaviourDSLBase::treatUsableInPurelyImplicitResolution);
     this->registerNewCallBack("@MaterialLaw",&IsotropicBehaviourDSLBase::treatMaterialLaw);
     this->registerNewCallBack("@FlowRule",&IsotropicBehaviourDSLBase::treatFlowRule);
     this->registerNewCallBack("@Theta",&IsotropicBehaviourDSLBase::treatTheta);
     this->registerNewCallBack("@Epsilon",&IsotropicBehaviourDSLBase::treatEpsilon);
     this->registerNewCallBack("@IterMax",&IsotropicBehaviourDSLBase::treatIterMax);
-    this->registerNewCallBack("@ElasticMaterialProperties",
-			      &IsotropicBehaviourDSLBase::treatElasticMaterialProperties);
+    this->registerNewCallBack(
+        "@ElasticMaterialProperties",
+        &IsotropicBehaviourDSLBase::treatElasticMaterialProperties);
     this->disableCallBack("@Brick");
     this->disableCallBack("@StateVar");
     this->disableCallBack("@StateVariable");

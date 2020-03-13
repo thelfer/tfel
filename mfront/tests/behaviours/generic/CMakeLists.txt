@@ -49,6 +49,8 @@ set(mfront_tests_SOURCES
   LogarithmicStrainElasticity2
   LogarithmicStrainElasticity3
   Plasticity
+  Plasticity2
+  Plasticity3
   LogarithmicStrainPlasticity
   DruckerPrager
   DruckerPragerEcroLin
@@ -423,6 +425,9 @@ test_generic(elasticity25)
 test_generic(elasticity26)
 test_generic(elasticity27)
 test_generic(elasticity28)
+test_generic(plasticity plasticity.ref)
+test_generic(plasticity2)
+test_generic(plasticity3)
 # test_generic(ddif2)
 # test_generic(ddif2-2)
 # test_generic(ddif2-3)

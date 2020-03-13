@@ -274,20 +274,21 @@ namespace mfront{
     using namespace std;
     const auto mvs = mb.getMainVariablesSize();
     const auto mprops = this->buildMaterialPropertiesList(mb,h);
-    if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
-      out << "template<tfel::material::ModellingHypothesis::Hypothesis H,typename Type";
-      if(mb.useQt()){
-	out << ",bool use_qt";
+    if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
+      out << "template<tfel::material::ModellingHypothesis::Hypothesis "
+             "H,typename Type";
+      if (mb.useQt()) {
+        out << ",bool use_qt";
       }
     } else {
       out << "template<typename Type";
-      if(mb.useQt()){
-	out << ",bool use_qt";
+      if (mb.useQt()) {
+        out << ",bool use_qt";
       }
     }
     out << ">\n";
     out << "struct AbaqusTraits<tfel::material::" << mb.getClassName() << "<";
-    if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
+    if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
       out << "H";
     } else {
       out << "tfel::material::ModellingHypothesis::"

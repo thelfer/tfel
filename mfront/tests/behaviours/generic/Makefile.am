@@ -107,6 +107,9 @@ EXTRA_DIST = CMakeLists.txt                                                     
              mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-3-1D.mtest \
              mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-3-2D.mtest \
              mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-3-3D.mtest \
+             plasticity.mtest                                                          \
+             plasticity2.mtest                                                         \
+             plasticity3.mtest                                                         \
              saintvenantkirchhoffelasticity-uniaxialloading-sig11-1D.mtest             \
              saintvenantkirchhoffelasticity-uniaxialloading-sig22-1D.mtest             \
              saintvenantkirchhoffelasticity-uniaxialloading-sig33-1D.mtest             \

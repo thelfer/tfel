@@ -343,13 +343,14 @@ namespace mfront {
     for (p = this->flows.begin(), n = 0; p != this->flows.end(); ++p, ++n) {
       os << "error+=std::abs(tfel::math::base_cast(newton_f(" << n << ")));\n";
     }
-    os << "try{" << endl
+    os << "try{\n"
        << "TinyMatrixSolve<" << this->flows.size() << ","
        << "real>::exe(newton_df,newton_f);\n"
-       << "} catch(LUException&){" << endl
-       << "return false;" << endl
-       << "}" << endl
+       << "} catch(LUException&){\n"
+       << "vdp /= 2;\n"
+       << "} else {\n"
        << "vdp -= newton_f;\n"
+       << "}\n"
        << "iter+=1;\n";
     if (getDebugMode()) {
       os << "cout << \"" << this->mb.getClassName()

@@ -9,6 +9,23 @@ The page declares the new functionalities of the 3.4 version of the
 
 # New features of `MFront`
 
+## Improved robustness of the isotropic DSLs
+
+The `@Flow` block can now return a boolean value in the
+`IsotropicMisesCreep`, `IsotropicMisesPlasticFlow`,
+`IsotropicStrainHardeningMisesCreep` DSLs.
+
+This allows to check to avoid Newton steps leading to too high values of
+the equivalent stress by returning `false`. This usually occurs if in
+elastic prediction is made (the default), i.e. when the plastic strain
+increment is too low.
+
+If `false` is returned, the value of the plastic strain increment is
+increased by doubling the previous Newton correction. If this happens at
+the first iteration, the value of the plastic strain increment is set to
+half of its upper bound value (this upper bound value is such that the
+associated von Mises stress is null).
+
 ## Generic behaviours
 
 ### Add the possibility of definining the tangent operator blocks: the `@TangentOperatorBlock` and `@TangentOperatorBlocks` keywords
@@ -94,6 +111,14 @@ Variables bounds (both @Bounds and @PhysicalBounds) are now available for materi
 They are available directly in the .so file via getExternalLibraryManager().
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/195/>
+
+## Ticket #202: DSLs for isotropic behaviours don't handle `NaN`
+
+The `IsotropicMisesCreep`, `IsotropicMisesPlasticFlow`,
+`IsotropicStrainHardeningMisesCreep` and
+`MultipleIsotropicMisesFlowsDSL` now handle properly `NaN` values.
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/202/>
 
 ## Ticket #196 : Export variable names for all interface of material property
 

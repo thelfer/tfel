@@ -1,0 +1,20 @@
+@DSL IsotropicPlasticMisesFlow;
+@Behaviour Plasticity2;
+@Author Helfer Thomas;
+@Date 23/11/06;
+
+@MaterialProperty stress H;
+@MaterialProperty stress s0;
+
+@FlowRule{
+  const auto R = H * p + s0;
+  if (2 * seq > 3 * R) {
+    f = numeric_limits<real>::quiet_NaN();
+    df_dseq = 1;
+    df_dp = -H;
+  } else {
+    f = seq - R;
+    df_dseq = 1;
+    df_dp = -H;
+  }
+}

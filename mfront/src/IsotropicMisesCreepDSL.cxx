@@ -96,55 +96,85 @@ namespace mfront{
       this->throwRuntimeError("IsotropicMisesCreepDSL::writeBehaviourParserSpecificMembers",
 			      "no flow rule declared (use the @FlowRule directive)");
     }
-    os << "void computeFlow(){\n"
+    os << "bool computeFlow(){\n"
        << "using namespace std;\n"
        << "using namespace tfel::math;\n"
        << "using namespace tfel::material;\n"
        << "using std::vector;\n";
     writeMaterialLaws(os,this->mb.getMaterialLaws());
     os << this->mb.getCode(h,BehaviourData::FlowRule)
-       << "\n}\n\n"
+       << "return true;\n}\n\n"
        << "bool NewtonIntegration(){\n"
        << "using namespace std;\n"
        << "using namespace tfel::math;\n"
-       << "bool converge=false;\n"
-       << "bool inversible=true;\n"
+       << "bool converged=false;\n"
        << "strain newton_f;\n"
        << "strain newton_df;\n"
+       << "auto newton_ddp = strain{}; // previous correction of the Newton algorithm\n"
        << "real newton_epsilon = 100*std::numeric_limits<real>::epsilon();\n"
        << "stress mu_3_theta = 3*(this->theta)*(this->mu);\n"
        << ""
        << "unsigned int iter=0;\n";    
-    os << "while((converge==false)&&\n"
-       << "(iter<(this->iterMax))&&\n"
-       << "(inversible==true)){\n"
+    os << "while((converged==false)&&\n"
+       << "(iter<(this->iterMax))){\n"
        << "this->seq = std::max(this->seq_e-mu_3_theta*(this->dp),real(0));\n"
-       << "this->computeFlow();\n"
+       << "const auto compute_flow_r = this->computeFlow();\n"
+       << "if(!((compute_flow_r)&&\n"
+       << "(tfel::math::ieee754::isfinite(this->f))&&\n"
+       << "(tfel::math::ieee754::isfinite(this->df_dseq)))){\n";
+    if (getDebugMode()) {
+      os << "cout << \"" << this->mb.getClassName()
+         << "::NewtonIntegration() : iteration \" "
+         << "<< iter << \": invalid evaluation of the flow rate or its "
+         << "derivative\\n\";\n";
+    };
+    os << "if(iter==0u){\n"
+       << "// probably an elastic prediction\n"
+       << "newton_ddp = (this->seq_e / mu_3_theta) / 2;\n"
+       << "} // end of if(iter==0u)\n"
+       << "this->dp += newton_ddp;\n"
+       << "iter+=1;\n"
+       << "} else {"
        << "newton_f  = this->dp - (this->f)*(this->dt);\n"
        << "newton_df = 1+mu_3_theta*(this->df_dseq)*(this->dt);\n"
        << "if(std::abs(base_cast(newton_df))"
        << ">newton_epsilon){\n"
-       << "this->dp -= newton_f/newton_df;\n"
+       << "newton_ddp = -newton_f/newton_df;\n"
+       << "this->dp += newton_ddp;\n"
        << "iter+=1;\n";
     if(getDebugMode()){
       os << "cout << \"" << this->mb.getClassName()
-	 << "::NewtonIntegration() : iteration \" "
-	 << "<< iter << \" : \" << std::abs(tfel::math::base_cast(newton_f)) << endl;\n";
+         << "::NewtonIntegration() : iteration \" "
+         << "<< iter << \" : \" << std::abs(tfel::math::base_cast(newton_f)) "
+            "<< endl;\n";
     }
-    os << "converge = (std::abs(tfel::math::base_cast(newton_f))<"
+    os << "converged = (std::abs(tfel::math::base_cast(newton_f))<"
        << "(this->epsilon));\n"
-       << "} else {\n"
-       << "inversible=false;\n"
+       << "} else {\n";
+    if (getDebugMode()) {
+      os << "cout << \"" << this->mb.getClassName()
+         << "::NewtonIntegration() : iteration \" "
+         << "<< iter << \": invalid jacobian\\n\";\n";
+    };
+    os << "if(iter==0u){\n";
+    if (getDebugMode()) {
+      os << "cout << \"" << this->mb.getClassName()
+         << "::NewtonIntegration() : iteration \" "
+         << "<< iter << \": invalid jacobian on the first iteration\\n\";\n";
+    };
+    os << "// probably an elastic prediction\n"
+       << "newton_ddp = (this->seq_e / mu_3_theta) / 2;\n"
+       << "} // end of if(iter==0u)\n"
+       << "this->dp += newton_ddp;\n"
+       << "iter+=1;\n"
        << "}\n"
        << "}\n\n"
-       << "if(inversible==false){\n"
-       << "return false;\n"
        << "}\n\n"
        << "if(iter==this->iterMax){\n";
     if(getDebugMode()){
       os << "cout << \"" << this->mb.getClassName()
-	 << "::NewtonIntegration() : no convergence after \" "
-	 << "<< iter << \" iterations\"<< endl << endl;\n";
+         << "::NewtonIntegration() : no convergence after \" "
+         << "<< iter << \" iterations\"<< endl << endl;\n";
       os << "cout << *this << endl;\n";
     }
     os << "return false;\n"
@@ -215,9 +245,8 @@ namespace mfront{
     os << "}\n\n";
   }
 
-  void IsotropicMisesCreepDSL::writeBehaviourComputeTangentOperator(std::ostream& os,
-								    const Hypothesis) const
-  {
+  void IsotropicMisesCreepDSL::writeBehaviourComputeTangentOperator(
+      std::ostream& os, const Hypothesis) const {
     os << "bool computeConsistentTangentOperator(const SMType smt){\n"
        << "using namespace std;\n"
        << "using tfel::material::computeElasticStiffness;\n"

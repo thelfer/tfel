@@ -3024,6 +3024,8 @@ mfront/tests/behaviours/ParameterTest.mfront -text
 mfront/tests/behaviours/ParameterTest2.mfront -text
 mfront/tests/behaviours/PlasIsoCin.mfront -text
 mfront/tests/behaviours/Plasticity.mfront -text
+mfront/tests/behaviours/Plasticity2.mfront -text
+mfront/tests/behaviours/Plasticity3.mfront -text
 mfront/tests/behaviours/PolyCrystals.mfront -text
 mfront/tests/behaviours/PolyCrystals_DD_CC.mfront -text
 mfront/tests/behaviours/PolyCrystals_DD_CFC.mfront -text
@@ -5520,6 +5522,9 @@ mfront/tests/behaviours/generic/mieheapellambrechtlogarithmicstrainnortoncreep-u
 mfront/tests/behaviours/generic/orthotropicswelling.mtest -text
 mfront/tests/behaviours/generic/orthotropicswelling2.mtest -text
 mfront/tests/behaviours/generic/orthotropicswelling3.mtest -text
+mfront/tests/behaviours/generic/plasticity.mtest -text
+mfront/tests/behaviours/generic/plasticity2.mtest -text
+mfront/tests/behaviours/generic/plasticity3.mtest -text
 mfront/tests/behaviours/generic/relocationtest.mtest -text
 mfront/tests/behaviours/generic/saintvenantkirchhoffelasticity-shear-1-2D.mtest -text
 mfront/tests/behaviours/generic/saintvenantkirchhoffelasticity-shear-1-3D.mtest -text

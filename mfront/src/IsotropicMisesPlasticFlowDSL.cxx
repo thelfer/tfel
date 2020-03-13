@@ -99,10 +99,8 @@ namespace mfront{
     }
   } // end of IsotropicMisesPlasticFlowDSL::endsInputFileProcessing
 
-  void
-  IsotropicMisesPlasticFlowDSL::writeBehaviourParserSpecificMembers(std::ostream& os,
-								    const Hypothesis h) const
-  {
+  void IsotropicMisesPlasticFlowDSL::writeBehaviourParserSpecificMembers(
+      std::ostream& os, const Hypothesis h) const {
     this->checkBehaviourFile(os);
     if(!this->mb.hasCode(h,BehaviourData::FlowRule)){
       const auto msg = [&h] () -> std::string {
@@ -115,37 +113,52 @@ namespace mfront{
       this->throwRuntimeError("IsotropicBehaviourDSLBase::"
 			      "endsInputFileProcessing: ",msg);
     }
-    os << "void computeFlow(){\n"
+    os << "bool computeFlow(){\n"
        << "using namespace std;\n"
        << "using namespace tfel::math;\n"
        << "using namespace tfel::material;\n"
        << "using std::vector;\n";
     writeMaterialLaws(os,this->mb.getMaterialLaws());
-    os << this->mb.getCode(h,BehaviourData::FlowRule)
-       << "\n}\n\n";
+    os << this->mb.getCode(h, BehaviourData::FlowRule) << "return true;\n}\n\n";
 
     os << "bool NewtonIntegration(){\n"
        << "using namespace std;\n"
        << "using namespace tfel::math;\n"
        << "bool converge=false;\n"
-       << "bool inversible=true;\n"
        << "strain newton_f;\n"
        << "strain newton_df;\n"
+       << "auto newton_ddp = strain{}\n; // previous correction of the Newton algorithm\n"
        << "real newton_epsilon = 100*std::numeric_limits<real>::epsilon();\n"
-       << "stress mu_3_theta = 3*("
-       << this->mb.getClassName() << "::theta)*(this->mu);\n"
-       << "real surf;"
-       << "\n"
+       << "stress mu_3_theta = 3*(" << this->mb.getClassName()
+       << "::theta)*(this->mu);\n"
+       << "real surf;\n"
        << "unsigned int iter = 0u;\n"
        << "this->p_=this->p+this->dp;\n"
        << "while((converge==false)&&\n"
-       << "(iter<this->iterMax)&&\n"
-       << "(inversible==true)){\n"
+       << "(iter<this->iterMax)){\n"
        << "this->seq = std::max(this->seq_e-mu_3_theta*(this->dp),real(0.f));\n"
-       << "this->computeFlow();\n"
+       << "const auto compute_flow_r = this->computeFlow();\n"
+       << "if(!((compute_flow_r)&&\n"
+       << "(tfel::math::ieee754::isfinite(this->f))&&\n"
+       << "(tfel::math::ieee754::isfinite(this->df_dp))&&\n"
+       << "(tfel::math::ieee754::isfinite(this->df_dseq)))){\n";
+    if (getDebugMode()) {
+      os << "cout << \"" << this->mb.getClassName()
+         << "::NewtonIntegration() : iteration \" "
+         << "<< iter << \": invalid evaluation of the yield surface or one of "
+         << "its derivatives\\n\";\n";
+    };
+    os << "if(iter==0u){\n"
+       << "// probably an elastic prediction\n"
+       << "newton_ddp = (this->seq_e / mu_3_theta) / 2;\n"
+       << "} // end of if(iter==0u)\n"
+       << "this->dp += newton_ddp;\n"
+       << "this->p_  = this->p + (this->theta)*(this->dp);\n"
+       << "iter+=1;\n"
+       << "} else {\n"
        << "surf = (this->f)/(this->young);\n"
        << "if(((surf>newton_epsilon)&&((this->dp)>=0))||"
-       << "((this->dp)>newton_epsilon)){"
+       << "((this->dp)>newton_epsilon)){\n"
        << "newton_f  = surf;\n"
        << "newton_df = ((this->theta)*(this->df_dp)"
        << "-mu_3_theta*(this->df_dseq))/(this->young);\n"
@@ -155,22 +168,38 @@ namespace mfront{
        << "}\n"
        << "if(std::abs(base_cast(newton_df))"
        << ">newton_epsilon){\n"
-       << "this->dp -= newton_f/newton_df;\n"
+       << "newton_ddp = -newton_f/newton_df;\n"
+       << "this->dp += newton_ddp;\n"
        << "this->p_  = this->p + (this->theta)*(this->dp);\n"
        << "iter+=1;\n";
     if(getDebugMode()){
       os << "cout << \"" << this->mb.getClassName()
-	 << "::NewtonIntegration() : iteration \" "
-	 << "<< iter << \" : \" << std::abs(tfel::math::base_cast(newton_f)) << endl;\n";
+         << "::NewtonIntegration() : iteration \" "
+         << "<< iter << \": \" << std::abs(tfel::math::base_cast(newton_f)) "
+            "<< '\\n';\n";
     }
     os << "converge = (std::abs(tfel::math::base_cast(newton_f))<"
        << "this->epsilon);\n"
-       << "} else {\n"
-       << "inversible=false;\n"
+       << "} else {\n";
+    if(getDebugMode()){
+      os << "cout << \"" << this->mb.getClassName()
+         << "::NewtonIntegration() : iteration \" "
+         << "<< iter << \": jacobian is singular\\n\";\n";
+    }
+    os << "if(iter==0u){\n";
+    if (getDebugMode()) {
+      os << "cout << \"" << this->mb.getClassName()
+         << "::NewtonIntegration() : iteration \" "
+         << "<< iter << \": invalid jacobian on the first iteration\\n\";\n";
+    };
+    os << "// probably an elastic prediction\n"
+       << "newton_ddp = (this->seq_e / mu_3_theta) / 2;\n"
+       << "} // end of if(iter==0u)\n"
+       << "this->dp += newton_ddp;\n"
+       << "this->p_  = this->p + (this->theta)*(this->dp);\n"
+       << "iter+=1;\n"
        << "}\n"
        << "}\n\n"
-       << "if(inversible==false){\n"
-       << "return false;\n"
        << "}\n\n"
        << "if(iter==this->iterMax){\n";
     if(getDebugMode()){
@@ -188,7 +217,7 @@ namespace mfront{
     }
     os << "return true;\n"
        << "}\n\n";
-  } // end of writeBehaviourParserSpecificMembers
+  }  // end of writeBehaviourParserSpecificMembers
 
   void IsotropicMisesPlasticFlowDSL::writeBehaviourIntegrator(std::ostream& os,
 							      const Hypothesis h) const
