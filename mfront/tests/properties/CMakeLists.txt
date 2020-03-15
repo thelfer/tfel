@@ -1,9 +1,5 @@
 add_subdirectory(interfaces)
 
-include_directories("${CMAKE_CURRENT_BINARY_DIR}/include")
-include_directories("${PROJECT_SOURCE_DIR}/include")
-link_directories("${PROJECT_BINARY_DIR}/src/Tests")
-
 macro(add_mfront_generated_source lib interface ext file)
   set(mfront_file   "${CMAKE_CURRENT_SOURCE_DIR}/${file}.mfront")
   if(CMAKE_VERSION AND (${CMAKE_VERSION} GREATER "2.8.2"))
@@ -147,12 +143,18 @@ mfront_dependencies(MFrontMaterialProperties
   VanadiumAlloy_YoungModulus_SRMA
   VanadiumAlloy_PoissonRatio_SRMA)
 mfront_check_library(MFrontMaterialProperties c "" ${mfront_SOURCES})
+target_include_directories(MFrontMaterialProperties
+  PRIVATE "${CMAKE_SOURCE_DIR}/include"
+  PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/include")
 
 if(HAVE_CASTEM)
   mfront_dependencies(MFrontMaterialProperties-castem
     VanadiumAlloy_YoungModulus_SRMA
     VanadiumAlloy_PoissonRatio_SRMA)
   mfront_check_library(MFrontMaterialProperties-castem castem "castem" ${mfront_SOURCES})
+  target_include_directories(MFrontMaterialProperties-castem
+    PRIVATE "${CMAKE_SOURCE_DIR}/include"
+    PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/include")
   if(WIN32)
     if(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
       set_target_properties(MFrontMaterialProperties-castem PROPERTIES LINK_FLAGS "-Wl,--kill-at")
@@ -164,6 +166,9 @@ mfront_dependencies(MFrontMaterialProperties-cxx
   VanadiumAlloy_YoungModulus_SRMA
   VanadiumAlloy_PoissonRatio_SRMA)
 mfront_check_library(MFrontMaterialProperties-cxx cxx cxx ${mfront_SOURCES})
+target_include_directories(MFrontMaterialProperties-cxx
+  PRIVATE "${CMAKE_SOURCE_DIR}/include"
+  PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/include")
 if(WIN32)
   if(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
     set_target_properties(MFrontMaterialProperties-cxx PROPERTIES LINK_FLAGS "-Wl,--kill-at")
@@ -175,6 +180,9 @@ if(HAVE_FORTRAN)
     VanadiumAlloy_YoungModulus_SRMA
     VanadiumAlloy_PoissonRatio_SRMA)
   mfront_check_library(MFrontMaterialProperties-fortran fortran "fortran" ${mfront_SOURCES})
+  target_include_directories(MFrontMaterialProperties-fortran
+    PRIVATE "${CMAKE_SOURCE_DIR}/include"
+    PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/include")
   if(WIN32)
     if(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
       set_target_properties(MFrontMaterialProperties-fortran PROPERTIES LINK_FLAGS "-Wl,--kill-at")
@@ -183,17 +191,21 @@ if(HAVE_FORTRAN)
 endif(HAVE_FORTRAN)
 
 add_executable(test-c EXCLUDE_FROM_ALL test-c.c)
+target_include_directories(test-c
+  PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/include")
+target_link_libraries(test-c MFrontMaterialProperties)
 add_test(NAME test-c COMMAND test-c)
 add_dependencies(check test-c)
 add_dependencies(test-c MFrontMaterialProperties)
-target_link_libraries(test-c MFrontMaterialProperties)
 
 add_executable(test-cxx EXCLUDE_FROM_ALL test-cxx.cxx)
+target_include_directories(test-cxx
+  PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/include")
+target_link_libraries(test-cxx MFrontMaterialProperties-cxx
+  TFELTests)
 add_test(NAME test-cxx COMMAND test-cxx)
 add_dependencies(check test-cxx)
 add_dependencies(test-cxx MFrontMaterialProperties-cxx)
-target_link_libraries(test-cxx MFrontMaterialProperties-cxx
-  TFELTests)
 if((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set_property(TEST test-cxx
                PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:TFELTests>\;$ENV{PATH}")

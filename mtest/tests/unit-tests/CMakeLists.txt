@@ -1,16 +1,3 @@
-include_directories("${PROJECT_SOURCE_DIR}/include")
-include_directories("${PROJECT_SOURCE_DIR}/mfront/include")
-include_directories("${PROJECT_SOURCE_DIR}/mtest/include")
-link_directories("${PROJECT_BINARY_DIR}/src/Material"
-                 "${PROJECT_BINARY_DIR}/src/Math"
-                 "${PROJECT_BINARY_DIR}/src/Glossary"
-                 "${PROJECT_BINARY_DIR}/src/System"
-                 "${PROJECT_BINARY_DIR}/src/Utilities"
-                 "${PROJECT_BINARY_DIR}/src/Exception"
-		 "${PROJECT_BINARY_DIR}/src/Tests"
-		 "${PROJECT_BINARY_DIR}/mfront/src"
-		 "${PROJECT_BINARY_DIR}/mtest/src")
-
 if(CMAKE_CONFIGURATION_TYPES)
   foreach(conf ${CMAKE_CONFIGURATION_TYPES})
     if(HAVE_CASTEM)

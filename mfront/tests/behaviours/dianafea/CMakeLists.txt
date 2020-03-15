@@ -1,17 +1,4 @@
-include_directories(
-  "${PROJECT_SOURCE_DIR}/include"
-  "${PROJECT_SOURCE_DIR}/mfront/include"
-  "${CMAKE_CURRENT_BINARY_DIR}/include")
-link_directories("${PROJECT_BINARY_DIR}/mfront/src"
-  "${PROJECT_BINARY_DIR}/src/Glossary"
-  "${PROJECT_BINARY_DIR}/src/Material"
-  "${PROJECT_BINARY_DIR}/src/Math"
-  "${PROJECT_BINARY_DIR}/src/Utilities"
-  "${PROJECT_BINARY_DIR}/src/System"
-  "${PROJECT_BINARY_DIR}/src/Tests"
-  "${PROJECT_BINARY_DIR}/src/Exception")
-  
-mfront_behaviour_check_library(MFrontDianaFEABehaviours dianafea
+  mfront_behaviour_check_library(MFrontDianaFEABehaviours dianafea
   MaterialPropertiesBoundsCheck
   StateVariablesBoundsCheck
   Elasticity
@@ -28,14 +15,8 @@ mfront_behaviour_check_library(MFrontDianaFEABehaviours dianafea
   ParameterTest
   ParameterTest2
   )
-
 target_link_libraries(MFrontDianaFEABehaviours
-  DianaFEAInterface
-  MFrontProfiling
-  TFELMaterial
-  TFELMath
-  TFELUtilities
-  TFELException)
+  PRIVATE DianaFEAInterface)
 
 if(WIN32)
   if(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")

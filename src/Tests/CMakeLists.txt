@@ -1,5 +1,3 @@
-include_directories("${PROJECT_SOURCE_DIR}/include")
-
 tfel_library(TFELTests
              Test.cxx
              TestResult.cxx
@@ -10,3 +8,7 @@ tfel_library(TFELTests
              MultipleTestOutputs.cxx
              TestManager.cxx
              TestCase.cxx)
+target_include_directories(TFELTests
+   PUBLIC 
+   $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
+   $<INSTALL_INTERFACE:include>)

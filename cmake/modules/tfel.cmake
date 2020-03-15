@@ -40,7 +40,6 @@ macro(tfel_project tfel_version_major tfel_version_minor tfel_version_patch)
   if(LIB_SUFFIX)
     add_definitions("-DLIB_SUFFIX=\\\"\"${LIB_SUFFIX}\"\\\"")
   endif(LIB_SUFFIX)
-
 endmacro(tfel_project)
 
 set(CPACK_COMPONENTS_ALL core mfront mtest mfm)
@@ -55,7 +54,7 @@ set(CPACK_COMPONENT_MTESTS_DESCRIPTION
 set(CPACK_COMPONENT_MFRONT_DEPENDS core)
 set(CPACK_COMPONENT_MTEST_DEPENDS  core mfront)
 
-macro(install_header dir file)
+function(install_header dir file)
   if(TFEL_APPEND_SUFFIX)  
     install(FILES ${dir}/${file}
       DESTINATION "include/TFEL-${TFEL_SUFFIX}/${dir}"
@@ -65,9 +64,9 @@ macro(install_header dir file)
       DESTINATION "include/${dir}"
       COMPONENT core)
   endif(TFEL_APPEND_SUFFIX)
-endmacro(install_header)
+endfunction(install_header)
 
-macro(install_mfront_header dir file)
+function(install_mfront_header dir file)
   if(TFEL_APPEND_SUFFIX)
     install(FILES ${dir}/${file}
       DESTINATION "include/TFEL-${TFEL_SUFFIX}/${dir}"
@@ -77,9 +76,9 @@ macro(install_mfront_header dir file)
       DESTINATION "include/${dir}"
       COMPONENT mfront)
   endif(TFEL_APPEND_SUFFIX)
-endmacro(install_mfront_header)
+endfunction(install_mfront_header)
 
-macro(install_mtest_header dir file)
+function(install_mtest_header dir file)
   if(TFEL_APPEND_SUFFIX)
     install(FILES ${dir}/${file}
       DESTINATION "include/TFEL-${TFEL_SUFFIX}/${dir}"
@@ -89,9 +88,9 @@ macro(install_mtest_header dir file)
       DESTINATION "include/${dir}"
       COMPONENT mtest)
   endif(TFEL_APPEND_SUFFIX)
-endmacro(install_mtest_header)
+endfunction(install_mtest_header)
 
-macro(install_mfm_header dir file)
+function(install_mfm_header dir file)
   if(TFEL_APPEND_SUFFIX)
     install(FILES ${dir}/${file}
       DESTINATION "include/TFEL-${TFEL_SUFFIX}/${dir}"
@@ -101,9 +100,9 @@ macro(install_mfm_header dir file)
       DESTINATION "include/${dir}"
       COMPONENT mfm)
   endif(TFEL_APPEND_SUFFIX)
-endmacro(install_mfm_header)
+endfunction(install_mfm_header)
 
-macro(install_data dir file)
+function(install_data dir file)
   if(TFEL_APPEND_SUFFIX)
     install(FILES ${file}
       DESTINATION "share/tfel-${TFEL_SUFFIX}/${dir}")
@@ -111,9 +110,9 @@ macro(install_data dir file)
     install(FILES ${file}
       DESTINATION "share/tfel/${dir}")
   endif(TFEL_APPEND_SUFFIX)
-endmacro(install_data)
+endfunction(install_data)
 
-macro(install_mfront_data dir file)
+function(install_mfront_data dir file)
   if(TFEL_APPEND_SUFFIX)
     install(FILES ${file}
       DESTINATION "share/doc/mfront-${TFEL_SUFFIX}/${dir}"
@@ -123,10 +122,9 @@ macro(install_mfront_data dir file)
       DESTINATION "share/doc/mfront/${dir}"
       COMPONENT mfront)
   endif(TFEL_APPEND_SUFFIX)
-	
-endmacro(install_mfront_data)
+endfunction(install_mfront_data)
 
-macro(install_gallery dir file)
+function(install_gallery dir file)
   install_mfront_data("gallery/${dir}" "${file}")
   if(TFEL_APPEND_SUFFIX)
     install(FILES ${file}
@@ -137,24 +135,33 @@ macro(install_gallery dir file)
       DESTINATION "share/doc/tfel/web/gallery/${dir}"
       COMPONENT web)
   endif(TFEL_APPEND_SUFFIX)
-endmacro(install_gallery)
+endfunction(install_gallery)
 
-macro(tfel_library_internal name component)
+function(tfel_library_internal name component)
   if(${ARGC} LESS 2)
     message(FATAL_ERROR "tfel_library_internal : no source specified")
   endif(${ARGC} LESS 2)
   add_library(${name} SHARED ${ARGN})
   if(TFEL_APPEND_SUFFIX)
+    set(export_install_path "share/tfel-${TFEL_SUFFIX}/cmake")
+  else(TFEL_APPEND_SUFFIX)
+    set(export_install_path "share/tfel/cmake")
+  endif(TFEL_APPEND_SUFFIX)
+  target_compile_options (${name} PRIVATE "${HHO_CXX_FLAGS}")
+  if(TFEL_APPEND_SUFFIX)
     set_target_properties(${name} PROPERTIES OUTPUT_NAME "${name}-${TFEL_SUFFIX}")
   endif(TFEL_APPEND_SUFFIX)
   if(WIN32)
-    install(TARGETS ${name} DESTINATION bin
+    install(TARGETS ${name} EXPORT ${name} 
+      DESTINATION bin
       COMPONENT ${component})
   else(WIN32)
-    install(TARGETS ${name}
+    install(TARGETS ${name} EXPORT ${name}
       DESTINATION lib${LIB_SUFFIX}
       COMPONENT ${component})
   endif(WIN32)
+  install(EXPORT ${name} DESTINATION ${export_install_path}
+          NAMESPACE tfel:: FILE ${name}Config.cmake)
   if(enable-static)
     add_library(${name}-static STATIC ${ARGN})
     if(TFEL_APPEND_SUFFIX)
@@ -175,24 +182,27 @@ macro(tfel_library_internal name component)
     set_target_properties(${name}-static PROPERTIES CLEAN_DIRECT_OUTPUT 1)
     set_target_properties(${name}-static PROPERTIES COMPILE_FLAGS "-D${name}_EXPORTS -DTFEL_STATIC_BUILD")
     if(WIN32)
-      install(TARGETS ${name}-static DESTINATION bin)
+      install(TARGETS ${name}-static EXPORT ${name}-static DESTINATION bin)
     else(WIN32)
-      install(TARGETS ${name}-static DESTINATION lib${LIB_SUFFIX})
+      install(TARGETS ${name}-static EXPORT ${name}-static DESTINATION lib${LIB_SUFFIX})
     endif(WIN32)
+    install(EXPORT ${name}-static DESTINATION ${export_install_path}
+            NAMESPACE tfel:: FILE ${name}StaticConfig.cmake)
+    target_compile_options (${name}-static PRIVATE "${TFEL_CXX_FLAGS}")
   endif(enable-static)
-endmacro(tfel_library_internal)
+endfunction(tfel_library_internal)
 
-macro(tfel_library name)
+function(tfel_library name)
   tfel_library_internal(${name} core ${ARGN})
-endmacro(tfel_library)
+endfunction(tfel_library)
 
-macro(mfront_library name)
+function(mfront_library name)
   tfel_library_internal(${name} mfront ${ARGN})
-endmacro(mfront_library)
+endfunction(mfront_library)
 
-macro(mtest_library name)
+function(mtest_library name)
   tfel_library_internal(${name} mtest ${ARGN})
-endmacro(mtest_library)
+endfunction(mtest_library)
 
 macro(add_mfront_behaviour_generated_source lib interface dir file)
   if(NOT "${dir}" STREQUAL "")
@@ -361,7 +371,7 @@ macro(mfront_dependencies lib)
   endforeach(source)
 endmacro(mfront_dependencies)
 
-macro(mfront_behaviour_check_library lib interface)
+function(mfront_behaviour_check_library lib interface)
   if(${ARGC} LESS 1)
     message(FATAL_ERROR "mfront_library : no source specified")
   endif(${ARGC} LESS 1)
@@ -373,10 +383,18 @@ macro(mfront_behaviour_check_library lib interface)
     ${${lib}_ADDITIONAL_SOURCES})
   set_target_properties(${lib} PROPERTIES
       COMPILE_FLAGS "-DMFRONT_COMPILING")
+  target_include_directories(${lib}
+    PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/include")
+  target_link_libraries(${lib}
+    PRIVATE MFrontProfiling
+    PRIVATE TFELMaterial
+    PRIVATE TFELMath
+    PRIVATE TFELUtilities
+    PRIVATE TFELException)
   add_dependencies(check ${lib})
-endmacro(mfront_behaviour_check_library)
+endfunction(mfront_behaviour_check_library)
 
-macro(mfront_behaviour_brick_check_library lib dir interface)
+function(mfront_behaviour_brick_check_library lib dir interface)
   if(${ARGC} LESS 1)
     message(FATAL_ERROR "mfront_library : no source specified")
   endif(${ARGC} LESS 1)
@@ -388,10 +406,18 @@ macro(mfront_behaviour_brick_check_library lib dir interface)
     ${${lib}_ADDITIONAL_SOURCES})
   set_target_properties(${lib} PROPERTIES
       COMPILE_FLAGS "-DMFRONT_COMPILING")
+  target_include_directories(${lib}
+    PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/include")
+  target_link_libraries(${lib}
+    PRIVATE MFrontProfiling
+    PRIVATE TFELMaterial
+    PRIVATE TFELMath
+    PRIVATE TFELUtilities
+    PRIVATE TFELException)
   add_dependencies(check ${lib})
-endmacro(mfront_behaviour_brick_check_library)
+endfunction(mfront_behaviour_brick_check_library)
 
-macro(python_module_base fullname name)
+function(python_module_base fullname name)
     if(${ARGC} LESS 1)
     message(FATAL_ERROR "python_lib_module : no source specified")
   endif(${ARGC} LESS 1)
@@ -419,9 +445,9 @@ macro(python_module_base fullname name)
     target_link_libraries(py_${fullname}
       ${Boost_PYTHON_LIBRARY} ${PYTHON_LIBRARIES})
   endif(TFEL_USES_CONAN)
-endmacro(python_module_base)
+endfunction(python_module_base)
 
-macro(python_lib_module name package)
+function(python_lib_module name package)
   python_module_base(${package}_${name} ${name} ${ARGN})
   if(TFEL_APPEND_SUFFIX)
     if(WIN32)
@@ -439,37 +465,36 @@ macro(python_lib_module name package)
         DESTINATION bin/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}/site-packages/${package}
         COMPONENT python_bindings)
     else(WIN32)
-      install(TARGETS py_${package}_${name}
-        DESTINATION lib${LIB_SUFFIX}/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}/site-packages/${package}
+      install(TARGETS py_${package}_${name}        DESTINATION lib${LIB_SUFFIX}/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}/site-packages/${package}
         COMPONENT python_bindings)
     endif(WIN32)
   endif(TFEL_APPEND_SUFFIX)
-endmacro(python_lib_module)
+endfunction(python_lib_module)
 
-macro(std_python_module name)
+function(std_python_module name)
   python_lib_module(${name} std ${ARGN})
-endmacro(std_python_module)
+endfunction(std_python_module)
 
-macro(tfel_python_module name)
+function(tfel_python_module name)
   python_lib_module(${name} tfel ${ARGN})
-endmacro(tfel_python_module)
+endfunction(tfel_python_module)
 
-macro(mfront_python_module name)
+function(mfront_python_module name)
   python_lib_module(${name} mfront ${ARGN})
   set(fullname "mfront_${name}")
   target_include_directories(py_${fullname}
     PRIVATE "${PROJECT_SOURCE_DIR}/mfront/include")
-endmacro(mfront_python_module)
+endfunction(mfront_python_module)
 
-macro(mtest_python_module name)
+function(mtest_python_module name)
   python_lib_module(${name} mtest ${ARGN})
   set(fullname "mtest_${name}")
   target_include_directories(py_${fullname}
     PRIVATE "${PROJECT_SOURCE_DIR}/mtest/include"
     PRIVATE "${PROJECT_SOURCE_DIR}/mfront/include")
-endmacro(mtest_python_module)
+endfunction(mtest_python_module)
 
-macro(tfel_python_script_base dir)
+function(tfel_python_script_base dir)
   if(${ARGC} LESS 1)
     message(FATAL_ERROR "tfel_python_script_base : no script specified")
   endif(${ARGC} LESS 1)
@@ -501,12 +526,12 @@ macro(tfel_python_script_base dir)
         COMPONENT python_bindings)
     endif(WIN32)
   endforeach(pyscript ${ARGN})
-endmacro(tfel_python_script_base)
+endfunction(tfel_python_script_base)
 
-macro(tfel_python_script dir)
+function(tfel_python_script dir)
   if(TFEL_APPEND_SUFFIX)
     tfel_python_script_base(${dir}_${TFEL_SUFFIX_FOR_PYTHON_MODULES} ${ARGN})
   else(TFEL_APPEND_SUFFIX)
     tfel_python_script_base(${dir} ${ARGN})
   endif(TFEL_APPEND_SUFFIX)
-endmacro(tfel_python_script)
+endfunction(tfel_python_script)

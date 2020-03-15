@@ -1,13 +1,3 @@
-include_directories(
-  "${PROJECT_SOURCE_DIR}/include"
-  "${PROJECT_SOURCE_DIR}/mfront/include"
-  "${CMAKE_CURRENT_BINARY_DIR}/include")
-link_directories("${PROJECT_BINARY_DIR}/mfront/src"
-                 "${PROJECT_BINARY_DIR}/src/Material"
-                 "${PROJECT_BINARY_DIR}/src/Math"
-                 "${PROJECT_BINARY_DIR}/src/Utilities"
-                 "${PROJECT_BINARY_DIR}/src/Exception")
-
 configure_file("${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/references/PolyCrystalsAngles.txt"
     PolyCrystalsAngles.txt @ONLY)
 configure_file("${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/references/PolyCrystalsAngles-30.txt"
@@ -103,14 +93,10 @@ mfront_dependencies(MFrontAsterBehaviours
   ThermalExpansionCoefficientTest_2
   ThermalExpansionCoefficientTest_3)
 
-mfront_behaviour_check_library(MFrontAsterBehaviours  aster ${mfront_tests_SOURCES})
+mfront_behaviour_check_library(MFrontAsterBehaviours aster
+  ${mfront_tests_SOURCES})
 target_link_libraries(MFrontAsterBehaviours
-  AsterInterface
-  MFrontProfiling
-  TFELMaterial
-  TFELMath
-  TFELUtilities
-  TFELException)
+  PRIVATE AsterInterface)
 
 if(WIN32)
   if(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")

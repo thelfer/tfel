@@ -1,37 +1,44 @@
-include_directories("${PROJECT_SOURCE_DIR}/include"
-                    "${PROJECT_SOURCE_DIR}/mfront/include")
-if(HAVE_CASTEM)
-  if(CASTEHOME)
-    include_directories("${CASTEMHOME}/include")
-    include_directories("${CASTEMHOME}/include/c")
-  endif(CASTEHOME)
-endif(HAVE_CASTEM)
-
-link_directories("${PROJECT_BINARY_DIR}/mfront/src"
-                 "${PROJECT_BINARY_DIR}/src/Material"
-                 "${PROJECT_BINARY_DIR}/src/Math"
-                 "${PROJECT_BINARY_DIR}/src/System"
-                 "${PROJECT_BINARY_DIR}/src/Glossary"
-                 "${PROJECT_BINARY_DIR}/src/Utilities"
-                 "${PROJECT_BINARY_DIR}/src/UnicodeSupport"
-                 "${PROJECT_BINARY_DIR}/src/Exception"
-		 "${PROJECT_BINARY_DIR}/src/Config")
-
 configure_file(${PROJECT_SOURCE_DIR}/mfront/src/MFrontHeader.cxx.in
                ${PROJECT_BINARY_DIR}/mfront/src/MFrontHeader.cxx)
 
 # MFrontLogStream
-
 mfront_library(MFrontLogStream
   MFrontLogStream.cxx)
+target_include_directories(MFrontLogStream
+   PUBLIC 
+   $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/mfront/include>
+   $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
+   $<INSTALL_INTERFACE:include>)
 
 # MFrontLogProfiling
-
 mfront_library(MFrontProfiling
   BehaviourProfiler.cxx)
+target_include_directories(MFrontProfiling
+   PUBLIC 
+   $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/mfront/include>
+   $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
+   $<INSTALL_INTERFACE:include>)
 if(UNIX AND (NOT APPLE) AND (NOT HAIKU) AND (NOT (CMAKE_SYSTEM_NAME STREQUAL "OpenBSD")))
-  target_link_libraries(MFrontProfiling rt)
+   target_link_libraries(MFrontProfiling PRIVATE rt)
 endif(UNIX AND (NOT APPLE) AND (NOT HAIKU) AND (NOT (CMAKE_SYSTEM_NAME STREQUAL "OpenBSD")))
+
+# MTestFileGenerator
+mfront_library(MTestFileGenerator
+  MTestFileGeneratorBase.cxx
+  UmatSmallStrainMTestFileGenerator.cxx
+  UmatFiniteStrainMTestFileGenerator.cxx
+  GenericBehaviourSmallStrainMTestFileGenerator.cxx
+  GenericBehaviourFiniteStrainMTestFileGenerator.cxx)
+target_include_directories(MTestFileGenerator
+   PUBLIC 
+   $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
+   $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/mfront/include>
+   $<INSTALL_INTERFACE:include>)
+target_link_libraries(MTestFileGenerator
+  PUBLIC TFELMaterial
+  PUBLIC TFELMath
+  PUBLIC TFELUtilities
+  PUBLIC TFELException)
 
 # TFELMFront
 
@@ -421,57 +428,55 @@ if(HAVE_CYRANO)
 endif(HAVE_CYRANO)
 
 mfront_library(TFELMFront ${TFELMFront_SOURCES})
+target_include_directories(TFELMFront
+   PUBLIC 
+   $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
+   $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/mfront/include>
+   $<INSTALL_INTERFACE:include>)
+if(HAVE_CASTEM)
+  if(CASTEHOME)
+    target_include_directories(TFELMFront 
+      PRIVATE "${CASTEMHOME}/include"
+      PRIVATE "${CASTEMHOME}/include/c")
+  endif(CASTEHOME)
+endif(HAVE_CASTEM)
 
 if(UNIX)
   if(NOT HAIKU)
     if(CMAKE_CXX_COMPILER_ID STREQUAL "PGI")
       target_link_libraries(TFELMFront
-	MFrontLogStream
-	TFELMaterial       TFELMathParser
-	TFELSystem         TFELUtilities
-	TFELUnicodeSupport TFELGlossary 
-        TFELException      TFELConfig
-	${TFEL_DL_LIBRARY})
+		PUBLIC MFrontLogStream
+	PUBLIC TFELMaterial       PUBLIC TFELMathParser
+	PUBLIC TFELSystem         PUBLIC TFELUtilities
+	PUBLIC TFELUnicodeSupport PUBLIC TFELGlossary 
+    PUBLIC TFELException      PUBLIC TFELConfig
+	PRIVATE ${TFEL_DL_LIBRARY})
     else(CMAKE_CXX_COMPILER_ID STREQUAL "PGI")
       target_link_libraries(TFELMFront
-	MFrontLogStream
-	TFELMaterial       TFELMathParser
-	TFELSystem         TFELUtilities
-	TFELUnicodeSupport TFELGlossary
-	TFELException      TFELConfig
-	-pthread ${TFEL_DL_LIBRARY})
+	PUBLIC MFrontLogStream
+	PUBLIC TFELMaterial       PUBLIC TFELMathParser
+	PUBLIC TFELSystem         PUBLIC TFELUtilities
+	PUBLIC TFELUnicodeSupport PUBLIC TFELGlossary
+	PUBLIC TFELException      PUBLIC TFELConfig
+	PRIVATE -pthread PRIVATE ${TFEL_DL_LIBRARY})
     endif(CMAKE_CXX_COMPILER_ID STREQUAL "PGI")
   else(NOT HAIKU)
     target_link_libraries(TFELMFront
-      MFrontLogStream
-      TFELMaterial  TFELMathParser
-      TFELSystem    TFELUtilities
-      TFELGlossary  TFELUnicodeSupport
-      TFELException TFELConfig
-      ${TFEL_DL_LIBRARY})
+      PUBLIC MFrontLogStream
+      PUBLIC TFELMaterial  PUBLIC TFELMathParser
+      PUBLIC TFELSystem    PUBLIC TFELUtilities
+      PUBLIC TFELGlossary  PUBLIC TFELUnicodeSupport
+      PUBLIC TFELException PUBLIC TFELConfig
+      PRIVATE ${TFEL_DL_LIBRARY})
   endif(NOT HAIKU)
 else(UNIX)
   target_link_libraries(TFELMFront
-    MFrontLogStream
-    TFELMaterial  TFELMathParser
-    TFELSystem    TFELUtilities
-    TFELGlossary  TFELUnicodeSupport
-    TFELException TFELConfig)
+    PUBLIC MFrontLogStream
+    PUBLIC TFELMaterial  PUBLIC TFELMathParser
+    PUBLIC TFELSystem    PUBLIC TFELUtilities
+    PUBLIC TFELGlossary  PUBLIC TFELUnicodeSupport
+    PUBLIC TFELException PUBLIC TFELConfig)
 endif(UNIX)
-
-# MTestFileGenerator
-
-mfront_library(MTestFileGenerator
-  MTestFileGeneratorBase.cxx
-  UmatSmallStrainMTestFileGenerator.cxx
-  UmatFiniteStrainMTestFileGenerator.cxx
-  GenericBehaviourSmallStrainMTestFileGenerator.cxx
-  GenericBehaviourFiniteStrainMTestFileGenerator.cxx)
-target_link_libraries(MTestFileGenerator
-  TFELMaterial
-  TFELMath
-  TFELUtilities
-  TFELException)
 
 # MFront
 

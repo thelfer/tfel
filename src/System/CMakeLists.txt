@@ -1,7 +1,3 @@
-include_directories("${PROJECT_SOURCE_DIR}/include"
-  "${CMAKE_CURRENT_SOURCE_DIR}")
-link_directories("${PROJECT_BINARY_DIR}/src/Exception")
-
 set(TFELSystem_SOURCES
   RecursiveFind.cxx
   LibraryInformation.cxx
@@ -48,16 +44,29 @@ else(UNIX)
 endif(UNIX)
 
 tfel_library(TFELSystem ${TFELSystem_SOURCES})
+target_include_directories(TFELSystem
+   PUBLIC 
+   $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
+   $<INSTALL_INTERFACE:include>
+   PRIVATE
+   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
 if(TFEL_DL_LIBRARY)
-  target_link_libraries(TFELSystem TFELException ${TFEL_DL_LIBRARY} ${CMAKE_THREAD_LIBS_INIT})
+  target_link_libraries(TFELSystem 
+	PUBLIC TFELException
+    PRIVATE ${TFEL_DL_LIBRARY}
+    PRIVATE ${CMAKE_THREAD_LIBS_INIT})
 else(TFEL_DL_LIBRARY)
   if((NOT i586-mingw32msvc_COMPILER) AND (NOT i686-w64-mingw32_COMPILER))
     if(Threads_FOUND)
-      target_link_libraries(TFELSystem TFELException Threads::Threads)
+      target_link_libraries(TFELSystem 
+		PUBLIC TFELException 
+		PRIVATE Threads::Threads)
     else(Threads_FOUND)
-      target_link_libraries(TFELSystem TFELException)
+      target_link_libraries(TFELSystem
+		PUBLIC TFELException)
     endif(Threads_FOUND)
   else((NOT i586-mingw32msvc_COMPILER) AND (NOT i686-w64-mingw32_COMPILER))
-    target_link_libraries(TFELSystem TFELException)
+    target_link_libraries(TFELSystem
+		PUBLIC TFELException)
   endif((NOT i586-mingw32msvc_COMPILER) AND (NOT i686-w64-mingw32_COMPILER))
 endif(TFEL_DL_LIBRARY)

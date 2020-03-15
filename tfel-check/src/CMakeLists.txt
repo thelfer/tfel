@@ -1,12 +1,6 @@
-include_directories("${PROJECT_SOURCE_DIR}/include")
-include_directories("${PROJECT_SOURCE_DIR}/tfel-check/include")
-link_directories("${PROJECT_BINARY_DIR}/src/Utilities"
-  "${PROJECT_BINARY_DIR}/src/System"
-  "${PROJECT_BINARY_DIR}/src/Math")
-
 add_library(TFELCheck
   Configuration.cxx
-    ConfigurationManager.cxx
+  ConfigurationManager.cxx
   PCILogDriver.cxx
   PCJUnitDriver.cxx
   PCLogger.cxx
@@ -27,7 +21,8 @@ add_library(TFELCheck
   MixedComparison.cxx
   AreaComparison.cxx
   Test.cxx)
-
+target_include_directories(TFELCheck
+  PUBLIC "${PROJECT_SOURCE_DIR}/tfel-check/include")
 target_link_libraries(TFELCheck
   TFELMathCubicSpline TFELMathParser
   TFELMath TFELUtilities TFELSystem)

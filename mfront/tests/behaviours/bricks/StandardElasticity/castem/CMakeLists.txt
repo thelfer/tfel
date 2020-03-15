@@ -1,13 +1,3 @@
-include_directories(
-  "${PROJECT_SOURCE_DIR}/include"
-  "${PROJECT_SOURCE_DIR}/mfront/include"
-  "${CMAKE_CURRENT_BINARY_DIR}/include")
-link_directories("${PROJECT_BINARY_DIR}/mfront/src"
-                 "${PROJECT_BINARY_DIR}/src/Material"
-                 "${PROJECT_BINARY_DIR}/src/Math"
-                 "${PROJECT_BINARY_DIR}/src/Utilities"
-                 "${PROJECT_BINARY_DIR}/src/Exception")
-
 if(HAVE_CASTEM)
   mfront_dependencies(MFrontCastemBehaviourBricks
     YoungModulusTest
@@ -44,8 +34,7 @@ if(HAVE_CASTEM)
     IsotropicJ2Plasticity
     SingleCrystal_DD_FCC)
   target_link_libraries(MFrontCastemBehaviourBricks
-    CastemInterface MFrontProfiling TFELMaterial
-    TFELMath TFELUtilities TFELException)
+    CastemInterface)
 endif(HAVE_CASTEM)
 
 macro(castemtest_standardelasticitybrick test_arg behaviour)

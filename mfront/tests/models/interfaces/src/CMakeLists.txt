@@ -1,26 +1,26 @@
-include_directories(
-  "${PROJECT_SOURCE_DIR}/include"
-  "${PROJECT_SOURCE_DIR}/mfront/include"
-  "${PROJECT_SOURCE_DIR}/mfront/tests/models/interfaces/include")
-link_directories("${PROJECT_BINARY_DIR}/mfront/src")
-
 if(NOT WIN32)
   add_library(LicosMFrontModel MODULE LicosModelInterface)
+  target_include_directories(LicosMFrontModel
+    PRIVATE ${CMAKE_SOURCE_DIR}/mfront/tests/models/interfaces/include)
   target_link_libraries(LicosMFrontModel
-    TFELMFront
-    MFrontLogStream
-    TFELSystem)
+    PRIVATE TFELMFront
+    PRIVATE MFrontLogStream
+    PRIVATE TFELSystem)
   add_library(GerminalMFrontModel SHARED
     MFrontPleiadesModelInterfaceBase
     MFrontGerminalModelInterface)
+  target_include_directories(GerminalMFrontModel
+    PRIVATE ${CMAKE_SOURCE_DIR}/mfront/tests/models/interfaces/include)
   target_link_libraries(GerminalMFrontModel
-    TFELMFront
-    MFrontLogStream
-    TFELSystem)
+    PRIVATE TFELMFront
+    PRIVATE MFrontLogStream
+    PRIVATE TFELSystem)
   add_library(PleiadesModelInterface-2.0 SHARED
     PleiadesModelInterface-2.0.cxx)
+  target_include_directories(PleiadesModelInterface-2.0
+    PRIVATE ${CMAKE_SOURCE_DIR}/mfront/tests/models/interfaces/include)
   target_link_libraries(PleiadesModelInterface-2.0
-    TFELMFront
-    MFrontLogStream
-    TFELSystem)
+    PRIVATE TFELMFront
+    PRIVATE MFrontLogStream
+    PRIVATE TFELSystem)
 endif(NOT WIN32)

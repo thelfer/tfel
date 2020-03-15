@@ -1,7 +1,3 @@
-include_directories("${PROJECT_SOURCE_DIR}/include")
-link_directories("${PROJECT_BINARY_DIR}/src/Tests")
-link_directories("${PROJECT_BINARY_DIR}/src/Utilities")
-
 # a simple macro
 macro(tests_metaprogramming test_arg)
   add_executable(${test_arg} EXCLUDE_FROM_ALL ${test_arg}.cxx)

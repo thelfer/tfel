@@ -1,14 +1,3 @@
-include_directories("${PROJECT_SOURCE_DIR}/include"
-                    "${PROJECT_SOURCE_DIR}/mfront/include"
-                    "${PROJECT_SOURCE_DIR}/mtest/include"
-                    "${PROJECT_SOURCE_DIR}/mfm-test-generator/include")
-link_directories("${PROJECT_BINARY_DIR}/mtest/src"
-                 "${PROJECT_BINARY_DIR}/mfront/src"
-                 "${PROJECT_BINARY_DIR}/src/System"
-                 "${PROJECT_BINARY_DIR}/src/Utilities"
-                 "${PROJECT_BINARY_DIR}/src/Exception"
-		         "${PROJECT_BINARY_DIR}/src/Config")
-
 macro(mfmtg_library name)
   tfel_library_internal(${name} mfm ${ARGN})
 endmacro(mfmtg_library)
@@ -25,6 +14,10 @@ mfmtg_library(MFMTestGenerator
   ClosedPipeTest.cxx
   MTestInputFileGenerators.cxx
   LicosInputFileGenerators.cxx)
+target_include_directories(MFMTestGenerator
+   PUBLIC 
+   $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/mfm-test-generator/include>
+   $<INSTALL_INTERFACE:include>)
 target_link_libraries(MFMTestGenerator
   TFELMTest MFrontLogStream TFELMaterial
   TFELSystem TFELUtilities)

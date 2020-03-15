@@ -1,13 +1,3 @@
-include_directories(
-  "${PROJECT_SOURCE_DIR}/include"
-  "${PROJECT_SOURCE_DIR}/mfront/include"
-  "${CMAKE_CURRENT_BINARY_DIR}/include")
-link_directories("${PROJECT_BINARY_DIR}/mfront/src"
-                 "${PROJECT_BINARY_DIR}/src/Material"
-                 "${PROJECT_BINARY_DIR}/src/Math"
-                 "${PROJECT_BINARY_DIR}/src/Utilities"
-                 "${PROJECT_BINARY_DIR}/src/Exception")
-
 set(mfront_tests_SOURCES
   SaintVenantKirchhoffElasticity
   SaintVenantKirchhoffElasticity2
@@ -23,12 +13,7 @@ set(mfront_tests_SOURCES
 mfront_behaviour_check_library(MFrontEuroplexusBehaviours
   epx ${mfront_tests_SOURCES})
 target_link_libraries(MFrontEuroplexusBehaviours
-  EuroplexusInterface
-  MFrontProfiling
-  TFELMaterial
-  TFELMath
-  TFELUtilities
-  TFELException)
+  PRIVATE EuroplexusInterface)
 
 if(WIN32)
   if(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")

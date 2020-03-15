@@ -1,19 +1,3 @@
-if(CASTEMHOME)
-  include_directories(
-    "${CASTEMHOME}/include"
-    "${CASTEMHOME}/include/c")
-endif(CASTEMHOME)
-
-include_directories(
-  "${CASTEMHOME}/include"
-  "${PROJECT_SOURCE_DIR}/include"
-  "${PROJECT_SOURCE_DIR}/mfront/include"
-  "${CMAKE_CURRENT_BINARY_DIR}/include")
-link_directories("${PROJECT_BINARY_DIR}/mfront/src"
-                 "${PROJECT_BINARY_DIR}/src/Material"
-                 "${PROJECT_BINARY_DIR}/src/Math"
-                 "${PROJECT_BINARY_DIR}/src/Utilities"
-                 "${PROJECT_BINARY_DIR}/src/Exception")
 macro(test_castem2 test_arg)
   foreach(rm ${IEEE754_ROUNDING_MODES})
     if(CMAKE_CONFIGURATION_TYPES)

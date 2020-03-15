@@ -1,13 +1,3 @@
-include_directories(
-  "${PROJECT_SOURCE_DIR}/include"
-  "${PROJECT_SOURCE_DIR}/mfront/include"
-  "${CMAKE_CURRENT_BINARY_DIR}/include")
-link_directories("${PROJECT_BINARY_DIR}/mfront/src"
-                 "${PROJECT_BINARY_DIR}/src/Material"
-                 "${PROJECT_BINARY_DIR}/src/Math"
-                 "${PROJECT_BINARY_DIR}/src/Utilities"
-                 "${PROJECT_BINARY_DIR}/src/Exception")
-
 if(HAVE_CASTEM)
   mfront_behaviour_brick_check_library(MFrontCastemStandardElastoViscoPlasticityBrickBehaviours
   StandardElastoViscoPlasticity umat
@@ -97,9 +87,8 @@ if(HAVE_CASTEM)
   StandardElastoViscoPlasticityHyperbolicSineTest_nj
   StandardElastoViscoPlasticityHyperbolicSineTest2
   StandardElastoViscoPlasticityHyperbolicSineTest2_nj)
-target_link_libraries(MFrontCastemStandardElastoViscoPlasticityBrickBehaviours
-  CastemInterface MFrontProfiling TFELMaterial TFELMath TFELUtilities
-  TFELException)
+  target_link_libraries(MFrontCastemStandardElastoViscoPlasticityBrickBehaviours
+    PRIVATE CastemInterface)
 endif(HAVE_CASTEM)
 
 function(castemtest_standardelastovicoplasticitybrick test_arg behaviour_name)
