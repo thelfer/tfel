@@ -1,6 +1,6 @@
 # Remove when CMake >= 2.8.4 is required
 set(CMAKE_LEGACY_CYGWIN_WIN32 0) 
-cmake_minimum_required(VERSION 2.4)
+cmake_minimum_required(VERSION 3.0)
 cmake_policy(SET CMP0005 OLD)
 if(CMAKE_VERSION VERSION_GREATER 3.0.0)
   cmake_policy(SET CMP0026 OLD)
@@ -448,6 +448,13 @@ if(enable-mkl)
     message(FATAL_ERROR "the MKL library has not been found")
   endif(NOT MKL_FOUND)
 endif(enable-mkl)
+
+# HHO support
+option(enable-hho-support "enable Hybrid High Order elements in MTest" OFF)
+if(enable-hho-support)
+  set(TFEL_HHO_SUPPORT ON)
+  find_package(HybridHighOrder REQUIRED)
+endif(enable-hho-support)
 
 # sub directories
 add_subdirectory(include) 

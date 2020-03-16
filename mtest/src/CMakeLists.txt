@@ -45,6 +45,7 @@ set(TFELMTest_SOURCES
   UserDefinedPostProcessing.cxx
   MTest.cxx
   PipeTest.cxx
+  PipeElement.cxx
   PipeLinearElement.cxx
   PipeQuadraticElement.cxx
   PipeCubicElement.cxx
@@ -158,6 +159,15 @@ set(TFELMTest_LDADD
 endif(HAVE_DIANAFEA)
 
 mtest_library(TFELMTest ${TFELMTest_SOURCES})
+if(TFEL_HHO_SUPPORT)
+  target_compile_definitions(TFELMTest
+    PRIVATE "PIPETEST_HHO_SUPPORT")
+endif(TFEL_HHO_SUPPORT)
+target_link_libraries(TFELMTest PUBLIC ${TFELMTest_LDADD})
+if(TFEL_HHO_SUPPORT)
+  target_link_libraries(TFELMTest PRIVATE
+    HybridHighOrder::HybridHighOrderMonodimensionalElements)
+endif(TFEL_HHO_SUPPORT)
 target_include_directories(TFELMTest
    PUBLIC 
    $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/mtest/include>
@@ -165,7 +175,6 @@ target_include_directories(TFELMTest
    $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
    $<INSTALL_INTERFACE:include>)
 
-target_link_libraries(TFELMTest PUBLIC ${TFELMTest_LDADD})
 
 add_executable(mtest MTestMain.cxx)
 if(WIN32 AND enable-static)

@@ -21,7 +21,7 @@
 #include"TFEL/Math/General/ConstExprMathFunctions.hxx"
 #include"MTest/Types.hxx"
 #include"MTest/SolverOptions.hxx"
-#include"MTest/PipeMesh.hxx"
+#include"MTest/PipeElement.hxx"
 
 namespace mtest{
 
@@ -29,12 +29,13 @@ namespace mtest{
   struct Behaviour;
   // forward declaration
   struct StructureCurrentState;
+  // forward declaration
+  struct PipeMesh;
   
   /*!
    * \brief structure describing a linear element for pipes
    */
-  struct PipeLinearElement
-  {
+  struct PipeLinearElement : PipeElement {
 #ifndef _MSC_VER
     // absolute value of the Gauss points position in the reference
     // element
@@ -53,65 +54,38 @@ namespace mtest{
     // Gauss point weight
     static const real wg;
 #endif /* _MSC_VER */
+
     /*!
-     * \brief interpolate nodal value in the element
-     * \param[in] v0: value at the first node
-     * \param[in] v1: value at the second node
-     * \param[in] x:  position in the reference element (-1<x<1)
+     * \brief constructor
+     * \param[in] n: index of this element
      */
-    static real interpolate(const real,const real,const real);
-    /*!
-     * \brief set the position of the gauss points
-     * \param[out] scs: structure current state
-     * \param[in]  m:   pipe mesh
-     */
-    static void
-    setGaussPointsPositions(StructureCurrentState&,
-			    const PipeMesh&);
-    /*!
-     * \brief compute the strain
-     * \param[out] scs: structure current state
-     * \param[in]  m:   pipe mesh
-     * \param[in]  u0:  displacement at the beginnig of the time step
-     * \param[in]  i:   element number
-     * \param[in]  b: if true, compute the strain at end of time
-     * step. If false, compute the strain at the beginning of the time
-     * step
-     */
-    static void
-    computeStrain(StructureCurrentState&,
-		  const PipeMesh&,
-		  const tfel::math::vector<real>&,
-		  const size_t,
-		  const bool);
-    /*!
-     * \return a pair containing:
-     * - a boolean syaing if the behaviour integration shall be
-     *   performed
-     * - a scaling factor that can be used to:
-     *     - increase the time step if the integration was successfull
-     *     - decrease the time step if the integration failed or if the
-     *       results were not reliable (time step too large).
-     * \param[out] k:   stiffness matrix
-     * \param[out] r:   residual
-     * \param[out] scs: structure current state
-     * \param[in]  u1:  current displacement estimation
-     * \param[in]  m:   pipe mesh
-     * \param[in]  b:   behaviour
-     * \param[in]  dt:  time increment
-     * \param[in]  mt:  stiffness matrix type
-     * \param[in]  i:   element number
-     */
-    static std::pair<bool,real>
-    updateStiffnessMatrixAndInnerForces(tfel::math::matrix<real>&,
-					tfel::math::vector<real>&,
-					StructureCurrentState&,
-					const Behaviour&,
-					const tfel::math::vector<real>&,
-					const PipeMesh&,
-					const real,
-					const StiffnessMatrixType,
-					const size_t);
+    PipeLinearElement(const size_t) noexcept;
+
+    static real interpolate(const real, const real, const real);
+
+    void setGaussPointsPositions(StructureCurrentState&,
+                                 const PipeMesh&) const override;
+
+    void computeStrain(StructureCurrentState&,
+                       const PipeMesh&,
+                       const tfel::math::vector<real>&,
+                       const bool) const override;
+
+    std::pair<bool, real> updateStiffnessMatrixAndInnerForces(
+        tfel::math::matrix<real>&,
+        tfel::math::vector<real>&,
+        StructureCurrentState&,
+        const Behaviour&,
+        const tfel::math::vector<real>&,
+        const PipeMesh&,
+        const real,
+        const StiffnessMatrixType) const override;
+    //! \brief destructor
+    ~PipeLinearElement() noexcept override;
+
+   private:
+    //! index of the element
+    const size_t index;
   }; // end of struct PipeLinearElement
 
 } // end of namespace mtest

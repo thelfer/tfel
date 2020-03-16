@@ -524,15 +524,18 @@ namespace mtest {
     if (this->mesh.etype == PipeMesh::LINEAR) {
       // each element has two integration points
       ss.istates.resize(2 * this->mesh.number_of_elements);
-      PipeLinearElement::setGaussPointsPositions(ss, this->mesh);
+      PipeLinearElement e(0);
+      e.setGaussPointsPositions(ss, this->mesh);
     } else if (this->mesh.etype == PipeMesh::QUADRATIC) {
       // each element has three integration points
       ss.istates.resize(3 * this->mesh.number_of_elements);
-      PipeQuadraticElement::setGaussPointsPositions(ss, this->mesh);
+      PipeQuadraticElement e(0);
+      e.setGaussPointsPositions(ss, this->mesh);
     } else if (this->mesh.etype == PipeMesh::CUBIC) {
       // each element has three integration points
       ss.istates.resize(4 * this->mesh.number_of_elements);
-      PipeCubicElement::setGaussPointsPositions(ss, this->mesh);
+      PipeCubicElement e(0);
+      e.setGaussPointsPositions(ss, this->mesh);
     } else {
       tfel::raise(
           "PipeTest::getNumberOfUnknowns: "
@@ -731,11 +734,14 @@ namespace mtest {
     // loop over the elements
     for (size_type i = 0; i != ne; ++i) {
       if (this->mesh.etype == PipeMesh::LINEAR) {
-        PipeLinearElement::computeStrain(scs, this->mesh, state.u0, i, false);
+        PipeLinearElement e(i);
+        e.computeStrain(scs, this->mesh, state.u0, false);
       } else if (this->mesh.etype == PipeMesh::QUADRATIC) {
-        PipeQuadraticElement::computeStrain(scs, this->mesh, state.u0, i, false);
+        PipeQuadraticElement e(i);
+        e.computeStrain(scs, this->mesh, state.u0, false);
       } else if (this->mesh.etype == PipeMesh::CUBIC) {
-        PipeCubicElement::computeStrain(scs, this->mesh, state.u0, i, false);
+        PipeCubicElement e(i);
+        e.computeStrain(scs, this->mesh, state.u0, false);
       } else {
         tfel::raise("PipeTest::prepare: unknown element type");
       }
@@ -781,9 +787,6 @@ namespace mtest {
       const real t,
       const real dt,
       const StiffnessMatrixType mt) const {
-    using LE = PipeLinearElement;
-    using QE = PipeQuadraticElement;
-    using CE = PipeCubicElement;
     constexpr const real pi = 3.14159265358979323846;
     // reset r and k
     std::fill(r.begin(), r.end(), real(0));
@@ -922,14 +925,17 @@ namespace mtest {
     for (size_type i = 0; i != ne; ++i) {
       auto ri = std::pair<bool, real>{};
       if (this->mesh.etype == PipeMesh::LINEAR) {
-        ri = LE::updateStiffnessMatrixAndInnerForces(k, r, scs, *(this->b), state.u1, this->mesh,
-                                                     dt, mt, i);
+        PipeLinearElement e(i);
+        ri = e.updateStiffnessMatrixAndInnerForces(
+            k, r, scs, *(this->b), state.u1, this->mesh, dt, mt);
       } else if (this->mesh.etype == PipeMesh::QUADRATIC) {
-        ri = QE::updateStiffnessMatrixAndInnerForces(k, r, scs, *(this->b), state.u1, this->mesh,
-                                                     dt, mt, i);
+        PipeQuadraticElement e(i);
+        ri = e.updateStiffnessMatrixAndInnerForces(
+            k, r, scs, *(this->b), state.u1, this->mesh, dt, mt);
       } else if (this->mesh.etype == PipeMesh::CUBIC) {
-        ri = CE::updateStiffnessMatrixAndInnerForces(k, r, scs, *(this->b), state.u1, this->mesh,
-                                                     dt, mt, i);
+        PipeCubicElement e(i);
+        ri = e.updateStiffnessMatrixAndInnerForces(
+            k, r, scs, *(this->b), state.u1, this->mesh, dt, mt);
       } else {
         tfel::raise(
             "PipeTest::computeStiffnessMatrixAndResidual: "
