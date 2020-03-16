@@ -98,6 +98,23 @@ This feature is now described in the (`MTest` page)[mtest.html]
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/209/>
 
+## Ticket #206: Export `TFEL` targets for use by external projects
+
+Here is a minimal example on how to use this feature:
+
+~~~~{.cmake}
+project("tfel-test")
+cmake_minimum_required(VERSION 3.0)
+
+find_package(TFELException REQUIRED)
+find_package(TFELMath REQUIRED)
+
+add_executable(test-test test.cxx)
+target_link_libraries(test-test tfel::TFELMath)
+~~~~
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/209/>
+
 ## Ticket #205: Add power isotropic hardening rule
 
 This feature is described in Section
