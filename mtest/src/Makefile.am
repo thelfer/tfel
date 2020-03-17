@@ -53,6 +53,7 @@ libTFELMTest_la_SOURCES = RoundingMode.cxx              \
 			  UserDefinedPostProcessing.cxx             \
 			  MTest.cxx                                 \
 			  PipeTest.cxx                              \
+			  PipeElement.cxx                           \
 			  PipeLinearElement.cxx                     \
 			  PipeQuadraticElement.cxx                  \
 			  PipeCubicElement.cxx                      \

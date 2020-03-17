@@ -5,7 +5,7 @@ if(HAVE_ASTER)
     FiniteStrainSingleCrystal_NumericalJacobian
     )
   target_link_libraries(MFrontAsterFiniteStrainSingleCrystalBrickBehaviours
-    AsterInterface)
+    PRIVATE AsterInterface)
 endif(HAVE_ASTER)
 
 macro(astertest_finitestrainsinglecrystalbrick test_arg behaviour)
