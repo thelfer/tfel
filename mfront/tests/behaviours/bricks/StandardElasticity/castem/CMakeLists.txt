@@ -34,7 +34,7 @@ if(HAVE_CASTEM)
     IsotropicJ2Plasticity
     SingleCrystal_DD_FCC)
   target_link_libraries(MFrontCastemBehaviourBricks
-    CastemInterface)
+    PRIVATE CastemInterface)
 endif(HAVE_CASTEM)
 
 macro(castemtest_standardelasticitybrick test_arg behaviour)
