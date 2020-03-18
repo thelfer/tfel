@@ -112,7 +112,7 @@ namespace mfront {
       }
       if (r == FLOWCRITERION) {
 #if __cplusplus >= 201703L
-        c += "const auto [seqf" + id + ",dseq" + id + "_ds" + id + "] = ";
+        c += "const auto [seqf" + id + ", n" + id + "] = ";
         c += "computeHosfordStressNormal(s" + id + ",this->" + an + "," +
              sp.getEquivalentStressLowerBound(bd) + ");\n";
 #else  /* __cplusplus >= 201703L */
@@ -156,7 +156,7 @@ namespace mfront {
       }
       if (r == FLOWCRITERION) {
 #if __cplusplus >= 201703L
-        c += "const auto [seq" + id + ", n" + id + ", dn" + id + "_ds" + id +
+        c += "const auto [seqf" + id + ", n" + id + ", dn" + id + "_ds" + id +
              "] = ";
         c += "computeHosfordStressSecondDerivative(s" + id + ",this->" + an +
              "," + sp.getEquivalentStressLowerBound(bd) + ");\n";
