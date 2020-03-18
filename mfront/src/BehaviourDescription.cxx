@@ -2991,7 +2991,8 @@ namespace mfront {
       getSymbol(symbols, mv.second);
     }
     for (const auto& b : this->getTangentOperatorBlocks()) {
-      if (Gradient::isIncrementKnown(b.second)) {
+      if ((Gradient::isIncrementKnown(b.second)) ||
+          (this->isExternalStateVariableName(h, b.second.name))) {
         symbols.insert({"\u2202" + displayName(b.first) + "\u2215\u2202\u0394" +
                             displayName(b.second),
                         "d" + b.first.name + "_dd" + b.second.name});

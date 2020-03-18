@@ -6,6 +6,10 @@ Version `3.3.1` is mainly a bug fix version of the `3.3` series.
 
 # Tickets fixed
 
+## Ticket #227: Symbolic names are not declared for the tangent operator blocks associated with the derivatives with respect to external state variables
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/227/>
+
 ## Ticket #221: `mfront-query --tangent-operator-blocks` shall return the symbolic name of the tangent operator blocks
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/221/>
