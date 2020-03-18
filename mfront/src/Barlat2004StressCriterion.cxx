@@ -226,7 +226,7 @@ namespace mfront {
       }
       if (r == FLOWCRITERION) {
 #if __cplusplus >= 201703L
-        c += "const auto [seq" + id + ",dseq" + id + "_ds" + id + "] = ";
+        c += "const auto [seqf" + id + ", n" + id + "] = ";
         c += "computeBarlatStressNormal(s" + id + ",this->" + l1n + ",this->" +
              l2n + ",this->" + an + "," + sp.getEquivalentStressLowerBound(bd) +
              ");\n";
@@ -258,8 +258,8 @@ namespace mfront {
 #if __cplusplus >= 201703L
         c += "const auto [seq" + id + ",dseq" + id + "_ds" + id + ",d2seq" +
              id + "_ds" + id + "ds" + id + "] = ";
-        c += "computeBarlatStressSecondDerivative(s" + id + ",this->" + an +
-             ",this->" + l1n + ",this->" + l2n + "," +
+        c += "computeBarlatStressSecondDerivative(s" + id + ", this->" + l1n +
+             ",this->" + l2n + ", this->" + an + "," +
              sp.getEquivalentStressLowerBound(bd) + ");\n";
 #else  /* __cplusplus >= 201703L */
         c += "stress seq" + id + ";\n";

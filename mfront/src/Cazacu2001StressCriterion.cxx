@@ -252,7 +252,7 @@ namespace mfront {
       }
       if (r == FLOWCRITERION) {
 #if __cplusplus >= 201703L
-        c += "const auto [seqf" + id + ",dseq" + id + "_ds" + id + "] = ";
+        c += "const auto [seqf" + id + ", n" + id + "] = ";
         c += "computeCazacu2001StressCriterionNormal(s" + id + ", this->" + an +
              ", this->" + bn + ", this->" + cn + "," +
              sp.getEquivalentStressLowerBound(bd) + ");\n";
@@ -304,7 +304,7 @@ namespace mfront {
       }
       if (r == FLOWCRITERION) {
 #if __cplusplus >= 201703L
-        c += "const auto [seq" + id + ", n" + id + ", dn" + id + "_ds" + id +
+        c += "const auto [seqf" + id + ", n" + id + ", dn" + id + "_ds" + id +
              "] = ";
         c += "computeCazacu2001StressCriterionSecondDerivative(s" + id +
              ", this->" + an + ", this->" + bn + ",this->" + cn + "," +
