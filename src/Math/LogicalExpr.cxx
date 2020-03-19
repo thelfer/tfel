@@ -88,7 +88,7 @@ namespace tfel {
       LogicalExpr::~LogicalExpr() = default;
 
       NegLogicalExpression::NegLogicalExpression(
-          const std::shared_ptr<LogicalExpr> a_)
+          const std::shared_ptr<LogicalExpr> a_) noexcept
           : a(a_) {}  // end of NegLogicalExpression::NegLogicalOperation
 
       bool NegLogicalExpression::getValue() const {

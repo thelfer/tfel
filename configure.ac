@@ -558,6 +558,9 @@ AM_CONDITIONAL([TFEL_LINUX],[test x"$TFEL_LINUX" = "xyes"])
 AM_CONDITIONAL([TFEL_WIN32],[test x"$TFEL_WIN" = "xyes" -a x"$TFEL_ARCH32" = "xyes"])
 AM_CONDITIONAL([TFEL_WIN64],[test x"$TFEL_WIN" = "xyes" -a x"$TFEL_ARCH64" = "xyes"])
 
+TFEL_HHO_SUPPORT="no"
+AM_CONDITIONAL([TFEL_HHO_SUPPORT],[test x"$TFEL_HHO_SUPPORT" = "xyes"])
+
 AC_OUTPUT([debug.sh Makefile Doxyfile docs/Makefile docs/tfel/Makefile
 	   docs/tfel/Makefile.doc docs/tfel/reference-guide.tex
 	   docs/tfel/Champs.tex docs/release-notes-2.0/Champs.tex

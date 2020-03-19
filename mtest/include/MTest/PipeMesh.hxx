@@ -14,19 +14,23 @@
 #ifndef LIB_MTEST_PIPEMESH_HXX
 #define LIB_MTEST_PIPEMESH_HXX
 
-#include"MTest/Types.hxx"
+#include "TFEL/Utilities/Data.hxx"
+#include "MTest/Types.hxx"
 
 namespace mtest{
 
   //! structure describing the pipe mesh
   struct PipeMesh{
     //! how the pipe is modelled
-    enum ElementType{
-      DEFAULT,
-      LINEAR,
+    enum ElementType {
+#ifdef PIPETEST_HHO_SUPPORT
+      HYBRID_HIGH_ORDER,
+#endif /* PIPETEST_HHO_SUPPORT */
+      CUBIC,
       QUADRATIC,
-      CUBIC
-    }; // end of enum ElementType
+      LINEAR,
+      DEFAULT
+    };  // end of enum ElementType
     //! inner radius
     real inner_radius = real(-1);
     //! outer radius
@@ -35,6 +39,8 @@ namespace mtest{
     int  number_of_elements = -1;
     //! element type
     ElementType etype = DEFAULT;
+    //! element data
+    tfel::utilities::Data edata;
   }; // end of struct PipeMesh
 
 } // end of namespace mtest

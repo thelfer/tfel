@@ -124,7 +124,7 @@ namespace tfel
 	  protected BinaryOperationBase
       {
 	BinaryOperation(const std::shared_ptr<Expr>,
-			const std::shared_ptr<Expr>);
+			const std::shared_ptr<Expr>) noexcept;
 	double getValue() const override final;
 	/*!
 	 * \return a string representation of the evaluator suitable to

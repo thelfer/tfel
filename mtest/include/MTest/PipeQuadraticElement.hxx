@@ -21,7 +21,7 @@
 #include"TFEL/Math/General/ConstExprMathFunctions.hxx"
 #include"MTest/Types.hxx"
 #include"MTest/SolverOptions.hxx"
-#include"MTest/PipeElement.hxx"
+#include"MTest/PipeElementBase.hxx"
 
 namespace mtest{
 
@@ -35,22 +35,22 @@ namespace mtest{
   /*!
    * \brief structure describing a quadratic element for pipes
    */
-  struct PipeQuadraticElement : PipeElement {
+  struct PipeQuadraticElement : PipeElementBase {
 #ifndef _MSC_VER
-    // absolute value of the Gauss points position in the reference
+    // absolute value of the Integration points position in the reference
     // element
     static constexpr const real abs_pg =
       tfel::math::constexpr_fct::sqrt(real(3)/real(5));
-    // value of the Gauss points position in the reference element
+    // value of the Integration points position in the reference element
     static constexpr const real pg_radii[3] = {-abs_pg,real(0),abs_pg};
-    // Gauss point weight
+    // Integration point weight
     static constexpr const real wg[3] =  {real(5.)/real(9.),
 					  real(8.)/real(9.),
 					  real(5.)/real(9.)};
 #else /* _MSC_VER */
-    // value of the Gauss points position in the reference element
+    // value of the Integration points position in the reference element
     static const real pg_radii[3];
-    // Gauss point weight
+    // Integration point weight
     static const real wg[3];
 #endif  /* _MSC_VER */
     /*!
@@ -64,15 +64,19 @@ namespace mtest{
 
     /*!
      * \brief constructor
-     * \param[in] n: index of this element
+     * \param[in] m: mesh
+     * \param[in] b: behaviour
+     * \param[in] n: element number
      */
-    PipeQuadraticElement(const size_t) noexcept;
+    PipeQuadraticElement(const PipeMesh&, const Behaviour&, const size_t);
 
-    void setGaussPointsPositions(StructureCurrentState&,
-                                 const PipeMesh&) const override;
+    size_type getNumberOfNodes() const override;
+
+    size_type getNumberOfIntegrationPoints() const override;
+
+    void setIntegrationPointsPositions(StructureCurrentState&) const override;
 
     void computeStrain(StructureCurrentState&,
-                       const PipeMesh&,
                        const tfel::math::vector<real>&,
                        const bool) const override;
 
@@ -80,17 +84,11 @@ namespace mtest{
         tfel::math::matrix<real>&,
         tfel::math::vector<real>&,
         StructureCurrentState&,
-        const Behaviour&,
         const tfel::math::vector<real>&,
-        const PipeMesh&,
         const real,
         const StiffnessMatrixType) const override;
     //! \brief destructor
     ~PipeQuadraticElement() noexcept override;
-
-   private:
-    //! index of the element
-    const size_t index;
   };  // end of struct PipeQuadraticElement
 
 } // end of namespace mtest

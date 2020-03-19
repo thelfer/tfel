@@ -64,7 +64,7 @@ namespace tfel
 	 */
 	StandardBinaryFunction(const char* const,
 			       const std::shared_ptr<Expr>,
-			       const std::shared_ptr<Expr>);
+			       const std::shared_ptr<Expr>) noexcept;
 	/*!
 	 *\return the value resulting for the evaluation of the
 	 * function and its arguments

@@ -61,7 +61,6 @@ namespace mtest {
                                          const tfel::math::matrix<real>& kt,
                                          const tfel::math::vector<real>& s) {
     using namespace tfel::material;
-    using size_type = tfel::math::matrix<real>::size_type;
     const auto ndv = b.getGradientsSize();
     const auto nth = b.getThermodynamicForcesSize();
     std::fill(k.begin(), k.end(), real(0));
@@ -214,9 +213,9 @@ namespace mtest {
     std::copy(v.begin(), v.end(), this->s_t0.begin());
   }  // end of MTest::setThermodynamicForcesInitialValues
 
-  void MTest::setGaussPointPositionForEvolutionsEvaluation(
+  void MTest::setIntegrationPointPositionForEvolutionsEvaluation(
       const CurrentState&) const {
-  }  // end of MTest::setGaussPointPositionForEvolutionsEvaluation
+  }  // end of MTest::setIntegrationPointPositionForEvolutionsEvaluation
 
   void MTest::completeInitialisation() {
     using namespace std;
@@ -597,7 +596,6 @@ namespace mtest {
       const real& dt,
       const StiffnessMatrixType smt) const {
     using tfel::material::MechanicalBehaviourBase;
-    using size_type = unsigned short;
     auto& scs = state.getStructureCurrentState("");
     auto& bwk = scs.getBehaviourWorkSpace();
     tfel::raise_if(scs.istates.size() != 1u, "MTest::prepare: invalid state");
@@ -792,8 +790,7 @@ namespace mtest {
    */
   static real MTest_getErrorNorm(const tfel::math::vector<real>& v,
                                  const tfel::math::vector<real>::size_type s) {
-    using size_type = tfel::math::vector<real>::size_type;
-    auto n = real(0);
+    auto n = real{};
     for (size_type i = 0; i != s; ++i) {
       n = std::max(n, std::abs(v(i)));
     }

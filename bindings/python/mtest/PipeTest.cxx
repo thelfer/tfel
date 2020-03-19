@@ -144,20 +144,22 @@ PipeTest_setOuterRadiusEvolution2(mtest::PipeTest& t,
   t.setOuterRadiusEvolution(mtest::make_evolution(v));
 } // end of PipeTest_setOuterRadiusEvolution2
 
-static void
-PipeTest_setElementType(mtest::PipeTest& t,
-			const std::string& e){
-  if(e=="Linear"){
-    t.setElementType(mtest::PipeMesh::LINEAR);
-  } else if(e=="Quadratic"){
-    t.setElementType(mtest::PipeMesh::QUADRATIC);
-  } else if(e=="Cubic"){
-    t.setElementType(mtest::PipeMesh::CUBIC);
+static void PipeTest_setElementType(mtest::PipeTest& t, const std::string& e) {
+  const auto d = tfel::utilities::Data();
+  if (e == "Linear") {
+    t.setElementType(mtest::PipeMesh::LINEAR, d);
+  } else if (e == "Quadratic") {
+    t.setElementType(mtest::PipeMesh::QUADRATIC, d);
+  } else if (e == "Cubic") {
+    t.setElementType(mtest::PipeMesh::CUBIC, d);
   } else {
-    tfel::raise("PipeTest::setElementType: "
-		"invalid element type ('"+e+"').\n"
-		"Valid element type are "
-		"'Linear' and 'Quadratic'");
+    tfel::raise(
+        "PipeTest::setElementType: "
+        "invalid element type ('" +
+        e +
+        "').\n"
+        "Valid element type are "
+        "'Linear' and 'Quadratic'");
   }
 } // end of PipeTest_setElementType
 

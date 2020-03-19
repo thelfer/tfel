@@ -1138,7 +1138,7 @@ namespace tfel {
                "Evaluator::treatGroup2: "
                "unterminated group (group began with '" +
                    s + "').");
-      return std::move(g);
+      return g;
     }  // end of Evaluator::treatGroup2
 
     std::vector<double>::size_type Evaluator::registerVariable(
@@ -1430,7 +1430,7 @@ namespace tfel {
         }
         pev->expr = this->expr->differentiate(pos, pev->variables);
       }
-      return std::move(pev);
+      return pev;
     }  // end of Evaluator::differentiate
 
     std::shared_ptr<tfel::math::parser::ExternalFunction>
@@ -1443,7 +1443,7 @@ namespace tfel {
       this->checkCyclicDependency();
       auto f = std::make_shared<Evaluator>(*this);
       f->expr = f->expr->resolveDependencies(f->variables);
-      return std::move(f);
+      return f;
     }  // end of Evaluator::resolveDependencies() const
 
     void Evaluator::removeDependencies() {
@@ -1518,7 +1518,7 @@ namespace tfel {
       pev->manager = this->manager;
       pev->expr = this->expr->createFunctionByChangingParametersIntoVariables(
           pev->variables, params, pev->positions);
-      return std::move(pev);
+      return pev;
     }  // end of Evaluator::createFunctionByChangingParametersIntoVariables
 
     void Evaluator::getParametersNames(std::set<std::string>& n) const {

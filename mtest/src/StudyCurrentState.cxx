@@ -29,7 +29,7 @@ namespace mtest{
   StudyCurrentState&
   StudyCurrentState::operator=(StudyCurrentState&&) = default;
   
-  void StudyCurrentState::initialize(const StudyCurrentState::size_type psz){
+  void StudyCurrentState::initialize(const size_type psz){
     this->u_1.clear();
     this->u0.clear();
     this->u1.clear();

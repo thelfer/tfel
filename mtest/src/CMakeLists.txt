@@ -46,6 +46,7 @@ set(TFELMTest_SOURCES
   MTest.cxx
   PipeTest.cxx
   PipeElement.cxx
+  PipeElementBase.cxx
   PipeLinearElement.cxx
   PipeQuadraticElement.cxx
   PipeCubicElement.cxx
@@ -57,6 +58,12 @@ set(TFELMTest_SOURCES
   MTestParser.cxx
   PipeTestParser.cxx
   GasEquationOfState.cxx)
+
+if(TFEL_HHO_SUPPORT)
+  set(TFELMTest_SOURCES 
+      PipeHybridHighOrderElement.cxx
+      ${TFELMTest_SOURCES})
+endif(TFEL_HHO_SUPPORT)
 
 set(TFELMTest_LDADD
   MFrontLogStream

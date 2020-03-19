@@ -408,7 +408,6 @@ namespace mtest {
     using namespace std;
     using namespace tfel::math;
     using tfel::math::vector;
-    using size_type = tfel::math::matrix<real>::size_type;
     auto throw_if = [](const bool c, const std::string& m) {
       tfel::raise_if(c, "GenericBehaviour::call_behaviour: " + m);
     };

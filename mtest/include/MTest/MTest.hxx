@@ -330,11 +330,11 @@ namespace mtest {
     //! \brief set the modelling hypothesis to the default one
     void setDefaultModellingHypothesis() override;
     /*!
-     * \brief set the position of the Gauss point in the evolution
+     * \brief set the position of the Integration point in the evolution
      * manager
      * \param[in] s: current state
      */
-    virtual void setGaussPointPositionForEvolutionsEvaluation(
+    virtual void setIntegrationPointPositionForEvolutionsEvaluation(
         const CurrentState&) const override;
     /*!
      * \return the number of unknowns (size of driving variables plus

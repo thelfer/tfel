@@ -54,6 +54,7 @@ libTFELMTest_la_SOURCES = RoundingMode.cxx              \
 			  MTest.cxx                                 \
 			  PipeTest.cxx                              \
 			  PipeElement.cxx                           \
+			  PipeElementBase.cxx                       \
 			  PipeLinearElement.cxx                     \
 			  PipeQuadraticElement.cxx                  \
 			  PipeCubicElement.cxx                      \
@@ -66,6 +67,10 @@ libTFELMTest_la_SOURCES = RoundingMode.cxx              \
 			  PipeTestParser.cxx                        \
 			  GasEquationOfState.cxx
 
+if TFEL_HHO_SUPPORT
+libTFELMTest_la_SOURCES += PipeHybridHighOrderElement.cxx
+endif # TFEL_HHO_SUPPORT
+
 libTFELMTest_la_LIBADD  = -L$(top_builddir)/mfront/src -lMFrontLogStream  \
 			  -L$(top_builddir)/src/Material -lTFELMaterial   \
 			  -L$(top_builddir)/src/Math                      \
@@ -76,6 +81,10 @@ libTFELMTest_la_LIBADD  = -L$(top_builddir)/mfront/src -lMFrontLogStream  \
 			  -L$(top_builddir)/src/Tests     -lTFELTests     \
 			  -L$(top_builddir)/src/Config     -lTFELConfig
 libTFELMTest_la_CPPFLAGS = $(AM_CPPFLAGS) -DTFELMTest_EXPORTS
+if TFEL_HHO_SUPPORT
+libTFELMTest_la_CPPFLAGS += -DPIPETEST_HHO_SUPPORT
+endif # TFEL_HHO_SUPPORT
+
 if TFEL_WIN
 libTFELMTest_la_LDFLAGS  = -no-undefined -avoid-version -Wl,--add-stdcall-alias -Wl,--kill-at
 endif # TFEL_WIN

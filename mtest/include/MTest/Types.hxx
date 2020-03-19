@@ -22,7 +22,9 @@
 namespace mtest {
 
   //! a simple alias
-  typedef double real;
+  using real = double;
+  //! a simple alias
+  using size_type = size_t;
   //! a simple alias
   struct Evolution;
   // ! a simple alias

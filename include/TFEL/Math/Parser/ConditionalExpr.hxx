@@ -35,13 +35,10 @@ namespace tfel
       {
 	ConditionalExpr(const std::shared_ptr<LogicalExpr>,
 			const std::shared_ptr<Expr>,
-			const std::shared_ptr<Expr>);
+			const std::shared_ptr<Expr>) noexcept;
+
 	double getValue() const override;
-	/*!
-	 * \return a string representation of the evaluator suitable to
-	 * be integrated in a C++ code.
-	 * \param[in] m: a map used to change the names of the variables
-	 */
+
 	std::string
 	getCxxFormula(const std::vector<std::string>&) const override;
 

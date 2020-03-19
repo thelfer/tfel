@@ -34,10 +34,7 @@ namespace mtest{
   /*!
    * structure describing the current state of a study
    */
-  struct MTEST_VISIBILITY_EXPORT StudyCurrentState
-  {
-    //! a simple alias
-    using size_type = tfel::math::vector<real>::size_type;
+  struct MTEST_VISIBILITY_EXPORT StudyCurrentState {
     //! default constructor
     StudyCurrentState();
     StudyCurrentState(const StudyCurrentState&);
@@ -70,7 +67,7 @@ namespace mtest{
      * \brief allocate memory
      * \param[out] psz: problem size
      */
-    void initialize(const StudyCurrentState::size_type);
+    void initialize(const size_type);
     /*!
      * \brief update the state: values at the end of the time step
      * becomes the values at the beginning of the next time step

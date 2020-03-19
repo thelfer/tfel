@@ -175,7 +175,7 @@ namespace tfel {
         }
       }
       CxxTokenizer::readSpecifiedToken("Data::read_vector", "}", p, pe);
-      return std::move(v);
+      return v;
     }
 
     Data Data::read_map(CxxTokenizer::const_iterator& p,
@@ -211,7 +211,7 @@ namespace tfel {
       }
       std::map<std::string, Data> r;
       tfel::utilities::read_map(r, p, pe,opts);
-      return std::move(r);
+      return r;
     }
 
     Data Data::read(CxxTokenizer::const_iterator& p,

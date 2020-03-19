@@ -38,10 +38,7 @@ namespace mtest{
   /*!
    * \brief abstract class describing a physical system
    */
-  struct MTEST_VISIBILITY_EXPORT Study
-  {
-    //! a simple alias
-    using size_type = tfel::math::vector<real>::size_type;
+  struct MTEST_VISIBILITY_EXPORT Study {
     /*!
      * \return the total number of unknowns (including the Lagrange
      * multipliers)
@@ -215,11 +212,11 @@ namespace mtest{
     virtual ~Study();
   protected:
     /*!
-     * \brief set the position of the Gauss point in the evolution
+     * \brief set the position of the Integration point in the evolution
      * manager
      * \param[in] s: current state
      */
-    virtual void setGaussPointPositionForEvolutionsEvaluation(const CurrentState&) const = 0;
+    virtual void setIntegrationPointPositionForEvolutionsEvaluation(const CurrentState&) const = 0;
   }; // end of struct Study
   
 } // end of namespace mtest

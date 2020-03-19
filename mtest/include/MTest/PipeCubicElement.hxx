@@ -21,33 +21,26 @@
 #include"TFEL/Math/General/ConstExprMathFunctions.hxx"
 #include"MTest/Types.hxx"
 #include"MTest/SolverOptions.hxx"
-#include"MTest/PipeElement.hxx"
+#include"MTest/PipeElementBase.hxx"
 
 namespace mtest{
-
-  // forward declaration
-  struct Behaviour;
-  // forward declaration
-  struct StructureCurrentState;
-  // forward declaration
-  struct PipeMesh;
   
   /*!
    * \brief structure describing a cubic element for pipes
    */
-  struct PipeCubicElement : PipeElement {
+  struct PipeCubicElement : PipeElementBase {
 #ifndef _MSC_VER
-    // value of the Gauss points position in the reference element
+    // value of the Integration points position in the reference element
     static constexpr const real pg_radii[4] = {
         -0.861136311594053, -0.339981043584856, 0.339981043584856,
         0.861136311594053};
-    // Gauss point weight
+    // Integration point weight
     static constexpr const real wg[4] = {0.347854845137454, 0.652145154862546,
                                          0.652145154862546, 0.347854845137454};
 #else /* _MSC_VER */
-    // value of the Gauss points position in the reference element
+    // value of the Integration points position in the reference element
     static const real pg_radii[4];
-    // Gauss point weight
+    // Integration point weight
     static const real wg[4];
 #endif  /* _MSC_VER */
     /*!
@@ -63,15 +56,19 @@ namespace mtest{
 
     /*!
      * \brief constructor
-     * \param[in] n: index of this element
+     * \param[in] m: mesh
+     * \param[in] b: behaviour
+     * \param[in] n: element number
      */
-    PipeCubicElement(const size_t) noexcept;
+    PipeCubicElement(const PipeMesh&, const Behaviour&, const size_t);
 
-    void setGaussPointsPositions(StructureCurrentState&,
-                                 const PipeMesh&) const override;
+    size_type getNumberOfNodes() const override;
+
+    size_type getNumberOfIntegrationPoints() const override;
+
+    void setIntegrationPointsPositions(StructureCurrentState&) const override;
 
     void computeStrain(StructureCurrentState&,
-                       const PipeMesh&,
                        const tfel::math::vector<real>&,
                        const bool) const override;
 
@@ -79,9 +76,7 @@ namespace mtest{
         tfel::math::matrix<real>&,
         tfel::math::vector<real>&,
         StructureCurrentState&,
-        const Behaviour&,
         const tfel::math::vector<real>&,
-        const PipeMesh&,
         const real,
         const StiffnessMatrixType) const override;
 
@@ -108,9 +103,6 @@ namespace mtest{
     static constexpr inline real dsf2(const real);
     static constexpr inline real sf3(const real);
     static constexpr inline real dsf3(const real);
-
-    //! index of the element
-    const size_t index;
   }; // end of struct PipeCubicElement
 
 } // end of namespace mtest

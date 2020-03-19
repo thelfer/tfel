@@ -21,7 +21,7 @@
 #include"TFEL/Math/General/ConstExprMathFunctions.hxx"
 #include"MTest/Types.hxx"
 #include"MTest/SolverOptions.hxx"
-#include"MTest/PipeElement.hxx"
+#include"MTest/PipeElementBase.hxx"
 
 namespace mtest{
 
@@ -29,45 +29,47 @@ namespace mtest{
   struct Behaviour;
   // forward declaration
   struct StructureCurrentState;
-  // forward declaration
-  struct PipeMesh;
   
   /*!
    * \brief structure describing a linear element for pipes
    */
-  struct PipeLinearElement : PipeElement {
+  struct PipeLinearElement : PipeElementBase {
 #ifndef _MSC_VER
-    // absolute value of the Gauss points position in the reference
+    // absolute value of the Integration points position in the reference
     // element
     static constexpr const real abs_pg =
       real(1)/tfel::math::constexpr_fct::sqrt(real(3));
-    // value of the Gauss points position in the reference element
+    // value of the Integration points position in the reference element
     static constexpr const real pg_radii[2] = {-abs_pg,abs_pg};
-    // Gauss point weight
+    // Integration point weight
     static constexpr const real wg = real(1);
 #else /* _MSC_VER */
-    // absolute value of the Gauss points position in the reference
+    // absolute value of the Integration points position in the reference
     // element
     static const real abs_pg;
-    // value of the Gauss points position in the reference element
+    // value of the Integration points position in the reference element
     static const real pg_radii[2];
-    // Gauss point weight
+    // Integration point weight
     static const real wg;
 #endif /* _MSC_VER */
 
-    /*!
-     * \brief constructor
-     * \param[in] n: index of this element
-     */
-    PipeLinearElement(const size_t) noexcept;
-
     static real interpolate(const real, const real, const real);
 
-    void setGaussPointsPositions(StructureCurrentState&,
-                                 const PipeMesh&) const override;
+    /*!
+     * \brief constructor
+     * \param[in] m: mesh
+     * \param[in] b: behaviour
+     * \param[in] n: element number
+     */
+    PipeLinearElement(const PipeMesh&, const Behaviour&, const size_t);
+
+    size_type getNumberOfNodes() const override;
+
+    size_type getNumberOfIntegrationPoints() const override;
+
+    void setIntegrationPointsPositions(StructureCurrentState&) const override;
 
     void computeStrain(StructureCurrentState&,
-                       const PipeMesh&,
                        const tfel::math::vector<real>&,
                        const bool) const override;
 
@@ -75,17 +77,11 @@ namespace mtest{
         tfel::math::matrix<real>&,
         tfel::math::vector<real>&,
         StructureCurrentState&,
-        const Behaviour&,
         const tfel::math::vector<real>&,
-        const PipeMesh&,
         const real,
         const StiffnessMatrixType) const override;
     //! \brief destructor
     ~PipeLinearElement() noexcept override;
-
-   private:
-    //! index of the element
-    const size_t index;
   }; // end of struct PipeLinearElement
 
 } // end of namespace mtest

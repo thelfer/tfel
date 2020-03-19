@@ -18,6 +18,7 @@
 #include "MTest/BehaviourWorkSpace.hxx"
 #include "MTest/CurrentState.hxx"
 #include "MTest/StructureCurrentState.hxx"
+#include "MTest/PipeMesh.hxx"
 #include "MTest/PipeQuadraticElement.hxx"
 
 namespace mtest {
@@ -27,10 +28,10 @@ namespace mtest {
   constexpr const real PipeQuadraticElement::wg[3];
   constexpr const real PipeQuadraticElement::pg_radii[3];
 #else  /* _MSC_VER */
-  // value of the Gauss points position in the reference element
+  // value of the integration points position in the reference element
   const real PipeQuadraticElement::pg_radii[3] = {
       -std::sqrt(real(3) / real(5)), real(0), std::sqrt(real(3) / real(5))};
-  // Gauss point weight
+  // integration point weight
   const real PipeQuadraticElement::wg[3] = {
       real(5.) / real(9.), real(8.) / real(9.), real(5.) / real(9.)};
 #endif /* _MSC_VER */
@@ -43,58 +44,41 @@ namespace mtest {
            (1. + x) * (1. - x) * v1;
   }  // end of PipeQuadraticElement::interpolate
 
-  PipeQuadraticElement::PipeQuadraticElement(const size_t n) noexcept
-      : index(n) {}  // end of PipeQuadraticElement::PipeQuadraticElement
+  PipeQuadraticElement::PipeQuadraticElement(const PipeMesh& m,
+                                             const Behaviour& b,
+                                             const size_t n) 
+      : PipeElementBase(m, b, n) {
+  }  // end of PipeQuadraticElement::PipeQuadraticElement
 
-  void PipeQuadraticElement::setGaussPointsPositions(StructureCurrentState& scs,
-                                                     const PipeMesh& m) const {
-    // number of elements
-    const auto ne = size_t(m.number_of_elements);
-    // inner radius
-    const auto Ri = m.inner_radius;
-    // outer radius
-    const auto Re = m.outer_radius;
-    // radius increment
-    const auto dr = (Re - Ri) / ne;
-    for (size_t i = 0; i != ne; ++i) {
-      // radial position of the first node
-      const auto r0 = Ri + dr * i;
-      // radial position of the second node
-      const auto r1 = r0 + dr / 2;
-      // radial position of the second node
-      const auto r2 = r0 + dr;
-      // loop over Gauss point
-      for (const auto g : {0, 1, 2}) {
-        // current state
-        auto& s = scs.istates[3 * i + g];
-        // Gauss point position in the reference element
-        const auto pg = pg_radii[g];
-        // radial position of the Gauss point
-        s.position = interpolate(r0, r1, r2, pg);
-      }
+  size_type PipeQuadraticElement::getNumberOfNodes() const {
+    return 3;
+  }  // end of PipeQuadraticElement::getNumberOfNodes
+
+  size_type PipeQuadraticElement::getNumberOfIntegrationPoints() const {
+    return 3;
+  }  // end of PipeQuadraticElement::getNumberOfIntegrationPoints
+
+  void PipeQuadraticElement::setIntegrationPointsPositions(
+      StructureCurrentState& scs) const {
+    // radial position of the second node
+    const auto r1 = (this->inner_radius + this->outer_radius) / 2;
+    // loop over integration point
+    for (const auto g : {0, 1, 2}) {
+      // current state
+      auto& s = scs.istates[3 * (this->index) + g];
+      // integration point position in the reference element
+      const auto pg = pg_radii[g];
+      // radial position of the integration point
+      s.position = interpolate(this->inner_radius, r1, this->outer_radius, pg);
     }
   }
 
   void PipeQuadraticElement::computeStrain(StructureCurrentState& scs,
-                                           const PipeMesh& m,
                                            const tfel::math::vector<real>& u,
                                            const bool b) const {
-    // number of elements
-    const auto ne = size_t(m.number_of_elements);
-    // number of nodes
-    const auto n = 2 * ne + 1;
-    // inner radius
-    const auto Ri = m.inner_radius;
-    // outer radius
-    const auto Re = m.outer_radius;
-    // radius increment
-    const auto dr = (Re - Ri) / ne;
-    // radial position of the first node
-    const auto r0 = Ri + dr * (this->index);
-    // radial position of the second node
-    const auto r1 = r0 + dr / 2;
-    // radial position of the second node
-    const auto r2 = r0 + dr;
+    const auto r0 = this->inner_radius;
+    const auto r2 = this->outer_radius;
+    const auto r1 = (r0 + r2) / 2;
     // radial displacement of the first node
     const auto ur0 = u[2 * (this->index)];
     // radial displacement of the second node
@@ -102,14 +86,14 @@ namespace mtest {
     // radial displacement of the third node
     const auto ur2 = u[2 * (this->index) + 2];
     // axial strain
-    const auto& ezz = u[n];
-    // loop over Gauss point
+    const auto& ezz = u.back();
+    // loop over integration point
     for (const auto g : {0, 1, 2}) {
-      // Gauss point position in the reference element
+      // integration point position in the reference element
       const auto pg = pg_radii[g];
       // inverse of the jacobian
       const auto iJ = 1 / (r0 * (pg - 0.5) + r2 * (pg + 0.5) - 2 * r1 * pg);
-      // radial position of the Gauss point
+      // radial position of the integration point
       const auto rg = interpolate(r0, r1, r2, pg);
       // current state
       auto& s = scs.istates[3 * (this->index) + g];
@@ -126,41 +110,27 @@ namespace mtest {
       tfel::math::matrix<real>& k,
       tfel::math::vector<real>& r,
       StructureCurrentState& scs,
-      const Behaviour& b,
       const tfel::math::vector<real>& u1,
-      const PipeMesh& m,
       const real dt,
       const StiffnessMatrixType mt) const {
     //! a simple alias
     constexpr const real pi = 3.14159265358979323846;
-    // number of elements
-    const auto ne = size_t(m.number_of_elements);
-    // number of nodes
-    const auto n = 2 * ne + 1;
-    // inner radius
-    const auto Ri = m.inner_radius;
-    // outer radius
-    const auto Re = m.outer_radius;
-    // radius increment
-    const auto dr = (Re - Ri) / ne;
-    // radial position of the first node
-    const auto r0 = Ri + dr * (this->index);
-    // radial position of the second node
-    const auto r1 = r0 + dr / 2;
-    // radial position of the thrid node
-    const auto r2 = r0 + dr;
+    const auto r0 = this->inner_radius;
+    const auto r2 = this->outer_radius;
+    const auto r1 = (r0 + r2) / 2;
     /* inner forces */
     auto& bwk = scs.getBehaviourWorkSpace();
     // compute the strain
-    this->computeStrain(scs, m, u1, true);
+    this->computeStrain(scs, u1, true);
     auto r_dt = real{};
-    // loop over Gauss point
+    // loop over integration point
     const auto i = this->index;
+    const auto n = static_cast<size_type>(r.size() - 1);
     for (const auto g : {0, 1, 2}) {
       setRoundingMode();
-      // Gauss point position in the reference element
+      // integration point position in the reference element
       const auto pg = pg_radii[g];
-      // radial position of the Gauss point
+      // radial position of the integration point
       const auto rg = interpolate(r0, r1, r2, pg);
       // jacobian of the transformation
       const auto J = r0 * (pg - 0.5) + r2 * (pg + 0.5) - 2 * r1 * pg;
@@ -172,7 +142,7 @@ namespace mtest {
       // current state
       auto& s = scs.istates[3 * i + g];
       setRoundingMode();
-      const auto rb = b.integrate(s, bwk, dt, mt);
+      const auto rb = this->behaviour.integrate(s, bwk, dt, mt);
       setRoundingMode();
       r_dt = (g == 0) ? rb.second : std::min(rb.second, r_dt);
       if (!rb.first) {
@@ -190,8 +160,7 @@ namespace mtest {
       const auto w = 2 * pi * wg[g] * J;
       // innner forces
       for (const auto j : {0, 1, 2}) {
-        r[2 * i + j] +=
-            w * (rg * pi_rr * dsf[j] / J + pi_tt * sf[j]);
+        r[2 * i + j] += w * (rg * pi_rr * dsf[j] / J + pi_tt * sf[j]);
       }
       // axial forces
       r[n] += w * rg * pi_zz;
@@ -212,8 +181,7 @@ namespace mtest {
         for (const auto j : {0, 1, 2}) {
           const auto de0_du = dsf[j] / J;
           const auto de2_du = sf[j] / rg;
-          k(n, 2 * i + j) +=
-              w * rg * (bk(1, 0) * de0_du + bk(1, 2) * de2_du);
+          k(n, 2 * i + j) += w * rg * (bk(1, 0) * de0_du + bk(1, 2) * de2_du);
         }
         k(n, n) += w * rg * bk(1, 1);
       }

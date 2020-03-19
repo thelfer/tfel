@@ -92,7 +92,6 @@ namespace mtest
       const tfel::math::vector<real>& Fv0,
       const tfel::math::vector<real>& Fv1) {
     using namespace tfel::math;
-    using size_type = unsigned short;
     t2tost2<N,real> dtau_ddF;
     t2tost2<N,real> dtau;
     t2tost2<N,real> dsig;

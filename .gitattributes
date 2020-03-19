@@ -6275,6 +6275,8 @@ mtest/include/MTest/MistralBehaviour.hxx -text
 mtest/include/MTest/NonLinearConstraint.hxx -text
 mtest/include/MTest/PipeCubicElement.hxx -text
 mtest/include/MTest/PipeElement.hxx -text
+mtest/include/MTest/PipeElementBase.hxx -text
+mtest/include/MTest/PipeHybridHighOrderElement.hxx -text
 mtest/include/MTest/PipeLinearElement.hxx -text
 mtest/include/MTest/PipeMesh.hxx -text
 mtest/include/MTest/PipeProfile.hxx -text
@@ -6371,6 +6373,8 @@ mtest/src/MistralBehaviour.cxx -text
 mtest/src/NonLinearConstraint.cxx -text
 mtest/src/PipeCubicElement.cxx -text
 mtest/src/PipeElement.cxx -text
+mtest/src/PipeElementBase.cxx -text
+mtest/src/PipeHybridHighOrderElement.cxx -text
 mtest/src/PipeLinearElement.cxx -text
 mtest/src/PipeProfile.cxx -text
 mtest/src/PipeProfileHander.cxx -text

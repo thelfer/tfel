@@ -124,8 +124,7 @@ namespace mtest {
      * \return the offset in the material properties list associated
      * with the definition of the orthotropic axes.
      */
-    std::vector<std::string>::size_type
-    getOrthototropicAxesOffset() const;
+    size_type getOrthototropicAxesOffset() const;
     //! the ansys fonction
     tfel::system::AnsysFctPtr fct;
   }; // end of struct Behaviour

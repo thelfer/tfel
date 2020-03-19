@@ -339,7 +339,7 @@ namespace mtest{
     // evaluations of the materials properties, state variables at the
     // end of the time step. Computation of thermal expansion if needed.
     for(auto& s: scs.istates){
-      this->setGaussPointPositionForEvolutionsEvaluation(s);
+      this->setIntegrationPointPositionForEvolutionsEvaluation(s);
       computeMaterialProperties(s,*(this->evm),*(this->dmpv),
   				this->b->getMaterialPropertiesNames(),t,dt);
       computeExternalStateVariables(s,*(this->evm),

@@ -28,7 +28,7 @@ extern "C" {
 					  const char * const f)
   {
     unsigned short * n;
-    size_t len = strlen(f);
+    const size_t len = strlen(f);
     char *myname = (char *) malloc((len+25u)*sizeof(char));
     if(myname==nullptr){
       return -1;
@@ -47,7 +47,7 @@ extern "C" {
 							    const char * const f)
   {
     unsigned short * n;
-    size_t len = strlen(f);
+    const size_t len = strlen(f);
     char *myname = (char *) malloc((len+43u)*sizeof(char));
     if(myname==nullptr){
       return -1;
@@ -66,7 +66,7 @@ extern "C" {
 						     const char * const f)
   {
     unsigned short * n;
-    size_t len = strlen(f);
+    const size_t len = strlen(f);
     char *myname = (char *) malloc((len+22u)*sizeof(char));
     if(myname==nullptr){
       return -1;
@@ -226,7 +226,7 @@ extern "C" {
   char **tfel_getMaterialPropertyVariables(LibraryHandlerPtr lib,
                                            const char *const name) {
     char **v;
-    size_t len = strlen(name);
+    const size_t len = strlen(name);
     char *myname = (char *)malloc((len + 6u) * sizeof(char));
     if (myname == nullptr) {
       return nullptr;

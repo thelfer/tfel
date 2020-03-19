@@ -156,7 +156,7 @@ namespace tfel
       struct TFEL_VISIBILITY_LOCAL LogicalOperation final
 	: public LogicalExpr
       {
-	LogicalOperation(const ExprPtr,const ExprPtr);
+	LogicalOperation(const ExprPtr,const ExprPtr) noexcept;
 	bool getValue() const override;
 	/*!
 	 * \return a string representation of the evaluator suitable to
@@ -213,7 +213,7 @@ namespace tfel
       struct TFEL_VISIBILITY_LOCAL NegLogicalExpression final
 	: public LogicalExpr
       {
-	NegLogicalExpression(LogicalExprPtr);
+	NegLogicalExpression(LogicalExprPtr) noexcept;
 	bool getValue() const override;
 	/*!
 	 * \return a string representation of the evaluator suitable to

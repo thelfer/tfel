@@ -30,7 +30,7 @@ namespace tfel
       template<double (*f)(const double,const double)>
       StandardBinaryFunction<f>::StandardBinaryFunction(const char* const n,
 							const std::shared_ptr<Expr> e1,
-							const std::shared_ptr<Expr> e2)
+							const std::shared_ptr<Expr> e2) noexcept
 	: name(n),expr1(e1),expr2(e2)
       {} // end of StandardBinaryFunction::StandardBinaryFunction
 

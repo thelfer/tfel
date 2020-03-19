@@ -18,6 +18,7 @@
 #include "MTest/BehaviourWorkSpace.hxx"
 #include "MTest/CurrentState.hxx"
 #include "MTest/StructureCurrentState.hxx"
+#include "MTest/PipeMesh.hxx"
 #include "MTest/PipeLinearElement.hxx"
 
 namespace mtest {
@@ -39,64 +40,49 @@ namespace mtest {
     return 0.5 * ((1 - x) * v0 + (1 + x) * v1);
   }  // end of PipeLinearElement::interpolate
 
-  PipeLinearElement::PipeLinearElement(const size_t n) noexcept
-      : index(n) {}  // end of PipeLinearElement::PipeLinearElement
+  PipeLinearElement::PipeLinearElement(const PipeMesh& m,
+                                       const Behaviour& b,
+                                       const size_t n) 
+      : PipeElementBase(m, b, n) {
+  }  // end of PipeLinearElement::PipeLinearElement
 
-  void PipeLinearElement::setGaussPointsPositions(StructureCurrentState& scs,
-                                                  const PipeMesh& m) const {
-    // number of elements
-    const auto ne = size_t(m.number_of_elements);
-    // inner radius
-    const auto Ri = m.inner_radius;
-    // outer radius
-    const auto Re = m.outer_radius;
-    // radius increment
-    const auto dr = (Re - Ri) / ne;
-    for (size_t i = 0; i != ne; ++i) {
-      // radial position of the first node
-      const auto r0 = Ri + dr * (this->index);
-      // radial position of the second node
-      const auto r1 = Ri + dr * (i + 1);
-      // loop over Gauss point
-      for (const auto g : {0, 1}) {
-        // current state
-        auto& s = scs.istates[2 * (this->index) + g];
-        // Gauss point position in the reference element
-        const auto pg = pg_radii[g];
-        // radial position of the Gauss point
-        s.position = interpolate(r0, r1, pg);
-      }
+  size_type PipeLinearElement::getNumberOfNodes() const {
+    return 2;
+  }  // end of PipeLinearElement::getNumberOfNodes
+
+  size_type PipeLinearElement::getNumberOfIntegrationPoints() const {
+    return 2;
+  }  // end of PipeLinearElement::getNumberOfIntegrationPoints
+
+  void PipeLinearElement::setIntegrationPointsPositions(
+      StructureCurrentState& scs) const {
+    // loop over integration point
+    for (const auto g : {0, 1}) {
+      // current state
+      auto& s = scs.istates[2 * (this->index) + g];
+      // integration point position in the reference element
+      const auto pg = pg_radii[g];
+      // radial position of the integration point
+      s.position = interpolate(this->inner_radius, this->outer_radius, pg);
     }
   }
 
   void PipeLinearElement::computeStrain(StructureCurrentState& scs,
-                                        const PipeMesh& m,
                                         const tfel::math::vector<real>& u,
                                         const bool b) const {
-    // number of elements
-    const auto ne = size_t(m.number_of_elements);
-    // inner radius
-    const auto Ri = m.inner_radius;
-    // outer radius
-    const auto Re = m.outer_radius;
-    // radius increment
-    const auto dr = (Re - Ri) / ne;
-    // radial position of the first node
-    const auto r0 = Ri + dr * (this->index);
-    // radial position of the second node
-    const auto r1 = Ri + dr * (this->index + 1);
+    const auto dr = this->outer_radius - this->inner_radius;
     // radial displacement of the first node
     const auto ur0 = u[this->index];
     // radial displacement of the second node
     const auto ur1 = u[this->index + 1];
     // axial strain
-    const auto& ezz = u[ne + 1];
-    // loop over Gauss point
+    const auto& ezz = u.back();
+    // loop over integration point
     for (const auto g : {0, 1}) {
-      // Gauss point position in the reference element
+      // integration point position in the reference element
       const auto pg = pg_radii[g];
-      // radial position of the Gauss point
-      const auto rg = interpolate(r0, r1, pg);
+      // radial position of the integration point
+      const auto rg = interpolate(this->inner_radius, this->outer_radius, pg);
       // current state
       auto& s = scs.istates[2 * (this->index) + g];
       // strain
@@ -111,44 +97,31 @@ namespace mtest {
       tfel::math::matrix<real>& k,
       tfel::math::vector<real>& r,
       StructureCurrentState& scs,
-      const Behaviour& b,
       const tfel::math::vector<real>& u1,
-      const PipeMesh& m,
       const real dt,
       const StiffnessMatrixType mt) const {
     //! a simple alias
     constexpr const real pi = 3.14159265358979323846;
-    // number of elements
-    const auto ne = size_t(m.number_of_elements);
-    // number of nodes
-    const auto n = ne + 1;
-    // inner radius
-    const auto Ri = m.inner_radius;
-    // outer radius
-    const auto Re = m.outer_radius;
-    // radius increment
-    const auto dr = (Re - Ri) / ne;
-    // radial position of the first node
-    const auto r0 = Ri + dr * (this->index);
-    // radial position of the second node
-    const auto r1 = Ri + dr * (this->index + 1);
+    // size of the element
+    const auto dr = this->outer_radius - this->inner_radius;
     // jacobian of the transformation
     const auto J = dr / 2;
     /* inner forces */
     auto& bwk = scs.getBehaviourWorkSpace();
     // compute the strain
-    this->computeStrain(scs, m, u1, true);
+    this->computeStrain(scs, u1, true);
     auto r_dt = real{};
-    // loop over Gauss point
+    const auto n = static_cast<size_type>(r.size() - 1);
+    // loop over integration point
     for (const auto g : {0, 1}) {
-      // Gauss point position in the reference element
+      // integration point position in the reference element
       const auto pg = pg_radii[g];
-      // radial position of the Gauss point
-      const auto rg = interpolate(r0, r1, pg);
+      // radial position of the integration point
+      const auto rg = interpolate(this->inner_radius, this->outer_radius, pg);
       // current state
       auto& s = scs.istates[2 * (this->index) + g];
       setRoundingMode();
-      const auto rb = b.integrate(s, bwk, dt, mt);
+      const auto rb = this->behaviour.integrate(s, bwk, dt, mt);
       setRoundingMode();
       r_dt = (g == 0) ? rb.second : std::min(rb.second, r_dt);
       if (!rb.first) {

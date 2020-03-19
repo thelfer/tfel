@@ -18,6 +18,7 @@
 #include "MTest/BehaviourWorkSpace.hxx"
 #include "MTest/CurrentState.hxx"
 #include "MTest/StructureCurrentState.hxx"
+#include "MTest/PipeMesh.hxx"
 #include "MTest/PipeCubicElement.hxx"
 
 namespace mtest {
@@ -87,62 +88,50 @@ namespace mtest {
     return r0 * dsf0(x) + r1 * dsf1(x) + r2 * dsf2(x) + r3 * dsf3(x);
   }  // end of PipeCubicElement::jacobian
 
-  PipeCubicElement::PipeCubicElement(const size_t n) noexcept
-      : index(n) {}  // end of PipeCubicElement::PipeCubicElement
+  PipeCubicElement::PipeCubicElement(const PipeMesh& m,
+                                     const Behaviour& b,
+                                     const size_t n) 
+      : PipeElementBase(m, b, n) {
+  }  // end of PipeCubicElement::PipeCubicElement
 
-  void PipeCubicElement::setGaussPointsPositions(StructureCurrentState& scs,
-                                                 const PipeMesh& m) const {
-    // number of elements
-    const auto ne = size_t(m.number_of_elements);
-    // inner radius
-    const auto Ri = m.inner_radius;
-    // outer radius
-    const auto Re = m.outer_radius;
-    // radius increment
-    const auto dr = (Re - Ri) / ne;
-    for (size_t i = 0; i != ne; ++i) {
-      // radial position of the first node
-      const auto r0 = Ri + dr * (this->index);
-      // radial position of the second node
-      const auto r1 = r0 + dr / 3;
-      // radial position of the third node
-      const auto r2 = r0 + 2 * dr / 3;
-      // radial position of the fourth node
-      const auto r3 = r0 + dr;
-      // loop over Gauss point
-      for (const auto g : {0, 1, 2, 3}) {
-        // current state
-        auto& s = scs.istates[4 * (this->index) + g];
-        // Gauss point position in the reference element
-        const auto pg = pg_radii[g];
-        // radial position of the Gauss point
-        s.position = interpolate(r0, r1, r2, r3, pg);
-      }
+  size_type PipeCubicElement::getNumberOfNodes() const {
+    return 4;
+  }  // end of PipeCubicElement::getNumberOfNodes
+
+  size_type PipeCubicElement::getNumberOfIntegrationPoints() const {
+    return 4;
+  }  // end of PipeCubicElement::getNumberOfIntegrationPoints
+
+  void PipeCubicElement::setIntegrationPointsPositions(StructureCurrentState& scs) const {
+    const auto dr = this->outer_radius - this->inner_radius;
+    // radial position of the second node
+    const auto r1 = this->inner_radius + dr / 3;
+    // radial position of the third node
+    const auto r2 = this->inner_radius + 2 * dr / 3;
+    // loop over integration point
+    for (const auto g : {0, 1, 2, 3}) {
+      // current state
+      auto& s = scs.istates[4 * (this->index) + g];
+      // integration point position in the reference element
+      const auto pg = pg_radii[g];
+      // radial position of the integration point
+      s.position =
+          interpolate(this->inner_radius, r1, r2, this->outer_radius, pg);
     }
   }
 
   void PipeCubicElement::computeStrain(StructureCurrentState& scs,
-                                       const PipeMesh& m,
                                        const tfel::math::vector<real>& u,
                                        const bool b) const {
-    // number of elements
-    const auto ne = size_t(m.number_of_elements);
-    // number of nodes
-    const auto n = 3 * ne + 1;
-    // inner radius
-    const auto Ri = m.inner_radius;
-    // outer radius
-    const auto Re = m.outer_radius;
-    // radius increment
-    const auto dr = (Re - Ri) / ne;
     // radial position of the first node
-    const auto r0 = Ri + dr * (this->index);
+    const auto r0 = this->inner_radius;
+    // radial position of the fourth node
+    const auto r3 = this->outer_radius;
+    const auto dr = r3 - r0;
     // radial position of the second node
     const auto r1 = r0 + dr / 3;
     // radial position of the third node
     const auto r2 = r0 + 2 * dr / 3;
-    // radial position of the fourth node
-    const auto r3 = r0 + dr;
     // radial displacement of the first node
     const auto ur0 = u[3 * (this->index)];
     // radial displacement of the second node
@@ -152,16 +141,16 @@ namespace mtest {
     // radial displacement of the fourth node
     const auto ur3 = u[3 * (this->index) + 3];
     // axial strain
-    const auto& ezz = u[n];
-    // loop over Gauss point
+    const auto& ezz = u.back();
+    // loop over integration point
     for (const auto g : {0, 1, 2, 3}) {
-      // Gauss point position in the reference element
+      // integration point position in the reference element
       const auto pg = pg_radii[g];
       // inverse of the jacobian
       const auto iJ = 1 / PipeCubicElement::jacobian(r0, r1, r2, r3, pg);
       // current state
       auto& s = scs.istates[4 * (this->index) + g];
-      // radial position of the Gauss point
+      // radial position of the integration point
       const auto rg = s.position;
       // strain
       auto& e = b ? s.e1 : s.e0;
@@ -177,51 +166,41 @@ namespace mtest {
       tfel::math::matrix<real>& k,
       tfel::math::vector<real>& r,
       StructureCurrentState& scs,
-      const Behaviour& b,
       const tfel::math::vector<real>& u1,
-      const PipeMesh& m,
       const real dt,
       const StiffnessMatrixType mt) const {
     //! a simple alias
     constexpr const real pi = 3.14159265358979323846;
-    // number of elements
-    const auto ne = size_t(m.number_of_elements);
-    // number of nodes
-    const auto n = 3 * ne + 1;
-    // inner radius
-    const auto Ri = m.inner_radius;
-    // outer radius
-    const auto Re = m.outer_radius;
-    // radius increment
-    const auto dr = (Re - Ri) / ne;
     // radial position of the first node
-    const auto r0 = Ri + dr * (this->index);
+    const auto r0 = this->inner_radius;
+    // radial position of the fourth node
+    const auto r3 = this->outer_radius;
+    const auto dr = r3 - r0;
     // radial position of the second node
     const auto r1 = r0 + dr / 3;
     // radial position of the third node
     const auto r2 = r0 + 2 * dr / 3;
-    // radial position of the fourth node
-    const auto r3 = r0 + dr;
     /* (this->index)nner forces */
     auto& bwk = scs.getBehaviourWorkSpace();
     // compute the strain
-    this->computeStrain(scs, m, u1, true);
-    // loop over Gauss point
+    this->computeStrain(scs, u1, true);
+    // loop over integration points
     auto r_dt = real{};
     const auto i = this->index;
+    const auto n = static_cast<size_type>(r.size() - 1);
     for (const auto g : {0, 1, 2, 3}) {
-      // Gauss point position in the reference element
+      // integration point position in the reference element
       const auto pg = pg_radii[g];
       // current state
       auto& s = scs.istates[4 * i + g];
-      // radial position of the Gauss point
+      // radial position of the integration point
       const auto rg = s.position;
       const real sfv[4] = {sf0(rg), sf1(rg), sf2(rg), sf3(rg)};
       const real dsfv[4] = {dsf0(rg), dsf1(rg), dsf2(rg), dsf3(rg)};
       // jacobian of the transformation
       const auto J = PipeCubicElement::jacobian(r0, r1, r2, r3, pg);
       setRoundingMode();
-      const auto rb = b.integrate(s, bwk, dt, mt);
+      const auto rb = this->behaviour.integrate(s, bwk, dt, mt);
       setRoundingMode();
       r_dt = (g == 0) ? rb.second : std::min(rb.second, r_dt);
       if (!rb.first) {

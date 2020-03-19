@@ -26,10 +26,7 @@ namespace mtest{
   /*!
    * work space used by the solver
    */
-  struct SolverWorkSpace
-  {
-    //! a simple alias
-    using size_type = tfel::math::matrix<real>::size_type;
+  struct SolverWorkSpace {
     //! stiffness matrix
     tfel::math::matrix<real> K;
     // residual
@@ -46,10 +43,8 @@ namespace mtest{
    * \param[out] wk : workspace
    * \param[in]  s  : problem size
    */
-  MTEST_VISIBILITY_EXPORT void
-  initialize(SolverWorkSpace&,
-	     const SolverWorkSpace::size_type);
-  
+  MTEST_VISIBILITY_EXPORT void initialize(SolverWorkSpace&, const size_type);
+
 } // end of namespace namespace mtest
 
 #endif /* LIB_MTEST_SOLVERWORKSPACE_HXX */

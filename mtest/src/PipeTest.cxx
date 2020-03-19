@@ -33,6 +33,9 @@
 #include "MTest/PipeLinearElement.hxx"
 #include "MTest/PipeQuadraticElement.hxx"
 #include "MTest/PipeCubicElement.hxx"
+#ifdef PIPETEST_HHO_SUPPORT
+#include "MTest/PipeHybridHighOrderElement.hxx"
+#endif /* PIPETEST_HHO_SUPPORT */
 #include "MTest/PipeProfile.hxx"
 #include "MTest/PipeProfileHandler.hxx"
 #include "MTest/PipeTest.hxx"
@@ -120,8 +123,6 @@ namespace mtest {
   };
 
   struct ProfileTest : public PipeTest::UTest {
-    // simple alias
-    using size_type = tfel::math::vector<real>::size_type;
     /*!
      * \param[in] n: name of the variable
      * \param[in] p: variable position in the appropriate array
@@ -322,9 +323,9 @@ namespace mtest {
     p->second->setValue(r);
   }  // end of setCurrentPosition
 
-  void PipeTest::setGaussPointPositionForEvolutionsEvaluation(const CurrentState& s) const {
+  void PipeTest::setIntegrationPointPositionForEvolutionsEvaluation(const CurrentState& s) const {
     setCurrentPosition(*(this->evm), s.position);
-  }  // end of PipeTest::setGaussPointPositionForEvolutionsEvaluation
+  }  // end of PipeTest::setIntegrationPointPositionForEvolutionsEvaluation
 
   void PipeTest::addIntegralTest(const std::string& n,
                                  const tfel::utilities::TextData& d,
@@ -373,90 +374,125 @@ namespace mtest {
     checkValue(mesh.outer_radius, "outer radius");
     checkValue(mesh.number_of_elements, "number of elements");
     setCurrentPosition(*(this->evm), (mesh.outer_radius - mesh.inner_radius) / 2);
+    SingleStructureScheme::completeInitialisation();
+    // checks
+    if ((this->mesh.etype == PipeMesh::LINEAR) ||
+        (this->mesh.etype == PipeMesh::QUADRATIC) ||
+        (this->mesh.etype == PipeMesh::CUBIC)) {
+      if (!this->mesh.edata.empty()) {
+        tfel::raise(
+            "PipeTest::completeInitialisation: "
+            "no element data expected for Lagrange element");
+      }
+    }
+    // element initialisation
     if (this->mesh.etype == PipeMesh::DEFAULT) {
       this->mesh.etype = PipeMesh::QUADRATIC;
-    }
-    SingleStructureScheme::completeInitialisation();
-    if (this->options.eeps < 0) {
-      this->options.eeps = 1.e-11;
-    }
-    if (this->options.seps < 0) {
-      this->options.seps = 1.e-3;
-    }
-    tfel::raise_if(this->hypothesis != ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,
-                   "PipeTest::completeInitialisation: "
-                   "invalid modelling hypothesis "
-                   "('" +
-                       ModellingHypothesis::toString(this->hypothesis) + "')");
-    if (this->al == DEFAULTAXIALLOADING) {
-      this->al = ENDCAPEFFECT;
-    }
-    if (this->al == IMPOSEDAXIALFORCE) {
-      tfel::raise_if(this->axial_force == nullptr,
-                     "PipeTest::completeInitialisation: "
-                     "the axial force evolution must be defined");
-    }
-    if (this->al == IMPOSEDAXIALGROWTH) {
-      if (this->axial_growth == nullptr) {
-        this->axial_growth = make_evolution(real(0));
       }
-    }
-    if (this->rl == DEFAULTLOADINGTYPE) {
-      this->rl = IMPOSEDPRESSURE;
-    }
-    if (this->rl == IMPOSEDOUTERRADIUS) {
-      tfel::raise_if(this->orev == nullptr,
-                     "PipeTest::completeInitialisation: "
-                     "the outer radius evolution must be defined");
-    } else {
-      if ((this->rl != TIGHTPIPE) && (this->al != IMPOSEDAXIALFORCE) &&
-          (this->al != IMPOSEDAXIALGROWTH)) {
-        tfel::raise_if((this->inner_pressure == nullptr) && (this->outer_pressure == nullptr),
+      this->elements.reserve(this->mesh.number_of_elements);
+      for (size_type i = 0; i != this->mesh.number_of_elements; ++i) {
+        if (this->mesh.etype == PipeMesh::LINEAR) {
+          this->elements.push_back(
+              std::make_shared<PipeLinearElement>(this->mesh, *(this->b), i));
+        } else if (this->mesh.etype == PipeMesh::QUADRATIC) {
+          this->elements.push_back(
+              std::make_shared<PipeQuadraticElement>(this->mesh, *(this->b), i));
+        } else if (this->mesh.etype == PipeMesh::CUBIC) {
+          this->elements.push_back(
+              std::make_shared<PipeCubicElement>(this->mesh, *(this->b), i));
+#ifdef PIPETEST_HHO_SUPPORT
+        } else if (this->mesh.etype == PipeMesh::HYBRID_HIGH_ORDER) {
+          this->elements.push_back(std::make_shared<PipeHybridHighOrderElement>(
+              this->mesh, *(this->b), i));
+#endif /* PIPETEST_HHO_SUPPORT */
+        } else {
+          tfel::raise("PipeTest::completeInitialisation: invalid element type");
+        }
+      }
+      // resolution options
+      if (this->options.eeps < 0) {
+        this->options.eeps = 1.e-11;
+      }
+      if (this->options.seps < 0) {
+        this->options.seps = 1.e-3;
+      }
+      tfel::raise_if(
+          this->hypothesis !=
+              ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,
+          "PipeTest::completeInitialisation: "
+          "invalid modelling hypothesis "
+          "('" +
+              ModellingHypothesis::toString(this->hypothesis) + "')");
+      if (this->al == DEFAULTAXIALLOADING) {
+        this->al = ENDCAPEFFECT;
+      }
+      if (this->al == IMPOSEDAXIALFORCE) {
+        tfel::raise_if(this->axial_force == nullptr,
                        "PipeTest::completeInitialisation: "
-                       "either an inner pressure evolution or "
-                       "an outer pressure evolution must be defined");
-      }
-    }
-    if (this->rl == TIGHTPIPE) {
-      tfel::raise_if(this->P0 < 0,
-                     "PipeTest::completeInitialisation: "
-                     "filling pressure not set");
-      tfel::raise_if(this->T0 < 0,
-                     "PipeTest::completeInitialisation: "
-                     "filling temperature not set");
-    }
-    if (this->out) {
-      unsigned short c = 7;
-      this->out << "# first  column : time\n"
-                   "# second column : inner radius\n"
-                   "# third  column : outer radius\n"
-                   "# fourth column : inner radius displacement\n"
-                   "# fifth  column : outer radius displacement\n"
-                   "# sixth  column : axial displacement\n";
-      if ((this->rl == IMPOSEDOUTERRADIUS) || (this->rl == TIGHTPIPE)) {
-        this->out << "# " << c << "th column : inner pressure\n";
-        ++c;
+                       "the axial force evolution must be defined");
       }
       if (this->al == IMPOSEDAXIALGROWTH) {
-        this->out << "# " << c << "th column : axial force\n";
-        ++c;
+        if (this->axial_growth == nullptr) {
+          this->axial_growth = make_evolution(real(0));
+        }
       }
-      for (const auto& ao : this->aoutputs) {
-        this->out << "# " << c << "th column : " << ao.d << '\n';
-        ++c;
+      if (this->rl == DEFAULTLOADINGTYPE) {
+        this->rl = IMPOSEDPRESSURE;
       }
-    }
-    if (this->rl == TIGHTPIPE) {
-      if (this->gseq != nullptr) {
-        constexpr const real pi = 3.14159265358979323846;
-        const auto Ri = this->mesh.inner_radius;
-        const auto V = pi * Ri * Ri;
-        this->n0 = this->gseq->computeNumberOfMoles(this->P0, V, this->T0);
+      if (this->rl == IMPOSEDOUTERRADIUS) {
+        tfel::raise_if(this->orev == nullptr,
+                       "PipeTest::completeInitialisation: "
+                       "the outer radius evolution must be defined");
+      } else {
+        if ((this->rl != TIGHTPIPE) && (this->al != IMPOSEDAXIALFORCE) &&
+            (this->al != IMPOSEDAXIALGROWTH)) {
+          tfel::raise_if((this->inner_pressure == nullptr) &&
+                             (this->outer_pressure == nullptr),
+                         "PipeTest::completeInitialisation: "
+                         "either an inner pressure evolution or "
+                         "an outer pressure evolution must be defined");
+        }
       }
-    }
+      if (this->rl == TIGHTPIPE) {
+        tfel::raise_if(this->P0 < 0,
+                       "PipeTest::completeInitialisation: "
+                       "filling pressure not set");
+        tfel::raise_if(this->T0 < 0,
+                       "PipeTest::completeInitialisation: "
+                       "filling temperature not set");
+      }
+      if (this->out) {
+        unsigned short c = 7;
+        this->out << "# first  column : time\n"
+                     "# second column : inner radius\n"
+                     "# third  column : outer radius\n"
+                     "# fourth column : inner radius displacement\n"
+                     "# fifth  column : outer radius displacement\n"
+                     "# sixth  column : axial displacement\n";
+        if ((this->rl == IMPOSEDOUTERRADIUS) || (this->rl == TIGHTPIPE)) {
+          this->out << "# " << c << "th column : inner pressure\n";
+          ++c;
+        }
+        if (this->al == IMPOSEDAXIALGROWTH) {
+          this->out << "# " << c << "th column : axial force\n";
+          ++c;
+        }
+        for (const auto& ao : this->aoutputs) {
+          this->out << "# " << c << "th column : " << ao.d << '\n';
+          ++c;
+        }
+      }
+      if (this->rl == TIGHTPIPE) {
+        if (this->gseq != nullptr) {
+          constexpr const real pi = 3.14159265358979323846;
+          const auto Ri = this->mesh.inner_radius;
+          const auto V = pi * Ri * Ri;
+          this->n0 = this->gseq->computeNumberOfMoles(this->P0, V, this->T0);
+        }
+      }
   }  // end of PipeTest::completeInitialisation
 
-  PipeTest::size_type PipeTest::getNumberOfNodes() const {
+  size_type PipeTest::getNumberOfNodes() const {
     tfel::raise_if(this->mesh.number_of_elements <= 0,
                    "PipeTest::getNumberOfNodes: "
                    "uninitialized number of elements");
@@ -465,19 +501,11 @@ namespace mtest {
                    "element type not defined");
     // number of elements
     const auto ne = size_type(this->mesh.number_of_elements);
-    if (this->mesh.etype == PipeMesh::LINEAR) {
-      return ne + 1;
-    } else if (this->mesh.etype == PipeMesh::QUADRATIC) {
-      return 2 * ne + 1;
-    } else if (this->mesh.etype == PipeMesh::CUBIC) {
-      return 3 * ne + 1;
-    }
-    tfel::raise(
-        "PipeTest::getNumberOfNodes: "
-        "unknown element type");
+    const auto& e = *(this->elements.at(0));
+    return (e.getNumberOfNodes() - 1) * ne + 1;
   }
 
-  PipeTest::size_type PipeTest::getNumberOfUnknowns() const {
+  size_type PipeTest::getNumberOfUnknowns() const {
     return this->getNumberOfNodes() + 1;
   }  // end of PipeTest::getNumberOfUnknowns
 
@@ -521,25 +549,13 @@ namespace mtest {
     auto& ss = s.getStructureCurrentState("");
     ss.setBehaviour(this->b);
     ss.setModellingHypothesis(this->hypothesis);
-    if (this->mesh.etype == PipeMesh::LINEAR) {
-      // each element has two integration points
-      ss.istates.resize(2 * this->mesh.number_of_elements);
-      PipeLinearElement e(0);
-      e.setGaussPointsPositions(ss, this->mesh);
-    } else if (this->mesh.etype == PipeMesh::QUADRATIC) {
-      // each element has three integration points
-      ss.istates.resize(3 * this->mesh.number_of_elements);
-      PipeQuadraticElement e(0);
-      e.setGaussPointsPositions(ss, this->mesh);
-    } else if (this->mesh.etype == PipeMesh::CUBIC) {
-      // each element has three integration points
-      ss.istates.resize(4 * this->mesh.number_of_elements);
-      PipeCubicElement e(0);
-      e.setGaussPointsPositions(ss, this->mesh);
-    } else {
-      tfel::raise(
-          "PipeTest::getNumberOfUnknowns: "
-          "unknown element type");
+    auto nss = size_type{};
+    for (const auto& e : this->elements) {
+      nss += e->getNumberOfIntegrationPoints();
+    }
+    ss.istates.resize(nss);
+    for (const auto& e : this->elements) {
+      e->setIntegrationPointsPositions(ss);
     }
     // intial values of strains
     tfel::math::vector<real> e0(this->b->getGradientsSize());
@@ -561,26 +577,30 @@ namespace mtest {
       // there could be an inconsistency with displacements
       // we should also be able to give a profile
       // throw(std::runtime_error("PipeTest::initializeCurrentState: "
-      // 			 "initialisation of strain is not supported yet"));
+      // 			 "initialisation of strain is not supported
+      // yet"));
       // std::copy(this->e_t0.begin(),this->e_t0.end(),s.e0.begin());
       //      }
       // setting the intial  values of stresses
       // if(!this->s_t0.empty()){
       // 	// we should be able to give a profile to do this
       // 	throw(std::runtime_error("PipeTest::initializeCurrentState: "
-      // 				 "initialisation of stress is not supported yet"));
+      // 				 "initialisation of stress is not
+      // supported
+      // yet"));
       // 	// std::copy(this->s_t0.begin(),this->s_t0.end(),cs.s0.begin());
       // }
 
       // We should be able to give a profile here.
       // getting the initial values of internal state variables
-      tfel::raise_if((this->iv_t0.size() > cs.iv_1.size()) ||
-                         (this->iv_t0.size() > cs.iv0.size()) ||
-                         (this->iv_t0.size() > cs.iv1.size()),
-                     "PipeTest::initializeCurrentState: "
-                     "the number of initial values declared "
-                     "by the user for the internal state variables exceeds the "
-                     "number of internal state variables declared by the behaviour");
+      tfel::raise_if(
+          (this->iv_t0.size() > cs.iv_1.size()) ||
+              (this->iv_t0.size() > cs.iv0.size()) ||
+              (this->iv_t0.size() > cs.iv1.size()),
+          "PipeTest::initializeCurrentState: "
+          "the number of initial values declared "
+          "by the user for the internal state variables exceeds the "
+          "number of internal state variables declared by the behaviour");
       std::copy(this->iv_t0.begin(), this->iv_t0.end(), cs.iv_1.begin());
       std::copy(this->iv_t0.begin(), this->iv_t0.end(), cs.iv0.begin());
       // revert the current state
@@ -597,7 +617,7 @@ namespace mtest {
                        "must be a constant evolution");
         cs.Tref = ev(0);
       }
-    }
+      }
   }  // end of PipeTest::initializeCurrentState
 
   std::string PipeTest::name() const { return "pipe test"; }  // end of PipeTest::name
@@ -729,22 +749,9 @@ namespace mtest {
 
   void PipeTest::prepare(StudyCurrentState& state, const real t, const real dt) const {
     auto& scs = state.getStructureCurrentState("");
-    // number of elements
-    const auto ne = size_t(this->mesh.number_of_elements);
     // loop over the elements
-    for (size_type i = 0; i != ne; ++i) {
-      if (this->mesh.etype == PipeMesh::LINEAR) {
-        PipeLinearElement e(i);
-        e.computeStrain(scs, this->mesh, state.u0, false);
-      } else if (this->mesh.etype == PipeMesh::QUADRATIC) {
-        PipeQuadraticElement e(i);
-        e.computeStrain(scs, this->mesh, state.u0, false);
-      } else if (this->mesh.etype == PipeMesh::CUBIC) {
-        PipeCubicElement e(i);
-        e.computeStrain(scs, this->mesh, state.u0, false);
-      } else {
-        tfel::raise("PipeTest::prepare: unknown element type");
-      }
+    for(const auto& e: this->elements){
+      e->computeStrain(scs, state.u0, false);
     }
     SingleStructureScheme::prepare(state, t, dt);
     // in case of substepping, reset unknown forces
@@ -799,8 +806,6 @@ namespace mtest {
     const auto Ri = this->mesh.inner_radius;
     // outer radius
     const auto Re = this->mesh.outer_radius;
-    // number of elements
-    const auto ne = size_type(this->mesh.number_of_elements);
     // number of nodes
     const auto n = this->getNumberOfNodes();
     // axial strain
@@ -922,32 +927,19 @@ namespace mtest {
     }
     // loop over the elements
     auto r_dt = real{};
-    for (size_type i = 0; i != ne; ++i) {
-      auto ri = std::pair<bool, real>{};
-      if (this->mesh.etype == PipeMesh::LINEAR) {
-        PipeLinearElement e(i);
-        ri = e.updateStiffnessMatrixAndInnerForces(
-            k, r, scs, *(this->b), state.u1, this->mesh, dt, mt);
-      } else if (this->mesh.etype == PipeMesh::QUADRATIC) {
-        PipeQuadraticElement e(i);
-        ri = e.updateStiffnessMatrixAndInnerForces(
-            k, r, scs, *(this->b), state.u1, this->mesh, dt, mt);
-      } else if (this->mesh.etype == PipeMesh::CUBIC) {
-        PipeCubicElement e(i);
-        ri = e.updateStiffnessMatrixAndInnerForces(
-            k, r, scs, *(this->b), state.u1, this->mesh, dt, mt);
-      } else {
-        tfel::raise(
-            "PipeTest::computeStiffnessMatrixAndResidual: "
-            "unknown element type");
-      }
-      if (i == 0) {
+    auto first = true;
+    for (const auto& e : this->elements) {
+      const auto ri =
+          e->updateStiffnessMatrixAndInnerForces(k, r, scs, state.u1, dt, mt);
+      if (first) {
         r_dt = ri.second;
+      } else {
+        r_dt = std::min(r_dt, ri.second);
       }
-      r_dt = std::min(r_dt, ri.second);
       if (!ri.first) {
         return {false, r_dt};
       }
+      first = false;
     }
     return {true, r_dt};
   }  // end of PipeTest::computeStiffnessMatrixAndResidual
@@ -985,8 +977,7 @@ namespace mtest {
 
   static real PipeTest_getErrorNorm(const tfel::math::vector<real>& v,
                                     const tfel::math::vector<real>::size_type s) {
-    using size_type = tfel::math::vector<real>::size_type;
-    auto n = real(0);
+    auto n = real{0};
     for (size_type i = 0; i != s; ++i) {
       n = std::max(n, std::abs(v(i)));
     }
@@ -1087,18 +1078,12 @@ namespace mtest {
     return cd;
   }  // end of
 
-  static PipeTest::size_type getNumberOfGaussPoints(const PipeMesh& m) {
+  size_type PipeTest::getNumberOfIntegrationPoints() const {
     // number of elements
-    const auto ne = PipeTest::size_type(m.number_of_elements);
-    if (m.etype == PipeMesh::LINEAR) {
-      return 2 * ne;
-    } else if (m.etype == PipeMesh::QUADRATIC) {
-      return 3 * ne;
-    } else if (m.etype == PipeMesh::CUBIC) {
-      return 4 * ne;
-    }
-    tfel::raise("getNumberOfGaussPoints: unknown element type");
-  }  // end of getNumberOfGaussPoints
+    const auto ne = size_type(this->mesh.number_of_elements);
+    const auto& e = this->elements.at(0);
+    return e->getNumberOfIntegrationPoints() * ne;
+  }  // end of  PipeTest::getNumberOfIntegrationPoints
 
   void PipeTest::computeLoadingCorrection(StudyCurrentState& state,
                                           SolverWorkSpace& wk,
@@ -1171,7 +1156,7 @@ namespace mtest {
     for (const auto& pr : this->profiles) {
       *(pr.out) << "#Time " << t + dt << '\n';
       // loop over the elements
-      for (size_type i = 0; i != getNumberOfGaussPoints(this->mesh); ++i) {
+      for (size_type i = 0; i != this->getNumberOfIntegrationPoints(); ++i) {
         const auto& s = scs.istates[i];
         *(pr.out) << s.position;
         for (const auto& pp : pr.profiles) {
@@ -1193,7 +1178,7 @@ namespace mtest {
     auto vmin = std::numeric_limits<real>::max();
     auto vmax = -std::numeric_limits<real>::max();
     // loop over the elements
-    for (size_type i = 0; i != getNumberOfGaussPoints(this->mesh); ++i) {
+    for (size_type i = 0; i != this->getNumberOfIntegrationPoints(); ++i) {
       const auto v = g(scs.istates[i]);
       vmin = std::min(vmin, v);
       vmax = std::max(vmax, v);
@@ -1312,11 +1297,21 @@ namespace mtest {
     this->rl = t;
   }  // end of PipeTest::setRadialLoading
 
-  void PipeTest::setElementType(const PipeMesh::ElementType ph) {
+  void PipeTest::setElementType(const PipeMesh::ElementType ph,
+                                const tfel::utilities::Data& d) {
     tfel::raise_if(this->mesh.etype != PipeMesh::DEFAULT,
                    "PipeTest::setElementType: "
                    "element type already defined");
+    if ((ph == PipeMesh::LINEAR) || (ph == PipeMesh::QUADRATIC) ||
+        (ph == PipeMesh::CUBIC)) {
+      if (!d.empty()) {
+        tfel::raise(
+            "PipeTest::setElementType: "
+            "no element data expected for Lagrange element");
+      }
+    }
     this->mesh.etype = ph;
+    this->mesh.edata = d;
   }  // end of PipeTest::setElementType
 
   void PipeTest::setInnerPressureEvolution(std::shared_ptr<Evolution> p) {

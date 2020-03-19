@@ -94,7 +94,7 @@ namespace tfel
 	  : public tfel::math::parser::IntegerExpr
       {
 	BinaryOperation(const parser::IntegerExprPtr,
-			const parser::IntegerExprPtr);
+			const parser::IntegerExprPtr) noexcept;
 	int getValue() const override;
 	parser::IntegerExprPtr clone(const std::vector<int>&) const override;
 	~BinaryOperation() override;

@@ -112,7 +112,7 @@ namespace tfel
       : public Evaluator::TLogicalExpr
     {
       TLogicalOperation(std::shared_ptr<Evaluator::TExpr>,
-			std::shared_ptr<Evaluator::TExpr>);
+			std::shared_ptr<Evaluator::TExpr>) noexcept;
       void reduce() override;
       parser::LogicalExprPtr analyse() override;
       ~TLogicalOperation() noexcept override;
@@ -126,7 +126,7 @@ namespace tfel
       : public Evaluator::TLogicalExpr
     {
       TLogicalBinaryOperation(std::shared_ptr<Evaluator::TLogicalExpr>,
-			      std::shared_ptr<Evaluator::TLogicalExpr>);
+			      std::shared_ptr<Evaluator::TLogicalExpr>) noexcept;
       void reduce() override;
       parser::LogicalExprPtr analyse()  override;
       ~TLogicalBinaryOperation() noexcept override;

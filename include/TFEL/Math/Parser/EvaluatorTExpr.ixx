@@ -21,7 +21,7 @@ namespace tfel
 
     template<typename Op>
     Evaluator::TLogicalOperation<Op>::TLogicalOperation(std::shared_ptr<Evaluator::TExpr> a_,
-							std::shared_ptr<Evaluator::TExpr> b_)
+							std::shared_ptr<Evaluator::TExpr> b_) noexcept
       : a(a_), b(b_)
     {} // end of Evaluator::TLogicalOperation::TLogicalOperation
 
@@ -48,7 +48,7 @@ namespace tfel
 
     template<typename Op>
     Evaluator::TLogicalBinaryOperation<Op>::TLogicalBinaryOperation(std::shared_ptr<Evaluator::TLogicalExpr> a_,
-								    std::shared_ptr<Evaluator::TLogicalExpr> b_)
+								    std::shared_ptr<Evaluator::TLogicalExpr> b_) noexcept
       : a(a_),b(b_)
     {} // end of Evaluator::TLogicalBinaryOperation<Op>::TLogicalBinaryOperation
 

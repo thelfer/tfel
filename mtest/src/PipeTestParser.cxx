@@ -34,6 +34,7 @@
 
 #include "TFEL/Raise.hxx"
 #include "TFEL/Utilities/TerminalColors.hxx"
+#include "TFEL/Utilities/Data.hxx"
 #include "MFront/MFrontLogStream.hxx"
 
 #include "MTest/AnalyticalTest.hxx"
@@ -348,12 +349,26 @@ namespace mtest {
     this->checkNotEndOfLine("PipeTestParser::handleElementType", p,
                             this->tokens.end());
     const auto& e = this->readString(p, this->tokens.end());
+    this->checkNotEndOfLine("PipeTestParser::handleElementType", p,
+                            this->tokens.end());
+    auto d = tfel::utilities::Data{};
+    if (p->value == "{") {
+      d = tfel::utilities::Data::read_map(p, this->tokens.end());
+      this->checkNotEndOfLine("PipeTestParser::handleElementType", p,
+                              this->tokens.end());
+    }
+    this->readSpecifiedToken("PipeTestParser::handleElementType", ";", p,
+                             this->tokens.end());
     if (e == "Linear") {
-      t.setElementType(PipeMesh::LINEAR);
+      t.setElementType(PipeMesh::LINEAR, d);
     } else if (e == "Quadratic") {
-      t.setElementType(PipeMesh::QUADRATIC);
+      t.setElementType(PipeMesh::QUADRATIC, d);
     } else if (e == "Cubic") {
-      t.setElementType(PipeMesh::CUBIC);
+      t.setElementType(PipeMesh::CUBIC, d);
+#ifdef PIPETEST_HHO_SUPPORT
+    } else if (e == "HybridHighOrder") {
+      t.setElementType(PipeMesh::HYBRID_HIGH_ORDER, d);
+#endif /* PIPETEST_HHO_SUPPORT */
     } else {
       tfel::raise(
           "PipeTest::setElementType: "
@@ -363,10 +378,6 @@ namespace mtest {
           "Valid element type are "
           "'Linear' and 'Quadratic'");
     }
-    this->checkNotEndOfLine("PipeTestParser::handleElementType", p,
-                            this->tokens.end());
-    this->readSpecifiedToken("PipeTestParser::handleElementType", ";", p,
-                             this->tokens.end());
   }  // end of PipeTestParser::handleElementType
 
   void PipeTestParser::handleGasEquationOfState(PipeTest& t,

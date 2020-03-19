@@ -11,17 +11,13 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_MTEST_PIPEHYBRIDHIGHORDERELEMENT_HXX
-#define LIB_MTEST_PIPEHYBRIDHIGHORDERELEMENT_HXX
-
-#include <iosfwd>
+#ifndef LIB_MTEST_PIPEELEMENT_HXX
+#define LIB_MTEST_PIPEELEMENT_HXX
 
 #include "TFEL/Math/vector.hxx"
 #include "TFEL/Math/matrix.hxx"
-#include "TFEL/Math/General/ConstExprMathFunctions.hxx"
 #include "MTest/Types.hxx"
 #include "MTest/SolverOptions.hxx"
-#include "MTest/PipeMesh.hxx"
 
 namespace mtest {
 
@@ -29,29 +25,37 @@ namespace mtest {
   struct Behaviour;
   // forward declaration
   struct StructureCurrentState;
+  // forward declaration
+  struct PipeMesh;
 
   /*!
    * \brief structure describing a Hybrid High Order element for pipes
    */
   struct PipeElement {
     /*!
+     * \return the number of nodes of the element
+     * This number of nodes is used to compute the number of unknowns.
+     */
+    virtual size_type getNumberOfNodes() const = 0;
+    /*!
+     * \return the number of integration points of the element
+     */
+    virtual size_type getNumberOfIntegrationPoints() const = 0;
+    /*!
      * \brief set the position of the gauss points for the whole mesh
      * \param[out] scs: structure current state
-     * \param[in]  m:   pipe mesh
      */
-    virtual void setGaussPointsPositions(StructureCurrentState&,
-                                         const PipeMesh&) const = 0;
+    virtual void setIntegrationPointsPositions(
+        StructureCurrentState&) const = 0;
     /*!
      * \brief compute the strain
      * \param[out] scs: structure current state
-     * \param[in]  m:   pipe mesh
      * \param[in]  u0:  displacement at the beginnig of the time step
      * \param[in]  b: if true, compute the strain at end of time
      * step. If false, compute the strain at the beginning of the time
      * step
      */
     virtual void computeStrain(StructureCurrentState&,
-                               const PipeMesh&,
                                const tfel::math::vector<real>&,
                                const bool) const = 0;
     /*!
@@ -66,8 +70,6 @@ namespace mtest {
      * \param[out] r:   residual
      * \param[out] scs: structure current state
      * \param[in]  u1:  current displacement estimation
-     * \param[in]  m:   pipe mesh
-     * \param[in]  b:   behaviour
      * \param[in]  dt:  time increment
      * \param[in]  mt:  stiffness matrix type
      * \param[in]  i:   element number
@@ -76,9 +78,7 @@ namespace mtest {
         tfel::math::matrix<real>&,
         tfel::math::vector<real>&,
         StructureCurrentState&,
-        const Behaviour&,
         const tfel::math::vector<real>&,
-        const PipeMesh&,
         const real,
         const StiffnessMatrixType) const = 0;
     //! destructor
@@ -87,4 +87,4 @@ namespace mtest {
 
 }  // end of namespace mtest
 
-#endif /* LIB_MTEST_PIPEHYBRIDHIGHORDERELEMENT_HXX */
+#endif /* LIB_MTEST_PIPEELEMENT_HXX */

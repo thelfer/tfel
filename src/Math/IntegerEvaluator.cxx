@@ -265,7 +265,7 @@ namespace tfel {
       }
       throw_if((!s.empty()) && (p == pe),
                "unterminated group (group began with '" + s + "').");
-      return std::move(g);
+      return g;
     }  // end of IntegerEvaluator::treatGroup2
 
     std::vector<double>::size_type IntegerEvaluator::registerVariable(
