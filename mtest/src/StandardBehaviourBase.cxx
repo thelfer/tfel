@@ -177,162 +177,6 @@ namespace mtest {
                                      this->hypothesis, v);
   }  // end of StandardBehaviourBase::getUpperPhysicalBound
 
-  tfel::material::MechanicalBehaviourBase::BehaviourType
-  StandardBehaviourBase::getBehaviourType() const {
-    using namespace tfel::material;
-    switch (this->btype) {
-      case 0:
-        return MechanicalBehaviourBase::GENERALBEHAVIOUR;
-      case 1:
-        return MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR;
-      case 2:
-        return MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR;
-      case 3:
-        return MechanicalBehaviourBase::COHESIVEZONEMODEL;
-    }
-    tfel::raise(
-        "StandardBehaviourBase::getBehaviourType: "
-        "unsupported behaviour type");
-  }  // end of StandardBehaviourBase::getBehaviourType
-
-  tfel::material::MechanicalBehaviourBase::Kinematic
-  StandardBehaviourBase::getBehaviourKinematic() const {
-    using namespace tfel::material;
-    switch (this->kinematic) {
-      case 0:
-        return MechanicalBehaviourBase::UNDEFINEDKINEMATIC;
-      case 1:
-        return MechanicalBehaviourBase::SMALLSTRAINKINEMATIC;
-      case 2:
-        return MechanicalBehaviourBase::COHESIVEZONEKINEMATIC;
-      case 3:
-        return MechanicalBehaviourBase::FINITESTRAINKINEMATIC_F_CAUCHY;
-      case 4:
-        return MechanicalBehaviourBase::FINITESTRAINKINEMATIC_ETO_PK1;
-    }
-    tfel::raise(
-        "StandardBehaviourBase::getBehaviourKinematic: "
-        "unsupported behaviour type");
-  }  // end of StandardBehaviourBase::getBehaviourKinematic
-
-  unsigned short StandardBehaviourBase::getGradientsSize() const {
-    const auto h = this->getHypothesis();
-    if (this->btype == 0) {
-      return getVariablesSize(this->gtypes, this->getHypothesis());
-    } else if ((this->btype == 1) ||
-               ((this->btype == 2u) && (this->kinematic == 4u))) {
-      // small strain behaviours
-      if ((h == ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) ||
-          (h == ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)) {
-        return 3u;
-      } else if ((h == ModellingHypothesis::PLANESTRAIN) ||
-                 (h == ModellingHypothesis::PLANESTRESS) ||
-                 (h == ModellingHypothesis::GENERALISEDPLANESTRAIN) ||
-                 (h == ModellingHypothesis::AXISYMMETRICAL)) {
-        return 4u;
-      } else if (h == ModellingHypothesis::TRIDIMENSIONAL) {
-        return 6u;
-      } else {
-        tfel::raise(
-            "StandardBehaviourBase::getGradientsSize: "
-            "unsupported modelling hypothesis");
-      }
-    } else if (this->btype == 2) {
-      // finite strain behaviours
-      if ((h == ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) ||
-          (h == ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)) {
-        return 3u;
-      } else if ((h == ModellingHypothesis::PLANESTRAIN) ||
-                 (h == ModellingHypothesis::PLANESTRESS) ||
-                 (h == ModellingHypothesis::GENERALISEDPLANESTRAIN) ||
-                 (h == ModellingHypothesis::AXISYMMETRICAL)) {
-        return 5u;
-      } else if (h == ModellingHypothesis::TRIDIMENSIONAL) {
-        return 9u;
-      } else {
-        tfel::raise(
-            "StandardBehaviourBase::getGradientsSize: "
-            "unsupported modelling hypothesis");
-      }
-    } else if (this->btype == 3) {
-      // cohesive zone models
-      if ((h == ModellingHypothesis::PLANESTRAIN) ||
-          (h == ModellingHypothesis::PLANESTRESS) ||
-          (h == ModellingHypothesis::GENERALISEDPLANESTRAIN) ||
-          (h == ModellingHypothesis::AXISYMMETRICAL)) {
-        return 2u;
-      } else if (h == ModellingHypothesis::TRIDIMENSIONAL) {
-        return 3u;
-      } else {
-        tfel::raise(
-            "StandardBehaviourBase::getGradientsSize: "
-            "unsupported modelling hypothesis");
-      }
-    }
-    tfel::raise(
-        "StandardBehaviourBase::getGradientsSize: "
-        "unsupported behaviour type");
-  }  // end of StandardBehaviourBase::getGradientsSize
-
-  unsigned short StandardBehaviourBase::getThermodynamicForcesSize() const {
-    const auto h = this->getHypothesis();
-    if (this->btype == 0) {
-      return getVariablesSize(this->thtypes, this->getHypothesis());
-    } else if ((this->btype == 1) ||
-               ((this->btype == 2u) && (this->kinematic == 4u))) {
-      // small strain behaviours
-      if ((h == ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) ||
-          (h == ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)) {
-        return 3u;
-      } else if ((h == ModellingHypothesis::PLANESTRAIN) ||
-                 (h == ModellingHypothesis::PLANESTRESS) ||
-                 (h == ModellingHypothesis::GENERALISEDPLANESTRAIN) ||
-                 (h == ModellingHypothesis::AXISYMMETRICAL)) {
-        return 4u;
-      } else if (h == ModellingHypothesis::TRIDIMENSIONAL) {
-        return 6u;
-      } else {
-        tfel::raise(
-            "StandardBehaviourBase::getThermodynamicForcesSize: "
-            "unsupported modelling hypothesis");
-      }
-    } else if (this->btype == 2) {
-      // finite strain behaviours
-      if ((h == ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) ||
-          (h == ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)) {
-        return 3u;
-      } else if ((h == ModellingHypothesis::PLANESTRAIN) ||
-                 (h == ModellingHypothesis::PLANESTRESS) ||
-                 (h == ModellingHypothesis::GENERALISEDPLANESTRAIN) ||
-                 (h == ModellingHypothesis::AXISYMMETRICAL)) {
-        return 4u;
-      } else if (h == ModellingHypothesis::TRIDIMENSIONAL) {
-        return 6u;
-      } else {
-        tfel::raise(
-            "StandardBehaviourBase::getThermodynamicForcesSize: "
-            "unsupported modelling hypothesis");
-      }
-    } else if (this->btype == 3) {
-      // cohesive zone models
-      if ((h == ModellingHypothesis::PLANESTRAIN) ||
-          (h == ModellingHypothesis::PLANESTRESS) ||
-          (h == ModellingHypothesis::GENERALISEDPLANESTRAIN) ||
-          (h == ModellingHypothesis::AXISYMMETRICAL)) {
-        return 2u;
-      } else if (h == ModellingHypothesis::TRIDIMENSIONAL) {
-        return 3u;
-      } else {
-        tfel::raise(
-            "StandardBehaviourBase::getThermodynamicForcesSize: "
-            "unsupported modelling hypothesis");
-      }
-    }
-    tfel::raise(
-        "StandardBehaviourBase::getThermodynamicForcesSize: "
-        "unsupported behaviour type");
-  }  // end of StandardBehaviourBase::getThermodynamicForcesSize
-
   std::vector<std::string> StandardBehaviourBase::getStensorComponentsSuffixes()
       const {
     const auto h = this->getHypothesis();
@@ -412,6 +256,179 @@ namespace mtest {
     }
     return c;
   }  // end of StandardBehaviourBase::getTensorComponentsSuffixes
+
+  tfel::material::MechanicalBehaviourBase::BehaviourType
+  StandardBehaviourBase::getBehaviourType() const {
+    using namespace tfel::material;
+    switch (this->btype) {
+      case 0:
+        return MechanicalBehaviourBase::GENERALBEHAVIOUR;
+      case 1:
+        return MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR;
+      case 2:
+        return MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR;
+      case 3:
+        return MechanicalBehaviourBase::COHESIVEZONEMODEL;
+    }
+    tfel::raise(
+        "StandardBehaviourBase::getBehaviourType: "
+        "unsupported behaviour type");
+  }  // end of StandardBehaviourBase::getBehaviourType
+
+  tfel::material::MechanicalBehaviourBase::Kinematic
+  StandardBehaviourBase::getBehaviourKinematic() const {
+    using namespace tfel::material;
+    switch (this->kinematic) {
+      case 0:
+        return MechanicalBehaviourBase::UNDEFINEDKINEMATIC;
+      case 1:
+        return MechanicalBehaviourBase::SMALLSTRAINKINEMATIC;
+      case 2:
+        return MechanicalBehaviourBase::COHESIVEZONEKINEMATIC;
+      case 3:
+        return MechanicalBehaviourBase::FINITESTRAINKINEMATIC_F_CAUCHY;
+      case 4:
+        return MechanicalBehaviourBase::FINITESTRAINKINEMATIC_ETO_PK1;
+    }
+    tfel::raise(
+        "StandardBehaviourBase::getBehaviourKinematic: "
+        "unsupported behaviour type");
+  }  // end of StandardBehaviourBase::getBehaviourKinematic
+
+  std::vector<std::string> StandardBehaviourBase::getGradientsNames() const {
+    return this->gnames;
+  }  // end of StandardBehaviourBase::getGradientsNames
+
+  std::vector<int> StandardBehaviourBase::getGradientsTypes() const {
+    return this->gtypes;
+  }  // end of StandardBehaviourBase::getGradientsTypes
+
+  unsigned short StandardBehaviourBase::getGradientsSize() const {
+    const auto h = this->getHypothesis();
+    if (this->btype == 0) {
+      return getVariablesSize(this->gtypes, this->getHypothesis());
+    } else if ((this->btype == 1) ||
+               ((this->btype == 2u) && (this->kinematic == 4u))) {
+      // small strain behaviours
+      if ((h == ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) ||
+          (h == ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)) {
+        return 3u;
+      } else if ((h == ModellingHypothesis::PLANESTRAIN) ||
+                 (h == ModellingHypothesis::PLANESTRESS) ||
+                 (h == ModellingHypothesis::GENERALISEDPLANESTRAIN) ||
+                 (h == ModellingHypothesis::AXISYMMETRICAL)) {
+        return 4u;
+      } else if (h == ModellingHypothesis::TRIDIMENSIONAL) {
+        return 6u;
+      } else {
+        tfel::raise(
+            "StandardBehaviourBase::getGradientsSize: "
+            "unsupported modelling hypothesis");
+      }
+    } else if (this->btype == 2) {
+      // finite strain behaviours
+      if ((h == ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) ||
+          (h == ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)) {
+        return 3u;
+      } else if ((h == ModellingHypothesis::PLANESTRAIN) ||
+                 (h == ModellingHypothesis::PLANESTRESS) ||
+                 (h == ModellingHypothesis::GENERALISEDPLANESTRAIN) ||
+                 (h == ModellingHypothesis::AXISYMMETRICAL)) {
+        return 5u;
+      } else if (h == ModellingHypothesis::TRIDIMENSIONAL) {
+        return 9u;
+      } else {
+        tfel::raise(
+            "StandardBehaviourBase::getGradientsSize: "
+            "unsupported modelling hypothesis");
+      }
+    } else if (this->btype == 3) {
+      // cohesive zone models
+      if ((h == ModellingHypothesis::PLANESTRAIN) ||
+          (h == ModellingHypothesis::PLANESTRESS) ||
+          (h == ModellingHypothesis::GENERALISEDPLANESTRAIN) ||
+          (h == ModellingHypothesis::AXISYMMETRICAL)) {
+        return 2u;
+      } else if (h == ModellingHypothesis::TRIDIMENSIONAL) {
+        return 3u;
+      } else {
+        tfel::raise(
+            "StandardBehaviourBase::getGradientsSize: "
+            "unsupported modelling hypothesis");
+      }
+    }
+    tfel::raise(
+        "StandardBehaviourBase::getGradientsSize: "
+        "unsupported behaviour type");
+  }  // end of StandardBehaviourBase::getGradientsSize
+
+  std::vector<std::string> StandardBehaviourBase::getThermodynamicForcesNames()
+      const {
+    return this->thnames;
+  }  // end of StandardBehaviourBase::getThermodynamicForcesNames
+
+  std::vector<int> StandardBehaviourBase::getThermodynamicForcesTypes() const {
+    return this->thtypes;
+  }  // end of StandardBehaviourBase::getThermodynamicForcesTypes
+
+  unsigned short StandardBehaviourBase::getThermodynamicForcesSize() const {
+    const auto h = this->getHypothesis();
+    if (this->btype == 0) {
+      return getVariablesSize(this->thtypes, this->getHypothesis());
+    } else if ((this->btype == 1) ||
+               ((this->btype == 2u) && (this->kinematic == 4u))) {
+      // small strain behaviours
+      if ((h == ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) ||
+          (h == ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)) {
+        return 3u;
+      } else if ((h == ModellingHypothesis::PLANESTRAIN) ||
+                 (h == ModellingHypothesis::PLANESTRESS) ||
+                 (h == ModellingHypothesis::GENERALISEDPLANESTRAIN) ||
+                 (h == ModellingHypothesis::AXISYMMETRICAL)) {
+        return 4u;
+      } else if (h == ModellingHypothesis::TRIDIMENSIONAL) {
+        return 6u;
+      } else {
+        tfel::raise(
+            "StandardBehaviourBase::getThermodynamicForcesSize: "
+            "unsupported modelling hypothesis");
+      }
+    } else if (this->btype == 2) {
+      // finite strain behaviours
+      if ((h == ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) ||
+          (h == ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)) {
+        return 3u;
+      } else if ((h == ModellingHypothesis::PLANESTRAIN) ||
+                 (h == ModellingHypothesis::PLANESTRESS) ||
+                 (h == ModellingHypothesis::GENERALISEDPLANESTRAIN) ||
+                 (h == ModellingHypothesis::AXISYMMETRICAL)) {
+        return 4u;
+      } else if (h == ModellingHypothesis::TRIDIMENSIONAL) {
+        return 6u;
+      } else {
+        tfel::raise(
+            "StandardBehaviourBase::getThermodynamicForcesSize: "
+            "unsupported modelling hypothesis");
+      }
+    } else if (this->btype == 3) {
+      // cohesive zone models
+      if ((h == ModellingHypothesis::PLANESTRAIN) ||
+          (h == ModellingHypothesis::PLANESTRESS) ||
+          (h == ModellingHypothesis::GENERALISEDPLANESTRAIN) ||
+          (h == ModellingHypothesis::AXISYMMETRICAL)) {
+        return 2u;
+      } else if (h == ModellingHypothesis::TRIDIMENSIONAL) {
+        return 3u;
+      } else {
+        tfel::raise(
+            "StandardBehaviourBase::getThermodynamicForcesSize: "
+            "unsupported modelling hypothesis");
+      }
+    }
+    tfel::raise(
+        "StandardBehaviourBase::getThermodynamicForcesSize: "
+        "unsupported behaviour type");
+  }  // end of StandardBehaviourBase::getThermodynamicForcesSize
 
   std::vector<std::string> StandardBehaviourBase::getGradientsComponents()
       const {
@@ -518,6 +535,11 @@ namespace mtest {
     return static_cast<unsigned short>(p - c.begin());
   }  // end of StandardBehaviourBase::getThermodynamicForceComponentPosition
 
+  std::vector<std::pair<std::string, std::string>>
+  StandardBehaviourBase::getTangentOperatorBlocks() const {
+    return this->tangent_operator_blocks;
+  }  // end of StandardBehaviourBase::getTangentOperatorBlocks
+
   size_t StandardBehaviourBase::getTangentOperatorArraySize() const {
     auto r = size_t{};
     auto getVariableSize = [this](const std::string& n) {
@@ -566,6 +588,11 @@ namespace mtest {
   StandardBehaviourBase::getInternalStateVariablesNames() const {
     return this->ivnames;
   }
+
+  std::vector<int> StandardBehaviourBase::getInternalStateVariablesTypes()
+      const {
+    return this->ivtypes;
+  }  // end of StandardBehaviourBase::getInternalStateVariablesTypes
 
   std::vector<std::string>
   StandardBehaviourBase::expandInternalStateVariablesNames() const {

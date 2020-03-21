@@ -1240,7 +1240,7 @@ namespace mfront {
         }();
     out << "tfel::math::stensor<" << N << ",real> s0;\n"
         << "tfel::math::stensor<" << N << ",real> s1;\n"
-        << "auto *const thermodynamic_forces0_old = "
+        << "const auto *const thermodynamic_forces0_old = "
            "d->s0.thermodynamic_forces;\n"
         << "auto *const thermodynamic_forces1_old = "
            "d->s1.thermodynamic_forces;\n"
@@ -1269,14 +1269,14 @@ namespace mfront {
         }
       }
       out << "if(sm==StressMeasure::PK1){\n"
-          << "tfel::math::TensorView<" << N
+          << "tfel::math::ConstTensorView<" << N
           << ",real> pk0(d->s0.thermodynamic_forces);\n"
           << "s0 = "
              "tfel::math::convertFirstPiolaKirchhoffStressToCauchyStress(pk0,"
              "F0);"
              "\n"
           << "} else if(sm==StressMeasure::PK2){\n"
-          << "tfel::math::StensorView<" << N
+          << "tfel::math::ConstStensorView<" << N
           << ",real> S0(d->s0.thermodynamic_forces);\n"
           << "s0 = "
              "tfel::math::convertSecondPiolaKirchhoffStressToCauchyStress(S0,"

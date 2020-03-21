@@ -6254,6 +6254,8 @@ mtest/include/MTest/Crossed2DeltabisAccelerationAlgorithm.hxx -text
 mtest/include/MTest/CrossedDelta2AccelerationAlgorithm.hxx -text
 mtest/include/MTest/CrossedSecantAccelerationAlgorithm.hxx -text
 mtest/include/MTest/CurrentState.hxx -text
+mtest/include/MTest/CurrentStateView.hxx -text
+mtest/include/MTest/CurrentStateView.ixx -text
 mtest/include/MTest/CyranoBehaviour.hxx -text
 mtest/include/MTest/CyranoEvolution.hxx -text
 mtest/include/MTest/DianaFEASmallStrainBehaviour.hxx -text
@@ -6265,6 +6267,9 @@ mtest/include/MTest/FunctionEvolution.hxx -text
 mtest/include/MTest/GasEquationOfState.hxx -text
 mtest/include/MTest/GenericBehaviour.hxx -text
 mtest/include/MTest/GenericSolver.hxx -text
+mtest/include/MTest/HybridHighOrder/BehaviourWrapperBase.hxx -text
+mtest/include/MTest/HybridHighOrder/FiniteStrainBehaviourWrapper.hxx -text
+mtest/include/MTest/HybridHighOrder/SmallStrainBehaviourWrapper.hxx -text
 mtest/include/MTest/ImposedGradient.hxx -text
 mtest/include/MTest/ImposedThermodynamicForce.hxx -text
 mtest/include/MTest/IronsTuckAccelerationAlgorithm.hxx -text
@@ -6350,6 +6355,7 @@ mtest/src/Crossed2DeltabisAccelerationAlgorithm.cxx -text
 mtest/src/CrossedDelta2AccelerationAlgorithm.cxx -text
 mtest/src/CrossedSecantAccelerationAlgorithm.cxx -text
 mtest/src/CurrentState.cxx -text
+mtest/src/CurrentStateView.cxx -text
 mtest/src/CyranoBehaviour.cxx -text
 mtest/src/CyranoEvolution.cxx -text
 mtest/src/DianaFEASmallStrainBehaviour.cxx -text
@@ -6361,6 +6367,9 @@ mtest/src/FunctionEvolution.cxx -text
 mtest/src/GasEquationOfState.cxx -text
 mtest/src/GenericBehaviour.cxx -text
 mtest/src/GenericSolver.cxx -text
+mtest/src/HybridHighOrderBehaviourWrapperBase.cxx -text
+mtest/src/HybridHighOrderFiniteStrainBehaviourWrapper.cxx -text
+mtest/src/HybridHighOrderSmallStrainBehaviourWrapper.cxx -text
 mtest/src/ImposedGradient.cxx -text
 mtest/src/ImposedThermodynamicForce.cxx -text
 mtest/src/IronsTuckAccelerationAlgorithm.cxx -text

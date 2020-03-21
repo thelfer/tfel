@@ -31,7 +31,7 @@ namespace tfel {
      * \tparam N: space dimension
      * \tparam T: value type
      */
-    template <unsigned short N, typename T>
+    template <unsigned short N, typename T, bool is_const>
     struct TensorViewExpr {
     };  // end of struct TensorFromTinyMatrixColumnViewExpr
 
@@ -40,60 +40,72 @@ namespace tfel {
      * \tparam N: space dimension
      * \tparam T: value type
      */
-    template <unsigned short N, typename T>
-    struct Expr<tensor<N, T>, TensorViewExpr<N, T>>
-        : public TensorConcept<Expr<tensor<N, T>, TensorViewExpr<N, T>>>,
-          public tensor_base<Expr<tensor<N, T>, TensorViewExpr<N, T>>> {
-      //! a simple alias
+    template <unsigned short N, typename T, bool is_const>
+    struct Expr<tensor<N, T>, TensorViewExpr<N, T, is_const>>
+        : public TensorConcept<
+              Expr<tensor<N, T>, TensorViewExpr<N, T, is_const>>>,
+          public tensor_base<
+              Expr<tensor<N, T>, TensorViewExpr<N, T, is_const>>> {
+      //! \brief a simple alias
       typedef EmptyRunTimeProperties RunTimeProperties;
-      //! a simple alias
-      typedef typename tensor<N, T>::value_type value_type;
-      typedef typename tensor<N, T>::pointer pointer;
-      typedef typename tensor<N, T>::const_pointer const_pointer;
-      typedef typename tensor<N, T>::reference reference;
-      typedef typename tensor<N, T>::const_reference const_reference;
-      typedef typename tensor<N, T>::size_type size_type;
-      typedef typename tensor<N, T>::difference_type difference_type;
+      //! \brief a simple alias
+      using value_type = typename std::conditional<is_const, const T, T>::type;
+      //! \brief a simple alias
+      using pointer = typename std::conditional<is_const, const T*, T*>::type;
+      //! \brief a simple alias
+      using const_pointer = const T*;
+      //! \brief a simple alias
+      using reference = typename std::conditional<is_const, const T&, T&>::type;
+      //! \brief a simple alias
+      using const_reference = const T&;
+      //! \brief a simple alias
+      using size_type = typename tensor<N, T>::size_type;
+      //! \brief a simple alias
+      using difference_type = typename tensor<N, T>::difference_type;
+
+      /*!
+       * \brief constructor
+       * \param[in] v : v_ values
+       */
+      explicit Expr(pointer v_) noexcept : v(v_) {}
+      //! \brief move constructor
+      Expr(Expr&&) noexcept = default;
+      //! \brief copy constructor
+      Expr(const Expr&) noexcept = default;
 
       RunTimeProperties getRunTimeProperties() const {
         return RunTimeProperties();
       }
 
-      /*!
-       * \param[in] v : v_ values
-       */
-      explicit Expr(T* const v_) noexcept : v(v_) {}  // end of Expr
-
-      Expr(Expr&&) noexcept = default;
-
-      Expr(const Expr&) noexcept = default;
-
-      const T& operator()(const unsigned short i) const noexcept {
+      const_reference operator()(const size_type i) const noexcept {
         return this->v[i];
       }  // end of operator() const
 
-      T& operator()(const unsigned short i) noexcept {
+      reference operator()(const size_type i) noexcept {
+        static_assert(!is_const, "invalid call for const view");
         return this->v[i];
       }  // end of operator()
 
-      const T& operator[](const unsigned short i) const noexcept {
+      const_reference operator[](const size_type i) const noexcept {
         return this->v[i];
       }  // end of operator[] const
 
-      T& operator[](const unsigned short i) noexcept {
+      reference operator[](const size_type i) noexcept {
+        static_assert(!is_const, "invalid call for const view");
         return this->v[i];
       }  // end of operator[]
 
-      //! using tensor_base::operator=
+      //! \brief using tensor_base::operator=
       using tensor_base<Expr>::operator=;
-      //! assignement operator
+      //! \brief assignement operator
       Expr& operator=(const Expr& src) {
+        static_assert(!is_const, "invalid call for const view");
         tensor_base<Expr>::operator=(src);
         return *this;
       }
 
       /*!
-       * size of the symmetric tensor
+       * \return the size of the symmetric tensor
        * (compatibility with vector)
        */
       constexpr TFEL_MATH_INLINE size_type size() const noexcept {
@@ -101,17 +113,20 @@ namespace tfel {
       }
 
      protected:
-      T* const v;
+      const pointer v;
 
      private:
       Expr() = delete;
-      //! simple check
+      //! \brief simple check
       TFEL_STATIC_ASSERT((N == 1u) || (N == 2u) || (N == 3u));
 
     };  // end of struct Expr
 
     template <unsigned short N, typename T = double>
-    using TensorView = Expr<tensor<N, T>, TensorViewExpr<N, T>>;
+    using TensorView = Expr<tensor<N, T>, TensorViewExpr<N, T, false>>;
+
+    template <unsigned short N, typename T = double>
+    using ConstTensorView = Expr<tensor<N, T>, TensorViewExpr<N, T, true>>;
 
   }  // end of namespace math
 

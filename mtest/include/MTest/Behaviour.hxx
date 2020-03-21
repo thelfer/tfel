@@ -76,66 +76,62 @@ namespace mtest {
                                                    const std::string&,
                                                    const Parameters&,
                                                    const Hypothesis);
+    //! \return the components suffixes of a symmetric tensor
+    virtual std::vector<std::string> getStensorComponentsSuffixes() const = 0;
+    //! \return the components suffixes of a vector
+    virtual std::vector<std::string> getVectorComponentsSuffixes() const = 0;
+    //! \return the components suffixes of a tensor
+    virtual std::vector<std::string> getTensorComponentsSuffixes() const = 0;
     //! \return the type of the behaviour
     virtual BehaviourType getBehaviourType() const = 0;
     //! \return the type of the behaviour
     virtual Kinematic getBehaviourKinematic() const = 0;
-    //! \return the size of a vector able to contain all the components of the driving variables
-    virtual unsigned short getGradientsSize() const = 0;
-    /*!
-     * \param[out] v : initial values of the driving variables
-     * \note : the vector shall have been correctly allocated
-     */
-    virtual void getGradientsDefaultInitialValues(tfel::math::vector<real>&) const = 0;
-    /*!
-     * \return the size of a vector able to contain all the components of the thermodynamic forces
-     */
-    virtual unsigned short getThermodynamicForcesSize() const = 0;
-    /*!
-     * \return the components suffixes of a symmetric tensor
-     */
-    virtual std::vector<std::string> getStensorComponentsSuffixes() const = 0;
-    /*!
-     * \return the components suffixes of a vector
-     */
-    virtual std::vector<std::string> getVectorComponentsSuffixes() const = 0;
-    /*!
-     * \return the components suffixes of a tensor
-     */
-    virtual std::vector<std::string> getTensorComponentsSuffixes() const = 0;
-    /*!
-     * \return the components of the driving variables
-     */
-    virtual std::vector<std::string> getGradientsComponents() const = 0;
-    /*!
-     * \return the components of the thermodynamic forces
-     */
-    virtual std::vector<std::string> getThermodynamicForcesComponents() const = 0;
-    /*!
-     * \param[in] c : component
-     */
-    virtual unsigned short getGradientComponentPosition(const std::string&) const = 0;
-    /*!
-     * \param[in] c : component
-     */
-    virtual unsigned short getThermodynamicForceComponentPosition(const std::string&) const = 0;
-    /*!
-     * \return the size of the tangent operator
-     */
-    virtual size_t getTangentOperatorArraySize() const = 0;
     /*!
      * \return the type of the behaviour
      * 0 means that the behaviour is isotropic.
      * 1 means that the behaviour is orthotropic.
      */
     virtual unsigned short getSymmetryType() const = 0;
+    //! \return the names of the gradients
+    virtual std::vector<std::string> getGradientsNames() const = 0;
+    //! \return the types of the gradients
+    virtual std::vector<int> getGradientsTypes() const = 0;
+    //! \return the size of a vector able to contain all the components of the gradients
+    virtual unsigned short getGradientsSize() const = 0;
+    //! \return the components of the gradients
+    virtual std::vector<std::string> getGradientsComponents() const = 0;
+    /*!
+     * \param[in] c : component
+     */
+    virtual unsigned short getGradientComponentPosition(const std::string&) const = 0;
+    /*!
+     * \param[out] v : initial values of the gradients
+     * \note : the vector shall have been correctly allocated
+     */
+    virtual void getGradientsDefaultInitialValues(tfel::math::vector<real>&) const = 0;
+    //! \return the size of a vector able to contain all the components of the thermodynamic forces
+    virtual unsigned short getThermodynamicForcesSize() const = 0;
+    //! \return the components of the thermodynamic forces
+    virtual std::vector<std::string> getThermodynamicForcesNames() const = 0;
+    //! \return the types of the thermodynamic forces
+    virtual std::vector<int> getThermodynamicForcesTypes() const = 0;
+    //! \return the components of the thermodynamic forces
+    virtual std::vector<std::string> getThermodynamicForcesComponents() const = 0;
+    /*!
+     * \param[in] c : component
+     */
+    virtual unsigned short getThermodynamicForceComponentPosition(
+        const std::string&) const = 0;
+    //! \return the list of the tangent operator blocks
+    virtual std::vector<std::pair<std::string, std::string>>
+    getTangentOperatorBlocks() const = 0;
+    //! \return the size of the tangent operator
+    virtual size_t getTangentOperatorArraySize() const = 0;
     //! \return the names of the material properties
     virtual std::vector<std::string> getMaterialPropertiesNames() const = 0;
     //! \return the number of the material properties
     virtual size_t getMaterialPropertiesSize() const = 0;
-    /*!
-     * \return the list of optional material properties
-     */
+    //! \return the list of optional material properties
     virtual std::vector<std::string> getOptionalMaterialProperties() const = 0;
     /*!
      * \brief This method solves two issues:
@@ -157,6 +153,8 @@ namespace mtest {
                                                             const EvolutionManager&) const = 0;
     //! \return the names of internal variables
     virtual std::vector<std::string> getInternalStateVariablesNames() const = 0;
+    //! \return the types of the internal state variables
+    virtual std::vector<int> getInternalStateVariablesTypes() const = 0;
     //! \return expand the names of internal variables
     virtual std::vector<std::string> expandInternalStateVariablesNames() const = 0;
     /*!

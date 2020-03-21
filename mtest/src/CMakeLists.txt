@@ -4,6 +4,7 @@ set(TFELMTest_SOURCES
   StudyCurrentState.cxx
   StructureCurrentState.cxx
   CurrentState.cxx
+  CurrentStateView.cxx
   Solver.cxx
   SolverOptions.cxx
   GenericSolver.cxx
@@ -57,11 +58,15 @@ set(TFELMTest_SOURCES
   SingleStructureSchemeParser.cxx
   MTestParser.cxx
   PipeTestParser.cxx
-  GasEquationOfState.cxx)
+  GasEquationOfState.cxx
+)
 
 if(TFEL_HHO_SUPPORT)
   set(TFELMTest_SOURCES 
       PipeHybridHighOrderElement.cxx
+      HybridHighOrderBehaviourWrapperBase.cxx
+      HybridHighOrderSmallStrainBehaviourWrapper.cxx
+      HybridHighOrderFiniteStrainBehaviourWrapper.cxx
       ${TFELMTest_SOURCES})
 endif(TFEL_HHO_SUPPORT)
 

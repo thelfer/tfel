@@ -12,6 +12,7 @@ libTFELMTest_la_SOURCES = RoundingMode.cxx              \
 			  StudyCurrentState.cxx                     \
 			  StructureCurrentState.cxx                 \
 			  CurrentState.cxx                          \
+			  CurrentStateView.cxx                      \
 			  Scheme.cxx                                \
 			  SchemeBase.cxx                            \
 			  SingleStructureScheme.cxx                 \
@@ -24,51 +25,54 @@ libTFELMTest_la_SOURCES = RoundingMode.cxx              \
 			  Behaviour.cxx                             \
 			  BehaviourWorkSpace.cxx                    \
 			  LogarithmicStrain1DBehaviourWrapper.cxx   \
-			  GenericBehaviour.cxx                      \
-			  StandardBehaviourBase.cxx                 \
-			  UmatNormaliseTangentOperator.cxx          \
-			  Constraint.cxx                            \
-			  ConstraintBase.cxx                        \
-			  NonLinearConstraint.cxx                   \
-			  ImposedGradient.cxx                       \
-			  ImposedThermodynamicForce.cxx             \
-			  Solver.cxx                                \
-		 	  SolverOptions.cxx                         \
-			  GenericSolver.cxx                         \
-			  AccelerationAlgorithmFactory.cxx          \
-			  AccelerationAlgorithm.cxx                 \
-			  AlternateSecantAccelerationAlgorithm.cxx  \
-			  AlternateDelta2AccelerationAlgorithm.cxx  \
-			  Alternate2DeltaAccelerationAlgorithm.cxx  \
-			  CrossedSecantAccelerationAlgorithm.cxx    \
-			  CrossedDelta2AccelerationAlgorithm.cxx    \
-			  Crossed2DeltaAccelerationAlgorithm.cxx    \
-			  Crossed2DeltabisAccelerationAlgorithm.cxx \
-			  SecantAccelerationAlgorithm.cxx           \
-			  CastemAccelerationAlgorithm.cxx           \
-			  IronsTuckAccelerationAlgorithm.cxx        \
-			  SteffensenAccelerationAlgorithm.cxx       \
-			  UAndersonAccelerationAlgorithm.cxx        \
-			  FAndersonAccelerationAlgorithm.cxx        \
-			  UserDefinedPostProcessing.cxx             \
-			  MTest.cxx                                 \
-			  PipeTest.cxx                              \
-			  PipeElement.cxx                           \
-			  PipeElementBase.cxx                       \
-			  PipeLinearElement.cxx                     \
-			  PipeQuadraticElement.cxx                  \
-			  PipeCubicElement.cxx                      \
-			  PipeProfile.cxx                           \
-			  PipeProfileHandler.cxx                    \
-			  TextDataUtilities.cxx                     \
-			  SchemeParserBase.cxx                      \
-			  SingleStructureSchemeParser.cxx           \
-			  MTestParser.cxx                           \
-			  PipeTestParser.cxx                        \
+			  GenericBehaviour.cxx                            \
+			  StandardBehaviourBase.cxx                       \
+			  UmatNormaliseTangentOperator.cxx                \
+			  Constraint.cxx                                  \
+			  ConstraintBase.cxx                              \
+			  NonLinearConstraint.cxx                         \
+			  ImposedGradient.cxx                             \
+			  ImposedThermodynamicForce.cxx                   \
+			  Solver.cxx                                      \
+		 	  SolverOptions.cxx                               \
+			  GenericSolver.cxx                               \
+			  AccelerationAlgorithmFactory.cxx                \
+			  AccelerationAlgorithm.cxx                       \
+			  AlternateSecantAccelerationAlgorithm.cxx        \
+			  AlternateDelta2AccelerationAlgorithm.cxx        \
+			  Alternate2DeltaAccelerationAlgorithm.cxx        \
+			  CrossedSecantAccelerationAlgorithm.cxx          \
+			  CrossedDelta2AccelerationAlgorithm.cxx          \
+			  Crossed2DeltaAccelerationAlgorithm.cxx          \
+			  Crossed2DeltabisAccelerationAlgorithm.cxx       \
+			  SecantAccelerationAlgorithm.cxx                 \
+			  CastemAccelerationAlgorithm.cxx                 \
+			  IronsTuckAccelerationAlgorithm.cxx              \
+			  SteffensenAccelerationAlgorithm.cxx             \
+			  UAndersonAccelerationAlgorithm.cxx              \
+			  FAndersonAccelerationAlgorithm.cxx              \
+			  UserDefinedPostProcessing.cxx                   \
+			  MTest.cxx                                       \
+			  PipeTest.cxx                                    \
+			  PipeElement.cxx                                 \
+			  PipeElementBase.cxx                             \
+			  PipeLinearElement.cxx                           \
+			  PipeQuadraticElement.cxx                        \
+			  PipeCubicElement.cxx                            \
+			  PipeProfile.cxx                                 \
+			  PipeProfileHandler.cxx                          \
+			  TextDataUtilities.cxx                           \
+			  SchemeParserBase.cxx                            \
+			  SingleStructureSchemeParser.cxx                 \
+			  MTestParser.cxx                                 \
+			  PipeTestParser.cxx                              \
 			  GasEquationOfState.cxx
 
 if TFEL_HHO_SUPPORT
-libTFELMTest_la_SOURCES += PipeHybridHighOrderElement.cxx
+libTFELMTest_la_SOURCES += PipeHybridHighOrderElement.cxx                  \
+                           HybridHighOrderBehaviourWrapperBase.cxx         \
+                           HybridHighOrderSmallStrainBehaviourWrapper.cxx  \
+                           HybridHighOrderFiniteStrainBehaviourWrapper.cxx
 endif # TFEL_HHO_SUPPORT
 
 libTFELMTest_la_LIBADD  = -L$(top_builddir)/mfront/src -lMFrontLogStream  \

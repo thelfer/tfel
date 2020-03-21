@@ -14,6 +14,7 @@
 #include <iostream>
 #include <algorithm>
 
+#include "HybridHighOrder/Geometry/Line.hxx"
 #include "HybridHighOrder/Element/Element.hxx"
 #include "HybridHighOrder/MonodimensionalElements/ElementFactory.hxx"
 
@@ -26,19 +27,27 @@
 #include "MTest/CurrentState.hxx"
 #include "MTest/StructureCurrentState.hxx"
 #include "MTest/PipeMesh.hxx"
+#include "MTest/HybridHighOrder/SmallStrainBehaviourWrapper.hxx"
+#include "MTest/HybridHighOrder/FiniteStrainBehaviourWrapper.hxx"
 #include "MTest/PipeHybridHighOrderElement.hxx"
 
 namespace mtest {
 
   struct PipeHybridHighOrderElement::PrivateMembers {
-    std::shared_ptr<hho::element::Element> hho_element;
-  }; // end of struct PipeHybridHighOrderElement::PrivateMembers
+    //! \brief geometric element
+    std::unique_ptr<::hho::geometry::Line<1u>> geometric_element;
+    //! \brief geometric element
+    std::unique_ptr<::hho::element::Behaviour> behaviour;
+    //     //! \brief HHO element
+    //     std::unique_ptr<::hho::element::Element> hho_element;
+  };  // end of struct PipeHybridHighOrderElement::PrivateMembers
 
   PipeHybridHighOrderElement::PipeHybridHighOrderElement(const PipeMesh& m,
                                                          const Behaviour& b,
                                                          const size_t n)
       : PipeElementBase(m, b, n) {
-    const auto& f = hho::monodimensional_elements::ElementFactory::get();
+    using BehaviourBase = tfel::material::MechanicalBehaviourBase;
+    const auto& f = ::hho::monodimensional_elements::ElementFactory::get();
     // mandatory keys
     const auto mkeys = std::vector<const char*>{"cell_polynomial_degree"};
     // optional keys
@@ -70,11 +79,29 @@ namespace mtest {
       raise("invalid value for '" + std::string{mkeys[0]} + "'");
     }
     this->pm = std::unique_ptr<PrivateMembers>{new PrivateMembers};
-    // this->pm->hho_element = f.generate(
-    //         "SolidMechanics",
-    //         hho::Hypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS,
-    //         "", const Line&, const Behaviour&) const;
-
+    this->pm->geometric_element = std::unique_ptr<::hho::geometry::Line<1u>>(
+        new ::hho::geometry::Line<1u>{
+            ::hho::geometry::Point<1u>{this->inner_radius},
+            ::hho::geometry::Point<1u>{this->outer_radius}});
+    if ((b.getBehaviourType() == BehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR) &&
+        (b.getBehaviourKinematic() == BehaviourBase::SMALLSTRAINKINEMATIC)) {
+      this->pm->behaviour = std::unique_ptr<::hho::element::Behaviour>(
+          new mtest::hho::SmallStrainBehaviourWrapper(b));
+    } else if ((b.getBehaviourType() ==
+                BehaviourBase::STANDARDFINITESTRAINBEHAVIOUR) &&
+               (b.getBehaviourKinematic() ==
+                BehaviourBase::FINITESTRAINKINEMATIC_ETO_PK1)) {
+      this->pm->behaviour = std::unique_ptr<::hho::element::Behaviour>(
+          new mtest::hho::FiniteStrainBehaviourWrapper(b));
+    } else {
+      tfel::raise("Unsupported behaviour type");
+    }
+    //     this->pm->hho_element = f.generate("FiniteStrainSolidMechanics",
+    //                                        "AxisymmetricalGeneralisedPlaneStrain",
+    //                                        "StandardElement_" +
+    //                                        std::to_string{kc},
+    //                                        this->pm->geometric_element,
+    //                                        this->pm->behaviour);
   }  // end of PipeHybridHighOrderElement::PipeHybridHighOrderElement
 
   size_type PipeHybridHighOrderElement::getNumberOfNodes() const {

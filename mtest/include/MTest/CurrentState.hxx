@@ -42,82 +42,79 @@ namespace mtest {
    * variables given here is only valid during the computations.
    */
   struct MTEST_VISIBILITY_EXPORT CurrentState {
-    //! variable type
+    //! \brief variable type
     enum PostProcessingVariableType {
       EXTERNALSTATEVARIABLE,
       INTERNALSTATEVARIABLE,
       DRIVINGVARIABLE,
       THERMODYNAMICFORCE
     };  // end of VariableType
-    //! default constructor
+    //! \brief default constructor
     CurrentState();
-    //! copy constructor
+    //! \brief copy constructor
     CurrentState(const CurrentState&);
-    //! move constructor
+    //! \brief move constructor
     CurrentState(CurrentState&&);
-    //! assignement
+    //! \brief assignement
     CurrentState& operator=(const CurrentState&);
-    //! move assignement
+    //! \brief move assignement
     CurrentState& operator=(CurrentState&&);
-    //! destructor
+    //! \brief destructor
     ~CurrentState() noexcept;
-    //! behaviour
+    //! \brief behaviour
     std::shared_ptr<const Behaviour> behaviour;
-    //! thermodynamic forces at the beginning of the previous of the time step
+    /*!
+     * \brief thermodynamic forces at the beginning of the previous of the time
+     * step
+     */
     tfel::math::vector<real> s_1;
-    //! thermodynamic forces at the beginning of the time step
+    //! \brief thermodynamic forces at the beginning of the time step
     tfel::math::vector<real> s0;
-    //! thermodynamic forces at the end of the time step
+    //! \brief thermodynamic forces at the end of the time step
     tfel::math::vector<real> s1;
-    /*!
-     * driving variables at the beginning of the time step
-     * \note for small strain behaviour, thermal strain are already substracted.
-     */
+    //! \brief driving variables at the beginning of the time step
     tfel::math::vector<real> e0;
-    /*!
-     * driving variables at the end of the time step
-     * \note for small strain behaviour, thermal strain are already substracted.
-     */
+    //! \brief driving variables at the end of the time step
     tfel::math::vector<real> e1;
     /*!
-     * thermal strain at the beginning of the time step
+     * \brief thermal strain at the beginning of the time step
      * (small strain behaviours)
      */
     tfel::math::vector<real> e_th0;
     /*!
-     * thermal strain at the end of the time step
+     * \brief thermal strain at the end of the time step
      * (small strain behaviours)
      */
     tfel::math::vector<real> e_th1;
-    //! material properties at the end of the time step
+    //! \brief material properties at the end of the time step
     tfel::math::vector<real> mprops1;
-    //! stored energy at the beginning of the time step
+    //! \brief stored energy at the beginning of the time step
     real se0;
-    //! stored energy at the end of the time step
+    //! \brief stored energy at the end of the time step
     real se1;
-    //! dissipated energy at the beginning of the time step
+    //! \brief dissipated energy at the beginning of the time step
     real de0;
-    //! dissipated energy at the end of the time step
+    //! \brief dissipated energy at the end of the time step
     real de1;
-    //! internal variables at the beginning of the previous time step
+    //! \brief internal variables at the beginning of the previous time step
     tfel::math::vector<real> iv_1;
-    //! internal variables at the beginning of the time step
+    //! \brief internal variables at the beginning of the time step
     tfel::math::vector<real> iv0;
-    //! internal variables at the end of the time step
+    //! \brief internal variables at the end of the time step
     tfel::math::vector<real> iv1;
-    //! external variables at the beginning of the time step
+    //! \brief external variables at the beginning of the time step
     tfel::math::vector<real> esv0;
-    //! external variables increments
+    //! \brief external variables increments
     tfel::math::vector<real> desv;
-    //! boolean, true if the rotation matrix has been defined by the user
+    //! \brief boolean, true if the rotation matrix has been defined by the user
     bool isRmDefined = false;
-    //! rotation matrix
+    //! \brief rotation matrix
     tfel::math::tmatrix<3u, 3u> r;
-    // position of the gauss point in the initial configuration
+    //! \brief position of the gauss point in the initial configuration
     real position;
-    // reference Temperature
+    //! \brief reference Temperature
     real Tref = 293.15;
-    //! information collected during the packaging stage
+    //! \brief information collected during the packaging stage
     std::map<std::string, PackagingInfo> packaging_info;
   };  // end of struct CurrentState
       /*!
