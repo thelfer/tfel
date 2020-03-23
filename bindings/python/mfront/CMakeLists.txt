@@ -19,10 +19,13 @@ mfront_python_module(_mfront mfront.cxx
   GeneratorOptions.cxx
   MakefileGenerator.cxx
   CMakeGenerator.cxx)
-target_link_libraries(py_mfront__mfront TFELMFront
+target_link_libraries(py_mfront__mfront
+  PRIVATE
+  TFELMFront
   MFrontLogStream TFELMaterial
   TFELMathParser  TFELSystem
   TFELUtilities   TFELGlossary
-  TFELException   TFELConfig)
+  TFELException   TFELConfig
+  ${TFEL_PYTHON_MODULES_PRIVATE_LINK_LIBRARIES})
 
 tfel_python_script(mfront __init__.py)

@@ -72,6 +72,50 @@ The following code can be added in a block defining an inelastic flow:
     isotropic_hardening : "Power" {R0 : 120e6, p0 : 1e-8, n : 5.e-2}
 ~~~~
 
+# New features of the `python` bindings
+
+## Improvements of the `tfel.math` module
+
+### Exposing acceleration algorithm
+
+The `FAnderson` and `UAnderson` acceleration algorithms are now
+available in the `tfel.math` module
+
+#### Example of the usage of the `UAnderson` acceleration algorithm
+
+The following code computes the solution of the equation
+\(x=\cos\paren{x}\) using a fixed point algorithm.
+
+~~~~{.python}
+from math import cos
+import numpy as np
+import tfel.math
+
+# The accelerator will be based on
+# the 5 last Picard iterations and
+# will be performed at every step
+a = tfel.math.UAnderson(5,1)
+
+f = lambda x: np.cos(x)
+    
+x0 = float(10)
+x = np.array([x0])    
+
+# This shall be called each time a
+# new resolution starts
+a.initialize(x)
+for i in range(0,100):
+    x = f(x)
+    print(i, x, f(x[0]))
+    if(abs(f(x[0])-x[0])<1.e-14):
+        break
+    # apply the acceleration
+    a.accelerate(x)
+~~~~
+
+Without acceleration, this algorithm takes \(78\) iterations. In
+comparison, the accelerated algorithm takes \(9\) iterations.
+
 # Tickets solved during the development of this version
 
 ## Ticket #219: Add the possibility to define the tangent operator blocks

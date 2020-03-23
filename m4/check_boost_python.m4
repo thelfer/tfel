@@ -27,6 +27,19 @@ AC_DEFUN([CHECK_BOOST_PYTHON],[
 	    # for squeeze
 	    AM_PATH_PYTHON([2.4])
 	    BOOST_PYTHONVERSION=$(echo $PYTHON_VERSION |sed 's/\.//')
+	    AC_CHECK_FILE(${BOOST_INSTALL_DIR}/lib/libboost_python${BOOST_LIBSUFFIX}${BOOST_PYTHONVERSION}.so,
+                boost_lib_dir_ok=yes,
+                boost_lib_dir_ok=no)
+ 	    if test "x${boost_lib_dir_ok}" = "xyes" ;
+	    then
+	       BOOST_PYTHON_LIBS="${BOOST_PYTHON_LIBS} -lboost_python${BOOST_LIBSUFFIX}${BOOST_PYTHONVERSION}"
+	    fi
+	fi
+	if test "x${boost_lib_dir_ok}" = "xno" ;
+	then
+	    # for squeeze
+	    AM_PATH_PYTHON([2.4])
+	    BOOST_PYTHONVERSION=$(echo $PYTHON_VERSION |sed 's/\.//')
 	    AC_CHECK_FILE(${BOOST_INSTALL_DIR}/lib/libboost_python${BOOST_LIBSUFFIX}-py${BOOST_PYTHONVERSION}.so,
                 boost_lib_dir_ok=yes,
                 boost_lib_dir_ok=no)

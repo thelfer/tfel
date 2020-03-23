@@ -18,7 +18,7 @@ _stl_pair_la_SOURCES   = pair.cxx
 _stl_tuple_la_SOURCES  = tuple.cxx
 
 _stl_vector_la_LIBADD  =  @BOOST_LIBS@ @BOOST_PYTHON_LIBS@            \
-		          -L@PYTHONPATH@/lib -lpython@PYTHON_VERSION@
+		                  -L@PYTHONPATH@/lib -lpython@PYTHON_VERSION@
 _stl_vector_la_LDFLAGS = -module
 
 _stl_map_la_LIBADD     = @BOOST_LIBS@ @BOOST_PYTHON_LIBS@            \

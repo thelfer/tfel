@@ -30,6 +30,9 @@ bindings/python/CMakeLists.txt -text
 bindings/python/Makefile.am -text
 bindings/python/include/CMakeLists.txt -text
 bindings/python/include/Makefile.am -text
+bindings/python/include/TFEL/Numpy/Config.hxx -text
+bindings/python/include/TFEL/Numpy/InitNumpy.hxx -text
+bindings/python/include/TFEL/Numpy/ndarray.hxx -text
 bindings/python/include/TFEL/Python/MapConverter.hxx -text
 bindings/python/include/TFEL/Python/PairConverter.hxx -text
 bindings/python/include/TFEL/Python/SharedPtr.hxx -text
@@ -96,6 +99,7 @@ bindings/python/tests/material-properties.py -text
 bindings/python/tests/pymfronttest1.py.in -text
 bindings/python/tests/pymfronttest2.py.in -text
 bindings/python/tests/pymfronttest3.py.in -text
+bindings/python/tfel/AccelerationAlgorithms.cxx -text
 bindings/python/tfel/Barlat.cxx -text
 bindings/python/tfel/CMakeLists.txt -text
 bindings/python/tfel/CrystalStructure.cxx -text
@@ -107,6 +111,7 @@ bindings/python/tfel/ExternalMaterialPropertyDescription.cxx -text
 bindings/python/tfel/Glossary.cxx -text
 bindings/python/tfel/GlossaryEntry.cxx -text
 bindings/python/tfel/Hosford.cxx -text
+bindings/python/tfel/InitNumpy.cxx -text
 bindings/python/tfel/LibraryInformation.cxx -text
 bindings/python/tfel/Makefile.am -text
 bindings/python/tfel/ModellingHypothesis.cxx -text
@@ -121,6 +126,7 @@ bindings/python/tfel/__init__.py.in -text
 bindings/python/tfel/__init__.py.version.in -text
 bindings/python/tfel/material.cxx -text
 bindings/python/tfel/math.cxx -text
+bindings/python/tfel/ndarray.cxx -text
 bindings/python/tfel/pyglossary.cxx -text
 bindings/python/tfel/st2tost2.cxx -text
 bindings/python/tfel/stensor.cxx -text
@@ -2155,6 +2161,7 @@ m4/ax_pthread.m4 -text
 m4/castem-unix-type.m4 -text
 m4/castem.m4 -text
 m4/check_boost.m4 -text
+m4/check_boost_numpy.m4 -text
 m4/check_boost_python.m4 -text
 m4/check_pthreads.m4 -text
 m4/cyrano-machine-type.m4 -text

@@ -438,13 +438,6 @@ function(python_module_base fullname name)
     SYSTEM
     PRIVATE "${Boost_INCLUDE_DIRS}"
     PRIVATE "${PYTHON_INCLUDE_DIRS}")
-  if(TFEL_USES_CONAN)
-    target_link_libraries(py_${fullname}
-      ${CONAN_LIBS} ${PYTHON_LIBRARIES})
-  else(TFEL_USES_CONAN)
-    target_link_libraries(py_${fullname}
-      ${Boost_PYTHON_LIBRARY} ${PYTHON_LIBRARIES})
-  endif(TFEL_USES_CONAN)
 endfunction(python_module_base)
 
 function(python_lib_module name package)

@@ -362,12 +362,15 @@ if test "x$use_python_bindings" != "xno";
     fi
     CHECK_BOOST
     CHECK_BOOST_PYTHON
+    CHECK_BOOST_NUMPY
     TFEL_PYTHON_BINDINGS=yes
     AC_DEFINE(TFEL_PYTHON_BINDINGS)
     AM_CONDITIONAL([TFEL_PYTHON_BINDINGS],true)
+    AM_CONDITIONAL([TFEL_NUMPY_SUPPORT],test "x${tfel_numpy_support}" = "xyes" )
 else
     TFEL_PYTHON_BINDINGS=no
-    AM_CONDITIONAL([TFEL_PYTHON_BINDINGS],false)
+    AM_CONDITIONAL([TFEL_PYTHON_BINDINGS], false)
+    AM_CONDITIONAL([TFEL_NUMPY_SUPPORT], false)
 fi
 
 # checks for java

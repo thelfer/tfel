@@ -18,8 +18,7 @@
 
 void declareTFELMathVector();
 
-void declareTFELMathVector()
-{
+void declareTFELMathVector() {
   using namespace tfel::python;
   using tfel::math::vector;
   initializeVectorConverter<vector<double> >();

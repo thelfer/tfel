@@ -14,6 +14,18 @@ tfel_LTLIBRARIES = _tfel.la     \
 		   material.la  \
 		   system.la
 
+if TFEL_NUMPY_SUPPORT
+tfel_LTLIBRARIES += libTFELNumpySupport.la
+libTFELNumpySupport_la_SOURCES  = InitNumpy.cxx
+libTFELNumpySupport_la_LIBADD   = @BOOST_LIBS@ @BOOST_PYTHON_LIBS@ @BOOST_NUMPY_LIBS@ \
+                                  -L@PYTHONPATH@/lib -lpython@PYTHON_VERSION@
+libTFELNumpySupport_la_CPPFLAGS = $(AM_CPPFLAGS)
+if TFEL_WIN
+libTFELNumpySupport_la_CPPFLAGS += -DTFELNumpySupport_EXPORTS
+endif
+endif
+
+
 _tfel_la_SOURCES = tfel.cxx              \
 		   PhysicalConstants.cxx
 _tfel_la_LIBADD  = @BOOST_LIBS@ @BOOST_PYTHON_LIBS@             \
@@ -29,16 +41,30 @@ tests_la_LIBADD  = -L@top_builddir@/src/Tests -lTFELTests       \
 		   -L@PYTHONPATH@/lib -lpython@PYTHON_VERSION@
 tests_la_LDFLAGS = -module
 
-math_la_SOURCES = math.cxx      \
-		  vector.cxx    \
-		  tvector.cxx   \
-		  stensor.cxx   \
-		  st2tost2.cxx  \
-		  Evaluator.cxx 
-math_la_LIBADD  = -L@top_builddir@/src/Math                    \
-		  -lTFELMath -lTFELMathParser                  \
-		  @BOOST_LIBS@ @BOOST_PYTHON_LIBS@             \
-		  -L@PYTHONPATH@/lib -lpython@PYTHON_VERSION@
+math_la_SOURCES = math.cxx           \
+		  vector.cxx                 \
+		  tvector.cxx                \
+		  stensor.cxx                \
+		  st2tost2.cxx               \
+		  Evaluator.cxx
+
+if TFEL_NUMPY_SUPPORT
+math_la_SOURCES  += AccelerationAlgorithms.cxx
+math_la_CPPFLAGS  = $(AM_CPPFLAGS) -DTFEL_NUMPY_SUPPORT
+else
+math_la_CPPFLAGS  = $(AM_CPPFLAGS)
+endif
+
+math_la_LIBADD  = -L@top_builddir@/src/Math                   \
+          		  -lTFELMath -lTFELMathParser                 \
+                  @BOOST_LIBS@ @BOOST_PYTHON_LIBS@            \
+                  -L@PYTHONPATH@/lib -lpython@PYTHON_VERSION@
+
+if TFEL_NUMPY_SUPPORT
+math_la_LIBADD += -L@builddir@                \
+                  -LTFELNumpySupport
+endif
+
 math_la_LDFLAGS = -module
 
 utilities_la_SOURCES = utilities.cxx \

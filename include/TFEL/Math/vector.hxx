@@ -165,8 +165,7 @@ namespace tfel{
       using Container::empty;
       using Container::operator[];
       //! assignement operator
-      vector& 
-      operator=(const vector&);
+      vector& operator=(const vector&);
       /*!
        * Assignement operator.
        * \param  const vector&, the vector to be copied.
