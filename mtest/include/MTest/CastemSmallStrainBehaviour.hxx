@@ -14,6 +14,7 @@
 #ifndef LIB_MTEST_CASTEMSMALLSTRAINUMATBEHAVIOUR_HXX
 #define LIB_MTEST_CASTEMSMALLSTRAINUMATBEHAVIOUR_HXX
 
+#include "TFEL/Utilities/Span.hxx"
 #include "TFEL/System/ExternalFunctionsPrototypes.hxx"
 #include "MTest/CastemStandardBehaviour.hxx"
 
@@ -41,9 +42,9 @@ namespace mtest {
         tfel::math::vector<real>&) const override;
     std::pair<bool, real> computePredictionOperator(
         BehaviourWorkSpace&,
-        const CurrentState&,
+        const CurrentStateView&,
         const StiffnessMatrixType) const override;
-    std::pair<bool, real> integrate(CurrentState&,
+    std::pair<bool, real> integrate(CurrentStateView&,
                                     BehaviourWorkSpace&,
                                     const real,
                                     const StiffnessMatrixType) const override;
@@ -66,7 +67,7 @@ namespace mtest {
      * step, if false compute a prediction of the stiffness matrix
      */
     virtual std::pair<bool, real> call_behaviour(tfel::math::matrix<real>&,
-                                                 CurrentState&,
+                                                 CurrentStateView&,
                                                  BehaviourWorkSpace&,
                                                  const real,
                                                  const StiffnessMatrixType,
@@ -79,7 +80,7 @@ namespace mtest {
      */
     virtual void computeElasticStiffness(
         tfel::math::matrix<real>&,
-        const tfel::math::vector<real>&,
+        const tfel::utilities::ConstSpan<real>&,
         const tfel::math::tmatrix<3u, 3u, real>&) const;
 
   };  // end of struct Behaviour

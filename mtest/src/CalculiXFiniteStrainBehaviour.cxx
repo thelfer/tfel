@@ -25,7 +25,7 @@
 #include "MFront/CalculiX/CalculiX.hxx"
 #include "MFront/CalculiX/CalculiXComputeStiffnessTensor.hxx"
 
-#include "MTest/CurrentState.hxx"
+#include "MTest/CurrentStateView.hxx"
 #include "MTest/BehaviourWorkSpace.hxx"
 #include "MTest/UmatNormaliseTangentOperator.hxx"
 #include "MTest/CalculiXFiniteStrainBehaviour.hxx"
@@ -44,7 +44,7 @@ namespace mtest {
 
   std::pair<bool, real> CalculiXFiniteStrainBehaviour::call_behaviour(
       tfel::math::matrix<real>& Kt,
-      CurrentState& s,
+      CurrentStateView& s,
       BehaviourWorkSpace& wk,
       const real dt,
       const StiffnessMatrixType ktype,

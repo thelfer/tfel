@@ -57,13 +57,12 @@ namespace mtest
      * \param[in] b : if true, integrate the behaviour over the time
      * step, if false compute a prediction of the stiffness matrix
      */
-    virtual std::pair<bool,real>
-    call_behaviour(tfel::math::matrix<real>&,
-		   CurrentState&,
-		   BehaviourWorkSpace&,
-		   const real,
-		   const StiffnessMatrixType,
-		   const bool) const override;
+   virtual std::pair<bool, real> call_behaviour(tfel::math::matrix<real>&,
+                                                CurrentStateView&,
+                                                BehaviourWorkSpace&,
+                                                const real,
+                                                const StiffnessMatrixType,
+                                                const bool) const override;
   }; // end of struct Behaviour
   
 } // end of namespace mtest

@@ -47,10 +47,10 @@ namespace mtest {
 
     std::pair<bool, real> computePredictionOperator(
         BehaviourWorkSpace&,
-        const CurrentState&,
+        const CurrentStateView&,
         const StiffnessMatrixType) const override;
 
-    std::pair<bool, real> integrate(CurrentState&,
+    std::pair<bool, real> integrate(CurrentStateView&,
                                     BehaviourWorkSpace&,
                                     const real,
                                     const StiffnessMatrixType) const override;
@@ -84,11 +84,11 @@ namespace mtest {
      * step, if false compute a prediction of the stiffness matrix
      */
     virtual std::pair<bool, real> call_behaviour(tfel::math::matrix<real>&,
-                                         CurrentState&,
-                                         BehaviourWorkSpace&,
-                                         const real,
-                                         const StiffnessMatrixType,
-                                         const bool) const;
+                                                 CurrentStateView&,
+                                                 BehaviourWorkSpace&,
+                                                 const real,
+                                                 const StiffnessMatrixType,
+                                                 const bool) const;
 
     virtual void executeFiniteStrainBehaviourStressPreProcessing(
         BehaviourWorkSpace&, mfront::gb::BehaviourData&) const;

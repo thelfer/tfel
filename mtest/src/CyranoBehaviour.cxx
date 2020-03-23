@@ -20,7 +20,7 @@
 #include"TFEL/Math/st2tost2.hxx"
 #include"TFEL/System/ExternalLibraryManager.hxx"
 #include"MFront/Cyrano/Cyrano.hxx"
-#include"MTest/CurrentState.hxx"
+#include"MTest/CurrentStateView.hxx"
 #include"MTest/BehaviourWorkSpace.hxx"
 #include"MTest/CyranoBehaviour.hxx"
 #include"MFront/Cyrano/CyranoComputeStiffnessTensor.hxx"
@@ -67,8 +67,7 @@ namespace mtest
     this->mpnames.insert(this->mpnames.begin(),tmp.begin(),tmp.end());
   }
 
-  void CyranoBehaviour::allocate(BehaviourWorkSpace& wk) const
-  {
+  void CyranoBehaviour::allocate(BehaviourWorkSpace& wk) const {
     const auto nstatev = this->getInternalStateVariablesSize();
     wk.D.resize(3u,3u);
     wk.kt.resize(3u,3u);
@@ -79,42 +78,37 @@ namespace mtest
     wk.ne.resize(3u);
     wk.ns.resize(3u);
     wk.nivs.resize(nstatev);
-    mtest::allocate(wk.cs,this->shared_from_this());
   }
 
-  tfel::math::tmatrix<3u,3u,real>
-  CyranoBehaviour::getRotationMatrix(const tfel::math::vector<real>&,
-					  const tfel::math::tmatrix<3u,3u,real>& r) const
-  {
+  tfel::math::tmatrix<3u, 3u, real> CyranoBehaviour::getRotationMatrix(
+      const tfel::math::vector<real>&,
+      const tfel::math::tmatrix<3u, 3u, real>& r) const {
     return r;
   } // end of CyranoBehaviour::getRotationMatrix
 
-  StiffnessMatrixType
-  CyranoBehaviour::getDefaultStiffnessMatrixType() const
-  {
+  StiffnessMatrixType CyranoBehaviour::getDefaultStiffnessMatrixType() const {
     return StiffnessMatrixType::CONSISTENTTANGENTOPERATOR;
   } // end of CyranoBehaviour::getDefaultStiffnessMatrixType
 
-  void
-  CyranoBehaviour::getGradientsDefaultInitialValues(tfel::math::vector<real>& v) const
-  {
+  void CyranoBehaviour::getGradientsDefaultInitialValues(
+      tfel::math::vector<real>& v) const {
     std::fill(v.begin(),v.end(),real(0));
-  } // end of CyranoBehaviour::setGradientsDefaultInitialValue  
+  } // end of CyranoBehaviour::setGradientsDefaultInitialValue
 
-  std::pair<bool,real>
-  CyranoBehaviour::computePredictionOperator(BehaviourWorkSpace& wk,
-					     const CurrentState& s,
-					     const StiffnessMatrixType ktype) const
-  {
+  std::pair<bool, real> CyranoBehaviour::computePredictionOperator(
+      BehaviourWorkSpace& wk,
+      const CurrentStateView& s,
+      const StiffnessMatrixType ktype) const {
     if(ktype==StiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES){
       return {false,real(-1)};
     }
-    wk.cs = s;
-    return this->call_behaviour(wk.kt,wk.cs,wk,real(1),ktype,false);
+    auto mv = makeMutableView(s);
+    auto v = mv.getView();
+    return this->call_behaviour(wk.kt, v, wk, real(1), ktype, false);
   } // end of CyranoBehaviour::computePredictionOperator
 
   std::pair<bool,real>
-  CyranoBehaviour::integrate(CurrentState& s,
+  CyranoBehaviour::integrate(CurrentStateView& s,
 			     BehaviourWorkSpace& wk,
 			     const real dt,
 			     const StiffnessMatrixType ktype) const
@@ -124,7 +118,7 @@ namespace mtest
 
   std::pair<bool,real>
   CyranoBehaviour::call_behaviour(tfel::math::matrix<real>& Kt,
-				  CurrentState& s,
+				  CurrentStateView& s,
 				  BehaviourWorkSpace& wk,
 				  const real dt,
 				  const StiffnessMatrixType ktype,

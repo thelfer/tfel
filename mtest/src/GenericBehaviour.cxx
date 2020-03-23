@@ -29,7 +29,7 @@
 #include "TFEL/System/ExternalLibraryManager.hxx"
 #include "MFront/MFrontLogStream.hxx"
 #include "MTest/Evolution.hxx"
-#include "MTest/CurrentState.hxx"
+#include "MTest/CurrentStateView.hxx"
 #include "MTest/BehaviourWorkSpace.hxx"
 #include "MFront/GenericBehaviour/BehaviourData.hxx"
 #include "MTest/GenericBehaviour.hxx"
@@ -361,7 +361,6 @@ namespace mtest {
       wk.e1.resize(ndv);
       wk.s0.resize(nth);
     }
-    mtest::allocate(wk.cs, this->shared_from_this());
     if (this->btype == 2u) {
       if (this->stress_measure == PK1) {
         wk.pk0.resize(ndv);
@@ -384,14 +383,15 @@ namespace mtest {
 
   std::pair<bool, real> GenericBehaviour::computePredictionOperator(
       BehaviourWorkSpace& wk,
-      const CurrentState& s,
+      const CurrentStateView& s,
       const StiffnessMatrixType ktype) const {
-    wk.cs = s;
-    return this->call_behaviour(wk.kt, wk.cs, wk, real(1), ktype, false);
+    auto mv = makeMutableView(s);
+    auto v = mv.getView();
+    return this->call_behaviour(wk.kt, v, wk, real(1), ktype, false);
   }  // end of GenericBehaviour::computePredictionOperator
 
   std::pair<bool, real> GenericBehaviour::integrate(
-      CurrentState& s,
+      CurrentStateView& s,
       BehaviourWorkSpace& wk,
       const real dt,
       const StiffnessMatrixType ktype) const {
@@ -400,7 +400,7 @@ namespace mtest {
 
   std::pair<bool, real> GenericBehaviour::call_behaviour(
       tfel::math::matrix<real>& Kt,
-      CurrentState& s,
+      CurrentStateView& s,
       BehaviourWorkSpace& wk,
       const real dt,
       const StiffnessMatrixType ktype,
@@ -411,11 +411,12 @@ namespace mtest {
     auto throw_if = [](const bool c, const std::string& m) {
       tfel::raise_if(c, "GenericBehaviour::call_behaviour: " + m);
     };
-    auto init_ptr = [](vector<real>& t, const vector<real>& v) -> real* {
+    auto init_ptr = [](vector<real>& t,
+                       const tfel::utilities::ConstSpan<real>& v) -> real* {
       if (v.empty()) {
         return nullptr;
       }
-      t = v;
+      t = tfel::math::vector<real>(v.begin(), v.end());
       return &t[0];
     };
     throw_if(wk.mps.size() != s.mprops1.size(),

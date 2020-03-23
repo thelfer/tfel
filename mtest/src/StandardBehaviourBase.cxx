@@ -913,8 +913,8 @@ namespace mtest {
     }
   }  // end of StandardBehaviourBase::initializeTangentOperator
 
-  bool StandardBehaviourBase::doPackagingStep(CurrentState&,
-                                              BehaviourWorkSpace&) const {
+  bool StandardBehaviourBase::doPackagingStep(BehaviourWorkSpace&,
+                                              const CurrentStateView&) const {
     return true;
   }  // end of StandardBehaviourBase::doPackagingStep
 

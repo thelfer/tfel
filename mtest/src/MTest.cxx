@@ -43,6 +43,7 @@
 #include "MTest/ImposedThermodynamicForce.hxx"
 #include "MTest/ImposedGradient.hxx"
 #include "MTest/CurrentState.hxx"
+#include "MTest/CurrentStateView.hxx"
 #include "MTest/BehaviourWorkSpace.hxx"
 #include "MTest/StructureCurrentState.hxx"
 #include "MTest/GenericSolver.hxx"
@@ -600,7 +601,8 @@ namespace mtest {
     auto& bwk = scs.getBehaviourWorkSpace();
     tfel::raise_if(scs.istates.size() != 1u, "MTest::prepare: invalid state");
     auto& s = scs.istates[0];
-    auto res = this->b->computePredictionOperator(bwk, s, smt);
+    auto v = makeView(s);
+    auto res = this->b->computePredictionOperator(bwk, v, smt);
     if (!res.first) {
       return res;
     }
@@ -677,7 +679,8 @@ namespace mtest {
     }
     // behaviour integration
     setRoundingMode();
-    const auto rb = this->b->integrate(s, bwk, dt, mt);
+    auto v = makeView(s);
+    const auto rb = this->b->integrate(v, bwk, dt, mt);
     setRoundingMode();
     if (!rb.first) {
       if (mfront::getVerboseMode() > mfront::VERBOSE_QUIET) {
@@ -698,7 +701,8 @@ namespace mtest {
         s.e1[i] += this->pv;
         try {
           setRoundingMode();
-          ok = this->b->integrate(s, bwk, dt, mt).first;
+          auto sview = makeView(s);
+          ok = this->b->integrate(sview, bwk, dt, mt).first;
           setRoundingMode();
         } catch (...) {
           ok = false;
@@ -714,7 +718,8 @@ namespace mtest {
         s.e1[i] -= this->pv;
         try {
           setRoundingMode();
-          ok = this->b->integrate(s, bwk, dt, mt).first;
+          auto sview = makeView(s);
+          ok = this->b->integrate(sview, bwk, dt, mt).first;
           setRoundingMode();
         } catch (...) {
           ok = false;

@@ -66,7 +66,7 @@ namespace mtest {
      * \param[in] s: current state
      */
    virtual void buildMaterialProperties(BehaviourWorkSpace&,
-                                        const CurrentState&) const;
+                                        const CurrentStateView&) const;
    /*!
     * The umat interface can handle plane stress by calling the
     * generalised plane strain version of the behaviour.  In this

@@ -22,7 +22,7 @@
 #include"MFront/Ansys/Ansys.hxx"
 #include"MFront/Ansys/AnsysComputeStiffnessTensor.hxx"
 
-#include"MTest/CurrentState.hxx"
+#include"MTest/CurrentStateView.hxx"
 #include"MTest/BehaviourWorkSpace.hxx"
 #include"MTest/AnsysStandardBehaviour.hxx"
 
@@ -139,7 +139,6 @@ namespace mtest {
     wk.ne.resize(ndv);
     wk.ns.resize(nth);
     wk.nivs.resize(nstatev);
-    mtest::allocate(wk.cs,this->shared_from_this());
   } // end of AnsysStandardBehaviour::allocate
 
   StiffnessMatrixType AnsysStandardBehaviour::getDefaultStiffnessMatrixType()
@@ -149,17 +148,18 @@ namespace mtest {
 
   std::pair<bool, real> AnsysStandardBehaviour::computePredictionOperator(
       BehaviourWorkSpace& wk,
-      const CurrentState& s,
+      const CurrentStateView& s,
       const StiffnessMatrixType ktype) const {
     if(ktype==StiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES){
       return {false,real(-1)};
     }
-    wk.cs = s;
-    return this->call_behaviour(wk.kt,wk.cs,wk,real(1),ktype,false);
+    auto mv = makeMutableView(s);
+    auto v = mv.getView();
+    return this->call_behaviour(wk.kt, v, wk, real(1), ktype, false);
   }
 
   std::pair<bool, real> AnsysStandardBehaviour::integrate(
-      CurrentState& s,
+      CurrentStateView& s,
       BehaviourWorkSpace& wk,
       const real dt,
       const StiffnessMatrixType ktype) const {

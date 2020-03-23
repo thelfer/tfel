@@ -10,9 +10,9 @@ nobase_include_HEADERS = MTest/Config.hxx	                       \
 			 MTest/StudyCurrentState.hxx	                       \
 			 MTest/StudyCurrentState.ixx	                       \
 			 MTest/StructureCurrentState.hxx	                   \
+			 MTest/PackagingInformation.hxx	                       \
 			 MTest/CurrentState.hxx	                               \
 			 MTest/CurrentStateView.hxx	                           \
-			 MTest/CurrentStateView.ixx	                           \
 			 MTest/Scheme.hxx	                                   \
 			 MTest/SchemeBase.hxx	                               \
 			 MTest/SingleStructureScheme.hxx                       \

@@ -16,6 +16,7 @@
 #include "MFront/Castem/Castem.hxx"
 #include "MFront/MFrontLogStream.hxx"
 #include "MTest/Evolution.hxx"
+#include "MTest/CurrentStateView.hxx"
 #include "MTest/BehaviourWorkSpace.hxx"
 #include "MTest/CastemEvolution.hxx"
 #include "MTest/CastemStandardBehaviour.hxx"
@@ -163,7 +164,6 @@ namespace mtest {
     } else {
       wk.mps.resize(this->mpnames.size());
     }
-    mtest::allocate(wk.cs, this->shared_from_this());
   }  // end of CastemStandardBehaviour::allocate
 
   StiffnessMatrixType CastemStandardBehaviour::getDefaultStiffnessMatrixType()
@@ -355,7 +355,7 @@ namespace mtest {
      // CastemStandardBehaviour::setOptionalMaterialPropertiesDefaultValues
 
   void CastemStandardBehaviour::buildMaterialProperties(
-      BehaviourWorkSpace& wk, const CurrentState& s) const {
+      BehaviourWorkSpace& wk, const CurrentStateView& s) const {
     auto throw_if = [](const bool c, const std::string& m) {
       tfel::raise_if(
           c, "CastemSmallStrainBehaviour::buildMaterialProperties: " + m);

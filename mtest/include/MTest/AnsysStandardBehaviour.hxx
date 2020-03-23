@@ -1,22 +1,22 @@
-/*! 
+/*!
  * \file  mtest/include/MTest/AnsysStandardBehaviour.hxx
  * \brief
  * \author Thomas Helfer
  * \brief 07 avril 2013
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MTEST_MTESTANSYSSTANDARDBEHAVIOUR_HXX
-#define LIB_MTEST_MTESTANSYSSTANDARDBEHAVIOUR_HXX 
+#define LIB_MTEST_MTESTANSYSSTANDARDBEHAVIOUR_HXX
 
-#include"TFEL/Config/TFELConfig.hxx"
-#include"TFEL/System/ExternalFunctionsPrototypes.hxx"
-#include"MTest/StandardBehaviourBase.hxx"
+#include "TFEL/Config/TFELConfig.hxx"
+#include "TFEL/System/ExternalFunctionsPrototypes.hxx"
+#include "MTest/StandardBehaviourBase.hxx"
 
 namespace mtest {
 
@@ -25,8 +25,7 @@ namespace mtest {
    * the ansys interface
    */
   struct MTEST_VISIBILITY_EXPORT AnsysStandardBehaviour
-    : public StandardBehaviourBase
-  {
+      : public StandardBehaviourBase {
     /*!
      * \return the suffix associated with a modelling hypothesis
      * \param[in] h: hypothesis
@@ -45,8 +44,8 @@ namespace mtest {
      * \param[in] b : behaviour name
      */
     AnsysStandardBehaviour(const Hypothesis,
-			    const std::string&,
-			    const std::string&);
+                           const std::string&,
+                           const std::string&);
     /*!
      * \brief compute the *real* rotation matrix
      * \param[in] mp : material properties
@@ -54,9 +53,9 @@ namespace mtest {
      * \note this method is only meaningfull for the umat (Cast3M)
      * interface
      */
-    tfel::math::tmatrix<3u,3u,real>
-    getRotationMatrix(const tfel::math::vector<real>&,
-		      const tfel::math::tmatrix<3u,3u,real>&) const override;
+    tfel::math::tmatrix<3u, 3u, real> getRotationMatrix(
+        const tfel::math::vector<real>&,
+        const tfel::math::tmatrix<3u, 3u, real>&) const override;
     std::vector<std::string> getOptionalMaterialProperties() const override;
     void setOptionalMaterialPropertiesDefaultValues(
         EvolutionManager&, const EvolutionManager&) const override;
@@ -73,10 +72,10 @@ namespace mtest {
      * \param[in]  s     : current state
      * \param[in]  ktype : type of the stiffness matrix
      */
-    std::pair<bool,real>
-    computePredictionOperator(BehaviourWorkSpace&,
-			      const CurrentState&,
-			      const StiffnessMatrixType) const override;
+    std::pair<bool, real> computePredictionOperator(
+        BehaviourWorkSpace&,
+        const CurrentStateView&,
+        const StiffnessMatrixType) const override;
     /*!
      * \brief integrate the mechanical behaviour over the time step
      * \return a pair. The first member is true if the integration was
@@ -87,11 +86,10 @@ namespace mtest {
      * \param[in]     dt    : time increment
      * \param[in]     ktype : type of the stiffness matrix
      */
-    std::pair<bool,real>
-    integrate(CurrentState&,
-	      BehaviourWorkSpace&,
-	      const real,
-	      const StiffnessMatrixType) const override;
+    std::pair<bool, real> integrate(CurrentStateView&,
+                                    BehaviourWorkSpace&,
+                                    const real,
+                                    const StiffnessMatrixType) const override;
     /*!
      * \brief allocate internal workspace
      * \param[out] wk : behaviour workspace
@@ -99,7 +97,8 @@ namespace mtest {
     void allocate(BehaviourWorkSpace&) const override;
     //! destructor
     ~AnsysStandardBehaviour() override;
-  protected:
+
+   protected:
     /*!
      * \brief call the mechanical behaviour
      * \return a pair. The first member is true if the integration was
@@ -113,13 +112,12 @@ namespace mtest {
      * \param[in]     b     : if true, integrate the behaviour over the time
      * step, if false compute a prediction of the stiffness matrix
      */
-    virtual std::pair<bool,real>
-    call_behaviour(tfel::math::matrix<real>&,
-		   CurrentState&,
-		   BehaviourWorkSpace&,
-		   const real,
-		   const StiffnessMatrixType,
-		   const bool) const = 0;
+    virtual std::pair<bool, real> call_behaviour(tfel::math::matrix<real>&,
+                                                 CurrentStateView&,
+                                                 BehaviourWorkSpace&,
+                                                 const real,
+                                                 const StiffnessMatrixType,
+                                                 const bool) const = 0;
     /*!
      * \return the offset in the material properties list associated
      * with the definition of the orthotropic axes.
@@ -127,9 +125,8 @@ namespace mtest {
     size_type getOrthototropicAxesOffset() const;
     //! the ansys fonction
     tfel::system::AnsysFctPtr fct;
-  }; // end of struct Behaviour
-  
-} // end of namespace mtest
+  };  // end of struct Behaviour
+
+}  // end of namespace mtest
 
 #endif /* LIB_MTEST_MTESTANSYSSTANDARDBEHAVIOUR_HXX */
-

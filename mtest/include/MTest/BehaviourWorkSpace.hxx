@@ -19,7 +19,6 @@
 
 #include "MTest/Config.hxx"
 #include "MTest/Types.hxx"
-#include "MTest/CurrentState.hxx"
 
 namespace mtest {
 
@@ -37,8 +36,6 @@ namespace mtest {
     BehaviourWorkSpace& operator=(const BehaviourWorkSpace&) = delete;
     //! destructor
     ~BehaviourWorkSpace();
-    //! current state
-    CurrentState cs;
     //! prediction operator (used by mtest to build the global
     //! stiffness matrix)
     tfel::math::matrix<real> kt;

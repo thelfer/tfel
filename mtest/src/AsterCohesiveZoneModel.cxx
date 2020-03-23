@@ -19,7 +19,7 @@
 #include "TFEL/System/ExternalLibraryManager.hxx"
 #include "MFront/MFrontLogStream.hxx"
 #include "MFront/Aster/Aster.hxx"
-#include "MTest/CurrentState.hxx"
+#include "MTest/CurrentStateView.hxx"
 #include "MTest/BehaviourWorkSpace.hxx"
 #include "MTest/AsterCohesiveZoneModel.hxx"
 
@@ -63,7 +63,6 @@ namespace mtest {
     wk.ne.resize(ndv);
     wk.ns.resize(nth);
     wk.nivs.resize(nstatev);
-    mtest::allocate(wk.cs, this->shared_from_this());
   }
 
   void AsterCohesiveZoneModel::getGradientsDefaultInitialValues(
@@ -78,17 +77,18 @@ namespace mtest {
 
   std::pair<bool, real> AsterCohesiveZoneModel::computePredictionOperator(
       BehaviourWorkSpace& wk,
-      const CurrentState& s,
+      const CurrentStateView& s,
       const StiffnessMatrixType ktype) const {
     if (ktype == StiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES) {
       return {false, real(-1)};
     }
-    wk.cs = s;
-    return this->call_behaviour(wk.kt, wk.cs, wk, real(1), ktype, false);
+    auto mv = makeMutableView(s);
+    auto v = mv.getView();
+    return this->call_behaviour(wk.kt, v, wk, real(1), ktype, false);
   }  // end of AsterCohesiveZoneModel::computePredictionOperator
 
   std::pair<bool, real> AsterCohesiveZoneModel::integrate(
-      CurrentState& s,
+      CurrentStateView& s,
       BehaviourWorkSpace& wk,
       const real dt,
       const StiffnessMatrixType ktype) const {
@@ -97,7 +97,7 @@ namespace mtest {
 
   std::pair<bool, real> AsterCohesiveZoneModel::call_behaviour(
       tfel::math::matrix<real>& Kt,
-      CurrentState& s,
+      CurrentStateView& s,
       BehaviourWorkSpace& wk,
       const real dt,
       const StiffnessMatrixType ktype,

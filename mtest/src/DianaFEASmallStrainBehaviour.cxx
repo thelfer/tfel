@@ -27,7 +27,7 @@
 #include "MFront/DianaFEA/DianaFEAComputeStiffnessTensor.hxx"
 
 #include "MTest/Evolution.hxx"
-#include "MTest/CurrentState.hxx"
+#include "MTest/CurrentStateView.hxx"
 #include "MTest/BehaviourWorkSpace.hxx"
 #include "MTest/DianaFEASmallStrainBehaviour.hxx"
 #include "MTest/UmatNormaliseTangentOperator.hxx"
@@ -67,7 +67,6 @@ namespace mtest {
     wk.ns.resize(nth);
     wk.nivs.resize(nstatev);
     wk.mps.resize(this->mpnames.size());
-    mtest::allocate(wk.cs,this->shared_from_this());
   } // end of DianaFEASmallStrainBehaviour::allocate
 
   tfel::math::tmatrix<3u, 3u, real> DianaFEASmallStrainBehaviour::getRotationMatrix(
@@ -86,14 +85,15 @@ namespace mtest {
 
   std::pair<bool, real> DianaFEASmallStrainBehaviour::computePredictionOperator(
       BehaviourWorkSpace& wk,
-      const CurrentState& s,
+      const CurrentStateView& s,
       const StiffnessMatrixType ktype) const {
-    wk.cs = s;
-    return this->call_behaviour(wk.kt, wk.cs, wk, real(1), ktype, false);
+    auto mv = makeMutableView(s);
+    auto v = mv.getView();
+    return this->call_behaviour(wk.kt, v, wk, real(1), ktype, false);
   }  // end of DianaFEASmallStrainBehaviour::computePredictionOperator
 
   std::pair<bool, real> DianaFEASmallStrainBehaviour::integrate(
-      CurrentState& s,
+      CurrentStateView& s,
       BehaviourWorkSpace& wk,
       const real dt,
       const StiffnessMatrixType ktype) const {
@@ -102,7 +102,7 @@ namespace mtest {
 
   std::pair<bool, real> DianaFEASmallStrainBehaviour::call_behaviour(
       tfel::math::matrix<real>& Kt,
-      CurrentState& s,
+      CurrentStateView& s,
       BehaviourWorkSpace& wk,
       const real dt,
       const StiffnessMatrixType ktype,

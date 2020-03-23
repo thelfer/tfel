@@ -558,6 +558,8 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Utilities/StringAlgorithms.hxx                                                          \
 			TFEL/Utilities/FCString.hxx                                                                  \
 			TFEL/Utilities/FCString.ixx                                                                  \
+			TFEL/Utilities/Span.hxx                                                                  \
+			TFEL/Utilities/Span.ixx                                                                  \
 			TFEL/Tests/MultipleTestOutputs.hxx					                     \
 			TFEL/Tests/StdStreamTestOutput.hxx					                     \
 			TFEL/Tests/XMLTestOutput.hxx					                             \

@@ -31,7 +31,7 @@
 #include "MFront/Abaqus/Abaqus.hxx"
 #include "MFront/Abaqus/AbaqusComputeStiffnessTensor.hxx"
 
-#include "MTest/CurrentState.hxx"
+#include "MTest/CurrentStateView.hxx"
 #include "MTest/BehaviourWorkSpace.hxx"
 #include "MTest/UmatNormaliseTangentOperator.hxx"
 #include "MTest/AbaqusExplicitBehaviour.hxx"
@@ -173,13 +173,15 @@ namespace mtest {
   void AbaqusExplicitBehaviour::allocate(BehaviourWorkSpace& wk) const {
     const auto ndv = this->getGradientsSize();
     const auto nth = this->getThermodynamicForcesSize();
+    const auto nstatev = this->getInternalStateVariablesSize();
     wk.D.resize(nth, nth);
     wk.kt.resize(nth, ndv);
     wk.k.resize(nth, ndv);
     wk.mps.resize(this->mpnames.size() == 0 ? 1u : this->mpnames.size(),
                   real(0));
+    wk.ivs0.resize(nstatev);
+    wk.ivs.resize(nstatev);
     wk.evs.resize(this->evnames.size());
-    mtest::allocate(wk.cs, this->shared_from_this());
   }  // end of AbaqusExplicitBehaviour::allocate
 
   StiffnessMatrixType AbaqusExplicitBehaviour::getDefaultStiffnessMatrixType()
@@ -187,8 +189,8 @@ namespace mtest {
     return StiffnessMatrixType::ELASTIC;
   }
 
-  bool AbaqusExplicitBehaviour::doPackagingStep(CurrentState& s,
-                                                BehaviourWorkSpace& wk) const {
+  bool AbaqusExplicitBehaviour::doPackagingStep(
+      BehaviourWorkSpace& wk, const CurrentStateView& s) const {
     using tfel::math::matrix;
     using abaqus::AbaqusInt;
     auto throw_if = [](const bool c, const std::string& m) {
@@ -247,21 +249,23 @@ namespace mtest {
     for (decltype(wk.evs.size()) i = 0; i != wk.evs.size(); ++i) {
       wk.evs[i] = s.esv0(i) + s.desv(i);
     }
+    std::copy(s.iv0.begin(), s.iv0.end(), wk.ivs0.begin());
+    std::copy(s.iv0.begin(), s.iv0.end(), wk.ivs.begin());
     if (this->omp == 2u) {
       if ((h == ModellingHypothesis::PLANESTRESS) ||
           (h == ModellingHypothesis::AXISYMMETRICAL) ||
           (h == ModellingHypothesis::PLANESTRAIN)) {
-        throw_if(s.iv0.size() < 2, "invalid number of state variables");
-        s.iv0[0] = s.r(0, 0);
-        s.iv0[1] = s.r(1, 0);
+        throw_if(wk.ivs0.size() < 2, "invalid number of state variables");
+        wk.ivs0[0] = s.r(0, 0);
+        wk.ivs0[1] = s.r(1, 0);
       } else if (h == ModellingHypothesis::TRIDIMENSIONAL) {
-        throw_if(s.iv0.size() < 6, "invalid number of state variables");
-        s.iv0[0] = s.r(0, 0);
-        s.iv0[1] = s.r(1, 0);
-        s.iv0[2] = s.r(2, 0);
-        s.iv0[3] = s.r(0, 1);
-        s.iv0[4] = s.r(1, 1);
-        s.iv0[5] = s.r(2, 1);
+        throw_if(wk.ivs0.size() < 6, "invalid number of state variables");
+        wk.ivs0[0] = s.r(0, 0);
+        wk.ivs0[1] = s.r(1, 0);
+        wk.ivs0[2] = s.r(2, 0);
+        wk.ivs0[3] = s.r(0, 1);
+        wk.ivs0[4] = s.r(1, 1);
+        wk.ivs0[5] = s.r(2, 1);
       } else {
         throw_if(true, "unsupported hypothesis (" +
                            ModellingHypothesis::toString(h) + ")");
@@ -281,10 +285,10 @@ namespace mtest {
                   &(wk.mps[0]), &density, strainInc, nullptr, &(s.esv0[0]),
                   stretchOld, defgradOld,
                   s.esv0.size() == 1 ? nullptr : &(s.esv0[0]) + 1, stressOld,
-                  nstatv == 0 ? nullptr : &(s.iv0[0]), &s.se0, &s.de0,
+                  nstatv == 0 ? nullptr : &(wk.ivs0[0]), &s.se0, &s.de0,
                   &(wk.evs[0]), stretchNew, defgradNew,
                   wk.evs.size() == 1 ? nullptr : &(wk.evs[0]) + 1, stressNew,
-                  nstatv == 0 ? nullptr : &(s.iv1[0]), &s.se1, &s.de1, 0);
+                  nstatv == 0 ? nullptr : &(wk.ivs[0]), &s.se1, &s.de1, 0);
       if (h == ModellingHypothesis::PLANESTRESS) {
         const auto idx = (i == 2) ? 3 : i;
         K(0, idx) = stressNew[0];
@@ -384,7 +388,7 @@ namespace mtest {
 
   std::pair<bool, real> AbaqusExplicitBehaviour::computePredictionOperator(
       BehaviourWorkSpace& wk,
-      const CurrentState& s,
+      const CurrentStateView& s,
       const StiffnessMatrixType ktype) const {
     if (ktype == StiffnessMatrixType::ELASTIC) {
       const auto p = s.packaging_info.find("InitialElasticStiffness");
@@ -400,7 +404,7 @@ namespace mtest {
   }
 
   std::pair<bool, real> AbaqusExplicitBehaviour::integrate(
-      CurrentState& s,
+      CurrentStateView& s,
       BehaviourWorkSpace& wk,
       const real dt,
       const StiffnessMatrixType ktype) const {
@@ -449,21 +453,22 @@ namespace mtest {
     for (decltype(wk.evs.size()) i = 0; i != wk.evs.size(); ++i) {
       wk.evs[i] = s.esv0(i) + s.desv(i);
     }
+    std::copy(s.iv0.begin(), s.iv0.end(), wk.ivs0.begin());
     if (this->omp == 2u) {
       if ((h == ModellingHypothesis::PLANESTRESS) ||
           (h == ModellingHypothesis::AXISYMMETRICAL) ||
           (h == ModellingHypothesis::PLANESTRAIN)) {
-        throw_if(s.iv0.size() < 2, "invalid number of state variables");
-        s.iv0[0] = s.r(0, 0);
-        s.iv0[1] = s.r(1, 0);
+        throw_if(wk.ivs0.size() < 2, "invalid number of state variables");
+        wk.ivs0[0] = s.r(0, 0);
+        wk.ivs0[1] = s.r(1, 0);
       } else if (h == ModellingHypothesis::TRIDIMENSIONAL) {
-        throw_if(s.iv0.size() < 6, "invalid number of state variables");
-        s.iv0[0] = s.r(0, 0);
-        s.iv0[1] = s.r(1, 0);
-        s.iv0[2] = s.r(2, 0);
-        s.iv0[3] = s.r(0, 1);
-        s.iv0[4] = s.r(1, 1);
-        s.iv0[5] = s.r(2, 1);
+        throw_if(wk.ivs0.size() < 6, "invalid number of state variables");
+        wk.ivs0[0] = s.r(0, 0);
+        wk.ivs0[1] = s.r(1, 0);
+        wk.ivs0[2] = s.r(2, 0);
+        wk.ivs0[3] = s.r(0, 1);
+        wk.ivs0[4] = s.r(1, 1);
+        wk.ivs0[5] = s.r(2, 1);
       } else {
         throw_if(true, "unsupported hypothesis (" +
                            ModellingHypothesis::toString(h) + ")");
@@ -553,7 +558,7 @@ namespace mtest {
         &totalTime, &dt, nullptr, nullptr, nullptr, &(wk.mps[0]), &density,
         strainInc, nullptr, &(s.esv0[0]), stretchOld, defgradOld,
         s.esv0.size() == 1 ? nullptr : &(s.esv0[0]) + 1, stressOld,
-        nstatv == 0 ? nullptr : &(s.iv0[0]), &s.se0, &s.de0, &(wk.evs[0]),
+        nstatv == 0 ? nullptr : &(wk.ivs0[0]), &s.se0, &s.de0, &(wk.evs[0]),
         stretchNew, defgradNew, wk.evs.size() == 1 ? nullptr : &(wk.evs[0]) + 1,
         stressNew, nstatv == 0 ? nullptr : &(s.iv1[0]), &s.se1, &s.de1, 0);
     if ((h == ModellingHypothesis::PLANESTRESS) ||

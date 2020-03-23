@@ -17,6 +17,7 @@
 #include "MTest/Behaviour.hxx"
 #include "MTest/BehaviourWorkSpace.hxx"
 #include "MTest/CurrentState.hxx"
+#include "MTest/CurrentStateView.hxx"
 #include "MTest/StructureCurrentState.hxx"
 #include "MTest/PipeMesh.hxx"
 #include "MTest/PipeCubicElement.hxx"
@@ -193,14 +194,9 @@ namespace mtest {
       const auto pg = pg_radii[g];
       // current state
       auto& s = scs.istates[4 * i + g];
-      // radial position of the integration point
-      const auto rg = s.position;
-      const real sfv[4] = {sf0(rg), sf1(rg), sf2(rg), sf3(rg)};
-      const real dsfv[4] = {dsf0(rg), dsf1(rg), dsf2(rg), dsf3(rg)};
-      // jacobian of the transformation
-      const auto J = PipeCubicElement::jacobian(r0, r1, r2, r3, pg);
+      auto sview = makeView(s);
       setRoundingMode();
-      const auto rb = this->behaviour.integrate(s, bwk, dt, mt);
+      const auto rb = this->behaviour.integrate(sview, bwk, dt, mt);
       setRoundingMode();
       r_dt = (g == 0) ? rb.second : std::min(rb.second, r_dt);
       if (!rb.first) {
@@ -211,6 +207,12 @@ namespace mtest {
         }
         return {false, r_dt};
       }
+      // radial position of the integration point
+      const auto rg = s.position;
+      const real sfv[4] = {sf0(rg), sf1(rg), sf2(rg), sf3(rg)};
+      const real dsfv[4] = {dsf0(rg), dsf1(rg), dsf2(rg), dsf3(rg)};
+      // jacobian of the transformation
+      const auto J = PipeCubicElement::jacobian(r0, r1, r2, r3, pg);
       // stress tensor
       const auto pi_rr = s.s1[0];
       const auto pi_zz = s.s1[1];

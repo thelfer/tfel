@@ -14,120 +14,66 @@
 #ifndef LIB_MTEST_CURRENTSTATEVIEW_HXX
 #define LIB_MTEST_CURRENTSTATEVIEW_HXX
 
+#include <map>
+#include <string>
 #include <vector>
 #include <type_traits>
 
+#include "TFEL/Utilities/Span.hxx"
 #include "TFEL/Math/tmatrix.hxx"
 #include "MTest/Config.hxx"
 #include "MTest/Types.hxx"
+#include "MTest/PackagingInformation.hxx"
 
 namespace mtest {
 
   // forward declaration
   struct CurrentState;
 
-  namespace internals {
-
-    /*!
-     * \brief a simple implementation of `std::span` (not available in C++-11)
-     */
-    template <typename T, bool const_view = false>
-    struct VectorView {
-      //! a simple alias
-      using vector_type = typename std::conditional<const_view,
-                                                    const std::vector<T>,
-                                                    std::vector<T>>::type;
-      //! a simple alias
-      using value_type =
-          typename std::conditional<const_view, const T, T>::type;
-      //! a simple alias
-      using size_type = typename vector_type::size_type;
-      //! a simple alias
-      using iterator_type = value_type*;
-      //! a simple alias
-      using const_iterator_type = const value_type*;
-      //! \brief constructor
-      VectorView(vector_type&) noexcept;
-      //! \brief move constructor
-      VectorView(VectorView&&) noexcept;
-      //! \brief copy constructor
-      VectorView(const VectorView&) noexcept;
-      /*!
-       * \return the pointer to the first element or nullptr is the
-       * sequence is empty
-       */
-      value_type* begin() noexcept;
-      /*!
-       * \return a pointer after to last element or nullptr is the
-       * sequence is empty
-       */
-      value_type* end() noexcept;
-      //! \return the size of the buffer
-      size_type size() const noexcept;
-      //! \return true if the buffer has zero size
-      bool empty() const noexcept;
-      /*!
-       * \return the ith element
-       * \param[in] i: rank
-       */
-      value_type& operator[](const size_type) noexcept;
-      /*!
-       * \return the ith element
-       * \param[in] i: rank
-       */
-      value_type& operator()(const size_type) noexcept;
-
-     private:
-      //! pointer to the beginning of the buffer
-      value_type* const b;
-      //! size of the memory buffer
-      const size_type s;
-    }; // end of VectorView
-
-    //! \brief a simple alias
-    template <typename T>
-    using ConstVectorView = VectorView<T, true>;
-
-  };  // end of namespace internals
-
   /*!
    * \brief structure containing a view of the state of the material.
    */
   struct MTEST_VISIBILITY_EXPORT CurrentStateView {
     //! \brief default constructor
-    CurrentStateView(CurrentState&);
+    CurrentStateView(CurrentState&) noexcept;
     //! \brief copy constructor
-    CurrentStateView(const CurrentStateView&);
+    CurrentStateView(const CurrentStateView&) noexcept;
+    //! \partial copy constructor
+    CurrentStateView(const CurrentStateView& src,
+                     std::vector<real>& s1,
+                     std::vector<real>& iv1,
+                     real& se1,
+                     real& de1) noexcept;
     //! \brief move constructor
-    CurrentStateView(CurrentStateView&&);
+    CurrentStateView(CurrentStateView&&) noexcept;
     //! \brief assignement
-    CurrentStateView& operator=(const CurrentStateView&);
+    CurrentStateView& operator=(const CurrentStateView&) noexcept;
     //! \brief move assignement
-    CurrentStateView& operator=(CurrentStateView&&);
+    CurrentStateView& operator=(CurrentStateView&&) noexcept;
     //! \brief destructor
     ~CurrentStateView() noexcept;
     //! \brief thermodynamic forces at the beginning of the time step
-    mtest::internals::ConstVectorView<real> s0;
+    tfel::utilities::ConstSpan<real> s0;
     //! \brief thermodynamic forces at the end of the time step
-    mtest::internals::VectorView<real> s1;
+    tfel::utilities::Span<real> s1;
     //! \brief driving variables at the beginning of the time step
-    mtest::internals::ConstVectorView<real> e0;
+    tfel::utilities::ConstSpan<real> e0;
     //! \brief driving variables at the end of the time step
-    mtest::internals::VectorView<real> e1;
+    tfel::utilities::ConstSpan<real> e1;
     //! \brief thermal strain at the beginning of the time step
-    mtest::internals::ConstVectorView<real> e_th0;
+    tfel::utilities::ConstSpan<real> e_th0;
     //! \brief thermal strain at the end of the time step
-    mtest::internals::VectorView<real> e_th1;
+    tfel::utilities::ConstSpan<real> e_th1;
     //! \brief material properties at the end of the time step
-    mtest::internals::ConstVectorView<real> mprops1;
+    tfel::utilities::ConstSpan<real> mprops1;
     //! \brief internal variables at the beginning of the time step
-    mtest::internals::ConstVectorView<real> iv0;
+    tfel::utilities::ConstSpan<real> iv0;
     //! \brief internal variables at the end of the time step
-    mtest::internals::VectorView<real> iv1;
+    tfel::utilities::Span<real> iv1;
     //! \brief external variables at the beginning of the time step
-    mtest::internals::ConstVectorView<real> esv0;
+    tfel::utilities::ConstSpan<real> esv0;
     //! \brief external variables increments
-    mtest::internals::ConstVectorView<real> desv;
+    tfel::utilities::ConstSpan<real> desv;
     //! \brief stored energy at the beginning of the time step
     const real& se0;
     //! \brief stored energy at the end of the time step
@@ -138,10 +84,56 @@ namespace mtest {
     real& de1;
     //! \brief rotation matrix
     const tfel::math::tmatrix<3u, 3u>& r;
+    //! \brief information collected during the packaging stage
+    std::map<std::string, PackagingInformation>& packaging_info;
   };  // end of struct CurrentStateView
 
-}  // end of namespace mtest
+  /*!
+   * \brief An helper structure which is used to turned a constant
+   * CurrentStateView into a mutable one.
+   */
+  struct MutableCurrentStateViewCopy {
+    //! \brief default constructor
+    MutableCurrentStateViewCopy() noexcept;
+    //! \brief default constructor
+    MutableCurrentStateViewCopy(const CurrentStateView&) noexcept;
+    //! \brief move constructor
+    MutableCurrentStateViewCopy(MutableCurrentStateViewCopy&&) noexcept;
+    //! \brief copy constructor
+    MutableCurrentStateViewCopy(const MutableCurrentStateViewCopy&) noexcept;
+    //! \brief move assignement
+    MutableCurrentStateViewCopy& operator=(
+        MutableCurrentStateViewCopy&&) noexcept;
+    //! \brief copy assignement
+    MutableCurrentStateViewCopy& operator=(
+        const MutableCurrentStateViewCopy&) noexcept;
+    //! \return a mutable view
+    CurrentStateView getView();
 
-#include "MTest/CurrentStateView.ixx"
+   private:
+    //! \brief reference to the original state view
+    const CurrentStateView& v;
+    //! \brief local copy of thermodynamic forces at the end of the time step
+    std::vector<real> s1;
+    //! \brief local copy of the internal variables at the end of the time step
+    std::vector<real> iv1;
+    //! \brief local copy of the stored energy at the end of the time step
+    real se1;
+    //! \brief local copy of the dissipated energy at the end of the time step
+    real de1;
+  };  // end of struct MutableCurrentStateViewCopy
+
+  /*!
+   * \brief a simple utility function
+   * \param[in] s: a state
+   */
+  CurrentStateView makeView(CurrentState&);
+  /*!
+   * \brief a simple utility function
+   * \param[in] s: a state view
+   */
+  MutableCurrentStateViewCopy makeMutableView(const CurrentStateView&);
+
+}  // end of namespace mtest
 
 #endif /* LIB_MTEST_CURRENTSTATEVIEW_HXX */

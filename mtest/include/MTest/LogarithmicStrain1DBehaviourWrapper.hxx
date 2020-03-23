@@ -107,12 +107,13 @@ namespace mtest {
     tfel::math::tmatrix<3u, 3u, real> getRotationMatrix(
         const tfel::math::vector<real>&,
         const tfel::math::tmatrix<3u, 3u, real>&) const override;
-    bool doPackagingStep(CurrentState&, BehaviourWorkSpace&) const override;
+    bool doPackagingStep(BehaviourWorkSpace&,
+                         const CurrentStateView&) const override;
     std::pair<bool, real> computePredictionOperator(
         BehaviourWorkSpace&,
-        const CurrentState&,
+        const CurrentStateView&,
         const StiffnessMatrixType) const override;
-    std::pair<bool, real> integrate(CurrentState&,
+    std::pair<bool, real> integrate(CurrentStateView&,
                                     BehaviourWorkSpace&,
                                     const real,
                                     const StiffnessMatrixType) const override;

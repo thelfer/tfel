@@ -2145,6 +2145,8 @@ include/TFEL/Utilities/GenTypeBase.ixx -text
 include/TFEL/Utilities/GenTypeBase_MSC.hxx -text
 include/TFEL/Utilities/GenTypeCastError.hxx -text
 include/TFEL/Utilities/GenTypeSpecialisation.ixx -text
+include/TFEL/Utilities/Span.hxx -text
+include/TFEL/Utilities/Span.ixx -text
 include/TFEL/Utilities/StringAlgorithms.hxx -text
 include/TFEL/Utilities/TerminalColors.hxx -text
 include/TFEL/Utilities/TextData.hxx -text
@@ -6255,7 +6257,6 @@ mtest/include/MTest/CrossedDelta2AccelerationAlgorithm.hxx -text
 mtest/include/MTest/CrossedSecantAccelerationAlgorithm.hxx -text
 mtest/include/MTest/CurrentState.hxx -text
 mtest/include/MTest/CurrentStateView.hxx -text
-mtest/include/MTest/CurrentStateView.ixx -text
 mtest/include/MTest/CyranoBehaviour.hxx -text
 mtest/include/MTest/CyranoEvolution.hxx -text
 mtest/include/MTest/DianaFEASmallStrainBehaviour.hxx -text
@@ -6278,6 +6279,7 @@ mtest/include/MTest/MTest.hxx -text
 mtest/include/MTest/MTestParser.hxx -text
 mtest/include/MTest/MistralBehaviour.hxx -text
 mtest/include/MTest/NonLinearConstraint.hxx -text
+mtest/include/MTest/PackagingInformation.hxx -text
 mtest/include/MTest/PipeCubicElement.hxx -text
 mtest/include/MTest/PipeElement.hxx -text
 mtest/include/MTest/PipeElementBase.hxx -text

@@ -113,6 +113,8 @@ install_header(TFEL/Utilities GenTypeSpecialisation.ixx)
 install_header(TFEL/Utilities TextData.hxx)
 install_header(TFEL/Utilities FCString.hxx)
 install_header(TFEL/Utilities FCString.ixx)
+install_header(TFEL/Utilities Span.hxx)
+install_header(TFEL/Utilities Span.ixx)
 
 install_header(TFEL/Exception TFELException.hxx)
 

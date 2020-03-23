@@ -36,10 +36,12 @@ namespace mtest {
   // forward declaration
   struct CurrentState;
   // forward declaration
+  struct CurrentStateView;
+  // forward declaration
   struct BehaviourWorkSpace;
 
   //! A simple wrapper around mechanical behaviours
-  struct MTEST_VISIBILITY_EXPORT Behaviour : std::enable_shared_from_this<Behaviour> {
+  struct MTEST_VISIBILITY_EXPORT Behaviour {
     //! a simple alias
     using Parameters = tfel::utilities::Data;
     //! a simple alias
@@ -293,7 +295,8 @@ namespace mtest {
      * \param[out] wk : behaviour workspace
      * \param[in] s   : current state
      */
-    virtual bool doPackagingStep(CurrentState&, BehaviourWorkSpace&) const = 0;
+    virtual bool doPackagingStep(BehaviourWorkSpace&,
+                                 const CurrentStateView&) const = 0;
     /*!
      * \brief compute the prediction operator at the beginning of the
      * time step.
@@ -304,9 +307,10 @@ namespace mtest {
      * \param[in]  s     : current state
      * \param[in]  ktype : type of the stiffness matrix
      */
-    virtual std::pair<bool, real> computePredictionOperator(BehaviourWorkSpace&,
-                                                            const CurrentState&,
-                                                            const StiffnessMatrixType) const = 0;
+    virtual std::pair<bool, real> computePredictionOperator(
+        BehaviourWorkSpace&,
+        const CurrentStateView&,
+        const StiffnessMatrixType) const = 0;
     /*!
      * \brief integrate the mechanical behaviour over the time step
      * \return a pair. The first member is true if the integration was
@@ -317,7 +321,7 @@ namespace mtest {
      * \param[in]     dt    : time increment
      * \param[in]     ktype : type of the stiffness matrix
      */
-    virtual std::pair<bool, real> integrate(CurrentState&,
+    virtual std::pair<bool, real> integrate(CurrentStateView&,
                                             BehaviourWorkSpace&,
                                             const real,
                                             const StiffnessMatrixType) const = 0;

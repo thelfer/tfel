@@ -19,7 +19,7 @@
 #include "TFEL/Math/tmatrix.hxx"
 #include "TFEL/System/ExternalLibraryManager.hxx"
 #include "MFront/Castem/Castem.hxx"
-#include "MTest/CurrentState.hxx"
+#include "MTest/CurrentStateView.hxx"
 #include "MTest/BehaviourWorkSpace.hxx"
 #include "MTest/CastemCohesiveZoneModel.hxx"
 
@@ -72,7 +72,6 @@ namespace mtest {
     wk.ne.resize(ndv);
     wk.ns.resize(nth);
     wk.nivs.resize(nstatev);
-    mtest::allocate(wk.cs, this->shared_from_this());
   }
 
   void CastemCohesiveZoneModel::getGradientsDefaultInitialValues(
@@ -87,7 +86,7 @@ namespace mtest {
 
   std::pair<bool, real> CastemCohesiveZoneModel::computePredictionOperator(
       BehaviourWorkSpace& wk,
-      const CurrentState& s,
+      const CurrentStateView& s,
       const StiffnessMatrixType ktype) const {
     if (ktype == StiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES) {
       // rotation matrix
@@ -102,7 +101,7 @@ namespace mtest {
   }  // end of CastemCohesiveZoneModel::computePredictionOperator
 
   std::pair<bool, real> CastemCohesiveZoneModel::integrate(
-      CurrentState& s,
+      CurrentStateView& s,
       BehaviourWorkSpace& wk,
       const real dt,
       const StiffnessMatrixType ktype) const {
@@ -213,7 +212,7 @@ namespace mtest {
 
   void CastemCohesiveZoneModel::computeElasticStiffness(
       tfel::math::matrix<real>& Kt,
-      const tfel::math::vector<real>& mp,
+      const tfel::utilities::ConstSpan<real>& mp,
       const tfel::math::tmatrix<3u, 3u, real>&) const {
     using namespace tfel::math;
     if (this->stype == 0u) {

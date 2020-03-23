@@ -1,20 +1,21 @@
-/*! 
+/*!
  * \file   mtest/include/MTest/CastemFiniteStrainBehaviour.hxx
  * \brief
  * \author Thomas Helfer
  * \brief  18 november 2013
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MTEST_CASTEMFINITESTRAINUMATBEHAVIOUR_HXX
-#define LIB_MTEST_CASTEMFINITESTRAINUMATBEHAVIOUR_HXX 
+#define LIB_MTEST_CASTEMFINITESTRAINUMATBEHAVIOUR_HXX
 
-#include"MTest/CastemStandardBehaviour.hxx"
+#include "TFEL/Utilities/Span.hxx"
+#include "MTest/CastemStandardBehaviour.hxx"
 
 namespace mtest {
 
@@ -23,16 +24,15 @@ namespace mtest {
    * interface
    */
   struct TFEL_VISIBILITY_LOCAL CastemFiniteStrainBehaviour
-    : public CastemStandardBehaviour
-  {
+      : public CastemStandardBehaviour {
     /*!
      * \param[in] h : modelling hypothesis
      * \param[in] l : library name
      * \param[in] b : behaviour name
      */
     CastemFiniteStrainBehaviour(const Hypothesis,
-				const std::string&,
-				const std::string&);
+                                const std::string&,
+                                const std::string&);
     /*!
      * \param[in] umb: behaviour description
      */
@@ -42,9 +42,9 @@ namespace mtest {
         tfel::math::vector<real>&) const override;
     std::pair<bool, real> computePredictionOperator(
         BehaviourWorkSpace&,
-        const CurrentState&,
+        const CurrentStateView&,
         const StiffnessMatrixType) const override;
-    std::pair<bool, real> integrate(CurrentState&,
+    std::pair<bool, real> integrate(CurrentStateView&,
                                     BehaviourWorkSpace&,
                                     const real,
                                     const StiffnessMatrixType) const override;
@@ -55,20 +55,20 @@ namespace mtest {
     const char* getBehaviourNameForUMATFunctionCall() const override;
     //! destructor
     ~CastemFiniteStrainBehaviour() override;
-  protected:
+
+   protected:
     /*!
      * \brief compute the elastic stiffness
      * \param[out] Kt   : tangent operator
      * \param[in]  mp   : material properties
      * \param[in]  drot : rotation matrix (Fortran convention)
      */
-   virtual void computeElasticStiffness(
-       tfel::math::matrix<real>&,
-       const tfel::math::vector<real>&,
-       const tfel::math::tmatrix<3u, 3u, real>&) const;
-  }; // end of struct Behaviour
-  
-} // end of namespace mtest
+    virtual void computeElasticStiffness(
+        tfel::math::matrix<real>&,
+        const tfel::utilities::ConstSpan<real>&,
+        const tfel::math::tmatrix<3u, 3u, real>&) const;
+  };  // end of struct Behaviour
+
+}  // end of namespace mtest
 
 #endif /* LIB_MTEST_CASTEMFINITESTRAINUMATBEHAVIOUR_HXX */
-

@@ -18,22 +18,16 @@
 #include <string>
 
 #include "TFEL/Math/vector.hxx"
-#include "TFEL/Math/matrix.hxx"
 #include "TFEL/Math/tmatrix.hxx"
-#include "TFEL/Utilities/GenTypeBase.hxx"
 
 #include "MTest/Config.hxx"
 #include "MTest/Types.hxx"
+#include "MTest/PackagingInformation.hxx"
 
 namespace mtest {
 
   // forward declaration
   struct Behaviour;
-  /*!
-   * an helper structure used to store information for the packaging step
-   */
-  using PackagingInfo = tfel::utilities::GenType<tfel::math::vector<real>,
-                                                 tfel::math::matrix<real>>;
 
   /*!
    * structure containing the state of the material.
@@ -115,7 +109,7 @@ namespace mtest {
     //! \brief reference Temperature
     real Tref = 293.15;
     //! \brief information collected during the packaging stage
-    std::map<std::string, PackagingInfo> packaging_info;
+    std::map<std::string, PackagingInformation> packaging_info;
   };  // end of struct CurrentState
       /*!
        * \brief allocate memory

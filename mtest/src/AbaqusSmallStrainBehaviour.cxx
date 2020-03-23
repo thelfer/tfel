@@ -22,7 +22,7 @@
 #include "MFront/Abaqus/Abaqus.hxx"
 #include "MFront/Abaqus/AbaqusComputeStiffnessTensor.hxx"
 
-#include "MTest/CurrentState.hxx"
+#include "MTest/CurrentStateView.hxx"
 #include "MTest/BehaviourWorkSpace.hxx"
 #include "MTest/UmatNormaliseTangentOperator.hxx"
 #include "MTest/AbaqusSmallStrainBehaviour.hxx"
@@ -41,7 +41,7 @@ namespace mtest {
 
   std::pair<bool, real> AbaqusSmallStrainBehaviour::call_behaviour(
       tfel::math::matrix<real>& Kt,
-      CurrentState& s,
+      CurrentStateView& s,
       BehaviourWorkSpace& wk,
       const real dt,
       const StiffnessMatrixType ktype,
@@ -80,29 +80,30 @@ namespace mtest {
     }
     // using a local copy of internal state variables to handle the
     // case where s.iv0 is empty
+    std::copy(s.iv0.begin(), s.iv0.end(), wk.ivs.begin());
+    const auto nstatv = static_cast<AbaqusInt>(wk.ivs.size());
+    // treating the rotation matrix
     if ((this->stype == 1u) && (this->omp == 2u)) {
       if ((h == ModellingHypothesis::PLANESTRESS) ||
           (h == ModellingHypothesis::AXISYMMETRICAL) ||
           (h == ModellingHypothesis::PLANESTRAIN)) {
         throw_if(s.iv0.size() < 2, "invalid number of state variables");
-        s.iv0[0] = s.r(0, 0);
-        s.iv0[1] = s.r(1, 0);
+        wk.ivs[0] = s.r(0, 0);
+        wk.ivs[1] = s.r(1, 0);
       } else if (h == ModellingHypothesis::TRIDIMENSIONAL) {
         throw_if(s.iv0.size() < 6, "invalid number of state variables");
-        s.iv0[0] = s.r(0, 0);
-        s.iv0[1] = s.r(1, 0);
-        s.iv0[2] = s.r(2, 0);
-        s.iv0[3] = s.r(0, 1);
-        s.iv0[4] = s.r(1, 1);
-        s.iv0[5] = s.r(2, 1);
+        wk.ivs[0] = s.r(0, 0);
+        wk.ivs[1] = s.r(1, 0);
+        wk.ivs[2] = s.r(2, 0);
+        wk.ivs[3] = s.r(0, 1);
+        wk.ivs[4] = s.r(1, 1);
+        wk.ivs[5] = s.r(2, 1);
       } else {
         throw_if(true, "unsupported hypothesis (" +
                            ModellingHypothesis::toString(h) + ")");
       }
     }
-    std::copy(s.iv0.begin(), s.iv0.end(), wk.ivs.begin());
-    const auto nstatv = static_cast<AbaqusInt>(wk.ivs.size());
-    // rotation matrix, set to identity
+    // incremental rotation matrix, set to identity
     const tmatrix<3u, 3u, real> drot = {1, 0, 0, 0, 1, 0, 0, 0, 1};
     stensor<3u, real> ue0(real(0));
     stensor<3u, real> ude(real(0));

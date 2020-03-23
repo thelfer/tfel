@@ -17,6 +17,7 @@
 #include "MTest/Behaviour.hxx"
 #include "MTest/BehaviourWorkSpace.hxx"
 #include "MTest/CurrentState.hxx"
+#include "MTest/CurrentStateView.hxx"
 #include "MTest/StructureCurrentState.hxx"
 #include "MTest/PipeMesh.hxx"
 #include "MTest/PipeLinearElement.hxx"
@@ -120,8 +121,9 @@ namespace mtest {
       const auto rg = interpolate(this->inner_radius, this->outer_radius, pg);
       // current state
       auto& s = scs.istates[2 * (this->index) + g];
+      auto sview = makeView(s);
       setRoundingMode();
-      const auto rb = this->behaviour.integrate(s, bwk, dt, mt);
+      const auto rb = this->behaviour.integrate(sview, bwk, dt, mt);
       setRoundingMode();
       r_dt = (g == 0) ? rb.second : std::min(rb.second, r_dt);
       if (!rb.first) {

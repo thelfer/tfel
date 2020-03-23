@@ -23,7 +23,7 @@
 #include "MFront/Ansys/Ansys.hxx"
 #include "MFront/Ansys/AnsysComputeStiffnessTensor.hxx"
 
-#include "MTest/CurrentState.hxx"
+#include "MTest/CurrentStateView.hxx"
 #include "MTest/BehaviourWorkSpace.hxx"
 #include "MTest/AnsysNormaliseTangentOperator.hxx"
 #include "MTest/AnsysFiniteStrainBehaviour.hxx"
@@ -43,7 +43,7 @@ namespace mtest {
 
   std::pair<bool, real> AnsysFiniteStrainBehaviour::call_behaviour(
       tfel::math::matrix<real>& Kt,
-      CurrentState& s,
+      CurrentStateView& s,
       BehaviourWorkSpace& wk,
       const real dt,
       const StiffnessMatrixType ktype,

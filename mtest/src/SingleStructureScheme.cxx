@@ -26,6 +26,7 @@
 #include"MTest/StudyCurrentState.hxx"
 #include"MTest/StructureCurrentState.hxx"
 #include"MTest/CurrentState.hxx"
+#include"MTest/CurrentStateView.hxx"
 #include"MTest/SingleStructureScheme.hxx"
 
 namespace mtest{
@@ -237,13 +238,13 @@ namespace mtest{
     checkIfDeclared(esvnames,*(this->evm),"external state variable");
   } // end of SingleStructureScheme::completeInitialisation
 
-  bool SingleStructureScheme::doPackagingStep(StudyCurrentState& state) const
-  {
+  bool SingleStructureScheme::doPackagingStep(StudyCurrentState& state) const {
     auto& scs = state.getStructureCurrentState("");
     auto& bwk = scs.getBehaviourWorkSpace();
     for(auto& s : scs.istates){
-      if(!this->b->doPackagingStep(s,bwk)){
-	return false;
+      const auto v = makeView(s);
+      if (!this->b->doPackagingStep(bwk, v)) {
+        return false;
       }
     }
     return true;

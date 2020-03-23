@@ -116,7 +116,8 @@ namespace mtest {
     std::vector<std::string> getOptionalMaterialProperties() const override;
     void setOptionalMaterialPropertiesDefaultValues(
         EvolutionManager&, const EvolutionManager&) const override;
-    bool doPackagingStep(CurrentState&, BehaviourWorkSpace&) const override;
+    bool doPackagingStep(BehaviourWorkSpace&,
+                         const CurrentStateView&) const override;
     //! destructor
     ~StandardBehaviourBase() override;
 

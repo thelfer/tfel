@@ -19,24 +19,24 @@
 #include "TFEL/Raise.hxx"
 #include "TFEL/FSAlgorithm/copy.hxx"
 #include "MTest/RoundingMode.hxx"
-#include "MTest/CurrentState.hxx"
+#include "MTest/CurrentStateView.hxx"
 #include "MTest/BehaviourWorkSpace.hxx"
 #include "MTest/LogarithmicStrain1DBehaviourWrapper.hxx"
 
 namespace mtest {
 
   static void convertStiffness(tfel::math::matrix<real>& k,
-                               const tfel::math::vector<real>& e,
-                               const tfel::math::vector<real>& s) {
-    k(0, 0) = (-s(0) + k(0, 0) / (1 + e(0))) / (1 + e(0));
-    k(1, 1) = (-s(1) + k(1, 1) / (1 + e(1))) / (1 + e(1));
-    k(2, 2) = (-s(2) + k(2, 2) / (1 + e(2))) / (1 + e(2));
-    k(0, 1) = k(0, 1) / ((1 + e(1)) * (1 + e(0)));
-    k(1, 0) = k(1, 0) / ((1 + e(0)) * (1 + e(1)));
-    k(2, 0) = k(2, 0) / ((1 + e(2)) * (1 + e(0)));
-    k(0, 2) = k(0, 2) / ((1 + e(0)) * (1 + e(2)));
-    k(1, 2) = k(1, 2) / ((1 + e(2)) * (1 + e(1)));
-    k(2, 1) = k(2, 1) / ((1 + e(1)) * (1 + e(2)));
+                               const real* const e,
+                               const real* const s) {
+    k(0, 0) = (-s[0] + k(0, 0) / (1 + e[0])) / (1 + e[0]);
+    k(1, 1) = (-s[1] + k(1, 1) / (1 + e[1])) / (1 + e[1]);
+    k(2, 2) = (-s[2] + k(2, 2) / (1 + e[2])) / (1 + e[2]);
+    k(0, 1) = k(0, 1) / ((1 + e[1]) * (1 + e[0]));
+    k(1, 0) = k(1, 0) / ((1 + e[0]) * (1 + e[1]));
+    k(2, 0) = k(2, 0) / ((1 + e[2]) * (1 + e[0]));
+    k(0, 2) = k(0, 2) / ((1 + e[0]) * (1 + e[2]));
+    k(1, 2) = k(1, 2) / ((1 + e[2]) * (1 + e[1]));
+    k(2, 1) = k(2, 1) / ((1 + e[1]) * (1 + e[2]));
   }
 
   LogarithmicStrain1DBehaviourWrapper::LogarithmicStrain1DBehaviourWrapper(
@@ -147,7 +147,7 @@ namespace mtest {
       const std::string& c) const {
     return this->b->getThermodynamicForceComponentPosition(c);
   }  // end of
-     // LogarithmicStrain1DBehaviourWrapper::getThermodynamicForceComponentPosition
+  // LogarithmicStrain1DBehaviourWrapper::getThermodynamicForceComponentPosition
 
   std::vector<std::pair<std::string, std::string>>
   LogarithmicStrain1DBehaviourWrapper::getTangentOperatorBlocks() const {
@@ -366,17 +366,16 @@ namespace mtest {
   }  // end of LogarithmicStrain1DBehaviourWrapper::getRotationMatrix
 
   bool LogarithmicStrain1DBehaviourWrapper::doPackagingStep(
-      CurrentState& s, BehaviourWorkSpace& wk) const {
-    return this->b->doPackagingStep(s, wk);
+      BehaviourWorkSpace& wk, const CurrentStateView& s) const {
+    return this->b->doPackagingStep(wk, s);
   }  // end of LogarithmicStrain1DBehaviourWrapper::doPackagingStep
 
   std::pair<bool, real>
   LogarithmicStrain1DBehaviourWrapper::computePredictionOperator(
       BehaviourWorkSpace& wk,
-      const CurrentState& s,
+      const CurrentStateView& s,
       const StiffnessMatrixType ktype) const {
     const auto eps = std::numeric_limits<real>::epsilon();
-    auto cs = s;
     // logarithmic strains
     if ((1 + s.e0[0] < eps) || (1 + s.e0[1] < eps) || (1 + s.e0[2] < eps) ||
         (1 + s.e1[0] < eps) || (1 + s.e1[1] < eps) || (1 + s.e1[2] < eps) ||
@@ -385,25 +384,31 @@ namespace mtest {
         (1 + s.e_th1[1] < eps) || (1 + s.e_th1[2] < eps)) {
       return {false, 0.5};
     }
-    cs.e0[0] = std::log1p(s.e0[0]);
-    cs.e0[1] = std::log1p(s.e0[1]);
-    cs.e0[2] = std::log1p(s.e0[2]);
-    cs.e1[0] = cs.e0[0];
-    cs.e1[1] = cs.e0[1];
-    cs.e1[2] = cs.e0[2];
-    cs.e_th0[0] = std::log1p(s.e_th0[0]);
-    cs.e_th0[1] = std::log1p(s.e_th0[1]);
-    cs.e_th0[2] = std::log1p(s.e_th0[2]);
-    cs.e_th1[0] = std::log1p(s.e_th1[0]);
-    cs.e_th1[1] = std::log1p(s.e_th1[1]);
-    cs.e_th1[2] = std::log1p(s.e_th1[2]);
+    // copying the view
+    auto cs = s;
+    // computing the logarithmic strains and its dual at the beginning of the
+    // time step
+    real e0[3];
+    real e_th0[3];
+    real s0[3];
+    e0[0] = std::log1p(s.e0[0]);
+    e0[1] = std::log1p(s.e0[1]);
+    e0[2] = std::log1p(s.e0[2]);
+    e_th0[0] = std::log1p(s.e_th0[0]);
+    e_th0[1] = std::log1p(s.e_th0[1]);
+    e_th0[2] = std::log1p(s.e_th0[2]);
     // stresses
-    cs.s0[0] = s.s0[0] * (1 + s.e0[0]);
-    cs.s0[1] = s.s0[1] * (1 + s.e0[1]);
-    cs.s0[2] = s.s0[2] * (1 + s.e0[2]);
-    cs.s1[0] = cs.s0[0];
-    cs.s1[1] = cs.s0[1];
-    cs.s1[2] = cs.s0[2];
+    s0[0] = s.s0[0] * (1 + s.e0[0]);
+    s0[1] = s.s0[1] * (1 + s.e0[1]);
+    s0[2] = s.s0[2] * (1 + s.e0[2]);
+    //
+    cs.e0 = tfel::utilities::ConstSpan<real>(e0, 3);
+    cs.e1 = tfel::utilities::ConstSpan<real>(e0, 3);
+    cs.e_th0 = tfel::utilities::ConstSpan<real>(e_th0, 3);
+    cs.e_th1 = tfel::utilities::ConstSpan<real>(e_th0, 3);
+    cs.s0 = tfel::utilities::ConstSpan<real>(s0, 3);
+    cs.s1 = tfel::utilities::Span<real>(s0, 3);
+    //
     const auto r = this->b->computePredictionOperator(wk, cs, ktype);
     if (!r.first) {
       return r;
@@ -412,13 +417,13 @@ namespace mtest {
     if ((ktype != StiffnessMatrixType::NOSTIFFNESS) &&
         (ktype != StiffnessMatrixType::UNSPECIFIEDSTIFFNESSMATRIXTYPE) &&
         (ktype != StiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES)) {
-      convertStiffness(wk.kt, s.e0, s.s0);
+      convertStiffness(wk.kt, e0, s0);
     }
     return r;
   }  // end of LogarithmicStrain1DBehaviourWrapper::computePredictionOperator
 
   std::pair<bool, real> LogarithmicStrain1DBehaviourWrapper::integrate(
-      CurrentState& s,
+      CurrentStateView& s,
       BehaviourWorkSpace& wk,
       const real dt,
       const StiffnessMatrixType ktype) const {
@@ -431,55 +436,55 @@ namespace mtest {
         (1 + s.e_th1[1] < eps) || (1 + s.e_th1[2] < eps)) {
       return {false, 0.5};
     }
+    // logarithmic strain
     real e0[3];
     real e1[3];
+    e0[0] = std::log1p(s.e0[0]);
+    e0[1] = std::log1p(s.e0[1]);
+    e0[2] = std::log1p(s.e0[2]);
+    e1[0] = std::log1p(s.e1[0]);
+    e1[1] = std::log1p(s.e1[1]);
+    e1[2] = std::log1p(s.e1[2]);
+    // stresses
+    real s0[3];
+    real s1[3];
+    s0[0] = s.s0[0] * (1 + s.e0[0]);
+    s0[1] = s.s0[1] * (1 + s.e0[1]);
+    s0[2] = s.s0[2] * (1 + s.e0[2]);
+    tfel::fsalgo::copy<3u>::exe(s0, s1);
+    // thermal strain
     real e_th0[3];
     real e_th1[3];
-    real s0[3];
-    // logarithmic strains
-    tfel::fsalgo::copy<3u>::exe(s.e0.begin(), e0);
-    tfel::fsalgo::copy<3u>::exe(s.e1.begin(), e1);
-    tfel::fsalgo::copy<3u>::exe(s.s0.begin(), s0);
-    s.e0[0] = std::log1p(e0[0]);
-    s.e0[1] = std::log1p(e0[1]);
-    s.e0[2] = std::log1p(e0[2]);
-    s.e1[0] = std::log1p(e1[0]);
-    s.e1[1] = std::log1p(e1[1]);
-    s.e1[2] = std::log1p(e1[2]);
-    // stresses
-    s.s0[0] = s0[0] * (1 + e0[0]);
-    s.s0[1] = s0[1] * (1 + e0[1]);
-    s.s0[2] = s0[2] * (1 + e0[2]);
-    // thermal strain
-    tfel::fsalgo::copy<3u>::exe(s.e_th0.begin(), e_th0);
-    tfel::fsalgo::copy<3u>::exe(s.e_th1.begin(), e_th1);
-    s.e_th0[0] = std::log1p(e_th0[0]);
-    s.e_th0[1] = std::log1p(e_th0[1]);
-    s.e_th0[2] = std::log1p(e_th0[2]);
-    s.e_th1[0] = std::log1p(e_th1[0]);
-    s.e_th1[1] = std::log1p(e_th1[1]);
-    s.e_th1[2] = std::log1p(e_th1[2]);
-    tfel::fsalgo::copy<3u>::exe(s.s0.begin(), s.s1.begin());
+    e_th0[0] = std::log1p(s.e_th0[0]);
+    e_th0[1] = std::log1p(s.e_th0[1]);
+    e_th0[2] = std::log1p(s.e_th0[2]);
+    e_th1[0] = std::log1p(s.e_th1[0]);
+    e_th1[1] = std::log1p(s.e_th1[1]);
+    e_th1[2] = std::log1p(s.e_th1[2]);
+    // copying the view
+    auto cs = s;
+    cs.e0 = tfel::utilities::ConstSpan<real>(e0, 3);
+    cs.e1 = tfel::utilities::ConstSpan<real>(e1, 3);
+    cs.e_th0 = tfel::utilities::ConstSpan<real>(e_th0, 3);
+    cs.e_th1 = tfel::utilities::ConstSpan<real>(e_th1, 3);
+    cs.s0 = tfel::utilities::ConstSpan<real>(s0, 3);
+    cs.s1 = tfel::utilities::Span<real>(s1, 3);
+    // behaviour integration
     setRoundingMode();
-    const auto r = this->b->integrate(s, wk, dt, ktype);
+    const auto r = this->b->integrate(cs, wk, dt, ktype);
     setRoundingMode();
-    tfel::fsalgo::copy<3u>::exe(e0, s.e0.begin());
-    tfel::fsalgo::copy<3u>::exe(e1, s.e1.begin());
-    tfel::fsalgo::copy<3u>::exe(s0, s.s0.begin());
-    tfel::fsalgo::copy<3u>::exe(e_th0, s.e_th0.begin());
-    tfel::fsalgo::copy<3u>::exe(e_th1, s.e_th1.begin());
     if (!r.first) {
       tfel::fsalgo::copy<3u>::exe(s0, s.s1.begin());
       return r;
     }
-    s.s1[0] /= 1 + e1[0];
-    s.s1[1] /= 1 + e1[1];
-    s.s1[2] /= 1 + e1[2];
+    s.s1[0] = s1[0] / (1 + s.e1[0]);
+    s.s1[1] = s1[1] / (1 + s.e1[1]);
+    s.s1[2] = s1[2] / (1 + s.e1[2]);
     // modify wk.k
     if ((ktype != StiffnessMatrixType::NOSTIFFNESS) &&
         (ktype != StiffnessMatrixType::UNSPECIFIEDSTIFFNESSMATRIXTYPE) &&
         (ktype != StiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES)) {
-      convertStiffness(wk.k, s.e1, s.s1);
+      convertStiffness(wk.k, &s.e1[0], &s.s1[0]);
     }
     return r;
   }  // end of LogarithmicStrain1DBehaviourWrapper::integrate

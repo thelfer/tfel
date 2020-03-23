@@ -23,7 +23,7 @@
 #include "MFront/Aster/Aster.hxx"
 #include "MFront/Aster/AsterComputeStiffnessTensor.hxx"
 
-#include "MTest/CurrentState.hxx"
+#include "MTest/CurrentStateView.hxx"
 #include "MTest/BehaviourWorkSpace.hxx"
 #include "MTest/AsterStandardBehaviour.hxx"
 
@@ -158,7 +158,6 @@ namespace mtest {
     return desc;
   }  // end of AsterStandardBehaviour::getInternalStateVariablesDescriptions
 
-
   void AsterStandardBehaviour::allocate(BehaviourWorkSpace& wk) const {
     const auto ndv = this->getGradientsSize();
     const auto nth = this->getThermodynamicForcesSize();
@@ -173,7 +172,6 @@ namespace mtest {
     wk.ne.resize(ndv);
     wk.ns.resize(nth);
     wk.nivs.resize(nstatev);
-    mtest::allocate(wk.cs, this->shared_from_this());
   }  // end of AsterStandardBehaviour::allocate
 
   StiffnessMatrixType AsterStandardBehaviour::getDefaultStiffnessMatrixType()
@@ -183,17 +181,18 @@ namespace mtest {
 
   std::pair<bool, real> AsterStandardBehaviour::computePredictionOperator(
       BehaviourWorkSpace& wk,
-      const CurrentState& s,
+      const CurrentStateView& s,
       const StiffnessMatrixType ktype) const {
     if (ktype == StiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES) {
       return {false, real(-1)};
     }
-    wk.cs = s;
-    return this->call_behaviour(wk.kt, wk.cs, wk, real(1), ktype, false);
+    auto mv = makeMutableView(s);
+    auto v = mv.getView();
+    return this->call_behaviour(wk.kt, v, wk, real(1), ktype, false);
   }
 
   std::pair<bool, real> AsterStandardBehaviour::integrate(
-      CurrentState& s,
+      CurrentStateView& s,
       BehaviourWorkSpace& wk,
       const real dt,
       const StiffnessMatrixType ktype) const {
