@@ -147,6 +147,7 @@ libTFELMFront_la_SOURCES = MFront.cxx                                           
 		           InelasticFlowFactory.cxx                               \
 		           StressCriterion.cxx                                    \
 		           StressCriterionBase.cxx                                \
+		           StandardStressCriterionBase.cxx                        \
 		           MisesStressCriterion.cxx                               \
 		           Hill1948StressCriterion.cxx                            \
 		           Barlat2004StressCriterion.cxx                          \

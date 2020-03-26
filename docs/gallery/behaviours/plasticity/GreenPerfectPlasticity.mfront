@@ -25,10 +25,10 @@ s0.setGlossaryName("YieldStress");
 @LocalVariable bool b; // if true, plastic loading
 
 @InitLocalVariables{
-  const auto sig_el  = computeElasticPrediction();
-  const auto s_el    = deviator(sig_el);
-  const auto tr_el   = trace(sig_el);
-  const auto seq     = sqrt(3*C*(s_el|s_el)/2+F*tr_el*tr_el);
+  const auto sig_el = computeElasticPrediction();
+  const auto s_el = deviator(sig_el);
+  const auto tr_el = trace(sig_el);
+  const auto seq = sqrt(3 * C * (s_el | s_el) / 2 + F * tr_el * tr_el);
   b = seq-s0 > 0;
 }
 

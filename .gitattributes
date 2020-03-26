@@ -2366,6 +2366,7 @@ mfront/include/MFront/BehaviourBrick/Provider.hxx -text
 mfront/include/MFront/BehaviourBrick/ProviderIdentifier.hxx -text
 mfront/include/MFront/BehaviourBrick/Requirement.hxx -text
 mfront/include/MFront/BehaviourBrick/RequirementManager.hxx -text
+mfront/include/MFront/BehaviourBrick/StandardStressCriterionBase.hxx -text
 mfront/include/MFront/BehaviourBrick/StressCriterion.hxx -text
 mfront/include/MFront/BehaviourBrick/StressCriterionBase.hxx -text
 mfront/include/MFront/BehaviourBrick/StressCriterionFactory.hxx -text
@@ -2881,6 +2882,7 @@ mfront/src/SpecificTargetDescription.cxx -text
 mfront/src/StandardBehaviourInterface.cxx -text
 mfront/src/StandardElasticityBrick.cxx -text
 mfront/src/StandardElastoViscoPlasticityBrick.cxx -text
+mfront/src/StandardStressCriterionBase.cxx -text
 mfront/src/StaticVariableDescription.cxx -text
 mfront/src/StressCriterion.cxx -text
 mfront/src/StressCriterionBase.cxx -text
