@@ -68,13 +68,16 @@ namespace mfront {
         c += sp.computeDerivatives(bd, "strain", "p" + id,
                                    dseq_ds + "/(" + snf + ")",
                                    this->sc->isNormalDeviatoric());
-        c += "if((" + dR_ddp + ">0)&&(seq<" +
-             sp.getEquivalentStressLowerBound(bd) + ")){\n";
+        c += "if(seq<" + sp.getEquivalentStressLowerBound(bd) + "){\n";
+        c += "if(" + dR_ddp + ">0){\n";
         c += dfp_ddp + " = -1*std::max(real(1.e-12),(" + dR_ddp + ")/(" + snf +
              "));\n";
         c += "} else {\n";
         c += dfp_ddp + " = -1*std::min(-real(1.e-12),(" + dR_ddp + ")/(" + snf +
              "));\n";
+        c += "}\n";
+        c += "} else {\n";
+        c += dfp_ddp + " = -(" + dR_ddp + ")/(" + snf + ");\n";
         c += "}\n";
         auto kid = decltype(khrs.size()){};
         for (const auto& khr : khrs) {
