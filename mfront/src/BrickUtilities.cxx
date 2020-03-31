@@ -254,6 +254,62 @@ namespace mfront {
       bd.setEntryName(h, n, e);
     }  // end of addStateVariable
 
+    void addStateVariableIfNotDefined(BehaviourDescription& bd,
+                                      const std::string& t,
+                                      const std::string& n,
+                                      const tfel::glossary::GlossaryEntry& g,
+                                      const unsigned short s,
+                                      const bool bo) {
+      constexpr const auto uh =
+          tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+      const auto b = [bd, &n, &g, &bo] {
+        for (const auto& v : bd.getBehaviourData(uh).getStateVariables()) {
+          if (v.getExternalName() == g) {
+            if ((!bo) && (v.name != n)) {
+              tfel::raise(
+                  "addStateVariableIfNotDefined: a state variable with the "
+                  "given glossary name already has already been registred");
+            }
+            return true;
+          }
+        }
+        return false;
+      }();
+      if (!b) {
+        auto v = mfront::VariableDescription(t, n, s, 0u);
+        v.setGlossaryName(g);
+        bd.addStateVariable(uh, v, mfront::BehaviourData::UNREGISTRED);
+      }
+    }  // end of addStateVariableIfNotDefined
+
+    void addStateVariableIfNotDefined(BehaviourDescription& bd,
+                                      const std::string& t,
+                                      const std::string& n,
+                                      const std::string& e,
+                                      const unsigned short s,
+                                      const bool bo) {
+      constexpr const auto uh =
+          tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+      const auto b = [bd, &n, &e, &bo] {
+        for (const auto& v : bd.getBehaviourData(uh).getStateVariables()) {
+          if (v.getExternalName() == e) {
+            if ((!bo) && (v.name != n)) {
+              tfel::raise(
+                  "addStateVariableIfNotDefined: a state variable with the "
+                  "given entry name already has already been registred");
+            }
+            return true;
+          }
+        }
+        return false;
+      }();
+      if (!b) {
+        auto v = mfront::VariableDescription(t, n, s, 0u);
+        v.setEntryName(e);
+        bd.addStateVariable(uh, v, mfront::BehaviourData::UNREGISTRED);
+      }
+    }
+
     void addExternalStateVariable(BehaviourDescription& bd,
                                   const std::string& t,
                                   const std::string& n,

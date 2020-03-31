@@ -55,51 +55,43 @@ namespace mfront {
         const StressPotential& sp,
         const std::string& id,
         const bool b) const {
+      constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       auto c = std::string{};
-      if (!this->ihrs.empty()) {
-        if (b) {
+      if (b) {
+        if (!this->ihrs.empty()) {
           c += computeElasticLimitAndDerivative(this->ihrs, id);
-          c += this->computeFlowRateAndDerivative(id);
-          c += "fp" + id + " -= (this->dt)*vp" + id + ";\n";
-          c += sp.computeDerivatives(bd, "strain", "p" + id,
-                                     "-(this->dt)*dvp" + id + "_dseqe" + id +
-                                         "*dseq" + id + "_ds" + id,
-                                     this->sc->isNormalDeviatoric());
+        }
+        c += this->computeFlowRateAndDerivative(id);
+        c += "fp" + id + " -= (this->dt)*vp" + id + ";\n";
+        c += sp.computeDerivatives(
+            bd, "strain", "p" + id,
+            "-(this->dt) * dvp" + id + "_dseqe" + id + " * dseq" + id + "_ds" + id,
+            this->sc->isNormalDeviatoric());
+        if (!this->ihrs.empty()) {
           c += "dfp" + id + "_ddp" + id + " += (this->dt)*dvp" + id + "_dseqe" +
                id + "*dR" + id + "_ddp" + id + ";\n";
-          auto kid = decltype(khrs.size()){};
-          for (const auto& khr : khrs) {
-            c +=
-                khr->computeDerivatives("p", "(this->dt)*dvp" + id + "_dseqe" +
-                                                 id + "*dseq" + id + "_ds" + id,
-                                        id, std::to_string(kid));
-            ++kid;
-          }
-        } else {
-          c += computeElasticLimit(this->ihrs, id);
-          c += this->computeFlowRate(id);
-          c += "fp" + id + " -= (this->dt)*vp" + id + ";\n";
+        }
+        auto kid = decltype(khrs.size()){};
+        for (const auto& khr : khrs) {
+          c += khr->computeDerivatives("p", "(this->dt) * dvp" + id + "_dseqe " +
+                                                id + " * dseq" + id + "_ds" + id,
+                                       id, std::to_string(kid));
+          ++kid;
+        }
+        if (this->isCoupledWithPorosityEvolution()) {
+          const auto& f =
+              bd.getBehaviourData(uh).getStateVariableDescriptionByExternalName(
+                  tfel::glossary::Glossary::Porosity);
+          c += "dfp" + id + "_dd" + f.name + " = ";
+          c += "- theta * (this->dt) * dvp" + id + "_dseqe" + id + " * ";
+          c += "dseqe" + id + "_d" + f.name + ";\n";
         }
       } else {
-        if (b) {
-          c += this->computeFlowRateAndDerivative(id);
-          c += "fp" + id + " -= (this->dt)*vp" + id + ";\n";
-          c += sp.computeDerivatives(bd, "strain", "p" + id,
-                                     "-(this->dt)*dvp" + id + "_dseqe" + id +
-                                         "*dseq" + id + "_ds" + id,
-                                     this->sc->isNormalDeviatoric());
-          auto kid = decltype(khrs.size()){};
-          for (const auto& khr : khrs) {
-            c +=
-                khr->computeDerivatives("p", "(this->dt)*dvp" + id + "_dseqe" +
-                                                 id + "*dseq" + id + "_ds" + id,
-                                        id, std::to_string(kid));
-            ++kid;
-          }
-        } else {
-          c += this->computeFlowRate(id);
-          c += "fp" + id + " -= (this->dt)*vp" + id + ";\n";
+        if (!this->ihrs.empty()) {
+          c += computeElasticLimit(this->ihrs, id);
         }
+        c += this->computeFlowRate(id);
+        c += "fp" + id + " -= (this->dt)*vp" + id + ";\n";
       }
       return c;
     }  // end of ViscoplasticFlowBase::buildFlowImplicitEquations

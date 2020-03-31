@@ -94,7 +94,8 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./TODO.md						                          \
 	   ./BehaviourBricks.md				                      \
 	   ./DDIF2Brick.md                                            \
-	   ./StandardElastoViscoPlasticityBrick.md				     \
+	   ./StandardElastoViscoPlasticityBrick.md     				        \
+       ./ExtendingStandardElastoViscoPlasticityBrick-StressCriterion.md \
 	   ./HookeStressPotential.md				     \
 	   ./DDIF2StressPotential.md				     \
 	   ./DefaultCZMDSL-keywords.md				      \
@@ -311,8 +312,10 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./img/XperMFront.xcf			                      \
 	   ./img/XperMFront.png			                          \
 	   ./img/RambergOsgoodNonLinearElasticity-UniaxialTensileTest.png \
-           ./img/FichantLaBorderieDamageBehaviourUniaxialTensileTest.png  \
-           ./img/AnsysTwistOfABar.svg                                     \
+       ./img/FichantLaBorderieDamageBehaviourUniaxialTensileTest.png  \
+       ./img/AnsysTwistOfABar.svg                                     \
+       ./img/ExtendingStandardElastoViscoPlasticityBrick-tree-2.png   \
+       ./img/ExtendingStandardElastoViscoPlasticityBrick-tree.png     \
 	   ./media/epx1.mp4                                               \
 	   ./media/epx2.mp4                                           \
 	   ./media/abaqus-explicit.mp4                                \
@@ -338,4 +341,20 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./downloads/patchs-Cast3M-2014.tar.bz2                     \
 	   ./downloads/patchs-Cast3M-2015.tar.bz2                     \
 	   ./downloads/example-zset8.5.tar.bz2                        \
-	   ./downloads/patchs-CalculiX-2.12.tar.bz2
+	   ./downloads/patchs-CalculiX-2.12.tar.bz2                   \
+	   ./cxx/include                                                          \
+	   ./cxx/include/TFEL                                                     \
+	   ./cxx/include/TFEL/Material                                            \
+	   ./cxx/include/TFEL/Material/StressCriterionTemplate.hxx                \
+	   ./cxx/include/TFEL/Material/StressCriterionTemplate.ixx                \
+	   ./cxx/mfront                                                           \
+	   ./cxx/mfront/include                                                   \
+	   ./cxx/mfront/include/MFront                                            \
+	   ./cxx/mfront/include/MFront/BehaviourBrick                             \
+	   ./cxx/mfront/include/MFront/BehaviourBrick/StressCriterionTemplate.hxx \
+	   ./cxx/mfront/src                                                       \
+	   ./cxx/mfront/src/StressCriterionTemplate.cxx                           \
+	   ./mfront                                                               \
+	   ./mfront/StressCriterionTest_NumericalJacobian.mfront                  \
+	   ./mfront/StressCriterionTest.mfront                                    \
+	   ./scripts/generate.sh

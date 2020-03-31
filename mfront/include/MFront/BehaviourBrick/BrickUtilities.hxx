@@ -265,6 +265,40 @@ namespace mfront {
                                                    const std::string &,
                                                    const unsigned short = 1u);
     /*!
+    *\brief add a new state variable
+    *\param[in] bd: behaviour description
+    *\param[in] t: type of the state variable
+    *\param[in] n: name of the variable
+    *\param[in] g: glossary name
+    *\param[in] s: array size
+    * \param[in] bo: allow name shadowing. If true, allows that a state variable
+    * with the given glossary name but a different name has already been defined.
+    */
+    MFRONT_VISIBILITY_EXPORT void addStateVariableIfNotDefined(
+        BehaviourDescription &,
+        const std::string &,
+        const std::string &,
+        const tfel::glossary::GlossaryEntry &,
+        const unsigned short = 1u,
+        const bool bo = false);
+    /*!
+     * \brief add a new state variable
+     * \param[in] bd: behaviour description
+     * \param[in] t: type of the state variable
+     * \param[in] n: name of the variable
+     * \param[in] e: entry name
+     * \param[in] s: array size
+     * \param[in] bo: allow name shadowing. If true, allows that a state variable
+     * with the given entry name but a different name has already been defined.
+     */
+    MFRONT_VISIBILITY_EXPORT void addStateVariableIfNotDefined(
+        BehaviourDescription &,
+        const std::string &,
+        const std::string &,
+        const std::string &,
+        const unsigned short = 1u,
+        const bool bo = false);
+    /*!
      * \brief add a new external state variable
      * \param[in] bd: behaviour description
      * \param[in] t: type of the material property

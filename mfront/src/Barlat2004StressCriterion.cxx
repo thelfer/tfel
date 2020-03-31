@@ -298,6 +298,10 @@ namespace mfront {
       return c;
     }  // end of Barlat2004StressCriterion::computeNormalDerivative
 
+    bool Barlat2004StressCriterion::isCoupledWithPorosityEvolution() const {
+      return false;
+    }  // end of Barlat2004StressCriterion::isCoupledWithPorosityEvolution
+
     bool Barlat2004StressCriterion::isNormalDeviatoric() const {
       return true;
     }  // end of Barlat2004StressCriterion::isNormalDeviatoric

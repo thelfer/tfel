@@ -151,6 +151,7 @@ pandoc_html(RungeKutta-keywords "--toc" "--toc-depth=1")
 pandoc_html(BehaviourBricks "--toc" "--toc-depth=2")
 pandoc_html(DDIF2Brick "--toc" "--toc-depth=2")
 pandoc_html(StandardElastoViscoPlasticityBrick "--toc" "--toc-depth=2")
+pandoc_html(ExtendingStandardElastoViscoPlasticityBrick-StressCriterion "--toc" "--toc-depth=2")
 pandoc_html(HookeStressPotential "--toc" "--toc-depth=2")
 pandoc_html(DDIF2StressPotential "--toc" "--toc-depth=2")
 
@@ -159,7 +160,7 @@ pandoc_html(DDIF2StressPotential "--toc" "--toc-depth=2")
 pandoc_html(MTest-keywords "--toc" "--toc-depth=1")
 
 if(TFEL_APPEND_SUFFIX)
-  install(DIRECTORY js css doc img media downloads
+  install(DIRECTORY js css doc img media downloads cxx mfront scripts
     DESTINATION share/doc/tfel-${TFEL_SUFFIX}/web
     COMPONENT website
     PATTERN ".svn" EXCLUDE)
@@ -169,7 +170,7 @@ if(TFEL_APPEND_SUFFIX)
     DESTINATION share/doc/tfel-${TFEL_SUFFIX}/web
     COMPONENT website)
 else(TFEL_APPEND_SUFFIX)
-  install(DIRECTORY js css doc img media downloads
+  install(DIRECTORY js css doc img media downloads cxx mfront scripts
     DESTINATION share/doc/tfel/web
     COMPONENT website
     PATTERN ".svn" EXCLUDE)

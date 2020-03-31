@@ -109,6 +109,10 @@ namespace mfront{
       return c;
     }  // end of MisesStressCriterion::computeNormalDerivative
 
+    bool MisesStressCriterion::isCoupledWithPorosityEvolution() const {
+      return false;
+    }  // end of MisesStressCriterion::isCoupledWithPorosityEvolution
+
     bool MisesStressCriterion::isNormalDeviatoric() const {
       return true;
     }  // end of MisesStressCriterion::isNormalDeviatoric

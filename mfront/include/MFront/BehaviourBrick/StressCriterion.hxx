@@ -185,6 +185,8 @@ namespace mfront {
                                                   const BehaviourDescription&,
                                                   const StressPotential&,
                                                   const Role) const = 0;
+      //! \return if the the flow is coupled with the porosity evolution
+      virtual bool isCoupledWithPorosityEvolution() const = 0;
       //! \return if the normal is deviatoric
       virtual bool isNormalDeviatoric() const = 0;
       //! destructor

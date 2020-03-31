@@ -148,6 +148,7 @@ libTFELMFront_la_SOURCES = MFront.cxx                                           
 		           StressCriterion.cxx                                    \
 		           StressCriterionBase.cxx                                \
 		           StandardStressCriterionBase.cxx                        \
+		           StandardPorousStressCriterionBase.cxx                  \
 		           MisesStressCriterion.cxx                               \
 		           Hill1948StressCriterion.cxx                            \
 		           Barlat2004StressCriterion.cxx                          \

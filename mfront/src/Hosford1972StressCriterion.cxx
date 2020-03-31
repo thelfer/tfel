@@ -173,6 +173,10 @@ namespace mfront {
       return c;
     }  // end of Hosford1972StressCriterion::computeNormalDerivative
 
+    bool Hosford1972StressCriterion::isCoupledWithPorosityEvolution() const {
+      return false;
+    }  // end of Hosford1972StressCriterion::isCoupledWithPorosityEvolution
+
     bool Hosford1972StressCriterion::isNormalDeviatoric() const {
       return true;
     }  // end of Hosford1972StressCriterion::isNormalDeviatoric

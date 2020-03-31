@@ -183,6 +183,10 @@ namespace mfront {
       return c;
     }  // end of Drucker1949StressCriterion::computeNormalDerivative
 
+    bool Drucker1949StressCriterion::isCoupledWithPorosityEvolution() const {
+      return false;
+    }  // end of Drucker1949StressCriterion::isCoupledWithPorosityEvolution
+
     bool Drucker1949StressCriterion::isNormalDeviatoric() const {
       return true;
     }  // end of Drucker1949StressCriterion::isNormalDeviatoric

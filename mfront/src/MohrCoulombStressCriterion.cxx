@@ -219,6 +219,10 @@ namespace mfront {
       return code;
     }  // end of MohrCoulombStressCriterion::computeNormalDerivative
 
+    bool MohrCoulombStressCriterion::isCoupledWithPorosityEvolution() const {
+      return false;
+    }  // end of MohrCoulombStressCriterion::isCoupledWithPorosityEvolution
+
     bool MohrCoulombStressCriterion::isNormalDeviatoric() const {
       return false;
     }  // end of MohrCoulombStressCriterion::isNormalDeviatoric

@@ -1,6 +1,6 @@
 /*!
  * \file   MFront/BehaviourBrick/StandardStressCriterionBase.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   25/03/2020
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
@@ -31,6 +31,9 @@ namespace mfront {
 
     /*!
      * \brief an helper class used to build a stress criterion.
+     * This class is meant to interface criterion described
+     * in the TFEL/Material library.
+     * The criterion is assumed to be uncoupled with the porosity evolution.
      */
     struct MFRONT_VISIBILITY_EXPORT StandardStressCriterionBase
         : StressCriterionBase {
@@ -64,7 +67,7 @@ namespace mfront {
                                           const BehaviourDescription&,
                                           const StressPotential&,
                                           const Role) const override;
-
+      bool isCoupledWithPorosityEvolution() const override final;
       //! destructor
       ~StandardStressCriterionBase() override;
 
@@ -72,8 +75,7 @@ namespace mfront {
       //! \brief name of the stress criterion
       const std::string name;
       //! \brief material properties
-      std::map<std::string,
-               BehaviourDescription::MaterialProperty> mps;
+      std::map<std::string, BehaviourDescription::MaterialProperty> mps;
     };  // end of StandardStressCriterionBase
 
   }  // end of namespace bbrick

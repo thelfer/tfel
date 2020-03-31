@@ -1,0 +1,63 @@
+@DSL Implicit;
+@Behaviour __StressCriterionName__PerfectPlasticity;
+@Author __Author__;
+@Date __Author__;
+@Description {
+  Implementation of a perfect plastic behaviour
+  based on the __StressCriterionName__ criterion.
+}
+
+@Includes{
+#include "TFEL/Material/__StressCriterionName__StressCriterion.hxx"
+}
+
+@ModellingHypotheses {".+"};
+@Brick StandardElasticity;
+@Epsilon 1.e-14;
+@Theta 1;
+
+@ComputeStiffnessTensor<UnAltered>{200e9, 0.3};
+
+@Parameter stress R0 = 150e6;
+R0.setGlossaryName("YieldStress");
+
+@StateVariable strain p;
+p.setGlossaryName("EquivalentPlasticStrain");
+
+//! \brief parameters of the yield criterion
+@LocalVariable __StressCriterionName__StressCriterionParameters<StressStensor> params;
+//! \brief flag stating that an elastic loading takes place
+@LocalVariable bool bp;
+
+@InitLocalVariables {
+  // initialize the parameters from the material properties
+  // elastic prediction
+  const auto seps = strain{1e-12} * young;
+  const auto se = this->computeElasticPrediction();
+  const auto seq_e = compute__StressCriterionName__Stress(se, params,seps);
+  bp = seq_e > R0;
+}
+
+@Integrator {
+  if (!bp) {
+    // elastic loading, nothing to be done
+    return true;
+  }
+  const auto seps = strain{1e-12} * young;
+#if __cplusplus >= 201703L
+  const auto[seq, n, dn] = compute__StressCriterionName__StressSecondDerivative(sig, params, seps);
+#else
+  auto seq = stress{};
+  auto n = __StressCriterionName__StressNormalType<StressStensor>{};
+  auto dn = __StressCriterionName__StressSecondDerivativeType<StressStensor>{};
+  std::tie(seq, n, dn) = compute__StressCriterionName__StressSecondDerivative(sig, params, seps);
+#endif
+  // plasticity
+  fp = (seq - R0) / young;
+  dfp_ddp = (seq < seps) ? 1 : 0;
+  dfp_ddeel = theta * (n | D) / young;
+  // equation associated with the split of the strain
+  feel += dp * n;
+  dfeel_ddeel += theta * dp * dn * D;
+  dfeel_ddp = n;
+}

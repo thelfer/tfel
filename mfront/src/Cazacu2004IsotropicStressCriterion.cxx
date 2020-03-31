@@ -185,6 +185,10 @@ namespace mfront {
       return c;
     }  // end of Cazacu2004IsotropicStressCriterion::computeNormalDerivative
 
+    bool Cazacu2004IsotropicStressCriterion::isCoupledWithPorosityEvolution() const {
+      return false;
+    }  // end of Cazacu2004IsotropicStressCriterion::isCoupledWithPorosityEvolution
+
     bool Cazacu2004IsotropicStressCriterion::isNormalDeviatoric() const {
       return true;
     }  // end of Cazacu2004IsotropicStressCriterion::isNormalDeviatoric

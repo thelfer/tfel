@@ -47,6 +47,9 @@ namespace mfront {
     ~StandardElastoViscoPlasticityBrick() override;
 
    private:
+    //! \return if a coupling with the porosity evolution is required
+    bool isCoupledWithPorosityEvolution() const;
+
     //! stress potential
     std::shared_ptr<bbrick::StressPotential> stress_potential;
     //! inelastic flows

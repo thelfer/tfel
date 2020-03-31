@@ -165,6 +165,10 @@ namespace mfront{
       return c;
     }  // end of Hill1948StressCriterion::computeNormalDerivative
 
+    bool Hill1948StressCriterion::isCoupledWithPorosityEvolution() const {
+      return false;
+    }  // end of Hill1948StressCriterion::isCoupledWithPorosityEvolution
+
     bool Hill1948StressCriterion::isNormalDeviatoric() const {
       return true;
     }  // end of Hill1948StressCriterion::isNormalDeviatoric

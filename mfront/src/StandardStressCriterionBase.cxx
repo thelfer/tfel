@@ -32,7 +32,14 @@ namespace mfront {
                                                  const DataMap& d,
                                                  const Role r) {
       StressCriterionBase::initialize(bd, dsl, id, d, r);
-      bd.appendToIncludes("#include \"TFEL/Material/" + name + "StressCriterion.hxx\"\n");
+      const auto mhs = this->getSupportedBehaviourSymmetries();
+      if (std::find(mhs.begin(), mhs.end(), mfront::ISOTROPIC) == mhs.end()) {
+        tfel::raise(
+            "StandardStressCriterionBase::initialize: "
+            "expected an isotropic criterion");
+      }
+      bd.appendToIncludes("#include \"TFEL/Material/" + name +
+                          "StressCriterion.hxx\"\n");
       const auto params =
           StressCriterion::getVariableId("sscb_parameters", id, r);
       for (const auto& mp : this->getOptions()) {
@@ -55,6 +62,10 @@ namespace mfront {
                        this->name + "StressCriterionParameters<StressStensor>",
                        params, 1u);
     }  // end of StandardStressCriterionBase::initialize
+
+    bool StandardStressCriterionBase::isCoupledWithPorosityEvolution() const {
+      return false;
+    }  // end of StandardStressCriterionBase::isCoupledWithPorosityEvolution()
 
     void StandardStressCriterionBase::endTreatment(BehaviourDescription& bd,
                                                    const AbstractBehaviourDSL& dsl,

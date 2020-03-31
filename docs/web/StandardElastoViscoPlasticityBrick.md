@@ -217,6 +217,11 @@ f\paren{\tsigma}=A\left<\Frac{\phi\paren{\tsigma-\sum_{i}\tenseur{X}_{i}}-\sum_{
 
 ## List of available stress criterion
 
+The following section describe stress criteria available by default.
+However, the `StandardElastoViscoPlasticity` brick can also be extended
+by the user as described
+[here](ExtendingStandardElastoViscoPlasticityBrick-StressCriterion.html).
+
 ### von Mises stress criterion
 
 #### Definition

@@ -51,6 +51,7 @@ namespace mfront {
         const StressPotential& sp,
         const std::string& id,
         const bool b) const {
+      constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       auto c = std::string{};
       tfel::raise_if(this->ihrs.empty(),
                      "PlasticInelasticFlow::buildFlowImplicitEquations :"
@@ -84,6 +85,13 @@ namespace mfront {
           c += khr->computeDerivatives("p", "-dseq_ds/(" + snf + ")", id,
                                        std::to_string(kid));
           ++kid;
+        }
+        if (this->isCoupledWithPorosityEvolution()) {
+          const auto& f =
+              bd.getBehaviourData(uh).getStateVariableDescriptionByExternalName(
+                  tfel::glossary::Glossary::Porosity);
+          c += "dfp" + id + "_dd" + f.name + " = ";
+          c += "(theta * d" + seq + "_d" + f.name + ")/(" + snf + ");\n";
         }
       } else {
         c += computeElasticLimit(this->ihrs, id);

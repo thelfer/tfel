@@ -127,6 +127,7 @@ nobase_include_HEADERS= MFront/MFront.hxx                                      \
 			MFront/BehaviourBrick/StressCriterion.hxx                         \
 			MFront/BehaviourBrick/StressCriterionBase.hxx                     \
 			MFront/BehaviourBrick/StandardStressCriterionBase.hxx             \
+			MFront/BehaviourBrick/StandardPorousStressCriterionBase.hxx       \
 			MFront/BehaviourBrick/MisesStressCriterion.hxx                    \
 			MFront/BehaviourBrick/Hill1948StressCriterion.hxx                 \
 			MFront/BehaviourBrick/Drucker1949StressCriterion.hxx              \

@@ -170,6 +170,7 @@ set(TFELMFront_SOURCES
     StressCriterion.cxx
     StressCriterionBase.cxx
     StandardStressCriterionBase.cxx
+    StandardPorousStressCriterionBase.cxx
     MisesStressCriterion.cxx
     Hill1948StressCriterion.cxx
     Barlat2004StressCriterion.cxx

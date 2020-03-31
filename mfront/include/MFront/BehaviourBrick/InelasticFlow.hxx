@@ -68,9 +68,9 @@ namespace mfront {
                               AbstractBehaviourDSL&,
                               const std::string&,
                               const DataMap&) = 0;
-      /*!
-       * \return the flow options
-       */
+      //! \return if the the flow is coupled with the porosity evolution
+      virtual bool isCoupledWithPorosityEvolution() const = 0;
+      //! \return the flow options
       virtual std::vector<OptionDescription> getOptions() const = 0;
       /*!
        * \brief complete the variable description

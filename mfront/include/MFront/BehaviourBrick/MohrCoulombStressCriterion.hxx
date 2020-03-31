@@ -50,6 +50,7 @@ namespace mfront {
                                           const BehaviourDescription&,
                                           const StressPotential&,
                                           const Role) const override;
+      bool isCoupledWithPorosityEvolution() const override;
       bool isNormalDeviatoric() const override;
       //! destructor
       ~MohrCoulombStressCriterion() override;

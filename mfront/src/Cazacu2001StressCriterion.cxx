@@ -323,6 +323,10 @@ namespace mfront {
       return c;
     }  // end of Cazacu2001StressCriterion::computeNormalDerivative
 
+    bool Cazacu2001StressCriterion::isCoupledWithPorosityEvolution() const {
+      return false;
+    }  // end of Cazacu2001StressCriterion::isCoupledWithPorosityEvolution
+
     bool Cazacu2001StressCriterion::isNormalDeviatoric() const {
       return true;
     }  // end of Cazacu2001StressCriterion::isNormalDeviatoric

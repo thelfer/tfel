@@ -1,8 +1,8 @@
 /*!
- * \file   include/MFront/BehaviourBrick/Cazacu2001StressCriterion.hxx
+ * \file   MFront/BehaviourBrick/StandardPorousStressCriterionBase.hxx
  * \brief
  * \author Thomas Helfer
- * \date   15/03/2018
+ * \date   25/03/2020
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence
@@ -11,32 +11,42 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_MFRONT_BEHAVIOURBRICK_CAZACU2001STRESSCRITERION_HXX
-#define LIB_MFRONT_BEHAVIOURBRICK_CAZACU2001STRESSCRITERION_HXX
+#ifndef LIB_MFRONT_BEHAVIOURBRICK_STANDARDPOROUSSTRESSCRITERIONBASE_HXX
+#define LIB_MFRONT_BEHAVIOURBRICK_STANDARDPOROUSSTRESSCRITERIONBASE_HXX
 
+#include <map>
+#include <memory>
+#include "MFront/MFrontConfig.hxx"
 #include "MFront/BehaviourBrick/StressCriterionBase.hxx"
 
 namespace mfront {
 
+  // forward declaration
+  struct AbstractBehaviourDSL;
+
   namespace bbrick {
 
+    // forward declaration
+    struct OptionDescription;
+
     /*!
-     * \brief This class describes the Cazacu2001 stress criterion
-     * defined by:
-     * \f[
-     * \sigma_{\mathrm{eq}}=
-     * \sqrt{3}\,\sqrt[6]{\left(J_{2}^{O}\right)^{3}
-     * - c\,\left(J_{3}^{O}\right)^{2}}
-     * \f]
-     * where \(J^{O}_{2}\) and \(J^{O}_{3}\) are the orthotropic
-     * generalizations of the second and third invariants
-     * of the deviatoric part of the stress tensor
-     * \f$\underline{\sigma}\f$.
+     * \brief an helper class used to build a stress criterion.
+     * This class is meant to interface criterion described
+     * in the TFEL/Material library.
+     * The criterion is assumed to be coupled with the porosity evolution.
      */
-    struct Cazacu2001StressCriterion final : StressCriterionBase {
-      std::vector<OptionDescription> getOptions() const override;
-      std::vector<BehaviourSymmetry> getSupportedBehaviourSymmetries()
-          const override;
+    struct MFRONT_VISIBILITY_EXPORT StandardPorousStressCriterionBase
+        : StressCriterionBase {
+      /*!
+       * \brief constructor
+       * \param[in] n: name of the stress criterion
+       */
+      StandardPorousStressCriterionBase(const std::string& n);
+
+      std::string computeElasticPrediction(
+          const std::string&,
+          const BehaviourDescription&,
+          const StressPotential&) const override;
       void initialize(BehaviourDescription&,
                       AbstractBehaviourDSL&,
                       const std::string&,
@@ -46,10 +56,6 @@ namespace mfront {
                         const AbstractBehaviourDSL&,
                         const std::string&,
                         const Role) override;
-      std::string computeElasticPrediction(
-          const std::string&,
-          const BehaviourDescription&,
-          const StressPotential&) const override;
       std::string computeCriterion(const std::string&,
                                    const BehaviourDescription&,
                                    const StressPotential&) const override;
@@ -61,22 +67,20 @@ namespace mfront {
                                           const BehaviourDescription&,
                                           const StressPotential&,
                                           const Role) const override;
-      bool isCoupledWithPorosityEvolution() const override;
-      bool isNormalDeviatoric() const override;
+      bool isCoupledWithPorosityEvolution() const override final;
+      bool isNormalDeviatoric() const override final;
       //! destructor
-      ~Cazacu2001StressCriterion() override;
+      ~StandardPorousStressCriterionBase() override;
 
-     protected:
-      //! coefficients of \f$J_{2}^{O}\f$
-      std::array<MaterialProperty, 6u> a;
-      //! coefficients of \f$J_{3}^{O}\f$
-      std::array<MaterialProperty, 11u> b;
-      //! \brief c parameter
-      BehaviourDescription::MaterialProperty cp;
-    };  // end of struct Cazacu2001StressCriterion
+     private:
+      //! \brief name of the stress criterion
+      const std::string name;
+      //! \brief material properties
+      std::map<std::string, BehaviourDescription::MaterialProperty> mps;
+    };  // end of StandardPorousStressCriterionBase
 
   }  // end of namespace bbrick
 
 }  // end of namespace mfront
 
-#endif /* LIB_MFRONT_BEHAVIOURBRICK_CAZACU2001STRESSCRITERION_HXX */
+#endif /* LIB_MFRONT_BEHAVIOURBRICK_STANDARDPOROUSSTRESSCRITERIONBASE_HXX */

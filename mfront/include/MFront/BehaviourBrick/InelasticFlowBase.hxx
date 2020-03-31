@@ -20,39 +20,18 @@ namespace mfront {
      * potentials.
      */
     struct InelasticFlowBase : InelasticFlow {
-      /*!
-       * \brief if an isotropic hardening rule is defined, a boolean local
-       * variable named `bpl`+id is defined.
-       * \param[in,out] bd: behaviour description
-       * \param[in,out] dsl: abstract behaviour dsl
-       * \param[in] id: flow id
-       * \param[in] d: options
-       */
       void initialize(BehaviourDescription&,
                       AbstractBehaviourDSL&,
                       const std::string&,
                       const DataMap&) override;
+
       /*!
-       * \brief if an isotropic hardening rule is defined, additional
-       * convergence checks are added to check that, if the convergence of the
-       * Newton algorithm is reached:
-       * - if the flow is active (`bpl`+id is `true`), the equivalent plastic
-       *   strain multiplier must be positive. If negative, the convergence flag
-       *   is set to false and the flow is desactivated (`bpl`+id is set to
-       *   `false`).
-       * - if the flow is not active (`bpl`+id is `false`), the stress criterion
-       *   must be lower than the elastic limit given by the isotropic hardening
-       *   rule. If this is not the case, the convergence flag is set to false
-       *   and the flow is activated (`bpl`+id is set to `true`).
-       *
-       * \note if the stress criterion is the same as the flow criterion, the
-       * flow is associative.
-       *
-       * \param[in,out] bd: behaviour description
-       * \param[in,out] dsl: abstract behaviour dsl
-       * \param[in] sp: stress potential
-       * \param[in] id: flow id
+       * \return if the the flow is coupled with the porosity evolution.
+       * \note the flow is considered coupled with the porosity evolution if the
+       * stress criterion of the flow criterion is.
        */
+      bool isCoupledWithPorosityEvolution() const override;
+
       void endTreatment(BehaviourDescription&,
                         const AbstractBehaviourDSL&,
                         const StressPotential&,

@@ -6,9 +6,12 @@
  */
 
 #include "TFEL/Raise.hxx"
+#include "TFEL/Glossary/Glossary.hxx"
+#include "TFEL/Glossary/GlossaryEntry.hxx"
 #include "TFEL/Utilities/Data.hxx"
 #include "MFront/ImplicitDSLBase.hxx"
 #include "MFront/NonLinearSystemSolver.hxx"
+#include "MFront/BehaviourBrick/BrickUtilities.hxx"
 #include "MFront/BehaviourBrick/StressPotential.hxx"
 #include "MFront/BehaviourBrick/StressPotentialFactory.hxx"
 #include "MFront/BehaviourBrick/OptionDescription.hxx"
@@ -118,6 +121,17 @@ namespace mfront {
     }
   }  // end of StandardElastoViscoPlasticityBrick::initialize
 
+  bool StandardElastoViscoPlasticityBrick::isCoupledWithPorosityEvolution()
+      const {
+    for (const auto& f : this->flows) {
+      if (f->isCoupledWithPorosityEvolution()) {
+        return true;
+      }
+    }
+    return false;
+  }  // end if
+     // StandardElastoViscoPlasticityBrick::isCoupledWithPorosityEvolution
+
   std::vector<StandardElastoViscoPlasticityBrick::Hypothesis>
   StandardElastoViscoPlasticityBrick::getSupportedModellingHypotheses() const {
     return this->stress_potential->getSupportedModellingHypotheses(this->bd,
@@ -125,6 +139,8 @@ namespace mfront {
   }
 
   void StandardElastoViscoPlasticityBrick::completeVariableDeclaration() const {
+    constexpr const auto uh =
+        tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     this->stress_potential->completeVariableDeclaration(this->bd, this->dsl);
     auto i = size_t{};
     for (const auto& f : this->flows) {
@@ -132,10 +148,35 @@ namespace mfront {
                                      getId(i, this->flows.size()));
       ++i;
     }
+    // automatic registration of the porosity for porous flows
+    if (this->isCoupledWithPorosityEvolution()) {
+      mfront::bbrick::addStateVariableIfNotDefined(
+          bd, "real", "f", tfel::glossary::Glossary::Porosity, 1u, true);
+      const auto& f =
+          bd.getBehaviourData(uh).getStateVariableDescriptionByExternalName(
+              tfel::glossary::Glossary::Porosity);
+      this->bd.reserveName(uh, f.name + "_");
+    }
   }  // end of StandardElastoViscoPlasticityBrick::completeVariableDeclaration
 
   void StandardElastoViscoPlasticityBrick::endTreatment() const {
+    constexpr const auto uh =
+        tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     const auto& idsl = dynamic_cast<const ImplicitDSLBase&>(this->dsl);
+    // value of the porosity at t+theta*dt
+    if (this->isCoupledWithPorosityEvolution()) {
+      const auto& f =
+          bd.getBehaviourData(uh).getStateVariableDescriptionByExternalName(
+              tfel::glossary::Glossary::Porosity);
+      const auto f_ = f.name + "_";
+      CodeBlock ib;
+      ib.code += "const auto " + f_ + " = ";
+      ib.code += "max(min(this->" + f.name + " + theta * (this->d" + f.name +
+                 "), real(1)), real(0));\n ";
+      bd.setCode(uh, BehaviourData::Integrator, ib,
+                 BehaviourData::CREATEORAPPEND, BehaviourData::AT_BEGINNING);
+    }
+
     this->stress_potential->endTreatment(this->bd, this->dsl);
     const bool requiresAnalyticalJacobian =
         ((idsl.getSolver().usesJacobian()) &&

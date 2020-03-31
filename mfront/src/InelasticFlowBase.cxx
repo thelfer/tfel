@@ -12,6 +12,8 @@
  */
 
 #include "TFEL/Raise.hxx"
+#include "TFEL/Glossary/Glossary.hxx"
+#include "TFEL/Glossary/GlossaryEntry.hxx"
 #include "TFEL/Utilities/Data.hxx"
 #include "MFront/ImplicitDSLBase.hxx"
 #include "MFront/NonLinearSystemSolver.hxx"
@@ -129,6 +131,21 @@ namespace mfront {
         }
       }
     }  // end of InelasticFlowBase::initialize
+
+    bool InelasticFlowBase::isCoupledWithPorosityEvolution() const {
+      if (this->sc == nullptr) {
+        tfel::raise(
+            "InelasticFlowBase::isCoupledWithPorosityEvolution: "
+            "initialized flow");
+      }
+      if (this->sc->isCoupledWithPorosityEvolution()) {
+        return true;
+      }
+      if (this->fc != nullptr) {
+        return this->fc->isCoupledWithPorosityEvolution();
+      }
+      return false;
+    }
 
     std::vector<OptionDescription> InelasticFlowBase::getOptions() const {
       std::vector<OptionDescription> opts;
@@ -287,19 +304,48 @@ namespace mfront {
         }
       }
       // elasticity
-      ib.code += "feel += this->dp" + id + "* n" + id + ";\n";
-      if (requiresAnalyticalJacobian) {
-        // jacobian terms
-        ib.code += "dfeel_ddp" + id + " = n" + id + ";\n";
-        ib.code += sp.computeDerivatives(
-            bd, "StrainStensor", "eel",
-            "(this->dp" + id + ")*dn" + id + "_ds" + id, is_deviatoric);
-        kid = decltype(khrs.size()){};
-        for (const auto& khr : khrs) {
-          ib.code += khr->computeDerivatives(
-              "eel", "-(this->dp" + id + ") * dn" + id + "_ds" + id, id,
-              std::to_string(kid));
-          ++kid;
+      if (this->isCoupledWithPorosityEvolution()) {
+        const auto& f =
+            bd.getBehaviourData(uh).getStateVariableDescriptionByExternalName(
+                tfel::glossary::Glossary::Porosity);
+        const auto f_ = f.name + "_";
+        ib.code +=
+            "feel += (1 - " + f_ + ") * this->dp" + id + "* n" + id + ";\n";
+        if (requiresAnalyticalJacobian) {
+          // jacobian terms
+          ib.code += "dfeel_ddp" + id + " = n" + id + ";\n";
+          ib.code += sp.computeDerivatives(
+              bd, "StrainStensor", "eel",
+              "(1 - " + f_ + ") * (this->dp" + id + ")*dn" + id + "_ds" + id,
+              is_deviatoric);
+          kid = decltype(khrs.size()){};
+          for (const auto& khr : khrs) {
+            ib.code += khr->computeDerivatives(
+                "eel", "- (1 - " + f_ + ") * (this->dp" + id + ") * dn" + id +
+                           "_ds" + id,
+                id, std::to_string(kid));
+            ++kid;
+          }
+          ib.code += "dfeel_dd" + f.name + " = ";
+          ib.code += "- theta * this->dp" + id + "* n" + id;
+          ib.code += "+  theta * (1 - " + f_ + ") * this->dp" + id + "* dn" +
+                     id + "_d" + f.name + ";\n";
+        }
+      } else {
+        ib.code += "feel += this->dp" + id + "* n" + id + ";\n";
+        if (requiresAnalyticalJacobian) {
+          // jacobian terms
+          ib.code += "dfeel_ddp" + id + " = n" + id + ";\n";
+          ib.code += sp.computeDerivatives(
+              bd, "StrainStensor", "eel",
+              "(this->dp" + id + ")*dn" + id + "_ds" + id, is_deviatoric);
+          kid = decltype(khrs.size()){};
+          for (const auto& khr : khrs) {
+            ib.code += khr->computeDerivatives(
+                "eel", "-(this->dp" + id + ") * dn" + id + "_ds" + id, id,
+                std::to_string(kid));
+            ++kid;
+          }
         }
       }
       // inelastic flow
@@ -319,6 +365,26 @@ namespace mfront {
         }
         ++kid;
       }
+      if (this->isCoupledWithPorosityEvolution()) {
+        // porosity evolution
+        const auto& f =
+            bd.getBehaviourData(uh).getStateVariableDescriptionByExternalName(
+                tfel::glossary::Glossary::Porosity);
+        const auto f_ = f.name + "_";
+        ib.code += "f" + f.name;
+        ib.code += " -= (1 - " + f_ + ") * (this->dp" + id + ") * trace(n" +
+                   id + ");\n";
+        if (requiresAnalyticalJacobian) {
+          ib.code += "df" + f.name + "_dd" + f.name;
+          ib.code += " += theta * " + f_ + " * (this->dp" + id + ") * trace(n" +
+                     id + ")";
+          ib.code += " -  theta * (1 - " + f_ + ")* (this->dp" + id +
+                     ") * (Stensor::Id() | dn_d" + f.name + ");\n";
+          ib.code += "df" + f.name + "_ddp" + id;
+          ib.code += " = - (1 - " + f_ + ")* (this->dp" + id + ") * trace(n" +
+                     id + ");\n";
+        }
+      }
       if (!this->ihrs.empty()) {
         ib.code += "} // end if(this->bpl" + id + ")\n";
       }
@@ -333,9 +399,16 @@ namespace mfront {
         acc.code += "if (this->dp" + id + " < -2*this->epsilon) {\n";
         acc.code += "// desactivating this system\n";
         acc.code += "converged = this->bpl" + id + " = false;\n";
+        acc.code += "}\n";
         acc.code += "} else {\n";
-	acc.code += "}\n";
-        acc.code += "} else {\n";
+        if (this->isCoupledWithPorosityEvolution()) {
+          const auto& f =
+              bd.getBehaviourData(uh).getStateVariableDescriptionByExternalName(
+                  tfel::glossary::Glossary::Porosity);
+          acc.code += "const auto " + f.name + "_ = ";
+          acc.code += "this->" + f.name + " + (" + bd.getClassName() +
+                      "::theta) * (this->d" + f.name + ");\n";
+        }
         acc.code += this->computeEffectiveStress(id);
         acc.code += this->sc->computeCriterion(id, bd, sp);
         acc.code += computeElasticLimit(this->ihrs, id);
