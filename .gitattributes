@@ -1822,6 +1822,7 @@ include/TFEL/Math/Matrix/tmatrix_row_view.hxx -text
 include/TFEL/Math/Matrix/tmatrix_row_view.ixx -text
 include/TFEL/Math/Matrix/tmatrix_submatrix_view.hxx -text
 include/TFEL/Math/Matrix/tmatrix_submatrix_view.ixx -text
+include/TFEL/Math/Newton-Raphson/ScalarNewtonRaphson.ixx -text
 include/TFEL/Math/Newton-Raphson/TinyNewtonRaphson.ixx -text
 include/TFEL/Math/Parser/BinaryFunction.hxx -text
 include/TFEL/Math/Parser/BinaryFunction.ixx -text
@@ -1922,6 +1923,7 @@ include/TFEL/Math/ST2toT2/T2toT2ST2toT2ProductExpr.hxx -text
 include/TFEL/Math/ST2toT2/TensorST2toT2ProductExpr.hxx -text
 include/TFEL/Math/ST2toT2/st2tot2.ixx -text
 include/TFEL/Math/ST2toT2/st2tot2ResultType.hxx -text
+include/TFEL/Math/ScalarNewtonRaphson.hxx -text
 include/TFEL/Math/Stensor/ConstStensorView.hxx -text
 include/TFEL/Math/Stensor/DecompositionInPositiveAndNegativeParts.hxx -text
 include/TFEL/Math/Stensor/DecompositionInPositiveAndNegativeParts.ixx -text
@@ -6722,6 +6724,7 @@ tests/Math/RungeKutta/rk42.cxx -text
 tests/Math/RungeKutta/rk54.cxx -text
 tests/Math/RungeKutta/runge_kutta2.cxx -text
 tests/Math/RungeKutta/runge_kutta4.cxx -text
+tests/Math/ScalarNewtonRaphsonTest.cxx -text
 tests/Math/StridedRandomAccessIteratorTest.cxx -text
 tests/Math/TensorProductCheck.cxx -text
 tests/Math/TinyVectorOfStensorFromTinyVectorView.cxx -text

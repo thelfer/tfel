@@ -7,7 +7,58 @@
 The page declares the new functionalities of the 3.4 version of the
 `TFEL` project.
 
+# Documentation
+
+[This
+page](ExtendingStandardElastoViscoPlasticityBrick-StressCriterion.md)
+describes how to extend the `TFEL/Material` library and the
+`StandardElastoViscoPlasticity` brick with a new stress criterion.
+
+# New features of the `TFEL` libraries
+
+## New features of the `TFEL/Math` library
+
+### Scalar Newton-Raphson algorithm
+
+The function `scalarNewtonRaphson`, declared in the
+`TFEL/Math/ScalarNewtonRaphson.hxx` is a generic implementation of the
+Newton-Raphson algorithm for scalar non linear equations.
+
+This implementation handles properly `IEEE754` exceptional cases
+(infinite numbers, `NaN` values), even if advanced compilers options are
+used (such as `-ffast-math` under `gcc`).
+
+#### Usage
+
+~~~~{.cxx}
+// this lambda takes the current estimate of the root and returns
+// a tuple containing the value of the function whose root is searched
+// and its derivative.
+auto fdf = [](const double x) {
+  return std::make_tuple(x * x - 13, 2 * x);
+};
+// this lambda returns a boolean stating if the algorithm has converged
+// the first argument is the value of the function whose root is searched
+// the second argument is the Newton correction to be applied
+// the third argument is the current estimate of the root
+// the fourth argument is the current iteration number
+auto c = [](const double f, const double, const double, const int) {
+  return std::abs(f) < 1.e-14;
+};
+// The `scalarNewtonRaphson` returns a tuple containing:
+// - a boolean stating if the algorithm has converged
+// - the last estimate of the function root
+// - the number of iterations performed
+// The two last arguments are respectively the initial guess and 
+// the maximum number of iterations to be performed
+const auto r = tfel::math::scalarNewtonRaphson(fdf, c, 0.1, 100);
+~~~~
+
 # New features of `MFront`
+
+## Coupling (visco-)plasticity with porosity evolutions in the `StandardElastoViscoPlasticity` brick
+
+## The `StandardStressCriterionBase` and `StandardPorousStressCriterionBase` base class to  ease the extension of the `StandardElastoViscoPlasticity` brick
 
 ## Improved robustness of the isotropic DSLs
 

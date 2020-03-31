@@ -205,6 +205,7 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/QR/QRDecomp.hxx			                                             \
 			TFEL/Math/QR/QRDecomp.ixx			                                             \
 			TFEL/Math/QR/QRException.hxx			                                             \
+			TFEL/Math/Newton-Raphson/ScalarNewtonRaphson.ixx                                               \
 			TFEL/Math/Newton-Raphson/TinyNewtonRaphson.ixx                                               \
 			TFEL/Math/RungeKutta/RungeKutta2.ixx		                                             \
 			TFEL/Math/RungeKutta/RungeKutta4.ixx		                                             \
@@ -364,6 +365,7 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/Quantity/qtIO.hxx			                                             \
 			TFEL/Math/Quantity/qtLimits.hxx                                                              \
 			TFEL/Math/qt.hxx				                                             \
+			TFEL/Math/ScalarNewtonRaphson.hxx		                                                    \
 			TFEL/Math/TinyNewtonRaphson.hxx		                                                     \
 			TFEL/Math/RungeKutta2.hxx			                                             \
 			TFEL/Math/RungeKutta4.hxx			                                             \
