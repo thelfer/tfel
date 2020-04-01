@@ -117,13 +117,15 @@ nobase_include_HEADERS= MFront/MFront.hxx                                      \
 			MFront/BehaviourBrick/IsotropicDamageHookeStressPotentialBase.hxx \
 			MFront/BehaviourBrick/IsotropicDamageHookeStressPotential.hxx     \
 			MFront/BehaviourBrick/StressPotentialFactory.hxx                  \
+			MFront/BehaviourBrick/InelasticFlowFactory.hxx                    \
 			MFront/BehaviourBrick/InelasticFlow.hxx                           \
 			MFront/BehaviourBrick/InelasticFlowBase.hxx                       \
 			MFront/BehaviourBrick/ViscoplasticFlowBase.hxx                    \
 			MFront/BehaviourBrick/NortonHoffViscoplasticFlow.hxx              \
 			MFront/BehaviourBrick/HyperbolicSineViscoplasticFlow.hxx          \
 			MFront/BehaviourBrick/PlasticInelasticFlow.hxx                    \
-			MFront/BehaviourBrick/InelasticFlowFactory.hxx                    \
+			MFront/BehaviourBrick/PorosityNucleationModelFactory.hxx          \
+			MFront/BehaviourBrick/PorosityNucleationModel.hxx                 \
 			MFront/BehaviourBrick/StressCriterion.hxx                         \
 			MFront/BehaviourBrick/StressCriterionBase.hxx                     \
 			MFront/BehaviourBrick/StandardStressCriterionBase.hxx             \

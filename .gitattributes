@@ -2372,6 +2372,8 @@ mfront/include/MFront/BehaviourBrick/MohrCoulombStressCriterion.hxx -text
 mfront/include/MFront/BehaviourBrick/NortonHoffViscoplasticFlow.hxx -text
 mfront/include/MFront/BehaviourBrick/OptionDescription.hxx -text
 mfront/include/MFront/BehaviourBrick/PlasticInelasticFlow.hxx -text
+mfront/include/MFront/BehaviourBrick/PorosityNucleationModel.hxx -text
+mfront/include/MFront/BehaviourBrick/PorosityNucleationModelFactory.hxx -text
 mfront/include/MFront/BehaviourBrick/PowerIsotropicHardeningRule.hxx -text
 mfront/include/MFront/BehaviourBrick/PragerKinematicHardeningRule.hxx -text
 mfront/include/MFront/BehaviourBrick/Provider.hxx -text
@@ -2881,6 +2883,8 @@ mfront/src/OptionDescription.cxx -text
 mfront/src/PedanticMode.cxx -text
 mfront/src/PerformanceProfiling.cxx -text
 mfront/src/PlasticInelasticFlow.cxx -text
+mfront/src/PorosityNucleationModel.cxx -text
+mfront/src/PorosityNucleationModelFactory.cxx -text
 mfront/src/PowellDogLegAlgorithmBase.cxx -text
 mfront/src/PowerIsotropicHardeningRule.cxx -text
 mfront/src/PragerKinematicHardeningRule.cxx -text

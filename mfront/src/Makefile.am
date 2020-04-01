@@ -138,13 +138,15 @@ libTFELMFront_la_SOURCES = MFront.cxx                                           
 		           IsotropicDamageHookeStressPotential.cxx                \
 		           DDIF2StressPotential.cxx                               \
 		           StressPotentialFactory.cxx                             \
+		           InelasticFlowFactory.cxx                               \
 		           InelasticFlow.cxx                                      \
 		           InelasticFlowBase.cxx                                  \
 		           ViscoplasticFlowBase.cxx                               \
 		           NortonHoffViscoplasticFlow.cxx                         \
 		           HyperbolicSineViscoplasticFlow.cxx                     \
 		           PlasticInelasticFlow.cxx                               \
-		           InelasticFlowFactory.cxx                               \
+		           PorosityNucleationModelFactory.cxx                     \
+		           PorosityNucleationModel.cxx                            \
 		           StressCriterion.cxx                                    \
 		           StressCriterionBase.cxx                                \
 		           StandardStressCriterionBase.cxx                        \

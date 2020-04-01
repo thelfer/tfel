@@ -122,6 +122,9 @@ namespace mfront {
             throw_if(!is_material_property(mp));
           }
           break;
+        case OptionDescription::DATAMAP:
+          throw_if(!d.is<std::map<std::string, tfel::utilities::Data>>());
+          break;
         case OptionDescription::DATASTRUCTURE:
           throw_if(!((d.is<tfel::utilities::DataStructure>()) ||
                      (d.is<std::string>())));

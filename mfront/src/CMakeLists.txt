@@ -161,12 +161,14 @@ set(TFELMFront_SOURCES
     DDIF2StressPotential.cxx
     StressPotentialFactory.cxx
     InelasticFlow.cxx
+    InelasticFlowFactory.cxx
     InelasticFlowBase.cxx
     ViscoplasticFlowBase.cxx
     NortonHoffViscoplasticFlow.cxx
     HyperbolicSineViscoplasticFlow.cxx
     PlasticInelasticFlow.cxx
-    InelasticFlowFactory.cxx
+    PorosityNucleationModel.cxx
+    PorosityNucleationModelFactory.cxx
     StressCriterion.cxx
     StressCriterionBase.cxx
     StandardStressCriterionBase.cxx

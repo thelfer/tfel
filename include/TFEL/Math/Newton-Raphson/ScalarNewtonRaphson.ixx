@@ -33,7 +33,7 @@ namespace tfel {
       auto x = x0;
       auto dx = NumericType{};
       if (i >= im) {
-        return {false, x0, i};
+        return std::make_tuple(false, x0, i);
       }
 #if __cplusplus >= 201703L
       auto[f, df] = f(x0);
@@ -47,7 +47,7 @@ namespace tfel {
         if ((!tfel::math::ieee754::isfinite(fv)) ||
             (!tfel::math::ieee754::isfinite(dfv)) ||
             (tfel::math::ieee754::fpclassify(dfv) == FP_ZERO)) {
-          return {false, x, i};
+          return std::make_tuple(false, x, i);
         }
         dx = -fv / dfv;
         converged = c(fv, dx, x, i);
@@ -57,7 +57,7 @@ namespace tfel {
           ++i;
         }
       }
-      return {converged, x, i};
+      return std::make_tuple(converged, x, i);
     }  // end of scalarNewtonRaphson
 
   }  // end of namespace math

@@ -17,6 +17,8 @@
 #include "MFront/BehaviourBrick/OptionDescription.hxx"
 #include "MFront/BehaviourBrick/InelasticFlow.hxx"
 #include "MFront/BehaviourBrick/InelasticFlowFactory.hxx"
+#include "MFront/BehaviourBrick/PorosityNucleationModel.hxx"
+#include "MFront/BehaviourBrick/PorosityNucleationModelFactory.hxx"
 #include "MFront/AbstractBehaviourDSL.hxx"
 #include "MFront/StandardElastoViscoPlasticityBrick.hxx"
 
@@ -31,41 +33,50 @@ namespace mfront {
 
   StandardElastoViscoPlasticityBrick::StandardElastoViscoPlasticityBrick(
       AbstractBehaviourDSL& dsl_, BehaviourDescription& mb_)
-      : BehaviourBrickBase(dsl_, mb_) {
-  }  // end of
-     // StandardElastoViscoPlasticityBrick::StandardElastoViscoPlasticityBrick
+      : BehaviourBrickBase(dsl_, mb_) {}  // end of
+  // StandardElastoViscoPlasticityBrick::StandardElastoViscoPlasticityBrick
 
   std::string StandardElastoViscoPlasticityBrick::getName() const {
     return "ElastoViscoPlasticity";
-  } // end of StandardElastoViscoPlasticityBrick::getName
+  }  // end of StandardElastoViscoPlasticityBrick::getName
 
-  BehaviourBrickDescription StandardElastoViscoPlasticityBrick::getDescription() const {
+  BehaviourBrickDescription StandardElastoViscoPlasticityBrick::getDescription()
+      const {
     auto d = BehaviourBrickDescription{};
-    d.behaviourType = tfel::material::MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR;
+    d.behaviourType =
+        tfel::material::MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR;
     d.integrationScheme = IntegrationScheme::IMPLICITSCHEME;
-    d.supportedModellingHypotheses = ModellingHypothesis::getModellingHypotheses();
-    d.supportedBehaviourSymmetries = {mfront::ISOTROPIC,mfront::ORTHOTROPIC};
+    d.supportedModellingHypotheses =
+        ModellingHypothesis::getModellingHypotheses();
+    d.supportedBehaviourSymmetries = {mfront::ISOTROPIC, mfront::ORTHOTROPIC};
     return d;
-  } // end of StandardElastoViscoPlasticityBrick::getDescription
+  }  // end of StandardElastoViscoPlasticityBrick::getDescription
 
   std::vector<bbrick::OptionDescription>
   StandardElastoViscoPlasticityBrick::getOptions(const bool) const {
     auto opts = std::vector<bbrick::OptionDescription>{};
-    opts.emplace_back("stress_potential", "", bbrick::OptionDescription::STRING);
-    opts.emplace_back("inelastic_flow", "", bbrick::OptionDescription::STRING);
+    opts.emplace_back("stress_potential",
+                      "Decare the stress potential (required)",
+                      bbrick::OptionDescription::STRING);
+    opts.emplace_back("inelastic_flow", "Declare another inelastic flow",
+                      bbrick::OptionDescription::STRING);
+    opts.emplace_back(
+        "porosity_evolution",
+        "state if the porosity evolution must be taken into account",
+        bbrick::OptionDescription::STRING);
     return opts;
   }  // end of StandardElastoViscoPlasticityBrick::getOptions
 
   void StandardElastoViscoPlasticityBrick::initialize(const Parameters&,
                                                       const DataMap& d) {
-    auto raise =
-        [](const std::string& m) {
-          tfel::raise(
-              "StandardElastoViscoPlasticityBrick::"
-              "StandardElastoViscoPlasticityBrick: " +
-              m);
-        };  // end of raise
+    auto raise = [](const std::string& m) {
+      tfel::raise(
+          "StandardElastoViscoPlasticityBrick::"
+          "StandardElastoViscoPlasticityBrick: " +
+          m);
+    };  // end of raise
     auto& iff = bbrick::InelasticFlowFactory::getFactory();
+    auto& nmf = bbrick::PorosityNucleationModelFactory::getFactory();
     auto getDataStructure = [&raise](const std::string& n, const Data& ds) {
       if (ds.is<std::string>()) {
         tfel::utilities::DataStructure nds;
@@ -89,6 +100,9 @@ namespace mfront {
         this->stress_potential->initialize(this->bd, this->dsl, ds.data);
       }
     };
+    //
+    this->checkOptionsNames(d);
+    //
     getStressPotential("elastic_potential");
     getStressPotential("stress_potential");
     if (this->stress_potential == nullptr) {
@@ -114,6 +128,34 @@ namespace mfront {
           }
         } else {
           append_flow(e.second, 1u);
+        }
+      } else if (e.first == "porosity_evolution") {
+        if (!e.second.is<DataMap>()) {
+          raise("invalid data type for entry 'porosity_evolution'");
+        }
+        for (const auto& ped : e.second.get<DataMap>()) {
+          if (ped.first == "nucleation_model") {
+            auto append_nucleation_model = [this, &nmf, getDataStructure](
+                const Data& nmd, const size_t msize) {
+              const auto ds = getDataStructure("nucleation_model", nmd);
+              auto nm = nmf.generate(ds.name);
+              nm->initialize(this->bd, this->dsl,
+                             getId(this->nucleation_models.size(), msize),
+                             ds.data);
+              this->nucleation_models.push_back(nm);
+            };
+            if (ped.second.is<std::vector<Data>>()) {
+              // multiple inelastic nucleation_models are defined
+              const auto& nms = ped.second.get<std::vector<Data>>();
+              for (const auto& nm : nms) {
+                append_nucleation_model(nm, nms.size());
+              }
+            } else {
+              append_nucleation_model(ped.second, 1u);
+            }
+          } else {
+            raise("invalid entry '" + ped.first + "' in 'porosity_evolution'");
+          }
         }
       } else {
         raise("unsupported entry '" + e.first + "'");

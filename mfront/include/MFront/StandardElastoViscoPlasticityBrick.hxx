@@ -18,6 +18,8 @@ namespace mfront {
     struct StressPotential;
     // forward declaration
     struct InelasticFlow;
+    // forward declaration
+    struct PorosityNucleationModel;
   }  // end of namespace bbrick
 
   /*!
@@ -50,10 +52,12 @@ namespace mfront {
     //! \return if a coupling with the porosity evolution is required
     bool isCoupledWithPorosityEvolution() const;
 
-    //! stress potential
+    //! \brief stress potential
     std::shared_ptr<bbrick::StressPotential> stress_potential;
-    //! inelastic flows
+    //! \brief inelastic flows
     std::vector<std::shared_ptr<bbrick::InelasticFlow>> flows;
+    //! \brief nucleation models
+    std::vector<std::shared_ptr<bbrick::PorosityNucleationModel>> nucleation_models;
 
   };  // end of StandardElastoViscoPlasticityBrick
 
