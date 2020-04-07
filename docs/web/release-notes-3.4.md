@@ -127,10 +127,24 @@ The following code can be added in a block defining an inelastic flow:
 
 ## Improvements of the `tfel.math` module
 
+### `NumPy` support
+
+This version is the first to use `Boost/NumPy` to provide interaction
+with `NumPy` array.
+
+> **Note**
+>
+> The `NumPy` support is enabled by default if the `Python` bindings
+> are requested. However, beware that `Boost/NumPy` is broken for
+> `Python3` up to version 1.68. We strongly recommend disabling
+> `NumPy` support when using previous versions of `Boost` by
+> passing the flag `-Denable-numpy-support=OFF` to the `cmake`
+> invokation.
+
 ### Exposing acceleration algorithm
 
 The `FAnderson` and `UAnderson` acceleration algorithms are now
-available in the `tfel.math` module
+available in the `tfel.math` module. This requires `NumPy` support.
 
 #### Example of the usage of the `UAnderson` acceleration algorithm
 
@@ -166,6 +180,12 @@ for i in range(0,100):
 
 Without acceleration, this algorithm takes \(78\) iterations. In
 comparison, the accelerated algorithm takes \(9\) iterations.
+
+# Improvements to the build system
+
+## Exporting `CMake`' targets
+
+## Disabling `NumPy` support
 
 # Tickets solved during the development of this version
 
