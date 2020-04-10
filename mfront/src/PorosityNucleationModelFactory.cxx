@@ -13,6 +13,7 @@
 
 #include "TFEL/Raise.hxx"
 #include "MFront/MFrontUtilities.hxx"
+#include "MFront/BehaviourBrick/ChuNeedleman1980StrainBasedPorosityNucleationModel.hxx"
 #include "MFront/BehaviourBrick/PorosityNucleationModelFactory.hxx"
 
 namespace mfront {
@@ -52,6 +53,10 @@ namespace mfront {
     }  // end of PorosityNucleationModelFactory::generate
 
     PorosityNucleationModelFactory::PorosityNucleationModelFactory() {
+      this->addGenerator("Chu-Needleman 1980 (strain)", []() {
+        return std::make_shared<
+            ChuNeedleman1980StrainBasedPorosityNucleationModel>();
+      });
     }  // end of PorosityNucleationModelFactory::PorosityNucleationModelFactory
 
     PorosityNucleationModelFactory::~PorosityNucleationModelFactory() = default;

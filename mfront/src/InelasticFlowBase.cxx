@@ -114,7 +114,32 @@ namespace mfront {
           } else {
             add_kinematic_hardening_rule(getDataStructure(e.first, e.second));
           }
-        }
+        } else if (e.first == "save_porosity_increase") {
+          if (!e.second.is<bool>()) {
+            raise("'save_porosity_increase' is not a boolean");
+          }
+          this->save_porosity_increase = e.second.get<bool>();
+        } else if (e.first == "porosity_effect_on_flow_rule") {
+          if (!e.second.is<std::string>()) {
+            raise("'porosity_effect_on_flow_rule' is not a string");
+          }
+          const auto& pe = e.second.get<std::string>();
+          if ((pe == "StandardPorosityEffect") ||
+              (pe == "standard_porosity_effect")) {
+            this->porosity_effect_on_flow_rule =
+                STANDARD_POROSITY_CORRECTION_ON_FLOW_RULE;
+          } else if ((pe == "None") || (pe == "none") || (pe == "false")) {
+            this->porosity_effect_on_flow_rule =
+                NO_POROSITY_EFFECT_ON_FLOW_RULE;
+          } else if (pe != "Undefined") {
+            raise(
+                "invalid value of 'porosity_effect_on_flow_rule'. Expected "
+                "'StandardPorosityEffect' (or equivalently "
+                "'standard_porosity_effect') or 'None' (or equivalently 'none' "
+                "or 'false'), but got '" +
+                pe + "'");
+          }
+        }  // other options must be treated in child classes
       }
       if (this->sc == nullptr) {
         raise("criterion has not been defined");
@@ -130,22 +155,64 @@ namespace mfront {
           bd.reserveName(uh, dR);
         }
       }
+      if (this->isCoupledWithPorosityEvolution()) {
+        if (this->fc != nullptr) {
+          if (this->fc->isNormalDeviatoric()) {
+            raise(
+                "InelasticFlowBase::initialize: "
+                "the flow is coupled with the porosity evolution by "
+                "the flow direction is deviatoric");
+          }
+        }
+        if (this->sc->isNormalDeviatoric()) {
+          raise(
+              "InelasticFlowBase::initialize: "
+              "the flow is coupled with the porosity evolution by "
+              "the flow direction is deviatoric");
+        }
+      }
+      if ((this->save_porosity_increase) &&
+          (this->contributesToPorosityGrowth())) {
+        addLocalVariable(bd, "real", "dfg" + id);
+        VariableDescription fg("real", "fg" + id, 1u, 0u);
+        const auto g =
+            tfel::glossary::Glossary::PorosityIncreaseDueToInelasticFlow;
+        if (id.empty()) {
+          fg.setGlossaryName(g);
+        } else {
+          fg.setEntryName(g.getKey() + id);
+        }
+        bd.addAuxiliaryStateVariable(uh, fg);
+      }
     }  // end of InelasticFlowBase::initialize
 
-    bool InelasticFlowBase::isCoupledWithPorosityEvolution() const {
-      if (this->sc == nullptr) {
+    void InelasticFlowBase::setPorosityEvolutionHandled(const bool b) {
+      if ((!b) && (this->isCoupledWithPorosityEvolution())) {
         tfel::raise(
-            "InelasticFlowBase::isCoupledWithPorosityEvolution: "
-            "initialized flow");
+            "InelasticFlowBase::setPorosityEvolutionHandled: "
+            "internal error (consistent situation)");
       }
-      if (this->sc->isCoupledWithPorosityEvolution()) {
-        return true;
-      }
-      if (this->fc != nullptr) {
-        return this->fc->isCoupledWithPorosityEvolution();
+      this->porosity_evolution_explicitely_handled = b;
+    }  // end of InelasticFlowBase::setPorosityEvolutionHandled
+
+    bool InelasticFlowBase::contributesToPorosityGrowth() const {
+      if ((this->porosity_evolution_explicitely_handled == true) ||
+          (this->isCoupledWithPorosityEvolution())) {
+        if (this->sc == nullptr) {
+          tfel::raise(
+              "InelasticFlowBase::contributesToPorosityGrowth: "
+              "unitialised object");
+        }
+        const bool bn = [this] {
+          if (this->fc != nullptr) {
+            return !this->fc->isNormalDeviatoric();
+          }
+          return !this->sc->isNormalDeviatoric();
+        }();
+        return bn;
       }
       return false;
-    }
+    }  // end of InelasticFlowBase::contributesToPorosityGrowth
 
     std::vector<OptionDescription> InelasticFlowBase::getOptions() const {
       std::vector<OptionDescription> opts;
@@ -163,6 +230,18 @@ namespace mfront {
       opts.emplace_back("kinematic_hardening",
                         "description of an hardening rule",
                         OptionDescription::DATASTRUCTURES);
+      opts.emplace_back(
+          "save_porosity_increase",
+          "if appropriate, save the porosity increase induced "
+          "by this inelastic flow in a dedicated auxiliary state variable",
+          OptionDescription::BOOLEAN);
+      opts.emplace_back(
+          "porosity_effect_on_flow_rule",
+          "specify the effect of the porosity of the flow rule. "
+          "Valid strings are 'StandardPorosityEffect' (or equivalently "
+          "'standard_porosity_effect') or 'None' (or equivalently 'none' "
+          "or 'false')'",
+          OptionDescription::STRING);
       return opts;
     }  // end of InelasticFlowBase::getOptions()
 
@@ -275,12 +354,12 @@ namespace mfront {
       if (!this->ihrs.empty()) {
         ib.code += "if(this->bpl" + id + "){\n";
       }
-      if(idsl.getSolver().usesJacobian()){
-      	ib.code += "if(!perturbatedSystemEvaluation){\n";
+      if (idsl.getSolver().usesJacobian()) {
+        ib.code += "if(!perturbatedSystemEvaluation){\n";
       }
       ib.code += "this->dp" + id + " = max(this->dp" + id + ", strain(0));\n";
-      if(idsl.getSolver().usesJacobian()){
-      	ib.code += "}\n";
+      if (idsl.getSolver().usesJacobian()) {
+        ib.code += "}\n";
       }
       ib.code += this->computeEffectiveStress(id);
       if (requiresAnalyticalJacobian) {
@@ -304,7 +383,8 @@ namespace mfront {
         }
       }
       // elasticity
-      if (this->isCoupledWithPorosityEvolution()) {
+      if (this->getPorosityEffectOnFlowRule() ==
+          STANDARD_POROSITY_CORRECTION_ON_FLOW_RULE) {
         const auto& f =
             bd.getBehaviourData(uh).getStateVariableDescriptionByExternalName(
                 tfel::glossary::Glossary::Porosity);
@@ -365,15 +445,21 @@ namespace mfront {
         }
         ++kid;
       }
-      if (this->isCoupledWithPorosityEvolution()) {
+      if (this->contributesToPorosityGrowth()) {
         // porosity evolution
         const auto& f =
             bd.getBehaviourData(uh).getStateVariableDescriptionByExternalName(
                 tfel::glossary::Glossary::Porosity);
         const auto f_ = f.name + "_";
-        ib.code += "f" + f.name;
-        ib.code += " -= (1 - " + f_ + ") * (this->dp" + id + ") * trace(n" +
-                   id + ");\n";
+        if (this->save_porosity_increase) {
+          ib.code += "dfg" + id + " = (1 - " + f_ + ") * (this->dp" + id +
+                     ") * trace(n" + id + ");\n";
+          ib.code += "f" + f.name + " -= dfg" + id + ";\n";
+        } else {
+          ib.code += "f" + f.name;
+          ib.code += " -= (1 - " + f_ + ") * (this->dp" + id + ") * trace(n" +
+                     id + ");\n";
+        }
         if (requiresAnalyticalJacobian) {
           ib.code += "df" + f.name + "_dd" + f.name;
           ib.code += " += theta * " + f_ + " * (this->dp" + id + ") * trace(n" +
@@ -421,7 +507,73 @@ namespace mfront {
         bd.setCode(uh, BehaviourData::AdditionalConvergenceChecks, acc,
                    BehaviourData::CREATEORAPPEND, BehaviourData::AT_BEGINNING);
       }
+      // update auxiliary state variables
+      if ((this->contributesToPorosityGrowth()) &&
+          (this->save_porosity_increase)) {
+        CodeBlock uav;
+        uav.code += "fg" + id + " += dfg" + id + ";\n";
+        bd.setCode(uh, BehaviourData::UpdateAuxiliaryStateVariables, uav,
+                   BehaviourData::CREATEORAPPEND, BehaviourData::AT_BEGINNING);
+      }
     }  // end of InelasticFlowBase::endTreatment
+
+    bool InelasticFlowBase::isCoupledWithPorosityEvolution() const {
+      if (this->sc == nullptr) {
+        tfel::raise(
+            "InelasticFlowBase::isCoupledWithPorosityEvolution: "
+            "uninitialized flow");
+      }
+      if (this->sc->isCoupledWithPorosityEvolution()) {
+        return true;
+      }
+      if (this->fc != nullptr) {
+        return this->fc->isCoupledWithPorosityEvolution();
+      }
+      return false;
+    }  // end of InelasticFlowBase::isCoupledWithPorosityEvolution
+
+    InelasticFlowBase::PorosityEffectOnFlowRule
+    InelasticFlowBase::getPorosityEffectOnFlowRule() const {
+      if (this->porosity_effect_on_flow_rule ==
+          UNDEFINED_POROSITY_EFFECT_ON_FLOW_RULE) {
+        if (this->sc == nullptr) {
+          tfel::raise(
+              "InelasticFlowBase::getPorosityEffectOnFlowRule:"
+              "uninitialised flow");
+        }
+        const auto scpe = this->sc->getPorosityEffectOnFlowRule();
+        if ((scpe != StressCriterion::NO_POROSITY_EFFECT_ON_FLOW_RULE) &&
+            (scpe !=
+             StressCriterion::STANDARD_POROSITY_CORRECTION_ON_FLOW_RULE)) {
+          tfel::raise(
+              "InelasticFlowBase::getPorosityEffectOnFlowRule:"
+              "unsupported porosity effect defined by the stress criterion");
+        }
+        if (this->fc != nullptr) {
+          const auto fcpe = this->fc->getPorosityEffectOnFlowRule();
+          if ((fcpe != StressCriterion::NO_POROSITY_EFFECT_ON_FLOW_RULE) &&
+              (fcpe !=
+               StressCriterion::STANDARD_POROSITY_CORRECTION_ON_FLOW_RULE)) {
+            tfel::raise(
+                "InelasticFlowBase::getPorosityEffectOnFlowRule:"
+                "unsupported porosity effect defined by the flow criterion");
+          }
+          if ((scpe ==
+               StressCriterion::STANDARD_POROSITY_CORRECTION_ON_FLOW_RULE) ||
+              (fcpe ==
+               StressCriterion::STANDARD_POROSITY_CORRECTION_ON_FLOW_RULE)) {
+            return STANDARD_POROSITY_CORRECTION_ON_FLOW_RULE;
+          }
+          return NO_POROSITY_EFFECT_ON_FLOW_RULE;
+        } else {
+          if (scpe == StressCriterion::NO_POROSITY_EFFECT_ON_FLOW_RULE) {
+            return NO_POROSITY_EFFECT_ON_FLOW_RULE;
+          }
+          return STANDARD_POROSITY_CORRECTION_ON_FLOW_RULE;
+        }
+      }
+      return this->porosity_effect_on_flow_rule;
+    }  // end of InelasticFlowBase::getPorosityEffectOnFlowRule
 
     InelasticFlowBase::~InelasticFlowBase() = default;
 

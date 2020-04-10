@@ -205,6 +205,11 @@ namespace mfront {
       return c;
     }  // end of StandardStressCriterionBase::computeNormalDerivative
 
+    StressCriterion::PorosityEffectOnFlowRule
+    StandardStressCriterionBase::getPorosityEffectOnFlowRule() const {
+      return StressCriterion::NO_POROSITY_EFFECT_ON_FLOW_RULE;
+    }  // end of StandardStressCriterionBase::getPorosityEffectOnFlowRule()
+
     StandardStressCriterionBase::~StandardStressCriterionBase() = default;
 
   }  // end of namespace bbrick

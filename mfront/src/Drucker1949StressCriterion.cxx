@@ -191,6 +191,11 @@ namespace mfront {
       return true;
     }  // end of Drucker1949StressCriterion::isNormalDeviatoric
 
+    StressCriterion::PorosityEffectOnFlowRule
+    Drucker1949StressCriterion::getPorosityEffectOnFlowRule() const {
+      return StressCriterion::NO_POROSITY_EFFECT_ON_FLOW_RULE;
+    }  // end of Drucker1949StressCriterion::getPorosityEffectOnFlowRule()
+
     Drucker1949StressCriterion::~Drucker1949StressCriterion() = default;
 
   }  // end of namespace bbrick

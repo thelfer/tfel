@@ -1633,6 +1633,8 @@ include/TFEL/Material/Cazacu2004OrthotropicYieldCriterion.ixx -text
 include/TFEL/Material/Cazacu2004YieldCriterionTypes.hxx -text
 include/TFEL/Material/Cazacu2006IsotropicYieldCriterion.hxx -text
 include/TFEL/Material/Cazacu2006IsotropicYieldCriterion.ixx -text
+include/TFEL/Material/ChuNeedleman1980StrainBasedNucleationModel.hxx -text
+include/TFEL/Material/ChuNeedleman1980StrainBasedNucleationModel.ixx -text
 include/TFEL/Material/CrystalStructure.hxx -text
 include/TFEL/Material/DDIF2Base.hxx -text
 include/TFEL/Material/DDIF2Base.ixx -text
@@ -2349,6 +2351,7 @@ mfront/include/MFront/BehaviourBrick/Cazacu2001StressCriterion.hxx -text
 mfront/include/MFront/BehaviourBrick/Cazacu2004IsotropicStressCriterion.hxx -text
 mfront/include/MFront/BehaviourBrick/Cazacu2004OrthotropicStressCriterion.hxx -text
 mfront/include/MFront/BehaviourBrick/Chaboche2012KinematicHardeningRule.hxx -text
+mfront/include/MFront/BehaviourBrick/ChuNeedleman1980StrainBasedPorosityNucleationModel.hxx -text
 mfront/include/MFront/BehaviourBrick/DDIF2StressPotential.hxx -text
 mfront/include/MFront/BehaviourBrick/Drucker1949StressCriterion.hxx -text
 mfront/include/MFront/BehaviourBrick/Hill1948StressCriterion.hxx -text
@@ -2373,6 +2376,7 @@ mfront/include/MFront/BehaviourBrick/NortonHoffViscoplasticFlow.hxx -text
 mfront/include/MFront/BehaviourBrick/OptionDescription.hxx -text
 mfront/include/MFront/BehaviourBrick/PlasticInelasticFlow.hxx -text
 mfront/include/MFront/BehaviourBrick/PorosityNucleationModel.hxx -text
+mfront/include/MFront/BehaviourBrick/PorosityNucleationModelBase.hxx -text
 mfront/include/MFront/BehaviourBrick/PorosityNucleationModelFactory.hxx -text
 mfront/include/MFront/BehaviourBrick/PowerIsotropicHardeningRule.hxx -text
 mfront/include/MFront/BehaviourBrick/PragerKinematicHardeningRule.hxx -text
@@ -2750,6 +2754,7 @@ mfront/src/Cazacu2001StressCriterion.cxx -text
 mfront/src/Cazacu2004IsotropicStressCriterion.cxx -text
 mfront/src/Cazacu2004OrthotropicStressCriterion.cxx -text
 mfront/src/Chaboche2012KinematicHardeningRule.cxx -text
+mfront/src/ChuNeedleman1980StrainBasedPorosityNucleationModel.cxx -text
 mfront/src/CodeBlock.cxx -text
 mfront/src/CompiledTargetDescriptionBase.cxx -text
 mfront/src/ComsolInterface.cxx -text
@@ -2884,6 +2889,7 @@ mfront/src/PedanticMode.cxx -text
 mfront/src/PerformanceProfiling.cxx -text
 mfront/src/PlasticInelasticFlow.cxx -text
 mfront/src/PorosityNucleationModel.cxx -text
+mfront/src/PorosityNucleationModelBase.cxx -text
 mfront/src/PorosityNucleationModelFactory.cxx -text
 mfront/src/PowellDogLegAlgorithmBase.cxx -text
 mfront/src/PowerIsotropicHardeningRule.cxx -text

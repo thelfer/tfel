@@ -461,7 +461,17 @@
 
 "Porosity"{
  type: "scalar";
- short_description : "la porosité du matériau";
+ short_description : "Porosity of the material";
+};
+
+"PorosityIncreaseDueToInelasticFlow"{
+ type: "scalar";
+ short_description : "Part of the porosity increase du to inelastic flow";
+};
+
+"PorosityIncreaseDueToNucleation" {
+ type: "scalar";
+ short_description : "Part of the porosity increase du to nucleation";
 };
 
 "IrradiationInducedSwelling"{

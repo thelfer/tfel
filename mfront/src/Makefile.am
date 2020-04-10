@@ -147,6 +147,8 @@ libTFELMFront_la_SOURCES = MFront.cxx                                           
 		           PlasticInelasticFlow.cxx                               \
 		           PorosityNucleationModelFactory.cxx                     \
 		           PorosityNucleationModel.cxx                            \
+		           PorosityNucleationModelBase.cxx                        \
+                   ChuNeedleman1980StrainBasedPorosityNucleationModel.cxx \
 		           StressCriterion.cxx                                    \
 		           StressCriterionBase.cxx                                \
 		           StandardStressCriterionBase.cxx                        \
@@ -172,9 +174,8 @@ libTFELMFront_la_SOURCES = MFront.cxx                                           
 		           PragerKinematicHardeningRule.cxx                       \
 		           Chaboche2012KinematicHardeningRule.cxx                 \
 		           BurletCailletaudKinematicHardeningRule.cxx             \
-		           ArmstrongFrederickKinematicHardeningRule.cxx            \
+		           ArmstrongFrederickKinematicHardeningRule.cxx           \
 		           KinematicHardeningRuleFactory.cxx
-
 
 if HAVE_GNUPLOT
 libTFELMFront_la_SOURCES += GnuplotMaterialPropertyInterface.cxx

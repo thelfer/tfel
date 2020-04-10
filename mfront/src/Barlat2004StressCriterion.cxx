@@ -306,6 +306,11 @@ namespace mfront {
       return true;
     }  // end of Barlat2004StressCriterion::isNormalDeviatoric
 
+    StressCriterion::PorosityEffectOnFlowRule
+    Barlat2004StressCriterion::getPorosityEffectOnFlowRule() const {
+      return StressCriterion::NO_POROSITY_EFFECT_ON_FLOW_RULE;
+    }  // end of Barlat2004StressCriterion::getPorosityEffectOnFlowRule()
+
     Barlat2004StressCriterion::~Barlat2004StressCriterion() = default;
 
   }  // end of namespace bbrick

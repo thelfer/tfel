@@ -68,6 +68,14 @@ namespace mfront {
                               AbstractBehaviourDSL&,
                               const std::string&,
                               const DataMap&) = 0;
+      /*!
+       * \brief set a flag stating if the porosity evolution is handled
+       * by the brick. This shall always be the case if the inelastic flow is
+       * coupled with the porosity evolution.
+       * This method is called after that all the other flows handled by this
+       * brick are initialized.
+       */
+      virtual void setPorosityEvolutionHandled(const bool) = 0;
       //! \return if the the flow is coupled with the porosity evolution
       virtual bool isCoupledWithPorosityEvolution() const = 0;
       //! \return the flow options

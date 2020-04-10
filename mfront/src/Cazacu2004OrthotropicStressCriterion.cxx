@@ -337,6 +337,11 @@ namespace mfront {
       return true;
     }  // end of Cazacu2004OrthotropicStressCriterion::isNormalDeviatoric
 
+    StressCriterion::PorosityEffectOnFlowRule
+    Cazacu2004OrthotropicStressCriterion::getPorosityEffectOnFlowRule() const {
+      return StressCriterion::NO_POROSITY_EFFECT_ON_FLOW_RULE;
+    }  // end of Cazacu2004OrthotropicStressCriterion::getPorosityEffectOnFlowRule()
+
     Cazacu2004OrthotropicStressCriterion::
         ~Cazacu2004OrthotropicStressCriterion() = default;
 

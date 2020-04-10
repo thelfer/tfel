@@ -42,6 +42,19 @@ namespace mfront {
 
     //! \brief class describing a stress criterion
     struct MFRONT_VISIBILITY_EXPORT StressCriterion {
+      //! \brief policy on how the porosity affects the flow rule
+      enum PorosityEffectOnFlowRule {
+        /*!
+         * \brief This value indicate that the flow rule is not affected by the
+         * porosity evolution.
+         */
+        NO_POROSITY_EFFECT_ON_FLOW_RULE,
+        /*!
+         * \brief This value indicate that the flow rule must be corrected by
+         * the standard \f$(1-f)\f$ factor where \f$f\f$ is the porosity.
+         */
+        STANDARD_POROSITY_CORRECTION_ON_FLOW_RULE,
+      };
       /*!
        * \brief describe the purpose of the criterion
        */
@@ -189,11 +202,16 @@ namespace mfront {
       virtual bool isCoupledWithPorosityEvolution() const = 0;
       //! \return if the normal is deviatoric
       virtual bool isNormalDeviatoric() const = 0;
+      /*!
+       * \return if using this stress criterion generally implies a
+       * correction of the flow rule 
+       */
+      virtual PorosityEffectOnFlowRule getPorosityEffectOnFlowRule() const = 0;
       //! destructor
       virtual ~StressCriterion();
-    };  // end of struct StressCriterion
+};  // end of struct StressCriterion
 
-  }  // end of namespace bbrick
+}  // end of namespace bbrick
 
 }  // end of namespace mfront
 

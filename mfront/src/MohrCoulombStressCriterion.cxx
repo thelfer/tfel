@@ -227,6 +227,11 @@ namespace mfront {
       return false;
     }  // end of MohrCoulombStressCriterion::isNormalDeviatoric
 
+    StressCriterion::PorosityEffectOnFlowRule
+    MohrCoulombStressCriterion::getPorosityEffectOnFlowRule() const {
+      return StressCriterion::NO_POROSITY_EFFECT_ON_FLOW_RULE;
+    }  // end of MohrCoulombStressCriterion::getPorosityEffectOnFlowRule()
+
     MohrCoulombStressCriterion::~MohrCoulombStressCriterion() = default;
 
   }  // end of namespace bbrick

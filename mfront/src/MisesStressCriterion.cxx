@@ -117,6 +117,11 @@ namespace mfront{
       return true;
     }  // end of MisesStressCriterion::isNormalDeviatoric
 
+    StressCriterion::PorosityEffectOnFlowRule
+    MisesStressCriterion::getPorosityEffectOnFlowRule() const {
+      return StressCriterion::NO_POROSITY_EFFECT_ON_FLOW_RULE;
+    }  // end of MisesStressCriterion::getPorosityEffectOnFlowRule()
+
     MisesStressCriterion::~MisesStressCriterion() = default;
 
   }  // end of namespace bbrick

@@ -578,9 +578,25 @@ Cette entrée décrit le coefficient de Poisson d'un matériau orthotrope relati
 
 # L'entrée Porosity
 
-Cette entrée décrit la porosité du matériau.
+Cette entrée décrit Porosity of the material.
 
 * noms : Porosity
+* unité: sans unité
+* type: scalaire 
+
+# L'entrée PorosityIncreaseDueToInelasticFlow
+
+Cette entrée décrit Part of the porosity increase du to inelastic flow.
+
+* noms : PorosityIncreaseDueToInelasticFlow
+* unité: sans unité
+* type: scalaire 
+
+# L'entrée PorosityIncreaseDueToNucleation
+
+Cette entrée décrit Part of the porosity increase du to nucleation.
+
+* noms : PorosityIncreaseDueToNucleation
 * unité: sans unité
 * type: scalaire 
 

@@ -98,6 +98,8 @@ static const GlossaryEntry PoissonRatio12;
 static const GlossaryEntry PoissonRatio13;
 static const GlossaryEntry PoissonRatio23;
 static const GlossaryEntry Porosity;
+static const GlossaryEntry PorosityIncreaseDueToInelasticFlow;
+static const GlossaryEntry PorosityIncreaseDueToNucleation;
 static const GlossaryEntry PowerDensity;
 static const GlossaryEntry Pressure;
 static const GlossaryEntry PrincipalStress1;
@@ -157,7 +159,7 @@ getKeys() const;
 
 protected :
 //! all glossary names (to initialise glossary entries)
-static const char * names[101];
+static const char * names[103];
 /*!
  * \brief insert a new entry
  */

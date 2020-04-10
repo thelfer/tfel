@@ -11,6 +11,11 @@ namespace mfront{
 
   namespace bbrick {
 
+    std::string PorosityNucleationModel::getVariableId(const std::string& n,
+                                                       const std::string& id) {
+      return "pnm_" + n + id;
+    }  // end of PorosityNucleationModel::getVariableId
+
     PorosityNucleationModel::~PorosityNucleationModel() = default;
 
   }  // end of namespace bbrick

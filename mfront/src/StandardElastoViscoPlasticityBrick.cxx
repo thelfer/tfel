@@ -108,16 +108,69 @@ namespace mfront {
     if (this->stress_potential == nullptr) {
       raise("no stress potential defined");
     }
+    auto save_individual_porosity_increase = false;
+    if (d.count("porosity_evolution") != 0) {
+      const auto& e = d.at("porosity_evolution");
+      if (!e.is<DataMap>()) {
+        raise("invalid data type for entry 'porosity_evolution'");
+      }
+      const auto ed = e.get<DataMap>();
+      if (ed.count("save_individual_porosity_increase") != 0) {
+        const auto b = ed.at("save_individual_porosity_increase");
+        if (!b.is<bool>()) {
+          raise("'save_individual_porosity_increase' is not a boolean value");
+        }
+        save_individual_porosity_increase = b.get<bool>();
+      }
+      for (const auto& ped : ed) {
+        if (ped.first == "save_individual_porosity_increase") {
+        } else if (ped.first == "nucleation_model") {
+          auto append_nucleation_model = [this, &nmf, getDataStructure, raise,
+                                          &save_individual_porosity_increase](
+              const Data& nmd, const size_t msize) {
+            const auto ds = getDataStructure("nucleation_model", nmd);
+            auto nm = nmf.generate(ds.name);
+            auto data = ds.data;
+            if (data.count("save_individual_porosity_increase") == 0) {
+              data["save_individual_porosity_increase"] =
+                  save_individual_porosity_increase;
+            }
+            nm->initialize(this->bd, this->dsl,
+                           getId(this->nucleation_models.size(), msize), data);
+            this->nucleation_models.push_back(nm);
+          };
+          if (ped.second.is<std::vector<Data>>()) {
+            // multiple inelastic nucleation_models are defined
+            const auto& nms = ped.second.get<std::vector<Data>>();
+            for (const auto& nm : nms) {
+              append_nucleation_model(nm, nms.size());
+            }
+          } else {
+            append_nucleation_model(ped.second, 1u);
+          }
+        } else {
+          raise("invalid entry '" + ped.first + "' in 'porosity_evolution'");
+        }
+      }
+      if (this->porosity_growth_policy == UNDEFINEDPOROSITYGROWTHPOLICY) {
+        this->porosity_growth_policy = STANDARDVISCOPLASTICPOROSITYGROWTHPOLICY;
+      }
+    }
     for (const auto& e : d) {
       if ((e.first == "elastic_potential") || (e.first == "stress_potential")) {
         // already treated
       } else if (e.first == "inelastic_flow") {
-        auto append_flow = [this, &iff, getDataStructure](const Data& ifd,
-                                                          const size_t msize) {
+        auto append_flow = [this, &iff, getDataStructure, raise,
+                            &save_individual_porosity_increase](
+            const Data& ifd, const size_t msize) {
           const auto ds = getDataStructure("inelatic_flow", ifd);
           auto iflow = iff.generate(ds.name);
+          auto data = ds.data;
+          if (data.count("save_porosity_increase") == 0) {
+            data["save_porosity_increase"] = save_individual_porosity_increase;
+          }
           iflow->initialize(this->bd, this->dsl,
-                            getId(this->flows.size(), msize), ds.data);
+                            getId(this->flows.size(), msize), data);
           this->flows.push_back(iflow);
         };
         if (e.second.is<std::vector<Data>>()) {
@@ -130,36 +183,14 @@ namespace mfront {
           append_flow(e.second, 1u);
         }
       } else if (e.first == "porosity_evolution") {
-        if (!e.second.is<DataMap>()) {
-          raise("invalid data type for entry 'porosity_evolution'");
-        }
-        for (const auto& ped : e.second.get<DataMap>()) {
-          if (ped.first == "nucleation_model") {
-            auto append_nucleation_model = [this, &nmf, getDataStructure](
-                const Data& nmd, const size_t msize) {
-              const auto ds = getDataStructure("nucleation_model", nmd);
-              auto nm = nmf.generate(ds.name);
-              nm->initialize(this->bd, this->dsl,
-                             getId(this->nucleation_models.size(), msize),
-                             ds.data);
-              this->nucleation_models.push_back(nm);
-            };
-            if (ped.second.is<std::vector<Data>>()) {
-              // multiple inelastic nucleation_models are defined
-              const auto& nms = ped.second.get<std::vector<Data>>();
-              for (const auto& nm : nms) {
-                append_nucleation_model(nm, nms.size());
-              }
-            } else {
-              append_nucleation_model(ped.second, 1u);
-            }
-          } else {
-            raise("invalid entry '" + ped.first + "' in 'porosity_evolution'");
-          }
-        }
       } else {
         raise("unsupported entry '" + e.first + "'");
       }
+    }
+    // say to every flows if the porosity is handled by the brick
+    const auto pe = this->isCoupledWithPorosityEvolution();
+    for (auto& f : this->flows) {
+      f->setPorosityEvolutionHandled(pe);
     }
   }  // end of StandardElastoViscoPlasticityBrick::initialize
 
@@ -170,7 +201,10 @@ namespace mfront {
         return true;
       }
     }
-    return false;
+    if (!this->nucleation_models.empty()) {
+      return true;
+    }
+    return this->porosity_growth_policy != UNDEFINEDPOROSITYGROWTHPOLICY;
   }  // end if
      // StandardElastoViscoPlasticityBrick::isCoupledWithPorosityEvolution
 
@@ -180,6 +214,16 @@ namespace mfront {
                                                                    this->dsl);
   }
 
+  std::map<std::string, std::shared_ptr<mfront::bbrick::InelasticFlow>>
+  StandardElastoViscoPlasticityBrick::buildInelasticFlowsMap() const {
+    auto i = size_t{};
+    auto m = std::map<std::string, std::shared_ptr<bbrick::InelasticFlow>>{};
+    for (const auto& f : this->flows) {
+      m.insert({getId(i, this->flows.size()), f});
+    }
+    return m;
+  }  // end of StandardElastoViscoPlasticityBrick::buildInelasticFlowsMap()
+
   void StandardElastoViscoPlasticityBrick::completeVariableDeclaration() const {
     constexpr const auto uh =
         tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
@@ -188,6 +232,13 @@ namespace mfront {
     for (const auto& f : this->flows) {
       f->completeVariableDeclaration(this->bd, this->dsl,
                                      getId(i, this->flows.size()));
+      ++i;
+    }
+    i = size_t{};
+    for (const auto& nm : this->nucleation_models) {
+      nm->completeVariableDeclaration(this->bd, this->dsl,
+                                      this->buildInelasticFlowsMap(),
+                                      getId(i, this->nucleation_models.size()));
       ++i;
     }
     // automatic registration of the porosity for porous flows
@@ -218,7 +269,6 @@ namespace mfront {
       bd.setCode(uh, BehaviourData::Integrator, ib,
                  BehaviourData::CREATEORAPPEND, BehaviourData::AT_BEGINNING);
     }
-
     this->stress_potential->endTreatment(this->bd, this->dsl);
     const bool requiresAnalyticalJacobian =
         ((idsl.getSolver().usesJacobian()) &&
@@ -230,6 +280,13 @@ namespace mfront {
     for (const auto& f : this->flows) {
       f->endTreatment(this->bd, this->dsl, *(this->stress_potential),
                       getId(i, this->flows.size()));
+      ++i;
+    }
+    i = size_t{};
+    for (const auto& nm : this->nucleation_models) {
+      nm->endTreatment(this->bd, this->dsl, *(this->stress_potential),
+                       this->buildInelasticFlowsMap(),
+                       getId(i, this->nucleation_models.size()));
       ++i;
     }
     // at this stage, one assumes that the various components of the inelastic

@@ -14,6 +14,7 @@
 #ifndef LIB_TFEL_MATERIAL___STRESS_CRITERION_NAME___HXX
 #define LIB_TFEL_MATERIAL___STRESS_CRITERION_NAME___HXX
 
+#include <tuple>
 #include <iosfwd>
 #include "TFEL/Math/stensor.hxx"
 #include "TFEL/Math/st2tost2.hxx"

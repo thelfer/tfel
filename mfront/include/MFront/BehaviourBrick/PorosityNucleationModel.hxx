@@ -33,6 +33,13 @@ namespace mfront {
 
   namespace bbrick {
 
+    // forward declaration
+    struct StressPotential;
+    // forward declaration
+    struct InelasticFlow;
+    // forward declaration
+    struct OptionDescription;
+
     //! \brief class describing an inelastic flow.
     struct MFRONT_VISIBILITY_EXPORT PorosityNucleationModel {
       //! a simple alias
@@ -41,10 +48,12 @@ namespace mfront {
       using DataMap = std::map<std::string, Data>;
       //! a simple alias
       using ModellingHypothesis = tfel::material::ModellingHypothesis;
-      //! a simple alias
-      using Hypothesis = ModellingHypothesis::Hypothesis;
-      //! a simple alias
-      using MaterialPropertyInput = BehaviourDescription::MaterialPropertyInput;
+      /*!
+       * \return the name of a variable from a base name and the nucleation model id.
+       * \param[in] n: base name
+       * \param[in] id: nucleation model id
+       */
+      static std::string getVariableId(const std::string&, const std::string&);
       /*!
        * \param[in,out] bd: behaviour description
        * \param[in,out] dsl: abstract behaviour dsl
@@ -55,6 +64,34 @@ namespace mfront {
                               AbstractBehaviourDSL&,
                               const std::string&,
                               const DataMap&) = 0;
+      //! \return the flow options
+      virtual std::vector<OptionDescription> getOptions() const = 0;
+      /*!
+       * \brief complete the variable description
+       * \param[in/out] bd: behaviour description
+       * \param[in] dsl: abstract behaviour dsl
+       * \param[in] iflows: list of inelastic flows and their associated ids
+       * \param[in] id: porosity nucleation model id
+       */
+      virtual void completeVariableDeclaration(
+          BehaviourDescription&,
+          const AbstractBehaviourDSL&,
+          const std::map<std::string, std::shared_ptr<bbrick::InelasticFlow>>&,
+          const std::string&) const = 0;
+      /*!
+       * \brief method called at the end of the input file processing
+       * \param[in] dsl: abstract behaviour dsl
+       * \param[in] bd: behaviour description
+       * \param[in] sp: stress potential
+       * \param[in] iflows: list of inelastic flows and their associated ids
+       * \param[in] id: porosity nucleation model id
+       */
+      virtual void endTreatment(
+          BehaviourDescription&,
+          const AbstractBehaviourDSL&,
+          const StressPotential&,
+          const std::map<std::string, std::shared_ptr<bbrick::InelasticFlow>>&,
+          const std::string&) const = 0;
       //! destructor
       virtual ~PorosityNucleationModel();
 

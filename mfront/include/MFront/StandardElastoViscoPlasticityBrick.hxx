@@ -8,6 +8,8 @@
 #ifndef LIB_MFRONT_STANDARDELASTOVISCOPLASTICITYBRICK_HXX
 #define LIB_MFRONT_STANDARDELASTOVISCOPLASTICITYBRICK_HXX
 
+#include <map>
+#include <string>
 #include <memory>
 #include "MFront/BehaviourBrickBase.hxx"
 
@@ -51,14 +53,21 @@ namespace mfront {
    private:
     //! \return if a coupling with the porosity evolution is required
     bool isCoupledWithPorosityEvolution() const;
-
+    //! \return a map associating a map and its idea
+    std::map<std::string, std::shared_ptr<bbrick::InelasticFlow>>
+    buildInelasticFlowsMap() const;
     //! \brief stress potential
     std::shared_ptr<bbrick::StressPotential> stress_potential;
     //! \brief inelastic flows
     std::vector<std::shared_ptr<bbrick::InelasticFlow>> flows;
     //! \brief nucleation models
-    std::vector<std::shared_ptr<bbrick::PorosityNucleationModel>> nucleation_models;
-
+    std::vector<std::shared_ptr<bbrick::PorosityNucleationModel>>
+        nucleation_models;
+    //! \brief porosity growth policy
+    enum {
+      UNDEFINEDPOROSITYGROWTHPOLICY,
+      STANDARDVISCOPLASTICPOROSITYGROWTHPOLICY
+    } porosity_growth_policy = UNDEFINEDPOROSITYGROWTHPOLICY;
   };  // end of StandardElastoViscoPlasticityBrick
 
 }  // end of namespace mfront

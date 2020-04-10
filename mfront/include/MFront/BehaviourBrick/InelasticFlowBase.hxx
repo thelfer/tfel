@@ -3,6 +3,12 @@
  * \brief
  * \author Thomas Helfer
  * \date   15/03/2018
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MFRONT_BEHAVIOURBRICK_INELASTICFLOWBASE_HXX
@@ -25,11 +31,8 @@ namespace mfront {
                       const std::string&,
                       const DataMap&) override;
 
-      /*!
-       * \return if the the flow is coupled with the porosity evolution.
-       * \note the flow is considered coupled with the porosity evolution if the
-       * stress criterion of the flow criterion is.
-       */
+      void setPorosityEvolutionHandled(const bool) override;
+
       bool isCoupledWithPorosityEvolution() const override;
 
       void endTreatment(BehaviourDescription&,
@@ -49,6 +52,29 @@ namespace mfront {
       ~InelasticFlowBase() override;
 
      protected:
+      //! \brief policy on how the porosity affects the flow rule
+      enum PorosityEffectOnFlowRule {
+        /*!
+         * \brief default choice. The effect of the porosity depends
+         * on the stress criterion (see the
+         * `StressCriterion::getPorosityEffectOnFlowRule` method).
+         */
+        UNDEFINED_POROSITY_EFFECT_ON_FLOW_RULE,
+        /*!
+         * \brief This value indicate that the flow rule is not affected by the
+         * porosity evolution.
+         */
+        NO_POROSITY_EFFECT_ON_FLOW_RULE,
+        /*!
+         * \brief This value indicate that the flow rule must be corrected by
+         * the standard \f$(1-f)\f$ factor where \f$f\f$ is the porosity.
+         */
+        STANDARD_POROSITY_CORRECTION_ON_FLOW_RULE,
+      };
+      //! \return the effect of the porosity on the flow rule.
+      virtual PorosityEffectOnFlowRule getPorosityEffectOnFlowRule() const;
+      //! \return if this flow contributes to porosity growth
+      virtual bool contributesToPorosityGrowth() const;
       /*!
        * \brief compute the effective stress at \f$t+\theta\,dt\f$.
        * \param[in] id: flow id
@@ -73,6 +99,19 @@ namespace mfront {
       std::vector<std::shared_ptr<IsotropicHardeningRule>> ihrs;
       //! kinematic hardening rules
       std::vector<std::shared_ptr<KinematicHardeningRule>> khrs;
+      //! Effect of the porosity on the flow rule.
+      PorosityEffectOnFlowRule porosity_effect_on_flow_rule =
+          UNDEFINED_POROSITY_EFFECT_ON_FLOW_RULE;
+      /*!
+       * \brief flag stating that the porosity evolution is handled by the brick
+       */
+      bool porosity_evolution_explicitely_handled = false;
+      /*!
+       * \brief flag stating if the contribution to the porosity growth
+       * associated with this flow, if any, must be saved in a dedicated
+       * auxiliary state variable.
+       */
+      bool save_porosity_increase = false;
     };  // end of struct InelasticFlowBase
 
   }  // end of namespace bbrick

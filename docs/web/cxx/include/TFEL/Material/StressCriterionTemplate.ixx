@@ -15,7 +15,6 @@
 #define LIB_TFEL_MATERIAL___STRESS_CRITERION_NAME___IXX
 
 #include <cmath>
-#include <tuple>
 #include <ostream>
 #include <algorithm>
 
