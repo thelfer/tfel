@@ -765,7 +765,6 @@ namespace mfront {
     this->checkNotEndOfFile(m);
     this->readSpecifiedToken(m, ";");
     auto blocks = std::vector<std::string>{};
-    blocks.resize(values.size());
     for (const auto& v : values) {
       blocks.push_back(v.value);
     }
