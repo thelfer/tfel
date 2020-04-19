@@ -154,6 +154,7 @@ namespace tfel{
       using Container::clear;
       using Container::resize;
       using Container::size;
+      using Container::data;
       using Container::begin;
       using Container::end;
       using Container::cbegin;

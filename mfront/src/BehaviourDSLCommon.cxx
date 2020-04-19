@@ -3209,6 +3209,7 @@ namespace mfront {
       os << "#include\"TFEL/Math/vector.hxx\"\n";
     }
     os << "#include\"TFEL/Math/stensor.hxx\"\n"
+       << "#include\"TFEL/Math/Stensor/StensorView.hxx\"\n"
        << "#include\"TFEL/Math/Stensor/StensorConceptIO.hxx\"\n"
        << "#include\"TFEL/Math/tmatrix.hxx\"\n"
        << "#include\"TFEL/Math/Matrix/tmatrixIO.hxx\"\n"
@@ -4411,8 +4412,15 @@ namespace mfront {
         };
         const auto bn = this->mb.getTangentOperatorBlockName(b);
         if (v1.getTypeFlag() == SupportedTypes::SCALAR) {
+          const auto o = get_offset();
           if (v2.getTypeFlag() == SupportedTypes::SCALAR) {
-            append(bn + "(Dt[" + get_offset() + "])");
+            append(bn + "(Dt[" + o + "])");
+          } else if (v2.getTypeFlag() == SupportedTypes::STENSOR) {
+            if (o != "0") {
+              append(bn + "(Dt.begin()+" + o + ")");
+            } else {
+              append(bn + "(Dt.begin())");
+            }
           } else {
             throw_unsupported_block();
           }
@@ -4429,7 +4437,8 @@ namespace mfront {
             throw_unsupported_block();
           }
         } else if (v1.getTypeFlag() == SupportedTypes::STENSOR) {
-          if (v2.getTypeFlag() == SupportedTypes::STENSOR) {
+          if ((v2.getTypeFlag() == SupportedTypes::SCALAR) ||
+              (v2.getTypeFlag() == SupportedTypes::STENSOR)) {
             const auto o = get_offset();
             if (o != "0") {
               append(bn + "(Dt.begin()+" + o + ")");
@@ -6392,6 +6401,8 @@ namespace mfront {
       if (v1.getTypeFlag() == SupportedTypes::SCALAR) {
         if (v2.getTypeFlag() == SupportedTypes::SCALAR) {
           os << "real& " << bn << ";\n";
+        } else if (v2.getTypeFlag() == SupportedTypes::STENSOR) {
+          os << "tfel::math::StensorView<N,real> " << bn << ";\n";
         } else {
           throw_unsupported_block();
         }
@@ -6404,7 +6415,9 @@ namespace mfront {
           throw_unsupported_block();
         }
       } else if (v1.getTypeFlag() == SupportedTypes::STENSOR) {
-        if (v2.getTypeFlag() == SupportedTypes::STENSOR) {
+        if (v2.getTypeFlag() == SupportedTypes::SCALAR) {
+          os << "tfel::math::StensorView<N,real> " << bn << ";\n";
+        } else if (v2.getTypeFlag() == SupportedTypes::STENSOR) {
           os << "tfel::math::ST2toST2View<N,real> " << bn << ";\n";
         } else {
           throw_unsupported_block();
