@@ -3216,8 +3216,10 @@ namespace mfront {
        << "#include\"TFEL/Math/st2tost2.hxx\"\n"
        << "#include\"TFEL/Math/ST2toST2/ST2toST2ConceptIO.hxx\"\n"
        << "#include\"TFEL/Math/ST2toST2/ST2toST2View.hxx\"\n";
-    if (this->mb.getBehaviourType() ==
-        BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
+    if ((this->mb.getBehaviourType() ==
+         BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) ||
+        (this->mb.getBehaviourType() ==
+         BehaviourDescription::GENERALBEHAVIOUR)) {
       os << "#include\"TFEL/Math/tensor.hxx\"\n"
          << "#include\"TFEL/Math/Tensor/TensorConceptIO.hxx\"\n"
          << "#include\"TFEL/Math/t2tot2.hxx\"\n"
@@ -3229,6 +3231,11 @@ namespace mfront {
          << "#include\"TFEL/Math/ST2toST2/ConvertToTangentModuli.hxx\"\n"
          << "#include\"TFEL/Math/ST2toST2/ConvertSpatialModuliToKirchhoffJaumanRateModuli.hxx\"\n"
          << "#include\"TFEL/Material/FiniteStrainBehaviourTangentOperator.hxx\"\n";
+    }
+    if (this->mb.getBehaviourType() == BehaviourDescription::GENERALBEHAVIOUR) {
+      os << "#include\"TFEL/Math/T2toT2/T2toT2View.hxx\"\n"
+         << "#include\"TFEL/Math/T2toST2/T2toST2View.hxx\"\n"
+         << "#include\"TFEL/Math/ST2toT2/ST2toT2View.hxx\"\n";
     }
     os << "#include\"TFEL/Material/ModellingHypothesis.hxx\"\n\n";
   }  // end of BehaviourDSLCommon::writeBehaviourDataStandardTFELIncludes
@@ -4415,7 +4422,8 @@ namespace mfront {
           const auto o = get_offset();
           if (v2.getTypeFlag() == SupportedTypes::SCALAR) {
             append(bn + "(Dt[" + o + "])");
-          } else if (v2.getTypeFlag() == SupportedTypes::STENSOR) {
+          } else if ((v2.getTypeFlag() == SupportedTypes::STENSOR) ||
+                     (v2.getTypeFlag() == SupportedTypes::TENSOR)) {
             if (o != "0") {
               append(bn + "(Dt.begin()+" + o + ")");
             } else {
@@ -4438,7 +4446,8 @@ namespace mfront {
           }
         } else if (v1.getTypeFlag() == SupportedTypes::STENSOR) {
           if ((v2.getTypeFlag() == SupportedTypes::SCALAR) ||
-              (v2.getTypeFlag() == SupportedTypes::STENSOR)) {
+              (v2.getTypeFlag() == SupportedTypes::STENSOR) ||
+              (v2.getTypeFlag() == SupportedTypes::TENSOR)) {
             const auto o = get_offset();
             if (o != "0") {
               append(bn + "(Dt.begin()+" + o + ")");
@@ -6403,6 +6412,8 @@ namespace mfront {
           os << "real& " << bn << ";\n";
         } else if (v2.getTypeFlag() == SupportedTypes::STENSOR) {
           os << "tfel::math::StensorView<N,real> " << bn << ";\n";
+        } else if (v2.getTypeFlag() == SupportedTypes::TENSOR) {
+          os << "tfel::math::TensorView<N,real> " << bn << ";\n";
         } else {
           throw_unsupported_block();
         }
@@ -6419,6 +6430,18 @@ namespace mfront {
           os << "tfel::math::StensorView<N,real> " << bn << ";\n";
         } else if (v2.getTypeFlag() == SupportedTypes::STENSOR) {
           os << "tfel::math::ST2toST2View<N,real> " << bn << ";\n";
+        } else if (v2.getTypeFlag() == SupportedTypes::TENSOR) {
+          os << "tfel::math::ST2toT2View<N,real> " << bn << ";\n";
+        } else {
+          throw_unsupported_block();
+        }
+      } else if (v1.getTypeFlag() == SupportedTypes::TENSOR) {
+        if (v2.getTypeFlag() == SupportedTypes::SCALAR) {
+          os << "tfel::math::TensorView<N,real> " << bn << ";\n";
+        } else if (v2.getTypeFlag() == SupportedTypes::STENSOR) {
+          os << "tfel::math::T2toST2View<N,real> " << bn << ";\n";
+        } else if (v2.getTypeFlag() == SupportedTypes::TENSOR) {
+          os << "tfel::math::T2toT2View<N,real> " << bn << ";\n";
         } else {
           throw_unsupported_block();
         }

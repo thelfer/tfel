@@ -41,10 +41,28 @@ namespace mfront{
                               const std::string&,
                               const unsigned int,
                               const StaticVariableValueType);
+    /*!
+     * Constructor
+     * \param[in] type_          : variable type
+     * \param[in] symbolic_name_ : symbolic variable name
+     * \param[in] name_          : variable name
+     * \param[in] lineNumber_    : line number
+     * \param[in] value_         : value
+     */
+    StaticVariableDescription(const std::string&,
+                              const std::string&,
+                              const std::string&,
+                              const unsigned int,
+                              const StaticVariableValueType);
+    //! \brief move constructor
     StaticVariableDescription(StaticVariableDescription&&);    
+    //! \brief copy constructor
     StaticVariableDescription(const StaticVariableDescription&);
-    StaticVariableDescription& operator=(StaticVariableDescription&&);    
+    //! \brief move assignement
+    StaticVariableDescription& operator=(StaticVariableDescription&&);
+    //! \brief standard assignement
     StaticVariableDescription& operator=(const StaticVariableDescription&);
+    //! \brief destructor
     ~StaticVariableDescription();
     //! value of the static variable
     StaticVariableValueType value;

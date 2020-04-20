@@ -1000,16 +1000,19 @@ namespace mfront {
     }
     ++(this->current);
     this->checkNotEndOfFile("DSLBase::treatStaticVar", "Cannot read variable name.");
-    const auto name = this->current->value;
-    if (!this->isValidIdentifier(name)) {
-      this->throwRuntimeError("DSLBase::treatStaticVar", "Variable name '" + name + "' is not valid.");
+    const auto sname = this->current->value;
+    const auto vname = tfel::unicode::getMangledString(sname);
+    if (!this->isValidIdentifier(vname)) {
+      this->throwRuntimeError("DSLBase::treatStaticVar",
+                              "Variable name '" + sname + "' is not valid.");
     }
     const auto line = this->current->line;
     ++(this->current);
     this->checkNotEndOfFile("DSLBase::treatStaticVar", "Expected to read value of variable.");
-    const auto value = this->readInitialisationValue<long double>(name, true);
+    const auto value = this->readInitialisationValue<long double>(sname, true);
     this->readSpecifiedToken("DSLBase::treatStaticVar", ";");
-    this->addStaticVariableDescription(StaticVariableDescription(type, name, line, value.second));
+    this->addStaticVariableDescription(
+        StaticVariableDescription(type, sname, vname, line, value.second));
   }  // end of DSLBase::treatStaticVar
 
   void DSLBase::ignoreKeyWord(const std::string& key) {

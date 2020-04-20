@@ -460,12 +460,13 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/ST2toT2/ST2toT2FromTinyMatrixView2.hxx                                             \
 			TFEL/Math/ST2toT2/StensorProductLeftDerivativeExpr.hxx                                       \
 			TFEL/Math/ST2toT2/StensorProductRightDerivativeExpr.hxx                                      \
-			TFEL/Math/ST2toT2/TensorST2toT2ProductExpr.hxx						     \
-			TFEL/Math/ST2toT2/ST2toT2StensorProductExpr.hxx						     \
-			TFEL/Math/ST2toT2/T2toT2ST2toT2ProductExpr.hxx						     \
-			TFEL/Math/ST2toT2/ST2toT2ST2toST2ProductExpr.hxx					     \
-			TFEL/Math/ST2toT2/T2toST2ST2toT2ProductExpr.hxx						     \
-			TFEL/Math/ST2toT2/ST2toT2T2toST2ProductExpr.hxx						     \
+			TFEL/Math/ST2toT2/TensorST2toT2ProductExpr.hxx						                         \
+			TFEL/Math/ST2toT2/ST2toT2StensorProductExpr.hxx						                         \
+			TFEL/Math/ST2toT2/T2toT2ST2toT2ProductExpr.hxx						                         \
+			TFEL/Math/ST2toT2/ST2toT2ST2toST2ProductExpr.hxx					                         \
+			TFEL/Math/ST2toT2/T2toST2ST2toT2ProductExpr.hxx						                         \
+			TFEL/Math/ST2toT2/ST2toT2T2toST2ProductExpr.hxx						                         \
+			TFEL/Math/ST2toT2/ST2toT2View.hxx						                                     \
 			TFEL/Math/Broyden.hxx                                                                        \
 			TFEL/Math/Broyden2.hxx                                                                       \
 			TFEL/Math/RootFinding/Broyden.ixx                                                            \

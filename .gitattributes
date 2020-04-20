@@ -1918,6 +1918,7 @@ include/TFEL/Math/ST2toT2/ST2toT2FromTinyMatrixView2.hxx -text
 include/TFEL/Math/ST2toT2/ST2toT2ST2toST2ProductExpr.hxx -text
 include/TFEL/Math/ST2toT2/ST2toT2StensorProductExpr.hxx -text
 include/TFEL/Math/ST2toT2/ST2toT2T2toST2ProductExpr.hxx -text
+include/TFEL/Math/ST2toT2/ST2toT2View.hxx -text
 include/TFEL/Math/ST2toT2/StensorProductLeftDerivativeExpr.hxx -text
 include/TFEL/Math/ST2toT2/StensorProductRightDerivativeExpr.hxx -text
 include/TFEL/Math/ST2toT2/T2toST2ST2toT2ProductExpr.hxx -text

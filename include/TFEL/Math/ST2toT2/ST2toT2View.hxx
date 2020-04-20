@@ -1,7 +1,8 @@
 /*!
- * \file   include/TFEL/Math/T2toST2/T2toST2View.hxx
+ * \file   include/TFEL/Math/ST2toT2/ST2toT2View.hxx
+ * \brief
  * \author Thomas Helfer
- * \date   16 July 2015
+ * \date   19/04/2020
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence
@@ -10,16 +11,16 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_TFEL_MATH_T2TOST2VIEW_HXX
-#define LIB_TFEL_MATH_T2TOST2VIEW_HXX
+#ifndef LIB_TFEL_MATH_ST2TOT2VIEW_HXX
+#define LIB_TFEL_MATH_ST2TOT2VIEW_HXX
 
 #include "TFEL/Metaprogramming/StaticAssert.hxx"
 
 #include "TFEL/Math/General/EmptyRunTimeProperties.hxx"
 #include "TFEL/Math/ExpressionTemplates/Expr.hxx"
 #include "TFEL/Math/Vector/VectorUtilities.hxx"
-#include "TFEL/Math/T2toST2/T2toST2Concept.hxx"
-#include "TFEL/Math/t2tost2.hxx"
+#include "TFEL/Math/T2toT2/T2toT2Concept.hxx"
+#include "TFEL/Math/t2tot2.hxx"
 #include "TFEL/Math/tmatrix.hxx"
 
 namespace tfel {
@@ -27,31 +28,32 @@ namespace tfel {
   namespace math {
 
     /*!
-     *  T2toST2 From Tiny Vector
+     * \brief a simple place holder
      * \param N  : space dimension
      * \param T  : value type
      */
     template <unsigned short N, typename T>
-    struct T2toST2ViewExpr {
-    };  // end of struct T2toST2FromTinyMatrixColumnViewExpr
+    struct ST2toT2ViewExpr {
+    };  // end of struct ST2toT2FromTinyMatrixColumnViewExpr
 
     /*!
-     *  T2toST2 From Tiny Vector expression
+     * \brief An expression that allows to interpret a memory buffer as an
+     * `ST2toT2` object.
      * \param N  : space dimension
      * \param T  : value type
      */
     template <unsigned short N, typename T>
-    struct Expr<t2tost2<N, T>, T2toST2ViewExpr<N, T>>
-        : public T2toST2Concept<Expr<t2tost2<N, T>, T2toST2ViewExpr<N, T>>>,
-          public t2tost2_base<Expr<t2tost2<N, T>, T2toST2ViewExpr<N, T>>> {
+    struct Expr<t2tot2<N, T>, ST2toT2ViewExpr<N, T>>
+        : public ST2toT2Concept<Expr<t2tot2<N, T>, ST2toT2ViewExpr<N, T>>>,
+          public t2tot2_base<Expr<t2tot2<N, T>, ST2toT2ViewExpr<N, T>>> {
       typedef EmptyRunTimeProperties RunTimeProperties;
-      typedef typename t2tost2<N, T>::value_type value_type;
-      typedef typename t2tost2<N, T>::pointer pointer;
-      typedef typename t2tost2<N, T>::const_pointer const_pointer;
-      typedef typename t2tost2<N, T>::reference reference;
-      typedef typename t2tost2<N, T>::const_reference const_reference;
-      typedef typename t2tost2<N, T>::size_type size_type;
-      typedef typename t2tost2<N, T>::difference_type difference_type;
+      typedef typename t2tot2<N, T>::value_type value_type;
+      typedef typename t2tot2<N, T>::pointer pointer;
+      typedef typename t2tot2<N, T>::const_pointer const_pointer;
+      typedef typename t2tot2<N, T>::reference reference;
+      typedef typename t2tot2<N, T>::const_reference const_reference;
+      typedef typename t2tot2<N, T>::size_type size_type;
+      typedef typename t2tot2<N, T>::difference_type difference_type;
 
       RunTimeProperties getRunTimeProperties() const {
         return RunTimeProperties();
@@ -68,27 +70,27 @@ namespace tfel {
 
       const T& operator()(const unsigned short i, const unsigned short j) const
           noexcept {
-        return this->v[TensorDimeToSize<N>::value * i + j];
+        return this->v[StensorDimeToSize<N>::value * i + j];
       }  // end of operator() const
 
       T& operator()(const unsigned short i, const unsigned short j) noexcept {
-        return this->v[TensorDimeToSize<N>::value * i + j];
+        return this->v[StensorDimeToSize<N>::value * i + j];
       }  // end of operator()
 
-      //! using t2tost2_base::operator=
-      using t2tost2_base<Expr>::operator=;
+      //! using t2tot2_base::operator=
+      using t2tot2_base<Expr>::operator=;
 
       Expr& operator=(const Expr& src) {
-        t2tost2_base<Expr>::operator=(src);
+        t2tot2_base<Expr>::operator=(src);
         return *this;
       }
 
       /*!
-       * size of the symmetric tensor
+       * \return the size of the symmetric tensor
        * (compatibility with vector)
        */
       constexpr TFEL_MATH_INLINE size_type size() const noexcept {
-        return StensorDimeToSize<N>::value * TensorDimeToSize<N>::value;
+        return TensorDimeToSize<N>::value * TensorDimeToSize<N>::value;
       }
 
      protected:
@@ -102,10 +104,10 @@ namespace tfel {
     };  // end of struct Expr
 
     template <unsigned short N, typename T = double>
-    using T2toST2View = Expr<t2tost2<N, T>, T2toST2ViewExpr<N, T>>;
+    using ST2toT2View = Expr<t2tot2<N, T>, ST2toT2ViewExpr<N, T>>;
 
   }  // end of namespace math
 
 }  // end of namespace tfel
 
-#endif /* LIB_TFEL_MATH_T2TOST2VIEW_HXX */
+#endif /* LIB_TFEL_MATH_ST2TOT2VIEW_HXX */
