@@ -15,6 +15,7 @@
 #include <sstream>
 #include "TFEL/Raise.hxx"
 #include "TFEL/Config/GetInstallPath.hxx"
+#include "TFEL/UnicodeSupport/UnicodeSupport.hxx"
 #include "TFEL/Utilities/TextData.hxx"
 #include "TFEL/System/ExternalLibraryManager.hxx"
 #include "TFEL/Math/Parser/ExternalCastemFunction.hxx"
@@ -157,7 +158,7 @@ namespace mtest {
   void SchemeParserBase::handleReal(SchemeBase& t, tokens_iterator& p) {
     const auto& v = this->readString(p, this->tokens.end());
     tfel::raise_if(
-        !this->isValidIdentifier(v),
+        !this->isValidIdentifier(tfel::unicode::getMangledString(v)),
         "SchemeParserBase::handleReal : '" + v + "' is not a valid identifier");
     const real value = this->readDouble(t, p);
     auto mpev = std::shared_ptr<Evolution>(new ConstantEvolution(value));
@@ -528,6 +529,9 @@ namespace mtest {
   void SchemeParserBase::handleEvolution(SchemeBase& t, tokens_iterator& p) {
     const auto& evt = this->readEvolutionType(p);
     const auto& n = this->readString(p, this->tokens.end());
+    tfel::raise_if(
+        !this->isValidIdentifier(tfel::unicode::getMangledString(n)),
+        "SchemeParserBase::handleReal : '" + n + "' is not a valid identifier");
     t.addEvolution(n, this->parseEvolution(t, evt, p), true, true);
     this->readSpecifiedToken("SchemeParserBase::handleEvolution", ";", p,
                              this->tokens.end());

@@ -6,6 +6,19 @@ Version `3.3.1` is mainly a bug fix version of the `3.3` series.
 
 # Tickets fixed
 
+## Ticket #233: Allow unicode support in variable names in `MTest`
+
+Unicode variables are now correctly handled by the `@Real` and
+`@Evolution` keywords.
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/233/>
+
+## Ticket #232: Better support for the tangent operator blocks in the `generic` interface
+
+The tangent operator blocks are now correctly handled.
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/232/>
+
 ## Ticket #227: Symbolic names are not declared for the tangent operator blocks associated with the derivatives with respect to external state variables
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/227/>

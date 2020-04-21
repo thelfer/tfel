@@ -189,6 +189,10 @@ comparison, the accelerated algorithm takes \(9\) iterations.
 
 # Tickets solved during the development of this version
 
+## Ticket #231: Support for tensors as gradients and thermodynamic forces in the `generic` behaviours
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/231/>
+
 ## Ticket #219: Add the possibility to define the tangent operator blocks
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/219/>

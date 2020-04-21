@@ -561,24 +561,68 @@ namespace mtest {
         }
       } else {
         const auto h = this->getHypothesis();
-        const auto p = wk.D.begin();
-        auto o = size_type{};
-        auto og = size_type{};
-        auto oth = size_type{};
-        for (size_type gi = 0; gi != this->gtypes.size(); ++gi) {
-          const auto g_size = mtest::getVariableSize(this->gtypes[gi], h);
-          for (size_type thj = 0; thj != this->thtypes.size(); ++thj) {
-            const auto th_size = mtest::getVariableSize(this->thtypes[thj], h);
-            for (size_type i = 0; i != g_size; ++i) {
-              for (size_type j = 0; j != th_size; ++j) {
-                Kt(og + i, oth + j) = p[o + i * th_size + j];
-              }
+        auto to_offset = size_type{};
+        for (const auto& to : this->getTangentOperatorBlocks()) {
+          auto getVariableOffset = [&h](const size_type pos,
+                                        const std::vector<int>& types) {
+            auto o = size_type{};
+            for (size_type p = 0; p != pos; ++p) {
+              o += mtest::getVariableSize(types[p], h);
             }
-            o += g_size * th_size;
-            oth += th_size;
+            return o;
+          };
+          const auto ptf =
+              std::find(this->thnames.begin(), this->thnames.end(), to.first);
+          const auto piv =
+              std::find(this->ivnames.begin(), this->ivnames.end(), to.first);
+          const auto pg =
+              std::find(this->gnames.begin(), this->gnames.end(), to.second);
+          const auto pev =
+              std::find(this->evnames.begin(), this->evnames.end(), to.second);
+          const auto to_ro = [&, this]() -> size_type {
+            if (pev != this->evnames.end()) {
+              return 1;
+            }
+            if (pg == this->gnames.end()) {
+              tfel::raise(
+                  "GenericBehaviour::call_behaviour(1): "
+                  "invalid tangent operator block ('" +
+                  to.first + "'" + " vs '" + to.second + "')");
+            }
+            return mtest::getVariableSize(
+                this->gtypes[pg - this->gnames.begin()], h);
+          }();
+          const auto to_co = [&, this]() -> size_type {
+            if (piv != this->ivnames.end()) {
+              return mtest::getVariableSize(
+                  this->ivtypes[piv - this->ivnames.begin()], h);
+            }
+            if (ptf == this->thnames.end()) {
+              tfel::raise(
+                  "GenericBehaviour::call_behaviour(2): "
+                  "invalid tangent operator block ('" +
+                  to.first + "'" + " vs '" + to.second + "')");
+            }
+            return mtest::getVariableSize(
+                this->thtypes[ptf - this->thnames.begin()], h);
+          }();
+          if ((ptf == this->thnames.end()) || (pg == this->gnames.end())) {
+            to_offset += to_ro * to_co;
+            continue;
           }
-          oth = size_type{};
-          og += g_size;
+          const auto tfpos = ptf - this->thnames.begin();
+          const auto gpos = pg - this->gnames.begin();
+          const auto og = getVariableOffset(gpos, this->gtypes);
+          const auto otf = getVariableOffset(tfpos, this->thtypes);
+          const auto g_size = mtest::getVariableSize(this->gtypes[gpos], h);
+          const auto th_size = mtest::getVariableSize(this->thtypes[tfpos], h);
+          const auto p = wk.D.begin();
+          for (size_type i = 0; i != g_size; ++i) {
+            for (size_type j = 0; j != th_size; ++j) {
+              Kt(og + i, otf + j) = p[to_offset + i * th_size + j];
+            }
+          }
+          to_offset += to_ro * to_co;
         }
       }
     }
