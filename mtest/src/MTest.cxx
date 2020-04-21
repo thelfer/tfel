@@ -321,19 +321,21 @@ namespace mtest {
         dvn = "opening displacement";
         thn = "cohesive force";
       } else {
-        dvn = "driving variables";
+        dvn = "gradients";
         thn = "thermodynamic forces";
       }
       const auto ndv = this->b->getGradientsSize();
+      const auto gc = this->b->getGradientsComponents();
       const auto nth = this->b->getThermodynamicForcesSize();
+      const auto thc = this->b->getThermodynamicForcesComponents();
       for (unsigned short i = 0; i != ndv; ++i) {
         this->out << "# " << cnbr << " column: " << i + 1
-                  << "th component of the " << dvn << '\n';
+                  << "th component of the " << dvn << " (" << gc[i] << ")\n";
         ++cnbr;
       }
       for (unsigned short i = 0; i != nth; ++i) {
         this->out << "# " << cnbr << " column: " << i + 1
-                  << "th component of the " << thn << '\n';
+                  << "th component of the " << thn << " (" << thc[i] << ")\n";
         ++cnbr;
       }
       const auto& ivdes = this->b->getInternalStateVariablesDescriptions();

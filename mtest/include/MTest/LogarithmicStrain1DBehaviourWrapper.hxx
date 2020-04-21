@@ -52,6 +52,8 @@ namespace mtest {
     unsigned short getThermodynamicForceComponentPosition(const std::string&) const override;
     unsigned short getSymmetryType() const override;
     size_t getTangentOperatorArraySize() const override;
+    std::vector<std::pair<std::string, std::string>> getTangentOperatorBlocks()
+        const override;
     std::vector<std::string> getMaterialPropertiesNames() const override;
     size_t getMaterialPropertiesSize() const override;
     std::vector<std::string> getOptionalMaterialProperties() const override;

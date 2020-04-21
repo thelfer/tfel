@@ -124,6 +124,12 @@ namespace mtest {
      */
     virtual size_t getTangentOperatorArraySize() const = 0;
     /*!
+     * \return the tangent operator blocks defined by the behaviour. Those
+     * blocks can be unused by `MTest`.
+     */
+    virtual std::vector<std::pair<std::string, std::string>>
+    getTangentOperatorBlocks() const = 0;
+    /*!
      * \return the type of the behaviour
      * 0 means that the behaviour is isotropic.
      * 1 means that the behaviour is orthotropic.

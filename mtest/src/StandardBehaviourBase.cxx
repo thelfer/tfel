@@ -536,10 +536,13 @@ namespace mtest {
             this->thtypes[pth - this->thnames.cbegin()], h);
       }
     };
-    for (const auto& b : this->tangent_operator_blocks) {
-    }
     return r;
   }  // end of StandardBehaviourBase::getTangentOperatorSize
+
+  std::vector<std::pair<std::string, std::string>>
+  StandardBehaviourBase::getTangentOperatorBlocks() const {
+    return this->tangent_operator_blocks;
+  }  // end of StandardBehaviourBase::getTangentOperatorBlocks()
 
   unsigned short StandardBehaviourBase::getSymmetryType() const {
     if (this->stype == 0) {
