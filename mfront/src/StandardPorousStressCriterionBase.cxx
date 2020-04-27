@@ -73,7 +73,7 @@ namespace mfront {
        // StandardPorousStressCriterionBase::isCoupledWithPorosityEvolution()
 
     bool StandardPorousStressCriterionBase::isNormalDeviatoric() const {
-      return true;
+      return false;
     }  // end of Hosford1972StressCriterion::StandardPorousStressCriterionBase
 
     void StandardPorousStressCriterionBase::endTreatment(

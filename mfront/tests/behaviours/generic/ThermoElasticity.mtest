@@ -1,0 +1,43 @@
+@Author HELFER Thomas 202608;
+@Date   21/04/2020;
+@Description{
+
+};
+
+@ModellingHypothesis 'Tridimensional';
+@XMLOutputFile @xml_output@;
+@MaximumNumberOfSubSteps 1;
+@Behaviour<generic> @library@ 'ThermoElasticity';
+
+// external state variable
+@ExternalStateVariable 'Temperature' {0 : 293.15, 1 : 800};
+
+@Times{0, 1};
+
+@Real 'E'  70e3;
+@Real 'ν'  0.3;
+@Real 'ρ'  2700.;
+@Real 'α'  2.31e-5 ;
+@Real 'Cₑ'  910e-6;
+@Real 'k'  237e-6;
+@Real 'Tʳᵉᶠ' 293.15;
+@Real 'λ' 'ν ⋅ E / ((1 + ν) ⋅ (1 - 2 ⋅ ν))';
+@Real 'μ' 'E / (2 ⋅ (1 + ν))';
+@Real 'κ' 'α ⋅ (2 ⋅ μ + 3 ⋅ λ)';
+
+@Evolution<function> 's' '(Cₑ / Tʳᵉᶠ + 3 ⋅ α ⋅ (κ / ρ)) ⋅ (Temperature - Tʳᵉᶠ)';
+
+@Test<function> {
+  'StrainXX' : 'α ⋅ (Temperature - Tʳᵉᶠ)',
+  'StrainYY' : 'α ⋅ (Temperature - Tʳᵉᶠ)',
+  'StrainZZ' : 'α ⋅ (Temperature - Tʳᵉᶠ)',
+  'StrainXY' : '0',
+  'StrainXZ' : '0',
+  'StrainYZ' : '0'
+} 1.e-12;
+
+@Test<function>{
+  'HeatFluxX': '0',
+  'HeatFluxY': '0',
+  'HeatFluxZ': '0'
+} 1.e-12;

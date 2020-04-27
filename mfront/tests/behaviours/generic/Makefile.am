@@ -171,5 +171,5 @@ EXTRA_DIST = CMakeLists.txt                                                     
              externalstatevariablesboundscheck3.mtest				       \
              externalstatevariablesboundscheck4.mtest				       \
              externalstatevariablesboundscheck5.mtest				       \
-             externalstatevariablesboundscheck6.mtest
-
+             externalstatevariablesboundscheck6.mtest                                  \
+             ThermoElasticity.mtest

@@ -53,7 +53,7 @@ namespace mfront {
          * \brief This value indicate that the flow rule must be corrected by
          * the standard \f$(1-f)\f$ factor where \f$f\f$ is the porosity.
          */
-        STANDARD_POROSITY_CORRECTION_ON_FLOW_RULE,
+        STANDARD_POROSITY_CORRECTION_ON_FLOW_RULE
       };
       /*!
        * \brief describe the purpose of the criterion

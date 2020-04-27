@@ -136,7 +136,9 @@ set(mfront_tests_SOURCES
   TemperatureUpdateOnSubSteppingCheck
   GenerateMTestFileOnFailure
   StationaryHeatTransfer
-  StationaryHeatTransfer2)
+  StationaryHeatTransfer2
+  ThermoElasticity
+  MiehePhaseFieldDisplacementDeviatoricSplit)
 
 mfront_dependencies(MFrontGenericBehaviours
   Inconel600_YoungModulus
@@ -711,3 +713,6 @@ test_generic(computethermalexpansion3)
 # test_generic(elasticmaterialpropertiesboundschecktest
 #   NO_XML_OUTPUT WILL_FAIL)
 # test_generic(temperatureupdateonsubsteppingcheck)
+
+test_generic(ThermoElasticity)
+

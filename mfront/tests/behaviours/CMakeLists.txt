@@ -172,3 +172,5 @@ install_mfront_data(tests/behaviours ElasticMaterialPropertiesBoundsCheckTest.mf
 install_mfront_data(tests/behaviours TemperatureUpdateOnSubSteppingCheck.mfront)
 install_mfront_data(tests/behaviours StationaryHeatTransfer.mfront)
 install_mfront_data(tests/behaviours StationaryHeatTransfer2.mfront)
+install_mfront_data(tests/behaviours ThermoElasticity.mfront)
+install_mfront_data(tests/behaviours MiehePhaseFieldDisplacementDeviatoricSplit.mfront)

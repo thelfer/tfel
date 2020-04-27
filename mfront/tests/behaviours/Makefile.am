@@ -156,7 +156,9 @@ MFRONTS= DDIF2.mfront                                                      \
 	 LogarithmicStrainOrthotropicElasticity.mfront                     \
 	 GenerateMTestFileOnFailure.mfront				   \
 	 StationaryHeatTransfer.mfront					   \
-	 StationaryHeatTransfer2.mfront
+	 StationaryHeatTransfer2.mfront                                    \
+	 ThermoElasticity.mfront                                           \
+         MiehePhaseFieldDisplacementDeviatoricSplit.mfront
 
 testsdir = $(pkgdatadir)/mfront/tests/behaviours
 tests_DATA = $(MFRONTS)

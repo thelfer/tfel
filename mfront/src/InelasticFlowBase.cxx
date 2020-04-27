@@ -160,7 +160,7 @@ namespace mfront {
           if (this->fc->isNormalDeviatoric()) {
             raise(
                 "InelasticFlowBase::initialize: "
-                "the flow is coupled with the porosity evolution by "
+                "the flow is coupled with the porosity evolution, but "
                 "the flow direction is deviatoric");
           }
         }
@@ -393,10 +393,10 @@ namespace mfront {
             "feel += (1 - " + f_ + ") * this->dp" + id + "* n" + id + ";\n";
         if (requiresAnalyticalJacobian) {
           // jacobian terms
-          ib.code += "dfeel_ddp" + id + " = n" + id + ";\n";
+          ib.code += "dfeel_ddp" + id + " = (1 - " + f_ + ") * n" + id + ";\n";
           ib.code += sp.computeDerivatives(
               bd, "StrainStensor", "eel",
-              "(1 - " + f_ + ") * (this->dp" + id + ")*dn" + id + "_ds" + id,
+              "(1 - " + f_ + ") * (this->dp" + id + ") * dn" + id + "_ds" + id,
               is_deviatoric);
           kid = decltype(khrs.size()){};
           for (const auto& khr : khrs) {
@@ -406,9 +406,9 @@ namespace mfront {
                 id, std::to_string(kid));
             ++kid;
           }
-          ib.code += "dfeel_dd" + f.name + " = ";
+          ib.code += "dfeel_dd" + f.name + " += ";
           ib.code += "- theta * this->dp" + id + "* n" + id;
-          ib.code += "+  theta * (1 - " + f_ + ") * this->dp" + id + "* dn" +
+          ib.code += "+ theta * (1 - " + f_ + ") * this->dp" + id + "* dn" +
                      id + "_d" + f.name + ";\n";
         }
       } else {
@@ -462,12 +462,20 @@ namespace mfront {
         }
         if (requiresAnalyticalJacobian) {
           ib.code += "df" + f.name + "_dd" + f.name;
-          ib.code += " += theta * " + f_ + " * (this->dp" + id + ") * trace(n" +
-                     id + ")";
-          ib.code += " -  theta * (1 - " + f_ + ")* (this->dp" + id +
+          ib.code += " += theta *(this->dp" + id + ") * trace(n" + id + ")";
+          ib.code += "  - theta * (1 - " + f_ + ")* (this->dp" + id +
                      ") * (Stensor::Id() | dn_d" + f.name + ");\n";
+          //           ib.code += "df" + f.name + "_ddeel -= ";
+          //           ib.code += "theta * (1 - " + f_ + ") * (this->dp" + id +
+          //           ") * ";
+          //           ib.code +=
+          //               "(Stensor::Id() | (" +
+          //               sp.computeDerivatives(bd, "StrainStensor", "eel",
+          //                                     "dn" + id + "_ds" + id,
+          //                                     is_deviatoric) +
+          //               "));\n";
           ib.code += "df" + f.name + "_ddp" + id;
-          ib.code += " = - (1 - " + f_ + ")* (this->dp" + id + ") * trace(n" +
+          ib.code += " = - (1 - " + f_ + ") * trace(n" +
                      id + ");\n";
         }
       }

@@ -1,0 +1,87 @@
+@DSL DefaultGenericBehaviour;
+@Author Jérémy Bleyer, Thomas Helfer;
+@Date 08 / 04 / 2020;
+@Behaviour MiehePhaseFieldDisplacementDeviatoricSplit;
+
+@Gradient StrainStensor εᵗᵒ;
+εᵗᵒ.setGlossaryName("Strain");
+@Flux StressStensor σ;
+σ.setGlossaryName("Stress");
+
+@Gradient real d;
+d.setGlossaryName("Damage");
+@Flux real Y;
+Y.setEntryName("EnergyRelease");
+
+@Gradient TVector g;
+g.setEntryName("DamageGradient");
+@Flux TVector q;
+q.setEntryName("DualDamageGradient");
+
+@MaterialProperty stress Yg;
+Yg.setGlossaryName("YoungModulus");
+@MaterialProperty real ν;
+ν.setGlossaryName("PoissonRatio");
+
+@Parameter real kres = 1e-6;
+kres.setEntryName("ResidualStiffness");
+
+@MaterialProperty real l₀;
+l₀.setEntryName("RegularizationLength");
+@MaterialProperty real Gc;
+Gc.setEntryName("FractureEnergy");
+
+@StateVariable real H;
+H.setEntryName("HistoryFunction");
+
+@TangentOperatorBlocks{∂σ∕∂Δεᵗᵒ, ∂σ∕∂Δd, ∂q∕∂Δg,∂Y∕∂Δd,∂Y∕∂Δεᵗᵒ};
+
+@Integrator {
+  // update the damage
+  const auto d_ = d + dd;
+  // lame coefficients
+  const auto λ = computeLambda(Yg, ν);
+  const auto μ = computeMu(Yg, ν);
+  // compression modulus
+  const auto κ = λ + 2 / 3 ⋅ μ;
+  // computation of the stress, positive energy density and consistent
+  // tangent operator
+  const auto ε = eval(εᵗᵒ + Δεᵗᵒ);
+  const auto tr = trace(ε);
+  const auto εᵈ = deviator(ε);
+  // energy density
+  const auto tr_p = max(tr, strain(0));
+  const auto tr_n = tr - tr_p;
+  const auto Ψ₊ = (κ / 2) ⋅ (tr_p) ⋅ (tr_p) + μ ⋅ (εᵈ | εᵈ);
+  // degradation function
+  const auto gᵈ = (1 - d_) ⋅ (1 - d_) + kres;
+  // stress
+  σ = κ ⋅ (gᵈ ⋅ tr_p + tr_n) ⋅ I₂ + 2 ⋅ μ ⋅ gᵈ ⋅ εᵈ;
+  // history function
+  const auto bp = Ψ₊ >= H;
+  if (bp) {
+    H = Ψ₊;
+  }
+  // consistent tangent operator
+  ∂Y∕∂Δd = Gc / l₀ + 2 ⋅ H;
+  q = Gc ⋅ l₀ ⋅ (g + Δg);
+  Y = ∂Y∕∂Δd ⋅ (d + Δd) - 2 ⋅ H;
+  if (computeTangentOperator_) {
+    static_cast<void>(smt);
+    const auto ∂g∕∂Δd = -2 ⋅ (1 - d_);
+    ∂σ∕∂Δd = ∂g∕∂Δd ⋅ (κ ⋅ tr_p ⋅ I₂ + 2 ⋅ μ ⋅ εᵈ);
+    if (tr >= 0) {
+      ∂σ∕∂Δεᵗᵒ = gᵈ ⋅ (κ ⋅ (I₂ ⊗ I₂) + 2 ⋅ μ ⋅ Stensor4::K());
+    } else {
+      ∂σ∕∂Δεᵗᵒ = κ ⋅ (I₂ ⊗ I₂) + gᵈ ⋅ 2 ⋅ μ ⋅ Stensor4::K();
+    }
+    const auto ∂Ψ₊∕∂Δεᵗᵒ = [&]() -> StressStensor {
+      if (tr >= 0) {
+        return κ ⋅ I₂ + 2 ⋅ μ ⋅ εᵈ;
+      }
+      return 2 ⋅ μ ⋅ εᵈ;
+    }();
+    ∂Y∕∂Δεᵗᵒ = 2 ⋅ ∂Ψ₊∕∂Δεᵗᵒ⋅ (d + Δd - 1);
+    ∂q∕∂Δg = Gc ⋅ l₀ ⋅ tmatrix<N, N, real>::Id();
+  }
+}  // end of @Integrator
