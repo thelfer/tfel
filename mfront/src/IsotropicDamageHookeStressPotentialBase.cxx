@@ -588,7 +588,47 @@ namespace mfront {
                  BehaviourData::CREATEORAPPEND, BehaviourData::AT_BEGINNING);
     }
 
-    std::string IsotropicDamageHookeStressPotentialBase::computeDerivatives(
+    std::vector<
+        std::tuple<std::string, std::string, mfront::SupportedTypes::TypeFlag>>
+    IsotropicDamageHookeStressPotentialBase::getStressDerivatives(const BehaviourDescription& bd) const {
+      const auto d = [&bd]() -> std::string {
+        if ((bd.getAttribute(BehaviourDescription::requiresStiffnessTensor,
+                             false)) ||
+            (bd.getAttribute(BehaviourDescription::computesStiffnessTensor,
+                             false))) {
+          return "(this->D)";
+        }
+        if (bd.getElasticSymmetryType() == mfront::ISOTROPIC) {
+          const auto bl = bd.getAttribute(
+              "HookeStressPotentialBase::UseLocalLameCoeficients", false);
+          const std::string lambda =
+              bl ? "this->sebdata.lambda" : "this->lambda";
+          const std::string mu = bl ? "this->sebdata.mu" : "this->mu";
+          return "(2 * (" + mu + ") * Stensor4::Id()+(" +
+                 lambda + ") * Stensor4::IxI())";
+        }
+        if (bd.getElasticSymmetryType() != mfront::ORTHOTROPIC) {
+          tfel::raise(
+              "HookeStressPotential::getStressDerivatives: "
+              "unsupported elastic symmetry type");
+        }
+        if (!bd.getAttribute<bool>(
+                BehaviourDescription::computesStiffnessTensor, false)) {
+          tfel::raise(
+              "HookeStressPotential::getStressDerivatives: "
+              "orthotropic behaviour shall require the stiffness tensor");
+        }
+        return "(this->D)";
+      }();
+      return {
+          {"((this->theta) * (1-this->d-(this->theta)*(this->dd))" + d + ")",
+           "eel", SupportedTypes::STENSOR},
+          {"(-(this->theta) * (" + d +
+               ") * (this->eel + (this->theta) * (this->deel)))",
+           "d", SupportedTypes::SCALAR}};
+    }  // end of IsotropicDamageHookeStressPotentialBase::getStressDerivatives
+
+    std::string IsotropicDamageHookeStressPotentialBase::generateImplicitEquationDerivatives(
         const BehaviourDescription& bd,
         const std::string& t,
         const std::string& v,
@@ -616,7 +656,7 @@ namespace mfront {
           c += "(this->eel + (this->theta) * (this->deel));\n";
         } else {
           tfel::raise(
-              "IsotropicDamageHookeStressPotentialBase::computeDerivatives: "
+              "IsotropicDamageHookeStressPotentialBase::generateImplicitEquationDerivatives: "
               "unsupported type for variable '" +
               t + "'");
         }
@@ -645,7 +685,7 @@ namespace mfront {
               c += "deviator(this->eel + (this->theta) * (this->deel));\n";
             } else {
               tfel::raise(
-                  "IsotropicDamageHookeStressPotentialBase::computeDerivatives:"
+                  "IsotropicDamageHookeStressPotentialBase::generateImplicitEquationDerivatives:"
                   " unsupported type for variable '" +
                   t + "'");
             }
@@ -676,7 +716,7 @@ namespace mfront {
                    "Stensor::Id());\n";
             } else {
               tfel::raise(
-                  "IsotropicDamageHookeStressPotentialBase::computeDerivatives:"
+                  "IsotropicDamageHookeStressPotentialBase::generateImplicitEquationDerivatives:"
                   " "
                   "unsupported type for variable '" +
                   t + "'");
@@ -686,7 +726,7 @@ namespace mfront {
           if (!bd.getAttribute<bool>(
                   BehaviourDescription::computesStiffnessTensor, false)) {
             tfel::raise(
-                "IsotropicDamageHookeStressPotentialBase::computeDerivatives: "
+                "IsotropicDamageHookeStressPotentialBase::generateImplicitEquationDerivatives: "
                 "orthotropic behaviour shall require the stiffness tensor");
           }
           if (vf == SupportedTypes::SCALAR) {
@@ -705,18 +745,18 @@ namespace mfront {
             c += "(this->eel + (this->theta) * (this->deel));\n";
           } else {
             tfel::raise(
-                "IsotropicDamageHookeStressPotentialBase::computeDerivatives: "
+                "IsotropicDamageHookeStressPotentialBase::generateImplicitEquationDerivatives: "
                 "unsupported type for variable '" +
                 t + "'");
           }
         } else {
           tfel::raise(
-              "IsotropicDamageHookeStressPotentialBase::computeDerivatives: "
+              "IsotropicDamageHookeStressPotentialBase::generateImplicitEquationDerivatives: "
               "unsupported elastic symmetry type");
         }
       }
       return c;
-    }  // end of IsotropicDamageHookeStressPotentialBase::computeDerivatives
+    }  // end of IsotropicDamageHookeStressPotentialBase::generateImplicitEquationDerivatives
 
     IsotropicDamageHookeStressPotentialBase::
         ~IsotropicDamageHookeStressPotentialBase() = default;

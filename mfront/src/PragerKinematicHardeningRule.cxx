@@ -39,11 +39,12 @@ namespace mfront {
         // opposite of dfa_ds
         const auto mdf_ds = "(this->dp" + fid + ") * dn" + fid + "_ds" + fid;
         c += "df" + an + "_ddp" + fid + " = - n" + fid + ";\n";
-        c += sp.computeDerivatives(bd, "StrainStensor", an, "-" + mdf_ds,
+        c += sp.generateImplicitEquationDerivatives(bd, "StrainStensor", an, "-" + mdf_ds,
                                    fc.isNormalDeviatoric());
         auto kid2 = decltype(khrs.size()){};
         for (const auto& khr : khrs) {
-          c += khr->computeDerivatives(an, mdf_ds, fid, std::to_string(kid2));
+          c += khr->generateImplicitEquationDerivatives(an, mdf_ds, fid,
+                                                        std::to_string(kid2));
           ++kid2;
         }
       }

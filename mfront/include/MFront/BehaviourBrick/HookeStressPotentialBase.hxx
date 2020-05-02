@@ -76,7 +76,6 @@ namespace mfront {
           BehaviourDescription&, const AbstractBehaviourDSL&) const override;
       void endTreatment(BehaviourDescription&,
                         const AbstractBehaviourDSL&) const override;
-      void writeStressDerivatives(BehaviourDescription&) const override;
       void computeElasticPrediction(BehaviourDescription&) const override;
       std::string getStressNormalisationFactor(
           const BehaviourDescription&) const override;

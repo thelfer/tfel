@@ -66,7 +66,7 @@ namespace mfront {
         const auto dfp_ddp = "dfp" + id + "_ddp" + id;
         c += computeElasticLimitAndDerivative(this->ihrs, id);
         c += fp + " = (" + seq + "-" + R + ")/("+snf+");\n";
-        c += sp.computeDerivatives(bd, "strain", "p" + id,
+        c += sp.generateImplicitEquationDerivatives(bd, "strain", "p" + id,
                                    dseq_ds + "/(" + snf + ")",
                                    this->sc->isNormalDeviatoric());
         c += "if(seq<" + sp.getEquivalentStressLowerBound(bd) + "){\n";
@@ -82,8 +82,8 @@ namespace mfront {
         c += "}\n";
         auto kid = decltype(khrs.size()){};
         for (const auto& khr : khrs) {
-          c += khr->computeDerivatives("p", "-dseq_ds/(" + snf + ")", id,
-                                       std::to_string(kid));
+          c += khr->generateImplicitEquationDerivatives(
+              "p", "-dseq_ds/(" + snf + ")", id, std::to_string(kid));
           ++kid;
         }
         if (this->isCoupledWithPorosityEvolution()) {

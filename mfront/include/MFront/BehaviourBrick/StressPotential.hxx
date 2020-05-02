@@ -107,29 +107,38 @@ namespace mfront {
       virtual void endTreatment(BehaviourDescription&,
                                 const AbstractBehaviourDSL&) const = 0;
       /*!
-       * \brief add the definition of the stress derivatives with respect to
-       * the integration variables used to define it. This definition is added
-       * to the `BehaviourData::Integrator` code block before the definition of
-       * the implicit system.
-       * \param[in/out] bd: behaviour description
+       * \return a vector of tuples giving information about the stress
+       * derivatives. Each tuple contains:
+       * - the expression of the stress derivative.
+       * - the name of the variable with respect to which, the stress has been
+       *   derived.
+       * - the type of the variable with respect to which, the stress has been
+       *   derived.
+       * \param[in] bd: behaviour description
        */
-      virtual void writeStressDerivatives(BehaviourDescription&) const = 0;
+      virtual std::vector<std::tuple<std::string,
+                                     std::string,
+                                     mfront::SupportedTypes::TypeFlag>>
+      getStressDerivatives(const BehaviourDescription& bd) const = 0;
       /*!
-       * \brief compute the derivatives of a variable \f$v\f$ knowing the
+       * \brief write the jacobian blocks corresponding the derivative of
+       * implicit equation associated with a variable \f$v\f$ knowing the
        * derivative of \f$\frac{d\,v}{d\underline{s}}\f$ where
        * \f$\underline{s}\f$ is the effective stress.
-       * \param[in] bd: behaviour description
+       * \param[in, out] bd: behaviour description
        * \param[in] t: variable type
        * \param[in] v: variable name
-       * \param[in] dfv_ds: derivative of the implicit equation associated to v
+       * \param[in] dfv_ds: derivative of the implicit equation associated
+       * to v
        * with respect to the effective stress
        * \param[in] b: boolean static that the flow criterion is deviatoric
        */
-      virtual std::string computeDerivatives(const BehaviourDescription&,
-                                             const std::string&,
-                                             const std::string&,
-                                             const std::string&,
-                                             const bool) const = 0;
+      virtual std::string generateImplicitEquationDerivatives(
+          const BehaviourDescription&,
+          const std::string&,
+          const std::string&,
+          const std::string&,
+          const bool) const = 0;
       /*!
        * \brief add the lines that defines `sigel`, the elastic prediction of
        * the stress. This definition is added

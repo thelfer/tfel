@@ -115,6 +115,21 @@ namespace mfront {
       virtual std::string computeKinematicHardenings(
           const std::string&, const std::string&) const = 0;
       /*!
+       * \return the back-strain' name
+       * \param[in] fid: flow id
+       * \param[in] kid: kinematic hardening rule id
+       */
+      virtual std::string getBackStrainVariable(const std::string&,
+                                                const std::string&) const = 0;
+      /*!
+       * \return the derivative of the back-stress with respect to the
+       * back-strain
+       * \param[in] fid: flow id
+       * \param[in] kid: kinematic hardening rule id
+       */
+      virtual std::string getBackStressDerivative(const std::string&,
+                                                  const std::string&) const = 0;
+      /*!
        * \brief compute the derivatives of a variable \f$v\f$ knowing the
        * derivative of \f$\frac{d\,v}{d\underline{s}}\f$.
        * \param[in] v: variable name
@@ -123,10 +138,11 @@ namespace mfront {
        * \param[in] fid: flow id
        * \param[in] kid: kinematic hardening rule id
        */
-      virtual std::string computeDerivatives(const std::string&,
-                                             const std::string&,
-                                             const std::string&,
-                                             const std::string&) const = 0;
+      virtual std::string generateImplicitEquationDerivatives(
+          const std::string&,
+          const std::string&,
+          const std::string&,
+          const std::string&) const = 0;
       /*!
        * \return the code computing the implicit equations associated with the
        * back-strains and the derivatives of those equations (if requested).

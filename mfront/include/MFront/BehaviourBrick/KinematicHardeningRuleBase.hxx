@@ -1,6 +1,6 @@
 /*!
  * \file   KinematicHardeningRuleBase.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   04/04/2018
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
@@ -41,10 +41,15 @@ namespace mfront {
           const std::string&, const std::string&) const override;
       std::string computeKinematicHardenings(const std::string&,
                                              const std::string&) const override;
-      std::string computeDerivatives(const std::string&,
-                                     const std::string&,
-                                     const std::string&,
-                                     const std::string&) const override;
+      std::string getBackStrainVariable(const std::string&,
+                                        const std::string&) const override;
+      std::string getBackStressDerivative(const std::string&,
+                                          const std::string&) const override;
+      std::string generateImplicitEquationDerivatives(
+          const std::string&,
+          const std::string&,
+          const std::string&,
+          const std::string&) const override;
       //! destructor
       ~KinematicHardeningRuleBase() override;
 

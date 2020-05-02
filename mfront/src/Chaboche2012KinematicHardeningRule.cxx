@@ -23,8 +23,8 @@ namespace mfront {
 
   namespace bbrick {
 
-    std::vector<OptionDescription> Chaboche2012KinematicHardeningRule::getOptions()
-        const {
+    std::vector<OptionDescription>
+    Chaboche2012KinematicHardeningRule::getOptions() const {
       auto opts = KinematicHardeningRuleBase::getOptions();
       opts.emplace_back("D", "back-strain callback coefficient",
                         OptionDescription::MATERIALPROPERTY);
@@ -47,7 +47,7 @@ namespace mfront {
         const DataMap& d) {
       constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       // `this` must be captured in gcc 4.7.2
-      auto get_mp = [&bd, &dsl, &d, &fid, &kid,this](
+      auto get_mp = [&bd, &dsl, &d, &fid, &kid, this](
           BehaviourDescription::MaterialProperty& mp, const std::string& n) {
         const auto nid = KinematicHardeningRule::getVariableId(n, fid, kid);
         if (d.count(n) == 0) {
@@ -69,8 +69,10 @@ namespace mfront {
       get_mp(this->w, "w");
       // reserved named
       const auto DJan = KinematicHardeningRule::getVariableId("DJa", fid, kid);
-      const auto iDJan = KinematicHardeningRule::getVariableId("iDJa", fid, kid);
-      const auto dDJan = KinematicHardeningRule::getVariableId("dDJa", fid, kid);
+      const auto iDJan =
+          KinematicHardeningRule::getVariableId("iDJa", fid, kid);
+      const auto dDJan =
+          KinematicHardeningRule::getVariableId("dDJa", fid, kid);
       const auto Psin = KinematicHardeningRule::getVariableId("Psi", fid, kid);
       const auto dPsin =
           KinematicHardeningRule::getVariableId("dPsi", fid, kid) + "_d" +
@@ -133,10 +135,12 @@ namespace mfront {
       const auto Phi_infn =
           KinematicHardeningRule::getVariableId("Phi_inf", fid, kid);
       const auto DJan = KinematicHardeningRule::getVariableId("DJa", fid, kid);
-      const auto dDJan = KinematicHardeningRule::getVariableId("dDJa", fid, kid);
+      const auto dDJan =
+          KinematicHardeningRule::getVariableId("dDJa", fid, kid);
       const auto Phin = KinematicHardeningRule::getVariableId("Phi", fid, kid);
       const auto dPhin =
-          KinematicHardeningRule::getVariableId("dPhi", fid, kid) + "_ddp" + fid;
+          KinematicHardeningRule::getVariableId("dPhi", fid, kid) + "_ddp" +
+          fid;
       const auto Psin = KinematicHardeningRule::getVariableId("Psi", fid, kid);
       const auto dPsin =
           KinematicHardeningRule::getVariableId("dPsi", fid, kid) + "_d" +
@@ -209,11 +213,12 @@ namespace mfront {
         }
         // opposite of dfa_ds
         const auto mdf_ds = "(this->dp" + fid + ") * dn" + fid + "_ds" + fid;
-        c += sp.computeDerivatives(bd, "StrainStensor", an, "-" + mdf_ds,
-                                   fc.isNormalDeviatoric());
+        c += sp.generateImplicitEquationDerivatives(
+            bd, "StrainStensor", an, "-" + mdf_ds, fc.isNormalDeviatoric());
         auto kid2 = decltype(khrs.size()){};
         for (const auto& khr : khrs) {
-          c += khr->computeDerivatives(an, mdf_ds, fid, std::to_string(kid2));
+          c += khr->generateImplicitEquationDerivatives(an, mdf_ds, fid,
+                                                        std::to_string(kid2));
           ++kid2;
         }
         c += "df" + an + "_dd" + an + " += ";
@@ -232,11 +237,12 @@ namespace mfront {
         // opposite of dfa_ds
         const auto mdf_ds = "(this->dp" + fid + ")*dn" + fid + "_ds" + fid;
         c += "df" + an + "_ddp" + fid + " = - n" + fid + ";\n";
-        c += sp.computeDerivatives(bd, "StrainStensor", an, "-" + mdf_ds,
-                                   fc.isNormalDeviatoric());
+        c += sp.generateImplicitEquationDerivatives(
+            bd, "StrainStensor", an, "-" + mdf_ds, fc.isNormalDeviatoric());
         auto kid2 = decltype(khrs.size()){};
         for (const auto& khr : khrs) {
-          c += khr->computeDerivatives(an, mdf_ds, fid, std::to_string(kid2));
+          c += khr->generateImplicitEquationDerivatives(an, mdf_ds, fid,
+                                                        std::to_string(kid2));
           ++kid2;
         }
       }
@@ -245,7 +251,8 @@ namespace mfront {
     }  // end of
     // Chaboche2012KinematicHardeningRule::buildBackStrainImplicitEquations
 
-    Chaboche2012KinematicHardeningRule::~Chaboche2012KinematicHardeningRule() = default;
+    Chaboche2012KinematicHardeningRule::~Chaboche2012KinematicHardeningRule() =
+        default;
 
   }  // end of namespace bbrick
 

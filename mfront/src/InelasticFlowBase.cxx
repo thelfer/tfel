@@ -394,13 +394,13 @@ namespace mfront {
         if (requiresAnalyticalJacobian) {
           // jacobian terms
           ib.code += "dfeel_ddp" + id + " = (1 - " + f_ + ") * n" + id + ";\n";
-          ib.code += sp.computeDerivatives(
+          ib.code += sp.generateImplicitEquationDerivatives(
               bd, "StrainStensor", "eel",
               "(1 - " + f_ + ") * (this->dp" + id + ") * dn" + id + "_ds" + id,
               is_deviatoric);
           kid = decltype(khrs.size()){};
           for (const auto& khr : khrs) {
-            ib.code += khr->computeDerivatives(
+            ib.code += khr->generateImplicitEquationDerivatives(
                 "eel", "- (1 - " + f_ + ") * (this->dp" + id + ") * dn" + id +
                            "_ds" + id,
                 id, std::to_string(kid));
@@ -416,12 +416,12 @@ namespace mfront {
         if (requiresAnalyticalJacobian) {
           // jacobian terms
           ib.code += "dfeel_ddp" + id + " = n" + id + ";\n";
-          ib.code += sp.computeDerivatives(
+          ib.code += sp.generateImplicitEquationDerivatives(
               bd, "StrainStensor", "eel",
-              "(this->dp" + id + ")*dn" + id + "_ds" + id, is_deviatoric);
+              "(this->dp" + id + ") * dn" + id + "_ds" + id, is_deviatoric);
           kid = decltype(khrs.size()){};
           for (const auto& khr : khrs) {
-            ib.code += khr->computeDerivatives(
+            ib.code += khr->generateImplicitEquationDerivatives(
                 "eel", "-(this->dp" + id + ") * dn" + id + "_ds" + id, id,
                 std::to_string(kid));
             ++kid;
@@ -451,32 +451,101 @@ namespace mfront {
             bd.getBehaviourData(uh).getStateVariableDescriptionByExternalName(
                 tfel::glossary::Glossary::Porosity);
         const auto f_ = f.name + "_";
-        if (this->save_porosity_increase) {
-          ib.code += "dfg" + id + " = (1 - " + f_ + ") * (this->dp" + id +
-                     ") * trace(n" + id + ");\n";
-          ib.code += "f" + f.name + " -= dfg" + id + ";\n";
+        if (this->getPorosityEffectOnFlowRule() ==
+            STANDARD_POROSITY_CORRECTION_ON_FLOW_RULE) {
+          if (this->save_porosity_increase) {
+            ib.code += "dfg" + id + " = power<2>(1 - " + f_ + ") * (this->dp" +
+                       id + ") * trace(n" + id + ");\n";
+            ib.code += "f" + f.name + " -= dfg" + id + ";\n";
+          } else {
+            ib.code += "f" + f.name;
+            ib.code += " -= power<2>(1 - " + f_ + ") * (this->dp" + id +
+                       ") * trace(n" + id + ");\n";
+          }
         } else {
-          ib.code += "f" + f.name;
-          ib.code += " -= (1 - " + f_ + ") * (this->dp" + id + ") * trace(n" +
-                     id + ");\n";
+          if (this->save_porosity_increase) {
+            ib.code += "dfg" + id + " = (1 - " + f_ + ") * (this->dp" + id +
+                       ") * trace(n" + id + ");\n";
+            ib.code += "f" + f.name + " -= dfg" + id + ";\n";
+          } else {
+            ib.code += "f" + f.name;
+            ib.code += " -= (1 - " + f_ + ") * (this->dp" + id + ") * trace(n" +
+                       id + ");\n";
+          }
         }
         if (requiresAnalyticalJacobian) {
-          ib.code += "df" + f.name + "_dd" + f.name;
-          ib.code += " += theta *(this->dp" + id + ") * trace(n" + id + ")";
-          ib.code += "  - theta * (1 - " + f_ + ")* (this->dp" + id +
-                     ") * (Stensor::Id() | dn_d" + f.name + ");\n";
-          //           ib.code += "df" + f.name + "_ddeel -= ";
-          //           ib.code += "theta * (1 - " + f_ + ") * (this->dp" + id +
-          //           ") * ";
-          //           ib.code +=
-          //               "(Stensor::Id() | (" +
-          //               sp.computeDerivatives(bd, "StrainStensor", "eel",
-          //                                     "dn" + id + "_ds" + id,
-          //                                     is_deviatoric) +
-          //               "));\n";
-          ib.code += "df" + f.name + "_ddp" + id;
-          ib.code += " = - (1 - " + f_ + ") * trace(n" +
-                     id + ");\n";
+          if (this->getPorosityEffectOnFlowRule() ==
+              STANDARD_POROSITY_CORRECTION_ON_FLOW_RULE) {
+            ib.code += "df" + f.name + "_dd" + f.name;
+            ib.code += " += 2 * theta * (1 - " + f_ + ") * (this->dp" + id +
+                       ") * trace(n" + id + ")";
+            ib.code += "  -     theta * power<2>(1 - " + f_ + ")* (this->dp" +
+                       id + ") * (Stensor::Id() | dn_d" + f.name + ");\n";
+            // derivatives with respect to stress
+            for (const auto& dsig : sp.getStressDerivatives(bd)) {
+              const auto& dsig_ddv = std::get<0>(dsig);
+              const auto& v = std::get<1>(dsig);
+              const auto& t = std::get<2>(dsig);
+              if ((t != SupportedTypes::SCALAR) &&
+                  (t != SupportedTypes::STENSOR)) {
+                tfel::raise(
+                    "InelasticFlowBase::endTreatment: "
+                    "stress dependency on variable '" +
+                    v + "' is not unsupported ");
+              }
+              ib.code += "df" + f.name + "_dd" + v + " -= ";
+              ib.code += "power<2>(1 - " + f_ + ") * (this->dp" + id + ") * ";
+              ib.code += "(Stensor::Id() | (dn" + id + "_ds" + id + " * (" +
+                         dsig_ddv + ")));\n";
+            }
+            kid = decltype(khrs.size()){};
+            for (const auto& khr : this->khrs) {
+              const auto an =
+                  khr->getBackStrainVariable(id, std::to_string(kid));
+              const auto dX =
+                  khr->getBackStressDerivative(id, std::to_string(kid));
+              ib.code += "df" + f.name + "_dd" + an + " += ";
+              ib.code += "power<2>(1 - " + f_ + ") * (this->dp" + id + ") * ";
+              ib.code += "(Stensor::Id() | " + dX + ");\n";
+              ++kid;
+            }
+            ib.code += "df" + f.name + "_ddp" + id;
+            ib.code += " = - power<2>(1 - " + f_ + ") * trace(n" + id + ");\n";
+          } else {
+            ib.code += "df" + f.name + "_dd" + f.name;
+            ib.code += " += theta *(this->dp" + id + ") * trace(n" + id + ")";
+            ib.code += "  - theta * (1 - " + f_ + ")* (this->dp" + id +
+                       ") * (Stensor::Id() | dn_d" + f.name + ");\n";
+            // derivatives with respect to stress
+            for (const auto& dsig : sp.getStressDerivatives(bd)) {
+              const auto& dsig_ddv = std::get<0>(dsig);
+              const auto& v = std::get<1>(dsig);
+              const auto& t = std::get<2>(dsig);
+              if ((t != SupportedTypes::SCALAR) &&
+                  (t != SupportedTypes::STENSOR)) {
+                tfel::raise(
+                    "InelasticFlowBase::endTreatment: "
+                    "stress dependency on variable '" +
+                    v + "' is not unsupported ");
+              }
+              ib.code += "df" + f.name + "_dd" + v + " -= ";
+              ib.code += "(1 - " + f_ + ") * (this->dp" + id + ") * ";
+              ib.code += "(Stensor::Id() | (dn" + id + "_ds" + id + " * (" +
+                         dsig_ddv + ")));\n";
+            }
+            for (const auto& khr : this->khrs) {
+              const auto an =
+                  khr->getBackStrainVariable(id, std::to_string(kid));
+              const auto dX =
+                  khr->getBackStressDerivative(id, std::to_string(kid));
+              ib.code += "df" + f.name + "_dd" + an + " += ";
+              ib.code += "(1 - " + f_ + ") * (this->dp" + id + ") * ";
+              ib.code += "(Stensor::Id() | " + dX + ");\n";
+              ++kid;
+            }
+            ib.code += "df" + f.name + "_ddp" + id;
+            ib.code += " = - (1 - " + f_ + ") * trace(n" + id + ");\n";
+          }
         }
       }
       if (!this->ihrs.empty()) {

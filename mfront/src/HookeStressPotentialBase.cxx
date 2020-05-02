@@ -967,10 +967,6 @@ namespace mfront {
       return mh;
     }  // end of HookeStressPotentialBase::getSupportedModellingHypothesis
 
-    void HookeStressPotentialBase::writeStressDerivatives(
-        BehaviourDescription&) const {
-    }  // end of HookeStressPotentialBase::writeStressDerivatives
-
     void HookeStressPotentialBase::computeElasticPrediction(
         BehaviourDescription& bd) const {
       CodeBlock i;

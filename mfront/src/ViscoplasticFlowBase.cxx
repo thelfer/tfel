@@ -1,5 +1,5 @@
 /*!
- * \file   NortonInelasticFlow.cxx
+ * \file   mfront/src/NortonInelasticFlow.cxx
  * \brief
  * \author Thomas Helfer
  * \date   28/03/2018
@@ -63,7 +63,7 @@ namespace mfront {
         }
         c += this->computeFlowRateAndDerivative(id);
         c += "fp" + id + " -= (this->dt)*vp" + id + ";\n";
-        c += sp.computeDerivatives(
+        c += sp.generateImplicitEquationDerivatives(
             bd, "strain", "p" + id,
             "-(this->dt) * dvp" + id + "_dseqe" + id + " * dseq" + id + "_ds" + id,
             this->sc->isNormalDeviatoric());
@@ -73,9 +73,10 @@ namespace mfront {
         }
         auto kid = decltype(khrs.size()){};
         for (const auto& khr : khrs) {
-          c += khr->computeDerivatives("p", "(this->dt) * dvp" + id + "_dseqe " +
-                                                id + " * dseq" + id + "_ds" + id,
-                                       id, std::to_string(kid));
+          c += khr->generateImplicitEquationDerivatives(
+              "p", "(this->dt) * dvp" + id + "_dseqe " + id + " * dseq" + id +
+                       "_ds" + id,
+              id, std::to_string(kid));
           ++kid;
         }
         if (this->isCoupledWithPorosityEvolution()) {

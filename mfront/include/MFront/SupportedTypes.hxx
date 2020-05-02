@@ -21,8 +21,7 @@
 #include"TFEL/Material/ModellingHypothesis.hxx"
 #include"MFront/MFrontConfig.hxx"
 
-namespace mfront
-{
+namespace mfront {
 
   //! class handling all type variables types supported by MFront
   struct MFRONT_VISIBILITY_EXPORT SupportedTypes {
@@ -33,7 +32,7 @@ namespace mfront
     static constexpr int ArraySizeLimit = 10u;
 #endif /* LIB_TFEL_SYSTEM_EXTERNALFUNCTIONSPROTOTYPES_HXX */
     //! type of variable supported
-    enum TypeFlag{SCALAR,TVECTOR,STENSOR,TENSOR};
+    enum TypeFlag { SCALAR, TVECTOR, STENSOR, TENSOR };
     /*!
      * class handling the size of a variable or a set of variables as
      * a function of the variables' type and the modelling hypothesis

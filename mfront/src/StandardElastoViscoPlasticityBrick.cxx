@@ -273,9 +273,6 @@ namespace mfront {
     const bool requiresAnalyticalJacobian =
         ((idsl.getSolver().usesJacobian()) &&
          (!idsl.getSolver().requiresNumericalJacobian()));
-    if (requiresAnalyticalJacobian) {
-      this->stress_potential->writeStressDerivatives(this->bd);
-    }
     auto i = size_t{};
     for (const auto& f : this->flows) {
       f->endTreatment(this->bd, this->dsl, *(this->stress_potential),

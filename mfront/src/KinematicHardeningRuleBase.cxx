@@ -54,7 +54,18 @@ namespace mfront {
       bd.reserveName(uh, an + '_');
     }  // end of KinematicHardeningRuleBase::initialize
 
-    std::string KinematicHardeningRuleBase::computeDerivatives(
+    std::string KinematicHardeningRuleBase::getBackStrainVariable(
+        const std::string& fid, const std::string& kid) const {
+      return KinematicHardeningRule::getVariableId("a", fid, kid);
+    }  // end of KinematicHardeningRuleBase::getBackStrainVariable
+
+    std::string KinematicHardeningRuleBase::getBackStressDerivative(
+        const std::string& fid, const std::string& kid) const {
+      const auto Cn = KinematicHardeningRule::getVariableId("C", fid, kid);
+      return "((2 * (this->theta) * ((this->" + Cn + ")/3)) * (Stensor4::Id()))";
+    }  // end of KinematicHardeningRuleBase::getBackStressDerivative
+
+    std::string KinematicHardeningRuleBase::generateImplicitEquationDerivatives(
         const std::string& v,
         const std::string& mdfv_ds,
         const std::string& fid,
@@ -63,7 +74,7 @@ namespace mfront {
       const auto Cn = KinematicHardeningRule::getVariableId("C", fid, kid);
       auto c = std::string{};
       c += "df" + v + "_dd" + an + " += ";
-      c += "(2*(this->theta)*(this->" + Cn + "))/3*(" + mdfv_ds + ");\n";
+      c += "(2*(this->theta)*((this->" + Cn + ")/3))*(" + mdfv_ds + ");\n";
       return c;
     }
 

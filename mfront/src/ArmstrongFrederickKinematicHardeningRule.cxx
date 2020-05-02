@@ -86,7 +86,7 @@ namespace mfront {
              ")*" + an + "_);\n";
         // opposite of the derivative of fa with respect to s
         const auto mdf_ds = "(this->dp" + fid + ")*dn" + fid + "_ds" + fid;
-        c += sp.computeDerivatives(bd, "StrainStensor", an, "-" + mdf_ds,
+        c += sp.generateImplicitEquationDerivatives(bd, "StrainStensor", an, "-" + mdf_ds,
                                    fc.isNormalDeviatoric());
         // term specific to this back strain
         c += "df" + an + "_dd" + an + " += ";
@@ -95,7 +95,7 @@ namespace mfront {
         // terms in common for all back strains
         auto kid2 = decltype(khrs.size()){};
         for (const auto& khr : khrs) {
-          c += khr->computeDerivatives(an, mdf_ds, fid, std::to_string(kid2));
+          c += khr->generateImplicitEquationDerivatives(an, mdf_ds, fid, std::to_string(kid2));
           ++kid2;
         }
       }
