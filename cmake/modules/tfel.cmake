@@ -405,13 +405,19 @@ macro(python_module_base fullname name)
   endif(WIN32)
   set_target_properties(py_${fullname} PROPERTIES PREFIX "")
   set_target_properties(py_${fullname} PROPERTIES OUTPUT_NAME ${name})
-  if(TFEL_USES_CONAN)
-    target_link_libraries(py_${fullname}
-      ${CONAN_LIBS} ${PYTHON_LIBRARIES})
-  else(TFEL_USES_CONAN)
-    target_link_libraries(py_${fullname}
-      ${Boost_PYTHON_LIBRARY} ${PYTHON_LIBRARIES})
-  endif(TFEL_USES_CONAN)
+  target_include_directories(py_${fullname}
+    PRIVATE "${PROJECT_SOURCE_DIR}/bindings/python/include"
+    PRIVATE "${PROJECT_SOURCE_DIR}/include")
+  target_include_directories(py_${fullname}
+    SYSTEM
+    PRIVATE "${Boost_INCLUDE_DIRS}"
+    PRIVATE "${PYTHON_INCLUDE_DIRS}")
+  if(python-static-interpreter-workaround)
+    if(APPLE)
+      target_link_options(py_${fullname}
+        PRIVATE "-undefined" "dynamic_lookup")
+    endif(APPLE)
+  endif(python-static-interpreter-workaround)
 endmacro(python_module_base)
 
 # macro(python_module name)
@@ -427,7 +433,7 @@ endmacro(python_module_base)
 #     endif(TFEL_APPEND_SUFFIX)
 # endmacro(python_module)
 
-macro(python_lib_module name package)
+function(python_lib_module name package)
   python_module_base(${package}_${name} ${name} ${ARGN})
   if(TFEL_APPEND_SUFFIX)
     if(WIN32)
@@ -450,25 +456,32 @@ macro(python_lib_module name package)
         COMPONENT python_bindings)
     endif(WIN32)
   endif(TFEL_APPEND_SUFFIX)
-endmacro(python_lib_module)
+endfunction(python_lib_module)
 
-macro(std_python_module name)
+function(std_python_module name)
   python_lib_module(${name} std ${ARGN})
-endmacro(std_python_module)
+endfunction(std_python_module)
 
-macro(tfel_python_module name)
+function(tfel_python_module name)
   python_lib_module(${name} tfel ${ARGN})
-endmacro(tfel_python_module)
+endfunction(tfel_python_module)
 
-macro(mfront_python_module name)
+function(mfront_python_module name)
   python_lib_module(${name} mfront ${ARGN})
-endmacro(mfront_python_module)
+  set(fullname "mfront_${name}")
+  target_include_directories(py_${fullname}
+    PRIVATE "${PROJECT_SOURCE_DIR}/mfront/include")
+endfunction(mfront_python_module)
 
-macro(mtest_python_module name)
+function(mtest_python_module name)
   python_lib_module(${name} mtest ${ARGN})
-endmacro(mtest_python_module)
+  set(fullname "mtest_${name}")
+  target_include_directories(py_${fullname}
+    PRIVATE "${PROJECT_SOURCE_DIR}/mtest/include"
+    PRIVATE "${PROJECT_SOURCE_DIR}/mfront/include")
+endfunction(mtest_python_module)
 
-macro(tfel_python_script_base dir)
+function(tfel_python_script_base dir)
   if(${ARGC} LESS 1)
     message(FATAL_ERROR "tfel_python_script_base : no script specified")
   endif(${ARGC} LESS 1)
@@ -500,12 +513,12 @@ macro(tfel_python_script_base dir)
         COMPONENT python_bindings)
     endif(WIN32)
   endforeach(pyscript ${ARGN})
-endmacro(tfel_python_script_base)
+endfunction(tfel_python_script_base)
 
-macro(tfel_python_script dir)
+function(tfel_python_script dir)
   if(TFEL_APPEND_SUFFIX)
     tfel_python_script_base(${dir}_${TFEL_SUFFIX_FOR_PYTHON_MODULES} ${ARGN})
   else(TFEL_APPEND_SUFFIX)
     tfel_python_script_base(${dir} ${ARGN})
   endif(TFEL_APPEND_SUFFIX)
-endmacro(tfel_python_script)
+endfunction(tfel_python_script)
