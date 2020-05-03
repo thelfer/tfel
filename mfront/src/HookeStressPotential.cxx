@@ -528,7 +528,11 @@ namespace mfront {
         }
         return "(this->theta) *(this->D)";
       }();
-      return {{d, "eel", SupportedTypes::STENSOR}};
+      // working around old gcc versions
+      auto r = std::vector<
+	std::tuple<std::string, std::string, mfront::SupportedTypes::TypeFlag>>{};
+      r.push_back(std::make_tuple(d, std::string("eel"), SupportedTypes::STENSOR));
+      return r;
     }  // end of HookeStressPotential::getStressDerivatives
 
     std::string HookeStressPotential::generateImplicitEquationDerivatives(
