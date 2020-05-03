@@ -44,7 +44,7 @@ namespace mtest {
         "invalid hypothesis.");
   } // end of AbaqusStandardBehaviour::getHypothesisSuffix
 
-  std::string AbaqusStandardBehaviour::getBehaviourName(const std::string& b, const Hypothesis h) {
+  std::string AbaqusStandardBehaviour::extractBehaviourName(const std::string& b, const Hypothesis h) {
     auto ends = [&b](const std::string& s) {
       if (b.length() >= s.length()) {
         return b.compare(b.length() - s.length(), s.length(), s) == 0;
@@ -53,7 +53,7 @@ namespace mtest {
     };
     const auto s = AbaqusStandardBehaviour::getHypothesisSuffix(h);
     tfel::raise_if(!ends(s),
-                   "AbaqusStandardBehaviour::getBehaviourName: "
+                   "AbaqusStandardBehaviour::extractBehaviourName: "
                    "invalid function name.");
     return {b.begin(), b.begin() + b.length() - s.length()};
   }
@@ -61,7 +61,7 @@ namespace mtest {
   AbaqusStandardBehaviour::AbaqusStandardBehaviour(const Hypothesis h,
                                                    const std::string& l,
                                                    const std::string& b)
-      : StandardBehaviourBase(h, l, AbaqusStandardBehaviour::getBehaviourName(b, h)) {
+      : StandardBehaviourBase(h, l, AbaqusStandardBehaviour::extractBehaviourName(b, h)) {
     auto throw_if = [](const bool c, const std::string& m) {
       tfel::raise_if(c,
                      "AbaqusStandardBehaviour::"
@@ -69,7 +69,7 @@ namespace mtest {
                          m);
     };
     auto& elm = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
-    const auto bn = AbaqusStandardBehaviour::getBehaviourName(b, h);
+    const auto bn = AbaqusStandardBehaviour::extractBehaviourName(b, h);
     throw_if(elm.getInterface(l, bn) != "Abaqus",
              "invalid interface '" + elm.getInterface(l, bn) + "'");
     this->fct = elm.getAbaqusExternalBehaviourFunction(l, b);

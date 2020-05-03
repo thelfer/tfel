@@ -4,7 +4,36 @@
 
 Version `3.3.1` is mainly a bug fix version of the `3.3` series.
 
+# New features in `MTest`
+
+## Unicode characters in `MTest`
+
+Usage of a limited subsets of `UTF-8` characters in variable names is
+now allowed. This subset is described here:
+
+<http://tfel.sourceforge.net/unicode.html>
+
 # Tickets fixed
+
+## Ticket #235: Support for `python` bindings in conda
+
+The conda' python interpreter is statically linked, which causes issues
+on `Mac Os` if the `python` modules are linked with the `python`
+library. See for details
+https://github.com/ContinuumIO/anaconda-issues/issues/9078. However, not
+linking with the `python` library usually lead to link failures du to
+missing symbols and requires the use of specific linker flags, which
+causes portability issues.
+
+A proper solution may only appear with CMake 3.15 with the
+`Python::module` target, see
+https://gitlab.kitware.com/cmake/cmake/issues/18100.
+
+Until this version is widely available, the
+`-Dpython-static-interpreter-workaround=ON` can be used at the `cmake`
+invokation.
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/235/>
 
 ## Ticket #233: Allow unicode support in variable names in `MTest`
 

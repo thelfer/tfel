@@ -41,7 +41,7 @@ behaviour. This framework is described
 
 ## Plasticity
 
-- [IsotropicLinearHardeningPlasticity](gallery/plasticity/IsotropicLinearHardeningPlasticity.mfront)
+- [IsotropicLinearHardeningPlasticity](IsotropicLinearHardeningPlasticity.html)
 - [IsotropicLinearKinematicHardeningPlasticity](gallery/plasticity/IsotropicLinearKinematicHardeningPlasticity.mfront)
 - The implementation of an orthotropic plastic behaviour with
   isotropic linear hardening is described

@@ -158,7 +158,7 @@ namespace mtest {
     if ((in == "Abaqus") || (in == "abaqus") || (in == "abaqus_standard") ||
         (in == "abaqus_umat")) {
       check_no_parameters();
-      const auto bn = AbaqusStandardBehaviour::getBehaviourName(f, h);
+      const auto bn = AbaqusStandardBehaviour::extractBehaviourName(f, h);
       const auto type = elm.getUMATBehaviourType(l, bn);
       if (type == 1u) {
         b = std::make_shared<AbaqusSmallStrainBehaviour>(h, l, f);
@@ -170,7 +170,7 @@ namespace mtest {
     }
     if ((in == "AbaqusExplicit") || (in == "abaqus_explicit") ||
         (in == "abaqus_vumat")) {
-      const auto bn = AbaqusExplicitBehaviour::getBehaviourName(f, h);
+      const auto bn = AbaqusExplicitBehaviour::extractBehaviourName(f, h);
       check_no_parameters();
       const auto type = elm.getUMATBehaviourType(l, bn);
       if (type == 2u) {
@@ -183,7 +183,7 @@ namespace mtest {
 #ifdef HAVE_ANSYS
     if ((in == "Ansys") || (in == "ansys") || (in == "ansys_usermat")) {
       check_no_parameters();
-      const auto bn = AnsysStandardBehaviour::getBehaviourName(f, h);
+      const auto bn = AnsysStandardBehaviour::extractBehaviourName(f, h);
       const auto type = elm.getUMATBehaviourType(l, bn);
       if (type == 1u) {
         b = std::make_shared<AnsysSmallStrainBehaviour>(h, l, f);

@@ -39,10 +39,10 @@ namespace mtest {
       //! \brief position
       unsigned short p;
     };  // end of struct Variable
-    /*!
-     * A structure containing the constraint derivative and the second
-     * derivative of the constraint
-     */
+        /*!
+         * A structure containing the constraint derivative and the second
+         * derivative of the constraint
+         */
     struct ConstraintDerivative {
       //! variable used to differentiate the constraint
       std::shared_ptr<Variable> v;
@@ -110,8 +110,9 @@ namespace mtest {
         const std::string& n, const unsigned short pos) {
       cv.push_back(std::make_shared<Constraint::Variable>(n, pos));
     };
+    auto cevs = buildExternalFunctionManagerFromConstantEvolutions(evm);
     this->c = std::make_shared<Constraint>();
-    this->c->c = std::make_shared<Evaluator>(f);
+    this->c->c = std::make_shared<Evaluator>(f, cevs);
     this->c->np = p;
     // creating all the variables
     const auto all_dvs = this->b.getGradientsComponents();
@@ -275,7 +276,7 @@ namespace mtest {
         }
       }
     } else {
-      K(pos,pos)=1;
+      K(pos, pos) = 1;
     }
   }  // end of NonLinearConstraint::setValues
 

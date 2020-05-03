@@ -161,7 +161,7 @@ namespace mtest {
         !this->isValidIdentifier(tfel::unicode::getMangledString(v)),
         "SchemeParserBase::handleReal : '" + v + "' is not a valid identifier");
     const real value = this->readDouble(t, p);
-    auto mpev = std::shared_ptr<Evolution>(new ConstantEvolution(value));
+    auto mpev = std::make_shared<ConstantEvolution>(value);
     this->readSpecifiedToken("SchemeParserBase::handleReal", ";", p,
                              this->tokens.end());
     t.addEvolution(v, mpev, true, true);

@@ -123,6 +123,28 @@ The following code can be added in a block defining an inelastic flow:
     isotropic_hardening : "Power" {R0 : 120e6, p0 : 1e-8, n : 5.e-2}
 ~~~~
 
+# New features in `MTest`
+
+## Import behaviour parameters
+
+The behaviour parameters are now automatically imported in the behaviour
+namespace with its default value.
+
+For example, the `YoungModulus` parameter of the `BishopBehaviour` will
+be available in the `BishopBehaviour::YoungModulus` variable.
+
+This feature is convenient for building unit tests comparing the
+simulated results with analytical ones.
+
+The list of imported parameters is displayed in `debug` mode.
+
+## Unicode characters in `MTest`
+
+Usage of a limited subsets of `UTF-8` characters in variable names is
+now allowed. This subset is described here:
+
+<http://tfel.sourceforge.net/unicode.html>
+
 # New features of the `python` bindings
 
 ## Improvements of the `tfel.math` module
@@ -188,6 +210,10 @@ comparison, the accelerated algorithm takes \(9\) iterations.
 ## Disabling `NumPy` support
 
 # Tickets solved during the development of this version
+
+## Ticket #234: Import behaviour parameters in `MTest`
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/234/>
 
 ## Ticket #231: Support for tensors as gradients and thermodynamic forces in the `generic` behaviours
 

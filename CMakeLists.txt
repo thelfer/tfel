@@ -270,6 +270,9 @@ option(enable-numpy-support
 option(enable-broken-boost-python-module-visibility-handling
   "workaround a bug in boost python which occurs on FreeBSD+clang. See https://github.com/boostorg/python/issues/173 for details" OFF)
 
+option(python-static-interpreter-workaround
+  "a workaround to handle the fact the conda' python interpreter is statically linked, which causes issues on Mac Os. See for details https://github.com/ContinuumIO/anaconda-issues/issues/9078. A proper solution may only appear with CMake 3.15 with the `Python::module` target, see https://gitlab.kitware.com/cmake/cmake/issues/18100. Until this version is widely available, this flag proposes a hack. Use with care." OFF)
+ 
 if(enable-python OR enable-python-bindings)
   find_package(PythonLibs REQUIRED)
   set(HAVE_PYTHON ON)
@@ -409,11 +412,31 @@ if(enable-python-bindings)
     set(TFEL_NUMPY_SUPPORT ON)
   endif(Boost_NUMPY_FOUND)
   if(TFEL_USES_CONAN)
-    set(TFEL_PYTHON_MODULES_PRIVATE_LINK_LIBRARIES
+    if(NOT python-static-interpreter-workaround)
+      set(TFEL_PYTHON_MODULES_PRIVATE_LINK_LIBRARIES
         ${CONAN_LIBS} ${PYTHON_LIBRARIES})
+    else(python-static-interpreter-workaround)
+      if(APPLE)
+        set(TFEL_PYTHON_MODULES_PRIVATE_LINK_LIBRARIES
+          ${CONAN_LIBS})
+      else(APPLE)
+        set(TFEL_PYTHON_MODULES_PRIVATE_LINK_LIBRARIES
+          ${CONAN_LIBS} ${PYTHON_LIBRARIES})
+      endif(APPLE)
+    endif()
   else(TFEL_USES_CONAN)
-    set(TFEL_PYTHON_MODULES_PRIVATE_LINK_LIBRARIES
-      ${Boost_PYTHON_LIBRARY} ${PYTHON_LIBRARIES})
+    if(NOT python-static-interpreter-workaround)
+      set(TFEL_PYTHON_MODULES_PRIVATE_LINK_LIBRARIES
+        ${Boost_PYTHON_LIBRARY} ${PYTHON_LIBRARIES})
+    else()
+      if(APPLE)
+        set(TFEL_PYTHON_MODULES_PRIVATE_LINK_LIBRARIES
+          ${Boost_PYTHON_LIBRARY})
+      else(APPLE)
+        set(TFEL_PYTHON_MODULES_PRIVATE_LINK_LIBRARIES
+          ${Boost_PYTHON_LIBRARY} ${PYTHON_LIBRARIES})
+      endif(APPLE)
+    endif()
   endif(TFEL_USES_CONAN)
   if(DEFINED TFEL_TMP_BUILD_SHARED_LIBS)
     unset(TFEL_TMP_BUILD_SHARED_LIBS)

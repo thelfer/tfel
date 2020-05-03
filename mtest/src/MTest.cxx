@@ -102,6 +102,13 @@ namespace mtest {
                             const std::vector<std::string>& ecmds,
                             const std::map<std::string, std::string>& s) {
     MTestParser().execute(*this, f, ecmds, s);
+    if (mfront::getVerboseMode() >= mfront::VERBOSE_DEBUG) {
+      mfront::getLogStream() << "Defined evolutions:\n";
+      for (const auto& e : *(this->evm)) {
+        mfront::getLogStream() << "- " << e.first << '\n';
+      }
+      mfront::getLogStream() << '\n';
+    }
   }  // end of MTest::readInputFile
 
   std::string MTest::name() const {

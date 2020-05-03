@@ -92,6 +92,10 @@ namespace mtest {
                    "(neither isotropic nor orthotropic)");
   }  // end of StandardBehaviourBase::StandardBehaviourBase
 
+  std::string StandardBehaviourBase::getBehaviourName() const{
+    return this->behaviour;
+  }  // end of StandardBehaviourBase::getBehaviourName
+
   StandardBehaviourBase::Hypothesis StandardBehaviourBase::getHypothesis()
       const {
     return ModellingHypothesis::fromString(this->hypothesis);

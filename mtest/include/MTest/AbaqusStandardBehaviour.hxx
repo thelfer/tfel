@@ -1,22 +1,22 @@
-/*! 
+/*!
  * \file  mtest/include/MTest/AbaqusStandardBehaviour.hxx
  * \brief
  * \author Thomas Helfer
  * \brief 07 avril 2013
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MTEST_MTESTABAQUSSTANDARDBEHAVIOUR_HXX
-#define LIB_MTEST_MTESTABAQUSSTANDARDBEHAVIOUR_HXX 
+#define LIB_MTEST_MTESTABAQUSSTANDARDBEHAVIOUR_HXX
 
-#include"TFEL/Config/TFELConfig.hxx"
-#include"TFEL/System/ExternalFunctionsPrototypes.hxx"
-#include"MTest/StandardBehaviourBase.hxx"
+#include "TFEL/Config/TFELConfig.hxx"
+#include "TFEL/System/ExternalFunctionsPrototypes.hxx"
+#include "MTest/StandardBehaviourBase.hxx"
 
 namespace mtest {
 
@@ -25,8 +25,7 @@ namespace mtest {
    * interface
    */
   struct MTEST_VISIBILITY_EXPORT AbaqusStandardBehaviour
-    : public StandardBehaviourBase
-  {
+      : public StandardBehaviourBase {
     /*!
      * \return the suffix associated with a modelling hypothesis
      * \param[in] h: hypothesis
@@ -38,15 +37,16 @@ namespace mtest {
      * \param[in] h : modelling hypothesis
      * \param[in] f : function implementation the behaviour
      */
-    static std::string getBehaviourName(const std::string&, const Hypothesis);
+    static std::string extractBehaviourName(const std::string&,
+                                            const Hypothesis);
     /*!
      * \param[in] h : modelling hypothesis
      * \param[in] l : library name
      * \param[in] b : behaviour name
      */
     AbaqusStandardBehaviour(const Hypothesis,
-			    const std::string&,
-			    const std::string&);
+                            const std::string&,
+                            const std::string&);
     /*!
      * \brief compute the *real* rotation matrix
      * \param[in] mp : material properties
@@ -54,9 +54,9 @@ namespace mtest {
      * \note this method is only meaningfull for the umat (Cast3M)
      * interface
      */
-    tfel::math::tmatrix<3u,3u,real>
-    getRotationMatrix(const tfel::math::vector<real>&,
-		      const tfel::math::tmatrix<3u,3u,real>&) const override;
+    tfel::math::tmatrix<3u, 3u, real> getRotationMatrix(
+        const tfel::math::vector<real>&,
+        const tfel::math::tmatrix<3u, 3u, real>&) const override;
     /*!
      * \return the default type of stiffness matrix used by the behaviour
      */
@@ -70,10 +70,10 @@ namespace mtest {
      * \param[in]  s     : current state
      * \param[in]  ktype : type of the stiffness matrix
      */
-    std::pair<bool,real>
-    computePredictionOperator(BehaviourWorkSpace&,
-			      const CurrentState&,
-			      const StiffnessMatrixType) const override;
+    std::pair<bool, real> computePredictionOperator(
+        BehaviourWorkSpace&,
+        const CurrentState&,
+        const StiffnessMatrixType) const override;
     /*!
      * \brief integrate the mechanical behaviour over the time step
      * \return a pair. The first member is true if the integration was
@@ -84,11 +84,10 @@ namespace mtest {
      * \param[in]     dt    : time increment
      * \param[in]     ktype : type of the stiffness matrix
      */
-    std::pair<bool,real>
-    integrate(CurrentState&,
-	      BehaviourWorkSpace&,
-	      const real,
-	      const StiffnessMatrixType) const override;
+    std::pair<bool, real> integrate(CurrentState&,
+                                    BehaviourWorkSpace&,
+                                    const real,
+                                    const StiffnessMatrixType) const override;
     /*!
      * \brief allocate internal workspace
      * \param[out] wk : behaviour workspace
@@ -96,7 +95,8 @@ namespace mtest {
     void allocate(BehaviourWorkSpace&) const override;
     //! destructor
     ~AbaqusStandardBehaviour() override;
-  protected:
+
+   protected:
     /*!
      * \brief call the mechanical behaviour
      * \return a pair. The first member is true if the integration was
@@ -110,20 +110,18 @@ namespace mtest {
      * \param[in]     b     : if true, integrate the behaviour over the time
      * step, if false compute a prediction of the stiffness matrix
      */
-    virtual std::pair<bool,real>
-    call_behaviour(tfel::math::matrix<real>&,
-		   CurrentState&,
-		   BehaviourWorkSpace&,
-		   const real,
-		   const StiffnessMatrixType,
-		   const bool) const = 0;
+    virtual std::pair<bool, real> call_behaviour(tfel::math::matrix<real>&,
+                                                 CurrentState&,
+                                                 BehaviourWorkSpace&,
+                                                 const real,
+                                                 const StiffnessMatrixType,
+                                                 const bool) const = 0;
     //! the abaqus fonction
     tfel::system::AbaqusFctPtr fct;
     //! orthotropy management policy
     unsigned short omp = 0u;
-  }; // end of struct Behaviour
-  
-} // end of namespace mtest
+  };  // end of struct Behaviour
+
+}  // end of namespace mtest
 
 #endif /* LIB_MTEST_MTESTABAQUSSTANDARDBEHAVIOUR_HXX */
-

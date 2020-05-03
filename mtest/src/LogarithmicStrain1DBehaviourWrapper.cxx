@@ -57,6 +57,10 @@ namespace mtest {
                    "the underlying behaviour must be small strain");
   }
 
+  std::string LogarithmicStrain1DBehaviourWrapper::getBehaviourName() const {
+    return this->b->getBehaviourName();
+  }  // end of LogarithmicStrain1DBehaviourWrapper::getBehaviourName()
+
   LogarithmicStrain1DBehaviourWrapper::Hypothesis
   LogarithmicStrain1DBehaviourWrapper::getHypothesis() const {
     return this->b->getHypothesis();

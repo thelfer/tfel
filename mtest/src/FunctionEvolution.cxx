@@ -19,7 +19,9 @@ namespace mtest {
 
   FunctionEvolution::FunctionEvolution(const std::string& f_,
                                        const EvolutionManager& evm_)
-      : evm(evm_), f(f_) {}  // end of FunctionEvolution::FunctionEvolution
+      : evm(evm_),
+        f(f_, buildExternalFunctionManagerFromConstantEvolutions(evm_)) {
+  }  // end of FunctionEvolution::FunctionEvolution
 
   real FunctionEvolution::operator()(const real t) const {
     const auto& args = this->f.getVariablesNames();

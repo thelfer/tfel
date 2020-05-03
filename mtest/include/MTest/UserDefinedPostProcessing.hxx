@@ -46,7 +46,7 @@ namespace mtest{
     //! list of function object used to retrieve values from the current state
     std::map<std::string, std::function<real(const CurrentState&)>> extractors;
     //! evolution manager
-    const EvolutionManager evm;
+    const EvolutionManager& evm;
     //! output file
     std::ofstream out;
   };  // end of UserDefinedPostProcessing

@@ -43,7 +43,7 @@ namespace mtest {
         "invalid hypothesis.");
   } // end of AnsysStandardBehaviour::getHypothesisSuffix
 
-  std::string AnsysStandardBehaviour::getBehaviourName(const std::string& b, const Hypothesis h) {
+  std::string AnsysStandardBehaviour::extractBehaviourName(const std::string& b, const Hypothesis h) {
     auto ends = [&b](const std::string& s){
       if(b.length()>=s.length()){
         return b.compare(b.length()-s.length(),s.length(),s)==0;
@@ -60,13 +60,13 @@ namespace mtest {
                                                  const std::string& l,
                                                  const std::string& b)
       : StandardBehaviourBase(
-            h, l, AnsysStandardBehaviour::getBehaviourName(b, h)) {
+            h, l, AnsysStandardBehaviour::extractBehaviourName(b, h)) {
     auto throw_if = [](const bool c, const std::string& m) {
       tfel::raise_if(c, "AnsysStandardBehaviour::AnsysStandardBehaviour: " + m);
     };
     auto& elm =
         tfel::system::ExternalLibraryManager::getExternalLibraryManager();
-    const auto bn = AnsysStandardBehaviour::getBehaviourName(b, h);
+    const auto bn = AnsysStandardBehaviour::extractBehaviourName(b, h);
     throw_if(elm.getInterface(l, bn) != "Ansys",
              "invalid interface '" + elm.getInterface(l, bn) + "'");
     this->fct = elm.getAnsysExternalBehaviourFunction(l, b);

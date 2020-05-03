@@ -37,6 +37,7 @@ namespace mtest {
      * \param[in] wb : wrapped behaviour
      */
     LogarithmicStrain1DBehaviourWrapper(const std::shared_ptr<Behaviour>&);
+    std::string getBehaviourName() const override;
     Hypothesis getHypothesis() const override;
     BehaviourType getBehaviourType() const override;
     Kinematic getBehaviourKinematic() const override;

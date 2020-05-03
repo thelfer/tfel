@@ -438,6 +438,12 @@ function(python_module_base fullname name)
     SYSTEM
     PRIVATE "${Boost_INCLUDE_DIRS}"
     PRIVATE "${PYTHON_INCLUDE_DIRS}")
+  if(python-static-interpreter-workaround)
+    if(APPLE)
+      target_link_options(py_${fullname}
+        PRIVATE "-undefined" "dynamic_lookup")
+    endif(APPLE)
+  endif(python-static-interpreter-workaround)
 endfunction(python_module_base)
 
 function(python_lib_module name package)

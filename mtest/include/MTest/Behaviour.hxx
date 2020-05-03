@@ -79,6 +79,8 @@ namespace mtest {
                                                    const std::string&,
                                                    const Parameters&,
                                                    const Hypothesis);
+    //! \return the name of the behaviour
+    virtual std::string getBehaviourName() const = 0;
     //! \return the type of the behaviour
     virtual BehaviourType getBehaviourType() const = 0;
     //! \return the type of the behaviour
