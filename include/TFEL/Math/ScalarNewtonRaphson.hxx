@@ -15,12 +15,32 @@
 #define LIB_TFEL_MATH_SCALARNEWTONRAPHSON_HXX
 
 #include <tuple>
+#include <limits>
 
 namespace tfel {
 
   namespace math {
 
     /*!
+     * \brief structure holding parameters of the `scalarNewtonRaphson`
+     * function.
+     * \tparam NumericType: type of the root
+     * \tparam IndexType: type of the iteration counter
+     */
+    template <typename NumericType, typename IndexType>
+    struct ScalarNewtonRaphsonParameters {
+      //! \brief initial guess
+      NumericType x0 = NumericType{};
+      //! \brief maximum number of iterations
+      IndexType im = IndexType{100};
+      //! \brief initial guess of the lower bound of the solution
+      NumericType xmin0 = std::numeric_limits<NumericType>::quiet_NaN();
+      //! \brief initial guess of the upper bound of the solution
+      NumericType xmax0 = std::numeric_limits<NumericType>::quiet_NaN();
+    };  // end of struct ScalarNewtonRaphsonParameters
+
+    /*!
+     * \brief find the root of the given function.
      * \tparam Function: type of a generalised function returning the
      * value of the objective function and its derivative
      * \tparam Criterion: type of a function which computes the stopping
@@ -40,6 +60,29 @@ namespace tfel {
               typename IndexType>
     std::tuple<bool, NumericType, IndexType> scalarNewtonRaphson(
         const Function&, const Criterion&, const NumericType, const IndexType);
+
+    /*!
+     * \brief find the root of the given function.
+     * \tparam Function: type of a generalised function returning the
+     * value of the objective function and its derivative
+     * \tparam Criterion: type of a function which computes the stopping
+     * criterion
+     * \tparam NumericType: type of the root
+     * \tparam IndexType: type of the iteration counter
+     * \param[in] f: generalised function
+     * \param[in] c: criterion
+     * \param[in] p: newton parameters
+     * \return a tuple whose first field is a boolean giving the convergence
+     * status and the second field the last estimate of the solution.
+     */
+    template <typename Function,
+              typename Criterion,
+              typename NumericType,
+              typename IndexType>
+    std::tuple<bool, NumericType, IndexType> scalarNewtonRaphson(
+        const Function&,
+        const Criterion&,
+        const ScalarNewtonRaphsonParameters<NumericType, IndexType>&);
 
   }  // end of namespace math
 
