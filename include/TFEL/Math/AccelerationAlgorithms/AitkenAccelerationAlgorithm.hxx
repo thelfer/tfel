@@ -1,0 +1,55 @@
+/*!
+ * \file   include/TFEL/Math/AccelerationAlgorithms/AitkenAccelerationAlgorithm.hxx
+ * \brief
+ * \author Thomas Helfer
+ * \date   28/05/2020
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
+ */
+
+#ifndef LIB_TFEL_MATH_ACCELERATIONALGORITHMS_AITKENACCELERATIONALGORITHM_HXX
+#define LIB_TFEL_MATH_ACCELERATIONALGORITHMS_AITKENACCELERATIONALGORITHM_HXX
+
+namespace tfel {
+
+  namespace math {
+
+    /*!
+     * \brief an implementation of the Aitken \f$\Delta^{2}\f$ algorithm
+     * \tparam NumericType: numeric type used
+     * \tparam IndexType: integer used to store the iteration number
+     */
+    template <typename NumericType, typename IndexType = unsigned int>
+    struct AitkenAccelerationAlgorithm {
+      /*!
+       * \brief this method shall be called before starting a new resolution
+       * \param[in] x0: initial guess
+       */
+      void initialize(const NumericType);
+      /*!
+       * \brief perform the acceleration
+       * \param[in,out] x: on input, the result of the Picard iteration. On
+       * output, an accelerated estimate.
+       */
+      void accelerate(NumericType&);
+
+     private:
+      //! \brief previous iterate
+      NumericType x0;
+      //! \brief previous iterate
+      NumericType x1;
+      //! \brief iteration number
+      IndexType i = 0;
+    };  // end of struct AitkenAccelerationAlgorithm
+
+  }  // end of namespace math
+
+}  // end of namespace tfel
+
+#include "TFEL/Math/AccelerationAlgorithms/AitkenAccelerationAlgorithm.ixx"
+
+#endif /* LIB_TFEL_MATH_ACCELERATIONALGORITHMS_AITKENACCELERATIONALGORITHM_HXX */

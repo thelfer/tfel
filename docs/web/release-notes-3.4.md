@@ -22,7 +22,9 @@ describes how to extend the `TFEL/Material` library and the
 
 The function `scalarNewtonRaphson`, declared in the
 `TFEL/Math/ScalarNewtonRaphson.hxx` is a generic implementation of the
-Newton-Raphson algorithm for scalar non linear equations.
+Newton-Raphson algorithm for scalar non linear equations. The Newton
+algorithm is coupled with bisection whenever root-bracketting is
+possible, which considerably increase its robustness.
 
 This implementation handles properly `IEEE754` exceptional cases
 (infinite numbers, `NaN` values), even if advanced compilers options are

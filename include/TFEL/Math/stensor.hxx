@@ -601,9 +601,9 @@ namespace tfel{
 			  const rotation_matrix<T>&);
       /*!
        * \brief compute the "eigentensors" derivatives
-       * \param[out] dn0_ds: derivative of the first  eigenvalue
-       * \param[out] dn1_ds: derivative of the second eigenvalue
-       * \param[out] dn2_ds: derivative of the third  eigenvalue
+       * \param[out] dn0_ds: derivative of the first  eigentensor
+       * \param[out] dn1_ds: derivative of the second eigentensor
+       * \param[out] dn2_ds: derivative of the third  eigentensor
        * \param[in]  vp:     eigen values
        * \param[in]  m:      eigen vectors
        * \param[in]  eps:    numerical parameter for regularisation

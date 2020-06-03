@@ -50,6 +50,7 @@ namespace mfront {
     // default local vars
     this->reserveName("mu_3_theta");
     this->reserveName("surf");
+    this->reserveName("jacobian_inversion_succeeded");
     this->mb.addLocalVariable(
         h, VariableDescription("StressStensor", "se", 1u, 0u));
     this->mb.addLocalVariable(
@@ -343,13 +344,17 @@ namespace mfront {
     for (p = this->flows.begin(), n = 0; p != this->flows.end(); ++p, ++n) {
       os << "error+=std::abs(tfel::math::base_cast(newton_f(" << n << ")));\n";
     }
-    os << "try{\n"
+    os << "auto jacobian_inversion_succeeded = true;"
+       << "try{\n"
        << "TinyMatrixSolve<" << this->flows.size() << ","
        << "real>::exe(newton_df,newton_f);\n"
        << "} catch(LUException&){\n"
-       << "vdp /= 2;\n"
-       << "} else {\n"
+       << "jacobian_inversion_succeeded = false;\n"
+       << "}\n"
+       << "if(jacobian_inversion_succeeded){\n"
        << "vdp -= newton_f;\n"
+       << "} else {\n "
+       << "vdp /= 2;\n"
        << "}\n"
        << "iter+=1;\n";
     if (getDebugMode()) {
@@ -357,28 +362,28 @@ namespace mfront {
          << "::NewtonIntegration() : iteration \" "
          << "<< iter << \" : \" << (error/(real(" << this->flows.size()
          << "))) << endl;\n";
-    }
-    os << "converge = ((error)/(real(" << this->flows.size() << "))<"
-       << "(" << this->mb.getClassName() << "::epsilon));\n"
-       << "}\n\n"
-       << "if(iter==" << this->mb.getClassName() << "::iterMax){\n";
-    if (getDebugMode()) {
-      os << "cout << \"" << this->mb.getClassName()
-         << "::NewtonIntegration() : no convergence after \" "
-         << "<< iter << \" iterations\"<< endl << endl;\n";
-      os << "cout << *this << endl;\n";
-    }
-    os << "return false;" << endl << "}\n\n";
-    for (p = this->flows.begin(), n = 0; p != this->flows.end(); ++p, ++n) {
-      os << "this->dp" << n << " = "
-         << "vdp(" << n << ");\n";
-    }
-    if (getDebugMode()) {
-      os << "cout << \"" << this->mb.getClassName()
-         << "::NewtonIntegration() : convergence after \" "
-         << "<< iter << \" iterations\"<< endl << endl;\n";
-    }
-    os << "return true;" << endl << "\n}\n\n";
+      }
+      os << "converge = ((error)/(real(" << this->flows.size() << "))<"
+         << "(" << this->mb.getClassName() << "::epsilon));\n"
+         << "}\n\n"
+         << "if(iter==" << this->mb.getClassName() << "::iterMax){\n";
+      if (getDebugMode()) {
+        os << "cout << \"" << this->mb.getClassName()
+           << "::NewtonIntegration() : no convergence after \" "
+           << "<< iter << \" iterations\"<< endl << endl;\n";
+        os << "cout << *this << endl;\n";
+      }
+      os << "return false;" << endl << "}\n\n";
+      for (p = this->flows.begin(), n = 0; p != this->flows.end(); ++p, ++n) {
+        os << "this->dp" << n << " = "
+           << "vdp(" << n << ");\n";
+      }
+      if (getDebugMode()) {
+        os << "cout << \"" << this->mb.getClassName()
+           << "::NewtonIntegration() : convergence after \" "
+           << "<< iter << \" iterations\"<< endl << endl;\n";
+      }
+      os << "return true;" << endl << "\n}\n\n";
   }  // end of writeBehaviourParserSpecificMembers
 
   void MultipleIsotropicMisesFlowsDSL::writeBehaviourIntegrator(

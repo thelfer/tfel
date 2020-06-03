@@ -10,6 +10,7 @@ macro(pandoc_html file)
     ARGS      --bibliography=${CMAKE_CURRENT_SOURCE_DIR}/bibliography.bib --filter pandoc-citeproc
     ARGS      --template=${CMAKE_CURRENT_SOURCE_DIR}/mfront-template.html
     ARGS      --mathjax
+    ARGS      --highlight-style=tango
     ARGS      --email-obfuscation=javascript
     ARGS       --default-image-extension=svg
     ARGS      ${ARGN}

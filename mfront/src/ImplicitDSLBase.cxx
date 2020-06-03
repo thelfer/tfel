@@ -146,7 +146,7 @@ namespace mfront {
     } else if (c == BehaviourData::Integrator) {
       // implicit system
       auto ivs = this->mb.getBehaviourData(h).getIntegrationVariables();
-      const auto mivs = [this,h] {
+      const auto mivs = [this, h] {
         auto livs = this->mb.getBehaviourData(h).getIntegrationVariables();
         // remove managed integration variables
         const auto mivs_names = [this] {
@@ -196,8 +196,8 @@ namespace mfront {
             }
           }
         } else {
-          i += "for(unsigned short i = 0; i != " + std::to_string(v1.arraySize) +
-               ";++i){\n";
+          i += "for(unsigned short i = 0; i != " +
+               std::to_string(v1.arraySize) + ";++i){\n";
           i += "f" + v1n + "(i) += ;\n";
           i += "// jacobian blocks\n";
           if ((this->solver != nullptr) && (this->solver->usesJacobian())) {
@@ -726,17 +726,19 @@ namespace mfront {
      * the user does not provide an alternative through the
      * @ComputeFinalStress
      */
-    this->readCodeBlock(*this, BehaviourData::ComputeThermodynamicForces,
-                        BehaviourData::ComputeFinalThermodynamicForcesCandidate,
-                        &ImplicitDSLBase::computeThermodynamicForcesVariableModifier1,
-                        &ImplicitDSLBase::computeThermodynamicForcesVariableModifier2, true,
-                        true);
+    this->readCodeBlock(
+        *this, BehaviourData::ComputeThermodynamicForces,
+        BehaviourData::ComputeFinalThermodynamicForcesCandidate,
+        &ImplicitDSLBase::computeThermodynamicForcesVariableModifier1,
+        &ImplicitDSLBase::computeThermodynamicForcesVariableModifier2, true,
+        true);
   }  // end of ImplicitDSLBase::treatComputeThermodynamicForces
 
   void ImplicitDSLBase::treatComputeFinalThermodynamicForces() {
-    this->readCodeBlock(*this, BehaviourData::ComputeFinalThermodynamicForces,
-                        &ImplicitDSLBase::computeThermodynamicForcesVariableModifier2, true,
-                        true);
+    this->readCodeBlock(
+        *this, BehaviourData::ComputeFinalThermodynamicForces,
+        &ImplicitDSLBase::computeThermodynamicForcesVariableModifier2, true,
+        true);
   }  // end of ImplicitDSLBase::treatComputeFinalThermodynamicForces
 
   void ImplicitDSLBase::treatMaximumIncrementValuePerIteration() {
@@ -2090,7 +2092,7 @@ namespace mfront {
        << "this->jacobian = tjacobian;\n"
        << "}\n"
        << "}\n\n";
-  }
+  } // end of ImplicitDSLBase::writeComputeNumericalJacobian
 
   std::string ImplicitDSLBase::getVectorMappingClass(
       const VariableDescription& v) const {
@@ -2563,7 +2565,7 @@ namespace mfront {
       if (Gradient::isIncrementKnown(mv.first)) {
         getIncrementSymbol(symbols, mv.first);
       } else {
-         mfront::addSymbol(symbols, displayName(mv.first) + "\u2080",
+        mfront::addSymbol(symbols, displayName(mv.first) + "\u2080",
                           mv.first.name + "0");
         mfront::addSymbol(symbols, displayName(mv.first) + "\u2081",
                           mv.first.name + "1");

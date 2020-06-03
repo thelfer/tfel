@@ -489,6 +489,8 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/AccelerationAlgorithms/FAnderson.ixx						     \
 			TFEL/Math/AccelerationAlgorithms/AndersonBase.hxx					     \
 			TFEL/Math/AccelerationAlgorithms/AndersonBase.ixx					     \
+			TFEL/Math/AccelerationAlgorithms/AitkenAccelerationAlgorithm.hxx					     \
+			TFEL/Math/AccelerationAlgorithms/AitkenAccelerationAlgorithm.ixx					     \
 			TFEL/Math/FischerBurmeister.hxx					                             \
 			TFEL/Math/FischerBurmeister.ixx					                             \
 			TFEL/Math/cadna.hxx					                                     \
