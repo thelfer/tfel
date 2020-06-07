@@ -69,17 +69,17 @@ namespace mfront {
     std::string getFunctionNameBasis(const std::string&) const override;
 
     virtual std::string getLibraryName(const BehaviourDescription&) const;
-
-    //! destructor
-    ~GenericBehaviourInterface() override;
-
-   protected:
     /*!
      * \return the name of the function generated for the given hypothesis
      * \param[in] base name for the function to be generated
      */
     virtual std::string getFunctionNameForHypothesis(const std::string&,
                                                      const Hypothesis) const;
+
+    //! destructor
+    ~GenericBehaviourInterface() override;
+
+   protected:
     /*!
      * \brief write the generation of an MTest file for the given hypothesis
      * \param[out] out: output stream

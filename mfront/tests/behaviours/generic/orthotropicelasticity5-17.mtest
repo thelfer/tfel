@@ -1,0 +1,41 @@
+@Author Helfer Thomas;
+@Date  29/02/2016;
+@Description{
+  "This test checks that the stiffness tensor "
+  "is correctly computed for an "
+  "orthotropic material."
+  "The orthotropic behaviour uses the 'Pipe' "
+  "orthotropic axes convention. This means that "
+  "the direction 2 and 3 are interchanged "
+  "with respect to three dimensional modelling."
+};
+
+@XMLOutputFile @xml_output@;
+@MaximumNumberOfSubSteps 1;
+@ModellingHypothesis 'PlaneStrain';
+@Behaviour<generic> @library@ 'OrthotropicElastic5';
+
+// Material properties for the three dimensional cases
+@Real 'E1'   '7.8e+10';
+@Real 'E2'   '2.64233e+11';
+@Real 'E3'   '3.32e+11';
+@Real 'nu12' '0.13';
+@Real 'nu13' '0.18';
+@Real 'nu23' '0.24';
+@Real 'G12'  '4.8e+10';
+@Real 'G13'  '7.8e+10';
+@Real 'G23'  '1.16418e+11';
+ 
+@ExternalStateVariable 'Temperature' 293.15;
+@Real 'ThermalExpansionReferenceTemperature' 293.15;
+@Real 'Tref' 'ThermalExpansionReferenceTemperature';
+
+@ImposedStrain<function> 'EXY' '1.e-3*sin(t/900.)';
+
+@Times {0.,3600 in 20};
+
+// stresses
+@Test<function> 'SXY' '2*G13*EXY'  1.e-3;
+@Test<function> {'SXX':'0','SYY':'0','SZZ':'0'}  1.e-3;
+// strains
+@Test<function> {'EXX':'0','EYY':'0','EZZ':'0'} 1.e-12;

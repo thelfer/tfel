@@ -18,5 +18,9 @@
  * \brief numerical type used by the interface
  */
 typedef double mfront_gb_real;
+/*!
+ * \brief numerical type used by the interface
+ */
+typedef size_t mfront_gb_size_type;
 
 #endif /* LIB_MFRONT_GENERICBEHAVIOUR_TYPES_H */

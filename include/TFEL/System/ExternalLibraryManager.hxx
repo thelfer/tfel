@@ -187,7 +187,7 @@ namespace tfel {
                                                            const std::string&,
                                                            const std::string&,
                                                            const std::string&);
-      
+
       /*!
        * \return true if the given variable has bounds
        * \param[in] l: name of the library
@@ -299,7 +299,6 @@ namespace tfel {
                                         const std::string&,
                                         const std::string&);
 
-
       /*!
        * \return true if the given variable (material property) has bounds
        * \param[in] l: name of the library
@@ -319,7 +318,8 @@ namespace tfel {
                          const std::string&,
                          const std::string&);
       /*!
-       * \return true if the given variable (material property) has a upper bound
+       * \return true if the given variable (material property) has a upper
+       * bound
        * \param[in] l: name of the library
        * \param[in] f: name of function or mechanical behaviour
        * \param[in] v: variable name
@@ -346,7 +346,8 @@ namespace tfel {
                                 const std::string&,
                                 const std::string&);
       /*!
-       * \return true if the given variable (material property) has physical bounds
+       * \return true if the given variable (material property) has physical
+       * bounds
        * \param[in] l: name of the library
        * \param[in] f: name of function or mechanical behaviour
        * \param[in] v: variable name
@@ -355,7 +356,8 @@ namespace tfel {
                              const std::string&,
                              const std::string&);
       /*!
-       * \return true if the given variable (material property) has a lower physical bound
+       * \return true if the given variable (material property) has a lower
+       * physical bound
        * \param[in] l: name of the library
        * \param[in] f: name of function or mechanical behaviour
        * \param[in] v: variable name
@@ -364,7 +366,8 @@ namespace tfel {
                                  const std::string&,
                                  const std::string&);
       /*!
-       * \return true if the given variable (material property) has a upper physical bound
+       * \return true if the given variable (material property) has a upper
+       * physical bound
        * \param[in] l: name of the library
        * \param[in] f: name of function or mechanical behaviour
        * \param[in] v: variable name
@@ -390,7 +393,6 @@ namespace tfel {
       long double getUpperPhysicalBound(const std::string&,
                                         const std::string&,
                                         const std::string&);
-
 
       /*!
        * \return the TFEL version used to generate the given entry
@@ -476,6 +478,60 @@ namespace tfel {
        */
       GenericBehaviourFctPtr getGenericBehaviourFunction(const std::string&,
                                                          const std::string&);
+      /*!
+       * \brief return a function used for rotate the gradients from
+       * the global frame to the material frame.
+       * \param[in] l: name of the library
+       * \param[in] f: function name
+       */
+      GenericBehaviourRotateGradientsFctPtr
+      getGenericBehaviourRotateGradientsFunction(const std::string&,
+                                                 const std::string&);
+      /*!
+       * \brief return a function used for rotate an array of gradients from
+       * the global frame to the material frame.
+       * \param[in] l: name of the library
+       * \param[in] f: function name
+       */
+      GenericBehaviourRotateArrayOfGradientsFctPtr
+      getGenericBehaviourRotateArrayOfGradientsFunction(const std::string&,
+                                                        const std::string&);
+      /*!
+       * \brief return a function used for rotate the thermodynamic forces from
+       * the material frame to the global frame.
+       * \param[in] l: name of the library
+       * \param[in] f: function name
+       */
+      GenericBehaviourRotateThermodynamicForcesFctPtr
+      getGenericBehaviourRotateThermodynamicForcesFunction(const std::string&,
+                                                           const std::string&);
+      /*!
+       * \brief return a function used for rotate an array of thermodynamic
+       * forces from the material frame to the global frame.
+       * \param[in] l: name of the library
+       * \param[in] f: function name
+       */
+      GenericBehaviourRotateArrayOfThermodynamicForcesFctPtr
+      getGenericBehaviourRotateArrayOfThermodynamicForcesFunction(
+          const std::string&, const std::string&);
+      /*!
+       * \return a function used for rotate the tangent operator blocks from
+       * the material frame to the global frame.
+       * \param[in] l: name of the library
+       * \param[in] f: function name
+       */
+      GenericBehaviourRotateTangentOperatorBlocksFctPtr
+      getGenericBehaviourRotateTangentOperatorBlocksFunction(
+          const std::string&, const std::string&);
+      /*!
+       * \return a function used for rotate an array of tangent operator blocks
+       * from the material frame to the global frame.
+       * \param[in] l: name of the library
+       * \param[in] f: function name
+       */
+      GenericBehaviourRotateArrayOfTangentOperatorBlocksFctPtr
+      getGenericBehaviourRotateArrayOfTangentOperatorBlocksFunction(
+          const std::string&, const std::string&);
       /*!
        * \param[in] l : name of the library
        * \param[in] f : function name

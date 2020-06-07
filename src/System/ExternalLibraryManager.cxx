@@ -1049,6 +1049,97 @@ namespace tfel {
       return fct;
     }
 
+    GenericBehaviourRotateGradientsFctPtr
+    ExternalLibraryManager::getGenericBehaviourRotateGradientsFunction(
+        const std::string& l, const std::string& f) {
+      const auto lib = this->loadLibrary(l);
+      const auto fct =
+          ::tfel_getGenericBehaviourRotateGradientsFunction(lib, f.c_str());
+      raise_if(
+          fct == nullptr,
+          "ExternalLibraryManager::getGenericBehaviourRotateGradientsFunction: "
+          "could not load generic gehaviour function '" +
+              f + "' (" + getErrorMessage() + ")");
+      return fct;
+    }  // end of
+       // ExternalLibraryManager::getGenericBehaviourRotateGradientsFunction
+
+    GenericBehaviourRotateArrayOfGradientsFctPtr
+    ExternalLibraryManager::getGenericBehaviourRotateArrayOfGradientsFunction(
+        const std::string& l, const std::string& f) {
+      const auto lib = this->loadLibrary(l);
+      const auto fct =
+          ::tfel_getGenericBehaviourRotateArrayOfGradientsFunction(lib, f.c_str());
+      raise_if(fct == nullptr,
+               "ExternalLibraryManager::"
+               "getGenericBehaviourRotateArrayOfGradientsFunction: "
+               "could not load generic gehaviour function '" +
+                   f + "' (" + getErrorMessage() + ")");
+      return fct;
+    }  // end of
+    // ExternalLibraryManager::getGenericBehaviourRotateArrayOfGradientsFunction
+
+    GenericBehaviourRotateThermodynamicForcesFctPtr
+    ExternalLibraryManager::getGenericBehaviourRotateThermodynamicForcesFunction(
+        const std::string& l, const std::string& f) {
+      const auto lib = this->loadLibrary(l);
+      const auto fct =
+          ::tfel_getGenericBehaviourRotateThermodynamicForcesFunction(lib, f.c_str());
+      raise_if(
+          fct == nullptr,
+          "ExternalLibraryManager::getGenericBehaviourRotateThermodynamicForcesFunction: "
+          "could not load generic gehaviour function '" +
+              f + "' (" + getErrorMessage() + ")");
+      return fct;
+    }  // end of
+       // ExternalLibraryManager::getGenericBehaviourRotateThermodynamicForcesFunction
+
+    GenericBehaviourRotateArrayOfThermodynamicForcesFctPtr
+    ExternalLibraryManager::
+        getGenericBehaviourRotateArrayOfThermodynamicForcesFunction(
+            const std::string& l, const std::string& f) {
+      const auto lib = this->loadLibrary(l);
+      const auto fct =
+          ::tfel_getGenericBehaviourRotateArrayOfThermodynamicForcesFunction(lib, f.c_str());
+      raise_if(fct == nullptr,
+               "ExternalLibraryManager::"
+               "getGenericBehaviourRotateArrayOfThermodynamicForcesFunction: "
+               "could not load generic gehaviour function '" +
+                   f + "' (" + getErrorMessage() + ")");
+      return fct;
+    }  // end of
+       // ExternalLibraryManager::getGenericBehaviourRotateArrayOfThermodynamicForcesFunction
+
+    GenericBehaviourRotateTangentOperatorBlocksFctPtr
+    ExternalLibraryManager::getGenericBehaviourRotateTangentOperatorBlocksFunction(
+        const std::string& l, const std::string& f) {
+      const auto lib = this->loadLibrary(l);
+      const auto fct =
+          ::tfel_getGenericBehaviourRotateTangentOperatorBlocksFunction(lib, f.c_str());
+      raise_if(
+          fct == nullptr,
+          "ExternalLibraryManager::getGenericBehaviourRotateTangentOperatorBlocksFunction: "
+          "could not load generic gehaviour function '" +
+              f + "' (" + getErrorMessage() + ")");
+      return fct;
+    }  // end of
+       // ExternalLibraryManager::getGenericBehaviourRotateTangentOperatorBlocksFunction
+
+    GenericBehaviourRotateArrayOfTangentOperatorBlocksFctPtr
+    ExternalLibraryManager::getGenericBehaviourRotateArrayOfTangentOperatorBlocksFunction(
+        const std::string& l, const std::string& f) {
+      const auto lib = this->loadLibrary(l);
+      const auto fct =
+          ::tfel_getGenericBehaviourRotateArrayOfTangentOperatorBlocksFunction(lib, f.c_str());
+      raise_if(fct == nullptr,
+               "ExternalLibraryManager::"
+               "getGenericBehaviourRotateArrayOfTangentOperatorBlocksFunction: "
+               "could not load generic gehaviour function '" +
+                   f + "' (" + getErrorMessage() + ")");
+      return fct;
+    }  // end of
+       // ExternalLibraryManager::getGenericBehaviourRotateArrayOfTangentOperatorBlocksFunction
+
     unsigned short ExternalLibraryManager::getMaterialPropertyNumberOfVariables(
         const std::string& l, const std::string& f) {
       const auto lib = this->loadLibrary(l);

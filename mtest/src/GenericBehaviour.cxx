@@ -36,95 +36,6 @@
 
 namespace mtest {
 
-  static void applyRotation(real* const v,
-                            const std::vector<int>& types,
-                            const GenericBehaviour::Hypothesis h,
-                            const tfel::math::tmatrix<3u, 3u, real>& r) {
-    auto o = size_t{};
-    const auto n = tfel::material::getSpaceDimension(h);
-    for (const auto& type : types) {
-      if (type == 0) {
-        o += 1;
-      } else if (type == 1) {
-        if (n == 2u) {
-          tfel::math::stensor<2u, real> s(v + o);
-          const auto rs = change_basis(s, r);
-          tfel::fsalgo::copy<4u>::exe(rs.begin(), v + o);
-        } else if (n == 3u) {
-          tfel::math::stensor<3u, real> s(v + o);
-          const auto rs = change_basis(s, r);
-          tfel::fsalgo::copy<6u>::exe(rs.begin(), v + o);
-        }
-        o += tfel::material::getStensorSize(h);
-      } else if (type == 2) {
-        tfel::raise("applyRotation: vector are not supported yet");
-        o += tfel::material::getSpaceDimension(h);
-      } else if (type == 3) {
-        if (n == 2u) {
-          tfel::math::tensor<2u, real> t(v + o);
-          const auto rt = change_basis(t, r);
-          tfel::fsalgo::copy<5u>::exe(rt.begin(), v + o);
-        } else if (n == 3u) {
-          tfel::math::tensor<3u, real> t(v + o);
-          const auto rt = change_basis(t, r);
-          tfel::fsalgo::copy<9u>::exe(rt.begin(), v + o);
-        }
-        o += tfel::material::getTensorSize(h);
-      }
-    }
-  }  // end of applyRotation
-
-  static void applyRotation(real* const v,
-                            const std::vector<int>& dvtypes,
-                            const std::vector<int>& thtypes,
-                            const GenericBehaviour::Hypothesis h,
-                            const tfel::math::tmatrix<3u, 3u, real>& r) {
-    auto o = size_t{};
-    const auto n = tfel::material::getSpaceDimension(h);
-    tfel::raise_if(dvtypes.size() != thtypes.size(),
-                   "applyRotation: the number of driving variables "
-                   "does not match the number of thermodynamic fores");
-    tfel::raise_if(dvtypes.size() != 1u, "applyRotation: unsupported case");
-    for (decltype(dvtypes.size()) i = 0; i != dvtypes.size(); ++i) {
-      if (dvtypes[i] == 1) {
-        // symmetric tensors
-        tfel::raise_if(thtypes[i] != 1,
-                       "applyRotation: "
-                       "unsupported case");
-        if (n == 2u) {
-          tfel::math::st2tost2<2u, real> k;
-          std::copy(v + o, v + o + k.size(), k.begin());
-          const auto rk = change_basis(k, r);
-          std::copy(rk.begin(), rk.end(), v + o);
-        } else if (n == 3u) {
-          tfel::math::st2tost2<3u, real> k;
-          std::copy(v + o, v + o + k.size(), k.begin());
-          const auto rk = change_basis(k, r);
-          std::copy(rk.begin(), rk.end(), v + o);
-        }
-      } else if (dvtypes[i] == 2) {
-        tfel::raise_if(dvtypes[i] != 1,
-                       "applyRotation: "
-                       "unsupported case");
-        if (n == 2u) {
-          tfel::math::t2tost2<2u, real> k;
-          std::copy(v + o, v + o + k.size(), k.begin());
-          const auto rk = change_basis(k, r);
-          std::copy(rk.begin(), rk.end(), v + o);
-        } else if (n == 3u) {
-          tfel::math::t2tost2<3u, real> k;
-          std::copy(v + o, v + o + k.size(), k.begin());
-          const auto rk = change_basis(k, r);
-          std::copy(rk.begin(), rk.end(), v + o);
-        }
-      } else {
-        tfel::raise(
-            "applyRotation: "
-            "unsupported driving variable type");
-      }
-    }
-  }  // end of applyRotation
-
   template <unsigned short N>
   void convertToSecondPiolaKirchhoffStress(real* const Sv,
                                            const real* const sv,
@@ -211,6 +122,25 @@ namespace mtest {
     auto& elm = ExternalLibraryManager::getExternalLibraryManager();
     const auto f = b + "_" + ModellingHypothesis::toString(h);
     this->fct = elm.getGenericBehaviourFunction(l, f);
+    if (this->stype == 1u) {
+      // load the rotation functions
+      this->rg_fct = elm.getGenericBehaviourRotateGradientsFunction(
+          l, f + "_rotateGradients");
+      if (this->btype == 2u) {
+        // finite strain behaviour
+        this->rtf_fct = elm.getGenericBehaviourRotateThermodynamicForcesFunction(
+            l, f + "_rotateThermodynamicForces_CauchyStress");
+        this->rto_fct =
+            elm.getGenericBehaviourRotateTangentOperatorBlocksFunction(
+                l, f + "_rotateTangentOperatorBlocks_dsig_dF");
+      } else {
+        this->rtf_fct = elm.getGenericBehaviourRotateThermodynamicForcesFunction(
+            l, f + "_rotateThermodynamicForces");
+        this->rto_fct =
+            elm.getGenericBehaviourRotateTangentOperatorBlocksFunction(
+                l, f + "_rotateTangentOperatorBlocks");
+      }
+    }
     // additional material properties to compute the elastic stiffness
     auto mps = std::vector<std::string>{};
     if (this->requiresStiffnessTensor) {
@@ -433,6 +363,7 @@ namespace mtest {
     throw_if(wk.evs.size() != s.esv0.size(),
              "temporary external state variable vector was not allocated "
              "properly");
+    const auto ir = tfel::math::transpose(s.r);
     if (this->btype == 2u) {
       if (this->fsto == DSIG_DF) {
         throw_if((wk.D.getNbRows() != Kt.getNbRows()) ||
@@ -469,9 +400,9 @@ namespace mtest {
           wk.e1(i) -= s.e_th1(i);
         }
       }
-      applyRotation(&(wk.e0[0]), this->dvtypes, this->getHypothesis(), s.r);
-      applyRotation(&(wk.e1[0]), this->dvtypes, this->getHypothesis(), s.r);
-      applyRotation(&(wk.s0[0]), this->thtypes, this->getHypothesis(), s.r);
+      this->rg_fct(&(wk.e0[0]), &(wk.e0[0]), s.r.begin());
+      this->rg_fct(&(wk.e1[0]), &(wk.e1[0]), s.r.begin());
+      this->rtf_fct(&(wk.s0[0]), &(wk.s0[0]), ir.begin());
       d.s0.gradients = &(wk.e0[0]);
       d.s1.gradients = &(wk.e1[0]);
       d.s0.thermodynamic_forces = &(wk.s0[0]);
@@ -516,7 +447,7 @@ namespace mtest {
     // type of integration to be performed
     StandardBehaviourBase::initializeTangentOperator(wk.D, ktype, b);
     d.K = &(wk.D(0, 0));
-    // saving the point the thermodynamic forces
+    // saving the point the thermodynamic forces in the material frame
     auto* const s0 = d.s0.thermodynamic_forces;
     auto* const s1 = d.s1.thermodynamic_forces;
     if (this->btype == 2u) {
@@ -530,10 +461,19 @@ namespace mtest {
     if (r != 1) {
       return {false, d.rdt};
     }
-    if (this->btype == 2u) {
-      d.s0.thermodynamic_forces = s0;
-      d.s1.thermodynamic_forces = s1;
-      this->executeFiniteStrainBehaviourStressPostProcessing(wk, d);
+    // turn back the gradients in the global frame
+    if (stype == 1u) {
+      // here we use the fact that d.s1.gradients is a pointer to &(wk.e0[0])
+      this->rg_fct(&(wk.e0[0]), &(wk.e0[0]), ir.begin());
+      this->rg_fct(&(wk.e1[0]), &(wk.e1[0]), ir.begin());
+    }
+    if (b) {
+      std::copy(wk.ivs.begin(), wk.ivs.end(), s.iv1.begin());
+      if (this->btype == 2u) {
+        d.s0.thermodynamic_forces = s0;
+        d.s1.thermodynamic_forces = s1;
+        this->executeFiniteStrainBehaviourStressPostProcessing(wk, d);
+      }
     }
     // tangent operator (...)
     if (ktype != StiffnessMatrixType::NOSTIFFNESS) {
@@ -543,15 +483,7 @@ namespace mtest {
         this->executeFiniteStrainBehaviourTangentOperatorPostProcessing(d);
       }
       if (this->stype == 1u) {
-        if ((this->btype == 1u) || (this->btype == 2u)) {
-          applyRotation(&(wk.D(0, 0)), this->dvtypes, this->thtypes,
-                        this->getHypothesis(), transpose(s.r));
-        } else {
-          tfel::raise(
-              "GenericBehaviour::call_behaviour: "
-              "orthotropic behaviours are only "
-              "supported for small or finite strain behaviours");
-        }
+        this->rto_fct(&(wk.D(0, 0)), &(wk.D(0, 0)), s.r.begin());
       }
       if ((this->gtypes.size() == 1u) && (this->thtypes.size() == 1u)) {
         for (unsigned short i = 0; i != nth; ++i) {
@@ -625,13 +557,9 @@ namespace mtest {
           to_offset += to_ro * to_co;
         }
       }
-    }
-    if (b) {
-      if (stype == 1u) {
-        applyRotation(d.s1.thermodynamic_forces, this->thtypes,
-                      this->getHypothesis(), transpose(s.r));
+      if (b && (this->stype == 1u)) {
+        this->rtf_fct(&s.s1[0], &s.s1[0], s.r.begin());
       }
-      std::copy(wk.ivs.begin(), wk.ivs.end(), s.iv1.begin());
     }
     return {true, d.rdt};
   }  // end of GenericBehaviour::call_behaviour
