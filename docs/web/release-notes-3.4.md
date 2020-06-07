@@ -17,7 +17,6 @@ tabPrefixTemplate: "$$i$$"
 secPrefixTemplate: "$$i$$"
 eqnPrefixTemplate: "($$i$$)"
 bibliography: bibliography.bib
-csl: iso690-numeric-en.csl
 ---
 
 \newcommand{\paren}[1]{{\left(#1\right)}}

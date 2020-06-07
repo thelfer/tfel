@@ -6,7 +6,6 @@
  };
 
 @XMLOutputFile @xml_output@;
-@MaximumNumberOfSubSteps 1;
 @StiffnessMatrixType 'Elastic';
 @UseCastemAccelerationAlgorithm true;
 
