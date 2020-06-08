@@ -70,7 +70,7 @@ namespace tfel {
 #endif
       auto fxmin = std::numeric_limits<NumericType>::quiet_NaN();
       auto fxmax = std::numeric_limits<NumericType>::quiet_NaN();
-      if (!tfel::math::ieee754::isfinite(xmin)) {
+      if (tfel::math::ieee754::isfinite(xmin)) {
         fxmin = std::get<0>(f(xmin));
         if (!tfel::math::ieee754::isfinite(fxmin)) {
           fxmin = std::numeric_limits<NumericType>::quiet_NaN();
