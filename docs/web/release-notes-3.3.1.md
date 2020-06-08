@@ -15,6 +15,10 @@ now allowed. This subset is described here:
 
 # Tickets fixed
 
+## Ticket #237: Compilation fails with `intel` compiler 2019 and 2020
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/237/>
+
 ## Ticket #235: Support for `python` bindings in conda
 
 The conda' python interpreter is statically linked, which causes issues

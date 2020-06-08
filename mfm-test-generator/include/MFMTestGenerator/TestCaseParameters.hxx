@@ -105,29 +105,13 @@ namespace mfmtg {
   template <typename T = std::string, typename StringType>
   const T& get(const TestCaseParameters&, const StringType&);
   /*!
-   * \return the parameter with the given identifiers if it exists, a default
-   * value otherwise.
-   * \param[in] p: parameters
-   * \param[in] n: first level identitifer.
-   * \param[in] args: higher level identifiers.
-   * \param[in] v: default value.
-   */
-  template <typename T = std::string,
-            typename T2,
-            typename StringType,
-            typename... StringTypes>
-  T get_if(const TestCaseParameters& parameters,
-           const StringType&,
-           const StringTypes&...,
-           const T2&);
-  /*!
    * \return the parameter with the given name if it exits a default value
    * otherwise.
    * \param[in] p: parameters
    * \param[in] n: name of the parameter to be retrieved.
    * \param[in] v: default value.
    */
-  template <typename T = std::string, typename T2, typename StringType>
+  template <typename T = std::string, typename StringType, typename T2>
   T get_if(const TestCaseParameters&, const StringType&, const T2&);
   /*!
    * \return the evolution stored at the given address

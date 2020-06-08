@@ -41,16 +41,7 @@ namespace mfmtg {
     return p.template get<T>();
   }  // end of get
 
-  template <typename T, typename T2, typename StringType, typename... StringTypes>
-  T get_if(const TestCaseParameters& parameters,
-           const StringType& n,
-           const StringTypes&... args,
-           const T2& v) {
-    const auto& p = getTestCaseParameters(parameters, n);
-    return get_if<T>(p, args..., v);
-  }  // end of get_if
-
-  template <typename T, typename T2, typename StringType>
+  template <typename T, typename StringType, typename T2>
   T get_if(const TestCaseParameters& parameters,
            const StringType& n,
            const T2& v) {
