@@ -2005,8 +2005,7 @@ namespace mfront {
           } else {
             os << "for(unsigned short idx2=0;idx2!=" << v.arraySize
                << ";++idx2){\n";
-            os << "for(unsigned short idx3=" << n2;
-            os << ";idx3!=TVectorSize;++idx3){\n";
+            os << "for(unsigned short idx3=0;idx3!=TVectorSize;++idx3){\n";
             os << "partial_jacobian_" << v.name << "(idx2)(idx3,idx)=vect_e("
                << n2 << "+idx3+idx2*TVectorSize);\n";
             os << "}\n";
@@ -2024,8 +2023,7 @@ namespace mfront {
           } else {
             os << "for(unsigned short idx2=0;idx2!=" << v.arraySize
                << ";++idx2){\n";
-            os << "for(unsigned short idx3=" << n2;
-            os << ";idx3!=StensorSize;++idx3){\n";
+            os << "for(unsigned short idx3=0;idx3!=StensorSize;++idx3){\n";
             os << "partial_jacobian_" << v.name << "(idx2)(idx3,idx)=vect_e("
                << n2 << "+idx3+idx2*StensorSize);\n";
             os << "}\n";
