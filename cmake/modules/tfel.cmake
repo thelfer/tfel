@@ -331,6 +331,12 @@ macro(python_module_base fullname name)
   set_target_properties(py_${fullname} PROPERTIES OUTPUT_NAME ${name})
   target_link_libraries(py_${fullname}
     ${Boost_PYTHON_LIBRARY} ${PYTHON_LIBRARIES})
+  if(python-static-interpreter-workaround)
+    if(APPLE)
+      target_link_options(py_${fullname}
+        PRIVATE "-undefined" "dynamic_lookup")
+    endif(APPLE)
+  endif(python-static-interpreter-workaround)
 endmacro(python_module_base)
 
 # macro(python_module name)
