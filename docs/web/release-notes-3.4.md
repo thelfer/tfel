@@ -4,7 +4,6 @@ author: Thomas Helfer
 date: 2020
 lang: en-EN
 numbersections: true
-toc: true
 documentclass: article
 from: markdown+tex_math_single_backslash
 geometry:

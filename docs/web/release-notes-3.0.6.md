@@ -4,6 +4,10 @@
 
 # Tickets fixed
 
+## Ticket #238: `getPartialJacobianInvert` is broken for arrays of internal state variables
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/238/>
+
 ## Ticket #224: Fix compilation of the `gentype3.cxx` test in `C++-17` with `gcc-9.2`
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/208/>
