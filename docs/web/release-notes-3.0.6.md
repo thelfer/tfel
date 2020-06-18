@@ -4,6 +4,10 @@
 
 # Tickets fixed
 
+## Ticket #239: Missing `ostream` header for `gcc-10.1.0`
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/239/>
+
 ## Ticket #238: `getPartialJacobianInvert` is broken for arrays of internal state variables
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/238/>
