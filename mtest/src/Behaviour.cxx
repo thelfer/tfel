@@ -11,16 +11,14 @@
  * project under specific licensing conditions.
  */
 
+#include <ostream>
 #include <stdexcept>
-
 #include "TFEL/Raise.hxx"
 #include "TFEL/System/ExternalLibraryManager.hxx"
-
 #include "MFront/MFrontLogStream.hxx"
 #include "MTest/CurrentState.hxx"
 #include "MTest/Evolution.hxx"
 #include "MTest/Behaviour.hxx"
-
 #include "MTest/GenericBehaviour.hxx"
 #ifdef HAVE_CASTEM
 #include "MTest/CastemSmallStrainBehaviour.hxx"
