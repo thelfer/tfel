@@ -12,8 +12,8 @@
  */
 
 #include <cmath>
+#include <ostream>
 #include <algorithm>
-
 #include "TFEL/Raise.hxx"
 #include "TFEL/Math/tmatrix.hxx"
 #include "TFEL/System/ExternalLibraryManager.hxx"

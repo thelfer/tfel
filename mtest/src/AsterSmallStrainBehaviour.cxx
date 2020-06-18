@@ -12,8 +12,8 @@
  */
 
 #include<cmath>
+#include<ostream>
 #include<algorithm>
-
 #include"TFEL/Raise.hxx"
 #include"TFEL/Math/tmatrix.hxx"
 #include"TFEL/Math/stensor.hxx"
@@ -21,7 +21,6 @@
 #include"MFront/MFrontLogStream.hxx"
 #include"MFront/Aster/Aster.hxx"
 #include"MFront/Aster/AsterComputeStiffnessTensor.hxx"
-
 #include"MTest/CurrentState.hxx"
 #include"MTest/BehaviourWorkSpace.hxx"
 #include"MTest/UmatNormaliseTangentOperator.hxx"
