@@ -13,6 +13,7 @@
 
 #include <cmath>
 #include <string>
+#include <ostream>
 #include "TFEL/Raise.hxx"
 #include "MFront/MFrontLogStream.hxx"
 #include "MTest/Behaviour.hxx"

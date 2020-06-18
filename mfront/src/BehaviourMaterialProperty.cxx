@@ -11,6 +11,7 @@
  * project under specific licensing conditions.
  */
 
+#include <ostream>
 #include "TFEL/Raise.hxx"
 #include "MFront/MFrontLogStream.hxx"
 #include "MFront/BehaviourDescription.hxx"
