@@ -11,6 +11,7 @@
  * project under specific licensing conditions. 
  */
 
+#include<ostream>
 #include"MFront/MFrontLogStream.hxx"
 #include"MTest/Evolution.hxx"
 #include"MTest/UmatBehaviourBase.hxx"

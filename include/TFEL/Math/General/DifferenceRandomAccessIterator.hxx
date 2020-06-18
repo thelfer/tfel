@@ -28,7 +28,7 @@ namespace tfel{
     struct TFELMATH_VISIBILITY_EXPORT DifferenceRandomAccessIteratorBase
     {
       //! 
-      TFEL_NORETURN static void throwInconsistentIteratorDifference(void);
+      TFEL_NORETURN static void throwInconsistentIteratorDifference();
     };
     
     /*!
@@ -211,4 +211,4 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_MATH_DIFFERENCERANDOMACCESSITERATOR_HXX_ */
+#endif /* LIB_TFEL_MATH_DIFFERENCERANDOMACCESSITERATOR_HXX */

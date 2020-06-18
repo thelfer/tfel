@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
+#include<ostream>
 #include<stdexcept>
-
 #include"MFront/MFrontLogStream.hxx"
 #include"MTest/CurrentState.hxx"
 #include"MTest/Evolution.hxx"
