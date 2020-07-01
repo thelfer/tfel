@@ -1747,6 +1747,8 @@ include/TFEL/Math/General/ComputeUnaryResult.hxx -text
 include/TFEL/Math/General/ConceptRebind.hxx -text
 include/TFEL/Math/General/ConstExprMathFunctions.hxx -text
 include/TFEL/Math/General/CubicRoots.hxx -text
+include/TFEL/Math/General/DerivativeType.hxx -text
+include/TFEL/Math/General/DerivativeType.ixx -text
 include/TFEL/Math/General/DifferenceRandomAccessIterator.hxx -text
 include/TFEL/Math/General/DotProduct.hxx -text
 include/TFEL/Math/General/EmptyRunTimeProperties.hxx -text
@@ -2462,6 +2464,7 @@ mfront/include/MFront/CastemInterface.hxx -text
 mfront/include/MFront/CastemMaterialPropertyInterface.hxx -text
 mfront/include/MFront/CastemSymbolsGenerator.hxx -text
 mfront/include/MFront/CodeBlock.hxx -text
+mfront/include/MFront/CodeBlock.ixx -text
 mfront/include/MFront/CompiledTargetDescriptionBase.hxx -text
 mfront/include/MFront/ComsolInterface.hxx -text
 mfront/include/MFront/CppMaterialPropertyInterface.hxx -text
@@ -6816,6 +6819,7 @@ tests/Math/cadna/Makefile.am -text
 tests/Math/cadna/cadna.cxx -text
 tests/Math/cadna/stensor_eigenvalues.cxx -text
 tests/Math/conj.cxx -text
+tests/Math/derivative_type.cxx -text
 tests/Math/discretization1D.cxx -text
 tests/Math/fsarray.cxx -text
 tests/Math/hill.cxx -text
@@ -7115,6 +7119,11 @@ tfel-doc/src/TestDocMain.cxx -text
 tfel-doc/src/TestDocParser.cxx -text
 tfel-doc/src/TestDocumentation.cxx -text
 tfel-doc/src/tfel-doc.cxx -text
+tfel-unicode-filt/CMakeLists.txt -text
+tfel-unicode-filt/Makefile.am -text
+tfel-unicode-filt/src/CMakeLists.txt -text
+tfel-unicode-filt/src/Makefile.am -text
+tfel-unicode-filt/src/tfel-unicode-filt.cxx -text
 /tfel.doxygen -text
 tools/FourthOrderTensorProduct/generate.cxx -text
 tools/PhysicalConstants/physical_constants.cxx -text

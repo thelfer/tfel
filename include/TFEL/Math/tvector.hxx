@@ -38,9 +38,9 @@ namespace tfel {
 
   namespace math {
 
-    //! Partial specialisation for tvectors.
     /*!
-     * This is a VectorConcept requirement.
+     * \brief Partial specialisation for tvectors.
+     * \note This is a VectorConcept requirement.
      * \see VectorTraits.
      */
     template <unsigned short N, typename T>

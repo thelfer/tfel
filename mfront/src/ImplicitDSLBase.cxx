@@ -18,9 +18,12 @@
 #include <sstream>
 #include <iomanip>
 
+#include "TFEL/Raise.hxx"
 #include "TFEL/Glossary/Glossary.hxx"
 #include "TFEL/Glossary/GlossaryEntry.hxx"
 #include "TFEL/Utilities/StringAlgorithms.hxx"
+#include "TFEL/UnicodeSupport/UnicodeSupport.hxx"
+#include "TFEL/Material/FiniteStrainBehaviourTangentOperator.hxx"
 #include "MFront/DSLUtilities.hxx"
 #include "MFront/MFrontDebugMode.hxx"
 #include "MFront/NonLinearSystemSolver.hxx"
@@ -31,6 +34,23 @@
 #include "MFront/ImplicitDSLBase.hxx"
 
 namespace mfront {
+
+  static VariableDescriptionContainer extractSecondPartOfTangentOperatorBlocks(
+      const BehaviourDescription& bd) {
+    VariableDescriptionContainer variables;
+    auto insert_if = [&variables](const VariableDescription& v) {
+      for (const auto& v2 : variables) {
+        if (v2.name == v.name) {
+          return;
+        }
+      }
+      variables.push_back(v);
+    };
+    for (const auto& to : bd.getTangentOperatorBlocks()) {
+      insert_if(to.second);
+    }
+    return variables;
+  }  // end of extractSecondPartOfTangentOperatorBlocks
 
   ImplicitDSLBase::ImplicitDSLBase() {
     constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
@@ -56,15 +76,19 @@ namespace mfront {
     this->reserveName("jacobian");
     this->reserveName("njacobian");
     this->reserveName("partial_jacobian");
+    this->reserveName("jacobian_permutation");
     this->reserveName("t");
     this->reserveName("error_1");
     this->reserveName("error_p");
     this->reserveName("idx");
     this->reserveName("idx2");
     this->reserveName("idx3");
+    this->reserveName("getPartialJacobianInvert");
+    this->reserveName("GetPartialJacobianInvert");
+    this->reserveName("TinyMatrixSolve");
+    this->mb.registerMemberName(uh, "computePartialJacobianInvert");
     this->mb.registerMemberName(uh, "computeNumericalJacobian");
     this->mb.registerMemberName(uh, "additionalConvergenceChecks");
-    this->reserveName("TinyMatrixSolve");
     // CallBacks
     this->registerNewCallBack(
         "@UsableInPurelyImplicitResolution",
@@ -741,6 +765,165 @@ namespace mfront {
         true);
   }  // end of ImplicitDSLBase::treatComputeFinalThermodynamicForces
 
+  void ImplicitDSLBase::readTangentOperatorCodeBlock(const CodeBlockOptions& o,
+                                                     const std::string& n) {
+    // variable modifier
+    std::function<std::string(const Hypothesis, const std::string&, const bool)>
+        m = [this](const Hypothesis h, const std::string& v, const bool b) {
+          return this->tangentOperatorVariableModifier(h, v, b);
+        };
+    // analyser
+    std::set<std::string> names;
+    std::map<std::string, VariableDescription>
+        get_integration_variables_derivatives;
+    for (const auto& to : this->mb.getTangentOperatorBlocks()) {
+      const auto& name = to.second.name;
+      get_integration_variables_derivatives
+          ["getIntegrationVariablesDerivatives_" + name] = to.second;
+      names.insert("getIntegrationVariablesDerivatives_" + name);
+    }
+    std::function<void(CodeBlock&, const Hypothesis, const std::string&)> a =
+        [this, names, get_integration_variables_derivatives](
+            CodeBlock& cb, const Hypothesis h, const std::string& v) {
+          using Derivative =
+              std::pair<VariableDescription, VariableDescription>;
+          const auto& d = this->mb.getBehaviourData(h);
+          std::map<std::string, Derivative> implicit_equation_derivatives;
+          for (const auto& to : this->mb.getTangentOperatorBlocks()) {
+            for (const auto& iv : d.getIntegrationVariables()) {
+              const auto n1 = "df" + iv.name + "_dd" + to.second.name;
+              const auto derivative = std::make_pair(iv, to.second);
+              implicit_equation_derivatives.insert({n1, derivative});
+            }
+          }
+          const auto an = CodeBlock::requires_jacobian_decomposition;
+          const auto bn = CodeBlock::uses_get_partial_jacobian_invert;
+          const auto cn = CodeBlock::used_get_integration_variables_derivatives;
+          const auto dn = CodeBlock::
+              used_implicit_equations_derivatives_with_respect_to_gradients_or_external_state_variables;
+          const auto pd = implicit_equation_derivatives.find(v);
+          // the jacobian must be decomposed
+          if ((v == "getPartialJacobianInvert") ||
+              (pd != implicit_equation_derivatives.end()) ||
+              (names.count(v) != 0)) {
+            if (cb.attributes.count(an) == 0) {
+              cb.attributes[an] = true;
+            } else {
+              if (!cb.attributes[an].is<bool>()) {
+                this->throwRuntimeError(
+                    "ImplicitDSLBase::readTangentOperatorCodeBlock",
+                    "invalid type for attribute '" + std::string(an) + "'");
+              }
+              if (!cb.attributes[an].get<bool>()) {
+                this->throwRuntimeError(
+                    "ImplicitDSLBase::readTangentOperatorCodeBlock",
+                    "inconsistent value for attribute '" + std::string(an) +
+                        "'");
+              }
+            }
+          }
+          //
+          if (v == "getPartialJacobianInvert") {
+            if (cb.attributes.count(bn) == 0) {
+              cb.attributes[bn] = true;
+            } else {
+              if (!cb.attributes[bn].is<bool>()) {
+                this->throwRuntimeError(
+                    "ImplicitDSLBase::readTangentOperatorCodeBlock",
+                    "invalid type for attribute '" + std::string(bn) + "'");
+              }
+              if (!cb.attributes[bn].get<bool>()) {
+                this->throwRuntimeError(
+                    "ImplicitDSLBase::readTangentOperatorCodeBlock",
+                    "inconsistent value for attribute '" + std::string(bn) +
+                        "'");
+              }
+            }
+          }
+          // a getIntegrationVariablesDerivative_X has been found
+          if (names.count(v) != 0) {
+            const auto& dv = get_integration_variables_derivatives.at(v);
+            // we check that at least one derivative of one implicit equation
+            // has been defined
+            if (cb.attributes.count(dn) == 0) {
+              this->throwRuntimeError(
+                  "ImplicitDSLBase::readTangentOperatorCodeBlock",
+                  "no derivative of an implicit equation with respect "
+                  "to '" +
+                      displayName(dv) +
+                      "' before the call to "
+                      "'getIntegrationVariablesDerivatives_" +
+                      displayName(dv) + "'");
+            } else {
+              if (!cb.attributes[dn].is<std::vector<Derivative>>()) {
+                this->throwRuntimeError(
+                    "ImplicitDSLBase::readTangentOperatorCodeBlock",
+                    "invalid type for attribute '" + std::string(dn) + "'");
+              }
+              const auto& derivatives =
+                  cb.attributes[dn].get<std::vector<Derivative>>();
+              const auto p =
+                  std::find_if(derivatives.begin(), derivatives.end(),
+                               [&dv](const Derivative& d1) {
+                                 return d1.second.name == dv.name;
+                               });
+              if (p == derivatives.end()) {
+                this->throwRuntimeError(
+                    "ImplicitDSLBase::readTangentOperatorCodeBlock",
+                    "no derivative of an implicit equation with respect "
+                    "to '" +
+                        displayName(dv) +
+                        "' before the call to "
+                        "'getIntegrationVariablesDerivatives_" +
+                        displayName(dv) + "'");
+              }
+            }
+            if (cb.attributes.count(cn) == 0) {
+              cb.attributes[cn] = std::vector<VariableDescription>(1u, dv);
+            } else {
+              if (!cb.attributes[cn].is<std::vector<VariableDescription>>()) {
+                this->throwRuntimeError(
+                    "ImplicitDSLBase::readTangentOperatorCodeBlock",
+                    "invalid type for attribute '" + std::string(cn) + "'");
+              }
+              auto& variables =
+                  cb.attributes[cn].get<std::vector<VariableDescription>>();
+              const auto p = std::find_if(variables.begin(), variables.end(),
+                                          [&dv](const VariableDescription& vv) {
+                                            return vv.name == dv.name;
+                                          });
+              if (p == variables.end()) {
+                variables.push_back(dv);
+              }
+            }
+          }
+          // a derivative of an implicit equation derivative has been found
+          if (pd != implicit_equation_derivatives.end()) {
+            if (cb.attributes.count(dn) == 0) {
+              cb.attributes[dn] = std::vector<Derivative>(1u, pd->second);
+            } else {
+              if (!cb.attributes[dn].is<std::vector<Derivative>>()) {
+                this->throwRuntimeError(
+                    "ImplicitDSLBase::readTangentOperatorCodeBlock",
+                    "invalid type for attribute '" + std::string(dn) + "'");
+              }
+              auto& derivatives =
+                  cb.attributes[dn].get<std::vector<Derivative>>();
+              const auto p = std::find_if(
+                  derivatives.begin(), derivatives.end(),
+                  [&pd](const Derivative& d1) {
+                    return (d1.first.name == pd->second.first.name) &&
+                           (d1.second.name == pd->second.second.name);
+                  });
+              if (p == derivatives.end()) {
+                derivatives.push_back(pd->second);
+              }
+            }
+          }
+        };
+    this->readCodeBlock(o, n, m, a, true);
+  }  // end of ImplicitDSLBase::readTangentOperatorCodeBlock
+
   void ImplicitDSLBase::treatMaximumIncrementValuePerIteration() {
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     this->checkNotEndOfFile(
@@ -890,7 +1073,7 @@ namespace mfront {
           (this->mb.getBehaviourType() !=
            BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR)) {
         this->throwRuntimeError(
-            "ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation",
+            "ImplicitDSLBase::completeVariableDeclaration",
             "Hill tensors shall only be defined for finite strain "
             "or small strain behaviours");
       }
@@ -989,19 +1172,31 @@ namespace mfront {
                     .contains(v2.name)))) {
             continue;
           }
-          const auto& s1 =
-              !v1.symbolic_form.empty() ? v1.symbolic_form : v1.name;
-          const auto& s2 =
-              !v2.symbolic_form.empty() ? v2.symbolic_form : v2.name;
-          this->mb.reserveName(h, "\u2202f" + s1 + "\u2215\u2202\u0394" + s2);
-          this->mb.reserveName(h, "df" + s1 + "_dd" + s2);
-        }  // end of ImplicitDSLBase::completeVariableDeclaration
+          this->mb.reserveName(h, "df" + v1.name + "_dd" + v2.name);
+        }
+      }
+    }
+    for (const auto& to : mb.getTangentOperatorBlocks()) {
+      this->reserveName("GetIntegrationVariablesDerivatives_" + to.second.name);
+      this->reserveName("getIntegrationVariablesDerivatives_" + to.second.name);
+      this->reserveName("dfzeros_dd" + to.second.name);
+      std::set<std::string> implicit_equation_derivatives;
+      for (const auto h : this->mb.getDistinctModellingHypotheses()) {
+        const auto& d = this->mb.getBehaviourData(h);
+        for (const auto& v : d.getIntegrationVariables()) {
+          implicit_equation_derivatives.insert("df" + v.name + "_dd" +
+                                               to.second.name);
+        }
+      }
+      for (const auto& ieq_derivative : implicit_equation_derivatives) {
+        this->mb.reserveName(uh, ieq_derivative);
       }
     }
   }  // end of ImplicitDSLBase::completeVariableDeclaration()
 
   void ImplicitDSLBase::endsInputFileProcessing() {
     using namespace tfel::glossary;
+    using namespace tfel::material;
     auto throw_if = [this](const bool c, const std::string& m) {
       if (c) {
         this->throwRuntimeError("ImplicitDSLBase::endsInputFileProcessing", m);
@@ -1103,124 +1298,323 @@ namespace mfront {
     this->setMinimalTangentOperator();
   }  // end of ImplicitDSLBase::endsInputFileProcessing()
 
-  void ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation(
-      std::ostream& os, const Hypothesis h) const {
-    using Modifier = std::function<std::string(const MaterialPropertyInput&)>;
-    Modifier mts = [this](const MaterialPropertyInput& i) -> std::string {
-      if ((i.category == MaterialPropertyInput::TEMPERATURE) ||
-          (i.category ==
-           MaterialPropertyInput::AUXILIARYSTATEVARIABLEFROMEXTERNALMODEL) ||
-          (i.category == MaterialPropertyInput::EXTERNALSTATEVARIABLE)) {
-        return "this->" + i.name + "+(this->theta)*(this->d" + i.name + ')';
-      } else if ((i.category == MaterialPropertyInput::MATERIALPROPERTY) ||
-                 (i.category == MaterialPropertyInput::STATEVARIABLE) ||
-                 (i.category == MaterialPropertyInput::PARAMETER)) {
-        return "this->" + i.name;
-      } else if (i.category == MaterialPropertyInput::STATICVARIABLE) {
-        return this->mb.getClassName() + "::" + i.name;
+  void ImplicitDSLBase::writeDerivativeView(
+      std::ostream& os, const DerivativeViewDescription& d) const {
+    const auto v1 = d.first_variable;
+    const auto v2 = d.second_variable;
+    const auto flag1 = SupportedTypes::getTypeFlag(v1.type);
+    const auto flag2 = SupportedTypes::getTypeFlag(v2.type);
+    const auto nr = d.matrix_number_of_rows;
+    const auto nc = d.matrix_number_of_columns;
+    const auto dr = d.derivative_row_position;
+    const auto dc = d.derivative_column_position;
+    if ((v1.arraySize == 1u) && (v2.arraySize == 1u)) {
+      if (flag1 == SupportedTypes::STENSOR) {
+        if (flag2 == SupportedTypes::STENSOR) {
+          os << "typename tfel::math::ST2toST2FromTinyMatrixView "  //
+             << "<N, " << nr << ", " << nc << ", " << dr << ", " << dc
+             << ", real>::type " << d.derivative_name << "(" << d.matrix_name
+             << ");\n";
+        } else if (flag2 == SupportedTypes::SCALAR) {
+          os << "typename tfel::math::StensorFromTinyMatrixColumnView"
+             << "<N, " << nr << ", " << nc << ", " << dr << ", " << dc
+             << ", real>::type " << d.derivative_name  //
+             << "(" << d.matrix_name << ");\n";
+        } else {
+          this->throwRuntimeError(
+              "ImplicitDSLBase::writeDerivativeView",
+              "unsupported type for integration variable '" + v2.name + "'");
+        }
+      } else if (flag1 == SupportedTypes::SCALAR) {
+        if (flag2 == SupportedTypes::STENSOR) {
+          os << "typename tfel::math::StensorFromTinyMatrixRowView"  //
+             << "<N," << nr << "," << nc << ", " << dr << ", " << dr
+             << ", real>::type " << d.derivative_name  //
+             << "(" << d.matrix_name << ");\n";
+        } else if (flag2 == SupportedTypes::SCALAR) {
+          os << "real& " << d.derivative_name << " = "  //
+             << d.matrix_name << "(" << dr << "," << dc << ");\n";
+        } else {
+          this->throwRuntimeError(
+              "ImplicitDSLBase::writeDerivativeView",
+              "unsupported type for integration variable '" + v2.name + "'");
+        }
       } else {
         this->throwRuntimeError(
-            "ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation",
-            "unsupported input type for variable '" + i.name + "'");
+            "ImplicitDSLBase::writeDerivativeView",
+            "unsupported type for integration variable '" + v1.name + "'");
       }
-    };
-    Modifier ets = [this](const MaterialPropertyInput& i) -> std::string {
-      if ((i.category == MaterialPropertyInput::TEMPERATURE) ||
-          (i.category ==
-           MaterialPropertyInput::AUXILIARYSTATEVARIABLEFROMEXTERNALMODEL) ||
-          (i.category == MaterialPropertyInput::EXTERNALSTATEVARIABLE)) {
-        return "this->" + i.name + "+this->d" + i.name;
-      } else if ((i.category == MaterialPropertyInput::MATERIALPROPERTY) ||
-                 (i.category == MaterialPropertyInput::STATEVARIABLE) ||
-                 (i.category == MaterialPropertyInput::PARAMETER)) {
-        return "this->" + i.name;
-      } else if (i.category == MaterialPropertyInput::STATICVARIABLE) {
-        return this->mb.getClassName() + "::" + i.name;
+    } else if ((v1.arraySize != 1u) && (v2.arraySize == 1u)) {
+      if (flag1 == SupportedTypes::SCALAR) {
+        if (flag2 == SupportedTypes::SCALAR) {
+          os << "auto " << d.derivative_name << "= [&" << d.matrix_name
+             << "](const unsigned short idx){\n"
+             << "return " << d.matrix_name << "(" << dr << "+idx, " << dc
+             << ");\n"
+             << "}\n\n";
+        } else if (flag2 == SupportedTypes::TVECTOR) {
+          // Le résultat est un vecteur, une ligne dans la matrice
+          // jacobienne
+          os << "auto " << d.derivative_name << "= [&" << d.matrix_name
+             << "](const unsigned short idx){\n"
+             << "return typename tfel::math::TVectorFromTinyMatrixRowView2<N,"
+             << nr << "," << nc << "," << dr << "," << dc << ",real>::type("
+             << d.matrix_name << ",idx,0);\n"
+             << "}\n\n";
+        } else {
+          // Le résultat est un tenseur, une ligne dans la matrice
+          // jacobienne
+          os << "auto " << d.derivative_name << "= [&" << d.matrix_name
+             << "](const unsigned short idx){\n"
+             << "return typename tfel::math::StensorFromTinyMatrixRowView2<N,"
+             << nr << "," << nc << "," << dr << "," << dc << ",real>::type("
+             << d.matrix_name << ",idx,0);\n"
+             << "}\n\n";
+        }
+      } else if (flag1 == SupportedTypes::TVECTOR) {
+        if (flag2 == SupportedTypes::SCALAR) {
+          // Le résultat est un tenseur, une colonne dans la matrice
+          // jacobienne
+          os << "auto " << d.derivative_name << "= [&" << d.matrix_name
+             << "](const unsigned short idx){\n"
+             << "return typename "
+             << "tfel::math::StensorFromTinyMatrixColumnView2<N," << nr << ","
+             << nc << "," << dr << "," << dc << ",real>::type(" << d.matrix_name
+             << ",idx,0);\n"
+             << "}\n\n";
+        } else if (flag2 == SupportedTypes::TVECTOR) {
+          os << "auto " << d.derivative_name << "= [&" << d.matrix_name
+             << "](const unsigned short idx){\n"
+             << "return typename tfel::math::TMatrixFromTinyMatrixView2<N,"
+             << nr << "," << nc << "," << dr << "," << dc << ",real>::type("
+             << d.matrix_name << ",idx,0u);\n"
+             << "}\n\n";
+        } else {
+          this->throwRuntimeError(
+              "ImplicitDSLBase::writeDerivativeView",
+              "derivation of a vector by a tensor is not defined");
+        }
       } else {
-        this->throwRuntimeError(
-            "ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation",
-            "unsupported input type for variable '" + i.name + "'");
+        if (flag2 == SupportedTypes::SCALAR) {
+          // Le résultat est un tenseur, une colonne dans la matrice
+          // jacobienne
+          os << "auto " << d.derivative_name << "= [&" << d.matrix_name
+             << "](const unsigned short idx){\n"
+             << "return typename tfel::math::StensorFromTinyMatrixColumnView2<N," << nr
+             << "," << nc << "," << dr << "," << dc << ",real>::type("
+             << d.matrix_name << ",idx,0);\n"
+             << "}\n\n";
+        } else if (flag2 == SupportedTypes::STENSOR) {
+          // Le résultat est un tenseur d'ordre 4
+          os << "auto " << d.derivative_name << "= [&" << d.matrix_name
+             << "](const unsigned short idx){\n"
+             << "return typename tfel::math::ST2toST2FromTinyMatrixView2<N,"
+             << nr << "," << nc << "," << dr << "," << dc << ",real>::type("
+             << d.matrix_name << ",idx,0u);\n"
+             << "}\n\n";
+        } else {
+          this->throwRuntimeError(
+              "ImplicitDSLBase::writeDerivativeView",
+              "derivation of a tensor by a vector is not defined");
+        }
       }
-    };
-    if (this->mb.getAttribute(BehaviourDescription::computesStiffnessTensor,
-                              false)) {
-      os << "// updating the stiffness tensor at the middle of the time "
-            "step\n";
-      this->writeStiffnessTensorComputation(os, "this->D", mts);
-      if (!this->mb.areElasticMaterialPropertiesConstantDuringTheTimeStep()) {
-        os << "// stiffness tensor at the end of the time step\n";
-        this->writeStiffnessTensorComputation(os, "this->D_tdt", ets);
+    } else if ((v1.arraySize == 1u) && (v2.arraySize != 1u)) {
+      if (flag1 == SupportedTypes::SCALAR) {
+        if (flag2 == SupportedTypes::SCALAR) {
+          os << "auto " << d.derivative_name << "= [&" << d.matrix_name
+             << "](const unsigned short idx){\n"
+             << "return " << d.matrix_name << "(" << dr << ", " << dc
+             << "+idx);\n"
+             << "}\n\n";
+        } else {
+          // Le résultat est un tenseur, une ligne dans la matrice
+          // jacobienne
+          os << "auto " << d.derivative_name << "= [&" << d.matrix_name
+             << "](const unsigned short idx){\n"
+             << "return typename tfel::math::StensorFromTinyMatrixRowView2<N,"
+             << nr << "," << nc << "," << dr << "," << dc << ",real>::type("
+             << d.matrix_name << ",0,idx);\n"
+             << "}\n\n";
+        }
+      } else {
+        if (flag2 == SupportedTypes::SCALAR) {
+          // Le résultat est un tenseur, une colonne dans la matrice
+          // jacobienne
+          os << "auto " << d.derivative_name << "= [&" << d.matrix_name
+             << "](const unsigned short idx){\n"
+             << "return typename "
+             << "tfel::math::StensorFromTinyMatrixColumnView2<N," << nr << ","
+             << nc << "," << dr << "," << dc << ",real>::type(" << d.matrix_name
+             << ",0,idx);\n"
+             << "}\n\n";
+        } else {
+          os << "auto " << d.derivative_name << "= [&" << d.matrix_name
+             << "](const unsigned short idx){\n"
+             << "return typename tfel::math::ST2toST2FromTinyMatrixView2<N,"
+             << nr << "," << nc << "," << dr << "," << dc << ",real>::type("
+             << d.matrix_name << ",0,idx);\n"
+             << "}\n\n";
+        }
+      }
+    } else if ((v1.arraySize != 1u) && (v2.arraySize != 1u)) {
+      if (flag1 == SupportedTypes::SCALAR) {
+        if (flag2 == SupportedTypes::SCALAR) {
+          os << "auto " << d.derivative_name << "= [&" << d.matrix_name
+             << "](const unsigned short idx, const unsigned short idx2){\n"
+             << "return " << d.matrix_name << "(" << dr << "+idx, " << dc
+             << "+idx2);\n"
+             << "}\n\n";
+        } else {
+          // Le résultat est un tenseur, une ligne dans la matrice
+          // jacobienne
+          os << "auto " << d.derivative_name << "= [&" << d.matrix_name
+             << "](const unsigned short idx, const unsigned short idx2){\n"
+             << "return typename tfel::math::StensorFromTinyMatrixRowView2<N,"
+             << nr << "," << nc << "," << dr << "," << dc << ",real>::type("
+             << d.matrix_name << ",idx,idx2);\n"
+             << "}\n\n";
+        }
+      } else {
+        if (flag2 == SupportedTypes::SCALAR) {
+          // Le résultat est un tenseur, une colonne dans la matrice
+          // jacobienne
+          os << "auto " << d.derivative_name << "= [&" << d.matrix_name
+             << "](const unsigned short idx, const unsigned short idx2){\n"
+             << "return typename "
+             << "tfel::math::StensorFromTinyMatrixColumnView2<N," << nr << ","
+             << nc << "," << dr << "," << dc << ",real>::type(" << d.matrix_name
+             << ",idx,idx2);\n"
+             << "}\n\n";
+        } else {
+          os << "auto " << d.derivative_name << "= [&" << d.matrix_name
+             << "](const unsigned short idx, const unsigned short idx2){\n"
+             << "return typename tfel::math::ST2toST2FromTinyMatrixView2<N,"
+             << nr << "," << nc << "," << dr << "," << dc << ",real>::type("
+             << d.matrix_name << ",idx,idx2);\n"
+             << "}\n\n";
+        }
       }
     }
-    for (const auto& ht : this->mb.getHillTensors()) {
-      if ((this->mb.getBehaviourType() !=
-           BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) &&
-          (this->mb.getBehaviourType() !=
-           BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR)) {
-        this->throwRuntimeError(
-            "ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation",
-            "Hill tensors shall only be defined for finite strain "
-            "or small strain behaviours");
+    }  // end of ImplicitDSLBase::writeDerivativeView
+
+    void ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation(
+        std::ostream & os, const Hypothesis h) const {
+      using Modifier = std::function<std::string(const MaterialPropertyInput&)>;
+      Modifier mts = [this](const MaterialPropertyInput& i) -> std::string {
+        if ((i.category == MaterialPropertyInput::TEMPERATURE) ||
+            (i.category ==
+             MaterialPropertyInput::AUXILIARYSTATEVARIABLEFROMEXTERNALMODEL) ||
+            (i.category == MaterialPropertyInput::EXTERNALSTATEVARIABLE)) {
+          return "this->" + i.name + "+(this->theta)*(this->d" + i.name + ')';
+        } else if ((i.category == MaterialPropertyInput::MATERIALPROPERTY) ||
+                   (i.category == MaterialPropertyInput::STATEVARIABLE) ||
+                   (i.category == MaterialPropertyInput::PARAMETER)) {
+          return "this->" + i.name;
+        } else if (i.category == MaterialPropertyInput::STATICVARIABLE) {
+          return this->mb.getClassName() + "::" + i.name;
+        } else {
+          this->throwRuntimeError(
+              "ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation",
+              "unsupported input type for variable '" + i.name + "'");
+        }
+      };
+      Modifier ets = [this](const MaterialPropertyInput& i) -> std::string {
+        if ((i.category == MaterialPropertyInput::TEMPERATURE) ||
+            (i.category ==
+             MaterialPropertyInput::AUXILIARYSTATEVARIABLEFROMEXTERNALMODEL) ||
+            (i.category == MaterialPropertyInput::EXTERNALSTATEVARIABLE)) {
+          return "this->" + i.name + "+this->d" + i.name;
+        } else if ((i.category == MaterialPropertyInput::MATERIALPROPERTY) ||
+                   (i.category == MaterialPropertyInput::STATEVARIABLE) ||
+                   (i.category == MaterialPropertyInput::PARAMETER)) {
+          return "this->" + i.name;
+        } else if (i.category == MaterialPropertyInput::STATICVARIABLE) {
+          return this->mb.getClassName() + "::" + i.name;
+        } else {
+          this->throwRuntimeError(
+              "ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation",
+              "unsupported input type for variable '" + i.name + "'");
+        }
+      };
+      if (this->mb.getAttribute(BehaviourDescription::computesStiffnessTensor,
+                                false)) {
+        os << "// updating the stiffness tensor at the middle of the time "
+              "step\n";
+        this->writeStiffnessTensorComputation(os, "this->D", mts);
+        if (!this->mb.areElasticMaterialPropertiesConstantDuringTheTimeStep()) {
+          os << "// stiffness tensor at the end of the time step\n";
+          this->writeStiffnessTensorComputation(os, "this->D_tdt", ets);
+        }
       }
-      this->writeHillTensorComputation(os, "this->" + ht.name, ht, mts);
-      if (!this->mb.areMaterialPropertiesConstantDuringTheTimeStep(ht.c)) {
-        this->writeHillTensorComputation(os, "this->" + ht.name + "_tdt", ht,
-                                         ets);
+      for (const auto& ht : this->mb.getHillTensors()) {
+        if ((this->mb.getBehaviourType() !=
+             BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) &&
+            (this->mb.getBehaviourType() !=
+             BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR)) {
+          this->throwRuntimeError(
+              "ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation",
+              "Hill tensors shall only be defined for finite strain "
+              "or small strain behaviours");
+        }
+        this->writeHillTensorComputation(os, "this->" + ht.name, ht, mts);
+        if (!this->mb.areMaterialPropertiesConstantDuringTheTimeStep(ht.c)) {
+          this->writeHillTensorComputation(os, "this->" + ht.name + "_tdt", ht,
+                                           ets);
+        }
       }
-    }
-    if ((!this->mb.getAttribute(BehaviourDescription::computesStiffnessTensor,
-                                false)) &&
-        (this->mb.getElasticSymmetryType() == ISOTROPIC) &&
-        (this->mb.areElasticMaterialPropertiesDefined())) {
-      const auto& emps = this->mb.getElasticMaterialProperties();
-      if (emps.size() != 2u) {
-        this->throwRuntimeError(
-            "ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation",
-            "invalid number of material properties");
+      if ((!this->mb.getAttribute(BehaviourDescription::computesStiffnessTensor,
+                                  false)) &&
+          (this->mb.getElasticSymmetryType() == ISOTROPIC) &&
+          (this->mb.areElasticMaterialPropertiesDefined())) {
+        const auto& emps = this->mb.getElasticMaterialProperties();
+        if (emps.size() != 2u) {
+          this->throwRuntimeError(
+              "ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation",
+              "invalid number of material properties");
+        }
+        if (!emps[0].is<BehaviourDescription::ConstantMaterialProperty>()) {
+          this->writeMaterialPropertyCheckBoundsEvaluation(os, emps[0], mts);
+        }
+        if (!emps[1].is<BehaviourDescription::ConstantMaterialProperty>()) {
+          this->writeMaterialPropertyCheckBoundsEvaluation(os, emps[1], mts);
+        }
+        if (!emps[0].is<BehaviourDescription::ConstantMaterialProperty>()) {
+          os << "this->young=";
+          this->writeMaterialPropertyEvaluation(os, emps[0], mts);
+          os << ";\n";
+        }
+        if (!emps[1].is<BehaviourDescription::ConstantMaterialProperty>()) {
+          os << "this->nu=";
+          this->writeMaterialPropertyEvaluation(os, emps[1], mts);
+          os << ";\n";
+        }
+        os << "this->lambda=computeLambda(young,nu);\n";
+        os << "this->mu=computeMu(young,nu);\n";
+        if (!this->mb.isMaterialPropertyConstantDuringTheTimeStep(emps[0])) {
+          this->writeMaterialPropertyCheckBoundsEvaluation(os, emps[0], ets);
+          os << "this->young_tdt=";
+          this->writeMaterialPropertyEvaluation(os, emps[0], ets);
+          os << ";\n";
+        } else {
+          os << "this->young_tdt  = this->young;\n";
+        }
+        if (!this->mb.isMaterialPropertyConstantDuringTheTimeStep(emps[1])) {
+          this->writeMaterialPropertyCheckBoundsEvaluation(os, emps[1], ets);
+          os << "this->nu_tdt=";
+          this->writeMaterialPropertyEvaluation(os, emps[1], ets);
+          os << ";\n";
+        } else {
+          os << "this->nu_tdt     = this->nu;\n";
+        }
+        if (!this->mb.areElasticMaterialPropertiesConstantDuringTheTimeStep()) {
+          os << "this->lambda_tdt = computeLambda(young_tdt,nu_tdt);\n";
+          os << "this->mu_tdt     = computeMu(young_tdt,nu_tdt);\n";
+        } else {
+          os << "this->lambda_tdt = this->lambda;\n";
+          os << "this->mu_tdt     = this->mu;\n";
+        }
       }
-      if (!emps[0].is<BehaviourDescription::ConstantMaterialProperty>()) {
-        this->writeMaterialPropertyCheckBoundsEvaluation(os, emps[0], mts);
-      }
-      if (!emps[1].is<BehaviourDescription::ConstantMaterialProperty>()) {
-        this->writeMaterialPropertyCheckBoundsEvaluation(os, emps[1], mts);
-      }
-      if (!emps[0].is<BehaviourDescription::ConstantMaterialProperty>()) {
-        os << "this->young=";
-        this->writeMaterialPropertyEvaluation(os, emps[0], mts);
-        os << ";\n";
-      }
-      if (!emps[1].is<BehaviourDescription::ConstantMaterialProperty>()) {
-        os << "this->nu=";
-        this->writeMaterialPropertyEvaluation(os, emps[1], mts);
-        os << ";\n";
-      }
-      os << "this->lambda=computeLambda(young,nu);\n";
-      os << "this->mu=computeMu(young,nu);\n";
-      if (!this->mb.isMaterialPropertyConstantDuringTheTimeStep(emps[0])) {
-        this->writeMaterialPropertyCheckBoundsEvaluation(os, emps[0], ets);
-        os << "this->young_tdt=";
-        this->writeMaterialPropertyEvaluation(os, emps[0], ets);
-        os << ";\n";
-      } else {
-        os << "this->young_tdt  = this->young;\n";
-      }
-      if (!this->mb.isMaterialPropertyConstantDuringTheTimeStep(emps[1])) {
-        this->writeMaterialPropertyCheckBoundsEvaluation(os, emps[1], ets);
-        os << "this->nu_tdt=";
-        this->writeMaterialPropertyEvaluation(os, emps[1], ets);
-        os << ";\n";
-      } else {
-        os << "this->nu_tdt     = this->nu;\n";
-      }
-      if (!this->mb.areElasticMaterialPropertiesConstantDuringTheTimeStep()) {
-        os << "this->lambda_tdt = computeLambda(young_tdt,nu_tdt);\n";
-        os << "this->mu_tdt     = computeMu(young_tdt,nu_tdt);\n";
-      } else {
-        os << "this->lambda_tdt = this->lambda;\n";
-        os << "this->mu_tdt     = this->mu;\n";
-      }
-    }
-    BehaviourDSLCommon::writeBehaviourLocalVariablesInitialisation(os, h);
+      BehaviourDSLCommon::writeBehaviourLocalVariablesInitialisation(os, h);
   }  // end of writeBehaviourLocalVariablesInitialisation
 
   void ImplicitDSLBase::writeBehaviourParserSpecificIncludes(
@@ -1878,7 +2272,9 @@ namespace mfront {
       // for solver based on the jacobian matrix, the get partial
       // jacobian invert method can be used to compute the tangent
       // operator.
-      this->writeGetPartialJacobianInvert(os, h);
+      this->writeComputePartialJacobianInvert(os, h);
+      // we may also get the state variables derivatives
+      this->writeGetIntegrationVariablesDerivatives(os, h);
     }
     // additional convergence checks
     if (this->mb.hasCode(h, BehaviourData::AdditionalConvergenceChecks)) {
@@ -1920,50 +2316,200 @@ namespace mfront {
     }
   }  // end of ImplicitDSLBase::writeBehaviourParserSpecificMembers
 
-  void ImplicitDSLBase::writeGetPartialJacobianInvert(
-      std::ostream& os, const Hypothesis h) const {
-    const auto& d = this->mb.getBehaviourData(h);
-    this->checkBehaviourFile(os);
-    SupportedTypes::TypeSize n;
-    for (const auto& v : d.getIntegrationVariables()) {
-      n += this->getTypeSize(v.type, v.arraySize);
+  static std::string getDerivativeTypeHolder(const VariableDescription& v1,
+                                             const VariableDescription& v2) {
+    if (v2.arraySize != 1u) {
+      tfel::raise("getDerivativeType: unsupported case");
     }
-    for (size_type i = 0; i != d.getIntegrationVariables().size(); ++i) {
-      os << "void\ngetPartialJacobianInvert(";
-      for (size_type i2 = 0; i2 <= i;) {
-        const auto& v = d.getIntegrationVariables()[i2];
-        const auto flag = SupportedTypes::getTypeFlag(v.type);
-        if (v.arraySize == 1u) {
-          switch (flag) {
-            case SupportedTypes::SCALAR:
-              os << "Stensor& ";
-              break;
-            case SupportedTypes::STENSOR:
-              os << "Stensor4& ";
-              break;
-            case SupportedTypes::TVECTOR:
-            case SupportedTypes::TENSOR:
-            default:
-              this->throwRuntimeError(
-                  "ImplicitDSLBase::writeGetPartialJacobianInvert",
-                  "internal error, tag unsupported");
-          }
-        } else {
-          switch (flag) {
-            case SupportedTypes::SCALAR:
-              os << "tfel::math::tvector<" << v.arraySize << "u,Stensor>& ";
-              break;
-            case SupportedTypes::STENSOR:
-              os << "tfel::math::tvector<" << v.arraySize << "u,Stensor4>& ";
-              break;
-            case SupportedTypes::TVECTOR:
-            case SupportedTypes::TENSOR:
-            default:
-              this->throwRuntimeError(
-                  "ImplicitDSLBase::writeGetPartialJacobianInvert",
-                  "internal error, tag unsupported");
+    const auto dtype =
+        "tfel::math::derivative_type<" + v1.type + ", " + v2.type + ">";
+    if (v1.arraySize == 1u) {
+      return dtype;
+    }
+    return "tfel::math::tvector<" + std::to_string(v1.arraySize) + ", " +
+           dtype + ">";
+  }  // end of getVariableDerivativeTypeHolder
+
+  void ImplicitDSLBase::writeBehaviourComputeTangentOperatorBody(
+      std::ostream& os, const Hypothesis h, const std::string& n) const {
+    using Derivative = std::pair<VariableDescription, VariableDescription>;
+    const auto& d = this->mb.getBehaviourData(h);
+    const auto& isvs = d.getIntegrationVariables();
+    const auto nivs = mfront::getTypeSize(isvs);
+    const auto& cb = this->mb.getCodeBlock(h, n);
+    if (getAttribute(cb, CodeBlock::requires_jacobian_decomposition, false)) {
+      os << "TinyPermutation<" << nivs << "> jacobian_permutation;\n"
+         << "TinyMatrixSolve<" << nivs
+         << ",real>::decomp(this->jacobian,jacobian_permutation);\n";
+    }
+    // treating getPartialJacobianInvert
+    if (getAttribute(cb, CodeBlock::uses_get_partial_jacobian_invert, false)) {
+      if (!getAttribute(cb, CodeBlock::requires_jacobian_decomposition,
+                        false)) {
+        tfel::raise(
+            "writeBehaviourComputeTangentOperatorBody: "
+            "inconsistent attribute declarations for code block '" +
+            n +
+            "'. If the attribute `uses_get_partial_jacobian_invert` "
+            "is set to true, then the attribute "
+            "`requires_jacobian_decomposition` must also be set to true");
+      }
+      const auto v2 = VariableDescription{"StrainStensor", "\u03B5\u1D57\u1D52",
+                                          "eto", 1u, 0u};
+      os << "struct GetPartialJacobianInvert{\n"
+         << "GetPartialJacobianInvert(" << this->mb.getClassName() << "& b,\n"
+         << "const tfel::math::TinyPermutation<" << nivs << ">& p)\n"
+         << ": behaviour(b),\n"
+         << "permutation(p)\n"
+         << "{}\n";
+      for (size_type i = 0; i != isvs.size(); ++i) {
+        os << "void operator()(";
+        for (size_type i2 = 0; i2 <= i;) {
+          const auto& v = isvs[i2];
+          os << getDerivativeTypeHolder(v, v2) << "& ";
+          os << "partial_jacobian_" << v.name;
+          if (++i2 <= i) {
+            os << ",\n";
           }
         }
+        os << "){\n"
+           << "this->behaviour.computePartialJacobianInvert("
+           << "this->permutation, ";
+        for (size_type i2 = 0; i2 <= i;) {
+          const auto& v = isvs[i2];
+          os << "partial_jacobian_" << v.name;
+          if (++i2 <= i) {
+            os << ",\n";
+          }
+        }
+        os << ");\n"
+           << "}\n";
+      }
+      os << "private:\n"
+         << this->mb.getClassName() << "& behaviour;\n"
+         << "const tfel::math::TinyPermutation<" << nivs << ">& permutation;\n"
+         << "}; // end of struct GetPartialJacobianInvert\n"
+         << "GetPartialJacobianInvert "
+            "getPartialJacobianInvert(*this, jacobian_permutation);\n";
+    }
+    // treating getIntegrationDerivatives
+    if (hasAttribute<std::vector<VariableDescription>>(
+            cb, CodeBlock::used_get_integration_variables_derivatives)) {
+      const auto& get_integration_variables_derivatives =
+          getAttribute<std::vector<VariableDescription>>(
+              cb, CodeBlock::used_get_integration_variables_derivatives);
+      const auto attr = CodeBlock::
+          used_implicit_equations_derivatives_with_respect_to_gradients_or_external_state_variables;
+      if (!hasAttribute<std::vector<Derivative>>(cb, attr)) {
+        this->throwRuntimeError(
+            "ImplicitDSLBase::writeBehaviourComputeTangentOperatorBody",
+            "internal error, no implicit equation derivative with respect "
+            "to "
+            "a gradient or and external state variable detected");
+      }
+      const auto& implicit_equations_derivatives =
+          getAttribute<std::vector<Derivative>>(cb, attr);
+      for (const auto givd : get_integration_variables_derivatives) {
+        std::vector<Derivative> derivatives;
+        std::copy_if(implicit_equations_derivatives.begin(),
+                     implicit_equations_derivatives.end(),
+                     std::back_inserter(derivatives),
+                     [&givd](const Derivative& v) {
+                       return givd.name == v.second.name;
+                     });
+        if (derivatives.empty()) {
+          this->throwRuntimeError(
+              "ImplicitDSLBase::writeBehaviourComputeTangentOperatorBody",
+              "internal error, no implicit equation derivative with "
+              "respect to "
+              "'" +
+                  displayName(givd) + "' defined");
+        }
+        auto nc = mfront::getTypeSize(givd);
+        const auto m = "dfzeros_dd" + givd.name;
+        os << "tfel::math::tmatrix<" << nivs << ", " << nc << "> "  //
+           << m << ";\n"
+           << "std::fill(" << m << ".begin(), " << m << ".end(), real(0));\n"
+           << "struct GetIntegrationVariablesDerivatives_" << givd.name << "{\n"
+           << "GetIntegrationVariablesDerivatives_" << givd.name
+           << "(tfel::math::tmatrix<" << nivs << ", " << nc << ">& v)\n"
+           << ": rhs(v)\n"
+           << "{}\n";
+        for (size_type i = 0; i != isvs.size(); ++i) {
+          os << "void operator()(";
+          for (size_type i2 = 0; i2 <= i;) {
+            const auto& v = isvs[i2];
+            os << getDerivativeTypeHolder(v, givd) << "& "
+                //              << "integration_variable_derivative_d" << v.name
+                //              << "_dd"
+                //              << givd.name;
+                ;
+            if (++i2 <= i) {
+              os << ",\n";
+            }
+          }
+          os << "){\n";
+          for (size_type i2 = 0; i2 <= i;) {
+            const auto& v = isvs[i2];
+            //           os << "integration_variable_derivative_d" << v.name <<
+            //           "_dd"
+            //              << givd.name << " = " ;
+            if (++i2 <= i) {
+              //            os << ",\n";
+            }
+          }
+          os << "}\n";
+      }
+      os << "private:\n"
+         << "tfel::math::tmatrix<" << nivs << ", " << nc << ">& rhs;\n"
+         << "};\n"
+         << "GetIntegrationVariablesDerivatives_" << givd.name << " "
+         << "getIntegrationVariablesDerivatives_" << givd.name << "(" << m
+         << ");\n";
+      // creating the view for the derivatives
+      auto cr = SupportedTypes::TypeSize{};  // current row
+      for (const auto& iv : d.getIntegrationVariables()) {
+        const auto p = std::find_if(
+            derivatives.begin(), derivatives.end(),
+            [&iv](const Derivative& dv) { return iv.name == dv.first.name; });
+        if (p == derivatives.end()) {
+          cr += mfront::getTypeSize(iv);
+          continue;
+        }
+        auto derivative_view = DerivativeViewDescription{};
+        derivative_view.derivative_name = "df" + iv.name + "_dd" + givd.name;
+        derivative_view.matrix_name = m;
+        derivative_view.first_variable = iv;
+        derivative_view.second_variable = givd;
+        derivative_view.matrix_number_of_rows = nivs;
+        derivative_view.matrix_number_of_columns = nc;
+        derivative_view.derivative_row_position = cr;
+        derivative_view.derivative_column_position = SupportedTypes::TypeSize{};
+        this->writeDerivativeView(os, derivative_view);
+        // update the row position
+        cr += mfront::getTypeSize(iv);
+        }
+      }
+    }
+    //
+    BehaviourDSLCommon::writeBehaviourComputeTangentOperatorBody(os, h, n);
+  }  // end of ImplicitDSLBase::writeBehaviourComputeTangentOperatorBody
+
+  void ImplicitDSLBase::writeComputePartialJacobianInvert(
+      std::ostream& os, const Hypothesis h) const {
+    this->checkBehaviourFile(os);
+    const auto& d = this->mb.getBehaviourData(h);
+    const auto& isvs = d.getIntegrationVariables();
+    const auto n = mfront::getTypeSize(isvs);
+    const auto v2 = VariableDescription{"StrainStensor", "\u03B5\u1D57\u1D52",
+                                        "eto", 1u, 0u};
+    for (size_type i = 0; i != isvs.size(); ++i) {
+      os << "void\ncomputePartialJacobianInvert("
+            "const tfel::math::TinyPermutation<"
+         << n << ">& jacobian_permutation, ";
+      for (size_type i2 = 0; i2 <= i;) {
+        const auto& v = isvs[i2];
+        os << getDerivativeTypeHolder(v, v2) << "& ";
         os << "partial_jacobian_" << v.name;
         if (++i2 <= i) {
           os << ",\n";
@@ -1972,14 +2518,12 @@ namespace mfront {
       os << ")\n"
          << "{\n"
          << "using namespace tfel::math;\n"
-         << "TinyPermutation<" << n << "> permuation;\n"
-         << "TinyMatrixSolve<" << n
-         << ",real>::decomp(this->jacobian,permuation);\n"
          << "for(unsigned short idx=0;idx!=StensorSize;++idx){\n"
          << "tvector<" << n << ",real> vect_e(real(0));\n"
          << "vect_e(idx) = real(1);\n"
          << "TinyMatrixSolve<" << n
-         << ",real>::back_substitute(this->jacobian,permuation,vect_e);\n";
+         << ",real>::back_substitute(this->jacobian,jacobian_permutation,"
+            "vect_e);\n";
       SupportedTypes::TypeSize n2;
       for (size_type i2 = 0; i2 <= i; ++i2) {
         const auto& v = d.getIntegrationVariables()[i2];
@@ -2034,7 +2578,7 @@ namespace mfront {
           }
         } else {
           this->throwRuntimeError(
-              "ImplicitDSLBase::writeGetPartialJacobianInvert",
+              "ImplicitDSLBase::writeComputePartialJacobianInvert",
               "internal error, tag unsupported");
         }
       }
@@ -2049,7 +2593,157 @@ namespace mfront {
       }
       os << "}\n\n";
     }
-  }  // end of ImplicitDSLBase::writeGetPartialJacobianInvert
+  }  // end of ImplicitDSLBase::writeComputePartialJacobianInvert
+
+  void ImplicitDSLBase::writeGetIntegrationVariablesDerivatives(
+      std::ostream& os, const Hypothesis h) const {
+    //         this->checkBehaviourFile(os);
+    //         const auto& d = this->mb.getBehaviourData(h);
+    //         const auto& isvs = d.getIntegrationVariables();
+    //         const auto n = mfront::getTypeSize(isvs);
+    //     for(const auto& v :
+    //     extractSecondPartOfTangentOperatorBlocks(this->bd)){
+    //       for (size_type i = 0; i != isvs.size(); ++i) {
+    //         os << "void\ngetIntegrationVariablesDerivatives_" << v.name
+    //         <<
+    //         "(";
+    //         for (size_type i2 = 0; i2 <= i;) {
+    //           const auto& v = isvs[i2];
+    //           const auto flag = SupportedTypes::getTypeFlag(v.type);
+    //           if (v.arraySize == 1u) {
+    //             switch (flag) {
+    //               case SupportedTypes::SCALAR:
+    //                 os << "Stensor& ";
+    //                 break;
+    //               case SupportedTypes::STENSOR:
+    //                 os << "Stensor4& ";
+    //                 break;
+    //               case SupportedTypes::TVECTOR:
+    //               case SupportedTypes::TENSOR:
+    //               default:
+    //                 this->throwRuntimeError(
+    //                     "ImplicitDSLBase::writeComputePartialJacobianInvert",
+    //                     "internal error, tag unsupported");
+    //             }
+    //           } else {
+    //             switch (flag) {
+    //               case SupportedTypes::SCALAR:
+    //                 os << "tfel::math::tvector<" << v.arraySize <<
+    //                 "u,Stensor>& ";
+    //                 break;
+    //               case SupportedTypes::STENSOR:
+    //                 os << "tfel::math::tvector<" << v.arraySize <<
+    //                 "u,Stensor4>& ";
+    //                 break;
+    //               case SupportedTypes::TVECTOR:
+    //               case SupportedTypes::TENSOR:
+    //               default:
+    //                 this->throwRuntimeError(
+    //                     "ImplicitDSLBase::writeComputePartialJacobianInvert",
+    //                     "internal error, tag unsupported");
+    //             }
+    //           }
+    //           os << "partial_jacobian_" << v.name;
+    //           if (++i2 <= i) {
+    //             os << ",\n";
+    //           }
+    //         }
+    //         os << ")\n"
+    //            << "{\n"
+    //            << "using namespace tfel::math;\n"
+    //            << "TinyPermutation<" << n << "> jacobian_permutation;\n"
+    //            << "TinyMatrixSolve<" << n
+    //            <<
+    //            ",real>::decomp(this->jacobian,jacobian_permutation);\n"
+    //            << "for(unsigned short idx=0;idx!=StensorSize;++idx){\n"
+    //            << "tvector<" << n << ",real> vect_e(real(0));\n"
+    //            << "vect_e(idx) = real(1);\n"
+    //            << "TinyMatrixSolve<" << n
+    //            <<
+    //            ",real>::back_substitute(this->jacobian,jacobian_permutation,vect_e);\n";
+    //         SupportedTypes::TypeSize n2;
+    //         for (size_type i2 = 0; i2 <= i; ++i2) {
+    //           const auto& v = d.getIntegrationVariables()[i2];
+    //           const auto flag = SupportedTypes::getTypeFlag(v.type);
+    //           if (flag == SupportedTypes::SCALAR) {
+    //             if (v.arraySize == 1u) {
+    //               os << "partial_jacobian_" << v.name << "(idx)=vect_e("
+    //               <<
+    //               n2
+    //                  << ");\n";
+    //             } else {
+    //               os << "for(unsigned short idx2=0;idx2!=" << v.arraySize
+    //                  << ";++idx2){\n"
+    //                  << "partial_jacobian_" << v.name <<
+    //                  "(idx2)(idx)=vect_e(" << n2
+    //                  << "+idx2);\n"
+    //                  << "}\n";
+    //             }
+    //             n2 += this->getTypeSize(v.type, v.arraySize);
+    //           } else if (flag == SupportedTypes::TVECTOR) {
+    //             if (v.arraySize == 1u) {
+    //               os << "for(unsigned short idx2=" << n2;
+    //               os << ";idx2!=";
+    //               n2 += this->getTypeSize(v.type, v.arraySize);
+    //               os << n2 << ";++idx2){\n";
+    //               os << "partial_jacobian_" << v.name
+    //                  << "(idx2,idx)=vect_e(idx2);\n";
+    //               os << "}\n";
+    //             } else {
+    //               os << "for(unsigned short idx2=0;idx2!=" << v.arraySize
+    //                  << ";++idx2){\n";
+    //               os << "for(unsigned short
+    //               idx3=0;idx3!=TVectorSize;++idx3){\n";
+    //               os << "partial_jacobian_" << v.name <<
+    //               "(idx2)(idx3,idx)=vect_e("
+    //                  << n2 << "+idx3+idx2*TVectorSize);\n";
+    //               os << "}\n";
+    //               os << "}\n";
+    //               n2 += this->getTypeSize(v.type, v.arraySize);
+    //             }
+    //           } else if (flag == SupportedTypes::STENSOR) {
+    //             if (v.arraySize == 1u) {
+    //               os << "for(unsigned short idx2=" << n2;
+    //               os << ";idx2!=";
+    //               n2 += this->getTypeSize(v.type, v.arraySize);
+    //               os << n2 << ";++idx2){\n";
+    //               os << "partial_jacobian_" << v.name
+    //                  << "(idx2,idx)=vect_e(idx2);\n";
+    //               os << "}\n";
+    //             } else {
+    //               os << "for(unsigned short idx2=0;idx2!=" << v.arraySize
+    //                  << ";++idx2){\n";
+    //               os << "for(unsigned short
+    //               idx3=0;idx3!=StensorSize;++idx3){\n";
+    //               os << "partial_jacobian_" << v.name <<
+    //               "(idx2)(idx3,idx)=vect_e("
+    //                  << n2 << "+idx3+idx2*StensorSize);\n";
+    //               os << "}\n";
+    //               os << "}\n";
+    //               n2 += this->getTypeSize(v.type, v.arraySize);
+    //             }
+    //           } else {
+    //             this->throwRuntimeError(
+    //                 "ImplicitDSLBase::writeComputePartialJacobianInvert",
+    //                 "internal error, tag unsupported");
+    //           }
+    //         }
+    //         os << "}\n";
+    //         for (size_type i2 = 0; i2 <= i; ++i2) {
+    //           const auto& v = d.getIntegrationVariables()[i2];
+    //           if (this->mb.hasAttribute(h, v.name +
+    //           "_normalisation_factor"))
+    //           {
+    //             const auto& nf = this->mb.getAttribute<std::string>(
+    //                 h, v.name + "_normalisation_factor");
+    //             os << "partial_jacobian_" << v.name << " /= " << nf <<
+    //             ";\n";
+    //           }
+    //         }
+    //         os << "}\n\n";
+    //       }
+    //     }
+  }  // end of ImplicitDSLBase::writeComputePartialJacobianInvert
 
   void ImplicitDSLBase::writeComputeNumericalJacobian(
       std::ostream& os, const Hypothesis h) const {
@@ -2090,7 +2784,7 @@ namespace mfront {
        << "this->jacobian = tjacobian;\n"
        << "}\n"
        << "}\n\n";
-  } // end of ImplicitDSLBase::writeComputeNumericalJacobian
+  }  // end of ImplicitDSLBase::writeComputeNumericalJacobian
 
   std::string ImplicitDSLBase::getVectorMappingClass(
       const VariableDescription& v) const {
@@ -2554,6 +3248,7 @@ namespace mfront {
   void ImplicitDSLBase::getSymbols(std::map<std::string, std::string>& symbols,
                                    const Hypothesis h,
                                    const std::string& n) {
+    using namespace tfel::material;
     BehaviourDSLCommon::getSymbols(symbols, h, n);
     const auto& d = this->mb.getBehaviourData(h);
     for (const auto& v : d.getIntegrationVariables()) {
@@ -2583,6 +3278,42 @@ namespace mfront {
               !v2.symbolic_form.empty() ? v2.symbolic_form : v2.name;
           addSymbol(symbols, "\u2202f" + s1 + "\u2215\u2202\u0394" + s2,
                     "df" + v1.name + "_dd" + v2.name);
+        }
+      }
+    }
+    const auto is_tangent_operator_code_block = [this, &n] {
+      if (this->mb.getBehaviourType() ==
+          BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
+        // all available tangent operators for finite strain  behaviours
+        for (const auto& t : getFiniteStrainBehaviourTangentOperatorFlags()) {
+          const auto ktype =
+              convertFiniteStrainBehaviourTangentOperatorFlagToString(t);
+          const auto bn =
+              std::string(BehaviourData::ComputeTangentOperator) + '-' + ktype;
+          if (n == bn) {
+            return true;
+          }
+        }
+        return false;
+      } else {
+        return n == BehaviourData::ComputeTangentOperator;
+      }
+    }();
+    if (is_tangent_operator_code_block) {
+      for (const auto& to : this->mb.getTangentOperatorBlocks()) {
+        const auto& sname = to.second.symbolic_form;
+        if (!sname.empty()) {
+          const auto& name = to.second.name;
+          addSymbol(symbols, "getIntegrationVariablesDerivatives_" + sname,
+                    "getIntegrationVariablesDerivatives_" + name);
+        }
+        for (const auto& iv : d.getIntegrationVariables()) {
+          const auto s1 = iv.symbolic_form.empty() ? iv.name : iv.symbolic_form;
+          const auto s2 = to.second.symbolic_form.empty()
+                              ? to.second.name
+                              : to.second.symbolic_form;
+          addSymbol(symbols, "\u2202f" + s1 + "\u2215\u2202\u0394" + s2,
+                    "df" + iv.name + "_dd" + to.second.name);
         }
       }
     }

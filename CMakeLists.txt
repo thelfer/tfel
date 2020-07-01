@@ -500,6 +500,7 @@ add_subdirectory(src)
 add_subdirectory(bindings)
 
 add_subdirectory(tfel-config)
+add_subdirectory(tfel-unicode-filt)
 if(UNIX AND (NOT CYGWIN) AND (NOT MSYS))
   add_subdirectory(tfel-doc)
   add_subdirectory(tfel-check)

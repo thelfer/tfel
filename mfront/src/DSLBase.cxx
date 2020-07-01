@@ -259,7 +259,7 @@ namespace mfront {
     }
     auto currentValue = demangle(*(this->current));
     if (analyser != nullptr) {
-      analyser->exe(currentValue);
+      analyser->exe(b, currentValue);
     }
     if (smn.find(currentValue) != smn.end()) {
       b.staticMembers.insert(currentValue);
@@ -329,7 +329,7 @@ namespace mfront {
         b.description += this->current->comment;
       }
       if (analyser != nullptr) {
-        analyser->exe(currentValue);
+        analyser->exe(b, currentValue);
       }
       if (smn.find(currentValue) != smn.end()) {
         b.staticMembers.insert(currentValue);

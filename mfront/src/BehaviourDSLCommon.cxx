@@ -77,6 +77,31 @@ static const char* const constexpr_c = "const";
 
 namespace mfront {
 
+  BehaviourDSLCommon::StandardVariableModifier::StandardVariableModifier(
+      const Hypothesis h, const FunctionType f)
+      : hypothesis(h),
+        fct(f) {}  // end of StandardVariableModifier::StandardVariableModifier
+
+  std::string BehaviourDSLCommon::StandardVariableModifier::exe(
+      const std::string& v, const bool b) {
+    return (this->fct)(this->hypothesis, v, b);
+  }  // end of StandardVariableModifier::exe
+
+  BehaviourDSLCommon::StandardVariableModifier::~StandardVariableModifier() =
+      default;
+
+  BehaviourDSLCommon::StandardWordAnalyser::StandardWordAnalyser(
+      const Hypothesis h, const FunctionType f)
+      : hypothesis(h),
+        fct(f) {}  // end of StandardWordAnalyser::StandardWordAnalyser
+
+  void BehaviourDSLCommon::StandardWordAnalyser::exe(CodeBlock& c,
+                                                     const std::string& v) {
+    this->fct(c, this->hypothesis, v);
+  }  // end of StandardWordAnalyser::exe
+
+  BehaviourDSLCommon::StandardWordAnalyser::~StandardWordAnalyser() = default;
+
   bool isValidBehaviourName(const std::string& n) {
     return tfel::utilities::CxxTokenizer::isValidIdentifier(n, false);
   }
@@ -350,6 +375,137 @@ namespace mfront {
     }
     p->second = c;
   }  // end of disableCallBack
+
+  BehaviourDSLCommon::CodeBlockOptions BehaviourDSLCommon::readCodeBlock(
+      const std::string& n,
+      std::function<
+          std::string(const Hypothesis, const std::string&, const bool)> m,
+      const bool b,
+      const bool s) {
+    CodeBlockOptions o;
+    this->readCodeBlockOptions(o, s);
+    this->treatUnsupportedCodeBlockOptions(o);
+    this->readCodeBlock(o, n, m, b);
+    return o;
+  }
+
+  BehaviourDSLCommon::CodeBlockOptions BehaviourDSLCommon::readCodeBlock(
+      const std::string& n,
+      std::function<
+          std::string(const Hypothesis, const std::string&, const bool)> m,
+      std::function<void(CodeBlock&, const Hypothesis, const std::string&)> a,
+      const bool b,
+      const bool s) {
+    CodeBlockOptions o;
+    this->readCodeBlockOptions(o, s);
+    this->treatUnsupportedCodeBlockOptions(o);
+    this->readCodeBlock(o, n, m, a, b);
+    return o;
+  }  // end of BehaviourDSLCommon::readCodeBlock
+
+  void BehaviourDSLCommon::readCodeBlock(
+      const BehaviourDSLCommon::CodeBlockOptions& o,
+      const std::string& n,
+      std::function<
+          std::string(const Hypothesis, const std::string&, const bool)> m,
+      std::function<void(CodeBlock&, const Hypothesis, const std::string&)> a,
+      const bool b) {
+    const auto beg = this->current;
+    this->disableVariableDeclaration();
+    for (const auto h : o.hypotheses) {
+      this->current = beg;
+      const auto& md = this->mb.getBehaviourData(h);
+      auto vm = std::make_shared<StandardVariableModifier>(h, m);
+      auto wa = std::make_shared<StandardWordAnalyser>(h, a);
+      CodeBlockParserOptions option;
+      option.qualifyStaticVariables = b;
+      option.qualifyMemberVariables = b;
+      option.modifier = vm;
+      option.analyser = wa;
+      option.mn = md.getRegistredMembersNames();
+      option.smn = md.getRegistredStaticMembersNames();
+      this->getSymbols(option.symbols, h, n);
+      const auto& c = this->readNextBlock(option);
+      this->mb.setCode(h, n, c, o.m, o.p);
+    }
+  }  // end of BehaviourDSLCommon::readCodeBlock
+
+  void BehaviourDSLCommon::readCodeBlock(
+      const BehaviourDSLCommon::CodeBlockOptions& o,
+      const std::string& n,
+      std::function<
+          std::string(const Hypothesis, const std::string&, const bool)> m,
+      const bool b) {
+    const auto beg = this->current;
+    this->disableVariableDeclaration();
+    for (const auto h : o.hypotheses) {
+      const auto& md = this->mb.getBehaviourData(h);
+      this->current = beg;
+      auto vm = std::make_shared<StandardVariableModifier>(h, m);
+      CodeBlockParserOptions option;
+      option.qualifyStaticVariables = b;
+      option.qualifyMemberVariables = b;
+      option.modifier = vm;
+      option.mn = md.getRegistredMembersNames();
+      option.smn = md.getRegistredStaticMembersNames();
+      this->getSymbols(option.symbols, h, n);
+      const auto& c = this->readNextBlock(option);
+      this->mb.setCode(h, n, c, o.m, o.p);
+    }
+  }  // end of BehaviourDSLCommon::readCodeBlock
+
+  BehaviourDSLCommon::CodeBlockOptions BehaviourDSLCommon::readCodeBlock(
+      const std::string& n1,
+      const std::string& n2,
+      std::function<
+          std::string(const Hypothesis, const std::string&, const bool)> m1,
+      std::function<
+          std::string(const Hypothesis, const std::string&, const bool)> m2,
+      const bool b,
+      const bool s) {
+    using std::shared_ptr;
+    CodeBlockOptions o;
+    this->readCodeBlockOptions(o, s);
+    this->treatUnsupportedCodeBlockOptions(o);
+    this->readCodeBlock(o, n1, n2, m1, m2, b);
+    return o;
+  }  // end of BehaviourDSLCommon::readCodeBlock
+
+  void BehaviourDSLCommon::readCodeBlock(
+      const BehaviourDSLCommon::CodeBlockOptions& o,
+      const std::string& n1,
+      const std::string& n2,
+      std::function<
+          std::string(const Hypothesis, const std::string&, const bool)> m1,
+      std::function<
+          std::string(const Hypothesis, const std::string&, const bool)> m2,
+      const bool b) {
+    const auto beg = this->current;
+    this->disableVariableDeclaration();
+    for (const auto& h : o.hypotheses) {
+      const auto& md = this->mb.getBehaviourData(h);
+      this->current = beg;
+      CodeBlock c1;
+      CodeBlock c2;
+      CodeBlockParserOptions o1;
+      o1.qualifyStaticVariables = b;
+      o1.qualifyMemberVariables = b;
+      o1.modifier = std::make_shared<StandardVariableModifier>(h, m1);
+      o1.mn = md.getRegistredMembersNames();
+      o1.smn = md.getRegistredStaticMembersNames();
+      this->getSymbols(o1.symbols, h, n1);
+      CodeBlockParserOptions o2;
+      o2.qualifyStaticVariables = b;
+      o2.qualifyMemberVariables = b;
+      o2.modifier = std::make_shared<StandardVariableModifier>(h, m2);
+      o2.mn = md.getRegistredMembersNames();
+      o2.smn = md.getRegistredStaticMembersNames();
+      this->getSymbols(o2.symbols, h, n1);
+      this->readNextBlock(c1, c2, o1, o2);
+      this->mb.setCode(h, n1, c1, o.m, o.p);
+      this->mb.setCode(h, n2, c2, o.m, o.p);
+    }
+  }  // end of BehaviourDSLCommon::readCodeBlock
 
   void BehaviourDSLCommon::addMaterialProperties(
       const VariableDescriptionContainer& mps) {
@@ -1864,7 +2020,10 @@ namespace mfront {
       o.smn = d.getRegistredStaticMembersNames();
       o.qualifyStaticVariables = true;
       o.qualifyMemberVariables = true;
-      o.modifier = makeVariableModifier(*this, h, &BehaviourDSLCommon::standardModifier);
+      o.modifier = std::make_shared<StandardVariableModifier>(
+          h, [this](const Hypothesis hv, const std::string& v, const bool b) {
+            return this->standardModifier(hv, v, b);
+          });
       this->mb.appendToPrivateCode(h, this->readNextBlock(o).code, true);
     }
   }  // end of void BehaviourDSLCommon::treatPrivate
@@ -1881,7 +2040,10 @@ namespace mfront {
       o.smn = d.getRegistredStaticMembersNames();
       o.qualifyStaticVariables = true;
       o.qualifyMemberVariables = true;
-      o.modifier = makeVariableModifier(*this, h, &BehaviourDSLCommon::standardModifier);
+      o.modifier = std::make_shared<StandardVariableModifier>(
+          h, [this](const Hypothesis hv, const std::string& v, const bool b) {
+            return this->standardModifier(hv, v, b);
+          });
       this->mb.appendToMembers(h, this->readNextBlock(o).code, true);
     }
   }  // end of BehaviourDSLCommon::treatMembers
@@ -1981,8 +2143,8 @@ namespace mfront {
         }
         this->throwRuntimeError("BehaviourDSLCommon::treatTangentOperator", msg.str());
       }
-      this->readCodeBlock(*this, o, std::string(BehaviourData::ComputeTangentOperator) + "-" + ktype,
-                          &BehaviourDSLCommon::tangentOperatorVariableModifier, true);
+      this->readTangentOperatorCodeBlock(
+          o, std::string(BehaviourData::ComputeTangentOperator) + "-" + ktype);
       for (const auto& h : o.hypotheses) {
         if (!this->mb.hasAttribute(h, BehaviourData::hasConsistentTangentOperator)) {
           this->mb.setAttribute(h, BehaviourData::hasConsistentTangentOperator, true);
@@ -1990,13 +2152,20 @@ namespace mfront {
       }
     } else {
       this->treatUnsupportedCodeBlockOptions(o);
-      this->readCodeBlock(*this, o, BehaviourData::ComputeTangentOperator,
-                          &BehaviourDSLCommon::tangentOperatorVariableModifier, true);
+      this->readTangentOperatorCodeBlock(o,
+                                         BehaviourData::ComputeTangentOperator);
       for (const auto& h : o.hypotheses) {
         this->mb.setAttribute(h, BehaviourData::hasConsistentTangentOperator, true);
       }
     }
   }  // end of BehaviourDSLCommon::treatTangentOperator
+
+  void BehaviourDSLCommon::readTangentOperatorCodeBlock(
+      const CodeBlockOptions& o, const std::string& n) {
+    this->readCodeBlock(*this, o, n,
+                        &BehaviourDSLCommon::tangentOperatorVariableModifier,
+                        true);
+  }  // end of BehaviourDSLCommon::readTangentOperatorCodeBlock
 
   void BehaviourDSLCommon::treatIsTangentOperatorSymmetric() {
     auto hs = std::set<Hypothesis>{};
@@ -6208,9 +6377,10 @@ namespace mfront {
                << "using namespace tfel::math;\n"
                << "using std::vector;\n";
             writeMaterialLaws(os, this->mb.getMaterialLaws());
-            os << this->mb.getCode(h, std::string(BehaviourData::ComputeTangentOperator) + "-" + ktype) << '\n'
-               << "return true;\n"
-               << "}\n\n";
+            this->writeBehaviourComputeTangentOperatorBody(
+                os, h, std::string(BehaviourData::ComputeTangentOperator) +
+                           "-" + ktype);
+            os << "}\n\n";
           } else {
             if ((h ==
                  ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS) ||
@@ -6292,12 +6462,17 @@ namespace mfront {
            << "using namespace tfel::math;\n"
            << "using std::vector;\n";
         writeMaterialLaws(os, this->mb.getMaterialLaws());
-        os << this->mb.getCode(h, BehaviourData::ComputeTangentOperator) << '\n'
-           << "return true;\n"
-           << "}\n\n";
+        this->writeBehaviourComputeTangentOperatorBody(
+            os, h, BehaviourData::ComputeTangentOperator);
+        os << "}\n\n";
       }
     }
   }  // end of BehaviourDSLCommon::writeBehaviourComputeTangentOperator
+
+  void BehaviourDSLCommon::writeBehaviourComputeTangentOperatorBody(
+      std::ostream& os, const Hypothesis h, const std::string& n) const {
+    os << this->mb.getCode(h, n) << '\n' << "return true;\n";
+  } // end of BehaviourDSLCommon::writeBehaviourComputeTangentOperatorBody
 
   void BehaviourDSLCommon::writeBehaviourGetTangentOperator(std::ostream& os) const {
     this->checkBehaviourFile(os);
@@ -7602,6 +7777,7 @@ namespace mfront {
           const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
           // if the user provided a tangent operator, it won't be
           // overriden
+
           CodeBlock tangentOperator;
           std::ostringstream code;
           code << "if(smt==ELASTIC){\n"

@@ -335,6 +335,10 @@ namespace mfront{
     		     BehaviourData::AT_BEGINNING);
     // tangent operator
     CodeBlock to;
+    if (idsl.getSolver().usesJacobian()) {
+      to.attributes["requires_jacobian_decomposition"] = true;
+      to.attributes["uses_get_partial_jacobian_invert"] = true;
+    }
     to.code = 
       "static_cast<void>(smt);\n"
       "const auto& ss = "+cn+"::getSlidingSystems();\n";

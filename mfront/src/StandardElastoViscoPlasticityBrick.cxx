@@ -255,7 +255,6 @@ namespace mfront {
   void StandardElastoViscoPlasticityBrick::endTreatment() const {
     constexpr const auto uh =
         tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-    const auto& idsl = dynamic_cast<const ImplicitDSLBase&>(this->dsl);
     // value of the porosity at t+theta*dt
     if (this->isCoupledWithPorosityEvolution()) {
       const auto& f =
@@ -270,9 +269,6 @@ namespace mfront {
                  BehaviourData::CREATEORAPPEND, BehaviourData::AT_BEGINNING);
     }
     this->stress_potential->endTreatment(this->bd, this->dsl);
-    const bool requiresAnalyticalJacobian =
-        ((idsl.getSolver().usesJacobian()) &&
-         (!idsl.getSolver().requiresNumericalJacobian()));
     auto i = size_t{};
     for (const auto& f : this->flows) {
       f->endTreatment(this->bd, this->dsl, *(this->stress_potential),

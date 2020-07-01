@@ -23,6 +23,24 @@ bibliography: bibliography.bib
 The page declares the new functionalities of the 3.4 version of the
 `TFEL` project.
 
+# Known incompatibilities
+
+## `getPartialJacobianInvert`
+
+In previous versions, `getPartialJacobianInvert` was implemented as a
+method.
+
+This may broke the code, in the extremely unlikely case, that the call
+to `getPartialJacobianInvert` was explicitly qualified as a method, i.e.
+if it was preceded by the `this` pointer. Hence, the following statement
+is not more valid:
+
+~~~~{.cxx}
+this->getPartialJacobianInvert(Je);
+~~~~
+
+We don't know any implementation affected by this incompatibility.
+
 # Documentation
 
 [This
@@ -33,6 +51,39 @@ describes how to extend the `TFEL/Material` library and the
 # New features of the `TFEL` libraries
 
 ## New features of the `TFEL/Math` library
+
+### The `DerivativeType` metafunction and the `derivative_type` alias
+
+The `DerivativeType` metafunction allows requiring the type of the
+derivative of a mathematical object with respect to another object.
+This metafunction handles units.
+
+
+For example:
+
+~~~~{.cxx}
+DerivativeType<StrainStensor, time>::type de_dt;
+~~~~
+
+declares the variable `de_dt` as the derivative of the a strain tensor
+with respect to scalare which has the unit of at time.
+
+The `derivative_type` alias allows a more concise declaration:
+
+~~~~{.cxx}
+derivative_type<StrainStensor, time> de_dt;
+~~~~
+
+> In `MFront` code blocks, the `StrainRateStensor` `typedef` is
+> automatically defined, so the previous declaration is equivalent
+> to:
+>
+> ~~~~{.cxx}
+> StrainRateStensor de_dt;
+> ~~~~
+>
+> The `derivative_type` is much more general and can be always be
+> used.
 
 ### Scalar Newton-Raphson algorithm
 
@@ -191,9 +242,7 @@ integration points to be treated.
 
 ### Finite strain behaviours
 
-As devised in Section
-@sec:sec:generic_behaviour_interface:finite_strain_behaviours, finite
-strain behaviours are a special case, because the returned stress
+Finite strain behaviours are a special case, because the returned stress
 measure and the returned tangent operator can be chosen at runtime time.
 A specific rotation function is generated for each supported stress
 measure and each supported tangent operator.
@@ -306,6 +355,43 @@ for i in range(0,100):
 
 Without acceleration, this algorithm takes \(78\) iterations. In
 comparison, the accelerated algorithm takes \(9\) iterations.
+
+# `tfel-unicode-filt`
+
+Version 3.3 introduces unicode support in `MFront`. This feature
+significantly improves the readability of `MFront` files, bringing it
+even closer to the mathematical expressions.
+
+When generating `C++` sources, unicode characters are mangled, i.e.
+translated into an acceptable form for the `C++` compiler. This mangled
+form may appears in the compiler error message and are difficult to
+read.
+
+The `tfel-unicode-filt` tool, which is similar to the famous `c++filt`
+tool, can be use to demangle the outputs of the compiler.
+
+For example, the following error message:
+
+~~~~{.bash}
+$ mfront --obuild  --interface=generic ThermalNorton.mfront
+Treating target : all
+In file included from ThermalNorton-generic.cxx:33:0:
+ThermalNorton.mfront: In member function ‘bool tfel::material::ThermalNorton<hypothesis, Type, false>::computeConsistentTangentOperator(tfel::material::ThermalNorton<hypothesis, Type, false>::SMType)’:
+ThermalNorton.mfront:147:75: error: ‘tum_2202__tum_0394__tum_03B5__eltum_2215__tum_2202__tum_0394__T’ was not declared in this scope
+~~~~
+
+can be significantly improved by `tfel-unicode-filt`:
+
+~~~~{.bash}
+$ mfront --obuild  --interface=generic ThermalNorton.mfront 2>&1 | tfel-unicode-filt
+Treating target : all
+In file included from ThermalNorton-generic.cxx:33:0:
+ThermalNorton.mfront: In member function ‘bool tfel::material::ThermalNorton<hypothesis, Type, false>::computeConsistentTangentOperator(tfel::material::ThermalNorton<hypothesis, Type, false>::SMType)’:
+ThermalNorton.mfront:147:75: error: ‘∂Δεel∕∂ΔT’ was not declared in this scope
+~~~~
+
+
+However, the compiler is not aware
 
 # Improvements to the build system
 

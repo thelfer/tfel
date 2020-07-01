@@ -204,10 +204,52 @@ namespace mfront {
   void BehaviourData::CodeBlocksAggregator::set(const CodeBlock& c,
                                                 const Position p,
                                                 const bool b) {
+    auto raise = [](const std::string& m) {
+      tfel::raise("BehaviourData::CodeBlocksAggregator::set: " + m);
+    };
     this->check();
     this->cblock.staticMembers.insert(c.staticMembers.begin(),
                                       c.staticMembers.end());
     this->cblock.members.insert(c.members.begin(), c.members.end());
+    for (const auto& a : c.attributes) {
+      if (this->cblock.attributes.count(a.first) != 0) {
+        auto& ca = this->cblock.attributes[a.first];
+        if (ca.is<bool>()) {
+          if (!a.second.is<bool>()) {
+            raise("unmatched type for attribute '" + a.first + "'");
+          }
+          if (a.second.get<bool>() != ca.get<bool>()) {
+            raise("unmatched value for attribute '" + a.first + "'");
+          }
+        } else if (ca.is<std::string>()) {
+          if (!a.second.is<std::string>()) {
+            raise("unmatched type for attribute '" + a.first + "'");
+          }
+          if (a.second.get<std::string>() != ca.get<std::string>()) {
+            raise("unmatched value for attribute '" + a.first + "'");
+          }
+        } else if (ca.is<std::vector<VariableDescription>>()) {
+          if (!a.second.is<std::vector<VariableDescription>>()) {
+            raise("unmatched type for attribute '" + a.first + "'");
+          }
+          auto& cv = ca.get<std::vector<VariableDescription>>();
+          for (const auto& v :
+               a.second.get<std::vector<VariableDescription>>()) {
+            const auto pv = std::find_if(cv.cbegin(), cv.cend(),
+                                         [&v](const VariableDescription& v2) {
+                                           return v.name == v2.name;
+                                         });
+            if (pv == cv.cend()) {
+              cv.push_back(v);
+            }
+          }
+        } else {
+          raise("unsupported attribute type (internal error)");
+        }
+      } else {
+        this->cblock.attributes.insert(a);
+      }
+    }
     switch (p) {
       case AT_BEGINNING:
         if (!this->cblock_begin.empty()) {

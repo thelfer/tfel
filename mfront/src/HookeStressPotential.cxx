@@ -327,6 +327,10 @@ namespace mfront {
       const auto& idsl = dynamic_cast<const ImplicitDSLBase&>(dsl);
       bd.checkVariablePosition("eel", "IntegrationVariable", 0u);
       CodeBlock to;
+      if (idsl.getSolver().usesJacobian()) {
+        to.attributes["requires_jacobian_decomposition"] = true;
+        to.attributes["uses_get_partial_jacobian_invert"] = true;
+      }
       // modelling hypotheses supported by the behaviour
       const auto bmh = bd.getModellingHypotheses();
       if ((bd.getAttribute(BehaviourDescription::requiresStiffnessTensor,

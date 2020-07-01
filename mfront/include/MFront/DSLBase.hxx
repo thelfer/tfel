@@ -100,9 +100,10 @@ namespace mfront {
          */
     struct MFRONT_VISIBILITY_EXPORT WordAnalyser {
       /*!
+       * \param[in] cb : code block being treated
        * \param[in] k : the current word
        */
-      virtual void exe(const std::string&) = 0;
+      virtual void exe(CodeBlock&, const std::string&) = 0;
       /*!
        * destructor
        */

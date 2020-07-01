@@ -410,6 +410,10 @@ namespace mfront {
 
   VariableDescription::~VariableDescription() = default;
 
+  SupportedTypes::TypeSize getTypeSize(const VariableDescription& v) {
+    return v.getTypeSize();
+  } // end of getTypeSize
+
   bool hasBounds(const VariableDescription& v) {
     return v.hasBounds();
   }  // end of hasBounds
@@ -554,6 +558,10 @@ namespace mfront {
   }  // end of SupportedTypes::getNumberOfVariables
 
   VariableDescriptionContainer::~VariableDescriptionContainer() = default;
+
+  SupportedTypes::TypeSize getTypeSize(const VariableDescriptionContainer& c) {
+    return c.getTypeSize();
+  } // end of getTypeSize
 
   bool hasBounds(const VariableDescriptionContainer& c) {
     for (const auto& v : c) {

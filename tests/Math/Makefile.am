@@ -10,6 +10,7 @@ if WITH_TESTS
 testdir = $(pkgdatadir)/tests/Math
 test_PROGRAMS = hill                                     \
 		promote                                  \
+		derivative_type                          \
 		power                                    \
 		qt                                       \
 		qt2                                      \
@@ -81,6 +82,7 @@ LDADD = -L$(top_builddir)/src/Math      \
 
 power_SOURCES                 = power.cxx
 promote_SOURCES               = promote.cxx
+derivative_type_SOURCES       = derivative_type.cxx
 qt_SOURCES                    = qt.cxx
 qt2_SOURCES                   = qt2.cxx
 qt3_SOURCES                   = qt3.cxx

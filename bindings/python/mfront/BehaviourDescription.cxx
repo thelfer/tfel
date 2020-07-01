@@ -129,15 +129,14 @@ getBooleanAttribute4(const mfront::BehaviourDescription& d,
   return d.getAttribute<bool>(h,n,v);
 }
 
-static bool
-hasAttribute(const mfront::BehaviourDescription& d,
-	     const mfront::BehaviourDescription::Hypothesis h,
-	     const std::string& n){
+static bool hasAttribute(const mfront::BehaviourDescription& d,
+                         const mfront::BehaviourDescription::Hypothesis h,
+                         const std::string& n) {
   return d.hasAttribute(h,n);
 }
 
 static void setStrainMeasure(mfront::BehaviourDescription& d,
-			     const std::string& s){
+                             const std::string& s) {
   if(s=="Linearised"){
     d.setStrainMeasure(mfront::BehaviourDescription::LINEARISED);
   } else if (s=="Green-Lagrange"){
@@ -198,7 +197,7 @@ void declareBehaviourDescription(){
 	 static_cast<bool (BehaviourDescription::*)(const std::string&) const>(&BehaviourDescription::hasAttribute))
     .def("getSymmetryType",&BehaviourDescription::getSymmetryType)
     .def("getElasticSymmetryType",&BehaviourDescription::getElasticSymmetryType)
-    .def("hasAttribute",hasAttribute)
+    .def("hasAttribute",::hasAttribute)
     .def("getUnsignedShortAttribute",getUnsignedShortAttribute)
     .def("getStringAttribute",getStringAttribute)
     .def("getBooleanAttribute",getBooleanAttribute)

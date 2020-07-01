@@ -2,7 +2,7 @@
 ACLOCAL_AMFLAGS = -I m4
 SUBDIRS = include src mfront mfront-query mfm mfront-doc  \
 	  mtest tests mfm bindings cmake docs tfel-config \
-          mfm-test-generator
+          mfm-test-generator tfel-unicode-filt
 
 if !TFEL_WIN
 SUBDIRS += tfel-doc tfel-check

@@ -223,6 +223,12 @@ namespace mfront {
   };  // end of struct VariableDescription
 
   /*!
+   * \return the size of the variable
+   * \param[in] v: variable description
+   */
+  MFRONT_VISIBILITY_EXPORT SupportedTypes::TypeSize getTypeSize(
+      const VariableDescription&);
+  /*!
    * \return true if the variable has bounds.
    * \param[in] v: variable description
    * \note this is a simple wrapper around the `hasBounds` method
@@ -361,6 +367,12 @@ namespace mfront {
   };  // end of struct VariableDescriptionContainer
 
   /*!
+   * \return the sum of the sizes of all the variables
+   * \param[in] c: variable description container
+   */
+  MFRONT_VISIBILITY_EXPORT SupportedTypes::TypeSize getTypeSize(
+      const VariableDescriptionContainer&);
+  /*!
    * \return true if one of the variables has bounds.
    * \param[in] c: variable description container
    */
@@ -396,7 +408,7 @@ namespace mfront {
       std::map<std::string, std::string>&, const VariableDescriptionContainer&);
 
   //! a simple alias for backward compatibility
-  typedef VariableDescriptionContainer VarContainer;
+  using VarContainer = VariableDescriptionContainer;
 
 }  // end of namespace mfront
 
