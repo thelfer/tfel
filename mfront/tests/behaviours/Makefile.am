@@ -36,6 +36,10 @@ MFRONTS= DDIF2.mfront                                                      \
          ImplicitNorton2.mfront                                            \
          ImplicitNorton3.mfront                                            \
          ImplicitNorton4.mfront                                            \
+         ImplicitNorton5.mfront                                            \
+         ImplicitNorton6.mfront                                            \
+         ThermalNorton.mfront                                            \
+         ThermalNorton2.mfront                                            \
          ImplicitFiniteStrainNorton.mfront                                 \
          ImplicitNorton_Broyden.mfront                                     \
          ImplicitNorton_Broyden2.mfront                                    \

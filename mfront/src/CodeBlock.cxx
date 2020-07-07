@@ -26,6 +26,8 @@ namespace mfront{
       used_implicit_equations_derivatives_with_respect_to_gradients_or_external_state_variables =
           "used_implicit_equations_derivatives_with_respect_to_gradients_or_"
           "external_state_variables";
+  const char* const CodeBlock::used_jacobian_invert_blocks =
+      "used_jacobian_invert_blocks";
 
   void CodeBlock::throwUnmatchedAttributeType(const std::string& n) {
     tfel::raise(

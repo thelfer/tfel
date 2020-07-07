@@ -19,6 +19,7 @@ test_PROGRAMS = hill                                     \
 		conj                                     \
 		lu                                       \
 		lu2                                      \
+		lu3                                      \
 		invert                                   \
 		invert2                                  \
 		tinymatrixsolve                          \
@@ -235,6 +236,15 @@ lu2_LDADD     = -L$(top_builddir)/src/Tests        \
 	        -lTFELMathParser -lTFELMathKriging \
 		-lTFELMath  -lTFELUtilities        \
 		-lTFELException	-lTFELTests
+
+lu3_SOURCES   = lu3.cxx
+lu3_LDADD     = -L$(top_builddir)/src/Tests        \
+		        -L$(top_builddir)/src/Math         \
+	            -L$(top_builddir)/src/Utilities    \
+	            -L$(top_builddir)/src/Exception    \
+	            -lTFELMathParser -lTFELMathKriging \
+		        -lTFELMath  -lTFELUtilities        \
+		        -lTFELException	-lTFELTests
 
 qr_SOURCES    = qr.cxx
 qr_LDADD      = -L$(top_builddir)/src/Tests        \

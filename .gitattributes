@@ -2988,6 +2988,8 @@ mfront/tests/behaviours/ImplicitNorton.mfront -text
 mfront/tests/behaviours/ImplicitNorton2.mfront -text
 mfront/tests/behaviours/ImplicitNorton3.mfront -text
 mfront/tests/behaviours/ImplicitNorton4.mfront -text
+mfront/tests/behaviours/ImplicitNorton5.mfront -text
+mfront/tests/behaviours/ImplicitNorton6.mfront -text
 mfront/tests/behaviours/ImplicitNorton_Broyden.mfront -text
 mfront/tests/behaviours/ImplicitNorton_Broyden2.mfront -text
 mfront/tests/behaviours/ImplicitNorton_LevenbergMarquardt.mfront -text
@@ -3085,6 +3087,8 @@ mfront/tests/behaviours/StrainHardeningCreep2.mfront -text
 mfront/tests/behaviours/StrainHardeningCreep3.mfront -text
 mfront/tests/behaviours/T91ViscoplasticBehaviour.mfront -text
 mfront/tests/behaviours/TemperatureUpdateOnSubSteppingCheck.mfront -text
+mfront/tests/behaviours/ThermalNorton.mfront -text
+mfront/tests/behaviours/ThermalNorton2.mfront -text
 mfront/tests/behaviours/ThermoElasticity.mfront -text
 mfront/tests/behaviours/Tvergaard.mfront -text
 mfront/tests/behaviours/UnilateralMazars.mfront -text
@@ -5521,6 +5525,8 @@ mfront/tests/behaviours/generic/finitestrainsinglecrystal_numericaljacobian-159.
 mfront/tests/behaviours/generic/implicitnorton-planestress.mtest -text
 mfront/tests/behaviours/generic/implicitnorton.mtest -text
 mfront/tests/behaviours/generic/implicitnorton2.mtest -text
+mfront/tests/behaviours/generic/implicitnorton5.mtest -text
+mfront/tests/behaviours/generic/implicitnorton6.mtest -text
 mfront/tests/behaviours/generic/isotropiclinearswelling.mtest -text
 mfront/tests/behaviours/generic/isotropiclinearswelling2.mtest -text
 mfront/tests/behaviours/generic/isotropicvolumeswelling.mtest -text
@@ -6842,6 +6848,7 @@ tests/Math/levenberg-marquardt3.cxx -text
 tests/Math/levenberg-marquardt4.cxx -text
 tests/Math/lu.cxx -text
 tests/Math/lu2.cxx -text
+tests/Math/lu3.cxx -text
 tests/Math/newton_raphson.cxx -text
 tests/Math/parser.cxx -text
 tests/Math/parser10.cxx -text

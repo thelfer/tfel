@@ -232,10 +232,10 @@ namespace mtest {
   }
 
   void SingleStructureScheme::completeInitialisation() {
-    SchemeBase::completeInitialisation();
     tfel::raise_if(this->b == nullptr,
-                   "MTest::completeInitialisation: "
+                   "SingleStructureScheme::completeInitialisation: "
                    "no behaviour defined");
+    SchemeBase::completeInitialisation();
     // check if material properties and external state variables are declared
     const auto mpnames = this->b->getMaterialPropertiesNames();
     const auto esvnames = this->b->getExternalStateVariablesNames();
@@ -258,6 +258,9 @@ namespace mtest {
 
   StiffnessMatrixType SingleStructureScheme::getDefaultStiffnessMatrixType()
       const {
+    tfel::raise_if(this->b == nullptr,
+                   "SingleStructureScheme::getDefaultStiffnessMatrixType: "
+                   "no behaviour defined");
     return this->b->getDefaultStiffnessMatrixType();
   }  // end of SingleStructureScheme::getDefaultStiffnessMatrixType
 

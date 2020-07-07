@@ -965,22 +965,23 @@ namespace mfront {
   }  // end of BehaviourDSLCommon::treatModel
 
   void BehaviourDSLCommon::treatUnsupportedCodeBlockOptions(const CodeBlockOptions& o) {
-    if (!o.untreated.empty()) {
-      std::ostringstream msg;
-      if (o.untreated.size() == 1u) {
-        msg << "option '" << o.untreated[0].value << "' is invalid";
-      } else {
-        msg << "the";
-        for (const auto& opt : o.untreated) {
-          msg << " '" << opt.value << "'";
-        }
-        msg << " options are invalid";
-      }
-      this->throwRuntimeError(
-          "BehaviourDSLCommon::"
-          "treatUnsupportedCodeBlockOptions",
-          msg.str());
+    if (o.untreated.empty()) {
+      return;
     }
+    std::ostringstream msg;
+    if (o.untreated.size() == 1u) {
+      msg << "option '" << o.untreated[0].value << "' is invalid";
+    } else {
+      msg << "the";
+      for (const auto& opt : o.untreated) {
+        msg << " '" << opt.value << "'";
+      }
+      msg << " options are invalid";
+    }
+    this->throwRuntimeError(
+        "BehaviourDSLCommon::"
+        "treatUnsupportedCodeBlockOptions",
+        msg.str());
   }  // end of BehaviourDSLCommon::treatUnsupportedCodeBlockOptions
 
   void BehaviourDSLCommon::addStaticVariableDescription(const StaticVariableDescription& v) {
@@ -2113,35 +2114,39 @@ namespace mfront {
     CodeBlockOptions o;
     this->readCodeBlockOptions(o, true);
     if (this->mb.getBehaviourType() == BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
-      bool found = false;
-      if (o.untreated.size() != 1u) {
-        ostringstream msg;
-        msg << "tangent operator type is undefined. Valid tanget operator type are :\n";
-        for (const auto& to : getFiniteStrainBehaviourTangentOperatorFlags()) {
-          msg << "- " << convertFiniteStrainBehaviourTangentOperatorFlagToString(to) << " : "
-              << getFiniteStrainBehaviourTangentOperatorDescription(to) << '\n';
+      auto po = o.untreated.begin();
+      const auto poe = o.untreated.end();
+      auto ktype = std::string{};
+      while (po != poe) {
+        const auto& opt = *po;
+        if (opt.flag != Token::Standard) {
+          continue;
         }
-        this->throwRuntimeError("BehaviourDSLCommon::treatTangentOperator", msg.str());
-      }
-      if (o.untreated[0].flag != Token::Standard) {
-        this->throwRuntimeError("BehaviourDSLCommon::treatTangentOperator",
-                                "invalid option '" + o.untreated[0].value + "'");
-      }
-      const auto& ktype = o.untreated[0].value;
-      for (const auto& to : getFiniteStrainBehaviourTangentOperatorFlags()) {
-        if (ktype == convertFiniteStrainBehaviourTangentOperatorFlagToString(to)) {
-          found = true;
+        for (const auto& to : getFiniteStrainBehaviourTangentOperatorFlags()) {
+          if (opt.value ==
+              convertFiniteStrainBehaviourTangentOperatorFlagToString(to)) {
+            ktype = opt.value;
+            break;
+          }
+        }
+        if (!ktype.empty()) {
+          o.untreated.erase(po);
           break;
         }
+        ++po;
       }
-      if (!found) {
+      if (ktype.empty()) {
         ostringstream msg;
-        msg << "invalid tangent operator type '" + ktype + "'. Valid tangent operator type are :\n";
+        msg << "Undefined tangent operator type '" + ktype +
+                   "'. Valid tangent operator type are :\n";
         for (const auto& to : getFiniteStrainBehaviourTangentOperatorFlags()) {
-          msg << "- " << convertFiniteStrainBehaviourTangentOperatorFlagToString(to) << " : "
-              << getFiniteStrainBehaviourTangentOperatorDescription(to) << '\n';
+          msg << "- "
+              << convertFiniteStrainBehaviourTangentOperatorFlagToString(to)
+              << " : " << getFiniteStrainBehaviourTangentOperatorDescription(to)
+              << '\n';
         }
-        this->throwRuntimeError("BehaviourDSLCommon::treatTangentOperator", msg.str());
+        this->throwRuntimeError("BehaviourDSLCommon::treatTangentOperator",
+                                msg.str());
       }
       this->readTangentOperatorCodeBlock(
           o, std::string(BehaviourData::ComputeTangentOperator) + "-" + ktype);
@@ -2151,7 +2156,6 @@ namespace mfront {
         }
       }
     } else {
-      this->treatUnsupportedCodeBlockOptions(o);
       this->readTangentOperatorCodeBlock(o,
                                          BehaviourData::ComputeTangentOperator);
       for (const auto& h : o.hypotheses) {
@@ -2162,6 +2166,7 @@ namespace mfront {
 
   void BehaviourDSLCommon::readTangentOperatorCodeBlock(
       const CodeBlockOptions& o, const std::string& n) {
+    this->treatUnsupportedCodeBlockOptions(o);
     this->readCodeBlock(*this, o, n,
                         &BehaviourDSLCommon::tangentOperatorVariableModifier,
                         true);

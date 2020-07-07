@@ -52,6 +52,20 @@ describes how to extend the `TFEL/Material` library and the
 
 ## New features of the `TFEL/Math` library
 
+### Solving multiple linear systems with `TinyMatrixSolve`
+
+~~~~{.cxx}
+  tfel::math::tmatrix<4, 4, T> m = {0, 2,  0,  1,  //
+                                    2, 2,  3,  2,  //
+                                    4, -3, 0,  1,  //
+                                    6, 1,  -6, -5};
+  tfel::math::tmatrix<4, 2, T> b = {0,  0,    //
+                                    -2, -12,  //
+                                    -7, -42,  //
+                                    6,  36};
+  tfel::math::TinyMatrixSolve<4u, T>::exe(m, b);
+~~~~
+
 ### The `DerivativeType` metafunction and the `derivative_type` alias
 
 The `DerivativeType` metafunction allows requiring the type of the

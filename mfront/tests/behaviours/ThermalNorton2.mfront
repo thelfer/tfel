@@ -1,0 +1,154 @@
+@DSL ImplicitGenericBehaviour;
+@Behaviour ThermalNorton2;
+@Author Thomas Helfer;
+@Date 24 / 06 / 2019;
+
+@Gradient StrainStensor εᵗᵒ;
+εᵗᵒ.setGlossaryName("Strain");
+
+@ThermodynamicForce StressStensor σ;
+σ.setGlossaryName("Stress");
+
+@TangentOperatorBlocks{∂σ∕∂Δεᵗᵒ,∂σ∕∂ΔT};
+
+@StateVariable StrainStensor εᵉˡ;
+εᵉˡ.setGlossaryName("ElasticStrain");
+
+@StateVariable strain p;
+p.setGlossaryName("EquivalentViscoplasticStrain");
+
+@Parameter real ν = 0.3;
+ν.setGlossaryName("PoissonRatio");
+
+@Parameter strainrate ∂ₜε₀ = 1.e-4;
+∂ₜε₀.setEntryName("ReferenceStrainRate");
+
+@Parameter strainrate σ₀ = 100e6;
+σ₀.setEntryName("ReferenceStress");
+
+@Parameter strainrate nn = 4.2;
+nn.setEntryName("NortonExponent");
+
+@Parameter temperature Tₐ = 500;
+Tₐ.setEntryName("ActivationTemperature");
+
+//! Norton exponent
+@LocalVariable strainrate A;
+//! Norton exponent
+@LocalVariable real ∂A∕∂T;
+
+//! thermal expansion at the end of the time step
+@LocalVariable thermalexpansion α_ₑₜₛ;
+/*!
+ * derivative of the thermal expansion with respect
+ * to the temperature at the end of the time step
+ */
+@LocalVariable real ∂α_ₑₜₛ∕∂T;
+
+//! First Lamé coefficient at the middle of the time step
+@LocalVariable stress λ;
+//! Second Lamé coefficient at the middle of the time step
+@LocalVariable stress μ;
+//! First Lamé coefficient at the end of the time step
+@LocalVariable stress λ_ₑₜₛ;
+/*!
+ * Derivative of the first Lamé coefficient with respect
+ * to the temperature at the end of the time step
+ */
+@LocalVariable real ∂λ_ₑₜₛ∕∂T;
+
+//! Second Lamé coefficient at the end of the time step
+@LocalVariable stress μ_ₑₜₛ;
+/*!
+ * Derivative of the second Lamé coefficient with respect
+ * to the temperature at the end of the time step
+ */
+@LocalVariable real ∂μ_ₑₜₛ∕∂T;
+//! Thermal expansion
+@LocalVariable StrainStensor Δεᵗʰ;
+//! von Mises stress
+@LocalVariable stress σₑ;
+
+@StaticVariable temperature Tʳᵉᶠ = 293.15;
+
+@InitLocalVariables {
+  auto young_modulus = [](const temperature Tᵛ) {
+    constexpr const auto E₀ = 2.1421e+4 ⋅ 1e7;
+    constexpr const auto E₁ = -3.8654 ⋅ 1e7;
+    constexpr const auto E₂ = -3.1636e-3 ⋅ 1e7;
+    const auto Tᶜ = Tᵛ - 273.15;
+    const auto Eᵛ = (E₂ ⋅ Tᶜ + E₁) ⋅ Tᶜ + E₀;
+    const auto ∂Eᵛ∕∂T = 2 ⋅ E₂ ⋅ Tᶜ + E₁;
+    return make_tuple(Eᵛ,∂Eᵛ∕∂T);
+  };
+  auto mean_thermal_expansion_coefficient = [](const temperature Tᵛ) {
+    constexpr const real α₀ = 9.038 ⋅ 1e-6;
+    constexpr const real α₁ = 3.014e-3 ⋅ 1e-6;
+    constexpr const real α₂ = 4.959e-7 ⋅ 1e-6;
+    const real Tᶜ = Tᵛ - 273.15;
+    const auto αᵛ = (α₂ ⋅ Tᶜ + α₁) ⋅ Tᶜ + α₀;
+    const auto ∂αᵛ∕∂T = 2 ⋅ α₂ ⋅ Tᶜ + α₁;
+    return make_tuple(αᵛ,∂αᵛ∕∂T);
+  };
+  const auto T_ = T + θ ⋅ ΔT;
+  // elastic coefficients
+  const auto E = get<0>(young_modulus(T_));
+  λ = computeLambda(E, ν);
+  μ = computeMu(E, ν);
+  auto E_ₑₜₛ = stress{};
+  auto ∂E_ₑₜₛ∕∂T = real{};
+  std::tie(E_ₑₜₛ,∂E_ₑₜₛ∕∂T) = young_modulus(T + ΔT);
+  λ_ₑₜₛ = computeLambda(E_ₑₜₛ, ν);
+  μ_ₑₜₛ = computeMu(E_ₑₜₛ, ν);
+  ∂λ_ₑₜₛ∕∂T = ν / ((1 + ν) ⋅ (1 - 2 ⋅ ν)) ⋅ ∂E_ₑₜₛ∕∂T;
+  ∂μ_ₑₜₛ∕∂T = ∂E_ₑₜₛ∕∂T / (2 ⋅ (1 + ν));
+  // thermal expansion
+  const auto α = get<0>(mean_thermal_expansion_coefficient(T));
+  std::tie(α_ₑₜₛ,∂α_ₑₜₛ∕∂T) = mean_thermal_expansion_coefficient(T + ΔT);
+  Δεᵗʰ = (α_ₑₜₛ ⋅ (T + ΔT - Tʳᵉᶠ) - α ⋅ (T - Tʳᵉᶠ)) ⋅ I₂;
+  // viscoplastic coefficients
+  A = ∂ₜε₀ ⋅ exp(-Tₐ / T_);
+  ∂A∕∂T = θ ⋅ A ⋅ Tₐ / (T_⋅T_);
+}
+
+@ComputeThermodynamicForces {
+  σ = λ ⋅ trace(εᵉˡ) ⋅ I₂ + 2 ⋅ μ ⋅ εᵉˡ;
+}
+
+@Integrator {
+  constexpr const auto Mᵉ = Stensor4::M();
+  constexpr const auto eeps = 1.e-14;
+  const auto seps = 2 ⋅ μ ⋅ eeps;
+  σₑ = sigmaeq(σ);
+  const auto iσₑ = 1 / max(σₑ, seps);
+  const auto n = 3 ⋅ deviator(σ) ⋅ (iσₑ / 2);
+  // elastic part
+  fεᵉˡ += Δp ⋅ n + Δεᵗʰ - Δεᵗᵒ;
+  // viscoplastic part
+  const auto vᵖ = A ⋅ pow(σₑ / σ₀, nn);
+  const auto ∂vᵖ∕∂σₑ = nn ⋅ vᵖ ⋅ iσₑ;
+  fp -= Δt ⋅ vᵖ;
+  // jacobian part
+  ∂fεᵉˡ∕∂Δεᵉˡ += 2 ⋅ μ ⋅ θ ⋅ Δp ⋅ iσₑ ⋅ (Mᵉ - (n ⊗ n));
+  ∂fεᵉˡ∕∂Δp = n;
+  ∂fp∕∂Δεᵉˡ = -2 ⋅ μ ⋅ θ ⋅ ∂vᵖ∕∂σₑ ⋅ Δt ⋅ n;
+}  // end of @Integrator
+
+// Note: at this stage, the elastic strain has been updated
+// to its value at the end of the time step
+@ComputeFinalThermodynamicForces {
+  σ = λ_ₑₜₛ ⋅ trace(εᵉˡ) ⋅ I₂ + 2 ⋅ μ_ₑₜₛ ⋅ εᵉˡ;
+}
+
+@TangentOperator {
+  const auto De = λ_ₑₜₛ ⋅ (I₂ ⊗ I₂) + 2 ⋅ μ_ₑₜₛ ⋅ I₄;
+  ∂fεᵉˡ∕∂Δεᵗᵒ = -I₄;
+  const auto ∂Δεᵉˡ∕∂Δεᵗᵒ = -iJ_εᵉˡ_εᵉˡ * ∂fεᵉˡ∕∂Δεᵗᵒ;
+  ∂σ∕∂Δεᵗᵒ = De ⋅ ∂Δεᵉˡ∕∂Δεᵗᵒ;
+  // derivative with respect to the temperature
+  ∂fp∕∂ΔT = -Δt ⋅ ∂A∕∂T ⋅ pow(σₑ / σ₀, nn);
+  ∂fεᵉˡ∕∂ΔT = (∂α_ₑₜₛ∕∂T⋅ (T + ΔT - Tʳᵉᶠ) + α_ₑₜₛ) ⋅ I₂;
+  const auto ∂Δεᵉˡ∕∂ΔT = -((iJ_εᵉˡ_εᵉˡ * ∂fεᵉˡ∕∂ΔT) + iJ_εᵉˡ_p ⋅ ∂fp∕∂ΔT);
+  const auto ∂De∕∂T = ∂λ_ₑₜₛ∕∂T ⋅ (I₂ ⊗ I₂) + 2 ⋅ ∂μ_ₑₜₛ∕∂T ⋅ I₄;
+  ∂σ∕∂ΔT = De ⋅ ∂Δεᵉˡ∕∂ΔT + ∂De∕∂T ⋅ εᵉˡ;
+}

@@ -140,8 +140,10 @@ EXTRA_DIST = CMakeLists.txt                                                     
              lorentz2.mtest                                                            \
              tvergaard.mtest                                                           \
              implicitnorton.mtest                                                      \
-             implicitnorton2.mtest                                                     \
              implicitnorton-planestress.mtest                                          \
+             implicitnorton2.mtest                                                     \
+             implicitnorton5.mtest                                                     \
+             implicitnorton6.mtest                                                     \
              chaboche.mtest                                                            \
              chaboche2.mtest							       \
              axialgrowth.mtest							       \

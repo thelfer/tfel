@@ -56,6 +56,10 @@ set(mfront_tests_SOURCES
   ImplicitNorton2
   ImplicitNorton3
   ImplicitNorton4
+  ImplicitNorton5
+  ImplicitNorton6
+  ThermalNorton
+  ThermalNorton2
   ImplicitFiniteStrainNorton
   ImplicitNorton_Broyden
   ImplicitNorton_Broyden2
@@ -429,6 +433,8 @@ test_generic(lorentz2)
 test_generic(implicitnorton)
 test_generic(implicitnorton2)
 test_generic(implicitnorton-planestress)
+test_generic(implicitnorton5)
+test_generic(implicitnorton6)
 # test_generic(implicitnorton-levenbergmarquardt)
 # test_generic(implicitnorton4-planestress)
 # test_generic(implicitorthotropiccreep2-planestress)

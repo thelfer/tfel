@@ -16,8 +16,10 @@
 
 #ifdef __cplusplus
 #include <cstdint>
+#include <cstddef>
 #else
 #include <stdint.h>
+#include <stddef.h>
 #endif /* __cplusplus */
 
 #if defined _WIN32 || defined _WIN64 || defined __CYGWIN__

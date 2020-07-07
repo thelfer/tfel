@@ -169,15 +169,6 @@ namespace mfront {
      */
     virtual void writeComputePartialJacobianInvert(std::ostream&,
                                                    const Hypothesis) const;
-    /*!
-     * \brief write the `getIntegrationVariablesDerivatives` methods. Those
-     * methods may be used to compute the consistent tangent operator.
-     * \param[in] os: output stream
-     * \param[in] h: modelling hypothesis
-     */
-    virtual void writeGetIntegrationVariablesDerivatives(
-        std::ostream&, const Hypothesis) const;
-
     //! \brief treat the `@Theta` keyword
     virtual void treatTheta();
     //! \brief treat the `@IterMax` keyword
