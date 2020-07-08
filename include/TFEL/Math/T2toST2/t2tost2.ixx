@@ -445,8 +445,8 @@ namespace tfel{
 
     template <typename T2toST2Type>
     typename std::enable_if<
-        tfel::meta::Implements<T2toST2Type, T2toST2Concept>::cond &&
-            T2toST2Traits<T2toST2Type>::dime == 1u,
+        ((tfel::meta::Implements<T2toST2Type, T2toST2Concept>::cond) &&
+         (T2toST2Traits<T2toST2Type>::dime == 1u)),
         t2tost2<1u, T2toST2NumType<T2toST2Type>>>::type
     change_basis(const T2toST2Type& s,
                  const rotation_matrix<T2toST2NumType<T2toST2Type>>&) {

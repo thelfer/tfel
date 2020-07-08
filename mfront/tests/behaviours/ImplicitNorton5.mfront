@@ -56,8 +56,8 @@ p.setGlossaryName("EquivalentViscoplasticStrain");
 }
 			  
 @Integrator{
-  constexpr const auto Mᵉ = Stensor4::M();
   constexpr const auto eeps = 1.e-14;
+  constexpr const auto Mᵉ = Stensor4::M();
   const auto seps = 2 ⋅ μ ⋅ eeps;
   const real A = 8.e-67;
   const real nn = 8.2;
