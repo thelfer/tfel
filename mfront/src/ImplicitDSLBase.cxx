@@ -1182,16 +1182,22 @@ namespace mfront {
         }
       }
     }
+    std::set<std::string>
+        gradients_or_external_state_variables_in_tangent_operator_blocks;
     for (const auto& to : mb.getTangentOperatorBlocks()) {
-      this->reserveName("GetIntegrationVariablesDerivatives_" + to.second.name);
-      this->reserveName("getIntegrationVariablesDerivatives_" + to.second.name);
-      this->reserveName("dfzeros_dd" + to.second.name);
+      gradients_or_external_state_variables_in_tangent_operator_blocks.insert(
+          to.second.name);
+    }
+    for (const auto& vn :
+         gradients_or_external_state_variables_in_tangent_operator_blocks) {
+      this->reserveName("GetIntegrationVariablesDerivatives_" + vn);
+      this->reserveName("getIntegrationVariablesDerivatives_" + vn);
+      this->reserveName("dfzeros_dd" + vn);
       std::set<std::string> implicit_equation_derivatives;
       for (const auto h : this->mb.getDistinctModellingHypotheses()) {
         const auto& d = this->mb.getBehaviourData(h);
         for (const auto& v : d.getIntegrationVariables()) {
-          implicit_equation_derivatives.insert("df" + v.name + "_dd" +
-                                               to.second.name);
+          implicit_equation_derivatives.insert("df" + v.name + "_dd" + vn);
         }
       }
       for (const auto& ieq_derivative : implicit_equation_derivatives) {
@@ -1366,10 +1372,12 @@ namespace mfront {
       if (flag1 == SupportedTypes::SCALAR) {
         if (flag2 == SupportedTypes::SCALAR) {
           os << "auto " << d.derivative_name << "= [&" << d.matrix_name
-             << "](const unsigned short idx){\n"
+             << "](const unsigned short idx) "
+             << "-> tfel::math::derivative_type"
+             << "<" << v1.type << ", " << v2.type << ">&{\n"
              << "return " << d.matrix_name << "(" << dr << "+idx, " << dc
              << ");\n"
-             << "}\n\n";
+             << "};\n";
         } else if (flag2 == SupportedTypes::TVECTOR) {
           // Le résultat est un vecteur, une ligne dans la matrice
           // jacobienne
@@ -1378,7 +1386,7 @@ namespace mfront {
              << "return typename tfel::math::TVectorFromTinyMatrixRowView2<N,"
              << nr << "," << nc << "," << dr << "," << dc << ",real>::type("
              << d.matrix_name << ",idx,0);\n"
-             << "}\n\n";
+             << "};\n";
         } else {
           // Le résultat est un tenseur, une ligne dans la matrice
           // jacobienne
@@ -1387,7 +1395,7 @@ namespace mfront {
              << "return typename tfel::math::StensorFromTinyMatrixRowView2<N,"
              << nr << "," << nc << "," << dr << "," << dc << ",real>::type("
              << d.matrix_name << ",idx,0);\n"
-             << "}\n\n";
+             << "};\n";
         }
       } else if (flag1 == SupportedTypes::TVECTOR) {
         if (flag2 == SupportedTypes::SCALAR) {
@@ -1399,14 +1407,14 @@ namespace mfront {
              << "tfel::math::StensorFromTinyMatrixColumnView2<N," << nr << ","
              << nc << "," << dr << "," << dc << ",real>::type(" << d.matrix_name
              << ",idx,0);\n"
-             << "}\n\n";
+             << "};\n";
         } else if (flag2 == SupportedTypes::TVECTOR) {
           os << "auto " << d.derivative_name << "= [&" << d.matrix_name
              << "](const unsigned short idx){\n"
              << "return typename tfel::math::TMatrixFromTinyMatrixView2<N,"
              << nr << "," << nc << "," << dr << "," << dc << ",real>::type("
              << d.matrix_name << ",idx,0u);\n"
-             << "}\n\n";
+             << "};\n";
         } else {
           this->throwRuntimeError(
               "ImplicitDSLBase::writeDerivativeView",
@@ -2416,7 +2424,7 @@ namespace mfront {
       }
       const auto v2 = VariableDescription{"StrainStensor", "\u03B5\u1D57\u1D52",
                                           "eto", 1u, 0u};
-      os << "struct GetPartialJacobianInvert{\n"
+      os << "struct TFEL_VISIBILITY_LOCAL GetPartialJacobianInvert{\n"
          << "GetPartialJacobianInvert(" << this->mb.getClassName() << "& b,\n"
          << "const tfel::math::TinyPermutation<" << nivs << ">& p)\n"
          << ": behaviour(b),\n"
@@ -2551,7 +2559,7 @@ namespace mfront {
            return rhs_os.str();
          }();
          const auto m = "dfzeros_dd" + givd.name;
-         os << "struct GetIntegrationVariablesDerivatives_" << givd.name
+         os << "struct TFEL_VISIBILITY_LOCAL GetIntegrationVariablesDerivatives_" << givd.name
             << "{\n"
             << "GetIntegrationVariablesDerivatives_" << givd.name << "("
             << this->mb.getClassName() << "& b,\n"
@@ -2600,14 +2608,13 @@ namespace mfront {
              if (v.arraySize == 1u) {
                os << "integration_variable_derivative_d" << v.name << "_dd"
                   << givd.name << " = integration_variable_derivative_d"
-                  << v.name << "_dd" << givd.name << "_view";
-               os << ";\n";
+                  << v.name << "_dd" << givd.name << "_view;\n";
              } else {
                os << "for(typename " << rhs_type
                   << "::size_type idx; idx!=" << v.arraySize << "; ++idx){\n"
                   << "integration_variable_derivative_d" << v.name << "_dd"
                   << givd.name << "(idx) = integration_variable_derivative_d"
-                  << v.name << "_dd" << givd.name << "_view(idx)"
+                  << v.name << "_dd" << givd.name << "_view(idx);"
                   << "}\n";
              }
            }
