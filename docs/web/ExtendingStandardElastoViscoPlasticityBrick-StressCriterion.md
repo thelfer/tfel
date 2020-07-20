@@ -23,7 +23,7 @@
 \newcommand{\dtot}{{{\mathrm{d}}}}
 \newcommand{\paren}[1]{{\left(#1\right)}}
 
-This document gives some insights of how a user may extend the
+This document gives some insights on how a user may extend the
 `StandardElastoViscoPlasticity` brick by adding a new stress criterion.
 
 The `StandardElastoViscoPlasticity` brick is fully described
@@ -117,7 +117,7 @@ $ mv StressCriterionTemplate.ixx \
 $ mv StressCriterionTest.mfront \
      tests/test1/Green1972PerfectPlasticity.mfront
 $ mv StressCriterionTest_NumericalJacobian.mfront \
-     tests/test2/Green1972PerfectPlasticity_NumericalJacobian.mfront
+     tests/test1/Green1972PerfectPlasticity_NumericalJacobian.mfront
 ~~~~
 
 The working directory is thus organized as follows:
@@ -472,7 +472,7 @@ replaced by the appropriate values.
 
 ## Adding the stress criterion options
 
-In our case, one shall only implement the `getOptions` methods to
+In our case, one shall only implement the `getOptions` method to
 declare the `F` and `C` coefficients.
 
 ~~~~{.cxx}

@@ -22,6 +22,7 @@
 #include "MFront/BehaviourBrick/Cazacu2004IsotropicStressCriterion.hxx"
 #include "MFront/BehaviourBrick/Cazacu2004OrthotropicStressCriterion.hxx"
 #include "MFront/BehaviourBrick/MohrCoulombStressCriterion.hxx"
+#include "MFront/BehaviourBrick/MichelAndSuquet1992HollowSphereStressCriterion.hxx"
 #include "MFront/BehaviourBrick/StressCriterionFactory.hxx"
 
 namespace mfront {
@@ -117,6 +118,9 @@ namespace mfront {
       });
       this->addGenerator("MohrCoulomb", []() {
         return std::make_shared<bbrick::MohrCoulombStressCriterion>();
+      });
+      this->addGenerator("MichelAndSuquet1992HollowSphere", []() {
+        return std::make_shared<bbrick::MichelAndSuquet1992HollowSphereStressCriterion>();
       });
     } // end of StressCriterionFactory::StressCriterionFactory
 

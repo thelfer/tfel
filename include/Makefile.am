@@ -55,6 +55,8 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Material/Barlat2004YieldCriterion.ixx			                             \
 			TFEL/Material/MohrCoulombYieldCriterion.hxx			                             \
 			TFEL/Material/MohrCoulombYieldCriterion.ixx			                             \
+			TFEL/Material/MichelAndSuquet1992HollowSphereStressCriterion.hxx                             \
+			TFEL/Material/MichelAndSuquet1992HollowSphereStressCriterion.ixx                             \
             TFEL/Material/ChuNeedleman1980StrainBasedNucleationModel.hxx                                 \
             TFEL/Material/ChuNeedleman1980StrainBasedNucleationModel.ixx                                 \
 			TFEL/Material/PiPlane.hxx                                                                    \

@@ -62,13 +62,13 @@ namespace mfront {
           c += computeElasticLimitAndDerivative(this->ihrs, id);
         }
         c += this->computeFlowRateAndDerivative(id);
-        c += "fp" + id + " -= (this->dt)*vp" + id + ";\n";
+        c += "fp" + id + " -= (this->dt) * vp" + id + ";\n";
         c += sp.generateImplicitEquationDerivatives(
             bd, "strain", "p" + id,
             "-(this->dt) * dvp" + id + "_dseqe" + id + " * dseq" + id + "_ds" + id,
             this->sc->isNormalDeviatoric());
         if (!this->ihrs.empty()) {
-          c += "dfp" + id + "_ddp" + id + " += (this->dt)*dvp" + id + "_dseqe" +
+          c += "dfp" + id + "_ddp" + id + " += (this->dt) * dvp" + id + "_dseqe" +
                id + "*dR" + id + "_ddp" + id + ";\n";
         }
         auto kid = decltype(khrs.size()){};
@@ -85,14 +85,14 @@ namespace mfront {
                   tfel::glossary::Glossary::Porosity);
           c += "dfp" + id + "_dd" + f.name + " = ";
           c += "- theta * (this->dt) * dvp" + id + "_dseqe" + id + " * ";
-          c += "dseqe" + id + "_d" + f.name + ";\n";
+          c += "dseq" + id + "_d" + f.name + ";\n";
         }
       } else {
         if (!this->ihrs.empty()) {
           c += computeElasticLimit(this->ihrs, id);
         }
         c += this->computeFlowRate(id);
-        c += "fp" + id + " -= (this->dt)*vp" + id + ";\n";
+        c += "fp" + id + " -= (this->dt) * vp" + id + ";\n";
       }
       return c;
     }  // end of ViscoplasticFlowBase::buildFlowImplicitEquations

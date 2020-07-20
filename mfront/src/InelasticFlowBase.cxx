@@ -426,6 +426,14 @@ namespace mfront {
                 std::to_string(kid));
             ++kid;
           }
+          if (this->isCoupledWithPorosityEvolution()) {
+            const auto& f = bd.getBehaviourData(uh)
+                                .getStateVariableDescriptionByExternalName(
+                                    tfel::glossary::Glossary::Porosity);
+          ib.code += "dfeel_dd" + f.name + " += ";
+          ib.code +=
+              "theta * this->dp" + id + " * dn" + id + "_d" + f.name + ";\n";
+          }
         }
       }
       // inelastic flow

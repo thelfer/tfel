@@ -1717,6 +1717,8 @@ namespace mfront {
     // symmetric tensors
     if (has_stensor) {
       os << "#include\"TFEL/Math/Stensor/StensorFromTinyVectorView.hxx\"\n"
+         << "#include \"TFEL/Math/Stensor/StensorFromTinyMatrixRowView.hxx\"\n"
+         << "#include \"TFEL/Math/Stensor/StensorFromTinyMatrixRowView2.hxx\"\n"
          << "#include\"TFEL/Math/ST2toST2/"
             "ST2toST2FromTinyMatrixView.hxx\"\n\n"
          << "#include\"TFEL/Math/ST2toST2/"

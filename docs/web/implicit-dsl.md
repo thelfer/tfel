@@ -34,6 +34,7 @@ eqnPrefixTemplate: "($$i$$)"
 \newcommand{\dtot}{{{\mathrm{d}}}}
 \newcommand{\paren}[1]{{\left(#1\right)}}
 
+![Description of the steps of the implicit scheme and the associated code blocks.](img/ImplicitDSL.svg ""){width=100%}
 
 # Description
 

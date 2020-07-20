@@ -448,7 +448,7 @@ system. Otherwise, the default initialization of the implicit equations
     // computation of the jacobian matrix
     dfeel_ddeel += 2*mu*theta*dp*Jmn*iseq ;
     dfeel_ddp    = n;
-    dfp_ddeel    = - Fexp*m*dt* 2*mu*theta*(n| Stensor4::M() )*two_third;
+    dfp_ddeel    = - Fexp*m*dt * 2 * mu* theta * n;
     dfp_ddp     += theta* Fexp *m *dt*b*(Rinf-Rp);
     for(unsigned short i=0;i!=2;++i){
       dfeel_dda(i)   = -C[i]*dp*theta*iseq*two_third*Jmn ;

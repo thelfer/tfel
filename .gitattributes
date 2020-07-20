@@ -1158,6 +1158,7 @@ docs/web/DDIF2StressPotential.md -text
 docs/web/DefaultCZMDSL-keywords.md -text
 docs/web/DefaultDSL-keywords.md -text
 docs/web/DefaultFiniteStrainDSL-keywords.md -text
+docs/web/ExtendingStandardElastoViscoPlasticityBrick-PorousStressCriterion.md -text
 docs/web/ExtendingStandardElastoViscoPlasticityBrick-StressCriterion.md -text
 docs/web/FichantLaBorderieDamageAndTorelliLoadInducedStrainBehaviour.md -text
 docs/web/FichantLaBorderieDamageBehaviour.md -text
@@ -1205,9 +1206,13 @@ docs/web/crossdomain.xml -text
 docs/web/css/main.css -text
 docs/web/css/normalize.css -text
 docs/web/css/slideshow.css -text
+docs/web/cxx/include/TFEL/Material/PorousStressCriterionTemplate.hxx -text
+docs/web/cxx/include/TFEL/Material/PorousStressCriterionTemplate.ixx -text
 docs/web/cxx/include/TFEL/Material/StressCriterionTemplate.hxx -text
 docs/web/cxx/include/TFEL/Material/StressCriterionTemplate.ixx -text
+docs/web/cxx/mfront/include/MFront/BehaviourBrick/PorousStressCriterionTemplate.hxx -text
 docs/web/cxx/mfront/include/MFront/BehaviourBrick/StressCriterionTemplate.hxx -text
+docs/web/cxx/mfront/src/PorousStressCriterionTemplate.cxx -text
 docs/web/cxx/mfront/src/StressCriterionTemplate.cxx -text
 docs/web/cyrano.md -text
 docs/web/devel.md -text
@@ -1288,6 +1293,8 @@ docs/web/img/Configuration.pdf -text
 docs/web/img/Configuration.png -text
 docs/web/img/CyranoPrinciple.png -text
 docs/web/img/DruckerPragerCap.svg -text
+docs/web/img/ExtendingStandardElastoViscoPlasticityBrick-PorousStressCriterion-tree-2.png -text
+docs/web/img/ExtendingStandardElastoViscoPlasticityBrick-PorousStressCriterion-tree.png -text
 docs/web/img/ExtendingStandardElastoViscoPlasticityBrick-tree-2.png -text
 docs/web/img/ExtendingStandardElastoViscoPlasticityBrick-tree.png -text
 docs/web/img/FichantLaBorderieDamageBehaviourUniaxialTensileTest.png -text
@@ -1484,6 +1491,8 @@ docs/web/mfm.md -text
 docs/web/mfront-doc.md -text
 docs/web/mfront-python.md -text
 docs/web/mfront-template.html -text
+docs/web/mfront/PorousStressCriterionTest.mfront -text
+docs/web/mfront/PorousStressCriterionTest_NumericalJacobian.mfront -text
 docs/web/mfront/StressCriterionTest.mfront -text
 docs/web/mfront/StressCriterionTest_NumericalJacobian.mfront -text
 docs/web/models.md -text
@@ -1522,6 +1531,7 @@ docs/web/release-notes-3.3.md -text
 docs/web/release-notes-3.4.md -text
 docs/web/release-notes.md -text
 docs/web/robots.txt -text
+docs/web/scripts/generate-porous.sh -text
 docs/web/scripts/generate.sh -text
 docs/web/search.md -text
 docs/web/signorini.md -text
@@ -1664,6 +1674,8 @@ include/TFEL/Material/MetallicCFCGenericSlidingSystemsInteractionMatrix.hxx -tex
 include/TFEL/Material/MetallicCFCGenericSlidingSystemsInteractionMatrix.ixx -text
 include/TFEL/Material/MetallicCFCSlidingSystems.hxx -text
 include/TFEL/Material/MetallicCFCSlidingSystems.ixx -text
+include/TFEL/Material/MichelAndSuquet1992HollowSphereStressCriterion.hxx -text
+include/TFEL/Material/MichelAndSuquet1992HollowSphereStressCriterion.ixx -text
 include/TFEL/Material/ModellingHypothesis.hxx -text
 include/TFEL/Material/MohrCoulombYieldCriterion.hxx -text
 include/TFEL/Material/MohrCoulombYieldCriterion.ixx -text
@@ -2375,6 +2387,7 @@ mfront/include/MFront/BehaviourBrick/KinematicHardeningRule.hxx -text
 mfront/include/MFront/BehaviourBrick/KinematicHardeningRuleBase.hxx -text
 mfront/include/MFront/BehaviourBrick/KinematicHardeningRuleFactory.hxx -text
 mfront/include/MFront/BehaviourBrick/LinearIsotropicHardeningRule.hxx -text
+mfront/include/MFront/BehaviourBrick/MichelAndSuquet1992HollowSphereStressCriterion.hxx -text
 mfront/include/MFront/BehaviourBrick/MisesStressCriterion.hxx -text
 mfront/include/MFront/BehaviourBrick/MohrCoulombStressCriterion.hxx -text
 mfront/include/MFront/BehaviourBrick/NortonHoffViscoplasticFlow.hxx -text
@@ -2877,6 +2890,7 @@ mfront/src/MaterialPropertyDSL.cxx -text
 mfront/src/MaterialPropertyDescription.cxx -text
 mfront/src/MaterialPropertyInterfaceFactory.cxx -text
 mfront/src/MaterialPropertyParametersHandler.cxx -text
+mfront/src/MichelAndSuquet1992HollowSphereStressCriterion.cxx -text
 mfront/src/MisesStressCriterion.cxx -text
 mfront/src/ModelDSL.cxx -text
 mfront/src/ModelDSLCommon.cxx -text

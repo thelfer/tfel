@@ -1,0 +1,71 @@
+@DSL Implicit;
+@Behaviour __StressCriterionName__ViscoPlasticity;
+@Author __Author__;
+@Date __Author__;
+@Description {
+  Implementation of a viscoplastic behaviour
+  based on the __StressCriterionName__ criterion.
+}
+
+@Includes{
+#include "TFEL/Material/__StressCriterionName__StressCriterion.hxx"
+}
+
+@ModellingHypotheses {".+"};
+@Brick StandardElasticity;
+@Epsilon 1.e-14;
+@Theta 1;
+
+@ComputeStiffnessTensor<UnAltered>{200e9, 0.3};
+
+// Insert parameters definition here
+
+@StateVariable StrainStensor evp;
+evp.setGlossaryName("ViscoplasticStrain");
+
+@StateVariable real f;
+f.setGlossaryName("Porosity");
+
+//! \brief parameters of the yield criterion
+@LocalVariable __StressCriterionName__StressCriterionParameters<StressStensor> params;
+
+@InitLocalVariables {
+  // initialize the parameters from the material properties
+}
+
+@Integrator {
+  const auto seps = strain{1e-12} * young;
+  const auto f_ = min(max(f + theta * df, real(0)), real(1));
+#if __cplusplus >= 201703L
+  const auto[seq, n, dseq_df, dn_ds, dn_df] =
+      compute__StressCriterionName__StressSecondDerivative(sig, f_, params, seps);
+#else
+  auto seq = stress{};
+  auto n = __StressCriterionName__StressNormalType<StressStensor>{};
+  auto dseq_df = stress{};
+  auto dn_ds = __StressCriterionName__StressSecondDerivativeType<StressStensor>{};
+  auto dn_df = __StressCriterionName__StressNormalType<StressStensor>{};
+  std::tie(seq, n, dseq_df, dn_ds, dn_df) =
+      compute__StressCriterionName__StressSecondDerivative(sig, f_, params, seps);
+#endif
+  // equation associated with the split of the strain
+  feel += devp;
+  dfeel_ddevp = Stensor4::Id();
+  // equation associated with the porosity evolution
+  ff -= (1 - f_) * trace(devp);
+  dff_ddf += theta * trace(devp);
+  dff_ddevp = -(1 - f_) * Stensor::Id();
+  // viscoplasticity
+
+}
+
+@AdditionalConvergenceChecks {
+  if (converged) {
+    if (f + df < 0) {
+      df = -f;
+    }
+    if (f + df > 1) {
+      df = 1-f;
+    }
+  }
+} // end of @AdditionalConvergenceChecks

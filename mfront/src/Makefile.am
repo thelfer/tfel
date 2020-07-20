@@ -162,6 +162,7 @@ libTFELMFront_la_SOURCES = MFront.cxx                                           
 		           Cazacu2004IsotropicStressCriterion.cxx                 \
 		           Cazacu2004OrthotropicStressCriterion.cxx               \
                    MohrCoulombStressCriterion.cxx                         \
+                   MichelAndSuquet1992HollowSphereStressCriterion.cxx             \
 		           StressCriterionFactory.cxx                             \
 		           IsotropicHardeningRule.cxx                             \
 		           LinearIsotropicHardeningRule.cxx                       \
