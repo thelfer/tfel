@@ -119,6 +119,20 @@ namespace mfront {
             raise("'save_porosity_increase' is not a boolean");
           }
           this->save_porosity_increase = e.second.get<bool>();
+        } else if (e.first == "porosity_evolution_algorithm") {
+          if (!e.second.is<std::string>()) {
+            raise("'porosity_evolution_algorithm' is not a boolean");
+          }
+          const auto& a = e.second.get<std::string>();
+          if (a == "standard_implicit_scheme") {
+            this->porosity_evolution_algorithm =
+                PorosityEvolutionAlgorithm::STANDARD_IMPLICIT_SCHEME;
+          } else if (a == "staggered_scheme") {
+            this->porosity_evolution_algorithm =
+                PorosityEvolutionAlgorithm::STAGGERED_SCHEME;
+          } else {
+            raise("internal error: unsupported porosity evolution algorithm");
+          }
         } else if (e.first == "porosity_effect_on_flow_rule") {
           if (!e.second.is<std::string>()) {
             raise("'porosity_effect_on_flow_rule' is not a string");
@@ -171,18 +185,20 @@ namespace mfront {
               "the flow direction is deviatoric");
         }
       }
-      if ((this->save_porosity_increase) &&
-          (this->contributesToPorosityGrowth())) {
-        addLocalVariable(bd, "real", "dfg" + id);
-        VariableDescription fg("real", "fg" + id, 1u, 0u);
-        const auto g =
-            tfel::glossary::Glossary::PorosityIncreaseDueToInelasticFlow;
-        if (id.empty()) {
-          fg.setGlossaryName(g);
-        } else {
-          fg.setEntryName(g.getKey() + id);
+      if (this->contributesToPorosityGrowth()) {
+        addLocalVariable(bd, "real", "trace_n" + id);
+        if (this->save_porosity_increase) {
+          addLocalVariable(bd, "real", "dfg" + id);
+          VariableDescription fg("real", "fg" + id, 1u, 0u);
+          const auto& g =
+              tfel::glossary::Glossary::PorosityIncreaseDueToInelasticFlow;
+          if (id.empty()) {
+            fg.setGlossaryName(g);
+          } else {
+            fg.setEntryName(g.getKey() + id);
+          }
+          bd.addAuxiliaryStateVariable(uh, fg);
         }
-        bd.addAuxiliaryStateVariable(uh, fg);
       }
     }  // end of InelasticFlowBase::initialize
 
@@ -242,6 +258,8 @@ namespace mfront {
           "'standard_porosity_effect') or 'None' (or equivalently 'none' "
           "or 'false')'",
           OptionDescription::STRING);
+      opts.emplace_back("porosity_evolution_algorithm",
+                        "reserved for internal use", OptionDescription::STRING);
       return opts;
     }  // end of InelasticFlowBase::getOptions()
 
@@ -382,6 +400,9 @@ namespace mfront {
                                              StressCriterion::FLOWCRITERION);
         }
       }
+      if (this->isCoupledWithPorosityEvolution()) {
+        ib.code += "this->trace_n" + id + " = trace(n" + id + ");\n";
+      }
       // elasticity
       if (this->getPorosityEffectOnFlowRule() ==
           STANDARD_POROSITY_CORRECTION_ON_FLOW_RULE) {
@@ -430,9 +451,9 @@ namespace mfront {
             const auto& f = bd.getBehaviourData(uh)
                                 .getStateVariableDescriptionByExternalName(
                                     tfel::glossary::Glossary::Porosity);
-          ib.code += "dfeel_dd" + f.name + " += ";
-          ib.code +=
-              "theta * this->dp" + id + " * dn" + id + "_d" + f.name + ";\n";
+            ib.code += "dfeel_dd" + f.name + " += ";
+            ib.code +=
+                "theta * this->dp" + id + " * dn" + id + "_d" + f.name + ";\n";
           }
         }
       }
@@ -453,107 +474,33 @@ namespace mfront {
         }
         ++kid;
       }
+      // porosity evolution
       if (this->contributesToPorosityGrowth()) {
-        // porosity evolution
-        const auto& f =
-            bd.getBehaviourData(uh).getStateVariableDescriptionByExternalName(
-                tfel::glossary::Glossary::Porosity);
-        const auto f_ = f.name + "_";
-        if (this->getPorosityEffectOnFlowRule() ==
-            STANDARD_POROSITY_CORRECTION_ON_FLOW_RULE) {
-          if (this->save_porosity_increase) {
-            ib.code += "dfg" + id + " = power<2>(1 - " + f_ + ") * (this->dp" +
-                       id + ") * trace(n" + id + ");\n";
-            ib.code += "f" + f.name + " -= dfg" + id + ";\n";
-          } else {
-            ib.code += "f" + f.name;
-            ib.code += " -= power<2>(1 - " + f_ + ") * (this->dp" + id +
-                       ") * trace(n" + id + ");\n";
-          }
+        if (this->porosity_evolution_algorithm ==
+            PorosityEvolutionAlgorithm::STAGGERED_SCHEME) {
+          const auto& f =
+              bd.getBehaviourData(uh).getStateVariableDescriptionByExternalName(
+                  tfel::glossary::Glossary::Porosity);
+          ib.code += "if(";
+          ib.code += StandardElastoViscoPlasticityBrick::
+              computeStandardSystemOfImplicitEquations;
+          ib.code += "){\n";
+          this->addFlowContributionToTheImplicitEquationAssociatedWithPorosityEvolution(
+              ib, bd, dsl, sp, id);
+          ib.code += "} else {\n";
+          ib.code += "f" + f.name + " -= ";
+          ib.code += StandardElastoViscoPlasticityBrick::
+              currentEstimateOfThePorosityIncrement;
+          ib.code += ";\n";
+          ib.code += "}\n";
+        } else if (this->porosity_evolution_algorithm ==
+                   PorosityEvolutionAlgorithm::STANDARD_IMPLICIT_SCHEME) {
+          this->addFlowContributionToTheImplicitEquationAssociatedWithPorosityEvolution(
+              ib, bd, dsl, sp, id);
         } else {
-          if (this->save_porosity_increase) {
-            ib.code += "dfg" + id + " = (1 - " + f_ + ") * (this->dp" + id +
-                       ") * trace(n" + id + ");\n";
-            ib.code += "f" + f.name + " -= dfg" + id + ";\n";
-          } else {
-            ib.code += "f" + f.name;
-            ib.code += " -= (1 - " + f_ + ") * (this->dp" + id + ") * trace(n" +
-                       id + ");\n";
-          }
-        }
-        if (requiresAnalyticalJacobian) {
-          if (this->getPorosityEffectOnFlowRule() ==
-              STANDARD_POROSITY_CORRECTION_ON_FLOW_RULE) {
-            ib.code += "df" + f.name + "_dd" + f.name;
-            ib.code += " += 2 * theta * (1 - " + f_ + ") * (this->dp" + id +
-                       ") * trace(n" + id + ")";
-            ib.code += "  -     theta * power<2>(1 - " + f_ + ")* (this->dp" +
-                       id + ") * (Stensor::Id() | dn_d" + f.name + ");\n";
-            // derivatives with respect to stress
-            for (const auto& dsig : sp.getStressDerivatives(bd)) {
-              const auto& dsig_ddv = std::get<0>(dsig);
-              const auto& v = std::get<1>(dsig);
-              const auto& t = std::get<2>(dsig);
-              if ((t != SupportedTypes::SCALAR) &&
-                  (t != SupportedTypes::STENSOR)) {
-                tfel::raise(
-                    "InelasticFlowBase::endTreatment: "
-                    "stress dependency on variable '" +
-                    v + "' is not unsupported ");
-              }
-              ib.code += "df" + f.name + "_dd" + v + " -= ";
-              ib.code += "power<2>(1 - " + f_ + ") * (this->dp" + id + ") * ";
-              ib.code += "(Stensor::Id() | (dn" + id + "_ds" + id + " * (" +
-                         dsig_ddv + ")));\n";
-            }
-            kid = decltype(khrs.size()){};
-            for (const auto& khr : this->khrs) {
-              const auto an =
-                  khr->getBackStrainVariable(id, std::to_string(kid));
-              const auto dX =
-                  khr->getBackStressDerivative(id, std::to_string(kid));
-              ib.code += "df" + f.name + "_dd" + an + " += ";
-              ib.code += "power<2>(1 - " + f_ + ") * (this->dp" + id + ") * ";
-              ib.code += "(Stensor::Id() | " + dX + ");\n";
-              ++kid;
-            }
-            ib.code += "df" + f.name + "_ddp" + id;
-            ib.code += " = - power<2>(1 - " + f_ + ") * trace(n" + id + ");\n";
-          } else {
-            ib.code += "df" + f.name + "_dd" + f.name;
-            ib.code += " += theta *(this->dp" + id + ") * trace(n" + id + ")";
-            ib.code += "  - theta * (1 - " + f_ + ")* (this->dp" + id +
-                       ") * (Stensor::Id() | dn_d" + f.name + ");\n";
-            // derivatives with respect to stress
-            for (const auto& dsig : sp.getStressDerivatives(bd)) {
-              const auto& dsig_ddv = std::get<0>(dsig);
-              const auto& v = std::get<1>(dsig);
-              const auto& t = std::get<2>(dsig);
-              if ((t != SupportedTypes::SCALAR) &&
-                  (t != SupportedTypes::STENSOR)) {
-                tfel::raise(
-                    "InelasticFlowBase::endTreatment: "
-                    "stress dependency on variable '" +
-                    v + "' is not unsupported ");
-              }
-              ib.code += "df" + f.name + "_dd" + v + " -= ";
-              ib.code += "(1 - " + f_ + ") * (this->dp" + id + ") * ";
-              ib.code += "(Stensor::Id() | (dn" + id + "_ds" + id + " * (" +
-                         dsig_ddv + ")));\n";
-            }
-            for (const auto& khr : this->khrs) {
-              const auto an =
-                  khr->getBackStrainVariable(id, std::to_string(kid));
-              const auto dX =
-                  khr->getBackStressDerivative(id, std::to_string(kid));
-              ib.code += "df" + f.name + "_dd" + an + " += ";
-              ib.code += "(1 - " + f_ + ") * (this->dp" + id + ") * ";
-              ib.code += "(Stensor::Id() | " + dX + ");\n";
-              ++kid;
-            }
-            ib.code += "df" + f.name + "_ddp" + id;
-            ib.code += " = - (1 - " + f_ + ") * trace(n" + id + ");\n";
-          }
+          tfel::raise(
+              "InelasticFlowBase::endTreatment: internal error "
+              "(unsupported porosity evolution algorithm)");
         }
       }
       if (!this->ihrs.empty()) {
@@ -596,11 +543,167 @@ namespace mfront {
       if ((this->contributesToPorosityGrowth()) &&
           (this->save_porosity_increase)) {
         CodeBlock uav;
-        uav.code += "fg" + id + " += dfg" + id + ";\n";
+        uav.code += "fg" + id + " += this->dfg" + id + ";\n";
         bd.setCode(uh, BehaviourData::UpdateAuxiliaryStateVariables, uav,
                    BehaviourData::CREATEORAPPEND, BehaviourData::AT_BEGINNING);
       }
     }  // end of InelasticFlowBase::endTreatment
+
+    std::string InelasticFlowBase::updateNextEstimateOfThePorosityIncrement(
+        const BehaviourDescription& bd, const std::string& id) const {
+      if (!this->contributesToPorosityGrowth()) {
+        return "";
+      }
+      const auto df = [this, &bd, &id] {
+        constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+        const auto& f =
+            bd.getBehaviourData(uh).getStateVariableDescriptionByExternalName(
+                tfel::glossary::Glossary::Porosity);
+        const auto theta = bd.getClassName() + "::theta";
+        const auto f_ = "((this->" + f.name + ") + (" + theta + ") * (this->" +
+                        std::string(StandardElastoViscoPlasticityBrick::
+                                        currentEstimateOfThePorosityIncrement) +
+                        "))";
+        if (this->getPorosityEffectOnFlowRule() ==
+            STANDARD_POROSITY_CORRECTION_ON_FLOW_RULE) {
+          return "power<2>(1 - " + f_ + ") * " +  //
+                 "(this->dp" + id + ") * (this->trace_n" + id + ")";
+        }
+        return "(1 - " + f_ + ") * " +  //
+               "(this->dp" + id + ") * (this->trace_n" + id + ")";
+      }();
+      auto c = std::string{};
+      if (this->save_porosity_increase) {
+        c = "this->dfg" + id + " = " + df + ";\n";
+        c += StandardElastoViscoPlasticityBrick::
+                 currentEstimateOfThePorosityIncrement;
+        c += " += this->dfg" + id + ";\n";
+      } else {
+        c = StandardElastoViscoPlasticityBrick::
+            nextEstimateOfThePorosityIncrement;
+        c += " += " + df + ";\n";
+      }
+      return c;
+    }  // end of updateNextEstimateOfThePorosityIncrement
+
+    void InelasticFlowBase::
+        addFlowContributionToTheImplicitEquationAssociatedWithPorosityEvolution(
+            CodeBlock& ib,
+            const BehaviourDescription& bd,
+            const AbstractBehaviourDSL& dsl,
+            const StressPotential& sp,
+            const std::string& id) const {
+      if (!this->contributesToPorosityGrowth()) {
+        return;
+      }
+      constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+      const auto& idsl = dynamic_cast<const ImplicitDSLBase&>(dsl);
+      const auto requiresAnalyticalJacobian =
+          ((idsl.getSolver().usesJacobian()) &&
+           (!idsl.getSolver().requiresNumericalJacobian()));
+      const auto& f =
+          bd.getBehaviourData(uh).getStateVariableDescriptionByExternalName(
+              tfel::glossary::Glossary::Porosity);
+      const auto f_ = f.name + "_";
+      if (this->getPorosityEffectOnFlowRule() ==
+          STANDARD_POROSITY_CORRECTION_ON_FLOW_RULE) {
+        if (this->save_porosity_increase) {
+          ib.code += "this->dfg" + id + " = power<2>(1 - " + f_ + ") * (this->dp" +
+                     id + ") * (this->trace_n" + id + ");\n";
+          ib.code += "f" + f.name + " -= this->dfg" + id + ";\n";
+        } else {
+          ib.code += "f" + f.name;
+          ib.code += " -= power<2>(1 - " + f_ + ") * (this->dp" + id +
+                     ") * (this->trace_n" + id + ");\n";
+        }
+      } else {
+        if (this->save_porosity_increase) {
+          ib.code += "this->dfg" + id + " = (1 - " + f_ + ") * (this->dp" + id +
+                     ") * (this->trace_n" + id + ");\n";
+          ib.code += "f" + f.name + " -= this->dfg" + id + ";\n";
+        } else {
+          ib.code += "f" + f.name;
+          ib.code += " -= (1 - " + f_ + ") * (this->dp" + id +
+                     ") * (this->trace_n" + id + ");\n";
+        }
+      }
+      if (requiresAnalyticalJacobian) {
+        if (this->getPorosityEffectOnFlowRule() ==
+            STANDARD_POROSITY_CORRECTION_ON_FLOW_RULE) {
+          ib.code += "df" + f.name + "_dd" + f.name;
+          ib.code += " += 2 * theta * (1 - " + f_ + ") * (this->dp" + id +
+                     ") * (this->trace_n" + id + ")";
+          ib.code += "  -     theta * power<2>(1 - " + f_ + ")* (this->dp" +
+                     id + ") * (Stensor::Id() | dn_d" + f.name + ");\n";
+          // derivatives with respect to stress
+          for (const auto& dsig : sp.getStressDerivatives(bd)) {
+            const auto& dsig_ddv = std::get<0>(dsig);
+            const auto& v = std::get<1>(dsig);
+            const auto& t = std::get<2>(dsig);
+            if ((t != SupportedTypes::SCALAR) &&
+                (t != SupportedTypes::STENSOR)) {
+              tfel::raise(
+                  "InelasticFlowBase::endTreatment: "
+                  "stress dependency on variable '" +
+                  v + "' is not unsupported ");
+            }
+            ib.code += "df" + f.name + "_dd" + v + " -= ";
+            ib.code += "power<2>(1 - " + f_ + ") * (this->dp" + id + ") * ";
+            ib.code += "(Stensor::Id() | (dn" + id + "_ds" + id + " * (" +
+                       dsig_ddv + ")));\n";
+          }
+          auto kid = decltype(khrs.size()){};
+          for (const auto& khr : this->khrs) {
+            const auto an = khr->getBackStrainVariable(id, std::to_string(kid));
+            const auto dX =
+                khr->getBackStressDerivative(id, std::to_string(kid));
+            ib.code += "df" + f.name + "_dd" + an + " += ";
+            ib.code += "power<2>(1 - " + f_ + ") * (this->dp" + id + ") * ";
+            ib.code += "(Stensor::Id() | " + dX + ");\n";
+            ++kid;
+          }
+          ib.code += "df" + f.name + "_ddp" + id;
+          ib.code +=
+              " = - power<2>(1 - " + f_ + ") * (this->trace_n" + id + ");\n";
+        } else {
+          ib.code += "df" + f.name + "_dd" + f.name;
+          ib.code +=
+              " += theta *(this->dp" + id + ") * (this->trace_n" + id + ")";
+          ib.code += "  - theta * (1 - " + f_ + ")* (this->dp" + id +
+                     ") * (Stensor::Id() | dn_d" + f.name + ");\n";
+          // derivatives with respect to stress
+          for (const auto& dsig : sp.getStressDerivatives(bd)) {
+            const auto& dsig_ddv = std::get<0>(dsig);
+            const auto& v = std::get<1>(dsig);
+            const auto& t = std::get<2>(dsig);
+            if ((t != SupportedTypes::SCALAR) &&
+                (t != SupportedTypes::STENSOR)) {
+              tfel::raise(
+                  "InelasticFlowBase::endTreatment: "
+                  "stress dependency on variable '" +
+                  v + "' is not unsupported ");
+            }
+            ib.code += "df" + f.name + "_dd" + v + " -= ";
+            ib.code += "(1 - " + f_ + ") * (this->dp" + id + ") * ";
+            ib.code += "(Stensor::Id() | (dn" + id + "_ds" + id + " * (" +
+                       dsig_ddv + ")));\n";
+          }
+          auto kid = decltype(khrs.size()){};
+          for (const auto& khr : this->khrs) {
+            const auto an = khr->getBackStrainVariable(id, std::to_string(kid));
+            const auto dX =
+                khr->getBackStressDerivative(id, std::to_string(kid));
+            ib.code += "df" + f.name + "_dd" + an + " += ";
+            ib.code += "(1 - " + f_ + ") * (this->dp" + id + ") * ";
+            ib.code += "(Stensor::Id() | " + dX + ");\n";
+            ++kid;
+          }
+          ib.code += "df" + f.name + "_ddp" + id;
+          ib.code += " = - (1 - " + f_ + ") * (this->trace_n" + id + ");\n";
+        }
+      }
+    }  // end of
+       // InelasticFlowBase::addFlowContributionToTheImplicitEquationAssociatedWithPorosityEvolution
 
     bool InelasticFlowBase::isCoupledWithPorosityEvolution() const {
       if (this->sc == nullptr) {

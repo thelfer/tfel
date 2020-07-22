@@ -111,6 +111,7 @@ nobase_include_HEADERS= MFront/MFront.hxx                                     \
 			MFront/BehaviourBrick/Requirement.hxx                                        \
 			MFront/BehaviourBrick/RequirementManager.hxx                                 \
 			MFront/BehaviourBrick/Provider.hxx                                           \
+			MFront/BehaviourBrick/PorosityEvolutionAlgorithm.hxx                         \
 			MFront/BehaviourBrick/StressPotential.hxx                                    \
 			MFront/BehaviourBrick/HookeStressPotentialBase.hxx                           \
 			MFront/BehaviourBrick/HookeStressPotential.hxx                               \
@@ -143,6 +144,7 @@ nobase_include_HEADERS= MFront/MFront.hxx                                     \
 			MFront/BehaviourBrick/Cazacu2004OrthotropicStressCriterion.hxx               \
 			MFront/BehaviourBrick/MohrCoulombStressCriterion.hxx                         \
 			MFront/BehaviourBrick/MichelAndSuquet1992HollowSphereStressCriterion.hxx     \
+			MFront/BehaviourBrick/GursonTvergaardNeedleman1982StressCriterion.hxx        \
 			MFront/BehaviourBrick/StressCriterionFactory.hxx                             \
 			MFront/BehaviourBrick/IsotropicHardeningRule.hxx                             \
 			MFront/BehaviourBrick/LinearIsotropicHardeningRule.hxx                       \

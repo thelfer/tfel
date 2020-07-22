@@ -1031,6 +1031,8 @@ This behaviour has been described in [@salvo_experimental_2015-1].
   "https://doi.org/10.1016/j.jnucmat.2015.02.018."
 }
 
+@StrainMeasure Hencky;
+
 @Algorithm NewtonRaphson;
 @Epsilon 1.e-14;
 @Theta 1;
@@ -1087,6 +1089,8 @@ with the `DDIF2` stress potential, as follows:
   "Journal of Nuclear Materials 460 (May 2015): 184–99."
   "https://doi.org/10.1016/j.jnucmat.2015.02.018."
 }
+
+@StrainMeasure Hencky;
 
 @Algorithm NewtonRaphson;
 @Epsilon 1.e-14;

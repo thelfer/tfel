@@ -15,6 +15,8 @@
 #define LIB_MFRONT_BEHAVIOURBRICK_INELASTICFLOWBASE_HXX
 
 #include <vector>
+#include "MFront/StandardElastoViscoPlasticityBrick.hxx"
+#include "MFront/BehaviourBrick/PorosityEvolutionAlgorithm.hxx"
 #include "MFront/BehaviourBrick/InelasticFlow.hxx"
 
 namespace mfront {
@@ -48,6 +50,8 @@ namespace mfront {
       void computeInitialActivationState(BehaviourDescription&,
                                          const StressPotential&,
                                          const std::string&) const override;
+      std::string updateNextEstimateOfThePorosityIncrement(
+          const BehaviourDescription&, const std::string&) const override;
       //! destructor
       ~InelasticFlowBase() override;
 
@@ -76,6 +80,22 @@ namespace mfront {
       //! \return if this flow contributes to porosity growth
       virtual bool contributesToPorosityGrowth() const;
       /*!
+       * \brief add the contribution of this inelastic flow to the implicit
+       * equation associated with the porosity evolution.
+       * \param[in] ib: integrator code block
+       * \param[in] dsl: abstract behaviour dsl
+       * \param[in] bd: behaviour description
+       * \param[in] sp: stress potential
+       * \param[in] id: flow id
+       */
+      virtual void
+      addFlowContributionToTheImplicitEquationAssociatedWithPorosityEvolution(
+          CodeBlock&,
+          const BehaviourDescription&,
+          const AbstractBehaviourDSL&,
+          const StressPotential&,
+          const std::string&) const;
+      /*!
        * \brief compute the effective stress at \f$t+\theta\,dt\f$.
        * \param[in] id: flow id
        */
@@ -102,6 +122,9 @@ namespace mfront {
       //! Effect of the porosity on the flow rule.
       PorosityEffectOnFlowRule porosity_effect_on_flow_rule =
           UNDEFINED_POROSITY_EFFECT_ON_FLOW_RULE;
+      //! \brief algorithm used to handle the porosity evolution
+      PorosityEvolutionAlgorithm porosity_evolution_algorithm =
+          PorosityEvolutionAlgorithm::STAGGERED_SCHEME;
       /*!
        * \brief flag stating that the porosity evolution is handled by the brick
        */

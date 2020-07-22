@@ -110,6 +110,9 @@ namespace mfront {
         case OptionDescription::BOOLEAN:
           throw_if(!d.is<bool>());
           break;
+        case OptionDescription::STRING:
+          throw_if(!d.is<std::string>());
+          break;
         case OptionDescription::REAL:
           throw_if((!d.is<double>()) && (!d.is<int>()));
           break;
@@ -140,7 +143,7 @@ namespace mfront {
           }
           break;
         default:
-          tfel::raise("check: unknown option type");
+          tfel::raise("check: unknown option type for option '" + o.name + "'");
       }
     }  // end of check
 

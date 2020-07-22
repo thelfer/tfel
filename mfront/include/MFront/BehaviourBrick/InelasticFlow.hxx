@@ -121,6 +121,16 @@ namespace mfront {
       virtual void computeInitialActivationState(BehaviourDescription&,
                                                  const StressPotential&,
                                                  const std::string&) const = 0;
+      /*!
+       * \return the code updating the next estimate of the porosity
+       * increment with the contribution of this flow. If this flow does not
+       * affect the porosity growth, the returned value may be empty.
+       * \param[in] bd: behaviour description
+       * \param[in] id: flow id
+       */
+      virtual std::string updateNextEstimateOfThePorosityIncrement(
+          const BehaviourDescription&, const std::string&) const = 0;
+
       //! destructor
       virtual ~InelasticFlow();
 

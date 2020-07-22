@@ -11,15 +11,10 @@
  * project under specific licensing conditions.
  */
 
+#include "TFEL/Raise.hxx"
 #include "MFront/BehaviourBrick/BrickUtilities.hxx"
 #include "MFront/BehaviourBrick/OptionDescription.hxx"
 #include "MFront/BehaviourBrick/StressPotential.hxx"
-#include "TFEL/Raise.hxx"
-
-#ifdef MFRONT_ADITIONNAL_LIBRARY
-#include "MFront/BehaviourBrick/StressCriterionFactory.hxx"
-#endif /* MFRONT_ADITIONNAL_LIBRARY */
-
 #include "MFront/BehaviourBrick/MichelAndSuquet1992HollowSphereStressCriterion.hxx"
 
 namespace mfront {
@@ -51,21 +46,6 @@ namespace mfront {
 
     MichelAndSuquet1992HollowSphereStressCriterion::
         ~MichelAndSuquet1992HollowSphereStressCriterion() = default;
-
-#ifdef MFRONT_ADITIONNAL_LIBRARY
-
-    struct MichelAndSuquet1992HollowSphereStressCriterionProxy {
-      MichelAndSuquet1992HollowSphereStressCriterionProxy() {
-        auto &f = StressCriterionFactory::getFactory();
-        f.addGenerator("MichelAndSuquet1992HollowSphere", [] {
-          return std::make_shared<MichelAndSuquet1992HollowSphereStressCriterion>();
-        });
-      }  // end of MichelAndSuquet1992HollowSphereStressCriterionProxy
-    };   // end of struct MichelAndSuquet1992HollowSphereStressCriterionProxy
-
-    static MichelAndSuquet1992HollowSphereStressCriterionProxy proxy;
-
-#endif /* MFRONT_ADITIONNAL_LIBRARY */
 
   }  // end of namespace bbrick
 

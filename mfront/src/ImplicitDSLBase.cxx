@@ -2306,7 +2306,7 @@ namespace mfront {
     // additional convergence checks
     if (this->mb.hasCode(h, BehaviourData::AdditionalConvergenceChecks)) {
       os << "void additionalConvergenceChecks(bool& converged,real& "
-            "error){\n"
+            "error, const SMType smt){\n"
          << "using namespace std;\n"
          << "using namespace tfel::math;\n"
          << "using std::vector;\n";
@@ -2315,9 +2315,10 @@ namespace mfront {
          << '\n'
          << "static_cast<void>(converged);\n"
          << "static_cast<void>(error);\n"
+         << "static_cast<void>(smt);\n"
          << "} // end of additionalConvergenceChecks\n\n";
     } else {
-      os << "void additionalConvergenceChecks(bool&,real&) const{\n"
+      os << "void additionalConvergenceChecks(bool&,real&,const SMType) const{\n"
          << "} // end of additionalConvergenceChecks\n\n";
     }
     // compute stress
