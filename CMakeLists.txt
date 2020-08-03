@@ -295,6 +295,11 @@ if(enable-python OR enable-python-bindings)
   string(REGEX REPLACE "[a-z]+.*$" "" PYTHONLIBS_VERSION_CLEANED ${PYTHONLIBS_VERSION_STRING})
   find_package(PythonInterp ${PYTHONLIBS_VERSION_CLEANED} REQUIRED)
   message(STATUS "python interpreter    ${PYTHON_EXECUTABLE}")
+  if(enable-numpy-support AND PYTHON_EXECUTABLE AND (NOT NUMPY_INCLUDE_DIRS))
+    execute_process(COMMAND "${PYTHON_EXECUTABLE}" "-c" "import numpy;print(numpy.get_include())"
+                    OUTPUT_VARIABLE NUMPY_INCLUDE_DIRS)
+    message(STATUS "Numpy header path     ${NUMPY_INCLUDE_DIRS}")
+  endif(enable-numpy-support AND PYTHON_EXECUTABLE AND (NOT NUMPY_INCLUDE_DIRS))
 endif(enable-python OR enable-python-bindings)
 
 #some checks

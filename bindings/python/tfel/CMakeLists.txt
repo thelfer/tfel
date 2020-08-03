@@ -11,6 +11,11 @@ if(TFEL_NUMPY_SUPPORT)
     SYSTEM
     PUBLIC "${Boost_INCLUDE_DIRS}"
     PUBLIC "${PYTHON_INCLUDE_DIRS}")
+  if(NUMPY_INCLUDE_DIRS) 
+    target_include_directories(TFELNumpySupport
+      SYSTEM
+      PUBLIC "${NUMPY_INCLUDE_DIRS}")
+  endif(NUMPY_INCLUDE_DIRS)
   if(TFEL_USES_CONAN)
     target_link_libraries(TFELNumpySupport
       ${CONAN_LIBS} ${PYTHON_LIBRARIES})
