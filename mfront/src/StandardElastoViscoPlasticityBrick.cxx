@@ -35,12 +35,26 @@ namespace mfront {
   const char* const StandardElastoViscoPlasticityBrick::
       computeStandardSystemOfImplicitEquations =
           "compute_standard_system_of_implicit_equations";
+  const char* const StandardElastoViscoPlasticityBrick::brokenVariable =
+      "broken";
   const char* const StandardElastoViscoPlasticityBrick::
       currentEstimateOfThePorosityIncrement =
           "current_estimate_of_the_porosity_increment";
   const char* const
       StandardElastoViscoPlasticityBrick::nextEstimateOfThePorosityIncrement =
           "next_estimate_of_the_porosity_increment";
+  const char* const StandardElastoViscoPlasticityBrick::
+      nextEstimateOfThePorosityAtTheEndOfTheTimeStep =
+          "next_estimate_of_the_porosity_at_the_end_of_the_time_step";
+  const char* const StandardElastoViscoPlasticityBrick::porosityUpperBound =
+      "upper_bound_of_the_porosity";
+  const char* const
+      StandardElastoViscoPlasticityBrick::porosityUpperBoundSafetyFactor =
+          "safety_factor_for_the_upper_bound_of_the_porosity";
+  const char* const StandardElastoViscoPlasticityBrick::
+      porosityUpperBoundSafetyFactorForFractureDetection =
+          "safety_factor_for_the_upper_bound_of_the_porosity_for_fracture_"
+          "detection";
   const char* const StandardElastoViscoPlasticityBrick::
       differenceBetweenSuccessiveEstimatesOfThePorosityIncrement =
           "difference_between_successive_estimates_of_the_porosity_increment";
@@ -234,6 +248,24 @@ namespace mfront {
             data["save_individual_porosity_increase"] =
                 save_individual_porosity_increase;
           }
+          if (data.count("porosity_evolution_algorithm") != 0) {
+            raise(
+                "the `porosity_evolution_algorithm` entry is reserved and "
+                "shall not be set by the user");
+          }
+          if (porosity_evolution_algorithm ==
+              mfront::bbrick::PorosityEvolutionAlgorithm::
+                  STANDARD_IMPLICIT_SCHEME) {
+            data["porosity_evolution_algorithm"] =
+                std::string("standard_implicit_scheme");
+          } else if (porosity_evolution_algorithm ==
+                     mfront::bbrick::PorosityEvolutionAlgorithm::
+                         STAGGERED_SCHEME) {
+            data["porosity_evolution_algorithm"] =
+                std::string("staggered_scheme");
+          } else {
+            raise("internal error (unsupported porosity algorithm)");
+          }
           nm->initialize(this->bd, this->dsl,
                          getId(this->nucleation_models.size(), msize), data);
           this->nucleation_models.push_back(nm);
@@ -415,38 +447,47 @@ namespace mfront {
           bd.getBehaviourData(uh).getStateVariableDescriptionByExternalName(
               tfel::glossary::Glossary::Porosity);
       this->bd.reserveName(uh, f.name + "_");
+      //
+      mfront::bbrick::addAuxiliaryStateVariableIfNotDefined(
+          bd, "real", brokenVariable, tfel::glossary::Glossary::Broken, 1u,
+          true);
+      //
+      VariableDescription alpha("real", porosityUpperBoundSafetyFactor, 1u, 0u);
+      alpha.description = "a safety factor for the porosity upper bound";
+      bd.addParameter(uh, alpha, BehaviourData::UNREGISTRED);
+      bd.setParameterDefaultValue(uh, porosityUpperBoundSafetyFactor, 0.985);
+      //
+      VariableDescription alpha2(
+          "real", porosityUpperBoundSafetyFactorForFractureDetection, 1u, 0u);
+      alpha2.description = "a safety factor for the porosity upper bound";
+      bd.addParameter(uh, alpha2, BehaviourData::UNREGISTRED);
+      bd.setParameterDefaultValue(
+          uh, porosityUpperBoundSafetyFactorForFractureDetection, 0.984);
       if (this->porosity_evolution_algorithm ==
           mfront::bbrick::PorosityEvolutionAlgorithm::STAGGERED_SCHEME) {
         mfront::bbrick::addLocalVariable(
-            bd, "bool", StandardElastoViscoPlasticityBrick::
-                            computeStandardSystemOfImplicitEquations);
-        mfront::bbrick::addLocalVariable(
-            bd, "real", StandardElastoViscoPlasticityBrick::
-                            currentEstimateOfThePorosityIncrement);
+            bd, "bool", computeStandardSystemOfImplicitEquations);
+        mfront::bbrick::addLocalVariable(bd, "real",
+                                         currentEstimateOfThePorosityIncrement);
+        mfront::bbrick::addLocalVariable(bd, "real", porosityUpperBound);
         mfront::bbrick::addLocalVariable(bd, "ushort",
-                                         StandardElastoViscoPlasticityBrick::
-                                             staggeredSchemeIterationCounter);
+                                         staggeredSchemeIterationCounter);
         // convergence criterion of the staggered scheme
-        VariableDescription eps("real", StandardElastoViscoPlasticityBrick::
-                                            staggeredSchemeConvergenceCriterion,
-                                1u, 0u);
+        VariableDescription eps("real", staggeredSchemeConvergenceCriterion, 1u,
+                                0u);
         eps.description = "stopping criterion value of the staggered scheme";
         bd.addParameter(uh, eps, BehaviourData::UNREGISTRED);
         bd.setParameterDefaultValue(
-            uh, StandardElastoViscoPlasticityBrick::
-                    staggeredSchemeConvergenceCriterion,
+            uh, staggeredSchemeConvergenceCriterion,
             this->staggered_algorithm_parameters.convergence_criterion);
         // maximum number of iterations of the staggered scheme
         VariableDescription iterMax(
-            "ushort", StandardElastoViscoPlasticityBrick::
-                          maximumNumberOfIterationsOfTheStaggeredScheme,
-            1u, 0u);
+            "ushort", maximumNumberOfIterationsOfTheStaggeredScheme, 1u, 0u);
         iterMax.description =
             "maximum number of iterations of the staggered scheme allowed";
         bd.addParameter(uh, iterMax, BehaviourData::UNREGISTRED);
         bd.setParameterDefaultValue(
-            uh, StandardElastoViscoPlasticityBrick::
-                    maximumNumberOfIterationsOfTheStaggeredScheme,
+            uh, maximumNumberOfIterationsOfTheStaggeredScheme,
             static_cast<unsigned short>(this->staggered_algorithm_parameters
                                             .maximum_number_of_iterations));
       }
@@ -456,19 +497,20 @@ namespace mfront {
   void StandardElastoViscoPlasticityBrick::endTreatment() const {
     constexpr const auto uh =
         tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    //
     if (this->isCoupledWithPorosityEvolution()) {
-      const auto& f =
-          bd.getBehaviourData(uh).getStateVariableDescriptionByExternalName(
-              tfel::glossary::Glossary::Porosity);
-      const auto f_ = f.name + "_";
       if (this->porosity_evolution_algorithm ==
           mfront::bbrick::PorosityEvolutionAlgorithm::STAGGERED_SCHEME) {
+        const auto& broken =
+            bd.getBehaviourData(uh)
+                .getAuxiliaryStateVariableDescriptionByExternalName(
+                    tfel::glossary::Glossary::Broken);
         CodeBlock init;
         // initialize the porosity status
         init.code += "this->";
         init.code += StandardElastoViscoPlasticityBrick::
             computeStandardSystemOfImplicitEquations;
-        init.code += " = false;\n";
+        init.code += " = 2 * (this->" + broken.name + ") > 1;\n";
         // initialize the porosity increment
         init.code += StandardElastoViscoPlasticityBrick::
             currentEstimateOfThePorosityIncrement;
@@ -480,22 +522,58 @@ namespace mfront {
         bd.setCode(uh, BehaviourData::BeforeInitializeLocalVariables, init,
                    BehaviourData::CREATEORAPPEND, BehaviourData::AT_BEGINNING);
       }
+      const auto& f =
+          bd.getBehaviourData(uh).getStateVariableDescriptionByExternalName(
+              tfel::glossary::Glossary::Porosity);
+      const auto f_ = f.name + "_";
       // value of the porosity at t+theta*dt
       CodeBlock ib;
       ib.code += "const auto " + f_ + " = ";
       ib.code += "std::max(std::min(this->" + f.name + " + theta * (this->d" +
-                 f.name + "), real(1)), real(0));\n ";
+                 f.name + "), (this->" +
+                 std::string(porosityUpperBoundSafetyFactor) + ") * " +
+                 std::string(porosityUpperBound) + "), real(0));\n ";
       bd.setCode(uh, BehaviourData::Integrator, ib,
                  BehaviourData::CREATEORAPPEND, BehaviourData::AT_BEGINNING);
-      ib.code = "if(!";
-      ib.code += StandardElastoViscoPlasticityBrick::
-          computeStandardSystemOfImplicitEquations;
-      ib.code += "){\n";
-      ib.code = "f" + f.name + " -= " +
-                StandardElastoViscoPlasticityBrick::
-                    currentEstimateOfThePorosityIncrement +
-                ";\n";
-      ib.code += "}\n";
+      // implicit equation associated with the porosity
+      if (this->porosity_evolution_algorithm ==
+          mfront::bbrick::PorosityEvolutionAlgorithm::STAGGERED_SCHEME) {
+        ib.code = "if(!this->";
+        ib.code += StandardElastoViscoPlasticityBrick::
+            computeStandardSystemOfImplicitEquations;
+        ib.code += "){\n";
+        ib.code += "f" + f.name + " -= " +
+                   StandardElastoViscoPlasticityBrick::
+                       currentEstimateOfThePorosityIncrement +
+                   ";\n";
+        ib.code += "}\n";
+        bd.setCode(uh, BehaviourData::Integrator, ib,
+                   BehaviourData::CREATEORAPPEND, BehaviourData::AT_BEGINNING);
+      }
+      // additional convergence checks
+      if (this->porosity_evolution_algorithm ==
+          mfront::bbrick::PorosityEvolutionAlgorithm::STAGGERED_SCHEME) {
+      const auto& broken =
+          bd.getBehaviourData(uh)
+              .getAuxiliaryStateVariableDescriptionByExternalName(
+                  tfel::glossary::Glossary::Broken);
+        // additional convergence checks
+        CodeBlock acc;
+        std::ostringstream os;
+        // We check if we did not built the implicit system only to have the
+        // jacobian of the full implicit system after the convergence of the
+        // staggered scheme. If this is the case, the converged flag is set
+        // to true and the the resolution is stopped
+        os << "if ((";
+        os << computeStandardSystemOfImplicitEquations;
+        os << ") || (2 * (this->" + broken.name + ") > 1)) {\n";
+        os << "converged = true;\n";
+        os << "return;\n";
+        os << "}\n";
+        acc.code = os.str();
+        bd.setCode(uh, BehaviourData::AdditionalConvergenceChecks, acc,
+                   BehaviourData::CREATEORAPPEND, BehaviourData::AT_BEGINNING);
+      }
     }
     this->stress_potential->endTreatment(this->bd, this->dsl);
     auto i = size_t{};
@@ -510,6 +588,33 @@ namespace mfront {
                        this->buildInelasticFlowsMap(),
                        getId(i, this->nucleation_models.size()));
       ++i;
+    }
+    // At this stage, one expects to be able to compute the upper porosity bound
+    if (this->isCoupledWithPorosityEvolution()){
+      const auto& f =
+          bd.getBehaviourData(uh).getStateVariableDescriptionByExternalName(
+              tfel::glossary::Glossary::Porosity);
+      const auto& broken =
+          bd.getBehaviourData(uh)
+              .getAuxiliaryStateVariableDescriptionByExternalName(
+                  tfel::glossary::Glossary::Broken);
+      CodeBlock init;
+      init.code += "this->";
+      init.code += porosityUpperBound;
+      init.code += " = real{1};\n";
+      auto flow_id = size_t{};
+      for (const auto& pf : this->flows) {
+        const auto id = getId(flow_id, this->flows.size());
+        init.code += pf->updatePorosityUpperBound(bd, id);
+        ++flow_id;
+      }
+      init.code += "if(2 * (this->" + broken.name + ") > 1){\n";
+      init.code += "this->" + f.name + " = (this->" +
+                   std::string(porosityUpperBoundSafetyFactor) + ") * (this->" +
+                   std::string(porosityUpperBound) + ");\n";
+      init.code += "}\n";
+      bd.setCode(uh, BehaviourData::BeforeInitializeLocalVariables, init,
+                 BehaviourData::CREATEORAPPEND, BehaviourData::AT_BEGINNING);
     }
     // at this stage, one assumes that the various components of the inelastic
     // flow (stress_potential, isotropic hardening rule) have added the
@@ -549,131 +654,123 @@ namespace mfront {
       const auto& f =
           bd.getBehaviourData(uh).getStateVariableDescriptionByExternalName(
               tfel::glossary::Glossary::Porosity);
-      const auto df = std::string(
-          StandardElastoViscoPlasticityBrick::
-              differenceBetweenSuccessiveEstimatesOfThePorosityIncrement);
+      const auto& broken =
+          bd.getBehaviourData(uh)
+              .getAuxiliaryStateVariableDescriptionByExternalName(
+                  tfel::glossary::Glossary::Broken);
+      const auto df =
+          differenceBetweenSuccessiveEstimatesOfThePorosityIncrement;
+      const auto f_ets = nextEstimateOfThePorosityAtTheEndOfTheTimeStep;
       // additional convergence checks
       CodeBlock acc;
-      auto generate_debug_message = [&acc, &f, &df](const bool b) {
+      std::ostringstream os;
+      auto generate_debug_message = [&os, &f, &df](const bool b) {
         if (!getDebugMode()) {
           return;
         }
         if (b) {
-          acc.code +=
-              "std::cout "  //
-              "<< \"convergence of the staggered algorithm:\\n\"";
+          os << "std::cout "
+             << "<< \"convergence of the staggered algorithm, iteration \"";
         } else {
-          acc.code +=
-              "std::cout "  //
-              "<< \"non convergence of the staggered algorithm:\\n\"";
+          os << "std::cout "
+             << "<< \"non convergence of the staggered algorithm:, iteration \"";
         }
-        acc.code +=
-            "<< \"- current estimate of the porosity at the end of the time "
-            "step: \"";
-        acc.code += " << ((this->" + f.name + ")+(this->";
-        acc.code += StandardElastoViscoPlasticityBrick::
-            currentEstimateOfThePorosityIncrement;
-        acc.code += ")) << '\\n'";
-        acc.code +=
-            "<< \"- current estimate of the porosity increment: \" << "
-            "(this->";
-        acc.code += StandardElastoViscoPlasticityBrick::
-            currentEstimateOfThePorosityIncrement;
-        acc.code += ") << '\\n'";
-        acc.code += "<< \"- next estimate of the porosity increment: \" << ";
-        acc.code += StandardElastoViscoPlasticityBrick::
-            nextEstimateOfThePorosityIncrement;
-        acc.code += " << '\\n'";
-        acc.code += "<< \"- difference: \" << ";
-        acc.code += "std::abs(" + df + ") << '\\n';\n";
+        os << " << this->" << staggeredSchemeIterationCounter << " << '\\n'\n"
+           << "<< \"- current estimate of the porosity at the end of the time "
+           << "step: \""
+           << " << ((this->" << f.name << ")+(this->"
+           << currentEstimateOfThePorosityIncrement << ")) << '\\n'\n"
+           << "<< \"- current estimate of the porosity increment: \" << "
+              "(this->"
+           << currentEstimateOfThePorosityIncrement << ") << '\\n'\n"
+           << "<< \"- next estimate of the porosity increment: \" << "
+           << nextEstimateOfThePorosityIncrement << " << '\\n'\n"
+           << "<< \"- difference: \" << "
+           << "std::abs(" << df << ") << '\\n';\n";
       };
-      // We check if we did not built the implicit system only to have the
-      // jacobian of the full implicit system after the convergence of the
-      // staggered scheme. If this is the case, the converged flag is set
-      // to true and the the resolution is stopped
-      acc.code += "if (";
-      acc.code += StandardElastoViscoPlasticityBrick::
-          computeStandardSystemOfImplicitEquations;
-      acc.code += ") {\n";
-      acc.code += "converged = true;\n";
-      acc.code += "return;\n";
-      acc.code += "}\n";
-      bd.setCode(uh, BehaviourData::AdditionalConvergenceChecks, acc,
-                 BehaviourData::CREATEORAPPEND, BehaviourData::AT_BEGINNING);
       // now we check that the staggered scheme has convergenced
-      acc.code = "if (converged && (!";
-      acc.code += StandardElastoViscoPlasticityBrick::
-          computeStandardSystemOfImplicitEquations;
-      acc.code += ")) {\n";
-      // 1. compute a new estimate of the porosity increment
-      acc.code += "auto ";
-      acc.code += StandardElastoViscoPlasticityBrick::
-          nextEstimateOfThePorosityIncrement;
-      acc.code += " = real{};\n";
+      os << "if (converged && (!";
+      os << computeStandardSystemOfImplicitEquations;
+      os << ")) {\n";
+      // 1. compute a new estimate of the porosity increment and get the maximum
+      // allowed porosity (onset of fracture)
+      os << "auto ";
+      os << nextEstimateOfThePorosityIncrement;
+      os << " = real{};\n";
       auto flow_id = size_t{};
       for (const auto& pf : this->flows) {
-        acc.code += pf->updateNextEstimateOfThePorosityIncrement(
-            bd, getId(flow_id, this->flows.size()));
+        const auto id = getId(flow_id, this->flows.size());
+        os << pf->updateNextEstimateOfThePorosityIncrement(bd, id);
         ++flow_id;
       }
-      //       auto nucleation_id = size_t{};
-      //       for (const auto& nm : this->nucleation_models) {
-      //         nm->updateNextEstimateOfThePorosityIncrement(
-      //             getId(nucleation_id, this->nucleation_models.size()));
-      //         ++nucleation_id;
-      //       }
-      // 2. get the maximum allowed porosity
-      // 3. check if the staggered algorithm has converged
-      acc.code += "const auto " + df + " = ";
-      acc.code += StandardElastoViscoPlasticityBrick::
-          nextEstimateOfThePorosityIncrement;
-      acc.code += " - (this->";
-      acc.code += StandardElastoViscoPlasticityBrick::
-          currentEstimateOfThePorosityIncrement;
-      acc.code += ");\n";
-      acc.code += "if(std::abs(" + df + ") < this->";
-      acc.code += StandardElastoViscoPlasticityBrick::
-          staggeredSchemeConvergenceCriterion;
-      acc.code += "){\n";
+      auto nucleation_id = size_t{};
+      for (const auto& nm : this->nucleation_models) {
+        const auto id = getId(nucleation_id, this->nucleation_models.size());
+        os << nm->updateNextEstimateOfThePorosityIncrement(
+            bd, this->buildInelasticFlowsMap(), id);
+        ++nucleation_id;
+      }
+      // next estimate of the porosity at the end of the time step
+      os << "const auto " << f_ets << " = this->f + "
+         << nextEstimateOfThePorosityIncrement << ";\n";
+      // 2. Treat the case when the newly computed porosity exceeds the porosity
+      // upper bounds
+      //
+      // The maximum allowed increment is the current value of the upper of the
+      // porosity minus the value at the beginning of the time step. We then
+      // use a dichotomic approach by choosing an increment which is an average
+      // of the previous increment and this maximum allowed increment
+      os << "if(" << f_ets << " > (this->" << porosityUpperBoundSafetyFactor
+         << " ) * ( this->" << porosityUpperBound << ")){\n"
+         << nextEstimateOfThePorosityIncrement << " = "
+         << "(this->" << currentEstimateOfThePorosityIncrement << " + (this->"
+         << porosityUpperBound << " - this->f))/2;\n";
+      // 3. Treat the case when the newly computed porosity is negative
+      //
+      // The maximum allowed increment is the opposite of the initial porosity.
+      // We then use a dichotomic approach by choosing an increment which is an
+      // average of the previous increment and this maximum allowed increment
+      os << "} else if(" << f_ets << " < 0){\n"
+         << nextEstimateOfThePorosityIncrement << " = "
+         << "(" << currentEstimateOfThePorosityIncrement << " - (this->f))/2;\n"
+         << "}\n";
+      // 4. check if the staggered algorithm has converged
+      os << "const auto " << df << " = " << nextEstimateOfThePorosityIncrement
+         << " - (this->" << currentEstimateOfThePorosityIncrement << ");\n"
+         << "if(std::abs(" << df << ") < this->"
+         << staggeredSchemeConvergenceCriterion << "){\n";
       generate_debug_message(true);
-      // makes one more iteration to compute the exact consistent tangent
-      // operator if required
-      acc.code += "converged = smt != CONSISTENTTANGENTOPERATOR;\n";
-      // the staggered scheme has converged
-      acc.code += StandardElastoViscoPlasticityBrick::
-          computeStandardSystemOfImplicitEquations;
-      acc.code += " = true;\n";
-      acc.code += "} else {\n";
+      // try to dectect failure
+      os << "if (this->f + this->" << currentEstimateOfThePorosityIncrement
+         << " > (this->" << porosityUpperBoundSafetyFactorForFractureDetection
+         << ") * (this->" << porosityUpperBound << ")){\n"
+         << "this->" << broken.name << "= 1;\n"
+         << "}\n"
+         // makes one more iteration to compute the exact consistent tangent
+         // operator if required
+         << "converged = smt != CONSISTENTTANGENTOPERATOR;\n"
+         // the staggered scheme has converged
+         << computeStandardSystemOfImplicitEquations << " = true;\n"
+         << "} else {\n";
       generate_debug_message(false);
       // the staggered scheme has not converged
-      acc.code += "if(";
-      acc.code +=
-          StandardElastoViscoPlasticityBrick::staggeredSchemeIterationCounter;
-      acc.code += " > this->";
-      acc.code += StandardElastoViscoPlasticityBrick::
-          maximumNumberOfIterationsOfTheStaggeredScheme;
-      acc.code += "){";
-      acc.code += "tfel::raise<DivergenceException>(\"";
-      acc.code += "maximum number of iterations of ";
-      acc.code += "the staggered algorithm reached\");\n";
-      acc.code += "}\n";
+      os << "if(" << staggeredSchemeIterationCounter << " > this->"
+         << maximumNumberOfIterationsOfTheStaggeredScheme << "){\n"
+         << "tfel::raise<DivergenceException>(\""
+         << "maximum number of iterations of "
+         << "the staggered algorithm reached\");\n"
+         << "}\n";
       // update the current estimate
-      acc.code += "this->";
-      acc.code += StandardElastoViscoPlasticityBrick::
-          currentEstimateOfThePorosityIncrement;
-      acc.code += " = ";
-      acc.code += StandardElastoViscoPlasticityBrick::
-          nextEstimateOfThePorosityIncrement;
-      acc.code += ";\n";
+      os << "this->" << currentEstimateOfThePorosityIncrement << " = "
+         << "(this->" << currentEstimateOfThePorosityIncrement << " + "
+         << nextEstimateOfThePorosityIncrement << ")/2;\n";
       // update the staggered iteration number
-      acc.code += "++";
-      acc.code +=
-          StandardElastoViscoPlasticityBrick::staggeredSchemeIterationCounter;
-      acc.code += ";\n";
-      acc.code += "this->iter = 0;\n";
-      acc.code += "converged = false;\n";
-      acc.code += "}\n";
-      acc.code += "} // end of if(converged&&...)\n";
+      os << "++" << staggeredSchemeIterationCounter << ";\n"
+         << "this->iter = 0;\n"
+         << "converged = false;\n"
+         << "}\n"
+         << "} // end of if(converged&&...)\n";
+      acc.code = os.str();
       bd.setCode(uh, BehaviourData::AdditionalConvergenceChecks, acc,
                  BehaviourData::CREATEORAPPEND, BehaviourData::AT_END);
     }

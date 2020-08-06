@@ -1,6 +1,6 @@
 /*!
  * \file   StressCriterionBase.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   10/04/2018
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
@@ -17,19 +17,19 @@
 #include "MFront/BehaviourBrick/OptionDescription.hxx"
 #include "MFront/BehaviourBrick/StressCriterionBase.hxx"
 
-namespace mfront{
+namespace mfront {
 
   namespace bbrick {
 
-    std::vector<OptionDescription> StressCriterionBase::getOptions() const{
+    std::vector<OptionDescription> StressCriterionBase::getOptions() const {
       return {};
     }  // end of StressCriterionBase::getOptions
 
     void StressCriterionBase::initialize(BehaviourDescription& bd,
-                                          AbstractBehaviourDSL&,
-                                          const std::string& id,
-                                          const DataMap& d,
-                                          const Role r) {
+                                         AbstractBehaviourDSL&,
+                                         const std::string& id,
+                                         const DataMap& d,
+                                         const Role r) {
       constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       // checking options
       mfront::bbrick::check(d, this->getOptions());
@@ -80,6 +80,18 @@ namespace mfront{
                                            const std::string&,
                                            const Role) {
     }  // end of StressCriterionBase::endTreatment
+
+    std::string StressCriterionBase::updatePorosityUpperBound(
+        const BehaviourDescription&, const std::string&, const Role r) const {
+      if (!((r == STRESSCRITERION) || (r == STRESSANDFLOWCRITERION))) {
+        tfel::raise(
+            "StressCriterionBase::updatePorosityUpperBound: invalid call for "
+            "this stress criterion. This method is not valid for flow "
+            "criteria (i.e. when the stress criterion is used to dertermine "
+            "the flow direction in non associated plasticity).");
+      }
+      return std::string{};
+    }  // end of StressCriterionBase::updatePorosityUpperBound
 
     StressCriterionBase::~StressCriterionBase() = default;
 

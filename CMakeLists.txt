@@ -296,9 +296,13 @@ if(enable-python OR enable-python-bindings)
   find_package(PythonInterp ${PYTHONLIBS_VERSION_CLEANED} REQUIRED)
   message(STATUS "python interpreter    ${PYTHON_EXECUTABLE}")
   if(enable-numpy-support AND PYTHON_EXECUTABLE AND (NOT NUMPY_INCLUDE_DIRS))
-    execute_process(COMMAND "${PYTHON_EXECUTABLE}" "-c" "import numpy;print(numpy.get_include())"
-                    OUTPUT_VARIABLE NUMPY_INCLUDE_DIRS)
-    message(STATUS "Numpy header path     ${NUMPY_INCLUDE_DIRS}")
+    execute_process(
+      COMMAND "${PYTHON_EXECUTABLE}" -c
+              "from __future__ import print_function\ntry: import numpy; print(numpy.get_include(), end='')\nexcept:pass\n"
+              OUTPUT_VARIABLE NUMPY_INCLUDE_PATH)
+      find_path(NUMPY_INCLUDE_DIRS numpy/arrayobject.h
+                HINTS "${NUMPY_INCLUDE_PATH}" "${PYTHON_INCLUDE_PATH}" NO_DEFAULT_PATH)
+      message(STATUS "Numpy header path     ${NUMPY_INCLUDE_DIRS}")
   endif(enable-numpy-support AND PYTHON_EXECUTABLE AND (NOT NUMPY_INCLUDE_DIRS))
 endif(enable-python OR enable-python-bindings)
 

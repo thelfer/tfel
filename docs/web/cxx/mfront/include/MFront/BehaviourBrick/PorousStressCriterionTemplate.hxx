@@ -37,6 +37,9 @@ struct __StressCriterionName__StressCriterion : StandardPorousStressCriterionBas
 
   PorosityEffectOnFlowRule getPorosityEffectOnFlowRule() const override;
 
+  std::string updatePorosityUpperBound(
+      const BehaviourDescription &) const override;
+
   //! \brief destructor
   ~__StressCriterionName__StressCriterion() override;
 }; // end of struct __StressCriterionName__StressCriterion

@@ -12,6 +12,7 @@
  */
 
 #include "TFEL/Raise.hxx"
+#include "MFront/StandardElastoViscoPlasticityBrick.hxx"
 #include "MFront/BehaviourBrick/BrickUtilities.hxx"
 #include "MFront/BehaviourBrick/OptionDescription.hxx"
 #include "MFront/BehaviourBrick/StressPotential.hxx"
@@ -51,6 +52,27 @@ namespace mfront {
     GursonTvergaardNeedleman1982StressCriterion::getPorosityEffectOnFlowRule() const {
       return StressCriterion::STANDARD_POROSITY_CORRECTION_ON_FLOW_RULE;
     }  // end of GursonTvergaardNeedleman1982StressCriterion::getPorosityEffectOnFlowRule()
+
+    std::string
+    GursonTvergaardNeedleman1982StressCriterion::updatePorosityUpperBound(
+        const BehaviourDescription&,
+        const std::string& id,
+        const Role r) const {
+      if (!((r == STRESSCRITERION) || (r == STRESSANDFLOWCRITERION))) {
+        tfel::raise(
+            "StressCriterionBase::updatePorosityUpperBound: invalid call for "
+            "this stress criterion. This method is not valid for flow "
+            "criteria (i.e. when the stress criterion is used to dertermine "
+            "the flow direction in non associated plasticity).");
+      }
+      const auto bound = std::string(
+          mfront::StandardElastoViscoPlasticityBrick::porosityUpperBound);
+      const auto params =
+          StressCriterion::getVariableId("sscb_parameters", id, r);
+      return "this->" + bound + " = " +  //
+             "std::min(this->" + bound + ", this->" + params + ".f_r);\n";
+    }  // end of GursonTvergaardNeedleman1982StressCriterion::getPorosityEffectOnFlowRule()
+
 
     GursonTvergaardNeedleman1982StressCriterion::
         ~GursonTvergaardNeedleman1982StressCriterion() = default;

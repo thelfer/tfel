@@ -41,6 +41,15 @@ namespace mfront {
                         const std::string&,
                         const Role) override;
       std::vector<OptionDescription> getOptions() const override;
+      /*!
+       * \return the code updating the upper bound of the porosity.
+       * If this stress criterion is not coupled with porosity, the returned
+       * value may be empty.
+       * \param[in] bd: behaviour description
+       */
+      std::string updatePorosityUpperBound(const BehaviourDescription&,
+                                           const std::string&,
+                                           const Role) const override;
       //! destructor
       ~StressCriterionBase() override;
     };  // end of StressCriterionBase

@@ -49,7 +49,8 @@ namespace mfront {
       //! a simple alias
       using ModellingHypothesis = tfel::material::ModellingHypothesis;
       /*!
-       * \return the name of a variable from a base name and the nucleation model id.
+       * \return the name of a variable from a base name and the nucleation
+       * model id.
        * \param[in] n: base name
        * \param[in] id: nucleation model id
        */
@@ -90,6 +91,17 @@ namespace mfront {
           BehaviourDescription&,
           const AbstractBehaviourDSL&,
           const StressPotential&,
+          const std::map<std::string, std::shared_ptr<bbrick::InelasticFlow>>&,
+          const std::string&) const = 0;
+      /*!
+       * \return the code updating the next estimate of the porosity
+       * increment with the contribution of this nucleation model.
+       * \param[in] bd: behaviour description
+       * \param[in] iflows: list of inelastic flows and their associated ids
+       * \param[in] id: porosity nucleation model id
+       */
+      virtual std::string updateNextEstimateOfThePorosityIncrement(
+          const BehaviourDescription&,
           const std::map<std::string, std::shared_ptr<bbrick::InelasticFlow>>&,
           const std::string&) const = 0;
       //! destructor

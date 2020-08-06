@@ -171,6 +171,7 @@ set(TFELMFront_SOURCES
     PorosityNucleationModelFactory.cxx
     PorosityNucleationModelBase.cxx
     ChuNeedleman1980StrainBasedPorosityNucleationModel.cxx
+    ChuNeedleman1980StressBasedPorosityNucleationModel.cxx
     StressCriterion.cxx
     StressCriterionBase.cxx
     StandardStressCriterionBase.cxx

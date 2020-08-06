@@ -41,9 +41,9 @@ namespace tfel {
           }
         } else {
           if (sn > smax + H * em) {
-            return  DDIF2State::GROWING_DAMAGE;
+            return DDIF2State::GROWING_DAMAGE;
           } else {
-            return  DDIF2State::ELASTIC_UNLOADING;
+            return DDIF2State::ELASTIC_UNLOADING;
           }
         }
       }
@@ -92,7 +92,7 @@ namespace tfel {
         dfe_dde = -r / yg;
         dfe_ddeel = (l * Stensor::Id() + 2 * m * n) / yg;
       }
-    } // end of DDIF2Base::buildImplicitEquation
+    }  // end of DDIF2Base::buildImplicitEquation
 
     template <typename StressStensor,
               typename Stensor,

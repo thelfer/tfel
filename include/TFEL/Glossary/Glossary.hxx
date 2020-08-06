@@ -42,6 +42,7 @@ static const GlossaryEntry AxialGrowth;
 static const GlossaryEntry AxialStrain;
 static const GlossaryEntry AxialStress;
 static const GlossaryEntry B10BurnUp;
+static const GlossaryEntry Broken;
 static const GlossaryEntry BulkModulus;
 static const GlossaryEntry BurnUp_AtPercent;
 static const GlossaryEntry BurnUp_MWJperTm;
@@ -159,7 +160,7 @@ getKeys() const;
 
 protected :
 //! all glossary names (to initialise glossary entries)
-static const char * names[103];
+static const char * names[104];
 /*!
  * \brief insert a new entry
  */

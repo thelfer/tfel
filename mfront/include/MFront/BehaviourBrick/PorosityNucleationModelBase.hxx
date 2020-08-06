@@ -14,6 +14,7 @@
 #ifndef LIB_MFRONT_BEHAVIOURBRICK_POROSITYNUCLEATIONMODELBASE_HXX
 #define LIB_MFRONT_BEHAVIOURBRICK_POROSITYNUCLEATIONMODELBASE_HXX
 
+#include "MFront/BehaviourBrick/PorosityEvolutionAlgorithm.hxx"
 #include "MFront/BehaviourBrick/PorosityNucleationModel.hxx"
 
 namespace mfront {
@@ -39,11 +40,18 @@ namespace mfront {
 
      protected:
       /*!
+       * \return a boolean stating if the nucleated porosity must be saved
+       */
+      virtual bool requiresSavingNucleatedPorosity() const = 0;
+      /*!
        * \brief flag stating if the contribution to the porosity nucleation
        * associated with this model must be saved in a dedicated
        * auxiliary state variable.
        */
       bool save_porosity_increase = false;
+      //! \brief algorithm used to handle the porosity evolution
+      PorosityEvolutionAlgorithm porosity_evolution_algorithm =
+          PorosityEvolutionAlgorithm::STAGGERED_SCHEME;
     };  // end of struct PorosityNucleationModelBase
 
   }  // end of namespace bbrick

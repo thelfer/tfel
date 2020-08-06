@@ -618,8 +618,30 @@ namespace mfront {
       if (getVerboseMode() >= VERBOSE_DEBUG) {
         getLogStream() << "HookeStressPotentialBase::endTreatment: begin\n";
       }
+      const auto& d = bd.getBehaviourData(uh);
+      const auto& asvs = d.getAuxiliaryStateVariables();
+      const auto& esvs = d.getExternalStateVariables();
+      const auto pav =
+          findByExternalName(asvs, tfel::glossary::Glossary::Broken);
+      const auto pev =
+          findByExternalName(esvs, tfel::glossary::Glossary::Broken);
       // implicit equation associated with the elastic strain
       CodeBlock integrator;
+      if (pav != asvs.end()) {
+        const auto& broken = *pav;
+        integrator.code += "if(2 * (this->" + broken.name + ") > 1){\n";
+        integrator.code += "  feel -= eel;\n";
+        integrator.code += "  return true;\n";
+        integrator.code += "}\n";
+      }
+      if (pev != esvs.end()) {
+        const auto& broken = *pev;
+        integrator.code += "if(2 * (this->" + broken.name + " + (" + bd.getClassName() +
+             "::theta) * d" + broken.name + ") > 1){\n";
+        integrator.code += "  feel -= eel;\n";
+        integrator.code += "  return true;\n";
+        integrator.code += "}\n";
+      }
       integrator.code = "feel -= this->deto;\n";
       bd.setCode(uh, BehaviourData::Integrator, integrator,
                  BehaviourData::CREATEORAPPEND, BehaviourData::AT_BEGINNING);

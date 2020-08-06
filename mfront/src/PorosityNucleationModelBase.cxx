@@ -40,10 +40,25 @@ namespace mfront {
             raise("'save_individual_porosity_increase' is not a boolean");
           }
           this->save_porosity_increase = e.second.get<bool>();
+        } else if (e.first == "porosity_evolution_algorithm") {
+          if (!e.second.is<std::string>()) {
+            raise("'porosity_evolution_algorithm' is not a boolean");
+          }
+          const auto& a = e.second.get<std::string>();
+          if (a == "standard_implicit_scheme") {
+            this->porosity_evolution_algorithm =
+                PorosityEvolutionAlgorithm::STANDARD_IMPLICIT_SCHEME;
+          } else if (a == "staggered_scheme") {
+            this->porosity_evolution_algorithm =
+                PorosityEvolutionAlgorithm::STAGGERED_SCHEME;
+          } else {
+            raise("internal error: unsupported porosity evolution algorithm");
+          }
         }  // other options must be treated in child classes
       }
       addLocalVariable(bd, "real", "dfn" + id);
-      if (this->save_porosity_increase) {
+      if ((this->save_porosity_increase) ||
+          (this->requiresSavingNucleatedPorosity())) {
         VariableDescription fn("real", "fn" + id, 1u, 0u);
         const auto g =
             tfel::glossary::Glossary::PorosityIncreaseDueToNucleation;
@@ -63,6 +78,8 @@ namespace mfront {
           "if appropriate, save the porosity increase induced "
           "by this inelastic flow in a dedicated auxiliary state variable",
           OptionDescription::BOOLEAN);
+      opts.emplace_back("porosity_evolution_algorithm",
+                        "reserved for internal use", OptionDescription::STRING);
       return opts;
     }  // end of PorosityNucleationModelBase::getOptions()
 
@@ -73,9 +90,10 @@ namespace mfront {
         const std::map<std::string, std::shared_ptr<bbrick::InelasticFlow>>&,
         const std::string& id) const {
       constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-      if (this->save_porosity_increase) {
+      if ((this->save_porosity_increase) ||
+          (this->requiresSavingNucleatedPorosity())) {
         CodeBlock uav;
-        uav.code = "fn" + id + " += dfn" + id + ";\n";
+        uav.code = "this->fn" + id + " += this->dfn" + id + ";\n";
         bd.setCode(uh, BehaviourData::UpdateAuxiliaryStateVariables, uav,
                    BehaviourData::CREATEORAPPEND, BehaviourData::AT_BEGINNING);
       }

@@ -149,6 +149,7 @@ libTFELMFront_la_SOURCES = MFront.cxx                                           
 		           PorosityNucleationModel.cxx                            \
 		           PorosityNucleationModelBase.cxx                        \
                    ChuNeedleman1980StrainBasedPorosityNucleationModel.cxx \
+                   ChuNeedleman1980StressBasedPorosityNucleationModel.cxx \
 		           StressCriterion.cxx                                    \
 		           StressCriterionBase.cxx                                \
 		           StandardStressCriterionBase.cxx                        \

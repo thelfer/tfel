@@ -367,6 +367,13 @@ namespace mfront {
   };  // end of struct VariableDescriptionContainer
 
   /*!
+   * \return an iterator to the variable with the given external name
+   * \param[in] c: variable container
+   * \param[in] n: external name
+   */
+  MFRONT_VISIBILITY_EXPORT VariableDescriptionContainer::const_iterator
+  findByExternalName(const VariableDescriptionContainer&, const std::string&);
+  /*!
    * \return the sum of the sizes of all the variables
    * \param[in] c: variable description container
    */

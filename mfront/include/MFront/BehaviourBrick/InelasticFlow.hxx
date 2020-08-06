@@ -130,7 +130,15 @@ namespace mfront {
        */
       virtual std::string updateNextEstimateOfThePorosityIncrement(
           const BehaviourDescription&, const std::string&) const = 0;
-
+      /*!
+       * \return the code updating the upper bound of the porosity.
+       * If this flow does not affect the porosity growth, the returned
+       * value may be empty.
+       * \param[in] bd: behaviour description
+       * \param[in] id: flow id
+       */
+      virtual std::string updatePorosityUpperBound(
+          const BehaviourDescription&, const std::string&) const = 0;
       //! destructor
       virtual ~InelasticFlow();
 

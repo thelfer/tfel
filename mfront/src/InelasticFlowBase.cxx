@@ -375,7 +375,8 @@ namespace mfront {
       if (idsl.getSolver().usesJacobian()) {
         ib.code += "if(!perturbatedSystemEvaluation){\n";
       }
-      ib.code += "this->dp" + id + " = max(this->dp" + id + ", strain(0));\n";
+      //       ib.code += "this->dp" + id + " = this->dp" + id + ",
+      //       strain(0));\n";
       if (idsl.getSolver().usesJacobian()) {
         ib.code += "}\n";
       }
@@ -478,20 +479,12 @@ namespace mfront {
       if (this->contributesToPorosityGrowth()) {
         if (this->porosity_evolution_algorithm ==
             PorosityEvolutionAlgorithm::STAGGERED_SCHEME) {
-          const auto& f =
-              bd.getBehaviourData(uh).getStateVariableDescriptionByExternalName(
-                  tfel::glossary::Glossary::Porosity);
           ib.code += "if(";
           ib.code += StandardElastoViscoPlasticityBrick::
               computeStandardSystemOfImplicitEquations;
           ib.code += "){\n";
           this->addFlowContributionToTheImplicitEquationAssociatedWithPorosityEvolution(
               ib, bd, dsl, sp, id);
-          ib.code += "} else {\n";
-          ib.code += "f" + f.name + " -= ";
-          ib.code += StandardElastoViscoPlasticityBrick::
-              currentEstimateOfThePorosityIncrement;
-          ib.code += ";\n";
           ib.code += "}\n";
         } else if (this->porosity_evolution_algorithm ==
                    PorosityEvolutionAlgorithm::STANDARD_IMPLICIT_SCHEME) {
@@ -604,12 +597,24 @@ namespace mfront {
       const auto& f =
           bd.getBehaviourData(uh).getStateVariableDescriptionByExternalName(
               tfel::glossary::Glossary::Porosity);
+      const auto& broken =
+          bd.getBehaviourData(uh)
+              .getAuxiliaryStateVariableDescriptionByExternalName(
+                  tfel::glossary::Glossary::Broken);
       const auto f_ = f.name + "_";
+      ib.code += "if(2 * (this->" + broken.name + ") > 1){\n";
+      if (this->save_porosity_increase) {
+        ib.code += "this->dfg" + id + " = real{};\n";
+        ib.code += "f" + f.name + " -= this->dfg" + id + ";\n";
+      } else {
+        ib.code += "f" + f.name + " -= real{};\n";
+      }
+      ib.code += "} else {\n";
       if (this->getPorosityEffectOnFlowRule() ==
           STANDARD_POROSITY_CORRECTION_ON_FLOW_RULE) {
         if (this->save_porosity_increase) {
-          ib.code += "this->dfg" + id + " = power<2>(1 - " + f_ + ") * (this->dp" +
-                     id + ") * (this->trace_n" + id + ");\n";
+          ib.code += "this->dfg" + id + " = power<2>(1 - " + f_ +
+                     ") * (this->dp" + id + ") * (this->trace_n" + id + ");\n";
           ib.code += "f" + f.name + " -= this->dfg" + id + ";\n";
         } else {
           ib.code += "f" + f.name;
@@ -702,6 +707,7 @@ namespace mfront {
           ib.code += " = - (1 - " + f_ + ") * (this->trace_n" + id + ");\n";
         }
       }
+      ib.code += "}\n";
     }  // end of
        // InelasticFlowBase::addFlowContributionToTheImplicitEquationAssociatedWithPorosityEvolution
 
@@ -762,6 +768,17 @@ namespace mfront {
       }
       return this->porosity_effect_on_flow_rule;
     }  // end of InelasticFlowBase::getPorosityEffectOnFlowRule
+
+    std::string InelasticFlowBase::updatePorosityUpperBound(
+        const BehaviourDescription& bd, const std::string& id) const {
+      if (this->sc == nullptr) {
+        tfel::raise(
+            "InelasticFlowBase::updatePorosityUpperBound: "
+            "uninitialized flow");
+      }
+      return this->sc->updatePorosityUpperBound(
+          bd, id, StressCriterion::STRESSCRITERION);
+    }  // end of InelasticFlowBase::updatePorosityUpperBound
 
     InelasticFlowBase::~InelasticFlowBase() = default;
 

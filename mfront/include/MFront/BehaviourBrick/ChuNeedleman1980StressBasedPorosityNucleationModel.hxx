@@ -1,5 +1,5 @@
 /*!
- * \file   include/MFront/BehaviourBrick/ChuNeedleman1980StrainBasedPorosityNucleationModel.hxx
+ * \file   include/MFront/BehaviourBrick/ChuNeedleman1980StressBasedPorosityNucleationModel.hxx
  * \brief    
  * \author Thomas Helfer
  * \date   05/04/2020
@@ -11,8 +11,8 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_MFRONT_BEHAVIOURBRICK_CHUNEEDLEMAN1980STRAINBASEDPOROSITYNUCLEATIONMODEL_HXX
-#define LIB_MFRONT_BEHAVIOURBRICK_CHUNEEDLEMAN1980STRAINBASEDPOROSITYNUCLEATIONMODEL_HXX
+#ifndef LIB_MFRONT_BEHAVIOURBRICK_CHUNEEDLEMAN1980STRESSBASEDPOROSITYNUCLEATIONMODEL_HXX
+#define LIB_MFRONT_BEHAVIOURBRICK_CHUNEEDLEMAN1980STRESSBASEDPOROSITYNUCLEATIONMODEL_HXX
 
 #include "MFront/BehaviourBrick/PorosityNucleationModelBase.hxx"
 
@@ -28,7 +28,7 @@ namespace mfront {
      * “Void Nucleation Effects in Biaxially Stretched Sheets.”
      * Journal of Engineering Materials and Technology 102 (3): 249–56
      */
-    struct ChuNeedleman1980StrainBasedPorosityNucleationModel
+    struct ChuNeedleman1980StressBasedPorosityNucleationModel
         : PorosityNucleationModelBase {
       void initialize(BehaviourDescription&,
                       AbstractBehaviourDSL&,
@@ -52,19 +52,21 @@ namespace mfront {
           const std::string&) const override;
       bool requiresSavingNucleatedPorosity() const override;
       //! \brief destructor
-      ~ChuNeedleman1980StrainBasedPorosityNucleationModel() override;
+      ~ChuNeedleman1980StressBasedPorosityNucleationModel() override;
 
      protected:
       //! 
       BehaviourDescription::MaterialProperty fn;
       //! 
-      BehaviourDescription::MaterialProperty en;
+      BehaviourDescription::MaterialProperty sigm;
       //! 
       BehaviourDescription::MaterialProperty sn;
-    };  // end of struct ChuNeedleman1980StrainBasedPorosityNucleationModel
+      //! 
+      BehaviourDescription::MaterialProperty fmax;
+    };  // end of struct ChuNeedleman1980StressBasedPorosityNucleationModel
 
   }  // end of namespace bbrick
 
 }  // end of namespace mfront
 
-#endif /* LIB_MFRONT_BEHAVIOURBRICK_CHUNEEDLEMAN1980STRAINBASEDPOROSITYNUCLEATIONMODEL_HXX */
+#endif /* LIB_MFRONT_BEHAVIOURBRICK_CHUNEEDLEMAN1980STRESSBASEDPOROSITYNUCLEATIONMODEL_HXX */

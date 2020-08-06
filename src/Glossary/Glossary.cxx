@@ -22,12 +22,13 @@ namespace tfel
 namespace glossary
 {
 
-const char* Glossary::names[103] = {
+const char* Glossary::names[104] = {
 "AxialDeformationGradient",
 "AxialGrowth",
 "AxialStrain",
 "AxialStress",
 "B10BurnUp",
+"Broken",
 "BulkModulus",
 "BurnUp (at.%)",
 "BurnUp (MWJ/tm)",
@@ -154,6 +155,12 @@ const GlossaryEntry Glossary::B10BurnUp("B10BurnUp","B10BurnUp",
 "m^{-3}","scalar",
 "le taux d'usure en \\(\\mbox{}^{10}B\\)",
 "Ce nombre décrit le nombre d'atomes de \\(\\mbox{}^{10}B\\) consommé par unité de volume au cours de l'irradiation.",
+"" /* no 'notes' defined */);
+
+const GlossaryEntry Glossary::Broken("Broken","Broken",
+"none","scalar",
+"material failure indicator",
+"" /* no 'description' defined */,
 "" /* no 'notes' defined */);
 
 const GlossaryEntry Glossary::BulkModulus("BulkModulus","BulkModulus",
@@ -691,7 +698,7 @@ const GlossaryEntry Glossary::TrescaStress("TrescaStress","TrescaStress",
 "" /* no 'description' defined */,
 "" /* no 'notes' defined */);
 
-const GlossaryEntry Glossary::UltimateTensileStrength("UltimateTensileStrength",Glossary::names+92,Glossary::names+94,
+const GlossaryEntry Glossary::UltimateTensileStrength("UltimateTensileStrength",Glossary::names+93,Glossary::names+95,
 "Pa","scalar",
 "la valeur maximale de la contrainte qu'un materiau peut supporter",
 "" /* no 'description' defined */,
@@ -715,7 +722,7 @@ const GlossaryEntry Glossary::VonMisesStress("VonMisesStress","VonMisesStress",
 "" /* no 'description' defined */,
 "" /* no 'notes' defined */);
 
-const GlossaryEntry Glossary::YieldStrength("YieldStrength",Glossary::names+97,Glossary::names+99,
+const GlossaryEntry Glossary::YieldStrength("YieldStrength",Glossary::names+98,Glossary::names+100,
 "Pa","scalar",
 "la limite d'élasticité",
 "" /* no 'description' defined */,
@@ -753,12 +760,13 @@ return glossary;
 } // end of Glossary::getGlossary
 
 Glossary::Glossary(){
-this->keys.reserve(101);
+this->keys.reserve(102);
 this->insert(Glossary::AxialDeformationGradient);
 this->insert(Glossary::AxialGrowth);
 this->insert(Glossary::AxialStrain);
 this->insert(Glossary::AxialStress);
 this->insert(Glossary::B10BurnUp);
+this->insert(Glossary::Broken);
 this->insert(Glossary::BulkModulus);
 this->insert(Glossary::BurnUp_AtPercent);
 this->insert(Glossary::BurnUp_MWJperTm);

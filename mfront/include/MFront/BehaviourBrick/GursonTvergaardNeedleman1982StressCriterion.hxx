@@ -36,6 +36,10 @@ namespace mfront {
 
       PorosityEffectOnFlowRule getPorosityEffectOnFlowRule() const override;
 
+      std::string updatePorosityUpperBound(const BehaviourDescription&,
+                                           const std::string&,
+                                           const Role) const override;
+
       //! \brief destructor
       ~GursonTvergaardNeedleman1982StressCriterion() override;
     };  // end of struct GursonTvergaardNeedleman1982StressCriterion

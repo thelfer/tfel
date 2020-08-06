@@ -2,7 +2,7 @@
  * \file   include/TFEL/Material/ChuNeedleman1980StrainBasedNucleationModel.ixx
  * \brief
  * \author Thomas Helfer
- * \date   04/04/2020
+ * \date   04/08/2020
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence
@@ -27,13 +27,26 @@ namespace tfel {
     }  // end of operator<<
 
     template <typename real>
-    std::tuple<real, real>
-    computeChuNeedleman1980StrainBasedNucleationModelPorosityRateFactor(
+    real computeChuNeedleman1980StrainBasedNucleationModelPorosityRateFactor(
         const real p,
         const ChuNeedleman1980StrainBasedNucleationModelParameters<real>&
             params) {
       // 1 / sqrt(2*pi)
-      constexpr const auto cste = 0.398942280401433;
+      constexpr const auto cste = real(0.398942280401433);
+      const auto x = (p - params.en) / (params.sn);
+      // porosity rate
+      const auto fr = cste * params.fn / (params.sn) * std::exp(-x * x / 2);
+      return fr;
+    }  // end of computeChuNeedleman1980StrainBasedNucleationModelPorosityRate
+
+    template <typename real>
+    std::tuple<real, real>
+    computeChuNeedleman1980StrainBasedNucleationModelPorosityRateFactorAndDerivative(
+        const real p,
+        const ChuNeedleman1980StrainBasedNucleationModelParameters<real>&
+            params) {
+      // 1 / sqrt(2*pi)
+      constexpr const auto cste = real(0.398942280401433);
       const auto x = (p - params.en) / (params.sn);
       // porosity rate
       const auto fr = cste * params.fn / (params.sn) * std::exp(-x * x / 2);

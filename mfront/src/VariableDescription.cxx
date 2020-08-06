@@ -14,6 +14,7 @@
 
 #include <sstream>
 #include <stdexcept>
+#include <algorithm>
 #include "TFEL/Raise.hxx"
 #include "TFEL/Glossary/Glossary.hxx"
 #include "TFEL/Glossary/GlossaryEntry.hxx"
@@ -517,15 +518,14 @@ namespace mfront {
   const VariableDescription&
   VariableDescriptionContainer::getVariableByExternalName(
       const std::string& n) const {
-    for (auto& v : *this) {
-      if (v.getExternalName() == n) {
-        return v;
-      }
+    auto p = findByExternalName(*this, n);
+    if (p == this->end()) {
+      tfel::raise(
+          "VariableDescriptionContainer::getVariableByExternalName : "
+          "no variable with external name '" +
+          n + "' found");
     }
-    tfel::raise(
-        "VariableDescriptionContainer::getVariableByExternalName : "
-        "no variable with external name '" +
-        n + "'");
+    return *p;
   }  // end of VariableDescriptionContainer::getVariableByExternalName
 
   const VariableDescription& VariableDescriptionContainer::getVariable(
@@ -558,6 +558,13 @@ namespace mfront {
   }  // end of SupportedTypes::getNumberOfVariables
 
   VariableDescriptionContainer::~VariableDescriptionContainer() = default;
+
+  VariableDescriptionContainer::const_iterator findByExternalName(
+      const VariableDescriptionContainer& c, const std::string& n) {
+    return std::find_if(c.begin(), c.end(), [&n](const VariableDescription& v) {
+      return v.getExternalName() == n;
+    });
+  }  // end of findByExternalName
 
   SupportedTypes::TypeSize getTypeSize(const VariableDescriptionContainer& c) {
     return c.getTypeSize();

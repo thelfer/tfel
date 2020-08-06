@@ -53,6 +53,30 @@ namespace tfel {
         const ChuNeedleman1980StrainBasedNucleationModelParameters<real>&);
     /*!
      * \brief computes the porosity rate factor \f$A_{n}\f$ as defined by
+     * the nucleation model of Chu and Needleman.
+     *
+     * \f[
+     * A_{n} = \frac{f_N}{s_N \sqrt{2\pi}}
+     *         \exp\left(-\frac{1}{2}
+     *                    \left(\frac{p - \epsilon_N}{s_N}\right)^2\right)
+     * \f]
+     *
+     * Chu, C. C., and A. Needleman. 1980.
+     * “Void Nucleation Effects in Biaxially Stretched Sheets.”
+     * Journal of Engineering Materials and Technology 102 (3): 249–56
+     *
+     * \tparam real: numeric type
+     *
+     * \param[in] p: equivalent plastic strain
+     * \param[in] params: parameters
+     */
+    template <typename real>
+    real computeChuNeedleman1980StrainBasedNucleationModelPorosityRateFactor(
+        const real,
+        const ChuNeedleman1980StrainBasedNucleationModelParameters<real>&);
+
+    /*!
+     * \brief computes the porosity rate factor \f$A_{n}\f$ as defined by
      * the nucleation model of Chu and Needleman and its derivative
      * \f$\frac{\partial A_{n}}{\partial p}\f$ with respect to the
      * equivalent plastic strain \f$p\f$.
@@ -74,7 +98,7 @@ namespace tfel {
      */
     template <typename real>
     std::tuple<real, real>
-    computeChuNeedleman1980StrainBasedNucleationModelPorosityRateFactor(
+    computeChuNeedleman1980StrainBasedNucleationModelPorosityRateFactorAndDerivative(
         const real,
         const ChuNeedleman1980StrainBasedNucleationModelParameters<real>&);
 

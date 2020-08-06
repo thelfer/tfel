@@ -52,6 +52,16 @@ namespace mfront {
                                          const std::string&) const override;
       std::string updateNextEstimateOfThePorosityIncrement(
           const BehaviourDescription&, const std::string&) const override;
+      /*!
+       * \return the code updating the upper bound of the porosity.
+       * If this flow does not affect the porosity growth, the returned
+       * value may be empty. By default, this method calls the 
+       * `updatePorosityUpperBound` of the underlying stress criterion.
+       * \param[in] bd: behaviour description
+       * \param[in] id: flow id
+       */
+      std::string updatePorosityUpperBound(const BehaviourDescription&,
+                                           const std::string&) const override;
       //! destructor
       ~InelasticFlowBase() override;
 

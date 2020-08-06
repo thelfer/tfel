@@ -1645,6 +1645,8 @@ include/TFEL/Material/Cazacu2006IsotropicYieldCriterion.hxx -text
 include/TFEL/Material/Cazacu2006IsotropicYieldCriterion.ixx -text
 include/TFEL/Material/ChuNeedleman1980StrainBasedNucleationModel.hxx -text
 include/TFEL/Material/ChuNeedleman1980StrainBasedNucleationModel.ixx -text
+include/TFEL/Material/ChuNeedleman1980StressBasedNucleationModel.hxx -text
+include/TFEL/Material/ChuNeedleman1980StressBasedNucleationModel.ixx -text
 include/TFEL/Material/CrystalStructure.hxx -text
 include/TFEL/Material/DDIF2Base.hxx -text
 include/TFEL/Material/DDIF2Base.ixx -text
@@ -2371,6 +2373,7 @@ mfront/include/MFront/BehaviourBrick/Cazacu2004IsotropicStressCriterion.hxx -tex
 mfront/include/MFront/BehaviourBrick/Cazacu2004OrthotropicStressCriterion.hxx -text
 mfront/include/MFront/BehaviourBrick/Chaboche2012KinematicHardeningRule.hxx -text
 mfront/include/MFront/BehaviourBrick/ChuNeedleman1980StrainBasedPorosityNucleationModel.hxx -text
+mfront/include/MFront/BehaviourBrick/ChuNeedleman1980StressBasedPorosityNucleationModel.hxx -text
 mfront/include/MFront/BehaviourBrick/DDIF2StressPotential.hxx -text
 mfront/include/MFront/BehaviourBrick/Drucker1949StressCriterion.hxx -text
 mfront/include/MFront/BehaviourBrick/GursonTvergaardNeedleman1982StressCriterion.hxx -text
@@ -2778,6 +2781,7 @@ mfront/src/Cazacu2004IsotropicStressCriterion.cxx -text
 mfront/src/Cazacu2004OrthotropicStressCriterion.cxx -text
 mfront/src/Chaboche2012KinematicHardeningRule.cxx -text
 mfront/src/ChuNeedleman1980StrainBasedPorosityNucleationModel.cxx -text
+mfront/src/ChuNeedleman1980StressBasedPorosityNucleationModel.cxx -text
 mfront/src/CodeBlock.cxx -text
 mfront/src/CompiledTargetDescriptionBase.cxx -text
 mfront/src/ComsolInterface.cxx -text

@@ -207,11 +207,22 @@ namespace mfront {
        * correction of the flow rule 
        */
       virtual PorosityEffectOnFlowRule getPorosityEffectOnFlowRule() const = 0;
+      /*!
+       * \return the code updating the upper bound of the porosity.
+       * If this stress criterion is not coupled with porosity, the returned
+       * value may be empty.
+       * \param[in] bd: behaviour description
+       * \param[in] id: flow id
+       * \param[in] r: criterion' role
+       */
+      virtual std::string updatePorosityUpperBound(const BehaviourDescription&,
+                                                   const std::string&,
+                                                   const Role) const = 0;
       //! destructor
       virtual ~StressCriterion();
-};  // end of struct StressCriterion
+    };  // end of struct StressCriterion
 
-}  // end of namespace bbrick
+  }  // end of namespace bbrick
 
 }  // end of namespace mfront
 

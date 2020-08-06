@@ -36,6 +36,8 @@ return_value_policy<reference_existing_object>())
 "la contrainte axiale")
 .def_readonly("B10BurnUp",&Glossary::B10BurnUp,
 "le taux d'usure en \\(\\mbox{}^{10}B\\)")
+.def_readonly("Broken",&Glossary::Broken,
+"material failure indicator")
 .def_readonly("BulkModulus",&Glossary::BulkModulus,
 "The bulk modulus of an isotropic material")
 .def_readonly("BurnUp_AtPercent",&Glossary::BurnUp_AtPercent,

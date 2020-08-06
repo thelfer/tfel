@@ -47,7 +47,19 @@ __StressCriterionName__StressCriterion::getOptions() const {
 StressCriterion::PorosityEffectOnFlowRule
 __StressCriterionName__StressCriterion::getPorosityEffectOnFlowRule() const {
   return StressCriterion::STANDARD_POROSITY_CORRECTION_ON_FLOW_RULE;
-}  // end of __StressCriterionName__StressCriterion::getPorosityEffectOnFlowRule()
+}  // end of __StressCriterionName__StressCriterion::getPorosityEffectOnFlowRule
+
+std::string __StressCriterionName__StressCriterion::updatePorosityUpperBound(
+    const BehaviourDescription &, const std::string &, const Role r) const {
+  if (!((r == STRESSCRITERION) || (r == STRESSANDFLOWCRITERION))) {
+    tfel::raise(
+        "StressCriterionBase::updatePorosityUpperBound: invalid call for "
+        "this stress criterion. This method is not valid for flow "
+        "criteria (i.e. when the stress criterion is used to dertermine "
+        "the flow direction in non associated plasticity).");
+  }
+  return std::string{};
+}  // end of __StressCriterionName__StressCriterion::updatePorosityUpperBound
 
 __StressCriterionName__StressCriterion::
     ~__StressCriterionName__StressCriterion() = default;

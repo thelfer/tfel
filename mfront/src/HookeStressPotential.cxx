@@ -35,6 +35,26 @@ namespace mfront {
         std::string m =
             "//! \\brief return an elastic prediction of the stresses\n"
             "StressStensor computeElasticPrediction() const{\n";
+        const auto& d = bd.getBehaviourData(h);
+        const auto& asvs = d.getAuxiliaryStateVariables();
+        const auto& esvs = d.getExternalStateVariables();
+        const auto pav =
+            findByExternalName(asvs, tfel::glossary::Glossary::Broken);
+        const auto pev =
+            findByExternalName(esvs, tfel::glossary::Glossary::Broken);
+        if (pav != asvs.end()) {
+          const auto& broken = *pav;
+          m += "if(2 * (this->" + broken.name + ") > 1){\n";
+          m += "  return StressStensor(stress(0));\n";
+          m += "}\n";
+        }
+        if (pev != esvs.end()) {
+          const auto& broken = *pev;
+          m += "if(2 * (this->" + broken.name + " + (" + bd.getClassName() +
+               "::theta) * d" + broken.name + ") > 1){\n";
+          m += "  return StressStensor(stress(0));\n";
+          m += "}\n";
+        }
         if (h == ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS) {
           if ((bd.getAttribute(BehaviourDescription::requiresStiffnessTensor,
                                false)) ||

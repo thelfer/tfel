@@ -47,6 +47,14 @@ namespace mfront {
      */
     static const char* const computeStandardSystemOfImplicitEquations;
     /*!
+     * \brief if the staggered approach is used, this is the name of an
+     * auxiliary state variable which states if the material point is
+     * totally damaged. If this variable is equal to 0, then the material is
+     * still able to sustain stress. If this variable is equal to 1, the
+     * material is totally damaged.
+     */
+    static const char* const brokenVariable;
+    /*!
      * \brief if the staggered approach is used, this is the name of a
      * local variable which holds the current estimate of the porosity
      * increment.
@@ -59,7 +67,31 @@ namespace mfront {
     static const char* const nextEstimateOfThePorosityIncrement;
     /*!
      * \brief if the staggered approach is used, this is the name of a variable
-     * which holds the difference between the new and the current estimates of
+     * which holds a next estimate of the porosity at the end of the time step.
+     */
+    static const char* const nextEstimateOfThePorosityAtTheEndOfTheTimeStep;
+    /*!
+     * \brief this is the name of a variable which holds the upper bound of the
+     * porosity.
+     */
+    static const char* const porosityUpperBound;
+    /*!
+     * \brief this is the name of a parameter which holds a safety factor for
+     * the porosity upper bound, because most of the stress criteria becomes
+     * singular when the associated upper bound is reached.
+     */
+    static const char* const porosityUpperBoundSafetyFactor;
+    /*!
+     * \brief this is the name of a parameter which holds a safety factor for
+     * the porosity upper bound when trying to detect the fracture of the
+     * material.
+     */
+    static const char* const porosityUpperBoundSafetyFactorForFractureDetection;
+    /*!
+     * \brief if the staggered approach is used, this is the name of a
+     * variable
+     * which holds the difference between the new and the current estimates
+     * of
      * the porosity increment.
      */
     static const char* const

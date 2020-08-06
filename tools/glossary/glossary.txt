@@ -1,3 +1,9 @@
+"Broken" {
+ unit: "none";
+ type: "scalar";
+ short_description: "material failure indicator";
+};
+
 "Emissivity"{
  unit: "kg.m.T^{−3}";
  type: "scalar";

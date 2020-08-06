@@ -61,6 +61,8 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Material/GursonTvergaardNeedleman1982StressCriterion.ixx                                \
             TFEL/Material/ChuNeedleman1980StrainBasedNucleationModel.hxx                                 \
             TFEL/Material/ChuNeedleman1980StrainBasedNucleationModel.ixx                                 \
+            TFEL/Material/ChuNeedleman1980StressBasedNucleationModel.hxx                                 \
+            TFEL/Material/ChuNeedleman1980StressBasedNucleationModel.ixx                                 \
 			TFEL/Material/PiPlane.hxx                                                                    \
 			TFEL/Material/PiPlane.ixx                                                                    \
 			TFEL/Material/StiffnessTensor.hxx			                                     \
