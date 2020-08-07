@@ -129,6 +129,10 @@ nobase_include_HEADERS= MFront/MFront.hxx                                     \
 			MFront/BehaviourBrick/PorosityNucleationModelFactory.hxx                     \
 			MFront/BehaviourBrick/PorosityNucleationModel.hxx                            \
 			MFront/BehaviourBrick/PorosityNucleationModelBase.hxx                        \
+			MFront/BehaviourBrick/StrainBasedPorosityNucleationModelBase.hxx             \
+			MFront/BehaviourBrick/StressBasedPorosityNucleationModelBase.hxx             \
+			MFront/BehaviourBrick/PowerLawStrainBasedPorosityNucleationModel.hxx         \
+			MFront/BehaviourBrick/PowerLawStressBasedPorosityNucleationModel.hxx         \
 			MFront/BehaviourBrick/ChuNeedleman1980StrainBasedPorosityNucleationModel.hxx \
 			MFront/BehaviourBrick/ChuNeedleman1980StressBasedPorosityNucleationModel.hxx \
 			MFront/BehaviourBrick/StressCriterion.hxx                                    \

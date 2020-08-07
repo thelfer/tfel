@@ -13,6 +13,8 @@
 
 #include "TFEL/Raise.hxx"
 #include "MFront/MFrontUtilities.hxx"
+#include "MFront/BehaviourBrick/PowerLawStrainBasedPorosityNucleationModel.hxx"
+#include "MFront/BehaviourBrick/PowerLawStressBasedPorosityNucleationModel.hxx"
 #include "MFront/BehaviourBrick/ChuNeedleman1980StrainBasedPorosityNucleationModel.hxx"
 #include "MFront/BehaviourBrick/ChuNeedleman1980StressBasedPorosityNucleationModel.hxx"
 #include "MFront/BehaviourBrick/PorosityNucleationModelFactory.hxx"
@@ -58,9 +60,23 @@ namespace mfront {
         return std::make_shared<
             ChuNeedleman1980StrainBasedPorosityNucleationModel>();
       });
+      this->addGenerator("ChuNeedleman1980 (strain)", []() {
+        return std::make_shared<
+            ChuNeedleman1980StrainBasedPorosityNucleationModel>();
+      });
       this->addGenerator("Chu-Needleman 1980 (stress)", []() {
         return std::make_shared<
             ChuNeedleman1980StressBasedPorosityNucleationModel>();
+      });
+      this->addGenerator("ChuNeedleman1980 (stress)", []() {
+        return std::make_shared<
+            ChuNeedleman1980StressBasedPorosityNucleationModel>();
+      });
+      this->addGenerator("PowerLaw (strain)", []() {
+        return std::make_shared<PowerLawStrainBasedPorosityNucleationModel>();
+      });
+      this->addGenerator("PowerLaw (stress)", []() {
+        return std::make_shared<PowerLawStressBasedPorosityNucleationModel>();
       });
     }  // end of PorosityNucleationModelFactory::PorosityNucleationModelFactory
 

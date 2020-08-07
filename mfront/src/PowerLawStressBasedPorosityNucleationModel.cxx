@@ -1,5 +1,5 @@
 /*!
- * \file   mfront/src/ChuNeedleman1980StressBasedPorosityNucleationModel.cxx
+ * \file   mfront/src/PowerLawStressBasedPorosityNucleationModel.cxx
  * \brief    
  * \author Thomas Helfer
  * \date   05/04/2020
@@ -14,33 +14,32 @@
 #include "TFEL/Raise.hxx"
 #include "MFront/BehaviourBrick/BrickUtilities.hxx"
 #include "MFront/BehaviourBrick/OptionDescription.hxx"
-#include "MFront/BehaviourBrick/ChuNeedleman1980StressBasedPorosityNucleationModel.hxx"
+#include "MFront/BehaviourBrick/PowerLawStressBasedPorosityNucleationModel.hxx"
 
 namespace mfront {
 
   namespace bbrick {
 
     std::string
-    ChuNeedleman1980StressBasedPorosityNucleationModel::getModelName() const {
-      return "ChuNeedleman1980StressBasedNucleationModel";
+    PowerLawStressBasedPorosityNucleationModel::getModelName() const {
+      return "PowerLawStressBasedNucleationModel";
     }  // end of
-       // ChuNeedleman1980StressBasedPorosityNucleationModel::getModelName
+       // PowerLawStressBasedPorosityNucleationModel::getModelName
 
     std::vector<PorosityNucleationModelBase::MaterialCoefficientDescription>
-    ChuNeedleman1980StressBasedPorosityNucleationModel::
+    PowerLawStressBasedPorosityNucleationModel::
         getMaterialCoefficientDescriptions() const {
       auto mcs = StressBasedPorosityNucleationModelBase::
           getMaterialCoefficientDescriptions();
-      mcs.push_back({"real", "fn", "porosity rate coefficient"});
+      mcs.push_back({"real", "fn", "law coefficient"});
       mcs.push_back(
-          {"stress", "sigm", "mean value of the gaussian distribution"});
-      mcs.push_back(
-          {"stress", "sn", "standard deviation of the gaussian distribution"});
+          {"strain", "sn", "minimal value of equivalent pastic srain"});
+      mcs.push_back({"real", "m", "exponent of the power law"});
       return mcs;
     }  // end of getMaterialCoefficientDescriptions
 
-    ChuNeedleman1980StressBasedPorosityNucleationModel::
-        ~ChuNeedleman1980StressBasedPorosityNucleationModel() = default;
+    PowerLawStressBasedPorosityNucleationModel::
+        ~PowerLawStressBasedPorosityNucleationModel() = default;
 
   }  // end of namespace bbrick
 

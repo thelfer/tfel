@@ -1,5 +1,5 @@
 /*!
- * \file   include/MFront/BehaviourBrick/ChuNeedleman1980StrainBasedPorosityNucleationModel.hxx
+ * \file   include/MFront/BehaviourBrick/PowerLawStrainBasedPorosityNucleationModel.hxx
  * \brief    
  * \author Thomas Helfer
  * \date   05/04/2020
@@ -11,8 +11,8 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_MFRONT_BEHAVIOURBRICK_CHUNEEDLEMAN1980STRAINBASEDPOROSITYNUCLEATIONMODEL_HXX
-#define LIB_MFRONT_BEHAVIOURBRICK_CHUNEEDLEMAN1980STRAINBASEDPOROSITYNUCLEATIONMODEL_HXX
+#ifndef LIB_MFRONT_BEHAVIOURBRICK_POWERLAWSTRAINBASEDPOROSITYNUCLEATIONMODEL_HXX
+#define LIB_MFRONT_BEHAVIOURBRICK_POWERLAWSTRAINBASEDPOROSITYNUCLEATIONMODEL_HXX
 
 #include "MFront/BehaviourBrick/StrainBasedPorosityNucleationModelBase.hxx"
 
@@ -21,27 +21,22 @@ namespace mfront {
   namespace bbrick {
 
     /*!
-     * \brief strain version of the nucleation model
-     * proposed by Chu and Needleman.
-     *
-     * Chu, C. C., and A. Needleman. 1980.
-     * “Void Nucleation Effects in Biaxially Stretched Sheets.”
-     * Journal of Engineering Materials and Technology 102 (3): 249–56
+     * \brief strain version of the power law nucleation model
      */
-    struct ChuNeedleman1980StrainBasedPorosityNucleationModel final
+    struct PowerLawStrainBasedPorosityNucleationModel final
         : StrainBasedPorosityNucleationModelBase {
       //! \brief destructor
-      ~ChuNeedleman1980StrainBasedPorosityNucleationModel() override;
+      ~PowerLawStrainBasedPorosityNucleationModel() override;
 
      protected:
       std::string getModelName() const override;
       bool requiresLimitOnNucleationPorosity() const override;
       std::vector<MaterialCoefficientDescription>
       getMaterialCoefficientDescriptions() const override;
-    };  // end of struct ChuNeedleman1980StrainBasedPorosityNucleationModel
+    };  // end of struct PowerLawStrainBasedPorosityNucleationModel
 
   }  // end of namespace bbrick
 
 }  // end of namespace mfront
 
-#endif /* LIB_MFRONT_BEHAVIOURBRICK_CHUNEEDLEMAN1980STRAINBASEDPOROSITYNUCLEATIONMODEL_HXX */
+#endif /* LIB_MFRONT_BEHAVIOURBRICK_POWERLAWSTRAINBASEDPOROSITYNUCLEATIONMODEL_HXX */

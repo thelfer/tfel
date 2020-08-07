@@ -1,0 +1,23 @@
+@DSL Implicit;
+@Behaviour PowerLawStrainBasedNucleationModelTest;
+@Author Thomas Helfer;
+@Date 4/08/2020;
+
+@Epsilon 1.e-14;
+@Theta 1;
+
+@Brick StandardElastoViscoPlasticity{
+  stress_potential : "Hooke" {young_modulus : 200e3, poisson_ratio : 0.3},
+  inelastic_flow : "Plastic" {
+    criterion : "Mises",
+    isotropic_hardening : "Linear" {R0 : 274}
+  },
+  porosity_evolution : {
+    nucleation_model : "PowerLaw (strain)" {
+      fn : 0.1,
+      en : 1e-2,
+      m : 4,
+      fmax : 0.1
+    }
+  }
+};

@@ -23,8 +23,29 @@ namespace mfront {
 
   namespace bbrick {
 
+    std::vector<PorosityNucleationModelBase::MaterialCoefficientDescription>
+    PorosityNucleationModelBase::getMaterialCoefficientDescriptions() const {
+      return {};
+    }  // end of getMaterialCoefficientDescriptions
+
+    std::vector<OptionDescription> PorosityNucleationModelBase::getOptions() const {
+      std::vector<OptionDescription> opts;
+      opts.emplace_back(
+          "save_individual_porosity_increase",
+          "if appropriate, save the porosity increase induced "
+          "by this inelastic flow in a dedicated auxiliary state variable",
+          OptionDescription::BOOLEAN);
+      opts.emplace_back("porosity_evolution_algorithm",
+                        "reserved for internal use", OptionDescription::STRING);
+      for (const auto& mc : this->getMaterialCoefficientDescriptions()) {
+        opts.emplace_back(mc.name, mc.description,
+                          OptionDescription::MATERIALPROPERTY);
+      }
+      return opts;
+    }  // end of PorosityNucleationModelBase::getOptions()
+
     void PorosityNucleationModelBase::initialize(BehaviourDescription& bd,
-                                                 AbstractBehaviourDSL&,
+                                                 AbstractBehaviourDSL& dsl,
                                                  const std::string& id,
                                                  const DataMap& d) {
       constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
@@ -56,6 +77,21 @@ namespace mfront {
           }
         }  // other options must be treated in child classes
       }
+      // treating material coefficients
+      for (const auto& mc : this->getMaterialCoefficientDescriptions()) {
+        const auto mc_n = PorosityNucleationModel::getVariableId(mc.name, id);
+        tfel::raise_if(
+            d.count(mc.name) == 0,
+            "ChuNeedleman1980StrainBasedPorosityNucleationModel::initialize: "
+            "material property '" +
+                mc_n + "' is not defined");
+        this->material_coefficients.insert(
+            {mc.name, getBehaviourDescriptionMaterialProperty(dsl, mc.name,
+                                                              d.at(mc.name))});
+        declareParameterOrLocalVariable(
+            bd, this->material_coefficients[mc.name], mc.type, mc_n);
+      }
+      //
       addLocalVariable(bd, "real", "dfn" + id);
       if ((this->save_porosity_increase) ||
           (this->requiresSavingNucleatedPorosity())) {
@@ -71,25 +107,32 @@ namespace mfront {
       }
     }  // end of PorosityNucleationModelBase::initialize
 
-    std::vector<OptionDescription> PorosityNucleationModelBase::getOptions() const {
-      std::vector<OptionDescription> opts;
-      opts.emplace_back(
-          "save_individual_porosity_increase",
-          "if appropriate, save the porosity increase induced "
-          "by this inelastic flow in a dedicated auxiliary state variable",
-          OptionDescription::BOOLEAN);
-      opts.emplace_back("porosity_evolution_algorithm",
-                        "reserved for internal use", OptionDescription::STRING);
-      return opts;
-    }  // end of PorosityNucleationModelBase::getOptions()
-
     void PorosityNucleationModelBase::endTreatment(
         BehaviourDescription& bd,
-        const AbstractBehaviourDSL&,
+        const AbstractBehaviourDSL& dsl,
         const StressPotential&,
-        const std::map<std::string, std::shared_ptr<bbrick::InelasticFlow>>&,
+        const std::map<std::string, std::shared_ptr<bbrick::InelasticFlow>>&
+            iflows,
         const std::string& id) const {
       constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+      // a simple check
+      if (iflows.empty()) {
+        tfel::raise(
+            "PorosityNucleationModelBase::endTreatment: "
+            "no inelastic flow declared");
+      }
+      // initialize
+      auto c = std::string{};
+      for (const auto& mc : this->getMaterialCoefficientDescriptions()) {
+        const auto mc_n = PorosityNucleationModel::getVariableId(mc.name, id);
+        c += generateMaterialPropertyInitializationCode(
+            dsl, bd, mc_n, this->material_coefficients.at(mc.name));
+      }
+      CodeBlock init;
+      init.code = c;
+      bd.setCode(uh, BehaviourData::BeforeInitializeLocalVariables, init,
+                 BehaviourData::CREATEORAPPEND, BehaviourData::AT_BEGINNING);
+      //
       if ((this->save_porosity_increase) ||
           (this->requiresSavingNucleatedPorosity())) {
         CodeBlock uav;
@@ -98,6 +141,19 @@ namespace mfront {
                    BehaviourData::CREATEORAPPEND, BehaviourData::AT_BEGINNING);
       }
     }  // end of PorosityNucleationModelBase::endTreatment
+
+    void PorosityNucleationModelBase::completeVariableDeclaration(
+        BehaviourDescription&,
+        const AbstractBehaviourDSL&,
+        const std::map<std::string, std::shared_ptr<bbrick::InelasticFlow>>&
+            iflows,
+        const std::string&) const {
+      if (iflows.empty()) {
+        tfel::raise(
+            "PorosityNucleationModelBase::"
+            "completeVariableDeclaration: no inelastic flow declared");
+      }
+    }  // end of PorosityNucleationModelBase::completeVariableDeclaration
 
     PorosityNucleationModelBase::~PorosityNucleationModelBase() = default;
 

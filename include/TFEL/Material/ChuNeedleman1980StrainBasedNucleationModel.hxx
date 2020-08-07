@@ -51,6 +51,7 @@ namespace tfel {
     std::ostream& operator<<(
         std::ostream&,
         const ChuNeedleman1980StrainBasedNucleationModelParameters<real>&);
+
     /*!
      * \brief computes the porosity rate factor \f$A_{n}\f$ as defined by
      * the nucleation model of Chu and Needleman.
@@ -67,13 +68,13 @@ namespace tfel {
      *
      * \tparam real: numeric type
      *
-     * \param[in] p: equivalent plastic strain
      * \param[in] params: parameters
+     * \param[in] p: equivalent plastic strain
      */
     template <typename real>
     real computeChuNeedleman1980StrainBasedNucleationModelPorosityRateFactor(
-        const real,
-        const ChuNeedleman1980StrainBasedNucleationModelParameters<real>&);
+        const ChuNeedleman1980StrainBasedNucleationModelParameters<real>&,
+        const real);
 
     /*!
      * \brief computes the porosity rate factor \f$A_{n}\f$ as defined by
@@ -93,14 +94,52 @@ namespace tfel {
      *
      * \tparam real: numeric type
      *
-     * \param[in] p: equivalent plastic strain
      * \param[in] params: parameters
+     * \param[in] p: equivalent plastic strain
      */
     template <typename real>
     std::tuple<real, real>
     computeChuNeedleman1980StrainBasedNucleationModelPorosityRateFactorAndDerivative(
-        const real,
-        const ChuNeedleman1980StrainBasedNucleationModelParameters<real>&);
+        const ChuNeedleman1980StrainBasedNucleationModelParameters<real>&,
+        const real);
+
+    /*!
+     * \brief computes the porosity increment \f$A_{n}\f$ as defined by
+     * the nucleation model of Chu and Needleman.
+     *
+     * Chu, C. C., and A. Needleman. 1980.
+     * “Void Nucleation Effects in Biaxially Stretched Sheets.”
+     * Journal of Engineering Materials and Technology 102 (3): 249–56
+     *
+     * \tparam real: numeric type
+     *
+     * \param[in] params: parameters
+     * \param[in] p: equivalent plastic strain
+     */
+    template <typename real>
+    real computeChuNeedleman1980StrainBasedNucleationModelPorosityIncrement(
+        const ChuNeedleman1980StrainBasedNucleationModelParameters<real>&,
+        const real);
+
+    /*!
+     * \brief computes the porosity increment defined by
+     * the nucleation model of Chu and Needleman and its derivative
+     * with respect to the increment of the equivalent plastic strain \f$p\f$.
+     *
+     * Chu, C. C., and A. Needleman. 1980.
+     * “Void Nucleation Effects in Biaxially Stretched Sheets.”
+     * Journal of Engineering Materials and Technology 102 (3): 249–56
+     *
+     * \tparam real: numeric type
+     *
+     * \param[in] params: parameters
+     * \param[in] p: equivalent plastic strain
+     */
+    template <typename real>
+    std::tuple<real, real>
+    computeChuNeedleman1980StrainBasedNucleationModelPorosityIncrementAndDerivative(
+        const ChuNeedleman1980StrainBasedNucleationModelParameters<real>&,
+        const real);
 
   }  // end of namespace material
 

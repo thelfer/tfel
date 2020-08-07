@@ -30,9 +30,9 @@ namespace tfel {
     template <typename StressStensorType>
     ChuNeedleman1980StressBasedNucleationModelRealType<StressStensorType>
     computeChuNeedleman1980StressBasedNucleationModelPorosityRateFactor(
-        const StressStensorType& sig,
         const ChuNeedleman1980StressBasedNucleationModelParameters<
-            StressStensorType>& params) {
+            StressStensorType>& params,
+        const StressStensorType& sig) {
       using real =
           ChuNeedleman1980StressBasedNucleationModelRealType<StressStensorType>;
       // 1 / sqrt(2*pi)
@@ -50,9 +50,9 @@ namespace tfel {
         ChuNeedleman1980StressBasedNucleationModeDerivativeType<
             StressStensorType>>
     computeChuNeedleman1980StressBasedNucleationModelPorosityRateFactorAndDerivative(
-        const StressStensorType& sig,
         const ChuNeedleman1980StressBasedNucleationModelParameters<
-            StressStensorType>& params) {
+            StressStensorType>& params,
+        const StressStensorType& sig) {
       using real =
           ChuNeedleman1980StressBasedNucleationModelRealType<StressStensorType>;
       using stress = ChuNeedleman1980StressBasedNucleationModelStressType<

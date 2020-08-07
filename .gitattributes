@@ -1694,6 +1694,10 @@ include/TFEL/Material/PiPlane.hxx -text
 include/TFEL/Material/PiPlane.ixx -text
 include/TFEL/Material/PolyCrystalsSlidingSystems.hxx -text
 include/TFEL/Material/PolyCrystalsSlidingSystems.ixx -text
+include/TFEL/Material/PowerLawStrainBasedNucleationModel.hxx -text
+include/TFEL/Material/PowerLawStrainBasedNucleationModel.ixx -text
+include/TFEL/Material/PowerLawStressBasedNucleationModel.hxx -text
+include/TFEL/Material/PowerLawStressBasedNucleationModel.ixx -text
 include/TFEL/Material/RambergOsgood.hxx -text
 include/TFEL/Material/SlipSystemsDescription.hxx -text
 include/TFEL/Material/StiffnessTensor.hxx -text
@@ -2404,6 +2408,8 @@ mfront/include/MFront/BehaviourBrick/PorosityNucleationModel.hxx -text
 mfront/include/MFront/BehaviourBrick/PorosityNucleationModelBase.hxx -text
 mfront/include/MFront/BehaviourBrick/PorosityNucleationModelFactory.hxx -text
 mfront/include/MFront/BehaviourBrick/PowerIsotropicHardeningRule.hxx -text
+mfront/include/MFront/BehaviourBrick/PowerLawStrainBasedPorosityNucleationModel.hxx -text
+mfront/include/MFront/BehaviourBrick/PowerLawStressBasedPorosityNucleationModel.hxx -text
 mfront/include/MFront/BehaviourBrick/PragerKinematicHardeningRule.hxx -text
 mfront/include/MFront/BehaviourBrick/Provider.hxx -text
 mfront/include/MFront/BehaviourBrick/ProviderIdentifier.hxx -text
@@ -2411,6 +2417,8 @@ mfront/include/MFront/BehaviourBrick/Requirement.hxx -text
 mfront/include/MFront/BehaviourBrick/RequirementManager.hxx -text
 mfront/include/MFront/BehaviourBrick/StandardPorousStressCriterionBase.hxx -text
 mfront/include/MFront/BehaviourBrick/StandardStressCriterionBase.hxx -text
+mfront/include/MFront/BehaviourBrick/StrainBasedPorosityNucleationModelBase.hxx -text
+mfront/include/MFront/BehaviourBrick/StressBasedPorosityNucleationModelBase.hxx -text
 mfront/include/MFront/BehaviourBrick/StressCriterion.hxx -text
 mfront/include/MFront/BehaviourBrick/StressCriterionBase.hxx -text
 mfront/include/MFront/BehaviourBrick/StressCriterionFactory.hxx -text
@@ -2922,6 +2930,8 @@ mfront/src/PorosityNucleationModelBase.cxx -text
 mfront/src/PorosityNucleationModelFactory.cxx -text
 mfront/src/PowellDogLegAlgorithmBase.cxx -text
 mfront/src/PowerIsotropicHardeningRule.cxx -text
+mfront/src/PowerLawStrainBasedPorosityNucleationModel.cxx -text
+mfront/src/PowerLawStressBasedPorosityNucleationModel.cxx -text
 mfront/src/PragerKinematicHardeningRule.cxx -text
 mfront/src/PythonMaterialPropertyInterface.cxx -text
 mfront/src/RungeKuttaDSL.cxx -text
@@ -2937,6 +2947,8 @@ mfront/src/StandardElastoViscoPlasticityBrick.cxx -text
 mfront/src/StandardPorousStressCriterionBase.cxx -text
 mfront/src/StandardStressCriterionBase.cxx -text
 mfront/src/StaticVariableDescription.cxx -text
+mfront/src/StrainBasedPorosityNucleationModelBase.cxx -text
+mfront/src/StressBasedPorosityNucleationModelBase.cxx -text
 mfront/src/StressCriterion.cxx -text
 mfront/src/StressCriterionBase.cxx -text
 mfront/src/StressCriterionFactory.cxx -text
@@ -4073,7 +4085,11 @@ mfront/tests/behaviours/bricks/StandardElasticity/cyrano/testcomputeelasticpredi
 mfront/tests/behaviours/bricks/StandardElasticity/cyrano/testcomputeelasticprediction3.mtest -text
 mfront/tests/behaviours/bricks/StandardElasticity/cyrano/testcomputeelasticprediction4.mtest -text
 mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/CMakeLists.txt -text
+mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/ChuNeedleman1980StrainBasedNucleationModelTest.mfront -text
+mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/ChuNeedleman1980StressBasedNucleationModelTest.mfront -text
 mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/Makefile.am -text
+mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/PowerLawStrainBasedNucleationModelTest.mfront -text
+mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/PowerLawStressBasedNucleationModelTest.mfront -text
 mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/StandardElastoViscoPlasticityHyperbolicSineTest.mfront -text
 mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/StandardElastoViscoPlasticityHyperbolicSineTest2.mfront -text
 mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/StandardElastoViscoPlasticityHyperbolicSineTest2_nj.mfront -text

@@ -533,6 +533,7 @@ namespace mfront {
                  f.name + "), (this->" +
                  std::string(porosityUpperBoundSafetyFactor) + ") * " +
                  std::string(porosityUpperBound) + "), real(0));\n ";
+      ib.code += "static_cast<void>(" + f_ + ");\n";
       bd.setCode(uh, BehaviourData::Integrator, ib,
                  BehaviourData::CREATEORAPPEND, BehaviourData::AT_BEGINNING);
       // implicit equation associated with the porosity

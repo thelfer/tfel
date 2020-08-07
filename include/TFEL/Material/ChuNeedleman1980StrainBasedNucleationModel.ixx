@@ -28,9 +28,9 @@ namespace tfel {
 
     template <typename real>
     real computeChuNeedleman1980StrainBasedNucleationModelPorosityRateFactor(
-        const real p,
         const ChuNeedleman1980StrainBasedNucleationModelParameters<real>&
-            params) {
+            params,
+        const real p) {
       // 1 / sqrt(2*pi)
       constexpr const auto cste = real(0.398942280401433);
       const auto x = (p - params.en) / (params.sn);
@@ -42,9 +42,9 @@ namespace tfel {
     template <typename real>
     std::tuple<real, real>
     computeChuNeedleman1980StrainBasedNucleationModelPorosityRateFactorAndDerivative(
-        const real p,
         const ChuNeedleman1980StrainBasedNucleationModelParameters<real>&
-            params) {
+            params,
+        const real p) {
       // 1 / sqrt(2*pi)
       constexpr const auto cste = real(0.398942280401433);
       const auto x = (p - params.en) / (params.sn);
@@ -56,6 +56,44 @@ namespace tfel {
       //
       return std::make_tuple(fr, dfr_dp);
     }  // end of computeChuNeedleman1980StrainBasedNucleationModelPorosityRate
+
+    template <typename real>
+    real computeChuNeedleman1980StrainBasedNucleationModelPorosityIncrement(
+        const ChuNeedleman1980StrainBasedNucleationModelParameters<real>&
+            params,
+        const real p,
+        const real dp,
+        const real) {
+      if (dp < 0) {
+        return 0;
+      }
+      constexpr const auto cste = tfel::math::Cste<real>::sqrt2;
+      const auto Fa = std::erf((p - params.en) / (cste * (params.sn)));
+      const auto Fb = std::erf((p + dp - params.en) / (cste * (params.sn)));
+      return (params.fn) * (Fb - Fa) / 2;
+    }  // end of
+       // computeChuNeedleman1980StrainBasedNucleationModelPorosityIncrement
+
+    template <typename real>
+    std::tuple<real, real>
+    computeChuNeedleman1980StrainBasedNucleationModelPorosityIncrementAndDerivative(
+        const ChuNeedleman1980StrainBasedNucleationModelParameters<real>&
+            params,
+        const real p,
+        const real dp,
+        const real) {
+      if (dp < 0) {
+        return {0,0};
+      }
+      constexpr const auto cste = tfel::math::Cste<real>::sqrt2;
+      const auto Fa = std::erf((p - params.en) / (cste * (params.sn)));
+      const auto Fb = std::erf((p + dp - params.en) / (cste * (params.sn)));
+      const auto An =
+          computeChuNeedleman1980StrainBasedNucleationModelPorosityRateFactor(
+              params, p);
+      return {(params.fn) * (Fb - Fa) / 2, An};
+    }  // end of
+       // computeChuNeedleman1980StrainBasedNucleationModelPorosityIncrement
 
   }  // end of namespace material
 

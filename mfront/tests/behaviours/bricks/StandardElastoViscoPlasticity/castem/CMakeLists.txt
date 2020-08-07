@@ -86,7 +86,12 @@ if(HAVE_CASTEM)
   StandardElastoViscoPlasticityHyperbolicSineTest
   StandardElastoViscoPlasticityHyperbolicSineTest_nj
   StandardElastoViscoPlasticityHyperbolicSineTest2
-  StandardElastoViscoPlasticityHyperbolicSineTest2_nj)
+  StandardElastoViscoPlasticityHyperbolicSineTest2_nj
+  ChuNeedleman1980StrainBasedNucleationModelTest
+  ChuNeedleman1980StressBasedNucleationModelTest
+  PowerLawStrainBasedNucleationModelTest
+  PowerLawStressBasedNucleationModelTest)
+
   target_link_libraries(MFrontCastemStandardElastoViscoPlasticityBrickBehaviours
     PRIVATE CastemInterface)
 endif(HAVE_CASTEM)

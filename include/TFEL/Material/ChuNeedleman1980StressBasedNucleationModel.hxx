@@ -92,15 +92,15 @@ namespace tfel {
      * “Void Nucleation Effects in Biaxially Stretched Sheets.”
      * Journal of Engineering Materials and Technology 102 (3): 249–56
      *
-     * \param[in] sig: stress tensor
      * \param[in] params: parameters
+     * \param[in] sig: stress tensor
      */
     template <typename StressStensorType>
     ChuNeedleman1980StressBasedNucleationModelRealType<StressStensorType>
     computeChuNeedleman1980StressBasedNucleationModelPorosityRateFactor(
-        const StressStensorType&,
         const ChuNeedleman1980StressBasedNucleationModelParameters<
-            StressStensorType>&);
+            StressStensorType>&,
+        const StressStensorType&);
 
     /*!
      * \brief computes the porosity rate factor \f$A_{n}\f$ as defined by
@@ -118,8 +118,8 @@ namespace tfel {
      * “Void Nucleation Effects in Biaxially Stretched Sheets.”
      * Journal of Engineering Materials and Technology 102 (3): 249–56
      *
-     * \param[in] sig: stress tensor
      * \param[in] params: parameters
+     * \param[in] sig: stress tensor
      */
     template <typename StressStensorType>
     std::tuple<
@@ -127,10 +127,9 @@ namespace tfel {
         ChuNeedleman1980StressBasedNucleationModeDerivativeType<
             StressStensorType>>
     computeChuNeedleman1980StressBasedNucleationModelPorosityRateFactorAndDerivative(
-        const StressStensorType&,
         const ChuNeedleman1980StressBasedNucleationModelParameters<
-            StressStensorType>&);
-
+            StressStensorType>&,
+        const StressStensorType&);
 
   }  // end of namespace material
 

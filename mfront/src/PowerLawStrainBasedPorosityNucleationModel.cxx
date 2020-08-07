@@ -1,5 +1,5 @@
 /*!
- * \file   mfront/src/ChuNeedleman1980StrainBasedPorosityNucleationModel.cxx
+ * \file   mfront/src/PowerLawStrainBasedPorosityNucleationModel.cxx
  * \brief    
  * \author Thomas Helfer
  * \date   05/04/2020
@@ -14,39 +14,36 @@
 #include "TFEL/Raise.hxx"
 #include "MFront/BehaviourBrick/BrickUtilities.hxx"
 #include "MFront/BehaviourBrick/OptionDescription.hxx"
-#include "MFront/BehaviourBrick/ChuNeedleman1980StrainBasedPorosityNucleationModel.hxx"
+#include "MFront/BehaviourBrick/PowerLawStrainBasedPorosityNucleationModel.hxx"
 
 namespace mfront {
 
   namespace bbrick {
 
     std::string
-    ChuNeedleman1980StrainBasedPorosityNucleationModel::getModelName() const {
-      return "ChuNeedleman1980StrainBasedNucleationModel";
-    }  // end of
-       // ChuNeedleman1980StrainBasedPorosityNucleationModel::getModelName
+    PowerLawStrainBasedPorosityNucleationModel::getModelName() const {
+      return "PowerLawStrainBasedNucleationModel";
+    }  // end of getModelName
 
-    bool ChuNeedleman1980StrainBasedPorosityNucleationModel::
+    bool PowerLawStrainBasedPorosityNucleationModel::
         requiresLimitOnNucleationPorosity() const {
-      return false;
-    }  // end of
-       // ChuNeedleman1980StrainBasedPorosityNucleationModel::requiresMaximumNucleationPorosity
+      return true;
+    }  // end of requiresMaximumNucleationPorosity
 
     std::vector<PorosityNucleationModelBase::MaterialCoefficientDescription>
-    ChuNeedleman1980StrainBasedPorosityNucleationModel::
+    PowerLawStrainBasedPorosityNucleationModel::
         getMaterialCoefficientDescriptions() const {
       auto mcs = StrainBasedPorosityNucleationModelBase::
           getMaterialCoefficientDescriptions();
-      mcs.push_back({"real", "fn", "porosity rate coefficient"});
+      mcs.push_back({"real", "fn", "law coefficient"});
       mcs.push_back(
-          {"strain", "en", "mean value of the gaussian distribution"});
-      mcs.push_back(
-          {"strain", "sn", "standard deviation of the gaussian distribution"});
+          {"strain", "en", "minimal value of equivalent pastic srain"});
+      mcs.push_back({"real", "m", "exponent of the power law"});
       return mcs;
     }  // end of getMaterialCoefficientDescriptions
 
-    ChuNeedleman1980StrainBasedPorosityNucleationModel::
-        ~ChuNeedleman1980StrainBasedPorosityNucleationModel() = default;
+    PowerLawStrainBasedPorosityNucleationModel::
+        ~PowerLawStrainBasedPorosityNucleationModel() = default;
 
   }  // end of namespace bbrick
 

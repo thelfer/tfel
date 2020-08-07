@@ -1,5 +1,5 @@
 /*!
- * \file   include/MFront/BehaviourBrick/ChuNeedleman1980StressBasedPorosityNucleationModel.hxx
+ * \file   include/MFront/BehaviourBrick/PowerLawStressBasedPorosityNucleationModel.hxx
  * \brief    
  * \author Thomas Helfer
  * \date   05/04/2020
@@ -11,8 +11,8 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_MFRONT_BEHAVIOURBRICK_CHUNEEDLEMAN1980STRESSBASEDPOROSITYNUCLEATIONMODEL_HXX
-#define LIB_MFRONT_BEHAVIOURBRICK_CHUNEEDLEMAN1980STRESSBASEDPOROSITYNUCLEATIONMODEL_HXX
+#ifndef LIB_MFRONT_BEHAVIOURBRICK_POWERLAWSTRESSBASEDPOROSITYNUCLEATIONMODEL_HXX
+#define LIB_MFRONT_BEHAVIOURBRICK_POWERLAWSTRESSBASEDPOROSITYNUCLEATIONMODEL_HXX
 
 #include "MFront/BehaviourBrick/StressBasedPorosityNucleationModelBase.hxx"
 
@@ -21,26 +21,21 @@ namespace mfront {
   namespace bbrick {
 
     /*!
-     * \brief strain version of the nucleation model
-     * proposed by Chu and Needleman.
-     *
-     * Chu, C. C., and A. Needleman. 1980.
-     * “Void Nucleation Effects in Biaxially Stretched Sheets.”
-     * Journal of Engineering Materials and Technology 102 (3): 249–56
+     * \brief stress version of the power law nucleation model
      */
-    struct ChuNeedleman1980StressBasedPorosityNucleationModel final
+    struct PowerLawStressBasedPorosityNucleationModel final
         : StressBasedPorosityNucleationModelBase {
       //! \brief destructor
-      ~ChuNeedleman1980StressBasedPorosityNucleationModel() override;
+      ~PowerLawStressBasedPorosityNucleationModel() override;
 
      protected:
       std::string getModelName() const override final;
       std::vector<MaterialCoefficientDescription>
       getMaterialCoefficientDescriptions() const override final;
-    };  // end of struct ChuNeedleman1980StressBasedPorosityNucleationModel
+    };  // end of struct PowerLawStressBasedPorosityNucleationModel
 
   }  // end of namespace bbrick
 
 }  // end of namespace mfront
 
-#endif /* LIB_MFRONT_BEHAVIOURBRICK_CHUNEEDLEMAN1980STRESSBASEDPOROSITYNUCLEATIONMODEL_HXX */
+#endif /* LIB_MFRONT_BEHAVIOURBRICK_POWERLAWSTRESSBASEDPOROSITYNUCLEATIONMODEL_HXX */

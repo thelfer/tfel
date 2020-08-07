@@ -86,7 +86,11 @@ MFRONTS=StandardElastoViscoPlasticityTest1.mfront                         \
 	StandardElastoViscoPlasticityIsotropicDamageHookeLaw_nj.mfront        \
 	StandardElastoViscoPlasticityIsotropicDamageHookeLaw2.mfront          \
 	StandardElastoViscoPlasticityIsotropicDamageHookeLaw2_nj.mfront       \
-	references/standardelastoviscoplasticitynortontest7.ref               \
+	ChuNeedleman1980StrainBasedNucleationModelTest.mfront		      \
+	ChuNeedleman1980StressBasedNucleationModelTest.mfront		      \
+	PowerLawStrainBasedNucleationModelTest.mfront			      \
+	PowerLawStressBasedNucleationModelTest.mfront			      \
+        references/standardelastoviscoplasticitynortontest7.ref               \
 	references/standardelastoviscoplasticitynortontest8_E.ref             \
 	references/standardelastoviscoplasticitynortontest8_S.ref             \
 	references/standardelastoviscoplasticitynortontest8-cyclic_E.ref      \
