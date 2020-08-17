@@ -3111,6 +3111,7 @@ mfront/tests/behaviours/RusinekKlepaczko_ssrt.mfront -text
 mfront/tests/behaviours/SaintVenantKirchhoffElasticity.mfront -text
 mfront/tests/behaviours/SaintVenantKirchhoffElasticity2.mfront -text
 mfront/tests/behaviours/SaintVenantKirchhoffElasticity3.mfront -text
+mfront/tests/behaviours/SaintVenantKirchhoffElasticity4.mfront -text
 mfront/tests/behaviours/SaintVenantKirchhoffElasticityTotalLagrangian.mfront -text
 mfront/tests/behaviours/SaintVenantKirchhoffElasticityWithSubStepping.mfront -text
 mfront/tests/behaviours/SlidingSystemsCC.mfront -text
@@ -4087,6 +4088,7 @@ mfront/tests/behaviours/bricks/StandardElasticity/cyrano/testcomputeelasticpredi
 mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/CMakeLists.txt -text
 mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/ChuNeedleman1980StrainBasedNucleationModelTest.mfront -text
 mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/ChuNeedleman1980StressBasedNucleationModelTest.mfront -text
+mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/ElasticContributionToPorosityGrowth.mfront -text
 mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/Makefile.am -text
 mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/PowerLawStrainBasedNucleationModelTest.mfront -text
 mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/PowerLawStressBasedNucleationModelTest.mfront -text
@@ -5702,6 +5704,7 @@ mfront/tests/behaviours/generic/saintvenantkirchhoffelasticity-uniaxialloading-s
 mfront/tests/behaviours/generic/saintvenantkirchhoffelasticity-uniaxialloading-sig33-1D.mtest -text
 mfront/tests/behaviours/generic/saintvenantkirchhoffelasticity-uniaxialloading-sig33-2D.mtest -text
 mfront/tests/behaviours/generic/saintvenantkirchhoffelasticity-uniaxialloading-sig33-3D.mtest -text
+mfront/tests/behaviours/generic/saintvenantkirchhoffelasticity4-uniaxialloading-1-3D.mtest -text
 mfront/tests/behaviours/generic/statevariablesboundscheck.mtest -text
 mfront/tests/behaviours/generic/statevariablesboundscheck2.mtest -text
 mfront/tests/behaviours/generic/tvergaard.mtest -text

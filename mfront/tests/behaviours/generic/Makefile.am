@@ -136,6 +136,7 @@ EXTRA_DIST = CMakeLists.txt                                                     
              saintvenantkirchhoffelasticity-shear-4-3D.mtest                           \
              saintvenantkirchhoffelasticity-shear-5-3D.mtest                           \
              saintvenantkirchhoffelasticity-shear-6-3D.mtest                           \
+             saintvenantkirchhoffelasticity4-uniaxialloading-1-3D.mtest                \
              lorentz.mtest                                                             \
              lorentz2.mtest                                                            \
              tvergaard.mtest                                                           \

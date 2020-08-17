@@ -90,7 +90,8 @@ if(HAVE_CASTEM)
   ChuNeedleman1980StrainBasedNucleationModelTest
   ChuNeedleman1980StressBasedNucleationModelTest
   PowerLawStrainBasedNucleationModelTest
-  PowerLawStressBasedNucleationModelTest)
+  PowerLawStressBasedNucleationModelTest
+  ElasticContributionToPorosityGrowth)
 
   target_link_libraries(MFrontCastemStandardElastoViscoPlasticityBrickBehaviours
     PRIVATE CastemInterface)

@@ -11,6 +11,7 @@
 #include <map>
 #include <string>
 #include <memory>
+#include "MFront/CodeBlock.hxx"
 #include "MFront/BehaviourBrickBase.hxx"
 #include "MFront/BehaviourBrick/PorosityEvolutionAlgorithm.hxx"
 
@@ -156,6 +157,14 @@ namespace mfront {
         const std::map<std::string, Data>&);
     //! \return if a coupling with the porosity evolution is required
     bool isCoupledWithPorosityEvolution() const;
+    /*!
+     * \brief add the contribution of this inelastic flow to the implicit
+     * equation associated with the porosity evolution.
+     * \param[in] ib: integrator code block
+     */
+    void
+    addElasticContributionToTheImplicitEquationAssociatedWithPorosityEvolution(
+        CodeBlock&) const;
     //! \return a map associating a map and its idea
     std::map<std::string, std::shared_ptr<bbrick::InelasticFlow>>
     buildInelasticFlowsMap() const;
@@ -199,7 +208,12 @@ namespace mfront {
       double convergence_criterion = 1e-10;
       //! \brief maximum number of iterations of the staggered scheme
       unsigned short maximum_number_of_iterations = 100;
-    } staggered_algorithm_parameters;
+      } staggered_algorithm_parameters;
+      /*!
+       * \brief a boolean stating if the elastic contribution to the porosity
+       * growth must be taken into account.
+       */
+      bool elastic_contribution = false;
   };  // end of StandardElastoViscoPlasticityBrick
 
 }  // end of namespace mfront

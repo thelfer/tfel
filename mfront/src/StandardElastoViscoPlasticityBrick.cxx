@@ -230,13 +230,19 @@ namespace mfront {
     if (ed.count("save_individual_porosity_increase") != 0) {
       const auto b = ed.at("save_individual_porosity_increase");
       if (!b.is<bool>()) {
-        raise("'save_individual_porosity_increase' is not a boolean value");
+        raise("the 'save_individual_porosity_increase' option is not a boolean value");
       }
       save_individual_porosity_increase = b.get<bool>();
     }
     for (const auto& ped : ed) {
       if (ped.first == "save_individual_porosity_increase") {
         // already treated
+      } else if (ped.first == "elastic_contribution") {
+        const auto b = ed.at("elastic_contribution");
+        if (!b.is<bool>()) {
+          raise("the 'elastic_contribution' option is not a boolean value");
+        }
+        this->elastic_contribution = b.get<bool>();
       } else if (ped.first == "nucleation_model") {
         auto append_nucleation_model = [this, &nmf, getDataStructure, raise,
                                         &save_individual_porosity_increase](
@@ -446,6 +452,13 @@ namespace mfront {
       const auto& f =
           bd.getBehaviourData(uh).getStateVariableDescriptionByExternalName(
               tfel::glossary::Glossary::Porosity);
+      if (!f.hasPhysicalBounds()) {
+        VariableBoundsDescription fbounds;
+        fbounds.boundsType = VariableBoundsDescription::LOWERANDUPPER;
+        fbounds.lowerBound = 0;
+        fbounds.upperBound = 1;
+        this->bd.setPhysicalBounds(uh, f.name, fbounds);
+      }
       this->bd.reserveName(uh, f.name + "_");
       //
       mfront::bbrick::addAuxiliaryStateVariableIfNotDefined(
@@ -463,13 +476,13 @@ namespace mfront {
       bd.addParameter(uh, alpha2, BehaviourData::UNREGISTRED);
       bd.setParameterDefaultValue(
           uh, porosityUpperBoundSafetyFactorForFractureDetection, 0.984);
+      mfront::bbrick::addLocalVariable(bd, "real", porosityUpperBound);
       if (this->porosity_evolution_algorithm ==
           mfront::bbrick::PorosityEvolutionAlgorithm::STAGGERED_SCHEME) {
         mfront::bbrick::addLocalVariable(
             bd, "bool", computeStandardSystemOfImplicitEquations);
         mfront::bbrick::addLocalVariable(bd, "real",
                                          currentEstimateOfThePorosityIncrement);
-        mfront::bbrick::addLocalVariable(bd, "real", porosityUpperBound);
         mfront::bbrick::addLocalVariable(bd, "ushort",
                                          staggeredSchemeIterationCounter);
         // convergence criterion of the staggered scheme
@@ -529,11 +542,32 @@ namespace mfront {
       // value of the porosity at t+theta*dt
       CodeBlock ib;
       ib.code += "const auto " + f_ + " = ";
-      ib.code += "std::max(std::min(this->" + f.name + " + theta * (this->d" +
-                 f.name + "), (this->" +
-                 std::string(porosityUpperBoundSafetyFactor) + ") * " +
-                 std::string(porosityUpperBound) + "), real(0));\n ";
+      ib.code += "std::max(std::min(this->" + f.name + " + (" +
+                 this->bd.getClassName() + "::theta) * (this->d" + f.name +
+                 "), (this->" + std::string(porosityUpperBoundSafetyFactor) +
+                 ") * " + std::string(porosityUpperBound) + "), real(0));\n ";
       ib.code += "static_cast<void>(" + f_ + ");\n";
+      if (this->elastic_contribution) {
+        if (this->porosity_evolution_algorithm ==
+            mfront::bbrick::PorosityEvolutionAlgorithm::STAGGERED_SCHEME) {
+          ib.code += "if(";
+          ib.code += StandardElastoViscoPlasticityBrick::
+              computeStandardSystemOfImplicitEquations;
+          ib.code += "){\n";
+          this->addElasticContributionToTheImplicitEquationAssociatedWithPorosityEvolution(
+              ib);
+          ib.code += "}\n";
+        } else if (this->porosity_evolution_algorithm ==
+                   mfront::bbrick::PorosityEvolutionAlgorithm::
+                       STANDARD_IMPLICIT_SCHEME) {
+          this->addElasticContributionToTheImplicitEquationAssociatedWithPorosityEvolution(
+              ib);
+        } else {
+          tfel::raise(
+              "StandardElastoViscoPlasticityBrick::endTreatment: internal error "
+              "(unsupported porosity evolution algorithm)");
+        }
+      }
       bd.setCode(uh, BehaviourData::Integrator, ib,
                  BehaviourData::CREATEORAPPEND, BehaviourData::AT_BEGINNING);
       // implicit equation associated with the porosity
@@ -551,13 +585,51 @@ namespace mfront {
         bd.setCode(uh, BehaviourData::Integrator, ib,
                    BehaviourData::CREATEORAPPEND, BehaviourData::AT_BEGINNING);
       }
+      // modification of the implicit equation to impose the bounds
+      if (this->porosity_evolution_algorithm ==
+          mfront::bbrick::PorosityEvolutionAlgorithm::STANDARD_IMPLICIT_SCHEME) {
+        const auto& idsl = dynamic_cast<const ImplicitDSLBase&>(this->dsl);
+        const auto requiresAnalyticalJacobian =
+            ((idsl.getSolver().usesJacobian()) &&
+             (!idsl.getSolver().requiresNumericalJacobian()));
+        ib.code = "if(this->" + f.name + " + this->d" + f.name +  //
+                  " - f" + f.name + " < 0){\n";
+        ib.code += "f" + f.name + " = " +  //
+                   "this->d" + f.name + " - this->" + f.name + ";\n";
+        if (requiresAnalyticalJacobian) {
+          ib.code +=
+              "for(unsigned short idx = 0; idx!= "  //
+              "this->jacobian.getNbCols(); ++idx){\n";
+          ib.code += "this->jacobian(" + f.name + "_offset, idx) = 0;\n";
+          ib.code += "}\n";
+          ib.code += "this->jacobian(" + f.name + "_offset, " + f.name +
+                     "_offset) = 1;\n";
+        }
+        ib.code += "}\n";
+        ib.code += "if(this->" + f.name + " + this->d" + f.name +  //
+                  " - f" + f.name + " > "+porosityUpperBound+"){\n";
+        ib.code += "f" + f.name + " = this->d" + f.name +  //
+                   " - (" + porosityUpperBound + " - this->" + f.name + ");\n";
+        if (requiresAnalyticalJacobian) {
+          ib.code +=
+              "for(unsigned short idx = 0; idx!= "  //
+              "this->jacobian.getNbCols(); ++idx){\n";
+          ib.code += "this->jacobian(" + f.name + "_offset, idx) = 0;\n";
+          ib.code += "}\n";
+          ib.code += "this->jacobian(" + f.name + "_offset, " + f.name +
+                     "_offset) = 1;\n";
+        }
+        ib.code += "}\n";
+        bd.setCode(uh, BehaviourData::Integrator, ib,
+                   BehaviourData::CREATEORAPPEND, BehaviourData::AT_END);
+      }
       // additional convergence checks
       if (this->porosity_evolution_algorithm ==
           mfront::bbrick::PorosityEvolutionAlgorithm::STAGGERED_SCHEME) {
-      const auto& broken =
-          bd.getBehaviourData(uh)
-              .getAuxiliaryStateVariableDescriptionByExternalName(
-                  tfel::glossary::Glossary::Broken);
+        const auto& broken =
+            bd.getBehaviourData(uh)
+                .getAuxiliaryStateVariableDescriptionByExternalName(
+                    tfel::glossary::Glossary::Broken);
         // additional convergence checks
         CodeBlock acc;
         std::ostringstream os;
@@ -664,6 +736,12 @@ namespace mfront {
       const auto f_ets = nextEstimateOfThePorosityAtTheEndOfTheTimeStep;
       // additional convergence checks
       CodeBlock acc;
+      // defining the `nextEstimateOfThePorosityIncrement` variable before the
+      // user code, so that the user can update the porosity with its own contribution
+      acc.code = "auto " + std::string(nextEstimateOfThePorosityIncrement) + " = real{};\n";
+      bd.setCode(uh, BehaviourData::AdditionalConvergenceChecks, acc,
+                 BehaviourData::CREATEORAPPEND, BehaviourData::AT_BEGINNING);
+      acc.code.clear();
       std::ostringstream os;
       auto generate_debug_message = [&os, &f, &df](const bool b) {
         if (!getDebugMode()) {
@@ -693,11 +771,17 @@ namespace mfront {
       os << "if (converged && (!";
       os << computeStandardSystemOfImplicitEquations;
       os << ")) {\n";
+      if (this->elastic_contribution) {
+        const auto f_ = "((this->" + f.name + ") + (" +
+                        this->bd.getClassName() + "::theta) * (this->" +
+                        std::string(StandardElastoViscoPlasticityBrick::
+                                        currentEstimateOfThePorosityIncrement) +
+                        "))";
+        os << nextEstimateOfThePorosityIncrement
+           << " += (1-" + f_ + ") * trace(this->deel);\n";
+      }
       // 1. compute a new estimate of the porosity increment and get the maximum
       // allowed porosity (onset of fracture)
-      os << "auto ";
-      os << nextEstimateOfThePorosityIncrement;
-      os << " = real{};\n";
       auto flow_id = size_t{};
       for (const auto& pf : this->flows) {
         const auto id = getId(flow_id, this->flows.size());
@@ -776,6 +860,36 @@ namespace mfront {
                  BehaviourData::CREATEORAPPEND, BehaviourData::AT_END);
     }
   }  // end of StandardElastoViscoPlasticityBrick::endTreatment
+
+  void StandardElastoViscoPlasticityBrick::
+      addElasticContributionToTheImplicitEquationAssociatedWithPorosityEvolution(
+          CodeBlock& ib) const {
+    constexpr const auto uh =
+        tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    const auto& f =
+        bd.getBehaviourData(uh).getStateVariableDescriptionByExternalName(
+            tfel::glossary::Glossary::Porosity);
+    const auto f_ = f.name + "_";
+    const auto& idsl = dynamic_cast<const ImplicitDSLBase&>(this->dsl);
+    const auto requiresAnalyticalJacobian =
+        ((idsl.getSolver().usesJacobian()) &&
+         (!idsl.getSolver().requiresNumericalJacobian()));
+    const auto& broken =
+        bd.getBehaviourData(uh)
+            .getAuxiliaryStateVariableDescriptionByExternalName(
+                tfel::glossary::Glossary::Broken);
+    ib.code += "if(2 * (this->" + broken.name + ") < 1){\n";
+    ib.code += "f" + f.name + " -= (1 - " + f_ + ") * trace(this->deel);\n";
+    if (requiresAnalyticalJacobian) {
+      ib.code += "df" + f.name + "_ddeel -= " +  //
+                 "(1 - " + f_ + ") * Stensor::Id();\n";
+      ib.code += "df" + f.name + "_dd" + f.name + " += " +  //
+                 "(" + this->bd.getClassName() +
+                 "::theta) * trace(this->deel);\n";
+    }
+    ib.code += "}\n";
+  }  // end of
+  // addElasticContributionToTheImplicitEquationAssociatedWithPorosityEvolution
 
   StandardElastoViscoPlasticityBrick::~StandardElastoViscoPlasticityBrick() =
       default;

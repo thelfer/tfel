@@ -184,6 +184,12 @@ namespace mfront {
               "the flow is coupled with the porosity evolution by "
               "the flow direction is deviatoric");
         }
+        if (!this->khrs.empty()) {
+          raise(
+              "InelasticFlowBase::initialize: "
+              "kinematic hardening rules are not supported "
+              "when coupled with a porosity evolution");
+        }
       }
       if (this->contributesToPorosityGrowth()) {
         addLocalVariable(bd, "real", "trace_n" + id);

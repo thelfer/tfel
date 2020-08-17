@@ -112,6 +112,7 @@ set(mfront_tests_SOURCES
   Tvergaard
   SaintVenantKirchhoffElasticity
   SaintVenantKirchhoffElasticity2
+  SaintVenantKirchhoffElasticity4
   OrthotropicSaintVenantKirchhoffElasticity
   CompressibleNeoHookeanBehaviour
   IncompressibleMooneyRivlinBehaviour
@@ -555,6 +556,8 @@ test_generic_fs(saintvenantkirchhoffelasticity-shear-3-3D)
 test_generic_fs(saintvenantkirchhoffelasticity-shear-4-3D)
 test_generic_fs(saintvenantkirchhoffelasticity-shear-5-3D)
 test_generic_fs(saintvenantkirchhoffelasticity-shear-6-3D)
+
+test_generic(saintvenantkirchhoffelasticity4-uniaxialloading-1-3D)
 
 # test_generic(elasticity_frst-uniaxialloading-1-1D)
 # test_generic(elasticity_frst-uniaxialloading-2-1D)

@@ -103,6 +103,7 @@ MFRONTS= DDIF2.mfront                                                      \
 	 SaintVenantKirchhoffElasticityTotalLagrangian.mfront              \
 	 SaintVenantKirchhoffElasticity2.mfront                            \
 	 SaintVenantKirchhoffElasticity3.mfront                            \
+	 SaintVenantKirchhoffElasticity4.mfront                            \
 	 SaintVenantKirchhoffElasticityWithSubStepping.mfront              \
 	 OrthotropicSaintVenantKirchhoffElasticity.mfront                  \
 	 LogarithmicStrainElasticity.mfront                                \

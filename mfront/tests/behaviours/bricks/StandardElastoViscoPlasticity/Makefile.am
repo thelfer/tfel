@@ -90,6 +90,7 @@ MFRONTS=StandardElastoViscoPlasticityTest1.mfront                         \
 	ChuNeedleman1980StressBasedNucleationModelTest.mfront		      \
 	PowerLawStrainBasedNucleationModelTest.mfront			      \
 	PowerLawStressBasedNucleationModelTest.mfront			      \
+        ElasticContributionToPorosityGrowth.mfront                            \
         references/standardelastoviscoplasticitynortontest7.ref               \
 	references/standardelastoviscoplasticitynortontest8_E.ref             \
 	references/standardelastoviscoplasticitynortontest8_S.ref             \

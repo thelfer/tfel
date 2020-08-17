@@ -413,6 +413,13 @@ namespace mfront {
    */
   MFRONT_VISIBILITY_EXPORT void getTimeDerivativeSymbols(
       std::map<std::string, std::string>&, const VariableDescriptionContainer&);
+  /*!
+   * \return the offset of the given variable.
+   * \param[in] c: variable description container
+   * \param[in] n: name of the variable
+   */
+  MFRONT_VISIBILITY_EXPORT SupportedTypes::TypeSize getOffset(
+      const VariableDescriptionContainer&, const std::string&);
 
   //! a simple alias for backward compatibility
   using VarContainer = VariableDescriptionContainer;

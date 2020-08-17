@@ -271,6 +271,7 @@ namespace mfront {
     for (const auto h : hs) {
       for (const auto& iv : v) {
         this->mb.reserveName(h, "f" + iv.name);
+        this->mb.reserveName(h, iv.name + "_offset");
       }
     }
   }
@@ -2925,11 +2926,8 @@ namespace mfront {
                                         const Hypothesis h) const {
     const auto& d = this->mb.getBehaviourData(h);
     SupportedTypes::TypeSize n;
-    SupportedTypes::TypeSize n2;
     SupportedTypes::TypeSize n3;
-    for (const auto& v : d.getIntegrationVariables()) {
-      n2 += this->getTypeSize(v.type, v.arraySize);
-    }
+    const auto n2 = mfront::getTypeSize(d.getIntegrationVariables());
     auto jp(this->jacobianPartsUsedInIntegrator);
     if (this->solver
             ->requiresJacobianToBeReinitialisedToIdentityAtEachIterations()) {
@@ -2952,6 +2950,8 @@ namespace mfront {
        << "static_cast<void>(perturbatedSystemEvaluation); \n";
     n = SupportedTypes::TypeSize();
     for (const auto& v : d.getIntegrationVariables()) {
+      os << "constexpr const auto " << v.name << "_offset = " << n << ";\n";
+      os << "static_cast<void>(" << v.name << "_offset);\n";
       if (SupportedTypes::getTypeFlag(v.type) == SupportedTypes::SCALAR) {
         if (v.arraySize == 1u) {
           os << "real& f" << v.name << "(this->fzeros(" << n << "));\n";

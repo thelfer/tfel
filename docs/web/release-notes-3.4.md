@@ -39,7 +39,20 @@ is not more valid:
 this->getPartialJacobianInvert(Je);
 ~~~~
 
-We don't know any implementation affected by this incompatibility.
+To the best of our knowledge, no implementation is affected by this
+incompatibility.
+
+## Declaration of the offsets of the integration variables in implicit schemes
+
+The offsets of the integration variables in implicit schemes are now
+automatically declared in the `@Integrator` code block. The names of the
+variables associated with those offsets may conflict with user defined
+variables. See Section
+@sec:mfront:releas3.4:integration_variables_offset for a description of
+this new feature.
+
+To the best of our knowledge, no implementation is affected by this
+incompatibility.
 
 # Documentation
 
@@ -139,10 +152,6 @@ const auto r = tfel::math::scalarNewtonRaphson(fdf, c, 0.1, 100);
 
 # New features of `MFront`
 
-## Coupling (visco-)plasticity with porosity evolutions in the `StandardElastoViscoPlasticity` brick
-
-## The `StandardStressCriterionBase` and `StandardPorousStressCriterionBase` base class to  ease the extension of the `StandardElastoViscoPlasticity` brick
-
 ## Improved robustness of the isotropic DSLs
 
 The `@Flow` block can now return a boolean value in the
@@ -176,7 +185,24 @@ use of the default tangent operation blocks. Hence, tangent operator
 blocks that are structurally zero (for example due to symmetry
 conditions) don't have to be compute any more.
 
+## Improvements to the implicit domain specific languages
+
+### Automatic definition of the offsets associated with integration variables{#sec:mfront:releas3.4:integration_variables_offset}
+
+Let `X` be the name of an integration variable. The variable `X_offset`
+is now automatically defined in the `@Integrator` code block. 
+
+This variable allows a direct modification of the residual associated
+with this variable (though the variable `fzeros`) and jacobian matrix
+(though the variable `jacobian`).
+
 ## Improvement of the `StandardElastoViscoplasticity` brick
+
+### Porous (visco-)plasticity
+
+### The `StandardStressCriterionBase` and `StandardPorousStressCriterionBase` base class to  ease the extension of the `StandardElastoViscoPlasticity` brick
+
+
 
 ### The `Power` isotropic hardening rule{#sec:power_isotropic_hardening_rule}
 

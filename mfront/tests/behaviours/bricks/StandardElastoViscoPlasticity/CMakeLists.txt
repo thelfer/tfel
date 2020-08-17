@@ -185,3 +185,5 @@ install_mfront_data(tests/behavioursbricks/StandardElastoViscoPlasticity
 	PowerLawStrainBasedNucleationModelTest.mfront)
 install_mfront_data(tests/behavioursbricks/StandardElastoViscoPlasticity
 	PowerLawStressBasedNucleationModelTest.mfront)
+install_mfront_data(tests/behavioursbricks/StandardElastoViscoPlasticity
+        ElasticContributionToPorosityGrowth.mfront)

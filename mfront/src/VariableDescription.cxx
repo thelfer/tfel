@@ -625,4 +625,17 @@ namespace mfront {
     }
   }  // end of getTimeDerivativeSymbols
 
+  SupportedTypes::TypeSize getOffset(const VariableDescriptionContainer& c,
+                                     const std::string& n) {
+    auto o = SupportedTypes::TypeSize{};
+    for (const auto& v : c) {
+      if (v.name == n) {
+        return o;
+      }
+      o += getTypeSize(v);
+    }
+    tfel::raise("mfront::getOffset: no variable name '" + n + "'");
+    return o;
+  } // end of getOffset
+
 }  // end of namespace mfront
