@@ -295,6 +295,9 @@ namespace mfront {
             m << "$(shell " << tfel_config << " --oflags0) ";
             break;
         }
+        if (o.debugFlags) {
+            m << "$(shell " << tfel_config << " --debug-flags) ";
+        }
       }
       if ((o.sys == "win32") || (o.sys == "cygwin")) {
         m << "-DWIN32 -DMFRONT_COMPILING $(INCLUDES) \n\n";

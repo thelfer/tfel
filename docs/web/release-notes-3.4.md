@@ -155,6 +155,12 @@ const auto r = tfel::math::scalarNewtonRaphson(fdf, c, 0.1, 100);
 
 # New features of `MFront`
 
+## Debugging options
+
+A new command line option has been added to `MFront`. The `-g` option
+adds standard debugging flags to the compiler flags when compiling
+shared libraries.
+
 ## Improved robustness of the isotropic DSLs
 
 The `@Flow` block can now return a boolean value in the
@@ -562,8 +568,10 @@ ThermalNorton.mfront: In member function ‘bool tfel::material::ThermalNorton<h
 ThermalNorton.mfront:147:75: error: ‘∂Δεel∕∂ΔT’ was not declared in this scope
 ~~~~
 
+# Improvements to `tfel-config`
 
-However, the compiler is not aware
+The command line option `--debug-flags` has been added to `tfel-config`.
+When used, `tfel-config` returns the standard debugging flags.
 
 # Improvements to the build system
 
@@ -584,6 +592,13 @@ For more details, see: <https://sourceforge.net/p/tfel/tickets/231/>
 ## Ticket #219: Add the possibility to define the tangent operator blocks
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/219/>
+
+## Ticket #214: Add a debugging option to `MFront`
+
+The `-g` option of `MFront` now adds standard debugging flags to the
+compiler flags when compiling shared libraries.
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/214/>
 
 ## Ticket #212: Better `const` correctness in the `generic` behaviour
 

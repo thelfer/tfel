@@ -260,9 +260,9 @@ namespace mfront {
                    "MFront::treatSilentBuild: "
                    "no argument given to the "
                    "--silentBuild option");
-    if (o == "on") {
+    if ((o == "on") || (o == "true")) {
       this->opts.silentBuild = true;
-    } else if (o == "off") {
+    } else if ((o == "off") || (o == "false")) {
       this->opts.silentBuild = false;
     } else {
       tfel::raise(
@@ -385,6 +385,9 @@ namespace mfront {
                               "generate build file with optimized compilations "
                               "flags and build libraries",
                               true);
+    this->registerCallBack(
+        "-g", CallBack("add debugging symbols",
+                       [this] { this->opts.debugFlags = true; }, false));
     this->registerNewCallBack(
         "--target", "-t", &MFront::treatTarget,
         "generate build file and build the specified target", true);
