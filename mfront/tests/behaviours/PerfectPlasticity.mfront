@@ -1,0 +1,18 @@
+@DSL Implicit;
+@Behaviour PerfectPlasticity;
+@Author Thomas Helfer;
+@Date 17 / 08 / 2020;
+@Description{};
+
+@Epsilon 1.e-14;
+@Theta 1;
+
+@Brick StandardElastoViscoPlasticity{
+  stress_potential : "Hooke" {young_modulus : 200e9, poisson_ratio : 0.3},
+  inelastic_flow : "Plastic" {
+    criterion : "Mises",
+    isotropic_hardening : "Linear" {R0 : 150e6},
+    maximum_equivalent_stress_factor : 1.5,
+    equivalent_stress_check_maximum_iteration_factor : 0.4
+  }
+};

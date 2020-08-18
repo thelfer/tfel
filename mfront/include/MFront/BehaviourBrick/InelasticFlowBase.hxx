@@ -55,7 +55,7 @@ namespace mfront {
       /*!
        * \return the code updating the upper bound of the porosity.
        * If this flow does not affect the porosity growth, the returned
-       * value may be empty. By default, this method calls the 
+       * value may be empty. By default, this method calls the
        * `updatePorosityUpperBound` of the underlying stress criterion.
        * \param[in] bd: behaviour description
        * \param[in] id: flow id
@@ -135,6 +135,34 @@ namespace mfront {
       //! \brief algorithm used to handle the porosity evolution
       PorosityEvolutionAlgorithm porosity_evolution_algorithm =
           PorosityEvolutionAlgorithm::STAGGERED_SCHEME;
+      /*!
+       * \brief minimum value of the cosine of the angle between two successive
+       * estimates of the flow direction. If the computed angle is lower than
+       * this threshold, the Newton step is rejected.
+       *
+       * \note the value of this parameter must be in the range [-1:1]. If this
+       * parameter is not in that range (which is the default), the code
+       * checking the value of the cosine is not generated.
+       */
+      double cosine_threshold = 2;
+      /*!
+       * \brief a factor \f$alpha\f$ which gives the threshold below which the
+       * check on the cosine of the angle between two successive
+       * estimates of the flow direction is performed, i.e. the test is
+       * performed if the iteration counter is greater than \f$alpha \cdot
+       * i_{\max{}}\f$ where \f$i_{\max{}}\f$ is the maximum number of
+       * iterations.
+       */
+      double cosine_check_minimum_iteration_factor = 0;
+      /*!
+       * \brief a factor \f$alpha\f$ which gives the threshold upper which the
+       * check on the cosine of the angle between two successive
+       * estimates of the flow direction is performed, i.e. the test is
+       * performed if the iteration counter is below \f$alpha \cdot
+       * i_{\max{}}\f$ where \f$i_{\max{}}\f$ is the maximum number of
+       * iterations.
+       */
+      double cosine_check_maximum_iteration_factor = 1;
       /*!
        * \brief flag stating that the porosity evolution is handled by the brick
        */

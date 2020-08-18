@@ -1,6 +1,21 @@
-% Description of the `StandardElastoViscoPlasticity` brick
-% Thomas Helfer
-% 15/04/2018
+---
+title: Description of the `StandardElastoViscoPlasticity` brick
+author: Thomas Helfer
+date: 2020
+lang: en-EN
+documentclass: article
+from: markdown+tex_math_single_backslash
+geometry:
+  - margin=2cm
+papersize: a4
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tabPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+bibliography: bibliography.bib
+---
 
 \newcommand{\tenseur}[1]{\underline{#1}}
 \newcommand{\tenseurq}[1]{\underline{\mathbf{#1}}}
@@ -37,6 +52,7 @@
 \newcommand{\bts}[1]{{\left.#1\right|_{t}}}
 \newcommand{\mts}[1]{{\left.#1\right|_{t+\theta\,\Delta\,t}}}
 \newcommand{\ets}[1]{{\left.#1\right|_{t+\Delta\,t}}}
+\newcommand{\norm}[1]{\lVert #1\rVert}
 
 This page describes the `StandardElastoViscoPlasticity` brick. This
 brick is used to describe a specific class of strain based behaviours
@@ -201,6 +217,49 @@ the limit of the elastic domain as a sum, denoted
 combining various predefined forms of isotropic hardening rules (Voce,
 Linear, etc.) defined hereafter.
 
+#### Maximum equivalent stress in the `Plastic` flow
+
+During the Newton iterations, the current estimate of the equivalent
+stress \(\sigmaeq\) may be significantly higher than the elastic limit
+\(R\). This may lead to a divergence of the Newton algorithm.
+
+One may reject the Newton steps leading to such high values of the
+elastic limit by specifying a relative threshold denoted \(\alpha\),
+i.e. if \(\sigmaeq\) is greater than \(\alpha\,\cdot\,R\). A typical
+value for \(\alpha\) is \(1.5\). This relative threshold is specified by
+the `maximum_equivalent_stress_factor` option.
+
+In some cases, rejecting steps may also lead to a divergence of the
+Newton algorithm, so one may specify a relative threshold \(\beta\) on
+the iteration number which desactivate this check, i.e. the check is
+performed only if the current iteration number is below
+\(\beta\,\cdot\,i_{\max{}}\) where \(i_{\max{}}\) is the maximum number
+of iterations allowed for the Newton algorithm. A typical value for
+\(\beta\) is \(0.4\). This relative threshold is specified by the
+`equivalent_stress_check_maximum_iteration_factor` option.
+
+##### Example
+
+~~~~{.cxx}
+@DSL Implicit;
+@Behaviour PerfectPlasticity;
+@Author Thomas Helfer;
+@Date 17 / 08 / 2020;
+@Description{};
+
+@Epsilon 1.e-14;
+@Theta 1;
+
+@Brick StandardElastoViscoPlasticity{
+  stress_potential : "Hooke" {young_modulus : 200e9, poisson_ratio : 0.3},
+  inelastic_flow : "Plastic" {
+    criterion : "Mises",
+    isotropic_hardening : "Linear" {R0 : 150e6},
+    maximum_equivalent_stress_factor : 1.5,
+    equivalent_stress_check_maximum_iteration_factor: 0.4
+  }
+};
+~~~~
 
 ### The `Norton` inelastic flow
 
@@ -215,7 +274,38 @@ The plastic flow is defined by:
 f\paren{\tsigma}=A\left<\Frac{\phi\paren{\tsigma-\sum_{i}\tenseur{X}_{i}}-\sum_{i}R_{i}\paren{p}}{K}\right>^{n}
 \]
 
-## List of available stress criterion
+## Newton steps rejections based on the change of the flow direction between two successive estimates {#sec:cosine_checks}
+
+Some stress criteria (Hosford 1972, Barlat 2004, Mohr-Coulomb) shows
+sharp edges that may cause the failure of the standard Newton algorithm,
+due to oscillations in the prediction of the flow direction.
+
+Rejecting Newton steps leading to a too large variation of the flow
+direction between the new estimate of the flow direction and the
+previous estimate is a cheap and efficient method to overcome this
+issue. This method can be viewed as a bisectional linesearch based on
+the Newton prediction: the Newton steps magnitude is divided by two if
+its results to a too large change in the flow direction.
+
+More precisely, the change of the flow direction is estimated by the
+computation of the cosine of the angle between the two previous
+estimates:
+
+\[
+\cos\paren{\alpha_{\tenseur{n}}}=\dfrac{\tenseur{n}\,\colon\,\tenseur{n}_{p}}{\norm{\tenseur{n}}\,\norm{\tenseur{n}}}
+\]
+
+with \(\norm{\tenseur{n}}=\sqrt{\tenseur{n}\,\colon\,\tenseur{n}}\).
+
+The Newton step is rejected if the value of
+\(\cos\paren{\alpha_{\tenseur{n}}}\) is lower than a user defined
+threshold. This threshold must be in the range \(\left[-1:1\right]\),
+but due to the slow variation of the cosine near \(0\), a typical value
+of this threshold is \(0.99\) which is equivalent to impose that the
+angle between two successive estimates is below \(8\mbox{}^{\circ}\).
+
+
+## List of available stress criteria
 
 The following section describes stress criteria available by default.
 However, the `StandardElastoViscoPlasticity` brick can also be extended
@@ -305,11 +395,25 @@ von Mises stress.
  "Comparison of the Hosford stress \(a=100,a=8\) and the von Mises
  stress in plane stress"){width=70%}
 
+### Options
+
+The Hosford exponent `a` is mandatory.
+
+Specifying the eigen solver using the `eigen_solver` option is optional.
+This option can have the value `default` or the value `Jacobi`.
+
 ### Example
 
 ~~~~{.cpp}
     criterion : "Hosford" {a : 6}
 ~~~~
+
+### Notes
+
+The Hosford yield surface may have sharp edges which may lead to
+divergence of the Newton algorithm du to oscillations of the flow
+direction. Specifying a threshold for the angle between. See Section
+@sec:cosine_checks for details.
 
 #### Options
 
@@ -597,6 +701,9 @@ This stress criterion has \(3\) mandatory options:
 > modelling hypotheses. The coefficients given by the user must always
 > correspond to the three dimensional case.
 
+Specifying the eigen solver using the `eigen_solver` option is optional.
+This option can have the value `default` or the value `Jacobi`.
+
 ### Example
 
 ~~~~{.cpp}
@@ -608,6 +715,13 @@ This stress criterion has \(3\) mandatory options:
             1.1471, 1.05166}
     }
 ~~~~
+
+### Notes
+
+The Barlat 2004 yield surface may have sharp edges which may lead to
+divergence of the Newton algorithm du to oscillations of the flow
+direction. Specifying a threshold for the angle between. See Section
+@sec:cosine_checks for details.
 
 ## List of available isotropic hardening rules
 

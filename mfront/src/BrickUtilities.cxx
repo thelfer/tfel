@@ -574,6 +574,18 @@ namespace mfront {
      return c;
     }  // end of computeElasticLimitAndDerivative
 
+    std::string handleEigenSolverOption(const std::string& e) {
+      if ((e == "TFEL") || (e == "default")) {
+        return "tfel::math::stensor_common::TFELEIGENSOLVER";
+      }
+      if (e != "Jacobi") {
+        tfel::raise(
+            "mfront::bbrick::handleEigenSolverOption: "
+            "unsupported eigen solver option '" + e + "'");
+      }
+      return "tfel::math::stensor_common::FSESJACOBIEIGENSOLVER";
+    }  // end of handleEigenSolverOption
+
   }  // end of namespace bbrick
 
 }  // end of namespace mfront

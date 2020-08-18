@@ -36,6 +36,7 @@ EXTRA_DIST = CMakeLists.txt                                                     
              elasticity26.mtest                                                        \
              elasticity27.mtest                                                        \
              elasticity28.mtest                                                        \
+             perfectplasticity.mtest                                                   \
              finiterotationsmallstrainelasticity2-shear-1-2D.mtest		       \
              finiterotationsmallstrainelasticity2-shear-1-3D.mtest		       \
              finiterotationsmallstrainelasticity2-shear-2-2D.mtest		       \

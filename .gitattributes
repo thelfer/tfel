@@ -3016,6 +3016,8 @@ mfront/tests/behaviours/GursonTvergaardNeedlemanPlasticFlow_NumericalJacobian.mf
 mfront/tests/behaviours/GursonTvergaardNeedlemanViscoPlasticFlow_NumericalJacobian.mfront -text
 mfront/tests/behaviours/Hayhurst.mfront -text
 mfront/tests/behaviours/HosfordPerfectPlasticity.mfront -text
+mfront/tests/behaviours/HosfordPerfectPlasticity2.mfront -text
+mfront/tests/behaviours/HosfordPerfectPlasticity3.mfront -text
 mfront/tests/behaviours/ImplicitFiniteStrainNorton.mfront -text
 mfront/tests/behaviours/ImplicitHayhurst.mfront -text
 mfront/tests/behaviours/ImplicitMonoCrystal.mfront -text
@@ -3099,6 +3101,7 @@ mfront/tests/behaviours/OrthotropicSwelling.mfront -text
 mfront/tests/behaviours/OrthotropicSwelling2.mfront -text
 mfront/tests/behaviours/ParameterTest.mfront -text
 mfront/tests/behaviours/ParameterTest2.mfront -text
+mfront/tests/behaviours/PerfectPlasticity.mfront -text
 mfront/tests/behaviours/PlasIsoCin.mfront -text
 mfront/tests/behaviours/Plasticity.mfront -text
 mfront/tests/behaviours/Plasticity2.mfront -text
@@ -5674,6 +5677,7 @@ mfront/tests/behaviours/generic/orthotropicelasticity6-9.mtest -text
 mfront/tests/behaviours/generic/orthotropicswelling.mtest -text
 mfront/tests/behaviours/generic/orthotropicswelling2.mtest -text
 mfront/tests/behaviours/generic/orthotropicswelling3.mtest -text
+mfront/tests/behaviours/generic/perfectplasticity.mtest -text
 mfront/tests/behaviours/generic/plasticity.mtest -text
 mfront/tests/behaviours/generic/plasticity2.mtest -text
 mfront/tests/behaviours/generic/plasticity3.mtest -text

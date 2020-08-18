@@ -15,21 +15,14 @@
 
 namespace mfront{
 
-  static bool& getMFrontDebugMode()
-  {
+  static bool& getMFrontDebugMode() {
     static bool b = false;
     return b;
   }
 
-  bool getDebugMode()
-  {
-    return getMFrontDebugMode();
-  }
+  bool getDebugMode() { return getMFrontDebugMode(); }
 
-  void setDebugMode(const bool b)
-  {
-    getMFrontDebugMode() = b;
-  }
+  void setDebugMode(const bool b) { getMFrontDebugMode() = b; }
 
 } // end of namespace mfront
 

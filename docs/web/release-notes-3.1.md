@@ -712,7 +712,7 @@ std::tie(vp,m)=s.computeEigenVectors(Stensor::ASCENDING);
 #### New eigen solvers{#sec:eigensolvers}
 
 The default eigen solver for symmetric tensors used in `TFEL` is based
-on analitical computations of the eigen values and eigen vectors. Such
+on analytical computations of the eigen values and eigen vectors. Such
 computations are more efficient but less accurate than the iterative
 Jacobi algorithm (see [@kopp_efficient_2008;@kopp_numerical_2017]).
 

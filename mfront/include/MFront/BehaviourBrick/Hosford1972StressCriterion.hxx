@@ -33,7 +33,8 @@ namespace mfront {
      * \f$\underline{\sigma}\f$.
      */
     struct Hosford1972StressCriterion final : StressCriterionBase {
-      std::vector<BehaviourSymmetry> getSupportedBehaviourSymmetries() const override;
+      std::vector<BehaviourSymmetry> getSupportedBehaviourSymmetries()
+          const override;
       std::vector<OptionDescription> getOptions() const override;
       void initialize(BehaviourDescription&,
                       AbstractBehaviourDSL&,
@@ -64,9 +65,18 @@ namespace mfront {
       PorosityEffectOnFlowRule getPorosityEffectOnFlowRule() const override;
       //! destructor
       ~Hosford1972StressCriterion() override;
-     protected:
+
+     private:
+      /*!
+       * \brief return the template parameter of the functions implemention the
+       * computation of the functions computing the Hosford stress criterion,
+       * its normal and its second derivative.
+       */
+      std::string getTemplateParameters() const;
       //! \brief hosford exponent
       BehaviourDescription::MaterialProperty a;
+      //! \brief choice of the eigen solver
+      std::string eigen_solver;
     };  // end of struct Hosford1972StressCriterion
 
   }  // end of namespace bbrick

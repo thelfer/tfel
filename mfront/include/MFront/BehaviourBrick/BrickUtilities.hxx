@@ -271,7 +271,8 @@ namespace mfront {
      * \param[in] n: name of the variable
      * \param[in] g: glossary name
      * \param[in] s: array size
-     * \param[in] bo: allow name shadowing. If true, allows that a state variable
+     * \param[in] bo: allow name shadowing. If true, allows that a state
+     * variable
      * with the given glossary name but a different name has already been
      * defined.
      */
@@ -307,7 +308,8 @@ namespace mfront {
      * \param[in] n: name of the variable
      * \param[in] g: glossary name
      * \param[in] s: array size
-     * \param[in] bo: allow name shadowing. If true, allows that a state variable
+     * \param[in] bo: allow name shadowing. If true, allows that a state
+     * variable
      * with the given glossary name but a different name has already been
      * defined.
     */
@@ -464,17 +466,39 @@ namespace mfront {
                                                const std::string &,
                                                const unsigned short,
                                                const std::vector<double> &);
-
+    /*!
+     * \brief generate the code that evaluates the initial elastic limit.
+     * \param[in] ihrs: list of isotropic hardening rules.
+     * \param[in] fid: flow id
+     */
     MFRONT_VISIBILITY_EXPORT std::string computeElasticLimitInitialValue(
         const std::vector<std::shared_ptr<IsotropicHardeningRule>> &,
         const std::string &);
-
+    /*!
+     * \brief generate the code that evaluates the elastic limit.
+     * \param[in] ihrs: list of isotropic hardening rules.
+     * \param[in] fid: flow id
+     */
+    MFRONT_VISIBILITY_EXPORT std::string computeElasticLimit(
+        const std::vector<std::shared_ptr<IsotropicHardeningRule>> &,
+        const std::string &);
+    /*!
+     * \brief generate the code that evaluates the elastic limit and its
+     * derivative with respect to the equivalent strain.
+     * \param[in] ihrs: list of isotropic hardening rules.
+     * \param[in] fid: flow id
+     */
     MFRONT_VISIBILITY_EXPORT std::string computeElasticLimitAndDerivative(
         const std::vector<std::shared_ptr<IsotropicHardeningRule>> &,
         const std::string &);
-
-    MFRONT_VISIBILITY_EXPORT std::string computeElasticLimit(
-        const std::vector<std::shared_ptr<IsotropicHardeningRule>> &,
+    /*!
+     * \brief return a string representation of the eigen solver enum associated with
+     * this string according to the following map:
+     * - `TFEL` or `default` -> `tfel::math::stensor_common::TFELEIGENSOLVER`
+     * - `Jacobi` -> `tfel::math::stensor_common::FSESJACOBIEIGENSOLVER`
+     * \param[in] e: eigen solver option
+     */
+    MFRONT_VISIBILITY_EXPORT std::string handleEigenSolverOption(
         const std::string &);
 
   }  // end of namespace bbrick

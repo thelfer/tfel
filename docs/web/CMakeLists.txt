@@ -133,6 +133,13 @@ pandoc_html(LoadInducedThermalStrainBehaviourTorelli2018  "--toc" "--toc-depth=2
 pandoc_html(FichantLaBorderieDamageAndTorelliLoadInducedStrainBehaviour   "--toc" "--toc-depth=2")
 pandoc_html(FischerBurmeister "--toc" "--toc-depth=2")
 pandoc_html(TFELSystem "--toc" "--toc-depth=2")
+pandoc_html(BehaviourBricks "--toc" "--toc-depth=2")
+pandoc_html(DDIF2Brick "--toc" "--toc-depth=2")
+pandoc_html(StandardElastoViscoPlasticityBrick "--toc" "--toc-depth=2" "--number-sections")
+pandoc_html(ExtendingStandardElastoViscoPlasticityBrick-StressCriterion "--toc" "--toc-depth=2" "--number-sections")
+pandoc_html(ExtendingStandardElastoViscoPlasticityBrick-PorousStressCriterion "--toc" "--toc-depth=2"  "--number-sections")
+pandoc_html(HookeStressPotential "--toc" "--toc-depth=2")
+pandoc_html(DDIF2StressPotential "--toc" "--toc-depth=2")
 
 # mfront keywords
 
@@ -149,13 +156,6 @@ pandoc_html(MaterialLaw-keywords "--toc" "--toc-depth=1")
 pandoc_html(Model-keywords "--toc" "--toc-depth=1")
 pandoc_html(MultipleIsotropicMisesFlows-keywords "--toc" "--toc-depth=1")
 pandoc_html(RungeKutta-keywords "--toc" "--toc-depth=1")
-pandoc_html(BehaviourBricks "--toc" "--toc-depth=2")
-pandoc_html(DDIF2Brick "--toc" "--toc-depth=2")
-pandoc_html(StandardElastoViscoPlasticityBrick "--toc" "--toc-depth=2")
-pandoc_html(ExtendingStandardElastoViscoPlasticityBrick-StressCriterion "--toc" "--toc-depth=2" "--number-sections")
-pandoc_html(ExtendingStandardElastoViscoPlasticityBrick-PorousStressCriterion "--toc" "--toc-depth=2"  "--number-sections")
-pandoc_html(HookeStressPotential "--toc" "--toc-depth=2")
-pandoc_html(DDIF2StressPotential "--toc" "--toc-depth=2")
 
 # mtest keywords
 

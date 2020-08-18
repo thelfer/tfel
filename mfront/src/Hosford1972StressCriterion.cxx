@@ -31,6 +31,10 @@ namespace mfront {
       auto opts = StressCriterionBase::getOptions();
       opts.emplace_back("a", "Hosford exponent",
                         OptionDescription::MATERIALPROPERTY);
+      opts.emplace_back(
+          "eigen_solver",
+          "Choice of the eigen solver. Valid value are 'default' and 'Jacoby'.",
+          OptionDescription::STRING);
       return opts;
     }  // end of Hosford1972StressCriterion::getOptions()
 
@@ -44,6 +48,10 @@ namespace mfront {
       tfel::raise_if(d.count("a") == 0,
                      "Hosford1972StressCriterion::initialize: "
                      "material property 'a' is not defined");
+      if (d.count("eigen_solver") != 0) {
+        this->eigen_solver =
+            handleEigenSolverOption(d.at("eigen_solver").get<std::string>());
+      }
       this->a = getBehaviourDescriptionMaterialProperty(dsl, "a", d.at("a"));
       declareParameterOrLocalVariable(bd, this->a, "real", an);
     }  // end of Hosford1972StressCriterion::initialize
@@ -71,9 +79,9 @@ namespace mfront {
         const StressPotential& sp) const {
       const auto an = StressCriterion::getVariableId(
           "a", id, StressCriterion::STRESSCRITERION);
-      return "const auto seqel" + id + " = computeHosfordStress(sel" + id +
-             ",this->" + an + "," + sp.getEquivalentStressLowerBound(bd) +
-             ");\n";
+      return "const auto seqel" + id + " = computeHosfordStress" +
+             this->getTemplateParameters() + "(sel" + id + ",this->" + an +
+             "," + sp.getEquivalentStressLowerBound(bd) + ");\n";
     }  // end of Hosford1972StressCriterion::computeElasticPrediction
 
     std::string Hosford1972StressCriterion::computeCriterion(
@@ -82,9 +90,9 @@ namespace mfront {
         const StressPotential& sp) const {
       const auto an = StressCriterion::getVariableId(
           "a", id, StressCriterion::STRESSCRITERION);
-      return "const auto seq" + id + " = computeHosfordStress(s" + id +
-             ",this->" + an + "," + sp.getEquivalentStressLowerBound(bd) +
-             ");\n";
+      return "const auto seq" + id + " = computeHosfordStress" +
+             this->getTemplateParameters() + "(s" + id + ",this->" + an + "," +
+             sp.getEquivalentStressLowerBound(bd) + ");\n";
     }  // end of Hosford1972StressCriterion::computeCriterion
 
     std::string Hosford1972StressCriterion::computeNormal(
@@ -97,13 +105,15 @@ namespace mfront {
       if ((r == STRESSCRITERION) || (r == STRESSANDFLOWCRITERION)) {
 #if __cplusplus >= 201703L
         c += "const auto [seq" + id + ",dseq" + id + "_ds" + id + "] = ";
-        c += "computeHosfordStressNormal(s" + id + ", this->" + an + "," +
+        c += "computeHosfordStressNormal" + this->getTemplateParameters() +
+             "(s" + id + ", this->" + an + "," +
              sp.getEquivalentStressLowerBound(bd) + ");\n";
 #else  /* __cplusplus >= 201703L */
         c += "stress seq" + id + ";\n";
         c += "Stensor dseq" + id + "_ds" + id + ";\n";
         c += "std::tie(seq" + id + ",dseq" + id + "_ds" + id + ") = ";
-        c += "computeHosfordStressNormal(s" + id + ",this->" + an + "," +
+        c += "computeHosfordStressNormal" + this->getTemplateParameters() +
+             "(s" + id + ",this->" + an + "," +
              sp.getEquivalentStressLowerBound(bd) + ");\n";
 #endif /* __cplusplus >= 201703L */
       }
@@ -113,13 +123,15 @@ namespace mfront {
       if (r == FLOWCRITERION) {
 #if __cplusplus >= 201703L
         c += "const auto [seqf" + id + ", n" + id + "] = ";
-        c += "computeHosfordStressNormal(s" + id + ",this->" + an + "," +
+        c += "computeHosfordStressNormal" + this->getTemplateParameters() +
+             "(s" + id + ",this->" + an + "," +
              sp.getEquivalentStressLowerBound(bd) + ");\n";
 #else  /* __cplusplus >= 201703L */
         c += "stress seqf" + id + ";\n";
         c += "Stensor n" + id + ";\n";
         c += "std::tie(seqf" + id + ",n" + id + ") = ";
-        c += "computeHosfordStressNormal(s" + id + ",this->" + an + "," +
+        c += "computeHosfordStressNormal" + this->getTemplateParameters() +
+             "(s" + id + ",this->" + an + "," +
              sp.getEquivalentStressLowerBound(bd) + ");\n";
 #endif /* __cplusplus >= 201703L */
       }
@@ -137,16 +149,18 @@ namespace mfront {
 #if __cplusplus >= 201703L
         c += "const auto [seq" + id + ",dseq" + id + "_ds" + id + ",d2seq" +
              id + "_ds" + id + "ds" + id + "] = ";
-        c += "computeHosfordStressSecondDerivative(s" + id + ",this->" + an +
-             "," + sp.getEquivalentStressLowerBound(bd) + ");\n";
+        c += "computeHosfordStressSecondDerivative" +
+             this->getTemplateParameters() + "(s" + id + ",this->" + an + "," +
+             sp.getEquivalentStressLowerBound(bd) + ");\n";
 #else  /* __cplusplus >= 201703L */
         c += "stress seq" + id + ";\n";
         c += "Stensor dseq" + id + "_ds" + id + ";\n";
         c += "Stensor4 d2seq" + id + "_ds" + id + "ds" + id + ";\n";
         c += "std::tie(seq" + id + ",dseq" + id + "_ds" + id + ",d2seq" + id +
              "_ds" + id + "ds" + id + ") = ";
-        c += "computeHosfordStressSecondDerivative(s" + id + ",this->" + an +
-             "," + sp.getEquivalentStressLowerBound(bd) + ");\n";
+        c += "computeHosfordStressSecondDerivative" +
+             this->getTemplateParameters() + "(s" + id + ",this->" + an + "," +
+             sp.getEquivalentStressLowerBound(bd) + ");\n";
 #endif /* __cplusplus >= 201703L */
       }
       if (r == STRESSANDFLOWCRITERION) {
@@ -158,20 +172,29 @@ namespace mfront {
 #if __cplusplus >= 201703L
         c += "const auto [seqf" + id + ", n" + id + ", dn" + id + "_ds" + id +
              "] = ";
-        c += "computeHosfordStressSecondDerivative(s" + id + ",this->" + an +
-             "," + sp.getEquivalentStressLowerBound(bd) + ");\n";
+        c += "computeHosfordStressSecondDerivative" +
+             this->getTemplateParameters() + "(s" + id + ",this->" + an + "," +
+             sp.getEquivalentStressLowerBound(bd) + ");\n";
 #else  /* __cplusplus >= 201703L */
         c += "stress seqf" + id + ";\n";
         c += "Stensor n" + id + ";\n";
         c += "Stensor4 dn" + id + "_ds" + id + ";\n";
         c +=
             "std::tie(seqf" + id + ",n" + id + ",dn" + id + "_ds" + id + ") = ";
-        c += "computeHosfordStressSecondDerivative(s" + id + ",this->" + an +
-             "," + sp.getEquivalentStressLowerBound(bd) + ");\n";
+        c += "computeHosfordStressSecondDerivative" +
+             this->getTemplateParameters() + "(s" + id + ",this->" + an + "," +
+             sp.getEquivalentStressLowerBound(bd) + ");\n";
 #endif /* __cplusplus >= 201703L */
       }
       return c;
     }  // end of Hosford1972StressCriterion::computeNormalDerivative
+
+    std::string Hosford1972StressCriterion::getTemplateParameters() const {
+      if (this->eigen_solver.empty()) {
+        return "";
+      }
+      return "<StressStensor, real, " + this->eigen_solver + ">";
+    }  // end of Hosford1972StressCriterion::getTemplateParameters
 
     bool Hosford1972StressCriterion::isCoupledWithPorosityEvolution() const {
       return false;

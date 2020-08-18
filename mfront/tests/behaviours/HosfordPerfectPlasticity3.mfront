@@ -1,0 +1,20 @@
+@DSL Implicit;
+@Behaviour HosfordPerfectPlasticity3;
+@Author Thomas Helfer;
+@Description{A simple implementation of a perfect plasticity
+                 behaviour using the Hosford stress.};
+
+@ModellingHypotheses{".+"};
+@Epsilon 1.e-16;
+@Theta 1;
+
+@Brick StandardElastoViscoPlasticity{
+  stress_potential : "Hooke" {young_modulus : 150e9, poisson_ratio : 0.3},
+  inelastic_flow : "Plastic" {
+    criterion : "Hosford1972" {a : 100, eigen_solver : "Jacobi"},
+    isotropic_hardening : "Linear" {R0 : 150e6},
+    cosine_threshold : 0.99,
+    maximum_equivalent_stress_factor : 1.5,
+    equivalent_stress_check_maximum_iteration_factor : 0.4
+  }
+};

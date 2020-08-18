@@ -25,6 +25,7 @@ namespace mfront {
      * \note the base class must declare a state variable named `p`+id.
      */
     struct PlasticInelasticFlow : InelasticFlowBase {
+      std::vector<OptionDescription> getOptions() const override;
       void initialize(BehaviourDescription&,
                       AbstractBehaviourDSL&,
                       const std::string&,
@@ -37,6 +38,26 @@ namespace mfront {
                                              const StressPotential&,
                                              const std::string&,
                                              const bool) const override;
+
+      /*!
+       *\brief maximum equivalent stress factor
+       *
+       * A factor, denoted \f$alpha\f$ in this description, which gives the
+       * maximal equivalent stress allowed before damping the current Newton
+       * step. This maximal equivalent stress is defined as \f$alpha * R\f$
+       * where \f$R\f$ is the current elastic limit. \f$alpha\f$ must be greater
+       * than one.
+       *
+       * If \f$alpha\f$ is lower than one, which is the default, the code
+       * performing this check is not generated.
+       */
+      double maximum_equivalent_stress_factor = -1;
+      /*!
+       * \brief a factor which gives the maximum number of iterations below
+       * which the check on the maximum equivalent stress is performed.
+       */
+      double equivalent_stress_check_maximum_iteration_factor = 0.5;
+
     };  // end of struct PlasticInelasticFlow
 
   }  // end of namespace bbrick

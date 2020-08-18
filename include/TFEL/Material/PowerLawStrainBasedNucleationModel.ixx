@@ -44,7 +44,7 @@ namespace tfel {
         const PowerLawStrainBasedNucleationModelParameters<real>& params,
         const real p) {
       if (p < params.en) {
-        return {0, 0};
+        return {real(0), real(0)};
       }
       const auto rp = p / params.en - 1;
       const auto irp = std::max(rp, 1e-12);
@@ -77,7 +77,7 @@ namespace tfel {
         const real dp,
         const real) {
       if ((dp < 0) || (p + dp < params.en)) {
-        return {0, 0};
+        return {real(0), real(0)};
       }
       const auto pa = std::max(p, params.en);
       auto Fa =

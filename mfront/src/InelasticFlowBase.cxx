@@ -32,6 +32,64 @@ namespace mfront {
 
   namespace bbrick {
 
+    std::vector<OptionDescription> InelasticFlowBase::getOptions() const {
+      std::vector<OptionDescription> opts;
+      opts.emplace_back(
+          "criterion",
+          "stress criterion to be used (Mises, Hill, Hosford, Barlat)",
+          OptionDescription::DATASTRUCTURE);
+      opts.emplace_back("flow_criterion",
+                        "stress criterion used to build the plastic potential "
+                        "(Mises, Hill, Hosford, Barlat)",
+                        OptionDescription::DATASTRUCTURE);
+      opts.emplace_back("isotropic_hardening",
+                        "choice of an isotropic hardening rule",
+                        OptionDescription::DATASTRUCTURES);
+      opts.emplace_back("kinematic_hardening",
+                        "description of an hardening rule",
+                        OptionDescription::DATASTRUCTURES);
+      opts.emplace_back(
+          "save_porosity_increase",
+          "if appropriate, save the porosity increase induced "
+          "by this inelastic flow in a dedicated auxiliary state variable",
+          OptionDescription::BOOLEAN);
+      opts.emplace_back(
+          "porosity_effect_on_flow_rule",
+          "specify the effect of the porosity of the flow rule. "
+          "Valid strings are 'StandardPorosityEffect' (or equivalently "
+          "'standard_porosity_effect') or 'None' (or equivalently 'none' "
+          "or 'false')'",
+          OptionDescription::STRING);
+      opts.emplace_back("porosity_evolution_algorithm",
+                        "reserved for internal use", OptionDescription::STRING);
+      opts.emplace_back("cosine_threshold",
+                        "minimum value of the cosine of the angle between two "
+                        "successive estimates of the flow direction. If the "
+                        "computed angle is lower than this threshold, the "
+                        "Newton step is rejected. This parameter must be in "
+                        "the range [-1:1].",
+                        OptionDescription::REAL);
+      opts.emplace_back(
+          "cosine_check_minimum_iteration_factor",
+          "a factor $\\alpha$ which gives the threshold below which the "
+          "check on the cosine of the angle between two successive estimates "
+          "of the flow direction is performed, i.e. the test is performed if "
+          "the iteration counter is greater than $\\alpha \\cdot i_{\\max{}}$ "
+          "where $i_{\\max{}}$ is the maximum number of iterations. This "
+          "parameter must be in the range [0:1].",
+          OptionDescription::REAL);
+      opts.emplace_back(
+          "cosine_check_maximum_iteration_factor",
+          "a factor $\\alpha$ which gives the threshold upper which the "
+          "check on the cosine of the angle between two successive estimates "
+          "of the flow direction is performed, i.e. the test is performed if "
+          "the iteration counter is lower than $\\alpha \\cdot i_{\\max{}}$ "
+          "where $i_{\\max{}}$ is the maximum number of iterations. This "
+          "parameter must be in the range [0:1].",
+          OptionDescription::REAL);
+      return opts;
+    }  // end of InelasticFlowBase::getOptions()
+
     void InelasticFlowBase::initialize(BehaviourDescription& bd,
                                        AbstractBehaviourDSL& dsl,
                                        const std::string& id,
@@ -153,7 +211,68 @@ namespace mfront {
                 "or 'false'), but got '" +
                 pe + "'");
           }
+        } else if (e.first == "cosine_threshold") {
+          this->cosine_threshold = tfel::utilities::convert<double>(e.second);
+          if ((this->cosine_threshold < -1) || (this->cosine_threshold > 1)) {
+            raise(
+                "invalid value for the option `cosine_threshold` (value must "
+                "be in range [-1:1]");
+          }
+        } else if (e.first == "cosine_check_minimum_iteration_factor") {
+          if (d.count("cosine_threshold") == 0) {
+            raise(
+                "option `cosine_check_minimum_iteration_factor` is only "
+                "meaningful if the option `cosine_threshold` is also "
+                "provided");
+          }
+          this->cosine_check_minimum_iteration_factor =
+              tfel::utilities::convert<double>(e.second);
+          if ((this->cosine_check_minimum_iteration_factor < -1) ||
+              (this->cosine_check_minimum_iteration_factor > 1)) {
+            raise(
+                "invalid value for the option "
+                "`cosine_check_minimum_iteration_factor` (value must be in "
+                "range [-1:1]");
+          }
+          if (this->cosine_check_maximum_iteration_factor <
+              this->cosine_check_minimum_iteration_factor) {
+            raise(
+                "the value of the option "
+                "`cosine_check_maximum_iteration_factor` must be greater than "
+                "the vaue of `cosine_check_minmum_iteration_factor`");
+          }
+        } else if (e.first == "cosine_check_maximum_iteration_factor") {
+          if (d.count("cosine_threshold") == 0) {
+            raise(
+                "option `cosine_check_maximum_iteration_factor` is only "
+                "meaningful if the option `cosine_threshold` is also "
+                "provided");
+          }
+          this->cosine_check_maximum_iteration_factor =
+              tfel::utilities::convert<double>(e.second);
+          if ((this->cosine_check_maximum_iteration_factor < -1) ||
+              (this->cosine_check_maximum_iteration_factor > 1)) {
+            raise(
+                "invalid value for the option "
+                "`cosine_check_maximum_iteration_factor` (value must be in "
+                "range [-1:1]");
+          }
+          if (this->cosine_check_maximum_iteration_factor <
+              this->cosine_check_minimum_iteration_factor) {
+            raise(
+                "the value of the option "
+                "`cosine_check_maximum_iteration_factor` must be greater than "
+                "the vaue of `cosine_check_minmum_iteration_factor`");
+          }
         }  // other options must be treated in child classes
+      }
+      if (this->cosine_threshold < 1.5) {
+        addLocalVariable(bd, "Stensor", "np" + id);
+        CodeBlock init;
+        init.code = "this->np" + id +
+                    " = Stensor(real(0));\n";
+        bd.setCode(uh, BehaviourData::BeforeInitializeLocalVariables, init,
+                   BehaviourData::CREATEORAPPEND, BehaviourData::AT_BEGINNING);
       }
       if (this->sc == nullptr) {
         raise("criterion has not been defined");
@@ -235,39 +354,6 @@ namespace mfront {
       }
       return false;
     }  // end of InelasticFlowBase::contributesToPorosityGrowth
-
-    std::vector<OptionDescription> InelasticFlowBase::getOptions() const {
-      std::vector<OptionDescription> opts;
-      opts.emplace_back(
-          "criterion",
-          "stress criterion to be used (Mises, Hill, Hosford, Barlat)",
-          OptionDescription::DATASTRUCTURE);
-      opts.emplace_back("flow_criterion",
-                        "stress criterion used to build the plastic potential "
-                        "(Mises, Hill, Hosford, Barlat)",
-                        OptionDescription::DATASTRUCTURE);
-      opts.emplace_back("isotropic_hardening",
-                        "choice of an isotropic hardening rule",
-                        OptionDescription::DATASTRUCTURES);
-      opts.emplace_back("kinematic_hardening",
-                        "description of an hardening rule",
-                        OptionDescription::DATASTRUCTURES);
-      opts.emplace_back(
-          "save_porosity_increase",
-          "if appropriate, save the porosity increase induced "
-          "by this inelastic flow in a dedicated auxiliary state variable",
-          OptionDescription::BOOLEAN);
-      opts.emplace_back(
-          "porosity_effect_on_flow_rule",
-          "specify the effect of the porosity of the flow rule. "
-          "Valid strings are 'StandardPorosityEffect' (or equivalently "
-          "'standard_porosity_effect') or 'None' (or equivalently 'none' "
-          "or 'false')'",
-          OptionDescription::STRING);
-      opts.emplace_back("porosity_evolution_algorithm",
-                        "reserved for internal use", OptionDescription::STRING);
-      return opts;
-    }  // end of InelasticFlowBase::getOptions()
 
     void InelasticFlowBase::completeVariableDeclaration(
         BehaviourDescription&,
@@ -406,6 +492,31 @@ namespace mfront {
           ib.code += this->fc->computeNormal(id, bd, sp,
                                              StressCriterion::FLOWCRITERION);
         }
+      }
+      // check on the flow direction
+      if (this->cosine_threshold < 1.5) {
+        const auto imin =
+            std::to_string(this->cosine_check_minimum_iteration_factor) +
+            " * this->iterMax";
+        const auto imax =
+            std::to_string(this->cosine_check_maximum_iteration_factor) +
+            " * this->iterMax";
+        const auto seps = sp.getEquivalentStressLowerBound(bd);
+        if (this->fc == nullptr) {
+          ib.code += "if((seq" + id + ">" + seps + ")&&";
+        } else {
+          ib.code += "if((seqf" + id + ">" + seps + ")&&";
+        }
+        ib.code += "(this->iter > " + imin + ")&&";
+        ib.code += "(this->iter < " + imax + ")){\n";
+        ib.code += "if (std::abs(n" + id + " | this->np" + id + ") < ";
+        ib.code += "std::sqrt((n" + id + ") | (n" + id + ")) * ";
+        ib.code += "std::sqrt((this->np" + id + ") | (this->np" + id + ")) * " +
+                   std::to_string(this->cosine_threshold) + ") {\n";
+        ib.code += "return false;\n";
+        ib.code += "}\n";
+        ib.code += "}\n";
+        ib.code += "this->np" + id + " = n" + id + ";\n";
       }
       if (this->isCoupledWithPorosityEvolution()) {
         ib.code += "this->trace_n" + id + " = trace(n" + id + ");\n";
@@ -575,7 +686,7 @@ namespace mfront {
       if (this->save_porosity_increase) {
         c = "this->dfg" + id + " = " + df + ";\n";
         c += StandardElastoViscoPlasticityBrick::
-                 currentEstimateOfThePorosityIncrement;
+            currentEstimateOfThePorosityIncrement;
         c += " += this->dfg" + id + ";\n";
       } else {
         c = StandardElastoViscoPlasticityBrick::
