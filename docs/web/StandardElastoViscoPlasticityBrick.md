@@ -44,7 +44,6 @@ bibliography: bibliography.bib
 
 \newcommand{\tDq}{{\underline{\mathbf{D}}}}
 \newcommand{\trace}[1]{{\mathrm{tr}\paren{#1}}}
-\newcommand{\Frac}[2]{{{\displaystyle \frac{\displaystyle #1}{\displaystyle #2}}}}
 \newcommand{\deriv}[2]{{{\displaystyle \frac{\displaystyle \partial #1}{\displaystyle \partial #2}}}}
 \newcommand{\dtot}{{{\mathrm{d}}}}
 \newcommand{\paren}[1]{{\left(#1\right)}}
@@ -265,14 +264,34 @@ of iterations allowed for the Newton algorithm. A typical value for
 
 The plastic flow is defined by:
 
-- a function \(f\paren{\tsigma}\) giving the flow intensity
+- a function \(f\paren{\tsigma}\) giving the flow intensity:
+  \[
+  f\paren{\tsigma}=A\,\left<\dfrac{\phi\paren{\tsigma-\sum_{i}\tenseur{X}_{i}}-\sum_{i}R_{i}\paren{p}}{K}\right>^{n}
+  \]
+- a stress criterion \(\phi\)
 - a viscoplastic potential \(g\)
-- one or more kinematic hardening rule (optional)
-- one isotropic hardening rule (optional)
+- one or more kinematic hardening rule (optional), denoted \(\tenseur{X}_{i}\)
+- one isotropic hardening rule (optional), denoted \(R_{i}\)
 
-\[
-f\paren{\tsigma}=A\left<\Frac{\phi\paren{\tsigma-\sum_{i}\tenseur{X}_{i}}-\sum_{i}R_{i}\paren{p}}{K}\right>^{n}
-\]
+### The `HyperbolicSine` inelastic flow
+
+The plastic flow is defined by:
+
+- a function \(f\paren{\tsigma}\) giving the flow intensity given by:
+  \[
+  f\paren{\tsigma}=A\,\sinh\paren{\dfrac{\left<\phi\paren{\tsigma-\sum_{i}\tenseur{X}_{i}}-\sum_{i}R_{i}\paren{p}\right>}{K}}^{n}
+  \]
+- a stress criterion \(\phi\)
+- a viscoplastic potential \(g\)
+- one or more kinematic hardening rule (optional), denoted \(\tenseur{X}_{i}\)
+- one isotropic hardening rule (optional), denoted \(R_{i}\)
+
+#### Newton steps rejection
+
+The exponential nature of the hyperbolic sinus function may lead to
+divergence of the Newton method. To avoid this, one may specify a
+relative threshold denoted \(K_{sf}\): if the stress estimate is greater
+than \(K_{sf}\,K\), the step is rejected.
 
 ## Newton steps rejections based on the change of the flow direction between two successive estimates {#sec:cosine_checks}
 
@@ -327,12 +346,12 @@ by the user:
 
 The von Mises stress is defined by:
 \[
-\sigmaeq=\sqrt{\Frac{3}{2}\,\tenseur{s}\,\colon\,\tenseur{s}}=\sqrt{3\,J_{2}}
+\sigmaeq=\sqrt{\dfrac{3}{2}\,\tenseur{s}\,\colon\,\tenseur{s}}=\sqrt{3\,J_{2}}
 \]
 where:
 - \(\tenseur{s}\) is the deviatoric stress defined as follows:
 \[
-\tenseur{s}=\tsigma-\Frac{1}{3}\,\trace{\tsigma}\,\tenseur{I}
+\tenseur{s}=\tsigma-\dfrac{1}{3}\,\trace{\tsigma}\,\tenseur{I}
 \]
 - \(J_{2}\) is the second invariant of \(\tenseur{s}\).
 
@@ -340,7 +359,7 @@ In terms of the eigenvalues of the stress, denoted by \(\sigma_{1}\),
 \(\sigma_{2}\) and \(\sigma_{3}\), the von Mises stress can also be
 defined by:
 \[
-\sigmaeq=\sqrt{\Frac{1}{2}\paren{\absvalue{\sigma_{1}-\sigma_{2}}^{2}+\absvalue{\sigma_{1}-\sigma_{3}}^{2}+\absvalue{\sigma_{2}-\sigma_{3}}^{2}}}
+\sigmaeq=\sqrt{\dfrac{1}{2}\paren{\absvalue{\sigma_{1}-\sigma_{2}}^{2}+\absvalue{\sigma_{1}-\sigma_{3}}^{2}+\absvalue{\sigma_{2}-\sigma_{3}}^{2}}}
 \]
 
 #### Options
@@ -359,13 +378,13 @@ The Drucker 1949 stress is defined by:
 \]
 where:
 
-- \(J_{2}=\Frac{1}{2}\,\tenseur{s}\,\colon\,\tenseur{s}\) is the second
+- \(J_{2}=\dfrac{1}{2}\,\tenseur{s}\,\colon\,\tenseur{s}\) is the second
   invariant of \(\tenseur{s}\).
 - \(J_{3}=\mathrm{det}\paren{\tenseur{s}}\) is the third invariant of
   \(\tenseur{s}\).
 - \(\tenseur{s}\) is the deviatoric stress defined as follows:
 \[
-\tenseur{s}=\tsigma-\Frac{1}{3}\,\trace{\tsigma}\,\tenseur{I}
+\tenseur{s}=\tsigma-\dfrac{1}{3}\,\trace{\tsigma}\,\tenseur{I}
 \]
 
 ### Example
@@ -382,7 +401,7 @@ The user must provide the \(c\) coefficient.
 
 The Hosford equivalent stress is defined by (see @hosford_generalized_1972):
 \[
-\sigmaeq^{H}=\sqrt[a]{\Frac{1}{2}\paren{\absvalue{\sigma_{1}-\sigma_{2}}^{a}+\absvalue{\sigma_{1}-\sigma_{3}}^{a}+\absvalue{\sigma_{2}-\sigma_{3}}^{a}}}
+\sigmaeq^{H}=\sqrt[a]{\dfrac{1}{2}\paren{\absvalue{\sigma_{1}-\sigma_{2}}^{a}+\absvalue{\sigma_{1}-\sigma_{3}}^{a}+\absvalue{\sigma_{2}-\sigma_{3}}^{a}}}
 \]
 where \(\sigma_{1}\), \(\sigma_{2}\) and \(\sigma_{3}\) are the eigenvalues of the
 stress.
@@ -431,13 +450,13 @@ In order to describe yield differential effects, the isotropic Cazacu
 
 where:
 
-- \(J_{2}=\Frac{1}{2}\,\tenseur{s}\,\colon\,\tenseur{s}\) is the second
+- \(J_{2}=\dfrac{1}{2}\,\tenseur{s}\,\colon\,\tenseur{s}\) is the second
   invariant of \(\tenseur{s}\).
 - \(J_{3}=\mathrm{det}\paren{\tenseur{s}}\) is the third invariant of
   \(\tenseur{s}\).
 - \(\tenseur{s}\) is the deviatoric stress defined as follows:
 \[
-\tenseur{s}=\tsigma-\Frac{1}{3}\,\trace{\tsigma}\,\tenseur{I}
+\tenseur{s}=\tsigma-\dfrac{1}{3}\,\trace{\tsigma}\,\tenseur{I}
 \]
 
 ### Example
@@ -652,7 +671,7 @@ orthotropy. There are defined through auxiliary linear transformations
 \]
 where \(\tenseurq{M}\) is the transformation of the stress to its deviator:
 \[
-\tenseurq{M}=\tenseurq{I}-\Frac{1}{3}\tenseur{I}\,\otimes\,\tenseur{I}
+\tenseurq{M}=\tenseurq{I}-\dfrac{1}{3}\tenseur{I}\,\otimes\,\tenseur{I}
 \]
 
 The linear transformations \(\tenseurq{C}'\) and \(\tenseurq{C}''\) of
@@ -784,7 +803,7 @@ The following code can be added in a block defining an inelastic flow:
 
 The `Swift` isotropic hardening rule is defined by:
 \[
-R\paren{p}=R_{0}\,\paren{\Frac{p+p_{0}}{p_{0}}}^{n}
+R\paren{p}=R_{0}\,\paren{\dfrac{p+p_{0}}{p_{0}}}^{n}
 \]
 
 #### Options
@@ -874,7 +893,7 @@ follows (see @armstrong_mathematical_1966):
 \[
 \left\{
 \begin{aligned}
-\tenseur{X}&=\Frac{2}{3}\,C\,\tenseur{a} \\
+\tenseur{X}&=\dfrac{2}{3}\,C\,\tenseur{a} \\
 \tenseur{\dot{a}}&=\dot{p}\,\tenseur{n}-D\,\dot{p}\,\tenseur{a} \\
 \end{aligned}
 \right.
@@ -896,10 +915,10 @@ The `Burlet-Cailletaud` kinematic hardening rule is defined as follows
 \[
 \left\{
 \begin{aligned}
-\tenseur{X}&=\Frac{2}{3}\,C\,\tenseur{a} \\
+\tenseur{X}&=\dfrac{2}{3}\,C\,\tenseur{a} \\
 \tenseur{\dot{a}}&=\dot{p}\,\tenseur{n}
 -\eta\,D\,\dot{p}\,\tenseur{a}
--\paren{1-\eta}\,D\,\Frac{2}{3}\,\dot{p}\,\paren{\tenseur{a}\,\colon\,\tenseur{n}}\,\tenseur{n} \\
+-\paren{1-\eta}\,D\,\dfrac{2}{3}\,\dot{p}\,\paren{\tenseur{a}\,\colon\,\tenseur{n}}\,\tenseur{n} \\
 \end{aligned}
 \right.
 \]
