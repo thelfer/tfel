@@ -69,7 +69,7 @@ namespace tfel {
       //
       const auto rs1 = s1 / params.sn - 1;
       if (rs1 < 0) {
-        return {0, Stensor(real(0))};
+        return std::make_tuple(real(0), Stensor(real(0)));
       }
       const auto irs1 = std::max(rs1, 1e-12);
       const auto An = (params.fn) * std::pow(rs1, params.m);

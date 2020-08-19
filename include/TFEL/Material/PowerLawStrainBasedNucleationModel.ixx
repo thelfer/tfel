@@ -77,7 +77,7 @@ namespace tfel {
         const real dp,
         const real) {
       if ((dp < 0) || (p + dp < params.en)) {
-        return {real(0), real(0)};
+        return std::make_tuple(real(0), real(0));
       }
       const auto pa = std::max(p, params.en);
       auto Fa =
@@ -85,7 +85,7 @@ namespace tfel {
       const auto rp = (p + dp) / (params.en) - 1;
       const auto rp_m = pow(rp, params.m);
       auto Fb = (params.fn) * (params.en) / (params.m + 1) * rp_m * rp;
-      return {Fb - Fa, (params.fn) * rp_m};
+      return std::make_tuple(Fb - Fa, (params.fn) * rp_m);
     }
 
   }  // end of namespace material
