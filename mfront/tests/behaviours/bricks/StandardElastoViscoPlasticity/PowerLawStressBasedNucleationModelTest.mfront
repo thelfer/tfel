@@ -13,11 +13,7 @@
     isotropic_hardening : "Linear" {R0 : 274}
   },
   porosity_evolution : {
-    nucleation_model : "PowerLaw (stress)" {
-      fn : 0.1,
-      sn : 20,
-      m : 4,
-      fmax : 0.1
-    }
+    nucleation_model :
+        "PowerLaw (stress)" {fn : 0.1, sn : 20, m : 4, fmax : 0.1, pmin : 0}
   }
 };

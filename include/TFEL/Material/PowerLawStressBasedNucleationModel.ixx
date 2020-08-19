@@ -31,7 +31,11 @@ namespace tfel {
     computePowerLawStressBasedNucleationModelPorosityRateFactor(
         const PowerLawStressBasedNucleationModelParameters<StressStensorType>&
             params,
-        const StressStensorType& sig) {
+        const StressStensorType& sig,
+        const PowerLawStressBasedNucleationModelRealType<StressStensorType>& p) {
+      if (p < params.pmin) {
+        return 0;
+      }
       auto vp = sig.computeEigenValues();
       const auto s1 = *(tfel::fsalgo::max_element<3u>::exe(vp.begin()));
       const auto rs = s1 / params.sn - 1;
@@ -48,7 +52,9 @@ namespace tfel {
     computePowerLawStressBasedNucleationModelPorosityRateFactorAndDerivative(
         const PowerLawStressBasedNucleationModelParameters<StressStensorType>&
             params,
-        const StressStensorType& sig) {
+        const StressStensorType& sig,
+        const PowerLawStressBasedNucleationModelRealType<StressStensorType>&
+            p) {
       using real =
           PowerLawStressBasedNucleationModelRealType<StressStensorType>;
       using stress =
@@ -56,6 +62,10 @@ namespace tfel {
       constexpr const auto N =
           tfel::math::StensorTraits<StressStensorType>::dime;
       using Stensor = tfel::math::stensor<N, real>;
+      //
+      if (p < params.pmin) {
+        return std::make_tuple(real(0), Stensor(real(0)));
+      }
       //
       auto vp = tfel::math::tvector<3u, stress>{};
       auto m = tfel::math::tmatrix<3u, 3u, real>{};

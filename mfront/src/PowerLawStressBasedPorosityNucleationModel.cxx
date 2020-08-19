@@ -35,6 +35,7 @@ namespace mfront {
       mcs.push_back(
           {"strain", "sn", "minimal value of equivalent pastic srain"});
       mcs.push_back({"real", "m", "exponent of the power law"});
+      mcs.push_back({"real", "pmin", "minimal equivalent plastic strain"});
       return mcs;
     }  // end of getMaterialCoefficientDescriptions
 

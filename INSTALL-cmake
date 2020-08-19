@@ -36,6 +36,8 @@ Options
   Kernel Library
 - enable-fortran : enables fortran support
 - enable-python : enables python support
+- enable-numpy-support: enables numpy support. This is activated by
+  default if enable-python is set
 - enable-java : enables java support
 - enable-aster : enables aster support
 - enable-abaqus : enables abaqus support

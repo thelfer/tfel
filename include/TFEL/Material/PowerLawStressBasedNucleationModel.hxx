@@ -63,6 +63,8 @@ namespace tfel {
       PowerLawStressBasedNucleationModelStressType<StressStensorType> sn;
       //! \brief exponent of the power law
       PowerLawStressBasedNucleationModelRealType<StressStensorType> m;
+      //! \brief minimum equivalent plastic strain
+      PowerLawStressBasedNucleationModelRealType<StressStensorType> pmin;
     };  // end of struct PowerLawStressBasedNucleationModelParameters
 
     /*!
@@ -90,12 +92,14 @@ namespace tfel {
      *
      * \param[in] params: parameters
      * \param[in] sig: stress tensor
+     * \param[in] p: equivalent plastic strain
      */
     template <typename StressStensorType>
     PowerLawStressBasedNucleationModelRealType<StressStensorType>
     computePowerLawStressBasedNucleationModelPorosityRateFactor(
         const PowerLawStressBasedNucleationModelParameters<StressStensorType>&,
-        const StressStensorType&);
+        const StressStensorType&,
+        const PowerLawStressBasedNucleationModelRealType<StressStensorType>&);
 
     /*!
      * \brief computes the porosity rate factor \f$A_{n}\f$ as defined by
@@ -105,12 +109,14 @@ namespace tfel {
      *
      * \f[
      * A_{n} = f_{n}\langle\dfrac{\sigma_{I}}{s_{n}}-1\rangle^{m}
+     * \quad\text{if}\quad p \geq p_{min}
      * \f]
      *
      * \tparam StressStensorType: type of the stress tensor
      *
      * \param[in] params: parameters
      * \param[in] sig: stress tensor
+     * \param[in] p: equivalent plastic strain
      */
     template <typename StressStensorType>
     std::tuple<
@@ -118,7 +124,8 @@ namespace tfel {
         PowerLawStressBasedNucleationModeDerivativeType<StressStensorType>>
     computePowerLawStressBasedNucleationModelPorosityRateFactorAndDerivative(
         const PowerLawStressBasedNucleationModelParameters<StressStensorType>&,
-        const StressStensorType&);
+        const StressStensorType&,
+        const PowerLawStressBasedNucleationModelRealType<StressStensorType>&);
 
   }  // end of namespace material
 

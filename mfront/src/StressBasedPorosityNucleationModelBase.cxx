@@ -99,6 +99,21 @@ namespace mfront {
       const auto& f =
           bd.getBehaviourData(uh).getStateVariableDescriptionByExternalName(
               tfel::glossary::Glossary::Porosity);
+      // total plastic strain
+      const auto p = [&iflows, &bd] {
+        const auto theta = bd.getClassName() + "::theta";
+        auto first = true;
+        auto v = std::string{};
+        for (const auto& flow : iflows) {
+          if (!first) {
+            v += " + ";
+          }
+          v += "this->p" + flow.first + " + ";
+          v += theta+" * std::max(this->dp" + flow.first + ", real(0))";
+          first = false;
+        }
+        return v;
+      }();
       // sum of the increments of the equivalent plastic strains
       const auto dp = [&iflows, &bd] {
         auto first = true;
@@ -118,7 +133,7 @@ namespace mfront {
       CodeBlock i;
       const auto call = "compute" + mn +
                         "PorosityRateFactorAndDerivative<StressStensor>" +  //
-                        "(this->" + parameters + ", this->sig)";
+                        "(this->" + parameters + ", this->sig, " + p + ")";
       if (this->porosity_evolution_algorithm ==
           PorosityEvolutionAlgorithm::STAGGERED_SCHEME) {
         i.code += "if(";
@@ -192,6 +207,21 @@ namespace mfront {
           PorosityNucleationModel::getVariableId("parameters", id);
       const auto An_n = PorosityNucleationModel::getVariableId("An", id);
       const auto fmax_n = PorosityNucleationModel::getVariableId("fmax", id);
+      // total plastic strain
+      const auto p = [&iflows, &bd] {
+        const auto theta = bd.getClassName() + "::theta";
+        auto first = true;
+        auto v = std::string{};
+        for (const auto& flow : iflows) {
+          if (!first) {
+            v += " + ";
+          }
+          v += "this->p" + flow.first + " + ";
+          v += theta+" * std::max(this->dp" + flow.first + ", real(0))";
+          first = false;
+        }
+        return v;
+      }();
       // sum of the increments of the equivalent plastic strains
       const auto dp = [&iflows, &bd] {
         auto first = true;
@@ -209,7 +239,7 @@ namespace mfront {
       auto c = std::string{};
       c += "const auto " + An_n + " = ";
       c += "compute" + mn + "PorosityRateFactor<StressStensor>" +  //
-           "(this->" + parameters + ", this->sig);\n";
+           "(this->" + parameters + ", this->sig, " + p + ");\n";
       c += "this->dfn" + id + " = std::min(" + An_n + " * (" + dp + "), this->" +
            fmax_n + " - this->fn);\n";
       c += mfront::StandardElastoViscoPlasticityBrick::
