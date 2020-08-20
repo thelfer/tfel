@@ -228,9 +228,9 @@ namespace mfront {
     }  // end of MohrCoulombStressCriterion::isNormalDeviatoric
 
     StressCriterion::PorosityEffectOnFlowRule
-    MohrCoulombStressCriterion::getPorosityEffectOnFlowRule() const {
-      return StressCriterion::NO_POROSITY_EFFECT_ON_FLOW_RULE;
-    }  // end of MohrCoulombStressCriterion::getPorosityEffectOnFlowRule()
+    MohrCoulombStressCriterion::getPorosityEffectOnEquivalentPlasticStrain() const {
+      return StressCriterion::NO_POROSITY_EFFECT_ON_EQUIVALENT_PLASTIC_STRAIN;
+    }  // end of MohrCoulombStressCriterion::getPorosityEffectOnEquivalentPlasticStrain()
 
     MohrCoulombStressCriterion::~MohrCoulombStressCriterion() = default;
 

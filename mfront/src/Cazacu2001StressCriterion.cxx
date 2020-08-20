@@ -332,9 +332,9 @@ namespace mfront {
     }  // end of Cazacu2001StressCriterion::isNormalDeviatoric
 
     StressCriterion::PorosityEffectOnFlowRule
-    Cazacu2001StressCriterion::getPorosityEffectOnFlowRule() const {
-      return StressCriterion::NO_POROSITY_EFFECT_ON_FLOW_RULE;
-    }  // end of Cazacu2001StressCriterion::getPorosityEffectOnFlowRule()
+    Cazacu2001StressCriterion::getPorosityEffectOnEquivalentPlasticStrain() const {
+      return StressCriterion::NO_POROSITY_EFFECT_ON_EQUIVALENT_PLASTIC_STRAIN;
+    }  // end of Cazacu2001StressCriterion::getPorosityEffectOnEquivalentPlasticStrain()
 
     Cazacu2001StressCriterion::~Cazacu2001StressCriterion() = default;
 

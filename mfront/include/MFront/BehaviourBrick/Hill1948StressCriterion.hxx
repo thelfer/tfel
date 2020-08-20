@@ -80,7 +80,7 @@ namespace mfront {
                                           const Role) const override;
       bool isCoupledWithPorosityEvolution() const override;
       bool isNormalDeviatoric() const override;
-      PorosityEffectOnFlowRule getPorosityEffectOnFlowRule() const override;
+      PorosityEffectOnFlowRule getPorosityEffectOnEquivalentPlasticStrain() const override;
       //! destructor
       ~Hill1948StressCriterion() override;
     };  // end of struct Hill1948StressCriterion

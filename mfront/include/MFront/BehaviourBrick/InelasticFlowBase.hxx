@@ -71,22 +71,22 @@ namespace mfront {
         /*!
          * \brief default choice. The effect of the porosity depends
          * on the stress criterion (see the
-         * `StressCriterion::getPorosityEffectOnFlowRule` method).
+         * `StressCriterion::getPorosityEffectOnEquivalentPlasticStrain` method).
          */
-        UNDEFINED_POROSITY_EFFECT_ON_FLOW_RULE,
+        UNDEFINED_POROSITY_EFFECT_ON_EQUIVALENT_PLASTIC_STRAIN,
         /*!
          * \brief This value indicate that the flow rule is not affected by the
          * porosity evolution.
          */
-        NO_POROSITY_EFFECT_ON_FLOW_RULE,
+        NO_POROSITY_EFFECT_ON_EQUIVALENT_PLASTIC_STRAIN,
         /*!
          * \brief This value indicate that the flow rule must be corrected by
          * the standard \f$(1-f)\f$ factor where \f$f\f$ is the porosity.
          */
-        STANDARD_POROSITY_CORRECTION_ON_FLOW_RULE,
+        STANDARD_POROSITY_CORRECTION_ON_EQUIVALENT_PLASTIC_STRAIN,
       };
       //! \return the effect of the porosity on the flow rule.
-      virtual PorosityEffectOnFlowRule getPorosityEffectOnFlowRule() const;
+      virtual PorosityEffectOnFlowRule getPorosityEffectOnEquivalentPlasticStrain() const;
       //! \return if this flow contributes to porosity growth
       virtual bool contributesToPorosityGrowth() const;
       /*!
@@ -130,8 +130,8 @@ namespace mfront {
       //! kinematic hardening rules
       std::vector<std::shared_ptr<KinematicHardeningRule>> khrs;
       //! Effect of the porosity on the flow rule.
-      PorosityEffectOnFlowRule porosity_effect_on_flow_rule =
-          UNDEFINED_POROSITY_EFFECT_ON_FLOW_RULE;
+      PorosityEffectOnFlowRule porosity_effect_on_equivalent_plastic_strain =
+          UNDEFINED_POROSITY_EFFECT_ON_EQUIVALENT_PLASTIC_STRAIN;
       //! \brief algorithm used to handle the porosity evolution
       PorosityEvolutionAlgorithm porosity_evolution_algorithm =
           PorosityEvolutionAlgorithm::STAGGERED_SCHEME;

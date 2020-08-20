@@ -52,9 +52,15 @@ f.setGlossaryName("Porosity");
   feel += devp;
   dfeel_ddevp = Stensor4::Id();
   // equation associated with the porosity evolution
-  ff -= (1 - f_) * trace(devp);
-  dff_ddf += theta * trace(devp);
-  dff_ddevp = -(1 - f_) * Stensor::Id();
+  if (f_ < 0) {
+    ff += f;
+  } else if (f_ > 1) {
+    ff -= 1 - f;
+  } else {
+    ff -= (1 - f_) * trace(devp);
+    dff_ddf += theta * trace(devp);
+    dff_ddevp = -(1 - f_) * Stensor::Id();
+  }
   // viscoplasticity
 
 }

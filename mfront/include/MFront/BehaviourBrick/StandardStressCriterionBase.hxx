@@ -68,7 +68,7 @@ namespace mfront {
                                           const StressPotential&,
                                           const Role) const override;
       bool isCoupledWithPorosityEvolution() const override final;
-      PorosityEffectOnFlowRule getPorosityEffectOnFlowRule()
+      PorosityEffectOnFlowRule getPorosityEffectOnEquivalentPlasticStrain()
           const override final;
       //! destructor
       ~StandardStressCriterionBase() override;

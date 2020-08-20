@@ -206,9 +206,9 @@ namespace mfront {
     }  // end of StandardStressCriterionBase::computeNormalDerivative
 
     StressCriterion::PorosityEffectOnFlowRule
-    StandardStressCriterionBase::getPorosityEffectOnFlowRule() const {
-      return StressCriterion::NO_POROSITY_EFFECT_ON_FLOW_RULE;
-    }  // end of StandardStressCriterionBase::getPorosityEffectOnFlowRule()
+    StandardStressCriterionBase::getPorosityEffectOnEquivalentPlasticStrain() const {
+      return StressCriterion::NO_POROSITY_EFFECT_ON_EQUIVALENT_PLASTIC_STRAIN;
+    }  // end of StandardStressCriterionBase::getPorosityEffectOnEquivalentPlasticStrain()
 
     StandardStressCriterionBase::~StandardStressCriterionBase() = default;
 

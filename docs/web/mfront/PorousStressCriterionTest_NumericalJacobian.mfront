@@ -51,7 +51,13 @@ f.setGlossaryName("Porosity");
   // equation associated with the split of the strain
   feel += devp;
   // equation associated with the porosity evolution
-  ff -= (1 - f_) * trace(devp);
+  if (f_ < 0) {
+    ff += f;
+  } else if (f_ > 1) {
+    ff -= 1 - f;
+  } else {
+    ff -= (1 - f_) * trace(devp);
+  }
   // viscoplasticity
 
 }

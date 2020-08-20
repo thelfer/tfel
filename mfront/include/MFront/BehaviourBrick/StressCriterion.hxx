@@ -48,12 +48,12 @@ namespace mfront {
          * \brief This value indicate that the flow rule is not affected by the
          * porosity evolution.
          */
-        NO_POROSITY_EFFECT_ON_FLOW_RULE,
+        NO_POROSITY_EFFECT_ON_EQUIVALENT_PLASTIC_STRAIN,
         /*!
          * \brief This value indicate that the flow rule must be corrected by
          * the standard \f$(1-f)\f$ factor where \f$f\f$ is the porosity.
          */
-        STANDARD_POROSITY_CORRECTION_ON_FLOW_RULE
+        STANDARD_POROSITY_CORRECTION_ON_EQUIVALENT_PLASTIC_STRAIN
       };
       /*!
        * \brief describe the purpose of the criterion
@@ -206,7 +206,7 @@ namespace mfront {
        * \return if using this stress criterion generally implies a
        * correction of the flow rule 
        */
-      virtual PorosityEffectOnFlowRule getPorosityEffectOnFlowRule() const = 0;
+      virtual PorosityEffectOnFlowRule getPorosityEffectOnEquivalentPlasticStrain() const = 0;
       /*!
        * \return the code updating the upper bound of the porosity.
        * If this stress criterion is not coupled with porosity, the returned

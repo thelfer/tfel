@@ -40,9 +40,9 @@ namespace mfront {
     }  // end of MichelAndSuquet1992HollowSphereStressCriterion::getOptions()
 
     StressCriterion::PorosityEffectOnFlowRule
-    MichelAndSuquet1992HollowSphereStressCriterion::getPorosityEffectOnFlowRule() const {
-      return StressCriterion::NO_POROSITY_EFFECT_ON_FLOW_RULE;
-    }  // end of MichelAndSuquet1992HollowSphereStressCriterion::getPorosityEffectOnFlowRule()
+    MichelAndSuquet1992HollowSphereStressCriterion::getPorosityEffectOnEquivalentPlasticStrain() const {
+      return StressCriterion::NO_POROSITY_EFFECT_ON_EQUIVALENT_PLASTIC_STRAIN;
+    }  // end of MichelAndSuquet1992HollowSphereStressCriterion::getPorosityEffectOnEquivalentPlasticStrain()
 
     MichelAndSuquet1992HollowSphereStressCriterion::
         ~MichelAndSuquet1992HollowSphereStressCriterion() = default;

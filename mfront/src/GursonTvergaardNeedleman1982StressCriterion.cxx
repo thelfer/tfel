@@ -49,9 +49,9 @@ namespace mfront {
     }  // end of GursonTvergaardNeedleman1982StressCriterion::getOptions()
 
     StressCriterion::PorosityEffectOnFlowRule
-    GursonTvergaardNeedleman1982StressCriterion::getPorosityEffectOnFlowRule() const {
-      return StressCriterion::STANDARD_POROSITY_CORRECTION_ON_FLOW_RULE;
-    }  // end of GursonTvergaardNeedleman1982StressCriterion::getPorosityEffectOnFlowRule()
+    GursonTvergaardNeedleman1982StressCriterion::getPorosityEffectOnEquivalentPlasticStrain() const {
+      return StressCriterion::STANDARD_POROSITY_CORRECTION_ON_EQUIVALENT_PLASTIC_STRAIN;
+    }  // end of GursonTvergaardNeedleman1982StressCriterion::getPorosityEffectOnEquivalentPlasticStrain()
 
     std::string
     GursonTvergaardNeedleman1982StressCriterion::updatePorosityUpperBound(
@@ -71,7 +71,7 @@ namespace mfront {
           StressCriterion::getVariableId("sscb_parameters", id, r);
       return "this->" + bound + " = " +  //
              "std::min(this->" + bound + ", this->" + params + ".f_r);\n";
-    }  // end of GursonTvergaardNeedleman1982StressCriterion::getPorosityEffectOnFlowRule()
+    }  // end of GursonTvergaardNeedleman1982StressCriterion::getPorosityEffectOnEquivalentPlasticStrain()
 
 
     GursonTvergaardNeedleman1982StressCriterion::

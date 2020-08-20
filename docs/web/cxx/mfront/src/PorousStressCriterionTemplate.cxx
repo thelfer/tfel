@@ -45,9 +45,9 @@ __StressCriterionName__StressCriterion::getOptions() const {
 } // end of __StressCriterionName__StressCriterion::getOptions()
 
 StressCriterion::PorosityEffectOnFlowRule
-__StressCriterionName__StressCriterion::getPorosityEffectOnFlowRule() const {
-  return StressCriterion::STANDARD_POROSITY_CORRECTION_ON_FLOW_RULE;
-}  // end of __StressCriterionName__StressCriterion::getPorosityEffectOnFlowRule
+__StressCriterionName__StressCriterion::getPorosityEffectOnEquivalentPlasticStrain() const {
+  return StressCriterion::STANDARD_POROSITY_CORRECTION_ON_EQUIVALENT_PLASTIC_STRAIN;
+}  // end of __StressCriterionName__StressCriterion::getPorosityEffectOnEquivalentPlasticStrain
 
 std::string __StressCriterionName__StressCriterion::updatePorosityUpperBound(
     const BehaviourDescription &, const std::string &, const Role r) const {

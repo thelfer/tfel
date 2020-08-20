@@ -54,7 +54,7 @@ namespace mfront {
           "by this inelastic flow in a dedicated auxiliary state variable",
           OptionDescription::BOOLEAN);
       opts.emplace_back(
-          "porosity_effect_on_flow_rule",
+          "porosity_effect_on_equivalent_plastic_strain",
           "specify the effect of the porosity of the flow rule. "
           "Valid strings are 'StandardPorosityEffect' (or equivalently "
           "'standard_porosity_effect') or 'None' (or equivalently 'none' "
@@ -191,21 +191,21 @@ namespace mfront {
           } else {
             raise("internal error: unsupported porosity evolution algorithm");
           }
-        } else if (e.first == "porosity_effect_on_flow_rule") {
+        } else if (e.first == "porosity_effect_on_equivalent_plastic_strain") {
           if (!e.second.is<std::string>()) {
-            raise("'porosity_effect_on_flow_rule' is not a string");
+            raise("'porosity_effect_on_equivalent_plastic_strain' is not a string");
           }
           const auto& pe = e.second.get<std::string>();
           if ((pe == "StandardPorosityEffect") ||
               (pe == "standard_porosity_effect")) {
-            this->porosity_effect_on_flow_rule =
-                STANDARD_POROSITY_CORRECTION_ON_FLOW_RULE;
+            this->porosity_effect_on_equivalent_plastic_strain =
+                STANDARD_POROSITY_CORRECTION_ON_EQUIVALENT_PLASTIC_STRAIN;
           } else if ((pe == "None") || (pe == "none") || (pe == "false")) {
-            this->porosity_effect_on_flow_rule =
-                NO_POROSITY_EFFECT_ON_FLOW_RULE;
+            this->porosity_effect_on_equivalent_plastic_strain =
+                NO_POROSITY_EFFECT_ON_EQUIVALENT_PLASTIC_STRAIN;
           } else if (pe != "Undefined") {
             raise(
-                "invalid value of 'porosity_effect_on_flow_rule'. Expected "
+                "invalid value of 'porosity_effect_on_equivalent_plastic_strain'. Expected "
                 "'StandardPorosityEffect' (or equivalently "
                 "'standard_porosity_effect') or 'None' (or equivalently 'none' "
                 "or 'false'), but got '" +
@@ -522,8 +522,8 @@ namespace mfront {
         ib.code += "this->trace_n" + id + " = trace(n" + id + ");\n";
       }
       // elasticity
-      if (this->getPorosityEffectOnFlowRule() ==
-          STANDARD_POROSITY_CORRECTION_ON_FLOW_RULE) {
+      if (this->getPorosityEffectOnEquivalentPlasticStrain() ==
+          STANDARD_POROSITY_CORRECTION_ON_EQUIVALENT_PLASTIC_STRAIN) {
         const auto& f =
             bd.getBehaviourData(uh).getStateVariableDescriptionByExternalName(
                 tfel::glossary::Glossary::Porosity);
@@ -674,8 +674,8 @@ namespace mfront {
                         std::string(StandardElastoViscoPlasticityBrick::
                                         currentEstimateOfThePorosityIncrement) +
                         "))";
-        if (this->getPorosityEffectOnFlowRule() ==
-            STANDARD_POROSITY_CORRECTION_ON_FLOW_RULE) {
+        if (this->getPorosityEffectOnEquivalentPlasticStrain() ==
+            STANDARD_POROSITY_CORRECTION_ON_EQUIVALENT_PLASTIC_STRAIN) {
           return "power<2>(1 - " + f_ + ") * " +  //
                  "(this->dp" + id + ") * (this->trace_n" + id + ")";
         }
@@ -727,8 +727,8 @@ namespace mfront {
         ib.code += "f" + f.name + " -= real{};\n";
       }
       ib.code += "} else {\n";
-      if (this->getPorosityEffectOnFlowRule() ==
-          STANDARD_POROSITY_CORRECTION_ON_FLOW_RULE) {
+      if (this->getPorosityEffectOnEquivalentPlasticStrain() ==
+          STANDARD_POROSITY_CORRECTION_ON_EQUIVALENT_PLASTIC_STRAIN) {
         if (this->save_porosity_increase) {
           ib.code += "this->dfg" + id + " = power<2>(1 - " + f_ +
                      ") * (this->dp" + id + ") * (this->trace_n" + id + ");\n";
@@ -750,8 +750,8 @@ namespace mfront {
         }
       }
       if (requiresAnalyticalJacobian) {
-        if (this->getPorosityEffectOnFlowRule() ==
-            STANDARD_POROSITY_CORRECTION_ON_FLOW_RULE) {
+        if (this->getPorosityEffectOnEquivalentPlasticStrain() ==
+            STANDARD_POROSITY_CORRECTION_ON_EQUIVALENT_PLASTIC_STRAIN) {
           ib.code += "df" + f.name + "_dd" + f.name;
           ib.code += " += 2 * theta * (1 - " + f_ + ") * (this->dp" + id +
                      ") * (this->trace_n" + id + ")";
@@ -844,47 +844,47 @@ namespace mfront {
     }  // end of InelasticFlowBase::isCoupledWithPorosityEvolution
 
     InelasticFlowBase::PorosityEffectOnFlowRule
-    InelasticFlowBase::getPorosityEffectOnFlowRule() const {
-      if (this->porosity_effect_on_flow_rule ==
-          UNDEFINED_POROSITY_EFFECT_ON_FLOW_RULE) {
+    InelasticFlowBase::getPorosityEffectOnEquivalentPlasticStrain() const {
+      if (this->porosity_effect_on_equivalent_plastic_strain ==
+          UNDEFINED_POROSITY_EFFECT_ON_EQUIVALENT_PLASTIC_STRAIN) {
         if (this->sc == nullptr) {
           tfel::raise(
-              "InelasticFlowBase::getPorosityEffectOnFlowRule:"
+              "InelasticFlowBase::getPorosityEffectOnEquivalentPlasticStrain:"
               "uninitialised flow");
         }
-        const auto scpe = this->sc->getPorosityEffectOnFlowRule();
-        if ((scpe != StressCriterion::NO_POROSITY_EFFECT_ON_FLOW_RULE) &&
+        const auto scpe = this->sc->getPorosityEffectOnEquivalentPlasticStrain();
+        if ((scpe != StressCriterion::NO_POROSITY_EFFECT_ON_EQUIVALENT_PLASTIC_STRAIN) &&
             (scpe !=
-             StressCriterion::STANDARD_POROSITY_CORRECTION_ON_FLOW_RULE)) {
+             StressCriterion::STANDARD_POROSITY_CORRECTION_ON_EQUIVALENT_PLASTIC_STRAIN)) {
           tfel::raise(
-              "InelasticFlowBase::getPorosityEffectOnFlowRule:"
+              "InelasticFlowBase::getPorosityEffectOnEquivalentPlasticStrain:"
               "unsupported porosity effect defined by the stress criterion");
         }
         if (this->fc != nullptr) {
-          const auto fcpe = this->fc->getPorosityEffectOnFlowRule();
-          if ((fcpe != StressCriterion::NO_POROSITY_EFFECT_ON_FLOW_RULE) &&
+          const auto fcpe = this->fc->getPorosityEffectOnEquivalentPlasticStrain();
+          if ((fcpe != StressCriterion::NO_POROSITY_EFFECT_ON_EQUIVALENT_PLASTIC_STRAIN) &&
               (fcpe !=
-               StressCriterion::STANDARD_POROSITY_CORRECTION_ON_FLOW_RULE)) {
+               StressCriterion::STANDARD_POROSITY_CORRECTION_ON_EQUIVALENT_PLASTIC_STRAIN)) {
             tfel::raise(
-                "InelasticFlowBase::getPorosityEffectOnFlowRule:"
+                "InelasticFlowBase::getPorosityEffectOnEquivalentPlasticStrain:"
                 "unsupported porosity effect defined by the flow criterion");
           }
           if ((scpe ==
-               StressCriterion::STANDARD_POROSITY_CORRECTION_ON_FLOW_RULE) ||
+               StressCriterion::STANDARD_POROSITY_CORRECTION_ON_EQUIVALENT_PLASTIC_STRAIN) ||
               (fcpe ==
-               StressCriterion::STANDARD_POROSITY_CORRECTION_ON_FLOW_RULE)) {
-            return STANDARD_POROSITY_CORRECTION_ON_FLOW_RULE;
+               StressCriterion::STANDARD_POROSITY_CORRECTION_ON_EQUIVALENT_PLASTIC_STRAIN)) {
+            return STANDARD_POROSITY_CORRECTION_ON_EQUIVALENT_PLASTIC_STRAIN;
           }
-          return NO_POROSITY_EFFECT_ON_FLOW_RULE;
+          return NO_POROSITY_EFFECT_ON_EQUIVALENT_PLASTIC_STRAIN;
         } else {
-          if (scpe == StressCriterion::NO_POROSITY_EFFECT_ON_FLOW_RULE) {
-            return NO_POROSITY_EFFECT_ON_FLOW_RULE;
+          if (scpe == StressCriterion::NO_POROSITY_EFFECT_ON_EQUIVALENT_PLASTIC_STRAIN) {
+            return NO_POROSITY_EFFECT_ON_EQUIVALENT_PLASTIC_STRAIN;
           }
-          return STANDARD_POROSITY_CORRECTION_ON_FLOW_RULE;
+          return STANDARD_POROSITY_CORRECTION_ON_EQUIVALENT_PLASTIC_STRAIN;
         }
       }
-      return this->porosity_effect_on_flow_rule;
-    }  // end of InelasticFlowBase::getPorosityEffectOnFlowRule
+      return this->porosity_effect_on_equivalent_plastic_strain;
+    }  // end of InelasticFlowBase::getPorosityEffectOnEquivalentPlasticStrain
 
     std::string InelasticFlowBase::updatePorosityUpperBound(
         const BehaviourDescription& bd, const std::string& id) const {

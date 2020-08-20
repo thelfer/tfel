@@ -419,6 +419,11 @@ std::tuple<MichelAndSuquet1992HollowSphereTestStressType<StressStensor>,
            MichelAndSuquet1992HollowSphereTestStressNormalType<StressStensor>,
            MichelAndSuquet1992HollowSphereTestStressDerivativeWithRespectToPorosityType<StressStensor>>
 computeMichelAndSuquet1992HollowSphereTestStressNormal(
+    const StressStensor & sig,
+    const MichelAndSuquet1992HollowSphereTestPorosityType<StressStensor> f,
+    const MichelAndSuquet1992HollowSphereTestStressCriterionParameters<
+        StressStensor> & p,
+    const MichelAndSuquet1992HollowSphereTestStressType<StressStensor> seps) {
   using real = MichelAndSuquet1992HollowSphereTestBaseType<StressStensor>;
   constexpr const auto id =
       MichelAndSuquet1992HollowSphereTestStressNormalType<StressStensor>::Id();
@@ -506,6 +511,7 @@ std::tuple<MichelAndSuquet1992HollowSphereTestStressType<StressStensor>,
            MichelAndSuquet1992HollowSphereTestNormalDerivativeWithRespectToPorosityType<StressStensor>>
 computeMichelAndSuquet1992HollowSphereTestStressSecondDerivative(
     const StressStensor& sig,
+    const MichelAndSuquet1992HollowSphereTestPorosityType<StressStensor> f,
     const MichelAndSuquet1992HollowSphereTestStressCriterionParameters<StressStensor>& p,
     const MichelAndSuquet1992HollowSphereTestStressType<StressStensor> seps) {
   constexpr const auto N = tfel::math::StensorTraits<StressStensor>::dime;
@@ -908,8 +914,8 @@ std::vector<OptionDescription> MichelAndSuquet1992HollowSphereTestStressCriterio
 } // end of MichelAndSuquet1992HollowSphereTestStressCriterion::getOptions()
 ~~~~
 
-The `getPorosityEffectOnFlowRule` method must be modified. But default,
-its returns the `STANDARD_POROSITY_CORRECTION_ON_FLOW_RULE` value which
+The `getPorosityEffectOnEquivalentPlasticStrain` method must be modified. But default,
+its returns the `STANDARD_POROSITY_CORRECTION_ON_EQUIVALENT_PLASTIC_STRAIN` value which
 would define define the increment of the viscoplastic strain as:
 
 \[
@@ -922,9 +928,9 @@ implementation for this method is:
 
 ~~~~{.cxx}
 StressCriterion::PorosityEffectOnFlowRule
-MichelAndSuquet1992HollowSphereTestStressCriterion::getPorosityEffectOnFlowRule() const {
-  return StressCriterion::NO_POROSITY_EFFECT_ON_FLOW_RULE;
-}  // end of MichelAndSuquet1992HollowSphereTestStressCriterion::getPorosityEffectOnFlowRule()
+MichelAndSuquet1992HollowSphereTestStressCriterion::getPorosityEffectOnEquivalentPlasticStrain() const {
+  return StressCriterion::NO_POROSITY_EFFECT_ON_EQUIVALENT_PLASTIC_STRAIN;
+}  // end of MichelAndSuquet1992HollowSphereTestStressCriterion::getPorosityEffectOnEquivalentPlasticStrain()
 ~~~~
 
 ## Compilation of the `MFront` plugin

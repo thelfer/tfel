@@ -34,7 +34,7 @@ namespace mfront {
 
       std::vector<OptionDescription> getOptions() const override;
 
-      PorosityEffectOnFlowRule getPorosityEffectOnFlowRule() const override;
+      PorosityEffectOnFlowRule getPorosityEffectOnEquivalentPlasticStrain() const override;
 
       //! \brief destructor
       ~MichelAndSuquet1992HollowSphereStressCriterion() override;
