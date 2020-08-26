@@ -54,10 +54,14 @@ namespace mfront {
         const std::string& n) const {
       const auto p = this->generators.find(n);
       if (p == this->generators.end()) {
-        tfel::raise(
+        auto msg = std::string(
             "StressCriterionFactory::generate: "
             "no generator named '" +
-            n + "'");
+            n + "'. Available criterion are:");
+        for (const auto& g : this->generators) {
+          msg += "\n- " + g.first;
+        }
+        tfel::raise(msg);
       }
       return p->second();
     }  // end of StressCriterionFactory::generate

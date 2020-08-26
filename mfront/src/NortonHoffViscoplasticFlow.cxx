@@ -167,7 +167,7 @@ namespace mfront {
              "-R" + id + ")/(this->K" + id + "),this->epsilon),this->E" + id +
              "-1);\n";
         c += "const auto dvp" + id + "_dseqe" + id + " = ";
-        c += "(this->E" + id + ")*(this->A" + id + ")*seqe" + id +
+        c += "(this->E" + id + ") * (this->A" + id + ") * seqe" + id +
              "_K__n_1/(this->K" + id + ");\n";
         c += "const auto vp" + id + " = ";
         c += "(this->A" + id + ")*seqe" + id + "_K__n_1*(seq" + id + "-R" + id +
