@@ -161,23 +161,28 @@ namespace mfront {
     std::string HyperbolicSineViscoplasticFlow::computeFlowRateAndDerivative(
         const std::string& id) const {
       auto c = std::string{};
+      const auto seq_n = "seq" + id;
+      const auto R_n = "R" + id;
+      const auto K_n = "this->K" + id;
+      const auto Ksf_n = "this->Ksf" + id;
+      const auto A_n = "this->A" + id;
+      const auto E_n = "this->E" + id;
       if (this->ihrs.empty()) {
         if (!this->Ksf.empty()) {
-          c += "if(seq" + id + ">(this->Ksf" + id + ")*this->K" + id + "){\n";
+          c += "if(" + seq_n + ">(" + Ksf_n + ")*" + K_n + "){\n";
           c += "return false;\n";
           c += "}\n";
         }
-        c += "const auto seqe" + id + "_K = ";
-        c += "seq" + id + "/(this->K" + id + ");\n";
+        c += "const auto seqe" + id + "_K = " + seq_n + "/(" + K_n + ");\n";
       } else {
         if (!this->Ksf.empty()) {
-          c += "if((seq" + id + "-R" + id + ")>";
-          c += "(this->Ksf" + id + ")*this->K" + id + "){\n";
+          c += "if((" + seq_n + " - " + R_n + ")> (" + Ksf_n + ") * " + K_n +
+               "){\n";
           c += "return false;\n";
           c += "}\n";
         }
         c += "const auto seqe" + id + "_K = ";
-        c += "(seq" + id + "-R" + id + ")/(this->K" + id + ");\n";
+        c += "(" + seq_n + " - " + R_n + ")/(" + K_n + ");\n";
       }
       c += "const auto exp_seqe" + id + "_K = ";
       c += "exp(seqe" + id + "_K);\n";
@@ -185,19 +190,19 @@ namespace mfront {
       c += "(exp_seqe" + id + "_K-1/exp_seqe" + id + "_K)/2;\n";
       c += "const auto cosh_seqe" + id + "_K = ";
       c += "(exp_seqe" + id + "_K+1/exp_seqe" + id + "_K)/2;\n";
-      if(!this->n.empty()){
+      if (!this->n.empty()) {
         c += "const auto sinh_seqe" + id + "_K__n_1 = ";
-        c += "pow(sinh_seqe" + id + "_K,this->E" + id + "-1);\n";
+        c += "std::pow(sinh_seqe" + id + "_K," + E_n + "-1);\n";
         c += "const auto vp" + id + " = ";
-        c += "sinh_seqe" + id + "_K__n_1 * sinh_seqe" + id + "_K;\n";
+        c += A_n + " * sinh_seqe" + id + "_K__n_1 * sinh_seqe" + id + "_K;\n";
         c += "const auto dvp" + id + "_dseqe" + id + " = ";
-        c += "(this->E" + id + ") * sinh_seqe" + id + "_K__n_1 * ";
-        c += "cosh_seqe" + id + "_K/(this->K" + id + ");\n";
+        c += "(" + E_n + ") * " + A_n + "*sinh_seqe" + id + "_K__n_1 * ";
+        c += "cosh_seqe" + id + "_K/(" + K_n + ");\n";
       } else {
         c += "const auto vp" + id + " = ";
-        c += "sinh_seqe" + id + "_K;\n";
+        c += A_n + " * sinh_seqe" + id + "_K;\n";
         c += "const auto dvp" + id + "_dseqe" + id + " = ";
-        c += "cosh_seqe" + id + "_K/(this->K" + id + ");\n";
+        c += A_n + "* cosh_seqe" + id + "_K/(" + K_n + ");\n";
       }
       return c;
     }  // end of HyperbolicSineViscoplasticFlow::computeFlowRateAndDerivative
