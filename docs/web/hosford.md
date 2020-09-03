@@ -1,6 +1,15 @@
-% Implementation of a perfect plastic behaviour using the Hosford equivalent stress
-% Thomas Helfer
-% 21/11/2017
+---
+title: Implementation of a perfect plastic behaviour using the Hosford equivalent stress
+author: Thomas Helfer, Jérémy Hure, Mohamed Shokeir
+date: 21/11/2017
+lang: en-EN
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tabPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
 
 \newcommand{\absvalue}[1]{{\left|#1\right|}}
 \newcommand{\paren}[1]{{\left(#1\right)}}

@@ -454,42 +454,35 @@ if(HAVE_CASTEM)
   endif(CASTEHOME)
 endif(HAVE_CASTEM)
 
+target_link_libraries(TFELMFront
+  PUBLIC MFrontLogStream
+  PUBLIC TFELMaterial       PUBLIC TFELMathParser
+  PUBLIC TFELSystem         PUBLIC TFELUtilities
+  PUBLIC TFELUnicodeSupport PUBLIC TFELGlossary 
+  PUBLIC TFELException      PUBLIC TFELConfig)
+
 if(UNIX)
   if(NOT HAIKU)
     if(CMAKE_CXX_COMPILER_ID STREQUAL "PGI")
       target_link_libraries(TFELMFront
-		PUBLIC MFrontLogStream
-	PUBLIC TFELMaterial       PUBLIC TFELMathParser
-	PUBLIC TFELSystem         PUBLIC TFELUtilities
-	PUBLIC TFELUnicodeSupport PUBLIC TFELGlossary 
-    PUBLIC TFELException      PUBLIC TFELConfig
-	PRIVATE ${TFEL_DL_LIBRARY})
+	    PRIVATE ${TFEL_DL_LIBRARY})
     else(CMAKE_CXX_COMPILER_ID STREQUAL "PGI")
       target_link_libraries(TFELMFront
-	PUBLIC MFrontLogStream
-	PUBLIC TFELMaterial       PUBLIC TFELMathParser
-	PUBLIC TFELSystem         PUBLIC TFELUtilities
-	PUBLIC TFELUnicodeSupport PUBLIC TFELGlossary
-	PUBLIC TFELException      PUBLIC TFELConfig
-	PRIVATE -pthread PRIVATE ${TFEL_DL_LIBRARY})
+      	PRIVATE -pthread PRIVATE ${TFEL_DL_LIBRARY})
     endif(CMAKE_CXX_COMPILER_ID STREQUAL "PGI")
   else(NOT HAIKU)
     target_link_libraries(TFELMFront
-      PUBLIC MFrontLogStream
-      PUBLIC TFELMaterial  PUBLIC TFELMathParser
-      PUBLIC TFELSystem    PUBLIC TFELUtilities
-      PUBLIC TFELGlossary  PUBLIC TFELUnicodeSupport
-      PUBLIC TFELException PUBLIC TFELConfig
       PRIVATE ${TFEL_DL_LIBRARY})
   endif(NOT HAIKU)
 else(UNIX)
-  target_link_libraries(TFELMFront
-    PUBLIC MFrontLogStream
-    PUBLIC TFELMaterial  PUBLIC TFELMathParser
-    PUBLIC TFELSystem    PUBLIC TFELUtilities
-    PUBLIC TFELGlossary  PUBLIC TFELUnicodeSupport
-    PUBLIC TFELException PUBLIC TFELConfig)
 endif(UNIX)
+
+if(HAVE_MADNEX)
+  target_compile_definitions(TFELMFront
+    PUBLIC MFRONT_HAVE_MADNEX)
+  target_link_libraries(TFELMFront
+    PRIVATE madnex::Madnex)
+endif(HAVE_MADNEX)
 
 # MFront
 

@@ -627,22 +627,14 @@ namespace mfront {
           findByExternalName(esvs, tfel::glossary::Glossary::Broken);
       // implicit equation associated with the elastic strain
       CodeBlock integrator;
-      if (pav != asvs.end()) {
-        const auto& broken = *pav;
+      if ((pav != asvs.end()) || (pev != esvs.end())) {
+        const auto& broken = (pev != esvs.end()) ? *pev : *pav;
         integrator.code += "if(2 * (this->" + broken.name + ") > 1){\n";
-        integrator.code += "  feel -= eel;\n";
+        integrator.code += "  this->deel = -(this->eel);\n";
         integrator.code += "  return true;\n";
         integrator.code += "}\n";
       }
-      if (pev != esvs.end()) {
-        const auto& broken = *pev;
-        integrator.code += "if(2 * (this->" + broken.name + " + (" + bd.getClassName() +
-             "::theta) * d" + broken.name + ") > 1){\n";
-        integrator.code += "  feel -= eel;\n";
-        integrator.code += "  return true;\n";
-        integrator.code += "}\n";
-      }
-      integrator.code = "feel -= this->deto;\n";
+      integrator.code += "feel -= this->deto;\n";
       bd.setCode(uh, BehaviourData::Integrator, integrator,
                  BehaviourData::CREATEORAPPEND, BehaviourData::AT_BEGINNING);
       // modelling hypotheses supported by the behaviour

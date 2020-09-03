@@ -18,6 +18,10 @@
 #include <stdexcept>
 #include <algorithm>
 
+#ifdef MFRONT_HAVE_MADNEX
+#include "Madnex/MFrontImplementation.hxx"
+#endif /* MFRONT_HAVE_MADNEX */
+
 #include "TFEL/Raise.hxx"
 #include "TFEL/Math/IntegerEvaluator.hxx"
 #include "TFEL/UnicodeSupport/UnicodeSupport.hxx"
@@ -138,7 +142,19 @@ namespace mfront {
   void DSLBase::openFile(const std::string& f,
                          const std::vector<std::string>& ecmds,
                          const std::map<std::string, std::string>& s) {
-    CxxTokenizer::openFile(f);
+    if (tfel::utilities::starts_with(f, "madnex:")) {
+#ifdef MFRONT_HAVE_MADNEX
+      const auto path = decomposeImplementationPathInMadnexFile(f);
+      const auto impl =
+          madnex::getMFrontImplementation(std::get<0>(path), std::get<1>(path),
+                                          std::get<2>(path), std::get<3>(path));
+      CxxTokenizer::parseString(impl.source);
+#else  /* MFRONT_HAVE_MADNEX */
+      tfel::raise("DSLBase::openFile: madnex support was not enabled");
+#endif /* MFRONT_HAVE_MADNEX */
+    } else {
+      CxxTokenizer::openFile(f);
+    }
     // substitutions
     const auto pe = s.end();
     for (auto& t : this->tokens) {

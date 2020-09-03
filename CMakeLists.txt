@@ -133,8 +133,15 @@ endif(enable-vera++)
 # portable-build
 option(enable-portable-build "produce binary that can be shared between various machine (same architecture, same gcc version, different processors" OFF)
 
+# madnex
+option(enable-madnex "enable madnex file support in mfront (see https://github.com/thelfer/madnex)" OFF)
+if(enable-madnex)
+  find_package(Madnex REQUIRED)
+  set(HAVE_MADNEX ON)
+endif(enable-madnex)
+
 # fortran (placed before compiler detection)
-option(enable-fortran "enable fortran support")
+option(enable-fortran "enable fortran support" OFF)
 if(enable-fortran)
   set(HAVE_FORTRAN ON)
   add_definitions("-DHAVE_FORTRAN=1")

@@ -43,6 +43,8 @@ namespace mfront {
   const char* const
       StandardElastoViscoPlasticityBrick::nextEstimateOfThePorosityIncrement =
           "next_estimate_of_the_porosity_increment";
+  const char* const StandardElastoViscoPlasticityBrick::fixedPointConverged =
+      "fixed_point_converged";
   const char* const StandardElastoViscoPlasticityBrick::
       nextEstimateOfThePorosityAtTheEndOfTheTimeStep =
           "next_estimate_of_the_porosity_at_the_end_of_the_time_step";
@@ -681,11 +683,12 @@ namespace mfront {
         init.code += pf->updatePorosityUpperBound(bd, id);
         ++flow_id;
       }
-      init.code += "if(2 * (this->" + broken.name + ") > 1){\n";
-      init.code += "this->" + f.name + " = (this->" +
-                   std::string(porosityUpperBoundSafetyFactor) + ") * (this->" +
-                   std::string(porosityUpperBound) + ");\n";
-      init.code += "}\n";
+      //       init.code += "if(2 * (this->" + broken.name + ") > 1){\n";
+      //       init.code += "this->" + f.name + " = (this->" +
+      //                    std::string(porosityUpperBoundSafetyFactor) + ") *
+      //                    (this->" +
+      //                    std::string(porosityUpperBound) + ");\n";
+      //       init.code += "}\n";
       bd.setCode(uh, BehaviourData::BeforeInitializeLocalVariables, init,
                  BehaviourData::CREATEORAPPEND, BehaviourData::AT_BEGINNING);
     }
@@ -738,7 +741,8 @@ namespace mfront {
       CodeBlock acc;
       // defining the `nextEstimateOfThePorosityIncrement` variable before the
       // user code, so that the user can update the porosity with its own contribution
-      acc.code = "auto " + std::string(nextEstimateOfThePorosityIncrement) + " = real{};\n";
+      acc.code = "auto " + std::string(fixedPointConverged) + " = true;\n";
+      acc.code += "auto " + std::string(nextEstimateOfThePorosityIncrement) + " = real{};\n";
       bd.setCode(uh, BehaviourData::AdditionalConvergenceChecks, acc,
                  BehaviourData::CREATEORAPPEND, BehaviourData::AT_BEGINNING);
       acc.code.clear();
@@ -821,9 +825,12 @@ namespace mfront {
          << "}\n";
       // 4. check if the staggered algorithm has converged
       os << "const auto " << df << " = " << nextEstimateOfThePorosityIncrement
-         << " - (this->" << currentEstimateOfThePorosityIncrement << ");\n"
-         << "if(std::abs(" << df << ") < this->"
-         << staggeredSchemeConvergenceCriterion << "){\n";
+         << " - (this->" << currentEstimateOfThePorosityIncrement << ");\n";
+      os << std::string(fixedPointConverged) << " =  ("
+         << std::string(fixedPointConverged) << ") && "
+         << "(std::abs(" << df << ") < this->"
+         << staggeredSchemeConvergenceCriterion << ");\n";
+      os << "if(" + std::string(fixedPointConverged) + "){\n";
       generate_debug_message(true);
       // try to dectect failure
       os << "if (this->f + this->" << currentEstimateOfThePorosityIncrement

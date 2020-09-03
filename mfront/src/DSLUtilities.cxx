@@ -13,9 +13,11 @@
   */
 
 #include <iostream>
+
 #include <cstdlib>
 #include <fstream>
 #include <sstream>
+#include <utility>
 #include <stdexcept>
 #include "TFEL/Raise.hxx"
 #include "TFEL/Config/TFELConfig.hxx"
@@ -355,5 +357,23 @@ void writeVariablesNamesSymbol(std::ostream &out, const std::string &name,
     }
     symbols.insert({s, r});
   }  // end of addSymbol
+
+  std::tuple<std::string, std::string, std::string, std::string>
+  decomposeImplementationPathInMadnexFile(const std::string& p) {
+    std::vector<std::string> details = tfel::utilities::tokenize(p, ':');
+    auto raise_if = [&p](const bool b) {
+      if (b) {
+        tfel::raise("decomposeImplementationPathInMadnexFile: invalid path '" +
+                    p + "'");
+      }
+    };
+    raise_if((details.size() != 5) && (details.size() != 4));
+    if (details.size() == 4) {
+      return {std::move(details[1]), std::move(details[2]), "",
+              std::move(details[3])};
+    }
+    return {std::move(details[1]), std::move(details[2]), std::move(details[3]),
+            std::move(details[4])};
+  }  // end of decomposeImplementationPathInMadnexFile
 
 }  // end of namespace mfront

@@ -57,6 +57,11 @@ namespace mfront {
     static const char* const brokenVariable;
     /*!
      * \brief if the staggered approach is used, this is the name of a
+     * local variable which states if the staggered approach succeeded.
+     */
+    static const char* const fixedPointConverged;
+    /*!
+     * \brief if the staggered approach is used, this is the name of a
      * local variable which holds the current estimate of the porosity
      * increment.
      */

@@ -1,6 +1,15 @@
-% Second and fourth-order tensor objects in `TFEL/Math`
-% 2/08/2017
-% Thomas Helfer
+---
+title: Second and fourth-order tensor objects in `TFEL/Math`
+author: Thomas Helfer, Jérémy Hure, Mohamed Shokeir
+date: 08/2020
+lang: en-EN
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tabPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
 
 \newcommand{\trace}[1]{{\mathrm{tr}\paren{#1}}}
 \newcommand{\tenseur}[1]{\underline{#1}}
@@ -269,7 +278,7 @@ A non symmetric second order tensor can be symmetrized using the
 A symmetric second order tensor can be unsymmetrized using the
 `unsyme` function. The result match the `TensorConcept`.
 
-##  Frobenius inner product of second order tensors
+## Frobenius inner product of second order tensors
 
 The Frobenius inner product \(\tns{a}\,\colon\,\tns{b}\) of two tensors
 \(\tns{a}\) and \(\tns{b}\) is defined by:
@@ -317,6 +326,23 @@ matching the `ST2toST2Concept`.
 
 The diadic product of two non symmetric tensors results in an object
 matching the `T2toT2Concept`.
+
+## Polar decomposition
+
+The polar decomposition of a tensor `F` can be computed as follows in
+`MFront`:
+
+~~~~{.cxx}
+tensor<N, real> R;
+stensor<N, strain> U;
+polar_decomposition(R, U, F);
+~~~~
+
+where:
+
+- `N` is the space dimension.
+- `real` is an alias to the numeric type.
+- `strain` is an alias to the numeric type.
 
 ## Application of a fourth order tensor
 
