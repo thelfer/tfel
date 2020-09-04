@@ -360,6 +360,7 @@ void writeVariablesNamesSymbol(std::ostream &out, const std::string &name,
 
   std::tuple<std::string, std::string, std::string, std::string>
   decomposeImplementationPathInMadnexFile(const std::string& p) {
+    using result_type = std::tuple<std::string, std::string, std::string, std::string>;
     std::vector<std::string> details = tfel::utilities::tokenize(p, ':');
     auto raise_if = [&p](const bool b) {
       if (b) {
@@ -369,10 +370,10 @@ void writeVariablesNamesSymbol(std::ostream &out, const std::string &name,
     };
     raise_if((details.size() != 5) && (details.size() != 4));
     if (details.size() == 4) {
-      return {std::move(details[1]), std::move(details[2]), "",
+      return result_type{std::move(details[1]), std::move(details[2]), "",
               std::move(details[3])};
     }
-    return {std::move(details[1]), std::move(details[2]), std::move(details[3]),
+    return result_type{std::move(details[1]), std::move(details[2]), std::move(details[3]),
             std::move(details[4])};
   }  // end of decomposeImplementationPathInMadnexFile
 
