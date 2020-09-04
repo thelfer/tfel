@@ -105,6 +105,9 @@ namespace mfront {
       return r.first.name;
     }  // end of findIfParameterOrMaterialPropertyIsUniformelyDefined
 
+    const char* const HookeStressPotentialBase::residualStiffnessFactor =
+        "residual_stiffness_factor";
+
     HookeStressPotentialBase::HookeStressPotentialBase() = default;
 
     std::vector<OptionDescription>
@@ -495,7 +498,6 @@ namespace mfront {
         bd.addStateVariable(uh, eel);
         bd.setGlossaryName(uh, "eel", Glossary::ElasticStrain);
       }
-
       // treating material properties and stress computation
       if ((bd.getAttribute(BehaviourDescription::requiresStiffnessTensor,
                            false)) ||
@@ -604,17 +606,40 @@ namespace mfront {
         }
       }
       bd.addLocalDataStructure(d, BehaviourData::ALREADYREGISTRED);
+      // look if the broken variable has defined
+      const auto has_broken = [&bd, &uh] {
+        const auto& bdata = bd.getBehaviourData(uh);
+        const auto& asvs = bdata.getAuxiliaryStateVariables();
+        const auto& esvs = bdata.getExternalStateVariables();
+        const auto pav =
+            findByExternalName(asvs, tfel::glossary::Glossary::Broken);
+        const auto pev =
+            findByExternalName(esvs, tfel::glossary::Glossary::Broken);
+        return (pav != asvs.end()) || (pev != esvs.end());
+      }();
+      if (has_broken) {
+        VariableDescription k(
+            "real", HookeStressPotentialBase::residualStiffnessFactor, 1u, 0u);
+        k.description =
+            "Relative value used to define the residual stiffness when broken";
+        bd.addParameter(uh, k, BehaviourData::UNREGISTRED);
+        bd.setParameterDefaultValue(
+            uh, HookeStressPotentialBase::residualStiffnessFactor, 1.e-5);
+        bd.setEntryName(uh, HookeStressPotentialBase::residualStiffnessFactor,
+                        "ResidualStiffnessFactor");
+      }
+      //
       if (getVerboseMode() >= VERBOSE_DEBUG) {
         getLogStream()
             << "HookeStressPotentialBase::completeVariableDeclaration: end\n";
       }
-    }
+    } // end of HookeStressPotentialBase::completeVariableDeclaration
 
     void HookeStressPotentialBase::endTreatment(
         BehaviourDescription& bd, const AbstractBehaviourDSL& dsl) const {
       // modelling hypotheses supported by the behaviour
+      constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       const auto bmh = bd.getModellingHypotheses();
-      const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       if (getVerboseMode() >= VERBOSE_DEBUG) {
         getLogStream() << "HookeStressPotentialBase::endTreatment: begin\n";
       }
@@ -654,17 +679,100 @@ namespace mfront {
       // declaring the computeElasticPrediction member
       this->declareComputeElasticPredictionMethod(bd);
       // prediction operator
+      // look if the broken variable has defined
       if (this->gpo) {
+        this->addBrokenPredictionOperatorSupport(bd);
         this->addGenericPredictionOperatorSupport(bd);
       }
       // tangent operator
       if (this->gto) {
+        this->addBrokenTangentOperatorSupport(bd);
         this->addGenericTangentOperatorSupport(bd, dsl);
       }
       if (getVerboseMode() >= VERBOSE_DEBUG) {
         getLogStream() << "HookeStressPotentialBase::endTreatment: end\n";
       }
     }  // end of HookeStressPotentialBase::endTreatment
+
+    void HookeStressPotentialBase::addBrokenOperatorSupport(
+        BehaviourDescription& bd, const std::string& c) const {
+      constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+      // look if the broken variable has defined
+      const auto broken_test = [&bd]() -> std::string {
+        const auto& d = bd.getBehaviourData(uh);
+        const auto& asvs = d.getAuxiliaryStateVariables();
+        const auto& esvs = d.getExternalStateVariables();
+        const auto pav =
+            findByExternalName(asvs, tfel::glossary::Glossary::Broken);
+        const auto pev =
+            findByExternalName(esvs, tfel::glossary::Glossary::Broken);
+        if ((pav != asvs.end()) || (pev != esvs.end())) {
+          const auto& broken = (pev != esvs.end()) ? *pev : *pav;
+          return "2 * (this->" + broken.name + ") > 1";
+        }
+        return "";
+      }();
+      if (broken_test.empty()) {
+        return;
+      }
+      const auto residual_factor =
+          "(this->" +
+          std::string{HookeStressPotentialBase::residualStiffnessFactor} + ")";
+      CodeBlock to;
+      to.code += "if(" + broken_test + "){\n";
+      if ((bd.getAttribute(BehaviourDescription::requiresStiffnessTensor,
+                           false)) ||
+          (bd.getAttribute(BehaviourDescription::computesStiffnessTensor,
+                           false))) {
+        const std::string D =
+            bd.getAttribute(BehaviourDescription::requiresStiffnessTensor,
+                            false)
+                ? "this->D"
+                : "this->D_tdt";
+        to.code += "this->Dt = " + residual_factor + " * (" + D + ");\n";
+      } else {
+        if (bd.getElasticSymmetryType() == mfront::ISOTROPIC) {
+          auto b = bd.getAttribute(
+              "HookeStressPotentialBase::UseLocalLameCoeficients", false);
+          const std::string lambda =
+              b ? "this->sebdata.lambda" : "this->lambda_tdt";
+          const std::string mu = b ? "this->sebdata.mu" : "this->mu_tdt";
+          to.code += "computeAlteredElasticStiffness<hypothesis,Type>::exe(Dt," +
+                    residual_factor + " * ( " + lambda + "), " +
+                    residual_factor + " * (" + mu + "));\n";
+        } else if (bd.getElasticSymmetryType() == mfront::ORTHOTROPIC) {
+          tfel::raise_if(
+              !bd.getAttribute<bool>(
+                  BehaviourDescription::computesStiffnessTensor, false),
+              "HookeStressPotentialBase::addBrokenOperatorSupport: "
+              "orthotropic behaviour shall require the stiffness tensor");
+          to.code += "this->Dt = " + residual_factor + " * (this->D_tdt);\n";
+        } else {
+          tfel::raise(
+              "HookeStressPotentialBase::addBrokenOperatorSupport: "
+              "unsupported elastic symmetry type");
+        }
+      }
+      if (c == BehaviourData::ComputePredictionOperator) {
+        to.code += "return SUCCESS;\n";
+      } else {
+        to.code += "return true;\n";
+      }
+      to.code += "} // end of if("+broken_test+")\n";
+      bd.setCode(ModellingHypothesis::UNDEFINEDHYPOTHESIS, c, to,
+                 BehaviourData::CREATEORAPPEND, BehaviourData::AT_BEGINNING);
+    }  // end of HookeStressPotentialBase::addBrokenOperatorSupport
+
+    void HookeStressPotentialBase::addBrokenPredictionOperatorSupport(
+        BehaviourDescription& bd) const {
+      this->addBrokenOperatorSupport(bd,
+                                     BehaviourData::ComputePredictionOperator);
+    }  // end of HookeStressPotentialBase::addBrokenPredictionOperatorSupport
+
+    void HookeStressPotentialBase::addBrokenTangentOperatorSupport(
+        BehaviourDescription& bd) const {
+      this->addBrokenOperatorSupport(bd, BehaviourData::ComputeTangentOperator);
+    }  // end of HookeStressPotentialBase::addBrokenPredictionOperatorSupport
 
     void HookeStressPotentialBase::declareComputeStressForOrthotropicBehaviour(
         BehaviourDescription&) const {

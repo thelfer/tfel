@@ -344,22 +344,6 @@ namespace mfront {
         tfel::raise_if(
             b, "HookeStressPotential::addGenericTangentOperatorSupport: " + m);
       };
-      // look if the broken variable has defined
-      //       const auto& d = bd.getBehaviourData(uh);
-      //       const auto& asvs = d.getAuxiliaryStateVariables();
-      //       const auto& esvs = d.getExternalStateVariables();
-      //       const auto pav =
-      //           findByExternalName(asvs, tfel::glossary::Glossary::Broken);
-      //       const auto pev =
-      //           findByExternalName(esvs, tfel::glossary::Glossary::Broken);
-      //       const auto broken_test = [&pav, &pev, &asvs, &esvs]() ->
-      //       std::string {
-      //         const auto& broken = (pev != esvs.end()) ? *pev : *pav;
-      //         if ((pav != asvs.end()) || (pev != esvs.end())) {
-      //           return "(2 * (this->" + broken.name + ") > 1";
-      //         }
-      //         return "";
-      //       }();
       //
       const auto& idsl = dynamic_cast<const ImplicitDSLBase&>(dsl);
       bd.checkVariablePosition("eel", "IntegrationVariable", 0u);
@@ -381,18 +365,7 @@ namespace mfront {
                 : "this->D_tdt";
         to.code +=
             "if((smt==ELASTIC)||(smt==SECANTOPERATOR)){\n";
-        //         if (!broken_test.empty()) {
-        //           to.code += "if(" + broken_test + "){";
-        //           to.code += "this->Dt = " +
-        //                      HookeStressPotentialBase::residualStiffnessFactor
-        //                      +
-        //                      " * (" + D + ");\n";
-        //           to.code += "} else {";
-        //           to.code += "this->Dt = " + D + ";\n";
-        //           to.code += "}";
-        //         } else {
         to.code += "this->Dt = " + D + ";\n";
-//        }
         if (idsl.getSolver().usesJacobian()) {
           to.code +=
               "} else if (smt==CONSISTENTTANGENTOPERATOR){\n"

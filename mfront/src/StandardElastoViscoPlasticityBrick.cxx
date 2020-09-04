@@ -202,6 +202,12 @@ namespace mfront {
     for (auto& f : this->flows) {
       f->setPorosityEvolutionHandled(pe);
     }
+    if (pe) {
+      //
+      mfront::bbrick::addAuxiliaryStateVariableIfNotDefined(
+          bd, "real", brokenVariable, tfel::glossary::Glossary::Broken, 1u,
+          true);
+    }
   }  // end of StandardElastoViscoPlasticityBrick::initialize
 
   bool StandardElastoViscoPlasticityBrick::treatPorosityEvolutionSection(
@@ -463,10 +469,6 @@ namespace mfront {
       }
       this->bd.reserveName(uh, f.name + "_");
       //
-      mfront::bbrick::addAuxiliaryStateVariableIfNotDefined(
-          bd, "real", brokenVariable, tfel::glossary::Glossary::Broken, 1u,
-          true);
-      //
       VariableDescription alpha("real", porosityUpperBoundSafetyFactor, 1u, 0u);
       alpha.description = "a safety factor for the porosity upper bound";
       bd.addParameter(uh, alpha, BehaviourData::UNREGISTRED);
@@ -666,13 +668,6 @@ namespace mfront {
     }
     // At this stage, one expects to be able to compute the upper porosity bound
     if (this->isCoupledWithPorosityEvolution()){
-      const auto& f =
-          bd.getBehaviourData(uh).getStateVariableDescriptionByExternalName(
-              tfel::glossary::Glossary::Porosity);
-      const auto& broken =
-          bd.getBehaviourData(uh)
-              .getAuxiliaryStateVariableDescriptionByExternalName(
-                  tfel::glossary::Glossary::Broken);
       CodeBlock init;
       init.code += "this->";
       init.code += porosityUpperBound;

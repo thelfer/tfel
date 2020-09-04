@@ -22,6 +22,8 @@ namespace mfront {
      * standard Hooke law.
      */
     struct HookeStressPotentialBase : StressPotential {
+      //! \brief name of the parameter holding the factor used to determine the residual stiffness
+      static const char* const residualStiffnessFactor;
       /*!
        * \return the options associated with material properties which are valid
        * for either an isotropic or an orthotropic behaviour.
@@ -117,27 +119,55 @@ namespace mfront {
        * \brief add support for the AXISYMMETRICALGENERALISEDPLANESTRESS
        * modelling hypothesis
        * \param[in] bd: behaviour description
+       * \param[in] dsl: behaviour domain language
        */
       virtual void addAxisymmetricalGeneralisedPlaneStressSupport(
           BehaviourDescription&, const AbstractBehaviourDSL&) const;
       /*!
        * \brief add support for the PLANESTRESS modelling hypothesis
        * \param[in] bd: behaviour description
+       * \param[in] dsl: behaviour domain language
        */
       virtual void addPlaneStressSupport(BehaviourDescription&,
                                          const AbstractBehaviourDSL&) const;
       /*!
-       * \brief add the generic tangent operator computation
+       * \brief when a variable with the glossary name `broken` is declared,
+       * this method adds the computation of a residual stiffness matrix at
+       * the beginning of the given code block.
+       * \param[in] bd: behaviour description
+       * \param[in] c: code block name.
+       */
+      virtual void addBrokenOperatorSupport(BehaviourDescription&,
+                                            const std::string&) const;
+      /*!
+       * \brief when a variable with the glossary name `broken` is declared,
+       * this method adds the computation of a residual stiffness matrix.
        * \param[in] bd: behaviour description
        */
-      virtual void addGenericTangentOperatorSupport(
-          BehaviourDescription&, const AbstractBehaviourDSL&) const = 0;
+      virtual void addBrokenPredictionOperatorSupport(
+          BehaviourDescription&) const;
       /*!
-       * \brief add the generic prediction operator computation
+       * \brief add the generic prediction operator computation.
        * \param[in] bd: behaviour description
+       * \note this method is called after `addBrokenPredictionOperatorSupport`
        */
       virtual void addGenericPredictionOperatorSupport(
           BehaviourDescription&) const = 0;
+      /*!
+       * \brief when a variable with the glossary name `broken` is declared,
+       * this method adds the computation of a residual stiffness matrix.
+       * \param[in] bd: behaviour description
+       * \param[in] dsl: behaviour domain language
+       */
+      virtual void addBrokenTangentOperatorSupport(BehaviourDescription&) const;
+      /*!
+       * \brief add the generic tangent operator computation
+       * \param[in] bd: behaviour description
+       * \param[in] dsl: behaviour domain language
+       * \note this method is called after `addBrokenTangentOperatorSupport`
+       */
+      virtual void addGenericTangentOperatorSupport(
+          BehaviourDescription&, const AbstractBehaviourDSL&) const = 0;
       /*!
        * \brief declare the compute elastic prediction method
        * \param[in] bd: behaviour description
