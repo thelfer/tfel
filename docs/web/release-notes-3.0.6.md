@@ -4,6 +4,17 @@
 
 # Tickets fixed
 
+## Ticket #244: Some header files related to MTest are not installed by `cmake`
+
+The following headers were not installed by `cmake`:
+
+- `SolverWorkSpace.hxx`
+- `PipeTest.hxx`
+- `PipeMesh.hxx`
+- `PipeProfileHandler.hxx`
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/244/>
+
 ## Ticket #239: Missing `ostream` header for `gcc-10.1.0`
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/239/>
