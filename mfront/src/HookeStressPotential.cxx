@@ -35,23 +35,9 @@ namespace mfront {
         std::string m =
             "//! \\brief return an elastic prediction of the stresses\n"
             "StressStensor computeElasticPrediction() const{\n";
-        const auto& d = bd.getBehaviourData(h);
-        const auto& asvs = d.getAuxiliaryStateVariables();
-        const auto& esvs = d.getExternalStateVariables();
-        const auto pav =
-            findByExternalName(asvs, tfel::glossary::Glossary::Broken);
-        const auto pev =
-            findByExternalName(esvs, tfel::glossary::Glossary::Broken);
-        if (pav != asvs.end()) {
-          const auto& broken = *pav;
-          m += "if(2 * (this->" + broken.name + ") > 1){\n";
-          m += "  return StressStensor(stress(0));\n";
-          m += "}\n";
-        }
-        if (pev != esvs.end()) {
-          const auto& broken = *pev;
-          m += "if(2 * (this->" + broken.name + " + (" + bd.getClassName() +
-               "::theta) * d" + broken.name + ") > 1){\n";
+        const auto broken_test = getBrokenTest(bd, false);
+        if (!broken_test.empty()) {
+          m += "if(" + broken_test + "){\n";
           m += "  return StressStensor(stress(0));\n";
           m += "}\n";
         }
@@ -284,6 +270,8 @@ namespace mfront {
           "this->sig = (this->D) * (this->eel + (this->theta) * "
           "(this->deel));\n";
       sets.code = "this->sig = (" + D_tdt + ")*(this->eel);\n";
+      addBrokenStateSupportToComputeStress(smts.code, bd, false);
+      addBrokenStateSupportToComputeStress(sets.code, bd, true);
       bd.setCode(h, BehaviourData::ComputeThermodynamicForces, smts,
                  BehaviourData::CREATE, BehaviourData::AT_BEGINNING, false);
       bd.setCode(h, BehaviourData::ComputeFinalThermodynamicForces, sets,
@@ -327,6 +315,8 @@ namespace mfront {
             "(this->sebdata.lambda)*trace(this->eel)*Stensor::Id()+"  //
             "2*(this->sebdata.mu)*this->eel;\n";
       }
+      addBrokenStateSupportToComputeStress(smts.code, bd, true);
+      addBrokenStateSupportToComputeStress(sets.code, bd, false);
       bd.setCode(uh, BehaviourData::ComputeThermodynamicForces, smts,
                  BehaviourData::CREATE, BehaviourData::AT_BEGINNING, false);
       bd.setCode(uh, BehaviourData::ComputeFinalThermodynamicForces, sets,

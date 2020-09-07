@@ -643,18 +643,11 @@ namespace mfront {
       if (getVerboseMode() >= VERBOSE_DEBUG) {
         getLogStream() << "HookeStressPotentialBase::endTreatment: begin\n";
       }
-      const auto& d = bd.getBehaviourData(uh);
-      const auto& asvs = d.getAuxiliaryStateVariables();
-      const auto& esvs = d.getExternalStateVariables();
-      const auto pav =
-          findByExternalName(asvs, tfel::glossary::Glossary::Broken);
-      const auto pev =
-          findByExternalName(esvs, tfel::glossary::Glossary::Broken);
       // implicit equation associated with the elastic strain
       CodeBlock integrator;
-      if ((pav != asvs.end()) || (pev != esvs.end())) {
-        const auto& broken = (pev != esvs.end()) ? *pev : *pav;
-        integrator.code += "if(2 * (this->" + broken.name + ") > 1){\n";
+      auto broken_test = getBrokenTest(bd, false);
+      if (!broken_test.empty()) {
+        integrator.code += "if(" + broken_test + "){\n";
         integrator.code += "  this->deel = -(this->eel);\n";
         integrator.code += "  return true;\n";
         integrator.code += "}\n";
@@ -696,22 +689,8 @@ namespace mfront {
 
     void HookeStressPotentialBase::addBrokenOperatorSupport(
         BehaviourDescription& bd, const std::string& c) const {
-      constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       // look if the broken variable has defined
-      const auto broken_test = [&bd]() -> std::string {
-        const auto& d = bd.getBehaviourData(uh);
-        const auto& asvs = d.getAuxiliaryStateVariables();
-        const auto& esvs = d.getExternalStateVariables();
-        const auto pav =
-            findByExternalName(asvs, tfel::glossary::Glossary::Broken);
-        const auto pev =
-            findByExternalName(esvs, tfel::glossary::Glossary::Broken);
-        if ((pav != asvs.end()) || (pev != esvs.end())) {
-          const auto& broken = (pev != esvs.end()) ? *pev : *pav;
-          return "2 * (this->" + broken.name + ") > 1";
-        }
-        return "";
-      }();
+      const auto broken_test = getBrokenTest(bd, true);
       if (broken_test.empty()) {
         return;
       }
@@ -790,8 +769,7 @@ namespace mfront {
       //   getLogStream() << "HookeStressPotentialBase::"
       //                     "declareComputeStressForOrthotropicBehaviour: end\n";
       // }
-    }  // end of
-       // HookeStressPotentialBase::declareComputeStressForOrthotropicBehaviour
+    }  // end of declareComputeStressForOrthotropicBehaviour
 
     void
     HookeStressPotentialBase::addAxisymmetricalGeneralisedPlaneStressSupport(

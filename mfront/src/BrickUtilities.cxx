@@ -7,6 +7,7 @@
 
 #include <utility>
 #include <sstream>
+#include "TFEL/Raise.hxx"
 #include "TFEL/Glossary/Glossary.hxx"
 #include "TFEL/Glossary/GlossaryEntry.hxx"
 #include "TFEL/Utilities/StringAlgorithms.hxx"
@@ -585,6 +586,51 @@ namespace mfront {
       }
       return "tfel::math::stensor_common::FSESJACOBIEIGENSOLVER";
     }  // end of handleEigenSolverOption
+
+    std::string getBrokenTest(const BehaviourDescription& bd, const bool b) {
+      constexpr const auto uh =
+          tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+      const auto& d = bd.getBehaviourData(uh);
+      const auto& asvs = d.getAuxiliaryStateVariables();
+      const auto& esvs = d.getExternalStateVariables();
+      const auto pav =
+          findByExternalName(asvs, tfel::glossary::Glossary::Broken);
+      const auto pev =
+          findByExternalName(esvs, tfel::glossary::Glossary::Broken);
+      if (pav != asvs.end()) {
+        return "2 * (this->" + pav->name + ") > 1";
+      }
+      if (pev != esvs.end()) {
+        const auto& name = pev->name;
+        if (b) {
+          return "2 * (this->" + name + " + (this->d " + name + ")) > 1";
+        } else {
+          return "2 * (this->" + name + " + (" + bd.getClassName() +
+                 "::theta) * (this->d " + name + ")) > 1";
+        }
+      }
+      return "";
+    }  // end of getBrokenTest
+
+    void addBrokenStateSupportToComputeStress(std::string& c,
+                                              const BehaviourDescription& bd,
+                                              const bool b) {
+      using BehaviourType = tfel::material::MechanicalBehaviourBase;
+      tfel::raise_if(
+          bd.getBehaviourType() != BehaviourType::STANDARDSTRAINBASEDBEHAVIOUR,
+          "invalid behaviour description (must describe a standard "
+          "strain based behaviour)");
+      const auto broken_test = getBrokenTest(bd, b);
+      if (broken_test.empty()) {
+        return;
+      }
+      auto r = "if(" + broken_test + "){\n";
+      r += "this->sig = StressStensor(stress(0));\n";
+      r += "} else {\n";
+      r += c;
+      r += "}\n";
+      std::swap(r, c);
+    }  // end of addBrokenStateSupportToComputeStress
 
   }  // end of namespace bbrick
 

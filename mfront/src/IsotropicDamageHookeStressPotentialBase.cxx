@@ -87,6 +87,12 @@ namespace mfront {
         std::string m =
             "//! \\brief return an elastic prediction of the stresses\n"
             "StressStensor computeElasticPrediction() const{\n";
+        const auto broken_test = getBrokenTest(bd, false);
+        if (!broken_test.empty()) {
+          m += "if(" + broken_test + "){\n";
+          m += "  return StressStensor(stress(0));\n";
+          m += "}\n";
+        }
         if (h == ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS) {
           if ((bd.getAttribute(BehaviourDescription::requiresStiffnessTensor,
                                false)) ||
@@ -370,6 +376,8 @@ namespace mfront {
                     "(this->sebdata.lambda)*trace(this->eel)*Stensor::Id()+"  //
                     "2*(this->sebdata.mu)*this->eel);\n";
       }
+      addBrokenStateSupportToComputeStress(smts.code, bd, false);
+      addBrokenStateSupportToComputeStress(sets.code, bd, true);
       bd.setCode(uh, BehaviourData::ComputeThermodynamicForces, smts,
                  BehaviourData::CREATE, BehaviourData::AT_BEGINNING, false);
       bd.setCode(uh, BehaviourData::ComputeFinalThermodynamicForces, sets,

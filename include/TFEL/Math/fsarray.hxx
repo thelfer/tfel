@@ -191,20 +191,23 @@ namespace tfel {
        */
       TFEL_MATH_INLINE reverse_iterator rbegin() noexcept;
       /*!
-       * \brief return an const reverse iterator to the last element of the vector
+       * \brief return an const reverse iterator to the last element of the
+       * vector
        * (provided for stl compatibility)
        * \return const_reverse_iterator, a const reverse iterator to the last
        * element
        */
       TFEL_MATH_INLINE const_reverse_iterator rbegin() const noexcept;
       /*!
-       * \brief return an  reverse iterator before the first element of the vector
+       * \brief return an  reverse iterator before the first element of the
+       * vector
        * (provided for stl compatibility)
        * \return reverse_iterator, a reverse iterator before the first element
        */
       TFEL_MATH_INLINE reverse_iterator rend() noexcept;
       /*!
-       * \brief return an const reverse iterator before the first element of the vector
+       * \brief return an const reverse iterator before the first element of the
+       * vector
        * (provided for stl compatibility)
        * \return const_reverse_iterator, a const reverse iterator before the
        * first element

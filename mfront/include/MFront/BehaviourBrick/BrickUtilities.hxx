@@ -492,14 +492,38 @@ namespace mfront {
         const std::vector<std::shared_ptr<IsotropicHardeningRule>> &,
         const std::string &);
     /*!
-     * \brief return a string representation of the eigen solver enum associated with
-     * this string according to the following map:
+     * \brief return a string representation of the eigen solver enum associated
+     * with this string according to the following map:
      * - `TFEL` or `default` -> `tfel::math::stensor_common::TFELEIGENSOLVER`
      * - `Jacobi` -> `tfel::math::stensor_common::FSESJACOBIEIGENSOLVER`
      * \param[in] e: eigen solver option
      */
     MFRONT_VISIBILITY_EXPORT std::string handleEigenSolverOption(
         const std::string &);
+    /*!
+     * \return a piece of code testing if the current integration point is
+     * broken if a variable with the glossary name `Broken` as been defined. If
+     * no such variable has been declared, an empty string is returned.
+     * \param[in] bd: behaviour description
+     * \param[in] b: boolean stating if the broken must be evaluated at the end
+     * of the time step (`true`) or at the middle of the time step (`false`).
+     */
+    MFRONT_VISIBILITY_EXPORT std::string getBrokenTest(
+        const BehaviourDescription &, const bool);
+    /*!
+     * \brief if a variable with the glossary name `Broken` has been defined,
+     * this function includes the given piece of code evaluating the stress
+     * tensor in a conditional block. If the material is broken, the stress
+     * tensor is set to zero. If the material is not broken, the original code
+     * is called. The given code is not modified if no variable with glossary
+     * name `Broken` is defined.
+     * \param[in,out] c: original code on input, modified code on output.
+     * \param[in] bd: behaviour description.
+     * \param[in] b: boolean stating if the broken must be evaluated at the end
+     * of the time step (`true`) or at the middle of the time step (`false`).
+     */
+    MFRONT_VISIBILITY_EXPORT void addBrokenStateSupportToComputeStress(
+        std::string &, const BehaviourDescription &, const bool);
 
   }  // end of namespace bbrick
 

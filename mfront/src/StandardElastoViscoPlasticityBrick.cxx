@@ -3,6 +3,12 @@
  * \brief
  * \author Thomas Helfer
  * \date   17/03/2018
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #include "TFEL/Raise.hxx"
@@ -201,12 +207,6 @@ namespace mfront {
     const auto pe = this->isCoupledWithPorosityEvolution();
     for (auto& f : this->flows) {
       f->setPorosityEvolutionHandled(pe);
-    }
-    if (pe) {
-      //
-      mfront::bbrick::addAuxiliaryStateVariableIfNotDefined(
-          bd, "real", brokenVariable, tfel::glossary::Glossary::Broken, 1u,
-          true);
     }
   }  // end of StandardElastoViscoPlasticityBrick::initialize
 
@@ -439,6 +439,25 @@ namespace mfront {
   void StandardElastoViscoPlasticityBrick::completeVariableDeclaration() const {
     constexpr const auto uh =
         tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    if (this->isCoupledWithPorosityEvolution()) {
+      mfront::bbrick::addStateVariableIfNotDefined(
+          bd, "real", "f", tfel::glossary::Glossary::Porosity, 1u, true);
+      const auto& f =
+          bd.getBehaviourData(uh).getStateVariableDescriptionByExternalName(
+              tfel::glossary::Glossary::Porosity);
+      if (!f.hasPhysicalBounds()) {
+        VariableBoundsDescription fbounds;
+        fbounds.boundsType = VariableBoundsDescription::LOWERANDUPPER;
+        fbounds.lowerBound = 0;
+        fbounds.upperBound = 1;
+        this->bd.setPhysicalBounds(uh, f.name, fbounds);
+      }
+      this->bd.reserveName(uh, f.name + "_");
+      //
+      mfront::bbrick::addAuxiliaryStateVariableIfNotDefined(
+          bd, "real", brokenVariable, tfel::glossary::Glossary::Broken, 1u,
+          true);
+    }
     this->stress_potential->completeVariableDeclaration(this->bd, this->dsl);
     auto i = size_t{};
     for (const auto& f : this->flows) {
@@ -455,19 +474,6 @@ namespace mfront {
     }
     // automatic registration of the porosity for porous flows
     if (this->isCoupledWithPorosityEvolution()) {
-      mfront::bbrick::addStateVariableIfNotDefined(
-          bd, "real", "f", tfel::glossary::Glossary::Porosity, 1u, true);
-      const auto& f =
-          bd.getBehaviourData(uh).getStateVariableDescriptionByExternalName(
-              tfel::glossary::Glossary::Porosity);
-      if (!f.hasPhysicalBounds()) {
-        VariableBoundsDescription fbounds;
-        fbounds.boundsType = VariableBoundsDescription::LOWERANDUPPER;
-        fbounds.lowerBound = 0;
-        fbounds.upperBound = 1;
-        this->bd.setPhysicalBounds(uh, f.name, fbounds);
-      }
-      this->bd.reserveName(uh, f.name + "_");
       //
       VariableDescription alpha("real", porosityUpperBoundSafetyFactor, 1u, 0u);
       alpha.description = "a safety factor for the porosity upper bound";
@@ -533,6 +539,7 @@ namespace mfront {
             currentEstimateOfThePorosityIncrement;
         init.code += " = real{};\n";
         // initialize the iteration counter of the staggered scheme
+        init.code += "this->";
         init.code +=
             StandardElastoViscoPlasticityBrick::staggeredSchemeIterationCounter;
         init.code += " = static_cast<unsigned short>(0);\n";
@@ -841,7 +848,7 @@ namespace mfront {
          << "} else {\n";
       generate_debug_message(false);
       // the staggered scheme has not converged
-      os << "if(" << staggeredSchemeIterationCounter << " > this->"
+      os << "if(this->" << staggeredSchemeIterationCounter << " > this->"
          << maximumNumberOfIterationsOfTheStaggeredScheme << "){\n"
          << "tfel::raise<DivergenceException>(\""
          << "maximum number of iterations of "
@@ -852,7 +859,7 @@ namespace mfront {
          << "(this->" << currentEstimateOfThePorosityIncrement << " + "
          << nextEstimateOfThePorosityIncrement << ")/2;\n";
       // update the staggered iteration number
-      os << "++" << staggeredSchemeIterationCounter << ";\n"
+      os << "++(this->" << staggeredSchemeIterationCounter << ");\n"
          << "this->iter = 0;\n"
          << "converged = false;\n"
          << "}\n"
@@ -860,6 +867,26 @@ namespace mfront {
       acc.code = os.str();
       bd.setCode(uh, BehaviourData::AdditionalConvergenceChecks, acc,
                  BehaviourData::CREATEORAPPEND, BehaviourData::AT_END);
+    }
+    //
+    if ((this->isCoupledWithPorosityEvolution()) &&
+        (this->porosity_evolution_algorithm ==
+         mfront::bbrick::PorosityEvolutionAlgorithm::
+             STANDARD_IMPLICIT_SCHEME)) {
+      const auto& broken =
+          bd.getBehaviourData(uh)
+              .getAuxiliaryStateVariableDescriptionByExternalName(
+                  tfel::glossary::Glossary::Broken);
+      auto uasv = CodeBlock{};
+      const auto fmax =
+          "(this->" +
+          std::string(porosityUpperBoundSafetyFactorForFractureDetection) +
+          ") * " + std::string(porosityUpperBound);
+      uasv.code += "if(this->f > " + fmax + "){\n";
+      uasv.code += "this->" + broken.name + " = true;\n";
+      uasv.code += "}\n";
+      bd.setCode(uh, BehaviourData::UpdateAuxiliaryStateVariables, uasv,
+                 BehaviourData::CREATEORAPPEND, BehaviourData::AT_BEGINNING);
     }
   }  // end of StandardElastoViscoPlasticityBrick::endTreatment
 
