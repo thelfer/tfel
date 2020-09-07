@@ -15,6 +15,10 @@ now allowed. This subset is described here:
 
 # Tickets fixed
 
+## Ticket #243: Generic behaviour interface: throwing an exception in the initialize method is not properly handled
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/243/>
+
 ## Ticket #237: Compilation fails with `intel` compiler 2019 and 2020
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/237/>
