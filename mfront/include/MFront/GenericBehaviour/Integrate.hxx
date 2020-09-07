@@ -220,8 +220,8 @@ namespace mfront {
                                     DoNothingEnergyComputer>::type;
       Behaviour b(d);
       b.setOutOfBoundsPolicy(p);
-      b.initialize();
       try {
+        b.initialize();
         b.checkBounds();
         if (d.K[0] < -0.25) {
           return computePredictionOperator(b, d, f);
