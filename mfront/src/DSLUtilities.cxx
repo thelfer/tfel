@@ -358,6 +358,8 @@ void writeVariablesNamesSymbol(std::ostream &out, const std::string &name,
     symbols.insert({s, r});
   }  // end of addSymbol
 
+#ifdef MFRONT_HAVE_MADNEX
+
   std::tuple<std::string, std::string, std::string, std::string>
   decomposeImplementationPathInMadnexFile(const std::string& p) {
     using result_type = std::tuple<std::string, std::string, std::string, std::string>;
@@ -376,5 +378,8 @@ void writeVariablesNamesSymbol(std::ostream &out, const std::string &name,
     return result_type{std::move(details[1]), std::move(details[2]), std::move(details[3]),
             std::move(details[4])};
   }  // end of decomposeImplementationPathInMadnexFile
+
+#endif /* MFRONT_HAVE_MADNEX */
+
 
 }  // end of namespace mfront

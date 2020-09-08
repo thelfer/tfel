@@ -683,16 +683,22 @@ namespace mfront {
                "(this->dp" + id + ") * (this->trace_n" + id + ")";
       }();
       auto c = std::string{};
+      c = "if (this->bpl" + id + "){\n";
       if (this->save_porosity_increase) {
-        c = "this->dfg" + id + " = " + df + ";\n";
+        c += "this->dfg" + id + " = " + df + ";\n";
         c += StandardElastoViscoPlasticityBrick::
-            currentEstimateOfThePorosityIncrement;
+            nextEstimateOfThePorosityIncrement;
         c += " += this->dfg" + id + ";\n";
       } else {
-        c = StandardElastoViscoPlasticityBrick::
+        c += StandardElastoViscoPlasticityBrick::
             nextEstimateOfThePorosityIncrement;
         c += " += " + df + ";\n";
       }
+      if (this->save_porosity_increase) {
+        c += "} else {\n";
+        c += "this->dfg" + id + " = real{};\n";
+      }
+      c += "}\n";
       return c;
     }  // end of updateNextEstimateOfThePorosityIncrement
 
