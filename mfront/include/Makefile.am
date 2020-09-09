@@ -150,6 +150,7 @@ nobase_include_HEADERS= MFront/MFront.hxx                                     \
 			MFront/BehaviourBrick/MohrCoulombStressCriterion.hxx                         \
 			MFront/BehaviourBrick/MichelAndSuquet1992HollowSphereStressCriterion.hxx     \
 			MFront/BehaviourBrick/GursonTvergaardNeedleman1982StressCriterion.hxx        \
+			MFront/BehaviourBrick/RousselierTanguyBesson2002StressCriterion.hxx          \
 			MFront/BehaviourBrick/StressCriterionFactory.hxx                             \
 			MFront/BehaviourBrick/IsotropicHardeningRule.hxx                             \
 			MFront/BehaviourBrick/LinearIsotropicHardeningRule.hxx                       \

@@ -1699,6 +1699,8 @@ include/TFEL/Material/PowerLawStrainBasedNucleationModel.ixx -text
 include/TFEL/Material/PowerLawStressBasedNucleationModel.hxx -text
 include/TFEL/Material/PowerLawStressBasedNucleationModel.ixx -text
 include/TFEL/Material/RambergOsgood.hxx -text
+include/TFEL/Material/RousselierTanguyBesson2002StressCriterion.hxx -text
+include/TFEL/Material/RousselierTanguyBesson2002StressCriterion.ixx -text
 include/TFEL/Material/SlipSystemsDescription.hxx -text
 include/TFEL/Material/StiffnessTensor.hxx -text
 include/TFEL/Material/StiffnessTensor.ixx -text
@@ -2415,6 +2417,7 @@ mfront/include/MFront/BehaviourBrick/Provider.hxx -text
 mfront/include/MFront/BehaviourBrick/ProviderIdentifier.hxx -text
 mfront/include/MFront/BehaviourBrick/Requirement.hxx -text
 mfront/include/MFront/BehaviourBrick/RequirementManager.hxx -text
+mfront/include/MFront/BehaviourBrick/RousselierTanguyBesson2002StressCriterion.hxx -text
 mfront/include/MFront/BehaviourBrick/StandardPorousStressCriterionBase.hxx -text
 mfront/include/MFront/BehaviourBrick/StandardStressCriterionBase.hxx -text
 mfront/include/MFront/BehaviourBrick/StrainBasedPorosityNucleationModelBase.hxx -text
@@ -2934,6 +2937,7 @@ mfront/src/PowerLawStrainBasedPorosityNucleationModel.cxx -text
 mfront/src/PowerLawStressBasedPorosityNucleationModel.cxx -text
 mfront/src/PragerKinematicHardeningRule.cxx -text
 mfront/src/PythonMaterialPropertyInterface.cxx -text
+mfront/src/RousselierTanguyBesson2002StressCriterion.cxx -text
 mfront/src/RungeKuttaDSL.cxx -text
 mfront/src/RungeKuttaDSLBase.cxx -text
 mfront/src/RungeKuttaFiniteStrainDSL.cxx -text

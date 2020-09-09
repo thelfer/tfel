@@ -59,6 +59,8 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Material/MichelAndSuquet1992HollowSphereStressCriterion.ixx                             \
 			TFEL/Material/GursonTvergaardNeedleman1982StressCriterion.hxx                                \
 			TFEL/Material/GursonTvergaardNeedleman1982StressCriterion.ixx                                \
+			TFEL/Material/RousselierTanguyBesson2002StressCriterion.hxx                                  \
+			TFEL/Material/RousselierTanguyBesson2002StressCriterion.ixx                                  \
             TFEL/Material/PowerLawStrainBasedNucleationModel.hxx                                         \
             TFEL/Material/PowerLawStrainBasedNucleationModel.ixx                                         \
             TFEL/Material/PowerLawStressBasedNucleationModel.hxx                                         \

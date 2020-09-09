@@ -68,10 +68,11 @@ namespace mfront {
       const auto bound = std::string(
           mfront::StandardElastoViscoPlasticityBrick::porosityUpperBound);
       const auto params =
-          StressCriterion::getVariableId("sscb_parameters", id, r);
+          GursonTvergaardNeedleman1982StressCriterion::getVariableId(
+              "sscb_parameters", id, r);
       return "this->" + bound + " = " +  //
              "std::min(this->" + bound + ", this->" + params + ".f_r);\n";
-    }  // end of GursonTvergaardNeedleman1982StressCriterion::getPorosityEffectOnEquivalentPlasticStrain()
+    }  // end of GursonTvergaardNeedleman1982StressCriterion::updatePorosityUpperBound()
 
 
     GursonTvergaardNeedleman1982StressCriterion::

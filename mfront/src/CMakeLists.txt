@@ -191,6 +191,7 @@ set(TFELMFront_SOURCES
     MohrCoulombStressCriterion.cxx
     MichelAndSuquet1992HollowSphereStressCriterion.cxx
     GursonTvergaardNeedleman1982StressCriterion.cxx
+    RousselierTanguyBesson2002StressCriterion.cxx
     StressCriterionFactory.cxx
     IsotropicHardeningRule.cxx
     LinearIsotropicHardeningRule.cxx
