@@ -12,14 +12,15 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_TFEL_FUNCTION_HXX
-#define LIB_TFEL_FUNCTION_HXX
+#ifndef LIB_TFEL_MATH_PARSER_FUNCTION_HXX
+#define LIB_TFEL_MATH_PARSER_FUNCTION_HXX
 
 #include <memory>
 #include "TFEL/Config/TFELConfig.hxx"
 #include "TFEL/Math/Parser/Expr.hxx"
 
 namespace tfel {
+
   namespace math {
 
     namespace parser {
@@ -50,7 +51,8 @@ namespace tfel {
          * \param[in] n: name of the function
          * \param[in] e: expression
          */
-        StandardFunction(const char* const, const std::shared_ptr<Expr>);
+        StandardFunction(const char* const,
+                         const std::shared_ptr<Expr>) noexcept;
         /*!
          *\return the value resulting for the evaluation of the
          * function and its argument

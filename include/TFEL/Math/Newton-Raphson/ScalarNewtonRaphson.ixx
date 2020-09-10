@@ -62,7 +62,7 @@ namespace tfel {
         return std::make_tuple(false, p.x0, i);
       }
 #if __cplusplus >= 201703L
-      auto[f, df] = f(p.x0);
+      auto[fv, dfv] = f(p.x0);
 #else
       auto fdf = f(p.x0);
       auto fv = std::get<0>(fdf);

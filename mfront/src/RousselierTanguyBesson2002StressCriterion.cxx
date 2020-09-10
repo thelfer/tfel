@@ -69,7 +69,7 @@ namespace mfront {
           StressCriterion::getVariableId("sscb_parameters", id, r);
       return "this->" + bound + " = " +   //
              "std::min(this->" + bound +  //
-             ", 3 / (2 * this->" + params + ".D);\n";
+             ", 3 / (2 * this->" + params + ".D));\n";
       }  // end of
          // RousselierTanguyBesson2002StressCriterion::updatePorosityUpperBound()
 

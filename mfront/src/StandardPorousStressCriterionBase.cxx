@@ -157,7 +157,7 @@ namespace mfront {
       if ((r == STRESSCRITERION) || (r == STRESSANDFLOWCRITERION)) {
 #if __cplusplus >= 201703L
         c += "const auto [" + seq + ",d" + seq + "_d" + s + "] = ";
-        c += "compute" + this->name + "StressNormal(" + s + ", " + f +
+        c += "compute" + this->name + "StressNormal(" + s + ", " + f_ +
              ", this->" + params + ", " + sp.getEquivalentStressLowerBound(bd) +
              ");\n";
 #else  /* __cplusplus >= 201703L */
@@ -249,10 +249,8 @@ namespace mfront {
 #if __cplusplus >= 201703L
         c += "const auto [" + seqf +  //
              ", n" + id +             //
-             ", dseqf_d" +
-             f.name  //
-             ", d" +
-             n + "_d" + s +  //
+             ", dseqf_d" + f.name +   //
+             ", d" + n + "_d" + s +   //
              ", d" + n + "_d" + f.name + "] = ";
         c += "compute" + this->name + "StressSecondDerivative(" + s + ", " +
              f_ + ", this->" + params + ", " +
