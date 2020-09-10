@@ -78,6 +78,8 @@ namespace mtest {
                                                    const std::string&,
                                                    const Parameters&,
                                                    const Hypothesis);
+    //! \return the name of the behaviour
+    virtual std::string getBehaviourName() const = 0;
     //! \return the components suffixes of a symmetric tensor
     virtual std::vector<std::string> getStensorComponentsSuffixes() const = 0;
     //! \return the components suffixes of a vector

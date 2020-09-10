@@ -46,8 +46,9 @@ namespace mfront {
         MATERIALPROPERTY,           //<! \brief material property
         ARRAYOFMATERIALPROPERTIES,  //<! \brief array of material properties
         BOOLEAN,                    //<! \brief boolean value
-        REAL,                       //<! \brief value
-        STRING,                     //<! \brief value
+        REAL,                       //<! \brief floating point value
+        STRING,                     //<! \brief string value
+        DATAMAP,                    //<! \brief a map of data
         DATASTRUCTURE,              //<! \brief data structure
         DATASTRUCTURES /*! \brief the option must be a data structure or an
                         *  array of data structures.

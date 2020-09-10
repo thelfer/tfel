@@ -103,8 +103,7 @@ namespace mfront {
         } else if (this->md.parameters.contains(c)) {
           this->currentVar = c;
           handler = &Child::treatParameterMethod;
-        } else if (this->md.constantMaterialProperties.contains(
-                       c)) {
+        } else if (this->md.constantMaterialProperties.contains(c)) {
           this->currentVar = c;
           handler = &Child::treatConstantMaterialPropertyMethod;
         } else {

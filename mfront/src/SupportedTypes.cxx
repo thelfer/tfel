@@ -57,6 +57,7 @@ namespace mfront {
         {"ForceTVector", SupportedTypes::TVECTOR},
         // Finite Strain
         {"DeformationGradientTensor", SupportedTypes::TENSOR},
+        {"StressTensor", SupportedTypes::TENSOR},
         // GenericBehaviour
         {"HeatFlux", SupportedTypes::TVECTOR},
         {"TemperatureGradient", SupportedTypes::TVECTOR},

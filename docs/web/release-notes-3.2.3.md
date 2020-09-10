@@ -9,6 +9,16 @@ all the fixes of this version.
 
 # Issues solved
 
+## Ticket #242: The factor in front of the hyperbolic sine is discarded when using the `HyperbolicSine` inelastic flow
+
+The optional factor in in front of the hyperbolic sine was not generated when using the `HyperbolicSine` inelastic flow.
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/242/>
+
+## Ticket #228: Many stress criteria of the StandardElastoViscoplasticity brick fail when compiling in C++-17
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/228/>
+
 ## Ticket #222: Handling stored and dissated energies is broken in `MTest` for `Abaqus/Standard` behaviours
 
 There were a bug in `MTest` in the `Abaqus/Standard` behaviours which

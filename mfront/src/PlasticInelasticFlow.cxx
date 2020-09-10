@@ -13,6 +13,7 @@
 
 #include "TFEL/Glossary/Glossary.hxx"
 #include "TFEL/Glossary/GlossaryEntry.hxx"
+#include "MFront/MFrontDebugMode.hxx"
 #include "MFront/ImplicitDSLBase.hxx"
 #include "MFront/NonLinearSystemSolver.hxx"
 #include "MFront/BehaviourBrick/BrickUtilities.hxx"
@@ -27,14 +28,69 @@ namespace mfront {
 
   namespace bbrick {
 
+    std::vector<OptionDescription> PlasticInelasticFlow::getOptions() const {
+      auto opts = InelasticFlowBase::getOptions();
+
+      opts.emplace_back("maximum_equivalent_stress_factor",
+                        "a factor alpha which gives the maximal equivalent "
+                        "stress allowed before damping the current Newton "
+                        "step. This maximal equivalent stress is defined as "
+                        "alpha * R where R is the current elastic limit. Alpha "
+                        "must be greater than one",
+                        OptionDescription::REAL);
+      opts.emplace_back(
+          "equivalent_stress_check_maximum_iteration_factor",
+          "This factor beta gives the maximum iteration, computed by beta * "
+          "iterMax where iterMax is maximum number of iterations of the Newton "
+          "scheme, below which one checks if the maximal equivalent stress is "
+          "significantly greater than the current elastic limit, i.e. if the "
+          "current iteration number is greater than beta * iterMax, no checks "
+          "is made on the maximum allowed equivalent stress. This option is "
+          "only meaningfull if the `maximum_equivalent_stress_factor` option "
+          "has been specified. By default, the value of this option is 0.5.",
+          OptionDescription::REAL);
+      return opts;
+    }  // end of PlasticInelasticFlow::getOptions()
+
     void PlasticInelasticFlow::initialize(BehaviourDescription& bd,
                                           AbstractBehaviourDSL& dsl,
                                           const std::string& id,
                                           const DataMap& d) {
       using namespace tfel::glossary;
+      const auto rsmax_n = std::string("maximum_equivalent_stress_factor");
+      const auto rimax_n =
+          std::string("equivalent_stress_check_maximum_iteration_factor");
       InelasticFlowBase::initialize(bd, dsl, id, d);
+      if (d.count(rsmax_n) != 0) {
+        const auto rsmax = d.at(rsmax_n);
+        this->maximum_equivalent_stress_factor =
+            tfel::utilities::convert<double>(rsmax);
+        if (this->maximum_equivalent_stress_factor < 1) {
+          tfel::raise(
+              "PlasticInelasticFlow::initialize: invalid value for the option "
+              "`" +
+              rsmax_n + "` (value must be greater than one)");
+        }
+      }
+      if (d.count(rimax_n) != 0) {
+        if (d.count(rsmax_n) == 0) {
+          tfel::raise("PlasticInelasticFlow::initialize: option `" + rimax_n +
+                      "` is only meaningful if the option " + rsmax_n +
+                      "` is set");
+        }
+        const auto imax = d.at(rimax_n);
+        this->equivalent_stress_check_maximum_iteration_factor =
+            tfel::utilities::convert<double>(imax);
+        if ((this->equivalent_stress_check_maximum_iteration_factor < 0) &&
+            (this->equivalent_stress_check_maximum_iteration_factor > 1)) {
+          tfel::raise(
+              "PlasticInelasticFlow::initialize: the value for option "
+              "`equivalent_stress_check_maximum_iteration_factor` is "
+              "invalid (must be positive and lower than 1)");
+        }
+      }
       tfel::raise_if(this->ihrs.empty(),
-                     "PlasticInelasticFlow::initialize:"
+                     "PlasticInelasticFlow::initialize: "
                      "no isotropic hardening rule defined");
       if (id.empty()) {
         addStateVariable(bd, "strain", "p", Glossary::EquivalentPlasticStrain);
@@ -51,7 +107,7 @@ namespace mfront {
         const StressPotential& sp,
         const std::string& id,
         const bool b) const {
-      auto c = std::string{};
+      constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       tfel::raise_if(this->ihrs.empty(),
                      "PlasticInelasticFlow::buildFlowImplicitEquations :"
                      "no isotropic hardening rule defined");
@@ -60,30 +116,65 @@ namespace mfront {
       const auto fp = "fp" + id;
       const auto seq = "seq" + id;
       const auto dseq_ds = "dseq" + id + "_ds" + id;
+      const auto damping = [this, &bd, &seq, &R]() {
+        auto c = std::string{};
+        if (this->maximum_equivalent_stress_factor >= 1) {
+          const auto rmax =
+              std::to_string(this->maximum_equivalent_stress_factor);
+          const auto imax = std::to_string(
+              this->equivalent_stress_check_maximum_iteration_factor);
+          c += "if((" + seq + " > " + rmax + " * " + R + ") && ";
+          c += "(this->iter < " + imax + " * (this->iterMax))){\n";
+          if (getDebugMode()) {
+            c += "std::cout << \"" + bd.getClassName() + "::computeFdF: ";
+            c += "equivalent stress (\" << seq << \") is greater than its ";
+            c += "threshold (\" << (";
+            c += std::to_string(this->maximum_equivalent_stress_factor);
+            c += "*" + R + ") << \")\\n\";\n";
+          }
+          c += "return false;\n";
+          c += "}\n";
+        }
+        return c;
+      }();
+      auto c = std::string{};
       if (b) {
         const auto dR_ddp = "dR" + id + "_ddp" + id;
         const auto dfp_ddp = "dfp" + id + "_ddp" + id;
         c += computeElasticLimitAndDerivative(this->ihrs, id);
-        c += fp + " = (" + seq + "-" + R + ")/("+snf+");\n";
-        c += sp.computeDerivatives(bd, "strain", "p" + id,
-                                   dseq_ds + "/(" + snf + ")",
-                                   this->sc->isNormalDeviatoric());
+        c += damping;
+        c += fp + " = (" + seq + "-" + R + ")/(" + snf + ");\n";
+        c += sp.generateImplicitEquationDerivatives(
+            bd, "strain", "p" + id, dseq_ds + "/(" + snf + ")",
+            this->sc->isNormalDeviatoric());
+        c += "if(seq<" + sp.getEquivalentStressLowerBound(bd) + "){\n";
         c += "if(" + dR_ddp + ">0){\n";
-        c += dfp_ddp + " = -1*std::max(real(1.e-12),(" + dR_ddp +
-             ")/("+snf+"));\n";
+        c += dfp_ddp + " = -1*std::max(real(1.e-12),(" + dR_ddp + ")/(" + snf +
+             "));\n";
         c += "} else {\n";
-        c += dfp_ddp + " = -1*std::min(-real(1.e-12),(" + dR_ddp +
-             ")/("+snf+"));\n";
+        c += dfp_ddp + " = -1*std::min(-real(1.e-12),(" + dR_ddp + ")/(" + snf +
+             "));\n";
+        c += "}\n";
+        c += "} else {\n";
+        c += dfp_ddp + " = -(" + dR_ddp + ")/(" + snf + ");\n";
         c += "}\n";
         auto kid = decltype(khrs.size()){};
         for (const auto& khr : khrs) {
-          c += khr->computeDerivatives("p", "-dseq_ds/(" + snf + ")", id,
-                                       std::to_string(kid));
+          c += khr->generateImplicitEquationDerivatives(
+              "p", "-dseq_ds/(" + snf + ")", id, std::to_string(kid));
           ++kid;
+        }
+        if (this->isCoupledWithPorosityEvolution()) {
+          const auto& f =
+              bd.getBehaviourData(uh).getStateVariableDescriptionByExternalName(
+                  tfel::glossary::Glossary::Porosity);
+          c += "dfp" + id + "_dd" + f.name + " = ";
+          c += "(theta * d" + seq + "_d" + f.name + ")/(" + snf + ");\n";
         }
       } else {
         c += computeElasticLimit(this->ihrs, id);
-        c += fp + " = (" + seq + "-" + R + ")/("+snf+");\n";
+        c += damping;
+        c += fp + " = (" + seq + "-" + R + ")/(" + snf + ");\n";
       }
       return c;
     }  // end of PlasticInelasticFlow::buildFlowImplicitEquations

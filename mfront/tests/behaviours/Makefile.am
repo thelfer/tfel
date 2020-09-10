@@ -23,7 +23,10 @@ MFRONTS= DDIF2.mfront                                                      \
          OrthotropicElastic5.mfront                                        \
          OrthotropicElastic6.mfront                                        \
          GeneralizedMaxwell.mfront                                         \
+	 PerfectPlasticity.mfront                                   \
 	 HosfordPerfectPlasticity.mfront                                   \
+	 HosfordPerfectPlasticity2.mfront                                  \
+	 HosfordPerfectPlasticity3.mfront                                  \
          FiniteRotationSmallStrainElasticity.mfront                        \
          FiniteRotationSmallStrainElasticity2.mfront                       \
 	 Plasticity.mfront                                                 \
@@ -36,6 +39,10 @@ MFRONTS= DDIF2.mfront                                                      \
          ImplicitNorton2.mfront                                            \
          ImplicitNorton3.mfront                                            \
          ImplicitNorton4.mfront                                            \
+         ImplicitNorton5.mfront                                            \
+         ImplicitNorton6.mfront                                            \
+         ThermalNorton.mfront                                            \
+         ThermalNorton2.mfront                                            \
          ImplicitFiniteStrainNorton.mfront                                 \
          ImplicitNorton_Broyden.mfront                                     \
          ImplicitNorton_Broyden2.mfront                                    \
@@ -99,6 +106,7 @@ MFRONTS= DDIF2.mfront                                                      \
 	 SaintVenantKirchhoffElasticityTotalLagrangian.mfront              \
 	 SaintVenantKirchhoffElasticity2.mfront                            \
 	 SaintVenantKirchhoffElasticity3.mfront                            \
+	 SaintVenantKirchhoffElasticity4.mfront                            \
 	 SaintVenantKirchhoffElasticityWithSubStepping.mfront              \
 	 OrthotropicSaintVenantKirchhoffElasticity.mfront                  \
 	 LogarithmicStrainElasticity.mfront                                \
@@ -156,7 +164,9 @@ MFRONTS= DDIF2.mfront                                                      \
 	 LogarithmicStrainOrthotropicElasticity.mfront                     \
 	 GenerateMTestFileOnFailure.mfront				   \
 	 StationaryHeatTransfer.mfront					   \
-	 StationaryHeatTransfer2.mfront
+	 StationaryHeatTransfer2.mfront                                    \
+	 ThermoElasticity.mfront                                           \
+         MiehePhaseFieldDisplacementDeviatoricSplit.mfront
 
 testsdir = $(pkgdatadir)/mfront/tests/behaviours
 tests_DATA = $(MFRONTS)

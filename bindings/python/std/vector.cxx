@@ -22,26 +22,22 @@
 #include"TFEL/Python/VectorConverter.hxx"
 
 #ifndef _WIN32
-struct DontDeclareAnyThing
-{
+struct DontDeclareAnyThing {
   static void
   declare()
   {}
 };
 
-struct DeclareProcessIdVector
-{
-  static void
-  declare()
-  {
+struct DeclareProcessIdVector {
+  static void declare() {
     using namespace tfel::system;
     using namespace tfel::python;
     initializeVectorConverter<std::vector<ProcessManager::ProcessId> >();
   }
 };
 #endif /* _WIN32 */
-BOOST_PYTHON_MODULE(_stl_vector)
-{
+
+BOOST_PYTHON_MODULE(_stl_vector) {
   using namespace std;
   using namespace tfel::meta;
   using namespace tfel::math;

@@ -36,6 +36,8 @@ return_value_policy<reference_existing_object>())
 "la contrainte axiale")
 .def_readonly("B10BurnUp",&Glossary::B10BurnUp,
 "le taux d'usure en \\(\\mbox{}^{10}B\\)")
+.def_readonly("Broken",&Glossary::Broken,
+"material failure indicator")
 .def_readonly("BulkModulus",&Glossary::BulkModulus,
 "The bulk modulus of an isotropic material")
 .def_readonly("BurnUp_AtPercent",&Glossary::BurnUp_AtPercent,
@@ -147,7 +149,11 @@ return_value_policy<reference_existing_object>())
 .def_readonly("PoissonRatio23",&Glossary::PoissonRatio23,
 "le coefficient de Poisson d'un matériau orthotrope relatif aux deuxième et troisième directions d'orthotropie")
 .def_readonly("Porosity",&Glossary::Porosity,
-"la porosité du matériau")
+"Porosity of the material")
+.def_readonly("PorosityIncreaseDueToInelasticFlow",&Glossary::PorosityIncreaseDueToInelasticFlow,
+"Part of the porosity increase du to inelastic flow")
+.def_readonly("PorosityIncreaseDueToNucleation",&Glossary::PorosityIncreaseDueToNucleation,
+"Part of the porosity increase du to nucleation")
 .def_readonly("PowerDensity",&Glossary::PowerDensity,
 "la densité de puissance")
 .def_readonly("Pressure",&Glossary::Pressure,

@@ -11,16 +11,16 @@
  * project under specific licensing conditions.
  */
 
-#include "TFEL/Material/ModellingHypothesis.hxx"
-#include "MFront/MFrontLogStream.hxx"
-#include "MTest/RoundingMode.hxx"
-#include "MTest/Behaviour.hxx"
-#include "MTest/BehaviourWorkSpace.hxx"
-#include "MTest/CurrentState.hxx"
+#include<ostream>
+#include"TFEL/Material/ModellingHypothesis.hxx"
+#include"MFront/MFrontLogStream.hxx"
+#include"MTest/RoundingMode.hxx"
+#include"MTest/Behaviour.hxx"
+#include"MTest/BehaviourWorkSpace.hxx"
+#include"MTest/CurrentState.hxx"
 #include "MTest/CurrentStateView.hxx"
-#include "MTest/StructureCurrentState.hxx"
-#include "MTest/PipeMesh.hxx"
-#include "MTest/PipeLinearElement.hxx"
+#include"MTest/StructureCurrentState.hxx"
+#include"MTest/PipeLinearElement.hxx"
 
 namespace mtest {
 

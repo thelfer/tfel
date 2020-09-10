@@ -110,7 +110,7 @@ namespace mfront {
         mdf_ds += "-(this->" + Dn + ")*(1-this->" + en + ")*2*(";
         mdf_ds += "(" + an + "_|" + n + ")*d" + n + "_ds" + fid + "+";
         mdf_ds += "(" + n + "^(" + an + "_|d" + n + "_ds" + fid + ")))/3)";
-        c += sp.computeDerivatives(bd, "StrainStensor", an, "-" + mdf_ds,
+        c += sp.generateImplicitEquationDerivatives(bd, "StrainStensor", an, "-" + mdf_ds,
                                    fc.isNormalDeviatoric());
         // term specific to this back strain
         c += "df" + an + "_dd" + an + " += ";
@@ -120,8 +120,8 @@ namespace mfront {
         // terms in common for all back strains
         auto kid2 = decltype(khrs.size()){};
         for (const auto& khr : khrs) {
-          c += khr->computeDerivatives(an, mdf_ds, fid,
-                                       std::to_string(kid2));
+          c += khr->generateImplicitEquationDerivatives(an, mdf_ds, fid,
+                                                        std::to_string(kid2));
           ++kid2;
         }
       }

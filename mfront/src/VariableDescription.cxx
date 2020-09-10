@@ -14,6 +14,7 @@
 
 #include <sstream>
 #include <stdexcept>
+#include <algorithm>
 #include "TFEL/Raise.hxx"
 #include "TFEL/Glossary/Glossary.hxx"
 #include "TFEL/Glossary/GlossaryEntry.hxx"
@@ -410,6 +411,10 @@ namespace mfront {
 
   VariableDescription::~VariableDescription() = default;
 
+  SupportedTypes::TypeSize getTypeSize(const VariableDescription& v) {
+    return v.getTypeSize();
+  } // end of getTypeSize
+
   bool hasBounds(const VariableDescription& v) {
     return v.hasBounds();
   }  // end of hasBounds
@@ -513,15 +518,14 @@ namespace mfront {
   const VariableDescription&
   VariableDescriptionContainer::getVariableByExternalName(
       const std::string& n) const {
-    for (auto& v : *this) {
-      if (v.getExternalName() == n) {
-        return v;
-      }
+    auto p = findByExternalName(*this, n);
+    if (p == this->end()) {
+      tfel::raise(
+          "VariableDescriptionContainer::getVariableByExternalName : "
+          "no variable with external name '" +
+          n + "' found");
     }
-    tfel::raise(
-        "VariableDescriptionContainer::getVariableByExternalName : "
-        "no variable with external name '" +
-        n + "'");
+    return *p;
   }  // end of VariableDescriptionContainer::getVariableByExternalName
 
   const VariableDescription& VariableDescriptionContainer::getVariable(
@@ -554,6 +558,17 @@ namespace mfront {
   }  // end of SupportedTypes::getNumberOfVariables
 
   VariableDescriptionContainer::~VariableDescriptionContainer() = default;
+
+  VariableDescriptionContainer::const_iterator findByExternalName(
+      const VariableDescriptionContainer& c, const std::string& n) {
+    return std::find_if(c.begin(), c.end(), [&n](const VariableDescription& v) {
+      return v.getExternalName() == n;
+    });
+  }  // end of findByExternalName
+
+  SupportedTypes::TypeSize getTypeSize(const VariableDescriptionContainer& c) {
+    return c.getTypeSize();
+  } // end of getTypeSize
 
   bool hasBounds(const VariableDescriptionContainer& c) {
     for (const auto& v : c) {
@@ -609,5 +624,18 @@ namespace mfront {
       getTimeDerivativeSymbol(symbols, v);
     }
   }  // end of getTimeDerivativeSymbols
+
+  SupportedTypes::TypeSize getOffset(const VariableDescriptionContainer& c,
+                                     const std::string& n) {
+    auto o = SupportedTypes::TypeSize{};
+    for (const auto& v : c) {
+      if (v.name == n) {
+        return o;
+      }
+      o += getTypeSize(v);
+    }
+    tfel::raise("mfront::getOffset: no variable name '" + n + "'");
+    return o;
+  } // end of getOffset
 
 }  // end of namespace mfront

@@ -49,6 +49,15 @@ namespace mfront {
     virtual const tfel::utilities::Argument& getCurrentCommandLineArgument()
         const = 0;
     virtual bool treatUnknownArgumentBase();
+    //! \brief method that must be called once all the arguments have been parsed
+    virtual void finalizeArgumentsParsing();
+#ifdef MFRONT_HAVE_MADNEX
+    /*!
+     * \brief treat a `madnex` file
+     * \param[in] f: file name
+     */
+    virtual void treatMadnexFile(const std::string&);
+#endif /* MFRONT_HAVE_MADNEX */
     //! \brief treat the `--verbose` command line option
     virtual void treatVerbose();
     //! \brief treat the `--unicode-output` command line option
@@ -68,9 +77,18 @@ namespace mfront {
     virtual void treatPedantic();
     //! \brief treat the `--interface` command line option
     virtual void treatInterface();
+    //! \brief treat the `--material-identifier` command line option
+    virtual void treatMaterialIdentifier();
+    //! \brief treat the `--material-property-identifier` command line option
+    virtual void treatMaterialPropertyIdentifier();
+    //! \brief treat the `--behaviour-identifier` command line option
+    virtual void treatBehaviourIdentifier();
+    //! \brief treat the `--model-identifier` command line option
+    virtual void treatModelIdentifier();
     /*!
      * \brief external commands specificed on the command line through
-     * an `--@XXX` option
+     * an `--@XXX` option. Those external commends are applied to
+     * all input files.
      */
     std::vector<std::string> ecmds;
     /*!
@@ -79,14 +97,23 @@ namespace mfront {
      * files will be replaced by `YYY`
      */
     std::map<std::string, std::string> substitutions;
-    //! list of all input files
+    //! \brief material identifier for the next input file
+    std::string material_identifier;
+    //! \brief material property identifier for the next input file
+    std::string material_property_identifier;
+    //! \brief behaviour identifier for the next input file
+    std::string behaviour_identifier;
+    //! \brief model identifier for the next input file
+    std::string model_identifier;
+    //! \brief list of all input files
     std::set<std::string> inputs;
-    //! list of interfaces declared on the command line or explicitely
-    //! added through the set interface method
+    /*!
+     * \brief list of interfaces declared on the command line or explicitely
+     * added through the set interface method.
+     */
     std::set<std::string> interfaces;
   };  // end of struct MFrontBase
 
 }  // end of namespace mfront
 
 #endif /* LIB_MFRONT_MFRONTBASE_HXX */
-

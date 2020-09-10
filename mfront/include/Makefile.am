@@ -1,6 +1,6 @@
 ## Makefile.am -- Process this file with automake to produce a Makefile.in file.
 
-nobase_include_HEADERS= MFront/MFront.hxx                                      \
+nobase_include_HEADERS= MFront/MFront.hxx                                     \
 			MFront/InstallPath.hxx                                            \
 			MFront/MaterialKnowledgeType.hxx                                  \
 			MFront/MFrontBase.hxx                                             \
@@ -10,10 +10,11 @@ nobase_include_HEADERS= MFront/MFront.hxx                                      \
 			MFront/CMakeGenerator.hxx                                         \
 			MFront/MakefileGenerator.hxx                                      \
 			MFront/CodeBlock.hxx                                              \
-			MFront/MFrontConfig.hxx	                                       \
-			MFront/MFrontDebugMode.hxx	                                       \
+			MFront/CodeBlock.ixx                                              \
+			MFront/MFrontConfig.hxx	                                          \
+			MFront/MFrontDebugMode.hxx	                                      \
 			MFront/PerformanceProfiling.hxx                                   \
-			MFront/PedanticMode.hxx	                                       \
+			MFront/PedanticMode.hxx	                                          \
 			MFront/MFrontLogStream.hxx                                        \
 			MFront/GenericData.hxx                                            \
 			MFront/FileDescription.hxx                                        \
@@ -87,64 +88,79 @@ nobase_include_HEADERS= MFront/MFront.hxx                                      \
 			MFront/DefaultFiniteStrainDSL.hxx                                 \
 			MFront/MaterialPropertyDSL.hxx                                    \
 			MFront/ModelDSL.hxx                                               \
-             MFront/BehaviourMaterialProperty.hxx                              \
+            MFront/BehaviourMaterialProperty.hxx                              \
 			MFront/StandardBehaviourInterface.hxx                             \
 			MFront/UMATInterfaceBase.hxx                                      \
 			MFront/GenericBehaviourInterface.hxx                              \
-             MFront/SymbolsGenerator.hxx                                 \
-                        MFront/GenericBehaviourSymbolsGenerator.hxx                       \
-			MFront/MTestFileGeneratorBase.hxx                                 \
-			MFront/UmatSmallStrainMTestFileGenerator.hxx                      \
-			MFront/UmatFiniteStrainMTestFileGenerator.hxx                     \
-			MFront/GenericBehaviourSmallStrainMTestFileGenerator.hxx          \
-			MFront/GenericBehaviourFiniteStrainMTestFileGenerator.hxx         \
-			MFront/MFrontTemplateGenerationOptions.hxx                        \
-			MFront/BehaviourBrickDescription.hxx                              \
-			MFront/AbstractBehaviourBrick.hxx                                 \
-			MFront/BehaviourBrickBase.hxx                                     \
-			MFront/BehaviourBrickFactory.hxx                                  \
-			MFront/BehaviourBrick/OptionDescription.hxx                       \
-			MFront/BehaviourBrick/BrickUtilities.hxx                          \
-			MFront/BehaviourBrick/BrickUtilities.ixx                          \
-			MFront/BehaviourBrick/ProviderIdentifier.hxx                      \
-			MFront/BehaviourBrick/Requirement.hxx                             \
-			MFront/BehaviourBrick/RequirementManager.hxx                      \
-			MFront/BehaviourBrick/Provider.hxx                                \
-			MFront/BehaviourBrick/StressPotential.hxx                         \
-			MFront/BehaviourBrick/HookeStressPotentialBase.hxx                \
-			MFront/BehaviourBrick/HookeStressPotential.hxx                    \
-			MFront/BehaviourBrick/DDIF2StressPotential.hxx                    \
-			MFront/BehaviourBrick/IsotropicDamageHookeStressPotentialBase.hxx \
-			MFront/BehaviourBrick/IsotropicDamageHookeStressPotential.hxx     \
-			MFront/BehaviourBrick/StressPotentialFactory.hxx                  \
-			MFront/BehaviourBrick/InelasticFlow.hxx                           \
-			MFront/BehaviourBrick/InelasticFlowBase.hxx                       \
-			MFront/BehaviourBrick/ViscoplasticFlowBase.hxx                    \
-			MFront/BehaviourBrick/NortonHoffViscoplasticFlow.hxx              \
-			MFront/BehaviourBrick/HyperbolicSineViscoplasticFlow.hxx          \
-			MFront/BehaviourBrick/PlasticInelasticFlow.hxx                    \
-			MFront/BehaviourBrick/InelasticFlowFactory.hxx                    \
-			MFront/BehaviourBrick/StressCriterion.hxx                         \
-			MFront/BehaviourBrick/StressCriterionBase.hxx                     \
-			MFront/BehaviourBrick/MisesStressCriterion.hxx                    \
-			MFront/BehaviourBrick/Hill1948StressCriterion.hxx                 \
-			MFront/BehaviourBrick/Drucker1949StressCriterion.hxx              \
-			MFront/BehaviourBrick/Barlat2004StressCriterion.hxx               \
-			MFront/BehaviourBrick/Hosford1972StressCriterion.hxx              \
-			MFront/BehaviourBrick/Cazacu2001StressCriterion.hxx               \
-			MFront/BehaviourBrick/Cazacu2004IsotropicStressCriterion.hxx      \
-			MFront/BehaviourBrick/Cazacu2004OrthotropicStressCriterion.hxx    \
-			MFront/BehaviourBrick/MohrCoulombStressCriterion.hxx              \
-			MFront/BehaviourBrick/StressCriterionFactory.hxx                  \
-			MFront/BehaviourBrick/IsotropicHardeningRule.hxx                  \
-			MFront/BehaviourBrick/LinearIsotropicHardeningRule.hxx            \
-			MFront/BehaviourBrick/SwiftIsotropicHardeningRule.hxx             \
-			MFront/BehaviourBrick/PowerIsotropicHardeningRule.hxx             \
-			MFront/BehaviourBrick/VoceIsotropicHardeningRule.hxx              \
-			MFront/BehaviourBrick/IsotropicHardeningRuleFactory.hxx           \
-			MFront/BehaviourBrick/KinematicHardeningRule.hxx                  \
-			MFront/BehaviourBrick/KinematicHardeningRuleBase.hxx              \
-			MFront/BehaviourBrick/PragerKinematicHardeningRule.hxx            \
+            MFront/SymbolsGenerator.hxx                                       \
+            MFront/GenericBehaviourSymbolsGenerator.hxx                       \
+			MFront/MTestFileGeneratorBase.hxx                                            \
+			MFront/UmatSmallStrainMTestFileGenerator.hxx                                 \
+			MFront/UmatFiniteStrainMTestFileGenerator.hxx                                \
+			MFront/GenericBehaviourSmallStrainMTestFileGenerator.hxx                     \
+			MFront/GenericBehaviourFiniteStrainMTestFileGenerator.hxx                    \
+			MFront/MFrontTemplateGenerationOptions.hxx                                   \
+			MFront/BehaviourBrickDescription.hxx                                         \
+			MFront/AbstractBehaviourBrick.hxx                                            \
+			MFront/BehaviourBrickBase.hxx                                                \
+			MFront/BehaviourBrickFactory.hxx                                             \
+			MFront/BehaviourBrick/OptionDescription.hxx                                  \
+			MFront/BehaviourBrick/BrickUtilities.hxx                                     \
+			MFront/BehaviourBrick/BrickUtilities.ixx                                     \
+			MFront/BehaviourBrick/ProviderIdentifier.hxx                                 \
+			MFront/BehaviourBrick/Requirement.hxx                                        \
+			MFront/BehaviourBrick/RequirementManager.hxx                                 \
+			MFront/BehaviourBrick/Provider.hxx                                           \
+			MFront/BehaviourBrick/PorosityEvolutionAlgorithm.hxx                         \
+			MFront/BehaviourBrick/StressPotential.hxx                                    \
+			MFront/BehaviourBrick/HookeStressPotentialBase.hxx                           \
+			MFront/BehaviourBrick/HookeStressPotential.hxx                               \
+			MFront/BehaviourBrick/DDIF2StressPotential.hxx                               \
+			MFront/BehaviourBrick/IsotropicDamageHookeStressPotentialBase.hxx            \
+			MFront/BehaviourBrick/IsotropicDamageHookeStressPotential.hxx                \
+			MFront/BehaviourBrick/StressPotentialFactory.hxx                             \
+			MFront/BehaviourBrick/InelasticFlowFactory.hxx                               \
+			MFront/BehaviourBrick/InelasticFlow.hxx                                      \
+			MFront/BehaviourBrick/InelasticFlowBase.hxx                                  \
+			MFront/BehaviourBrick/ViscoplasticFlowBase.hxx                               \
+			MFront/BehaviourBrick/NortonHoffViscoplasticFlow.hxx                         \
+			MFront/BehaviourBrick/HyperbolicSineViscoplasticFlow.hxx                     \
+			MFront/BehaviourBrick/PlasticInelasticFlow.hxx                               \
+			MFront/BehaviourBrick/PorosityNucleationModelFactory.hxx                     \
+			MFront/BehaviourBrick/PorosityNucleationModel.hxx                            \
+			MFront/BehaviourBrick/PorosityNucleationModelBase.hxx                        \
+			MFront/BehaviourBrick/StrainBasedPorosityNucleationModelBase.hxx             \
+			MFront/BehaviourBrick/StressBasedPorosityNucleationModelBase.hxx             \
+			MFront/BehaviourBrick/PowerLawStrainBasedPorosityNucleationModel.hxx         \
+			MFront/BehaviourBrick/PowerLawStressBasedPorosityNucleationModel.hxx         \
+			MFront/BehaviourBrick/ChuNeedleman1980StrainBasedPorosityNucleationModel.hxx \
+			MFront/BehaviourBrick/ChuNeedleman1980StressBasedPorosityNucleationModel.hxx \
+			MFront/BehaviourBrick/StressCriterion.hxx                                    \
+			MFront/BehaviourBrick/StressCriterionBase.hxx                                \
+			MFront/BehaviourBrick/StandardStressCriterionBase.hxx                        \
+			MFront/BehaviourBrick/StandardPorousStressCriterionBase.hxx                  \
+			MFront/BehaviourBrick/MisesStressCriterion.hxx                               \
+			MFront/BehaviourBrick/Hill1948StressCriterion.hxx                            \
+			MFront/BehaviourBrick/Drucker1949StressCriterion.hxx                         \
+			MFront/BehaviourBrick/Barlat2004StressCriterion.hxx                          \
+			MFront/BehaviourBrick/Hosford1972StressCriterion.hxx                         \
+			MFront/BehaviourBrick/Cazacu2001StressCriterion.hxx                          \
+			MFront/BehaviourBrick/Cazacu2004IsotropicStressCriterion.hxx                 \
+			MFront/BehaviourBrick/Cazacu2004OrthotropicStressCriterion.hxx               \
+			MFront/BehaviourBrick/MohrCoulombStressCriterion.hxx                         \
+			MFront/BehaviourBrick/MichelAndSuquet1992HollowSphereStressCriterion.hxx     \
+			MFront/BehaviourBrick/GursonTvergaardNeedleman1982StressCriterion.hxx        \
+			MFront/BehaviourBrick/RousselierTanguyBesson2002StressCriterion.hxx          \
+			MFront/BehaviourBrick/StressCriterionFactory.hxx                             \
+			MFront/BehaviourBrick/IsotropicHardeningRule.hxx                             \
+			MFront/BehaviourBrick/LinearIsotropicHardeningRule.hxx                       \
+			MFront/BehaviourBrick/SwiftIsotropicHardeningRule.hxx                        \
+			MFront/BehaviourBrick/PowerIsotropicHardeningRule.hxx                        \
+			MFront/BehaviourBrick/VoceIsotropicHardeningRule.hxx                         \
+			MFront/BehaviourBrick/IsotropicHardeningRuleFactory.hxx                      \
+			MFront/BehaviourBrick/KinematicHardeningRule.hxx                             \
+			MFront/BehaviourBrick/KinematicHardeningRuleBase.hxx                         \
+			MFront/BehaviourBrick/PragerKinematicHardeningRule.hxx                       \
 			MFront/BehaviourBrick/ArmstrongFrederickKinematicHardeningRule.hxx \
 			MFront/BehaviourBrick/Chaboche2012KinematicHardeningRule.hxx       \
 			MFront/BehaviourBrick/BurletCailletaudKinematicHardeningRule.hxx   \

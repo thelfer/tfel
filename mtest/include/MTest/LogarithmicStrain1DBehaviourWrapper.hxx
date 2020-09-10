@@ -38,6 +38,7 @@ namespace mtest {
      * \param[in] wb : wrapped behaviour
      */
     LogarithmicStrain1DBehaviourWrapper(const std::shared_ptr<Behaviour>&);
+    std::string getBehaviourName() const override;
     std::vector<std::string> getStensorComponentsSuffixes() const override;
     std::vector<std::string> getVectorComponentsSuffixes() const override;
     std::vector<std::string> getTensorComponentsSuffixes() const override;

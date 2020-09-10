@@ -42,6 +42,19 @@ namespace mfront {
 
     //! \brief class describing a stress criterion
     struct MFRONT_VISIBILITY_EXPORT StressCriterion {
+      //! \brief policy on how the porosity affects the flow rule
+      enum PorosityEffectOnFlowRule {
+        /*!
+         * \brief This value indicate that the flow rule is not affected by the
+         * porosity evolution.
+         */
+        NO_POROSITY_EFFECT_ON_EQUIVALENT_PLASTIC_STRAIN,
+        /*!
+         * \brief This value indicate that the flow rule must be corrected by
+         * the standard \f$(1-f)\f$ factor where \f$f\f$ is the porosity.
+         */
+        STANDARD_POROSITY_CORRECTION_ON_EQUIVALENT_PLASTIC_STRAIN
+      };
       /*!
        * \brief describe the purpose of the criterion
        */
@@ -185,8 +198,26 @@ namespace mfront {
                                                   const BehaviourDescription&,
                                                   const StressPotential&,
                                                   const Role) const = 0;
+      //! \return if the the flow is coupled with the porosity evolution
+      virtual bool isCoupledWithPorosityEvolution() const = 0;
       //! \return if the normal is deviatoric
       virtual bool isNormalDeviatoric() const = 0;
+      /*!
+       * \return if using this stress criterion generally implies a
+       * correction of the flow rule 
+       */
+      virtual PorosityEffectOnFlowRule getPorosityEffectOnEquivalentPlasticStrain() const = 0;
+      /*!
+       * \return the code updating the upper bound of the porosity.
+       * If this stress criterion is not coupled with porosity, the returned
+       * value may be empty.
+       * \param[in] bd: behaviour description
+       * \param[in] id: flow id
+       * \param[in] r: criterion' role
+       */
+      virtual std::string updatePorosityUpperBound(const BehaviourDescription&,
+                                                   const std::string&,
+                                                   const Role) const = 0;
       //! destructor
       virtual ~StressCriterion();
     };  // end of struct StressCriterion

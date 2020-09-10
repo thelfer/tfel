@@ -323,9 +323,18 @@ namespace mfront {
       return c;
     }  // end of Cazacu2001StressCriterion::computeNormalDerivative
 
+    bool Cazacu2001StressCriterion::isCoupledWithPorosityEvolution() const {
+      return false;
+    }  // end of Cazacu2001StressCriterion::isCoupledWithPorosityEvolution
+
     bool Cazacu2001StressCriterion::isNormalDeviatoric() const {
       return true;
     }  // end of Cazacu2001StressCriterion::isNormalDeviatoric
+
+    StressCriterion::PorosityEffectOnFlowRule
+    Cazacu2001StressCriterion::getPorosityEffectOnEquivalentPlasticStrain() const {
+      return StressCriterion::NO_POROSITY_EFFECT_ON_EQUIVALENT_PLASTIC_STRAIN;
+    }  // end of Cazacu2001StressCriterion::getPorosityEffectOnEquivalentPlasticStrain()
 
     Cazacu2001StressCriterion::~Cazacu2001StressCriterion() = default;
 

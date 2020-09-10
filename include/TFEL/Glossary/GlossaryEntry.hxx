@@ -20,17 +20,14 @@
 
 #include"TFEL/Config/TFELConfig.hxx"
 
-namespace tfel
-{
+namespace tfel {
 
-  namespace glossary
-  {
-  
+  namespace glossary {
+
     /*!
      * structure describing an entry of the glossary
      */
-    struct TFELGLOSSARY_VISIBILITY_EXPORT GlossaryEntry
-    {
+    struct TFELGLOSSARY_VISIBILITY_EXPORT GlossaryEntry {
       /*!
        * constructor
        * \param[in] k  : key used to store the entry
@@ -42,12 +39,12 @@ namespace tfel
        * \param[in] no : note
        */
       GlossaryEntry(const std::string&,
-		    const std::string&,
-		    const std::string&,
-		    const std::string&,
-		    const std::string&,
-		    const std::vector<std::string>&,
-		    const std::vector<std::string>&);
+                    const std::string&,
+                    const std::string&,
+                    const std::string&,
+                    const std::string&,
+                    const std::vector<std::string>&,
+                    const std::vector<std::string>&);
       /*!
        * constructor
        * \param[in] k  : key used to store
@@ -180,28 +177,23 @@ namespace tfel
       /*!
        * \return the key
        */
-      const std::string&
-	getKey() const;
+      const std::string& getKey() const;
       /*!
        * \return names asssociated with this key
        */
-      const std::vector<std::string>&
-	getNames() const;
+      const std::vector<std::string>& getNames() const;
       /*!
        * \return the unit
        */
-      const std::string&
-	getUnit() const;
+      const std::string& getUnit() const;
       /*!
        * \return the type
        */
-      const std::string&
-	getType() const;
+      const std::string& getType() const;
       /*!
        * \return the short description
        */
-      const std::string&
-	getShortDescription() const;
+      const std::string& getShortDescription() const;
       /*!
        * \return the description
        */

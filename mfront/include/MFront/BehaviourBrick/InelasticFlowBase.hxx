@@ -3,12 +3,20 @@
  * \brief
  * \author Thomas Helfer
  * \date   15/03/2018
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MFRONT_BEHAVIOURBRICK_INELASTICFLOWBASE_HXX
 #define LIB_MFRONT_BEHAVIOURBRICK_INELASTICFLOWBASE_HXX
 
 #include <vector>
+#include "MFront/StandardElastoViscoPlasticityBrick.hxx"
+#include "MFront/BehaviourBrick/PorosityEvolutionAlgorithm.hxx"
 #include "MFront/BehaviourBrick/InelasticFlow.hxx"
 
 namespace mfront {
@@ -20,39 +28,15 @@ namespace mfront {
      * potentials.
      */
     struct InelasticFlowBase : InelasticFlow {
-      /*!
-       * \brief if an isotropic hardening rule is defined, a boolean local
-       * variable named `bpl`+id is defined.
-       * \param[in,out] bd: behaviour description
-       * \param[in,out] dsl: abstract behaviour dsl
-       * \param[in] id: flow id
-       * \param[in] d: options
-       */
       void initialize(BehaviourDescription&,
                       AbstractBehaviourDSL&,
                       const std::string&,
                       const DataMap&) override;
-      /*!
-       * \brief if an isotropic hardening rule is defined, additional
-       * convergence checks are added to check that, if the convergence of the
-       * Newton algorithm is reached:
-       * - if the flow is active (`bpl`+id is `true`), the equivalent plastic
-       *   strain multiplier must be positive. If negative, the convergence flag
-       *   is set to false and the flow is desactivated (`bpl`+id is set to
-       *   `false`).
-       * - if the flow is not active (`bpl`+id is `false`), the stress criterion
-       *   must be lower than the elastic limit given by the isotropic hardening
-       *   rule. If this is not the case, the convergence flag is set to false
-       *   and the flow is activated (`bpl`+id is set to `true`).
-       *
-       * \note if the stress criterion is the same as the flow criterion, the
-       * flow is associative.
-       *
-       * \param[in,out] bd: behaviour description
-       * \param[in,out] dsl: abstract behaviour dsl
-       * \param[in] sp: stress potential
-       * \param[in] id: flow id
-       */
+
+      void setPorosityEvolutionHandled(const bool) override;
+
+      bool isCoupledWithPorosityEvolution() const override;
+
       void endTreatment(BehaviourDescription&,
                         const AbstractBehaviourDSL&,
                         const StressPotential&,
@@ -66,10 +50,61 @@ namespace mfront {
       void computeInitialActivationState(BehaviourDescription&,
                                          const StressPotential&,
                                          const std::string&) const override;
+      std::string updateNextEstimateOfThePorosityIncrement(
+          const BehaviourDescription&, const std::string&) const override;
+      /*!
+       * \return the code updating the upper bound of the porosity.
+       * If this flow does not affect the porosity growth, the returned
+       * value may be empty. By default, this method calls the
+       * `updatePorosityUpperBound` of the underlying stress criterion.
+       * \param[in] bd: behaviour description
+       * \param[in] id: flow id
+       */
+      std::string updatePorosityUpperBound(const BehaviourDescription&,
+                                           const std::string&) const override;
       //! destructor
       ~InelasticFlowBase() override;
 
      protected:
+      //! \brief policy on how the porosity affects the flow rule
+      enum PorosityEffectOnFlowRule {
+        /*!
+         * \brief default choice. The effect of the porosity depends
+         * on the stress criterion (see the
+         * `StressCriterion::getPorosityEffectOnEquivalentPlasticStrain` method).
+         */
+        UNDEFINED_POROSITY_EFFECT_ON_EQUIVALENT_PLASTIC_STRAIN,
+        /*!
+         * \brief This value indicate that the flow rule is not affected by the
+         * porosity evolution.
+         */
+        NO_POROSITY_EFFECT_ON_EQUIVALENT_PLASTIC_STRAIN,
+        /*!
+         * \brief This value indicate that the flow rule must be corrected by
+         * the standard \f$(1-f)\f$ factor where \f$f\f$ is the porosity.
+         */
+        STANDARD_POROSITY_CORRECTION_ON_EQUIVALENT_PLASTIC_STRAIN,
+      };
+      //! \return the effect of the porosity on the flow rule.
+      virtual PorosityEffectOnFlowRule getPorosityEffectOnEquivalentPlasticStrain() const;
+      //! \return if this flow contributes to porosity growth
+      virtual bool contributesToPorosityGrowth() const;
+      /*!
+       * \brief add the contribution of this inelastic flow to the implicit
+       * equation associated with the porosity evolution.
+       * \param[in] ib: integrator code block
+       * \param[in] dsl: abstract behaviour dsl
+       * \param[in] bd: behaviour description
+       * \param[in] sp: stress potential
+       * \param[in] id: flow id
+       */
+      virtual void
+      addFlowContributionToTheImplicitEquationAssociatedWithPorosityEvolution(
+          CodeBlock&,
+          const BehaviourDescription&,
+          const AbstractBehaviourDSL&,
+          const StressPotential&,
+          const std::string&) const;
       /*!
        * \brief compute the effective stress at \f$t+\theta\,dt\f$.
        * \param[in] id: flow id
@@ -94,6 +129,50 @@ namespace mfront {
       std::vector<std::shared_ptr<IsotropicHardeningRule>> ihrs;
       //! kinematic hardening rules
       std::vector<std::shared_ptr<KinematicHardeningRule>> khrs;
+      //! Effect of the porosity on the flow rule.
+      PorosityEffectOnFlowRule porosity_effect_on_equivalent_plastic_strain =
+          UNDEFINED_POROSITY_EFFECT_ON_EQUIVALENT_PLASTIC_STRAIN;
+      //! \brief algorithm used to handle the porosity evolution
+      PorosityEvolutionAlgorithm porosity_evolution_algorithm =
+          PorosityEvolutionAlgorithm::STAGGERED_SCHEME;
+      /*!
+       * \brief minimum value of the cosine of the angle between two successive
+       * estimates of the flow direction. If the computed angle is lower than
+       * this threshold, the Newton step is rejected.
+       *
+       * \note the value of this parameter must be in the range [-1:1]. If this
+       * parameter is not in that range (which is the default), the code
+       * checking the value of the cosine is not generated.
+       */
+      double cosine_threshold = 2;
+      /*!
+       * \brief a factor \f$alpha\f$ which gives the threshold below which the
+       * check on the cosine of the angle between two successive
+       * estimates of the flow direction is performed, i.e. the test is
+       * performed if the iteration counter is greater than \f$alpha \cdot
+       * i_{\max{}}\f$ where \f$i_{\max{}}\f$ is the maximum number of
+       * iterations.
+       */
+      double cosine_check_minimum_iteration_factor = 0;
+      /*!
+       * \brief a factor \f$alpha\f$ which gives the threshold upper which the
+       * check on the cosine of the angle between two successive
+       * estimates of the flow direction is performed, i.e. the test is
+       * performed if the iteration counter is below \f$alpha \cdot
+       * i_{\max{}}\f$ where \f$i_{\max{}}\f$ is the maximum number of
+       * iterations.
+       */
+      double cosine_check_maximum_iteration_factor = 1;
+      /*!
+       * \brief flag stating that the porosity evolution is handled by the brick
+       */
+      bool porosity_evolution_explicitely_handled = false;
+      /*!
+       * \brief flag stating if the contribution to the porosity growth
+       * associated with this flow, if any, must be saved in a dedicated
+       * auxiliary state variable.
+       */
+      bool save_porosity_increase = false;
     };  // end of struct InelasticFlowBase
 
   }  // end of namespace bbrick

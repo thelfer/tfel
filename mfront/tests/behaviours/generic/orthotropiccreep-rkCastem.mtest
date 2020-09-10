@@ -1,0 +1,48 @@
+@Author Helfer Thomas;
+@Date   09 avril 2013;
+@Description{
+  This test an orthotrpic equivalent of the Norton law
+  integrated using a Runge-Kutta algorithm.
+ };
+
+@XMLOutputFile @xml_output@;
+@StiffnessMatrixType 'Elastic';
+@UseCastemAccelerationAlgorithm true;
+
+@Real 'young' 100e9;
+@Real 'nu'    0.3;
+
+@Behaviour<generic> @library@ 'OrthotropicCreep_rkCastem';
+@MaterialProperty<constant> 'YoungModulus1'     'young';
+@MaterialProperty<constant> 'YoungModulus2'     'young';
+@MaterialProperty<constant> 'YoungModulus3'     'young';
+@MaterialProperty<constant> 'PoissonRatio12'       'nu';
+@MaterialProperty<constant> 'PoissonRatio13'       'nu';
+@MaterialProperty<constant> 'PoissonRatio23'       'nu';
+@MaterialProperty<constant> 'ShearModulus12'    'young';
+@MaterialProperty<constant> 'ShearModulus13'    'young';
+@MaterialProperty<constant> 'ShearModulus23'    'young';
+
+@ExternalStateVariable 'Temperature' 293.15;
+
+@Real 'P' '20.e6';
+@Strain {'-PoissonRatio12*P/YoungModulus1',
+         '-PoissonRatio12*P/YoungModulus1',
+         'P/YoungModulus1',0.,0.,0.};
+@Stress {0.,0.,'P',0.,0.,0.};
+@InternalStateVariable 'ElasticStrain' {'-PoissonRatio12*P/YoungModulus1',
+                                        '-PoissonRatio12*P/YoungModulus1',
+                                        'P/YoungModulus1',0.,0.,0.};
+
+@ImposedStress 'SZZ' 'P';
+
+@Times {0.,100. in 40};
+
+@Real 'A'   8.e-67;
+@Real 'n'   8.2;
+@Real 'H_F' 0.371;
+@Real 'H_G' '1-H_F';
+@Real 'H_H' 4.052;
+@Real 'seq' 'sqrt(H_G+H_H)*P';
+@Test<function> 'HillStress' 'seq' 'P*1.e-6';
+@Test<function> 'EquivalentViscoplasticStrain' 'A*seq**n*t' 1.e-6;

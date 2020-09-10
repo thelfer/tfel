@@ -110,6 +110,9 @@ namespace mfront {
         case OptionDescription::BOOLEAN:
           throw_if(!d.is<bool>());
           break;
+        case OptionDescription::STRING:
+          throw_if(!d.is<std::string>());
+          break;
         case OptionDescription::REAL:
           throw_if((!d.is<double>()) && (!d.is<int>()));
           break;
@@ -121,6 +124,9 @@ namespace mfront {
           for (const auto& mp : d.get<std::vector<tfel::utilities::Data>>()) {
             throw_if(!is_material_property(mp));
           }
+          break;
+        case OptionDescription::DATAMAP:
+          throw_if(!d.is<std::map<std::string, tfel::utilities::Data>>());
           break;
         case OptionDescription::DATASTRUCTURE:
           throw_if(!((d.is<tfel::utilities::DataStructure>()) ||
@@ -137,7 +143,7 @@ namespace mfront {
           }
           break;
         default:
-          tfel::raise("check: unknown option type");
+          tfel::raise("check: unknown option type for option '" + o.name + "'");
       }
     }  // end of check
 

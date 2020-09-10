@@ -1,0 +1,12 @@
+@Author Thomas Helfer;
+@Date 17 / 08 / 2020;
+@Description{A simple tensile test of a perfect plastic behaviour};
+
+@MaximumNumberOfSubSteps 1;
+@XMLOutputFile @xml_output@;
+@ModellingHypothesis 'Tridimensional';
+@Behaviour<generic> @library@ 'PerfectPlasticity';
+
+@ExternalStateVariable 'Temperature' 293.15;
+@ImposedStrain 'EXX' {0 : 0, 1 : 1e-2};
+@Times{0, 1};

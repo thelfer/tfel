@@ -11,9 +11,37 @@
  * project under specific licensing conditions. 
  */
 
-#include"MFront/CodeBlock.hxx"
+#include "TFEL/Raise.hxx"
+#include "MFront/CodeBlock.hxx"
 
 namespace mfront{
+
+  const char* const CodeBlock::requires_jacobian_decomposition =
+      "requires_jacobian_decomposition";
+  const char* const CodeBlock::uses_get_partial_jacobian_invert =
+      "uses_get_partial_jacobian_invert";
+  const char* const CodeBlock::used_get_integration_variables_derivatives =
+      "used_get_integration_variables_derivatives";
+  const char* const CodeBlock::
+      used_implicit_equations_derivatives_with_respect_to_gradients_or_external_state_variables =
+          "used_implicit_equations_derivatives_with_respect_to_gradients_or_"
+          "external_state_variables";
+  const char* const CodeBlock::used_jacobian_invert_blocks =
+      "used_jacobian_invert_blocks";
+
+  void CodeBlock::throwUnmatchedAttributeType(const std::string& n) {
+    tfel::raise(
+        "CodeBlock::throwUnmatchedAttributeType: "
+        "unexpected type for attribute '" +
+        n + "'");
+  }  // end of CodeBlock::throwUnmatchedAttributeType
+
+  void CodeBlock::throwUndeclaredAttribute(const std::string& n) {
+    tfel::raise(
+        "CodeBlock::throwUndeclaredAttribute: "
+        "no attribute '" +
+        n + "' declared");
+  }  // end of CodeBlock::throwUndeclaredAttribute
 
   CodeBlock::CodeBlock() = default;
   CodeBlock::CodeBlock(CodeBlock&&) = default;

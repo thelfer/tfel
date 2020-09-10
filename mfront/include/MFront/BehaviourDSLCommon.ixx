@@ -17,73 +17,16 @@
 namespace mfront {
 
   template <typename T, typename T2>
-  BehaviourDSLCommon::StandardVariableModifier<T, T2>::StandardVariableModifier(
-      T& i, const Hypothesis h, const MPtr p)
-      : instance(i),
-        hypothesis(h),
-        mptr(p) {
-  }  // end of StandardVariableModifier<T,T2>::StandardVariableModifier
-
-  template <typename T, typename T2>
-  std::string BehaviourDSLCommon::StandardVariableModifier<T, T2>::exe(
-      const std::string& v, const bool b) {
-    return (this->instance.*mptr)(this->hypothesis, v, b);
-  }  // end of StandardVariableModifier<T,T2>::exe
-
-  template <typename T, typename T2>
-  BehaviourDSLCommon::StandardVariableModifier<T, T2>::
-      ~StandardVariableModifier() = default;
-
-  template <typename T, typename T2>
-  std::shared_ptr<BehaviourDSLCommon::VariableModifier>
-  BehaviourDSLCommon::makeVariableModifier(
-      T& i,
-      const Hypothesis h,
-      std::string (T2::*p)(const Hypothesis, const std::string&, const bool)) {
-    return std::shared_ptr<VariableModifier>(
-        new StandardVariableModifier<T, T2>(i, h, p));
-  }  // end of makeVariableModifier
-
-  template <typename T, typename T2>
-  BehaviourDSLCommon::StandardWordAnalyser<T, T2>::StandardWordAnalyser(
-      T& i, const Hypothesis h, const MPtr p)
-      : instance(i),
-        mptr(p),
-        hypothesis(h) {
-  }  // end of StandardWordAnalyser<T,T2>::StandardWordAnalyser
-
-  template <typename T, typename T2>
-  void BehaviourDSLCommon::StandardWordAnalyser<T, T2>::exe(
-      const std::string& v) {
-    (this->instance.*mptr)(this->hypothesis, v);
-  }  // end of StandardWordAnalyser<T,T2>::exe
-
-  template <typename T, typename T2>
-  BehaviourDSLCommon::StandardWordAnalyser<T, T2>::~StandardWordAnalyser() =
-      default;
-
-  template <typename T, typename T2>
-  std::shared_ptr<BehaviourDSLCommon::WordAnalyser>
-  BehaviourDSLCommon::makeWordAnalyser(T& i,
-                                       const Hypothesis h,
-                                       void (T2::*p)(const Hypothesis,
-                                                     const std::string&)) {
-    return std::shared_ptr<WordAnalyser>(
-        new StandardWordAnalyser<T, T2>(i, h, p));
-  }  // end of makeWordAnalyser
-
-  template <typename T, typename T2>
   BehaviourDSLCommon::CodeBlockOptions BehaviourDSLCommon::readCodeBlock(
       T& child,
       const std::string& n,
       std::string (T2::*m)(const Hypothesis, const std::string&, const bool),
       const bool b,
       const bool s) {
-    CodeBlockOptions o;
-    this->readCodeBlockOptions(o, s);
-    this->treatUnsupportedCodeBlockOptions(o);
-    this->readCodeBlock(child, o, n, m, b);
-    return o;
+    std::function<std::string(const Hypothesis, const std::string&, const bool)>
+        f = [&child, m](const Hypothesis h, const std::string& sv,
+                        const bool bv) { return (child.*m)(h, sv, bv); };
+    return this->readCodeBlock(n, f, b, s);
   }
 
   template <typename T, typename T2, typename T3>
@@ -94,11 +37,14 @@ namespace mfront {
       void (T3::*a)(const Hypothesis, const std::string&),
       const bool b,
       const bool s) {
-    CodeBlockOptions o;
-    this->readCodeBlockOptions(o, s);
-    this->treatUnsupportedCodeBlockOptions(o);
-    this->readCodeBlock(child, o, n, m, a, b);
-    return o;
+    std::function<std::string(const Hypothesis, const std::string&, const bool)>
+        fm = [&child, m](const Hypothesis h, const std::string& sv,
+                         const bool bv) { (child.*m)(h, sv, bv); };
+    std::function<void(CodeBlock&, const Hypothesis, const std::string&)> fa =
+        [&child, a](CodeBlock&, const Hypothesis h, const std::string& sv) {
+          (child.*a)(h, sv);
+        };
+    return this->readCodeBlock(n, fm, fa, b, s);
   }  // end of BehaviourDSLCommon::readCodeBlock
 
   template <typename T, typename T2, typename T3>
@@ -109,25 +55,14 @@ namespace mfront {
       std::string (T2::*m)(const Hypothesis, const std::string&, const bool),
       void (T3::*a)(const Hypothesis, const std::string&),
       const bool b) {
-    const auto& h = o.hypotheses;
-    const auto beg = this->current;
-    this->disableVariableDeclaration();
-    for (auto ph = h.cbegin(); ph != h.cend(); ++ph) {
-      this->current = beg;
-      const auto& md = this->mb.getBehaviourData(*ph);
-      auto vm = makeVariableModifier(child, *ph, m);
-      auto wa = makeWordAnalyser(child, *ph, a);
-      CodeBlockParserOptions option;
-      option.qualifyStaticVariables = b;
-      option.qualifyMemberVariables = b;
-      option.modifier = vm;
-      option.analyser = wa;
-      option.mn = md.getRegistredMembersNames();
-      option.smn = md.getRegistredStaticMembersNames();
-      this->getSymbols(option.symbols, *ph, n);
-      const auto& c = this->readNextBlock(option);
-      this->mb.setCode(*ph, n, c, o.m, o.p);
-    }
+    std::function<std::string(const Hypothesis, const std::string&, const bool)>
+        fm = [&child, m](const Hypothesis h, const std::string& sv,
+                          const bool bv) { (child.*m)(h, sv, bv); };
+    std::function<void(CodeBlock&, const Hypothesis, const std::string&)> fa =
+        [&child, a](CodeBlock&, const Hypothesis h, const std::string& sv) {
+          (child.*a)(h, sv);
+        };
+    this->readCodeBlock(o, n, fm, fa, b);
   }  // end of BehaviourDSLCommon::readCodeBlock
 
   template <typename T, typename T2>
@@ -137,23 +72,10 @@ namespace mfront {
       const std::string& n,
       std::string (T2::*m)(const Hypothesis, const std::string&, const bool),
       const bool b) {
-    const auto& h = o.hypotheses;
-    const auto beg = this->current;
-    this->disableVariableDeclaration();
-    for (auto ph = h.cbegin(); ph != h.cend(); ++ph) {
-      const auto& md = this->mb.getBehaviourData(*ph);
-      this->current = beg;
-      auto vm = makeVariableModifier(child, *ph, m);
-      CodeBlockParserOptions option;
-      option.qualifyStaticVariables = b;
-      option.qualifyMemberVariables = b;
-      option.modifier = vm;
-      option.mn = md.getRegistredMembersNames();
-      option.smn = md.getRegistredStaticMembersNames();
-      this->getSymbols(option.symbols, *ph, n);
-      const auto& c = this->readNextBlock(option);
-      this->mb.setCode(*ph, n, c, o.m, o.p);
-    }
+    std::function<std::string(const Hypothesis, const std::string&, const bool)>
+        f = [&child, m](const Hypothesis h, const std::string& sv,
+                        const bool bv) { return (child.*m)(h, sv, bv); };
+    this->readCodeBlock(o, n, f, b);
   }  // end of BehaviourDSLCommon::readCodeBlock
 
   template <typename T, typename T2>
@@ -165,12 +87,13 @@ namespace mfront {
       std::string (T2::*m2)(const Hypothesis, const std::string&, const bool),
       const bool b,
       const bool s) {
-    using std::shared_ptr;
-    CodeBlockOptions o;
-    this->readCodeBlockOptions(o, s);
-    this->treatUnsupportedCodeBlockOptions(o);
-    this->readCodeBlock(child, o, n1, n2, m1, m2, b);
-    return o;
+    std::function<std::string(const Hypothesis, const std::string&, const bool)>
+        f1 = [&child, m1](const Hypothesis h, const std::string& sv,
+                          const bool bv) { return (child.*m1)(h, sv, bv); };
+    std::function<std::string(const Hypothesis, const std::string&, const bool)>
+        f2 = [&child, m2](const Hypothesis h, const std::string& sv,
+                          const bool bv) { return (child.*m2)(h, sv, bv); };
+    return this->readCodeBlock(n1, n2, f1, f2, b, s);
   }  // end of BehaviourDSLCommon::readCodeBlock
 
   template <typename T, typename T2>
@@ -182,32 +105,13 @@ namespace mfront {
       std::string (T2::*m1)(const Hypothesis, const std::string&, const bool),
       std::string (T2::*m2)(const Hypothesis, const std::string&, const bool),
       const bool b) {
-    const auto& hs = o.hypotheses;
-    const auto beg = this->current;
-    this->disableVariableDeclaration();
-    for (const auto& h : hs) {
-      const auto& md = this->mb.getBehaviourData(h);
-      this->current = beg;
-      CodeBlock c1;
-      CodeBlock c2;
-      CodeBlockParserOptions o1;
-      o1.qualifyStaticVariables = b;
-      o1.qualifyMemberVariables = b;
-      o1.modifier = makeVariableModifier(child, h, m1);
-      o1.mn = md.getRegistredMembersNames();
-      o1.smn = md.getRegistredStaticMembersNames();
-      this->getSymbols(o1.symbols, h, n1);
-      CodeBlockParserOptions o2;
-      o2.qualifyStaticVariables = b;
-      o2.qualifyMemberVariables = b;
-      o2.modifier = makeVariableModifier(child, h, m2);
-      o2.mn = md.getRegistredMembersNames();
-      o2.smn = md.getRegistredStaticMembersNames();
-      this->getSymbols(o2.symbols, h, n1);
-      this->readNextBlock(c1, c2, o1, o2);
-      this->mb.setCode(h, n1, c1, o.m, o.p);
-      this->mb.setCode(h, n2, c2, o.m, o.p);
-    }
+    std::function<std::string(const Hypothesis, const std::string&, const bool)>
+        f1 = [&child, m1](const Hypothesis h, const std::string& sv,
+                          const bool bv) { return (child.*m1)(h, sv, bv); };
+    std::function<std::string(const Hypothesis, const std::string&, const bool)>
+        f2 = [&child, m2](const Hypothesis h, const std::string& sv,
+                          const bool bv) { (child.*m2)(h, sv, bv); };
+    this->readCodeBlock(o, n1, n2, f1, f2, b);
   }  // end of BehaviourDSLCommon::readCodeBlock
 
 }  // end of namespace mfront

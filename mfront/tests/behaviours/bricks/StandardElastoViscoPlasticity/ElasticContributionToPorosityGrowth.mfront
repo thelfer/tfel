@@ -1,0 +1,13 @@
+@DSL Implicit;
+@Behaviour ElasticContributionToPorosityGrowth;
+@Author Thomas Helfer;
+@Date 4/08/2020;
+
+@Epsilon 1.e-14;
+@Theta 1;
+
+@Brick StandardElastoViscoPlasticity{
+  stress_potential : "Hooke" {young_modulus : 200e9, poisson_ratio : 0.3},
+  porosity_evolution :
+      {elastic_contribution : true, algorithm : "standard implicit scheme"}
+};

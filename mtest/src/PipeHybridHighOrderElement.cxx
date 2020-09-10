@@ -14,7 +14,7 @@
 #include <iostream>
 #include <algorithm>
 
-#include "HybridHighOrder/Geometry/Line.hxx"
+#include "HybridHighOrder/Geometry/Segment.hxx"
 #include "HybridHighOrder/Element/Element.hxx"
 #include "HybridHighOrder/MonodimensionalElements/ElementFactory.hxx"
 
@@ -35,7 +35,7 @@ namespace mtest {
 
   struct PipeHybridHighOrderElement::PrivateMembers {
     //! \brief geometric element
-    std::unique_ptr<::hho::geometry::Line<1u>> geometric_element;
+    std::unique_ptr<::hho::geometry::Segment<1u>> geometric_element;
     //! \brief geometric element
     std::unique_ptr<::hho::element::Behaviour> behaviour;
     //     //! \brief HHO element
@@ -79,10 +79,9 @@ namespace mtest {
       raise("invalid value for '" + std::string{mkeys[0]} + "'");
     }
     this->pm = std::unique_ptr<PrivateMembers>{new PrivateMembers};
-    this->pm->geometric_element = std::unique_ptr<::hho::geometry::Line<1u>>(
-        new ::hho::geometry::Line<1u>{
-            ::hho::geometry::Point<1u>{this->inner_radius},
-            ::hho::geometry::Point<1u>{this->outer_radius}});
+    this->pm->geometric_element = std::unique_ptr<::hho::geometry::Segment<1u>>(
+        new ::hho::geometry::Segment<1u>{
+	  ::hho::geometry::make_segment(this->inner_radius,this->outer_radius)});
     if ((b.getBehaviourType() == BehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR) &&
         (b.getBehaviourKinematic() == BehaviourBase::SMALLSTRAINKINEMATIC)) {
       this->pm->behaviour = std::unique_ptr<::hho::element::Behaviour>(

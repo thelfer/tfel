@@ -178,6 +178,13 @@ namespace mfront {
     m << "\n"
       << "message(STATUS \"tfel oflags         : ${TFEL_OFLAGS}\")\n"
       << "\n";
+    // debug flags
+    if (o.debugFlags) {
+      m << "spawn(TFEL_DEBUG_FLAGS ${TFEL_CONFIG} \"--debug-flags\")\n"
+        << "\n"
+        << "message(STATUS \"tfel debug flags    : ${TFEL_DEBUG_FLAGS}\")\n"
+        << "\n";
+    }
     // include_directories
     const auto include_directories = [&t] {
       auto r = std::vector<std::string>{};
@@ -237,6 +244,10 @@ namespace mfront {
       m << "# Setting compile flags for " << l.name << '\n'
         << "set(" << l.name << "_COMPILE_FLAGS)\n"
         << "list(APPEND " << l.name << "_COMPILE_FLAGS ${TFEL_OFLAGS})\n";
+      if (o.debugFlags) {
+        m << "list(APPEND " << l.name
+          << "_COMPILE_FLAGS ${TFEL_DEBUG_FLAGS})\n";
+      }
       if ((o.sys == "win32") || (o.sys == "cygwin")) {
         m << "list(APPEND " << l.name
           << "_COMPILE_FLAGS \"-DMFRONT_COMPILING\")\n";

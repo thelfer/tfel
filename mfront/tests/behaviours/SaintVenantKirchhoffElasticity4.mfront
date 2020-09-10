@@ -1,0 +1,45 @@
+@DSL DefaultGenericBehaviour;
+@Behaviour SaintVenantKirchhoffElasticity4;
+@Author Thomas Helfer;
+@Date 16 / 08 / 2020;
+@Description {
+  An implementation of the SaintVenant-Kirchoff
+  hyperelastic behaviour using the DefaultGenericBehaviour
+  domain specific language.
+}
+
+@Gradient DeformationGradientTensor F;
+F.setGlossaryName("DeformationGradient");
+
+@ThermodynamicForce StressTensor Π;
+Π.setEntryName("FirstPiolaKirchhoffStress");
+
+@MaterialProperty stress E;
+E.setGlossaryName("YoungModulus");
+@MaterialProperty real ν;
+ν.setGlossaryName("PoissonRatio");
+
+@LocalVariable stress λ;         //<! Premier coefficient de Lamé
+@LocalVariable stress μ;         //<! Second  coefficient de Lamé
+@LocalVariable StressStensor S;  //<! Second Piola-Kirchhoff stress
+
+@InitLocalVariables {
+  λ = computeLambda(E, ν);
+  μ = computeMu(E, ν);
+}
+
+@Integrator {
+  const auto F₁ = F + dF;
+  const auto e = computeGreenLagrangeTensor(F₁);
+  S = λ ⋅ trace(e) ⋅ I₂ + 2 ⋅ μ ⋅ e;
+  Π = F₁ ⋅ S;
+}
+
+@TangentOperator {
+  static_cast<void>(smt);
+  const auto F₁ = eval(F + dF);
+  const auto σ = convertSecondPiolaKirchhoffStressToCauchyStress(S, F₁);
+  const auto De = eval(λ ⋅ (I₂ ⊗ I₂) + 2 ⋅ μ ⋅ I₄);
+  Dt = convert<FiniteStrainBehaviourTangentOperatorBase::DPK1_DF,
+               FiniteStrainBehaviourTangentOperatorBase::DS_DEGL>(De, F, F₁, σ);
+}

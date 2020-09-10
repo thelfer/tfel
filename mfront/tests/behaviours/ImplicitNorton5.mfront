@@ -1,0 +1,85 @@
+@DSL ImplicitGenericBehaviour;
+@Author Thomas Helfer;
+@Date   21/09/2008;
+@Behaviour ImplicitNorton5;
+@Description{
+  This file implements the Norton law, described as:
+  "$$"
+  "\left\{"
+  "  \begin{aligned}"
+  "    \tepsilonto   &= \tepsilonel+\tepsilonvis \\"
+  "    \tsigma       &= \tenseurq{D}\,:\,\tepsilonel\\"
+  "    \tdepsilonvis &= \dot{p}\,\tenseur{n} \\"
+  "    \dot{p}       &= A\,\sigmaeq^{m}"
+  "  \end{aligned}"
+  "\right."
+  "$$"
+  This implementation is used to test the GenericPlaneStress
+  support provided by the Cast3M interface.
+}
+
+@Epsilon 1.e-16;
+
+@Gradient StrainStensor εᵗᵒ;
+εᵗᵒ.setGlossaryName("Strain");
+
+@ThermodynamicForce StressStensor σ;
+σ.setGlossaryName("Stress");
+
+@TangentOperatorBlocks{∂σ∕∂Δεᵗᵒ};
+
+@StateVariable StrainStensor εᵉˡ;
+εᵉˡ.setGlossaryName("ElasticStrain");
+
+@MaterialProperty stress E;
+E.setGlossaryName("YoungModulus");
+@MaterialProperty real ν;
+ν.setGlossaryName("PoissonRatio");
+
+@StateVariable strain p;
+p.setGlossaryName("EquivalentViscoplasticStrain");
+@PhysicalBounds p in [0:*[;
+
+//! First Lamé coefficient
+@LocalVariable stress λ;
+//! Second Lamé coefficient
+@LocalVariable stress μ;
+
+/* Initialize shear modulus */
+@InitLocalVariables{
+  λ = computeLambda(E, ν);
+  μ = computeMu(E, ν);
+} // end of @InitLocalVariables
+
+@ComputeThermodynamicForces {
+  σ = λ ⋅ trace(εᵉˡ) ⋅ I₂ + 2 ⋅ μ ⋅ εᵉˡ;
+}
+			  
+@Integrator{
+  constexpr const auto eeps = 1.e-14;
+  constexpr const auto Mᵉ = Stensor4::M();
+  const auto seps = 2 ⋅ μ ⋅ eeps;
+  const real A = 8.e-67;
+  const real nn = 8.2;
+  const auto σₑ = sigmaeq(σ);
+  const auto iσₑ = 1 / max(σₑ, seps);
+  const auto n = 3 ⋅ deviator(σ) ⋅ (iσₑ / 2);
+  // elasticity
+  fεᵉˡ += Δp ⋅ n - Δεᵗᵒ;
+  // viscoplasticity
+  const auto vᵖ = A ⋅ pow(σₑ, nn);
+  fp -= Δt ⋅ vᵖ;
+  // jacobian
+  const auto ∂vᵖ∕∂σₑ = nn ⋅ vᵖ ⋅ iσₑ;
+  ∂fεᵉˡ∕∂Δεᵉˡ += 2 ⋅ μ ⋅ θ ⋅ Δp ⋅ iσₑ ⋅ (Mᵉ - (n ⊗ n));
+  ∂fεᵉˡ∕∂Δp = n;
+  ∂fp∕∂Δεᵉˡ = -2 ⋅ μ ⋅ θ ⋅ ∂vᵖ∕∂σₑ ⋅ Δt ⋅ n;
+} // end of @Integrator
+
+@TangentOperator {
+  const auto De = λ ⋅ (I₂ ⊗ I₂) + 2 ⋅ μ ⋅ I₄;
+  ∂fεᵉˡ∕∂Δεᵗᵒ = -I₄;
+  auto ∂Δεᵉˡ∕∂Δεᵗᵒ = Stensor4{};
+  getIntegrationVariablesDerivatives_εᵗᵒ(∂Δεᵉˡ∕∂Δεᵗᵒ);
+  ∂σ∕∂Δεᵗᵒ = De ⋅ ∂Δεᵉˡ∕∂Δεᵗᵒ;
+}

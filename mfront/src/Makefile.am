@@ -138,15 +138,26 @@ libTFELMFront_la_SOURCES = MFront.cxx                                           
 		           IsotropicDamageHookeStressPotential.cxx                \
 		           DDIF2StressPotential.cxx                               \
 		           StressPotentialFactory.cxx                             \
+		           InelasticFlowFactory.cxx                               \
 		           InelasticFlow.cxx                                      \
 		           InelasticFlowBase.cxx                                  \
 		           ViscoplasticFlowBase.cxx                               \
 		           NortonHoffViscoplasticFlow.cxx                         \
 		           HyperbolicSineViscoplasticFlow.cxx                     \
 		           PlasticInelasticFlow.cxx                               \
-		           InelasticFlowFactory.cxx                               \
+		           PorosityNucleationModelFactory.cxx                     \
+		           PorosityNucleationModel.cxx                            \
+		           PorosityNucleationModelBase.cxx                        \
+                   StrainBasedPorosityNucleationModelBase.cxx             \
+                   StressBasedPorosityNucleationModelBase.cxx             \
+                   PowerLawStrainBasedPorosityNucleationModel.cxx         \
+                   PowerLawStressBasedPorosityNucleationModel.cxx         \
+                   ChuNeedleman1980StrainBasedPorosityNucleationModel.cxx \
+                   ChuNeedleman1980StressBasedPorosityNucleationModel.cxx \
 		           StressCriterion.cxx                                    \
 		           StressCriterionBase.cxx                                \
+		           StandardStressCriterionBase.cxx                        \
+		           StandardPorousStressCriterionBase.cxx                  \
 		           MisesStressCriterion.cxx                               \
 		           Hill1948StressCriterion.cxx                            \
 		           Barlat2004StressCriterion.cxx                          \
@@ -155,7 +166,10 @@ libTFELMFront_la_SOURCES = MFront.cxx                                           
 		           Cazacu2001StressCriterion.cxx                          \
 		           Cazacu2004IsotropicStressCriterion.cxx                 \
 		           Cazacu2004OrthotropicStressCriterion.cxx               \
-                   MohrCoulombStressCriterion.cxx                         \
+		           MohrCoulombStressCriterion.cxx                         \
+		           MichelAndSuquet1992HollowSphereStressCriterion.cxx     \
+		           GursonTvergaardNeedleman1982StressCriterion.cxx        \
+		           RousselierTanguyBesson2002StressCriterion.cxx          \
 		           StressCriterionFactory.cxx                             \
 		           IsotropicHardeningRule.cxx                             \
 		           LinearIsotropicHardeningRule.cxx                       \
@@ -168,9 +182,8 @@ libTFELMFront_la_SOURCES = MFront.cxx                                           
 		           PragerKinematicHardeningRule.cxx                       \
 		           Chaboche2012KinematicHardeningRule.cxx                 \
 		           BurletCailletaudKinematicHardeningRule.cxx             \
-		           ArmstrongFrederickKinematicHardeningRule.cxx            \
+		           ArmstrongFrederickKinematicHardeningRule.cxx           \
 		           KinematicHardeningRuleFactory.cxx
-
 
 if HAVE_GNUPLOT
 libTFELMFront_la_SOURCES += GnuplotMaterialPropertyInterface.cxx

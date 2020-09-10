@@ -18,6 +18,10 @@
 #include <stdexcept>
 #include <algorithm>
 
+#ifdef MFRONT_HAVE_MADNEX
+#include "Madnex/MFrontImplementation.hxx"
+#endif /* MFRONT_HAVE_MADNEX */
+
 #include "TFEL/Raise.hxx"
 #include "TFEL/Math/IntegerEvaluator.hxx"
 #include "TFEL/UnicodeSupport/UnicodeSupport.hxx"
@@ -138,7 +142,19 @@ namespace mfront {
   void DSLBase::openFile(const std::string& f,
                          const std::vector<std::string>& ecmds,
                          const std::map<std::string, std::string>& s) {
-    CxxTokenizer::openFile(f);
+    if (tfel::utilities::starts_with(f, "madnex:")) {
+#ifdef MFRONT_HAVE_MADNEX
+      const auto path = decomposeImplementationPathInMadnexFile(f);
+      const auto impl =
+          madnex::getMFrontImplementation(std::get<0>(path), std::get<1>(path),
+                                          std::get<2>(path), std::get<3>(path));
+      CxxTokenizer::parseString(impl.source);
+#else  /* MFRONT_HAVE_MADNEX */
+      tfel::raise("DSLBase::openFile: madnex support was not enabled");
+#endif /* MFRONT_HAVE_MADNEX */
+    } else {
+      CxxTokenizer::openFile(f);
+    }
     // substitutions
     const auto pe = s.end();
     for (auto& t : this->tokens) {
@@ -259,7 +275,7 @@ namespace mfront {
     }
     auto currentValue = demangle(*(this->current));
     if (analyser != nullptr) {
-      analyser->exe(currentValue);
+      analyser->exe(b, currentValue);
     }
     if (smn.find(currentValue) != smn.end()) {
       b.staticMembers.insert(currentValue);
@@ -329,7 +345,7 @@ namespace mfront {
         b.description += this->current->comment;
       }
       if (analyser != nullptr) {
-        analyser->exe(currentValue);
+        analyser->exe(b, currentValue);
       }
       if (smn.find(currentValue) != smn.end()) {
         b.staticMembers.insert(currentValue);
@@ -1000,16 +1016,19 @@ namespace mfront {
     }
     ++(this->current);
     this->checkNotEndOfFile("DSLBase::treatStaticVar", "Cannot read variable name.");
-    const auto name = this->current->value;
-    if (!this->isValidIdentifier(name)) {
-      this->throwRuntimeError("DSLBase::treatStaticVar", "Variable name '" + name + "' is not valid.");
+    const auto sname = this->current->value;
+    const auto vname = tfel::unicode::getMangledString(sname);
+    if (!this->isValidIdentifier(vname)) {
+      this->throwRuntimeError("DSLBase::treatStaticVar",
+                              "Variable name '" + sname + "' is not valid.");
     }
     const auto line = this->current->line;
     ++(this->current);
     this->checkNotEndOfFile("DSLBase::treatStaticVar", "Expected to read value of variable.");
-    const auto value = this->readInitialisationValue<long double>(name, true);
+    const auto value = this->readInitialisationValue<long double>(sname, true);
     this->readSpecifiedToken("DSLBase::treatStaticVar", ";");
-    this->addStaticVariableDescription(StaticVariableDescription(type, name, line, value.second));
+    this->addStaticVariableDescription(
+        StaticVariableDescription(type, sname, vname, line, value.second));
   }  // end of DSLBase::treatStaticVar
 
   void DSLBase::ignoreKeyWord(const std::string& key) {

@@ -11,6 +11,7 @@
  * project under specific licensing conditions. 
  */
 
+#include <ostream>
 #include "MFront/MFrontDebugMode.hxx"
 #include "MFront/BehaviourDescription.hxx"
 #include "MFront/PerformanceProfiling.hxx"
@@ -151,7 +152,7 @@ namespace mfront{
         << "this->zeros_1  = this->zeros;\n"
         << "error=norm(this->fzeros)/(real(" << n2 << "));\n"
         << "converged = error<this->epsilon;\n"
-        << "this->additionalConvergenceChecks(converged,error);\n";
+        << "this->additionalConvergenceChecks(converged, error, smt);\n";
     if(getDebugMode()){
       out << "cout << \"" << mb.getClassName()
 	  << "::integrate() : iteration \" "

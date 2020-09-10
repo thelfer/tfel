@@ -29,7 +29,10 @@ set(mfront_tests_SOURCES
   OrthotropicElastic4
   OrthotropicElastic5
   OrthotropicElastic6
+  PerfectPlasticity
   HosfordPerfectPlasticity
+  HosfordPerfectPlasticity2
+  HosfordPerfectPlasticity3
   FiniteRotationSmallStrainElasticity
   FiniteRotationSmallStrainElasticity2
   LogarithmicStrainElasticity
@@ -56,6 +59,10 @@ set(mfront_tests_SOURCES
   ImplicitNorton2
   ImplicitNorton3
   ImplicitNorton4
+  ImplicitNorton5
+  ImplicitNorton6
+  ThermalNorton
+  ThermalNorton2
   ImplicitFiniteStrainNorton
   ImplicitNorton_Broyden
   ImplicitNorton_Broyden2
@@ -108,6 +115,7 @@ set(mfront_tests_SOURCES
   Tvergaard
   SaintVenantKirchhoffElasticity
   SaintVenantKirchhoffElasticity2
+  SaintVenantKirchhoffElasticity4
   OrthotropicSaintVenantKirchhoffElasticity
   CompressibleNeoHookeanBehaviour
   IncompressibleMooneyRivlinBehaviour
@@ -136,7 +144,9 @@ set(mfront_tests_SOURCES
   TemperatureUpdateOnSubSteppingCheck
   GenerateMTestFileOnFailure
   StationaryHeatTransfer
-  StationaryHeatTransfer2)
+  StationaryHeatTransfer2
+  ThermoElasticity
+  MiehePhaseFieldDisplacementDeviatoricSplit)
 
 mfront_dependencies(MFrontGenericBehaviours
   Inconel600_YoungModulus
@@ -406,6 +416,7 @@ test_generic(elasticity25)
 test_generic(elasticity26)
 test_generic(elasticity27)
 test_generic(elasticity28)
+test_generic(perfectplasticity)
 test_generic(plasticity plasticity.ref)
 test_generic(plasticity2)
 test_generic(plasticity3)
@@ -427,6 +438,8 @@ test_generic(lorentz2)
 test_generic(implicitnorton)
 test_generic(implicitnorton2)
 test_generic(implicitnorton-planestress)
+test_generic(implicitnorton5)
+test_generic(implicitnorton6)
 # test_generic(implicitnorton-levenbergmarquardt)
 # test_generic(implicitnorton4-planestress)
 # test_generic(implicitorthotropiccreep2-planestress)
@@ -434,61 +447,61 @@ test_generic(implicitnorton-planestress)
 # test_generic(norton-euler)
 # test_generic(norton-rk2)
 # test_generic(norton-rk4)
-# test_generic(orthotropicelasticity3-1)
-# test_generic(orthotropicelasticity3-2)
-# test_generic(orthotropicelasticity3-3)
-# test_generic(orthotropicelasticity4-1)
-# test_generic(orthotropicelasticity5-1)
-# test_generic(orthotropicelasticity5-2)
-# test_generic(orthotropicelasticity5-3)
-# test_generic(orthotropicelasticity5-4)
-# test_generic(orthotropicelasticity5-5)
-# test_generic(orthotropicelasticity5-6)
-# test_generic(orthotropicelasticity5-7)
-# test_generic(orthotropicelasticity5-8)
-# test_generic(orthotropicelasticity5-9)
-# test_generic(orthotropicelasticity5-10)
-# test_generic(orthotropicelasticity5-11)
-# test_generic(orthotropicelasticity5-12)
-# test_generic(orthotropicelasticity5-13)
-# test_generic(orthotropicelasticity5-14)
-# test_generic(orthotropicelasticity5-15)
-# test_generic(orthotropicelasticity5-16)
-# test_generic(orthotropicelasticity5-17)
-# test_generic(orthotropicelasticity5-18)
-# test_generic(orthotropicelasticity5-19)
-# test_generic(orthotropicelasticity5-20)
-# test_generic(orthotropicelasticity5-21)
-# test_generic(orthotropicelasticity5-22)
-# test_generic(orthotropicelasticity5-23)
-# test_generic(orthotropicelasticity5-24)
-# test_generic(orthotropicelasticity6-1)
-# test_generic(orthotropicelasticity6-2)
-# test_generic(orthotropicelasticity6-3)
-# test_generic(orthotropicelasticity6-4)
-# test_generic(orthotropicelasticity6-5)
-# test_generic(orthotropicelasticity6-6)
-# test_generic(orthotropicelasticity6-7)
-# test_generic(orthotropicelasticity6-8)
-# test_generic(orthotropicelasticity6-9)
-# test_generic(orthotropicelasticity6-10)
-# test_generic(orthotropicelasticity6-11)
-# test_generic(orthotropicelasticity6-12)
-# test_generic(orthotropicelasticity6-13)
-# test_generic(orthotropicelasticity6-14)
-# test_generic(orthotropicelasticity6-15)
-# test_generic(orthotropicelasticity6-16)
-# test_generic(orthotropicelasticity6-17)
-# test_generic(orthotropicelasticity6-18)
-# test_generic(orthotropicelasticity6-19)
-# test_generic(orthotropicelasticity6-20)
-# test_generic(orthotropicelasticity6-21)
-# test_generic(orthotropicelasticity6-22)
-# test_generic(orthotropicelasticity6-23)
-# test_generic(orthotropicelasticity6-24)
-# test_generic(orthotropiccreep)
-# test_generic(orthotropiccreep-rk42)
-# test_generic(orthotropiccreep-rkGeneric)
+test_generic(orthotropicelasticity3-1)
+test_generic(orthotropicelasticity3-2)
+test_generic(orthotropicelasticity3-3)
+test_generic(orthotropicelasticity4-1)
+test_generic(orthotropicelasticity5-1)
+test_generic(orthotropicelasticity5-2)
+test_generic(orthotropicelasticity5-3)
+test_generic(orthotropicelasticity5-4)
+test_generic(orthotropicelasticity5-5)
+test_generic(orthotropicelasticity5-6)
+test_generic(orthotropicelasticity5-7)
+test_generic(orthotropicelasticity5-8)
+test_generic(orthotropicelasticity5-9)
+test_generic(orthotropicelasticity5-10)
+test_generic(orthotropicelasticity5-11)
+test_generic(orthotropicelasticity5-12)
+test_generic(orthotropicelasticity5-13)
+test_generic(orthotropicelasticity5-14)
+test_generic(orthotropicelasticity5-15)
+test_generic(orthotropicelasticity5-16)
+test_generic(orthotropicelasticity5-17)
+test_generic(orthotropicelasticity5-18)
+test_generic(orthotropicelasticity5-19)
+test_generic(orthotropicelasticity5-20)
+test_generic(orthotropicelasticity5-21)
+test_generic(orthotropicelasticity5-22)
+test_generic(orthotropicelasticity5-23)
+test_generic(orthotropicelasticity5-24)
+test_generic(orthotropicelasticity6-1)
+test_generic(orthotropicelasticity6-2)
+test_generic(orthotropicelasticity6-3)
+test_generic(orthotropicelasticity6-4)
+test_generic(orthotropicelasticity6-5)
+test_generic(orthotropicelasticity6-6)
+test_generic(orthotropicelasticity6-7)
+test_generic(orthotropicelasticity6-8)
+test_generic(orthotropicelasticity6-9)
+test_generic(orthotropicelasticity6-10)
+test_generic(orthotropicelasticity6-11)
+test_generic(orthotropicelasticity6-12)
+test_generic(orthotropicelasticity6-13)
+test_generic(orthotropicelasticity6-14)
+test_generic(orthotropicelasticity6-15)
+test_generic(orthotropicelasticity6-16)
+test_generic(orthotropicelasticity6-17)
+test_generic(orthotropicelasticity6-18)
+test_generic(orthotropicelasticity6-19)
+test_generic(orthotropicelasticity6-20)
+test_generic(orthotropicelasticity6-21)
+test_generic(orthotropicelasticity6-22)
+test_generic(orthotropicelasticity6-23)
+test_generic(orthotropicelasticity6-24)
+test_generic(orthotropiccreep)
+test_generic(orthotropiccreep-rk42)
+test_generic(orthotropiccreep-rkCastem)
 # test_generic(strainhardeningcreep)
 # test_generic(strainhardeningcreep2)
 # test_generic(strainhardeningcreep3)
@@ -547,6 +560,8 @@ test_generic_fs(saintvenantkirchhoffelasticity-shear-3-3D)
 test_generic_fs(saintvenantkirchhoffelasticity-shear-4-3D)
 test_generic_fs(saintvenantkirchhoffelasticity-shear-5-3D)
 test_generic_fs(saintvenantkirchhoffelasticity-shear-6-3D)
+
+test_generic(saintvenantkirchhoffelasticity4-uniaxialloading-1-3D)
 
 # test_generic(elasticity_frst-uniaxialloading-1-1D)
 # test_generic(elasticity_frst-uniaxialloading-2-1D)
@@ -679,15 +694,14 @@ test_generic_fs(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-3
 # test_generic(implicitsimomieheelastoplasticity)
 # test_generic(T91-satohtest)
 # test_generic(T91-viscositytest)
-# test_generic(finitestrainsinglecrystal-001)
-# test_generic(finitestrainsinglecrystal-012)
-# test_generic(finitestrainsinglecrystal-012-2)
-# test_generic(finitestrainsinglecrystal-159)
-# test_generic(finitestrainsinglecrystal_numericaljacobian-001)
-# test_generic(finitestrainsinglecrystal_numericaljacobian-012)
-# test_generic(finitestrainsinglecrystal_numericaljacobian-012-2)
-# test_generic(finitestrainsinglecrystal_numericaljacobian-159)
-# test_generic(finitestrainsinglecrystal2-001)
+test_generic_fs(finitestrainsinglecrystal-001 finitestrainsinglecrystal-001.ref)
+test_generic_fs(finitestrainsinglecrystal-012 finitestrainsinglecrystal-012.ref)
+test_generic_fs(finitestrainsinglecrystal-012-2 finitestrainsinglecrystal-012.ref)
+test_generic_fs(finitestrainsinglecrystal-159 finitestrainsinglecrystal-159.ref)
+test_generic_fs(finitestrainsinglecrystal_numericaljacobian-001 finitestrainsinglecrystal-001.ref)
+test_generic_fs(finitestrainsinglecrystal_numericaljacobian-012 finitestrainsinglecrystal-012.ref)
+test_generic_fs(finitestrainsinglecrystal_numericaljacobian-012-2 finitestrainsinglecrystal-012.ref)
+test_generic_fs(finitestrainsinglecrystal_numericaljacobian-159 finitestrainsinglecrystal-159.ref)
 # test_generic(anistropiclemaitreviscoplasticbehaviour)
 # test_generic(tssf)
 test_generic(computestressfreeexpansion)
@@ -711,3 +725,6 @@ test_generic(computethermalexpansion3)
 # test_generic(elasticmaterialpropertiesboundschecktest
 #   NO_XML_OUTPUT WILL_FAIL)
 # test_generic(temperatureupdateonsubsteppingcheck)
+
+test_generic(ThermoElasticity)
+

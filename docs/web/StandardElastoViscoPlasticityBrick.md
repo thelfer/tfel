@@ -1,6 +1,21 @@
-% Description of the `StandardElastoViscoPlasticity` brick
-% Thomas Helfer
-% 15/04/2018
+---
+title: Description of the `StandardElastoViscoPlasticity` brick
+author: Thomas Helfer
+date: 2020
+lang: en-EN
+documentclass: article
+from: markdown+tex_math_single_backslash
+geometry:
+  - margin=2cm
+papersize: a4
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tabPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+bibliography: bibliography.bib
+---
 
 \newcommand{\tenseur}[1]{\underline{#1}}
 \newcommand{\tenseurq}[1]{\underline{\mathbf{#1}}}
@@ -29,7 +44,6 @@
 
 \newcommand{\tDq}{{\underline{\mathbf{D}}}}
 \newcommand{\trace}[1]{{\mathrm{tr}\paren{#1}}}
-\newcommand{\Frac}[2]{{{\displaystyle \frac{\displaystyle #1}{\displaystyle #2}}}}
 \newcommand{\deriv}[2]{{{\displaystyle \frac{\displaystyle \partial #1}{\displaystyle \partial #2}}}}
 \newcommand{\dtot}{{{\mathrm{d}}}}
 \newcommand{\paren}[1]{{\left(#1\right)}}
@@ -37,6 +51,7 @@
 \newcommand{\bts}[1]{{\left.#1\right|_{t}}}
 \newcommand{\mts}[1]{{\left.#1\right|_{t+\theta\,\Delta\,t}}}
 \newcommand{\ets}[1]{{\left.#1\right|_{t+\Delta\,t}}}
+\newcommand{\norm}[1]{\lVert #1\rVert}
 
 This page describes the `StandardElastoViscoPlasticity` brick. This
 brick is used to describe a specific class of strain based behaviours
@@ -201,21 +216,129 @@ the limit of the elastic domain as a sum, denoted
 combining various predefined forms of isotropic hardening rules (Voce,
 Linear, etc.) defined hereafter.
 
+#### Maximum equivalent stress in the `Plastic` flow
+
+During the Newton iterations, the current estimate of the equivalent
+stress \(\sigmaeq\) may be significantly higher than the elastic limit
+\(R\). This may lead to a divergence of the Newton algorithm.
+
+One may reject the Newton steps leading to such high values of the
+elastic limit by specifying a relative threshold denoted \(\alpha\),
+i.e. if \(\sigmaeq\) is greater than \(\alpha\,\cdot\,R\). A typical
+value for \(\alpha\) is \(1.5\). This relative threshold is specified by
+the `maximum_equivalent_stress_factor` option.
+
+In some cases, rejecting steps may also lead to a divergence of the
+Newton algorithm, so one may specify a relative threshold \(\beta\) on
+the iteration number which desactivate this check, i.e. the check is
+performed only if the current iteration number is below
+\(\beta\,\cdot\,i_{\max{}}\) where \(i_{\max{}}\) is the maximum number
+of iterations allowed for the Newton algorithm. A typical value for
+\(\beta\) is \(0.4\). This relative threshold is specified by the
+`equivalent_stress_check_maximum_iteration_factor` option.
+
+##### Example
+
+~~~~{.cxx}
+@DSL Implicit;
+@Behaviour PerfectPlasticity;
+@Author Thomas Helfer;
+@Date 17 / 08 / 2020;
+@Description{};
+
+@Epsilon 1.e-14;
+@Theta 1;
+
+@Brick StandardElastoViscoPlasticity{
+  stress_potential : "Hooke" {young_modulus : 200e9, poisson_ratio : 0.3},
+  inelastic_flow : "Plastic" {
+    criterion : "Mises",
+    isotropic_hardening : "Linear" {R0 : 150e6},
+    maximum_equivalent_stress_factor : 1.5,
+    equivalent_stress_check_maximum_iteration_factor: 0.4
+  }
+};
+~~~~
 
 ### The `Norton` inelastic flow
 
 The plastic flow is defined by:
 
-- a function \(f\paren{\tsigma}\) giving the flow intensity
+- a function \(f\paren{\tsigma}\) giving the flow intensity:
+  \[
+  f\paren{\tsigma}=A\,\left<\dfrac{\phi\paren{\tsigma-\sum_{i}\tenseur{X}_{i}}-\sum_{i}R_{i}\paren{p}}{K}\right>^{n}
+  \]
+- a stress criterion \(\phi\)
 - a viscoplastic potential \(g\)
-- one or more kinematic hardening rule (optional)
-- one isotropic hardening rule (optional)
+- one or more kinematic hardening rule (optional), denoted \(\tenseur{X}_{i}\)
+- one isotropic hardening rule (optional), denoted \(R_{i}\)
+
+### The `HyperbolicSine` inelastic flow
+
+The plastic flow is defined by:
+
+- a function \(f\paren{\tsigma}\) giving the flow intensity given by:
+  \[
+  f\paren{\tsigma}=A\,\sinh\paren{\dfrac{\left<\phi\paren{\tsigma-\sum_{i}\tenseur{X}_{i}}-\sum_{i}R_{i}\paren{p}\right>}{K}}^{n}
+  \]
+- a stress criterion \(\phi\)
+- a viscoplastic potential \(g\)
+- one or more kinematic hardening rule (optional), denoted \(\tenseur{X}_{i}\)
+- one isotropic hardening rule (optional), denoted \(R_{i}\)
+
+#### Newton steps rejection
+
+The exponential nature of the hyperbolic sinus function may lead to
+divergence of the Newton method. To avoid this, one may specify a
+relative threshold denoted \(K_{sf}\): if the stress estimate is greater
+than \(K_{sf}\,K\), the step is rejected.
+
+## Newton steps rejections based on the change of the flow direction between two successive estimates {#sec:cosine_checks}
+
+Some stress criteria (Hosford 1972, Barlat 2004, Mohr-Coulomb) shows
+sharp edges that may cause the failure of the standard Newton algorithm,
+due to oscillations in the prediction of the flow direction.
+
+Rejecting Newton steps leading to a too large variation of the flow
+direction between the new estimate of the flow direction and the
+previous estimate is a cheap and efficient method to overcome this
+issue. This method can be viewed as a bisectional linesearch based on
+the Newton prediction: the Newton steps magnitude is divided by two if
+its results to a too large change in the flow direction.
+
+More precisely, the change of the flow direction is estimated by the
+computation of the cosine of the angle between the two previous
+estimates:
 
 \[
-f\paren{\tsigma}=A\left<\Frac{\phi\paren{\tsigma-\sum_{i}\tenseur{X}_{i}}-\sum_{i}R_{i}\paren{p}}{K}\right>^{n}
+\cos\paren{\alpha_{\tenseur{n}}}=\dfrac{\tenseur{n}\,\colon\,\tenseur{n}_{p}}{\norm{\tenseur{n}}\,\norm{\tenseur{n}}}
 \]
 
-## List of available stress criterion
+with \(\norm{\tenseur{n}}=\sqrt{\tenseur{n}\,\colon\,\tenseur{n}}\).
+
+The Newton step is rejected if the value of
+\(\cos\paren{\alpha_{\tenseur{n}}}\) is lower than a user defined
+threshold. This threshold must be in the range \(\left[-1:1\right]\),
+but due to the slow variation of the cosine near \(0\), a typical value
+of this threshold is \(0.99\) which is equivalent to impose that the
+angle between two successive estimates is below \(8\mbox{}^{\circ}\).
+
+
+## List of available stress criteria
+
+The following section describes stress criteria available by default.
+However, the `StandardElastoViscoPlasticity` brick can also be extended
+by the user:
+
+- [this
+  page](ExtendingStandardElastoViscoPlasticityBrick-StressCriterion.html)
+  describes how to add a new stress criterion which is not coupled with
+  the evolution of the porosity.
+- [this
+  page](ExtendingStandardElastoViscoPlasticityBrick-PorousStressCriterion.html)
+  describes how to add a new stress criterion coupled with the evolution
+  of the porosity.
+
 
 ### von Mises stress criterion
 
@@ -223,12 +346,12 @@ f\paren{\tsigma}=A\left<\Frac{\phi\paren{\tsigma-\sum_{i}\tenseur{X}_{i}}-\sum_{
 
 The von Mises stress is defined by:
 \[
-\sigmaeq=\sqrt{\Frac{3}{2}\,\tenseur{s}\,\colon\,\tenseur{s}}=\sqrt{3\,J_{2}}
+\sigmaeq=\sqrt{\dfrac{3}{2}\,\tenseur{s}\,\colon\,\tenseur{s}}=\sqrt{3\,J_{2}}
 \]
 where:
 - \(\tenseur{s}\) is the deviatoric stress defined as follows:
 \[
-\tenseur{s}=\tsigma-\Frac{1}{3}\,\trace{\tsigma}\,\tenseur{I}
+\tenseur{s}=\tsigma-\dfrac{1}{3}\,\trace{\tsigma}\,\tenseur{I}
 \]
 - \(J_{2}\) is the second invariant of \(\tenseur{s}\).
 
@@ -236,7 +359,7 @@ In terms of the eigenvalues of the stress, denoted by \(\sigma_{1}\),
 \(\sigma_{2}\) and \(\sigma_{3}\), the von Mises stress can also be
 defined by:
 \[
-\sigmaeq=\sqrt{\Frac{1}{2}\paren{\absvalue{\sigma_{1}-\sigma_{2}}^{2}+\absvalue{\sigma_{1}-\sigma_{3}}^{2}+\absvalue{\sigma_{2}-\sigma_{3}}^{2}}}
+\sigmaeq=\sqrt{\dfrac{1}{2}\paren{\absvalue{\sigma_{1}-\sigma_{2}}^{2}+\absvalue{\sigma_{1}-\sigma_{3}}^{2}+\absvalue{\sigma_{2}-\sigma_{3}}^{2}}}
 \]
 
 #### Options
@@ -255,13 +378,13 @@ The Drucker 1949 stress is defined by:
 \]
 where:
 
-- \(J_{2}=\Frac{1}{2}\,\tenseur{s}\,\colon\,\tenseur{s}\) is the second
+- \(J_{2}=\dfrac{1}{2}\,\tenseur{s}\,\colon\,\tenseur{s}\) is the second
   invariant of \(\tenseur{s}\).
 - \(J_{3}=\mathrm{det}\paren{\tenseur{s}}\) is the third invariant of
   \(\tenseur{s}\).
 - \(\tenseur{s}\) is the deviatoric stress defined as follows:
 \[
-\tenseur{s}=\tsigma-\Frac{1}{3}\,\trace{\tsigma}\,\tenseur{I}
+\tenseur{s}=\tsigma-\dfrac{1}{3}\,\trace{\tsigma}\,\tenseur{I}
 \]
 
 ### Example
@@ -278,7 +401,7 @@ The user must provide the \(c\) coefficient.
 
 The Hosford equivalent stress is defined by (see @hosford_generalized_1972):
 \[
-\sigmaeq^{H}=\sqrt[a]{\Frac{1}{2}\paren{\absvalue{\sigma_{1}-\sigma_{2}}^{a}+\absvalue{\sigma_{1}-\sigma_{3}}^{a}+\absvalue{\sigma_{2}-\sigma_{3}}^{a}}}
+\sigmaeq^{H}=\sqrt[a]{\dfrac{1}{2}\paren{\absvalue{\sigma_{1}-\sigma_{2}}^{a}+\absvalue{\sigma_{1}-\sigma_{3}}^{a}+\absvalue{\sigma_{2}-\sigma_{3}}^{a}}}
 \]
 where \(\sigma_{1}\), \(\sigma_{2}\) and \(\sigma_{3}\) are the eigenvalues of the
 stress.
@@ -291,11 +414,25 @@ von Mises stress.
  "Comparison of the Hosford stress \(a=100,a=8\) and the von Mises
  stress in plane stress"){width=70%}
 
+### Options
+
+The Hosford exponent `a` is mandatory.
+
+Specifying the eigen solver using the `eigen_solver` option is optional.
+This option can have the value `default` or the value `Jacobi`.
+
 ### Example
 
 ~~~~{.cpp}
     criterion : "Hosford" {a : 6}
 ~~~~
+
+### Notes
+
+The Hosford yield surface may have sharp edges which may lead to
+divergence of the Newton algorithm du to oscillations of the flow
+direction. Specifying a threshold for the angle between. See Section
+@sec:cosine_checks for details.
 
 #### Options
 
@@ -313,13 +450,13 @@ In order to describe yield differential effects, the isotropic Cazacu
 
 where:
 
-- \(J_{2}=\Frac{1}{2}\,\tenseur{s}\,\colon\,\tenseur{s}\) is the second
+- \(J_{2}=\dfrac{1}{2}\,\tenseur{s}\,\colon\,\tenseur{s}\) is the second
   invariant of \(\tenseur{s}\).
 - \(J_{3}=\mathrm{det}\paren{\tenseur{s}}\) is the third invariant of
   \(\tenseur{s}\).
 - \(\tenseur{s}\) is the deviatoric stress defined as follows:
 \[
-\tenseur{s}=\tsigma-\Frac{1}{3}\,\trace{\tsigma}\,\tenseur{I}
+\tenseur{s}=\tsigma-\dfrac{1}{3}\,\trace{\tsigma}\,\tenseur{I}
 \]
 
 ### Example
@@ -534,7 +671,7 @@ orthotropy. There are defined through auxiliary linear transformations
 \]
 where \(\tenseurq{M}\) is the transformation of the stress to its deviator:
 \[
-\tenseurq{M}=\tenseurq{I}-\Frac{1}{3}\tenseur{I}\,\otimes\,\tenseur{I}
+\tenseurq{M}=\tenseurq{I}-\dfrac{1}{3}\tenseur{I}\,\otimes\,\tenseur{I}
 \]
 
 The linear transformations \(\tenseurq{C}'\) and \(\tenseurq{C}''\) of
@@ -583,6 +720,9 @@ This stress criterion has \(3\) mandatory options:
 > modelling hypotheses. The coefficients given by the user must always
 > correspond to the three dimensional case.
 
+Specifying the eigen solver using the `eigen_solver` option is optional.
+This option can have the value `default` or the value `Jacobi`.
+
 ### Example
 
 ~~~~{.cpp}
@@ -594,6 +734,13 @@ This stress criterion has \(3\) mandatory options:
             1.1471, 1.05166}
     }
 ~~~~
+
+### Notes
+
+The Barlat 2004 yield surface may have sharp edges which may lead to
+divergence of the Newton algorithm du to oscillations of the flow
+direction. Specifying a threshold for the angle between. See Section
+@sec:cosine_checks for details.
 
 ## List of available isotropic hardening rules
 
@@ -656,7 +803,7 @@ The following code can be added in a block defining an inelastic flow:
 
 The `Swift` isotropic hardening rule is defined by:
 \[
-R\paren{p}=R_{0}\,\paren{\Frac{p+p_{0}}{p_{0}}}^{n}
+R\paren{p}=R_{0}\,\paren{\dfrac{p+p_{0}}{p_{0}}}^{n}
 \]
 
 #### Options
@@ -746,7 +893,7 @@ follows (see @armstrong_mathematical_1966):
 \[
 \left\{
 \begin{aligned}
-\tenseur{X}&=\Frac{2}{3}\,C\,\tenseur{a} \\
+\tenseur{X}&=\dfrac{2}{3}\,C\,\tenseur{a} \\
 \tenseur{\dot{a}}&=\dot{p}\,\tenseur{n}-D\,\dot{p}\,\tenseur{a} \\
 \end{aligned}
 \right.
@@ -768,10 +915,10 @@ The `Burlet-Cailletaud` kinematic hardening rule is defined as follows
 \[
 \left\{
 \begin{aligned}
-\tenseur{X}&=\Frac{2}{3}\,C\,\tenseur{a} \\
+\tenseur{X}&=\dfrac{2}{3}\,C\,\tenseur{a} \\
 \tenseur{\dot{a}}&=\dot{p}\,\tenseur{n}
 -\eta\,D\,\dot{p}\,\tenseur{a}
--\paren{1-\eta}\,D\,\Frac{2}{3}\,\dot{p}\,\paren{\tenseur{a}\,\colon\,\tenseur{n}}\,\tenseur{n} \\
+-\paren{1-\eta}\,D\,\dfrac{2}{3}\,\dot{p}\,\paren{\tenseur{a}\,\colon\,\tenseur{n}}\,\tenseur{n} \\
 \end{aligned}
 \right.
 \]

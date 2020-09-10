@@ -37,7 +37,8 @@ namespace mtest {
      * \param[in] h : modelling hypothesis
      * \param[in] f : function implementation the behaviour
      */
-    static std::string getBehaviourName(const std::string&, const Hypothesis);
+    static std::string extractBehaviourName(const std::string&,
+                                            const Hypothesis);
     /*!
      * \param[in] h : modelling hypothesis
      * \param[in] l : library name
@@ -71,7 +72,7 @@ namespace mtest {
      */
     std::pair<bool, real> computePredictionOperator(
         BehaviourWorkSpace&,
-        const CurrentStateView&,
+        const CurrentState&,
         const StiffnessMatrixType) const override;
     /*!
      * \brief integrate the mechanical behaviour over the time step
@@ -83,7 +84,7 @@ namespace mtest {
      * \param[in]     dt    : time increment
      * \param[in]     ktype : type of the stiffness matrix
      */
-    std::pair<bool, real> integrate(CurrentStateView&,
+    std::pair<bool, real> integrate(CurrentState&,
                                     BehaviourWorkSpace&,
                                     const real,
                                     const StiffnessMatrixType) const override;
@@ -110,7 +111,7 @@ namespace mtest {
      * step, if false compute a prediction of the stiffness matrix
      */
     virtual std::pair<bool, real> call_behaviour(tfel::math::matrix<real>&,
-                                                 CurrentStateView&,
+                                                 CurrentState&,
                                                  BehaviourWorkSpace&,
                                                  const real,
                                                  const StiffnessMatrixType,

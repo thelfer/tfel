@@ -260,9 +260,9 @@ namespace mfront {
                    "MFront::treatSilentBuild: "
                    "no argument given to the "
                    "--silentBuild option");
-    if (o == "on") {
+    if ((o == "on") || (o == "true")) {
       this->opts.silentBuild = true;
-    } else if (o == "off") {
+    } else if ((o == "off") || (o == "false")) {
       this->opts.silentBuild = false;
     } else {
       tfel::raise(
@@ -313,6 +313,20 @@ namespace mfront {
                               "(deprecated, use --list-dsl)");
     this->registerNewCallBack("--list-dsl", &MFront::treatListParsers,
                               "list all available domain specific languages");
+#ifdef MFRONT_HAVE_MADNEX
+    this->registerNewCallBack("--material", &MFront::treatMaterialIdentifier,
+                              "specify a material identifier", true);
+    this->registerNewCallBack(
+        "--material-property", &MFront::treatMaterialPropertyIdentifier,
+        "specify a material property identifier (can be a regular expression)",
+        true);
+    this->registerNewCallBack(
+        "--behaviour", &MFront::treatBehaviourIdentifier,
+        "specify a behaviour identifier (can be a regular expression)", true);
+    this->registerNewCallBack(
+        "--model", &MFront::treatModelIdentifier,
+        "specify a model identifier (can be a regular expression)", true);
+#endif /* MFRONT_HAVE_MADNEX */
     this->registerNewCallBack(
         "--help-commands", &MFront::treatHelpCommands,
         "display the help associated with all the keywords for the given "
@@ -356,9 +370,10 @@ namespace mfront {
                               "display the help associated for the given "
                               "domain specific language and exits",
                               true);
-    this->registerNewCallBack(
-        "--debug", &MFront::treatDebug,
-        "set debug mode (remove references to initial file)");
+    this->registerNewCallBack("--debug", &MFront::treatDebug,
+                              "set debug mode, i.e. remove references to "
+                              "initial file and add information about the "
+                              "local convergence of the integration algorithm");
     this->registerNewCallBack("--warning", "-W", &MFront::treatWarning,
                               "print warnings");
     this->registerNewCallBack("--pedantic", &MFront::treatPedantic,
@@ -385,6 +400,9 @@ namespace mfront {
                               "generate build file with optimized compilations "
                               "flags and build libraries",
                               true);
+    this->registerCallBack(
+        "-g", CallBack("add debugging symbols",
+                       [this] { this->opts.debugFlags = true; }, false));
     this->registerNewCallBack(
         "--target", "-t", &MFront::treatTarget,
         "generate build file and build the specified target", true);
@@ -560,6 +578,7 @@ namespace mfront {
     this->setArguments(argc, argv);
     this->registerArgumentCallBacks();
     this->parseArguments();
+    this->finalizeArgumentsParsing();
   }  // end of MFront::MFront
 
   void MFront::treatDefine() {

@@ -1,0 +1,37 @@
+@Author Helfer Thomas;
+@Date  29/02/2016;
+@Description{
+  "This test checks that the stiffness tensor "
+  "is correctly computed for an "
+  "orthotropic material."
+};
+
+@XMLOutputFile @xml_output@;
+@MaximumNumberOfSubSteps 1;
+@Behaviour<generic> @library@ 'OrthotropicElastic6';
+
+@Real 'E1'   '7.8e+10';
+@Real 'E2'   '2.64233e+11';
+@Real 'E3'   '3.32e+11';
+@Real 'nu12' '0.13';
+@Real 'nu13' '0.18';
+@Real 'nu23' '0.24';
+@Real 'G12'  '4.8e+10';
+@Real 'G13'  '7.8e+10';
+@Real 'G23'  '1.16418e+11';
+
+@ExternalStateVariable 'Temperature' 293.15;
+@Real 'ThermalExpansionReferenceTemperature' 293.15;
+@Real 'Tref' 'ThermalExpansionReferenceTemperature';
+
+@ImposedStrain<function> 'EYY' '1.e-3*sin(t/900.)';
+
+@Times {0.,3600 in 20};
+
+// stresses
+@Test<function> 'SYY' 'E2*EYY'  1.e-3;
+@Test<function> {'SXX':'0','SZZ':'0'}  1.e-3;
+// strains
+@Test<function> 'EXX' '-nu12*(E2/E1)*EYY'  1.e-12;
+@Test<function> 'EZZ' '-nu23*EYY'  1.e-12;
+@Test<function> {'EXY':'0.','EXZ':'0.','EYZ':'0.'} 1.e-12;

@@ -223,6 +223,12 @@ namespace mfront {
   };  // end of struct VariableDescription
 
   /*!
+   * \return the size of the variable
+   * \param[in] v: variable description
+   */
+  MFRONT_VISIBILITY_EXPORT SupportedTypes::TypeSize getTypeSize(
+      const VariableDescription&);
+  /*!
    * \return true if the variable has bounds.
    * \param[in] v: variable description
    * \note this is a simple wrapper around the `hasBounds` method
@@ -361,6 +367,19 @@ namespace mfront {
   };  // end of struct VariableDescriptionContainer
 
   /*!
+   * \return an iterator to the variable with the given external name
+   * \param[in] c: variable container
+   * \param[in] n: external name
+   */
+  MFRONT_VISIBILITY_EXPORT VariableDescriptionContainer::const_iterator
+  findByExternalName(const VariableDescriptionContainer&, const std::string&);
+  /*!
+   * \return the sum of the sizes of all the variables
+   * \param[in] c: variable description container
+   */
+  MFRONT_VISIBILITY_EXPORT SupportedTypes::TypeSize getTypeSize(
+      const VariableDescriptionContainer&);
+  /*!
    * \return true if one of the variables has bounds.
    * \param[in] c: variable description container
    */
@@ -394,9 +413,16 @@ namespace mfront {
    */
   MFRONT_VISIBILITY_EXPORT void getTimeDerivativeSymbols(
       std::map<std::string, std::string>&, const VariableDescriptionContainer&);
+  /*!
+   * \return the offset of the given variable.
+   * \param[in] c: variable description container
+   * \param[in] n: name of the variable
+   */
+  MFRONT_VISIBILITY_EXPORT SupportedTypes::TypeSize getOffset(
+      const VariableDescriptionContainer&, const std::string&);
 
   //! a simple alias for backward compatibility
-  typedef VariableDescriptionContainer VarContainer;
+  using VarContainer = VariableDescriptionContainer;
 
 }  // end of namespace mfront
 

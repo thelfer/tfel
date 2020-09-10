@@ -30,45 +30,58 @@ Basic Installation
 Options
 =======
 
-  enable-static     : compiles static libraries
-  enable-eigen      : allows support for eigen linear solvers
-  enable-mkl        : allows support for linear solvers provided by the Math Kernel Library
-  enable-fortran    : enables fortran support
-  enable-python     : enables python support
-  enable-java       : enables java support
-  enable-aster      : enables aster support
-  enable-abaqus     : enables abaqus support
-  enable-ansys      : enables ansys support
-  enable-europlexus : enables europlexus support
-  enable-zmat       : enables zmat support
-  enable-cyrano     : enables cyrano support (cyrano is eDF fuel performance code)
-  enable-calculix   : enables CalculiX support
-  enable-comsol     : enables Combsol support
-  enable-diana-fea  : enables Diana FEA support
-  enable-lsdyna     : enables LS-DYNA support
-  enable-libcxx     : enable libc++ on Linux and clang
-  enable-cxx-17     : enable c++-17 features (requires `gcc` >= 7.2)
-  
-  enable-random-tests: enable tests based on a random choice of 
-  enable-developer-warnings : enable additionnal compiler warnings
-  enable-advanced-developer-warnings : enable additionnal compiler warnings 
-  enable-sanitize-options : additional compiler flags (gcc specific)
-  enable-portable-build   : do not use processor specific flags. The generated binaries can be
-                            used on other machines as long as the architecture and the compiler
-			    version are the same
-
-  enable-doxygen-doc    : generate doxygen documentation (disabled by default)
-  enable-reference-doc  : enable the generation of the reference documentation
-                          (requires a valid latex engine)
-  enable-website        : generate the TFEL website
-                          (enabled by default if pandoc is found)
-  enable-fast-math      : use advance options to optimize code further.
-  			  Compiler can then ignore IEEE 754 compatibility
-  enable-broken-boost-python-module-visibility-handling : workaround a bug
-  			  in boost python which occurs on FreeBSD+clang.
-			  See https://github.com/boostorg/python/issues/173
-			  for details
-  enable-glibcxx-debug  : use the debug version of the STL implemented by the GLIB
+- enable-static : compiles static libraries
+- enable-eigen : allows support for eigen linear solvers
+- enable-mkl : allows support for linear solvers provided by the Math
+  Kernel Library
+- enable-fortran : enables fortran support
+- enable-python : enables python support
+- enable-numpy-support: enables numpy support. This is activated by
+  default if enable-python is set
+- enable-java : enables java support
+- enable-aster : enables aster support
+- enable-abaqus : enables abaqus support
+- enable-ansys : enables ansys support
+- enable-europlexus : enables europlexus support
+- enable-zmat : enables zmat support
+- enable-cyrano : enables cyrano support (cyrano is eDF fuel performance
+  code)
+- enable-calculix   : enables CalculiX support
+- enable-comsol : enables Combsol support
+- enable-diana-fea : enables Diana FEA support
+- enable-lsdyna : enables LS-DYNA support
+- enable-libcxx : enable libc++ on Linux and clang
+- enable-cxx-17 : enable c++-17 features (requires `gcc` >= 7.2)
+- enable-random-tests: enable tests based on a random choice of
+- enable-developer-warnings : enable additionnal compiler warnings
+- enable-advanced-developer-warnings : enable additionnal compiler
+  warnings
+- enable-sanitize-options : additional compiler flags (gcc specific)
+- enable-portable-build : do not use processor specific flags. The
+  generated binaries can be used on other machines as long as the
+  architecture and the compiler version are the same
+- enable-doxygen-doc : generate doxygen documentation (disabled by
+  default)
+- enable-reference-doc : enable the generation of the reference
+  documentation (requires a valid latex engine)
+- enable-website : generate the TFEL website (enabled by default if
+  pandoc is found)
+- enable-fast-math : use advance options to optimize code further.
+  Compiler can then ignore IEEE 754 compatibility
+- enable-broken-boost-python-module-visibility-handling : workaround a
+  bug in boost python which occurs on FreeBSD+clang. See
+  https://github.com/boostorg/python/issues/173 for details
+- python-static-interpreter-workaround: a workaround to handle the fact
+  the conda' python interpreter is statically linked, which causes
+  issues on Mac Os. See for details
+  https://github.com/ContinuumIO/anaconda-issues/issues/9078. A proper
+  solution may only appear with CMake 3.15 with the `Python::module`
+  target, see https://gitlab.kitware.com/cmake/cmake/issues/18100. Until
+  this version is widely available, this flag proposes a hack. Use with
+  care.
+- enable-glibcxx-debug : use the debug version of the STL
+  implemented by the GLIB
+- enable-hho-support    : enable Hybrid High Order elements in MTest
 
 cmake usefull variables
 =======================

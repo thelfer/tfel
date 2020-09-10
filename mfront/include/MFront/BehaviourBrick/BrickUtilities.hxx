@@ -265,6 +265,80 @@ namespace mfront {
                                                    const std::string &,
                                                    const unsigned short = 1u);
     /*!
+     * \brief add a new state variable
+     * \param[in] bd: behaviour description
+     * \param[in] t: type of the state variable
+     * \param[in] n: name of the variable
+     * \param[in] g: glossary name
+     * \param[in] s: array size
+     * \param[in] bo: allow name shadowing. If true, allows that a state
+     * variable
+     * with the given glossary name but a different name has already been
+     * defined.
+     */
+    MFRONT_VISIBILITY_EXPORT void addStateVariableIfNotDefined(
+        BehaviourDescription &,
+        const std::string &,
+        const std::string &,
+        const tfel::glossary::GlossaryEntry &,
+        const unsigned short = 1u,
+        const bool bo = false);
+    /*!
+     * \brief add a new state variable
+     * \param[in] bd: behaviour description
+     * \param[in] t: type of the state variable
+     * \param[in] n: name of the variable
+     * \param[in] e: entry name
+     * \param[in] s: array size
+     * \param[in] bo: allow name shadowing. If true, allows that a state
+     * variable
+     * with the given entry name but a different name has already been defined.
+     */
+    MFRONT_VISIBILITY_EXPORT void addStateVariableIfNotDefined(
+        BehaviourDescription &,
+        const std::string &,
+        const std::string &,
+        const std::string &,
+        const unsigned short = 1u,
+        const bool bo = false);
+    /*!
+     * \brief add a new auxiliary state variable
+     * \param[in] bd: behaviour description
+     * \param[in] t: type of the state variable
+     * \param[in] n: name of the variable
+     * \param[in] g: glossary name
+     * \param[in] s: array size
+     * \param[in] bo: allow name shadowing. If true, allows that a state
+     * variable
+     * with the given glossary name but a different name has already been
+     * defined.
+    */
+    MFRONT_VISIBILITY_EXPORT void addAuxiliaryStateVariableIfNotDefined(
+        BehaviourDescription &,
+        const std::string &,
+        const std::string &,
+        const tfel::glossary::GlossaryEntry &,
+        const unsigned short = 1u,
+        const bool bo = false);
+    /*!
+     * \brief add a new auxiliary state variable
+     * \param[in] bd: behaviour description
+     * \param[in] t: type of the state variable
+     * \param[in] n: name of the variable
+     * \param[in] e: entry name
+     * \param[in] s: array size
+     * \param[in] bo: allow name shadowing. If true, allows that a state
+     * variable with the given entry name but a different name has already been
+     * defined.
+     */
+    MFRONT_VISIBILITY_EXPORT void addAuxiliaryStateVariableIfNotDefined(
+        BehaviourDescription &,
+        const std::string &,
+        const std::string &,
+        const std::string &,
+        const unsigned short = 1u,
+        const bool bo = false);
+    /*!
      * \brief add a new external state variable
      * \param[in] bd: behaviour description
      * \param[in] t: type of the material property
@@ -392,18 +466,64 @@ namespace mfront {
                                                const std::string &,
                                                const unsigned short,
                                                const std::vector<double> &);
-
+    /*!
+     * \brief generate the code that evaluates the initial elastic limit.
+     * \param[in] ihrs: list of isotropic hardening rules.
+     * \param[in] fid: flow id
+     */
     MFRONT_VISIBILITY_EXPORT std::string computeElasticLimitInitialValue(
         const std::vector<std::shared_ptr<IsotropicHardeningRule>> &,
         const std::string &);
-
-    MFRONT_VISIBILITY_EXPORT std::string computeElasticLimitAndDerivative(
-        const std::vector<std::shared_ptr<IsotropicHardeningRule>> &,
-        const std::string &);
-
+    /*!
+     * \brief generate the code that evaluates the elastic limit.
+     * \param[in] ihrs: list of isotropic hardening rules.
+     * \param[in] fid: flow id
+     */
     MFRONT_VISIBILITY_EXPORT std::string computeElasticLimit(
         const std::vector<std::shared_ptr<IsotropicHardeningRule>> &,
         const std::string &);
+    /*!
+     * \brief generate the code that evaluates the elastic limit and its
+     * derivative with respect to the equivalent strain.
+     * \param[in] ihrs: list of isotropic hardening rules.
+     * \param[in] fid: flow id
+     */
+    MFRONT_VISIBILITY_EXPORT std::string computeElasticLimitAndDerivative(
+        const std::vector<std::shared_ptr<IsotropicHardeningRule>> &,
+        const std::string &);
+    /*!
+     * \brief return a string representation of the eigen solver enum associated
+     * with this string according to the following map:
+     * - `TFEL` or `default` -> `tfel::math::stensor_common::TFELEIGENSOLVER`
+     * - `Jacobi` -> `tfel::math::stensor_common::FSESJACOBIEIGENSOLVER`
+     * \param[in] e: eigen solver option
+     */
+    MFRONT_VISIBILITY_EXPORT std::string handleEigenSolverOption(
+        const std::string &);
+    /*!
+     * \return a piece of code testing if the current integration point is
+     * broken if a variable with the glossary name `Broken` as been defined. If
+     * no such variable has been declared, an empty string is returned.
+     * \param[in] bd: behaviour description
+     * \param[in] b: boolean stating if the broken must be evaluated at the end
+     * of the time step (`true`) or at the middle of the time step (`false`).
+     */
+    MFRONT_VISIBILITY_EXPORT std::string getBrokenTest(
+        const BehaviourDescription &, const bool);
+    /*!
+     * \brief if a variable with the glossary name `Broken` has been defined,
+     * this function includes the given piece of code evaluating the stress
+     * tensor in a conditional block. If the material is broken, the stress
+     * tensor is set to zero. If the material is not broken, the original code
+     * is called. The given code is not modified if no variable with glossary
+     * name `Broken` is defined.
+     * \param[in,out] c: original code on input, modified code on output.
+     * \param[in] bd: behaviour description.
+     * \param[in] b: boolean stating if the broken must be evaluated at the end
+     * of the time step (`true`) or at the middle of the time step (`false`).
+     */
+    MFRONT_VISIBILITY_EXPORT void addBrokenStateSupportToComputeStress(
+        std::string &, const BehaviourDescription &, const bool);
 
   }  // end of namespace bbrick
 

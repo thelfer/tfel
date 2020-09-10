@@ -92,6 +92,10 @@ namespace mtest {
                    "(neither isotropic nor orthotropic)");
   }  // end of StandardBehaviourBase::StandardBehaviourBase
 
+  std::string StandardBehaviourBase::getBehaviourName() const{
+    return this->behaviour;
+  }  // end of StandardBehaviourBase::getBehaviourName
+
   StandardBehaviourBase::Hypothesis StandardBehaviourBase::getHypothesis()
       const {
     return ModellingHypothesis::fromString(this->hypothesis);
@@ -558,8 +562,6 @@ namespace mtest {
             this->thtypes[pth - this->thnames.cbegin()], h);
       }
     };
-    for (const auto& b : this->tangent_operator_blocks) {
-    }
     return r;
   }  // end of StandardBehaviourBase::getTangentOperatorSize
 

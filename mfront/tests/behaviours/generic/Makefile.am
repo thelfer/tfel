@@ -36,6 +36,7 @@ EXTRA_DIST = CMakeLists.txt                                                     
              elasticity26.mtest                                                        \
              elasticity27.mtest                                                        \
              elasticity28.mtest                                                        \
+             perfectplasticity.mtest                                                   \
              finiterotationsmallstrainelasticity2-shear-1-2D.mtest		       \
              finiterotationsmallstrainelasticity2-shear-1-3D.mtest		       \
              finiterotationsmallstrainelasticity2-shear-2-2D.mtest		       \
@@ -136,12 +137,15 @@ EXTRA_DIST = CMakeLists.txt                                                     
              saintvenantkirchhoffelasticity-shear-4-3D.mtest                           \
              saintvenantkirchhoffelasticity-shear-5-3D.mtest                           \
              saintvenantkirchhoffelasticity-shear-6-3D.mtest                           \
+             saintvenantkirchhoffelasticity4-uniaxialloading-1-3D.mtest                \
              lorentz.mtest                                                             \
              lorentz2.mtest                                                            \
              tvergaard.mtest                                                           \
              implicitnorton.mtest                                                      \
-             implicitnorton2.mtest                                                     \
              implicitnorton-planestress.mtest                                          \
+             implicitnorton2.mtest                                                     \
+             implicitnorton5.mtest                                                     \
+             implicitnorton6.mtest                                                     \
              chaboche.mtest                                                            \
              chaboche2.mtest							       \
              axialgrowth.mtest							       \
@@ -155,6 +159,69 @@ EXTRA_DIST = CMakeLists.txt                                                     
              isotropiclinearswelling2.mtest					       \
              isotropicvolumeswelling.mtest					       \
              isotropicvolumeswelling2.mtest					       \
+             orthotropicelasticity6-9.mtest					       \
+             orthotropicelasticity6-8.mtest					       \
+             orthotropicelasticity6-7.mtest					       \
+             orthotropicelasticity6-6.mtest					       \
+             orthotropicelasticity6-5.mtest					       \
+             orthotropicelasticity6-4.mtest					       \
+             orthotropicelasticity6-3.mtest					       \
+             orthotropicelasticity6-2.mtest					       \
+             orthotropicelasticity6-24.mtest					       \
+             orthotropicelasticity6-23.mtest					       \
+             orthotropicelasticity6-22.mtest					       \
+             orthotropicelasticity6-21.mtest					       \
+             orthotropicelasticity6-20.mtest					       \
+             orthotropicelasticity6-1.mtest					       \
+             orthotropicelasticity6-19.mtest					       \
+             orthotropicelasticity6-18.mtest					       \
+             orthotropicelasticity6-17.mtest					       \
+             orthotropicelasticity6-16.mtest					       \
+             orthotropicelasticity6-15.mtest					       \
+             orthotropicelasticity6-14.mtest					       \
+             orthotropicelasticity6-13.mtest					       \
+             orthotropicelasticity6-12.mtest					       \
+             orthotropicelasticity6-11.mtest					       \
+             orthotropicelasticity6-10.mtest					       \
+             orthotropicelasticity5-9.mtest					       \
+             orthotropicelasticity5-8.mtest					       \
+             orthotropicelasticity5-7.mtest					       \
+             orthotropicelasticity5-6.mtest					       \
+             orthotropicelasticity5-5.mtest					       \
+             orthotropicelasticity5-4.mtest					       \
+             orthotropicelasticity5-3.mtest					       \
+             orthotropicelasticity5-2.mtest					       \
+             orthotropicelasticity5-24.mtest					       \
+             orthotropicelasticity5-23.mtest					       \
+             orthotropicelasticity5-22.mtest					       \
+             orthotropicelasticity5-21.mtest					       \
+             orthotropicelasticity5-20.mtest					       \
+             orthotropicelasticity5-1.mtest					       \
+             orthotropicelasticity5-19.mtest					       \
+             orthotropicelasticity5-18.mtest					       \
+             orthotropicelasticity5-17.mtest					       \
+             orthotropicelasticity5-16.mtest					       \
+             orthotropicelasticity5-15.mtest					       \
+             orthotropicelasticity5-14.mtest					       \
+             orthotropicelasticity5-13.mtest					       \
+             orthotropicelasticity5-12.mtest					       \
+             orthotropicelasticity5-11.mtest					       \
+             orthotropicelasticity5-10.mtest					       \
+             orthotropicelasticity4-1.mtest					       \
+             orthotropicelasticity3-3.mtest					       \
+             orthotropicelasticity3-2.mtest					       \
+             orthotropicelasticity3-1.mtest					       \
+             finitestrainsinglecrystal-001.mtest				       \
+             finitestrainsinglecrystal-012-2.mtest				       \
+             finitestrainsinglecrystal-012.mtest				       \
+             finitestrainsinglecrystal-159.mtest				       \
+             finitestrainsinglecrystal_numericaljacobian-001.mtest		       \
+             finitestrainsinglecrystal_numericaljacobian-012-2.mtest		       \
+             finitestrainsinglecrystal_numericaljacobian-012.mtest		       \
+             finitestrainsinglecrystal_numericaljacobian-159.mtest		       \
+             orthotropiccreep-rk42.mtest					       \
+             orthotropiccreep-rkCastem.mtest					       \
+             orthotropiccreep.mtest						       \
              orthotropicswelling.mtest						       \
              orthotropicswelling2.mtest						       \
              orthotropicswelling3.mtest						       \
@@ -171,5 +238,5 @@ EXTRA_DIST = CMakeLists.txt                                                     
              externalstatevariablesboundscheck3.mtest				       \
              externalstatevariablesboundscheck4.mtest				       \
              externalstatevariablesboundscheck5.mtest				       \
-             externalstatevariablesboundscheck6.mtest
-
+             externalstatevariablesboundscheck6.mtest                                  \
+             ThermoElasticity.mtest

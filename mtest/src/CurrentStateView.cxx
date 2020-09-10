@@ -16,6 +16,8 @@
 
 namespace mtest {
 
+  CurrentStateView::CurrentStateView() noexcept = default;
+
   CurrentStateView::CurrentStateView(CurrentState& src) noexcept
       : s0(src.s0),
         s1(src.s1),
@@ -28,12 +30,12 @@ namespace mtest {
         iv1(src.iv1),
         esv0(src.esv0),
         desv(src.desv),
-        se0(src.se0),
-        se1(src.se1),
-        de0(src.de0),
-        de1(src.de1),
-        r(src.r),
-        packaging_info(src.packaging_info) {
+        se0(&src.se0),
+        se1(&src.se1),
+        de0(&src.de0),
+        de1(&src.de1),
+        r(&src.r),
+        packaging_info(&src.packaging_info) {
   }  // end of CurrentStateView::CurrentStateView
 
   CurrentStateView::CurrentStateView(const CurrentStateView&) noexcept = default;
@@ -55,9 +57,9 @@ namespace mtest {
         esv0(src.esv0),
         desv(src.desv),
         se0(src.se0),
-        se1(nse1),
+        se1(&nse1),
         de0(src.de0),
-        de1(nde1),
+        de1(&nde1),
         r(src.r),
         packaging_info(src.packaging_info) {
   }  // end of CurrentStateView::CurrentStateView
@@ -71,8 +73,8 @@ namespace mtest {
       : v(src),
         s1(src.s1.begin(), src.s1.end()),
         iv1(src.iv1.begin(), src.iv1.end()),
-        se1(src.se1),
-        de1(src.de1) {
+        se1(src.se1 == nullptr ? 0 : *(src.se1)),
+        de1(src.de1 == nullptr ? 0 : *(src.de1)) {
   }  // end of MutableCurrentStateViewCopy::MutableCurrentStateViewCopy
 
   MutableCurrentStateViewCopy::MutableCurrentStateViewCopy(

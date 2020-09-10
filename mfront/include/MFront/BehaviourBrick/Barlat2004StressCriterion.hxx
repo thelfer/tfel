@@ -122,17 +122,27 @@ namespace mfront {
                                           const BehaviourDescription&,
                                           const StressPotential&,
                                           const Role) const override;
+      bool isCoupledWithPorosityEvolution() const override;
       bool isNormalDeviatoric() const override;
+      PorosityEffectOnFlowRule getPorosityEffectOnEquivalentPlasticStrain() const override;
       //! destructor
       ~Barlat2004StressCriterion() override;
 
-     protected:
+     private:
+      /*!
+       * \brief return the template parameter of the functions implemention the
+       * computation of the functions computing the Hosford stress criterion,
+       * its normal and its second derivative.
+       */
+      std::string getTemplateParameters() const;
       //! coefficients of the first linear transformation
       std::array<MaterialProperty, 9u> l1;
       //! coefficients of the second linear transformation
       std::array<MaterialProperty, 9u> l2;
       //! Barlat exponent
       MaterialProperty a;
+      //! \brief choice of the eigen solver
+      std::string eigen_solver;
     };  // end of struct Barlat2004StressCriterion
 
   }  // end of namespace bbrick

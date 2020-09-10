@@ -16,6 +16,7 @@
 #define LIB_MFRONT_DSLUTILITIES_HXX
 
 #include <map>
+#include <tuple>
 #include <iosfwd>
 #include <vector>
 #include <string>
@@ -40,33 +41,34 @@ namespace mfront {
    * \param[out] os: output stream
    * \param[in]  n:  name of the law
    * \param[in]  mpd:  material property description
-   */ MFRONT_VISIBILITY_EXPORT void writeVariablesNamesSymbol(std::ostream&, 
-                                                   const std::string&,
-                                                   const mfront::MaterialPropertyDescription&);
+   */ MFRONT_VISIBILITY_EXPORT void writeVariablesNamesSymbol(
+      std::ostream&,
+      const std::string&,
+      const mfront::MaterialPropertyDescription&);
 
-   
-   /*!
+  /*!
    * \brief write the bounds
    * \param[out] os: output stream
    * \param[in]  n:  name of the law
    * \param[in]  vn:  name of the variable
    * \param[in]  bt:  type of bounds (physical or not)
    * \param[in]  b:  bound description 
-   */  MFRONT_VISIBILITY_EXPORT void writeBoundsSymbol(std::ostream&,
-                                                  const std::string&,
-                                                  const std::string&,
-                                                  const std::string&,
-                                                  const mfront::VariableBoundsDescription&);
+   */ MFRONT_VISIBILITY_EXPORT void writeBoundsSymbol(
+      std::ostream&,
+      const std::string&,
+      const std::string&,
+      const std::string&,
+      const mfront::VariableBoundsDescription&);
 
-   /*!
+  /*!
    * \brief write the name of the variable
    * \param[out] os: output stream
    * \param[in]  n:  name of the law
    * \param[in]  mpd:  material property description
-   */   MFRONT_VISIBILITY_EXPORT void writeVariablesBoundsSymbols(std::ostream&, 
-                                                     const std::string&,
-                                                     const mfront::MaterialPropertyDescription&);
-                         
+   */ MFRONT_VISIBILITY_EXPORT void writeVariablesBoundsSymbols(
+      std::ostream&,
+      const std::string&,
+      const mfront::MaterialPropertyDescription&);
 
   /*!
    * \brief write a specific symbol stating that a given name entry
@@ -190,6 +192,21 @@ namespace mfront {
    */
   MFRONT_VISIBILITY_EXPORT void displayGlossaryEntryCompleteDescription(
       std::ostream&, const tfel::glossary::GlossaryEntry&);
+
+#ifdef MFRONT_HAVE_MADNEX
+
+  /*!
+   * \brief decompose an implementation location in a madnex file. The path
+   * is assumed to have the following form:
+   * `madnex:<file>:<type>:<material>:<implementation>`
+   * \param[in] path : implementation
+   * \return a vector of string 
+   */
+  MFRONT_VISIBILITY_EXPORT
+  std::tuple<std::string, std::string, std::string, std::string>
+  decomposeImplementationPathInMadnexFile(const std::string&);
+
+#endif /* MFRONT_HAVE_MADNEX */
 
 }  // end of namespace mfront
 

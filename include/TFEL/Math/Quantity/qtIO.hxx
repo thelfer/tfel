@@ -17,18 +17,16 @@
 #include<ostream>
 #include"TFEL/Math/qt.hxx"
 
-namespace tfel
-{
+namespace tfel {
 
-  namespace math
-  {
+  namespace math {
 
-    template<typename unit,typename T>
-    TFEL_MATH_INLINE2 std::ostream& operator << (std::ostream&, const qt<unit,T>&);
+    template <typename unit, typename T>
+    TFEL_MATH_INLINE2 std::ostream& operator<<(std::ostream&,
+                                               const qt<unit, T>&);
 
-    template<typename unit,typename T>
-    std::ostream& operator << (std::ostream& os, const qt<unit,T>& q)
-    {
+    template <typename unit, typename T>
+    std::ostream& operator<<(std::ostream& os, const qt<unit, T>& q) {
       os << q.getValue();
       return os;
     }

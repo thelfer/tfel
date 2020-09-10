@@ -55,6 +55,20 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Material/Barlat2004YieldCriterion.ixx			                             \
 			TFEL/Material/MohrCoulombYieldCriterion.hxx			                             \
 			TFEL/Material/MohrCoulombYieldCriterion.ixx			                             \
+			TFEL/Material/MichelAndSuquet1992HollowSphereStressCriterion.hxx                             \
+			TFEL/Material/MichelAndSuquet1992HollowSphereStressCriterion.ixx                             \
+			TFEL/Material/GursonTvergaardNeedleman1982StressCriterion.hxx                                \
+			TFEL/Material/GursonTvergaardNeedleman1982StressCriterion.ixx                                \
+			TFEL/Material/RousselierTanguyBesson2002StressCriterion.hxx                                  \
+			TFEL/Material/RousselierTanguyBesson2002StressCriterion.ixx                                  \
+            TFEL/Material/PowerLawStrainBasedNucleationModel.hxx                                         \
+            TFEL/Material/PowerLawStrainBasedNucleationModel.ixx                                         \
+            TFEL/Material/PowerLawStressBasedNucleationModel.hxx                                         \
+            TFEL/Material/PowerLawStressBasedNucleationModel.ixx                                         \
+            TFEL/Material/ChuNeedleman1980StrainBasedNucleationModel.hxx                                 \
+            TFEL/Material/ChuNeedleman1980StrainBasedNucleationModel.ixx                                 \
+            TFEL/Material/ChuNeedleman1980StressBasedNucleationModel.hxx                                 \
+            TFEL/Material/ChuNeedleman1980StressBasedNucleationModel.ixx                                 \
 			TFEL/Material/PiPlane.hxx                                                                    \
 			TFEL/Material/PiPlane.ixx                                                                    \
 			TFEL/Material/StiffnessTensor.hxx			                                     \
@@ -205,6 +219,7 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/QR/QRDecomp.hxx			                                             \
 			TFEL/Math/QR/QRDecomp.ixx			                                             \
 			TFEL/Math/QR/QRException.hxx			                                             \
+			TFEL/Math/Newton-Raphson/ScalarNewtonRaphson.ixx                                               \
 			TFEL/Math/Newton-Raphson/TinyNewtonRaphson.ixx                                               \
 			TFEL/Math/RungeKutta/RungeKutta2.ixx		                                             \
 			TFEL/Math/RungeKutta/RungeKutta4.ixx		                                             \
@@ -342,6 +357,8 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/General/UnaryResultType.hxx	                                                     \
 			TFEL/Math/General/ComputeObjectTag.ixx	                                                     \
 			TFEL/Math/General/ComputeObjectTag.hxx	                                                     \
+			TFEL/Math/General/DerivativeType.ixx	                                                     \
+			TFEL/Math/General/DerivativeType.hxx	                                                     \
 			TFEL/Math/General/Complex.hxx		                                                     \
 			TFEL/Math/General/ObjectObjectRandomAccessConstIterator.hxx                                  \
 			TFEL/Math/General/NegObjectRandomAccessConstIterator.hxx                                     \
@@ -364,6 +381,7 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/Quantity/qtIO.hxx			                                             \
 			TFEL/Math/Quantity/qtLimits.hxx                                                              \
 			TFEL/Math/qt.hxx				                                             \
+			TFEL/Math/ScalarNewtonRaphson.hxx		                                                    \
 			TFEL/Math/TinyNewtonRaphson.hxx		                                                     \
 			TFEL/Math/RungeKutta2.hxx			                                             \
 			TFEL/Math/RungeKutta4.hxx			                                             \
@@ -456,12 +474,13 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/ST2toT2/ST2toT2FromTinyMatrixView2.hxx                                             \
 			TFEL/Math/ST2toT2/StensorProductLeftDerivativeExpr.hxx                                       \
 			TFEL/Math/ST2toT2/StensorProductRightDerivativeExpr.hxx                                      \
-			TFEL/Math/ST2toT2/TensorST2toT2ProductExpr.hxx						     \
-			TFEL/Math/ST2toT2/ST2toT2StensorProductExpr.hxx						     \
-			TFEL/Math/ST2toT2/T2toT2ST2toT2ProductExpr.hxx						     \
-			TFEL/Math/ST2toT2/ST2toT2ST2toST2ProductExpr.hxx					     \
-			TFEL/Math/ST2toT2/T2toST2ST2toT2ProductExpr.hxx						     \
-			TFEL/Math/ST2toT2/ST2toT2T2toST2ProductExpr.hxx						     \
+			TFEL/Math/ST2toT2/TensorST2toT2ProductExpr.hxx						                         \
+			TFEL/Math/ST2toT2/ST2toT2StensorProductExpr.hxx						                         \
+			TFEL/Math/ST2toT2/T2toT2ST2toT2ProductExpr.hxx						                         \
+			TFEL/Math/ST2toT2/ST2toT2ST2toST2ProductExpr.hxx					                         \
+			TFEL/Math/ST2toT2/T2toST2ST2toT2ProductExpr.hxx						                         \
+			TFEL/Math/ST2toT2/ST2toT2T2toST2ProductExpr.hxx						                         \
+			TFEL/Math/ST2toT2/ST2toT2View.hxx						                                     \
 			TFEL/Math/Broyden.hxx                                                                        \
 			TFEL/Math/Broyden2.hxx                                                                       \
 			TFEL/Math/RootFinding/Broyden.ixx                                                            \
@@ -484,6 +503,8 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/AccelerationAlgorithms/FAnderson.ixx						     \
 			TFEL/Math/AccelerationAlgorithms/AndersonBase.hxx					     \
 			TFEL/Math/AccelerationAlgorithms/AndersonBase.ixx					     \
+			TFEL/Math/AccelerationAlgorithms/AitkenAccelerationAlgorithm.hxx					     \
+			TFEL/Math/AccelerationAlgorithms/AitkenAccelerationAlgorithm.ixx					     \
 			TFEL/Math/FischerBurmeister.hxx					                             \
 			TFEL/Math/FischerBurmeister.ixx					                             \
 			TFEL/Math/cadna.hxx					                                     \

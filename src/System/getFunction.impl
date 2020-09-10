@@ -8,964 +8,1132 @@
  */
 
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
-#include<cstdlib>
-#include<cstring>
-#define dlsym(handle, func) GetProcAddress (handle, func)
+#include <cstdlib>
+#include <cstring>
+#define dlsym(handle, func) GetProcAddress(handle, func)
 #else
-#include<stdlib.h>
-#include<string.h>
-#include<dlfcn.h>
+#include <stdlib.h>
+#include <string.h>
+#include <dlfcn.h>
 #define nullptr NULL
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
 
-#include"TFEL/System/getFunction.h"
+#include "TFEL/System/getFunction.h"
 
-#ifdef	__cplusplus
+#ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
-  int tfel_getUMATRequiresStiffnessTensor(LibraryHandlerPtr l,
-					  const char * const f)
-  {
-    unsigned short * n;
-    const size_t len = strlen(f);
-    char *myname = (char *) malloc((len+25u)*sizeof(char));
-    if(myname==nullptr){
-      return -1;
-    }
-    strncpy(myname,f,len+1);
-    strncat(myname,"_requiresStiffnessTensor",24u);
-    n= (unsigned short *) dlsym(l,myname);
-    free(myname);
-    if(n==nullptr){
-      return -1;
-    }  
-    return *n;
+int tfel_getUMATRequiresStiffnessTensor(LibraryHandlerPtr l,
+                                        const char *const f) {
+  unsigned short *n;
+  size_t len = strlen(f);
+  char *myname = (char *)malloc((len + 25u) * sizeof(char));
+  if (myname == nullptr) {
+    return -1;
   }
-
-  int tfel_getUMATRequiresThermalExpansionCoefficientTensor(LibraryHandlerPtr l,
-							    const char * const f)
-  {
-    unsigned short * n;
-    const size_t len = strlen(f);
-    char *myname = (char *) malloc((len+43u)*sizeof(char));
-    if(myname==nullptr){
-      return -1;
-    }
-    strncpy(myname,f,len+1);
-    strncat(myname,"_requiresThermalExpansionCoefficientTensor",42u);
-    n= (unsigned short *) dlsym(l,myname);
-    free(myname);
-    if(n==nullptr){
-      return -1;
-    }  
-    return *n;
+  strncpy(myname, f, len + 1);
+  strncat(myname, "_requiresStiffnessTensor", 24u);
+  n = (unsigned short *)dlsym(l, myname);
+  free(myname);
+  if (n == nullptr) {
+    return -1;
   }
+  return *n;
+}
 
-  int tfel_checkIfAsterBehaviourSavesTangentOperator(LibraryHandlerPtr l,
-						     const char * const f)
-  {
-    unsigned short * n;
-    const size_t len = strlen(f);
-    char *myname = (char *) malloc((len+22u)*sizeof(char));
-    if(myname==nullptr){
-      return -1;
-    }
-    strncpy(myname,f,len);
-    myname[len]='_';
-    myname[len+1u]='s';
-    myname[len+2u]='a';
-    myname[len+3u]='v';
-    myname[len+4u]='e';
-    myname[len+5u]='s';
-    myname[len+6u]='T';
-    myname[len+7u]='a';
-    myname[len+8u]='n';
-    myname[len+9u]='g';
-    myname[len+10u]='e';
-    myname[len+11u]='n';
-    myname[len+12u]='t';
-    myname[len+13u]='O';
-    myname[len+14u]='p';
-    myname[len+15u]='e';
-    myname[len+16u]='r';
-    myname[len+17u]='a';
-    myname[len+18u]='t';
-    myname[len+19u]='o';
-    myname[len+20u]='r';
-    myname[len+21u]='\0';
-    n= (unsigned short *) dlsym(l,myname);
-    free(myname);
-    if(n==nullptr){
-      return -1;
-    }
-    return *n;
+int tfel_getUMATRequiresThermalExpansionCoefficientTensor(LibraryHandlerPtr l,
+                                                          const char *const f) {
+  unsigned short *n;
+  size_t len = strlen(f);
+  char *myname = (char *)malloc((len + 43u) * sizeof(char));
+  if (myname == nullptr) {
+    return -1;
   }
-
-  double tfel_getDouble(LibraryHandlerPtr lib,
-	   	        const char * const name){
-    double * n = (double *) dlsym(lib,name);
-    if(n==nullptr){
-      return 0.;
-    }  
-    return *n;
-  } 
-
-  long  double tfel_getLongDouble(LibraryHandlerPtr lib,
-				  const char * const name){
-    long double * n = (long double *) dlsym(lib,name);
-    if(n==nullptr){
-      return 0.;
-    }  
-    return *n;
-  } 
-
-  int tfel_getInteger(LibraryHandlerPtr lib,
-		      const char * const name){
-    int * n = (int *) dlsym(lib,name);
-    if(n==nullptr){
-      return 0.;
-    }  
-    return *n;
-  } 
-
-  int tfel_getUnsignedShort(LibraryHandlerPtr lib,
-			    const char * const name){
-    unsigned short * n;
-    n= (unsigned short *) dlsym(lib,name);
-    if(n==nullptr){
-      return -1;
-    }  
-    return *n;
-  } 
-
-  int tfel_getBool(LibraryHandlerPtr lib,
-		   const char * const name){
-    unsigned short * n;
-    n= (unsigned short *) dlsym(lib,name);
-    if(n==nullptr){
-      return -1;
-    }  
-    return (int) *n;
+  strncpy(myname, f, len + 1);
+  strncat(myname, "_requiresThermalExpansionCoefficientTensor", 42u);
+  n = (unsigned short *)dlsym(l, myname);
+  free(myname);
+  if (n == nullptr) {
+    return -1;
   }
+  return *n;
+}
 
-  char **
-  tfel_getArrayOfStrings(LibraryHandlerPtr lib,
-			 const char * const name)
-  {
-    char ** v;
-    v = (char **) dlsym(lib,name);
-    return v;
+int tfel_checkIfAsterBehaviourSavesTangentOperator(LibraryHandlerPtr l,
+                                                   const char *const f) {
+  unsigned short *n;
+  size_t len = strlen(f);
+  char *myname = (char *)malloc((len + 22u) * sizeof(char));
+  if (myname == nullptr) {
+    return -1;
   }
-
-  int *
-  tfel_getArrayOfInts(LibraryHandlerPtr lib,
-		      const char * const name)
-  {
-    int * v;
-    v = (int *) dlsym(lib,name);
-    return v;
+  strncpy(myname, f, len);
+  myname[len] = '_';
+  myname[len + 1u] = 's';
+  myname[len + 2u] = 'a';
+  myname[len + 3u] = 'v';
+  myname[len + 4u] = 'e';
+  myname[len + 5u] = 's';
+  myname[len + 6u] = 'T';
+  myname[len + 7u] = 'a';
+  myname[len + 8u] = 'n';
+  myname[len + 9u] = 'g';
+  myname[len + 10u] = 'e';
+  myname[len + 11u] = 'n';
+  myname[len + 12u] = 't';
+  myname[len + 13u] = 'O';
+  myname[len + 14u] = 'p';
+  myname[len + 15u] = 'e';
+  myname[len + 16u] = 'r';
+  myname[len + 17u] = 'a';
+  myname[len + 18u] = 't';
+  myname[len + 19u] = 'o';
+  myname[len + 20u] = 'r';
+  myname[len + 21u] = '\0';
+  n = (unsigned short *)dlsym(l, myname);
+  free(myname);
+  if (n == nullptr) {
+    return -1;
   }
+  return *n;
+}
 
-  int (TFEL_ADDCALL_PTR tfel_getSetOutOfBoundsPolicyFunction(LibraryHandlerPtr lib,
-							     const char * const name))(const int){
-    return (int (TFEL_ADDCALL_PTR)(const int)) dlsym(lib,name);
-  } 
-
-  int (TFEL_ADDCALL_PTR tfel_getSetParameterFunction(LibraryHandlerPtr lib,const char * const name))(const char* const,
-												     const double){
-    return (int (TFEL_ADDCALL_PTR)(const char*const,
-				   const double)) dlsym(lib,name);
-  } 
-
-  int (TFEL_ADDCALL_PTR tfel_getSetIntegerParameterFunction(LibraryHandlerPtr lib,const char * const name))(const char* const,
-													    const int){
-    return (int (TFEL_ADDCALL_PTR)(const char*const,
-				   const int)) dlsym(lib,name);
+double tfel_getDouble(LibraryHandlerPtr lib, const char *const name) {
+  double *n = (double *)dlsym(lib, name);
+  if (n == nullptr) {
+    return 0.;
   }
+  return *n;
+}
 
-  int (TFEL_ADDCALL_PTR tfel_getSetUnsignedShortParameterFunction(LibraryHandlerPtr lib,const char * const name))(const char* const,
-														  const unsigned short){
-    return (int (TFEL_ADDCALL_PTR)(const char*const,
-				   const unsigned short)) dlsym(lib,name);
+long double tfel_getLongDouble(LibraryHandlerPtr lib, const char *const name) {
+  long double *n = (long double *)dlsym(lib, name);
+  if (n == nullptr) {
+    return 0.;
   }
+  return *n;
+}
 
-  double (TFEL_ADDCALL_PTR tfel_getCastemFunction(LibraryHandlerPtr lib,const char * const name))(const double*const){
-    return (double (TFEL_ADDCALL_PTR)(const double*const)) dlsym(lib,name);
-  } 
-
-  int (TFEL_ADDCALL_PTR tfel_getGenericBehaviourFunction(LibraryHandlerPtr l,
-						         const char * const f))(struct mfront_gb_BehaviourData* const){
-    return (int (TFEL_ADDCALL_PTR)(struct mfront_gb_BehaviourData* const)) dlsym(l,f);
-  }  // end of tfel_getGenericBehaviourFunction
-
-  int tfel_getMaterialPropertyNumberOfVariables(LibraryHandlerPtr lib,
-                                                const char *const name) {
-    unsigned short * n;
-    size_t len = strlen(name);
-    char *myname = (char *) malloc((len+7u)*sizeof(char));
-    if(myname==nullptr){
-      return -1;
-    }
-    strncpy(myname, name, len);
-    myname[len] = '_';
-    myname[len + 1u] = 'n';
-    myname[len + 2u] = 'a';
-    myname[len + 3u] = 'r';
-    myname[len + 4u] = 'g';
-    myname[len + 5u] = 's';
-    myname[len + 6u] = '\0';
-    n = (unsigned short *)dlsym(lib, myname);
-    free(myname);
-    if (n == nullptr) {
-      return -1;
-    }
-    return *n;
+int tfel_getInteger(LibraryHandlerPtr lib, const char *const name) {
+  int *n = (int *)dlsym(lib, name);
+  if (n == nullptr) {
+    return 0.;
   }
+  return *n;
+}
 
-  char **tfel_getMaterialPropertyVariables(LibraryHandlerPtr lib,
-                                           const char *const name) {
-    char **v;
-    const size_t len = strlen(name);
-    char *myname = (char *)malloc((len + 6u) * sizeof(char));
-    if (myname == nullptr) {
-      return nullptr;
-    }
-    strncpy(myname, name, len);
-    myname[len] = '_';
-    myname[len + 1u] = 'a';
-    myname[len + 2u] = 'r';
-    myname[len + 3u] = 'g';
-    myname[len + 4u] = 's';
-    myname[len + 5u] = '\0';
-    v = (char **)dlsym(lib, myname);
-    free(myname);
-    return v;
+int tfel_getUnsignedShort(LibraryHandlerPtr lib, const char *const name) {
+  unsigned short *n;
+  n = (unsigned short *)dlsym(lib, name);
+  if (n == nullptr) {
+    return -1;
   }
+  return *n;
+}
 
-  double (TFEL_ADDCALL_PTR tfel_getCyranoMaterialProperty(LibraryHandlerPtr lib,
-							  const char * const name))(CyranoOutputStatus* const,
-										    const CyranoRealType* const,
-										    const CyranoIntegerType,
-										    const CyranoOutOfBoundsPolicy)
-  {
-    return (double (TFEL_ADDCALL_PTR)(CyranoOutputStatus* const,
-				    const CyranoRealType* const,
-				    const CyranoIntegerType,
-				    const CyranoOutOfBoundsPolicy)) dlsym(lib,name);
+int tfel_getBool(LibraryHandlerPtr lib, const char *const name) {
+  unsigned short *n;
+  n = (unsigned short *)dlsym(lib, name);
+  if (n == nullptr) {
+    return -1;
   }
-  
-  void (TFEL_ADDCALL_PTR tfel_getCyranoFunction(LibraryHandlerPtr lib,
-						const char * const name))(const CyranoIntegerType  *const,
-									  const CyranoRealType *const,
-									  const CyranoRealType *const,
-									  CyranoRealType *const,
-									  const CyranoRealType *const,
-									  const CyranoRealType *const,
-									  const CyranoRealType *const,
-									  const CyranoRealType *const,
-									  const CyranoRealType *const,
-									  const CyranoIntegerType  *const,
-									  const CyranoRealType *const,
-									  const CyranoRealType *const,
-									  CyranoRealType *const,
-									  const CyranoIntegerType  *const,
-									  CyranoRealType *const,
-									  const CyranoIntegerType  *const,
-									  CyranoIntegerType  *const)
-  {
-    return (void (TFEL_ADDCALL_PTR)(const CyranoIntegerType  *const,
-				    const CyranoRealType *const,
-				    const CyranoRealType *const,
-				    CyranoRealType *const,
-				    const CyranoRealType *const,
-				    const CyranoRealType *const,
-				    const CyranoRealType *const,
-				    const CyranoRealType *const,
-				    const CyranoRealType *const,
-				    const CyranoIntegerType  *const,
-				    const CyranoRealType *const,
-				    const CyranoRealType *const,
-				    CyranoRealType *const,
-				    const CyranoIntegerType  *const,
-				    CyranoRealType *const,
-				    const CyranoIntegerType  *const,
-				    CyranoIntegerType  *const)) dlsym(lib,name);
+  return (int)*n;
+}
+
+char **tfel_getArrayOfStrings(LibraryHandlerPtr lib, const char *const name) {
+  char **v;
+  v = (char **)dlsym(lib, name);
+  return v;
+}
+
+int *tfel_getArrayOfInts(LibraryHandlerPtr lib, const char *const name) {
+  int *v;
+  v = (int *)dlsym(lib, name);
+  return v;
+}
+
+int(TFEL_ADDCALL_PTR tfel_getSetOutOfBoundsPolicyFunction(
+    LibraryHandlerPtr lib, const char *const name))(const int) {
+  return (int(TFEL_ADDCALL_PTR)(const int))dlsym(lib, name);
+}
+
+int(TFEL_ADDCALL_PTR tfel_getSetParameterFunction(
+    LibraryHandlerPtr lib, const char *const name))(const char *const,
+                                                    const double) {
+  return (int(TFEL_ADDCALL_PTR)(const char *const, const double))dlsym(lib,
+                                                                       name);
+}
+
+int(TFEL_ADDCALL_PTR tfel_getSetIntegerParameterFunction(
+    LibraryHandlerPtr lib, const char *const name))(const char *const,
+                                                    const int) {
+  return (int(TFEL_ADDCALL_PTR)(const char *const, const int))dlsym(lib, name);
+}
+
+int(TFEL_ADDCALL_PTR tfel_getSetUnsignedShortParameterFunction(
+    LibraryHandlerPtr lib, const char *const name))(const char *const,
+                                                    const unsigned short) {
+  return (int(TFEL_ADDCALL_PTR)(const char *const, const unsigned short))dlsym(
+      lib, name);
+}
+
+double(TFEL_ADDCALL_PTR tfel_getCastemFunction(
+    LibraryHandlerPtr lib, const char *const name))(const double *const) {
+  return (double(TFEL_ADDCALL_PTR)(const double *const))dlsym(lib, name);
+}
+
+int(TFEL_ADDCALL_PTR tfel_getGenericBehaviourFunction(LibraryHandlerPtr l,
+                                                      const char *const f))(
+    struct mfront_gb_BehaviourData *const) {
+  return (int(TFEL_ADDCALL_PTR)(struct mfront_gb_BehaviourData * const))dlsym(
+      l, f);
+}  // end of tfel_getGenericBehaviourFunction
+
+void(TFEL_ADDCALL_PTR tfel_getGenericBehaviourRotateGradientsFunction(
+    LibraryHandlerPtr l, const char *const f))(mfront_gb_real *const,
+                                               const mfront_gb_real *const,
+                                               const mfront_gb_real *const) {
+  return (void(TFEL_ADDCALL_PTR)(mfront_gb_real * const,
+                                 const mfront_gb_real *const,
+                                 const mfront_gb_real *const))dlsym(l, f);
+}  // end of tfel_getGenericBehaviourRotateGradientsFunction
+
+void(TFEL_ADDCALL_PTR tfel_getGenericBehaviourRotateArrayOfGradientsFunction(
+    LibraryHandlerPtr l, const char *const f))(mfront_gb_real *const,
+                                               const mfront_gb_real *const,
+                                               const mfront_gb_real *const,
+                                               const mfront_gb_size_type) {
+  return (void(TFEL_ADDCALL_PTR)(
+      mfront_gb_real * const, const mfront_gb_real *const,
+      const mfront_gb_real *const, const mfront_gb_size_type))dlsym(l, f);
+}  // end of tfel_getGenericBehaviourRotateArrayOfGradientsFunction
+
+void(TFEL_ADDCALL_PTR tfel_getGenericBehaviourRotateThermodynamicForcesFunction(
+    LibraryHandlerPtr l, const char *const f))(mfront_gb_real *const,
+                                               const mfront_gb_real *const,
+                                               const mfront_gb_real *const) {
+  return (void(TFEL_ADDCALL_PTR)(mfront_gb_real * const,
+                                 const mfront_gb_real *const,
+                                 const mfront_gb_real *const))dlsym(l, f);
+}  // end of tfel_getGenericBehaviourRotateThermodynamicForcesFunction
+
+void(TFEL_ADDCALL_PTR
+         tfel_getGenericBehaviourRotateArrayOfThermodynamicForcesFunction(
+             LibraryHandlerPtr l,
+             const char *const f))(mfront_gb_real *const,
+                                   const mfront_gb_real *const,
+                                   const mfront_gb_real *const,
+                                   const mfront_gb_size_type) {
+  return (void(TFEL_ADDCALL_PTR)(mfront_gb_real * const,
+                                 const mfront_gb_real *const,
+                                 const mfront_gb_real *const,
+                                 const mfront_gb_size_type))dlsym(l, f);
+}  // end of tfel_getGenericBehaviourRotateArrayOfThermodynamicForcesFunction
+
+void(TFEL_ADDCALL_PTR
+         tfel_getGenericBehaviourRotateTangentOperatorBlocksFunction(
+             LibraryHandlerPtr l,
+             const char *const f))(mfront_gb_real *const,
+                                   const mfront_gb_real *const,
+                                   const mfront_gb_real *const) {
+  return (void(TFEL_ADDCALL_PTR)(mfront_gb_real * const,
+                                 const mfront_gb_real *const,
+                                 const mfront_gb_real *const))dlsym(l, f);
+}  // end of tfel_getGenericBehaviourRotateTangentOperatorBlocksFunction
+
+void(TFEL_ADDCALL_PTR
+         tfel_getGenericBehaviourRotateArrayOfTangentOperatorBlocksFunction(
+             LibraryHandlerPtr l,
+             const char *const f))(mfront_gb_real *const,
+                                   const mfront_gb_real *const,
+                                   const mfront_gb_real *const,
+                                   const mfront_gb_size_type) {
+  return (void(TFEL_ADDCALL_PTR)(mfront_gb_real * const,
+                                 const mfront_gb_real *const,
+                                 const mfront_gb_real *const,
+                                 const mfront_gb_size_type))dlsym(l, f);
+}  // end of tfel_getGenericBehaviourRotateArrayOfTangentOperatorBlocksFunction
+
+int tfel_getMaterialPropertyNumberOfVariables(LibraryHandlerPtr lib,
+                                              const char *const name) {
+  unsigned short *n;
+  size_t len = strlen(name);
+  char *myname = (char *)malloc((len + 7u) * sizeof(char));
+  if (myname == nullptr) {
+    return -1;
   }
-
-  void (TFEL_ADDCALL_PTR tfel_getAnsysExternalBehaviourFunction(LibraryHandlerPtr l,
-								const char * const f))(const AnsysIntegerType *const,
-										       const AnsysIntegerType *const,
-										       const AnsysIntegerType *const,
-										       const AnsysIntegerType *const,
-										       const AnsysIntegerType *const,
-										       const AnsysIntegerType *const,
-										       const AnsysIntegerType *const,
-										       AnsysIntegerType *const,
-										       const AnsysIntegerType *const,
-										       const AnsysIntegerType *const,
-										       const AnsysIntegerType *const,
-										       const AnsysIntegerType *const,
-										       const AnsysIntegerType *const,
-										       const AnsysRealType *const,
-										       const AnsysRealType *const,
-										       const AnsysRealType *const,
-										       const AnsysRealType *const,
-										       AnsysRealType *const,
-										       AnsysRealType *const,
-										       AnsysRealType *const,
-										       AnsysRealType *const,
-										       AnsysRealType *const,
-										       AnsysRealType *const,
-										       const AnsysRealType *const,
-										       const AnsysRealType *const,
-										       AnsysRealType *const,
-										       const AnsysRealType *const,
-										       const AnsysRealType *const,
-										       const AnsysRealType *const,
-										       const AnsysRealType *const,
-										       const AnsysRealType *const,
-										       const AnsysRealType *const,
-										       AnsysRealType *const,
-										       const AnsysRealType *const,
-										       const AnsysRealType *const,
-										       const AnsysRealType *const,
-										       const AnsysRealType *const,
-										       const AnsysRealType *const,
-										       const AnsysRealType *const,
-										       const AnsysRealType *const,
-										       const AnsysRealType *const)
-  {
-    return (void (TFEL_ADDCALL_PTR)(const AnsysIntegerType *const,const AnsysIntegerType *const,const AnsysIntegerType *const,
-				    const AnsysIntegerType *const,const AnsysIntegerType *const,const AnsysIntegerType *const,
-				    const AnsysIntegerType *const,AnsysIntegerType *const,const AnsysIntegerType *const,
-				    const AnsysIntegerType *const,const AnsysIntegerType *const,const AnsysIntegerType *const,
-				    const AnsysIntegerType *const,const AnsysRealType *const,const AnsysRealType *const,
-				    const AnsysRealType *const,const AnsysRealType *const,AnsysRealType *const,
-				    AnsysRealType *const,AnsysRealType *const,AnsysRealType *const,
-				    AnsysRealType *const,AnsysRealType *const,const AnsysRealType *const,
-				    const AnsysRealType *const,AnsysRealType *const,const AnsysRealType *const,
-				    const AnsysRealType *const,const AnsysRealType *const,const AnsysRealType *const,
-				    const AnsysRealType *const,const AnsysRealType *const,AnsysRealType *const,
-				    const AnsysRealType *const,const AnsysRealType *const,const AnsysRealType *const,
-				    const AnsysRealType *const,const AnsysRealType *const,const AnsysRealType *const,
-				    const AnsysRealType *const,const AnsysRealType *const)) dlsym(l,f);
+  strncpy(myname, name, len);
+  myname[len] = '_';
+  myname[len + 1u] = 'n';
+  myname[len + 2u] = 'a';
+  myname[len + 3u] = 'r';
+  myname[len + 4u] = 'g';
+  myname[len + 5u] = 's';
+  myname[len + 6u] = '\0';
+  n = (unsigned short *)dlsym(lib, myname);
+  free(myname);
+  if (n == nullptr) {
+    return -1;
   }
-  
-  void (TFEL_ADDCALL_PTR tfel_getAbaqusExplicitExternalBehaviourFunction(LibraryHandlerPtr l,
-									 const char * const f))(const AbaqusIntegerType *const,
-												const AbaqusIntegerType *const,
-												const AbaqusIntegerType *const,
-												const AbaqusIntegerType *const,
-												const AbaqusIntegerType *const,
-												const AbaqusIntegerType *const,
-												const AbaqusIntegerType *const,
-												const AbaqusRealType* const,
-												const AbaqusRealType* const,
-												const AbaqusRealType* const,
-												const char* const,
-												const AbaqusRealType* const,
-												const AbaqusRealType* const,
-												const AbaqusRealType* const,
-												const AbaqusRealType* const,
-												const AbaqusRealType* const,
-												const AbaqusRealType* const,
-												const AbaqusRealType* const,
-												const AbaqusRealType* const,
-												const AbaqusRealType* const,
-												const AbaqusRealType* const,
-												const AbaqusRealType* const,
-												const AbaqusRealType* const,
-												const AbaqusRealType* const,
-												const AbaqusRealType* const,
-												const AbaqusRealType* const,
-												const AbaqusRealType* const,
-												const AbaqusRealType* const,
-												const AbaqusRealType* const,
-												AbaqusRealType* const,
-												AbaqusRealType* const,
-												AbaqusRealType* const,
-												AbaqusRealType* const,
-												const int)
-  {
-    return (void (TFEL_ADDCALL_PTR)(const AbaqusIntegerType *const,const AbaqusIntegerType *const,
-				    const AbaqusIntegerType *const,const AbaqusIntegerType *const,
-				    const AbaqusIntegerType *const,const AbaqusIntegerType *const,
-				    const AbaqusIntegerType *const,const AbaqusRealType* const,
-				    const AbaqusRealType    *const,const AbaqusRealType* const,
-				    const char* const,             const AbaqusRealType* const,
-				    const AbaqusRealType    * const,const AbaqusRealType* const,
-				    const AbaqusRealType    * const,const AbaqusRealType* const,
-				    const AbaqusRealType    * const,const AbaqusRealType* const,
-				    const AbaqusRealType    * const,const AbaqusRealType* const,
-				    const AbaqusRealType    * const,const AbaqusRealType* const,
-				    const AbaqusRealType    * const,const AbaqusRealType* const,
-				    const AbaqusRealType    * const,const AbaqusRealType* const,
-				    const AbaqusRealType    * const,const AbaqusRealType* const,
-				    const AbaqusRealType    * const,      AbaqusRealType* const,
-				          AbaqusRealType    * const,      AbaqusRealType* const,
-				    AbaqusRealType    * const,const int))dlsym(l,f);
+  return *n;
+}
+
+char **tfel_getMaterialPropertyVariables(LibraryHandlerPtr lib,
+                                         const char *const name) {
+  char **v;
+  size_t len = strlen(name);
+  char *myname = (char *)malloc((len + 6u) * sizeof(char));
+  if (myname == nullptr) {
+    return nullptr;
   }
-  
-  void (TFEL_ADDCALL_PTR tfel_getAbaqusExternalBehaviourFunction(LibraryHandlerPtr l,
-								 const char * const n))(AbaqusRealType *const,
-									AbaqusRealType *const,
-									AbaqusRealType *const,
-									AbaqusRealType *const,
-									AbaqusRealType *const,
-									AbaqusRealType *const,
-									AbaqusRealType *const,
-									AbaqusRealType *const,
-									AbaqusRealType *const,
-									AbaqusRealType *const,
-									const AbaqusRealType *const,
-									const AbaqusRealType *const,
-									const AbaqusRealType *const,
-									 const AbaqusRealType *const,
-									const AbaqusRealType *const,
-									const AbaqusRealType *const,
-									const AbaqusRealType *const,
-									const AbaqusRealType *const,
-									const char      *const,
-									const AbaqusIntegerType  *const,
-									const AbaqusIntegerType  *const,
-									const AbaqusIntegerType  *const,
-									const AbaqusIntegerType  *const,
-									const AbaqusRealType *const,
-									const AbaqusIntegerType  *const,
-									const AbaqusRealType *const,
-									const AbaqusRealType *const,
-									AbaqusRealType *const,
-									const AbaqusRealType *const,
-									const AbaqusRealType *const,
-									const AbaqusRealType *const,
-									const AbaqusIntegerType  *const,
-									const AbaqusIntegerType  *const,
-									const AbaqusIntegerType  *const,
-									const AbaqusIntegerType  *const,
-									const AbaqusIntegerType  *const,
-									AbaqusIntegerType  *const,
-									const int)
-  {
-    return (void (TFEL_ADDCALL_PTR)(AbaqusRealType *const,AbaqusRealType *const,AbaqusRealType *const,AbaqusRealType *const,
-				    AbaqusRealType *const,AbaqusRealType *const,
-				    AbaqusRealType *const,AbaqusRealType *const,
-				    AbaqusRealType *const,AbaqusRealType *const,
-				    const AbaqusRealType *const,const AbaqusRealType *const,
-				    const AbaqusRealType *const,const AbaqusRealType *const,
-				    const AbaqusRealType *const,const AbaqusRealType *const,
-				    const AbaqusRealType *const,const AbaqusRealType *const,
-				    const char      *const,const AbaqusIntegerType  *const,
-				    const AbaqusIntegerType  *const,const AbaqusIntegerType  *const,
-				    const AbaqusIntegerType  *const,const AbaqusRealType *const,
-				    const AbaqusIntegerType  *const,const AbaqusRealType *const,
-				    const AbaqusRealType *const,AbaqusRealType *const,
-				    const AbaqusRealType *const,const AbaqusRealType *const,
-				    const AbaqusRealType *const,const AbaqusIntegerType  *const,
-				    const AbaqusIntegerType  *const,const AbaqusIntegerType  *const,
-				    const AbaqusIntegerType  *const,const AbaqusIntegerType  *const,
-				    AbaqusIntegerType  *const,const int))dlsym(l,n);
-  }
-
-  void (TFEL_ADDCALL_PTR tfel_getCastemExternalBehaviourFunction(LibraryHandlerPtr l,
-								 const char * const n))(CastemRealType *const,
-											CastemRealType *const,
-											CastemRealType *const,
-											CastemRealType *const,
-											CastemRealType *const,
-											CastemRealType *const,
-											CastemRealType *const,
-											CastemRealType *const,
-											CastemRealType *const,
-											CastemRealType *const,
-											const CastemRealType *const,
-											const CastemRealType *const,
-											const CastemRealType *const,
-											const CastemRealType *const,
-											const CastemRealType *const,
-											const CastemRealType *const,
-											const CastemRealType *const,
-											const CastemRealType *const,
-											const char      *const,
-											const CastemIntegerType  *const,
-											const CastemIntegerType  *const,
-											const CastemIntegerType  *const,
-											const CastemIntegerType  *const,
-											const CastemRealType *const,
-											const CastemIntegerType  *const,
-											const CastemRealType *const,
-											const CastemRealType *const,
-											CastemRealType *const,
-											const CastemRealType *const,
-											const CastemRealType *const,
-											const CastemRealType *const,
-											const CastemIntegerType  *const,
-											const CastemIntegerType  *const,
-											const CastemIntegerType  *const,
-											const CastemIntegerType  *const,
-											const CastemIntegerType  *const,
-											CastemIntegerType  *const,
-											const int)
-  {
-    return (void (TFEL_ADDCALL_PTR)(CastemRealType *const,CastemRealType *const,
-				    CastemRealType *const,CastemRealType *const,
-				    CastemRealType *const,CastemRealType *const,
-				    CastemRealType *const,CastemRealType *const,
-				    CastemRealType *const,CastemRealType *const,
-				    const CastemRealType *const,const CastemRealType *const,
-				    const CastemRealType *const,const CastemRealType *const,
-				    const CastemRealType *const,const CastemRealType *const,
-				    const CastemRealType *const,const CastemRealType *const,
-				    const char      *const,const CastemIntegerType  *const,
-				    const CastemIntegerType  *const,const CastemIntegerType  *const,
-				    const CastemIntegerType  *const,const CastemRealType *const,
-				    const CastemIntegerType  *const,const CastemRealType *const,
-				    const CastemRealType *const,CastemRealType *const,
-				    const CastemRealType *const,const CastemRealType *const,
-				    const CastemRealType *const,const CastemIntegerType  *const,
-				    const CastemIntegerType  *const,const CastemIntegerType  *const,
-				    const CastemIntegerType  *const,const CastemIntegerType  *const,
-				    CastemIntegerType  *const,const int))dlsym(l,n);
-  }
-  
-  void (TFEL_ADDCALL_PTR tfel_getAsterFunction(LibraryHandlerPtr lib,
-					       const char * const name))(AsterRealType *const,
-									 AsterRealType *const,
-									 AsterRealType *const,
-									 const AsterRealType *const,
-									 const AsterRealType *const,
-									 const AsterRealType *const,
-									 const AsterRealType *const,
-									 const AsterRealType *const,
-									 const AsterRealType *const,
-									 const AsterRealType *const,
-									 const AsterIntegerType  *const,
-									 const AsterIntegerType  *const,
-									 const AsterRealType *const,
-									 const AsterIntegerType  *const,
-									 const AsterRealType *const,
-									 AsterRealType *const,
-									 const AsterIntegerType  *const)
-  {
-    return (void (TFEL_ADDCALL_PTR)(AsterRealType *const,AsterRealType *const,
-				    AsterRealType *const,const AsterRealType *const,
-				    const AsterRealType *const,const AsterRealType *const,
-				    const AsterRealType *const,const AsterRealType *const,
-				    const AsterRealType *const,const AsterRealType *const,
-				    const AsterIntegerType  *const,const AsterIntegerType  *const,
-				    const AsterRealType *const,const AsterIntegerType  *const,
-				    const AsterRealType *const,AsterRealType *const,
-				    const AsterIntegerType  *const))dlsym(lib,name);
-  }
-  
-  const char * (TFEL_ADDCALL_PTR tfel_getAsterIntegrationErrorMessage(LibraryHandlerPtr lib,
-								 const char * const name))()
-  {
-    return (const char* (TFEL_ADDCALL_PTR)())dlsym(lib,name);
-  }
-
-  void (TFEL_ADDCALL_PTR tfel_getEuroplexusFunction(LibraryHandlerPtr l,
-						    const char * const n))(EuroplexusIntegerType *const,
-									   EuroplexusRealType *const,
-									   EuroplexusRealType *const,
-									   EuroplexusRealType *const,
-									   EuroplexusRealType *const,
-									   EuroplexusIntegerType *const,		   
-									   char *const,
-									   const EuroplexusIntegerType  *const,
-									   const EuroplexusIntegerType  *const,
-									   const EuroplexusRealType *const,
-									   const EuroplexusRealType *const,
-   									   const EuroplexusRealType *const,
-									   const EuroplexusRealType *const,
-									   const EuroplexusRealType *const,
-									   const EuroplexusIntegerType  *const,
-									   const EuroplexusRealType *const,
-									   const EuroplexusRealType *const,
-									   const EuroplexusRealType *const,
-									   const EuroplexusRealType *const,
-									   const EuroplexusIntegerType  *const)
-  {
-    return (void (TFEL_ADDCALL_PTR)(      EuroplexusIntegerType  *const,       EuroplexusRealType     *const,
-				          EuroplexusRealType     *const,       EuroplexusRealType     *const,
-				          EuroplexusRealType     *const,       EuroplexusIntegerType  *const,		   
-					  char                   *const,
-				    const EuroplexusIntegerType  *const, const EuroplexusIntegerType  *const,
-				    const EuroplexusRealType     *const, const EuroplexusRealType     *const,
-				    const EuroplexusRealType     *const, const EuroplexusRealType     *const,
-    				    const EuroplexusRealType     *const, const EuroplexusIntegerType  *const,
-				    const EuroplexusRealType     *const, const EuroplexusRealType     *const,
-				    const EuroplexusRealType     *const, const EuroplexusRealType     *const,
-				    const EuroplexusIntegerType  *const))dlsym(l,n);
-  }
-
-  void (TFEL_ADDCALL_PTR tfel_getCalculiXExternalBehaviourFunction(LibraryHandlerPtr l,
-								   const char * const n))(const char * const,
-											  const CalculiXIntegerType* const,
-											  const CalculiXIntegerType* const,
-											  const CalculiXIntegerType* const,
-											  const CalculiXRealType* const,
-											  const CalculiXRealType* const,
-											  const CalculiXRealType* const,
-											  const CalculiXRealType* const,
-											  const CalculiXRealType* const,
-											  const CalculiXRealType* const,
-											  const CalculiXRealType* const,
-											  const CalculiXRealType* const,
-											  const CalculiXIntegerType* const,
-											  const CalculiXRealType* const,
-											  const CalculiXRealType* const,
-											  const CalculiXRealType* const,
-											  const CalculiXRealType* const,
-											  const CalculiXIntegerType* const,
-											  const CalculiXIntegerType* const,
-											  const CalculiXIntegerType* const,
-											  const CalculiXIntegerType* const,
-											  const CalculiXRealType* const,
-											  CalculiXRealType* const,
-											  CalculiXRealType* const,
-											  CalculiXRealType* const,
-											  const CalculiXIntegerType* const,
-											  const CalculiXRealType* const,
-											  const CalculiXRealType* const,
-											  CalculiXRealType* const,
-											  const CalculiXIntegerType* const,
-											  const int)
-  {
-    return (void (TFEL_ADDCALL_PTR)(const char * const,const CalculiXIntegerType* const,const CalculiXIntegerType* const,
-				    const CalculiXIntegerType* const,const CalculiXRealType* const,const CalculiXRealType* const,
-				    const CalculiXRealType* const,const CalculiXRealType* const,const CalculiXRealType* const,
-				    const CalculiXRealType* const,const CalculiXRealType* const,const CalculiXRealType* const,
-				    const CalculiXIntegerType* const,const CalculiXRealType* const,const CalculiXRealType* const,
-				    const CalculiXRealType* const,const CalculiXRealType* const,const CalculiXIntegerType* const,
-				    const CalculiXIntegerType* const,const CalculiXIntegerType* const,const CalculiXIntegerType* const,
-				    const CalculiXRealType* const,CalculiXRealType* const,CalculiXRealType* const,
-				    CalculiXRealType* const,const CalculiXIntegerType* const,const CalculiXRealType* const,
-				    const CalculiXRealType* const,CalculiXRealType* const,const CalculiXIntegerType* const,
-				    const int))dlsym(l,n);
-  }
-
-  void(TFEL_ADDCALL_PTR tfel_getDianaFEAExternalBehaviourFunction(
-      LibraryHandlerPtr l,
-      const char *const n))(DianaFEARealType *const,
-                            DianaFEARealType *const,
-                            DianaFEARealType *const,
-                            const DianaFEAIntegerType *const,
-                            const DianaFEAIntegerType *const,
-                            const DianaFEAIntegerType *const,
-                            const DianaFEARealType *const,
-                            const DianaFEARealType *const,
-                            const DianaFEARealType *const,
-                            const DianaFEARealType *const,
-                            const DianaFEARealType *const,
-                            const DianaFEARealType *const) {
-    typedef void(TFEL_ADDCALL_PTR FctPtr)(
-        DianaFEARealType * const, DianaFEARealType *const,
-        DianaFEARealType *const,
-	const DianaFEAIntegerType *const,
-	const DianaFEAIntegerType *const,
-	const DianaFEAIntegerType *const,
-        const DianaFEARealType *const, const DianaFEARealType *const,
-        const DianaFEARealType *const, const DianaFEARealType *const,
-        const DianaFEARealType *const, const DianaFEARealType *const);
-    return (FctPtr)dlsym(l, n);
-  }  // end of tfel_getDianaFEAExternalBehaviourFunction
-
-  double (TFEL_ADDCALL_PTR tfel_getCFunction0(LibraryHandlerPtr lib,const char * const name))(){
-    return (double (TFEL_ADDCALL_PTR)()) dlsym(lib,name);
-  } 
-
-  double (TFEL_ADDCALL_PTR tfel_getCFunction1(LibraryHandlerPtr lib,const char * const name))(double){
-    return (double (TFEL_ADDCALL_PTR)(double)) dlsym(lib,name);
-  }
-
-
-  double (TFEL_ADDCALL_PTR tfel_getCFunction2(LibraryHandlerPtr lib,const char * const name))(double,double){
-    return (double (TFEL_ADDCALL_PTR)(double,double)) dlsym(lib,name);
-  }
-
-
-  double (TFEL_ADDCALL_PTR tfel_getCFunction3(LibraryHandlerPtr lib,const char * const name))(double,double,
-											      double){
-    return (double (TFEL_ADDCALL_PTR)(double,double,double)) dlsym(lib,name);
-  }
-
-
-  double (TFEL_ADDCALL_PTR tfel_getCFunction4(LibraryHandlerPtr lib,const char * const name))(double,double,
-											      double,double){
-    return (double (TFEL_ADDCALL_PTR)(double,double,double,double)) dlsym(lib,name);
-  }
-
-
-  double (TFEL_ADDCALL_PTR tfel_getCFunction5(LibraryHandlerPtr lib,const char * const name))(double,double,
-											      double,double,
-											      double){
-    return (double (TFEL_ADDCALL_PTR)(double,double,double,double,
-				      double)) dlsym(lib,name);
-  }
-
-  double (TFEL_ADDCALL_PTR tfel_getCFunction6(LibraryHandlerPtr lib,const char * const name))(double,double,
-											      double,double,
-											      double,double){
-    return (double (TFEL_ADDCALL_PTR)(double,double,double,double,
-				      double,double)) dlsym(lib,name);
-  }
-
-
-  double (TFEL_ADDCALL_PTR tfel_getCFunction7(LibraryHandlerPtr lib,const char * const name))(double,double,
-											      double,double,
-											      double,double,
-											      double){
-    return (double (TFEL_ADDCALL_PTR)(double,double,double,double,
-				      double,double,double)) dlsym(lib,name);
-  }
-
-
-  double (TFEL_ADDCALL_PTR tfel_getCFunction8(LibraryHandlerPtr lib,const char * const name))(double,double,
-											      double,double,
-											      double,double,
-											      double,double){
-    return (double (TFEL_ADDCALL_PTR)(double,double,double,double,
-				      double,double,double,double)) dlsym(lib,name);
-  }
-
-
-  double (TFEL_ADDCALL_PTR tfel_getCFunction9(LibraryHandlerPtr lib,const char * const name))(double,double,
-											      double,double,
-											      double,double,
-											      double,double,
-											      double){
-    return (double (TFEL_ADDCALL_PTR)(double,double,double,double,
-				      double,double,double,double,
-				      double)) dlsym(lib,name);
-  }
-
-
-  double (TFEL_ADDCALL_PTR tfel_getCFunction10(LibraryHandlerPtr lib,const char * const name))(double,double,
-											       double,double,
-											       double,double,
-											       double,double,
-											       double,double){
-    return (double (TFEL_ADDCALL_PTR)(double,double,double,double,
-				      double,double,double,double,
-				      double,double)) dlsym(lib,name);
-  }
-
-
-  double (TFEL_ADDCALL_PTR tfel_getCFunction11(LibraryHandlerPtr lib,const char * const name))(double,double,
-											       double,double,
-											       double,double,
-											       double,double,
-											       double,double,
-											       double){
-    return (double (TFEL_ADDCALL_PTR)(double,double,double,double,
-				      double,double,double,double,
-				      double,double,double)) dlsym(lib,name);
-  }
-
-
-  double (TFEL_ADDCALL_PTR tfel_getCFunction12(LibraryHandlerPtr lib,const char * const name))(double,double,
-											       double,double,
-											       double,double,
-											       double,double,
-											       double,double,
-											       double,double){
-    return (double (TFEL_ADDCALL_PTR)(double,double,double,double,
-				      double,double,double,double,
-				      double,double,double,double)) dlsym(lib,name);
-  }
-
-
-  double (TFEL_ADDCALL_PTR tfel_getCFunction13(LibraryHandlerPtr lib,const char * const name))(double,double,
-											       double,double,
-											       double,double,
-											       double,double,
-											       double,double,
-											       double,double,
-											       double){
-    return (double (TFEL_ADDCALL_PTR)(double,double,double,double,
-				      double,double,double,double,
-				      double,double,double,double,
-				      double)) dlsym(lib,name);
-  }
-
-
-  double (TFEL_ADDCALL_PTR tfel_getCFunction14(LibraryHandlerPtr lib,const char * const name))(double,double,
-											       double,double,
-											       double,double,
-											       double,double,
-											       double,double,
-											       double,double,
-											       double,double){
-    return (double (TFEL_ADDCALL_PTR)(double,double,double,double,
-				      double,double,double,double,
-				      double,double,double,double,
-				      double,double)) dlsym(lib,name);
-  }
-
-
-  double (TFEL_ADDCALL_PTR tfel_getCFunction15(LibraryHandlerPtr lib,const char * const name))(double,double,
-											       double,double,
-											       double,double,
-											       double,double,
-											       double,double,
-											       double,double,
-											       double,double,
-											       double){
-    return (double (TFEL_ADDCALL_PTR)(double,double,double,double,
-				      double,double,double,double,
-				      double,double,double,double,
-				      double,double,double)) dlsym(lib,name);
-  }
-
-  double (TFEL_ADDCALL_PTR tfel_getFortranFunction0(LibraryHandlerPtr lib,const char * const name))(){
-    return (double (TFEL_ADDCALL_PTR)()) dlsym(lib,name);
-  } 
-
-
-  double (TFEL_ADDCALL_PTR tfel_getFortranFunction1(LibraryHandlerPtr lib,const char * const name))(const double* const){
-    return (double (TFEL_ADDCALL_PTR)(const double* const)) dlsym(lib,name);
-  }
-
-
-  double (TFEL_ADDCALL_PTR tfel_getFortranFunction2(LibraryHandlerPtr lib,const char * const name))(const double* const,const double* const){
-    return (double (TFEL_ADDCALL_PTR)(const double* const,const double* const)) dlsym(lib,name);
-  }
-
-
-  double (TFEL_ADDCALL_PTR tfel_getFortranFunction3(LibraryHandlerPtr lib,const char * const name))(const double* const,const double* const,
-												    const double* const){
-    return (double (TFEL_ADDCALL_PTR)(const double* const,const double* const,const double* const)) dlsym(lib,name);
-  }
-
-
-  double (TFEL_ADDCALL_PTR tfel_getFortranFunction4(LibraryHandlerPtr lib,const char * const name))(const double* const,const double* const,
-												    const double* const,const double* const){
-    return (double (TFEL_ADDCALL_PTR)(const double* const,const double* const,const double* const,const double* const)) dlsym(lib,name);
-  }
-
-
-  double (TFEL_ADDCALL_PTR tfel_getFortranFunction5(LibraryHandlerPtr lib,const char * const name))(const double* const,const double* const,
-												    const double* const,const double* const,
-												    const double* const){
-    return (double (TFEL_ADDCALL_PTR)(const double* const,const double* const,const double* const,const double* const,
-				      const double* const)) dlsym(lib,name);
-  }
-
-  double (TFEL_ADDCALL_PTR tfel_getFortranFunction6(LibraryHandlerPtr lib,const char * const name))(const double* const,const double* const,
-												    const double* const,const double* const,
-												    const double* const,const double* const){
-    return (double (TFEL_ADDCALL_PTR)(const double* const,const double* const,const double* const,const double* const,
-				      const double* const,const double* const)) dlsym(lib,name);
-  }
-
-
-  double (TFEL_ADDCALL_PTR tfel_getFortranFunction7(LibraryHandlerPtr lib,const char * const name))(const double* const,const double* const,
-												    const double* const,const double* const,
-												    const double* const,const double* const,
-												    const double* const){
-    return (double (TFEL_ADDCALL_PTR)(const double* const,const double* const,const double* const,const double* const,
-				      const double* const,const double* const,const double* const)) dlsym(lib,name);
-  }
-
-
-  double (TFEL_ADDCALL_PTR tfel_getFortranFunction8(LibraryHandlerPtr lib,const char * const name))(const double* const,const double* const,
-												    const double* const,const double* const,
-												    const double* const,const double* const,
-												    const double* const,const double* const){
-    return (double (TFEL_ADDCALL_PTR)(const double* const,const double* const,const double* const,const double* const,
-				      const double* const,const double* const,const double* const,const double* const)) dlsym(lib,name);
-  }
-
-
-  double (TFEL_ADDCALL_PTR tfel_getFortranFunction9(LibraryHandlerPtr lib,const char * const name))(const double* const,const double* const,
-												    const double* const,const double* const,
-												    const double* const,const double* const,
-												    const double* const,const double* const,
-												    const double* const){
-    return (double (TFEL_ADDCALL_PTR)(const double* const,const double* const,const double* const,const double* const,
-				      const double* const,const double* const,const double* const,const double* const,
-				      const double* const)) dlsym(lib,name);
-  }
-
-
-  double (TFEL_ADDCALL_PTR tfel_getFortranFunction10(LibraryHandlerPtr lib,const char * const name))(const double* const,const double* const,
-												     const double* const,const double* const,
-												     const double* const,const double* const,
-												     const double* const,const double* const,
-												     const double* const,const double* const){
-    return (double (TFEL_ADDCALL_PTR)(const double* const,const double* const,const double* const,const double* const,
-				      const double* const,const double* const,const double* const,const double* const,
-				      const double* const,const double* const)) dlsym(lib,name);
-  }
-
-
-  double (TFEL_ADDCALL_PTR tfel_getFortranFunction11(LibraryHandlerPtr lib,const char * const name))(const double* const,const double* const,
-												     const double* const,const double* const,
-												     const double* const,const double* const,
-												     const double* const,const double* const,
-												     const double* const,const double* const,
-												     const double* const){
-    return (double (TFEL_ADDCALL_PTR)(const double* const,const double* const,const double* const,const double* const,
-				      const double* const,const double* const,const double* const,const double* const,
-				      const double* const,const double* const,const double* const)) dlsym(lib,name);
-  }
-
-
-  double (TFEL_ADDCALL_PTR tfel_getFortranFunction12(LibraryHandlerPtr lib,const char * const name))(const double* const,const double* const,
-												     const double* const,const double* const,
-												     const double* const,const double* const,
-												     const double* const,const double* const,
-												     const double* const,const double* const,
-												     const double* const,const double* const){
-    return (double (TFEL_ADDCALL_PTR)(const double* const,const double* const,const double* const,const double* const,
-				      const double* const,const double* const,const double* const,const double* const,
-				      const double* const,const double* const,const double* const,const double* const)) dlsym(lib,name);
-  }
-
-
-  double (TFEL_ADDCALL_PTR tfel_getFortranFunction13(LibraryHandlerPtr lib,const char * const name))(const double* const,const double* const,
-												     const double* const,const double* const,
-												     const double* const,const double* const,
-												     const double* const,const double* const,
-												     const double* const,const double* const,
-												     const double* const,const double* const,
-												     const double* const){
-    return (double (TFEL_ADDCALL_PTR)(const double* const,const double* const,const double* const,const double* const,
-				      const double* const,const double* const,const double* const,const double* const,
-				      const double* const,const double* const,const double* const,const double* const,
-				      const double* const)) dlsym(lib,name);
-  }
-
-
-  double (TFEL_ADDCALL_PTR tfel_getFortranFunction14(LibraryHandlerPtr lib,const char * const name))(const double* const,const double* const,
-												     const double* const,const double* const,
-												     const double* const,const double* const,
-												     const double* const,const double* const,
-												     const double* const,const double* const,
-												     const double* const,const double* const,
-												     const double* const,const double* const){
-    return (double (TFEL_ADDCALL_PTR)(const double* const,const double* const,const double* const,const double* const,
-				      const double* const,const double* const,const double* const,const double* const,
-				      const double* const,const double* const,const double* const,const double* const,
-				      const double* const,const double* const)) dlsym(lib,name);
-  }
-
-
-  double (TFEL_ADDCALL_PTR tfel_getFortranFunction15(LibraryHandlerPtr lib,const char * const name))(const double* const,const double* const,
-												     const double* const,const double* const,
-												     const double* const,const double* const,
-												     const double* const,const double* const,
-												     const double* const,const double* const,
-												     const double* const,const double* const,
-												     const double* const,const double* const,
-												     const double* const){
-    return (double (TFEL_ADDCALL_PTR)(const double* const,const double* const,const double* const,const double* const,
-				      const double* const,const double* const,const double* const,const double* const,
-				      const double* const,const double* const,const double* const,const double* const,
-				      const double* const,const double* const,const double* const)) dlsym(lib,name);
-  }
-
-#ifdef	__cplusplus
+  strncpy(myname, name, len);
+  myname[len] = '_';
+  myname[len + 1u] = 'a';
+  myname[len + 2u] = 'r';
+  myname[len + 3u] = 'g';
+  myname[len + 4u] = 's';
+  myname[len + 5u] = '\0';
+  v = (char **)dlsym(lib, myname);
+  free(myname);
+  return v;
+}
+
+double(TFEL_ADDCALL_PTR tfel_getCyranoMaterialProperty(LibraryHandlerPtr lib,
+                                                       const char *const name))(
+    CyranoOutputStatus *const,
+    const CyranoRealType *const,
+    const CyranoIntegerType,
+    const CyranoOutOfBoundsPolicy) {
+  return (double(TFEL_ADDCALL_PTR)(
+      CyranoOutputStatus * const, const CyranoRealType *const,
+      const CyranoIntegerType, const CyranoOutOfBoundsPolicy))dlsym(lib, name);
+}
+
+void(TFEL_ADDCALL_PTR tfel_getCyranoFunction(LibraryHandlerPtr lib,
+                                             const char *const name))(
+    const CyranoIntegerType *const,
+    const CyranoRealType *const,
+    const CyranoRealType *const,
+    CyranoRealType *const,
+    const CyranoRealType *const,
+    const CyranoRealType *const,
+    const CyranoRealType *const,
+    const CyranoRealType *const,
+    const CyranoRealType *const,
+    const CyranoIntegerType *const,
+    const CyranoRealType *const,
+    const CyranoRealType *const,
+    CyranoRealType *const,
+    const CyranoIntegerType *const,
+    CyranoRealType *const,
+    const CyranoIntegerType *const,
+    CyranoIntegerType *const) {
+  return (void(TFEL_ADDCALL_PTR)(
+      const CyranoIntegerType *const, const CyranoRealType *const,
+      const CyranoRealType *const, CyranoRealType *const,
+      const CyranoRealType *const, const CyranoRealType *const,
+      const CyranoRealType *const, const CyranoRealType *const,
+      const CyranoRealType *const, const CyranoIntegerType *const,
+      const CyranoRealType *const, const CyranoRealType *const,
+      CyranoRealType *const, const CyranoIntegerType *const,
+      CyranoRealType *const, const CyranoIntegerType *const,
+      CyranoIntegerType *const))dlsym(lib, name);
+}
+
+void(TFEL_ADDCALL_PTR tfel_getAnsysExternalBehaviourFunction(
+    LibraryHandlerPtr l, const char *const f))(const AnsysIntegerType *const,
+                                               const AnsysIntegerType *const,
+                                               const AnsysIntegerType *const,
+                                               const AnsysIntegerType *const,
+                                               const AnsysIntegerType *const,
+                                               const AnsysIntegerType *const,
+                                               const AnsysIntegerType *const,
+                                               AnsysIntegerType *const,
+                                               const AnsysIntegerType *const,
+                                               const AnsysIntegerType *const,
+                                               const AnsysIntegerType *const,
+                                               const AnsysIntegerType *const,
+                                               const AnsysIntegerType *const,
+                                               const AnsysRealType *const,
+                                               const AnsysRealType *const,
+                                               const AnsysRealType *const,
+                                               const AnsysRealType *const,
+                                               AnsysRealType *const,
+                                               AnsysRealType *const,
+                                               AnsysRealType *const,
+                                               AnsysRealType *const,
+                                               AnsysRealType *const,
+                                               AnsysRealType *const,
+                                               const AnsysRealType *const,
+                                               const AnsysRealType *const,
+                                               AnsysRealType *const,
+                                               const AnsysRealType *const,
+                                               const AnsysRealType *const,
+                                               const AnsysRealType *const,
+                                               const AnsysRealType *const,
+                                               const AnsysRealType *const,
+                                               const AnsysRealType *const,
+                                               AnsysRealType *const,
+                                               const AnsysRealType *const,
+                                               const AnsysRealType *const,
+                                               const AnsysRealType *const,
+                                               const AnsysRealType *const,
+                                               const AnsysRealType *const,
+                                               const AnsysRealType *const,
+                                               const AnsysRealType *const,
+                                               const AnsysRealType *const) {
+  return (void(TFEL_ADDCALL_PTR)(
+      const AnsysIntegerType *const, const AnsysIntegerType *const,
+      const AnsysIntegerType *const, const AnsysIntegerType *const,
+      const AnsysIntegerType *const, const AnsysIntegerType *const,
+      const AnsysIntegerType *const, AnsysIntegerType *const,
+      const AnsysIntegerType *const, const AnsysIntegerType *const,
+      const AnsysIntegerType *const, const AnsysIntegerType *const,
+      const AnsysIntegerType *const, const AnsysRealType *const,
+      const AnsysRealType *const, const AnsysRealType *const,
+      const AnsysRealType *const, AnsysRealType *const, AnsysRealType *const,
+      AnsysRealType *const, AnsysRealType *const, AnsysRealType *const,
+      AnsysRealType *const, const AnsysRealType *const,
+      const AnsysRealType *const, AnsysRealType *const,
+      const AnsysRealType *const, const AnsysRealType *const,
+      const AnsysRealType *const, const AnsysRealType *const,
+      const AnsysRealType *const, const AnsysRealType *const,
+      AnsysRealType *const, const AnsysRealType *const,
+      const AnsysRealType *const, const AnsysRealType *const,
+      const AnsysRealType *const, const AnsysRealType *const,
+      const AnsysRealType *const, const AnsysRealType *const,
+      const AnsysRealType *const))dlsym(l, f);
+}
+
+void(TFEL_ADDCALL_PTR tfel_getAbaqusExplicitExternalBehaviourFunction(
+    LibraryHandlerPtr l, const char *const f))(const AbaqusIntegerType *const,
+                                               const AbaqusIntegerType *const,
+                                               const AbaqusIntegerType *const,
+                                               const AbaqusIntegerType *const,
+                                               const AbaqusIntegerType *const,
+                                               const AbaqusIntegerType *const,
+                                               const AbaqusIntegerType *const,
+                                               const AbaqusRealType *const,
+                                               const AbaqusRealType *const,
+                                               const AbaqusRealType *const,
+                                               const char *const,
+                                               const AbaqusRealType *const,
+                                               const AbaqusRealType *const,
+                                               const AbaqusRealType *const,
+                                               const AbaqusRealType *const,
+                                               const AbaqusRealType *const,
+                                               const AbaqusRealType *const,
+                                               const AbaqusRealType *const,
+                                               const AbaqusRealType *const,
+                                               const AbaqusRealType *const,
+                                               const AbaqusRealType *const,
+                                               const AbaqusRealType *const,
+                                               const AbaqusRealType *const,
+                                               const AbaqusRealType *const,
+                                               const AbaqusRealType *const,
+                                               const AbaqusRealType *const,
+                                               const AbaqusRealType *const,
+                                               const AbaqusRealType *const,
+                                               const AbaqusRealType *const,
+                                               AbaqusRealType *const,
+                                               AbaqusRealType *const,
+                                               AbaqusRealType *const,
+                                               AbaqusRealType *const,
+                                               const int) {
+  return (void(TFEL_ADDCALL_PTR)(
+      const AbaqusIntegerType *const, const AbaqusIntegerType *const,
+      const AbaqusIntegerType *const, const AbaqusIntegerType *const,
+      const AbaqusIntegerType *const, const AbaqusIntegerType *const,
+      const AbaqusIntegerType *const, const AbaqusRealType *const,
+      const AbaqusRealType *const, const AbaqusRealType *const,
+      const char *const, const AbaqusRealType *const,
+      const AbaqusRealType *const, const AbaqusRealType *const,
+      const AbaqusRealType *const, const AbaqusRealType *const,
+      const AbaqusRealType *const, const AbaqusRealType *const,
+      const AbaqusRealType *const, const AbaqusRealType *const,
+      const AbaqusRealType *const, const AbaqusRealType *const,
+      const AbaqusRealType *const, const AbaqusRealType *const,
+      const AbaqusRealType *const, const AbaqusRealType *const,
+      const AbaqusRealType *const, const AbaqusRealType *const,
+      const AbaqusRealType *const, AbaqusRealType *const, AbaqusRealType *const,
+      AbaqusRealType *const, AbaqusRealType *const, const int))dlsym(l, f);
+}
+
+void(TFEL_ADDCALL_PTR tfel_getAbaqusExternalBehaviourFunction(
+    LibraryHandlerPtr l, const char *const n))(AbaqusRealType *const,
+                                               AbaqusRealType *const,
+                                               AbaqusRealType *const,
+                                               AbaqusRealType *const,
+                                               AbaqusRealType *const,
+                                               AbaqusRealType *const,
+                                               AbaqusRealType *const,
+                                               AbaqusRealType *const,
+                                               AbaqusRealType *const,
+                                               AbaqusRealType *const,
+                                               const AbaqusRealType *const,
+                                               const AbaqusRealType *const,
+                                               const AbaqusRealType *const,
+                                               const AbaqusRealType *const,
+                                               const AbaqusRealType *const,
+                                               const AbaqusRealType *const,
+                                               const AbaqusRealType *const,
+                                               const AbaqusRealType *const,
+                                               const char *const,
+                                               const AbaqusIntegerType *const,
+                                               const AbaqusIntegerType *const,
+                                               const AbaqusIntegerType *const,
+                                               const AbaqusIntegerType *const,
+                                               const AbaqusRealType *const,
+                                               const AbaqusIntegerType *const,
+                                               const AbaqusRealType *const,
+                                               const AbaqusRealType *const,
+                                               AbaqusRealType *const,
+                                               const AbaqusRealType *const,
+                                               const AbaqusRealType *const,
+                                               const AbaqusRealType *const,
+                                               const AbaqusIntegerType *const,
+                                               const AbaqusIntegerType *const,
+                                               const AbaqusIntegerType *const,
+                                               const AbaqusIntegerType *const,
+                                               const AbaqusIntegerType *const,
+                                               AbaqusIntegerType *const,
+                                               const int) {
+  return (void(TFEL_ADDCALL_PTR)(
+      AbaqusRealType * const, AbaqusRealType *const, AbaqusRealType *const,
+      AbaqusRealType *const, AbaqusRealType *const, AbaqusRealType *const,
+      AbaqusRealType *const, AbaqusRealType *const, AbaqusRealType *const,
+      AbaqusRealType *const, const AbaqusRealType *const,
+      const AbaqusRealType *const, const AbaqusRealType *const,
+      const AbaqusRealType *const, const AbaqusRealType *const,
+      const AbaqusRealType *const, const AbaqusRealType *const,
+      const AbaqusRealType *const, const char *const,
+      const AbaqusIntegerType *const, const AbaqusIntegerType *const,
+      const AbaqusIntegerType *const, const AbaqusIntegerType *const,
+      const AbaqusRealType *const, const AbaqusIntegerType *const,
+      const AbaqusRealType *const, const AbaqusRealType *const,
+      AbaqusRealType *const, const AbaqusRealType *const,
+      const AbaqusRealType *const, const AbaqusRealType *const,
+      const AbaqusIntegerType *const, const AbaqusIntegerType *const,
+      const AbaqusIntegerType *const, const AbaqusIntegerType *const,
+      const AbaqusIntegerType *const, AbaqusIntegerType *const,
+      const int))dlsym(l, n);
+}
+
+void(TFEL_ADDCALL_PTR tfel_getCastemExternalBehaviourFunction(
+    LibraryHandlerPtr l, const char *const n))(CastemRealType *const,
+                                               CastemRealType *const,
+                                               CastemRealType *const,
+                                               CastemRealType *const,
+                                               CastemRealType *const,
+                                               CastemRealType *const,
+                                               CastemRealType *const,
+                                               CastemRealType *const,
+                                               CastemRealType *const,
+                                               CastemRealType *const,
+                                               const CastemRealType *const,
+                                               const CastemRealType *const,
+                                               const CastemRealType *const,
+                                               const CastemRealType *const,
+                                               const CastemRealType *const,
+                                               const CastemRealType *const,
+                                               const CastemRealType *const,
+                                               const CastemRealType *const,
+                                               const char *const,
+                                               const CastemIntegerType *const,
+                                               const CastemIntegerType *const,
+                                               const CastemIntegerType *const,
+                                               const CastemIntegerType *const,
+                                               const CastemRealType *const,
+                                               const CastemIntegerType *const,
+                                               const CastemRealType *const,
+                                               const CastemRealType *const,
+                                               CastemRealType *const,
+                                               const CastemRealType *const,
+                                               const CastemRealType *const,
+                                               const CastemRealType *const,
+                                               const CastemIntegerType *const,
+                                               const CastemIntegerType *const,
+                                               const CastemIntegerType *const,
+                                               const CastemIntegerType *const,
+                                               const CastemIntegerType *const,
+                                               CastemIntegerType *const,
+                                               const int) {
+  return (void(TFEL_ADDCALL_PTR)(
+      CastemRealType * const, CastemRealType *const, CastemRealType *const,
+      CastemRealType *const, CastemRealType *const, CastemRealType *const,
+      CastemRealType *const, CastemRealType *const, CastemRealType *const,
+      CastemRealType *const, const CastemRealType *const,
+      const CastemRealType *const, const CastemRealType *const,
+      const CastemRealType *const, const CastemRealType *const,
+      const CastemRealType *const, const CastemRealType *const,
+      const CastemRealType *const, const char *const,
+      const CastemIntegerType *const, const CastemIntegerType *const,
+      const CastemIntegerType *const, const CastemIntegerType *const,
+      const CastemRealType *const, const CastemIntegerType *const,
+      const CastemRealType *const, const CastemRealType *const,
+      CastemRealType *const, const CastemRealType *const,
+      const CastemRealType *const, const CastemRealType *const,
+      const CastemIntegerType *const, const CastemIntegerType *const,
+      const CastemIntegerType *const, const CastemIntegerType *const,
+      const CastemIntegerType *const, CastemIntegerType *const,
+      const int))dlsym(l, n);
+}
+
+void(TFEL_ADDCALL_PTR tfel_getAsterFunction(LibraryHandlerPtr lib,
+                                            const char *const name))(
+    AsterRealType *const,
+    AsterRealType *const,
+    AsterRealType *const,
+    const AsterRealType *const,
+    const AsterRealType *const,
+    const AsterRealType *const,
+    const AsterRealType *const,
+    const AsterRealType *const,
+    const AsterRealType *const,
+    const AsterRealType *const,
+    const AsterIntegerType *const,
+    const AsterIntegerType *const,
+    const AsterRealType *const,
+    const AsterIntegerType *const,
+    const AsterRealType *const,
+    AsterRealType *const,
+    const AsterIntegerType *const) {
+  return (void(TFEL_ADDCALL_PTR)(
+      AsterRealType * const, AsterRealType *const, AsterRealType *const,
+      const AsterRealType *const, const AsterRealType *const,
+      const AsterRealType *const, const AsterRealType *const,
+      const AsterRealType *const, const AsterRealType *const,
+      const AsterRealType *const, const AsterIntegerType *const,
+      const AsterIntegerType *const, const AsterRealType *const,
+      const AsterIntegerType *const, const AsterRealType *const,
+      AsterRealType *const, const AsterIntegerType *const))dlsym(lib, name);
+}
+
+const char *(TFEL_ADDCALL_PTR tfel_getAsterIntegrationErrorMessage(
+    LibraryHandlerPtr lib, const char *const name))() {
+  return (const char *(TFEL_ADDCALL_PTR)())dlsym(lib, name);
+}
+
+void(TFEL_ADDCALL_PTR tfel_getEuroplexusFunction(LibraryHandlerPtr l,
+                                                 const char *const n))(
+    EuroplexusIntegerType *const,
+    EuroplexusRealType *const,
+    EuroplexusRealType *const,
+    EuroplexusRealType *const,
+    EuroplexusRealType *const,
+    EuroplexusIntegerType *const,
+    char *const,
+    const EuroplexusIntegerType *const,
+    const EuroplexusIntegerType *const,
+    const EuroplexusRealType *const,
+    const EuroplexusRealType *const,
+    const EuroplexusRealType *const,
+    const EuroplexusRealType *const,
+    const EuroplexusRealType *const,
+    const EuroplexusIntegerType *const,
+    const EuroplexusRealType *const,
+    const EuroplexusRealType *const,
+    const EuroplexusRealType *const,
+    const EuroplexusRealType *const,
+    const EuroplexusIntegerType *const) {
+  return (void(TFEL_ADDCALL_PTR)(
+      EuroplexusIntegerType * const, EuroplexusRealType *const,
+      EuroplexusRealType *const, EuroplexusRealType *const,
+      EuroplexusRealType *const, EuroplexusIntegerType *const, char *const,
+      const EuroplexusIntegerType *const, const EuroplexusIntegerType *const,
+      const EuroplexusRealType *const, const EuroplexusRealType *const,
+      const EuroplexusRealType *const, const EuroplexusRealType *const,
+      const EuroplexusRealType *const, const EuroplexusIntegerType *const,
+      const EuroplexusRealType *const, const EuroplexusRealType *const,
+      const EuroplexusRealType *const, const EuroplexusRealType *const,
+      const EuroplexusIntegerType *const))dlsym(l, n);
+}
+
+void(TFEL_ADDCALL_PTR tfel_getCalculiXExternalBehaviourFunction(
+    LibraryHandlerPtr l, const char *const n))(const char *const,
+                                               const CalculiXIntegerType *const,
+                                               const CalculiXIntegerType *const,
+                                               const CalculiXIntegerType *const,
+                                               const CalculiXRealType *const,
+                                               const CalculiXRealType *const,
+                                               const CalculiXRealType *const,
+                                               const CalculiXRealType *const,
+                                               const CalculiXRealType *const,
+                                               const CalculiXRealType *const,
+                                               const CalculiXRealType *const,
+                                               const CalculiXRealType *const,
+                                               const CalculiXIntegerType *const,
+                                               const CalculiXRealType *const,
+                                               const CalculiXRealType *const,
+                                               const CalculiXRealType *const,
+                                               const CalculiXRealType *const,
+                                               const CalculiXIntegerType *const,
+                                               const CalculiXIntegerType *const,
+                                               const CalculiXIntegerType *const,
+                                               const CalculiXIntegerType *const,
+                                               const CalculiXRealType *const,
+                                               CalculiXRealType *const,
+                                               CalculiXRealType *const,
+                                               CalculiXRealType *const,
+                                               const CalculiXIntegerType *const,
+                                               const CalculiXRealType *const,
+                                               const CalculiXRealType *const,
+                                               CalculiXRealType *const,
+                                               const CalculiXIntegerType *const,
+                                               const int) {
+  return (void(TFEL_ADDCALL_PTR)(
+      const char *const, const CalculiXIntegerType *const,
+      const CalculiXIntegerType *const, const CalculiXIntegerType *const,
+      const CalculiXRealType *const, const CalculiXRealType *const,
+      const CalculiXRealType *const, const CalculiXRealType *const,
+      const CalculiXRealType *const, const CalculiXRealType *const,
+      const CalculiXRealType *const, const CalculiXRealType *const,
+      const CalculiXIntegerType *const, const CalculiXRealType *const,
+      const CalculiXRealType *const, const CalculiXRealType *const,
+      const CalculiXRealType *const, const CalculiXIntegerType *const,
+      const CalculiXIntegerType *const, const CalculiXIntegerType *const,
+      const CalculiXIntegerType *const, const CalculiXRealType *const,
+      CalculiXRealType *const, CalculiXRealType *const, CalculiXRealType *const,
+      const CalculiXIntegerType *const, const CalculiXRealType *const,
+      const CalculiXRealType *const, CalculiXRealType *const,
+      const CalculiXIntegerType *const, const int))dlsym(l, n);
+}
+
+void(TFEL_ADDCALL_PTR tfel_getDianaFEAExternalBehaviourFunction(
+    LibraryHandlerPtr l, const char *const n))(DianaFEARealType *const,
+                                               DianaFEARealType *const,
+                                               DianaFEARealType *const,
+                                               const DianaFEAIntegerType *const,
+                                               const DianaFEAIntegerType *const,
+                                               const DianaFEAIntegerType *const,
+                                               const DianaFEARealType *const,
+                                               const DianaFEARealType *const,
+                                               const DianaFEARealType *const,
+                                               const DianaFEARealType *const,
+                                               const DianaFEARealType *const,
+                                               const DianaFEARealType *const) {
+  typedef void(TFEL_ADDCALL_PTR FctPtr)(
+      DianaFEARealType * const, DianaFEARealType *const,
+      DianaFEARealType *const, const DianaFEAIntegerType *const,
+      const DianaFEAIntegerType *const, const DianaFEAIntegerType *const,
+      const DianaFEARealType *const, const DianaFEARealType *const,
+      const DianaFEARealType *const, const DianaFEARealType *const,
+      const DianaFEARealType *const, const DianaFEARealType *const);
+  return (FctPtr)dlsym(l, n);
+}  // end of tfel_getDianaFEAExternalBehaviourFunction
+
+double(TFEL_ADDCALL_PTR tfel_getCFunction0(LibraryHandlerPtr lib,
+                                           const char *const name))() {
+  return (double(TFEL_ADDCALL_PTR)())dlsym(lib, name);
+}
+
+double(TFEL_ADDCALL_PTR tfel_getCFunction1(LibraryHandlerPtr lib,
+                                           const char *const name))(double) {
+  return (double(TFEL_ADDCALL_PTR)(double))dlsym(lib, name);
+}
+
+double(TFEL_ADDCALL_PTR tfel_getCFunction2(LibraryHandlerPtr lib,
+                                           const char *const name))(double,
+                                                                    double) {
+  return (double(TFEL_ADDCALL_PTR)(double, double))dlsym(lib, name);
+}
+
+double(TFEL_ADDCALL_PTR tfel_getCFunction3(LibraryHandlerPtr lib,
+                                           const char *const name))(double,
+                                                                    double,
+                                                                    double) {
+  return (double(TFEL_ADDCALL_PTR)(double, double, double))dlsym(lib, name);
+}
+
+double(TFEL_ADDCALL_PTR tfel_getCFunction4(LibraryHandlerPtr lib,
+                                           const char *const name))(double,
+                                                                    double,
+                                                                    double,
+                                                                    double) {
+  return (double(TFEL_ADDCALL_PTR)(double, double, double, double))dlsym(lib,
+                                                                         name);
+}
+
+double(TFEL_ADDCALL_PTR tfel_getCFunction5(LibraryHandlerPtr lib,
+                                           const char *const name))(
+    double, double, double, double, double) {
+  return (double(TFEL_ADDCALL_PTR)(double, double, double, double,
+                                   double))dlsym(lib, name);
+}
+
+double(TFEL_ADDCALL_PTR tfel_getCFunction6(LibraryHandlerPtr lib,
+                                           const char *const name))(
+    double, double, double, double, double, double) {
+  return (double(TFEL_ADDCALL_PTR)(double, double, double, double, double,
+                                   double))dlsym(lib, name);
+}
+
+double(TFEL_ADDCALL_PTR tfel_getCFunction7(LibraryHandlerPtr lib,
+                                           const char *const name))(
+    double, double, double, double, double, double, double) {
+  return (double(TFEL_ADDCALL_PTR)(double, double, double, double, double,
+                                   double, double))dlsym(lib, name);
+}
+
+double(TFEL_ADDCALL_PTR tfel_getCFunction8(LibraryHandlerPtr lib,
+                                           const char *const name))(
+    double, double, double, double, double, double, double, double) {
+  return (double(TFEL_ADDCALL_PTR)(double, double, double, double, double,
+                                   double, double, double))dlsym(lib, name);
+}
+
+double(TFEL_ADDCALL_PTR tfel_getCFunction9(LibraryHandlerPtr lib,
+                                           const char *const name))(
+    double, double, double, double, double, double, double, double, double) {
+  return (double(TFEL_ADDCALL_PTR)(double, double, double, double, double,
+                                   double, double, double, double))dlsym(lib,
+                                                                         name);
+}
+
+double(TFEL_ADDCALL_PTR tfel_getCFunction10(LibraryHandlerPtr lib,
+                                            const char *const name))(double,
+                                                                     double,
+                                                                     double,
+                                                                     double,
+                                                                     double,
+                                                                     double,
+                                                                     double,
+                                                                     double,
+                                                                     double,
+                                                                     double) {
+  return (double(TFEL_ADDCALL_PTR)(double, double, double, double, double,
+                                   double, double, double, double,
+                                   double))dlsym(lib, name);
+}
+
+double(TFEL_ADDCALL_PTR tfel_getCFunction11(LibraryHandlerPtr lib,
+                                            const char *const name))(double,
+                                                                     double,
+                                                                     double,
+                                                                     double,
+                                                                     double,
+                                                                     double,
+                                                                     double,
+                                                                     double,
+                                                                     double,
+                                                                     double,
+                                                                     double) {
+  return (double(TFEL_ADDCALL_PTR)(double, double, double, double, double,
+                                   double, double, double, double, double,
+                                   double))dlsym(lib, name);
+}
+
+double(TFEL_ADDCALL_PTR tfel_getCFunction12(LibraryHandlerPtr lib,
+                                            const char *const name))(double,
+                                                                     double,
+                                                                     double,
+                                                                     double,
+                                                                     double,
+                                                                     double,
+                                                                     double,
+                                                                     double,
+                                                                     double,
+                                                                     double,
+                                                                     double,
+                                                                     double) {
+  return (double(TFEL_ADDCALL_PTR)(double, double, double, double, double,
+                                   double, double, double, double, double,
+                                   double, double))dlsym(lib, name);
+}
+
+double(TFEL_ADDCALL_PTR tfel_getCFunction13(LibraryHandlerPtr lib,
+                                            const char *const name))(double,
+                                                                     double,
+                                                                     double,
+                                                                     double,
+                                                                     double,
+                                                                     double,
+                                                                     double,
+                                                                     double,
+                                                                     double,
+                                                                     double,
+                                                                     double,
+                                                                     double,
+                                                                     double) {
+  return (double(TFEL_ADDCALL_PTR)(double, double, double, double, double,
+                                   double, double, double, double, double,
+                                   double, double, double))dlsym(lib, name);
+}
+
+double(TFEL_ADDCALL_PTR tfel_getCFunction14(LibraryHandlerPtr lib,
+                                            const char *const name))(double,
+                                                                     double,
+                                                                     double,
+                                                                     double,
+                                                                     double,
+                                                                     double,
+                                                                     double,
+                                                                     double,
+                                                                     double,
+                                                                     double,
+                                                                     double,
+                                                                     double,
+                                                                     double,
+                                                                     double) {
+  return (double(TFEL_ADDCALL_PTR)(
+      double, double, double, double, double, double, double, double, double,
+      double, double, double, double, double))dlsym(lib, name);
+}
+
+double(TFEL_ADDCALL_PTR tfel_getCFunction15(LibraryHandlerPtr lib,
+                                            const char *const name))(double,
+                                                                     double,
+                                                                     double,
+                                                                     double,
+                                                                     double,
+                                                                     double,
+                                                                     double,
+                                                                     double,
+                                                                     double,
+                                                                     double,
+                                                                     double,
+                                                                     double,
+                                                                     double,
+                                                                     double,
+                                                                     double) {
+  return (double(TFEL_ADDCALL_PTR)(
+      double, double, double, double, double, double, double, double, double,
+      double, double, double, double, double, double))dlsym(lib, name);
+}
+
+double(TFEL_ADDCALL_PTR tfel_getFortranFunction0(LibraryHandlerPtr lib,
+                                                 const char *const name))() {
+  return (double(TFEL_ADDCALL_PTR)())dlsym(lib, name);
+}
+
+double(TFEL_ADDCALL_PTR tfel_getFortranFunction1(
+    LibraryHandlerPtr lib, const char *const name))(const double *const) {
+  return (double(TFEL_ADDCALL_PTR)(const double *const))dlsym(lib, name);
+}
+
+double(TFEL_ADDCALL_PTR tfel_getFortranFunction2(
+    LibraryHandlerPtr lib, const char *const name))(const double *const,
+                                                    const double *const) {
+  return (double(TFEL_ADDCALL_PTR)(const double *const,
+                                   const double *const))dlsym(lib, name);
+}
+
+double(TFEL_ADDCALL_PTR tfel_getFortranFunction3(LibraryHandlerPtr lib,
+                                                 const char *const name))(
+    const double *const, const double *const, const double *const) {
+  return (double(TFEL_ADDCALL_PTR)(const double *const, const double *const,
+                                   const double *const))dlsym(lib, name);
+}
+
+double(TFEL_ADDCALL_PTR tfel_getFortranFunction4(
+    LibraryHandlerPtr lib, const char *const name))(const double *const,
+                                                    const double *const,
+                                                    const double *const,
+                                                    const double *const) {
+  return (double(TFEL_ADDCALL_PTR)(const double *const, const double *const,
+                                   const double *const,
+                                   const double *const))dlsym(lib, name);
+}
+
+double(TFEL_ADDCALL_PTR tfel_getFortranFunction5(
+    LibraryHandlerPtr lib, const char *const name))(const double *const,
+                                                    const double *const,
+                                                    const double *const,
+                                                    const double *const,
+                                                    const double *const) {
+  return (double(TFEL_ADDCALL_PTR)(const double *const, const double *const,
+                                   const double *const, const double *const,
+                                   const double *const))dlsym(lib, name);
+}
+
+double(TFEL_ADDCALL_PTR tfel_getFortranFunction6(
+    LibraryHandlerPtr lib, const char *const name))(const double *const,
+                                                    const double *const,
+                                                    const double *const,
+                                                    const double *const,
+                                                    const double *const,
+                                                    const double *const) {
+  return (double(TFEL_ADDCALL_PTR)(const double *const, const double *const,
+                                   const double *const, const double *const,
+                                   const double *const,
+                                   const double *const))dlsym(lib, name);
+}
+
+double(TFEL_ADDCALL_PTR tfel_getFortranFunction7(
+    LibraryHandlerPtr lib, const char *const name))(const double *const,
+                                                    const double *const,
+                                                    const double *const,
+                                                    const double *const,
+                                                    const double *const,
+                                                    const double *const,
+                                                    const double *const) {
+  return (double(TFEL_ADDCALL_PTR)(const double *const, const double *const,
+                                   const double *const, const double *const,
+                                   const double *const, const double *const,
+                                   const double *const))dlsym(lib, name);
+}
+
+double(TFEL_ADDCALL_PTR tfel_getFortranFunction8(
+    LibraryHandlerPtr lib, const char *const name))(const double *const,
+                                                    const double *const,
+                                                    const double *const,
+                                                    const double *const,
+                                                    const double *const,
+                                                    const double *const,
+                                                    const double *const,
+                                                    const double *const) {
+  return (double(TFEL_ADDCALL_PTR)(
+      const double *const, const double *const, const double *const,
+      const double *const, const double *const, const double *const,
+      const double *const, const double *const))dlsym(lib, name);
+}
+
+double(TFEL_ADDCALL_PTR tfel_getFortranFunction9(
+    LibraryHandlerPtr lib, const char *const name))(const double *const,
+                                                    const double *const,
+                                                    const double *const,
+                                                    const double *const,
+                                                    const double *const,
+                                                    const double *const,
+                                                    const double *const,
+                                                    const double *const,
+                                                    const double *const) {
+  return (double(TFEL_ADDCALL_PTR)(const double *const, const double *const,
+                                   const double *const, const double *const,
+                                   const double *const, const double *const,
+                                   const double *const, const double *const,
+                                   const double *const))dlsym(lib, name);
+}
+
+double(TFEL_ADDCALL_PTR tfel_getFortranFunction10(
+    LibraryHandlerPtr lib, const char *const name))(const double *const,
+                                                    const double *const,
+                                                    const double *const,
+                                                    const double *const,
+                                                    const double *const,
+                                                    const double *const,
+                                                    const double *const,
+                                                    const double *const,
+                                                    const double *const,
+                                                    const double *const) {
+  return (double(TFEL_ADDCALL_PTR)(
+      const double *const, const double *const, const double *const,
+      const double *const, const double *const, const double *const,
+      const double *const, const double *const, const double *const,
+      const double *const))dlsym(lib, name);
+}
+
+double(TFEL_ADDCALL_PTR tfel_getFortranFunction11(
+    LibraryHandlerPtr lib, const char *const name))(const double *const,
+                                                    const double *const,
+                                                    const double *const,
+                                                    const double *const,
+                                                    const double *const,
+                                                    const double *const,
+                                                    const double *const,
+                                                    const double *const,
+                                                    const double *const,
+                                                    const double *const,
+                                                    const double *const) {
+  return (double(TFEL_ADDCALL_PTR)(
+      const double *const, const double *const, const double *const,
+      const double *const, const double *const, const double *const,
+      const double *const, const double *const, const double *const,
+      const double *const, const double *const))dlsym(lib, name);
+}
+
+double(TFEL_ADDCALL_PTR tfel_getFortranFunction12(
+    LibraryHandlerPtr lib, const char *const name))(const double *const,
+                                                    const double *const,
+                                                    const double *const,
+                                                    const double *const,
+                                                    const double *const,
+                                                    const double *const,
+                                                    const double *const,
+                                                    const double *const,
+                                                    const double *const,
+                                                    const double *const,
+                                                    const double *const,
+                                                    const double *const) {
+  return (double(TFEL_ADDCALL_PTR)(
+      const double *const, const double *const, const double *const,
+      const double *const, const double *const, const double *const,
+      const double *const, const double *const, const double *const,
+      const double *const, const double *const,
+      const double *const))dlsym(lib, name);
+}
+
+double(TFEL_ADDCALL_PTR tfel_getFortranFunction13(
+    LibraryHandlerPtr lib, const char *const name))(const double *const,
+                                                    const double *const,
+                                                    const double *const,
+                                                    const double *const,
+                                                    const double *const,
+                                                    const double *const,
+                                                    const double *const,
+                                                    const double *const,
+                                                    const double *const,
+                                                    const double *const,
+                                                    const double *const,
+                                                    const double *const,
+                                                    const double *const) {
+  return (double(TFEL_ADDCALL_PTR)(
+      const double *const, const double *const, const double *const,
+      const double *const, const double *const, const double *const,
+      const double *const, const double *const, const double *const,
+      const double *const, const double *const, const double *const,
+      const double *const))dlsym(lib, name);
+}
+
+double(TFEL_ADDCALL_PTR tfel_getFortranFunction14(
+    LibraryHandlerPtr lib, const char *const name))(const double *const,
+                                                    const double *const,
+                                                    const double *const,
+                                                    const double *const,
+                                                    const double *const,
+                                                    const double *const,
+                                                    const double *const,
+                                                    const double *const,
+                                                    const double *const,
+                                                    const double *const,
+                                                    const double *const,
+                                                    const double *const,
+                                                    const double *const,
+                                                    const double *const) {
+  return (double(TFEL_ADDCALL_PTR)(
+      const double *const, const double *const, const double *const,
+      const double *const, const double *const, const double *const,
+      const double *const, const double *const, const double *const,
+      const double *const, const double *const, const double *const,
+      const double *const, const double *const))dlsym(lib, name);
+}
+
+double(TFEL_ADDCALL_PTR tfel_getFortranFunction15(
+    LibraryHandlerPtr lib, const char *const name))(const double *const,
+                                                    const double *const,
+                                                    const double *const,
+                                                    const double *const,
+                                                    const double *const,
+                                                    const double *const,
+                                                    const double *const,
+                                                    const double *const,
+                                                    const double *const,
+                                                    const double *const,
+                                                    const double *const,
+                                                    const double *const,
+                                                    const double *const,
+                                                    const double *const,
+                                                    const double *const) {
+  return (double(TFEL_ADDCALL_PTR)(
+      const double *const, const double *const, const double *const,
+      const double *const, const double *const, const double *const,
+      const double *const, const double *const, const double *const,
+      const double *const, const double *const, const double *const,
+      const double *const, const double *const,
+      const double *const))dlsym(lib, name);
+}
+
+#ifdef __cplusplus
 }
 #endif /* __cplusplus */

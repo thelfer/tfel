@@ -51,6 +51,28 @@ namespace mfront {
     ~ImplicitDSLBase() override;
 
    protected:
+    /*!
+     * \brief a structure describing a view of a derivative in a tiny matrix.
+     */
+    struct DerivativeViewDescription {
+      //! \brief name of the view to be created
+      std::string derivative_name;
+      //! \brief name of the matrix frow which the view is created
+      std::string matrix_name;
+      //! \brief variable which is derivatived
+      VariableDescription first_variable;
+      //! \brief variable with respect to which the derivation is made
+      VariableDescription second_variable;
+      //! \brief number of rows of the matrix
+      SupportedTypes::TypeSize matrix_number_of_rows;
+      //! \brief number of columns of the matrix
+      SupportedTypes::TypeSize matrix_number_of_columns;
+      //! \brief row at which the view starts
+      SupportedTypes::TypeSize derivative_row_position;
+      //! \brief column at which the view starts
+      SupportedTypes::TypeSize derivative_column_position;
+    };  // end of struct DerivativeViewDescription
+
     //! a simple alias
     using Solver = std::shared_ptr<NonLinearSystemSolver>;
 
@@ -76,24 +98,33 @@ namespace mfront {
      * solver may have specific keywords
      */
     void treatUnknownKeyword() override;
-    /*!
-     * \param[in] h : modelling hypothesis
-     * \param[in] n : variable name
-     */
+
     void treatUnknownVariableMethod(const Hypothesis,
                                     const std::string&) override;
-    //! \brief treat the `@StateVariable` keyword
+
     void treatStateVariable() override;
     //! \brief treat the `@IntegrationVariable` keyword
     void treatIntegrationVariable();
-    //! \brief treat the `@Integrator` keyword
+
     void treatIntegrator() override;
     //! \brief treat the `@ComputeFinalThermodynamicForces` keyword
     virtual void treatComputeFinalThermodynamicForces();
 
+    void readTangentOperatorCodeBlock(const CodeBlockOptions&,
+                                      const std::string&) override;
+
     void completeVariableDeclaration() override;
 
     void endsInputFileProcessing() override;
+
+    /*!
+     * \brief write the declaration and initialisation of the view of a
+     * derivative in a matrix
+     * \param[in,out] os: output stream
+     * \param[in] d: description of the derivative' view
+     */
+    virtual void writeDerivativeView(std::ostream&,
+                                     const DerivativeViewDescription&) const;
 
     void writeBehaviourLocalVariablesInitialisation(
         std::ostream&, const Hypothesis) const override;
@@ -127,8 +158,17 @@ namespace mfront {
     virtual void writeComputeNumericalJacobian(std::ostream&,
                                                const Hypothesis) const;
 
-    virtual void writeGetPartialJacobianInvert(std::ostream&,
-                                               const Hypothesis) const;
+    void writeBehaviourComputeTangentOperatorBody(
+        std::ostream&, const Hypothesis, const std::string&) const override;
+    /*!
+     * \brief write the `computePartialJacobianInvert` methods. Those methods
+     * may be
+     * used to compute the consistent tangent operator.
+     * \param[in] os: output stream
+     * \param[in] h: modelling hypothesis
+     */
+    virtual void writeComputePartialJacobianInvert(std::ostream&,
+                                                   const Hypothesis) const;
     //! \brief treat the `@Theta` keyword
     virtual void treatTheta();
     //! \brief treat the `@IterMax` keyword

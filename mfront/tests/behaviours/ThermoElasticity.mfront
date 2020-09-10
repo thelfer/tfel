@@ -1,0 +1,55 @@
+@DSL DefaultGenericBehaviour;
+@Behaviour ThermoElasticity;
+@Author Thomas Helfer;
+@Date 19/04/2020;
+@Description {
+}
+
+@Gradient StrainStensor εᵗᵒ;
+εᵗᵒ.setGlossaryName("Strain");
+
+@Flux StressStensor σ;
+σ.setGlossaryName("Stress");
+
+@Gradient TemperatureGradient ∇T;
+∇T.setGlossaryName("TemperatureGradient");
+
+@Flux HeatFlux j;
+j.setGlossaryName("HeatFlux");
+
+@StateVariable real s;
+s.setEntryName("EntropyPerUnitOfMass");
+
+@TangentOperatorBlocks{∂σ∕∂Δεᵗᵒ, ∂σ∕∂ΔT, ∂s∕∂ΔT, ∂s∕∂Δεᵗᵒ, ∂j∕∂Δ∇T};
+
+@StaticVariable real Tʳᵉᶠ = 293.15;
+
+@Parameter stress E = 70e3;
+E.setGlossaryName("YoungModulus");
+@Parameter real ν = 0.3;
+ν.setGlossaryName("PoissonRatio");
+@Parameter massdensity ρ = 2700.;
+ρ.setGlossaryName("MassDensity");
+@Parameter thermalconductivity α = 2.31e-5 ;
+α.setGlossaryName("ThermalExpansion");
+@Parameter real Cₑ = 910e-6;
+Cₑ.setEntryName("SpecificHeatAtConstantStrainPerUnitOfMass");
+@Parameter thermalconductivity k = 237e-6;
+k.setGlossaryName("ThermalConductivity");
+
+@Integrator{
+  const auto λ = computeLambda(E, ν);
+  const auto μ = computeMu(E, ν);
+  const auto κ = α ⋅ (2 ⋅ μ + 3 ⋅ λ);
+  const auto ε = εᵗᵒ + Δεᵗᵒ;
+  σ = λ ⋅ trace(ε) ⋅ I₂ + 2 ⋅ μ ⋅ ε - κ ⋅ (T + ΔT - Tʳᵉᶠ) ⋅ I₂;
+  s = Cₑ / Tʳᵉᶠ ⋅ (T + ΔT - Tʳᵉᶠ) + (κ / ρ) ⋅ trace(ε);
+  j = -k ⋅ (∇T + Δ∇T);
+  if (computeTangentOperator_) {
+    ∂σ∕∂Δεᵗᵒ = λ ⋅ (I₂ ⊗ I₂) + 2 ⋅ μ ⋅ I₄;
+    ∂σ∕∂ΔT = -κ ⋅ I₂;
+    ∂s∕∂ΔT = Cₑ / Tʳᵉᶠ;
+    ∂s∕∂Δεᵗᵒ = κ ⋅ Cₑ / Tʳᵉᶠ ⋅ I₂;
+    ∂j∕∂Δ∇T = -k ⋅ tmatrix<N, N, real>::Id();
+  }
+}

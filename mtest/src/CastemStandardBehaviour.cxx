@@ -11,6 +11,7 @@
  * project under specific licensing conditions.
  */
 
+#include <ostream>
 #include "TFEL/Raise.hxx"
 #include "TFEL/System/ExternalLibraryManager.hxx"
 #include "MFront/Castem/Castem.hxx"

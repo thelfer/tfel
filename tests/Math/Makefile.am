@@ -10,6 +10,7 @@ if WITH_TESTS
 testdir = $(pkgdatadir)/tests/Math
 test_PROGRAMS = hill                                     \
 		promote                                  \
+		derivative_type                          \
 		power                                    \
 		qt                                       \
 		qt2                                      \
@@ -18,6 +19,7 @@ test_PROGRAMS = hill                                     \
 		conj                                     \
 		lu                                       \
 		lu2                                      \
+		lu3                                      \
 		invert                                   \
 		invert2                                  \
 		tinymatrixsolve                          \
@@ -69,7 +71,8 @@ test_PROGRAMS = hill                                     \
                 CorotationnalCauchyStressToSecondPioloKirchhoffStressTest \
 		StridedRandomAccessIteratorTest          \
 		DifferenceRandomAccessIteratorTest       \
-	        IEEE754Test
+	        IEEE754Test                          \
+        ScalarNewtonRaphsonTest
 
 LDADD = -L$(top_builddir)/src/Math      \
 	-L$(top_builddir)/src/Utilities \
@@ -80,6 +83,7 @@ LDADD = -L$(top_builddir)/src/Math      \
 
 power_SOURCES                 = power.cxx
 promote_SOURCES               = promote.cxx
+derivative_type_SOURCES       = derivative_type.cxx
 qt_SOURCES                    = qt.cxx
 qt2_SOURCES                   = qt2.cxx
 qt3_SOURCES                   = qt3.cxx
@@ -119,6 +123,7 @@ CorotationnalCauchyStressToSecondPioloKirchhoffStressTest_SOURCES = Corotationna
 StridedRandomAccessIteratorTest_SOURCES    = StridedRandomAccessIteratorTest.cxx
 DifferenceRandomAccessIteratorTest_SOURCES = DifferenceRandomAccessIteratorTest.cxx
 IEEE754Test_SOURCES = IEEE754Test.cxx
+ScalarNewtonRaphsonTest_SOURCES = ScalarNewtonRaphsonTest.cxx
 
 discretization1D_SOURCES = discretization1D.cxx
 discretization1D_LDADD   = -L$(top_builddir)/src/Math      \
@@ -231,6 +236,15 @@ lu2_LDADD     = -L$(top_builddir)/src/Tests        \
 	        -lTFELMathParser -lTFELMathKriging \
 		-lTFELMath  -lTFELUtilities        \
 		-lTFELException	-lTFELTests
+
+lu3_SOURCES   = lu3.cxx
+lu3_LDADD     = -L$(top_builddir)/src/Tests        \
+		        -L$(top_builddir)/src/Math         \
+	            -L$(top_builddir)/src/Utilities    \
+	            -L$(top_builddir)/src/Exception    \
+	            -lTFELMathParser -lTFELMathKriging \
+		        -lTFELMath  -lTFELUtilities        \
+		        -lTFELException	-lTFELTests
 
 qr_SOURCES    = qr.cxx
 qr_LDADD      = -L$(top_builddir)/src/Tests        \

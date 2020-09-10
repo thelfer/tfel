@@ -19,13 +19,21 @@
 
 namespace mfront{
 
-  StaticVariableDescription::StaticVariableDescription(const std::string& type_,
-						       const std::string& name_,
-						       const unsigned int line_,
-						       const StaticVariableValueType value_)
-    : VariableDescriptionBase(type_,name_,1u,line_),
-      value(value_)
-  {}
+  StaticVariableDescription::StaticVariableDescription(
+      const std::string& type_,
+      const std::string& name_,
+      const unsigned int line_,
+      const StaticVariableValueType value_)
+      : VariableDescriptionBase(type_, name_, 1u, line_), value(value_) {}
+
+  StaticVariableDescription::StaticVariableDescription(
+      const std::string& type_,
+      const std::string& symbolic_name_,
+      const std::string& name_,
+      const unsigned int line_,
+      const StaticVariableValueType value_)
+      : VariableDescriptionBase(type_, symbolic_name_, name_, 1u, line_),
+        value(value_) {}
 
   StaticVariableDescription::StaticVariableDescription(StaticVariableDescription&&) = default;    
   StaticVariableDescription::StaticVariableDescription(const StaticVariableDescription&) = default;

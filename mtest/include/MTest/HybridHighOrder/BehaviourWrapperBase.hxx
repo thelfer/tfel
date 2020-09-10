@@ -15,6 +15,7 @@
 #define LIB_MTEST_HYBRIDHIGHORDER_BEHAVIOURWRAPPERBASE_HXX
 
 #include "HybridHighOrder/Element/Behaviour.hxx"
+#include "MTest/BehaviourWorkSpace.hxx"
 
 namespace mtest{
 
@@ -31,7 +32,7 @@ namespace mtest{
        * \brief constructor
        * \param[in] b: mtest behaviour
        */
-      BehaviourWrapperBase(const mtest::Behaviour&) noexcept;
+      BehaviourWrapperBase(const mtest::Behaviour&);
 
       ::hho::Hypothesis get_hypothesis() const override;
 
@@ -80,6 +81,8 @@ namespace mtest{
      protected:
       //!\brief underlying MTest' behaviour
       const mtest::Behaviour &behaviour;
+      //! \brief workspace
+      mutable BehaviourWorkSpace wk;
     };  // end of struct BehaviourWrapperBase
 
   }  // end of namespace hho

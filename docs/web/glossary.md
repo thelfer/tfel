@@ -55,6 +55,14 @@ Cette entrée décrit le taux d'usure en \(\mbox{}^{10}B\).
 
 Ce nombre décrit le nombre d'atomes de \(\mbox{}^{10}B\) consommé par unité de volume au cours de l'irradiation.
 
+# L'entrée Broken
+
+Cette entrée décrit material failure indicator.
+
+* noms : Broken
+* unité: \(none\)
+* type: scalaire 
+
 # L'entrée BulkModulus
 
 Cette entrée décrit The bulk modulus of an isotropic material.
@@ -578,9 +586,25 @@ Cette entrée décrit le coefficient de Poisson d'un matériau orthotrope relati
 
 # L'entrée Porosity
 
-Cette entrée décrit la porosité du matériau.
+Cette entrée décrit Porosity of the material.
 
 * noms : Porosity
+* unité: sans unité
+* type: scalaire 
+
+# L'entrée PorosityIncreaseDueToInelasticFlow
+
+Cette entrée décrit Part of the porosity increase du to inelastic flow.
+
+* noms : PorosityIncreaseDueToInelasticFlow
+* unité: sans unité
+* type: scalaire 
+
+# L'entrée PorosityIncreaseDueToNucleation
+
+Cette entrée décrit Part of the porosity increase du to nucleation.
+
+* noms : PorosityIncreaseDueToNucleation
 * unité: sans unité
 * type: scalaire 
 

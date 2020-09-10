@@ -1,16 +1,32 @@
-% MFront usage in [Code-Aster](http://www.code-aster.org/)
-% Helfer Thomas
-% October 13, 2014
+---
+title: `MFront` interface for `code_aster`
+author: Thomas Helfer
+date: 2020
+lang: en-EN
+numbersections: true
+documentclass: article
+from: markdown+tex_math_single_backslash
+geometry:
+  - margin=2cm
+papersize: a4
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tabPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+bibliography: bibliography.bib
+---
 
 This document shows how to use `MFront` mechanical behaviour in EDF
-[`Code_Aster`](http://www.code-aster.org) finite element solver. It is
+[`code_aster`](http://www.code-aster.org) finite element solver. It is
 extracted from the
 [`MFront` tutorial](documents/tutoriel/tutoriel.pdf). A full
 description is available in the
-[`Code_Aster`](http://www.code-aster.org) reference documentation (see
+[`code_aster`](http://www.code-aster.org) reference documentation (see
 @code_notice_2014).
 
-Usage of `MFront` in [`Code_Aster`](http://www.code-aster.org) can be
+Usage of `MFront` in [`code_aster`](http://www.code-aster.org) can be
 made very easy, once a few things have been clarified. This is
 precisely the purpose of this page.
 
@@ -30,16 +46,16 @@ Those two steps are detailed in this document.
 
 > **A word of caution**
 > 
-> `MFront` is now part of the `Code_Aster` distribution. **The use of
+> `MFront` is now part of the `code_aster` distribution. **The use of
 > another version of `MFront` for generating mechanical behaviours is
 > strongly discouraged** as there is no garantee that two versions of
 > MFront are binary compatible: combining two versions of `MFront` can
-> lead to an error in the best case, crashes of `Code_Aster` in the
+> lead to an error in the best case, crashes of `code_aster` in the
 > worst case and a wide variety of strange behaviours in between.
 
-> **`MFront` behaviours officially integrated in `Code_Aster`**
+> **`MFront` behaviours officially integrated in `code_aster`**
 >
-> Some mechanical behaviours officially available in `Code_Aster` are
+> Some mechanical behaviours officially available in `code_aster` are
 > natively generated with `MFront`. Those may be distinguished by
 > their names which are lowercase (e.g. `Iwan`).
 > This page only deals with user generated `MFront` mechanical behaviours.
@@ -57,14 +73,14 @@ The `aster` interface can be used to introduce:
 ## Finite strain behaviours
 
 Support for `MFront` finite strain behaviours is only available for
-`Code_Aster` version greater than `13`.
+`code_aster` version greater than `13`.
 
-`Code_Aster` provides two distincts finite strain formulation:
+`code_aster` provides two distincts finite strain formulation:
 
 - `SIMO_MIEHE` which is a finite strain formulation where the
   principle of virtual power is expressed in the current
   configuration (see @edf_loi_2013).
-- `GROT_GDEP` is the name in `Code_Aster` of a finite strain
+- `GROT_GDEP` is the name in `code_aster` of a finite strain
   formulation based on the principle of virtual work in the reference
   configuration expressed in term of the Green-Lagrange strain and the
   second Piola-Kirchhoff stress. Such a formulation is also called
@@ -88,18 +104,13 @@ one of the following choice:
 By default, finite strain behaviours must be used with the
 `SIMO_MIEHE` finite strain formulation.
 
-> **Support of the `GROT_GDEP` finite strain formulation**
->
-> Official versions of `Code_Aster` does not support yet calling
-> `MFront` behaviours for the `GROT_GDEP` finite strain formulation.
-
 # Generating the shared library
 
-The first step can be done as part of a `Code_Aster` simulation or
-*before* running `Code_Aster`. These two approaches have their
+The first step can be done as part of a `code_aster` simulation or
+*before* running `code_aster`. These two approaches have their
 advantages and their drawbacks.
 
-The first one is used in `Code_Aster` verification tests
+The first one is used in `code_aster` verification tests
 associated with `MFront` and for various examples delivered with the
 code.
 
@@ -109,7 +120,7 @@ flexible.
 In the following, we will consider the case of single mechanical
 behaviour implemented in a file called `plasticity.mfront`.
 
-## Generating the shared library as part of the `Code_Aster` simulation
+## Generating the shared library as part of the `code_aster` simulation
 
 The instructions for the generation of the shared library are given in
 the `.comm` file by an instruction similar to:
@@ -128,7 +139,7 @@ The previous instruction calls the `mfront` executable which will:
 - build the shared library from the previous `C++` sources.
 
 Those operations are performed in a temporary directory in which the
-`Code_Aster` simulation is run. **For the `plasticity.mfront` to be
+`code_aster` simulation is run. **For the `plasticity.mfront` to be
 present in this directory, it must be declared in `astk` as an external
 data file (e.g. with type `nom`)**.
 
@@ -174,17 +185,17 @@ This first approach however have however serious drawbacks:
 
 ## Second approach: generating the library before launching the simulation
 
-### Usage of `MFront` outside the `Code_Aster` environment
+### Usage of `MFront` outside the `code_aster` environment
 
 As previously described, `as_run` sets up various environment
 variables to enable the use of `mfront` and the use of the shared
 libraries generated by `mfront` during the simulation.
 
-To use `MFront` outside of a `Code_Aster` simulation, we have to set an
+To use `MFront` outside of a `code_aster` simulation, we have to set an
 appropriate environment.
 
 Let `ASTER_ROOT` be an environment variable containing the installation
-directory of `Code_Aster` (`as_run` and `astk` are then located in the
+directory of `code_aster` (`as_run` and `astk` are then located in the
 `$ASTER_ROOT/bin` directory). In the examples below, the `ASTER_ROOT`
 variable is supposed to have been defined by the user. Using the
 `bash` shell, this is done by:
@@ -197,7 +208,7 @@ Of course, the previous instruction must be adapted for your specific
 installation.
 
 `MFront` is installed in `$ASTER_ROOT/public/mfront-xxx` where `xxx`
-stands for the version of `MFront` delivered with `Code_Aster`.
+stands for the version of `MFront` delivered with `code_aster`.
 
 To use `MFront`, one must set the `PATH` and `LD_LIBRARY_PATH` as
 follows:
@@ -239,7 +250,7 @@ This second approach has the following advantages:
 
 - Compilation errors are easier to detect, analyze and correct.
 - The mechanical behaviours can be tested with `MTest` before their
-  introduction in `Code_Aster`, which is a good pratice.
+  introduction in `code_aster`, which is a good pratice.
 - All the functionnalities of `MFront` are available.
 - The shared library is build only once (i.e. is not rebuilt for each
   simulation run)
@@ -271,7 +282,7 @@ Starting from an existing input file, two things must be declared:
 
 ### Version 12.x
 
-In the `DEFI_MATERIAU` block, one must add for `Code_Aster` version
+In the `DEFI_MATERIAU` block, one must add for `code_aster` version
 `12.x`:
 
 ~~~~ {.python}
@@ -337,145 +348,6 @@ COMPORTEMENT=_F ( RELATION    = 'MFRONT',
 </div>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
 <script src="js/slideshow.js"></script>
-
-# Know issues
-
-The `Code_Aster` team uses the `bitbucket` forge:
-
-<https://bitbucket.org/code_aster/codeaster-src>
-
-This section reports all the issues are related to `MFront`. The
-number of the ticket are the one used by the `bitbucket` forge.
-
-## Ticket #92: `SIMO_MIEHE` with `MFront` (Solved in `Code_Aster` 13.4)
-
-For versions prior to 13.4, invalid deformation gradients were send to
-the behaviour during the prediction phase, causing floatting point
-exceptions.
-
-For previous versions, one workaround is to use another prediction
-policy, for example:
-
-~~~~{.python}
-RESU1=STAT_NON_LINE(...
-	                NEWTON=_F(PREDICTION = 'EXTRAPOLE',
-					...
-~~~~
-
-For more details, see <https://bitbucket.org/code_aster/codeaster-src/issues/92/simo_miehe-with-mfront>.
-
-## Ticket #93: Better support of external state variables for `MFront` behaviours
-
-If the behaviours declares an external state variable (corresponding
-to a "control variable" in `Code_Aster` wording), its availability is
-not checked.
-
-If not correctly declared, a nan value seems to be passed to the
-behaviour, which can be quite difficult to debug.
-
-Note that the number of declared external state variables is not
-passed to the `MFront` behaviour, so even this basic check is not
-possible.
-
-For more details, see <https://bitbucket.org/code_aster/codeaster-src/issues/93/better-support-of-external-state-variables>.
-
-## Ticket #96: `MFront` small strain behaviours and `GROT_GDEP`
-
-`MFront` small strain behaviours are not usable with `GROT_GDEP` due to
-a meaningless restriction.
-
-For more details, see <https://bitbucket.org/code_aster/codeaster-src/issues/96/mfront-small-strain-behaviours-and>.
-
-## Ticket #97: `MFront` finite strain behaviours and `GROT_GDEP`
-
-`MFront` finite strain behaviours are currently restricted to the
-`SIMO_MIEHE` finite strain formulation. Support for the `GROT_GDEP`
-finite strain formulation will be available in `MFront` 3.1 (see the
-documentation of the `@AsterFiniteStrainFormulation`
-keyword). Appropriate developments must be made on the `Code_Aster`
-side.
-
-For more details, see <https://bitbucket.org/code_aster/codeaster-src/issues/97/mfront-finite-strain-behaviours-and>.
-
-## Ticket #98: `MFront`: check if the behaviour is small strain or finite strain
-
-Currently, one can use a `MFront` finite strain behaviour with
-the `GDEF_LOG` option, leading to a severe crash.
-
-Whether a `MFront` behaviour is a finite or small strain behaviour shall
-be checked by `Code_Aster`. This piece of information is given by the
-<behaviour>_BehaviourType symbol exported in the library.
-
-A small strain behaviour shall be usable in the small strain
-assumption and with the `GROT_GDEP` and `GDEF_LOG` finite strain
-strategies.
-
-A finite strain behaviour shall only be usable with `SIMO_MIEHE`. (and
-with `GROT_GDEP` in the future, see Ticket #97 below.
-
-For more details, see <https://bitbucket.org/code_aster/codeaster-src/issues/98/mfront-check-if-the-behaviour-is-small>.
-
-## Ticket #99: `MFront`: minimal length in LIST_COEF is not meaningfull
-
-Currently, a least 2 entries must be given in the `LIST_COEF`
-command. This is not meaningfull as some behaviours contains all the
-relevant physical information and does not require any material
-property.
-
-To overcome this issue, two dummy material properties can be added to
-the `MFront` behaviour from the command line:
-
-~~~~{.sh}
-mfront --@MaterialProperty="real fake1" --@MaterialProperty="real fake2" ...
-~~~~
-
-For more details, see <https://bitbucket.org/code_aster/codeaster-src/issues/99/mfront-minimal-length-in-list_coef-is-not>.
-
-## Ticket #100: `MFront`: restrict the finite strain strategies usable
-
-For small strain behaviours, `MFront` 3.1 provides a keyword
-(`@FiniteStrainStrategy`) stating which finite strain strategy
-(`GROT_GDEP` or `GDEF_LOG`) has been used for the behaviour
-identification.
-
-Developments in `Code_Aster` are required to read this information and
-check proper usage of the behaviour.
-
-For more details, see <https://bitbucket.org/code_aster/codeaster-src/issues/100/mfront-restrict-the-finite-strain>.
-
-## Ticket #101: `MFront`: the library name containing officially supported behaviours is the same as the default library name generated by `MFront` (Solved in `Code_Aster` 13.4)
-
-By default (if neither the `@Library` nor the `@Material` keywords are
-used), `MFront` generates a library called `libAsterBehaviour.so`.
-
-This library may conflict with the library delivered with `Code_Aster`
-which contains the officially supported behaviours.
-
-Changing the library name in `Code_Aster` seems easier for backward
-compatibility (for example, for `MTest` users).
-
-## Ticket #103: `MFront`: allow modification of parameters
-
-Parameters are the MFront "flightweight" way of modifying the
-coefficients of a behaviour.  Compared to material properties (given
-through the `LIST_COEF` entry in `Code_Aster`), parameters have
-default values. They are also global values, meaning that have the
-same value for every material.
-
-It is possible to overload the default values by defining an
-appropriate text file (see the MFront documentation) in the current
-directory (meaning that this txt file must be declared as a data in
-the export file, otherwise not copied by `as_run`).
-
-However, modifying parameters from the input file would be more
-convenient and would allow the supervisor to check that a parameter as
-been modified (hence, the study is no more under AQ if the behaviour
-was under AQ).
-
-Currently a parameter can be modified through the
-`ExternalLibraryManager` class of the `TFEL/System`
-library. `Code_Aster` already modifies the `epsilon` parameter if
-needed.
 
 #References
 

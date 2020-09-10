@@ -156,21 +156,20 @@ namespace tfel {
        * matrix.
        */
       template <typename Stensor2Type1, typename Stensor, typename real>
-      static TFEL_VISIBILITY_LOCAL void treatFracture(
-          Stensor2Type1&,
-          real&,
-          real&,
-          const real,
-          const real,
-          const real,
-          const Stensor&,
-          const Stensor&,
-          const real,
-          const real,
-          const real,
-          const real,
-          const real,
-          const real = real(0));
+      static TFEL_VISIBILITY_LOCAL void treatFracture(Stensor2Type1&,
+                                                      real&,
+                                                      real&,
+                                                      const real,
+                                                      const real,
+                                                      const real,
+                                                      const Stensor&,
+                                                      const Stensor&,
+                                                      const real,
+                                                      const real,
+                                                      const real,
+                                                      const real,
+                                                      const real,
+                                                      const real = real(0));
       /*!
        * \brief function used to define the equations associated with fracture
        * in explicit integration.
@@ -220,24 +219,24 @@ namespace tfel {
                                                tfel::math::tvector<3, real>&);
 
 #ifndef _MSC_VER
-    //! small parameter which guarantees that Ef is finite
-    static constexpr double emin1 = 1.e-7;
-    //! small parameter which guarantees that Ef is finite
-    static constexpr double emin_rk1 = 1.e-5;
-    //! small numerical parameter
-    static constexpr double eps = 1.e-10;
+      //! small parameter which guarantees that Ef is finite
+      static constexpr double emin1 = 1.e-7;
+      //! small parameter which guarantees that Ef is finite
+      static constexpr double emin_rk1 = 1.e-5;
+      //! small numerical parameter
+      static constexpr double eps = 1.e-10;
 #else
-    //! small parameter which guarantees that Ef is finite
-    static const double emin1;
-    //! small parameter which guarantees that Ef is finite
-    static const double emin_rk1;
-    //! small numerical parameter
-    static const double eps;
+      //! small parameter which guarantees that Ef is finite
+      static const double emin1;
+      //! small parameter which guarantees that Ef is finite
+      static const double emin_rk1;
+      //! small numerical parameter
+      static const double eps;
 #endif
 
-  };  // end of struct DDIF2Base
+    };  // end of struct DDIF2Base
 
-}  // end of namespace material
+  }  // end of namespace material
 
 }  // end of namespace tfel
 

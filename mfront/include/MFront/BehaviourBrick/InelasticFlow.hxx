@@ -69,8 +69,16 @@ namespace mfront {
                               const std::string&,
                               const DataMap&) = 0;
       /*!
-       * \return the flow options
+       * \brief set a flag stating if the porosity evolution is handled
+       * by the brick. This shall always be the case if the inelastic flow is
+       * coupled with the porosity evolution.
+       * This method is called after that all the other flows handled by this
+       * brick are initialized.
        */
+      virtual void setPorosityEvolutionHandled(const bool) = 0;
+      //! \return if the the flow is coupled with the porosity evolution
+      virtual bool isCoupledWithPorosityEvolution() const = 0;
+      //! \return the flow options
       virtual std::vector<OptionDescription> getOptions() const = 0;
       /*!
        * \brief complete the variable description
@@ -113,6 +121,24 @@ namespace mfront {
       virtual void computeInitialActivationState(BehaviourDescription&,
                                                  const StressPotential&,
                                                  const std::string&) const = 0;
+      /*!
+       * \return the code updating the next estimate of the porosity
+       * increment with the contribution of this flow. If this flow does not
+       * affect the porosity growth, the returned value may be empty.
+       * \param[in] bd: behaviour description
+       * \param[in] id: flow id
+       */
+      virtual std::string updateNextEstimateOfThePorosityIncrement(
+          const BehaviourDescription&, const std::string&) const = 0;
+      /*!
+       * \return the code updating the upper bound of the porosity.
+       * If this flow does not affect the porosity growth, the returned
+       * value may be empty.
+       * \param[in] bd: behaviour description
+       * \param[in] id: flow id
+       */
+      virtual std::string updatePorosityUpperBound(
+          const BehaviourDescription&, const std::string&) const = 0;
       //! destructor
       virtual ~InelasticFlow();
 

@@ -36,95 +36,6 @@
 
 namespace mtest {
 
-  static void applyRotation(real* const v,
-                            const std::vector<int>& types,
-                            const GenericBehaviour::Hypothesis h,
-                            const tfel::math::tmatrix<3u, 3u, real>& r) {
-    auto o = size_t{};
-    const auto n = tfel::material::getSpaceDimension(h);
-    for (const auto& type : types) {
-      if (type == 0) {
-        o += 1;
-      } else if (type == 1) {
-        if (n == 2u) {
-          tfel::math::stensor<2u, real> s(v + o);
-          const auto rs = change_basis(s, r);
-          tfel::fsalgo::copy<4u>::exe(rs.begin(), v + o);
-        } else if (n == 3u) {
-          tfel::math::stensor<3u, real> s(v + o);
-          const auto rs = change_basis(s, r);
-          tfel::fsalgo::copy<6u>::exe(rs.begin(), v + o);
-        }
-        o += tfel::material::getStensorSize(h);
-      } else if (type == 2) {
-        tfel::raise("applyRotation: vector are not supported yet");
-        o += tfel::material::getSpaceDimension(h);
-      } else if (type == 3) {
-        if (n == 2u) {
-          tfel::math::tensor<2u, real> t(v + o);
-          const auto rt = change_basis(t, r);
-          tfel::fsalgo::copy<5u>::exe(rt.begin(), v + o);
-        } else if (n == 3u) {
-          tfel::math::tensor<3u, real> t(v + o);
-          const auto rt = change_basis(t, r);
-          tfel::fsalgo::copy<9u>::exe(rt.begin(), v + o);
-        }
-        o += tfel::material::getTensorSize(h);
-      }
-    }
-  }  // end of applyRotation
-
-  static void applyRotation(real* const v,
-                            const std::vector<int>& dvtypes,
-                            const std::vector<int>& thtypes,
-                            const GenericBehaviour::Hypothesis h,
-                            const tfel::math::tmatrix<3u, 3u, real>& r) {
-    auto o = size_t{};
-    const auto n = tfel::material::getSpaceDimension(h);
-    tfel::raise_if(dvtypes.size() != thtypes.size(),
-                   "applyRotation: the number of driving variables "
-                   "does not match the number of thermodynamic fores");
-    tfel::raise_if(dvtypes.size() != 1u, "applyRotation: unsupported case");
-    for (decltype(dvtypes.size()) i = 0; i != dvtypes.size(); ++i) {
-      if (dvtypes[i] == 1) {
-        // symmetric tensors
-        tfel::raise_if(thtypes[i] != 1,
-                       "applyRotation: "
-                       "unsupported case");
-        if (n == 2u) {
-          tfel::math::st2tost2<2u, real> k;
-          std::copy(v + o, v + o + k.size(), k.begin());
-          const auto rk = change_basis(k, r);
-          std::copy(rk.begin(), rk.end(), v + o);
-        } else if (n == 3u) {
-          tfel::math::st2tost2<3u, real> k;
-          std::copy(v + o, v + o + k.size(), k.begin());
-          const auto rk = change_basis(k, r);
-          std::copy(rk.begin(), rk.end(), v + o);
-        }
-      } else if (dvtypes[i] == 2) {
-        tfel::raise_if(dvtypes[i] != 1,
-                       "applyRotation: "
-                       "unsupported case");
-        if (n == 2u) {
-          tfel::math::t2tost2<2u, real> k;
-          std::copy(v + o, v + o + k.size(), k.begin());
-          const auto rk = change_basis(k, r);
-          std::copy(rk.begin(), rk.end(), v + o);
-        } else if (n == 3u) {
-          tfel::math::t2tost2<3u, real> k;
-          std::copy(v + o, v + o + k.size(), k.begin());
-          const auto rk = change_basis(k, r);
-          std::copy(rk.begin(), rk.end(), v + o);
-        }
-      } else {
-        tfel::raise(
-            "applyRotation: "
-            "unsupported driving variable type");
-      }
-    }
-  }  // end of applyRotation
-
   template <unsigned short N>
   void convertToSecondPiolaKirchhoffStress(real* const Sv,
                                            const real* const sv,
@@ -211,6 +122,25 @@ namespace mtest {
     auto& elm = ExternalLibraryManager::getExternalLibraryManager();
     const auto f = b + "_" + ModellingHypothesis::toString(h);
     this->fct = elm.getGenericBehaviourFunction(l, f);
+    if (this->stype == 1u) {
+      // load the rotation functions
+      this->rg_fct = elm.getGenericBehaviourRotateGradientsFunction(
+          l, f + "_rotateGradients");
+      if (this->btype == 2u) {
+        // finite strain behaviour
+        this->rtf_fct = elm.getGenericBehaviourRotateThermodynamicForcesFunction(
+            l, f + "_rotateThermodynamicForces_CauchyStress");
+        this->rto_fct =
+            elm.getGenericBehaviourRotateTangentOperatorBlocksFunction(
+                l, f + "_rotateTangentOperatorBlocks_dsig_dF");
+      } else {
+        this->rtf_fct = elm.getGenericBehaviourRotateThermodynamicForcesFunction(
+            l, f + "_rotateThermodynamicForces");
+        this->rto_fct =
+            elm.getGenericBehaviourRotateTangentOperatorBlocksFunction(
+                l, f + "_rotateTangentOperatorBlocks");
+      }
+    }
     // additional material properties to compute the elastic stiffness
     auto mps = std::vector<std::string>{};
     if (this->requiresStiffnessTensor) {
@@ -408,6 +338,7 @@ namespace mtest {
     using namespace std;
     using namespace tfel::math;
     using tfel::math::vector;
+    using size_type = tfel::math::matrix<real>::size_type;
     auto throw_if = [](const bool c, const std::string& m) {
       tfel::raise_if(c, "GenericBehaviour::call_behaviour: " + m);
     };
@@ -433,6 +364,7 @@ namespace mtest {
     throw_if(wk.evs.size() != s.esv0.size(),
              "temporary external state variable vector was not allocated "
              "properly");
+    const auto ir = tfel::math::transpose(*(s.r));
     if (this->btype == 2u) {
       if (this->fsto == DSIG_DF) {
         throw_if((wk.D.getNbRows() != Kt.getNbRows()) ||
@@ -469,9 +401,9 @@ namespace mtest {
           wk.e1(i) -= s.e_th1(i);
         }
       }
-      applyRotation(&(wk.e0[0]), this->dvtypes, this->getHypothesis(), s.r);
-      applyRotation(&(wk.e1[0]), this->dvtypes, this->getHypothesis(), s.r);
-      applyRotation(&(wk.s0[0]), this->thtypes, this->getHypothesis(), s.r);
+      this->rg_fct(&(wk.e0[0]), &(wk.e0[0]), s.r->begin());
+      this->rg_fct(&(wk.e1[0]), &(wk.e1[0]), s.r->begin());
+      this->rtf_fct(&(wk.s0[0]), &(wk.s0[0]), ir.begin());
       d.s0.gradients = &(wk.e0[0]);
       d.s1.gradients = &(wk.e1[0]);
       d.s0.thermodynamic_forces = &(wk.s0[0]);
@@ -498,10 +430,10 @@ namespace mtest {
     d.s1.material_properties = d.s0.material_properties;
     d.s0.internal_state_variables = init_ptr(wk.ivs0, s.iv0);
     d.s1.internal_state_variables = init_ptr(wk.ivs, s.iv1);
-    d.s0.stored_energy = &s.se0;
-    d.s1.stored_energy = &s.se1;
-    d.s0.dissipated_energy = &s.de0;
-    d.s1.dissipated_energy = &s.de1;
+    d.s0.stored_energy = s.se0;
+    d.s1.stored_energy = s.se1;
+    d.s0.dissipated_energy = s.de0;
+    d.s1.dissipated_energy = s.de1;
     d.s0.external_state_variables = init_ptr(wk.evs0, s.esv0);
     if (!s.esv0.empty()) {
       for (decltype(s.esv0.size()) i = 0; i != s.esv0.size(); ++i) {
@@ -530,10 +462,19 @@ namespace mtest {
     if (r != 1) {
       return {false, d.rdt};
     }
-    if (this->btype == 2u) {
-      d.s0.thermodynamic_forces = s0;
-      d.s1.thermodynamic_forces = s1;
-      this->executeFiniteStrainBehaviourStressPostProcessing(wk, d);
+    // turn back the gradients in the global frame
+    if (stype == 1u) {
+      // here we use the fact that d.s1.gradients is a pointer to &(wk.e0[0])
+      this->rg_fct(&(wk.e0[0]), &(wk.e0[0]), ir.begin());
+      this->rg_fct(&(wk.e1[0]), &(wk.e1[0]), ir.begin());
+    }
+    if (b) {
+      std::copy(wk.ivs.begin(), wk.ivs.end(), s.iv1.begin());
+      if (this->btype == 2u) {
+        d.s0.thermodynamic_forces = s0;
+        d.s1.thermodynamic_forces = s1;
+        this->executeFiniteStrainBehaviourStressPostProcessing(wk, d);
+      }
     }
     // tangent operator (...)
     if (ktype != StiffnessMatrixType::NOSTIFFNESS) {
@@ -543,15 +484,7 @@ namespace mtest {
         this->executeFiniteStrainBehaviourTangentOperatorPostProcessing(d);
       }
       if (this->stype == 1u) {
-        if ((this->btype == 1u) || (this->btype == 2u)) {
-          applyRotation(&(wk.D(0, 0)), this->dvtypes, this->thtypes,
-                        this->getHypothesis(), transpose(s.r));
-        } else {
-          tfel::raise(
-              "GenericBehaviour::call_behaviour: "
-              "orthotropic behaviours are only "
-              "supported for small or finite strain behaviours");
-        }
+        this->rto_fct(&(wk.D(0, 0)), &(wk.D(0, 0)), s.r->begin());
       }
       if ((this->gtypes.size() == 1u) && (this->thtypes.size() == 1u)) {
         for (unsigned short i = 0; i != nth; ++i) {
@@ -561,33 +494,73 @@ namespace mtest {
         }
       } else {
         const auto h = this->getHypothesis();
-        const auto p = wk.D.begin();
-        auto o = size_type{};
-        auto og = size_type{};
-        auto oth = size_type{};
-        for (size_type gi = 0; gi != this->gtypes.size(); ++gi) {
-          const auto g_size = mtest::getVariableSize(this->gtypes[gi], h);
-          for (size_type thj = 0; thj != this->thtypes.size(); ++thj) {
-            const auto th_size = mtest::getVariableSize(this->thtypes[thj], h);
-            for (size_type i = 0; i != g_size; ++i) {
-              for (size_type j = 0; j != th_size; ++j) {
-                Kt(og + i, oth + j) = p[o + i * th_size + j];
-              }
+        auto to_offset = size_type{};
+        for (const auto& to : this->getTangentOperatorBlocks()) {
+          auto getVariableOffset = [&h](const size_type pos,
+                                        const std::vector<int>& types) {
+            auto o = size_type{};
+            for (size_type p = 0; p != pos; ++p) {
+              o += mtest::getVariableSize(types[p], h);
             }
-            o += g_size * th_size;
-            oth += th_size;
+            return o;
+          };
+          const auto ptf =
+              std::find(this->thnames.begin(), this->thnames.end(), to.first);
+          const auto piv =
+              std::find(this->ivnames.begin(), this->ivnames.end(), to.first);
+          const auto pg =
+              std::find(this->gnames.begin(), this->gnames.end(), to.second);
+          const auto pev =
+              std::find(this->evnames.begin(), this->evnames.end(), to.second);
+          const auto to_ro = [&, this]() -> size_type {
+            if (pev != this->evnames.end()) {
+              return 1;
+            }
+            if (pg == this->gnames.end()) {
+              tfel::raise(
+                  "GenericBehaviour::call_behaviour(1): "
+                  "invalid tangent operator block ('" +
+                  to.first + "'" + " vs '" + to.second + "')");
+            }
+            return mtest::getVariableSize(
+                this->gtypes[pg - this->gnames.begin()], h);
+          }();
+          const auto to_co = [&, this]() -> size_type {
+            if (piv != this->ivnames.end()) {
+              return mtest::getVariableSize(
+                  this->ivtypes[piv - this->ivnames.begin()], h);
+            }
+            if (ptf == this->thnames.end()) {
+              tfel::raise(
+                  "GenericBehaviour::call_behaviour(2): "
+                  "invalid tangent operator block ('" +
+                  to.first + "'" + " vs '" + to.second + "')");
+            }
+            return mtest::getVariableSize(
+                this->thtypes[ptf - this->thnames.begin()], h);
+          }();
+          if ((ptf == this->thnames.end()) || (pg == this->gnames.end())) {
+            to_offset += to_ro * to_co;
+            continue;
           }
-          oth = size_type{};
-          og += g_size;
+          const auto tfpos = ptf - this->thnames.begin();
+          const auto gpos = pg - this->gnames.begin();
+          const auto og = getVariableOffset(gpos, this->gtypes);
+          const auto otf = getVariableOffset(tfpos, this->thtypes);
+          const auto g_size = mtest::getVariableSize(this->gtypes[gpos], h);
+          const auto th_size = mtest::getVariableSize(this->thtypes[tfpos], h);
+          const auto p = wk.D.begin();
+          for (size_type i = 0; i != g_size; ++i) {
+            for (size_type j = 0; j != th_size; ++j) {
+              Kt(og + i, otf + j) = p[to_offset + i * th_size + j];
+            }
+          }
+          to_offset += to_ro * to_co;
         }
       }
-    }
-    if (b) {
-      if (stype == 1u) {
-        applyRotation(d.s1.thermodynamic_forces, this->thtypes,
-                      this->getHypothesis(), transpose(s.r));
+      if (b && (this->stype == 1u)) {
+        this->rtf_fct(&s.s1[0], &s.s1[0], s.r->begin());
       }
-      std::copy(wk.ivs.begin(), wk.ivs.end(), s.iv1.begin());
     }
     return {true, d.rdt};
   }  // end of GenericBehaviour::call_behaviour
@@ -742,98 +715,96 @@ namespace mtest {
     }  // end of
        // GenericBehaviour::executeFiniteStrainBehaviourStressPostProcessing
 
-    void GenericBehaviour::
-        executeFiniteStrainBehaviourTangentOperatorPostProcessing(
-            mfront::gb::BehaviourData & d) const {
-      if (this->fsto == DSIG_DF) {
-        // nothing to be done
-      } else if (this->fsto == DS_DEGL) {
-        const auto n = tfel::material::getSpaceDimension(this->getHypothesis());
-        if (n == 1u) {
-          if (this->getHypothesis() ==
-              ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS) {
-            tfel::raise(
-                "GenericBehaviour::call_behaviour: "
-                "using DS_DEGL in plane strain is not supported yet");
-          } else {
-            convertFromDSDEGL<1u>(d.K, d.s0.gradients, d.s1.gradients,
-                                  d.s1.thermodynamic_forces);
-          }
-        } else if (n == 2u) {
-          if (this->getHypothesis() == ModellingHypothesis::PLANESTRESS) {
-            tfel::raise(
-                "GenericBehaviour::call_behaviour: "
-                "using DS_DEGL in plane strain is not supported yet");
-          } else {
-            convertFromDSDEGL<2u>(d.K, d.s0.gradients, d.s1.gradients,
-                                  d.s1.thermodynamic_forces);
-          }
-        } else if (n == 3u) {
-          convertFromDSDEGL<3u>(d.K, d.s0.gradients, d.s1.gradients,
-                                d.s1.thermodynamic_forces);
-        } else {
+  void
+  GenericBehaviour::executeFiniteStrainBehaviourTangentOperatorPostProcessing(
+      mfront::gb::BehaviourData& d) const {
+    if (this->fsto == DSIG_DF) {
+      // nothing to be done
+    } else if (this->fsto == DS_DEGL) {
+      const auto n = tfel::material::getSpaceDimension(this->getHypothesis());
+      if (n == 1u) {
+        if (this->getHypothesis() ==
+            ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS) {
           tfel::raise(
               "GenericBehaviour::call_behaviour: "
-              "invalid space dimensions");
-        }
-      } else if (this->fsto == DPK1_DF) {
-        const auto n = tfel::material::getSpaceDimension(this->getHypothesis());
-        if (n == 1u) {
-          if (this->getHypothesis() ==
-              ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS) {
-            tfel::raise(
-                "GenericBehaviour::call_behaviour: "
-                "using DS_DEGL in plane strain is not supported yet");
-          } else {
-            convertFromDPK1DF<1u>(d.K, d.s0.gradients, d.s1.gradients,
-                                  d.s1.thermodynamic_forces);
-          }
-        } else if (n == 2u) {
-          if (this->getHypothesis() ==
-              ModellingHypothesis::PLANESTRESS) {
-            tfel::raise(
-                "GenericBehaviour::call_behaviour: "
-                "using DS_DEGL in plane strain is not supported yet");
-          } else {
-            convertFromDPK1DF<2u>(d.K, d.s0.gradients, d.s1.gradients,
-                                  d.s1.thermodynamic_forces);
-          }
-        } else if (n == 3u) {
-          convertFromDPK1DF<3u>(d.K, d.s0.gradients, d.s1.gradients,
-                                d.s1.thermodynamic_forces);
+              "using DS_DEGL in plane strain is not supported yet");
         } else {
+          convertFromDSDEGL<1u>(d.K, d.s0.gradients, d.s1.gradients,
+                                d.s1.thermodynamic_forces);
+        }
+      } else if (n == 2u) {
+        if (this->getHypothesis() == ModellingHypothesis::PLANESTRESS) {
           tfel::raise(
               "GenericBehaviour::call_behaviour: "
-              "invalid space dimensions");
+              "using DS_DEGL in plane strain is not supported yet");
+        } else {
+          convertFromDSDEGL<2u>(d.K, d.s0.gradients, d.s1.gradients,
+                                d.s1.thermodynamic_forces);
         }
+      } else if (n == 3u) {
+        convertFromDSDEGL<3u>(d.K, d.s0.gradients, d.s1.gradients,
+                              d.s1.thermodynamic_forces);
       } else {
         tfel::raise(
             "GenericBehaviour::call_behaviour: "
-            "internal error, unexpected tangent operator type");
+            "invalid space dimensions");
       }
-    }  // end of
-    // GenericBehaviour::executeFiniteStrainBehaviourTangentOperatorPostProcessing
+    } else if (this->fsto == DPK1_DF) {
+      const auto n = tfel::material::getSpaceDimension(this->getHypothesis());
+      if (n == 1u) {
+        if (this->getHypothesis() ==
+            ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS) {
+          tfel::raise(
+              "GenericBehaviour::call_behaviour: "
+              "using DS_DEGL in plane strain is not supported yet");
+        } else {
+          convertFromDPK1DF<1u>(d.K, d.s0.gradients, d.s1.gradients,
+                                d.s1.thermodynamic_forces);
+        }
+      } else if (n == 2u) {
+        if (this->getHypothesis() == ModellingHypothesis::PLANESTRESS) {
+          tfel::raise(
+              "GenericBehaviour::call_behaviour: "
+              "using DS_DEGL in plane strain is not supported yet");
+        } else {
+          convertFromDPK1DF<2u>(d.K, d.s0.gradients, d.s1.gradients,
+                                d.s1.thermodynamic_forces);
+        }
+      } else if (n == 3u) {
+        convertFromDPK1DF<3u>(d.K, d.s0.gradients, d.s1.gradients,
+                              d.s1.thermodynamic_forces);
+      } else {
+        tfel::raise(
+            "GenericBehaviour::call_behaviour: "
+            "invalid space dimensions");
+      }
+    } else {
+      tfel::raise(
+          "GenericBehaviour::call_behaviour: "
+          "internal error, unexpected tangent operator type");
+    }
+  }  // end of
+  // GenericBehaviour::executeFiniteStrainBehaviourTangentOperatorPostProcessing
 
-    tfel::math::tmatrix<3u, 3u, real> GenericBehaviour::getRotationMatrix(
-        const tfel::math::vector<real>&,
-        const tfel::math::tmatrix<3u, 3u, real>& r) const {
-      return r;
-    }  // end of GenericBehaviour::getRotationMatrix
+  tfel::math::tmatrix<3u, 3u, real> GenericBehaviour::getRotationMatrix(
+      const tfel::math::vector<real>&,
+      const tfel::math::tmatrix<3u, 3u, real>& r) const {
+    return r;
+  }  // end of GenericBehaviour::getRotationMatrix
 
-    std::vector<std::string> GenericBehaviour::getOptionalMaterialProperties()
-        const {
-      return {};
-    }  // end of GenericBehaviour::getOptionalMaterialProperties
+  std::vector<std::string> GenericBehaviour::getOptionalMaterialProperties()
+      const {
+    return {};
+  }  // end of GenericBehaviour::getOptionalMaterialProperties
 
-    void GenericBehaviour::setOptionalMaterialPropertiesDefaultValues(
-        EvolutionManager&, const EvolutionManager&) const {
-    }  // end of GenericBehaviour::setOptionalMaterialPropertiesDefaultValues
+  void GenericBehaviour::setOptionalMaterialPropertiesDefaultValues(
+      EvolutionManager&, const EvolutionManager&) const {
+  }  // end of GenericBehaviour::setOptionalMaterialPropertiesDefaultValues
 
-    StiffnessMatrixType GenericBehaviour::getDefaultStiffnessMatrixType()
-        const {
-      return StiffnessMatrixType::CONSISTENTTANGENTOPERATOR;
-    }  // end of GenericBehaviour::getDefaultStiffnessMatrixType
+  StiffnessMatrixType GenericBehaviour::getDefaultStiffnessMatrixType() const {
+    return StiffnessMatrixType::CONSISTENTTANGENTOPERATOR;
+  }  // end of GenericBehaviour::getDefaultStiffnessMatrixType
 
-    GenericBehaviour::~GenericBehaviour() = default;
+  GenericBehaviour::~GenericBehaviour() = default;
 
 }  // end of namespace mtest

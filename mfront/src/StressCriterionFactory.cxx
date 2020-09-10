@@ -22,6 +22,9 @@
 #include "MFront/BehaviourBrick/Cazacu2004IsotropicStressCriterion.hxx"
 #include "MFront/BehaviourBrick/Cazacu2004OrthotropicStressCriterion.hxx"
 #include "MFront/BehaviourBrick/MohrCoulombStressCriterion.hxx"
+#include "MFront/BehaviourBrick/MichelAndSuquet1992HollowSphereStressCriterion.hxx"
+#include "MFront/BehaviourBrick/GursonTvergaardNeedleman1982StressCriterion.hxx"
+#include "MFront/BehaviourBrick/RousselierTanguyBesson2002StressCriterion.hxx"
 #include "MFront/BehaviourBrick/StressCriterionFactory.hxx"
 
 namespace mfront {
@@ -39,7 +42,7 @@ namespace mfront {
     }  // end of StressCriterionFactory::getRegistredStressCriteria
 
     void StressCriterionFactory::addGenerator(const std::string& n,
-                                                 const Generator& g) {
+                                              const Generator& g) {
       if (!this->generators.insert({n, g}).second) {
         tfel::raise(
             "StressCriterionFactory::addGenerator: "
@@ -52,10 +55,14 @@ namespace mfront {
         const std::string& n) const {
       const auto p = this->generators.find(n);
       if (p == this->generators.end()) {
-        tfel::raise(
+        auto msg = std::string(
             "StressCriterionFactory::generate: "
             "no generator named '" +
-            n + "'");
+            n + "'. Available criterion are:");
+        for (const auto& g : this->generators) {
+          msg += "\n- " + g.first;
+        }
+        tfel::raise(msg);
       }
       return p->second();
     }  // end of StressCriterionFactory::generate
@@ -118,7 +125,31 @@ namespace mfront {
       this->addGenerator("MohrCoulomb", []() {
         return std::make_shared<bbrick::MohrCoulombStressCriterion>();
       });
-    } // end of StressCriterionFactory::StressCriterionFactory
+      this->addGenerator("MichelAndSuquet1992HollowSphere", []() {
+        return std::make_shared<
+            bbrick::MichelAndSuquet1992HollowSphereStressCriterion>();
+      });
+      this->addGenerator("GursonTvergaardNeedleman1982", []() {
+        return std::make_shared<
+            bbrick::GursonTvergaardNeedleman1982StressCriterion>();
+      });
+      this->addGenerator("GTN", []() {
+        return std::make_shared<
+            bbrick::GursonTvergaardNeedleman1982StressCriterion>();
+      });
+      this->addGenerator("GTN 1982", []() {
+        return std::make_shared<
+            bbrick::GursonTvergaardNeedleman1982StressCriterion>();
+      });
+      this->addGenerator("RousselierTanguyBesson2002", []() {
+        return std::make_shared<
+            bbrick::RousselierTanguyBesson2002StressCriterion>();
+      });
+      this->addGenerator("RousselierTanguyBesson 2002", []() {
+        return std::make_shared<
+            bbrick::RousselierTanguyBesson2002StressCriterion>();
+      });
+    }  // end of StressCriterionFactory::StressCriterionFactory
 
     StressCriterionFactory::~StressCriterionFactory() = default;
 

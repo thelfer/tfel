@@ -55,6 +55,7 @@ namespace mtest {
                           const std::string&);
     //! \param[in] umb: behaviour description
     StandardBehaviourBase(const StandardBehaviourDescription&);
+    std::string getBehaviourName() const override;
     std::vector<std::string> getStensorComponentsSuffixes() const override;
     std::vector<std::string> getVectorComponentsSuffixes() const override;
     std::vector<std::string> getTensorComponentsSuffixes() const override;

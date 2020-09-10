@@ -22,12 +22,13 @@ namespace tfel
 namespace glossary
 {
 
-const char* Glossary::names[101] = {
+const char* Glossary::names[104] = {
 "AxialDeformationGradient",
 "AxialGrowth",
 "AxialStrain",
 "AxialStress",
 "B10BurnUp",
+"Broken",
 "BulkModulus",
 "BurnUp (at.%)",
 "BurnUp (MWJ/tm)",
@@ -84,6 +85,8 @@ const char* Glossary::names[101] = {
 "PoissonRatio13",
 "PoissonRatio23",
 "Porosity",
+"PorosityIncreaseDueToInelasticFlow",
+"PorosityIncreaseDueToNucleation",
 "PowerDensity",
 "Pressure",
 "PrincipalStress1",
@@ -152,6 +155,12 @@ const GlossaryEntry Glossary::B10BurnUp("B10BurnUp","B10BurnUp",
 "m^{-3}","scalar",
 "le taux d'usure en \\(\\mbox{}^{10}B\\)",
 "Ce nombre décrit le nombre d'atomes de \\(\\mbox{}^{10}B\\) consommé par unité de volume au cours de l'irradiation.",
+"" /* no 'notes' defined */);
+
+const GlossaryEntry Glossary::Broken("Broken","Broken",
+"none","scalar",
+"material failure indicator",
+"" /* no 'description' defined */,
 "" /* no 'notes' defined */);
 
 const GlossaryEntry Glossary::BulkModulus("BulkModulus","BulkModulus",
@@ -499,7 +508,19 @@ const GlossaryEntry Glossary::PoissonRatio23("PoissonRatio23","PoissonRatio23",
 
 const GlossaryEntry Glossary::Porosity("Porosity","Porosity",
 "","scalar",
-"la porosité du matériau",
+"Porosity of the material",
+"" /* no 'description' defined */,
+"" /* no 'notes' defined */);
+
+const GlossaryEntry Glossary::PorosityIncreaseDueToInelasticFlow("PorosityIncreaseDueToInelasticFlow","PorosityIncreaseDueToInelasticFlow",
+"","scalar",
+"Part of the porosity increase du to inelastic flow",
+"" /* no 'description' defined */,
+"" /* no 'notes' defined */);
+
+const GlossaryEntry Glossary::PorosityIncreaseDueToNucleation("PorosityIncreaseDueToNucleation","PorosityIncreaseDueToNucleation",
+"","scalar",
+"Part of the porosity increase du to nucleation",
 "" /* no 'description' defined */,
 "" /* no 'notes' defined */);
 
@@ -677,7 +698,7 @@ const GlossaryEntry Glossary::TrescaStress("TrescaStress","TrescaStress",
 "" /* no 'description' defined */,
 "" /* no 'notes' defined */);
 
-const GlossaryEntry Glossary::UltimateTensileStrength("UltimateTensileStrength",Glossary::names+90,Glossary::names+92,
+const GlossaryEntry Glossary::UltimateTensileStrength("UltimateTensileStrength",Glossary::names+93,Glossary::names+95,
 "Pa","scalar",
 "la valeur maximale de la contrainte qu'un materiau peut supporter",
 "" /* no 'description' defined */,
@@ -701,7 +722,7 @@ const GlossaryEntry Glossary::VonMisesStress("VonMisesStress","VonMisesStress",
 "" /* no 'description' defined */,
 "" /* no 'notes' defined */);
 
-const GlossaryEntry Glossary::YieldStrength("YieldStrength",Glossary::names+95,Glossary::names+97,
+const GlossaryEntry Glossary::YieldStrength("YieldStrength",Glossary::names+98,Glossary::names+100,
 "Pa","scalar",
 "la limite d'élasticité",
 "" /* no 'description' defined */,
@@ -739,12 +760,13 @@ return glossary;
 } // end of Glossary::getGlossary
 
 Glossary::Glossary(){
-this->keys.reserve(99);
+this->keys.reserve(102);
 this->insert(Glossary::AxialDeformationGradient);
 this->insert(Glossary::AxialGrowth);
 this->insert(Glossary::AxialStrain);
 this->insert(Glossary::AxialStress);
 this->insert(Glossary::B10BurnUp);
+this->insert(Glossary::Broken);
 this->insert(Glossary::BulkModulus);
 this->insert(Glossary::BurnUp_AtPercent);
 this->insert(Glossary::BurnUp_MWJperTm);
@@ -801,6 +823,8 @@ this->insert(Glossary::PoissonRatio12);
 this->insert(Glossary::PoissonRatio13);
 this->insert(Glossary::PoissonRatio23);
 this->insert(Glossary::Porosity);
+this->insert(Glossary::PorosityIncreaseDueToInelasticFlow);
+this->insert(Glossary::PorosityIncreaseDueToNucleation);
 this->insert(Glossary::PowerDensity);
 this->insert(Glossary::Pressure);
 this->insert(Glossary::PrincipalStress1);

@@ -147,7 +147,6 @@ function(tfel_library_internal name component)
   else(TFEL_APPEND_SUFFIX)
     set(export_install_path "share/tfel/cmake")
   endif(TFEL_APPEND_SUFFIX)
-  target_compile_options (${name} PRIVATE "${HHO_CXX_FLAGS}")
   if(TFEL_APPEND_SUFFIX)
     set_target_properties(${name} PROPERTIES OUTPUT_NAME "${name}-${TFEL_SUFFIX}")
   endif(TFEL_APPEND_SUFFIX)
@@ -438,13 +437,12 @@ function(python_module_base fullname name)
     SYSTEM
     PRIVATE "${Boost_INCLUDE_DIRS}"
     PRIVATE "${PYTHON_INCLUDE_DIRS}")
-  if(TFEL_USES_CONAN)
-    target_link_libraries(py_${fullname}
-      ${CONAN_LIBS} ${PYTHON_LIBRARIES})
-  else(TFEL_USES_CONAN)
-    target_link_libraries(py_${fullname}
-      ${Boost_PYTHON_LIBRARY} ${PYTHON_LIBRARIES})
-  endif(TFEL_USES_CONAN)
+  if(python-static-interpreter-workaround)
+    if(APPLE)
+      target_link_options(py_${fullname}
+        PRIVATE "-undefined" "dynamic_lookup")
+    endif(APPLE)
+  endif(python-static-interpreter-workaround)
 endfunction(python_module_base)
 
 function(python_lib_module name package)

@@ -109,9 +109,18 @@ namespace mfront{
       return c;
     }  // end of MisesStressCriterion::computeNormalDerivative
 
+    bool MisesStressCriterion::isCoupledWithPorosityEvolution() const {
+      return false;
+    }  // end of MisesStressCriterion::isCoupledWithPorosityEvolution
+
     bool MisesStressCriterion::isNormalDeviatoric() const {
       return true;
     }  // end of MisesStressCriterion::isNormalDeviatoric
+
+    StressCriterion::PorosityEffectOnFlowRule
+    MisesStressCriterion::getPorosityEffectOnEquivalentPlasticStrain() const {
+      return StressCriterion::NO_POROSITY_EFFECT_ON_EQUIVALENT_PLASTIC_STRAIN;
+    }  // end of MisesStressCriterion::getPorosityEffectOnEquivalentPlasticStrain()
 
     MisesStressCriterion::~MisesStressCriterion() = default;
 

@@ -32,6 +32,7 @@ namespace mfront {
         file(f) {
     this->registerCommandLineCallBacks();
     this->parseArguments();
+    this->finalizeArgumentsParsing();
     // registring interfaces
     if (!this->interfaces.empty()) {
       dsl->setInterfaces(this->interfaces);
@@ -75,6 +76,22 @@ namespace mfront {
                              CallBack("do not display errors using "
                                       "a message box (windows only)",
                                       [] {}, false));
+#ifdef MFRONT_HAVE_MADNEX
+    Parser::registerNewCallBack("--material",
+                                &MaterialPropertyQuery::treatMaterialIdentifier,
+                                "specify a material identifier", true);
+    Parser::registerNewCallBack(
+        "--material-property",
+        &MaterialPropertyQuery::treatMaterialPropertyIdentifier,
+        "specify a material property identifier (can be a regular expression)",
+        true);
+    Parser::registerNewCallBack(
+        "--behaviour", &MaterialPropertyQuery::treatBehaviourIdentifier,
+        "specify a behaviour identifier (can be a regular expression)", true);
+    Parser::registerNewCallBack(
+        "--model", &MaterialPropertyQuery::treatModelIdentifier,
+        "specify a model identifier (can be a regular expression)", true);
+#endif /* MFRONT_HAVE_MADNEX */
     // standard queries
     const std::vector<std::pair<const char*, const char*>> sq = {
         {"--author", "show the author name"},
@@ -155,7 +172,7 @@ namespace mfront {
            }});
     } else {
       tfel::raise(
-          "MaterialProperty::treatStandardQuery: "
+          "MaterialPropertyQuery::treatStandardQuery: "
           "unsupported query '" +
           qn + "'");
     }
@@ -280,4 +297,5 @@ namespace mfront {
   }
 
   MaterialPropertyQuery::~MaterialPropertyQuery() = default;
-}
+
+}  // end of namespace mfront

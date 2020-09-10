@@ -10,6 +10,7 @@ macro(pandoc_html file)
     ARGS      --bibliography=${CMAKE_CURRENT_SOURCE_DIR}/bibliography.bib --filter pandoc-citeproc
     ARGS      --template=${CMAKE_CURRENT_SOURCE_DIR}/mfront-template.html
     ARGS      --mathjax
+    ARGS      --highlight-style=tango
     ARGS      --email-obfuscation=javascript
     ARGS       --default-image-extension=svg
     ARGS      ${ARGN}
@@ -64,7 +65,7 @@ pandoc_html(gallery  "--toc")
 pandoc_html(glossary)
 pandoc_html(material-properties)
 pandoc_html(behaviours)
-pandoc_html(implicit-dsl)
+pandoc_html(implicit-dsl "--toc" "--toc-depth=3"  "--number-sections")
 pandoc_html(models)
 pandoc_html(parameters)
 pandoc_html(publications)
@@ -132,6 +133,13 @@ pandoc_html(LoadInducedThermalStrainBehaviourTorelli2018  "--toc" "--toc-depth=2
 pandoc_html(FichantLaBorderieDamageAndTorelliLoadInducedStrainBehaviour   "--toc" "--toc-depth=2")
 pandoc_html(FischerBurmeister "--toc" "--toc-depth=2")
 pandoc_html(TFELSystem "--toc" "--toc-depth=2")
+pandoc_html(BehaviourBricks "--toc" "--toc-depth=2")
+pandoc_html(DDIF2Brick "--toc" "--toc-depth=2")
+pandoc_html(StandardElastoViscoPlasticityBrick "--toc" "--toc-depth=2" "--number-sections")
+pandoc_html(ExtendingStandardElastoViscoPlasticityBrick-StressCriterion "--toc" "--toc-depth=2" "--number-sections")
+pandoc_html(ExtendingStandardElastoViscoPlasticityBrick-PorousStressCriterion "--toc" "--toc-depth=2"  "--number-sections")
+pandoc_html(HookeStressPotential "--toc" "--toc-depth=2")
+pandoc_html(DDIF2StressPotential "--toc" "--toc-depth=2")
 
 # mfront keywords
 
@@ -148,18 +156,13 @@ pandoc_html(MaterialLaw-keywords "--toc" "--toc-depth=1")
 pandoc_html(Model-keywords "--toc" "--toc-depth=1")
 pandoc_html(MultipleIsotropicMisesFlows-keywords "--toc" "--toc-depth=1")
 pandoc_html(RungeKutta-keywords "--toc" "--toc-depth=1")
-pandoc_html(BehaviourBricks "--toc" "--toc-depth=2")
-pandoc_html(DDIF2Brick "--toc" "--toc-depth=2")
-pandoc_html(StandardElastoViscoPlasticityBrick "--toc" "--toc-depth=2")
-pandoc_html(HookeStressPotential "--toc" "--toc-depth=2")
-pandoc_html(DDIF2StressPotential "--toc" "--toc-depth=2")
 
 # mtest keywords
 
 pandoc_html(MTest-keywords "--toc" "--toc-depth=1")
 
 if(TFEL_APPEND_SUFFIX)
-  install(DIRECTORY js css doc img media downloads
+  install(DIRECTORY js css doc img media downloads cxx mfront scripts
     DESTINATION share/doc/tfel-${TFEL_SUFFIX}/web
     COMPONENT website
     PATTERN ".svn" EXCLUDE)
@@ -169,7 +172,7 @@ if(TFEL_APPEND_SUFFIX)
     DESTINATION share/doc/tfel-${TFEL_SUFFIX}/web
     COMPONENT website)
 else(TFEL_APPEND_SUFFIX)
-  install(DIRECTORY js css doc img media downloads
+  install(DIRECTORY js css doc img media downloads cxx mfront scripts
     DESTINATION share/doc/tfel/web
     COMPONENT website
     PATTERN ".svn" EXCLUDE)

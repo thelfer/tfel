@@ -1,0 +1,74 @@
+@DSL Implicit;
+@Behaviour __StressCriterionName__ViscoPlasticity_NumericalJacobian;
+@Author __Author__;
+@Date __Author__;
+@Description {
+  Implementation of a viscoplastic behaviour
+  based on the __StressCriterionName__ criterion.
+}
+
+@Includes{
+#include "TFEL/Material/__StressCriterionName__StressCriterion.hxx"
+}
+
+@ModellingHypotheses {".+"};
+@Brick StandardElasticity;
+
+@Algorithm NewtonRaphson_NumericalJacobian;
+@PerturbationValueForNumericalJacobianComputation 1.e-8;
+@Epsilon 1.e-14;
+@Theta 1;
+
+@ComputeStiffnessTensor<UnAltered>{200e9, 0.3};
+
+// Insert parameters definition here
+
+@StateVariable StrainStensor evp;
+evp.setGlossaryName("ViscoplasticStrain");
+
+@StateVariable real f;
+f.setGlossaryName("Porosity");
+
+//! \brief parameters of the yield criterion
+@LocalVariable __StressCriterionName__StressCriterionParameters<StressStensor> params;
+
+@InitLocalVariables {
+  // initialize the stress criterion parameter
+
+}
+
+@Integrator {
+  const auto seps = strain{1e-12} * young;
+  const auto f_ = min(max(f + theta * df, real(0)), real(1));
+#if __cplusplus >= 201703L
+  const auto[seq, n, dseq_df] = compute__StressCriterionName__StressStressNormal(sig, f_, params, seps);
+#else
+  auto seq = stress{};
+  auto n = __StressCriterionName__StressNormalType<StressStensor>{};
+  auto dseq_df = stress{};
+  std::tie(seq, n, dseq_df) = compute__StressCriterionName__StressNormal(sig, f_, params, seps);
+#endif
+  // equation associated with the split of the strain
+  feel += devp;
+  // equation associated with the porosity evolution
+  if (f_ < 0) {
+    ff += f;
+  } else if (f_ > 1) {
+    ff -= 1 - f;
+  } else {
+    ff -= (1 - f_) * trace(devp);
+  }
+  // viscoplasticity
+
+}
+
+@AdditionalConvergenceChecks {
+  if (converged) {
+    if (f + df < 0) {
+      df = -f;
+    }
+    if (f + df > 1) {
+      df = 1-f;
+    }
+  }
+} // end of @AdditionalConvergenceChecks

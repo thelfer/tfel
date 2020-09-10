@@ -104,6 +104,23 @@ namespace mtest {
 
     //! \brief pointer to the function
     tfel::system::GenericBehaviourFctPtr fct;
+    /*!
+     * \brief pointer to the function in charge of rotating the gradients from
+     * the global frame to the material frame
+     */
+    tfel::system::GenericBehaviourRotateGradientsFctPtr rg_fct = nullptr;
+    /*!
+     * \brief pointer to the function in charge of rotating the thermodynamic
+     * forces from the material frame to the global frame
+     */
+    tfel::system::GenericBehaviourRotateThermodynamicForcesFctPtr rtf_fct =
+        nullptr;
+    /*!
+     * \brief pointer to the function in charge of rotating the tangent
+     * operator blocks from the material frame to the global frame
+     */
+    tfel::system::GenericBehaviourRotateThermodynamicForcesFctPtr rto_fct =
+        nullptr;
     //! \brief stress measure requested for finite strain behaviours
     enum {
       CAUCHY,  //!< Cauchy stress

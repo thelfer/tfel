@@ -15,10 +15,10 @@ mtest_python_module(_mtest
   MFrontLogStream.cxx)
 
 target_link_libraries(py_mtest__mtest
-  TFELMTest
-  TFELMaterial
-  TFELMath
-  TFELUtilities
-  TFELException)
+  PRIVATE
+  TFELMTest TFELMaterial
+  TFELMath  TFELUtilities
+  TFELException
+  ${TFEL_PYTHON_MODULES_PRIVATE_LINK_LIBRARIES})
 
 tfel_python_script(mtest __init__.py)

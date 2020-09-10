@@ -1322,14 +1322,14 @@ namespace tfel {
 
     Evaluator::Evaluator(
         const std::string& f,
-        std::shared_ptr<tfel::math::parser::ExternalFunctionManager>& m) {
+        std::shared_ptr<tfel::math::parser::ExternalFunctionManager> m) {
       this->setFunction(f, m);
     }  // end of Evaluator::Evaluator
 
     Evaluator::Evaluator(
         const std::vector<std::string>& vars,
         const std::string& f,
-        std::shared_ptr<tfel::math::parser::ExternalFunctionManager>& m) {
+        std::shared_ptr<tfel::math::parser::ExternalFunctionManager> m) {
       this->setFunction(vars, f, m);
     }  // end of Evaluator::Evaluator
 

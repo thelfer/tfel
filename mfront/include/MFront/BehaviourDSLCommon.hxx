@@ -125,19 +125,19 @@ namespace mfront {
     //! a simple alias
     using CallBack = std::function<void()>;
     /*!
-     * create a variable modifier from a method
+     * \brief create a variable modifier from a method
      */
-    template <typename T, typename T2>
     struct TFEL_VISIBILITY_LOCAL StandardVariableModifier final
         : public VariableModifier {
       //! a simple alias
-      typedef std::string (T2::*MPtr)(const Hypothesis,
-                                      const std::string&,
-                                      const bool);
+      using FunctionType = std::function<std::string(
+          const Hypothesis, const std::string&, const bool)>;
       /*!
-       * constructor
+       * \brief constructor from a std::function
+       * \param[in] h: hypothesis
+       * \param[in] f: function object
        */
-      StandardVariableModifier(T&, const Hypothesis, const MPtr);
+      StandardVariableModifier(const Hypothesis, const FunctionType);
       /*!
        * \param[in] v : the variable name
        * \param[in] b : true if "this" shall be added
@@ -147,51 +147,34 @@ namespace mfront {
       ~StandardVariableModifier() override;
 
      private:
-      T& instance;
       const Hypothesis hypothesis;
-      const MPtr mptr;
+      FunctionType fct;
     };
-    /*!
-     * create a standard variable modifier from an instance of a class
-     * and a pointer to a member
-     */
-    template <typename T, typename T2>
-    std::shared_ptr<VariableModifier> makeVariableModifier(
-        T&,
-        const Hypothesis,
-        std::string (T2::*)(const Hypothesis, const std::string&, const bool));
-    template <typename T, typename T2>
     struct TFEL_VISIBILITY_LOCAL StandardWordAnalyser final
         : public WordAnalyser {
       //! a simple alias
-      typedef void (T2::*MPtr)(const Hypothesis, const std::string&);
+      using FunctionType =
+          std::function<void(CodeBlock&, const Hypothesis, const std::string&)>;
       /*!
-       * constructor
+       * \brief constructor
+       * \param[in] h: hypothesis
+       * \param[in] f: function object
        */
-      StandardWordAnalyser(T&, const Hypothesis, const MPtr);
+      StandardWordAnalyser(const Hypothesis, const FunctionType);
       /*!
+       * \param[in] cb : code block
        * \param[in] k : the current word
        */
-      void exe(const std::string&) override;
+      void exe(CodeBlock&, const std::string&) override;
       //! destructor
       ~StandardWordAnalyser() override;
 
      private:
-      T& instance;
-      const MPtr mptr;
       const Hypothesis hypothesis;
+      const FunctionType fct;
     };
     /*!
-     * create a standard variable modifier from an instance of a class
-     * and a pointer to a member
-     */
-    template <typename T, typename T2>
-    std::shared_ptr<WordAnalyser> makeWordAnalyser(
-        T&,
-        const Hypothesis,
-        void (T2::*)(const Hypothesis, const std::string&));
-    /*!
-     * option to code blocks
+     * \brief structure holding options passed to code blocks
      */
     struct CodeBlockOptions {
       //! a simple alias
@@ -373,6 +356,100 @@ namespace mfront {
         std::string (T2::*)(const Hypothesis, const std::string&, const bool),
         std::string (T2::*)(const Hypothesis, const std::string&, const bool),
         const bool);
+    /*!
+     * \brief read the next code block and adds it tho the mechanical
+     * behaviour
+     * \param[in] n     : name of the method read
+     * \param[in] m     : modifier
+     * \param[in] b     : add "this->" in front of variables
+     * \param[in] s     : allow specialisation
+     */
+    CodeBlockOptions readCodeBlock(
+        const std::string&,
+        std::function<
+            std::string(const Hypothesis, const std::string&, const bool)>,
+        const bool,
+        const bool);
+    /*!
+     * \brief read the next code block and adds it tho the mechanical
+     * behaviour
+     * \param[in] n     : name of the method read
+     * \param[in] m     : modifier
+     * \param[in] b     : add "this->" in front of variables
+     */
+    void readCodeBlock(const CodeBlockOptions&,
+                       const std::string&,
+                       std::function<std::string(
+                           const Hypothesis, const std::string&, const bool)>,
+                       const bool);
+    /*!
+     * \brief read the next code block and adds it tho the mechanical
+     * behaviour
+     * \param[in] n     : name of the method read
+     * \param[in] m     : modifier
+     * \param[in] a     : word analyser
+     * \param[in] b     : add "this->" in front of variables
+     * \param[in] s     : allow specialisation
+     */
+    CodeBlockOptions readCodeBlock(
+        const std::string&,
+        std::function<
+            std::string(const Hypothesis, const std::string&, const bool)>,
+        std::function<void(CodeBlock&, const Hypothesis, const std::string&)>,
+        const bool,
+        const bool);
+    /*!
+     * \brief read the next code block and adds it tho the mechanical
+     * behaviour
+     * \param[in] n     : name of the method read
+     * \param[in] m     : modifier
+     * \param[in] a     : word analyser
+     * \param[in] b     : add "this->" in front of variables
+     * \param[in] s     : allow specialisation
+     */
+    void readCodeBlock(
+        const CodeBlockOptions&,
+        const std::string&,
+        std::function<
+            std::string(const Hypothesis, const std::string&, const bool)>,
+        std::function<void(CodeBlock&, const Hypothesis, const std::string&)>,
+        const bool);
+    /*!
+     * \brief read the next code block and adds it tho the mechanical
+     * behaviour
+     * \param[in] n1    : name of the first method read
+     * \param[in] n2    : name of the second method read
+     * \param[in] m1    : modifier
+     * \param[in] m2    : modifier
+     * \param[in] b     : add "this->" in front of variables
+     * \param[in] s     : allow specialisation
+     */
+    CodeBlockOptions readCodeBlock(
+        const std::string&,
+        const std::string&,
+        std::function<
+            std::string(const Hypothesis, const std::string&, const bool)>,
+        std::function<
+            std::string(const Hypothesis, const std::string&, const bool)>,
+        const bool,
+        const bool);
+    /*!
+     * \brief read the next code block and adds it tho the mechanical
+     * behaviour
+     * \param[in] n1    : name of the first method read
+     * \param[in] n2    : name of the second method read
+     * \param[in] m1    : modifier
+     * \param[in] m2    : modifier
+     * \param[in] b     : add "this->" in front of variables
+     */
+    void readCodeBlock(const CodeBlockOptions&,
+                       const std::string&,
+                       const std::string&,
+                       std::function<std::string(
+                           const Hypothesis, const std::string&, const bool)>,
+                       std::function<std::string(
+                           const Hypothesis, const std::string&, const bool)>,
+                       const bool);
     //! \brief throw an exception is some options were not recognized
     void treatUnsupportedCodeBlockOptions(const CodeBlockOptions&);
     /*!
@@ -563,8 +640,21 @@ namespace mfront {
     void treatMembers() override;
     //! \brief treat the `@StrainMeasure` keyword
     virtual void treatStrainMeasure();
-    //! \brief treat the `@TangentOperator` keyword
+    /*!
+     * \brief treat the `@TangentOperator` keyword
+     * \note this method read the code block options and determines
+     * which tangent operator is computed (for finite strain behaviours)
+     * and then calls the `readTangentOperatorCodeBlock` method
+     */
     virtual void treatTangentOperator();
+    /*!
+     * \brief read a code block describing the computation of one of the
+     * tangent operator
+     * \param[in] o: code block options
+     * \param[in] n: name of the code block
+     */
+    virtual void readTangentOperatorCodeBlock(const CodeBlockOptions&,
+                                              const std::string&);
     //! \brief treat the `@IsTangentOperatorSymmetric` keyword
     virtual void treatIsTangentOperatorSymmetric();
     //! \brief treat the `@Material` keyword
@@ -1155,8 +1245,27 @@ namespace mfront {
     virtual void writeBehaviourComputePredictionOperator(
         std::ostream&, const Hypothesis) const;
 
+    /*!
+     * \brief write the methods associated with the computation of the tangent
+     * operator
+     * \param[in,out] os: output file stream
+     * \param[in] h: modelling hypothesis
+     * \note this method calls `writeBehaviourComputeTangentOperatorBody` to
+     * write the body of the method. The body of the method follows a preamble
+     * containing some `using` statements (for `std` and `tfel::math`
+     * namespaces) and the declaration of material laws.
+     */
     virtual void writeBehaviourComputeTangentOperator(std::ostream&,
                                                       const Hypothesis) const;
+    /*!
+     * \brief write the body of a method computing the tangent operator
+     * \param[in,out] os: output file stream
+     * \param[in] h: modelling hypothesis
+     * \param[in] n: code block name
+     */
+    virtual void writeBehaviourComputeTangentOperatorBody(
+        std::ostream&, const Hypothesis, const std::string&) const;
+
     //! \brief write the code returning the tangent operator
     virtual void writeBehaviourGetTangentOperator(std::ostream&) const;
     /*!

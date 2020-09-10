@@ -10,7 +10,7 @@ AC_CANONICAL_HOST
 AC_CANONICAL_TARGET
 
 # Automake specific stuff
-AM_INIT_AUTOMAKE([foreign dist-bzip2 tar-ustar subdir-objects subdir-objects subdir-objects subdir-objects subdir-objects subdir-objects subdir-objects subdir-objects subdir-objects])
+AM_INIT_AUTOMAKE([foreign dist-bzip2 tar-ustar subdir-objects subdir-objects subdir-objects subdir-objects subdir-objects subdir-objects subdir-objects subdir-objects subdir-objects subdir-objects])
 m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])])
 
 # ok, this is ugly, but is sufficient for our needs
@@ -362,12 +362,15 @@ if test "x$use_python_bindings" != "xno";
     fi
     CHECK_BOOST
     CHECK_BOOST_PYTHON
+    CHECK_BOOST_NUMPY
     TFEL_PYTHON_BINDINGS=yes
     AC_DEFINE(TFEL_PYTHON_BINDINGS)
     AM_CONDITIONAL([TFEL_PYTHON_BINDINGS],true)
+    AM_CONDITIONAL([TFEL_NUMPY_SUPPORT],test "x${tfel_numpy_support}" = "xyes" )
 else
     TFEL_PYTHON_BINDINGS=no
-    AM_CONDITIONAL([TFEL_PYTHON_BINDINGS],false)
+    AM_CONDITIONAL([TFEL_PYTHON_BINDINGS], false)
+    AM_CONDITIONAL([TFEL_NUMPY_SUPPORT], false)
 fi
 
 # checks for java
@@ -3225,16 +3228,21 @@ AC_OUTPUT([debug.sh Makefile Doxyfile docs/Makefile docs/tfel/Makefile
 	   mtest/tests/ptest/cyrano/cyranotightpipe-gd-quadratic.ptest
 	   mtest/tests/ptest/cyrano/cyranotightpipe-linear.ptest
 	   mtest/tests/ptest/cyrano/cyranotightpipe-quadratic.ptest
-	   tfel-config/Makefile tfel-doc/Makefile
+	   tfel-config/Makefile
 	   tfel-config/include/Makefile
 	   tfel-config/include/tfel-config.hxx
-	   tfel-config/src/Makefile tfel-doc/src/Makefile
-	   tfel-doc/include/Makefile tfel-check/tests/pass/Makefile
+	   tfel-config/src/Makefile
+           tfel-doc/Makefile
+           tfel-doc/include/Makefile
+           tfel-doc/src/Makefile
+ 	   tfel-check/tests/pass/Makefile
 	   tfel-check/tests/unitTest/Makefile
 	   tfel-check/tests/xfail/Makefile tfel-check/tests/Makefile
 	   tfel-check/include/Makefile tfel-check/src/Makefile
 	   tfel-check/Makefile bindings/Makefile
-	   bindings/python/Makefile bindings/python/std/Makefile
+           tfel-unicode-filt/Makefile
+           tfel-unicode-filt/src/Makefile
+           bindings/python/Makefile bindings/python/std/Makefile
 	   bindings/python/std/__init__.py
 	   bindings/python/tfel/Makefile
 	   bindings/python/tfel/__init__.py
@@ -3264,4 +3272,4 @@ AC_OUTPUT([debug.sh Makefile Doxyfile docs/Makefile docs/tfel/Makefile
 	   tests/Math/cadna/Makefile tests/FSAlgorithms/Makefile
 	   tests/Utilities/Makefile tests/MetaProgramming/Makefile
 	   tests/Material/Makefile tests/System/Makefile
-        tests/UnicodeSupport/Makefile ])
+           tests/UnicodeSupport/Makefile ])

@@ -1,3 +1,9 @@
+"Broken" {
+ unit: "none";
+ type: "scalar";
+ short_description: "material failure indicator";
+};
+
 "Emissivity"{
  unit: "kg.m.T^{−3}";
  type: "scalar";
@@ -461,7 +467,17 @@
 
 "Porosity"{
  type: "scalar";
- short_description : "la porosité du matériau";
+ short_description : "Porosity of the material";
+};
+
+"PorosityIncreaseDueToInelasticFlow"{
+ type: "scalar";
+ short_description : "Part of the porosity increase du to inelastic flow";
+};
+
+"PorosityIncreaseDueToNucleation" {
+ type: "scalar";
+ short_description : "Part of the porosity increase du to nucleation";
 };
 
 "IrradiationInducedSwelling"{

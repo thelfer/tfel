@@ -54,6 +54,47 @@ namespace tfel {
     };
 
     /*!
+     * \brief partial specialisation of the `DerivativeTypeDispatcher`
+     * metafunction.
+     */
+    template <typename TensorType, typename ScalarType>
+    struct DerivativeTypeDispatcher<TensorTag,
+                                    ScalarTag,
+                                    TensorType,
+                                    ScalarType> {
+      static_assert(tfel::meta::Implements<TensorType, TensorConcept>::cond,
+                    "template argument TensorType is not a tensor");
+      static_assert(tfel::typetraits::IsScalar<ScalarType>::cond,
+                    "template argument ScalarType is not a scalar");
+      static_assert(tfel::typetraits::IsScalar<TensorNumType<TensorType>>::cond,
+                    "the tensor type does not hold a scalar");
+      //! \brief result
+      using type =
+          tensor<TensorTraits<TensorType>::dime,
+                  derivative_type<TensorNumType<TensorType>, ScalarType>>;
+    };  // end of struct DerivativeTypeDispatcher
+    /*!
+     * \brief partial specialisation of the `DerivativeTypeDispatcher`
+     * metafunction.
+     */
+    template <typename ScalarType, typename TensorType>
+    struct DerivativeTypeDispatcher<ScalarTag,
+                                    TensorTag,
+                                    ScalarType,
+                                    TensorType> {
+      static_assert(tfel::meta::Implements<TensorType, TensorConcept>::cond,
+                    "template argument TensorType is not a tensor");
+      static_assert(tfel::typetraits::IsScalar<ScalarType>::cond,
+                    "template argument ScalarType is not a scalar");
+      static_assert(tfel::typetraits::IsScalar<TensorNumType<TensorType>>::cond,
+                    "the tensor type does not hold a scalar");
+      //! \brief result
+      using type =
+          tensor<TensorTraits<TensorType>::dime,
+                  derivative_type<ScalarType, TensorNumType<TensorType>>>;
+    };  // end of struct DerivativeTypeDispatcher
+
+    /*!
      * \brief a base for tensor or classes acting like tensor.
      * \param Child : child class
      * \param N     : spatial dimension

@@ -2,7 +2,9 @@
 % Bruno Michel, Thomas Helfer
 % 12/2017
 
-This page describes the `DDIF2` stress potential.
+This page describes the `DDIF2` stress potential which describes a
+damaging law used in CEA' fuel performance codes. See
+[@michel_3d_2008;@michel_3d_2016;@michel_new_2017].
 
 The `DDIF2` behaviour is used to describe the brittle nature of
 nuclear fuel ceramics and is usually coupled with a description of the

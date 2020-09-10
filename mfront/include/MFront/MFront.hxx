@@ -139,7 +139,6 @@ namespace mfront{
 
     //! generator options
     GeneratorOptions opts;
-    
     //! targets to be build as specified by the user
     std::set<std::string> specifiedTargets;
     //! macros defined by the user on the command line

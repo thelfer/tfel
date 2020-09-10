@@ -14,17 +14,23 @@
 #include <cmath>
 #include <sstream>
 #include "TFEL/Raise.hxx"
+#include "MFront/MFrontLogStream.hxx"
 #include "MTest/Evolution.hxx"
 #include "MTest/AnalyticalTest.hxx"
 
 namespace mtest {
 
-  AnalyticalTest::AnalyticalTest(const std::string& f_,
-                                 const std::string& v,
-                                 const std::function<real(const CurrentState&)>& g,
-                                 const EvolutionManager& evm_,
-                                 const real eps_)
-      : f(f_), name(v), get(g), evm(evm_), eps(eps_) {}  // AnalyticalTest::AnalyticalTest
+  AnalyticalTest::AnalyticalTest(
+      const std::string& f_,
+      const std::string& v,
+      const std::function<real(const CurrentState&)>& g,
+      const EvolutionManager& evm_,
+      const real eps_)
+      : f(f_, buildExternalFunctionManagerFromConstantEvolutions(evm_)),
+        name(v),
+        get(g),
+        evm(evm_),
+        eps(eps_) {}  // AnalyticalTest::AnalyticalTest
 
   void AnalyticalTest::check(const CurrentState& s,
                              const real t,

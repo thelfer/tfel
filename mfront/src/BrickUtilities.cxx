@@ -7,6 +7,7 @@
 
 #include <utility>
 #include <sstream>
+#include "TFEL/Raise.hxx"
 #include "TFEL/Glossary/Glossary.hxx"
 #include "TFEL/Glossary/GlossaryEntry.hxx"
 #include "TFEL/Utilities/StringAlgorithms.hxx"
@@ -254,6 +255,120 @@ namespace mfront {
       bd.setEntryName(h, n, e);
     }  // end of addStateVariable
 
+    void addStateVariableIfNotDefined(BehaviourDescription& bd,
+                                      const std::string& t,
+                                      const std::string& n,
+                                      const tfel::glossary::GlossaryEntry& g,
+                                      const unsigned short s,
+                                      const bool bo) {
+      constexpr const auto uh =
+          tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+      const auto b = [bd, &n, &g, &bo] {
+        for (const auto& v : bd.getBehaviourData(uh).getStateVariables()) {
+          if (v.getExternalName() == g) {
+            if ((!bo) && (v.name != n)) {
+              tfel::raise(
+                  "addStateVariableIfNotDefined: a state variable with the "
+                  "given glossary name already has already been registred");
+            }
+            return true;
+          }
+        }
+        return false;
+      }();
+      if (!b) {
+        auto v = mfront::VariableDescription(t, n, s, 0u);
+        v.setGlossaryName(g);
+        bd.addStateVariable(uh, v, mfront::BehaviourData::UNREGISTRED);
+      }
+    }  // end of addStateVariableIfNotDefined
+
+    void addStateVariableIfNotDefined(BehaviourDescription& bd,
+                                      const std::string& t,
+                                      const std::string& n,
+                                      const std::string& e,
+                                      const unsigned short s,
+                                      const bool bo) {
+      constexpr const auto uh =
+          tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+      const auto b = [bd, &n, &e, &bo] {
+        for (const auto& v : bd.getBehaviourData(uh).getStateVariables()) {
+          if (v.getExternalName() == e) {
+            if ((!bo) && (v.name != n)) {
+              tfel::raise(
+                  "addStateVariableIfNotDefined: a state variable with the "
+                  "given entry name already has already been registred");
+            }
+            return true;
+          }
+        }
+        return false;
+      }();
+      if (!b) {
+        auto v = mfront::VariableDescription(t, n, s, 0u);
+        v.setEntryName(e);
+        bd.addStateVariable(uh, v, mfront::BehaviourData::UNREGISTRED);
+      }
+    }
+
+    void addAuxiliaryStateVariableIfNotDefined(BehaviourDescription& bd,
+                                      const std::string& t,
+                                      const std::string& n,
+                                      const tfel::glossary::GlossaryEntry& g,
+                                      const unsigned short s,
+                                      const bool bo) {
+      constexpr const auto uh =
+          tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+      const auto b = [bd, &n, &g, &bo] {
+        for (const auto& v : bd.getBehaviourData(uh).getAuxiliaryStateVariables()) {
+          if (v.getExternalName() == g) {
+            if ((!bo) && (v.name != n)) {
+              tfel::raise(
+                  "addAuxiliaryStateVariableIfNotDefined: an auxiliary state "
+                  "variable with the given glossary name already has already "
+                  "been registred");
+            }
+            return true;
+          }
+        }
+        return false;
+      }();
+      if (!b) {
+        auto v = mfront::VariableDescription(t, n, s, 0u);
+        v.setGlossaryName(g);
+        bd.addAuxiliaryStateVariable(uh, v, mfront::BehaviourData::UNREGISTRED);
+      }
+    }  // end of addAuxiliaryStateVariableIfNotDefined
+
+    void addAuxiliaryStateVariableIfNotDefined(BehaviourDescription& bd,
+                                      const std::string& t,
+                                      const std::string& n,
+                                      const std::string& e,
+                                      const unsigned short s,
+                                      const bool bo) {
+      constexpr const auto uh =
+          tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+      const auto b = [bd, &n, &e, &bo] {
+        for (const auto& v : bd.getBehaviourData(uh).getAuxiliaryStateVariables()) {
+          if (v.getExternalName() == e) {
+            if ((!bo) && (v.name != n)) {
+              tfel::raise(
+                  "addAuxiliaryStateVariableIfNotDefined: an auxiliary state "
+                  "variable with the given entry name already has already been "
+                  "registred");
+            }
+            return true;
+          }
+        }
+        return false;
+      }();
+      if (!b) {
+        auto v = mfront::VariableDescription(t, n, s, 0u);
+        v.setEntryName(e);
+        bd.addAuxiliaryStateVariable(uh, v, mfront::BehaviourData::UNREGISTRED);
+      }
+    }
+
     void addExternalStateVariable(BehaviourDescription& bd,
                                   const std::string& t,
                                   const std::string& n,
@@ -459,6 +574,63 @@ namespace mfront {
      c += "const auto dR" + fid + "_ddp" + fid + " = " + dR + ";\n";
      return c;
     }  // end of computeElasticLimitAndDerivative
+
+    std::string handleEigenSolverOption(const std::string& e) {
+      if ((e == "TFEL") || (e == "default")) {
+        return "tfel::math::stensor_common::TFELEIGENSOLVER";
+      }
+      if (e != "Jacobi") {
+        tfel::raise(
+            "mfront::bbrick::handleEigenSolverOption: "
+            "unsupported eigen solver option '" + e + "'");
+      }
+      return "tfel::math::stensor_common::FSESJACOBIEIGENSOLVER";
+    }  // end of handleEigenSolverOption
+
+    std::string getBrokenTest(const BehaviourDescription& bd, const bool b) {
+      constexpr const auto uh =
+          tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+      const auto& d = bd.getBehaviourData(uh);
+      const auto& asvs = d.getAuxiliaryStateVariables();
+      const auto& esvs = d.getExternalStateVariables();
+      const auto pav =
+          findByExternalName(asvs, tfel::glossary::Glossary::Broken);
+      const auto pev =
+          findByExternalName(esvs, tfel::glossary::Glossary::Broken);
+      if (pav != asvs.end()) {
+        return "2 * (this->" + pav->name + ") > 1";
+      }
+      if (pev != esvs.end()) {
+        const auto& name = pev->name;
+        if (b) {
+          return "2 * (this->" + name + " + (this->d " + name + ")) > 1";
+        } else {
+          return "2 * (this->" + name + " + (" + bd.getClassName() +
+                 "::theta) * (this->d " + name + ")) > 1";
+        }
+      }
+      return "";
+    }  // end of getBrokenTest
+
+    void addBrokenStateSupportToComputeStress(std::string& c,
+                                              const BehaviourDescription& bd,
+                                              const bool b) {
+      using BehaviourType = tfel::material::MechanicalBehaviourBase;
+      tfel::raise_if(
+          bd.getBehaviourType() != BehaviourType::STANDARDSTRAINBASEDBEHAVIOUR,
+          "invalid behaviour description (must describe a standard "
+          "strain based behaviour)");
+      const auto broken_test = getBrokenTest(bd, b);
+      if (broken_test.empty()) {
+        return;
+      }
+      auto r = "if(" + broken_test + "){\n";
+      r += "this->sig = StressStensor(stress(0));\n";
+      r += "} else {\n";
+      r += c;
+      r += "}\n";
+      std::swap(r, c);
+    }  // end of addBrokenStateSupportToComputeStress
 
   }  // end of namespace bbrick
 

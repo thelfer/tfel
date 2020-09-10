@@ -35,6 +35,8 @@ namespace mtest {
    */
   struct MTEST_VISIBILITY_EXPORT CurrentStateView {
     //! \brief default constructor
+    CurrentStateView() noexcept;
+    //! \brief constructor from a CurrentState
     CurrentStateView(CurrentState&) noexcept;
     //! \brief copy constructor
     CurrentStateView(const CurrentStateView&) noexcept;
@@ -75,17 +77,17 @@ namespace mtest {
     //! \brief external variables increments
     tfel::utilities::ConstSpan<real> desv;
     //! \brief stored energy at the beginning of the time step
-    const real& se0;
+    const real* se0 = nullptr;
     //! \brief stored energy at the end of the time step
-    real& se1;
+    real* se1 = nullptr;
     //! \brief dissipated energy at the beginning of the time step
-    const real& de0;
+    const real* de0 = nullptr; 
     //! \brief dissipated energy at the end of the time step
-    real& de1;
+    real* de1 = nullptr;
     //! \brief rotation matrix
-    const tfel::math::tmatrix<3u, 3u>& r;
+    const tfel::math::tmatrix<3u, 3u>* r = nullptr;
     //! \brief information collected during the packaging stage
-    std::map<std::string, PackagingInformation>& packaging_info;
+    const std::map<std::string, PackagingInformation>* packaging_info = nullptr;
   };  // end of struct CurrentStateView
 
   /*!

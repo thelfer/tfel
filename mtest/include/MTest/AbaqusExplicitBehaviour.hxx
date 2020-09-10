@@ -37,7 +37,8 @@ namespace mtest {
      * \param[in] h : modelling hypothesis
      * \param[in] f : function implementation the behaviour
      */
-    static std::string getBehaviourName(const std::string&, const Hypothesis);
+    static std::string extractBehaviourName(const std::string&,
+                                            const Hypothesis);
     /*!
      * \param[in] h : modelling hypothesis
      * \param[in] l : library name
@@ -46,29 +47,64 @@ namespace mtest {
     AbaqusExplicitBehaviour(const Hypothesis,
                             const std::string&,
                             const std::string&);
-
+    /*!
+     * \brief compute the *real* rotation matrix
+     * \param[in] mp : material properties
+     * \param[in] r  : rotation matrix defined by the user
+     * \note this method is only meaningfull for the umat (Cast3M)
+     * interface
+     */
     tfel::math::tmatrix<3u, 3u, real> getRotationMatrix(
         const tfel::math::vector<real>&,
         const tfel::math::tmatrix<3u, 3u, real>&) const override;
-
+    /*!
+     * \return the default type of stiffness matrix used by the behaviour
+     */
     StiffnessMatrixType getDefaultStiffnessMatrixType() const override;
-
+    /*!
+     * \param[out] v : initial values of the driving variables
+     */
     void getGradientsDefaultInitialValues(
         tfel::math::vector<real>&) const override;
-
-    bool doPackagingStep(BehaviourWorkSpace&,
-                         const CurrentStateView&) const override;
-
+    /*!
+     * \brief execute the packaging step. This victious step is done
+     * at the beginning of the computation.
+     * \return a boolean
+     * \param[out] wk : behaviour workspace
+     * \param[in] s   : current state
+     */
+    bool doPackagingStep(CurrentState&, BehaviourWorkSpace&) const override;
+    /*!
+     * \brief integrate the mechanical behaviour over the time step
+     * \return a pair. The first member is true if the integration was
+     * successfull, false otherwise. The second member contains a time
+     * step scaling factor.
+     * \param[out] wk    : behaviour workspace
+     * \param[in]  s     : current state
+     * \param[in]  ktype : type of the stiffness matrix
+     */
     std::pair<bool, real> computePredictionOperator(
         BehaviourWorkSpace&,
-        const CurrentStateView&,
+        const CurrentState&,
         const StiffnessMatrixType) const override;
-
-    std::pair<bool, real> integrate(CurrentStateView&,
+    /*!
+     * \brief integrate the mechanical behaviour over the time step
+     * \return a pair. The first member is true if the integration was
+     * successfull, false otherwise. The second member contains a time
+     * step scaling factor.
+     * \param[in,out] s     : current state
+     * \param[out]    wk    : behaviour workspace
+     * \param[in]     dt    : time increment
+     * \param[in]     ktype : type of the stiffness matrix
+     */
+    std::pair<bool, real> integrate(CurrentState&,
                                     BehaviourWorkSpace&,
                                     const real,
                                     const StiffnessMatrixType) const override;
-
+    /*!
+     * \brief allocate internal workspace
+     * \param[out] wk : behaviour workspace
+     */
     void allocate(BehaviourWorkSpace&) const override;
     //! destructor
     ~AbaqusExplicitBehaviour() override;

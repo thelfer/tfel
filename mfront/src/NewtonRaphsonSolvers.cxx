@@ -11,6 +11,7 @@
  * project under specific licensing conditions.
  */
 
+#include <ostream>
 #include "TFEL/Raise.hxx"
 #include "MFront/MFrontDebugMode.hxx"
 #include "MFront/BehaviourDescription.hxx"
@@ -157,7 +158,7 @@ namespace mfront {
         << "} else {\n"
         << "this->zeros_1  = this->zeros;\n";
     out << "converged = error<this->epsilon;\n"
-        << "this->additionalConvergenceChecks(converged,error);\n";
+        << "this->additionalConvergenceChecks(converged, error, smt);\n";
     if (this->requiresNumericalJacobian()) {
       // We compute the numerical jacobian even if we converged since
       // most of the time, this tangent operator will be computed

@@ -73,6 +73,8 @@ namespace mfront{
 #endif /* __CYGWIN__ */
     //! \brief optimisation level
     OptimisationLevel olevel = LEVEL1;
+    //! \brief add debugging flags
+    bool debugFlags = false;
     /*!
      * \brief boolean stating that no output regarding the compilation
      * commands shall be displayed.

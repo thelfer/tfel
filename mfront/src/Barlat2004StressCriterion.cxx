@@ -30,6 +30,10 @@ namespace mfront {
                         OptionDescription::ARRAYOFMATERIALPROPERTIES);
       opts.emplace_back("a", "Barlat exponent",
                         OptionDescription::MATERIALPROPERTY);
+      opts.emplace_back(
+          "eigen_solver",
+          "Choice of the eigen solver. Valid value are 'default' and 'Jacoby'.",
+          OptionDescription::STRING);
       return opts;
     }  // end of Barlat2004StressCriterion::getOptions
 
@@ -96,6 +100,10 @@ namespace mfront {
                      "Barlat2004StressCriterion::initialize: "
                      "material property 'a' is not defined");
       this->a = getBehaviourDescriptionMaterialProperty(dsl, "a", d.at("a"));
+      if (d.count("eigen_solver") != 0) {
+        this->eigen_solver =
+            handleEigenSolverOption(d.at("eigen_solver").get<std::string>());
+      }
       declareParameterOrLocalVariable(bd, this->a, "real", an);
       addLocalVariable(bd, "Stensor4",
                        StressCriterion::getVariableId("l1", id, r));
@@ -174,8 +182,9 @@ namespace mfront {
           "l1", id, StressCriterion::STRESSCRITERION);
       const auto l2n = StressCriterion::getVariableId(
           "l2", id, StressCriterion::STRESSCRITERION);
-      return "const auto seqel" + id + " = computeBarlatStress(sel" + id +
-             ",this->" + l1n + ",this->" + l2n + ",this->" + an + "," +
+      return "const auto seqel" + id + " = computeBarlatStress" +
+             this->getTemplateParameters() + "(sel" + id + ",this->" + l1n +
+             ",this->" + l2n + ",this->" + an + "," +
              sp.getEquivalentStressLowerBound(bd) + ");\n";
     }  // end of Barlat2004StressCriterion::computeElasticPrediction
 
@@ -189,8 +198,9 @@ namespace mfront {
           "l1", id, StressCriterion::STRESSCRITERION);
       const auto l2n = StressCriterion::getVariableId(
           "l2", id, StressCriterion::STRESSCRITERION);
-      return "const auto seq" + id + " = computeBarlatStress(s" + id +
-             ",this->" + l1n + ",this->" + l2n + ",this->" + an + "," +
+      return "const auto seq" + id + " = computeBarlatStress" +
+             this->getTemplateParameters() + "(s" + id + ",this->" + l1n +
+             ",this->" + l2n + ",this->" + an + "," +
              sp.getEquivalentStressLowerBound(bd) + ");\n";
     }  // end of Barlat2004StressCriterion::computeNormal
 
@@ -209,16 +219,16 @@ namespace mfront {
       if ((r == STRESSCRITERION) || (r == STRESSANDFLOWCRITERION)) {
 #if __cplusplus >= 201703L
         c += "const auto [seq" + id + ",dseq" + id + "_ds" + id + "] = ";
-        c += "computeBarlatStressNormal(s" + id + ",this->" + l1n + ",this->" +
-             l2n + "," + an + "," + sp.getEquivalentStressLowerBound(bd) +
-             ");\n";
+        c += "computeBarlatStressNormal" + this->getTemplateParameters() +
+             "(s" + id + ",this->" + l1n + ",this->" + l2n + "," + an + "," +
+             sp.getEquivalentStressLowerBound(bd) + ");\n";
 #else  /* __cplusplus >= 201703L */
         c += "stress seq" + id + ";\n";
         c += "Stensor dseq" + id + "_ds" + id + ";\n";
         c += "std::tie(seq" + id + ",dseq" + id + "_ds" + id + ") = ";
-        c += "computeBarlatStressNormal(s" + id + ",this->" + l1n + ",this->" +
-             l2n + ",this->" + an + "," + sp.getEquivalentStressLowerBound(bd) +
-             ");\n";
+        c += "computeBarlatStressNormal" + this->getTemplateParameters() +
+             "(s" + id + ",this->" + l1n + ",this->" + l2n + ",this->" + an +
+             "," + sp.getEquivalentStressLowerBound(bd) + ");\n";
 #endif /* __cplusplus >= 201703L */
       }
       if (r == STRESSANDFLOWCRITERION) {
@@ -227,16 +237,16 @@ namespace mfront {
       if (r == FLOWCRITERION) {
 #if __cplusplus >= 201703L
         c += "const auto [seqf" + id + ", n" + id + "] = ";
-        c += "computeBarlatStressNormal(s" + id + ",this->" + l1n + ",this->" +
-             l2n + ",this->" + an + "," + sp.getEquivalentStressLowerBound(bd) +
-             ");\n";
+        c += "computeBarlatStressNormal" + this->getTemplateParameters() +
+             "(s" + id + ",this->" + l1n + ",this->" + l2n + ",this->" + an +
+             "," + sp.getEquivalentStressLowerBound(bd) + ");\n";
 #else  /* __cplusplus >= 201703L */
         c += "stress seqf" + id + ";\n";
         c += "Stensor n" + id + ";\n";
         c += "std::tie(seqf" + id + ",n" + id + ") = ";
-        c += "computeBarlatStressNormal(s" + id + ",this->" + l1n + ",this->" +
-             l2n + ",this->" + an + "," + sp.getEquivalentStressLowerBound(bd) +
-             ");\n";
+        c += "computeBarlatStressNormal" + this->getTemplateParameters() +
+             "(s" + id + ",this->" + l1n + ",this->" + l2n + ",this->" + an +
+             "," + sp.getEquivalentStressLowerBound(bd) + ");\n";
 #endif /* __cplusplus >= 201703L */
       }
       return c;
@@ -258,7 +268,8 @@ namespace mfront {
 #if __cplusplus >= 201703L
         c += "const auto [seq" + id + ",dseq" + id + "_ds" + id + ",d2seq" +
              id + "_ds" + id + "ds" + id + "] = ";
-        c += "computeBarlatStressSecondDerivative(s" + id + ", this->" + l1n +
+        c += "computeBarlatStressSecondDerivative" +
+             this->getTemplateParameters() + "(s" + id + ", this->" + l1n +
              ",this->" + l2n + ", this->" + an + "," +
              sp.getEquivalentStressLowerBound(bd) + ");\n";
 #else  /* __cplusplus >= 201703L */
@@ -267,7 +278,8 @@ namespace mfront {
         c += "Stensor4 d2seq" + id + "_ds" + id + "ds" + id + ";\n";
         c += "std::tie(seq" + id + ",dseq" + id + "_ds" + id + ",d2seq" + id +
              "_ds" + id + "ds" + id + ") = ";
-        c += "computeBarlatStressSecondDerivative(s" + id + ",this->" + l1n +
+        c += "computeBarlatStressSecondDerivative" +
+             this->getTemplateParameters() + "(s" + id + ",this->" + l1n +
              ",this->" + l2n + ",this->" + an + "," +
              sp.getEquivalentStressLowerBound(bd) + ");\n";
 #endif /* __cplusplus >= 201703L */
@@ -281,7 +293,8 @@ namespace mfront {
 #if __cplusplus >= 201703L
         c += "const auto [seqf" + id + ", n" + id + ", dn" + id + "_ds" + id +
              "] = ";
-        c += "computeBarlatStressSecondDerivative(s" + id + ",this->" + l1n +
+        c += "computeBarlatStressSecondDerivative" +
+             this->getTemplateParameters() + "(s" + id + ",this->" + l1n +
              ",this->" + l2n + ",this->" + an + "," +
              sp.getEquivalentStressLowerBound(bd) + ");\n";
 #else  /* __cplusplus >= 201703L */
@@ -290,7 +303,8 @@ namespace mfront {
         c += "Stensor4 dn" + id + "_ds" + id + ";\n";
         c +=
             "std::tie(seqf" + id + ",n" + id + ",dn" + id + "_ds" + id + ") = ";
-        c += "computeBarlatStressSecondDerivative(s" + id + ",this->" + l1n +
+        c += "computeBarlatStressSecondDerivative<" +
+             this->getTemplateParameters() + ">(s" + id + ",this->" + l1n +
              ",this->" + l2n + ",this->" + an + "," +
              sp.getEquivalentStressLowerBound(bd) + ");\n";
 #endif /* __cplusplus >= 201703L */
@@ -298,9 +312,25 @@ namespace mfront {
       return c;
     }  // end of Barlat2004StressCriterion::computeNormalDerivative
 
+    bool Barlat2004StressCriterion::isCoupledWithPorosityEvolution() const {
+      return false;
+    }  // end of Barlat2004StressCriterion::isCoupledWithPorosityEvolution
+
     bool Barlat2004StressCriterion::isNormalDeviatoric() const {
       return true;
     }  // end of Barlat2004StressCriterion::isNormalDeviatoric
+
+    StressCriterion::PorosityEffectOnFlowRule
+    Barlat2004StressCriterion::getPorosityEffectOnEquivalentPlasticStrain() const {
+      return StressCriterion::NO_POROSITY_EFFECT_ON_EQUIVALENT_PLASTIC_STRAIN;
+    }  // end of Barlat2004StressCriterion::getPorosityEffectOnEquivalentPlasticStrain()
+
+    std::string Barlat2004StressCriterion::getTemplateParameters() const {
+      if (this->eigen_solver.empty()) {
+        return "";
+      }
+      return "<StressStensor, real, " + this->eigen_solver + ">";
+    }  // end of Barlat2004StressCriterion::getTemplateParameters
 
     Barlat2004StressCriterion::~Barlat2004StressCriterion() = default;
 
