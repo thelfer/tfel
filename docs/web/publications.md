@@ -1,9 +1,14 @@
-% Publications
+ Publications
 % Helfer Thomas
 % June 22, 2019
 
 ---
 nocite: |
+    @garcia_effect_2020
+    @helfer_mfrontgenericinterfacesupport_2020
+    @lu_efficient_2020
+    @marano_non-linear_2020
+    @boustani_extending_2020
     @draup_development_2019
     @manso_settlement_2019
     @singh_brittle_2019
