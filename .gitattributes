@@ -1476,6 +1476,7 @@ docs/web/js/plugins.js -text
 docs/web/js/slideshow.js -text
 docs/web/js/vendor/jquery-1.10.2.min.js -text
 docs/web/js/vendor/modernizr-2.6.2.min.js -text
+docs/web/madnex.md -text
 docs/web/material-properties.md -text
 docs/web/material.md -text
 docs/web/math.md -text

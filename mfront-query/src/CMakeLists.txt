@@ -13,6 +13,14 @@ if(TFEL_APPEND_SUFFIX)
   set_target_properties(mfront-query
     PROPERTIES OUTPUT_NAME "mfront-query-${TFEL_SUFFIX}")
 endif(TFEL_APPEND_SUFFIX)
+
+if(HAVE_MADNEX)
+  target_compile_definitions(mfront-query
+    PUBLIC MFRONT_QUERY_HAVE_MADNEX)
+  target_link_libraries(mfront-query
+    PRIVATE madnex::Madnex)
+endif(HAVE_MADNEX)
+
 install(TARGETS mfront-query DESTINATION bin
   COMPONENT mfront)
 

@@ -204,8 +204,6 @@ namespace mfront
     const auto name = mpd.material.empty() ?
       mpd.className : mpd.material+"_"+mpd.className;
     const auto src_name  = "src/" +name+"-cxx.cxx";
-	const auto& params = mpd.parameters;
-	const auto& file=fd.fileName;
     std::ofstream src(src_name);
     throw_if(!src,"unable to open '"+src_name+"'");
     src.exceptions(std::ios::badbit|std::ios::failbit);

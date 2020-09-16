@@ -30,48 +30,48 @@ Basic Installation
 Options
 =======
 
-- enable-static : compiles static libraries
-- enable-eigen : allows support for eigen linear solvers
-- enable-mkl : allows support for linear solvers provided by the Math
+- `enable-static`: compiles static libraries
+- `enable-eigen`: allows support for eigen linear solvers
+- `enable-mkl`: allows support for linear solvers provided by the Math
   Kernel Library
-- enable-fortran : enables fortran support
-- enable-python : enables python support
-- enable-numpy-support: enables numpy support. This is activated by
+- `enable-fortran`: enables fortran support
+- `enable-python`: enables python support
+- `enable-numpy-support: enables numpy support. This is activated by
   default if enable-python is set
-- enable-java : enables java support
-- enable-aster : enables aster support
-- enable-abaqus : enables abaqus support
-- enable-ansys : enables ansys support
-- enable-europlexus : enables europlexus support
-- enable-zmat : enables zmat support
-- enable-cyrano : enables cyrano support (cyrano is eDF fuel performance
+- `enable-java`: enables java support
+- `enable-aster`: enables aster support
+- `enable-abaqus`: enables abaqus support
+- `enable-ansys`: enables ansys support
+- `enable-europlexus`: enables europlexus support
+- `enable-zmat`: enables zmat support
+- `enable-cyrano`: enables cyrano support (cyrano is eDF fuel performance
   code)
-- enable-calculix   : enables CalculiX support
-- enable-comsol : enables Combsol support
-- enable-diana-fea : enables Diana FEA support
-- enable-lsdyna : enables LS-DYNA support
-- enable-libcxx : enable libc++ on Linux and clang
-- enable-cxx-17 : enable c++-17 features (requires `gcc` >= 7.2)
-- enable-random-tests: enable tests based on a random choice of
-- enable-developer-warnings : enable additionnal compiler warnings
-- enable-advanced-developer-warnings : enable additionnal compiler
+- `enable-calculix  `: enables CalculiX support
+- `enable-comsol`: enables Combsol support
+- `enable-diana-fea`: enables Diana FEA support
+- `enable-lsdyna`: enables LS-DYNA support
+- `enable-libcxx`: enable libc++ on Linux and clang
+- `enable-cxx-17`: enable c++-17 features (requires `gcc` >= 7.2)
+- `enable-random-tests: enable tests based on a random choice of
+- `enable-developer-warnings`: enable additionnal compiler warnings
+- `enable-advanced-developer-warnings`: enable additional compiler
   warnings
-- enable-sanitize-options : additional compiler flags (gcc specific)
-- enable-portable-build : do not use processor specific flags. The
+- `enable-sanitize-options`: additional compiler flags (gcc specific)
+- `enable-portable-build`: do not use processor specific flags. The
   generated binaries can be used on other machines as long as the
   architecture and the compiler version are the same
-- enable-doxygen-doc : generate doxygen documentation (disabled by
+- `enable-doxygen-doc`: generate doxygen documentation (disabled by
   default)
-- enable-reference-doc : enable the generation of the reference
+- `enable-reference-doc`: enable the generation of the reference
   documentation (requires a valid latex engine)
-- enable-website : generate the TFEL website (enabled by default if
+- `enable-website`: generate the TFEL website (enabled by default if
   pandoc is found)
-- enable-fast-math : use advance options to optimize code further.
+- `enable-fast-math`: use advance options to optimize code further.
   Compiler can then ignore IEEE 754 compatibility
-- enable-broken-boost-python-module-visibility-handling : workaround a
+- `enable-broken-boost-python-module-visibility-handling`: workaround a
   bug in boost python which occurs on FreeBSD+clang. See
   https://github.com/boostorg/python/issues/173 for details
-- python-static-interpreter-workaround: a workaround to handle the fact
+- `python-static-interpreter-workaround: a workaround to handle the fact
   the conda' python interpreter is statically linked, which causes
   issues on Mac Os. See for details
   https://github.com/ContinuumIO/anaconda-issues/issues/9078. A proper
@@ -79,34 +79,35 @@ Options
   target, see https://gitlab.kitware.com/cmake/cmake/issues/18100. Until
   this version is widely available, this flag proposes a hack. Use with
   care.
-- enable-glibcxx-debug : use the debug version of the STL
-  implemented by the GLIB
+- `enable-glibcxx-debug`: use the debug version of the STL implemented
+  by the GLIB
 
 cmake usefull variables
 =======================
 
-- `CMAKE_BUILD_TYPE`           : two values are supported 'Release' and 'Debug'
-- `CASTEM_INSTALL_PATH`        : specify where the castem has been installed
-- `ZSET_INSTALL_PATH`          : specify where the ZSET sofware has been
-                                 installed
-- `CMAKE_TOOLCHAIN_FILE`       : specify a tool chain file
-- `TFEL_SVN_REVISION`          : tfel-svn revision
-- `Python_ADDITIONAL_VERSIONS` : select the `python` version to
-  			         use. Note that only the major and minor
-  			         version of python shall be passed, not
-  			         the revision version or the detection
-  			         fails.
-- `TFEL_BROKEN_LIBMATH`        : set to `ON` to disable tests based on
-                                 changing the rounding mode. This is not
-				 well supported by old version of the GNU
-				 library for example (such as the one
-				 delivered with debian wheezy).
-- `TFEL_DL_LIBRARY`            : set the path the `dl` library. This library
-  			       	 can sometimes not be found when using non
-			       	 default compilers (eg. the PGI compiler).
+- `CMAKE_BUILD_TYPE`: two values are supported 'Release' and 'Debug'
+- `CASTEM_INSTALL_PATH`: specify where the castem has been installed
+- `ZSET_INSTALL_PATH`: specify where the ZSET sofware has been
+  installed
+- `CMAKE_TOOLCHAIN_FILE`: specify a tool chain file
+- `TFEL_SVN_REVISION`: tfel-svn revision
+- `Python_ADDITIONAL_VERSIONS`: select the `python` version to use.
+  Note that only the major and minor version of python shall be passed,
+  not the revision version or the detection fails.
+- `Madnex_DIR`: path where the `MadnexConfig.cmake` file has been
+  installed. This information is required when compiling `TFEL` with
+  support of `madnex` files. This path is usually given by
+  `$MADNEX_PREFIX/share/madnex/cmake/` where `MADNEX_PREFIX` is the
+  installation directory of the `Madnex` library.
+- `TFEL_DL_LIBRARY`: set the path the `dl` library. This library can
+  sometimes not be found when using non default compilers (eg. the PGI
+  compiler).
+- `TFEL_BROKEN_LIBMATH`: set to `ON` to disable tests based on changing
+  the rounding mode. This is not well supported by old version of the
+  GNU library for example (such as the one delivered with debian
+  wheezy).
 - `USE_EXTERNAL_COMPILER_FLAGS`: set to `ON` to use the `CFLAGS` and
-                                 `CXXFLAGS` environment variables
-				 to build `TFEL`
+  `CXXFLAGS` environment variables to build `TFEL`
 
 cmake typical usage
 ===================
@@ -144,10 +145,12 @@ cmake ../trunk -DCMAKE_BUILD_TYPE=Release -Denable-developer-warnings=ON -Denabl
 main targets:
 =============
 
-  - all              : build the libraries
-  - doc-html         : generate the doxygen documentation
-  - doc-pdf          : generate all the documentation in pdf
-  - website          : generate the TFEL website
-  - doc              : generate all the documentation
-  - check            : build tests and execute them
-  - install          : install the libraries
+The main generated targets are:
+
+- `all` : build the libraries
+- `doc-html`: generate the `doxygen` documentation
+- `doc-pdf`: generate all the documentation in pdf
+- `website`: generate the `TFEL` website
+- `doc`: generate all the documentation
+- `check`: build tests and execute them
+- `install`: install the libraries

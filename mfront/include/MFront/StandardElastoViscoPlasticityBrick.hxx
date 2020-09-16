@@ -158,8 +158,7 @@ namespace mfront {
      * \brief extract the parameters associated with the staggered scheme
      * \param[in] algorithm_parameters: parameters
      */
-    void treatStaggeredPorosityEvolutionAlgorithmParameters(
-        const std::map<std::string, Data>&);
+    void treatStaggeredPorosityEvolutionAlgorithmParameters(const DataMap&);
     //! \return if a coupling with the porosity evolution is required
     bool isCoupledWithPorosityEvolution() const;
     /*!

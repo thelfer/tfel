@@ -244,6 +244,7 @@ namespace tfel {
         using AssignOperatorPtr = void (*)(void *const, const void *const);
         //! a simple alias.
         using CopyConstructorPtr = void (*)(void *const, const void *const);
+      protected:
         /*!
          * \param[in] i: index
          * \return a pointer to a specific destructor

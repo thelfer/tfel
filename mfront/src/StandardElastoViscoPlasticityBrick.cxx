@@ -366,7 +366,7 @@ namespace mfront {
 
   void StandardElastoViscoPlasticityBrick::
       treatStaggeredPorosityEvolutionAlgorithmParameters(
-          const std::map<std::string, Data>& algorithm_parameters) {
+          const DataMap& algorithm_parameters) {
     auto raise = [](const std::string& m) {
       tfel::raise(
           "StandardElastoViscoPlasticityBrick::"

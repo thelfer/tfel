@@ -49,15 +49,9 @@ namespace mfront {
     virtual const tfel::utilities::Argument& getCurrentCommandLineArgument()
         const = 0;
     virtual bool treatUnknownArgumentBase();
-    //! \brief method that must be called once all the arguments have been parsed
+    //! \brief method that must be called once all the arguments have been
+    //! parsed
     virtual void finalizeArgumentsParsing();
-#ifdef MFRONT_HAVE_MADNEX
-    /*!
-     * \brief treat a `madnex` file
-     * \param[in] f: file name
-     */
-    virtual void treatMadnexFile(const std::string&);
-#endif /* MFRONT_HAVE_MADNEX */
     //! \brief treat the `--verbose` command line option
     virtual void treatVerbose();
     //! \brief treat the `--unicode-output` command line option
@@ -113,6 +107,23 @@ namespace mfront {
      */
     std::set<std::string> interfaces;
   };  // end of struct MFrontBase
+
+  /*!
+   * \return the paths to `MFront` implementations matching the given
+   * pattern in the given file. Standard `MFront` files only contains one
+   * implementations. `Madnex` files may contain several implementations.
+   * \param[in] f: file name
+   * \param[in] material_identifier: identifier of the material (may be empty).
+   * \param[in] behaviour_identifier: identifier for material properties.
+   * \param[in] behaviour_identifier: identifier for behaviours.
+   * \param[in] model_identifier: identifier for behaviours.
+   */
+  MFRONT_VISIBILITY_EXPORT std::vector<std::string>
+  getMFrontImplementationsPaths(const std::string&,
+                                const std::string&,
+                                const std::string&,
+                                const std::string&,
+                                const std::string&);
 
 }  // end of namespace mfront
 

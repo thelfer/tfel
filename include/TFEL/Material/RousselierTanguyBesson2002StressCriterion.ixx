@@ -83,26 +83,25 @@ namespace tfel {
         return (3 * p.qR * (pr / 2) * iomf * ilf);
       }
       // First order approximation
-      const auto A = omfd;
+      const auto A = iomf * seq;
       const auto B = 2 * f * (p.DR / 3);
       const auto C = 3 * p.qR * pr * iomf / 2;
-      const auto a = B * C * C;
+      const auto a = B * C * C / 2;
       const auto b = A + B * C;
       const auto c = B - 1;
 
       const auto x01 = [&] {
         const auto d = b * b - 4 * a * c;
         if ((d < 0) || (tfel::math::ieee754::fpclassify(a) == FP_ZERO)) {
-          return std::min(-b / c, iseq);
+          return std::min(-c / b, iseq);
         }
-        return std::min(
-            std::max((-b + sqrt(d)) / 2 * a, (-b - sqrt(d)) / 2 * a), iseq);
+        return std::min(std::max((-b + sqrt(d)) / (2 * a), (-b - sqrt(d)) / (2 * a)), iseq);
       }();
-
-      const auto lf = std::log(3 / (2 * f * p.DR));
-      const auto ilf = 1 / std::max(lf, seps);
-      const auto x0 = (x01 + 1 / (3 * p.qR * (pr / 2) * iomf * ilf)) / 2;
-      //      const auto d = sqrt(b * b - 4) auto x0 = c / b;  // iseq * omfd;
+      //const auto lf = std::log(3 / (2 * f * p.DR));
+      //const auto ilf = 1 / std::max(lf, seps);
+      //const auto x0 = (x01 + 1 / (3 * p.qR * (pr / 2) * iomf * ilf)) / 2;
+      const auto x0 = x01;
+      //const auto d = sqrt(b * b - 4) auto x0 = c / b;  // iseq * omfd;
       const auto SdS = [seq, pr, f, iomf, p](const istress x) {
         const auto e = std::exp(3 * p.qR * pr * iomf * std::abs(x) / 2);
         const auto S = seq * iomf * std::abs(x) + 2 * f * (p.DR / 3) * e - 1;

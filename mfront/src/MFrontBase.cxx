@@ -32,6 +32,7 @@
 #include "MFront/PedanticMode.hxx"
 #include "MFront/MFrontLogStream.hxx"
 #include "MFront/MFrontDebugMode.hxx"
+#include "MFront/MFrontUtilities.hxx"
 #include "MFront/DSLUtilities.hxx"
 #include "MFront/DefaultDSL.hxx"
 #include "MFront/DSLFactory.hxx"
@@ -156,6 +157,173 @@ namespace mfront {
     }
     return dsl;
   }  // end of MFrontBase::getAbstractDSL
+
+#ifdef MFRONT_HAVE_MADNEX
+  static std::vector<std::string> getMFrontImplementationsPathsInMadnexFiles(
+      const std::string& f,
+      const std::string& material_identifier,
+      const std::string& material_property_identifier,
+      const std::string& behaviour_identifier,
+      const std::string& model_identifier) {
+    auto inputs = std::vector<std::string> {};
+    auto db = madnex::MFrontDataBase{f};
+    auto raise = [](const std::string& m) {
+      tfel::raise("MFrontBase::treatMadnexFile: " + m);
+    };
+    if ((material_property_identifier.empty()) &&
+        (behaviour_identifier.empty()) && (model_identifier.empty())) {
+      raise("no material property or behaviour or model identifier specified ");
+    }
+    if (material_identifier.empty()) {
+      auto filter = [](const std::map<std::string, std::vector<std::string>>&
+                           available_implementations,
+                       const std::string& p) {
+        auto res = std::map<std::string, std::vector<std::string>>{};
+        std::regex r(p);
+        for (const auto& i : available_implementations) {
+          auto impls = std::vector<std::string>{};
+          std::copy_if(
+              i.second.begin(), i.second.end(), std::back_inserter(impls),
+              [&r](const std::string& n) { return std::regex_match(n, r); });
+          if (!impls.empty()) {
+            res[i.first] = impls;
+          }
+        }
+        return res;
+      };  // end of filter
+      auto append = [&inputs, &f](
+          const std::map<std::string, std::vector<std::string>>&
+              selected_implementations,
+          const std::string& t) {
+        for (const auto& mi : selected_implementations) {
+          for (const auto& i : mi.second) {
+            insert_if(inputs,
+                      "madnex:" + f + ":" + t + ":" + mi.first + ":" + i);
+          }
+        }
+      };
+      if (!material_property_identifier.empty()) {
+        const auto mps = filter(db.getAvailableMaterialProperties(),
+                                material_property_identifier);
+        if (mps.empty()) {
+          raise("no material property matching '" +
+                material_property_identifier + "' in file '" + f + "'");
+        }
+        append(mps, "material_property");
+      }
+      if (!behaviour_identifier.empty()) {
+        const auto bs =
+            filter(db.getAvailableBehaviours(), behaviour_identifier);
+        if (bs.empty()) {
+          raise("no behaviour matching '" + behaviour_identifier +
+                "' in file '" + f + "'");
+        }
+        append(bs, "behaviour");
+      }
+      if (!model_identifier.empty()) {
+        const auto ms = filter(db.getAvailableModels(), model_identifier);
+        if (ms.empty()) {
+          raise("no model matching '" + model_identifier + "' in file '" + f +
+                "'");
+        }
+        append(ms, "model");
+      }
+    } else {
+      auto filter = [](const std::vector<std::string>& names,
+                       const std::string& p) {
+        auto res = std::vector<std::string>{};
+        std::regex r(p);
+        std::copy_if(
+            names.begin(), names.end(), std::back_inserter(res),
+            [&r](const std::string& n) { return std::regex_match(n, r); });
+        return res;
+      };  // end of filter
+      auto append = [&inputs, &f, &material_identifier](
+          const std::vector<std::string>& selected_implementations,
+          const std::string& t) {
+        for (const auto& i : selected_implementations) {
+          insert_if(inputs, "madnex:" + f + ":" + t + ":" +
+                                material_identifier + ":" + i);
+        }
+      };
+      if (!material_property_identifier.empty()) {
+        const auto mps =
+            filter(db.getAvailableMaterialProperties(material_identifier),
+                   material_property_identifier);
+        if (mps.empty()) {
+          raise("no material property matching '" +
+                material_property_identifier + "' in file '" + f +
+                "' for material '" + material_identifier + "'");
+        }
+        append(mps, "material_property");
+      }
+      if (!behaviour_identifier.empty()) {
+        const auto bs = filter(db.getAvailableBehaviours(material_identifier),
+                               behaviour_identifier);
+        if (bs.empty()) {
+          raise("no behaviour matching '" + behaviour_identifier +
+                "' in file '" + f + "' for material '" + material_identifier +
+                "'");
+        }
+        append(bs, "behaviour");
+      }
+      if (!model_identifier.empty()) {
+        const auto ms = filter(db.getAvailableModels(material_identifier),
+                               model_identifier);
+        if (ms.empty()) {
+          raise("no model matching '" + model_identifier + "' in file '" + f +
+                "' for material '" + material_identifier + "'");
+        }
+        append(ms, "model");
+      }
+    }
+    return inputs;
+  }    // end of getMFrontImplementationsPathsInMadnexFiles
+#endif /* MFRONT_HAVE_MADNEX */
+
+  std::vector<std::string> getMFrontImplementationsPaths(
+      const std::string& f,
+      const std::string& material_identifier,
+      const std::string& material_property_identifier,
+      const std::string& behaviour_identifier,
+      const std::string& model_identifier) {
+    auto inputs = std::vector<std::string>{};
+    // file extensions
+    const auto ext = [&f]() -> std::string {
+      const auto p = f.find(".");
+      if (p != std::string::npos) {
+        return f.substr(p + 1);
+      }
+      return "";
+    }();
+    if ((ext == "madnex") || (ext == "edf")) {
+#ifdef MFRONT_HAVE_MADNEX
+      inputs = getMFrontImplementationsPathsInMadnexFiles(
+          f, material_identifier, material_property_identifier,
+          behaviour_identifier, model_identifier);
+#else  /* MFRONT_HAVE_MADNEX */
+      tfel::raise(
+          "getMFrontImplementationsPaths: "
+          "madnex support has not been enabled");
+#endif /* MFRONT_HAVE_MADNEX */
+    } else {
+      auto check = [&ext](const std::string& s, const char* const t) {
+        if (s.empty()) {
+          return;
+        }
+        tfel::raise("getMFrontImplementationsPaths: specifiying a " +
+                    std::string(t) +
+                    "' identifier is not valid for files with the extension '" +
+                    ext + "'");
+      };
+      check(material_identifier, "material");
+      check(material_property_identifier, "material property");
+      check(behaviour_identifier, "behaviour");
+      check(model_identifier, "model");
+      inputs.push_back(f);
+    }
+    return inputs;
+  }  // end of getMFrontImplementationsPaths
 
   MFrontBase::MFrontBase() {
     using namespace tfel::system;
@@ -283,7 +451,7 @@ namespace mfront {
 #else  /* _WIN32 */
         const auto s1 = an.substr(2);
 #endif /* _WIN32 */
-        if(std::count(s1.begin(), s1.end(), '@') != 2){
+        if (std::count(s1.begin(), s1.end(), '@') != 2) {
           raise("bad substitution pattern '" + s1 + "'");
         }
         if (s1.empty()) {
@@ -312,158 +480,16 @@ namespace mfront {
     if (starts_with(an, "-")) {
       return false;
     }
-    const auto ext = [&an]() -> std::string {
-      const auto p = an.find(".");
-      if (p != std::string::npos) {
-        return an.substr(p + 1);
-      }
-      return "";
-    }();
-    if (ext == "madnex") {
-#ifdef MFRONT_HAVE_MADNEX
-      this->treatMadnexFile(an);
-#else  /* MFRONT_HAVE_MADNEX */
-      raise("madnex support has not been enabled");
-#endif /* MFRONT_HAVE_MADNEX */
-    } else {
-      auto check = [&ext, &raise](const std::string& s, const char* const t) {
-        if (s.empty()) {
-          return;
-        }
-        raise("specifiying a " + std::string(t) +
-              "' identifier is not valid for files with the extension '" + ext +
-              "'");
-      };
-      check(this->material_identifier, "material");
-      check(this->material_property_identifier, "material property");
-      check(this->behaviour_identifier, "behaviour");
-      check(this->model_identifier, "model");
-      this->inputs.insert(an);
-    }
+    const auto paths = getMFrontImplementationsPaths(
+        an, this->material_identifier, this->material_property_identifier,
+        this->behaviour_identifier, this->model_identifier);
+    this->inputs.insert(paths.begin(), paths.end());
     this->material_identifier.clear();
     this->material_property_identifier.clear();
     this->behaviour_identifier.clear();
     this->model_identifier.clear();
     return true;
   }  // end of MFrontBase::treatUnknownArgument
-
-#ifdef MFRONT_HAVE_MADNEX
-  void MFrontBase::treatMadnexFile(const std::string& f) {
-    auto db = madnex::MFrontDataBase{f};
-    auto raise = [](const std::string& m) {
-      tfel::raise("MFrontBase::treatMadnexFile: " + m);
-    };
-    if ((this->material_property_identifier.empty()) &&
-        (this->behaviour_identifier.empty()) &&
-        (this->model_identifier.empty())) {
-      raise("no material property or behaviour or model identifier specified ");
-    }
-    if (this->material_identifier.empty()) {
-      auto filter = [](const std::map<std::string, std::vector<std::string>>&
-                           available_implementations,
-                       const std::string& p) {
-        auto res = std::map<std::string, std::vector<std::string>>{};
-        std::regex r(p);
-        for (const auto& i : available_implementations) {
-          auto impls = std::vector<std::string>{};
-          std::copy_if(
-              i.second.begin(), i.second.end(), std::back_inserter(impls),
-              [&r](const std::string& n) { return std::regex_match(n, r); });
-          if (!impls.empty()) {
-            res[i.first] = impls;
-          }
-        }
-        return res;
-      };  // end of filter
-      auto append = [this, &f](
-          const std::map<std::string, std::vector<std::string>>&
-              selected_implementations,
-          const std::string& t) {
-        for (const auto& mi : selected_implementations) {
-          for (const auto& i : mi.second) {
-            this->inputs.insert("madnex:" + f + ":" + t + ":" + mi.first + ":" +
-                                i);
-          }
-        }
-      };
-      if (!this->material_property_identifier.empty()) {
-        const auto mps = filter(db.getAvailableMaterialProperties(),
-                                this->material_property_identifier);
-        if (mps.empty()) {
-          raise("no material property matching '" +
-                this->material_property_identifier + "' in file '" + f + "'");
-        }
-        append(mps, "material_property");
-      }
-      if (!this->behaviour_identifier.empty()) {
-        const auto bs =
-            filter(db.getAvailableBehaviours(), this->behaviour_identifier);
-        if (bs.empty()) {
-          raise("no behaviour matching '" + this->behaviour_identifier +
-                "' in file '" + f + "'");
-        }
-        append(bs, "behaviour");
-      }
-      if (!this->model_identifier.empty()) {
-        const auto ms = filter(db.getAvailableModels(), this->model_identifier);
-        if (ms.empty()) {
-          raise("no model matching '" + this->model_identifier + "' in file '" +
-                f + "'");
-        }
-        append(ms, "model");
-      }
-    } else {
-      auto filter = [](const std::vector<std::string>& names,
-                       const std::string& p) {
-        auto res = std::vector<std::string>{};
-        std::regex r(p);
-        std::copy_if(
-            names.begin(), names.end(), std::back_inserter(res),
-            [&r](const std::string& n) { return std::regex_match(n, r); });
-        return res;
-      };  // end of filter
-      auto append = [this, &f](
-          const std::vector<std::string>& selected_implementations,
-          const std::string& t) {
-        for (const auto& i : selected_implementations) {
-          this->inputs.insert("madnex:" + f + ":" + t + ":" +
-                              this->material_identifier + ":" + i);
-        }
-      };
-      if (!this->material_property_identifier.empty()) {
-        const auto mps =
-            filter(db.getAvailableMaterialProperties(this->material_identifier),
-                   this->material_property_identifier);
-        if (mps.empty()) {
-          raise("no material property matching '" +
-                this->material_property_identifier + "' in file '" + f +
-                "' for material '" + this->material_identifier + "'");
-        }
-        append(mps, "material_property");
-      }
-      if (!this->behaviour_identifier.empty()) {
-        const auto bs =
-            filter(db.getAvailableBehaviours(this->material_identifier),
-                   this->behaviour_identifier);
-        if (bs.empty()) {
-          raise("no behaviour matching '" + this->behaviour_identifier +
-                "' in file '" + f + "' for material '" +
-                this->material_identifier + "'");
-        }
-        append(bs, "behaviour");
-      }
-      if (!this->model_identifier.empty()) {
-        const auto ms = filter(db.getAvailableModels(this->material_identifier),
-                               this->model_identifier);
-        if (ms.empty()) {
-          raise("no model matching '" + this->model_identifier + "' in file '" +
-                f + "' for material '" + this->material_identifier + "'");
-        }
-        append(ms, "model");
-      }
-    }
-  }  // end of MFrontBase::treatMadnexFile
-#endif /* MFRONT_HAVE_MADNEX */
 
   void MFrontBase::treatVerbose() {
     const auto& o = this->getCurrentCommandLineArgument().getOption();

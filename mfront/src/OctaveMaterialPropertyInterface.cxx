@@ -107,8 +107,6 @@ namespace mfront
     tfel::system::systemCall::mkdir("octave");
     const auto name = (mpd.material.empty()) ? mpd.className : mpd.material+"_"+mpd.className;
     const auto fn   = "octave/"+ name+".cpp";
-	const auto& params = mpd.parameters;
-	const auto& file=fd.fileName;
     std::ofstream out{fn};
     tfel::raise_if(!out,"OctaveMaterialPropertyInterface::writeOutputFiles: "
 		   "unable to open file '"+fn+"'");

@@ -248,7 +248,6 @@ namespace mfront
     const auto src = this->getSrcFileName(mpd.material,mpd.className);
     const auto fn  = "src/" + src +".cxx";
     const auto name  = (!mpd.material.empty()) ? mpd.material+"_"+mpd.law : mpd.law;
-    const auto& file=fd.fileName;
     std::ofstream os(fn);
     tfel::raise_if(!os,"CMaterialPropertyInterfaceBase::writeOutputFiles : "
 		   "unable to open '"+fn+"' for writing output file.");
