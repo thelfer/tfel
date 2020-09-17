@@ -90,7 +90,10 @@ $src/configure ${python_configure_arg} ${python_bindings_configure_arg} --enable
 $make_exec
 $make_exec check
 $make_exec distcheck
-$make_exec doc-pdf
+if test "x$rdoc" == "xON" ;
+then
+    $make_exec doc-pdf
+fi
 $make_exec install
 popd # from build-autotools
 if test "x$fcheck" == "xno" ;
@@ -101,7 +104,10 @@ then
     $make_exec
     $make_exec check
     $make_exec distcheck
-    $make_exec doc-pdf
+    if test "x$rdoc" == "xON" ;
+    then
+	$make_exec doc-pdf
+    fi
     $make_exec install
     popd # from build-autotools-debug
 fi
