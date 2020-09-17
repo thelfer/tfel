@@ -583,14 +583,29 @@ namespace mfront {
     const auto f = i.getFunctionNameForHypothesis(name, h);
     // rotate thermodynamic forces
     if (is_finite_strain) {
+      const auto stensor_offset =
+          "idx * " + std::to_string(tfel::material::getStensorSize(h));
+      const auto tensor_offset =
+          "idx * " + std::to_string(tfel::material::getTensorSize(h));
       os << "void " << f << "_rotateThermodynamicForces_CauchyStress("
          << "mfront_gb_real* const dest, "
          << "const mfront_gb_real* const src, "
          << "const mfront_gb_real* const rv){\n";
       writeRotationMatrixDefinition(os, true);
-      auto args_cauchy =
-          WriteRotationFunctionArgument{os, h, "sig", 0, ""};
+      auto args_cauchy = WriteRotationFunctionArgument{os, h, "sig", 0, ""};
       writeStensorRotation(args_cauchy);
+      os << "}\n\n";
+      os << "void " << f << "_rotateArrayOfThermodynamicForces_CauchyStress("
+         << "mfront_gb_real* const dest, "
+         << "const mfront_gb_real* const src, "
+         << "const mfront_gb_real* const rv, "
+         << "mfront_gb_size_type s){\n";
+      writeRotationMatrixDefinition(os, true);
+      os << "for(mfront_gb_size_type idx=0; idx != s; ++idx){\n";
+      auto args_cauchy_2 =
+          WriteRotationFunctionArgument{os, h, "sig", 0, stensor_offset};
+      writeStensorRotation(args_cauchy_2);
+      os << "}\n";
       os << "}\n\n";
       os << "void " << f << "_rotateThermodynamicForces_PK2Stress("
          << "mfront_gb_real* const dest, "
@@ -600,6 +615,18 @@ namespace mfront {
       auto args_pk2 = WriteRotationFunctionArgument{os, h, "pk2", 0, ""};
       writeStensorRotation(args_pk2);
       os << "}\n\n";
+      os << "void " << f << "_rotateArrayOfThermodynamicForces_PK2Stress("
+         << "mfront_gb_real* const dest, "
+         << "const mfront_gb_real* const src, "
+         << "const mfront_gb_real* const rv, "
+         << "mfront_gb_size_type s){\n";
+      writeRotationMatrixDefinition(os, true);
+      os << "for(mfront_gb_size_type idx=0; idx != s; ++idx){\n";
+      auto args_pk2_2 =
+          WriteRotationFunctionArgument{os, h, "pk2", 0, stensor_offset};
+      writeStensorRotation(args_pk2_2);
+      os << "}\n";
+      os << "}\n\n";
       os << "void " << f << "_rotateThermodynamicForces_PK1Stress("
          << "mfront_gb_real* const dest, "
          << "const mfront_gb_real* const src, "
@@ -607,6 +634,18 @@ namespace mfront {
       writeRotationMatrixDefinition(os, true);
       auto args_pk1 = WriteRotationFunctionArgument{os, h, "pk1", 0, ""};
       writeTensorRotation(args_pk1);
+      os << "}\n\n";
+      os << "void " << f << "_rotateArrayOfThermodynamicForces_PK1Stress("
+         << "mfront_gb_real* const dest, "
+         << "const mfront_gb_real* const src, "
+         << "const mfront_gb_real* const rv, "
+         << "mfront_gb_size_type s){\n";
+      writeRotationMatrixDefinition(os, true);
+      os << "for(mfront_gb_size_type idx=0; idx != s; ++idx){\n";
+      auto args_pk1_2 =
+          WriteRotationFunctionArgument{os, h, "pk1", 0, tensor_offset};
+      writeTensorRotation(args_pk1_2);
+      os << "}\n";
       os << "}\n\n";
     } else {
       os << "void " << f << "_rotateThermodynamicForces("
