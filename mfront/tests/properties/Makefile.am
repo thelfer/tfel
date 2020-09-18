@@ -92,6 +92,21 @@ nodist_libMFrontMaterialProperties_castem_la_SOURCES = src/VanadiumAlloy_YoungMo
 						       src/Inconel600_YoungModulus-castem.cxx
 endif
 
+BUILT_SOURCES=include/ErrnoHandlingCheck.hxx                         \
+	      include/VanadiumAlloy_YoungModulus_SRMA.hxx            \
+	      include/VanadiumAlloy_PoissonRatio_SRMA.hxx            \
+	      include/VanadiumAlloy_SpecificHeat_SRMA.hxx            \
+	      include/VanadiumAlloy_ThermalExpansion_SRMA.hxx        \
+	      include/VanadiumAlloy_ThermalConductivity_SRMA.hxx     \
+              include/ErrnoHandlingCheck-cxx.hxx                     \
+	      include/VanadiumAlloy_YoungModulus_SRMA-cxx.hxx        \
+	      include/VanadiumAlloy_PoissonRatio_SRMA-cxx.hxx        \
+	      include/VanadiumAlloy_SpecificHeat_SRMA-cxx.hxx        \
+	      include/VanadiumAlloy_ThermalExpansion_SRMA-cxx.hxx    \
+	      include/VanadiumAlloy_ThermalConductivity_SRMA-cxx.hxx
+
+
+
 testdir = $(pkgdatadir)/mfront/tests/
 
 test_PROGRAMS = test-c
