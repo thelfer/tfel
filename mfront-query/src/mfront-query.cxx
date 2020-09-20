@@ -385,7 +385,7 @@ int main(const int argc, const char* const* const argv) {
       q->exe();
     }
 #if not defined(__GLIBCXX__)
-  } catch (exception& e) {
+  } catch (std::exception& e) {
 #if defined _WIN32 || defined _WIN64 || defined __CYGWIN__
     if (bg) {
       MessageBox(nullptr, e.what(), "mfront", 0);
