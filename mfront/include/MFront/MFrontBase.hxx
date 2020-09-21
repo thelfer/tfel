@@ -73,12 +73,18 @@ namespace mfront {
     virtual void treatInterface();
     //! \brief treat the `--material-identifier` command line option
     virtual void treatMaterialIdentifier();
-    //! \brief treat the `--material-property-identifier` command line option
+    //! \brief treat the `--material-property` command line option
     virtual void treatMaterialPropertyIdentifier();
-    //! \brief treat the `--behaviour-identifier` command line option
+    //! \brief treat the `--all-material-properties` command line option
+    virtual void treatAllMaterialProperties();
+    //! \brief treat the `--behaviour` command line option
     virtual void treatBehaviourIdentifier();
-    //! \brief treat the `--model-identifier` command line option
+    //! \brief treat the `--all-behaviours` command line option
+    virtual void treatAllBehaviours();
+    //! \brief treat the `--model` command line option
     virtual void treatModelIdentifier();
+    //! \brief treat the `--all-models` command line option
+    virtual void treatAllModels();
     /*!
      * \brief external commands specificed on the command line through
      * an `--@XXX` option. Those external commends are applied to

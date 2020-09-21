@@ -60,12 +60,85 @@ More information about the options that can be passed to `cmake` are
 given in the `INSTALL-cmake` file which is located at the root of the
 `TFEL` sources.
 
+# `mfront` usage
+
+The only thing specific to `madnex` files is the selection of the
+implementation to be treated.
+
+For a behaviour, this selection is done through the `--material` and
+`--behaviour` options. For example:
+
+~~~~{.bash}
+$ mfront --obuild --interface=generic --material=<material_id> --behaviour=<behaviour_id> file.madnex
+~~~~
+
+Here, `behaviour_id` can be a regular expression.
+
+For material properties and models, the `--material-property` and
+`--model` options have a similar role than the `--behaviour` option for
+behaviours.
+
+The `--all-material-properties`, `--all-behaviours`, and `--all-models`
+options allows to select all the material properties, behaviours and
+models respectively, as follows:
+
+~~~~{.bash}
+$ mfront --obuild --interface=generic --material=<material_id> --all-behaviours file.madnex
+~~~~
+
+The material name `<none>` has a special meaning here: it allows the
+selection of implementations that not associated with a material.
+
+# `mfront` python module
+
+The `mfront` python module is fully described here:
+
+<http://tfel.sourceforge.net/mfront-python.html>
+
+The main function related to `madnex` file support is the
+`getMFrontImplementationsPaths` which takes five arguments:
+
+- the name of the file. The name of this argument is `file`;
+- the name of a material. If the material name is empty, the
+  implementations associated with all the materials are are considered
+  and also the implementations associated with no material. To select
+  only implementations associated with no material, one shall use the
+  special material name `<none>`. The name of this argument is `material`.
+- a regular expression describing the searched material properties. This
+  argument can be empty. The name of this argument is
+  `material_property`.
+- a regular expression describing the searched behaviours. This argument
+  can be empty. The name of this argument is `behaviour`.
+- a regular expression describing the searched models. This argument can
+  be empty. The name of this argument is `model`.
+
+This function returns a list of strings where the path of the
+implementation is encoded.
+
+~~~~{.python}
+import mfront
+
+paths = mfront.getMFrontImplementationsPaths("file.madnex",
+                                             material=<material_id>,
+                                             behaviour=behaviour_id>)
+if len(paths) == 0:
+  raise("no matching implementation")
+
+dsl = mfront.getDSL(paths[0])
+dsl.analyseFile(paths[0])
+~~~~
+
 # `mfront-query` usage
 
 ## Options specific to `madnex` files
 
 Several options has been added to the `mfront-query` specifically for
 `madnex` files.
+
+Queries of the file itself (list of materials, behaviours, etc...) are
+also provided by the `madnex-query` tool.
+
+### Listing all material a `madnex` file
 
 The `--list-materials` returns the list of all materials in a `MFront`
 file:
@@ -74,51 +147,41 @@ file:
 $ `mfront-query` --list-materials file.madnex
 ~~~~
 
+### Listing of all material properties, all behaviours or all models
 
+The following options are available:
+
+- `--list-material-properties`: list of material properties.
+- `--list-behaviours`: list of all behaviours.
+- `--list-models`: list of all models.
+
+A typical call is as follows:
 
 ~~~~{.bash}
 $ `mfront-query` --list-behaviours file.madnex
 ~~~~
 
+The previous options are affected by the the definition of a material,
+as follows:
+
 ~~~~{.bash}
 $ `mfront-query` --material=<material_id> --list-behaviours file.madnex
 ~~~~
 
-## Options specific to `madnex` files
+## Querying information about implementation, options specific to `madnex` files
 
-# `mfront` usage
-
-~~~~{.bash}
-$ mfront --obuild --interface=generic --material=<material_id> --behaviour=<behaviour_id> file.madnex
-~~~~
-
-The '--behaviour' option is not mandatory when only one behaviour is
-stored.
+For a behaviour, the selection of an implementation on which the queries
+are made is done through the `--material` and `--behaviour` options. For
+example:
 
 ~~~~{.bash}
-$ mfront --obuild --interface=generic --material=<material_id> --all-behaviours file.madnex
+$ mfront-query --obuild --interface=generic --material=<material_id> --behaviour=<behaviour_id> file.madnex --state-variables
 ~~~~
 
-~~~~{.bash}
-$ mfront --obuild --interface=generic --all-behaviours file.madnex
-~~~~
+Here, `behaviour_id` can be a regular expression.
 
-# `mfront` python module
-
-<http://tfel.sourceforge.net/mfront-python.html>
-
-~~~~{.python}
-import mfront
-
-dsl = mfront.getDSL("file.madnex",<material_id>,<behaviour_id>)
-dsl.analyseFile("file.madnex",<material_id>,<behaviour_id>)
-~~~~
-
-~~~~{.python}
-import mfront
-
-dsl = mfront.getDSL("file.madnex",<behaviour_id>)
-dsl.analyseFile("file.madnex",<behaviour_id>)
-~~~~
+For material properties and models, the `--material-property` and
+`--model` options have a similar role than the `--behaviour` option for
+behaviours.
 
 # References

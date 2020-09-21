@@ -229,6 +229,9 @@ namespace mfront {
         append(ms, "model");
       }
     } else {
+      const auto m_id = [&material_identifier]() -> std::string {
+        return material_identifier == "<none>" ? "" : material_identifier;
+      }();
       auto filter = [](const std::vector<std::string>& names,
                        const std::string& p) {
         auto res = std::vector<std::string>{};
@@ -238,17 +241,16 @@ namespace mfront {
             [&r](const std::string& n) { return std::regex_match(n, r); });
         return res;
       };  // end of filter
-      auto append = [&inputs, &f, &material_identifier](
+      auto append = [&inputs, &f, &m_id](
           const std::vector<std::string>& selected_implementations,
           const std::string& t) {
         for (const auto& i : selected_implementations) {
-          insert_if(inputs, "madnex:" + f + ":" + t + ":" +
-                                material_identifier + ":" + i);
+          insert_if(inputs, "madnex:" + f + ":" + t + ":" + m_id + ":" + i);
         }
       };
       if (!material_property_identifier.empty()) {
         const auto mps =
-            filter(db.getAvailableMaterialProperties(material_identifier),
+            filter(db.getAvailableMaterialProperties(m_id),
                    material_property_identifier);
         if (mps.empty()) {
           raise("no material property matching '" +
@@ -258,8 +260,8 @@ namespace mfront {
         append(mps, "material_property");
       }
       if (!behaviour_identifier.empty()) {
-        const auto bs = filter(db.getAvailableBehaviours(material_identifier),
-                               behaviour_identifier);
+        const auto bs =
+            filter(db.getAvailableBehaviours(m_id), behaviour_identifier);
         if (bs.empty()) {
           raise("no behaviour matching '" + behaviour_identifier +
                 "' in file '" + f + "' for material '" + material_identifier +
@@ -268,8 +270,7 @@ namespace mfront {
         append(bs, "behaviour");
       }
       if (!model_identifier.empty()) {
-        const auto ms = filter(db.getAvailableModels(material_identifier),
-                               model_identifier);
+        const auto ms = filter(db.getAvailableModels(m_id), model_identifier);
         if (ms.empty()) {
           raise("no model matching '" + model_identifier + "' in file '" + f +
                 "' for material '" + material_identifier + "'");
@@ -382,9 +383,24 @@ namespace mfront {
                    "MFrontBase::treatMaterialPropertyIdentifier: "
                    "can't specify a behaviour identifier and "
                    "a model identifier");
-    this->behaviour_identifier = o;
+    this->material_property_identifier = o;
   }  // end of MFrontBase::treatMaterialPropertyIdentifier
 
+  void MFrontBase::treatAllMaterialProperties() {
+    tfel::raise_if(!this->material_property_identifier.empty(),
+                   "MFrontBase::treatMaterialPropertyIdentifier: "
+                   "material property identifier already specified");
+    tfel::raise_if(!this->behaviour_identifier.empty(),
+                   "MFrontBase::treatMaterialPropertyIdentifier: "
+                   "can't specify a material property identifier and "
+                   "a behaviour identifier");
+    tfel::raise_if(!this->model_identifier.empty(),
+                   "MFrontBase::treatMaterialPropertyIdentifier: "
+                   "can't specify a behaviour identifier and "
+                   "a model identifier");
+    this->material_property_identifier = ".+";
+  }  // end of MFrontBase::treatAllMaterialProperties
+ 
   void MFrontBase::treatBehaviourIdentifier() {
     auto& o = this->getCurrentCommandLineArgument().getOption();
     tfel::raise_if(o.empty(),
@@ -404,6 +420,21 @@ namespace mfront {
     this->behaviour_identifier = o;
   }  // end of MFrontBase::treatBehaviourIdentifier
 
+  void MFrontBase::treatAllBehaviours() {
+    tfel::raise_if(!this->behaviour_identifier.empty(),
+                   "MFrontBase::treatBehaviourIdentifier: "
+                   "behaviour identifier already specified");
+    tfel::raise_if(!this->material_property_identifier.empty(),
+                   "MFrontBase::treatBehaviourIdentifier: "
+                   "can't specify a behaviour identifier and "
+                   "a material property identifier");
+    tfel::raise_if(!this->model_identifier.empty(),
+                   "MFrontBase::treatBehaviourIdentifier: "
+                   "can't specify a behaviour identifier and "
+                   "a model identifier");
+    this->behaviour_identifier = ".+";
+  }  // end of MFrontBase::treatAllBehaviours
+
   void MFrontBase::treatModelIdentifier() {
     auto& o = this->getCurrentCommandLineArgument().getOption();
     tfel::raise_if(o.empty(),
@@ -422,6 +453,21 @@ namespace mfront {
                    "a behaviour identifier");
     this->model_identifier = o;
   }  // end of MFrontBase::treatModelIdentifier
+
+  void MFrontBase::treatAllModels() {
+    tfel::raise_if(!this->model_identifier.empty(),
+                   "MFrontBase::treatModelIdentifier: "
+                   "model identifier already specified");
+    tfel::raise_if(!this->material_property_identifier.empty(),
+                   "MFrontBase::treatModelIdentifier: "
+                   "can't specify a model identifier and "
+                   "a material property identifier");
+    tfel::raise_if(!this->behaviour_identifier.empty(),
+                   "MFrontBase::treatModelIdentifier: "
+                   "can't specify a model identifier and "
+                   "a behaviour identifier");
+    this->model_identifier = ".+";
+  }  // end of MFrontBase::treatAllModels
 
   void MFrontBase::treatSearchPath() {
     const auto& o = this->getCurrentCommandLineArgument().getOption();

@@ -326,6 +326,15 @@ namespace mfront {
     this->registerNewCallBack(
         "--model", &MFront::treatModelIdentifier,
         "specify a model identifier (can be a regular expression)", true);
+    this->registerNewCallBack(
+        "--all-material-properties", &MFront::treatAllMaterialProperties,
+        "select all material properties", true);
+    this->registerNewCallBack(
+        "--all-behaviours", &MFront::treatAllBehaviours,
+        "select all behaviours", true);
+    this->registerNewCallBack(
+        "--all-models", &MFront::treatAllModels,
+        "select all models", true);
 #endif /* MFRONT_HAVE_MADNEX */
     this->registerNewCallBack(
         "--help-commands", &MFront::treatHelpCommands,
