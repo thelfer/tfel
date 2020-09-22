@@ -13,6 +13,7 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./behaviours.md				              \
 	   ./implicit-dsl.md				              \
 	   ./models.md				                      \
+	   ./madnex.md				                      \
 	   ./castem.md						      \
 	   ./castem-fr.md					      \
 	   ./epx.md						      \

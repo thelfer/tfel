@@ -15,8 +15,10 @@
 #define LIB_TFEL_CHECK_CONFIGURATION_HXX
 
 #include<map>
+#include<vector>
 #include<string>
 #include"TFEL/Check/TFELCheckConfig.hxx"
+#include"TFEL/Check/PCLogger.hxx"
 
 namespace tfel{
 
@@ -36,6 +38,8 @@ namespace tfel{
       Configuration& operator=(Configuration&&);
       //! \brief standard assignement
       Configuration& operator=(const Configuration&);
+      //! \brief list of subordinates
+      std::vector<std::string> available_components;
       /*!
        * \brief substitutions applied to `.check` files.
        *
@@ -43,6 +47,8 @@ namespace tfel{
        * replaced by value.
        */
       std::map<std::string,std::string> substitutions;
+      //! global logger
+      PCLogger log;
     }; // end of struct Configuration
     
   } // end of namespace check

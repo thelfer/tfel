@@ -100,3 +100,15 @@ licencesdir = $(pkgdatadir)
 dist_licences_DATA = LICENCE-GNU-GPL \
                      LICENCE-CECILL-A-EN \
                      LICENCE-CECILL-A-FR
+
+## This rule requires Autoconf 2.62 or newer.
+install-data-local:
+	@$(NORMAL_INSTALL)
+	$(MKDIR_P) $(pkgdatadir)
+	cp -R $(srcdir)/test-suite $(pkgdatadir)/
+
+## Warning: the following rule assumes that this package is the
+## sole owner of files below $(help_dir)!
+uninstall-local:
+	@$(NORMAL_UNINSTALL)
+	rm -f $(pkgdatadir)/test-suite

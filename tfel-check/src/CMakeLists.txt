@@ -29,10 +29,15 @@ target_link_libraries(TFELCheck
 
 add_executable(tfel-check tfel-check.cxx)
 target_link_libraries(tfel-check
-  TFELCheck TFELUtilities TFELSystem)
+  TFELMFront TFELCheck TFELUtilities TFELSystem)
 if(TFEL_APPEND_SUFFIX)
   set_target_properties(tfel-check
     PROPERTIES OUTPUT_NAME "tfel-check-${TFEL_SUFFIX}")
 endif(TFEL_APPEND_SUFFIX)
   install(TARGETS tfel-check DESTINATION bin
     COMPONENT core)
+
+if(HAVE_MADNEX)
+  target_compile_definitions(tfel-check
+    PUBLIC TFEL_MADNEX)
+endif(HAVE_MADNEX)

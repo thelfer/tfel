@@ -1,0 +1,11 @@
+@DSL Implicit;
+@Behaviour TestMP;
+@Description{
+  "This test is meant to check that the exported "
+  "material properties works as expected"
+}
+
+@Brick StandardElasticity{
+  young_modulus : "127.8e9*(1-7.825e-5*(T-293.15))",
+  poisson_ratio : 0.3
+};

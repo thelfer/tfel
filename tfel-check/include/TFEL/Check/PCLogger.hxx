@@ -5,12 +5,12 @@
  * \author sb152252
  * \date 31 août 2009
  *
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_TFELCHECK_PCLOGGER_HXX
@@ -19,25 +19,32 @@
 #include <vector>
 #include <memory>
 #include "TFEL/Check/TFELCheckConfig.hxx"
-#include "TFEL/Check/PCILogDriver.hxx"
 
-namespace tfel{
+namespace tfel {
 
-  namespace check{
+  namespace check {
 
-    struct TFELCHECK_VISIBILITY_EXPORT PCLogger
-    {
+    // forward declaration
+    struct PCILogDriver;
+
+    struct TFELCHECK_VISIBILITY_EXPORT PCLogger {
+      //! a simple alias
       using driver = std::shared_ptr<PCILogDriver>;
-    
+      //! \brief default constructor
       PCLogger();
       /*!
        * \param[in] logDriver
        */
       PCLogger(const driver&);
+      //! \brief move constructor
       PCLogger(PCLogger&&);
+      //! \brief copy constructor
       PCLogger(const PCLogger&);
+      //! \brief move assignement
       PCLogger& operator=(PCLogger&&);
+      //! \brief standard assignement
       PCLogger& operator=(const PCLogger&);
+      //! \brief destructor
       virtual ~PCLogger();
 
       /*!
@@ -59,7 +66,11 @@ namespace tfel{
        * \param message a message to send to log.
        */
       void addMessage(const std::string& message);
-
+      /*!
+       * \brief report that a test has been skipped
+       * \param[in] d: description of the test
+       */
+      void reportSkippedTest(const std::string&);
       /*!
        * \brief add a simple test result to all log outputs
        *
@@ -67,8 +78,9 @@ namespace tfel{
        * \param success a bool test success
        * \param message a string message explaining the test result
        */
-      void addSimpleTestResult(const std::string& testname, bool success,
-			       const std::string& message = "");
+      void addSimpleTestResult(const std::string& testname,
+                               const bool success,
+                               const std::string& message = "");
 
       /*!
        * \brief add a test result to all log outputs
@@ -80,18 +92,21 @@ namespace tfel{
        * \param success a bool test success
        * \param message a string message explaining the test result
        */
-      void addTestResult(const std::string& testname, const std::string& step,
-			 const std::string& command, float time, bool success,
-			 const std::string& message = "");
+      void addTestResult(const std::string& testname,
+                         const std::string& step,
+                         const std::string& command,
+                         const float time,
+                         const bool success,
+                         const std::string& message = "");
 
       void terminate();
 
-    private:
+     private:
       std::vector<driver> drivers;
     };
 
-  } // end of namespace check
+  }  // end of namespace check
 
-} // end of namespace tfel
+}  // end of namespace tfel
 
 #endif /* LIB_TFELCHECK_PCLOGGER_HXX */

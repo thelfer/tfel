@@ -1,0 +1,4 @@
+/* Generating MFront behaviour and material properties */
+
+@Requires {"tfel::madnex","mfront::python"};
+@Command "@python@ MadnexTest.py";

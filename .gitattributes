@@ -6786,6 +6786,14 @@ src/Utilities/StringAlgorithms.cxx -text
 src/Utilities/TerminalColors.cxx -text
 src/Utilities/TextData.cxx -text
 src/Utilities/Token.cxx -text
+test-suite/clean.sh -text
+test-suite/madnex/MFront-test1.madnex -text
+test-suite/madnex/MadnexTest.py -text
+test-suite/madnex/madnex.check -text
+test-suite/madnex/test.py -text
+test-suite/python-bindings/MaterialPropertyTest.py -text
+test-suite/python-bindings/material-properties.check -text
+test-suite/python-bindings/test-mp.mfront -text
 tests/CMakeLists.txt -text
 tests/FSAlgorithms/CMakeLists.txt -text
 tests/FSAlgorithms/Makefile.am -text

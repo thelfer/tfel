@@ -46,12 +46,14 @@ namespace tfel{
        * \brief Append a message to log.
        * Append a message to log (to be implemented by inherited class).
        *
-       * \param message a message to send to log.
-       *
-       * \retval <return value> { description }
+       * \param[in] message a message to send to log.
        */
-      virtual void addMessage(const std::string& message) = 0;
-
+      virtual void addMessage(const std::string&) = 0;
+      /*!
+       * \brief report that a test has been skipped
+       * \param[in] d: description of the test
+       */
+      virtual void reportSkippedTest(const std::string&) = 0;
       /*!
        * \brief add a test result to log.
        * Append a test result to log (to be implemented by inherited class).

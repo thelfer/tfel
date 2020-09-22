@@ -24,8 +24,7 @@
 
 namespace mfront{
 
-  struct MFRONT_VISIBILITY_EXPORT BehaviourInterfaceFactory
-  {
+  struct MFRONT_VISIBILITY_EXPORT BehaviourInterfaceFactory {
     typedef std::shared_ptr<AbstractBehaviourInterface> (*InterfaceCreator)();
     
     static BehaviourInterfaceFactory&
@@ -42,37 +41,31 @@ namespace mfront{
      * \return a newly created interface
      * \param[in] n : interface name
      */
-    std::shared_ptr<AbstractBehaviourInterface>
-    getInterface(const std::string&);
+    std::shared_ptr<AbstractBehaviourInterface> getInterface(
+        const std::string&);
 
-    void registerInterfaceCreator(const std::string&,
-				  InterfaceCreator);
-   
-    void
-    registerInterfaceAlias(const std::string&,
-			   const std::string&);
- 
+    void registerInterfaceCreator(const std::string&, InterfaceCreator);
+
+    void registerInterfaceAlias(const std::string&, const std::string&);
 
     ~BehaviourInterfaceFactory();
     
   private:
+   typedef std::map<std::string, std::string> AliasContainer;
+   typedef std::map<std::string, InterfaceCreator> InterfaceCreatorsContainer;
 
-    typedef std::map<std::string,std::string> AliasContainer;
-    typedef std::map<std::string,InterfaceCreator> InterfaceCreatorsContainer;
+   TFEL_VISIBILITY_LOCAL BehaviourInterfaceFactory() = default;
+   BehaviourInterfaceFactory(const BehaviourInterfaceFactory&) = delete;
+   BehaviourInterfaceFactory(BehaviourInterfaceFactory&&) = delete;
+   BehaviourInterfaceFactory& operator=(const BehaviourInterfaceFactory&) =
+       delete;
+   BehaviourInterfaceFactory& operator=(BehaviourInterfaceFactory&&) = delete;
 
-    TFEL_VISIBILITY_LOCAL BehaviourInterfaceFactory() = default;
-    BehaviourInterfaceFactory(const BehaviourInterfaceFactory&) = delete;
-    BehaviourInterfaceFactory(BehaviourInterfaceFactory&&) = delete;
-    BehaviourInterfaceFactory& operator = (const BehaviourInterfaceFactory&) = delete;
-    BehaviourInterfaceFactory& operator = (BehaviourInterfaceFactory&&) = delete;
+   TFEL_VISIBILITY_LOCAL
+   InterfaceCreatorsContainer& getInterfaceCreatorsMap() const;
 
-    TFEL_VISIBILITY_LOCAL
-    InterfaceCreatorsContainer&
-    getInterfaceCreatorsMap() const;
-
-    TFEL_VISIBILITY_LOCAL
-    AliasContainer&
-    getAliasesMap() const;
+   TFEL_VISIBILITY_LOCAL
+   AliasContainer& getAliasesMap() const;
 
   };
 

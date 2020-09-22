@@ -1,21 +1,21 @@
 /*!
  * \file   Configuration.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   13 sept. 2017
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
-#include"TFEL/Check/Configuration.hxx"
+#include "TFEL/Check/Configuration.hxx"
 
-namespace tfel{
+namespace tfel {
 
-  namespace check{
+  namespace check {
 
     Configuration::Configuration() = default;
 
@@ -23,12 +23,10 @@ namespace tfel{
 
     Configuration::Configuration(const Configuration&) = default;
 
-    Configuration&
-    Configuration::operator=(Configuration&&) = default;
+    Configuration& Configuration::operator=(Configuration&&) = default;
 
-    Configuration&
-    Configuration::operator=(const Configuration&) = default;
-    
-  } // end of namespace check
+    Configuration& Configuration::operator=(const Configuration&) = default;
 
-} // end of namespace tfel
+  }  // end of namespace check
+
+}  // end of namespace tfel
