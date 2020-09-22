@@ -3077,4 +3077,14 @@ namespace mfront {
     }
   }  // end of checkIsStrictlyNegative
 
+  std::string getParametersFileName(const BehaviourDescription& bd){
+    return bd.getClassName() + "-parameters.txt";
+  }  // end of getParametersFileName
+
+  std::string getParametersFileName(const BehaviourDescription& bd,
+                                   const BehaviourDescription::Hypothesis h) {
+    const auto hn = BehaviourDescription::ModellingHypothesis::toString(h);
+    return bd.getClassName() + hn + "-parameters.txt";
+  }  // end of getParametersFileName
+
 }  // end of namespace mfront

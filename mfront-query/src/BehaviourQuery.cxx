@@ -308,7 +308,10 @@ namespace mfront {
          "show the list of attributes of the behaviour description"},
         {"--code-blocks",
          "show the list of code-blocks of the behaviour description for "
-         " the selected modelling hypothesis"}};
+         " the selected modelling hypothesis"},
+        {"--parameters-file",
+         "display the name of a text file which can be used to modify the "
+         "default value of the parameters"}};
     for (const auto& q : sq) {
       Parser::registerNewCallBack(q.first, &BehaviourQuery::treatStandardQuery,
                                   q.second);
@@ -806,11 +809,22 @@ namespace mfront {
            }});
     } else if (qn == "--code-blocks") {
       this->queries.push_back(
-          {"attributes", [](const FileDescription&,
+          {"code-blocks", [](const FileDescription&,
                             const BehaviourDescription& d, const Hypothesis h) {
              const auto& names = d.getBehaviourData(h).getCodeBlockNames();
              for (const auto& n : names) {
                cout << "- " << n << '\n';
+             }
+           }});
+    } else if (qn == "--parameters-file") {
+      this->queries.push_back(
+          {"parameters-file",
+           [](const FileDescription&, const BehaviourDescription& d,
+              const Hypothesis h) {
+             if (h != ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
+               cout << mfront::getParametersFileName(d, h) << '\n';
+             } else {
+               cout << mfront::getParametersFileName(d) << '\n';
              }
            }});
     } else {

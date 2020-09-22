@@ -1829,6 +1829,23 @@ namespace mfront {
   };  // end of struct BehaviourDescription
 
   /*!
+   * \return the name of a text file allowing the change the name of the
+   * parameters of the given behaviour
+   * \param[in] bd: behaviour description
+   */
+  MFRONT_VISIBILITY_EXPORT std::string getParametersFileName(
+      const BehaviourDescription&);
+  /*!
+   * \return the name of a text file allowing the change the name of the
+   * parameters of the given behaviour for the given hypothesis
+   * \param[in] bd: behaviour description
+   * \param[in] h: modelling hypothesis
+   * \note h must not be the undefined hypothesis.
+   */
+  MFRONT_VISIBILITY_EXPORT std::string getParametersFileName(
+      const BehaviourDescription&, const BehaviourDescription::Hypothesis);
+
+  /*!
    * \brief set the elastic symmetry of a material if not already
    * defined. If already defined, check that the symmetry is the same
    * as the one given in argument

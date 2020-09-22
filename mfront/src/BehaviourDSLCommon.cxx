@@ -7264,10 +7264,11 @@ namespace mfront {
       }
     }
     os << "// Reading parameters from a file\n";
-    os << cname << "::readParameters(*this,\"" << this->mb.getClassName() << "-parameters.txt\");\n";
+    os << cname << "::readParameters(*this,\"" << getParametersFileName(this->mb)
+       << "\");\n";
     if (h != ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
-      os << cname << "::readParameters(*this,\"" << this->mb.getClassName() << ModellingHypothesis::toString(h)
-         << "-parameters.txt\");\n";
+      os << cname << "::readParameters(*this,\""
+         << getParametersFileName(this->mb, h) << "\");\n";
     }
     os << "}\n\n";
     auto write_if = [&os](bool& b) {
