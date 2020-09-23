@@ -1,6 +1,15 @@
-% Parameters
-% Thomas Hefer
-% November 6, 2014
+---
+title: Parameters in `MFront`
+author: Thomas
+date: 6/10/2014
+lang: en-EN
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tabPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
 
 # Rationale
 
@@ -46,16 +55,26 @@ few shortcomings (compared to material properties).
 Parameters are defined with the `@Parameter` keyword. The following
 syntax are allowed:
 
-~~~~~~~~~{#parameters .cpp}
-@Parameter dmax1 =  0.98; // initialisation by assignment syntax
-@Parameter dmax2(0.98);   // constructor syntax
-@Parameter dmax3{0.98};   // uniform initialisation syntax
-@Parameter dmax4;         // only syntax valid for tfel < 2.0
+~~~~~{#parameters .cpp}
+@Parameter real dmax1 =  0.98; // initialisation by assignment syntax
+@Parameter real dmax2(0.98);   // constructor syntax
+@Parameter real dmax3{0.98};   // uniform initialisation syntax
+@Parameter real dmax4;         // only syntax valid for tfel < 2.0
 dmax4.setDefaultValue(0.98);
-~~~~~~~~~
+~~~~~
 
 A glossary name or an entry name can be associated to a parameter
 through the `setGlossaryName` or the `setEntryName` method.
+
+> **Note**
+>
+> Historically, the type of the parameter was not required and was
+> implicitly assumed to be of the `real` type. Although deprecated,
+> the following syntax is still valid:
+> 
+> ~~~~~{#parameters .cpp}
+> @Parameter dmax1 =  0.98; // initialisation by assignment syntax
+> ~~~~~
 
 # Modifying a parameter at runtime
 
@@ -65,7 +84,7 @@ There are two ways to modify a parameter at runtime:
 - through an external file
 
 From our point of view, the first method is preferable but is not
-always avaiable. Some examples are provided below.
+always available. Some examples are provided below.
 
 ## Examples of modify the calling solver input file
 
@@ -80,7 +99,7 @@ The keyword `@Parameter` is available in [`MTest`](mtest.html).
 The `***parameter` section can be used to define parameters from the
 input file.
 
-## External file
+## External file {#sec:mfront:parameters:parameters_file}
 
 Let us take an example of a behaviour named `Mazars` (the behaviour
 name is defined by the value given to the `@Behaviour` keyword and
@@ -107,5 +126,60 @@ This functionality is illustrated below:
 
 ![Defintion of parameters through an external file](img/parameters.svg
  "Defintion of parameters through an external file")
+
+# Querying information about parameters in `mfront-query`
+
+## List of parameters
+
+The list of parameters in an `mfront` file can be retrieved as follows:
+
+~~~~{.bash}
+$ mfront-query --parameters Rousselier.mfront
+...
+- safety_factor_for_the_upper_bound_of_the_porosity: a safety factor for the porosity upper bound
+- safety_factor_for_the_upper_bound_of_the_porosity_for_fracture_detection: a safety factor for the porosity upper bound
+- staggered_scheme_porosity_criterion: stopping criterion value of the staggered scheme
+- staggered_scheme_maximum_number_of_iterations: maximum number of iterations of the staggered scheme allowed
+- minimal_time_step_scaling_factor: minimal value for the time step scaling factor
+- maximal_time_step_scaling_factor: maximal value for the time step scaling factor
+- numerical_jacobian_epsilon: perturbation value used to compute a numerical approximation of the jacobian
+- iterMax: maximum number of iterations allowed
+~~~~
+
+## Querying the default value of a parameter
+
+The default value of a parameter can be retrieved using the
+`--parameter-default-value` query, as follows:
+
+~~~~{.bash}
+$ mfront-query --parameter-default-value=epsilon Rousselier.mfront 
+1.e-14
+$ mfront-query --parameter-default-value=iterMax Rousselier.mfront
+100
+~~~~
+
+## Querying the type of a parameter
+
+The type of a parameter can be retrieved through the `--parameter-type`
+query, as follows:
+
+~~~~{.bash}
+$ mfront-query --parameter-type=iterMax Rousselier.mfront
+ushort
+~~~~
+
+Here `ushort` means that the `iterMax` parameter is stored as unsigned
+short integer.
+
+## Querying the name of the parameters' file through `mfront-query`
+
+The name of the file which can be used to modify the parameters' values
+(see Section @sec:mfront:parameters:parameters_file) can be retrieved
+with the `--parameters-file` query:
+
+~~~~{.bash}
+$ mfront-query --parameters-file Rousselier.mfront 
+Rousseliertest-parameters.txt
+~~~~
 
 <!-- Local IspellDict: english -->
