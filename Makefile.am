@@ -94,21 +94,21 @@ EXTRA_DIST = bootstrap.sh     \
              INSTALL-cmake    \
 	     env-win32.sh.in  \
 	     env-win32.bat.in \
-	     README.md
+	     README.md        \
+             test-suite
 
 licencesdir = $(pkgdatadir)
 dist_licences_DATA = LICENCE-GNU-GPL \
                      LICENCE-CECILL-A-EN \
                      LICENCE-CECILL-A-FR
 
-## This rule requires Autoconf 2.62 or newer.
-install-data-local:
-	@$(NORMAL_INSTALL)
-	$(MKDIR_P) $(pkgdatadir)
-	cp -R $(srcdir)/test-suite $(pkgdatadir)/
-
-## Warning: the following rule assumes that this package is the
-## sole owner of files below $(help_dir)!
-uninstall-local:
-	@$(NORMAL_UNINSTALL)
-	rm -f $(pkgdatadir)/test-suite
+testsuitedir = $(pkgdatadir)
+nobase_dist_testsuite_DATA =				       \
+  test-suite/clean.sh				       \
+  test-suite/madnex/madnex.check		       \
+  test-suite/madnex/MadnexTest.py		       \
+  test-suite/madnex/MFront-test1.madnex		       \
+  test-suite/madnex/test.py			       \
+  test-suite/python-bindings/material-properties.check \
+  test-suite/python-bindings/MaterialPropertyTest.py   \
+  test-suite/python-bindings/test-mp.mfront
