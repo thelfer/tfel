@@ -7,6 +7,10 @@ solved are described below.
 
 # Tickets fixed
 
+## Ticket #245: Example generated with the zmat behaviour misses the `**parameters` section
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/245/>
+
 ## Ticket #199: The wrapping of the `setParameter` methods of the `mtest::Behaviour` class is missing in the `python` bindings
 
 The following methods are now available:

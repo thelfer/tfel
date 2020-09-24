@@ -1249,6 +1249,7 @@ namespace mfront {
         }
         if (!params.empty()) {
           out << "# list of parameters, which are *optional*\n";
+          out << "**parameters\n";
           for (const auto& p : params) {
             const auto pn = d.getExternalName(p.name);
             out << "  " << pn << " ";
@@ -1420,8 +1421,6 @@ namespace mfront {
     const auto& d = mb.getBehaviourData(h);
     const auto& params = d.getParameters();
     const auto pnames = d.getExternalNames(params);
-    VariableDescriptionContainer::const_iterator p;
-    vector<string>::const_iterator pn;
     out << "void\n"
         << "ZMAT" << mb.getClassName() << "::initializeParameters"
         << getSpaceDimensionSuffix(h) << "(ASCII_FILE& file){\n"
@@ -1430,8 +1429,9 @@ namespace mfront {
         << "if(str[0]=='*'){\n"
         << "file.back();\n"
         << "break;\n";
-    for (p = params.begin(), pn = pnames.begin(); p != params.end();
-         ++p, ++pn) {
+    auto p = params.begin();
+    auto pn = pnames.begin();
+    for (; p != params.end(); ++p, ++pn) {
       if ((p->type == "int") || (p->type == "ushort")) {
         out << "} else if(str==\"" << *pn << "\"){\n";
         if (p->type == "int") {
