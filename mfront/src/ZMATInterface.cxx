@@ -1141,6 +1141,7 @@ namespace mfront {
         }
         if (!params.empty()) {
           out << "# list of parameters, which are *optional*\n";
+          out << "**parameters\n";
           for (const auto& p : params) {
             const auto pn = d.getExternalName(p.name);
             out << "  " << pn << " ";
