@@ -1262,7 +1262,8 @@ namespace mfront {
     };
     throw_if(!this->parameters.contains(n), "no parameter '" + n + "' defined");
     const auto& p = this->parameters.getVariable(n);
-    throw_if(p.type != "real",
+    const auto f = SupportedTypes::getTypeFlag(p.type);
+    throw_if(f != SupportedTypes::SCALAR,
              "parameter '" + n + "' is not a floatting point");
     throw_if(p.arraySize == 1,
              "parameter '" + n + "' has not been declared as an array");

@@ -22,6 +22,13 @@ explicit DSLs were ill-formed.
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/243/>
 
+## Ticket #247: Creating array of typed parameters is broken
+
+Creating an array of scalar parameters with a type different than real
+was broken.
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/247/>
+
 ## Ticket #243: Generic behaviour interface: throwing an exception in the initialize method is not properly handled
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/243/>
