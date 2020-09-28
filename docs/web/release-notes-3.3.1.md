@@ -15,6 +15,13 @@ now allowed. This subset is described here:
 
 # Tickets fixed
 
+## Ticket #248: Symbols of time derivative in explicit DSLs are wrong
+
+The symbols associated with the time derivatives of state variables in
+explicit DSLs were ill-formed.
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/243/>
+
 ## Ticket #243: Generic behaviour interface: throwing an exception in the initialize method is not properly handled
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/243/>
