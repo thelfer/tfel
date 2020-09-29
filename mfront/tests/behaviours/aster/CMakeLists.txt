@@ -67,6 +67,9 @@ set(mfront_tests_SOURCES
   MonoCrystal_DD_CC_NumericalJacobian
   MonoCrystal_DD_CC_Irradiation
   MonoCrystal_DD_CC_Irradiation_NumericalJacobian
+  BerveillerZaouiPolyCrystal
+  BerveillerZaouiPolyCrystal_DD_CC
+  BerveillerZaouiPolyCrystal_DD_CFC
   PolyCrystals
   PolyCrystals_DD_CC
   PolyCrystals_DD_CFC

@@ -2474,6 +2474,9 @@ mfront/tests/behaviours/AnistropicLemaitreViscoplasticBehaviour.mfront -text
 mfront/tests/behaviours/AxialGrowth.mfront -text
 mfront/tests/behaviours/AxialGrowth2.mfront -text
 mfront/tests/behaviours/AxialGrowth3.mfront -text
+mfront/tests/behaviours/BerveillerZaouiPolyCrystal.mfront -text
+mfront/tests/behaviours/BerveillerZaouiPolyCrystal_DD_CC.mfront -text
+mfront/tests/behaviours/BerveillerZaouiPolyCrystal_DD_CFC.mfront -text
 mfront/tests/behaviours/Burger.mfront -text
 mfront/tests/behaviours/CMakeLists.txt -text
 mfront/tests/behaviours/Chaboche.mfront -text
