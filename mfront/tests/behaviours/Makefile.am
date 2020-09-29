@@ -78,6 +78,9 @@ MFRONTS= DDIF2.mfront                                                      \
 	 MonoCrystal_DD_CC_Irradiation_NumericalJacobian.mfront            \
 	 MonoCrystal_DD_CC_InteractionMatrix.mfront                        \
 	 MonoCrystal_DD_CC_SlidingSystems.mfront                           \
+	 BerveillerZaouiPolyCrystal.mfront                                 \
+	 BerveillerZaouiPolyCrystal_DD_CFC.mfront                          \
+	 BerveillerZaouiPolyCrystal_DD_CC.mfront                           \
 	 PolyCrystals.mfront                                               \
 	 PolyCrystals_DD_CFC.mfront                                        \
 	 PolyCrystals_DD_CC.mfront                                         \

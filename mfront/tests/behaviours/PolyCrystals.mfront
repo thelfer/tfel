@@ -3,6 +3,14 @@
 @Behaviour PolyCrystals;
 @OrthotropicBehaviour;
 @RequireStiffnessTensor;
+@Description{
+  This implementation is flawed. It is kept
+  for backward compatibility. Please refer
+  to the BerveillerZaouiPolyCrystal.mfront
+  file.
+  See Ticket 249 for details
+  "https://sourceforge.net/p/tfel/tickets/249/"
+}
 
 // Number of phases
 @IntegerConstant Np  = 30;
