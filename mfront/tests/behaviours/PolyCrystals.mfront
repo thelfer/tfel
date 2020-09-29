@@ -3,13 +3,21 @@
 @Behaviour PolyCrystals;
 @OrthotropicBehaviour;
 @RequireStiffnessTensor;
+@Description{
+  This implementation is flawed. It is kept
+  for backward compatibility. Please refer
+  to the BerveillerZaouiPolyCrystal.mfront
+  file.
+  See Ticket 249 for details
+  "https://sourceforge.net/p/tfel/tickets/249/"
+}
 
 // Number of phases
-@IntegerConstant Np = 30;
+@IntegerConstant Np  = 30;
 // Number of sliding systems
 @IntegerConstant Nss = 12;
 
-@Epsilon 1.e-6;
+@Epsilon 1.e-6 ;
 
 @MaterialProperty real m;
 @MaterialProperty real K;
@@ -20,41 +28,39 @@
 @MaterialProperty real H;
 @MaterialProperty real d1;
 @MaterialProperty real Mu;
-@StateVariable StrainStensor epsp;
-@StateVariable StrainStensor epsg[Np];
+@StateVariable StrainStensor    epsp;
+@StateVariable StrainStensor    epsg[Np];
 
 // comment declarer 12*ng ?
-@StateVariable strain g[Nss * Np];
-@StateVariable strain a[Nss * Np];
-@StateVariable strain p[Nss * Np];
-@AuxiliaryStateVariable real pg;
+@StateVariable strain           g[Nss*Np];
+@StateVariable strain           a[Nss*Np];
+@StateVariable strain           p[Nss*Np];
+@AuxiliaryStateVariable real    pg;
 
-@Includes {
-#include "TFEL/Material/PolyCrystalsSlidingSystems.hxx"
-#include "TFEL/Material/MetallicCFCSlidingSystems.hxx"
-#include "TFEL/Material/MetallicCFCGenericSlidingSystemsInteractionMatrix.hxx"
+@Includes{
+#include"TFEL/Material/PolyCrystalsSlidingSystems.hxx"
+#include"TFEL/Material/MetallicCFCSlidingSystems.hxx"
+#include"TFEL/Material/MetallicCFCGenericSlidingSystemsInteractionMatrix.hxx"
 }
 
-@Members {
+@Members{
   // Mono crystal  sliding system
   typedef MetallicCFCSlidingSystems<real> MCSlidingSystems;
   // Poly crystals sliding system
-  typedef PolyCrystalsSlidingSystems<Np, MCSlidingSystems, real>
-      PCSlidingSystems;
+  typedef PolyCrystalsSlidingSystems<Np,MCSlidingSystems,real> PCSlidingSystems;
   // Interaction matrix
-  typedef MetallicCFCGenericSlidingSystemsInteractionMatrix<real>
-      InteractionMatrix;
+  typedef MetallicCFCGenericSlidingSystemsInteractionMatrix<real> InteractionMatrix;
 }
 
 //! fraction volumique
-@LocalVariable real fv[Np];
+@LocalVariable real  fv[Np];
 //! interaction matrix
-@LocalVariable tfel::math::tmatrix<Nss, Nss, real> mh;
+@LocalVariable tfel::math::tmatrix<Nss,Nss,real> mh;
 
-@InitLocalVariables<Append> {
+@InitLocalVariables<Append>{
   // fractions volumiques
-  for (unsigned short i = 0; i != Np; ++i) {
-    fv[i] = 1.0 / static_cast<real>(Np);
+  for(unsigned short i=0;i!=Np;++i){
+    fv[i]=1.0/static_cast<real>(Np) ; 
   }
   // matrice d'interaction
   const real h1 = 1.;
@@ -63,61 +69,60 @@
   const real h4 = 1.;
   const real h5 = 1.;
   const real h6 = 1.;
-  mh = InteractionMatrix::getInteractionMatrix(h1, h2, h3, h4, h5, h6);
+  mh = InteractionMatrix::getInteractionMatrix(h1,h2,h3,
+					       h4,h5,h6);
 }
 
-@ComputeStress {
-  sig = D * eel;
+@ComputeStress{
+  sig = D*eel;
 }
 
-@Derivative {
+@Derivative{
   const PCSlidingSystems& gs =
-      PCSlidingSystems::getPolyCrystalsSlidingSystems("PolyCrystalsAngles.txt");
-  StressStensor sigg(real(0));
-  depsp = Stensor(real(0));
-  // boucle sur le nombre de phases (ou grains)
-  real pe[Nss];
-  for (unsigned short k = 0; k != Np; ++k) {
+    PCSlidingSystems::getPolyCrystalsSlidingSystems("PolyCrystalsAngles.txt");
+  StressStensor sigg(real(0)) ;
+  depsp=Stensor(real(0)) ;
+  // boucle sur le nombre de phases (ou grains) 
+  real pe[Nss] ;
+  for(unsigned short k=0;k!=Np;++k){  
     // localisation BZ
-    real seq = sigmaeq(sig);
-    if (seq > 0) {
-      real alph = 1. / (1.0 + 1.5 * Mu * pg / seq);
-      sigg = sig + Mu * alph * (epsp - epsg[k]);
+    real seq=sigmaeq(sig);
+    if (seq>0){
+      real alph=1./(1.0+1.5*Mu*pg/seq) ;
+      sigg=sig+Mu*alph*(epsp-epsg[k]);        
     }
-    for (unsigned short i = 0; i != Nss; ++i) {
-      pe[i] = Q * (1. - exp(-b * p[Nss * k + i]));
+    for(unsigned short i=0;i!=Nss;++i){
+      pe[i] = Q*(1.-exp(-b*p[Nss*k+i])) ;
     }
-    depsg[k] = Stensor(real(0));
-    for (unsigned short i = 0; i != Nss; ++i) {
-      real Rp = R0;
-      for (unsigned short j = 0; j != Nss; ++j) {
-        Rp += mh(i, j) * pe[j];
+    depsg[k]=Stensor(real(0)) ;
+    for(unsigned short i=0;i!=Nss;++i){
+      real Rp = R0 ;
+      for(unsigned short j=0;j!=Nss;++j){
+	Rp +=mh(i,j)*pe[j] ;
       }
       // tenseurs mus de chaque grain / systeme dans le repere global
       StrainStensor mu_ki(gs.mus[k][i].begin());
-      real tau = mu_ki | sigg;
-      real tma = tau - C * a[Nss * k + i];
-      real tmR = abs(tma) - Rp;
-      if (tmR > 1.e5) {
-        return false;
+      real tau = mu_ki | sigg ;
+      real tma = tau-C*a[Nss*k+i] ;
+      real tmR = abs(tma)-Rp ;
+      if(tmR > 1.e5){return false;}
+      if (tmR>0.){
+	real sgn=tma/abs(tma);
+	dg[Nss*k+i]  = sgn*pow((tmR/K),m);
       }
-      if (tmR > 0.) {
-        real sgn = tma / abs(tma);
-        dg[Nss * k + i] = sgn * pow((tmR / K), m);
-      } else {
-        dg[Nss * k + i] = 0.;
+      else{
+	dg[Nss*k+i]=0.;
       }
-      dp[Nss * k + i] = abs(dg[Nss * k + i]);
-      da[Nss * k + i] =
-          dg[Nss * k + i] - d1 * a[Nss * k + i] * abs(dg[Nss * k + i]);
-      depsg[k] += dg[Nss * k + i] * mu_ki;
+      dp[Nss*k+i]  = abs(dg[Nss*k+i]);
+      da[Nss*k+i]  = dg[Nss*k+i]-d1*a[Nss*k+i]*abs(dg[Nss*k+i]);
+      depsg[k]+=dg[Nss*k+i]*mu_ki ;
     }
-    depsp += depsg[k] * fv[k];
+    depsp+=depsg[k]*fv[k] ;
   }
-  deel = -depsp + deto;
+  deel = -depsp+deto;
 }
 
-@UpdateAuxiliaryStateVars {
-  static const real INV_SQRT_3_2 = real(1) / sqrt(real(3) / real(2));
-  pg += dt_ * sqrt(depsp | depsp) * INV_SQRT_3_2;
+@UpdateAuxiliaryStateVars{
+  static const real INV_SQRT_3_2 = real(1)/sqrt(real(3)/real(2));
+  pg+=dt_*sqrt(depsp|depsp)*INV_SQRT_3_2;
 }

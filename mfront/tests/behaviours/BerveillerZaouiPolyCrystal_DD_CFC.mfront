@@ -1,5 +1,8 @@
 @DSL RungeKutta;
-@Behaviour PolyCrystals_DD_CFC;
+@Algorithm rk54;
+@Behaviour BerveillerZaouiPolyCrystal_DD_CFC;
+@ModellingHypothesis Tridimensional;
+
 @Author Jean-Michel Proix;
 @Date   21/06/2013;
 @Description{
@@ -8,15 +11,11 @@
 
   This implementation is flawed. It is kept
   for backward compatibility. Please refer
-  to the BerveillerZaouiPolyCrystal_DD_CFC.mfront
+  to the BerveillerZaouiPolyCrystal.mfront
   file.
   See Ticket 249 for details
   "https://sourceforge.net/p/tfel/tickets/249/"
 }
-
-@ModellingHypothesis Tridimensional;
-
-@Algorithm rk54;
 
 // Number of phases
 @IntegerConstant Np  = 30;
@@ -36,9 +35,9 @@
 
 @StateVariable StrainStensor    epsp;
 @StateVariable strain           omega[Nss*Np];
-@StateVariable StrainStensor    epsg[Np];
-@AuxiliaryStateVariable real    pg;
 omega.setErrorNormalisationFactor(1.e-7);
+@StateVariable StrainStensor    epsg[Np];
+@StateVariable real    pg;
 
 @Includes{
 #include"TFEL/Math/power.hxx"
@@ -140,11 +139,8 @@ omega.setErrorNormalisationFactor(1.e-7);
     }
     depsp+=depsg[k]*fv[k] ;
   }
+  dpg = sqrt((2 * (depsp | depsp)) / 3);
   deel = -depsp+deto;
-}
-
-@UpdateAuxiliaryStateVars{
-  pg+=dt_*sqrt(depsp|depsp)/sqrt(1.5);
 }
 
 
