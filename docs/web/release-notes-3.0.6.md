@@ -4,6 +4,22 @@
 
 # Tickets fixed
 
+## Ticket #246: Explicit implementation of the Berveiller-Zaoui homogeneisation scheme is inefficient
+
+Several polycrystal behaviours based on the Berveiller-Zaoui
+homogeneisation scheme are available in the tests of `MFront`.
+
+For some unknown reasons, those implementations declared the equivalent
+plastic strain as an auxiliary state variable. This lead to a
+significantly more difficult convergence of the `Runge-Kutta` algorithm.
+
+Since the results are correct, those implementations are kept as they
+are, but new corrected implementations are provided. Appropriate
+warnings are added to the description of flawed behaviours. Users are
+advised to use the newly proposed implementation.
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/246/>
+
 ## Ticket #244: Some header files related to MTest are not installed by `cmake`
 
 The following headers were not installed by `cmake`:

@@ -102,6 +102,9 @@ set(mfront_tests_SOURCES
   FiniteStrainSingleCrystal
   FiniteStrainSingleCrystal2
   FiniteStrainSingleCrystal_NumericalJacobian
+  BerveillerZaouiPolyCrystal
+  BerveillerZaouiPolyCrystal_DD_CC
+  BerveillerZaouiPolyCrystal_DD_CFC
   PolyCrystals
   PolyCrystals_DD_CC
   PolyCrystals_DD_CFC

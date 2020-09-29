@@ -1,13 +1,16 @@
 @DSL RungeKutta;
-@Behaviour PolyCrystals_DD_CC;
+@Behaviour BerveillerZaouiPolyCrystal_DD_CC;
 @Author Jean-Michel Proix;
 @Date   08/10/2014;
 @Description{
   Polycristal BZ du modele DD_CC
 
+  Polycrystal behaviour based on the Berveiller-Zaoui
+  homogeneisation scheme.
+
   This implementation is flawed. It is kept
   for backward compatibility. Please refer
-  to the BerveillerZaouiPolyCrystal.mfront
+  to the BerveillerZaouiPolyCrystal_DD_CC.mfront
   file.
   See Ticket 249 for details
   "https://sourceforge.net/p/tfel/tickets/249/"
@@ -219,7 +222,7 @@ omega.setErrorNormalisationFactor(1.e-7);
     }
     depsp+=depsg[k]*fv[k] ;
   }
-  dpg = sqrt(depsp|depsp)/sqrt(1.5);
+  dpg = sqrt((2 * (depsp | depsp)) / 3);
   deel = -depsp+deto;
 }
 
