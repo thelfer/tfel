@@ -391,8 +391,7 @@ namespace mfront {
     } else if (args.array_offset.empty()) {
       args.os << "const auto " << args.variable_name
               << " = tfel::math::" << type << "<" << d
-              << ",mfront::gb::real>{src + " << args.variable_offset
-              << "};\n"
+              << ",mfront::gb::real>{src + " << args.variable_offset << "};\n"
               << "auto " << args.variable_name
               << "_view = tfel::math::" << view_type << "<" << d
               << ",mfront::gb::real>(dest + " << args.variable_offset << ");\n"
@@ -427,8 +426,8 @@ namespace mfront {
     if ((args.variable_offset == 0) && (args.array_offset.empty())) {
       args.os << "auto " << args.variable_name << " = tfel::math::" << type
               << "<" << d << ",mfront::gb::real>{};\n"
-              << "std::copy(src, src + " << args.variable_name
-              << ".size(), " << args.variable_name << ".begin());\n"
+              << "std::copy(src, src + " << args.variable_name << ".size(), "
+              << args.variable_name << ".begin());\n"
               << "auto " << args.variable_name
               << "_view = tfel::math::" << view_type << "<" << d
               << ",mfront::gb::real>(dest);\n"
@@ -866,7 +865,7 @@ namespace mfront {
          << "const mfront_gb_size_type s){\n";
       writeRotationMatrixDefinition(os, true);
       auto args_dpk2_degl_2 = WriteRotationFunctionArgument{
-          os,   h, "dpk2_degl", 0, "idx * " + std::to_string(stsize * stsize)};
+          os, h, "dpk2_degl", 0, "idx * " + std::to_string(stsize * stsize)};
       os << "for(mfront_gb_size_type idx=0; idx != s; ++idx){\n";
       writeST2toST2Rotation(args_dpk2_degl_2);
       os << "}\n";

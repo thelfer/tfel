@@ -9,6 +9,16 @@ all the fixes of this version.
 
 # Issues solved
 
+## Ticket #249: Implementation of the Norton-Hoff in the StandardElastoViscoPlasticity brick may lead to negative equivalent plastic strain increment
+
+The implementation of the Norton-Hoff flow rule in the
+`StandardElastoViscoPlasticity` brick may in some exceptional cases lead
+to negative equivalent plastic strain increment. This was checked by the
+brick and led to a divergence of the Newton algorithm, so this flaw
+could not induce wrong results.
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/249/>
+
 ## Ticket #242: The factor in front of the hyperbolic sine is discarded when using the `HyperbolicSine` inelastic flow
 
 The optional factor in in front of the hyperbolic sine was not generated when using the `HyperbolicSine` inelastic flow.
