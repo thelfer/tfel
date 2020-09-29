@@ -46,7 +46,6 @@ namespace mfront {
                                          AbstractBehaviourDSL& dsl,
                                          const std::string& id,
                                          const DataMap& d) {
-      constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       auto get_mp = [&dsl, &bd, &id, &d](
           const std::string& mpn, const std::string& t, const std::string& vn) {
         if (d.count(mpn) == 0) {
@@ -78,13 +77,13 @@ namespace mfront {
       if (d.count("Ksf") != 0) {
         this->Ksf = get_mp("Ksf", "real", "Ksf");
       }
-      bd.reserveName(uh, "seqe" + id + "_K__n_1");
     }  // end of NortonHoffViscoplasticFlow::initialize
 
-    void NortonHoffViscoplasticFlow::endTreatment(BehaviourDescription& bd,
-                                           const AbstractBehaviourDSL& dsl,
-                                           const StressPotential& sp,
-                                           const std::string& id) const {
+    void NortonHoffViscoplasticFlow::endTreatment(
+        BehaviourDescription& bd,
+        const AbstractBehaviourDSL& dsl,
+        const StressPotential& sp,
+        const std::string& id) const {
       constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       ViscoplasticFlowBase::endTreatment(bd, dsl, sp, id);
       auto mts = getMiddleOfTimeStepModifier(bd);
@@ -148,30 +147,30 @@ namespace mfront {
           c += "return false;\n";
           c += "}\n";
         }
-        c += "const auto seqe" + id + "_K__n_1 = pow(std::max((seq" + id +
-             ")/(this->K" + id + "),this->epsilon),this->E" + id + "-1);\n";
-        c += "const auto dvp" + id + "_dseqe" + id + " = ";
-        c += "(this->E" + id + ")*(this->A" + id + ")*seqe" + id +
-             "_K__n_1/(this->K" + id + ");\n";
+        const auto rseq = "(seq" + id + ") / (this->K" + id + ")";
+        const auto bseq = "std::max(" + rseq + ", real(0))";
         c += "const auto vp" + id + " = ";
-        c += "(this->A" + id + ")*seqe" + id + "_K__n_1*(seq" + id +
-             ")/(this->K" + id + ");\n";
+        c += "(this->A" + id + ") * pow(" + bseq + ", this->E" + id + ");\n";
+        c += "const auto dvp" + id + "_dseqe" + id + " = ";
+        const auto seps = "(this->epsilon) * (this->K" + id + ")";
+        const auto bseq2 = "(std::max(seq" + id + ", " + seps + "))";
+        c += "(this->E" + id + ") * vp" + id + " / " + bseq2 + ";\n";
       } else {
         if (!this->Ksf.empty()) {
-          c += "if((seq" + id + "-R" + id + ")>";
+          c += "if((seq" + id + " - R" + id + ")>";
           c += "(this->Ksf" + id + ")*this->K" + id + "){\n";
           c += "return false;\n";
           c += "}\n";
         }
-        c += "const auto seqe" + id + "_K__n_1 = pow(std::max((seq" + id +
-             "-R" + id + ")/(this->K" + id + "),this->epsilon),this->E" + id +
-             "-1);\n";
-        c += "const auto dvp" + id + "_dseqe" + id + " = ";
-        c += "(this->E" + id + ")*(this->A" + id + ")*seqe" + id +
-             "_K__n_1/(this->K" + id + ");\n";
+        const auto rseq = "(seq" + id + " - R" + id + ") / (this->K" + id + ")";
+        const auto bseq = "std::max(" + rseq + ", real(0))";
         c += "const auto vp" + id + " = ";
-        c += "(this->A" + id + ")*seqe" + id + "_K__n_1*(seq" + id + "-R" + id +
-             ")/(this->K" + id + ");\n";
+        c += "(this->A" + id + ") * pow(" + bseq + ", this->E" + id + ");\n";
+        c += "const auto dvp" + id + "_dseqe" + id + " = ";
+        const auto seps = "(this->epsilon) * (this->K" + id + ")";
+        const auto bseq2 =
+            "(std::max(seq" + id + " - R" + id + ", " + seps + "))";
+        c += "(this->E" + id + ") * vp" + id + " / " + bseq2 + ";\n";
       }
       return c;
     }  // end of NortonHoffViscoplasticFlow::computeFlowRateAndDerivative
