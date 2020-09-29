@@ -1,13 +1,22 @@
 @DSL RungeKutta;
-@Algorithm rk54;
 @Behaviour PolyCrystals_DD_CFC;
-@ModellingHypothesis Tridimensional;
-
 @Author Jean-Michel Proix;
 @Date   21/06/2013;
 @Description{
-  Homégénéisation
+  Polycrystal behaviour based on the Berveiller-Zaoui
+  homogeneisation scheme.
+
+  This implementation is flawed. It is kept
+  for backward compatibility. Please refer
+  to the BerveillerZaouiPolyCrystal_DD_CFC.mfront
+  file.
+  See Ticket 249 for details
+  "https://sourceforge.net/p/tfel/tickets/249/"
 }
+
+@ModellingHypothesis Tridimensional;
+
+@Algorithm rk54;
 
 // Number of phases
 @IntegerConstant Np  = 30;

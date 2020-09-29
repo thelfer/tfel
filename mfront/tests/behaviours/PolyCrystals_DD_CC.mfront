@@ -1,12 +1,19 @@
 @DSL RungeKutta;
-@Algorithm rk54;
 @Behaviour PolyCrystals_DD_CC;
-
 @Author Jean-Michel Proix;
 @Date   08/10/2014;
 @Description{
   Polycristal BZ du modele DD_CC
+
+  This implementation is flawed. It is kept
+  for backward compatibility. Please refer
+  to the BerveillerZaouiPolyCrystal_DD_CC.mfront
+  file.
+  See Ticket 249 for details
+  "https://sourceforge.net/p/tfel/tickets/249/"
 }
+
+@Algorithm rk54;
 @Epsilon 1.e-7 ;
 
 // Number of phases
@@ -68,6 +75,7 @@ omega.setErrorNormalisationFactor(1.e-7);
 //! fraction volumique
 @LocalVariable real  fv[Np];
 @LocalVariable real Lc ;
+
 
 @InitLocalVariables<Append>{
   // fractions volumiques
