@@ -30,7 +30,7 @@ downloaded here:
 <https://github.com/thelfer/madnex>
 
 The website of this library [@cea_edf_madnex_library_2020] details the
-data model used to store `MFront` implementations [@].
+data model used to store `MFront` implementations.
 
 # Compilation of `TFEL` with `madnex` files support
 
@@ -183,5 +183,9 @@ Here, `behaviour_id` can be a regular expression.
 For material properties and models, the `--material-property` and
 `--model` options have a similar role than the `--behaviour` option for
 behaviours.
+
+# Storing an `MFront` file in a `madnex` file
+
+
 
 # References

@@ -67,6 +67,7 @@ void declareSearchPathsHandler();
 void declareGeneratorOptions();
 void declareMakefileGenerator();
 void declareCMakeGenerator();
+void declareOverridableImplementation();
 
 static boost::python::object getDSL(const std::string& f) {
   auto dsl = mfront::MFrontBase::getDSL(f);
@@ -94,6 +95,7 @@ BOOST_PYTHON_MODULE(_mfront) {
   declareCompiledTargetDescriptionBase();
   declareLibraryDescription();
   declareTargetsDescription();
+  declareOverridableImplementation();
   // behaviours
   declareAbstractBehaviourDSL();
   declareBehaviourAttribute();

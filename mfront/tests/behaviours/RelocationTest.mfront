@@ -1,6 +1,6 @@
 @Behaviour RelocationTest;
 @Author Thomas Helfer;
-@Author 6/09/2017;
+@Date 6/09/2017;
 @Description{
   "Behaviour used to test the "
   "`@Relocation` keyword."

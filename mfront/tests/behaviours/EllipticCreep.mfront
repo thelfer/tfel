@@ -1,7 +1,7 @@
 @DSL    Implicit;
 @Behaviour EllipticCreep;
 @Author    Thomas Helfer;
-@Author    9 Octobre 2013;
+@Date  9/12/2013;
 
 // elastic properties
 @MaterialProperty stress young;

@@ -3,6 +3,7 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./CHANGELOG.md					      \
 	   ./favicon.ico					      \
 	   ./404.html						      \
+	   ./iso690-numeric-en.csl                    \
 	   ./bibliography.bib					      \
 	   ./svn.md					              \
 	   ./faq.md					              \
@@ -126,6 +127,7 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./unicode.md                                               \
 	   ./RambergOsgoodNonLinearElasticity.md                      \
 	   ./MericCailletaudSingleCrystalPlasticity.md                \
+           ./ExplicitBerveillerZaouiPolyCrystals.md                   \
 	   ./MohrCoulomb.md                                           \
 	   ./FichantLaBorderieDamageBehaviour.md                            \
            ./LoadInducedThermalStrainBehaviourTorelli2018.md                \
@@ -320,6 +322,8 @@ EXTRA_DIST=CMakeLists.txt					      \
        ./img/ExtendingStandardElastoViscoPlasticityBrick-tree-2.png   \
        ./img/ExtendingStandardElastoViscoPlasticityBrick-PorousStressCriterion-tree.png     \
        ./img/ExtendingStandardElastoViscoPlasticityBrick-PorousStressCriterion-tree-2.png   \
+       ./img/PolycrystalHCP_BZ.svg                                                          \
+       ./img/MericCailletaudFiniteStrainResidualTopography.png                              \
 	   ./media/epx1.mp4                                               \
 	   ./media/epx2.mp4                                           \
 	   ./media/abaqus-explicit.mp4                                \
@@ -346,6 +350,7 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./downloads/patchs-Cast3M-2015.tar.bz2                     \
 	   ./downloads/example-zset8.5.tar.bz2                        \
 	   ./downloads/patchs-CalculiX-2.12.tar.bz2                   \
+	   ./downloads/ExplicitBerveillerZaouiPolyCrystals.tar.bz2    \
 	   ./cxx/include                                                                 \
 	   ./cxx/include/TFEL                                                            \
 	   ./cxx/include/TFEL/Material                                                   \

@@ -200,7 +200,9 @@ namespace mfront {
    * is assumed to have the following form:
    * `madnex:<file>:<type>:<material>:<implementation>`
    * \param[in] path : implementation
-   * \return a vector of string 
+   * \return a tuple of strings containng the file path, the type of the
+   * implementation (material property, behaviour or model), the material name,
+   * the name of the implementation
    */
   MFRONT_VISIBILITY_EXPORT
   std::tuple<std::string, std::string, std::string, std::string>

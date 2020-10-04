@@ -9,6 +9,7 @@ macro(pandoc_html file)
     ARGS      --filter pandoc-crossref -M crossrefYaml=${CMAKE_CURRENT_SOURCE_DIR}/pandoc-crossref.yaml
     ARGS      --bibliography=${CMAKE_CURRENT_SOURCE_DIR}/bibliography.bib --filter pandoc-citeproc
     ARGS      --template=${CMAKE_CURRENT_SOURCE_DIR}/mfront-template.html
+    ARGS      --csl=${CMAKE_CURRENT_SOURCE_DIR}/iso690-numeric-en.csl
     ARGS      --mathjax
     ARGS      --highlight-style=tango
     ARGS      --email-obfuscation=javascript
@@ -141,6 +142,7 @@ pandoc_html(ExtendingStandardElastoViscoPlasticityBrick-StressCriterion "--toc" 
 pandoc_html(ExtendingStandardElastoViscoPlasticityBrick-PorousStressCriterion "--toc" "--toc-depth=2"  "--number-sections")
 pandoc_html(HookeStressPotential "--toc" "--toc-depth=2")
 pandoc_html(DDIF2StressPotential "--toc" "--toc-depth=2")
+pandoc_html(ExplicitBerveillerZaouiPolyCrystals "--toc" "--toc-depth=2")
 
 # mfront keywords
 

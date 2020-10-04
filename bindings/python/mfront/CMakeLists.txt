@@ -18,7 +18,8 @@ mfront_python_module(_mfront mfront.cxx
   SearchPathsHandler.cxx
   GeneratorOptions.cxx
   MakefileGenerator.cxx
-  CMakeGenerator.cxx)
+  CMakeGenerator.cxx
+  OverridableImplementation.cxx)
 target_link_libraries(py_mfront__mfront
   PRIVATE
   TFELMFront

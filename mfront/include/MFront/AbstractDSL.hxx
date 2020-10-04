@@ -46,6 +46,22 @@ namespace mfront {
     //! \return the file description associated with the treated file
     virtual const FileDescription& getFileDescription() const = 0;
     /*!
+     * \return the identifier (material property name, behaviour name, model
+     * name) of the treated file
+     */
+    virtual std::string getMaterialKnowledgeIdentifier() const = 0;
+    //! \return the material described by the treated file
+    virtual std::string getMaterialName() const = 0;
+    /*!
+     * \return if the variable with the given external name (glossary name or
+     * entry name) is overridable.
+     * \param[in] n: external name of the parameter
+     *
+     * Depending on the DSL's, a parameter may override a parameter, but also a
+     * material property for example.
+     */
+    virtual bool isOverridableByAParameter(const std::string&) const = 0;
+    /*!
      * \brief analyse a file
      * \param[in] f     : file name
      * \param[in] ecmds : additionnal commands inserted treated before

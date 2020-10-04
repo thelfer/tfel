@@ -100,6 +100,19 @@ namespace mfront {
     return MATERIALPROPERTYDSL;
   }
 
+  std::string MaterialPropertyDSL::getMaterialKnowledgeIdentifier() const {
+    return this->md.law;
+  }  // end of MaterialPropertyDSL::getMaterialKnowledgeIdentifier
+
+  std::string MaterialPropertyDSL::getMaterialName() const {
+    return this->md.material;
+  }  // end of MaterialPropertyDSL::getMaterialName(
+
+  bool MaterialPropertyDSL::isOverridableByAParameter(
+      const std::string&) const {
+    return false;
+  }  // end of MaterialPropertyDSL::isOverridableByAParameter
+
   void MaterialPropertyDSL::endsInputFileProcessing() {
   }  // end of MaterialPropertyDSL::endsInputFileProcessing
 
@@ -162,18 +175,17 @@ namespace mfront {
     return "MaterialLaw";
   }  // end of MaterialPropertyDSL::getName()
 
-  void MaterialPropertyDSL::treatMaterial() {
+  void MaterialPropertyDSL::setMaterial(const std::string& m) {
     if (!this->md.material.empty()) {
-      this->throwRuntimeError("MaterialPropertyDSL::treatMaterial",
+      this->throwRuntimeError("MaterialPropertyDSL::setMaterial",
                               "material name alreay defined");
     }
-    const auto& m = this->readOnlyOneToken();
     if (!isValidMaterialName(m)) {
-      this->throwRuntimeError("MaterialPropertyDSL::treatMaterial",
+      this->throwRuntimeError("MaterialPropertyDSL::setMaterial",
                               "invalid material name '" + m + "'");
     }
     this->md.material = m;
-  }  // end of MaterialPropertyDSL::treatMaterial
+  }  // end of MaterialPropertyDSL::setMaterial
 
   void MaterialPropertyDSL::treatLibrary() {
     if (!this->md.library.empty()) {
@@ -223,19 +235,30 @@ namespace mfront {
     this->md.parameters.push_back(p);
   }  // MaterialPropertyDSL::treatParameter
 
-  void MaterialPropertyDSL::treatLaw() {
+  void MaterialPropertyDSL::setMaterialKnowledgeIdentifier(const std::string& i) {
     auto throw_if = [this](const bool b, const std::string& m) {
       if (b) {
-        this->throwRuntimeError("MaterialPropertyDSL::treatLaw", m);
+        this->throwRuntimeError("MaterialPropertyDSL::setMaterialKnowledgeIdentifier", m);
       }
     };
-    throw_if(!this->md.className.empty(), "law name has already been declared");
+    throw_if(!isValidMaterialPropertyName(i),
+             "'" + i + "' is not a valid law name");
+    throw_if(!this->md.className.empty(),
+             "class name has already been declared");
     throw_if(!this->md.law.empty(), "law name has already been declared");
+    this->md.law = i;
+    this->md.className = i;
+  }  // end of MaterialPropertyDSL::setMaterialKnowledgeIdentifier
+
+  void MaterialPropertyDSL::treatLaw() {
     const auto& l = this->readOnlyOneToken();
-    throw_if(!isValidMaterialPropertyName(l),
-             "'" + l + "' is not a valid law name");
-    this->md.law = l;
-    this->md.className = l;
+    if(!isValidMaterialPropertyName(l)){
+      this->throwRuntimeError("MaterialPropertyDSL::treatLaw",
+                              "'" + l + "' is not a valid law name");
+    }
+    if (this->overriden_implementation_name.empty()) {
+      this->setMaterialKnowledgeIdentifier(l);
+    }
   }  // end of MaterialPropertyDSL::treatLaw
 
   void MaterialPropertyDSL::addInterface(const std::string& i) {

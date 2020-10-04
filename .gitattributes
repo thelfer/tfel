@@ -53,6 +53,7 @@ bindings/python/mfront/GeneratorOptions.cxx -text
 bindings/python/mfront/LibraryDescription.cxx -text
 bindings/python/mfront/Makefile.am -text
 bindings/python/mfront/MakefileGenerator.cxx -text
+bindings/python/mfront/OverridableImplementation.cxx -text
 bindings/python/mfront/SearchPathsHandler.cxx -text
 bindings/python/mfront/TargetsDescription.cxx -text
 bindings/python/mfront/VariableBoundsDescription.cxx -text
@@ -1158,6 +1159,7 @@ docs/web/DDIF2StressPotential.md -text
 docs/web/DefaultCZMDSL-keywords.md -text
 docs/web/DefaultDSL-keywords.md -text
 docs/web/DefaultFiniteStrainDSL-keywords.md -text
+docs/web/ExplicitBerveillerZaouiPolyCrystals.md -text
 docs/web/ExtendingStandardElastoViscoPlasticityBrick-PorousStressCriterion.md -text
 docs/web/ExtendingStandardElastoViscoPlasticityBrick-StressCriterion.md -text
 docs/web/FichantLaBorderieDamageAndTorelliLoadInducedStrainBehaviour.md -text
@@ -1226,6 +1228,7 @@ docs/web/doc/js.md -text
 docs/web/doc/misc.md -text
 docs/web/doc/usage.md -text
 docs/web/documentations.md -text
+docs/web/downloads/ExplicitBerveillerZaouiPolyCrystals.tar.bz2 -text
 docs/web/downloads/example-castem2014.tar.bz2 -text
 docs/web/downloads/example-zset8.5.tar.bz2 -text
 docs/web/downloads/patchs-CalculiX-2.12.tar.bz2 -text
@@ -1323,6 +1326,7 @@ docs/web/img/JUSM18_RDEGEILH_Fissuration_culasses.svg -text
 docs/web/img/LoadInducedLoadInducedThermalStrain_Torelli2018.xcf -text
 docs/web/img/LoadInducedThermalStrain_Torelli2018.png -text
 docs/web/img/LogarithmicStrainPlasticity-ssna303.svg -text
+docs/web/img/MericCailletaudFiniteStrainResidualTopography.png -text
 docs/web/img/MohrCoulombAnalitical.svg -text
 docs/web/img/MohrCoulombPiPlane.svg -text
 docs/web/img/MohrCoulombSmoothing.svg -text
@@ -1338,6 +1342,7 @@ docs/web/img/PSACylinderHeadDesign.png -text
 docs/web/img/PSACylinderHeadDesign.svg -text
 docs/web/img/PSACylinderHeadDesign.xcf -text
 docs/web/img/Polar_decomposition_of_F.png -text
+docs/web/img/PolycrystalHCP_BZ.svg -text
 docs/web/img/RambergOsgoodNonLinearElasticity-UniaxialTensileTest.png -text
 docs/web/img/SalomeMeca2015.png -text
 docs/web/img/Scherzinger/Hosford100/LevenbergMarquardt.png -text
@@ -1468,6 +1473,7 @@ docs/web/install-windows-VisualStudio.md -text
 docs/web/install-windows-msys.md -text
 docs/web/install.md -text
 docs/web/interfaces.md -text
+docs/web/iso690-numeric-en.csl -text
 docs/web/isotropicplasticityamstrongfrederickinematichardening.md -text
 docs/web/iwan.md -text
 docs/web/js/MathJax.js -text
@@ -2669,6 +2675,8 @@ mfront/include/MFront/NonLinearSystemSolver.hxx -text
 mfront/include/MFront/NonLinearSystemSolverBase.hxx -text
 mfront/include/MFront/NonLinearSystemSolverFactory.hxx -text
 mfront/include/MFront/OctaveMaterialPropertyInterface.hxx -text
+mfront/include/MFront/OverridableImplementation.hxx -text
+mfront/include/MFront/OverridableImplementation.ixx -text
 mfront/include/MFront/PedanticMode.hxx -text
 mfront/include/MFront/PerformanceProfiling.hxx -text
 mfront/include/MFront/PowellDogLegAlgorithmBase.hxx -text
@@ -2926,6 +2934,7 @@ mfront/src/NonLinearSystemSolverFactory.cxx -text
 mfront/src/NortonHoffViscoplasticFlow.cxx -text
 mfront/src/OctaveMaterialPropertyInterface.cxx -text
 mfront/src/OptionDescription.cxx -text
+mfront/src/OverridableImplementation.cxx -text
 mfront/src/PedanticMode.cxx -text
 mfront/src/PerformanceProfiling.cxx -text
 mfront/src/PlasticInelasticFlow.cxx -text

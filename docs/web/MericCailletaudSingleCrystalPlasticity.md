@@ -1,6 +1,42 @@
-% How to implement the Méric-Cailletaud single crystal behaviour
-% Thomas Helfer, Alexandre Bourceret
-% 25/10/2019
+---
+title: How to implement the Méric-Cailletaud single crystal behaviour
+author: Thomas Helfer, Alexandre Bourceret
+writer: Thomas Helfer
+examinator: Thomas Helfer
+date: 2/10/2020
+laboratory: LSC
+lang: en-EN
+numbersections: true
+documentnumber:
+documentversion: 0
+milestone:
+casenumber:
+researchprogram:
+contractualarrangement: EDF-CEA-Framatome
+clients:
+keywords: 
+abstract: |
+  This report shows how to integrate the Méric-Cailletaud behaviour
+  under the small strain and finite strain assumptions.
+restrictedabstract: |
+  This report is released publicly as part of the documentation of the
+  `MFront` project.
+geometry:
+- paper=a4paper
+- margin=2cm
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+bibliography: bibliography.bib
+header-includes:
+- \usepackage{tcolorbox}
+- \newtcolorbox{myquote}{colframe=gray}
+- \renewenvironment{quote}{\begin{myquote}}{\end{myquote}}
+monofont: DejaVuSansMono.ttf 
+---
 
 \newcommand{\bts}[1]{{\left.#1\right|_{t}}}
 \newcommand{\mts}[1]{{\left.#1\right|_{t+\theta\,\Delta\,t}}}
@@ -27,7 +63,8 @@
 \newcommand{\sign}[1]{\mathop{sgn}\paren{#1}}
 
 This article shows how to implement the Méric-Cailletaud single crystal
-viscoplastic behaviour in `MFront`. Such an example illustrates:
+viscoplastic behaviour [@meric_single_1991] in `MFront`. Such an example
+illustrates:
 
 - The usage of `StandardElasticity` brick (see
   [this page](BehaviourBricks.html)).
@@ -36,6 +73,8 @@ viscoplastic behaviour in `MFront`. Such an example illustrates:
   will automatically let `MFront` generate the slips systems and the
   interaction matrix.
 - The notion of integration variables and auxiliary state variables.
+- The FiniteStrainSingleCrystal brick, which is described
+  [here](finitestrainsinglecrystal.html).
 
 > **Advices**
 >
@@ -74,24 +113,6 @@ The theoretical frame which allow the monocrystalline model was
 introduced in the 70. Monocrystalline behaviour describes the slip of
 the crystallographic structure throught the slip systems of the
 considerated crystal. Slips systems are defined using two vectors: the normal of the slip plan and the slip direction. 
-
-<--!
-From each slip systems the symmetric part of the Schmid tensor
-tenseur{m}_{i} is defined. Due to this tensor which describes the slips
-systems in 3 dimensions, the monocrystalline behaviour law can only be
-express in 3 dimensions models. The Schmid tensor allows the orientation
-of the constraint tensor on each slip system, which is the resolved
-shear stress \tau_{i}. The inelastic flow is defined by dot{\gamma}_{i}
-and depends on the chosen potential. The cumulated viscoplastic strain
-is defined by dot{p}_{i} which is the absolute value of the inelastic
-flow. The hardening R_{i} is calculated for each slip systems,and it can
-be described by the sum of all the interactions each slip system has
-experienced with all the others slips systems. Interactions are
-describes using the interaction matrix which represents the geometrical
-relation between the two slip systems which are interacting. Finally,
-the defined viscoplastic strain rate \tepsilonvis is a sum of all the
-hardenings o
--->
 
 The behaviour is described by a standard decomposition of the strain
 \(\tepsilonto\) in an elastic and a viscoplastic component, respectively
@@ -926,5 +947,9 @@ are required:
   
   where `dM_ddeel` stands for the derivative of the Mandel stress with respect
   to the elastic strain. `dM_ddeel` is automatically computed by the brick.
+
+# Applications
+
+![Residual topography after a wickers indentation test in a single crystal](img/MericCailletaudFiniteStrainResidualTopography.png)
 
 # References

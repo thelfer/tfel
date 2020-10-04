@@ -19,6 +19,8 @@ nobase_include_HEADERS= MFront/MFront.hxx                                     \
 			MFront/GenericData.hxx                                            \
 			MFront/FileDescription.hxx                                        \
 			MFront/TargetsDescription.hxx                                     \
+			MFront/OverridableImplementation.hxx                              \
+			MFront/OverridableImplementation.ixx                              \
 			MFront/CompiledTargetDescriptionBase.hxx                          \
 			MFront/ExecutableDescription.hxx                                  \
 			MFront/LibraryDescription.hxx                                     \

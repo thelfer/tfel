@@ -220,6 +220,22 @@ namespace mfront {
         &BehaviourDSLCommon::treatDislocationsMeanFreePathInteractionMatrix);
   }  // end of BehaviourDSLCommon::BehaviourDSLCommon
 
+  std::string BehaviourDSLCommon::getMaterialKnowledgeIdentifier() const {
+    if (this->mb.isBehaviourNameDefined()) {
+      return this->mb.getBehaviourName();
+    }
+    return {};
+  }  // end of BehaviourDSLCommon::getMaterialKnowledgeIdentifier
+
+  std::string BehaviourDSLCommon::getMaterialName() const {
+    return this->mb.getMaterialName();
+  }  // end of BehaviourDSLCommon::getMaterialName(
+
+  bool BehaviourDSLCommon::isOverridableByAParameter(
+      const std::string&) const {
+    return false;
+  }  // end of BehaviourDSLCommon::isOverridableByAParameter
+
   void BehaviourDSLCommon::analyse() {
     const auto& mh = ModellingHypothesis::getModellingHypotheses();
     std::vector<std::string> hn(mh.size());
@@ -358,6 +374,20 @@ namespace mfront {
     }
     this->hooks[k].push_back(h);
   }  // end of BehaviourDSLCommon::addHook
+
+  void BehaviourDSLCommon::setMaterial(const std::string& m) {
+    if (!isValidMaterialName(m)) {
+      this->throwRuntimeError("BehaviourDSLCommon::setMaterial",
+                              "invalid material name '" + m + "'");
+    }
+    this->mb.setMaterialName(m);
+    if (!isValidIdentifier(this->mb.getClassName())) {
+      this->throwRuntimeError("BehaviourDSLCommon::setMaterial",
+                              "resulting class name is not valid (read '" +
+                                  this->mb.getClassName() + "')");
+    }
+  }  // end of BehaviourDSLCommon::setMaterial
+
 
   void BehaviourDSLCommon::treatDisabledCallBack() {
     --(this->current);
@@ -2183,19 +2213,6 @@ namespace mfront {
     }
   }  // end of BehaviourDSLCommon::treatTangentOperator
 
-  void BehaviourDSLCommon::treatMaterial() {
-    const auto& m = this->readOnlyOneToken();
-    if (!isValidMaterialName(m)) {
-      this->throwRuntimeError("BehaviourDSLCommon::treatMaterial",
-			      "invalid material name '" + m + "'");
-    }
-    this->mb.setMaterialName(m);
-    if (!isValidIdentifier(this->mb.getClassName())) {
-      this->throwRuntimeError("BehaviourDSLCommon::treatMaterial",
-                              "resulting class name is not valid (read '" + this->mb.getClassName() + "')");
-    }
-  }  // end of BehaviourDSLCommon::treatMaterial
-
   void BehaviourDSLCommon::treatLibrary() {
     const auto& l = this->readOnlyOneToken();
     if (!isValidLibraryName(l)) {
@@ -2890,19 +2907,29 @@ namespace mfront {
     this->mb.setAttribute(BehaviourDescription::requiresThermalExpansionCoefficientTensor, true, false);
   }  // end of BehaviourDSLCommon::treatRequireThermalExpansionCoefficientTensor
 
+  void BehaviourDSLCommon::setMaterialKnowledgeIdentifier(const std::string& i) {
+    if (!isValidBehaviourName(i)) {
+      this->throwRuntimeError("BehaviourDSLCommon::setMaterialKnowledgeIdentifier",
+                              "invalid behaviour name '" + i+ "'");
+    }
+    this->mb.setBehaviourName(i);
+    if (!isValidIdentifier(this->mb.getClassName())) {
+      this->throwRuntimeError("BehaviourDSLCommon::setMaterialKnowledgeIdentifier",
+                              "resulting class name is not valid (read '" +
+                                  this->mb.getClassName() + "')");
+    }
+  }  // end of BehaviourDSLCommon::setMaterialKnowledgeIdentifier
+
   void BehaviourDSLCommon::treatBehaviour() {
     const auto& b = this->readOnlyOneToken();
     if (!isValidBehaviourName(b)) {
       this->throwRuntimeError("BehaviourDSLCommon::treatBehaviour",
                               "invalid behaviour name '" + b + "'");
     }
-    this->mb.setBehaviourName(b);
-    if (!isValidIdentifier(this->mb.getClassName())) {
-      this->throwRuntimeError("BehaviourDSLCommon::treatBehaviour",
-                              "resulting class name is not valid (read '" +
-                                  this->mb.getClassName() + "')");
+    if (this->overriden_implementation_name.empty()) {
+      this->setMaterialKnowledgeIdentifier(b);
     }
-  }  // end of BehaviourDSLCommon::treatMaterial
+  }  // end of BehaviourDSLCommon::treatBehaviour
 
   void BehaviourDSLCommon::readStringList(std::vector<std::string>& cont) {
     this->checkNotEndOfFile("BehaviourDSLCommon::readStringList", "Cannot read interface name.");

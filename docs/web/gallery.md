@@ -53,7 +53,6 @@ behaviour. This framework is described
 - The implementation of the Barlat' Yld2004-18p behaviour is described
   [here](barlat-yld2004.html).
 - The implementation of a perfect plastic behaviour based on the
-- The implementation of a perfect plastic behaviour based on the
   Green yield criterion is described [here](greenplasticity.html).
 - The implementation of a multi-surface, compressible and perfect
   plastic behaviour using the Drucker-Prager yield criterion and a cap
@@ -68,5 +67,18 @@ behaviour. This framework is described
   described
   [here](isotropicplasticityamstrongfrederickinematichardening.html)
 - [ImplicitNorton](gallery/viscoplasticity/ImplicitNorton.mfront)
+
+### Single crystal
+
+- The implementation of the Méric-Cailletaud single crystal behaviour
+  under the small and finite strain assumptions are described
+  [here](MericCailletaudSingleCrystalPlasticity.html)
+
+### PolyCrystal
+
+- The description of the implementation of a polycrystal behaviour
+  based on the Berveiller-Zaoui homogeneisation scheme using an
+  explicit scheme is available
+  [here](ExplicitBerveillerZaouiPolyCrystals.html)
 
 <!-- Local IspellDict: english -->

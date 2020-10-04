@@ -28,6 +28,7 @@ libTFELMFront_la_SOURCES = MFront.cxx                                           
 			   MakefileGenerator.cxx                                  \
 		           FileDescription.cxx                                    \
 		           TargetsDescription.cxx                                 \
+		           OverridableImplementation.cxx                          \
 		           CompiledTargetDescriptionBase.cxx                      \
 		           LibraryDescription.cxx                                 \
 		           ExecutableDescription.cxx                              \

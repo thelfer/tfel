@@ -52,6 +52,7 @@ set(TFELMFront_SOURCES
     CodeBlock.cxx
     FileDescription.cxx
     TargetsDescription.cxx
+    OverridableImplementation.cxx
     CompiledTargetDescriptionBase.cxx
     LibraryDescription.cxx
     ExecutableDescription.cxx

@@ -40,6 +40,9 @@ namespace mfront{
     //! constructor
     ModelDSLCommon();
     DSLTarget getTargetType() const override final;
+    std::string getMaterialKnowledgeIdentifier() const override;
+    std::string getMaterialName() const override;
+    bool isOverridableByAParameter(const std::string&) const override;
     void endsInputFileProcessing() override;
     void generateOutputFiles() override;
     void setInterfaces(const std::set<std::string>&) override;
@@ -47,104 +50,63 @@ namespace mfront{
     ~ModelDSLCommon() override;
 
   protected:
-    /*!
-     * \brief register a name.
-     * \param[in] n : name
-     * \param[in] b : if false, don't check if variable has already
-     * been reserved yet. If true, check if the variable has alredy
-     * been registred and throws an exception if it does, register it
-     * otherwise
-     */
-    void reserveName(const std::string&) override;
-    /*!
-     * \brief look if a name is reserved
-     * \param[in] n : name
-     */
-    bool isNameReserved(const std::string&) const override;
-    /*!
-     * \return the name of the generated class
-     */
-    std::string getClassName() const override ;
-    /*!
-     * \brief add a material law
-     * \param[in] m : added material law name
-     */
-    void addMaterialLaw(const std::string&) override;
-    /*!
-     * \brief append the given code to the includes
-     */
-    void appendToIncludes(const std::string&) override;
-    /*!
-     * \brief append the given code to the members
-     */
-    void appendToMembers(const std::string&) override;
-    /*!
-     * \brief append the given code to the private code
-     */
-    void appendToPrivateCode(const std::string&) override;
-    /*!
-     * \brief append the given code to the sources
-     */
-    void appendToSources(const std::string&) override;
-    /*!
-     * \brief add a static variable description
-     * \param[in] v : variable description
-     */
-    void addStaticVariableDescription(const StaticVariableDescription&) override;
-    /*!
-     * \return the value of an integer constant
-     * \param[in] n: variable name
-     */
-    int getIntegerConstant(const std::string&) const override;
-    //! treat the `@Material` keyword
-    virtual void treatMaterial();
-    //! treat the `@Library` keyword
-    virtual void treatLibrary();
+   void reserveName(const std::string&) override;
+   bool isNameReserved(const std::string&) const override;
+   std::string getClassName() const override;
+   void addMaterialLaw(const std::string&) override;
+   void appendToIncludes(const std::string&) override;
+   void appendToMembers(const std::string&) override;
+   void appendToPrivateCode(const std::string&) override;
+   void appendToSources(const std::string&) override;
+   void addStaticVariableDescription(const StaticVariableDescription&) override;
+   int getIntegerConstant(const std::string&) const override;
+   void treatUnknownKeyword() override;
+   void setMaterial(const std::string&) override;
+   void setMaterialKnowledgeIdentifier(const std::string&) override;
+   //! treat the `@Library` keyword
+   virtual void treatLibrary();
 
-    virtual void treatModel();
+   virtual void treatModel();
 
-    virtual void treatDomain();
+   virtual void treatDomain();
 
-    virtual void treatDomains();
+   virtual void treatDomains();
 
-    void treatUnknownKeyword() override;
+   virtual void treatBounds();
 
-    virtual void treatBounds();
-    
-    virtual void treatPhysicalBounds();
+   virtual void treatPhysicalBounds();
 
-    virtual void treatConstantMaterialProperty();
+   virtual void treatConstantMaterialProperty();
 
-    virtual void treatConstantMaterialPropertyMethod();
+   virtual void treatConstantMaterialPropertyMethod();
 
-    virtual void treatFunction();
+   virtual void treatFunction();
 
-    virtual void treatOutput();
+   virtual void treatOutput();
 
-    virtual void treatOutputMethod();
+   virtual void treatOutputMethod();
 
-    virtual void treatInput();
+   virtual void treatInput();
 
-    virtual void treatInputMethod();
+   virtual void treatInputMethod();
 
-    virtual void treatParameter();
+   virtual void treatParameter();
 
-    virtual void treatLocalParameter();
+   virtual void treatLocalParameter();
 
-    virtual void treatParameterMethod();
+   virtual void treatParameterMethod();
 
-    virtual void readDefaultValue();
+   virtual void readDefaultValue();
 
-    virtual bool isOutputVariable(const std::string&) const;
+   virtual bool isOutputVariable(const std::string&) const;
 
-    virtual bool isInputVariable(const std::string&) const;
+   virtual bool isInputVariable(const std::string&) const;
 
-    ModelDescription md;
-    
-    std::map<std::string,
-	     std::shared_ptr<AbstractModelInterface>> interfaces;
+   ModelDescription md;
 
-    std::string currentVar;
+   std::map<std::string, std::shared_ptr<AbstractModelInterface>> interfaces;
+
+   std::string currentVar;
   }; // end of class ModelDSLCommon
 
 } // end of namespace mfront  

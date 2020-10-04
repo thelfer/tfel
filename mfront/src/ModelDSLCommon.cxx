@@ -72,6 +72,19 @@ namespace mfront {
     }
   }
 
+  std::string ModelDSLCommon::getMaterialKnowledgeIdentifier() const {
+    return this->md.className;
+  }  // end of ModelDSLCommon::getMaterialKnowledgeIdentifier
+
+  std::string ModelDSLCommon::getMaterialName() const {
+    return this->md.material;
+  }  // end of ModelDSLCommon::getMaterialName(
+
+  bool ModelDSLCommon::isOverridableByAParameter(
+      const std::string&) const {
+    return false;
+  }  // end of ModelDSLCommon::isOverridableByAParameter
+
   void ModelDSLCommon::endsInputFileProcessing() {
   }  // end of ModelDSLCommon::endsInputFileProcessing
 
@@ -110,48 +123,59 @@ namespace mfront {
                             "unknown variable '" + n + "'");
   }  // end of ModelDSLCommon::getIntegerConstant
 
-  void ModelDSLCommon::treatMaterial() {
+  void ModelDSLCommon::setMaterial(const std::string& m) {
     if (!this->md.material.empty()) {
-      this->throwRuntimeError("ModelDSLCommon::treatMaterial",
+      this->throwRuntimeError("ModelDSLCommon::setMaterial",
                               "material name alreay defined");
     }
-    const auto& m = this->readOnlyOneToken();
     if (!isValidMaterialName(m)) {
-      this->throwRuntimeError("ModelDSLCommon::treatMaterial",
+      this->throwRuntimeError("ModelDSLCommon::setMaterial",
                               "invalid material name ('" + m + "')");
     }
     this->md.material = m;
-    if (!this->md.className.empty()) {
-      this->md.className = this->md.material + "_" + this->md.className;
+    if (!this->md.modelName.empty()) {
+      this->md.className = this->md.material + "_" + this->md.modelName;
     }
-  }  // end of ModelDSLCommon::treatMaterial
+  }  // end of ModelDSLCommon::setMaterial
 
   void ModelDSLCommon::treatLibrary() {
     const auto& l = this->readOnlyOneToken();
     if (!isValidLibraryName(l)) {
-      this->throwRuntimeError("ModelDSLCommon::treatMaterial",
+      this->throwRuntimeError("ModelDSLCommon::treatLibrary",
                               "invalid library name");
     }
     if (!this->md.library.empty()) {
-      this->throwRuntimeError("ModelDSLCommon::treatMaterial",
+      this->throwRuntimeError("ModelDSLCommon::treatLibrary",
                               "library name already registred");
     }
     this->md.library = l;
   }  // end of ModelDSLCommon::treatLibrary
 
-  void ModelDSLCommon::treatModel() {
+  void ModelDSLCommon::setMaterialKnowledgeIdentifier(const std::string& i) {
     if (!this->md.className.empty()) {
-      this->throwRuntimeError("ModelDSLCommon::treatModel",
+      this->throwRuntimeError("ModelDSLCommon::setMaterialKnowledgeIdentifier",
                               "model name already defined");
     }
+    if (!isValidModelName(i)) {
+      this->throwRuntimeError("ModelDSLCommon::setMaterialKnowledgeIdentifier",
+                              "invalid model name");
+    }
+    this->md.modelName = i;
+    if (!this->md.material.empty()) {
+      this->md.className = this->md.material + "_" + this->md.modelName;
+    } else {
+      this->md.className = i;
+    }
+  }  // end of ModelDSLCommon::setMaterialKnowledgeIdentifier
+
+  void ModelDSLCommon::treatModel() {
     const auto& m  = this->readOnlyOneToken();
     if (!isValidModelName(m)) {
       this->throwRuntimeError("ModelDSLCommon::treatModel",
                               "invalid model name");
     }
-    this->md.className = m;
-    if (!this->md.material.empty()) {
-      this->md.className = this->md.material + "_" + this->md.className;
+    if (this->overriden_implementation_name.empty()) {
+      this->setMaterialKnowledgeIdentifier(m);
     }
   }  // end of ModelDSLCommon::treatModel
 
@@ -178,7 +202,7 @@ namespace mfront {
     for (const auto& i : this->interfaces) {
       i.second->writeOutputFiles(this->fd, this->md);
     }
-  }  // end of ModelDSLCommon::writeOutputFiles
+  }  // end of ModelDSLCommon::generateOutputFiles
 
   void ModelDSLCommon::treatUnknownKeyword() {
     TokensContainer::const_iterator p2;

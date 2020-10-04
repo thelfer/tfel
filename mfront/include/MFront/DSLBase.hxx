@@ -40,12 +40,12 @@ namespace mfront {
    * \return if the given name is valid
    * \param[in] n: material name
    */
-  MFRONT_VISIBILITY_EXPORT  bool isValidMaterialName(const std::string&);
+  MFRONT_VISIBILITY_EXPORT bool isValidMaterialName(const std::string&);
   /*!
    * \return if the given name is valid
    * \param[in] n: library name
    */
-  MFRONT_VISIBILITY_EXPORT  bool isValidLibraryName(const std::string&);
+  MFRONT_VISIBILITY_EXPORT bool isValidLibraryName(const std::string&);
 
   /*!
    * \brief base structure for domain specific languages
@@ -170,13 +170,48 @@ namespace mfront {
      */
     virtual bool isNameReserved(const std::string&) const = 0;
     /*!
-     * \return a temporary name which has not been reserved. This
-     * method shall be used to get a temporary name at a
-     * code block scope.
-     * \param[in,out] tmpnames: list of already used temporary names
-     * in the treated code block.
-     * \param[in]     p: prefix
+     * \brief specify the name of the implementation before parsing the
+     * `MFront` source file. Any name specified in the `MFront` file, through
+     * the `@Law`, `@Behaviour` or `@Model` keywords, will be ignored.
+     * \param[in] i: name of the implementation
      */
+    virtual void overrideMaterialKnowledgeIdentifier(const std::string&);
+    /*!
+     * \brief specify the name of the material before parsing the
+     * `MFront` source file. Any material name specified with the `@Material`
+     * keyword will be ignored.
+     * \param[in] m: material' name
+     */
+    virtual void overrideMaterialName(const std::string&);
+    /*!
+     * \brief specify the name of the author before parsing the
+     * `MFront` source file. Any author' name specified with the `@Author`
+     * keyword will be ignored.
+     * \param[in] a: author' name
+     */
+    virtual void overrideAuthorName(const std::string&);
+    /*!
+     * \brief specify the date of the `MFront` implementation before
+     * parsing the `MFront` source file. Any date specified with the
+     * `@Date` keyword will be ignored.
+     * \param[in] d: date
+     */
+    virtual void overrideDate(const std::string&);
+    /*!
+     * \brief specify the description of the `MFront` implementation before
+     * parsing the `MFront` source file. Any description specified with the
+     * `@Description` keyword will be ignored.
+     * \param[in] d: description
+     */
+    virtual void overrideDescription(const std::string&);
+    /*!
+      * \return a temporary name which has not been reserved. This
+      * method shall be used to get a temporary name at a
+      * code block scope.
+      * \param[in,out] tmpnames: list of already used temporary names
+      * in the treated code block.
+      * \param[in]     p: prefix
+      */
     virtual std::string getTemporaryVariableName(std::vector<std::string>&,
                                                  const std::string&) const;
     /*!
@@ -396,39 +431,58 @@ namespace mfront {
      */
     virtual std::shared_ptr<MaterialPropertyDescription>
     handleMaterialPropertyDescription(const std::string&);
-    //! handle the `@MFront` keyword
+    /*!
+     * \brief set the material described by the implementation
+     * \param[in] m: material name
+     */
+    virtual void setMaterial(const std::string&) = 0;
+    /*!
+     * \brief set the name of the implementation, i.e. the material property'
+     * name, the behaviour' name or the model' name.
+     * \param[in] i: implementation name
+     */
+    virtual void setMaterialKnowledgeIdentifier(const std::string&) = 0;
+    //! \brief set the author of the implementation
+    virtual void setAuthor(const std::string&);
+    //! \brief set the date at which the implementation has been written
+    virtual void setDate(const std::string&);
+    //! \brief set the description of the `MFront` file
+    virtual void setDescription(const std::string&);
+    //! \brief treat the `@Material` keyword
+    virtual void treatMaterial();
+    //! \brief handle the `@MFront` keyword
     virtual void treatMFront();
-    //! handle the `@Import` keyword
+    //! \brief handle the `@Import` keyword
     virtual void treatImport();
-    //! handle the `@MaterialLaw` keyword
+    //! \brief handle the `@MaterialLaw` keyword
     virtual void treatMaterialLaw();
-    //! handle the `@Link` keyword
+    //! \brief handle the `@Link` keyword
     virtual void treatLink();
-    //! handle the `@Author` keyword
+    //! \brief handle the `@Author` keyword
     virtual void treatAuthor();
-    //! handle the `@Data` keyword
+    //! \brief handle the `@Data` keyword
     virtual void treatDate();
-    //! handle the `@Includes` keyword
+    //! \brief handle the `@Includes` keyword
     virtual void treatIncludes();
-    //! handle the `@Sources` keyword
+    //! \brief handle the `@Sources` keyword
     virtual void treatSources();
-    //! handle the `@Private` keyword
+    //! \brief handle the `@Private` keyword
     virtual void treatPrivate();
-    //! handle the `@Members` keyword
+    //! \brief handle the `@Members` keyword
     virtual void treatMembers();
-    //! handle the `@Parser` keyword
+    //! \brief handle the `@Parser` keyword
     virtual void treatParser();
-    //! handle the `@StaticVar` keyword
+    //! \brief handle the `@StaticVar` keyword
     virtual void treatStaticVar();
-    //! handle the `@IntegerConstant` keyword
+    //! \brief handle the `@IntegerConstant` keyword
     virtual void treatIntegerConstant();
-    //! handle the `@Description` keyword
+    //! \brief handle the `@Description` keyword
     virtual void treatDescription();
-    //! handle the `@LonelySeparator` keyword
+    //! \brief handle the `@LonelySeparator` keyword
     virtual void treatLonelySeparator();
     //!
     virtual void ignoreKeyWord(const std::string&);
-    //! treat an unknown keyword
+    //! \brief treat an unknown keyword
     virtual void treatUnknownKeyword();
     /*!
      * \brief this method must be called at the end of the treatment:
@@ -451,7 +505,7 @@ namespace mfront {
      * \brief extract a double from the current token
      */
     double readDouble();
-    //! destructor
+    //! \brief destructor
     ~DSLBase() override;
     //! \brief description of the file treated
     FileDescription fd;
@@ -497,7 +551,16 @@ namespace mfront {
      * automatically unset once the callback returns.
      */
     std::string currentComment;
-
+    //! \brief overriden implementation name
+    std::string overriden_implementation_name;
+    //! \brief overriden material
+    std::string overriden_material;
+    //! \brief overriden author
+    std::string overriden_author;
+    //! \brief overriden date
+    std::string overriden_date;
+    //! \brief overriden description
+    std::string overriden_description;
   };  // end of class DSLBase
 
 }  // end of namespace mfront

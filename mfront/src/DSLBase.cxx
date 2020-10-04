@@ -145,9 +145,23 @@ namespace mfront {
     if (tfel::utilities::starts_with(f, "madnex:")) {
 #ifdef MFRONT_HAVE_MADNEX
       const auto path = decomposeImplementationPathInMadnexFile(f);
-      const auto impl =
-          madnex::getMFrontImplementation(std::get<0>(path), std::get<1>(path),
-                                          std::get<2>(path), std::get<3>(path));
+      const auto& material = std::get<2>(path);
+      const auto& name = std::get<3>(path);
+      const auto impl = madnex::getMFrontImplementation(
+          std::get<0>(path), std::get<1>(path), material, name);
+      this->overrideMaterialKnowledgeIdentifier(name);
+      if (!material.empty()) {
+        this->overrideMaterialName(material);
+      }
+      if (!impl.metadata.author.empty()) {
+        this->overrideAuthorName(impl.metadata.author);
+      }
+      if (!impl.metadata.date.empty()) {
+        this->overrideDate(impl.metadata.date);
+      }
+      if (!impl.metadata.description.empty()) {
+        this->overrideDescription(impl.metadata.description);
+      }
       CxxTokenizer::parseString(impl.source);
 #else  /* MFRONT_HAVE_MADNEX */
       tfel::raise("DSLBase::openFile: madnex support was not enabled");
@@ -923,10 +937,98 @@ namespace mfront {
     }
   }  // end of DSLBase::treatMaterialLaw
 
+  void DSLBase::treatLonelySeparator() {
+    if (getPedanticMode()) {
+      getLogStream() << this->fd.fileName << ":" << this->current->line << ":" << this->current->offset
+                     << ": warning: extra ‘;’ [-pedantic]\n";
+    }
+  }  // end of DSLBase::treatLonelySperator
+
+  void DSLBase::overrideMaterialKnowledgeIdentifier(const std::string& i) {
+    if (!this->overriden_implementation_name.empty()) {
+      this->throwRuntimeError("DSLBase::overrideMaterialKnowledgeIdentifier",
+                              "the implementation name is already overriden");
+    }
+    this->overriden_implementation_name = i;
+    this->setMaterialKnowledgeIdentifier(i);
+  }  // end of DSLBase::overrideMaterialKnowledgeIdentifier
+
+  void DSLBase::overrideMaterialName(const std::string& m) {
+    if (!this->overriden_material.empty()) {
+      this->throwRuntimeError("DSLBase::overrideMaterialName",
+                              "the material name is already overriden");
+    }
+    this->overriden_material = m;
+    this->setMaterial(m);
+  }  // end of DSLBase::overrideMaterialName
+
+  void DSLBase::overrideAuthorName(const std::string& a) {
+    if (!this->overriden_author.empty()) {
+      this->throwRuntimeError("DSLBase::overrideAuthorName",
+                              "the author is already overriden");
+    }
+    this->overriden_author = a;
+    this->setAuthor(a);
+  }  // end of DSLBase::overrideAuthorName
+
+  void DSLBase::overrideDate(const std::string& d) {
+    if (!this->overriden_date.empty()) {
+      this->throwRuntimeError("DSLBase::overrideDate",
+                              "the date is already overriden");
+    }
+    this->overriden_date = d;
+    this->setDate(d);
+  }  // end of DSLBase::overrideAuthorName
+
+  void DSLBase::overrideDescription(const std::string& d) {
+    if (!this->overriden_description.empty()) {
+      this->throwRuntimeError("DSLBase::overrideDescription",
+                              "the description is already overriden");
+    }
+    this->overriden_description = d;
+    this->setDescription(d);
+  }  // end of DSLBase::overrideAuthorName
+
+  void DSLBase::treatMaterial() {
+    const auto& m = this->readOnlyOneToken();
+    if (this->overriden_material.empty()) {
+      this->setMaterial(m);
+   }
+  }  // end of DSLBase::treatMaterial
+
+  void DSLBase::treatAuthor() {
+    const auto author = this->readUntilEndOfInstruction();
+    if (this->overriden_author.empty()) {
+      this->setAuthor(author);
+    }
+  }  // end of DSLBase::treatAuthor
+
+  void DSLBase::setAuthor(const std::string& a) {
+    if (!this->fd.authorName.empty()) {
+      this->throwRuntimeError("DSLBase::setAuthor", "author already specified");
+    }
+    this->fd.authorName = a;
+  }  // end of DSLBase::setAuthor
+
+  void DSLBase::treatDate() {
+    const auto date = this->readUntilEndOfInstruction();
+    if (this->overriden_date.empty()) {
+      this->setDate(date);
+    }
+  }  // end of DSLBase::treatDate
+
+  void DSLBase::setDate(const std::string& d) {
+    if (!this->fd.date.empty()) {
+      this->throwRuntimeError("DSLBase::setDate", "date already specified");
+    }
+    this->fd.date = d;
+  }  // end of DSLBase::setDate
+
   void DSLBase::treatDescription() {
     this->readSpecifiedToken("DSLBase::treatDescription", "{");
     this->checkNotEndOfFile("DSLBase::treatDescription");
-    this->fd.description += "* ";
+    auto description = std::string{};
+    description += "* ";
     auto currentLine = this->current->line;
     unsigned int openedBrackets = 1u;
     while ((this->current != this->tokens.end()) && (!((this->current->value == "}") && (openedBrackets == 1u)))) {
@@ -944,16 +1046,16 @@ namespace mfront {
       }
       if (currentLine != this->current->line) {
         while (currentLine != this->current->line) {
-          this->fd.description += "\n* ";
+          description += "\n* ";
           ++currentLine;
         }
       }
       if (this->current->flag == tfel::utilities::Token::String) {
-        this->fd.description += this->current->value.substr(1, this->current->value.size() - 2u);
+        description += this->current->value.substr(1, this->current->value.size() - 2u);
       } else {
-        this->fd.description += this->current->value;
+        description += this->current->value;
       }
-      this->fd.description += " ";
+      description += " ";
       ++(this->current);
     }
     if (this->current == this->tokens.end()) {
@@ -961,20 +1063,17 @@ namespace mfront {
       this->throwRuntimeError("DSLBase::treatDescription", "File ended before the end of description.");
     }
     ++(this->current);
+    if (this->overriden_description.empty()) {
+      this->setDescription(description);
+    }
   }  // end of DSLBase::treatDescription
 
-  void DSLBase::treatLonelySeparator() {
-    if (getPedanticMode()) {
-      getLogStream() << this->fd.fileName << ":" << this->current->line << ":" << this->current->offset
-                     << ": warning: extra ‘;’ [-pedantic]\n";
+  void DSLBase::setDescription(const std::string& d) {
+    if (!this->fd.description.empty()) {
+      this->throwRuntimeError("DSLBase::setDescription", "date already specified");
     }
-  }  // end of DSLBase::treatLonelySperator
-
-  void DSLBase::treatAuthor() {
-    this->fd.authorName = this->readUntilEndOfInstruction();
-  }  // end of DSLBase::treatAuthor
-
-  void DSLBase::treatDate() { this->fd.date = this->readUntilEndOfInstruction(); }  // end of DSLBase::treatDate
+    this->fd.description= d;
+  }  // end of DSLBase::setDescription
 
   void DSLBase::treatUnknownKeyword() {
     --(this->current);
