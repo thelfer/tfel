@@ -3,15 +3,18 @@ try:
 except ImportError:
     import unittest
 
-from mfront import getMFrontImplementationsPaths
+from mfront import getImplementationsPaths
     
 class MadnexTest(unittest.TestCase):
 
     def test_pass(self):
 
-        paths = getMFrontImplementationsPaths(file = 'MFront-test1.madnex',
-                                              behaviour = ".+")
-        
+        paths = getImplementationsPaths(file = 'MFront-test1.madnex',
+	                                behaviour = ".+")
+        self.assertTrue(len(paths) == 1)
+        self.assertTrue(paths[0] ==
+                        'madnex:MFront-test1.madnex:'
+                        'behaviour::J2Plasticity')
         
 if __name__ == '__main__':
     unittest.main()

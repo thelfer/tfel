@@ -26,6 +26,7 @@
 #include "MFront/PerformanceProfiling.hxx"
 #include "MFront/ModelDescription.hxx"
 #include "MFront/BehaviourData.hxx"
+#include "MFront/MFrontLogStream.hxx"
 
 namespace mfront {
 
@@ -320,7 +321,7 @@ namespace mfront {
 
   BehaviourData::BehaviourData() {
     this->registerMemberName("dt");
-    this->reserveName("\u0394t"); // symbolic value
+    this->reserveName("\u0394t");  // symbolic value
     // treating the temperature
     auto T = VariableDescription{"temperature", "T", 1u, 0u};
     T.setGlossaryName("Temperature");
@@ -460,7 +461,18 @@ namespace mfront {
 
   void BehaviourData::addMaterialProperty(const VariableDescription& v,
                                           const RegistrationStatus s) {
-    this->addVariable(this->materialProperties, v, s, false);
+    const auto op = this->overriding_parameters.find(v.name);
+    if (op != this->overriding_parameters.end()) {
+      if (v.arraySize != 1u) {
+        tfel::raise(
+            "BehaviourData::addMaterialProperty: "
+            "overriding arrays of material properties is not supported yet");
+      }
+      this->addParameter(v, s);
+      this->setParameterDefaultValue(v.name, op->second);
+    } else {
+      this->addVariable(this->materialProperties, v, s, false);
+    }
   }  // end of BehaviourData::addMaterialProperty
 
   void BehaviourData::addIntegrationVariable(const VariableDescription& v,
@@ -521,6 +533,14 @@ namespace mfront {
 
   void BehaviourData::addParameter(const VariableDescription& v,
                                    const RegistrationStatus s) {
+    const auto op = this->overriding_parameters.find(v.name);
+    if (op != this->overriding_parameters.end()) {
+      if (v.arraySize != 1u) {
+        tfel::raise(
+            "BehaviourData::addParameter: "
+            "overriding array of parameters is not supported yet");
+      }
+    }
     this->addVariable(this->parameters, v, s, false);
   }  // end of BehaviourData::addParameter
 
@@ -1250,9 +1270,15 @@ namespace mfront {
     const auto f = SupportedTypes::getTypeFlag(p.type);
     throw_if(f != SupportedTypes::SCALAR,
              "parameter '" + n + "' is not a scalar");
-    throw_if(!this->parametersDefaultValues.insert({n, v}).second,
-             "default value for parameter '" + n + "' already defined");
-  }
+    const auto op = this->overriding_parameters.find(n);
+    if (op == this->overriding_parameters.end()) {
+      throw_if(!this->parametersDefaultValues.insert({n, v}).second,
+               "default value for parameter '" + n + "' already defined");
+    } else {
+      throw_if(!this->parametersDefaultValues.insert({n, op->second}).second,
+               "default value for parameter '" + n + "' already defined");
+    }
+  }  // end of BehaviourData::setParameterDefaultValue
 
   void BehaviourData::setParameterDefaultValue(const std::string& n,
                                                const unsigned short i,
@@ -1268,11 +1294,12 @@ namespace mfront {
     throw_if(p.arraySize == 1,
              "parameter '" + n + "' has not been declared as an array");
     const auto idx = std::to_string(i);
-    const auto n2 = n + '[' + idx + ']';
-    throw_if(i >= p.arraySize, "index " + idx +
-                                   " is greater "
-                                   "than parameter '" +
+    throw_if(i >= p.arraySize, "index " + idx + " is greater than parameter '" +
                                    n + "' array size");
+    const auto n2 = n + '[' + idx + ']';
+    //     const auto op = this->overriding_parameters.find(n2);
+    //     if (op != this->overriding_parameters.end()) {
+    //     }
     throw_if(!this->parametersDefaultValues.insert({n2, v}).second,
              "default value for parameter '" + n2 + "' already defined");
   }
@@ -1716,7 +1743,8 @@ namespace mfront {
     return false;
   }  // end of BehaviourData::isStressFreeExansionAnisotropic
 
-  void BehaviourData::getSymbols(std::map<std::string, std::string>& symbols) const {
+  void BehaviourData::getSymbols(
+      std::map<std::string, std::string>& symbols) const {
     mfront::getSymbols(symbols, this->materialProperties);
     mfront::getSymbols(symbols, this->persistentVariables);
     mfront::getSymbols(symbols, this->integrationVariables);
@@ -1726,6 +1754,17 @@ namespace mfront {
     mfront::getSymbols(symbols, this->localVariables);
     mfront::getSymbols(symbols, this->parameters);
   }  // end of BehaviourData::getSymbols
+
+  void BehaviourData::overrideByAParameter(const std::string& n,
+                                           const double v) {
+    if (this->overriding_parameters.count(n) != 0) {
+      tfel::raise(
+          "BehaviourData::overrideByAParameter: "
+          "an override for variable '" +
+          n + "' has already been specified");
+    }
+    this->overriding_parameters[n] = v;
+  }  // end of BehaviourData::overrideByAParameter
 
   BehaviourData::~BehaviourData() = default;
 

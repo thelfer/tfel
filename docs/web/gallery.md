@@ -74,11 +74,13 @@ behaviour. This framework is described
   under the small and finite strain assumptions are described
   [here](MericCailletaudSingleCrystalPlasticity.html)
 
+<!--
 ### PolyCrystal
 
 - The description of the implementation of a polycrystal behaviour
   based on the Berveiller-Zaoui homogeneisation scheme using an
   explicit scheme is available
   [here](ExplicitBerveillerZaouiPolyCrystals.html)
+-->
 
 <!-- Local IspellDict: english -->

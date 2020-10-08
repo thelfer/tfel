@@ -13,6 +13,7 @@
 
 #include <sstream>
 #include "TFEL/Raise.hxx"
+#include "TFEL/Math/Parser/ConstantExternalFunction.hxx"
 #include "TFEL/Material/OutOfBoundsPolicy.hxx"
 #include "MFront/MFrontLogStream.hxx"
 #include "MTest/MTest.hxx"
@@ -110,7 +111,7 @@ namespace mtest {
       this->checkNotEndOfLine("SingleStructureSchemeParser::handleBehaviour", p,
                               this->tokens.end());
       if((p->value == "generic") || (p->value == "Generic")){
-	i = "Generic";
+        i = "Generic";
       }
 #ifdef HAVE_CASTEM
       if ((p->value == "umat") || (p->value == "castem") || (p->value == "Castem") ||
@@ -195,6 +196,15 @@ namespace mtest {
       t.setBehaviour(i, l, f, d);
     } else {
       t.setBehaviour(w, i, l, f, d);
+    }
+    const auto& b = *(t.getBehaviour());
+    // adding parameters
+    const auto& n = b.getBehaviourName();
+    for (const auto& p : b.getParametersNames()) {
+      const auto cste =
+          std::make_shared<tfel::math::parser::ConstantExternalFunction>(
+              b.getRealParameterDefaultValue(p));
+      this->externalFunctions->insert({n + "::" + p, cste});
     }
   }  // end of SingleStructureSchemeParser::handleBehaviour
 

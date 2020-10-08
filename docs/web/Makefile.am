@@ -134,7 +134,8 @@ EXTRA_DIST=CMakeLists.txt					      \
            ./FichantLaBorderieDamageAndTorelliLoadInducedStrainBehaviour.md \
            ./FischerBurmeister.md                                     \
            ./TFELSystem.md                                            \
-	   ./theory.md                                                \
+	   ./tfel-check.md                                            \
+           ./theory.md                                                \
 	   ./robots.txt						      \
 	   ./crossdomain.xml					      \
 	   ./js/vendor						      \

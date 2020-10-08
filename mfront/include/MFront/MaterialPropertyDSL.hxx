@@ -35,7 +35,7 @@ namespace mfront {
   MFRONT_VISIBILITY_EXPORT bool isValidMaterialPropertyName(const std::string&);
 
   /*!
-   * Parser handling material properties
+   * \brief domain specific language handling material properties
    */
   struct MFRONT_VISIBILITY_EXPORT MaterialPropertyDSL : public DSLBase {
     //! \return the name of the parser
@@ -48,7 +48,9 @@ namespace mfront {
     DSLTarget getTargetType() const override final;
     std::string getMaterialKnowledgeIdentifier() const override;
     std::string getMaterialName() const override;
-    bool isOverridableByAParameter(const std::string&) const override;
+    std::string getOverridableVariableNameByExternalName(
+        const std::string&) const override;
+    void overrideByAParameter(const std::string&, const double) override;
     void getKeywordsList(std::vector<std::string>&) const override;
     void setInterfaces(const std::set<std::string>&) override;
     void analyseFile(const std::string&,
@@ -119,6 +121,8 @@ namespace mfront {
     virtual void registerNewCallBack(const std::string&, const MemberFuncPtr);
     //! description of the material property
     MaterialPropertyDescription md;
+    //! \brief overriding parameters
+    std::map<std::string, double> overriding_parameters;
     /*!
      * list of registred interfaces
      */

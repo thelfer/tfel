@@ -61,7 +61,10 @@ namespace mfront {
     handleMaterialPropertyDescription(const std::string&) override;
     std::string getMaterialKnowledgeIdentifier() const override;
     std::string getMaterialName() const override;
-    bool isOverridableByAParameter(const std::string&) const override;
+    std::string getOverridableVariableNameByExternalName(
+        const std::string&) const override;
+    void overrideByAParameter(const std::string&, const double) override;
+
     void analyseFile(const std::string&,
                      const std::vector<std::string>&,
                      const std::map<std::string, std::string>&) override;

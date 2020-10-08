@@ -80,10 +80,19 @@ namespace mfront {
     return this->md.material;
   }  // end of ModelDSLCommon::getMaterialName(
 
-  bool ModelDSLCommon::isOverridableByAParameter(
+  std::string ModelDSLCommon::getOverridableVariableNameByExternalName(
       const std::string&) const {
-    return false;
-  }  // end of ModelDSLCommon::isOverridableByAParameter
+#pragma message("unimplemented")
+    tfel::raise(
+        "ModelDSLCommon::getOverridableVariableNameByExternalName: "
+        "unimplemented feature");
+    return "";
+  }  // end of ModelDSLCommon::getOverridableVariableNameByExternalName
+
+  void ModelDSLCommon::overrideByAParameter(const std::string& n,
+                                            const double v) {
+#pragma message("unimplemented")
+  }  // end of ModelDSLCommon::overrideByAParameter
 
   void ModelDSLCommon::endsInputFileProcessing() {
   }  // end of ModelDSLCommon::endsInputFileProcessing
@@ -710,7 +719,13 @@ namespace mfront {
       this->checkNotEndOfFile("DSLBase::handleParameter");
       auto value = this->readInitialisationValue<double>(n, false);
       if (value.first) {
-        v.setAttribute(VariableDescription::defaultValue, value.second, false);
+        const auto op = this->overriding_parameters.find(n);
+        if (op == this->overriding_parameters.end()) {
+          v.setAttribute(VariableDescription::defaultValue, value.second,
+                         false);
+        } else {
+          v.setAttribute(VariableDescription::defaultValue, op->second, false);
+        }
       }
       if (this->current->value == ",") {
         ++(this->current);
@@ -836,7 +851,12 @@ namespace mfront {
       v.setAttribute(VariableDescription::defaultValue, values, false);
     } else if ((v.type == "double") || (v.type == "real")) {
       const auto value = this->readDouble();
-      v.setAttribute(VariableDescription::defaultValue, value, false);
+      const auto op = this->overriding_parameters.find(v.name);
+      if (op == this->overriding_parameters.end()) {
+        v.setAttribute(VariableDescription::defaultValue, value, false);
+      } else {
+        v.setAttribute(VariableDescription::defaultValue, op->second, false);
+      }
     } else if (v.type == "string") {
       const auto value = this->readString("ModelDSLCommon::readDefaultValue");
       v.setAttribute(VariableDescription::defaultValue, value, false);

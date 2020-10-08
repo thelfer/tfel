@@ -117,6 +117,34 @@ namespace mfront {
     void appendToSources(const std::string&);
     //! \brief destructor
     virtual ~ModelDescription();
+    /*!
+     * \brief register a name.
+     * \param[in] n : name
+     * \param[in] b : if false, don't check if variable has already
+     * been reserved yet. If true, check if the variable has alredy
+     * been registred and throws an exception if it does, register it
+     * otherwise
+     * \note this method is called internally by the registerVariable
+     * and registerStaticVariable methods.
+     */
+    void reserveName(const std::string&);
+    /*!
+     * \brief register a static member name
+     * \param[in] n : name
+     */
+    void registerMemberName(const std::string&);
+    /*!
+     * \brief register a static member name
+     * \param[in] n : name
+     */
+    void registerStaticMemberName(const std::string&);
+    /*!
+     * \brief look if a name is reserved
+     * \param[in] n : name
+     */
+    bool isNameReserved(const std::string&) const;
+    //! \brief \return the list of reserved names
+    std::set<std::string>& getReservedNames();
     //! \brief list of functions declared
     std::vector<Function> functions;
     //! \brief list of all outputs
@@ -152,34 +180,8 @@ namespace mfront {
     std::set<std::string> memberNames;
     //! \brief list of variables names
     std::set<std::string> staticMemberNames;
-    /*!
-     * \brief register a name.
-     * \param[in] n : name
-     * \param[in] b : if false, don't check if variable has already
-     * been reserved yet. If true, check if the variable has alredy
-     * been registred and throws an exception if it does, register it
-     * otherwise
-     * \note this method is called internally by the registerVariable
-     * and registerStaticVariable methods.
-     */
-    void reserveName(const std::string&);
-    /*!
-     * \brief register a static member name
-     * \param[in] n : name
-     */
-    void registerMemberName(const std::string&);
-    /*!
-     * \brief register a static member name
-     * \param[in] n : name
-     */
-    void registerStaticMemberName(const std::string&);
-    /*!
-     * \brief look if a name is reserved
-     * \param[in] n : name
-     */
-    bool isNameReserved(const std::string&) const;
-    //! \brief \return the list of reserved names
-    std::set<std::string>& getReservedNames();
+    //! \brief overriding parameters
+    std::map<std::string, double> overriding_parameters;
 
    protected:
     /*!

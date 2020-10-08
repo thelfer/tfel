@@ -1,5 +1,5 @@
 /*!
- * \file   SchemeParserBase.cxx
+ * \file   mtest/src/SchemeParserBase.cxx
  * \brief
  * \author Thomas Helfer
  * \date   21 déc. 2015
@@ -19,6 +19,7 @@
 #include "TFEL/Utilities/TextData.hxx"
 #include "TFEL/System/ExternalLibraryManager.hxx"
 #include "TFEL/Math/Parser/ExternalCastemFunction.hxx"
+#include "TFEL/Math/Parser/ConstantExternalFunction.hxx"
 #include "MFront/MFrontLogStream.hxx"
 #include "MTest/MTest.hxx"
 #include "MTest/Evolution.hxx"
@@ -531,8 +532,15 @@ namespace mtest {
     const auto& n = this->readString(p, this->tokens.end());
     tfel::raise_if(
         !this->isValidIdentifier(tfel::unicode::getMangledString(n)),
-        "SchemeParserBase::handleReal : '" + n + "' is not a valid identifier");
-    t.addEvolution(n, this->parseEvolution(t, evt, p), true, true);
+        "SchemeParserBase::handleEvolution: '" + n + "' is not a valid identifier");
+    const auto ev = this->parseEvolution(t, evt, p);
+    if (ev->isConstant()) {
+      const auto cste =
+          std::make_shared<tfel::math::parser::ConstantExternalFunction>(
+              ev->operator()(0));
+      this->externalFunctions->insert({n, cste});
+    }
+    t.addEvolution(n, ev, true, true);
     this->readSpecifiedToken("SchemeParserBase::handleEvolution", ";", p,
                              this->tokens.end());
   }
@@ -540,7 +548,6 @@ namespace mtest {
   real SchemeParserBase::readDouble(SchemeBase& t, tokens_iterator& p) {
     this->checkNotEndOfLine("SchemeParserBase::readDouble", p,
                             this->tokens.end());
-    real r(0);
     if (p->flag == tfel::utilities::Token::String) {
       const auto& f = this->readString(p, this->tokens.end());
       tfel::math::Evaluator ev(f, this->externalFunctions);
@@ -548,25 +555,19 @@ namespace mtest {
         const auto evs = t.getEvolutions();
         const auto pev = evs.find(v);
         tfel::raise_if(pev == evs.end(),
-                       "SchemeParserBase::readDouble: "
-                       "no evolution named '" +
+                       "SchemeParserBase::readDouble: no evolution named '" +
                            v + "' defined");
         const auto& e = *(pev->second);
         tfel::raise_if(!e.isConstant(),
-                       "SchemeParserBase::readDouble : "
-                       "formula '" +
-                           f +
-                           "' shall "
-                           "only depend on constant evolutions "
+                       "SchemeParserBase::readDouble : formula '" + f +
+                           "' shall only depend on constant evolutions "
                            "(evolution '" +
                            v + "' is not constant)");
         ev.setVariableValue(v, e(0));
       }
-      r = ev.getValue();
-    } else {
-      r = CxxTokenizer::readDouble(p, this->tokens.end());
+      return ev.getValue();
     }
-    return r;
+    return CxxTokenizer::readDouble(p, this->tokens.end());
   }  // end of SchemeParserBase::readDouble
 
   real SchemeParserBase::readTime(SchemeBase& t, tokens_iterator& p) {

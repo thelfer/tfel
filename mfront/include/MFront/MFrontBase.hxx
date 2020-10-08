@@ -114,23 +114,6 @@ namespace mfront {
     std::set<std::string> interfaces;
   };  // end of struct MFrontBase
 
-  /*!
-   * \return the paths to `MFront` implementations matching the given
-   * pattern in the given file. Standard `MFront` files only contains one
-   * implementations. `Madnex` files may contain several implementations.
-   * \param[in] f: file name
-   * \param[in] material_identifier: identifier of the material (may be empty).
-   * \param[in] behaviour_identifier: identifier for material properties.
-   * \param[in] behaviour_identifier: identifier for behaviours.
-   * \param[in] model_identifier: identifier for behaviours.
-   */
-  MFRONT_VISIBILITY_EXPORT std::vector<std::string>
-  getMFrontImplementationsPaths(const std::string&,
-                                const std::string&,
-                                const std::string&,
-                                const std::string&,
-                                const std::string&);
-
 }  // end of namespace mfront
 
 #endif /* LIB_MFRONT_MFRONTBASE_HXX */

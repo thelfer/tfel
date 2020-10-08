@@ -14,6 +14,7 @@
 #include <cmath>
 #include <limits>
 #include <cstring>
+#include <ostream>
 #include <algorithm>
 
 #include "TFEL/Raise.hxx"
@@ -460,6 +461,21 @@ namespace mtest {
     const auto r = (this->fct)(&d);
     if (r != 1) {
       return {false, d.rdt};
+    }
+    if (mfront::getVerboseMode() >= mfront::VERBOSE_DEBUG) {
+      auto& log = mfront::getLogStream();
+      log << "Consistent tangent operator returned by the behaviour:\n";
+      const auto ndv = this->getGradientsSize();
+      const auto nth = this->getThermodynamicForcesSize();
+      for (size_type i = 0; i != ndv; ++i) {
+        for (size_type j = 0; j != nth;) {
+          log << *(&(wk.D(0, 0)) + i * nth + j);
+          if (++j != nth) {
+            log << " ";
+          }
+        }
+        log << '\n';
+      }
     }
     // turn back the gradients in the global frame
     if (stype == 1u) {

@@ -44,14 +44,7 @@
 #include "MFront/MaterialPropertyDSL.hxx"
 #include "MFront/AbstractBehaviourDSL.hxx"
 #include "MFront/ModelDSL.hxx"
-
-struct MFrontPathSpecifier {
-  std::string file;
-  std::string material_identifier;
-  std::string material_property_identifier;
-  std::string behaviour_identifier;
-  std::string model_identifier;
-};  // end of struct MFrontPathSpecifier
+#include "MFront/PathSpecifier.hxx"
 
 #ifdef MFRONT_QUERY_HAVE_MADNEX
 
@@ -61,7 +54,7 @@ using GetAvailableImplementationsPtr2 =
     std::map<std::string, std::vector<std::string>> (
         madnex::MFrontDataBase::*)() const;
 
-static void listImplementations(const MFrontPathSpecifier& p,
+static void listImplementations(const mfront::PathSpecifier& p,
                                 const std::string& itypes,
                                 const GetAvailableImplementationsPtr1 m1,
                                 const GetAvailableImplementationsPtr2 m2) {
@@ -124,7 +117,7 @@ static void listImplementations(const MFrontPathSpecifier& p,
   }
 }  // end of listImplementations
 
-static void listMaterialProperties(const MFrontPathSpecifier& p) {
+static void listMaterialProperties(const mfront::PathSpecifier& p) {
   GetAvailableImplementationsPtr1 m1 =
       &madnex::MFrontDataBase::getAvailableMaterialProperties;
   GetAvailableImplementationsPtr2 m2 =
@@ -132,7 +125,7 @@ static void listMaterialProperties(const MFrontPathSpecifier& p) {
   listImplementations(p, "material properties", m1, m2);
 }  // end of listMaterialProperties
 
-static void listBehaviours(const MFrontPathSpecifier& p) {
+static void listBehaviours(const mfront::PathSpecifier& p) {
   GetAvailableImplementationsPtr1 m1 =
       &madnex::MFrontDataBase::getAvailableBehaviours;
   GetAvailableImplementationsPtr2 m2 =
@@ -140,7 +133,7 @@ static void listBehaviours(const MFrontPathSpecifier& p) {
   listImplementations(p, "behaviours", m1, m2);
 }  // end of listBehaviours
 
-static void listModels(const MFrontPathSpecifier& p) {
+static void listModels(const mfront::PathSpecifier& p) {
   GetAvailableImplementationsPtr1 m1 =
       &madnex::MFrontDataBase::getAvailableModels;
   GetAvailableImplementationsPtr2 m2 =
@@ -168,8 +161,8 @@ int main(const int argc, const char* const* const argv) {
 #if not defined(__GLIBCXX__)
   try {
 #endif /* not defined(__GLIBCXX__) */
-    auto current_path_specifier = MFrontPathSpecifier{};
-    auto path_specifiers = std::vector<MFrontPathSpecifier>{};
+    auto current_path_specifier = mfront::PathSpecifier{};
+    auto path_specifiers = std::vector<mfront::PathSpecifier>{};
     auto queries_arguments = std::vector<const char*>{};
 #ifdef MFRONT_QUERY_HAVE_MADNEX
     auto list_material_properties = false;
@@ -179,63 +172,8 @@ int main(const int argc, const char* const* const argv) {
     queries_arguments.push_back(argv[0]);
     for (auto arg = argv + 1; arg != argv + argc; ++arg) {
       const auto a = std::string{*arg};
-      if (a[0] != '-') {
-        current_path_specifier.file = a;
-        path_specifiers.push_back(current_path_specifier);
-        current_path_specifier.file.clear();
-        current_path_specifier.material_identifier.clear();
-        current_path_specifier.material_property_identifier.clear();
-        current_path_specifier.behaviour_identifier.clear();
-        current_path_specifier.model_identifier.clear();
-      } else if (tfel::utilities::starts_with(a, "--material=")) {
-        tfel::raise_if(!current_path_specifier.material_identifier.empty(),
-                       "mfront-query: material multiply defined");
-        current_path_specifier.material_identifier =
-            a.substr(std::strlen("--material="));
-        tfel::raise_if(current_path_specifier.material_identifier.empty(),
-                       "mfront-query: empty material name specified");
-      } else if (tfel::utilities::starts_with(a, "--material-property=")) {
-        tfel::raise_if(
-            !current_path_specifier.material_property_identifier.empty(),
-            "mfront-query: material property multiply defined");
-        current_path_specifier.material_property_identifier =
-            a.substr(std::strlen("--material-property="));
-        tfel::raise_if(
-            current_path_specifier.material_property_identifier.empty(),
-            "mfront-query: empty material property specified");
-      } else if (tfel::utilities::starts_with(a, "--behaviour=")) {
-        tfel::raise_if(!current_path_specifier.behaviour_identifier.empty(),
-                       "mfront-query: behaviour multiply defined");
-        current_path_specifier.behaviour_identifier =
-            a.substr(std::strlen("--behaviour="));
-        tfel::raise_if(current_path_specifier.behaviour_identifier.empty(),
-                       "mfront-query: empty behaviour specified");
-      } else if (tfel::utilities::starts_with(a, "--model=")) {
-        tfel::raise_if(!current_path_specifier.model_identifier.empty(),
-                       "mfront-query: model multiply defined");
-        current_path_specifier.model_identifier =
-            a.substr(std::strlen("--model="));
-        tfel::raise_if(current_path_specifier.model_identifier.empty(),
-                       "mfront-query: empty model specified");
-#if (defined _WIN32) || (defined _WIN64)
-      } else if (tfel::utilities::starts_with(a, "/material=")) {
-        material = a.substr(std::strlen("/material="));
-        tfel::raise_if(material.empty(),
-                       "mfront-query: empty material name specified");
-      } else if (tfel::utilities::starts_with(a, "/material-property=")) {
-        material_property_identifier =
-            a.substr(std::strlen("/material-property="));
-        tfel::raise_if(material_property_identifier.empty(),
-                       "mfront-query: empty material property specified");
-      } else if (tfel::utilities::starts_with(a, "/behaviour=")) {
-        behaviour_identifier = a.substr(std::strlen("/behaviour="));
-        tfel::raise_if(behaviour_identifier.empty(),
-                       "mfront-query: empty behaviour specified");
-      } else if (tfel::utilities::starts_with(a, "/model=")) {
-        model_identifier = a.substr(std::strlen("/model="));
-        tfel::raise_if(model_identifier.empty(),
-                       "mfront-query: empty model specified");
-#endif /* (defined _WIN32) || (defined _WIN64)*/
+      if (mfront::parsePathSpecifierArguments(path_specifiers,
+                                              current_path_specifier, a)) {
       } else if ((a == "--help") || (a == "-h")) {
         std::cout << "Usage : " << argv[0] << " [options] [files]\n"
                   << "Available options are:\n"
@@ -301,24 +239,8 @@ int main(const int argc, const char* const* const argv) {
         queries_arguments.push_back(*arg);
       }
     }
-    //
-    if (!current_path_specifier.file.empty()) {
-      path_specifiers.push_back(current_path_specifier);
-    } else {
-      tfel::raise_if(!current_path_specifier.material_identifier.empty(),
-                     "mfront-query: material name specified "
-                     "after the last input file");
-      tfel::raise_if(
-          !current_path_specifier.material_property_identifier.empty(),
-          "mfront-query: material property specified "
-          "after the last input file");
-      tfel::raise_if(!current_path_specifier.behaviour_identifier.empty(),
-                     "mfront-query: behaviour specified "
-                     "after the last input file");
-      tfel::raise_if(!current_path_specifier.model_identifier.empty(),
-                     "mfront-query: model specified "
-                     "after the last input file");
-    }
+    mfront::finalizePathSpecifierArgumentsParsing(path_specifiers,
+                                                  current_path_specifier);
 #ifdef MFRONT_QUERY_HAVE_MADNEX
     if (list_material_properties || list_behaviours || list_models) {
       tfel::raise_if(
@@ -342,13 +264,8 @@ int main(const int argc, const char* const* const argv) {
     }
 #endif /* MFRONT_QUERY_HAVE_MADNEX */
     //
-    auto implementations = std::vector<std::string>{};
-    for (const auto& p : path_specifiers) {
-      const auto paths = mfront::getMFrontImplementationsPaths(
-          p.file, p.material_identifier, p.material_property_identifier,
-          p.behaviour_identifier, p.model_identifier);
-      implementations.insert(implementations.end(), paths.begin(), paths.end());
-    }
+    const auto implementations =
+        mfront::getImplementationsPaths(path_specifiers);
     //
     auto mpqueries = std::vector<std::shared_ptr<MaterialPropertyQuery>>{};
     auto bqueries = std::vector<std::shared_ptr<BehaviourQuery>>{};
@@ -400,3 +317,4 @@ int main(const int argc, const char* const* const argv) {
 #endif /* not defined(__GLIBCXX__) */
   return EXIT_SUCCESS;
 }
+ 

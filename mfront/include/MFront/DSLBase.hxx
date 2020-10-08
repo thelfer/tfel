@@ -205,6 +205,12 @@ namespace mfront {
      */
     virtual void overrideDescription(const std::string&);
     /*!
+     * \brief specify that the given variable must be overriden by a parameter.
+     * \param[in] n: variable name
+     * \param[in] v: variable value
+     */
+    virtual void overrideByAParameter(const std::string&, const double) = 0;
+    /*!
       * \return a temporary name which has not been reserved. This
       * method shall be used to get a temporary name at a
       * code block scope.

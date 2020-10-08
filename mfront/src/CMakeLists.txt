@@ -45,6 +45,7 @@ target_link_libraries(MTestFileGenerator
 set(TFELMFront_SOURCES
     MFront.cxx
     MFrontBase.cxx
+    PathSpecifier.cxx
     MFrontUtilities.cxx
     GeneratorOptions.cxx
     CMakeGenerator.cxx

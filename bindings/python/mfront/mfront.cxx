@@ -19,6 +19,7 @@
 #include "MFront/InitInterfaces.hxx"
 #include "MFront/AbstractDSL.hxx"
 #include "MFront/AbstractBehaviourDSL.hxx"
+#include "MFront/PathSpecifier.hxx"
 
 #ifdef _MSC_VER
 // explicit specialisation to fix a bug in Visual Studio 2015 update 3
@@ -80,11 +81,15 @@ static boost::python::object getDSL(const std::string& f) {
 }
 
 BOOST_PYTHON_MODULE(_mfront) {
+  using GetImplementationsPathsPtr = std::vector<std::string> (*)(
+      const std::string&, const std::string&, const std::string&,
+      const std::string&, const std::string&);
+  GetImplementationsPathsPtr ptr = mfront::getImplementationsPaths;
   boost::python::def("initDSLs", mfront::initDSLs);
   boost::python::def("initInterfaces", mfront::initInterfaces);
   boost::python::def("getDSL", getDSL);
   boost::python::def(
-      "getMFrontImplementationsPaths", mfront::getMFrontImplementationsPaths,
+      "getImplementationsPaths", ptr,
       (boost::python::args("file"), boost::python::args("material") = "",
        boost::python::args("material_property") = "",
        boost::python::args("behaviour") = "",

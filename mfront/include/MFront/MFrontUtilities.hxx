@@ -3,7 +3,7 @@
  * \brief This header declares a few helper function to write
  * information in the mfront storage format
  * \author Thomas Helfer
- * \date   15 août 2015
+ * \date   15/08/2015
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence
@@ -29,6 +29,8 @@ namespace mfront {
 
   // forward declaration
   struct VariableBoundsDescription;
+  // forward declaration
+  struct MFrontPathSpecifier;
 
   /*!
    * \return the keys of a map

@@ -212,6 +212,15 @@ namespace mfront {
     //! \return if the behaviour name is defined
     bool isBehaviourNameDefined() const;
     /*!
+     * \brief specify that the given variable must be overriden by a parameter
+     * when declared.
+     *
+     * \param[in] n: variable name
+     * \param[in] v: variable value
+     * \note This must be called before the declaration of the variable.
+     */
+    void overrideByAParameter(const std::string&, const double);
+    /*!
      * \brief set the behaviour name
      * \param[in] b: behaviour name
      */

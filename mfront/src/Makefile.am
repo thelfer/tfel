@@ -20,12 +20,13 @@ if TFEL_WIN
 libMFrontLogStream_la_LDFLAGS  = -no-undefined -avoid-version -Wl,--add-stdcall-alias -Wl,--kill-at
 endif # TFEL_WIN
 
-libTFELMFront_la_SOURCES = MFront.cxx                                             \
-			   MFrontBase.cxx                                         \
-			   MFrontUtilities.cxx                                    \
-			   GeneratorOptions.cxx                                   \
-			   CMakeGenerator.cxx                                     \
-			   MakefileGenerator.cxx                                  \
+libTFELMFront_la_SOURCES = MFront.cxx                                     \
+			   MFrontBase.cxx                                             \
+			   PathSpecifier.cxx                                          \
+			   MFrontUtilities.cxx                                        \
+			   GeneratorOptions.cxx                                       \
+			   CMakeGenerator.cxx                                         \
+			   MakefileGenerator.cxx                                      \
 		           FileDescription.cxx                                    \
 		           TargetsDescription.cxx                                 \
 		           OverridableImplementation.cxx                          \

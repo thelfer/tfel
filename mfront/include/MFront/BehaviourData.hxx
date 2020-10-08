@@ -43,19 +43,19 @@ namespace mfront {
      * normalised code block names
      * \note code block name begins with an upper case
      */
-    //! standard code name
+    //! \brief standard code name
     static const char* const FlowRule;
-    //! standard code name
+    //! \brief standard code name
     static const char* const BeforeInitializeLocalVariables;
-    //! standard code name
+    //! \brief standard code name
     static const char* const InitializeLocalVariables;
-    //! standard code name
+    //! \brief standard code name
     static const char* const AfterInitializeLocalVariables;
-    //! standard code name
+    //! \brief standard code name
     static const char* const ComputePredictor;
-    //! standard code name
+    //! \brief standard code name
     static const char* const ComputeThermodynamicForces;
-    //! standard code name
+    //! \brief standard code name
     /* Most behaviours will only rely the @ComputeThermodynamicForces keyword to
      * estimate thermodynamic forces at the middle of the time step and at the
      * end.  However, some finite strains behaviours must compute a
@@ -66,49 +66,55 @@ namespace mfront {
      * `@ComputeFinalThermodynamicForces`
      */
     static const char* const ComputeFinalThermodynamicForcesCandidate;
-    //! standard code name
+    //! \brief standard code name
     static const char* const ComputeFinalThermodynamicForces;
-    //! standard code name
+    //! \brief standard code name
     static const char* const DefaultComputeFinalThermodynamicForce;
-    //! standard code name
+    //! \brief standard code name
     static const char* const APrioriTimeStepScalingFactor;
-    //! standard code name
+    //! \brief standard code name
     static const char* const Integrator;
-    //! standard code name
+    //! \brief standard code name
     static const char* const APosterioriTimeStepScalingFactor;
-    //! standard code name
+    //! \brief standard code name
     static const char* const ComputeDerivative;
-    //! standard code name
+    //! \brief standard code name
     static const char* const ComputePredictionOperator;
-    //! standard code name
+    //! \brief standard code name
     static const char* const ComputeTangentOperator;
-    //! standard code name
+    //! \brief standard code name
     static const char* const ComputeStressFreeExpansion;
-    //! standard code name
+    //! \brief standard code name
     static const char* const UpdateAuxiliaryStateVariables;
-    //! standard code name
+    //! \brief standard code name
     static const char* const InitializeJacobian;
-    //! standard code name
+    //! \brief standard code name
     static const char* const InitializeJacobianInvert;
-    //! standard code name
+    //! \brief standard code name
     static const char* const ComputeInternalEnergy;
-    //! standard code name
+    //! \brief standard code name
     static const char* const ComputeDissipatedEnergy;
-    //! standard code name
+    //! \brief standard code name
     static const char* const AdditionalConvergenceChecks;
     /*
      * normalised attribute names
      * \note properties name begins with a lower case
      */
-    //! if this attribute is true, the behaviour can compute a tangent
-    //! operator
+    /*!
+     * \brief if this attribute is true, the behaviour can compute a tangent
+     * operator.
+     */
     static const char* const hasConsistentTangentOperator;
-    //! if this attribute is true, the tangent operator can be
-    //  considered symmetric
+    /*!
+     * \brief if this attribute is true, the tangent operator can be
+     * considered symmetric.
+     */
     static const char* const isConsistentTangentOperatorSymmetric;
-    //! if this attribute is true, the behaviour can compute an a
-    //! priori estimate of the time step scaling factor after the
-    //! initialisation
+    /*!
+     * \brief if this attribute is true, the behaviour can compute an a
+     * priori estimate of the time step scaling factor after the
+     * initialisation
+     */
     static const char* const hasAPrioriTimeStepScalingFactor;
     //! if this attribute is true, the behaviour can compute an a
     //! posteriori estimate of the time step scaling factor after the
@@ -131,11 +137,11 @@ namespace mfront {
      * variables.
      */
     static const char* const allowsNewUserDefinedVariables;
-    //! a boolean attribute telling if profiling information shall be collected
+    //! \brief a boolean attribute telling if profiling information shall be collected
     static const char* const profiling;
-    //! algorithm used
+    //! \brief algorithm used
     static const char* const algorithm;
-    //! number of evaluation of the computeDerivative method
+    //! \brief number of evaluation of the computeDerivative method
     //  of a Runge-Kutta algorithm
     static const char* const numberOfEvaluations;
     /*!
@@ -145,10 +151,10 @@ namespace mfront {
      * State Variable
      */
     struct SFED_ESV {
-      //! variable name
+      //! \brief variable name
       std::string vname;
     };  // end of SFED_ESV
-    //! a placeholder for null expansion
+    //! \brief a placeholder for null expansion
     struct NullExpansion {};
     /*!
      * a stress free expansion can be computed using by:
@@ -173,7 +179,7 @@ namespace mfront {
      * \f]
      */
     struct VolumeSwellingStressFreeExpansion {
-      //! o volumetric stress free expansion
+      //! \brief o volumetric stress free expansion
       StressFreeExpansionHandler sfe;
     };  // end of struct VolumeSwellingStressFreeExpansion
         /*!
@@ -184,7 +190,7 @@ namespace mfront {
          * \f]
          */
     struct AxialGrowth {
-      //! description of the axial growth
+      //! \brief description of the axial growth
       StressFreeExpansionHandler sfe;
     };  // end of struct AxialGrowth
         /*!
@@ -195,7 +201,7 @@ namespace mfront {
          * \f]
          */
     struct Relocation {
-      //! description of the axial growth
+      //! \brief description of the axial growth
       StressFreeExpansionHandler sfe;
     };  // end of struct Relocation
         /*!
@@ -207,7 +213,7 @@ namespace mfront {
          * \f]
          */
     struct IsotropicStressFreeExpansion {
-      //! stress free expansion in each direction
+      //! \brief stress free expansion in each direction
       StressFreeExpansionHandler sfe;
     };  // end of struct IsotropicStressFreeExpansion
         /*!
@@ -215,11 +221,11 @@ namespace mfront {
          * to an orthotropic swelling
          */
     struct OrthotropicStressFreeExpansion {
-      //! stress free expansion in the first material direction
+      //! \brief stress free expansion in the first material direction
       StressFreeExpansionHandler sfe0;
-      //! stress free expansion in the second material direction
+      //! \brief stress free expansion in the second material direction
       StressFreeExpansionHandler sfe1;
-      //! stress free expansion in the third material direction
+      //! \brief stress free expansion in the third material direction
       StressFreeExpansionHandler sfe2;
     };  // end of struct OrthotropicStressFreeExpansion
         /*!
@@ -228,7 +234,7 @@ namespace mfront {
          * state variables
          */
     struct OrthotropicStressFreeExpansionII {
-      //! stress free expansions
+      //! \brief stress free expansions
       SFED_ESV esv;
     };  // end of struct OrthotropicStressFreeExpansion
         /*!
@@ -242,7 +248,7 @@ namespace mfront {
             IsotropicStressFreeExpansion,
             OrthotropicStressFreeExpansion,
             OrthotropicStressFreeExpansionII>::type;
-    //! description of a stress free expansion
+    //! \brief description of a stress free expansion
     using StressFreeExpansionDescription =
         tfel::utilities::GenTypeBase<StressFreeExpansionDescriptionTypes>;
     /*!
@@ -281,16 +287,24 @@ namespace mfront {
       FORCEREGISTRATION,
       ALREADYREGISTRED
     };
-    //! constructor
+    //! \brief constructor
     BehaviourData();
-    //! copy constructor
+    //! \brief copy constructor
     explicit BehaviourData(const BehaviourData&);
-    //! move constructor (disabled)
+    //! \brief move constructor (disabled)
     BehaviourData(BehaviourData&&) = delete;
-    //! assignement operator (disabled)
+    //! \brief assignement operator (disabled)
     BehaviourData& operator=(const BehaviourData&) = delete;
-    //! move assignement operator (disabled)
+    //! \brief move assignement operator (disabled)
     BehaviourData& operator=(BehaviourData&&) = delete;
+    /*!
+     * \brief specify that the given variable must be overriden by a parameter.
+     * This must be called before the declaration of the variable.
+     *
+     * \param[in] n: variable name
+     * \param[in] v: variable value
+     */
+    void overrideByAParameter(const std::string&, const double);
     /*!
      * This method has been introduced to optimize the mechanical
      * resolution in licos : a purely implicit resolution only
@@ -513,7 +527,7 @@ namespace mfront {
      */
     bool isStaticVariableName(const std::string& n) const;
 
-    //! \return the static variables defined
+    //! \brief \return the static variables defined
     const StaticVariableDescriptionContainer& getStaticVariables() const;
     /*!
      * \brief add a material property
@@ -647,7 +661,7 @@ namespace mfront {
      * \param[in] s : members
      */
     void appendToPrivateCode(const std::string&);
-    //! \return the material private code
+    //! \brief \return the material private code
     std::string getPrivateCode() const;
     /*!
      * \brief return the name of the code blocks defined so far
@@ -889,9 +903,9 @@ namespace mfront {
      * \note : this method automatically calls the reserveName method
      */
     void registerStaticMemberName(const std::string&);
-    //! \return all the registred member names
+    //! \brief \return all the registred member names
     const std::set<std::string>& getRegistredMembersNames() const;
-    //! \return all the registred static member names
+    //! \brief \return all the registred static member names
     const std::set<std::string>& getRegistredStaticMembersNames() const;
     /*!
      * \return the name of all the variables (material properties,
@@ -904,7 +918,7 @@ namespace mfront {
      * \param[out] symbols: map between symbols and replacement strings
      */
     void getSymbols(std::map<std::string, std::string>&) const;
-    //! destructor
+    //! \brief destructor
     virtual ~BehaviourData();
 
    private:
@@ -912,11 +926,11 @@ namespace mfront {
      * structure used to handle a blocks of code
      */
     struct CodeBlocksAggregator {
-      //! a simple alias
+      //! \brief a simple alias
       typedef BehaviourData::Position Position;
-      //! a simple alias
+      //! \brief a simple alias
       typedef BehaviourData::Mode Mode;
-      //! constructor
+      //! \brief constructor
       CodeBlocksAggregator();
       CodeBlocksAggregator(CodeBlocksAggregator&&) = default;
       CodeBlocksAggregator(const CodeBlocksAggregator&) = default;
@@ -936,33 +950,33 @@ namespace mfront {
        * \param[in] b : if true, the code can be overriden or completed
        */
       void replace(const CodeBlock&, const Position, const bool);
-      //! \return the code block
+      //! \brief \return the code block
       const CodeBlock& get() const;
-      //! \return true if the code is mutable
+      //! \brief \return true if the code is mutable
       bool isMutable() const;
-      //! destructor
+      //! \brief destructor
       ~CodeBlocksAggregator();
 
      private:
-      //! \brief update the code block
+      //! \brief \brief update the code block
       void update();
-      //! check that the get function was not already called.
+      //! \brief check that the get function was not already called.
       void check() const;
-      //! beginnig of the block
+      //! \brief beginnig of the block
       std::string cblock_begin;
-      //! block body
+      //! \brief block body
       std::string cblock_body;
-      //! end of the block
+      //! \brief end of the block
       std::string cblock_end;
-      //! beginnig of the doc
+      //! \brief beginnig of the doc
       std::string cdoc_begin;
-      //! doc body
+      //! \brief doc body
       std::string cdoc_body;
-      //! end of the doc
+      //! \brief end of the doc
       std::string cdoc_end;
-      //! resulting code block
+      //! \brief resulting code block
       CodeBlock cblock;
-      //! get already called
+      //! \brief get already called
       mutable bool is_mutable = true;
     };
     /*!
@@ -1002,51 +1016,53 @@ namespace mfront {
      * resolutions
      */
     std::set<std::string> pupirv;
-    //! registred code blocks
+    //! \brief registred code blocks
     std::map<std::string, CodeBlocksAggregator> cblocks;
-    //! registred material properties
+    //! \brief registred material properties
     VariableDescriptionContainer materialProperties;
-    //! registred persistent variables
+    //! \brief registred persistent variables
     VariableDescriptionContainer persistentVariables;
-    //! registred integration variables
+    //! \brief registred integration variables
     VariableDescriptionContainer integrationVariables;
-    //! registred state variables
+    //! \brief registred state variables
     VariableDescriptionContainer stateVariables;
-    //! registred auxiliary state variables
+    //! \brief registred auxiliary state variables
     VariableDescriptionContainer auxiliaryStateVariables;
-    //! registred external state variables
+    //! \brief registred external state variables
     VariableDescriptionContainer externalStateVariables;
-    //! registred local variables
+    //! \brief registred local variables
     VariableDescriptionContainer localVariables;
-    //! parameters of the behaviour
+    //! \brief parameters of the behaviour
     VariableDescriptionContainer parameters;
-    //! default value for floatting point paramerters
+    //! \brief default value for floatting point paramerters
     std::map<std::string, double> parametersDefaultValues;
-    //! default value for signed integer paramerters
+    //! \brief default value for signed integer paramerters
     std::map<std::string, int> iParametersDefaultValues;
-    //! default value for short unsigned integer paramerters
+    //! \brief default value for short unsigned integer paramerters
     std::map<std::string, unsigned short> uParametersDefaultValues;
-    //! static variables
+    //! \brief static variables
     StaticVariableDescriptionContainer staticVariables;
     /*!
      * \brief registred stress fress expansion descriptions
      */
     std::vector<StressFreeExpansionDescription> sfeds;
-    //! behaviour attributes
+    //! \brief overriding parameters
+    std::map<std::string, double> overriding_parameters;
+    //! \brief behaviour attributes
     std::map<std::string, BehaviourAttribute> attributes;
-    //! private code
+    //! \brief private code
     std::string privateCode;
-    //! class members
+    //! \brief class members
     std::string members;
-    //! list of glossary names used by the behaviour
+    //! \brief list of glossary names used by the behaviour
     std::map<std::string, std::string> glossaryNames;
-    //! list of entry names used by the behaviour
+    //! \brief list of entry names used by the behaviour
     std::map<std::string, std::string> entryNames;
-    //! list of reserved names
+    //! \brief list of reserved names
     std::set<std::string> reservedNames;
-    //! list of variables names
+    //! \brief list of variables names
     std::set<std::string> membersNames;
-    //! list of variables names
+    //! \brief list of variables names
     std::set<std::string> staticMembersNames;
     /*!
      * boolean stating if this behaviour can be used in a purely

@@ -83,7 +83,10 @@ void declareOverridableImplementation() {
                                     MATERIAL_KNOWLEDGE_IDENTIFIER>(a);
           },
           "override the name of the model (fails if the source file does not "
-          "describe a model)");
+          "describe a model)")
+      .def("overrideByAParameter",
+           &mfront::OverridableImplementation::overrideByAParameter,
+           "override a variable by the given parameter");
 
   boost::python::def("write", write_ptr, "export an implementation to a file");
 

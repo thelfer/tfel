@@ -42,20 +42,16 @@ namespace mfront {
       : dsl(generateAbstractDSL(f)),
         source(f) {}  // end of OverridableImplementation
 
-  void OverridableImplementation::setParameterOverride(const std::string& n,
+  const std::map<std::string, double>&
+  OverridableImplementation::getOverridingParameters() const {
+    return this->parameters;
+  }  // end of OverridableImplementation::getOverridingParameters
+
+  void OverridableImplementation::overrideByAParameter(const std::string& n,
                                                        const double v) {
-    if (!dsl->isOverridableByAParameter(n)) {
-      tfel::raise(
-          "OverridableImplementation::setParameterOverride: parameter '" + n +
-          "' is not overridable");
-    }
-    if (this->parameters.count(n) != 0) {
-      tfel::raise(
-          "OverridableImplementation::setParameterOverride: parameter '" + n +
-          "' is already overriden");
-    }
-    this->parameters.insert({n, v});
-  }  // end of OverridableImplementation::setParameterOverride
+    const auto vn = dsl->getOverridableVariableNameByExternalName(n);
+    this->parameters[vn] = v;
+  }  // end of OverridableImplementation::overrideByAParameter
 
   AbstractDSL::DSLTarget OverridableImplementation::getTargetType() const {
     return this->dsl->getTargetType();
@@ -101,8 +97,8 @@ namespace mfront {
             i.getOverridenValue<Tags::MATERIAL_KNOWLEDGE_IDENTIFIER>(),
             i.getSourceMaterialKnowledgeIdentifier());
     if (impl.name.empty()) {
-      tfel::raise(
-          "mfront::writeMadnexFile: no material knowledge identifier define");
+      tfel::raise("mfront::writeMadnexFile: "
+		  "no material knowledge identifier defined");
     }
     copy_if(impl.metadata.author, i.getOverridenValue<Tags::AUTHOR_NAME>(),
             fd.authorName);
@@ -113,15 +109,29 @@ namespace mfront {
     copy_if(material, i.getOverridenValue<Tags::MATERIAL_NAME>(),
             i.getSourceMaterialName());
     impl.source = getSourceFileContent(i.getSourceFilePath());
+    impl.parameters = i.getOverridingParameters();
+    const auto mkt = [i]() -> std::string {
+      const auto t = i.getTargetType();
+      if(t == AbstractDSL::MATERIALPROPERTYDSL){
+        return "MaterialProperties";
+      } else if (t == AbstractDSL::BEHAVIOURDSL) {
+        return "Behaviours";
+      } else if (t != AbstractDSL::MODELDSL) {
+        tfel::raise(
+            "mfront::writeMadnexFile: "
+            "unsupported DSL target");
+      }
+      return "Models";
+    }();
     auto file = madnex::File(f, H5F_ACC_TRUNC);
     auto r = file.getRoot();
     madnex::createGroup(r, "MFront");
     auto g = madnex::Group();
     if (!material.empty()) {
       madnex::createGroup(r, "MFront/" + material);
-      g = madnex::createGroup(r, "MFront/" + material + "/Behaviours");
+      g = madnex::createGroup(r, "MFront/" + material + "/" + mkt);
     } else {
-      g = madnex::createGroup(r, "MFront/Behaviours");
+      g = madnex::createGroup(r, "MFront/" + mkt);
     }
     madnex::write(g, impl);
   }    // end of writeMadnexFile
@@ -142,6 +152,7 @@ namespace mfront {
       tfel::raise("write: unsupported file extension '" + ext + "'");
     }
 #else  /* MFRONT_HAVE_MADNEX */
+    static_cast<void>(i);
     tfel::raise("write: unsupported file extension '" + ext + "'");
 #endif /* MFRONT_HAVE_MADNEX */
   }    // end of write

@@ -1,61 +1,64 @@
 /*!
  * \file   mtest/include/MTest/SchemeBase.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   02 oct. 2015
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MTEST_SCHEMEBASE_HXX
 #define LIB_MTEST_SCHEMEBASE_HXX
 
-#include<vector>
-#include<string>
-#include<memory>
-#include<fstream>
+#include <vector>
+#include <string>
+#include <memory>
+#include <fstream>
 
-#include"TFEL/Material/ModellingHypothesis.hxx"
-#include"TFEL/Material/MechanicalBehaviour.hxx"
+#include "TFEL/Material/ModellingHypothesis.hxx"
+#include "TFEL/Material/MechanicalBehaviour.hxx"
 
-#include"MTest/Types.hxx"
-#include"MTest/Config.hxx"
-#include"MTest/Study.hxx"
-#include"MTest/Scheme.hxx"
-#include"MTest/SolverOptions.hxx"
+#include "MTest/Types.hxx"
+#include "MTest/Config.hxx"
+#include "MTest/Study.hxx"
+#include "MTest/Scheme.hxx"
+#include "MTest/SolverOptions.hxx"
 
-namespace mtest{
+namespace mtest {
 
   // forward declaration
   struct AccelerationAlgorithm;
-  
-  struct MTEST_VISIBILITY_EXPORT SchemeBase
-    : public Scheme,
-      public Study
-  {
+
+  struct MTEST_VISIBILITY_EXPORT SchemeBase : public Scheme, public Study {
     // simple alias
-    enum OutputFrequency{
+    enum OutputFrequency {
       USERDEFINEDTIMES,
       EVERYPERIOD
-    }; // end of enum OutputFrequency      
+    };  // end of enum OutputFrequency
     //! a simple alias
     using ModellingHypothesis = tfel::material::ModellingHypothesis;
     //! a simple alias
-    using Hypothesis   = ModellingHypothesis::Hypothesis;
+    using Hypothesis = ModellingHypothesis::Hypothesis;
     //! a simple alias
     using EvolutionPtr = std::shared_ptr<Evolution>;
     //! a simple alias
-    using BehaviourType = tfel::material::MechanicalBehaviourBase::BehaviourType;
+    using BehaviourType =
+        tfel::material::MechanicalBehaviourBase::BehaviourType;
     //! a simple alias
-    using Kinematic     = tfel::material::MechanicalBehaviourBase::Kinematic;
+    using Kinematic = tfel::material::MechanicalBehaviourBase::Kinematic;
+    //! \brief constructor
     SchemeBase();
+    //! \brief move constructor
     SchemeBase(SchemeBase&&) = delete;
+    //! \brief copy constructor
     SchemeBase(const SchemeBase&) = delete;
+    //! \brief move assignement
     SchemeBase& operator=(SchemeBase&&) = delete;
+    //! \brief standard assignement
     SchemeBase& operator=(const SchemeBase&) = delete;
     /*!
      * \param[in] h : modelling hypothesis
@@ -76,14 +79,12 @@ namespace mtest{
      * \brief set the output file precision
      * \param[in] p : precision
      */
-    virtual void
-    setOutputFilePrecision(const unsigned int);
+    virtual void setOutputFilePrecision(const unsigned int);
     /*!
      * \brief set the residual file
      * \param[in] f : file name
      */
-    virtual void
-    setResidualFileName(const std::string&);
+    virtual void setResidualFileName(const std::string&);
     //! \return true if the residual file name has been defined
     virtual bool isResidualFileNameDefined() const;
     /*!
@@ -99,13 +100,11 @@ namespace mtest{
      * \brief set the residual file precision
      * \param[in] p : precision
      */
-    virtual void
-    setResidualFilePrecision(const unsigned int);
+    virtual void setResidualFilePrecision(const unsigned int);
     /*!
      * \return the list of evolutions
      */
-    const EvolutionManager&
-    getEvolutions() const;
+    const EvolutionManager& getEvolutions() const;
     /*!
      * \brief add a new evolution
      * \param[in] n  : evolution name
@@ -117,11 +116,10 @@ namespace mtest{
      * \note if b2 is true and the evolution already exists, an
      * exeception is thrown.
      */
-    virtual void
-    addEvolution(const std::string&,
-		 const EvolutionPtr,
-		 const bool,
-		 const bool);
+    virtual void addEvolution(const std::string&,
+                              const EvolutionPtr,
+                              const bool,
+                              const bool);
     /*!
      * \brief set evolution value for a given time
      * \param[in] n  : evolution name
@@ -130,10 +128,7 @@ namespace mtest{
      *
      * \note the evolution *must* be of type LPIEvolution
      */
-    virtual void
-    setEvolutionValue(const std::string&,
-		      const real,
-		      const real);
+    virtual void setEvolutionValue(const std::string&, const real, const real);
     /*!
      * \brief set the description
      * \param[in] d : description
@@ -148,7 +143,7 @@ namespace mtest{
      * \brief set the date
      * \param[in] d : date
      */
-    virtual void setDate(const std::string&); 
+    virtual void setDate(const std::string&);
     /*!
      * \brief set the output frequency
      * \param[in] o: output frequency
@@ -158,46 +153,38 @@ namespace mtest{
      * \brief set the maximal time step
      * \param[in] v : value
      */
-    virtual void
-    setDynamicTimeStepScaling(const bool);
-   /*!
-     * \brief set the maximal time step
-     * \param[in] v : value
-     */
-    virtual void
-    setMaximalTimeStep(const real);
+    virtual void setDynamicTimeStepScaling(const bool);
+    /*!
+      * \brief set the maximal time step
+      * \param[in] v : value
+      */
+    virtual void setMaximalTimeStep(const real);
     /*!
      * \brief set the minimal time step
      * \param[in] v : value
      */
-    virtual void
-    setMinimalTimeStep(const real);
+    virtual void setMinimalTimeStep(const real);
     /*!
      * \brief set the maximal time step scaling factor
      * \param[in] v : value
      */
-    virtual void
-    setMaximalTimeStepScalingFactor(const real);
+    virtual void setMaximalTimeStepScalingFactor(const real);
     /*!
      * \brief set the minimal time step scaling factor
      * \param[in] v : value
      */
-    virtual void
-    setMinimalTimeStepScalingFactor(const real);
+    virtual void setMinimalTimeStepScalingFactor(const real);
     virtual void setMaximumNumberOfIterations(const unsigned int);
     virtual void setMaximumNumberOfSubSteps(const unsigned int);
     //! \return the dimension
-    virtual unsigned short
-    getDimension() const;
+    virtual unsigned short getDimension() const;
     //! \return the modelling hypothesis
-    virtual ModellingHypothesis::Hypothesis
-    getModellingHypothesis() const;
+    virtual ModellingHypothesis::Hypothesis getModellingHypothesis() const;
     /*!
      * \brief set the stiffness updating policy
      * \param[in] b : boolean
      */
-    virtual void
-    setStiffnessUpdatingPolicy(const StiffnessUpdatingPolicy);
+    virtual void setStiffnessUpdatingPolicy(const StiffnessUpdatingPolicy);
     /*!
      * \brief set the prediction policy
      * \param[in] p : prediction policy
@@ -224,7 +211,7 @@ namespace mtest{
      * \param[in] v : parameter value
      */
     virtual void setAccelerationAlgorithmParameter(const std::string&,
-						   const std::string&);
+                                                   const std::string&);
     /*!
      * \brief set at which iteration the use of the castem
      * acceleration algorithm  will begin
@@ -244,26 +231,24 @@ namespace mtest{
     /*!
      * complete the initialisation. This method must be called once.
      * \note this method must be called by the derived class.
-     */ 
+     */
     virtual void completeInitialisation();
     //! destructor
     ~SchemeBase() override;
-  protected:
+
+   protected:
     //! \return the default stiffness matrix type
-    virtual StiffnessMatrixType
-    getDefaultStiffnessMatrixType() const = 0;
+    virtual StiffnessMatrixType getDefaultStiffnessMatrixType() const = 0;
     /*!
      * \brief declare a new variable
      * \param[in] v : variable name
      */
-    void declareVariable(const std::string&,
-			 const bool);
+    void declareVariable(const std::string&, const bool);
     /*!
      * \brief declare a list of new variables
      * \param[in] v : variable names
      */
-    void declareVariables(const std::vector<std::string>&,
-			  const bool);
+    void declareVariables(const std::vector<std::string>&, const bool);
     //! declared variable names
     std::vector<std::string> vnames;
     //! initilisation stage
@@ -279,8 +264,8 @@ namespace mtest{
     //! date
     std::string date;
     //! modelling hypothesis
-    ModellingHypothesis::Hypothesis hypothesis = 
-      ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    ModellingHypothesis::Hypothesis hypothesis =
+        ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     //! list of evolutions
     std::shared_ptr<EvolutionManager> evm;
     //! output file name
@@ -300,8 +285,8 @@ namespace mtest{
     int oprec = -1;
     //! residual file precision
     int rprec = -1;
-  }; // end of struct SchemeBase
-  
-} // end of namespace mtest
+  };  // end of struct SchemeBase
+
+}  // end of namespace mtest
 
 #endif /* LIB_MTEST_SCHEMEBASE_HXX */

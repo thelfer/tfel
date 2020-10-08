@@ -108,10 +108,28 @@ namespace mfront {
     return this->md.material;
   }  // end of MaterialPropertyDSL::getMaterialName(
 
-  bool MaterialPropertyDSL::isOverridableByAParameter(
-      const std::string&) const {
-    return false;
-  }  // end of MaterialPropertyDSL::isOverridableByAParameter
+  std::string MaterialPropertyDSL::getOverridableVariableNameByExternalName(
+      const std::string& en) const {
+    const auto p = findByExternalName(this->md.parameters, en);
+    if (p == this->md.parameters.end()) {
+      tfel::raise(
+          "MaterialPropertyDSL::getOverridableVariableNameByExternalName: "
+          "no overridable variable associated with external name '" +
+          en + "'");
+    }
+    return p->name;
+  }  // end of MaterialPropertyDSL::getOverridableVariableNameByExternalName
+
+  void MaterialPropertyDSL::overrideByAParameter(const std::string& n,
+                                                 const double v) {
+    if (this->overriding_parameters.count(n) != 0) {
+      tfel::raise(
+          "MaterialPropertyDSL::overrideByAParameter: "
+          "an override for variable '" +
+          n + "' has already been defined");
+    }
+    this->overriding_parameters[n] = v;
+  }  // end of MaterialPropertyDSL::overrideByAParameter
 
   void MaterialPropertyDSL::endsInputFileProcessing() {
   }  // end of MaterialPropertyDSL::endsInputFileProcessing
@@ -228,7 +246,12 @@ namespace mfront {
     ++(this->current);
     const auto value = this->readInitialisationValue<double>(p.name, false);
     if (value.first) {
-      p.setAttribute(VariableDescription::defaultValue, value.second, false);
+      const auto op = this->overriding_parameters.find(p.name);
+      if (op == this->overriding_parameters.end()) {
+        p.setAttribute(VariableDescription::defaultValue, value.second, false);
+      } else {
+        p.setAttribute(VariableDescription::defaultValue, op->second, false);
+      }
     }
     this->readSpecifiedToken("MaterialPropertyDSL::treatParameter", ";");
     this->reserveName(p.name);
@@ -465,8 +488,13 @@ namespace mfront {
           "MaterialPropertyDSL::treatMethod",
           "Expected to read value of variable '" + this->currentVar + "'");
       auto& p = this->md.parameters.getVariable(this->currentVar);
-      p.setAttribute(VariableDescription::defaultValue, this->readDouble(),
-                     false);
+      const auto v = this->readDouble();
+      const auto op = this->overriding_parameters.find(p.name);
+      if (op == this->overriding_parameters.end()) {
+        p.setAttribute(VariableDescription::defaultValue, v, false);
+      } else {
+        p.setAttribute(VariableDescription::defaultValue, op->second, false);
+      }
       --(this->current);
     } else {
       throw_if(true, "internal error (untreated method '" + methodName + "'");

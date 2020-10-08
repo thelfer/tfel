@@ -99,13 +99,13 @@ namespace mfront {
     template <Tags Tag>
     const std::string& getOverridenValue() const;
     /*!
-     * \brief add a parameter override
-     * \param[in] n: parameter name
+     * \brief override a variable by a parameter
+     * \param[in] n: external variable name
      * \param[in] v: parameter value
      */
-    void setParameterOverride(const std::string&, const double);
+    void overrideByAParameter(const std::string&, const double);
     //! \return the parameters'overrides
-    const std::map<std::string, double>& getParametersOverrides() const;
+    const std::map<std::string, double>& getOverridingParameters() const;
     //! \return the target of the dsl
     AbstractDSL::DSLTarget getTargetType() const;
     /*!

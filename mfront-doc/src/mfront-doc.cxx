@@ -33,6 +33,7 @@
 #include "MFront/BehaviourDocumentationGenerator.hxx"
 #include "MFront/AbstractDSL.hxx"
 #include "MFront/AbstractBehaviourDSL.hxx"
+#include "MFront/PathSpecifier.hxx"
 
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main(const int argc, const char* const* const argv) {
@@ -40,35 +41,50 @@ int main(const int argc, const char* const* const argv) {
   using BGen = BehaviourDocumentationGenerator;
   initDSLs();
   initInterfaces();
-  std::vector<std::shared_ptr<BGen>> bgens;
+  auto current_path_specifier = mfront::PathSpecifier{};
+  auto path_specifiers = std::vector<mfront::PathSpecifier>{};
+  auto untreated_arguments = std::vector<const char*>(1u, argv[0]);
 #if defined _WIN32 || defined _WIN64 || defined __CYGWIN__
   try {
 #endif /* __CYGWIN__ */
-    for (auto a = argv + 1; a != argv + argc; ++a) {
-      if ((*a)[0] != '-') {
-        const std::string f{*a};
-        auto dsl = MFrontBase::getDSL(f);
-        if (dsl->getTargetType() == AbstractDSL::BEHAVIOURDSL) {
-          auto b = std::dynamic_pointer_cast<AbstractBehaviourDSL>(dsl);
-          tfel::raise_if(!b, "mfront-doc: invalid dsl implementation");
-          bgens.push_back(std::make_shared<BGen>(argc, argv, b, f));
-        } else {
-          tfel::raise("mfront-doc: unsupported dsl type");
-        }
-      } else if ((strcmp(*a, "--help") == 0) || (strcmp(*a, "-h") == 0)) {
+    for (auto pa = argv + 1; pa != argv + argc; ++pa) {
+      auto a = std::string(*pa);
+      if (mfront::parsePathSpecifierArguments(path_specifiers,
+                                              current_path_specifier, a)) {
+      } else if ((a == "--help") || (a == "-h")) {
         std::cout << "Usage : " << argv[0] << " [options] [files]" << std::endl;
         std::cout << "Available options are :" << std::endl
                   << "--help,-h : print this message" << std::endl
                   << "--usage   : show how to use " << argv[0] << std::endl;
         ::exit(EXIT_SUCCESS);
-      } else if ((strcmp(*a, "--version") == 0) || (strcmp(*a, "-v") == 0)) {
+      } else if ((a == "--version") || (a == "-v")) {
         std::cout << MFrontHeader::getHeader();
         exit(EXIT_SUCCESS);
-      } else if (strcmp(*a, "--usage") == 0) {
+      } else if (a == "--usage") {
         std::cout << "Usage : " << argv[0] << " [options] [files]" << std::endl;
         exit(EXIT_SUCCESS);
+      } else {
+        untreated_arguments.push_back(*pa);
       }
     }
+    mfront::finalizePathSpecifierArgumentsParsing(path_specifiers,
+                                                  current_path_specifier);
+    const auto implementations =
+        mfront::getImplementationsPaths(path_specifiers);
+    //
+    auto bgens = std::vector<std::shared_ptr<BGen>>{};
+    for (const auto& f : implementations) {
+      auto dsl = MFrontBase::getDSL(f);
+      if (dsl->getTargetType() == AbstractDSL::BEHAVIOURDSL) {
+        auto b = std::dynamic_pointer_cast<AbstractBehaviourDSL>(dsl);
+        tfel::raise_if(!b, "mfront-doc: invalid dsl implementation");
+        bgens.push_back(std::make_shared<BGen>(
+            untreated_arguments.size(), untreated_arguments.data(), b, f));
+      } else {
+        tfel::raise("mfront-doc: unsupported dsl type");
+      }
+    }
+    //
     for (const auto& q : bgens) {
       q->exe();
     }

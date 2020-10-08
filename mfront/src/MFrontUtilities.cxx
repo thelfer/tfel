@@ -11,18 +11,17 @@
  * project under specific licensing conditions. 
  */
 
-#include<cctype>
-#include<sstream>
-#include<ostream>
-#include<cstring>
-#include<stdexcept>
-#include<algorithm>
-#include"TFEL/Raise.hxx"
+#include <cctype>
+#include <sstream>
+#include <ostream>
+#include <cstring>
+#include <stdexcept>
+#include <algorithm>
+#include "TFEL/Raise.hxx"
 #include "TFEL/UnicodeSupport/UnicodeSupport.hxx"
-#include"TFEL/Utilities/StringAlgorithms.hxx"
-#include"MFront/VariableBoundsDescription.hxx"
-#include"MFront/MFrontUtilities.hxx"
-
+#include "TFEL/Utilities/StringAlgorithms.hxx"
+#include "MFront/VariableBoundsDescription.hxx"
+#include "MFront/MFrontUtilities.hxx"
 
 namespace mfront{
 
@@ -224,5 +223,5 @@ namespace mfront{
     throw_if(p != pe, "invalid variable name '" + n + "'");
     return std::make_tuple(r, true, i);
   } // end of extractVariableNameAndArrayPosition
-  
+
 } // end of namespace mfront

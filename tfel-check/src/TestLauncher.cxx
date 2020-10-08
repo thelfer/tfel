@@ -24,6 +24,7 @@
 
 #include "TFEL/Raise.hxx"
 #include "TFEL/System/ProcessManager.hxx"
+#include "TFEL/Utilities/Data.hxx"
 #include "TFEL/Utilities/TerminalColors.hxx"
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 
@@ -45,6 +46,15 @@
 namespace tfel {
 
   namespace check {
+
+    TestLauncher::Command::Command() = default;
+    TestLauncher::Command::Command(Command&&) = default;
+    TestLauncher::Command::Command(const Command&) = default;
+    TestLauncher::Command&  //
+        TestLauncher::Command::operator=(Command&&) = default;
+    TestLauncher::Command&  //
+        TestLauncher::Command::operator=(const Command&) = default;
+    TestLauncher::Command::~Command() = default;
 
     TestLauncher::TestLauncher(const Configuration& c, const std::string& f)
         : glog(c.log),
@@ -164,11 +174,42 @@ namespace tfel {
     void TestLauncher::treatRequires() {
       const auto r = CxxTokenizer::readStringArray(this->current, this->end());
       this->requirements.insert(this->requirements.end(), r.begin(), r.end());
-      this->readSpecifiedToken("TestLauncher::treatCommand", ";");
-    } // end of TestLauncher::treatRequires
+      this->readSpecifiedToken("TestLauncher::treatRequires", ";");
+    }  // end of TestLauncher::treatRequires
 
     void TestLauncher::treatCommand() {
-      const auto c = this->readString("TestLauncher::treatCommand");
+      auto c = Command();
+      /*!
+       * \brief parse the options associated with the execution of the command
+       * \param[in] c: command
+       * \param[in] opts: options passed to the command
+       *
+       * Valid options are:
+       *
+       * - `expected_output`: if specified, a test is added to which compares
+       *    the command output to the expected value.
+       */
+      auto parseCommandOptions = [&c](
+          const std::map<std::string, tfel::utilities::Data>& options) {
+        for (const auto& o : options) {
+          if (o.first == "expected_output") {
+            if (!o.second.is<std::string>()) {
+              tfel::raise(
+                  "parseCommandOptions: invalid type "
+                  "for option 'expected_output'");
+            }
+            c.expected_output = o.second.get<std::string>();
+          } else {
+            tfel::raise("parseCommandOptions: invalid option '" + o.first +
+                        "'");
+          }
+        }
+      };  // end of parseCommandOptions
+      c.command = this->readString("TestLauncher::treatCommand");
+      if (this->current->value == "{") {
+        parseCommandOptions(
+            tfel::utilities::Data::read_map(this->current, this->end()));
+      }
       this->commands.push_back(c);
       this->readSpecifiedToken("TestLauncher::treatCommand", ";");
     }  // end of TestLauncher::treatCommand
@@ -393,6 +434,13 @@ namespace tfel {
       this->clear();
     }  // end of TestLauncher::analyseInputFile
 
+    static std::string getFileContent(const std::string& f) {
+      std::ifstream file(f);
+      std::ostringstream s;
+      s << file.rdbuf();
+      return s.str();
+    }  // end of getSourceFileContent
+
     double TestLauncher::ClockAction(ClockEventType clockevent) {
       using namespace std;
       clock_t r;
@@ -436,7 +484,7 @@ namespace tfel {
           unsigned short i = 1;
           for (const auto& c : this->commands) {
             const auto step = "Exec-" + std::to_string(i);
-            this->glog.reportSkippedTest("** " + step + " " + c);
+            this->glog.reportSkippedTest("** " + step + " " + c.command);
             ++i;
           }
           return gsuccess;
@@ -449,20 +497,28 @@ namespace tfel {
         success = true;
         try {
           this->ClockAction(START);
-          manager.execute(c, "", this->testname + "-" + step + ".out",
+          manager.execute(c.command, "", this->testname + "-" + step + ".out",
                           this->environments);
           this->ClockAction(STOP);
-          this->log.addTestResult(this->testname, step, c,
-                                  this->ClockAction(GET), true);
+          if (!c.expected_output.empty()) {
+            const auto output =
+                getFileContent(this->testname + "-" + step + ".out");
+            this->log.addTestResult(this->testname, step, c.command,
+                                    this->ClockAction(GET),
+                                    c.expected_output == output);
+          } else {
+            this->log.addTestResult(this->testname, step, c.command,
+                                    this->ClockAction(GET), true);
+          }
         } catch (std::exception& e) {
-          this->log.addTestResult(this->testname, step, c, 0.0, false,
+          this->log.addTestResult(this->testname, step, c.command, 0.0, false,
                                   e.what());
           if (this->comparisons.empty()) {
             gsuccess = false;
           }
           success = false;
         }
-        this->glog.addSimpleTestResult("** " + step + " " + c, success);
+        this->glog.addSimpleTestResult("** " + step + " " + c.command, success);
         i++;
       }
       i = 1;

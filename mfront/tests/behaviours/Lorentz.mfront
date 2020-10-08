@@ -1,10 +1,6 @@
-/*!
- * \file   Lorentz.mfront
- */
-
 @Behaviour Lorentz;
 @Author Helfer Thomas;
-@Date   18/06/2013;
+@Date 18 / 06 / 2013;
 @Description {
   "Loi de Lorentz modifié pour prendre en compte "
   "le caractère unilatéral de l'endommagement"
@@ -21,48 +17,49 @@ nu.setGlossaryName("PoissonRatio");
 @StateVariable real d;
 
 @ProvidesTangentOperator;
-@Integrator{
-  const real lambda = computeLambda(young,nu);
-  const real  mu    = computeMu(young,nu);
-  Stensor4      dpp; // derivative of the positive part
-  StrainStensor pp;  // positive part of the strain tensor
-  const StrainStensor e = eto+deto;  // negative part
-  computeStensorPositivePartAndDerivative(dpp,pp,e,1e-10);
-  const StrainStensor np = e-pp;  // negative part
+@Integrator {
+  const real lambda = computeLambda(young, nu);
+  const real mu = computeMu(young, nu);
+  Stensor4 dpp;                        // derivative of the positive part
+  StrainStensor pp;                    // positive part of the strain tensor
+  const StrainStensor e = eto + deto;  // negative part
+  computeStensorPositivePartAndDerivative(dpp, pp, e, 1e-10);
+  const StrainStensor np = e - pp;  // negative part
   // partie positive de la trace
   const real trp = trace(pp);
   const real trn = trace(np);
   // force thermodynamique associé à l'endommagement
   bool bloading = false;
   Stensor dd_dde(real(0));
-  if(d<0.99){
-    const real y = mu*(pp|pp)+0.5*lambda*trp*trp;
-    if((y>=k*g/(1+g))&&(y<=k*(1+g)/g)){
-      const real dtest = 1+g-sqrt(k*g*(1+g)/y); 
-      if(d<=dtest){
-	bloading = true;
-	d = min(dtest,real(1));
+  if (d < 0.99) {
+    const real y = mu * (pp | pp) + 0.5 * lambda * trp * trp;
+    if ((y >= k * g / (1 + g)) && (y <= k * (1 + g) / g)) {
+      const real dtest = 1 + g - sqrt(k * g * (1 + g) / y);
+      if (d <= dtest) {
+        bloading = true;
+        d = min(dtest, real(1));
       }
-    } else if(y>=k*(1+g)/g){
+    } else if (y >= k * (1 + g) / g) {
       bloading = true;
       d = real(1);
     }
   }
-  const real deff = min(d,real(0.99));
+  const real deff = min(d, real(0.99));
   // eigen values of s0
-  sig = lambda*((1-deff)*trp+trn)*StrainStensor::Id()+2*mu*((1-deff)*pp+np);
-  if(computeTangentOperator_){
-    if(smt==ELASTIC){
-      computeUnalteredElasticStiffness<N,Type>::exe(Dt,lambda,mu);
-    } else if ((smt==SECANTOPERATOR)||(smt==CONSISTENTTANGENTOPERATOR)){
+  sig = lambda * ((1 - deff) * trp + trn) * StrainStensor::Id() +
+        2 * mu * ((1 - deff) * pp + np);
+  if (computeTangentOperator_) {
+    if (smt == ELASTIC) {
+      computeUnalteredElasticStiffness<N, Type>::exe(Dt, lambda, mu);
+    } else if ((smt == SECANTOPERATOR) || (smt == CONSISTENTTANGENTOPERATOR)) {
       StiffnessTensor Hooke;
-      computeUnalteredElasticStiffness<N,Type>::exe(Hooke,lambda,mu);
-      if((smt==CONSISTENTTANGENTOPERATOR)&&(bloading)){
-	// J'ai pas encore calculé correctement dd_dde !!
-	// Dt = Hooke*(Stensor4::Id()-deff*dpp-(pp^dd_dde));
-	return FAILURE;
+      computeUnalteredElasticStiffness<N, Type>::exe(Hooke, lambda, mu);
+      if ((smt == CONSISTENTTANGENTOPERATOR) && (bloading)) {
+        // J'ai pas encore calculé correctement dd_dde !!
+        // Dt = Hooke*(Stensor4::Id()-deff*dpp-(pp^dd_dde));
+        return FAILURE;
       } else {
-	Dt = Hooke*(Stensor4::Id()-deff*dpp);
+        Dt = Hooke * (Stensor4::Id() - deff * dpp);
       }
     } else {
       return FAILURE;

@@ -96,7 +96,7 @@ The `mfront` python module is fully described here:
 <http://tfel.sourceforge.net/mfront-python.html>
 
 The main function related to `madnex` file support is the
-`getMFrontImplementationsPaths` which takes five arguments:
+`getImplementationsPaths` which takes five arguments:
 
 - the name of the file. The name of this argument is `file`;
 - the name of a material. If the material name is empty, the
@@ -118,9 +118,9 @@ implementation is encoded.
 ~~~~{.python}
 import mfront
 
-paths = mfront.getMFrontImplementationsPaths("file.madnex",
-                                             material=<material_id>,
-                                             behaviour=behaviour_id>)
+paths = mfront.getImplementationPaths("file.madnex",
+                                      material=<material_id>,
+                                      behaviour=behaviour_id>)
 if len(paths) == 0:
   raise("no matching implementation")
 
@@ -186,6 +186,29 @@ behaviours.
 
 # Storing an `MFront` file in a `madnex` file
 
+The easiest way to store an `MFront` file is to create an instance of
+the `OverridableImplementation` class and then call the `write`
+function. Here is an example in `python`:
 
+~~~~{.python}
+import mfront
+
+i = mfront.OverridableImplementation("Plasticity.mfront")
+mfront.write(i, "Plasticity.madnex")
+~~~~
+
+
+However, the `OverridableImplementation` class also allows modifying
+the medata of a implementation, as follows:
+
+~~~~{.python}
+import mfront
+
+i = mfront.OverridableImplementation("Plasticity.mfront")
+i.overrideBehaviourName("Plasticity_SRMA2022")
+i.overrideMaterial("A316LN")
+i.overrideAuthor("John Mac Enroe")
+mfront.write(i, "Plasticity.madnex")
+~~~~
 
 # References

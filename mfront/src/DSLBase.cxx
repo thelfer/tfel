@@ -162,6 +162,9 @@ namespace mfront {
       if (!impl.metadata.description.empty()) {
         this->overrideDescription(impl.metadata.description);
       }
+      for (const auto& p: impl.parameters) {
+        this->overrideByAParameter(p.first, p.second);
+      }
       CxxTokenizer::parseString(impl.source);
 #else  /* MFRONT_HAVE_MADNEX */
       tfel::raise("DSLBase::openFile: madnex support was not enabled");

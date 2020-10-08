@@ -3041,6 +3041,14 @@ namespace mfront {
     return empds;
   }  // end of BehaviourDescription::getElasticMaterialPropertiesDescriptions
 
+  void BehaviourDescription::overrideByAParameter(const std::string& n,
+                                                  const double v) {
+    this->d.overrideByAParameter(n, v);
+    for (auto& md : this->sd) {
+      md.second->overrideByAParameter(n, v);
+    }
+  }  // end of BehaviourDescription::overrideByAParameter
+
   BehaviourDescription::~BehaviourDescription() = default;
 
   void setElasticSymmetryType(BehaviourDescription& bd,

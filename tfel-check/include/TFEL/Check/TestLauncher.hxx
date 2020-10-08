@@ -63,6 +63,30 @@ namespace tfel {
 
      private:
       typedef void (TestLauncher::*CallBack)();
+      /*!
+       * \brief a simple structure describing a command to be launched
+       */
+      struct Command {
+        //! \brief default constructor
+        Command();
+        //! \brief move constructor
+        Command(Command&&);
+        //! \brief copy constructor
+        Command(const Command&);
+        //! \brief move assignement
+        Command& operator=(Command&&);
+        //! \brief default assignement
+        Command& operator=(const Command&);
+        //! \brief destructor
+        ~Command();
+        //! \brief command to be executed
+        std::string command;
+        //! \brief expected output
+        std::string expected_output;
+      };  // end of struct Command
+      /*!
+       * \brief register a new callback
+       */
       void registerCallBack(const std::string&, const CallBack&);
       //! analyse the input file
       void analyseInputFile(const Configuration&);
@@ -131,7 +155,7 @@ namespace tfel {
       PCLogger glog;        /**!< global logfile output stream */
       std::string file;     /**!< file containing tfel-check commands */
       std::string testname; /**!< test name based on file name */
-      std::vector<std::string> commands;
+      std::vector<Command> commands;
       std::string XMLResult; /**!< string containing testcase result, Junit
                                 formatted. */
       double prec = 1.e-8;

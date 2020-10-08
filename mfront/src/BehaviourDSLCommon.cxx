@@ -231,11 +231,6 @@ namespace mfront {
     return this->mb.getMaterialName();
   }  // end of BehaviourDSLCommon::getMaterialName(
 
-  bool BehaviourDSLCommon::isOverridableByAParameter(
-      const std::string&) const {
-    return false;
-  }  // end of BehaviourDSLCommon::isOverridableByAParameter
-
   void BehaviourDSLCommon::analyse() {
     const auto& mh = ModellingHypothesis::getModellingHypotheses();
     std::vector<std::string> hn(mh.size());
@@ -5786,7 +5781,7 @@ namespace mfront {
   }  // end of BehaviourDSLCommon::writeBehaviourStandardTFELTypedefs
 
   void BehaviourDSLCommon::writeBehaviourTraits(std::ostream& os) const {
-    const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     this->checkBehaviourFile(os);
     const auto& ah = ModellingHypothesis::getModellingHypotheses();
     // writing partial specialisations
@@ -7996,6 +7991,29 @@ namespace mfront {
     }
   }  // end of
      // BehaviourDSLCommon::setComputeFinalThermodynamicForcesFromComputeFinalThermodynamicForcesCandidateIfNecessary
+
+  std::string BehaviourDSLCommon::getOverridableVariableNameByExternalName(
+      const std::string& en) const {
+    constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    const auto& d = this->mb.getBehaviourData(uh);
+    const auto pp = findByExternalName(d.getParameters(), en);
+    if (pp != d.getParameters().end()) {
+      return pp->name;
+    }
+    const auto pmp = findByExternalName(d.getMaterialProperties(), en);
+    if (pmp == d.getMaterialProperties().end()) {
+      tfel::raise(
+          "BehaviourDSLCommon::getOverridableVariableNameByExternalName: "
+          "no overridable variable associated with external name '" +
+          en + "'");
+    }
+    return pmp->name;
+  }  // end of BehaviourDSLCommon::getOverridableVariableNameByExternalName
+
+  void BehaviourDSLCommon::overrideByAParameter(const std::string& n,
+                                                const double v) {
+    this->mb.overrideByAParameter(n, v);
+  }  // end of BehaviourDSLCommon::overrideByAParameter
 
   BehaviourDSLCommon::~BehaviourDSLCommon() = default;
 

@@ -6,13 +6,14 @@ nobase_include_HEADERS= MFront/MFront.hxx                                     \
 			MFront/MFrontBase.hxx                                             \
 			MFront/MFrontUtilities.hxx                                        \
 			MFront/MFrontUtilities.ixx                                        \
+			MFront/PathSpecifier.hxx                                          \
 			MFront/GeneratorOptions.hxx                                       \
 			MFront/CMakeGenerator.hxx                                         \
 			MFront/MakefileGenerator.hxx                                      \
 			MFront/CodeBlock.hxx                                              \
 			MFront/CodeBlock.ixx                                              \
 			MFront/MFrontConfig.hxx	                                          \
-			MFront/MFrontDebugMode.hxx	                                      \
+			MFront/MFrontDebugMode.hxx	                                  \
 			MFront/PerformanceProfiling.hxx                                   \
 			MFront/PedanticMode.hxx	                                          \
 			MFront/MFrontLogStream.hxx                                        \

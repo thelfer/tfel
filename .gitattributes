@@ -1547,6 +1547,7 @@ docs/web/sovs.md -text
 docs/web/svn.md -text
 docs/web/tensors.md -text
 docs/web/tex/lcmd_utf8.tex -text
+docs/web/tfel-check.md -text
 docs/web/tfel-python.md -text
 docs/web/theory.md -text
 docs/web/tutorial-spanish.md -text
@@ -2677,6 +2678,7 @@ mfront/include/MFront/NonLinearSystemSolverFactory.hxx -text
 mfront/include/MFront/OctaveMaterialPropertyInterface.hxx -text
 mfront/include/MFront/OverridableImplementation.hxx -text
 mfront/include/MFront/OverridableImplementation.ixx -text
+mfront/include/MFront/PathSpecifier.hxx -text
 mfront/include/MFront/PedanticMode.hxx -text
 mfront/include/MFront/PerformanceProfiling.hxx -text
 mfront/include/MFront/PowellDogLegAlgorithmBase.hxx -text
@@ -2935,6 +2937,7 @@ mfront/src/NortonHoffViscoplasticFlow.cxx -text
 mfront/src/OctaveMaterialPropertyInterface.cxx -text
 mfront/src/OptionDescription.cxx -text
 mfront/src/OverridableImplementation.cxx -text
+mfront/src/PathSpecifier.cxx -text
 mfront/src/PedanticMode.cxx -text
 mfront/src/PerformanceProfiling.cxx -text
 mfront/src/PlasticInelasticFlow.cxx -text
@@ -6801,8 +6804,9 @@ src/Utilities/Token.cxx -text
 test-suite/clean.sh -text
 test-suite/madnex/MFront-test1.madnex -text
 test-suite/madnex/MadnexTest.py -text
+test-suite/madnex/OverridableImplementation.py -text
+test-suite/madnex/Plasticity.mfront -text
 test-suite/madnex/madnex.check -text
-test-suite/madnex/test.py -text
 test-suite/python-bindings/MaterialPropertyTest.py -text
 test-suite/python-bindings/material-properties.check -text
 test-suite/python-bindings/test-mp.mfront -text

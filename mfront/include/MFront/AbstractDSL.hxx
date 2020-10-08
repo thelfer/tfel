@@ -53,14 +53,14 @@ namespace mfront {
     //! \return the material described by the treated file
     virtual std::string getMaterialName() const = 0;
     /*!
-     * \return if the variable with the given external name (glossary name or
-     * entry name) is overridable.
-     * \param[in] n: external name of the parameter
+     * \return the variable name associated with the given external name
+     * \param[in] n: external name of the quantity overridable by a parameter
      *
      * Depending on the DSL's, a parameter may override a parameter, but also a
      * material property for example.
      */
-    virtual bool isOverridableByAParameter(const std::string&) const = 0;
+    virtual std::string getOverridableVariableNameByExternalName(
+        const std::string&) const = 0;
     /*!
      * \brief analyse a file
      * \param[in] f     : file name

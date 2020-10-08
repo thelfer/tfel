@@ -94,8 +94,7 @@ EXTRA_DIST = bootstrap.sh     \
              INSTALL-cmake    \
 	     env-win32.sh.in  \
 	     env-win32.bat.in \
-	     README.md        \
-             test-suite
+	     README.md
 
 licencesdir = $(pkgdatadir)
 dist_licences_DATA = LICENCE-GNU-GPL \
@@ -103,12 +102,13 @@ dist_licences_DATA = LICENCE-GNU-GPL \
                      LICENCE-CECILL-A-FR
 
 testsuitedir = $(pkgdatadir)
-nobase_dist_testsuite_DATA =				       \
+nobase_dist_testsuite_DATA =			       \
   test-suite/clean.sh				       \
   test-suite/madnex/madnex.check		       \
   test-suite/madnex/MadnexTest.py		       \
   test-suite/madnex/MFront-test1.madnex		       \
-  test-suite/madnex/test.py			       \
+  test-suite/madnex/OverridableImplementation.py       \
+  test-suite/madnex/Plasticity.mfront		       \
   test-suite/python-bindings/material-properties.check \
   test-suite/python-bindings/MaterialPropertyTest.py   \
   test-suite/python-bindings/test-mp.mfront
