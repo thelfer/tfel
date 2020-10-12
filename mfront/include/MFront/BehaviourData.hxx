@@ -919,7 +919,7 @@ namespace mfront {
      */
     void getSymbols(std::map<std::string, std::string>&) const;
     //! \brief destructor
-    virtual ~BehaviourData();
+    ~BehaviourData() override;
 
    private:
     /*!

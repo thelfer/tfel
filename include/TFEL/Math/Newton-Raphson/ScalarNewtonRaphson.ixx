@@ -15,6 +15,7 @@
 #define LIB_TFEL_MATH_SCALARNEWTONRAPHSON_IXX
 
 #include "TFEL/Math/General/IEEE754.hxx"
+#include "TFEL/Math/RootFinding/BissectionAlgorithmBase.hxx"
 
 namespace tfel {
 
@@ -43,20 +44,9 @@ namespace tfel {
         const Function& f,
         const Criterion& c,
         const ScalarNewtonRaphsonParameters<NumericType, IndexType>& p) {
-      auto has_opposite_signs = [](const NumericType a, const NumericType b) {
-        auto sgn = [](const NumericType value) {
-          constexpr const auto zero = NumericType{};
-          return (zero < value) - (value < zero);
-        };
-        return sgn(a) != sgn(b);
-      };
       auto i = IndexType{};
       auto x = p.x0;
-      auto xmin = p.xmin0;
-      auto xmax = p.xmax0;
-      if (xmax < xmin) {
-        std::swap(xmin, xmax);
-      }
+      auto b = BissectionAlgorithmBase<NumericType>{};
       auto dx = NumericType{};
       if (i >= p.im) {
         return std::make_tuple(false, p.x0, i);
@@ -68,89 +58,43 @@ namespace tfel {
       auto fv = std::get<0>(fdf);
       auto dfv = std::get<1>(fdf);
 #endif
-      auto fxmin = std::numeric_limits<NumericType>::quiet_NaN();
-      auto fxmax = std::numeric_limits<NumericType>::quiet_NaN();
-      if (tfel::math::ieee754::isfinite(xmin)) {
-        fxmin = std::get<0>(f(xmin));
-        if (!tfel::math::ieee754::isfinite(fxmin)) {
-          fxmin = std::numeric_limits<NumericType>::quiet_NaN();
-          xmin = std::numeric_limits<NumericType>::quiet_NaN();
-        }
+      if (tfel::math::ieee754::isfinite(p.xmin0)) {
+        b.updateBounds(p.xmin0, std::get<0>(f(p.xmin0)));
       }
-      if (tfel::math::ieee754::isfinite(xmax)) {
-        fxmax = std::get<0>(f(xmax));
-        if (!tfel::math::ieee754::isfinite(fxmax)) {
-          fxmax = std::numeric_limits<NumericType>::quiet_NaN();
-          xmax = std::numeric_limits<NumericType>::quiet_NaN();
-        }
-      }
-      // check that fxmin and fmax have opposite signs
-      if ((tfel::math::ieee754::isfinite(fxmin)) &&
-          (tfel::math::ieee754::isfinite(fxmax)) &&
-          (!has_opposite_signs(fxmin, fxmax))) {
-        if (std::abs(fxmin) < std::abs(fxmax)) {
-          fxmax = std::numeric_limits<NumericType>::quiet_NaN();
-          xmax = std::numeric_limits<NumericType>::quiet_NaN();
-        } else {
-          fxmin = std::numeric_limits<NumericType>::quiet_NaN();
-          xmin = std::numeric_limits<NumericType>::quiet_NaN();
-        }
+      if (tfel::math::ieee754::isfinite(p.xmax0)) {
+        b.updateBounds(p.xmax0, std::get<0>(f(p.xmax0)));
       }
       auto converged = false;
       while ((!converged) && (i != p.im)) {
-        auto bounds_changed = false;
-        const auto has_xmin = tfel::math::ieee754::isfinite(xmin);
-        const auto has_xmax = tfel::math::ieee754::isfinite(xmax);
-        if ((!tfel::math::ieee754::isfinite(fv)) ||
-            (!tfel::math::ieee754::isfinite(dfv)) ||
-            (tfel::math::ieee754::fpclassify(dfv) == FP_ZERO)) {
-          if (has_xmin && has_xmax) {
-            x = (xmin + xmax) / 2;
-          } else if (has_xmin) {
-            x = (xmin + x) / 2;
-          } else if (has_xmax) {
-            x = (xmax + x) / 2;
-          } else {
-            return std::make_tuple(false, x, i);
-          }
-        } else {
-          if (has_xmin) {
-            if ((!has_opposite_signs(fv, fxmin)) && (x > xmin)) {
-              xmin = x;
-              fxmin = fv;
-              bounds_changed = true;
-            }
-          } else {
-            xmin = x;
-            fxmin = fv;
-            bounds_changed = true;
-          }
-          if (has_xmax) {
-            if ((!has_opposite_signs(fv, fxmax)) && (x < xmax)) {
-              xmax = x;
-              fxmax = fv;
-              bounds_changed = true;
-            }
-          } else if (!bounds_changed) {
-            if ((has_xmin) && (has_opposite_signs(fv, fxmin))) {
-              xmax = x;
-              fxmax = fv;
-              if (xmin > xmax) {
-                std::swap(xmax, xmin);
-                std::swap(fxmax, fxmin);
-              }
-              bounds_changed = true;
-            }
-          }
-        }
-        dx = -fv / dfv;
-        converged = c(fv, dx, x, i);
+        b.updateBounds(x, fv);
+        converged = tfel::math::ieee754::isfinite(x) &&
+                    tfel::math::ieee754::isfinite(fv) && c(fv, dx, x, i);
         if (!converged) {
-          x += dx;
-          if (!bounds_changed) {
-            if (has_xmin && has_xmax && ((x < xmin) || (x > xmax))) {
-              x = (xmin + xmax) / 2;
+          // we now have to find a new  root estimate
+          if ((!tfel::math::ieee754::isfinite(x)) ||  //
+              (!tfel::math::ieee754::isfinite(fv)) ||
+              (tfel::math::ieee754::fpclassify(dfv) == FP_ZERO)) {
+            // here we can't do a Newton step,
+            // hence we see the bissection can provide a new estimate
+            // of the root.
+            if (!b.getNextRootEstimate(x)) {
+              // the bissection method can't provide a new estimate, so the only
+              // thing that we can do here is to divide the previous Newton step
+              // by 2
+              if (i == 0) {
+                return std::make_tuple(false, p.x0, i);
+              } else {
+                // step back
+                dx /= 2;
+                x -= dx;
+                b.iterate(x);
+              }
             }
+          } else {
+            // standard newton step
+            dx = -fv / dfv;
+            x += dx;
+            b.iterate(x);
           }
           std::tie(fv, dfv) = f(x);
           ++i;

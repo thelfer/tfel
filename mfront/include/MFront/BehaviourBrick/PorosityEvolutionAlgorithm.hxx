@@ -23,7 +23,7 @@ namespace mfront {
      */
     enum struct PorosityEvolutionAlgorithm {
       STANDARD_IMPLICIT_SCHEME,  //!< \brief monolithich approach
-      STAGGERED_SCHEME,          //!< \brief staggered approach
+      STAGGERED_SCHEME           //!< \brief staggered approach
     };  // end of enum struct PorosityEvolutionAlgorithm
 
   }  // end of namespace bbrick

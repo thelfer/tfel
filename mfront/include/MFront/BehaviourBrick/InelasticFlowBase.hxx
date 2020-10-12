@@ -83,7 +83,7 @@ namespace mfront {
          * \brief This value indicate that the flow rule must be corrected by
          * the standard \f$(1-f)\f$ factor where \f$f\f$ is the porosity.
          */
-        STANDARD_POROSITY_CORRECTION_ON_EQUIVALENT_PLASTIC_STRAIN,
+        STANDARD_POROSITY_CORRECTION_ON_EQUIVALENT_PLASTIC_STRAIN
       };
       //! \return the effect of the porosity on the flow rule.
       virtual PorosityEffectOnFlowRule getPorosityEffectOnEquivalentPlasticStrain() const;

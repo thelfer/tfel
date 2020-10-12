@@ -33,8 +33,8 @@ namespace tfel
       LUException();
       LUException(LUException&&);
       LUException(const LUException&);
-      //! destructor
-      virtual ~LUException() noexcept;
+      //! \brief destructor
+      ~LUException() noexcept override;
     }; // end of struct LUException
 
     /*!

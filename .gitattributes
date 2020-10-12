@@ -1905,6 +1905,8 @@ include/TFEL/Math/Quantity/qtOperations.hxx -text
 include/TFEL/Math/Quantity/qtOperations.ixx -text
 include/TFEL/Math/Quantity/qtSamples.hxx -text
 include/TFEL/Math/Quantity/qtSpecific.hxx -text
+include/TFEL/Math/RootFinding/BissectionAlgorithmBase.hxx -text
+include/TFEL/Math/RootFinding/BissectionAlgorithmBase.ixx -text
 include/TFEL/Math/RootFinding/Broyden.ixx -text
 include/TFEL/Math/RootFinding/Broyden2.ixx -text
 include/TFEL/Math/RungeKutta/RungeKutta2.ixx -text
@@ -6854,6 +6856,7 @@ tests/Material/OrthotropicAxesConventionTest.cxx -text
 tests/Material/OrthotropicPlasticityTest.cxx -text
 tests/Material/SlipSystemsDescriptionTest.cxx -text
 tests/Material/boundsCheck.cxx -text
+tests/Math/BissectionAlgorithmTest.cxx -text
 tests/Math/CMakeLists.txt -text
 tests/Math/CorotationnalCauchyStressToSecondPioloKirchhoffStressTest.cxx -text
 tests/Math/CubicRoots.cxx -text

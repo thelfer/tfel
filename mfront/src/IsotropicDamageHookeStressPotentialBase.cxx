@@ -634,8 +634,8 @@ namespace mfront {
       auto r = std::vector<
         std::tuple<std::string, std::string, mfront::SupportedTypes::TypeFlag>>{};
       r.push_back(std::make_tuple(
-        "((this->theta) * (1-this->d-(this->theta)*(this->dd))" + d + ")",
-	std::string("eel"), SupportedTypes::STENSOR)),
+          "((this->theta) * (1-this->d-(this->theta)*(this->dd))" + d + ")",
+          std::string("eel"), SupportedTypes::STENSOR));
       r.push_back(std::make_tuple(
          "(-(this->theta) * (" + d + ") * (this->eel + (this->theta) * (this->deel)))",
          std::string("d"), SupportedTypes::SCALAR));

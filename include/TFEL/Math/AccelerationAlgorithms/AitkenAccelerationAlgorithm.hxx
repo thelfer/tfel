@@ -14,6 +14,8 @@
 #ifndef LIB_TFEL_MATH_ACCELERATIONALGORITHMS_AITKENACCELERATIONALGORITHM_HXX
 #define LIB_TFEL_MATH_ACCELERATIONALGORITHMS_AITKENACCELERATIONALGORITHM_HXX
 
+#include <ostream>
+
 namespace tfel {
 
   namespace math {
@@ -45,6 +47,16 @@ namespace tfel {
       //! \brief iteration number
       IndexType i = 0;
     };  // end of struct AitkenAccelerationAlgorithm
+
+    /*!
+     * \brief output stream operator
+     * \param[in] os: output operator
+     * \param[in] a: algorithm
+     */
+    template <typename NumericType, typename IndexType>
+    std::ostream& operator<<(
+        std::ostream&,
+        const AitkenAccelerationAlgorithm<NumericType, IndexType>&);
 
   }  // end of namespace math
 

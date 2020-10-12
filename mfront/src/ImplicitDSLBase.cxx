@@ -1214,7 +1214,7 @@ namespace mfront {
         }
       }
     }
-    for (const auto iJb : jacobian_invert_blocks) {
+    for (const auto& iJb : jacobian_invert_blocks) {
       this->mb.reserveName(uh, iJb);
     }
   }  // end of ImplicitDSLBase::completeVariableDeclaration()
@@ -2388,8 +2388,8 @@ namespace mfront {
          << "this->jacobian, jacobian_permutation, jacobian_invert);\n";
       auto cr = SupportedTypes::TypeSize{};  // current row
       auto cc = SupportedTypes::TypeSize{};  // current column
-      for (const auto iv1 : isvs) {
-        for (const auto iv2 : isvs) {
+      for (const auto& iv1 : isvs) {
+        for (const auto& iv2 : isvs) {
           if (std::find_if(invert_jacobian_blocks.begin(),
                            invert_jacobian_blocks.end(),
                            [&iv1, &iv2](const Derivative& derivative) {
@@ -2540,7 +2540,7 @@ namespace mfront {
        }
        const auto& implicit_equations_derivatives =
            getAttribute<std::vector<Derivative>>(cb, attr);
-       for (const auto givd : get_integration_variables_derivatives) {
+       for (const auto& givd : get_integration_variables_derivatives) {
          std::vector<Derivative> derivatives;
          std::copy_if(implicit_equations_derivatives.begin(),
                       implicit_equations_derivatives.end(),
@@ -2580,7 +2580,6 @@ namespace mfront {
              os << getDerivativeTypeHolder(v, givd) << "& "
                 << "integration_variable_derivative_d" << v.name << "_dd"
                 << givd.name;
-             ;
              if (++i2 <= i) {
                os << ",\n";
              }

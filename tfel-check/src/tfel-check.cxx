@@ -182,6 +182,19 @@ namespace tfel {
                           parse(this->configurations, f);
                         },
                         true));
+      this->registerCallBack(
+          "--list-default-components",
+          CallBack("list all default components",
+                   [this] {
+                     auto global_configuration =
+                         this->configurations.getConfiguration("");
+                     for (const auto& c :
+                          global_configuration.available_components) {
+                       std::cout << "- " << c << '\n';
+                     }
+                     std::exit(EXIT_SUCCESS);
+                   },
+                   false));
     }  // end of TFELCheck::registerArgumentCallBacks
 
     std::string TFELCheck::getVersionDescription() const { return VERSION; }

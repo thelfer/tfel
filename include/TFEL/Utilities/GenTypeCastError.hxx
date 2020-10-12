@@ -3,45 +3,42 @@
  * \brief  This file implements the GenTypeCastError class
  * \see    GenTypeBase
  * \author Thomas Helfer
- * \date   29 Jan. 2009
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \date   29/01/2009
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_TFEL_GENTYPECASTERROR_HXX
-#define LIB_TFEL_GENTYPECASTERROR_HXX 
+#define LIB_TFEL_GENTYPECASTERROR_HXX
 
-#include<stdexcept>
+#include <stdexcept>
 
-#include"TFEL/Config/TFELConfig.hxx"
+#include "TFEL/Config/TFELConfig.hxx"
 
-namespace tfel
-{
-  
-  namespace utilities
-  {
+namespace tfel {
+
+  namespace utilities {
 
     /*!
      * exception thrown when requesting a bad type out of a
      * GenTypeBase class
      */
     struct TFELUTILITIES_VISIBILITY_EXPORT GenTypeCastError
-      : public std::runtime_error
-    {
-      //! Default consutructor
+        : public std::runtime_error {
+      //! \brief default consutructor
       GenTypeCastError();
       GenTypeCastError(const GenTypeCastError&) = default;
       GenTypeCastError(GenTypeCastError&&) = default;
-      //! destructor
-      virtual ~GenTypeCastError() noexcept;
-    }; // end of struct GenTypeCastErrro
+      //! \brief destructor
+      ~GenTypeCastError() noexcept override;
+    };  // end of struct GenTypeCastErrro
 
-  } // end of namespace utilities
+  }  // end of namespace utilities
 
-} // end of namespace tfel
+}  // end of namespace tfel
 
 #endif /* LIB_TFEL_GENTYPECASTERROR_HXX */

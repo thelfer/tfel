@@ -31,7 +31,7 @@ namespace tfel {
       COMPRESSION = 0,
       UNDAMAGED_TENSION = 1,
       GROWING_DAMAGE = 2,
-      ELASTIC_UNLOADING = 3,
+      ELASTIC_UNLOADING = 3
     };  // end of enum struct DDIF2State
 
     /*!

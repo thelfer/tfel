@@ -106,7 +106,7 @@ namespace tfel {
     };
 
     template <typename T>
-    static void initializeVectorConverter() {
+    void initializeVectorConverter() {
       using namespace boost::python;
       // register the to-python converter
       to_python_converter<T, vector_to_python_list<T>>();

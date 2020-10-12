@@ -76,7 +76,7 @@ namespace tfel {
                                const std::string& = "",
                                const bool = false);
       //! destructor
-      virtual ~ArgumentParserBase();
+      ~ArgumentParserBase() override;
 
      private:
       //! copy constructor

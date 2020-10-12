@@ -29,7 +29,7 @@ namespace tfel
     {
       KrigingErrorInvalidLength();
       KrigingErrorInvalidLength(const KrigingErrorInvalidLength&) = default;
-      virtual ~KrigingErrorInvalidLength() noexcept;
+      ~KrigingErrorInvalidLength() noexcept override;
     }; // end of struct KrigingErrorInvalidLength
 
     struct TFELMATHKRIGING_VISIBILITY_EXPORT KrigingErrorNoDataSpecified
@@ -37,7 +37,7 @@ namespace tfel
     {
       KrigingErrorNoDataSpecified();
       KrigingErrorNoDataSpecified(const KrigingErrorNoDataSpecified&) = default;
-      virtual ~KrigingErrorNoDataSpecified() noexcept;
+      ~KrigingErrorNoDataSpecified() noexcept override;
     }; // end of struct KrigingErrorNoDataSpecified
 
     struct TFELMATHKRIGING_VISIBILITY_EXPORT KrigingErrorInsufficientData
@@ -45,7 +45,7 @@ namespace tfel
     {
       KrigingErrorInsufficientData();
       KrigingErrorInsufficientData(const KrigingErrorInsufficientData&) = default;
-      virtual ~KrigingErrorInsufficientData() noexcept;
+      ~KrigingErrorInsufficientData() noexcept override;
     }; // end of struct KrigingErrorInsufficientData
 
   } // end of namespace math

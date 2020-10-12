@@ -127,7 +127,7 @@ namespace mfront{
          << "::NewtonIntegration() : iteration \" "
          << "<< iter << \": invalid evaluation of the flow rate or its "
          << "derivative\\n\";\n";
-    };
+    }
     os << "if(iter==0u){\n"
        << "// probably an elastic prediction\n"
        << "newton_ddp = (this->seq_e / mu_3_theta) / 2;\n"

@@ -483,6 +483,8 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/ST2toT2/ST2toT2View.hxx						                                     \
 			TFEL/Math/Broyden.hxx                                                                        \
 			TFEL/Math/Broyden2.hxx                                                                       \
+			TFEL/Math/RootFinding/BissectionAlgorithmBase.hxx                                            \
+			TFEL/Math/RootFinding/BissectionAlgorithmBase.ixx                                            \
 			TFEL/Math/RootFinding/Broyden.ixx                                                            \
 			TFEL/Math/RootFinding/Broyden2.ixx                                                           \
 			TFEL/Math/LevenbergMarquardt.hxx                                                             \

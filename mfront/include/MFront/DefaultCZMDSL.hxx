@@ -32,7 +32,7 @@ namespace mfront{
     //! \brief  constructor
     DefaultCZMDSL();
     //! \brief  destructor
-    ~DefaultCZMDSL();
+    ~DefaultCZMDSL() override;
   protected:
    std::string getLocalVariablesInitializers(const Hypothesis) const override;
 

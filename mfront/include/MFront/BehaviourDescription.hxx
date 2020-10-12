@@ -1539,7 +1539,7 @@ namespace mfront {
     void getSymbols(std::map<std::string, std::string>&,
                     const Hypothesis) const;
     //! destructor
-    ~BehaviourDescription();
+    ~BehaviourDescription() override;
 
    private:
     //! a simple alias (std::optional is not yet available)

@@ -23,7 +23,7 @@ namespace tfel {
     void AitkenAccelerationAlgorithm<NumericType, IndexType>::initialize(
         const NumericType x) {
       this->i = false;
-      this->x0 = x0;
+      this->x0 = x;
       this->x1 = NumericType{};
     }  // end of AitkenAccelerationAlgorithm::initialize
 
@@ -52,6 +52,14 @@ namespace tfel {
       }
       this->i = !(this->i);
     }  // end of AitkenAccelerationAlgorithm::accelerate
+
+    template <typename NumericType, typename IndexType>
+    std::ostream& operator<<(
+        std::ostream& os,
+        const AitkenAccelerationAlgorithm<NumericType, IndexType>&) {
+      os << "{}";
+      return os;
+    }  // end of operator<<
 
   }  // end of namespace math
 

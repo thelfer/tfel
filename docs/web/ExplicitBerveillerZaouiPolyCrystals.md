@@ -501,10 +501,14 @@ containing the description of the phases.
   const auto σᵉ = sigmaeq(σ);
 ~~~~
 
+The macroscopic strain rate is then initialised to zero:
+
 ~~~~{.cxx}
   // initialisation of the macroscopic strain rate
-  ∂ₜεᵛᵖ = Stensor(real(0));
+  ∂ₜεᵛᵖ = Stensor(strainrate(0));
 ~~~~
+
+Then, the loop over the phases is started, as follows:
 
 ~~~~{.cxx}
   // loop over the phases
@@ -512,6 +516,9 @@ containing the description of the phases.
     // volume fraction of the phase
     const auto φ = gs.volume_fractions[k];
 ~~~~
+
+The local stress is computed following the Berveiller-Zaoui scheme
+(Equation @eq:mfront:bz:sig):
 
 ~~~~{.cxx}
     // local stress following the Berveiller-Zaoui scheme
@@ -522,10 +529,15 @@ containing the description of the phases.
     }
 ~~~~
 
+We then initialise the microscopic strain rate:
+
 ~~~~{.cxx}
     // initialisation of the microscopic strain rate
-    ∂ₜεᵛᵖᵍ[k] = Stensor(real(0));
+    ∂ₜεᵛᵖᵍ[k] = Stensor(strainrate(0));
 ~~~~
+
+We now start the loop over the slip system of the considered phase and
+evaluate the contribution to the microscopic strain rate:
 
 ~~~~{.cxx}
     for (unsigned short i = 0; i != Nss; ++i) {
@@ -539,27 +551,12 @@ containing the description of the phases.
         }
         return 3;
       }(); // return the family number 
-~~~~
-
-~~~~{.cxx}
       // orientation tensors in the material frame
       const auto& μⁱᵏ = gs.mus[k][i];
-~~~~
-
-~~~~{.cxx}
       // resolved shear stress
       const auto τ = μⁱᵏ | σᵍ;
-~~~~
-
-~~~~{.cxx}
-      if (abs(τ) - τᶜ[idx] > 1.e5) {
-        return false;
-      }
-~~~~
-
-~~~~{.cxx}
-     const auto rτ = (abs(τ) - τᶜ[idx]) / K;
-     if (rτ > 0) {
+      const auto rτ = (abs(τ) - τᶜ[idx]) / K;
+      if (rτ > 0) {
         const auto sgn = τ > 0 ? 1 : -1;
         const auto ∂ₜg = sgn ⋅ pow(rτ, m[idx]);
         dεᵛᵖᵍ[k] += ∂ₜg ⋅ μⁱᵏ;
@@ -567,18 +564,22 @@ containing the description of the phases.
     } // end of the loop over the slip systems
 ~~~~
 
-~~~~{.cxx}
-    ∂ₜεᵛᵖ += ∂ₜεᵛᵖᵍ[k] ⋅ φ;
-~~~~
+The macroscopic strain rate is then updated by the contribution of the
+considered phase:
 
 ~~~~{.cxx}
+    ∂ₜεᵛᵖ += ∂ₜεᵛᵖᵍ[k] ⋅ φ;
   } // end of the loop over the phases
 ~~~~
+
+After the loop over the phases, one can update the rate of the
+macroscopic equivalent plastic strain and the macroscopic elastic strain
+rate:
 
 ~~~~{.cxx}
   // rate of the macroscopic equivalent plastic strain
   ∂ₜp = sqrt((2 ⋅ (∂ₜεᵛᵖ | ∂ₜεᵛᵖ)) / 3);
-  // elastic strain rain
+  // elastic strain rate
   ∂ₜεᵉˡ = ∂ₜεᵗᵒ - ∂ₜεᵛᵖ;
 ~~~~
 

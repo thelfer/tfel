@@ -69,7 +69,7 @@ namespace tfel
       ChildProcessCreationFailedException();
       ChildProcessCreationFailedException(const ChildProcessCreationFailedException&) = default;
       ChildProcessCreationFailedException(ChildProcessCreationFailedException&&) = default;
-      virtual ~ChildProcessCreationFailedException() noexcept;
+      ~ChildProcessCreationFailedException() noexcept override;
     }; // end of struct ChildProcessCreationFailedException
 
     template<typename T>

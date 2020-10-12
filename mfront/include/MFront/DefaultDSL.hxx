@@ -34,7 +34,7 @@ namespace mfront {
     //! \brief  constructor
     DefaultDSL();
     //! \brief  destructor
-    ~DefaultDSL();
+    ~DefaultDSL() override;
   };  // end of struct DefaultDSL
 
 }  // end of namespace mfront

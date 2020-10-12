@@ -35,7 +35,7 @@ namespace mfront {
         const std::string&,
         const MFrontTemplateGenerationOptions&) const override;
     //! \brief  destructor
-    ~ImplicitFiniteStrainDSL();
+    ~ImplicitFiniteStrainDSL() noexcept override;
   };  // end of struct ImplicitFiniteStrainDSL
 
 }  // end of namespace mfront

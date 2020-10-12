@@ -35,7 +35,7 @@ namespace mfront {
         const std::string&,
         const MFrontTemplateGenerationOptions&) const override;
     //! destructor
-    ~RungeKuttaDSL();
+    ~RungeKuttaDSL() override;
   }; // end of struct RungeKuttaDSL
 
 } // end of namespace mfront

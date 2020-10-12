@@ -332,7 +332,7 @@ namespace tfel {
       const Token& operator[](const size_type) const;
       //! \return the number of token
       size_type size() const;
-      //! destructor
+      //! \brief destructor
       virtual ~CxxTokenizer();
 
      protected:

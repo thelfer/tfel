@@ -72,7 +72,8 @@ test_PROGRAMS = hill                                     \
 		StridedRandomAccessIteratorTest          \
 		DifferenceRandomAccessIteratorTest       \
 	        IEEE754Test                          \
-        ScalarNewtonRaphsonTest
+        ScalarNewtonRaphsonTest                  \
+        BissectionAlgorithmTest
 
 LDADD = -L$(top_builddir)/src/Math      \
 	-L$(top_builddir)/src/Utilities \
@@ -124,6 +125,7 @@ StridedRandomAccessIteratorTest_SOURCES    = StridedRandomAccessIteratorTest.cxx
 DifferenceRandomAccessIteratorTest_SOURCES = DifferenceRandomAccessIteratorTest.cxx
 IEEE754Test_SOURCES = IEEE754Test.cxx
 ScalarNewtonRaphsonTest_SOURCES = ScalarNewtonRaphsonTest.cxx
+BissectionAlgorithmTest_SOURCES = BissectionAlgorithmTest.cxx
 
 discretization1D_SOURCES = discretization1D.cxx
 discretization1D_LDADD   = -L$(top_builddir)/src/Math      \

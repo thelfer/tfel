@@ -27,7 +27,7 @@ namespace tfel {
       MathException() = default;
       MathException(MathException&&) = default;
       MathException(const MathException&) = default;
-      virtual ~MathException() noexcept;
+      ~MathException() noexcept override;
     };  // end of struct MathException
 
     struct TFELMATH_VISIBILITY_EXPORT MathRunTimeException

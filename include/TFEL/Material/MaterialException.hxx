@@ -30,7 +30,7 @@ namespace tfel{
       MaterialException(const std::string&);
       MaterialException(MaterialException&&)      = default;
       MaterialException(const MaterialException&) = default;
-      virtual ~MaterialException() noexcept;
+      ~MaterialException() noexcept override;
     };
 
     struct TFELMATERIAL_VISIBILITY_EXPORT DivergenceException final

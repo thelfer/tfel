@@ -147,7 +147,7 @@ namespace mfront{
          << "::NewtonIntegration() : iteration \" "
          << "<< iter << \": invalid evaluation of the yield surface or one of "
          << "its derivatives\\n\";\n";
-    };
+    }
     os << "if(iter==0u){\n"
        << "// probably an elastic prediction\n"
        << "newton_ddp = (this->seq_e / mu_3_theta) / 2;\n"
@@ -191,7 +191,7 @@ namespace mfront{
       os << "cout << \"" << this->mb.getClassName()
          << "::NewtonIntegration() : iteration \" "
          << "<< iter << \": invalid jacobian on the first iteration\\n\";\n";
-    };
+    }
     os << "// probably an elastic prediction\n"
        << "newton_ddp = (this->seq_e / mu_3_theta) / 2;\n"
        << "} // end of if(iter==0u)\n"

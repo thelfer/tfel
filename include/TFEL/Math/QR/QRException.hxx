@@ -34,7 +34,7 @@ namespace tfel
       QRException(QRException&&);
       QRException(const QRException&);
       //! destructor
-      virtual ~QRException() noexcept;
+      ~QRException() noexcept override;
     }; // end of struct QRException
 
     /*!

@@ -121,6 +121,17 @@ namespace mfront {
      */
     static const char* const maximumNumberOfIterationsOfTheStaggeredScheme;
     /*!
+     * \brief if the staggered approach is used, this is the name of a
+     * instance of the `tfel::math::BissectionAlgorithmBase` class.
+     */
+    static const char* const staggeredSchemeBissectionAlgorithm;
+    /*!
+     * \brief if the staggered approach is used and that the acceleration
+     * algorithm used is the Aitken one, this is the name of a
+     * instance of the `tfel::math::AitkenAccelerationAlgorithm` class.
+     */
+    static const char* const staggeredSchemeAitkenAccelerationAlgorithm;
+    /*!
      * \brief constructor
      * \param[in] dsl_ : calling domain specific language
      * \param[in] bd_  : behaviour description
@@ -201,8 +212,8 @@ namespace mfront {
     //! \brief algorithm used to handle the porosity evolution
     mfront::bbrick::PorosityEvolutionAlgorithm porosity_evolution_algorithm =
         mfront::bbrick::PorosityEvolutionAlgorithm::STAGGERED_SCHEME;
-    //! \brief parameters fo the staggered scheme
-    struct {
+    //! \brief structure holding the parameters for the staggered scheme
+    struct StaggeredSchemeParameters {
       /*!
        * \brief value used to check if the values of the porosity between two
        * iterations of the staggered scheme are almost identical, i.e. that
@@ -212,12 +223,23 @@ namespace mfront {
       double convergence_criterion = 1e-10;
       //! \brief maximum number of iterations of the staggered scheme
       unsigned short maximum_number_of_iterations = 100;
-      } staggered_algorithm_parameters;
       /*!
-       * \brief a boolean stating if the elastic contribution to the porosity
-       * growth must be taken into account.
+       * \brief list of possible acceleration algorithm
        */
-      bool elastic_contribution = false;
+      enum AccelerationAlgorithm {
+        RELAXATION,
+        AITKEN
+      };  // end of enum AccelerationAlgorithm
+          //! \brief selected acceleration algorithm
+      AccelerationAlgorithm acceleration_algorithm = AITKEN;
+    };  // end of  struct StaggeredSchemeParameters
+    //! \brief parameters for the staggered scheme
+    StaggeredSchemeParameters staggered_scheme_parameters;
+    /*!
+     * \brief a boolean stating if the elastic contribution to the porosity
+     * growth must be taken into account.
+     */
+    bool elastic_contribution = false;
   };  // end of StandardElastoViscoPlasticityBrick
 
 }  // end of namespace mfront

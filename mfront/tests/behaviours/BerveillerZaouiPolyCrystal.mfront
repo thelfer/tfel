@@ -73,8 +73,8 @@
 @Derivative {
   const PCSlidingSystems& gs =
       PCSlidingSystems::getPolyCrystalsSlidingSystems("PolyCrystalsAngles.txt");
-  StressStensor sigg(real(0));
-  depsp = Stensor(real(0));
+  StressStensor sigg(stress(0));
+  depsp = Stensor(strainrate(0));
   // boucle sur le nombre de phases (ou grains)
   real pe[Nss];
   for (unsigned short k = 0; k != Np; ++k) {
@@ -87,7 +87,7 @@
     for (unsigned short i = 0; i != Nss; ++i) {
       pe[i] = Q * (1. - exp(-b * p[Nss * k + i]));
     }
-    depsg[k] = Stensor(real(0));
+    depsg[k] = Stensor(strainrate(0));
     for (unsigned short i = 0; i != Nss; ++i) {
       real Rp = R0;
       for (unsigned short j = 0; j != Nss; ++j) {

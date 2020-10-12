@@ -35,7 +35,7 @@ namespace mfront {
         const std::string&,
         const MFrontTemplateGenerationOptions&) const override;
     //! \brief  destructor
-    ~ImplicitDSLII();
+    ~ImplicitDSLII() override;
   };  // end of struct ImplicitDSLII
 
 }  // end of namespace mfront

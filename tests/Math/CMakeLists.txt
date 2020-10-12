@@ -105,6 +105,7 @@ tests_math(StridedRandomAccessIteratorTest)
 tests_math(DifferenceRandomAccessIteratorTest)
 tests_math(IEEE754Test)
 tests_math(ScalarNewtonRaphsonTest)
+tests_math(BissectionAlgorithmTest)
 
 tests_math3(levenberg-marquardt4)
 

@@ -108,7 +108,7 @@ namespace tfel {
         }
         components.push_back(c);
       });
-    }  // end of ConfigurationManager::addSubstitution
+    }  // end of ConfigurationManager::addComponent
 
     const Configuration& ConfigurationManager::getConfiguration() const {
       return this->configuration;
@@ -132,17 +132,29 @@ namespace tfel {
       auto p = tokenizer.begin();
       const auto pe = tokenizer.end();
       while (p != pe) {
-        if (p->value == "substitutions") {
+        if (p->value == "components") {
+          ++p;
+          CxxTokenizer::readSpecifiedToken("tfel::check::parse", ":", p, pe);
+          CxxTokenizer::checkNotEndOfLine("tfel::check::parse", p, pe);
+          const auto components =
+              convert<std::vector<std::string>>(Data::read(p, pe));
+          for (const auto& component : components) {
+            c.addComponent(component);
+          }
+          CxxTokenizer::readSpecifiedToken("tfel::check::parse", ";", p, pe);
+        } else if (p->value == "substitutions") {
           ++p;
           CxxTokenizer::readSpecifiedToken("tfel::check::parse", ":", p, pe);
           CxxTokenizer::checkNotEndOfLine("tfel::check::parse", p, pe);
           const auto variables =
               convert<std::map<std::string, std::string>>(Data::read(p, pe));
           for (const auto& v : variables) {
-            c.addSubstitution(v.first, v.second);
+
+            c.addSubstitution("@" + v.first + "@", v.second);
           }
+          CxxTokenizer::readSpecifiedToken("tfel::check::parse", ";", p, pe);
         } else {
-          throw_if(true, "unexpected token 'p->value'");
+          throw_if(true, "unexpected token '" + p->value + "'");
         }
       }
     }  // end of parse
