@@ -1329,6 +1329,7 @@ AC_OUTPUT([debug.sh Makefile Doxyfile docs/Makefile docs/tfel/Makefile
 	   mfront/tests/behaviours/bricks/DDIF2/castem/Makefile
 	   mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/Makefile
 	   mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/castem/Makefile
+	   mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/generic/Makefile
 	   mfront/tests/behaviours/generic/Makefile
 	   mfront/tests/behaviours/castem/Makefile
 	   mfront/tests/behaviours/castem/UMATExternalBehaviourDescription.cxx

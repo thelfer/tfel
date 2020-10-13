@@ -1,4 +1,4 @@
-SUBDIRS=castem
+SUBDIRS=castem generic
 
 MFRONTS=StandardElastoViscoPlasticityTest1.mfront                         \
 	StandardElastoViscoPlasticityTest2.mfront                             \
@@ -91,6 +91,8 @@ MFRONTS=StandardElastoViscoPlasticityTest1.mfront                         \
 	PowerLawStrainBasedNucleationModelTest.mfront			      \
 	PowerLawStressBasedNucleationModelTest.mfront			      \
         ElasticContributionToPorosityGrowth.mfront                            \
+        GursonTvergaardNeedleman1982.mfront                                   \
+        RousselierTanguyBesson2002.mfront                                     \
         references/standardelastoviscoplasticitynortontest7.ref               \
 	references/standardelastoviscoplasticitynortontest8_E.ref             \
 	references/standardelastoviscoplasticitynortontest8_S.ref             \

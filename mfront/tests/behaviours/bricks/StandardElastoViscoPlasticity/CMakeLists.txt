@@ -1,4 +1,5 @@
 add_subdirectory(castem)
+add_subdirectory(generic)
 
 install_mfront_data(tests/behavioursbricks/StandardElastoViscoPlasticity
   StandardElastoViscoPlasticityTest1.mfront)
@@ -187,3 +188,7 @@ install_mfront_data(tests/behavioursbricks/StandardElastoViscoPlasticity
 	PowerLawStressBasedNucleationModelTest.mfront)
 install_mfront_data(tests/behavioursbricks/StandardElastoViscoPlasticity
         ElasticContributionToPorosityGrowth.mfront)
+install_mfront_data(tests/behavioursbricks/StandardElastoViscoPlasticity
+        GursonTvergaardNeedleman1982.mfront)
+install_mfront_data(tests/behavioursbricks/StandardElastoViscoPlasticity
+        RousselierTanguyBesson2002.mfront)
