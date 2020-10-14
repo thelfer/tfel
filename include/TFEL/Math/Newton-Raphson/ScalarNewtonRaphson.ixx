@@ -67,35 +67,39 @@ namespace tfel {
       auto converged = false;
       while ((!converged) && (i != p.im)) {
         b.updateBounds(x, fv);
-        converged = tfel::math::ieee754::isfinite(x) &&
+        auto have_valid_increment_estimate = false;
+        if ((tfel::math::ieee754::isfinite(fv)) ||
+            (tfel::math::ieee754::fpclassify(dfv) == FP_ZERO)) {
+          dx = -fv / dfv;
+          have_valid_increment_estimate = true;
+        } else {
+          // here we can't do a Newton step,
+          // hence we see the bissection can provide a new estimate
+          // of the root.
+          auto xold = x;
+          if (b.getNextRootEstimate(x)) {
+            dx = x - xold;
+            x = xold;
+            have_valid_increment_estimate = true;
+          } else {
+            // the bissection method can't provide a new estimate, so the only
+            // thing that we can do here is to divide the previous Newton step
+            // by 2
+            if (i == 0) {
+              return std::make_tuple(false, p.x0, i);
+            } else {
+              // step back
+              x -= dx / 2;
+              b.iterate(x);
+              std::tie(fv, dfv) = f(x);
+            }
+          }
+        }
+        converged = have_valid_increment_estimate && tfel::math::ieee754::isfinite(x) &&
                     tfel::math::ieee754::isfinite(fv) && c(fv, dx, x, i);
         if (!converged) {
-          // we now have to find a new  root estimate
-          if ((!tfel::math::ieee754::isfinite(x)) ||  //
-              (!tfel::math::ieee754::isfinite(fv)) ||
-              (tfel::math::ieee754::fpclassify(dfv) == FP_ZERO)) {
-            // here we can't do a Newton step,
-            // hence we see the bissection can provide a new estimate
-            // of the root.
-            if (!b.getNextRootEstimate(x)) {
-              // the bissection method can't provide a new estimate, so the only
-              // thing that we can do here is to divide the previous Newton step
-              // by 2
-              if (i == 0) {
-                return std::make_tuple(false, p.x0, i);
-              } else {
-                // step back
-                dx /= 2;
-                x -= dx;
-                b.iterate(x);
-              }
-            }
-          } else {
-            // standard newton step
-            dx = -fv / dfv;
-            x += dx;
-            b.iterate(x);
-          }
+          x += dx;
+          b.iterate(x);
           std::tie(fv, dfv) = f(x);
           ++i;
         }

@@ -1,5 +1,5 @@
 /*!
- * \file   StandardElastoViscoPlasticityBrick.cxx
+ * \file   mfront/src/StandardElastoViscoPlasticityBrick.cxx
  * \brief
  * \author Thomas Helfer
  * \date   17/03/2018
@@ -978,6 +978,7 @@ namespace mfront {
            << nextEstimateOfThePorosityIncrement << ");\n";
         os << staggeredSchemeBissectionAlgorithm << ".iterate("
            << nextEstimateOfThePorosityIncrement << ");\n";
+        apply_next_estimate_bounds();
         os << "this->" << currentEstimateOfThePorosityIncrement << " = "
            << nextEstimateOfThePorosityIncrement << ";\n";
       }
