@@ -137,7 +137,12 @@ namespace tfel {
         const RousselierTanguyBesson2002StressType<StressStensor> seps) {
       using real = RousselierTanguyBesson2002BaseType<StressStensor>;
       using normal = RousselierTanguyBesson2002StressNormalType<StressStensor>;
-
+      using result = std::tuple<
+        RousselierTanguyBesson2002StressType<StressStensor>,
+        RousselierTanguyBesson2002StressNormalType<StressStensor>,
+        RousselierTanguyBesson2002StressDerivativeWithRespectToPorosityType<
+	  StressStensor>>;
+      
       constexpr const auto id = normal::Id();
 
       const auto ss = computeRousselierTanguyBesson2002Stress(sig, f, p, seps);
@@ -166,7 +171,7 @@ namespace tfel {
       const auto dss_dsig = -dS_dsig * idS_dss;
       const auto dss_df = -dS_df * idS_dss;
 
-      return {ss, dss_dsig, dss_df};
+      return result{ss, dss_dsig, dss_df};
     }  // end of computeRousselierTanguyBesson2002StressNormal
 
     template <typename StressStensor>
@@ -190,6 +195,14 @@ namespace tfel {
       // using istress = tfel::math::result_type<real, stress,
       // tfel::math::OpDiv>;
       using normal = RousselierTanguyBesson2002StressNormalType<StressStensor>;
+      using result = std::tuple<
+        RousselierTanguyBesson2002StressType<StressStensor>,
+        RousselierTanguyBesson2002StressNormalType<StressStensor>,
+        RousselierTanguyBesson2002StressDerivativeWithRespectToPorosityType<
+            StressStensor>,
+        RousselierTanguyBesson2002StressSecondDerivativeType<StressStensor>,
+        RousselierTanguyBesson2002NormalDerivativeWithRespectToPorosityType<
+	  StressStensor>>;
       // using normal_derivative =
       // RousselierTanguyBesson2002StressSecondDerivativeType<StressStensor>;
       using namespace tfel::math;
@@ -250,7 +263,7 @@ namespace tfel {
           -idS_dss * (d2S_dsigdf + (d2S_dssdf * n)) +  //
           power<2>(idS_dss) * ((d2S_dsigdss + (d2S_dss2 * n)) * dS_df);
 
-      return {ss, n, dss_df, dn_dsig, dn_df};
+      return result{ss, n, dss_df, dn_dsig, dn_df};
     }  // end of computeRousselierTanguyBesson2002SecondDerivative
 
   }  // end of namespace material

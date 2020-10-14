@@ -115,6 +115,9 @@ const auto r = tfel::math::scalarNewtonRaphson(SdS, c, x0, size_type{100});
 						  const GursonTvergaardNeedleman1982StressCriterionParameters<StressStensor> &p,
 						  const GursonTvergaardNeedleman1982StressType<StressStensor> seps) {
     using normal = GursonTvergaardNeedleman1982StressNormalType<StressStensor>;
+    using result =   std::tuple<GursonTvergaardNeedleman1982StressType<StressStensor>,
+				GursonTvergaardNeedleman1982StressNormalType<StressStensor>,
+				GursonTvergaardNeedleman1982StressDerivativeWithRespectToPorosityType<StressStensor>>;
     using namespace tfel::math;
     constexpr const auto id = normal::Id();
     const auto ss = computeGursonTvergaardNeedleman1982Stress(sig, f, p, seps);
@@ -144,7 +147,7 @@ const auto r = tfel::math::scalarNewtonRaphson(SdS, c, x0, size_type{100});
     const auto dS_df = (2 * p.q_1 * ch - 2 * p.q_3 * fstar) * dfstar;
     const auto dss_df = -dS_df * idS_dss;
     // result
-    return {ss, n, dss_df};
+    return result{ss, n, dss_df};
   } // end of computeGursonTvergaardNeedleman1982StressNormal
   
   template <typename StressStensor>
@@ -157,9 +160,14 @@ const auto r = tfel::math::scalarNewtonRaphson(SdS, c, x0, size_type{100});
 							    const StressStensor &sig, const GursonTvergaardNeedleman1982PorosityType<StressStensor> f,
 							    const GursonTvergaardNeedleman1982StressCriterionParameters<StressStensor> &p,
 							    const GursonTvergaardNeedleman1982StressType<StressStensor> seps) {
+    using normal = GursonTvergaardNeedleman1982StressNormalType<StressStensor>;
+    using result =   std::tuple<GursonTvergaardNeedleman1982StressType<StressStensor>,
+				GursonTvergaardNeedleman1982StressNormalType<StressStensor>,
+				GursonTvergaardNeedleman1982StressDerivativeWithRespectToPorosityType<StressStensor>,
+				GursonTvergaardNeedleman1982StressSecondDerivativeType<StressStensor>,
+				GursonTvergaardNeedleman1982NormalDerivativeWithRespectToPorosityType<StressStensor>>;
     constexpr const auto N = tfel::math::StensorTraits<StressStensor>::dime;
     constexpr const auto M = tfel::math::st2tost2<N,double>::M();
-    using normal = GursonTvergaardNeedleman1982StressNormalType<StressStensor>;
     using namespace tfel::math;
     
     constexpr const auto id = normal::Id();
@@ -205,7 +213,7 @@ const auto r = tfel::math::scalarNewtonRaphson(SdS, c, x0, size_type{100});
     const auto dn_df      = -idS_dss * (d2S_dsigdf + (d2S_dssdf * n)) + //
       power<2>(idS_dss) * ((d2S_dsigdss + (d2S_dss2 * n)) * dS_df);
   
-  return {ss, n, dss_df, dn_dsig, dn_df};
+  return result{ss, n, dss_df, dn_dsig, dn_df};
 } // end of computeGursonTvergaardNeedleman1982SecondDerivative
 
 } // end of namespace material
