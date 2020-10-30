@@ -372,7 +372,7 @@ The following code can be added in a block defining an inelastic flow:
 
 ## Improvement of the `generic` interface
 
-## Support of orthotropic behaviours
+### Support of orthotropic behaviours
 
 Orthotropic behaviours requires to:
 
@@ -418,7 +418,7 @@ functions are also generated:
 Those functions takes an additional arguments which is the number of
 integration points to be treated.
 
-### Finite strain behaviours
+#### Finite strain behaviours
 
 Finite strain behaviours are a special case, because the returned stress
 measure and the returned tangent operator can be chosen at runtime time.

@@ -3,7 +3,7 @@
  * \brief
  *
  * \author Thomas Helfer
- * \date   05 mai 2008
+ * \date   05/05/2008
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence
@@ -4641,6 +4641,19 @@ namespace mfront {
             throw_unsupported_block();
           }
         } else if (v1.getTypeFlag() == SupportedTypes::STENSOR) {
+          if ((v2.getTypeFlag() == SupportedTypes::SCALAR) ||
+              (v2.getTypeFlag() == SupportedTypes::STENSOR) ||
+              (v2.getTypeFlag() == SupportedTypes::TENSOR)) {
+            const auto o = get_offset();
+            if (o != "0") {
+              append(bn + "(Dt.begin()+" + o + ")");
+            } else {
+              append(bn + "(Dt.begin())");
+            }
+          } else {
+            throw_unsupported_block();
+          }
+        } else if (v1.getTypeFlag() == SupportedTypes::TENSOR) {
           if ((v2.getTypeFlag() == SupportedTypes::SCALAR) ||
               (v2.getTypeFlag() == SupportedTypes::STENSOR) ||
               (v2.getTypeFlag() == SupportedTypes::TENSOR)) {

@@ -121,7 +121,7 @@ function(castemtest_standardelastovicoplasticitybrick test_arg behaviour_name)
     foreach(mh ${_MODELLING_HYPOTHESES})
       foreach(rm ${IEEE754_ROUNDING_MODES})
         if(NOT _REFERENCE_FILE)
-          add_test(NAME brick${test_arg}_${behaviour_name}_${mh}_${rm}_mtest
+          add_test(NAME brick${test_arg}_${behaviour_name}_${mh}_${rm}_castem_mtest
   	              COMMAND mtest --rounding-direction-mode=${rm}
                   --verbose=level0 --xml-output=true
                   --result-file-output=false
@@ -130,7 +130,7 @@ function(castemtest_standardelastovicoplasticitybrick test_arg behaviour_name)
                   --@library@="$<TARGET_FILE:MFrontCastemStandardElastoViscoPlasticityBrickBehaviours>"
                   --@behaviour@="${behaviour_name}"
                   --@xml_output@="${test_arg}-${behaviour_name}-${rm}.xml" ${file})
-          add_test(NAME brick${test_arg}_${behaviour_name}_consistenttangentoperator_${mh}_${rm}_mtest
+          add_test(NAME brick${test_arg}_${behaviour_name}_consistenttangentoperator_${mh}_${rm}_castem_mtest
             	     COMMAND mtest --rounding-direction-mode=${rm}
                   --verbose=level0 --xml-output=true --result-file-output=false
                   --@StiffnessMatrixType='ConsistentTangentOperator'
@@ -140,7 +140,7 @@ function(castemtest_standardelastovicoplasticitybrick test_arg behaviour_name)
                   --@xml_output@="${test_arg}-${behaviour_name}-consistenttangentoperator-${rm}.xml" ${file})
         else(NOT _REFERENCE_FILE)
           set(rfile "${top_srcdir}/mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/references/${_REFERENCE_FILE}")
-          add_test(NAME brick${test_arg}_${behaviour_name}_${mh}_${rm}_mtest
+          add_test(NAME brick${test_arg}_${behaviour_name}_${mh}_${rm}_castem_mtest
             	     COMMAND mtest --rounding-direction-mode=${rm} --verbose=level0 --xml-output=true --result-file-output=false
             	     --@AccelerationAlgorithm='Cast3M'
                   --@ModellingHypothesis="${mh}"
@@ -148,7 +148,7 @@ function(castemtest_standardelastovicoplasticitybrick test_arg behaviour_name)
                   --@behaviour@="${behaviour_name}"
             	     --@xml_output@="${test_arg}-${behaviour_name}-${rm}.xml"
             	     --@reference_file@="${rfile}" ${file})
-          add_test(NAME brick${test_arg}_${behaviour_name}_consistenttangentoperator_${mh}_${rm}_mtest
+          add_test(NAME brick${test_arg}_${behaviour_name}_consistenttangentoperator_${mh}_${rm}_castem_mtest
             	     COMMAND mtest --rounding-direction-mode=${rm} --verbose=level0 --xml-output=true --result-file-output=false
             	     --@StiffnessMatrixType='ConsistentTangentOperator'
                   --@ModellingHypothesis="${mh}"
@@ -158,16 +158,16 @@ function(castemtest_standardelastovicoplasticitybrick test_arg behaviour_name)
             	     --@reference_file@="${rfile}" ${file})
         endif(NOT _REFERENCE_FILE)
         if((CMAKE_HOST_WIN32) AND (NOT MSYS))
-            	set_property(TEST brick${test_arg}_${behaviour_name}_${mh}_${rm}_mtest
+            	set_property(TEST brick${test_arg}_${behaviour_name}_${mh}_${rm}_castem_mtest
             	  PROPERTY DEPENDS "MFrontCastemStandardElastoViscoPlasticityBrickBehaviours MFrontMaterialProperties-castem mtest"
             	  PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:TFELMTest>\;$<TARGET_FILE_DIR:TFELMFront>\;$<TARGET_FILE_DIR:MFrontLogStream>\;$<TARGET_FILE_DIR:TFELMaterial>\;$<TARGET_FILE_DIR:TFELNUMODIS>\;$<TARGET_FILE_DIR:TFELMathParser>\;$<TARGET_FILE_DIR:TFELGlossary>\;$<TARGET_FILE_DIR:TFELSystem>\;$<TARGET_FILE_DIR:TFELUtilities>\;$<TARGET_FILE_DIR:TFELException>\;$<TARGET_FILE_DIR:TFELTests>\;$<TARGET_FILE_DIR:TFELConfig>\;$<TARGET_FILE_DIR:TFELPhysicalConstants>\;$<TARGET_FILE_DIR:TFELUnicodeSupport>\;$ENV{PATH}")
-            	set_property(TEST brick${test_arg}_${behaviour_name}_consistenttangentoperator_${mh}_${rm}_mtest
+            	set_property(TEST brick${test_arg}_${behaviour_name}_consistenttangentoperator_${mh}_${rm}_castem_mtest
             	  PROPERTY DEPENDS "MFrontCastemStandardElastoViscoPlasticityBrickBehaviours MFrontMaterialProperties-castem mtest"
             	  PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:TFELMTest>\;$<TARGET_FILE_DIR:TFELMFront>\;$<TARGET_FILE_DIR:MFrontLogStream>\;$<TARGET_FILE_DIR:TFELMaterial>\;$<TARGET_FILE_DIR:TFELNUMODIS>\;$<TARGET_FILE_DIR:TFELMathParser>\;$<TARGET_FILE_DIR:TFELGlossary>\;$<TARGET_FILE_DIR:TFELSystem>\;$<TARGET_FILE_DIR:TFELUtilities>\;$<TARGET_FILE_DIR:TFELException>\;$<TARGET_FILE_DIR:TFELTests>\;$<TARGET_FILE_DIR:TFELConfig>\;$<TARGET_FILE_DIR:TFELPhysicalConstants>\;$<TARGET_FILE_DIR:TFELUnicodeSupport>\;$ENV{PATH}")
         elseif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-          set_property(TEST brick${test_arg}_${behaviour_name}_${mh}_${rm}_mtest
+          set_property(TEST brick${test_arg}_${behaviour_name}_${mh}_${rm}_castem_mtest
             	  PROPERTY DEPENDS "MFrontCastemStandardElastoViscoPlasticityBrickBehaviours MFrontMaterialProperties-castem mtest")
-          set_property(TEST brick${test_arg}_${behaviour_name}_consistenttangentoperator_${mh}_${rm}_mtest
+          set_property(TEST brick${test_arg}_${behaviour_name}_consistenttangentoperator_${mh}_${rm}_castem_mtest
             	  PROPERTY DEPENDS "MFrontCastemStandardElastoViscoPlasticityBrickBehaviours MFrontMaterialProperties-castem mtest")
         endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
       endforeach(rm ${IEEE754_ROUNDING_MODES})
