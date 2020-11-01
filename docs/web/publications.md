@@ -1,10 +1,33 @@
- Publications
-% Helfer Thomas
-% June 22, 2019
+---
+title: Publications
+author: Thomas Helfer
+date: 1/10/2020
+lang: en-EN
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tabPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
 
 ---
 nocite: |
+    @parisio_model_2020
     @garcia_effect_2020
+    @deng_slope_2020
+    @helfer_assisted_2020
+    @bleyer_small-strain_2020
+    @bleyer_multiphase_2020
+    @bleyer_transient_2020
+    @bleyer_monolithic_2020
+    @bleyer_stationnary_2020
+    @bleyer_stationnary_2020b
+    @bleyer_phase-field_2020
+    @bleyer_overview_2020
+    @bleyer_finite-strain_2020
+    @helfer_extending_2020
+    @helfer_using_2020
     @helfer_mfrontgenericinterfacesupport_2020
     @lu_efficient_2020
     @marano_non-linear_2020

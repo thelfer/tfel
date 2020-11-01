@@ -516,6 +516,19 @@ A non symmetric second order tensor can be transpose using the
 const auto B = transpose(A);
 ~~~~
 
+#### Derivative of the transpose of a second order tensor
+
+The linear operation which turns a second order tensor into its
+transpose can be retrieved using the static method
+`transpose_derivative` of the `t2tot2` class as follows:
+
+~~~~{.cpp}
+const auto dtA_dA = t2tot2<real,N>::transpose_derivative();
+~~~~
+
+As its name suggests, this linear operation is also the derivative of
+the transpose of a second order tensor with respect to itself.
+
 ### Transposition of a fourth order tensor
 
 A fourth order tensor matching the `ST2toST2Concept` (i.e. a linear form
