@@ -156,6 +156,10 @@ namespace tfel {
        * orthotropic.
        */
       unsigned short etype = 0;
+      //! \brief if true, the behaviour may compute the internal energy
+      bool computesInternalEnergy = false;
+      //! \brief if true, the behaviour may compute the dissipated energy
+      bool computesDissipatedEnergy = false;
       /*!
        * \brief If isUPUIR is true, the behaviour is usable in purely implicit
        * resolution.

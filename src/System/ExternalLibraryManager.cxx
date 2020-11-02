@@ -1140,6 +1140,36 @@ namespace tfel {
     }  // end of
        // ExternalLibraryManager::getGenericBehaviourRotateArrayOfTangentOperatorBlocksFunction
 
+    bool ExternalLibraryManager::isUMATBehaviourAbleToComputeInternalEnergy(
+        const std::string& l, const std::string& f, const std::string& h) {
+      ExternalLibraryManagerCheckModellingHypothesisName(h);
+      const auto lib = this->loadLibrary(l);
+      auto b = ::tfel_getBool(
+          lib, (f + "_" + h + "_ComputesInternalEnergy").c_str());
+      if (b == -1) {
+        b = ::tfel_getBool(lib, (f + "_ComputesInternalEnergy").c_str());
+      }
+      if (b == -1) {
+        return false;
+      }
+      return (b == 1);
+    }  // end of isUMATBehaviourAbleToComputeInternalEnergy
+
+    bool ExternalLibraryManager::isUMATBehaviourAbleToComputeDissipatedEnergy(
+        const std::string& l, const std::string& f, const std::string& h) {
+      ExternalLibraryManagerCheckModellingHypothesisName(h);
+      const auto lib = this->loadLibrary(l);
+      auto b = ::tfel_getBool(
+          lib, (f + "_" + h + "_ComputesDissipatedEnergy").c_str());
+      if (b == -1) {
+        b = ::tfel_getBool(lib, (f + "_ComputesDissipatedEnergy").c_str());
+      }
+      if (b == -1) {
+        return false;
+      }
+      return (b == 1);
+    }  // end of isUMATBehaviourAbleToComputeDissipatedEnergy
+
     unsigned short ExternalLibraryManager::getMaterialPropertyNumberOfVariables(
         const std::string& l, const std::string& f) {
       const auto lib = this->loadLibrary(l);

@@ -58,6 +58,10 @@ void declareExternalBehaviourDescription() {
       .def_readonly("stype", &ExternalBehaviourDescription::stype)
       .def_readonly("etype", &ExternalBehaviourDescription::etype)
       .def_readonly("isUPUIR", &ExternalBehaviourDescription::isUPUIR)
+      .def_readonly("computesInternalEnergy",
+                    &ExternalBehaviourDescription::computesInternalEnergy)
+      .def_readonly("computesDissipatedEnergy",
+                    &ExternalBehaviourDescription::computesDissipatedEnergy)
       .def_readonly("requiresStiffnessTensor",
                     &ExternalBehaviourDescription::requiresStiffnessTensor)
       .def_readonly("requiresThermalExpansionCoefficientTensor",

@@ -753,6 +753,24 @@ namespace tfel {
       std::vector<std::string> getUMATElasticMaterialPropertiesEntryPoints(
           const std::string&, const std::string&);
       /*!
+       * \brief return true if the behaviour computes the internal energy
+       * \param[in] l : name of the library
+       * \param[in] f : law name
+       * \param[in] h : modelling hypothesis
+       */
+      bool isUMATBehaviourAbleToComputeInternalEnergy(const std::string&,
+                                                      const std::string&,
+                                                      const std::string&);
+      /*!
+       * \brief return true if the behaviour computes the dissipated energy
+       * \param[in] l : name of the library
+       * \param[in] f : law name
+       * \param[in] h : modelling hypothesis
+       */
+      bool isUMATBehaviourAbleToComputeDissipatedEnergy(const std::string&,
+                                                        const std::string&,
+                                                        const std::string&);
+      /*!
        * \param[in] l : name of the library
        * \param[in] f : law name
        * \param[in] h : modelling hypothesis

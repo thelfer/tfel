@@ -85,15 +85,19 @@ MFRONTS=StandardElastoViscoPlasticityTest1.mfront                         \
 	StandardElastoViscoPlasticityIsotropicDamageHookeLaw.mfront           \
 	StandardElastoViscoPlasticityIsotropicDamageHookeLaw_nj.mfront        \
 	StandardElastoViscoPlasticityIsotropicDamageHookeLaw2.mfront          \
-	StandardElastoViscoPlasticityIsotropicDamageHookeLaw2_nj.mfront       \
-	ChuNeedleman1980StrainBasedNucleationModelTest.mfront		      \
-	ChuNeedleman1980StressBasedNucleationModelTest.mfront		      \
-	PowerLawStrainBasedNucleationModelTest.mfront			      \
-	PowerLawStressBasedNucleationModelTest.mfront			      \
-        ElasticContributionToPorosityGrowth.mfront                            \
-        GursonTvergaardNeedleman1982.mfront                                   \
-        RousselierTanguyBesson2002.mfront                                     \
-        references/standardelastoviscoplasticitynortontest7.ref               \
+	StandardElastoViscoPlasticityIsotropicDamageHookeLaw2_nj.mfront                      \
+    StandardElastoViscoPlasticityHarmonicSumOfNortonHoffViscoplasticFlowsTest.mfront     \
+    StandardElastoViscoPlasticityHarmonicSumOfNortonHoffViscoplasticFlowsTest_nj.mfront  \
+    StandardElastoViscoPlasticityHarmonicSumOfNortonHoffViscoplasticFlowsTest2.mfront    \
+    StandardElastoViscoPlasticityHarmonicSumOfNortonHoffViscoplasticFlowsTest2_nj.mfront \
+	ChuNeedleman1980StrainBasedNucleationModelTest.mfront		          \
+	ChuNeedleman1980StressBasedNucleationModelTest.mfront		          \
+	PowerLawStrainBasedNucleationModelTest.mfront			              \
+	PowerLawStressBasedNucleationModelTest.mfront			              \
+    ElasticContributionToPorosityGrowth.mfront                            \
+    GursonTvergaardNeedleman1982.mfront                                   \
+    RousselierTanguyBesson2002.mfront                                     \
+    references/standardelastoviscoplasticitynortontest7.ref               \
 	references/standardelastoviscoplasticitynortontest8_E.ref             \
 	references/standardelastoviscoplasticitynortontest8_S.ref             \
 	references/standardelastoviscoplasticitynortontest8-cyclic_E.ref      \

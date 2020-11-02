@@ -76,6 +76,10 @@ namespace tfel {
       this->thtypes = elm.getUMATThermodynamicForcesTypes(l, f);
       this->isUPUIR =
           elm.isUMATBehaviourUsableInPurelyImplicitResolution(l, f, h);
+      this->computesInternalEnergy =
+          elm.isUMATBehaviourAbleToComputeInternalEnergy(l, f, h);
+      this->computesDissipatedEnergy =
+          elm.isUMATBehaviourAbleToComputeDissipatedEnergy(l, f, h);
       this->mpnames = elm.getUMATMaterialPropertiesNames(l, f, h);
       this->ivnames = elm.getUMATInternalStateVariablesNames(l, f, h);
       this->ivtypes = elm.getUMATInternalStateVariablesTypes(l, f, h);

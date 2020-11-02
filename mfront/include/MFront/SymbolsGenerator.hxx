@@ -387,6 +387,37 @@ namespace mfront {
                                         const std::string &,
                                         const Hypothesis) const = 0;
     /*!
+     * \brief write an integer symbol stating if the behaviour can compute the
+     * internal energy
+     * \param[out] f   : output stream
+     * \param[in] i    : standard behaviour interface
+     * \param[in] mb   : behaviour description
+     * \param[in] fd   : file description
+     * \param[in] h    : modelling hypothesis
+     */
+    virtual void writeComputesInternalEnergySymbol(
+        std::ostream &,
+        const StandardBehaviourInterface &,
+        const BehaviourDescription &,
+        const std::string &,
+        const Hypothesis) const;
+    /*!
+     * \brief write an integer symbol stating if the behaviour can compute the
+     * dissipated energy
+     * \param[out] f   : output stream
+     * \param[in] i    : standard behaviour interface
+     * \param[in] mb   : behaviour description
+     * \param[in] fd   : file description
+     * \param[in] h    : modelling hypothesis
+     */
+    virtual void writeComputesDissipatedEnergySymbol(
+        std::ostream &,
+        const StandardBehaviourInterface &,
+        const BehaviourDescription &,
+        const std::string &,
+        const Hypothesis) const;
+
+    /*!
      * \param[out] f    : output stream
      * \param[in] i    : standard behaviour interface
      * \param[in]  name : name of the umat function

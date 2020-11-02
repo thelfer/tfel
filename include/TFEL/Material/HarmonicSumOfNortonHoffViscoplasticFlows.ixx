@@ -97,7 +97,7 @@ namespace tfel {
         dp = A[i] * pow(seq / K[i], n[i]);
         ddp_dseq = n[i] * dp / seq;
         idp += 1 / dp;
-        didp_dseq += -idp * idp * ddp_dseq;
+        didp_dseq += -ddp_dseq / (dp * dp);
       }
       std::get<0>(r) = 1 / idp;
       std::get<1>(r) = -1 / (idp * idp) * didp_dseq;

@@ -292,7 +292,31 @@ namespace mfront {
     this->writePhysicalBoundsSymbols(out, i, bd, name, h);
     this->writeRequirementsSymbols(out, i, bd, name, h);
     this->writeAdditionalSymbols(out, i, bd, fd, name, h);
+    this->writeComputesInternalEnergySymbol(out, i, bd, name, h);
+    this->writeComputesDissipatedEnergySymbol(out, i, bd, name, h);
   }
+
+  void SymbolsGenerator::writeComputesInternalEnergySymbol(
+      std::ostream& out,
+      const StandardBehaviourInterface& i,
+      const BehaviourDescription& bd,
+      const std::string& name,
+      const Hypothesis h) const {
+    const auto b = bd.hasCode(h, BehaviourData::ComputeInternalEnergy) ? 1 : 0;
+    out << "MFRONT_SHAREDOBJ unsigned short " << this->getSymbolName(i, name, h)
+        << "_ComputesInternalEnergy = " << b << ";\n\n";
+  }  // end of SymbolsGenerator::writeComputesInternalEnergySymbol
+
+  void SymbolsGenerator::writeComputesDissipatedEnergySymbol(
+      std::ostream& out,
+      const StandardBehaviourInterface& i,
+      const BehaviourDescription& bd,
+      const std::string& name,
+      const Hypothesis h) const {
+    const auto b = bd.hasCode(h, BehaviourData::ComputeDissipatedEnergy) ? 1 : 0;
+    out << "MFRONT_SHAREDOBJ unsigned short " << this->getSymbolName(i, name, h)
+        << "_ComputesDissipatedEnergy = " << b << ";\n\n";
+  }  // end of SymbolsGenerator::writeComputesDissipatedEnergySymbol
 
   void SymbolsGenerator::writeSpecificSymbols(std::ostream&,
                                               const StandardBehaviourInterface&,
