@@ -595,6 +595,8 @@ install_header(TFEL/Material OrthotropicAxesConvention.ixx)
 install_header(TFEL/Material GursonTvergaardNeedleman.hxx)
 install_header(TFEL/Material CrystalStructure.hxx)
 install_header(TFEL/Material SlipSystemsDescription.hxx)
+install_header(TFEL/Material HarmonicSumOfNortonHoffViscoplasticFlows.hxx)
+install_header(TFEL/Material HarmonicSumOfNortonHoffViscoplasticFlows.ixx)
 
 install_header(TFEL/Tests MultipleTestOutputs.hxx)
 install_header(TFEL/Tests StdStreamTestOutput.hxx)

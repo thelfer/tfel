@@ -27,7 +27,8 @@ namespace mfront {
 
   namespace bbrick {
 
-    std::vector<OptionDescription> NortonHoffViscoplasticFlow::getOptions() const {
+    std::vector<OptionDescription> NortonHoffViscoplasticFlow::getOptions()
+        const {
       auto opts = ViscoplasticFlowBase::getOptions();
       opts.emplace_back("A", "Norton coefficient (optional)",
                         OptionDescription::MATERIALPROPERTY);
@@ -43,9 +44,9 @@ namespace mfront {
     }  // end of NortonHoffViscoplasticFlow::getOptions
 
     void NortonHoffViscoplasticFlow::initialize(BehaviourDescription& bd,
-                                         AbstractBehaviourDSL& dsl,
-                                         const std::string& id,
-                                         const DataMap& d) {
+                                                AbstractBehaviourDSL& dsl,
+                                                const std::string& id,
+                                                const DataMap& d) {
       auto get_mp = [&dsl, &bd, &id, &d](
           const std::string& mpn, const std::string& t, const std::string& vn) {
         if (d.count(mpn) == 0) {
@@ -88,29 +89,21 @@ namespace mfront {
       ViscoplasticFlowBase::endTreatment(bd, dsl, sp, id);
       auto mts = getMiddleOfTimeStepModifier(bd);
       CodeBlock i;
-      auto eval = [&mts, &dsl, &i](
-          const BehaviourDescription::MaterialProperty& mp,
-          const std::string& mpn) {
-        if ((!mp.empty()) &&
-            (!mp.is<BehaviourDescription::ConstantMaterialProperty>())) {
-          std::ostringstream mps;
-          mps << "this->" + mpn + " = ";
-          dsl.writeMaterialPropertyEvaluation(mps, mp, mts);
-          mps << ";\n";
-          i.code += mps.str();
-        }
-      };
-      eval(this->A, "A" + id);
-      eval(this->K, "K" + id);
-      eval(this->n, "E" + id);
+      i.code += generateMaterialPropertyInitializationCode(dsl, bd, "A" + id,
+                                                           this->A);
+      i.code += generateMaterialPropertyInitializationCode(dsl, bd, "K" + id,
+                                                           this->K);
+      i.code += generateMaterialPropertyInitializationCode(dsl, bd, "E" + id,
+                                                           this->n);
       if (!this->Ksf.empty()) {
-        eval(this->Ksf, "Ksf" + id);
+        i.code += generateMaterialPropertyInitializationCode(
+            dsl, bd, "Ksf" + id, this->Ksf);
       }
       if (!i.code.empty()) {
         bd.setCode(uh, BehaviourData::BeforeInitializeLocalVariables, i,
                    BehaviourData::CREATEORAPPEND, BehaviourData::AT_BEGINNING);
       }
-    }  // end of KinematicHardeningRuleBase::endTreatment
+    }  // end of NortonHoffViscoplasticFlow::endTreatment
 
     std::string NortonHoffViscoplasticFlow::computeFlowRate(
         const std::string& id) const {

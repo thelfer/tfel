@@ -1666,6 +1666,8 @@ include/TFEL/Material/FiniteStrainBehaviourTangentOperatorBase.hxx -text
 include/TFEL/Material/GursonTvergaardNeedleman.hxx -text
 include/TFEL/Material/GursonTvergaardNeedleman1982StressCriterion.hxx -text
 include/TFEL/Material/GursonTvergaardNeedleman1982StressCriterion.ixx -text
+include/TFEL/Material/HarmonicSumOfNortonHoffViscoplasticFlows.hxx -text
+include/TFEL/Material/HarmonicSumOfNortonHoffViscoplasticFlows.ixx -text
 include/TFEL/Material/Hill.hxx -text
 include/TFEL/Material/Hill.ixx -text
 include/TFEL/Material/Hosford1972YieldCriterion.hxx -text
@@ -2393,6 +2395,7 @@ mfront/include/MFront/BehaviourBrick/ChuNeedleman1980StressBasedPorosityNucleati
 mfront/include/MFront/BehaviourBrick/DDIF2StressPotential.hxx -text
 mfront/include/MFront/BehaviourBrick/Drucker1949StressCriterion.hxx -text
 mfront/include/MFront/BehaviourBrick/GursonTvergaardNeedleman1982StressCriterion.hxx -text
+mfront/include/MFront/BehaviourBrick/HarmonicSumOfNortonHoffViscoplasticFlows.hxx -text
 mfront/include/MFront/BehaviourBrick/Hill1948StressCriterion.hxx -text
 mfront/include/MFront/BehaviourBrick/HookeStressPotential.hxx -text
 mfront/include/MFront/BehaviourBrick/HookeStressPotentialBase.hxx -text
@@ -2865,6 +2868,7 @@ mfront/src/GenericBehaviourSymbolsGenerator.cxx -text
 mfront/src/GnuplotMaterialPropertyInterface.cxx -text
 mfront/src/Gradient.cxx -text
 mfront/src/GursonTvergaardNeedleman1982StressCriterion.cxx -text
+mfront/src/HarmonicSumOfNortonHoffViscoplasticFlows.cxx -text
 mfront/src/Hill1948StressCriterion.cxx -text
 mfront/src/HookeStressPotential.cxx -text
 mfront/src/HookeStressPotentialBase.cxx -text

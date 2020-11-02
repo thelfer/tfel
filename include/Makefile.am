@@ -96,6 +96,8 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Material/GursonTvergaardNeedleman.hxx                                                   \
 			TFEL/Material/CrystalStructure.hxx                                                           \
 			TFEL/Material/SlipSystemsDescription.hxx                                                     \
+            TFEL/Material/HarmonicSumOfNortonHoffViscoplasticFlows.hxx                                   \
+            TFEL/Material/HarmonicSumOfNortonHoffViscoplasticFlows.ixx                                   \
 			TFEL/Config/Internals/TFELTypesInternals.hxx	                                             \
 			TFEL/Config/Internals/SpatialGradType.hxx	                                             \
 			TFEL/Config/Internals/TemperatureGradientType.hxx	                                     \

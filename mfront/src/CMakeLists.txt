@@ -168,6 +168,7 @@ set(TFELMFront_SOURCES
     ViscoplasticFlowBase.cxx
     NortonHoffViscoplasticFlow.cxx
     HyperbolicSineViscoplasticFlow.cxx
+    HarmonicSumOfNortonHoffViscoplasticFlows.cxx
     PlasticInelasticFlow.cxx
     PorosityNucleationModel.cxx
     PorosityNucleationModelFactory.cxx

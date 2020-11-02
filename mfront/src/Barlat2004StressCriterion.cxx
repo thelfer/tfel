@@ -53,8 +53,8 @@ namespace mfront {
                      "Barlat2004StressCriterion::initialize: "
                      "the behaviour must be orthotropic");
       // this is captured for gcc 4.7.2
-      auto get_l = [&dsl, &bd, &d, &r, &id,this](const std::string& n,
-						 const char* const en) {
+      auto get_l = [&dsl, &bd, &d, &r, &id, this](const std::string& n,
+                                                  const char* const en) {
         if (d.count(n) == 0) {
           tfel::raise("Barlat2004StressCriterion::initialize: entry '" +
                       std::string(n) + "' is not defined");
@@ -62,7 +62,6 @@ namespace mfront {
         const auto vn = StressCriterion::getVariableId(n + "v", id, r);
         const auto l = getArrayOfBehaviourDescriptionMaterialProperties<9u>(
             dsl, n, d.at(n));
-
         if (l[0].is<ConstantMaterialProperty>()) {
           std::vector<double> values(9u);
           for (unsigned short i = 0; i != 9; ++i) {

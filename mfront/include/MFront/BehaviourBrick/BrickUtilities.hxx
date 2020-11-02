@@ -53,6 +53,12 @@ namespace mfront {
         const std::string &);
     /*!
      * \return true if all the elements of the array is constant.
+     * \param[in] mps: array of material properties
+     */
+    MFRONT_VISIBILITY_EXPORT bool areAllConstantMaterialProperties(
+        const std::vector<BehaviourDescription::MaterialProperty> &);
+    /*!
+     * \return true if all the elements of the array is constant.
      * \tparam N: size of the array of material properties
      * \param[in] mps: array of material properties
      */
@@ -83,6 +89,19 @@ namespace mfront {
     MFRONT_VISIBILITY_EXPORT void declareParameterOrLocalVariable(
         BehaviourDescription &,
         BehaviourDescription::MaterialProperty &,
+        const std::string &,
+        const std::string &);
+    /*!
+     * \brief declare an array of parameters or an array of local variables used
+     * to store the evaluation of an array of material properties.
+     * \param[out] bd: behaviour description
+     * \param[in,out] mps: array of material property
+     * \param[in] t: variable type
+     * \param[in] n: variable name
+     */
+    MFRONT_VISIBILITY_EXPORT void declareParameterOrLocalVariable(
+        BehaviourDescription &,
+        std::vector<BehaviourDescription::MaterialProperty> &,
         const std::string &,
         const std::string &);
     /*!
@@ -184,7 +203,23 @@ namespace mfront {
     /*!
      * \return the code initializing the arrays of variables containing the
      * material properties' values at \(t+\theta\,dt\).
-     * \note If all the material properties areconstant, an empty string is
+     * \note If all the material properties are constant, an empty string is
+     * returned, as those material properties are assumed to be associated with
+     * an array of parameters.
+     * \param[in] dsl: abstract behaviour dsl.
+     * \param[in] bd: behaviour description
+     * \param[in] n: name of the variable storing the material property value.
+     * \param[in] mps: array of material property description.
+     */
+    std::string generateMaterialPropertiesInitializationCode(
+        const AbstractBehaviourDSL &,
+        const BehaviourDescription &,
+        const std::string &,
+        const std::vector<BehaviourDescription::MaterialProperty> &);
+    /*!
+     * \return the code initializing the arrays of variables containing the
+     * material properties' values at \(t+\theta\,dt\).
+     * \note If all the material properties are constant, an empty string is
      * returned, as those material properties are assumed to be associated with
      * an array of parameters.
      * \param[in] dsl: abstract behaviour dsl.
@@ -524,6 +559,34 @@ namespace mfront {
      */
     MFRONT_VISIBILITY_EXPORT void addBrokenStateSupportToComputeStress(
         std::string &, const BehaviourDescription &, const bool);
+    /*!
+     * \return an array of material properties from the data read in
+     * an input file.
+     * \param[in] bsl: domain specific language
+     * \param[in] n: name of the material properties
+     * \param[in] d: data in which the material properties are stored.
+     */
+    MFRONT_VISIBILITY_EXPORT
+    std::vector<BehaviourDescription::MaterialProperty>
+    getArrayOfBehaviourDescriptionMaterialProperties(
+        AbstractBehaviourDSL &,
+        const std::string &,
+        const tfel::utilities::Data &);
+
+    /*!
+     * \return a fixed-sized array of material properties from the data read in
+     * an input file.
+     * \tparam N: number of material properties to be read
+     * \param[in] bsl: domain specific language
+     * \param[in] n: name of the material properties
+     * \param[in] d: data in which the material properties are stored.
+     */
+    template <std::size_t N>
+    std::array<BehaviourDescription::MaterialProperty, N>
+    getArrayOfBehaviourDescriptionMaterialProperties(
+        AbstractBehaviourDSL &,
+        const std::string &,
+        const tfel::utilities::Data &);
 
   }  // end of namespace bbrick
 

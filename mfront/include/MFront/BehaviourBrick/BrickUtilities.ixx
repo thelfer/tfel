@@ -23,7 +23,8 @@ namespace mfront {
     getArrayOfBehaviourDescriptionMaterialProperties(
         AbstractBehaviourDSL& dsl,
         const std::string& n,
-        const tfel::utilities::Data& d){
+        const tfel::utilities::Data& d) {
+      static_assert(N != 0, "invalid array size");
       std::array<BehaviourDescription::MaterialProperty, N> mps;
       if (!d.is<std::vector<tfel::utilities::Data>>()) {
         tfel::raise(
@@ -53,6 +54,7 @@ namespace mfront {
     template <std::size_t N>
     bool areAllConstantMaterialProperties(
         const std::array<BehaviourDescription::MaterialProperty, N> & mps){
+      static_assert(N != 0, "invalid array size");
       for (const auto& mp : mps) {
         if (!mp.template is<BehaviourDescription::ConstantMaterialProperty>()) {
           return false;
@@ -67,10 +69,10 @@ namespace mfront {
         std::array<BehaviourDescription::MaterialProperty, N>& mps,
         const std::string& t,
         const std::string& n) {
+      static_assert(N != 0, "invalid array size");
       constexpr const auto h =
           tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-      const auto b = areAllConstantMaterialProperties(mps);
-      if (b) {
+      if (areAllConstantMaterialProperties(mps)) {
         for (auto& mp : mps) {
           auto& cmp =
               mp.template get<BehaviourDescription::ConstantMaterialProperty>();
@@ -79,11 +81,20 @@ namespace mfront {
         // declare associated parameter
         VariableDescription m(t, n, N, 0u);
         bd.addParameter(h, m);
-        for (decltype(mps.size()) i = 0; i != mps.size(); ++i) {
-          auto& cmp = mps[i]
-                          .template get<
-                              BehaviourDescription::ConstantMaterialProperty>();
-          bd.setParameterDefaultValue(h, n, i, cmp.value);
+        if (N == 1) {
+          const auto& cmp =
+              mps[0]
+                  .template get<
+                      BehaviourDescription::ConstantMaterialProperty>();
+          bd.setParameterDefaultValue(h, n, cmp.value);
+        } else {
+          for (decltype(mps.size()) i = 0; i != mps.size(); ++i) {
+            const auto& cmp =
+                mps[i]
+                    .template get<
+                        BehaviourDescription::ConstantMaterialProperty>();
+            bd.setParameterDefaultValue(h, n, i, cmp.value);
+          }
         }
       } else {
         VariableDescription m(t, n, N, 0u);
@@ -98,6 +109,7 @@ namespace mfront {
         const std::string& t,
         const std::string& n,
         const std::string& en) {
+      static_assert(N != 0, "invalid array size");
       constexpr const auto h =
           tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       declareParameterOrLocalVariable(bd, mps, t, n);

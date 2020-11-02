@@ -129,6 +129,7 @@ nobase_include_HEADERS= MFront/MFront.hxx                                     \
 			MFront/BehaviourBrick/NortonHoffViscoplasticFlow.hxx                         \
 			MFront/BehaviourBrick/HyperbolicSineViscoplasticFlow.hxx                     \
 			MFront/BehaviourBrick/PlasticInelasticFlow.hxx                               \
+			MFront/BehaviourBrick/HarmonicSumOfNortonHoffViscoplasticFlows.hxx           \
 			MFront/BehaviourBrick/PorosityNucleationModelFactory.hxx                     \
 			MFront/BehaviourBrick/PorosityNucleationModel.hxx                            \
 			MFront/BehaviourBrick/PorosityNucleationModelBase.hxx                        \

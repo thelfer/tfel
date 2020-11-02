@@ -120,9 +120,12 @@ namespace mfront {
           throw_if(!is_material_property(d));
           break;
         case OptionDescription::ARRAYOFMATERIALPROPERTIES:
-          throw_if(!d.is<std::vector<tfel::utilities::Data>>());
-          for (const auto& mp : d.get<std::vector<tfel::utilities::Data>>()) {
-            throw_if(!is_material_property(mp));
+          if (d.is<std::vector<tfel::utilities::Data>>()) {
+            for (const auto& mp : d.get<std::vector<tfel::utilities::Data>>()) {
+              throw_if(!is_material_property(mp));
+            }
+          } else {
+            throw_if(!is_material_property(d));
           }
           break;
         case OptionDescription::DATAMAP:

@@ -632,6 +632,99 @@ namespace mfront {
       std::swap(r, c);
     }  // end of addBrokenStateSupportToComputeStress
 
+    std::vector<BehaviourDescription::MaterialProperty>
+    getArrayOfBehaviourDescriptionMaterialProperties(
+        AbstractBehaviourDSL& dsl,
+        const std::string& n,
+        const tfel::utilities::Data& d) {
+      std::vector<BehaviourDescription::MaterialProperty> mps;
+      if (!d.is<std::vector<tfel::utilities::Data>>()) {
+        mps.push_back(getBehaviourDescriptionMaterialProperty(dsl, n, d));
+        return mps;
+      }
+      for (const auto& e : d.get<std::vector<tfel::utilities::Data>>()) {
+        mps.push_back(getBehaviourDescriptionMaterialProperty(dsl, n, e));
+      }
+      return mps;
+    }  // end of getArrayOfBehaviourDescriptionMaterialProperties
+
+    bool areAllConstantMaterialProperties(
+        const std::vector<BehaviourDescription::MaterialProperty>& mps) {
+      for (const auto& mp : mps) {
+        if (!mp.template is<BehaviourDescription::ConstantMaterialProperty>()) {
+          return false;
+        }
+      }
+      return true;
+    }  // end of areAllConstantMaterialProperties
+
+    void declareParameterOrLocalVariable(
+        BehaviourDescription& bd,
+        std::vector<BehaviourDescription::MaterialProperty>& mps,
+        const std::string& t,
+        const std::string& n) {
+      constexpr const auto h =
+          tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+      if (mps.empty()) {
+        tfel::raise(
+            "mfront::declareParameterOrLocalVariable: "
+            "empty array of material properties '" +
+            n + "' of type '" + t + "'");
+      }
+      if (areAllConstantMaterialProperties(mps)) {
+        for (auto& mp : mps) {
+          auto& cmp =
+              mp.template get<BehaviourDescription::ConstantMaterialProperty>();
+          cmp.name = n;
+        }
+        // declare associated parameter
+        VariableDescription m(t, n, mps.size(), 0u);
+        bd.addParameter(h, m);
+        if (mps.size() == 1u) {
+          const auto& cmp =
+              mps[0]
+                  .template get<
+                      BehaviourDescription::ConstantMaterialProperty>();
+          bd.setParameterDefaultValue(h, n, cmp.value);
+        } else {
+          for (decltype(mps.size()) i = 0; i != mps.size(); ++i) {
+            const auto& cmp =
+                mps[i]
+                    .template get<
+                        BehaviourDescription::ConstantMaterialProperty>();
+            bd.setParameterDefaultValue(h, n, i, cmp.value);
+          }
+        }
+      } else {
+        VariableDescription m(t, n, mps.size(), 0u);
+        bd.addLocalVariable(h, m);
+      }
+    }  // end of declareParameterOrLocalVariable
+
+    std::string generateMaterialPropertiesInitializationCode(
+        const AbstractBehaviourDSL& dsl,
+        const BehaviourDescription& bd,
+        const std::string& n,
+        const std::vector<BehaviourDescription::MaterialProperty>& mps) {
+      auto c = std::string{};
+      if (!areAllConstantMaterialProperties(mps)) {
+        for (decltype(mps.size()) i = 0; i != mps.size(); ++i) {
+          const auto& mp = mps[i];
+          const auto vn = n + "[" + std::to_string(i) + "]";
+          if (!mp.template is<
+                  BehaviourDescription::ConstantMaterialProperty>()) {
+            c += generateMaterialPropertyInitializationCode(dsl, bd, vn, mp);
+          } else {
+            const auto& cmp = mp.template get<
+                BehaviourDescription::ConstantMaterialProperty>();
+            c += "this->" + vn + " = " + std::to_string(i) + "] = " +
+                 std::to_string(cmp.value) + ";\n";
+          }
+        }
+      }
+      return c;
+    } // end of generateMaterialPropertiesInitializationCode
+
   }  // end of namespace bbrick
 
 }  // end of namespace mfront

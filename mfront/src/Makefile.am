@@ -147,6 +147,7 @@ libTFELMFront_la_SOURCES = MFront.cxx                                     \
 		           NortonHoffViscoplasticFlow.cxx                         \
 		           HyperbolicSineViscoplasticFlow.cxx                     \
 		           PlasticInelasticFlow.cxx                               \
+		           HarmonicSumOfNortonHoffViscoplasticFlows.cxx           \
 		           PorosityNucleationModelFactory.cxx                     \
 		           PorosityNucleationModel.cxx                            \
 		           PorosityNucleationModelBase.cxx                        \
