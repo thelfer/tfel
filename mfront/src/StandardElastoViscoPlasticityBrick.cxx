@@ -903,7 +903,8 @@ namespace mfront {
       }
       auto apply_next_estimate_bounds = [&os, f_ets] {
         // next estimate of the porosity at the end of the time step
-        os << "const auto " << f_ets << " = this->f + "
+        os << "{\n"
+           << "const auto " << f_ets << " = this->f + "
            << nextEstimateOfThePorosityIncrement << ";\n";
         // Treat the case when the newly computed porosity exceeds the
         // porosity upper bounds.
@@ -916,17 +917,19 @@ namespace mfront {
            << " ) * ( this->" << porosityUpperBound << ")){\n"
            << nextEstimateOfThePorosityIncrement << " = "
            << "(this->" << currentEstimateOfThePorosityIncrement << " + (this->"
-           << porosityUpperBound << " - this->f))/2;\n";
-        // Treat the case when the newly computed porosity is negative
-        //
-        // The maximum allowed increment is the opposite of the initial
-        // porosity. We then use a dichotomic approach by choosing an increment
-        // which is an average of the previous increment and this maximum
-        // allowed increment
-        os << "} else if(" << f_ets << " < 0){\n"
+           << porosityUpperBound << " - this->f))/2;\n"
+           // Treat the case when the newly computed porosity is negative
+           //
+           // The maximum allowed increment is the opposite of the initial
+           // porosity. We then use a dichotomic approach by choosing an
+           // increment
+           // which is an average of the previous increment and this maximum
+           // allowed increment
+           << "} else if(" << f_ets << " < 0){\n"
            << nextEstimateOfThePorosityIncrement << " = "
            << "(" << currentEstimateOfThePorosityIncrement
            << " - (this->f))/2;\n"
+           << "}\n"
            << "}\n";
       };
       // 2. apply the bounds on the next estimate

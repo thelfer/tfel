@@ -119,7 +119,10 @@ MFRONTS=StandardElastoViscoPlasticityTest1.mfront                         \
 	references/standardelastoviscoplasticityplasticitytest11-cyclic_E.ref \
 	references/standardelastoviscoplasticityplasticitytest11-cyclic_S.ref \
 	references/standardelastoviscoplasticityplasticitytest16.ref          \
-	references/standardelastoviscoplasticityplasticitytest17.ref
+	references/standardelastoviscoplasticityplasticitytest17.ref          \
+	references/GursonTvergaardNeedleman1982-test1.ref                     \
+	references/GursonTvergaardNeedleman1982-test2.ref
+
 
 testsdir = $(pkgdatadir)/mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity
 tests_DATA = $(MFRONTS)

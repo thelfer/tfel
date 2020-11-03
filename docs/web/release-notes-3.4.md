@@ -209,6 +209,37 @@ with this variable (though the variable `fzeros`) and jacobian matrix
 
 ### Porous (visco-)plasticity
 
+### The `HarmonicSumOfNortonHoffViscoplasticFlows` inelastic flow {#sec:HarmonicSumOfNortonHoffViscoplasticFlows}
+
+An new inelastic flow called `HarmonicSumOfNortonHoffViscoplasticFlows`
+has been added. The equivalent viscoplastic strain rate \(\dot{p}\) is
+defined as:
+
+\[
+\dfrac{1}{\dot{p}}=\sum_{i=1}^{N}\dfrac{1}{\dot{p}_{i}}
+\]
+
+where \(\dot{p}_{i}\) has an expression similar to the the Norton-Hoff
+viscoplastic flow:
+
+\[
+\dot{p}_{i}=A_{i}\,\paren{\dfrac{\sigmaeq}{K_{i}}}^{n_{i}}
+\]
+
+#### Example
+
+~~~~{.cxx}
+@Brick StandardElastoViscoPlasticity{
+  stress_potential : "Hooke" {young_modulus : 150e9, poisson_ratio : 0.3},
+  inelastic_flow : "HarmonicSumOfNortonHoffViscoplasticFlows" {
+    criterion : "Mises",
+    A : {8e-67, 8e-67},
+    K : {1,1},
+    n : {8.2,8.2}
+  }
+};
+~~~~
+
 ### Choice of the eigen solver for some stress criteria in the `StandardElastoviscoPlascity` brick {#sec:standardelastoviscoplascity:eigen_solver}
 
 The `Hosford1972` and `Barlat2004` now has an `eigen_solver` option.
@@ -580,6 +611,14 @@ When used, `tfel-config` returns the standard debugging flags.
 ## Disabling `NumPy` support
 
 # Tickets solved during the development of this version
+
+## Ticket #250: Add a new inelastic flow to the `StandardElastoViscoPlasticity` brick
+
+This ticket requested the addition of the
+`HarmonicSumOfNortonHoffViscoplasticFlows` inelastic flow. See Section
+@sec:HarmonicSumOfNortonHoffViscoplasticFlows for details.
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/250/>
 
 ## Ticket #234: Import behaviour parameters in `MTest`
 

@@ -1,0 +1,17 @@
+@MaximumNumberOfSubSteps 1;
+@XMLOutputFile @xml_output@;
+@Behaviour<generic> @library@ 'GursonTvergaardNeedleman1982';
+@InternalStateVariable 'Porosity' 1e-3;
+@ExternalStateVariable 'Temperature' 293.15 ;
+
+@Real 'A' '0.7273';
+@NonLinearConstraint<Stress> 'SYY - A*SXX';
+@NonLinearConstraint<Stress> 'SZZ - A*SXX';
+
+@ImposedStrain 'EXX' {0 : 0, 1 : 0.08};
+@Times{0, 1. in 500};
+
+@Test<file> @reference_file@ 'SXX'  8 1e-3;
+@Test<file> @reference_file@ 'SYY'  9 1e-3;
+@Test<file> @reference_file@ 'SZZ'  10 1e-3;
+@Test<file> @reference_file@ 'Porosity'  20 1e-8;

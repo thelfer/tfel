@@ -275,16 +275,50 @@ The plastic flow is defined by:
 
 ### The `HyperbolicSine` inelastic flow
 
-The plastic flow is defined by:
+The viscoplastic flow is defined by:
 
 - a function \(f\paren{\tsigma}\) giving the flow intensity given by:
   \[
   f\paren{\tsigma}=A\,\sinh\paren{\dfrac{\left<\phi\paren{\tsigma-\sum_{i}\tenseur{X}_{i}}-\sum_{i}R_{i}\paren{p}\right>}{K}}^{n}
   \]
 - a stress criterion \(\phi\)
-- a viscoplastic potential \(g\)
 - one or more kinematic hardening rule (optional), denoted \(\tenseur{X}_{i}\)
 - one isotropic hardening rule (optional), denoted \(R_{i}\)
+
+### The `HarmonicSumOfNortonHoffViscoplasticFlows` inelastic flow 
+
+The equivalent viscoplastic strain rate \(\dot{p}\) is defined as:
+
+\[
+\dfrac{1}{\dot{p}}=\sum_{i=1}^{N}\dfrac{1}{\dot{p}_{i}}
+\]
+
+where \(\dot{p}_{i}\) has an expression similar to the the Norton-Hoff
+viscoplastic flow:
+
+\[
+\dot{p}_{i}=A_{i}\,\paren{\dfrac{\left<\phi\paren{\tsigma-\sum_{j}\tenseur{X}_{j}}-\sum_{j}R_{j}\paren{p}\right>}{K_{i}}}^{n_{i}}
+\]
+
+in which appear:
+
+- a stress criterion \(\phi\)
+- one or more kinematic hardening rule (optional), denoted \(\tenseur{X}_{i}\)
+- one isotropic hardening rule (optional), denoted \(R_{i}\)
+
+#### Example
+
+~~~~{.cxx}
+@Brick StandardElastoViscoPlasticity{
+  stress_potential : "Hooke" {young_modulus : 150e9, poisson_ratio : 0.3},
+  inelastic_flow : "HarmonicSumOfNortonHoffViscoplasticFlows" {
+    criterion : "Mises",
+    A : {8e-67, 8e-67},
+    K : {1,1},
+    n : {8.2,8.2}
+  }
+};
+~~~~
 
 #### Newton steps rejection
 

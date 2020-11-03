@@ -4262,7 +4262,11 @@ mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/castem/castemstanda
 mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/castem/castemstandardelastoviscoplasticityplasticitytest8_nj.mtest -text
 mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/castem/castemstandardelastoviscoplasticityplasticitytest_nj.mtest -text
 mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/generic/CMakeLists.txt -text
+mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/generic/GursonTvergaardNeedleman1982-test1.mtest -text
+mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/generic/GursonTvergaardNeedleman1982-test2.mtest -text
 mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/generic/Makefile.am -text
+mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/references/GursonTvergaardNeedleman1982-test1.ref -text
+mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/references/GursonTvergaardNeedleman1982-test2.ref -text
 mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/references/standardelastoviscoplasticitynortontest7.ref -text
 mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/references/standardelastoviscoplasticitynortontest8-cyclic_E.ref -text
 mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/references/standardelastoviscoplasticitynortontest8-cyclic_S.ref -text
