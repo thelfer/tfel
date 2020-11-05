@@ -75,8 +75,8 @@ namespace mfront {
                      "empty model specified");
 #if (defined _WIN32) || (defined _WIN64)
     } else if (tfel::utilities::starts_with(a, "/material=")) {
-      s.material = a.substr(std::strlen("/material="));
-      tfel::raise_if(s.material.empty(),
+      s.material_identifier = a.substr(std::strlen("/material="));
+      tfel::raise_if(s.material_identifier.empty(),
                      "parsePathSpecifierArguments: "
                      "empty material name specified");
     } else if (tfel::utilities::starts_with(a, "/material-property=")) {
