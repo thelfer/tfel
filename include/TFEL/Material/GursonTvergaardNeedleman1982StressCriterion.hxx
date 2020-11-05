@@ -24,25 +24,28 @@ namespace tfel {
 
     //! a simple alias
     template <typename StressStensor>
-    using GursonTvergaardNeedleman1982StressType = tfel::math::StensorNumType<StressStensor>;
+    using GursonTvergaardNeedleman1982StressType =
+        tfel::math::StensorNumType<StressStensor>;
     //! a simple alias
     template <typename StressStensor>
     using GursonTvergaardNeedleman1982BaseType =
         tfel::typetraits::base_type<tfel::math::StensorNumType<StressStensor>>;
     //! a simple alias
     template <typename StressStensor>
-    using GursonTvergaardNeedleman1982PorosityType = GursonTvergaardNeedleman1982BaseType<StressStensor>;
+    using GursonTvergaardNeedleman1982PorosityType =
+        GursonTvergaardNeedleman1982BaseType<StressStensor>;
     //! a simple alias
     template <typename StressStensor>
     using GursonTvergaardNeedleman1982InvertStressType =
-        tfel::math::result_type<GursonTvergaardNeedleman1982BaseType<StressStensor>,
-                                GursonTvergaardNeedleman1982StressType<StressStensor>,
-                                tfel::math::OpDiv>;
+        tfel::math::result_type<
+            GursonTvergaardNeedleman1982BaseType<StressStensor>,
+            GursonTvergaardNeedleman1982StressType<StressStensor>,
+            tfel::math::OpDiv>;
     //! a simple alias
     template <typename StressStensor>
-    using GursonTvergaardNeedleman1982StressNormalType =
-        tfel::math::stensor<tfel::math::StensorTraits<StressStensor>::dime,
-                            GursonTvergaardNeedleman1982BaseType<StressStensor>>;
+    using GursonTvergaardNeedleman1982StressNormalType = tfel::math::stensor<
+        tfel::math::StensorTraits<StressStensor>::dime,
+        GursonTvergaardNeedleman1982BaseType<StressStensor>>;
     //! a simple alias
     template <typename StressStensor>
     using GursonTvergaardNeedleman1982StressDerivativeWithRespectToPorosityType =
@@ -50,13 +53,15 @@ namespace tfel {
     //! a simple alias
     template <typename StressStensor>
     using GursonTvergaardNeedleman1982StressEigenTensorType =
-        tfel::math::stensor<tfel::math::StensorTraits<StressStensor>::dime,
-                            GursonTvergaardNeedleman1982BaseType<StressStensor>>;
+        tfel::math::stensor<
+            tfel::math::StensorTraits<StressStensor>::dime,
+            GursonTvergaardNeedleman1982BaseType<StressStensor>>;
     //! a simple alias
     template <typename StressStensor>
     using GursonTvergaardNeedleman1982StressSecondDerivativeType =
-        tfel::math::st2tost2<tfel::math::StensorTraits<StressStensor>::dime,
-                             GursonTvergaardNeedleman1982InvertStressType<StressStensor>>;
+        tfel::math::st2tost2<
+            tfel::math::StensorTraits<StressStensor>::dime,
+            GursonTvergaardNeedleman1982InvertStressType<StressStensor>>;
     //! a simple alias
     template <typename StressStensor>
     using GursonTvergaardNeedleman1982NormalDerivativeWithRespectToPorosityType =
@@ -88,7 +93,9 @@ namespace tfel {
      */
     template <typename StressStensor>
     std::ostream& operator<<(
-        std::ostream&, const GursonTvergaardNeedleman1982StressCriterionParameters<StressStensor>&);
+        std::ostream&,
+        const GursonTvergaardNeedleman1982StressCriterionParameters<
+            StressStensor>&);
 
     /*!
      * \brief compute the GursonTvergaardNeedleman1982 yield stress
@@ -99,13 +106,16 @@ namespace tfel {
      * \param[in] seps: threshold for the equivalent stress.
      */
     template <typename StressStensor>
-    GursonTvergaardNeedleman1982StressType<StressStensor> computeGursonTvergaardNeedleman1982Stress(
+    GursonTvergaardNeedleman1982StressType<StressStensor>
+    computeGursonTvergaardNeedleman1982Stress(
         const StressStensor&,
         const GursonTvergaardNeedleman1982PorosityType<StressStensor>,
-        const GursonTvergaardNeedleman1982StressCriterionParameters<StressStensor>&,
+        const GursonTvergaardNeedleman1982StressCriterionParameters<
+            StressStensor>&,
         const GursonTvergaardNeedleman1982StressType<StressStensor>);
     /*!
-     * \brief compute the GursonTvergaardNeedleman1982 yield stress and the its first derivative
+     * \brief compute the GursonTvergaardNeedleman1982 yield stress and the its
+     * first derivative
      * \tparam StressStensor: type of the stress tensor
      * \param[in] sig: stress tensor
      * \param[in] f: porosity
@@ -113,16 +123,20 @@ namespace tfel {
      * \param[in] seps: threshold for the equivalent stress.
      */
     template <typename StressStensor>
-    std::tuple<GursonTvergaardNeedleman1982StressType<StressStensor>,
-               GursonTvergaardNeedleman1982StressNormalType<StressStensor>,
-               GursonTvergaardNeedleman1982StressDerivativeWithRespectToPorosityType<StressStensor>>
+    std::tuple<
+        GursonTvergaardNeedleman1982StressType<StressStensor>,
+        GursonTvergaardNeedleman1982StressNormalType<StressStensor>,
+        GursonTvergaardNeedleman1982StressDerivativeWithRespectToPorosityType<
+            StressStensor>>
     computeGursonTvergaardNeedleman1982StressNormal(
         const StressStensor&,
         const GursonTvergaardNeedleman1982PorosityType<StressStensor>,
-        const GursonTvergaardNeedleman1982StressCriterionParameters<StressStensor>&,
+        const GursonTvergaardNeedleman1982StressCriterionParameters<
+            StressStensor>&,
         const GursonTvergaardNeedleman1982StressType<StressStensor>);
     /*!
-     * \brief compute the GursonTvergaardNeedleman1982 yield stress and its first and second
+     * \brief compute the GursonTvergaardNeedleman1982 yield stress and its
+     * first and second
      * derivatives
      * \tparam StressStensor: type of the stress tensor
      * \param[in] sig: stress tensor
@@ -131,15 +145,19 @@ namespace tfel {
      * \param[in] seps: threshold for the equivalent stress.
      */
     template <typename StressStensor>
-    std::tuple<GursonTvergaardNeedleman1982StressType<StressStensor>,
-               GursonTvergaardNeedleman1982StressNormalType<StressStensor>,
-               GursonTvergaardNeedleman1982StressDerivativeWithRespectToPorosityType<StressStensor>,
-               GursonTvergaardNeedleman1982StressSecondDerivativeType<StressStensor>,
-               GursonTvergaardNeedleman1982NormalDerivativeWithRespectToPorosityType<StressStensor>>
+    std::tuple<
+        GursonTvergaardNeedleman1982StressType<StressStensor>,
+        GursonTvergaardNeedleman1982StressNormalType<StressStensor>,
+        GursonTvergaardNeedleman1982StressDerivativeWithRespectToPorosityType<
+            StressStensor>,
+        GursonTvergaardNeedleman1982StressSecondDerivativeType<StressStensor>,
+        GursonTvergaardNeedleman1982NormalDerivativeWithRespectToPorosityType<
+            StressStensor>>
     computeGursonTvergaardNeedleman1982StressSecondDerivative(
         const StressStensor&,
         const GursonTvergaardNeedleman1982PorosityType<StressStensor>,
-        const GursonTvergaardNeedleman1982StressCriterionParameters<StressStensor>&,
+        const GursonTvergaardNeedleman1982StressCriterionParameters<
+            StressStensor>&,
         const GursonTvergaardNeedleman1982StressType<StressStensor>);
 
   }  // end of namespace material

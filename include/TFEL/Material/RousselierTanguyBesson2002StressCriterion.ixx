@@ -95,13 +95,14 @@ namespace tfel {
         if ((d < 0) || (tfel::math::ieee754::fpclassify(a) == FP_ZERO)) {
           return std::min(-c / b, iseq);
         }
-        return std::min(std::max((-b + sqrt(d)) / (2 * a), (-b - sqrt(d)) / (2 * a)), iseq);
+        return std::min(
+            std::max((-b + sqrt(d)) / (2 * a), (-b - sqrt(d)) / (2 * a)), iseq);
       }();
-      //const auto lf = std::log(3 / (2 * f * p.DR));
-      //const auto ilf = 1 / std::max(lf, seps);
-      //const auto x0 = (x01 + 1 / (3 * p.qR * (pr / 2) * iomf * ilf)) / 2;
+      // const auto lf = std::log(3 / (2 * f * p.DR));
+      // const auto ilf = 1 / std::max(lf, seps);
+      // const auto x0 = (x01 + 1 / (3 * p.qR * (pr / 2) * iomf * ilf)) / 2;
       const auto x0 = x01;
-      //const auto d = sqrt(b * b - 4) auto x0 = c / b;  // iseq * omfd;
+      // const auto d = sqrt(b * b - 4) auto x0 = c / b;  // iseq * omfd;
       const auto SdS = [seq, pr, f, iomf, p](const istress x) {
         const auto e = std::exp(3 * p.qR * pr * iomf * std::abs(x) / 2);
         const auto S = seq * iomf * std::abs(x) + 2 * f * (p.DR / 3) * e - 1;
@@ -138,12 +139,12 @@ namespace tfel {
       using real = RousselierTanguyBesson2002BaseType<StressStensor>;
       using normal = RousselierTanguyBesson2002StressNormalType<StressStensor>;
       using result = std::tuple<
-        RousselierTanguyBesson2002StressType<StressStensor>,
-        RousselierTanguyBesson2002StressNormalType<StressStensor>,
-        RousselierTanguyBesson2002StressDerivativeWithRespectToPorosityType<
-	  StressStensor>>;
-      
-      constexpr const auto id = normal::Id();
+          RousselierTanguyBesson2002StressType<StressStensor>,
+          RousselierTanguyBesson2002StressNormalType<StressStensor>,
+          RousselierTanguyBesson2002StressDerivativeWithRespectToPorosityType<
+              StressStensor>>;
+
+      const auto id = normal::Id();
 
       const auto ss = computeRousselierTanguyBesson2002Stress(sig, f, p, seps);
       const auto iss = 1 / std::max(ss, seps);
@@ -196,18 +197,18 @@ namespace tfel {
       // tfel::math::OpDiv>;
       using normal = RousselierTanguyBesson2002StressNormalType<StressStensor>;
       using result = std::tuple<
-        RousselierTanguyBesson2002StressType<StressStensor>,
-        RousselierTanguyBesson2002StressNormalType<StressStensor>,
-        RousselierTanguyBesson2002StressDerivativeWithRespectToPorosityType<
-            StressStensor>,
-        RousselierTanguyBesson2002StressSecondDerivativeType<StressStensor>,
-        RousselierTanguyBesson2002NormalDerivativeWithRespectToPorosityType<
-	  StressStensor>>;
+          RousselierTanguyBesson2002StressType<StressStensor>,
+          RousselierTanguyBesson2002StressNormalType<StressStensor>,
+          RousselierTanguyBesson2002StressDerivativeWithRespectToPorosityType<
+              StressStensor>,
+          RousselierTanguyBesson2002StressSecondDerivativeType<StressStensor>,
+          RousselierTanguyBesson2002NormalDerivativeWithRespectToPorosityType<
+              StressStensor>>;
       // using normal_derivative =
       // RousselierTanguyBesson2002StressSecondDerivativeType<StressStensor>;
       using namespace tfel::math;
-      constexpr const auto id = normal::Id();
-      constexpr const auto M = tfel::math::st2tost2<N, real>::M();
+      const auto id = normal::Id();
+      const auto M = tfel::math::st2tost2<N, real>::M();
 
       const auto ss = computeRousselierTanguyBesson2002Stress(sig, f, p, seps);
       const auto iss = 1 / std::max(ss, seps);
