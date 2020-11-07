@@ -150,6 +150,8 @@ function(tfel_library_internal name component)
   if(TFEL_APPEND_SUFFIX)
     set_target_properties(${name} PROPERTIES OUTPUT_NAME "${name}-${TFEL_SUFFIX}")
   endif(TFEL_APPEND_SUFFIX)
+  set_target_properties( ${name}
+    PROPERTIES VERSION ${TFEL_VERSION} SOVERSION ${TFEL_VERSION})
   if(WIN32)
     install(TARGETS ${name} EXPORT ${name} 
       DESTINATION bin

@@ -1,6 +1,6 @@
 ---
 title: How to implement the Méric-Cailletaud single crystal behaviour
-author: Thomas Helfer, Alexandre Bourceret
+author: Thomas Helfer, Alexandre Bourceret, Arnaud Lejeune
 writer: Thomas Helfer
 examinator: Thomas Helfer
 date: 2/10/2020
@@ -111,8 +111,22 @@ The implementations described in this document are available here:
 
 The theoretical frame which allow the monocrystalline model was
 introduced in the 70. Monocrystalline behaviour describes the slip of
-the crystallographic structure throught the slip systems of the
-considerated crystal. Slips systems are defined using two vectors: the normal of the slip plan and the slip direction. 
+the crystallographic structure through the slip systems of the
+considerated crystal. The crystal completely defines the different 
+possibilities of displacement of the atoms within the crystallographic
+structure. The origin of the sliding planes lies in the contact between
+certain atoms of the crystal which generates, under stress, preferential
+directions of displacement. The sliding of the atoms along the sliding planes
+generates dislocations within the material. As with dislocations, there are
+different types of interaction between the sliding systems. These mechanisms
+at the microscopic scale largely describe the origins of the hardening of matter.
+
+The first particularity of a monocrystalline law is in the use of the Schmid tensor
+to project the tensors of the stresses in the resolved shear stress.The Schmid tensor
+is determined from the normal to the slip plane and the direction of the slip. The second
+particularity lies in the introduction of an interaction matrix which weigths hardening
+according to the type of interaction considered. The last particularity is the introduction
+of the orientation of the crystal material for the elastic and the plastic modelization.
 
 The behaviour is described by a standard decomposition of the strain
 \(\tepsilonto\) in an elastic and a viscoplastic component, respectively
@@ -950,6 +964,27 @@ are required:
 
 # Applications
 
-![Residual topography after a wickers indentation test in a single crystal](img/MericCailletaudFiniteStrainResidualTopography.png)
+
+![Simulated residual topography after a Berkovich indentation test in a
+single crystal. The values are normalized by the residual indentation
+depth
+\(h_{r}\)](img/MericCailletaudFiniteStrainResidualTopography.png){#fig:single_crystal:Berkovich_indentation width=75%}
+
+This study has been conducted as part of the the PhD thesis of
+A.Bourceret (FEMTO) supervised  by A.Lejeune, Y.Gaillard 
+and F.Richard (FEMTO). It deals with the modelling
+of a Berkovich nanoindentation test on a copper sample which is
+described by the Meric-Cailletaud single crystal law at finite strain.
+
+The imposed displacement of the berkovich indenter to a maximum value of
+\(500\,nm\). For this simulation the material parameters identified
+copper by Méric et al were used [@meric_single_1991].
+
+The finite element model based contains \(4.10^4\) elements for the
+geometric description of the copper sample and the Berkovich indenter.
+This model is treated by the Ansys finite element solver. The results of
+this simulation are reported on Figure
+@fig:single_crystal:Berkovich_indentation which represents the simulated
+residual topography.
 
 # References

@@ -4,6 +4,13 @@
 
 # Tickets fixed
 
+## Ticket #254: Register libraries for `ldconfig`
+
+In previous versions, the build version and the API version of shared
+libraries were not specified.
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/254/>
+
 ## Ticket #246: Explicit implementation of the Berveiller-Zaoui homogeneisation scheme is inefficient
 
 Several polycrystal behaviours based on the Berveiller-Zaoui
