@@ -359,14 +359,12 @@ namespace mfront {
         return "aster::AsterStandardSmallStrainStressFreeExpansionHandler";
       } else if (mb.getBehaviourType() == BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
         return "nullptr";
-      } else if (mb.getBehaviourType() == BehaviourDescription::COHESIVEZONEMODEL) {
-        return "nullptr";
-      } else {
-        throw_if(true,
-                 "the aster interface only supports "
-                 "small and finite strain behaviours and "
-                 "cohesive zone models");
       }
+      throw_if(mb.getBehaviourType() != BehaviourDescription::COHESIVEZONEMODEL,
+	       "the aster interface only supports "
+	       "small and finite strain behaviours and "
+	       "cohesive zone models");
+      return "nullptr";
     }();
 
     out << "/*!\n";

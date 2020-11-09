@@ -193,22 +193,6 @@ namespace tfel {
       template <typename Child>
       class GenTypeSpecializedMethods<Child, tfel::meta::TLE> {};
 
-    }  // end of namespace internals
-
-  }  // end of namespace utilities
-
-}  // end of namespace tfel
-
-#ifdef _MSC_VER
-#include "TFEL/Utilities/GenTypeBase_MSC.hxx"
-#else
-
-namespace tfel {
-
-  namespace utilities {
-
-    namespace internals {
-
       //! An helper class to fill the runtime methods of a GenType.
       /*
        * \param unsigned short N, the current index.
@@ -237,7 +221,7 @@ namespace tfel {
             typename std::conditional<std::is_trivial<T>::value,
                                       GenTypeTrivialDestroy<T>,
                                       GenTypeGenericDestroy<T>>::type;  //! size of the typelise
-        static constexpr const auto N = sizeof...(Types);
+        static constexpr const auto Ntypes = sizeof...(Types);
         //! a simple alias.
         using DestructorPtr = void (*)(void *const);
         //! a simple alias.
@@ -250,28 +234,40 @@ namespace tfel {
          * \return a pointer to a specific destructor
          */
         DestructorPtr get_destructor(const unsigned short i) {
-          constexpr const DestructorPtr m[N] = {&GenTypeDestroy<Types>::exe...};
-          return (i >= N) ? nullptr : m[i];
+          constexpr const DestructorPtr m[Ntypes] = {&GenTypeDestroy<Types>::exe...};
+          return (i >= Ntypes) ? nullptr : m[i];
         }
         /*!
          * \param[in] i: index
          * \return a pointer to a copy constructor
          */
         CopyConstructorPtr get_copy_constructor(const unsigned short i) {
-          constexpr const CopyConstructorPtr m[N] = {&GenTypeCopy<Types>::exe...};
-          return (i >= N) ? nullptr : m[i];
+          constexpr const CopyConstructorPtr m[Ntypes] = {&GenTypeCopy<Types>::exe...};
+          return (i >= Ntypes) ? nullptr : m[i];
         }
         /*!
          * \param[in] i: index
          * \return a pointer to an assignement operator
          */
         AssignOperatorPtr get_assignement_operator(const unsigned short i) {
-          constexpr const AssignOperatorPtr m[N] = {&GenTypeAssign<Types>::exe...};
-          return (i >= N) ? nullptr : m[i];
+          constexpr const AssignOperatorPtr m[Ntypes] = {&GenTypeAssign<Types>::exe...};
+          return (i >= Ntypes) ? nullptr : m[i];
         }
       };
-
+      
     }  // end of namespace internals
+
+  }  // end of namespace utilities
+
+}  // end of namespace tfel
+
+#if defined _MSC_VER
+#include "TFEL/Utilities/GenTypeBase_MSC.hxx"
+#else
+
+namespace tfel {
+
+  namespace utilities {
 
     //! The base class of GenType.
     /*

@@ -39,10 +39,13 @@ namespace tfel{
     template<typename T, template<typename> class Concept>
     struct TFEL_VISIBILITY_LOCAL Implements
     {
+      //!
+      using decay_type = typename std::decay<T>::type;
       /*!
        * The result of the metafunction.
        */
-      static constexpr bool cond = std::is_base_of<Concept<T>,T>::value;
+      static constexpr bool cond = std::is_base_of<Concept<decay_type>,
+						   decay_type>::value;
     };
 
     template<typename T, template<typename> class Concept>

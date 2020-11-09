@@ -17,65 +17,6 @@ namespace tfel{
   
   namespace utilities{
     
-    namespace internals{
-      
-      //! An helper class to fill the runtime methods of a GenType.
-      /*
-       * \param unsigned short N, the current index.
-       * \param typename List, a list of types.
-       * \author Thomas Helfer.
-       * \date   20 Apr. 2007.
-       */
-      template<unsigned short N,typename List>
-      struct TFEL_VISIBILITY_LOCAL GenTypeRunTimeMethods
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-	: public GenTypeRunTimeMethods<N-1,List>
-#endif /* DOXYGEN_SHOULD_SKIP_THIS */
-      {
-	//! Default constructor
-	/*
-	 * This constructor fills the arrays of function pointers
-	 * associated with the N-1 type in the typelist.
-	 */
-	GenTypeRunTimeMethods()
-	{
-	  this->destroyMethod[N-1] = &GenTypeDestroy::exe;
-	  this->copyMethod[N-1]    = &GenTypeCopy<Current>::exe;
-	  this->assignMethod[N-1]  = &GenTypeAssign<Current>::exe;
-	}
-      private:
-	//! a simple alias.
-	typedef typename tfel::meta::TLFindNthElt<List,N-1>::type Current;
-	//! choose the function used to destroy the N-1 type of the typelist.
-	typedef typename std::conditional<std::is_trivial<Current>::value,
-					  GenTypeTrivialDestroy<Current>,
-					  GenTypeGenericDestroy<Current>>::type GenTypeDestroy; 
-      };
-
-      //! A partial specialisation to end the recursion.
-      /*
-       * \author Thomas Helfer.
-       * \date   20 Apr. 2007.
-       */
-      template<typename List>
-      struct TFEL_VISIBILITY_LOCAL GenTypeRunTimeMethods<0u,List>
-      {
-	//! a simple alias.
-	typedef void (*DestroyMethod)(void *const);
-	//! a simple alias.
-	typedef void (*AssignMethod)(void *const,const void* const);
-	//! a simple alias.
-	typedef void (*CopyMethod)(void *const,const void* const);
-	//! array containing function pointers to call a specific destructor.
-	DestroyMethod destroyMethod[tfel::meta::TLSize<List>::value];
-	//! array containing function pointers to call a specific assignement operator.
-	AssignMethod  assignMethod[tfel::meta::TLSize<List>::value];
-	//! array containing function pointers to call a specific copy constructor.
-	CopyMethod copyMethod[tfel::meta::TLSize<List>::value];
-      };
-
-    } // end of namespace internals
-
     //! The base class of GenType.
     /*
      * \param  typename List, the list of types contained in the GenType.
@@ -84,7 +25,8 @@ namespace tfel{
      */
     template<typename List>
     struct GenTypeBase
-      : public tfel::utilities::internals::GenTypeSpecializedMethods<GenTypeBase<List>,List>
+      : public tfel::utilities::internals::GenTypeSpecializedMethods<GenTypeBase<List>,List>,
+	public tfel::utilities::internals::GenTypeRunTimeMethods<List>
     {
       //! Default constructor.
       TFEL_INLINE GenTypeBase()
@@ -92,9 +34,18 @@ namespace tfel{
       {}
       template<typename T1,
 	       typename std::enable_if<
-		 tfel::meta::TLCountNbrOfT<T1,List>::value==1, 
+		 tfel::meta::TLCountNbrOfT<typename std::decay<T1>::type,List>::value==1, 
 		 bool>::type = true>
       TFEL_INLINE GenTypeBase(const T1& v)
+	: index(tfel::meta::TLSize<List>::value)
+      {
+	this->template set<T1>(v);
+      }
+      template<typename T1,
+	       typename std::enable_if<
+		 tfel::meta::TLCountNbrOfT<typename std::decay<T1>::type,List>::value==1, 
+		 bool>::type = true>
+      TFEL_INLINE GenTypeBase(T1&& v)
 	: index(tfel::meta::TLSize<List>::value)
       {
 	this->template set<T1>(v);
@@ -106,12 +57,11 @@ namespace tfel{
       TFEL_INLINE GenTypeBase(const GenTypeBase& src)
 	: index(src.index)
       {
-	using namespace tfel::meta;
-	if(this->index!=TLSize<List>::value){
+	if (!this->empty()) {
 	  // create a new object by copy
-	  void  * tmp       = reinterpret_cast<void*>(&buffer);
-	  const void * tmp2 = reinterpret_cast<const void*>(&(src.buffer));
-	  (*(GenTypeBase::methods.copyMethod[this->index]))(tmp,tmp2);
+	  auto *tmp = reinterpret_cast<void *>(&buffer);
+	  auto *tmp2 = reinterpret_cast<const void *>(&(src.buffer));
+	  (*(this->get_copy_constructor(this->index)))(tmp, tmp2);
 	}
       }
       //! The assignement operator.
@@ -119,41 +69,33 @@ namespace tfel{
        * \param const GenTypeBase&, the right-hand side.
        */
       TFEL_INLINE GenTypeBase&
-      operator=(const GenTypeBase& src)
-      {
-	using namespace tfel::meta;
+      operator=(const GenTypeBase& src){
 	// check for self-assignement
-	if(this!=&src){
-	  if(this->index==src.index){
-	    if(src.index!=TLSize<List>::value){
-	      // the two GenTypes hold the same objects
-	      // we then use the assignement operator.
-	      void  * tmp       = reinterpret_cast<void*>(&buffer);
-	      const void * tmp2 = reinterpret_cast<const void*>(&(src.buffer));
-	      (*(GenTypeBase::methods.assignMethod[this->index]))(tmp,tmp2);
-	    } else {
-	      // src is not initialized,
-	      // we then destroy holded object
-	      if(this->index!=TLSize<List>::value){
-		void * tmp = reinterpret_cast<void*>(&buffer);
-		(*(GenTypeBase::methods.destroyMethod[this->index]))(tmp);
-	      }
-	      this->index = TLSize<List>::value;
-	    }
+	if (this == &src) {
+	  return *this;
+	}
+	if (this->index == src.index) {
+	  if (src.index != ListSize) {
+	    // the two GenTypes hold the same objects
+	    // we then use the assignement operator.
+	    auto *tmp = reinterpret_cast<void *>(&buffer);
+	    auto *tmp2 = reinterpret_cast<const void *>(&(src.buffer));
+	    (*(this->get_assignement_operator(this->index)))(tmp, tmp2);
 	  } else {
-	    // the two GenType have two differents objects.
-	    // we first destroy the previous object and create a new
-	    // one by copy.
-	    if(this->index!=TLSize<List>::value){
-	      void * tmp = reinterpret_cast<void*>(&buffer);
-	      (*(GenTypeBase::methods.destroyMethod[this->index]))(tmp);
-	    }
-	    this->index = src.index;
-	    if(this->index!=TLSize<List>::value){
-	      void  * tmp       = reinterpret_cast<void*>(&buffer);
-	      const void * tmp2 = reinterpret_cast<const void*>(&(src.buffer));
-	      (*(GenTypeBase::methods.copyMethod[this->index]))(tmp,tmp2);
-	    }
+	    // src is not initialized,
+	    // we then destroy holded object
+	    this->clear();
+	  }
+	} else {
+	  // the two GenType have two differents objects.
+	  // we first destroy the previous object and create a new
+	  // one by copy.
+	  this->clear();
+	  this->index = src.index;
+	  if (!this->empty()) {
+	    auto *tmp = reinterpret_cast<void *>(&buffer);
+	    auto *tmp2 = reinterpret_cast<const void *>(&(src.buffer));
+	    (*(this->get_copy_constructor(this->index)))(tmp, tmp2);
 	  }
 	}
 	return *this;
@@ -171,14 +113,14 @@ namespace tfel{
 	this->operator=(src);
 	return true;
       }
-         /*!
+      /*!
        * \param[in] args: argument passed to the constructor of the
        * object
        */
       template<typename T1,typename... Args>
       TFEL_INLINE
       typename std::enable_if<
-	tfel::meta::TLCountNbrOfT<T1,List>::value==1, 
+	tfel::meta::TLCountNbrOfT<typename std::decay<T1>::type,List>::value==1, 
 	T1&>::type 
       emplace(Args&&... args){
 	// We create a new object of type T1 by calling the copy constructor
@@ -187,17 +129,38 @@ namespace tfel{
 	// the magic of placement new...
 	return *(new (p) T1(std::forward<Args>(args)...));
       } // end of emplace
-      //! set the value of the GenType.
-      /*
-       * \param const T1&, the value affected to the GenType.
-       * \pre   T1 must be a type that the GenType can hold.
-       */
+	//! set the value of the GenType.
+	/*
+	 * \param const T1&, the value affected to the GenType.
+	 * \pre   T1 must be a type that the GenType can hold.
+	 */
       template<typename T1>
       TFEL_INLINE
       typename std::enable_if<
-	tfel::meta::TLCountNbrOfT<T1,List>::value==1, 
-	void >::type 
+	tfel::meta::TLCountNbrOfT<typename std::decay<T1>::type,
+				  List>::value==1, 
+	void>::type 
       set(const T1& src)
+      {
+	using type = typename std::decay<T1>::type;
+	if(this->template is<type>()){
+	  if(&(this->template get<type>())==&src){
+	    return;
+	  }
+	}
+	// We create a new object of type T1 by calling the copy constructor
+	this->template set_uninitialised<type>();
+	void * p = reinterpret_cast<void*>(&(this->buffer));
+	// the magic of placement new...
+	new (p) type(src);
+      }
+      template<typename T1>
+      TFEL_INLINE
+      typename std::enable_if<
+	tfel::meta::TLCountNbrOfT<typename std::decay<T1>::type,
+				  List>::value==1, 
+	void>::type 
+      set(T1&& src)
       {
 	using type = typename std::decay<T1>::type;
 	if(this->template is<type>()){
@@ -220,32 +183,46 @@ namespace tfel{
       template<typename T1>
       TFEL_INLINE
       typename std::enable_if<
-	tfel::meta::TLCountNbrOfT<T1,List>::value==1, 
+	tfel::meta::TLCountNbrOfT<typename std::decay<T1>::type,List>::value==1, 
 	GenTypeBase&>::type 
       operator=(const T1& src)
       {
 	this->template set<T1>(src);
 	return *this;
       }
-      template<typename T1>
-      typename std::enable_if<tfel::meta::TLCountNbrOfT<T1,List>::value==1,
-			      bool>::type
-      is() const
-      {
-	using namespace tfel::meta;
-	return this->index==TLPosition<T1,List>::value;
-      } // end of Value::is
-      //! get the value contained in the GenType (const version).
       /*
-       * \return const T1&, the value affected to the GenType.
+       * \param  const T1&, the value affected to the GenType.
+       * \return GenTypeBase&, a reference to this.
        * \pre    T1 must be a type that the GenType can hold.
-       * \throw  GenTypeCastError, if the type contained in the GenType does
-       * not match.
        */
       template<typename T1>
       TFEL_INLINE
       typename std::enable_if<
-	tfel::meta::TLCountNbrOfT<T1,List>::value==1, 
+	tfel::meta::TLCountNbrOfT<typename std::decay<T1>::type,List>::value==1, 
+	GenTypeBase&>::type 
+      operator=(T1&& src)
+      {
+	this->template set<T1>(src);
+	return *this;
+      }
+      template<typename T1>
+      typename std::enable_if<tfel::meta::TLCountNbrOfT<typename std::decay<T1>::type,List>::value==1,
+			      bool>::type
+      is() const
+      {
+	return this->index==tfel::meta::TLPosition<T1,List>::value;
+      } // end of Value::is
+	//! get the value contained in the GenType (const version).
+	/*
+	 * \return const T1&, the value affected to the GenType.
+	 * \pre    T1 must be a type that the GenType can hold.
+	 * \throw  GenTypeCastError, if the type contained in the GenType does
+	 * not match.
+	 */
+      template<typename T1>
+      TFEL_INLINE
+      typename std::enable_if<
+	tfel::meta::TLCountNbrOfT<typename std::decay<T1>::type,List>::value==1, 
 	const T1& >::type 
       get() const
       {	
@@ -269,7 +246,7 @@ namespace tfel{
       template<typename T1>
       TFEL_INLINE 
       typename std::enable_if<
-	tfel::meta::TLCountNbrOfT<T1,List>::value==1, 
+	tfel::meta::TLCountNbrOfT<typename std::decay<T1>::type,List>::value==1, 
 	T1&>::type 
       get()
       {
@@ -297,22 +274,22 @@ namespace tfel{
       /*
        * Destructor
        */
-      ~GenTypeBase()
+      TFEL_INLINE ~GenTypeBase()
       {
-	using namespace tfel::meta;
-	if(this->index!=TLSize<List>::value){
-	  //This calls the destructor of the type hold
-	  void * tmp = reinterpret_cast<void*>(&buffer);
-	  (*(GenTypeBase::methods.destroyMethod[this->index]))(tmp);
-	}
+	this->clear();
       }
       //! number of object that the GenType can hold
       static constexpr unsigned short ListSize = tfel::meta::TLSize<List>::value;
-      //! a simple alias.
-      typedef internals::GenTypeRunTimeMethods<ListSize,List> RunTimeMethods;
     protected:
-      //! RunTimeMethods used by the GenType.
-      static const RunTimeMethods methods;
+      //! clear the GenType
+      TFEL_INLINE void clear() {
+	if (!this->empty()) {
+	  // destroy the current object
+	  auto *tmp = reinterpret_cast<void *>(&buffer);
+	  (*(this->get_destructor(this->index)))(tmp);
+	}
+	this->index = ListSize;
+      }
       //! memory where objects are holded
       //! set the value of the GenType.
       /*
@@ -322,17 +299,12 @@ namespace tfel{
       template<typename T1>
       TFEL_INLINE
       typename std::enable_if<
-	tfel::meta::TLCountNbrOfT<T1,List>::value==1, 
+	tfel::meta::TLCountNbrOfT<typename std::decay<T1>::type,List>::value==1, 
 	void >::type 
       set_uninitialised()
       {
-	using namespace tfel::meta;
-	if(this->index!=TLSize<List>::value){
-	  // destroy the current object
-	  void * tmp = reinterpret_cast<void*>(&buffer);
-	  (*(GenTypeBase::methods.destroyMethod[this->index]))(tmp);
-	}
-	this->index=TLFindEltPos<T1,List>::value;
+	this->clear();
+	this->index = tfel::meta::TLFindEltPos<T1, List>::value;
       }
       //! container type
       typedef typename std::aligned_storage<tfel::meta::TLMaxSize<List>::value,
@@ -345,11 +317,6 @@ namespace tfel{
       //! a simple assertion
       TFEL_STATIC_ASSERT((tfel::meta::TLElementsAreUnique<List>::cond));
     };
-
-    //! RunTimeMethods used by the GenType.
-    template<typename List>
-    const typename GenTypeBase<List>::RunTimeMethods GenTypeBase<List>::methods;
-
 
   } // end of namespace utilities
 
