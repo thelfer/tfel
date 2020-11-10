@@ -325,6 +325,8 @@ EXTRA_DIST=CMakeLists.txt					      \
        ./img/ExtendingStandardElastoViscoPlasticityBrick-PorousStressCriterion-tree-2.png   \
        ./img/PolycrystalHCP_BZ.svg                                                          \
        ./img/MericCailletaudFiniteStrainResidualTopography.png                              \
+       ./img/Highlights-3.4.png                              \
+       ./img/PorousPlasticity-3.4.png                              \
 	   ./media/epx1.mp4                                               \
 	   ./media/epx2.mp4                                           \
 	   ./media/abaqus-explicit.mp4                                \

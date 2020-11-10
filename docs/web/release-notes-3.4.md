@@ -16,6 +16,7 @@ tabPrefixTemplate: "$$i$$"
 secPrefixTemplate: "$$i$$"
 eqnPrefixTemplate: "($$i$$)"
 bibliography: bibliography.bib
+monofont: DejaVuSansMono.ttf 
 ---
 
 \newcommand{\paren}[1]{{\left(#1\right)}}
@@ -23,12 +24,95 @@ bibliography: bibliography.bib
 \newcommand{\norm}[1]{\lVert #1\rVert}
 \newcommand{\sigmaeq}{\sigma_{\mathrm{eq}}}
 
-The page declares the new functionalities of the 3.4 version of the
+The page describes the new functionalities of Version 3.4 of the
 `TFEL` project.
 
-# Known incompatibilities
+# Overview
 
-## `getPartialJacobianInvert`
+## Some noticeable applications of `MFront` and `MGIS` in 2020
+
+![Some noticeable applications of `MFront` and `MGIS` in 2020](img/Highlights-3.4.png){#fig:tfel-3.4 width=90%}
+
+Figure @fig:tfel-3.4 presents some noticeable applications of `MFront`:
+
+a. Normalised residual topography after an indentation test on a single
+   crsytal of copper with Méric-Cailletaud' finite stain behaviour
+   [@meric_fe_1994] using `Ansys`.
+   Contribution of A. Bourceret and A. Lejeune, (FEMTO).
+b. Slope failure analysis with strength reduction in
+   [`OpenGeoSys`](https://www.opengeosys.org/) [@deng_slope_2020].
+   Contribution of T. Deng and T. Nagel
+   (Geotechnical Institute, Technische Universität Bergakademie Freiberg).
+c. Integration of the `MGIS` integration in `Europlexus`.
+   Contribution of P. Bouda, (CEA DM2S).
+d. Simulation of rolling using the innovative CEA' proto-application `MEFISTO`.
+   Contribution of O. Jamond, (CEA DM2S).
+e. Industrial thermomechanical design of a cylinder block with an
+   with MFront and Abaqus at Groupe PSA. This study is one result of the
+   PhD thesis of L. Jacquinot which provides a continuous modelling of the
+   AlSi9Cu3Mg aluminium alloy behaviour from manufacturing to final usage
+   Contribution of A. Forré (Groupe PSA).
+f. Column collapse using the Material Point Method.
+   Contribution of Ning Guo, Wenlong Li (Zhejiang University)
+
+## Highlights
+
+![a) `Cast3M` simulation of a Notched Tensile sample of an AA6061-T6
+found in the core of Jules Horowitz Reactor and comparison of simulation
+result with experimental data. b) `Cast3M` simulation of a Charpy test
+on the PWR reactor core vessel'
+steel](img/PorousPlasticity-3.4.png){#fig:porous_plasticity width=95%}
+
+The major features of Version 3.4 are:
+
+- A better support generalised behaviours, in particular regarding the
+  computation of the consistent tangent operator in the implicit schemes
+  [@helfer_assisted_2020]. Examples of this features are presented in
+  references
+  [@bleyer_monolithic_2020;@bleyer_multiphase_2020;@bleyer_transient_2020;@helfer_using_2020].
+- An extension of the [`StandardElastoViscoPlasticity`
+  brick](http://tfel.sourceforge.net/StandardElastoViscoPlasticityBrick.html)
+  to porous materials See Figure @fig:porous_plasticity for some
+  examples of ductile failure simulations with `Cast3M`.
+- The ability to store `MFront` behaviours in a [`madnex`
+  file](https://github.com/thelfer/madnex). `madnex` is a data model
+  based on `HDF5` file format that was originally designed by EDF as
+  part of their in-house projects for capitalising their experimental
+  data and which is now being shared among the main actors of the french
+  nuclear industry with the aim of becoming the de facto standard to
+  exchange experimental data, `MFront` implementations and unit tests of
+  those implementations. Documentation is available here:
+  <http://tfel.sourceforge.net/madnex.html>.
+- The `MFront`' `generic` interface now exports functions to rotate
+  gradients in the material frame before the behaviour integration and
+  rotate the thermodynamics forces and the tangent operator blocks in
+  the global frame after the behaviour integration. Such functions are
+  particularly useful for generalised behaviours.
+
+A special effort has been set on the documentation with many new
+tutorials
+[@helfer_assisted_2020;@bleyer_monolithic_2020;@bleyer_multiphase_2020;@bleyer_small-strain_2020;@bleyer_transient_2020;@bleyer_stationnary_2020;@bleyer_stationnary_2020b;@bleyer_phase-field_2020;@;@helfer_using_2020].
+
+In order to increase the community of developers, a first tutorial
+showing how a new stress criteria can be added to the
+[`StandardElastoViscoPlasticity`
+brick](http://tfel.sourceforge.net/StandardElastoViscoPlasticityBrick.html)
+has been published [@helfer_extending_2020]. Other similar tutorials are
+being considered.
+
+## Simultaneous releases This version has been released along with:
+
+- [Version 3.0.6](http://tfel.sourceforge.net/release-notes-3.0.6.md)
+- [Version 3.1.6](http://tfel.sourceforge.net/release-notes-3.1.6.md)
+- [Version 3.2.3](http://tfel.sourceforge.net/release-notes-3.2.3.md)
+- [Version 3.3.1](http://tfel.sourceforge.net/release-notes-3.3.1.md)
+
+Those releases are mainly related to bug-fixes. Version 3.4 inherits
+from all the fixes detailed in the associated release notes.
+
+## Known incompatibilities
+
+### `getPartialJacobianInvert`
 
 In previous versions, `getPartialJacobianInvert` was implemented as a
 method.
@@ -45,7 +129,7 @@ this->getPartialJacobianInvert(Je);
 To the best of our knowledge, no implementation is affected by this
 incompatibility.
 
-## Declaration of the offsets of the integration variables in implicit schemes
+### Declaration of the offsets of the integration variables in implicit schemes
 
 The offsets of the integration variables in implicit schemes are now
 automatically declared in the `@Integrator` code block. The names of the
@@ -120,7 +204,7 @@ derivative_type<StrainStensor, time> de_dt;
 The function `scalarNewtonRaphson`, declared in the
 `TFEL/Math/ScalarNewtonRaphson.hxx` is a generic implementation of the
 Newton-Raphson algorithm for scalar non linear equations. The Newton
-algorithm is coupled with bisection whenever root-bracketting is
+algorithm is coupled with bisection whenever root-bracketing is
 possible, which considerably increase its robustness.
 
 This implementation handles properly `IEEE754` exceptional cases
@@ -180,7 +264,7 @@ associated von Mises stress is null).
 
 ## Generic behaviours
 
-### Add the possibility of definining the tangent operator blocks: the `@TangentOperatorBlock` and `@TangentOperatorBlocks` keywords
+### Add the possibility of defining the tangent operator blocks: the `@TangentOperatorBlock` and `@TangentOperatorBlocks` keywords
 
 In version `3.3.x`, some tangent operator blocks are automatically
 declared, namely, the derivatives of all the fluxes with respect to all
@@ -192,7 +276,7 @@ The `@TangentOperatorBlock` and `@TangentOperatorBlocks` allow a more fine
 grained control of the tangent operator blocks available and disable the
 use of the default tangent operation blocks. Hence, tangent operator
 blocks that are structurally zero (for example due to symmetry
-conditions) don't have to be compute any more.
+conditions) don't have to be computed any more.
 
 ## Improvements to the implicit domain specific languages
 
@@ -205,9 +289,44 @@ This variable allows a direct modification of the residual associated
 with this variable (though the variable `fzeros`) and jacobian matrix
 (though the variable `jacobian`).
 
-## Improvement of the `StandardElastoViscoplasticity` brick
+## Improvement of the `StandardElastoViscoPlasticity` brick
 
 ### Porous (visco-)plasticity
+
+The `StandardElastoViscoPlasticity` brick has been extended to support
+porous (visco-)plastic flows which are typically used to model ductile
+failure of metals. This allows building complex porous plastic models in
+a clear and concise way, as illustrated below:
+
+~~~~{.cxx}
+@Brick StandardElastoViscoPlasticity{
+  stress_potential : "Hooke" {young_modulus : 70e3, poisson_ratio : 0.3},  //
+  inelastic_flow : "Plastic" {
+    criterion : "GursonTvergaardNeedleman1982" {
+      f_c : 0.04, f_r : 0.056, q_1 : 2., q_2 : 1., q_3 : 4.},
+    isotropic_hardening : "Linear" {R0 : 274},
+    isotropic_hardening : "Voce" {R0 : 0, Rinf : 85, b : 17},
+    isotropic_hardening : "Voce" {R0 : 0, Rinf : 17, b : 262}
+  }
+  nucleation_model : "Chu_Needleman" {
+    An : 0.01, pn : 0.1, sn : 0.1 },
+};
+~~~~
+
+The following stress criteria are available:
+
+- `GursonTvergaardNeedleman1982`
+- `RousselierTanguyBesson2002`
+
+The following nucleation models are available:
+
+- `ChuNeedleman1980 (strain)`
+- `ChuNeedleman1980 (stress)`
+- `PowerLaw (strain)`
+- `PowerLaw (stress)`
+
+This extension will be fully described in a dedicated report which is
+currently under review.
 
 ### The `HarmonicSumOfNortonHoffViscoplasticFlows` inelastic flow {#sec:HarmonicSumOfNortonHoffViscoplasticFlows}
 
@@ -585,8 +704,10 @@ For example, the following error message:
 $ mfront --obuild  --interface=generic ThermalNorton.mfront
 Treating target : all
 In file included from ThermalNorton-generic.cxx:33:0:
-ThermalNorton.mfront: In member function ‘bool tfel::material::ThermalNorton<hypothesis, Type, false>::computeConsistentTangentOperator(tfel::material::ThermalNorton<hypothesis, Type, false>::SMType)’:
-ThermalNorton.mfront:147:75: error: ‘tum_2202__tum_0394__tum_03B5__eltum_2215__tum_2202__tum_0394__T’ was not declared in this scope
+ThermalNorton.mfront: In member function ‘bool tfel::material::ThermalNorton<hypothesis, Type, false>::
+computeConsistentTangentOperator(tfel::material::ThermalNorton<hypothesis, Type, false>::SMType)’:
+ThermalNorton.mfront:147:75: error: ‘tum_2202__tum_0394__tum_03B5__eltum_2215__tum_2202__tum_0394__T’
+was not declared in this scope
 ~~~~
 
 can be significantly improved by `tfel-unicode-filt`:
@@ -595,7 +716,8 @@ can be significantly improved by `tfel-unicode-filt`:
 $ mfront --obuild  --interface=generic ThermalNorton.mfront 2>&1 | tfel-unicode-filt
 Treating target : all
 In file included from ThermalNorton-generic.cxx:33:0:
-ThermalNorton.mfront: In member function ‘bool tfel::material::ThermalNorton<hypothesis, Type, false>::computeConsistentTangentOperator(tfel::material::ThermalNorton<hypothesis, Type, false>::SMType)’:
+ThermalNorton.mfront: In member function ‘bool tfel::material::ThermalNorton<hypothesis, Type, false>::
+computeConsistentTangentOperator(tfel::material::ThermalNorton<hypothesis, Type, false>::SMType)’:
 ThermalNorton.mfront:147:75: error: ‘∂Δεel∕∂ΔT’ was not declared in this scope
 ~~~~
 
@@ -697,7 +819,7 @@ For more details, see: <https://sourceforge.net/p/tfel/tickets/200/>
 
 ## Ticket #195 : Export variables bounds for material properties
 
-Variables bounds (both @Bounds and @PhysicalBounds) are now available for material properties. 
+Variables bounds (both `@Bounds` and `@PhysicalBounds`) are now available for material properties. 
 They are available directly in the .so file via getExternalLibraryManager().
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/195/>
