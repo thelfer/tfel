@@ -2492,7 +2492,7 @@ namespace mfront {
         auto nc = mfront::getTypeSize(derivatives.first);
         const auto rhs_type = [&nivs, &nc] {
           std::ostringstream rhs_os;
-          rhs_os << "tfel::math::tmatrix<" << nivs << ", " << nc << ">";
+          rhs_os << "tfel::math::tmatrix<" << nivs << ", " << nc << ", real>";
           return rhs_os.str();
         }();
         const auto m = "dfzeros_dd" + derivatives.first.name;
@@ -2559,7 +2559,7 @@ namespace mfront {
          auto nc = mfront::getTypeSize(givd);
          const auto rhs_type = [&nivs, &nc] {
            std::ostringstream rhs_os;
-           rhs_os << "tfel::math::tmatrix<" << nivs << ", " << nc << ">";
+           rhs_os << "tfel::math::tmatrix<" << nivs << ", " << nc << ", real>";
            return rhs_os.str();
          }();
          const auto m = "dfzeros_dd" + givd.name;

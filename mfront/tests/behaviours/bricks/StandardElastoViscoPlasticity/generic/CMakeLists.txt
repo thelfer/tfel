@@ -140,13 +140,8 @@ function(generictest_standardelastovicoplasticitybrick test_arg behaviour_name)
           	set_property(TEST brick${test_arg}_${behaviour_name}_${mh}_${rm}_generic_mtest
           	  PROPERTY DEPENDS "MFrontStandardElastoViscoPlasticityBrickBehaviours mtest"
           	  PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:TFELMTest>\;$<TARGET_FILE_DIR:TFELMFront>\;$<TARGET_FILE_DIR:MFrontLogStream>\;$<TARGET_FILE_DIR:TFELMaterial>\;$<TARGET_FILE_DIR:TFELNUMODIS>\;$<TARGET_FILE_DIR:TFELMathParser>\;$<TARGET_FILE_DIR:TFELGlossary>\;$<TARGET_FILE_DIR:TFELSystem>\;$<TARGET_FILE_DIR:TFELUtilities>\;$<TARGET_FILE_DIR:TFELException>\;$<TARGET_FILE_DIR:TFELTests>\;$<TARGET_FILE_DIR:TFELConfig>\;$<TARGET_FILE_DIR:TFELPhysicalConstants>\;$<TARGET_FILE_DIR:TFELUnicodeSupport>\;$ENV{PATH}")
-          	set_property(TEST brick${test_arg}_${behaviour_name}_consistenttangentoperator_${mh}_${rm}_generic_mtest
-          	  PROPERTY DEPENDS "MFrontStandardElastoViscoPlasticityBrickBehaviours mtest"
-          	  PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:TFELMTest>\;$<TARGET_FILE_DIR:TFELMFront>\;$<TARGET_FILE_DIR:MFrontLogStream>\;$<TARGET_FILE_DIR:TFELMaterial>\;$<TARGET_FILE_DIR:TFELNUMODIS>\;$<TARGET_FILE_DIR:TFELMathParser>\;$<TARGET_FILE_DIR:TFELGlossary>\;$<TARGET_FILE_DIR:TFELSystem>\;$<TARGET_FILE_DIR:TFELUtilities>\;$<TARGET_FILE_DIR:TFELException>\;$<TARGET_FILE_DIR:TFELTests>\;$<TARGET_FILE_DIR:TFELConfig>\;$<TARGET_FILE_DIR:TFELPhysicalConstants>\;$<TARGET_FILE_DIR:TFELUnicodeSupport>\;$ENV{PATH}")
       elseif((CMAKE_HOST_WIN32) AND (NOT MSYS))
         set_property(TEST brick${test_arg}_${behaviour_name}_${mh}_${rm}_generic_mtest
-          	  PROPERTY DEPENDS "MFrontStandardElastoViscoPlasticityBrickBehaviours mtest")
-        set_property(TEST brick${test_arg}_${behaviour_name}_consistenttangentoperator_${mh}_${rm}_generic_mtest
           	  PROPERTY DEPENDS "MFrontStandardElastoViscoPlasticityBrickBehaviours mtest")
       endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
     endforeach(rm ${IEEE754_ROUNDING_MODES})

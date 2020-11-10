@@ -73,18 +73,18 @@ Tₐ.setEntryName("ActivationTemperature");
 
 @InitLocalVariables {
   auto young_modulus = [](const temperature Tᵛ) {
-    constexpr const auto E₀ = 2.1421e+4 ⋅ 1e7;
-    constexpr const auto E₁ = -3.8654 ⋅ 1e7;
-    constexpr const auto E₂ = -3.1636e-3 ⋅ 1e7;
+    const auto E₀ = 2.1421e+4 ⋅ 1e7;
+    const auto E₁ = -3.8654 ⋅ 1e7;
+    const auto E₂ = -3.1636e-3 ⋅ 1e7;
     const auto Tᶜ = Tᵛ - 273.15;
     const auto Eᵛ = (E₂ ⋅ Tᶜ + E₁) ⋅ Tᶜ + E₀;
     const auto ∂Eᵛ∕∂T = 2 ⋅ E₂ ⋅ Tᶜ + E₁;
     return make_tuple(Eᵛ,∂Eᵛ∕∂T);
   };
   auto mean_thermal_expansion_coefficient = [](const temperature Tᵛ) {
-    constexpr const real α₀ = 9.038 ⋅ 1e-6;
-    constexpr const real α₁ = 3.014e-3 ⋅ 1e-6;
-    constexpr const real α₂ = 4.959e-7 ⋅ 1e-6;
+    const real α₀ = 9.038 ⋅ 1e-6;
+    const real α₁ = 3.014e-3 ⋅ 1e-6;
+    const real α₂ = 4.959e-7 ⋅ 1e-6;
     const real Tᶜ = Tᵛ - 273.15;
     const auto αᵛ = (α₂ ⋅ Tᶜ + α₁) ⋅ Tᶜ + α₀;
     const auto ∂αᵛ∕∂T = 2 ⋅ α₂ ⋅ Tᶜ + α₁;
@@ -116,7 +116,7 @@ Tₐ.setEntryName("ActivationTemperature");
 }
 
 @Integrator {
-  constexpr const auto eeps = 1.e-14;
+  const auto eeps = strain(1.e-14);
   const auto Mᵉ = Stensor4::M();
   const auto seps = 2 ⋅ μ ⋅ eeps;
   σₑ = sigmaeq(σ);

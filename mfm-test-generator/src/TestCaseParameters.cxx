@@ -47,11 +47,11 @@ namespace mfmtg{
                                         const char* const n) {
     const auto p = parameters.find(n);
     if (p == parameters.end()) {
-      tfel::raise("getParameter: no parameter named '" + std::string(n) + "'");
+      tfel::raise("getParameterFromCString: no parameter named '" + std::string(n) + "'");
     }
     return p->second;
   }  // end of getParameter
-
+  
   const TestCaseParameters& getTestCaseParameters(
       const TestCaseParameters& parameters, const std::string& n) {
     const auto& p = getParameter(parameters, n);
@@ -78,41 +78,46 @@ namespace mfmtg{
 
   Evolution getEvolution(const TestCaseParameters& p, const char* const n) {
     const auto& e = getParameter(p, n);
-    if (e.is<int>()) {
-      return static_cast<double>(e.get<int>());
-    } else if (e.is<double>()) {
-      return e.get<double>();
-    } else if (e.is<std::map<double,double>>()) {
-      return e.get<std::map<double,double>>();
-    } else if (!e.is<TestCaseParameters>()) {
-      tfel::raise("getEvolution: invalid type for evolution '" +
-                  std::string(n) + "'");
-    } else if (e.is<std::map<double, double>>()) {
-      return e.get<std::map<double, double>>();
-    }
-    const auto& evd = e.get<TestCaseParameters>();
-    if (contains(evd, "file")) {
-      auto get_column =
-          [&evd](const char* const nvalues) -> EvolutionFromFile::Values {
-        const auto pvalues = getParameter(evd, nvalues);
-        if (pvalues.is<int>()) {
-          const auto c = pvalues.get<int>();
-          if (c <= 0) {
-            tfel::raise(
-                "mfmtg::getEvolution: "
-                "invalid column value");
-          }
-          return static_cast<unsigned int>(c);
-        }
-        return pvalues.get<std::string>();
-      };
-      auto ev = EvolutionFromFile{};
-      ev.file = get(evd, "file");
-      ev.times = get_column("times");
-      ev.values = get_column("values");
-      return ev;
-    }
-    // the evolution is defined explicitly
+    Evolution r;
+     if (e.is<int>()) {
+       r.set(static_cast<double>(e.get<int>()));
+       return r;
+     } else if (e.is<double>()) {
+       r.set(e.get<double>());
+       return r;
+     } else if (e.is<std::map<double,double>>()) {
+       r.set(e.get<std::map<double,double>>());
+       return r;
+     } else if (!e.is<TestCaseParameters>()) {
+       tfel::raise("getEvolution: invalid type for evolution '" +
+                   std::string(n) + "'");
+     } else if (e.is<std::map<double, double>>()) {
+       r.set(e.get<std::map<double, double>>());
+       return r;
+     }
+     const auto& evd = e.get<TestCaseParameters>();
+     if (contains(evd, "file")) {
+       auto get_column =
+	 [&evd](const char* const nvalues) -> EvolutionFromFile::Values {
+         const auto pvalues = getParameter(evd, nvalues);
+         if (pvalues.is<int>()) {
+           const auto c = pvalues.get<int>();
+           if (c <= 0) {
+             tfel::raise(
+			 "mfmtg::getEvolution: "
+			 "invalid column value");
+           }
+           return static_cast<unsigned int>(c);
+         }
+         return pvalues.get<std::string>();
+       };
+       auto ev = EvolutionFromFile{};
+       ev.file = get(evd, "file");
+       ev.times = get_column("times");
+       ev.values = get_column("values");
+       return ev;
+     }
+     // the evolution is defined explicitly
     auto ev = std::map<double, double>{};
     check(e, {"times", "values"});
     const auto times = tfel::utilities::convert<std::vector<double>>(
@@ -125,7 +130,8 @@ namespace mfmtg{
     for (decltype(times.size()) i = 0; i != times.size(); ++i) {
       ev.insert({times[i], values[i]});
     }
-    return ev;
+    r.set(ev);
+    return r;
   }  // end of getEvolution
 
   std::map<std::string, Evolution> getEvolutions(const TestCaseParameters& p,
