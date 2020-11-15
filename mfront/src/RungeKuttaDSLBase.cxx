@@ -542,13 +542,23 @@ namespace mfront{
     this->readSpecifiedToken("RungeKuttaDSLBase::treatAlgorithm",";");
   }
 
-  void RungeKuttaDSLBase::completeVariableDeclaration()
-  {
+  void RungeKuttaDSLBase::completeVariableDeclaration() {
     const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     if(getVerboseMode()>=VERBOSE_DEBUG){
       getLogStream() << "RungeKuttaDSLBase::completeVariableDeclaration: begin\n";
     }
     BehaviourDSLCommon::completeVariableDeclaration();
+    // driving variables
+    for(const auto& v: this->mb.getMainVariables()){
+      const auto& dv = v.first;
+      this->mb.addLocalVariable(
+          uh, VariableDescription(dv.type, dv.name + "_", 1u, 0u));
+      this->mb.addLocalVariable(
+          uh,
+          VariableDescription(SupportedTypes::getTimeDerivativeType(dv.type),
+                              "d" + dv.name + "_", 1u, 0u));
+    }
+    // algorithm
     if(!this->mb.hasAttribute(BehaviourData::algorithm)){
       this->setDefaultAlgorithm();
     }

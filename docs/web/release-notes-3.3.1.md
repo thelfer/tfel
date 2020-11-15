@@ -15,6 +15,10 @@ now allowed. This subset is described here:
 
 # Tickets fixed
 
+# Ticket #255: Rate of gradients are not available in `@Derivative` for generic behaviours
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/255/>
+
 ## Ticket #248: Symbols of time derivative in explicit DSLs are wrong
 
 The symbols associated with the time derivatives of state variables in
