@@ -25,15 +25,6 @@ namespace mfront{
     eel.description = "elastic strain";
     this->mb.addStateVariable(h,eel);
     this->mb.setGlossaryName(h,"eel","ElasticStrain");
-    // driving variables
-    for(const auto& v: this->mb.getMainVariables()){
-      const auto& dv = v.first;
-      this->mb.addLocalVariable(
-          h, VariableDescription(dv.type, dv.name + "_", 1u, 0u));
-      this->mb.addLocalVariable(
-          h, VariableDescription(SupportedTypes::getTimeDerivativeType(dv.type),
-                                 "d" + dv.name + "_", 1u, 0u));
-    }
     this->registerNewCallBack(
         "@ComputeStress", &RungeKuttaDSL::treatComputeThermodynamicForces);
     this->registerNewCallBack(

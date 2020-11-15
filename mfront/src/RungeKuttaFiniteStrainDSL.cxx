@@ -16,16 +16,8 @@
 namespace mfront{
 
   RungeKuttaFiniteStrainDSL::RungeKuttaFiniteStrainDSL() {
-    const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     this->mb.setDSLName("RungeKuttaFiniteStrain");
     this->mb.declareAsAFiniteStrainStandardBehaviour(true);
-    // driving variables
-    for(const auto& v: this->mb.getMainVariables()){
-      const auto& dv = v.first;
-      this->mb.addLocalVariable(h,VariableDescription(dv.type,dv.name+"_",1u,0u));
-      this->mb.addLocalVariable(h,VariableDescription(SupportedTypes::getTimeDerivativeType(dv.type),
-						      "d"+dv.name+"_",1u,0u));
-    }
     this->registerNewCallBack(
         "@ComputeStress", &RungeKuttaFiniteStrainDSL::treatComputeThermodynamicForces);
     this->registerNewCallBack(
