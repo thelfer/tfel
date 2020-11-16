@@ -141,6 +141,14 @@ this new feature.
 To the best of our knowledge, no implementation is affected by this
 incompatibility.
 
+## Noticeable fixed issues that may affect the results obtained with previous versions
+
+Ticket #256 reported that the scalar product of two unsymmetric tensors
+was not properly computed.
+
+This may affect single crystal finite strain computations to a limited
+extent, as the Mandel stress tensor is almost symmetric.
+
 # Documentation
 
 [This
