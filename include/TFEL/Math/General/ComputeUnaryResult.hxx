@@ -35,7 +35,7 @@ namespace tfel{
     template<typename A,typename TagOp,typename Op>
     struct ComputeUnaryResult_<ScalarTag,TagOp,A,Op>
     {
-      typedef typename std::decay<A>::type A_;
+      typedef std::decay_t<A> A_;
       typedef typename UnaryResultType<A_,Op>::type Result;
       typedef typename UnaryResultType<A_,Op>::type Handle;
     };
@@ -44,7 +44,7 @@ namespace tfel{
     class ComputeUnaryResult
     {
       //! a simple alias
-      typedef typename std::decay<A>::type A_;
+      typedef std::decay_t<A> A_;
       typedef typename ComputeObjectTag<A_>::type TagA;
       typedef typename ComputeObjectTag<Op>::type TagOp;
     public:

@@ -99,7 +99,7 @@ namespace tfel
 
     private:
 
-      using stype  = typename std::decay<T>::type;
+      using stype  = std::decay_t<T>;
       using traits = StensorTraits<stype>;
       
       /*!
@@ -113,7 +113,7 @@ namespace tfel
     template<typename T>
     struct TensorViewFromStensor
     {
-      using stype  = typename std::decay<T>::type;
+      using stype  = std::decay_t<T>;
       using traits = StensorTraits<stype>;
       static  const unsigned short N = traits::dime;
       typedef Expr<tensor<N,typename traits::NumType>,TensorViewFromStensorExpr<T>> type;

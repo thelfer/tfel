@@ -44,10 +44,7 @@ if(enable-libcxx)
   tfel_enable_cxx_compiler_flag(COMPILER_CXXFLAGS "stdlib=libc++")
 endif(enable-libcxx)
 
-if(${CMAKE_CXX_COMPILER_VERSION} VERSION_LESS 3.4)
-  message(FATAL_ERROR "TFEL C++11 support is only available for clang version >= 3.4")
-endif(${CMAKE_CXX_COMPILER_VERSION} VERSION_LESS 3.4)
-set(COMPILER_CXXFLAGS "${COMPILER_CXXFLAGS} -std=c++11")
+set(COMPILER_CXXFLAGS "${COMPILER_CXXFLAGS} -std=c++17")
 
 option(enable-sanitize-options "enable various clang sanitize options (undefined, address,...)" OFF)
 

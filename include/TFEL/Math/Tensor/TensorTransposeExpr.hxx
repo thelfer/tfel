@@ -36,8 +36,8 @@ namespace tfel{
       : public ExprBase
     {
       typedef EmptyRunTimeProperties RunTimeProperties; 
-      typedef typename TensorTraits<typename std::decay<A>::type>::IndexType IndexType;
-      typedef typename TensorTraits<typename std::decay<A>::type>::NumType   NumType;
+      typedef typename TensorTraits<std::decay_t<A>>::IndexType IndexType;
+      typedef typename TensorTraits<std::decay_t<A>>::NumType   NumType;
       
       TFEL_MATH_INLINE RunTimeProperties
       getRunTimeProperties() const
@@ -62,7 +62,7 @@ namespace tfel{
       ArgumentStorage<A> a;
 
     private:
-      TFEL_STATIC_ASSERT((tfel::meta::Implements<typename std::decay<A>::type,TensorConcept>::cond));
+      TFEL_STATIC_ASSERT((tfel::meta::Implements<std::decay_t<A>,TensorConcept>::cond));
 
     };
 
@@ -83,7 +83,7 @@ namespace tfel{
 
     private:
 
-      TFEL_STATIC_ASSERT((tfel::math::TensorTraits<typename std::decay<A>::type>::dime==1u));
+      TFEL_STATIC_ASSERT((tfel::math::TensorTraits<std::decay_t<A>>::dime==1u));
     };
 
     template<typename A>
@@ -123,7 +123,7 @@ namespace tfel{
 
     private:
 
-      TFEL_STATIC_ASSERT((tfel::math::TensorTraits<typename std::decay<A>::type>::dime==2u));
+      TFEL_STATIC_ASSERT((tfel::math::TensorTraits<std::decay_t<A>>::dime==2u));
     };
 
     template<typename A>
@@ -175,7 +175,7 @@ namespace tfel{
 
     private:
 
-      TFEL_STATIC_ASSERT((tfel::math::TensorTraits<typename std::decay<A>::type>::dime==3u));
+      TFEL_STATIC_ASSERT((tfel::math::TensorTraits<std::decay_t<A>>::dime==3u));
     };
 
   } // end of namespace math

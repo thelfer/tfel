@@ -16,7 +16,8 @@ tfel_LTLIBRARIES = _tfel.la     \
 
 if TFEL_NUMPY_SUPPORT
 tfel_LTLIBRARIES += libTFELNumpySupport.la
-libTFELNumpySupport_la_SOURCES  = InitNumpy.cxx
+libTFELNumpySupport_la_SOURCES  = InitNumpy.cxx \
+                                  ndarray.cxx
 libTFELNumpySupport_la_LIBADD   = @BOOST_LIBS@ @BOOST_PYTHON_LIBS@ @BOOST_NUMPY_LIBS@ \
                                   -L@PYTHONPATH@/lib -lpython@PYTHON_VERSION@
 libTFELNumpySupport_la_CPPFLAGS = $(AM_CPPFLAGS)
@@ -56,7 +57,7 @@ math_la_CPPFLAGS  = $(AM_CPPFLAGS)
 endif
 
 math_la_LIBADD  = -L@top_builddir@/src/Math                   \
-          		  -lTFELMath -lTFELMathParser                 \
+		  -lTFELMath -lTFELMathParser                 \
                   @BOOST_LIBS@ @BOOST_PYTHON_LIBS@            \
                   -L@PYTHONPATH@/lib -lpython@PYTHON_VERSION@
 

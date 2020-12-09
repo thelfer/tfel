@@ -69,9 +69,9 @@ namespace tfel{
     struct ResultType
     {
       //! a simple alias
-      using A_ = typename std::decay<A>::type;
+      using A_ = std::decay_t<A>;
       //! a simple alias
-      using B_ = typename std::decay<B>::type;
+      using B_ = std::decay_t<B>;
       //! Tag of the object A
       using TagA = typename ComputeObjectTag<A_>::type;
       //! Tag of the object B

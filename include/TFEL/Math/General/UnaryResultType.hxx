@@ -57,7 +57,7 @@ namespace tfel{
     class UnaryResultType
     {
       //! bare argument type
-      using A_ = typename std::decay<A>::type;
+      using A_ = std::decay_t<A>;
       //! Tag of the object A
       typedef typename ComputeObjectTag<A_>::type TagA;
       typedef typename ComputeObjectTag<Op>::type TagOp;

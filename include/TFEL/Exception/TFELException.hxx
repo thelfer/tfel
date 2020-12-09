@@ -17,31 +17,26 @@
 #include <stdexcept>
 #include "TFEL/Config/TFELConfig.hxx"
 
-namespace tfel {
+namespace tfel::exception {
 
-  namespace exception {
+  /*!
+   * \struct TFELException
+   * \brief  generic Exception, base class for all the other exception used in
+   * the `TFEL` project.
+   * \author Thomas Helfer
+   * \date   02 Aug 2006
+   */
+  struct TFELEXCEPTION_VISIBILITY_EXPORT TFELException : public std::exception {
+    //! default constructor
+    TFELException() = default;
+    //! copy constructor
+    TFELException(const TFELException&) = default;
+    //! copy constructor
+    TFELException(TFELException&&) = default;
+    //! destructor
+    ~TFELException() noexcept override;
+  };  // end of struct TFELException
 
-    /*!
-     * \struct TFELException
-     * \brief  generic Exception, base class for all the other exception used in
-     * the `TFEL` project.
-     * \author Thomas Helfer
-     * \date   02 Aug 2006
-     */
-    struct TFELEXCEPTION_VISIBILITY_EXPORT TFELException
-        : public std::exception {
-      //! default constructor
-      TFELException() = default;
-      //! copy constructor
-      TFELException(const TFELException&) = default;
-      //! copy constructor
-      TFELException(TFELException&&) = default;
-      //! destructor
-      ~TFELException() noexcept override;
-    };  // end of struct TFELException
-
-  }  // end of namespace exception
-
-}  // end of namespace tfel
+}  // end of namespace tfel::exception
 
 #endif /* LIB_TFEL_EXCEPTIONS_HXX */

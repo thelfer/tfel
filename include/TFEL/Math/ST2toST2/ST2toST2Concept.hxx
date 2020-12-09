@@ -162,8 +162,8 @@ namespace tfel{
     TFEL_MATH_INLINE auto
     transpose(T&& t)
     -> typename std::enable_if<
-       tfel::meta::Implements<typename std::decay<T>::type,ST2toST2Concept>::cond,
-       Expr<typename ST2toST2Type<typename std::decay<T>::type>::type,
+       tfel::meta::Implements<std::decay_t<T>,ST2toST2Concept>::cond,
+       Expr<typename ST2toST2Type<std::decay_t<T>>::type,
             ST2toST2TransposeExpr<decltype(t)>>>::type;
     /*!
      * \return the determinant of a `st2tost2`

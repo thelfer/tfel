@@ -63,8 +63,8 @@ namespace tfel{
     class ComputeBinaryResult_<VectorTag,VectorTag,A,B,Op>
     {
       struct DummyHandle{};
-      typedef typename VectorType<typename std::decay<A>::type>::type VecA;
-      typedef typename VectorType<typename std::decay<B>::type>::type VecB;
+      typedef typename VectorType<std::decay_t<A>>::type VecA;
+      typedef typename VectorType<std::decay_t<B>>::type VecB;
     public:
       typedef typename ResultType<VecA,VecB,Op>::type Result;
       typedef typename std::conditional<tfel::typetraits::IsInvalid<Result>::cond,
@@ -76,8 +76,8 @@ namespace tfel{
     class ComputeBinaryResult_<VectorTag,VectorTag,A,B,OpDotProduct>
     {
       struct DummyHandle{};
-      typedef typename VectorType<typename std::decay<A>::type>::type VecA;
-      typedef typename VectorType<typename std::decay<B>::type>::type VecB;
+      typedef typename VectorType<std::decay_t<A>>::type VecA;
+      typedef typename VectorType<std::decay_t<B>>::type VecB;
     public:
       typedef typename ResultType<VecA,VecB,OpDotProduct>::type Result;
       typedef typename VectorDotProductHandle<VecA,VecB>::type Handle;
@@ -90,8 +90,8 @@ namespace tfel{
     class ComputeBinaryResult_<VectorTag,VectorTag,A,B,OpDiadicProduct>
     {
       struct DummyHandle{};
-      typedef typename VectorType<typename std::decay<A>::type>::type VecA;
-      typedef typename VectorType<typename std::decay<A>::type>::type VecB;
+      typedef typename VectorType<std::decay_t<A>>::type VecA;
+      typedef typename VectorType<std::decay_t<A>>::type VecB;
     public:
       typedef typename ResultType<VecA,VecB,OpDiadicProduct>::type Result;
       typedef typename std::conditional<tfel::typetraits::IsInvalid<Result>::cond,
@@ -106,9 +106,9 @@ namespace tfel{
     struct ComputeBinaryResult_<ScalarTag,VectorTag,A,B,Op>
     {
       struct DummyHandle{};
-      typedef typename VectorType<typename std::decay<B>::type>::type      VectB;
+      typedef typename VectorType<std::decay_t<B>>::type      VectB;
     public:
-      typedef typename ResultType<typename std::decay<A>::type,VectB,Op>::type Result;
+      typedef typename ResultType<std::decay_t<A>,VectB,Op>::type Result;
       typedef typename std::conditional<tfel::typetraits::IsInvalid<Result>::cond,
 					DummyHandle,
 					Expr<Result,ScalarObjectOperation<A,B,Op>>>::type Handle;
@@ -121,9 +121,9 @@ namespace tfel{
     class ComputeBinaryResult_<VectorTag,ScalarTag,A,B,Op>
     {
       struct DummyHandle{};
-      typedef typename VectorType<typename std::decay<A>::type>::type      VectA;
+      typedef typename VectorType<std::decay_t<A>>::type      VectA;
     public:
-      typedef typename ResultType<VectA,typename std::decay<B>::type,Op>::type Result;
+      typedef typename ResultType<VectA,std::decay_t<B>,Op>::type Result;
       typedef typename std::conditional<tfel::typetraits::IsInvalid<Result>::cond,
 					DummyHandle,
 					Expr<Result,ObjectScalarOperation<A,B,Op>>>::type Handle;
@@ -136,7 +136,7 @@ namespace tfel{
     class ComputeUnaryResult_<VectorTag,UnaryOperatorTag,A,OpNeg>
     {
       struct DummyHandle{};
-      typedef typename VectorType<typename std::decay<A>::type>::type VectA;
+      typedef typename VectorType<std::decay_t<A>>::type VectA;
     public:
       typedef typename UnaryResultType<VectA,OpNeg>::type Result;
       typedef typename std::conditional<tfel::typetraits::IsInvalid<Result>::cond,

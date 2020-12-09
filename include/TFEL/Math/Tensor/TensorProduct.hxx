@@ -64,8 +64,8 @@ namespace tfel{
       ArgumentStorage<A> a;
       ArgumentStorage<B> b;
 
-      TFEL_STATIC_ASSERT((tfel::meta::Implements<typename std::decay<A>::type,TensorConcept>::cond));
-      TFEL_STATIC_ASSERT((tfel::meta::Implements<typename std::decay<B>::type,TensorConcept>::cond));
+      TFEL_STATIC_ASSERT((tfel::meta::Implements<std::decay_t<A>,TensorConcept>::cond));
+      TFEL_STATIC_ASSERT((tfel::meta::Implements<std::decay_t<B>,TensorConcept>::cond));
     };
 
     template<typename A, typename B>
@@ -85,8 +85,8 @@ namespace tfel{
 
     private:
 
-      TFEL_STATIC_ASSERT((tfel::math::TensorTraits<typename std::decay<A>::type>::dime==1u));
-      TFEL_STATIC_ASSERT((tfel::math::TensorTraits<typename std::decay<B>::type>::dime==1u));
+      TFEL_STATIC_ASSERT((tfel::math::TensorTraits<std::decay_t<A>>::dime==1u));
+      TFEL_STATIC_ASSERT((tfel::math::TensorTraits<std::decay_t<B>>::dime==1u));
 
     };
 
@@ -120,8 +120,8 @@ namespace tfel{
 
     private:
 
-      TFEL_STATIC_ASSERT((tfel::math::TensorTraits<typename std::decay<A>::type>::dime==2u));
-      TFEL_STATIC_ASSERT((tfel::math::TensorTraits<typename std::decay<B>::type>::dime==2u));
+      TFEL_STATIC_ASSERT((tfel::math::TensorTraits<std::decay_t<A>>::dime==2u));
+      TFEL_STATIC_ASSERT((tfel::math::TensorTraits<std::decay_t<B>>::dime==2u));
     };
 
     template<typename A, typename B>
@@ -163,8 +163,8 @@ namespace tfel{
 
     private:
 
-      using ttypeA = typename std::decay<A>::type;
-      using ttypeB = typename std::decay<A>::type;
+      using ttypeA = std::decay_t<A>;
+      using ttypeB = std::decay_t<A>;
       TFEL_STATIC_ASSERT((tfel::math::TensorTraits<ttypeA>::dime==3u));
       TFEL_STATIC_ASSERT((tfel::math::TensorTraits<ttypeB>::dime==3u));
     };

@@ -34,13 +34,13 @@ namespace tfel{
     class TFEL_VISIBILITY_LOCAL StensorProductExprBase
       : public ExprBase
     {
-      TFEL_STATIC_ASSERT((tfel::meta::Implements<typename std::decay<A>::type,
+      TFEL_STATIC_ASSERT((tfel::meta::Implements<std::decay_t<A>,
 						 StensorConcept>::cond));
-      TFEL_STATIC_ASSERT((tfel::meta::Implements<typename std::decay<B>::type,
+      TFEL_STATIC_ASSERT((tfel::meta::Implements<std::decay_t<B>,
 						 StensorConcept>::cond));
       
-      typedef typename ComputeBinaryResult<typename std::decay<A>::type,
-					   typename std::decay<B>::type,OpMult>::Result Result;
+      typedef typename ComputeBinaryResult<std::decay_t<A>,
+					   std::decay_t<B>,OpMult>::Result Result;
 
     public:
 
@@ -96,8 +96,8 @@ namespace tfel{
 
     private:
 
-      TFEL_STATIC_ASSERT((tfel::math::StensorTraits<typename std::decay<A>::type>::dime==1u));
-      TFEL_STATIC_ASSERT((tfel::math::StensorTraits<typename std::decay<B>::type>::dime==1u));
+      TFEL_STATIC_ASSERT((tfel::math::StensorTraits<std::decay_t<A>>::dime==1u));
+      TFEL_STATIC_ASSERT((tfel::math::StensorTraits<std::decay_t<B>>::dime==1u));
 
     };
 
@@ -136,8 +136,8 @@ namespace tfel{
 
     private:
 
-      TFEL_STATIC_ASSERT((tfel::math::StensorTraits<typename std::decay<A>::type>::dime==2u));
-      TFEL_STATIC_ASSERT((tfel::math::StensorTraits<typename std::decay<B>::type>::dime==2u));
+      TFEL_STATIC_ASSERT((tfel::math::StensorTraits<std::decay_t<A>>::dime==2u));
+      TFEL_STATIC_ASSERT((tfel::math::StensorTraits<std::decay_t<B>>::dime==2u));
 
     };
 
@@ -184,8 +184,8 @@ namespace tfel{
 
     private:
 
-      TFEL_STATIC_ASSERT((tfel::math::StensorTraits<typename std::decay<A>::type>::dime==3u));
-      TFEL_STATIC_ASSERT((tfel::math::StensorTraits<typename std::decay<B>::type>::dime==3u));
+      TFEL_STATIC_ASSERT((tfel::math::StensorTraits<std::decay_t<A>>::dime==3u));
+      TFEL_STATIC_ASSERT((tfel::math::StensorTraits<std::decay_t<B>>::dime==3u));
 
     };
 

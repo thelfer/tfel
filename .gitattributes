@@ -1970,10 +1970,6 @@ include/TFEL/Math/ScalarNewtonRaphson.hxx -text
 include/TFEL/Math/Stensor/ConstStensorView.hxx -text
 include/TFEL/Math/Stensor/DecompositionInPositiveAndNegativeParts.hxx -text
 include/TFEL/Math/Stensor/DecompositionInPositiveAndNegativeParts.ixx -text
-include/TFEL/Math/Stensor/Internals/BuildStensorFromEigenValuesAndVectors.hxx -text
-include/TFEL/Math/Stensor/Internals/BuildStensorFromMatrix.hxx -text
-include/TFEL/Math/Stensor/Internals/BuildStensorFromVectorDiadicProduct.hxx -text
-include/TFEL/Math/Stensor/Internals/BuildStensorFromVectorsSymmetricDiadicProduct.hxx -text
 include/TFEL/Math/Stensor/Internals/FSESSymmetricEigenSolver.hxx -text
 include/TFEL/Math/Stensor/Internals/FSESSymmetricEigenSolver.ixx -text
 include/TFEL/Math/Stensor/Internals/GteSymmetricEigenSolver.hxx -text
@@ -1986,12 +1982,7 @@ include/TFEL/Math/Stensor/Internals/StensorComputeEigenValuesDerivatives.hxx -te
 include/TFEL/Math/Stensor/Internals/StensorComputeEigenVectors.hxx -text
 include/TFEL/Math/Stensor/Internals/StensorComputeEigenVectorsDerivatives.hxx -text
 include/TFEL/Math/Stensor/Internals/StensorComputeIsotropicFunctionDerivative.hxx -text
-include/TFEL/Math/Stensor/Internals/StensorDeterminant.hxx -text
 include/TFEL/Math/Stensor/Internals/StensorEigenSolver.hxx -text
-include/TFEL/Math/Stensor/Internals/StensorExport.hxx -text
-include/TFEL/Math/Stensor/Internals/StensorExport.ixx -text
-include/TFEL/Math/Stensor/Internals/StensorImport.hxx -text
-include/TFEL/Math/Stensor/Internals/StensorInvert.hxx -text
 include/TFEL/Math/Stensor/StensorConcept.hxx -text
 include/TFEL/Math/Stensor/StensorConcept.ixx -text
 include/TFEL/Math/Stensor/StensorConceptIO.hxx -text
@@ -2211,7 +2202,6 @@ include/TFEL/Utilities/TerminalColors.hxx -text
 include/TFEL/Utilities/TextData.hxx -text
 include/TFEL/Utilities/Token.hxx -text
 m4/aster-machine-type.m4 -text
-m4/ax_cxx_compile_stdcxx_11.m4 -text
 m4/ax_pthread.m4 -text
 m4/castem-unix-type.m4 -text
 m4/castem.m4 -text
@@ -2225,6 +2215,8 @@ m4/gxx.m4 -text
 m4/intel.m4 -text
 m4/m4-ax_jni_include_dir.m4 -text
 m4/m4-ax_prog_java_cc.m4 -text
+m4/m4_ax_cxx_compile_stdcxx.m4 -text
+m4/m4_ax_cxx_compile_stdcxx_17.m4 -text
 m4/mp_with_curses.m4 -text
 m4/vl_lib_readline.m4 -text
 m4/zset.m4 -text

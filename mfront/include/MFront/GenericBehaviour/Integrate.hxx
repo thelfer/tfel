@@ -38,49 +38,50 @@ namespace mfront {
     void exportTangentOperator(real* const v, const real K) {
       *v = K;
     }  // end of exportTangentOperator
-    /*!
-     * \brief export the tangent operator used by some generic behaviours.
-     * \tparam real: numeric type used
-     * \tparam N: size of the array containing the tangent operator
-     * \param[out] v: exported values
-     * \param[in] K: computed tangent operator
-     */
+       /*!
+        * \brief export the tangent operator used by some generic behaviours.
+        * \tparam real: numeric type used
+        * \tparam N: size of the array containing the tangent operator
+        * \param[out] v: exported values
+        * \param[in] K: computed tangent operator
+        */
     template <typename real, unsigned short N>
-    void exportTangentOperator(real* const v, const tfel::math::tvector<N,real>& K) {
+    void exportTangentOperator(real* const v,
+                               const tfel::math::tvector<N, real>& K) {
       std::copy(K.begin(), K.end(), v);
     }  // end of exportTangentOperator
-    /*!
-     * \brief export the tangent operator used by some generic behaviours.
-     * \tparam real: numeric type used
-     * \tparam N: space dimension
-     * \param[out] v: exported values
-     * \param[in] K: computed tangent operator
-     */
+       /*!
+        * \brief export the tangent operator used by some generic behaviours.
+        * \tparam real: numeric type used
+        * \tparam N: space dimension
+        * \param[out] v: exported values
+        * \param[in] K: computed tangent operator
+        */
     template <typename real, unsigned short N>
     void exportTangentOperator(real* const v,
                                const tfel::math::t2tost2<N, real>& K) {
       std::copy(K.begin(), K.end(), v);
     }  // end of exportTangentOperator
-    /*!
-     * \brief export the tangent operator used by some generic behaviours.
-     * \tparam real: numeric type used
-     * \tparam N: space dimension
-     * \param[out] v: exported values
-     * \param[in] K: computed tangent operator
-     */
+       /*!
+        * \brief export the tangent operator used by some generic behaviours.
+        * \tparam real: numeric type used
+        * \tparam N: space dimension
+        * \param[out] v: exported values
+        * \param[in] K: computed tangent operator
+        */
     template <typename real, unsigned short N>
     void exportTangentOperator(real* const v,
-			       const tfel::math::t2tot2<N, real>& K) {
+                               const tfel::math::t2tot2<N, real>& K) {
       std::copy(K.begin(), K.end(), v);
     }  // end of exportTangentOperator
-    /*!
-     * \brief export the tangent operator used by standard small
-     * strain behaviours.
-     * \tparam real: numeric type used
-     * \tparam N: space dimension
-     * \param[out] v: exported values
-     * \param[in] K: computed tangent operator
-     */
+       /*!
+        * \brief export the tangent operator used by standard small
+        * strain behaviours.
+        * \tparam real: numeric type used
+        * \tparam N: space dimension
+        * \param[out] v: exported values
+        * \param[in] K: computed tangent operator
+        */
     template <typename real, unsigned short N>
     void exportTangentOperator(real* const v,
                                const tfel::math::st2tost2<N, real>& K) {
@@ -221,7 +222,7 @@ namespace mfront {
       Behaviour b(d);
       b.setOutOfBoundsPolicy(p);
       try {
-	b.initialize();
+        b.initialize();
         b.checkBounds();
         if (d.K[0] < -0.25) {
           return computePredictionOperator(b, d, f);

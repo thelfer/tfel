@@ -72,8 +72,8 @@ namespace tfel{
     class ComputeBinaryResult_<MatrixTag,MatrixTag,A,B,Op>
     {
       struct DummyHandle{};
-      typedef typename MatrixType<typename std::decay<A>::type>::type MatA;
-      typedef typename MatrixType<typename std::decay<B>::type>::type MatB;
+      typedef typename MatrixType<std::decay_t<A>>::type MatA;
+      typedef typename MatrixType<std::decay_t<B>>::type MatB;
     public:
       typedef typename ResultType<MatA,MatB,Op>::type Result;
       typedef typename std::conditional<tfel::typetraits::IsInvalid<Result>::cond,
@@ -88,7 +88,7 @@ namespace tfel{
     class ComputeBinaryResult_<ScalarTag,MatrixTag,A,B,Op>
     {
       struct DummyHandle{};
-      typedef typename MatrixType<typename std::decay<B>::type>::type MatB;
+      typedef typename MatrixType<std::decay_t<B>>::type MatB;
     public:
       typedef typename ResultType<A,MatB,Op>::type Result;
       typedef typename std::conditional<tfel::typetraits::IsInvalid<Result>::cond,
@@ -103,7 +103,7 @@ namespace tfel{
     struct ComputeBinaryResult_<MatrixTag,ScalarTag,A,B,Op>
     {
       struct DummyHandle{};
-      typedef typename MatrixType<typename std::decay<A>::type>::type MatA;
+      typedef typename MatrixType<std::decay_t<A>>::type MatA;
     public:
       typedef typename ResultType<MatA,B,Op>::type Result;
       typedef typename std::conditional<tfel::typetraits::IsInvalid<Result>::cond,
@@ -118,8 +118,8 @@ namespace tfel{
     struct ComputeBinaryResult_<MatrixTag,VectorTag,A,B,OpMult>
     {
       struct DummyHandle{};
-      typedef typename MatrixType<typename std::decay<A>::type>::type MatA;
-      typedef typename VectorType<typename std::decay<B>::type>::type VecB;
+      typedef typename MatrixType<std::decay_t<A>>::type MatA;
+      typedef typename VectorType<std::decay_t<B>>::type VecB;
     public:
       typedef typename ResultType<MatA,VecB,OpMult>::type Result;
       typedef typename std::conditional<tfel::typetraits::IsInvalid<Result>::cond,
@@ -135,8 +135,8 @@ namespace tfel{
     struct ComputeBinaryResult_<VectorTag,MatrixTag,A,B,OpMult>
     {
       struct DummyHandle{};
-      typedef typename VectorType<typename std::decay<A>::type>::type VecA;
-      typedef typename MatrixType<typename std::decay<B>::type>::type MatB;
+      typedef typename VectorType<std::decay_t<A>>::type VecA;
+      typedef typename MatrixType<std::decay_t<B>>::type MatB;
     public:
       typedef typename ResultType<VecA,MatB,OpMult>::type Result;
       typedef typename std::conditional<tfel::typetraits::IsInvalid<Result>::cond,
@@ -152,7 +152,7 @@ namespace tfel{
     class ComputeUnaryResult_<MatrixTag,UnaryOperatorTag,A,OpNeg>
     {
       struct DummyHandle{};
-      typedef typename MatrixType<typename std::decay<A>::type>::type MatA;
+      typedef typename MatrixType<std::decay_t<A>>::type MatA;
     public:
       typedef typename UnaryResultType<MatA,OpNeg>::type Result;
       typedef typename std::conditional<tfel::typetraits::IsInvalid<Result>::cond,

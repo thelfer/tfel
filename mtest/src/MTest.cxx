@@ -244,12 +244,7 @@ namespace mtest {
         }
         auto ec = std::make_shared<ImposedGradient>(2, eev);
         this->constraints.push_back(ec);
-      } else {
-        tfel::raise(
-            "MTest::completeInitialisation : "
-            "plane strain hypothesis is only "
-            "handled for small and finite strain behaviours");
-      }
+      } 
     }
     if (this->hypothesis ==
         ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS) {
@@ -276,11 +271,6 @@ namespace mtest {
         auto sc = std::make_shared<ImposedThermodynamicForce>(1, sev);
         this->constraints.push_back(ec);
         this->constraints.push_back(sc);
-      } else {
-        tfel::raise(
-            "MTest::completeInitialisation : "
-            "generalised plane stress is only "
-            "handled for small and finite strain behaviours");
       }
     }
     if (this->hypothesis == ModellingHypothesis::PLANESTRESS) {
@@ -301,11 +291,6 @@ namespace mtest {
         auto sc = std::make_shared<ImposedThermodynamicForce>(2, sev);
         this->constraints.push_back(ec);
         this->constraints.push_back(sc);
-      } else {
-        tfel::raise(
-            "MTest::completeInitialisation : "
-            "plane stress is only handled for small and "
-            "finite strain behaviours");
       }
     }
     SingleStructureScheme::completeInitialisation();

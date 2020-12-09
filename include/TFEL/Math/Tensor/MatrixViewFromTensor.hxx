@@ -50,14 +50,14 @@ namespace tfel
     {}; // end of struct MatrixViewFromTensorExpr
 
     template<typename TensorType>
-    struct Expr<tmatrix<3u,3u,TensorNumType<typename std::decay<TensorType>::type>>,
+    struct Expr<tmatrix<3u,3u,TensorNumType<std::decay_t<TensorType>>>,
 		      MatrixViewFromTensorExpr<TensorType> >
       : public ExprBase,
-	public MatrixConcept<Expr<tmatrix<3u,3u,TensorNumType<typename std::decay<TensorType>::type>>,
+	public MatrixConcept<Expr<tmatrix<3u,3u,TensorNumType<std::decay_t<TensorType>>>,
 				  MatrixViewFromTensorExpr<TensorType> > >
     {
       
-      using traits  = TensorTraits<typename std::decay<TensorType>::type>;
+      using traits  = TensorTraits<std::decay_t<TensorType>>;
       using NumType = typename traits::NumType;
       typedef unsigned short IndexType;
       typedef EmptyRunTimeProperties RunTimeProperties;
@@ -84,7 +84,7 @@ namespace tfel
 
       ArgumentStorage<TensorType> t;
       //! a simple check
-      TFEL_STATIC_ASSERT((tfel::meta::Implements<typename std::decay<TensorType>::type,
+      TFEL_STATIC_ASSERT((tfel::meta::Implements<std::decay_t<TensorType>,
 			  TensorConcept>::cond));
 
     }; // end of struct Expr

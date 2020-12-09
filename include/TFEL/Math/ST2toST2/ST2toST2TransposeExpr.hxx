@@ -43,7 +43,7 @@ namespace tfel {
       //! a simple alias
       using IndexType = unsigned short;
       //! a simple alias
-      using NumType = ST2toST2NumType<typename std::decay<A>::type>;
+      using NumType = ST2toST2NumType<std::decay_t<A>>;
 
       TFEL_MATH_INLINE RunTimeProperties getRunTimeProperties() const {
         return EmptyRunTimeProperties();
@@ -68,7 +68,7 @@ namespace tfel {
       ArgumentStorage<A> a;
 
      private:
-      TFEL_STATIC_ASSERT((tfel::meta::Implements<typename std::decay<A>::type,
+      TFEL_STATIC_ASSERT((tfel::meta::Implements<std::decay_t<A>,
                                                  ST2toST2Concept>::cond));
     };
 

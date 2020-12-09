@@ -46,7 +46,7 @@ if test "x$CFLAGS" = "x";
 fi
 
 AC_PROG_CXX
-AX_CXX_COMPILE_STDCXX_11([noext],[mandatory])
+AX_CXX_COMPILE_STDCXX_17([noext],[mandatory])
 
 AC_CHECKING("architecture type")
 
@@ -208,7 +208,7 @@ OPTIMISATION_FLAGS2=""
 
 # g++ specific treatement
 if test "x$GXX" == "xyes"; then
-    COMPILER_CXXFLAGS="-std=c++11";
+    COMPILER_CXXFLAGS="";
     COMPILER_WARNINGS="";
     OPTIMISATION_FLAGS0="-DNO_RUNTIME_CHECK_BOUNDS -DNDEBUG"
     OPTIMISATION_FLAGS=""
@@ -220,7 +220,7 @@ fi
 if test "x$INTEL" == "xyes";
 then
     COMPILER_FLAGS="";
-    COMPILER_CXXFLAGS="-std=c++11";
+    COMPILER_CXXFLAGS="";
     COMPILER_WARNINGS="";
     OPTIMISATION_FLAGS0="-DNO_RUNTIME_CHECK_BOUNDS -DNDEBUG"
     OPTIMISATION_FLAGS=""

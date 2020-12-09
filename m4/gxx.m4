@@ -286,7 +286,7 @@ AC_DEFUN([AC_CHECK_GXX],
 	    COMPILER_WARNINGS="$COMPILER_WARNINGS -Wunknown-pragmas -Wundef  -Wreorder"
 
             CXXFLAGS="$CXXFLAGS $COMPILER_WARNINGS"
-	    CXXFLAGS="$CXXFLAGS -std=c++11 -DNO_RUNTIME_CHECK_BOUNDS $COMPILER_WARNINGS"
+	    CXXFLAGS="$CXXFLAGS -std=c++17 -DNO_RUNTIME_CHECK_BOUNDS $COMPILER_WARNINGS"
 
 	    if test "${CXX}" = "clang++"; then
                CXXFLAGS="$CXXFLAGS -ftemplate-depth-250"
@@ -298,9 +298,9 @@ AC_DEFUN([AC_CHECK_GXX],
 		dnl gxx versions prior to 3.3 are known to be buggy 
 		dnl when two much metaprogramming is involved
 		AC_MSG_CHECKING(for gxx 3.4.0 or later)
-		GXXVERSION="`"$CXX" -dumpversion`"
+		GXXVERSION="`$CXX -dumpversion`"
 		AC_MSG_RESULT($GXXVERSION)
-		GXXVERSION="`"$CXX" -dumpversion |
+		GXXVERSION="`$CXX -dumpversion |
                 awk 'BEGIN { FS = "." };
                       1 { if ((@S|@1 * 10000 + @S|@2 * 100 + @S|@3) >= 30400) { print "yes" } }'
                 `"

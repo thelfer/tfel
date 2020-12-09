@@ -62,7 +62,7 @@ namespace tfel{
        */
       struct RowConstIterator
       {	
-	using MType   = typename std::decay<A>::type;
+	using MType   = std::decay_t<A>;
 	using NumType = typename MatrixTraits<MType>::NumType;
 	//! default constructor
 	TFEL_MATH_INLINE RowConstIterator(const MType& m_,
@@ -90,7 +90,7 @@ namespace tfel{
       // VType does not provide an iterator
       struct VectorConstIterator
       {	
-	using VType   = typename std::decay<B>::type;
+	using VType   = std::decay_t<B>;
 	using NumType = typename VectorTraits<VType>::NumType;
 	TFEL_MATH_INLINE VectorConstIterator(const VType& v_)
 	  : v(v_)
@@ -112,8 +112,8 @@ namespace tfel{
 
     protected:
       //! a simple alias
-      using Result = typename ComputeBinaryResult<typename std::decay<A>::type,
-						  typename std::decay<B>::type,OpMult>::Result;
+      using Result = typename ComputeBinaryResult<std::decay_t<A>,
+						  std::decay_t<B>,OpMult>::Result;
       //! a simple alias
       using NumType   = typename VectorTraits<Result>::NumType;
       //! a simple alias
@@ -143,8 +143,8 @@ namespace tfel{
 
       ArgumentStorage<A> a;
       ArgumentStorage<B> b;
-      TFEL_STATIC_ASSERT((tfel::meta::Implements<typename std::decay<A>::type,MatrixConcept>::cond));
-      TFEL_STATIC_ASSERT((tfel::meta::Implements<typename std::decay<B>::type,VectorConcept>::cond));
+      TFEL_STATIC_ASSERT((tfel::meta::Implements<std::decay_t<A>,MatrixConcept>::cond));
+      TFEL_STATIC_ASSERT((tfel::meta::Implements<std::decay_t<B>,VectorConcept>::cond));
     };
 
   } // end of namespace math

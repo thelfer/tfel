@@ -89,9 +89,9 @@ namespace tfel{
     class ComputeBinaryResult
     {
       //! a simple alias
-      using A_ = typename std::decay<A>::type;
+      using A_ = std::decay_t<A>;
       //! a simple alias
-      using B_ = typename std::decay<B>::type;
+      using B_ = std::decay_t<B>;
       //! tag of the left hand side
       typedef typename ComputeObjectTag<A_>::type TagA;
       //! tag of the right hand side
@@ -117,9 +117,9 @@ namespace tfel{
     {
     private:
       //! bare type
-      typedef typename std::decay<A>::type A_;
+      typedef std::decay_t<A> A_;
       //! bare type
-      typedef typename std::decay<B>::type B_;
+      typedef std::decay_t<B> B_;
     public:
       //! the result.
       typedef typename ResultType<A_,B_,Op>::type Result;
