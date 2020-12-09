@@ -130,8 +130,8 @@ namespace tfel::math {
   template <
       typename InputIterator,
       std::enable_if_t<
-          std::is_same<typename std::iterator_traits<InputIterator>::value_type,
-                       tfel::typetraits::base_type<T>>::value,
+          std::is_same_v<typename std::iterator_traits<InputIterator>::value_type,
+                       tfel::typetraits::base_type<T>>,
           bool>>
   stensor<N, T>::stensor(const InputIterator p) {
     using base = tfel::typetraits::base_type<T>;

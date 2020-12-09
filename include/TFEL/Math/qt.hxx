@@ -116,26 +116,26 @@ namespace tfel::math {
      * Assignement operator
      */
     template <typename T2>
-    TFEL_MATH_INLINE typename std::enable_if<
+    TFEL_MATH_INLINE std::enable_if_t<
         std::is_same<typename tfel::typetraits::Promote<T, T2>::type, T>::value,
-        qt<unit, T>&>::type
+        qt<unit, T>&>
     operator=(const qt<unit, T2>& src);
     /*!
      * Operator +=
      */
     template <typename T2>
-    TFEL_MATH_INLINE typename std::enable_if<
+    TFEL_MATH_INLINE std::enable_if_t<
         std::is_same<typename tfel::typetraits::Promote<T, T2>::type, T>::value,
-        qt<unit, T>&>::type
+        qt<unit, T>&>
     operator+=(const qt<unit, T2>& src);
 
     /*!
      * Operator -=
      */
     template <typename T2>
-    TFEL_MATH_INLINE typename std::enable_if<
+    TFEL_MATH_INLINE std::enable_if_t<
         std::is_same<typename tfel::typetraits::Promote<T, T2>::type, T>::value,
-        qt<unit, T>&>::type
+        qt<unit, T>&>
     operator-=(const qt<unit, T2>& src);
 
     /*!
@@ -144,8 +144,8 @@ namespace tfel::math {
      */
     template <typename T2>
     TFEL_MATH_INLINE
-        typename std::enable_if<IsQtScalarOperationValid<T, T2>::cond,
-                                qt<unit, T>&>::type
+        std::enable_if_t<IsQtScalarOperationValid<T, T2>::cond,
+                                qt<unit, T>&>
         operator*=(const T2 a);
     /*!
      * Operator /=
@@ -153,8 +153,8 @@ namespace tfel::math {
      */
     template <typename T2>
     TFEL_MATH_INLINE
-        typename std::enable_if<IsQtScalarOperationValid<T, T2>::cond,
-                                qt<unit, T>&>::type
+        std::enable_if_t<IsQtScalarOperationValid<T, T2>::cond,
+                                qt<unit, T>&>
         operator/=(const T2 a);
 
     /*!
@@ -244,33 +244,33 @@ namespace tfel::math {
      * Operator =
      */
     template <typename T2>
-    TFEL_MATH_INLINE typename std::enable_if<
+    TFEL_MATH_INLINE std::enable_if_t<
         std::is_same<typename tfel::typetraits::Promote<T, T2>::type, T>::value,
-        qt<NoUnit, T>&>::type
+        qt<NoUnit, T>&>
     operator=(const qt<NoUnit, T2>& src);
 
     template <typename T2>
     TFEL_MATH_INLINE
-        typename std::enable_if<IsConvertibleToQtNoUnit<T, T2>::cond,
-                                qt<NoUnit, T>&>::type
+        std::enable_if_t<IsConvertibleToQtNoUnit<T, T2>::cond,
+                                qt<NoUnit, T>&>
         operator=(const T2 src);
 
     /*!
      * Operator +=
      */
     template <typename T2>
-    TFEL_MATH_INLINE typename std::enable_if<
+    TFEL_MATH_INLINE std::enable_if_t<
         std::is_same<typename tfel::typetraits::Promote<T, T2>::type, T>::value,
-        qt<NoUnit, T>&>::type
+        qt<NoUnit, T>&>
     operator+=(const qt<NoUnit, T2>& src);
 
     /*!
      * Operator -=
      */
     template <typename T2>
-    TFEL_MATH_INLINE typename std::enable_if<
+    TFEL_MATH_INLINE std::enable_if_t<
         std::is_same<typename tfel::typetraits::Promote<T, T2>::type, T>::value,
-        qt<NoUnit, T>&>::type
+        qt<NoUnit, T>&>
     operator-=(const qt<NoUnit, T2>& src);
 
     /*!
@@ -279,8 +279,8 @@ namespace tfel::math {
      */
     template <typename T2>
     TFEL_MATH_INLINE
-        typename std::enable_if<IsConvertibleToQtNoUnit<T, T2>::cond,
-                                qt<NoUnit, T>&>::type
+        std::enable_if_t<IsConvertibleToQtNoUnit<T, T2>::cond,
+                                qt<NoUnit, T>&>
         operator*=(const T2 a);
 
     /*!
@@ -289,8 +289,8 @@ namespace tfel::math {
      */
     template <typename T2>
     TFEL_MATH_INLINE
-        typename std::enable_if<IsConvertibleToQtNoUnit<T, T2>::cond,
-                                qt<NoUnit, T>&>::type
+        std::enable_if_t<IsConvertibleToQtNoUnit<T, T2>::cond,
+                                qt<NoUnit, T>&>
         operator/=(const T2 a);
 
     /*!

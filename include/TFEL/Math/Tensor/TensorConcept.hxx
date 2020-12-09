@@ -244,14 +244,14 @@ namespace tfel::math {
    * \param[in]  : argument
    */
   template <typename TensorResultType, typename TensorType>
-  typename std::enable_if<
+  std::enable_if_t<
       implementsTensorConcept<TensorResultType>() &&
           implementsTensorConcept<TensorType>() &&
           tfel::typetraits::IsAssignableTo<
               typename ComputeUnaryResult<TensorNumType<TensorType>,
                                           Power<2>>::Result,
               TensorNumType<TensorResultType>>::cond,
-      void>::type
+      void>
   computeDeterminantDerivative(TensorResultType&, const TensorType&);
   /*!
    * \brief provide the polar decomposition of a tensor
@@ -260,7 +260,7 @@ namespace tfel::math {
    * \param[in]  F
    */
   template <typename TensorType, typename StensorType, typename TensorType2>
-  typename std::enable_if<
+  std::enable_if_t<
       implementsTensorConcept<TensorType>() &&
           implementsTensorConcept<TensorType2>() &&
           implementsStensorConcept<StensorType>() &&
@@ -272,7 +272,7 @@ namespace tfel::math {
           (TensorTraits<TensorType>::dime ==
            StensorTraits<StensorType>::dime) &&
           (TensorTraits<TensorType>::dime == 1u),
-      void>::type
+      void>
   polar_decomposition(TensorType&, StensorType&, const TensorType2&);
 
   /*!
@@ -282,7 +282,7 @@ namespace tfel::math {
    * \param[in]  F
    */
   template <typename TensorType, typename StensorType, typename TensorType2>
-  typename std::enable_if<
+  std::enable_if_t<
       implementsTensorConcept<TensorType>() &&
           implementsTensorConcept<TensorType2>() &&
           implementsStensorConcept<StensorType>() &&
@@ -295,13 +295,13 @@ namespace tfel::math {
            StensorTraits<StensorType>::dime) &&
           ((TensorTraits<TensorType>::dime == 2u) ||
            (TensorTraits<TensorType>::dime == 3u)),
-      void>::type
+      void>
   polar_decomposition(TensorType&, StensorType&, const TensorType2&);
 
   // template<typename TensorType>
   // TFEL_MATH_INLINE auto
   // matrix_view(TensorType&& t)
-  // -> typename std::enable_if<
+  // -> std::enable_if_t<
   //   tfel::meta::Implements<typename
   //   std::decay<TensorType>::type,TensorConcept>::cond,
   //   Expr<tmatrix<3u,3u,TensorNumType<typename
@@ -314,7 +314,7 @@ namespace tfel::math {
   // template<typename TensorType>
   // TFEL_MATH_INLINE auto
   // transpose(TensorType&& t)
-  // -> typename std::enable_if<
+  // -> std::enable_if_t<
   //   tfel::meta::Implements<typename
   //   std::decay<TensorType>::type,TensorConcept>::cond &&
   //   (TensorTraits<std::decay_t<TensorType>>::dime==1u),
@@ -327,7 +327,7 @@ namespace tfel::math {
   // template<typename TensorType>
   // TFEL_MATH_INLINE auto
   // transpose(TensorType&& t)
-  // -> typename std::enable_if<
+  // -> std::enable_if_t<
   //   tfel::meta::Implements<typename
   //   std::decay<TensorType>::type,TensorConcept>::cond &&
   //   (TensorTraits<std::decay_t<TensorType>>::dime==2u),
@@ -340,7 +340,7 @@ namespace tfel::math {
   // template<typename TensorType>
   // TFEL_MATH_INLINE auto
   // transpose(TensorType&& t)
-  // -> typename std::enable_if<
+  // -> std::enable_if_t<
   //   tfel::meta::Implements<typename
   //   std::decay<TensorType>::type,TensorConcept>::cond &&
   //   (TensorTraits<std::decay_t<TensorType>>::dime==3u),

@@ -43,12 +43,20 @@
 
 namespace tfel::math {
 
+  /*!
+   * \brief partial specialisation of the `StensorTraits` class.
+   * \param[in] N: space dimension
+   * \param[in] T: numeric type
+   */
   template <unsigned short N, typename T>
   struct TFEL_VISIBILITY_LOCAL StensorTraits<stensor<N, T>> {
-    typedef T NumType;
-    typedef unsigned short IndexType;
+    //! \brief numeric type
+    using NumType = T;
+    //! \brief index type
+    using IndexType = unsigned short;
+    //! \brief space dimension
     static constexpr unsigned short dime = N;
-  };
+  }; // end of StensorTraits
 
   /*!
    * \brief partial specialisation of the `DerivativeTypeDispatcher`
@@ -212,12 +220,11 @@ namespace tfel::math {
      * const, pointer to a tabular used to initialise the components
      * of the stensor. This tabular is left unchanged.
      */
-    template <
-        typename InputIterator,
-        std::enable_if_t<std::is_same<typename std::iterator_traits<
-                                          InputIterator>::value_type,
-                                      tfel::typetraits::base_type<T>>::value,
-                         bool> = true>
+    template <typename InputIterator,
+              std::enable_if_t<std::is_same_v<typename std::iterator_traits<
+                                                  InputIterator>::value_type,
+                                              tfel::typetraits::base_type<T>>,
+                               bool> = true>
     TFEL_MATH_INLINE explicit stensor(const InputIterator);
     //! \brief copy constructor
     TFEL_MATH_INLINE constexpr stensor(const stensor<N, T>&) = default;
