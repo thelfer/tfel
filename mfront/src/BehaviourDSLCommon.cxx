@@ -820,6 +820,10 @@ namespace mfront{
 			      "for writing output file");
     }
     this->srcFile.open("src/"+this->srcFileName);
+    this->behaviourFile.precision(14);
+    this->behaviourDataFile.precision(14);
+    this->integrationDataFile.precision(14);
+    this->srcFile.precision(14);
     if(!this->srcFile){
       this->throwRuntimeError("BehaviourDSLCommon::generateOutputFiles",
 			      "unable to open '"+this->srcFileName+"' "
