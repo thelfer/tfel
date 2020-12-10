@@ -1,0 +1,24 @@
+---
+title: Release notes of the 3.4.1 version of `TFEL`, `MFront` and `MTest`
+author: Thomas Helfer
+date: 2020
+lang: en-EN
+numbersections: true
+documentclass: article
+from: markdown+tex_math_single_backslash
+geometry:
+  - margin=2cm
+papersize: a4
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tabPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
+
+# Tickets fixed
+
+## Ticket #258: Missing `ndarray.cxx` source
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/258/>

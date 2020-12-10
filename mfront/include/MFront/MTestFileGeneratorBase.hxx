@@ -166,11 +166,11 @@ namespace mfront {
       InternalStateVariable& operator=(InternalStateVariable&&) = default;
       InternalStateVariable& operator=(const InternalStateVariable&) = default;
       ~InternalStateVariable();
-      //! name
+      //! \brief name
       std::string name;
-      //! type of the variable
+      //! \brief type of the variable
       SupportedTypes::TypeFlag type;
-      //! initial value
+      //! \brief initial value
       real values[9];
     };  // end of struct InternalStateVariable
     //! modelling hypothesis

@@ -25,134 +25,6 @@
 
 namespace tfel::math {
 
-  namespace internals {
-
-    /*!
-     * An helper struct used to defined a tensor from the fortran
-     * matrix
-     */
-    template <unsigned short N>
-    struct BuildTensorFromFortranMatrix;
-
-    /*!
-     * Partial specialisation in 1D
-     */
-    template <>
-    struct BuildTensorFromFortranMatrix<1u> {
-      /*!
-       * \param[in] t : tensor
-       * \param[in] v : fortran values
-       */
-      template <typename T>
-      TFEL_MATH_INLINE2 static void exe(
-          T* const t, const tfel::typetraits::base_type<T>* const v) {
-        t[0] = T(v[0]);
-        t[1] = T(v[4]);
-        t[2] = T(v[8]);
-      }  // end of exe
-    };   // end of struct BuildTensorFromFortranMatrix<1u>
-
-    /*!
-     * Partial specialisation in 2D
-     */
-    template <>
-    struct BuildTensorFromFortranMatrix<2u> {
-      /*!
-       * \param[in] t : tensor
-       * \param[in] v : fortran values
-       */
-      template <typename T>
-      TFEL_MATH_INLINE2 static void exe(
-          T* const t, const tfel::typetraits::base_type<T>* const v) {
-        BuildTensorFromFortranMatrix<1u>::exe(t, v);
-        t[3] = T(v[3]);
-        t[4] = T(v[1]);
-      }  // end of exe
-    };   // end of struct BuildTensorFromFortranMatrix<1u>
-
-    /*!
-     * Partial specialisation in 3D
-     */
-    template <>
-    struct BuildTensorFromFortranMatrix<3u> {
-      /*!
-       * \param[in] t : tensor
-       * \param[in] v : fortran values
-       */
-      template <typename T>
-      TFEL_MATH_INLINE2 static void exe(
-          T* const t, const tfel::typetraits::base_type<T>* const v) {
-        BuildTensorFromFortranMatrix<2u>::exe(t, v);
-        t[5] = T(v[6]);
-        t[6] = T(v[2]);
-        t[7] = T(v[7]);
-        t[8] = T(v[5]);
-      }  // end of exe
-    };   // end of struct BuildTensorFromFortranMatrix<1u>
-
-    template <unsigned short N>
-    struct TensorMatrixAccessOperator;
-
-    template <>
-    struct TensorMatrixAccessOperator<1u> {
-      template <typename T>
-      TFEL_MATH_INLINE static T exe(const tfel::math::tensor<1u, T>& t,
-                                    const unsigned short i,
-                                    const unsigned short j) {
-        if ((i > 2) || (j > 2)) {
-          throw(TensorInvalidIndexesException());
-        }
-        return (i == j) ? t(i) : T(0);
-      }
-    };
-
-    template <>
-    struct TensorMatrixAccessOperator<2u> {
-      template <typename T>
-      TFEL_MATH_INLINE static T exe(const tfel::math::tensor<2u, T>& t,
-                                    const unsigned short i,
-                                    const unsigned short j) {
-        if ((i > 2) || (j > 2)) {
-          throw(TensorInvalidIndexesException());
-        }
-        if (i == j) {
-          return t(i);
-        } else if ((i == 0) && (j == 1)) {
-          return t(3);
-        } else if ((i == 1) && (j == 0)) {
-          return t(4);
-        }
-        return T(0);
-      }
-    };
-
-    template <>
-    struct TensorMatrixAccessOperator<3u> {
-      template <typename T>
-      TFEL_MATH_INLINE static T exe(const tfel::math::tensor<3u, T>& t,
-                                    const unsigned short i,
-                                    const unsigned short j) {
-        if ((i == j) && (i < 3)) {
-          return t(i);
-        } else if ((i == 0) && (j == 1)) {
-          return t(3);
-        } else if ((i == 1) && (j == 0)) {
-          return t(4);
-        } else if ((i == 0) && (j == 2)) {
-          return t(5);
-        } else if ((i == 2) && (j == 0)) {
-          return t(6);
-        } else if ((i == 1) && (j == 2)) {
-          return t(7);
-        } else if ((i == 2) && (j == 1)) {
-          return t(8);
-        }
-        throw(TensorInvalidIndexesException());
-      }
-    };
-
-  }  // end of namespace internals
-
   template <typename Child>
   template <typename TensorType>
   std::enable_if_t<
@@ -251,16 +123,26 @@ namespace tfel::math {
   template <unsigned short N, typename T>
   void tensor<N, T>::buildFromFortranMatrix(
       tensor<N, T>& t, const tfel::typetraits::base_type<T>* const v) {
-    using tfel::math::internals::BuildTensorFromFortranMatrix;
-    BuildTensorFromFortranMatrix<N>::template exe<T>(t.begin(), v);
+    t[0] = T(v[0]);
+    t[1] = T(v[4]);
+    t[2] = T(v[8]);
+    if constexpr ((N == 2) || (N == 3)) {
+      t[3] = T(v[3]);
+      t[4] = T(v[1]);
+    }
+    if constexpr (N == 3) {
+      t[5] = T(v[6]);
+      t[6] = T(v[2]);
+      t[7] = T(v[7]);
+      t[8] = T(v[5]);
+    }
   }  // end of void tensor<N,T>::buildFromFortranMatrix
 
   template <unsigned short N, typename T>
   tensor<N, T> tensor<N, T>::buildFromFortranMatrix(
       const tfel::typetraits::base_type<T>* const v) {
-    using tfel::math::internals::BuildTensorFromFortranMatrix;
     tensor<N, T> t;
-    BuildTensorFromFortranMatrix<N>::template exe<T>(t.begin(), v);
+    tensor<N, T>::buildFromFortranMatrix(t, v);
     return t;
   }  // end of void tensor<N,T>::buildFromFortranMatrix
 
@@ -291,9 +173,38 @@ namespace tfel::math {
   template <unsigned short N, typename T>
   T tensor<N, T>::operator()(const unsigned short i,
                              const unsigned short j) const {
-    using tfel::math::internals::TensorMatrixAccessOperator;
-    return TensorMatrixAccessOperator<N>::exe(*this, i, j);
-  }
+    static_assert((N == 1) || (N == 2) || (N == 3), "invalid space dimension");
+    if ((i > 2) || (j > 2)) {
+      throw(TensorInvalidIndexesException());
+    }
+    if constexpr (N == 1) {
+      return (i == j) ? (*this)(i) : T(0);
+    } else if constexpr (N == 2) {
+      if (i == j) {
+        return (*this)(i);
+      } else if ((i == 0) && (j == 1)) {
+        return (*this)(3);
+      } else if ((i == 1) && (j == 0)) {
+        return (*this)(4);
+      }
+      return T(0);
+    } else {
+      if (i == j) {
+        return (*this)(i);
+      } else if ((i == 0) && (j == 1)) {
+        return (*this)(3);
+      } else if ((i == 1) && (j == 0)) {
+        return (*this)(4);
+      } else if ((i == 0) && (j == 2)) {
+        return (*this)(5);
+      } else if ((i == 2) && (j == 0)) {
+        return (*this)(6);
+      } else if ((i == 1) && (j == 2)) {
+        return (*this)(7);
+      }
+      return (*this)(8);
+    }
+  }  // end of operator()
 
   template <unsigned short N, typename T>
   constexpr typename tensor<N, T>::RunTimeProperties

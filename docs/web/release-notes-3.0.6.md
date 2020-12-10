@@ -25,7 +25,6 @@ was not properly computed.
 This may affect single crystal finite strain computations to a limited
 extent, as the Mandel stress tensor is almost symmetric.
 
-
 # Tickets fixed
 
 ## Ticket #256: Scalar products of unsymmetric tensors

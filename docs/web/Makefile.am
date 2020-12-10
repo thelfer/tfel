@@ -59,6 +59,7 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./release-notes-3.0.4.md				      \
 	   ./release-notes-3.0.5.md				      \
 	   ./release-notes-3.0.6.md				      \
+	   ./release-notes-3.0.7.md				      \
 	   ./release-notes-3.1.md				      \
 	   ./release-notes-3.1.1.md				      \
 	   ./release-notes-3.1.2.md				      \
@@ -66,13 +67,18 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./release-notes-3.1.4.md				      \
 	   ./release-notes-3.1.5.md				      \
 	   ./release-notes-3.1.6.md				      \
+	   ./release-notes-3.1.7.md				      \
 	   ./release-notes-3.2.md				      \
 	   ./release-notes-3.2.1.md				      \
 	   ./release-notes-3.2.2.md				      \
 	   ./release-notes-3.2.3.md				      \
+	   ./release-notes-3.2.4.md				      \
 	   ./release-notes-3.3.md				      \
 	   ./release-notes-3.3.1.md				      \
+	   ./release-notes-3.3.2.md				      \
 	   ./release-notes-3.4.md				      \
+	   ./release-notes-3.4.1.md				      \
+	   ./release-notes-4.0.md				      \
 	   ./hyperelasticity.md				              \
 	   ./search.md				              \
 	   ./signorini.md				              \
