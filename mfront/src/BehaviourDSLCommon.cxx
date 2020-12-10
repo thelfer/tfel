@@ -779,6 +779,10 @@ namespace mfront {
     std::ofstream behaviourDataFile("include/" + this->getBehaviourDataFileName());
     std::ofstream integrationDataFile("include/" + this->getIntegrationDataFileName());
     std::ofstream srcFile("src/" + this->getSrcFileName());
+    behaviourFile.precision(14);
+    behaviourDataFile.precision(14);
+    integrationDataFile.precision(14);
+    srcFile.precision(14);
     for (const auto& em : this->externalMFrontFiles) {
       this->callMFront(em.second, {em.first});
     }
