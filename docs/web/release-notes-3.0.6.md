@@ -34,7 +34,6 @@ The scalar product of unsymmetric tensors was not computed correctly in
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/256/>
 
-
 ## Ticket #254: Register libraries for `ldconfig`
 
 In previous versions, the build version and the API version of shared
