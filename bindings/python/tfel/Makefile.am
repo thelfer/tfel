@@ -15,7 +15,7 @@ tfel_LTLIBRARIES = _tfel.la     \
 		   system.la
 
 if TFEL_NUMPY_SUPPORT
-tfel_LTLIBRARIES += libTFELNumpySupport.lax
+tfel_LTLIBRARIES += libTFELNumpySupport.la
 libTFELNumpySupport_la_SOURCES  = InitNumpy.cxx \
                                   ndarray.cxx
 libTFELNumpySupport_la_LIBADD   = @BOOST_LIBS@ @BOOST_PYTHON_LIBS@ @BOOST_NUMPY_LIBS@ \
