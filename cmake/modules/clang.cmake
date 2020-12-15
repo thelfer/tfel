@@ -44,8 +44,6 @@ if(enable-libcxx)
   tfel_enable_cxx_compiler_flag(COMPILER_CXXFLAGS "stdlib=libc++")
 endif(enable-libcxx)
 
-set(COMPILER_CXXFLAGS "${COMPILER_CXXFLAGS} -std=c++17")
-
 option(enable-sanitize-options "enable various clang sanitize options (undefined, address,...)" OFF)
 
 if(enable-sanitize-options)

@@ -1,5 +1,3 @@
-set(COMPILER_CXXFLAGS "${COMPILER_CXXFLAGS} -std=c++17")
-
 tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS  "Wall")
 # 383 : value copied to temporary, reference to temporary used
 # 981 : operands are evaluated in unspecified order

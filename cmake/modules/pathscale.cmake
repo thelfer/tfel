@@ -24,5 +24,3 @@ if(HAVE_FORTRAN)
     message(FATAL_ERROR "unsupported fortran compiler ${CMAKE_Fortran_COMPILER_NAME}")
   endif(${CMAKE_Fortran_COMPILER_ID} STREQUAL "PathScale")
 endif(HAVE_FORTRAN)
-
-set(COMPILER_CXXFLAGS "${COMPILER_CXXFLAGS} -std=c++17")

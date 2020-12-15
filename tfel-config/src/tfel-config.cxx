@@ -523,6 +523,9 @@ int main(const int argc, const char* const* const argv) {
 
     if (compilerflags) {
       std::cout << COMPILER_FLAGS << " " << COMPILER_CXXFLAGS << " ";
+#if (defined __GNUC__) || (defined __clang__) || (defined __INTEL_COMPILER)
+      std::cout << "-std=c++17 ";
+#endif
     }
 
     if (debugflags) {

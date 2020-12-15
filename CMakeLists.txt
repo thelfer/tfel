@@ -21,6 +21,9 @@ if(EXISTS "${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
   set(TFEL_USES_CONAN ON)
 endif(EXISTS "${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
 
+set(CMAKE_CXX_STANDARD 17)
+set(CXX_STANDARD_REQUIRED ON)
+
 # tfel specific macros
 include(cmake/modules/tfel.cmake)
 # some variables for compatibility with autotools
