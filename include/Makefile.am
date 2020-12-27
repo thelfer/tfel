@@ -229,7 +229,6 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/RungeKutta/RungeKutta54.ixx		                                             \
 			TFEL/Math/Tensor/tensor.ixx								     \
 			TFEL/Math/Tensor/tensorResultType.hxx							     \
-			TFEL/Math/Tensor/TensorChangeBasis.hxx							     \
 			TFEL/Math/Tensor/TensorConcept.hxx							     \
 			TFEL/Math/Tensor/TensorConcept.ixx							     \
 			TFEL/Math/Tensor/TensorConceptIO.hxx							     \
@@ -396,15 +395,11 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/T2toT2/T2toT2View.hxx                                                         \
 			TFEL/Math/T2toT2/T2toT2ConceptOperations.hxx                                                 \
 			TFEL/Math/T2toT2/t2tot2ResultType.hxx                                                        \
-			TFEL/Math/T2toT2/T2toT2FromTinyMatrixView.hxx                                                \
-			TFEL/Math/T2toT2/T2toT2FromTinyMatrixView2.hxx                                               \
 			TFEL/Math/T2toT2/TensorProductLeftDerivativeExpr.hxx                                         \
 			TFEL/Math/T2toT2/TensorProductRightDerivativeExpr.hxx                                        \
 			TFEL/Math/T2toT2/TensorT2toT2ProductExpr.hxx						     \
 			TFEL/Math/T2toT2/T2toT2TensorProductExpr.hxx						     \
 			TFEL/Math/T2toT2/T2toT2T2toT2ProductExpr.hxx						     \
-			TFEL/Math/T2toT2/BuildFromRotationMatrix.hxx                                                 \
-			TFEL/Math/T2toT2/ChangeBasis.hxx                                                             \
 			TFEL/Math/T2toT2/ConvertToPK1Derivative.hxx                                                  \
 			TFEL/Math/T2toT2/ConvertToPK1Derivative.ixx                                                  \
 			TFEL/Math/T2toT2/ConvertFromPK1Derivative.hxx                                                \
@@ -445,8 +440,6 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/T2toST2/T2toST2ConceptIO.hxx                                                       \
 			TFEL/Math/T2toST2/T2toST2ConceptOperations.hxx                                               \
 			TFEL/Math/T2toST2/t2tost2ResultType.hxx                                                      \
-			TFEL/Math/T2toST2/T2toST2FromTinyMatrixView.hxx                                              \
-			TFEL/Math/T2toST2/T2toST2FromTinyMatrixView2.hxx                                             \
 			TFEL/Math/T2toST2/LeftCauchyGreenTensorDerivativeExpr.hxx                                    \
 			TFEL/Math/T2toST2/RightCauchyGreenTensorDerivativeExpr.hxx                                   \
 			TFEL/Math/T2toST2/T2toST2TensorProductExpr.hxx                                               \
@@ -463,8 +456,6 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/ST2toT2/ST2toT2Concept.ixx                                                         \
 			TFEL/Math/ST2toT2/ST2toT2ConceptIO.hxx                                                       \
 			TFEL/Math/ST2toT2/ST2toT2ConceptOperations.hxx                                               \
-			TFEL/Math/ST2toT2/ST2toT2FromTinyMatrixView.hxx                                              \
-			TFEL/Math/ST2toT2/ST2toT2FromTinyMatrixView2.hxx                                             \
 			TFEL/Math/ST2toT2/StensorProductLeftDerivativeExpr.hxx                                       \
 			TFEL/Math/ST2toT2/StensorProductRightDerivativeExpr.hxx                                      \
 			TFEL/Math/ST2toT2/TensorST2toT2ProductExpr.hxx						                         \
@@ -505,11 +496,9 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/cadna.hxx					                                     \
 			TFEL/Metaprogramming/Forward/TypeList.hxx                                                    \
 			TFEL/Metaprogramming/IsConstCallable.hxx                                                     \
-			TFEL/Metaprogramming/StaticAssert.hxx                                                        \
 			TFEL/Metaprogramming/Implements.hxx	                                                     \
 			TFEL/Metaprogramming/TypeList.hxx	                                                     \
 			TFEL/Metaprogramming/TypeList.ixx                                                            \
-			TFEL/Metaprogramming/IsSubClassOf.hxx	                                                     \
 			TFEL/Metaprogramming/GenerateTypeList.hxx                                                    \
 			TFEL/Metaprogramming/InvalidType.hxx	                                                     \
 			TFEL/Metaprogramming/HasIterator.hxx	                                                     \

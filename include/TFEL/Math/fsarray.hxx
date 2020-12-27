@@ -18,7 +18,6 @@
 #include <type_traits>
 #include <initializer_list>
 #include "TFEL/Config/TFELConfig.hxx"
-#include "TFEL/Metaprogramming/StaticAssert.hxx"
 
 namespace tfel::math {
 
@@ -44,6 +43,8 @@ namespace tfel::math {
    */
   template <unsigned short N, typename T>
   struct TFEL_VISIBILITY_LOCAL fsarray : protected array_container<N, T> {
+    // a simple assertion stating that the dimension is valid.
+    static_assert(N != 0);
     /*!
      * type of the fsarray's values.
      * (this is a stl requirement).
@@ -222,10 +223,6 @@ namespace tfel::math {
      */
     constexpr TFEL_MATH_INLINE const_reference operator[](const size_type) const
         noexcept;
-
-   private:
-    //! a simple assertion stating that the dimension is valid.
-    TFEL_STATIC_ASSERT(N != 0);
   };
 
 }  // end of namespace tfel::math

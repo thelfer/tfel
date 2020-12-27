@@ -21,14 +21,13 @@
 #include "TFEL/Math/General/Abs.hxx"
 #include "TFEL/Math/General/MathConstants.hxx"
 #include "TFEL/Math/Vector/VectorUtilities.hxx"
-#include "TFEL/Math/Tensor/TensorChangeBasis.hxx"
 
 namespace tfel::math {
 
   template <typename Child>
   template <typename TensorType>
   std::enable_if_t<
-      tfel::meta::Implements<TensorType, TensorConcept>::cond &&
+      implementsTensorConcept<TensorType>() &&
           TensorTraits<Child>::dime == TensorTraits<TensorType>::dime &&
           tfel::typetraits::IsAssignableTo<TensorNumType<TensorType>,
                                            TensorNumType<Child>>::cond,
@@ -59,7 +58,7 @@ namespace tfel::math {
   template <typename Child>
   template <typename TensorType>
   std::enable_if_t<
-      tfel::meta::Implements<TensorType, TensorConcept>::cond &&
+      implementsTensorConcept<TensorType>() &&
           TensorTraits<Child>::dime == TensorTraits<TensorType>::dime &&
           tfel::typetraits::IsAssignableTo<TensorNumType<TensorType>,
                                            TensorNumType<Child>>::cond,
@@ -75,7 +74,7 @@ namespace tfel::math {
   template <typename Child>
   template <typename TensorType>
   std::enable_if_t<
-      tfel::meta::Implements<TensorType, TensorConcept>::cond &&
+      implementsTensorConcept<TensorType>() &&
           TensorTraits<Child>::dime == TensorTraits<TensorType>::dime &&
           tfel::typetraits::IsAssignableTo<TensorNumType<TensorType>,
                                            TensorNumType<Child>>::cond,
@@ -222,8 +221,8 @@ namespace tfel::math {
   tensor<N, T>::import(const T2* const src) {
     typedef tfel::typetraits::base_type<T> base;
     typedef tfel::fsalgo::copy<TensorDimeToSize<N>::value> Copy;
-    TFEL_STATIC_ASSERT(
-        (tfel::typetraits::IsSafelyReinterpretCastableTo<T, base>::cond));
+    static_assert(
+        tfel::typetraits::IsSafelyReinterpretCastableTo<T, base>::cond);
     Copy::exe(src, reinterpret_cast<base*>(this->v));
   }
 
@@ -232,25 +231,24 @@ namespace tfel::math {
   void tensor<N, T>::write(tfel::typetraits::base_type<T>* const t) const {
     typedef tfel::typetraits::base_type<T> base;
     typedef tfel::fsalgo::copy<TensorDimeToSize<N>::value> Copy;
-    TFEL_STATIC_ASSERT(
-        (tfel::typetraits::IsSafelyReinterpretCastableTo<T, base>::cond));
+    static_assert(
+        tfel::typetraits::IsSafelyReinterpretCastableTo<T, base>::cond);
     Copy::exe(reinterpret_cast<const base*>(this->v), t);
   }
 
-  // ChangeBasis
   template <unsigned short N, typename T>
-  void tensor<N, T>::changeBasis(const rotation_matrix<T>& m) {
-    TensorChangeBasis<N, T>::exe(this->v, m);
-  }
+  void tensor<N, T>::changeBasis(const rotation_matrix<T>& m) noexcept {
+    const auto rt = change_basis(*this, m);
+    *this = rt;
+  }  // end of changeBasis
 
-  // Return Id
   template <unsigned short N, typename T>
   const tensor<N, T>& tensor<N, T>::Id() {
-    typedef tfel::typetraits::base_type<T> base;
-    constexpr base zero{0};
-    constexpr base one{1};
-    constexpr base IdCoef[] = {one,  one,  one,  zero, zero,
-                               zero, zero, zero, zero};
+    using real = tfel::typetraits::base_type<T> ;
+    constexpr const real zero{0};
+    constexpr const real one{1};
+    constexpr const real IdCoef[] = {one,  one,  one,  zero, zero,
+                                     zero, zero, zero, zero};
     static const tensor<N, T> id(IdCoef);
     return id;
   }  // end of tensor<N,T>::Id
@@ -266,83 +264,42 @@ namespace tfel::math {
   exportToBaseTypeArray(const tensor<N, T>& t, OutputIterator p) {
     typedef tfel::typetraits::base_type<T> base;
     typedef tfel::fsalgo::copy<TensorDimeToSize<N>::value> Copy;
-    TFEL_STATIC_ASSERT(
-        (tfel::typetraits::IsSafelyReinterpretCastableTo<T, base>::cond));
+    static_assert(
+        tfel::typetraits::IsSafelyReinterpretCastableTo<T, base>::cond);
     Copy::exe(reinterpret_cast<const base*>(&t[0]), p);
   }
 
   template <typename TensorType>
   std::enable_if_t<
-      tfel::meta::Implements<TensorType, TensorConcept>::cond &&
-          TensorTraits<TensorType>::dime == 1u,
-      tensor<1u,
+      implementsTensorConcept<TensorType>(),
+      tensor<TensorTraits<TensorType>::dime,
              typename ComputeBinaryResult<
                  tfel::typetraits::base_type<TensorNumType<TensorType>>,
                  TensorNumType<TensorType>,
                  OpDiv>::Result>>
-  invert(const TensorType& t) {
-    typedef TensorNumType<TensorType> T;
-    typedef tfel::typetraits::base_type<T> base;
-    typedef typename ComputeBinaryResult<base, T, OpDiv>::Result T2;
-    tensor<1u, T2> t2;
-    t2(0) = base(1) / t(0);
-    t2(1) = base(1) / t(1);
-    t2(2) = base(1) / t(2);
-    return t2;
-  }
+  invert(const TensorType& t) noexcept {
+    using real = tfel::typetraits::base_type<TensorNumType<TensorType>>;
+    constexpr const auto one = real(1);
+    constexpr const auto N = TensorTraits<TensorType>::dime;
+    static_assert((N == 1) || (N == 2) || (N == 3), "invalid space dimension");
+    if constexpr (N == 1) {
+      return {one / t[0], one / t[1], one / t[2]};
+    } else if constexpr (N == 2) {
+      const auto id = one / (t[0] * t[1] - t[3] * t[4]);
+      return {t[1] * id, t[0] * id, one / t[2], -t[3] * id, -t[4] * id};
+    } else {
+      const auto id = one / det(t);
+      return {
+          (t[1] * t[2] - t[7] * t[8]) * id, (t[0] * t[2] - t[5] * t[6]) * id,
+          (t[0] * t[1] - t[3] * t[4]) * id, (t[5] * t[8] - t[2] * t[3]) * id,
+          (t[6] * t[7] - t[2] * t[4]) * id, (t[3] * t[7] - t[1] * t[5]) * id,
+          (t[4] * t[8] - t[1] * t[6]) * id, (t[4] * t[5] - t[0] * t[7]) * id,
+          (t[3] * t[6] - t[0] * t[8]) * id};
+    }
+  }  // end of invert
 
   template <typename TensorType>
-  std::enable_if_t<
-      tfel::meta::Implements<TensorType, TensorConcept>::cond &&
-          TensorTraits<TensorType>::dime == 2u,
-      tensor<2u,
-             typename ComputeBinaryResult<
-                 tfel::typetraits::base_type<TensorNumType<TensorType>>,
-                 TensorNumType<TensorType>,
-                 OpDiv>::Result>>
-  invert(const TensorType& t) {
-    typedef TensorNumType<TensorType> T;
-    typedef tfel::typetraits::base_type<T> base;
-    typedef typename ComputeBinaryResult<base, T, OpDiv>::Result T3;
-    tensor<2u, T3> t2;
-    const auto id = base(1) / (t(0) * t(1) - t(3) * t(4));
-    t2(0) = t(1) * id;
-    t2(1) = t(0) * id;
-    t2(3) = -t(3) * id;
-    t2(4) = -t(4) * id;
-    t2(2) = base(1) / t(2);
-    return t2;
-  }
-
-  template <typename TensorType>
-  std::enable_if_t<
-      tfel::meta::Implements<TensorType, TensorConcept>::cond &&
-          TensorTraits<TensorType>::dime == 3u,
-      tensor<3u,
-             typename ComputeBinaryResult<
-                 tfel::typetraits::base_type<TensorNumType<TensorType>>,
-                 TensorNumType<TensorType>,
-                 OpDiv>::Result>>
-  invert(const TensorType& t) {
-    typedef TensorNumType<TensorType> T;
-    typedef tfel::typetraits::base_type<T> base;
-    typedef typename ComputeBinaryResult<base, T, OpDiv>::Result T4;
-    tensor<3u, T4> t2;
-    const auto id = base(1) / det(t);
-    t2(0) = (t(1) * t(2) - t(7) * t(8)) * id;
-    t2(1) = (t(0) * t(2) - t(5) * t(6)) * id;
-    t2(2) = (t(0) * t(1) - t(3) * t(4)) * id;
-    t2(3) = (t(5) * t(8) - t(2) * t(3)) * id;
-    t2(4) = (t(6) * t(7) - t(2) * t(4)) * id;
-    t2(5) = (t(3) * t(7) - t(1) * t(5)) * id;
-    t2(6) = (t(4) * t(8) - t(1) * t(6)) * id;
-    t2(7) = (t(4) * t(5) - t(0) * t(7)) * id;
-    t2(8) = (t(3) * t(6) - t(0) * t(8)) * id;
-    return t2;
-  }
-
-  template <typename TensorType>
-  std::enable_if_t<tfel::meta::Implements<TensorType, TensorConcept>::cond,
+  std::enable_if_t<implementsTensorConcept<TensorType>(),
                    tensor<TensorTraits<TensorType>::dime,
                           typename ComputeUnaryResult<TensorNumType<TensorType>,
                                                       Power<2>>::Result>>
@@ -357,195 +314,178 @@ namespace tfel::math {
 
   template <typename TensorType>
   std::enable_if_t<
-      tfel::meta::Implements<TensorType, TensorConcept>::cond,
+      implementsTensorConcept<TensorType>(),
       tensor<TensorTraits<TensorType>::dime, TensorNumType<TensorType>>>
-  change_basis(
-      const TensorType& t,
-      const tmatrix<3u,
-                    3u,
-                    tfel::typetraits::base_type<TensorNumType<TensorType>>>&
-          r) {
-    tensor<TensorTraits<TensorType>::dime, TensorNumType<TensorType>> nt{t};
-    nt.changeBasis(r);
-    return nt;
+  change_basis(const TensorType& t,
+               const rotation_matrix<TensorNumType<TensorType>>& r) noexcept {
+    constexpr const auto N = TensorTraits<TensorType>::dime;
+    static_assert((N == 1) || (N == 2) || (N == 3), "invalid space dimension");
+    if constexpr (N == 1) {
+      return t;
+    } else if constexpr (N == 2) {
+      const auto a = r(0, 0);
+      const auto b = r(0, 1);
+      const auto d = r(1, 0);
+      const auto e = r(1, 1);
+      return {a * d * t[4] + a * d * t[3] + d * d * t[1] + a * a * t[0],
+              b * e * t[4] + b * e * t[3] + e * e * t[1] + b * b * t[0], t[2],
+              b * d * t[4] + a * e * t[3] + d * e * t[1] + a * b * t[0],
+              a * e * t[4] + b * d * t[3] + d * e * t[1] + a * b * t[0]};
+    } else {
+      const auto a = r(0, 0);
+      const auto b = r(0, 1);
+      const auto c = r(0, 2);
+      const auto d = r(1, 0);
+      const auto e = r(1, 1);
+      const auto f = r(1, 2);
+      const auto g = r(2, 0);
+      const auto h = r(2, 1);
+      const auto i = r(2, 2);
+      return {d * g * t[8] + d * g * t[7] + a * g * t[6] + a * g * t[5] +
+                  a * d * t[4] + a * d * t[3] + g * g * t[2] + d * d * t[1] +
+                  a * a * t[0],
+              e * h * t[8] + e * h * t[7] + b * h * t[6] + b * h * t[5] +
+                  b * e * t[4] + b * e * t[3] + h * h * t[2] + e * e * t[1] +
+                  b * b * t[0],
+              f * i * t[8] + f * i * t[7] + c * i * t[6] + c * i * t[5] +
+                  c * f * t[4] + c * f * t[3] + i * i * t[2] + f * f * t[1] +
+                  c * c * t[0],
+              e * g * t[8] + d * h * t[7] + b * g * t[6] + a * h * t[5] +
+                  b * d * t[4] + a * e * t[3] + g * h * t[2] + d * e * t[1] +
+                  a * b * t[0],
+              d * h * t[8] + e * g * t[7] + a * h * t[6] + b * g * t[5] +
+                  a * e * t[4] + b * d * t[3] + g * h * t[2] + d * e * t[1] +
+                  a * b * t[0],
+              f * g * t[8] + d * i * t[7] + c * g * t[6] + a * i * t[5] +
+                  c * d * t[4] + a * f * t[3] + g * i * t[2] + d * f * t[1] +
+                  a * c * t[0],
+              d * i * t[8] + f * g * t[7] + a * i * t[6] + c * g * t[5] +
+                  a * f * t[4] + c * d * t[3] + g * i * t[2] + d * f * t[1] +
+                  a * c * t[0],
+              f * h * t[8] + e * i * t[7] + c * h * t[6] + b * i * t[5] +
+                  c * e * t[4] + b * f * t[3] + h * i * t[2] + e * f * t[1] +
+                  b * c * t[0],
+              e * i * t[8] + f * h * t[7] + b * i * t[6] + c * h * t[5] +
+                  b * f * t[4] + c * e * t[3] + h * i * t[2] + e * f * t[1] +
+                  b * c * t[0]};
+    }
   }  // end of change_basis
 
-  template <class T>
-  std::enable_if_t<((tfel::meta::Implements<T, StensorConcept>::cond) &&
-                    (StensorTraits<T>::dime == 1u)),
-                   tensor<1u, StensorNumType<T>>>
-  unsyme(const T& s) {
-    return {s[0], s[1], s[2]};
-  }
-
-  template <class T>
-  std::enable_if_t<((tfel::meta::Implements<T, StensorConcept>::cond) &&
-                    (StensorTraits<T>::dime == 2u)),
-                   tensor<2u, StensorNumType<T>>>
-  unsyme(const T& s) {
-    using real = tfel::typetraits::base_type<StensorNumType<T>>;
-    constexpr const auto cste = Cste<real>::isqrt2;
-    const auto s01 = s[3] * cste;
-    return {s[0], s[1], s[2], s01, s01};
-  }
-
-  template <class T>
-  std::enable_if_t<((tfel::meta::Implements<T, StensorConcept>::cond) &&
-                    (StensorTraits<T>::dime == 3u)),
-                   tensor<3u, StensorNumType<T>>>
-  unsyme(const T& s) {
-    using real = tfel::typetraits::base_type<StensorNumType<T>>;
-    constexpr const auto cste = Cste<real>::isqrt2;
-    const auto s01 = s[3] * cste;
-    const auto s02 = s[4] * cste;
-    const auto s12 = s[5] * cste;
-    return {s[0], s[1], s[2], s01, s01, s02, s02, s12, s12};
+  template <typename StensorType>
+  std::enable_if_t<
+      implementsStensorConcept<StensorType>(),
+      tensor<StensorTraits<StensorType>::dime, StensorNumType<StensorType>>>
+  unsyme(const StensorType& s) {
+    constexpr const auto N = StensorTraits<StensorType>::dime;
+    static_assert((N == 1) || (N == 2) || (N == 3), "invalid space dimension");
+    if constexpr (N == 1) {
+      return {s[0], s[1], s[2]};
+    } else if constexpr (N == 2) {
+      constexpr const auto cste = Cste<StensorNumType<StensorType>>::isqrt2;
+      const auto s01 = s[3] * cste;
+      return {s[0], s[1], s[2], s01, s01};
+    } else {
+      constexpr const auto cste = Cste<StensorNumType<StensorType>>::isqrt2;
+      const auto s01 = s[3] * cste;
+      const auto s02 = s[4] * cste;
+      const auto s12 = s[5] * cste;
+      return {s[0], s[1], s[2], s01, s01, s02, s02, s12, s12};
+    }
   }
 
   template <typename StensorType, typename TensorType>
-  std::enable_if_t<
-      ((tfel::meta::Implements<StensorType, StensorConcept>::cond) &&
-       (StensorTraits<StensorType>::dime == 1u) &&
-       (tfel::meta::Implements<TensorType, TensorConcept>::cond) &&
-       (TensorTraits<TensorType>::dime == 1u)),
-      tensor<1u,
-             typename ResultType<StensorNumType<StensorType>,
-                                 TensorNumType<TensorType>,
-                                 OpMult>::type>>
+  std::enable_if_t<(implementsStensorConcept<StensorType>() &&
+                    implementsTensorConcept<TensorType>()),
+                   tensor<StensorTraits<StensorType>::dime,
+                          typename ResultType<StensorNumType<StensorType>,
+                                              TensorNumType<TensorType>,
+                                              OpMult>::type>>
   convertCauchyStressToFirstPiolaKirchhoffStress(const StensorType& s,
                                                  const TensorType& F) {
-    return {s[0] * F[1] * F[2], F[0] * s[1] * F[2], F[0] * s[2] * F[1]};
-  }  // end of convertCauchyStressToFirstPiolaKirchhoffStress
-
-  template <typename StensorType, typename TensorType>
-  std::enable_if_t<
-      ((tfel::meta::Implements<StensorType, StensorConcept>::cond) &&
-       (StensorTraits<StensorType>::dime == 2u) &&
-       (tfel::meta::Implements<TensorType, TensorConcept>::cond) &&
-       (TensorTraits<TensorType>::dime == 2u)),
-      tensor<2u,
-             typename ResultType<StensorNumType<StensorType>,
-                                 TensorNumType<TensorType>,
-                                 OpMult>::type>>
-  convertCauchyStressToFirstPiolaKirchhoffStress(const StensorType& s,
-                                                 const TensorType& F) {
-    using real = tfel::typetraits::base_type<StensorNumType<StensorType>>;
-    constexpr const auto cste = Cste<real>::sqrt2;
-    constexpr const auto icste = Cste<real>::isqrt2;
-    return {-(s[3] * F[2] * F[3] - cste * s[0] * F[1] * F[2]) * icste,
-            -(s[3] * F[2] * F[4] - cste * F[0] * s[1] * F[2]) * icste,
-            F[0] * s[2] * F[1] - s[2] * F[3] * F[4],
-            -(cste * s[0] * F[2] * F[4] - F[0] * s[3] * F[2]) * icste,
-            -(cste * s[1] * F[2] * F[3] - s[3] * F[1] * F[2]) * icste};
-  }  // end of convertCauchyStressToFirstPiolaKirchhoffStress
-
-  template <typename StensorType, typename TensorType>
-  std::enable_if_t<
-      ((tfel::meta::Implements<StensorType, StensorConcept>::cond) &&
-       (StensorTraits<StensorType>::dime == 3u) &&
-       (tfel::meta::Implements<TensorType, TensorConcept>::cond) &&
-       (TensorTraits<TensorType>::dime == 3u)),
-      tensor<3u,
-             typename ResultType<StensorNumType<StensorType>,
-                                 TensorNumType<TensorType>,
-                                 OpMult>::type>>
-  convertCauchyStressToFirstPiolaKirchhoffStress(const StensorType& s,
-                                                 const TensorType& F) {
-    using real = tfel::typetraits::base_type<StensorNumType<StensorType>>;
-    constexpr const auto cste = Cste<real>::sqrt2;
-    return {-((2 * s[0] * F[7] - cste * s[3] * F[5]) * F[8] -
-              cste * s[4] * F[3] * F[7] + cste * s[4] * F[1] * F[5] +
-              cste * s[3] * F[2] * F[3] - 2 * s[0] * F[1] * F[2]) /
-                2,
-            ((cste * s[3] * F[6] - cste * F[0] * s[5]) * F[7] -
-             2 * s[1] * F[5] * F[6] + cste * s[5] * F[4] * F[5] -
-             cste * s[3] * F[2] * F[4] + 2 * F[0] * s[1] * F[2]) /
-                2,
-            ((cste * s[4] * F[4] - cste * F[0] * s[5]) * F[8] +
-             (cste * s[5] * F[3] - cste * s[4] * F[1]) * F[6] -
-             2 * s[2] * F[3] * F[4] + 2 * F[0] * s[2] * F[1]) /
-                2,
-            ((2 * s[0] * F[6] - cste * F[0] * s[4]) * F[7] -
-             cste * s[3] * F[5] * F[6] + cste * s[4] * F[4] * F[5] -
-             2 * s[0] * F[2] * F[4] + cste * F[0] * s[3] * F[2]) /
-                2,
-            -((cste * s[3] * F[7] - 2 * s[1] * F[5]) * F[8] -
-              cste * s[5] * F[3] * F[7] + cste * s[5] * F[1] * F[5] +
-              2 * s[1] * F[2] * F[3] - cste * s[3] * F[1] * F[2]) /
-                2,
-            ((2 * s[0] * F[4] - cste * F[0] * s[3]) * F[8] +
-             (cste * s[3] * F[3] - 2 * s[0] * F[1]) * F[6] -
-             cste * s[4] * F[3] * F[4] + cste * F[0] * s[4] * F[1]) /
-                2,
-            -((cste * s[4] * F[7] - cste * s[5] * F[5]) * F[8] -
-              2 * s[2] * F[3] * F[7] + 2 * s[2] * F[1] * F[5] +
-              cste * s[5] * F[2] * F[3] - cste * s[4] * F[1] * F[2]) /
-                2,
-            ((cste * s[3] * F[4] - 2 * F[0] * s[1]) * F[8] +
-             (2 * s[1] * F[3] - cste * s[3] * F[1]) * F[6] -
-             cste * s[5] * F[3] * F[4] + cste * F[0] * s[5] * F[1]) /
-                2,
-            ((cste * s[4] * F[6] - 2 * F[0] * s[2]) * F[7] -
-             cste * s[5] * F[5] * F[6] + 2 * s[2] * F[4] * F[5] -
-             cste * s[4] * F[2] * F[4] + cste * F[0] * s[5] * F[2]) /
-                2};
+    constexpr const auto N = StensorTraits<StensorType>::dime;
+    static_assert((N == 1) || (N == 2) || (N == 3), "invalid space dimension");
+    static_assert(TensorTraits<TensorType>::dime == N);
+    if constexpr (N == 1) {
+      return {s[0] * F[1] * F[2], F[0] * s[1] * F[2], F[0] * s[2] * F[1]};
+    } else if constexpr (N == 2) {
+      constexpr const auto cste = Cste<StensorNumType<StensorType>>::sqrt2;
+      constexpr const auto icste = Cste<StensorNumType<StensorType>>::isqrt2;
+      return {-(s[3] * F[2] * F[3] - cste * s[0] * F[1] * F[2]) * icste,
+              -(s[3] * F[2] * F[4] - cste * F[0] * s[1] * F[2]) * icste,
+              F[0] * s[2] * F[1] - s[2] * F[3] * F[4],
+              -(cste * s[0] * F[2] * F[4] - F[0] * s[3] * F[2]) * icste,
+              -(cste * s[1] * F[2] * F[3] - s[3] * F[1] * F[2]) * icste};
+    } else {
+      constexpr const auto cste = Cste<StensorNumType<StensorType>>::sqrt2;
+      return {-((2 * s[0] * F[7] - cste * s[3] * F[5]) * F[8] -
+                cste * s[4] * F[3] * F[7] + cste * s[4] * F[1] * F[5] +
+                cste * s[3] * F[2] * F[3] - 2 * s[0] * F[1] * F[2]) /
+                  2,
+              ((cste * s[3] * F[6] - cste * F[0] * s[5]) * F[7] -
+               2 * s[1] * F[5] * F[6] + cste * s[5] * F[4] * F[5] -
+               cste * s[3] * F[2] * F[4] + 2 * F[0] * s[1] * F[2]) /
+                  2,
+              ((cste * s[4] * F[4] - cste * F[0] * s[5]) * F[8] +
+               (cste * s[5] * F[3] - cste * s[4] * F[1]) * F[6] -
+               2 * s[2] * F[3] * F[4] + 2 * F[0] * s[2] * F[1]) /
+                  2,
+              ((2 * s[0] * F[6] - cste * F[0] * s[4]) * F[7] -
+               cste * s[3] * F[5] * F[6] + cste * s[4] * F[4] * F[5] -
+               2 * s[0] * F[2] * F[4] + cste * F[0] * s[3] * F[2]) /
+                  2,
+              -((cste * s[3] * F[7] - 2 * s[1] * F[5]) * F[8] -
+                cste * s[5] * F[3] * F[7] + cste * s[5] * F[1] * F[5] +
+                2 * s[1] * F[2] * F[3] - cste * s[3] * F[1] * F[2]) /
+                  2,
+              ((2 * s[0] * F[4] - cste * F[0] * s[3]) * F[8] +
+               (cste * s[3] * F[3] - 2 * s[0] * F[1]) * F[6] -
+               cste * s[4] * F[3] * F[4] + cste * F[0] * s[4] * F[1]) /
+                  2,
+              -((cste * s[4] * F[7] - cste * s[5] * F[5]) * F[8] -
+                2 * s[2] * F[3] * F[7] + 2 * s[2] * F[1] * F[5] +
+                cste * s[5] * F[2] * F[3] - cste * s[4] * F[1] * F[2]) /
+                  2,
+              ((cste * s[3] * F[4] - 2 * F[0] * s[1]) * F[8] +
+               (2 * s[1] * F[3] - cste * s[3] * F[1]) * F[6] -
+               cste * s[5] * F[3] * F[4] + cste * F[0] * s[5] * F[1]) /
+                  2,
+              ((cste * s[4] * F[6] - 2 * F[0] * s[2]) * F[7] -
+               cste * s[5] * F[5] * F[6] + 2 * s[2] * F[4] * F[5] -
+               cste * s[4] * F[2] * F[4] + cste * F[0] * s[5] * F[2]) /
+                  2};
+    }
   }  // end of convertCauchyStressToFirstPiolaKirchhoffStress
 
   template <typename TensorType, typename TensorType2>
-  std::enable_if_t<
-      ((tfel::meta::Implements<TensorType, TensorConcept>::cond) &&
-       (TensorTraits<TensorType>::dime == 1u) &&
-       (tfel::meta::Implements<TensorType2, TensorConcept>::cond) &&
-       (TensorTraits<TensorType2>::dime == 1u)),
-      stensor<1u,
-              typename ResultType<TensorNumType<TensorType>,
-                                  TensorNumType<TensorType2>,
-                                  OpMult>::type>>
+  std::enable_if_t<(implementsTensorConcept<TensorType>() &&
+                    implementsTensorConcept<TensorType2>()),
+                   stensor<TensorTraits<TensorType>::dime,
+                           typename ResultType<TensorNumType<TensorType>,
+                                               TensorNumType<TensorType2>,
+                                               OpMult>::type>>
   convertFirstPiolaKirchhoffStressToCauchyStress(const TensorType& P,
                                                  const TensorType2& F) {
-    return {P[0] / (F[1] * F[2]), P[1] / (F[0] * F[2]), P[2] / (F[0] * F[1])};
-  }  // end of convertFirstPiolaKirchhoffStressToCauchyStress
-
-  template <typename TensorType, typename TensorType2>
-  std::enable_if_t<
-      ((tfel::meta::Implements<TensorType, TensorConcept>::cond) &&
-       (TensorTraits<TensorType>::dime == 2u) &&
-       (tfel::meta::Implements<TensorType2, TensorConcept>::cond) &&
-       (TensorTraits<TensorType2>::dime == 2u)),
-      stensor<2u,
-              typename ResultType<TensorNumType<TensorType>,
-                                  TensorNumType<TensorType2>,
-                                  OpMult>::type>>
-  convertFirstPiolaKirchhoffStressToCauchyStress(const TensorType& P,
-                                                 const TensorType2& F) {
-    using real = tfel::typetraits::base_type<TensorNumType<TensorType2>>;
-    constexpr const auto cste = Cste<real>::sqrt2;
-    const auto iJ = 1 / det(F);
-    return {(P[3] * F[3] + F[0] * P[0]) * iJ, (P[4] * F[4] + P[1] * F[1]) * iJ,
-            P[2] * F[2] * iJ, cste * (P[1] * F[3] + F[0] * P[4]) * iJ};
-  }  // end of convertFirstPiolaKirchhoffStressToCauchyStress
-
-  template <typename TensorType, typename TensorType2>
-  std::enable_if_t<
-      ((tfel::meta::Implements<TensorType, TensorConcept>::cond) &&
-       (TensorTraits<TensorType>::dime == 3u) &&
-       (tfel::meta::Implements<TensorType2, TensorConcept>::cond) &&
-       (TensorTraits<TensorType2>::dime == 3u)),
-      stensor<3u,
-              typename ResultType<TensorNumType<TensorType>,
-                                  TensorNumType<TensorType2>,
-                                  OpMult>::type>>
-  convertFirstPiolaKirchhoffStressToCauchyStress(const TensorType& P,
-                                                 const TensorType2& F) {
-    using real = tfel::typetraits::base_type<TensorNumType<TensorType2>>;
-    constexpr const auto cste = Cste<real>::sqrt2;
-    const auto iJ = 1 / det(F);
-    return {(P[5] * F[5] + P[3] * F[3] + F[0] * P[0]) * iJ,
-            (P[7] * F[7] + P[4] * F[4] + P[1] * F[1]) * iJ,
-            (P[8] * F[8] + P[6] * F[6] + P[2] * F[2]) * iJ,
-            cste * (P[7] * F[5] + P[1] * F[3] + F[0] * P[4]) * iJ,
-            cste * (P[2] * F[5] + P[8] * F[3] + F[0] * P[6]) * iJ,
-            cste * (P[2] * F[7] + P[6] * F[4] + P[8] * F[1]) * iJ};
+    constexpr const auto N = TensorTraits<TensorType>::dime;
+    static_assert((N == 1) || (N == 2) || (N == 3), "invalid space dimension");
+    static_assert(TensorTraits<TensorType2>::dime == N);
+    if constexpr (N == 1) {
+      return {P[0] / (F[1] * F[2]), P[1] / (F[0] * F[2]), P[2] / (F[0] * F[1])};
+    } else if constexpr (N == 2) {
+      constexpr const auto cste = Cste<TensorNumType<TensorType2>>::sqrt2;
+      const auto iJ = 1 / det(F);
+      return {(P[3] * F[3] + F[0] * P[0]) * iJ,
+              (P[4] * F[4] + P[1] * F[1]) * iJ, P[2] * F[2] * iJ,
+              cste * (P[1] * F[3] + F[0] * P[4]) * iJ};
+    } else {
+      constexpr const auto cste = Cste<TensorNumType<TensorType2>>::sqrt2;
+      const auto iJ = 1 / det(F);
+      return {(P[5] * F[5] + P[3] * F[3] + F[0] * P[0]) * iJ,
+              (P[7] * F[7] + P[4] * F[4] + P[1] * F[1]) * iJ,
+              (P[8] * F[8] + P[6] * F[6] + P[2] * F[2]) * iJ,
+              cste * (P[7] * F[5] + P[1] * F[3] + F[0] * P[4]) * iJ,
+              cste * (P[2] * F[5] + P[8] * F[3] + F[0] * P[6]) * iJ,
+              cste * (P[2] * F[7] + P[6] * F[4] + P[8] * F[1]) * iJ};
+    }
   }  // end of convertFirstPiolaKirchhoffStressToCauchyStress
 
 }  // end of namespace tfel::math

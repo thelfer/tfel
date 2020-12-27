@@ -46,8 +46,7 @@ struct GenType::DumpToString {
 
   template <typename T>
   static return_type apply(const T& v) {
-    using namespace std;
-    ostringstream out;
+    std::ostringstream out;
     out << v;
     return out.str();
   }
@@ -60,7 +59,6 @@ struct GenType::Dump {
 
   template <typename T>
   return_type operator()(const T& v) {
-    using namespace std;
     this->stream << v;
   }
 
@@ -78,8 +76,7 @@ struct GenType::Load {
 
   template <typename T>
   return_type operator()(T& v) {
-    using namespace std;
-    istringstream is(this->value);
+    std::istringstream is(this->value);
     is >> v;
   }
 
@@ -88,14 +85,12 @@ struct GenType::Load {
 };
 
 std::string GenType::dumpToString() const {
-  using namespace tfel::utilities;
-  return apply<DumpToString>(*this);
+  return tfel::utilities::apply<DumpToString>(*this);
 }
 
 void GenType::dump(std::ostream& s) const {
-  using namespace tfel::utilities;
   Dump d(s);
-  return apply(d, *this);
+  return tfel::utilities::apply(d, *this);
 }
 
 void GenType::load(const std::string& t, const std::string& v) {

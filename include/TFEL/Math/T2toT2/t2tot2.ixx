@@ -18,16 +18,12 @@
 #include <iterator>
 #include <algorithm>
 #include <type_traits>
-
 #include "TFEL/FSAlgorithm/FSAlgorithm.hxx"
 #include "TFEL/TypeTraits/IsSafelyReinterpretCastableTo.hxx"
 #include "TFEL/Math/Vector/VectorUtilities.hxx"
 #include "TFEL/Math/Matrix/MatrixUtilities.hxx"
-#include "TFEL/Math/Matrix/MatrixUtilities.hxx"
 #include "TFEL/Math/T2toT2/TensorProductLeftDerivativeExpr.hxx"
 #include "TFEL/Math/T2toT2/TensorProductRightDerivativeExpr.hxx"
-#include "TFEL/Math/T2toT2/BuildFromRotationMatrix.hxx"
-#include "TFEL/Math/T2toT2/ChangeBasis.hxx"
 
 #if defined(__GNUG__) && (not defined(__CLANG__)) && \
     (not defined(__INTEL_COMPILER))
@@ -44,699 +40,715 @@
 #define TFEL_MATH_T2TOT2_SPECIALVALUES_CONSTEXPR_SUPPORT
 #endif
 
-namespace tfel {
+namespace tfel::math {
 
-  namespace math {
+  // Assignement operator
+  template <typename Child>
+  template <typename T2toT2Type>
+  std::enable_if_t<tfel::meta::Implements<T2toT2Type, T2toT2Concept>::cond &&
+                       T2toT2Traits<Child>::dime ==
+                           T2toT2Traits<T2toT2Type>::dime &&
+                       tfel::typetraits::IsAssignableTo<
+                           typename T2toT2Traits<T2toT2Type>::NumType,
+                           typename T2toT2Traits<Child>::NumType>::cond,
+                   Child&>
+  t2tot2_base<Child>::operator=(const T2toT2Type& src) {
+    auto& child = static_cast<Child&>(*this);
+    matrix_utilities<
+        TensorDimeToSize<T2toT2Traits<Child>::dime>::value,
+        TensorDimeToSize<T2toT2Traits<Child>::dime>::value,
+        TensorDimeToSize<T2toT2Traits<Child>::dime>::value>::copy(src, child);
+    return child;
+  }
 
-    namespace internals {
+  template <typename Child>
+  template <typename T2toT2Type>
+  std::enable_if_t<tfel::meta::Implements<T2toT2Type, T2toT2Concept>::cond &&
+                       T2toT2Traits<Child>::dime ==
+                           T2toT2Traits<T2toT2Type>::dime &&
+                       tfel::typetraits::IsAssignableTo<
+                           typename T2toT2Traits<T2toT2Type>::NumType,
+                           typename T2toT2Traits<Child>::NumType>::cond,
+                   Child&>
+  t2tot2_base<Child>::operator+=(const T2toT2Type& src) {
+    auto& child = static_cast<Child&>(*this);
+    matrix_utilities<
+        TensorDimeToSize<T2toT2Traits<Child>::dime>::value,
+        TensorDimeToSize<T2toT2Traits<Child>::dime>::value,
+        TensorDimeToSize<T2toT2Traits<Child>::dime>::value>::plusEqual(child,
+                                                                       src);
+    return child;
+  }
 
-      /*!
-       * \brief an helper class used to compute special t2tot2 values
-       * \tparam N: space dimension
-       * \tparam T: numerical type
-       */
-      template <unsigned short N, typename T>
-      struct ComputeSpecialT2toT2Values;
-      /*!
-       * \brief Partial specialisation of the
-       * ComputeSpecialT2toT2Values class in 1D.
-       * \tparam T: numerical type
-       */
-      template <typename T>
-      struct TFEL_VISIBILITY_LOCAL ComputeSpecialT2toT2Values<1u, T> {
-#ifdef TFEL_MATH_T2TOT2_SPECIALVALUES_CONSTEXPR_SUPPORT
-        static TFEL_CONSTEXPR const T zero = T{0};
-        static TFEL_CONSTEXPR const T one = T{1};
-        static TFEL_CONSTEXPR const T one_third = T{1} / T{3};
-        static TFEL_CONSTEXPR const T two_third = T{2} / T{3};
-#endif
-        /*!
-         * \return the derivative of the transpose of a tensor with respect of
-         * this tensor
-         */
-        static TFEL_MATH_INLINE TFEL_CONSTEXPR tfel::math::t2tot2<1u, T>
-        transpose_derivative() {
-          return ComputeSpecialT2toT2Values<1u, T>::Id();
-        }
-        //! \return the identity
-        static TFEL_MATH_INLINE TFEL_CONSTEXPR tfel::math::t2tot2<1u, T> Id() {
-#ifndef TFEL_MATH_T2TOT2_SPECIALVALUES_CONSTEXPR_SUPPORT
-          const auto zero = T{0};
-          const auto one = T{1};
-#endif
-          return {one, zero, zero, zero, one, zero, zero, zero, one};
-        }
-        //! \return Id2^Id2, where Id2 is the identity tensor
-        static TFEL_MATH_INLINE TFEL_CONSTEXPR tfel::math::t2tot2<1u, T> IxI() {
-#ifndef TFEL_MATH_T2TOT2_SPECIALVALUES_CONSTEXPR_SUPPORT
-          const auto one = T{1};
-#endif
-          return {one, one, one, one, one, one, one, one, one};
-        }
-        /*!
-         * \return Id4-Id2^Id2/3, where Id4 is the identity of t2tot2 and
-         * Id2 is the identity tensor
-         */
-        static TFEL_MATH_INLINE TFEL_CONSTEXPR tfel::math::t2tot2<1u, T> K() {
-#ifndef TFEL_MATH_T2TOT2_SPECIALVALUES_CONSTEXPR_SUPPORT
-          const auto one_third = T{1} / T{3};
-          const auto two_third = T{2} / T{3};
-#endif
-          return {two_third,  -one_third, -one_third, -one_third, two_third,
-                  -one_third, -one_third, -one_third, two_third};
-        }
-      };
-      /*!
-       * \brief Partial specialisation of the
-       * ComputeSpecialT2toT2Values class in 2D.
-       * \tparam T: numerical type
-       */
-      template <typename T>
-      struct TFEL_VISIBILITY_LOCAL ComputeSpecialT2toT2Values<2u, T> {
-#ifdef TFEL_MATH_T2TOT2_SPECIALVALUES_CONSTEXPR_SUPPORT
-        static TFEL_CONSTEXPR const T zero = T{0};
-        static TFEL_CONSTEXPR const T one = T{1};
-        static TFEL_CONSTEXPR const T one_third = T{1} / T{3};
-        static TFEL_CONSTEXPR const T two_third = T{2} / T{3};
-#endif
-        /*!
-         * \return the derivative of the transpose of a tensor with respect of
-         * this tensor
-         */
-        static TFEL_MATH_INLINE TFEL_CONSTEXPR tfel::math::t2tot2<2u, T>
-        transpose_derivative() {
-#ifndef TFEL_MATH_T2TOT2_SPECIALVALUES_CONSTEXPR_SUPPORT
-          const auto zero = T{0};
-          const auto one = T{1};
-#endif
-          return {one,  zero, zero, zero, zero, zero, one,  zero, zero,
-                  zero, zero, zero, one,  zero, zero, zero, zero, zero,
-                  zero, one,  zero, zero, zero, one,  zero};
-        }
-        //! \return the identity
-        static TFEL_MATH_INLINE TFEL_CONSTEXPR tfel::math::t2tot2<2u, T> Id() {
-#ifndef TFEL_MATH_T2TOT2_SPECIALVALUES_CONSTEXPR_SUPPORT
-          const auto zero = T{0};
-          const auto one = T{1};
-#endif
-          return {one,  zero, zero, zero, zero, zero, one,  zero, zero,
-                  zero, zero, zero, one,  zero, zero, zero, zero, zero,
-                  one,  zero, zero, zero, zero, zero, one};
-        }
-        //! \return Id2^Id2, where Id2 is the identity tensor
-        static TFEL_MATH_INLINE TFEL_CONSTEXPR tfel::math::t2tot2<2u, T> IxI() {
-#ifndef TFEL_MATH_T2TOT2_SPECIALVALUES_CONSTEXPR_SUPPORT
-          const auto zero = T{0};
-          const auto one = T{1};
-#endif
-          return {one,  one,  one,  zero, zero, one,  one,  one,  zero,
-                  zero, one,  one,  one,  zero, zero, zero, zero, zero,
-                  zero, zero, zero, zero, zero, zero, zero};
-        }
-        /*!
-         * \return Id4-Id2^Id2/3, where Id4 is the identity of t2tot2 and
-         * Id2 is the identity tensor
-         */
-        static TFEL_MATH_INLINE TFEL_CONSTEXPR tfel::math::t2tot2<2u, T> K() {
-#ifndef TFEL_MATH_T2TOT2_SPECIALVALUES_CONSTEXPR_SUPPORT
-          const auto zero = T{0};
-          const auto one = T{1};
-          const auto one_third = T{1} / T{3};
-          const auto two_third = T{2} / T{3};
-#endif
-          return {two_third,  -one_third, -one_third, zero, zero,
-                  -one_third, two_third,  -one_third, zero, zero,
-                  -one_third, -one_third, two_third,  zero, zero,
-                  zero,       zero,       zero,       one,  zero,
-                  zero,       zero,       zero,       zero, one};
-        }
-      };
-      /*!
-       * \brief Partial specialisation of the
-       * ComputeSpecialT2toT2Values class in 3D.
-       * \tparam T: numerical type
-       */
-      template <typename T>
-      struct TFEL_VISIBILITY_LOCAL ComputeSpecialT2toT2Values<3u, T> {
-#ifdef TFEL_MATH_T2TOT2_SPECIALVALUES_CONSTEXPR_SUPPORT
-        static TFEL_CONSTEXPR const T zero = T{0};
-        static TFEL_CONSTEXPR const T one = T{1};
-        static TFEL_CONSTEXPR const T one_third = T{1} / T{3};
-        static TFEL_CONSTEXPR const T two_third = T{2} / T{3};
-#endif
-        /*!
-         * \return the derivative of the transpose of a tensor with respect of
-         * this tensor
-         */
-        static TFEL_MATH_INLINE TFEL_CONSTEXPR tfel::math::t2tot2<3u, T>
-        transpose_derivative() {
-#ifndef TFEL_MATH_T2TOT2_SPECIALVALUES_CONSTEXPR_SUPPORT
-          const auto zero = T{0};
-          const auto one = T{1};
-#endif
-          return {one,  zero, zero, zero, zero, zero, zero, zero, zero,
-                  zero, one,  zero, zero, zero, zero, zero, zero, zero,
-                  zero, zero, one,  zero, zero, zero, zero, zero, zero,
-                  zero, zero, zero, zero, one,  zero, zero, zero, zero,
-                  zero, zero, zero, one,  zero, zero, zero, zero, zero,
-                  zero, zero, zero, zero, zero, zero, one,  zero, zero,
-                  zero, zero, zero, zero, zero, one,  zero, zero, zero,
-                  zero, zero, zero, zero, zero, zero, zero, zero, one,
-                  zero, zero, zero, zero, zero, zero, zero, one,  zero};
-        }
-        //! \return the identity
-        static TFEL_MATH_INLINE TFEL_CONSTEXPR tfel::math::t2tot2<3u, T> Id() {
-#ifndef TFEL_MATH_T2TOT2_SPECIALVALUES_CONSTEXPR_SUPPORT
-          const auto zero = T{0};
-          const auto one = T{1};
-#endif
-          return {one,  zero, zero, zero, zero, zero, zero, zero, zero,
-                  zero, one,  zero, zero, zero, zero, zero, zero, zero,
-                  zero, zero, one,  zero, zero, zero, zero, zero, zero,
-                  zero, zero, zero, one,  zero, zero, zero, zero, zero,
-                  zero, zero, zero, zero, one,  zero, zero, zero, zero,
-                  zero, zero, zero, zero, zero, one,  zero, zero, zero,
-                  zero, zero, zero, zero, zero, zero, one,  zero, zero,
-                  zero, zero, zero, zero, zero, zero, zero, one,  zero,
-                  zero, zero, zero, zero, zero, zero, zero, zero, one};
-        }
-        //! \return Id2^Id2, where Id2 is the identity tensor
-        static TFEL_MATH_INLINE TFEL_CONSTEXPR tfel::math::t2tot2<3u, T> IxI() {
-#ifndef TFEL_MATH_T2TOT2_SPECIALVALUES_CONSTEXPR_SUPPORT
-          const auto zero = T{0};
-          const auto one = T{1};
-#endif
-          return {one,  one,  one,  zero, zero, zero, zero, zero, zero,
-                  one,  one,  one,  zero, zero, zero, zero, zero, zero,
-                  one,  one,  one,  zero, zero, zero, zero, zero, zero,
-                  zero, zero, zero, zero, zero, zero, zero, zero, zero,
-                  zero, zero, zero, zero, zero, zero, zero, zero, zero,
-                  zero, zero, zero, zero, zero, zero, zero, zero, zero,
-                  zero, zero, zero, zero, zero, zero, zero, zero, zero,
-                  zero, zero, zero, zero, zero, zero, zero, zero, zero,
-                  zero, zero, zero, zero, zero, zero, zero, zero, zero};
-        }
-        /*!
-         * \return Id4-Id2^Id2/3, where Id4 is the identity of t2tot2 and
-         * Id2 is the identity tensor
-         */
-        static TFEL_MATH_INLINE TFEL_CONSTEXPR tfel::math::t2tot2<3u, T> K() {
-#ifndef TFEL_MATH_T2TOT2_SPECIALVALUES_CONSTEXPR_SUPPORT
-          const auto zero = T{0};
-          const auto one = T{1};
-          const auto one_third = T{1} / T{3};
-          const auto two_third = T{2} / T{3};
-#endif
-          return {two_third, -one_third, -one_third, zero,       zero,
-                  zero,      zero,       zero,       zero,       -one_third,
-                  two_third, -one_third, zero,       zero,       zero,
-                  zero,      zero,       zero,       -one_third, -one_third,
-                  two_third, zero,       zero,       zero,       zero,
-                  zero,      zero,       zero,       zero,       zero,
-                  one,       zero,       zero,       zero,       zero,
-                  zero,      zero,       zero,       zero,       zero,
-                  one,       zero,       zero,       zero,       zero,
-                  zero,      zero,       zero,       zero,       zero,
-                  one,       zero,       zero,       zero,       zero,
-                  zero,      zero,       zero,       zero,       zero,
-                  one,       zero,       zero,       zero,       zero,
-                  zero,      zero,       zero,       zero,       zero,
-                  one,       zero,       zero,       zero,       zero,
-                  zero,      zero,       zero,       zero,       zero,
-                  one};
-        }
-      };
-    }  // end of namespace internals
+  // Assignement operator
+  template <typename Child>
+  template <typename T2toT2Type>
+  std::enable_if_t<tfel::meta::Implements<T2toT2Type, T2toT2Concept>::cond &&
+                       T2toT2Traits<Child>::dime ==
+                           T2toT2Traits<T2toT2Type>::dime &&
+                       tfel::typetraits::IsAssignableTo<
+                           typename T2toT2Traits<T2toT2Type>::NumType,
+                           typename T2toT2Traits<Child>::NumType>::cond,
+                   Child&>
+  t2tot2_base<Child>::operator-=(const T2toT2Type& src) {
+    auto& child = static_cast<Child&>(*this);
+    matrix_utilities<
+        TensorDimeToSize<T2toT2Traits<Child>::dime>::value,
+        TensorDimeToSize<T2toT2Traits<Child>::dime>::value,
+        TensorDimeToSize<T2toT2Traits<Child>::dime>::value>::minusEqual(child,
+                                                                        src);
+    return child;
+  }
 
-    // Assignement operator
-    template <typename Child>
-    template <typename T2toT2Type>
-    std::enable_if_t<tfel::meta::Implements<T2toT2Type, T2toT2Concept>::cond &&
-                         T2toT2Traits<Child>::dime ==
-                             T2toT2Traits<T2toT2Type>::dime &&
-                         tfel::typetraits::IsAssignableTo<
-                             typename T2toT2Traits<T2toT2Type>::NumType,
-                             typename T2toT2Traits<Child>::NumType>::cond,
-                     Child&>
-    t2tot2_base<Child>::operator=(const T2toT2Type& src) {
-      auto& child = static_cast<Child&>(*this);
-      matrix_utilities<
-          TensorDimeToSize<T2toT2Traits<Child>::dime>::value,
-          TensorDimeToSize<T2toT2Traits<Child>::dime>::value,
-          TensorDimeToSize<T2toT2Traits<Child>::dime>::value>::copy(src, child);
-      return child;
+  // *= operator
+  template <typename Child>
+  template <typename T2>
+  std::enable_if_t<
+      tfel::typetraits::IsScalar<T2>::cond &&
+          std::is_same<
+              typename ResultType<typename T2toT2Traits<Child>::NumType,
+                                  T2,
+                                  OpMult>::type,
+              typename T2toT2Traits<Child>::NumType>::value,
+      Child&>
+  t2tot2_base<Child>::operator*=(const T2 s) {
+    auto& child = static_cast<Child&>(*this);
+    matrix_utilities<
+        TensorDimeToSize<T2toT2Traits<Child>::dime>::value,
+        TensorDimeToSize<T2toT2Traits<Child>::dime>::value,
+        TensorDimeToSize<T2toT2Traits<Child>::dime>::value>::multByScalar(child,
+                                                                          s);
+    return child;
+  }
+
+  // /= operator
+  template <typename Child>
+  template <typename T2>
+  std::enable_if_t<
+      tfel::typetraits::IsScalar<T2>::cond &&
+          std::is_same<
+              typename ResultType<typename T2toT2Traits<Child>::NumType,
+                                  T2,
+                                  OpDiv>::type,
+              typename T2toT2Traits<Child>::NumType>::value,
+      Child&>
+  t2tot2_base<Child>::operator/=(const T2 s) {
+    auto& child = static_cast<Child&>(*this);
+    matrix_utilities<
+        TensorDimeToSize<T2toT2Traits<Child>::dime>::value,
+        TensorDimeToSize<T2toT2Traits<Child>::dime>::value,
+        TensorDimeToSize<T2toT2Traits<Child>::dime>::value>::divByScalar(child,
+                                                                         s);
+    return child;
+  }
+
+  template <unsigned short N, typename T>
+  t2tot2<N, tfel::typetraits::base_type<T>> t2tot2<N, T>::fromRotationMatrix(
+      const rotation_matrix<T>& r) {
+    using base = tfel::typetraits::base_type<T>;
+    static_assert((N == 1) || (N == 2) || (N == 3));
+    if constexpr (N == 1) {
+      return t2tot2<N, base>::Id();
+    } else if constexpr (N == 2) {
+      constexpr const auto zero = base{0};
+      constexpr const auto one = base{1};
+      tfel::math::t2tot2<2u, base> rt;
+      const auto a = r(0, 0);
+      const auto b = r(0, 1);
+      const auto d = r(1, 0);
+      const auto e = r(1, 1);
+      // a*d*v[4]+a*d*v[3]+d*d*v[1]+a*a*v[0];
+      rt(0, 4) = a * d;
+      rt(0, 3) = a * d;
+      rt(0, 2) = zero;
+      rt(0, 1) = d * d;
+      rt(0, 0) = a * a;
+      // b*e*v[4]+b*e*v[3]+e*e*v[1]+b*b*v[0];
+      rt(1, 4) = b * e;
+      rt(1, 3) = b * e;
+      rt(1, 2) = zero;
+      rt(1, 1) = e * e;
+      rt(1, 0) = b * b;
+      // b*d*v[4]+a*e*v[3]+d*e*v[1]+a*b*v[0];
+      rt(3, 4) = b * d;
+      rt(3, 3) = a * e;
+      rt(3, 2) = zero;
+      rt(3, 1) = d * e;
+      rt(3, 0) = a * b;
+      // a*e*v[4]+b*d*v[3]+d*e*v[1]+a*b*v[0];
+      rt(4, 4) = a * e;
+      rt(4, 3) = b * d;
+      rt(4, 2) = zero;
+      rt(4, 1) = d * e;
+      rt(4, 0) = a * b;
+      // the last one
+      rt(2, 4) = zero;
+      rt(2, 3) = zero;
+      rt(2, 2) = one;
+      rt(2, 1) = zero;
+      rt(2, 0) = zero;
+      return rt;
+    } else {
+      const auto a = r(0, 0);
+      const auto b = r(0, 1);
+      const auto c = r(0, 2);
+      const auto d = r(1, 0);
+      const auto e = r(1, 1);
+      const auto f = r(1, 2);
+      const auto g = r(2, 0);
+      const auto h = r(2, 1);
+      const auto i = r(2, 2);
+      tfel::math::t2tot2<3u, T> rt;
+      // d*g*v[8]+d*g*v[7]+a*g*v[6]+a*g*v[5]+a*d*v[4]+a*d*v[3]+g*g*v[2]+d*d*v[1]+a*a*v[0];
+      rt(0, 0) = a * a;
+      rt(0, 1) = d * d;
+      rt(0, 2) = g * g;
+      rt(0, 3) = a * d;
+      rt(0, 4) = a * d;
+      rt(0, 5) = a * g;
+      rt(0, 6) = a * g;
+      rt(0, 7) = d * g;
+      rt(0, 8) = d * g;
+      // e*h*v[8]+e*h*v[7]+b*h*v[6]+b*h*v[5]+b*e*v[4]+b*e*v[3]+h*h*v[2]+e*e*v[1]+b*b*v[0];
+      rt(1, 0) = b * b;
+      rt(1, 1) = e * e;
+      rt(1, 2) = h * h;
+      rt(1, 3) = b * e;
+      rt(1, 4) = b * e;
+      rt(1, 5) = b * h;
+      rt(1, 6) = b * h;
+      rt(1, 7) = e * h;
+      rt(1, 8) = e * h;
+      // f*i*v[8]+f*i*v[7]+c*i*v[6]+c*i*v[5]+c*f*v[4]+c*f*v[3]+i*i*v[2]+f*f*v[1]+c*c*v[0];
+      rt(2, 0) = c * c;
+      rt(2, 1) = f * f;
+      rt(2, 2) = i * i;
+      rt(2, 3) = c * f;
+      rt(2, 4) = c * f;
+      rt(2, 5) = c * i;
+      rt(2, 6) = c * i;
+      rt(2, 7) = f * i;
+      rt(2, 8) = f * i;
+      // e*g*v[8]+d*h*v[7]+b*g*v[6]+a*h*v[5]+b*d*v[4]+a*e*v[3]+g*h*v[2]+d*e*v[1]+a*b*v[0];
+      rt(3, 8) = e * g;
+      rt(3, 7) = d * h;
+      rt(3, 6) = b * g;
+      rt(3, 5) = a * h;
+      rt(3, 4) = b * d;
+      rt(3, 3) = a * e;
+      rt(3, 2) = g * h;
+      rt(3, 1) = d * e;
+      rt(3, 0) = a * b;
+      // d*h*v[8]+e*g*v[7]+a*h*v[6]+b*g*v[5]+a*e*v[4]+b*d*v[3]+g*h*v[2]+d*e*v[1]+a*b*v[0];
+      rt(4, 8) = d * h;
+      rt(4, 7) = e * g;
+      rt(4, 6) = a * h;
+      rt(4, 5) = b * g;
+      rt(4, 4) = a * e;
+      rt(4, 3) = b * d;
+      rt(4, 2) = g * h;
+      rt(4, 1) = d * e;
+      rt(4, 0) = a * b;
+      // f*g*v[8]+d*i*v[7]+c*g*v[6]+a*i*v[5]+c*d*v[4]+a*f*v[3]+g*i*v[2]+d*f*v[1]+a*c*v[0];
+      rt(5, 8) = f * g;
+      rt(5, 7) = d * i;
+      rt(5, 6) = c * g;
+      rt(5, 5) = a * i;
+      rt(5, 4) = c * d;
+      rt(5, 3) = a * f;
+      rt(5, 2) = g * i;
+      rt(5, 1) = d * f;
+      rt(5, 0) = a * c;
+      // d*i*v[8]+f*g*v[7]+a*i*v[6]+c*g*v[5]+a*f*v[4]+c*d*v[3]+g*i*v[2]+d*f*v[1]+a*c*v[0];
+      rt(6, 8) = d * i;
+      rt(6, 7) = f * g;
+      rt(6, 6) = a * i;
+      rt(6, 5) = c * g;
+      rt(6, 4) = a * f;
+      rt(6, 3) = c * d;
+      rt(6, 2) = g * i;
+      rt(6, 1) = d * f;
+      rt(6, 0) = a * c;
+      // f*h*v[8]+e*i*v[7]+c*h*v[6]+b*i*v[5]+c*e*v[4]+b*f*v[3]+h*i*v[2]+e*f*v[1]+b*c*v[0];
+      rt(7, 8) = f * h;
+      rt(7, 7) = e * i;
+      rt(7, 6) = c * h;
+      rt(7, 5) = b * i;
+      rt(7, 4) = c * e;
+      rt(7, 3) = b * f;
+      rt(7, 2) = h * i;
+      rt(7, 1) = e * f;
+      rt(7, 0) = b * c;
+      // e*i*v[8]+f*h*v[7]+b*i*v[6]+c*h*v[5]+b*f*v[4]+c*e*v[3]+h*i*v[2]+e*f*v[1]+b*c*v[0];
+      rt(8, 8) = e * i;
+      rt(8, 7) = f * h;
+      rt(8, 6) = b * i;
+      rt(8, 5) = c * h;
+      rt(8, 4) = b * f;
+      rt(8, 3) = c * e;
+      rt(8, 2) = h * i;
+      rt(8, 1) = e * f;
+      rt(8, 0) = b * c;
+      return rt;
     }
+  }  // end of t2tot2<N,T>::fromRotationMatrix
 
-    template <typename Child>
-    template <typename T2toT2Type>
-    std::enable_if_t<tfel::meta::Implements<T2toT2Type, T2toT2Concept>::cond &&
-                         T2toT2Traits<Child>::dime ==
-                             T2toT2Traits<T2toT2Type>::dime &&
-                         tfel::typetraits::IsAssignableTo<
-                             typename T2toT2Traits<T2toT2Type>::NumType,
-                             typename T2toT2Traits<Child>::NumType>::cond,
-                     Child&>
-    t2tot2_base<Child>::operator+=(const T2toT2Type& src) {
-      auto& child = static_cast<Child&>(*this);
-      matrix_utilities<
-          TensorDimeToSize<T2toT2Traits<Child>::dime>::value,
-          TensorDimeToSize<T2toT2Traits<Child>::dime>::value,
-          TensorDimeToSize<T2toT2Traits<Child>::dime>::value>::plusEqual(child,
-                                                                         src);
-      return child;
+  template <unsigned short N, typename T>
+  template <typename TensorType>
+  std::enable_if_t<tfel::meta::Implements<TensorType, TensorConcept>::cond &&
+                       TensorTraits<TensorType>::dime == N &&
+                       tfel::typetraits::IsAssignableTo<
+                           typename TensorTraits<TensorType>::NumType,
+                           T>::cond,
+                   Expr<t2tot2<N, T>, TensorProductLeftDerivativeExpr<N>>>
+  t2tot2<N, T>::tpld(const TensorType& B) {
+    return Expr<t2tot2<N, T>, TensorProductLeftDerivativeExpr<N>>(B);
+  }  // end of t2tot2<N,T>
+
+  template <unsigned short N, typename T>
+  template <typename TensorType, typename T2toT2Type>
+  std::enable_if_t<
+      tfel::meta::Implements<TensorType, TensorConcept>::cond &&
+          tfel::meta::Implements<T2toT2Type, T2toT2Concept>::cond &&
+          TensorTraits<TensorType>::dime == N &&
+          T2toT2Traits<T2toT2Type>::dime == N &&
+          tfel::typetraits::IsAssignableTo<
+              typename ComputeBinaryResult<
+                  typename TensorTraits<TensorType>::NumType,
+                  typename T2toT2Traits<T2toT2Type>::NumType,
+                  OpMult>::Result,
+              T>::cond,
+      Expr<t2tot2<N, T>, TensorProductLeftDerivativeExpr<N>>>
+  t2tot2<N, T>::tpld(const TensorType& B, const T2toT2Type& C) {
+    return Expr<t2tot2<N, T>, TensorProductLeftDerivativeExpr<N>>(B, C);
+  }
+
+  template <unsigned short N, typename T>
+  template <typename TensorType>
+  std::enable_if_t<tfel::meta::Implements<TensorType, TensorConcept>::cond &&
+                       TensorTraits<TensorType>::dime == N &&
+                       tfel::typetraits::IsAssignableTo<
+                           typename TensorTraits<TensorType>::NumType,
+                           T>::cond,
+                   Expr<t2tot2<N, T>, TensorProductRightDerivativeExpr<N>>>
+  t2tot2<N, T>::tprd(const TensorType& A) {
+    return Expr<t2tot2<N, T>, TensorProductRightDerivativeExpr<N>>(A);
+  }
+
+  template <unsigned short N, typename T>
+  template <typename TensorType, typename T2toT2Type>
+  std::enable_if_t<
+      tfel::meta::Implements<TensorType, TensorConcept>::cond &&
+          tfel::meta::Implements<T2toT2Type, T2toT2Concept>::cond &&
+          TensorTraits<TensorType>::dime == N &&
+          T2toT2Traits<T2toT2Type>::dime == N &&
+          tfel::typetraits::IsAssignableTo<
+              typename ComputeBinaryResult<
+                  typename TensorTraits<TensorType>::NumType,
+                  typename T2toT2Traits<T2toT2Type>::NumType,
+                  OpMult>::Result,
+              T>::cond,
+      Expr<t2tot2<N, T>, TensorProductRightDerivativeExpr<N>>>
+  t2tot2<N, T>::tprd(const TensorType& A, const T2toT2Type& C) {
+    return Expr<t2tot2<N, T>, TensorProductRightDerivativeExpr<N>>(A, C);
+  }
+
+  template <unsigned short N, typename T>
+  typename tfel::math::t2tot2<N, tfel::typetraits::base_type<T>> TFEL_CONSTEXPR
+  t2tot2<N, T>::transpose_derivative() {
+    using base = tfel::typetraits::base_type<T>;
+    constexpr const auto c0 = base{0};
+    constexpr const auto c1 = base{1};
+    static_assert((N == 1) || (N == 2) || (N == 3));
+    if constexpr (N == 1) {
+      return {c1, c0, c0,  //
+              c0, c1, c0,  //
+              c0, c0, c1};
+    } else if constexpr (N == 2) {
+      return {c1, c0, c0, c0, c0,  //
+              c0, c1, c0, c0, c0,  //
+              c0, c0, c1, c0, c0,  //
+              c0, c0, c0, c0, c1,  //
+              c0, c0, c0, c1, c0};
+    } else {
+      return {c1, c0, c0, c0, c0, c0, c0, c0, c0,  //
+              c0, c1, c0, c0, c0, c0, c0, c0, c0,  //
+              c0, c0, c1, c0, c0, c0, c0, c0, c0,  //
+              c0, c0, c0, c0, c1, c0, c0, c0, c0,  //
+              c0, c0, c0, c1, c0, c0, c0, c0, c0,  //
+              c0, c0, c0, c0, c0, c0, c1, c0, c0,  //
+              c0, c0, c0, c0, c0, c1, c0, c0, c0,  //
+              c0, c0, c0, c0, c0, c0, c0, c0, c1,  //
+              c0, c0, c0, c0, c0, c0, c0, c1, c0};
     }
+  }
 
-    // Assignement operator
-    template <typename Child>
-    template <typename T2toT2Type>
-    std::enable_if_t<tfel::meta::Implements<T2toT2Type, T2toT2Concept>::cond &&
-                         T2toT2Traits<Child>::dime ==
-                             T2toT2Traits<T2toT2Type>::dime &&
-                         tfel::typetraits::IsAssignableTo<
-                             typename T2toT2Traits<T2toT2Type>::NumType,
-                             typename T2toT2Traits<Child>::NumType>::cond,
-                     Child&>
-    t2tot2_base<Child>::operator-=(const T2toT2Type& src) {
-      auto& child = static_cast<Child&>(*this);
-      matrix_utilities<
-          TensorDimeToSize<T2toT2Traits<Child>::dime>::value,
-          TensorDimeToSize<T2toT2Traits<Child>::dime>::value,
-          TensorDimeToSize<T2toT2Traits<Child>::dime>::value>::minusEqual(child,
-                                                                          src);
-      return child;
+  template <unsigned short N, typename T>
+  TFEL_CONSTEXPR t2tot2<N, tfel::typetraits::base_type<T>> t2tot2<N, T>::Id() {
+    using base = tfel::typetraits::base_type<T>;
+    constexpr const auto c0 = base{0};
+    constexpr const auto c1 = base{1};
+    static_assert((N == 1) || (N == 2) || (N == 3));
+    if constexpr (N == 1) {
+      return {c1, c0, c0,  //
+              c0, c1, c0,  //
+              c0, c0, c1};
+    } else if constexpr (N == 2) {
+      return {c1, c0, c0, c0, c0,  //
+              c0, c1, c0, c0, c0,  //
+              c0, c0, c1, c0, c0,  //
+              c0, c0, c0, c1, c0,  //
+              c0, c0, c0, c0, c1};
+    } else {
+      return {c1, c0, c0, c0, c0, c0, c0, c0, c0,  //
+              c0, c1, c0, c0, c0, c0, c0, c0, c0,  //
+              c0, c0, c1, c0, c0, c0, c0, c0, c0,  //
+              c0, c0, c0, c1, c0, c0, c0, c0, c0,  //
+              c0, c0, c0, c0, c1, c0, c0, c0, c0,  //
+              c0, c0, c0, c0, c0, c1, c0, c0, c0,  //
+              c0, c0, c0, c0, c0, c0, c1, c0, c0,  //
+              c0, c0, c0, c0, c0, c0, c0, c1, c0,  //
+              c0, c0, c0, c0, c0, c0, c0, c0, c1};
     }
+  }  // end of Id
 
-    // *= operator
-    template <typename Child>
-    template <typename T2>
-    std::enable_if_t<
-        tfel::typetraits::IsScalar<T2>::cond &&
-            std::is_same<
-                typename ResultType<typename T2toT2Traits<Child>::NumType,
-                                    T2,
-                                    OpMult>::type,
-                typename T2toT2Traits<Child>::NumType>::value,
-        Child&>
-    t2tot2_base<Child>::operator*=(const T2 s) {
-      auto& child = static_cast<Child&>(*this);
-      matrix_utilities<TensorDimeToSize<T2toT2Traits<Child>::dime>::value,
-                       TensorDimeToSize<T2toT2Traits<Child>::dime>::value,
-                       TensorDimeToSize<T2toT2Traits<Child>::dime>::value>::
-          multByScalar(child, s);
-      return child;
+  template <unsigned short N, typename T>
+  TFEL_CONSTEXPR t2tot2<N, tfel::typetraits::base_type<T>> t2tot2<N, T>::IxI() {
+    using base = tfel::typetraits::base_type<T>;
+    constexpr const auto c0 = base{0};
+    constexpr const auto c1 = base{1};
+    static_assert((N == 1) || (N == 2) || (N == 3));
+    if constexpr (N == 1) {
+      return {c1, c1, c1,  //
+              c1, c1, c1,  //
+              c1, c1, c1};
+    } else if constexpr (N == 2) {
+      return {c1, c1, c1, c0, c0,  //
+              c1, c1, c1, c0, c0,  //
+              c1, c1, c1, c0, c0,  //
+              c0, c0, c0, c0, c0,  //
+              c0, c0, c0, c0, c0};
+    } else {
+      return {c1, c1, c1, c0, c0, c0, c0, c0, c0,  //
+              c1, c1, c1, c0, c0, c0, c0, c0, c0,  //
+              c1, c1, c1, c0, c0, c0, c0, c0, c0,  //
+              c0, c0, c0, c0, c0, c0, c0, c0, c0,  //
+              c0, c0, c0, c0, c0, c0, c0, c0, c0,  //
+              c0, c0, c0, c0, c0, c0, c0, c0, c0,  //
+              c0, c0, c0, c0, c0, c0, c0, c0, c0,  //
+              c0, c0, c0, c0, c0, c0, c0, c0, c0,  //
+              c0, c0, c0, c0, c0, c0, c0, c0, c0};
     }
+  }  // end of IxI
 
-    // /= operator
-    template <typename Child>
-    template <typename T2>
-    std::enable_if_t<
-        tfel::typetraits::IsScalar<T2>::cond &&
-            std::is_same<
-                typename ResultType<typename T2toT2Traits<Child>::NumType,
-                                    T2,
-                                    OpDiv>::type,
-                typename T2toT2Traits<Child>::NumType>::value,
-        Child&>
-    t2tot2_base<Child>::operator/=(const T2 s) {
-      auto& child = static_cast<Child&>(*this);
-      matrix_utilities<TensorDimeToSize<T2toT2Traits<Child>::dime>::value,
-                       TensorDimeToSize<T2toT2Traits<Child>::dime>::value,
-                       TensorDimeToSize<T2toT2Traits<Child>::dime>::value>::
-          divByScalar(child, s);
-      return child;
+  template <unsigned short N, typename T>
+  TFEL_CONSTEXPR t2tot2<N, tfel::typetraits::base_type<T>> t2tot2<N, T>::K() {
+    using base = tfel::typetraits::base_type<T>;
+    static_assert((N == 1) || (N == 2) || (N == 3));
+    constexpr const auto c2_3 = base{2} / base{3};
+    constexpr const auto mc1_3 = -base{1} / base{3};
+    if constexpr (N == 1) {
+      return {c2_3,  mc1_3, mc1_3,  //
+              mc1_3, c2_3,  mc1_3,  //
+              mc1_3, mc1_3, c2_3};
+    } else if constexpr (N == 2) {
+      constexpr const auto c0 = base{0};
+      constexpr const auto c1 = base{1};
+      return {c2_3,  mc1_3, mc1_3, c0, c0,  //
+              mc1_3, c2_3,  mc1_3, c0, c0,  //
+              mc1_3, mc1_3, c2_3,  c0, c0,  //
+              c0,    c0,    c0,    c1, c0,  //
+              c0,    c0,    c0,    c0, c1};
+    } else {
+      constexpr const auto c0 = base{0};
+      constexpr const auto c1 = base{1};
+      return {c2_3,  mc1_3, mc1_3, c0, c0, c0, c0, c0, c0,  //
+              mc1_3, c2_3,  mc1_3, c0, c0, c0, c0, c0, c0,  //
+              mc1_3, mc1_3, c2_3,  c0, c0, c0, c0, c0, c0,  //
+              c0,    c0,    c0,    c1, c0, c0, c0, c0, c0,  //
+              c0,    c0,    c0,    c0, c1, c0, c0, c0, c0,  //
+              c0,    c0,    c0,    c0, c0, c1, c0, c0, c0,  //
+              c0,    c0,    c0,    c0, c0, c0, c1, c0, c0,  //
+              c0,    c0,    c0,    c0, c0, c0, c0, c1, c0,  //
+              c0,    c0,    c0,    c0, c0, c0, c0, c0, c1};
     }
+  }  // end of K
 
-    template <unsigned short N, typename T>
-    t2tot2<N, typename tfel::typetraits::BaseType<T>::type>
-    t2tot2<N, T>::fromRotationMatrix(
-        const tmatrix<3u, 3u, typename tfel::typetraits::BaseType<T>::type>&
-            r) {
-      return t2tot2_internals::BuildFromRotationMatrix<N, T>::exe(r);
-    }  // end of t2tot2<N,T>::fromRotationMatrix
+  template <unsigned short N, typename T>
+  constexpr t2tot2<N, T>::t2tot2() {}
 
-    template <unsigned short N, typename T>
-    template <typename TensorType>
-    std::enable_if_t<tfel::meta::Implements<TensorType, TensorConcept>::cond &&
-                         TensorTraits<TensorType>::dime == N &&
-                         tfel::typetraits::IsAssignableTo<
-                             typename TensorTraits<TensorType>::NumType,
-                             T>::cond,
-                     Expr<t2tot2<N, T>, TensorProductLeftDerivativeExpr<N>>>
-    t2tot2<N, T>::tpld(const TensorType& B) {
-      return Expr<t2tot2<N, T>, TensorProductLeftDerivativeExpr<N>>(B);
-    }  // end of t2tot2<N,T>
+  template <unsigned short N, typename T>
+  template <
+      typename T2,
+      std::enable_if_t<tfel::typetraits::IsAssignableTo<T2, T>::cond, bool>>
+  constexpr t2tot2<N, T>::t2tot2(const T2& init)
+      : fsarray<TensorDimeToSize<N>::value * TensorDimeToSize<N>::value, T>(
+            init) {}
 
-    template <unsigned short N, typename T>
-    template <typename TensorType, typename T2toT2Type>
-    std::enable_if_t<
-        tfel::meta::Implements<TensorType, TensorConcept>::cond &&
-            tfel::meta::Implements<T2toT2Type, T2toT2Concept>::cond &&
-            TensorTraits<TensorType>::dime == N &&
-            T2toT2Traits<T2toT2Type>::dime == N &&
-            tfel::typetraits::IsAssignableTo<
-                typename ComputeBinaryResult<
-                    typename TensorTraits<TensorType>::NumType,
-                    typename T2toT2Traits<T2toT2Type>::NumType,
-                    OpMult>::Result,
-                T>::cond,
-        Expr<t2tot2<N, T>, TensorProductLeftDerivativeExpr<N>>>
-    t2tot2<N, T>::tpld(const TensorType& B, const T2toT2Type& C) {
-      return Expr<t2tot2<N, T>, TensorProductLeftDerivativeExpr<N>>(B, C);
+  template <unsigned short N, typename T>
+  template <
+      typename T2,
+      std::enable_if_t<tfel::typetraits::IsAssignableTo<T2, T>::cond, bool>>
+  constexpr t2tot2<N, T>::t2tot2(const std::initializer_list<T2>& values)
+      : fsarray<TensorDimeToSize<N>::value * TensorDimeToSize<N>::value, T>(
+            values) {}
+
+  template <unsigned short N, typename T>
+  template <typename T2, typename Op>
+  t2tot2<N, T>::t2tot2(const Expr<t2tot2<N, T2>, Op>& src) {
+    matrix_utilities<TensorDimeToSize<N>::value, TensorDimeToSize<N>::value,
+                     TensorDimeToSize<N>::value>::copy(src, *this);
+  }
+
+  template <unsigned short N, typename T>
+  template <typename T2toST2Type,
+            std::enable_if_t<
+                ((tfel::meta::Implements<T2toST2Type,
+                                         tfel::math::T2toST2Concept>::cond) &&
+                 (tfel::typetraits::IsAssignableTo<T2toST2NumType<T2toST2Type>,
+                                                   T>::cond) &&
+                 (T2toST2Traits<T2toST2Type>::dime == N)),
+                bool>>
+  t2tot2<N, T>::t2tot2(const T2toST2Type& s) {
+    convert(*this, s);
+  }  // end of t2tot2<N, T>::t2tot2
+
+  template <unsigned short N, typename T>
+  constexpr t2tot2<N, T>::t2tot2(const t2tot2<N, T>& src)
+      : T2toT2Concept<t2tot2<N, T>>(src),
+        fsarray<TensorDimeToSize<N>::value * TensorDimeToSize<N>::value, T>(
+            src) {}
+
+  template <unsigned short N, typename T>
+  t2tot2<N, T>& t2tot2<N, T>::operator=(const t2tot2<N, T>& src) {
+    fsarray<TensorDimeToSize<N>::value * TensorDimeToSize<N>::value, T>::
+    operator=(src);
+    return *this;
+  }
+
+  template <unsigned short N, typename T>
+  T& t2tot2<N, T>::operator()(const unsigned short i, const unsigned short j) {
+    return this->v[TensorDimeToSize<N>::value * i + j];
+  }
+
+  template <unsigned short N, typename T>
+  constexpr const T& t2tot2<N, T>::operator()(const unsigned short i,
+                                              const unsigned short j) const {
+    return this->v[TensorDimeToSize<N>::value * i + j];
+  }
+
+  template <unsigned short N, typename T>
+  template <typename InputIterator>
+  TFEL_MATH_INLINE2 void t2tot2<N, T>::copy(const InputIterator src) {
+    tfel::fsalgo::copy<TensorDimeToSize<N>::value *
+                       TensorDimeToSize<N>::value>::exe(src, *this);
+  }
+
+  template <unsigned short N, typename T>
+  typename t2tot2<N, T>::RunTimeProperties t2tot2<N, T>::getRunTimeProperties()
+      const {
+    return RunTimeProperties();
+  }  // end of t2tot2<N,T>::getRunTimeProperties
+
+  template <typename T2toT2Type>
+  std::enable_if_t<
+      tfel::meta::Implements<T2toT2Type, T2toT2Concept>::cond,
+      t2tot2<T2toT2Traits<T2toT2Type>::dime, T2toT2NumType<T2toT2Type>>>
+  change_basis(const T2toT2Type& s,
+               const rotation_matrix<T2toT2NumType<T2toT2Type>>& r) {
+    constexpr const auto N = T2toT2Traits<T2toT2Type>::dime;
+    static_assert((N == 1) || (N == 2) || (N == 3));
+    if constexpr (N == 1) {
+      return s;
+    } else {
+      using real = tfel::typetraits::base_type<T2toT2NumType<T2toT2Type>>;
+      using t2tot2 = tfel::math::t2tot2<T2toT2Traits<T2toT2Type>::dime, real>;
+      const auto sr = t2tot2::fromRotationMatrix(r);
+      const auto sir = t2tot2::fromRotationMatrix(transpose(r));
+      return sr * s * sir;
     }
+  }  // end of change_basis
 
-    template <unsigned short N, typename T>
-    template <typename TensorType>
-    std::enable_if_t<tfel::meta::Implements<TensorType, TensorConcept>::cond &&
-                         TensorTraits<TensorType>::dime == N &&
-                         tfel::typetraits::IsAssignableTo<
-                             typename TensorTraits<TensorType>::NumType,
-                             T>::cond,
-                     Expr<t2tot2<N, T>, TensorProductRightDerivativeExpr<N>>>
-    t2tot2<N, T>::tprd(const TensorType& A) {
-      return Expr<t2tot2<N, T>, TensorProductRightDerivativeExpr<N>>(A);
-    }
+  template <typename TensorType>
+  std::enable_if_t<
+      tfel::meta::Implements<TensorType, TensorConcept>::cond,
+      t2tot2<TensorTraits<TensorType>::dime, TensorNumType<TensorType>>>
+  computeVelocityGradientDerivative(const TensorType& F) {
+    using res =
+        t2tot2<TensorTraits<TensorType>::dime, TensorNumType<TensorType>>;
+    const auto iF = invert(F);
+    return res::tpld(iF);
+  }
 
-    template <unsigned short N, typename T>
-    template <typename TensorType, typename T2toT2Type>
-    std::enable_if_t<
-        tfel::meta::Implements<TensorType, TensorConcept>::cond &&
-            tfel::meta::Implements<T2toT2Type, T2toT2Concept>::cond &&
-            TensorTraits<TensorType>::dime == N &&
-            T2toT2Traits<T2toT2Type>::dime == N &&
-            tfel::typetraits::IsAssignableTo<
-                typename ComputeBinaryResult<
-                    typename TensorTraits<TensorType>::NumType,
-                    typename T2toT2Traits<T2toT2Type>::NumType,
-                    OpMult>::Result,
-                T>::cond,
-        Expr<t2tot2<N, T>, TensorProductRightDerivativeExpr<N>>>
-    t2tot2<N, T>::tprd(const TensorType& A, const T2toT2Type& C) {
-      return Expr<t2tot2<N, T>, TensorProductRightDerivativeExpr<N>>(A, C);
-    }
+  template <typename TensorType>
+  std::enable_if_t<
+      tfel::meta::Implements<TensorType, TensorConcept>::cond,
+      t2tot2<TensorTraits<TensorType>::dime, TensorNumType<TensorType>>>
+  computeSpinRateDerivative(const TensorType& F) {
+    using value_type = typename TensorTraits<TensorType>::NumType;
+    using base = typename tfel::typetraits::BaseType<value_type>::type;
+    using res = t2tot2<TensorTraits<TensorType>::dime, value_type>;
+    using resbase = t2tot2<TensorTraits<TensorType>::dime, base>;
+    const auto iF = invert(F);
+    const auto itF = invert(transpose(F));
+    const auto dt = resbase::transpose_derivative();
+    const res r = res::tpld(iF) - res::tprd(itF, dt);
+    return r / 2;
+  }
 
-    template <unsigned short N, typename T>
-    typename tfel::math::t2tot2<N, typename tfel::typetraits::BaseType<T>::type>
-        TFEL_CONSTEXPR t2tot2<N, T>::transpose_derivative() {
-      using base = typename tfel::typetraits::BaseType<T>::type;
-      return internals::ComputeSpecialT2toT2Values<
-          N, base>::transpose_derivative();
-    }
+  template <typename TensorType>
+  std::enable_if_t<
+      tfel::meta::Implements<TensorType, TensorConcept>::cond &&
+          TensorTraits<TensorType>::dime == 1u &&
+          tfel::typetraits::IsScalar<TensorNumType<TensorType>>::cond,
+      t2tot2<1u, TensorNumType<TensorType>>>
+  computeDeterminantSecondDerivative(const TensorType& t) {
+    using NumType = typename TensorTraits<TensorType>::NumType;
+    constexpr const auto zero = NumType{0};
+    return {zero, t[2], t[1], t[2], zero, t[0], t[1], t[0], zero};
+  }  // end of computeDeterminantSecondDerivative
 
-    template <unsigned short N, typename T>
-    TFEL_CONSTEXPR t2tot2<N, typename tfel::typetraits::BaseType<T>::type>
-    t2tot2<N, T>::Id() {
-      using base = typename tfel::typetraits::BaseType<T>::type;
-      return internals::ComputeSpecialT2toT2Values<N, base>::Id();
-    }
+  template <typename TensorType>
+  std::enable_if_t<
+      tfel::meta::Implements<TensorType, TensorConcept>::cond &&
+          TensorTraits<TensorType>::dime == 2u &&
+          tfel::typetraits::IsScalar<TensorNumType<TensorType>>::cond,
+      t2tot2<2u, TensorNumType<TensorType>>>
+  computeDeterminantSecondDerivative(const TensorType& t) {
+    using NumType = typename TensorTraits<TensorType>::NumType;
+    constexpr const auto zero = NumType{0};
+    return {zero,  t[2], t[1], zero, zero,  t[2],  zero, t[0], zero,
+            zero,  t[1], t[0], zero, -t[4], -t[3], zero, zero, -t[3],
+            -t[2], zero, zero, zero, -t[4], zero,  -t[2]};
+  }  // end of computeDeterminantSecondDerivative
 
-    template <unsigned short N, typename T>
-    TFEL_CONSTEXPR t2tot2<N, typename tfel::typetraits::BaseType<T>::type>
-    t2tot2<N, T>::IxI() {
-      using base = typename tfel::typetraits::BaseType<T>::type;
-      return internals::ComputeSpecialT2toT2Values<N, base>::IxI();
-    }
+  template <typename TensorType>
+  std::enable_if_t<
+      tfel::meta::Implements<TensorType, TensorConcept>::cond &&
+          TensorTraits<TensorType>::dime == 3u &&
+          tfel::typetraits::IsScalar<TensorNumType<TensorType>>::cond,
+      t2tot2<3u, TensorNumType<TensorType>>>
+  computeDeterminantSecondDerivative(const TensorType& t) {
+    using NumType = typename TensorTraits<TensorType>::NumType;
+    constexpr const auto zero = NumType{0};
+    return {zero,  t[2],  t[1],  zero,  zero,  zero,  zero,  -t[8], -t[7],
+            t[2],  zero,  t[0],  zero,  zero,  -t[6], -t[5], zero,  zero,
+            t[1],  t[0],  zero,  -t[4], -t[3], zero,  zero,  zero,  zero,
+            zero,  zero,  -t[3], -t[2], zero,  t[8],  zero,  zero,  t[5],
+            zero,  zero,  -t[4], zero,  -t[2], zero,  t[7],  t[6],  zero,
+            zero,  -t[5], zero,  t[7],  zero,  -t[1], zero,  t[3],  zero,
+            zero,  -t[6], zero,  zero,  t[8],  zero,  -t[1], zero,  t[4],
+            -t[7], zero,  zero,  zero,  t[5],  t[4],  zero,  -t[0], zero,
+            -t[8], zero,  zero,  t[6],  zero,  zero,  t[3],  zero,  -t[0]};
+  }  // end of computeDeterminantSecondDerivative
 
-    template <unsigned short N, typename T>
-    TFEL_CONSTEXPR t2tot2<N, typename tfel::typetraits::BaseType<T>::type>
-    t2tot2<N, T>::K() {
-      using base = typename tfel::typetraits::BaseType<T>::type;
-      return internals::ComputeSpecialT2toT2Values<N, base>::K();
-    }
+  template <typename T, typename T2toST2Type>
+  std::enable_if_t<
+      ((tfel::meta::Implements<T2toST2Type, T2toST2Concept>::cond) &&
+       (tfel::typetraits::IsAssignableTo<T2toST2NumType<T2toST2Type>,
+                                         T>::cond) &&
+       T2toST2Traits<T2toST2Type>::dime == 1u),
+      void>
+  convert(t2tot2<1u, T>& d, const T2toST2Type& s) {
+    tfel::fsalgo::copy<9u>::exe(s.begin(), d.begin());
+  }  // end of convert
 
-    template <unsigned short N, typename T>
-    constexpr t2tot2<N, T>::t2tot2() {}
+  template <typename T, typename T2toST2Type>
+  std::enable_if_t<
+      ((tfel::meta::Implements<T2toST2Type, T2toST2Concept>::cond) &&
+       (tfel::typetraits::IsAssignableTo<T2toST2NumType<T2toST2Type>,
+                                         T>::cond) &&
+       T2toST2Traits<T2toST2Type>::dime == 2u),
+      void>
+  convert(t2tot2<2u, T>& d, const T2toST2Type& s) {
+    constexpr const auto icste = Cste<T>::isqrt2;
+    d(0, 0) = s(0, 0);
+    d(0, 1) = s(0, 1);
+    d(0, 2) = s(0, 2);
+    d(0, 3) = s(0, 3);
+    d(0, 4) = s(0, 4);
+    d(1, 0) = s(1, 0);
+    d(1, 1) = s(1, 1);
+    d(1, 2) = s(1, 2);
+    d(1, 3) = s(1, 3);
+    d(1, 4) = s(1, 4);
+    d(2, 0) = s(2, 0);
+    d(2, 1) = s(2, 1);
+    d(2, 2) = s(2, 2);
+    d(2, 3) = s(2, 3);
+    d(2, 4) = s(2, 4);
+    d(4, 0) = d(3, 0) = s(3, 0) * icste;
+    d(4, 1) = d(3, 1) = s(3, 1) * icste;
+    d(4, 2) = d(3, 2) = s(3, 2) * icste;
+    d(4, 3) = d(3, 3) = s(3, 3) * icste;
+    d(4, 4) = d(3, 4) = s(3, 4) * icste;
+  }  // end of convert
 
-    template <unsigned short N, typename T>
-    template <
-        typename T2,
-        std::enable_if_t<tfel::typetraits::IsAssignableTo<T2, T>::cond, bool>>
-    constexpr t2tot2<N, T>::t2tot2(const T2& init)
-        : fsarray<TensorDimeToSize<N>::value * TensorDimeToSize<N>::value, T>(
-              init) {}
+  template <typename T, typename T2toST2Type>
+  std::enable_if_t<
+      ((tfel::meta::Implements<T2toST2Type, T2toST2Concept>::cond) &&
+       (tfel::typetraits::IsAssignableTo<T2toST2NumType<T2toST2Type>,
+                                         T>::cond) &&
+       T2toST2Traits<T2toST2Type>::dime == 3u),
+      void>
+  convert(t2tot2<3u, T>& d, const T2toST2Type& s) {
+    constexpr const auto icste = Cste<T>::isqrt2;
+    d(0, 0) = s(0, 0);
+    d(0, 1) = s(0, 1);
+    d(0, 2) = s(0, 2);
+    d(0, 3) = s(0, 3);
+    d(0, 4) = s(0, 4);
+    d(0, 5) = s(0, 5);
+    d(0, 6) = s(0, 6);
+    d(0, 7) = s(0, 7);
+    d(0, 8) = s(0, 8);
+    d(1, 0) = s(1, 0);
+    d(1, 1) = s(1, 1);
+    d(1, 2) = s(1, 2);
+    d(1, 3) = s(1, 3);
+    d(1, 4) = s(1, 4);
+    d(1, 5) = s(1, 5);
+    d(1, 6) = s(1, 6);
+    d(1, 7) = s(1, 7);
+    d(1, 8) = s(1, 8);
+    d(2, 0) = s(2, 0);
+    d(2, 1) = s(2, 1);
+    d(2, 2) = s(2, 2);
+    d(2, 3) = s(2, 3);
+    d(2, 4) = s(2, 4);
+    d(2, 5) = s(2, 5);
+    d(2, 6) = s(2, 6);
+    d(2, 7) = s(2, 7);
+    d(2, 8) = s(2, 8);
+    d(4, 0) = d(3, 0) = s(3, 0) * icste;
+    d(4, 1) = d(3, 1) = s(3, 1) * icste;
+    d(4, 2) = d(3, 2) = s(3, 2) * icste;
+    d(4, 3) = d(3, 3) = s(3, 3) * icste;
+    d(4, 4) = d(3, 4) = s(3, 4) * icste;
+    d(4, 5) = d(3, 5) = s(3, 5) * icste;
+    d(4, 6) = d(3, 6) = s(3, 6) * icste;
+    d(4, 7) = d(3, 7) = s(3, 7) * icste;
+    d(4, 8) = d(3, 8) = s(3, 8) * icste;
+    d(6, 0) = d(5, 0) = s(4, 0) * icste;
+    d(6, 1) = d(5, 1) = s(4, 1) * icste;
+    d(6, 2) = d(5, 2) = s(4, 2) * icste;
+    d(6, 3) = d(5, 3) = s(4, 3) * icste;
+    d(6, 4) = d(5, 4) = s(4, 4) * icste;
+    d(6, 5) = d(5, 5) = s(4, 5) * icste;
+    d(6, 6) = d(5, 6) = s(4, 6) * icste;
+    d(6, 7) = d(5, 7) = s(4, 7) * icste;
+    d(6, 8) = d(5, 8) = s(4, 8) * icste;
+    d(8, 0) = d(7, 0) = s(5, 0) * icste;
+    d(8, 1) = d(7, 1) = s(5, 1) * icste;
+    d(8, 2) = d(7, 2) = s(5, 2) * icste;
+    d(8, 3) = d(7, 3) = s(5, 3) * icste;
+    d(8, 4) = d(7, 4) = s(5, 4) * icste;
+    d(8, 5) = d(7, 5) = s(5, 5) * icste;
+    d(8, 6) = d(7, 6) = s(5, 6) * icste;
+    d(8, 7) = d(7, 7) = s(5, 7) * icste;
+    d(8, 8) = d(7, 8) = s(5, 8) * icste;
+  }  // end of convert
 
-    template <unsigned short N, typename T>
-    template <
-        typename T2,
-        std::enable_if_t<tfel::typetraits::IsAssignableTo<T2, T>::cond, bool>>
-    constexpr t2tot2<N, T>::t2tot2(const std::initializer_list<T2>& values)
-        : fsarray<TensorDimeToSize<N>::value * TensorDimeToSize<N>::value, T>(
-              values) {}
-
-    template <unsigned short N, typename T>
-    template <typename T2, typename Op>
-    t2tot2<N, T>::t2tot2(const Expr<t2tot2<N, T2>, Op>& src) {
-      matrix_utilities<TensorDimeToSize<N>::value, TensorDimeToSize<N>::value,
-                       TensorDimeToSize<N>::value>::copy(src, *this);
-    }
-
-    template <unsigned short N, typename T>
-    template <typename T2toST2Type,
-              std::enable_if_t<
-                  ((tfel::meta::Implements<T2toST2Type,
-                                           tfel::math::T2toST2Concept>::cond) &&
-                   (tfel::typetraits::
-                        IsAssignableTo<T2toST2NumType<T2toST2Type>, T>::cond) &&
-                   (T2toST2Traits<T2toST2Type>::dime == N)),
-                  bool>>
-    t2tot2<N, T>::t2tot2(const T2toST2Type& s) {
-      convert(*this, s);
-    }  // end of t2tot2<N, T>::t2tot2
-
-    template <unsigned short N, typename T>
-    constexpr t2tot2<N, T>::t2tot2(const t2tot2<N, T>& src)
-        : T2toT2Concept<t2tot2<N, T>>(src),
-          fsarray<TensorDimeToSize<N>::value * TensorDimeToSize<N>::value, T>(
-              src) {}
-
-    template <unsigned short N, typename T>
-    t2tot2<N, T>& t2tot2<N, T>::operator=(const t2tot2<N, T>& src) {
-      fsarray<TensorDimeToSize<N>::value * TensorDimeToSize<N>::value, T>::
-      operator=(src);
-      return *this;
-    }
-
-    template <unsigned short N, typename T>
-    T& t2tot2<N, T>::operator()(const unsigned short i,
-                                const unsigned short j) {
-      return this->v[TensorDimeToSize<N>::value * i + j];
-    }
-
-    template <unsigned short N, typename T>
-    constexpr const T& t2tot2<N, T>::operator()(const unsigned short i,
-                                                const unsigned short j) const {
-      return this->v[TensorDimeToSize<N>::value * i + j];
-    }
-
-    template <unsigned short N, typename T>
-    template <typename InputIterator>
-    TFEL_MATH_INLINE2 void t2tot2<N, T>::copy(const InputIterator src) {
-      tfel::fsalgo::copy<TensorDimeToSize<N>::value *
-                         TensorDimeToSize<N>::value>::exe(src, *this);
-    }
-
-    template <unsigned short N, typename T>
-    typename t2tot2<N, T>::RunTimeProperties
-    t2tot2<N, T>::getRunTimeProperties() const {
-      return RunTimeProperties();
-    }  // end of t2tot2<N,T>::getRunTimeProperties
-
-    template <typename T2toT2Type>
-    std::enable_if_t<tfel::meta::Implements<T2toT2Type, T2toT2Concept>::cond,
-                     t2tot2<T2toT2Traits<T2toT2Type>::dime,
-                            typename T2toT2Traits<T2toT2Type>::NumType>>
-    change_basis(
-        const T2toT2Type& s,
-        const tfel::math::tmatrix<
-            3u,
-            3u,
-            typename tfel::typetraits::BaseType<
-                typename T2toT2Traits<T2toT2Type>::NumType>::type>& r) {
-      return t2tot2_internals::ChangeBasis<T2toT2Traits<T2toT2Type>::dime>::exe(
-          s, r);
-    }
-
-    template <typename TensorType>
-    std::enable_if_t<tfel::meta::Implements<TensorType, TensorConcept>::cond,
-                     t2tot2<TensorTraits<TensorType>::dime,
-                            typename TensorTraits<TensorType>::NumType>>
-    computeVelocityGradientDerivative(const TensorType& F) {
-      using res = t2tot2<TensorTraits<TensorType>::dime,
-                         typename TensorTraits<TensorType>::NumType>;
-      const auto iF = invert(F);
-      return res::tpld(iF);
-    }
-
-    template <typename TensorType>
-    std::enable_if_t<tfel::meta::Implements<TensorType, TensorConcept>::cond,
-                     t2tot2<TensorTraits<TensorType>::dime,
-                            typename TensorTraits<TensorType>::NumType>>
-    computeSpinRateDerivative(const TensorType& F) {
-      using value_type = typename TensorTraits<TensorType>::NumType;
-      using base = typename tfel::typetraits::BaseType<value_type>::type;
-      using res = t2tot2<TensorTraits<TensorType>::dime, value_type>;
-      using resbase = t2tot2<TensorTraits<TensorType>::dime, base>;
-      const auto iF = invert(F);
-      const auto itF = invert(transpose(F));
-      const auto dt = resbase::transpose_derivative();
-      const res r = res::tpld(iF) - res::tprd(itF, dt);
-      return r / 2;
-    }
-
-    template <typename TensorType>
-    std::enable_if_t<tfel::meta::Implements<TensorType, TensorConcept>::cond &&
-                         TensorTraits<TensorType>::dime == 1u &&
-                         tfel::typetraits::IsScalar<
-                             typename TensorTraits<TensorType>::NumType>::cond,
-                     t2tot2<1u, typename TensorTraits<TensorType>::NumType>>
-    computeDeterminantSecondDerivative(const TensorType& t) {
-      using NumType = typename TensorTraits<TensorType>::NumType;
-      constexpr const auto zero = NumType{0};
-      return {zero, t[2], t[1], t[2], zero, t[0], t[1], t[0], zero};
-    }  // end of computeDeterminantSecondDerivative
-
-    template <typename TensorType>
-    std::enable_if_t<tfel::meta::Implements<TensorType, TensorConcept>::cond &&
-                         TensorTraits<TensorType>::dime == 2u &&
-                         tfel::typetraits::IsScalar<
-                             typename TensorTraits<TensorType>::NumType>::cond,
-                     t2tot2<2u, typename TensorTraits<TensorType>::NumType>>
-    computeDeterminantSecondDerivative(const TensorType& t) {
-      using NumType = typename TensorTraits<TensorType>::NumType;
-      constexpr const auto zero = NumType{0};
-      return {zero,  t[2], t[1], zero, zero,  t[2],  zero, t[0], zero,
-              zero,  t[1], t[0], zero, -t[4], -t[3], zero, zero, -t[3],
-              -t[2], zero, zero, zero, -t[4], zero,  -t[2]};
-    }  // end of computeDeterminantSecondDerivative
-
-    template <typename TensorType>
-    std::enable_if_t<tfel::meta::Implements<TensorType, TensorConcept>::cond &&
-                         TensorTraits<TensorType>::dime == 3u &&
-                         tfel::typetraits::IsScalar<
-                             typename TensorTraits<TensorType>::NumType>::cond,
-                     t2tot2<3u, typename TensorTraits<TensorType>::NumType>>
-    computeDeterminantSecondDerivative(const TensorType& t) {
-      using NumType = typename TensorTraits<TensorType>::NumType;
-      constexpr const auto zero = NumType{0};
-      return {zero,  t[2],  t[1],  zero,  zero,  zero,  zero,  -t[8], -t[7],
-              t[2],  zero,  t[0],  zero,  zero,  -t[6], -t[5], zero,  zero,
-              t[1],  t[0],  zero,  -t[4], -t[3], zero,  zero,  zero,  zero,
-              zero,  zero,  -t[3], -t[2], zero,  t[8],  zero,  zero,  t[5],
-              zero,  zero,  -t[4], zero,  -t[2], zero,  t[7],  t[6],  zero,
-              zero,  -t[5], zero,  t[7],  zero,  -t[1], zero,  t[3],  zero,
-              zero,  -t[6], zero,  zero,  t[8],  zero,  -t[1], zero,  t[4],
-              -t[7], zero,  zero,  zero,  t[5],  t[4],  zero,  -t[0], zero,
-              -t[8], zero,  zero,  t[6],  zero,  zero,  t[3],  zero,  -t[0]};
-    }  // end of computeDeterminantSecondDerivative
-
-    template <typename T, typename T2toST2Type>
-    std::enable_if_t<
-        ((tfel::meta::Implements<T2toST2Type, T2toST2Concept>::cond) &&
-         (tfel::typetraits::IsAssignableTo<T2toST2NumType<T2toST2Type>,
-                                           T>::cond) &&
-         T2toST2Traits<T2toST2Type>::dime == 1u),
-        void>
-    convert(t2tot2<1u, T>& d, const T2toST2Type& s) {
-      tfel::fsalgo::copy<9u>::exe(s.begin(), d.begin());
-    }  // end of convert
-
-    template <typename T, typename T2toST2Type>
-    std::enable_if_t<
-        ((tfel::meta::Implements<T2toST2Type, T2toST2Concept>::cond) &&
-         (tfel::typetraits::IsAssignableTo<T2toST2NumType<T2toST2Type>,
-                                           T>::cond) &&
-         T2toST2Traits<T2toST2Type>::dime == 2u),
-        void>
-    convert(t2tot2<2u, T>& d, const T2toST2Type& s) {
-      constexpr const auto icste = Cste<T>::isqrt2;
-      d(0, 0) = s(0, 0);
-      d(0, 1) = s(0, 1);
-      d(0, 2) = s(0, 2);
-      d(0, 3) = s(0, 3);
-      d(0, 4) = s(0, 4);
-      d(1, 0) = s(1, 0);
-      d(1, 1) = s(1, 1);
-      d(1, 2) = s(1, 2);
-      d(1, 3) = s(1, 3);
-      d(1, 4) = s(1, 4);
-      d(2, 0) = s(2, 0);
-      d(2, 1) = s(2, 1);
-      d(2, 2) = s(2, 2);
-      d(2, 3) = s(2, 3);
-      d(2, 4) = s(2, 4);
-      d(4, 0) = d(3, 0) = s(3, 0) * icste;
-      d(4, 1) = d(3, 1) = s(3, 1) * icste;
-      d(4, 2) = d(3, 2) = s(3, 2) * icste;
-      d(4, 3) = d(3, 3) = s(3, 3) * icste;
-      d(4, 4) = d(3, 4) = s(3, 4) * icste;
-    }  // end of convert
-
-    template <typename T, typename T2toST2Type>
-    std::enable_if_t<
-        ((tfel::meta::Implements<T2toST2Type, T2toST2Concept>::cond) &&
-         (tfel::typetraits::IsAssignableTo<T2toST2NumType<T2toST2Type>,
-                                           T>::cond) &&
-         T2toST2Traits<T2toST2Type>::dime == 3u),
-        void>
-    convert(t2tot2<3u, T>& d, const T2toST2Type& s) {
-      constexpr const auto icste = Cste<T>::isqrt2;
-      d(0, 0) = s(0, 0);
-      d(0, 1) = s(0, 1);
-      d(0, 2) = s(0, 2);
-      d(0, 3) = s(0, 3);
-      d(0, 4) = s(0, 4);
-      d(0, 5) = s(0, 5);
-      d(0, 6) = s(0, 6);
-      d(0, 7) = s(0, 7);
-      d(0, 8) = s(0, 8);
-      d(1, 0) = s(1, 0);
-      d(1, 1) = s(1, 1);
-      d(1, 2) = s(1, 2);
-      d(1, 3) = s(1, 3);
-      d(1, 4) = s(1, 4);
-      d(1, 5) = s(1, 5);
-      d(1, 6) = s(1, 6);
-      d(1, 7) = s(1, 7);
-      d(1, 8) = s(1, 8);
-      d(2, 0) = s(2, 0);
-      d(2, 1) = s(2, 1);
-      d(2, 2) = s(2, 2);
-      d(2, 3) = s(2, 3);
-      d(2, 4) = s(2, 4);
-      d(2, 5) = s(2, 5);
-      d(2, 6) = s(2, 6);
-      d(2, 7) = s(2, 7);
-      d(2, 8) = s(2, 8);
-      d(4, 0) = d(3, 0) = s(3, 0) * icste;
-      d(4, 1) = d(3, 1) = s(3, 1) * icste;
-      d(4, 2) = d(3, 2) = s(3, 2) * icste;
-      d(4, 3) = d(3, 3) = s(3, 3) * icste;
-      d(4, 4) = d(3, 4) = s(3, 4) * icste;
-      d(4, 5) = d(3, 5) = s(3, 5) * icste;
-      d(4, 6) = d(3, 6) = s(3, 6) * icste;
-      d(4, 7) = d(3, 7) = s(3, 7) * icste;
-      d(4, 8) = d(3, 8) = s(3, 8) * icste;
-      d(6, 0) = d(5, 0) = s(4, 0) * icste;
-      d(6, 1) = d(5, 1) = s(4, 1) * icste;
-      d(6, 2) = d(5, 2) = s(4, 2) * icste;
-      d(6, 3) = d(5, 3) = s(4, 3) * icste;
-      d(6, 4) = d(5, 4) = s(4, 4) * icste;
-      d(6, 5) = d(5, 5) = s(4, 5) * icste;
-      d(6, 6) = d(5, 6) = s(4, 6) * icste;
-      d(6, 7) = d(5, 7) = s(4, 7) * icste;
-      d(6, 8) = d(5, 8) = s(4, 8) * icste;
-      d(8, 0) = d(7, 0) = s(5, 0) * icste;
-      d(8, 1) = d(7, 1) = s(5, 1) * icste;
-      d(8, 2) = d(7, 2) = s(5, 2) * icste;
-      d(8, 3) = d(7, 3) = s(5, 3) * icste;
-      d(8, 4) = d(7, 4) = s(5, 4) * icste;
-      d(8, 5) = d(7, 5) = s(5, 5) * icste;
-      d(8, 6) = d(7, 6) = s(5, 6) * icste;
-      d(8, 7) = d(7, 7) = s(5, 7) * icste;
-      d(8, 8) = d(7, 8) = s(5, 8) * icste;
-    }  // end of convert
-
-  }  // end of namespace math
-
-}  // end of namespace tfel
+}  // end of namespace tfel::math
 
 #endif /* LIB_TFEL_MATH_T2TOT2IXX */

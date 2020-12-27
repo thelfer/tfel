@@ -18,7 +18,6 @@
 #include <type_traits>
 
 #include "TFEL/Config/TFELConfig.hxx"
-#include "TFEL/Metaprogramming/StaticAssert.hxx"
 #include "TFEL/TypeTraits/IsAssignableTo.hxx"
 #include "TFEL/TypeTraits/BaseType.hxx"
 #include "TFEL/TypeTraits/RealPartType.hxx"
@@ -131,11 +130,13 @@ namespace tfel::math {
       : public VectorConcept<tvector<N, T>>,
         public tvector_base<tvector<N, T>, N, T>,
         public fsarray<N, T> {
-    //! a simple typedef to the tvector runtime properties
+    // a simple assertion stating that the dimension is valid.
+    static_assert(N != 0);
     /*!
+     * \brief a simple typedef to the tvector runtime properties
      * This is a VectorConcept requirement.
      */
-    typedef EmptyRunTimeProperties RunTimeProperties;
+    using RunTimeProperties = EmptyRunTimeProperties;
     //! \brief default constructor.
     TFEL_MATH_INLINE explicit constexpr tvector();
     //! copy constructor
@@ -244,9 +245,6 @@ namespace tfel::math {
          TinyVectorFromTinyVectorViewExpr<J - I, N, I, T, true>>
     slice() const;
 
-   private:
-    //! a simple assertion stating that the dimension is valid.
-    TFEL_STATIC_ASSERT(N != 0);
   };
   /*!
    * \brief create a new tvector by applying a functor
@@ -333,13 +331,11 @@ namespace tfel::math {
 namespace tfel::typetraits {
 
   /*!
-   * Partial specialisation for tvectors
+   * \brief Partial specialisation for tvectors
    */
   template <unsigned short N, typename T2, typename T>
   struct IsAssignableTo<tfel::math::tvector<N, T2>, tfel::math::tvector<N, T>> {
-    /*!
-     *  Result
-     */
+    //! \brief result
     static constexpr bool cond = IsAssignableTo<T2, T>::cond;
   };
 

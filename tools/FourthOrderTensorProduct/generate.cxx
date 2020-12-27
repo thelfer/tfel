@@ -200,7 +200,7 @@ writePartialSpecialisation(std::ostream& out,
   out << "  //! a simple alias" << endl;
   out << "  typedef typename " << getName(r) << "Traits<" << getName(r) << "ResultType>::NumType value_type;" << endl;
   out << "  //! a simple check" << endl;
-  out << "  TFEL_STATIC_ASSERT((" << getName(r) << "Traits<" << getName(r) << "ResultType>::dime==" << d << "u));" << endl;
+  out << "  static_assert((" << getName(r) << "Traits<" << getName(r) << "ResultType>::dime==" << d << "u));" << endl;
   out << "  /*!" << endl;
   out << "   * \\param[in] a : first term of the product" << endl;
   out << "   * \\param[in] b : second term of the product" << endl;
@@ -211,14 +211,10 @@ writePartialSpecialisation(std::ostream& out,
   out << "  " << getName(r) << "Expr(const " << getName(p.first) << "Type& a," << endl;
   out << "		 const " << getName(p.second) << "Type2& b)" << endl;
   out << "  {" << endl;
-  out << "	//! a simple check" << endl;
-  out << "	TFEL_STATIC_ASSERT((tfel::meta::Implements<" << getName(p.first) << "Type," << getName(p.first) << "Concept>::cond));" << endl;
-  out << "	//! a simple check" << endl;
-  out << "	TFEL_STATIC_ASSERT((tfel::meta::Implements<" << getName(p.second) << "Type2," << getName(p.second) << "Concept>::cond));" << endl;
-  out << "	//! a simple check" << endl;
-  out << "	TFEL_STATIC_ASSERT((" << getName(p.first) << "Traits<" << getName(p.first) << "Type>::dime==" << d << "u));" << endl;
-  out << "	//! a simple check" << endl;
-  out << "	TFEL_STATIC_ASSERT((" << getName(p.second) << "Traits <" << getName(p.second) << "Type2>::dime==" << d << "u));" << endl;
+  out << "	static_assert(tfel::meta::Implements<" << getName(p.first) << "Type," << getName(p.first) << "Concept>::cond);" << endl;
+  out << "	static_assert(tfel::meta::Implements<" << getName(p.second) << "Type2," << getName(p.second) << "Concept>::cond);" << endl;
+  out << "	static_assert(" << getName(p.first) << "Traits<" << getName(p.first) << "Type>::dime==" << d << "u);" << endl;
+  out << "	static_assert(" << getName(p.second) << "Traits <" << getName(p.second) << "Type2>::dime==" << d << "u);" << endl;
   unsigned short o=0;
   for(unsigned short i=0;i!=getRowSize(r,d);++i){
     for(unsigned short j=0;j!=getColumnSize(r,d);++j,++o){

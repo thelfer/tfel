@@ -18,6 +18,7 @@
 #include <vector>
 #include <memory>
 #include <utility>
+#include <optional>
 
 #include "TFEL/Utilities/GenTypeBase.hxx"
 #include "TFEL/Math/tvector.hxx"
@@ -1542,9 +1543,6 @@ namespace mfront {
     ~BehaviourDescription() override;
 
    private:
-    //! a simple alias (std::optional is not yet available)
-    template <typename T>
-    using optional = tfel::utilities::GenType<T>;
     /*!
      * \brief throw an exception saying that no attribute with the
      * given name exists
@@ -1796,12 +1794,12 @@ namespace mfront {
      * be defined.
      */
     std::vector<ModelDescription> models;
-    //! slip systems
-    optional<SlipSystemsDescription> gs;
+    //! \brief slip systems
+    std::optional<SlipSystemsDescription> gs;
     //! \brief list of all Hill tensors defined
     std::vector<HillTensor> hillTensors;
     //! strain measure
-    optional<StrainMeasure> strainMeasure;
+    std::optional<StrainMeasure> strainMeasure;
     //! use units
     bool use_qt = false;
     //! type of behaviour

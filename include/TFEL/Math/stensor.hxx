@@ -18,9 +18,7 @@
 #include <cstddef>
 #include <iterator>
 #include <type_traits>
-
 #include "TFEL/Config/TFELConfig.hxx"
-#include "TFEL/Metaprogramming/StaticAssert.hxx"
 #include "TFEL/TypeTraits/IsScalar.hxx"
 #include "TFEL/TypeTraits/BaseType.hxx"
 #include "TFEL/TypeTraits/IsAssignableTo.hxx"
@@ -194,6 +192,7 @@ namespace tfel::math {
         public stensor_common,
         public stensor_base<stensor<N, T>>,
         public fsarray<StensorDimeToSize<N>::value, T> {
+    static_assert((N == 1u) || (N == 2u) || (N == 3u));
     //! This is a StensorConcept requirement.
     typedef EmptyRunTimeProperties RunTimeProperties;
     //! \brief default constructor
@@ -810,10 +809,6 @@ namespace tfel::math {
                                           const FunctionDerivative&,
                                           const T,
                                           const bool = false) const;
-
-   private:
-    //! a simple check
-    TFEL_STATIC_ASSERT((N == 1u) || (N == 2u) || (N == 3u));
   };  // end of class stensor
 
   /*!

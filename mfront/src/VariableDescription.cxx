@@ -101,19 +101,19 @@ namespace mfront {
   }  // end of VariableDescription::setEntryName
 
   bool VariableDescription::hasGlossaryName() const {
-    return this->glossaryName.is<std::string>();
+    return this->glossaryName.has_value();
   }
 
   bool VariableDescription::hasEntryName() const {
-    return this->entryName.is<std::string>();
+    return this->entryName.has_value();
   }
 
   const std::string& VariableDescription::getExternalName() const {
     if (this->hasGlossaryName()) {
-      return this->glossaryName.get<std::string>();
+      return this->glossaryName.value();
     }
     if (this->hasEntryName()) {
-      return this->entryName.get<std::string>();
+      return this->entryName.value();
     }
     return this->name;
   }  // end of VariableDescription::getExternalName

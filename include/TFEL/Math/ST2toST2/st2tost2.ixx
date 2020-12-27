@@ -200,135 +200,133 @@ namespace tfel::math {
             init) {}
 
   template <unsigned short N, typename T>
-  struct ComputeSpecialST2ST2Values;
-
-  template <typename T>
-  struct ComputeSpecialST2ST2Values<1u, T> {
-    static TFEL_MATH_INLINE constexpr st2tost2<1u, T> getId() {
-      return st2tost2<1u, T>{
-          {T{1}, T{0}, T{0}, T{0}, T{1}, T{0}, T{0}, T{0}, T{1}}};
-    }  // end of getId()
-    static TFEL_MATH_INLINE constexpr st2tost2<1u, T> getIxI() {
-      return st2tost2<1u, T>{
-          {T{1}, T{1}, T{1}, T{1}, T{1}, T{1}, T{1}, T{1}, T{1}}};
-    }  // end of getIxI()
-    static TFEL_MATH_INLINE constexpr st2tost2<1u, T> getJ() {
-      return st2tost2<1u, T>{{T{1} / T{3}, T{1} / T{3}, T{1} / T{3},
-                              T{1} / T{3}, T{1} / T{3}, T{1} / T{3},
-                              T{1} / T{3}, T{1} / T{3}, T{1} / T{3}}};
-    }  // end of getJ()
-    static TFEL_MATH_INLINE constexpr st2tost2<1u, T> getK() {
-      return st2tost2<1u, T>{{T{2} / T{3}, -T{1} / T{3}, -T{1} / T{3},
-                              -T{1} / T{3}, T{2} / T{3}, -T{1} / T{3},
-                              -T{1} / T{3}, -T{1} / T{3}, T{2} / T{3}}};
-    }  // end of getK()
-    static TFEL_MATH_INLINE constexpr st2tost2<1u, T> getM() {
-      return st2tost2<1u, T>{{T{1}, -T{1} / T{2}, -T{1} / T{2}, -T{1} / T{2},
-                              T{1}, -T{1} / T{2}, -T{1} / T{2}, -T{1} / T{2},
-                              T{1}}};
-    }  // end of getM()
-  };
-
-  template <typename T>
-  struct ComputeSpecialST2ST2Values<2u, T> {
-    static TFEL_MATH_INLINE constexpr st2tost2<2u, T> getId() {
-      return st2tost2<2u, T>{{T{1}, T{0}, T{0}, T{0}, T{0}, T{1}, T{0}, T{0},
-                              T{0}, T{0}, T{1}, T{0}, T{0}, T{0}, T{0}, T{1}}};
-    }  // end of getId()
-    static TFEL_MATH_INLINE constexpr st2tost2<2u, T> getIxI() {
-      return st2tost2<2u, T>{{T{1}, T{1}, T{1}, T{0}, T{1}, T{1}, T{1}, T{0},
-                              T{1}, T{1}, T{1}, T{0}, T{0}, T{0}, T{0}, T{0}}};
-    }  // end of getIxI()
-    static TFEL_MATH_INLINE constexpr st2tost2<2u, T> getJ() {
-      return st2tost2<2u, T>{{T{1} / T{3}, T{1} / T{3}, T{1} / T{3}, T{0},
-                              T{1} / T{3}, T{1} / T{3}, T{1} / T{3}, T{0},
-                              T{1} / T{3}, T{1} / T{3}, T{1} / T{3}, T{0}, T{0},
-                              T{0}, T{0}, T{0}}};
-    }  // end of getJ()
-    static TFEL_MATH_INLINE constexpr st2tost2<2u, T> getK() {
-      return st2tost2<2u, T>{{T{2} / T{3}, -T{1} / T{3}, -T{1} / T{3}, T{0},
-                              -T{1} / T{3}, T{2} / T{3}, -T{1} / T{3}, T{0},
-                              -T{1} / T{3}, -T{1} / T{3}, T{2} / T{3}, T{0},
-                              T{0}, T{0}, T{0}, T{1}}};
-    }  // end of getK()
-    static TFEL_MATH_INLINE constexpr st2tost2<2u, T> getM() {
-      return st2tost2<2u, T>{{T{1}, -T{1} / T{2}, -T{1} / T{2}, T{0},
-                              -T{1} / T{2}, T{1}, -T{1} / T{2}, T{0},
-                              -T{1} / T{2}, -T{1} / T{2}, T{1}, T{0}, T{0},
-                              T{0}, T{0}, T{3} / T{2}}};
-    }  // end of getM()
-  };
-
-  template <typename T>
-  struct ComputeSpecialST2ST2Values<3u, T> {
-    static TFEL_MATH_INLINE constexpr st2tost2<3u, T> getId() {
-      return st2tost2<3u, T>{{T{1}, T{0}, T{0}, T{0}, T{0}, T{0}, T{0}, T{1},
-                              T{0}, T{0}, T{0}, T{0}, T{0}, T{0}, T{1}, T{0},
-                              T{0}, T{0}, T{0}, T{0}, T{0}, T{1}, T{0}, T{0},
-                              T{0}, T{0}, T{0}, T{0}, T{1}, T{0}, T{0}, T{0},
-                              T{0}, T{0}, T{0}, T{1}}};
-    }  // end of getId()
-    static TFEL_MATH_INLINE constexpr st2tost2<3u, T> getIxI() {
-      return st2tost2<3u, T>{{T{1}, T{1}, T{1}, T{0}, T{0}, T{0}, T{1}, T{1},
-                              T{1}, T{0}, T{0}, T{0}, T{1}, T{1}, T{1}, T{0},
-                              T{0}, T{0}, T{0}, T{0}, T{0}, T{0}, T{0}, T{0},
-                              T{0}, T{0}, T{0}, T{0}, T{0}, T{0}, T{0}, T{0},
-                              T{0}, T{0}, T{0}, T{0}}};
-    }  // end of getIxI()
-    static TFEL_MATH_INLINE constexpr st2tost2<3u, T> getJ() {
-      return st2tost2<3u, T>{
-          {T{1} / T{3}, T{1} / T{3}, T{1} / T{3}, T{0}, T{0}, T{0},
-           T{1} / T{3}, T{1} / T{3}, T{1} / T{3}, T{0}, T{0}, T{0},
-           T{1} / T{3}, T{1} / T{3}, T{1} / T{3}, T{0}, T{0}, T{0},
-           T{0},        T{0},        T{0},        T{0}, T{0}, T{0},
-           T{0},        T{0},        T{0},        T{0}, T{0}, T{0},
-           T{0},        T{0},        T{0},        T{0}, T{0}, T{0}}};
-    }  // end of getJ()
-    static TFEL_MATH_INLINE constexpr st2tost2<3u, T> getK() {
-      return st2tost2<3u, T>{
-          {T{2} / T{3},  -T{1} / T{3}, -T{1} / T{3}, T{0}, T{0}, T{0},
-           -T{1} / T{3}, T{2} / T{3},  -T{1} / T{3}, T{0}, T{0}, T{0},
-           -T{1} / T{3}, -T{1} / T{3}, T{2} / T{3},  T{0}, T{0}, T{0},
-           T{0},         T{0},         T{0},         T{1}, T{0}, T{0},
-           T{0},         T{0},         T{0},         T{0}, T{1}, T{0},
-           T{0},         T{0},         T{0},         T{0}, T{0}, T{1}}};
-    }  // end of getK()
-    static TFEL_MATH_INLINE constexpr st2tost2<3u, T> getM() {
-      return st2tost2<3u, T>{
-          {T{1},       -T{1} / T{2}, -T{1} / T{2}, T{0},         T{0},
-           T{0},       -T{1} / T{2}, T{1},         -T{1} / T{2}, T{0},
-           T{0},       T{0},         -T{1} / T{2}, -T{1} / T{2}, T{1},
-           T{0},       T{0},         T{0},         T{0},         T{0},
-           T{0},       T{3} / T{2},  T{0},         T{0},         T{0},
-           T{0},       T{0},         T{0},         T{3} / T{2},  T{0},
-           T{0},       T{0},         T{0},         T{0},         T{0},
-           T{3} / T{2}}};
-    }  // end of getM()
-  };
-
-  template <unsigned short N, typename T>
   constexpr st2tost2<N, T> st2tost2<N, T>::Id() {
-    return ComputeSpecialST2ST2Values<N, T>::getId();
+    constexpr const auto c0 = T{0};
+    constexpr const auto c1 = T{1};
+    static_assert((N == 1) || (N == 2) || (N == 3));
+    if constexpr (N == 1) {
+      return {c1, c0, c0,  //
+              c0, c1, c0,  //
+              c0, c0, c1};
+    } else if constexpr (N == 2) {
+      return {c1, c0, c0, c0,  //
+              c0, c1, c0, c0,  //
+              c0, c0, c1, c0,  //
+              c0, c0, c0, c1};
+    } else {
+      return {c1, c0, c0, c0, c0, c0,  //
+              c0, c1, c0, c0, c0, c0,  //
+              c0, c0, c1, c0, c0, c0,  //
+              c0, c0, c0, c1, c0, c0,  //
+              c0, c0, c0, c0, c1, c0,  //
+              c0, c0, c0, c0, c0, c1};
+    }
   }  // end of st2tost2<N,T>::Id
 
   template <unsigned short N, typename T>
   constexpr st2tost2<N, T> st2tost2<N, T>::IxI() {
-    return ComputeSpecialST2ST2Values<N, T>::getIxI();
+    constexpr const auto c1 = T{1};
+    static_assert((N == 1) || (N == 2) || (N == 3));
+    if constexpr (N == 1) {
+      return {c1, c1, c1,  //
+              c1, c1, c1,  //
+              c1, c1, c1};
+    } else if constexpr (N == 2) {
+      constexpr const auto c0 = T{0};
+      return {c1, c1, c1, c0,  //
+              c1, c1, c1, c0,  //
+              c1, c1, c1, c0,  //
+              c0, c0, c0, c0};
+    } else {
+      constexpr const auto c0 = T{0};
+      return {c1, c1, c1, c0, c0, c0,  //
+              c1, c1, c1, c0, c0, c0,  //
+              c1, c1, c1, c0, c0, c0,  //
+              c0, c0, c0, c0, c0, c0,  //
+              c0, c0, c0, c0, c0, c0,  //
+              c0, c0, c0, c0, c0, c0};
+    }
   }  // end of st2tost2<N,T>::Id
 
   template <unsigned short N, typename T>
   constexpr st2tost2<N, T> st2tost2<N, T>::K() {
-    return ComputeSpecialST2ST2Values<N, T>::getK();
+    constexpr const auto c2_3 = T{2} / T{3};
+    constexpr const auto mc1_3 = -T{1} / T{3};
+    static_assert((N == 1) || (N == 2) || (N == 3));
+    if constexpr (N == 1) {
+      return {c2_3,  mc1_3, mc1_3,  //
+              mc1_3, c2_3,  mc1_3,  //
+              mc1_3, mc1_3, c2_3};
+    } else if constexpr (N == 2) {
+      constexpr const auto c0 = T{0};
+      constexpr const auto c1 = T{1};
+      return {c2_3,  mc1_3, mc1_3, c0,  //
+              mc1_3, c2_3,  mc1_3, c0,  //
+              mc1_3, mc1_3, c2_3,  c0,  //
+              c0,    c0,    c0,    c1};
+    } else {
+      constexpr const auto c0 = T{0};
+      constexpr const auto c1 = T{1};
+      return {c2_3,  mc1_3, mc1_3, c0, c0, c0,  //
+              mc1_3, c2_3,  mc1_3, c0, c0, c0,  //
+              mc1_3, mc1_3, c2_3,  c0, c0, c0,  //
+              c0,    c0,    c0,    c1, c0, c0,  //
+              c0,    c0,    c0,    c0, c1, c0,  //
+              c0,    c0,    c0,    c0, c0, c1};
+    }
   }  // end of st2tost2<N,T>::K
 
   template <unsigned short N, typename T>
   constexpr st2tost2<N, T> st2tost2<N, T>::M() {
-    return ComputeSpecialST2ST2Values<N, T>::getM();
+    constexpr const auto c1 = T{1};
+    constexpr const auto mc1_2 = -T{1} / T{2};
+    static_assert((N == 1) || (N == 2) || (N == 3));
+    if constexpr (N == 1) {
+      return {c1,    mc1_2, mc1_2,  //
+              mc1_2, c1,    mc1_2,  //
+              mc1_2, mc1_2, c1};
+    } else if constexpr (N == 2) {
+      constexpr const auto c0 = T{0};
+      constexpr const auto c3_2 = T{3} / T{2};
+      return {c1,    mc1_2, mc1_2, c0,  //
+              mc1_2, c1,    mc1_2, c0,  //
+              mc1_2, mc1_2, c1,    c0,  //
+              c0,    c0,    c0,    c3_2};
+    } else {
+      constexpr const auto c0 = T{0};
+      constexpr const auto c3_2 = T{3} / T{2};
+      return {c1,    mc1_2, mc1_2, c0,   c0,   c0,  //
+              mc1_2, c1,    mc1_2, c0,   c0,   c0,  //
+              mc1_2, mc1_2, c1,    c0,   c0,   c0,  //
+              c0,    c0,    c0,    c3_2, c0,   c0,  //
+              c0,    c0,    c0,    c0,   c3_2, c0,  //
+              c0,    c0,    c0,    c0,   c0,   c3_2};
+    }
   }  // end of st2tost2<N,T>::M
 
   template <unsigned short N, typename T>
   constexpr st2tost2<N, T> st2tost2<N, T>::J() {
-    return ComputeSpecialST2ST2Values<N, T>::getJ();
+    constexpr const auto c1_3 = T{1} / T{3};
+    static_assert((N == 1) || (N == 2) || (N == 3));
+    if constexpr (N == 1) {
+      return {c1_3, c1_3, c1_3,  //
+              c1_3, c1_3, c1_3,  //
+              c1_3, c1_3, c1_3};
+    } else if constexpr (N == 2) {
+      constexpr const auto c0 = T{0};
+      return {c1_3, c1_3, c1_3, c0,  //
+              c1_3, c1_3, c1_3, c0,  //
+              c1_3, c1_3, c1_3, c0,  //
+              c0,   c0,   c0,   c0};
+    } else {
+      constexpr const auto c0 = T{0};
+      return {c1_3, c1_3, c1_3, c0, c0, c0,  //
+              c1_3, c1_3, c1_3, c0, c0, c0,  //
+              c1_3, c1_3, c1_3, c0, c0, c0,  //
+              c0,   c0,   c0,   c0, c0, c0,  //
+              c0,   c0,   c0,   c0, c0, c0,  //
+              c0,   c0,   c0,   c0, c0, c0};
+    }
   }  // end of st2tost2<N,T>::J
 
   template <unsigned short N, typename T>

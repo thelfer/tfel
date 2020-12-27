@@ -80,10 +80,9 @@ namespace tfel::math {
      * operation is stored in the Expr class.
      */
     template <typename T>
-    using ArgumentStorage =
-        typename std::conditional<std::is_rvalue_reference<T>::value,
-                                  const std::decay_t<T>,
-                                  const std::decay_t<T>&>::type;
+    using ArgumentStorage = std::conditional_t<std::is_rvalue_reference_v<T>,
+                                               const std::decay_t<T>,
+                                               const std::decay_t<T>&>;
   };  // end of strut ExprBase
 
   /*!
@@ -129,9 +128,9 @@ namespace tfel::math {
                              Expr<ResultType, Operation>>::type,
         public Operation {
     //! a simple alias
-    typedef typename Operation::value_type value_type;
+    using value_type = typename Operation::value_type;
     //! a simple alias
-    typedef typename Operation::size_type size_type;
+    using size_type = typename Operation::size_type;
     /*!
      * default constructor
      * \param[in] args : arguments of Operation constructor
@@ -160,7 +159,7 @@ namespace tfel::math {
     value_type& operator[](const size_type i) {
       // may not be defined
       static_assert(
-          std::is_same<decltype(Operation::operator()(i)), value_type&>::value,
+          std::is_same_v<decltype(Operation::operator()(i)), value_type&>,
           "unexpected return value for Operation::operator(size_type)");
       return Operation::operator()(i);
     }
@@ -206,20 +205,17 @@ namespace tfel::math {
     template <typename... Indexes>
     TFEL_MATH_INLINE auto operator()(const Indexes... i) const
         -> UnaryOperationHandler<
-            typename std::conditional<
-                std::is_lvalue_reference<
-                    typename tfel::meta::ResultOf<argument_storage_type,
-                                                  Indexes...>::type>::value,
-                typename tfel::meta::ResultOf<argument_storage_type,
-                                              Indexes...>::type,
-                typename tfel::meta::ResultOf<argument_storage_type,
-                                              Indexes...>::type&&>::type,
+            std::conditional_t<
+                std::is_lvalue_reference_v<
+                    tfel::meta::result_of<argument_storage_type, Indexes...>>,
+                tfel::meta::result_of<argument_storage_type, Indexes...>,
+                tfel::meta::result_of<argument_storage_type, Indexes...>&&>,
             Op> {
-      static_assert(isUnaryOperationResultTypeValid<
-                        typename tfel::meta::ResultOf<argument_storage_type,
-                                                      Indexes...>::type,
-                        Op>::value,
-                    "invalid call to unary operation operator()");
+      static_assert(
+          isUnaryOperationResultTypeValid<
+              tfel::meta::result_of<argument_storage_type, Indexes...>,
+              Op>::value,
+          "invalid call to unary operation operator()");
       return Op::apply(this->a(i...));
     }  // end of operator()
    protected:
@@ -270,9 +266,8 @@ namespace tfel::math {
     TFEL_MATH_INLINE value_type operator[](const size_type i) const {
       static_assert(
           isBinaryOperationResultTypeValid<
-              typename tfel::meta::ResultOf<lhs_storage_type, size_type>::type,
-              typename tfel::meta::ResultOf<rhs_storage_type, size_type>::type,
-              Op>::value,
+              tfel::meta::result_of<lhs_storage_type, size_type>,
+              tfel::meta::result_of<rhs_storage_type, size_type>, Op>::value,
           "invalid call to unary operation operator[]");
       return Op::apply(this->a(i), this->b(i));
     }
@@ -281,27 +276,22 @@ namespace tfel::math {
      */
     template <typename... Indexes>
     TFEL_MATH_INLINE BinaryOperationHandler<
-        typename std::conditional<
-            std::is_lvalue_reference<
-                typename tfel::meta::ResultOf<lhs_storage_type,
-                                              Indexes...>::type>::value,
-            typename tfel::meta::ResultOf<lhs_storage_type, Indexes...>::type,
-            typename tfel::meta::ResultOf<lhs_storage_type,
-                                          Indexes...>::type&&>::type,
-        typename std::conditional<
-            std::is_lvalue_reference<
-                typename tfel::meta::ResultOf<rhs_storage_type,
-                                              Indexes...>::type>::value,
-            typename tfel::meta::ResultOf<rhs_storage_type, Indexes...>::type,
-            typename tfel::meta::ResultOf<rhs_storage_type,
-                                          Indexes...>::type&&>::type,
+        std::conditional_t<
+            std::is_lvalue_reference_v<
+                tfel::meta::result_of<lhs_storage_type, Indexes...>>,
+            tfel::meta::result_of<lhs_storage_type, Indexes...>,
+            tfel::meta::result_of<lhs_storage_type, Indexes...>&&>,
+        std::conditional_t<
+            std::is_lvalue_reference_v<
+                tfel::meta::result_of<rhs_storage_type, Indexes...>>,
+            tfel::meta::result_of<rhs_storage_type, Indexes...>,
+            tfel::meta::result_of<rhs_storage_type, Indexes...>&&>,
         Op>
     operator()(const Indexes... i) const {
       static_assert(
           isBinaryOperationResultTypeValid<
-              typename tfel::meta::ResultOf<lhs_storage_type, Indexes...>::type,
-              typename tfel::meta::ResultOf<rhs_storage_type, Indexes...>::type,
-              Op>::value,
+              tfel::meta::result_of<lhs_storage_type, Indexes...>,
+              tfel::meta::result_of<rhs_storage_type, Indexes...>, Op>::value,
           "invalid call to binary operation operator()");
       return Op::apply(this->a(i...), this->b(i...));
     }  // end of operator()
@@ -354,9 +344,8 @@ namespace tfel::math {
     TFEL_MATH_INLINE value_type operator[](const size_type i) const {
       static_assert(
           isBinaryOperationResultTypeValid<
-              typename std::add_lvalue_reference<lhs_storage_type>::type,
-              typename tfel::meta::ResultOf<rhs_storage_type, size_type>::type,
-              Op>::value,
+              std::add_lvalue_reference_t<lhs_storage_type>,
+              tfel::meta::result_of<rhs_storage_type, size_type>, Op>::value,
           "invalid call");
       return Op::apply(this->a, this->b(i));
     }
@@ -365,21 +354,18 @@ namespace tfel::math {
      */
     template <typename... Indexes>
     TFEL_MATH_INLINE BinaryOperationHandler<
-        typename std::add_lvalue_reference<lhs_storage_type>::type,
-        typename std::conditional<
-            std::is_lvalue_reference<
-                typename tfel::meta::ResultOf<rhs_storage_type,
-                                              Indexes...>::type>::value,
-            typename tfel::meta::ResultOf<rhs_storage_type, Indexes...>::type,
-            typename tfel::meta::ResultOf<rhs_storage_type,
-                                          Indexes...>::type&&>::type,
+        std::add_lvalue_reference_t<lhs_storage_type>,
+        std::conditional_t<
+            std::is_lvalue_reference_v<
+                tfel::meta::result_of<rhs_storage_type, Indexes...>>,
+            tfel::meta::result_of<rhs_storage_type, Indexes...>,
+            tfel::meta::result_of<rhs_storage_type, Indexes...>&&>,
         Op>
     operator()(const Indexes... i) const {
       static_assert(
           isBinaryOperationResultTypeValid<
-              typename std::add_lvalue_reference<lhs_storage_type>::type,
-              typename tfel::meta::ResultOf<rhs_storage_type, Indexes...>::type,
-              Op>::value,
+              std::add_lvalue_reference_t<lhs_storage_type>,
+              tfel::meta::result_of<rhs_storage_type, Indexes...>, Op>::value,
           "invalid call");
       return Op::apply(this->a, this->b(i...));
     }  // end of operator()
@@ -432,9 +418,8 @@ namespace tfel::math {
     TFEL_MATH_INLINE value_type operator[](const size_type i) const {
       static_assert(
           isBinaryOperationResultTypeValid<
-              typename tfel::meta::ResultOf<lhs_storage_type, size_type>::type,
-              typename std::add_lvalue_reference<rhs_storage_type>::type,
-              Op>::value,
+              tfel::meta::result_of<lhs_storage_type, size_type>,
+              std::add_lvalue_reference_t<rhs_storage_type>, Op>::value,
           "invalid call");
       return Op::apply(this->a(i), this->b);
     }
@@ -443,21 +428,18 @@ namespace tfel::math {
      */
     template <typename... Indexes>
     TFEL_MATH_INLINE BinaryOperationHandler<
-        typename std::conditional<
-            std::is_lvalue_reference<
-                typename tfel::meta::ResultOf<lhs_storage_type,
-                                              Indexes...>::type>::value,
-            typename tfel::meta::ResultOf<lhs_storage_type, Indexes...>::type,
-            typename tfel::meta::ResultOf<lhs_storage_type,
-                                          Indexes...>::type&&>::type,
-        typename std::add_lvalue_reference<rhs_storage_type>::type,
+        std::conditional_t<
+            std::is_lvalue_reference_v<
+                tfel::meta::result_of<lhs_storage_type, Indexes...>>,
+            tfel::meta::result_of<lhs_storage_type, Indexes...>,
+            tfel::meta::result_of<lhs_storage_type, Indexes...>&&>,
+        std::add_lvalue_reference_t<rhs_storage_type>,
         Op>
     operator()(const Indexes... i) const {
       static_assert(
           isBinaryOperationResultTypeValid<
-              typename tfel::meta::ResultOf<lhs_storage_type, Indexes...>::type,
-              typename std::add_lvalue_reference<rhs_storage_type>::type,
-              Op>::value,
+              tfel::meta::result_of<lhs_storage_type, Indexes...>,
+              std::add_lvalue_reference_t<rhs_storage_type>, Op>::value,
           "invalid call");
       return Op::apply(this->a(i...), this->b);
     }  // end of operator()
@@ -508,10 +490,9 @@ namespace tfel::math {
      * \param[in] i : column index
      */
     TFEL_MATH_INLINE
-    BinaryOperationHandler<
-        typename tfel::meta::ResultOf<lhs_storage_type, size_type>::type,
-        typename tfel::meta::ResultOf<rhs_storage_type, size_type>::type,
-        OpMult>
+    BinaryOperationHandler<tfel::meta::result_of<lhs_storage_type, size_type>,
+                           tfel::meta::result_of<rhs_storage_type, size_type>,
+                           OpMult>
     operator()(const size_type i, const size_type j) const {
       return (this->a(i)) * (this->b(j));
     }
@@ -532,10 +513,10 @@ namespace tfel::math {
   };  // end of struct ResultOfEvaluation
 
   /*!
-   * \brief partial specialisation of the `ResultOfEvaluation` class for objects
-   * representing a lazy expression.
-   * \tparam ResultType: result of the evaluation of the lazy expression
-   * \tparam Operation: operation performed by the lazy expression
+   * \brief partial specialisation of the `ResultOfEvaluation` class for
+   * objects representing a lazy expression. \tparam ResultType: result of the
+   * evaluation of the lazy expression \tparam Operation: operation performed by
+   * the lazy expression
    */
   template <typename ResultType, typename Operation>
   struct ResultOfEvaluation<Expr<ResultType, Operation>> {

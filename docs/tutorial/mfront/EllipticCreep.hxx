@@ -15,7 +15,6 @@
 
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Config/TFELTypes.hxx"
-#include"TFEL/Metaprogramming/StaticAssert.hxx"
 #include"TFEL/TypeTraits/IsFundamentalNumericType.hxx"
 #include"TFEL/TypeTraits/IsReal.hxx"
 #include"TFEL/Material/MechanicalBehaviour.hxx"
@@ -111,9 +110,9 @@ public EllipticCreepIntegrationData<hypothesis,Type,false>
 
 static constexpr unsigned short N = ModellingHypothesisToSpaceDimension<hypothesis>::value;
 
-TFEL_STATIC_ASSERT(N==1||N==2||N==3);
-TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<Type>::cond);
-TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<Type>::cond);
+static_assert(N==1||N==2||N==3);
+static_assert(tfel::typetraits::IsFundamentalNumericType<Type>::cond);
+static_assert(tfel::typetraits::IsReal<Type>::cond);
 
 friend std::ostream& operator<< <>(std::ostream&,const EllipticCreep&);
 

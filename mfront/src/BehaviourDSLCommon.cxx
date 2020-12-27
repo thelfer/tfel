@@ -3393,7 +3393,6 @@ namespace mfront {
        << "#include\"TFEL/PhysicalConstants.hxx\"\n"
        << "#include\"TFEL/Config/TFELConfig.hxx\"\n"
        << "#include\"TFEL/Config/TFELTypes.hxx\"\n"
-       << "#include\"TFEL/Metaprogramming/StaticAssert.hxx\"\n"
        << "#include\"TFEL/TypeTraits/IsFundamentalNumericType.hxx\"\n"
        << "#include\"TFEL/TypeTraits/IsReal.hxx\"\n"
        << "#include\"TFEL/Math/General/IEEE754.hxx\"\n";
@@ -3681,10 +3680,10 @@ namespace mfront {
          << "ModellingHypothesis::" << ModellingHypothesis::toUpperCaseString(h) << ";\n";
     }
     os << "static " << constexpr_c << " unsigned short N = ModellingHypothesisToSpaceDimension<hypothesis>::value;\n"
-       << "TFEL_STATIC_ASSERT(N==1||N==2||N==3);\n"
-       << "TFEL_STATIC_ASSERT(tfel::typetraits::"
+       << "static_assert(N==1||N==2||N==3);\n"
+       << "static_assert(tfel::typetraits::"
        << "IsFundamentalNumericType<Type>::cond);\n"
-       << "TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<Type>::cond);\n\n"
+       << "static_assert(tfel::typetraits::IsReal<Type>::cond);\n\n"
        << "friend std::ostream& operator<< <>(std::ostream&,const " << this->mb.getClassName() << "BehaviourData&);\n\n"
        << "/* integration data is declared friend to access"
        << "   driving variables at the beginning of the time step */\n";
@@ -3943,10 +3942,10 @@ namespace mfront {
          << "ModellingHypothesis::" << ModellingHypothesis::toUpperCaseString(h) << ";\n";
     }
     os << "static " << constexpr_c << " unsigned short N = ModellingHypothesisToSpaceDimension<hypothesis>::value;\n\n";
-    os << "TFEL_STATIC_ASSERT(N==1||N==2||N==3);\n";
-    os << "TFEL_STATIC_ASSERT(tfel::typetraits::"
+    os << "static_assert(N==1||N==2||N==3);\n";
+    os << "static_assert(tfel::typetraits::"
        << "IsFundamentalNumericType<Type>::cond);\n";
-    os << "TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<Type>::cond);\n\n";
+    os << "static_assert(tfel::typetraits::IsReal<Type>::cond);\n\n";
     os << "friend std::ostream& operator<< <>(std::ostream&,const ";
     os << this->mb.getClassName() << "&);\n\n";
   }
@@ -5700,7 +5699,6 @@ namespace mfront {
        << "#include\"TFEL/PhysicalConstants.hxx\"\n"
        << "#include\"TFEL/Config/TFELConfig.hxx\"\n"
        << "#include\"TFEL/Config/TFELTypes.hxx\"\n"
-       << "#include\"TFEL/Metaprogramming/StaticAssert.hxx\"\n"
        << "#include\"TFEL/TypeTraits/IsFundamentalNumericType.hxx\"\n"
        << "#include\"TFEL/TypeTraits/IsReal.hxx\"\n"
        << "#include\"TFEL/Math/General/IEEE754.hxx\"\n";
@@ -6722,7 +6720,6 @@ namespace mfront {
        << "#include\"TFEL/PhysicalConstants.hxx\"\n"
        << "#include\"TFEL/Config/TFELConfig.hxx\"\n"
        << "#include\"TFEL/Config/TFELTypes.hxx\"\n"
-       << "#include\"TFEL/Metaprogramming/StaticAssert.hxx\"\n"
        << "#include\"TFEL/TypeTraits/IsFundamentalNumericType.hxx\"\n"
        << "#include\"TFEL/TypeTraits/IsScalar.hxx\"\n"
        << "#include\"TFEL/TypeTraits/IsReal.hxx\"\n"
@@ -6993,10 +6990,10 @@ namespace mfront {
          << "ModellingHypothesis::" << ModellingHypothesis::toUpperCaseString(h) << ";\n";
     }
     os << "static " << constexpr_c << " unsigned short N = ModellingHypothesisToSpaceDimension<hypothesis>::value;\n";
-    os << "TFEL_STATIC_ASSERT(N==1||N==2||N==3);\n";
-    os << "TFEL_STATIC_ASSERT(tfel::typetraits::"
+    os << "static_assert(N==1||N==2||N==3);\n";
+    os << "static_assert(tfel::typetraits::"
        << "IsFundamentalNumericType<Type>::cond);\n";
-    os << "TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<Type>::cond);\n\n";
+    os << "static_assert(tfel::typetraits::IsReal<Type>::cond);\n\n";
     os << "friend std::ostream& operator<< <>(std::ostream&,const ";
     os << this->mb.getClassName() << "IntegrationData&);\n\n";
   }

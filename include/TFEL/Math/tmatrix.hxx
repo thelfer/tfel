@@ -16,7 +16,6 @@
 #include <cstddef>
 #include <type_traits>
 #include "TFEL/Config/TFELConfig.hxx"
-#include "TFEL/Metaprogramming/StaticAssert.hxx"
 #include "TFEL/TypeTraits/IsAssignableTo.hxx"
 #include "TFEL/Math/fsarray.hxx"
 #include "TFEL/Math/General/BasicOperations.hxx"
@@ -174,6 +173,10 @@ namespace tfel::math {
   struct tmatrix : public MatrixConcept<tmatrix<N, M, T>>,
                    public tmatrix_base<tmatrix<N, M, T>, N, M, T>,
                    public fsarray<N * M, T> {
+    // a simple assertion stating that the number of row is valid.
+    static_assert(N != 0);
+    // a simple assertion stating that the number of column is valid.
+    static_assert(M != 0);
     //! a simple typedef to the tmatrix runtime properties
     /*
      * This is a MatrixConcept requirement.
@@ -352,12 +355,6 @@ namespace tfel::math {
     using tmatrix_base<tmatrix, N, M, T>::operator*=;
     //! using tmatrix_base::operator/=
     using tmatrix_base<tmatrix, N, M, T>::operator/=;
-
-   private:
-    //! a simple assertion stating that the number of row is valid.
-    TFEL_STATIC_ASSERT(N != 0);
-    //! a simple assertion stating that the number of column is valid.
-    TFEL_STATIC_ASSERT(M != 0);
   };
 
   /*!

@@ -18,7 +18,6 @@
 #include<algorithm>
 
 #include"TFEL/Config/TFELTypes.hxx"
-#include"TFEL/Metaprogramming/StaticAssert.hxx"
 #include"TFEL/Material/MaterialException.hxx"
 
 namespace tfel{

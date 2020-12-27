@@ -185,9 +185,9 @@ namespace tfel::math {
 
   template <typename TensorType>
   std::enable_if_t<
-      ((implementsTensorConcept<TensorType>()) &&
-       (tfel::typetraits::IsFundamentalNumericType<
-           TensorNumType<TensorType>>::cond)),
+      (implementsTensorConcept<TensorType>()) &&
+          (tfel::typetraits::IsFundamentalNumericType<
+              TensorNumType<TensorType>>::cond),
       stensor<TensorTraits<TensorType>::dime, TensorNumType<TensorType>>>
   computeLeftCauchyGreenTensor(const TensorType& t) {
     using real = TensorNumType<TensorType>;
@@ -443,9 +443,9 @@ namespace tfel::math {
   det(const TensorType& t) {
     constexpr const auto N = TensorTraits<TensorType>::dime;
     static_assert((N == 1) || (N == 2) || (N == 3), "invalid space dimension");
-    if constexpr (N == 1) {
+    if constexpr (N == 1u) {
       return t(0) * t(1) * t(2);
-    } else if constexpr (N == 2) {
+    } else if constexpr (N == 2u) {
       return (t(0) * t(1) - t(3) * t(4)) * t(2);
     } else {
       const auto a = t(0);

@@ -17,9 +17,7 @@
 #include <ratio>
 #include <cmath>
 #include <type_traits>
-
 #include "TFEL/Config/TFELConfig.hxx"
-#include "TFEL/Metaprogramming/StaticAssert.hxx"
 
 namespace tfel::math {
 
@@ -132,7 +130,7 @@ namespace tfel::math {
 
   template <unsigned int N>
   class TFEL_VISIBILITY_LOCAL PowerSqrtPos {
-    TFEL_STATIC_ASSERT(N >= 0);
+    static_assert(N >= 0);
 
    public:
     template <typename T>
@@ -174,7 +172,7 @@ namespace tfel::math {
 
   template <int N, unsigned int D>
   class TFEL_VISIBILITY_LOCAL PowerImplSelector {
-    TFEL_STATIC_ASSERT(D != 0);
+    static_assert(D != 0);
 
     static constexpr const auto N_ = std::ratio<N, D>::num;
     static constexpr const auto D_ =

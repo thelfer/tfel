@@ -1,30 +1,28 @@
-/*! 
+/*!
  * \file  StandardOperations.hxx
  * \brief
  * \author Thomas Helfer
  * \date   03 févr. 2015
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_TFEL_MATH_EXPRESSIONTEMPLATES_STANDARDOPERATIONS_HXX
-#define LIB_TFEL_MATH_EXPRESSIONTEMPLATES_STANDARDOPERATIONS_HXX 
+#define LIB_TFEL_MATH_EXPRESSIONTEMPLATES_STANDARDOPERATIONS_HXX
 
-#include<type_traits>
+#include <type_traits>
+#include "TFEL/TypeTraits/IsScalar.hxx"
+#include "TFEL/Math/General/ResultType.hxx"
+#include "TFEL/Math/General/ComputeUnaryResult.hxx"
+#include "TFEL/Math/General/ComputeBinaryResult.hxx"
 
-#include"TFEL/TypeTraits/IsScalar.hxx"
+namespace tfel {
 
-#include"TFEL/Math/General/ResultType.hxx"
-#include"TFEL/Math/General/ComputeUnaryResult.hxx"
-#include"TFEL/Math/General/ComputeBinaryResult.hxx"
-
-namespace tfel{
-
-  namespace math{
+  namespace math {
 
     /*!
      * \brief negate a mathematical object
@@ -39,13 +37,11 @@ namespace tfel{
      * \see ComputeBinaryResult
      * \see IsInvalidType
      */
-    template<typename T1>
-    TFEL_MATH_INLINE auto
-    operator - (T1&& a)
-      -> typename std::enable_if<isUnaryOperationResultTypeValid<decltype(a),OpNeg>::value,
-                                 UnaryOperationHandler<decltype(a),OpNeg>>::type
-    {
-      return UnaryOperationHandler<decltype(a),OpNeg>(std::forward<T1>(a));
+    template <typename T1>
+    TFEL_MATH_INLINE auto operator-(T1&& a) -> typename std::enable_if<
+        isUnaryOperationResultTypeValid<decltype(a), OpNeg>::value,
+        UnaryOperationHandler<decltype(a), OpNeg>>::type {
+      return UnaryOperationHandler<decltype(a), OpNeg>(std::forward<T1>(a));
     }
 
     /*!
@@ -63,16 +59,15 @@ namespace tfel{
      * \see ComputeBinaryResult
      * \see IsInvalidType
      */
-    template<typename T1,typename T2>
-    TFEL_MATH_INLINE auto
-    operator + (T1&& a,T2&& b)
-      -> typename std::enable_if<isBinaryOperationResultTypeValid<decltype(a),decltype(b),OpPlus>::value&&
-                                 (!((tfel::typetraits::IsScalar<std::decay_t<T1>>::cond)&&
-				    (tfel::typetraits::IsScalar<std::decay_t<T2>>::cond))),
-                                 BinaryOperationHandler<decltype(a),decltype(b),OpPlus>>::type
-    {
-      return BinaryOperationHandler<decltype(a),decltype(b),OpPlus>(std::forward<T1>(a),
-								    std::forward<T2>(b));
+    template <typename T1, typename T2>
+    TFEL_MATH_INLINE auto operator+(T1&& a, T2&& b) -> typename std::enable_if<
+        isBinaryOperationResultTypeValid<decltype(a), decltype(b), OpPlus>::
+                value &&
+            (!((tfel::typetraits::IsScalar<std::decay_t<T1>>::cond) &&
+               (tfel::typetraits::IsScalar<std::decay_t<T2>>::cond))),
+        BinaryOperationHandler<decltype(a), decltype(b), OpPlus>>::type {
+      return BinaryOperationHandler<decltype(a), decltype(b), OpPlus>(
+          std::forward<T1>(a), std::forward<T2>(b));
     }
 
     /*!
@@ -90,16 +85,15 @@ namespace tfel{
      * \see ComputeBinaryResult
      * \see IsInvalidType
      */
-    template<typename T1,typename T2>
-    TFEL_MATH_INLINE auto
-    operator - (T1&& a,T2&& b)
-      -> typename std::enable_if<isBinaryOperationResultTypeValid<decltype(a),decltype(b),OpMinus>::value&&
-                                 (!((tfel::typetraits::IsScalar<std::decay_t<T1>>::cond)&&
-				    (tfel::typetraits::IsScalar<std::decay_t<T2>>::cond))),
-                                 BinaryOperationHandler<decltype(a),decltype(b),OpMinus>>::type
-    {
-      return BinaryOperationHandler<decltype(a),decltype(b),OpMinus>(std::forward<T1>(a),
-								     std::forward<T2>(b));
+    template <typename T1, typename T2>
+    TFEL_MATH_INLINE auto operator-(T1&& a, T2&& b) -> typename std::enable_if<
+        isBinaryOperationResultTypeValid<decltype(a), decltype(b), OpMinus>::
+                value &&
+            (!((tfel::typetraits::IsScalar<std::decay_t<T1>>::cond) &&
+               (tfel::typetraits::IsScalar<std::decay_t<T2>>::cond))),
+        BinaryOperationHandler<decltype(a), decltype(b), OpMinus>>::type {
+      return BinaryOperationHandler<decltype(a), decltype(b), OpMinus>(
+          std::forward<T1>(a), std::forward<T2>(b));
     }
 
     /*!
@@ -117,16 +111,15 @@ namespace tfel{
      * \see ComputeBinaryResult
      * \see IsInvalidType
      */
-    template<typename T1,typename T2>
-    TFEL_MATH_INLINE auto
-    operator * (T1&& a,T2&& b)
-      -> typename std::enable_if<isBinaryOperationResultTypeValid<decltype(a),decltype(b),OpMult>::value&&
-                                 (!((tfel::typetraits::IsScalar<std::decay_t<T1>>::cond)&&
-				    (tfel::typetraits::IsScalar<std::decay_t<T2>>::cond))),
-                                 BinaryOperationHandler<decltype(a),decltype(b),OpMult>>::type
-    {
-      return BinaryOperationHandler<decltype(a),decltype(b),OpMult>(std::forward<T1>(a),
-								    std::forward<T2>(b));
+    template <typename T1, typename T2>
+    TFEL_MATH_INLINE auto operator*(T1&& a, T2&& b) -> typename std::enable_if<
+        isBinaryOperationResultTypeValid<decltype(a), decltype(b), OpMult>::
+                value &&
+            (!((tfel::typetraits::IsScalar<std::decay_t<T1>>::cond) &&
+               (tfel::typetraits::IsScalar<std::decay_t<T2>>::cond))),
+        BinaryOperationHandler<decltype(a), decltype(b), OpMult>>::type {
+      return BinaryOperationHandler<decltype(a), decltype(b), OpMult>(
+          std::forward<T1>(a), std::forward<T2>(b));
     }
 
     /*!
@@ -144,16 +137,15 @@ namespace tfel{
      * \see ComputeBinaryResult
      * \see IsInvalidType
      */
-    template<typename T1,typename T2>
-    TFEL_MATH_INLINE auto
-    operator / (T1&& a,T2&& b)
-      -> typename std::enable_if<isBinaryOperationResultTypeValid<decltype(a),decltype(b),OpDiv>::value&&
-                                 (!((tfel::typetraits::IsScalar<std::decay_t<T1>>::cond)&&
-				    (tfel::typetraits::IsScalar<std::decay_t<T2>>::cond))),
-                                 BinaryOperationHandler<decltype(a),decltype(b),OpDiv>>::type
-    {
-      return BinaryOperationHandler<decltype(a),decltype(b),OpDiv>(std::forward<T1>(a),
-								   std::forward<T2>(b));
+    template <typename T1, typename T2>
+    TFEL_MATH_INLINE auto operator/(T1&& a, T2&& b) -> typename std::enable_if<
+        isBinaryOperationResultTypeValid<decltype(a), decltype(b), OpDiv>::
+                value &&
+            (!((tfel::typetraits::IsScalar<std::decay_t<T1>>::cond) &&
+               (tfel::typetraits::IsScalar<std::decay_t<T2>>::cond))),
+        BinaryOperationHandler<decltype(a), decltype(b), OpDiv>>::type {
+      return BinaryOperationHandler<decltype(a), decltype(b), OpDiv>(
+          std::forward<T1>(a), std::forward<T2>(b));
     }
 
     /*!
@@ -171,21 +163,21 @@ namespace tfel{
      * \see ComputeBinaryResult
      * \see IsInvalidType
      */
-    template<typename T1,typename T2>
-    TFEL_MATH_INLINE auto
-    operator ^ (T1&& a,T2&& b)
-      -> typename std::enable_if<isBinaryOperationResultTypeValid<decltype(a),decltype(b),OpDiadicProduct>::value&&
-                                 (!((tfel::typetraits::IsScalar<std::decay_t<T1>>::cond)&&
-				    (tfel::typetraits::IsScalar<std::decay_t<T2>>::cond))),
-                                 BinaryOperationHandler<decltype(a),decltype(b),OpDiadicProduct>>::type
-    {
-      return BinaryOperationHandler<decltype(a),decltype(b),OpDiadicProduct>(std::forward<T1>(a),
-									     std::forward<T2>(b));
+    template <typename T1, typename T2>
+    TFEL_MATH_INLINE auto operator^(T1&& a, T2&& b) -> typename std::enable_if<
+        isBinaryOperationResultTypeValid<decltype(a),
+                                         decltype(b),
+                                         OpDiadicProduct>::value &&
+            (!((tfel::typetraits::IsScalar<std::decay_t<T1>>::cond) &&
+               (tfel::typetraits::IsScalar<std::decay_t<T2>>::cond))),
+        BinaryOperationHandler<decltype(a), decltype(b), OpDiadicProduct>>::
+        type {
+      return BinaryOperationHandler<decltype(a), decltype(b), OpDiadicProduct>(
+          std::forward<T1>(a), std::forward<T2>(b));
     }
 
-  } // end of namespace math
+  }  // end of namespace math
 
-} // end of namespace tfel
+}  // end of namespace tfel
 
 #endif /* LIB_TFEL_MATH_EXPRESSIONTEMPLATES_STANDARDOPERATIONS_HXX */
-

@@ -14,8 +14,6 @@
 #ifndef LIB_TFEL_MATH_ST2TOT2VIEW_HXX
 #define LIB_TFEL_MATH_ST2TOT2VIEW_HXX
 
-#include "TFEL/Metaprogramming/StaticAssert.hxx"
-
 #include "TFEL/Math/General/EmptyRunTimeProperties.hxx"
 #include "TFEL/Math/ExpressionTemplates/Expr.hxx"
 #include "TFEL/Math/Vector/VectorUtilities.hxx"
@@ -23,9 +21,7 @@
 #include "TFEL/Math/t2tot2.hxx"
 #include "TFEL/Math/tmatrix.hxx"
 
-namespace tfel {
-
-  namespace math {
+namespace tfel::math {
 
     /*!
      * \brief a simple place holder
@@ -46,6 +42,8 @@ namespace tfel {
     struct Expr<t2tot2<N, T>, ST2toT2ViewExpr<N, T>>
         : public ST2toT2Concept<Expr<t2tot2<N, T>, ST2toT2ViewExpr<N, T>>>,
           public t2tot2_base<Expr<t2tot2<N, T>, ST2toT2ViewExpr<N, T>>> {
+      static_assert((N == 1u) || (N == 2u) || (N == 3u));
+
       typedef EmptyRunTimeProperties RunTimeProperties;
       typedef typename t2tot2<N, T>::value_type value_type;
       typedef typename t2tot2<N, T>::pointer pointer;
@@ -98,16 +96,12 @@ namespace tfel {
 
      private:
       Expr() = delete;
-      //! simple check
-      TFEL_STATIC_ASSERT((N == 1u) || (N == 2u) || (N == 3u));
 
     };  // end of struct Expr
 
     template <unsigned short N, typename T = double>
     using ST2toT2View = Expr<t2tot2<N, T>, ST2toT2ViewExpr<N, T>>;
 
-  }  // end of namespace math
-
-}  // end of namespace tfel
+  }  // end of namespace tfel::math
 
 #endif /* LIB_TFEL_MATH_ST2TOT2VIEW_HXX */

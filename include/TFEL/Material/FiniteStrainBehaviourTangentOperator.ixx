@@ -31,12 +31,14 @@
  * specialisation of the FiniteStrainBehaviourTangentOperatorConverter
  * structure
  */
-#define  TFEL_MATERIAL_FINITESTRAINBEHAVIOURTANGENTOPERATORCONVERTER(OP1,OP2)                                   \
-  template<>                                                                                                    \
-  struct FiniteStrainBehaviourTangentOperatorConverter<FiniteStrainBehaviourTangentOperatorBase::OP1,           \
-						       FiniteStrainBehaviourTangentOperatorBase::OP2>           \
-      : public FiniteStrainBehaviourTangentOperatorConverterBase<FiniteStrainBehaviourTangentOperatorBase::OP1, \
-								 FiniteStrainBehaviourTangentOperatorBase::OP2>
+#define TFEL_MATERIAL_FINITESTRAINBEHAVIOURTANGENTOPERATORCONVERTER(OP1, OP2) \
+  template <>                                                                 \
+  struct FiniteStrainBehaviourTangentOperatorConverter<                       \
+      FiniteStrainBehaviourTangentOperatorBase::OP1,                          \
+      FiniteStrainBehaviourTangentOperatorBase::OP2>                          \
+      : public FiniteStrainBehaviourTangentOperatorConverterBase<             \
+            FiniteStrainBehaviourTangentOperatorBase::OP1,                    \
+            FiniteStrainBehaviourTangentOperatorBase::OP2>
 
 namespace tfel
 {

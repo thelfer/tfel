@@ -17,7 +17,6 @@
 #include <cmath>
 #include <type_traits>
 #include "TFEL/Config/TFELConfig.hxx"
-#include "TFEL/Metaprogramming/StaticAssert.hxx"
 #include "TFEL/Metaprogramming/TypeList.hxx"
 #include "TFEL/TypeTraits/IsScalar.hxx"
 #include "TFEL/TypeTraits/IsReal.hxx"
@@ -57,17 +56,9 @@ namespace tfel::math {
    */
   template <typename unit, typename T = double>
   class qt {
-    /*!
-     * A simple check, T must be a fundamental numerical type.
-     */
-    TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<T>::cond);
-    /*!
-     * A simple check, T must be a scalar.
-     */
-    TFEL_STATIC_ASSERT(tfel::typetraits::IsScalar<T>::cond);
-    /*!
-     * The value of the qt
-     */
+    static_assert(tfel::typetraits::IsFundamentalNumericType<T>::cond);
+    static_assert(tfel::typetraits::IsScalar<T>::cond);
+    //! \brief the value of the quantity
     T value;
 
    public:
@@ -144,8 +135,7 @@ namespace tfel::math {
      */
     template <typename T2>
     TFEL_MATH_INLINE
-        std::enable_if_t<IsQtScalarOperationValid<T, T2>::cond,
-                                qt<unit, T>&>
+        std::enable_if_t<IsQtScalarOperationValid<T, T2>::cond, qt<unit, T>&>
         operator*=(const T2 a);
     /*!
      * Operator /=
@@ -153,8 +143,7 @@ namespace tfel::math {
      */
     template <typename T2>
     TFEL_MATH_INLINE
-        std::enable_if_t<IsQtScalarOperationValid<T, T2>::cond,
-                                qt<unit, T>&>
+        std::enable_if_t<IsQtScalarOperationValid<T, T2>::cond, qt<unit, T>&>
         operator/=(const T2 a);
 
     /*!
@@ -184,17 +173,9 @@ namespace tfel::math {
    */
   template <typename T>
   class qt<NoUnit, T> {
-    /*!
-     * A simple check, T must be a fundamental numerical type.
-     */
-    TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<T>::cond);
-    /*!
-     * A simple check, T must be a scalar.
-     */
-    TFEL_STATIC_ASSERT(tfel::typetraits::IsScalar<T>::cond);
-    /*!
-     * The value of the qt
-     */
+    static_assert(tfel::typetraits::IsFundamentalNumericType<T>::cond);
+    static_assert(tfel::typetraits::IsScalar<T>::cond);
+    //! \brief the value of the quantity
     T value;
 
    public:
@@ -251,8 +232,7 @@ namespace tfel::math {
 
     template <typename T2>
     TFEL_MATH_INLINE
-        std::enable_if_t<IsConvertibleToQtNoUnit<T, T2>::cond,
-                                qt<NoUnit, T>&>
+        std::enable_if_t<IsConvertibleToQtNoUnit<T, T2>::cond, qt<NoUnit, T>&>
         operator=(const T2 src);
 
     /*!
@@ -279,8 +259,7 @@ namespace tfel::math {
      */
     template <typename T2>
     TFEL_MATH_INLINE
-        std::enable_if_t<IsConvertibleToQtNoUnit<T, T2>::cond,
-                                qt<NoUnit, T>&>
+        std::enable_if_t<IsConvertibleToQtNoUnit<T, T2>::cond, qt<NoUnit, T>&>
         operator*=(const T2 a);
 
     /*!
@@ -289,8 +268,7 @@ namespace tfel::math {
      */
     template <typename T2>
     TFEL_MATH_INLINE
-        std::enable_if_t<IsConvertibleToQtNoUnit<T, T2>::cond,
-                                qt<NoUnit, T>&>
+        std::enable_if_t<IsConvertibleToQtNoUnit<T, T2>::cond, qt<NoUnit, T>&>
         operator/=(const T2 a);
 
     /*!

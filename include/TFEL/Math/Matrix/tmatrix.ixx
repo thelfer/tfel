@@ -175,7 +175,7 @@ namespace tfel::math {
 
     template <unsigned short N, unsigned short M, typename T>
     tmatrix<N, N, T> tmatrix<N, M, T>::Id() {
-      TFEL_STATIC_ASSERT(N == M);
+      static_assert(N == M);
       tmatrix<N, N, T> m2(static_cast<T>(0.));
       unsigned short i;
       for (i = 0; i < N; ++i) {

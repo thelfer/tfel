@@ -122,7 +122,7 @@ namespace tfel::math {
   template <unsigned short N, typename T>
   template <typename T2, typename Operation>
   tvector<N, T>::tvector(const Expr<tvector<N, T2>, Operation>& src) {
-    TFEL_STATIC_ASSERT((tfel::typetraits::IsAssignableTo<T2, T>::cond));
+    static_assert(tfel::typetraits::IsAssignableTo<T2, T>::cond);
     vectorToTab<N>::exe(src, this->v);
   }  // end of tvector<N,T>::tvector(const Expr<tvector<N,T2>,Operation>&)
 
@@ -190,8 +190,8 @@ namespace tfel::math {
   exportToBaseTypeArray(const tvector<N, T>& v, OutputIterator p) {
     typedef tfel::fsalgo::copy<N> Copy;
     typedef tfel::typetraits::base_type<T> base;
-    TFEL_STATIC_ASSERT(
-        (tfel::typetraits::IsSafelyReinterpretCastableTo<T, base>::cond));
+    static_assert(
+        tfel::typetraits::IsSafelyReinterpretCastableTo<T, base>::cond);
     Copy::exe(reinterpret_cast<const base*>(&v[0]), p);
   }  // end of exportToBaseTypePointer
 

@@ -127,16 +127,15 @@ namespace tfel::math {
       : fsarray<StensorDimeToSize<N>::value, T>(init) {}
 
   template <unsigned short N, typename T>
-  template <
-      typename InputIterator,
-      std::enable_if_t<
-          std::is_same_v<typename std::iterator_traits<InputIterator>::value_type,
-                       tfel::typetraits::base_type<T>>,
-          bool>>
+  template <typename InputIterator,
+            std::enable_if_t<std::is_same_v<typename std::iterator_traits<
+                                                InputIterator>::value_type,
+                                            tfel::typetraits::base_type<T>>,
+                             bool>>
   stensor<N, T>::stensor(const InputIterator p) {
     using base = tfel::typetraits::base_type<T>;
-    TFEL_STATIC_ASSERT(
-        (tfel::typetraits::IsSafelyReinterpretCastableTo<T, base>::cond));
+    static_assert(
+        tfel::typetraits::IsSafelyReinterpretCastableTo<T, base>::cond);
     tfel::fsalgo::copy<StensorDimeToSize<N>::value>::exe(
         p, reinterpret_cast<base*>(this->v));
   }
@@ -163,8 +162,8 @@ namespace tfel::math {
   }
 
   template <unsigned short N, typename T>
-  constexpr const T& stensor<N, T>::operator()(
-      const unsigned short i) const noexcept {
+  constexpr const T& stensor<N, T>::operator()(const unsigned short i) const
+      noexcept {
     return this->v[i];
   }
 
@@ -202,7 +201,7 @@ namespace tfel::math {
       ptr[4] = p[4] * icste;
       ptr[5] = p[5] * icste;
     }
-  } // end of importVoigt
+  }  // end of importVoigt
 
   template <unsigned short N, typename T>
   template <typename InputIterator>
@@ -232,7 +231,7 @@ namespace tfel::math {
       ptr[4] = p[4] * cste;
       ptr[5] = p[5] * cste;
     }
-  } // end of importTab
+  }  // end of importTab
 
   template <unsigned short N, typename T>
   template <typename InputIterator>
@@ -256,25 +255,25 @@ namespace tfel::math {
     using base = tfel::typetraits::base_type<T>;
     const auto* const ptr = static_cast<const base* const>(this->v);
     if constexpr (N == 1) {
-	  p[0] = ptr[0];
-	  p[1] = ptr[1];
-	  p[2] = ptr[2];
+      p[0] = ptr[0];
+      p[1] = ptr[1];
+      p[2] = ptr[2];
     } else if constexpr (N == 2) {
-	  constexpr const auto icste = Cste<T>::isqrt2;
-	  p[0] = ptr[0];
-	  p[1] = ptr[1];
-	  p[2] = ptr[2];
-	  p[3] = ptr[3]*icste;
+      constexpr const auto icste = Cste<T>::isqrt2;
+      p[0] = ptr[0];
+      p[1] = ptr[1];
+      p[2] = ptr[2];
+      p[3] = ptr[3] * icste;
     } else {
-	  constexpr const auto icste = Cste<T>::isqrt2;
-	  p[0] = ptr[0];
-	  p[1] = ptr[1];
-	  p[2] = ptr[2];
-	  p[3] = ptr[3]*icste;
-	  p[4] = ptr[4]*icste;
-	  p[5] = ptr[5]*icste;
+      constexpr const auto icste = Cste<T>::isqrt2;
+      p[0] = ptr[0];
+      p[1] = ptr[1];
+      p[2] = ptr[2];
+      p[3] = ptr[3] * icste;
+      p[4] = ptr[4] * icste;
+      p[5] = ptr[5] * icste;
     }
-  } // end of exportTab
+  }  // end of exportTab
 
   template <unsigned short N, typename T>
   template <typename T2>
@@ -285,8 +284,8 @@ namespace tfel::math {
   stensor<N, T>::write(T2* const t) const {
     using base = tfel::typetraits::base_type<T>;
     typedef tfel::fsalgo::copy<StensorDimeToSize<N>::value> Copy;
-    TFEL_STATIC_ASSERT(
-        (tfel::typetraits::IsSafelyReinterpretCastableTo<T, base>::cond));
+    static_assert(
+        tfel::typetraits::IsSafelyReinterpretCastableTo<T, base>::cond);
     Copy::exe(reinterpret_cast<const base*>(this->v), t);
   }
 
@@ -391,10 +390,10 @@ namespace tfel::math {
   bool stensor<N, T>::computeEigenVector(VectorType& ev, const T vp) const {
     using real = VectorNumType<VectorType>;
     typedef tfel::math::internals::StensorComputeEigenVectors<N> SCEV;
-    TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<real>::cond);
-    TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<real>::cond);
-    TFEL_STATIC_ASSERT(
-        (tfel::typetraits::IsSafelyReinterpretCastableTo<T, real>::cond));
+    static_assert(tfel::typetraits::IsFundamentalNumericType<real>::cond);
+    static_assert(tfel::typetraits::IsReal<real>::cond);
+    static_assert(
+        tfel::typetraits::IsSafelyReinterpretCastableTo<T, real>::cond);
     return SCEV::computeEigenVector(ev, reinterpret_cast<const real*>(this->v),
                                     *(reinterpret_cast<const real*>(&vp)));
   }
@@ -638,8 +637,8 @@ namespace tfel::math {
   exportToBaseTypeArray(const stensor<N, T>& s, OutputIterator p) {
     using base = tfel::typetraits::base_type<T>;
     typedef tfel::fsalgo::copy<StensorDimeToSize<N>::value> Copy;
-    TFEL_STATIC_ASSERT(
-        (tfel::typetraits::IsSafelyReinterpretCastableTo<T, base>::cond));
+    static_assert(
+        tfel::typetraits::IsSafelyReinterpretCastableTo<T, base>::cond);
     Copy::exe(reinterpret_cast<const base*>(&s[0]), p);
   }
 
@@ -702,7 +701,7 @@ namespace tfel::math {
               s(2) * s(3) * s(3) - s(1) * s(4) * s(4) - s(0) * s(5) * s(5)) /
              2;
     }
-  } // end of det
+  }  // end of det
 
   template <typename StensorType>
   std::enable_if_t<
@@ -718,8 +717,9 @@ namespace tfel::math {
     if constexpr (N == 1) {
       return {1 / s(0), 1 / s(1), 1 / s(2)};
     } else if constexpr (N == 2) {
-	  const auto idet = 1/det(s);
-	  return {s(1)*s(2)*idet,s(0)*s(2)*idet,1/s(2),-s(2)*s(3)*idet};
+      const auto idet = 1 / det(s);
+      return {s(1) * s(2) * idet, s(0) * s(2) * idet, 1 / s(2),
+              -s(2) * s(3) * idet};
     } else {
       using real = tfel::typetraits::base_type<StensorNumType<StensorType>>;
       constexpr const auto two = real(2);
@@ -733,7 +733,7 @@ namespace tfel::math {
               (icste * s(3) * s(5) - s(1) * s(4)) * iJ,
               (icste * s(3) * s(4) - s(0) * s(5)) * iJ};
     }
-  } // end of invert
+  }  // end of invert
 
   template <unsigned short N, typename T>
   template <typename MatrixType>
@@ -755,7 +755,7 @@ namespace tfel::math {
               (m(0, 2) + m(2, 0)) * cste,
               (m(2, 1) + m(1, 2)) * cste};
     }
-  } // end of buildFromMatrix
+  }  // end of buildFromMatrix
 
   template <unsigned short N, typename T>
   template <typename VectorType>
@@ -775,7 +775,7 @@ namespace tfel::math {
       return {v(0) * v(0),        v(1) * v(1),        v(2) * v(2),
               v(0) * v(1) * cste, v(0) * v(2) * cste, v(1) * v(2) * cste};
     }
-  } // end of buildFromVectorDiadicProduct
+  }  // end of buildFromVectorDiadicProduct
 
   template <unsigned short N, typename T>
   template <typename VectorType, typename VectorType2>
@@ -802,7 +802,7 @@ namespace tfel::math {
               (v1(0) * v2(2) + v2(0) * v1(2)) * cste,
               (v1(1) * v2(2) + v2(1) * v1(2)) * cste};
     }
-  } // end of buildFromVectorsSymmetricDiadicProduct
+  }  // end of buildFromVectorsSymmetricDiadicProduct
 
   template <unsigned short N, typename T>
   stensor<N, T> stensor<N, T>::buildFromEigenValuesAndVectors(
@@ -835,14 +835,14 @@ namespace tfel::math {
                v3 * m(1, 2) * m(2, 2)) *
                   cste};
     }
-  } // end of buildFromEigenValuesAndVectors
+  }  // end of buildFromEigenValuesAndVectors
 
   template <unsigned short N, typename T>
   stensor<N, T> stensor<N, T>::buildFromEigenValuesAndVectors(
       const tvector<3u, T>& vp,
       const tmatrix<3u, 3u, tfel::typetraits::base_type<T>>& m) {
     return stensor::buildFromEigenValuesAndVectors(vp(0), vp(1), vp(2), m);
-  } // end of buildFromEigenValuesAndVectors
+  }  // end of buildFromEigenValuesAndVectors
 
   template <unsigned short N, typename T>
   stensor<N, T> stensor<N, T>::buildLogarithmFromEigenValuesAndVectors(
@@ -852,7 +852,7 @@ namespace tfel::math {
       const tmatrix<3u, 3u, tfel::typetraits::base_type<T>>& m) {
     return stensor::buildFromEigenValuesAndVectors(std::log(v1), std::log(v2),
                                                    std::log(v3), m);
-  } // end of buildLogarithmFromEigenValuesAndVectors
+  }  // end of buildLogarithmFromEigenValuesAndVectors
 
   template <unsigned short N, typename T>
   stensor<N, T> stensor<N, T>::buildLogarithmFromEigenValuesAndVectors(
@@ -860,7 +860,7 @@ namespace tfel::math {
       const tmatrix<3u, 3u, tfel::typetraits::base_type<T>>& m) {
     return stensor::buildFromEigenValuesAndVectors(
         std::log(vp(0)), std::log(vp(1)), std::log(vp(2)), m);
-  } // end of buildLogarithmFromEigenValuesAndVectors
+  }  // end of buildLogarithmFromEigenValuesAndVectors
 
   template <unsigned short N, typename T>
   stensor<N, T> stensor<N, T>::buildPositivePartFromEigenValuesAndVectors(
@@ -870,7 +870,7 @@ namespace tfel::math {
       const tmatrix<3u, 3u, tfel::typetraits::base_type<T>>& m) {
     return stensor::buildFromEigenValuesAndVectors(
         std::max(T(0), v1), std::max(T(0), v2), std::max(T(0), v3), m);
-  } // end of buildPositivePartFromEigenValuesAndVectors
+  }  // end of buildPositivePartFromEigenValuesAndVectors
 
   template <unsigned short N, typename T>
   stensor<N, T> stensor<N, T>::buildPositivePartFromEigenValuesAndVectors(
@@ -878,7 +878,7 @@ namespace tfel::math {
       const tmatrix<3u, 3u, tfel::typetraits::base_type<T>>& m) {
     return stensor::buildFromEigenValuesAndVectors(
         std::max(T(0), vp(0)), std::max(T(0), vp(1)), std::max(T(0), vp(2)), m);
-  } // end of buildPositivePartFromEigenValuesAndVectors
+  }  // end of buildPositivePartFromEigenValuesAndVectors
 
   template <unsigned short N, typename T>
   stensor<N, T> stensor<N, T>::buildNegativePartFromEigenValuesAndVectors(
@@ -888,7 +888,7 @@ namespace tfel::math {
       const tmatrix<3u, 3u, tfel::typetraits::base_type<T>>& m) {
     return stensor::buildFromEigenValuesAndVectors(
         std::min(T(0), v1), std::min(T(0), v2), std::min(T(0), v3), m);
-  } // end of buildNegativePartFromEigenValuesAndVectors
+  }  // end of buildNegativePartFromEigenValuesAndVectors
 
   template <unsigned short N, typename T>
   stensor<N, T> stensor<N, T>::buildNegativePartFromEigenValuesAndVectors(
@@ -896,7 +896,7 @@ namespace tfel::math {
       const tmatrix<3u, 3u, tfel::typetraits::base_type<T>>& m) {
     return stensor::buildFromEigenValuesAndVectors(
         std::min(T(0), vp(0)), std::min(T(0), vp(1)), std::min(T(0), vp(2)), m);
-  } // end of buildNegativePartFromEigenValuesAndVectors
+  }  // end of buildNegativePartFromEigenValuesAndVectors
 
   template <typename StensorType>
   std::enable_if_t<((implementsStensorConcept<StensorType>()) &&

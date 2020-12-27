@@ -17,26 +17,19 @@
 #include <cstddef>
 #include <initializer_list>
 #include <type_traits>
-
 #include "TFEL/Config/TFELConfig.hxx"
-#include "TFEL/Metaprogramming/StaticAssert.hxx"
-
 #include "TFEL/TypeTraits/IsScalar.hxx"
 #include "TFEL/TypeTraits/BaseType.hxx"
 #include "TFEL/TypeTraits/IsAssignableTo.hxx"
 #include "TFEL/TypeTraits/IsSafelyReinterpretCastableTo.hxx"
-
 #include "TFEL/FSAlgorithm/FSAlgorithm.hxx"
-
 #include "TFEL/Math/General/BasicOperations.hxx"
 #include "TFEL/Math/General/EmptyRunTimeProperties.hxx"
-
 #include "TFEL/Math/fsarray.hxx"
 #include "TFEL/Math/Vector/VectorUtilities.hxx"
 #include "TFEL/Math/Tensor/TensorSizeToDime.hxx"
 #include "TFEL/Math/Tensor/TensorConcept.hxx"
 #include "TFEL/Math/Tensor/TensorConceptOperations.hxx"
-
 #include "TFEL/Math/tvector.hxx"
 #include "TFEL/Math/tmatrix.hxx"
 #include "TFEL/Math/stensor.hxx"
@@ -60,7 +53,7 @@ namespace tfel::math {
                                   ScalarTag,
                                   TensorType,
                                   ScalarType> {
-    static_assert(tfel::meta::Implements<TensorType, TensorConcept>::cond,
+    static_assert(implementsTensorConcept<TensorType>(),
                   "template argument TensorType is not a tensor");
     static_assert(tfel::typetraits::IsScalar<ScalarType>::cond,
                   "template argument ScalarType is not a scalar");
@@ -79,7 +72,7 @@ namespace tfel::math {
                                   TensorTag,
                                   ScalarType,
                                   TensorType> {
-    static_assert(tfel::meta::Implements<TensorType, TensorConcept>::cond,
+    static_assert(implementsTensorConcept<TensorType>(),
                   "template argument TensorType is not a tensor");
     static_assert(tfel::typetraits::IsScalar<ScalarType>::cond,
                   "template argument ScalarType is not a scalar");
@@ -103,7 +96,7 @@ namespace tfel::math {
      */
     template <typename TensorType>
     TFEL_MATH_INLINE std::enable_if_t<
-        tfel::meta::Implements<TensorType, TensorConcept>::cond &&
+        implementsTensorConcept<TensorType>() &&
             TensorTraits<Child>::dime == TensorTraits<TensorType>::dime &&
             tfel::typetraits::IsAssignableTo<TensorNumType<TensorType>,
                                              TensorNumType<Child>>::cond,
@@ -120,7 +113,7 @@ namespace tfel::math {
     //! Assignement operator
     template <typename TensorType>
     TFEL_MATH_INLINE std::enable_if_t<
-        tfel::meta::Implements<TensorType, TensorConcept>::cond &&
+        implementsTensorConcept<TensorType>() &&
             TensorTraits<Child>::dime == TensorTraits<TensorType>::dime &&
             tfel::typetraits::IsAssignableTo<TensorNumType<TensorType>,
                                              TensorNumType<Child>>::cond,
@@ -129,7 +122,7 @@ namespace tfel::math {
     //! Assignement operator
     template <typename TensorType>
     TFEL_MATH_INLINE std::enable_if_t<
-        tfel::meta::Implements<TensorType, TensorConcept>::cond &&
+        implementsTensorConcept<TensorType>() &&
             TensorTraits<Child>::dime == TensorTraits<TensorType>::dime &&
             tfel::typetraits::IsAssignableTo<TensorNumType<TensorType>,
                                              TensorNumType<Child>>::cond,
@@ -163,6 +156,7 @@ namespace tfel::math {
   struct tensor : public TensorConcept<tensor<N, T>>,
                   public tensor_base<tensor<N, T>>,
                   public fsarray<TensorDimeToSize<N>::value, T> {
+    static_assert((N == 1u) || (N == 2u) || (N == 3u));
     /*
      * This is a TensorConcept requirement.
      */
@@ -226,8 +220,8 @@ namespace tfel::math {
     // Copy Constructor
     template <typename T2, typename Op>
     TFEL_MATH_INLINE tensor(const Expr<tensor<N, T2>, Op>& src) {
-      TFEL_STATIC_ASSERT(
-          (tfel::typetraits::IsSafelyReinterpretCastableTo<T2, T>::cond));
+      static_assert(
+          tfel::typetraits::IsSafelyReinterpretCastableTo<T2, T>::cond);
       vectorToTab<TensorDimeToSize<N>::value>::exe(src, this->v);
     }
     //! assignement operator
@@ -251,7 +245,7 @@ namespace tfel::math {
     using tensor_base<tensor<N, T>>::operator=;
 
     //! change basis
-    TFEL_MATH_INLINE2 void changeBasis(const rotation_matrix<T>&);
+    TFEL_MATH_INLINE2 void changeBasis(const rotation_matrix<T>&) noexcept;
 
     /*!
      * \return the identity tensor
@@ -273,62 +267,30 @@ namespace tfel::math {
     template <typename InputIterator>
     TFEL_MATH_INLINE2 void copy(const InputIterator src);
 
-   private:
-    //! a simple check
-    TFEL_STATIC_ASSERT((N == 1u) || (N == 2u) || (N == 3u));
   };  // end of class tensor
 
   template <unsigned short N, typename T, typename OutputIterator>
   TFEL_MATH_INLINE2 std::enable_if_t<tfel::typetraits::IsScalar<T>::cond, void>
   exportToBaseTypeArray(const tensor<N, T>&, OutputIterator);
   /*!
-   * \return the invert of a 1D tensor
+   * \return the invert of a tensor
    * \param[in] t : tensor to be inverted
    */
   template <typename TensorType>
   TFEL_MATH_INLINE2 std::enable_if_t<
-      tfel::meta::Implements<TensorType, TensorConcept>::cond &&
-          TensorTraits<TensorType>::dime == 1u,
-      tensor<1u,
+      implementsTensorConcept<TensorType>(),
+      tensor<TensorTraits<TensorType>::dime,
              typename ComputeBinaryResult<
                  tfel::typetraits::base_type<TensorNumType<TensorType>>,
                  TensorNumType<TensorType>,
                  OpDiv>::Result>>
-  invert(const TensorType&);
-  /*!
-   * \return the invert of a 2D tensor
-   * \param[in] t : tensor to be inverted
-   */
-  template <typename TensorType>
-  TFEL_MATH_INLINE2 std::enable_if_t<
-      tfel::meta::Implements<TensorType, TensorConcept>::cond &&
-          TensorTraits<TensorType>::dime == 2u,
-      tensor<2u,
-             typename ComputeBinaryResult<
-                 tfel::typetraits::base_type<TensorNumType<TensorType>>,
-                 TensorNumType<TensorType>,
-                 OpDiv>::Result>>
-  invert(const TensorType&);
-  /*!
-   * \return the invert of a 3D tensor
-   * \param[in] t : tensor to be inverted
-   */
-  template <typename TensorType>
-  TFEL_MATH_INLINE2 std::enable_if_t<
-      tfel::meta::Implements<TensorType, TensorConcept>::cond &&
-          TensorTraits<TensorType>::dime == 3u,
-      tensor<3u,
-             typename ComputeBinaryResult<
-                 tfel::typetraits::base_type<TensorNumType<TensorType>>,
-                 TensorNumType<TensorType>,
-                 OpDiv>::Result>>
-  invert(const TensorType&);
+  invert(const TensorType&) noexcept;
   /*!
    * \return the derivative of the determinant
    * \param[in] F: tensor where the the determinant is evaluated
    */
   template <typename TensorType>
-  std::enable_if_t<tfel::meta::Implements<TensorType, TensorConcept>::cond,
+  std::enable_if_t<implementsTensorConcept<TensorType>(),
                    tensor<TensorTraits<TensorType>::dime,
                           typename ComputeUnaryResult<TensorNumType<TensorType>,
                                                       Power<2>>::Result>>
@@ -341,35 +303,21 @@ namespace tfel::math {
    */
   template <typename TensorType>
   TFEL_MATH_INLINE2 std::enable_if_t<
-      tfel::meta::Implements<TensorType, TensorConcept>::cond,
+      implementsTensorConcept<TensorType>(),
       tensor<TensorTraits<TensorType>::dime, TensorNumType<TensorType>>>
   change_basis(const TensorType&,
-               const rotation_matrix<TensorNumType<TensorType>>&);
-
-  template <class T>
-  TFEL_MATH_INLINE
-      std::enable_if_t<((tfel::meta::Implements<T, StensorConcept>::cond) &&
-                        (StensorTraits<T>::dime == 1u)),
-                       tensor<1u, StensorNumType<T>>>
-      unsyme(const T&);
-
-  template <class T>
-  TFEL_MATH_INLINE
-      std::enable_if_t<((tfel::meta::Implements<T, StensorConcept>::cond) &&
-                        (StensorTraits<T>::dime == 2u)),
-                       tensor<2u, StensorNumType<T>>>
-      unsyme(const T&);
-
-  template <class T>
-  TFEL_MATH_INLINE
-      std::enable_if_t<((tfel::meta::Implements<T, StensorConcept>::cond) &&
-                        (StensorTraits<T>::dime == 3u)),
-                       tensor<3u, StensorNumType<T>>>
-      unsyme(const T&);
-
+               const rotation_matrix<TensorNumType<TensorType>>&) noexcept;
   /*!
-   * \brief convert the Cauchy stress to the first Piola-Kirchhoff stress in
-   * 1D.
+   * \return the unsymmetric tensor corresponding to the given symmetric tensor.
+   * \param[in] s: symmetric tensor
+   */
+  template <typename StensorType>
+  TFEL_MATH_INLINE std::enable_if_t<
+      implementsStensorConcept<StensorType>(),
+      tensor<StensorTraits<StensorType>::dime, StensorNumType<StensorType>>>
+  unsyme(const StensorType&);
+  /*!
+   * \brief convert the Cauchy stress to the first Piola-Kirchhoff stress.
    *
    * \tparam StensorType: type of the  Cauchy stress
    * \tparam TensorType: type of the  deformation gradient
@@ -379,102 +327,31 @@ namespace tfel::math {
    * \return the first Piola-Kirchhoff stress
    */
   template <typename StensorType, typename TensorType>
-  TFEL_MATH_INLINE std::enable_if_t<
-      ((tfel::meta::Implements<StensorType, StensorConcept>::cond) &&
-       (StensorTraits<StensorType>::dime == 1u) &&
-       (tfel::meta::Implements<TensorType, TensorConcept>::cond) &&
-       (TensorTraits<TensorType>::dime == 1u)),
-      tensor<1u,
-             typename ResultType<StensorNumType<StensorType>,
-                                 TensorNumType<TensorType>,
-                                 OpMult>::type>>
-  convertCauchyStressToFirstPiolaKirchhoffStress(const StensorType&,
-                                                 const TensorType&);
-
+  TFEL_MATH_INLINE
+      std::enable_if_t<(implementsStensorConcept<StensorType>() &&
+                        implementsTensorConcept<TensorType>()),
+                       tensor<StensorTraits<StensorType>::dime,
+                              typename ResultType<StensorNumType<StensorType>,
+                                                  TensorNumType<TensorType>,
+                                                  OpMult>::type>>
+      convertCauchyStressToFirstPiolaKirchhoffStress(const StensorType&,
+                                                     const TensorType&);
   /*!
-   * \brief convert the Cauchy stress to the first Piola-Kirchhoff stress in
-   * 1D.
+   * \brief convert the first Piola-Kirchhoff stress to the Cauchy stress
+   * \tparam TensorType: type of the  first Piola-Kirchhoff stress
+   * \tparam TensorType2: type of the  deformation gradient
    *
-   * \tparam StensorType: type of the  Cauchy stress
-   * \tparam TensorType: type of the  deformation gradient
-   *
-   * \param[in] s: Cauchy stress
+   * \param[in] P: Cauchy stress
    * \param[in] F: deformation gradient
-   * \return the first Piola-Kirchhoff stress
+   * \return the Cauchy stress
    */
-  template <typename StensorType, typename TensorType>
-  TFEL_MATH_INLINE std::enable_if_t<
-      ((tfel::meta::Implements<StensorType, StensorConcept>::cond) &&
-       (StensorTraits<StensorType>::dime == 2u) &&
-       (tfel::meta::Implements<TensorType, TensorConcept>::cond) &&
-       (TensorTraits<TensorType>::dime == 2u)),
-      tensor<2u,
-             typename ResultType<StensorNumType<StensorType>,
-                                 TensorNumType<TensorType>,
-                                 OpMult>::type>>
-  convertCauchyStressToFirstPiolaKirchhoffStress(const StensorType&,
-                                                 const TensorType&);
-
-  /*!
-   * \brief convert the Cauchy stress to the first Piola-Kirchhoff stress in
-   * 1D.
-   *
-   * \tparam StensorType: type of the  Cauchy stress
-   * \tparam TensorType: type of the  deformation gradient
-   *
-   * \param[in] s: Cauchy stress
-   * \param[in] F: deformation gradient
-   * \return the first Piola-Kirchhoff stress
-   */
-  template <typename StensorType, typename TensorType>
-  TFEL_MATH_INLINE std::enable_if_t<
-      ((tfel::meta::Implements<StensorType, StensorConcept>::cond) &&
-       (StensorTraits<StensorType>::dime == 3u) &&
-       (tfel::meta::Implements<TensorType, TensorConcept>::cond) &&
-       (TensorTraits<TensorType>::dime == 3u)),
-      tensor<3u,
-             typename ResultType<StensorNumType<StensorType>,
-                                 TensorNumType<TensorType>,
-                                 OpMult>::type>>
-  convertCauchyStressToFirstPiolaKirchhoffStress(const StensorType&,
-                                                 const TensorType&);
-
   template <typename TensorType, typename TensorType2>
-  std::enable_if_t<
-      ((tfel::meta::Implements<TensorType, TensorConcept>::cond) &&
-       (TensorTraits<TensorType>::dime == 1u) &&
-       (tfel::meta::Implements<TensorType2, TensorConcept>::cond) &&
-       (TensorTraits<TensorType2>::dime == 1u)),
-      stensor<1u,
-              typename ResultType<TensorNumType<TensorType>,
-                                  TensorNumType<TensorType2>,
-                                  OpMult>::type>>
-  convertFirstPiolaKirchhoffStressToCauchyStress(const TensorType&,
-                                                 const TensorType2&);
-
-  template <typename TensorType, typename TensorType2>
-  std::enable_if_t<
-      ((tfel::meta::Implements<TensorType, TensorConcept>::cond) &&
-       (TensorTraits<TensorType>::dime == 2u) &&
-       (tfel::meta::Implements<TensorType2, TensorConcept>::cond) &&
-       (TensorTraits<TensorType2>::dime == 2u)),
-      stensor<2u,
-              typename ResultType<TensorNumType<TensorType>,
-                                  TensorNumType<TensorType2>,
-                                  OpMult>::type>>
-  convertFirstPiolaKirchhoffStressToCauchyStress(const TensorType&,
-                                                 const TensorType2&);
-
-  template <typename TensorType, typename TensorType2>
-  std::enable_if_t<
-      ((tfel::meta::Implements<TensorType, TensorConcept>::cond) &&
-       (TensorTraits<TensorType>::dime == 3u) &&
-       (tfel::meta::Implements<TensorType2, TensorConcept>::cond) &&
-       (TensorTraits<TensorType2>::dime == 3u)),
-      stensor<3u,
-              typename ResultType<TensorNumType<TensorType>,
-                                  TensorNumType<TensorType2>,
-                                  OpMult>::type>>
+  std::enable_if_t<(implementsTensorConcept<TensorType>() &&
+                    implementsTensorConcept<TensorType2>()),
+                   stensor<TensorTraits<TensorType>::dime,
+                           typename ResultType<TensorNumType<TensorType>,
+                                               TensorNumType<TensorType2>,
+                                               OpMult>::type>>
   convertFirstPiolaKirchhoffStressToCauchyStress(const TensorType&,
                                                  const TensorType2&);
 

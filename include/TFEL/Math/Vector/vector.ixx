@@ -11,8 +11,8 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_TFEL_VECTORIXX
-#define LIB_TFEL_VECTORIXX
+#ifndef LIB_TFEL_MATH_VECTOR_IXX
+#define LIB_TFEL_MATH_VECTOR_IXX
 
 #include <cassert>
 
@@ -164,4 +164,4 @@ namespace tfel::math {
 
 #include "TFEL/Math/Vector/vectorResultType.hxx"
 
-#endif /* LIB_TFEL_VECTORIXX */
+#endif /* LIB_TFEL_MATH_VECTOR_IXX */

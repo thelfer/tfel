@@ -17,8 +17,8 @@
 #include <map>
 #include <vector>
 #include <string>
+#include <optional>
 #include <initializer_list>
-
 #include "TFEL/Utilities/GenTypeBase.hxx"
 #include "MFront/MFrontConfig.hxx"
 #include "MFront/SupportedTypes.hxx"
@@ -215,9 +215,9 @@ namespace mfront {
     //! standard bounds
     OptionalVariableBoundsDescription physicalBounds;
     //! glossary name
-    OptionalString glossaryName;
+    std::optional<std::string> glossaryName;
     //! entry name
-    OptionalString entryName;
+    std::optional<std::string> entryName;
     //! variable attributes
     std::map<std::string, VariableAttribute> attributes;
   };  // end of struct VariableDescription

@@ -1,25 +1,25 @@
 @DSL Implicit;
 @Behaviour IsotropicJ2Plasticity;
 @Author Thomas Helfer;
-@Date   5/06/2016;
-@Description{
+@Date 5 / 06 / 2016;
+@Description {
   "This file is used to test the StandardElasticity "
   "brick for an isotropic J2 plastic behaviour with "
   "linear isotropic hardening."
- }
+}
 
 @Theta 1;
 @Epsilon 1e-14;
-@ModellingHypotheses {".+"};
+@ModellingHypotheses{".+"};
 @Brick "StandardElasticity";
 
 @Parameter young = 150e9;
 young.setGlossaryName("YoungModulus");
-@Parameter nu    = 0.3;
+@Parameter nu = 0.3;
 nu.setGlossaryName("PoissonRatio");
-@Parameter H=102e9;
+@Parameter H = 102e9;
 H.setEntryName("HardeningSlope");
-@Parameter s0=102e6;
+@Parameter s0 = 102e6;
 s0.setEntryName("InitialYieldStress");
 
 @StateVariable strain p;
@@ -27,23 +27,23 @@ p.setGlossaryName("EquivalentPlasticStrain");
 
 @LocalVariable bool b;
 
-@InitLocalVariables{
+@InitLocalVariables {
   const auto sig_el = computeElasticPrediction();
   const auto seq_el = sigmaeq(sig_el);
-  b = seq_el>s0+H*p;
+  b = seq_el > s0 + H * p;
 }
 
-@Integrator{
-  if(b){
-    const auto mu   = computeMu(young,nu);
-    const auto seq  = sigmaeq(sig);
-    const auto iseq = 1/max(seq,1.e-10*young);
-    const auto n    = 3*iseq*deviator(sig)/2;
-    fp           = (seq-H*(p+theta*dp)-s0)/young;
-    dfp_ddeel    = 2*mu*theta*n/young;
-    dfp_ddp      = -theta*H/young;
-    feel        += dp*n;
-    dfeel_ddp    = n;
-    dfeel_ddeel += 2*mu*theta*dp*iseq*(Stensor4::M()-(n^n));
+@Integrator {
+  if (b) {
+    const auto mu = computeMu(young, nu);
+    const auto seq = sigmaeq(sig);
+    const auto iseq = 1 / max(seq, 1.e-10 * young);
+    const auto n = 3 * iseq * deviator(sig) / 2;
+    fp = (seq - H * (p + theta * dp) - s0) / young;
+    dfp_ddeel = 2 * mu * theta * n / young;
+    dfp_ddp = -theta * H / young;
+    feel += dp * n;
+    dfeel_ddp = n;
+    dfeel_ddeel += 2 * mu * theta * dp * iseq * (Stensor4::M() - (n ^ n));
   }
 }

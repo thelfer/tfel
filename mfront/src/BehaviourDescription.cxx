@@ -512,15 +512,14 @@ namespace mfront {
       return MaterialPropertyInput::MATERIALPROPERTY;
     } else if (this->isParameterName(h, v)) {
       return MaterialPropertyInput::PARAMETER;
-    } else if (this->isStaticVariableName(h, v)) {
-      return MaterialPropertyInput::STATICVARIABLE;
     }
-    throw_if(true, "unsupported variable: variable '" + v +
-                       "' is "
-                       "neither an external state variable, a material "
-                       "property nor a parameter nor an auxiliary "
-                       "state variable evaluated by an external model, "
-                       "nor a static variable");
+    throw_if(!this->isStaticVariableName(h, v),
+             "unsupported variable: variable '" + v +
+                 "' is neither an external state variable, a material "
+                 "property nor a parameter nor an auxiliary "
+                 "state variable evaluated by an external model, "
+                 "nor a static variable");
+    return MaterialPropertyInput::STATICVARIABLE;
   }  // end of BehaviourDescription::getMaterialPropertyInputCategory
 
   std::vector<BehaviourDescription::MaterialPropertyInput>
@@ -993,11 +992,11 @@ namespace mfront {
     tfel::raise_if(this->hasCrystalStructure(),
                    "BehaviourDescription::setCrystalStructure: "
                    "crystal structure already declared");
-    this->gs = SlipSystemsDescription(s);
+    this->gs.emplace(s);
   }  // end of BehaviourDescription::setCrystalStructure
 
   bool BehaviourDescription::hasCrystalStructure() const {
-    return !this->gs.empty();
+    return this->gs.has_value();
   }  // end of BehaviourDescription::hasCrystalStructure
 
   BehaviourDescription::CrystalStructure
@@ -1005,7 +1004,7 @@ namespace mfront {
     tfel::raise_if(!this->hasCrystalStructure(),
                    "BehaviourDescription::setCrystalStructure: "
                    "no crystal structure declared");
-    return this->gs.get<SlipSystemsDescription>().getCrystalStructure();
+    return this->gs.value().getCrystalStructure();
   }  // end of BehaviourDescription::getCrystalStructure
 
   void BehaviourDescription::addHillTensor(
@@ -1526,7 +1525,7 @@ namespace mfront {
     throw_if(!this->hasCrystalStructure(),
              "crystal structure is not defined yet");
     for (const auto& s : ss) {
-      auto& ssd = this->gs.get<SlipSystemsDescription>();
+      auto& ssd = this->gs.value();
       const auto nb = ssd.getNumberOfSlipSystemsFamilies();
       if (s.is<SlipSystemsDescription::system3d>()) {
         const auto& s3d = s.get<SlipSystemsDescription::system3d>();
@@ -1542,7 +1541,7 @@ namespace mfront {
                                   static_cast<int>(css.size()));
       this->addStaticVariable(uh, v, BehaviourData::UNREGISTRED);
     }
-    const auto& ssd = this->gs.get<SlipSystemsDescription>();
+    const auto& ssd = this->gs.value();
     auto n = int{};
     for (SlipSystemsDescription::size_type i = 0;
          i != ssd.getNumberOfSlipSystemsFamilies(); ++i) {
@@ -1554,10 +1553,10 @@ namespace mfront {
   }
 
   bool BehaviourDescription::areSlipSystemsDefined() const {
-    if (this->gs.empty()) {
+    if (!this->gs.has_value()) {
       return false;
     }
-    auto& ssd = this->gs.get<SlipSystemsDescription>();
+    auto& ssd = this->gs.value();
     return ssd.getNumberOfSlipSystemsFamilies() != 0;
   }  // end of BehaviourDescription::areSlipSystemsDefined
 
@@ -1566,7 +1565,7 @@ namespace mfront {
     tfel::raise_if(!this->areSlipSystemsDefined(),
                    "BehaviourDescription::getSlipSystems: "
                    "no slip systems defined");
-    return this->gs;
+    return this->gs.value();
   }  // end of BehaviourDescription::getSlipSystems
 
   BehaviourDescription::InteractionMatrixStructure
@@ -1574,15 +1573,14 @@ namespace mfront {
     tfel::raise_if(!this->areSlipSystemsDefined(),
                    "BehaviourDescription::getInteractionMatrixStructure: "
                    "no slip system defined");
-    return this->gs.get<SlipSystemsDescription>()
-        .getInteractionMatrixStructure();
+    return this->gs.value().getInteractionMatrixStructure();
   }  // end of BehaviourDescription::getInteractionMatrix
 
   bool BehaviourDescription::hasInteractionMatrix() const {
-    if (!this->gs.is<SlipSystemsDescription>()) {
+    if (!this->gs.has_value()) {
       return false;
     }
-    return this->gs.get<SlipSystemsDescription>().hasInteractionMatrix();
+    return this->gs.value().hasInteractionMatrix();
   }  // end of BehaviourDescription::hasInteractionMatrix
 
   void BehaviourDescription::setInteractionMatrix(
@@ -1593,18 +1591,16 @@ namespace mfront {
     throw_if(!this->allowsNewUserDefinedVariables(),
              "new variables are can't be defined after the first code block.");
     throw_if(!this->areSlipSystemsDefined(), "no slip system defined");
-    this->gs.get<SlipSystemsDescription>().setInteractionMatrix(m);
+    this->gs.value().setInteractionMatrix(m);
   }  // end of BehaviourDescription::setInteractionMatrix
 
   bool BehaviourDescription::hasDislocationsMeanFreePathInteractionMatrix()
       const {
-    if (!this->gs.is<SlipSystemsDescription>()) {
+    if (!this->gs.has_value()) {
       return false;
     }
-    return this->gs.get<SlipSystemsDescription>()
-        .hasDislocationsMeanFreePathInteractionMatrix();
-  }  // end of
-     // BehaviourDescription::hasDislocationsMeanFreePathInteractionMatrix
+    return this->gs.value().hasDislocationsMeanFreePathInteractionMatrix();
+  }  // end of hasDislocationsMeanFreePathInteractionMatrix
 
   void BehaviourDescription::setDislocationsMeanFreePathInteractionMatrix(
       const std::vector<long double>& m) {
@@ -1617,10 +1613,8 @@ namespace mfront {
     throw_if(!this->allowsNewUserDefinedVariables(),
              "new variables are can't be defined after the first code block.");
     throw_if(!this->areSlipSystemsDefined(), "no slip system defined");
-    this->gs.get<SlipSystemsDescription>()
-        .setDislocationsMeanFreePathInteractionMatrix(m);
-  }  // end of
-     // BehaviourDescription::setDislocationsMeanFreePathInteractionMatrix
+    this->gs.value().setDislocationsMeanFreePathInteractionMatrix(m);
+  }  // end of setDislocationsMeanFreePathInteractionMatrix
 
   void BehaviourDescription::setUseQt(const bool b) {
     tfel::raise_if(this->use_qt,
@@ -2977,11 +2971,11 @@ namespace mfront {
     tfel::raise_if(!this->isStrainMeasureDefined(),
                    "BehaviourDescription::getStrainMeasure: "
                    "no strain measure defined");
-    return this->strainMeasure.get<StrainMeasure>();
+    return this->strainMeasure.value();
   }  // end of BehaviourDescription::setStrainMeasure()
 
   bool BehaviourDescription::isStrainMeasureDefined() const {
-    return this->strainMeasure.is<StrainMeasure>();
+    return this->strainMeasure.has_value();
   }  // end of BehaviourDescription::isStrainMeasureDefined()
 
   void BehaviourDescription::getSymbols(

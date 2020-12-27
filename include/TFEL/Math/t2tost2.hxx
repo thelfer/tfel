@@ -17,7 +17,6 @@
 #include <cstddef>
 
 #include "TFEL/Config/TFELConfig.hxx"
-#include "TFEL/Metaprogramming/StaticAssert.hxx"
 #include "TFEL/TypeTraits/IsScalar.hxx"
 #include "TFEL/TypeTraits/BaseType.hxx"
 #include "TFEL/TypeTraits/IsInvalid.hxx"

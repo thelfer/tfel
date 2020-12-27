@@ -20,658 +20,647 @@
 #include <limits>
 #include <utility>
 #include <type_traits>
-
+#include "TFEL/Raise.hxx"
 #include "TFEL/Config/TFELConfig.hxx"
-#include "TFEL/Metaprogramming/StaticAssert.hxx"
 #include "TFEL/Metaprogramming/TypeList.hxx"
 #include "TFEL/Metaprogramming/GenerateTypeList.hxx"
 #include "TFEL/Utilities/GenTypeCastError.hxx"
 
-namespace tfel {
+namespace tfel::utilities::internals {
 
-  namespace utilities {
+  //! a helper function for destroying a plain old data type.
+  /*
+   * \author Thomas Helfer.
+   * \date   20 Apr. 2007.
+   */
+  template <typename T>
+  struct TFEL_VISIBILITY_LOCAL GenTypeTrivialDestroy {
+    //! the helper function.
+    /*
+     * \param void *const, a pointer (not used).
+     */
+    TFEL_INLINE static void exe(void *const) {}
+  };
 
-    namespace internals {
+  //! an helper function to call the destructor of T.
+  /*
+   * \author Thomas Helfer.
+   * \date   20 Apr. 2007.
+   */
+  template <typename T>
+  struct TFEL_VISIBILITY_LOCAL GenTypeGenericDestroy {
+    //! the helper function.
+    /*
+     * \param void *const, a pointer to a T object.
+     */
+    TFEL_INLINE static void exe(void *const p) {
+      static_cast<void>(p);
+      static_cast<T *>(p)->~T();
+    }
+  };  // end of GenTypeGenericDestroy
 
-      //! a helper function for destroying a plain old data type.
-      /*
-       * \author Thomas Helfer.
-       * \date   20 Apr. 2007.
-       */
-      template <typename T>
-      struct TFEL_VISIBILITY_LOCAL GenTypeTrivialDestroy {
-        //! the helper function.
-        /*
-         * \param void *const, a pointer (not used).
-         */
-        TFEL_INLINE static void exe(void *const) {}
-      };
+  //! an helper function to call the assignement operator of T.
+  /*
+   * \author Thomas Helfer.
+   * \date   15/06/2017.
+   */
+  template <typename T>
+  struct TFEL_VISIBILITY_LOCAL GenTypeDefaultAssign {
+    //! the helper function.
+    /*
+     * \param void *const, a pointer to a T-object.
+     * \param const void *const, a pointer to a T-object.
+     * \return const bool, the result of the comparison.
+     */
+    static void exe(void *const p, const void *const p2) {
+      auto &tmp = *(static_cast<T *>(p));
+      const auto &tmp2 = *(static_cast<const T *>(p2));
+      tmp = tmp2;
+    }
+  };
+  //! an helper function to call the assignement operator of T.
+  /*
+   * \author Thomas Helfer.
+   * \date   15/06/2017.
+   */
+  template <typename T>
+  struct TFEL_VISIBILITY_LOCAL GenTypeNoAssign {
+    //! the helper function.
+    /*
+     * \param void *const, a pointer to a T-object.
+     * \param const void *const, a pointer to a T-object.
+     * \return const bool, the result of the comparison.
+     */
+    [[noreturn]] static void exe(void *const, const void *const) {
+      tfel::raise("GenTypeAssign: type is not assignable");
+    }
+  };
+  //! an helper function to call the assignement operator of T.
+  /*
+   * \author Thomas Helfer.
+   * \date   20 Apr. 2007.
+   */
+  template <typename T>
+  struct TFEL_VISIBILITY_LOCAL GenTypeAssign
+      : public std::conditional<std::is_assignable<T, T>::value,
+                                GenTypeDefaultAssign<T>,
+                                GenTypeNoAssign<T>>::type {
+    using impl = typename std::conditional<std::is_assignable<T, T>::value,
+                                           GenTypeDefaultAssign<T>,
+                                           GenTypeNoAssign<T>>::type;
+    using impl::exe;
+  };
 
-      //! an helper function to call the destructor of T.
-      /*
-       * \author Thomas Helfer.
-       * \date   20 Apr. 2007.
-       */
-      template <typename T>
-      struct TFEL_VISIBILITY_LOCAL GenTypeGenericDestroy {
-        //! the helper function.
-        /*
-         * \param void *const, a pointer to a T object.
-         */
-        TFEL_INLINE static void exe(void *const p) {
-          static_cast<void>(p);
-          static_cast<T *>(p)->~T();
-        }
-      };  // end of GenTypeGenericDestroy
+  //! an helper function to call the copy constructor of T.
+  /*
+   * \author Thomas Helfer.
+   * \date   20 Apr. 2007.
+   */
+  template <typename T>
+  struct TFEL_VISIBILITY_LOCAL GenTypeCopy {
+    //! the helper function.
+    /*
+     * \param void *const, a pointer to a T-object.
+     * \param const void *const, a pointer to a T-object.
+     */
+    static void exe(void *const p, const void *const p2) {
+      const auto &tmp2 = *(static_cast<const T *>(p2));
+      // placement new
+      new (p) T(tmp2);
+    }
+  };
 
-      //! an helper function to call the assignement operator of T.
-      /*
-       * \author Thomas Helfer.
-       * \date   15/06/2017.
-       */
-      template <typename T>
-      struct TFEL_VISIBILITY_LOCAL GenTypeDefaultAssign {
-        //! the helper function.
-        /*
-         * \param void *const, a pointer to a T-object.
-         * \param const void *const, a pointer to a T-object.
-         * \return const bool, the result of the comparison.
-         */
-        static void exe(void *const p, const void *const p2) {
-          auto &tmp = *(static_cast<T *>(p));
-          const auto &tmp2 = *(static_cast<const T *>(p2));
-          tmp = tmp2;
-        }
-      };
-      //! an helper function to call the assignement operator of T.
-      /*
-       * \author Thomas Helfer.
-       * \date   15/06/2017.
-       */
-      template <typename T>
-      struct TFEL_VISIBILITY_LOCAL GenTypeNoAssign {
-        //! the helper function.
-        /*
-         * \param void *const, a pointer to a T-object.
-         * \param const void *const, a pointer to a T-object.
-         * \return const bool, the result of the comparison.
-         */
-        static void exe(void *const, const void *const) {
-          throw(
-              std::runtime_error("GenTypeAssign: "
-                                 "type is not assignable"));
-        }
-      };
-      //! an helper function to call the assignement operator of T.
-      /*
-       * \author Thomas Helfer.
-       * \date   20 Apr. 2007.
-       */
-      template <typename T>
-      struct TFEL_VISIBILITY_LOCAL GenTypeAssign
-          : public std::conditional<std::is_assignable<T, T>::value,
-                                    GenTypeDefaultAssign<T>,
-                                    GenTypeNoAssign<T>>::type {
-        using impl = typename std::conditional<std::is_assignable<T, T>::value,
-                                               GenTypeDefaultAssign<T>,
-                                               GenTypeNoAssign<T>>::type;
-        using impl::exe;
-      };
+  //! an helper class to a add methods to a GenType for a specific type.
+  /*
+   * This class is based on the curiously recurring template
+   * pattern for achieving this.
+   * \param typename Child, the Child of this class.
+   * \param typename T, the specific type.
+   * \see GenTypeSpecialisation.ixx for examples.
+   * \see http://en.wikipedia.org/wiki/Curiously_Recurring_Template_Pattern
+   * \author Thomas Helfer.
+   * \date   20 Apr. 2007.
+   */
+  template <typename Child, typename T>
+  struct GenTypeSpecializedAccessor {};
 
-      //! an helper function to call the copy constructor of T.
-      /*
-       * \author Thomas Helfer.
-       * \date   20 Apr. 2007.
-       */
-      template <typename T>
-      struct TFEL_VISIBILITY_LOCAL GenTypeCopy {
-        //! the helper function.
-        /*
-         * \param void *const, a pointer to a T-object.
-         * \param const void *const, a pointer to a T-object.
-         */
-        static void exe(void *const p, const void *const p2) {
-          const auto &tmp2 = *(static_cast<const T *>(p2));
-          // placement new
-          new (p) T(tmp2);
-        }
-      };
-
-      //! an helper class to a add methods to a GenType for a specific type.
-      /*
-       * This class is based on the curiously recurring template
-       * pattern for achieving this.
-       * \param typename Child, the Child of this class.
-       * \param typename T, the specific type.
-       * \see GenTypeSpecialisation.ixx for examples.
-       * \see http://en.wikipedia.org/wiki/Curiously_Recurring_Template_Pattern
-       * \author Thomas Helfer.
-       * \date   20 Apr. 2007.
-       */
-      template <typename Child, typename T>
-      struct GenTypeSpecializedAccessor {};
-
-      //! an helper class to a add methods to a GenType.
-      /*
-       * This class is based on the curiously recurring template
-       * pattern for achieving this.
-       * \param typename Child, the Child of this class.
-       * \param typename List, the List of types contained in the GenType.
-       * \see GenTypeSpecialisation.ixx for examples.
-       * \see http://en.wikipedia.org/wiki/Curiously_Recurring_Template_Pattern
-       * \author Thomas Helfer.
-       * \date   20 Apr. 2007.
-       */
-      template <typename Child, typename List>
-      class GenTypeSpecializedMethods
+  //! an helper class to a add methods to a GenType.
+  /*
+   * This class is based on the curiously recurring template
+   * pattern for achieving this.
+   * \param typename Child, the Child of this class.
+   * \param typename List, the List of types contained in the GenType.
+   * \see GenTypeSpecialisation.ixx for examples.
+   * \see http://en.wikipedia.org/wiki/Curiously_Recurring_Template_Pattern
+   * \author Thomas Helfer.
+   * \date   20 Apr. 2007.
+   */
+  template <typename Child, typename List>
+  class GenTypeSpecializedMethods
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-          : public GenTypeSpecializedMethods<Child, typename List::Next>,
-            public GenTypeSpecializedAccessor<Child, typename List::Current>
-#else /* DOXYGEN_SHOULD_SKIP_THIS */
-          public GenTypeSpecializedAccessor<Child, typename List::Current>
+      : public GenTypeSpecializedMethods<Child, typename List::Next>,
+        public GenTypeSpecializedAccessor<Child, typename List::Current>
+#else  /* DOXYGEN_SHOULD_SKIP_THIS */
+      public GenTypeSpecializedAccessor<Child, typename List::Current>
 #endif /* DOXYGEN_SHOULD_SKIP_THIS */
-      {
-        //! a simple alias.
-        typedef typename List::Current Current;
+  {
+    //! a simple alias.
+    typedef typename List::Current Current;
 
-       public:
-        //! cast operator.
-        TFEL_INLINE operator Current &() {
-          return static_cast<Child *>(this)->template get<Current>();
-        }
-        //! cast operator (const version).
-        TFEL_INLINE operator const Current &() const {
-          return static_cast<const Child *>(this)->template get<Current>();
-        }
-      };
+   public:
+    //! cast operator.
+    TFEL_INLINE operator Current &() {
+      return static_cast<Child *>(this)->template get<Current>();
+    }
+    //! cast operator (const version).
+    TFEL_INLINE operator const Current &() const {
+      return static_cast<const Child *>(this)->template get<Current>();
+    }
+  };
 
-      //! a partial specialisation to end the recursion.
-      /*
-       * \author Thomas Helfer.
-       * \date   20 Apr. 2007.
-       */
-      template <typename Child>
-      class GenTypeSpecializedMethods<Child, tfel::meta::TLE> {};
+  //! a partial specialisation to end the recursion.
+  /*
+   * \author Thomas Helfer.
+   * \date   20 Apr. 2007.
+   */
+  template <typename Child>
+  class GenTypeSpecializedMethods<Child, tfel::meta::TLE> {};
 
-      //! An helper class to fill the runtime methods of a GenType.
-      /*
-       * \param unsigned short N, the current index.
-       * \param typename List, a list of types.
-       * \author Thomas Helfer.
-       * \date   20 Apr. 2007.
-       */
-      template <typename List, typename... Types>
-      struct TFEL_VISIBILITY_LOCAL GenTypeRunTimeMethods
+  //! An helper class to fill the runtime methods of a GenType.
+  /*
+   * \param unsigned short N, the current index.
+   * \param typename List, a list of types.
+   * \author Thomas Helfer.
+   * \date   20 Apr. 2007.
+   */
+  template <typename List, typename... Types>
+  struct TFEL_VISIBILITY_LOCAL GenTypeRunTimeMethods
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-          : public GenTypeRunTimeMethods<typename List::Next, Types..., typename List::Current>
+      : public GenTypeRunTimeMethods<typename List::Next,
+                                     Types...,
+                                     typename List::Current>
 #endif /* DOXYGEN_SHOULD_SKIP_THIS */
-      {
-      };
+  {
+  };
 
-      //! A partial specialisation to end the recursion.
-      /*
-       * \author Thomas Helfer.
-       * \date   20 Apr. 2007.
-       */
-      template <typename... Types>
-      struct TFEL_VISIBILITY_LOCAL GenTypeRunTimeMethods<tfel::meta::TLE, Types...> {
-        //! choose the function used to destroy the N-1 type of the typelist.
-        template <typename T>
-        using GenTypeDestroy =
-            typename std::conditional<std::is_trivial<T>::value,
-                                      GenTypeTrivialDestroy<T>,
-                                      GenTypeGenericDestroy<T>>::type;  //! size of the typelise
-        static constexpr const auto Ntypes = sizeof...(Types);
-        //! a simple alias.
-        using DestructorPtr = void (*)(void *const);
-        //! a simple alias.
-        using AssignOperatorPtr = void (*)(void *const, const void *const);
-        //! a simple alias.
-        using CopyConstructorPtr = void (*)(void *const, const void *const);
-      protected:
-        /*!
-         * \param[in] i: index
-         * \return a pointer to a specific destructor
-         */
-        DestructorPtr get_destructor(const unsigned short i) {
-          constexpr const DestructorPtr m[Ntypes] = {&GenTypeDestroy<Types>::exe...};
-          return (i >= Ntypes) ? nullptr : m[i];
-        }
-        /*!
-         * \param[in] i: index
-         * \return a pointer to a copy constructor
-         */
-        CopyConstructorPtr get_copy_constructor(const unsigned short i) {
-          constexpr const CopyConstructorPtr m[Ntypes] = {&GenTypeCopy<Types>::exe...};
-          return (i >= Ntypes) ? nullptr : m[i];
-        }
-        /*!
-         * \param[in] i: index
-         * \return a pointer to an assignement operator
-         */
-        AssignOperatorPtr get_assignement_operator(const unsigned short i) {
-          constexpr const AssignOperatorPtr m[Ntypes] = {&GenTypeAssign<Types>::exe...};
-          return (i >= Ntypes) ? nullptr : m[i];
-        }
-      };
-      
-    }  // end of namespace internals
+  //! A partial specialisation to end the recursion.
+  /*
+   * \author Thomas Helfer.
+   * \date   20 Apr. 2007.
+   */
+  template <typename... Types>
+  struct TFEL_VISIBILITY_LOCAL
+      GenTypeRunTimeMethods<tfel::meta::TLE, Types...> {
+    //! choose the function used to destroy the N-1 type of the typelist.
+    template <typename T>
+    using GenTypeDestroy = typename std::conditional<
+        std::is_trivial<T>::value,
+        GenTypeTrivialDestroy<T>,
+        GenTypeGenericDestroy<T>>::type;  //! size of the typelise
+    static constexpr const auto Ntypes = sizeof...(Types);
+    //! a simple alias.
+    using DestructorPtr = void (*)(void *const);
+    //! a simple alias.
+    using AssignOperatorPtr = void (*)(void *const, const void *const);
+    //! a simple alias.
+    using CopyConstructorPtr = void (*)(void *const, const void *const);
 
-  }  // end of namespace utilities
+   protected:
+    /*!
+     * \param[in] i: index
+     * \return a pointer to a specific destructor
+     */
+    DestructorPtr get_destructor(const unsigned short i) {
+      constexpr const DestructorPtr m[Ntypes] = {
+          &GenTypeDestroy<Types>::exe...};
+      return (i >= Ntypes) ? nullptr : m[i];
+    }
+    /*!
+     * \param[in] i: index
+     * \return a pointer to a copy constructor
+     */
+    CopyConstructorPtr get_copy_constructor(const unsigned short i) {
+      constexpr const CopyConstructorPtr m[Ntypes] = {
+          &GenTypeCopy<Types>::exe...};
+      return (i >= Ntypes) ? nullptr : m[i];
+    }
+    /*!
+     * \param[in] i: index
+     * \return a pointer to an assignement operator
+     */
+    AssignOperatorPtr get_assignement_operator(const unsigned short i) {
+      constexpr const AssignOperatorPtr m[Ntypes] = {
+          &GenTypeAssign<Types>::exe...};
+      return (i >= Ntypes) ? nullptr : m[i];
+    }
+  };
 
-}  // end of namespace tfel
+}  // end of namespace tfel::utilities::internals
 
 #if defined _MSC_VER
 #include "TFEL/Utilities/GenTypeBase_MSC.hxx"
 #else
 
-namespace tfel {
+namespace tfel::utilities {
 
-  namespace utilities {
-
-    //! The base class of GenType.
-    /*
-     * \param  typename List, the list of types contained in the GenType.
-     * \author Thomas Helfer.
-     * \date   20 Apr. 2007.
+  //! The base class of GenType.
+  /*
+   * \param  typename List, the list of types contained in the GenType.
+   * \author Thomas Helfer.
+   * \date   20 Apr. 2007.
+   */
+  template <typename List>
+  struct GenTypeBase
+      : public tfel::utilities::internals::
+            GenTypeSpecializedMethods<GenTypeBase<List>, List>,
+        public tfel::utilities::internals::GenTypeRunTimeMethods<List> {
+    static_assert(tfel::meta::TLElementsAreUnique<List>::cond);
+    /*!
+     * \brief a simple wrapper around std::enable_if
+     * \tparam T: tested type which must belong to List for the requirement to
+     * hold true \tparam R: result
      */
-    template <typename List>
-    struct GenTypeBase
-        : public tfel::utilities::internals::GenTypeSpecializedMethods<GenTypeBase<List>, List>,
-          public tfel::utilities::internals::GenTypeRunTimeMethods<List> {
-      /*!
-       * \brief a simple wrapper around std::enable_if
-       * \tparam T: tested type which must belong to List for the requirement to hold true
-       * \tparam R: result
-       */
-      template <typename T, typename R = T>
-      using count = typename tfel::meta::TLCountNbrOfT<typename std::decay<T>::type, List>;
-      /*!
-       * \brief a simple wrapper around std::enable_if
-       * \tparam T: tested type which must belong to List for the requirement to hold true
-       * \tparam R: result
-       */
-      template <typename T, typename R = T>
-      using type_check = typename std::enable_if<count<T>::value == 1, R>::type;
-      //! number of object that the GenType can hold
-      static constexpr unsigned short ListSize = tfel::meta::TLSize<List>::value;
-      //! Default constructor.
-      TFEL_INLINE GenTypeBase() = default;
-      /*!
-       * intialize by value
-       * \param[in] v: value
-       */
-      template <typename T1, type_check<T1, bool> = true>
-      TFEL_INLINE GenTypeBase(T1 &&v) {
-        this->template set<T1>(std::forward<T1>(v));
+    template <typename T, typename R = T>
+    using count =
+        typename tfel::meta::TLCountNbrOfT<typename std::decay<T>::type, List>;
+    /*!
+     * \brief a simple wrapper around std::enable_if
+     * \tparam T: tested type which must belong to List for the requirement to
+     * hold true \tparam R: result
+     */
+    template <typename T, typename R = T>
+    using type_check = typename std::enable_if<count<T>::value == 1, R>::type;
+    //! number of object that the GenType can hold
+    static constexpr unsigned short ListSize = tfel::meta::TLSize<List>::value;
+    //! Default constructor.
+    TFEL_INLINE GenTypeBase() = default;
+    /*!
+     * intialize by value
+     * \param[in] v: value
+     */
+    template <typename T1, type_check<T1, bool> = true>
+    TFEL_INLINE GenTypeBase(T1 &&v) {
+      this->template set<T1>(std::forward<T1>(v));
+    }
+    /*!
+     * \brief copy constructor
+     * \param src: the source
+     */
+    TFEL_INLINE GenTypeBase(const GenTypeBase &src) : index(src.index) {
+      if (!this->empty()) {
+        // create a new object by copy
+        auto *tmp = reinterpret_cast<void *>(&buffer);
+        auto *tmp2 = reinterpret_cast<const void *>(&(src.buffer));
+        (*(this->get_copy_constructor(this->index)))(tmp, tmp2);
       }
-      /*!
-       * \brief copy constructor
-       * \param src: the source
-       */
-      TFEL_INLINE GenTypeBase(const GenTypeBase &src) : index(src.index) {
+    }
+    /*!
+     * \param[in] args: argument passed to the constructor of the
+     * object
+     */
+    template <typename T1, typename... Args>
+    TFEL_INLINE type_check<T1, T1 &> emplace(Args &&... args) {
+      // We create a new object of type T1 by calling the copy constructor
+      this->template set_uninitialised<T1>();
+      void *p = reinterpret_cast<void *>(&(this->buffer));
+      // the magic of placement new...
+      return *(new (p) T1(std::forward<Args>(args)...));
+    }  // end of emplace
+       /*!
+        * \brief assignement operator
+        * \param src: the right-hand side
+        */
+    TFEL_INLINE GenTypeBase &operator=(const GenTypeBase &src) {
+      // check for self-assignement
+      if (this == &src) {
+        return *this;
+      }
+      if (this->index == src.index) {
+        if (src.index != ListSize) {
+          // the two GenTypes hold the same objects
+          // we then use the assignement operator.
+          auto *tmp = reinterpret_cast<void *>(&buffer);
+          auto *tmp2 = reinterpret_cast<const void *>(&(src.buffer));
+          (*(this->get_assignement_operator(this->index)))(tmp, tmp2);
+        } else {
+          // src is not initialized,
+          // we then destroy holded object
+          this->clear();
+        }
+      } else {
+        // the two GenType have two differents objects.
+        // we first destroy the previous object and create a new
+        // one by copy.
+        this->clear();
+        this->index = src.index;
         if (!this->empty()) {
-          // create a new object by copy
           auto *tmp = reinterpret_cast<void *>(&buffer);
           auto *tmp2 = reinterpret_cast<const void *>(&(src.buffer));
           (*(this->get_copy_constructor(this->index)))(tmp, tmp2);
         }
       }
-      /*!
-       * \param[in] args: argument passed to the constructor of the
-       * object
-       */
-      template <typename T1, typename... Args>
-      TFEL_INLINE type_check<T1, T1 &> emplace(Args &&... args) {
-        // We create a new object of type T1 by calling the copy constructor
-        this->template set_uninitialised<T1>();
-        void *p = reinterpret_cast<void *>(&(this->buffer));
-        // the magic of placement new...
-        return *(new (p) T1(std::forward<Args>(args)...));
-      }  // end of emplace
-         /*!
-          * \brief assignement operator
-          * \param src: the right-hand side
-          */
-      TFEL_INLINE GenTypeBase &operator=(const GenTypeBase &src) {
-        // check for self-assignement
-        if (this == &src) {
-          return *this;
+      return *this;
+    }
+    //! \return true if empty
+    bool empty() const { return this->index == ListSize; }
+    /*!
+     * \brief copy a GenType (calls the assignement operator).
+     * \param src: object to be copied
+     */
+    bool copy(const GenTypeBase &src) {
+      this->operator=(src);
+      return true;
+    }
+    //! set the value of the GenType.
+    /*
+     * \param const T1&, the value affected to the GenType.
+     * \pre   T1 must be a type that the GenType can hold.
+     */
+    template <typename T1>
+    TFEL_INLINE type_check<T1, void> set(T1 &&src) {
+      using type = typename std::decay<T1>::type;
+      if (this->template is<type>()) {
+        if (&(this->template get<type>()) == &src) {
+          return;
         }
-        if (this->index == src.index) {
-          if (src.index != ListSize) {
-            // the two GenTypes hold the same objects
-            // we then use the assignement operator.
-            auto *tmp = reinterpret_cast<void *>(&buffer);
-            auto *tmp2 = reinterpret_cast<const void *>(&(src.buffer));
-            (*(this->get_assignement_operator(this->index)))(tmp, tmp2);
-          } else {
-            // src is not initialized,
-            // we then destroy holded object
-            this->clear();
-          }
-        } else {
-          // the two GenType have two differents objects.
-          // we first destroy the previous object and create a new
-          // one by copy.
-          this->clear();
-          this->index = src.index;
-          if (!this->empty()) {
-            auto *tmp = reinterpret_cast<void *>(&buffer);
-            auto *tmp2 = reinterpret_cast<const void *>(&(src.buffer));
-            (*(this->get_copy_constructor(this->index)))(tmp, tmp2);
-          }
+      }
+      // We create a new object of type T1 by calling the copy constructor
+      this->template set_uninitialised<type>();
+      void *p = reinterpret_cast<void *>(&(this->buffer));
+      // the magic of placement new...
+      new (p) type(std::forward<T1>(src));
+    }
+    //! set the value of the GenType.
+    /*
+     * \param const T1&, the value affected to the GenType.
+     * \pre   T1 must be a type that the GenType can hold.
+     */
+    template <typename T1>
+    TFEL_INLINE type_check<T1, void> set(const T1 &src) {
+      using type = typename std::decay<T1>::type;
+      if (this->template is<type>()) {
+        if (&(this->template get<type>()) == &src) {
+          return;
         }
-        return *this;
       }
-      //! \return true if empty
-      bool empty() const { return this->index == ListSize; }
-      /*!
-       * \brief copy a GenType (calls the assignement operator).
-       * \param src: object to be copied
-       */
-      bool copy(const GenTypeBase &src) {
-        this->operator=(src);
-        return true;
-      }
-      //! set the value of the GenType.
-      /*
-       * \param const T1&, the value affected to the GenType.
-       * \pre   T1 must be a type that the GenType can hold.
-       */
-      template <typename T1>
-      TFEL_INLINE type_check<T1, void> set(T1 &&src) {
-        using type = typename std::decay<T1>::type;
-        if (this->template is<type>()) {
-          if (&(this->template get<type>()) == &src) {
-            return;
-          }
-        }
-        // We create a new object of type T1 by calling the copy constructor
-        this->template set_uninitialised<type>();
-        void *p = reinterpret_cast<void *>(&(this->buffer));
-        // the magic of placement new...
-        new (p) type(std::forward<T1>(src));
-      }
-      //! set the value of the GenType.
-      /*
-       * \param const T1&, the value affected to the GenType.
-       * \pre   T1 must be a type that the GenType can hold.
-       */
-      template <typename T1>
-      TFEL_INLINE type_check<T1, void> set(const T1 &src) {
-        using type = typename std::decay<T1>::type;
-        if (this->template is<type>()) {
-          if (&(this->template get<type>()) == &src) {
-            return;
-          }
-        }
-        // We create a new object of type T1 by calling the copy constructor
-        this->template set_uninitialised<type>();
-        void *p = reinterpret_cast<void *>(&(this->buffer));
-        // the magic of placement new...
-        new (p) type(src);
-      }
-      //! assignement operator.
-      /*
-       * \param  const T1&, the value affected to the GenType.
-       * \return GenTypeBase&, a reference to this.
-       * \pre    T1 must be a type that the GenType can hold.
-       */
-      template <typename T1>
-      TFEL_INLINE type_check<T1, GenTypeBase &> operator=(T1 &&src) {
-        this->template set<T1>(std::forward<T1>(src));
-        return *this;
-      }
-      template <typename T1>
-      TFEL_INLINE type_check<T1, bool> is() const {
-        return this->index == tfel::meta::TLPosition<T1, List>::value;
-      }  // end of Value::is
-         //! get the value contained in the GenType (const version).
-         /*
-          * \return const T1&, the value affected to the GenType.
-          * \pre    T1 must be a type that the GenType can hold.
-          * \throw  GenTypeCastError, if the type contained in the GenType does
-          * not match.
-          */
-      template <typename T1>
-      TFEL_INLINE type_check<T1, const T1 &> get() const {
-        // a silly trick to avoir a gcc warning
-        union {
-          const storage_t *c;
-          const T1 *ptr;
-        } ptr;
-        if (!this->template is<T1>()) {
-          throw(GenTypeCastError());
-        }
-        ptr.c = &(this->buffer);
-        return *(ptr.ptr);
-      }
-      //! get the value contained in the GenType.
-      /*
-       * \return T1&, the value affected to the GenType.
-       * \pre    T1 must be a type that the GenType can hold.
-       * \throw  GenTypeCastError, if the type contained in the GenType does not match.
-       */
-      template <typename T1>
-      TFEL_INLINE type_check<T1, T1 &> get() {
-        // a silly trick to avoir a gcc warning
-        union {
-          storage_t *c;
-          T1 *ptr;
-        } ptr;
-        if (!this->template is<T1>()) {
-          throw(GenTypeCastError());
-        }
-        ptr.c = &(this->buffer);
-        return *(ptr.ptr);
-      }
-      /*!
-       * \return the type index of the object
-       */
-      TFEL_INLINE unsigned short getTypeIndex() const { return this->index; }
-      //! destructor
-      TFEL_INLINE ~GenTypeBase() { this->clear(); }
+      // We create a new object of type T1 by calling the copy constructor
+      this->template set_uninitialised<type>();
+      void *p = reinterpret_cast<void *>(&(this->buffer));
+      // the magic of placement new...
+      new (p) type(src);
+    }
+    //! assignement operator.
+    /*
+     * \param  const T1&, the value affected to the GenType.
+     * \return GenTypeBase&, a reference to this.
+     * \pre    T1 must be a type that the GenType can hold.
+     */
+    template <typename T1>
+    TFEL_INLINE type_check<T1, GenTypeBase &> operator=(T1 &&src) {
+      this->template set<T1>(std::forward<T1>(src));
+      return *this;
+    }
+    template <typename T1>
+    TFEL_INLINE type_check<T1, bool> is() const {
+      return this->index == tfel::meta::TLPosition<T1, List>::value;
+    }  // end of Value::is
+       //! get the value contained in the GenType (const version).
+       /*
+        * \return const T1&, the value affected to the GenType.
+        * \pre    T1 must be a type that the GenType can hold.
+        * \throw  GenTypeCastError, if the type contained in the GenType does
+        * not match.
+        */
+    template <typename T1>
+    TFEL_INLINE type_check<T1, const T1 &> get() const {
+      // a silly trick to avoir a gcc warning
+      union {
+        const storage_t *c;
+        const T1 *ptr;
+      } ptr;
+      tfel::raise_if<GenTypeCastError>(!this->template is<T1>());
+      ptr.c = &(this->buffer);
+      return *(ptr.ptr);
+    }
+    //! get the value contained in the GenType.
+    /*
+     * \return T1&, the value affected to the GenType.
+     * \pre    T1 must be a type that the GenType can hold.
+     * \throw  GenTypeCastError, if the type contained in the GenType does not
+     * match.
+     */
+    template <typename T1>
+    TFEL_INLINE type_check<T1, T1 &> get() {
+      // a silly trick to avoir a gcc warning
+      union {
+        storage_t *c;
+        T1 *ptr;
+      } ptr;
+      tfel::raise_if<GenTypeCastError>(!this->template is<T1>());
+      ptr.c = &(this->buffer);
+      return *(ptr.ptr);
+    }
+    /*!
+     * \return the type index of the object
+     */
+    TFEL_INLINE unsigned short getTypeIndex() const { return this->index; }
+    //! destructor
+    TFEL_INLINE ~GenTypeBase() { this->clear(); }
 
-     protected:
-      //! clear the GenType
-      TFEL_INLINE void clear() {
-        if (!this->empty()) {
-          // destroy the current object
-          auto *tmp = reinterpret_cast<void *>(&buffer);
-          (*(this->get_destructor(this->index)))(tmp);
-        }
-        this->index = ListSize;
+   protected:
+    //! clear the GenType
+    TFEL_INLINE void clear() {
+      if (!this->empty()) {
+        // destroy the current object
+        auto *tmp = reinterpret_cast<void *>(&buffer);
+        (*(this->get_destructor(this->index)))(tmp);
       }
-      //! set the value of the GenType.
-      /*
-       * \param const T1&, the value affected to the GenType.
-       * \pre   T1 must be a type that the GenType can hold.
-       */
-      template <typename T1>
-      TFEL_INLINE type_check<T1, void> set_uninitialised() {
-        this->clear();
-        this->index = tfel::meta::TLFindEltPos<T1, List>::value;
-      }
-      //! container type
-      typedef typename std::aligned_storage<tfel::meta::TLMaxSize<List>::value,
-                                            tfel::meta::TLMaxAlign<List>::value>::type storage_t;
-      //! the buffer where objects are hold.
-      storage_t buffer;
-      //! index to the current type hold by the GenType.
-      unsigned short index = ListSize;
+      this->index = ListSize;
+    }
+    //! set the value of the GenType.
+    /*
+     * \param const T1&, the value affected to the GenType.
+     * \pre   T1 must be a type that the GenType can hold.
+     */
+    template <typename T1>
+    TFEL_INLINE type_check<T1, void> set_uninitialised() {
+      this->clear();
+      this->index = tfel::meta::TLFindEltPos<T1, List>::value;
+    }
+    //! container type
+    using storage_t =
+        std::aligned_storage_t<tfel::meta::TLMaxSize<List>::value,
+                               tfel::meta::TLMaxAlign<List>::value>;
+    //! the buffer where objects are hold.
+    storage_t buffer;
+    //! index to the current type hold by the GenType.
+    unsigned short index = ListSize;
+  };
 
-     private:
-      //! a simple assertion
-      TFEL_STATIC_ASSERT((tfel::meta::TLElementsAreUnique<List>::cond));
-    };
-
-  }  // end of namespace utilities
-
-}  // end of namespace tfel
+}  // end of namespace tfel::utilities
 
 #endif /* _MSC_VER */
 
-namespace tfel {
+namespace tfel::utilities {
 
-  namespace utilities {
+  /*!
+   * Apply function T::apply to a GenTypeBase for the type holded by the
+   * GenTypeBase.
+   *
+   * \param T    : class containing the function to be applied.
+   * \param List : list of types contained in the GenTypeBase class.
+   * \param v    : GenTypeBase class argument.
+   *
+   * \pre class T must contain a static function name 'apply' for
+   * each type in List.
+   * \pre class T must define 'return_type' as a class or a typedef.
+   *
+   * \throw a GenTypeCastError if the GenTypeBase does not hold any
+   * object.
+   */
+  template <typename T, typename List>
+  typename T::return_type apply(const GenTypeBase<List> &);
 
-    /*!
-     * Apply function T::apply to a GenTypeBase for the type holded by the
-     * GenTypeBase.
-     *
-     * \param T    : class containing the function to be applied.
-     * \param List : list of types contained in the GenTypeBase class.
-     * \param v    : GenTypeBase class argument.
-     *
-     * \pre class T must contain a static function name 'apply' for
-     * each type in List.
-     * \pre class T must define 'return_type' as a class or a typedef.
-     *
-     * \throw a GenTypeCastError if the GenTypeBase does not hold any
-     * object.
-     */
-    template <typename T, typename List>
-    typename T::return_type apply(const GenTypeBase<List> &);
+  /*!
+   * Apply functor T to a GenTypeBase for the type holded by the
+   * GenTypeBase.
+   *
+   * \param T    : class containing the function to be applied.
+   * \param List : list of types contained in the GenTypeBase class.
+   * \param f    : functor.
+   * \param v    : GenTypeBase class argument.
+   *
+   * \pre class T must contain the opertor () for each type in List.
+   * \pre class T must define 'return_type' as a class or a typedef.
+   *
+   * \throw a GenTypeCastError if the GenTypeBase does not hold any
+   * object.
+   */
+  template <typename T, typename List>
+  typename T::return_type apply(T &, const GenTypeBase<List> &);
 
-    /*!
-     * Apply functor T to a GenTypeBase for the type holded by the
-     * GenTypeBase.
-     *
-     * \param T    : class containing the function to be applied.
-     * \param List : list of types contained in the GenTypeBase class.
-     * \param f    : functor.
-     * \param v    : GenTypeBase class argument.
-     *
-     * \pre class T must contain the opertor () for each type in List.
-     * \pre class T must define 'return_type' as a class or a typedef.
-     *
-     * \throw a GenTypeCastError if the GenTypeBase does not hold any
-     * object.
-     */
-    template <typename T, typename List>
-    typename T::return_type apply(T &, const GenTypeBase<List> &);
+  /*!
+   * Apply function T::apply to a GenTypeBase for the types holded
+   * by the two GenTypeBase.
+   *
+   * \param T    : class containing the function to be applied.
+   * \param List : list of types contained in the GenTypeBase class.
+   * \param v1   : GenTypeBase class argument.
+   * \param v2   : GenTypeBase class argument.
+   *
+   * \pre class T must contain a static function name 'apply' for
+   * each pair of types in List.
+   * \pre class T must define 'return_type' as a class or a typedef.
+   *
+   * \throw a GenTypeCastError if one of the GenTypeBase does not
+   * hold any object.
+   */
+  template <typename T, typename List>
+  typename T::return_type apply(const GenTypeBase<List> &,
+                                const GenTypeBase<List> &);
 
-    /*!
-     * Apply function T::apply to a GenTypeBase for the types holded
-     * by the two GenTypeBase.
-     *
-     * \param T    : class containing the function to be applied.
-     * \param List : list of types contained in the GenTypeBase class.
-     * \param v1   : GenTypeBase class argument.
-     * \param v2   : GenTypeBase class argument.
-     *
-     * \pre class T must contain a static function name 'apply' for
-     * each pair of types in List.
-     * \pre class T must define 'return_type' as a class or a typedef.
-     *
-     * \throw a GenTypeCastError if one of the GenTypeBase does not
-     * hold any object.
-     */
-    template <typename T, typename List>
-    typename T::return_type apply(const GenTypeBase<List> &, const GenTypeBase<List> &);
+  /*!
+   * Apply functor T to a GenTypeBase for the types holded by the
+   * two GenTypeBase.
+   *
+   * \param T    : class containing the function to be applied.
+   * \param List : list of types contained in the GenTypeBase class.
+   * \param f    : functor.
+   * \param v1   : GenTypeBase class argument.
+   * \param v2   : GenTypeBase class argument.
+   *
+   * \pre class T must contain the opertor () for each pair of types
+   * in List.
+   * \pre class T must define 'return_type' as a class or a typedef.
+   *
+   * \throw a GenTypeCastError if the GenTypeBase does not hold any
+   * object.
+   */
+  template <typename T, typename List>
+  typename T::return_type apply(T &,
+                                const GenTypeBase<List> &,
+                                const GenTypeBase<List> &);
 
-    /*!
-     * Apply functor T to a GenTypeBase for the types holded by the
-     * two GenTypeBase.
-     *
-     * \param T    : class containing the function to be applied.
-     * \param List : list of types contained in the GenTypeBase class.
-     * \param f    : functor.
-     * \param v1   : GenTypeBase class argument.
-     * \param v2   : GenTypeBase class argument.
-     *
-     * \pre class T must contain the opertor () for each pair of types
-     * in List.
-     * \pre class T must define 'return_type' as a class or a typedef.
-     *
-     * \throw a GenTypeCastError if the GenTypeBase does not hold any
-     * object.
-     */
-    template <typename T, typename List>
-    typename T::return_type apply(T &, const GenTypeBase<List> &, const GenTypeBase<List> &);
+  /*!
+   * Apply function T::apply to a GenTypeBase for the type holded by the
+   * GenTypeBase.
+   *
+   * \param T    : class containing the function to be applied.
+   * \param List : list of types contained in the GenTypeBase class.
+   * \param v    : GenTypeBase class argument.
+   *
+   * \pre class T must contain a static function name 'apply' for
+   * each type in List.
+   * \pre class T must define 'return_type' as a class or a typedef.
+   *
+   * \throw a GenTypeCastError if the GenTypeBase does not hold any
+   * object.
+   */
+  template <typename T, typename List>
+  typename T::return_type apply(GenTypeBase<List> &);
 
-    /*!
-     * Apply function T::apply to a GenTypeBase for the type holded by the
-     * GenTypeBase.
-     *
-     * \param T    : class containing the function to be applied.
-     * \param List : list of types contained in the GenTypeBase class.
-     * \param v    : GenTypeBase class argument.
-     *
-     * \pre class T must contain a static function name 'apply' for
-     * each type in List.
-     * \pre class T must define 'return_type' as a class or a typedef.
-     *
-     * \throw a GenTypeCastError if the GenTypeBase does not hold any
-     * object.
-     */
-    template <typename T, typename List>
-    typename T::return_type apply(GenTypeBase<List> &);
+  /*!
+   * Apply functor T to a GenTypeBase for the type holded by the
+   * GenTypeBase.
+   *
+   * \param T    : class containing the function to be applied.
+   * \param List : list of types contained in the GenTypeBase class.
+   * \param f    : functor.
+   * \param v    : GenTypeBase class argument.
+   *
+   * \pre class T must contain the opertor () for each type in List.
+   * \pre class T must define 'return_type' as a class or a typedef.
+   *
+   * \throw a GenTypeCastError if the GenTypeBase does not hold any
+   * object.
+   */
+  template <typename T, typename List>
+  typename T::return_type apply(T &, GenTypeBase<List> &);
 
-    /*!
-     * Apply functor T to a GenTypeBase for the type holded by the
-     * GenTypeBase.
-     *
-     * \param T    : class containing the function to be applied.
-     * \param List : list of types contained in the GenTypeBase class.
-     * \param f    : functor.
-     * \param v    : GenTypeBase class argument.
-     *
-     * \pre class T must contain the opertor () for each type in List.
-     * \pre class T must define 'return_type' as a class or a typedef.
-     *
-     * \throw a GenTypeCastError if the GenTypeBase does not hold any
-     * object.
-     */
-    template <typename T, typename List>
-    typename T::return_type apply(T &, GenTypeBase<List> &);
+  /*!
+   * Apply function T::apply to a GenTypeBase for the types holded
+   * by the two GenTypeBase.
+   *
+   * \param T    : class containing the function to be applied.
+   * \param List : list of types contained in the GenTypeBase class.
+   * \param v1   : GenTypeBase class argument.
+   * \param v2   : GenTypeBase class argument.
+   *
+   * \pre class T must contain a static function name 'apply' for
+   * each pair of types in List.
+   * \pre class T must define 'return_type' as a class or a typedef.
+   *
+   * \throw a GenTypeCastError if one of the GenTypeBase does not
+   * hold any object.
+   */
+  template <typename T, typename List>
+  typename T::return_type apply(GenTypeBase<List> &, GenTypeBase<List> &);
 
-    /*!
-     * Apply function T::apply to a GenTypeBase for the types holded
-     * by the two GenTypeBase.
-     *
-     * \param T    : class containing the function to be applied.
-     * \param List : list of types contained in the GenTypeBase class.
-     * \param v1   : GenTypeBase class argument.
-     * \param v2   : GenTypeBase class argument.
-     *
-     * \pre class T must contain a static function name 'apply' for
-     * each pair of types in List.
-     * \pre class T must define 'return_type' as a class or a typedef.
-     *
-     * \throw a GenTypeCastError if one of the GenTypeBase does not
-     * hold any object.
-     */
-    template <typename T, typename List>
-    typename T::return_type apply(GenTypeBase<List> &, GenTypeBase<List> &);
+  /*!
+   * Apply functor T to a GenTypeBase for the types holded by the
+   * two GenTypeBase.
+   *
+   * \param T    : class containing the function to be applied.
+   * \param List : list of types contained in the GenTypeBase class.
+   * \param f    : functor.
+   * \param v1   : GenTypeBase class argument.
+   * \param v2   : GenTypeBase class argument.
+   *
+   * \pre class T must contain the opertor () for each pair of types
+   * in List.
+   * \pre class T must define 'return_type' as a class or a typedef.
+   *
+   * \throw a GenTypeCastError if the GenTypeBase does not hold any
+   * object.
+   */
+  template <typename T, typename List>
+  typename T::return_type apply(T &, GenTypeBase<List> &, GenTypeBase<List> &);
 
-    /*!
-     * Apply functor T to a GenTypeBase for the types holded by the
-     * two GenTypeBase.
-     *
-     * \param T    : class containing the function to be applied.
-     * \param List : list of types contained in the GenTypeBase class.
-     * \param f    : functor.
-     * \param v1   : GenTypeBase class argument.
-     * \param v2   : GenTypeBase class argument.
-     *
-     * \pre class T must contain the opertor () for each pair of types
-     * in List.
-     * \pre class T must define 'return_type' as a class or a typedef.
-     *
-     * \throw a GenTypeCastError if the GenTypeBase does not hold any
-     * object.
-     */
-    template <typename T, typename List>
-    typename T::return_type apply(T &, GenTypeBase<List> &, GenTypeBase<List> &);
+  template <typename... Types>
+  using GenType =
+      GenTypeBase<typename tfel::meta::GenerateTypeList<Types...>::type>;
 
-    template <typename... Types>
-    using GenType = GenTypeBase<typename tfel::meta::GenerateTypeList<Types...>::type>;
-
-  }  // end of namespace utilities
-
-}  // end of namespace tfel
+}  // end of namespace tfel::utilities
 
 #include "TFEL/Utilities/GenTypeBase.ixx"
 #include "TFEL/Utilities/GenTypeSpecialisation.ixx"

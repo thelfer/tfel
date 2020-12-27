@@ -17,7 +17,6 @@
 #include <cstddef>
 #include <type_traits>
 #include "TFEL/Config/TFELConfig.hxx"
-#include "TFEL/Metaprogramming/StaticAssert.hxx"
 #include "TFEL/TypeTraits/IsScalar.hxx"
 #include "TFEL/TypeTraits/BaseType.hxx"
 #include "TFEL/TypeTraits/IsInvalid.hxx"
@@ -74,9 +73,9 @@ namespace tfel::math {
                                   StensorTag,
                                   StensorType1,
                                   StensorType2> {
-    static_assert(tfel::meta::Implements<StensorType1, StensorConcept>::cond,
+    static_assert(implementsStensorConcept<StensorType1>(),
                   "template argument StensorType1 is not a symmetric tensor");
-    static_assert(tfel::meta::Implements<StensorType2, StensorConcept>::cond,
+    static_assert(implementsStensorConcept<StensorType2>(),
                   "template argument StensorType2 is not a symmetric tensor");
     static_assert(StensorTraits<StensorType1>::dime ==
                       StensorTraits<StensorType2>::dime,
@@ -106,8 +105,7 @@ namespace tfel::math {
      */
     template <typename ST2toST2Type>
     TFEL_MATH_INLINE std::enable_if_t<
-        tfel::meta::Implements<ST2toST2Type,
-                               tfel::math::ST2toST2Concept>::cond &&
+        tfel::meta::Implements<ST2toST2Type, ST2toST2Concept>::cond &&
             ST2toST2Traits<Child>::dime == ST2toST2Traits<ST2toST2Type>::dime &&
             tfel::typetraits::IsAssignableTo<ST2toST2NumType<ST2toST2Type>,
                                              ST2toST2NumType<Child>>::cond,
@@ -116,8 +114,7 @@ namespace tfel::math {
     //! Assignement operator
     template <typename ST2toST2Type>
     TFEL_MATH_INLINE std::enable_if_t<
-        tfel::meta::Implements<ST2toST2Type,
-                               tfel::math::ST2toST2Concept>::cond &&
+        tfel::meta::Implements<ST2toST2Type, ST2toST2Concept>::cond &&
             ST2toST2Traits<Child>::dime == ST2toST2Traits<ST2toST2Type>::dime &&
             tfel::typetraits::IsAssignableTo<ST2toST2NumType<ST2toST2Type>,
                                              ST2toST2NumType<Child>>::cond,
@@ -126,8 +123,7 @@ namespace tfel::math {
     //! Assignement operator
     template <typename ST2toST2Type>
     TFEL_MATH_INLINE std::enable_if_t<
-        tfel::meta::Implements<ST2toST2Type,
-                               tfel::math::ST2toST2Concept>::cond &&
+        tfel::meta::Implements<ST2toST2Type, ST2toST2Concept>::cond &&
             ST2toST2Traits<Child>::dime == ST2toST2Traits<ST2toST2Type>::dime &&
             tfel::typetraits::IsAssignableTo<ST2toST2NumType<ST2toST2Type>,
                                              ST2toST2NumType<Child>>::cond,
@@ -163,6 +159,8 @@ namespace tfel::math {
                                        StensorDimeToSize<N>::value,
                                    T>,
                     public st2tost2_base<st2tost2<N, T>> {
+    static_assert((N == 1u) || (N == 2u) || (N == 3u));
+
     /*!
      * \param[in] s : tensor squared
      * \return the derivative of the square of a symmetric tensor
@@ -183,8 +181,7 @@ namespace tfel::math {
     template <typename StensorType, typename ST2toST2Type>
     static TFEL_MATH_INLINE std::enable_if_t<
         tfel::meta::Implements<StensorType, StensorConcept>::cond &&
-            tfel::meta::Implements<ST2toST2Type,
-                                   tfel::math::ST2toST2Concept>::cond &&
+            tfel::meta::Implements<ST2toST2Type, ST2toST2Concept>::cond &&
             StensorTraits<StensorType>::dime == N &&
             ST2toST2Traits<ST2toST2Type>::dime == N &&
             tfel::typetraits::IsAssignableTo<
@@ -296,11 +293,6 @@ namespace tfel::math {
     static TFEL_MATH_INLINE constexpr st2tost2 J();
 
    private:
-    /*!
-     * A simple check
-     */
-    TFEL_STATIC_ASSERT((N == 1u) || (N == 2u) || (N == 3u));
-
     enum ParticularSt2toSt2 {
       ST2TOST2_IDENTITY,
       ST2TOST2_J,

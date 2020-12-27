@@ -157,7 +157,7 @@ namespace tfel::math {
      * system
      * \param[in] r : rotation matrix
      */
-    static tfel::math::t2tot2<N, typename tfel::typetraits::BaseType<T>::type>
+    static tfel::math::t2tot2<N, tfel::typetraits::base_type<T>>
     fromRotationMatrix(const rotation_matrix<T>&);
     /*!
      * \param[in] B : second tensor of the product
@@ -230,22 +230,22 @@ namespace tfel::math {
      * this tensor
      */
     static TFEL_MATH_INLINE TFEL_CONSTEXPR
-        tfel::math::t2tot2<N, typename tfel::typetraits::BaseType<T>::type>
+        tfel::math::t2tot2<N, tfel::typetraits::base_type<T>>
         transpose_derivative();
     //! \return the identity
     static TFEL_MATH_INLINE TFEL_CONSTEXPR
-        tfel::math::t2tot2<N, typename tfel::typetraits::BaseType<T>::type>
+        tfel::math::t2tot2<N, tfel::typetraits::base_type<T>>
         Id();
     //! \return Id2^Id2, where Id2 is the identity tensor
     static TFEL_MATH_INLINE TFEL_CONSTEXPR
-        tfel::math::t2tot2<N, typename tfel::typetraits::BaseType<T>::type>
+        tfel::math::t2tot2<N, tfel::typetraits::base_type<T>>
         IxI();
     /*!
      * \return Id4-Id2^Id2/3, where Id4 is the identity of t2tot2 and
      * Id2 is the identity tensor
      */
     static TFEL_MATH_INLINE TFEL_CONSTEXPR
-        tfel::math::t2tot2<N, typename tfel::typetraits::BaseType<T>::type>
+        tfel::math::t2tot2<N, tfel::typetraits::base_type<T>>
         K();
     //! This is a T2toT2 concept requirement.
     typedef EmptyRunTimeProperties RunTimeProperties;
@@ -295,12 +295,12 @@ namespace tfel::math {
      * Import values
      */
     template <typename T2>
-    TFEL_MATH_INLINE2 std::enable_if_t<
-        tfel::typetraits::IsSafelyReinterpretCastableTo<
-            T2,
-            typename tfel::typetraits::BaseType<T>::type>::cond,
-        void>
-    import(const T2* const);
+    TFEL_MATH_INLINE2
+        std::enable_if_t<tfel::typetraits::IsSafelyReinterpretCastableTo<
+                             T2,
+                             tfel::typetraits::base_type<T>>::cond,
+                         void>
+        import(const T2* const);
 
     /*!
      * Assignement operator
@@ -329,45 +329,42 @@ namespace tfel::math {
    * \param[in] r : rotation matrix
    */
   template <typename T2toT2Type>
-  TFEL_MATH_INLINE2
-      std::enable_if_t<tfel::meta::Implements<T2toT2Type, T2toT2Concept>::cond,
-                       t2tot2<T2toT2Traits<T2toT2Type>::dime,
-                              typename T2toT2Traits<T2toT2Type>::NumType>>
-      change_basis(const T2toT2Type&,
-                   const rotation_matrix<T2toT2NumType<T2toT2Type>>&);
+  TFEL_MATH_INLINE2 std::enable_if_t<
+      tfel::meta::Implements<T2toT2Type, T2toT2Concept>::cond,
+      t2tot2<T2toT2Traits<T2toT2Type>::dime, T2toT2NumType<T2toT2Type>>>
+  change_basis(const T2toT2Type&,
+               const rotation_matrix<T2toT2NumType<T2toT2Type>>&);
 
   /*!
    * \return compute the derivative of the velocity gradient
    * \param[in] F : deformation gradient
    */
   template <typename TensorType>
-  TFEL_MATH_INLINE2
-      std::enable_if_t<tfel::meta::Implements<TensorType, TensorConcept>::cond,
-                       t2tot2<TensorTraits<TensorType>::dime,
-                              typename TensorTraits<TensorType>::NumType>>
-      computeVelocityGradientDerivative(const TensorType&);
+  TFEL_MATH_INLINE2 std::enable_if_t<
+      tfel::meta::Implements<TensorType, TensorConcept>::cond,
+      t2tot2<TensorTraits<TensorType>::dime, TensorNumType<TensorType>>>
+  computeVelocityGradientDerivative(const TensorType&);
 
   /*!
    * \return compute the derivative of the spin rate
    * \param[in] F : deformation gradient
    */
   template <typename TensorType>
-  TFEL_MATH_INLINE2
-      std::enable_if_t<tfel::meta::Implements<TensorType, TensorConcept>::cond,
-                       t2tot2<TensorTraits<TensorType>::dime,
-                              typename TensorTraits<TensorType>::NumType>>
-      computeSpinRateDerivative(const TensorType&);
+  TFEL_MATH_INLINE2 std::enable_if_t<
+      tfel::meta::Implements<TensorType, TensorConcept>::cond,
+      t2tot2<TensorTraits<TensorType>::dime, TensorNumType<TensorType>>>
+  computeSpinRateDerivative(const TensorType&);
   /*!
    * \brief compute the second derivative of the determinant of a
    * symmetric tensor
    * \param[in] s: tensor
    */
   template <typename TensorType>
-  std::enable_if_t<tfel::meta::Implements<TensorType, TensorConcept>::cond &&
-                       TensorTraits<TensorType>::dime == 1u &&
-                       tfel::typetraits::IsScalar<
-                           typename TensorTraits<TensorType>::NumType>::cond,
-                   t2tot2<1u, typename TensorTraits<TensorType>::NumType>>
+  std::enable_if_t<
+      tfel::meta::Implements<TensorType, TensorConcept>::cond &&
+          TensorTraits<TensorType>::dime == 1u &&
+          tfel::typetraits::IsScalar<TensorNumType<TensorType>>::cond,
+      t2tot2<1u, TensorNumType<TensorType>>>
   computeDeterminantSecondDerivative(const TensorType&);
   /*!
    * \brief compute the second derivative of the determinant of a
@@ -375,11 +372,11 @@ namespace tfel::math {
    * \param[in] s: tensor
    */
   template <typename TensorType>
-  std::enable_if_t<tfel::meta::Implements<TensorType, TensorConcept>::cond &&
-                       TensorTraits<TensorType>::dime == 2u &&
-                       tfel::typetraits::IsScalar<
-                           typename TensorTraits<TensorType>::NumType>::cond,
-                   t2tot2<2u, typename TensorTraits<TensorType>::NumType>>
+  std::enable_if_t<
+      tfel::meta::Implements<TensorType, TensorConcept>::cond &&
+          TensorTraits<TensorType>::dime == 2u &&
+          tfel::typetraits::IsScalar<TensorNumType<TensorType>>::cond,
+      t2tot2<2u, TensorNumType<TensorType>>>
   computeDeterminantSecondDerivative(const TensorType&);
   /*!
    * \brief compute the second derivative of the determinant of a
@@ -387,11 +384,11 @@ namespace tfel::math {
    * \param[in] s: tensor
    */
   template <typename TensorType>
-  std::enable_if_t<tfel::meta::Implements<TensorType, TensorConcept>::cond &&
-                       TensorTraits<TensorType>::dime == 3u &&
-                       tfel::typetraits::IsScalar<
-                           typename TensorTraits<TensorType>::NumType>::cond,
-                   t2tot2<3u, typename TensorTraits<TensorType>::NumType>>
+  std::enable_if_t<
+      tfel::meta::Implements<TensorType, TensorConcept>::cond &&
+          TensorTraits<TensorType>::dime == 3u &&
+          tfel::typetraits::IsScalar<TensorNumType<TensorType>>::cond,
+      t2tot2<3u, TensorNumType<TensorType>>>
   computeDeterminantSecondDerivative(const TensorType&);
 
   template <typename T, typename T2toST2Type>
