@@ -200,7 +200,7 @@ namespace tfel::math {
   std::enable_if_t<tfel::typetraits::IsScalar<T>::cond,
                    typename tfel::typetraits::RealPartType<T>::type>
   norm(const tvector<N, T>& vec) {
-    typedef typename ResultType<T, T, OpMult>::type squareT;
+    typedef result_type<T, T, OpMult> squareT;
     return std::sqrt(
         real(dotProduct<N>::exe(vec.begin(), vec.begin(), squareT(0u))));
   }

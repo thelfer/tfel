@@ -143,14 +143,6 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/Forward/st2tost2.hxx                                                               \
 			TFEL/Math/Forward/t2tost2.hxx                                                                \
 			TFEL/Math/Forward/st2tot2.hxx                                                                \
-			TFEL/Math/Forward/VectorConcept.hxx                                                          \
-			TFEL/Math/Forward/MatrixConcept.hxx                                                          \
-			TFEL/Math/Forward/StensorConcept.hxx                                                         \
-			TFEL/Math/Forward/TensorConcept.hxx                                                          \
-			TFEL/Math/Forward/T2toT2Concept.hxx                                                          \
-			TFEL/Math/Forward/ST2toST2Concept.hxx                                                        \
-			TFEL/Math/Forward/T2toST2Concept.hxx                                                         \
-			TFEL/Math/Forward/ST2toT2Concept.hxx                                                         \
 			TFEL/Math/Forward/TinyNewtonRaphson.hxx                                                      \
 			TFEL/Math/General/Forward/General.hxx                                                        \
 			TFEL/Math/Bindings/atlas.hxx                                                                 \
@@ -329,6 +321,7 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/Matrix/TVectorTMatrixExpr.hxx                                                      \
 			TFEL/Math/Matrix/TMatrixView.hxx                                                             \
 			TFEL/Math/Matrix/ConstTMatrixView.hxx                                                        \
+	                TFEL/Math/General/MathObjectTraits.hxx                                                          \
 	                TFEL/Math/General/ConceptRebind.hxx                                                          \
 	                TFEL/Math/General/MathConstants.hxx                                                          \
 			TFEL/Math/General/ConstExprMathFunctions.hxx                                                 \

@@ -27,31 +27,10 @@ namespace tfel::math {
   template <typename T>
   struct MatrixProperties;
 
-  //! Partial specialisation for matrixs.
-  /*
-   * This is a MatrixConcept requirement.
-   * \see MatrixTraits.
-   */
-  template <typename T>
-  struct TFEL_VISIBILITY_LOCAL MatrixTraits<matrix<T>> {
-    //! the type holded by the tmatrix.
-    typedef typename tfel::math::vector<T>::value_type NumType;
-    //! the type of the index used by the tmatrix.
-    typedef typename tfel::math::vector<T>::size_type IndexType;
-/*!
- * RunTime Properties
- */
-#ifdef NO_RUNTIME_CHECK_BOUNDS
-    typedef EmptyRunTimeProperties RunTimeProperties;
-#else  /* NO_RUNTIME_CHECK_BOUNDS */
-    typedef MatrixProperties<T> RunTimeProperties;
-#endif /* LIB_TFEL_MATH_MATRIX_HXX */
-  };
-
   template <typename T>
   struct TFEL_VISIBILITY_LOCAL MatrixProperties {
     //! a simple alias
-    typedef typename MatrixTraits<matrix<T>>::IndexType IndexType;
+    typedef typename MathObjectTraits<matrix<T>>::IndexType IndexType;
 
     MatrixProperties(const IndexType, const IndexType);
 
@@ -64,9 +43,9 @@ namespace tfel::math {
     bool operator!=(const MatrixProperties&) const;
 
    protected:
-    typename MatrixTraits<matrix<T>>::IndexType nb_rows;
+    typename MathObjectTraits<matrix<T>>::IndexType nb_rows;
 
-    typename MatrixTraits<matrix<T>>::IndexType nb_cols;
+    typename MathObjectTraits<matrix<T>>::IndexType nb_cols;
 
   };  // end of MatrixProperties
 

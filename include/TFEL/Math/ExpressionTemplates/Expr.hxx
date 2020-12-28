@@ -16,6 +16,7 @@
 
 #include <type_traits>
 #include "TFEL/Metaprogramming/ResultOf.hxx"
+#include "TFEL/Math/General/MathObjectTraits.hxx"
 #include "TFEL/Math/General/BasicOperations.hxx"
 #include "TFEL/Math/General/ComputeObjectTag.hxx"
 #include "TFEL/Math/General/ConceptRebind.hxx"
@@ -501,6 +502,16 @@ namespace tfel::math {
     lhs_storage_type a;  //<! left  hand side argument of the operation
     rhs_storage_type b;  //<! right hand side argument of the operation
   };  // end of struct Expr<ResultType,DiadicProductOperation<T1,T2,Op>>
+
+  /*!
+   * \brief partial specialisation of the `MathObjectTraits`.
+   * We assume that the expression has the same properties that the result
+   * of its evaluation.
+   */
+  template <typename ResultType, typename Operation>
+  struct MathObjectTraits<Expr<ResultType, Operation>>
+      : public MathObjectTraits<ResultType> {
+  };  // end of struct MathObjectTraits<Expr<ResultType, Operation>>
 
   /*!
    * \brief a metafunction giving the result of a the evaluation of an object.

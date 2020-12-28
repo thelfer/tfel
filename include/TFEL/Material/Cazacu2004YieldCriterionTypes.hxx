@@ -37,12 +37,12 @@ namespace tfel {
     //! a simple alias
     template <typename StressStensor>
     using Cazacu2004StressNormalType =
-        tfel::math::stensor<tfel::math::StensorTraits<StressStensor>::dime,
+        tfel::math::stensor<tfel::math::getSpaceDimension<StressStensor>(),
                             Cazacu2004BaseType<StressStensor>>;
     //! a simple alias
     template <typename StressStensor>
     using Cazacu2004StressSecondDerivativeType =
-        tfel::math::st2tost2<tfel::math::StensorTraits<StressStensor>::dime,
+        tfel::math::st2tost2<tfel::math::getSpaceDimension<StressStensor>(),
                              Cazacu2004InvertStressType<StressStensor>>;
 
   }  // end of namespace material

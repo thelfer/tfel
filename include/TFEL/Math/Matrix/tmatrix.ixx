@@ -279,8 +279,8 @@ namespace tfel::math {
 
       template <typename Matrix>
       TFEL_MATH_INLINE std::enable_if_t<
-          tfel::meta::Implements<Matrix, MatrixConcept>::cond,
-          typename ComputeUnaryResult<typename MatrixTraits<Matrix>::NumType,
+          implementsMatrixConcept<Matrix>(),
+          typename ComputeUnaryResult<MathObjectNumType<Matrix>,
                                       Power<3>>::Result>
       det2(const Matrix& m) {
         return m(0, 0) * m(1, 1) - m(1, 0) * m(0, 1);
@@ -288,8 +288,8 @@ namespace tfel::math {
 
       template <typename Matrix>
       TFEL_MATH_INLINE std::enable_if_t<
-          tfel::meta::Implements<Matrix, MatrixConcept>::cond,
-          typename ComputeUnaryResult<typename MatrixTraits<Matrix>::NumType,
+          implementsMatrixConcept<Matrix>(),
+          typename ComputeUnaryResult<MathObjectNumType<Matrix>,
                                       Power<3>>::Result>
       det3(const Matrix& m) {
         const auto a = m(0, 0);

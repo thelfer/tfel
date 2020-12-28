@@ -29,7 +29,7 @@ namespace tfel {
                                                     const TinyPermutation<N>& p,
                                                     tvector<N, T>& b,
                                                     const T eps) {
-      using size_type = typename MatrixTraits<tmatrix<N, N, T>>::IndexType;
+      using size_type = typename MathObjectTraits<tmatrix<N, N, T>>::IndexType;
       auto x = b;
       if (p.isIdentity()) {
         for (size_type i = 0; i != N; ++i) {
@@ -85,7 +85,7 @@ namespace tfel {
         const TinyPermutation<N>& p,
         tfel::math::tmatrix<N, M, T>& b,
         const T eps) {
-      using size_type = typename MatrixTraits<tmatrix<N, N, T>>::IndexType;
+      using size_type = typename MathObjectTraits<tmatrix<N, N, T>>::IndexType;
       auto x = b;
       if (p.isIdentity()) {
         for (size_type i = 0; i != N; ++i) {

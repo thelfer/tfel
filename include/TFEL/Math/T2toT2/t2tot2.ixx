@@ -45,37 +45,37 @@ namespace tfel::math {
   // Assignement operator
   template <typename Child>
   template <typename T2toT2Type>
-  std::enable_if_t<tfel::meta::Implements<T2toT2Type, T2toT2Concept>::cond &&
-                       T2toT2Traits<Child>::dime ==
-                           T2toT2Traits<T2toT2Type>::dime &&
+  std::enable_if_t<implementsT2toT2Concept<T2toT2Type>() &&
+                       getSpaceDimension<Child>() ==
+                           getSpaceDimension<T2toT2Type>() &&
                        tfel::typetraits::IsAssignableTo<
-                           typename T2toT2Traits<T2toT2Type>::NumType,
-                           typename T2toT2Traits<Child>::NumType>::cond,
+                           MathObjectNumType<T2toT2Type>,
+                           MathObjectNumType<Child>>::cond,
                    Child&>
   t2tot2_base<Child>::operator=(const T2toT2Type& src) {
     auto& child = static_cast<Child&>(*this);
     matrix_utilities<
-        TensorDimeToSize<T2toT2Traits<Child>::dime>::value,
-        TensorDimeToSize<T2toT2Traits<Child>::dime>::value,
-        TensorDimeToSize<T2toT2Traits<Child>::dime>::value>::copy(src, child);
+        TensorDimeToSize<getSpaceDimension<Child>()>::value,
+        TensorDimeToSize<getSpaceDimension<Child>()>::value,
+        TensorDimeToSize<getSpaceDimension<Child>()>::value>::copy(src, child);
     return child;
   }
 
   template <typename Child>
   template <typename T2toT2Type>
-  std::enable_if_t<tfel::meta::Implements<T2toT2Type, T2toT2Concept>::cond &&
-                       T2toT2Traits<Child>::dime ==
-                           T2toT2Traits<T2toT2Type>::dime &&
+  std::enable_if_t<implementsT2toT2Concept<T2toT2Type>() &&
+                       getSpaceDimension<Child>() ==
+                           getSpaceDimension<T2toT2Type>() &&
                        tfel::typetraits::IsAssignableTo<
-                           typename T2toT2Traits<T2toT2Type>::NumType,
-                           typename T2toT2Traits<Child>::NumType>::cond,
+                           MathObjectNumType<T2toT2Type>,
+                           MathObjectNumType<Child>>::cond,
                    Child&>
   t2tot2_base<Child>::operator+=(const T2toT2Type& src) {
     auto& child = static_cast<Child&>(*this);
     matrix_utilities<
-        TensorDimeToSize<T2toT2Traits<Child>::dime>::value,
-        TensorDimeToSize<T2toT2Traits<Child>::dime>::value,
-        TensorDimeToSize<T2toT2Traits<Child>::dime>::value>::plusEqual(child,
+        TensorDimeToSize<getSpaceDimension<Child>()>::value,
+        TensorDimeToSize<getSpaceDimension<Child>()>::value,
+        TensorDimeToSize<getSpaceDimension<Child>()>::value>::plusEqual(child,
                                                                        src);
     return child;
   }
@@ -83,19 +83,19 @@ namespace tfel::math {
   // Assignement operator
   template <typename Child>
   template <typename T2toT2Type>
-  std::enable_if_t<tfel::meta::Implements<T2toT2Type, T2toT2Concept>::cond &&
-                       T2toT2Traits<Child>::dime ==
-                           T2toT2Traits<T2toT2Type>::dime &&
+  std::enable_if_t<implementsT2toT2Concept<T2toT2Type>() &&
+                       getSpaceDimension<Child>() ==
+                           getSpaceDimension<T2toT2Type>() &&
                        tfel::typetraits::IsAssignableTo<
-                           typename T2toT2Traits<T2toT2Type>::NumType,
-                           typename T2toT2Traits<Child>::NumType>::cond,
+                           MathObjectNumType<T2toT2Type>,
+                           MathObjectNumType<Child>>::cond,
                    Child&>
   t2tot2_base<Child>::operator-=(const T2toT2Type& src) {
     auto& child = static_cast<Child&>(*this);
     matrix_utilities<
-        TensorDimeToSize<T2toT2Traits<Child>::dime>::value,
-        TensorDimeToSize<T2toT2Traits<Child>::dime>::value,
-        TensorDimeToSize<T2toT2Traits<Child>::dime>::value>::minusEqual(child,
+        TensorDimeToSize<getSpaceDimension<Child>()>::value,
+        TensorDimeToSize<getSpaceDimension<Child>()>::value,
+        TensorDimeToSize<getSpaceDimension<Child>()>::value>::minusEqual(child,
                                                                         src);
     return child;
   }
@@ -103,20 +103,19 @@ namespace tfel::math {
   // *= operator
   template <typename Child>
   template <typename T2>
-  std::enable_if_t<
-      tfel::typetraits::IsScalar<T2>::cond &&
-          std::is_same<
-              typename ResultType<typename T2toT2Traits<Child>::NumType,
-                                  T2,
-                                  OpMult>::type,
-              typename T2toT2Traits<Child>::NumType>::value,
-      Child&>
+  std::enable_if_t<tfel::typetraits::IsScalar<T2>::cond &&
+                       std::is_same_v<typename ResultType<
+                                          MathObjectNumType<Child>,
+                                          T2,
+                                          OpMult>::type,
+                                      MathObjectNumType<Child>>,
+                   Child&>
   t2tot2_base<Child>::operator*=(const T2 s) {
     auto& child = static_cast<Child&>(*this);
     matrix_utilities<
-        TensorDimeToSize<T2toT2Traits<Child>::dime>::value,
-        TensorDimeToSize<T2toT2Traits<Child>::dime>::value,
-        TensorDimeToSize<T2toT2Traits<Child>::dime>::value>::multByScalar(child,
+        TensorDimeToSize<getSpaceDimension<Child>()>::value,
+        TensorDimeToSize<getSpaceDimension<Child>()>::value,
+        TensorDimeToSize<getSpaceDimension<Child>()>::value>::multByScalar(child,
                                                                           s);
     return child;
   }
@@ -124,20 +123,19 @@ namespace tfel::math {
   // /= operator
   template <typename Child>
   template <typename T2>
-  std::enable_if_t<
-      tfel::typetraits::IsScalar<T2>::cond &&
-          std::is_same<
-              typename ResultType<typename T2toT2Traits<Child>::NumType,
-                                  T2,
-                                  OpDiv>::type,
-              typename T2toT2Traits<Child>::NumType>::value,
-      Child&>
+  std::enable_if_t<tfel::typetraits::IsScalar<T2>::cond &&
+                       std::is_same_v<typename ResultType<
+                                          MathObjectNumType<Child>,
+                                          T2,
+                                          OpDiv>::type,
+                                      MathObjectNumType<Child>>,
+                   Child&>
   t2tot2_base<Child>::operator/=(const T2 s) {
     auto& child = static_cast<Child&>(*this);
     matrix_utilities<
-        TensorDimeToSize<T2toT2Traits<Child>::dime>::value,
-        TensorDimeToSize<T2toT2Traits<Child>::dime>::value,
-        TensorDimeToSize<T2toT2Traits<Child>::dime>::value>::divByScalar(child,
+        TensorDimeToSize<getSpaceDimension<Child>()>::value,
+        TensorDimeToSize<getSpaceDimension<Child>()>::value,
+        TensorDimeToSize<getSpaceDimension<Child>()>::value>::divByScalar(child,
                                                                          s);
     return child;
   }
@@ -295,10 +293,10 @@ namespace tfel::math {
 
   template <unsigned short N, typename T>
   template <typename TensorType>
-  std::enable_if_t<tfel::meta::Implements<TensorType, TensorConcept>::cond &&
-                       TensorTraits<TensorType>::dime == N &&
+  std::enable_if_t<implementsTensorConcept<TensorType>() &&
+                       getSpaceDimension<TensorType>() == N &&
                        tfel::typetraits::IsAssignableTo<
-                           typename TensorTraits<TensorType>::NumType,
+                           MathObjectNumType<TensorType>,
                            T>::cond,
                    Expr<t2tot2<N, T>, TensorProductLeftDerivativeExpr<N>>>
   t2tot2<N, T>::tpld(const TensorType& B) {
@@ -307,28 +305,27 @@ namespace tfel::math {
 
   template <unsigned short N, typename T>
   template <typename TensorType, typename T2toT2Type>
-  std::enable_if_t<
-      tfel::meta::Implements<TensorType, TensorConcept>::cond &&
-          tfel::meta::Implements<T2toT2Type, T2toT2Concept>::cond &&
-          TensorTraits<TensorType>::dime == N &&
-          T2toT2Traits<T2toT2Type>::dime == N &&
-          tfel::typetraits::IsAssignableTo<
-              typename ComputeBinaryResult<
-                  typename TensorTraits<TensorType>::NumType,
-                  typename T2toT2Traits<T2toT2Type>::NumType,
-                  OpMult>::Result,
-              T>::cond,
-      Expr<t2tot2<N, T>, TensorProductLeftDerivativeExpr<N>>>
+  std::enable_if_t<implementsTensorConcept<TensorType>() &&
+                       implementsT2toT2Concept<T2toT2Type>() &&
+                       getSpaceDimension<TensorType>() == N &&
+                       getSpaceDimension<T2toT2Type>() == N &&
+                       tfel::typetraits::IsAssignableTo<
+                           typename ComputeBinaryResult<
+                               MathObjectNumType<TensorType>,
+                               MathObjectNumType<T2toT2Type>,
+                               OpMult>::Result,
+                           T>::cond,
+                   Expr<t2tot2<N, T>, TensorProductLeftDerivativeExpr<N>>>
   t2tot2<N, T>::tpld(const TensorType& B, const T2toT2Type& C) {
     return Expr<t2tot2<N, T>, TensorProductLeftDerivativeExpr<N>>(B, C);
   }
 
   template <unsigned short N, typename T>
   template <typename TensorType>
-  std::enable_if_t<tfel::meta::Implements<TensorType, TensorConcept>::cond &&
-                       TensorTraits<TensorType>::dime == N &&
+  std::enable_if_t<implementsTensorConcept<TensorType>() &&
+                       getSpaceDimension<TensorType>() == N &&
                        tfel::typetraits::IsAssignableTo<
-                           typename TensorTraits<TensorType>::NumType,
+                           MathObjectNumType<TensorType>,
                            T>::cond,
                    Expr<t2tot2<N, T>, TensorProductRightDerivativeExpr<N>>>
   t2tot2<N, T>::tprd(const TensorType& A) {
@@ -338,14 +335,14 @@ namespace tfel::math {
   template <unsigned short N, typename T>
   template <typename TensorType, typename T2toT2Type>
   std::enable_if_t<
-      tfel::meta::Implements<TensorType, TensorConcept>::cond &&
-          tfel::meta::Implements<T2toT2Type, T2toT2Concept>::cond &&
-          TensorTraits<TensorType>::dime == N &&
-          T2toT2Traits<T2toT2Type>::dime == N &&
+      implementsTensorConcept<TensorType>() &&
+          implementsT2toT2Concept<T2toT2Type>() &&
+          getSpaceDimension<TensorType>() == N &&
+          getSpaceDimension<T2toT2Type>() == N &&
           tfel::typetraits::IsAssignableTo<
               typename ComputeBinaryResult<
-                  typename TensorTraits<TensorType>::NumType,
-                  typename T2toT2Traits<T2toT2Type>::NumType,
+                  MathObjectNumType<TensorType>,
+                  MathObjectNumType<T2toT2Type>,
                   OpMult>::Result,
               T>::cond,
       Expr<t2tot2<N, T>, TensorProductRightDerivativeExpr<N>>>
@@ -354,7 +351,7 @@ namespace tfel::math {
   }
 
   template <unsigned short N, typename T>
-  typename tfel::math::t2tot2<N, tfel::typetraits::base_type<T>> TFEL_CONSTEXPR
+  TFEL_CONSTEXPR tfel::math::t2tot2<N, tfel::typetraits::base_type<T>>
   t2tot2<N, T>::transpose_derivative() {
     using base = tfel::typetraits::base_type<T>;
     constexpr const auto c0 = base{0};
@@ -415,7 +412,6 @@ namespace tfel::math {
   template <unsigned short N, typename T>
   TFEL_CONSTEXPR t2tot2<N, tfel::typetraits::base_type<T>> t2tot2<N, T>::IxI() {
     using base = tfel::typetraits::base_type<T>;
-    constexpr const auto c0 = base{0};
     constexpr const auto c1 = base{1};
     static_assert((N == 1) || (N == 2) || (N == 3));
     if constexpr (N == 1) {
@@ -423,12 +419,14 @@ namespace tfel::math {
               c1, c1, c1,  //
               c1, c1, c1};
     } else if constexpr (N == 2) {
+      constexpr const auto c0 = base{0};
       return {c1, c1, c1, c0, c0,  //
               c1, c1, c1, c0, c0,  //
               c1, c1, c1, c0, c0,  //
               c0, c0, c0, c0, c0,  //
               c0, c0, c0, c0, c0};
     } else {
+      constexpr const auto c0 = base{0};
       return {c1, c1, c1, c0, c0, c0, c0, c0, c0,  //
               c1, c1, c1, c0, c0, c0, c0, c0, c0,  //
               c1, c1, c1, c0, c0, c0, c0, c0, c0,  //
@@ -503,11 +501,10 @@ namespace tfel::math {
   template <unsigned short N, typename T>
   template <typename T2toST2Type,
             std::enable_if_t<
-                ((tfel::meta::Implements<T2toST2Type,
-                                         tfel::math::T2toST2Concept>::cond) &&
+                ((implementsT2toST2Concept<T2toST2Type>()) &&
                  (tfel::typetraits::IsAssignableTo<T2toST2NumType<T2toST2Type>,
                                                    T>::cond) &&
-                 (T2toST2Traits<T2toST2Type>::dime == N)),
+                 (getSpaceDimension<T2toST2Type>() == N)),
                 bool>>
   t2tot2<N, T>::t2tot2(const T2toST2Type& s) {
     convert(*this, s);
@@ -552,17 +549,17 @@ namespace tfel::math {
 
   template <typename T2toT2Type>
   std::enable_if_t<
-      tfel::meta::Implements<T2toT2Type, T2toT2Concept>::cond,
-      t2tot2<T2toT2Traits<T2toT2Type>::dime, T2toT2NumType<T2toT2Type>>>
+      implementsT2toT2Concept<T2toT2Type>(),
+      t2tot2<getSpaceDimension<T2toT2Type>(), T2toT2NumType<T2toT2Type>>>
   change_basis(const T2toT2Type& s,
                const rotation_matrix<T2toT2NumType<T2toT2Type>>& r) {
-    constexpr const auto N = T2toT2Traits<T2toT2Type>::dime;
+    constexpr const auto N = getSpaceDimension<T2toT2Type>();
     static_assert((N == 1) || (N == 2) || (N == 3));
     if constexpr (N == 1) {
       return s;
     } else {
       using real = tfel::typetraits::base_type<T2toT2NumType<T2toT2Type>>;
-      using t2tot2 = tfel::math::t2tot2<T2toT2Traits<T2toT2Type>::dime, real>;
+      using t2tot2 = tfel::math::t2tot2<getSpaceDimension<T2toT2Type>(), real>;
       const auto sr = t2tot2::fromRotationMatrix(r);
       const auto sir = t2tot2::fromRotationMatrix(transpose(r));
       return sr * s * sir;
@@ -571,24 +568,24 @@ namespace tfel::math {
 
   template <typename TensorType>
   std::enable_if_t<
-      tfel::meta::Implements<TensorType, TensorConcept>::cond,
-      t2tot2<TensorTraits<TensorType>::dime, TensorNumType<TensorType>>>
+      implementsTensorConcept<TensorType>(),
+      t2tot2<getSpaceDimension<TensorType>(), TensorNumType<TensorType>>>
   computeVelocityGradientDerivative(const TensorType& F) {
     using res =
-        t2tot2<TensorTraits<TensorType>::dime, TensorNumType<TensorType>>;
+        t2tot2<getSpaceDimension<TensorType>(), TensorNumType<TensorType>>;
     const auto iF = invert(F);
     return res::tpld(iF);
   }
 
   template <typename TensorType>
   std::enable_if_t<
-      tfel::meta::Implements<TensorType, TensorConcept>::cond,
-      t2tot2<TensorTraits<TensorType>::dime, TensorNumType<TensorType>>>
+      implementsTensorConcept<TensorType>(),
+      t2tot2<getSpaceDimension<TensorType>(), TensorNumType<TensorType>>>
   computeSpinRateDerivative(const TensorType& F) {
-    using value_type = typename TensorTraits<TensorType>::NumType;
+    using value_type = MathObjectNumType<TensorType>;
     using base = typename tfel::typetraits::BaseType<value_type>::type;
-    using res = t2tot2<TensorTraits<TensorType>::dime, value_type>;
-    using resbase = t2tot2<TensorTraits<TensorType>::dime, base>;
+    using res = t2tot2<getSpaceDimension<TensorType>(), value_type>;
+    using resbase = t2tot2<getSpaceDimension<TensorType>(), base>;
     const auto iF = invert(F);
     const auto itF = invert(transpose(F));
     const auto dt = resbase::transpose_derivative();
@@ -598,155 +595,124 @@ namespace tfel::math {
 
   template <typename TensorType>
   std::enable_if_t<
-      tfel::meta::Implements<TensorType, TensorConcept>::cond &&
-          TensorTraits<TensorType>::dime == 1u &&
+      implementsTensorConcept<TensorType>() &&
           tfel::typetraits::IsScalar<TensorNumType<TensorType>>::cond,
-      t2tot2<1u, TensorNumType<TensorType>>>
+      t2tot2<getSpaceDimension<TensorType>(), TensorNumType<TensorType>>>
   computeDeterminantSecondDerivative(const TensorType& t) {
-    using NumType = typename TensorTraits<TensorType>::NumType;
+    constexpr const auto N = getSpaceDimension<TensorType>();
+    using NumType = MathObjectNumType<TensorType>;
     constexpr const auto zero = NumType{0};
-    return {zero, t[2], t[1], t[2], zero, t[0], t[1], t[0], zero};
-  }  // end of computeDeterminantSecondDerivative
-
-  template <typename TensorType>
-  std::enable_if_t<
-      tfel::meta::Implements<TensorType, TensorConcept>::cond &&
-          TensorTraits<TensorType>::dime == 2u &&
-          tfel::typetraits::IsScalar<TensorNumType<TensorType>>::cond,
-      t2tot2<2u, TensorNumType<TensorType>>>
-  computeDeterminantSecondDerivative(const TensorType& t) {
-    using NumType = typename TensorTraits<TensorType>::NumType;
-    constexpr const auto zero = NumType{0};
-    return {zero,  t[2], t[1], zero, zero,  t[2],  zero, t[0], zero,
-            zero,  t[1], t[0], zero, -t[4], -t[3], zero, zero, -t[3],
-            -t[2], zero, zero, zero, -t[4], zero,  -t[2]};
-  }  // end of computeDeterminantSecondDerivative
-
-  template <typename TensorType>
-  std::enable_if_t<
-      tfel::meta::Implements<TensorType, TensorConcept>::cond &&
-          TensorTraits<TensorType>::dime == 3u &&
-          tfel::typetraits::IsScalar<TensorNumType<TensorType>>::cond,
-      t2tot2<3u, TensorNumType<TensorType>>>
-  computeDeterminantSecondDerivative(const TensorType& t) {
-    using NumType = typename TensorTraits<TensorType>::NumType;
-    constexpr const auto zero = NumType{0};
-    return {zero,  t[2],  t[1],  zero,  zero,  zero,  zero,  -t[8], -t[7],
-            t[2],  zero,  t[0],  zero,  zero,  -t[6], -t[5], zero,  zero,
-            t[1],  t[0],  zero,  -t[4], -t[3], zero,  zero,  zero,  zero,
-            zero,  zero,  -t[3], -t[2], zero,  t[8],  zero,  zero,  t[5],
-            zero,  zero,  -t[4], zero,  -t[2], zero,  t[7],  t[6],  zero,
-            zero,  -t[5], zero,  t[7],  zero,  -t[1], zero,  t[3],  zero,
-            zero,  -t[6], zero,  zero,  t[8],  zero,  -t[1], zero,  t[4],
-            -t[7], zero,  zero,  zero,  t[5],  t[4],  zero,  -t[0], zero,
-            -t[8], zero,  zero,  t[6],  zero,  zero,  t[3],  zero,  -t[0]};
+    static_assert((N == 1) || (N == 2) || (N == 3));
+    if constexpr (N == 1) {
+      return {zero, t[2], t[1], t[2], zero, t[0], t[1], t[0], zero};
+    } else if constexpr (N == 2) {
+      return {zero,  t[2], t[1], zero, zero,  t[2],  zero, t[0], zero,
+              zero,  t[1], t[0], zero, -t[4], -t[3], zero, zero, -t[3],
+              -t[2], zero, zero, zero, -t[4], zero,  -t[2]};
+    } else {
+      return {zero,  t[2],  t[1],  zero,  zero,  zero,  zero,  -t[8], -t[7],
+              t[2],  zero,  t[0],  zero,  zero,  -t[6], -t[5], zero,  zero,
+              t[1],  t[0],  zero,  -t[4], -t[3], zero,  zero,  zero,  zero,
+              zero,  zero,  -t[3], -t[2], zero,  t[8],  zero,  zero,  t[5],
+              zero,  zero,  -t[4], zero,  -t[2], zero,  t[7],  t[6],  zero,
+              zero,  -t[5], zero,  t[7],  zero,  -t[1], zero,  t[3],  zero,
+              zero,  -t[6], zero,  zero,  t[8],  zero,  -t[1], zero,  t[4],
+              -t[7], zero,  zero,  zero,  t[5],  t[4],  zero,  -t[0], zero,
+              -t[8], zero,  zero,  t[6],  zero,  zero,  t[3],  zero,  -t[0]};
+    }
   }  // end of computeDeterminantSecondDerivative
 
   template <typename T, typename T2toST2Type>
   std::enable_if_t<
-      ((tfel::meta::Implements<T2toST2Type, T2toST2Concept>::cond) &&
+      ((implementsT2toST2Concept<T2toST2Type>()) &&
        (tfel::typetraits::IsAssignableTo<T2toST2NumType<T2toST2Type>,
-                                         T>::cond) &&
-       T2toST2Traits<T2toST2Type>::dime == 1u),
+                                         T>::cond)),
       void>
-  convert(t2tot2<1u, T>& d, const T2toST2Type& s) {
-    tfel::fsalgo::copy<9u>::exe(s.begin(), d.begin());
-  }  // end of convert
-
-  template <typename T, typename T2toST2Type>
-  std::enable_if_t<
-      ((tfel::meta::Implements<T2toST2Type, T2toST2Concept>::cond) &&
-       (tfel::typetraits::IsAssignableTo<T2toST2NumType<T2toST2Type>,
-                                         T>::cond) &&
-       T2toST2Traits<T2toST2Type>::dime == 2u),
-      void>
-  convert(t2tot2<2u, T>& d, const T2toST2Type& s) {
-    constexpr const auto icste = Cste<T>::isqrt2;
-    d(0, 0) = s(0, 0);
-    d(0, 1) = s(0, 1);
-    d(0, 2) = s(0, 2);
-    d(0, 3) = s(0, 3);
-    d(0, 4) = s(0, 4);
-    d(1, 0) = s(1, 0);
-    d(1, 1) = s(1, 1);
-    d(1, 2) = s(1, 2);
-    d(1, 3) = s(1, 3);
-    d(1, 4) = s(1, 4);
-    d(2, 0) = s(2, 0);
-    d(2, 1) = s(2, 1);
-    d(2, 2) = s(2, 2);
-    d(2, 3) = s(2, 3);
-    d(2, 4) = s(2, 4);
-    d(4, 0) = d(3, 0) = s(3, 0) * icste;
-    d(4, 1) = d(3, 1) = s(3, 1) * icste;
-    d(4, 2) = d(3, 2) = s(3, 2) * icste;
-    d(4, 3) = d(3, 3) = s(3, 3) * icste;
-    d(4, 4) = d(3, 4) = s(3, 4) * icste;
-  }  // end of convert
-
-  template <typename T, typename T2toST2Type>
-  std::enable_if_t<
-      ((tfel::meta::Implements<T2toST2Type, T2toST2Concept>::cond) &&
-       (tfel::typetraits::IsAssignableTo<T2toST2NumType<T2toST2Type>,
-                                         T>::cond) &&
-       T2toST2Traits<T2toST2Type>::dime == 3u),
-      void>
-  convert(t2tot2<3u, T>& d, const T2toST2Type& s) {
-    constexpr const auto icste = Cste<T>::isqrt2;
-    d(0, 0) = s(0, 0);
-    d(0, 1) = s(0, 1);
-    d(0, 2) = s(0, 2);
-    d(0, 3) = s(0, 3);
-    d(0, 4) = s(0, 4);
-    d(0, 5) = s(0, 5);
-    d(0, 6) = s(0, 6);
-    d(0, 7) = s(0, 7);
-    d(0, 8) = s(0, 8);
-    d(1, 0) = s(1, 0);
-    d(1, 1) = s(1, 1);
-    d(1, 2) = s(1, 2);
-    d(1, 3) = s(1, 3);
-    d(1, 4) = s(1, 4);
-    d(1, 5) = s(1, 5);
-    d(1, 6) = s(1, 6);
-    d(1, 7) = s(1, 7);
-    d(1, 8) = s(1, 8);
-    d(2, 0) = s(2, 0);
-    d(2, 1) = s(2, 1);
-    d(2, 2) = s(2, 2);
-    d(2, 3) = s(2, 3);
-    d(2, 4) = s(2, 4);
-    d(2, 5) = s(2, 5);
-    d(2, 6) = s(2, 6);
-    d(2, 7) = s(2, 7);
-    d(2, 8) = s(2, 8);
-    d(4, 0) = d(3, 0) = s(3, 0) * icste;
-    d(4, 1) = d(3, 1) = s(3, 1) * icste;
-    d(4, 2) = d(3, 2) = s(3, 2) * icste;
-    d(4, 3) = d(3, 3) = s(3, 3) * icste;
-    d(4, 4) = d(3, 4) = s(3, 4) * icste;
-    d(4, 5) = d(3, 5) = s(3, 5) * icste;
-    d(4, 6) = d(3, 6) = s(3, 6) * icste;
-    d(4, 7) = d(3, 7) = s(3, 7) * icste;
-    d(4, 8) = d(3, 8) = s(3, 8) * icste;
-    d(6, 0) = d(5, 0) = s(4, 0) * icste;
-    d(6, 1) = d(5, 1) = s(4, 1) * icste;
-    d(6, 2) = d(5, 2) = s(4, 2) * icste;
-    d(6, 3) = d(5, 3) = s(4, 3) * icste;
-    d(6, 4) = d(5, 4) = s(4, 4) * icste;
-    d(6, 5) = d(5, 5) = s(4, 5) * icste;
-    d(6, 6) = d(5, 6) = s(4, 6) * icste;
-    d(6, 7) = d(5, 7) = s(4, 7) * icste;
-    d(6, 8) = d(5, 8) = s(4, 8) * icste;
-    d(8, 0) = d(7, 0) = s(5, 0) * icste;
-    d(8, 1) = d(7, 1) = s(5, 1) * icste;
-    d(8, 2) = d(7, 2) = s(5, 2) * icste;
-    d(8, 3) = d(7, 3) = s(5, 3) * icste;
-    d(8, 4) = d(7, 4) = s(5, 4) * icste;
-    d(8, 5) = d(7, 5) = s(5, 5) * icste;
-    d(8, 6) = d(7, 6) = s(5, 6) * icste;
-    d(8, 7) = d(7, 7) = s(5, 7) * icste;
-    d(8, 8) = d(7, 8) = s(5, 8) * icste;
+  convert(t2tot2<getSpaceDimension<T2toST2Type>(), T>& d,
+          const T2toST2Type& s) {
+    constexpr const auto N = getSpaceDimension<T2toST2Type>();
+    static_assert((N == 1) || (N == 2) || (N == 3));
+    if constexpr (N == 1) {
+      tfel::fsalgo::copy<9u>::exe(s.begin(), d.begin());
+    } else if constexpr (N == 2) {
+      constexpr const auto icste = Cste<T>::isqrt2;
+      d(0, 0) = s(0, 0);
+      d(0, 1) = s(0, 1);
+      d(0, 2) = s(0, 2);
+      d(0, 3) = s(0, 3);
+      d(0, 4) = s(0, 4);
+      d(1, 0) = s(1, 0);
+      d(1, 1) = s(1, 1);
+      d(1, 2) = s(1, 2);
+      d(1, 3) = s(1, 3);
+      d(1, 4) = s(1, 4);
+      d(2, 0) = s(2, 0);
+      d(2, 1) = s(2, 1);
+      d(2, 2) = s(2, 2);
+      d(2, 3) = s(2, 3);
+      d(2, 4) = s(2, 4);
+      d(4, 0) = d(3, 0) = s(3, 0) * icste;
+      d(4, 1) = d(3, 1) = s(3, 1) * icste;
+      d(4, 2) = d(3, 2) = s(3, 2) * icste;
+      d(4, 3) = d(3, 3) = s(3, 3) * icste;
+      d(4, 4) = d(3, 4) = s(3, 4) * icste;
+    } else {
+      constexpr const auto icste = Cste<T>::isqrt2;
+      d(0, 0) = s(0, 0);
+      d(0, 1) = s(0, 1);
+      d(0, 2) = s(0, 2);
+      d(0, 3) = s(0, 3);
+      d(0, 4) = s(0, 4);
+      d(0, 5) = s(0, 5);
+      d(0, 6) = s(0, 6);
+      d(0, 7) = s(0, 7);
+      d(0, 8) = s(0, 8);
+      d(1, 0) = s(1, 0);
+      d(1, 1) = s(1, 1);
+      d(1, 2) = s(1, 2);
+      d(1, 3) = s(1, 3);
+      d(1, 4) = s(1, 4);
+      d(1, 5) = s(1, 5);
+      d(1, 6) = s(1, 6);
+      d(1, 7) = s(1, 7);
+      d(1, 8) = s(1, 8);
+      d(2, 0) = s(2, 0);
+      d(2, 1) = s(2, 1);
+      d(2, 2) = s(2, 2);
+      d(2, 3) = s(2, 3);
+      d(2, 4) = s(2, 4);
+      d(2, 5) = s(2, 5);
+      d(2, 6) = s(2, 6);
+      d(2, 7) = s(2, 7);
+      d(2, 8) = s(2, 8);
+      d(4, 0) = d(3, 0) = s(3, 0) * icste;
+      d(4, 1) = d(3, 1) = s(3, 1) * icste;
+      d(4, 2) = d(3, 2) = s(3, 2) * icste;
+      d(4, 3) = d(3, 3) = s(3, 3) * icste;
+      d(4, 4) = d(3, 4) = s(3, 4) * icste;
+      d(4, 5) = d(3, 5) = s(3, 5) * icste;
+      d(4, 6) = d(3, 6) = s(3, 6) * icste;
+      d(4, 7) = d(3, 7) = s(3, 7) * icste;
+      d(4, 8) = d(3, 8) = s(3, 8) * icste;
+      d(6, 0) = d(5, 0) = s(4, 0) * icste;
+      d(6, 1) = d(5, 1) = s(4, 1) * icste;
+      d(6, 2) = d(5, 2) = s(4, 2) * icste;
+      d(6, 3) = d(5, 3) = s(4, 3) * icste;
+      d(6, 4) = d(5, 4) = s(4, 4) * icste;
+      d(6, 5) = d(5, 5) = s(4, 5) * icste;
+      d(6, 6) = d(5, 6) = s(4, 6) * icste;
+      d(6, 7) = d(5, 7) = s(4, 7) * icste;
+      d(6, 8) = d(5, 8) = s(4, 8) * icste;
+      d(8, 0) = d(7, 0) = s(5, 0) * icste;
+      d(8, 1) = d(7, 1) = s(5, 1) * icste;
+      d(8, 2) = d(7, 2) = s(5, 2) * icste;
+      d(8, 3) = d(7, 3) = s(5, 3) * icste;
+      d(8, 4) = d(7, 4) = s(5, 4) * icste;
+      d(8, 5) = d(7, 5) = s(5, 5) * icste;
+      d(8, 6) = d(7, 6) = s(5, 6) * icste;
+      d(8, 7) = d(7, 7) = s(5, 7) * icste;
+      d(8, 8) = d(7, 8) = s(5, 8) * icste;
+    }
   }  // end of convert
 
 }  // end of namespace tfel::math

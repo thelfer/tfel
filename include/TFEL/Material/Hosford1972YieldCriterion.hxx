@@ -37,17 +37,17 @@ namespace tfel {
     //! a simple alias
     template <typename StressStensor>
     using HosfordStressNormalType =
-        tfel::math::stensor<tfel::math::StensorTraits<StressStensor>::dime,
+        tfel::math::stensor<tfel::math::getSpaceDimension<StressStensor>(),
                             HosfordBaseType<StressStensor>>;
     //! a simple alias
     template <typename StressStensor>
     using HosfordStressEigenTensorType =
-        tfel::math::stensor<tfel::math::StensorTraits<StressStensor>::dime,
+        tfel::math::stensor<tfel::math::getSpaceDimension<StressStensor>(),
                             HosfordBaseType<StressStensor>>;
     //! a simple alias
     template <typename StressStensor>
     using HosfordStressSecondDerivativeType =
-        tfel::math::st2tost2<tfel::math::StensorTraits<StressStensor>::dime,
+        tfel::math::st2tost2<tfel::math::getSpaceDimension<StressStensor>(),
                              HosfordInvertStressType<StressStensor>>;
     /*!
      * \brief compute the Hosford yield stress

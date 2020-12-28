@@ -18,21 +18,20 @@
 #include <cmath>
 #include <cstddef>
 #include "TFEL/Config/TFELConfig.hxx"
-#include "TFEL/Metaprogramming/Implements.hxx"
-#include "TFEL/Math/Forward/TensorConcept.hxx"
 #include "TFEL/Math/General/ResultType.hxx"
 #include "TFEL/Math/General/EmptyRunTimeProperties.hxx"
 #include "TFEL/Math/ExpressionTemplates/Expr.hxx"
+#include "TFEL/Math/Tensor/TensorConcept.hxx"
 
 namespace tfel::math {
 
   template <typename A>
   struct TFEL_VISIBILITY_LOCAL TensorTransposeExprBase : public ExprBase {
-    static_assert(tfel::meta::Implements<std::decay_t<A>, TensorConcept>::cond);
+    static_assert(implementsTensorConcept<A>());
 
     typedef EmptyRunTimeProperties RunTimeProperties;
-    typedef typename TensorTraits<std::decay_t<A>>::IndexType IndexType;
-    typedef typename TensorTraits<std::decay_t<A>>::NumType NumType;
+    typedef typename MathObjectTraits<std::decay_t<A>>::IndexType IndexType;
+    typedef typename MathObjectTraits<std::decay_t<A>>::NumType NumType;
 
     TFEL_MATH_INLINE RunTimeProperties getRunTimeProperties() const {
       return EmptyRunTimeProperties();
@@ -55,7 +54,7 @@ namespace tfel::math {
   template <typename A>
   struct TFEL_VISIBILITY_LOCAL TensorTransposeExpr1D
       : public TensorTransposeExprBase<A> {
-    static_assert(tfel::math::TensorTraits<std::decay_t<A>>::dime == 1u);
+    static_assert(getSpaceDimension<A>() == 1u);
 
     TFEL_MATH_INLINE TensorTransposeExpr1D(A l)
         : TensorTransposeExprBase<A>(std::forward<A>(l)) {}
@@ -69,7 +68,7 @@ namespace tfel::math {
   template <typename A>
   struct TFEL_VISIBILITY_LOCAL TensorTransposeExpr2D
       : public TensorTransposeExprBase<A> {
-    static_assert(tfel::math::TensorTraits<std::decay_t<A>>::dime == 2u);
+    static_assert(getSpaceDimension<A>() == 2u);
 
     TFEL_MATH_INLINE TensorTransposeExpr2D(A l)
         : TensorTransposeExprBase<A>(std::forward<A>(l)) {}
@@ -103,7 +102,7 @@ namespace tfel::math {
   template <typename A>
   struct TFEL_VISIBILITY_LOCAL TensorTransposeExpr3D
       : public TensorTransposeExprBase<A> {
-    static_assert(tfel::math::TensorTraits<std::decay_t<A>>::dime == 3u);
+    static_assert(getSpaceDimension<A>() == 3u);
 
     TFEL_MATH_INLINE TensorTransposeExpr3D(A l)
         : TensorTransposeExprBase<A>(std::forward<A>(l)) {}

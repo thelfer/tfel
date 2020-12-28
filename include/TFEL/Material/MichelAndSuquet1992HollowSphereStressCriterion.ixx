@@ -113,7 +113,7 @@ computeMichelAndSuquet1992HollowSphereStressSecondDerivative(
     const MichelAndSuquet1992HollowSphereStressCriterionParameters<
         StressStensor> &p,
     const MichelAndSuquet1992HollowSphereStressType<StressStensor> seps) {
-  constexpr const auto N = tfel::math::StensorTraits<StressStensor>::dime;
+  constexpr const auto N = tfel::math::getSpaceDimension<StressStensor>();
   using real = MichelAndSuquet1992HollowSphereBaseType<StressStensor>;
   using normal = MichelAndSuquet1992HollowSphereStressNormalType<StressStensor>;
   using Stensor4 = tfel::math::st2tost2<N, real>;

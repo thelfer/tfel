@@ -60,7 +60,7 @@ namespace tfel {
       using stress =
           PowerLawStressBasedNucleationModelStressType<StressStensorType>;
       constexpr const auto N =
-          tfel::math::StensorTraits<StressStensorType>::dime;
+          tfel::math::getSpaceDimension<StressStensorType>();
       using Stensor = tfel::math::stensor<N, real>;
       //
       if (p < params.pmin) {

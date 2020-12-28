@@ -46,7 +46,7 @@ namespace tfel{
     template<unsigned short N, typename T,typename Scal>
     class ResultType_<StensorTag,ScalarTag,stensor<N,T>,Scal,OpMult>
     {
-      typedef typename ResultType<T,Scal,OpMult>::type ResBase_;
+      typedef result_type<T,Scal,OpMult> ResBase_;
     public:
       typedef typename std::conditional<tfel::typetraits::IsInvalid<ResBase_>::cond,
 					tfel::meta::InvalidType,
@@ -61,7 +61,7 @@ namespace tfel{
     template<unsigned short N, typename T,typename Scal>
     class ResultType_<StensorTag,ScalarTag,stensor<N,T>,Scal,OpDiv>
     {
-      typedef typename ResultType<T,Scal,OpDiv>::type ResBase_;
+      typedef result_type<T,Scal,OpDiv> ResBase_;
     public:
       typedef typename std::conditional<tfel::typetraits::IsInvalid<ResBase_>::cond,
 				      tfel::meta::InvalidType,
@@ -76,7 +76,7 @@ namespace tfel{
     template<typename Scal,unsigned short N,typename T>
     class ResultType_<ScalarTag,StensorTag,Scal,stensor<N,T>,OpMult>
     {
-      typedef typename ResultType<Scal,T,OpMult>::type ResBase_;
+      typedef result_type<Scal,T,OpMult> ResBase_;
     public:
       typedef typename std::conditional<tfel::typetraits::IsInvalid<ResBase_>::cond,
 				      tfel::meta::InvalidType,
@@ -90,7 +90,7 @@ namespace tfel{
     template<unsigned short N,typename T,typename T2>
     class ResultType<stensor<N,T>,stensor<N,T2>,OpPlus>
     {
-      typedef typename ResultType<T,T2,OpPlus>::type ResBase_;
+      typedef result_type<T,T2,OpPlus> ResBase_;
     public:
       typedef typename std::conditional<tfel::typetraits::IsInvalid<ResBase_>::cond,
 				      tfel::meta::InvalidType,
@@ -104,7 +104,7 @@ namespace tfel{
     template<unsigned short N,typename T,typename T2>
     class ResultType<stensor<N,T>,stensor<N,T2>,OpMinus>
     {
-      typedef typename ResultType<T,T2,OpMinus>::type ResBase_;
+      typedef result_type<T,T2,OpMinus> ResBase_;
     public:
       typedef typename std::conditional<tfel::typetraits::IsInvalid<ResBase_>::cond,
 				      tfel::meta::InvalidType,
@@ -118,7 +118,7 @@ namespace tfel{
     template<unsigned short N,typename T,typename T2>
     class ResultType<stensor<N,T>,stensor<N,T2>,OpMult>
     {
-      typedef typename ResultType<T,T2,OpMult>::type ResBase_;
+      typedef result_type<T,T2,OpMult> ResBase_;
     public:
       typedef typename std::conditional<tfel::typetraits::IsInvalid<ResBase_>::cond,
 					tfel::meta::InvalidType,
@@ -132,7 +132,7 @@ namespace tfel{
     template<unsigned short N,typename T,typename T2>
     class ResultType<stensor<N,T>,stensor<N,T2>,OpDiadicProduct>
     {
-      typedef typename ResultType<T,T2,OpMult>::type ResBase_;
+      typedef result_type<T,T2,OpMult> ResBase_;
     public:
       typedef typename std::conditional<tfel::typetraits::IsInvalid<ResBase_>::cond,
 					tfel::meta::InvalidType,
@@ -147,7 +147,7 @@ namespace tfel{
     class ResultType<stensor<N,T>,
 		     stensor<N,T2>,OpDotProduct>
     {
-      typedef typename ResultType<T,T2,OpMult>::type ResBase_;
+      typedef result_type<T,T2,OpMult> ResBase_;
       static constexpr bool isValid = tfel::typetraits::IsScalar<T>::cond  &&
 	                              tfel::typetraits::IsScalar<T2>::cond &&
                                       tfel::typetraits::IsInvalid<ResBase_>::cond;

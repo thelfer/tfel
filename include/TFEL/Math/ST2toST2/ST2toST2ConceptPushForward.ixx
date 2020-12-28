@@ -23,9 +23,9 @@ namespace tfel::math {
   typename std::enable_if<implementsST2toST2Concept<ST2toST2Type>() &&
                               implementsST2toST2Concept<ST2toST2Type2>() &&
                               implementsTensorConcept<TensorType>() &&
-                              ST2toST2Traits<ST2toST2Type>::dime == 1u &&
-                              ST2toST2Traits<ST2toST2Type2>::dime == 1u &
-                                  TensorTraits<TensorType>::dime == 1u,
+                              getSpaceDimension<ST2toST2Type>() == 1u &&
+                              getSpaceDimension<ST2toST2Type2>() == 1u &
+                                  getSpaceDimension<TensorType>() == 1u,
                           void>::type
   push_forward(ST2toST2Type& Ct, const ST2toST2Type2& C, const TensorType& F) {
     const auto C0 = F[0] * F[0];
@@ -46,12 +46,12 @@ namespace tfel::math {
   typename std::enable_if<implementsST2toST2Concept<ST2toST2Type>() &&
                               implementsST2toST2Concept<ST2toST2Type2>() &&
                               implementsTensorConcept<TensorType>() &&
-                              ST2toST2Traits<ST2toST2Type>::dime == 2u &&
-                              ST2toST2Traits<ST2toST2Type2>::dime == 2u &
-                                  TensorTraits<TensorType>::dime == 2u,
+                              getSpaceDimension<ST2toST2Type>() == 2u &&
+                              getSpaceDimension<ST2toST2Type2>() == 2u &
+                                  getSpaceDimension<TensorType>() == 2u,
                           void>::type
   push_forward(ST2toST2Type& Ct, const ST2toST2Type2& C, const TensorType& F) {
-    using NumType = typename ST2toST2Traits<ST2toST2Type>::NumType;
+    using NumType = MathObjectNumType<ST2toST2Type>;
     constexpr const auto cste = Cste<NumType>::sqrt2;
     constexpr const auto icste = Cste<NumType>::isqrt2;
     Ct(0, 0) = F[0] * F[0] * F[0] * F[0] * C(0, 0) +
@@ -229,12 +229,12 @@ namespace tfel::math {
   typename std::enable_if<implementsST2toST2Concept<ST2toST2Type>() &&
                               implementsST2toST2Concept<ST2toST2Type2>() &&
                               implementsTensorConcept<TensorType>() &&
-                              ST2toST2Traits<ST2toST2Type>::dime == 3u &&
-                              ST2toST2Traits<ST2toST2Type2>::dime == 3u &
-                                  TensorTraits<TensorType>::dime == 3u,
+                              getSpaceDimension<ST2toST2Type>() == 3u &&
+                              getSpaceDimension<ST2toST2Type2>() == 3u &
+                                  getSpaceDimension<TensorType>() == 3u,
                           void>::type
   push_forward(ST2toST2Type& Ct, const ST2toST2Type2& C, const TensorType& F) {
-    using NumType = typename ST2toST2Traits<ST2toST2Type>::NumType;
+    using NumType = MathObjectNumType<ST2toST2Type>;
     using size_type = unsigned short;
     auto row_index = [](size_type i, size_type j) -> size_type {
       // i,j are valid for the space dimension considered

@@ -36,23 +36,23 @@ namespace tfel::math {
   struct Expr<T2toST2Type, RightCauchyGreenTensorDerivativeExpr<1u>>
       : public T2toST2Concept<
             Expr<T2toST2Type, RightCauchyGreenTensorDerivativeExpr<1u>>>,
-        public fsarray<9u, typename T2toST2Traits<T2toST2Type>::NumType> {
-    static_assert(T2toST2Traits<T2toST2Type>::dime == 1u);
+        public fsarray<9u, MathObjectNumType<T2toST2Type>> {
+    static_assert(getSpaceDimension<T2toST2Type>() == 1u);
     //! a simple alias
     typedef EmptyRunTimeProperties RunTimeProperties;
     //! a simple alias
-    typedef typename T2toST2Traits<T2toST2Type>::NumType value_type;
+    typedef MathObjectNumType<T2toST2Type> value_type;
     /*!
      * \param[in] B : second tensor of the product
      */
     template <typename TensorType>
     TFEL_MATH_INLINE2 Expr(const TensorType& F) {
-      static_assert(tfel::meta::Implements<TensorType, TensorConcept>::cond);
-      static_assert(T2toST2Traits<T2toST2Type>::dime ==
-                    TensorTraits<TensorType>::dime);
+      static_assert(implementsTensorConcept<TensorType>());
+      static_assert(getSpaceDimension<T2toST2Type>() ==
+                    getSpaceDimension<TensorType>());
       static_assert(tfel::typetraits::IsAssignableTo<
-                    typename TensorTraits<TensorType>::NumType,
-                    typename T2toST2Traits<T2toST2Type>::NumType>::cond);
+                    MathObjectNumType<TensorType>,
+                    MathObjectNumType<T2toST2Type>>::cond);
       constexpr value_type zero{0};
       this->v[0] = 2 * F[0];
       this->v[1] = this->v[2] = this->v[3] = zero;
@@ -85,23 +85,23 @@ namespace tfel::math {
   struct Expr<T2toST2Type, RightCauchyGreenTensorDerivativeExpr<2u>>
       : public T2toST2Concept<
             Expr<T2toST2Type, RightCauchyGreenTensorDerivativeExpr<2u>>>,
-        public fsarray<20u, typename T2toST2Traits<T2toST2Type>::NumType> {
-    static_assert(T2toST2Traits<T2toST2Type>::dime == 2u);
+        public fsarray<20u, MathObjectNumType<T2toST2Type>> {
+    static_assert(getSpaceDimension<T2toST2Type>() == 2u);
     //! a simple alias
     typedef EmptyRunTimeProperties RunTimeProperties;
     //! a simple alias
-    typedef typename T2toST2Traits<T2toST2Type>::NumType value_type;
+    typedef MathObjectNumType<T2toST2Type> value_type;
     /*!
      * \param[in] B : second tensor of the product
      */
     template <typename TensorType>
     TFEL_MATH_INLINE2 Expr(const TensorType& F) {
-      static_assert(tfel::meta::Implements<TensorType, TensorConcept>::cond);
-      static_assert(T2toST2Traits<T2toST2Type>::dime ==
-                    TensorTraits<TensorType>::dime);
+      static_assert(implementsTensorConcept<TensorType>());
+      static_assert(getSpaceDimension<T2toST2Type>() ==
+                    getSpaceDimension<TensorType>());
       static_assert(tfel::typetraits::IsAssignableTo<
-                    typename TensorTraits<TensorType>::NumType,
-                    typename T2toST2Traits<T2toST2Type>::NumType>::cond);
+                    MathObjectNumType<TensorType>,
+                    MathObjectNumType<T2toST2Type>>::cond);
       constexpr const auto cste = Cste<value_type>::sqrt2;
       constexpr value_type zero{0};
       this->v[0] = 2 * F[0];
@@ -145,23 +145,23 @@ namespace tfel::math {
   struct Expr<T2toST2Type, RightCauchyGreenTensorDerivativeExpr<3u>>
       : public T2toST2Concept<
             Expr<T2toST2Type, RightCauchyGreenTensorDerivativeExpr<3u>>>,
-        public fsarray<54u, typename T2toST2Traits<T2toST2Type>::NumType> {
-    static_assert(T2toST2Traits<T2toST2Type>::dime == 3u);
+        public fsarray<54u, MathObjectNumType<T2toST2Type>> {
+    static_assert(getSpaceDimension<T2toST2Type>() == 3u);
     //! a simple alias
     typedef EmptyRunTimeProperties RunTimeProperties;
     //! a simple alias
-    typedef typename T2toST2Traits<T2toST2Type>::NumType value_type;
+    typedef MathObjectNumType<T2toST2Type> value_type;
     /*!
      * \param[in] B : second tensor of the product
      */
     template <typename TensorType>
     TFEL_MATH_INLINE2 Expr(const TensorType& F) {
-      static_assert(tfel::meta::Implements<TensorType, TensorConcept>::cond);
-      static_assert(T2toST2Traits<T2toST2Type>::dime ==
-                    TensorTraits<TensorType>::dime);
+      static_assert(implementsTensorConcept<TensorType>());
+      static_assert(getSpaceDimension<T2toST2Type>() ==
+                    getSpaceDimension<TensorType>());
       static_assert(tfel::typetraits::IsAssignableTo<
-                    typename TensorTraits<TensorType>::NumType,
-                    typename T2toST2Traits<T2toST2Type>::NumType>::cond);
+                    MathObjectNumType<TensorType>,
+                    MathObjectNumType<T2toST2Type>>::cond);
       constexpr const auto cste = Cste<value_type>::sqrt2;
       constexpr value_type zero{0};
       this->v[0] = 2 * F[0];

@@ -49,22 +49,6 @@ namespace tfel::math {
   struct ConvertT2toST2ToST2toST2Expr;
 
   /*!
-   * \brief partial specialisation of the `ST2toST2Traits` class for
-   * `st2tost2`.
-   * \tparam N: space dimension
-   * \tparam T: numeric type
-   */
-  template <unsigned short N, typename T>
-  struct ST2toST2Traits<st2tost2<N, T>> {
-    //! a simple alias
-    typedef T NumType;
-    //! a simple alias
-    typedef unsigned short IndexType;
-    //! a simple alias
-    static constexpr unsigned short dime = N;
-  };
-
-  /*!
    * \brief partial specialisation of the `DerivativeTypeDispatcher`
    * metafunction.
    */
@@ -77,8 +61,8 @@ namespace tfel::math {
                   "template argument StensorType1 is not a symmetric tensor");
     static_assert(implementsStensorConcept<StensorType2>(),
                   "template argument StensorType2 is not a symmetric tensor");
-    static_assert(StensorTraits<StensorType1>::dime ==
-                      StensorTraits<StensorType2>::dime,
+    static_assert(getSpaceDimension<StensorType1>() ==
+                      getSpaceDimension<StensorType2>(),
                   "symmetric tensor types don't have the same dimension");
     static_assert(
         tfel::typetraits::IsScalar<StensorNumType<StensorType1>>::cond,
@@ -87,7 +71,7 @@ namespace tfel::math {
         tfel::typetraits::IsScalar<StensorNumType<StensorType2>>::cond,
         "the second symmetric tensor type does not hold a scalar");
     //! \brief result
-    using type = st2tost2<StensorTraits<StensorType1>::dime,
+    using type = st2tost2<getSpaceDimension<StensorType1>(),
                           derivative_type<StensorNumType<StensorType1>,
                                           StensorNumType<StensorType2>>>;
   };  // end of struct DerivativeTypeDispatcher
@@ -105,8 +89,8 @@ namespace tfel::math {
      */
     template <typename ST2toST2Type>
     TFEL_MATH_INLINE std::enable_if_t<
-        tfel::meta::Implements<ST2toST2Type, ST2toST2Concept>::cond &&
-            ST2toST2Traits<Child>::dime == ST2toST2Traits<ST2toST2Type>::dime &&
+        implementsST2toST2Concept<ST2toST2Type>() &&
+            getSpaceDimension<Child>() == getSpaceDimension<ST2toST2Type>() &&
             tfel::typetraits::IsAssignableTo<ST2toST2NumType<ST2toST2Type>,
                                              ST2toST2NumType<Child>>::cond,
         Child&>
@@ -114,8 +98,8 @@ namespace tfel::math {
     //! Assignement operator
     template <typename ST2toST2Type>
     TFEL_MATH_INLINE std::enable_if_t<
-        tfel::meta::Implements<ST2toST2Type, ST2toST2Concept>::cond &&
-            ST2toST2Traits<Child>::dime == ST2toST2Traits<ST2toST2Type>::dime &&
+        implementsST2toST2Concept<ST2toST2Type>() &&
+            getSpaceDimension<Child>() == getSpaceDimension<ST2toST2Type>() &&
             tfel::typetraits::IsAssignableTo<ST2toST2NumType<ST2toST2Type>,
                                              ST2toST2NumType<Child>>::cond,
         Child&>
@@ -123,8 +107,8 @@ namespace tfel::math {
     //! Assignement operator
     template <typename ST2toST2Type>
     TFEL_MATH_INLINE std::enable_if_t<
-        tfel::meta::Implements<ST2toST2Type, ST2toST2Concept>::cond &&
-            ST2toST2Traits<Child>::dime == ST2toST2Traits<ST2toST2Type>::dime &&
+        implementsST2toST2Concept<ST2toST2Type>() &&
+            getSpaceDimension<Child>() == getSpaceDimension<ST2toST2Type>() &&
             tfel::typetraits::IsAssignableTo<ST2toST2NumType<ST2toST2Type>,
                                              ST2toST2NumType<Child>>::cond,
         Child&>
@@ -167,8 +151,8 @@ namespace tfel::math {
      */
     template <typename StensorType>
     static TFEL_MATH_INLINE std::enable_if_t<
-        tfel::meta::Implements<StensorType, tfel::math::StensorConcept>::cond &&
-            StensorTraits<StensorType>::dime == N &&
+        implementsStensorConcept<StensorType>() &&
+            getSpaceDimension<StensorType>() == N &&
             tfel::typetraits::IsAssignableTo<StensorNumType<StensorType>,
                                              T>::cond,
         Expr<st2tost2<N, T>, StensorSquareDerivativeExpr<N>>>
@@ -180,10 +164,10 @@ namespace tfel::math {
      */
     template <typename StensorType, typename ST2toST2Type>
     static TFEL_MATH_INLINE std::enable_if_t<
-        tfel::meta::Implements<StensorType, StensorConcept>::cond &&
-            tfel::meta::Implements<ST2toST2Type, ST2toST2Concept>::cond &&
-            StensorTraits<StensorType>::dime == N &&
-            ST2toST2Traits<ST2toST2Type>::dime == N &&
+        implementsStensorConcept<StensorType>() &&
+            implementsST2toST2Concept<ST2toST2Type>() &&
+            getSpaceDimension<StensorType>() == N &&
+            getSpaceDimension<ST2toST2Type>() == N &&
             tfel::typetraits::IsAssignableTo<
                 typename ComputeBinaryResult<StensorNumType<StensorType>,
                                              ST2toST2NumType<ST2toST2Type>,
@@ -197,10 +181,10 @@ namespace tfel::math {
      */
     template <typename T2toST2Type>
     static TFEL_MATH_INLINE std::enable_if_t<
-        tfel::meta::Implements<T2toST2Type, tfel::math::T2toST2Concept>::cond &&
-            T2toST2Traits<T2toST2Type>::dime == N &&
+        implementsT2toST2Concept<T2toST2Type>() &&
+            getSpaceDimension<T2toST2Type>() == N &&
             tfel::typetraits::IsAssignableTo<
-                typename T2toST2Traits<T2toST2Type>::NumType,
+                MathObjectNumType<T2toST2Type>,
                 T>::cond,
         Expr<st2tost2<N, T>, ConvertT2toST2ToST2toST2Expr<N>>>
     convert(const T2toST2Type&);
@@ -219,8 +203,8 @@ namespace tfel::math {
      */
     template <typename StensorType>
     static TFEL_MATH_INLINE std::enable_if_t<
-        tfel::meta::Implements<StensorType, tfel::math::StensorConcept>::cond &&
-            StensorTraits<StensorType>::dime == N &&
+        implementsStensorConcept<StensorType>() &&
+            getSpaceDimension<StensorType>() == N &&
             tfel::typetraits::IsAssignableTo<StensorNumType<StensorType>,
                                              T>::cond,
         tfel::math::st2tost2<N, T>>
@@ -311,8 +295,8 @@ namespace tfel::math {
    */
   template <typename ST2toST2Type>
   TFEL_MATH_INLINE2 std::enable_if_t<
-      tfel::meta::Implements<ST2toST2Type, ST2toST2Concept>::cond,
-      st2tost2<ST2toST2Traits<ST2toST2Type>::dime,
+      implementsST2toST2Concept<ST2toST2Type>(),
+      st2tost2<getSpaceDimension<ST2toST2Type>(),
                ST2toST2NumType<ST2toST2Type>>>
   change_basis(const ST2toST2Type&,
                const rotation_matrix<ST2toST2NumType<ST2toST2Type>>&);
@@ -322,9 +306,9 @@ namespace tfel::math {
    */
   template <typename ST2toST2Type>
   TFEL_MATH_INLINE2 std::enable_if_t<
-      tfel::meta::Implements<ST2toST2Type, ST2toST2Concept>::cond,
+      implementsST2toST2Concept<ST2toST2Type>(),
       st2tost2<
-          ST2toST2Traits<ST2toST2Type>::dime,
+          getSpaceDimension<ST2toST2Type>(),
           typename ComputeBinaryResult<typename tfel::typetraits::base_type<
                                            ST2toST2NumType<ST2toST2Type>>,
                                        ST2toST2NumType<ST2toST2Type>,
@@ -341,10 +325,10 @@ namespace tfel::math {
    */
   template <typename ST2toST2Type, typename TensorType>
   std::enable_if_t<
-      tfel::meta::Implements<ST2toST2Type, ST2toST2Concept>::cond &&
-          tfel::meta::Implements<TensorType, TensorConcept>::cond &&
-          ST2toST2Traits<ST2toST2Type>::dime == TensorTraits<TensorType>::dime,
-      st2tost2<ST2toST2Traits<ST2toST2Type>::dime,
+      implementsST2toST2Concept<ST2toST2Type>() &&
+          implementsTensorConcept<TensorType>() &&
+          getSpaceDimension<ST2toST2Type>() == getSpaceDimension<TensorType>(),
+      st2tost2<getSpaceDimension<ST2toST2Type>(),
                typename ComputeBinaryResult<ST2toST2NumType<ST2toST2Type>,
                                             TensorNumType<TensorType>,
                                             OpMult>::Result>>
@@ -352,38 +336,14 @@ namespace tfel::math {
 
   template <typename ST2toST2Type, typename TensorType>
   std::enable_if_t<
-      tfel::meta::Implements<ST2toST2Type, ST2toST2Concept>::cond &&
-          tfel::meta::Implements<TensorType, TensorConcept>::cond &&
-          ST2toST2Traits<ST2toST2Type>::dime == TensorTraits<TensorType>::dime,
-      st2tost2<ST2toST2Traits<ST2toST2Type>::dime,
+      implementsST2toST2Concept<ST2toST2Type>() &&
+          implementsTensorConcept<TensorType>() &&
+          getSpaceDimension<ST2toST2Type>() == getSpaceDimension<TensorType>(),
+      st2tost2<getSpaceDimension<ST2toST2Type>(),
                typename ComputeBinaryResult<ST2toST2NumType<ST2toST2Type>,
                                             TensorNumType<TensorType>,
                                             OpMult>::Result>>
   pull_back(const ST2toST2Type&, const TensorType&);
-  /*!
-   * \brief compute the second derivative of the determinant of a
-   * symmetric tensor
-   * \param[in] s: tensor
-   */
-  template <typename StensorType>
-  std::enable_if_t<
-      tfel::meta::Implements<StensorType, StensorConcept>::cond &&
-          StensorTraits<StensorType>::dime == 1u &&
-          tfel::typetraits::IsScalar<StensorNumType<StensorType>>::cond,
-      st2tost2<1u, StensorNumType<StensorType>>>
-  computeDeterminantSecondDerivative(const StensorType&);
-  /*!
-   * \brief compute the second derivative of the determinant of a
-   * symmetric tensor
-   * \param[in] s: tensor
-   */
-  template <typename StensorType>
-  std::enable_if_t<
-      tfel::meta::Implements<StensorType, StensorConcept>::cond &&
-          StensorTraits<StensorType>::dime == 2u &&
-          tfel::typetraits::IsScalar<StensorNumType<StensorType>>::cond,
-      st2tost2<2u, StensorNumType<StensorType>>>
-  computeDeterminantSecondDerivative(const StensorType&);
   /*!
    * \brief compute the second derivative of determinant of the
    * deviator of a symmetric tensor with respect to this tensor.
@@ -404,10 +364,9 @@ namespace tfel::math {
    */
   template <typename StensorType>
   std::enable_if_t<
-      tfel::meta::Implements<StensorType, StensorConcept>::cond &&
-          StensorTraits<StensorType>::dime == 3u &&
+      implementsStensorConcept<StensorType>() &&
           tfel::typetraits::IsScalar<StensorNumType<StensorType>>::cond,
-      st2tost2<3u, StensorNumType<StensorType>>>
+      st2tost2<getSpaceDimension<StensorType>(), StensorNumType<StensorType>>>
   computeDeviatorDeterminantSecondDerivative(const StensorType&);
   /*!
    * \brief compute the second derivative of the determinant of the
@@ -429,60 +388,9 @@ namespace tfel::math {
    */
   template <typename StensorType>
   std::enable_if_t<
-      tfel::meta::Implements<StensorType, StensorConcept>::cond &&
-          StensorTraits<StensorType>::dime == 1u &&
+      implementsStensorConcept<StensorType>() &&
           tfel::typetraits::IsScalar<StensorNumType<StensorType>>::cond,
-      st2tost2<1u, StensorNumType<StensorType>>>
-  computeDeviatorDeterminantSecondDerivative(const StensorType&);
-  /*!
-   * \brief compute the second derivative of the determinant of the
-   * deviator of symmetric tensor.
-
-   * Let \f$\underline{s}\f$ be a symmetric tensor and \f$J_{3}\f$
-   * be the determinant of \f$\underline{s}'\f$ the deviator of
-   * \f$\underline{s}\f$:
-   * \f[
-   * J_{3} = \mathrm{det}\left(\underline{s}'\right)
-   *       =
-   \mathrm{det}\left(\underline{s}-\mathrm{tr}\left(\underline{s}'\right)\,\underline{I}\right)
-   * \f]
-   *
-   * This function computes \f$\displaystyle\frac{\partial^{2} J_{3}}{\partial
-   \underline{\sigma}^{2}}\f$.
-   *
-   * \param[in] s: tensor
-   */
-  template <typename StensorType>
-  std::enable_if_t<
-      tfel::meta::Implements<StensorType, StensorConcept>::cond &&
-          StensorTraits<StensorType>::dime == 2u &&
-          tfel::typetraits::IsScalar<StensorNumType<StensorType>>::cond,
-      st2tost2<2u, StensorNumType<StensorType>>>
-  computeDeviatorDeterminantSecondDerivative(const StensorType&);
-  /*!
-   * \brief compute the second derivative of the determinant of the
-   * deviator of symmetric tensor.
-
-   * Let \f$\underline{s}\f$ be a symmetric tensor and \f$J_{3}\f$
-   * be the determinant of \f$\underline{s}'\f$ the deviator of
-   * \f$\underline{s}\f$:
-   * \f[
-   * J_{3} = \mathrm{det}\left(\underline{s}'\right)
-   *       =
-   \mathrm{det}\left(\underline{s}-\mathrm{tr}\left(\underline{s}'\right)\,\underline{I}\right)
-   * \f]
-   *
-   * This function computes \f$\displaystyle\frac{\partial^{2} J_{3}}{\partial
-   \underline{\sigma}^{2}}\f$.
-   *
-   * \param[in] s: tensor
-   */
-  template <typename StensorType>
-  std::enable_if_t<
-      tfel::meta::Implements<StensorType, StensorConcept>::cond &&
-          StensorTraits<StensorType>::dime == 3u &&
-          tfel::typetraits::IsScalar<StensorNumType<StensorType>>::cond,
-      st2tost2<3u, StensorNumType<StensorType>>>
+      st2tost2<getSpaceDimension<StensorType>(), StensorNumType<StensorType>>>
   computeDeviatorDeterminantSecondDerivative(const StensorType&);
 
 }  // end of namespace tfel::math

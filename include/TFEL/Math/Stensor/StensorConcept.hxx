@@ -18,25 +18,21 @@
 #include "TFEL/Metaprogramming/InvalidType.hxx"
 #include "TFEL/TypeTraits/BaseType.hxx"
 #include "TFEL/TypeTraits/IsAssignableTo.hxx"
+#include "TFEL/Math/General/MathObjectTraits.hxx"
 #include "TFEL/Math/General/ConceptRebind.hxx"
 #include "TFEL/Math/General/ComputeUnaryResult.hxx"
 #include "TFEL/Math/General/Abs.hxx"
 #include "TFEL/Math/General/MathConstants.hxx"
+#include "TFEL/Math/General/MathObjectTraits.hxx"
 #include "TFEL/Math/ExpressionTemplates/Expr.hxx"
 #include "TFEL/Math/power.hxx"
 
 namespace tfel::math {
 
+  //! \brief a simple alias
   template <typename StensorType>
-  struct StensorTraits {
-    typedef tfel::meta::InvalidType NumType;
-    typedef unsigned short IndexType;
-    static constexpr unsigned short dime = 0u;
-  };
-
-  template <typename StensorType>
-  using StensorNumType = typename StensorTraits<StensorType>::NumType;
-
+  using StensorNumType = MathObjectNumType<StensorType>;
+  //! \brief a simple alias
   template <typename StensorType>
   using StensorBaseType =
       tfel::typetraits::base_type<StensorNumType<StensorType>>;
@@ -63,6 +59,11 @@ namespace tfel::math {
     ~StensorConcept() = default;
   };
 
+  /*!
+   * \brief an helper function which returns if the given type implements the
+   * `StensorConcept`.
+   * \tparam StensorType: type tested
+   */
   template <typename StensorType>
   constexpr bool implementsStensorConcept() {
     return tfel::meta::implements<StensorType, StensorConcept>();

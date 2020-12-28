@@ -1,56 +1,51 @@
 /*!
- * \file   include/TFEL/Math/ST2toT2/ST2toT2Concept.ixx  
- * \brief    
+ * \file   include/TFEL/Math/ST2toT2/ST2toT2Concept.ixx
+ * \brief
  * \author Thomas Helfer
  * \date   19 November 2013
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_TFEL_MATH_ST2TOT2_CONCEPT_IXX
 #define LIB_TFEL_MATH_ST2TOT2_CONCEPT_IXX 1
 
-#include"TFEL/Math/Tensor/TensorSizeToDime.hxx"
-#include"TFEL/Math/Stensor/StensorSizeToDime.hxx"
+#include "TFEL/Math/Tensor/TensorSizeToDime.hxx"
+#include "TFEL/Math/Stensor/StensorSizeToDime.hxx"
 
-namespace tfel{
+namespace tfel::math {
 
-  namespace math{
-    
-    template<class T>
-    TFEL_MATH_INLINE typename ST2toT2Traits<T>::NumType
-    ST2toT2Concept<T>::operator()(const unsigned short i,
-				  const unsigned short j) const
-    {
-      return static_cast<const T&>(*this).operator()(i,j);
-    } // end of ST2toT2Concept<T>::operator()
+  template <class T>
+  TFEL_MATH_INLINE MathObjectNumType<T> ST2toT2Concept<T>::
+  operator()(const unsigned short i, const unsigned short j) const {
+    return static_cast<const T&>(*this).operator()(i, j);
+  }  // end of ST2toT2Concept<T>::operator()
 
-    template<typename ST2toT2Type>
-    typename std::enable_if<
-      tfel::meta::Implements<ST2toT2Type,ST2toT2Concept>::cond,
-      typename tfel::typetraits::AbsType<typename ST2toT2Traits<ST2toT2Type>::NumType>::type
-    >::type
-    abs(const ST2toT2Type& v)
-    {
-      unsigned short i;
-      unsigned short j;
-      typedef typename ST2toT2Traits<ST2toT2Type>::NumType NumType;
-      typedef typename tfel::typetraits::AbsType<NumType>::type AbsNumType;
-      AbsNumType a(0);
-      for(i=0;i<TensorDimeToSize<ST2toT2Traits<ST2toT2Type>::dime>::value;++i){
-	for(j=0;j<StensorDimeToSize<ST2toT2Traits<ST2toT2Type>::dime>::value;++j){
-	  a += abs(v(i,j));
-	}
+  template <typename ST2toT2Type>
+  typename std::enable_if<
+      implementsST2toT2Concept<ST2toT2Type>(),
+      typename tfel::typetraits::AbsType<
+          MathObjectNumType<ST2toT2Type>>::type>::type
+  abs(const ST2toT2Type& v) {
+    using NumType = MathObjectNumType<ST2toT2Type>;
+    using AbsNumType = typename tfel::typetraits::AbsType<NumType>::type;
+    constexpr const auto tsize =
+        TensorDimeToSize<getSpaceDimension<ST2toT2Type>()>::value;
+    constexpr const auto ssize =
+        StensorDimeToSize<getSpaceDimension<ST2toT2Type>()>::value;
+    AbsNumType a(0);
+    for (unsigned short i = 0; i < tsize; ++i) {
+      for (unsigned short j = 0; j < ssize; ++j) {
+        a += abs(v(i, j));
       }
-      return a;
     }
-    
-  } // end of namespace math
+    return a;
+  }
 
-} // end of namespace tfel
+}  // end of namespace tfel::math
 
 #endif /* LIB_TFEL_MATH_ST2TOT2_CONCEPT_IXX */

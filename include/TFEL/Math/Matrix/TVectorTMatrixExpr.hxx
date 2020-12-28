@@ -19,7 +19,6 @@
 #include <iterator>
 #include <type_traits>
 #include "TFEL/Config/TFELConfig.hxx"
-#include "TFEL/Metaprogramming/Implements.hxx"
 #include "TFEL/FSAlgorithm/inner_product.hxx"
 #include "TFEL/Math/General/ResultType.hxx"
 #include "TFEL/Math/General/BasicOperations.hxx"
@@ -33,8 +32,8 @@ namespace tfel::math {
 
   template <unsigned short N, unsigned short M, typename A, typename B>
   struct TVectorTMatrixExpr : public ExprBase {
-    static_assert(tfel::meta::Implements<std::decay_t<A>, VectorConcept>::cond);
-    static_assert(tfel::meta::Implements<std::decay_t<B>, MatrixConcept>::cond);
+    static_assert(implementsVectorConcept<A>());
+    static_assert(implementsMatrixConcept<B>());
 
     typedef EmptyRunTimeProperties RunTimeProperties;
 
@@ -48,7 +47,7 @@ namespace tfel::math {
 
     struct ColumnConstIterator {
       using MType = std::decay_t<B>;
-      using NumType = typename MatrixTraits<MType>::NumType;
+      using NumType = MathObjectNumType<MType>;
       TFEL_MATH_INLINE ColumnConstIterator(const MType& m_,
                                            const unsigned short j_)
           : m(m_), i(0), j(j_) {}
@@ -66,7 +65,7 @@ namespace tfel::math {
 
     struct VectorConstIterator {
       using VType = std::decay_t<A>;
-      using NumType = typename VectorTraits<VType>::NumType;
+      using NumType = MathObjectNumType<VType>;
       TFEL_MATH_INLINE VectorConstIterator(const VType& v_) : v(v_), i(0) {}
       TFEL_MATH_INLINE VectorConstIterator& operator++() {
         ++i;
@@ -79,8 +78,8 @@ namespace tfel::math {
       unsigned short i;
     };  // end of struc VectorConstIterator
 
-    using NumType = typename VectorTraits<Result>::NumType;
-    using IndexType = typename VectorTraits<Result>::NumType;
+    using NumType = MathObjectNumType<Result>;
+    using IndexType = MathObjectNumType<Result>;
 
     typedef NumType value_type;
     typedef NumType* pointer;

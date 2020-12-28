@@ -23,19 +23,19 @@ void function(const tfel::math::VectorConcept<T>&);
 
 template<class T>
 void function(const tfel::math::VectorConcept<T>&,
-	      const typename tfel::math::VectorTraits<T>::NumType,
-	      const typename tfel::math::VectorTraits<T>::NumType,
-	      const typename tfel::math::VectorTraits<T>::NumType,
-	      const typename tfel::math::VectorTraits<T>::NumType,
+	      const typename tfel::math::MathObjectTraits<T>::NumType,
+	      const typename tfel::math::MathObjectTraits<T>::NumType,
+	      const typename tfel::math::MathObjectTraits<T>::NumType,
+	      const typename tfel::math::MathObjectTraits<T>::NumType,
 	      const unsigned int);
 
 template<class T>
 void function(const tfel::math::MatrixConcept<T>&,
-	      const typename tfel::math::MatrixTraits<T>::NumType,
-	      const typename tfel::math::MatrixTraits<T>::NumType,
-	      const typename tfel::math::MatrixTraits<T>::NumType,
-	      const typename tfel::math::MatrixTraits<T>::NumType,
-	      const typename tfel::math::MatrixTraits<T>::NumType,
+	      const typename tfel::math::MathObjectTraits<T>::NumType,
+	      const typename tfel::math::MathObjectTraits<T>::NumType,
+	      const typename tfel::math::MathObjectTraits<T>::NumType,
+	      const typename tfel::math::MathObjectTraits<T>::NumType,
+	      const typename tfel::math::MathObjectTraits<T>::NumType,
 	      const unsigned int);
 
 template<class T>

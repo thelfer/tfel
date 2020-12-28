@@ -46,7 +46,7 @@ namespace tfel{
     template<typename StensorType>
     typename std::enable_if<
       tfel::meta::Implements<StensorType,tfel::math::StensorConcept>::cond,
-      tfel::math::stensor<tfel::math::StensorTraits<StensorType>::dime,
+      tfel::math::stensor<tfel::math::getSpaceDimension<StensorType>(),
 			  typename tfel::math::ComputeUnaryResult<tfel::math::StensorNumType<StensorType>,
 								  tfel::math::Power<2>>::Result>>::type
     computeJ3Derivative(const StensorType&);
@@ -74,7 +74,7 @@ namespace tfel{
     typename std::enable_if<
       tfel::meta::Implements<StensorType,tfel::math::StensorConcept>::cond&&
       tfel::typetraits::IsScalar<tfel::math::StensorNumType<StensorType>>::cond,
-      tfel::math::st2tost2<tfel::math::StensorTraits<StensorType>::dime,
+      tfel::math::st2tost2<tfel::math::getSpaceDimension<StensorType>(),
 			   tfel::math::StensorNumType<StensorType>>>::type
     computeJ3SecondDerivative(const StensorType&);
     

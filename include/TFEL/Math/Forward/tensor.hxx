@@ -12,28 +12,39 @@
  */
 
 #ifndef LIB_TFEL_MATH_FORWARD_TENSOR_HXX
-#define LIB_TFEL_MATH_FORWARD_TENSOR_HXX 
+#define LIB_TFEL_MATH_FORWARD_TENSOR_HXX
 
-namespace tfel
-{
+#include "TFEL/Math/General/MathObjectTraits.hxx"
 
-  namespace math
-  {
+namespace tfel::math {
 
-    /*
-     * \class tensor
-     * \brief finite size symmetric tensor.
-     * \param N, the spatial dimension, see TensorDimeToSize for details. 
-     * \param T, numerical type used, by default, double
-     * \pre   This class is only defined for N=1u,2u and 3u.
-     * \see   TensorDimeToSize and TensorSizeToDime. 
-     */
-    template<unsigned short N,typename T=double>
-    struct tensor;
+  /*
+   * \class tensor
+   * \brief non symmetric tensor.
+   * \param N: the spatial dimension, see TensorDimeToSize for details.
+   * \param T: numerical type used, by default, double
+   * \pre   This class is only defined for N=1u,2u and 3u.
+   * \see   TensorDimeToSize and TensorSizeToDime.
+   */
+  template <unsigned short N, typename T = double>
+  struct tensor;
 
-  } // end of namespace math
+  /*!
+   * \brief partial specialisation of the `MathObjectTraits` class.
+   * \tparam N: space dimension
+   * \tparam T: numeric type
+   */
+  template <unsigned short N, typename T>
+  struct MathObjectTraits<tensor<N, T>> {
+    //! \brief numeric type
+    using NumType = T;
+    //! \brief index type
+    using IndexType = unsigned short;
+    //! \brief space dimension
+    static constexpr unsigned short dime = N;
+  };
 
-} // end of namespace tfel
+}  // end of namespace tfel::math
 
 #endif /* LIB_TFEL_MATH_FORWARD_TENSOR_HXX */
 

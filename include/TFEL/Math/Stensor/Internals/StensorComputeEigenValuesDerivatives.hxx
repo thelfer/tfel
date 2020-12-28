@@ -27,8 +27,8 @@ namespace tfel {
       struct StensorComputeEigenValuesDerivatives<1u> {
         template <typename StensorType>
         static TFEL_MATH_INLINE2 typename std::enable_if<
-            ((tfel::meta::Implements<StensorType, StensorConcept>::cond) &&
-             (StensorTraits<StensorType>::dime == 1u)),
+            ((implementsStensorConcept<StensorType>()) &&
+             (getSpaceDimension<StensorType>() == 1u)),
             void>::type
         exe(StensorType& n0,
             StensorType& n1,
@@ -47,8 +47,8 @@ namespace tfel {
       struct StensorComputeEigenValuesDerivatives<2u> {
         template <typename StensorType>
         static TFEL_MATH_INLINE2 typename std::enable_if<
-            ((tfel::meta::Implements<StensorType, StensorConcept>::cond) &&
-             (StensorTraits<StensorType>::dime == 2u)),
+            ((implementsStensorConcept<StensorType>()) &&
+             (getSpaceDimension<StensorType>() == 2u)),
             void>::type
         exe(StensorType& n0,
             StensorType& n1,
@@ -69,8 +69,8 @@ namespace tfel {
       struct StensorComputeEigenValuesDerivatives<3u> {
         template <typename StensorType>
         static TFEL_MATH_INLINE2 typename std::enable_if<
-            ((tfel::meta::Implements<StensorType, StensorConcept>::cond) &&
-             (StensorTraits<StensorType>::dime == 3u)),
+            ((implementsStensorConcept<StensorType>()) &&
+             (getSpaceDimension<StensorType>() == 3u)),
             void>::type
         exe(StensorType& n0,
             StensorType& n1,

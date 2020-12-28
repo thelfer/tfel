@@ -24,18 +24,18 @@
 namespace tfel::math {
 
   template <typename Scal>
-  TFEL_MATH_INLINE typename std::enable_if<
-      tfel::typetraits::IsFundamentalNumericType<Scal>::cond,
-      Scal>::type
-  abs(const Scal& s) {
+  TFEL_MATH_INLINE
+      std::enable_if_t<tfel::typetraits::IsFundamentalNumericType<Scal>::cond,
+                       Scal>
+      abs(const Scal& s) {
     return std::abs(s);
   }
 
   template <typename Scal>
-  TFEL_MATH_INLINE typename std::enable_if<
-      tfel::typetraits::IsFundamentalNumericType<Scal>::cond,
-      Scal>::type
-  abs(const Complex<Scal>& s) {
+  TFEL_MATH_INLINE
+      std::enable_if_t<tfel::typetraits::IsFundamentalNumericType<Scal>::cond,
+                       Scal>
+      abs(const Complex<Scal>& s) {
     return s.norm();
   }
 

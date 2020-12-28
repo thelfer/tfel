@@ -15,6 +15,8 @@
 #define LIB_TFEL_METAPROGRAMMING_ISCONSTCALLABLE_HXX
 
 #include <type_traits>
+#include "TFEL/Config/TFELConfig.hxx"
+#include "TFEL/Metaprogramming/InvalidType.hxx"
 
 namespace tfel::meta {
 

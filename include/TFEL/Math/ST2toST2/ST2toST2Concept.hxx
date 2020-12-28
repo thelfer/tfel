@@ -14,12 +14,12 @@
 #define LIB_TFEL_MATH_ST2TOST2CONCEPT_HXX 1
 
 #include <type_traits>
-
 #include "TFEL/Config/TFELConfig.hxx"
 #include "TFEL/Metaprogramming/Implements.hxx"
 #include "TFEL/Metaprogramming/InvalidType.hxx"
 #include "TFEL/Math/power.hxx"
 #include "TFEL/Math/General/Abs.hxx"
+#include "TFEL/Math/General/MathObjectTraits.hxx"
 #include "TFEL/Math/General/ConceptRebind.hxx"
 #include "TFEL/Math/Tensor/TensorConcept.hxx"
 #include "TFEL/Math/ExpressionTemplates/Expr.hxx"
@@ -31,15 +31,9 @@ namespace tfel::math {
   template <typename A>
   struct ST2toST2TransposeExpr;
 
-  template <typename T>
-  struct ST2toST2Traits {
-    typedef tfel::meta::InvalidType NumType;
-    static constexpr unsigned short dime = 0u;
-  };
-
   //! a simple alias
   template <typename T>
-  using ST2toST2NumType = typename ST2toST2Traits<T>::NumType;
+  using ST2toST2NumType = MathObjectNumType<T>;
 
   /*!
    * \class ST2toST2Tag
@@ -51,7 +45,7 @@ namespace tfel::math {
   struct ST2toST2Concept {
     typedef ST2toST2Tag ConceptTag;
 
-    typename ST2toST2Traits<T>::NumType operator()(const unsigned short,
+    MathObjectNumType<T> operator()(const unsigned short,
                                                    const unsigned short) const;
 
    protected:
@@ -62,6 +56,11 @@ namespace tfel::math {
     ~ST2toST2Concept() = default;
   };
 
+  /*!
+   * \brief an helper function which returns if the given type implements the
+   * `ST2toST2Concept`.
+   * \tparam ST2toST2Type: type tested
+   */
   template <typename ST2toST2Type>
   constexpr bool implementsST2toST2Concept() {
     return tfel::meta::implements<ST2toST2Type, ST2toST2Concept>();
@@ -75,7 +74,7 @@ namespace tfel::math {
   template <typename ST2toST2Type>
   std::enable_if_t<implementsST2toST2Concept<ST2toST2Type>(),
                    typename tfel::typetraits::AbsType<
-                       typename ST2toST2Traits<ST2toST2Type>::NumType>::type>
+                       MathObjectNumType<ST2toST2Type>>::type>
   abs(const ST2toST2Type&);
 
   /*!
@@ -91,9 +90,9 @@ namespace tfel::math {
   std::enable_if_t<implementsST2toST2Concept<ST2toST2Type>() &&
                        implementsST2toST2Concept<ST2toST2Type2>() &&
                        implementsTensorConcept<TensorType>() &&
-                       ST2toST2Traits<ST2toST2Type>::dime == 1u &&
-                       ST2toST2Traits<ST2toST2Type2>::dime == 1u &
-                           TensorTraits<TensorType>::dime == 1u,
+                       getSpaceDimension<ST2toST2Type>() == 1u &&
+                       getSpaceDimension<ST2toST2Type2>() == 1u &
+                           getSpaceDimension<TensorType>() == 1u,
                    void>
   push_forward(ST2toST2Type&, const ST2toST2Type2&, const TensorType&);
   /*!
@@ -109,9 +108,9 @@ namespace tfel::math {
   std::enable_if_t<implementsST2toST2Concept<ST2toST2Type>() &&
                        implementsST2toST2Concept<ST2toST2Type2>() &&
                        implementsTensorConcept<TensorType>() &&
-                       ST2toST2Traits<ST2toST2Type>::dime == 2u &&
-                       ST2toST2Traits<ST2toST2Type2>::dime == 2u &
-                           TensorTraits<TensorType>::dime == 2u,
+                       getSpaceDimension<ST2toST2Type>() == 2u &&
+                       getSpaceDimension<ST2toST2Type2>() == 2u &
+                           getSpaceDimension<TensorType>() == 2u,
                    void>
   push_forward(ST2toST2Type&, const ST2toST2Type2&, const TensorType&);
   /*!
@@ -127,19 +126,18 @@ namespace tfel::math {
   std::enable_if_t<implementsST2toST2Concept<ST2toST2Type>() &&
                        implementsST2toST2Concept<ST2toST2Type2>() &&
                        implementsTensorConcept<TensorType>() &&
-                       ST2toST2Traits<ST2toST2Type>::dime == 3u &&
-                       ST2toST2Traits<ST2toST2Type2>::dime == 3u &
-                           TensorTraits<TensorType>::dime == 3u,
+                       getSpaceDimension<ST2toST2Type>() == 3u &&
+                       getSpaceDimension<ST2toST2Type2>() == 3u &
+                           getSpaceDimension<TensorType>() == 3u,
                    void>
   push_forward(ST2toST2Type&, const ST2toST2Type2&, const TensorType&);
   /*!
-   * \return a transposed view of  the tensor
+   * \return a transposed view
    */
   template <typename ST2toST2Type>
-  TFEL_MATH_INLINE auto transpose(ST2toST2Type&& t) ->
-      typename std::enable_if<implementsST2toST2Concept<ST2toST2Type>(),
-                              Expr<EvaluationResult<ST2toST2Type>,
-                                   ST2toST2TransposeExpr<decltype(t)>>>::type;
+  TFEL_MATH_INLINE auto transpose(ST2toST2Type&& t) -> std::enable_if_t<
+      implementsST2toST2Concept<ST2toST2Type>(),
+      Expr<EvaluationResult<ST2toST2Type>, ST2toST2TransposeExpr<decltype(t)>>>;
   /*!
    * \return the determinant of a `st2tost2`
    * \param[in] s: fourth order tensor
@@ -147,7 +145,7 @@ namespace tfel::math {
   template <typename ST2toST2Type>
   std::enable_if_t<
       implementsST2toST2Concept<ST2toST2Type>() &&
-          (ST2toST2Traits<ST2toST2Type>::dime == 1u) &&
+          (getSpaceDimension<ST2toST2Type>() == 1u) &&
           tfel::typetraits::IsScalar<ST2toST2NumType<ST2toST2Type>>::cond,
       typename ComputeUnaryResult<ST2toST2NumType<ST2toST2Type>,
                                   Power<3>>::Result>
@@ -159,12 +157,12 @@ namespace tfel::math {
   template <typename ST2toST2Type>
   std::enable_if_t<
       implementsST2toST2Concept<ST2toST2Type>() &&
-          ((ST2toST2Traits<ST2toST2Type>::dime == 2u) ||
-           (ST2toST2Traits<ST2toST2Type>::dime == 3u)) &&
+          ((getSpaceDimension<ST2toST2Type>() == 2u) ||
+           (getSpaceDimension<ST2toST2Type>() == 3u)) &&
           tfel::typetraits::IsScalar<ST2toST2NumType<ST2toST2Type>>::cond,
       typename ComputeUnaryResult<
           ST2toST2NumType<ST2toST2Type>,
-          Power<ST2toST2Traits<ST2toST2Type>::dime>>::Result>
+          Power<getSpaceDimension<ST2toST2Type>()>>::Result>
   det(const ST2toST2Type&);
 
 }  // end of namespace tfel::math

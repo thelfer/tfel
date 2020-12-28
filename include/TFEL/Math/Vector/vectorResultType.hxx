@@ -48,7 +48,7 @@ namespace tfel{
     template<typename T, typename Scal>
     class ResultType_<VectorTag,ScalarTag,vector<T>,Scal,OpMult>
     {
-      typedef typename ResultType<T,Scal,OpMult>::type ResBase_;
+      typedef result_type<T,Scal,OpMult> ResBase_;
     public:
       typedef typename std::conditional<tfel::typetraits::IsInvalid<ResBase_>::cond,
 				      tfel::meta::InvalidType,
@@ -63,7 +63,7 @@ namespace tfel{
     template<typename Scal, typename T>
     class ResultType_<ScalarTag,VectorTag,Scal,vector<T>,OpMult>
     {
-      typedef typename ResultType<Scal,T,OpMult>::type ResBase_;
+      typedef result_type<Scal,T,OpMult> ResBase_;
     public:
       typedef typename std::conditional<tfel::typetraits::IsInvalid<ResBase_>::cond,
 				      tfel::meta::InvalidType,
@@ -77,7 +77,7 @@ namespace tfel{
     template<typename T,typename T2>
     class ResultType<vector<T>,vector<T2>,OpDotProduct>
     {
-      typedef typename ResultType<T,T2,OpMult>::type ResBase_;
+      typedef result_type<T,T2,OpMult> ResBase_;
       static constexpr bool isValid = tfel::typetraits::IsInvalid<ResBase_>::cond;
     public:
 	typedef typename std::conditional<isValid,
@@ -93,7 +93,7 @@ namespace tfel{
     template<typename T, typename Scal>
     class ResultType_<VectorTag,ScalarTag,vector<T>,Scal,OpDiv>
     {
-      typedef typename ResultType<T,Scal,OpDiv>::type ResBase_;
+      typedef result_type<T,Scal,OpDiv> ResBase_;
     public:
       typedef typename std::conditional<tfel::typetraits::IsInvalid<ResBase_>::cond,
 				      tfel::meta::InvalidType,
@@ -107,7 +107,7 @@ namespace tfel{
     template<typename T,typename T2>
     class ResultType<vector<T>,vector<T2>,OpDiadicProduct>
     {
-      typedef typename ResultType<T,T2,OpMult>::type ResBase_;
+      typedef result_type<T,T2,OpMult> ResBase_;
     public:
       typedef typename std::conditional<tfel::typetraits::IsInvalid<ResBase_>::cond,
 				      tfel::meta::InvalidType,
@@ -121,7 +121,7 @@ namespace tfel{
     template<typename T, typename T2>
     class ResultType<vector<T>,vector<T2>,OpPlus>
     {
-      typedef typename ResultType<T,T2,OpPlus>::type ResBase_;
+      typedef result_type<T,T2,OpPlus> ResBase_;
     public:
       typedef typename std::conditional<tfel::typetraits::IsInvalid<ResBase_>::cond,
 				      tfel::meta::InvalidType,
@@ -135,7 +135,7 @@ namespace tfel{
     template<typename T, typename T2>
     class ResultType<vector<T>,vector<T2>,OpMinus>
     {
-      typedef typename ResultType<T,T2,OpMinus>::type ResBase_;
+      typedef result_type<T,T2,OpMinus> ResBase_;
     public:
       typedef typename std::conditional<tfel::typetraits::IsInvalid<ResBase_>::cond,
 				      tfel::meta::InvalidType,
@@ -149,7 +149,7 @@ namespace tfel{
     template<typename T, typename T2>
     class ResultType<vector<T>,vector<T2>,OpMult>
     {
-      typedef typename ResultType<T,T2,OpMult>::type ResBase_;
+      typedef result_type<T,T2,OpMult> ResBase_;
     public:
       typedef typename std::conditional<tfel::typetraits::IsInvalid<ResBase_>::cond,
 				      tfel::meta::InvalidType,

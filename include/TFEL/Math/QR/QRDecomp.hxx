@@ -78,7 +78,7 @@ namespace tfel {
           VectorType&,
           const MatrixType&,
           const VectorType&,
-          const typename MatrixTraits<MatrixType>::NumType);
+          const MathObjectNumType<MatrixType>);
       /*!
        * \param[in] v : vector
        * \param[in] a : decomposed matrix 
@@ -105,7 +105,7 @@ namespace tfel {
           VectorType&,
           const MatrixType&,
           const VectorType&,
-          const typename MatrixTraits<MatrixType>::IndexType);
+          const typename MathObjectTraits<MatrixType>::IndexType);
 
       /*!
        * Compute the norm of the cth column of matrix m,
@@ -116,11 +116,11 @@ namespace tfel {
        * \param[in] e : past-the end row
        */
       template <typename MatrixType>
-      static typename MatrixTraits<MatrixType>::NumType enorm(
+      static MathObjectNumType<MatrixType> enorm(
           const MatrixType&,
-          const typename MatrixTraits<MatrixType>::IndexType,
-          const typename MatrixTraits<MatrixType>::IndexType,
-          const typename MatrixTraits<MatrixType>::IndexType);
+          const typename MathObjectTraits<MatrixType>::IndexType,
+          const typename MathObjectTraits<MatrixType>::IndexType,
+          const typename MathObjectTraits<MatrixType>::IndexType);
     };
 
   } // end of namespace math

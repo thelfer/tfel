@@ -30,8 +30,8 @@ namespace tfel {
     template <typename MatrixType, typename VectorType>
     void QRDecomp::exe(MatrixType& a, VectorType& rdiag, VectorType& beta) {
       using namespace std;
-      using real = typename MatrixTraits<MatrixType>::NumType;
-      using size_type = typename MatrixTraits<MatrixType>::IndexType;
+      using real = MathObjectNumType<MatrixType>;
+      using size_type = typename MathObjectTraits<MatrixType>::IndexType;
       const auto m = a.getNbRows();
       const auto n = a.getNbCols();
       if ((m == 0) || (n == 0)) {
@@ -71,9 +71,9 @@ namespace tfel {
         VectorType& v,
         const MatrixType& a,
         const VectorType& beta,
-        const typename MatrixTraits<MatrixType>::IndexType c) {
-      using real = typename MatrixTraits<MatrixType>::NumType;
-      using size_type = typename MatrixTraits<MatrixType>::IndexType;
+        const typename MathObjectTraits<MatrixType>::IndexType c) {
+      using real = MathObjectNumType<MatrixType>;
+      using size_type = typename MathObjectTraits<MatrixType>::IndexType;
       const auto m = a.getNbRows();
       const auto n = a.getNbCols();
       if ((m == 0) || (n == 0)) {
@@ -96,7 +96,7 @@ namespace tfel {
     void QRDecomp::tq_product(VectorType& v,
                               const MatrixType& a,
                               const VectorType& beta) {
-      using size_type = typename MatrixTraits<MatrixType>::IndexType;
+      using size_type = typename MathObjectTraits<MatrixType>::IndexType;
       const auto m = a.getNbCols();
       for (size_type i = 0; i != m; ++i) {
         QRDecomp::householder_product(v, a, beta, i);
@@ -108,8 +108,8 @@ namespace tfel {
         VectorType& v,
         const MatrixType& a,
         const VectorType& d,
-        const typename MatrixTraits<MatrixType>::NumType e) {
-      using size_type = typename MatrixTraits<MatrixType>::IndexType;
+        const MathObjectNumType<MatrixType> e) {
+      using size_type = typename MathObjectTraits<MatrixType>::IndexType;
       const auto m = a.getNbRows();
       const auto n = a.getNbCols();
       if ((m == 0) || (n == 0)) {
@@ -135,19 +135,19 @@ namespace tfel {
     void QRDecomp::back_substitute(VectorType& v,
                                    const MatrixType& a,
                                    const VectorType& d) {
-      using real = typename MatrixTraits<MatrixType>::NumType;
+      using real = MathObjectNumType<MatrixType>;
       TFEL_CONSTEXPR const auto eps = 100 * std::numeric_limits<real>::min();
       QRDecomp::back_substitute(v, a, d, eps);
     }
 
     template <typename MatrixType>
-    typename MatrixTraits<MatrixType>::NumType QRDecomp::enorm(
+    MathObjectNumType<MatrixType> QRDecomp::enorm(
         const MatrixType& m,
-        const typename MatrixTraits<MatrixType>::IndexType c,
-        const typename MatrixTraits<MatrixType>::IndexType b,
-        const typename MatrixTraits<MatrixType>::IndexType e) {
-      using real = typename MatrixTraits<MatrixType>::NumType;
-      using size_type = typename MatrixTraits<MatrixType>::IndexType;
+        const typename MathObjectTraits<MatrixType>::IndexType c,
+        const typename MathObjectTraits<MatrixType>::IndexType b,
+        const typename MathObjectTraits<MatrixType>::IndexType e) {
+      using real = MathObjectNumType<MatrixType>;
+      using size_type = typename MathObjectTraits<MatrixType>::IndexType;
       auto n = real(0);
       for (size_type i = b; i != e; ++i) {
         const auto v = m(i, c);

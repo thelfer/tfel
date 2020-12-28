@@ -16,27 +16,23 @@
 
 #include "TFEL/TypeTraits/BaseType.hxx"
 
-namespace tfel {
+namespace tfel::math {
 
-  namespace math {
+  /*
+   * \class tmatrix.
+   * \brief a class representing tiny matrixs of fixed size.
+   * \param unsigned short, the number of rows hold by the tmatrix.
+   * \param unsigned short, the number of columns hold by the tmatrix.
+   * \param typename T, the type hold by the tmatrix.
+   */
+  template <unsigned short N, unsigned short M, typename T>
+  struct tmatrix;
 
-    /*
-     * \class tmatrix.
-     * \brief a class representing tiny matrixs of fixed size.
-     * \param unsigned short, the number of rows hold by the tmatrix.
-     * \param unsigned short, the number of columns hold by the tmatrix.
-     * \param typename T, the type hold by the tmatrix.
-     */
-    template <unsigned short N, unsigned short M, typename T>
-    struct tmatrix;
-    
-    //! a simple alias
-    template <typename T>
-    using rotation_matrix = tmatrix<3, 3, tfel::typetraits::base_type<T>>;
+  //! a simple alias
+  template <typename T>
+  using rotation_matrix = tmatrix<3, 3, tfel::typetraits::base_type<T>>;
 
-  } // end of namespace math
-
-} // end of namespace tfel
+}  // end of namespace tfel::math
 
 #endif /* LIB_TFEL_MATH_FORWARD_TMATRIX_HXX */
 

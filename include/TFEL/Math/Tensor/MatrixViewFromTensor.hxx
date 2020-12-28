@@ -14,9 +14,9 @@
 #include "TFEL/Math/General/EmptyRunTimeProperties.hxx"
 #include "TFEL/Math/ExpressionTemplates/Expr.hxx"
 #include "TFEL/Math/Vector/VectorUtilities.hxx"
-#include "TFEL/Math/Tensor/TensorConcept.hxx"
 #include "TFEL/Math/Forward/tmatrix.hxx"
 #include "TFEL/Math/Forward/tensor.hxx"
+#include "TFEL/Math/Matrix/MatrixConcept.hxx"
 
 namespace tfel::math {
 
@@ -24,12 +24,6 @@ namespace tfel::math {
     template <unsigned short N>
     struct TensorConceptMatrixAccessOperator;
   }
-
-  template <typename T>
-  struct TensorConcept;
-
-  template <typename T>
-  struct TensorTraits;
 
   /*!
    * Matrix view from tensor
@@ -44,10 +38,9 @@ namespace tfel::math {
         public MatrixConcept<
             Expr<tmatrix<3u, 3u, TensorNumType<std::decay_t<TensorType>>>,
                  MatrixViewFromTensorExpr<TensorType>>> {
-    static_assert(
-        tfel::meta::Implements<std::decay_t<TensorType>, TensorConcept>::cond);
+    static_assert(implementsTensorConcept<TensorType>());
 
-    using traits = TensorTraits<std::decay_t<TensorType>>;
+    using traits = MathObjectTraits<std::decay_t<TensorType>>;
     using NumType = typename traits::NumType;
     typedef unsigned short IndexType;
     typedef EmptyRunTimeProperties RunTimeProperties;

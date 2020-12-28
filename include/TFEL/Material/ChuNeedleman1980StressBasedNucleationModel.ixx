@@ -62,7 +62,7 @@ namespace tfel {
       using stress = ChuNeedleman1980StressBasedNucleationModelStressType<
           StressStensorType>;
       constexpr const auto N =
-          tfel::math::StensorTraits<StressStensorType>::dime;
+          tfel::math::getSpaceDimension<StressStensorType>();
       using Stensor = tfel::math::stensor<N, real>;
       // 1 / sqrt(2*pi)
       constexpr const auto cste = real(0.398942280401433);

@@ -44,7 +44,7 @@ namespace tfel {
     //! a simple alias
     template <typename StressStensor>
     using GursonTvergaardNeedleman1982StressNormalType = tfel::math::stensor<
-        tfel::math::StensorTraits<StressStensor>::dime,
+        tfel::math::getSpaceDimension<StressStensor>(),
         GursonTvergaardNeedleman1982BaseType<StressStensor>>;
     //! a simple alias
     template <typename StressStensor>
@@ -54,13 +54,13 @@ namespace tfel {
     template <typename StressStensor>
     using GursonTvergaardNeedleman1982StressEigenTensorType =
         tfel::math::stensor<
-            tfel::math::StensorTraits<StressStensor>::dime,
+            tfel::math::getSpaceDimension<StressStensor>(),
             GursonTvergaardNeedleman1982BaseType<StressStensor>>;
     //! a simple alias
     template <typename StressStensor>
     using GursonTvergaardNeedleman1982StressSecondDerivativeType =
         tfel::math::st2tost2<
-            tfel::math::StensorTraits<StressStensor>::dime,
+            tfel::math::getSpaceDimension<StressStensor>(),
             GursonTvergaardNeedleman1982InvertStressType<StressStensor>>;
     //! a simple alias
     template <typename StressStensor>

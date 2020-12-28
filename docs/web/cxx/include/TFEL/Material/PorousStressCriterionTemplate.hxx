@@ -42,7 +42,7 @@ namespace tfel {
     //! a simple alias
     template <typename StressStensor>
     using __StressCriterionName__StressNormalType =
-        tfel::math::stensor<tfel::math::StensorTraits<StressStensor>::dime,
+        tfel::math::stensor<tfel::math::getSpaceDimension<StressStensor>(),
                             __StressCriterionName__BaseType<StressStensor>>;
     //! a simple alias
     template <typename StressStensor>
@@ -51,12 +51,12 @@ namespace tfel {
     //! a simple alias
     template <typename StressStensor>
     using __StressCriterionName__StressEigenTensorType =
-        tfel::math::stensor<tfel::math::StensorTraits<StressStensor>::dime,
+        tfel::math::stensor<tfel::math::getSpaceDimension<StressStensor>(),
                             __StressCriterionName__BaseType<StressStensor>>;
     //! a simple alias
     template <typename StressStensor>
     using __StressCriterionName__StressSecondDerivativeType =
-        tfel::math::st2tost2<tfel::math::StensorTraits<StressStensor>::dime,
+        tfel::math::st2tost2<tfel::math::getSpaceDimension<StressStensor>(),
                              __StressCriterionName__InvertStressType<StressStensor>>;
     //! a simple alias
     template <typename StressStensor>

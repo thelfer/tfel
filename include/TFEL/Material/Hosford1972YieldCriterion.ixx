@@ -40,7 +40,7 @@ namespace tfel {
        * \param[in] e: criterion used to check if two eigenvalues are equal
        */
       template <typename StressStensor>
-      typename std::enable_if<tfel::math::StensorTraits<StressStensor>::dime ==
+      typename std::enable_if<tfel::math::getSpaceDimension<StressStensor>() ==
                                   1u,
                               void>::type
       computeHosfordStressSecondDerivative(
@@ -77,7 +77,7 @@ namespace tfel {
           * \param[in] e: criterion used to check if two eigenvalues are equal
           */
       template <typename StressStensor>
-      typename std::enable_if<tfel::math::StensorTraits<StressStensor>::dime ==
+      typename std::enable_if<tfel::math::getSpaceDimension<StressStensor>() ==
                                   2u,
                               void>::type
       computeHosfordStressSecondDerivative(
@@ -135,7 +135,7 @@ namespace tfel {
           * \param[in] e: criterion used to check if two eigenvalues are equal
           */
       template <typename StressStensor>
-      typename std::enable_if<tfel::math::StensorTraits<StressStensor>::dime ==
+      typename std::enable_if<tfel::math::getSpaceDimension<StressStensor>() ==
                                   3u,
                               void>::type
       computeHosfordStressSecondDerivative(
@@ -246,7 +246,7 @@ namespace tfel {
     computeHosfordStressNormal(const StressStensor& s,
                                const HosfordExponentType a,
                                const HosfordStressType<StressStensor> e) {
-      constexpr const auto N = tfel::math::StensorTraits<StressStensor>::dime;
+      constexpr const auto N = tfel::math::getSpaceDimension<StressStensor>();
       using stress = HosfordStressType<StressStensor>;
       using real = HosfordBaseType<StressStensor>;
       using normal = HosfordStressNormalType<StressStensor>;
@@ -301,7 +301,7 @@ namespace tfel {
         const StressStensor& s,
         const HosfordExponentType a,
         const HosfordStressType<StressStensor> e) {
-      constexpr const auto N = tfel::math::StensorTraits<StressStensor>::dime;
+      constexpr const auto N = tfel::math::getSpaceDimension<StressStensor>();
       using stress = HosfordStressType<StressStensor>;
       using real = HosfordBaseType<StressStensor>;
       using istress = tfel::math::result_type<real, stress, tfel::math::OpDiv>;

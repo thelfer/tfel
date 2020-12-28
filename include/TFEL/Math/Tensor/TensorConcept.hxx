@@ -23,14 +23,12 @@
 #include "TFEL/TypeTraits/BaseType.hxx"
 #include "TFEL/Math/power.hxx"
 #include "TFEL/Math/General/Abs.hxx"
+#include "TFEL/Math/General/MathObjectTraits.hxx"
 #include "TFEL/Math/General/ConceptRebind.hxx"
 #include "TFEL/Math/MathException.hxx"
 #include "TFEL/Math/Forward/tensor.hxx"
 #include "TFEL/Math/Forward/stensor.hxx"
-#include "TFEL/Math/Forward/MatrixConcept.hxx"
-#include "TFEL/Math/Forward/tmatrix.hxx"
 #include "TFEL/Math/Stensor/StensorConcept.hxx"
-#include "TFEL/Math/Tensor/TensorTransposeExpr.hxx"
 
 namespace tfel::math {
 
@@ -38,24 +36,9 @@ namespace tfel::math {
   template <typename TensorType>
   struct MatrixViewFromTensorExpr;
 
-  /*!
-   * \brief a traits class for tensors. This shall be specialised
-   * for classes implementing the tensor concept (@see TensorConcept).
-   * \tparam T: class
-   */
-  template <typename T>
-  struct TensorTraits {
-    //! numeric type using by the tensor
-    typedef tfel::meta::InvalidType NumType;
-    //! index type
-    typedef unsigned short IndexType;
-    //! space dimension
-    static constexpr unsigned short dime = 0u;
-  };  // end of struct TensorTraits
-
   //! a simple alias
   template <typename T>
-  using TensorNumType = typename TensorTraits<T>::NumType;
+  using TensorNumType = MathObjectNumType<T>;
 
   /*!
    * \class TensorTag
@@ -125,6 +108,11 @@ namespace tfel::math {
     ~TensorConcept() = default;
   };
 
+  /*!
+   * \brief an helper function which returns if the given type implements the
+   * `TensorConcept`.
+   * \tparam TensorType: type tested
+   */
   template <typename TensorType>
   constexpr bool implementsTensorConcept() {
     return tfel::meta::implements<TensorType, TensorConcept>();
@@ -154,7 +142,7 @@ namespace tfel::math {
   template <typename TensorType>
   TFEL_MATH_INLINE std::enable_if_t<
       implementsTensorConcept<TensorType>(),
-      stensor<TensorTraits<TensorType>::dime, TensorNumType<TensorType>>>
+      stensor<getSpaceDimension<TensorType>(), TensorNumType<TensorType>>>
   syme(const TensorType&);
 
   template <typename TensorType>
@@ -162,7 +150,7 @@ namespace tfel::math {
       (implementsTensorConcept<TensorType>()) &&
           (tfel::typetraits::IsFundamentalNumericType<
               TensorNumType<TensorType>>::cond),
-      stensor<TensorTraits<TensorType>::dime, TensorNumType<TensorType>>>
+      stensor<getSpaceDimension<TensorType>(), TensorNumType<TensorType>>>
   computeRightCauchyGreenTensor(const TensorType&);
 
   template <typename TensorType>
@@ -170,7 +158,7 @@ namespace tfel::math {
       (implementsTensorConcept<TensorType>()) &&
           (tfel::typetraits::IsFundamentalNumericType<
               TensorNumType<TensorType>>::cond),
-      stensor<TensorTraits<TensorType>::dime, TensorNumType<TensorType>>>
+      stensor<getSpaceDimension<TensorType>(), TensorNumType<TensorType>>>
   computeLeftCauchyGreenTensor(const TensorType&);
 
   template <typename TensorType>
@@ -178,7 +166,7 @@ namespace tfel::math {
       (implementsTensorConcept<TensorType>()) &&
           (tfel::typetraits::IsFundamentalNumericType<
               TensorNumType<TensorType>>::cond),
-      stensor<TensorTraits<TensorType>::dime, TensorNumType<TensorType>>>
+      stensor<getSpaceDimension<TensorType>(), TensorNumType<TensorType>>>
   computeGreenLagrangeTensor(const TensorType&);
 
   /*!
@@ -193,7 +181,7 @@ namespace tfel::math {
        (implementsTensorConcept<TensorType>()) &&
        (tfel::typetraits::IsFundamentalNumericType<
            TensorNumType<StensorType>>::cond)),
-      stensor<StensorTraits<StensorType>::dime, StensorNumType<StensorType>>>
+      stensor<getSpaceDimension<StensorType>(), StensorNumType<StensorType>>>
   pushForward(const StensorType&, const TensorType&);
   /*!
    * compute the product:
@@ -208,7 +196,7 @@ namespace tfel::math {
        (implementsTensorConcept<TensorType>()) &&
        (tfel::typetraits::IsFundamentalNumericType<
            TensorNumType<StensorType>>::cond)),
-      stensor<StensorTraits<StensorType>::dime, StensorNumType<StensorType>>>
+      stensor<getSpaceDimension<StensorType>(), StensorNumType<StensorType>>>
   push_forward(const StensorType&, const TensorType&);
 
   template <typename StensorType, typename TensorType>
@@ -217,7 +205,7 @@ namespace tfel::math {
        (implementsTensorConcept<TensorType>()) &&
        (tfel::typetraits::IsFundamentalNumericType<
            TensorNumType<TensorType>>::cond)),
-      stensor<StensorTraits<StensorType>::dime, StensorNumType<StensorType>>>
+      stensor<getSpaceDimension<StensorType>(), StensorNumType<StensorType>>>
   convertCauchyStressToSecondPiolaKirchhoffStress(const StensorType&,
                                                   const TensorType&);
 
@@ -227,7 +215,7 @@ namespace tfel::math {
        (implementsTensorConcept<TensorType>()) &&
        (tfel::typetraits::IsFundamentalNumericType<
            TensorNumType<TensorType>>::cond)),
-      stensor<StensorTraits<StensorType>::dime, StensorNumType<StensorType>>>
+      stensor<getSpaceDimension<StensorType>(), StensorNumType<StensorType>>>
   convertSecondPiolaKirchhoffStressToCauchyStress(const StensorType&,
                                                   const TensorType&);
 
@@ -268,10 +256,10 @@ namespace tfel::math {
                        TensorNumType<TensorType2>>::value &&
           std::is_same<tfel::typetraits::base_type<TensorNumType<TensorType2>>,
                        TensorNumType<TensorType>>::value &&
-          (TensorTraits<TensorType>::dime == TensorTraits<TensorType2>::dime) &&
-          (TensorTraits<TensorType>::dime ==
-           StensorTraits<StensorType>::dime) &&
-          (TensorTraits<TensorType>::dime == 1u),
+          (getSpaceDimension<TensorType>() == getSpaceDimension<TensorType2>()) &&
+          (getSpaceDimension<TensorType>() ==
+           getSpaceDimension<StensorType>()) &&
+          (getSpaceDimension<TensorType>() == 1u),
       void>
   polar_decomposition(TensorType&, StensorType&, const TensorType2&);
 
@@ -290,62 +278,13 @@ namespace tfel::math {
                        TensorNumType<TensorType2>>::value &&
           std::is_same<tfel::typetraits::base_type<TensorNumType<TensorType2>>,
                        TensorNumType<TensorType>>::value &&
-          (TensorTraits<TensorType>::dime == TensorTraits<TensorType2>::dime) &&
-          (TensorTraits<TensorType>::dime ==
-           StensorTraits<StensorType>::dime) &&
-          ((TensorTraits<TensorType>::dime == 2u) ||
-           (TensorTraits<TensorType>::dime == 3u)),
+          (getSpaceDimension<TensorType>() == getSpaceDimension<TensorType2>()) &&
+          (getSpaceDimension<TensorType>() ==
+           getSpaceDimension<StensorType>()) &&
+          ((getSpaceDimension<TensorType>() == 2u) ||
+           (getSpaceDimension<TensorType>() == 3u)),
       void>
   polar_decomposition(TensorType&, StensorType&, const TensorType2&);
-
-  // template<typename TensorType>
-  // TFEL_MATH_INLINE auto
-  // matrix_view(TensorType&& t)
-  // -> std::enable_if_t<
-  //   tfel::meta::Implements<typename
-  //   std::decay<TensorType>::type,TensorConcept>::cond,
-  //   Expr<tmatrix<3u,3u,TensorNumType<typename
-  //   std::decay<decltype(t)>::type>>,
-  //   MatrixViewFromTensorExpr<decltype(t)>>>::type;
-
-  // /*!
-  //  * \return a transposed view of  the tensor
-  //  */
-  // template<typename TensorType>
-  // TFEL_MATH_INLINE auto
-  // transpose(TensorType&& t)
-  // -> std::enable_if_t<
-  //   tfel::meta::Implements<typename
-  //   std::decay<TensorType>::type,TensorConcept>::cond &&
-  //   (TensorTraits<std::decay_t<TensorType>>::dime==1u),
-  //   Expr<tensor<1u,TensorNumType<std::decay_t<decltype(t)>>>,
-  // 	   TensorTransposeExpr1D<decltype(t)>>>::type;
-
-  // /*!
-  //  * \return a transposed view of  the tensor
-  //  */
-  // template<typename TensorType>
-  // TFEL_MATH_INLINE auto
-  // transpose(TensorType&& t)
-  // -> std::enable_if_t<
-  //   tfel::meta::Implements<typename
-  //   std::decay<TensorType>::type,TensorConcept>::cond &&
-  //   (TensorTraits<std::decay_t<TensorType>>::dime==2u),
-  //   Expr<tensor<2u,TensorNumType<std::decay_t<decltype(t)>>>,
-  // 	   TensorTransposeExpr2D<decltype(t)>>>::type;
-
-  // /*!
-  //  * \return a transposed view of  the tensor
-  //  */
-  // template<typename TensorType>
-  // TFEL_MATH_INLINE auto
-  // transpose(TensorType&& t)
-  // -> std::enable_if_t<
-  //   tfel::meta::Implements<typename
-  //   std::decay<TensorType>::type,TensorConcept>::cond &&
-  //   (TensorTraits<std::decay_t<TensorType>>::dime==3u),
-  //   Expr<tensor<3u,TensorNumType<std::decay_t<decltype(t)>>>,
-  // 	   TensorTransposeExpr3D<decltype(t)>>>::type;
 
 }  // end of namespace tfel::math
 

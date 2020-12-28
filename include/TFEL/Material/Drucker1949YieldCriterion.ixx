@@ -75,7 +75,7 @@ namespace tfel {
       using stress = Drucker1949StressType<StressStensor>;
       using real = Drucker1949BaseType<StressStensor>;
       using istress = Drucker1949InvertStressType<StressStensor>;
-      constexpr const auto N = tfel::math::StensorTraits<StressStensor>::dime;
+      constexpr const auto N = tfel::math::getSpaceDimension<StressStensor>();
       TFEL_CONSTEXPR const auto e = real(1) / 6;
       TFEL_CONSTEXPR const auto sqrt3 = tfel::math::Cste<real>::sqrt3;
       const auto s = deviator(sig);

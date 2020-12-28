@@ -14,25 +14,38 @@
 #ifndef LIB_TFEL_MATH_FORWARD_ST2TOST2_HXX
 #define LIB_TFEL_MATH_FORWARD_ST2TOST2_HXX 
 
-namespace tfel{
-  
-  namespace math {
+#include "TFEL/Math/General/MathObjectTraits.hxx"
 
-    /*
-     * \class st2tost2
-     * \brief finite size linear function on symmetric tensor.
-     * \param N, the spatial dimension, see StensorDimeToSize for details. 
-     * \param T, numerical type used, by default, double
-     * \pre   This class is only defined for N=1u,2u and 3u.
-     * \see   StensorDimeToSize and StensorSizeToDime.
-     */
-    template<unsigned short N,
-	     typename T = double>
-    struct st2tost2;
+namespace tfel::math {
 
-  } // end of namespace math
+  /*!
+   * \class st2tost2
+   * \brief linear operator on symmetric tensors.
+   * \tparam N: the spatial dimension, see StensorDimeToSize for details.
+   * \tparam T: numerical type used, by default, double
+   * \pre   This class is only defined for N=1u,2u and 3u.
+   * \see   StensorDimeToSize and StensorSizeToDime.
+   */
+  template <unsigned short N, typename T = double>
+  struct st2tost2;
 
-} // end of namespace tfel
+  /*!
+   * \brief partial specialisation of the `MathObjectTraits` class for
+   * `st2tost2`.
+   * \tparam N: space dimension
+   * \tparam T: numeric type
+   */
+  template <unsigned short N, typename T>
+  struct MathObjectTraits<st2tost2<N, T>> {
+    //! \brief numeric type
+    using NumType = T;
+    //! \brief index type
+    using IndexType = unsigned short;
+    //! \brief space dimension
+    static constexpr unsigned short dime = N;
+  };
+
+}  // end of namespace tfel::math
 
 #endif /* LIB_TFEL_MATH_FORWARD_ST2TOST2_HXX */
 

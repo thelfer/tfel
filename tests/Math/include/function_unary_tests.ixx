@@ -32,10 +32,10 @@ void function(const tfel::math::VectorConcept<T>& x){
 
 template<class T>
 void function(const tfel::math::VectorConcept<T>& x,
-	      const typename tfel::math::VectorTraits<T>::NumType v0,
-	      const typename tfel::math::VectorTraits<T>::NumType v1,
-	      const typename tfel::math::VectorTraits<T>::NumType v2,
-	      const typename tfel::math::VectorTraits<T>::NumType eps,
+	      const typename tfel::math::MathObjectTraits<T>::NumType v0,
+	      const typename tfel::math::MathObjectTraits<T>::NumType v1,
+	      const typename tfel::math::MathObjectTraits<T>::NumType v2,
+	      const typename tfel::math::MathObjectTraits<T>::NumType eps,
 	      const unsigned int test_number)
 {
 #ifdef TFEL_VERBOSE
@@ -50,11 +50,11 @@ void function(const tfel::math::VectorConcept<T>& x,
 
 template<class T>
 void function(const tfel::math::MatrixConcept<T>& x,
-	      const typename tfel::math::MatrixTraits<T>::NumType v0,
-	      const typename tfel::math::MatrixTraits<T>::NumType v1,
-	      const typename tfel::math::MatrixTraits<T>::NumType v2,
-	      const typename tfel::math::MatrixTraits<T>::NumType v3,
-	      const typename tfel::math::MatrixTraits<T>::NumType eps,
+	      const typename tfel::math::MathObjectTraits<T>::NumType v0,
+	      const typename tfel::math::MathObjectTraits<T>::NumType v1,
+	      const typename tfel::math::MathObjectTraits<T>::NumType v2,
+	      const typename tfel::math::MathObjectTraits<T>::NumType v3,
+	      const typename tfel::math::MathObjectTraits<T>::NumType eps,
 	      const unsigned int test_number)
 {
 #ifdef TFEL_VERBOSE

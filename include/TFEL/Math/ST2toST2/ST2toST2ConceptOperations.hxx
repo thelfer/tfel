@@ -2,7 +2,7 @@
  * \file   include/TFEL/Math/ST2toST2/ST2toST2ConceptOperations.hxx
  * \brief  This file implements operations that can be applied to st2tost2.
  * \author Thomas Helfer
- * \date   01 jui 2006
+ * \date   01/07/2006
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence
@@ -11,12 +11,11 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_TFEL_ST2TOST2_CONCEPT_OPERATIONS_HXX
-#define LIB_TFEL_ST2TOST2_CONCEPT_OPERATIONS_HXX
+#ifndef LIB_TFEL_MATH_ST2TOST2_CONCEPT_OPERATIONS_HXX
+#define LIB_TFEL_MATH_ST2TOST2_CONCEPT_OPERATIONS_HXX
 
 #include <cmath>
 #include "TFEL/Config/TFELConfig.hxx"
-#include "TFEL/Metaprogramming/Implements.hxx"
 #include "TFEL/Math/Stensor/StensorConcept.hxx"
 #include "TFEL/Math/ExpressionTemplates/Expr.hxx"
 #include "TFEL/Math/ExpressionTemplates/StandardOperations.hxx"
@@ -25,12 +24,6 @@
 #include "TFEL/Math/ST2toST2/ST2toST2ST2toST2ProductExpr.hxx"
 
 namespace tfel::math {
-
-  template <typename T_type, typename Operation>
-  struct ST2toST2Traits<Expr<T_type, Operation>> {
-    using NumType = typename ST2toST2Traits<T_type>::NumType;
-    static constexpr unsigned short dime = ST2toST2Traits<T_type>::dime;
-  };
 
   /*
    * Partial Specialisation of ComputeBinaryResult_ for st2tost2's operation
@@ -42,7 +35,7 @@ namespace tfel::math {
     using ST2toST2TypeB = EvaluationResult<B>;
 
    public:
-    using Result = typename ResultType<ST2toST2TypeA, ST2toST2TypeB, Op>::type;
+    using Result = result_type<ST2toST2TypeA, ST2toST2TypeB, Op>;
     using Handle = std::conditional_t<tfel::typetraits::IsInvalid<Result>::cond,
                                       DummyHandle,
                                       Expr<Result, BinaryOperation<A, B, Op>>>;
@@ -58,7 +51,7 @@ namespace tfel::math {
     using ST2toST2TypeB = EvaluationResult<B>;
 
    public:
-    using Result = typename ResultType<A, ST2toST2TypeB, Op>::type;
+    using Result = result_type<A, ST2toST2TypeB, Op>;
     using Handle =
         std::conditional_t<tfel::typetraits::IsInvalid<Result>::cond,
                            DummyHandle,
@@ -75,7 +68,7 @@ namespace tfel::math {
     using ST2toST2TypeA = EvaluationResult<A>;
 
    public:
-    using Result = typename ResultType<ST2toST2TypeA, B, Op>::type;
+    using Result = result_type<ST2toST2TypeA, B, Op>;
     using Handle =
         std::conditional_t<tfel::typetraits::IsInvalid<Result>::cond,
                            DummyHandle,
@@ -94,12 +87,12 @@ namespace tfel::math {
 
    public:
     using Result =
-        typename ResultType<ST2toST2TypeA, ST2toST2TypeB, OpMult>::type;
+        result_type<ST2toST2TypeA, ST2toST2TypeB, OpMult>;
     using Handle = std::conditional_t<
         tfel::typetraits::IsInvalid<Result>::cond,
         DummyHandle,
         Expr<Result,
-             ST2toST2ST2toST2ProductExpr<ST2toST2Traits<Result>::dime>>>;
+             ST2toST2ST2toST2ProductExpr<getSpaceDimension<Result>()>>>;
   };
 
   /*
@@ -111,14 +104,15 @@ namespace tfel::math {
     struct DummyHandle {};
     using ST2toST2TypeA = EvaluationResult<A>;
     //! \brief a simple alias
-    using StensB = EvaluationResult<B>;
+    using StensorTypeB = EvaluationResult<B>;
 
    public:
-    using Result = typename ResultType<ST2toST2TypeA, StensB, OpMult>::type;
+    using Result =
+        result_type<ST2toST2TypeA, StensorTypeB, OpMult>;
     using Handle = std::conditional_t<
         tfel::typetraits::IsInvalid<Result>::cond,
         DummyHandle,
-        Expr<Result, ST2toST2StensorProductExpr<StensorTraits<Result>::dime>>>;
+        Expr<Result, ST2toST2StensorProductExpr<getSpaceDimension<Result>()>>>;
   };
 
   /*
@@ -129,16 +123,17 @@ namespace tfel::math {
   class ComputeBinaryResult_<StensorTag, ST2toST2Tag, A, B, OpMult> {
     struct DummyHandle {};
     //! \brief a simple alias
-    using StensA = EvaluationResult<A>;
+    using StensorTypeA = EvaluationResult<A>;
     //! \brief a simple alias
     using ST2toST2TypeB = EvaluationResult<B>;
 
    public:
-    using Result = typename ResultType<StensA, ST2toST2TypeB, OpMult>::type;
+    using Result =
+        result_type<StensorTypeA, ST2toST2TypeB, OpMult>;
     using Handle = std::conditional_t<
         tfel::typetraits::IsInvalid<Result>::cond,
         DummyHandle,
-        Expr<Result, StensorST2toST2ProductExpr<StensorTraits<Result>::dime>>>;
+        Expr<Result, StensorST2toST2ProductExpr<getSpaceDimension<Result>()>>>;
   };
 
   /*
@@ -158,8 +153,8 @@ namespace tfel::math {
 
   template <typename T1, typename T2>
   TFEL_MATH_INLINE typename std::enable_if<
-      tfel::meta::Implements<T1, StensorConcept>::cond &&
-          tfel::meta::Implements<T2, ST2toST2Concept>::cond &&
+      implementsStensorConcept<T1>() &&
+          implementsST2toST2Concept<T2>() &&
           !tfel::typetraits::IsInvalid<
               typename ComputeBinaryResult<T1, T2, OpMult>::Result>::cond,
       typename ComputeBinaryResult<T1, T2, OpMult>::Handle>::type
@@ -170,4 +165,4 @@ namespace tfel::math {
 
 }  // end of namespace tfel::math
 
-#endif /* LIB_TFEL_ST2TOST2_CONCEPT_OPERATIONS_HXX */
+#endif /* LIB_TFEL_MATH_ST2TOST2_CONCEPT_OPERATIONS_HXX */

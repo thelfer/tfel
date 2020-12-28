@@ -41,7 +41,7 @@ namespace tfel::math {
       implementsStensorConcept<StensorType>(),
       typename tfel::typetraits::AbsType<StensorNumType<StensorType>>::type>
   abs(const StensorType& s) {
-    constexpr const auto N = StensorTraits<StensorType>::dime;
+    constexpr const auto N = getSpaceDimension<StensorType>();
     static_assert((N == 1) || (N == 2) || (N == 3), "invalid space dimension");
     if constexpr (N == 1u) {
       return tfel::math::abs(s(0)) + tfel::math::abs(s(1)) +
@@ -61,7 +61,7 @@ namespace tfel::math {
                    StensorNumType<StensorType>>
   sigmaeq(const StensorType& s) {
     using real = tfel::typetraits::base_type<StensorNumType<StensorType>>;
-    constexpr const auto N = StensorTraits<StensorType>::dime;
+    constexpr const auto N = getSpaceDimension<StensorType>();
     TFEL_CONSTEXPR const auto one_third = real(1) / real(3);
     TFEL_CONSTEXPR const auto cste = real(3) / real(2);
     static_assert((N == 1) || (N == 2) || (N == 3), "invalid space dimension");
@@ -89,7 +89,7 @@ namespace tfel::math {
   deviator(const StensorType& s) {
     using Result = EvaluationResult<StensorType>;
     using real = tfel::typetraits::base_type<StensorNumType<StensorType>>;
-    constexpr const auto N = StensorTraits<StensorType>::dime;
+    constexpr const auto N = getSpaceDimension<StensorType>();
     static_assert((N == 1) || (N == 2) || (N == 3), "invalid space dimension");
     TFEL_CONSTEXPR const auto one_third = real{1} / real{3};
     const auto tr = one_third * trace(s);
@@ -112,8 +112,8 @@ namespace tfel::math {
               StensorNumType<StensorResultType>>::cond,
       void>
   computeDeterminantDerivative(StensorResultType& dJ, const StensorType& s) {
-    constexpr const auto N = StensorTraits<StensorType>::dime;
-    static_assert(N == StensorTraits<StensorResultType>::dime,
+    constexpr const auto N = getSpaceDimension<StensorType>();
+    static_assert(N == getSpaceDimension<StensorResultType>(),
                   "arguments must have the same space dimension");
     static_assert((N == 1) || (N == 2) || (N == 3), "invalid space dimension");
     if constexpr (N == 1u) {
@@ -150,8 +150,8 @@ namespace tfel::math {
       void>
   computeDeviatorDeterminantDerivative(StensorResultType& dJ,
                                        const StensorType& s) {
-    constexpr const auto N = StensorTraits<StensorType>::dime;
-    static_assert(N == StensorTraits<StensorResultType>::dime,
+    constexpr const auto N = getSpaceDimension<StensorType>();
+    static_assert(N == getSpaceDimension<StensorResultType>(),
                   "arguments must have the same space dimension");
     static_assert((N == 1) || (N == 2) || (N == 3), "invalid space dimension");
     if constexpr (N == 1u) {

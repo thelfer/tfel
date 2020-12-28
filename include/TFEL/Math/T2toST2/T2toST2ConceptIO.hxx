@@ -35,19 +35,19 @@ namespace tfel{
       unsigned short i;
       unsigned short j;
       os << "[";
-      for(i=0;i<StensorDimeToSize<T2toST2Traits<T>::dime>::value;++i){
+      for(i=0;i<StensorDimeToSize<getSpaceDimension<T>()>::value;++i){
 	if(i!=0){
 	  os << " [";
 	} else {
 	  os << "[";
 	}
-	for(j=0;j<TensorDimeToSize<T2toST2Traits<T>::dime>::value;++j){
+	for(j=0;j<TensorDimeToSize<getSpaceDimension<T>()>::value;++j){
 	  os << s(i,j);
-	  if(j!=TensorDimeToSize<T2toST2Traits<T>::dime>::value-1){
+	  if(j!=TensorDimeToSize<getSpaceDimension<T>()>::value-1){
 	    os << ",";
 	  }
 	}
-	if(i!=StensorDimeToSize<T2toST2Traits<T>::dime>::value-1){
+	if(i!=StensorDimeToSize<getSpaceDimension<T>()>::value-1){
 	  os << "]\n";
 	} else {
 	  os << "]";

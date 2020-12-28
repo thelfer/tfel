@@ -32,7 +32,7 @@ namespace tfel{
     {
       unsigned short i;
       os << "[ ";
-      for(i=0;i!=TensorDimeToSize<TensorTraits<T>::dime>::value;++i){
+      for(i=0;i!=TensorDimeToSize<getSpaceDimension<T>()>::value;++i){
 	os << s(i) << " ";
       }
       os << "]";

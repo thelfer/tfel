@@ -35,23 +35,23 @@ namespace tfel::math {
       : public TensorConcept<
             Expr<TensorResultType, StensorT2toST2ProductExpr<1u>>>,
         public fsarray<
-            TensorDimeToSize<TensorTraits<TensorResultType>::dime>::value,
-            typename TensorTraits<TensorResultType>::NumType> {
-    static_assert(TensorTraits<TensorResultType>::dime == 1u);
+            TensorDimeToSize<getSpaceDimension<TensorResultType>()>::value,
+            MathObjectNumType<TensorResultType>> {
+    static_assert(getSpaceDimension<TensorResultType>() == 1u);
     //! a simple alias
     typedef EmptyRunTimeProperties RunTimeProperties;
     //! a simple alias
-    typedef typename TensorTraits<TensorResultType>::NumType value_type;
+    typedef MathObjectNumType<TensorResultType> value_type;
     /*!
      * \param[in] a : first term of the product
      * \param[in] b : second term of the product
      */
     template <typename StensorType, typename T2toST2Type>
     TFEL_MATH_INLINE Expr(const StensorType& a, const T2toST2Type& b) {
-      static_assert(tfel::meta::Implements<T2toST2Type, T2toST2Concept>::cond);
-      static_assert(tfel::meta::Implements<StensorType, StensorConcept>::cond);
-      static_assert(T2toST2Traits<T2toST2Type>::dime == 1u);
-      static_assert(StensorTraits<StensorType>::dime == 1u);
+      static_assert(implementsT2toST2Concept<T2toST2Type>());
+      static_assert(implementsStensorConcept<StensorType>());
+      static_assert(getSpaceDimension<T2toST2Type>() == 1u);
+      static_assert(getSpaceDimension<StensorType>() == 1u);
       this->v[0] = b(0, 0) * a(0) + b(1, 0) * a(1) + b(2, 0) * a(2);
       this->v[1] = b(0, 1) * a(0) + b(1, 1) * a(1) + b(2, 1) * a(2);
       this->v[2] = b(0, 2) * a(0) + b(1, 2) * a(1) + b(2, 2) * a(2);
@@ -80,23 +80,23 @@ namespace tfel::math {
       : public TensorConcept<
             Expr<TensorResultType, StensorT2toST2ProductExpr<2u>>>,
         public fsarray<
-            TensorDimeToSize<TensorTraits<TensorResultType>::dime>::value,
-            typename TensorTraits<TensorResultType>::NumType> {
-    static_assert(TensorTraits<TensorResultType>::dime == 2u);
+            TensorDimeToSize<getSpaceDimension<TensorResultType>()>::value,
+            MathObjectNumType<TensorResultType>> {
+    static_assert(getSpaceDimension<TensorResultType>() == 2u);
     //! a simple alias
     typedef EmptyRunTimeProperties RunTimeProperties;
     //! a simple alias
-    typedef typename TensorTraits<TensorResultType>::NumType value_type;
+    typedef MathObjectNumType<TensorResultType> value_type;
     /*!
      * \param[in] a : first term of the product
      * \param[in] b : second term of the product
      */
     template <typename StensorType, typename T2toST2Type>
     TFEL_MATH_INLINE Expr(const StensorType& a, const T2toST2Type& b) {
-      static_assert(tfel::meta::Implements<T2toST2Type, T2toST2Concept>::cond);
-      static_assert(tfel::meta::Implements<StensorType, StensorConcept>::cond);
-      static_assert(T2toST2Traits<T2toST2Type>::dime == 2u);
-      static_assert(StensorTraits<StensorType>::dime == 2u);
+      static_assert(implementsT2toST2Concept<T2toST2Type>());
+      static_assert(implementsStensorConcept<StensorType>());
+      static_assert(getSpaceDimension<T2toST2Type>() == 2u);
+      static_assert(getSpaceDimension<StensorType>() == 2u);
       this->v[0] =
           b(3, 0) * a[3] + b(2, 0) * a[2] + b(1, 0) * a[1] + b(0, 0) * a[0];
       this->v[1] =
@@ -132,23 +132,23 @@ namespace tfel::math {
       : public TensorConcept<
             Expr<TensorResultType, StensorT2toST2ProductExpr<3u>>>,
         public fsarray<
-            TensorDimeToSize<TensorTraits<TensorResultType>::dime>::value,
-            typename TensorTraits<TensorResultType>::NumType> {
-    static_assert(TensorTraits<TensorResultType>::dime == 3u);
+            TensorDimeToSize<getSpaceDimension<TensorResultType>()>::value,
+            MathObjectNumType<TensorResultType>> {
+    static_assert(getSpaceDimension<TensorResultType>() == 3u);
     //! a simple alias
     typedef EmptyRunTimeProperties RunTimeProperties;
     //! a simple alias
-    typedef typename TensorTraits<TensorResultType>::NumType value_type;
+    typedef MathObjectNumType<TensorResultType> value_type;
     /*!
      * \param[in] a : first term of the product
      * \param[in] b : second term of the product
      */
     template <typename StensorType, typename T2toST2Type>
     TFEL_MATH_INLINE Expr(const StensorType& a, const T2toST2Type& b) {
-      static_assert(tfel::meta::Implements<T2toST2Type, T2toST2Concept>::cond);
-      static_assert(tfel::meta::Implements<StensorType, StensorConcept>::cond);
-      static_assert(T2toST2Traits<T2toST2Type>::dime == 3u);
-      static_assert(StensorTraits<StensorType>::dime == 3u);
+      static_assert(implementsT2toST2Concept<T2toST2Type>());
+      static_assert(implementsStensorConcept<StensorType>());
+      static_assert(getSpaceDimension<T2toST2Type>() == 3u);
+      static_assert(getSpaceDimension<StensorType>() == 3u);
       this->v[0] = b(5, 0) * a[5] + b(4, 0) * a[4] + b(3, 0) * a[3] +
                    b(2, 0) * a[2] + b(1, 0) * a[1] + b(0, 0) * a[0];
       this->v[1] = b(5, 1) * a[5] + b(4, 1) * a[4] + b(3, 1) * a[3] +

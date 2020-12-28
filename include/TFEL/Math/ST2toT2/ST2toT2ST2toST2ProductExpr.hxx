@@ -37,27 +37,25 @@ namespace tfel::math {
       : public ST2toT2Concept<
             Expr<ST2toT2ResultType, ST2toT2ST2toST2ProductExpr<1u>>>,
         public fsarray<
-            TensorDimeToSize<ST2toT2Traits<ST2toT2ResultType>::dime>::value *
+            TensorDimeToSize<getSpaceDimension<ST2toT2ResultType>()>::value *
                 StensorDimeToSize<
-                    ST2toT2Traits<ST2toT2ResultType>::dime>::value,
-            typename ST2toT2Traits<ST2toT2ResultType>::NumType> {
-    static_assert(ST2toT2Traits<ST2toT2ResultType>::dime == 1u);
+                    getSpaceDimension<ST2toT2ResultType>()>::value,
+            MathObjectNumType<ST2toT2ResultType>> {
+    static_assert(getSpaceDimension<ST2toT2ResultType>() == 1u);
     //! a simple alias
     typedef EmptyRunTimeProperties RunTimeProperties;
     //! a simple alias
-    typedef typename ST2toT2Traits<ST2toT2ResultType>::NumType value_type;
+    typedef MathObjectNumType<ST2toT2ResultType> value_type;
     /*!
      * \param[in] a : first term of the product
      * \param[in] b : second term of the product
      */
     template <typename ST2toT2Type, typename ST2toST2Type2>
     TFEL_MATH_INLINE Expr(const ST2toT2Type& a, const ST2toST2Type2& b) {
-      static_assert(tfel::meta::Implements<ST2toT2Type,
-                                           tfel::math::ST2toT2Concept>::cond);
-      static_assert(
-          tfel::meta::Implements<ST2toST2Type2, ST2toST2Concept>::cond);
-      static_assert(ST2toT2Traits<ST2toT2Type>::dime == 1u);
-      static_assert(ST2toST2Traits<ST2toST2Type2>::dime == 1u);
+      static_assert(implementsST2toT2Concept<ST2toT2Type>());
+      static_assert(implementsST2toST2Concept<ST2toST2Type2>());
+      static_assert(getSpaceDimension<ST2toT2Type>() == 1u);
+      static_assert(getSpaceDimension<ST2toST2Type2>() == 1u);
       this->v[0] = a(0, 0) * b(0, 0) + a(0, 1) * b(1, 0) + a(0, 2) * b(2, 0);
       this->v[1] = a(0, 0) * b(0, 1) + a(0, 1) * b(1, 1) + a(0, 2) * b(2, 1);
       this->v[2] = a(0, 0) * b(0, 2) + a(0, 1) * b(1, 2) + a(0, 2) * b(2, 2);
@@ -94,27 +92,25 @@ namespace tfel::math {
       : public ST2toT2Concept<
             Expr<ST2toT2ResultType, ST2toT2ST2toST2ProductExpr<2u>>>,
         public fsarray<
-            TensorDimeToSize<ST2toT2Traits<ST2toT2ResultType>::dime>::value *
+            TensorDimeToSize<getSpaceDimension<ST2toT2ResultType>()>::value *
                 StensorDimeToSize<
-                    ST2toT2Traits<ST2toT2ResultType>::dime>::value,
-            typename ST2toT2Traits<ST2toT2ResultType>::NumType> {
-    static_assert(ST2toT2Traits<ST2toT2ResultType>::dime == 2u);
+                    getSpaceDimension<ST2toT2ResultType>()>::value,
+            MathObjectNumType<ST2toT2ResultType>> {
+    static_assert(getSpaceDimension<ST2toT2ResultType>() == 2u);
     //! a simple alias
     typedef EmptyRunTimeProperties RunTimeProperties;
     //! a simple alias
-    typedef typename ST2toT2Traits<ST2toT2ResultType>::NumType value_type;
+    typedef MathObjectNumType<ST2toT2ResultType> value_type;
     /*!
      * \param[in] a : first term of the product
      * \param[in] b : second term of the product
      */
     template <typename ST2toT2Type, typename ST2toST2Type2>
     TFEL_MATH_INLINE Expr(const ST2toT2Type& a, const ST2toST2Type2& b) {
-      static_assert(tfel::meta::Implements<ST2toT2Type,
-                                           tfel::math::ST2toT2Concept>::cond);
-      static_assert(
-          tfel::meta::Implements<ST2toST2Type2, ST2toST2Concept>::cond);
-      static_assert(ST2toT2Traits<ST2toT2Type>::dime == 2u);
-      static_assert(ST2toST2Traits<ST2toST2Type2>::dime == 2u);
+      static_assert(implementsST2toT2Concept<ST2toT2Type>());
+      static_assert(implementsST2toST2Concept<ST2toST2Type2>());
+      static_assert(getSpaceDimension<ST2toT2Type>() == 2u);
+      static_assert(getSpaceDimension<ST2toST2Type2>() == 2u);
       this->v[0] = a(0, 0) * b(0, 0) + a(0, 1) * b(1, 0) + a(0, 2) * b(2, 0) +
                    a(0, 3) * b(3, 0);
       this->v[1] = a(0, 0) * b(0, 1) + a(0, 1) * b(1, 1) + a(0, 2) * b(2, 1) +
@@ -182,27 +178,25 @@ namespace tfel::math {
       : public ST2toT2Concept<
             Expr<ST2toT2ResultType, ST2toT2ST2toST2ProductExpr<3u>>>,
         public fsarray<
-            TensorDimeToSize<ST2toT2Traits<ST2toT2ResultType>::dime>::value *
+            TensorDimeToSize<getSpaceDimension<ST2toT2ResultType>()>::value *
                 StensorDimeToSize<
-                    ST2toT2Traits<ST2toT2ResultType>::dime>::value,
-            typename ST2toT2Traits<ST2toT2ResultType>::NumType> {
-    static_assert(ST2toT2Traits<ST2toT2ResultType>::dime == 3u);
+                    getSpaceDimension<ST2toT2ResultType>()>::value,
+            MathObjectNumType<ST2toT2ResultType>> {
+    static_assert(getSpaceDimension<ST2toT2ResultType>() == 3u);
     //! a simple alias
     typedef EmptyRunTimeProperties RunTimeProperties;
     //! a simple alias
-    typedef typename ST2toT2Traits<ST2toT2ResultType>::NumType value_type;
+    typedef MathObjectNumType<ST2toT2ResultType> value_type;
     /*!
      * \param[in] a : first term of the product
      * \param[in] b : second term of the product
      */
     template <typename ST2toT2Type, typename ST2toST2Type2>
     TFEL_MATH_INLINE Expr(const ST2toT2Type& a, const ST2toST2Type2& b) {
-      static_assert(tfel::meta::Implements<ST2toT2Type,
-                                           tfel::math::ST2toT2Concept>::cond);
-      static_assert(
-          tfel::meta::Implements<ST2toST2Type2, ST2toST2Concept>::cond);
-      static_assert(ST2toT2Traits<ST2toT2Type>::dime == 3u);
-      static_assert(ST2toST2Traits<ST2toST2Type2>::dime == 3u);
+      static_assert(implementsST2toT2Concept<ST2toT2Type>());
+      static_assert(implementsST2toST2Concept<ST2toST2Type2>());
+      static_assert(getSpaceDimension<ST2toT2Type>() == 3u);
+      static_assert(getSpaceDimension<ST2toST2Type2>() == 3u);
       this->v[0] = a(0, 0) * b(0, 0) + a(0, 1) * b(1, 0) + a(0, 2) * b(2, 0) +
                    a(0, 3) * b(3, 0) + a(0, 4) * b(4, 0) + a(0, 5) * b(5, 0);
       this->v[1] = a(0, 0) * b(0, 1) + a(0, 1) * b(1, 1) + a(0, 2) * b(2, 1) +

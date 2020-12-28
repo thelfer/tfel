@@ -15,28 +15,22 @@
 #define LIB_TFEL_MATH_T2TOST2CONCEPT_HXX 1
 
 #include <type_traits>
-
 #include "TFEL/Config/TFELConfig.hxx"
 #include "TFEL/Metaprogramming/Implements.hxx"
 #include "TFEL/Metaprogramming/InvalidType.hxx"
 #include "TFEL/TypeTraits/IsFundamentalNumericType.hxx"
 #include "TFEL/TypeTraits/BaseType.hxx"
 #include "TFEL/Math/General/Abs.hxx"
+#include "TFEL/Math/General/MathObjectTraits.hxx"
 #include "TFEL/Math/General/ConceptRebind.hxx"
 #include "TFEL/Math/Tensor/TensorConcept.hxx"
 #include "TFEL/Math/Stensor/StensorConcept.hxx"
-#include "TFEL/Math/Forward/T2toST2Concept.hxx"
 
 namespace tfel::math {
 
-  template <class T>
-  struct T2toST2Traits {
-    typedef tfel::meta::InvalidType NumType;
-    static constexpr unsigned short dime = 0u;
-  };
   //! a simple alias
   template <class T>
-  using T2toST2NumType = typename T2toST2Traits<T>::NumType;
+  using T2toST2NumType = MathObjectNumType<T>;
   /*!
    * \class T2toST2Tag
    * \brief Helper class to characterise t2tost2.
@@ -47,7 +41,7 @@ namespace tfel::math {
   struct T2toST2Concept {
     typedef T2toST2Tag ConceptTag;
 
-    typename T2toST2Traits<T>::NumType operator()(const unsigned short,
+    MathObjectNumType<T> operator()(const unsigned short,
                                                   const unsigned short) const;
 
    protected:
@@ -58,6 +52,16 @@ namespace tfel::math {
     ~T2toST2Concept() = default;
   };
 
+  /*!
+   * \brief an helper function which returns if the given type implements the
+   * `T2toST2Concept`.
+   * \tparam T2toST2Type: type tested
+   */
+  template <typename T2toST2Type>
+  constexpr bool implementsT2toST2Concept() {
+    return tfel::meta::implements<T2toST2Type, T2toST2Concept>();
+  }  // end of implementsT2toST2Concept
+
   //! paratial specialisation for T2toST2
   template <typename Type>
   struct ConceptRebind<T2toST2Tag, Type> {
@@ -66,9 +70,9 @@ namespace tfel::math {
 
   template <typename T2toST2Type>
   typename std::enable_if<
-      tfel::meta::Implements<T2toST2Type, T2toST2Concept>::cond,
+      implementsT2toST2Concept<T2toST2Type>(),
       typename tfel::typetraits::AbsType<
-          typename T2toST2Traits<T2toST2Type>::NumType>::type>::type
+          MathObjectNumType<T2toST2Type>>::type>::type
   abs(const T2toST2Type&);
 
   /*!
@@ -91,22 +95,22 @@ namespace tfel::math {
             typename StensorType,
             typename TensorType>
   typename std::enable_if<
-      tfel::meta::Implements<T2toST2ResultType, T2toST2Concept>::cond &&
-          tfel::meta::Implements<T2toST2Type, T2toST2Concept>::cond &&
-          tfel::meta::Implements<StensorType, StensorConcept>::cond &&
-          tfel::meta::Implements<TensorType, TensorConcept>::cond &&
-          T2toST2Traits<T2toST2ResultType>::dime == 1u &&
-          T2toST2Traits<T2toST2Type>::dime == 1u &&
-          StensorTraits<StensorType>::dime == 1u &&
-          TensorTraits<TensorType>::dime == 1u &&
+      implementsT2toST2Concept<T2toST2ResultType>() &&
+          implementsT2toST2Concept<T2toST2Type>() &&
+          implementsStensorConcept<StensorType>() &&
+          implementsTensorConcept<TensorType>() &&
+          getSpaceDimension<T2toST2ResultType>() == 1u &&
+          getSpaceDimension<T2toST2Type>() == 1u &&
+          getSpaceDimension<StensorType>() == 1u &&
+          getSpaceDimension<TensorType>() == 1u &&
           tfel::typetraits::IsFundamentalNumericType<
-              typename TensorTraits<TensorType>::NumType>::cond &&
+              MathObjectNumType<TensorType>>::cond &&
           tfel::typetraits::IsAssignableTo<
               typename ComputeBinaryResult<
-                  typename T2toST2Traits<T2toST2Type>::NumType,
-                  typename StensorTraits<StensorType>::NumType,
+                  MathObjectNumType<T2toST2Type>,
+                  MathObjectNumType<StensorType>,
                   OpPlus>::Result,
-              typename T2toST2Traits<T2toST2ResultType>::NumType>::cond,
+              MathObjectNumType<T2toST2ResultType>>::cond,
       void>::type
   computePushForwardDerivative(T2toST2ResultType&,
                                const T2toST2Type&,
@@ -132,22 +136,22 @@ namespace tfel::math {
             typename StensorType,
             typename TensorType>
   typename std::enable_if<
-      tfel::meta::Implements<T2toST2ResultType, T2toST2Concept>::cond &&
-          tfel::meta::Implements<T2toST2Type, T2toST2Concept>::cond &&
-          tfel::meta::Implements<StensorType, StensorConcept>::cond &&
-          tfel::meta::Implements<TensorType, TensorConcept>::cond &&
-          T2toST2Traits<T2toST2ResultType>::dime == 2u &&
-          T2toST2Traits<T2toST2Type>::dime == 2u &&
-          StensorTraits<StensorType>::dime == 2u &&
-          TensorTraits<TensorType>::dime == 2u &&
+      implementsT2toST2Concept<T2toST2ResultType>() &&
+          implementsT2toST2Concept<T2toST2Type>() &&
+          implementsStensorConcept<StensorType>() &&
+          implementsTensorConcept<TensorType>() &&
+          getSpaceDimension<T2toST2ResultType>() == 2u &&
+          getSpaceDimension<T2toST2Type>() == 2u &&
+          getSpaceDimension<StensorType>() == 2u &&
+          getSpaceDimension<TensorType>() == 2u &&
           tfel::typetraits::IsFundamentalNumericType<
-              typename TensorTraits<TensorType>::NumType>::cond &&
+              MathObjectNumType<TensorType>>::cond &&
           tfel::typetraits::IsAssignableTo<
               typename ComputeBinaryResult<
-                  typename T2toST2Traits<T2toST2Type>::NumType,
-                  typename StensorTraits<StensorType>::NumType,
+                  MathObjectNumType<T2toST2Type>,
+                  MathObjectNumType<StensorType>,
                   OpPlus>::Result,
-              typename T2toST2Traits<T2toST2ResultType>::NumType>::cond,
+              MathObjectNumType<T2toST2ResultType>>::cond,
       void>::type
   computePushForwardDerivative(T2toST2ResultType&,
                                const T2toST2Type&,
@@ -173,22 +177,22 @@ namespace tfel::math {
             typename StensorType,
             typename TensorType>
   typename std::enable_if<
-      tfel::meta::Implements<T2toST2ResultType, T2toST2Concept>::cond &&
-          tfel::meta::Implements<T2toST2Type, T2toST2Concept>::cond &&
-          tfel::meta::Implements<StensorType, StensorConcept>::cond &&
-          tfel::meta::Implements<TensorType, TensorConcept>::cond &&
-          T2toST2Traits<T2toST2ResultType>::dime == 3u &&
-          T2toST2Traits<T2toST2Type>::dime == 3u &&
-          StensorTraits<StensorType>::dime == 3u &&
-          TensorTraits<TensorType>::dime == 3u &&
+      implementsT2toST2Concept<T2toST2ResultType>() &&
+          implementsT2toST2Concept<T2toST2Type>() &&
+          implementsStensorConcept<StensorType>() &&
+          implementsTensorConcept<TensorType>() &&
+          getSpaceDimension<T2toST2ResultType>() == 3u &&
+          getSpaceDimension<T2toST2Type>() == 3u &&
+          getSpaceDimension<StensorType>() == 3u &&
+          getSpaceDimension<TensorType>() == 3u &&
           tfel::typetraits::IsFundamentalNumericType<
-              typename TensorTraits<TensorType>::NumType>::cond &&
+              MathObjectNumType<TensorType>>::cond &&
           tfel::typetraits::IsAssignableTo<
               typename ComputeBinaryResult<
-                  typename T2toST2Traits<T2toST2Type>::NumType,
-                  typename StensorTraits<StensorType>::NumType,
+                  MathObjectNumType<T2toST2Type>,
+                  MathObjectNumType<StensorType>,
                   OpPlus>::Result,
-              typename T2toST2Traits<T2toST2ResultType>::NumType>::cond,
+              MathObjectNumType<T2toST2ResultType>>::cond,
       void>::type
   computePushForwardDerivative(T2toST2ResultType&,
                                const T2toST2Type&,
@@ -207,24 +211,24 @@ namespace tfel::math {
             typename StensorType,
             typename TensorType>
   typename std::enable_if<
-      tfel::meta::Implements<T2toST2ResultType, T2toST2Concept>::cond &&
-          tfel::meta::Implements<T2toST2Type, T2toST2Concept>::cond &&
-          tfel::meta::Implements<StensorType, StensorConcept>::cond &&
-          tfel::meta::Implements<TensorType, TensorConcept>::cond &&
-          T2toST2Traits<T2toST2ResultType>::dime ==
-              T2toST2Traits<T2toST2Type>::dime &&
-          T2toST2Traits<T2toST2ResultType>::dime ==
-              StensorTraits<StensorType>::dime &&
-          T2toST2Traits<T2toST2ResultType>::dime ==
-              TensorTraits<TensorType>::dime &&
+      implementsT2toST2Concept<T2toST2ResultType>() &&
+          implementsT2toST2Concept<T2toST2Type>() &&
+          implementsStensorConcept<StensorType>() &&
+          implementsTensorConcept<TensorType>() &&
+          getSpaceDimension<T2toST2ResultType>() ==
+              getSpaceDimension<T2toST2Type>() &&
+          getSpaceDimension<T2toST2ResultType>() ==
+              getSpaceDimension<StensorType>() &&
+          getSpaceDimension<T2toST2ResultType>() ==
+              getSpaceDimension<TensorType>() &&
           tfel::typetraits::IsFundamentalNumericType<
-              typename TensorTraits<TensorType>::NumType>::cond &&
+              MathObjectNumType<TensorType>>::cond &&
           tfel::typetraits::IsAssignableTo<
               typename ComputeBinaryResult<
-                  typename T2toST2Traits<T2toST2Type>::NumType,
-                  typename StensorTraits<StensorType>::NumType,
+                  MathObjectNumType<T2toST2Type>,
+                  MathObjectNumType<StensorType>,
                   OpPlus>::Result,
-              typename T2toST2Traits<T2toST2ResultType>::NumType>::cond,
+              MathObjectNumType<T2toST2ResultType>>::cond,
       void>::type
   computeCauchyStressDerivativeFromKirchhoffStressDerivative(T2toST2ResultType&,
                                                              const T2toST2Type&,
@@ -243,24 +247,24 @@ namespace tfel::math {
             typename StensorType,
             typename TensorType>
   typename std::enable_if<
-      tfel::meta::Implements<T2toST2ResultType, T2toST2Concept>::cond &&
-          tfel::meta::Implements<T2toST2Type, T2toST2Concept>::cond &&
-          tfel::meta::Implements<StensorType, StensorConcept>::cond &&
-          tfel::meta::Implements<TensorType, TensorConcept>::cond &&
-          T2toST2Traits<T2toST2ResultType>::dime ==
-              T2toST2Traits<T2toST2Type>::dime &&
-          T2toST2Traits<T2toST2ResultType>::dime ==
-              StensorTraits<StensorType>::dime &&
-          T2toST2Traits<T2toST2ResultType>::dime ==
-              TensorTraits<TensorType>::dime &&
+      implementsT2toST2Concept<T2toST2ResultType>() &&
+          implementsT2toST2Concept<T2toST2Type>() &&
+          implementsStensorConcept<StensorType>() &&
+          implementsTensorConcept<TensorType>() &&
+          getSpaceDimension<T2toST2ResultType>() ==
+              getSpaceDimension<T2toST2Type>() &&
+          getSpaceDimension<T2toST2ResultType>() ==
+              getSpaceDimension<StensorType>() &&
+          getSpaceDimension<T2toST2ResultType>() ==
+              getSpaceDimension<TensorType>() &&
           tfel::typetraits::IsFundamentalNumericType<
-              typename TensorTraits<TensorType>::NumType>::cond &&
+              MathObjectNumType<TensorType>>::cond &&
           tfel::typetraits::IsAssignableTo<
               typename ComputeBinaryResult<
-                  typename T2toST2Traits<T2toST2Type>::NumType,
-                  typename StensorTraits<StensorType>::NumType,
+                  MathObjectNumType<T2toST2Type>,
+                  MathObjectNumType<StensorType>,
                   OpPlus>::Result,
-              typename T2toST2Traits<T2toST2ResultType>::NumType>::cond,
+              MathObjectNumType<T2toST2ResultType>>::cond,
       void>::type
   computeKirchhoffStressDerivativeFromCauchyStressDerivative(T2toST2ResultType&,
                                                              const T2toST2Type&,

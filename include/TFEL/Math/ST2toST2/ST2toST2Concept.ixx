@@ -23,7 +23,7 @@
 namespace tfel::math {
 
   template <class T>
-  TFEL_MATH_INLINE typename ST2toST2Traits<T>::NumType ST2toST2Concept<T>::
+  TFEL_MATH_INLINE MathObjectNumType<T> ST2toST2Concept<T>::
   operator()(const unsigned short i, const unsigned short j) const {
     return static_cast<const T&>(*this).operator()(i, j);
   }  // end of ST2toST2Concept<T>::operator()
@@ -31,13 +31,13 @@ namespace tfel::math {
   template <typename ST2toST2Type>
   std::enable_if_t<implementsST2toST2Concept<ST2toST2Type>(),
                    typename tfel::typetraits::AbsType<
-                       typename ST2toST2Traits<ST2toST2Type>::NumType>::type>
+                       MathObjectNumType<ST2toST2Type>>::type>
   abs(const ST2toST2Type& v) {
-    using NumType = typename ST2toST2Traits<ST2toST2Type>::NumType;
-    using IndexType = typename ST2toST2Traits<ST2toST2Type>::IndexType;
+    using NumType = MathObjectNumType<ST2toST2Type>;
+    using IndexType = typename MathObjectTraits<ST2toST2Type>::IndexType;
     using AbsNumType = typename tfel::typetraits::AbsType<NumType>::type;
     constexpr const auto ssize =
-        StensorDimeToSize<ST2toST2Traits<ST2toST2Type>::dime>::value;
+        StensorDimeToSize<getSpaceDimension<ST2toST2Type>()>::value;
     AbsNumType a(0);
     for (IndexType i = 0; i < ssize; ++i) {
       for (IndexType j = 0; j < ssize; ++j) {
@@ -48,10 +48,10 @@ namespace tfel::math {
   }
 
   template <typename ST2toST2Type>
-  auto transpose(ST2toST2Type&& t) ->
-      typename std::enable_if<implementsST2toST2Concept<ST2toST2Type>(),
-                              Expr<EvaluationResult<ST2toST2Type>,
-                                   ST2toST2TransposeExpr<decltype(t)>>>::type {
+  auto transpose(ST2toST2Type&& t)
+      -> std::enable_if_t<implementsST2toST2Concept<ST2toST2Type>(),
+                          Expr<EvaluationResult<ST2toST2Type>,
+                               ST2toST2TransposeExpr<decltype(t)>>> {
     return Expr<EvaluationResult<ST2toST2Type>,
                 ST2toST2TransposeExpr<decltype(t)>>(
         std::forward<ST2toST2Type>(t));
@@ -60,7 +60,7 @@ namespace tfel::math {
   template <typename ST2toST2Type>
   std::enable_if_t<
       implementsST2toST2Concept<ST2toST2Type>() &&
-          (ST2toST2Traits<ST2toST2Type>::dime == 1u) &&
+          (getSpaceDimension<ST2toST2Type>() == 1u) &&
           tfel::typetraits::IsScalar<ST2toST2NumType<ST2toST2Type>>::cond,
       typename ComputeUnaryResult<ST2toST2NumType<ST2toST2Type>,
                                   Power<3>>::Result>
@@ -80,15 +80,15 @@ namespace tfel::math {
   template <typename ST2toST2Type>
   std::enable_if_t<
       implementsST2toST2Concept<ST2toST2Type>() &&
-          ((ST2toST2Traits<ST2toST2Type>::dime == 2u) ||
-           (ST2toST2Traits<ST2toST2Type>::dime == 3u)) &&
+          ((getSpaceDimension<ST2toST2Type>() == 2u) ||
+           (getSpaceDimension<ST2toST2Type>() == 3u)) &&
           tfel::typetraits::IsScalar<ST2toST2NumType<ST2toST2Type>>::cond,
       typename ComputeUnaryResult<
           ST2toST2NumType<ST2toST2Type>,
-          Power<ST2toST2Traits<ST2toST2Type>::dime>>::Result>
+          Power<getSpaceDimension<ST2toST2Type>()>>::Result>
   det(const ST2toST2Type& s) {
     using real = ST2toST2NumType<ST2toST2Type>;
-    constexpr const auto N = ST2toST2Traits<ST2toST2Type>::dime;
+    constexpr const auto N = getSpaceDimension<ST2toST2Type>();
     constexpr const auto ts = StensorDimeToSize<N>::value;
     tmatrix<ts, ts, real> m;
     TinyPermutation<ts> p;

@@ -42,7 +42,7 @@ namespace tfel {
     //! a simple alias
     template <typename StressStensor>
     using MichelAndSuquet1992HollowSphereStressNormalType =
-        tfel::math::stensor<tfel::math::StensorTraits<StressStensor>::dime,
+        tfel::math::stensor<tfel::math::getSpaceDimension<StressStensor>(),
                             MichelAndSuquet1992HollowSphereBaseType<StressStensor>>;
     //! a simple alias
     template <typename StressStensor>
@@ -51,12 +51,12 @@ namespace tfel {
     //! a simple alias
     template <typename StressStensor>
     using MichelAndSuquet1992HollowSphereStressEigenTensorType =
-        tfel::math::stensor<tfel::math::StensorTraits<StressStensor>::dime,
+        tfel::math::stensor<tfel::math::getSpaceDimension<StressStensor>(),
                             MichelAndSuquet1992HollowSphereBaseType<StressStensor>>;
     //! a simple alias
     template <typename StressStensor>
     using MichelAndSuquet1992HollowSphereStressSecondDerivativeType =
-        tfel::math::st2tost2<tfel::math::StensorTraits<StressStensor>::dime,
+        tfel::math::st2tost2<tfel::math::getSpaceDimension<StressStensor>(),
                              MichelAndSuquet1992HollowSphereInvertStressType<StressStensor>>;
     //! a simple alias
     template <typename StressStensor>

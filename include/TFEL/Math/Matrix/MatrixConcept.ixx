@@ -18,9 +18,9 @@ namespace tfel{
     
     template<class T>
     TFEL_MATH_INLINE 
-    typename MatrixTraits<T>::NumType
-    MatrixConcept<T>::operator()(const typename MatrixTraits<T>::IndexType i,
-				 const typename MatrixTraits<T>::IndexType j) const {
+    MathObjectNumType<T>
+    MatrixConcept<T>::operator()(const typename MathObjectTraits<T>::IndexType i,
+				 const typename MathObjectTraits<T>::IndexType j) const {
       return static_cast<const T&>(*this).operator()(i,j);
     }
     

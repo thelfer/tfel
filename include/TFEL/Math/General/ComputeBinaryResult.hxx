@@ -122,9 +122,9 @@ namespace tfel{
       typedef std::decay_t<B> B_;
     public:
       //! the result.
-      typedef typename ResultType<A_,B_,Op>::type Result;
+      typedef result_type<A_,B_,Op> Result;
       //! the handle.
-      typedef typename ResultType<A_,B_,Op>::type Handle;
+      typedef result_type<A_,B_,Op> Handle;
     }; // end of ComputeBinaryResult_.
 
     //! an alias for the result of an binary operation

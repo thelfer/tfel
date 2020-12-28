@@ -19,19 +19,14 @@
 #include "TFEL/Metaprogramming/Implements.hxx"
 #include "TFEL/Metaprogramming/InvalidType.hxx"
 #include "TFEL/Math/General/Abs.hxx"
+#include "TFEL/Math/General/MathObjectTraits.hxx"
 #include "TFEL/Math/General/ConceptRebind.hxx"
-#include "TFEL/Math/Forward/ST2toT2Concept.hxx"
 
 namespace tfel::math {
 
-  template <class T>
-  struct ST2toT2Traits {
-    typedef tfel::meta::InvalidType NumType;
-    static constexpr unsigned short dime = 0u;
-  };
   //! a simple alias
   template <class T>
-  using ST2toT2NumType = typename ST2toT2Traits<T>::NumType;
+  using ST2toT2NumType = MathObjectNumType<T>;
   /*!
    * \class ST2toT2Tag
    * \brief Helper class to characterise st2tot2.
@@ -42,8 +37,8 @@ namespace tfel::math {
   struct ST2toT2Concept {
     typedef ST2toT2Tag ConceptTag;
 
-    typename ST2toT2Traits<T>::NumType operator()(const unsigned short,
-                                                  const unsigned short) const;
+    MathObjectNumType<T> operator()(
+        const unsigned short, const unsigned short) const;
 
    protected:
     ST2toT2Concept() = default;
@@ -53,6 +48,16 @@ namespace tfel::math {
     ~ST2toT2Concept() = default;
   };
 
+  /*!
+   * \brief an helper function which returns if the given type implements the
+   * `ST2toT2Concept`.
+   * \tparam ST2toT2Type: type tested
+   */
+  template <typename ST2toT2Type>
+  constexpr bool implementsST2toT2Concept() {
+    return tfel::meta::implements<ST2toT2Type, ST2toT2Concept>();
+  }  // end of implementsST2toT2Concept
+
   //! paratial specialisation for symmetric tensors
   template <typename Type>
   struct ConceptRebind<ST2toT2Tag, Type> {
@@ -60,15 +65,10 @@ namespace tfel::math {
   };
 
   template <typename ST2toT2Type>
-  constexpr bool implementsST2toT2Concept() {
-    return tfel::meta::implements<ST2toT2Type, ST2toT2Concept>();
-  }  // end of implementsST2toT2Concept
-
-  template <typename ST2toT2Type>
   typename std::enable_if<
-      tfel::meta::Implements<ST2toT2Type, ST2toT2Concept>::cond,
+      implementsST2toT2Concept<ST2toT2Type>(),
       typename tfel::typetraits::AbsType<
-          typename ST2toT2Traits<ST2toT2Type>::NumType>::type>::type
+          MathObjectNumType<ST2toT2Type>>::type>::type
   abs(const ST2toT2Type&);
 
 }  // end of namespace tfel::math

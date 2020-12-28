@@ -38,16 +38,16 @@ namespace tfel::math {
   /*!
    * \brief Partial specialisation for tvectors.
    * \note This is a VectorConcept requirement.
-   * \see VectorTraits.
+   * \see MathObjectTraits.
    */
   template <unsigned short N, typename T>
-  struct TFEL_VISIBILITY_LOCAL VectorTraits<tvector<N, T>> {
-    //! the type holded by the tvector.
-    typedef T NumType;
-    //! the type of the index used by the tvector.
-    typedef unsigned short IndexType;
-    //! a simple alias to the tvector runtime properties
-    typedef EmptyRunTimeProperties RunTimeProperties;
+  struct TFEL_VISIBILITY_LOCAL MathObjectTraits<tvector<N, T>> {
+    //! \brief the type holded by the tvector.
+    using NumType = T;
+    //! \brief the type of the index used by the tvector.
+    using IndexType = unsigned short;
+    //! brief a `tvector` is not related to the space dimension
+    static constexpr const unsigned short dime = 0;
   };
 
   /*!
@@ -57,7 +57,7 @@ namespace tfel::math {
   struct IsTVectorScalarOperationValid {
     static constexpr bool cond =
         tfel::typetraits::IsScalar<T2>::cond &&
-        std::is_same<typename ResultType<T, T2, OpMult>::type, T>::value;
+        std::is_same<result_type<T, T2, OpMult>, T>::value;
   };  // end of struct IsTVectorScalarOperationValid
 
   /*!

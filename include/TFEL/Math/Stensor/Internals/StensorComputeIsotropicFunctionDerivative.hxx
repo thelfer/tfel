@@ -40,8 +40,8 @@ namespace tfel {
                   typename FunctionDerivative,
                   typename T>
         static typename std::enable_if<
-            (tfel::meta::Implements<ST2toST2Type, ST2toST2Concept>::cond) &&
-                (ST2toST2Traits<ST2toST2Type>::dime == 1u),
+            (implementsST2toST2Concept<ST2toST2Type>()) &&
+                (getSpaceDimension<ST2toST2Type>() == 1u),
             void>::type
         exe2(ST2toST2Type& d,
              const Function&,
@@ -70,8 +70,8 @@ namespace tfel {
             */
         template <typename ST2toST2Type, typename T1, typename T2, typename T3>
         static typename std::enable_if<
-            (tfel::meta::Implements<ST2toST2Type, ST2toST2Concept>::cond) &&
-                (ST2toST2Traits<ST2toST2Type>::dime == 1u),
+            (implementsST2toST2Concept<ST2toST2Type>()) &&
+                (getSpaceDimension<ST2toST2Type>() == 1u),
             void>::type
         exe(ST2toST2Type& d,
             const tvector<3u, T1>&,
@@ -104,8 +104,8 @@ namespace tfel {
          */
         template <typename ST2toST2Type, typename T1, typename T2, typename T3>
         static typename std::enable_if<
-            (tfel::meta::Implements<ST2toST2Type, ST2toST2Concept>::cond) &&
-                (ST2toST2Traits<ST2toST2Type>::dime == 2u),
+            (implementsST2toST2Concept<ST2toST2Type>()) &&
+                (getSpaceDimension<ST2toST2Type>() == 2u),
             void>::type
         exe(ST2toST2Type& d,
             const tvector<3u, T1>& f,
@@ -147,8 +147,8 @@ namespace tfel {
                   typename Function,
                   typename FunctionDerivative>
         static typename std::enable_if<
-            (tfel::meta::Implements<ST2toST2Type, ST2toST2Concept>::cond) &&
-                (ST2toST2Traits<ST2toST2Type>::dime == 2u),
+            (implementsST2toST2Concept<ST2toST2Type>()) &&
+                (getSpaceDimension<ST2toST2Type>() == 2u),
             void>::type
         exe2(ST2toST2Type& d,
              const Function& f,
@@ -177,8 +177,8 @@ namespace tfel {
          */
         template <typename ST2toST2Type, typename T1, typename T2, typename T3>
         static typename std::enable_if<
-            (tfel::meta::Implements<ST2toST2Type, ST2toST2Concept>::cond) &&
-                (ST2toST2Traits<ST2toST2Type>::dime == 3u),
+            (implementsST2toST2Concept<ST2toST2Type>()) &&
+                (getSpaceDimension<ST2toST2Type>() == 3u),
             void>::type
         exe(ST2toST2Type& d,
             const tvector<3u, T1>& f,
@@ -272,8 +272,8 @@ namespace tfel {
                   typename Function,
                   typename FunctionDerivative>
         static typename std::enable_if<
-            (tfel::meta::Implements<ST2toST2Type, ST2toST2Concept>::cond) &&
-                (ST2toST2Traits<ST2toST2Type>::dime == 3u),
+            (implementsST2toST2Concept<ST2toST2Type>()) &&
+                (getSpaceDimension<ST2toST2Type>() == 3u),
             void>::type
         exe2(ST2toST2Type& d,
              const Function& f,

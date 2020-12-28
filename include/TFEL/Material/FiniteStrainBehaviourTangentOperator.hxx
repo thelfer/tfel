@@ -132,12 +132,11 @@ namespace tfel {
        * assignement operator
        */
       template <typename T>
-      typename std::enable_if<
-          tfel::meta::Implements<T, tfel::math::T2toST2Concept>::cond &&
-              tfel::math::T2toST2Traits<T>::dime == N &&
-              std::is_same<typename tfel::math::T2toST2Traits<T>::NumType,
-                           StressType>::value,
-          FiniteStrainBehaviourTangentOperator&>::type
+      std::enable_if_t<
+          tfel::math::implementsT2toST2Concept<T>() &&
+              tfel::math::getSpaceDimension<T>() == N &&
+              std::is_same_v<tfel::math::MathObjectNumType<T>, StressType>,
+          FiniteStrainBehaviourTangentOperator&>
       operator=(const T& e) {
         using namespace tfel::math;
         if (this->template is<t2tost2<N, StressType>*>()) {
@@ -154,12 +153,11 @@ namespace tfel {
        * assignement operator
        */
       template <typename T>
-      typename std::enable_if<
-          tfel::meta::Implements<T, tfel::math::ST2toST2Concept>::cond &&
-              tfel::math::ST2toST2Traits<T>::dime == N &&
-              std::is_same<typename tfel::math::ST2toST2Traits<T>::NumType,
-                           StressType>::value,
-          FiniteStrainBehaviourTangentOperator&>::type
+      std::enable_if_t<
+          tfel::math::implementsST2toST2Concept<T>() &&
+              tfel::math::getSpaceDimension<T>() == N &&
+              std::is_same_v<tfel::math::MathObjectNumType<T>, StressType>,
+          FiniteStrainBehaviourTangentOperator&>
       operator=(const T& e) {
         using namespace tfel::math;
         if (this->template is<st2tost2<N, StressType>*>()) {

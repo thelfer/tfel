@@ -17,7 +17,6 @@
 
 #include <cmath>
 #include "TFEL/Config/TFELConfig.hxx"
-#include "TFEL/Metaprogramming/Implements.hxx"
 #include "TFEL/Math/General/ResultType.hxx"
 #include "TFEL/Math/General/MathConstants.hxx"
 #include "TFEL/Math/General/ConstExprMathFunctions.hxx"
@@ -28,10 +27,8 @@ namespace tfel::math {
 
   template <typename A, typename B>
   class TFEL_VISIBILITY_LOCAL StensorProductExprBase : public ExprBase {
-    static_assert(
-        tfel::meta::Implements<std::decay_t<A>, StensorConcept>::cond);
-    static_assert(
-        tfel::meta::Implements<std::decay_t<B>, StensorConcept>::cond);
+    static_assert(implementsStensorConcept<A>());
+    static_assert(implementsStensorConcept<B>());
 
     typedef typename ComputeBinaryResult<std::decay_t<A>,
                                          std::decay_t<B>,
@@ -39,8 +36,8 @@ namespace tfel::math {
 
    public:
     typedef EmptyRunTimeProperties RunTimeProperties;
-    typedef typename TensorTraits<Result>::IndexType IndexType;
-    typedef typename TensorTraits<Result>::NumType NumType;
+    typedef typename MathObjectTraits<Result>::IndexType IndexType;
+    typedef MathObjectNumType<Result> NumType;
     typedef NumType value_type;
     typedef NumType* pointer;
     typedef const NumType* const_pointer;
@@ -66,8 +63,8 @@ namespace tfel::math {
   template <typename A, typename B>
   struct TFEL_VISIBILITY_LOCAL StensorProductExpr1D
       : public StensorProductExprBase<A, B> {
-    static_assert(tfel::math::StensorTraits<std::decay_t<A>>::dime == 1u);
-    static_assert(tfel::math::StensorTraits<std::decay_t<B>>::dime == 1u);
+    static_assert(tfel::math::MathObjectTraits<std::decay_t<A>>::dime == 1u);
+    static_assert(tfel::math::MathObjectTraits<std::decay_t<B>>::dime == 1u);
 
     using size_type = typename StensorProductExprBase<A, B>::size_type;
 
@@ -87,8 +84,8 @@ namespace tfel::math {
   template <typename A, typename B>
   struct TFEL_VISIBILITY_LOCAL StensorProductExpr2D
       : public StensorProductExprBase<A, B> {
-    static_assert(tfel::math::StensorTraits<std::decay_t<A>>::dime == 2u);
-    static_assert(tfel::math::StensorTraits<std::decay_t<B>>::dime == 2u);
+    static_assert(tfel::math::MathObjectTraits<std::decay_t<A>>::dime == 2u);
+    static_assert(tfel::math::MathObjectTraits<std::decay_t<B>>::dime == 2u);
 
     using size_type = typename StensorProductExprBase<A, B>::size_type;
 
@@ -124,8 +121,8 @@ namespace tfel::math {
   template <typename A, typename B>
   struct TFEL_VISIBILITY_LOCAL StensorProductExpr3D
       : public StensorProductExprBase<A, B> {
-    static_assert(tfel::math::StensorTraits<std::decay_t<A>>::dime == 3u);
-    static_assert(tfel::math::StensorTraits<std::decay_t<B>>::dime == 3u);
+    static_assert(tfel::math::MathObjectTraits<std::decay_t<A>>::dime == 3u);
+    static_assert(tfel::math::MathObjectTraits<std::decay_t<B>>::dime == 3u);
 
     using size_type = typename StensorProductExprBase<A, B>::size_type;
 

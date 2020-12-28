@@ -37,17 +37,17 @@ namespace tfel{
     //! a simple alias
     template<typename StressStensor>
     using CazacuStressNormalType =
-      tfel::math::stensor<tfel::math::StensorTraits<StressStensor>::dime,
+      tfel::math::stensor<tfel::math::getSpaceDimension<StressStensor>(),
 			  CazacuBaseType<StressStensor>>;
     //! a simple alias
     template<typename StressStensor>
     using CazacuStressEigenTensorType =
-      tfel::math::stensor<tfel::math::StensorTraits<StressStensor>::dime,
+      tfel::math::stensor<tfel::math::getSpaceDimension<StressStensor>(),
 			  CazacuBaseType<StressStensor>>;
     //! a simple alias
     template<typename StressStensor>
     using CazacuStressSecondDerivativeType =
-      tfel::math::st2tost2<tfel::math::StensorTraits<StressStensor>::dime,
+      tfel::math::st2tost2<tfel::math::getSpaceDimension<StressStensor>(),
 			   CazacuInvertStressType<StressStensor>>;
     /*!
      * \brief compute the Cazacu 2006 yield stress defined as follows:

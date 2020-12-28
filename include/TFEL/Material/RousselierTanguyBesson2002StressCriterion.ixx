@@ -190,7 +190,7 @@ namespace tfel {
         const RousselierTanguyBesson2002StressCriterionParameters<
             StressStensor>& p,
         const RousselierTanguyBesson2002StressType<StressStensor> seps) {
-      constexpr const auto N = tfel::math::StensorTraits<StressStensor>::dime;
+      constexpr const auto N = tfel::math::getSpaceDimension<StressStensor>();
       // using stress = RousselierTanguyBesson2002StressType<StressStensor>;
       using real = RousselierTanguyBesson2002BaseType<StressStensor>;
       // using istress = tfel::math::result_type<real, stress,

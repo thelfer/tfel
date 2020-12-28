@@ -33,7 +33,7 @@ namespace tfel {
     //! a simple alias
     template <typename StressStensor>
     using BarlatLinearTransformationType =
-        tfel::math::st2tost2<tfel::math::StensorTraits<StressStensor>::dime,
+        tfel::math::st2tost2<tfel::math::getSpaceDimension<StressStensor>(),
                              BarlatBaseType<StressStensor>>;
     //! a simple alias
     template <typename StressStensor>
@@ -44,17 +44,17 @@ namespace tfel {
     //! a simple alias
     template <typename StressStensor>
     using BarlatStressNormalType =
-        tfel::math::stensor<tfel::math::StensorTraits<StressStensor>::dime,
+        tfel::math::stensor<tfel::math::getSpaceDimension<StressStensor>(),
                             BarlatBaseType<StressStensor>>;
     //! a simple alias
     template <typename StressStensor>
     using BarlatStressEigenTensorType =
-        tfel::math::stensor<tfel::math::StensorTraits<StressStensor>::dime,
+        tfel::math::stensor<tfel::math::getSpaceDimension<StressStensor>(),
                             BarlatBaseType<StressStensor>>;
     //! a simple alias
     template <typename StressStensor>
     using BarlatStressSecondDerivativeType =
-        tfel::math::st2tost2<tfel::math::StensorTraits<StressStensor>::dime,
+        tfel::math::st2tost2<tfel::math::getSpaceDimension<StressStensor>(),
                              BarlatInvertStressType<StressStensor>>;
     /*!
      * \brief an helper structure used to simplify the code

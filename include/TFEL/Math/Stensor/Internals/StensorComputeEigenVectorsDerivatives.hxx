@@ -50,8 +50,8 @@ namespace tfel {
       struct StensorComputeEigenTensorsDerivatives<1u> {
         template <typename ST2toST2Type, typename NumType>
         static TFEL_MATH_INLINE2 typename std::enable_if<
-            (tfel::meta::Implements<ST2toST2Type, ST2toST2Concept>::cond) &&
-                (ST2toST2Traits<ST2toST2Type>::dime == 1u) &&
+            (implementsST2toST2Concept<ST2toST2Type>()) &&
+                (getSpaceDimension<ST2toST2Type>() == 1u) &&
                 (tfel::typetraits::IsAssignableTo<
                     typename ComputeBinaryResult<
                         tfel::typetraits::base_type<NumType>,
@@ -80,8 +80,8 @@ namespace tfel {
           : public StensorComputeEigenTensorsDerivativesBase {
         template <typename ST2toST2Type, typename NumType>
         static TFEL_MATH_INLINE2 typename std::enable_if<
-            (tfel::meta::Implements<ST2toST2Type, ST2toST2Concept>::cond) &&
-                (ST2toST2Traits<ST2toST2Type>::dime == 2u) &&
+            (implementsST2toST2Concept<ST2toST2Type>()) &&
+                (getSpaceDimension<ST2toST2Type>() == 2u) &&
                 (tfel::typetraits::IsAssignableTo<
                     typename ComputeBinaryResult<
                         tfel::typetraits::base_type<NumType>,
@@ -116,8 +116,8 @@ namespace tfel {
           : public StensorComputeEigenTensorsDerivativesBase {
         template <typename ST2toST2Type, typename NumType>
         static TFEL_MATH_INLINE2 typename std::enable_if<
-            (tfel::meta::Implements<ST2toST2Type, ST2toST2Concept>::cond) &&
-                (ST2toST2Traits<ST2toST2Type>::dime == 3u) &&
+            (implementsST2toST2Concept<ST2toST2Type>()) &&
+                (getSpaceDimension<ST2toST2Type>() == 3u) &&
                 (tfel::typetraits::IsAssignableTo<
                     typename ComputeBinaryResult<
                         tfel::typetraits::base_type<NumType>,

@@ -22,10 +22,10 @@ namespace tfel{
     auto symmetric_product_aba(const StensorType1& a,
 			       const StensorType2& b)
       -> typename std::enable_if<
-	((tfel::meta::Implements<StensorType1,StensorConcept>::cond)&&
-	 (tfel::meta::Implements<StensorType2,StensorConcept>::cond)&&
-	 (StensorTraits<StensorType1>::dime==1u)&&
-	 (StensorTraits<StensorType2>::dime==1u)),
+	((implementsStensorConcept<StensorType1>())&&
+	 (implementsStensorConcept<StensorType2>())&&
+	 (getSpaceDimension<StensorType1>()==1u)&&
+	 (getSpaceDimension<StensorType2>()==1u)),
       stensor<1u,decltype(a[0]*b[0]*a[0])>>::type
     {
       return {a[0]*a[0]*b[0],
@@ -37,10 +37,10 @@ namespace tfel{
     auto symmetric_product_aba(const StensorType1& a,
 			       const StensorType2& b)
       -> typename std::enable_if<
-	((tfel::meta::Implements<StensorType1,StensorConcept>::cond)&&
-	 (tfel::meta::Implements<StensorType2,StensorConcept>::cond)&&
-	 (StensorTraits<StensorType1>::dime==2u)&&
-	 (StensorTraits<StensorType2>::dime==2u)),
+	((implementsStensorConcept<StensorType1>())&&
+	 (implementsStensorConcept<StensorType2>())&&
+	 (getSpaceDimension<StensorType1>()==2u)&&
+	 (getSpaceDimension<StensorType2>()==2u)),
       stensor<2u,decltype(a[0]*b[0]*a[0])>>::type
     {
       return {(2*a[0]*a[3]*b[3]+a[3]*a[3]*b[1]+2*a[0]*a[0]*b[0])/2,
@@ -53,10 +53,10 @@ namespace tfel{
     auto symmetric_product_aba(const StensorType1& a,
 			       const StensorType2& b)
       -> typename std::enable_if<
-      ((tfel::meta::Implements<StensorType1,StensorConcept>::cond)&&
-       (tfel::meta::Implements<StensorType2,StensorConcept>::cond)&&
-       (StensorTraits<StensorType1>::dime==3u)&&
-       (StensorTraits<StensorType2>::dime==3u)),
+      ((implementsStensorConcept<StensorType1>())&&
+       (implementsStensorConcept<StensorType2>())&&
+       (getSpaceDimension<StensorType1>()==3u)&&
+       (getSpaceDimension<StensorType2>()==3u)),
       stensor<3u,decltype(a[0]*b[0]*a[0])>>::type
     {
       using NumType = decltype(a[0]*b[0]*a[0]);

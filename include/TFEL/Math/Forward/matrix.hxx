@@ -12,27 +12,36 @@
  */
 
 #ifndef LIB_TFEL_MATH_FORWARD_MATRIX_HXX
-#define LIB_TFEL_MATH_FORWARD_MATRIX_HXX 
+#define LIB_TFEL_MATH_FORWARD_MATRIX_HXX
 
-namespace tfel
-{
+#include "TFEL/Math/General/MathObjectTraits.hxx"
 
-  namespace math
-  {
+namespace tfel::math {
 
-    /*
-     * \class matrix.
-     * \brief a class representing tiny matrixs of fixed size.
-     * \param unsigned short, the number of rows hold by the matrix.
-     * \param unsigned short, the number of columns hold by the matrix.
-     * \param typename T, the type hold by the matrix.
-     */
-    template<typename T>
-    struct matrix;
+  /*!
+   * \class matrix.
+   * \brief a class representing a dynamically allocated matrix
+   * \tparam T: the type hold by the matrix.
+   */
+  template <typename T>
+  struct matrix;
 
-  } // end of namespace math
+  /*!
+   * \brief partial specialisation for `matrix`.
+   * This is a MatrixConcept requirement.
+   * \see MathObjectTraits.
+   */
+  template <typename T>
+  struct MathObjectTraits<matrix<T>> {
+    //! \brief the type holded by the matrix.
+    using NumType = T;
+    //! \brief the type of the index used by the matrix.
+    using IndexType = typename tfel::math::vector<T>::size_type;
+    //! brief a `matrix` is not related to the space dimension
+    static constexpr const unsigned short dime = 0;
+  };
 
-} // end of namespace tfel
+}  // end of namespace tfel::math
 
 #endif /* LIB_TFEL_MATH_FORWARD_MATRIX_HXX */
 

@@ -15,54 +15,32 @@
 #ifndef LIB_TFEL_MATH_TENSORCONCEPTOPERATIONSIXX
 #define LIB_TFEL_MATH_TENSORCONCEPTOPERATIONSIXX
 
-namespace tfel {
+namespace tfel::math {
 
-  namespace math {
-
-    template <typename T1, typename T2>
-    typename std::enable_if<
-        tfel::meta::Implements<T1, TensorConcept>::cond &&
-            tfel::meta::Implements<T2, TensorConcept>::cond &&
-            TensorTraits<T1>::dime == 1u && TensorTraits<T2>::dime == 1u &&
-            !tfel::typetraits::IsInvalid<
-                typename ComputeBinaryResult<T1, T2, OpDotProduct>::Result>::
-                cond,
-        typename ComputeBinaryResult<T1, T2, OpDotProduct>::Result>::type
-    operator|(const T1& a, const T2& b) {
-      return a(0) * b(0) + a(1) * b(1) + a(2) * b(2);
+  template <typename TensorType1, typename TensorType2>
+  std::enable_if_t<
+      implementsTensorConcept<TensorType1>() &&
+          implementsTensorConcept<TensorType2>() &&
+          !tfel::typetraits::IsInvalid<
+              typename ComputeBinaryResult<TensorType1, TensorType2, OpDotProduct>::
+                  Result>::cond,
+      typename ComputeBinaryResult<TensorType1, TensorType2, OpDotProduct>::Result>
+  operator|(const TensorType1& a, const TensorType2& b) {
+    constexpr const auto N = getSpaceDimension<TensorType1>();
+    static_assert((N == 1u) || (N == 2u) || (N == 3u));
+    static_assert(N == getSpaceDimension<TensorType2>());
+    if constexpr (N == 1u) {
+      return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+    } else if constexpr (N == 2u) {
+      return a[0] * b[0] + a[1] * b[1] + a[2] * b[2] + a[3] * b[3] +
+             a[4] * b[4];
+    } else {
+      return a[0] * b[0] + a[1] * b[1] + a[2] * b[2] + a[3] * b[3] +
+             a[4] * b[4] + a[5] * b[5] + a[6] * b[6] + a[7] * b[7] +
+             a[8] * b[8];
     }
+  }
 
-    template <typename T1, typename T2>
-    typename std::enable_if<
-        tfel::meta::Implements<T1, TensorConcept>::cond &&
-            tfel::meta::Implements<T2, TensorConcept>::cond &&
-            TensorTraits<T1>::dime == 2u && TensorTraits<T2>::dime == 2u &&
-            !tfel::typetraits::IsInvalid<
-                typename ComputeBinaryResult<T1, T2, OpDotProduct>::Result>::
-                cond,
-        typename ComputeBinaryResult<T1, T2, OpDotProduct>::Result>::type
-    operator|(const T1& a, const T2& b) {
-      return a(0) * b(0) + a(1) * b(1) + a(2) * b(2) + a(3) * b(3) +
-             a(4) * b(4);
-    }
-
-    template <typename T1, typename T2>
-    typename std::enable_if<
-        tfel::meta::Implements<T1, TensorConcept>::cond &&
-            tfel::meta::Implements<T2, TensorConcept>::cond &&
-            TensorTraits<T1>::dime == 3u && TensorTraits<T2>::dime == 3u &&
-            !tfel::typetraits::IsInvalid<
-                typename ComputeBinaryResult<T1, T2, OpDotProduct>::Result>::
-                cond,
-        typename ComputeBinaryResult<T1, T2, OpDotProduct>::Result>::type
-    operator|(const T1& a, const T2& b) {
-      return a(0) * b(0) + a(1) * b(1) + a(2) * b(2) + a(3) * b(3) +
-             a(4) * b(4) + a(5) * b(5) + a(6) * b(6) + a(7) * b(7) +
-             a(8) * b(8);
-    }
-
-  }  // end of namespace math
-
-}  // end of namespace tfel
+}  // end of namespace tfel::math
 
 #endif /* LIB_TFEL_MATH_TENSORCONCEPTOPERATIONSIXX */

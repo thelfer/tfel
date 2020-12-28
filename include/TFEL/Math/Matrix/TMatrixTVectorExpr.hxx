@@ -19,7 +19,6 @@
 #include <iterator>
 #include <type_traits>
 #include "TFEL/Config/TFELConfig.hxx"
-#include "TFEL/Metaprogramming/Implements.hxx"
 #include "TFEL/FSAlgorithm/inner_product.hxx"
 #include "TFEL/Math/General/ResultType.hxx"
 #include "TFEL/Math/General/BasicOperations.hxx"
@@ -41,8 +40,8 @@ namespace tfel::math {
    */
   template <unsigned short N, unsigned short M, typename A, typename B>
   struct TMatrixTVectorExpr : public ExprBase {
-    static_assert(tfel::meta::Implements<std::decay_t<A>, MatrixConcept>::cond);
-    static_assert(tfel::meta::Implements<std::decay_t<B>, VectorConcept>::cond);
+    static_assert(implementsMatrixConcept<A>());
+    static_assert(implementsVectorConcept<B>());
 
     //! a simple alias
     typedef EmptyRunTimeProperties RunTimeProperties;
@@ -56,7 +55,7 @@ namespace tfel::math {
      */
     struct RowConstIterator {
       using MType = std::decay_t<A>;
-      using NumType = typename MatrixTraits<MType>::NumType;
+      using NumType = MathObjectNumType<MType>;
       //! default constructor
       TFEL_MATH_INLINE RowConstIterator(const MType& m_,
                                         const unsigned short i_)
@@ -80,7 +79,7 @@ namespace tfel::math {
     // VType does not provide an iterator
     struct VectorConstIterator {
       using VType = std::decay_t<B>;
-      using NumType = typename VectorTraits<VType>::NumType;
+      using NumType = MathObjectNumType<VType>;
       TFEL_MATH_INLINE VectorConstIterator(const VType& v_) : v(v_) {}
       TFEL_MATH_INLINE VectorConstIterator& operator++() {
         ++i;
@@ -99,9 +98,9 @@ namespace tfel::math {
                                                 std::decay_t<B>,
                                                 OpMult>::Result;
     //! a simple alias
-    using NumType = typename VectorTraits<Result>::NumType;
+    using NumType = MathObjectNumType<Result>;
     //! a simple alias
-    using IndexType = typename VectorTraits<Result>::IndexType;
+    using IndexType = typename MathObjectTraits<Result>::IndexType;
 
     typedef NumType value_type;
     typedef NumType* pointer;

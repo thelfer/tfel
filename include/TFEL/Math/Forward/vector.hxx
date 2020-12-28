@@ -14,25 +14,35 @@
 #ifndef LIB_TFEL_MATH_FORWARD_VECTOR_HXX
 #define LIB_TFEL_MATH_FORWARD_VECTOR_HXX 
 
-namespace tfel
-{
+#include "TFEL/Math/General/MathObjectTraits.hxx"
 
-  namespace math
-  {
+namespace tfel::math {
 
-    /*!
-     * \class vector
-     * \brief  A class representing resizable medium sized vector.
-     * \param  ValueType, the underlying numerical type.
-     * \author Thomas Helfer
-     * \date   04 April 2007
-     */
-    template<typename T>
-    class vector;
+  /*!
+   * \class vector
+   * \brief  A class representing dynamically allocated vector.
+   * \tparam  T: the underlying numerical type.
+   * \author Thomas Helfer
+   * \date   04/04/2007
+   */
+  template <typename T>
+  class vector;
 
-  } // end of namespace math
+  /*!
+   * \brief Partial specialisation for the vector class.
+   * \see MathObjectTraits
+   */
+  template <typename T>
+  struct MathObjectTraits<vector<T>> {
+    //! \brief the type holded by the vector.
+    using NumType = T;
+    //! \brief the type of the index used by the vector.
+    using IndexType = typename std::vector<T>::size_type;
+    //! brief a `vector` is not related to the space dimension
+    static constexpr const unsigned short dime = 0;
+  };
 
-} // end of namespace tfel
+}  // end of namespace tfel::math
 
 #endif /* LIB_TFEL_MATH_FORWARD_VECTOR_HXX */
 

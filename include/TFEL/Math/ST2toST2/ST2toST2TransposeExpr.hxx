@@ -17,11 +17,10 @@
 #include <cmath>
 #include <cstddef>
 #include "TFEL/Config/TFELConfig.hxx"
-#include "TFEL/Metaprogramming/Implements.hxx"
-#include "TFEL/Math/Forward/ST2toST2Concept.hxx"
 #include "TFEL/Math/General/ResultType.hxx"
 #include "TFEL/Math/General/EmptyRunTimeProperties.hxx"
 #include "TFEL/Math/ExpressionTemplates/Expr.hxx"
+#include "TFEL/Math/ST2toST2/ST2toST2Concept.hxx"
 
 namespace tfel::math {
 
@@ -33,8 +32,7 @@ namespace tfel::math {
    */
   template <typename A>
   struct TFEL_VISIBILITY_LOCAL ST2toST2TransposeExpr : public ExprBase {
-    static_assert(
-        tfel::meta::Implements<std::decay_t<A>, ST2toST2Concept>::cond);
+    static_assert(implementsST2toST2Concept<A>());
     //! a simple alias
     using RunTimeProperties = EmptyRunTimeProperties;
     //! a simple alias

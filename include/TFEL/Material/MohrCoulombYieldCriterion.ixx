@@ -127,7 +127,7 @@ namespace tfel {
     computeMohrCoulombStressCriterionNormal(
         const MohrCoulombParameters<StressStensor>& p,
         const StressStensor& sig) {
-      constexpr const auto N = tfel::math::StensorTraits<StressStensor>::dime;
+      constexpr const auto N = tfel::math::getSpaceDimension<StressStensor>();
       using real = MohrCoulombBaseType<StressStensor>;
       using Stensor = tfel::math::stensor<N, real>;
       constexpr const auto local_zero_tolerance = real(1e-14);
@@ -191,7 +191,7 @@ namespace tfel {
     computeMohrCoulombStressCriterionSecondDerivative(
         const MohrCoulombParameters<StressStensor>& p,
         const StressStensor& sig) {
-      constexpr const auto N = tfel::math::StensorTraits<StressStensor>::dime;
+      constexpr const auto N = tfel::math::getSpaceDimension<StressStensor>();
       using real = MohrCoulombBaseType<StressStensor>;
       using Stensor = tfel::math::stensor<N, real>;
       using Stensor4 = tfel::math::st2tost2<N, real>;

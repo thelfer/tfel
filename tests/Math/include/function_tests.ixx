@@ -19,10 +19,10 @@
 
 template<class T>
 void function(const tfel::math::VectorConcept<T>& x,
-	      typename tfel::math::VectorTraits<T>::NumType v0,
-	      typename tfel::math::VectorTraits<T>::NumType v1,
-	      typename tfel::math::VectorTraits<T>::NumType v2,
-	      typename tfel::math::VectorTraits<T>::NumType eps,
+	      typename tfel::math::MathObjectTraits<T>::NumType v0,
+	      typename tfel::math::MathObjectTraits<T>::NumType v1,
+	      typename tfel::math::MathObjectTraits<T>::NumType v2,
+	      typename tfel::math::MathObjectTraits<T>::NumType eps,
 	      unsigned int)
 {
   assert(std::abs(x(0)-v0)<=eps);

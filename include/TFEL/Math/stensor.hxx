@@ -42,21 +42,6 @@
 namespace tfel::math {
 
   /*!
-   * \brief partial specialisation of the `StensorTraits` class.
-   * \param[in] N: space dimension
-   * \param[in] T: numeric type
-   */
-  template <unsigned short N, typename T>
-  struct TFEL_VISIBILITY_LOCAL StensorTraits<stensor<N, T>> {
-    //! \brief numeric type
-    using NumType = T;
-    //! \brief index type
-    using IndexType = unsigned short;
-    //! \brief space dimension
-    static constexpr unsigned short dime = N;
-  }; // end of StensorTraits
-
-  /*!
    * \brief partial specialisation of the `DerivativeTypeDispatcher`
    * metafunction.
    */
@@ -73,7 +58,7 @@ namespace tfel::math {
                   "the symmetric tensor type does not hold a scalar");
     //! \brief result
     using type =
-        stensor<StensorTraits<StensorType>::dime,
+        stensor<getSpaceDimension<StensorType>(),
                 derivative_type<StensorNumType<StensorType>, ScalarType>>;
   };  // end of struct DerivativeTypeDispatcher
   /*!
@@ -91,7 +76,7 @@ namespace tfel::math {
                   "ScalarType is not a scalar");
     //! \brief result
     using type =
-        stensor<StensorTraits<StensorType>::dime,
+        stensor<getSpaceDimension<StensorType>(),
                 derivative_type<ScalarType, StensorNumType<StensorType>>>;
   };  // end of struct DerivativeTypeDispatcher
 
@@ -109,7 +94,7 @@ namespace tfel::math {
     template <typename StensorType>
     TFEL_MATH_INLINE std::enable_if_t<
         implementsStensorConcept<StensorType>() &&
-            StensorTraits<Child>::dime == StensorTraits<StensorType>::dime &&
+            getSpaceDimension<Child>() == getSpaceDimension<StensorType>() &&
             tfel::typetraits::IsAssignableTo<StensorNumType<StensorType>,
                                              StensorNumType<Child>>::cond,
         Child&>
@@ -118,7 +103,7 @@ namespace tfel::math {
     template <typename StensorType>
     TFEL_MATH_INLINE std::enable_if_t<
         implementsStensorConcept<StensorType>() &&
-            StensorTraits<Child>::dime == StensorTraits<StensorType>::dime &&
+            getSpaceDimension<Child>() == getSpaceDimension<StensorType>() &&
             tfel::typetraits::IsAssignableTo<StensorNumType<StensorType>,
                                              StensorNumType<Child>>::cond,
         Child&>
@@ -127,7 +112,7 @@ namespace tfel::math {
     template <typename StensorType>
     TFEL_MATH_INLINE std::enable_if_t<
         implementsStensorConcept<StensorType>() &&
-            StensorTraits<Child>::dime == StensorTraits<StensorType>::dime &&
+            getSpaceDimension<Child>() == getSpaceDimension<StensorType>() &&
             tfel::typetraits::IsAssignableTo<StensorNumType<StensorType>,
                                              StensorNumType<Child>>::cond,
         Child&>
@@ -603,7 +588,7 @@ namespace tfel::math {
      */
     template <typename StensorType>
     static std::enable_if_t<(implementsStensorConcept<StensorType>()) &&
-                                (StensorTraits<StensorType>::dime == N) &&
+                                (getSpaceDimension<StensorType>() == N) &&
                                 (tfel::typetraits::IsAssignableTo<
                                     tfel::typetraits::base_type<T>,
                                     StensorNumType<StensorType>>::cond),
@@ -628,7 +613,7 @@ namespace tfel::math {
      */
     template <typename StensorType>
     static std::enable_if_t<(implementsStensorConcept<StensorType>()) &&
-                                (StensorTraits<StensorType>::dime == N) &&
+                                (getSpaceDimension<StensorType>() == N) &&
                                 (tfel::typetraits::IsAssignableTo<
                                     tfel::typetraits::base_type<T>,
                                     StensorNumType<StensorType>>::cond),
@@ -648,8 +633,8 @@ namespace tfel::math {
      */
     template <typename ST2toST2Type>
     static std::enable_if_t<
-        (tfel::meta::Implements<ST2toST2Type, ST2toST2Concept>::cond) &&
-            (ST2toST2Traits<ST2toST2Type>::dime == N) &&
+        (implementsST2toST2Concept<ST2toST2Type>()) &&
+            (getSpaceDimension<ST2toST2Type>() == N) &&
             (tfel::typetraits::IsAssignableTo<
                 typename ComputeBinaryResult<tfel::typetraits::base_type<T>,
                                              T,
@@ -709,8 +694,8 @@ namespace tfel::math {
      */
     template <typename ST2toST2Type, typename T1, typename T2>
     static std::enable_if_t<
-        (tfel::meta::Implements<ST2toST2Type, ST2toST2Concept>::cond) &&
-            (ST2toST2Traits<ST2toST2Type>::dime == N) &&
+        (implementsST2toST2Concept<ST2toST2Type>()) &&
+            (getSpaceDimension<ST2toST2Type>() == N) &&
             (tfel::typetraits::IsAssignableTo<
                 typename ComputeBinaryResult<tfel::typetraits::base_type<T>,
                                              T,
@@ -754,8 +739,8 @@ namespace tfel::math {
               typename Function,
               typename FunctionDerivative>
     static std::enable_if_t<
-        (tfel::meta::Implements<ST2toST2Type, ST2toST2Concept>::cond) &&
-            (ST2toST2Traits<ST2toST2Type>::dime == N) &&
+        (implementsST2toST2Concept<ST2toST2Type>()) &&
+            (getSpaceDimension<ST2toST2Type>() == N) &&
             (tfel::typetraits::IsAssignableTo<
                 typename ComputeBinaryResult<tfel::typetraits::base_type<T>,
                                              T,
@@ -841,7 +826,7 @@ namespace tfel::math {
   template <typename StensorType>
   std::enable_if_t<
       implementsStensorConcept<StensorType>(),
-      stensor<StensorTraits<StensorType>::dime, StensorNumType<StensorType>>>
+      stensor<getSpaceDimension<StensorType>(), StensorNumType<StensorType>>>
   square_root(const StensorType&);
 
   template <typename StensorType>
@@ -856,7 +841,7 @@ namespace tfel::math {
   template <typename StensorType>
   std::enable_if_t<
       implementsStensorConcept<StensorType>(),
-      stensor<StensorTraits<StensorType>::dime,
+      stensor<getSpaceDimension<StensorType>(),
               typename ComputeUnaryResult<StensorNumType<StensorType>,
                                           Power<2>>::Result>>
   computeDeterminantDerivative(const StensorType&);
@@ -881,7 +866,7 @@ namespace tfel::math {
   template <typename StensorType>
   std::enable_if_t<
       implementsStensorConcept<StensorType>(),
-      stensor<StensorTraits<StensorType>::dime,
+      stensor<getSpaceDimension<StensorType>(),
               typename ComputeUnaryResult<StensorNumType<StensorType>,
                                           Power<2>>::Result>>
   computeDeviatorDeterminantDerivative(const StensorType&);
@@ -894,14 +879,14 @@ namespace tfel::math {
   template <typename StensorType>
   TFEL_MATH_INLINE2 std::enable_if_t<
       implementsStensorConcept<StensorType>(),
-      stensor<StensorTraits<StensorType>::dime, StensorNumType<StensorType>>>
+      stensor<getSpaceDimension<StensorType>(), StensorNumType<StensorType>>>
   change_basis(const StensorType&,
                const rotation_matrix<StensorNumType<StensorType>>&);
 
   template <typename StensorType>
   TFEL_MATH_INLINE2 std::enable_if_t<
       implementsStensorConcept<StensorType>(),
-      stensor<StensorTraits<StensorType>::dime,
+      stensor<getSpaceDimension<StensorType>(),
               typename ComputeBinaryResult<
                   tfel::typetraits::base_type<StensorNumType<StensorType>>,
                   StensorNumType<StensorType>,
@@ -915,7 +900,7 @@ namespace tfel::math {
   template <typename StensorType>
   TFEL_MATH_INLINE2
       std::enable_if_t<((implementsStensorConcept<StensorType>()) &&
-                        (StensorTraits<StensorType>::dime == 1u) &&
+                        (getSpaceDimension<StensorType>() == 1u) &&
                         (tfel::typetraits::IsFundamentalNumericType<
                             StensorNumType<StensorType>>::cond)),
                        stensor<1u, StensorNumType<StensorType>>>
@@ -928,11 +913,11 @@ namespace tfel::math {
   template <typename StensorType>
   TFEL_MATH_INLINE2 std::enable_if_t<
       ((implementsStensorConcept<StensorType>()) &&
-       ((StensorTraits<StensorType>::dime == 2u) ||
-        (StensorTraits<StensorType>::dime == 3u)) &&
+       ((getSpaceDimension<StensorType>() == 2u) ||
+        (getSpaceDimension<StensorType>() == 3u)) &&
        (tfel::typetraits::IsFundamentalNumericType<
            StensorNumType<StensorType>>::cond)),
-      stensor<StensorTraits<StensorType>::dime, StensorNumType<StensorType>>>
+      stensor<getSpaceDimension<StensorType>(), StensorNumType<StensorType>>>
   logarithm(const StensorType&, const bool = false);
   /*!
    * \brief compute the absolute value of a symmetric tensor
@@ -941,7 +926,7 @@ namespace tfel::math {
    */
   template <typename StensorType>
   std::enable_if_t<((implementsStensorConcept<StensorType>()) &&
-                    (StensorTraits<StensorType>::dime == 1u) &&
+                    (getSpaceDimension<StensorType>() == 1u) &&
                     (tfel::typetraits::IsFundamentalNumericType<
                         StensorNumType<StensorType>>::cond)),
                    stensor<1u, StensorNumType<StensorType>>>
@@ -954,11 +939,11 @@ namespace tfel::math {
   template <typename StensorType>
   std::enable_if_t<
       ((implementsStensorConcept<StensorType>()) &&
-       ((StensorTraits<StensorType>::dime == 2u) ||
-        (StensorTraits<StensorType>::dime == 3u)) &&
+       ((getSpaceDimension<StensorType>() == 2u) ||
+        (getSpaceDimension<StensorType>() == 3u)) &&
        (tfel::typetraits::IsFundamentalNumericType<
            StensorNumType<StensorType>>::cond)),
-      stensor<StensorTraits<StensorType>::dime, StensorNumType<StensorType>>>
+      stensor<getSpaceDimension<StensorType>(), StensorNumType<StensorType>>>
   absolute_value(const StensorType&, const bool = false);
   /*!
    * \brief compute the positive part of a symmetric tensor
@@ -967,7 +952,7 @@ namespace tfel::math {
    */
   template <typename StensorType>
   std::enable_if_t<((implementsStensorConcept<StensorType>()) &&
-                    (StensorTraits<StensorType>::dime == 1u) &&
+                    (getSpaceDimension<StensorType>() == 1u) &&
                     (tfel::typetraits::IsFundamentalNumericType<
                         StensorNumType<StensorType>>::cond)),
                    stensor<1u, StensorNumType<StensorType>>>
@@ -980,11 +965,11 @@ namespace tfel::math {
   template <typename StensorType>
   std::enable_if_t<
       ((implementsStensorConcept<StensorType>()) &&
-       ((StensorTraits<StensorType>::dime == 2u) ||
-        (StensorTraits<StensorType>::dime == 3u)) &&
+       ((getSpaceDimension<StensorType>() == 2u) ||
+        (getSpaceDimension<StensorType>() == 3u)) &&
        (tfel::typetraits::IsFundamentalNumericType<
            StensorNumType<StensorType>>::cond)),
-      stensor<StensorTraits<StensorType>::dime, StensorNumType<StensorType>>>
+      stensor<getSpaceDimension<StensorType>(), StensorNumType<StensorType>>>
   positive_part(const StensorType&, const bool = false);
   /*!
    * \brief compute the negative part of a symmetric tensor
@@ -993,7 +978,7 @@ namespace tfel::math {
    */
   template <typename StensorType>
   std::enable_if_t<((implementsStensorConcept<StensorType>()) &&
-                    (StensorTraits<StensorType>::dime == 1u) &&
+                    (getSpaceDimension<StensorType>() == 1u) &&
                     (tfel::typetraits::IsFundamentalNumericType<
                         StensorNumType<StensorType>>::cond)),
                    stensor<1u, StensorNumType<StensorType>>>
@@ -1006,11 +991,11 @@ namespace tfel::math {
   template <typename StensorType>
   std::enable_if_t<
       ((implementsStensorConcept<StensorType>()) &&
-       ((StensorTraits<StensorType>::dime == 2u) ||
-        (StensorTraits<StensorType>::dime == 3u)) &&
+       ((getSpaceDimension<StensorType>() == 2u) ||
+        (getSpaceDimension<StensorType>() == 3u)) &&
        (tfel::typetraits::IsFundamentalNumericType<
            StensorNumType<StensorType>>::cond)),
-      stensor<StensorTraits<StensorType>::dime, StensorNumType<StensorType>>>
+      stensor<getSpaceDimension<StensorType>(), StensorNumType<StensorType>>>
   negative_part(const StensorType&, const bool = false);
   /*!
    * \return the square of a symmetric stensor
@@ -1019,7 +1004,7 @@ namespace tfel::math {
   template <typename StensorType>
   std::enable_if_t<
       implementsStensorConcept<StensorType>() &&
-          StensorTraits<StensorType>::dime == 1u,
+          getSpaceDimension<StensorType>() == 1u,
       stensor<1u,
               typename ComputeBinaryResult<StensorNumType<StensorType>,
                                            StensorNumType<StensorType>,
@@ -1032,7 +1017,7 @@ namespace tfel::math {
   template <typename StensorType>
   std::enable_if_t<
       implementsStensorConcept<StensorType>() &&
-          StensorTraits<StensorType>::dime == 2u,
+          getSpaceDimension<StensorType>() == 2u,
       stensor<2u,
               typename ComputeBinaryResult<StensorNumType<StensorType>,
                                            StensorNumType<StensorType>,
@@ -1045,7 +1030,7 @@ namespace tfel::math {
   template <typename StensorType>
   std::enable_if_t<
       implementsStensorConcept<StensorType>() &&
-          StensorTraits<StensorType>::dime == 3u,
+          getSpaceDimension<StensorType>() == 3u,
       stensor<3u,
               typename ComputeBinaryResult<StensorNumType<StensorType>,
                                            StensorNumType<StensorType>,
@@ -1063,7 +1048,7 @@ namespace tfel::math {
       typename StensorType>
   std::enable_if_t<
       implementsStensorConcept<StensorType>(),
-      stensor<StensorTraits<StensorType>::dime, StensorNumType<StensorType>>>
+      stensor<getSpaceDimension<StensorType>(), StensorNumType<StensorType>>>
   computeIsotropicFunction(const Function&,
                            const StensorType&,
                            const bool = false);
@@ -1083,7 +1068,7 @@ namespace tfel::math {
       typename StensorType>
   std::enable_if_t<
       implementsStensorConcept<StensorType>(),
-      st2tost2<StensorTraits<StensorType>::dime, StensorNumType<StensorType>>>
+      st2tost2<getSpaceDimension<StensorType>(), StensorNumType<StensorType>>>
   computeIsotropicFunctionDerivative(const Function&,
                                      const FunctionDerivative&,
                                      const StensorType&,
@@ -1104,9 +1089,9 @@ namespace tfel::math {
       typename FunctionDerivative,
       typename StensorType>
   std::enable_if_t<implementsStensorConcept<StensorType>(),
-                   std::pair<stensor<StensorTraits<StensorType>::dime,
+                   std::pair<stensor<getSpaceDimension<StensorType>(),
                                      StensorNumType<StensorType>>,
-                             st2tost2<StensorTraits<StensorType>::dime,
+                             st2tost2<getSpaceDimension<StensorType>(),
                                       StensorNumType<StensorType>>>>
   computeIsotropicFunctionDerivative(const Function&,
                                      const FunctionDerivative&,
@@ -1126,8 +1111,8 @@ namespace tfel::math {
    */
   template <typename T, typename T2>
   TFEL_MATH_INLINE2 std::enable_if_t<
-      ((implementsStensorConcept<T>()) && (StensorTraits<T>::dime == 1u) &&
-       (implementsStensorConcept<T2>()) && (StensorTraits<T2>::dime == 1u) &&
+      ((implementsStensorConcept<T>()) && (getSpaceDimension<T>() == 1u) &&
+       (implementsStensorConcept<T2>()) && (getSpaceDimension<T2>() == 1u) &&
        (tfel::typetraits::IsFundamentalNumericType<StensorNumType<T2>>::cond)),
       stensor<1u, StensorNumType<T>>>
   convertCorotationnalCauchyStressToSecondPiolaKirchhoffStress(const T&,
@@ -1145,8 +1130,8 @@ namespace tfel::math {
    */
   template <typename T, typename T2>
   TFEL_MATH_INLINE2 std::enable_if_t<
-      ((implementsStensorConcept<T>()) && (StensorTraits<T>::dime == 2u) &&
-       (implementsStensorConcept<T2>()) && (StensorTraits<T2>::dime == 2u) &&
+      ((implementsStensorConcept<T>()) && (getSpaceDimension<T>() == 2u) &&
+       (implementsStensorConcept<T2>()) && (getSpaceDimension<T2>() == 2u) &&
        (tfel::typetraits::IsFundamentalNumericType<StensorNumType<T2>>::cond)),
       stensor<2u, StensorNumType<T>>>
   convertCorotationnalCauchyStressToSecondPiolaKirchhoffStress(const T&,
@@ -1164,8 +1149,8 @@ namespace tfel::math {
    */
   template <typename T, typename T2>
   TFEL_MATH_INLINE2 std::enable_if_t<
-      ((implementsStensorConcept<T>()) && (StensorTraits<T>::dime == 3u) &&
-       (implementsStensorConcept<T2>()) && (StensorTraits<T2>::dime == 3u) &&
+      ((implementsStensorConcept<T>()) && (getSpaceDimension<T>() == 3u) &&
+       (implementsStensorConcept<T2>()) && (getSpaceDimension<T2>() == 3u) &&
        (tfel::typetraits::IsFundamentalNumericType<StensorNumType<T2>>::cond)),
       stensor<3u, StensorNumType<T>>>
   convertCorotationnalCauchyStressToSecondPiolaKirchhoffStress(const T&,
@@ -1183,8 +1168,8 @@ namespace tfel::math {
    */
   template <typename T, typename T2>
   TFEL_MATH_INLINE2 std::enable_if_t<
-      ((implementsStensorConcept<T>()) && (StensorTraits<T>::dime == 1u) &&
-       (implementsStensorConcept<T2>()) && (StensorTraits<T2>::dime == 1u) &&
+      ((implementsStensorConcept<T>()) && (getSpaceDimension<T>() == 1u) &&
+       (implementsStensorConcept<T2>()) && (getSpaceDimension<T2>() == 1u) &&
        (tfel::typetraits::IsFundamentalNumericType<StensorNumType<T2>>::cond)),
       stensor<1u, StensorNumType<T>>>
   convertSecondPiolaKirchhoffStressToCorotationnalCauchyStress(const T&,
@@ -1202,8 +1187,8 @@ namespace tfel::math {
    */
   template <typename T, typename T2>
   TFEL_MATH_INLINE2 std::enable_if_t<
-      ((implementsStensorConcept<T>()) && (StensorTraits<T>::dime == 2u) &&
-       (implementsStensorConcept<T2>()) && (StensorTraits<T2>::dime == 2u) &&
+      ((implementsStensorConcept<T>()) && (getSpaceDimension<T>() == 2u) &&
+       (implementsStensorConcept<T2>()) && (getSpaceDimension<T2>() == 2u) &&
        (tfel::typetraits::IsFundamentalNumericType<StensorNumType<T2>>::cond)),
       stensor<2u, StensorNumType<T>>>
   convertSecondPiolaKirchhoffStressToCorotationnalCauchyStress(const T&,
@@ -1221,8 +1206,8 @@ namespace tfel::math {
    */
   template <typename T, typename T2>
   TFEL_MATH_INLINE2 std::enable_if_t<
-      ((implementsStensorConcept<T>()) && (StensorTraits<T>::dime == 3u) &&
-       (implementsStensorConcept<T2>()) && (StensorTraits<T2>::dime == 3u) &&
+      ((implementsStensorConcept<T>()) && (getSpaceDimension<T>() == 3u) &&
+       (implementsStensorConcept<T2>()) && (getSpaceDimension<T2>() == 3u) &&
        (tfel::typetraits::IsFundamentalNumericType<StensorNumType<T2>>::cond)),
       stensor<3u, StensorNumType<T>>>
   convertSecondPiolaKirchhoffStressToCorotationnalCauchyStress(const T&,
@@ -1238,8 +1223,8 @@ namespace tfel::math {
   template <typename StensorType1, typename StensorType2>
   std::enable_if_t<((implementsStensorConcept<StensorType1>()) &&
                     (implementsStensorConcept<StensorType2>()) &&
-                    (StensorTraits<StensorType1>::dime == 1u) &&
-                    (StensorTraits<StensorType2>::dime == 1u)),
+                    (getSpaceDimension<StensorType1>() == 1u) &&
+                    (getSpaceDimension<StensorType2>() == 1u)),
                    stensor<3u,
                            typename ResultType<StensorNumType<StensorType1>,
                                                StensorNumType<StensorType2>,
@@ -1257,8 +1242,8 @@ namespace tfel::math {
   template <typename StensorType1, typename StensorType2>
   std::enable_if_t<((implementsStensorConcept<StensorType1>()) &&
                     (implementsStensorConcept<StensorType2>()) &&
-                    (StensorTraits<StensorType1>::dime == 2u) &&
-                    (StensorTraits<StensorType2>::dime == 2u)),
+                    (getSpaceDimension<StensorType1>() == 2u) &&
+                    (getSpaceDimension<StensorType2>() == 2u)),
                    stensor<2u,
                            typename ResultType<StensorNumType<StensorType1>,
                                                StensorNumType<StensorType2>,
@@ -1275,8 +1260,8 @@ namespace tfel::math {
   template <typename StensorType1, typename StensorType2>
   std::enable_if_t<((implementsStensorConcept<StensorType1>()) &&
                     (implementsStensorConcept<StensorType2>()) &&
-                    (StensorTraits<StensorType1>::dime == 3u) &&
-                    (StensorTraits<StensorType2>::dime == 3u)),
+                    (getSpaceDimension<StensorType1>() == 3u) &&
+                    (getSpaceDimension<StensorType2>() == 3u)),
                    stensor<3u,
                            typename ResultType<StensorNumType<StensorType1>,
                                                StensorNumType<StensorType2>,

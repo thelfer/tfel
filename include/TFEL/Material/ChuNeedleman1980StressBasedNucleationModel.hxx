@@ -43,7 +43,7 @@ namespace tfel {
     template <typename StressStensorType>
     using ChuNeedleman1980StressBasedNucleationModeDerivativeType =
         tfel::math::stensor<
-            tfel::math::StensorTraits<StressStensorType>::dime,
+            tfel::math::getSpaceDimension<StressStensorType>(),
             ChuNeedleman1980StressBasedNucleationModelInverseStressType<
                 StressStensorType>>;
 

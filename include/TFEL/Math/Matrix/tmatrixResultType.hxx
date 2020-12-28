@@ -44,7 +44,7 @@ namespace tfel{
     template<unsigned short N,unsigned short M, typename T, typename Scal>
     class ResultType_<MatrixTag,ScalarTag,tmatrix<N,M,T>,Scal,OpMult>
     {
-      typedef typename ResultType<T,Scal,OpMult>::type ResBase_;
+      typedef result_type<T,Scal,OpMult> ResBase_;
     public:
       typedef typename std::conditional<tfel::typetraits::IsInvalid<ResBase_>::cond,
 				      tfel::meta::InvalidType,
@@ -59,7 +59,7 @@ namespace tfel{
     template<unsigned short N,unsigned short M, typename T, typename Scal>
     class ResultType_<MatrixTag,ScalarTag,tmatrix<N,M,T>,Scal,OpDiv>
     {
-      typedef typename ResultType<T,Scal,OpDiv>::type ResBase_;
+      typedef result_type<T,Scal,OpDiv> ResBase_;
     public:
       typedef typename std::conditional<tfel::typetraits::IsInvalid<ResBase_>::cond,
 				      tfel::meta::InvalidType,
@@ -74,7 +74,7 @@ namespace tfel{
     template<typename Scal,unsigned short N,unsigned short M, typename T>
     class ResultType_<ScalarTag,MatrixTag,Scal,tmatrix<N,M,T>,OpMult>
     {
-      typedef typename ResultType<Scal,T,OpMult>::type ResBase_;
+      typedef result_type<Scal,T,OpMult> ResBase_;
     public:
       typedef typename std::conditional<tfel::typetraits::IsInvalid<ResBase_>::cond,
 				      tfel::meta::InvalidType,
@@ -88,7 +88,7 @@ namespace tfel{
     template<unsigned short N,unsigned short M, typename T, typename T2>
     class ResultType<tmatrix<N,M,T>,tmatrix<N,M,T2>,OpPlus>
     {
-      typedef typename ResultType<T,T2,OpPlus>::type ResBase_;
+      typedef result_type<T,T2,OpPlus> ResBase_;
     public:
       typedef typename std::conditional<tfel::typetraits::IsInvalid<ResBase_>::cond,
 				      tfel::meta::InvalidType,
@@ -102,7 +102,7 @@ namespace tfel{
     template<unsigned short N,unsigned short M, typename T, typename T2>
     class ResultType<tmatrix<N,M,T>,tmatrix<N,M,T2>,OpMinus>
     {
-      typedef typename ResultType<T,T2,OpMinus>::type ResBase_;
+      typedef result_type<T,T2,OpMinus> ResBase_;
     public:
       typedef typename std::conditional<tfel::typetraits::IsInvalid<ResBase_>::cond,
 				      tfel::meta::InvalidType,
@@ -112,7 +112,7 @@ namespace tfel{
     template<unsigned short N,unsigned short M, typename T, typename T2>
     class ResultType<tmatrix<N,M,T>,tvector<M,T2>,OpMult>
     {
-      typedef typename ResultType<T,T2,OpMult>::type ResBase_;
+      typedef result_type<T,T2,OpMult> ResBase_;
     public:
       typedef typename std::conditional<tfel::typetraits::IsInvalid<ResBase_>::cond,
 				      tfel::meta::InvalidType,
@@ -122,7 +122,7 @@ namespace tfel{
     template<unsigned short N,unsigned short M, typename T, typename T2>
     class ResultType<tvector<N,T>,tmatrix<N,M,T2>,OpMult>
     {
-      typedef typename ResultType<T,T2,OpMult>::type ResBase_;
+      typedef result_type<T,T2,OpMult> ResBase_;
     public:
       typedef typename std::conditional<tfel::typetraits::IsInvalid<ResBase_>::cond,
 				      tfel::meta::InvalidType,

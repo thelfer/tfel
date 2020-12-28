@@ -37,12 +37,12 @@ namespace tfel {
     //! a simple alias
     template <typename StressStensor>
     using Drucker1949StressNormalType =
-        tfel::math::stensor<tfel::math::StensorTraits<StressStensor>::dime,
+        tfel::math::stensor<tfel::math::getSpaceDimension<StressStensor>(),
                             Drucker1949BaseType<StressStensor>>;
     //! a simple alias
     template <typename StressStensor>
     using Drucker1949StressSecondDerivativeType =
-        tfel::math::st2tost2<tfel::math::StensorTraits<StressStensor>::dime,
+        tfel::math::st2tost2<tfel::math::getSpaceDimension<StressStensor>(),
                              Drucker1949InvertStressType<StressStensor>>;
     /*!
      * \brief compute the Drucker1949 yield stress defined by:

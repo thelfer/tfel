@@ -39,7 +39,7 @@ namespace tfel{
        * \param[in] e: criterion used to check if two eigenvalues are equal
        */
       template<typename StressStensor>
-      typename std::enable_if<tfel::math::StensorTraits<StressStensor>::dime==1u,
+      typename std::enable_if<tfel::math::getSpaceDimension<StressStensor>()==1u,
 			      void>::type
       computeCazacu2006IsotropicStressSecondDerivative(tfel::material::CazacuStressSecondDerivativeType<StressStensor>& d2Psi_ds2,
 						       const tfel::math::tvector<3u,tfel::material::CazacuBaseType<StressStensor>>&,
@@ -70,7 +70,7 @@ namespace tfel{
        * \param[in] e: criterion used to check if two eigenvalues are equal
        */
       template<typename StressStensor>
-      typename std::enable_if<tfel::math::StensorTraits<StressStensor>::dime==2u,
+      typename std::enable_if<tfel::math::getSpaceDimension<StressStensor>()==2u,
 			      void>::type
       computeCazacu2006IsotropicStressSecondDerivative(tfel::material::CazacuStressSecondDerivativeType<StressStensor>& d2Psi_ds2,
 						       const tfel::math::tvector<3u,tfel::material::CazacuBaseType<StressStensor>>& dPsi_dvp,
@@ -112,7 +112,7 @@ namespace tfel{
        * \param[in] e: criterion used to check if two eigenvalues are equal
        */
       template<typename StressStensor>
-      typename std::enable_if<tfel::math::StensorTraits<StressStensor>::dime==3u,
+      typename std::enable_if<tfel::math::getSpaceDimension<StressStensor>()==3u,
 			      void>::type
       computeCazacu2006IsotropicStressSecondDerivative(tfel::material::CazacuStressSecondDerivativeType<StressStensor>& d2Psi_ds2,
 						       const tfel::math::tvector<3u,tfel::material::CazacuBaseType<StressStensor>>& dPsi_dvp,
@@ -195,7 +195,7 @@ namespace tfel{
 					   const CazacuBaseType<StressTensor> k,
 					   const CazacuStressType<StressStensor> e)
     {
-      constexpr const auto N = tfel::math::StensorTraits<StressStensor>::dime;
+      constexpr const auto N = tfel::math::getSpaceDimension<StressStensor>();
       using stress  = CazacuStressType<StressStensor>;
       using real    = CazacuBaseType<StressStensor>;
       using normal  = CazacuStressNormalType<StressStensor>;
@@ -240,7 +240,7 @@ namespace tfel{
 						     const CazacuBaseType<StressTensor> k,
 						     const CazacuStressType<StressStensor> e)
     {
-      constexpr const auto N = tfel::math::StensorTraits<StressStensor>::dime;
+      constexpr const auto N = tfel::math::getSpaceDimension<StressStensor>();
       using stress  = CazacuStressType<StressStensor>;
       using real    = CazacuBaseType<StressStensor>;
       using istress = tfel::math::result_type<real,stress,tfel::math::OpDiv>;

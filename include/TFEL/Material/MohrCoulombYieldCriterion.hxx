@@ -39,12 +39,12 @@ namespace tfel {
     //! a simple alias
     template <typename StressStensor>
     using MohrCoulombStressNormalType =
-        tfel::math::stensor<tfel::math::StensorTraits<StressStensor>::dime,
+        tfel::math::stensor<tfel::math::getSpaceDimension<StressStensor>(),
                             MohrCoulombBaseType<StressStensor>>;
     //! a simple alias
     template <typename StressStensor>
     using MohrCoulombStressSecondDerivativeType =
-        tfel::math::st2tost2<tfel::math::StensorTraits<StressStensor>::dime,
+        tfel::math::st2tost2<tfel::math::getSpaceDimension<StressStensor>(),
                              MohrCoulombInvertStressType<StressStensor>>;
 
     /*!

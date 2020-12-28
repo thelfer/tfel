@@ -34,12 +34,12 @@ namespace tfel::math {
    */
   template <typename DPPType, typename PPType, typename StensorType>
   std::enable_if_t<
-      tfel::meta::Implements<DPPType, ST2toST2Concept>::cond &&
-          tfel::meta::Implements<PPType, StensorConcept>::cond &&
-          tfel::meta::Implements<StensorType, StensorConcept>::cond &&
-          ST2toST2Traits<DPPType>::dime == StensorTraits<StensorType>::dime &&
-          StensorTraits<PPType>::dime == StensorTraits<StensorType>::dime &&
-          StensorTraits<StensorType>::dime == 1u &&
+      implementsST2toST2Concept<DPPType>() &&
+          implementsStensorConcept<PPType>() &&
+          implementsStensorConcept<StensorType>() &&
+          getSpaceDimension<DPPType>() == getSpaceDimension<StensorType>() &&
+          getSpaceDimension<PPType>() == getSpaceDimension<StensorType>() &&
+          getSpaceDimension<StensorType>() == 1u &&
           tfel::typetraits::IsAssignableTo<StensorNumType<StensorType>,
                                            StensorNumType<PPType>>::cond &&
           tfel::typetraits::IsAssignableTo<
@@ -66,12 +66,12 @@ namespace tfel::math {
    */
   template <typename DPPType, typename PPType, typename StensorType>
   std::enable_if_t<
-      tfel::meta::Implements<DPPType, ST2toST2Concept>::cond &&
-          tfel::meta::Implements<PPType, StensorConcept>::cond &&
-          tfel::meta::Implements<StensorType, StensorConcept>::cond &&
-          ST2toST2Traits<DPPType>::dime == StensorTraits<StensorType>::dime &&
-          StensorTraits<PPType>::dime == StensorTraits<StensorType>::dime &&
-          StensorTraits<StensorType>::dime == 2u &&
+      implementsST2toST2Concept<DPPType>() &&
+          implementsStensorConcept<PPType>() &&
+          implementsStensorConcept<StensorType>() &&
+          getSpaceDimension<DPPType>() == getSpaceDimension<StensorType>() &&
+          getSpaceDimension<PPType>() == getSpaceDimension<StensorType>() &&
+          getSpaceDimension<StensorType>() == 2u &&
           tfel::typetraits::IsAssignableTo<StensorNumType<StensorType>,
                                            StensorNumType<PPType>>::cond &&
           tfel::typetraits::IsAssignableTo<
@@ -98,12 +98,12 @@ namespace tfel::math {
    */
   template <typename DPPType, typename PPType, typename StensorType>
   std::enable_if_t<
-      tfel::meta::Implements<DPPType, ST2toST2Concept>::cond &&
-          tfel::meta::Implements<PPType, StensorConcept>::cond &&
-          tfel::meta::Implements<StensorType, StensorConcept>::cond &&
-          ST2toST2Traits<DPPType>::dime == StensorTraits<StensorType>::dime &&
-          StensorTraits<PPType>::dime == StensorTraits<StensorType>::dime &&
-          StensorTraits<StensorType>::dime == 3u &&
+      implementsST2toST2Concept<DPPType>() &&
+          implementsStensorConcept<PPType>() &&
+          implementsStensorConcept<StensorType>() &&
+          getSpaceDimension<DPPType>() == getSpaceDimension<StensorType>() &&
+          getSpaceDimension<PPType>() == getSpaceDimension<StensorType>() &&
+          getSpaceDimension<StensorType>() == 3u &&
           tfel::typetraits::IsAssignableTo<StensorNumType<StensorType>,
                                            StensorNumType<PPType>>::cond &&
           tfel::typetraits::IsAssignableTo<
@@ -140,16 +140,16 @@ namespace tfel::math {
             typename NPType,
             typename StensorType>
   typename std::enable_if<
-      tfel::meta::Implements<DPPType, ST2toST2Concept>::cond &&
-          tfel::meta::Implements<DNPType, ST2toST2Concept>::cond &&
-          tfel::meta::Implements<PPType, StensorConcept>::cond &&
-          tfel::meta::Implements<NPType, StensorConcept>::cond &&
-          tfel::meta::Implements<StensorType, StensorConcept>::cond &&
-          ST2toST2Traits<DPPType>::dime == StensorTraits<StensorType>::dime &&
-          ST2toST2Traits<DNPType>::dime == StensorTraits<StensorType>::dime &&
-          StensorTraits<PPType>::dime == StensorTraits<StensorType>::dime &&
-          StensorTraits<NPType>::dime == StensorTraits<StensorType>::dime &&
-          StensorTraits<StensorType>::dime == 1u &&
+      implementsST2toST2Concept<DPPType>() &&
+          implementsST2toST2Concept<DNPType>() &&
+          implementsStensorConcept<PPType>() &&
+          implementsStensorConcept<NPType>() &&
+          implementsStensorConcept<StensorType>() &&
+          getSpaceDimension<DPPType>() == getSpaceDimension<StensorType>() &&
+          getSpaceDimension<DNPType>() == getSpaceDimension<StensorType>() &&
+          getSpaceDimension<PPType>() == getSpaceDimension<StensorType>() &&
+          getSpaceDimension<NPType>() == getSpaceDimension<StensorType>() &&
+          getSpaceDimension<StensorType>() == 1u &&
           tfel::typetraits::IsAssignableTo<StensorNumType<StensorType>,
                                            StensorNumType<PPType>>::cond &&
           tfel::typetraits::IsAssignableTo<StensorNumType<StensorType>,
@@ -195,16 +195,16 @@ namespace tfel::math {
             typename NPType,
             typename StensorType>
   typename std::enable_if<
-      tfel::meta::Implements<DPPType, ST2toST2Concept>::cond &&
-          tfel::meta::Implements<DNPType, ST2toST2Concept>::cond &&
-          tfel::meta::Implements<PPType, StensorConcept>::cond &&
-          tfel::meta::Implements<NPType, StensorConcept>::cond &&
-          tfel::meta::Implements<StensorType, StensorConcept>::cond &&
-          ST2toST2Traits<DPPType>::dime == StensorTraits<StensorType>::dime &&
-          ST2toST2Traits<DNPType>::dime == StensorTraits<StensorType>::dime &&
-          StensorTraits<PPType>::dime == StensorTraits<StensorType>::dime &&
-          StensorTraits<NPType>::dime == StensorTraits<StensorType>::dime &&
-          StensorTraits<StensorType>::dime == 2u &&
+      implementsST2toST2Concept<DPPType>() &&
+          implementsST2toST2Concept<DNPType>() &&
+          implementsStensorConcept<PPType>() &&
+          implementsStensorConcept<NPType>() &&
+          implementsStensorConcept<StensorType>() &&
+          getSpaceDimension<DPPType>() == getSpaceDimension<StensorType>() &&
+          getSpaceDimension<DNPType>() == getSpaceDimension<StensorType>() &&
+          getSpaceDimension<PPType>() == getSpaceDimension<StensorType>() &&
+          getSpaceDimension<NPType>() == getSpaceDimension<StensorType>() &&
+          getSpaceDimension<StensorType>() == 2u &&
           tfel::typetraits::IsAssignableTo<StensorNumType<StensorType>,
                                            StensorNumType<PPType>>::cond &&
           tfel::typetraits::IsAssignableTo<StensorNumType<StensorType>,
@@ -250,16 +250,16 @@ namespace tfel::math {
             typename NPType,
             typename StensorType>
   typename std::enable_if<
-      tfel::meta::Implements<DPPType, ST2toST2Concept>::cond &&
-          tfel::meta::Implements<DNPType, ST2toST2Concept>::cond &&
-          tfel::meta::Implements<PPType, StensorConcept>::cond &&
-          tfel::meta::Implements<NPType, StensorConcept>::cond &&
-          tfel::meta::Implements<StensorType, StensorConcept>::cond &&
-          ST2toST2Traits<DPPType>::dime == StensorTraits<StensorType>::dime &&
-          ST2toST2Traits<DNPType>::dime == StensorTraits<StensorType>::dime &&
-          StensorTraits<PPType>::dime == StensorTraits<StensorType>::dime &&
-          StensorTraits<NPType>::dime == StensorTraits<StensorType>::dime &&
-          StensorTraits<StensorType>::dime == 3u &&
+      implementsST2toST2Concept<DPPType>() &&
+          implementsST2toST2Concept<DNPType>() &&
+          implementsStensorConcept<PPType>() &&
+          implementsStensorConcept<NPType>() &&
+          implementsStensorConcept<StensorType>() &&
+          getSpaceDimension<DPPType>() == getSpaceDimension<StensorType>() &&
+          getSpaceDimension<DNPType>() == getSpaceDimension<StensorType>() &&
+          getSpaceDimension<PPType>() == getSpaceDimension<StensorType>() &&
+          getSpaceDimension<NPType>() == getSpaceDimension<StensorType>() &&
+          getSpaceDimension<StensorType>() == 3u &&
           tfel::typetraits::IsAssignableTo<StensorNumType<StensorType>,
                                            StensorNumType<PPType>>::cond &&
           tfel::typetraits::IsAssignableTo<StensorNumType<StensorType>,

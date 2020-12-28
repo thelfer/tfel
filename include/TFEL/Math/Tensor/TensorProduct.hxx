@@ -17,7 +17,6 @@
 
 #include <cmath>
 #include "TFEL/Config/TFELConfig.hxx"
-#include "TFEL/Metaprogramming/Implements.hxx"
 #include "TFEL/Math/General/ResultType.hxx"
 #include "TFEL/Math/General/EmptyRunTimeProperties.hxx"
 
@@ -25,8 +24,8 @@ namespace tfel::math {
 
   template <typename A, typename B>
   struct TFEL_VISIBILITY_LOCAL TensorProductExprBase : public ExprBase {
-    static_assert(tfel::meta::Implements<std::decay_t<A>, TensorConcept>::cond);
-    static_assert(tfel::meta::Implements<std::decay_t<B>, TensorConcept>::cond);
+    static_assert(implementsTensorConcept<A>());
+    static_assert(implementsTensorConcept<B>());
 
     typedef EmptyRunTimeProperties RunTimeProperties;
 
@@ -36,8 +35,8 @@ namespace tfel::math {
 
    protected:
     typedef typename ComputeBinaryResult<A, B, OpMult>::Result Result;
-    typedef typename TensorTraits<Result>::NumType NumType;
-    typedef typename TensorTraits<Result>::IndexType IndexType;
+    typedef MathObjectNumType<Result> NumType;
+    typedef typename MathObjectTraits<Result>::IndexType IndexType;
 
     typedef NumType value_type;
     typedef NumType* pointer;
@@ -58,8 +57,8 @@ namespace tfel::math {
   template <typename A, typename B>
   struct TFEL_VISIBILITY_LOCAL TensorProductExpr1D
       : public TensorProductExprBase<A, B> {
-    static_assert(tfel::math::TensorTraits<std::decay_t<A>>::dime == 1u);
-    static_assert(tfel::math::TensorTraits<std::decay_t<B>>::dime == 1u);
+    static_assert(tfel::math::MathObjectTraits<std::decay_t<A>>::dime == 1u);
+    static_assert(tfel::math::MathObjectTraits<std::decay_t<B>>::dime == 1u);
 
     TFEL_MATH_INLINE TensorProductExpr1D(A l, B r)
         : TensorProductExprBase<A, B>(std::forward<A>(l), std::forward<B>(r)) {}
@@ -73,8 +72,8 @@ namespace tfel::math {
   template <typename A, typename B>
   struct TFEL_VISIBILITY_LOCAL TensorProductExpr2D
       : public TensorProductExprBase<A, B> {
-    static_assert(tfel::math::TensorTraits<std::decay_t<A>>::dime == 2u);
-    static_assert(tfel::math::TensorTraits<std::decay_t<B>>::dime == 2u);
+    static_assert(tfel::math::MathObjectTraits<std::decay_t<A>>::dime == 2u);
+    static_assert(tfel::math::MathObjectTraits<std::decay_t<B>>::dime == 2u);
 
     TFEL_MATH_INLINE TensorProductExpr2D(A l, B r)
         : TensorProductExprBase<A, B>(std::forward<A>(l), std::forward<B>(r)) {}
@@ -143,8 +142,8 @@ namespace tfel::math {
    private:
     using ttypeA = std::decay_t<A>;
     using ttypeB = std::decay_t<A>;
-    static_assert(tfel::math::TensorTraits<ttypeA>::dime == 3u);
-    static_assert(tfel::math::TensorTraits<ttypeB>::dime == 3u);
+    static_assert(tfel::math::getSpaceDimension<ttypeA>() == 3u);
+    static_assert(tfel::math::getSpaceDimension<ttypeB>() == 3u);
   };
 
 }  // end of namespace tfel::math

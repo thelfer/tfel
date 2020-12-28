@@ -82,7 +82,7 @@ namespace tfel::math {
 
    private:
     using stype = std::decay_t<T>;
-    using traits = StensorTraits<stype>;
+    using traits = MathObjectTraits<stype>;
 
     static_assert((N == 1u) || (N == 2u) || (N == 3u));
     static_assert(traits::dime == N);
@@ -92,7 +92,7 @@ namespace tfel::math {
   template <typename T>
   struct TensorViewFromStensor {
     using stype = std::decay_t<T>;
-    using traits = StensorTraits<stype>;
+    using traits = MathObjectTraits<stype>;
     static const unsigned short N = traits::dime;
     typedef Expr<tensor<N, typename traits::NumType>,
                  TensorViewFromStensorExpr<T>>

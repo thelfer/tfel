@@ -16,20 +16,12 @@
 
 #include <cmath>
 #include "TFEL/Config/TFELConfig.hxx"
-#include "TFEL/Metaprogramming/Implements.hxx"
 #include "TFEL/Math/ExpressionTemplates/Expr.hxx"
 #include "TFEL/Math/ExpressionTemplates/StandardOperations.hxx"
 #include "TFEL/Math/Stensor/StensorProduct.hxx"
 #include "TFEL/Math/Tensor/TensorConcept.hxx"
 
 namespace tfel::math {
-
-  template <typename T_type, typename Operation>
-  struct StensorTraits<Expr<T_type, Operation>> {
-    typedef typename StensorTraits<T_type>::NumType NumType;
-    typedef typename StensorTraits<T_type>::IndexType IndexType;
-    static constexpr unsigned short dime = StensorTraits<T_type>::dime;
-  };
 
   /*
    * Partial Specialisation of ComputeBinaryResult_ for stensor's operation
@@ -43,7 +35,7 @@ namespace tfel::math {
     using StensB = EvaluationResult<B>;
 
    public:
-    using Result = typename ResultType<StensA, StensB, Op>::type;
+    using Result = result_type<StensA, StensB, Op>;
     using Handle = std::conditional_t<tfel::typetraits::IsInvalid<Result>::cond,
                                       DummyHandle,
                                       Expr<Result, BinaryOperation<A, B, Op>>>;
@@ -61,14 +53,14 @@ namespace tfel::math {
     using StensB = EvaluationResult<B>;
     //! \brief a simple alias
     using Operation =
-        std::conditional_t<StensorTraits<StensA>::dime == 1u,
+        std::conditional_t<getSpaceDimension<StensA>() == 1u,
                            StensorProductExpr1D<A, B>,
-                           std::conditional_t<StensorTraits<StensA>::dime == 2u,
+                           std::conditional_t<getSpaceDimension<StensA>() == 2u,
                                               StensorProductExpr2D<A, B>,
                                               StensorProductExpr3D<A, B>>>;
 
    public:
-    using Result = typename ResultType<StensA, StensB, OpMult>::type;
+    using Result = result_type<StensA, StensB, OpMult>;
     using Handle = std::conditional_t<tfel::typetraits::IsInvalid<Result>::cond,
                                       DummyHandle,
                                       Expr<Result, Operation>>;
@@ -86,7 +78,7 @@ namespace tfel::math {
     using StensB = EvaluationResult<B>;
 
    public:
-    using Result = typename ResultType<StensA, StensB, OpDiadicProduct>::type;
+    using Result = result_type<StensA, StensB, OpDiadicProduct>;
     using Handle =
         std::conditional_t<tfel::typetraits::IsInvalid<Result>::cond,
                            DummyHandle,
@@ -104,7 +96,7 @@ namespace tfel::math {
     using StensB = EvaluationResult<B>;
 
    public:
-    typedef typename ResultType<A, StensB, Op>::type Result;
+    typedef result_type<A, StensB, Op> Result;
     typedef typename std::conditional<
         tfel::typetraits::IsInvalid<Result>::cond,
         DummyHandle,
@@ -122,7 +114,7 @@ namespace tfel::math {
     using StensA = EvaluationResult<A>;
 
    public:
-    typedef typename ResultType<StensA, B, Op>::type Result;
+    typedef result_type<StensA, B, Op> Result;
     typedef typename std::conditional<
         tfel::typetraits::IsInvalid<Result>::cond,
         DummyHandle,
@@ -154,24 +146,24 @@ namespace tfel::math {
     using StensorB = EvaluationResult<B>;
 
    public:
-    typedef typename ResultType<StensorA, StensorB, OpDotProduct>::type Result;
-    typedef typename ResultType<StensorA, StensorB, OpDotProduct>::type Handle;
+    typedef result_type<StensorA, StensorB, OpDotProduct> Result;
+    typedef result_type<StensorA, StensorB, OpDotProduct> Handle;
   };
 
   /*!
    * \return the inner product of a stensor
    * \param const T1&, the left  stensor.
    * \param const T2&, the right stensor.
-   * \return const typename ResultType<T,T2,OpMult>::type, the
+   * \return const result_type<T,T2,OpMult>, the
    * result.
    * \warning the operator| has not the priority expected for such
    * an operation : use of parenthesis is required.
    */
   template <typename T1, typename T2>
   typename std::enable_if<
-      tfel::meta::Implements<T1, StensorConcept>::cond &&
-          tfel::meta::Implements<T2, StensorConcept>::cond &&
-          StensorTraits<T1>::dime == 1u && StensorTraits<T2>::dime == 1u &&
+      implementsStensorConcept<T1>() &&
+          implementsStensorConcept<T2>() &&
+          getSpaceDimension<T1>() == 1u && getSpaceDimension<T2>() == 1u &&
           !tfel::typetraits::IsInvalid<
               typename ComputeBinaryResult<T1, T2, OpDotProduct>::Result>::cond,
       typename ComputeBinaryResult<T1, T2, OpDotProduct>::Result>::type
@@ -180,16 +172,16 @@ namespace tfel::math {
    * \return the inner product of a stensor
    * \param const T1&, the left  stensor.
    * \param const T2&, the right stensor.
-   * \return const typename ResultType<T,T2,OpMult>::type, the
+   * \return const result_type<T,T2,OpMult>, the
    * result.
    * \warning the operator| has not the priority expected for such
    * an operation : use of parenthesis is required.
    */
   template <typename T1, typename T2>
   typename std::enable_if<
-      tfel::meta::Implements<T1, StensorConcept>::cond &&
-          tfel::meta::Implements<T2, StensorConcept>::cond &&
-          StensorTraits<T1>::dime == 2u && StensorTraits<T2>::dime == 2u &&
+      implementsStensorConcept<T1>() &&
+          implementsStensorConcept<T2>() &&
+          getSpaceDimension<T1>() == 2u && getSpaceDimension<T2>() == 2u &&
           !tfel::typetraits::IsInvalid<
               typename ComputeBinaryResult<T1, T2, OpDotProduct>::Result>::cond,
       typename ComputeBinaryResult<T1, T2, OpDotProduct>::Result>::type
@@ -198,16 +190,16 @@ namespace tfel::math {
    * \return the inner product of a stensor
    * \param const T1&, the left  stensor.
    * \param const T2&, the right stensor.
-   * \return const typename ResultType<T,T2,OpMult>::type, the
+   * \return const result_type<T,T2,OpMult>, the
    * result.
    * \warning the operator| has not the priority expected for such
    * an operation : use of parenthesis is required.
    */
   template <typename T1, typename T2>
   typename std::enable_if<
-      tfel::meta::Implements<T1, StensorConcept>::cond &&
-          tfel::meta::Implements<T2, StensorConcept>::cond &&
-          StensorTraits<T1>::dime == 3u && StensorTraits<T2>::dime == 3u &&
+      implementsStensorConcept<T1>() &&
+          implementsStensorConcept<T2>() &&
+          getSpaceDimension<T1>() == 3u && getSpaceDimension<T2>() == 3u &&
           !tfel::typetraits::IsInvalid<
               typename ComputeBinaryResult<T1, T2, OpDotProduct>::Result>::cond,
       typename ComputeBinaryResult<T1, T2, OpDotProduct>::Result>::type

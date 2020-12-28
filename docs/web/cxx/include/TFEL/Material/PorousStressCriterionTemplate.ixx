@@ -49,7 +49,7 @@ namespace tfel {
         const __StressCriterionName__PorosityType<StressStensor> f,
         const __StressCriterionName__StressCriterionParameters<StressStensor>& p,
         const __StressCriterionName__StressType<StressStensor> seps) {
-      constexpr const auto N = tfel::math::StensorTraits<StressStensor>::dime;
+      constexpr const auto N = tfel::math::getSpaceDimension<StressStensor>();
       using stress = __StressCriterionName__StressType<StressStensor>;
       using real = __StressCriterionName__BaseType<StressStensor>;
       using istress = tfel::math::result_type<real, stress, tfel::math::OpDiv>;
@@ -68,7 +68,7 @@ namespace tfel {
         const __StressCriterionName__PorosityType<StressStensor> f,
         const __StressCriterionName__StressCriterionParameters<StressStensor>& p,
         const __StressCriterionName__StressType<StressStensor> seps) {
-      constexpr const auto N = tfel::math::StensorTraits<StressStensor>::dime;
+      constexpr const auto N = tfel::math::getSpaceDimension<StressStensor>();
       using stress = __StressCriterionName__StressType<StressStensor>;
       using real = __StressCriterionName__BaseType<StressStensor>;
       using istress = tfel::math::result_type<real, stress, tfel::math::OpDiv>;

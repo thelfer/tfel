@@ -19,10 +19,10 @@
 
 template<class T>
 void function(const tfel::math::VectorConcept<T>&,
-	      typename tfel::math::VectorTraits<T>::NumType,
-	      typename tfel::math::VectorTraits<T>::NumType,
-	      typename tfel::math::VectorTraits<T>::NumType,
-	      typename tfel::math::VectorTraits<T>::NumType,
+	      typename tfel::math::MathObjectTraits<T>::NumType,
+	      typename tfel::math::MathObjectTraits<T>::NumType,
+	      typename tfel::math::MathObjectTraits<T>::NumType,
+	      typename tfel::math::MathObjectTraits<T>::NumType,
 	      unsigned int);
 
 #include "function_tests.ixx"

@@ -36,25 +36,23 @@ namespace tfel::math {
       : public StensorConcept<
             Expr<StensorResultType, ST2toST2StensorProductExpr<1u>>>,
         public fsarray<
-            StensorDimeToSize<StensorTraits<StensorResultType>::dime>::value,
-            typename StensorTraits<StensorResultType>::NumType> {
-    static_assert(StensorTraits<StensorResultType>::dime == 1u);
+            StensorDimeToSize<getSpaceDimension<StensorResultType>()>::value,
+            MathObjectNumType<StensorResultType>> {
+    static_assert(getSpaceDimension<StensorResultType>() == 1u);
     //! a simple alias
     typedef EmptyRunTimeProperties RunTimeProperties;
     //! a simple alias
-    typedef typename StensorTraits<StensorResultType>::NumType value_type;
+    typedef MathObjectNumType<StensorResultType> value_type;
     /*!
      * \param[in] a : first term of the product
      * \param[in] b : second term of the product
      */
     template <typename ST2toST2Type, typename StensorType>
     TFEL_MATH_INLINE Expr(const ST2toST2Type& a, const StensorType& b) {
-      static_assert(
-          tfel::meta::Implements<ST2toST2Type, ST2toST2Concept>::cond);
-      static_assert(tfel::meta::Implements<StensorType,
-                                           tfel::math::StensorConcept>::cond);
-      static_assert(ST2toST2Traits<ST2toST2Type>::dime == 1u);
-      static_assert(StensorTraits<StensorType>::dime == 1u);
+      static_assert(implementsST2toST2Concept<ST2toST2Type>());
+      static_assert(implementsStensorConcept<StensorType>());
+      static_assert(getSpaceDimension<ST2toST2Type>() == 1u);
+      static_assert(getSpaceDimension<StensorType>() == 1u);
       this->v[0] = a(0, 0) * b(0) + a(0, 1) * b(1) + a(0, 2) * b(2);
       this->v[1] = a(1, 0) * b(0) + a(1, 1) * b(1) + a(1, 2) * b(2);
       this->v[2] = a(2, 0) * b(0) + a(2, 1) * b(1) + a(2, 2) * b(2);
@@ -91,25 +89,23 @@ namespace tfel::math {
       : public StensorConcept<
             Expr<StensorResultType, ST2toST2StensorProductExpr<2u>>>,
         public fsarray<
-            StensorDimeToSize<StensorTraits<StensorResultType>::dime>::value,
-            typename StensorTraits<StensorResultType>::NumType> {
-    static_assert(StensorTraits<StensorResultType>::dime == 2u);
+            StensorDimeToSize<getSpaceDimension<StensorResultType>()>::value,
+            MathObjectNumType<StensorResultType>> {
+    static_assert(getSpaceDimension<StensorResultType>() == 2u);
     //! a simple alias
     typedef EmptyRunTimeProperties RunTimeProperties;
     //! a simple alias
-    typedef typename StensorTraits<StensorResultType>::NumType value_type;
+    typedef MathObjectNumType<StensorResultType> value_type;
     /*!
      * \param[in] a : first term of the product
      * \param[in] b : second term of the product
      */
     template <typename ST2toST2Type, typename StensorType>
     TFEL_MATH_INLINE Expr(const ST2toST2Type& a, const StensorType& b) {
-      static_assert(
-          tfel::meta::Implements<ST2toST2Type, ST2toST2Concept>::cond);
-      static_assert(tfel::meta::Implements<StensorType,
-                                           tfel::math::StensorConcept>::cond);
-      static_assert(ST2toST2Traits<ST2toST2Type>::dime == 2u);
-      static_assert(StensorTraits<StensorType>::dime == 2u);
+      static_assert(implementsST2toST2Concept<ST2toST2Type>());
+      static_assert(implementsStensorConcept<StensorType>());
+      static_assert(getSpaceDimension<ST2toST2Type>() == 2u);
+      static_assert(getSpaceDimension<StensorType>() == 2u);
       this->v[0] =
           a(0, 0) * b(0) + a(0, 1) * b(1) + a(0, 2) * b(2) + a(0, 3) * b(3);
       this->v[1] =
@@ -151,25 +147,23 @@ namespace tfel::math {
       : public StensorConcept<
             Expr<StensorResultType, ST2toST2StensorProductExpr<3u>>>,
         public fsarray<
-            StensorDimeToSize<StensorTraits<StensorResultType>::dime>::value,
-            typename StensorTraits<StensorResultType>::NumType> {
-    static_assert(StensorTraits<StensorResultType>::dime == 3u);
+            StensorDimeToSize<getSpaceDimension<StensorResultType>()>::value,
+            MathObjectNumType<StensorResultType>> {
+    static_assert(getSpaceDimension<StensorResultType>() == 3u);
     //! a simple alias
     typedef EmptyRunTimeProperties RunTimeProperties;
     //! a simple alias
-    typedef typename StensorTraits<StensorResultType>::NumType value_type;
+    typedef MathObjectNumType<StensorResultType> value_type;
     /*!
      * \param[in] a : first term of the product
      * \param[in] b : second term of the product
      */
     template <typename ST2toST2Type, typename StensorType>
     TFEL_MATH_INLINE Expr(const ST2toST2Type& a, const StensorType& b) {
-      static_assert(
-          tfel::meta::Implements<ST2toST2Type, ST2toST2Concept>::cond);
-      static_assert(tfel::meta::Implements<StensorType,
-                                           tfel::math::StensorConcept>::cond);
-      static_assert(ST2toST2Traits<ST2toST2Type>::dime == 3u);
-      static_assert(StensorTraits<StensorType>::dime == 3u);
+      static_assert(implementsST2toST2Concept<ST2toST2Type>());
+      static_assert(implementsStensorConcept<StensorType>());
+      static_assert(getSpaceDimension<ST2toST2Type>() == 3u);
+      static_assert(getSpaceDimension<StensorType>() == 3u);
       this->v[0] = a(0, 0) * b(0) + a(0, 1) * b(1) + a(0, 2) * b(2) +
                    a(0, 3) * b(3) + a(0, 4) * b(4) + a(0, 5) * b(5);
       this->v[1] = a(1, 0) * b(0) + a(1, 1) * b(1) + a(1, 2) * b(2) +

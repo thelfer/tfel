@@ -34,7 +34,7 @@ namespace tfel{
        * \param[in] e: criterion used to check if two eigenvalues are equal
        */
       template<typename StressStensor>
-      typename std::enable_if<tfel::math::StensorTraits<StressStensor>::dime==1u,
+      typename std::enable_if<tfel::math::getSpaceDimension<StressStensor>()==1u,
 			      void>::type
       completeBaralatStressSecondDerivative(tfel::material::BarlatStressSecondDerivativeType<StressStensor>&,
 					   const tfel::math::tvector<3u,tfel::material::BarlatBaseType<StressStensor>>&,
@@ -55,7 +55,7 @@ namespace tfel{
        * \param[in] e: criterion used to check if two eigenvalues are equal
        */
       template<typename StressStensor>
-      typename std::enable_if<tfel::math::StensorTraits<StressStensor>::dime==2u,
+      typename std::enable_if<tfel::math::getSpaceDimension<StressStensor>()==2u,
 			      void>::type
       completeBaralatStressSecondDerivative(tfel::material::BarlatStressSecondDerivativeType<StressStensor>& d2Phi_ds2,
 					   const tfel::math::tvector<3u,tfel::material::BarlatBaseType<StressStensor>>& dPhi_dvp,
@@ -88,7 +88,7 @@ namespace tfel{
        * \param[in] e: criterion used to check if two eigenvalues are equal
        */
       template<typename StressStensor>
-      typename std::enable_if<tfel::math::StensorTraits<StressStensor>::dime==3u,
+      typename std::enable_if<tfel::math::getSpaceDimension<StressStensor>()==3u,
 			      void>::type
       completeBaralatStressSecondDerivative(tfel::material::BarlatStressSecondDerivativeType<StressStensor>& d2Phi_ds2,
 					    const tfel::math::tvector<3u,tfel::material::BarlatBaseType<StressStensor>>& dPhi_dvp,
@@ -203,7 +203,7 @@ namespace tfel{
 			      const BarlatExponentType a,
 			      const BarlatStressType<StressStensor> e)
     {
-      constexpr const auto N = tfel::math::StensorTraits<StressStensor>::dime;
+      constexpr const auto N = tfel::math::getSpaceDimension<StressStensor>();
       using stress  = BarlatStressType<StressStensor>;
       using real    = BarlatBaseType<StressStensor>;
       using normal  = BarlatStressNormalType<StressStensor>;
@@ -381,7 +381,7 @@ namespace tfel{
 					const BarlatExponentType a,
 					const BarlatStressType<StressStensor> e)
     {
-      constexpr const auto N = tfel::math::StensorTraits<StressStensor>::dime;
+      constexpr const auto N = tfel::math::getSpaceDimension<StressStensor>();
       using stress  = BarlatStressType<StressStensor>;
       using real    = BarlatBaseType<StressStensor>;
       using normal  = BarlatStressNormalType<StressStensor>;

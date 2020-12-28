@@ -35,7 +35,7 @@ namespace tfel::math {
       : public ST2toST2Concept<
             Expr<ST2toST2ResultType, ConvertT2toST2ToST2toST2Expr<1u>>>,
         public fsarray<9u, ST2toST2NumType<ST2toST2ResultType>> {
-    static_assert(ST2toST2Traits<ST2toST2ResultType>::dime == 1u);
+    static_assert(getSpaceDimension<ST2toST2ResultType>() == 1u);
     //! a simple alias
     typedef ST2toST2NumType<ST2toST2ResultType> value_type;
     //! a simple alias
@@ -46,11 +46,11 @@ namespace tfel::math {
     template <typename T2toST2Type>
     Expr(const T2toST2Type& A) {
       using tfel::fsalgo::copy;
-      static_assert(tfel::meta::Implements<T2toST2Type, T2toST2Concept>::cond);
-      static_assert(ST2toST2Traits<ST2toST2ResultType>::dime ==
-                    T2toST2Traits<T2toST2Type>::dime);
+      static_assert(implementsT2toST2Concept<T2toST2Type>());
+      static_assert(getSpaceDimension<ST2toST2ResultType>() ==
+                    getSpaceDimension<T2toST2Type>());
       static_assert(tfel::typetraits::IsAssignableTo<
-                    typename T2toST2Traits<T2toST2Type>::NumType,
+                    MathObjectNumType<T2toST2Type>,
                     ST2toST2NumType<ST2toST2ResultType>>::cond);
       copy<9u>::exe(&A(0, 0), this->v);
     }  // end of Expr
@@ -83,7 +83,7 @@ namespace tfel::math {
             Expr<ST2toST2ResultType, ConvertT2toST2ToST2toST2Expr<2u>>>,
         public fsarray<16u, ST2toST2NumType<ST2toST2ResultType>> {
     //! a simple check
-    static_assert(ST2toST2Traits<ST2toST2ResultType>::dime == 2u);
+    static_assert(getSpaceDimension<ST2toST2ResultType>() == 2u);
     //! a simple alias
     typedef ST2toST2NumType<ST2toST2ResultType> value_type;
     //! a simple alias
@@ -93,11 +93,11 @@ namespace tfel::math {
      */
     template <typename T2toST2Type>
     Expr(const T2toST2Type& A) {
-      static_assert(tfel::meta::Implements<T2toST2Type, T2toST2Concept>::cond);
-      static_assert(ST2toST2Traits<ST2toST2ResultType>::dime ==
-                    T2toST2Traits<T2toST2Type>::dime);
+      static_assert(implementsT2toST2Concept<T2toST2Type>());
+      static_assert(getSpaceDimension<ST2toST2ResultType>() ==
+                    getSpaceDimension<T2toST2Type>());
       static_assert(tfel::typetraits::IsAssignableTo<
-                    typename T2toST2Traits<T2toST2Type>::NumType,
+                    MathObjectNumType<T2toST2Type>,
                     ST2toST2NumType<ST2toST2ResultType>>::cond);
       using tfel::typetraits::BaseType;
       typedef typename BaseType<value_type>::type real;
@@ -148,7 +148,7 @@ namespace tfel::math {
       : public ST2toST2Concept<
             Expr<ST2toST2ResultType, ConvertT2toST2ToST2toST2Expr<3u>>>,
         public fsarray<36u, ST2toST2NumType<ST2toST2ResultType>> {
-    static_assert(ST2toST2Traits<ST2toST2ResultType>::dime == 3u);
+    static_assert(getSpaceDimension<ST2toST2ResultType>() == 3u);
     //! a simple alias
     typedef ST2toST2NumType<ST2toST2ResultType> value_type;
     //! a simple alias
@@ -158,11 +158,11 @@ namespace tfel::math {
      */
     template <typename T2toST2Type>
     Expr(const T2toST2Type& A) {
-      static_assert(tfel::meta::Implements<T2toST2Type, T2toST2Concept>::cond);
-      static_assert(ST2toST2Traits<ST2toST2ResultType>::dime ==
-                    T2toST2Traits<T2toST2Type>::dime);
+      static_assert(implementsT2toST2Concept<T2toST2Type>());
+      static_assert(getSpaceDimension<ST2toST2ResultType>() ==
+                    getSpaceDimension<T2toST2Type>());
       static_assert(tfel::typetraits::IsAssignableTo<
-                    typename T2toST2Traits<T2toST2Type>::NumType,
+                    MathObjectNumType<T2toST2Type>,
                     ST2toST2NumType<ST2toST2ResultType>>::cond);
       using tfel::typetraits::BaseType;
       typedef typename BaseType<value_type>::type real;

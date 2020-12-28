@@ -37,13 +37,6 @@
 
 namespace tfel::math {
 
-  template <unsigned short N, typename T>
-  struct TFEL_VISIBILITY_LOCAL TensorTraits<tensor<N, T>> {
-    typedef T NumType;
-    typedef unsigned short IndexType;
-    static constexpr unsigned short dime = N;
-  };
-
   /*!
    * \brief partial specialisation of the `DerivativeTypeDispatcher`
    * metafunction.
@@ -60,7 +53,7 @@ namespace tfel::math {
     static_assert(tfel::typetraits::IsScalar<TensorNumType<TensorType>>::cond,
                   "the tensor type does not hold a scalar");
     //! \brief result
-    using type = tensor<TensorTraits<TensorType>::dime,
+    using type = tensor<getSpaceDimension<TensorType>(),
                         derivative_type<TensorNumType<TensorType>, ScalarType>>;
   };  // end of struct DerivativeTypeDispatcher
   /*!
@@ -79,7 +72,7 @@ namespace tfel::math {
     static_assert(tfel::typetraits::IsScalar<TensorNumType<TensorType>>::cond,
                   "the tensor type does not hold a scalar");
     //! \brief result
-    using type = tensor<TensorTraits<TensorType>::dime,
+    using type = tensor<getSpaceDimension<TensorType>(),
                         derivative_type<ScalarType, TensorNumType<TensorType>>>;
   };  // end of struct DerivativeTypeDispatcher
 
@@ -97,7 +90,7 @@ namespace tfel::math {
     template <typename TensorType>
     TFEL_MATH_INLINE std::enable_if_t<
         implementsTensorConcept<TensorType>() &&
-            TensorTraits<Child>::dime == TensorTraits<TensorType>::dime &&
+            getSpaceDimension<Child>() == getSpaceDimension<TensorType>() &&
             tfel::typetraits::IsAssignableTo<TensorNumType<TensorType>,
                                              TensorNumType<Child>>::cond,
         Child&>
@@ -114,7 +107,7 @@ namespace tfel::math {
     template <typename TensorType>
     TFEL_MATH_INLINE std::enable_if_t<
         implementsTensorConcept<TensorType>() &&
-            TensorTraits<Child>::dime == TensorTraits<TensorType>::dime &&
+            getSpaceDimension<Child>() == getSpaceDimension<TensorType>() &&
             tfel::typetraits::IsAssignableTo<TensorNumType<TensorType>,
                                              TensorNumType<Child>>::cond,
         Child&>
@@ -123,7 +116,7 @@ namespace tfel::math {
     template <typename TensorType>
     TFEL_MATH_INLINE std::enable_if_t<
         implementsTensorConcept<TensorType>() &&
-            TensorTraits<Child>::dime == TensorTraits<TensorType>::dime &&
+            getSpaceDimension<Child>() == getSpaceDimension<TensorType>() &&
             tfel::typetraits::IsAssignableTo<TensorNumType<TensorType>,
                                              TensorNumType<Child>>::cond,
         Child&>
@@ -279,7 +272,7 @@ namespace tfel::math {
   template <typename TensorType>
   TFEL_MATH_INLINE2 std::enable_if_t<
       implementsTensorConcept<TensorType>(),
-      tensor<TensorTraits<TensorType>::dime,
+      tensor<getSpaceDimension<TensorType>(),
              typename ComputeBinaryResult<
                  tfel::typetraits::base_type<TensorNumType<TensorType>>,
                  TensorNumType<TensorType>,
@@ -291,7 +284,7 @@ namespace tfel::math {
    */
   template <typename TensorType>
   std::enable_if_t<implementsTensorConcept<TensorType>(),
-                   tensor<TensorTraits<TensorType>::dime,
+                   tensor<getSpaceDimension<TensorType>(),
                           typename ComputeUnaryResult<TensorNumType<TensorType>,
                                                       Power<2>>::Result>>
   computeDeterminantDerivative(const TensorType&);
@@ -304,7 +297,7 @@ namespace tfel::math {
   template <typename TensorType>
   TFEL_MATH_INLINE2 std::enable_if_t<
       implementsTensorConcept<TensorType>(),
-      tensor<TensorTraits<TensorType>::dime, TensorNumType<TensorType>>>
+      tensor<getSpaceDimension<TensorType>(), TensorNumType<TensorType>>>
   change_basis(const TensorType&,
                const rotation_matrix<TensorNumType<TensorType>>&) noexcept;
   /*!
@@ -314,7 +307,7 @@ namespace tfel::math {
   template <typename StensorType>
   TFEL_MATH_INLINE std::enable_if_t<
       implementsStensorConcept<StensorType>(),
-      tensor<StensorTraits<StensorType>::dime, StensorNumType<StensorType>>>
+      tensor<getSpaceDimension<StensorType>(), StensorNumType<StensorType>>>
   unsyme(const StensorType&);
   /*!
    * \brief convert the Cauchy stress to the first Piola-Kirchhoff stress.
@@ -330,7 +323,7 @@ namespace tfel::math {
   TFEL_MATH_INLINE
       std::enable_if_t<(implementsStensorConcept<StensorType>() &&
                         implementsTensorConcept<TensorType>()),
-                       tensor<StensorTraits<StensorType>::dime,
+                       tensor<getSpaceDimension<StensorType>(),
                               typename ResultType<StensorNumType<StensorType>,
                                                   TensorNumType<TensorType>,
                                                   OpMult>::type>>
@@ -348,7 +341,7 @@ namespace tfel::math {
   template <typename TensorType, typename TensorType2>
   std::enable_if_t<(implementsTensorConcept<TensorType>() &&
                     implementsTensorConcept<TensorType2>()),
-                   stensor<TensorTraits<TensorType>::dime,
+                   stensor<getSpaceDimension<TensorType>(),
                            typename ResultType<TensorNumType<TensorType>,
                                                TensorNumType<TensorType2>,
                                                OpMult>::type>>

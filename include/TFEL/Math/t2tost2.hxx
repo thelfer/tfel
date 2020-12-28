@@ -45,16 +45,6 @@ namespace tfel::math {
   template <unsigned short>
   struct LeftCauchyGreenTensorDerivativeExpr;
 
-  /*
-   * Partial specialisation for t2tost2
-   */
-  template <unsigned short N, typename T>
-  struct T2toST2Traits<t2tost2<N, T>> {
-    typedef T NumType;
-    typedef unsigned short IndexType;
-    static constexpr unsigned short dime = N;
-  };
-
   /*!
    * \brief partial specialisation of the `DerivativeTypeDispatcher`
    * metafunction.
@@ -64,12 +54,12 @@ namespace tfel::math {
                                   TensorTag,
                                   StensorType1,
                                   TensorType2> {
-    static_assert(tfel::meta::Implements<StensorType1, StensorConcept>::cond,
+    static_assert(implementsStensorConcept<StensorType1>(),
                   "template argument StensorType1 is not a symmetric tensor");
-    static_assert(tfel::meta::Implements<TensorType2, TensorConcept>::cond,
+    static_assert(implementsTensorConcept<TensorType2>(),
                   "template argument TensorType2 is not a tensor");
-    static_assert(StensorTraits<StensorType1>::dime ==
-                      TensorTraits<TensorType2>::dime,
+    static_assert(getSpaceDimension<StensorType1>() ==
+                      getSpaceDimension<TensorType2>(),
                   "symmetric tensor types don't have the same dimension");
     static_assert(
         tfel::typetraits::IsScalar<StensorNumType<StensorType1>>::cond,
@@ -77,7 +67,7 @@ namespace tfel::math {
     static_assert(tfel::typetraits::IsScalar<TensorNumType<TensorType2>>::cond,
                   "the second tensor type does not hold a scalar");
     //! \brief result
-    using type = t2tost2<StensorTraits<StensorType1>::dime,
+    using type = t2tost2<getSpaceDimension<StensorType1>(),
                          derivative_type<StensorNumType<StensorType1>,
                                          TensorNumType<TensorType2>>>;
   };  // end of struct DerivativeTypeDispatcher
@@ -95,31 +85,31 @@ namespace tfel::math {
      */
     template <typename T2toST2Type>
     TFEL_MATH_INLINE std::enable_if_t<
-        tfel::meta::Implements<T2toST2Type, tfel::math::T2toST2Concept>::cond &&
-            T2toST2Traits<Child>::dime == T2toST2Traits<T2toST2Type>::dime &&
+        implementsT2toST2Concept<T2toST2Type>() &&
+            getSpaceDimension<Child>() == getSpaceDimension<T2toST2Type>() &&
             tfel::typetraits::IsAssignableTo<
-                typename T2toST2Traits<T2toST2Type>::NumType,
-                typename T2toST2Traits<Child>::NumType>::cond,
+                MathObjectNumType<T2toST2Type>,
+                MathObjectNumType<Child>>::cond,
         Child&>
     operator=(const T2toST2Type&);
     //! Assignement operator
     template <typename T2toST2Type>
     TFEL_MATH_INLINE std::enable_if_t<
-        tfel::meta::Implements<T2toST2Type, tfel::math::T2toST2Concept>::cond &&
-            T2toST2Traits<Child>::dime == T2toST2Traits<T2toST2Type>::dime &&
+        implementsT2toST2Concept<T2toST2Type>() &&
+            getSpaceDimension<Child>() == getSpaceDimension<T2toST2Type>() &&
             tfel::typetraits::IsAssignableTo<
-                typename T2toST2Traits<T2toST2Type>::NumType,
-                typename T2toST2Traits<Child>::NumType>::cond,
+                MathObjectNumType<T2toST2Type>,
+                MathObjectNumType<Child>>::cond,
         Child&>
     operator+=(const T2toST2Type&);
     //! Assignement operator
     template <typename T2toST2Type>
     TFEL_MATH_INLINE std::enable_if_t<
-        tfel::meta::Implements<T2toST2Type, tfel::math::T2toST2Concept>::cond &&
-            T2toST2Traits<Child>::dime == T2toST2Traits<T2toST2Type>::dime &&
+        implementsT2toST2Concept<T2toST2Type>() &&
+            getSpaceDimension<Child>() == getSpaceDimension<T2toST2Type>() &&
             tfel::typetraits::IsAssignableTo<
-                typename T2toST2Traits<T2toST2Type>::NumType,
-                typename T2toST2Traits<Child>::NumType>::cond,
+                MathObjectNumType<T2toST2Type>,
+                MathObjectNumType<Child>>::cond,
         Child&>
     operator-=(const T2toST2Type&);
     /*!
@@ -129,10 +119,10 @@ namespace tfel::math {
     TFEL_MATH_INLINE std::enable_if_t<
         tfel::typetraits::IsScalar<T2>::cond &&
             std::is_same<
-                typename ResultType<typename T2toST2Traits<Child>::NumType,
+                typename ResultType<MathObjectNumType<Child>,
                                     T2,
                                     OpMult>::type,
-                typename T2toST2Traits<Child>::NumType>::value,
+                MathObjectNumType<Child>>::value,
         Child&>
     operator*=(const T2);
     /*!
@@ -142,10 +132,10 @@ namespace tfel::math {
     TFEL_MATH_INLINE std::enable_if_t<
         tfel::typetraits::IsScalar<T2>::cond &&
             std::is_same<
-                typename ResultType<typename T2toST2Traits<Child>::NumType,
+                typename ResultType<MathObjectNumType<Child>,
                                     T2,
                                     OpDiv>::type,
-                typename T2toST2Traits<Child>::NumType>::value,
+                MathObjectNumType<Child>>::value,
         Child&>
     operator/=(const T2);
   };  // end of struct t2tost2_base
@@ -163,10 +153,10 @@ namespace tfel::math {
      */
     template <typename TensorType>
     static TFEL_MATH_INLINE std::enable_if_t<
-        tfel::meta::Implements<TensorType, TensorConcept>::cond &&
-            TensorTraits<TensorType>::dime == N &&
+        implementsTensorConcept<TensorType>() &&
+            getSpaceDimension<TensorType>() == N &&
             tfel::typetraits::IsAssignableTo<
-                typename TensorTraits<TensorType>::NumType,
+                MathObjectNumType<TensorType>,
                 T>::cond,
         Expr<t2tost2<N, T>, RightCauchyGreenTensorDerivativeExpr<N>>>
     dCdF(const TensorType&);
@@ -177,10 +167,10 @@ namespace tfel::math {
      */
     template <typename TensorType>
     static TFEL_MATH_INLINE std::enable_if_t<
-        tfel::meta::Implements<TensorType, TensorConcept>::cond &&
-            TensorTraits<TensorType>::dime == N &&
+        implementsTensorConcept<TensorType>() &&
+            getSpaceDimension<TensorType>() == N &&
             tfel::typetraits::IsAssignableTo<
-                typename TensorTraits<TensorType>::NumType,
+                MathObjectNumType<TensorType>,
                 T>::cond,
         Expr<t2tost2<N, T>, LeftCauchyGreenTensorDerivativeExpr<N>>>
     dBdF(const TensorType&);
@@ -255,8 +245,8 @@ namespace tfel::math {
    */
   template <typename T2toST2Type>
   std::enable_if_t<
-      ((tfel::meta::Implements<T2toST2Type, T2toST2Concept>::cond) &&
-       (T2toST2Traits<T2toST2Type>::dime == 1u)),
+      ((implementsT2toST2Concept<T2toST2Type>()) &&
+       (getSpaceDimension<T2toST2Type>() == 1u)),
       t2tost2<1u, T2toST2NumType<T2toST2Type>>>
   change_basis(const T2toST2Type&,
                const rotation_matrix<T2toST2NumType<T2toST2Type>>&);
@@ -267,9 +257,9 @@ namespace tfel::math {
    */
   template <typename T2toST2Type>
   std::enable_if_t<
-      ((tfel::meta::Implements<T2toST2Type, T2toST2Concept>::cond) &&
-       (T2toST2Traits<T2toST2Type>::dime != 1u)),
-      t2tost2<T2toST2Traits<T2toST2Type>::dime, T2toST2NumType<T2toST2Type>>>
+      ((implementsT2toST2Concept<T2toST2Type>()) &&
+       (getSpaceDimension<T2toST2Type>() != 1u)),
+      t2tost2<getSpaceDimension<T2toST2Type>(), T2toST2NumType<T2toST2Type>>>
   change_basis(const T2toST2Type& s,
                const rotation_matrix<T2toST2NumType<T2toST2Type>>&);
 
@@ -278,9 +268,9 @@ namespace tfel::math {
    */
   template <typename T2toT2Type>
   TFEL_MATH_INLINE std::enable_if_t<
-      ((T2toT2Traits<T2toT2Type>::dime == 1u) &&
-       tfel::meta::Implements<T2toT2Type, tfel::math::T2toT2Concept>::cond),
-      t2tost2<1u, typename T2toT2Traits<T2toT2Type>::NumType>>
+      ((getSpaceDimension<T2toT2Type>() == 1u) &&
+       implementsT2toT2Concept<T2toT2Type>()),
+      t2tost2<1u, MathObjectNumType<T2toT2Type>>>
   convertToT2toST2(const T2toT2Type&);
 
   /*!
@@ -288,9 +278,9 @@ namespace tfel::math {
    */
   template <typename T2toT2Type>
   TFEL_MATH_INLINE std::enable_if_t<
-      ((T2toT2Traits<T2toT2Type>::dime == 2u) &&
-       tfel::meta::Implements<T2toT2Type, tfel::math::T2toT2Concept>::cond),
-      t2tost2<2u, typename T2toT2Traits<T2toT2Type>::NumType>>
+      ((getSpaceDimension<T2toT2Type>() == 2u) &&
+       implementsT2toT2Concept<T2toT2Type>()),
+      t2tost2<2u, MathObjectNumType<T2toT2Type>>>
   convertToT2toST2(const T2toT2Type&);
 
   /*!
@@ -298,9 +288,9 @@ namespace tfel::math {
    */
   template <typename T2toT2Type>
   TFEL_MATH_INLINE std::enable_if_t<
-      ((T2toT2Traits<T2toT2Type>::dime == 3u) &&
-       tfel::meta::Implements<T2toT2Type, tfel::math::T2toT2Concept>::cond),
-      t2tost2<3u, typename T2toT2Traits<T2toT2Type>::NumType>>
+      ((getSpaceDimension<T2toT2Type>() == 3u) &&
+       implementsT2toT2Concept<T2toT2Type>()),
+      t2tost2<3u, MathObjectNumType<T2toT2Type>>>
   convertToT2toST2(const T2toT2Type&);
 
   /*!
@@ -311,9 +301,9 @@ namespace tfel::math {
    */
   template <typename TensorType>
   TFEL_MATH_INLINE2 std::enable_if_t<
-      (tfel::meta::Implements<TensorType, TensorConcept>::cond) &&
-          (TensorTraits<TensorType>::dime == 1u),
-      t2tost2<1u, typename TensorTraits<TensorType>::NumType>>
+      (implementsTensorConcept<TensorType>()) &&
+          (getSpaceDimension<TensorType>() == 1u),
+      t2tost2<1u, MathObjectNumType<TensorType>>>
   computeRateOfDeformationDerivative(const TensorType&);
   /*!
    * \return compute the derivative of the rate of deformation
@@ -321,9 +311,9 @@ namespace tfel::math {
    */
   template <typename TensorType>
   TFEL_MATH_INLINE2 std::enable_if_t<
-      (tfel::meta::Implements<TensorType, TensorConcept>::cond) &&
-          (TensorTraits<TensorType>::dime == 2u),
-      t2tost2<2u, typename TensorTraits<TensorType>::NumType>>
+      (implementsTensorConcept<TensorType>()) &&
+          (getSpaceDimension<TensorType>() == 2u),
+      t2tost2<2u, MathObjectNumType<TensorType>>>
   computeRateOfDeformationDerivative(const TensorType&);
   /*!
    * \return compute the derivative of the rate of deformation
@@ -331,9 +321,9 @@ namespace tfel::math {
    */
   template <typename TensorType>
   TFEL_MATH_INLINE2 std::enable_if_t<
-      (tfel::meta::Implements<TensorType, TensorConcept>::cond) &&
-          (TensorTraits<TensorType>::dime == 1u),
-      t2tost2<1u, typename TensorTraits<TensorType>::NumType>>
+      (implementsTensorConcept<TensorType>()) &&
+          (getSpaceDimension<TensorType>() == 1u),
+      t2tost2<1u, MathObjectNumType<TensorType>>>
   computeRateOfDeformationDerivative(const TensorType&);
   /*!
    * \brief compute the Cauchy stress derivative from the Kirchhoff stress
@@ -344,18 +334,18 @@ namespace tfel::math {
    */
   template <typename T2toST2Type, typename StensorType, typename TensorType>
   std::enable_if_t<
-      tfel::meta::Implements<T2toST2Type, T2toST2Concept>::cond &&
-          tfel::meta::Implements<StensorType, StensorConcept>::cond &&
-          tfel::meta::Implements<TensorType, TensorConcept>::cond &&
-          T2toST2Traits<T2toST2Type>::dime ==
-              StensorTraits<StensorType>::dime &&
-          T2toST2Traits<T2toST2Type>::dime == TensorTraits<TensorType>::dime &&
+      implementsT2toST2Concept<T2toST2Type>() &&
+          implementsStensorConcept<StensorType>() &&
+          implementsTensorConcept<TensorType>() &&
+          getSpaceDimension<T2toST2Type>() ==
+              getSpaceDimension<StensorType>() &&
+          getSpaceDimension<T2toST2Type>() == getSpaceDimension<TensorType>() &&
           tfel::typetraits::IsFundamentalNumericType<
-              typename TensorTraits<TensorType>::NumType>::cond,
-      t2tost2<T2toST2Traits<T2toST2Type>::dime,
+              MathObjectNumType<TensorType>>::cond,
+      t2tost2<getSpaceDimension<T2toST2Type>(),
               typename ComputeBinaryResult<
-                  typename T2toST2Traits<T2toST2Type>::NumType,
-                  typename StensorTraits<StensorType>::NumType,
+                  MathObjectNumType<T2toST2Type>,
+                  MathObjectNumType<StensorType>,
                   OpPlus>::Result>>
   computeCauchyStressDerivativeFromKirchhoffStressDerivative(const T2toST2Type&,
                                                              const StensorType&,
@@ -369,18 +359,18 @@ namespace tfel::math {
    */
   template <typename T2toST2Type, typename StensorType, typename TensorType>
   std::enable_if_t<
-      tfel::meta::Implements<T2toST2Type, T2toST2Concept>::cond &&
-          tfel::meta::Implements<StensorType, StensorConcept>::cond &&
-          tfel::meta::Implements<TensorType, TensorConcept>::cond &&
-          T2toST2Traits<T2toST2Type>::dime ==
-              StensorTraits<StensorType>::dime &&
-          T2toST2Traits<T2toST2Type>::dime == TensorTraits<TensorType>::dime &&
+      implementsT2toST2Concept<T2toST2Type>() &&
+          implementsStensorConcept<StensorType>() &&
+          implementsTensorConcept<TensorType>() &&
+          getSpaceDimension<T2toST2Type>() ==
+              getSpaceDimension<StensorType>() &&
+          getSpaceDimension<T2toST2Type>() == getSpaceDimension<TensorType>() &&
           tfel::typetraits::IsFundamentalNumericType<
-              typename TensorTraits<TensorType>::NumType>::cond,
-      t2tost2<T2toST2Traits<T2toST2Type>::dime,
+              MathObjectNumType<TensorType>>::cond,
+      t2tost2<getSpaceDimension<T2toST2Type>(),
               typename ComputeBinaryResult<
-                  typename T2toST2Traits<T2toST2Type>::NumType,
-                  typename StensorTraits<StensorType>::NumType,
+                  MathObjectNumType<T2toST2Type>,
+                  MathObjectNumType<StensorType>,
                   OpPlus>::Result>>
   computeKirchhoffStressDerivativeFromCauchyStressDerivative(const T2toST2Type&,
                                                              const StensorType&,

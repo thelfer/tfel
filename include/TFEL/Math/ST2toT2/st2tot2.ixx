@@ -31,37 +31,37 @@ namespace tfel::math {
   // Assignement operator
   template <typename Child>
   template <typename ST2toT2Type>
-  std::enable_if_t<tfel::meta::Implements<ST2toT2Type, ST2toT2Concept>::cond &&
-                       ST2toT2Traits<Child>::dime ==
-                           ST2toT2Traits<ST2toT2Type>::dime &&
+  std::enable_if_t<implementsST2toT2Concept<ST2toT2Type>() &&
+                       getSpaceDimension<Child>() ==
+                           getSpaceDimension<ST2toT2Type>() &&
                        tfel::typetraits::IsAssignableTo<
-                           typename ST2toT2Traits<ST2toT2Type>::NumType,
-                           typename ST2toT2Traits<Child>::NumType>::cond,
+                           MathObjectNumType<ST2toT2Type>,
+                           MathObjectNumType<Child>>::cond,
                    Child&>
   st2tot2_base<Child>::operator=(const ST2toT2Type& src) {
     auto& child = static_cast<Child&>(*this);
     matrix_utilities<
-        TensorDimeToSize<ST2toT2Traits<Child>::dime>::value,
-        StensorDimeToSize<ST2toT2Traits<Child>::dime>::value,
-        StensorDimeToSize<ST2toT2Traits<Child>::dime>::value>::copy(src, child);
+        TensorDimeToSize<getSpaceDimension<Child>()>::value,
+        StensorDimeToSize<getSpaceDimension<Child>()>::value,
+        StensorDimeToSize<getSpaceDimension<Child>()>::value>::copy(src, child);
     return child;
   }
 
   template <typename Child>
   template <typename ST2toT2Type>
-  std::enable_if_t<tfel::meta::Implements<ST2toT2Type, ST2toT2Concept>::cond &&
-                       ST2toT2Traits<Child>::dime ==
-                           ST2toT2Traits<ST2toT2Type>::dime &&
+  std::enable_if_t<implementsST2toT2Concept<ST2toT2Type>() &&
+                       getSpaceDimension<Child>() ==
+                           getSpaceDimension<ST2toT2Type>() &&
                        tfel::typetraits::IsAssignableTo<
-                           typename ST2toT2Traits<ST2toT2Type>::NumType,
-                           typename ST2toT2Traits<Child>::NumType>::cond,
+                           MathObjectNumType<ST2toT2Type>,
+                           MathObjectNumType<Child>>::cond,
                    Child&>
   st2tot2_base<Child>::operator+=(const ST2toT2Type& src) {
     auto& child = static_cast<Child&>(*this);
     matrix_utilities<
-        TensorDimeToSize<ST2toT2Traits<Child>::dime>::value,
-        StensorDimeToSize<ST2toT2Traits<Child>::dime>::value,
-        StensorDimeToSize<ST2toT2Traits<Child>::dime>::value>::plusEqual(child,
+        TensorDimeToSize<getSpaceDimension<Child>()>::value,
+        StensorDimeToSize<getSpaceDimension<Child>()>::value,
+        StensorDimeToSize<getSpaceDimension<Child>()>::value>::plusEqual(child,
                                                                          src);
     return child;
   }
@@ -69,19 +69,19 @@ namespace tfel::math {
   // Assignement operator
   template <typename Child>
   template <typename ST2toT2Type>
-  std::enable_if_t<tfel::meta::Implements<ST2toT2Type, ST2toT2Concept>::cond &&
-                       ST2toT2Traits<Child>::dime ==
-                           ST2toT2Traits<ST2toT2Type>::dime &&
+  std::enable_if_t<implementsST2toT2Concept<ST2toT2Type>() &&
+                       getSpaceDimension<Child>() ==
+                           getSpaceDimension<ST2toT2Type>() &&
                        tfel::typetraits::IsAssignableTo<
-                           typename ST2toT2Traits<ST2toT2Type>::NumType,
-                           typename ST2toT2Traits<Child>::NumType>::cond,
+                           MathObjectNumType<ST2toT2Type>,
+                           MathObjectNumType<Child>>::cond,
                    Child&>
   st2tot2_base<Child>::operator-=(const ST2toT2Type& src) {
     auto& child = static_cast<Child&>(*this);
     matrix_utilities<
-        TensorDimeToSize<ST2toT2Traits<Child>::dime>::value,
-        StensorDimeToSize<ST2toT2Traits<Child>::dime>::value,
-        StensorDimeToSize<ST2toT2Traits<Child>::dime>::value>::minusEqual(child,
+        TensorDimeToSize<getSpaceDimension<Child>()>::value,
+        StensorDimeToSize<getSpaceDimension<Child>()>::value,
+        StensorDimeToSize<getSpaceDimension<Child>()>::value>::minusEqual(child,
                                                                           src);
     return child;
   }
@@ -92,16 +92,16 @@ namespace tfel::math {
   std::enable_if_t<
       tfel::typetraits::IsScalar<T2>::cond &&
           std::is_same<
-              typename ResultType<typename ST2toT2Traits<Child>::NumType,
+              typename ResultType<MathObjectNumType<Child>,
                                   T2,
                                   OpMult>::type,
-              typename ST2toT2Traits<Child>::NumType>::value,
+              MathObjectNumType<Child>>::value,
       Child&>
   st2tot2_base<Child>::operator*=(const T2 s) {
     auto& child = static_cast<Child&>(*this);
-    matrix_utilities<TensorDimeToSize<ST2toT2Traits<Child>::dime>::value,
-                     StensorDimeToSize<ST2toT2Traits<Child>::dime>::value,
-                     StensorDimeToSize<ST2toT2Traits<Child>::dime>::value>::
+    matrix_utilities<TensorDimeToSize<getSpaceDimension<Child>()>::value,
+                     StensorDimeToSize<getSpaceDimension<Child>()>::value,
+                     StensorDimeToSize<getSpaceDimension<Child>()>::value>::
         multByScalar(child, s);
     return child;
   }
@@ -112,26 +112,26 @@ namespace tfel::math {
   std::enable_if_t<
       tfel::typetraits::IsScalar<T2>::cond &&
           std::is_same<
-              typename ResultType<typename ST2toT2Traits<Child>::NumType,
+              typename ResultType<MathObjectNumType<Child>,
                                   T2,
                                   OpDiv>::type,
-              typename ST2toT2Traits<Child>::NumType>::value,
+              MathObjectNumType<Child>>::value,
       Child&>
   st2tot2_base<Child>::operator/=(const T2 s) {
     auto& child = static_cast<Child&>(*this);
-    matrix_utilities<TensorDimeToSize<ST2toT2Traits<Child>::dime>::value,
-                     StensorDimeToSize<ST2toT2Traits<Child>::dime>::value,
-                     StensorDimeToSize<ST2toT2Traits<Child>::dime>::value>::
+    matrix_utilities<TensorDimeToSize<getSpaceDimension<Child>()>::value,
+                     StensorDimeToSize<getSpaceDimension<Child>()>::value,
+                     StensorDimeToSize<getSpaceDimension<Child>()>::value>::
         divByScalar(child, s);
     return child;
   }
 
   template <unsigned short N, typename T>
   template <typename StensorType>
-  std::enable_if_t<tfel::meta::Implements<StensorType, StensorConcept>::cond &&
-                       StensorTraits<StensorType>::dime == N &&
+  std::enable_if_t<implementsStensorConcept<StensorType>() &&
+                       getSpaceDimension<StensorType>() == N &&
                        tfel::typetraits::IsAssignableTo<
-                           typename StensorTraits<StensorType>::NumType,
+                           MathObjectNumType<StensorType>,
                            T>::cond,
                    Expr<st2tot2<N, T>, StensorProductLeftDerivativeExpr<N>>>
   st2tot2<N, T>::tpld(const StensorType& b) {
@@ -141,14 +141,14 @@ namespace tfel::math {
   template <unsigned short N, typename T>
   template <typename StensorType, typename ST2toST2Type>
   std::enable_if_t<
-      tfel::meta::Implements<StensorType, StensorConcept>::cond &&
-          tfel::meta::Implements<ST2toST2Type, ST2toST2Concept>::cond &&
-          StensorTraits<StensorType>::dime == N &&
-          ST2toST2Traits<ST2toST2Type>::dime == N &&
+      implementsStensorConcept<StensorType>() &&
+          implementsST2toST2Concept<ST2toST2Type>() &&
+          getSpaceDimension<StensorType>() == N &&
+          getSpaceDimension<ST2toST2Type>() == N &&
           tfel::typetraits::IsAssignableTo<
               typename ComputeBinaryResult<
-                  typename StensorTraits<StensorType>::NumType,
-                  typename ST2toST2Traits<ST2toST2Type>::NumType,
+                  MathObjectNumType<StensorType>,
+                  MathObjectNumType<ST2toST2Type>,
                   OpMult>::Result,
               T>::cond,
       Expr<st2tot2<N, T>, StensorProductLeftDerivativeExpr<N>>>
@@ -158,10 +158,10 @@ namespace tfel::math {
 
   template <unsigned short N, typename T>
   template <typename StensorType>
-  std::enable_if_t<tfel::meta::Implements<StensorType, StensorConcept>::cond &&
-                       StensorTraits<StensorType>::dime == N &&
+  std::enable_if_t<implementsStensorConcept<StensorType>() &&
+                       getSpaceDimension<StensorType>() == N &&
                        tfel::typetraits::IsAssignableTo<
-                           typename StensorTraits<StensorType>::NumType,
+                           MathObjectNumType<StensorType>,
                            T>::cond,
                    Expr<st2tot2<N, T>, StensorProductRightDerivativeExpr<N>>>
   st2tot2<N, T>::tprd(const StensorType& a) {
@@ -171,14 +171,14 @@ namespace tfel::math {
   template <unsigned short N, typename T>
   template <typename StensorType, typename ST2toST2Type>
   std::enable_if_t<
-      tfel::meta::Implements<StensorType, StensorConcept>::cond &&
-          tfel::meta::Implements<ST2toST2Type, ST2toST2Concept>::cond &&
-          StensorTraits<StensorType>::dime == N &&
-          ST2toST2Traits<ST2toST2Type>::dime == N &&
+      implementsStensorConcept<StensorType>() &&
+          implementsST2toST2Concept<ST2toST2Type>() &&
+          getSpaceDimension<StensorType>() == N &&
+          getSpaceDimension<ST2toST2Type>() == N &&
           tfel::typetraits::IsAssignableTo<
               typename ComputeBinaryResult<
-                  typename StensorTraits<StensorType>::NumType,
-                  typename ST2toST2Traits<ST2toST2Type>::NumType,
+                  MathObjectNumType<StensorType>,
+                  MathObjectNumType<ST2toST2Type>,
                   OpMult>::Result,
               T>::cond,
       Expr<st2tot2<N, T>, StensorProductRightDerivativeExpr<N>>>

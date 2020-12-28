@@ -58,7 +58,7 @@ namespace tfel {
         const Cazacu2004BaseType<StressStensor> c,
         const Cazacu2004StressType<StressStensor> seps) {
       using real = Cazacu2004BaseType<StressStensor>;
-      constexpr const auto N = tfel::math::StensorTraits<StressStensor>::dime;
+      constexpr const auto N = tfel::math::getSpaceDimension<StressStensor>();
       const auto s = tfel::math::deviator(sig);
       const auto J2 = (s | s) / 2;
       const auto J3 = tfel::math::det(s);

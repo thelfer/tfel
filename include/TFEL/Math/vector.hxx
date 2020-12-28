@@ -18,7 +18,6 @@
 
 #include <vector>
 #include <type_traits>
-
 #include "TFEL/TypeTraits/BaseType.hxx"
 #include "TFEL/TypeTraits/IsAssignableTo.hxx"
 #include "TFEL/Math/Forward/vector.hxx"
@@ -26,26 +25,6 @@
 #include "TFEL/Math/Vector/VectorConceptOperations.hxx"
 
 namespace tfel::math {
-
-  /*!
-   * \brief Partial specialisation for the vector class.
-   * \see VectorTraits
-   */
-  template <typename T>
-  struct TFEL_VISIBILITY_LOCAL VectorTraits<vector<T>> {
-    /*
-     * The underlying numerical type.
-     */
-    typedef T NumType;
-    /*
-     * The index type
-     */
-    typedef typename std::vector<T>::size_type IndexType;
-    /*
-     * RunTime Properties
-     */
-    typedef IndexType RunTimeProperties;
-  };
 
   template <typename T>
   class TFEL_VISIBILITY_LOCAL vector : public VectorConcept<vector<T>>,

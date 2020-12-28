@@ -3315,25 +3315,16 @@ namespace mfront {
         }
       } else if ((flag == SupportedTypes::TVECTOR) || (flag == SupportedTypes::STENSOR) ||
                  (flag == SupportedTypes::TENSOR)) {
-        std::string traits;
-        if (flag == SupportedTypes::TVECTOR) {
-          traits = "VectorTraits";
-        } else if (flag == SupportedTypes::STENSOR) {
-          traits = "StensorTraits";
-        } else if (flag == SupportedTypes::TENSOR) {
-          traits = "TensorTraits";
-        } else {
-          this->throwRuntimeError("BehaviourDSLCommon::getIntegrationVariablesIncrementsInitializers",
-                                  "internal error, tag unsupported");
-        }
+        const auto traits = "MathObjectTraits<" + t + ">";
         if (v.arraySize == 1u) {
-          f << "d" << n << "(typename tfel::math::" + traits + "<" << t << ">::NumType(0))";
+          f << "d" << n << "(typename tfel::math::" + traits + "::NumType(0))";
         } else {
           if (this->mb.useDynamicallyAllocatedVector(v.arraySize)) {
-            f << "d" << n << "(" << v.arraySize << "," << t << "(typename tfel::math::" + traits + "<" << t
-              << ">::NumType(0)))";
+            f << "d" << n << "(" << v.arraySize << "," << t
+              << "(typename tfel::math::" + traits + "::NumType(0)))";
           } else {
-            f << "d" << n << "(" << t << "(typename tfel::math::" + traits + "<" << t << ">::NumType(0)))";
+            f << "d" << n << "(" << t
+              << "(typename tfel::math::" + traits + "::NumType(0)))";
           }
         }
       } else {

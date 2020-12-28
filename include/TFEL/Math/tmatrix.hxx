@@ -28,19 +28,19 @@
 
 namespace tfel::math {
 
-  //! Partial specialisation for tmatrixs.
-  /*
+  /*!
+   * \brief partial specialisation for tmatrix
    * This is a MatrixConcept requirement.
-   * \see MatrixTraits.
+   * \see MathObjectTraits.
    */
   template <unsigned short N, unsigned short M, typename T>
-  struct TFEL_VISIBILITY_LOCAL MatrixTraits<tmatrix<N, M, T>> {
-    //! the type holded by the tmatrix.
-    typedef T NumType;
-    //! the type of the index used by the tmatrix.
-    typedef unsigned short IndexType;
-    //! a simple typedef to the tmatrix runtime properties
-    typedef EmptyRunTimeProperties RunTimeProperties;
+  struct TFEL_VISIBILITY_LOCAL MathObjectTraits<tmatrix<N, M, T>> {
+    //! \brief the type holded by the tmatrix.
+    using NumType = T;
+    //! \brief the type of the index used by the tmatrix.
+    using IndexType = unsigned short;
+    //! brief a `tmatrix` is not related to the space dimension
+    static constexpr const unsigned short dime = 0;
   };
 
   // forward declaration
