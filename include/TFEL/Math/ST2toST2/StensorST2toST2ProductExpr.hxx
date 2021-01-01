@@ -36,12 +36,12 @@ namespace tfel::math {
             Expr<StensorResultType, StensorST2toST2ProductExpr<1u>>>,
         public fsarray<
             StensorDimeToSize<getSpaceDimension<StensorResultType>()>::value,
-            StensorNumType<StensorResultType>> {
+            numeric_type<StensorResultType>> {
     static_assert(getSpaceDimension<StensorResultType>() == 1u);
     //! a simple alias
     typedef EmptyRunTimeProperties RunTimeProperties;
     //! a simple alias
-    typedef StensorNumType<StensorResultType> value_type;
+    typedef numeric_type<StensorResultType> value_type;
     //! a simple check
     /*!
      * \param[in] a : first term of the product
@@ -82,12 +82,12 @@ namespace tfel::math {
             Expr<StensorResultType, StensorST2toST2ProductExpr<2u>>>,
         public fsarray<
             StensorDimeToSize<getSpaceDimension<StensorResultType>()>::value,
-            StensorNumType<StensorResultType>> {
+            numeric_type<StensorResultType>> {
     static_assert(getSpaceDimension<StensorResultType>() == 2u);
     //! a simple alias
     typedef EmptyRunTimeProperties RunTimeProperties;
     //! a simple alias
-    typedef StensorNumType<StensorResultType> value_type;
+    typedef numeric_type<StensorResultType> value_type;
     /*!
      * \param[in] a : first term of the product
      * \param[in] b : second term of the product
@@ -132,12 +132,12 @@ namespace tfel::math {
             Expr<StensorResultType, StensorST2toST2ProductExpr<3u>>>,
         public fsarray<
             StensorDimeToSize<getSpaceDimension<StensorResultType>()>::value,
-            StensorNumType<StensorResultType>> {
+            numeric_type<StensorResultType>> {
     static_assert(getSpaceDimension<StensorResultType>() == 3u);
     //! a simple alias
     typedef EmptyRunTimeProperties RunTimeProperties;
     //! a simple alias
-    typedef StensorNumType<StensorResultType> value_type;
+    typedef numeric_type<StensorResultType> value_type;
     /*!
      * \param[in] a : first term of the product
      * \param[in] b : second term of the product

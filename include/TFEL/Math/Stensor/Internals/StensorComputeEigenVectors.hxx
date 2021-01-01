@@ -46,8 +46,8 @@ namespace tfel::math::internals {
                                    const T* const s,
                                    const T vp) {
       static_assert(tfel::typetraits::IsFundamentalNumericType<
-                         VectorNumType<VectorType>>::cond);
-      static_assert(std::is_same_v<VectorNumType<VectorType>, T>);
+                         numeric_type<VectorType>>::cond);
+      static_assert(std::is_same_v<numeric_type<VectorType>, T>);
       static_assert(tfel::typetraits::IsFundamentalNumericType<T>::cond);
       static_assert(tfel::typetraits::IsReal<T>::cond);
       constexpr const auto zero = T{0};
@@ -113,8 +113,8 @@ namespace tfel::math::internals {
                                    const T* const s,
                                    const T vp) {
       using namespace tfel::typetraits;
-      static_assert(IsFundamentalNumericType<VectorNumType<VectorType>>::cond);
-      static_assert(std::is_same_v<VectorNumType<VectorType>, T>);
+      static_assert(IsFundamentalNumericType<numeric_type<VectorType>>::cond);
+      static_assert(std::is_same_v<numeric_type<VectorType>, T>);
       static_assert(IsFundamentalNumericType<T>::cond);
       static_assert(IsReal<T>::cond);
       constexpr const auto zero = T{0};
@@ -270,8 +270,8 @@ namespace tfel::math::internals {
                                    const T vp) {
       using namespace tfel::typetraits;
       static_assert(
-          IsFundamentalNumericType<VectorNumType<VectorType>>::cond);
-      static_assert(std::is_same_v<VectorNumType<VectorType>, T>);
+          IsFundamentalNumericType<numeric_type<VectorType>>::cond);
+      static_assert(std::is_same_v<numeric_type<VectorType>, T>);
       static_assert(IsFundamentalNumericType<T>::cond);
       static_assert(IsReal<T>::cond);
       return computeEigenVector(src, vp, v(0), v(1), v(2));

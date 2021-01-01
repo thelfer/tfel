@@ -31,10 +31,6 @@ namespace tfel::math {
   template <typename A>
   struct ST2toST2TransposeExpr;
 
-  //! a simple alias
-  template <typename T>
-  using ST2toST2NumType = MathObjectNumType<T>;
-
   /*!
    * \class ST2toST2Tag
    * \brief Helper class to characterise st2tost2.
@@ -45,7 +41,7 @@ namespace tfel::math {
   struct ST2toST2Concept {
     typedef ST2toST2Tag ConceptTag;
 
-    MathObjectNumType<T> operator()(const unsigned short,
+    numeric_type<T> operator()(const unsigned short,
                                                    const unsigned short) const;
 
    protected:
@@ -74,7 +70,7 @@ namespace tfel::math {
   template <typename ST2toST2Type>
   std::enable_if_t<implementsST2toST2Concept<ST2toST2Type>(),
                    typename tfel::typetraits::AbsType<
-                       MathObjectNumType<ST2toST2Type>>::type>
+                       numeric_type<ST2toST2Type>>::type>
   abs(const ST2toST2Type&);
 
   /*!
@@ -146,8 +142,8 @@ namespace tfel::math {
   std::enable_if_t<
       implementsST2toST2Concept<ST2toST2Type>() &&
           (getSpaceDimension<ST2toST2Type>() == 1u) &&
-          tfel::typetraits::IsScalar<ST2toST2NumType<ST2toST2Type>>::cond,
-      typename ComputeUnaryResult<ST2toST2NumType<ST2toST2Type>,
+          tfel::typetraits::IsScalar<numeric_type<ST2toST2Type>>::cond,
+      typename ComputeUnaryResult<numeric_type<ST2toST2Type>,
                                   Power<3>>::Result>
   det(const ST2toST2Type&);
   /*!
@@ -159,9 +155,9 @@ namespace tfel::math {
       implementsST2toST2Concept<ST2toST2Type>() &&
           ((getSpaceDimension<ST2toST2Type>() == 2u) ||
            (getSpaceDimension<ST2toST2Type>() == 3u)) &&
-          tfel::typetraits::IsScalar<ST2toST2NumType<ST2toST2Type>>::cond,
+          tfel::typetraits::IsScalar<numeric_type<ST2toST2Type>>::cond,
       typename ComputeUnaryResult<
-          ST2toST2NumType<ST2toST2Type>,
+          numeric_type<ST2toST2Type>,
           Power<getSpaceDimension<ST2toST2Type>()>>::Result>
   det(const ST2toST2Type&);
 

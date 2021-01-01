@@ -30,8 +30,8 @@ namespace tfel {
     template <typename MatrixType, typename VectorType>
     void QRDecomp::exe(MatrixType& a, VectorType& rdiag, VectorType& beta) {
       using namespace std;
-      using real = MathObjectNumType<MatrixType>;
-      using size_type = typename MathObjectTraits<MatrixType>::IndexType;
+      using real = numeric_type<MatrixType>;
+      using size_type = index_type<MatrixType>;
       const auto m = a.getNbRows();
       const auto n = a.getNbCols();
       if ((m == 0) || (n == 0)) {
@@ -71,9 +71,9 @@ namespace tfel {
         VectorType& v,
         const MatrixType& a,
         const VectorType& beta,
-        const typename MathObjectTraits<MatrixType>::IndexType c) {
-      using real = MathObjectNumType<MatrixType>;
-      using size_type = typename MathObjectTraits<MatrixType>::IndexType;
+        const index_type<MatrixType> c) {
+      using real = numeric_type<MatrixType>;
+      using size_type = index_type<MatrixType>;
       const auto m = a.getNbRows();
       const auto n = a.getNbCols();
       if ((m == 0) || (n == 0)) {
@@ -96,7 +96,7 @@ namespace tfel {
     void QRDecomp::tq_product(VectorType& v,
                               const MatrixType& a,
                               const VectorType& beta) {
-      using size_type = typename MathObjectTraits<MatrixType>::IndexType;
+      using size_type = index_type<MatrixType>;
       const auto m = a.getNbCols();
       for (size_type i = 0; i != m; ++i) {
         QRDecomp::householder_product(v, a, beta, i);
@@ -108,8 +108,8 @@ namespace tfel {
         VectorType& v,
         const MatrixType& a,
         const VectorType& d,
-        const MathObjectNumType<MatrixType> e) {
-      using size_type = typename MathObjectTraits<MatrixType>::IndexType;
+        const numeric_type<MatrixType> e) {
+      using size_type = index_type<MatrixType>;
       const auto m = a.getNbRows();
       const auto n = a.getNbCols();
       if ((m == 0) || (n == 0)) {
@@ -135,19 +135,19 @@ namespace tfel {
     void QRDecomp::back_substitute(VectorType& v,
                                    const MatrixType& a,
                                    const VectorType& d) {
-      using real = MathObjectNumType<MatrixType>;
+      using real = numeric_type<MatrixType>;
       TFEL_CONSTEXPR const auto eps = 100 * std::numeric_limits<real>::min();
       QRDecomp::back_substitute(v, a, d, eps);
     }
 
     template <typename MatrixType>
-    MathObjectNumType<MatrixType> QRDecomp::enorm(
+    numeric_type<MatrixType> QRDecomp::enorm(
         const MatrixType& m,
-        const typename MathObjectTraits<MatrixType>::IndexType c,
-        const typename MathObjectTraits<MatrixType>::IndexType b,
-        const typename MathObjectTraits<MatrixType>::IndexType e) {
-      using real = MathObjectNumType<MatrixType>;
-      using size_type = typename MathObjectTraits<MatrixType>::IndexType;
+        const index_type<MatrixType> c,
+        const index_type<MatrixType> b,
+        const index_type<MatrixType> e) {
+      using real = numeric_type<MatrixType>;
+      using size_type = index_type<MatrixType>;
       auto n = real(0);
       for (size_type i = b; i != e; ++i) {
         const auto v = m(i, c);

@@ -25,11 +25,11 @@ namespace tfel {
 
     //! a simple alias
     template <typename StressStensor>
-    using MichelAndSuquet1992HollowSphereStressType = tfel::math::StensorNumType<StressStensor>;
+    using MichelAndSuquet1992HollowSphereStressType = tfel::math::numeric_type<StressStensor>;
     //! a simple alias
     template <typename StressStensor>
     using MichelAndSuquet1992HollowSphereBaseType =
-        tfel::typetraits::base_type<tfel::math::StensorNumType<StressStensor>>;
+        tfel::typetraits::base_type<tfel::math::numeric_type<StressStensor>>;
     //! a simple alias
     template <typename StressStensor>
     using MichelAndSuquet1992HollowSpherePorosityType = MichelAndSuquet1992HollowSphereBaseType<StressStensor>;

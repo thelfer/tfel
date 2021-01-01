@@ -36,10 +36,10 @@ namespace tfel::math::st2tost2_internals {
     static TFEL_MATH_INLINE2 typename std::enable_if<
         (tfel::math::implementsST2toST2Concept<ST2toST2Type>() &&
          tfel::math::getSpaceDimension<ST2toST2Type>() == 1u),
-        tfel::math::st2tost2<1u, ST2toST2NumType<ST2toST2Type>>>::type
+        tfel::math::st2tost2<1u, numeric_type<ST2toST2Type>>>::type
     exe(const ST2toST2Type& s,
         const tfel::math::rotation_matrix<
-            tfel::math::ST2toST2NumType<ST2toST2Type>>&) {
+            tfel::math::numeric_type<ST2toST2Type>>&) {
       return s;
     }
   };  // end of ChangeBasis<1u>
@@ -56,12 +56,12 @@ namespace tfel::math::st2tost2_internals {
         (tfel::math::implementsST2toST2Concept<ST2toST2Type>() &&
          tfel::math::getSpaceDimension<ST2toST2Type>() == 2u),
         tfel::math::st2tost2<2u,
-                             tfel::math::ST2toST2NumType<ST2toST2Type>>>::type
+                             tfel::math::numeric_type<ST2toST2Type>>>::type
     exe(const ST2toST2Type& s,
         const tfel::math::rotation_matrix<
-            tfel::math::ST2toST2NumType<ST2toST2Type>>& r) {
+            tfel::math::numeric_type<ST2toST2Type>>& r) {
       using st2tost2 =
-          tfel::math::st2tost2<2u, tfel::math::ST2toST2NumType<ST2toST2Type>>;
+          tfel::math::st2tost2<2u, tfel::math::numeric_type<ST2toST2Type>>;
       const auto sr = st2tost2::fromRotationMatrix(r);
       const auto sir = st2tost2::fromRotationMatrix(transpose(r));
       return sr * s * sir;
@@ -82,12 +82,12 @@ namespace tfel::math::st2tost2_internals {
         (tfel::math::implementsST2toST2Concept<ST2toST2Type>() &&
          tfel::math::getSpaceDimension<ST2toST2Type>() == 3u),
         tfel::math::st2tost2<3u,
-                             tfel::math::ST2toST2NumType<ST2toST2Type>>>::type
+                             tfel::math::numeric_type<ST2toST2Type>>>::type
     exe(const ST2toST2Type& s,
         const tfel::math::rotation_matrix<
-            tfel::math::ST2toST2NumType<ST2toST2Type>>& r) {
+            tfel::math::numeric_type<ST2toST2Type>>& r) {
       using st2tost2 =
-          tfel::math::st2tost2<3u, tfel::math::ST2toST2NumType<ST2toST2Type>>;
+          tfel::math::st2tost2<3u, tfel::math::numeric_type<ST2toST2Type>>;
       const auto sr = st2tost2::fromRotationMatrix(r);
       const auto sir = st2tost2::fromRotationMatrix(transpose(r));
       return sr * s * sir;

@@ -122,8 +122,8 @@ namespace tfel{
     template<typename StressStensor,
 	     tfel::math::stensor_common::EigenSolver es =
 	     tfel::math::stensor_common::TFELEIGENSOLVER>
-    std::tuple<tfel::math::StensorNumType<StressStensor>,
-	       tfel::math::StensorNumType<StressStensor>>
+    std::tuple<tfel::math::numeric_type<StressStensor>,
+	       tfel::math::numeric_type<StressStensor>>
     projectOnPiPlane(const StressStensor&);
     /*!
      * \brief this function returns the stress state

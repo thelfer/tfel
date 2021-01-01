@@ -135,7 +135,7 @@ namespace tfel {
       std::enable_if_t<
           tfel::math::implementsT2toST2Concept<T>() &&
               tfel::math::getSpaceDimension<T>() == N &&
-              std::is_same_v<tfel::math::MathObjectNumType<T>, StressType>,
+              std::is_same_v<tfel::math::numeric_type<T>, StressType>,
           FiniteStrainBehaviourTangentOperator&>
       operator=(const T& e) {
         using namespace tfel::math;
@@ -156,7 +156,7 @@ namespace tfel {
       std::enable_if_t<
           tfel::math::implementsST2toST2Concept<T>() &&
               tfel::math::getSpaceDimension<T>() == N &&
-              std::is_same_v<tfel::math::MathObjectNumType<T>, StressType>,
+              std::is_same_v<tfel::math::numeric_type<T>, StressType>,
           FiniteStrainBehaviourTangentOperator&>
       operator=(const T& e) {
         using namespace tfel::math;

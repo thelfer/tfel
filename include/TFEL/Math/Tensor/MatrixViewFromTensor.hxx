@@ -32,16 +32,15 @@ namespace tfel::math {
   struct MatrixViewFromTensorExpr {};  // end of struct MatrixViewFromTensorExpr
 
   template <typename TensorType>
-  struct Expr<tmatrix<3u, 3u, TensorNumType<std::decay_t<TensorType>>>,
+  struct Expr<tmatrix<3u, 3u, numeric_type<TensorType>>,
               MatrixViewFromTensorExpr<TensorType>>
       : public ExprBase,
         public MatrixConcept<
-            Expr<tmatrix<3u, 3u, TensorNumType<std::decay_t<TensorType>>>,
+            Expr<tmatrix<3u, 3u, numeric_type<TensorType>>,
                  MatrixViewFromTensorExpr<TensorType>>> {
     static_assert(implementsTensorConcept<TensorType>());
 
-    using traits = MathObjectTraits<std::decay_t<TensorType>>;
-    using NumType = typename traits::NumType;
+    using NumType = numeric_type<TensorType>;
     typedef unsigned short IndexType;
     typedef EmptyRunTimeProperties RunTimeProperties;
 
@@ -53,8 +52,8 @@ namespace tfel::math {
 
     NumType operator()(const unsigned short i, const unsigned short j) const {
       using tfel::math::internals::TensorConceptMatrixAccessOperator;
-      return TensorConceptMatrixAccessOperator<traits::dime>::exe(this->t, i,
-                                                                  j);
+      constexpr const auto N = getSpaceDimension<TensorType>();
+      return TensorConceptMatrixAccessOperator<N>::exe(this->t, i, j);
     }  // end of operator() const
 
    protected:

@@ -15,7 +15,6 @@
 #define LIB_TFEL_MATH_CONVERTKIRCHHOFFSTRESSJAUMANRATEMODULITOKIRCHHOFFSTRESSDERIVATIVE_HXX
 
 #include<type_traits>
-#include"TFEL/TypeTraits/BaseType.hxx"
 #include"TFEL/Math/General/ConstExprMathFunctions.hxx"
 #include"TFEL/Math/t2tost2.hxx"
 #include"TFEL/Math/Tensor/TensorConcept.hxx"

@@ -33,10 +33,10 @@ namespace tfel::math {
   struct Expr<T2toT2ResultType, TensorProductRightDerivativeExpr<1u>>
       : public T2toT2Concept<
             Expr<T2toT2ResultType, TensorProductRightDerivativeExpr<1u>>>,
-        public fsarray<9u, MathObjectNumType<T2toT2ResultType>> {
+        public fsarray<9u, numeric_type<T2toT2ResultType>> {
     static_assert(getSpaceDimension<T2toT2ResultType>() == 1u);
     //! a simple alias
-    typedef MathObjectNumType<T2toT2ResultType> value_type;
+    typedef numeric_type<T2toT2ResultType> value_type;
     //! a simple alias
     typedef EmptyRunTimeProperties RunTimeProperties;
     /*!
@@ -48,8 +48,8 @@ namespace tfel::math {
       static_assert(getSpaceDimension<T2toT2ResultType>() ==
                     getSpaceDimension<TensorType>());
       static_assert(tfel::typetraits::IsAssignableTo<
-                    MathObjectNumType<TensorType>,
-                    MathObjectNumType<T2toT2ResultType>>::cond);
+                    numeric_type<TensorType>,
+                    numeric_type<T2toT2ResultType>>::cond);
       this->v[0] = A[0];
       this->v[4] = A[1];
       this->v[8] = A[2];
@@ -73,9 +73,9 @@ namespace tfel::math {
       static_assert(
           tfel::typetraits::IsAssignableTo<
               typename ComputeBinaryResult<
-                  MathObjectNumType<TensorType>,
-                  MathObjectNumType<T2toT2Type>, OpMult>::Result,
-              MathObjectNumType<T2toT2ResultType>>::cond);
+                  numeric_type<TensorType>,
+                  numeric_type<T2toT2Type>, OpMult>::Result,
+              numeric_type<T2toT2ResultType>>::cond);
       this->v[0] = C(0, 0) * A[0];
       this->v[1] = C(0, 1) * A[0];
       this->v[2] = C(0, 2) * A[0];
@@ -113,10 +113,10 @@ namespace tfel::math {
   struct Expr<T2toT2ResultType, TensorProductRightDerivativeExpr<2u>>
       : public T2toT2Concept<
             Expr<T2toT2ResultType, TensorProductRightDerivativeExpr<2u>>>,
-        public fsarray<25u, MathObjectNumType<T2toT2ResultType>> {
+        public fsarray<25u, numeric_type<T2toT2ResultType>> {
     static_assert(getSpaceDimension<T2toT2ResultType>() == 2u);
     //! a simple alias
-    typedef MathObjectNumType<T2toT2ResultType> value_type;
+    typedef numeric_type<T2toT2ResultType> value_type;
     //! a simple alias
     typedef EmptyRunTimeProperties RunTimeProperties;
     /*!
@@ -128,8 +128,8 @@ namespace tfel::math {
       static_assert(getSpaceDimension<T2toT2ResultType>() ==
                     getSpaceDimension<TensorType>());
       static_assert(tfel::typetraits::IsAssignableTo<
-                    MathObjectNumType<TensorType>,
-                    MathObjectNumType<T2toT2ResultType>>::cond);
+                    numeric_type<TensorType>,
+                    numeric_type<T2toT2ResultType>>::cond);
       this->v[0] = A[0];
       this->v[4] = A[3];
       this->v[1] = this->v[2] = this->v[3] = value_type(0);
@@ -161,9 +161,9 @@ namespace tfel::math {
       static_assert
           (tfel::typetraits::IsAssignableTo<
               typename ComputeBinaryResult<
-                  MathObjectNumType<TensorType>,
-                  MathObjectNumType<T2toT2Type>, OpMult>::Result,
-              MathObjectNumType<T2toT2ResultType>>::cond);
+                  numeric_type<TensorType>,
+                  numeric_type<T2toT2Type>, OpMult>::Result,
+              numeric_type<T2toT2ResultType>>::cond);
       this->v[0] = C(4, 0) * A[3] + C(0, 0) * A[0];
       this->v[1] = C(4, 1) * A[3] + C(0, 1) * A[0];
       this->v[2] = C(4, 2) * A[3] + C(0, 2) * A[0];
@@ -217,10 +217,10 @@ namespace tfel::math {
   struct Expr<T2toT2ResultType, TensorProductRightDerivativeExpr<3u>>
       : public T2toT2Concept<
             Expr<T2toT2ResultType, TensorProductRightDerivativeExpr<3u>>>,
-        public fsarray<81u, MathObjectNumType<T2toT2ResultType>> {
+        public fsarray<81u, numeric_type<T2toT2ResultType>> {
     static_assert(getSpaceDimension<T2toT2ResultType>() == 3u);
     //! a simple alias
-    typedef MathObjectNumType<T2toT2ResultType> value_type;
+    typedef numeric_type<T2toT2ResultType> value_type;
     //! a simple alias
     typedef EmptyRunTimeProperties RunTimeProperties;
     /*!
@@ -232,8 +232,8 @@ namespace tfel::math {
       static_assert(getSpaceDimension<T2toT2ResultType>() ==
                     getSpaceDimension<TensorType>());
       static_assert(tfel::typetraits::IsAssignableTo<
-                    MathObjectNumType<TensorType>,
-                    MathObjectNumType<T2toT2ResultType>>::cond);
+                    numeric_type<TensorType>,
+                    numeric_type<T2toT2ResultType>>::cond);
       this->v[0] = A[0];
       this->v[4] = A[3];
       this->v[6] = A[5];
@@ -296,9 +296,9 @@ namespace tfel::math {
       static_assert(
           tfel::typetraits::IsAssignableTo<
               typename ComputeBinaryResult<
-                  MathObjectNumType<TensorType>,
-                  MathObjectNumType<T2toT2Type>, OpMult>::Result,
-              MathObjectNumType<T2toT2ResultType>>::cond);
+                  numeric_type<TensorType>,
+                  numeric_type<T2toT2Type>, OpMult>::Result,
+              numeric_type<T2toT2ResultType>>::cond);
       this->v[0] = C(6, 0) * A[5] + C(4, 0) * A[3] + C(0, 0) * A[0];
       this->v[1] = C(6, 1) * A[5] + C(4, 1) * A[3] + C(0, 1) * A[0];
       this->v[2] = C(6, 2) * A[5] + C(4, 2) * A[3] + C(0, 2) * A[0];

@@ -16,8 +16,6 @@
 #define LIB_TFEL_TINY_MATRIXIXX
 
 #include "TFEL/FSAlgorithm/FSAlgorithm.hxx"
-#include "TFEL/TypeTraits/BaseType.hxx"
-
 #include "TFEL/Math/General/AbsCompare.hxx"
 #include "TFEL/Math/Matrix/MatrixUtilities.hxx"
 
@@ -141,8 +139,7 @@ namespace tfel::math {
     tmatrix_base<Child, N, M, T>::operator/=(const T2 s) {
       auto& child = static_cast<Child&>(*this);
       matrix_utilities<N, M, M>::multByScalar(
-          child,
-          (static_cast<typename tfel::typetraits::BaseType<T2>::type>(1u)) / s);
+          child, (static_cast<base_type<T2>>(1u)) / s);
       return child;
     }
 
@@ -280,7 +277,7 @@ namespace tfel::math {
       template <typename Matrix>
       TFEL_MATH_INLINE std::enable_if_t<
           implementsMatrixConcept<Matrix>(),
-          typename ComputeUnaryResult<MathObjectNumType<Matrix>,
+          typename ComputeUnaryResult<numeric_type<Matrix>,
                                       Power<3>>::Result>
       det2(const Matrix& m) {
         return m(0, 0) * m(1, 1) - m(1, 0) * m(0, 1);
@@ -289,7 +286,7 @@ namespace tfel::math {
       template <typename Matrix>
       TFEL_MATH_INLINE std::enable_if_t<
           implementsMatrixConcept<Matrix>(),
-          typename ComputeUnaryResult<MathObjectNumType<Matrix>,
+          typename ComputeUnaryResult<numeric_type<Matrix>,
                                       Power<3>>::Result>
       det3(const Matrix& m) {
         const auto a = m(0, 0);

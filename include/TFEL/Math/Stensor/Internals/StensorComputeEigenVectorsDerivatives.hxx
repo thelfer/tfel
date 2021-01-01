@@ -26,7 +26,7 @@ namespace tfel {
       struct StensorComputeEigenTensorsDerivativesBase {
         template <typename NumType>
         TFEL_MATH_INLINE static
-            typename ComputeBinaryResult<tfel::typetraits::base_type<NumType>,
+            typename ComputeBinaryResult<base_type<NumType>,
                                          NumType,
                                          OpDiv>::Result
             regularized_inverse(const NumType x, const NumType eps) {
@@ -54,10 +54,10 @@ namespace tfel {
                 (getSpaceDimension<ST2toST2Type>() == 1u) &&
                 (tfel::typetraits::IsAssignableTo<
                     typename ComputeBinaryResult<
-                        tfel::typetraits::base_type<NumType>,
+                        base_type<NumType>,
                         NumType,
                         OpDiv>::Result,
-                    ST2toST2NumType<ST2toST2Type>>::cond),
+                    numeric_type<ST2toST2Type>>::cond),
             void>::type
         exe(ST2toST2Type& dn0_ds,
             ST2toST2Type& dn1_ds,
@@ -84,10 +84,10 @@ namespace tfel {
                 (getSpaceDimension<ST2toST2Type>() == 2u) &&
                 (tfel::typetraits::IsAssignableTo<
                     typename ComputeBinaryResult<
-                        tfel::typetraits::base_type<NumType>,
+                        base_type<NumType>,
                         NumType,
                         OpDiv>::Result,
-                    ST2toST2NumType<ST2toST2Type>>::cond),
+                    numeric_type<ST2toST2Type>>::cond),
             void>::type
         exe(ST2toST2Type& dn0_ds,
             ST2toST2Type& dn1_ds,
@@ -95,7 +95,7 @@ namespace tfel {
             const tfel::math::tvector<3u, NumType>& vp,
             const tfel::math::rotation_matrix<NumType>& m,
             const NumType eps) {
-          typedef tfel::typetraits::base_type<NumType> base;
+          typedef base_type<NumType> base;
           typedef typename ComputeBinaryResult<base, NumType, OpDiv>::Result
               InvNumType;
           constexpr const auto icste = Cste<base>::isqrt2;
@@ -120,10 +120,10 @@ namespace tfel {
                 (getSpaceDimension<ST2toST2Type>() == 3u) &&
                 (tfel::typetraits::IsAssignableTo<
                     typename ComputeBinaryResult<
-                        tfel::typetraits::base_type<NumType>,
+                        base_type<NumType>,
                         NumType,
                         OpDiv>::Result,
-                    ST2toST2NumType<ST2toST2Type>>::cond),
+                    numeric_type<ST2toST2Type>>::cond),
             void>::type
         exe(ST2toST2Type& dn0_ds,
             ST2toST2Type& dn1_ds,
@@ -132,7 +132,7 @@ namespace tfel {
             const tfel::math::rotation_matrix<NumType>& m,
             const NumType eps) {
           using namespace tfel::math;
-          typedef tfel::typetraits::base_type<NumType> base;
+          typedef base_type<NumType> base;
           constexpr const auto cste = Cste<base>::isqrt2;
           const tvector<3u, base> v0 = m.template column_view<0u>();
           const tvector<3u, base> v1 = m.template column_view<1u>();

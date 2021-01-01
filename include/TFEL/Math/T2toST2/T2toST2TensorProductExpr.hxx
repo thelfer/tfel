@@ -34,12 +34,12 @@ namespace tfel::math {
   struct Expr<StensorResultType, T2toST2TensorProductExpr<1u>>
       : public StensorConcept<
             Expr<StensorResultType, T2toST2TensorProductExpr<1u>>>,
-        public fsarray<3u, MathObjectNumType<StensorResultType>> {
+        public fsarray<3u, numeric_type<StensorResultType>> {
     static_assert(getSpaceDimension<StensorResultType>() == 1u);
     //! a simple alias
     typedef EmptyRunTimeProperties RunTimeProperties;
     //! a simple alias
-    typedef MathObjectNumType<StensorResultType> value_type;
+    typedef numeric_type<StensorResultType> value_type;
     /*!
      * \param[in] a : first term of the product
      * \param[in] b : second term of the product
@@ -79,12 +79,12 @@ namespace tfel::math {
   struct Expr<StensorResultType, T2toST2TensorProductExpr<2u>>
       : public StensorConcept<
             Expr<StensorResultType, T2toST2TensorProductExpr<2u>>>,
-        public fsarray<4u, MathObjectNumType<StensorResultType>> {
+        public fsarray<4u, numeric_type<StensorResultType>> {
     static_assert(getSpaceDimension<StensorResultType>() == 2u);
     //! a simple alias
     typedef EmptyRunTimeProperties RunTimeProperties;
     //! a simple alias
-    typedef MathObjectNumType<StensorResultType> value_type;
+    typedef numeric_type<StensorResultType> value_type;
     /*!
      * \param[in] a : first term of the product
      * \param[in] b : second term of the product
@@ -129,12 +129,12 @@ namespace tfel::math {
   struct Expr<StensorResultType, T2toST2TensorProductExpr<3u>>
       : public StensorConcept<
             Expr<StensorResultType, T2toST2TensorProductExpr<3u>>>,
-        public fsarray<6u, MathObjectNumType<StensorResultType>> {
+        public fsarray<6u, numeric_type<StensorResultType>> {
     static_assert(getSpaceDimension<StensorResultType>() == 3u);
     //! a simple alias
     typedef EmptyRunTimeProperties RunTimeProperties;
     //! a simple alias
-    typedef MathObjectNumType<StensorResultType> value_type;
+    typedef numeric_type<StensorResultType> value_type;
     /*!
      * \param[in] a : first term of the product
      * \param[in] b : second term of the product

@@ -15,7 +15,6 @@
 #define LIB_TFEL_MATH_UMATNORMALISETANGENTOPERATORIXX
 
 #include <cmath>
-#include "TFEL/TypeTraits/BaseType.hxx"
 #include "TFEL/Math/ST2toST2/ST2toST2View.hxx"
 #include "TFEL/Math/ST2toST2/ConstST2toST2View.hxx"
 #include "TFEL/Math/General/MathConstants.hxx"

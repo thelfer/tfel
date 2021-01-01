@@ -27,11 +27,11 @@ namespace tfel {
     //! \brief a simple alias
     template <typename StressStensorType>
     using ChuNeedleman1980StressBasedNucleationModelStressType =
-        tfel::math::StensorNumType<StressStensorType>;
+        tfel::math::numeric_type<StressStensorType>;
     //! \brief a simple alias
     template <typename StressStensorType>
     using ChuNeedleman1980StressBasedNucleationModelRealType =
-        tfel::typetraits::base_type<tfel::math::StensorNumType<StressStensorType>>;
+        tfel::typetraits::base_type<tfel::math::numeric_type<StressStensorType>>;
     //! \brief a simple alias
     template <typename StressStensorType>
     using ChuNeedleman1980StressBasedNucleationModelInverseStressType =

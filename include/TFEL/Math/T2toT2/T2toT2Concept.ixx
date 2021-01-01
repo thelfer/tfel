@@ -14,7 +14,6 @@
 #ifndef LIB_TFEL_MATH_T2TOT2_CONCEPT_IXX
 #define LIB_TFEL_MATH_T2TOT2_CONCEPT_IXX 1
 
-#include "TFEL/TypeTraits/BaseType.hxx"
 #include "TFEL/Math/Matrix/MatrixUtilities.hxx"
 #include "TFEL/Math/LU/LUDecomp.hxx"
 #include "TFEL/Math/LU/TinyPermutation.hxx"
@@ -24,7 +23,7 @@
 namespace tfel::math {
 
   template <class T>
-  TFEL_MATH_INLINE MathObjectNumType<T> T2toT2Concept<T>::
+  TFEL_MATH_INLINE numeric_type<T> T2toT2Concept<T>::
   operator()(const unsigned short i, const unsigned short j) const {
     return static_cast<const T&>(*this).operator()(i, j);
   }  // end of T2toT2Concept<T>::operator()
@@ -32,11 +31,11 @@ namespace tfel::math {
   template <typename T2toT2Type>
   std::enable_if_t<implementsT2toT2Concept<T2toT2Type>(),
                    typename tfel::typetraits::AbsType<
-                       MathObjectNumType<T2toT2Type>>::type>
+                       numeric_type<T2toT2Type>>::type>
   abs(const T2toT2Type& v) {
     unsigned short i;
     unsigned short j;
-    typedef MathObjectNumType<T2toT2Type> NumType;
+    typedef numeric_type<T2toT2Type> NumType;
     typedef typename tfel::typetraits::AbsType<NumType>::type AbsNumType;
     AbsNumType a(0);
     for (i = 0; i < TensorDimeToSize<getSpaceDimension<T2toT2Type>()>::value;
@@ -53,8 +52,8 @@ namespace tfel::math {
   std::enable_if_t<
       implementsT2toT2Concept<T2toT2Type>() &&
           (getSpaceDimension<T2toT2Type>() == 1u) &&
-          tfel::typetraits::IsScalar<T2toT2NumType<T2toT2Type>>::cond,
-      typename ComputeUnaryResult<T2toT2NumType<T2toT2Type>, Power<3>>::Result>
+          tfel::typetraits::IsScalar<numeric_type<T2toT2Type>>::cond,
+      typename ComputeUnaryResult<numeric_type<T2toT2Type>, Power<3>>::Result>
   det(const T2toT2Type& s) {
     const auto a = s(0, 0);
     const auto b = s(0, 1);
@@ -73,12 +72,12 @@ namespace tfel::math {
       implementsT2toT2Concept<T2toT2Type>() &&
           ((getSpaceDimension<T2toT2Type>() == 2u) ||
            (getSpaceDimension<T2toT2Type>() == 3u)) &&
-          tfel::typetraits::IsScalar<T2toT2NumType<T2toT2Type>>::cond,
+          tfel::typetraits::IsScalar<numeric_type<T2toT2Type>>::cond,
       typename ComputeUnaryResult<
-          T2toT2NumType<T2toT2Type>,
+          numeric_type<T2toT2Type>,
           Power<getSpaceDimension<T2toT2Type>()>>::Result>
   det(const T2toT2Type& s) {
-    using real = T2toT2NumType<T2toT2Type>;
+    using real = numeric_type<T2toT2Type>;
     constexpr const auto N = getSpaceDimension<T2toT2Type>();
     constexpr const auto ts = TensorDimeToSize<N>::value;
     tmatrix<ts, ts, real> m;

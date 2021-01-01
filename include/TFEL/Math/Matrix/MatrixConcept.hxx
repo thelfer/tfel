@@ -22,9 +22,6 @@
 
 namespace tfel::math {
 
-  //! a simple alias
-  template <typename T>
-  using MatrixNumType = MathObjectNumType<T>;
   /*!
    * \class MatrixTag
    * \brief Helper class to characterise matrices.
@@ -47,9 +44,9 @@ namespace tfel::math {
      * \param  j: the column index
      * \return m(i,j)
      */
-    MathObjectNumType<T> operator()(
-        const typename MathObjectTraits<T>::IndexType,
-        const typename MathObjectTraits<T>::IndexType) const;
+    numeric_type<T> operator()(
+        const index_type<T>,
+        const index_type<T>) const;
 
    protected:
     MatrixConcept() = default;

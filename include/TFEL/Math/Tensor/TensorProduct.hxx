@@ -35,8 +35,8 @@ namespace tfel::math {
 
    protected:
     typedef typename ComputeBinaryResult<A, B, OpMult>::Result Result;
-    typedef MathObjectNumType<Result> NumType;
-    typedef typename MathObjectTraits<Result>::IndexType IndexType;
+    typedef numeric_type<Result> NumType;
+    typedef index_type<Result> IndexType;
 
     typedef NumType value_type;
     typedef NumType* pointer;

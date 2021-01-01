@@ -38,7 +38,7 @@ namespace tfel::math {
     //! a simple alias
     using IndexType = unsigned short;
     //! a simple alias
-    using NumType = ST2toST2NumType<std::decay_t<A>>;
+    using NumType = numeric_type<A>;
 
     TFEL_MATH_INLINE RunTimeProperties getRunTimeProperties() const {
       return EmptyRunTimeProperties();

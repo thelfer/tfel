@@ -14,7 +14,6 @@
 #ifndef LIB_TFEL_MATH_INTERNALS_STENSOREIGENSOLVER_HXX
 #define LIB_TFEL_MATH_INTERNALS_STENSOREIGENSOLVER_HXX
 
-#include "TFEL/TypeTraits/BaseType.hxx"
 #include "TFEL/Math/Stensor/Internals/FSESSymmetricEigenSolver.hxx"
 #include "TFEL/Math/Stensor/Internals/GteSymmetricEigenSolver.hxx"
 #include "TFEL/Math/Stensor/Internals/StensorComputeEigenValues.hxx"
@@ -39,7 +38,7 @@ namespace tfel::math::internals {
   template <stensor_common::EigenSolver, unsigned short N, typename NumType>
   struct StensorEigenSolver {
     //! base type
-    using base = tfel::typetraits::base_type<NumType>;
+    using base = base_type<NumType>;
     /*!
      * \param[out] vp0: first  eigen value
      * \param[out] vp1: second eigen value
@@ -92,7 +91,7 @@ namespace tfel::math::internals {
                             3u,
                             NumType> {
     //! base type
-    using base = tfel::typetraits::base_type<NumType>;
+    using base = base_type<NumType>;
     /*!
      * \param[out] vp0: first  eigen value
      * \param[out] vp1: second eigen value
@@ -154,7 +153,7 @@ namespace tfel::math::internals {
                             2u,
                             NumType> {
     //! base type
-    using base = tfel::typetraits::base_type<NumType>;
+    using base = base_type<NumType>;
     /*!
      * \param[out] vp0: first  eigen value
      * \param[out] vp1: second eigen value
@@ -219,7 +218,7 @@ namespace tfel::math::internals {
                             3u,
                             NumType> {
     //! base type
-    using base = tfel::typetraits::base_type<NumType>;
+    using base = base_type<NumType>;
     /*!
      * \param[out] vp0: first  eigen value
      * \param[out] vp1: second eigen value
@@ -297,7 +296,7 @@ namespace tfel::math::internals {
                             3u,
                             NumType> {
     //! base type
-    using base = tfel::typetraits::base_type<NumType>;
+    using base = base_type<NumType>;
     /*!
      * \param[out] vp0: first  eigen value
      * \param[out] vp1: second eigen value
@@ -372,7 +371,7 @@ namespace tfel::math::internals {
   template <typename NumType>
   struct StensorEigenSolver<stensor_common::FSESQLEIGENSOLVER, 3u, NumType> {
     //! base type
-    using base = tfel::typetraits::base_type<NumType>;
+    using base = base_type<NumType>;
     /*!
      * \param[out] vp0: first  eigen value
      * \param[out] vp1: second eigen value
@@ -450,7 +449,7 @@ namespace tfel::math::internals {
                             3u,
                             NumType> {
     //! base type
-    using base = tfel::typetraits::base_type<NumType>;
+    using base = base_type<NumType>;
     /*!
      * \param[out] vp0: first  eigen value
      * \param[out] vp1: second eigen value
@@ -528,7 +527,7 @@ namespace tfel::math::internals {
                             3u,
                             NumType> {
     //! base type
-    using base = tfel::typetraits::base_type<NumType>;
+    using base = base_type<NumType>;
     /*!
      * \param[out] vp0: first  eigen value
      * \param[out] vp1: second eigen value

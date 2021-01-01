@@ -16,6 +16,8 @@
 
 #include <type_traits>
 #include "TFEL/Metaprogramming/InvalidType.hxx"
+#include "TFEL/TypeTraits/BaseType.hxx"
+#include "TFEL/TypeTraits/IsScalar.hxx"
 
 namespace tfel::math {
 
@@ -40,18 +42,27 @@ namespace tfel::math {
 
   //! \brief a simple alias
   template <typename MathObjectType>
-  using MathObjectNumType =
+  using numeric_type =
       typename MathObjectTraits<std::decay_t<MathObjectType>>::NumType;
-
+  //! \brief a simple alias
+  template <typename MathObjectType>
+  using index_type =
+      typename MathObjectTraits<std::decay_t<MathObjectType>>::IndexType;
+  //! \brief a simple alias
+  template <typename T>
+  using base_type =
+      std::conditional_t<tfel::typetraits::isScalar<T>(),
+                         tfel::typetraits::base_type<T>,
+                         tfel::typetraits::base_type<numeric_type<T>>>;
   /*!
-   * \brief an helper function to retrieve the space dimension associated with a
-   * math object.
+   * \brief an helper function to retrieve the space dimension associated
+   * with a math object.
    * \tparam MathObjectType: math object
    */
   template <typename MathObjectType>
   constexpr unsigned short getSpaceDimension() {
     return MathObjectTraits<std::decay_t<MathObjectType>>::dime;
-  } // end of getSpaceDimension
+  }  // end of getSpaceDimension
 
 }  // end of namespace tfel::math
 

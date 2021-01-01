@@ -33,8 +33,8 @@ namespace tfel {
         exe(StensorType& n0,
             StensorType& n1,
             StensorType& n2,
-            const rotation_matrix<StensorNumType<StensorType>>&) {
-          using real = tfel::typetraits::base_type<StensorNumType<StensorType>>;
+            const rotation_matrix<numeric_type<StensorType>>&) {
+          using real = base_type<numeric_type<StensorType>>;
           constexpr const auto zero = real(0);
           constexpr const auto one = real(1);
           n0 = {one, zero, zero};
@@ -53,8 +53,8 @@ namespace tfel {
         exe(StensorType& n0,
             StensorType& n1,
             StensorType& n2,
-            const rotation_matrix<StensorNumType<StensorType>>& m) {
-          using real = tfel::typetraits::base_type<StensorNumType<StensorType>>;
+            const rotation_matrix<numeric_type<StensorType>>& m) {
+          using real = base_type<numeric_type<StensorType>>;
           constexpr const auto zero = real(0);
           constexpr const auto one = real(1);
           const tvector<3u, real> v0 = m.template column_view<0u>();
@@ -75,8 +75,8 @@ namespace tfel {
         exe(StensorType& n0,
             StensorType& n1,
             StensorType& n2,
-            const rotation_matrix<StensorNumType<StensorType>>& m) {
-          using real = tfel::typetraits::base_type<StensorNumType<StensorType>>;
+            const rotation_matrix<numeric_type<StensorType>>& m) {
+          using real = base_type<numeric_type<StensorType>>;
           const tvector<3u, real> v0 = m.template column_view<0u>();
           const tvector<3u, real> v1 = m.template column_view<1u>();
           const tvector<3u, real> v2 = m.template column_view<2u>();

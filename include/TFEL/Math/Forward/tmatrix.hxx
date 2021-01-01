@@ -14,7 +14,7 @@
 #ifndef LIB_TFEL_MATH_FORWARD_TMATRIX_HXX
 #define LIB_TFEL_MATH_FORWARD_TMATRIX_HXX
 
-#include "TFEL/TypeTraits/BaseType.hxx"
+#include "TFEL/Math/General/MathObjectTraits.hxx"
 
 namespace tfel::math {
 
@@ -28,9 +28,24 @@ namespace tfel::math {
   template <unsigned short N, unsigned short M, typename T>
   struct tmatrix;
 
+  /*!
+   * \brief partial specialisation for tmatrix
+   * This is a MatrixConcept requirement.
+   * \see MathObjectTraits.
+   */
+  template <unsigned short N, unsigned short M, typename T>
+  struct TFEL_VISIBILITY_LOCAL MathObjectTraits<tmatrix<N, M, T>> {
+    //! \brief the type holded by the tmatrix.
+    using NumType = T;
+    //! \brief the type of the index used by the tmatrix.
+    using IndexType = unsigned short;
+    //! brief a `tmatrix` is not related to the space dimension
+    static constexpr const unsigned short dime = 0;
+  };
+
   //! a simple alias
   template <typename T>
-  using rotation_matrix = tmatrix<3, 3, tfel::typetraits::base_type<T>>;
+  using rotation_matrix = tmatrix<3, 3, base_type<T>>;
 
 }  // end of namespace tfel::math
 

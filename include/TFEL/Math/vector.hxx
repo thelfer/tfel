@@ -13,12 +13,11 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_TFEL_VECTOR_HXX
-#define LIB_TFEL_VECTOR_HXX
+#ifndef LIB_TFEL_MATH_VECTOR_HXX
+#define LIB_TFEL_MATH_VECTOR_HXX
 
 #include <vector>
 #include <type_traits>
-#include "TFEL/TypeTraits/BaseType.hxx"
 #include "TFEL/TypeTraits/IsAssignableTo.hxx"
 #include "TFEL/Math/Forward/vector.hxx"
 #include "TFEL/Math/Vector/VectorConcept.hxx"
@@ -240,4 +239,4 @@ namespace tfel::math {
 
 #include "TFEL/Math/Vector/vector.ixx"
 
-#endif /* LIB_TFEL_VECTOR_HXX */
+#endif /* LIB_TFEL_MATH_VECTOR_HXX */

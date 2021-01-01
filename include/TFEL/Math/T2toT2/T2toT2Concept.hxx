@@ -25,9 +25,6 @@
 
 namespace tfel::math {
 
-  //! a simple alias
-  template <typename T>
-  using T2toT2NumType = MathObjectNumType<T>;
   /*!
    * \class T2toT2Tag
    * \brief Helper class to characterise t2tot2.
@@ -38,7 +35,7 @@ namespace tfel::math {
   struct T2toT2Concept {
     typedef T2toT2Tag ConceptTag;
 
-    MathObjectNumType<T> operator()(
+    numeric_type<T> operator()(
         const unsigned short, const unsigned short) const;
 
    protected:
@@ -68,7 +65,7 @@ namespace tfel::math {
   template <typename T2toT2Type>
   std::enable_if_t<implementsT2toT2Concept<T2toT2Type>(),
                    typename tfel::typetraits::AbsType<
-                       MathObjectNumType<T2toT2Type>>::type>
+                       numeric_type<T2toT2Type>>::type>
   abs(const T2toT2Type&);
   /*!
    * \return the determinant of a `st2tost2`
@@ -78,8 +75,8 @@ namespace tfel::math {
   std::enable_if_t<
       implementsT2toT2Concept<T2toT2Type>() &&
           (getSpaceDimension<T2toT2Type>() == 1u) &&
-          tfel::typetraits::IsScalar<T2toT2NumType<T2toT2Type>>::cond,
-      typename ComputeUnaryResult<T2toT2NumType<T2toT2Type>, Power<3>>::Result>
+          tfel::typetraits::IsScalar<numeric_type<T2toT2Type>>::cond,
+      typename ComputeUnaryResult<numeric_type<T2toT2Type>, Power<3>>::Result>
   det(const T2toT2Type&);
   /*!
    * \return the determinant of a `st2tost2`
@@ -90,9 +87,9 @@ namespace tfel::math {
       implementsT2toT2Concept<T2toT2Type>() &&
           ((getSpaceDimension<T2toT2Type>() == 2u) ||
            (getSpaceDimension<T2toT2Type>() == 3u)) &&
-          tfel::typetraits::IsScalar<T2toT2NumType<T2toT2Type>>::cond,
+          tfel::typetraits::IsScalar<numeric_type<T2toT2Type>>::cond,
       typename ComputeUnaryResult<
-          T2toT2NumType<T2toT2Type>,
+          numeric_type<T2toT2Type>,
           Power<getSpaceDimension<T2toT2Type>()>>::Result>
   det(const T2toT2Type&);
 

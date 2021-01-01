@@ -20,7 +20,6 @@
 #include "TFEL/Metaprogramming/Implements.hxx"
 #include "TFEL/Metaprogramming/InvalidType.hxx"
 #include "TFEL/TypeTraits/IsAssignableTo.hxx"
-#include "TFEL/TypeTraits/BaseType.hxx"
 #include "TFEL/Math/power.hxx"
 #include "TFEL/Math/General/Abs.hxx"
 #include "TFEL/Math/General/MathObjectTraits.hxx"
@@ -35,10 +34,6 @@ namespace tfel::math {
   //! forward declaration
   template <typename TensorType>
   struct MatrixViewFromTensorExpr;
-
-  //! a simple alias
-  template <typename T>
-  using TensorNumType = MathObjectNumType<T>;
 
   /*!
    * \class TensorTag
@@ -93,12 +88,12 @@ namespace tfel::math {
   struct TensorConcept {
     typedef TensorTag ConceptTag;
 
-    TensorNumType<T> operator()(const unsigned short,
+    numeric_type<T> operator()(const unsigned short,
                                 const unsigned short) const;
 
-    TensorNumType<T> operator()(const unsigned short) const;
+    numeric_type<T> operator()(const unsigned short) const;
 
-    TensorNumType<T> operator[](const unsigned short) const;
+    numeric_type<T> operator[](const unsigned short) const;
 
    protected:
     TensorConcept() = default;
@@ -131,42 +126,42 @@ namespace tfel::math {
   template <typename TensorType>
   std::enable_if_t<
       implementsTensorConcept<TensorType>(),
-      typename tfel::typetraits::AbsType<TensorNumType<TensorType>>::type>
+      typename tfel::typetraits::AbsType<numeric_type<TensorType>>::type>
   abs(const TensorType&);
 
   template <typename TensorType>
   TFEL_MATH_INLINE std::enable_if_t<implementsTensorConcept<TensorType>(),
-                                    TensorNumType<TensorType>>
+                                    numeric_type<TensorType>>
   trace(const TensorType& s);
 
   template <typename TensorType>
   TFEL_MATH_INLINE std::enable_if_t<
       implementsTensorConcept<TensorType>(),
-      stensor<getSpaceDimension<TensorType>(), TensorNumType<TensorType>>>
+      stensor<getSpaceDimension<TensorType>(), numeric_type<TensorType>>>
   syme(const TensorType&);
 
   template <typename TensorType>
   TFEL_MATH_INLINE2 std::enable_if_t<
       (implementsTensorConcept<TensorType>()) &&
           (tfel::typetraits::IsFundamentalNumericType<
-              TensorNumType<TensorType>>::cond),
-      stensor<getSpaceDimension<TensorType>(), TensorNumType<TensorType>>>
+              numeric_type<TensorType>>::cond),
+      stensor<getSpaceDimension<TensorType>(), numeric_type<TensorType>>>
   computeRightCauchyGreenTensor(const TensorType&);
 
   template <typename TensorType>
   TFEL_MATH_INLINE2 std::enable_if_t<
       (implementsTensorConcept<TensorType>()) &&
           (tfel::typetraits::IsFundamentalNumericType<
-              TensorNumType<TensorType>>::cond),
-      stensor<getSpaceDimension<TensorType>(), TensorNumType<TensorType>>>
+              numeric_type<TensorType>>::cond),
+      stensor<getSpaceDimension<TensorType>(), numeric_type<TensorType>>>
   computeLeftCauchyGreenTensor(const TensorType&);
 
   template <typename TensorType>
   TFEL_MATH_INLINE2 std::enable_if_t<
       (implementsTensorConcept<TensorType>()) &&
           (tfel::typetraits::IsFundamentalNumericType<
-              TensorNumType<TensorType>>::cond),
-      stensor<getSpaceDimension<TensorType>(), TensorNumType<TensorType>>>
+              numeric_type<TensorType>>::cond),
+      stensor<getSpaceDimension<TensorType>(), numeric_type<TensorType>>>
   computeGreenLagrangeTensor(const TensorType&);
 
   /*!
@@ -180,8 +175,8 @@ namespace tfel::math {
       ((implementsStensorConcept<StensorType>()) &&
        (implementsTensorConcept<TensorType>()) &&
        (tfel::typetraits::IsFundamentalNumericType<
-           TensorNumType<StensorType>>::cond)),
-      stensor<getSpaceDimension<StensorType>(), StensorNumType<StensorType>>>
+           numeric_type<StensorType>>::cond)),
+      stensor<getSpaceDimension<StensorType>(), numeric_type<StensorType>>>
   pushForward(const StensorType&, const TensorType&);
   /*!
    * compute the product:
@@ -195,8 +190,8 @@ namespace tfel::math {
       ((implementsStensorConcept<StensorType>()) &&
        (implementsTensorConcept<TensorType>()) &&
        (tfel::typetraits::IsFundamentalNumericType<
-           TensorNumType<StensorType>>::cond)),
-      stensor<getSpaceDimension<StensorType>(), StensorNumType<StensorType>>>
+           numeric_type<StensorType>>::cond)),
+      stensor<getSpaceDimension<StensorType>(), numeric_type<StensorType>>>
   push_forward(const StensorType&, const TensorType&);
 
   template <typename StensorType, typename TensorType>
@@ -204,8 +199,8 @@ namespace tfel::math {
       ((implementsStensorConcept<StensorType>()) &&
        (implementsTensorConcept<TensorType>()) &&
        (tfel::typetraits::IsFundamentalNumericType<
-           TensorNumType<TensorType>>::cond)),
-      stensor<getSpaceDimension<StensorType>(), StensorNumType<StensorType>>>
+           numeric_type<TensorType>>::cond)),
+      stensor<getSpaceDimension<StensorType>(), numeric_type<StensorType>>>
   convertCauchyStressToSecondPiolaKirchhoffStress(const StensorType&,
                                                   const TensorType&);
 
@@ -214,15 +209,15 @@ namespace tfel::math {
       ((implementsStensorConcept<StensorType>()) &&
        (implementsTensorConcept<TensorType>()) &&
        (tfel::typetraits::IsFundamentalNumericType<
-           TensorNumType<TensorType>>::cond)),
-      stensor<getSpaceDimension<StensorType>(), StensorNumType<StensorType>>>
+           numeric_type<TensorType>>::cond)),
+      stensor<getSpaceDimension<StensorType>(), numeric_type<StensorType>>>
   convertSecondPiolaKirchhoffStressToCauchyStress(const StensorType&,
                                                   const TensorType&);
 
   template <typename TensorType>
   std::enable_if_t<
       implementsTensorConcept<TensorType>(),
-      typename ComputeUnaryResult<TensorNumType<TensorType>, Power<3>>::Result>
+      typename ComputeUnaryResult<numeric_type<TensorType>, Power<3>>::Result>
   det(const TensorType&);
 
   /*!
@@ -236,9 +231,9 @@ namespace tfel::math {
       implementsTensorConcept<TensorResultType>() &&
           implementsTensorConcept<TensorType>() &&
           tfel::typetraits::IsAssignableTo<
-              typename ComputeUnaryResult<TensorNumType<TensorType>,
+              typename ComputeUnaryResult<numeric_type<TensorType>,
                                           Power<2>>::Result,
-              TensorNumType<TensorResultType>>::cond,
+              numeric_type<TensorResultType>>::cond,
       void>
   computeDeterminantDerivative(TensorResultType&, const TensorType&);
   /*!
@@ -252,10 +247,10 @@ namespace tfel::math {
       implementsTensorConcept<TensorType>() &&
           implementsTensorConcept<TensorType2>() &&
           implementsStensorConcept<StensorType>() &&
-          std::is_same<StensorNumType<StensorType>,
-                       TensorNumType<TensorType2>>::value &&
-          std::is_same<tfel::typetraits::base_type<TensorNumType<TensorType2>>,
-                       TensorNumType<TensorType>>::value &&
+          std::is_same<numeric_type<StensorType>,
+                       numeric_type<TensorType2>>::value &&
+          std::is_same<base_type<numeric_type<TensorType2>>,
+                       numeric_type<TensorType>>::value &&
           (getSpaceDimension<TensorType>() == getSpaceDimension<TensorType2>()) &&
           (getSpaceDimension<TensorType>() ==
            getSpaceDimension<StensorType>()) &&
@@ -274,10 +269,10 @@ namespace tfel::math {
       implementsTensorConcept<TensorType>() &&
           implementsTensorConcept<TensorType2>() &&
           implementsStensorConcept<StensorType>() &&
-          std::is_same<StensorNumType<StensorType>,
-                       TensorNumType<TensorType2>>::value &&
-          std::is_same<tfel::typetraits::base_type<TensorNumType<TensorType2>>,
-                       TensorNumType<TensorType>>::value &&
+          std::is_same<numeric_type<StensorType>,
+                       numeric_type<TensorType2>>::value &&
+          std::is_same<base_type<numeric_type<TensorType2>>,
+                       numeric_type<TensorType>>::value &&
           (getSpaceDimension<TensorType>() == getSpaceDimension<TensorType2>()) &&
           (getSpaceDimension<TensorType>() ==
            getSpaceDimension<StensorType>()) &&

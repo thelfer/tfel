@@ -16,7 +16,6 @@
 #include "TFEL/Config/TFELConfig.hxx"
 #include "TFEL/Metaprogramming/Implements.hxx"
 #include "TFEL/Metaprogramming/InvalidType.hxx"
-#include "TFEL/TypeTraits/BaseType.hxx"
 #include "TFEL/TypeTraits/IsAssignableTo.hxx"
 #include "TFEL/Math/General/MathObjectTraits.hxx"
 #include "TFEL/Math/General/ConceptRebind.hxx"
@@ -29,14 +28,6 @@
 
 namespace tfel::math {
 
-  //! \brief a simple alias
-  template <typename StensorType>
-  using StensorNumType = MathObjectNumType<StensorType>;
-  //! \brief a simple alias
-  template <typename StensorType>
-  using StensorBaseType =
-      tfel::typetraits::base_type<StensorNumType<StensorType>>;
-
   /*!
    * \class StensorTag
    * \brief Helper class to characterise stensors.
@@ -47,9 +38,9 @@ namespace tfel::math {
   struct StensorConcept {
     using ConceptTag = StensorTag;
 
-    StensorNumType<T> operator()(const unsigned short) const;
+    numeric_type<T> operator()(const unsigned short) const;
 
-    StensorNumType<T> operator[](const unsigned short) const;
+    numeric_type<T> operator[](const unsigned short) const;
 
    protected:
     StensorConcept() = default;
@@ -83,7 +74,7 @@ namespace tfel::math {
   template <typename StensorType>
   std::enable_if_t<
       implementsStensorConcept<StensorType>(),
-      typename tfel::typetraits::AbsType<StensorNumType<StensorType>>::type>
+      typename tfel::typetraits::AbsType<numeric_type<StensorType>>::type>
   abs(const StensorType&);
   /*!
    * \return the trace of a symmetric tensor
@@ -91,7 +82,7 @@ namespace tfel::math {
    */
   template <typename StensorType>
   TFEL_MATH_INLINE std::enable_if_t<implementsStensorConcept<StensorType>(),
-                                    StensorNumType<StensorType>>
+                                    numeric_type<StensorType>>
   trace(const StensorType&);
   /*!
    * \return the von Mises stress of a symmetric tensor
@@ -99,7 +90,7 @@ namespace tfel::math {
    */
   template <typename StensorType>
   TFEL_MATH_INLINE2 std::enable_if_t<implementsStensorConcept<StensorType>(),
-                                     StensorNumType<StensorType>>
+                                     numeric_type<StensorType>>
   sigmaeq(const StensorType&);
   /*!
    * \return the deviator of a symmetric tensor
@@ -127,9 +118,9 @@ namespace tfel::math {
       implementsStensorConcept<StensorResultType>() &&
           implementsStensorConcept<StensorType>() &&
           tfel::typetraits::IsAssignableTo<
-              typename ComputeUnaryResult<StensorNumType<StensorType>,
+              typename ComputeUnaryResult<numeric_type<StensorType>,
                                           Power<2>>::Result,
-              StensorNumType<StensorResultType>>::cond,
+              numeric_type<StensorResultType>>::cond,
       void>
   computeDeterminantDerivative(StensorResultType&, const StensorType&);
   /*!
@@ -143,9 +134,9 @@ namespace tfel::math {
       implementsStensorConcept<StensorResultType>() &&
           implementsStensorConcept<StensorType>() &&
           tfel::typetraits::IsAssignableTo<
-              typename ComputeUnaryResult<StensorNumType<StensorType>,
+              typename ComputeUnaryResult<numeric_type<StensorType>,
                                           Power<2>>::Result,
-              StensorNumType<StensorResultType>>::cond,
+              numeric_type<StensorResultType>>::cond,
       void>
   computeDeviatorDeterminantDerivative(StensorResultType&, const StensorType&);
 

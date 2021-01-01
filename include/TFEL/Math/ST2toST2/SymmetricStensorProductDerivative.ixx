@@ -25,7 +25,7 @@ namespace tfel::math {
                                (getSpaceDimension<StensorType2>() == 1u)),
                               st2tost2<1u, decltype(a[0] * b[0])>>::type {
     using NumType = decltype(a[0] * b[0]);
-    using real = tfel::typetraits::base_type<NumType>;
+    using real = base_type<NumType>;
     constexpr const auto zero = real(0);
     return {2 * a[0] * b[0], zero, zero, zero,
             2 * a[1] * b[1], zero, zero, zero,
@@ -41,7 +41,7 @@ namespace tfel::math {
                                (getSpaceDimension<StensorType2>() == 2u)),
                               st2tost2<2u, decltype(a[0] * b[0])>>::type {
     using NumType = decltype(a[0] * b[0]);
-    using real = tfel::typetraits::base_type<NumType>;
+    using real = base_type<NumType>;
     constexpr const auto zero = real(0);
     return {a[3] * b[3] + 2 * a[0] * b[0],
             zero,
@@ -70,7 +70,7 @@ namespace tfel::math {
                                (getSpaceDimension<StensorType2>() == 3u)),
                               st2tost2<3u, decltype(a[0] * b[0])>>::type {
     using NumType = decltype(a[0] * b[0]);
-    using real = tfel::typetraits::base_type<NumType>;
+    using real = base_type<NumType>;
     constexpr const auto zero = real(0);
     constexpr const auto cste = Cste<real>::sqrt2;
     return {a[4] * b[4] + a[3] * b[3] + 2 * a[0] * b[0], zero, zero,
@@ -116,7 +116,7 @@ namespace tfel::math {
                                (getSpaceDimension<StensorType>() == 1u)),
                               st2tost2<1u, decltype(a[0] * a[0])>>::type {
     using NumType = decltype(a[0] * a[0]);
-    using real = tfel::typetraits::base_type<NumType>;
+    using real = base_type<NumType>;
     constexpr const auto zero = real(0);
     return {a[0] * a[0], zero,        zero,  //
             zero,        a[1] * a[1], zero,  //
@@ -129,7 +129,7 @@ namespace tfel::math {
                                (getSpaceDimension<StensorType>() == 2u)),
                               st2tost2<2u, decltype(a[0] * a[0])>>::type {
     using NumType = decltype(a[0] * a[0]);
-    using real = tfel::typetraits::base_type<NumType>;
+    using real = base_type<NumType>;
     constexpr const auto zero = real(0);
     return {a[0] * a[0],
             a[3] * a[3] / 2,
@@ -155,7 +155,7 @@ namespace tfel::math {
                                (getSpaceDimension<StensorType>() == 3u)),
                               st2tost2<3u, decltype(a[0] * a[0])>>::type {
     using NumType = decltype(a[0] * a[0]);
-    using real = tfel::typetraits::base_type<NumType>;
+    using real = base_type<NumType>;
     constexpr const auto cste = Cste<real>::sqrt2;
     constexpr const auto icste = Cste<real>::isqrt2;
     constexpr const auto cste2 = 2 * Cste<real>::sqrt2;

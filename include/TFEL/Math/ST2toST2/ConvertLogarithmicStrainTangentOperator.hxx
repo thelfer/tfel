@@ -15,7 +15,6 @@
 #define LIB_TFEL_MATH_CONVERTLOGARITHMICSTRAINTANGENTOPERATOR_HXX
 
 #include <type_traits>
-#include "TFEL/TypeTraits/BaseType.hxx"
 #include "TFEL/Math/tvector.hxx"
 #include "TFEL/Math/tmatrix.hxx"
 #include "TFEL/Math/stensor.hxx"
@@ -41,7 +40,7 @@ namespace tfel::math {
   template <typename stress>
   struct ConvertLogarithmicStrainTangentOperator<1u, stress> {
     //! a simple alias
-    using real = tfel::typetraits::base_type<stress>;
+    using real = base_type<stress>;
     /*!
      *  \param[out] Cse: tangent moduli relating the rate of the
      *                   second Kirchhoff stress to the rate of the
@@ -62,19 +61,19 @@ namespace tfel::math {
     static typename std::enable_if<
         ((implementsST2toST2Concept<ST2toST2Type>()) &&
              (tfel::math::getSpaceDimension<ST2toST2Type>() == 1u) &&
-             (std::is_same<ST2toST2NumType<ST2toST2Type>, stress>::value) &&
+             (std::is_same<numeric_type<ST2toST2Type>, stress>::value) &&
              (implementsST2toST2Concept<ST2toST2Type2>()) &&
              (tfel::math::getSpaceDimension<ST2toST2Type2>() == 1u) &&
-             (tfel::typetraits::IsAssignableTo<ST2toST2NumType<ST2toST2Type2>,
+             (tfel::typetraits::IsAssignableTo<numeric_type<ST2toST2Type2>,
                                                stress>::cond),
          (implementsST2toST2Concept<ST2toST2Type3>()) &&
              (tfel::math::getSpaceDimension<ST2toST2Type3>() == 1u) &&
-             (tfel::typetraits::IsAssignableTo<ST2toST2NumType<ST2toST2Type3>,
+             (tfel::typetraits::IsAssignableTo<numeric_type<ST2toST2Type3>,
                                                real>::cond),
          (implementsStensorConcept<StressStensorType>()) &&
              (tfel::math::getSpaceDimension<StressStensorType>() == 1u) &&
              (tfel::typetraits::IsAssignableTo<
-                 StensorNumType<StressStensorType>,
+                 numeric_type<StressStensorType>,
                  stress>::cond)),
         void>::type
     exe(ST2toST2Type& Cse,

@@ -222,7 +222,7 @@ namespace tfel::math {
   struct ComputeUnaryResult_<TensorTag, UnaryOperatorTag, A, OpNeg> {
     struct DummyHandle {};
     using TensorTypeA = EvaluationResult<A>;
-    typedef MathObjectNumType<A> NumA;
+    typedef numeric_type<A> NumA;
     typedef typename ComputeUnaryResult<NumA, OpNeg>::Result NumResult;
 
    public:

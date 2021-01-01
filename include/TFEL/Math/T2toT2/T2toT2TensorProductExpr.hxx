@@ -34,12 +34,12 @@ namespace tfel::math {
             Expr<TensorResultType, T2toT2TensorProductExpr<1u>>>,
         public fsarray<
             TensorDimeToSize<getSpaceDimension<TensorResultType>()>::value,
-            MathObjectNumType<TensorResultType>> {
+            numeric_type<TensorResultType>> {
     static_assert(getSpaceDimension<TensorResultType>() == 1u);
     //! a simple alias
     typedef EmptyRunTimeProperties RunTimeProperties;
     //! a simple alias
-    typedef MathObjectNumType<TensorResultType> value_type;
+    typedef numeric_type<TensorResultType> value_type;
     /*!
      * \param[in] a : first term of the product
      * \param[in] b : second term of the product
@@ -80,12 +80,12 @@ namespace tfel::math {
             Expr<TensorResultType, T2toT2TensorProductExpr<2u>>>,
         public fsarray<
             TensorDimeToSize<getSpaceDimension<TensorResultType>()>::value,
-            MathObjectNumType<TensorResultType>> {
+            numeric_type<TensorResultType>> {
     static_assert(getSpaceDimension<TensorResultType>() == 2u);
     //! a simple alias
     typedef EmptyRunTimeProperties RunTimeProperties;
     //! a simple alias
-    typedef MathObjectNumType<TensorResultType> value_type;
+    typedef numeric_type<TensorResultType> value_type;
     /*!
      * \param[in] a : first term of the product
      * \param[in] b : second term of the product
@@ -133,12 +133,12 @@ namespace tfel::math {
             Expr<TensorResultType, T2toT2TensorProductExpr<3u>>>,
         public fsarray<
             TensorDimeToSize<getSpaceDimension<TensorResultType>()>::value,
-            MathObjectNumType<TensorResultType>> {
+            numeric_type<TensorResultType>> {
     static_assert(getSpaceDimension<TensorResultType>() == 3u);
     //! a simple alias
     typedef EmptyRunTimeProperties RunTimeProperties;
     //! a simple alias
-    typedef MathObjectNumType<TensorResultType> value_type;
+    typedef numeric_type<TensorResultType> value_type;
     /*!
      * \param[in] a : first term of the product
      * \param[in] b : second term of the product

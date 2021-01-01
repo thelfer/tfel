@@ -14,6 +14,8 @@
 #ifndef LIB_TFEL_QTSPECIFIC_HXX
 #define LIB_TFEL_QTSPECIFIC_HXX
 
+#include "TFEL/TypeTraits/BaseType.hxx"
+
 /*!
  * \def TFEL_MATH_QT_BASE_TYPE
  * \brief  An helper macro used to define BaseType for quantity.

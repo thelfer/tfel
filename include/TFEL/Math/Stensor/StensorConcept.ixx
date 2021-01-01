@@ -18,20 +18,20 @@
 namespace tfel::math {
 
   template <class T>
-  StensorNumType<T> StensorConcept<T>::operator()(
+  numeric_type<T> StensorConcept<T>::operator()(
       const unsigned short i) const {
     return static_cast<const T&>(*this).operator()(i);
   }
 
   template <class T>
-  StensorNumType<T> StensorConcept<T>::operator[](
+  numeric_type<T> StensorConcept<T>::operator[](
       const unsigned short i) const {
     return static_cast<const T&>(*this).operator()(i);
   }
 
   template <typename StensorType>
   std::enable_if_t<implementsStensorConcept<StensorType>(),
-                   StensorNumType<StensorType>>
+                   numeric_type<StensorType>>
   trace(const StensorType& s) {
     return s(0) + s(1) + s(2);
   }
@@ -39,7 +39,7 @@ namespace tfel::math {
   template <typename StensorType>
   std::enable_if_t<
       implementsStensorConcept<StensorType>(),
-      typename tfel::typetraits::AbsType<StensorNumType<StensorType>>::type>
+      typename tfel::typetraits::AbsType<numeric_type<StensorType>>::type>
   abs(const StensorType& s) {
     constexpr const auto N = getSpaceDimension<StensorType>();
     static_assert((N == 1) || (N == 2) || (N == 3), "invalid space dimension");
@@ -58,9 +58,9 @@ namespace tfel::math {
 
   template <typename StensorType>
   std::enable_if_t<implementsStensorConcept<StensorType>(),
-                   StensorNumType<StensorType>>
+                   numeric_type<StensorType>>
   sigmaeq(const StensorType& s) {
-    using real = tfel::typetraits::base_type<StensorNumType<StensorType>>;
+    using real = base_type<numeric_type<StensorType>>;
     constexpr const auto N = getSpaceDimension<StensorType>();
     TFEL_CONSTEXPR const auto one_third = real(1) / real(3);
     TFEL_CONSTEXPR const auto cste = real(3) / real(2);
@@ -88,7 +88,7 @@ namespace tfel::math {
                    EvaluationResult<StensorType>>
   deviator(const StensorType& s) {
     using Result = EvaluationResult<StensorType>;
-    using real = tfel::typetraits::base_type<StensorNumType<StensorType>>;
+    using real = base_type<numeric_type<StensorType>>;
     constexpr const auto N = getSpaceDimension<StensorType>();
     static_assert((N == 1) || (N == 2) || (N == 3), "invalid space dimension");
     TFEL_CONSTEXPR const auto one_third = real{1} / real{3};
@@ -107,9 +107,9 @@ namespace tfel::math {
       implementsStensorConcept<StensorResultType>() &&
           implementsStensorConcept<StensorType>() &&
           tfel::typetraits::IsAssignableTo<
-              typename ComputeUnaryResult<StensorNumType<StensorType>,
+              typename ComputeUnaryResult<numeric_type<StensorType>,
                                           Power<2>>::Result,
-              StensorNumType<StensorResultType>>::cond,
+              numeric_type<StensorResultType>>::cond,
       void>
   computeDeterminantDerivative(StensorResultType& dJ, const StensorType& s) {
     constexpr const auto N = getSpaceDimension<StensorType>();
@@ -126,8 +126,8 @@ namespace tfel::math {
       dJ[2] = s[0] * s[1] - s[3] * s[3] / 2;
       dJ[3] = -s[3] * s[2];
     } else if constexpr (N == 3u) {
-      using NumType = StensorNumType<StensorType>;
-      using real = tfel::typetraits::base_type<NumType>;
+      using NumType = numeric_type<StensorType>;
+      using real = base_type<NumType>;
       TFEL_CONSTEXPR const auto one_half = real(1) / real(2);
       TFEL_CONSTEXPR const auto icste = Cste<real>::isqrt2;
       dJ[0] = s[1] * s[2] - s[5] * s[5] * one_half;
@@ -144,9 +144,9 @@ namespace tfel::math {
       implementsStensorConcept<StensorResultType>() &&
           implementsStensorConcept<StensorType>() &&
           tfel::typetraits::IsAssignableTo<
-              typename ComputeUnaryResult<StensorNumType<StensorType>,
+              typename ComputeUnaryResult<numeric_type<StensorType>,
                                           Power<2>>::Result,
-              StensorNumType<StensorResultType>>::cond,
+              numeric_type<StensorResultType>>::cond,
       void>
   computeDeviatorDeterminantDerivative(StensorResultType& dJ,
                                        const StensorType& s) {
@@ -179,8 +179,8 @@ namespace tfel::math {
           9;
       dJ[3] = -((2 * s[2] - s[1] - s[0]) * s[3]) / 3;
     } else if constexpr (N == 3u) {
-      using NumType = StensorNumType<StensorType>;
-      using real = tfel::typetraits::base_type<NumType>;
+      using NumType = numeric_type<StensorType>;
+      using real = base_type<NumType>;
       TFEL_CONSTEXPR const auto cste = Cste<real>::sqrt2;
       dJ[0] = -(6 * s[5] * s[5] - 3 * s[4] * s[4] - 3 * s[3] * s[3] +
                 2 * s[2] * s[2] + (4 * s[0] - 8 * s[1]) * s[2] +

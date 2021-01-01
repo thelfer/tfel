@@ -19,7 +19,6 @@
 
 #include "TFEL/Config/TFELConfig.hxx"
 #include "TFEL/TypeTraits/IsAssignableTo.hxx"
-#include "TFEL/TypeTraits/BaseType.hxx"
 #include "TFEL/TypeTraits/RealPartType.hxx"
 #include "TFEL/TypeTraits/IsSafelyReinterpretCastableTo.hxx"
 #include "TFEL/FSAlgorithm/copy.hxx"

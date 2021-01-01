@@ -21,10 +21,10 @@ namespace tfel {
     template <typename MatrixType, typename PermutationType>
     int LUDecomp::exe(MatrixType& m,
                       PermutationType& p,
-                      const MathObjectNumType<MatrixType> eps) {
+                      const numeric_type<MatrixType> eps) {
       using namespace std;
-      using size_type = typename MathObjectTraits<MatrixType>::IndexType;
-      using real = MathObjectNumType<MatrixType>;
+      using size_type = index_type<MatrixType>;
+      using real = numeric_type<MatrixType>;
       TFEL_CONSTEXPR const auto c = real(1) / 10;
       if (m.getNbRows() != m.getNbCols()) {
         throw(LUMatrixNotSquare());

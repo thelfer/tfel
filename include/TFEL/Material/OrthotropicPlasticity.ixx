@@ -22,7 +22,7 @@ namespace tfel{
     template<typename StensorType>
     typename std::enable_if<
       tfel::meta::Implements<StensorType,tfel::math::StensorConcept>::cond,
-      tfel::math::UnaryOperationResult<tfel::math::StensorNumType<StensorType>,
+      tfel::math::UnaryOperationResult<tfel::math::numeric_type<StensorType>,
 				       tfel::math::Power<2>>>::type
     computeJ2O(const StensorType& s,
 	       const J2OCoefficients<StensorType>& a){
@@ -33,15 +33,15 @@ namespace tfel{
     typename std::enable_if<
       tfel::meta::Implements<StensorType,tfel::math::StensorConcept>::cond&&
       tfel::math::getSpaceDimension<StensorType>()==1u,
-      tfel::math::UnaryOperationResult<tfel::math::StensorNumType<StensorType>,
+      tfel::math::UnaryOperationResult<tfel::math::numeric_type<StensorType>,
 				       tfel::math::Power<2>>>::type
     computeJ2O(const StensorType& s,
-	       const tfel::math::StensorBaseType<StensorType> a1,
-	       const tfel::math::StensorBaseType<StensorType> a2,
-	       const tfel::math::StensorBaseType<StensorType> a3,
-	       const tfel::math::StensorBaseType<StensorType>,
-	       const tfel::math::StensorBaseType<StensorType>,
-	       const tfel::math::StensorBaseType<StensorType>)
+	       const tfel::math::base_type<StensorType> a1,
+	       const tfel::math::base_type<StensorType> a2,
+	       const tfel::math::base_type<StensorType> a3,
+	       const tfel::math::base_type<StensorType>,
+	       const tfel::math::base_type<StensorType>,
+	       const tfel::math::base_type<StensorType>)
     {
       return (a2*(s[1]-s[2])*(s[1]-s[2])+
 	      a3*(s[0]-s[2])*(s[0]-s[2])+
@@ -52,15 +52,15 @@ namespace tfel{
     typename std::enable_if<
       tfel::meta::Implements<StensorType,tfel::math::StensorConcept>::cond&&
       tfel::math::getSpaceDimension<StensorType>()==2u,
-      tfel::math::UnaryOperationResult<tfel::math::StensorNumType<StensorType>,
+      tfel::math::UnaryOperationResult<tfel::math::numeric_type<StensorType>,
 				       tfel::math::Power<2>>>::type
     computeJ2O(const StensorType& s,
-	       const tfel::math::StensorBaseType<StensorType> a1,
-	       const tfel::math::StensorBaseType<StensorType> a2,
-	       const tfel::math::StensorBaseType<StensorType> a3,
-	       const tfel::math::StensorBaseType<StensorType> a4,
-	       const tfel::math::StensorBaseType<StensorType>,
-	       const tfel::math::StensorBaseType<StensorType>)
+	       const tfel::math::base_type<StensorType> a1,
+	       const tfel::math::base_type<StensorType> a2,
+	       const tfel::math::base_type<StensorType> a3,
+	       const tfel::math::base_type<StensorType> a4,
+	       const tfel::math::base_type<StensorType>,
+	       const tfel::math::base_type<StensorType>)
     {
       return (a2*(s[1]-s[2])*(s[1]-s[2])+a3*(s[0]-s[2])*(s[0]-s[2])+
 	      a1*(s[0]-s[1])*(s[0]-s[1]))/6+a4*s[3]*s[3]/2;
@@ -70,15 +70,15 @@ namespace tfel{
     typename std::enable_if<
       tfel::meta::Implements<StensorType,tfel::math::StensorConcept>::cond&&
       tfel::math::getSpaceDimension<StensorType>()==3u,
-      tfel::math::UnaryOperationResult<tfel::math::StensorNumType<StensorType>,
+      tfel::math::UnaryOperationResult<tfel::math::numeric_type<StensorType>,
 				       tfel::math::Power<2>>>::type
     computeJ2O(const StensorType& s,
-	       const tfel::math::StensorBaseType<StensorType> a1,
-	       const tfel::math::StensorBaseType<StensorType> a2,
-	       const tfel::math::StensorBaseType<StensorType> a3,
-	       const tfel::math::StensorBaseType<StensorType> a4,
-	       const tfel::math::StensorBaseType<StensorType> a5,
-	       const tfel::math::StensorBaseType<StensorType> a6)
+	       const tfel::math::base_type<StensorType> a1,
+	       const tfel::math::base_type<StensorType> a2,
+	       const tfel::math::base_type<StensorType> a3,
+	       const tfel::math::base_type<StensorType> a4,
+	       const tfel::math::base_type<StensorType> a5,
+	       const tfel::math::base_type<StensorType> a6)
     {
       return (a6*s[5]*s[5]+a5*s[4]*s[4]+a4*s[3]*s[3])/2+
 	(a2*(s[1]-s[2])*(s[1]-s[2])+a3*(s[0]-s[2])*(s[0]-s[2])+a1*(s[0]-s[1])*(s[0]-s[1]))/6;
@@ -88,7 +88,7 @@ namespace tfel{
     typename std::enable_if<
       tfel::meta::Implements<StensorType,tfel::math::StensorConcept>::cond,
       tfel::math::stensor<tfel::math::getSpaceDimension<StensorType>(),
-			  tfel::math::StensorNumType<StensorType>>>::type
+			  tfel::math::numeric_type<StensorType>>>::type
     computeJ2ODerivative(const StensorType& s,
 			 const J2OCoefficients<StensorType>& a){
       return computeJ2ODerivative(s,a[0],a[1],a[2],a[3],a[4],a[5]);
@@ -99,14 +99,14 @@ namespace tfel{
       tfel::meta::Implements<StensorType,tfel::math::StensorConcept>::cond&&
       tfel::math::getSpaceDimension<StensorType>()==1u,
       tfel::math::stensor<tfel::math::getSpaceDimension<StensorType>(),
-			  tfel::math::StensorNumType<StensorType>>>::type
+			  tfel::math::numeric_type<StensorType>>>::type
     computeJ2ODerivative(const StensorType& s,
-			 const tfel::math::StensorBaseType<StensorType> a1,
-			 const tfel::math::StensorBaseType<StensorType> a2,
-			 const tfel::math::StensorBaseType<StensorType> a3,
-			 const tfel::math::StensorBaseType<StensorType>,
-			 const tfel::math::StensorBaseType<StensorType>,
-			 const tfel::math::StensorBaseType<StensorType>)
+			 const tfel::math::base_type<StensorType> a1,
+			 const tfel::math::base_type<StensorType> a2,
+			 const tfel::math::base_type<StensorType> a3,
+			 const tfel::math::base_type<StensorType>,
+			 const tfel::math::base_type<StensorType>,
+			 const tfel::math::base_type<StensorType>)
     {
       return {(a3*(s[0]-s[2]))/3+(a1*(s[0]-s[1]))/3,
 	  (a2*(s[1]-s[2]))/3-(a1*(s[0]-s[1]))/3,
@@ -118,14 +118,14 @@ namespace tfel{
       tfel::meta::Implements<StensorType,tfel::math::StensorConcept>::cond&&
       tfel::math::getSpaceDimension<StensorType>()==2u,
       tfel::math::stensor<tfel::math::getSpaceDimension<StensorType>(),
-			  tfel::math::StensorNumType<StensorType>>>::type
+			  tfel::math::numeric_type<StensorType>>>::type
     computeJ2ODerivative(const StensorType& s,
-			 const tfel::math::StensorBaseType<StensorType> a1,
-			 const tfel::math::StensorBaseType<StensorType> a2,
-			 const tfel::math::StensorBaseType<StensorType> a3,
-			 const tfel::math::StensorBaseType<StensorType> a4,
-			 const tfel::math::StensorBaseType<StensorType>,
-			 const tfel::math::StensorBaseType<StensorType>)
+			 const tfel::math::base_type<StensorType> a1,
+			 const tfel::math::base_type<StensorType> a2,
+			 const tfel::math::base_type<StensorType> a3,
+			 const tfel::math::base_type<StensorType> a4,
+			 const tfel::math::base_type<StensorType>,
+			 const tfel::math::base_type<StensorType>)
     {
       return {(a3*(s[0]-s[2]))/3+(a1*(s[0]-s[1]))/3,
 	  (a2*(s[1]-s[2]))/3-(a1*(s[0]-s[1]))/3,
@@ -137,14 +137,14 @@ namespace tfel{
       tfel::meta::Implements<StensorType,tfel::math::StensorConcept>::cond&&
       tfel::math::getSpaceDimension<StensorType>()==3u,
       tfel::math::stensor<tfel::math::getSpaceDimension<StensorType>(),
-			  tfel::math::StensorNumType<StensorType>>>::type
+			  tfel::math::numeric_type<StensorType>>>::type
     computeJ2ODerivative(const StensorType& s,
-			 const tfel::math::StensorBaseType<StensorType> a1,
-			 const tfel::math::StensorBaseType<StensorType> a2,
-			 const tfel::math::StensorBaseType<StensorType> a3,
-			 const tfel::math::StensorBaseType<StensorType> a4,
-			 const tfel::math::StensorBaseType<StensorType> a5,
-			 const tfel::math::StensorBaseType<StensorType> a6)
+			 const tfel::math::base_type<StensorType> a1,
+			 const tfel::math::base_type<StensorType> a2,
+			 const tfel::math::base_type<StensorType> a3,
+			 const tfel::math::base_type<StensorType> a4,
+			 const tfel::math::base_type<StensorType> a5,
+			 const tfel::math::base_type<StensorType> a6)
     {
       return {(a3*(s[0]-s[2]))/3+(a1*(s[0]-s[1]))/3,
 	  (a2*(s[1]-s[2]))/3-(a1*(s[0]-s[1]))/3,
@@ -156,8 +156,8 @@ namespace tfel{
     typename std::enable_if<
       tfel::meta::Implements<StensorType,tfel::math::StensorConcept>::cond,
       tfel::math::st2tost2<tfel::math::getSpaceDimension<StensorType>(),
-			   tfel::math::BinaryOperationResult<tfel::math::StensorBaseType<StensorType>,
-							     tfel::math::StensorNumType<StensorType>,
+			   tfel::math::BinaryOperationResult<tfel::math::base_type<StensorType>,
+							     tfel::math::numeric_type<StensorType>,
 							     tfel::math::OpDiv>>>::type
     computeJ2OSecondDerivative(const StensorType& s,
 			       const J2OCoefficients<StensorType>& a){
@@ -169,16 +169,16 @@ namespace tfel{
       tfel::meta::Implements<StensorType,tfel::math::StensorConcept>::cond&&
       tfel::math::getSpaceDimension<StensorType>()==1u,
       tfel::math::st2tost2<tfel::math::getSpaceDimension<StensorType>(),
-			   tfel::math::BinaryOperationResult<tfel::math::StensorBaseType<StensorType>,
-							     tfel::math::StensorNumType<StensorType>,
+			   tfel::math::BinaryOperationResult<tfel::math::base_type<StensorType>,
+							     tfel::math::numeric_type<StensorType>,
 							     tfel::math::OpDiv>>>::type
     computeJ2OSecondDerivative(const StensorType&,
-			       const tfel::math::StensorBaseType<StensorType> a1,
-			       const tfel::math::StensorBaseType<StensorType> a2,
-			       const tfel::math::StensorBaseType<StensorType> a3,
-			       const tfel::math::StensorBaseType<StensorType>,
-			       const tfel::math::StensorBaseType<StensorType>,
-			       const tfel::math::StensorBaseType<StensorType>)
+			       const tfel::math::base_type<StensorType> a1,
+			       const tfel::math::base_type<StensorType> a2,
+			       const tfel::math::base_type<StensorType> a3,
+			       const tfel::math::base_type<StensorType>,
+			       const tfel::math::base_type<StensorType>,
+			       const tfel::math::base_type<StensorType>)
     {
       return {(a3+a1)/3,-a1/3,-a3/3,
 	  -a1/3,(a2+a1)/3,-a2/3,
@@ -190,18 +190,18 @@ namespace tfel{
       tfel::meta::Implements<StensorType,tfel::math::StensorConcept>::cond&&
       tfel::math::getSpaceDimension<StensorType>()==2u,
       tfel::math::st2tost2<tfel::math::getSpaceDimension<StensorType>(),
-			   tfel::math::BinaryOperationResult<tfel::math::StensorBaseType<StensorType>,
-							     tfel::math::StensorNumType<StensorType>,
+			   tfel::math::BinaryOperationResult<tfel::math::base_type<StensorType>,
+							     tfel::math::numeric_type<StensorType>,
 							     tfel::math::OpDiv>>>::type
     computeJ2OSecondDerivative(const StensorType&,
-			       const tfel::math::StensorBaseType<StensorType> a1,
-			       const tfel::math::StensorBaseType<StensorType> a2,
-			       const tfel::math::StensorBaseType<StensorType> a3,
-			       const tfel::math::StensorBaseType<StensorType> a4,
-			       const tfel::math::StensorBaseType<StensorType>,
-			       const tfel::math::StensorBaseType<StensorType>)
+			       const tfel::math::base_type<StensorType> a1,
+			       const tfel::math::base_type<StensorType> a2,
+			       const tfel::math::base_type<StensorType> a3,
+			       const tfel::math::base_type<StensorType> a4,
+			       const tfel::math::base_type<StensorType>,
+			       const tfel::math::base_type<StensorType>)
     {
-      using real = tfel::math::StensorBaseType<StensorType>;
+      using real = tfel::math::base_type<StensorType>;
       constexpr const auto zero = real{0};
       return {(a3+a1)/3,-a1/3,-a3/3,zero,
 	  -a1/3,(a2+a1)/3,-a2/3,zero,
@@ -214,18 +214,18 @@ namespace tfel{
       tfel::meta::Implements<StensorType,tfel::math::StensorConcept>::cond&&
       tfel::math::getSpaceDimension<StensorType>()==3u,
       tfel::math::st2tost2<tfel::math::getSpaceDimension<StensorType>(),
-			   tfel::math::BinaryOperationResult<tfel::math::StensorBaseType<StensorType>,
-							     tfel::math::StensorNumType<StensorType>,
+			   tfel::math::BinaryOperationResult<tfel::math::base_type<StensorType>,
+							     tfel::math::numeric_type<StensorType>,
 							     tfel::math::OpDiv>>>::type
     computeJ2OSecondDerivative(const StensorType&,
-			       const tfel::math::StensorBaseType<StensorType> a1,
-			       const tfel::math::StensorBaseType<StensorType> a2,
-			       const tfel::math::StensorBaseType<StensorType> a3,
-			       const tfel::math::StensorBaseType<StensorType> a4,
-			       const tfel::math::StensorBaseType<StensorType> a5,
-			       const tfel::math::StensorBaseType<StensorType> a6)
+			       const tfel::math::base_type<StensorType> a1,
+			       const tfel::math::base_type<StensorType> a2,
+			       const tfel::math::base_type<StensorType> a3,
+			       const tfel::math::base_type<StensorType> a4,
+			       const tfel::math::base_type<StensorType> a5,
+			       const tfel::math::base_type<StensorType> a6)
     {
-      using real = tfel::math::StensorBaseType<StensorType>;
+      using real = tfel::math::base_type<StensorType>;
       constexpr const auto zero = real{0};
       return {(a3+a1)/3,-a1/3,-a3/3,zero,zero,zero,
 	  -a1/3,(a2+a1)/3,-a2/3,zero,zero,zero,
@@ -238,7 +238,7 @@ namespace tfel{
     template<typename StensorType>
     typename std::enable_if<
       tfel::meta::Implements<StensorType,tfel::math::StensorConcept>::cond,
-      tfel::math::UnaryOperationResult<tfel::math::StensorNumType<StensorType>,
+      tfel::math::UnaryOperationResult<tfel::math::numeric_type<StensorType>,
 				       tfel::math::Power<3>>>::type
     computeJ3O(const StensorType& s,
 	       const J3OCoefficients<StensorType>& b){
@@ -250,20 +250,20 @@ namespace tfel{
     typename std::enable_if<
       tfel::meta::Implements<StensorType,tfel::math::StensorConcept>::cond&&
       tfel::math::getSpaceDimension<StensorType>()==1u,
-      tfel::math::UnaryOperationResult<tfel::math::StensorNumType<StensorType>,
+      tfel::math::UnaryOperationResult<tfel::math::numeric_type<StensorType>,
 				       tfel::math::Power<3>>>::type
     computeJ3O(const StensorType& s,
-	       const tfel::math::StensorBaseType<StensorType> b1,
-	       const tfel::math::StensorBaseType<StensorType> b2,
-	       const tfel::math::StensorBaseType<StensorType> b3,
-	       const tfel::math::StensorBaseType<StensorType> b4,
-	       const tfel::math::StensorBaseType<StensorType>,
-	       const tfel::math::StensorBaseType<StensorType>,
-	       const tfel::math::StensorBaseType<StensorType>,
-	       const tfel::math::StensorBaseType<StensorType>,
-	       const tfel::math::StensorBaseType<StensorType>,
-	       const tfel::math::StensorBaseType<StensorType>,
-	       const tfel::math::StensorBaseType<StensorType>){
+	       const tfel::math::base_type<StensorType> b1,
+	       const tfel::math::base_type<StensorType> b2,
+	       const tfel::math::base_type<StensorType> b3,
+	       const tfel::math::base_type<StensorType> b4,
+	       const tfel::math::base_type<StensorType>,
+	       const tfel::math::base_type<StensorType>,
+	       const tfel::math::base_type<StensorType>,
+	       const tfel::math::base_type<StensorType>,
+	       const tfel::math::base_type<StensorType>,
+	       const tfel::math::base_type<StensorType>,
+	       const tfel::math::base_type<StensorType>){
       return ((2*(b4+b1)-b3-b2)*s[2]*s[2]*s[2])/27
 	+((b4+b3)*s[1]*s[1]*s[1])/27
 	+((b2+b1)*s[0]*s[0]*s[0])/27
@@ -277,20 +277,20 @@ namespace tfel{
     typename std::enable_if<
       tfel::meta::Implements<StensorType,tfel::math::StensorConcept>::cond&&
       tfel::math::getSpaceDimension<StensorType>()==2u,
-      tfel::math::UnaryOperationResult<tfel::math::StensorNumType<StensorType>,
+      tfel::math::UnaryOperationResult<tfel::math::numeric_type<StensorType>,
 				       tfel::math::Power<3>>>::type
     computeJ3O(const StensorType& s,
-	       const tfel::math::StensorBaseType<StensorType> b1,
-	       const tfel::math::StensorBaseType<StensorType> b2,
-	       const tfel::math::StensorBaseType<StensorType> b3,
-	       const tfel::math::StensorBaseType<StensorType> b4,
-	       const tfel::math::StensorBaseType<StensorType> b5,
-	       const tfel::math::StensorBaseType<StensorType>,
-	       const tfel::math::StensorBaseType<StensorType>,
-	       const tfel::math::StensorBaseType<StensorType>,
-	       const tfel::math::StensorBaseType<StensorType>,
-	       const tfel::math::StensorBaseType<StensorType> b10,
-	       const tfel::math::StensorBaseType<StensorType>){
+	       const tfel::math::base_type<StensorType> b1,
+	       const tfel::math::base_type<StensorType> b2,
+	       const tfel::math::base_type<StensorType> b3,
+	       const tfel::math::base_type<StensorType> b4,
+	       const tfel::math::base_type<StensorType> b5,
+	       const tfel::math::base_type<StensorType>,
+	       const tfel::math::base_type<StensorType>,
+	       const tfel::math::base_type<StensorType>,
+	       const tfel::math::base_type<StensorType>,
+	       const tfel::math::base_type<StensorType> b10,
+	       const tfel::math::base_type<StensorType>){
       return ((2*(b4+b1)-b3-b2)*s[2]*s[2]*s[2])/27
 	+((b4+b3)*s[1]*s[1]*s[1])/27
 	+((b2+b1)*s[0]*s[0]*s[0])/27
@@ -305,21 +305,21 @@ namespace tfel{
     typename std::enable_if<
       tfel::meta::Implements<StensorType,tfel::math::StensorConcept>::cond&&
       tfel::math::getSpaceDimension<StensorType>()==3u,
-      tfel::math::UnaryOperationResult<tfel::math::StensorNumType<StensorType>,
+      tfel::math::UnaryOperationResult<tfel::math::numeric_type<StensorType>,
 				       tfel::math::Power<3>>>::type
     computeJ3O(const StensorType& s,
-	       const tfel::math::StensorBaseType<StensorType> b1,
-	       const tfel::math::StensorBaseType<StensorType> b2,
-	       const tfel::math::StensorBaseType<StensorType> b3,
-	       const tfel::math::StensorBaseType<StensorType> b4,
-	       const tfel::math::StensorBaseType<StensorType> b5,
-	       const tfel::math::StensorBaseType<StensorType> b6,
-	       const tfel::math::StensorBaseType<StensorType> b7,
-	       const tfel::math::StensorBaseType<StensorType> b8,
-	       const tfel::math::StensorBaseType<StensorType> b9,
-	       const tfel::math::StensorBaseType<StensorType> b10,
-	       const tfel::math::StensorBaseType<StensorType> b11){
-      using real = tfel::math::StensorBaseType<StensorType>;
+	       const tfel::math::base_type<StensorType> b1,
+	       const tfel::math::base_type<StensorType> b2,
+	       const tfel::math::base_type<StensorType> b3,
+	       const tfel::math::base_type<StensorType> b4,
+	       const tfel::math::base_type<StensorType> b5,
+	       const tfel::math::base_type<StensorType> b6,
+	       const tfel::math::base_type<StensorType> b7,
+	       const tfel::math::base_type<StensorType> b8,
+	       const tfel::math::base_type<StensorType> b9,
+	       const tfel::math::base_type<StensorType> b10,
+	       const tfel::math::base_type<StensorType> b11){
+      using real = tfel::math::base_type<StensorType>;
       TFEL_CONSTEXPR const auto icste = tfel::math::Cste<real>::isqrt2;
       return ((2*(b4+b1)-b3-b2)*s[2]*s[2]*s[2])/27
 	+((b4+b3)*s[1]*s[1]*s[1])/27
@@ -338,7 +338,7 @@ namespace tfel{
     typename std::enable_if<
       tfel::meta::Implements<StensorType,tfel::math::StensorConcept>::cond,
       tfel::math::stensor<tfel::math::getSpaceDimension<StensorType>(),
-			  tfel::math::UnaryOperationResult<tfel::math::StensorNumType<StensorType>,
+			  tfel::math::UnaryOperationResult<tfel::math::numeric_type<StensorType>,
 							   tfel::math::Power<2>>>>::type
     computeJ3ODerivative(const StensorType& s,
 			 const J3OCoefficients<StensorType>& b){
@@ -351,22 +351,22 @@ namespace tfel{
       tfel::meta::Implements<StensorType,tfel::math::StensorConcept>::cond&&
       tfel::math::getSpaceDimension<StensorType>()==1u,
       tfel::math::stensor<tfel::math::getSpaceDimension<StensorType>(),
-			  tfel::math::UnaryOperationResult<tfel::math::StensorNumType<StensorType>,
+			  tfel::math::UnaryOperationResult<tfel::math::numeric_type<StensorType>,
 							   tfel::math::Power<2>>>>::type
     computeJ3ODerivative(const StensorType& s,
-			 const tfel::math::StensorBaseType<StensorType> b1,
-			 const tfel::math::StensorBaseType<StensorType> b2,
-			 const tfel::math::StensorBaseType<StensorType> b3,
-			 const tfel::math::StensorBaseType<StensorType> b4,
-			 const tfel::math::StensorBaseType<StensorType>,
-			 const tfel::math::StensorBaseType<StensorType>,
-			 const tfel::math::StensorBaseType<StensorType>,
-			 const tfel::math::StensorBaseType<StensorType>,
-			 const tfel::math::StensorBaseType<StensorType>,
-			 const tfel::math::StensorBaseType<StensorType>,
-			 const tfel::math::StensorBaseType<StensorType>){
+			 const tfel::math::base_type<StensorType> b1,
+			 const tfel::math::base_type<StensorType> b2,
+			 const tfel::math::base_type<StensorType> b3,
+			 const tfel::math::base_type<StensorType> b4,
+			 const tfel::math::base_type<StensorType>,
+			 const tfel::math::base_type<StensorType>,
+			 const tfel::math::base_type<StensorType>,
+			 const tfel::math::base_type<StensorType>,
+			 const tfel::math::base_type<StensorType>,
+			 const tfel::math::base_type<StensorType>,
+			 const tfel::math::base_type<StensorType>){
       using namespace tfel::math;
-      auto dJ3O = stensor<1u,UnaryOperationResult<StensorNumType<StensorType>,
+      auto dJ3O = stensor<1u,UnaryOperationResult<numeric_type<StensorType>,
 						  Power<2>>>{};
       dJ3O[0] = -((b4-b2+b1)*s[2]*s[2])/9+(2*(b4+b1)*s[1]*s[2])/9-
 	(b4*s[1]*s[1])/9+(-2*s[0]*(b1*s[1]+b2*s[2]))/9+((b2+b1)*s[0]*s[0])/9;
@@ -383,22 +383,22 @@ namespace tfel{
       tfel::meta::Implements<StensorType,tfel::math::StensorConcept>::cond&&
       tfel::math::getSpaceDimension<StensorType>()==2u,
       tfel::math::stensor<tfel::math::getSpaceDimension<StensorType>(),
-			  tfel::math::UnaryOperationResult<tfel::math::StensorNumType<StensorType>,
+			  tfel::math::UnaryOperationResult<tfel::math::numeric_type<StensorType>,
 							   tfel::math::Power<2>>>>::type
     computeJ3ODerivative(const StensorType& s,
-			 const tfel::math::StensorBaseType<StensorType> b1,
-			 const tfel::math::StensorBaseType<StensorType> b2,
-			 const tfel::math::StensorBaseType<StensorType> b3,
-			 const tfel::math::StensorBaseType<StensorType> b4,
-			 const tfel::math::StensorBaseType<StensorType> b5,
-			 const tfel::math::StensorBaseType<StensorType>,
-			 const tfel::math::StensorBaseType<StensorType>,
-			 const tfel::math::StensorBaseType<StensorType>,
-			 const tfel::math::StensorBaseType<StensorType>,
-			 const tfel::math::StensorBaseType<StensorType> b10,
-			 const tfel::math::StensorBaseType<StensorType>){
+			 const tfel::math::base_type<StensorType> b1,
+			 const tfel::math::base_type<StensorType> b2,
+			 const tfel::math::base_type<StensorType> b3,
+			 const tfel::math::base_type<StensorType> b4,
+			 const tfel::math::base_type<StensorType> b5,
+			 const tfel::math::base_type<StensorType>,
+			 const tfel::math::base_type<StensorType>,
+			 const tfel::math::base_type<StensorType>,
+			 const tfel::math::base_type<StensorType>,
+			 const tfel::math::base_type<StensorType> b10,
+			 const tfel::math::base_type<StensorType>){
       using namespace tfel::math;
-      auto dJ3O = stensor<2u,UnaryOperationResult<StensorNumType<StensorType>,
+      auto dJ3O = stensor<2u,UnaryOperationResult<numeric_type<StensorType>,
 						 Power<2>>>{};
       dJ3O[0] = -((b5-2*b10)*s[3]*s[3])/6-((b4-b2+b1)*s[2]*s[2])/9+(2*(b4+b1)*s[1]*s[2])/9-
 	(b4*s[1]*s[1])/9+(-2*s[0]*(b1*s[1]+b2*s[2]))/9+((b2+b1)*s[0]*s[0])/9;
@@ -416,24 +416,24 @@ namespace tfel{
       tfel::meta::Implements<StensorType,tfel::math::StensorConcept>::cond&&
       tfel::math::getSpaceDimension<StensorType>()==3u,
       tfel::math::stensor<tfel::math::getSpaceDimension<StensorType>(),
-			  tfel::math::UnaryOperationResult<tfel::math::StensorNumType<StensorType>,
+			  tfel::math::UnaryOperationResult<tfel::math::numeric_type<StensorType>,
 							   tfel::math::Power<2>>>>::type
     computeJ3ODerivative(const StensorType& s,
-			 const tfel::math::StensorBaseType<StensorType> b1,
-			 const tfel::math::StensorBaseType<StensorType> b2,
-			 const tfel::math::StensorBaseType<StensorType> b3,
-			 const tfel::math::StensorBaseType<StensorType> b4,
-			 const tfel::math::StensorBaseType<StensorType> b5,
-			 const tfel::math::StensorBaseType<StensorType> b6,
-			 const tfel::math::StensorBaseType<StensorType> b7,
-			 const tfel::math::StensorBaseType<StensorType> b8,
-			 const tfel::math::StensorBaseType<StensorType> b9,
-			 const tfel::math::StensorBaseType<StensorType> b10,
-			 const tfel::math::StensorBaseType<StensorType> b11){
+			 const tfel::math::base_type<StensorType> b1,
+			 const tfel::math::base_type<StensorType> b2,
+			 const tfel::math::base_type<StensorType> b3,
+			 const tfel::math::base_type<StensorType> b4,
+			 const tfel::math::base_type<StensorType> b5,
+			 const tfel::math::base_type<StensorType> b6,
+			 const tfel::math::base_type<StensorType> b7,
+			 const tfel::math::base_type<StensorType> b8,
+			 const tfel::math::base_type<StensorType> b9,
+			 const tfel::math::base_type<StensorType> b10,
+			 const tfel::math::base_type<StensorType> b11){
       using namespace tfel::math;
-      using real = StensorBaseType<StensorType>;
+      using real = base_type<StensorType>;
       TFEL_CONSTEXPR const auto icste = Cste<real>::isqrt2;
-      auto dJ3O = stensor<3u,UnaryOperationResult<StensorNumType<StensorType>,
+      auto dJ3O = stensor<3u,UnaryOperationResult<numeric_type<StensorType>,
 						 Power<2>>>{};
       dJ3O[0] = (-((b7+b6)*s[5]*s[5])/6)-((b8-2*b9)*s[4]*s[4])/6-
 	((b5-2*b10)*s[3]*s[3])/6-((b4-b2+b1)*s[2]*s[2])/9+(2*(b4+b1)*s[1]*s[2])/9-
@@ -458,7 +458,7 @@ namespace tfel{
     typename std::enable_if<
       tfel::meta::Implements<StensorType,tfel::math::StensorConcept>::cond,
       tfel::math::st2tost2<tfel::math::getSpaceDimension<StensorType>(),
-			   tfel::math::StensorNumType<StensorType>>>::type
+			   tfel::math::numeric_type<StensorType>>>::type
     computeJ3OSecondDerivative(const StensorType& s,
 			       const J3OCoefficients<StensorType>& b){
       return computeJ3OSecondDerivative(s,b[0],b[1],b[2],b[3],b[4],b[5],
@@ -470,20 +470,20 @@ namespace tfel{
       tfel::meta::Implements<StensorType,tfel::math::StensorConcept>::cond&&
       tfel::math::getSpaceDimension<StensorType>()==1u,
       tfel::math::st2tost2<tfel::math::getSpaceDimension<StensorType>(),
-			   tfel::math::StensorNumType<StensorType>>>::type
+			   tfel::math::numeric_type<StensorType>>>::type
     computeJ3OSecondDerivative(const StensorType& s,
-			       const tfel::math::StensorBaseType<StensorType> b1,
-			       const tfel::math::StensorBaseType<StensorType> b2,
-			       const tfel::math::StensorBaseType<StensorType> b3,
-			       const tfel::math::StensorBaseType<StensorType> b4,
-			       const tfel::math::StensorBaseType<StensorType>,
-			       const tfel::math::StensorBaseType<StensorType>,
-			       const tfel::math::StensorBaseType<StensorType>,
-			       const tfel::math::StensorBaseType<StensorType>,
-			       const tfel::math::StensorBaseType<StensorType>,
-			       const tfel::math::StensorBaseType<StensorType>,
-			       const tfel::math::StensorBaseType<StensorType>){
-      auto d2J3O = tfel::math::st2tost2<1u,tfel::math::StensorNumType<StensorType>>{};
+			       const tfel::math::base_type<StensorType> b1,
+			       const tfel::math::base_type<StensorType> b2,
+			       const tfel::math::base_type<StensorType> b3,
+			       const tfel::math::base_type<StensorType> b4,
+			       const tfel::math::base_type<StensorType>,
+			       const tfel::math::base_type<StensorType>,
+			       const tfel::math::base_type<StensorType>,
+			       const tfel::math::base_type<StensorType>,
+			       const tfel::math::base_type<StensorType>,
+			       const tfel::math::base_type<StensorType>,
+			       const tfel::math::base_type<StensorType>){
+      auto d2J3O = tfel::math::st2tost2<1u,tfel::math::numeric_type<StensorType>>{};
       d2J3O(0,0) = (-2*(b2*s[2]+b1*s[1]))/9+(2*(b2+b1)*s[0])/9;
       d2J3O(0,1) = (2*(b4+b1)*s[2])/9+(-2*b4*s[1])/9+(-2*b1*s[0])/9;
       d2J3O(0,2) = (-2*(b4-b2+b1)*s[2])/9+(2*(b4+b1)*s[1])/9+(-2*b2*s[0])/9;
@@ -501,20 +501,20 @@ namespace tfel{
       tfel::meta::Implements<StensorType,tfel::math::StensorConcept>::cond&&
       tfel::math::getSpaceDimension<StensorType>()==2u,
       tfel::math::st2tost2<tfel::math::getSpaceDimension<StensorType>(),
-			   tfel::math::StensorNumType<StensorType>>>::type
+			   tfel::math::numeric_type<StensorType>>>::type
     computeJ3OSecondDerivative(const StensorType& s,
-			       const tfel::math::StensorBaseType<StensorType> b1,
-			       const tfel::math::StensorBaseType<StensorType> b2,
-			       const tfel::math::StensorBaseType<StensorType> b3,
-			       const tfel::math::StensorBaseType<StensorType> b4,
-			       const tfel::math::StensorBaseType<StensorType> b5,
-			       const tfel::math::StensorBaseType<StensorType>,
-			       const tfel::math::StensorBaseType<StensorType>,
-			       const tfel::math::StensorBaseType<StensorType>,
-			       const tfel::math::StensorBaseType<StensorType>,
-			       const tfel::math::StensorBaseType<StensorType> b10,
-			       const tfel::math::StensorBaseType<StensorType>){
-      auto d2J3O = tfel::math::st2tost2<2u,tfel::math::StensorNumType<StensorType>>{};
+			       const tfel::math::base_type<StensorType> b1,
+			       const tfel::math::base_type<StensorType> b2,
+			       const tfel::math::base_type<StensorType> b3,
+			       const tfel::math::base_type<StensorType> b4,
+			       const tfel::math::base_type<StensorType> b5,
+			       const tfel::math::base_type<StensorType>,
+			       const tfel::math::base_type<StensorType>,
+			       const tfel::math::base_type<StensorType>,
+			       const tfel::math::base_type<StensorType>,
+			       const tfel::math::base_type<StensorType> b10,
+			       const tfel::math::base_type<StensorType>){
+      auto d2J3O = tfel::math::st2tost2<2u,tfel::math::numeric_type<StensorType>>{};
       d2J3O(0,0) = (-2*(b2*s[2]+b1*s[1]))/9+(2*(b2+b1)*s[0])/9;
       d2J3O(0,1) = (2*(b4+b1)*s[2])/9+(-2*b4*s[1])/9+(-2*b1*s[0])/9;
       d2J3O(0,2) = (-2*(b4-b2+b1)*s[2])/9+(2*(b4+b1)*s[1])/9+(-2*b2*s[0])/9;
@@ -539,23 +539,23 @@ namespace tfel{
       tfel::meta::Implements<StensorType,tfel::math::StensorConcept>::cond&&
       tfel::math::getSpaceDimension<StensorType>()==3u,
       tfel::math::st2tost2<tfel::math::getSpaceDimension<StensorType>(),
-			   tfel::math::StensorNumType<StensorType>>>::type
+			   tfel::math::numeric_type<StensorType>>>::type
     computeJ3OSecondDerivative(const StensorType& s,
-			       const tfel::math::StensorBaseType<StensorType> b1,
-			       const tfel::math::StensorBaseType<StensorType> b2,
-			       const tfel::math::StensorBaseType<StensorType> b3,
-			       const tfel::math::StensorBaseType<StensorType> b4,
-			       const tfel::math::StensorBaseType<StensorType> b5,
-			       const tfel::math::StensorBaseType<StensorType> b6,
-			       const tfel::math::StensorBaseType<StensorType> b7,
-			       const tfel::math::StensorBaseType<StensorType> b8,
-			       const tfel::math::StensorBaseType<StensorType> b9,
-			       const tfel::math::StensorBaseType<StensorType> b10,
-			       const tfel::math::StensorBaseType<StensorType> b11){
+			       const tfel::math::base_type<StensorType> b1,
+			       const tfel::math::base_type<StensorType> b2,
+			       const tfel::math::base_type<StensorType> b3,
+			       const tfel::math::base_type<StensorType> b4,
+			       const tfel::math::base_type<StensorType> b5,
+			       const tfel::math::base_type<StensorType> b6,
+			       const tfel::math::base_type<StensorType> b7,
+			       const tfel::math::base_type<StensorType> b8,
+			       const tfel::math::base_type<StensorType> b9,
+			       const tfel::math::base_type<StensorType> b10,
+			       const tfel::math::base_type<StensorType> b11){
       using namespace tfel::math;
-      using real = StensorBaseType<StensorType>;
+      using real = base_type<StensorType>;
       TFEL_CONSTEXPR const auto icste = Cste<real>::isqrt2;
-      auto d2J3O = st2tost2<3u,StensorNumType<StensorType>>{};
+      auto d2J3O = st2tost2<3u,numeric_type<StensorType>>{};
       d2J3O(0,0) = (-2*(b2*s[2]+b1*s[1]))/9+(2*(b2+b1)*s[0])/9;
       d2J3O(0,1) = (2*(b4+b1)*s[2])/9+(-2*b4*s[1])/9+(-2*b1*s[0])/9;
       d2J3O(0,2) = (-2*(b4-b2+b1)*s[2])/9+(2*(b4+b1)*s[1])/9+(-2*b2*s[0])/9;

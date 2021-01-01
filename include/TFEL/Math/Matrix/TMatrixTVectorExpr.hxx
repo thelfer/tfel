@@ -55,7 +55,7 @@ namespace tfel::math {
      */
     struct RowConstIterator {
       using MType = std::decay_t<A>;
-      using NumType = MathObjectNumType<MType>;
+      using NumType = numeric_type<MType>;
       //! default constructor
       TFEL_MATH_INLINE RowConstIterator(const MType& m_,
                                         const unsigned short i_)
@@ -79,7 +79,7 @@ namespace tfel::math {
     // VType does not provide an iterator
     struct VectorConstIterator {
       using VType = std::decay_t<B>;
-      using NumType = MathObjectNumType<VType>;
+      using NumType = numeric_type<VType>;
       TFEL_MATH_INLINE VectorConstIterator(const VType& v_) : v(v_) {}
       TFEL_MATH_INLINE VectorConstIterator& operator++() {
         ++i;
@@ -98,9 +98,9 @@ namespace tfel::math {
                                                 std::decay_t<B>,
                                                 OpMult>::Result;
     //! a simple alias
-    using NumType = MathObjectNumType<Result>;
+    using NumType = numeric_type<Result>;
     //! a simple alias
-    using IndexType = typename MathObjectTraits<Result>::IndexType;
+    using IndexType = index_type<Result>;
 
     typedef NumType value_type;
     typedef NumType* pointer;

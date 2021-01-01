@@ -25,11 +25,11 @@ namespace tfel {
     //! a simple alias
     template <typename StressStensor>
     using GursonTvergaardNeedleman1982StressType =
-        tfel::math::StensorNumType<StressStensor>;
+        tfel::math::numeric_type<StressStensor>;
     //! a simple alias
     template <typename StressStensor>
     using GursonTvergaardNeedleman1982BaseType =
-        tfel::typetraits::base_type<tfel::math::StensorNumType<StressStensor>>;
+        tfel::typetraits::base_type<tfel::math::numeric_type<StressStensor>>;
     //! a simple alias
     template <typename StressStensor>
     using GursonTvergaardNeedleman1982PorosityType =

@@ -36,12 +36,12 @@ namespace tfel::math {
   struct Expr<T2toST2Type, LeftCauchyGreenTensorDerivativeExpr<1u>>
       : public T2toST2Concept<
             Expr<T2toST2Type, LeftCauchyGreenTensorDerivativeExpr<1u>>>,
-        public fsarray<9u, MathObjectNumType<T2toST2Type>> {
+        public fsarray<9u, numeric_type<T2toST2Type>> {
     static_assert(getSpaceDimension<T2toST2Type>() == 1u);
     //! a simple alias
     typedef EmptyRunTimeProperties RunTimeProperties;
     //! a simple alias
-    typedef MathObjectNumType<T2toST2Type> value_type;
+    typedef numeric_type<T2toST2Type> value_type;
     /*!
      * \param[in] B : second tensor of the product
      */
@@ -51,8 +51,8 @@ namespace tfel::math {
       static_assert(getSpaceDimension<T2toST2Type>() ==
                     getSpaceDimension<TensorType>());
       static_assert(tfel::typetraits::IsAssignableTo<
-                    MathObjectNumType<TensorType>,
-                    MathObjectNumType<T2toST2Type>>::cond);
+                    numeric_type<TensorType>,
+                    numeric_type<T2toST2Type>>::cond);
       constexpr value_type zero{0};
       this->v[0] = 2 * F[0];
       this->v[1] = this->v[2] = this->v[3] = zero;
@@ -79,12 +79,12 @@ namespace tfel::math {
   struct Expr<T2toST2Type, LeftCauchyGreenTensorDerivativeExpr<2u>>
       : public T2toST2Concept<
             Expr<T2toST2Type, LeftCauchyGreenTensorDerivativeExpr<2u>>>,
-        public fsarray<20u, MathObjectNumType<T2toST2Type>> {
+        public fsarray<20u, numeric_type<T2toST2Type>> {
     static_assert(getSpaceDimension<T2toST2Type>() == 2u);
     //! a simple alias
     typedef EmptyRunTimeProperties RunTimeProperties;
     //! a simple alias
-    typedef MathObjectNumType<T2toST2Type> value_type;
+    typedef numeric_type<T2toST2Type> value_type;
     /*!
      * \param[in] B : second tensor of the product
      */
@@ -95,8 +95,8 @@ namespace tfel::math {
       static_assert(getSpaceDimension<T2toST2Type>() ==
                     getSpaceDimension<TensorType>());
       static_assert(tfel::typetraits::IsAssignableTo<
-                    MathObjectNumType<TensorType>,
-                    MathObjectNumType<T2toST2Type>>::cond);
+                    numeric_type<TensorType>,
+                    numeric_type<T2toST2Type>>::cond);
       constexpr const auto cste = Cste<value_type>::sqrt2;
       constexpr value_type zero{0};
       this->v[0] = 2 * F[0];
@@ -134,12 +134,12 @@ namespace tfel::math {
   struct Expr<T2toST2Type, LeftCauchyGreenTensorDerivativeExpr<3u>>
       : public T2toST2Concept<
             Expr<T2toST2Type, LeftCauchyGreenTensorDerivativeExpr<3u>>>,
-        public fsarray<54u, MathObjectNumType<T2toST2Type>> {
+        public fsarray<54u, numeric_type<T2toST2Type>> {
     static_assert(getSpaceDimension<T2toST2Type>() == 3u);
     //! a simple alias
     typedef EmptyRunTimeProperties RunTimeProperties;
     //! a simple alias
-    typedef MathObjectNumType<T2toST2Type> value_type;
+    typedef numeric_type<T2toST2Type> value_type;
     /*!
      * \param[in] B : second tensor of the product
      */
@@ -149,8 +149,8 @@ namespace tfel::math {
       static_assert(getSpaceDimension<T2toST2Type>() ==
                     getSpaceDimension<TensorType>());
       static_assert(tfel::typetraits::IsAssignableTo<
-                    MathObjectNumType<TensorType>,
-                    MathObjectNumType<T2toST2Type>>::cond);
+                    numeric_type<TensorType>,
+                    numeric_type<T2toST2Type>>::cond);
       constexpr const auto cste = Cste<value_type>::sqrt2;
       constexpr value_type zero{0};
       this->v[0] = 2 * F[0];

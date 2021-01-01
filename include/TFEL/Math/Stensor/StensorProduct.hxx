@@ -36,8 +36,8 @@ namespace tfel::math {
 
    public:
     typedef EmptyRunTimeProperties RunTimeProperties;
-    typedef typename MathObjectTraits<Result>::IndexType IndexType;
-    typedef MathObjectNumType<Result> NumType;
+    typedef index_type<Result> IndexType;
+    typedef numeric_type<Result> NumType;
     typedef NumType value_type;
     typedef NumType* pointer;
     typedef const NumType* const_pointer;

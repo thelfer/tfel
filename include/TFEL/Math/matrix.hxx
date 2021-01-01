@@ -30,7 +30,7 @@ namespace tfel::math {
   template <typename T>
   struct TFEL_VISIBILITY_LOCAL MatrixProperties {
     //! a simple alias
-    typedef typename MathObjectTraits<matrix<T>>::IndexType IndexType;
+    using IndexType = index_type<matrix<T>>;
 
     MatrixProperties(const IndexType, const IndexType);
 
@@ -43,9 +43,9 @@ namespace tfel::math {
     bool operator!=(const MatrixProperties&) const;
 
    protected:
-    typename MathObjectTraits<matrix<T>>::IndexType nb_rows;
+    IndexType nb_rows;
 
-    typename MathObjectTraits<matrix<T>>::IndexType nb_cols;
+    IndexType nb_cols;
 
   };  // end of MatrixProperties
 

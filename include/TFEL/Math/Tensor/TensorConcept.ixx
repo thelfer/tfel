@@ -32,7 +32,7 @@ namespace tfel::math {
     template <>
     struct TensorConceptMatrixAccessOperator<1u> {
       template <typename TensorType>
-      static TFEL_MATH_INLINE TensorNumType<TensorType> exe(
+      static TFEL_MATH_INLINE numeric_type<TensorType> exe(
           const TensorType& t, const unsigned short i, const unsigned short j) {
         if ((i == j) && (i < 3)) {
           return t(i);
@@ -44,7 +44,7 @@ namespace tfel::math {
     template <>
     struct TensorConceptMatrixAccessOperator<2u> {
       template <typename TensorType>
-      TFEL_MATH_INLINE static TensorNumType<TensorType> exe(
+      TFEL_MATH_INLINE static numeric_type<TensorType> exe(
           const TensorType& t, const unsigned short i, const unsigned short j) {
         if ((i == j) && (i < 3)) {
           return t(i);
@@ -60,7 +60,7 @@ namespace tfel::math {
     template <>
     struct TensorConceptMatrixAccessOperator<3u> {
       template <typename TensorType>
-      TFEL_MATH_INLINE static TensorNumType<TensorType> exe(
+      TFEL_MATH_INLINE static numeric_type<TensorType> exe(
           const TensorType& t, const unsigned short i, const unsigned short j) {
         if ((i == j) && (i < 3)) {
           return t(i);
@@ -84,17 +84,17 @@ namespace tfel::math {
   }  // end of namespace internals
 
   template <typename T>
-  TensorNumType<T> TensorConcept<T>::operator()(const unsigned short i) const {
+  numeric_type<T> TensorConcept<T>::operator()(const unsigned short i) const {
     return static_cast<const T&>(*this).operator()(i);
   }
 
   template <typename T>
-  TensorNumType<T> TensorConcept<T>::operator[](const unsigned short i) const {
+  numeric_type<T> TensorConcept<T>::operator[](const unsigned short i) const {
     return static_cast<const T&>(*this).operator()(i);
   }
 
   template <typename T>
-  TensorNumType<T> TensorConcept<T>::operator()(const unsigned short i,
+  numeric_type<T> TensorConcept<T>::operator()(const unsigned short i,
                                                 const unsigned short j) const {
     using tfel::math::internals::TensorConceptMatrixAccessOperator;
     if ((i > 2) || (j > 2)) {
@@ -106,7 +106,7 @@ namespace tfel::math {
 
   template <class TensorType>
   std::enable_if_t<implementsTensorConcept<TensorType>(),
-                   TensorNumType<TensorType>>
+                   numeric_type<TensorType>>
   trace(const TensorType& s) {
     return s(0) + s(1) + s(2);
   }  // end of trace
@@ -114,7 +114,7 @@ namespace tfel::math {
   template <typename TensorType>
   std::enable_if_t<
       implementsTensorConcept<TensorType>(),
-      typename tfel::typetraits::AbsType<TensorNumType<TensorType>>::type>
+      typename tfel::typetraits::AbsType<numeric_type<TensorType>>::type>
   abs(const TensorType& s) {
     constexpr const auto N = getSpaceDimension<TensorType>();
     static_assert((N == 1) || (N == 2) || (N == 3), "invalid space dimension");
@@ -137,17 +137,17 @@ namespace tfel::math {
   template <typename TensorType>
   std::enable_if_t<
       implementsTensorConcept<TensorType>(),
-      stensor<getSpaceDimension<TensorType>(), TensorNumType<TensorType>>>
+      stensor<getSpaceDimension<TensorType>(), numeric_type<TensorType>>>
   syme(const TensorType& t) {
     constexpr const auto N = getSpaceDimension<TensorType>();
     static_assert((N == 1) || (N == 2) || (N == 3), "invalid space dimension");
     if constexpr (N == 1u) {
       return {t[0], t[1], t[2]};
     } else if constexpr (N == 2u) {
-      constexpr const auto icste = Cste<TensorNumType<TensorType>>::isqrt2;
+      constexpr const auto icste = Cste<numeric_type<TensorType>>::isqrt2;
       return {t[0], t[1], t[2], icste * (t[3] + t[4])};
     } else if constexpr (N == 3u) {
-      constexpr const auto icste = Cste<TensorNumType<TensorType>>::isqrt2;
+      constexpr const auto icste = Cste<numeric_type<TensorType>>::isqrt2;
       return {t[0],
               t[1],
               t[2],
@@ -161,10 +161,10 @@ namespace tfel::math {
   std::enable_if_t<
       ((implementsTensorConcept<TensorType>()) &&
        (tfel::typetraits::IsFundamentalNumericType<
-           TensorNumType<TensorType>>::cond)),
-      stensor<getSpaceDimension<TensorType>(), TensorNumType<TensorType>>>
+           numeric_type<TensorType>>::cond)),
+      stensor<getSpaceDimension<TensorType>(), numeric_type<TensorType>>>
   computeRightCauchyGreenTensor(const TensorType& t) {
-    using real = TensorNumType<TensorType>;
+    using real = numeric_type<TensorType>;
     constexpr const auto N = getSpaceDimension<TensorType>();
     static_assert((N == 1) || (N == 2) || (N == 3), "invalid space dimension");
     if constexpr (N == 1u) {
@@ -188,10 +188,10 @@ namespace tfel::math {
   std::enable_if_t<
       (implementsTensorConcept<TensorType>()) &&
           (tfel::typetraits::IsFundamentalNumericType<
-              TensorNumType<TensorType>>::cond),
-      stensor<getSpaceDimension<TensorType>(), TensorNumType<TensorType>>>
+              numeric_type<TensorType>>::cond),
+      stensor<getSpaceDimension<TensorType>(), numeric_type<TensorType>>>
   computeLeftCauchyGreenTensor(const TensorType& t) {
-    using real = TensorNumType<TensorType>;
+    using real = numeric_type<TensorType>;
     constexpr const auto N = getSpaceDimension<TensorType>();
     static_assert((N == 1) || (N == 2) || (N == 3), "invalid space dimension");
     if constexpr (N == 1u) {
@@ -215,8 +215,8 @@ namespace tfel::math {
   std::enable_if_t<
       ((implementsTensorConcept<TensorType>()) &&
        (tfel::typetraits::IsFundamentalNumericType<
-           TensorNumType<TensorType>>::cond)),
-      stensor<getSpaceDimension<TensorType>(), TensorNumType<TensorType>>>
+           numeric_type<TensorType>>::cond)),
+      stensor<getSpaceDimension<TensorType>(), numeric_type<TensorType>>>
   computeGreenLagrangeTensor(const TensorType& t) {
     constexpr const auto N = getSpaceDimension<TensorType>();
     static_assert((N == 1) || (N == 2) || (N == 3), "invalid space dimension");
@@ -224,12 +224,12 @@ namespace tfel::math {
       return {(t[0] * t[0] - 1) / 2, (t[1] * t[1] - 1) / 2,
               (t[2] * t[2] - 1) / 2};
     } else if constexpr (N == 2u) {
-      constexpr const auto icste = Cste<TensorNumType<TensorType>>::isqrt2;
+      constexpr const auto icste = Cste<numeric_type<TensorType>>::isqrt2;
       return {(t[0] * t[0] + t[4] * t[4] - 1) / 2,
               (t[1] * t[1] + t[3] * t[3] - 1) / 2, (t[2] * t[2] - 1) / 2,
               icste * (t[0] * t[3] + t[1] * t[4])};
     } else if constexpr (N == 3u) {
-      constexpr const auto icste = Cste<TensorNumType<TensorType>>::isqrt2;
+      constexpr const auto icste = Cste<numeric_type<TensorType>>::isqrt2;
       return {(t[0] * t[0] + t[4] * t[4] + t[6] * t[6] - 1) / 2,
               (t[1] * t[1] + t[3] * t[3] + t[8] * t[8] - 1) / 2,
               (t[2] * t[2] + t[5] * t[5] + t[7] * t[7] - 1) / 2,
@@ -244,8 +244,8 @@ namespace tfel::math {
       ((implementsStensorConcept<StensorType>()) &&
        (implementsTensorConcept<TensorType>()) &&
        (tfel::typetraits::IsFundamentalNumericType<
-           TensorNumType<StensorType>>::cond)),
-      stensor<getSpaceDimension<StensorType>(), StensorNumType<StensorType>>>
+           numeric_type<StensorType>>::cond)),
+      stensor<getSpaceDimension<StensorType>(), numeric_type<StensorType>>>
   pushForward(const StensorType& p, const TensorType& F) {
     static_assert(
         getSpaceDimension<StensorType>() == getSpaceDimension<TensorType>(),
@@ -258,8 +258,8 @@ namespace tfel::math {
       ((implementsStensorConcept<StensorType>()) &&
        (implementsTensorConcept<TensorType>()) &&
        (tfel::typetraits::IsFundamentalNumericType<
-           TensorNumType<StensorType>>::cond)),
-      stensor<getSpaceDimension<StensorType>(), StensorNumType<StensorType>>>
+           numeric_type<StensorType>>::cond)),
+      stensor<getSpaceDimension<StensorType>(), numeric_type<StensorType>>>
   push_forward(const StensorType& p, const TensorType& F) {
     constexpr const auto N = getSpaceDimension<StensorType>();
     static_assert((N == 1) || (N == 2) || (N == 3), "invalid space dimension");
@@ -268,7 +268,7 @@ namespace tfel::math {
     if constexpr (N == 1u) {
       return {p[0] * F[0] * F[0], p[1] * F[1] * F[1], p[2] * F[2] * F[2]};
     } else if constexpr (N == 2u) {
-      constexpr const auto cste = Cste<StensorNumType<StensorType>>::sqrt2;
+      constexpr const auto cste = Cste<numeric_type<StensorType>>::sqrt2;
       return {
           p[1] * F[3] * F[3] + cste * p[3] * F[0] * F[3] + p[0] * F[0] * F[0],
           p[0] * F[4] * F[4] + cste * p[3] * F[1] * F[4] + p[1] * F[1] * F[1],
@@ -276,7 +276,7 @@ namespace tfel::math {
           (p[3] * F[3] + cste * p[0] * F[0]) * F[4] +
               cste * p[1] * F[1] * F[3] + p[3] * F[0] * F[1]};
     } else if constexpr (N == 3u) {
-      constexpr const auto cste = Cste<StensorNumType<StensorType>>::sqrt2;
+      constexpr const auto cste = Cste<numeric_type<StensorType>>::sqrt2;
       return {p[2] * F[5] * F[5] +
                   (cste * p[5] * F[3] + cste * p[4] * F[0]) * F[5] +
                   p[1] * F[3] * F[3] + cste * p[3] * F[0] * F[3] +
@@ -309,8 +309,8 @@ namespace tfel::math {
       ((implementsStensorConcept<StensorType>()) &&
        (implementsTensorConcept<TensorType>()) &&
        (tfel::typetraits::IsFundamentalNumericType<
-           TensorNumType<TensorType>>::cond)),
-      stensor<getSpaceDimension<StensorType>(), StensorNumType<StensorType>>>
+           numeric_type<TensorType>>::cond)),
+      stensor<getSpaceDimension<StensorType>(), numeric_type<StensorType>>>
   convertCauchyStressToSecondPiolaKirchhoffStress(const StensorType& s,
                                                   const TensorType& F) {
     constexpr const auto N = getSpaceDimension<StensorType>();
@@ -321,7 +321,7 @@ namespace tfel::math {
       return {s[0] * F[1] * F[2] / (F[0]), s[1] * F[0] * F[2] / (F[1]),
               s[2] * F[0] * F[1] / (F[2])};
     } else if constexpr (N == 2u) {
-      constexpr const auto cste = Cste<StensorNumType<StensorType>>::sqrt2;
+      constexpr const auto cste = Cste<numeric_type<StensorType>>::sqrt2;
       const auto iF = invert(F);
       const auto J = det(F);
       return {(s[1] * iF[3] * iF[3] + cste * s[3] * iF[0] * iF[3] +
@@ -335,7 +335,7 @@ namespace tfel::math {
                cste * s[1] * iF[1] * iF[3] + s[3] * iF[0] * iF[1]) *
                   J};
     } else {
-      constexpr const auto cste = Cste<StensorNumType<StensorType>>::sqrt2;
+      constexpr const auto cste = Cste<numeric_type<StensorType>>::sqrt2;
       const auto iF = invert(F);
       const auto J = det(F);
       return {(s[2] * iF[5] * iF[5] +
@@ -376,8 +376,8 @@ namespace tfel::math {
       ((implementsStensorConcept<StensorType>()) &&
        (implementsTensorConcept<TensorType>()) &&
        (tfel::typetraits::IsFundamentalNumericType<
-           TensorNumType<TensorType>>::cond)),
-      stensor<getSpaceDimension<StensorType>(), StensorNumType<StensorType>>>
+           numeric_type<TensorType>>::cond)),
+      stensor<getSpaceDimension<StensorType>(), numeric_type<StensorType>>>
   convertSecondPiolaKirchhoffStressToCauchyStress(const StensorType& p,
                                                   const TensorType& F) {
     constexpr const auto N = getSpaceDimension<StensorType>();
@@ -389,7 +389,7 @@ namespace tfel::math {
       return {p[0] * F[0] * F[0] * iJ, p[1] * F[1] * F[1] * iJ,
               p[2] * F[2] * F[2] * iJ};
     } else if constexpr (N == 2u) {
-      constexpr const auto cste = Cste<StensorNumType<StensorType>>::sqrt2;
+      constexpr const auto cste = Cste<numeric_type<StensorType>>::sqrt2;
       const auto iJ = 1 / det(F);
       return {(p[1] * F[3] * F[3] + cste * p[3] * F[0] * F[3] +
                p[0] * F[0] * F[0]) *
@@ -402,7 +402,7 @@ namespace tfel::math {
                cste * p[1] * F[1] * F[3] + p[3] * F[0] * F[1]) *
                   iJ};
     } else {
-      constexpr const auto cste = Cste<StensorNumType<StensorType>>::sqrt2;
+      constexpr const auto cste = Cste<numeric_type<StensorType>>::sqrt2;
       const auto iJ = 1 / det(F);
       return {(p[2] * F[5] * F[5] +
                (cste * p[5] * F[3] + cste * p[4] * F[0]) * F[5] +
@@ -440,7 +440,7 @@ namespace tfel::math {
   template <typename TensorType>
   std::enable_if_t<
       implementsTensorConcept<TensorType>(),
-      typename ComputeUnaryResult<TensorNumType<TensorType>, Power<3>>::Result>
+      typename ComputeUnaryResult<numeric_type<TensorType>, Power<3>>::Result>
   det(const TensorType& t) {
     constexpr const auto N = getSpaceDimension<TensorType>();
     static_assert((N == 1) || (N == 2) || (N == 3), "invalid space dimension");
@@ -467,9 +467,9 @@ namespace tfel::math {
       implementsTensorConcept<TensorResultType>() &&
           implementsTensorConcept<TensorType>() &&
           tfel::typetraits::IsAssignableTo<
-              typename ComputeUnaryResult<TensorNumType<TensorType>,
+              typename ComputeUnaryResult<numeric_type<TensorType>,
                                           Power<2>>::Result,
-              TensorNumType<TensorResultType>>::cond,
+              numeric_type<TensorResultType>>::cond,
       void>
   computeDeterminantDerivative(TensorResultType& dJ, const TensorType& F) {
     constexpr const auto N = getSpaceDimension<TensorType>();
@@ -504,10 +504,10 @@ namespace tfel::math {
       implementsTensorConcept<TensorType>() &&
           implementsTensorConcept<TensorType2>() &&
           implementsStensorConcept<StensorType>() &&
-          std::is_same<StensorNumType<StensorType>,
-                       TensorNumType<TensorType2>>::value &&
-          std::is_same<tfel::typetraits::base_type<TensorNumType<TensorType2>>,
-                       TensorNumType<TensorType>>::value &&
+          std::is_same<numeric_type<StensorType>,
+                       numeric_type<TensorType2>>::value &&
+          std::is_same<base_type<numeric_type<TensorType2>>,
+                       numeric_type<TensorType>>::value &&
           (getSpaceDimension<TensorType>() == getSpaceDimension<TensorType2>()) &&
           (getSpaceDimension<TensorType>() ==
            getSpaceDimension<StensorType>()) &&
@@ -515,8 +515,8 @@ namespace tfel::math {
       void>
   polar_decomposition(TensorType& R, StensorType& U, const TensorType2& F) {
     using tfel::fsalgo::copy;
-    typedef TensorNumType<TensorType2> T;
-    using real = tfel::typetraits::base_type<T>;
+    typedef numeric_type<TensorType2> T;
+    using real = base_type<T>;
     R = tensor<1u, real>::Id();
     copy<3u>::exe(F.begin(), U.begin());
   }  // end of polar_decomposition
@@ -526,10 +526,10 @@ namespace tfel::math {
       implementsTensorConcept<TensorType>() &&
           implementsTensorConcept<TensorType2>() &&
           implementsStensorConcept<StensorType>() &&
-          std::is_same<StensorNumType<StensorType>,
-                       TensorNumType<TensorType2>>::value &&
-          std::is_same<tfel::typetraits::base_type<TensorNumType<TensorType2>>,
-                       TensorNumType<TensorType>>::value &&
+          std::is_same<numeric_type<StensorType>,
+                       numeric_type<TensorType2>>::value &&
+          std::is_same<base_type<numeric_type<TensorType2>>,
+                       numeric_type<TensorType>>::value &&
           (getSpaceDimension<TensorType>() == getSpaceDimension<TensorType2>()) &&
           (getSpaceDimension<TensorType>() ==
            getSpaceDimension<StensorType>()) &&
@@ -538,8 +538,8 @@ namespace tfel::math {
       void>
   polar_decomposition(TensorType& R, StensorType& U, const TensorType2& F) {
     using tfel::fsalgo::transform;
-    using T = TensorNumType<TensorType2>;
-    using base = tfel::typetraits::base_type<T>;
+    using T = numeric_type<TensorType2>;
+    using base = base_type<T>;
     using T2 = typename ComputeBinaryResult<T, T, OpMult>::Result;
     constexpr auto dime = getSpaceDimension<TensorType>();
     const auto id = stensor<dime, base>::Id();
@@ -561,9 +561,9 @@ namespace tfel::math {
   template <typename TensorType>
   TFEL_MATH_INLINE auto matrix_view(TensorType&& t) -> typename std::enable_if<
       implementsTensorConcept<TensorType>(),
-      Expr<tmatrix<3u, 3u, TensorNumType<std::decay_t<decltype(t)>>>,
+      Expr<tmatrix<3u, 3u, numeric_type<decltype(t)>>,
            MatrixViewFromTensorExpr<decltype(t)>>>::type {
-    using NumType = TensorNumType<std::decay_t<decltype(t)>>;
+    using NumType = numeric_type<decltype(t)>;
     return Expr<tmatrix<3u, 3u, NumType>,
                 MatrixViewFromTensorExpr<decltype(t)>>(
         std::forward<TensorType>(t));
@@ -573,9 +573,9 @@ namespace tfel::math {
   TFEL_MATH_INLINE auto transpose(TensorType&& t) -> typename std::enable_if<
       implementsTensorConcept<TensorType>() &&
           (getSpaceDimension<TensorType>() == 1u),
-      Expr<tensor<1u, TensorNumType<std::decay_t<decltype(t)>>>,
+      Expr<tensor<1u, numeric_type<decltype(t)>>,
            TensorTransposeExpr1D<decltype(t)>>>::type {
-    return Expr<tensor<1u, TensorNumType<std::decay_t<decltype(t)>>>,
+    return Expr<tensor<1u, numeric_type<decltype(t)>>,
                 TensorTransposeExpr1D<decltype(t)>>(
         std::forward<TensorType>(t));
   }  // end of transpose
@@ -584,9 +584,9 @@ namespace tfel::math {
   TFEL_MATH_INLINE auto transpose(TensorType&& t) -> typename std::enable_if<
       implementsTensorConcept<TensorType>() &&
           (getSpaceDimension<TensorType>() == 2u),
-      Expr<tensor<2u, TensorNumType<std::decay_t<decltype(t)>>>,
+      Expr<tensor<2u, numeric_type<decltype(t)>>,
            TensorTransposeExpr2D<decltype(t)>>>::type {
-    return Expr<tensor<2u, TensorNumType<std::decay_t<decltype(t)>>>,
+    return Expr<tensor<2u, numeric_type<decltype(t)>>,
                 TensorTransposeExpr2D<decltype(t)>>(
         std::forward<TensorType>(t));
   }  // end of transpose
@@ -595,9 +595,9 @@ namespace tfel::math {
   TFEL_MATH_INLINE auto transpose(TensorType&& t) -> std::enable_if_t<
       implementsTensorConcept<TensorType>() &&
           (getSpaceDimension<TensorType>() == 3u),
-      Expr<tensor<3u, TensorNumType<std::decay_t<decltype(t)>>>,
+      Expr<tensor<3u, numeric_type<decltype(t)>>,
            TensorTransposeExpr3D<decltype(t)>>> {
-    return Expr<tensor<3u, TensorNumType<std::decay_t<decltype(t)>>>,
+    return Expr<tensor<3u, numeric_type<decltype(t)>>,
                 TensorTransposeExpr3D<decltype(t)>>(
         std::forward<TensorType>(t));
   }  // end of transpose

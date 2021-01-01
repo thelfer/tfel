@@ -15,7 +15,6 @@
 #define LIB_TFEL_MATH_CONVERTTOTANGENTMODULI_HXX
 
 #include <type_traits>
-#include "TFEL/TypeTraits/BaseType.hxx"
 #include "TFEL/Math/General/BasicOperations.hxx"
 #include "TFEL/Math/General/ResultType.hxx"
 #include "TFEL/Math/General/ConstExprMathFunctions.hxx"
@@ -33,13 +32,13 @@ namespace tfel::math {
        implementsTensorConcept<TensorType>()),
       st2tost2<
           1u,
-          typename ResultType<MathObjectNumType<T2toST2Type>,
-                              TensorNumType<TensorType>,
+          typename ResultType<numeric_type<T2toST2Type>,
+                              numeric_type<TensorType>,
                               OpMult>::type>>::type
   convertToTangentModuli(const T2toST2Type& K, const TensorType& F) {
     st2tost2<
-        1u, typename ResultType<MathObjectNumType<T2toST2Type>,
-                                TensorNumType<TensorType>, OpMult>::type>
+        1u, typename ResultType<numeric_type<T2toST2Type>,
+                                numeric_type<TensorType>, OpMult>::type>
         C;
     C(0, 0) = K(0, 0) * F(0);
     C(0, 1) = K(0, 1) * F(1);
@@ -61,15 +60,14 @@ namespace tfel::math {
        implementsTensorConcept<TensorType>()),
       st2tost2<
           2u,
-          typename ResultType<MathObjectNumType<T2toST2Type>,
-                              TensorNumType<TensorType>,
+          typename ResultType<numeric_type<T2toST2Type>,
+                              numeric_type<TensorType>,
                               OpMult>::type>>::type
   convertToTangentModuli(const T2toST2Type& K, const TensorType& F) {
     using res =
-        typename ResultType<MathObjectNumType<T2toST2Type>,
-                            TensorNumType<TensorType>, OpMult>::type;
-    using base = typename tfel::typetraits::BaseType<res>::type;
-    TFEL_CONSTEXPR const auto icste2 = Cste<res>::isqrt2 / base(2);
+        typename ResultType<numeric_type<T2toST2Type>,
+                            numeric_type<TensorType>, OpMult>::type;
+    TFEL_CONSTEXPR const auto icste2 = Cste<res>::isqrt2 / 2;
     st2tost2<2u, res> C;
     C(0, 0) = K(0, 0) * F(0) + K(0, 3) * F(3);
     C(0, 3) =
@@ -106,15 +104,14 @@ namespace tfel::math {
        implementsTensorConcept<TensorType>()),
       st2tost2<
           3u,
-          typename ResultType<MathObjectNumType<T2toST2Type>,
-                              TensorNumType<TensorType>,
+          typename ResultType<numeric_type<T2toST2Type>,
+                              numeric_type<TensorType>,
                               OpMult>::type>>::type
   convertToTangentModuli(const T2toST2Type& K, const TensorType& F) {
     using res =
-        typename ResultType<MathObjectNumType<T2toST2Type>,
-                            TensorNumType<TensorType>, OpMult>::type;
-    using base = typename tfel::typetraits::BaseType<res>::type;
-    TFEL_CONSTEXPR const auto icste2 = Cste<res>::isqrt2 / base(2);
+        typename ResultType<numeric_type<T2toST2Type>,
+                            numeric_type<TensorType>, OpMult>::type;
+    TFEL_CONSTEXPR const auto icste2 = Cste<res>::isqrt2 / 2;
     st2tost2<3u, res> C;
     C(0, 0) = K(0, 0) * F(0) + K(0, 3) * F(3) + K(0, 5) * F(5);
     C(0, 3) = (K(0, 0) * F(4) + K(0, 3) * F(1) + K(0, 5) * F(7) +

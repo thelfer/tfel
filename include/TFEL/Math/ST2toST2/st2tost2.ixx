@@ -40,8 +40,8 @@ namespace tfel::math {
   std::enable_if_t<
       implementsST2toST2Concept<ST2toST2Type>() &&
           getSpaceDimension<Child>() == getSpaceDimension<ST2toST2Type>() &&
-          tfel::typetraits::IsAssignableTo<ST2toST2NumType<ST2toST2Type>,
-                                           ST2toST2NumType<Child>>::cond,
+          tfel::typetraits::IsAssignableTo<numeric_type<ST2toST2Type>,
+                                           numeric_type<Child>>::cond,
       Child&>
   st2tost2_base<Child>::operator=(const ST2toST2Type& src) {
     auto& child = static_cast<Child&>(*this);
@@ -58,8 +58,8 @@ namespace tfel::math {
   std::enable_if_t<
       implementsST2toST2Concept<ST2toST2Type>() &&
           getSpaceDimension<Child>() == getSpaceDimension<ST2toST2Type>() &&
-          tfel::typetraits::IsAssignableTo<ST2toST2NumType<ST2toST2Type>,
-                                           ST2toST2NumType<Child>>::cond,
+          tfel::typetraits::IsAssignableTo<numeric_type<ST2toST2Type>,
+                                           numeric_type<Child>>::cond,
       Child&>
   st2tost2_base<Child>::operator+=(const ST2toST2Type& src) {
     auto& child = static_cast<Child&>(*this);
@@ -77,8 +77,8 @@ namespace tfel::math {
   std::enable_if_t<
       implementsST2toST2Concept<ST2toST2Type>() &&
           getSpaceDimension<Child>() == getSpaceDimension<ST2toST2Type>() &&
-          tfel::typetraits::IsAssignableTo<ST2toST2NumType<ST2toST2Type>,
-                                           ST2toST2NumType<Child>>::cond,
+          tfel::typetraits::IsAssignableTo<numeric_type<ST2toST2Type>,
+                                           numeric_type<Child>>::cond,
       Child&>
   st2tost2_base<Child>::operator-=(const ST2toST2Type& src) {
     auto& child = static_cast<Child&>(*this);
@@ -95,8 +95,8 @@ namespace tfel::math {
   std::enable_if_t<
       tfel::typetraits::IsScalar<T2>::cond &&
           std::is_same<
-              typename ResultType<ST2toST2NumType<Child>, T2, OpMult>::type,
-              ST2toST2NumType<Child>>::value,
+              typename ResultType<numeric_type<Child>, T2, OpMult>::type,
+              numeric_type<Child>>::value,
       Child&>
   st2tost2_base<Child>::operator*=(const T2 s) {
     auto& child = static_cast<Child&>(*this);
@@ -113,8 +113,8 @@ namespace tfel::math {
   std::enable_if_t<
       tfel::typetraits::IsScalar<T2>::cond &&
           std::is_same<
-              typename ResultType<ST2toST2NumType<Child>, T2, OpDiv>::type,
-              ST2toST2NumType<Child>>::value,
+              typename ResultType<numeric_type<Child>, T2, OpDiv>::type,
+              numeric_type<Child>>::value,
       Child&>
   st2tost2_base<Child>::operator/=(const T2 s) {
     auto& child = static_cast<Child&>(*this);
@@ -130,7 +130,7 @@ namespace tfel::math {
   std::enable_if_t<implementsStensorConcept<StensorType>() &&
                        getSpaceDimension<StensorType>() == N &&
                        tfel::typetraits::
-                           IsAssignableTo<StensorNumType<StensorType>, T>::cond,
+                           IsAssignableTo<numeric_type<StensorType>, T>::cond,
                    Expr<st2tost2<N, T>, StensorSquareDerivativeExpr<N>>>
   st2tost2<N, T>::dsquare(const StensorType& s) {
     return Expr<st2tost2<N, T>, StensorSquareDerivativeExpr<N>>(s);
@@ -144,8 +144,8 @@ namespace tfel::math {
           getSpaceDimension<StensorType>() == N &&
           getSpaceDimension<ST2toST2Type>() == N &&
           tfel::typetraits::IsAssignableTo<
-              typename ComputeBinaryResult<StensorNumType<StensorType>,
-                                           ST2toST2NumType<ST2toST2Type>,
+              typename ComputeBinaryResult<numeric_type<StensorType>,
+                                           numeric_type<ST2toST2Type>,
                                            OpMult>::Result,
               T>::cond,
       Expr<st2tost2<N, T>, StensorSquareDerivativeExpr<N>>>
@@ -158,7 +158,7 @@ namespace tfel::math {
   std::enable_if_t<
       implementsStensorConcept<StensorType>() &&
           getSpaceDimension<StensorType>() == N &&
-          tfel::typetraits::IsAssignableTo<StensorNumType<StensorType>,
+          tfel::typetraits::IsAssignableTo<numeric_type<StensorType>,
                                            T>::cond,
       tfel::math::st2tost2<N, T>>
   st2tost2<N, T>::stpd(const StensorType& s) {
@@ -170,7 +170,7 @@ namespace tfel::math {
   std::enable_if_t<implementsT2toST2Concept<T2toST2Type>() &&
                        getSpaceDimension<T2toST2Type>() == N &&
                        tfel::typetraits::IsAssignableTo<
-                           MathObjectNumType<T2toST2Type>,
+                           numeric_type<T2toST2Type>,
                            T>::cond,
                    Expr<st2tost2<N, T>, ConvertT2toST2ToST2toST2Expr<N>>>
   st2tost2<N, T>::convert(const T2toST2Type& src) {
@@ -178,7 +178,7 @@ namespace tfel::math {
   }
 
   template <unsigned short N, typename T>
-  st2tost2<N, tfel::typetraits::base_type<T>>
+  st2tost2<N, base_type<T>>
   st2tost2<N, T>::fromRotationMatrix(const rotation_matrix<T>& r) {
     return st2tost2_internals::BuildFromRotationMatrix<N, T>::exe(r);
   }  // end of st2tost2<N,T>::fromRotationMatrix
@@ -406,16 +406,15 @@ namespace tfel::math {
       implementsST2toST2Concept<ST2toST2Type>(),
       st2tost2<getSpaceDimension<ST2toST2Type>(),
                typename ComputeBinaryResult<
-                   tfel::typetraits::base_type<ST2toST2NumType<ST2toST2Type>>,
-                   ST2toST2NumType<ST2toST2Type>,
+                   base_type<numeric_type<ST2toST2Type>>,
+                   numeric_type<ST2toST2Type>,
                    OpDiv>::Result>>
   invert(const ST2toST2Type& s) {
-    using tfel::typetraits::BaseType;
     static constexpr unsigned short N = getSpaceDimension<ST2toST2Type>();
     static constexpr unsigned short StensorSize = StensorDimeToSize<N>::value;
-    typedef ST2toST2NumType<ST2toST2Type> NumType;
-    typedef typename BaseType<NumType>::type real;
-    typedef typename ComputeBinaryResult<real, NumType, OpDiv>::Result iNumType;
+    using NumType = numeric_type<ST2toST2Type>;
+    using real = base_type<ST2toST2Type>;
+    using iNumType = typename ComputeBinaryResult<real, NumType, OpDiv>::Result;
     st2tost2<N, iNumType> is;
     tmatrix<StensorSize, StensorSize, real> m;
     for (unsigned short i = 0; i != StensorSize; ++i) {
@@ -435,9 +434,9 @@ namespace tfel::math {
   template <typename ST2toST2Type>
   std::enable_if_t<implementsST2toST2Concept<ST2toST2Type>(),
                    st2tost2<getSpaceDimension<ST2toST2Type>(),
-                            ST2toST2NumType<ST2toST2Type>>>
+                            numeric_type<ST2toST2Type>>>
   change_basis(const ST2toST2Type& s,
-               const rotation_matrix<ST2toST2NumType<ST2toST2Type>>& r) {
+               const rotation_matrix<numeric_type<ST2toST2Type>>& r) {
     return st2tost2_internals::ChangeBasis<
         getSpaceDimension<ST2toST2Type>()>::exe(s, r);
   }
@@ -448,13 +447,13 @@ namespace tfel::math {
           implementsTensorConcept<TensorType>() &&
           getSpaceDimension<ST2toST2Type>() == getSpaceDimension<TensorType>(),
       st2tost2<getSpaceDimension<ST2toST2Type>(),
-               typename ComputeBinaryResult<ST2toST2NumType<ST2toST2Type>,
-                                            TensorNumType<TensorType>,
+               typename ComputeBinaryResult<numeric_type<ST2toST2Type>,
+                                            numeric_type<TensorType>,
                                             OpMult>::Result>>
   push_forward(const ST2toST2Type& C, const TensorType& F) {
     st2tost2<getSpaceDimension<ST2toST2Type>(),
-             BinaryOperationResult<ST2toST2NumType<ST2toST2Type>,
-                                   TensorNumType<TensorType>, OpMult>>
+             BinaryOperationResult<numeric_type<ST2toST2Type>,
+                                   numeric_type<TensorType>, OpMult>>
         r;
     push_forward(r, C, F);
     return r;
@@ -466,8 +465,8 @@ namespace tfel::math {
           implementsTensorConcept<TensorType>() &&
           getSpaceDimension<ST2toST2Type>() == getSpaceDimension<TensorType>(),
       st2tost2<getSpaceDimension<ST2toST2Type>(),
-               typename ComputeBinaryResult<ST2toST2NumType<ST2toST2Type>,
-                                            TensorNumType<TensorType>,
+               typename ComputeBinaryResult<numeric_type<ST2toST2Type>,
+                                            numeric_type<TensorType>,
                                             OpMult>::Result>>
   pull_back(const ST2toST2Type& C, const TensorType& F) {
     const auto iF = invert(F);
@@ -477,10 +476,10 @@ namespace tfel::math {
   template <typename StensorType>
   std::enable_if_t<
       implementsStensorConcept<StensorType>() &&
-          tfel::typetraits::IsScalar<StensorNumType<StensorType>>::cond,
-      st2tost2<getSpaceDimension<StensorType>(), StensorNumType<StensorType>>>
+          tfel::typetraits::IsScalar<numeric_type<StensorType>>::cond,
+      st2tost2<getSpaceDimension<StensorType>(), numeric_type<StensorType>>>
   computeDeterminantSecondDerivative(const StensorType& s) {
-    using NumType = StensorNumType<StensorType>;
+    using NumType = numeric_type<StensorType>;
     constexpr const auto N = getSpaceDimension<StensorType>();
     constexpr const auto zero = NumType{0};
     static_assert((N == 1) || (N == 2) || (N == 3));
@@ -503,8 +502,8 @@ namespace tfel::math {
   template <typename StensorType>
   std::enable_if_t<
       implementsStensorConcept<StensorType>() &&
-          tfel::typetraits::IsScalar<StensorNumType<StensorType>>::cond,
-      st2tost2<getSpaceDimension<StensorType>(), StensorNumType<StensorType>>>
+          tfel::typetraits::IsScalar<numeric_type<StensorType>>::cond,
+      st2tost2<getSpaceDimension<StensorType>(), numeric_type<StensorType>>>
   computeDeviatorDeterminantSecondDerivative(const StensorType& s) {
     constexpr const auto N = getSpaceDimension<StensorType>();
     static_assert((N == 1) || (N == 2) || (N == 3));
@@ -536,7 +535,7 @@ namespace tfel::math {
               (-2 * s[3]) / 3,
               -(2 * s[2] - s[1] - s[0]) / 3};
     } else {
-      using NumType = StensorNumType<StensorType>;
+      using NumType = numeric_type<StensorType>;
       constexpr const auto icste = Cste<NumType>::isqrt2;
       return {-(2 * s[2] + 2 * s[1] - 4 * s[0]) / 9,
               (4 * s[2] - 2 * s[1] - 2 * s[0]) / 9,

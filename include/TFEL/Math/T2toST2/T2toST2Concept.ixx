@@ -21,7 +21,7 @@
 namespace tfel::math {
 
   template <class T>
-  TFEL_MATH_INLINE MathObjectNumType<T> T2toST2Concept<T>::
+  TFEL_MATH_INLINE numeric_type<T> T2toST2Concept<T>::
   operator()(const unsigned short i, const unsigned short j) const {
     return static_cast<const T&>(*this).operator()(i, j);
   }  // end of T2toST2Concept<T>::operator()
@@ -30,9 +30,9 @@ namespace tfel::math {
   typename std::enable_if<
       implementsT2toST2Concept<T2toST2Type>(),
       typename tfel::typetraits::AbsType<
-          MathObjectNumType<T2toST2Type>>::type>::type
+          numeric_type<T2toST2Type>>::type>::type
   abs(const T2toST2Type& v) {
-    using NumType = MathObjectNumType<T2toST2Type>;
+    using NumType = numeric_type<T2toST2Type>;
     using AbsNumType = typename tfel::typetraits::AbsType<NumType>::type;
     AbsNumType a(0);
     constexpr const auto ssize =
@@ -61,13 +61,13 @@ namespace tfel::math {
           getSpaceDimension<StensorType>() == 1u &&
           getSpaceDimension<TensorType>() == 1u &&
           tfel::typetraits::IsFundamentalNumericType<
-              MathObjectNumType<TensorType>>::cond &&
+              numeric_type<TensorType>>::cond &&
           tfel::typetraits::IsAssignableTo<
               typename ComputeBinaryResult<
-                  MathObjectNumType<T2toST2Type>,
-                  MathObjectNumType<StensorType>,
+                  numeric_type<T2toST2Type>,
+                  numeric_type<StensorType>,
                   OpPlus>::Result,
-              MathObjectNumType<T2toST2ResultType>>::cond,
+              numeric_type<T2toST2ResultType>>::cond,
       void>::type
   computePushForwardDerivative(T2toST2ResultType& dTdF,
                                const T2toST2Type& dSdF,
@@ -101,19 +101,19 @@ namespace tfel::math {
           getSpaceDimension<StensorType>() == 2u &&
           getSpaceDimension<TensorType>() == 2u &&
           tfel::typetraits::IsFundamentalNumericType<
-              MathObjectNumType<TensorType>>::cond &&
+              numeric_type<TensorType>>::cond &&
           tfel::typetraits::IsAssignableTo<
               typename ComputeBinaryResult<
-                  MathObjectNumType<T2toST2Type>,
-                  MathObjectNumType<StensorType>,
+                  numeric_type<T2toST2Type>,
+                  numeric_type<StensorType>,
                   OpPlus>::Result,
-              MathObjectNumType<T2toST2ResultType>>::cond,
+              numeric_type<T2toST2ResultType>>::cond,
       void>::type
   computePushForwardDerivative(T2toST2ResultType& dTdF,
                                const T2toST2Type& dSdF,
                                const StensorType& S,
                                const TensorType& F) {
-    typedef MathObjectNumType<T2toST2Type> value_type;
+    typedef numeric_type<T2toST2Type> value_type;
     constexpr const auto cste = Cste<value_type>::sqrt2;
     constexpr const auto icste = Cste<value_type>::isqrt2;
     // derivative with respect to F0
@@ -189,19 +189,19 @@ namespace tfel::math {
           getSpaceDimension<StensorType>() == 3u &&
           getSpaceDimension<TensorType>() == 3u &&
           tfel::typetraits::IsFundamentalNumericType<
-              MathObjectNumType<TensorType>>::cond &&
+              numeric_type<TensorType>>::cond &&
           tfel::typetraits::IsAssignableTo<
               typename ComputeBinaryResult<
-                  MathObjectNumType<T2toST2Type>,
-                  MathObjectNumType<StensorType>,
+                  numeric_type<T2toST2Type>,
+                  numeric_type<StensorType>,
                   OpPlus>::Result,
-              MathObjectNumType<T2toST2ResultType>>::cond,
+              numeric_type<T2toST2ResultType>>::cond,
       void>::type
   computePushForwardDerivative(T2toST2ResultType& dTdF,
                                const T2toST2Type& dSdF,
                                const StensorType& S,
                                const TensorType& F) {
-    typedef MathObjectNumType<T2toST2Type> value_type;
+    typedef numeric_type<T2toST2Type> value_type;
     constexpr const auto cste = Cste<value_type>::sqrt2;
     constexpr const auto icste = Cste<value_type>::isqrt2;
     // derivative with respect to F0
@@ -579,13 +579,13 @@ namespace tfel::math {
           getSpaceDimension<T2toST2ResultType>() ==
               getSpaceDimension<TensorType>() &&
           tfel::typetraits::IsFundamentalNumericType<
-              MathObjectNumType<TensorType>>::cond &&
+              numeric_type<TensorType>>::cond &&
           tfel::typetraits::IsAssignableTo<
               typename ComputeBinaryResult<
-                  MathObjectNumType<T2toST2Type>,
-                  MathObjectNumType<StensorType>,
+                  numeric_type<T2toST2Type>,
+                  numeric_type<StensorType>,
                   OpPlus>::Result,
-              MathObjectNumType<T2toST2ResultType>>::cond,
+              numeric_type<T2toST2ResultType>>::cond,
       void>::type
   computeCauchyStressDerivativeFromKirchhoffStressDerivative(
       T2toST2ResultType& ds,
@@ -613,13 +613,13 @@ namespace tfel::math {
           getSpaceDimension<T2toST2ResultType>() ==
               getSpaceDimension<TensorType>() &&
           tfel::typetraits::IsFundamentalNumericType<
-              MathObjectNumType<TensorType>>::cond &&
+              numeric_type<TensorType>>::cond &&
           tfel::typetraits::IsAssignableTo<
               typename ComputeBinaryResult<
-                  MathObjectNumType<T2toST2Type>,
-                  MathObjectNumType<StensorType>,
+                  numeric_type<T2toST2Type>,
+                  numeric_type<StensorType>,
                   OpPlus>::Result,
-              MathObjectNumType<T2toST2ResultType>>::cond,
+              numeric_type<T2toST2ResultType>>::cond,
       void>::type
   computeKirchhoffStressDerivativeFromCauchyStressDerivative(
       T2toST2ResultType& dt_K,

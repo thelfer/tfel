@@ -15,7 +15,6 @@
 #define LIB_TFEL_MATH_CONVERTSPATIALMODULITOKIRCHOFFJAUMANRATEMODULI_HXX
 
 #include <type_traits>
-#include "TFEL/TypeTraits/BaseType.hxx"
 #include "TFEL/Math/General/BasicOperations.hxx"
 #include "TFEL/Math/General/ResultType.hxx"
 #include "TFEL/Math/General/ConstExprMathFunctions.hxx"
@@ -38,12 +37,12 @@ namespace tfel::math {
                            (getSpaceDimension<StensorType>() == 1u) &&
                            implementsST2toST2Concept<ST2toST2Type>() &&
                            implementsStensorConcept<StensorType>() &&
-                           std::is_same_v<ST2toST2NumType<ST2toST2Type>,
-                                          StensorNumType<StensorType>>),
-                          st2tost2<1u, ST2toST2NumType<ST2toST2Type>>>::type
+                           std::is_same_v<numeric_type<ST2toST2Type>,
+                                          numeric_type<StensorType>>),
+                          st2tost2<1u, numeric_type<ST2toST2Type>>>::type
   convertSpatialModuliToKirchhoffJaumanRateModuli(const ST2toST2Type& C_s,
                                                   const StensorType& tau) {
-    using NumType = ST2toST2NumType<ST2toST2Type>;
+    using NumType = numeric_type<ST2toST2Type>;
     st2tost2<1u, NumType> C_tJ;
     C_tJ(0, 0) = C_s(0, 0) + 2 * tau[0];
     C_tJ(0, 1) = C_s(0, 1);
@@ -70,12 +69,12 @@ namespace tfel::math {
                            (getSpaceDimension<StensorType>() == 2u) &&
                            implementsST2toST2Concept<ST2toST2Type>() &&
                            implementsStensorConcept<StensorType>() &&
-                           std::is_same_v<ST2toST2NumType<ST2toST2Type>,
-                                          StensorNumType<StensorType>>),
-                          st2tost2<2u, ST2toST2NumType<ST2toST2Type>>>::type
+                           std::is_same_v<numeric_type<ST2toST2Type>,
+                                          numeric_type<StensorType>>),
+                          st2tost2<2u, numeric_type<ST2toST2Type>>>::type
   convertSpatialModuliToKirchhoffJaumanRateModuli(const ST2toST2Type& C_s,
                                                   const StensorType& tau) {
-    using NumType = ST2toST2NumType<ST2toST2Type>;
+    using NumType = numeric_type<ST2toST2Type>;
     st2tost2<2u, NumType> C_tJ;
     C_tJ(0, 0) = C_s(0, 0) + 2 * tau[0];
     C_tJ(1, 1) = C_s(1, 1) + 2 * tau[1];
@@ -109,12 +108,12 @@ namespace tfel::math {
                            (getSpaceDimension<StensorType>() == 3u) &&
                            implementsST2toST2Concept<ST2toST2Type>() &&
                            implementsStensorConcept<StensorType>() &&
-                           std::is_same_v<ST2toST2NumType<ST2toST2Type>,
-                                          StensorNumType<StensorType>>),
-                          st2tost2<3u, ST2toST2NumType<ST2toST2Type>>>::type
+                           std::is_same_v<numeric_type<ST2toST2Type>,
+                                          numeric_type<StensorType>>),
+                          st2tost2<3u, numeric_type<ST2toST2Type>>>::type
   convertSpatialModuliToKirchhoffJaumanRateModuli(const ST2toST2Type& C_s,
                                                   const StensorType& tau) {
-    using NumType = ST2toST2NumType<ST2toST2Type>;
+    using NumType = numeric_type<ST2toST2Type>;
     constexpr const auto icste = Cste<NumType>::isqrt2;
     st2tost2<3u, NumType> C_tJ;
     C_tJ(0, 0) = C_s(0, 0) + 2 * tau[0];

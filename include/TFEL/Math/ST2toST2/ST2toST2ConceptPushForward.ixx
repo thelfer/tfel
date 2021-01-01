@@ -14,7 +14,6 @@
 #ifndef LIB_TFEL_MATH_ST2TOST2_PUSH_FORWARDIXX
 #define LIB_TFEL_MATH_ST2TOST2_PUSH_FORWARDIXX
 
-#include "TFEL/TypeTraits/BaseType.hxx"
 #include "TFEL/Math/General/MathConstants.hxx"
 
 namespace tfel::math {
@@ -51,7 +50,7 @@ namespace tfel::math {
                                   getSpaceDimension<TensorType>() == 2u,
                           void>::type
   push_forward(ST2toST2Type& Ct, const ST2toST2Type2& C, const TensorType& F) {
-    using NumType = MathObjectNumType<ST2toST2Type>;
+    using NumType = numeric_type<ST2toST2Type>;
     constexpr const auto cste = Cste<NumType>::sqrt2;
     constexpr const auto icste = Cste<NumType>::isqrt2;
     Ct(0, 0) = F[0] * F[0] * F[0] * F[0] * C(0, 0) +
@@ -234,7 +233,7 @@ namespace tfel::math {
                                   getSpaceDimension<TensorType>() == 3u,
                           void>::type
   push_forward(ST2toST2Type& Ct, const ST2toST2Type2& C, const TensorType& F) {
-    using NumType = MathObjectNumType<ST2toST2Type>;
+    using NumType = numeric_type<ST2toST2Type>;
     using size_type = unsigned short;
     auto row_index = [](size_type i, size_type j) -> size_type {
       // i,j are valid for the space dimension considered

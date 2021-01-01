@@ -24,9 +24,6 @@
 
 namespace tfel::math {
 
-  //! a simple alias
-  template <class T>
-  using ST2toT2NumType = MathObjectNumType<T>;
   /*!
    * \class ST2toT2Tag
    * \brief Helper class to characterise st2tot2.
@@ -37,7 +34,7 @@ namespace tfel::math {
   struct ST2toT2Concept {
     typedef ST2toT2Tag ConceptTag;
 
-    MathObjectNumType<T> operator()(
+    numeric_type<T> operator()(
         const unsigned short, const unsigned short) const;
 
    protected:
@@ -68,7 +65,7 @@ namespace tfel::math {
   typename std::enable_if<
       implementsST2toT2Concept<ST2toT2Type>(),
       typename tfel::typetraits::AbsType<
-          MathObjectNumType<ST2toT2Type>>::type>::type
+          numeric_type<ST2toT2Type>>::type>::type
   abs(const ST2toT2Type&);
 
 }  // end of namespace tfel::math

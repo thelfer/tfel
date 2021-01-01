@@ -20,7 +20,7 @@
 namespace tfel::math {
 
   template <class T>
-  TFEL_MATH_INLINE MathObjectNumType<T> ST2toT2Concept<T>::
+  TFEL_MATH_INLINE numeric_type<T> ST2toT2Concept<T>::
   operator()(const unsigned short i, const unsigned short j) const {
     return static_cast<const T&>(*this).operator()(i, j);
   }  // end of ST2toT2Concept<T>::operator()
@@ -29,9 +29,9 @@ namespace tfel::math {
   typename std::enable_if<
       implementsST2toT2Concept<ST2toT2Type>(),
       typename tfel::typetraits::AbsType<
-          MathObjectNumType<ST2toT2Type>>::type>::type
+          numeric_type<ST2toT2Type>>::type>::type
   abs(const ST2toT2Type& v) {
-    using NumType = MathObjectNumType<ST2toT2Type>;
+    using NumType = numeric_type<ST2toT2Type>;
     using AbsNumType = typename tfel::typetraits::AbsType<NumType>::type;
     constexpr const auto tsize =
         TensorDimeToSize<getSpaceDimension<ST2toT2Type>()>::value;

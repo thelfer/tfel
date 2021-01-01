@@ -32,7 +32,7 @@ namespace tfel {
     struct LUSolve {
       template <typename MatrixType, typename VectorType>
       static TFEL_MATH_INLINE2 void exe(MatrixType& m, VectorType& b) {
-        typedef typename MathObjectTraits<MatrixType>::IndexType IndexType;
+        typedef index_type<MatrixType> IndexType;
         Permutation<IndexType> p(m.getNbRows());
         VectorType x(b.size());
         LUSolve::exe(m, b, x, p);
@@ -43,7 +43,7 @@ namespace tfel {
           MatrixType& m,
           VectorType& b,
           VectorType& x,
-          Permutation<typename MathObjectTraits<MatrixType>::IndexType>& p) {
+          Permutation<index_type<MatrixType>>& p) {
         if (m.getNbRows() != m.getNbCols()) {
           throw(LUMatrixNotSquare());
         }
@@ -64,8 +64,8 @@ namespace tfel {
           const MatrixType& m,
           VectorType& b,
           VectorType& x,
-          Permutation<typename MathObjectTraits<MatrixType>::IndexType>& p) {
-        using size_type = typename MathObjectTraits<MatrixType>::IndexType;
+          Permutation<index_type<MatrixType>>& p) {
+        using size_type = index_type<MatrixType>;
         if (m.getNbRows() != m.getNbCols()) {
           throw(LUMatrixNotSquare());
         }

@@ -14,7 +14,6 @@
 #ifndef LIB_TFEL_MATH_STENSORSQUAREDERIVATIVE_H
 #define LIB_TFEL_MATH_STENSORSQUAREDERIVATIVE_H
 
-#include "TFEL/TypeTraits/BaseType.hxx"
 #include "TFEL/Math/General/MathConstants.hxx"
 #include "TFEL/Math/General/EmptyRunTimeProperties.hxx"
 
@@ -34,10 +33,10 @@ namespace tfel::math {
   struct Expr<ST2toST2ResultType, StensorSquareDerivativeExpr<1u>>
       : public ST2toST2Concept<
             Expr<ST2toST2ResultType, StensorSquareDerivativeExpr<1u>>>,
-        public fsarray<9u, ST2toST2NumType<ST2toST2ResultType>> {
+        public fsarray<9u, numeric_type<ST2toST2ResultType>> {
     static_assert(getSpaceDimension<ST2toST2ResultType>() == 1u);
     //! a simple alias
-    typedef ST2toST2NumType<ST2toST2ResultType> value_type;
+    typedef numeric_type<ST2toST2ResultType> value_type;
     //! a simple alias
     typedef EmptyRunTimeProperties RunTimeProperties;
     /*!
@@ -49,8 +48,8 @@ namespace tfel::math {
       static_assert(getSpaceDimension<ST2toST2ResultType>() ==
                     getSpaceDimension<StensorType>());
       static_assert(tfel::typetraits::IsAssignableTo<
-                    StensorNumType<StensorType>,
-                    ST2toST2NumType<ST2toST2ResultType>>::cond);
+                    numeric_type<StensorType>,
+                    numeric_type<ST2toST2ResultType>>::cond);
       constexpr const value_type zero = value_type(0);
       this->v[0] = 2 * B[0];
       this->v[4] = 2 * B[1];
@@ -72,10 +71,10 @@ namespace tfel::math {
       static_assert(getSpaceDimension<ST2toST2Type>() ==
                     getSpaceDimension<StensorType>());
       static_assert(tfel::typetraits::IsAssignableTo<
-                    typename ComputeBinaryResult<StensorNumType<StensorType>,
-                                                 ST2toST2NumType<ST2toST2Type>,
+                    typename ComputeBinaryResult<numeric_type<StensorType>,
+                                                 numeric_type<ST2toST2Type>,
                                                  OpMult>::Result,
-                    ST2toST2NumType<ST2toST2ResultType>>::cond);
+                    numeric_type<ST2toST2ResultType>>::cond);
       this->v[0] = 2 * C(0, 0) * s(0);
       this->v[1] = 2 * C(0, 1) * s(0);
       this->v[2] = 2 * C(0, 2) * s(0);
@@ -112,10 +111,10 @@ namespace tfel::math {
   struct Expr<ST2toST2ResultType, StensorSquareDerivativeExpr<2u>>
       : public ST2toST2Concept<
             Expr<ST2toST2ResultType, StensorSquareDerivativeExpr<2u>>>,
-        public fsarray<16u, ST2toST2NumType<ST2toST2ResultType>> {
+        public fsarray<16u, numeric_type<ST2toST2ResultType>> {
     static_assert(getSpaceDimension<ST2toST2ResultType>() == 2u);
     //! a simple alias
-    typedef ST2toST2NumType<ST2toST2ResultType> value_type;
+    typedef numeric_type<ST2toST2ResultType> value_type;
     //! a simple alias
     typedef EmptyRunTimeProperties RunTimeProperties;
     /*!
@@ -127,8 +126,8 @@ namespace tfel::math {
       static_assert(getSpaceDimension<ST2toST2ResultType>() ==
                     getSpaceDimension<StensorType>());
       static_assert(tfel::typetraits::IsAssignableTo<
-                    StensorNumType<StensorType>,
-                    ST2toST2NumType<ST2toST2ResultType>>::cond);
+                    numeric_type<StensorType>,
+                    numeric_type<ST2toST2ResultType>>::cond);
       constexpr const value_type zero = value_type(0);
       this->v[0] = 2 * s(0);
       this->v[1] = zero;
@@ -160,10 +159,10 @@ namespace tfel::math {
       static_assert(getSpaceDimension<ST2toST2Type>() ==
                     getSpaceDimension<StensorType>());
       static_assert(tfel::typetraits::IsAssignableTo<
-                    typename ComputeBinaryResult<StensorNumType<StensorType>,
-                                                 ST2toST2NumType<ST2toST2Type>,
+                    typename ComputeBinaryResult<numeric_type<StensorType>,
+                                                 numeric_type<ST2toST2Type>,
                                                  OpMult>::Result,
-                    ST2toST2NumType<ST2toST2ResultType>>::cond);
+                    numeric_type<ST2toST2ResultType>>::cond);
       this->v[0] = C(3, 0) * s(3) + 2 * C(0, 0) * s(0);
       this->v[1] = C(3, 1) * s(3) + 2 * C(0, 1) * s(0);
       this->v[2] = C(3, 2) * s(3) + 2 * C(0, 2) * s(0);
@@ -207,10 +206,10 @@ namespace tfel::math {
   struct Expr<ST2toST2ResultType, StensorSquareDerivativeExpr<3u>>
       : public ST2toST2Concept<
             Expr<ST2toST2ResultType, StensorSquareDerivativeExpr<3u>>>,
-        public fsarray<36u, ST2toST2NumType<ST2toST2ResultType>> {
+        public fsarray<36u, numeric_type<ST2toST2ResultType>> {
     static_assert(getSpaceDimension<ST2toST2ResultType>() == 3u);
     //! a simple alias
-    typedef ST2toST2NumType<ST2toST2ResultType> value_type;
+    typedef numeric_type<ST2toST2ResultType> value_type;
     //! a simple alias
     typedef EmptyRunTimeProperties RunTimeProperties;
     /*!
@@ -222,9 +221,9 @@ namespace tfel::math {
       static_assert(getSpaceDimension<ST2toST2ResultType>() ==
                           getSpaceDimension<StensorType>());
       static_assert(tfel::typetraits::IsAssignableTo<
-                          StensorNumType<StensorType>,
-                          ST2toST2NumType<ST2toST2ResultType>>::cond);
-      using real = tfel::typetraits::base_type<value_type>;
+                          numeric_type<StensorType>,
+                          numeric_type<ST2toST2ResultType>>::cond);
+      using real = base_type<value_type>;
       TFEL_CONSTEXPR const auto zero = value_type(0);
       TFEL_CONSTEXPR const auto one_half = real(1) / 2;
       constexpr const auto icste = Cste<value_type>::isqrt2;
@@ -278,11 +277,11 @@ namespace tfel::math {
       static_assert(getSpaceDimension<ST2toST2Type>() ==
                     getSpaceDimension<StensorType>());
       static_assert(tfel::typetraits::IsAssignableTo<
-                    typename ComputeBinaryResult<StensorNumType<StensorType>,
-                                                 ST2toST2NumType<ST2toST2Type>,
+                    typename ComputeBinaryResult<numeric_type<StensorType>,
+                                                 numeric_type<ST2toST2Type>,
                                                  OpMult>::Result,
-                    ST2toST2NumType<ST2toST2ResultType>>::cond);
-      using real = tfel::typetraits::base_type<value_type>;
+                    numeric_type<ST2toST2ResultType>>::cond);
+      using real = base_type<value_type>;
       TFEL_CONSTEXPR const auto one_half = real(1) / real(2);
       constexpr const auto cste = Cste<real>::sqrt2;
       this->v[0] = C(4, 0) * s(4) + C(3, 0) * s(3) + 2 * C(0, 0) * s(0);

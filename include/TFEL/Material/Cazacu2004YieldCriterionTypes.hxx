@@ -23,11 +23,11 @@ namespace tfel {
 
     //! a simple alias
     template <typename StressStensor>
-    using Cazacu2004StressType = tfel::math::StensorNumType<StressStensor>;
+    using Cazacu2004StressType = tfel::math::numeric_type<StressStensor>;
     //! a simple alias
     template <typename StressStensor>
     using Cazacu2004BaseType =
-        tfel::typetraits::base_type<tfel::math::StensorNumType<StressStensor>>;
+        tfel::typetraits::base_type<tfel::math::numeric_type<StressStensor>>;
     //! a simple alias
     template <typename StressStensor>
     using Cazacu2004InvertStressType =

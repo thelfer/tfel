@@ -37,12 +37,12 @@ namespace tfel::math {
         public fsarray<
             TensorDimeToSize<getSpaceDimension<T2toT2ResultType>()>::value *
                 TensorDimeToSize<getSpaceDimension<T2toT2ResultType>()>::value,
-            MathObjectNumType<T2toT2ResultType>> {
+            numeric_type<T2toT2ResultType>> {
     static_assert(getSpaceDimension<T2toT2ResultType>() == 1u);
     //! a simple alias
     typedef EmptyRunTimeProperties RunTimeProperties;
     //! a simple alias
-    typedef MathObjectNumType<T2toT2ResultType> value_type;
+    typedef numeric_type<T2toT2ResultType> value_type;
     /*!
      * \param[in] a : first term of the product
      * \param[in] b : second term of the product
@@ -93,12 +93,12 @@ namespace tfel::math {
         public fsarray<
             TensorDimeToSize<getSpaceDimension<T2toT2ResultType>()>::value *
                 TensorDimeToSize<getSpaceDimension<T2toT2ResultType>()>::value,
-            MathObjectNumType<T2toT2ResultType>> {
+            numeric_type<T2toT2ResultType>> {
     static_assert(getSpaceDimension<T2toT2ResultType>() == 2u);
     //! a simple alias
     typedef EmptyRunTimeProperties RunTimeProperties;
     //! a simple alias
-    typedef MathObjectNumType<T2toT2ResultType> value_type;
+    typedef numeric_type<T2toT2ResultType> value_type;
     /*!
      * \param[in] a : first term of the product
      * \param[in] b : second term of the product
@@ -190,12 +190,12 @@ namespace tfel::math {
         public fsarray<
             TensorDimeToSize<getSpaceDimension<T2toT2ResultType>()>::value *
                 TensorDimeToSize<getSpaceDimension<T2toT2ResultType>()>::value,
-            MathObjectNumType<T2toT2ResultType>> {
+            numeric_type<T2toT2ResultType>> {
     static_assert(getSpaceDimension<T2toT2ResultType>() == 3u);
     //! a simple alias
     typedef EmptyRunTimeProperties RunTimeProperties;
     //! a simple alias
-    typedef MathObjectNumType<T2toT2ResultType> value_type;
+    typedef numeric_type<T2toT2ResultType> value_type;
     /*!
      * \param[in] a : first term of the product
      * \param[in] b : second term of the product

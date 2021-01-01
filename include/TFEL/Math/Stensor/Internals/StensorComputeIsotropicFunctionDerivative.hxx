@@ -49,7 +49,7 @@ namespace tfel {
              const tvector<3u, T>& vp,
              const rotation_matrix<T>&,
              const T) {
-          using real = ST2toST2NumType<ST2toST2Type>;
+          using real = numeric_type<ST2toST2Type>;
           constexpr const auto zero = real(0);
           d(0, 0) = df(vp[0]);
           d(0, 1) = d(0, 2) = zero;
@@ -77,9 +77,9 @@ namespace tfel {
             const tvector<3u, T1>&,
             const tvector<3u, T2>& df,
             const tvector<3u, T3>&,
-            const tmatrix<3u, 3u, tfel::typetraits::base_type<T3>>&,
+            const tmatrix<3u, 3u, base_type<T3>>&,
             const T3) {
-          using real = ST2toST2NumType<ST2toST2Type>;
+          using real = numeric_type<ST2toST2Type>;
           constexpr const auto zero = real(0);
           d(0, 0) = df[0];
           d(0, 1) = d(0, 2) = zero;
@@ -111,10 +111,10 @@ namespace tfel {
             const tvector<3u, T1>& f,
             const tvector<3u, T2>& df,
             const tvector<3u, T3>& vp,
-            const tmatrix<3u, 3u, tfel::typetraits::base_type<T3>>& m,
+            const tmatrix<3u, 3u, base_type<T3>>& m,
             const T3 eps) {
-          using real = ST2toST2NumType<ST2toST2Type>;
-          using base = tfel::typetraits::base_type<real>;
+          using real = numeric_type<ST2toST2Type>;
+          using base = base_type<real>;
           using tvector = tfel::math::tvector<3u, real>;
           using stensor = tfel::math::stensor<2u, real>;
           constexpr const base cste = Cste<base>::sqrt2;
@@ -184,10 +184,10 @@ namespace tfel {
             const tvector<3u, T1>& f,
             const tvector<3u, T2>& df,
             const tvector<3u, T3>& vp,
-            const tmatrix<3u, 3u, tfel::typetraits::base_type<T3>>& m,
+            const tmatrix<3u, 3u, base_type<T3>>& m,
             const T3 eps) {
-          using real = ST2toST2NumType<ST2toST2Type>;
-          using base = tfel::typetraits::base_type<real>;
+          using real = numeric_type<ST2toST2Type>;
+          using base = base_type<real>;
           using tvector = tfel::math::tvector<3u, real>;
           using stensor = tfel::math::stensor<3u, real>;
           using st2tost2 = tfel::math::st2tost2<3u, real>;

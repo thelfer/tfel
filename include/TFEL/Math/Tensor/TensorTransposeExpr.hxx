@@ -30,8 +30,8 @@ namespace tfel::math {
     static_assert(implementsTensorConcept<A>());
 
     typedef EmptyRunTimeProperties RunTimeProperties;
-    typedef typename MathObjectTraits<std::decay_t<A>>::IndexType IndexType;
-    typedef typename MathObjectTraits<std::decay_t<A>>::NumType NumType;
+    using IndexType = index_type<A>;
+    using NumType = numeric_type<A>;
 
     TFEL_MATH_INLINE RunTimeProperties getRunTimeProperties() const {
       return EmptyRunTimeProperties();

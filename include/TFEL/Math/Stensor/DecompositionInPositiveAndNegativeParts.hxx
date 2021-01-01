@@ -40,16 +40,16 @@ namespace tfel::math {
           getSpaceDimension<DPPType>() == getSpaceDimension<StensorType>() &&
           getSpaceDimension<PPType>() == getSpaceDimension<StensorType>() &&
           getSpaceDimension<StensorType>() == 1u &&
-          tfel::typetraits::IsAssignableTo<StensorNumType<StensorType>,
-                                           StensorNumType<PPType>>::cond &&
+          tfel::typetraits::IsAssignableTo<numeric_type<StensorType>,
+                                           numeric_type<PPType>>::cond &&
           tfel::typetraits::IsAssignableTo<
-              tfel::typetraits::base_type<StensorNumType<StensorType>>,
-              ST2toST2NumType<DPPType>>::cond,
+              base_type<numeric_type<StensorType>>,
+              numeric_type<DPPType>>::cond,
       void>
   computeStensorPositivePartAndDerivative(DPPType&,
                                           PPType&,
                                           const StensorType&,
-                                          const StensorNumType<StensorType>);
+                                          const numeric_type<StensorType>);
 
   /*!
    * \brief compute the decomposition of a symmetric tensor in its
@@ -72,16 +72,16 @@ namespace tfel::math {
           getSpaceDimension<DPPType>() == getSpaceDimension<StensorType>() &&
           getSpaceDimension<PPType>() == getSpaceDimension<StensorType>() &&
           getSpaceDimension<StensorType>() == 2u &&
-          tfel::typetraits::IsAssignableTo<StensorNumType<StensorType>,
-                                           StensorNumType<PPType>>::cond &&
+          tfel::typetraits::IsAssignableTo<numeric_type<StensorType>,
+                                           numeric_type<PPType>>::cond &&
           tfel::typetraits::IsAssignableTo<
-              tfel::typetraits::base_type<StensorNumType<StensorType>>,
-              ST2toST2NumType<DPPType>>::cond,
+              base_type<numeric_type<StensorType>>,
+              numeric_type<DPPType>>::cond,
       void>
   computeStensorPositivePartAndDerivative(DPPType&,
                                           PPType&,
                                           const StensorType&,
-                                          const StensorNumType<StensorType>);
+                                          const numeric_type<StensorType>);
 
   /*!
    * \brief compute the decomposition of a symmetric tensor in its
@@ -104,16 +104,16 @@ namespace tfel::math {
           getSpaceDimension<DPPType>() == getSpaceDimension<StensorType>() &&
           getSpaceDimension<PPType>() == getSpaceDimension<StensorType>() &&
           getSpaceDimension<StensorType>() == 3u &&
-          tfel::typetraits::IsAssignableTo<StensorNumType<StensorType>,
-                                           StensorNumType<PPType>>::cond &&
+          tfel::typetraits::IsAssignableTo<numeric_type<StensorType>,
+                                           numeric_type<PPType>>::cond &&
           tfel::typetraits::IsAssignableTo<
-              tfel::typetraits::base_type<StensorNumType<StensorType>>,
-              ST2toST2NumType<DPPType>>::cond,
+              base_type<numeric_type<StensorType>>,
+              numeric_type<DPPType>>::cond,
       void>
   computeStensorPositivePartAndDerivative(DPPType&,
                                           PPType&,
                                           const StensorType&,
-                                          const StensorNumType<StensorType>);
+                                          const numeric_type<StensorType>);
   /*!
    * \brief compute the decomposition of a symmetric tensor in a
    * positive and negative parts and their derivatives.
@@ -150,16 +150,16 @@ namespace tfel::math {
           getSpaceDimension<PPType>() == getSpaceDimension<StensorType>() &&
           getSpaceDimension<NPType>() == getSpaceDimension<StensorType>() &&
           getSpaceDimension<StensorType>() == 1u &&
-          tfel::typetraits::IsAssignableTo<StensorNumType<StensorType>,
-                                           StensorNumType<PPType>>::cond &&
-          tfel::typetraits::IsAssignableTo<StensorNumType<StensorType>,
-                                           StensorNumType<NPType>>::cond &&
+          tfel::typetraits::IsAssignableTo<numeric_type<StensorType>,
+                                           numeric_type<PPType>>::cond &&
+          tfel::typetraits::IsAssignableTo<numeric_type<StensorType>,
+                                           numeric_type<NPType>>::cond &&
           tfel::typetraits::IsAssignableTo<
-              tfel::typetraits::base_type<StensorNumType<StensorType>>,
-              ST2toST2NumType<DPPType>>::cond &&
+              base_type<numeric_type<StensorType>>,
+              numeric_type<DPPType>>::cond &&
           tfel::typetraits::IsAssignableTo<
-              tfel::typetraits::base_type<StensorNumType<StensorType>>,
-              ST2toST2NumType<DNPType>>::cond,
+              base_type<numeric_type<StensorType>>,
+              numeric_type<DNPType>>::cond,
       void>::type
   computeStensorDecompositionInPositiveAndNegativeParts(
       DPPType&,
@@ -167,7 +167,7 @@ namespace tfel::math {
       PPType&,
       NPType&,
       const StensorType&,
-      const StensorNumType<StensorType>);
+      const numeric_type<StensorType>);
 
   /*!
    * \brief compute the decomposition of a symmetric tensor in a
@@ -205,16 +205,16 @@ namespace tfel::math {
           getSpaceDimension<PPType>() == getSpaceDimension<StensorType>() &&
           getSpaceDimension<NPType>() == getSpaceDimension<StensorType>() &&
           getSpaceDimension<StensorType>() == 2u &&
-          tfel::typetraits::IsAssignableTo<StensorNumType<StensorType>,
-                                           StensorNumType<PPType>>::cond &&
-          tfel::typetraits::IsAssignableTo<StensorNumType<StensorType>,
-                                           StensorNumType<NPType>>::cond &&
+          tfel::typetraits::IsAssignableTo<numeric_type<StensorType>,
+                                           numeric_type<PPType>>::cond &&
+          tfel::typetraits::IsAssignableTo<numeric_type<StensorType>,
+                                           numeric_type<NPType>>::cond &&
           tfel::typetraits::IsAssignableTo<
-              tfel::typetraits::base_type<StensorNumType<StensorType>>,
-              ST2toST2NumType<DPPType>>::cond &&
+              base_type<numeric_type<StensorType>>,
+              numeric_type<DPPType>>::cond &&
           tfel::typetraits::IsAssignableTo<
-              tfel::typetraits::base_type<StensorNumType<StensorType>>,
-              ST2toST2NumType<DNPType>>::cond,
+              base_type<numeric_type<StensorType>>,
+              numeric_type<DNPType>>::cond,
       void>::type
   computeStensorDecompositionInPositiveAndNegativeParts(
       DPPType&,
@@ -222,7 +222,7 @@ namespace tfel::math {
       PPType&,
       NPType&,
       const StensorType&,
-      const StensorNumType<StensorType>);
+      const numeric_type<StensorType>);
 
   /*!
    * \brief compute the decomposition of a symmetric tensor in a
@@ -260,16 +260,16 @@ namespace tfel::math {
           getSpaceDimension<PPType>() == getSpaceDimension<StensorType>() &&
           getSpaceDimension<NPType>() == getSpaceDimension<StensorType>() &&
           getSpaceDimension<StensorType>() == 3u &&
-          tfel::typetraits::IsAssignableTo<StensorNumType<StensorType>,
-                                           StensorNumType<PPType>>::cond &&
-          tfel::typetraits::IsAssignableTo<StensorNumType<StensorType>,
-                                           StensorNumType<NPType>>::cond &&
+          tfel::typetraits::IsAssignableTo<numeric_type<StensorType>,
+                                           numeric_type<PPType>>::cond &&
+          tfel::typetraits::IsAssignableTo<numeric_type<StensorType>,
+                                           numeric_type<NPType>>::cond &&
           tfel::typetraits::IsAssignableTo<
-              tfel::typetraits::base_type<StensorNumType<StensorType>>,
-              ST2toST2NumType<DPPType>>::cond &&
+              base_type<numeric_type<StensorType>>,
+              numeric_type<DPPType>>::cond &&
           tfel::typetraits::IsAssignableTo<
-              tfel::typetraits::base_type<StensorNumType<StensorType>>,
-              ST2toST2NumType<DNPType>>::cond,
+              base_type<numeric_type<StensorType>>,
+              numeric_type<DNPType>>::cond,
       void>::type
   computeStensorDecompositionInPositiveAndNegativeParts(
       DPPType&,
@@ -277,7 +277,7 @@ namespace tfel::math {
       PPType&,
       NPType&,
       const StensorType&,
-      const StensorNumType<StensorType>);
+      const numeric_type<StensorType>);
 
 }  // end of namespace tfel::math
 

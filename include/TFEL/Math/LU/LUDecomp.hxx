@@ -47,9 +47,9 @@ namespace tfel {
       static TFEL_MATH_INLINE2 int exe(
           MatrixType&,
           PermutationType&,
-          const MathObjectNumType<MatrixType> =
+          const numeric_type<MatrixType> =
               100 * std::numeric_limits<
-                        MathObjectNumType<MatrixType>>::min());
+                        numeric_type<MatrixType>>::min());
                         
     };  // end of struct LUDecomp
 

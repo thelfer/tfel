@@ -25,11 +25,11 @@ namespace tfel {
 
     //! a simple alias
     template <typename StressStensor>
-    using BarlatStressType = tfel::math::StensorNumType<StressStensor>;
+    using BarlatStressType = tfel::math::numeric_type<StressStensor>;
     //! a simple alias
     template <typename StressStensor>
     using BarlatBaseType =
-        tfel::typetraits::base_type<tfel::math::StensorNumType<StressStensor>>;
+        tfel::typetraits::base_type<tfel::math::numeric_type<StressStensor>>;
     //! a simple alias
     template <typename StressStensor>
     using BarlatLinearTransformationType =

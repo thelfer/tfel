@@ -15,7 +15,6 @@
 #define LIB_TFEL_MATH_CONVERTT2TOST2TOST2TOST2EXPR_HXX
 
 #include "TFEL/FSAlgorithm/copy.hxx"
-#include "TFEL/TypeTraits/BaseType.hxx"
 #include "TFEL/Math/General/MathConstants.hxx"
 
 namespace tfel::math {
@@ -34,10 +33,10 @@ namespace tfel::math {
   struct Expr<ST2toST2ResultType, ConvertT2toST2ToST2toST2Expr<1u>>
       : public ST2toST2Concept<
             Expr<ST2toST2ResultType, ConvertT2toST2ToST2toST2Expr<1u>>>,
-        public fsarray<9u, ST2toST2NumType<ST2toST2ResultType>> {
+        public fsarray<9u, numeric_type<ST2toST2ResultType>> {
     static_assert(getSpaceDimension<ST2toST2ResultType>() == 1u);
     //! a simple alias
-    typedef ST2toST2NumType<ST2toST2ResultType> value_type;
+    typedef numeric_type<ST2toST2ResultType> value_type;
     //! a simple alias
     typedef EmptyRunTimeProperties RunTimeProperties;
     /*!
@@ -50,8 +49,8 @@ namespace tfel::math {
       static_assert(getSpaceDimension<ST2toST2ResultType>() ==
                     getSpaceDimension<T2toST2Type>());
       static_assert(tfel::typetraits::IsAssignableTo<
-                    MathObjectNumType<T2toST2Type>,
-                    ST2toST2NumType<ST2toST2ResultType>>::cond);
+                    numeric_type<T2toST2Type>,
+                    numeric_type<ST2toST2ResultType>>::cond);
       copy<9u>::exe(&A(0, 0), this->v);
     }  // end of Expr
     /*!
@@ -81,11 +80,11 @@ namespace tfel::math {
   struct Expr<ST2toST2ResultType, ConvertT2toST2ToST2toST2Expr<2u>>
       : public ST2toST2Concept<
             Expr<ST2toST2ResultType, ConvertT2toST2ToST2toST2Expr<2u>>>,
-        public fsarray<16u, ST2toST2NumType<ST2toST2ResultType>> {
+        public fsarray<16u, numeric_type<ST2toST2ResultType>> {
     //! a simple check
     static_assert(getSpaceDimension<ST2toST2ResultType>() == 2u);
     //! a simple alias
-    typedef ST2toST2NumType<ST2toST2ResultType> value_type;
+    typedef numeric_type<ST2toST2ResultType> value_type;
     //! a simple alias
     typedef EmptyRunTimeProperties RunTimeProperties;
     /*!
@@ -97,12 +96,10 @@ namespace tfel::math {
       static_assert(getSpaceDimension<ST2toST2ResultType>() ==
                     getSpaceDimension<T2toST2Type>());
       static_assert(tfel::typetraits::IsAssignableTo<
-                    MathObjectNumType<T2toST2Type>,
-                    ST2toST2NumType<ST2toST2ResultType>>::cond);
-      using tfel::typetraits::BaseType;
-      typedef typename BaseType<value_type>::type real;
+                    numeric_type<T2toST2Type>,
+                    numeric_type<ST2toST2ResultType>>::cond);
       constexpr const auto icste = Cste<value_type>::sqrt2;
-      constexpr const auto icste2 = Cste<value_type>::sqrt2 / (real(2));
+      constexpr const auto icste2 = Cste<value_type>::isqrt2;
       this->v[0] = A(0, 0);
       this->v[1] = A(0, 1);
       this->v[2] = A(0, 2);
@@ -147,10 +144,10 @@ namespace tfel::math {
   struct Expr<ST2toST2ResultType, ConvertT2toST2ToST2toST2Expr<3u>>
       : public ST2toST2Concept<
             Expr<ST2toST2ResultType, ConvertT2toST2ToST2toST2Expr<3u>>>,
-        public fsarray<36u, ST2toST2NumType<ST2toST2ResultType>> {
+        public fsarray<36u, numeric_type<ST2toST2ResultType>> {
     static_assert(getSpaceDimension<ST2toST2ResultType>() == 3u);
     //! a simple alias
-    typedef ST2toST2NumType<ST2toST2ResultType> value_type;
+    typedef numeric_type<ST2toST2ResultType> value_type;
     //! a simple alias
     typedef EmptyRunTimeProperties RunTimeProperties;
     /*!
@@ -162,12 +159,10 @@ namespace tfel::math {
       static_assert(getSpaceDimension<ST2toST2ResultType>() ==
                     getSpaceDimension<T2toST2Type>());
       static_assert(tfel::typetraits::IsAssignableTo<
-                    MathObjectNumType<T2toST2Type>,
-                    ST2toST2NumType<ST2toST2ResultType>>::cond);
-      using tfel::typetraits::BaseType;
-      typedef typename BaseType<value_type>::type real;
+                    numeric_type<T2toST2Type>,
+                    numeric_type<ST2toST2ResultType>>::cond);
       constexpr const auto icste = Cste<value_type>::sqrt2;
-      constexpr const auto icste2 = Cste<value_type>::sqrt2 / (real(2));
+      constexpr const auto icste2 = Cste<value_type>::isqrt2;
       this->v[0] = A(0, 0);
       this->v[1] = A(0, 1);
       this->v[2] = A(0, 2);

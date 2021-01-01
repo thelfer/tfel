@@ -29,11 +29,11 @@ namespace tfel::math {
     static TFEL_MATH_INLINE std::enable_if_t<
         implementsStensorConcept<StensorType>() &&
             getSpaceDimension<StensorType>() == 1u &&
-            tfel::typetraits::IsAssignableTo<StensorNumType<StensorType>,
+            tfel::typetraits::IsAssignableTo<numeric_type<StensorType>,
                                              T>::cond,
         tfel::math::st2tost2<1u, T>>
     exe(const StensorType& s) {
-      using real = typename tfel::typetraits::BaseType<T>::type;
+      using real = base_type<T>;
       constexpr const real zero = real(0);
       return {2 * s[0], zero, zero, zero, 2 * s[1], zero, zero, zero, 2 * s[2]};
     }
@@ -45,11 +45,11 @@ namespace tfel::math {
     static TFEL_MATH_INLINE std::enable_if_t<
         implementsStensorConcept<StensorType>() &&
             getSpaceDimension<StensorType>() == 2u &&
-            tfel::typetraits::IsAssignableTo<StensorNumType<StensorType>,
+            tfel::typetraits::IsAssignableTo<numeric_type<StensorType>,
                                              T>::cond,
         tfel::math::st2tost2<2u, T>>
     exe(const StensorType& s) {
-      using real = typename tfel::typetraits::BaseType<T>::type;
+      using real = base_type<T>;
       constexpr const real zero = real(0);
       return {2 * s[0], zero, zero, s[3],       zero,     2 * s[1],
               zero,     s[3], zero, zero,       2 * s[2], zero,
@@ -63,11 +63,11 @@ namespace tfel::math {
     static TFEL_MATH_INLINE std::enable_if_t<
         implementsStensorConcept<StensorType>() &&
             getSpaceDimension<StensorType>() == 3u &&
-            tfel::typetraits::IsAssignableTo<StensorNumType<StensorType>,
+            tfel::typetraits::IsAssignableTo<numeric_type<StensorType>,
                                              T>::cond,
         tfel::math::st2tost2<3u, T>>
     exe(const StensorType& s) {
-      using real = tfel::typetraits::base_type<T>;
+      using real = base_type<T>;
       constexpr const auto icste = Cste<T>::isqrt2;
       constexpr const auto zero = real(0);
       return {2 * s[0],   zero,        zero,         s[3],         s[4],

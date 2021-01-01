@@ -18,7 +18,6 @@
 #include <type_traits>
 #include "TFEL/Config/TFELConfig.hxx"
 #include "TFEL/TypeTraits/IsScalar.hxx"
-#include "TFEL/TypeTraits/BaseType.hxx"
 #include "TFEL/TypeTraits/IsInvalid.hxx"
 #include "TFEL/TypeTraits/IsAssignableTo.hxx"
 #include "TFEL/TypeTraits/IsSafelyReinterpretCastableTo.hxx"
@@ -65,15 +64,15 @@ namespace tfel::math {
                       getSpaceDimension<StensorType2>(),
                   "symmetric tensor types don't have the same dimension");
     static_assert(
-        tfel::typetraits::IsScalar<StensorNumType<StensorType1>>::cond,
+        tfel::typetraits::IsScalar<numeric_type<StensorType1>>::cond,
         "the first symmetric tensor type does not hold a scalar");
     static_assert(
-        tfel::typetraits::IsScalar<StensorNumType<StensorType2>>::cond,
+        tfel::typetraits::IsScalar<numeric_type<StensorType2>>::cond,
         "the second symmetric tensor type does not hold a scalar");
     //! \brief result
     using type = st2tost2<getSpaceDimension<StensorType1>(),
-                          derivative_type<StensorNumType<StensorType1>,
-                                          StensorNumType<StensorType2>>>;
+                          derivative_type<numeric_type<StensorType1>,
+                                          numeric_type<StensorType2>>>;
   };  // end of struct DerivativeTypeDispatcher
 
   /*!
@@ -91,8 +90,8 @@ namespace tfel::math {
     TFEL_MATH_INLINE std::enable_if_t<
         implementsST2toST2Concept<ST2toST2Type>() &&
             getSpaceDimension<Child>() == getSpaceDimension<ST2toST2Type>() &&
-            tfel::typetraits::IsAssignableTo<ST2toST2NumType<ST2toST2Type>,
-                                             ST2toST2NumType<Child>>::cond,
+            tfel::typetraits::IsAssignableTo<numeric_type<ST2toST2Type>,
+                                             numeric_type<Child>>::cond,
         Child&>
     operator=(const ST2toST2Type&);
     //! Assignement operator
@@ -100,8 +99,8 @@ namespace tfel::math {
     TFEL_MATH_INLINE std::enable_if_t<
         implementsST2toST2Concept<ST2toST2Type>() &&
             getSpaceDimension<Child>() == getSpaceDimension<ST2toST2Type>() &&
-            tfel::typetraits::IsAssignableTo<ST2toST2NumType<ST2toST2Type>,
-                                             ST2toST2NumType<Child>>::cond,
+            tfel::typetraits::IsAssignableTo<numeric_type<ST2toST2Type>,
+                                             numeric_type<Child>>::cond,
         Child&>
     operator+=(const ST2toST2Type&);
     //! Assignement operator
@@ -109,8 +108,8 @@ namespace tfel::math {
     TFEL_MATH_INLINE std::enable_if_t<
         implementsST2toST2Concept<ST2toST2Type>() &&
             getSpaceDimension<Child>() == getSpaceDimension<ST2toST2Type>() &&
-            tfel::typetraits::IsAssignableTo<ST2toST2NumType<ST2toST2Type>,
-                                             ST2toST2NumType<Child>>::cond,
+            tfel::typetraits::IsAssignableTo<numeric_type<ST2toST2Type>,
+                                             numeric_type<Child>>::cond,
         Child&>
     operator-=(const ST2toST2Type&);
     /*!
@@ -120,8 +119,8 @@ namespace tfel::math {
     TFEL_MATH_INLINE std::enable_if_t<
         tfel::typetraits::IsScalar<T2>::cond &&
             std::is_same<
-                typename ResultType<ST2toST2NumType<Child>, T2, OpMult>::type,
-                ST2toST2NumType<Child>>::value,
+                typename ResultType<numeric_type<Child>, T2, OpMult>::type,
+                numeric_type<Child>>::value,
         Child&>
     operator*=(const T2);
     /*!
@@ -131,8 +130,8 @@ namespace tfel::math {
     TFEL_MATH_INLINE std::enable_if_t<
         tfel::typetraits::IsScalar<T2>::cond &&
             std::is_same<
-                typename ResultType<ST2toST2NumType<Child>, T2, OpDiv>::type,
-                ST2toST2NumType<Child>>::value,
+                typename ResultType<numeric_type<Child>, T2, OpDiv>::type,
+                numeric_type<Child>>::value,
         Child&>
     operator/=(const T2);
   };  // end of struct st2tost2_base
@@ -153,7 +152,7 @@ namespace tfel::math {
     static TFEL_MATH_INLINE std::enable_if_t<
         implementsStensorConcept<StensorType>() &&
             getSpaceDimension<StensorType>() == N &&
-            tfel::typetraits::IsAssignableTo<StensorNumType<StensorType>,
+            tfel::typetraits::IsAssignableTo<numeric_type<StensorType>,
                                              T>::cond,
         Expr<st2tost2<N, T>, StensorSquareDerivativeExpr<N>>>
     dsquare(const StensorType&);
@@ -169,8 +168,8 @@ namespace tfel::math {
             getSpaceDimension<StensorType>() == N &&
             getSpaceDimension<ST2toST2Type>() == N &&
             tfel::typetraits::IsAssignableTo<
-                typename ComputeBinaryResult<StensorNumType<StensorType>,
-                                             ST2toST2NumType<ST2toST2Type>,
+                typename ComputeBinaryResult<numeric_type<StensorType>,
+                                             numeric_type<ST2toST2Type>,
                                              OpMult>::Result,
                 T>::cond,
         Expr<st2tost2<N, T>, StensorSquareDerivativeExpr<N>>>
@@ -184,7 +183,7 @@ namespace tfel::math {
         implementsT2toST2Concept<T2toST2Type>() &&
             getSpaceDimension<T2toST2Type>() == N &&
             tfel::typetraits::IsAssignableTo<
-                MathObjectNumType<T2toST2Type>,
+                numeric_type<T2toST2Type>,
                 T>::cond,
         Expr<st2tost2<N, T>, ConvertT2toST2ToST2toST2Expr<N>>>
     convert(const T2toST2Type&);
@@ -192,7 +191,7 @@ namespace tfel::math {
      * build the equivalent st2tost2 from a rotation matrix
      * \param[in] r : rotation matrix
      */
-    static tfel::math::st2tost2<N, tfel::typetraits::base_type<T>>
+    static tfel::math::st2tost2<N, base_type<T>>
     fromRotationMatrix(const rotation_matrix<T>&);
     /*!
      * \brief compute the derivative of the symmetric tensor product:
@@ -205,7 +204,7 @@ namespace tfel::math {
     static TFEL_MATH_INLINE std::enable_if_t<
         implementsStensorConcept<StensorType>() &&
             getSpaceDimension<StensorType>() == N &&
-            tfel::typetraits::IsAssignableTo<StensorNumType<StensorType>,
+            tfel::typetraits::IsAssignableTo<numeric_type<StensorType>,
                                              T>::cond,
         tfel::math::st2tost2<N, T>>
     stpd(const StensorType&);
@@ -247,7 +246,7 @@ namespace tfel::math {
     TFEL_MATH_INLINE2
         std::enable_if_t<tfel::typetraits::IsSafelyReinterpretCastableTo<
                              T2,
-                             tfel::typetraits::base_type<T>>::cond,
+                             base_type<T>>::cond,
                          void>
         import(const T2* const);
 
@@ -297,9 +296,9 @@ namespace tfel::math {
   TFEL_MATH_INLINE2 std::enable_if_t<
       implementsST2toST2Concept<ST2toST2Type>(),
       st2tost2<getSpaceDimension<ST2toST2Type>(),
-               ST2toST2NumType<ST2toST2Type>>>
+               numeric_type<ST2toST2Type>>>
   change_basis(const ST2toST2Type&,
-               const rotation_matrix<ST2toST2NumType<ST2toST2Type>>&);
+               const rotation_matrix<numeric_type<ST2toST2Type>>&);
   /*!
    * \return the invert of a st2tost2
    * \param[in] s : st2tost2 to be inverted
@@ -309,9 +308,8 @@ namespace tfel::math {
       implementsST2toST2Concept<ST2toST2Type>(),
       st2tost2<
           getSpaceDimension<ST2toST2Type>(),
-          typename ComputeBinaryResult<typename tfel::typetraits::base_type<
-                                           ST2toST2NumType<ST2toST2Type>>,
-                                       ST2toST2NumType<ST2toST2Type>,
+          typename ComputeBinaryResult<base_type<numeric_type<ST2toST2Type>>,
+                                       numeric_type<ST2toST2Type>,
                                        OpDiv>::Result>>
   invert(const ST2toST2Type&);
 
@@ -329,8 +327,8 @@ namespace tfel::math {
           implementsTensorConcept<TensorType>() &&
           getSpaceDimension<ST2toST2Type>() == getSpaceDimension<TensorType>(),
       st2tost2<getSpaceDimension<ST2toST2Type>(),
-               typename ComputeBinaryResult<ST2toST2NumType<ST2toST2Type>,
-                                            TensorNumType<TensorType>,
+               typename ComputeBinaryResult<numeric_type<ST2toST2Type>,
+                                            numeric_type<TensorType>,
                                             OpMult>::Result>>
   push_forward(const ST2toST2Type&, const TensorType&);
 
@@ -340,8 +338,8 @@ namespace tfel::math {
           implementsTensorConcept<TensorType>() &&
           getSpaceDimension<ST2toST2Type>() == getSpaceDimension<TensorType>(),
       st2tost2<getSpaceDimension<ST2toST2Type>(),
-               typename ComputeBinaryResult<ST2toST2NumType<ST2toST2Type>,
-                                            TensorNumType<TensorType>,
+               typename ComputeBinaryResult<numeric_type<ST2toST2Type>,
+                                            numeric_type<TensorType>,
                                             OpMult>::Result>>
   pull_back(const ST2toST2Type&, const TensorType&);
   /*!
@@ -365,8 +363,8 @@ namespace tfel::math {
   template <typename StensorType>
   std::enable_if_t<
       implementsStensorConcept<StensorType>() &&
-          tfel::typetraits::IsScalar<StensorNumType<StensorType>>::cond,
-      st2tost2<getSpaceDimension<StensorType>(), StensorNumType<StensorType>>>
+          tfel::typetraits::IsScalar<numeric_type<StensorType>>::cond,
+      st2tost2<getSpaceDimension<StensorType>(), numeric_type<StensorType>>>
   computeDeviatorDeterminantSecondDerivative(const StensorType&);
   /*!
    * \brief compute the second derivative of the determinant of the
@@ -389,8 +387,8 @@ namespace tfel::math {
   template <typename StensorType>
   std::enable_if_t<
       implementsStensorConcept<StensorType>() &&
-          tfel::typetraits::IsScalar<StensorNumType<StensorType>>::cond,
-      st2tost2<getSpaceDimension<StensorType>(), StensorNumType<StensorType>>>
+          tfel::typetraits::IsScalar<numeric_type<StensorType>>::cond,
+      st2tost2<getSpaceDimension<StensorType>(), numeric_type<StensorType>>>
   computeDeviatorDeterminantSecondDerivative(const StensorType&);
 
 }  // end of namespace tfel::math

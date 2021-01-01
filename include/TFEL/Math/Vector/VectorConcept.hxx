@@ -23,10 +23,6 @@
 
 namespace tfel::math {
 
-  //! a simple alias
-  template <typename T>
-  using VectorNumType = MathObjectNumType<T>;
-
   /*!
    * \class VectorTag
    * \brief Helper class to characterise vectors.
@@ -37,11 +33,11 @@ namespace tfel::math {
   struct VectorConcept {
     typedef VectorTag ConceptTag;
 
-    TFEL_MATH_INLINE MathObjectNumType<T> operator()(
-        const typename MathObjectTraits<T>::IndexType) const;
+    TFEL_MATH_INLINE numeric_type<T> operator()(
+        const index_type<T>) const;
 
-    TFEL_MATH_INLINE MathObjectNumType<T> operator[](
-        const typename MathObjectTraits<T>::IndexType) const;
+    TFEL_MATH_INLINE numeric_type<T> operator[](
+        const index_type<T>) const;
 
    protected:
     VectorConcept() = default;

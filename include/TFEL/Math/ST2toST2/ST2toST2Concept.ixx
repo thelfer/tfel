@@ -23,7 +23,7 @@
 namespace tfel::math {
 
   template <class T>
-  TFEL_MATH_INLINE MathObjectNumType<T> ST2toST2Concept<T>::
+  TFEL_MATH_INLINE numeric_type<T> ST2toST2Concept<T>::
   operator()(const unsigned short i, const unsigned short j) const {
     return static_cast<const T&>(*this).operator()(i, j);
   }  // end of ST2toST2Concept<T>::operator()
@@ -31,10 +31,10 @@ namespace tfel::math {
   template <typename ST2toST2Type>
   std::enable_if_t<implementsST2toST2Concept<ST2toST2Type>(),
                    typename tfel::typetraits::AbsType<
-                       MathObjectNumType<ST2toST2Type>>::type>
+                       numeric_type<ST2toST2Type>>::type>
   abs(const ST2toST2Type& v) {
-    using NumType = MathObjectNumType<ST2toST2Type>;
-    using IndexType = typename MathObjectTraits<ST2toST2Type>::IndexType;
+    using NumType = numeric_type<ST2toST2Type>;
+    using IndexType = index_type<ST2toST2Type>;
     using AbsNumType = typename tfel::typetraits::AbsType<NumType>::type;
     constexpr const auto ssize =
         StensorDimeToSize<getSpaceDimension<ST2toST2Type>()>::value;
@@ -61,8 +61,8 @@ namespace tfel::math {
   std::enable_if_t<
       implementsST2toST2Concept<ST2toST2Type>() &&
           (getSpaceDimension<ST2toST2Type>() == 1u) &&
-          tfel::typetraits::IsScalar<ST2toST2NumType<ST2toST2Type>>::cond,
-      typename ComputeUnaryResult<ST2toST2NumType<ST2toST2Type>,
+          tfel::typetraits::IsScalar<numeric_type<ST2toST2Type>>::cond,
+      typename ComputeUnaryResult<numeric_type<ST2toST2Type>,
                                   Power<3>>::Result>
   det(const ST2toST2Type& s) {
     const auto a = s(0, 0);
@@ -82,12 +82,12 @@ namespace tfel::math {
       implementsST2toST2Concept<ST2toST2Type>() &&
           ((getSpaceDimension<ST2toST2Type>() == 2u) ||
            (getSpaceDimension<ST2toST2Type>() == 3u)) &&
-          tfel::typetraits::IsScalar<ST2toST2NumType<ST2toST2Type>>::cond,
+          tfel::typetraits::IsScalar<numeric_type<ST2toST2Type>>::cond,
       typename ComputeUnaryResult<
-          ST2toST2NumType<ST2toST2Type>,
+          numeric_type<ST2toST2Type>,
           Power<getSpaceDimension<ST2toST2Type>()>>::Result>
   det(const ST2toST2Type& s) {
-    using real = ST2toST2NumType<ST2toST2Type>;
+    using real = numeric_type<ST2toST2Type>;
     constexpr const auto N = getSpaceDimension<ST2toST2Type>();
     constexpr const auto ts = StensorDimeToSize<N>::value;
     tmatrix<ts, ts, real> m;

@@ -16,8 +16,6 @@
 #define LIB_TFEL_TINY_VECTOR_IXX
 
 #include <iterator>
-
-#include "TFEL/TypeTraits/BaseType.hxx"
 #include "TFEL/FSAlgorithm/FSAlgorithm.hxx"
 #include "TFEL/Math/General/Abs.hxx"
 #include "TFEL/Math/General/BasicOperations.hxx"
@@ -93,7 +91,7 @@ namespace tfel::math {
   template <typename T2>
   std::enable_if_t<IsTVectorScalarOperationValid<T, T2, OpDiv>::cond, Child&>
   tvector_base<Child, N, T>::operator/=(const T2 s) {
-    constexpr const auto one = tfel::typetraits::base_type<T2>(1);
+    constexpr const auto one = base_type<T2>(1);
     VectorUtilities<N>::scale(static_cast<Child&>(*this), one / s);
     return static_cast<Child&>(*this);
   }
@@ -189,7 +187,7 @@ namespace tfel::math {
   std::enable_if_t<tfel::typetraits::IsScalar<T>::cond, void>
   exportToBaseTypeArray(const tvector<N, T>& v, OutputIterator p) {
     typedef tfel::fsalgo::copy<N> Copy;
-    typedef tfel::typetraits::base_type<T> base;
+    typedef base_type<T> base;
     static_assert(
         tfel::typetraits::IsSafelyReinterpretCastableTo<T, base>::cond);
     Copy::exe(reinterpret_cast<const base*>(&v[0]), p);
@@ -258,7 +256,7 @@ namespace tfel::math {
 
   template <typename T>
   void find_perpendicular_vector(tvector<3u, T>& y, const tvector<3u, T>& x) {
-    using real = tfel::typetraits::base_type<T>;
+    using real = base_type<T>;
     constexpr const auto zero = T(0);
     constexpr const auto one = T(1);
     const auto nx = (x | x);
