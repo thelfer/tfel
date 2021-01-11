@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_CHILDPROCESS_HXX
-#define LIB_CHILDPROCESS_HXX 
+#ifndef LIB_TFEL_SYSTEM_CHILDPROCESS_HXX
+#define LIB_TFEL_SYSTEM_CHILDPROCESS_HXX 
 
 #include<cstdlib>
 #include<cstring>
@@ -69,7 +69,7 @@ namespace tfel
       ChildProcessCreationFailedException();
       ChildProcessCreationFailedException(const ChildProcessCreationFailedException&) = default;
       ChildProcessCreationFailedException(ChildProcessCreationFailedException&&) = default;
-      virtual ~ChildProcessCreationFailedException() noexcept;
+      ~ChildProcessCreationFailedException() noexcept override;
     }; // end of struct ChildProcessCreationFailedException
 
     template<typename T>
@@ -86,7 +86,7 @@ namespace tfel
       if(::pipe(toFather)==-1){
 	throw(ChildProcessCreationFailedException());
       }
-      auto_ptr<T> childProcess = auto_ptr<T>(new T(toChild[1],toFather[0]));
+      auto childProcess = std::unique_ptr<T>(new T(toChild[1], toFather[0]));
       pid = ::fork();
       if(pid==-1){
 	throw(ChildProcessCreationFailedException());
@@ -116,5 +116,5 @@ namespace tfel
     
 } // end of namespace tfel
 
-#endif /* LIB_CHILDPROCESS_HXX */
+#endif /* LIB_TFEL_SYSTEM_CHILDPROCESS_HXX */
 
