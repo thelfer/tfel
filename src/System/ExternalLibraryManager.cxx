@@ -1528,8 +1528,18 @@ namespace tfel {
       std::vector<std::string> names;
       this->getUMATNames(names, l, f, "", "ElasticMaterialPropertiesEntryPoints");
       return names;
-    }  // end of
-       // ExternalLibraryManager::getUMATElasticMaterialPropertiesEntryPoints
+    }  // end of getUMATElasticMaterialPropertiesEntryPoints
+
+    std::vector<std::string> ExternalLibraryManager::
+        getUMATLinearThermalExpansionCoefficientsEntryPoints(
+            const std::string& l, const std::string& f) {
+      if (!this->contains(l, f + "_LinearThermalExpansionCoefficientsEntryPoints")) {
+        return {};
+      }
+      std::vector<std::string> names;
+      this->getUMATNames(names, l, f, "", "LinearThermalExpansionCoefficientsEntryPoints");
+      return names;
+    }  // end of getUMATLinearThermalExpansionCoefficientsEntryPoints
 
     std::vector<std::string>
     ExternalLibraryManager::getUMATMaterialPropertiesNames(

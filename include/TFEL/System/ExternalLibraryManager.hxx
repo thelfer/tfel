@@ -753,6 +753,22 @@ namespace tfel {
       std::vector<std::string> getUMATElasticMaterialPropertiesEntryPoints(
           const std::string&, const std::string&);
       /*!
+       * \brief return the name of entry points for the linear thermal expansion coefficients
+       * associated with a behaviour, if any. The kind of entry point (function,
+       * class, etc.) depends on the interface used.
+       *
+       * The size of the returned vector is currently either:
+       * - 0: which means that the behaviour does not export its elastic
+       *      properties.
+       * - 1, which means that the thermal expansion is isotropic.
+       * - 3, which means that the thermal expansion is orthotropic.
+       *
+       * \param[in] l : name of the library
+       * \param[in] f : law name
+       */
+      std::vector<std::string> getUMATLinearThermalExpansionCoefficientsEntryPoints(
+          const std::string&, const std::string&);
+      /*!
        * \brief return true if the behaviour computes the internal energy
        * \param[in] l : name of the library
        * \param[in] f : law name

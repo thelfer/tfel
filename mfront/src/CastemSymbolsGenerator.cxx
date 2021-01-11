@@ -67,6 +67,7 @@ namespace mfront {
       os << "MFRONT_SHAREDOBJ unsigned short " << i.getFunctionNameBasis(name)
          << "_UsesGenericPlaneStressAlgorithm = 0u;\n\n";
     }
+    const auto fn = i.getFunctionNameBasis(name);
     // elastic material properties
     auto emps = [&bd, &i, &name] {
       auto names = std::vector<std::string>{};
@@ -78,10 +79,25 @@ namespace mfront {
       }
       return names;
     }();
-    const auto fn = i.getFunctionNameBasis(name);
     os << "MFRONT_SHAREDOBJ unsigned short " << fn
        << "_nElasticMaterialPropertiesEntryPoints = " << emps.size() << "u;\n";
     this->writeArrayOfStringsSymbol(os, fn + "_ElasticMaterialPropertiesEntryPoints", emps);
+    // material properties associated with the thermal expansion coefficients
+    auto themps = [&bd, &i, &name] {
+      auto names = std::vector<std::string>{};
+      if (bd.areThermalExpansionCoefficientsDefined()) {
+        for (const auto& e : bd.getThermalExpansionCoefficientsDescriptions()) {
+          CastemMaterialPropertyInterface imp;
+          names.push_back(imp.getCastemFunctionName(e));
+        }
+      }
+      return names;
+    }();
+    os << "MFRONT_SHAREDOBJ unsigned short " << fn
+       << "_nLinearThermalExpansionCoefficientsEntryPoints = "  //
+       << themps.size() << "u;\n";
+    this->writeArrayOfStringsSymbol(
+        os, fn + "_LinearThermalExpansionCoefficientsEntryPoints", themps);
   }  // end of CastemSymbolsGenerator::writeSpecificSymbols
 
   bool CastemSymbolsGenerator::handleStrainMeasure() const{

@@ -102,6 +102,18 @@ namespace tfel {
        */
       std::vector<std::string> elastic_material_properties_epts;
       /*!
+       * \brief names of entry points associated with linear thermal expansion
+       * coefficients properties exported by the behaviour, if any. This is
+       * currently only supported by a few interfaces (`Cyrano`, `Cast3M`).
+       *
+       * The size of this member is either:
+       * - 0: which means that the behaviour does not export its elastic
+       *      properties.
+       * - 1, which means that the thermal expansion is isotropic.
+       * - 3, which means that the thermal expansion is orthotropic.
+       */
+      std::vector<std::string> linear_thermal_expansion_coefficients_epts;
+      /*!
        * \brief names of the material properties that must be given to the
        * behaviour by the calling solver
        */

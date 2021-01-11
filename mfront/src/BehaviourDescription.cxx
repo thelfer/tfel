@@ -3041,6 +3041,28 @@ namespace mfront {
     return empds;
   }  // end of BehaviourDescription::getElasticMaterialPropertiesDescriptions
 
+  std::vector<MaterialPropertyDescription>
+  BehaviourDescription::getThermalExpansionCoefficientsDescriptions() const {
+    const auto& themps = this->getThermalExpansionCoefficients();
+    auto thempds = std::vector<MaterialPropertyDescription>{themps.size()};
+    if (themps.size() == 1u) {
+      thempds[0] =
+          buildMaterialPropertyDescription(themps[0], *this, "ThermalExpansion");
+    } else if (themps.size() == 3u) {
+      thempds[0] = buildMaterialPropertyDescription(themps[0], *this,
+                                                   "ThermalExpansion1");
+      thempds[1] = buildMaterialPropertyDescription(themps[1], *this,
+                                                   "ThermalExpansion2");
+      thempds[2] = buildMaterialPropertyDescription(themps[2], *this,
+                                                   "ThermalExpansion3");
+    } else {
+      tfel::raise(
+          "BehaviourDescription::getThermalExpansionCoefficientsDescriptions: "
+          "invalid number of material properties");
+    }
+    return thempds;
+  }  // end of getThermalExpansionCoefficientsDescriptions
+
   void BehaviourDescription::overrideByAParameter(const std::string& n,
                                                   const double v) {
     this->d.overrideByAParameter(n, v);

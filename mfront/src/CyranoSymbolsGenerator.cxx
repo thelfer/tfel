@@ -43,6 +43,21 @@ namespace mfront {
     os << "MFRONT_SHAREDOBJ unsigned short " << fn
        << "_nElasticMaterialPropertiesEntryPoints = " << emps.size() << "u;\n";
     this->writeArrayOfStringsSymbol(os, fn + "_ElasticMaterialPropertiesEntryPoints", emps);
+    auto themps = [&bd, &i, &name] {
+      auto names = std::vector<std::string>{};
+      if (bd.areThermalExpansionCoefficientsDefined()) {
+        for (const auto& e : bd.getThermalExpansionCoefficientsDescriptions()) {
+          CyranoMaterialPropertyInterface imp;
+          names.push_back(imp.getCyranoFunctionName(e));
+        }
+      }
+      return names;
+    }();
+    os << "MFRONT_SHAREDOBJ unsigned short " << fn
+       << "_nLinearThermalExpansionCoefficientsEntryPoints = "  //
+       << themps.size() << "u;\n";
+    this->writeArrayOfStringsSymbol(
+        os, fn + "_LinearThermalExpansionCoefficientsEntryPoints", themps);
   }  // end of CyranoSymbolsGenerator::writeSpecificSymbols
 
   void CyranoSymbolsGenerator::writeAdditionalSymbols(

@@ -134,7 +134,7 @@ namespace tfel {
                                       const int errNbr) {
       std::string err = strerror(errNbr);
       std::transform(err.begin(), err.end(), err.begin(),
-                     std::ptr_fun(::tolower));
+                     [](const char c){return ::tolower(c);});
       auto msg = errMsg;
       msg += " (system error: ";
       msg += err;
