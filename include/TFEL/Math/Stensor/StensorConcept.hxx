@@ -16,11 +16,11 @@
 #include "TFEL/Config/TFELConfig.hxx"
 #include "TFEL/Metaprogramming/Implements.hxx"
 #include "TFEL/Metaprogramming/InvalidType.hxx"
-#include "TFEL/TypeTraits/IsAssignableTo.hxx"
 #include "TFEL/Math/General/MathObjectTraits.hxx"
 #include "TFEL/Math/General/ConceptRebind.hxx"
 #include "TFEL/Math/General/ComputeUnaryResult.hxx"
 #include "TFEL/Math/General/Abs.hxx"
+#include "TFEL/Math/General/MathObjectTraits.hxx"
 #include "TFEL/Math/General/MathConstants.hxx"
 #include "TFEL/Math/General/MathObjectTraits.hxx"
 #include "TFEL/Math/ExpressionTemplates/Expr.hxx"
@@ -115,12 +115,11 @@ namespace tfel::math {
    */
   template <typename StensorResultType, typename StensorType>
   std::enable_if_t<
-      implementsStensorConcept<StensorResultType>() &&
-          implementsStensorConcept<StensorType>() &&
-          tfel::typetraits::IsAssignableTo<
-              typename ComputeUnaryResult<numeric_type<StensorType>,
-                                          Power<2>>::Result,
-              numeric_type<StensorResultType>>::cond,
+      (implementsStensorConcept<StensorResultType>() &&
+       implementsStensorConcept<StensorType>() &&
+       isAssignableTo<typename ComputeUnaryResult<numeric_type<StensorType>,
+                                                  Power<2>>::Result,
+                      numeric_type<StensorResultType>>()),
       void>
   computeDeterminantDerivative(StensorResultType&, const StensorType&);
   /*!
@@ -131,12 +130,11 @@ namespace tfel::math {
    */
   template <typename StensorResultType, typename StensorType>
   std::enable_if_t<
-      implementsStensorConcept<StensorResultType>() &&
-          implementsStensorConcept<StensorType>() &&
-          tfel::typetraits::IsAssignableTo<
-              typename ComputeUnaryResult<numeric_type<StensorType>,
-                                          Power<2>>::Result,
-              numeric_type<StensorResultType>>::cond,
+      (implementsStensorConcept<StensorResultType>() &&
+       implementsStensorConcept<StensorType>() &&
+       isAssignableTo<typename ComputeUnaryResult<numeric_type<StensorType>,
+                                                  Power<2>>::Result,
+                      numeric_type<StensorResultType>>()),
       void>
   computeDeviatorDeterminantDerivative(StensorResultType&, const StensorType&);
 

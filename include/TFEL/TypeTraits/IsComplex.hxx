@@ -4,89 +4,81 @@
  * specialises it for standard numeric types.
  * \author Thomas Helfer
  * \date   04 Jul 2006
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
-#ifndef LIB_TFEL_ISCOMPLEX_HXX
-#define LIB_TFEL_ISCOMPLEX_HXX 
+#ifndef LIB_TFEL_TYPETRAITS_ISCOMPLEX_HXX
+#define LIB_TFEL_TYPETRAITS_ISCOMPLEX_HXX
 
-#include"TFEL/Math/Forward/Complex.hxx"
+#include "TFEL/Math/Forward/Complex.hxx"
 
 /*!
  * \def    TFEL_META_IS_COMPLEX
  * \brief An helper macro to specialise IsComplex for each standard
  * numeric types.
  * \author Thomas Helfer
- * \date   28 jun 2006 
+ * \date   28 jun 2006
  */
-#define TFEL_META_IS_COMPLEX(X)            \
-    /*!                                    \
-     * \brief Partial specialisation for X \
-     * \see   IsComplex                    \
-     */                                    \
-    template<>                             \
-    struct IsComplex< X >{                 \
-      /*!				   \
-       *  Result			   \
-       */				   \
-      static constexpr bool cond = true;       \
-    };                                     \
-    /*!                                    \
-     * \brief Partial specialisation for X \
-     * \see   IsComplex                    \
-     */                                    \
-    template<>                             \
-    struct IsComplex<const X >{            \
-      /*!				   \
-       *  Result			   \
-       */				   \
-      static constexpr bool cond = true;       \
-    }                                 
+#define TFEL_META_IS_COMPLEX(X)          \
+  /*!                                    \
+   * \brief Partial specialisation for X \
+   * \see   IsComplex                    \
+   */                                    \
+  template <>                            \
+  struct IsComplex<X> {                  \
+    /*!                                  \
+     *  Result                           \
+     */                                  \
+    static constexpr bool cond = true;   \
+  };                                     \
+  /*!                                    \
+   * \brief Partial specialisation for X \
+   * \see   IsComplex                    \
+   */                                    \
+  template <>                            \
+  struct IsComplex<const X> {            \
+    /*!                                  \
+     *  Result                           \
+     */                                  \
+    static constexpr bool cond = true;   \
+  }
 
-namespace tfel{
+namespace tfel::typetraits {
 
-  namespace typetraits{
+  /*!
+   * \brief Traits class which says it a given type stands for a
+   * complex numerical type.
+   *
+   * \param  T, type to be tested.
+   * \return bool cond, true if T stands for a complex numerical
+   * type, false otherwise.
+   *
+   * \see IsScalar, IsReal
+   *
+   * \author Thomas Helfer
+   * \date   04 Jul 2006
+   */
+  template <typename T>
+  struct IsComplex {
+    //! \brief result
+    static constexpr bool cond = false;
+  };
 
-    /*!
-     * \brief Traits class which says it a given type stands for a
-     * complex numerical type.
-     *
-     * \param  T, type to be tested.
-     * \return bool cond, true if T stands for a complex numerical
-     * type, false otherwise.
-     *
-     * \see IsScalar, IsReal
-     *
-     * \author Thomas Helfer
-     * \date   04 Jul 2006
-     */
-    template<typename T>
-    struct IsComplex{
-      /*!
-       *  Result
-       */
-      static constexpr bool cond = false;
-    };
+  TFEL_META_IS_COMPLEX(tfel::math::Complex<unsigned short>);
+  TFEL_META_IS_COMPLEX(tfel::math::Complex<unsigned int>);
+  TFEL_META_IS_COMPLEX(tfel::math::Complex<unsigned long int>);
+  TFEL_META_IS_COMPLEX(tfel::math::Complex<short>);
+  TFEL_META_IS_COMPLEX(tfel::math::Complex<int>);
+  TFEL_META_IS_COMPLEX(tfel::math::Complex<long int>);
+  TFEL_META_IS_COMPLEX(tfel::math::Complex<float>);
+  TFEL_META_IS_COMPLEX(tfel::math::Complex<double>);
+  TFEL_META_IS_COMPLEX(tfel::math::Complex<long double>);
 
-    TFEL_META_IS_COMPLEX(tfel::math::Complex<unsigned short>);
-    TFEL_META_IS_COMPLEX(tfel::math::Complex<unsigned int>);
-    TFEL_META_IS_COMPLEX(tfel::math::Complex<unsigned long int>);
-    TFEL_META_IS_COMPLEX(tfel::math::Complex<short>);
-    TFEL_META_IS_COMPLEX(tfel::math::Complex<int>);
-    TFEL_META_IS_COMPLEX(tfel::math::Complex<long int>);
-    TFEL_META_IS_COMPLEX(tfel::math::Complex<float>);
-    TFEL_META_IS_COMPLEX(tfel::math::Complex<double>);
-    TFEL_META_IS_COMPLEX(tfel::math::Complex<long double>);
-
-  } // end of namespace typetraits
-
-} // end of namespace tfel
-  
+}  // end of namespace tfel::typetraits
 
 #endif /* LIB_TFEL_ISCOMPLEX_HXX */
-

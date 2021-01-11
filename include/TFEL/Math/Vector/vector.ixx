@@ -89,8 +89,8 @@ namespace tfel::math {
 
   template <typename T>
   template <typename T2, typename Operation>
-  std::enable_if_t<tfel::typetraits::IsAssignableTo<T2, T>::cond, vector<T>&>
-  vector<T>::operator=(const Expr<vector<T2>, Operation>& expr) {
+  std::enable_if_t<isAssignableTo<T2, T>(), vector<T>&> vector<T>::operator=(
+      const Expr<vector<T2>, Operation>& expr) {
 #ifndef NO_RUNTIME_CHECK_BOUNDS
 //      RunTimeCheck<RunTimeProperties>::exe(this->getRunTimeProperties(),expr.getRunTimeProperties());
 #endif /* LIB_TFEL_VECTORIXX */
@@ -103,8 +103,8 @@ namespace tfel::math {
 
   template <typename T>
   template <typename T2, typename Operation>
-  std::enable_if_t<tfel::typetraits::IsAssignableTo<T2, T>::cond, vector<T>&>
-  vector<T>::operator+=(const Expr<vector<T2>, Operation>& expr) {
+  std::enable_if_t<isAssignableTo<T2, T>(), vector<T>&> vector<T>::operator+=(
+      const Expr<vector<T2>, Operation>& expr) {
 #ifndef NO_RUNTIME_CHECK_BOUNDS
 //      RunTimeCheck<RunTimeProperties>::exe(this->getRunTimeProperties(),expr.getRunTimeProperties());
 #endif /* LIB_TFEL_VECTORIXX */
@@ -117,8 +117,8 @@ namespace tfel::math {
 
   template <typename T>
   template <typename T2, typename Operation>
-  std::enable_if_t<tfel::typetraits::IsAssignableTo<T2, T>::cond, vector<T>&>
-  vector<T>::operator-=(const Expr<vector<T2>, Operation>& expr) {
+  std::enable_if_t<isAssignableTo<T2, T>(), vector<T>&> vector<T>::operator-=(
+      const Expr<vector<T2>, Operation>& expr) {
 #ifndef NO_RUNTIME_CHECK_BOUNDS
 //      RunTimeCheck<RunTimeProperties>::exe(this->getRunTimeProperties(),expr.getRunTimeProperties());
 #endif /* LIB_TFEL_VECTORIXX */
@@ -148,7 +148,7 @@ namespace tfel::math {
 
   template <typename T>
   TFEL_MATH_INLINE2
-      std::enable_if_t<tfel::typetraits::IsScalar<T>::cond,
+      std::enable_if_t<isScalar<T>(),
                        typename tfel::typetraits::RealPartType<T>::type>
       norm(const vector<T>& vec) {
     T n(0);

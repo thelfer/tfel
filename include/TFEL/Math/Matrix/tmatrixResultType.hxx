@@ -1,162 +1,159 @@
 /*!
  * \file   include/TFEL/Math/Matrix/tmatrixResultType.hxx
- * \brief  this file implements partial specialisations of the ResultType and GenerateMatrix traits class for tmatrix.
- * \author Thomas Helfer
- * \date   12 Jul 2006
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \brief  this file implements partial specialisations of the ResultType and
+ * GenerateMatrix traits class for tmatrix. \author Thomas Helfer \date   12 Jul
+ * 2006 \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_TFEL_TINY_MATRIX_RESULT_TYPE_HXX
-#define LIB_TFEL_TINY_MATRIX_RESULT_TYPE_HXX 
+#define LIB_TFEL_TINY_MATRIX_RESULT_TYPE_HXX
 
-#include"TFEL/Math/tvector.hxx"
-#include"TFEL/Math/tmatrix.hxx"
-#include"TFEL/Math/Matrix/TVectorTMatrixExpr.hxx"
-#include"TFEL/Math/Matrix/TMatrixTVectorExpr.hxx"
+#include "TFEL/Math/tvector.hxx"
+#include "TFEL/Math/tmatrix.hxx"
+#include "TFEL/Math/Matrix/TVectorTMatrixExpr.hxx"
+#include "TFEL/Math/Matrix/TMatrixTVectorExpr.hxx"
 
-namespace tfel{
-  
-  namespace math{
-    
-    /*
-     * Partial specialisation for negation.
-     */
-    template<unsigned short N,unsigned short M,typename T>
-    class UnaryResultType<tmatrix<N,M,T>,OpNeg>
-    {
-      typedef typename UnaryResultType<T,OpNeg>::type ResBase_;
-    public:
-      typedef typename std::conditional<tfel::typetraits::IsInvalid<ResBase_>::cond,
-				      tfel::meta::InvalidType,
-				      tmatrix<N,M,ResBase_> >::type type;
-    };
+namespace tfel::math {
 
-    /*!
-     * \brief Partial specialisation for tmatrix and 
-     * scalars operations
-     * \see   ResultType_
-     */
-    template<unsigned short N,unsigned short M, typename T, typename Scal>
-    class ResultType_<MatrixTag,ScalarTag,tmatrix<N,M,T>,Scal,OpMult>
-    {
-      typedef result_type<T,Scal,OpMult> ResBase_;
-    public:
-      typedef typename std::conditional<tfel::typetraits::IsInvalid<ResBase_>::cond,
-				      tfel::meta::InvalidType,
-				      tmatrix<N,M,ResBase_> >::type type;
-    };
+  /*
+   * Partial specialisation for negation.
+   */
+  template <unsigned short N, unsigned short M, typename T>
+  class UnaryResultType<tmatrix<N, M, T>, OpNeg> {
+    typedef typename UnaryResultType<T, OpNeg>::type ResBase_;
 
-    /*!
-     * \brief Partial specialisation for tmatrix and 
-     * scalars operations
-     * \see   ResultType_
-     */
-    template<unsigned short N,unsigned short M, typename T, typename Scal>
-    class ResultType_<MatrixTag,ScalarTag,tmatrix<N,M,T>,Scal,OpDiv>
-    {
-      typedef result_type<T,Scal,OpDiv> ResBase_;
-    public:
-      typedef typename std::conditional<tfel::typetraits::IsInvalid<ResBase_>::cond,
-				      tfel::meta::InvalidType,
-				      tmatrix<N,M,ResBase_> >::type type;
-    };
+   public:
+    using type = std::conditional_t<isInvalid<ResBase_>(),
+                                    tfel::meta::InvalidType,
+                                    tmatrix<N, M, ResBase_>>;
+  };
 
-    /*!
-     * \brief Partial specialisation for tmatrix and 
-     * scalars operations
-     * \see   ResultType_
-     */
-    template<typename Scal,unsigned short N,unsigned short M, typename T>
-    class ResultType_<ScalarTag,MatrixTag,Scal,tmatrix<N,M,T>,OpMult>
-    {
-      typedef result_type<Scal,T,OpMult> ResBase_;
-    public:
-      typedef typename std::conditional<tfel::typetraits::IsInvalid<ResBase_>::cond,
-				      tfel::meta::InvalidType,
-				      tmatrix<N,M,ResBase_> >::type type;
-    };
+  /*!
+   * \brief Partial specialisation for tmatrix and
+   * scalars operations
+   * \see   ResultType_
+   */
+  template <unsigned short N, unsigned short M, typename T, typename Scal>
+  class ResultType_<MatrixTag, ScalarTag, tmatrix<N, M, T>, Scal, OpMult> {
+    typedef result_type<T, Scal, OpMult> ResBase_;
 
-    /*!
-     * \brief Partial specialisation for tmatrix
-     * \see   ResultType
-     */
-    template<unsigned short N,unsigned short M, typename T, typename T2>
-    class ResultType<tmatrix<N,M,T>,tmatrix<N,M,T2>,OpPlus>
-    {
-      typedef result_type<T,T2,OpPlus> ResBase_;
-    public:
-      typedef typename std::conditional<tfel::typetraits::IsInvalid<ResBase_>::cond,
-				      tfel::meta::InvalidType,
-				      tmatrix<N,M,ResBase_> >::type type;
-    };
+   public:
+    using type = std::conditional_t<isInvalid<ResBase_>(),
+                                    tfel::meta::InvalidType,
+                                    tmatrix<N, M, ResBase_>>;
+  };
 
-    /*!
-     * \brief Partial specialisation for tmatrix
-     * \see   ResultType
-     */
-    template<unsigned short N,unsigned short M, typename T, typename T2>
-    class ResultType<tmatrix<N,M,T>,tmatrix<N,M,T2>,OpMinus>
-    {
-      typedef result_type<T,T2,OpMinus> ResBase_;
-    public:
-      typedef typename std::conditional<tfel::typetraits::IsInvalid<ResBase_>::cond,
-				      tfel::meta::InvalidType,
-				      tmatrix<N,M,ResBase_> >::type type;
-    };
+  /*!
+   * \brief Partial specialisation for tmatrix and
+   * scalars operations
+   * \see   ResultType_
+   */
+  template <unsigned short N, unsigned short M, typename T, typename Scal>
+  class ResultType_<MatrixTag, ScalarTag, tmatrix<N, M, T>, Scal, OpDiv> {
+    typedef result_type<T, Scal, OpDiv> ResBase_;
 
-    template<unsigned short N,unsigned short M, typename T, typename T2>
-    class ResultType<tmatrix<N,M,T>,tvector<M,T2>,OpMult>
-    {
-      typedef result_type<T,T2,OpMult> ResBase_;
-    public:
-      typedef typename std::conditional<tfel::typetraits::IsInvalid<ResBase_>::cond,
-				      tfel::meta::InvalidType,
-				      tvector<N,ResBase_> >::type type;
-    }; // end of ComputeBinaryResult.
+   public:
+    using type = std::conditional_t<isInvalid<ResBase_>(),
+                                    tfel::meta::InvalidType,
+                                    tmatrix<N, M, ResBase_>>;
+  };
 
-    template<unsigned short N,unsigned short M, typename T, typename T2>
-    class ResultType<tvector<N,T>,tmatrix<N,M,T2>,OpMult>
-    {
-      typedef result_type<T,T2,OpMult> ResBase_;
-    public:
-      typedef typename std::conditional<tfel::typetraits::IsInvalid<ResBase_>::cond,
-				      tfel::meta::InvalidType,
-				      tvector<M,ResBase_> >::type type;
-    }; // end of ComputeBinaryResult.
+  /*!
+   * \brief Partial specialisation for tmatrix and
+   * scalars operations
+   * \see   ResultType_
+   */
+  template <typename Scal, unsigned short N, unsigned short M, typename T>
+  class ResultType_<ScalarTag, MatrixTag, Scal, tmatrix<N, M, T>, OpMult> {
+    typedef result_type<Scal, T, OpMult> ResBase_;
 
-    template<unsigned short N,unsigned short M,
-	     typename T, typename T2,
-	     typename A, typename B>
-    class MatrixVectorHandle<tmatrix<N,M,T>,tvector<M,T2>,A,B>
-    {
-      struct DummyHandle
-      {};
-    public:
-      typedef Expr<typename ResultType<tmatrix<N,M,T>,tvector<M,T2>,OpMult>::type,
-		   TMatrixTVectorExpr<N,M,A,B> > type;
-    };
+   public:
+    using type = std::conditional_t<isInvalid<ResBase_>(),
+                                    tfel::meta::InvalidType,
+                                    tmatrix<N, M, ResBase_>>;
+  };
 
-    template<unsigned short N,unsigned short M,
-	     typename T, typename T2,
-	     typename A, typename B>
-    class MatrixVectorHandle<tvector<N,T>,tmatrix<N,M,T2>,A,B>
-    {
-      struct DummyHandle
-      {};
-    public:
-      typedef Expr<typename ResultType<tvector<N,T>,tmatrix<N,M,T2>,OpMult>::type,
-		   TVectorTMatrixExpr<N,M,A,B> > type;
-    };
+  /*!
+   * \brief Partial specialisation for tmatrix
+   * \see   ResultType
+   */
+  template <unsigned short N, unsigned short M, typename T, typename T2>
+  class ResultType<tmatrix<N, M, T>, tmatrix<N, M, T2>, OpPlus> {
+    typedef result_type<T, T2, OpPlus> ResBase_;
 
-  } // end of namespace math
+   public:
+    using type = std::conditional_t<isInvalid<ResBase_>(),
+                                    tfel::meta::InvalidType,
+                                    tmatrix<N, M, ResBase_>>;
+  };
 
-} // end of namespace tfel
+  /*!
+   * \brief Partial specialisation for tmatrix
+   * \see   ResultType
+   */
+  template <unsigned short N, unsigned short M, typename T, typename T2>
+  class ResultType<tmatrix<N, M, T>, tmatrix<N, M, T2>, OpMinus> {
+    typedef result_type<T, T2, OpMinus> ResBase_;
 
+   public:
+    using type = std::conditional_t<isInvalid<ResBase_>(),
+                                    tfel::meta::InvalidType,
+                                    tmatrix<N, M, ResBase_>>;
+  };
+
+  template <unsigned short N, unsigned short M, typename T, typename T2>
+  class ResultType<tmatrix<N, M, T>, tvector<M, T2>, OpMult> {
+    typedef result_type<T, T2, OpMult> ResBase_;
+
+   public:
+    using type = std::conditional_t<isInvalid<ResBase_>(),
+                                    tfel::meta::InvalidType,
+                                    tvector<N, ResBase_>>;
+  };  // end of ComputeBinaryResult.
+
+  template <unsigned short N, unsigned short M, typename T, typename T2>
+  class ResultType<tvector<N, T>, tmatrix<N, M, T2>, OpMult> {
+    typedef result_type<T, T2, OpMult> ResBase_;
+
+   public:
+    using type = std::conditional_t<isInvalid<ResBase_>(),
+                                    tfel::meta::InvalidType,
+                                    tvector<M, ResBase_>>;
+  };  // end of ComputeBinaryResult.
+
+  template <unsigned short N,
+            unsigned short M,
+            typename T,
+            typename T2,
+            typename A,
+            typename B>
+  class MatrixVectorHandle<tmatrix<N, M, T>, tvector<M, T2>, A, B> {
+    struct DummyHandle {};
+
+   public:
+    using type = Expr<result_type<tmatrix<N, M, T>, tvector<M, T2>, OpMult>,
+                      TMatrixTVectorExpr<N, M, A, B>>;
+  };
+
+  template <unsigned short N,
+            unsigned short M,
+            typename T,
+            typename T2,
+            typename A,
+            typename B>
+  class MatrixVectorHandle<tvector<N, T>, tmatrix<N, M, T2>, A, B> {
+    struct DummyHandle {};
+
+   public:
+    using type = Expr<result_type<tvector<N, T>, tmatrix<N, M, T2>, OpMult>,
+                      TVectorTMatrixExpr<N, M, A, B>>;
+  };
+
+}  // end of namespace tfel::math
 
 #endif /* LIB_TFEL_TINY_MATRIX_RESULT_TYPE_HXX */
-

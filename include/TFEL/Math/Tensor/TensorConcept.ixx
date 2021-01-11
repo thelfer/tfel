@@ -212,7 +212,7 @@ namespace tfel::math {
   }  // end of computeLeftCauchyGreenTensor
 
   template <typename TensorType>
-  std::enable_if_t<
+  constexpr std::enable_if_t<
       ((implementsTensorConcept<TensorType>()) &&
        (tfel::typetraits::IsFundamentalNumericType<
            numeric_type<TensorType>>::cond)),
@@ -464,12 +464,11 @@ namespace tfel::math {
 
   template <typename TensorResultType, typename TensorType>
   std::enable_if_t<
-      implementsTensorConcept<TensorResultType>() &&
-          implementsTensorConcept<TensorType>() &&
-          tfel::typetraits::IsAssignableTo<
-              typename ComputeUnaryResult<numeric_type<TensorType>,
-                                          Power<2>>::Result,
-              numeric_type<TensorResultType>>::cond,
+      (implementsTensorConcept<TensorResultType>() &&
+       implementsTensorConcept<TensorType>() &&
+       isAssignableTo<typename ComputeUnaryResult<numeric_type<TensorType>,
+                                                  Power<2>>::Result,
+                      numeric_type<TensorResultType>>()),
       void>
   computeDeterminantDerivative(TensorResultType& dJ, const TensorType& F) {
     constexpr const auto N = getSpaceDimension<TensorType>();
@@ -540,7 +539,7 @@ namespace tfel::math {
     using tfel::fsalgo::transform;
     using T = numeric_type<TensorType2>;
     using base = base_type<T>;
-    using T2 = typename ComputeBinaryResult<T, T, OpMult>::Result;
+    using T2 = BinaryOperationResult<T,T,OpMult>;
     constexpr auto dime = getSpaceDimension<TensorType>();
     const auto id = stensor<dime, base>::Id();
     tvector<3u, T2> vp_C;

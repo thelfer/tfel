@@ -2,7 +2,7 @@
  * \file   include/TFEL/Math/Tensor/TensorConcept.hxx
  * \brief
  * \author Thomas Helfer
- * \date   01 Déc 2013
+ * \date   01/12/2013
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence
@@ -140,13 +140,13 @@ namespace tfel::math {
       stensor<getSpaceDimension<TensorType>(), numeric_type<TensorType>>>
   syme(const TensorType&);
 
-  template <typename TensorType>
-  TFEL_MATH_INLINE2 std::enable_if_t<
-      (implementsTensorConcept<TensorType>()) &&
-          (tfel::typetraits::IsFundamentalNumericType<
-              numeric_type<TensorType>>::cond),
-      stensor<getSpaceDimension<TensorType>(), numeric_type<TensorType>>>
-  computeRightCauchyGreenTensor(const TensorType&);
+  //   template <typename TensorType>
+  //   TFEL_MATH_INLINE2 std::enable_if_t<
+  //       (implementsTensorConcept<TensorType>()) &&
+  //           (tfel::typetraits::IsFundamentalNumericType<
+  //               numeric_type<TensorType>>::cond),
+  //       stensor<getSpaceDimension<TensorType>(), numeric_type<TensorType>>>
+  //   computeRightCauchyGreenTensor(const TensorType&);
 
   template <typename TensorType>
   TFEL_MATH_INLINE2 std::enable_if_t<
@@ -156,13 +156,13 @@ namespace tfel::math {
       stensor<getSpaceDimension<TensorType>(), numeric_type<TensorType>>>
   computeLeftCauchyGreenTensor(const TensorType&);
 
-  template <typename TensorType>
-  TFEL_MATH_INLINE2 std::enable_if_t<
-      (implementsTensorConcept<TensorType>()) &&
-          (tfel::typetraits::IsFundamentalNumericType<
-              numeric_type<TensorType>>::cond),
-      stensor<getSpaceDimension<TensorType>(), numeric_type<TensorType>>>
-  computeGreenLagrangeTensor(const TensorType&);
+  //   template <typename TensorType>
+  //   constexpr std::enable_if_t<
+  //       (implementsTensorConcept<TensorType>()) &&
+  //           (tfel::typetraits::IsFundamentalNumericType<
+  //               numeric_type<TensorType>>::cond),
+  //       stensor<getSpaceDimension<TensorType>(), numeric_type<TensorType>>>
+  //   computeGreenLagrangeTensor(const TensorType&);
 
   /*!
    * compute the product:
@@ -228,12 +228,11 @@ namespace tfel::math {
    */
   template <typename TensorResultType, typename TensorType>
   std::enable_if_t<
-      implementsTensorConcept<TensorResultType>() &&
-          implementsTensorConcept<TensorType>() &&
-          tfel::typetraits::IsAssignableTo<
-              typename ComputeUnaryResult<numeric_type<TensorType>,
-                                          Power<2>>::Result,
-              numeric_type<TensorResultType>>::cond,
+      (implementsTensorConcept<TensorResultType>() &&
+       implementsTensorConcept<TensorType>() &&
+       isAssignableTo<typename ComputeUnaryResult<numeric_type<TensorType>,
+                                                  Power<2>>::Result,
+                      numeric_type<TensorResultType>>()),
       void>
   computeDeterminantDerivative(TensorResultType&, const TensorType&);
   /*!

@@ -64,17 +64,13 @@ namespace tfel::math {
              (std::is_same<numeric_type<ST2toST2Type>, stress>::value) &&
              (implementsST2toST2Concept<ST2toST2Type2>()) &&
              (tfel::math::getSpaceDimension<ST2toST2Type2>() == 1u) &&
-             (tfel::typetraits::IsAssignableTo<numeric_type<ST2toST2Type2>,
-                                               stress>::cond),
+             (isAssignableTo<numeric_type<ST2toST2Type2>, stress>()),
          (implementsST2toST2Concept<ST2toST2Type3>()) &&
              (tfel::math::getSpaceDimension<ST2toST2Type3>() == 1u) &&
-             (tfel::typetraits::IsAssignableTo<numeric_type<ST2toST2Type3>,
-                                               real>::cond),
+             (isAssignableTo<numeric_type<ST2toST2Type3>, real>()),
          (implementsStensorConcept<StressStensorType>()) &&
              (tfel::math::getSpaceDimension<StressStensorType>() == 1u) &&
-             (tfel::typetraits::IsAssignableTo<
-                 numeric_type<StressStensorType>,
-                 stress>::cond)),
+             (isAssignableTo<numeric_type<StressStensorType>, stress>())),
         void>::type
     exe(ST2toST2Type& Cse,
         const ST2toST2Type2& C,

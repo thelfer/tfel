@@ -16,7 +16,6 @@
 
 #include <cmath>
 #include "TFEL/Config/TFELConfig.hxx"
-#include "TFEL/TypeTraits/IsInvalid.hxx"
 #include "TFEL/Math/ExpressionTemplates/Expr.hxx"
 #include "TFEL/Math/Vector/VectorConcept.hxx"
 
@@ -49,7 +48,7 @@ namespace tfel::math {
 
    public:
     using Result = result_type<MatrixTypeA, MatrixTypeB, Op>;
-    using Handle = std::conditional_t<tfel::typetraits::IsInvalid<Result>::cond,
+    using Handle = std::conditional_t<isInvalid<Result>(),
                                       DummyHandle,
                                       Expr<Result, BinaryOperation<A, B, Op>>>;
   };
@@ -65,7 +64,7 @@ namespace tfel::math {
    public:
     using Result = result_type<A, MatrixTypeB, Op>;
     using Handle =
-        std::conditional_t<tfel::typetraits::IsInvalid<Result>::cond,
+        std::conditional_t<isInvalid<Result>(),
                            DummyHandle,
                            Expr<Result, ScalarObjectOperation<A, B, Op>>>;
   };
@@ -81,7 +80,7 @@ namespace tfel::math {
    public:
     using Result = result_type<MatrixTypeA, B, Op>;
     using Handle =
-        std::conditional_t<tfel::typetraits::IsInvalid<Result>::cond,
+        std::conditional_t<isInvalid<Result>(),
                            DummyHandle,
                            Expr<Result, ObjectScalarOperation<A, B, Op>>>;
   };
@@ -99,7 +98,7 @@ namespace tfel::math {
    public:
     using Result = result_type<MatrixTypeA, VectorTypeB, OpMult>;
     using Handle = std::conditional_t<
-        tfel::typetraits::IsInvalid<Result>::cond,
+        isInvalid<Result>(),
         DummyHandle,
         typename MatrixVectorHandle<MatrixTypeA, VectorTypeB, A, B>::type>;
   };
@@ -117,7 +116,7 @@ namespace tfel::math {
    public:
     using Result = result_type<VectorTypeA, MatrixTypeB, OpMult>;
     using Handle = std::conditional_t<
-        tfel::typetraits::IsInvalid<Result>::cond,
+        isInvalid<Result>(),
         DummyHandle,
         typename MatrixVectorHandle<VectorTypeA, MatrixTypeB, A, B>::type>;
   };
@@ -132,7 +131,7 @@ namespace tfel::math {
 
    public:
     using Result = typename UnaryResultType<MatrixTypeA, OpNeg>::type;
-    using Handle = std::conditional_t<tfel::typetraits::IsInvalid<Result>::cond,
+    using Handle = std::conditional_t<isInvalid<Result>(),
                                       DummyHandle,
                                       Expr<Result, UnaryOperation<A, OpNeg>>>;
   };

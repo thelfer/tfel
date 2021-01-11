@@ -17,10 +17,7 @@
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Math/General/RunTimeCheck.hxx"
 
-namespace tfel
-{
-  
-  namespace math
+namespace tfel::math
   {
 
     struct VectorVectorDotProduct
@@ -49,9 +46,7 @@ namespace tfel
 
     }; // end of struct VectorVectorDotProduct
 
-  } // end of namespace math
-
-} // end of namespace tfel
+  } // end of namespace tfel::math
 
 #endif /* LIB_TFEL_MATH_VECTORVECTORDOTPRODUCT_H */
 

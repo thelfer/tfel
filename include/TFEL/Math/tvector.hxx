@@ -35,28 +35,12 @@
 namespace tfel::math {
 
   /*!
-   * \brief Partial specialisation for tvectors.
-   * \note This is a VectorConcept requirement.
-   * \see MathObjectTraits.
-   */
-  template <unsigned short N, typename T>
-  struct TFEL_VISIBILITY_LOCAL MathObjectTraits<tvector<N, T>> {
-    //! \brief the type holded by the tvector.
-    using NumType = T;
-    //! \brief the type of the index used by the tvector.
-    using IndexType = unsigned short;
-    //! brief a `tvector` is not related to the space dimension
-    static constexpr const unsigned short dime = 0;
-  };
-
-  /*!
    * An helper class to deal with limitation of Visual Studio 10
    */
   template <typename T, typename T2, typename Op>
   struct IsTVectorScalarOperationValid {
     static constexpr bool cond =
-        tfel::typetraits::IsScalar<T2>::cond &&
-        std::is_same<result_type<T, T2, OpMult>, T>::value;
+        isScalar<T2>() && std::is_same<result_type<T, T2, OpMult>, T>::value;
   };  // end of struct IsTVectorScalarOperationValid
 
   /*!
@@ -71,39 +55,33 @@ namespace tfel::math {
      * \pre T2 must be assignable to a T.
      */
     template <typename T2, typename Operation>
-    TFEL_MATH_INLINE
-        std::enable_if_t<tfel::typetraits::IsAssignableTo<T2, T>::cond, Child&>
-        operator=(const Expr<tvector<N, T2>, Operation>&);
+    TFEL_MATH_INLINE std::enable_if_t<isAssignableTo<T2, T>(), Child&>
+    operator=(const Expr<tvector<N, T2>, Operation>&);
 
     // Assignement operator
     template <typename T2>
-    TFEL_MATH_INLINE
-        std::enable_if_t<tfel::typetraits::IsAssignableTo<T2, T>::cond, Child&>
-        operator=(const tvector<N, T2>&);
+    TFEL_MATH_INLINE std::enable_if_t<isAssignableTo<T2, T>(), Child&>
+    operator=(const tvector<N, T2>&);
 
     // Assignement operator
     template <typename T2, typename Operation>
-    TFEL_MATH_INLINE
-        std::enable_if_t<tfel::typetraits::IsAssignableTo<T2, T>::cond, Child&>
-        operator+=(const Expr<tvector<N, T2>, Operation>&);
+    TFEL_MATH_INLINE std::enable_if_t<isAssignableTo<T2, T>(), Child&>
+    operator+=(const Expr<tvector<N, T2>, Operation>&);
 
     // Assignement operator
     template <typename T2>
-    TFEL_MATH_INLINE
-        std::enable_if_t<tfel::typetraits::IsAssignableTo<T2, T>::cond, Child&>
-        operator+=(const tvector<N, T2>&);
+    TFEL_MATH_INLINE std::enable_if_t<isAssignableTo<T2, T>(), Child&>
+    operator+=(const tvector<N, T2>&);
 
     // Assignement operator
     template <typename T2, typename Operation>
-    TFEL_MATH_INLINE
-        std::enable_if_t<tfel::typetraits::IsAssignableTo<T2, T>::cond, Child&>
-        operator-=(const Expr<tvector<N, T2>, Operation>&);
+    TFEL_MATH_INLINE std::enable_if_t<isAssignableTo<T2, T>(), Child&>
+    operator-=(const Expr<tvector<N, T2>, Operation>&);
 
     // Assignement operator
     template <typename T2>
-    TFEL_MATH_INLINE
-        std::enable_if_t<tfel::typetraits::IsAssignableTo<T2, T>::cond, Child&>
-        operator-=(const tvector<N, T2>&);
+    TFEL_MATH_INLINE std::enable_if_t<isAssignableTo<T2, T>(), Child&>
+    operator-=(const tvector<N, T2>&);
 
     /*!
      * operator*=
@@ -124,78 +102,20 @@ namespace tfel::math {
         operator/=(const T2);
   };
 
-  template <unsigned short N, typename T = double>
-  struct TFEL_VISIBILITY_LOCAL tvector
-      : public VectorConcept<tvector<N, T>>,
-        public tvector_base<tvector<N, T>, N, T>,
-        public fsarray<N, T> {
-    // a simple assertion stating that the dimension is valid.
-    static_assert(N != 0);
-    /*!
-     * \brief a simple typedef to the tvector runtime properties
-     * This is a VectorConcept requirement.
-     */
-    using RunTimeProperties = EmptyRunTimeProperties;
-    //! \brief default constructor.
-    TFEL_MATH_INLINE explicit constexpr tvector();
-    //! copy constructor
-    TFEL_MATH_INLINE constexpr tvector(const tvector&) = default;
-    /*!
-     * \brief Default Constructor
-     * \param[in] init: value used to initialise the components of the vector
-     */
-    template <typename T2,
-              std::enable_if_t<tfel::typetraits::IsAssignableTo<T2, T>::cond,
-                               bool> = true>
-    TFEL_MATH_INLINE constexpr explicit tvector(const T2&);
-    /*!
-     * \brief Default Constructor
-     * \param[in] init: values used to initialise the components of the vector
-     */
-    template <typename T2,
-              std::enable_if_t<tfel::typetraits::IsAssignableTo<T2, T>::cond,
-                               bool> = true>
-    TFEL_MATH_INLINE constexpr tvector(const std::initializer_list<T2>&);
-    /*!
-     * Constructor from a pointer.
-     * \param const T* : initial values.
-     */
-    TFEL_MATH_INLINE explicit tvector(const T* const);
-    //! Assignement operator
-    /*!
-     * \param src: a vector expression.
-     * \return tvector<N,T>& a reference to this.
-     * \pre T2 must be assignable to a T.
-     */
-    template <typename T2, typename Operation>
-    TFEL_MATH_INLINE tvector(const Expr<tvector<N, T2>, Operation>&);
-    //! assignement operator
-    tvector& operator=(const tvector&) = default;
-    //! using tvector_base::operator=
-    using tvector_base<tvector, N, T>::operator=;
-    /*!
-     * \brief index operator.
-     * This is a vector concept requirement.
-     * \param const unsigned short, index.
-     * \return const T&, a reference to the tvector ith element.
-     */
-    TFEL_MATH_INLINE constexpr const T& operator()(const unsigned short) const
-        noexcept;
-    /*!
-     * \brief index operator.
-     * This is a vector concept requirement.
-     * \param const unsigned short, index.
-     * \return const T&, a reference to the tvector ith element.
-     */
-    TFEL_MATH_INLINE T& operator()(const unsigned short) noexcept;
-    // using fsarray assignement operator
-    using fsarray<N, T>::operator[];
-    /*!
-     * Return the RunTimeProperties of the tvector
-     * \return tvector::RunTimeProperties
-     */
-    TFEL_MATH_INLINE constexpr RunTimeProperties getRunTimeProperties() const
-        noexcept;
+  template <unsigned short N, typename ValueType = double>
+  struct tvector : VectorConcept<tvector<N, ValueType>>,
+                   GenericFixedSizeArray<tvector<N, ValueType>,
+                                         FixedSizeVectorPolicy<N, ValueType>> {
+    //! \brief a simple alias
+    using GenericFixedSizeArrayBase =
+        GenericFixedSizeArray<tvector<N, ValueType>,
+                              FixedSizeVectorPolicy<N, ValueType>>;
+    //
+    TFEL_MATH_FIXED_SIZE_ARRAY_DEFAULT_METHODS(tvector,
+                                               GenericFixedSizeArrayBase);
+    // inheriting GenericFixedSizeArray' access operators
+    using GenericFixedSizeArrayBase::operator[];
+    using GenericFixedSizeArrayBase::operator();
     /*!
      * copy the Nth elements following this argument.
      * \param const InputIterator, an iterator to the first element
@@ -208,8 +128,8 @@ namespace tfel::math {
      * \param[in] I : the starting index
      */
     template <unsigned short I>
-    Expr<tvector<N - I, T>,
-         TinyVectorFromTinyVectorViewExpr<N - I, N, I, T, false>>
+    Expr<tvector<N - I, ValueType>,
+         TinyVectorFromTinyVectorViewExpr<N - I, N, I, ValueType, false>>
     slice();
     /*!
      * \brief create a slice
@@ -219,8 +139,8 @@ namespace tfel::math {
      * vector, so this vector shall not be destroyed before the slice
      */
     template <unsigned short I, unsigned short J>
-    Expr<tvector<J - I, T>,
-         TinyVectorFromTinyVectorViewExpr<J - I, N, I, T, false>>
+    Expr<tvector<J - I, ValueType>,
+         TinyVectorFromTinyVectorViewExpr<J - I, N, I, ValueType, false>>
     slice();
     /*!
      * \brief create a slice (const version)
@@ -229,8 +149,8 @@ namespace tfel::math {
      * vector, so this vector shall not be destroyed before the slice
      */
     template <unsigned short I>
-    Expr<tvector<N - I, T>,
-         TinyVectorFromTinyVectorViewExpr<N - I, N, I, T, true>>
+    Expr<tvector<N - I, ValueType>,
+         TinyVectorFromTinyVectorViewExpr<N - I, N, I, ValueType, true>>
     slice() const;
     /*!
      * \brief create a slice (const version)
@@ -240,11 +160,11 @@ namespace tfel::math {
      * vector, so this vector shall not be destroyed before the slice
      */
     template <unsigned short I, unsigned short J>
-    Expr<tvector<J - I, T>,
-         TinyVectorFromTinyVectorViewExpr<J - I, N, I, T, true>>
+    Expr<tvector<J - I, ValueType>,
+         TinyVectorFromTinyVectorViewExpr<J - I, N, I, ValueType, true>>
     slice() const;
+  };  // end of tvector
 
-  };
   /*!
    * \brief create a new tvector by applying a functor
    * \param[in] f: functor
@@ -256,8 +176,8 @@ namespace tfel::math {
    * export the given vector to an array of the
    */
   template <unsigned short N, typename T, typename OutputIterator>
-  TFEL_MATH_INLINE2 std::enable_if_t<tfel::typetraits::IsScalar<T>::cond, void>
-  exportToBaseTypeArray(const tvector<N, T>&, OutputIterator);
+  TFEL_MATH_INLINE2 std::enable_if_t<isScalar<T>(), void> exportToBaseTypeArray(
+      const tvector<N, T>&, OutputIterator);
 
   template <unsigned short N, typename T>
   TFEL_MATH_INLINE2 typename tfel::typetraits::AbsType<T>::type abs(
@@ -335,7 +255,7 @@ namespace tfel::typetraits {
   template <unsigned short N, typename T2, typename T>
   struct IsAssignableTo<tfel::math::tvector<N, T2>, tfel::math::tvector<N, T>> {
     //! \brief result
-    static constexpr bool cond = IsAssignableTo<T2, T>::cond;
+    static constexpr bool cond = isAssignableTo<T2, T>();
   };
 
 }  // end of namespace tfel::typetraits

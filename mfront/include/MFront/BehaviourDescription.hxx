@@ -1022,6 +1022,13 @@ namespace mfront {
     const std::vector<MaterialProperty>& getThermalExpansionCoefficients()
         const;
     /*!
+     * \return the description of the thermal expansion coefficients
+     * \brief this method is meant to generate callable material properties when
+     * needed.
+     */
+    std::vector<MaterialPropertyDescription>
+    getThermalExpansionCoefficientsDescriptions() const;
+    /*!
      * set the behaviour thermal expansion coefficient (isotropic behaviour)
      * \param[in] a: thermal expansion
      */

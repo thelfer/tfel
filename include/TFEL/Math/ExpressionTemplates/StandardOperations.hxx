@@ -15,8 +15,8 @@
 #define LIB_TFEL_MATH_EXPRESSIONTEMPLATES_STANDARDOPERATIONS_HXX
 
 #include <type_traits>
-#include "TFEL/TypeTraits/IsScalar.hxx"
 #include "TFEL/Math/General/ResultType.hxx"
+#include "TFEL/Math/General/MathObjectTraits.hxx"
 #include "TFEL/Math/General/ComputeUnaryResult.hxx"
 #include "TFEL/Math/General/ComputeBinaryResult.hxx"
 

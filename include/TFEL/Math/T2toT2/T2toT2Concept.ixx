@@ -23,15 +23,15 @@
 namespace tfel::math {
 
   template <class T>
-  TFEL_MATH_INLINE numeric_type<T> T2toT2Concept<T>::
-  operator()(const unsigned short i, const unsigned short j) const {
+  TFEL_MATH_INLINE numeric_type<T> T2toT2Concept<T>::operator()(
+      const unsigned short i, const unsigned short j) const {
     return static_cast<const T&>(*this).operator()(i, j);
   }  // end of T2toT2Concept<T>::operator()
 
   template <typename T2toT2Type>
-  std::enable_if_t<implementsT2toT2Concept<T2toT2Type>(),
-                   typename tfel::typetraits::AbsType<
-                       numeric_type<T2toT2Type>>::type>
+  std::enable_if_t<
+      implementsT2toT2Concept<T2toT2Type>(),
+      typename tfel::typetraits::AbsType<numeric_type<T2toT2Type>>::type>
   abs(const T2toT2Type& v) {
     unsigned short i;
     unsigned short j;
@@ -51,46 +51,37 @@ namespace tfel::math {
   template <typename T2toT2Type>
   std::enable_if_t<
       implementsT2toT2Concept<T2toT2Type>() &&
-          (getSpaceDimension<T2toT2Type>() == 1u) &&
-          tfel::typetraits::IsScalar<numeric_type<T2toT2Type>>::cond,
+          isScalar<numeric_type<T2toT2Type>>(),
       typename ComputeUnaryResult<numeric_type<T2toT2Type>, Power<3>>::Result>
   det(const T2toT2Type& s) {
-    const auto a = s(0, 0);
-    const auto b = s(0, 1);
-    const auto c = s(0, 2);
-    const auto d = s(1, 0);
-    const auto e = s(1, 1);
-    const auto f = s(1, 2);
-    const auto g = s(2, 0);
-    const auto h = s(2, 1);
-    const auto i = s(2, 2);
-    return a * (e * i - f * h) + b * (f * g - d * i) + c * (d * h - e * g);
-  }  // end of det
-
-  template <typename T2toT2Type>
-  std::enable_if_t<
-      implementsT2toT2Concept<T2toT2Type>() &&
-          ((getSpaceDimension<T2toT2Type>() == 2u) ||
-           (getSpaceDimension<T2toT2Type>() == 3u)) &&
-          tfel::typetraits::IsScalar<numeric_type<T2toT2Type>>::cond,
-      typename ComputeUnaryResult<
-          numeric_type<T2toT2Type>,
-          Power<getSpaceDimension<T2toT2Type>()>>::Result>
-  det(const T2toT2Type& s) {
-    using real = numeric_type<T2toT2Type>;
-    constexpr const auto N = getSpaceDimension<T2toT2Type>();
-    constexpr const auto ts = TensorDimeToSize<N>::value;
-    tmatrix<ts, ts, real> m;
-    TinyPermutation<ts> p;
-    tfel::fsalgo::copy<ts * ts>::exe(s.begin(), m.begin());
-    int r = 1;
-    try {
-      r = LUDecomp::exe(m, p);
-    } catch (...) {
-      return {};
+    constexpr auto N = getSpaceDimension<T2toT2Type>();
+    static_assert((N == 1) || (N == 2) || (N == 3));
+    if constexpr (N == 1) {
+      const auto a = s(0, 0);
+      const auto b = s(0, 1);
+      const auto c = s(0, 2);
+      const auto d = s(1, 0);
+      const auto e = s(1, 1);
+      const auto f = s(1, 2);
+      const auto g = s(2, 0);
+      const auto h = s(2, 1);
+      const auto i = s(2, 2);
+      return a * (e * i - f * h) + b * (f * g - d * i) + c * (d * h - e * g);
+    } else {
+      using real = numeric_type<T2toT2Type>;
+      constexpr const auto ts = TensorDimeToSize<N>::value;
+      tmatrix<ts, ts, real> m;
+      TinyPermutation<ts> p;
+      tfel::fsalgo::copy<ts * ts>::exe(s.begin(), m.begin());
+      int r = 1;
+      try {
+        r = LUDecomp::exe(m, p);
+      } catch (...) {
+        return {};
+      }
+      const auto v = DiagonalTermProduct<ts, real>::exe(m);
+      return r == 1 ? v : -v;
     }
-    const auto v = DiagonalTermProduct<ts, real>::exe(m);
-    return r == 1 ? v : -v;
   }  // end of det
 
 }  // end of namespace tfel::math

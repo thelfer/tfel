@@ -61,7 +61,7 @@ namespace tfel::math {
   std::enable_if_t<
       implementsST2toST2Concept<ST2toST2Type>() &&
           (getSpaceDimension<ST2toST2Type>() == 1u) &&
-          tfel::typetraits::IsScalar<numeric_type<ST2toST2Type>>::cond,
+          isScalar<numeric_type<ST2toST2Type>>(),
       typename ComputeUnaryResult<numeric_type<ST2toST2Type>,
                                   Power<3>>::Result>
   det(const ST2toST2Type& s) {
@@ -82,7 +82,7 @@ namespace tfel::math {
       implementsST2toST2Concept<ST2toST2Type>() &&
           ((getSpaceDimension<ST2toST2Type>() == 2u) ||
            (getSpaceDimension<ST2toST2Type>() == 3u)) &&
-          tfel::typetraits::IsScalar<numeric_type<ST2toST2Type>>::cond,
+          isScalar<numeric_type<ST2toST2Type>>(),
       typename ComputeUnaryResult<
           numeric_type<ST2toST2Type>,
           Power<getSpaceDimension<ST2toST2Type>()>>::Result>

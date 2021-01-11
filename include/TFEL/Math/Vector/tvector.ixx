@@ -28,51 +28,48 @@ namespace tfel::math {
 
   template <typename Child, unsigned short N, typename T>
   template <typename T2, typename Operation>
-  std::enable_if_t<tfel::typetraits::IsAssignableTo<T2, T>::cond, Child&>
-  tvector_base<Child, N, T>::operator=(
-      const Expr<tvector<N, T2>, Operation>& src) {
+  std::enable_if_t<isAssignableTo<T2, T>(), Child&> tvector_base<Child, N, T>::
+  operator=(const Expr<tvector<N, T2>, Operation>& src) {
     vectorToTab<N>::exe(src, static_cast<Child&>(*this));
     return static_cast<Child&>(*this);
   }
 
   template <typename Child, unsigned short N, typename T>
   template <typename T2>
-  std::enable_if_t<tfel::typetraits::IsAssignableTo<T2, T>::cond, Child&>
-  tvector_base<Child, N, T>::operator=(const tvector<N, T2>& src) {
+  std::enable_if_t<isAssignableTo<T2, T>(), Child&> tvector_base<Child, N, T>::
+  operator=(const tvector<N, T2>& src) {
     vectorToTab<N>::exe(src, static_cast<Child&>(*this));
     return static_cast<Child&>(*this);
   }
 
   template <typename Child, unsigned short N, typename T>
   template <typename T2, typename Operation>
-  std::enable_if_t<tfel::typetraits::IsAssignableTo<T2, T>::cond, Child&>
-  tvector_base<Child, N, T>::operator+=(
-      const Expr<tvector<N, T2>, Operation>& src) {
+  std::enable_if_t<isAssignableTo<T2, T>(), Child&> tvector_base<Child, N, T>::
+  operator+=(const Expr<tvector<N, T2>, Operation>& src) {
     VectorUtilities<N>::PlusEqual(static_cast<Child&>(*this), src);
     return static_cast<Child&>(*this);
   }
 
   template <typename Child, unsigned short N, typename T>
   template <typename T2, typename Operation>
-  std::enable_if_t<tfel::typetraits::IsAssignableTo<T2, T>::cond, Child&>
-  tvector_base<Child, N, T>::operator-=(
-      const Expr<tvector<N, T2>, Operation>& src) {
+  std::enable_if_t<isAssignableTo<T2, T>(), Child&> tvector_base<Child, N, T>::
+  operator-=(const Expr<tvector<N, T2>, Operation>& src) {
     VectorUtilities<N>::MinusEqual(static_cast<Child&>(*this), src);
     return static_cast<Child&>(*this);
   }
 
   template <typename Child, unsigned short N, typename T>
   template <typename T2>
-  std::enable_if_t<tfel::typetraits::IsAssignableTo<T2, T>::cond, Child&>
-  tvector_base<Child, N, T>::operator+=(const tvector<N, T2>& src) {
+  std::enable_if_t<isAssignableTo<T2, T>(), Child&> tvector_base<Child, N, T>::
+  operator+=(const tvector<N, T2>& src) {
     VectorUtilities<N>::PlusEqual(static_cast<Child&>(*this), src);
     return static_cast<Child&>(*this);
   }
 
   template <typename Child, unsigned short N, typename T>
   template <typename T2>
-  std::enable_if_t<tfel::typetraits::IsAssignableTo<T2, T>::cond, Child&>
-  tvector_base<Child, N, T>::operator-=(const tvector<N, T2>& src) {
+  std::enable_if_t<isAssignableTo<T2, T>(), Child&> tvector_base<Child, N, T>::
+  operator-=(const tvector<N, T2>& src) {
     VectorUtilities<N>::MinusEqual(static_cast<Child&>(*this), src);
     return static_cast<Child&>(*this);
   }
@@ -94,51 +91,6 @@ namespace tfel::math {
     constexpr const auto one = base_type<T2>(1);
     VectorUtilities<N>::scale(static_cast<Child&>(*this), one / s);
     return static_cast<Child&>(*this);
-  }
-
-  template <unsigned short N, typename T>
-  constexpr tvector<N, T>::tvector() {}
-
-  template <unsigned short N, typename T>
-  template <
-      typename T2,
-      std::enable_if_t<tfel::typetraits::IsAssignableTo<T2, T>::cond, bool>>
-  constexpr tvector<N, T>::tvector(const T2& init) : fsarray<N, T>(init) {}
-
-  template <unsigned short N, typename T>
-  template <
-      typename T2,
-      std::enable_if_t<tfel::typetraits::IsAssignableTo<T2, T>::cond, bool>>
-  constexpr tvector<N, T>::tvector(const std::initializer_list<T2>& init)
-      : fsarray<N, T>(init) {}
-
-  template <unsigned short N, typename T>
-  tvector<N, T>::tvector(const T* const init) {
-    tfel::fsalgo::copy<N>::exe(init, this->v);
-  }
-
-  template <unsigned short N, typename T>
-  template <typename T2, typename Operation>
-  tvector<N, T>::tvector(const Expr<tvector<N, T2>, Operation>& src) {
-    static_assert(tfel::typetraits::IsAssignableTo<T2, T>::cond);
-    vectorToTab<N>::exe(src, this->v);
-  }  // end of tvector<N,T>::tvector(const Expr<tvector<N,T2>,Operation>&)
-
-  template <unsigned short N, typename T>
-  constexpr const T& tvector<N, T>::operator()(const unsigned short i) const
-      noexcept {
-    return this->v[i];
-  }
-
-  template <unsigned short N, typename T>
-  T& tvector<N, T>::operator()(const unsigned short i) noexcept {
-    return this->v[i];
-  }
-
-  template <unsigned short N, typename T>
-  constexpr typename tvector<N, T>::RunTimeProperties
-  tvector<N, T>::getRunTimeProperties() const noexcept {
-    return RunTimeProperties();
   }
 
   template <unsigned short N, typename T>
@@ -184,7 +136,7 @@ namespace tfel::math {
   }  // end of tvector<N,T>::slice
 
   template <unsigned short N, typename T, typename OutputIterator>
-  std::enable_if_t<tfel::typetraits::IsScalar<T>::cond, void>
+  std::enable_if_t<isScalar<T>(), void>
   exportToBaseTypeArray(const tvector<N, T>& v, OutputIterator p) {
     typedef tfel::fsalgo::copy<N> Copy;
     typedef base_type<T> base;
@@ -195,7 +147,7 @@ namespace tfel::math {
 
   // Norm2
   template <unsigned short N, typename T>
-  std::enable_if_t<tfel::typetraits::IsScalar<T>::cond,
+  std::enable_if_t<isScalar<T>(),
                    typename tfel::typetraits::RealPartType<T>::type>
   norm(const tvector<N, T>& vec) {
     typedef result_type<T, T, OpMult> squareT;

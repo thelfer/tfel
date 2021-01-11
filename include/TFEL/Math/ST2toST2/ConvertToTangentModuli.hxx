@@ -25,20 +25,17 @@
 namespace tfel::math {
 
   template <typename T2toST2Type, typename TensorType>
-  typename std::enable_if<
-      ((getSpaceDimension<T2toST2Type>() == 1u) &&
-       (getSpaceDimension<TensorType>() == 1u) &&
-       implementsT2toST2Concept<T2toST2Type>() &&
-       implementsTensorConcept<TensorType>()),
-      st2tost2<
-          1u,
-          typename ResultType<numeric_type<T2toST2Type>,
-                              numeric_type<TensorType>,
-                              OpMult>::type>>::type
+  typename std::enable_if<((getSpaceDimension<T2toST2Type>() == 1u) &&
+                           (getSpaceDimension<TensorType>() == 1u) &&
+                           implementsT2toST2Concept<T2toST2Type>() &&
+                           implementsTensorConcept<TensorType>()),
+                          st2tost2<1u,
+                                   result_type<numeric_type<T2toST2Type>,
+                                               numeric_type<TensorType>,
+                                               OpMult>>>::type
   convertToTangentModuli(const T2toST2Type& K, const TensorType& F) {
-    st2tost2<
-        1u, typename ResultType<numeric_type<T2toST2Type>,
-                                numeric_type<TensorType>, OpMult>::type>
+    st2tost2<1u, result_type<numeric_type<T2toST2Type>,
+                             numeric_type<TensorType>, OpMult>>
         C;
     C(0, 0) = K(0, 0) * F(0);
     C(0, 1) = K(0, 1) * F(1);
@@ -53,20 +50,17 @@ namespace tfel::math {
   }  // end of convertToTangentModuli
 
   template <typename T2toST2Type, typename TensorType>
-  typename std::enable_if<
-      ((getSpaceDimension<T2toST2Type>() == 2u) &&
-       (getSpaceDimension<TensorType>() == 2u) &&
-       implementsT2toST2Concept<T2toST2Type>() &&
-       implementsTensorConcept<TensorType>()),
-      st2tost2<
-          2u,
-          typename ResultType<numeric_type<T2toST2Type>,
-                              numeric_type<TensorType>,
-                              OpMult>::type>>::type
+  typename std::enable_if<((getSpaceDimension<T2toST2Type>() == 2u) &&
+                           (getSpaceDimension<TensorType>() == 2u) &&
+                           implementsT2toST2Concept<T2toST2Type>() &&
+                           implementsTensorConcept<TensorType>()),
+                          st2tost2<2u,
+                                   result_type<numeric_type<T2toST2Type>,
+                                               numeric_type<TensorType>,
+                                               OpMult>>>::type
   convertToTangentModuli(const T2toST2Type& K, const TensorType& F) {
-    using res =
-        typename ResultType<numeric_type<T2toST2Type>,
-                            numeric_type<TensorType>, OpMult>::type;
+    using res = result_type<numeric_type<T2toST2Type>, numeric_type<TensorType>,
+                            OpMult>;
     TFEL_CONSTEXPR const auto icste2 = Cste<res>::isqrt2 / 2;
     st2tost2<2u, res> C;
     C(0, 0) = K(0, 0) * F(0) + K(0, 3) * F(3);
@@ -97,20 +91,17 @@ namespace tfel::math {
   }  // end of convertToTangentModuli
 
   template <typename T2toST2Type, typename TensorType>
-  typename std::enable_if<
-      ((getSpaceDimension<T2toST2Type>() == 3u) &&
-       (getSpaceDimension<TensorType>() == 3u) &&
-       implementsT2toST2Concept<T2toST2Type>() &&
-       implementsTensorConcept<TensorType>()),
-      st2tost2<
-          3u,
-          typename ResultType<numeric_type<T2toST2Type>,
-                              numeric_type<TensorType>,
-                              OpMult>::type>>::type
+  typename std::enable_if<((getSpaceDimension<T2toST2Type>() == 3u) &&
+                           (getSpaceDimension<TensorType>() == 3u) &&
+                           implementsT2toST2Concept<T2toST2Type>() &&
+                           implementsTensorConcept<TensorType>()),
+                          st2tost2<3u,
+                                   result_type<numeric_type<T2toST2Type>,
+                                               numeric_type<TensorType>,
+                                               OpMult>>>::type
   convertToTangentModuli(const T2toST2Type& K, const TensorType& F) {
-    using res =
-        typename ResultType<numeric_type<T2toST2Type>,
-                            numeric_type<TensorType>, OpMult>::type;
+    using res = result_type<numeric_type<T2toST2Type>, numeric_type<TensorType>,
+                            OpMult>;
     TFEL_CONSTEXPR const auto icste2 = Cste<res>::isqrt2 / 2;
     st2tost2<3u, res> C;
     C(0, 0) = K(0, 0) * F(0) + K(0, 3) * F(3) + K(0, 5) * F(5);

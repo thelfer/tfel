@@ -47,9 +47,8 @@ namespace tfel::math {
       static_assert(implementsTensorConcept<TensorType>());
       static_assert(getSpaceDimension<T2toT2ResultType>() ==
                     getSpaceDimension<TensorType>());
-      static_assert(tfel::typetraits::IsAssignableTo<
-                    numeric_type<TensorType>,
-                    numeric_type<T2toT2ResultType>>::cond);
+      static_assert(isAssignableTo<numeric_type<TensorType>,
+                                   numeric_type<T2toT2ResultType>>());
       this->v[0] = A[0];
       this->v[4] = A[1];
       this->v[8] = A[2];
@@ -64,18 +63,16 @@ namespace tfel::math {
     template <typename TensorType, typename T2toT2Type>
     Expr(const TensorType& A, const T2toT2Type& C) {
       static_assert(implementsTensorConcept<TensorType>());
-      static_assert(
-          implementsT2toT2Concept<T2toT2Type>());
+      static_assert(implementsT2toT2Concept<T2toT2Type>());
       static_assert(getSpaceDimension<T2toT2ResultType>() ==
                     getSpaceDimension<TensorType>());
       static_assert(getSpaceDimension<T2toT2Type>() ==
                     getSpaceDimension<TensorType>());
       static_assert(
-          tfel::typetraits::IsAssignableTo<
-              typename ComputeBinaryResult<
-                  numeric_type<TensorType>,
-                  numeric_type<T2toT2Type>, OpMult>::Result,
-              numeric_type<T2toT2ResultType>>::cond);
+          isAssignableTo<typename ComputeBinaryResult<numeric_type<TensorType>,
+                                                      numeric_type<T2toT2Type>,
+                                                      OpMult>::Result,
+                         numeric_type<T2toT2ResultType>>());
       this->v[0] = C(0, 0) * A[0];
       this->v[1] = C(0, 1) * A[0];
       this->v[2] = C(0, 2) * A[0];
@@ -127,9 +124,8 @@ namespace tfel::math {
       static_assert(implementsTensorConcept<TensorType>());
       static_assert(getSpaceDimension<T2toT2ResultType>() ==
                     getSpaceDimension<TensorType>());
-      static_assert(tfel::typetraits::IsAssignableTo<
-                    numeric_type<TensorType>,
-                    numeric_type<T2toT2ResultType>>::cond);
+      static_assert(isAssignableTo<numeric_type<TensorType>,
+                                   numeric_type<T2toT2ResultType>>());
       this->v[0] = A[0];
       this->v[4] = A[3];
       this->v[1] = this->v[2] = this->v[3] = value_type(0);
@@ -152,18 +148,16 @@ namespace tfel::math {
     template <typename TensorType, typename T2toT2Type>
     Expr(const TensorType& A, const T2toT2Type& C) {
       static_assert(implementsTensorConcept<TensorType>());
-      static_assert(
-          implementsT2toT2Concept<T2toT2Type>());
+      static_assert(implementsT2toT2Concept<T2toT2Type>());
       static_assert(getSpaceDimension<T2toT2ResultType>() ==
                     getSpaceDimension<TensorType>());
       static_assert(getSpaceDimension<T2toT2Type>() ==
                     getSpaceDimension<TensorType>());
-      static_assert
-          (tfel::typetraits::IsAssignableTo<
-              typename ComputeBinaryResult<
-                  numeric_type<TensorType>,
-                  numeric_type<T2toT2Type>, OpMult>::Result,
-              numeric_type<T2toT2ResultType>>::cond);
+      static_assert(
+          isAssignableTo<typename ComputeBinaryResult<numeric_type<TensorType>,
+                                                      numeric_type<T2toT2Type>,
+                                                      OpMult>::Result,
+                         numeric_type<T2toT2ResultType>>());
       this->v[0] = C(4, 0) * A[3] + C(0, 0) * A[0];
       this->v[1] = C(4, 1) * A[3] + C(0, 1) * A[0];
       this->v[2] = C(4, 2) * A[3] + C(0, 2) * A[0];
@@ -231,9 +225,8 @@ namespace tfel::math {
       static_assert(implementsTensorConcept<TensorType>());
       static_assert(getSpaceDimension<T2toT2ResultType>() ==
                     getSpaceDimension<TensorType>());
-      static_assert(tfel::typetraits::IsAssignableTo<
-                    numeric_type<TensorType>,
-                    numeric_type<T2toT2ResultType>>::cond);
+      static_assert(isAssignableTo<numeric_type<TensorType>,
+                                   numeric_type<T2toT2ResultType>>());
       this->v[0] = A[0];
       this->v[4] = A[3];
       this->v[6] = A[5];
@@ -287,18 +280,16 @@ namespace tfel::math {
     template <typename TensorType, typename T2toT2Type>
     Expr(const TensorType& A, const T2toT2Type& C) {
       static_assert(implementsTensorConcept<TensorType>());
-      static_assert(
-          implementsT2toT2Concept<T2toT2Type>());
+      static_assert(implementsT2toT2Concept<T2toT2Type>());
       static_assert(getSpaceDimension<T2toT2ResultType>() ==
                     getSpaceDimension<TensorType>());
       static_assert(getSpaceDimension<T2toT2Type>() ==
                     getSpaceDimension<TensorType>());
       static_assert(
-          tfel::typetraits::IsAssignableTo<
-              typename ComputeBinaryResult<
-                  numeric_type<TensorType>,
-                  numeric_type<T2toT2Type>, OpMult>::Result,
-              numeric_type<T2toT2ResultType>>::cond);
+          isAssignableTo<typename ComputeBinaryResult<numeric_type<TensorType>,
+                                                      numeric_type<T2toT2Type>,
+                                                      OpMult>::Result,
+                         numeric_type<T2toT2ResultType>>());
       this->v[0] = C(6, 0) * A[5] + C(4, 0) * A[3] + C(0, 0) * A[0];
       this->v[1] = C(6, 1) * A[5] + C(4, 1) * A[3] + C(0, 1) * A[0];
       this->v[2] = C(6, 2) * A[5] + C(4, 2) * A[3] + C(0, 2) * A[0];

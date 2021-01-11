@@ -19,10 +19,10 @@
 #include <iterator>
 #include <type_traits>
 #include "TFEL/Config/TFELConfig.hxx"
-#include "TFEL/TypeTraits/IsScalar.hxx"
 #include "TFEL/TypeTraits/IsAssignableTo.hxx"
 #include "TFEL/TypeTraits/IsSafelyReinterpretCastableTo.hxx"
 #include "TFEL/Math/power.hxx"
+#include "TFEL/Math/General/MathObjectTraits.hxx"
 #include "TFEL/Math/General/BasicOperations.hxx"
 #include "TFEL/Math/General/EmptyRunTimeProperties.hxx"
 #include "TFEL/Math/General/DerivativeType.hxx"
@@ -51,9 +51,8 @@ namespace tfel::math {
                                   ScalarType> {
     static_assert(implementsStensorConcept<StensorType>(),
                   "StensorType is not a symmetric tensor");
-    static_assert(tfel::typetraits::IsScalar<ScalarType>::cond,
-                  "ScalarType is not a scalar");
-    static_assert(tfel::typetraits::IsScalar<numeric_type<StensorType>>::cond,
+    static_assert(isScalar<ScalarType>(), "ScalarType is not a scalar");
+    static_assert(isScalar<numeric_type<StensorType>>(),
                   "the symmetric tensor type does not hold a scalar");
     //! \brief result
     using type =
@@ -71,8 +70,7 @@ namespace tfel::math {
                                   StensorType> {
     static_assert(implementsStensorConcept<StensorType>(),
                   "StensorType is not a symmetric tensor");
-    static_assert(tfel::typetraits::IsScalar<ScalarType>::cond,
-                  "ScalarType is not a scalar");
+    static_assert(isScalar<ScalarType>(), "ScalarType is not a scalar");
     //! \brief result
     using type =
         stensor<getSpaceDimension<StensorType>(),
@@ -92,28 +90,25 @@ namespace tfel::math {
      */
     template <typename StensorType>
     TFEL_MATH_INLINE std::enable_if_t<
-        implementsStensorConcept<StensorType>() &&
-            getSpaceDimension<Child>() == getSpaceDimension<StensorType>() &&
-            tfel::typetraits::IsAssignableTo<numeric_type<StensorType>,
-                                             numeric_type<Child>>::cond,
+        (implementsStensorConcept<StensorType>() &&
+         getSpaceDimension<Child>() == getSpaceDimension<StensorType>() &&
+         isAssignableTo<numeric_type<StensorType>, numeric_type<Child>>()),
         Child&>
     operator=(const StensorType&);
     //! Assignement operator
     template <typename StensorType>
     TFEL_MATH_INLINE std::enable_if_t<
-        implementsStensorConcept<StensorType>() &&
-            getSpaceDimension<Child>() == getSpaceDimension<StensorType>() &&
-            tfel::typetraits::IsAssignableTo<numeric_type<StensorType>,
-                                             numeric_type<Child>>::cond,
+        (implementsStensorConcept<StensorType>() &&
+         getSpaceDimension<Child>() == getSpaceDimension<StensorType>() &&
+         isAssignableTo<numeric_type<StensorType>, numeric_type<Child>>()),
         Child&>
     operator+=(const StensorType&);
     //! Assignement operator
     template <typename StensorType>
     TFEL_MATH_INLINE std::enable_if_t<
-        implementsStensorConcept<StensorType>() &&
-            getSpaceDimension<Child>() == getSpaceDimension<StensorType>() &&
-            tfel::typetraits::IsAssignableTo<numeric_type<StensorType>,
-                                             numeric_type<Child>>::cond,
+        (implementsStensorConcept<StensorType>() &&
+         getSpaceDimension<Child>() == getSpaceDimension<StensorType>() &&
+         isAssignableTo<numeric_type<StensorType>, numeric_type<Child>>()),
         Child&>
     operator-=(const StensorType&);
     /*!
@@ -121,10 +116,9 @@ namespace tfel::math {
      */
     template <typename T2>
     TFEL_MATH_INLINE std::enable_if_t<
-        tfel::typetraits::IsScalar<T2>::cond &&
-            std::is_same<
-                typename ResultType<numeric_type<Child>, T2, OpMult>::type,
-                numeric_type<Child>>::value,
+        isScalar<T2>() &&
+            std::is_same<result_type<numeric_type<Child>, T2, OpMult>,
+                         numeric_type<Child>>::value,
         Child&>
     operator*=(const T2);
     /*!
@@ -132,10 +126,9 @@ namespace tfel::math {
      */
     template <typename T2>
     TFEL_MATH_INLINE std::enable_if_t<
-        tfel::typetraits::IsScalar<T2>::cond &&
-            std::is_same<
-                typename ResultType<numeric_type<Child>, T2, OpDiv>::type,
-                numeric_type<Child>>::value,
+        isScalar<T2>() &&
+            std::is_same<result_type<numeric_type<Child>, T2, OpDiv>,
+                         numeric_type<Child>>::value,
         Child&>
     operator/=(const T2);
   };  // end of struct stensor_base
@@ -170,71 +163,31 @@ namespace tfel::math {
     };  // end of EigenValuesOrdering
   };    // end of struct stensor_common
 
-  template <unsigned short N, typename T>
-  struct TFEL_VISIBILITY_LOCAL stensor
-      : public StensorConcept<stensor<N, T>>,
-        public stensor_common,
-        public stensor_base<stensor<N, T>>,
-        public fsarray<StensorDimeToSize<N>::value, T> {
+  template <unsigned short N, typename ValueType>
+  struct stensor
+      : StensorConcept<stensor<N, ValueType>>,
+        stensor_common,
+        GenericFixedSizeArray<
+            stensor<N, ValueType>,
+            FixedSizeVectorPolicy<StensorDimeToSize<N>::value, ValueType>> {
     static_assert((N == 1u) || (N == 2u) || (N == 3u));
-    //! This is a StensorConcept requirement.
-    typedef EmptyRunTimeProperties RunTimeProperties;
-    //! \brief default constructor
-    TFEL_MATH_INLINE explicit constexpr stensor() = default;
-    /*!
-     * \brief Default Constructor
-     * \param[in] init: value used to initialise the components of the stensor
-     */
-    template <typename T2,
-              std::enable_if_t<tfel::typetraits::IsAssignableTo<T2, T>::cond,
-                               bool> = true>
-    TFEL_MATH_INLINE explicit constexpr stensor(const T2&);
-    /*!
-     * \brief Default Constructor
-     * \param[in] init: values used to initialise the components of the vector
-     */
-    template <typename T2,
-              std::enable_if_t<tfel::typetraits::IsAssignableTo<T2, T>::cond,
-                               bool> = true>
-    TFEL_MATH_INLINE constexpr stensor(const std::initializer_list<T2>&);
-    /*!
-     * \brief Default Constructor.
-     * \param const base_type<T>*
-     * const, pointer to a tabular used to initialise the components
-     * of the stensor. This tabular is left unchanged.
-     */
-    template <typename InputIterator,
-              std::enable_if_t<std::is_same_v<typename std::iterator_traits<
-                                                  InputIterator>::value_type,
-                                              base_type<T>>,
-                               bool> = true>
-    TFEL_MATH_INLINE explicit stensor(const InputIterator);
-    //! \brief copy constructor
-    TFEL_MATH_INLINE constexpr stensor(const stensor<N, T>&) = default;
-    /*!
-     * \brief constructor
-     */
-    template <typename T2,
-              std::enable_if_t<tfel::typetraits::IsAssignableTo<T2, T>::cond,
-                               bool> = true>
-    TFEL_MATH_INLINE constexpr stensor(const stensor<N, T2>&);
-    /*!
-     * copy from stensor expression template object
-     */
-    template <typename T2,
-              typename Operation,
-              std::enable_if_t<tfel::typetraits::IsAssignableTo<T2, T>::cond,
-                               bool> = true>
-    TFEL_MATH_INLINE stensor(const Expr<stensor<N, T2>, Operation>& src);
-    //! copy assignement operator
-    stensor& operator=(const stensor&) = default;
+    //! \brief a simple alias
+    using GenericFixedSizeArrayBase = GenericFixedSizeArray<
+        stensor<N, ValueType>,
+        FixedSizeVectorPolicy<StensorDimeToSize<N>::value, ValueType>>;
+    //
+    TFEL_MATH_FIXED_SIZE_ARRAY_DEFAULT_METHODS(stensor,
+                                               GenericFixedSizeArrayBase);
+    // inheriting GenericFixedSizeArray' access operators
+    using GenericFixedSizeArrayBase::operator[];
+    using GenericFixedSizeArrayBase::operator();
     /*!
      * \brief Import from Voigt
      */
     template <typename InputIterator>
     TFEL_MATH_INLINE2 std::enable_if_t<
         std::is_same<typename std::iterator_traits<InputIterator>::value_type,
-                     base_type<T>>::value,
+                     base_type<ValueType>>::value,
         void>
     importVoigt(const InputIterator);
     /*!
@@ -243,7 +196,7 @@ namespace tfel::math {
     template <typename InputIterator>
     TFEL_MATH_INLINE2 std::enable_if_t<
         std::is_same<typename std::iterator_traits<InputIterator>::value_type,
-                     base_type<T>>::value,
+                     base_type<ValueType>>::value,
         void>
     importTab(const InputIterator);
     /*!
@@ -252,31 +205,27 @@ namespace tfel::math {
     template <typename InputIterator>
     TFEL_MATH_INLINE2 std::enable_if_t<
         std::is_same<typename std::iterator_traits<InputIterator>::value_type,
-                     base_type<T>>::value,
+                     base_type<ValueType>>::value,
         void>
     import(const InputIterator);
     /*!
      * Export to Tab (Voigt notations for stresses)
      */
     template <typename T2>
-    TFEL_MATH_INLINE2
-        std::enable_if_t<tfel::typetraits::IsSafelyReinterpretCastableTo<
-                             T2,
-                             base_type<T>>::cond,
-                         void>
-        exportTab(T2* const) const;
+    TFEL_MATH_INLINE2 std::enable_if_t<
+        tfel::typetraits::
+            IsSafelyReinterpretCastableTo<T2, base_type<ValueType>>::cond,
+        void>
+    exportTab(T2* const) const;
     /*!
      * Write to Tab
      */
     template <typename T2>
-    TFEL_MATH_INLINE2
-        std::enable_if_t<tfel::typetraits::IsSafelyReinterpretCastableTo<
-                             T2,
-                             base_type<T>>::cond,
-                         void>
-        write(T2* const) const;
-    //! using stensor_base::operator=
-    using stensor_base<stensor>::operator=;
+    TFEL_MATH_INLINE2 std::enable_if_t<
+        tfel::typetraits::
+            IsSafelyReinterpretCastableTo<T2, base_type<ValueType>>::cond,
+        void>
+    write(T2* const) const;
     /*!
      * compute eigenvalues
      * \tparam     es:  eigen solver
@@ -286,9 +235,9 @@ namespace tfel::math {
      * \param[in]  b:   refine eigenvalues
      */
     template <EigenSolver = TFELEIGENSOLVER>
-    TFEL_MATH_INLINE2 void computeEigenValues(T&,
-                                              T&,
-                                              T&,
+    TFEL_MATH_INLINE2 void computeEigenValues(ValueType&,
+                                              ValueType&,
+                                              ValueType&,
                                               const bool = false) const;
     /*!
      * compute eigenvalues
@@ -297,7 +246,7 @@ namespace tfel::math {
      * \param[in]  b:  refine eigenvalues
      */
     template <EigenSolver = TFELEIGENSOLVER>
-    TFEL_MATH_INLINE2 void computeEigenValues(tvector<3u, T>&,
+    TFEL_MATH_INLINE2 void computeEigenValues(tvector<3u, ValueType>&,
                                               const bool = false) const;
     /*!
      * compute eigenvalues
@@ -306,7 +255,7 @@ namespace tfel::math {
      * \return eigen values
      */
     template <EigenSolver = TFELEIGENSOLVER>
-    TFEL_MATH_INLINE2 tvector<3u, T> computeEigenValues(
+    TFEL_MATH_INLINE2 tvector<3u, ValueType> computeEigenValues(
         const bool = false) const;
     /*!
      * compute eigenvalues
@@ -318,8 +267,11 @@ namespace tfel::math {
      * \param[in]  b:   refine eigenvalues
      */
     template <EigenSolver = TFELEIGENSOLVER>
-    TFEL_MATH_INLINE2 void computeEigenValues(
-        T&, T&, T&, const EigenValuesOrdering, const bool = false) const;
+    TFEL_MATH_INLINE2 void computeEigenValues(ValueType&,
+                                              ValueType&,
+                                              ValueType&,
+                                              const EigenValuesOrdering,
+                                              const bool = false) const;
     /*!
      * compute eigenvalues
      * \tparam     es: eigen solver
@@ -328,7 +280,7 @@ namespace tfel::math {
      * \param[in]  b:  refine eigenvalues
      */
     template <EigenSolver = TFELEIGENSOLVER>
-    TFEL_MATH_INLINE2 void computeEigenValues(tvector<3u, T>&,
+    TFEL_MATH_INLINE2 void computeEigenValues(tvector<3u, ValueType>&,
                                               const EigenValuesOrdering,
                                               const bool = false) const;
     /*!
@@ -339,7 +291,7 @@ namespace tfel::math {
      * \return eigen values
      */
     template <EigenSolver = TFELEIGENSOLVER>
-    TFEL_MATH_INLINE2 tvector<3u, T> computeEigenValues(
+    TFEL_MATH_INLINE2 tvector<3u, ValueType> computeEigenValues(
         const EigenValuesOrdering, const bool = false) const;
     /*!
      * compute eigenvectors and eigenvalues
@@ -347,8 +299,9 @@ namespace tfel::math {
      * \param[in] b:  refine eigenvalues
      */
     template <EigenSolver = TFELEIGENSOLVER>
-    TFEL_MATH_INLINE2 std::tuple<tvector<3u, T>, rotation_matrix<T>>
-    computeEigenVectors(const bool = false) const;
+    TFEL_MATH_INLINE2
+        std::tuple<tvector<3u, ValueType>, rotation_matrix<ValueType>>
+        computeEigenVectors(const bool = false) const;
     /*!
      * compute eigenvectors and eigenvalues
      * \tparam     es: eigen solver
@@ -357,8 +310,8 @@ namespace tfel::math {
      * \param[in]  b  : refine eigenvalues
      */
     template <EigenSolver = TFELEIGENSOLVER>
-    TFEL_MATH_INLINE2 void computeEigenVectors(tvector<3u, T>&,
-                                               rotation_matrix<T>&,
+    TFEL_MATH_INLINE2 void computeEigenVectors(tvector<3u, ValueType>&,
+                                               rotation_matrix<ValueType>&,
                                                const bool = false) const;
     /*!
      * compute eigenvectors and eigenvalues
@@ -367,8 +320,10 @@ namespace tfel::math {
      * \param[in] b: refine eigenvalues
      */
     template <EigenSolver = TFELEIGENSOLVER>
-    TFEL_MATH_INLINE2 std::tuple<tvector<3u, T>, rotation_matrix<T>>
-    computeEigenVectors(const EigenValuesOrdering, const bool = false) const;
+    TFEL_MATH_INLINE2
+        std::tuple<tvector<3u, ValueType>, rotation_matrix<ValueType>>
+        computeEigenVectors(const EigenValuesOrdering,
+                            const bool = false) const;
     /*!
      * compute eigenvectors and eigenvalues
      * \tparam     es: eigen solver
@@ -378,8 +333,8 @@ namespace tfel::math {
      * \param[in]  b:  refine eigenvalues
      */
     template <EigenSolver = TFELEIGENSOLVER>
-    TFEL_MATH_INLINE2 void computeEigenVectors(tvector<3u, T>&,
-                                               rotation_matrix<T>&,
+    TFEL_MATH_INLINE2 void computeEigenVectors(tvector<3u, ValueType>&,
+                                               rotation_matrix<ValueType>&,
                                                const EigenValuesOrdering,
                                                const bool = false) const;
     /*!
@@ -394,27 +349,14 @@ namespace tfel::math {
      * \param[in]  vp : eigenvalue
      */
     template <typename VectorType>
-    TFEL_MATH_INLINE2 bool computeEigenVector(VectorType&, const T) const;
+    TFEL_MATH_INLINE2 bool computeEigenVector(VectorType&,
+                                              const ValueType) const;
     /*!
      * change basis
      */
-    TFEL_MATH_INLINE2 void changeBasis(const rotation_matrix<T>&);
-    /*!
-     * Return Identity
-     */
-    TFEL_MATH_INLINE static constexpr stensor<N, T> Id();
-
-    TFEL_MATH_INLINE constexpr const T& operator()(
-        const unsigned short) const noexcept;
-
-    TFEL_MATH_INLINE T& operator()(const unsigned short) noexcept;
-    // fsarray access operator
-    using fsarray<StensorDimeToSize<N>::value, T>::operator[];
-    /*!
-     * \return the RunTimeProperties of the stensor
-     */
-    constexpr TFEL_MATH_INLINE RunTimeProperties
-    getRunTimeProperties() const noexcept;
+    TFEL_MATH_INLINE2 void changeBasis(const rotation_matrix<ValueType>&);
+    //! \return the identity
+    TFEL_MATH_INLINE static constexpr stensor<N, base_type<ValueType>> Id();
     /*!
      * copy the value from a container
      */
@@ -426,10 +368,10 @@ namespace tfel::math {
      * \param[in] m : matrix
      */
     template <typename MatrixType>
-    static TFEL_MATH_INLINE2 std::enable_if_t<
-        tfel::typetraits::IsAssignableTo<numeric_type<MatrixType>, T>::cond,
-        stensor<N, T>>
-    buildFromMatrix(const MatrixType&);
+    static TFEL_MATH_INLINE2
+        std::enable_if_t<isAssignableTo<numeric_type<MatrixType>, ValueType>(),
+                         stensor<N, ValueType>>
+        buildFromMatrix(const MatrixType&);
 
     /*!
      * build a symmetric tensor from the diadic product of a vector with
@@ -438,11 +380,10 @@ namespace tfel::math {
      */
     template <typename VectorType>
     static TFEL_MATH_INLINE2 std::enable_if_t<
-        tfel::typetraits::IsAssignableTo<
-            typename ComputeUnaryResult<numeric_type<VectorType>,
-                                        Power<2>>::Result,
-            T>::cond,
-        stensor<N, T>>
+        isAssignableTo<typename ComputeUnaryResult<numeric_type<VectorType>,
+                                                   Power<2>>::Result,
+                       ValueType>(),
+        stensor<N, ValueType>>
     buildFromVectorDiadicProduct(const VectorType&);
 
     /*!
@@ -453,12 +394,11 @@ namespace tfel::math {
      */
     template <typename VectorType, typename VectorType2>
     static TFEL_MATH_INLINE2 std::enable_if_t<
-        tfel::typetraits::IsAssignableTo<
-            typename ComputeBinaryResult<numeric_type<VectorType>,
-                                         numeric_type<VectorType2>,
-                                         OpMult>::Result,
-            T>::cond,
-        stensor<N, T>>
+        isAssignableTo<BinaryOperationResult<numeric_type<VectorType>,
+                                             numeric_type<VectorType2>,
+                                             OpMult>,
+                       ValueType>(),
+        stensor<N, ValueType>>
     buildFromVectorsSymmetricDiadicProduct(const VectorType&,
                                            const VectorType2&);
 
@@ -469,16 +409,19 @@ namespace tfel::math {
      * \param[in] v2 : third  eigen value
      * \param[in] m  : matrix containing the eigen vectors
      */
-    static stensor<N, T> buildFromEigenValuesAndVectors(
-        const T&, const T&, const T&, const rotation_matrix<T>&);
+    static stensor<N, ValueType> buildFromEigenValuesAndVectors(
+        const ValueType&,
+        const ValueType&,
+        const ValueType&,
+        const rotation_matrix<ValueType>&);
 
     /*!
      * build a symmetric tensor from its eigen values and vectors
      * \param[in] vp : eigen values
      * \param[in] m  : matrix containing the eigen vectors
      */
-    static stensor<N, T> buildFromEigenValuesAndVectors(
-        const tvector<3u, T>&, const rotation_matrix<T>&);
+    static stensor<N, ValueType> buildFromEigenValuesAndVectors(
+        const tvector<3u, ValueType>&, const rotation_matrix<ValueType>&);
 
     /*!
      * build the logarithm of a symmetric tensor given through its eigen
@@ -488,8 +431,11 @@ namespace tfel::math {
      * \param[in] v2 : third  eigen value
      * \param[in] m  : matrix containing the eigen vectors
      */
-    static stensor<N, T> buildLogarithmFromEigenValuesAndVectors(
-        const T&, const T&, const T&, const rotation_matrix<T>&);
+    static stensor<N, ValueType> buildLogarithmFromEigenValuesAndVectors(
+        const ValueType&,
+        const ValueType&,
+        const ValueType&,
+        const rotation_matrix<ValueType>&);
 
     /*!
      * build the logarithm of a symmetric tensor given through its eigen
@@ -497,8 +443,8 @@ namespace tfel::math {
      * \param[in] vp : eigen values
      * \param[in] m  : matrix containing the eigen vectors
      */
-    static stensor<N, T> buildLogarithmFromEigenValuesAndVectors(
-        const tvector<3u, T>&, const rotation_matrix<T>&);
+    static stensor<N, ValueType> buildLogarithmFromEigenValuesAndVectors(
+        const tvector<3u, ValueType>&, const rotation_matrix<ValueType>&);
 
     /*!
      * build the absolute value of a symmetric tensor given through its eigen
@@ -508,8 +454,11 @@ namespace tfel::math {
      * \param[in] v2 : third  eigen value
      * \param[in] m  : matrix containing the eigen vectors
      */
-    static stensor<N, T> buildAbsoluteValueFromEigenValuesAndVectors(
-        const T&, const T&, const T&, const rotation_matrix<T>&);
+    static stensor<N, ValueType> buildAbsoluteValueFromEigenValuesAndVectors(
+        const ValueType&,
+        const ValueType&,
+        const ValueType&,
+        const rotation_matrix<ValueType>&);
 
     /*!
      * build the absolute value of a symmetric tensor given through its eigen
@@ -517,8 +466,8 @@ namespace tfel::math {
      * \param[in] vp : eigen values
      * \param[in] m  : matrix containing the eigen vectors
      */
-    static stensor<N, T> buildAbsoluteValueFromEigenValuesAndVectors(
-        const tvector<3u, T>&, const rotation_matrix<T>&);
+    static stensor<N, ValueType> buildAbsoluteValueFromEigenValuesAndVectors(
+        const tvector<3u, ValueType>&, const rotation_matrix<ValueType>&);
 
     /*!
      * build the positive part of a symmetric tensor given through its eigen
@@ -528,16 +477,19 @@ namespace tfel::math {
      * \param[in] v2 : third  eigen value
      * \param[in] m  : matrix containing the eigen vectors
      */
-    static stensor<N, T> buildPositivePartFromEigenValuesAndVectors(
-        const T&, const T&, const T&, const rotation_matrix<T>&);
+    static stensor<N, ValueType> buildPositivePartFromEigenValuesAndVectors(
+        const ValueType&,
+        const ValueType&,
+        const ValueType&,
+        const rotation_matrix<ValueType>&);
     /*!
      * build the positive part of a symmetric tensor given through its eigen
      * values and vectors
      * \param[in] vp : eigen values
      * \param[in] m  : matrix containing the eigen vectors
      */
-    static stensor<N, T> buildPositivePartFromEigenValuesAndVectors(
-        const tvector<3u, T>&, const rotation_matrix<T>&);
+    static stensor<N, ValueType> buildPositivePartFromEigenValuesAndVectors(
+        const tvector<3u, ValueType>&, const rotation_matrix<ValueType>&);
     /*!
      * build the positive part of a symmetric tensor given through its eigen
      * values and vectors
@@ -546,8 +498,11 @@ namespace tfel::math {
      * \param[in] v2 : third  eigen value
      * \param[in] m  : matrix containing the eigen vectors
      */
-    static stensor<N, T> buildNegativePartFromEigenValuesAndVectors(
-        const T&, const T&, const T&, const rotation_matrix<T>&);
+    static stensor<N, ValueType> buildNegativePartFromEigenValuesAndVectors(
+        const ValueType&,
+        const ValueType&,
+        const ValueType&,
+        const rotation_matrix<ValueType>&);
 
     /*!
      * build the negative part of a symmetric tensor given through its eigen
@@ -555,8 +510,8 @@ namespace tfel::math {
      * \param[in] vp : eigen values
      * \param[in] m  : matrix containing the eigen vectors
      */
-    static stensor<N, T> buildNegativePartFromEigenValuesAndVectors(
-        const tvector<3u, T>&, const rotation_matrix<T>&);
+    static stensor<N, ValueType> buildNegativePartFromEigenValuesAndVectors(
+        const tvector<3u, ValueType>&, const rotation_matrix<ValueType>&);
     /*!
      * compute the eigenvalues derivatives with respect with this tensor
      * \param[out] n : derivatives of the  eigenvalues
@@ -569,8 +524,10 @@ namespace tfel::math {
      * \(\underbrace{n}_{i}\) are the eigen tensors associated to the given
      * tensor.
      */
-    std::tuple<stensor<N, T>, stensor<N, T>, stensor<N, T>>
-    computeEigenValuesDerivatives(const rotation_matrix<T>&);
+    std::tuple<stensor<N, ValueType>,
+               stensor<N, ValueType>,
+               stensor<N, ValueType>>
+    computeEigenValuesDerivatives(const rotation_matrix<ValueType>&);
     /*!
      * compute the eigenvalues derivatives with respect with this tensor
      * \param[out] n0 : derivative of the first eigenvalue
@@ -586,23 +543,24 @@ namespace tfel::math {
      * tensor.
      */
     template <typename StensorType>
-    static std::enable_if_t<(implementsStensorConcept<StensorType>()) &&
-                                (getSpaceDimension<StensorType>() == N) &&
-                                (tfel::typetraits::IsAssignableTo<
-                                    base_type<T>,
-                                    numeric_type<StensorType>>::cond),
-                            void>
+    static std::enable_if_t<
+        (implementsStensorConcept<StensorType>()) &&
+            (getSpaceDimension<StensorType>() == N) &&
+            (isAssignableTo<base_type<ValueType>, numeric_type<StensorType>>()),
+        void>
     computeEigenValuesDerivatives(StensorType&,
                                   StensorType&,
                                   StensorType&,
-                                  const rotation_matrix<T>&);
+                                  const rotation_matrix<ValueType>&);
     /*!
      * \brief compute the "eigentensors"
      * \param[out] n: derivativse of the eigenvalues
      * \param[in]  m: eigenvectors
      */
-    static std::tuple<stensor<N, T>, stensor<N, T>, stensor<N, T>>
-    computeEigenTensors(const rotation_matrix<T>&);
+    static std::tuple<stensor<N, ValueType>,
+                      stensor<N, ValueType>,
+                      stensor<N, ValueType>>
+    computeEigenTensors(const rotation_matrix<ValueType>&);
     /*!
      * compute the "eigentensors"
      * \param[out] n0: derivative of the first  eigenvalue
@@ -611,16 +569,15 @@ namespace tfel::math {
      * \param[in]  m:  eigenvectors
      */
     template <typename StensorType>
-    static std::enable_if_t<(implementsStensorConcept<StensorType>()) &&
-                                (getSpaceDimension<StensorType>() == N) &&
-                                (tfel::typetraits::IsAssignableTo<
-                                    base_type<T>,
-                                    numeric_type<StensorType>>::cond),
-                            void>
+    static std::enable_if_t<
+        (implementsStensorConcept<StensorType>()) &&
+            (getSpaceDimension<StensorType>() == N) &&
+            (isAssignableTo<base_type<ValueType>, numeric_type<StensorType>>()),
+        void>
     computeEigenTensors(StensorType&,
                         StensorType&,
                         StensorType&,
-                        const rotation_matrix<T>&);
+                        const rotation_matrix<ValueType>&);
     /*!
      * \brief compute the "eigentensors" derivatives
      * \param[out] dn0_ds: derivative of the first  eigentensor
@@ -634,18 +591,16 @@ namespace tfel::math {
     static std::enable_if_t<
         (implementsST2toST2Concept<ST2toST2Type>()) &&
             (getSpaceDimension<ST2toST2Type>() == N) &&
-            (tfel::typetraits::IsAssignableTo<
-                typename ComputeBinaryResult<base_type<T>,
-                                             T,
-                                             OpDiv>::Result,
-                numeric_type<ST2toST2Type>>::cond),
+            (isAssignableTo<
+                BinaryOperationResult<base_type<ValueType>, ValueType, OpDiv>,
+                numeric_type<ST2toST2Type>>()),
         void>
     computeEigenTensorsDerivatives(ST2toST2Type&,
                                    ST2toST2Type&,
                                    ST2toST2Type&,
-                                   const tvector<3u, T>&,
-                                   const rotation_matrix<T>&,
-                                   const T);
+                                   const tvector<3u, ValueType>&,
+                                   const rotation_matrix<ValueType>&,
+                                   const ValueType);
     /*!
      * compute an isotropic function
      * \param[in]  f:   function
@@ -653,18 +608,18 @@ namespace tfel::math {
      * \param[in]  m:   eigenvectors
      */
     template <typename Function>
-    static stensor<N, typename std::result_of<Function(T)>::type>
+    static stensor<N, typename std::result_of<Function(ValueType)>::type>
     computeIsotropicFunction(const Function&,
-                             const tvector<3u, T>&,
-                             const rotation_matrix<T>&);
+                             const tvector<3u, ValueType>&,
+                             const rotation_matrix<ValueType>&);
     /*!
      * compute an isotropic function
      * \param[in]  f: function values for each eigen values
      * \param[in]  m: eigenvectors
      */
     template <typename T2>
-    static stensor<N, T2> computeIsotropicFunction(const tvector<3u, T2>&,
-                                                   const rotation_matrix<T>&);
+    static stensor<N, T2> computeIsotropicFunction(
+        const tvector<3u, T2>&, const rotation_matrix<ValueType>&);
     /*!
      * \return the derivative of an isotropic function
      * \param[in]  f:   function values
@@ -678,9 +633,9 @@ namespace tfel::math {
     static st2tost2<N, T2> computeIsotropicFunctionDerivative(
         const tvector<3u, T1>&,
         const tvector<3u, T2>&,
-        const tvector<3u, T>&,
-        const rotation_matrix<T>&,
-        const T);
+        const tvector<3u, ValueType>&,
+        const rotation_matrix<ValueType>&,
+        const ValueType);
     /*!
      * compute the derivative of an isotropic function
      * \param[out] d:   result
@@ -695,18 +650,16 @@ namespace tfel::math {
     static std::enable_if_t<
         (implementsST2toST2Concept<ST2toST2Type>()) &&
             (getSpaceDimension<ST2toST2Type>() == N) &&
-            (tfel::typetraits::IsAssignableTo<
-                typename ComputeBinaryResult<base_type<T>,
-                                             T,
-                                             OpDiv>::Result,
-                numeric_type<ST2toST2Type>>::cond),
+            (isAssignableTo<
+                BinaryOperationResult<base_type<ValueType>, ValueType, OpDiv>,
+                numeric_type<ST2toST2Type>>()),
         void>
     computeIsotropicFunctionDerivative(ST2toST2Type&,
                                        const tvector<3u, T1>&,
                                        const tvector<3u, T2>&,
-                                       const tvector<3u, T>&,
-                                       const rotation_matrix<T>&,
-                                       const T);
+                                       const tvector<3u, ValueType>&,
+                                       const rotation_matrix<ValueType>&,
+                                       const ValueType);
     /*!
      * compute the derivative of an isotropic function
      * \param[out] d:   result
@@ -718,12 +671,14 @@ namespace tfel::math {
      * equals
      */
     template <typename Function, typename FunctionDerivative>
-    static st2tost2<N, typename std::result_of<FunctionDerivative(T)>::type>
+    static st2tost2<
+        N,
+        typename std::result_of<FunctionDerivative(ValueType)>::type>
     computeIsotropicFunctionDerivative(const Function&,
                                        const FunctionDerivative&,
-                                       const tvector<3u, T>&,
-                                       const rotation_matrix<T>&,
-                                       const T);
+                                       const tvector<3u, ValueType>&,
+                                       const rotation_matrix<ValueType>&,
+                                       const ValueType);
     /*!
      * compute the derivative of an isotropic function
      * \param[out] d:   result
@@ -740,25 +695,23 @@ namespace tfel::math {
     static std::enable_if_t<
         (implementsST2toST2Concept<ST2toST2Type>()) &&
             (getSpaceDimension<ST2toST2Type>() == N) &&
-            (tfel::typetraits::IsAssignableTo<
-                typename ComputeBinaryResult<base_type<T>,
-                                             T,
-                                             OpDiv>::Result,
-                numeric_type<ST2toST2Type>>::cond),
+            (isAssignableTo<
+                BinaryOperationResult<base_type<ValueType>, ValueType, OpDiv>,
+                numeric_type<ST2toST2Type>>()),
         void>
     computeIsotropicFunctionDerivative(ST2toST2Type&,
                                        const Function&,
                                        const FunctionDerivative&,
-                                       const tvector<3u, T>&,
-                                       const rotation_matrix<T>&,
-                                       const T);
+                                       const tvector<3u, ValueType>&,
+                                       const rotation_matrix<ValueType>&,
+                                       const ValueType);
     /*!
      * \return the value of an isotropic function
      * \param[in] f: function
      * \param[in] b:   if true, refinement of eigen values is performed
      */
     template <EigenSolver = TFELEIGENSOLVER, typename Function>
-    stensor<N, typename std::result_of<Function(T)>::type>
+    stensor<N, typename std::result_of<Function(ValueType)>::type>
     computeIsotropicFunction(const Function&, const bool = false) const;
     /*!
      * \return the derivative of an isotropic function
@@ -771,10 +724,10 @@ namespace tfel::math {
     template <EigenSolver = TFELEIGENSOLVER,
               typename Function,
               typename FunctionDerivative>
-    st2tost2<N, typename std::result_of<FunctionDerivative(T)>::type>
+    st2tost2<N, typename std::result_of<FunctionDerivative(ValueType)>::type>
     computeIsotropicFunctionDerivative(const Function&,
                                        const FunctionDerivative&,
-                                       const T,
+                                       const ValueType,
                                        const bool = false) const;
     /*!
      * \return the derivative of an isotropic function
@@ -787,20 +740,22 @@ namespace tfel::math {
     template <EigenSolver = TFELEIGENSOLVER,
               typename Function,
               typename FunctionDerivative>
-    std::pair<stensor<N, typename std::result_of<Function(T)>::type>,
-              st2tost2<N, typename std::result_of<FunctionDerivative(T)>::type>>
+    std::pair<
+        stensor<N, typename std::result_of<Function(ValueType)>::type>,
+        st2tost2<N,
+                 typename std::result_of<FunctionDerivative(ValueType)>::type>>
     computeIsotropicFunctionAndDerivative(const Function&,
                                           const FunctionDerivative&,
-                                          const T,
+                                          const ValueType,
                                           const bool = false) const;
-  };  // end of class stensor
+  };  // end of stensor
 
   /*!
    * export the given vector to an array of the
    */
   template <unsigned short N, typename T, typename OutputIterator>
-  TFEL_MATH_INLINE2 std::enable_if_t<tfel::typetraits::IsScalar<T>::cond, void>
-  exportToBaseTypeArray(const stensor<N, T>&, OutputIterator);
+  TFEL_MATH_INLINE2 std::enable_if_t<isScalar<T>(), void> exportToBaseTypeArray(
+      const stensor<N, T>&, OutputIterator);
 
   /*!
    * compute the tresca stress
@@ -829,9 +784,9 @@ namespace tfel::math {
   square_root(const StensorType&);
 
   template <typename StensorType>
-  std::enable_if_t<implementsStensorConcept<StensorType>(),
-                   typename ComputeUnaryResult<numeric_type<StensorType>,
-                                               Power<3>>::Result>
+  std::enable_if_t<
+      implementsStensorConcept<StensorType>(),
+      typename ComputeUnaryResult<numeric_type<StensorType>, Power<3>>::Result>
   det(const StensorType&);
   /*!
    * \return the derivative of the determinant
@@ -886,10 +841,9 @@ namespace tfel::math {
   TFEL_MATH_INLINE2 std::enable_if_t<
       implementsStensorConcept<StensorType>(),
       stensor<getSpaceDimension<StensorType>(),
-              typename ComputeBinaryResult<
-                  base_type<numeric_type<StensorType>>,
-                  numeric_type<StensorType>,
-                  OpDiv>::Result>>
+              BinaryOperationResult<base_type<numeric_type<StensorType>>,
+                                    numeric_type<StensorType>,
+                                    OpDiv>>>
   invert(const StensorType&);
   /*!
    * \brief compute the logarithm of a symmetric tensor
@@ -1001,39 +955,36 @@ namespace tfel::math {
    * \param[in] s : squared tensor
    */
   template <typename StensorType>
-  std::enable_if_t<
-      implementsStensorConcept<StensorType>() &&
-          getSpaceDimension<StensorType>() == 1u,
-      stensor<1u,
-              typename ComputeBinaryResult<numeric_type<StensorType>,
-                                           numeric_type<StensorType>,
-                                           OpMult>::Result>>
+  std::enable_if_t<implementsStensorConcept<StensorType>() &&
+                       getSpaceDimension<StensorType>() == 1u,
+                   stensor<1u,
+                           BinaryOperationResult<numeric_type<StensorType>,
+                                                 numeric_type<StensorType>,
+                                                 OpMult>>>
   square(const StensorType&);
   /*!
    * \return the square of a symmetric stensor
    * \param[in] s : squared tensor
    */
   template <typename StensorType>
-  std::enable_if_t<
-      implementsStensorConcept<StensorType>() &&
-          getSpaceDimension<StensorType>() == 2u,
-      stensor<2u,
-              typename ComputeBinaryResult<numeric_type<StensorType>,
-                                           numeric_type<StensorType>,
-                                           OpMult>::Result>>
+  std::enable_if_t<implementsStensorConcept<StensorType>() &&
+                       getSpaceDimension<StensorType>() == 2u,
+                   stensor<2u,
+                           BinaryOperationResult<numeric_type<StensorType>,
+                                                 numeric_type<StensorType>,
+                                                 OpMult>>>
   square(const StensorType&);
   /*!
    * \return the square of a symmetric stensor
    * \param[in] s : squared tensor
    */
   template <typename StensorType>
-  std::enable_if_t<
-      implementsStensorConcept<StensorType>() &&
-          getSpaceDimension<StensorType>() == 3u,
-      stensor<3u,
-              typename ComputeBinaryResult<numeric_type<StensorType>,
-                                           numeric_type<StensorType>,
-                                           OpMult>::Result>>
+  std::enable_if_t<implementsStensorConcept<StensorType>() &&
+                       getSpaceDimension<StensorType>() == 3u,
+                   stensor<3u,
+                           BinaryOperationResult<numeric_type<StensorType>,
+                                                 numeric_type<StensorType>,
+                                                 OpMult>>>
   square(const StensorType&);
   /*!
    * \return the value of an isotropic function
@@ -1222,49 +1173,12 @@ namespace tfel::math {
   template <typename StensorType1, typename StensorType2>
   std::enable_if_t<((implementsStensorConcept<StensorType1>()) &&
                     (implementsStensorConcept<StensorType2>()) &&
-                    (getSpaceDimension<StensorType1>() == 1u) &&
-                    (getSpaceDimension<StensorType2>() == 1u)),
-                   stensor<3u,
-                           typename ResultType<numeric_type<StensorType1>,
-                                               numeric_type<StensorType2>,
-                                               OpMult>::type>>
-  symmetric_product(const StensorType1&, const StensorType2&);
-  /*!
-   * \brief return the symmetric product of two stensors as a symmetric
-   * tensor:
-   * \f[
-   * s1*s2+s2*s1
-   * \f]
-   * \param[in] s1: first  tensor
-   * \param[in] s2: second tensor
-   */
-  template <typename StensorType1, typename StensorType2>
-  std::enable_if_t<((implementsStensorConcept<StensorType1>()) &&
-                    (implementsStensorConcept<StensorType2>()) &&
-                    (getSpaceDimension<StensorType1>() == 2u) &&
-                    (getSpaceDimension<StensorType2>() == 2u)),
-                   stensor<2u,
-                           typename ResultType<numeric_type<StensorType1>,
-                                               numeric_type<StensorType2>,
-                                               OpMult>::type>>
-  symmetric_product(const StensorType1&, const StensorType2&);
-  /*!
-   * \brief return the symmetric product of two stensors as a symmetric tensor
-   * \f[
-   * s1*s2+s2*s1
-   * \f]
-   * \param[in] s1: first  tensor
-   * \param[in] s2: second tensor
-   */
-  template <typename StensorType1, typename StensorType2>
-  std::enable_if_t<((implementsStensorConcept<StensorType1>()) &&
-                    (implementsStensorConcept<StensorType2>()) &&
-                    (getSpaceDimension<StensorType1>() == 3u) &&
-                    (getSpaceDimension<StensorType2>() == 3u)),
-                   stensor<3u,
-                           typename ResultType<numeric_type<StensorType1>,
-                                               numeric_type<StensorType2>,
-                                               OpMult>::type>>
+                    (getSpaceDimension<StensorType1>() ==
+                     getSpaceDimension<StensorType2>())),
+                   stensor<getSpaceDimension<StensorType1>(),
+                           result_type<numeric_type<StensorType1>,
+                                       numeric_type<StensorType2>,
+                                       OpMult>>>
   symmetric_product(const StensorType1&, const StensorType2&);
 
 }  // end of namespace tfel::math
@@ -1276,7 +1190,7 @@ namespace tfel::typetraits {
     /*!
      *  Result
      */
-    static constexpr bool cond = IsAssignableTo<T2, T>::cond;
+    static constexpr bool cond = isAssignableTo<T2, T>();
   };
 
 }  // end of namespace tfel::typetraits

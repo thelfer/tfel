@@ -26,7 +26,7 @@ namespace tfel::math {
 
   template <typename T1, typename T2>
   struct VectorDotProductHandle {
-    typedef VectorVectorDotProduct type;
+    using type = VectorVectorDotProduct;
   };
 
   /*
@@ -40,7 +40,7 @@ namespace tfel::math {
 
    public:
     using Result = result_type<VectorTypeA, VectorTypeB, Op>;
-    using Handle = std::conditional_t<tfel::typetraits::IsInvalid<Result>::cond,
+    using Handle = std::conditional_t<isInvalid<Result>(),
                                       DummyHandle,
                                       Expr<Result, BinaryOperation<A, B, Op>>>;
   };
@@ -52,8 +52,7 @@ namespace tfel::math {
     using VectorTypeB = EvaluationResult<B>;
 
    public:
-    using Result =
-        result_type<VectorTypeA, VectorTypeB, OpDotProduct>;
+    using Result = result_type<VectorTypeA, VectorTypeB, OpDotProduct>;
     using Handle =
         typename VectorDotProductHandle<VectorTypeA, VectorTypeB>::type;
   };
@@ -68,10 +67,9 @@ namespace tfel::math {
     using VectorTypeB = EvaluationResult<B>;
 
    public:
-    using Result =
-        result_type<VectorTypeA, VectorTypeB, OpDiadicProduct>;
+    using Result = result_type<VectorTypeA, VectorTypeB, OpDiadicProduct>;
     using Handle =
-        std::conditional_t<tfel::typetraits::IsInvalid<Result>::cond,
+        std::conditional_t<isInvalid<Result>(),
                            DummyHandle,
                            Expr<Result, DiadicProductOperation<A, B>>>;
   };
@@ -83,12 +81,11 @@ namespace tfel::math {
   struct ComputeBinaryResult_<ScalarTag, VectorTag, A, B, Op> {
     struct DummyHandle {};
     using VectorTypeB = EvaluationResult<B>;
-    
 
    public:
-    using Result = typename ResultType<std::decay_t<A>, VectorTypeB, Op>::type;
+    using Result = result_type<std::decay_t<A>, VectorTypeB, Op>;
     using Handle =
-        std::conditional_t<tfel::typetraits::IsInvalid<Result>::cond,
+        std::conditional_t<isInvalid<Result>(),
                            DummyHandle,
                            Expr<Result, ScalarObjectOperation<A, B, Op>>>;
   };
@@ -102,9 +99,9 @@ namespace tfel::math {
     using VectorTypeA = EvaluationResult<A>;
 
    public:
-    using Result = typename ResultType<VectorTypeA, std::decay_t<B>, Op>::type;
+    using Result = result_type<VectorTypeA, B, Op>;
     using Handle =
-        std::conditional_t<tfel::typetraits::IsInvalid<Result>::cond,
+        std::conditional_t<isInvalid<Result>(),
                            DummyHandle,
                            Expr<Result, ObjectScalarOperation<A, B, Op>>>;
   };
@@ -119,7 +116,7 @@ namespace tfel::math {
 
    public:
     using Result = typename UnaryResultType<VectorTypeA, OpNeg>::type;
-    using Handle = std::conditional_t<tfel::typetraits::IsInvalid<Result>::cond,
+    using Handle = std::conditional_t<isInvalid<Result>(),
                                       DummyHandle,
                                       Expr<Result, UnaryOperation<A, OpNeg>>>;
   };
@@ -127,28 +124,24 @@ namespace tfel::math {
   template <typename T1, typename T2, typename Op>
   struct IsVectorVectorOperationValid {
     static constexpr bool cond =
-        (implementsVectorConcept<T1>() &&
-         implementsVectorConcept<T2>() &&
-         (!tfel::typetraits::IsInvalid<
-             typename ComputeBinaryResult<T1, T2, Op>::Result>::cond));
+        (implementsVectorConcept<T1>() && implementsVectorConcept<T2>() &&
+         (!isInvalid<BinaryOperationResult<T1, T2, Op>>()));
   };
 
   template <typename T1, typename T2, typename Op>
   struct IsScalarVectorOperationValid {
     static constexpr bool cond =
-        (tfel::typetraits::IsScalar<T1>::cond &&
+        (isScalar<T1>() &&
          implementsVectorConcept<T2>() &&
-         (!tfel::typetraits::IsInvalid<
-             typename ComputeBinaryResult<T1, T2, Op>::Result>::cond));
+         (!isInvalid<BinaryOperationResult<T1, T2, Op>>()));
   };
 
   template <typename T1>
   struct IsEuclidianNormValid {
     static constexpr bool cond =
         implementsVectorConcept<T1>() &&
-        !tfel::typetraits::IsInvalid<typename tfel::typetraits::RealPartType<
-            typename ComputeBinaryResult<T1, T1, OpDotProduct>::Result>::type>::
-            cond;
+        !isInvalid<typename tfel::typetraits::RealPartType<
+            BinaryOperationResult<T1, T1, OpDotProduct>>::type>();
   };
 
   /*!
@@ -162,7 +155,7 @@ namespace tfel::math {
    */
   template <typename T1, typename T2>
   std::enable_if_t<IsVectorVectorOperationValid<T1, T2, OpDotProduct>::cond,
-                   typename ComputeBinaryResult<T1, T2, OpDotProduct>::Result>
+                   BinaryOperationResult<T1, T2, OpDotProduct>>
   operator|(const T1&, const T2&);
 
   /*!
@@ -171,10 +164,9 @@ namespace tfel::math {
    * \return const typename tfel::typetraits::RealPartType<T>::type, the result
    */
   template <typename T1>
-  std::enable_if_t<
-      IsEuclidianNormValid<T1>::cond,
-      typename tfel::typetraits::RealPartType<
-          typename ComputeBinaryResult<T1, T1, OpDotProduct>::Result>::type>
+  std::enable_if_t<IsEuclidianNormValid<T1>::cond,
+                   typename tfel::typetraits::RealPartType<
+                       BinaryOperationResult<T1, T1, OpDotProduct>>::type>
   norm(const T1&);
 
 }  // end of namespace tfel::math

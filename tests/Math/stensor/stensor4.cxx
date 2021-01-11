@@ -30,14 +30,14 @@
 int main(){
   using namespace std;
   using namespace tfel::math;
-  const stensor<1>  Id  = stensor<1>::Id();
-  const st2tost2<1> IxI = st2tost2<1>::IxI();
+  constexpr stensor<1>  Id  = stensor<1>::Id();
+  constexpr st2tost2<1> IxI = st2tost2<1>::IxI();
   stensor<1> a;
-  a(0)=1.;
-  a(1)=2.;
-  a(2)=3.;
-  cout << (Id^Id) << endl;
+  a(0) = 1.;
+  a(1) = 2.;
+  a(2) = 3.;
+  cout << (Id ^ Id) << endl;
   cout << IxI << endl;
-  cout << (a|(Id^Id)) << endl;
+  cout << (a | (Id ^ Id)) << endl;
   return EXIT_SUCCESS;
 }

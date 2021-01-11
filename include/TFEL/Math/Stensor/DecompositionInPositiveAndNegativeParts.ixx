@@ -35,23 +35,20 @@ namespace tfel::math {
 
   template <typename DPPType, typename PPType, typename StensorType>
   std::enable_if_t<
-      implementsST2toST2Concept<DPPType>() &&
-          implementsStensorConcept<PPType>() &&
-          implementsStensorConcept<StensorType>() &&
-          getSpaceDimension<DPPType>() == getSpaceDimension<StensorType>() &&
-          getSpaceDimension<PPType>() == getSpaceDimension<StensorType>() &&
-          getSpaceDimension<StensorType>() == 1u &&
-          tfel::typetraits::IsAssignableTo<numeric_type<StensorType>,
-                                           numeric_type<PPType>>::cond &&
-          tfel::typetraits::IsAssignableTo<
-              base_type<numeric_type<StensorType>>,
-              numeric_type<DPPType>>::cond,
+      (implementsST2toST2Concept<DPPType>() &&
+       implementsStensorConcept<PPType>() &&
+       implementsStensorConcept<StensorType>() &&
+       getSpaceDimension<DPPType>() == getSpaceDimension<StensorType>() &&
+       getSpaceDimension<PPType>() == getSpaceDimension<StensorType>() &&
+       getSpaceDimension<StensorType>() == 1u &&
+       isAssignableTo<numeric_type<StensorType>, numeric_type<PPType>>() &&
+       isAssignableTo<base_type<numeric_type<StensorType>>,
+                      numeric_type<DPPType>>()),
       void>
-  computeStensorPositivePartAndDerivative(
-      DPPType& dpp,
-      PPType& pp,
-      const StensorType& s,
-      const numeric_type<StensorType> eps) {
+  computeStensorPositivePartAndDerivative(DPPType& dpp,
+                                          PPType& pp,
+                                          const StensorType& s,
+                                          const numeric_type<StensorType> eps) {
     using std::abs;
     typedef numeric_type<StensorType> NumType;
     typedef base_type<NumType> real;
@@ -92,23 +89,20 @@ namespace tfel::math {
 
   template <typename DPPType, typename PPType, typename StensorType>
   std::enable_if_t<
-      implementsST2toST2Concept<DPPType>() &&
-          implementsStensorConcept<PPType>() &&
-          implementsStensorConcept<StensorType>() &&
-          getSpaceDimension<DPPType>() == getSpaceDimension<StensorType>() &&
-          getSpaceDimension<PPType>() == getSpaceDimension<StensorType>() &&
-          getSpaceDimension<StensorType>() == 2u &&
-          tfel::typetraits::IsAssignableTo<numeric_type<StensorType>,
-                                           numeric_type<PPType>>::cond &&
-          tfel::typetraits::IsAssignableTo<
-              base_type<numeric_type<StensorType>>,
-              numeric_type<DPPType>>::cond,
+      (implementsST2toST2Concept<DPPType>() &&
+       implementsStensorConcept<PPType>() &&
+       implementsStensorConcept<StensorType>() &&
+       getSpaceDimension<DPPType>() == getSpaceDimension<StensorType>() &&
+       getSpaceDimension<PPType>() == getSpaceDimension<StensorType>() &&
+       getSpaceDimension<StensorType>() == 2u &&
+       isAssignableTo<numeric_type<StensorType>, numeric_type<PPType>>() &&
+       isAssignableTo<base_type<numeric_type<StensorType>>,
+                      numeric_type<DPPType>>()),
       void>
-  computeStensorPositivePartAndDerivative(
-      DPPType& dpp,
-      PPType& pp,
-      const StensorType& s,
-      const numeric_type<StensorType> eps) {
+  computeStensorPositivePartAndDerivative(DPPType& dpp,
+                                          PPType& pp,
+                                          const StensorType& s,
+                                          const numeric_type<StensorType> eps) {
     using std::abs;
     using tfel::math::internals::stensor_pneg;
     using tfel::math::internals::stensor_ppos;
@@ -171,23 +165,20 @@ namespace tfel::math {
 
   template <typename DPPType, typename PPType, typename StensorType>
   typename std::enable_if<
-      implementsST2toST2Concept<DPPType>() &&
-          implementsStensorConcept<PPType>() &&
-          implementsStensorConcept<StensorType>() &&
-          getSpaceDimension<DPPType>() == getSpaceDimension<StensorType>() &&
-          getSpaceDimension<PPType>() == getSpaceDimension<StensorType>() &&
-          getSpaceDimension<StensorType>() == 3u &&
-          tfel::typetraits::IsAssignableTo<numeric_type<StensorType>,
-                                           numeric_type<PPType>>::cond &&
-          tfel::typetraits::IsAssignableTo<
-              base_type<numeric_type<StensorType>>,
-              numeric_type<DPPType>>::cond,
+      (implementsST2toST2Concept<DPPType>() &&
+       implementsStensorConcept<PPType>() &&
+       implementsStensorConcept<StensorType>() &&
+       getSpaceDimension<DPPType>() == getSpaceDimension<StensorType>() &&
+       getSpaceDimension<PPType>() == getSpaceDimension<StensorType>() &&
+       getSpaceDimension<StensorType>() == 3u &&
+       isAssignableTo<numeric_type<StensorType>, numeric_type<PPType>>() &&
+       isAssignableTo<base_type<numeric_type<StensorType>>,
+                      numeric_type<DPPType>>()),
       void>::type
-  computeStensorPositivePartAndDerivative(
-      DPPType& dpp,
-      PPType& pp,
-      const StensorType& s,
-      const numeric_type<StensorType> eps) {
+  computeStensorPositivePartAndDerivative(DPPType& dpp,
+                                          PPType& pp,
+                                          const StensorType& s,
+                                          const numeric_type<StensorType> eps) {
     using tfel::math::internals::stensor_pneg;
     using tfel::math::internals::stensor_ppos;
     typedef numeric_type<StensorType> NumType;
@@ -330,26 +321,22 @@ namespace tfel::math {
             typename NPType,
             typename StensorType>
   typename std::enable_if<
-      implementsST2toST2Concept<DPPType>() &&
-          implementsST2toST2Concept<DNPType>() &&
-          implementsStensorConcept<PPType>() &&
-          implementsStensorConcept<NPType>() &&
-          implementsStensorConcept<StensorType>() &&
-          getSpaceDimension<DPPType>() == getSpaceDimension<StensorType>() &&
-          getSpaceDimension<DNPType>() == getSpaceDimension<StensorType>() &&
-          getSpaceDimension<PPType>() == getSpaceDimension<StensorType>() &&
-          getSpaceDimension<NPType>() == getSpaceDimension<StensorType>() &&
-          getSpaceDimension<StensorType>() == 1u &&
-          tfel::typetraits::IsAssignableTo<numeric_type<StensorType>,
-                                           numeric_type<PPType>>::cond &&
-          tfel::typetraits::IsAssignableTo<numeric_type<StensorType>,
-                                           numeric_type<NPType>>::cond &&
-          tfel::typetraits::IsAssignableTo<
-              base_type<numeric_type<StensorType>>,
-              numeric_type<DPPType>>::cond &&
-          tfel::typetraits::IsAssignableTo<
-              base_type<numeric_type<StensorType>>,
-              numeric_type<DNPType>>::cond,
+      (implementsST2toST2Concept<DPPType>() &&
+       implementsST2toST2Concept<DNPType>() &&
+       implementsStensorConcept<PPType>() &&
+       implementsStensorConcept<NPType>() &&
+       implementsStensorConcept<StensorType>() &&
+       getSpaceDimension<DPPType>() == getSpaceDimension<StensorType>() &&
+       getSpaceDimension<DNPType>() == getSpaceDimension<StensorType>() &&
+       getSpaceDimension<PPType>() == getSpaceDimension<StensorType>() &&
+       getSpaceDimension<NPType>() == getSpaceDimension<StensorType>() &&
+       getSpaceDimension<StensorType>() == 1u &&
+       isAssignableTo<numeric_type<StensorType>, numeric_type<PPType>>() &&
+       isAssignableTo<numeric_type<StensorType>, numeric_type<NPType>>() &&
+       isAssignableTo<base_type<numeric_type<StensorType>>,
+                      numeric_type<DPPType>>() &&
+       isAssignableTo<base_type<numeric_type<StensorType>>,
+                      numeric_type<DNPType>>()),
       void>::type
   computeStensorDecompositionInPositiveAndNegativeParts(
       DPPType& dpp,
@@ -419,26 +406,22 @@ namespace tfel::math {
             typename NPType,
             typename StensorType>
   typename std::enable_if<
-      implementsST2toST2Concept<DPPType>() &&
-          implementsST2toST2Concept<DNPType>() &&
-          implementsStensorConcept<PPType>() &&
-          implementsStensorConcept<NPType>() &&
-          implementsStensorConcept<StensorType>() &&
-          getSpaceDimension<DPPType>() == getSpaceDimension<StensorType>() &&
-          getSpaceDimension<DNPType>() == getSpaceDimension<StensorType>() &&
-          getSpaceDimension<PPType>() == getSpaceDimension<StensorType>() &&
-          getSpaceDimension<NPType>() == getSpaceDimension<StensorType>() &&
-          getSpaceDimension<StensorType>() == 2u &&
-          tfel::typetraits::IsAssignableTo<numeric_type<StensorType>,
-                                           numeric_type<PPType>>::cond &&
-          tfel::typetraits::IsAssignableTo<numeric_type<StensorType>,
-                                           numeric_type<NPType>>::cond &&
-          tfel::typetraits::IsAssignableTo<
-              base_type<numeric_type<StensorType>>,
-              numeric_type<DPPType>>::cond &&
-          tfel::typetraits::IsAssignableTo<
-              base_type<numeric_type<StensorType>>,
-              numeric_type<DNPType>>::cond,
+      (implementsST2toST2Concept<DPPType>() &&
+       implementsST2toST2Concept<DNPType>() &&
+       implementsStensorConcept<PPType>() &&
+       implementsStensorConcept<NPType>() &&
+       implementsStensorConcept<StensorType>() &&
+       getSpaceDimension<DPPType>() == getSpaceDimension<StensorType>() &&
+       getSpaceDimension<DNPType>() == getSpaceDimension<StensorType>() &&
+       getSpaceDimension<PPType>() == getSpaceDimension<StensorType>() &&
+       getSpaceDimension<NPType>() == getSpaceDimension<StensorType>() &&
+       getSpaceDimension<StensorType>() == 2u &&
+       isAssignableTo<numeric_type<StensorType>, numeric_type<PPType>>() &&
+       isAssignableTo<numeric_type<StensorType>, numeric_type<NPType>>() &&
+       isAssignableTo<base_type<numeric_type<StensorType>>,
+                      numeric_type<DPPType>>() &&
+       isAssignableTo<base_type<numeric_type<StensorType>>,
+                      numeric_type<DNPType>>()),
       void>::type
   computeStensorDecompositionInPositiveAndNegativeParts(
       DPPType& dpp,
@@ -531,26 +514,22 @@ namespace tfel::math {
             typename NPType,
             typename StensorType>
   std::enable_if_t<
-      implementsST2toST2Concept<DPPType>() &&
-          implementsST2toST2Concept<DNPType>() &&
-          implementsStensorConcept<PPType>() &&
-          implementsStensorConcept<NPType>() &&
-          implementsStensorConcept<StensorType>() &&
-          getSpaceDimension<DPPType>() == getSpaceDimension<StensorType>() &&
-          getSpaceDimension<DNPType>() == getSpaceDimension<StensorType>() &&
-          getSpaceDimension<PPType>() == getSpaceDimension<StensorType>() &&
-          getSpaceDimension<NPType>() == getSpaceDimension<StensorType>() &&
-          getSpaceDimension<StensorType>() == 3u &&
-          tfel::typetraits::IsAssignableTo<numeric_type<StensorType>,
-                                           numeric_type<PPType>>::cond &&
-          tfel::typetraits::IsAssignableTo<numeric_type<StensorType>,
-                                           numeric_type<NPType>>::cond &&
-          tfel::typetraits::IsAssignableTo<
-              base_type<numeric_type<StensorType>>,
-              numeric_type<DPPType>>::cond &&
-          tfel::typetraits::IsAssignableTo<
-              base_type<numeric_type<StensorType>>,
-              numeric_type<DNPType>>::cond,
+      (implementsST2toST2Concept<DPPType>() &&
+       implementsST2toST2Concept<DNPType>() &&
+       implementsStensorConcept<PPType>() &&
+       implementsStensorConcept<NPType>() &&
+       implementsStensorConcept<StensorType>() &&
+       getSpaceDimension<DPPType>() == getSpaceDimension<StensorType>() &&
+       getSpaceDimension<DNPType>() == getSpaceDimension<StensorType>() &&
+       getSpaceDimension<PPType>() == getSpaceDimension<StensorType>() &&
+       getSpaceDimension<NPType>() == getSpaceDimension<StensorType>() &&
+       getSpaceDimension<StensorType>() == 3u &&
+       isAssignableTo<numeric_type<StensorType>, numeric_type<PPType>>() &&
+       isAssignableTo<numeric_type<StensorType>, numeric_type<NPType>>() &&
+       isAssignableTo<base_type<numeric_type<StensorType>>,
+                      numeric_type<DPPType>>() &&
+       isAssignableTo<base_type<numeric_type<StensorType>>,
+                      numeric_type<DNPType>>()),
       void>
   computeStensorDecompositionInPositiveAndNegativeParts(
       DPPType& dpp,

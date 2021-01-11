@@ -60,6 +60,10 @@ namespace tfel {
         this->elastic_material_properties_epts =
             elm.getUMATElasticMaterialPropertiesEntryPoints(l, f);
       }
+      if (elm.contains(l, f + "_LinearThermalExpansionCoefficientsEntryPoints")) {
+        this->linear_thermal_expansion_coefficients_epts =
+            elm.getUMATLinearThermalExpansionCoefficientsEntryPoints(l, f);
+      }
       this->source = elm.getSource(l, f);
       this->mfront_interface = elm.getInterface(l, f);
       this->btype = elm.getUMATBehaviourType(l, f);

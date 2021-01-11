@@ -62,12 +62,10 @@ namespace tfel::math {
           getSpaceDimension<TensorType>() == 1u &&
           tfel::typetraits::IsFundamentalNumericType<
               numeric_type<TensorType>>::cond &&
-          tfel::typetraits::IsAssignableTo<
-              typename ComputeBinaryResult<
-                  numeric_type<T2toST2Type>,
-                  numeric_type<StensorType>,
-                  OpPlus>::Result,
-              numeric_type<T2toST2ResultType>>::cond,
+          isAssignableTo<typename ComputeBinaryResult<numeric_type<T2toST2Type>,
+                                                      numeric_type<StensorType>,
+                                                      OpPlus>::Result,
+                         numeric_type<T2toST2ResultType>>(),
       void>::type
   computePushForwardDerivative(T2toST2ResultType& dTdF,
                                const T2toST2Type& dSdF,
@@ -102,12 +100,10 @@ namespace tfel::math {
           getSpaceDimension<TensorType>() == 2u &&
           tfel::typetraits::IsFundamentalNumericType<
               numeric_type<TensorType>>::cond &&
-          tfel::typetraits::IsAssignableTo<
-              typename ComputeBinaryResult<
-                  numeric_type<T2toST2Type>,
-                  numeric_type<StensorType>,
-                  OpPlus>::Result,
-              numeric_type<T2toST2ResultType>>::cond,
+          isAssignableTo<typename ComputeBinaryResult<numeric_type<T2toST2Type>,
+                                                      numeric_type<StensorType>,
+                                                      OpPlus>::Result,
+                         numeric_type<T2toST2ResultType>>(),
       void>::type
   computePushForwardDerivative(T2toST2ResultType& dTdF,
                                const T2toST2Type& dSdF,
@@ -190,12 +186,10 @@ namespace tfel::math {
           getSpaceDimension<TensorType>() == 3u &&
           tfel::typetraits::IsFundamentalNumericType<
               numeric_type<TensorType>>::cond &&
-          tfel::typetraits::IsAssignableTo<
-              typename ComputeBinaryResult<
-                  numeric_type<T2toST2Type>,
-                  numeric_type<StensorType>,
-                  OpPlus>::Result,
-              numeric_type<T2toST2ResultType>>::cond,
+          isAssignableTo<typename ComputeBinaryResult<numeric_type<T2toST2Type>,
+                                                      numeric_type<StensorType>,
+                                                      OpPlus>::Result,
+                         numeric_type<T2toST2ResultType>>(),
       void>::type
   computePushForwardDerivative(T2toST2ResultType& dTdF,
                                const T2toST2Type& dSdF,
@@ -580,12 +574,10 @@ namespace tfel::math {
               getSpaceDimension<TensorType>() &&
           tfel::typetraits::IsFundamentalNumericType<
               numeric_type<TensorType>>::cond &&
-          tfel::typetraits::IsAssignableTo<
-              typename ComputeBinaryResult<
-                  numeric_type<T2toST2Type>,
-                  numeric_type<StensorType>,
-                  OpPlus>::Result,
-              numeric_type<T2toST2ResultType>>::cond,
+          isAssignableTo<typename ComputeBinaryResult<numeric_type<T2toST2Type>,
+                                                      numeric_type<StensorType>,
+                                                      OpPlus>::Result,
+                         numeric_type<T2toST2ResultType>>(),
       void>::type
   computeCauchyStressDerivativeFromKirchhoffStressDerivative(
       T2toST2ResultType& ds,
@@ -614,12 +606,10 @@ namespace tfel::math {
               getSpaceDimension<TensorType>() &&
           tfel::typetraits::IsFundamentalNumericType<
               numeric_type<TensorType>>::cond &&
-          tfel::typetraits::IsAssignableTo<
-              typename ComputeBinaryResult<
-                  numeric_type<T2toST2Type>,
-                  numeric_type<StensorType>,
-                  OpPlus>::Result,
-              numeric_type<T2toST2ResultType>>::cond,
+          isAssignableTo<typename ComputeBinaryResult<numeric_type<T2toST2Type>,
+                                                      numeric_type<StensorType>,
+                                                      OpPlus>::Result,
+                         numeric_type<T2toST2ResultType>>(),
       void>::type
   computeKirchhoffStressDerivativeFromCauchyStressDerivative(
       T2toST2ResultType& dt_K,

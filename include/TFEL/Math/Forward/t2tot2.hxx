@@ -36,11 +36,8 @@ namespace tfel::math {
    * \tparam T: numeric type
    */
   template <unsigned short N, typename T>
-  struct MathObjectTraits<t2tot2<N, T>> {
-    //! \brief numeric type
-    using NumType = T;
-    //! \brief index type
-    using IndexType = unsigned short;
+  struct MathObjectTraits<t2tot2<N, T>>
+      : MathObjectTraitsBase<T, unsigned short> {
     //! \brief space dimension
     static constexpr unsigned short dime = N;
   };

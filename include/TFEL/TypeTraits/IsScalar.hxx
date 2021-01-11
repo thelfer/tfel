@@ -15,6 +15,7 @@
 #ifndef LIB_TFEL_TYPETRAITS_ISSCALAR_HXX
 #define LIB_TFEL_TYPETRAITS_ISSCALAR_HXX
 
+#include <type_traits>
 #include "TFEL/Math/Forward/Complex.hxx"
 
 /*!
@@ -93,7 +94,7 @@ namespace tfel::typetraits {
    */
   template <typename T>
   constexpr bool isScalar() {
-    return IsScalar<T>::cond;
+    return IsScalar<std::decay_t<T>>::cond;
   }
 
 }  // end of namespace tfel::typetraits

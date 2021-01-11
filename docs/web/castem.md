@@ -1,6 +1,22 @@
-% MFront usage in [Cast3M](http://www-cast3m.cea.fr/)
-% Helfer Thomas
-% October 13, 2014
+---
+title: `MFront` interface for Cast3M
+author: Thomas Helfer
+date: October 13, 2014
+lang: en-EN
+numbersections: true
+documentclass: article
+from: markdown+tex_math_single_backslash
+geometry:
+  - margin=2cm
+papersize: a4
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tabPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+bibliography: bibliography.bib
+---
 
 \newcommand{\tenseur}[1]{\underline{#1}}
 \newcommand{\tenseurq}[1]{\underline{\mathbf{#1}}}

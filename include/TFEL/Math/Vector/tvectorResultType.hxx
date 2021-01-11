@@ -31,7 +31,7 @@ namespace tfel::math {
     typedef typename UnaryResultType<T, OpNeg>::type ResBase_;
 
    public:
-    using type = std::conditional_t<tfel::typetraits::IsInvalid<ResBase_>::cond,
+    using type = std::conditional_t<isInvalid<ResBase_>(),
                                     tfel::meta::InvalidType,
                                     tvector<N, ResBase_>>;
   };
@@ -46,7 +46,7 @@ namespace tfel::math {
     typedef result_type<T, Scal, OpMult> ResBase_;
 
    public:
-    using type = std::conditional_t<tfel::typetraits::IsInvalid<ResBase_>::cond,
+    using type = std::conditional_t<isInvalid<ResBase_>(),
                                     tfel::meta::InvalidType,
                                     tvector<N, ResBase_>>;
   };
@@ -61,7 +61,7 @@ namespace tfel::math {
     typedef result_type<T, Scal, OpDiv> ResBase_;
 
    public:
-    using type = std::conditional_t<tfel::typetraits::IsInvalid<ResBase_>::cond,
+    using type = std::conditional_t<isInvalid<ResBase_>(),
                                     tfel::meta::InvalidType,
                                     tvector<N, ResBase_>>;
   };
@@ -76,7 +76,7 @@ namespace tfel::math {
     typedef result_type<Scal, T, OpMult> ResBase_;
 
    public:
-    using type = std::conditional_t<tfel::typetraits::IsInvalid<ResBase_>::cond,
+    using type = std::conditional_t<isInvalid<ResBase_>(),
                                     tfel::meta::InvalidType,
                                     tvector<N, ResBase_>>;
   };
@@ -90,7 +90,7 @@ namespace tfel::math {
     typedef result_type<T, T2, OpPlus> ResBase_;
 
    public:
-    using type = std::conditional_t<tfel::typetraits::IsInvalid<ResBase_>::cond,
+    using type = std::conditional_t<isInvalid<ResBase_>(),
                                     tfel::meta::InvalidType,
                                     tvector<N, ResBase_>>;
   };
@@ -104,7 +104,7 @@ namespace tfel::math {
     typedef result_type<T, T2, OpMinus> ResBase_;
 
    public:
-    using type = std::conditional_t<tfel::typetraits::IsInvalid<ResBase_>::cond,
+    using type = std::conditional_t<isInvalid<ResBase_>(),
                                     tfel::meta::InvalidType,
                                     tvector<N, ResBase_>>;
   };
@@ -118,7 +118,7 @@ namespace tfel::math {
     typedef result_type<T, T2, OpMult> ResBase_;
 
    public:
-    using type = std::conditional_t<tfel::typetraits::IsInvalid<ResBase_>::cond,
+    using type = std::conditional_t<isInvalid<ResBase_>(),
                                     tfel::meta::InvalidType,
                                     tvector<N, ResBase_>>;
   };
@@ -132,7 +132,7 @@ namespace tfel::math {
     typedef result_type<T, T2, OpMult> ResBase_;
 
    public:
-    using type = std::conditional_t<tfel::typetraits::IsInvalid<ResBase_>::cond,
+    using type = std::conditional_t<isInvalid<ResBase_>(),
                                     tfel::meta::InvalidType,
                                     tmatrix<N, M, ResBase_>>;
   };
@@ -145,7 +145,7 @@ namespace tfel::math {
   struct ResultType<tvector<N, T>, tvector<N, T2>, OpDotProduct> {
    private:
     typedef result_type<T, T2, OpMult> ResBase_;
-    static constexpr bool isValid = tfel::typetraits::IsInvalid<ResBase_>::cond;
+    static constexpr bool isValid = isInvalid<ResBase_>();
 
    public:
     using type = std::conditional_t<isValid, tfel::meta::InvalidType, ResBase_>;

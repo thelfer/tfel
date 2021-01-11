@@ -33,11 +33,8 @@ namespace tfel::math {
    * \see MathObjectTraits
    */
   template <typename T>
-  struct MathObjectTraits<vector<T>> {
-    //! \brief the type holded by the vector.
-    using NumType = T;
-    //! \brief the type of the index used by the vector.
-    using IndexType = typename std::vector<T>::size_type;
+  struct MathObjectTraits<vector<T>>
+      : MathObjectTraitsBase<T, typename std::vector<T>::size_type> {
     //! brief a `vector` is not related to the space dimension
     static constexpr const unsigned short dime = 0;
   };

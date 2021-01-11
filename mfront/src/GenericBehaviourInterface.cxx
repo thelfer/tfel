@@ -2326,14 +2326,14 @@ namespace mfront {
         << "auto *const thermodynamic_forces1_old = "
            "d->s1.thermodynamic_forces;\n"
         << "auto *const K_old = d->K;\n"
-        << "K[0] = d->K[0];\n"
+        << "K(0,0) = d->K[0];\n"
         << "d->s0.gradients = e0.begin();\n"
         << "d->s1.gradients = e1.begin();\n"
         << "d->s0.thermodynamic_forces = " << ss << "0.begin();\n"
         << "d->s1.thermodynamic_forces = " << ss << "1.begin();\n"
         << "d->K = K.begin();\n"
-        << "const auto bp = K[0]<-0.5;\n"
-        << "const auto bk = K[0]>0.5;\n";
+        << "const auto bp = K(0,0) < -0.5;\n"
+        << "const auto bk = K(0,0) > 0.5;\n";
   }  // end of
      // GenericBehaviourInterface::writeStrainMeasureCommonPreProcessing2
 

@@ -18,10 +18,10 @@
 #include <initializer_list>
 #include <type_traits>
 #include "TFEL/Config/TFELConfig.hxx"
-#include "TFEL/TypeTraits/IsScalar.hxx"
 #include "TFEL/TypeTraits/IsAssignableTo.hxx"
 #include "TFEL/TypeTraits/IsSafelyReinterpretCastableTo.hxx"
 #include "TFEL/FSAlgorithm/FSAlgorithm.hxx"
+#include "TFEL/Math/General/MathObjectTraits.hxx"
 #include "TFEL/Math/General/BasicOperations.hxx"
 #include "TFEL/Math/General/EmptyRunTimeProperties.hxx"
 #include "TFEL/Math/fsarray.hxx"
@@ -47,9 +47,9 @@ namespace tfel::math {
                                   ScalarType> {
     static_assert(implementsTensorConcept<TensorType>(),
                   "template argument TensorType is not a tensor");
-    static_assert(tfel::typetraits::IsScalar<ScalarType>::cond,
+    static_assert(isScalar<ScalarType>(),
                   "template argument ScalarType is not a scalar");
-    static_assert(tfel::typetraits::IsScalar<numeric_type<TensorType>>::cond,
+    static_assert(isScalar<numeric_type<TensorType>>(),
                   "the tensor type does not hold a scalar");
     //! \brief result
     using type = tensor<getSpaceDimension<TensorType>(),
@@ -66,9 +66,9 @@ namespace tfel::math {
                                   TensorType> {
     static_assert(implementsTensorConcept<TensorType>(),
                   "template argument TensorType is not a tensor");
-    static_assert(tfel::typetraits::IsScalar<ScalarType>::cond,
+    static_assert(isScalar<ScalarType>(),
                   "template argument ScalarType is not a scalar");
-    static_assert(tfel::typetraits::IsScalar<numeric_type<TensorType>>::cond,
+    static_assert(isScalar<numeric_type<TensorType>>(),
                   "the tensor type does not hold a scalar");
     //! \brief result
     using type = tensor<getSpaceDimension<TensorType>(),
@@ -90,25 +90,22 @@ namespace tfel::math {
     TFEL_MATH_INLINE std::enable_if_t<
         implementsTensorConcept<TensorType>() &&
             getSpaceDimension<Child>() == getSpaceDimension<TensorType>() &&
-            tfel::typetraits::IsAssignableTo<numeric_type<TensorType>,
-                                             numeric_type<Child>>::cond,
+            isAssignableTo<numeric_type<TensorType>, numeric_type<Child>>(),
         Child&>
     operator=(const TensorType&);
     /*!
      * Assignement operator
      */
     template <typename T>
-    TFEL_MATH_INLINE std::enable_if_t<
-        tfel::typetraits::IsAssignableTo<T, numeric_type<Child>>::cond,
-        Child&>
-    operator=(const std::initializer_list<T>&);
+    TFEL_MATH_INLINE
+        std::enable_if_t<isAssignableTo<T, numeric_type<Child>>(), Child&>
+        operator=(const std::initializer_list<T>&);
     //! Assignement operator
     template <typename TensorType>
     TFEL_MATH_INLINE std::enable_if_t<
         implementsTensorConcept<TensorType>() &&
             getSpaceDimension<Child>() == getSpaceDimension<TensorType>() &&
-            tfel::typetraits::IsAssignableTo<numeric_type<TensorType>,
-                                             numeric_type<Child>>::cond,
+            isAssignableTo<numeric_type<TensorType>, numeric_type<Child>>(),
         Child&>
     operator+=(const TensorType&);
     //! Assignement operator
@@ -116,8 +113,7 @@ namespace tfel::math {
     TFEL_MATH_INLINE std::enable_if_t<
         implementsTensorConcept<TensorType>() &&
             getSpaceDimension<Child>() == getSpaceDimension<TensorType>() &&
-            tfel::typetraits::IsAssignableTo<numeric_type<TensorType>,
-                                             numeric_type<Child>>::cond,
+            isAssignableTo<numeric_type<TensorType>, numeric_type<Child>>(),
         Child&>
     operator-=(const TensorType&);
     /*!
@@ -125,10 +121,9 @@ namespace tfel::math {
      */
     template <typename T2>
     TFEL_MATH_INLINE std::enable_if_t<
-        tfel::typetraits::IsScalar<T2>::cond &&
-            std::is_same<
-                typename ResultType<numeric_type<Child>, T2, OpMult>::type,
-                numeric_type<Child>>::value,
+        isScalar<T2>() &&
+            std::is_same<result_type<numeric_type<Child>, T2, OpMult>,
+                         numeric_type<Child>>::value,
         Child&>
     operator*=(const T2);
     /*!
@@ -136,23 +131,28 @@ namespace tfel::math {
      */
     template <typename T2>
     TFEL_MATH_INLINE std::enable_if_t<
-        tfel::typetraits::IsScalar<T2>::cond &&
-            std::is_same<
-                typename ResultType<numeric_type<Child>, T2, OpDiv>::type,
-                numeric_type<Child>>::value,
+        isScalar<T2>() &&
+            std::is_same<result_type<numeric_type<Child>, T2, OpDiv>,
+                         numeric_type<Child>>::value,
         Child&>
     operator/=(const T2);
   };  // end of struct tensor_base
 
-  template <unsigned short N, typename T>
-  struct tensor : public TensorConcept<tensor<N, T>>,
-                  public tensor_base<tensor<N, T>>,
-                  public fsarray<TensorDimeToSize<N>::value, T> {
+  template <unsigned short N, typename ValueType>
+  struct tensor
+      : TensorConcept<tensor<N, ValueType>>,
+        GenericFixedSizeArray<
+            tensor<N, ValueType>,
+            FixedSizeVectorPolicy<TensorDimeToSize<N>::value, ValueType>> {
     static_assert((N == 1u) || (N == 2u) || (N == 3u));
-    /*
-     * This is a TensorConcept requirement.
+    //! a simple alias
+    using GenericFixedSizeArrayBase = GenericFixedSizeArray<
+        tensor<N, ValueType>,
+        FixedSizeVectorPolicy<TensorDimeToSize<N>::value, ValueType>>;
+    /*!
+     * \return the identity tensor
      */
-    typedef EmptyRunTimeProperties RunTimeProperties;
+    static constexpr tensor<N, base_type<ValueType>> Id();
     /*!
      * \brief Build a tensor from a fortran matrix.
      * \param[in] t: tensor to be filled
@@ -160,109 +160,62 @@ namespace tfel::math {
      * components of the tensor. This array is left unchanged.
      */
     TFEL_MATH_INLINE2 static void buildFromFortranMatrix(
-        tensor<N, T>&, const base_type<T>* const);
+        tensor<N, ValueType>&, const base_type<ValueType>* const);
     /*!
      * \brief Build a tensor from a fortran matrix.
      * \param[in] t: tensor to be filled
      * \param[in] v: pointer to an array used to initialise the
      * components of the tensor. This array is left unchanged.
      */
-    TFEL_MATH_INLINE2 static tensor<N, T> buildFromFortranMatrix(
-        const base_type<T>* const);
+    TFEL_MATH_INLINE2 static tensor<N, ValueType> buildFromFortranMatrix(
+        const base_type<ValueType>* const);
+    //
+    TFEL_MATH_FIXED_SIZE_ARRAY_DEFAULT_METHODS(tensor,
+                                               GenericFixedSizeArrayBase);
+    // inheriting GenericFixedSizeArray' access operators
+    using GenericFixedSizeArray<
+        tensor<N, ValueType>,
+        FixedSizeVectorPolicy<TensorDimeToSize<N>::value, ValueType>>::
+    operator[];
     /*!
-     * \brief Default Constructor
-     * \warning enabled only if storage is static
+     * \brief access operator
+     * \param[in] i: index
      */
-    TFEL_MATH_INLINE explicit constexpr tensor() = default;
+    constexpr ValueType operator()(const typename tensor::size_type) const;
     /*!
-     * \brief Default Constructor
-     * \param T, value used to initialise the components of the tensor
-     * \warning enabled only if storage is static
+     * \brief access operator
+     * \param[in] i: index
      */
-    template <typename T2,
-              std::enable_if_t<tfel::typetraits::IsAssignableTo<T2, T>::cond,
-                               bool> = true>
-    TFEL_MATH_INLINE explicit constexpr tensor(const T2&);
+    constexpr ValueType& operator()(const typename tensor::size_type);
     /*!
-     * \brief Default Constructor.
-     * \param init, pointer to an array used to initialise the
-     * components of the tensor. This array is left unchanged.
+     * \brief matrix-like access operator
+     * \param[in] i: row number
+     * \param[in] j: column number
      */
-    template <
-        typename InputIterator,
-        std::enable_if_t<std::is_same<typename std::iterator_traits<
-                                          InputIterator>::value_type,
-                                      base_type<T>>::value,
-                         bool> = true>
-    TFEL_MATH_INLINE explicit tensor(const InputIterator p) {
-      using base = base_type<T>;
-      tfel::fsalgo::copy<TensorDimeToSize<N>::value>::exe(
-          p, reinterpret_cast<base*>(this->v));
-    }
+    ValueType operator()(const typename tensor::size_type,
+                         const typename tensor::size_type) const;
     /*!
-     * \brief Default Constructor
-     * \param[in] init: values used to initialise the components of the vector
+     * \brief write to an array
      */
-    template <typename T2,
-              std::enable_if_t<tfel::typetraits::IsAssignableTo<T2, T>::cond,
-                               bool> = true>
-    TFEL_MATH_INLINE constexpr tensor(const std::initializer_list<T2>&);
-    //! \brief copy constructor
-    TFEL_MATH_INLINE constexpr tensor(const tensor<N, T>&) = default;
-    // Copy Constructor
-    template <typename T2, typename Op>
-    TFEL_MATH_INLINE tensor(const Expr<tensor<N, T2>, Op>& src) {
-      static_assert(
-          tfel::typetraits::IsSafelyReinterpretCastableTo<T2, T>::cond);
-      vectorToTab<TensorDimeToSize<N>::value>::exe(src, this->v);
-    }
-    //! assignement operator
-    TFEL_MATH_INLINE tensor& operator=(const tensor<N, T>&) = default;
-    /*!
-     * Write to Tab
-     */
-    TFEL_MATH_INLINE2 void write(base_type<T>* const) const;
+    TFEL_MATH_INLINE2 void write(base_type<ValueType>* const) const;
     /*!
      * Import values
      */
     template <typename T2>
-    TFEL_MATH_INLINE2
-        std::enable_if_t<tfel::typetraits::IsSafelyReinterpretCastableTo<
-                             T2,
-                             base_type<T>>::cond,
-                         void>
-        import(const T2* const);
-
-    //! assignement operator
-    using tensor_base<tensor<N, T>>::operator=;
-
+    TFEL_MATH_INLINE2 std::enable_if_t<
+        tfel::typetraits::
+            IsSafelyReinterpretCastableTo<T2, base_type<ValueType>>::cond,
+        void>
+    import(const T2* const);
     //! change basis
-    TFEL_MATH_INLINE2 void changeBasis(const rotation_matrix<T>&) noexcept;
-
-    /*!
-     * \return the identity tensor
-     */
-    TFEL_MATH_INLINE static const tensor<N, T>& Id();
-
-    using fsarray<TensorDimeToSize<N>::value, T>::operator[];
-
-    TFEL_MATH_INLINE constexpr const T& operator()(const unsigned short) const;
-    TFEL_MATH_INLINE T& operator()(const unsigned short);
-    TFEL_MATH_INLINE T operator()(const unsigned short,
-                                  const unsigned short) const;
-    /*!
-     * Return the RunTimeProperties of the tvector
-     * \return tvector::RunTimeProperties
-     */
-    constexpr TFEL_MATH_INLINE RunTimeProperties getRunTimeProperties() const;
+    TFEL_MATH_INLINE2 void changeBasis(const rotation_matrix<ValueType>&) noexcept;
 
     template <typename InputIterator>
     TFEL_MATH_INLINE2 void copy(const InputIterator src);
-
-  };  // end of class tensor
+  };  // end of struct tensor
 
   template <unsigned short N, typename T, typename OutputIterator>
-  TFEL_MATH_INLINE2 std::enable_if_t<tfel::typetraits::IsScalar<T>::cond, void>
+  TFEL_MATH_INLINE2 std::enable_if_t<isScalar<T>(), void>
   exportToBaseTypeArray(const tensor<N, T>&, OutputIterator);
   /*!
    * \return the invert of a tensor
@@ -272,10 +225,9 @@ namespace tfel::math {
   TFEL_MATH_INLINE2 std::enable_if_t<
       implementsTensorConcept<TensorType>(),
       tensor<getSpaceDimension<TensorType>(),
-             typename ComputeBinaryResult<
-                 base_type<numeric_type<TensorType>>,
-                 numeric_type<TensorType>,
-                 OpDiv>::Result>>
+             typename ComputeBinaryResult<base_type<numeric_type<TensorType>>,
+                                          numeric_type<TensorType>,
+                                          OpDiv>::Result>>
   invert(const TensorType&) noexcept;
   /*!
    * \return the derivative of the determinant
@@ -323,9 +275,9 @@ namespace tfel::math {
       std::enable_if_t<(implementsStensorConcept<StensorType>() &&
                         implementsTensorConcept<TensorType>()),
                        tensor<getSpaceDimension<StensorType>(),
-                              typename ResultType<numeric_type<StensorType>,
-                                                  numeric_type<TensorType>,
-                                                  OpMult>::type>>
+                              result_type<numeric_type<StensorType>,
+                                          numeric_type<TensorType>,
+                                          OpMult>>>
       convertCauchyStressToFirstPiolaKirchhoffStress(const StensorType&,
                                                      const TensorType&);
   /*!
@@ -341,9 +293,9 @@ namespace tfel::math {
   std::enable_if_t<(implementsTensorConcept<TensorType>() &&
                     implementsTensorConcept<TensorType2>()),
                    stensor<getSpaceDimension<TensorType>(),
-                           typename ResultType<numeric_type<TensorType>,
-                                               numeric_type<TensorType2>,
-                                               OpMult>::type>>
+                           result_type<numeric_type<TensorType>,
+                                       numeric_type<TensorType2>,
+                                       OpMult>>>
   convertFirstPiolaKirchhoffStressToCauchyStress(const TensorType&,
                                                  const TensorType2&);
 
@@ -354,7 +306,7 @@ namespace tfel::typetraits {
   template <unsigned short N, typename T2, typename T>
   struct IsAssignableTo<tfel::math::tensor<N, T2>, tfel::math::tensor<N, T>> {
     //! result
-    static constexpr bool cond = IsAssignableTo<T2, T>::cond;
+    static constexpr bool cond = isAssignableTo<T2, T>();
   };
 
 }  // end of namespace tfel::typetraits

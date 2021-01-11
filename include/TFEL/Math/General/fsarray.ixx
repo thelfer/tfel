@@ -85,7 +85,7 @@ namespace tfel::math {
   template <unsigned short N, typename T>
   template <
       typename T2,
-      std::enable_if_t<tfel::typetraits::IsAssignableTo<T2, T>::cond, bool>>
+      std::enable_if_t<isAssignableTo<T2, T>::cond, bool>>
   constexpr fsarray<N, T>::fsarray(const fsarray<N, T2>& values)
       : array_container<N, T>(tfel::math::internals::fsarray_initializer<
                               N>::template applyFromArray<T>(values)) {
@@ -94,7 +94,7 @@ namespace tfel::math {
   template <unsigned short N, typename T>
   template <
       typename T2,
-      std::enable_if_t<tfel::typetraits::IsAssignableTo<T2, T>::cond, bool>>
+      std::enable_if_t<isAssignableTo<T2, T>::cond, bool>>
   constexpr fsarray<N, T>::fsarray(const std::initializer_list<T2>& values)
       : array_container<N, T>(
             values.size() == 1u
@@ -107,7 +107,7 @@ namespace tfel::math {
   template <unsigned short N, typename T>
   template <
       typename T2,
-      std::enable_if_t<tfel::typetraits::IsAssignableTo<T2, T>::cond, bool>>
+      std::enable_if_t<isAssignableTo<T2, T>::cond, bool>>
   constexpr fsarray<N, T>::fsarray(const T2& value)
       : array_container<N, T>(tfel::math::internals::fsarray_initializer<
                               N>::template applyFromValue<T>(value)) {}

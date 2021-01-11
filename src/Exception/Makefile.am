@@ -6,5 +6,6 @@ AM_LDFLAGS   =-no-undefined -avoid-version -Wl,--add-stdcall-alias -Wl,--kill-at
 endif
 
 lib_LTLIBRARIES = libTFELException.la 
-libTFELException_la_SOURCES = TFELException.cxx
+libTFELException_la_SOURCES = TFELException.cxx     \
+                              ContractViolation.cxx
 EXTRA_DIST = CMakeLists.txt

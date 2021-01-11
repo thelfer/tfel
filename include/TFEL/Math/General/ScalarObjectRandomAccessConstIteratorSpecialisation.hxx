@@ -24,10 +24,7 @@ namespace tfel::math {
    */
   template <typename A, typename B>
   class ScalarObjectRandomAccessConstIterator<A, B, OpMult> {
-    /*
-     * a static assertion ensuring that A is a scalar.
-     */
-    static_assert(tfel::typetraits::IsScalar<A>::cond);
+    static_assert(tfel::typetraits::isScalar<A>());
     /*
      * Name
      */
@@ -67,7 +64,7 @@ namespace tfel::math {
     /*
      * Result of the multplication between the scalar and the NumTypeB
      */
-    typedef typename ComputeBinaryResult<A, NumTypeB, OpMult>::Handle NumType;
+    typedef BinaryOperationHandler<A,NumTypeB,OpMult> NumType;
     /*
      * Type returned by the * operator.
      */
@@ -190,7 +187,7 @@ namespace tfel::math {
    */
   template <typename A, typename B>
   class ScalarObjectRandomAccessConstIterator<A, B, OpDiv> {
-    static_assert(tfel::typetraits::IsScalar<A>::cond);
+    static_assert(tfel::typetraits::isScalar<A>());
     typedef typename B::const_iterator ConstIteratorType;
     static_assert(
         tfel::typetraits::IsRandomAccessIterator<ConstIteratorType>::cond);
@@ -205,7 +202,7 @@ namespace tfel::math {
 
    public:
     typedef std::random_access_iterator_tag iterator_category;
-    typedef typename ComputeBinaryResult<A, NumTypeB, OpDiv>::Handle NumType;
+    typedef BinaryOperationHandler<A,NumTypeB,OpDiv> NumType;
     typedef const NumType value_type;
     typedef Distance difference_type;
     typedef const NumType* pointer;
@@ -288,7 +285,7 @@ namespace tfel::math {
    */
   template <typename A, typename B>
   class ObjectScalarRandomAccessConstIterator<A, B, OpMult> {
-    static_assert(tfel::typetraits::IsScalar<B>::cond);
+    static_assert(tfel::typetraits::isScalar<B>());
     typedef typename A::const_iterator ConstIteratorType;
     static_assert(
         tfel::typetraits::IsRandomAccessIterator<ConstIteratorType>::cond);
@@ -303,7 +300,7 @@ namespace tfel::math {
         Distance;
 
     typedef std::random_access_iterator_tag iterator_category;
-    typedef typename ComputeBinaryResult<NumTypeA, B, OpMult>::Handle NumType;
+    typedef BinaryOperationHandler<NumTypeA,B,OpMult> NumType;
     typedef const NumType value_type;
     typedef Distance difference_type;
     typedef const NumType* pointer;
@@ -386,7 +383,7 @@ namespace tfel::math {
    */
   template <typename A, typename B>
   class ObjectScalarRandomAccessConstIterator<A, B, OpDiv> {
-    static_assert(tfel::typetraits::IsScalar<B>::cond);
+    static_assert(tfel::typetraits::isScalar<B>());
     typedef typename A::const_iterator ConstIteratorType;
     static_assert(
         tfel::typetraits::IsRandomAccessIterator<ConstIteratorType>::cond);
@@ -401,7 +398,7 @@ namespace tfel::math {
         Distance;
 
     typedef std::random_access_iterator_tag iterator_category;
-    typedef typename ComputeBinaryResult<NumTypeA, B, OpDiv>::Handle NumType;
+    typedef BinaryOperationHandler<NumTypeA,B,OpDiv> NumType;
     typedef const NumType value_type;
     typedef Distance difference_type;
     typedef const NumType* pointer;

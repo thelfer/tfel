@@ -45,13 +45,11 @@ namespace tfel::math {
   // Assignement operator
   template <typename Child>
   template <typename T2toT2Type>
-  std::enable_if_t<implementsT2toT2Concept<T2toT2Type>() &&
-                       getSpaceDimension<Child>() ==
-                           getSpaceDimension<T2toT2Type>() &&
-                       tfel::typetraits::IsAssignableTo<
-                           numeric_type<T2toT2Type>,
-                           numeric_type<Child>>::cond,
-                   Child&>
+  std::enable_if_t<
+      implementsT2toT2Concept<T2toT2Type>() &&
+          getSpaceDimension<Child>() == getSpaceDimension<T2toT2Type>() &&
+          isAssignableTo<numeric_type<T2toT2Type>, numeric_type<Child>>(),
+      Child&>
   t2tot2_base<Child>::operator=(const T2toT2Type& src) {
     auto& child = static_cast<Child&>(*this);
     matrix_utilities<
@@ -63,80 +61,71 @@ namespace tfel::math {
 
   template <typename Child>
   template <typename T2toT2Type>
-  std::enable_if_t<implementsT2toT2Concept<T2toT2Type>() &&
-                       getSpaceDimension<Child>() ==
-                           getSpaceDimension<T2toT2Type>() &&
-                       tfel::typetraits::IsAssignableTo<
-                           numeric_type<T2toT2Type>,
-                           numeric_type<Child>>::cond,
-                   Child&>
+  std::enable_if_t<
+      implementsT2toT2Concept<T2toT2Type>() &&
+          getSpaceDimension<Child>() == getSpaceDimension<T2toT2Type>() &&
+          isAssignableTo<numeric_type<T2toT2Type>, numeric_type<Child>>(),
+      Child&>
   t2tot2_base<Child>::operator+=(const T2toT2Type& src) {
     auto& child = static_cast<Child&>(*this);
     matrix_utilities<
         TensorDimeToSize<getSpaceDimension<Child>()>::value,
         TensorDimeToSize<getSpaceDimension<Child>()>::value,
         TensorDimeToSize<getSpaceDimension<Child>()>::value>::plusEqual(child,
-                                                                       src);
+                                                                        src);
     return child;
   }
 
   // Assignement operator
   template <typename Child>
   template <typename T2toT2Type>
-  std::enable_if_t<implementsT2toT2Concept<T2toT2Type>() &&
-                       getSpaceDimension<Child>() ==
-                           getSpaceDimension<T2toT2Type>() &&
-                       tfel::typetraits::IsAssignableTo<
-                           numeric_type<T2toT2Type>,
-                           numeric_type<Child>>::cond,
-                   Child&>
+  std::enable_if_t<
+      implementsT2toT2Concept<T2toT2Type>() &&
+          getSpaceDimension<Child>() == getSpaceDimension<T2toT2Type>() &&
+          isAssignableTo<numeric_type<T2toT2Type>, numeric_type<Child>>(),
+      Child&>
   t2tot2_base<Child>::operator-=(const T2toT2Type& src) {
     auto& child = static_cast<Child&>(*this);
     matrix_utilities<
         TensorDimeToSize<getSpaceDimension<Child>()>::value,
         TensorDimeToSize<getSpaceDimension<Child>()>::value,
         TensorDimeToSize<getSpaceDimension<Child>()>::value>::minusEqual(child,
-                                                                        src);
+                                                                         src);
     return child;
   }
 
   // *= operator
   template <typename Child>
   template <typename T2>
-  std::enable_if_t<tfel::typetraits::IsScalar<T2>::cond &&
-                       std::is_same_v<typename ResultType<
-                                          numeric_type<Child>,
-                                          T2,
-                                          OpMult>::type,
-                                      numeric_type<Child>>,
-                   Child&>
+  std::enable_if_t<
+      isScalar<T2>() &&
+          std::is_same_v<result_type<numeric_type<Child>, T2, OpMult>,
+                         numeric_type<Child>>,
+      Child&>
   t2tot2_base<Child>::operator*=(const T2 s) {
     auto& child = static_cast<Child&>(*this);
-    matrix_utilities<
-        TensorDimeToSize<getSpaceDimension<Child>()>::value,
-        TensorDimeToSize<getSpaceDimension<Child>()>::value,
-        TensorDimeToSize<getSpaceDimension<Child>()>::value>::multByScalar(child,
-                                                                          s);
+    matrix_utilities<TensorDimeToSize<getSpaceDimension<Child>()>::value,
+                     TensorDimeToSize<getSpaceDimension<Child>()>::value,
+                     TensorDimeToSize<getSpaceDimension<Child>()>::value>::
+        multByScalar(child, s);
     return child;
   }
 
   // /= operator
   template <typename Child>
   template <typename T2>
-  std::enable_if_t<tfel::typetraits::IsScalar<T2>::cond &&
-                       std::is_same_v<typename ResultType<
-                                          numeric_type<Child>,
-                                          T2,
-                                          OpDiv>::type,
-                                      numeric_type<Child>>,
-                   Child&>
+  std::enable_if_t<
+      isScalar<T2>() &&
+          std::is_same_v<result_type<numeric_type<Child>, T2, OpDiv>,
+                         numeric_type<Child>>,
+      Child&>
   t2tot2_base<Child>::operator/=(const T2 s) {
     auto& child = static_cast<Child&>(*this);
     matrix_utilities<
         TensorDimeToSize<getSpaceDimension<Child>()>::value,
         TensorDimeToSize<getSpaceDimension<Child>()>::value,
         TensorDimeToSize<getSpaceDimension<Child>()>::value>::divByScalar(child,
-                                                                         s);
+                                                                          s);
     return child;
   }
 
@@ -295,9 +284,7 @@ namespace tfel::math {
   template <typename TensorType>
   std::enable_if_t<implementsTensorConcept<TensorType>() &&
                        getSpaceDimension<TensorType>() == N &&
-                       tfel::typetraits::IsAssignableTo<
-                           numeric_type<TensorType>,
-                           T>::cond,
+                       isAssignableTo<numeric_type<TensorType>, T>(),
                    Expr<t2tot2<N, T>, TensorProductLeftDerivativeExpr<N>>>
   t2tot2<N, T>::tpld(const TensorType& B) {
     return Expr<t2tot2<N, T>, TensorProductLeftDerivativeExpr<N>>(B);
@@ -305,17 +292,16 @@ namespace tfel::math {
 
   template <unsigned short N, typename T>
   template <typename TensorType, typename T2toT2Type>
-  std::enable_if_t<implementsTensorConcept<TensorType>() &&
-                       implementsT2toT2Concept<T2toT2Type>() &&
-                       getSpaceDimension<TensorType>() == N &&
-                       getSpaceDimension<T2toT2Type>() == N &&
-                       tfel::typetraits::IsAssignableTo<
-                           typename ComputeBinaryResult<
-                               numeric_type<TensorType>,
-                               numeric_type<T2toT2Type>,
-                               OpMult>::Result,
-                           T>::cond,
-                   Expr<t2tot2<N, T>, TensorProductLeftDerivativeExpr<N>>>
+  std::enable_if_t<
+      implementsTensorConcept<TensorType>() &&
+          implementsT2toT2Concept<T2toT2Type>() &&
+          getSpaceDimension<TensorType>() == N &&
+          getSpaceDimension<T2toT2Type>() == N &&
+          isAssignableTo<typename ComputeBinaryResult<numeric_type<TensorType>,
+                                                      numeric_type<T2toT2Type>,
+                                                      OpMult>::Result,
+                         T>(),
+      Expr<t2tot2<N, T>, TensorProductLeftDerivativeExpr<N>>>
   t2tot2<N, T>::tpld(const TensorType& B, const T2toT2Type& C) {
     return Expr<t2tot2<N, T>, TensorProductLeftDerivativeExpr<N>>(B, C);
   }
@@ -324,9 +310,7 @@ namespace tfel::math {
   template <typename TensorType>
   std::enable_if_t<implementsTensorConcept<TensorType>() &&
                        getSpaceDimension<TensorType>() == N &&
-                       tfel::typetraits::IsAssignableTo<
-                           numeric_type<TensorType>,
-                           T>::cond,
+                       isAssignableTo<numeric_type<TensorType>, T>(),
                    Expr<t2tot2<N, T>, TensorProductRightDerivativeExpr<N>>>
   t2tot2<N, T>::tprd(const TensorType& A) {
     return Expr<t2tot2<N, T>, TensorProductRightDerivativeExpr<N>>(A);
@@ -339,19 +323,17 @@ namespace tfel::math {
           implementsT2toT2Concept<T2toT2Type>() &&
           getSpaceDimension<TensorType>() == N &&
           getSpaceDimension<T2toT2Type>() == N &&
-          tfel::typetraits::IsAssignableTo<
-              typename ComputeBinaryResult<
-                  numeric_type<TensorType>,
-                  numeric_type<T2toT2Type>,
-                  OpMult>::Result,
-              T>::cond,
+          isAssignableTo<typename ComputeBinaryResult<numeric_type<TensorType>,
+                                                      numeric_type<T2toT2Type>,
+                                                      OpMult>::Result,
+                         T>(),
       Expr<t2tot2<N, T>, TensorProductRightDerivativeExpr<N>>>
   t2tot2<N, T>::tprd(const TensorType& A, const T2toT2Type& C) {
     return Expr<t2tot2<N, T>, TensorProductRightDerivativeExpr<N>>(A, C);
   }
 
   template <unsigned short N, typename T>
-  TFEL_CONSTEXPR tfel::math::t2tot2<N, base_type<T>>
+  constexpr tfel::math::t2tot2<N, base_type<T>>
   t2tot2<N, T>::transpose_derivative() {
     using base = base_type<T>;
     constexpr const auto c0 = base{0};
@@ -381,7 +363,7 @@ namespace tfel::math {
   }
 
   template <unsigned short N, typename T>
-  TFEL_CONSTEXPR t2tot2<N, base_type<T>> t2tot2<N, T>::Id() {
+  constexpr t2tot2<N, base_type<T>> t2tot2<N, T>::Id() {
     using base = base_type<T>;
     constexpr const auto c0 = base{0};
     constexpr const auto c1 = base{1};
@@ -410,7 +392,7 @@ namespace tfel::math {
   }  // end of Id
 
   template <unsigned short N, typename T>
-  TFEL_CONSTEXPR t2tot2<N, base_type<T>> t2tot2<N, T>::IxI() {
+  constexpr t2tot2<N, base_type<T>> t2tot2<N, T>::IxI() {
     using base = base_type<T>;
     constexpr const auto c1 = base{1};
     static_assert((N == 1) || (N == 2) || (N == 3));
@@ -440,7 +422,7 @@ namespace tfel::math {
   }  // end of IxI
 
   template <unsigned short N, typename T>
-  TFEL_CONSTEXPR t2tot2<N, base_type<T>> t2tot2<N, T>::K() {
+  constexpr t2tot2<N, base_type<T>> t2tot2<N, T>::K() {
     using base = base_type<T>;
     static_assert((N == 1) || (N == 2) || (N == 3));
     constexpr const auto c2_3 = base{2} / base{3};
@@ -473,66 +455,15 @@ namespace tfel::math {
   }  // end of K
 
   template <unsigned short N, typename T>
-  constexpr t2tot2<N, T>::t2tot2() {}
-
-  template <unsigned short N, typename T>
   template <
-      typename T2,
-      std::enable_if_t<tfel::typetraits::IsAssignableTo<T2, T>::cond, bool>>
-  constexpr t2tot2<N, T>::t2tot2(const T2& init)
-      : fsarray<TensorDimeToSize<N>::value * TensorDimeToSize<N>::value, T>(
-            init) {}
-
-  template <unsigned short N, typename T>
-  template <
-      typename T2,
-      std::enable_if_t<tfel::typetraits::IsAssignableTo<T2, T>::cond, bool>>
-  constexpr t2tot2<N, T>::t2tot2(const std::initializer_list<T2>& values)
-      : fsarray<TensorDimeToSize<N>::value * TensorDimeToSize<N>::value, T>(
-            values) {}
-
-  template <unsigned short N, typename T>
-  template <typename T2, typename Op>
-  t2tot2<N, T>::t2tot2(const Expr<t2tot2<N, T2>, Op>& src) {
-    matrix_utilities<TensorDimeToSize<N>::value, TensorDimeToSize<N>::value,
-                     TensorDimeToSize<N>::value>::copy(src, *this);
-  }
-
-  template <unsigned short N, typename T>
-  template <typename T2toST2Type,
-            std::enable_if_t<
-                ((implementsT2toST2Concept<T2toST2Type>()) &&
-                 (tfel::typetraits::IsAssignableTo<numeric_type<T2toST2Type>,
-                                                   T>::cond) &&
-                 (getSpaceDimension<T2toST2Type>() == N)),
-                bool>>
-  t2tot2<N, T>::t2tot2(const T2toST2Type& s) {
+      typename T2toST2Type,
+      std::enable_if_t<((implementsT2toST2Concept<T2toST2Type>()) &&
+                        (isAssignableTo<numeric_type<T2toST2Type>, T>()) &&
+                        (getSpaceDimension<T2toST2Type>() == N)),
+                       bool>>
+  constexpr t2tot2<N, T>::t2tot2(const T2toST2Type& s) {
     convert(*this, s);
   }  // end of t2tot2<N, T>::t2tot2
-
-  template <unsigned short N, typename T>
-  constexpr t2tot2<N, T>::t2tot2(const t2tot2<N, T>& src)
-      : T2toT2Concept<t2tot2<N, T>>(src),
-        fsarray<TensorDimeToSize<N>::value * TensorDimeToSize<N>::value, T>(
-            src) {}
-
-  template <unsigned short N, typename T>
-  t2tot2<N, T>& t2tot2<N, T>::operator=(const t2tot2<N, T>& src) {
-    fsarray<TensorDimeToSize<N>::value * TensorDimeToSize<N>::value, T>::
-    operator=(src);
-    return *this;
-  }
-
-  template <unsigned short N, typename T>
-  T& t2tot2<N, T>::operator()(const unsigned short i, const unsigned short j) {
-    return this->v[TensorDimeToSize<N>::value * i + j];
-  }
-
-  template <unsigned short N, typename T>
-  constexpr const T& t2tot2<N, T>::operator()(const unsigned short i,
-                                              const unsigned short j) const {
-    return this->v[TensorDimeToSize<N>::value * i + j];
-  }
 
   template <unsigned short N, typename T>
   template <typename InputIterator>
@@ -540,12 +471,6 @@ namespace tfel::math {
     tfel::fsalgo::copy<TensorDimeToSize<N>::value *
                        TensorDimeToSize<N>::value>::exe(src, *this);
   }
-
-  template <unsigned short N, typename T>
-  typename t2tot2<N, T>::RunTimeProperties t2tot2<N, T>::getRunTimeProperties()
-      const {
-    return RunTimeProperties();
-  }  // end of t2tot2<N,T>::getRunTimeProperties
 
   template <typename T2toT2Type>
   std::enable_if_t<
@@ -582,21 +507,21 @@ namespace tfel::math {
       implementsTensorConcept<TensorType>(),
       t2tot2<getSpaceDimension<TensorType>(), numeric_type<TensorType>>>
   computeSpinRateDerivative(const TensorType& F) {
+    constexpr auto N = getSpaceDimension<TensorType>();
     using value_type = numeric_type<TensorType>;
     using base = base_type<TensorType>;
-    using res = t2tot2<getSpaceDimension<TensorType>(), value_type>;
-    using resbase = t2tot2<getSpaceDimension<TensorType>(), base>;
+    using res = t2tot2<N, value_type>;
+    using resbase = t2tot2<N, base>;
     const auto iF = invert(F);
     const auto itF = invert(transpose(F));
     const auto dt = resbase::transpose_derivative();
-    const res r = res::tpld(iF) - res::tprd(itF, dt);
-    return r / 2;
+    return eval((res::tpld(iF) - res::tprd(itF, dt)) / 2);
   }
 
   template <typename TensorType>
   std::enable_if_t<
       implementsTensorConcept<TensorType>() &&
-          tfel::typetraits::IsScalar<numeric_type<TensorType>>::cond,
+          isScalar<numeric_type<TensorType>>(),
       t2tot2<getSpaceDimension<TensorType>(), numeric_type<TensorType>>>
   computeDeterminantSecondDerivative(const TensorType& t) {
     constexpr const auto N = getSpaceDimension<TensorType>();
@@ -623,11 +548,9 @@ namespace tfel::math {
   }  // end of computeDeterminantSecondDerivative
 
   template <typename T, typename T2toST2Type>
-  std::enable_if_t<
-      ((implementsT2toST2Concept<T2toST2Type>()) &&
-       (tfel::typetraits::IsAssignableTo<numeric_type<T2toST2Type>,
-                                         T>::cond)),
-      void>
+  std::enable_if_t<((implementsT2toST2Concept<T2toST2Type>()) &&
+                    (isAssignableTo<numeric_type<T2toST2Type>, T>())),
+                   void>
   convert(t2tot2<getSpaceDimension<T2toST2Type>(), T>& d,
           const T2toST2Type& s) {
     constexpr const auto N = getSpaceDimension<T2toST2Type>();

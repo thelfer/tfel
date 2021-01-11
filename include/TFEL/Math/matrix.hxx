@@ -209,10 +209,8 @@ namespace tfel::math {
      * \return matrix&, a reference to itself.
      */
     template <typename T2, typename Operation>
-    TFEL_MATH_INLINE2
-        std::enable_if_t<tfel::typetraits::IsAssignableTo<T2, T>::cond,
-                         matrix<T>&>
-        operator=(const Expr<matrix<T2>, Operation>&);
+    TFEL_MATH_INLINE2 std::enable_if_t<isAssignableTo<T2, T>(), matrix<T>&>
+    operator=(const Expr<matrix<T2>, Operation>&);
 
     /*
      * Assignement operator
@@ -221,10 +219,8 @@ namespace tfel::math {
      * \return matrix&, a reference to itself.
      */
     template <typename T2, typename Operation>
-    TFEL_MATH_INLINE2
-        std::enable_if_t<tfel::typetraits::IsAssignableTo<T2, T>::cond,
-                         matrix<T>&>
-        operator+=(const Expr<matrix<T2>, Operation>&);
+    TFEL_MATH_INLINE2 std::enable_if_t<isAssignableTo<T2, T>(), matrix<T>&>
+    operator+=(const Expr<matrix<T2>, Operation>&);
 
     /*
      * Assignement operator
@@ -233,10 +229,8 @@ namespace tfel::math {
      * \return matrix&, a reference to itself.
      */
     template <typename T2, typename Operation>
-    TFEL_MATH_INLINE2
-        std::enable_if_t<tfel::typetraits::IsAssignableTo<T2, T>::cond,
-                         matrix<T>&>
-        operator-=(const Expr<matrix<T2>, Operation>&);
+    TFEL_MATH_INLINE2 std::enable_if_t<isAssignableTo<T2, T>(), matrix<T>&>
+    operator-=(const Expr<matrix<T2>, Operation>&);
 
     void swap(matrix&);
 

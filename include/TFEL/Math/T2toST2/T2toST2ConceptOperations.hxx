@@ -17,7 +17,6 @@
 #include <cmath>
 #include "TFEL/Config/TFELConfig.hxx"
 #include "TFEL/Metaprogramming/HasRandomAccessConstIterator.hxx"
-#include "TFEL/TypeTraits/IsScalar.hxx"
 #include "TFEL/Math/General/ResultType.hxx"
 #include "TFEL/Math/General/BasicOperations.hxx"
 #include "TFEL/Math/General/ComputeObjectTag.hxx"
@@ -47,7 +46,7 @@ namespace tfel::math {
 
    public:
     using Result = result_type<T2toST2TypeA, T2toST2TypeB, Op>;
-    using Handle = std::conditional_t<tfel::typetraits::IsInvalid<Result>::cond,
+    using Handle = std::conditional_t<isInvalid<Result>(),
                                       DummyHandle,
                                       Expr<Result, BinaryOperation<A, B, Op>>>;
   };
@@ -64,10 +63,9 @@ namespace tfel::math {
     using T2toST2TypeB = EvaluationResult<B>;
 
    public:
-    using Result =
-        result_type<ST2toST2TypeA, T2toST2TypeB, OpMult>;
+    using Result = result_type<ST2toST2TypeA, T2toST2TypeB, OpMult>;
     using Handle = std::conditional_t<
-        tfel::typetraits::IsInvalid<Result>::cond,
+        isInvalid<Result>(),
         DummyHandle,
         Expr<Result, ST2toST2T2toST2ProductExpr<getSpaceDimension<Result>()>>>;
   };
@@ -85,7 +83,7 @@ namespace tfel::math {
    public:
     using Result = result_type<T2toST2TypeA, T2toT2TypeB, OpMult>;
     using Handle = std::conditional_t<
-        tfel::typetraits::IsInvalid<Result>::cond,
+        isInvalid<Result>(),
         DummyHandle,
         Expr<Result, T2toST2T2toT2ProductExpr<getSpaceDimension<Result>()>>>;
   };
@@ -101,10 +99,9 @@ namespace tfel::math {
     using TensorTypeB = EvaluationResult<B>;
 
    public:
-    using Result =
-        result_type<StensorTypeA, TensorTypeB, OpDiadicProduct>;
+    using Result = result_type<StensorTypeA, TensorTypeB, OpDiadicProduct>;
     using Handle =
-        std::conditional_t<tfel::typetraits::IsInvalid<Result>::cond,
+        std::conditional_t<isInvalid<Result>(),
                            DummyHandle,
                            Expr<Result, DiadicProductOperation<A, B>>>;
   };
@@ -122,7 +119,7 @@ namespace tfel::math {
    public:
     using Result = result_type<T2toST2TypeA, TensorTypeB, OpMult>;
     using Handle = std::conditional_t<
-        tfel::typetraits::IsInvalid<Result>::cond,
+        isInvalid<Result>(),
         DummyHandle,
         Expr<Result, T2toST2TensorProductExpr<getSpaceDimension<Result>()>>>;
   };
@@ -138,10 +135,9 @@ namespace tfel::math {
     using T2toST2TypeB = EvaluationResult<B>;
 
    public:
-    using Result =
-        result_type<StensorTypeA, T2toST2TypeB, OpMult>;
+    using Result = result_type<StensorTypeA, T2toST2TypeB, OpMult>;
     using Handle = std::conditional_t<
-        tfel::typetraits::IsInvalid<Result>::cond,
+        isInvalid<Result>(),
         DummyHandle,
         Expr<Result, StensorT2toST2ProductExpr<getSpaceDimension<Result>()>>>;
   };
@@ -159,7 +155,7 @@ namespace tfel::math {
    public:
     using Result = result_type<ScalarA, T2toST2TypeB, Op>;
     using Handle =
-        std::conditional_t<tfel::typetraits::IsInvalid<Result>::cond,
+        std::conditional_t<isInvalid<Result>(),
                            DummyHandle,
                            Expr<Result, ScalarObjectOperation<A, B, Op>>>;
   };
@@ -176,7 +172,7 @@ namespace tfel::math {
    public:
     using Result = result_type<T2toST2TypeA, B, Op>;
     using Handle =
-        std::conditional_t<tfel::typetraits::IsInvalid<Result>::cond,
+        std::conditional_t<isInvalid<Result>(),
                            DummyHandle,
                            Expr<Result, ObjectScalarOperation<A, B, Op>>>;
   };
@@ -191,22 +187,18 @@ namespace tfel::math {
 
    public:
     using Result = typename UnaryResultType<T2toST2TypeA, OpNeg>::type;
-    typedef
-        typename std::conditional<tfel::typetraits::IsInvalid<Result>::cond,
-                                  DummyHandle,
-                                  Expr<Result, UnaryOperation<A, OpNeg>>>::type
-            Handle;
+    using Handle = std::conditional_t<isInvalid<Result>(),
+                                      DummyHandle,
+                                      Expr<Result, UnaryOperation<A, OpNeg>>>;
   };
 
   template <typename T1, typename T2>
   TFEL_MATH_INLINE typename std::enable_if<
-      implementsStensorConcept<T1>() &&
-          implementsT2toST2Concept<T2>() &&
-          !tfel::typetraits::IsInvalid<
-              typename ComputeBinaryResult<T1, T2, OpMult>::Result>::cond,
-      typename ComputeBinaryResult<T1, T2, OpMult>::Handle>::type
+      implementsStensorConcept<T1>() && implementsT2toST2Concept<T2>() &&
+          !isInvalid<BinaryOperationResult<T1, T2, OpMult>>(),
+      BinaryOperationHandler<T1, T2, OpMult>>::type
   operator|(const T1& a, const T2& b) {
-    typedef typename ComputeBinaryResult<T1, T2, OpMult>::Handle Handle;
+    typedef BinaryOperationHandler<T1, T2, OpMult> Handle;
     return Handle(a, b);
   }
 

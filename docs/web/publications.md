@@ -13,6 +13,8 @@ eqnPrefixTemplate: "($$i$$)"
 
 ---
 nocite: |
+    @seidlhofer_compressible_2021
+    @hure_yield_2021
     @parisio_model_2020
     @garcia_effect_2020
     @deng_slope_2020

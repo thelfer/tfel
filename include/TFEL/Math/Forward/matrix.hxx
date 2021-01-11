@@ -32,11 +32,8 @@ namespace tfel::math {
    * \see MathObjectTraits.
    */
   template <typename T>
-  struct MathObjectTraits<matrix<T>> {
-    //! \brief the type holded by the matrix.
-    using NumType = T;
-    //! \brief the type of the index used by the matrix.
-    using IndexType = typename tfel::math::vector<T>::size_type;
+  struct MathObjectTraits<matrix<T>>
+      : MathObjectTraitsBase<T, typename tfel::math::vector<T>::size_type> {
     //! brief a `matrix` is not related to the space dimension
     static constexpr const unsigned short dime = 0;
   };

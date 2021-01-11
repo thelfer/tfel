@@ -189,13 +189,13 @@ namespace tfel::math {
   };
 
   template <int N, typename T>
-  std::enable_if_t<tfel::typetraits::IsScalar<T>::cond, T> power(const T x) {
+  std::enable_if_t<tfel::typetraits::isScalar<T>(), T> power(const T x) {
     typedef typename tfel::math::PowerImplSelector<N, 1u>::type Implementation;
     return Implementation::exe(x);
   }
 
   template <int N, unsigned int D, typename T>
-  std::enable_if_t<tfel::typetraits::IsScalar<T>::cond, T> power(const T x) {
+  std::enable_if_t<tfel::typetraits::isScalar<T>(), T> power(const T x) {
     typedef typename tfel::math::PowerImplSelector<N, D>::type Implementation;
     return Implementation::exe(x);
   }

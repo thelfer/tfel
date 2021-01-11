@@ -19,52 +19,47 @@
 #include"TFEL/Math/General/UnaryResultType.hxx"
 #include"TFEL/Math/General/ComputeObjectTag.hxx"
 
-namespace tfel{
+namespace tfel::math {
 
-  namespace math{
+  template <typename TagA, typename TagOp, typename A, typename Op>
+  struct ComputeUnaryResult_ {
+    using Result = tfel::meta::InvalidType;
+    using Handle = tfel::meta::InvalidType;
+  };
 
-    template<typename TagA,typename TagOp,
-	     typename A,typename Op>
-    struct ComputeUnaryResult_
-    {
-      using Result = tfel::meta::InvalidType;
-      using Handle = tfel::meta::InvalidType;
-    };
+  //! Partial Specialisation of ComputeUnaryResult_ for scalars
+  template <typename A, typename TagOp, typename Op>
+  struct ComputeUnaryResult_<ScalarTag, TagOp, A, Op> {
+    typedef std::decay_t<A> A_;
+    typedef typename UnaryResultType<A_, Op>::type Result;
+    typedef typename UnaryResultType<A_, Op>::type Handle;
+  };
 
-    //! Partial Specialisation of ComputeUnaryResult_ for scalars
-    template<typename A,typename TagOp,typename Op>
-    struct ComputeUnaryResult_<ScalarTag,TagOp,A,Op>
-    {
-      typedef std::decay_t<A> A_;
-      typedef typename UnaryResultType<A_,Op>::type Result;
-      typedef typename UnaryResultType<A_,Op>::type Handle;
-    };
+  template <typename A, typename Op>
+  class ComputeUnaryResult {
+    //! a simple alias
+    typedef std::decay_t<A> A_;
+    typedef typename ComputeObjectTag<A_>::type TagA;
+    typedef typename ComputeObjectTag<Op>::type TagOp;
 
-    template<typename A,typename Op>
-    class ComputeUnaryResult
-    {
-      //! a simple alias
-      typedef std::decay_t<A> A_;
-      typedef typename ComputeObjectTag<A_>::type TagA;
-      typedef typename ComputeObjectTag<Op>::type TagOp;
-    public:
-      typedef typename ComputeUnaryResult_<TagA,TagOp,A,Op>::Result Result;
-      typedef typename ComputeUnaryResult_<TagA,TagOp,A,Op>::Handle Handle;
-    };
+   public:
+    typedef typename ComputeUnaryResult_<TagA, TagOp, A, Op>::Result Result;
+    typedef typename ComputeUnaryResult_<TagA, TagOp, A, Op>::Handle Handle;
+  };
 
-    //! an alias for the result of an unary operation
-    template<typename T1,typename Op>
-    using UnaryOperationResult = typename ComputeUnaryResult<T1,Op>::Result;
-    //! an alias of the handler of an unary operation
-    template<typename T1,typename Op>
-    using UnaryOperationHandler = typename ComputeUnaryResult<T1,Op>::Handle;
-    //! an alias
-    template<typename T1, typename Op>
-    using isUnaryOperationResultTypeValid = std::integral_constant<bool,!tfel::typetraits::IsInvalid<UnaryOperationResult<T1,Op>>::cond>;
+  //! an alias for the result of an unary operation
+  template <typename T1, typename Op>
+  using UnaryOperationResult = typename ComputeUnaryResult<T1, Op>::Result;
+  //! an alias of the handler of an unary operation
+  template <typename T1, typename Op>
+  using UnaryOperationHandler = typename ComputeUnaryResult<T1, Op>::Handle;
+  //! an alias
+  template <typename T1, typename Op>
+  using isUnaryOperationResultTypeValid = std::integral_constant<
+      bool,
+      !tfel::typetraits::IsInvalid<UnaryOperationResult<T1, Op>>::cond>;
 
-  } // end of namespace math
-
-} // end of namespace tfel
+}  // end of namespace tfel::math
 
 #endif /* LIB_TFEL_COMPUTEUNARYRESULT_HXX */
 

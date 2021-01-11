@@ -37,15 +37,12 @@ namespace tfel::math {
    * \tparam T: numeric type
    */
   template <unsigned short N, typename T>
-  struct MathObjectTraits<st2tot2<N, T>> {
-    //! \brief numeric type
-    using NumType = T;
-    //! \brief index type
-    using IndexType = unsigned short;
+  struct MathObjectTraits<st2tot2<N, T>>
+      : MathObjectTraitsBase<T, unsigned short> {
     //! \brief space dimension
     static constexpr unsigned short dime = N;
   };
 
-}  // end of namespace tfel::math
+  }  // end of namespace tfel::math
 
 #endif /* LIB_TFEL_MATH_FORWARD_ST2TOT2_HXX */

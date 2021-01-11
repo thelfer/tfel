@@ -74,23 +74,8 @@ namespace tfel::math {
   template <typename T2toT2Type>
   std::enable_if_t<
       implementsT2toT2Concept<T2toT2Type>() &&
-          (getSpaceDimension<T2toT2Type>() == 1u) &&
-          tfel::typetraits::IsScalar<numeric_type<T2toT2Type>>::cond,
+          isScalar<numeric_type<T2toT2Type>>(),
       typename ComputeUnaryResult<numeric_type<T2toT2Type>, Power<3>>::Result>
-  det(const T2toT2Type&);
-  /*!
-   * \return the determinant of a `st2tost2`
-   * \param[in] s: fourth order tensor
-   */
-  template <typename T2toT2Type>
-  std::enable_if_t<
-      implementsT2toT2Concept<T2toT2Type>() &&
-          ((getSpaceDimension<T2toT2Type>() == 2u) ||
-           (getSpaceDimension<T2toT2Type>() == 3u)) &&
-          tfel::typetraits::IsScalar<numeric_type<T2toT2Type>>::cond,
-      typename ComputeUnaryResult<
-          numeric_type<T2toT2Type>,
-          Power<getSpaceDimension<T2toT2Type>()>>::Result>
   det(const T2toT2Type&);
 
 }  // end of namespace tfel::math

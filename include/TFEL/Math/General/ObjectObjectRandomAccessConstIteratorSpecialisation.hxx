@@ -44,7 +44,7 @@ namespace tfel::math {
 
    public:
     typedef std::random_access_iterator_tag iterator_category;
-    typedef typename ComputeBinaryResult<NumTypeA, NumTypeB, OpPlus>::Handle
+    typedef BinaryOperationHandler<NumTypeA,NumTypeB,OpPlus>
         NumType;
     typedef const NumType value_type;
     typedef Distance difference_type;
@@ -152,7 +152,7 @@ namespace tfel::math {
 
    public:
     typedef std::random_access_iterator_tag iterator_category;
-    typedef typename ComputeBinaryResult<NumTypeA, NumTypeB, OpMinus>::Handle
+    typedef BinaryOperationHandler<NumTypeA,NumTypeB,OpMinus>
         NumType;
     typedef const NumType value_type;
     typedef Distance difference_type;
@@ -260,7 +260,7 @@ namespace tfel::math {
 
    public:
     typedef std::random_access_iterator_tag iterator_category;
-    typedef typename ComputeBinaryResult<NumTypeA, NumTypeB, OpMult>::Handle
+    typedef BinaryOperationHandler<NumTypeA,NumTypeB,OpMult>
         NumType;
     typedef const NumType value_type;
     typedef Distance difference_type;
@@ -368,7 +368,7 @@ namespace tfel::math {
    public:
     typedef std::random_access_iterator_tag iterator_category;
     typedef
-        typename ComputeBinaryResult<NumTypeA, NumTypeB, OpDiv>::Handle NumType;
+        BinaryOperationHandler<NumTypeA,NumTypeB,OpDiv> NumType;
     typedef const NumType value_type;
     typedef Distance difference_type;
     typedef const NumType* pointer;

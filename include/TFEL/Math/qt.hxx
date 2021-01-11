@@ -27,6 +27,7 @@
 #include "TFEL/TypeTraits/Promote.hxx"
 #include "TFEL/Math/Forward/Complex.hxx"
 #include "TFEL/Math/General/BasicOperations.hxx"
+#include "TFEL/Math/General/MathObjectTraits.hxx"
 #include "TFEL/Math/Quantity/Unit.hxx"
 
 namespace tfel::math {
@@ -38,7 +39,7 @@ namespace tfel::math {
   struct IsQtScalarOperationValid {
     static constexpr bool cond =
         tfel::typetraits::IsFundamentalNumericType<T2>::cond &&
-        tfel::typetraits::IsScalar<T>::cond &&
+        isScalar<T>() &&
         std::is_same<typename tfel::typetraits::Promote<T, T2>::type, T>::value;
   };
 
@@ -56,7 +57,7 @@ namespace tfel::math {
   template <typename unit, typename T = double>
   class qt {
     static_assert(tfel::typetraits::IsFundamentalNumericType<T>::cond);
-    static_assert(tfel::typetraits::IsScalar<T>::cond);
+    static_assert(isScalar<T>());
     //! \brief the value of the quantity
     T value;
 
@@ -162,7 +163,7 @@ namespace tfel::math {
         std::is_same<typename tfel::typetraits::Promote<T, T2>::type,
                      T>::value &&
         tfel::typetraits::IsFundamentalNumericType<T2>::cond &&
-        tfel::typetraits::IsScalar<T2>::cond;
+        isScalar<T2>();
   };
 
   /*!
@@ -173,7 +174,7 @@ namespace tfel::math {
   template <typename T>
   class qt<NoUnit, T> {
     static_assert(tfel::typetraits::IsFundamentalNumericType<T>::cond);
-    static_assert(tfel::typetraits::IsScalar<T>::cond);
+    static_assert(isScalar<T>());
     //! \brief the value of the quantity
     T value;
 

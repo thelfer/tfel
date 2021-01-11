@@ -237,6 +237,15 @@ namespace mfront {
       }
     }
 
+    // write the thermal expansions
+    if (mb.areThermalExpansionCoefficientsDefined()) {
+      for (const auto& themp :
+           mb.getThermalExpansionCoefficientsDescriptions()) {
+        CyranoMaterialPropertyInterface i;
+        i.writeOutputFiles(themp, fd);
+      }
+    }
+
     // opening header file
     auto fileName = "cyrano"+name+".hxx";
     std::ofstream out("include/MFront/Cyrano/" + fileName);
@@ -385,7 +394,6 @@ namespace mfront {
     insert_if(l.include_directories,
               "$(shell " + tfel_config + " --include-path)");
     insert_if(l.sources, "cyrano" + name + ".cxx");
-    insert_if(l.epts, name);
     insert_if(l.epts, this->getFunctionNameBasis(name));
     insert_if(d.headers, "MFront/Cyrano/cyrano" + name + ".hxx");
     insert_if(l.link_directories,
@@ -409,6 +417,12 @@ namespace mfront {
       for (const auto& emp : bd.getElasticMaterialPropertiesDescriptions()) {
         CyranoMaterialPropertyInterface i;
         i.getLibraryDescription(d, l, emp);
+      }
+    }
+    if (bd.areThermalExpansionCoefficientsDefined()) {
+      for (const auto& themp : bd.getThermalExpansionCoefficientsDescriptions()) {
+        CyranoMaterialPropertyInterface i;
+        i.getLibraryDescription(d, l, themp);
       }
     }
   }    // end of CyranoInterface::getTargetsDescription(TargetsDescription&)

@@ -35,9 +35,9 @@ namespace tfel::math {
   std::enable_if_t<implementsT2toST2Concept<T2toST2Type>() &&
                        getSpaceDimension<Child>() ==
                            getSpaceDimension<T2toST2Type>() &&
-                       tfel::typetraits::IsAssignableTo<
+                       isAssignableTo<
                            numeric_type<T2toST2Type>,
-                           numeric_type<Child>>::cond,
+                           numeric_type<Child>>(),
                    Child&>
   t2tost2_base<Child>::operator=(const T2toST2Type& src) {
     auto& child = static_cast<Child&>(*this);
@@ -53,9 +53,9 @@ namespace tfel::math {
   std::enable_if_t<implementsT2toST2Concept<T2toST2Type>() &&
                        getSpaceDimension<Child>() ==
                            getSpaceDimension<T2toST2Type>() &&
-                       tfel::typetraits::IsAssignableTo<
+                       isAssignableTo<
                            numeric_type<T2toST2Type>,
-                           numeric_type<Child>>::cond,
+                           numeric_type<Child>>(),
                    Child&>
   t2tost2_base<Child>::operator+=(const T2toST2Type& src) {
     auto& child = static_cast<Child&>(*this);
@@ -73,9 +73,9 @@ namespace tfel::math {
   std::enable_if_t<implementsT2toST2Concept<T2toST2Type>() &&
                        getSpaceDimension<Child>() ==
                            getSpaceDimension<T2toST2Type>() &&
-                       tfel::typetraits::IsAssignableTo<
+                       isAssignableTo<
                            numeric_type<T2toST2Type>,
-                           numeric_type<Child>>::cond,
+                           numeric_type<Child>>(),
                    Child&>
   t2tost2_base<Child>::operator-=(const T2toST2Type& src) {
     auto& child = static_cast<Child&>(*this);
@@ -91,12 +91,9 @@ namespace tfel::math {
   template <typename Child>
   template <typename T2>
   std::enable_if_t<
-      tfel::typetraits::IsScalar<T2>::cond &&
-          std::is_same<
-              typename ResultType<numeric_type<Child>,
-                                  T2,
-                                  OpMult>::type,
-              numeric_type<Child>>::value,
+      isScalar<T2>() &&
+          std::is_same<result_type<numeric_type<Child>, T2, OpMult>,
+                       numeric_type<Child>>::value,
       Child&>
   t2tost2_base<Child>::operator*=(const T2 s) {
     auto& child = static_cast<Child&>(*this);
@@ -110,14 +107,10 @@ namespace tfel::math {
   // /= operator
   template <typename Child>
   template <typename T2>
-  std::enable_if_t<
-      tfel::typetraits::IsScalar<T2>::cond &&
-          std::is_same<
-              typename ResultType<numeric_type<Child>,
-                                  T2,
-                                  OpDiv>::type,
-              numeric_type<Child>>::value,
-      Child&>
+  std::enable_if_t<isScalar<T2>() &&
+                       std::is_same<result_type<numeric_type<Child>, T2, OpDiv>,
+                                    numeric_type<Child>>::value,
+                   Child&>
   t2tost2_base<Child>::operator/=(const T2 s) {
     auto& child = static_cast<Child&>(*this);
     matrix_utilities<
@@ -132,9 +125,9 @@ namespace tfel::math {
   template <typename TensorType>
   std::enable_if_t<implementsTensorConcept<TensorType>() &&
                        getSpaceDimension<TensorType>() == N &&
-                       tfel::typetraits::IsAssignableTo<
+                       isAssignableTo<
                            numeric_type<TensorType>,
-                           T>::cond,
+                           T>(),
                    Expr<t2tost2<N, T>, RightCauchyGreenTensorDerivativeExpr<N>>>
   t2tost2<N, T>::dCdF(const TensorType& F) {
     return Expr<t2tost2<N, T>, RightCauchyGreenTensorDerivativeExpr<N>>(F);
@@ -144,63 +137,13 @@ namespace tfel::math {
   template <typename TensorType>
   std::enable_if_t<implementsTensorConcept<TensorType>() &&
                        getSpaceDimension<TensorType>() == N &&
-                       tfel::typetraits::IsAssignableTo<
+                       isAssignableTo<
                            numeric_type<TensorType>,
-                           T>::cond,
+                           T>(),
                    Expr<t2tost2<N, T>, LeftCauchyGreenTensorDerivativeExpr<N>>>
   t2tost2<N, T>::dBdF(const TensorType& F) {
     return Expr<t2tost2<N, T>, LeftCauchyGreenTensorDerivativeExpr<N>>(F);
   }  // end of t2tost2::dBdF
-
-  template <unsigned short N, typename T>
-  constexpr t2tost2<N, T>::t2tost2() {}  // end of t2tost2<N,T>::t2tost2
-
-  template <unsigned short N, typename T>
-  template <
-      typename T2,
-      std::enable_if_t<tfel::typetraits::IsAssignableTo<T2, T>::cond, bool>>
-  constexpr t2tost2<N, T>::t2tost2(const std::initializer_list<T2>& init)
-      : fsarray<StensorDimeToSize<N>::value * TensorDimeToSize<N>::value, T>(
-            init) {}
-
-  template <unsigned short N, typename T>
-  template <
-      typename T2,
-      std::enable_if_t<tfel::typetraits::IsAssignableTo<T2, T>::cond, bool>>
-  constexpr t2tost2<N, T>::t2tost2(const T2& init)
-      : fsarray<StensorDimeToSize<N>::value * TensorDimeToSize<N>::value, T>(
-            init) {}  // end of t2tost2<N,T>::t2tost2
-
-  template <unsigned short N, typename T>
-  constexpr t2tost2<N, T>::t2tost2(const t2tost2<N, T>& src)
-      : T2toST2Concept<t2tost2<N, T>>(src),
-        fsarray<StensorDimeToSize<N>::value * TensorDimeToSize<N>::value, T>(
-            src) {}
-
-  template <unsigned short N, typename T>
-  template <typename T2, typename Op>
-  t2tost2<N, T>::t2tost2(const Expr<t2tost2<N, T2>, Op>& src) {
-    matrix_utilities<StensorDimeToSize<N>::value, TensorDimeToSize<N>::value,
-                     TensorDimeToSize<N>::value>::copy(src, *this);
-  }
-
-  template <unsigned short N, typename T>
-  t2tost2<N, T>& t2tost2<N, T>::operator=(const t2tost2<N, T>& src) {
-    fsarray<StensorDimeToSize<N>::value * TensorDimeToSize<N>::value, T>::
-    operator=(src);
-    return *this;
-  }
-
-  template <unsigned short N, typename T>
-  T& t2tost2<N, T>::operator()(const unsigned short i, const unsigned short j) {
-    return this->v[TensorDimeToSize<N>::value * i + j];
-  }
-
-  template <unsigned short N, typename T>
-  constexpr const T& t2tost2<N, T>::operator()(const unsigned short i,
-                                               const unsigned short j) const {
-    return this->v[TensorDimeToSize<N>::value * i + j];
-  }
 
   template <unsigned short N, typename T>
   template <typename InputIterator>
@@ -209,17 +152,10 @@ namespace tfel::math {
                        TensorDimeToSize<N>::value>::exe(src, *this);
   }
 
-  template <unsigned short N, typename T>
-  typename t2tost2<N, T>::RunTimeProperties
-  t2tost2<N, T>::getRunTimeProperties() const {
-    return RunTimeProperties();
-  }  // end of t2tost2<N,T>::getRunTimeProperties
-
   template <typename T2toT2Type>
-  std::enable_if_t<
-      ((getSpaceDimension<T2toT2Type>() == 1u) &&
-       implementsT2toT2Concept<T2toT2Type>()),
-      t2tost2<1u, numeric_type<T2toT2Type>>>
+  std::enable_if_t<((getSpaceDimension<T2toT2Type>() == 1u) &&
+                    implementsT2toT2Concept<T2toT2Type>()),
+                   t2tost2<1u, numeric_type<T2toT2Type>>>
   convertToT2toST2(const T2toT2Type& t) {
     using value_type = numeric_type<T2toT2Type>;
     t2tost2<1u, value_type> r;

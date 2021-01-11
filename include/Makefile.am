@@ -1,6 +1,7 @@
 ## Makefile.am -- Process this file with automake to produce a Makefile.in file.
 
-nobase_include_HEADERS= TFEL/Macros.hxx                                                                              \
+nobase_include_HEADERS= TFEL/Macros.hxx                                                                  \
+			TFEL/ContractViolation.hxx                                                                   \
 			TFEL/Raise.hxx                                                                               \
 			TFEL/Raise.ixx                                                                               \
 			TFEL/PhysicalConstants.hxx                                                                   \
@@ -126,7 +127,7 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/TypeTraits/IsInvalid.hxx		                                                     \
 			TFEL/TypeTraits/IsRandomAccessIterator.hxx	                                             \
 			TFEL/Math/fsarray.hxx                                                                        \
-			TFEL/Math/General/fsarray.ixx                                                                \
+			TFEL/Math/runtime_array.hxx                                                                  \
 			TFEL/Math/power.hxx                                                                          \
 			TFEL/Math/power.ixx                                                                          \
 			TFEL/Math/Discretization1D.hxx                                                               \
@@ -146,6 +147,34 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/Forward/TinyNewtonRaphson.hxx                                                      \
 			TFEL/Math/General/Forward/General.hxx                                                        \
 			TFEL/Math/Bindings/atlas.hxx                                                                 \
+			TFEL/Math/Array/StandardTemplateLibraryCompatibilityLayers.hxx				     \
+			TFEL/Math/Array/StandardTemplateLibraryCompatibilityLayers.ixx				     \
+			TFEL/Math/Array/ArrayCommonMethods.hxx							     \
+			TFEL/Math/Array/ArrayCommonMethods.ixx							     \
+			TFEL/Math/Array/ArrayPolicies.hxx							     \
+			TFEL/Math/Array/ArrayPolicies.ixx							     \
+			TFEL/Math/Array/ConstFixedSizeArrayBase.hxx						     \
+			TFEL/Math/Array/ConstFixedSizeArrayBase.ixx						     \
+			TFEL/Math/Array/ConstRuntimeArrayBase.hxx						     \
+			TFEL/Math/Array/ConstRuntimeArrayBase.ixx						     \
+			TFEL/Math/Array/View.hxx								     \
+TFEL/Math/Array/ConstView.hxx								     \
+			TFEL/Math/Array/FixedSizeArrayPolicies.hxx						     \
+			TFEL/Math/Array/FixedSizeIndexingPolicies.hxx						     \
+			TFEL/Math/Array/GenericFixedSizeArray.hxx						     \
+			TFEL/Math/Array/GenericFixedSizeArray.ixx						     \
+			TFEL/Math/Array/GenericRuntimeArray.hxx							     \
+			TFEL/Math/Array/GenericRuntimeArray.ixx							     \
+			TFEL/Math/Array/IndexingPolicies.hxx							     \
+			TFEL/Math/Array/IndexingPolicies.ixx							     \
+			TFEL/Math/Array/IterateOverMultipleIndices.hxx						     \
+			TFEL/Math/Array/MultipleIndicesFunctors.hxx						     \
+			TFEL/Math/Array/MutableFixedSizeArrayBase.hxx						     \
+			TFEL/Math/Array/MutableFixedSizeArrayBase.ixx						     \
+			TFEL/Math/Array/MutableRuntimeArrayBase.hxx						     \
+			TFEL/Math/Array/MutableRuntimeArrayBase.ixx						     \
+			TFEL/Math/Array/RuntimeArrayPolicies.hxx						     \
+			TFEL/Math/Array/RuntimeIndexingPolicies.hxx						     \
 			TFEL/Math/Parser/BinaryFunction.hxx					                     \
 			TFEL/Math/Parser/EvaluatorBase.hxx 					                     \
 			TFEL/Math/Parser/Negation.hxx					                             \

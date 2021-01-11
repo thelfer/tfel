@@ -1,0 +1,56 @@
+/*!
+ * \file  include/TFEL/Math/Array/MutableFixedSizeArrayBase.hxx
+ * \brief
+ * \author Thomas Helfer
+ * \date 01/01/2021
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
+ */
+
+#ifndef LIB_TFEL_MATH_ARRAY_MUTABLEFIXEDSIZEARRAYBASE_HXX
+#define LIB_TFEL_MATH_ARRAY_MUTABLEFIXEDSIZEARRAYBASE_HXX
+
+#include "TFEL/Math/Array/ArrayPolicies.hxx"
+#include "TFEL/Math/Array/ArrayCommonMethods.hxx"
+#include "TFEL/Math/Array/FixedSizeArrayPolicies.hxx"
+#include "TFEL/Math/Array/StandardTemplateLibraryCompatibilityLayers.hxx"
+
+namespace tfel::math {
+
+  /*!
+   * \brief a base class for mutable fixed size arrays.
+   */
+  template <typename Child, typename ArrayPolicy>
+  struct MutableFixedSizeArrayBase
+      : public ArrayPolicy::IndexingPolicy,
+        public MutableArrayCommonMethods<Child, ArrayPolicy>,
+        public MutableArraySTLCompatibilityLayer<Child, ArrayPolicy> {
+    // some checks
+    static_assert(std::is_empty_v<typename ArrayPolicy::IndexingPolicy>);
+    static_assert(hasArrayPolicyFixedSizes<ArrayPolicy>(),
+                  "array policy must have fixed sizes");
+    static_assert(getArrayPolicyMinimalDataSize<ArrayPolicy>() != 0,
+                  "invalid minimal container size");
+    // exposing MutableArrayCommonMethods assignement operators
+    using MutableArrayCommonMethods<Child, ArrayPolicy>::operator=;
+    //! \return the current indexing policy
+    constexpr const typename ArrayPolicy::IndexingPolicy& getIndexingPolicy()
+        const;
+    /*!
+     * \brief apply a multi-indices functor
+     * \param[in] f: functor
+     * \tparam Function: type of the functor
+     */
+    template <typename Functor>
+    constexpr void iterate(const Functor&);
+  };  // end of struct MutableFixedSizeArrayBase
+
+}  // end of namespace tfel::math
+
+#include "TFEL/Math/Array/MutableFixedSizeArrayBase.ixx"
+
+#endif /* LIB_TFEL_MATH_ARRAY_MUTABLEFIXEDSIZEARRAYBASE_HXX */

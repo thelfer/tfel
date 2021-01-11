@@ -116,7 +116,7 @@ namespace tfel::math {
   struct ComputeObjectTag {
    private:
     //! \brief tells if T is a scalar.
-    static constexpr bool IsTScalar = tfel::typetraits::IsScalar<T>::cond;
+    static constexpr bool IsTScalar = tfel::typetraits::isScalar<T>();
     //! \brief tells if T is an unary operator.
     static constexpr bool IsTUnaryOperator =
         tfel::typetraits::IsUnaryOperator<T>::cond;

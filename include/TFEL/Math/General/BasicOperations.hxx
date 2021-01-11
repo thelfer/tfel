@@ -202,7 +202,7 @@ namespace tfel {
 
     template <typename T>
     TFEL_MATH_INLINE
-        std::enable_if_t<tfel::typetraits::IsScalar<T>::cond &&
+        std::enable_if_t<tfel::typetraits::isScalar<T>() &&
                              (!tfel::typetraits::IsComplex<T>::cond),
                          T>
         conj(const T src) {
@@ -211,7 +211,7 @@ namespace tfel {
 
     template <typename T>
     TFEL_MATH_INLINE
-        std::enable_if_t<tfel::typetraits::IsScalar<T>::cond &&
+        std::enable_if_t<tfel::typetraits::isScalar<T>() &&
                              (!tfel::typetraits::IsComplex<T>::cond),
                          T>
         real(const T src) {

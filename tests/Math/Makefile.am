@@ -32,6 +32,7 @@ test_PROGRAMS = hill                                     \
 		newton_raphson                           \
 		solve                                    \
 		fsarray                                  \
+		runtime_array                            \
 		tmatrix                                  \
 		tmatrix1                                 \
 		tmatrix2                                 \
@@ -98,6 +99,7 @@ tinymatrixsolve2_SOURCES      = tinymatrixsolve2.cxx
 newton_raphson_SOURCES        = newton_raphson.cxx       
 solve_SOURCES                 = solve.cxx                
 fsarray_SOURCES               = fsarray.cxx
+runtime_array_SOURCES         = runtime_array.cxx
 tmatrix_SOURCES               = tmatrix.cxx
 tmatrix1_SOURCES              = tmatrix1.cxx
 tmatrix2_SOURCES              = tmatrix2.cxx

@@ -47,9 +47,8 @@ namespace tfel::math {
       static_assert(implementsStensorConcept<StensorType>());
       static_assert(getSpaceDimension<ST2toT2ResultType>() ==
                     getSpaceDimension<StensorType>());
-      static_assert(tfel::typetraits::IsAssignableTo<
-                    numeric_type<StensorType>,
-                    numeric_type<ST2toT2ResultType>>::cond);
+      static_assert(isAssignableTo<numeric_type<StensorType>,
+                                   numeric_type<ST2toT2ResultType>>());
       const value_type zero = value_type(0);
       this->v[0] = a(0);
       this->v[4] = a(1);
@@ -65,18 +64,16 @@ namespace tfel::math {
     template <typename StensorType, typename ST2toST2Type>
     Expr(const StensorType& a, const ST2toST2Type& C) {
       static_assert(implementsStensorConcept<StensorType>());
-      static_assert(
-          implementsST2toST2Concept<ST2toST2Type>());
+      static_assert(implementsST2toST2Concept<ST2toST2Type>());
       static_assert(getSpaceDimension<ST2toT2ResultType>() ==
                     getSpaceDimension<StensorType>());
       static_assert(getSpaceDimension<ST2toST2Type>() ==
                     getSpaceDimension<StensorType>());
-      static_assert(tfel::typetraits::IsAssignableTo<
-                    typename ComputeBinaryResult<
-                        numeric_type<StensorType>,
-                        numeric_type<ST2toST2Type>,
-                        OpMult>::Result,
-                    numeric_type<ST2toT2ResultType>>::cond);
+      static_assert(
+          isAssignableTo<typename ComputeBinaryResult<
+                             numeric_type<StensorType>,
+                             numeric_type<ST2toST2Type>, OpMult>::Result,
+                         numeric_type<ST2toT2ResultType>>());
       this->v[0] = C(0, 0) * a(0);
       this->v[1] = C(0, 1) * a(0);
       this->v[2] = C(0, 2) * a(0);
@@ -114,8 +111,7 @@ namespace tfel::math {
   struct Expr<ST2toT2ResultType, StensorProductRightDerivativeExpr<2u>>
       : public ST2toT2Concept<
             Expr<ST2toT2ResultType, StensorProductRightDerivativeExpr<2u>>>,
-        public fsarray<20u,
-                       numeric_type<ST2toT2ResultType>> {
+        public fsarray<20u, numeric_type<ST2toT2ResultType>> {
     static_assert(getSpaceDimension<ST2toT2ResultType>() == 2u);
     //! a simple alias
     using value_type = numeric_type<ST2toT2ResultType>;
@@ -126,13 +122,11 @@ namespace tfel::math {
      */
     template <typename StensorType>
     Expr(const StensorType& a) {
-      static_assert
-          (implementsStensorConcept<StensorType>());
+      static_assert(implementsStensorConcept<StensorType>());
       static_assert(getSpaceDimension<ST2toT2ResultType>() ==
                     getSpaceDimension<StensorType>());
-      static_assert(tfel::typetraits::IsAssignableTo<
-                    numeric_type<StensorType>,
-                    numeric_type<ST2toT2ResultType>>::cond);
+      static_assert(isAssignableTo<numeric_type<StensorType>,
+                                   numeric_type<ST2toT2ResultType>>());
       using real = base_type<ST2toT2ResultType>;
       constexpr const auto icste = Cste<real>::isqrt2;
       constexpr const auto zero = value_type(0);
@@ -165,18 +159,16 @@ namespace tfel::math {
     template <typename StensorType, typename ST2toST2Type>
     Expr(const StensorType& a, const ST2toST2Type& C) {
       static_assert(implementsStensorConcept<StensorType>());
-      static_assert(
-          implementsST2toST2Concept<ST2toST2Type>());
+      static_assert(implementsST2toST2Concept<ST2toST2Type>());
       static_assert(getSpaceDimension<ST2toT2ResultType>() ==
                     getSpaceDimension<StensorType>());
       static_assert(getSpaceDimension<ST2toST2Type>() ==
                     getSpaceDimension<StensorType>());
-      static_assert(tfel::typetraits::IsAssignableTo<
-                    typename ComputeBinaryResult<
-                        numeric_type<StensorType>,
-                        numeric_type<ST2toST2Type>,
-                        OpMult>::Result,
-                    numeric_type<ST2toT2ResultType>>::cond);
+      static_assert(
+          isAssignableTo<typename ComputeBinaryResult<
+                             numeric_type<StensorType>,
+                             numeric_type<ST2toST2Type>, OpMult>::Result,
+                         numeric_type<ST2toT2ResultType>>());
       using real = base_type<ST2toT2ResultType>;
       constexpr const auto icste = Cste<real>::isqrt2;
       TFEL_CONSTEXPR const auto one_half = real(1) / 2;
@@ -228,8 +220,7 @@ namespace tfel::math {
   struct Expr<ST2toT2ResultType, StensorProductRightDerivativeExpr<3u>>
       : public ST2toT2Concept<
             Expr<ST2toT2ResultType, StensorProductRightDerivativeExpr<3u>>>,
-        public fsarray<54u,
-                       numeric_type<ST2toT2ResultType>> {
+        public fsarray<54u, numeric_type<ST2toT2ResultType>> {
     static_assert(getSpaceDimension<ST2toT2ResultType>() == 3u);
     //! a simple alias
     typedef numeric_type<ST2toT2ResultType> value_type;
@@ -240,13 +231,11 @@ namespace tfel::math {
      */
     template <typename StensorType>
     Expr(const StensorType& a) {
-      static_assert
-          (implementsStensorConcept<StensorType>());
+      static_assert(implementsStensorConcept<StensorType>());
       static_assert(getSpaceDimension<ST2toT2ResultType>() ==
                     getSpaceDimension<StensorType>());
-      static_assert(tfel::typetraits::IsAssignableTo<
-                    numeric_type<StensorType>,
-                    numeric_type<ST2toT2ResultType>>::cond);
+      static_assert(isAssignableTo<numeric_type<StensorType>,
+                                   numeric_type<ST2toT2ResultType>>());
       using real = base_type<ST2toT2ResultType>;
       constexpr const auto icste = Cste<real>::isqrt2;
       constexpr const auto zero = value_type(0);
@@ -313,18 +302,16 @@ namespace tfel::math {
     template <typename StensorType, typename ST2toST2Type>
     Expr(const StensorType& a, const ST2toST2Type& C) {
       static_assert(implementsStensorConcept<StensorType>());
-      static_assert(
-          implementsST2toST2Concept<ST2toST2Type>());
+      static_assert(implementsST2toST2Concept<ST2toST2Type>());
       static_assert(getSpaceDimension<ST2toT2ResultType>() ==
                     getSpaceDimension<StensorType>());
       static_assert(getSpaceDimension<ST2toST2Type>() ==
                     getSpaceDimension<StensorType>());
-      static_assert(tfel::typetraits::IsAssignableTo<
-                    typename ComputeBinaryResult<
-                        numeric_type<StensorType>,
-                        numeric_type<ST2toST2Type>,
-                        OpMult>::Result,
-                    numeric_type<ST2toT2ResultType>>::cond);
+      static_assert(
+          isAssignableTo<typename ComputeBinaryResult<
+                             numeric_type<StensorType>,
+                             numeric_type<ST2toST2Type>, OpMult>::Result,
+                         numeric_type<ST2toT2ResultType>>());
       using real = base_type<ST2toT2ResultType>;
       constexpr const auto icste = Cste<real>::isqrt2;
       TFEL_CONSTEXPR const auto one_half = real(1) / 2;

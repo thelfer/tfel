@@ -23,12 +23,10 @@ namespace tfel::math {
           implementsStensorConcept<StensorType2>() &&
           getSpaceDimension<StensorType1>() == 1u &&
           getSpaceDimension<StensorType2>() == 1u &&
-          !tfel::typetraits::IsInvalid<
-              typename ComputeBinaryResult<StensorType1,
+          !isInvalid<BinaryOperationResult<StensorType1,
                                            StensorType2,
-                                           OpDotProduct>::Result>::cond,
-      typename ComputeBinaryResult<StensorType1, StensorType2, OpDotProduct>::
-          Result>
+                                           OpDotProduct>>(),
+      BinaryOperationResult<StensorType1, StensorType2, OpDotProduct>>
   operator|(const StensorType1& a, const StensorType2& b) {
     return a(0) * b(0) + a(1) * b(1) + a(2) * b(2);
   }
@@ -39,12 +37,10 @@ namespace tfel::math {
           implementsStensorConcept<StensorType2>() &&
           getSpaceDimension<StensorType1>() == 2u &&
           getSpaceDimension<StensorType2>() == 2u &&
-          !tfel::typetraits::IsInvalid<
-              typename ComputeBinaryResult<StensorType1,
+          !isInvalid<BinaryOperationResult<StensorType1,
                                            StensorType2,
-                                           OpDotProduct>::Result>::cond,
-      typename ComputeBinaryResult<StensorType1, StensorType2, OpDotProduct>::
-          Result>
+                                           OpDotProduct>>(),
+      BinaryOperationResult<StensorType1, StensorType2, OpDotProduct>>
   operator|(const StensorType1& a, const StensorType2& b) {
     return a(0) * b(0) + a(1) * b(1) + a(2) * b(2) + a(3) * b(3);
   }
@@ -55,12 +51,10 @@ namespace tfel::math {
           implementsStensorConcept<StensorType2>() &&
           getSpaceDimension<StensorType1>() == 3u &&
           getSpaceDimension<StensorType2>() == 3u &&
-          !tfel::typetraits::IsInvalid<
-              typename ComputeBinaryResult<StensorType1,
+          !isInvalid<BinaryOperationResult<StensorType1,
                                            StensorType2,
-                                           OpDotProduct>::Result>::cond,
-      typename ComputeBinaryResult<StensorType1, StensorType2, OpDotProduct>::
-          Result>
+                                           OpDotProduct>>(),
+      BinaryOperationResult<StensorType1, StensorType2, OpDotProduct>>
   operator|(const StensorType1& a, const StensorType2& b) {
     return a(0) * b(0) + a(1) * b(1) + a(2) * b(2) + a(3) * b(3) + a(4) * b(4) +
            a(5) * b(5);

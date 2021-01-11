@@ -159,7 +159,7 @@ namespace tfel::math {
      */
     template <typename T2, typename Operation>
     TFEL_MATH_INLINE2
-        std::enable_if_t<tfel::typetraits::IsAssignableTo<T2, T>::cond,
+        std::enable_if_t<isAssignableTo<T2, T>(),
                          vector<T>&>
         operator=(const Expr<vector<T2>, Operation>&);
     /*
@@ -170,7 +170,7 @@ namespace tfel::math {
      */
     template <typename T2, typename Operation>
     TFEL_MATH_INLINE2
-        std::enable_if_t<tfel::typetraits::IsAssignableTo<T2, T>::cond,
+        std::enable_if_t<isAssignableTo<T2, T>(),
                          vector<T>&>
         operator+=(const Expr<vector<T2>, Operation>&);
     /*
@@ -181,7 +181,7 @@ namespace tfel::math {
      */
     template <typename T2, typename Operation>
     TFEL_MATH_INLINE2
-        std::enable_if_t<tfel::typetraits::IsAssignableTo<T2, T>::cond,
+        std::enable_if_t<isAssignableTo<T2, T>(),
                          vector<T>&>
         operator-=(const Expr<vector<T2>, Operation>&);
     /*
@@ -231,7 +231,7 @@ namespace tfel::math {
    * \return const typename tfel::typetraits::RealPartType<T>::type, the result
    */
   template <typename T>
-  std::enable_if_t<tfel::typetraits::IsScalar<T>::cond,
+  std::enable_if_t<isScalar<T>(),
                    typename tfel::typetraits::RealPartType<T>::type>
   norm(const vector<T>&);
 

@@ -48,9 +48,8 @@ namespace tfel::math {
       static_assert(implementsT2toST2Concept<T2toST2Type>());
       static_assert(getSpaceDimension<ST2toST2ResultType>() ==
                     getSpaceDimension<T2toST2Type>());
-      static_assert(tfel::typetraits::IsAssignableTo<
-                    numeric_type<T2toST2Type>,
-                    numeric_type<ST2toST2ResultType>>::cond);
+      static_assert(isAssignableTo<numeric_type<T2toST2Type>,
+                                   numeric_type<ST2toST2ResultType>>());
       copy<9u>::exe(&A(0, 0), this->v);
     }  // end of Expr
     /*!
@@ -95,9 +94,8 @@ namespace tfel::math {
       static_assert(implementsT2toST2Concept<T2toST2Type>());
       static_assert(getSpaceDimension<ST2toST2ResultType>() ==
                     getSpaceDimension<T2toST2Type>());
-      static_assert(tfel::typetraits::IsAssignableTo<
-                    numeric_type<T2toST2Type>,
-                    numeric_type<ST2toST2ResultType>>::cond);
+      static_assert(isAssignableTo<numeric_type<T2toST2Type>,
+                                   numeric_type<ST2toST2ResultType>>());
       constexpr const auto icste = Cste<value_type>::sqrt2;
       constexpr const auto icste2 = Cste<value_type>::isqrt2;
       this->v[0] = A(0, 0);
@@ -158,9 +156,8 @@ namespace tfel::math {
       static_assert(implementsT2toST2Concept<T2toST2Type>());
       static_assert(getSpaceDimension<ST2toST2ResultType>() ==
                     getSpaceDimension<T2toST2Type>());
-      static_assert(tfel::typetraits::IsAssignableTo<
-                    numeric_type<T2toST2Type>,
-                    numeric_type<ST2toST2ResultType>>::cond);
+      static_assert(isAssignableTo<numeric_type<T2toST2Type>,
+                                   numeric_type<ST2toST2ResultType>>());
       constexpr const auto icste = Cste<value_type>::sqrt2;
       constexpr const auto icste2 = Cste<value_type>::isqrt2;
       this->v[0] = A(0, 0);

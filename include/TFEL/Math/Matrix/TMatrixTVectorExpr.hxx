@@ -94,9 +94,7 @@ namespace tfel::math {
 
    protected:
     //! a simple alias
-    using Result = typename ComputeBinaryResult<std::decay_t<A>,
-                                                std::decay_t<B>,
-                                                OpMult>::Result;
+    using Result = BinaryOperationResult<A, B, OpMult>;
     //! a simple alias
     using NumType = numeric_type<Result>;
     //! a simple alias

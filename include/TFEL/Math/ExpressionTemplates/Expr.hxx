@@ -16,6 +16,7 @@
 
 #include <type_traits>
 #include "TFEL/Metaprogramming/ResultOf.hxx"
+#include "TFEL/TypeTraits/IsAssignableTo.hxx"
 #include "TFEL/Math/General/MathObjectTraits.hxx"
 #include "TFEL/Math/General/BasicOperations.hxx"
 #include "TFEL/Math/General/ComputeObjectTag.hxx"
@@ -547,9 +548,40 @@ namespace tfel::math {
    */
   template <typename ResultType, typename Operation>
   ResultType eval(const Expr<ResultType, Operation>& e) {
-    return {e};
+    return e;
   }  // end of eval
 
 }  // end of namespace tfel::math
+
+namespace tfel::typetraits{
+
+  /*!
+   * \brief generic partial specialisation for an expression
+   * \tparam EvaluationResult: result of the evaluation of the expression
+   */
+  template <typename EvaluationResult, typename Operation>
+  struct IsAssignableTo<tfel::math::Expr<EvaluationResult, Operation>,
+                        EvaluationResult> {
+    //! \brief result
+    static constexpr bool cond = true;
+  };  // end of struct IsAssignableTo
+
+  /*!
+   * \brief generic partial specialisation for an expression
+   * \tparam EvaluationResult: result of the evaluation of the expression
+   * \tparam DestinationType: destination
+   */
+  template <typename EvaluationResult,
+            typename Operation,
+            typename DestinationType>
+  struct IsAssignableTo<tfel::math::Expr<EvaluationResult, Operation>,
+                        DestinationType> {
+    //! \brief result
+    static constexpr bool cond =
+        isAssignableTo<EvaluationResult, DestinationType>();
+  };  // end of struct IsAssignableTo
+
+}  // end of namespace tfel::typetraits
+
 
 #endif /* LIB_TFEL_MATH_EXPRESSION_EXPR_HXX */

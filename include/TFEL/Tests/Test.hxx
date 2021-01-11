@@ -15,34 +15,26 @@
 #define LIB_TFEL_TESTS_TEST_HXX 1
 
 #include<string>
-
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Tests/TestResult.hxx"
 
-namespace tfel
-{
+namespace tfel::tests {
 
-  namespace tests
-  {
-    
-    //! \brief the ase class of all tests.
-    struct TFELTESTS_VISIBILITY_EXPORT Test
-    {
-      //! \return the name of the test
-      virtual std::string name() const = 0;
-      //! \return the group of the test
-      virtual std::string classname() const = 0;
-      /*! 
-       * \brief execute test
-       * \return the results of the test
-       */
-      virtual TestResult execute() = 0;
-      //! destructor
-      virtual ~Test();
-    }; // end of struct Test
-    
-  } // end of namespace tests
+  //! \brief base class of all unit tests.
+  struct TFELTESTS_VISIBILITY_EXPORT Test {
+    //! \return the name of the test
+    virtual std::string name() const = 0;
+    //! \return the group of the test
+    virtual std::string classname() const = 0;
+    /*!
+     * \brief execute test
+     * \return the results of the test
+     */
+    virtual TestResult execute() = 0;
+    //! destructor
+    virtual ~Test();
+  };  // end of struct Test
 
-} // end of namespace tfel
+}  // end of namespace tfel::tests
 
 #endif /* LIB_TFEL_TESTS_TEST_HXX */

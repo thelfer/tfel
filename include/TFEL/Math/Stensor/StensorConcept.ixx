@@ -104,12 +104,11 @@ namespace tfel::math {
 
   template <typename StensorResultType, typename StensorType>
   std::enable_if_t<
-      implementsStensorConcept<StensorResultType>() &&
-          implementsStensorConcept<StensorType>() &&
-          tfel::typetraits::IsAssignableTo<
-              typename ComputeUnaryResult<numeric_type<StensorType>,
-                                          Power<2>>::Result,
-              numeric_type<StensorResultType>>::cond,
+      (implementsStensorConcept<StensorResultType>() &&
+       implementsStensorConcept<StensorType>() &&
+       isAssignableTo<typename ComputeUnaryResult<numeric_type<StensorType>,
+                                                  Power<2>>::Result,
+                      numeric_type<StensorResultType>>()),
       void>
   computeDeterminantDerivative(StensorResultType& dJ, const StensorType& s) {
     constexpr const auto N = getSpaceDimension<StensorType>();
@@ -141,12 +140,11 @@ namespace tfel::math {
 
   template <typename StensorResultType, typename StensorType>
   std::enable_if_t<
-      implementsStensorConcept<StensorResultType>() &&
-          implementsStensorConcept<StensorType>() &&
-          tfel::typetraits::IsAssignableTo<
-              typename ComputeUnaryResult<numeric_type<StensorType>,
-                                          Power<2>>::Result,
-              numeric_type<StensorResultType>>::cond,
+      (implementsStensorConcept<StensorResultType>() &&
+       implementsStensorConcept<StensorType>() &&
+       isAssignableTo<typename ComputeUnaryResult<numeric_type<StensorType>,
+                                                  Power<2>>::Result,
+                      numeric_type<StensorResultType>>()),
       void>
   computeDeviatorDeterminantDerivative(StensorResultType& dJ,
                                        const StensorType& s) {

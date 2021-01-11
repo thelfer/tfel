@@ -46,7 +46,7 @@ namespace tfel::math {
    public:
     typedef std::random_access_iterator_tag iterator_category;
     typedef
-        typename ComputeBinaryResult<NumTypeA, NumTypeB, Op>::Handle NumType;
+        BinaryOperationHandler<NumTypeA,NumTypeB,Op> NumType;
     typedef const NumType value_type;
     typedef Distance difference_type;
     typedef const NumType* pointer;

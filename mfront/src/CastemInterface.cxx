@@ -648,6 +648,13 @@ namespace mfront {
         i.writeOutputFiles(emp, fd);
       }
     }
+    // write the material properties
+    if (mb.areThermalExpansionCoefficientsDefined()) {
+      for (const auto& themp : mb.getThermalExpansionCoefficientsDescriptions()) {
+        CastemMaterialPropertyInterface i;
+        i.writeOutputFiles(themp, fd);
+      }
+    }
 
     const auto name = this->getBehaviourName(mb);
 
@@ -1499,6 +1506,13 @@ namespace mfront {
       for (const auto& emp : bd.getElasticMaterialPropertiesDescriptions()) {
         CastemMaterialPropertyInterface i;
         i.getLibraryDescription(d, l, emp);
+      }
+    }
+    // thermal expansion coefficients
+    if (bd.areThermalExpansionCoefficientsDefined()) {
+      for (const auto& themp : bd.getThermalExpansionCoefficientsDescriptions()) {
+        CastemMaterialPropertyInterface i;
+        i.getLibraryDescription(d, l, themp);
       }
     }
   }  // end of CastemInterface::getTargetsDescription

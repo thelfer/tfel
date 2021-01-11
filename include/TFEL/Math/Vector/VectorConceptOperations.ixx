@@ -19,10 +19,10 @@ namespace tfel::math {
 
   template <typename T1, typename T2>
   std::enable_if_t<IsVectorVectorOperationValid<T1, T2, OpDotProduct>::cond,
-                   typename ComputeBinaryResult<T1, T2, OpDotProduct>::Result>
+                   BinaryOperationResult<T1, T2, OpDotProduct>>
   operator|(const T1& a, const T2& b) {
-    typedef typename ComputeBinaryResult<T1, T2, OpDotProduct>::Result Result;
-    typedef typename ComputeBinaryResult<T1, T2, OpDotProduct>::Handle Handle;
+    typedef BinaryOperationResult<T1,T2,OpDotProduct> Result;
+    typedef BinaryOperationHandler<T1, T2, OpDotProduct> Handle;
     return Handle::template exe<Result, T1, T2>(a, b);
   }
 
@@ -30,7 +30,7 @@ namespace tfel::math {
   std::enable_if_t<
       IsEuclidianNormValid<T1>::cond,
       typename tfel::typetraits::RealPartType<
-          typename ComputeBinaryResult<T1, T1, OpDotProduct>::Result>::type>
+          BinaryOperationResult<T1,T1,OpDotProduct>>::type>
   norm(const T1& v) {
     return std::sqrt(real(v | v));
   }

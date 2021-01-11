@@ -42,8 +42,8 @@ namespace tfel {
     struct DerivativeType {
       //! boolean stating if both variables are scalar
       static constexpr const auto are_scalars =
-          tfel::typetraits::IsScalar<T1>::cond &&
-          tfel::typetraits::IsScalar<T2>::cond;
+          isScalar<T1>() &&
+          isScalar<T2>();
       //! the result
       using type = typename std::conditional<
           are_scalars,

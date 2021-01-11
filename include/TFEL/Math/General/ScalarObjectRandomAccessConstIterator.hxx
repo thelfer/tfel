@@ -25,7 +25,7 @@ namespace tfel::math {
 
   template <typename A, typename B, typename Op>
   class ScalarObjectRandomAccessConstIterator {
-    static_assert(tfel::typetraits::IsScalar<A>::cond);
+    static_assert(tfel::typetraits::isScalar<A>());
     typedef typename B::const_iterator ConstIteratorType;
     static_assert(
         tfel::typetraits::IsRandomAccessIterator<ConstIteratorType>::cond);
@@ -40,7 +40,7 @@ namespace tfel::math {
 
    public:
     typedef std::random_access_iterator_tag iterator_category;
-    typedef typename ComputeBinaryResult<A, NumTypeB, Op>::Handle NumType;
+    typedef BinaryOperationHandler<A,NumTypeB,Op> NumType;
     typedef const NumType value_type;
     typedef Distance difference_type;
     typedef const NumType* pointer;
@@ -124,7 +124,7 @@ namespace tfel::math {
 
   template <typename A, typename B, typename Op>
   class ObjectScalarRandomAccessConstIterator {
-    static_assert(tfel::typetraits::IsScalar<B>::cond);
+    static_assert(tfel::typetraits::isScalar<B>());
     typedef typename A::const_iterator ConstIteratorType;
     static_assert(
         tfel::typetraits::IsRandomAccessIterator<ConstIteratorType>::cond);
@@ -139,7 +139,7 @@ namespace tfel::math {
         Distance;
 
     typedef std::random_access_iterator_tag iterator_category;
-    typedef typename ComputeBinaryResult<NumTypeA, B, Op>::Handle NumType;
+    typedef BinaryOperationHandler<NumTypeA,B,Op> NumType;
     typedef const NumType value_type;
     typedef Distance difference_type;
     typedef const NumType* pointer;
